@@ -18316,6 +18316,30 @@ EOF
 D"
 	    dotest client-7 "cat file1" "abc"
 
+	    cat >${TESTDIR}/serveme <<EOF
+#!${TESTSHELL}
+echo "Valid-requests Root Valid-responses valid-requests Directory Entry Modified Unchanged Argument Argumentx ci co update"
+echo "ok"
+echo "M OK, whatever"
+echo "ok"
+cat >${TESTDIR}/client.tmp
+EOF
+	    dotest client-8 "${testcvs} update -D 99-10-04" "OK, whatever"
+	    dotest client-9 "cat ${TESTDIR}/client.tmp" \
+"Root ${TESTDIR}/cvsroot
+Valid-responses [-a-zA-Z ]*
+valid-requests
+Argument -D
+Argument 4 Oct 1999 04:00:00 -0000
+Directory \.
+${TESTDIR}/cvsroot/first-dir
+Entry /file1/1\.2///
+Modified file1
+u=rw,g=r,o=r
+4
+abc
+update"
+
 	    cd ../..
 	    rm -r 1
 	    rmdir ${TESTDIR}/bogus

@@ -1,5 +1,12 @@
 1998-12-29  Jim Kingdon  <http://www.cyclic.com>
 
+	* client.c (client_senddate): Use date_to_internet rather than
+	using our own "5/26/1997 13:01:40 GMT" date format.
+	* main.c (date_to_internet): Check for errors from sscanf.  Always
+	send a four digit year.  Send hours, minutes, and seconds as two
+	digits per RFC822.
+	* sanity.sh (client): New tests client-8 and client-9 test for this.
+
 	* sanity.sh (rcs2): New tests rcs2-6 through rcs2-8 test for fix
 	to lib/getdate.y (before the fix, "100 months" or "8 years" would
 	tend to mean the year 1969, thus the tests would give "cvs update:
