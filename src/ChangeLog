@@ -1,5 +1,9 @@
 2003-07-16  Derek Price  <derek@ximbiot.com>
 
+	* cvs.h: Include pathmax.h.
+
+2003-07-16  Derek Price  <derek@ximbiot.com>
+
 	* myndbm.c: Use the GNU getdelim function rather than our package
 	getstr.
 	* server.c: Use the (hopefully) GNULIB and more appropriately named
