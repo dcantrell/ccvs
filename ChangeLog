@@ -1,5 +1,13 @@
 2003-05-19  Derek Price  <derek@ximbiot.com>
 
+	* configure.in: Add calls to support lib/malloc.c from GNULIB.
+
+	* aclocal: Regenerated.
+	* configure: Ditto.
+	* config.h.in: Ditto.
+
+2003-05-19  Derek Price  <derek@ximbiot.com>
+
 	* configure.in: Add calls to support lib/lstat.c and lib/stat.c.  Add
 	m4/Makefile to AC_OUTPUT.
 
