@@ -1,3 +1,8 @@
+2005-02-04 Derek Price <derek@ximbiot.com>
+
+	* zlib.c (compress_buffer_input): Don't return EOF when there is data
+	pending.
+
 2005-02-01 Derek Price <derek@ximbiot.com>
 
 	* main.c: Update year in copyright notice to match GNU standards.

@@ -193,15 +193,24 @@ compress_buffer_input (void *closure, char *data, size_t need, size_t size,
 	bd->size = cb->zstr.avail_in;
 	bd->bufp = (char *) cb->zstr.next_in;
 
+	sofar = size - cb->zstr.avail_out;
+
 	if (zstatus == Z_STREAM_END)
+	{
+	    /* If we read any data, then return it, relying on the fact that
+	     * we will get Z_STREAM_END on the next read too.
+	     */
+	    if (sofar > 0) break;
+
+	    /* Otherwise, return EOF.  */
 	    return -1;
+	}
 
 	/* If we have obtained NEED bytes, then return, unless NEED is
            zero and we haven't obtained anything at all.  If NEED is
            zero, we will keep reading from the underlying buffer until
            we either can't read anything, or we have managed to
            inflate at least one byte.  */
-	sofar = size - cb->zstr.avail_out;
 	if (sofar > 0 && sofar >= need)
 	    break;
 
@@ -219,8 +228,22 @@ compress_buffer_input (void *closure, char *data, size_t need, size_t size,
 	status = (*cb->buf->input) (cb->buf->closure, bd->text,
 				    need > 0 ? 1 : 0,
 				    BUFFER_DATA_SIZE, &nread);
-	if (status != 0)
+
+	if (status == -2)
+	    /* Don't try to recover from memory allcoation errors.  */
 	    return status;
+
+	if (status != 0)
+	{
+	    /* If we read any data, then return it, relying on the fact that
+	     * we will get the same error reading the underlying buffer
+	     * on the next read too.
+	     */
+	    if (sofar > 0) break;
+
+	    /* Otherwise, return EOF.  */
+	    return status;
+	}
 
 	/* If we didn't read anything, then presumably the buffer is
            in nonblocking mode, and we should just get out now with
