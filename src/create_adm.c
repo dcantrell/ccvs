@@ -13,16 +13,23 @@
 
 #include "cvs.h"
 
-/* update_dir includes dir as its last component.  */
+/* update_dir includes dir as its last component.
 
-void
-Create_Admin (dir, update_dir, repository, tag, date, nonbranch)
+   Return value is 0 for success, or 1 if we printed a warning message.
+   Note that many errors are still fatal; particularly for unlikely errors
+   a fatal error is probably better than a warning which might be missed
+   or after which CVS might do something non-useful.  If WARN is zero, then
+   don't print warnings; all errors are fatal then.  */
+
+int
+Create_Admin (dir, update_dir, repository, tag, date, nonbranch, warn)
     char *dir;
     char *update_dir;
     char *repository;
     char *tag;
     char *date;
     int nonbranch;
+    int warn;
 {
     FILE *fout;
     char *cp;
@@ -41,7 +48,7 @@ Create_Admin (dir, update_dir, repository, tag, date, nonbranch)
 #endif
 
     if (noexec)
-	return;
+	return 0;
 
     tmp = xmalloc (strlen (dir) + 100);
     if (dir != NULL)
@@ -51,7 +58,21 @@ Create_Admin (dir, update_dir, repository, tag, date, nonbranch)
     if (isfile (tmp))
 	error (1, 0, "there is a version in %s already", update_dir);
 
-    make_directory (tmp);
+    if (CVS_MKDIR (tmp, 0777) < 0)
+    {
+	if (warn)
+	{
+	    /* The reason that this is a warning, rather than silently
+	       just skipping creating the directory, is that we don't want
+	       CVS's behavior to vary subtly based on factors (like directory
+	       permissions) which are not made clear to the user.  With
+	       the warning at least we let them know what is going on.  */
+	    error (0, errno, "warning: cannot make directory %s", tmp);
+	    return 1;
+	}
+	else
+	    error (1, errno, "cannot make directory %s", tmp);
+    }
 
     /* record the current cvs root for later use */
 
@@ -140,4 +161,5 @@ Create_Admin (dir, update_dir, repository, tag, date, nonbranch)
 #endif
 
     free (tmp);
+    return 0;
 }

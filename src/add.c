@@ -223,7 +223,8 @@ cannot add files with '/' in their name; %s not added",
 
 		strip_trailing_slashes (argv[i]);
 
-		Create_Admin (argv[i], argv[i], rcsdir, tag, date, nonbranch);
+		Create_Admin (argv[i], argv[i], rcsdir, tag, date,
+			      nonbranch, 0);
 
 		if (tag)
 		    free (tag);
@@ -635,9 +636,9 @@ add_directory (repository, entries, dir)
 
 #ifdef SERVER_SUPPORT
     if (!server_active)
-	Create_Admin (".", dir, rcsdir, tag, date, nonbranch);
+	Create_Admin (".", dir, rcsdir, tag, date, nonbranch, 0);
 #else
-    Create_Admin (".", dir, rcsdir, tag, date, nonbranch);
+    Create_Admin (".", dir, rcsdir, tag, date, nonbranch, 0);
 #endif
     if (tag)
 	free (tag);

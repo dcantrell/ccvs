@@ -473,9 +473,9 @@ int xcmp PROTO((const char *file1, const char *file2));
 int yesno PROTO((void));
 void *valloc PROTO((size_t bytes));
 time_t get_date PROTO((char *date, struct timeb *now));
-void Create_Admin PROTO((char *dir, char *update_dir,
-			 char *repository, char *tag, char *date,
-			 int nonbranch));
+extern int Create_Admin PROTO ((char *dir, char *update_dir,
+				char *repository, char *tag, char *date,
+				int nonbranch, int warn));
 
 /* Locking subsystem (implemented in lock.c).  */
 
