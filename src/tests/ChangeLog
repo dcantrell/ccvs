@@ -1,3 +1,8 @@
+2003-08-19  Derek R. Price  <derek@ximbiot.com>
+
+	* README: Regenerating test suite no longer requires a patch to the
+	development version of Autoconf.  Increase some other verbage.
+
 2003-08-14  Derek R. Price  <derek@ximbiot.com>
 
 	* atspecific.m4 (AT_CVS_SETUP): Set up a default project and check it
