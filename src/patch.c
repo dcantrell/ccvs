@@ -230,6 +230,9 @@ patch (argc, argv)
 #endif
 
     /* clean up if we get a signal */
+#ifdef SIGABRT
+    (void) SIG_register (SIGABRT, patch_cleanup);
+#endif
 #ifdef SIGHUP
     (void) SIG_register (SIGHUP, patch_cleanup);
 #endif

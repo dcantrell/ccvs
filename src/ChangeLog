@@ -1,5 +1,12 @@
 2000-07-06  Larry Jones  <larry.jones@sdrc.com>
 
+	* main.c (main): Catch SIGABRT to try to clean up after assertion
+	failures.  Don't bother SIG_register'ing Lock_Cleanup because
+	main_cleanup calls it indirectly anyway.
+	* patch.c (patch): Catch SIGABRT.
+	* rcs.c (rcs_internal_lockfile): Ditto.
+	* server.c (server): Ditto.
+
 	* fileattr.c (fileattr_write): Don't delete the unrecog_head list
 	when writing...
 	(fileattr_free): Delete it when freeing!

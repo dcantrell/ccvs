@@ -8160,6 +8160,9 @@ rcs_internal_lockfile (rcsfile)
     {
 	first_call = 0;
 	/* clean up if we get a signal */
+#ifdef SIGABRT
+	(void) SIG_register (SIGABRT, rcs_cleanup);
+#endif
 #ifdef SIGHUP
 	(void) SIG_register (SIGHUP, rcs_cleanup);
 #endif
