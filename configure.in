@@ -90,7 +90,38 @@ AC_TYPE_SIGNAL
 AC_STRUCT_ST_BLKSIZE
 AC_STRUCT_ST_RDEV
 AC_REPLACE_FUNCS(mkdir rename strstr dup2 strerror valloc waitpid memmove strtoul)
-AC_CHECK_FUNCS(fchmod fsync ftime mkstemp mktemp putenv vprintf ftruncate timezone getpagesize initgroups fchdir sigaction sigprocmask sigvec sigsetmask sigblock tempnam tzset readlink wait3 mknod getpassphrase getgroups)
+AC_CHECK_FUNCS(\
+	fchdir \
+	fchmod \
+	fsync \
+	ftime \
+	ftruncate \
+	getgroups \
+	getpagesize \
+	getpassphrase \
+	initgroups \
+	mknod \
+	mkstemp \
+	mktemp \
+	putenv \
+	readlink \
+	sigaction \
+	sigblock \
+	sigprocmask \
+	sigsetmask \
+	sigvec \
+	tempnam \
+	timezone \
+	tzset \
+	vprintf \
+	wait3 \
+)
+# we only need one of the following
+AC_CHECK_FUNCS([\
+	nanosleep \
+	usleep \
+	select \
+], [break])
 
 dnl
 dnl The CVS coding standard (as specified in HACKING) is that if it exists

@@ -1,3 +1,11 @@
+2001-02-14  Derek Price  <derek.price@openavenue.com>
+
+	* configure.in (AC_CHECK_FUNCS): Alphebetize & reorganize.  Add
+	cascading search for nanosleep, usleep, & select, in that order.
+	* config.h.in: Regenerated.
+	* configure: Regenerated.
+	* cvsnt.mak: List xtime.h & xselect.h dependancies.
+
 2001-02-14  Larry Jones  <larry.jones@sdrc.com>
 
 	* cvsnt.dsp: Remove references to rtag.c & rtag.obj.

@@ -595,6 +595,7 @@ DEP_CPP_MKMOD=\
 	".\lib\fnmatch.h"\
 	".\windows-NT\pwd.h"\
 	".\lib\system.h"\
+	".\lib\xtime.h"\
 	".\src\hash.h"\
 	".\src\client.h"\
 	".\src\myndbm.h"\
@@ -632,6 +633,7 @@ DEP_CPP_SUBR_=\
 	".\lib\fnmatch.h"\
 	".\windows-NT\pwd.h"\
 	".\lib\system.h"\
+	".\lib\xtime.h"\
 	".\src\hash.h"\
 	".\src\client.h"\
 	".\src\myndbm.h"\
@@ -668,6 +670,7 @@ DEP_CPP_ADMIN=\
 	".\lib\fnmatch.h"\
 	".\windows-NT\pwd.h"\
 	".\lib\system.h"\
+	".\lib\xtime.h"\
 	".\src\hash.h"\
 	".\src\client.h"\
 	".\src\myndbm.h"\
@@ -716,6 +719,8 @@ DEP_CPP_SERVE=\
 	".\lib\regex.h"\
 	".\lib\getopt.h"\
 	".\lib\wait.h"\
+	".\lib\xselect.h"\
+	".\lib\xtime.h"\
 	".\src\rcs.h"\
 	".\src\update.h"\
 	".\src\server.h"\
@@ -745,6 +750,7 @@ DEP_CPP_DIFF_=\
 	".\lib\fnmatch.h"\
 	".\windows-NT\pwd.h"\
 	".\lib\system.h"\
+	".\lib\xtime.h"\
 	".\src\hash.h"\
 	".\src\client.h"\
 	".\src\myndbm.h"\
@@ -807,6 +813,7 @@ DEP_CPP_CLIEN=\
 	".\lib\fnmatch.h"\
 	".\windows-NT\pwd.h"\
 	".\lib\system.h"\
+	".\lib\xtime.h"\
 	".\src\hash.h"\
 	".\src\client.h"\
 	".\src\myndbm.h"\
@@ -843,6 +850,7 @@ DEP_CPP_CHECK=\
 	".\lib\fnmatch.h"\
 	".\windows-NT\pwd.h"\
 	".\lib\system.h"\
+	".\lib\xtime.h"\
 	".\src\hash.h"\
 	".\src\client.h"\
 	".\src\myndbm.h"\
@@ -879,12 +887,14 @@ DEP_CPP_NO_DI=\
 	".\lib\fnmatch.h"\
 	".\windows-NT\pwd.h"\
 	".\lib\system.h"\
+	".\lib\xtime.h"\
 	".\src\hash.h"\
 	".\src\client.h"\
 	".\src\myndbm.h"\
 	".\lib\regex.h"\
 	".\lib\getopt.h"\
 	".\lib\wait.h"\
+	".\lib\xtime.h"\
 	".\src\rcs.h"\
 	".\src\update.h"\
 	".\src\server.h"\
@@ -916,6 +926,7 @@ DEP_CPP_ENTRI=\
 	".\lib\fnmatch.h"\
 	".\windows-NT\pwd.h"\
 	".\lib\system.h"\
+	".\lib\xtime.h"\
 	".\src\hash.h"\
 	".\src\client.h"\
 	".\src\myndbm.h"\
@@ -953,6 +964,7 @@ DEP_CPP_TAG_C=\
 	".\lib\fnmatch.h"\
 	".\windows-NT\pwd.h"\
 	".\lib\system.h"\
+	".\lib\xtime.h"\
 	".\src\hash.h"\
 	".\src\client.h"\
 	".\src\myndbm.h"\
@@ -989,6 +1001,7 @@ DEP_CPP_STATU=\
 	".\lib\fnmatch.h"\
 	".\windows-NT\pwd.h"\
 	".\lib\system.h"\
+	".\lib\xtime.h"\
 	".\src\hash.h"\
 	".\src\client.h"\
 	".\src\myndbm.h"\
@@ -1026,6 +1039,7 @@ DEP_CPP_ROOT_=\
 	".\lib\fnmatch.h"\
 	".\windows-NT\pwd.h"\
 	".\lib\system.h"\
+	".\lib\xtime.h"\
 	".\src\hash.h"\
 	".\src\client.h"\
 	".\src\myndbm.h"\
@@ -1063,6 +1077,7 @@ DEP_CPP_MYNDB=\
 	".\lib\fnmatch.h"\
 	".\windows-NT\pwd.h"\
 	".\lib\system.h"\
+	".\lib\xtime.h"\
 	".\src\hash.h"\
 	".\src\client.h"\
 	".\src\myndbm.h"\
@@ -1099,6 +1114,7 @@ DEP_CPP_HASH_=\
 	".\lib\fnmatch.h"\
 	".\windows-NT\pwd.h"\
 	".\lib\system.h"\
+	".\lib\xtime.h"\
 	".\src\hash.h"\
 	".\src\client.h"\
 	".\src\myndbm.h"\
@@ -1136,6 +1152,7 @@ DEP_CPP_REPOS=\
 	".\lib\fnmatch.h"\
 	".\windows-NT\pwd.h"\
 	".\lib\system.h"\
+	".\lib\xtime.h"\
 	".\src\hash.h"\
 	".\src\client.h"\
 	".\src\myndbm.h"\
@@ -1173,6 +1190,7 @@ DEP_CPP_PARSE=\
 	".\lib\fnmatch.h"\
 	".\windows-NT\pwd.h"\
 	".\lib\system.h"\
+	".\lib\xtime.h"\
 	".\src\hash.h"\
 	".\src\client.h"\
 	".\src\myndbm.h"\
@@ -1209,6 +1227,7 @@ DEP_CPP_VERS_=\
 	".\lib\fnmatch.h"\
 	".\windows-NT\pwd.h"\
 	".\lib\system.h"\
+	".\lib\xtime.h"\
 	".\src\hash.h"\
 	".\src\client.h"\
 	".\src\myndbm.h"\
@@ -1247,6 +1266,7 @@ DEP_CPP_CHECKI=\
 	".\lib\fnmatch.h"\
 	".\windows-NT\pwd.h"\
 	".\lib\system.h"\
+	".\lib\xtime.h"\
 	".\src\hash.h"\
 	".\src\client.h"\
 	".\src\myndbm.h"\
@@ -1287,6 +1307,7 @@ DEP_CPP_COMMI=\
 	".\lib\fnmatch.h"\
 	".\windows-NT\pwd.h"\
 	".\lib\system.h"\
+	".\lib\xtime.h"\
 	".\src\hash.h"\
 	".\src\client.h"\
 	".\src\myndbm.h"\
@@ -1323,6 +1344,7 @@ DEP_CPP_VERSI=\
 	".\lib\fnmatch.h"\
 	".\windows-NT\pwd.h"\
 	".\lib\system.h"\
+	".\lib\xtime.h"\
 	".\src\hash.h"\
 	".\src\client.h"\
 	".\src\myndbm.h"\
@@ -1382,6 +1404,7 @@ DEP_CPP_CVSRC=\
 	".\lib\fnmatch.h"\
 	".\windows-NT\pwd.h"\
 	".\lib\system.h"\
+	".\lib\xtime.h"\
 	".\src\hash.h"\
 	".\src\client.h"\
 	".\src\myndbm.h"\
@@ -1418,6 +1441,7 @@ DEP_CPP_REMOV=\
 	".\lib\fnmatch.h"\
 	".\windows-NT\pwd.h"\
 	".\lib\system.h"\
+	".\lib\xtime.h"\
 	".\src\hash.h"\
 	".\src\client.h"\
 	".\src\myndbm.h"\
@@ -1468,6 +1492,8 @@ DEP_CPP_UPDAT=\
 	".\lib\regex.h"\
 	".\lib\getopt.h"\
 	".\lib\wait.h"\
+	".\lib\xselect.h"\
+	".\lib\xtime.h"\
 	".\src\rcs.h"\
 	".\src\update.h"\
 	".\src\server.h"\
@@ -1499,6 +1525,7 @@ DEP_CPP_LOGMS=\
 	".\lib\fnmatch.h"\
 	".\windows-NT\pwd.h"\
 	".\lib\system.h"\
+	".\lib\xtime.h"\
 	".\src\hash.h"\
 	".\src\client.h"\
 	".\src\myndbm.h"\
@@ -1535,6 +1562,7 @@ DEP_CPP_CLASS=\
 	".\lib\fnmatch.h"\
 	".\windows-NT\pwd.h"\
 	".\lib\system.h"\
+	".\lib\xtime.h"\
 	".\src\hash.h"\
 	".\src\client.h"\
 	".\src\myndbm.h"\
@@ -1572,6 +1600,7 @@ DEP_CPP_HISTO=\
 	".\lib\fnmatch.h"\
 	".\windows-NT\pwd.h"\
 	".\lib\system.h"\
+	".\lib\xtime.h"\
 	".\src\hash.h"\
 	".\src\client.h"\
 	".\src\myndbm.h"\
@@ -1610,6 +1639,7 @@ DEP_CPP_ADD_C=\
 	".\lib\fnmatch.h"\
 	".\windows-NT\pwd.h"\
 	".\lib\system.h"\
+	".\lib\xtime.h"\
 	".\src\hash.h"\
 	".\src\client.h"\
 	".\src\myndbm.h"\
@@ -1646,6 +1676,7 @@ DEP_CPP_LOCK_=\
 	".\lib\fnmatch.h"\
 	".\windows-NT\pwd.h"\
 	".\lib\system.h"\
+	".\lib\xtime.h"\
 	".\src\hash.h"\
 	".\src\client.h"\
 	".\src\myndbm.h"\
@@ -1685,6 +1716,7 @@ DEP_CPP_RECUR=\
 	".\lib\fnmatch.h"\
 	".\windows-NT\pwd.h"\
 	".\lib\system.h"\
+	".\lib\xtime.h"\
 	".\src\hash.h"\
 	".\src\client.h"\
 	".\src\myndbm.h"\
@@ -1722,6 +1754,7 @@ DEP_CPP_MODUL=\
 	".\lib\fnmatch.h"\
 	".\windows-NT\pwd.h"\
 	".\lib\system.h"\
+	".\lib\xtime.h"\
 	".\src\hash.h"\
 	".\src\client.h"\
 	".\src\myndbm.h"\
@@ -1758,6 +1791,7 @@ DEP_CPP_FIND_=\
 	".\lib\fnmatch.h"\
 	".\windows-NT\pwd.h"\
 	".\lib\system.h"\
+	".\lib\xtime.h"\
 	".\src\hash.h"\
 	".\src\client.h"\
 	".\src\myndbm.h"\
@@ -1796,6 +1830,7 @@ DEP_CPP_RCS_C=\
 	".\lib\fnmatch.h"\
 	".\windows-NT\pwd.h"\
 	".\lib\system.h"\
+	".\lib\xtime.h"\
 	".\src\hash.h"\
 	".\src\client.h"\
 	".\src\myndbm.h"\
@@ -1832,6 +1867,7 @@ DEP_CPP_CREAT=\
 	".\lib\fnmatch.h"\
 	".\windows-NT\pwd.h"\
 	".\lib\system.h"\
+	".\lib\xtime.h"\
 	".\src\hash.h"\
 	".\src\client.h"\
 	".\src\myndbm.h"\
@@ -1868,6 +1904,7 @@ DEP_CPP_MAIN_=\
 	".\lib\fnmatch.h"\
 	".\windows-NT\pwd.h"\
 	".\lib\system.h"\
+	".\lib\xtime.h"\
 	".\src\hash.h"\
 	".\src\client.h"\
 	".\src\myndbm.h"\
@@ -1905,6 +1942,7 @@ DEP_CPP_PATCH=\
 	".\lib\fnmatch.h"\
 	".\windows-NT\pwd.h"\
 	".\lib\system.h"\
+	".\lib\xtime.h"\
 	".\src\hash.h"\
 	".\src\client.h"\
 	".\src\myndbm.h"\
@@ -1943,6 +1981,7 @@ DEP_CPP_RELEA=\
 	".\lib\fnmatch.h"\
 	".\windows-NT\pwd.h"\
 	".\lib\system.h"\
+	".\lib\xtime.h"\
 	".\src\hash.h"\
 	".\src\client.h"\
 	".\src\myndbm.h"\
@@ -1979,6 +2018,7 @@ DEP_CPP_RCSCM=\
 	".\lib\fnmatch.h"\
 	".\windows-NT\pwd.h"\
 	".\lib\system.h"\
+	".\lib\xtime.h"\
 	".\src\hash.h"\
 	".\src\client.h"\
 	".\src\myndbm.h"\
@@ -2034,6 +2074,7 @@ DEP_CPP_IMPOR=\
 	".\lib\fnmatch.h"\
 	".\windows-NT\pwd.h"\
 	".\lib\system.h"\
+	".\lib\xtime.h"\
 	".\src\hash.h"\
 	".\src\client.h"\
 	".\src\myndbm.h"\
@@ -2071,6 +2112,7 @@ DEP_CPP_IGNOR=\
 	".\lib\fnmatch.h"\
 	".\windows-NT\pwd.h"\
 	".\lib\system.h"\
+	".\lib\xtime.h"\
 	".\src\hash.h"\
 	".\src\client.h"\
 	".\src\myndbm.h"\
@@ -2107,6 +2149,7 @@ DEP_CPP_LOG_C=\
 	".\lib\fnmatch.h"\
 	".\windows-NT\pwd.h"\
 	".\lib\system.h"\
+	".\lib\xtime.h"\
 	".\src\hash.h"\
 	".\src\client.h"\
 	".\src\myndbm.h"\
@@ -2144,6 +2187,7 @@ DEP_CPP_WRAPP=\
 	".\lib\fnmatch.h"\
 	".\windows-NT\pwd.h"\
 	".\lib\system.h"\
+	".\lib\xtime.h"\
 	".\src\hash.h"\
 	".\src\client.h"\
 	".\src\myndbm.h"\
@@ -2180,6 +2224,7 @@ DEP_CPP_ERROR=\
 	".\lib\fnmatch.h"\
 	".\windows-NT\pwd.h"\
 	".\lib\system.h"\
+	".\lib\xtime.h"\
 	".\src\hash.h"\
 	".\src\client.h"\
 	".\src\myndbm.h"\
@@ -2217,6 +2262,7 @@ DEP_CPP_EXPAN=\
 	".\lib\fnmatch.h"\
 	".\windows-NT\pwd.h"\
 	".\lib\system.h"\
+	".\lib\xtime.h"\
 	".\src\hash.h"\
 	".\src\client.h"\
 	".\src\myndbm.h"\
@@ -2256,6 +2302,7 @@ DEP_CPP_EDIT_=\
 	".\lib\fnmatch.h"\
 	".\windows-NT\pwd.h"\
 	".\lib\system.h"\
+	".\lib\xtime.h"\
 	".\src\hash.h"\
 	".\src\client.h"\
 	".\src\myndbm.h"\
@@ -2294,6 +2341,7 @@ DEP_CPP_FILEA=\
 	".\lib\fnmatch.h"\
 	".\windows-NT\pwd.h"\
 	".\lib\system.h"\
+	".\lib\xtime.h"\
 	".\src\hash.h"\
 	".\src\client.h"\
 	".\src\myndbm.h"\
@@ -2333,6 +2381,7 @@ DEP_CPP_WATCH=\
 	".\lib\fnmatch.h"\
 	".\windows-NT\pwd.h"\
 	".\lib\system.h"\
+	".\lib\xtime.h"\
 	".\src\hash.h"\
 	".\src\client.h"\
 	".\src\myndbm.h"\
@@ -2370,6 +2419,7 @@ DEP_CPP_LOGIN=\
 	".\lib\fnmatch.h"\
 	".\windows-NT\pwd.h"\
 	".\lib\system.h"\
+	".\lib\xtime.h"\
 	".\src\hash.h"\
 	".\src\client.h"\
 	".\src\myndbm.h"\
@@ -2406,6 +2456,7 @@ DEP_CPP_SCRAM=\
 	".\lib\fnmatch.h"\
 	".\windows-NT\pwd.h"\
 	".\lib\system.h"\
+	".\lib\xtime.h"\
 	".\src\hash.h"\
 	".\src\client.h"\
 	".\src\myndbm.h"\
@@ -2443,6 +2494,7 @@ DEP_CPP_BUFFE=\
 	".\lib\fnmatch.h"\
 	".\windows-NT\pwd.h"\
 	".\lib\system.h"\
+	".\lib\xtime.h"\
 	".\src\hash.h"\
 	".\src\client.h"\
 	".\src\myndbm.h"\
@@ -2481,6 +2533,7 @@ DEP_CPP_ZLIB_=\
 	".\lib\fnmatch.h"\
 	".\windows-NT\pwd.h"\
 	".\lib\system.h"\
+	".\lib\xtime.h"\
 	".\src\hash.h"\
 	".\src\client.h"\
 	".\src\myndbm.h"\
@@ -2526,6 +2579,7 @@ SOURCE=.\lib\sighandle.c
 DEP_CPP_SIGHA=\
 	".\windows-NT\config.h"\
 	".\lib\system.h"\
+	".\lib\xtime.h"\
 	{$(INCLUDE)}"\sys\Types.h"\
 	{$(INCLUDE)}"\sys\Stat.h"\
 	{$(INCLUDE)}"\sys\Timeb.h"\
@@ -2617,6 +2671,7 @@ SOURCE=.\lib\valloc.c
 DEP_CPP_VALLO=\
 	".\windows-NT\config.h"\
 	".\lib\system.h"\
+	".\lib\xtime.h"\
 	{$(INCLUDE)}"\sys\Types.h"\
 	{$(INCLUDE)}"\sys\Stat.h"\
 	{$(INCLUDE)}"\sys\Timeb.h"\
@@ -2639,6 +2694,7 @@ SOURCE=.\lib\xgetwd.c
 DEP_CPP_XGETW=\
 	".\windows-NT\config.h"\
 	".\lib\system.h"\
+	".\lib\xtime.h"\
 	{$(INCLUDE)}"\sys\Types.h"\
 	{$(INCLUDE)}"\sys\Stat.h"\
 	{$(INCLUDE)}"\sys\Timeb.h"\
@@ -2683,6 +2739,7 @@ SOURCE=.\lib\fnmatch.c
 DEP_CPP_FNMAT=\
 	".\windows-NT\config.h"\
 	".\lib\system.h"\
+	".\lib\xtime.h"\
 	".\lib\fnmatch.h"\
 	{$(INCLUDE)}"\sys\Types.h"\
 	{$(INCLUDE)}"\sys\Stat.h"\
@@ -2705,6 +2762,7 @@ NODEP_CPP_FNMAT=\
 SOURCE=.\lib\getdate.c
 DEP_CPP_GETDA=\
 	".\windows-NT\config.h"\
+	".\lib\xtime.h"\
 	{$(INCLUDE)}"\sys\Types.h"\
 	{$(INCLUDE)}"\sys\Timeb.h"\
 	
@@ -2753,6 +2811,7 @@ DEP_CPP_MKDIR=\
 	".\lib\fnmatch.h"\
 	".\windows-NT\pwd.h"\
 	".\lib\system.h"\
+	".\lib\xtime.h"\
 	".\src\hash.h"\
 	".\src\client.h"\
 	".\src\myndbm.h"\
@@ -2789,6 +2848,7 @@ DEP_CPP_RUN_C=\
 	".\lib\fnmatch.h"\
 	".\windows-NT\pwd.h"\
 	".\lib\system.h"\
+	".\lib\xtime.h"\
 	".\src\hash.h"\
 	".\src\client.h"\
 	".\src\myndbm.h"\
@@ -2838,6 +2898,7 @@ DEP_CPP_FILES=\
 	".\lib\fnmatch.h"\
 	".\windows-NT\pwd.h"\
 	".\lib\system.h"\
+	".\lib\xtime.h"\
 	".\src\hash.h"\
 	".\src\client.h"\
 	".\src\myndbm.h"\
@@ -2874,6 +2935,7 @@ DEP_CPP_WIN32=\
 	".\lib\fnmatch.h"\
 	".\windows-NT\pwd.h"\
 	".\lib\system.h"\
+	".\lib\xtime.h"\
 	".\src\hash.h"\
 	".\src\client.h"\
 	".\src\myndbm.h"\
@@ -2950,6 +3012,7 @@ DEP_CPP_RCMD_=\
 	".\lib\fnmatch.h"\
 	".\windows-NT\pwd.h"\
 	".\lib\system.h"\
+	".\lib\xtime.h"\
 	".\src\hash.h"\
 	".\src\client.h"\
 	".\src\myndbm.h"\
@@ -2986,6 +3049,7 @@ DEP_CPP_START=\
 	".\lib\fnmatch.h"\
 	".\windows-NT\pwd.h"\
 	".\lib\system.h"\
+	".\lib\xtime.h"\
 	".\src\hash.h"\
 	".\src\client.h"\
 	".\src\myndbm.h"\
@@ -3565,6 +3629,7 @@ SOURCE=.\lib\fncase.c
 DEP_CPP_FNCAS=\
 	".\windows-NT\config.h"\
 	".\lib\system.h"\
+	".\lib\xtime.h"\
 	{$(INCLUDE)}"\sys\Types.h"\
 	{$(INCLUDE)}"\sys\Stat.h"\
 	{$(INCLUDE)}"\sys\Timeb.h"\
