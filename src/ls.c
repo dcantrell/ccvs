@@ -25,7 +25,7 @@ static RCSNode *xrcsnode;
 
 static const char *const ls_usage[] =
 {
-    "Usage: %s %s [-e] [-l] [-R] [-r rev] [-D date] [path...]\n",
+    "Usage: %s %s [-e | -l] [-R] [-r rev] [-D date] [path...]\n",
     "\t-e\tDisplay in CVS/Entries format.\n",
     "\t-l\tDisplay all details.\n",
     "\t-R\tList recursively.\n",
