@@ -1,3 +1,7 @@
+2004-10-23  Conrad T. Pino  <Conrad@Pino.com>
+
+	* cvsnt.dep: Regenerate for "lib/libcvs.dsp" change.
+
 2004-10-22  Mark D. Baushke  <mdb@cvshome.org>
 
 	* cvsnt.dsp: Add "windows-NT/stdint.h" to project.
