@@ -1,5 +1,9 @@
 2003-02-25  Derek Price  <derek@ximbiot.com>
 
+	* sanity.sh (rcs4): Use UTC to work across timezones.
+
+2003-02-25  Derek Price  <derek@ximbiot.com>
+
 	* rcs.c (RCS_getdate): Fix a bug that shows up when checking out
 	files by date with the "-D date" command line option. There is
 	code in the original to handle a special case. If the date search
