@@ -1,5 +1,10 @@
 Tue Jan 30 09:43:34 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* lock.c (readers_exist): If stat gave an error, print an error
+	message saying it was from stat, rather than from "reading
+	directory".  Skip the message completely if it was an
+	existence_error.
+
 	* sanity.sh (branches): New tests (branches off of branches, etc.).
 
 Tue Jan 30 11:55:34 MET 1996  Norbert Kiesel  <nk@col.sw-ley.de>
