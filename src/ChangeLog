@@ -1,3 +1,8 @@
+1998-09-25  Jim Meyering  <meyering@ascend.com>
+
+	* sanity.sh (devcom-180): Add 0-9 to the range of characters allowed
+	in hostname regexp.
+
 1998-09-25  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* sanity.sh (log2): New test log2-7a tests for one error handling
@@ -73,7 +78,7 @@
 	compiling root.c with the DEBUG option.
 	(main): fix a few typos.
 	* cvs.h (CVSmethod): add fork_method.
-	
+
 	* server.c (create_adm_p): use Emptydir as the placeholder
 	directory instead of "." to avoid problems with "cvs update -d" et
 	al.
@@ -93,7 +98,7 @@
 
 	  2) With the new multiroot mods, we don't ever want to rewrite
 	  CVS/Root files in the way the removed code did.  Consider:
-	  
+
 	    cvs -d repository1 co a
 	    cd a
 	    cvs -d repository2 co b
@@ -102,7 +107,7 @@
 	  The update command would rewrite the contents of a/CVS/Root to
 	  the incorrect value.  Bad.  We then wouldn't be talking to the
 	  correct repository for files in a.
-	  
+
 	  3) The removed code seems to be a quick hack to support working
 	  directories checked out from multiple repositories.  With the
 	  CVS_IGNORE_REMOTE_ROOT variable set, one could perform commands
@@ -276,7 +281,7 @@ Wed Sep  2 02:30:22 1998  Jim Kingdon  <kingdon@pennington.cyclic.com>
 	* tag.c (cvstag): same.
 	* update.c (update): same.
 	* watch.c (watch_addremove): same.
-	(watchers): same.	
+	(watchers): same.
 
 1998-08-31  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
@@ -286,11 +291,11 @@ Wed Sep  2 02:30:22 1998  Jim Kingdon  <kingdon@pennington.cyclic.com>
 1998-08-31  Norbert Kiesel  <nk@iname.com>
 
 	* release.c (release): modify last patch to release so that
-	save_cwd is called only once and restore_cwd is always called when 
+	save_cwd is called only once and restore_cwd is always called when
 	neccessary.  Also fixed a tiny memory leak.
 
 	* sanity.sh (release): added some more tests for "cvs release"
-	including a test with two dirs and a "no" for the first one (which 
+	including a test with two dirs and a "no" for the first one (which
 	fails without the above patch).
 
 1998-08-28  Noel Cragg  <noel@swish.red-bean.com>
@@ -298,7 +303,7 @@ Wed Sep  2 02:30:22 1998  Jim Kingdon  <kingdon@pennington.cyclic.com>
 	* sanity.sh (crerepos-18): add new comment and change test
 	slightly to support multiroot.
 	(multiroot): add more tests.
-	
+
 	* server.c (create_adm_p): new function.
 	(dirswitch): call create_adm_p.  Modify the code to always write a
 	new CVSADM_REP file, since create_adm_p might have put a
@@ -471,7 +476,7 @@ Tue Aug 18 14:30:59 1998  Noel Cragg  <noel@swish.red-bean.com>
  	that one-time initializations happen first (outside the loop) and
  	the other stuff happens inside the loop.
 	(set_root_directory): helper function.
-	
+
 	* cvs.h: add prototypes for root_directories and current_root, two
  	new globals for keeping track of multiple CVSROOT information.
 
