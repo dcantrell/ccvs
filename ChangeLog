@@ -1,3 +1,10 @@
+Mon Aug 21 16:08:37 1995  Jim Blandy  <jimb@totoro.cyclic.com>
+
+        Bring the saga to a close:
+	* configure.in: Use AC_PROG_MAKE_SET here, to decide whether we
+	need to set the MAKE variable in Makefile.
+	* Makefile.in: Use @SET_MAKE@ here, to set MAKE when appropriate.
+
 Mon Aug 21 15:26:29 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* Makefile.in: Add comment regarding AC_SET_MAKE.
