@@ -1,3 +1,9 @@
+2003-09-12  Derek Price  <derek@ximbiot.com>
+
+	* cvs.texinfo (checkoutlist): Document the error messages which may be
+	specified in this file.
+	* stamp-vti, version.texi: Regenerated.
+
 2003-08-29  Derek Price  <derek@ximbiot.com>
 
 	* cvs.texinfo (Administrative files, Commit files): Remove references
