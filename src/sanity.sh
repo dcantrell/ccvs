@@ -10272,7 +10272,7 @@ File: a                	Status: Entry Invalid
    Repository revision:	1\.1\.2\.1	${CVSROOT_DIRNAME}/first-dir/a,v
    Sticky Tag:		branch (branch: 1\.1\.2)
    Sticky Date:		(none)
-   Sticky Options:	(none)"
+   Sticky Options:	(none)${DOTSTAR}"
 	  dotest newb-123j "${testcvs} -q update" \
 "${SPROG} update: \`a' is no longer in the repository"
 
