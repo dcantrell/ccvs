@@ -483,7 +483,7 @@ if test x"$*" = x; then
 	tests="${tests} new newb conflicts conflicts2"
 	tests="${tests} modules modules2 modules3 mflag errmsg1 errmsg2"
 	tests="${tests} devcom devcom2"
-	tests="${tests} devcom3 ignore binfiles binfiles2 binwrap"
+	tests="${tests} devcom3 ignore binfiles binfiles2 mcopy binwrap"
 	tests="${tests} mwrap info config"
 	tests="${tests} serverpatch log log2 crerepos rcs big modes stamps"
 	tests="${tests} sticky keyword toplevel head admin reserved"
@@ -5678,7 +5678,7 @@ done"
 	  echo 'edits in dir 2' >binfile
 	  dotest binfiles-con1 "${testcvs} -q update" \
 "U binfile
-${PROG} [a-z]*: binary file needs merge
+${PROG} [a-z]*: nonmergeable file needs merge
 ${PROG} [a-z]*: revision 1\.3 from repository is now in binfile
 ${PROG} [a-z]*: file from working directory is now in \.#binfile\.1\.2
 C binfile"
@@ -5911,12 +5911,12 @@ done"
 	  dotest binfiles2-8 "${testcvs} -q update -j br" \
 "U binfile\.dat
 U brmod
-${PROG} [a-z]*: binary file needs merge
+${PROG} [a-z]*: nonmergeable file needs merge
 ${PROG} [a-z]*: revision 1.1.2.1 from repository is now in brmod-trmod
 ${PROG} [a-z]*: file from working directory is now in .#brmod-trmod.1.2
 C brmod-trmod
 M brmod-wdmod
-${PROG} [a-z]*: binary file needs merge
+${PROG} [a-z]*: nonmergeable file needs merge
 ${PROG} [a-z]*: revision 1.1.2.1 from repository is now in brmod-wdmod
 ${PROG} [a-z]*: file from working directory is now in .#brmod-wdmod.1.1
 C brmod-wdmod"
@@ -5925,6 +5925,8 @@ C brmod-wdmod"
 	  dotest binfiles2-9-brmod "cmp ../binfile2 brmod"
 	  dotest binfiles2-9-brmod-trmod "cmp ../binfile2 brmod-trmod"
 	  dotest binfiles2-9-brmod-trmod "cmp ../binfile2 brmod-wdmod"
+	  dotest binfiles2-9a-brmod-trmod "cmp ../binfile3 .#brmod-trmod.1.2"
+	  dotest binfiles2-9a-brmod-wdmod "cmp ../binfile3 .#brmod-wdmod.1.1"
 
 	  # Test that everything was properly scheduled.
 	  dotest binfiles2-10 "${testcvs} -q ci -m checkin" \
@@ -5951,10 +5953,163 @@ done"
 	  rm -r 1
 	  ;;
 
+	mcopy)
+	  # See comment at "mwrap" test for list of other wrappers tests.
+	  # Test cvs's ability to handle nonmergeable files specified with
+	  # -m 'COPY' in wrappers.  Similar to the binfiles2 test,
+	  # which tests the same thing for binary files
+	  # (which are non-mergeable in the same sense).
+	  #
+	  # Cases (we are merging from the branch to the trunk):
+	  # brmod) File modified on branch, not on trunk.
+	  #      File should be copied over to trunk (no merging is needed).
+	  # brmod-trmod) File modified on branch, also on trunk.
+	  #      This is a conflict.  Present the user with both files and
+	  #      let them figure it out.
+	  # brmod-wdmod) File modified on branch, not modified in the trunk
+	  #      repository, but modified in the (trunk) working directory.
+	  #      This is also a conflict.
+
+	  # For the moment, remote CVS can't pass wrappers from CVSWRAPPERS
+	  # (see wrap_send).  So skip these tests for remote.
+	  if test "x$remote" = xno; then
+
+	  mkdir ${CVSROOT_DIRNAME}/first-dir
+	  mkdir 1; cd 1
+	  dotest mcopy-1 "${testcvs} -q co first-dir" ''
+	  cd first-dir
+
+	  # FIXCVS: unless a branch has at least one file on it,
+	  # tag_check_valid won't know it exists.  So if brmod didn't
+	  # exist, we would have to invent it.
+	  echo 'brmod initial contents' >brmod
+	  echo 'brmod-trmod initial contents' >brmod-trmod
+	  echo 'brmod-wdmod initial contents' >brmod-wdmod
+	  echo "* -m 'COPY'" >.cvswrappers
+	  dotest mcopy-1a \
+"${testcvs} add .cvswrappers brmod brmod-trmod brmod-wdmod" \
+"${PROG} [a-z]*: scheduling file .\.cvswrappers. for addition
+${PROG} [a-z]*: scheduling file .brmod. for addition
+${PROG} [a-z]*: scheduling file .brmod-trmod. for addition
+${PROG} [a-z]*: scheduling file .brmod-wdmod. for addition
+${PROG} [a-z]*: use .cvs commit. to add these files permanently"
+	  dotest mcopy-1b "${testcvs} -q ci -m add" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/\.cvswrappers,v
+done
+Checking in \.cvswrappers;
+${TESTDIR}/cvsroot/first-dir/\.cvswrappers,v  <--  \.cvswrappers
+initial revision: 1\.1
+done
+RCS file: ${TESTDIR}/cvsroot/first-dir/brmod,v
+done
+Checking in brmod;
+${TESTDIR}/cvsroot/first-dir/brmod,v  <--  brmod
+initial revision: 1\.1
+done
+RCS file: ${TESTDIR}/cvsroot/first-dir/brmod-trmod,v
+done
+Checking in brmod-trmod;
+${TESTDIR}/cvsroot/first-dir/brmod-trmod,v  <--  brmod-trmod
+initial revision: 1\.1
+done
+RCS file: ${TESTDIR}/cvsroot/first-dir/brmod-wdmod,v
+done
+Checking in brmod-wdmod;
+${TESTDIR}/cvsroot/first-dir/brmod-wdmod,v  <--  brmod-wdmod
+initial revision: 1\.1
+done"
+
+	  # NOTE: .cvswrappers files are broken (see comment in
+	  # src/wrapper.c).  So doing everything via the environment
+	  # variable is a workaround.  Better would be to test them
+	  # both.
+	  CVSWRAPPERS="* -m 'COPY'"
+	  export CVSWRAPPERS
+	  dotest mcopy-2 "${testcvs} -q tag -b br" 'T \.cvswrappers
+T brmod
+T brmod-trmod
+T brmod-wdmod'
+	  dotest mcopy-3 "${testcvs} -q update -r br" ''
+	  echo 'modify brmod on br' >brmod
+	  echo 'modify brmod-trmod on br' >brmod-trmod
+	  echo 'modify brmod-wdmod on br' >brmod-wdmod
+	  dotest mcopy-5 "${testcvs} -q ci -m br-changes" \
+"Checking in brmod;
+${TESTDIR}/cvsroot/first-dir/brmod,v  <--  brmod
+new revision: 1\.1\.2\.1; previous revision: 1\.1
+done
+Checking in brmod-trmod;
+${TESTDIR}/cvsroot/first-dir/brmod-trmod,v  <--  brmod-trmod
+new revision: 1\.1\.2\.1; previous revision: 1\.1
+done
+Checking in brmod-wdmod;
+${TESTDIR}/cvsroot/first-dir/brmod-wdmod,v  <--  brmod-wdmod
+new revision: 1\.1\.2\.1; previous revision: 1\.1
+done"
+	  dotest mcopy-6 "${testcvs} -q update -A" \
+"[UP] brmod
+[UP] brmod-trmod
+[UP] brmod-wdmod"
+	  dotest mcopy-7 "cat brmod brmod-trmod brmod-wdmod" \
+"brmod initial contents
+brmod-trmod initial contents
+brmod-wdmod initial contents"
+
+	  echo 'modify brmod-trmod again on trunk' >brmod-trmod
+	  dotest mcopy-7a "${testcvs} -q ci -m tr-modify" \
+"Checking in brmod-trmod;
+${TESTDIR}/cvsroot/first-dir/brmod-trmod,v  <--  brmod-trmod
+new revision: 1\.2; previous revision: 1\.1
+done"
+	  echo 'modify brmod-wdmod in working dir' >brmod-wdmod
+
+	  dotest mcopy-8 "${testcvs} -q update -j br" \
+"U brmod
+${PROG} [a-z]*: nonmergeable file needs merge
+${PROG} [a-z]*: revision 1.1.2.1 from repository is now in brmod-trmod
+${PROG} [a-z]*: file from working directory is now in .#brmod-trmod.1.2
+C brmod-trmod
+M brmod-wdmod
+${PROG} [a-z]*: nonmergeable file needs merge
+${PROG} [a-z]*: revision 1.1.2.1 from repository is now in brmod-wdmod
+${PROG} [a-z]*: file from working directory is now in .#brmod-wdmod.1.1
+C brmod-wdmod"
+
+	  dotest mcopy-9 "cat brmod brmod-trmod brmod-wdmod" \
+"modify brmod on br
+modify brmod-trmod on br
+modify brmod-wdmod on br"
+	  dotest mcopy-9a "cat .#brmod-trmod.1.2 .#brmod-wdmod.1.1" \
+"modify brmod-trmod again on trunk
+modify brmod-wdmod in working dir"
+
+	  # Test that everything was properly scheduled.
+	  dotest mcopy-10 "${testcvs} -q ci -m checkin" \
+"Checking in brmod;
+${TESTDIR}/cvsroot/first-dir/brmod,v  <--  brmod
+new revision: 1\.2; previous revision: 1\.1
+done
+Checking in brmod-trmod;
+${TESTDIR}/cvsroot/first-dir/brmod-trmod,v  <--  brmod-trmod
+new revision: 1\.3; previous revision: 1\.2
+done
+Checking in brmod-wdmod;
+${TESTDIR}/cvsroot/first-dir/brmod-wdmod,v  <--  brmod-wdmod
+new revision: 1\.2; previous revision: 1\.1
+done"
+	  cd ..
+	  cd ..
+
+	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  rm -r 1
+
+	  fi # end of tests to be skipped for remote
+
+	  ;;
+
 	binwrap)
 	  # Test the ability to specify binary-ness based on file name.
-	  # We could also be testing the ability to use the other
-	  # ways to specify a wrapper (CVSROOT/cvswrappers, etc.).
+	  # See "mwrap" for a list of other wrappers tests.
 
 	  mkdir dir-to-import
 	  cd dir-to-import
@@ -5998,8 +6153,21 @@ File: foo\.exe          	Status: Up-to-date
 	  ;;
 
 	mwrap)
-	  # Tests relating to the -m wrappers options.  -k tests are in
-	  # binwrap and -t/-f tests haven't been written yet.
+	  # Tests of various wrappers features:
+	  # -m 'COPY' and cvs update: mwrap
+	  # -m 'COPY' and joining: mcopy
+	  # -k: binwrap
+	  # -t/-f: hasn't been written yet.
+	  # 
+	  # Tests of different ways of specifying wrappers:
+	  # CVSROOT/cvswrappers: mwrap
+	  # -W: binwrap
+	  # .cvswrappers in working directory: mcopy
+	  # CVSWRAPPERS environment variable: mcopy
+
+	  # This test is similar to binfiles-con1; -m 'COPY' specifies
+	  # non-mergeableness the same way that -kb does.
+
 	  dotest mwrap-c1 "${testcvs} -q co CVSROOT" "[UP] CVSROOT${DOTSTAR}"
 	  cd CVSROOT
 	  echo "* -m 'COPY'" >>cvswrappers
@@ -6041,14 +6209,14 @@ done"
 	  cd m1/first-dir
 	  echo "changed in m1" >aa
 	  dotest_fail mwrap-7 "${testcvs} -nq update" "C aa"
-	  dotest_fail mwrap-8 "${testcvs} -q update" \
-"${PROG} [a-z]*: A -m .COPY. wrapper is specified
-${PROG} [a-z]*: but file aa needs merge
-${PROG} \[[a-z]* aborted\]: You probably want to avoid -m .COPY. wrappers"
-	  # Under the old, dangerous behavior, this would have been
-	  # "changed in m2" -- that is, the changes in the working directory
-	  # would have been clobbered (!).
-	  dotest mwrap-9 "cat aa" "changed in m1"
+	  dotest mwrap-8 "${testcvs} -q update" \
+"U aa
+${PROG} [a-z]*: nonmergeable file needs merge
+${PROG} [a-z]*: revision 1\.2 from repository is now in aa
+${PROG} [a-z]*: file from working directory is now in \.#aa\.1\.1
+C aa"
+	  dotest mwrap-9 "cat aa" "changed in m2"
+	  dotest mwrap-10 "cat .#aa.1.1" "changed in m1"
 	  cd ../..
 	  cd CVSROOT
 	  echo '# comment out' >cvswrappers

@@ -1,5 +1,15 @@
 Thu Aug 14 11:08:40 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* update.c (merge_file, join_file): If wrap_merge_is_copy, treat
+	files as nonmergeable (as we had been treating binary files).
+	(join_file, update_fileproc): Remove previous wrap_merge_is_copy
+	cruft.
+	* sanity.sh (mcopy): New tests, test for above fix.
+	(binfiles2): New tests binfiles2-9a-* correct an oversight.
+	(binfiles, binfiles2): Adjust to reflect wording change from
+	"binary file" to "nonmergeable file".
+	(mwrap): Adjust tests mwrap-8 through mwrap-10 for new behavior.
+
 	* main.c (main): Reword copyright notices to include the latest
 	year, to refer to "other authors" in addition to the ones listed,
 	and to be more concisely formatted.
