@@ -9558,6 +9558,10 @@ them):
 @c FIXME: Where does this talk about renaming tags?
 @c And what about rtag?  This needs to be moved to
 @c the body of the manual.
+@c Also see:
+@c  "How do I move or rename a magic branch tag?"
+@c in the FAQ (I think the issues it talks about still
+@c apply, but this could use some sanity.sh work).
 @item -F 
 Overwrite an existing tag of the same name on a
 different revision.
