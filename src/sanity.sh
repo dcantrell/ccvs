@@ -13667,7 +13667,7 @@ done"
 	  echo abb >abb
 	  dotest devcom-2 "${testcvs} add abb" \
 "$PROG add: scheduling file \`abb' for addition
-$PROG add: use 'cvs commit' to add this file permanently"
+$PROG add: use '$PROG commit' to add this file permanently"
 
 	  dotest devcom-3 "${testcvs} -q ci -m added" \
 "RCS file: ${CVSROOT_DIRNAME}/first-dir/abb,v
@@ -13684,7 +13684,7 @@ done"
 	  echo abc >abc
 	  dotest devcom-6 "${testcvs} add abc" \
 "$PROG add: scheduling file \`abc' for addition
-$PROG add: use 'cvs commit' to add this file permanently"
+$PROG add: use '$PROG commit' to add this file permanently"
 
 	  dotest devcom-7 "${testcvs} -q ci -m added" \
 "RCS file: ${CVSROOT_DIRNAME}/first-dir/abc,v
