@@ -343,7 +343,6 @@ RCS_reparsercsfile (rdata)
     for (;;)
     {
 	char *valp;
-	char date[MAXDATELEN];
 
         vnode = (RCSVers *) xmalloc (sizeof (RCSVers));
 	memset (vnode, 0, sizeof (RCSVers));
