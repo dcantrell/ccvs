@@ -1,3 +1,7 @@
+1999-01-27  Jim Kingdon  <http://www.cyclic.com>
+
+	* sanity.sh (client-9): Don't assume the time zone.
+
 1999-01-26  Jim Kingdon  <http://www.cyclic.com>
 
 	Fix one facet of the "cvs add -kb" re-adding problem (the other
