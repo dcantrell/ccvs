@@ -13045,7 +13045,23 @@ ${PROG} checkout: Updating dir2d1/suba"
 	  dotest emptydir-15 "cat dir2d1/CVS/Repository" "moda"
 	  cd ..
 
-	  rm -r 1 2
+	  # Test the effect of a non-cvs directory already existing with the
+	  # same name as one in the modules file.
+	  mkdir 3; cd 3
+	  mkdir dir2d1
+	  dotest emptydir-16 "${testcvs} co 2d1mod" \
+"${PROG} checkout: Updating dir2d1/sub/sub2d1
+U dir2d1/sub/sub2d1/file1"
+	  dotest emptydir-17 "test -d dir2d1/CVS"
+
+	  # clean up
+	  if $keep; then
+	    echo Keeping ${TESTDIR} and exiting due to --keep
+	    exit 0
+	  fi
+
+	  cd ..
+	  rm -r 1 2 3
 	  rm -rf ${CVSROOT_DIRNAME}/mod1 ${CVSROOT_DIRNAME}/moda
 	  # I guess for the moment the convention is going to be
 	  # that we don't need to remove ${CVSROOT_DIRNAME}/CVSROOT/Emptydir
