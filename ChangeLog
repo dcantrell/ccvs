@@ -1,3 +1,10 @@
+Mon Dec  2 13:05:44 1996  Ian Lance Taylor  <ian@cygnus.com>
+
+	* configure.in: Don't call AC_CHECK_FUNCS(connect) a second time,
+	because the value will have been cached; instead, check whether
+	the library was found with connect defined.
+	* configure: Rebuild with autoconf 2.12.
+
 Sat Nov 30 23:04:52 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* BUGS: Add note about mysterious failure in test 187a3.
