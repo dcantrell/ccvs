@@ -1,8 +1,10 @@
-Fri Sep 29 14:41:14 1995  Karl Fogel  <kfogel@floss.cyclic.com>
+Fri Sep 29 14:41:14 1995  <bmeier@rzu.unizh.ch>
 
         * root.c: start rcsid[] with "CVSid".
 
 Fri Sep 29 14:32:36 1995  Norbert Kiesel <nk@col.sw-ley.de>
+        
+        * repos.c (Short_Repository): 
         
         * tag.c (pretag_proc): correct user-visible string.
         

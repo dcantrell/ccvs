@@ -135,9 +135,13 @@ Short_Repository (repository)
     if (repository == NULL)
 	return (NULL);
 
-    /* if repository matches CVSroot at the beginning, strip off CVSroot */
+    /* If repository matches CVSroot at the beginning, strip off CVSroot */
+    /* And skip leading '/' in rep, in case CVSroot ended with '/'. */
     if (strncmp (CVSroot, repository, strlen (CVSroot)) == 0)
-	return (repository + strlen (CVSroot) + 1);
+    {
+	char *rep = repository + strlen (CVSroot);
+	return (*rep == '/') ? rep+1 : rep;
+    }
     else
 	return (repository);
 }
