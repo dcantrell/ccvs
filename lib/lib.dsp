@@ -63,8 +63,8 @@ LIB32=link.exe -lib
 # PROP Output_Dir "WinDebug"
 # PROP Intermediate_Dir "WinDebug"
 # PROP Target_Dir ""
-# ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /YX /FD /GZ  /c
-# ADD CPP /nologo /W3 /Gm /GX /ZI /Od /I "..\windows-NT" /I "." /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /D "HAVE_CONFIG_H" /YX /FD /GZ  /c
+# ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /YX /FD /GZ /c
+# ADD CPP /nologo /W3 /Gm /GX /ZI /Od /I "..\windows-NT" /I "." /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /D "HAVE_CONFIG_H" /YX /FD /GZ /c
 # ADD BASE RSC /l 0x409 /d "_DEBUG"
 # ADD RSC /l 0x409 /d "_DEBUG"
 BSC32=bscmake.exe
@@ -83,6 +83,10 @@ LIB32=link.exe -lib
 # Begin Group "Source Files"
 
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
+# Begin Source File
+
+SOURCE=.\alloca.c
+# End Source File
 # Begin Source File
 
 SOURCE=.\exitfail.c
@@ -160,25 +164,25 @@ SOURCE="..\windows-NT\config.h"
 # End Source File
 # Begin Source File
 
-SOURCE="..\lib\fnmatch.h.in"
+SOURCE="..\lib\fnmatch_.h"
 
 !IF  "$(CFG)" == "LIB - Win32 Release"
 
 # Begin Custom Build
-InputPath="..\lib\fnmatch.h.in"
+InputPath="..\lib\fnmatch_.h"
 
 ".\fnmatch.h" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	copy .\fnmatch.h.in .\fnmatch.h
+	copy .\fnmatch_.h .\fnmatch.h
 
 # End Custom Build
 
 !ELSEIF  "$(CFG)" == "LIB - Win32 Debug"
 
 # Begin Custom Build
-InputPath="..\lib\fnmatch.h.in"
+InputPath="..\lib\fnmatch_.h"
 
 ".\fnmatch.h" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	copy .\fnmatch.h.in .\fnmatch.h
+	copy .\fnmatch_.h .\fnmatch.h
 
 # End Custom Build
 
