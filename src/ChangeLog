@@ -1,5 +1,18 @@
 1998-09-24  Noel Cragg  <noel@swish.red-bean.com>
 
+	* sanity.sh (rcslib-symlink-5, rcslib-symlink-6): new tests to
+	check the operation of "tag" when there are symlinks in the
+	repository.
+
+	* rcs.c (RCS_checkin): remove old code that resolved the symlink
+	and call resolve_symlink instead.
+	(RCS_rewrite): call resolve_symlink before doing anything else to
+	make sure we're operating on the file and not the symlink.
+
+	* subr.c (resolve_symlink): new routine -- resolves a symbolic
+	link chain to its destination.
+	* cvs.h: add prototype.
+
 	* sanity.sh (basica-6.2, basica-6.3): changed match expressions to
 	reflect new diff output.
 
