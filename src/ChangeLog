@@ -1,3 +1,8 @@
+Thu Jan 25 00:41:59 1996  Karl Fogel  <kfogel@floss.red-bean.com>
+
+        * options.h.in (AUTH_SERVER_SUPPORT, AUTH_CLIENT_SUPPORT): change
+        comment now that no longer under construction.
+
 Wed Jan 24 15:25:22 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* Version 1.7.1.
