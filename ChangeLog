@@ -1,5 +1,11 @@
 2004-10-05  Derek Price  <derek@ximbiot.com>
 
+	* configure.in: Rename some GNULIB macro calls.
+	* srclist.txt (gettext, vasnprintf, shared): Add new files.
+	* config.rpath: Import new version from GNULIB.
+
+2004-10-05  Derek Price  <derek@ximbiot.com>
+
 	* configure.in: Call gl_SAVE_CWD.
 
 2004-10-05  Derek Price  <derek@ximbiot.com>
