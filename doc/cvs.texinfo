@@ -2131,6 +2131,19 @@ section allow such coordination, while retaining the
 ability of two developers to edit the same file at the
 same time.
 
+@c Some people might ask why CVS does not enforce the
+@c rule on chmod, by requiring a cvs edit before a cvs
+@c commit.  The main reason is that it could always be
+@c circumvented--one could edit the file, and
+@c then when ready to check it in, do the cvs edit and put
+@c in the new contents and do the cvs commit.  One
+@c implementation note: if we _do_ want to have cvs commit
+@c require a cvs edit, we should store the state on
+@c whether the cvs edit has occurred in the working
+@c directory, rather than having the server try to keep
+@c track of what working directories exist.
+@c FIXME: should the above discussion be part of the
+@c manual proper, somewhere, not just in a comment?
 For maximum benefit developers should use @code{cvs
 edit} (not @code{chmod}) to make files read-write to
 edit them, and @code{cvs release} (not @code{rm}) to
