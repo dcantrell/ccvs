@@ -475,7 +475,7 @@ cvs-paper.ps: cvs-paper.ms
 # - They should be disabled on systems without the bug and in environments
 #   where $(srcdir) = $(builddir)
 @MAKE_TARGETS_IN_VPATH_FALSE@CVSvn.texi: $(srcdir)/CVSvn.texi
-@MAKE_TARGETS_IN_VPATH_FALSE@	# use cat so the time stamp gets set properly
+@MAKE_TARGETS_IN_VPATH_FALSE@	## use cat so the time stamp gets set properly
 @MAKE_TARGETS_IN_VPATH_FALSE@	cat $(srcdir)/CVSvn.texi >$@
 @MAKE_TARGETS_IN_VPATH_FALSE@$(srcdir)/CVSvn.texi: $(srcdir)/CVSvn.texi.in $(top_srcdir)/configure.in
 @MAKE_TARGETS_IN_VPATH_FALSE@	sed 's,@VERSION\@,$(VERSION),g' $(srcdir)/CVSvn.texi.in >$(srcdir)/CVSvn.ttexi
