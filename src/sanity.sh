@@ -128,11 +128,11 @@ RFCDATE="[a-zA-Z0-9 ][a-zA-Z0-9 ]* [0-9:][0-9:]* -0000"
 RFCDATE_EPOCH="1 Jan 1970 00:00:00 -0000"
 
 # On cygwin32, we may not have /bin/sh.
-if [ -r /bin/sh ]; then
+if test -r /bin/sh; then
   TESTSHELL="/bin/sh"
 else
   TESTSHELL=`type -p sh 2>/dev/null`
-  if [ ! -r "$TESTSHELL" ]; then
+  if test ! -r "$TESTSHELL"; then
     TESTSHELL="/bin/sh"
   fi
 fi
@@ -22708,7 +22708,6 @@ fi
 echo "OK, all tests completed."
 
 # TODO:
-# * use "test" not "[" and see if all test's support `-z'
 # * Test `cvs update -d foo' (where foo does not exist).
 # * Test `cvs update foo bar' (where foo and bar are both from the
 #   same directory in the repository).  Suppose one is a branch--make
