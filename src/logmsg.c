@@ -210,6 +210,8 @@ do_editor (dir, messagep, repository, changes)
 	*messagep = NULL;
     else
     {
+	/* On NT, we might read less than st_size bytes, but we won't
+	   read more.  So this works.  */
 	*messagep = (char *) xmalloc (post_stbuf.st_size + 1);
  	*messagep[0] = '\0';
     }

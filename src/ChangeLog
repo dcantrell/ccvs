@@ -1,5 +1,16 @@
 Tue Mar 26 09:48:49 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	NT local changes plus miscellaneous things noticed in the process:
+	* import.c (add_rcs_file): Use binary mode to write RCS file.  Use
+	\012 where linefeed is intended.  Copy data a small block at a
+	time, until we hit EOF, rather than trying to read the whole file
+	into memory at once.
+	* client.c (send_modified): Add comments regarding st_size.
+	* commit.c (commit): Add comments regarding binary mode and read().
+	* logmsg.c (do_editor): Add comments regarding st_size.
+	* server.c (server_updated): Use binary mode to read file we are
+	sending.
+
 	* rcscmds.c (RCS_settag): Complain if user tries to add a tag name
 	reserved to CVS.
 	* sanity.sh (basica): Test for this behavior.
