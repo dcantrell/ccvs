@@ -53,9 +53,7 @@ struct admin_data
     /* Keyword substitution mode (-k), e.g. "-kb".  */
     char *kflag;
 
-    /* Description (-t).  See sanity.sh for various moanings about
-       files and stdin and such.  "" if -t specified without an
-       argument.  It is "-t" followed by the argument.  */
+    /* Description (-t).  */
     char *desc;
 
     /* Interactive (-I).  Problematic with client/server.  */
@@ -282,13 +280,15 @@ admin (argc, argv)
 		    error (0, 0, "duplicate 't' option");
 		    goto usage_error;
 		}
-		if (optarg == NULL)
-		    admin_data.desc = xstrdup ("-t");
+		if (optarg != NULL && optarg[0] == '-')
+		    admin_data.desc = xstrdup (optarg + 1);
 		else
 		{
-		    admin_data.desc = xmalloc (strlen (optarg) + 5);
-		    strcpy (admin_data.desc, "-t");
-		    strcat (admin_data.desc, optarg);
+		    size_t bufsize = 0;
+		    size_t len;
+
+		    get_file (optarg, optarg, "r", &admin_data.desc,
+			      &bufsize, &len);
 		}
 		break;
 
@@ -412,7 +412,26 @@ admin (argc, argv)
 	if (admin_data.delete_revs != NULL)
 	    send_arg (admin_data.delete_revs);
 	if (admin_data.desc != NULL)
-	    send_arg (admin_data.desc);
+	{
+	    char *p = admin_data.desc;
+	    send_to_server ("Argument -t-", 0);
+	    while (*p)
+	    {
+		if (*p == '\n')
+		{
+		    send_to_server ("\012Argumentx ", 0);
+		    ++p;
+		}
+		else
+		{
+		    char *q = strchr (p, '\n');
+		    if (q == NULL) q = p + strlen (p);
+		    send_to_server (p, q - p);
+		    p = q;
+		}
+	    }
+	    send_to_server ("\012", 1);
+	}
 	if (admin_data.quiet)
 	    send_arg ("-q");
 	if (admin_data.kflag != NULL)
@@ -593,20 +612,7 @@ admin_fileproc (callerdat, finfo)
     if (admin_data->desc != NULL)
     {
 	free (rcs->desc);
-	rcs->desc = NULL;
-	if (admin_data->desc[2] == '-')
-	    rcs->desc = xstrdup (admin_data->desc + 3);
-	else
-	{
-	    char *descfile = admin_data->desc + 2;
-	    size_t bufsize = 0;
-	    size_t len;
-
-	    /* If -t specified with no argument, read from stdin. */
-	    if (*descfile == '\0')
-		descfile = NULL;
-	    get_file (descfile, descfile, "r", &rcs->desc, &bufsize, &len);
-	}
+	rcs->desc = xstrdup (admin_data->desc);
     }
     if (admin_data->kflag != NULL)
     {
