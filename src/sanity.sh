@@ -7335,6 +7335,9 @@ br2:line1
 	  ;;
 
 	join-readonly-conflict)
+	  # Previously, only tests 1 & 11 were being tested.  I added the
+	  # intermediate dotest's to try and diagnose a different failure
+	  #
 	  # Demonstrate that cvs-1.9.29 can fail on 2nd and subsequent
 	  # conflict-evoking join attempts.
 	  # Even with that version of CVS, This test failed only in
@@ -7342,50 +7345,77 @@ br2:line1
 	  # operation only for files that were read-only (either due to
 	  # use of cvs' global -r option, setting the CVSREAD envvar,
 	  # or use of watch lists).
-	  mkdir 1; cd 1
+	  mkdir join-readonly-conflict; cd join-readonly-conflict
 	  dotest join-readonly-conflict-1 "$testcvs -q co -l ." ''
-	  module=x
+	  module=join-readonly-conflict
 	  mkdir $module
 	  $testcvs -q add $module >>$LOGFILE 2>&1
 	  cd $module
 
 	  file=m
 	  echo trunk > $file
-	  $testcvs -q add $file >>$LOGFILE 2>&1
-	  $testcvs -q ci -m . $file >>$LOGFILE 2>&1
+	  dotest join-readonly-conflict-2 "$testcvs -Q add $file" ''
 
-	  $testcvs tag -b B $file >>$LOGFILE 2>&1
-	  $testcvs -q update -rB $file >>$LOGFILE 2>&1
+	  dotest join-readonly-conflict-3 "$testcvs -q ci -m . $file" \
+"RCS file: $CVSROOT_DIRNAME/$module/$file,v
+done
+Checking in $file;
+$CVSROOT_DIRNAME/$module/$file,v  <--  $file
+initial revision: 1\.1
+done"
+
+	  dotest join-readonly-conflict-4 "$testcvs tag -b B $file" "T $file"
+	  dotest join-readonly-conflict-5 "$testcvs -q update -rB $file" ''
 	  echo branch B > $file
-	  $testcvs ci -m . $file >>$LOGFILE 2>&1
+	  dotest join-readonly-conflict-6 "$testcvs -q ci -m . $file" \
+"Checking in $file;
+$CVSROOT_DIRNAME/$module/$file,v  <--  $file
+new revision: 1\.1\.2\.1; previous revision: 1\.1
+done"
 
 	  rm $file
-	  $testcvs update -A $file >>$LOGFILE 2>&1
+	  dotest join-readonly-conflict-7 "$testcvs -Q update -A $file" ''
 	  # Make sure $file is read-only.  This can happen more realistically
 	  # via patch -- which could be used to apply a delta, yet would
 	  # preserve a file's read-only permissions.
 	  echo conflict > $file; chmod u-w $file
-	  $testcvs update -r B $file >>$LOGFILE 2>&1
-
-	  rm -f $file
-	  $testcvs update -A $file >>$LOGFILE 2>&1
-	  # This one would fail because cvs couldn't open the existing
-	  # (and read-only) .# file for writing.
-	  echo conflict > $file
-
-	  test -w ".#$file.1.1" && fail "$file is writable"
-	  dotest join-readonly-conflict-2 "$testcvs update -r B $file" \
-"RCS file: ${CVSROOT_DIRNAME}/$module/$file,v
+	  dotest join-readonly-conflict-8 "$testcvs update -r B $file" \
+"RCS file: $CVSROOT_DIRNAME/$module/$file,v
 retrieving revision 1\.1
 retrieving revision 1\.1\.2\.1
 Merging differences between 1\.1 and 1\.1\.2\.1 into $file
 rcsmerge: warning: conflicts during merge
-${PROG} [a-z]*: conflicts found in $file
+$PROG [a-z]*: conflicts found in $file
+C $file"
+
+	  # restore to the trunk
+	  rm -f $file
+	  dotest join-readonly-conflict-9 "$testcvs -Q update -A $file" ''
+
+	  # This one would fail because cvs couldn't open the existing
+	  # (and read-only) .# file for writing.
+	  echo conflict > $file
+
+	  # verify that the backup file is writable
+	  if test -w ".#$file.1.1"; then
+	    fail "join-readonly-conflict-10 : .#$file.1.1 is writable"
+	  else
+	    pass "join-readonly-conflict-10"
+	  fi
+	  dotest join-readonly-conflict-11 "$testcvs update -r B $file" \
+"RCS file: $CVSROOT_DIRNAME/$module/$file,v
+retrieving revision 1\.1
+retrieving revision 1\.1\.2\.1
+Merging differences between 1\.1 and 1\.1\.2\.1 into $file
+rcsmerge: warning: conflicts during merge
+$PROG [a-z]*: conflicts found in $file
 C m"
 
 	  cd ../..
-	  rm -rf 1
-	  rm -rf ${CVSROOT_DIRNAME}/$module
+	  if $keep; then :; else
+	    rm -rf join-readonly-conflict
+	    rm -rf $CVSROOT_DIRNAME/$module
+	  fi
 	  ;;
 
 	join-admin)
