@@ -1,5 +1,18 @@
 2004-02-04  Derek Price  <derek@ximbiot.com>
 
+	* modules.c (do_modules): Move content to and make this function a
+	wrapper for...
+	(_do_modules): ...this new function which can watch for infinite loops
+	in alias modules.
+	* stack.c (_push, _pop, _unshift, _shift, push_string, pop_string,
+	unshift_string, shift_string): New
+	functions.
+	* stack.h (push_string, pop_string, unshift_string, shift_string: New
+	prototypes.
+	* sanity.sh (modules): Add check for nested alias loops.
+
+2004-02-04  Derek Price  <derek@ximbiot.com>
+
 	* sanity.sh (recase): Update test names and comments for clarity and
 	consistency.
 
