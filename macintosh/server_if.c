@@ -5,6 +5,7 @@
  * Michael Ladwig <mike@twinpeaks.prc.com> --- November 1995
  */
 
+#include "mac_config.h"
 #include "cvs.h"
 
 #include <GUSI.h>
