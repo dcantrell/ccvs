@@ -16,7 +16,7 @@
 
 2003-02-07  Derek Price  <derek@ximbiot.com>
 
-	* rcscmds (RCS_merge): Add a FIXME.
+	* rcscmds.c (RCS_merge): Add a FIXME.
 
 2003-02-07  Derek Price  <derek@ximbiot.com>
 
