@@ -400,8 +400,6 @@ Entries_Open (aflag)
 	write_entries (entries);
 
     /* clean up and return */
-    if (fpin)
-	(void) fclose (fpin);
     if (dirtag)
 	free (dirtag);
     if (dirdate)
