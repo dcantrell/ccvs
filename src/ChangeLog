@@ -1,5 +1,7 @@
 Fri Sep 27 05:24:56 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* diff.c: Add comment about --brief option.
+
 	* README-rm-add: Removed; the information which was here is now in
 	cvs.texinfo.
 	* Makefile.in (DISTFILES): Remove README-rm-add.

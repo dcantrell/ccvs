@@ -119,7 +119,13 @@ static struct option const longopts[] =
     {"paginate", 0, 0, 144},
     {"rcs", 0, 0, 'n'},
     {"show-c-function", 0, 0, 'p'},
+
+    /* This is a potentially very useful option, except the output is so
+       silly.  It would be much better for it to look like "cvs rdiff -s"
+       which displays all the same info, minus quite a few lines of
+       extraneous garbage.  */
     {"brief", 0, 0, 145},
+
     {"report-identical-files", 0, 0, 's'},
     {"expand-tabs", 0, 0, 't'},
     {"ignore-all-space", 0, 0, 'w'},
