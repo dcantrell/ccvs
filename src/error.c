@@ -67,24 +67,27 @@ extern char *strerror ();
 
 extern int vasprintf ();
 
-typedef void (*fn_returning_void) PROTO((void));
-
-/* Function to call before exiting.  */
-static fn_returning_void cleanup_fn;
-
-fn_returning_void
-error_set_cleanup (arg)
-     fn_returning_void arg;
+void
+error_exit PROTO ((void))
 {
-    fn_returning_void retval = cleanup_fn;
-    cleanup_fn = arg;
-    return retval;
+    Lock_Cleanup();
+#ifdef SERVER_SUPPORT
+    if (server_active)
+	server_cleanup (0);
+#endif
+#ifdef SYSTEM_CLEANUP
+    /* Hook for OS-specific behavior, for example socket subsystems on
+       NT and OS2 or dealing with windows and arguments on Mac.  */
+    SYSTEM_CLEANUP ();
+#endif
+    exit (EXIT_FAILURE);
 }
 
 /* Print the program name and error message MESSAGE, which is a printf-style
    format string with optional args.
    If ERRNUM is nonzero, print its corresponding system error message.
-   Exit with status EXIT_FAILURE if STATUS is nonzero.  */
+   Exit with status EXIT_FAILURE if STATUS is nonzero.  If MESSAGE is "",
+   no need to print a message.  */
 /* VARARGS */
 void
 #if defined (HAVE_VPRINTF) && __STDC__
@@ -98,6 +101,7 @@ error (status, errnum, message, va_alist)
 #endif
 {
 #ifdef HAVE_VPRINTF
+    if (message[0] != '\0')
     {
 	va_list args;
 	char *mess = NULL;
@@ -158,6 +162,7 @@ error (status, errnum, message, va_alist)
     /* I think that all relevant systems have vprintf these days.  But
        just in case, I'm leaving this code here.  */
 
+    if (message[0] != '\0')
     {
 	FILE *out = stderr;
 
@@ -203,11 +208,7 @@ error (status, errnum, message, va_alist)
 #endif /* No HAVE_VPRINTF */
 
     if (status)
-    {
-	if (cleanup_fn)
-	    (*cleanup_fn) ();
-	exit (EXIT_FAILURE);
-    }
+	error_exit ();
 }
 
 /* Print the program name and error message MESSAGE, which is a printf-style
@@ -248,9 +249,5 @@ fperror (fp, status, errnum, message, va_alist)
     putc ('\n', fp);
     fflush (fp);
     if (status)
-    {
-	if (cleanup_fn)
-	    (*cleanup_fn) ();
-	exit (EXIT_FAILURE);
-    }
+	error_exit ();
 }

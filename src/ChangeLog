@@ -1,3 +1,21 @@
+Mon Oct 28 08:55:57 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	The following changes are to ensure that SYSTEM_CLEANUP is always
+	called.
+	* error.c, cvs.h, main.c: Remove error_set_cleanup and related
+	machinery.  It was for a time when error.c was intended to be
+	shared with other programs, but that is no longer true.
+	* error.c, error.h (error_exit): New function; like error_cleanup
+	from main.c but also calls SYSTEM_CLEANUP and exit (EXIT_FAILURE).
+	* error.c (error, fperror): Call error_exit instead of doing it
+	ourself.
+	* server.c (server, serve_valid_responses, switch_to_user,
+	check_password, pserver_authenticate_connection, 
+	kserver_authenticate_connection): Call SYSTEM_CLEANUP before exit.
+	* add.c, client.c, import.c, main.c, mkmodules.c, modules.c,
+	recurse.c, server.c, tag.c, update.c: Call error_exit ()
+	instead of exit (EXIT_FAILURE).
+
 Sun Oct 27 08:34:16 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* sanity.sh (conflicts): New test 128.5 tests "cvs co -p" in an empty

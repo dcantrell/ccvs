@@ -38,6 +38,10 @@ void error (int, int, const char *, ...) \
 void error ();
 #endif
 
+/* Exit due to an error.  Similar to error (1, 0, "message"), but call
+   it in the case where the message has already been printed.  */
+extern void error_exit PROTO ((void));
+
 /* If non-zero, error will use the CVS protocol to report error
    messages.  This will only be set in the CVS server parent process;
    most other code is run via do_cvs_command, which forks off a child

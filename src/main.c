@@ -265,16 +265,6 @@ main_cleanup (sig)
 #endif /* !DONT_USE_SIGNALS */
 }
 
-static void
-error_cleanup PROTO((void))
-{
-    Lock_Cleanup();
-#ifdef SERVER_SUPPORT
-    if (server_active)
-	server_cleanup (0);
-#endif
-}
-
 int
 main (argc, argv)
     int argc;
@@ -302,8 +292,6 @@ main (argc, argv)
         don't use it. */
     int option_index = 0;
     int need_to_create_root = 0;
-
-    error_set_cleanup (error_cleanup);
 
 #ifdef SYSTEM_INITIALIZE
     /* Hook for OS-specific behavior, for example socket subsystems on
@@ -860,5 +848,5 @@ usage (cpp)
     (void) fprintf (stderr, *cpp++, program_name, command_name);
     for (; *cpp; cpp++)
 	(void) fprintf (stderr, *cpp);
-    exit (EXIT_FAILURE);
+    error_exit ();
 }

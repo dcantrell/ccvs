@@ -792,7 +792,7 @@ Numeric tag %s contains characters other than digits and '.'", name);
 	else
 	{
 	    if (save_cwd (&cwd))
-		exit (EXIT_FAILURE);
+		error_exit ();
 	    if ( CVS_CHDIR (repository) < 0)
 		error (1, errno, "cannot change to %s directory", repository);
 	}

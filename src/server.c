@@ -433,6 +433,16 @@ serve_valid_responses (arg)
 	       cause deadlock, as noted in server_cleanup.  */
 	    buf_flush (buf_to_net, 1);
 
+	    /* I'm doing this manually rather than via error_exit ()
+	       because I'm not sure whether we want to call server_cleanup.
+	       Needs more investigation....  */
+
+#ifdef SYSTEM_CLEANUP
+	    /* Hook for OS-specific behavior, for example socket subsystems on
+	       NT and OS2 or dealing with windows and arguments on Mac.  */
+	    SYSTEM_CLEANUP ();
+#endif
+
 	    exit (EXIT_FAILURE);
 	}
 	else if (rs->status == rs_optional)
@@ -1564,8 +1574,7 @@ error ENOMEM Virtual memory exhausted.\n";
 
     /* If this gives an error, not much we could do.  syslog() it?  */
     write (STDOUT_FILENO, msg, sizeof (msg) - 1);
-    server_cleanup (0);
-    exit (EXIT_FAILURE);
+    error_exit ();
 }
 
 static void
@@ -3615,6 +3624,17 @@ server (argc, argv)
 	{
 	    printf ("E Fatal server error, aborting.\n\
 error ENOMEM Virtual memory exhausted.\n");
+
+	    /* I'm doing this manually rather than via error_exit ()
+	       because I'm not sure whether we want to call server_cleanup.
+	       Needs more investigation....  */
+
+#ifdef SYSTEM_CLEANUP
+	    /* Hook for OS-specific behavior, for example socket subsystems on
+	       NT and OS2 or dealing with windows and arguments on Mac.  */
+	    SYSTEM_CLEANUP ();
+#endif
+
 	    exit (EXIT_FAILURE);
 	}
 	putenv (env);
@@ -3656,6 +3676,18 @@ error ENOMEM Virtual memory exhausted.\n");
 		 */
 		printf ("E Fatal server error, aborting.\n\
 error ENOMEM Virtual memory exhausted.\n");
+
+		/* I'm doing this manually rather than via error_exit ()
+		   because I'm not sure whether we want to call server_cleanup.
+		   Needs more investigation....  */
+
+#ifdef SYSTEM_CLEANUP
+		/* Hook for OS-specific behavior, for example socket
+		   subsystems on NT and OS2 or dealing with windows
+		   and arguments on Mac.  */
+		SYSTEM_CLEANUP ();
+#endif
+
 		exit (EXIT_FAILURE);
 	    }
 	    strcpy (server_temp_dir, Tmpdir);
@@ -3699,6 +3731,17 @@ error ENOMEM Virtual memory exhausted.\n");
 	 */
 	printf ("E Fatal server error, aborting.\n\
 error ENOMEM Virtual memory exhausted.\n");
+
+	/* I'm doing this manually rather than via error_exit ()
+	   because I'm not sure whether we want to call server_cleanup.
+	   Needs more investigation....  */
+
+#ifdef SYSTEM_CLEANUP
+	/* Hook for OS-specific behavior, for example socket subsystems on
+	   NT and OS2 or dealing with windows and arguments on Mac.  */
+	SYSTEM_CLEANUP ();
+#endif
+
 	exit (EXIT_FAILURE);
     }
 
@@ -3781,6 +3824,16 @@ switch_to_user (username)
     {
 	printf ("E Fatal error, aborting.\n\
 error 0 %s: no such user\n", username);
+	/* I'm doing this manually rather than via error_exit ()
+	   because I'm not sure whether we want to call server_cleanup.
+	   Needs more investigation....  */
+
+#ifdef SYSTEM_CLEANUP
+	/* Hook for OS-specific behavior, for example socket subsystems on
+	   NT and OS2 or dealing with windows and arguments on Mac.  */
+	SYSTEM_CLEANUP ();
+#endif
+
 	exit (EXIT_FAILURE);
     }
 
@@ -3955,6 +4008,17 @@ check_password (username, password, repository)
 	{
 	    printf ("E Fatal error, aborting.\n\
 error 0 %s: no such user\n", username);
+
+	    /* I'm doing this manually rather than via error_exit ()
+	       because I'm not sure whether we want to call server_cleanup.
+	       Needs more investigation....  */
+
+#ifdef SYSTEM_CLEANUP
+	    /* Hook for OS-specific behavior, for example socket subsystems on
+	       NT and OS2 or dealing with windows and arguments on Mac.  */
+	    SYSTEM_CLEANUP ();
+#endif
+
 	    exit (EXIT_FAILURE);
 	}
 	
@@ -4082,12 +4146,30 @@ pserver_authenticate_connection ()
     {
 	printf ("I HATE YOU\n");
 	fflush (stdout);
+	/* I'm doing this manually rather than via error_exit ()
+	   because I'm not sure whether we want to call server_cleanup.
+	   Needs more investigation....  */
+
+#ifdef SYSTEM_CLEANUP
+	/* Hook for OS-specific behavior, for example socket subsystems on
+	   NT and OS2 or dealing with windows and arguments on Mac.  */
+	SYSTEM_CLEANUP ();
+#endif
+
 	exit (EXIT_FAILURE);
     }
 
     /* Don't go any farther if we're just responding to "cvs login". */
     if (verify_and_exit)
+    {
+#ifdef SYSTEM_CLEANUP
+	/* Hook for OS-specific behavior, for example socket subsystems on
+	   NT and OS2 or dealing with windows and arguments on Mac.  */
+	SYSTEM_CLEANUP ();
+#endif
+
 	exit (0);
+    }
 
     /* Switch to run as this user. */
     switch_to_user (host_user);
@@ -4118,6 +4200,11 @@ kserver_authenticate_connection ()
     {
 	printf ("E Fatal error, aborting.\n\
 error %s getpeername or getsockname failed\n", strerror (errno));
+#ifdef SYSTEM_CLEANUP
+	/* Hook for OS-specific behavior, for example socket subsystems on
+	   NT and OS2 or dealing with windows and arguments on Mac.  */
+	SYSTEM_CLEANUP ();
+#endif
 	exit (EXIT_FAILURE);
     }
 
@@ -4139,6 +4226,11 @@ error %s getpeername or getsockname failed\n", strerror (errno));
     {
 	printf ("E Fatal error, aborting.\n\
 error 0 kerberos: %s\n", krb_get_err_text(status));
+#ifdef SYSTEM_CLEANUP
+	/* Hook for OS-specific behavior, for example socket subsystems on
+	   NT and OS2 or dealing with windows and arguments on Mac.  */
+	SYSTEM_CLEANUP ();
+#endif
 	exit (EXIT_FAILURE);
     }
 
@@ -4150,6 +4242,11 @@ error 0 kerberos: %s\n", krb_get_err_text(status));
     {
 	printf ("E Fatal error, aborting.\n\
 error 0 kerberos: can't get local name: %s\n", krb_get_err_text(status));
+#ifdef SYSTEM_CLEANUP
+	/* Hook for OS-specific behavior, for example socket subsystems on
+	   NT and OS2 or dealing with windows and arguments on Mac.  */
+	SYSTEM_CLEANUP ();
+#endif
 	exit (EXIT_FAILURE);
     }
 
