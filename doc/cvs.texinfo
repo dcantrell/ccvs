@@ -1153,12 +1153,14 @@ would be in
 /usr/local/cvsroot/yoyodyne/tc/backend.c,v
 @end example
 
+@noindent
 but if it goes in the attic, it would be in
 
 @example
 /usr/local/cvsroot/yoyodyne/tc/Attic/backend.c,v
 @end example
 
+@noindent
 @cindex Dead state
 instead.  It should not matter from a user point of
 view whether a file is in the attic; @sc{cvs} keeps
@@ -1259,6 +1261,7 @@ Ffile2 _watched=;_editors=sue>8 Jan 1975+workstn1+/home/sue/cvs
 D _watched=
 @end example
 
+@noindent
 means that the file @file{file1} should be checked out
 read-only.  Furthermore, joe is watching for edits and
 mary is watching for commits.  The file @file{file2}
@@ -1461,12 +1464,14 @@ example, after the command
 cvs -d :local:/usr/local/cvsroot checkout yoyodyne/tc
 @end example
 
+@noindent
 @file{Root} will contain
 
 @example
 :local:/usr/local/cvsroot
 @end example
 
+@noindent
 and @file{Repository} will contain either
 
 @example
@@ -1500,6 +1505,7 @@ If the first character is @samp{/}, then the format is:
 /@var{name}/@var{revision}/@var{timestamp}[+@var{conflict}]/@var{options}/@var{tagdate}
 @end example
 
+@noindent
 where @samp{[} and @samp{]} are not part of the entry,
 but instead indicate that the @samp{+} and conflict
 marker are optional.  @var{name} is the name of the
@@ -1560,6 +1566,7 @@ like:
 D/@var{name}/@var{filler1}/@var{filler2}/@var{filler3}/@var{filler4}
 @end example
 
+@noindent
 where @var{name} is the name of the subdirectory, and
 all the @var{filler} fields should be silently ignored,
 for future expansion.  Programs which modify
@@ -1697,6 +1704,7 @@ the @file{Base} directory.  The format is:
 B@var{name}/@var{rev}/@var{expansion}
 @end example
 
+@noindent
 where @var{expansion} should be ignored, to allow for
 future expansion.
 
@@ -2161,6 +2169,7 @@ faun, put the following line into the file
 toe.example.com  mozart
 @end example
 
+@noindent
 Then test that @samp{rsh} is working with
 
 @example
@@ -2229,6 +2238,7 @@ the module @file{foo} in the repository
 cvs -d :ext:bach@@faun.example.org/usr/local/cvsroot checkout foo
 @end example
 
+@noindent
 (The @file{bach@@} can be omitted if the username is
 the same on both the local and remote hosts.)
 
@@ -2296,8 +2306,9 @@ single line in @file{inetd.conf}) should be sufficient:
 cvs -f --allow-root=/usr/cvsroot pserver
 @end example
 
-You could also use the
-@samp{-T} option to specify a temporary directory.
+@noindent
+(You could also use the
+@samp{-T} option to specify a temporary directory.)
 
 The @samp{--allow-root} option specifies the allowable
 @sc{cvsroot} directory.  Clients which attempt to use a
@@ -2318,8 +2329,8 @@ name instead of a raw port number, then put this in
 cvspserver      2401/tcp
 @end example
 
-        and put @code{cvspserver} instead of
-@code{2401} in @file{inetd.conf}.
+@noindent
+and put @code{cvspserver} instead of @code{2401} in @file{inetd.conf}.
 
 If your system uses @code{xinetd} instead of @code{inetd},
 the procedure is slightly different.
@@ -2374,6 +2385,7 @@ melissa:tGX1fS8sun6rY:pubcvs
 qproj:XR4EZcEs0szik:pubcvs
 @end example
 
+@noindent
 (The passwords are encrypted according to the standard
 Unix @code{crypt()} function, so it is possible to
 paste in passwords directly from regular Unix
@@ -2438,6 +2450,7 @@ fish:rKa5jzULzmhOo:kfogel
 sussman:1sOp854gDF3DY
 @end example
 
+@noindent
 When the password field is omitted or empty, then the
 client's authentication attempt will succeed with any
 password, including the empty string.  However, the
@@ -2498,6 +2511,7 @@ optional port number, and path to the repository.  For example:
 cvs -d :pserver:faun.example.org:/usr/local/cvsroot checkout someproj
 @end example
 
+@noindent
 or
 
 @example
@@ -2518,6 +2532,7 @@ cvs -d :pserver:bach@@faun.example.org:/usr/local/cvsroot login
 CVS password:
 @end example
 
+@noindent
 or
 
 @example
@@ -2559,6 +2574,7 @@ with the stored password.  So, for example
 cvs -d :pserver:bach@@faun.example.org:/usr/local/cvsroot checkout foo
 @end example
 
+@noindent
 should just work (unless the password changes on the
 server side, in which case you'll have to re-run
 @code{cvs login}).
@@ -2831,6 +2847,7 @@ splotnik
 jrandom
 @end example
 
+@noindent
         (Don't forget the newline after the last user.)
 
         "Exclusion" means explicitly listing everyone
@@ -3452,6 +3469,7 @@ T frontend.c
 T parser.c
 @end example
 
+@noindent
 (When you give @sc{cvs} a directory as argument, it generally applies the
 operation to all the files in that directory, and (recursively), to any
 subdirectories that it may contain.  @xref{Recursive behavior}.)
@@ -3624,6 +3642,7 @@ To delete a tag, specify the @samp{-d} option to either
 cvs rtag -d rel-0-4 tc
 @end example
 
+@noindent
 deletes the tag @code{rel-0-4} from the module @code{tc}.
 
 @cindex Moving tags
@@ -3945,6 +3964,7 @@ it to a given branch with @samp{update -r}:
 $ cvs update -r rel-1-0-patches tc
 @end example
 
+@noindent
 or equivalently:
 
 @example
@@ -4250,6 +4270,7 @@ Branch R1fix -> +---! 1.2.2.1 !----! 1.2.2.2 !
                     +---------+    +---------+
 @end example
 
+@noindent
 where the starred line represents the merge from the
 @samp{R1fix} branch to the main trunk, as just
 discussed.
@@ -4268,6 +4289,7 @@ Branch R1fix -> +---! 1.2.2.1 !----! 1.2.2.2 !----! 1.2.2.3 !
                     +---------+    +---------+    +---------+
 @end example
 
+@noindent
 and then you want to merge those new changes onto the
 main trunk.  If you just use the @code{cvs update -j
 R1fix m.c} command again, @sc{cvs} will attempt to
@@ -4423,6 +4445,7 @@ For example, suppose you have a file like this:
 +-----+    +-----+
 @end example
 
+@noindent
 and your working directory is currently on the trunk
 (revision 1.2).  Then you might get the following
 results from a merge:
@@ -5367,6 +5390,7 @@ commands.  In the taginfo file put:
 ALL /usr/local/cvsroot/CVSROOT/loggit
 @end example
 
+@noindent
 Where @file{/usr/local/cvsroot/CVSROOT/loggit} contains the
 following script:
 
@@ -6205,14 +6229,15 @@ the locks prevent other people from reading or writing.
 @c a/one.c and b/four.c and another commits a/two.c and
 @c b/three.c.  Then an update cannot get the new a/one.c
 @c and a/two.c and the old b/four.c and b/three.c.
-One might hope for the following property
+One might hope for the following property:
 
-@example
+@quotation
 If someone commits some changes in one cvs command,
 then an update by someone else will either get all the
 changes, or none of them.
-@end example
+@end quotation
 
+@noindent
 but @sc{cvs} does @emph{not} have this property.  For
 example, given the files
 
@@ -6223,12 +6248,14 @@ b/three.c
 b/four.c
 @end example
 
+@noindent
 if someone runs
 
 @example
 cvs ci a/two.c b/three.c
 @end example
 
+@noindent
 and someone else runs @code{cvs update} at the same
 time, the person running @code{update} might get only
 the change to @file{b/three.c} and not the change to
@@ -6414,6 +6441,7 @@ single line:
 ALL mail %s -s "CVS notification"
 @end example
 
+@noindent
 This causes users to be notified by electronic mail.
 @c FIXME: should it be this hard to set up this
 @c behavior (and the result when one fails to do so,
@@ -6589,6 +6617,7 @@ cvs update: cannot open CVS/Entries for reading:
 No such file or directory
 @end example
 
+@noindent
 and your operation will likely be aborted.  To use the
 watch features, you must upgrade all copies of @sc{cvs}
 which use that repository in local or server mode.  If
@@ -6801,7 +6830,7 @@ messages are @emph{not} replaced.  Instead, the new log
 message is inserted after @code{$@asis{Log:@dots{}}$}.
 Each new line is prefixed with the same string which
 precedes the @code{$Log} keyword.  For example, if the
-file contains
+file contains:
 
 @example
   /* Here is what people have been up to:
@@ -7675,6 +7704,7 @@ example the following line in @file{.cvsrc}
 cvs -z6
 @end example
 
+@noindent
 causes @sc{cvs} to use compression level 6.
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -7876,7 +7906,7 @@ file using @samp{-D}, @sc{cvs} records the date you specified, so that
 further updates in the same directory will use the same date
 (for more information on sticky tags/dates, @pxref{Sticky tags}).
 
-@samp{-D} is available with the @code{checkout},
+@samp{-D} is available with the @code{annotate}, @code{checkout},
 @code{diff}, @code{export}, @code{history},
 @code{rdiff}, @code{rtag}, and @code{update} commands.
 (The @code{history} command uses this option in a
@@ -10456,6 +10486,7 @@ Initial revision
 Commands, command options, and command arguments:
 
 @table @code
+@c ------------------------------------------------------------
 @item add [@var{options}] [@var{files}@dots{}]
 Add a new file/directory.  See @ref{Adding files}.
 
@@ -10467,6 +10498,7 @@ Set keyword expansion.
 Set file description.
 @end table
 
+@c ------------------------------------------------------------
 @item admin [@var{options}] [@var{files}@dots{}]
 Administration of history files in the repository.  See
 @ref{admin}.
@@ -10516,6 +10548,7 @@ Set file description to @var{string}.
 Unlock revision @var{rev}, or latest revision.
 @end table
 
+@c ------------------------------------------------------------
 @item annotate [@var{options}] [@var{files}@dots{}]
 Show last revision where each line was modified.  See
 @ref{annotate}.
@@ -10540,6 +10573,7 @@ behavior}.
 Annotate revision @var{tag}.  See @ref{Common options}.
 @end table
 
+@c ------------------------------------------------------------
 @item checkout [@var{options}] @var{modules}@dots{}
 Get a copy of the sources.  See @ref{checkout}.
 
@@ -10599,6 +10633,7 @@ Checkout revision @var{tag} (is sticky).  See @ref{Common options}.
 Like -c, but include module status.  See @ref{checkout options}.
 @end table
 
+@c ------------------------------------------------------------
 @item commit [@var{options}] [@var{files}@dots{}]
 Check changes into the repository.  See @ref{commit}.
 
@@ -10632,6 +10667,7 @@ Commit to @var{rev}.  See @ref{commit options}.
 @c and made concise enough.
 @end table
 
+@c ------------------------------------------------------------
 @item diff [@var{options}] [@var{files}@dots{}]
 Show differences between revisions.  See @ref{diff}.
 In addition to the options shown below, accepts a wide
@@ -10666,6 +10702,7 @@ Diff revision for @var{rev1} against working file.  See
 Diff @var{rev1}/@var{date1} against @var{rev2}.  See @ref{diff options}.
 @end table
 
+@c ------------------------------------------------------------
 @item edit [@var{options}] [@var{files}@dots{}]
 Get ready to edit a watched file.  See @ref{Editing files}.
 
@@ -10684,6 +10721,7 @@ Operate recursively (default).  @xref{Recursive
 behavior}.
 @end table
 
+@c ------------------------------------------------------------
 @item editors [@var{options}] [@var{files}@dots{}]
 See who is editing a watched file.  See @ref{Watch information}.
 
@@ -10696,6 +10734,7 @@ Operate recursively (default).  @xref{Recursive
 behavior}.
 @end table
 
+@c ------------------------------------------------------------
 @item export [@var{options}] @var{modules}@dots{}
 Export files from @sc{cvs}.  See @ref{export}.
 
@@ -10736,6 +10775,7 @@ behavior}.
 Checkout revision @var{tag}.  See @ref{Common options}.
 @end table
 
+@c ------------------------------------------------------------
 @item history [@var{options}] [@var{files}@dots{}]
 Show repository access history.  See @ref{history}.
 
@@ -10760,14 +10800,16 @@ Report on all record types.  See @ref{history options}.
 Last modified (committed or modified report).  See @ref{history options}.
 
 @item -m @var{module}
-Report on @var{module} (repeatable).  See @ref{history
-options}.
+Report on @var{module} (repeatable).  See @ref{history options}.
 
 @item -n @var{module}
 In @var{module}.  See @ref{history options}.
 
 @item -o
 Report on checked out modules.  See @ref{history options}.
+
+@item -p @var{repository}
+In @var{repository}.  See @ref{history options}.
 
 @item -r @var{rev}
 Since revision @var{rev}.  See @ref{history options}.
@@ -10782,8 +10824,7 @@ Since tag record placed in history file (by anyone).
 See @ref{history options}.
 
 @item -u @var{user}
-For user @var{user} (repeatable).  See @ref{history
-options}.
+For user @var{user} (repeatable).  See @ref{history options}.
 
 @item -w
 Working directory must match.  See @ref{history options}.
@@ -10793,10 +10834,10 @@ Report on @var{types}, one or more of
 @code{TOEFWUCGMAR}.  See @ref{history options}.
 
 @item -z @var{zone}
-Output for time zone @var{zone}.  See @ref{history
-options}.
+Output for time zone @var{zone}.  See @ref{history options}.
 @end table
 
+@c ------------------------------------------------------------
 @item import [@var{options}] @var{repository} @var{vendor-tag} @var{release-tags}@dots{}
 Import files into @sc{cvs}, using vendor branches.  See
 @ref{import}.
@@ -10826,10 +10867,12 @@ More files to ignore (! to reset).  See
 More wrappers.  See @ref{import options}.
 @end table
 
+@c ------------------------------------------------------------
 @item init
 Create a @sc{cvs} repository if it doesn't exist.  See
 @ref{Creating a repository}.
 
+@c ------------------------------------------------------------
 @item log [@var{options}] [@var{files}@dots{}]
 Print out history information for files.  See @ref{log}.
 
@@ -10867,14 +10910,17 @@ options}.
 Only list revisions checked in by specified logins.  See @ref{log options}.
 @end table
 
+@c ------------------------------------------------------------
 @item login
 Prompt for password for authenticating server.  See
 @ref{Password authentication client}.
 
+@c ------------------------------------------------------------
 @item logout
 Remove stored password for authenticating server.  See
 @ref{Password authentication client}.
 
+@c ------------------------------------------------------------
 @item rdiff [@var{options}] @var{modules}@dots{}
 Show differences between releases.  See @ref{rdiff}.
 
@@ -10914,6 +10960,7 @@ Use RCS Version @var{vers} for keyword expansion (obsolete).  See
 @ref{rdiff options}.
 @end table
 
+@c ------------------------------------------------------------
 @item release [@var{options}] @var{directory}
 Indicate that a directory is no longer in use.  See
 @ref{release}.
@@ -10923,6 +10970,7 @@ Indicate that a directory is no longer in use.  See
 Delete the given directory.  See @ref{release options}.
 @end table
 
+@c ------------------------------------------------------------
 @item remove [@var{options}] [@var{files}@dots{}]
 Remove an entry from the repository.  See @ref{Removing files}.
 
@@ -10938,6 +10986,7 @@ Operate recursively (default).  @xref{Recursive
 behavior}.
 @end table
 
+@c ------------------------------------------------------------
 @item rtag [@var{options}] @var{tag} @var{modules}@dots{}
 Add a symbolic tag to a module.
 See @ref{Revisions} and @ref{Branching and merging}.
@@ -10977,6 +11026,7 @@ behavior}.
 Tag existing tag @var{rev}.  See @ref{Tagging by date/tag}.
 @end table
 
+@c ------------------------------------------------------------
 @item status [@var{options}] @var{files}@dots{}
 Display status information in a working directory.  See
 @ref{File status}.
@@ -10993,6 +11043,7 @@ behavior}.
 Include tag information for file.  See @ref{Tags}.
 @end table
 
+@c ------------------------------------------------------------
 @item tag [@var{options}] @var{tag} [@var{files}@dots{}]
 Add a symbolic tag to checked out version of files.
 See @ref{Revisions} and @ref{Branching and merging}.
@@ -11029,24 +11080,19 @@ behavior}.
 Tag existing tag @var{rev}.  See @ref{Tagging by date/tag}.
 @end table
 
+@c ------------------------------------------------------------
 @item unedit [@var{options}] [@var{files}@dots{}]
 Undo an edit command.  See @ref{Editing files}.
 
 @table @code
-@item -a @var{actions}
-Specify actions for temporary watch, where
-@var{actions} is @code{edit}, @code{unedit},
-@code{commit}, @code{all}, or @code{none}.  See
-@ref{Editing files}.
-
 @item -l
 Local; run only in current working directory.  See @ref{Recursive behavior}.
 
 @item -R
-Operate recursively (default).  @xref{Recursive
-behavior}.
+Operate recursively (default).  @xref{Recursive behavior}.
 @end table
 
+@c ------------------------------------------------------------
 @item update [@var{options}] [@var{files}@dots{}]
 Bring work tree in sync with repository.  See
 @ref{update}.
@@ -11106,12 +11152,14 @@ Checkout revision @var{tag} (is sticky).  See @ref{Common options}.
 More wrappers.  See @ref{import options}.
 @end table
 
+@c ------------------------------------------------------------
 @item version
 @cindex version (subcommand)
 
 Display the version of @sc{cvs} being used.  If the repository
 is remote, display both the client and server versions.
 
+@c ------------------------------------------------------------
 @item watch [on|off|add|remove] [@var{options}] [@var{files}@dots{}]
 
 on/off: turn on/off read-only checkouts of files.  See
@@ -11135,6 +11183,7 @@ Operate recursively (default).  @xref{Recursive
 behavior}.
 @end table
 
+@c ------------------------------------------------------------
 @item watchers [@var{options}] [@var{files}@dots{}]
 See who is watching a file.  See @ref{Watch information}.
 
@@ -11356,6 +11405,7 @@ example, if modules contains
 ampermod &first-dir
 @end example
 
+@noindent
 then a checkout will create an @code{ampermod} directory
 which contains a directory called @code{first-dir},
 which in turns contains all the directories and files
@@ -11416,6 +11466,7 @@ For example, if the modules file contains:
 exmodule -a !first-dir/sdir first-dir
 @end example
 
+@noindent
 then checking out the module @samp{exmodule} will check
 out everything in @samp{first-dir} except any files in
 the subdirectory @samp{first-dir/sdir}.
@@ -12485,6 +12536,7 @@ message such as:
 cvs commit: Rebuilding administrative file database
 @end example
 
+@noindent
 and the checked out copy in the @file{CVSROOT}
 directory should be updated.
 
@@ -12552,9 +12604,11 @@ internal variables are:
 @table @code
 @item CVSROOT
 @cindex CVSROOT, internal variable
-This is the value of the @sc{cvs} root in use.
+This is the absolute path to the current @sc{cvs} root directory.
 @xref{Repository}, for a description of the various
-ways to specify this.
+ways to specify this, but note that the internal
+variable contains just the directory and not any
+of the access method information.
 
 @item RCSBIN
 @cindex RCSBIN, internal variable
@@ -12624,9 +12678,9 @@ Environment variables passed to administrative files are:
 @item CVS_USER
 The @sc{cvs}-specific username provided by the user, if it
 can be provided (currently just for the pserver access
-method), and to the empty string otherwise.  (CVS_USER
-and USER may differ when @file{$CVSROOT/CVSROOT/passwd}
-is used to map cvs usernames to system usernames.)
+method), and to the empty string otherwise.  (@code{CVS_USER}
+and @code{USER} may differ when @file{$CVSROOT/CVSROOT/passwd}
+is used to map @sc{cvs} usernames to system usernames.)
 @end table
 
 @node config
@@ -12721,7 +12775,7 @@ repository with LockDir enabled.
 
 @cindex LogHistory, in CVSROOT/config
 @item LogHistory=@var{value}
-Control what is logged to the @file{CVSROOT/history} file.
+Control what is logged to the @file{CVSROOT/history} file (@pxref{history}).
 Default of @samp{TOFEWGCMAR} (or simply @samp{all}) will log
 all transactions.  Any subset of the default is
 legal.  (For example, to only log transactions that modify the
@@ -13457,6 +13511,7 @@ Usage: cvs [cvs-options] command [command-options-and-arguments]
 ...
 @end example
 
+@noindent
 then you're missing the @samp{pserver} command at the end of the
 line in @file{inetd.conf}; check to make sure that the entire command
 is on one line and that it's complete.
@@ -13471,6 +13526,7 @@ CVS commands are:
 ...
 @end example
 
+@noindent
 then you've misspelled @samp{pserver} in some way.  If it isn't
 obvious, check for invisible control characters (particularly
 carriage returns) in @file{inetd.conf}.
@@ -13507,6 +13563,7 @@ cvs server: cannot open /root/.cvsignore: Permission denied
 cvs [server aborted]: can't chdir(/root): Permission denied
 @end example
 
+@noindent
 then you probably haven't specified @samp{-f} in @file{inetd.conf}.
 (In releases prior to @sc{cvs} 1.11.1, this problem can be caused by
 your system setting the @code{$HOME} environment variable
