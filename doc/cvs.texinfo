@@ -3806,6 +3806,14 @@ will normally never be locked when you use @sc{cvs}.
 Same as @code{$@asis{Header}$}, except that the @sc{rcs}
 filename is without a path.
 
+@cindex Name keyword
+@item $@asis{Name}$
+Tag name used to check out this file.
+@c FIXME: should supply an example (e.g. "if you use
+@c "cvs update -r foo" then Name expands to "foo").  Also
+@c should add Name to testsuite (best way to ensure
+@c that the example is correct!)
+
 @cindex Locker keyword
 @item $@asis{Locker}$
 The login name of the user who locked the revision
