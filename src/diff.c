@@ -35,18 +35,19 @@ static char *user_file_rev;
 #endif
 
 static char *options;
+/* FIXME: arbitrary limit (security hole, if the client passes us
+   data which overflows it).  */
 static char opts[PATH_MAX];
 static int diff_errors;
 static int empty_files = 0;
 
+/* FIXME: should be documenting all the options here.  They don't
+   perfectly match rcsdiff options (for example, we always support
+   --ifdef and --context, but rcsdiff only does if diff does).  */
 static const char *const diff_usage[] =
 {
     "Usage: %s %s [-lN] [rcsdiff-options]\n",
-#ifdef CVS_DIFFDATE
     "    [[-r rev1 | -D date1] [-r rev2 | -D date2]] [files...] \n",
-#else
-    "    [-r rev1 [-r rev2]] [files...] \n",
-#endif
     "\t-l\tLocal directory only, not recursive\n",
     "\t-D d1\tDiff revision for date against working file.\n",
     "\t-D d2\tDiff rev1/date1 against date2.\n",
@@ -54,6 +55,73 @@ static const char *const diff_usage[] =
     "\t-r rev1\tDiff revision for rev1 against working file.\n",
     "\t-r rev2\tDiff rev1/date1 against rev2.\n",
     NULL
+};
+
+/* I copied this array directly out of diff.c in diffutils 2.7, after
+   removing the following entries, none of which seem relevant to use
+   with CVS:
+     --help
+     --version
+     --recursive
+     --unidirectional-new-file
+     --starting-file
+     --exclude
+     --exclude-from
+     --sdiff-merge-assist
+
+   I changed the options which take optional arguments (--context and
+   --unified) to return a number rather than a letter, so that the
+   optional argument could be handled more easily.  I changed the
+   --paginate and --brief options to return a number, since -l and -q
+   mean something else to cvs diff.
+
+   The numbers 129- that appear in the fourth element of some entries
+   tell the big switch in `diff' how to process those options. -- Ian
+
+   The following options, which diff lists as "An alias, no longer
+   recommended" have been removed: --file-label --entire-new-file
+   --ascii --print.  */
+
+static struct option const longopts[] =
+{
+    {"ignore-blank-lines", 0, 0, 'B'},
+    {"context", 2, 0, 143},
+    {"ifdef", 1, 0, 147},
+    {"show-function-line", 1, 0, 'F'},
+    {"speed-large-files", 0, 0, 'H'},
+    {"ignore-matching-lines", 1, 0, 'I'},
+    {"label", 1, 0, 'L'},
+    {"new-file", 0, 0, 'N'},
+    {"initial-tab", 0, 0, 'T'},
+    {"width", 1, 0, 'W'},
+    {"text", 0, 0, 'a'},
+    {"ignore-space-change", 0, 0, 'b'},
+    {"minimal", 0, 0, 'd'},
+    {"ed", 0, 0, 'e'},
+    {"forward-ed", 0, 0, 'f'},
+    {"ignore-case", 0, 0, 'i'},
+    {"paginate", 0, 0, 144},
+    {"rcs", 0, 0, 'n'},
+    {"show-c-function", 0, 0, 'p'},
+    {"brief", 0, 0, 145},
+    {"report-identical-files", 0, 0, 's'},
+    {"expand-tabs", 0, 0, 't'},
+    {"ignore-all-space", 0, 0, 'w'},
+    {"side-by-side", 0, 0, 'y'},
+    {"unified", 2, 0, 146},
+    {"left-column", 0, 0, 129},
+    {"suppress-common-lines", 0, 0, 130},
+    {"old-line-format", 1, 0, 132},
+    {"new-line-format", 1, 0, 133},
+    {"unchanged-line-format", 1, 0, 134},
+    {"line-format", 1, 0, 135},
+    {"old-group-format", 1, 0, 136},
+    {"new-group-format", 1, 0, 137},
+    {"unchanged-group-format", 1, 0, 138},
+    {"changed-group-format", 1, 0, 139},
+    {"horizon-lines", 1, 0, 140},
+    {"binary", 0, 0, 142},
+    {0, 0, 0, 0}
 };
 
 int
@@ -65,6 +133,7 @@ diff (argc, argv)
     int c, err = 0;
     int local = 0;
     int which;
+    int option_index;
 
     if (argc == -1)
 	usage (diff_usage);
@@ -80,16 +149,17 @@ diff (argc, argv)
     opts[0] = '\0';
 #endif
     optind = 1;
-    while ((c = getopt (argc, argv,
-		   "abcdefhilnpqtuw0123456789BHNQRTC:D:F:I:L:V:k:r:")) != -1)
+    while ((c = getopt_long (argc, argv,
+	       "abcdefhilnpqstuwy0123456789BHNQRTC:D:F:I:L:U:V:W:k:r:",
+			     longopts, &option_index)) != -1)
     {
 	switch (c)
 	{
 	    case 'a': case 'b': case 'c': case 'd': case 'e': case 'f':
-	    case 'h': case 'i': case 'n': case 'p': case 't': case 'u':
-	    case 'w': case '0': case '1': case '2': case '3': case '4':
-	    case '5': case '6': case '7': case '8': case '9': case 'B':
-	    case 'H': case 'T': case 'Q':
+	    case 'h': case 'i': case 'n': case 'p': case 's': case 't':
+	    case 'u': case 'w': case 'y': case '0': case '1': case '2':
+	    case '3': case '4': case '5': case '6': case '7': case '8':
+	    case '9': case 'B': case 'H': case 'T': case 'Q':
 		(void) sprintf (tmp, " -%c", (char) c);
 		(void) strcat (opts, tmp);
 		if (c == 'Q')
@@ -99,12 +169,29 @@ diff (argc, argv)
 		    c = 'q';
 		}
 		break;
-	    case 'C': case 'F': case 'I': case 'L': case 'V':
-#ifndef CVS_DIFFDATE
-	    case 'D':
-#endif
-		(void) sprintf (tmp, " -%c%s", (char) c, optarg);
-		(void) strcat (opts, tmp);
+	    case 'C': case 'F': case 'I': case 'L': case 'U': case 'V':
+	    case 'W':
+		(void) sprintf (tmp, " -%c", (char) c);
+		strcat (opts, tmp);
+		strcat (opts, optarg);
+		break;
+	    case 147:
+		/* --ifdef.  */
+		strcat (opts, " -D");
+		strcat (opts, optarg);
+		break;
+	    case 129: case 130: case 131: case 132: case 133: case 134:
+	    case 135: case 136: case 137: case 138: case 139: case 140:
+	    case 141: case 142: case 143: case 144: case 145: case 146:
+		strcat (opts, " --");
+		strcat (opts, longopts[option_index].name);
+		if (longopts[option_index].has_arg == 1
+		    || (longopts[option_index].has_arg == 2
+			&& optarg != NULL))
+		{
+		    strcat (opts, "=");
+		    strcat (opts, optarg);
+		}
 		break;
 	    case 'R':
 		local = 0;
@@ -129,7 +216,6 @@ diff (argc, argv)
 		else
 		    diff_rev1 = optarg;
 		break;
-#ifdef CVS_DIFFDATE
 	    case 'D':
 		if (diff_rev2 != NULL || diff_date2 != NULL)
 		    error (1, 0,
@@ -139,7 +225,6 @@ diff (argc, argv)
 		else
 		    diff_date1 = Make_Date (optarg);
 		break;
-#endif
 	    case 'N':
 		empty_files = 1;
 		break;

@@ -3911,27 +3911,35 @@ send_dirent_proc (dir, repository, update_dir)
 
 /*
  * Send each option in a string to the server, one by one.
- * This assumes that the options are single characters.  For
- * more complex parsing, do it yourself.
+ * This assumes that the options are separated by spaces, for example
+ * STRING might be "--foo -C5 -y".
  */
 
 void
 send_option_string (string)
     char *string;
 {
+    char *copy;
     char *p;
-    char it[3];
 
-    for (p = string; p[0]; p++) {
-	if (p[0] == ' ')
-	    continue;
-	if (p[0] == '-')
-	    continue;
-	it[0] = '-';
-	it[1] = p[0];
-	it[2] = '\0';
-	send_arg (it);
+    copy = xstrdup (string);
+    p = copy;
+    while (1)
+    {
+        char *s;
+	char l;
+
+	for (s = p; *s != ' ' && *s != '\0'; s++)
+	    ;
+	l = *s;
+	*s = '\0';
+	if (s != p)
+	    send_arg (p);
+	if (l == '\0')
+	    break;
+	p = s + 1;
     }
+    free (copy);
 }
 
 
