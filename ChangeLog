@@ -1,7 +1,12 @@
+2005-03-10  Mark D. Baushke  <mdb@cvshome.org>
+
+	* configure: Regenerated.
+
 2005-03-09 Derek Price <derek@ximbiot.com>
 
 	* configure.in: Don't generate windows-NT/mkconfig or
 	windows-NT/fix-msvc-mak.
+	* configure: Regenerated.
 
 2005-03-07  Conrad T. Pino  <Conrad@Pino.com>
 

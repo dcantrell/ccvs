@@ -1,3 +1,7 @@
+2005-03-10  Mark D. Baushke  <mdb@cvshome.org>
+
+	* zlib.c: Include "pagealign_alloc.h".
+
 2005-03-09 Derek Price <derek@ximbiot.com>
 
 	* add.c (add, add_directory), buffer.c (allocate_buffer_datas),

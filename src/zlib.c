@@ -18,6 +18,7 @@
 
 #include "cvs.h"
 #include "buffer.h"
+#include "pagealign_alloc.h"
 
 #if defined (SERVER_SUPPORT) || defined (CLIENT_SUPPORT)
 
