@@ -156,12 +156,11 @@ AC_HEADER_DIRENT
 AC_HEADER_STDC
 AC_HEADER_SYS_WAIT
 AC_CHECK_HEADERS(\
-	errno.h \
 	direct.h \
+	errno.h \
 	fcntl.h \
 	fnmatch.h \
 	io.h \
-	limits.h \
 	memory.h \
 	ndbm.h \
 	string.h \
@@ -175,7 +174,6 @@ AC_CHECK_HEADERS(\
 	sys/timeb.h \
 	unistd.h \
 	utime.h\
-	varargs.h \
 )
 AC_HEADER_STAT
 AC_HEADER_TIME

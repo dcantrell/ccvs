@@ -68,7 +68,7 @@ $GNULIB/m4/ssize_t.m4				m4		no NI
 # $GNULIB/modules/gettext
 $GNULIB/lib/gettext.h				lib		no NI
 $GNULIB/m4/codeset.m4				m4		no NI
-$GNULIB/m4/gettext.m4				m4		no NI
+$GNULIB/m4/gettext.m4				m4		yes NI
 $GNULIB/m4/glibc21.m4				m4		no NI
 $GNULIB/m4/iconv.m4				m4		no NI
 $GNULIB/m4/intdiv0.m4				m4		no NI

@@ -1,5 +1,15 @@
 2003-07-22  Derek Price  <derek@ximbiot.com>
 
+	* configure.in: We can assume <limits.h> and <stdarg.h>, so we no
+	longer need to check for <limits.h> or <varargs>.
+	* srclist.txt (m4/gettext): Note local modifications.
+
+	* aclocal.m4: Regenerate.
+	* config.h.in: Ditto.
+	* configure: Ditto.
+
+2003-07-22  Derek Price  <derek@ximbiot.com>
+
 	* configure.in: Add call to gl_FUNC_STRERROR,
 	s/jm_FUNC_MEMMOVE/gl_FUNC_MEMMOVE/, and alphebetize list.
 	* srclist.txt: Add GNULIB strerror module.

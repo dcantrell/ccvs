@@ -245,9 +245,6 @@
 /* Define to 1 if you have the `nsl' library (-lnsl). */
 #undef HAVE_LIBNSL
 
-/* Define to 1 if you have the <limits.h> header file. */
-#undef HAVE_LIMITS_H
-
 /* Define to 1 if you have the `login' function. */
 #undef HAVE_LOGIN
 
@@ -455,9 +452,6 @@
 
 /* Define to 1 if you have the `valloc' function. */
 #undef HAVE_VALLOC
-
-/* Define to 1 if you have the <varargs.h> header file. */
-#undef HAVE_VARARGS_H
 
 /* Define to 1 if you have the `vfork' function. */
 #undef HAVE_VFORK
