@@ -55,6 +55,30 @@ Both RCS 5.7 and current versions of CVS handle the $Log keyword in a
 different way if the log message starts with "checked in with -k by ".
 I don't think this behavior is documented anywhere.
 
+One common concern about the RCS file format is the fact that to get
+the head of a branch, one must apply deltas from the head of the trunk
+to the branchpoint, and then from the branchpoint to the head of the
+branch.  While more detailed analyses might be worth doing, we will
+note:
+
+    * The performance bottleneck for CVS generally is figuring out which
+    files to operate on and that sort of thing, not applying deltas.
+
+    * Here is one quick test (probably not a very good test; a better test
+    would use a normally sized file (say 50-200K) instead of a small one):
+
+	I just did a quick test with a small file (on a Sun Ultra 1/170E
+	running Solaris 5.5.1), with 1000 revisions on the main branch and
+	1000 revisions on branch that forked at the root (i.e., RCS revisions
+	1.1, 1.2, ..., 1.1000, and branch revisions 1.1.1.1, 1.1.1.2, ...,
+	1.1.1.1000).  It took about 0.15 seconds real time to check in the
+	first revision, and about 0.6 seconds to check in and 0.3 seconds to
+	retrieve revision 1.1.1.1000 (the worst case).
+
+    * Any attempt to "fix" this problem should be careful not to interfere
+    with other features, such as lightweight creation of branches
+    (particularly using CVS magic branches).
+
 Diff follows:
 
 (Note that in the following diff the old value for the Id keyword was:
