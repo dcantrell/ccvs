@@ -1,5 +1,8 @@
 Tue Feb 20 14:07:50 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* sanity.sh: Merge test rtags into test basic2.  They never were
+	capable of running separately of each other.
+
 	* sanity.sh (deep): New test, to test ability to operate in deeply
 	nested directories (more quickly than basic2 test did).
 	(basic2,rtags): Remove directories dir3 and dir4.  Remove file8,
