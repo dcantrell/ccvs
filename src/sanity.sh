@@ -12832,7 +12832,7 @@ if test "x\$CVS_PID" != "x"; then
     # if all hosts had a 'ps' command that supported the -p switch,
     # but Solaris 7 /usr/ucb/ps does not and that may be the one we use.
     # It is because this is so messy that the CVS_PID feature exists.
-    ppid=\`ps -l |\\
+    ppid=\`ps -el |\\
     awk '/PPID/ { for (i=1; i <= NF; i++) {
                     if (\$i == "PPID") ppidx = i; 
                     if (\$i == "PID") pidx = i;
@@ -12843,15 +12843,15 @@ if test "x\$CVS_PID" != "x"; then
     grep "^\$\$ " |\\
     awk '{ print \$NF }'\`
   fi
-  if test \$ppid = \${CVS_PID}; then
+  if test "x\$ppid" = "x\${CVS_PID}"; then
     # The PID looks okay to me
     exit 0
   else
     echo The environment variable CVS_PID is not properly set.
-    echo It should have been set to \$ppid but instead was \$CVS_PID
+    echo It should have been set to \'\$ppid\' but instead was \'\$CVS_PID\'
     echo It is possible that this test is broken for your host.
-    echo Here is the output of the ps -l command:
-    ps -l
+    echo Here is the output of the ps -el command:
+    ps -el
     exit 1
   fi
 else
