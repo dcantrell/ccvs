@@ -1,5 +1,9 @@
 Tue Oct  8 22:35:34 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* sanity.sh (log2): Re-add these tests; they were deleted for 1.9
+	(because they were thought to be destabilizing and/or due to
+	confusion/accident), but they can be put back now.
+
 	* sanity.sh (death2): In tests death2-diff-{2,4,6,8,10}, allow "-"
 	or "%" in temp file names.  The system (tmpnam or whatever)
 	generates these names so they vary from system to system.
