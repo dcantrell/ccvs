@@ -11386,6 +11386,9 @@ date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
 	  dotest log2-7 "${testcvs} admin -t${TESTDIR}/descrip file1" \
 "RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
 done"
+	  dotest_fail log2-7a "${testcvs} admin -t${TESTDIR}/nonexist file1" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
+${PROG} \[[a-z]* aborted\]: can't stat ${TESTDIR}/nonexist: No such file or directory"
 	  dotest log2-8 "${testcvs} log -N file1" "
 RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
 Working file: file1
@@ -11407,6 +11410,11 @@ date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
 	  # Reading the description from stdin is broken for remote.
 	  # See comments in cvs.texinfo for a few more notes on this.
 	  if test "x$remote" = xno; then
+
+	    # TODO: `cvs admin -t "my message" file1' is a request to
+	    # read the message from stdin and to operate on two files.
+	    # Should test that there is an error because "my message"
+	    # doesn't exist.
 
 	    if echo change from stdin | ${testcvs} admin -t -q file1
 	    then
