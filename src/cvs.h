@@ -182,10 +182,6 @@ extern int errno;
 #define CVSDOTIGNORE	".cvsignore"
 #define CVSDOTWRAPPER   ".cvswrappers"
 
-/* Define to enable alternate death support (which doesn't require any
-   help from RCS).  */
-/* #define CVSDEA		"CVS.dea" */
-
 /* Define to enable alternate death support (which uses the RCS state).  */
 #define DEATH_STATE 1
 

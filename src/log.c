@@ -199,52 +199,6 @@ log_fileproc (file, update_dir, repository, entries, srcfiles)
 	return (1);
     }
 
-#ifdef CVSDEA
-    /* Print information on dead revisions.  Printing them at the
-       start rather than with each revision is cheesy, but no more so
-       than printing the symbolic tags at the start.  */
-    {
-	char *deafilename;
-	FILE *deafile;
-	int ch;
-	deafilename = xmalloc (strlen (repository) + sizeof (CVSDEA) +
-			       strlen (file) + 80);
-	sprintf (deafilename, "%s/%s/%s", repository, CVSDEA, file);
-	deafile = fopen (deafilename, "r");
-	if (deafile == NULL)
-	{
-	    if (errno != ENOENT)
-		error (0, errno, "cannot read %s", deafilename);
-	}
-	else
-	{
-	    int printed = 0;
-	    while (1)
-	    {
-		ch = getc (deafile);
-		if (ferror (deafile))
-		    error (1, errno, "cannot read %s", deafilename);
-		if (feof (deafile))
-		    break;
-		if (!printed)
-		{
-		    printed = 1;
-		    printf ("Dead revisions: ");
-		}
-		if (ch == '\012')
-		    putc (' ', stdout);
-		else
-		    putc (ch, stdout);
-	    }
-	    if (printed)
-		putc ('\n', stdout);
-	    if (fclose (deafile) == EOF)
-		error (0, errno, "cannot close %s", deafilename);
-	}
-	free (deafilename);
-    }
-#endif /* CVSDEA */
-
     run_setup ("%s%s %s", Rcsbin, RCS_RLOG, options);
     run_arg (rcsfile->path);
 
