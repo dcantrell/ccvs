@@ -1,5 +1,11 @@
 Wed Dec 20 00:27:36 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
+        * login.c (login): prefix scrambled password with 'A', so we know
+        which version of scrambling was used.  This may be useful in the
+        future.
+        (get_cvs_password): skip past the leading 'A'.
+        Scramble $CVS_PASSWORD before returning it.
+
         * scramble.c: made this work.
 
 Tue Dec 19 17:45:11 1995  Karl Fogel  <kfogel@floss.cyclic.com>
