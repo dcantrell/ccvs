@@ -1,3 +1,10 @@
+Sat Aug 30 03:17:36 1997  Noel Cragg  <noel@harvey.cyclic.com>
+
+	* TODO: Add a header so emacs chooses the correct editing mode.
+  	Made several entries more verbose (expanded some of the less
+ 	well-known acronyms and/or added pointers to further
+ 	documentation).
+
 Wed Aug 20 09:51:52 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* INSTALL: Remove "SparcClassing" typo that has been there for
