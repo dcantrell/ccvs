@@ -1,5 +1,8 @@
 Changes since 1.6:
 
+* RCS keyword "Name" supported for "cvs update -r <tag>" and "cvs
+checkout -r <tag>".
+
 * If there is a group whose name matches a compiled in value which
 defaults to "cvsadmin", only members of that group can use "cvs
 admin".

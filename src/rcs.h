@@ -78,7 +78,7 @@ RCSNode *RCS_parse PROTO((const char *file, const char *repos));
 RCSNode *RCS_parsercsfile PROTO((char *rcsfile));
 char *RCS_check_kflag PROTO((const char *arg));
 char *RCS_getdate PROTO((RCSNode * rcs, char *date, int force_tag_match));
-char *RCS_gettag PROTO((RCSNode * rcs, char *tag, int force_tag_match));
+char *RCS_gettag PROTO((RCSNode * rcs, char *symtag, int force_tag_match));
 char *RCS_getversion PROTO((RCSNode * rcs, char *tag, char *date,
 		      int force_tag_match));
 char *RCS_magicrev PROTO((RCSNode *rcs, char *rev));
