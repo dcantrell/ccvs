@@ -2300,7 +2300,7 @@ join_file (struct file_info *finfo, Vers_TS *vers)
      * file2. Note: If rev1 did not exist in the file (rev1 == NULL),
      * be silent.
      */
-    if (vers->ts_user
+    if (vers->vn_user != NULL && vers->ts_user != NULL
         && strcmp (vers->ts_user, vers->ts_rcs) == 0
         && strcmp (rev2, vers->vn_user) == 0)
     {
