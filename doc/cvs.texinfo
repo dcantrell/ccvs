@@ -1524,7 +1524,9 @@ needs to pass through additional programs, so it may be
 slower.  So if you have kerberos installed you can
 connect via a direct @sc{tcp} connection,
 authenticating with kerberos (note that the data
-transmitted is @emph{not} encrypted).
+transmitted is @emph{not} encrypted by default; you
+must use the @code{-x} global option to request
+encryption).
 
 To do this, @sc{cvs} needs to be compiled with kerberos
 support; when configuring @sc{cvs} it tries to detect
@@ -4397,6 +4399,12 @@ Make new working files read-write.  Overrides the
 setting of the @code{$CVSREAD} environment variable.
 Files are created read-write by default, unless @code{$CVSREAD} is
 set or @samp{-r} is given.
+
+@item -x
+Encrypt all communication between the client and the
+server.  Only has an effect on the @sc{cvs} client.  As
+of this writing, this is only implemented when using a
+Kerberos connection (@pxref{Kerberos authenticated}).
 
 @item -z @var{gzip-level}
 Set the compression level.  Only has an effect on the

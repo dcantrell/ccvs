@@ -146,9 +146,6 @@ the latest nightly re-sync, then it would read what it needs to from the
 master).
 
 @item
-Provide encryption using kerberos.
-
-@item
 The current procedure for @code{cvs update} is highly sub-optimal if
 there are many modified files.  One possible alternative would be to
 have the client send a first request without the contents of every
@@ -496,6 +493,17 @@ from the server will also be compressed.  The @var{level} argument
 suggests to the server the level of compression that it should apply; it
 should be an integer between 1 and 9, inclusive, where a higher number
 indicates more compression.
+
+@item Kerberos-encrypt \n
+Response expected: no.
+Use Kerberos encryption to encrypt all further communication between the
+client and the server.  This will only work if the connection was made
+over Kerberos in the first place.  If both the @code{Gzip-stream} and
+the @code{Kerberos-encrypt} requests are used, the
+@code{Kerberos-request} request should be used first.  This will make
+the client and server encrypt the compressed data, as opposed to
+compressing the encrypted data.  Encrypted data is generally
+incompressible.
 
 @item Set @var{variable}=@var{value} \n
 Response expected: no.

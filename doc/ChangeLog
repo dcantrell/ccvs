@@ -1,3 +1,12 @@
+Wed Jul 24 18:53:13 1996  Ian Lance Taylor  <ian@cygnus.com>
+
+	* cvs.texinfo (Kerberos authenticated): Change the note that the
+	Kerberos connection is not encrypted.
+	(Global options): Add documentation for -x.
+	* cvsclient.texi (Protocol Notes): Remove enhancement note about
+	Kerberos encryption.
+	(Requests): Add documentation for Kerberos-encrypt request.
+
 Thu Jul 18 18:27:40 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (Creating a repository): Mention need to be able to
