@@ -953,7 +953,17 @@ add_rcs_file (message, rcs, user, add_vhead, key_opt,
 
     tocvsPath = wrap_tocvs_process_file (user);
     userfile = (tocvsPath == NULL ? user : tocvsPath);
-    fpuser = CVS_FOPEN (userfile, "r");
+
+    /* Opening in text mode is probably never the right thing for the
+       server (because the protocol encodes text files in a fashion
+       which does not depend on what the client or server OS is, as
+       documented in cvsclient.texi), but as long as the server just
+       runs on unix it is a moot point.  */
+    fpuser = CVS_FOPEN (userfile,
+			((local_opt != NULL && strcmp (local_opt, "b") == 0)
+			 ? "rb"
+			 : "r")
+			);
     if (fpuser == NULL)
     {
 	/* not fatal, continue import */

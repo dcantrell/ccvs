@@ -1,3 +1,10 @@
+Sat Aug 16 18:09:05 1997   Martin Sjoelin <martin.sjoelin@ubs.ch>
+	and Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* import.c (add_rcs_file): Before opening the input file
+	when importing, if options is binary, open the file in
+	binary mode.
+
 1997-08-16  enami tsugutomo  <enami@ba2.so-net.or.jp>
 
 	* sanity.sh (mcopy): Unset CVSWRAPPERS last of all.
