@@ -5,6 +5,9 @@
 	(addnode_at_front): Simply return insert_before.
 	* hash.h (insert_before): Add prototype.
 
+	* server.c (dirswitch): Compute `strlen(dir)' once and save it,
+	rather than computing it four times.
+
 Sun Nov 30 18:03:02 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* admin.c: Fix comment (no longer a front-end to "rcs").
