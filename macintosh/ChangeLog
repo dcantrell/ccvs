@@ -1,3 +1,7 @@
+Thu Feb  1 19:50:02 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* options.h: Remove RM; no longer used.
+
 Fri Jan 12 10:36:48 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* Makefile.in (dist-dir, DISTFILES): Makefile is not in srcdir.

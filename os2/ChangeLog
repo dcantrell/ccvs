@@ -1,5 +1,7 @@
 Thu Feb  1 15:07:13 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* options.h: Remove RM; no longer used.
+
 	* filesubr.c: Remove rcsid.
 
 Sun Jan 28 12:31:03 1996  Jim Kingdon  (kingdon@beezley)
