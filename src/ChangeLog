@@ -1,3 +1,10 @@
+Thu Jan 22 10:05:55 1998  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* log.c (log_fileproc): Look for first character of version
+	'0' AND second character '\0', rather than OR.  I didn't try to
+	come up with a test case but this looks like a simple thinko
+	(albeit one which would show up in obscure cases if at all).
+
 Tue Jan 20 19:37:53 1998  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* client.c (send_dirent_proc): Don't send nonexistent directories

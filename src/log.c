@@ -508,7 +508,7 @@ log_fileproc (callerdat, finfo)
 	    Entnode *e;
 	    
 	    e = (Entnode *) p->data;
-	    if (e->version[0] == '0' || e->version[1] == '\0')
+	    if (e->version[0] == '0' && e->version[1] == '\0')
 	    {
 		if (!really_quiet)
 		    error (0, 0, "%s has been added, but not committed",
