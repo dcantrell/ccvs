@@ -26196,6 +26196,14 @@ ${TESTDIR}/crerepos/dir1
 editors
 EOF
 
+	    # Test that the global `-l' option is ignored nonfatally.
+	    dotest server-16 "${testcvs} server" \
+"E cvs server: WARNING: global \`-l' option ignored\.
+ok" <<EOF
+Global_option -l
+noop
+EOF
+
 	    if $keep; then
 	      echo Keeping ${TESTDIR} and exiting due to --keep
 	      exit 0
