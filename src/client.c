@@ -919,6 +919,11 @@ protocol error: compressed files not supported for that operation");
 }
 
 /*
+ * The time stamp of the last file we registered.
+ */
+static time_t last_register_time;
+
+/*
  * The Checksum response gives the checksum for the file transferred
  * over by the next Updated, Merged or Patch response.  We just store
  * it here, and then check it in update_entries.
@@ -1409,6 +1414,8 @@ update_entries (data_arg, ent_list, short_pathname, filename)
     {
 	char *local_timestamp;
 	char *file_timestamp;
+
+	(void) time (&last_register_time);
 
 	local_timestamp = data->timestamp;
 	if (local_timestamp == NULL || ts[0] == '+')
@@ -2637,6 +2644,16 @@ get_responses_and_close ()
 #endif /* ! RSH_NOT_TRANSPARENT */
 
     server_started = 0;
+
+    /* see if we need to sleep before returning */
+    if (last_register_time)
+    {
+	time_t now;
+
+	(void) time (&now);
+	if (now == last_register_time)
+	    sleep (1);			/* to avoid time-stamp races */
+    }
 
     return errs;
 }
