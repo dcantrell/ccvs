@@ -86,7 +86,6 @@ Name_Repository (dir, update_dir)
 
 	error (1, save_errno, "cannot open %s", tmp);
     }
-    free (tmp);
 
     if (getline (&repos, &repos_allocated, fpin) < 0)
     {
@@ -94,7 +93,10 @@ Name_Repository (dir, update_dir)
 	error (0, 0, "in directory %s:", xupdate_dir);
 	error (1, errno, "cannot read %s", CVSADM_REP);
     }
-    (void) fclose (fpin);
+    if (fclose (fpin) < 0)
+	error (0, errno, "cannot close %s", tmp);
+    free (tmp);
+
     if ((cp = strrchr (repos, '\n')) != NULL)
 	*cp = '\0';			/* strip the newline */
 
