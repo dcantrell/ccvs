@@ -631,10 +631,10 @@ int is_valid_client_path (const char *pathname)
  * the directory portion of SHORT_PATHNAME.  */
 
 static void
-call_in_directory( char *pathname,
-                   void (*func) ( char *_data, List *_ent_list,
-                                  char *_short_pathname, char *_filename ),
-                   char *data )
+call_in_directory (const char *pathname,
+                   void (*func) (char *_data, List *_ent_list,
+                                 char *_short_pathname, char *_filename),
+                   char *data)
 {
     /* This variable holds the result of Entries_Open. */
     List *last_entries = NULL;
@@ -1812,8 +1812,10 @@ update_entries( char *data_arg, List *ent_list, char *short_pathname,
     free (entries_line);
 }
 
+
+
 static void
-handle_checked_in( char *args, int len )
+handle_checked_in (char *args, int len)
 {
     struct update_entries_data dat;
     dat.contents = UPDATE_ENTRIES_CHECKIN;
@@ -1821,6 +1823,8 @@ handle_checked_in( char *args, int len )
     dat.timestamp = NULL;
     call_in_directory (args, update_entries, (char *)&dat);
 }
+
+
 
 static void
 handle_new_entry( char *args, int len )
@@ -2265,7 +2269,13 @@ send_repository (const char *dir, const char *repos, const char *update_dir)
 	}
     }
     send_to_server ("\012", 1);
-    send_to_server (repos, 0);
+    if (supported_request ("Relative-directory"))
+    {
+	const char *short_repos = Short_Repository (repos);
+	send_to_server (short_repos, 0);
+    }
+    else
+	send_to_server (repos, 0);
     send_to_server ("\012", 1);
 
     if (supported_request ("Static-directory"))
@@ -2904,11 +2914,13 @@ read_from_server( char *buf, size_t len )
     }
 }
 
+
+
 /*
  * Get some server responses and process them.  Returns nonzero for
  * error, 0 for success.  */
 int
-get_server_responses( void )
+get_server_responses (void)
 {
     struct response *rs;
     do
@@ -3044,7 +3056,7 @@ supported_request( char *name )
     for (rq = requests; rq->name; rq++)
 	if (!strcmp (rq->name, name))
 	    return (rq->flags & RQ_SUPPORTED) != 0;
-    error (1, 0, "internal error: testing support for unknown option?");
+    error (1, 0, "internal error: testing support for unknown request?");
     /* NOTREACHED */
     return 0;
 }

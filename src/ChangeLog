@@ -1,3 +1,12 @@
+2004-06-29  Derek R. Price  <derek@ximbiot.com>
+
+	* client.c: Gratuitous reformatting.
+	(send_repository): Send relative Directory when server reports it is
+	able to handle it.
+	* server.c (serve_directory): Handle relative directories.
+	(output_dir): Send relative directories.
+	(requests): Add `Relative-directory' request.
+
 2004-06-26  Mark D. Baushke  <mdb@cvshome.org>
 
 	* import.c (import_usage): Add new -X flag.
