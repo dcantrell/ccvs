@@ -444,9 +444,6 @@ static struct buffer *to_server;
 /* Buffer used to read from the server.  */
 static struct buffer *from_server;
 
-/* Process ID of rsh subprocess.  */
-static int rsh_pid = -1;
-
 
 /* We want to be able to log data sent between us and the server.  We
    do it using log buffers.  Each log buffer has another buffer which
@@ -3751,6 +3748,8 @@ get_cvs_port_number (root)
 		    method_names[root->method]);
 	    break;
     }
+    /* NOTREACHED */
+    return -1;
 }
 
 
@@ -4354,7 +4353,7 @@ send_variable_proc (node, closure)
 void
 start_server ()
 {
-    int tofd, fromfd, rootless;
+    int rootless;
     char *log = getenv ("CVS_CLIENT_LOG");
 
     /* Clear our static variables for this invocation. */
@@ -4404,10 +4403,13 @@ start_server ()
 
 	case server_method:
 #if defined(START_SERVER)
+	    {
+	    int tofd, fromfd;
 	    START_SERVER (&tofd, &fromfd, getcaller (),
 			  current_parsed_root->username, current_parsed_root->hostname,
 			  current_parsed_root->directory);
 	    make_bufs_from_fds (tofd, fromfd, 0, &to_server, &from_server);
+	    }
 #else
 	    /* FIXME: It should be possible to implement this portably,
 	       like pserver, which would get rid of the duplicated code
