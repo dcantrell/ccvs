@@ -1,3 +1,8 @@
+2004-11-08 Derek Price <derek@ximbiot.com>
+
+	* sanity.sh (version_test): Echo good version data to the log, even
+	when it went to stderr.  Don't echo bad version data.
+
 2004-11-08  Mark D. Baushke  <mdb@cvshome.org>
 
 	* sanity.sh (tool_find): Rewrite. API changed to allow a list of

@@ -712,13 +712,15 @@ is_bad_tool ()
 version_test ()
 {
   vercmd=$1
-  if RES=`$vercmd --version </dev/null 2>/dev/null`; then
+  verbad=:
+  if RES=`$vercmd --version </dev/null 2>&1`; then
     if test "X$RES" != "X--version" && test "X$RES" != "X" ; then
       echo "$RES"
-    else
-      echo "$RES"
-      echo "The command \`$vercmd' does not support the --version option."
+      verbad=false
     fi
+  fi
+  if $verbad; then
+    echo "The command \`$vercmd' does not support the --version option."
   fi
   # It does not really matter that --version is not supported
   return 0
