@@ -1,5 +1,7 @@
 2000-07-26  Larry Jones  <larry.jones@sdrc.com>
 
+	* sanity.sh (info): Try to avoid out-of-order messages.
+
 	* sanity.sh (info): Fix problems when running twice in a row.
 
 2000-07-17  Larry Jones  <larry.jones@sdrc.com>
