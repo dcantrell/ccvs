@@ -1,3 +1,9 @@
+2001-05-21  Derek Price  <dprice@collab.net>
+
+	* cvs.texinfo (Connecting via rsh): Use @samp{} instead of @file{}
+	where it seemed appropriate.
+	(Patch from Alexey Mahotkin <alexm@hsys.msk.ru>).
+
 2001-05-18  Larry Jones  <larry.jones@sdrc.com>
 
 	* cvs.texinfo (Password authentication server): Add xinetd info.
