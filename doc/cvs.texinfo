@@ -10394,6 +10394,19 @@ All occurances of the name @samp{ALL} appearing as a
 regular expression are used in addition to the first
 matching regular expression or @samp{DEFAULT}.
 
+@c FIXME: should be offering advice, somewhere around
+@c here, about where to put the template file.  The
+@c verifymsg example uses /usr/cvssupport but doesn't
+@c say anything about what that directory is for or
+@c whether it is hardwired into CVS or who creates
+@c it or anything.  In particular we should say
+@c how to version control the template file.  A
+@c probably better answer than the /usr/cvsssupport
+@c stuff is to use checkoutlist.  FIXME: it doesn't
+@c seem like checkoutlist is documented at all!
+@c Also I am starting to see a connection between
+@c this and the Keeping a checked out copy node.
+@c Probably want to say something about that.
 The log message template will be used as a default log
 message.  If you specify a log message with @samp{cvs
 commit -m @var{message}} or @samp{cvs commit -f
