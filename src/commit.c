@@ -228,7 +228,7 @@ find_fileproc (void *callerdat, struct file_info *finfo)
 	if (vers->ts_user == NULL)
 	    error (0, 0, "nothing known about `%s'", finfo->fullname);
 	else
-	    error (0, 0, "use `%s add' to create an entry for %s",
+	    error (0, 0, "use `%s add' to create an entry for `%s'",
 		   program_name, finfo->fullname);
 	freevers_ts (&vers);
 	return 1;
