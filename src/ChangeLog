@@ -1,5 +1,8 @@
 Tue Nov  4 12:19:28 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* lock.c: Update comment to refer to add_rcs_file rather than "rcs
+	-i".
+
 	* rcs.h (struct rcsnode): Add comments for all fields.
 	* rcs.c (RCS_delete_revs): Refuse to delete revisions which have
 	symbolic names.  Fix fencepost bug which caused us to sometimes
