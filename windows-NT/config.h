@@ -447,6 +447,9 @@
 /* Define to 1 if you have the `rename' function. */
 #undef HAVE_RENAME
 
+/* Define to 1 if you have the `rpmatch' function. */
+#undef HAVE_RPMATCH
+
 /* Define to 1 if you have run the test for working tzset. */
 #define HAVE_RUN_TZSET_TEST 1
 
