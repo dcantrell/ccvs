@@ -1,3 +1,12 @@
+1998-12-23  Larry Jones  <larry.jones@sdrc.com>
+
+	* sanity.sh (rcs3, dotest_fail): The assertion failure message varies
+	wildly between different systems and the resulting abort call can
+	even result in spurrious output.  Fix the regexp to accept nearly
+	anything containing some kind of assertion failure and ensure that
+	any spurrious output ends up in the output file instead of on the
+	terminal.
+
 1998-12-23  Jim Kingdon  <http://www.cyclic.com>
 
 	* admin.c, checkout.c, commit.c, cvsrc.c, expand_path.c,
