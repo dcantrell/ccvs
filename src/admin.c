@@ -477,6 +477,9 @@ admin_fileproc (callerdat, finfo)
 
     rcs = vers->srcfile;
     if (rcs->flags & PARTIAL)
+	/* FIXME: why is this calling RCS_fully_parse rather than
+	   RCS_reparsercsfile?  Do we look at the ";add" and ";delete"
+	   fields anywhere?  If so, where?  */
 	RCS_fully_parse (rcs);
 
     status = 0;

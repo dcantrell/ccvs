@@ -253,10 +253,20 @@ RCS_parsercsfile_i (fp, rcsfile)
     rdata->path = xstrdup (rcsfile);
 
     /* Process HEAD and BRANCH keywords from the RCS header.  
-     *
-     * Most cvs operatations on the main branch don't need any more
-     * information.  Those that do call XXX to completely parse the
-     * RCS file.  */
+
+       Most cvs operations on the main branch don't need any more
+       information.  Those that do call RCS_reparsercsfile to parse
+       the rest of the header and the deltas.
+
+       People often wonder whether this is inefficient, to open the
+       file once here and once in RCS_reparsercsfile.  Well, it might
+       help a little bit if we kept the file open (I haven't tried
+       timing this myself), but basically the common case, which we
+       want to optimize, is the one in which we call
+       RCS_parsercsfile_i and not RCS_reparsercsfile (for example,
+       "cvs update" on a lot of files most of which are unmodified).
+       So making the case in which we call RCS_reparsercsfile fast is
+       not as important.  */
 
     if (getrcskey (fp, &key, &value, NULL) == -1 || key == NULL)
 	goto l_error;
@@ -6222,6 +6232,10 @@ rcs_lockfilename (rcsfile)
 
     return lockfile;
 }
+
+/* Rewrite an RCS file.  The basic idea here is that the caller should
+   first call RCS_reparsercsfile, then munge the data structures as
+   desired (via RCS_delete_revs, RCS_checkin, &c), then call RCS_rewrite.  */
 
 void
 RCS_rewrite (rcs, newdtext, insertpt)
