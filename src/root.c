@@ -642,6 +642,7 @@ normalize_cvsroot (default_user, default_port)
 	    CVSroot_username ? CVSroot_username : default_user,
 	    hostname, port_s, CVSroot_directory);
 
+    free (hostname);
     return cvsroot_canonical;
 }
 #endif AUTH_CLIENT_SUPPORT
