@@ -1,4 +1,8 @@
 Wed Jun 05 10:07:29 1996  Mike Ladwig  <mike@twinpeaks.prc.com>
+
+	* import.c (add_rcs_file): make buf char[] not unsigned char[]
+
+Wed Jun 05 10:07:29 1996  Mike Ladwig  <mike@twinpeaks.prc.com>
 			  and Jim Kingdon  <kingdon@cyclic.com>
 
 	* main.c (main): Add CLEANUP_SOCKET_SUBSYSTEM hook at end.  Revise
