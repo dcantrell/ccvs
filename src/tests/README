@@ -1,17 +1,34 @@
-This test suite currently requires the development version of Autoconf to be
-regenerated.  The distributed Bourne shell script should still be useful to
-those who simply want to test their system and do not need to alter the test
-suite.
+This is the short summary of what needs to be done to use this test suite.
+More detailed instructions are contained in the `TESTS' file in the topplevel
+of this source distribution.
+
+
+
+REGENERATING THE TEST SUITE
+***************************
+
+This package must be configured with the `--enable-maintainer-mode' option to
+allow rebuilding of the test suite.  Please see the `INSTALL' file at the
+toplevel of this source distribution and the `TESTS' file in the same directory
+for more.
+
+The distributed Bourne shell script should still be useful to those who simply
+want to test their system and do not need to alter the test suite.
+
+
+
+RUNNING THE TEST SUITE
+**********************
 
 To run from this directory:
 
 	$ ./suite AUTOTEST_PATH=src
 
-To run from any directory with a working cvs or to test the first executable
+To run from any directory with a working CVS or to test the first executable
 named `cvs' in $PATH:
 
 	$ suite
 
-For more info:
+For more info on running tests:
 
 	$ suite --help

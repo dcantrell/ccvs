@@ -1,3 +1,9 @@
+2003-11-17  Derek R. Price  <derek@ximbiot.com>
+
+	* README: Note rebuilding requirements and point to the TESTS and
+	INSTALL files.  Don't mention version numbers so this only needs to be
+	stored in one or two locations.
+
 2003-11-12  Derek R. Price  <derek@ximbiot.com>
 
 	* version.at: Use a more complicated sed script for --version which
