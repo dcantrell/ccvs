@@ -881,7 +881,12 @@ time as an opaque string rather than interpreting it).
 @var{clienthost} is the name of the host on which the edit or unedit
 took place, and @var{working-dir} is the pathname of the working
 directory where the edit or unedit took place.  @var{watches} are the
-temporary watches to set.  If @var{watches} is followed by \t then the
+temporary watches, zero or more of the following characters in the
+following order: @samp{E} for edit, @samp{U} for unedit, @samp{C} for
+commit, and all other letters should be silently ignored for future
+expansion.  If @var{notification-type} is @samp{E} the temporary watches
+are set; if it is @samp{U} they are cleared.
+If @var{watches} is followed by \t then the
 \t and the rest of the line should be ignored, for future expansion.
 
 Note that a client may be capable of performing an @code{edit} or
