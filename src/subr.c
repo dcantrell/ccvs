@@ -128,7 +128,6 @@ allocate_and_strcat (str, lenp, src)
     size_t *lenp;
     const char *src;
 {
-    size_t new_size;
 
     expand_string (str, lenp, strlen (*str) + strlen (src) + 1);
     strcat (*str, src);
@@ -848,34 +847,35 @@ sleep_past (desttime)
 #ifdef HAVE_GETTIMEOFDAY
 	struct timeval tv;
 	gettimeofday (&tv, NULL);
-	if (tv.tv_sec <= desttime)
-	{
-	    s = (desttime - tv.tv_sec) - 1;
+	if (tv.tv_sec > desttime)
+	    break;
+	s = desttime - tv.tv_sec;
+	if (tv.tv_usec > 0)
 	    us = 1000000 - tv.tv_usec;
-	}
 	else
 	{
-	    s = 0;
+	    s++;
 	    us = 0;
 	}
 #else
 	/* default to 20 ms increments */
-	s = (desttime - t) - 1;
+	s = desttime - t;
 	us = 20000;
 #endif
 
-#ifdef HAVE_NANOSLEEP
+#if defined(HAVE_NANOSLEEP)
 	{
 	    struct timespec ts;
 	    ts.tv_sec = s;
 	    ts.tv_nsec = us * 1000;
 	    (void)nanosleep (&ts, NULL);
 	}
-#else	/* HAVE_NANOSLEEP */
-# ifdef HAVE_USLEEP
-	(void)usleep (s * 1000000 + us);
-# else	/* HAVE_USLEEP */
-#   ifdef HAVE_SELECT
+#elif defined(HAVE_USLEEP)
+	if (s > 0)
+	    (void)sleep (s);
+	else
+	    (void)usleep (us);
+#elif defined(HAVE_SELECT)
 	{
 	    /* use select instead of sleep since it is a fairly portable way of
 	     * sleeping for ms.
@@ -883,12 +883,11 @@ sleep_past (desttime)
 	    struct timeval tv;
 	    tv.tv_sec = s;
 	    tv.tv_usec = us;
-	    (void)select (0, NULL, NULL, NULL, &tv);
+	    (void)select (0, (fd_set *)NULL, (fd_set *)NULL, (fd_set *)NULL, &tv);
 	}
-#   else /* HAVE_SELECT */
-	(void)sleep(s + 1);
-#   endif /* !HAVE_SELECT */
-# endif	/* !HAVE_USLEEP */
-#endif	/* !HAVE_NANOSLEEP */
+#else
+	if (us > 0) s++;
+	(void)sleep(s);
+#endif
     }
 }
