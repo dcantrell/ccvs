@@ -1,6 +1,6 @@
-### OS/2 has a GNU `make', so we might actually end up using this
-### file.  In any case, we would need it for 'make dist' to work
-### properly on Unix machines.
+### OS/2 has a GNU `make', so we might actually end up using
+### `Makefile.in'.  In any case, we would need it for 'make dist' to
+### work properly on Unix machines. 
 
 project: cvs.exe
 
@@ -11,6 +11,7 @@ project: cvs.exe
 # working, then make it fancy.
 srcdir     = .
 top_srcdir = ..
+libdir     = ../lib
 cvs_srcdir = ../src
 VPATH      = ${srcdir}
 
@@ -23,8 +24,10 @@ SHELL = /bin/sh
 # taken straight from the example project
 LIB = s:\ibmcpp\lib;s:\toolkt21\os2lib;
 CINC = -Is:/ibmcpp/include -Is:/toolkt21/c/os2h
-CFLAGS = -C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm ${CINC}
-CFLAGS += -I. -I../lib
+# This says we are building an object file, not a full executable.
+OBJ_CFLAGS = -C+
+CFLAGS = -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm ${CINC}
+CFLAGS += -I${srcdir} -I${libdir} -I${cvs_srcdir}
 CFLAGS += -DIBM_CPP
 
 # TCP/IP stuff
@@ -35,10 +38,6 @@ TCPIPLIB = s:\ibmtcpip\lib\tcp32dll.lib	s:\ibmtcpip\lib\so32dll.lib porttcp.obj
 # FTPLIB   = s:\ibmtcpip\lib\ftpapi.lib
 
 CFLAGS 	 += -DTCPIP_IBM -Is:\ibmtcpip\include
-
-# standard source rule
-.c.obj:
-	icc ${CFLAGS} /Fo$@ $*.c
 
 # headers specific to OS/2
 # tcpip.mak is almost certainly unnecessary, but I include it for now.
@@ -111,7 +110,6 @@ COMMON_SOURCES = \
        ${cvs_srcdir}/server.c \
        ${cvs_srcdir}/status.c \
        ${cvs_srcdir}/subr.c \
-       ${cvs_srcdir}/run.c \
        ${cvs_srcdir}/tag.c \
        ${cvs_srcdir}/update.c \
        ${cvs_srcdir}/wrapper.c \
@@ -119,8 +117,19 @@ COMMON_SOURCES = \
        ${cvs_srcdir}/version.c
 # end of $COMMON_SOURCES
 
+# sources from ../lib
+LIB_SOURCES = \
+       ${libdir}/getopt.c \
+       ${libdir}/getopt1.c \
+       ${libdir}/getline.c
+
 # object files from OS/2 sources
-OS2_OBJECTS = 
+OS2_OBJECTS = \
+       mkdir.obj \
+       pwd.obj \
+       filesubr.obj \
+       dirent.obj \
+       run.obj
 
 # object files from ../src
 COMMON_OBJECTS = \
@@ -163,8 +172,6 @@ COMMON_OBJECTS = \
        ${cvs_srcdir}/server.obj \
        ${cvs_srcdir}/status.obj \
        ${cvs_srcdir}/subr.obj \
-       ${cvs_srcdir}/filesubr.obj \
-       ${cvs_srcdir}/run.obj \
        ${cvs_srcdir}/tag.obj \
        ${cvs_srcdir}/update.obj \
        ${cvs_srcdir}/wrapper.obj \
@@ -172,12 +179,18 @@ COMMON_OBJECTS = \
        ${cvs_srcdir}/version.obj
 # end of $COMMON_OBJECTS
 
-SOURCES = ${OS2_SOURCES} ${COMMON_SOURCES}
+# objects from ../lib
+LIB_OBJECTS = \
+       ${libdir}/getopt.obj \
+       ${libdir}/getopt1.obj \
+       ${libdir}/getline.obj
+
+SOURCES = ${OS2_SOURCES} ${COMMON_SOURCES} ${LIB_SOURCES}
 HEADERS = ${OS2_HEADERS} ${COMMON_HEADERS}
-OBJECTS = ${OS2_OBJECTS} ${COMMON_OBJECTS}
+OBJECTS = ${OS2_OBJECTS} ${COMMON_OBJECTS} ${LIB_OBJECTS}
 
 DISTFILES = ${OS2_HEADERS} ${OS2_SOURCES} \
-  README ChangeLog Makefile.in .cvsignore test-makefile
+  README ChangeLog Makefile.in .cvsignore test-makefile Makefile
 
 all:
 
@@ -205,11 +218,13 @@ dist-dir:
 	done
 
 clean:
-	@echo make clean does nothing right now in os2 subdir
+	del *.obj cvs.exe
 
+.c.obj:
+	icc ${OBJ_CFLAGS} ${CFLAGS} /Fo$@ $*.c
 
-# There seems to be no option to icc for specifying library locations,
-# so must `set' the path in the compilation environment.
+# There seems to be no ICC option for specifying library locations, so
+# we must `set' the path in the compilation environment.  Urgkle. 
 cvs.exe: ${OBJECTS}
 	set LIB=${LIB} & icc -Q+ -Ti+ -Fe$@ -B"/batch" ${OBJECTS} ${TCPIPLIB}
 

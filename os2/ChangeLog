@@ -1,5 +1,13 @@
 Fri Nov 10 14:21:14 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
+        * Makefile.in (COMMON_SOURCES, COMMON_OBJECTS): removed filesubr
+        and run, since we have OS/2-specific versions of them now.
+        (DISTFILES): Include Makefile in distribution, since people won't
+        be running configure on their OS/2 systems.
+        (LIB_SOURCES, LIB_OBJECTS): new vars; we'll just build stuff in
+        the lib directory and link it in directly.
+        Made rules for compiling objects and for the full executable.
+
         * threads.c: new file.
 
 Wed Nov  8 11:14:46 1995  Karl Fogel  <kfogel@floss.cyclic.com>
