@@ -1,3 +1,7 @@
+2003-10-27  Derek Price  <derek@ximbiot.com>
+
+	* cvsnt.mak: /PROTO\.h/d;.
+
 2003-10-24  Derek Price  <derek@ximbiot.com>
 
 	* NEWS: Update recent text about joins to reflect new behavior.
