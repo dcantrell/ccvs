@@ -1,3 +1,8 @@
+2004-02-02  Derek Price  <derek@ximbiot.com>
+
+	* NEWS: Note removal from the server of support for case insensitive
+	clients.
+
 2004-01-30  Derek Price  <derek@ximbiot.com>
 
 	* NEWS: Note man page fix.
