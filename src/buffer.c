@@ -948,8 +948,7 @@ buf_read_short_line (struct buffer *buf, char **line, size_t *lenp,
 int
 buf_read_data (struct buffer *buf, int want, char **retdata, int *got)
 {
-    if (buf->input == NULL)
-	abort ();
+    assert (buf->input);
 
     while (buf->data != NULL && buf->data->size == 0)
     {
