@@ -1,3 +1,3 @@
 Makefile
-vc50.pdb
-vc50.idb
+Debug
+Release
