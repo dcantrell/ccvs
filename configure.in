@@ -340,6 +340,12 @@ if test "$ac_cv_func_crypt" = yes; then
 fi
 fi # enable_server
 
+dnl For the moment we will assume that all systems which have
+dnl the unixyness to run configure are unixy enough to do the
+dnl PreservePermissions stuff.  I have this sinking feeling that
+dnl things won't be that simple, before long.
+AC_DEFINE(PRESERVE_PERMISSIONS_SUPPORT)
+
 dnl On cygwin32, we configure like a Unix system, but we use the
 dnl Windows support code in lib/fncase.c to handle the case
 dnl insensitive file system.  We also need some support libraries.  We
