@@ -19,13 +19,8 @@ NEW FEATURES
   redistribution of server load which is transparent to all known CVS clients.
 
 * Thanks to funding from Juniper Networks <http://juniper.net>, some code has
-  been added which attempts to second-guess the system file cache, which may
-  provide a performance boost on some systems.  Since this code actually slows
-  CVS down in conjunction with many modern file caches, it is disabled by
-  default.  To check for a performance boost on your system, configure with the
-  --disable-file-cache-trust option.  If you find any systems where this
-  improves your performance, please send a note describing it to the
-  <bug-cvs@gnu.org> mailing list.
+  been added which second-guesses the system file cache for a performance
+  boost.
 
 * The loginfo scripting hook now runs after the administrative files in CVSROOT
   are rebuilt, rather than before.
