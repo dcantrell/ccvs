@@ -1,3 +1,9 @@
+2003-06-09  Derek Price  <derek@ximbiot.com>
+
+	* system.h: Reference the WIN32 macro only in order to define WOE32,
+	in accordance with the GNU convention to avoid implying that we
+	consider the Microsoft Windows Operating Environment any sort of "win".
+
 2003-05-29  Derek Price  <derek@ximbiot.com>
 
 	* Makefile.am: xgssapi.h is no more.

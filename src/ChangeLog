@@ -1,5 +1,15 @@
 2003-06-09  Derek Price  <derek@ximbiot.com>
 
+	* rcs.c (RCS_delete_revs): Reference WOE32 rather than WIN32 in
+	accordance with the GNU convention to avoid implying that we consider
+	the Microsoft Windows Operating Environment any sort of "win".
+
+2003-06-09  Derek Price  <derek@ximbiot.com>
+
+	* filesubr.c (cvs_temp_file): Tidy a comment.
+
+2003-06-09  Derek Price  <derek@ximbiot.com>
+
 	* patch.c (patch_fileproc): Don't assume the content of files is
 	different just because the revision number is different.
 	* sanity.sh (rdiff-add-remove-nodiff): New tests for the above.
