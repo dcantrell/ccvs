@@ -1410,10 +1410,14 @@ described in @ref{Specifying a repository}.
 @cindex CVS/Repository file
 @item Repository
 This file contains the directory within the repository
-which the current directory corresponds with.  For
-historical reasons it is an absolute pathname, although
-it would make more sense for it to be relative to the
-root.  For example, after the command
+which the current directory corresponds with.  It can
+be either an absolute pathname or a relative pathname;
+@sc{cvs} has had the ability to read either format
+since at least version 1.3 or so.  The relative
+pathname is relative to the root, and is the more
+sensible approach, but the absolute pathname is quite
+common and implementations should accept either.  For
+example, after the command
 
 @example
 cvs -d :local:/usr/local/cvsroot checkout yoyodyne/tc
@@ -1425,10 +1429,17 @@ cvs -d :local:/usr/local/cvsroot checkout yoyodyne/tc
 :local:/usr/local/cvsroot
 @end example
 
-and @file{Repository} will contain
+and @file{Repository} will contain either
 
 @example
-/usr/local/cvsroot/yoydyne/tc
+/usr/local/cvsroot/yoyodyne/tc
+@end example
+
+@noindent
+or
+
+@example
+yoyodyne/tc
 @end example
 
 @cindex Entries file, in CVS directory

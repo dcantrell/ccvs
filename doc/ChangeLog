@@ -1,3 +1,8 @@
+Tue Jul  1 09:19:02 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (Working directory storage): Relative repositories
+	in CVS/Repository are legal.
+
 Mon Jun 30 10:48:21 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvsclient.texi (Top): Add menu item for Password scrambling.
