@@ -820,13 +820,17 @@ lock_wait (repos)
     char *repos;
 {
     time_t now;
+    char *msg;
 
     (void) time (&now);
-    error (0, 0, "[%8.8s] waiting for %s's lock in %s", ctime (&now) + 11,
-	   lockers_name, repos);
+    msg = xmalloc (100 + strlen (lockers_name) + strlen (repos));
+    sprintf (msg, "[%8.8s] waiting for %s's lock in %s", ctime (&now) + 11,
+	     lockers_name, repos);
+    error (0, 0, "%s", msg);
     /* Call cvs_flusherr to ensure that the user sees this message as
        soon as possible.  */
     cvs_flusherr ();
+    free (msg);
     (void) sleep (CVSLCKSLEEP);
 }
 
@@ -838,12 +842,16 @@ lock_obtained (repos)
      char *repos;
 {
     time_t now;
+    char *msg;
 
     (void) time (&now);
-    error (0, 0, "[%8.8s] obtained lock in %s", ctime (&now) + 11, repos);
+    msg = xmalloc (100 + strlen (repos));
+    sprintf (msg, "[%8.8s] obtained lock in %s", ctime (&now) + 11, repos);
+    error (0, 0, "%s", msg);
     /* Call cvs_flusherr to ensure that the user sees this message as
        soon as possible.  */
     cvs_flusherr ();
+    free (msg);
 }
 
 static int lock_filesdoneproc PROTO ((void *callerdat, int err,

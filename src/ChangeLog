@@ -1,3 +1,11 @@
+1999-02-09  Jim Kingdon  <http://www.cyclic.com>
+
+	* error.c (error): Rewrite to no longer use vasprintf (see
+	../lib/ChangeLog for rationale).  Note the slight change in
+	interface - callers which want %8.8s or similar formats need to
+	call sprintf.
+	* lock.c (lock_wait, lock_obtained): Use sprintf.
+
 1999-02-08  Jim Kingdon  <http://www.cyclic.com>
 
 	* rcs.c (RCS_delete_revs): Pass -a to diff_exec.
