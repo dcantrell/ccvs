@@ -241,6 +241,8 @@ int rcs_change_text PROTO ((const char *, char *, size_t, const char *,
 void RCS_deltas PROTO ((RCSNode *, FILE *, struct rcsbuffer *, char *,
 			enum rcs_delta_op, char **, size_t *,
 			char **, size_t *));
+void RCS_setincexc PROTO ((const char *arg));
+void RCS_setlocalid PROTO ((const char *arg));
 char *make_file_label PROTO ((char *, char *, RCSNode *));
 char *locate_rcs PROTO (( const char *repository,
                           const char *file,

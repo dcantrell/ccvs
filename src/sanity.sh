@@ -914,6 +914,7 @@ if test x"$*" = x; then
 	tests="${tests} join-admin join-admin-2"
 	tests="${tests} new newb conflicts conflicts2 conflicts3"
 	tests="${tests} clean"
+	tests="${tests} keywordexpand"
 	# Checking out various places (modules, checkout -d, &c)
 	tests="${tests} modules modules2 modules3 modules4 modules5 modules6"
 	tests="${tests} mkmodules-temp-file-removal"
@@ -9709,6 +9710,117 @@ fish"
 	  cd ../..
           rm -rf 1
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  ;;
+
+	keywordexpand)
+	  # Tests of the original *BSD tag= and keywordexpand= features
+	  # are done via the LocalKeyword= and KeywordExpand features.
+	  mkdir keywordexpand; cd keywordexpand
+
+	  dotest keywordexpand-1 "${testcvs} -q co CVSROOT" \
+'U CVSROOT/checkoutlist
+U CVSROOT/commitinfo
+U CVSROOT/config
+U CVSROOT/cvswrappers
+U CVSROOT/editinfo
+U CVSROOT/loginfo
+U CVSROOT/modules
+U CVSROOT/notify
+U CVSROOT/rcsinfo
+U CVSROOT/taginfo
+U CVSROOT/verifymsg'
+	  cd CVSROOT
+	  echo LocalKeyword=MyBSD=CVSHeader >> config
+	  # First do not expand any keywords
+	  echo KeywordExpand=i >> config
+	  dotest keywordexpand-2 "${testcvs} -Q ci -mkeywordexpand config" \
+"Checking in config;
+${CVSROOT_DIRNAME}/CVSROOT/config,v  <--  config
+new revision: 1\.2; previous revision: 1\.1
+done
+${PROG} [a-z]*: Rebuilding administrative file database"
+
+	  cd ..
+
+	  mkdir testimport; cd testimport
+	  echo '$''Author$' > file1
+	  echo '$''Date$' >> file1
+	  echo '$''CVSHeader$' >> file1
+	  echo '$''Header$' >> file1
+	  echo '$''Id$' >> file1
+	  echo '$''Locker$' >> file1
+	  echo '$''Log$' >> file1
+	  echo '$''Name$' >> file1
+	  echo '$''RCSfile$' >> file1
+	  echo '$''Revision$' >> file1
+	  echo '$''Source$' >> file1
+	  echo '$''State$' >> file1
+	  echo '$''MyBSD$' >> file1
+	  dotest keywordexpand-3 \
+"${testcvs} -Q import -I ! -m test-import-with-bsd-keyword keywordexpand vendor v1" \
+''
+	  cd ..
+
+	  dotest keywordexpand-4 "${testcvs} -Q checkout keywordexpand" ''
+	  cd keywordexpand
+	  dotest keywordexpand-5 "cat file1" \
+"\$""Author\$
+\$""Date\$
+\$""CVSHeader\$
+\$""Header\$
+\$""Id\$
+\$""Locker\$
+\$""Log\$
+\$""Name\$
+\$""RCSfile\$
+\$""Revision\$
+\$""Source\$
+\$""State\$
+\$MyBSD\$"
+	  cd ../CVSROOT
+	  # Now expand just the MyBSD and Id keywords
+	  mv config config.old
+	  sed -e 's/KeywordExpand=i/KeywordExpand=iMyBSD,Id/' < config.old > config
+	  rm -f config.old
+	  dotest keywordexpand-6 "${testcvs} -Q ci -mkeywordexpand config" \
+"Checking in config;
+${CVSROOT_DIRNAME}/CVSROOT/config,v  <--  config
+new revision: 1\.3; previous revision: 1\.2
+done
+${PROG} [a-z]*: Rebuilding administrative file database"
+	  cd ../keywordexpand
+	  echo 'a change' >> file1
+	  dotest keywordexpand-7 "${testcvs} -Q ci -madd" \
+"Checking in file1;
+${CVSROOT_DIRNAME}/keywordexpand/file1,v  <--  file1
+new revision: 1\.2; previous revision: 1\.1
+done"
+	  dotest keywordexpand-8 "cat file1" \
+"\$""Author\$
+\$""Date\$
+\$""CVSHeader\$
+\$""Header\$
+\$""Id: file1,v 1\.2 [0-9/]* [0-9:]* ${username} Exp \$
+\$""Locker\$
+\$""Log\$
+\$""Name\$
+\$""RCSfile\$
+\$""Revision\$
+\$""Source\$
+\$""State\$
+\$MyBSD: keywordexpand/file1,v 1\.2 [0-9/]* [0-9:]* ${username} Exp \$
+a change"
+	  cd ..
+
+	  dokeep
+
+	  # Done. Clean up.
+	  cd ..
+	  rm -rf ${TESTDIR}/keywordexpand \
+                ${CVSROOT_DIRNAME}/keywordexpand
+	  rm -f ${CVSROOT_DIRNAME}/CVSROOT/config,v \
+                ${CVSROOT_DIRNAME}/CVSROOT/config
+	  dotest keywordexpand-cleanup-1 "${testcvs} init" ''
 	  ;;
 
 	modules)

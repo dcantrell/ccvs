@@ -6830,11 +6830,12 @@ with strings of the form
 a new revision of the file.
 
 @menu
-* Keyword list::                Keywords
-* Using keywords::              Using keywords
-* Avoiding substitution::       Avoiding substitution
-* Substitution modes::          Substitution modes
-* Log keyword::                 Problems with the $@asis{}Log$ keyword.
+* Keyword list::                   Keywords
+* Using keywords::                 Using keywords
+* Avoiding substitution::          Avoiding substitution
+* Substitution modes::             Substitution modes
+* Configuring keyword expansion::  Configuring keyword expansion
+* Log keyword::                    Problems with the $@asis{}Log$ keyword.
 @end menu
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -6854,6 +6855,23 @@ This is a list of the keywords:
 @cindex Author keyword
 @item $@asis{Author}$
 The login name of the user who checked in the revision.
+
+@cindex CVSHeader keyword
+@item $@asis{CVSHeader}
+A standard header (similar to $@asis{Header}$, but with
+the CVS root stripped off). It contains the relative
+pathname of the @sc{rcs} file to the CVS root, the
+revision number, the date (UTC), the author, the state,
+and the locker (if locked). Files will normally never
+be locked when you use @sc{cvs}.
+
+Note that this keyword has only been recently
+introduced to @sc{cvs} and may cause problems with
+existing installations if $@asis{CVSHeader}$ is already
+in the files for a different purpose. This keyword may
+be excluded using the @code{KeywordExpansion=eCVSHeader}
+in the @file{CVSROOT/config} file. 
+See @ref{Configuring keyword expansion} for more details.
 
 @cindex Date keyword
 @item $@asis{Date}$
@@ -6931,6 +6949,53 @@ The full pathname of the RCS file.
 @item $@asis{State}$
 The state assigned to the revision.  States can be
 assigned with @code{cvs admin -s}---see @ref{admin options}.
+
+@cindex Local keyword
+@item Local keyword
+The @code{LocalKeyword} option in the @file{CVSROOT/config} file
+may be used to specify a local keyword which is to be
+used as an alias for one of the other keywords. For
+example, if the @file{CVSROOT/config} file contains
+a line with @code{LocalKeyword=MYBSD=CVSHeader}, then a
+file with the local keyword $@asis{MYBSD}$ will be
+expanded as if it were a $@asis{CVSHeader}$ keyword. If
+the src/frob.c file contained this keyword, it might
+look something like this:
+
+@example
+  /*
+   * $@asis{}MYBSD: src/frob.c,v 1.1 2003/05/04 09:27:45 john Exp $ 
+   */
+@end example
+
+Many repositories make use of a such a ``local
+keyword'' feature. An old patch to @sc{cvs} provided
+the @code{LocalKeyword} feature using a @code{tag=}
+option and called this the ``custom tag'' or ``local
+tag'' feature. It was used in conjunction with the
+what they called the @code{tagexpand=} option. In
+@sc{cvs} this other option is known as the
+@code{KeywordExpand} option. 
+See @ref{Configuring Keyword Expansion} for more
+details.
+
+Examples from popular projects include:
+$@asis{FreeBSD}$, $@asis{NetBSD}$, $@asis{OpenBSD}$,
+$@asis{XFree86}$, $@asis{Xorg}$.
+
+The advantage of this is that you can include your
+local version information in a file using this local
+keyword without disrupting the upstream version
+information (which may be a different local keyword or
+a standard keyword). Allowing bug reports and the like
+to more properly identify the source of the original
+bug to the third-party and reducing the number of
+conflicts that arise during an import of a new version.
+
+All keyword expansion except the local keyword may be
+disabled using the @code{KeywordExpansion} option in
+the @file{CVSROOT/config} file---see 
+@ref{Configuring keyword expansion} for more details.
 
 @end table
 
@@ -7012,6 +7077,14 @@ contains @samp{$@@asis@{@}Author$} whenever the text
 @samp{$@asis{}Author$} should appear.  In @code{nroff}
 and @code{troff} you can embed the null-character
 @code{\&} inside the keyword for a similar effect.
+
+It is also possible to specify an explicit list of
+keywords to include or exclude using the
+@code{KeywordExpand} option in the
+@file{CVSROOT/config} file--see @ref{Configuring keyword expansion}
+for more details. This feature is intended primarily
+for use with the @code{LocalKeyword} option--see
+@ref{Local keyword}.
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node Substitution modes
@@ -7101,6 +7174,98 @@ export}---@pxref{export}.  But be aware that doesn't
 handle an export containing binary files correctly.
 
 @end table
+
+@c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+@node Configuring keyword expansion
+@section Configuring Keyord Expansion
+@cindex Configuring keyword expansion
+
+In a repository that includes third-party software on
+vendor branches, it is sometimes helpful to configure
+CVS to use a local keyword instead of the standard
+$@asis{Id}$ or $@asis{Header}$ keywords. Examples from
+real projects includ, $@asis{Xorg}$, $@asis{XFree86}$,
+$@asis{FreeBSD}$, $@asis{NetBSD}$, $@asis{OpenBSD}$,
+and even $@asis{dotat}$. The advantage of this is that
+you can include your local version information in a
+file using this local keyword (sometimes called a
+``custom tag'' or a ``local tag'') without disrupting
+the upstream version information (which may be a
+different local keyword or a standard keyword). In
+these cases, it is typically desirable to disable the
+expansion of all keywords except the configured local
+keyword.
+
+The @code{KeywordExpansion} option in the
+@file{CVSROOT/config} file is intended to allow for the
+either the explicit exclusion of a keyword or list of
+keywords, or for the explicit inclusion of a keyword or
+a list of keywords. This list may include the
+@code{LocalKeyword} that has been configured.
+
+The @code{KeywordExpansion} option is followed by
+@code{=} and the next character may either be @code{i}
+to start an inclusion list or @code{e} to start an
+exclusion list. If the following lines were added to
+the @file{CVSROOT/config} file:
+
+@example
+        # Add a "MyBSD" keyword and restrict keyword
+        # expansion
+        LocalKeyword=MyBSD=CVSHeader
+        KeywordExpand=iMyBSD
+@end example
+
+then only the $@asis{MyBSD}$ keyword would be expanded.
+A list may be used. The this example:
+
+@example
+        # Add a "MyBSD" keyword and restrict keyword
+        # expansion to the MyBSD, Name and Date keywords.
+        LocalKeyword=MyBSD=CVSHeader
+        KeywordExpand=iMyBSD,Name,Date
+@end example
+
+would allow $@asis{MyBSD}$, $@asis{Name}$, and
+$@asis{Date}$ to be expanded.
+
+It is also possible to configure an exclusion list
+using the following:
+
+@example
+        # Do not expand the non-RCS keyword CVSHeader
+        KeywordExpand=eCVSHeader
+@end example
+
+This allows @sc{cvs} to ignore the recently introduced
+$@asis{CVSHeader}$ keyword and retain all of the
+others. The exclusion entry could also contain the
+standard RCS keyword list, but this could be confusing
+to users that expect RCS keywords to be expanded, so
+ycare should be taken to properly set user expectations
+for a repository that is configured in that manner.
+
+If there is a desire to not have any RCS keywords
+expanded and not use the @code{-ko} flags everywhere,
+an administrator may disable all keyword expansion
+using the @file{CVSROOT/config} line:
+
+@example
+	# Do not expand any RCS keywords
+	KeywordExpand=i
+@end example
+
+this could be confusing to users that expect RCS
+keywords like $@asis{Id}$ to be expanded properly,
+so care should be taken to properly set user
+expectations for a repository so configured.
+
+It should be noted that a patch to provide both the
+@code{KeywordExpand} and @code{LocalKeyword} features
+has been around a long time. However, that patch
+implemented these features using @code{tag=} and
+@code{tagexpand=} keywords and those keywords are NOT
+recognized.
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node Log keyword
@@ -11002,6 +11167,7 @@ Keywords (@pxref{Keyword list}):
 @example
 $@asis{}Author: joe $
 $@asis{}Date: 1993/12/09 03:21:13 $
+$@asis{}CVSHeader: files/file1,v 1.1 1993/12/09 03:21:13 joe Exp harry $
 $@asis{}Header: /home/files/file1,v 1.1 1993/12/09 03:21:13 joe Exp harry $
 $@asis{}Id: file1,v 1.1 1993/12/09 03:21:13 joe Exp harry $
 $@asis{}Locker: harry $
