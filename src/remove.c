@@ -156,11 +156,10 @@ remove_fileproc (callerdat, finfo)
 
     if (vers->ts_user != NULL)
     {
-	char wd[1000];
 	existing_files++;
 	if (!quiet)
-	    error (0, 0, "file `%s' still in working directory [%s:%s]",
-		   finfo->fullname, getwd(wd), finfo->file);
+	    error (0, 0, "file `%s' still in working directory",
+		   finfo->fullname);
     }
     else if (vers->vn_user == NULL)
     {

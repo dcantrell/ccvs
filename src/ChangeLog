@@ -1,3 +1,11 @@
+Fri Aug 23 14:55:41 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* remove.c (remove_fileproc): Revert change of 23 Aug to print
+	getwd and finfo->file in message.  The latter is redundant with
+	fullname and the former is redundant with fullname and the working
+	directory when CVS was invoked.  The implementation was also
+	lacking as the getwd call could overflow the buffer.
+
 Fri Aug 23 18:40:35 1996  Norbert Kiesel  <nk@col.sw-ley.de>
 
 	* remove.c (cvsremove): fix remove -f for client/server
