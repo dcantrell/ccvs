@@ -1,3 +1,9 @@
+Wed Aug 14 01:07:10 1996  Greg A. Woods  <woods@most.weird.com>
+
+	* history.c (history): apply fix posted by Steven Meyer
+	<steve@blacksmith.com> to info-cvs to correct handling of '-D'
+	argument.  Message-Id: <9608122335.AA01385@nijel.blacksmith.com>
+
 Tue Aug 13 13:42:36 1996  Ian Lance Taylor  <ian@cygnus.com>
 
 	* log.c (cvslog): Remove comment about calling rlog.
