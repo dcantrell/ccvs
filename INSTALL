@@ -263,8 +263,13 @@ Building from source code under Unix:
     with --enable-maintainer-mode.
 
     The CVS Makefiles and configure script were built using Automake 1.7.5 and
-    Autoconf 2.57, respectively.  Other combinations of autotool versions may
-    or may not work.
+    a patched Autoconf 2.57, respectively.  The patched 2.57 Autoconf sources
+    are available from <http://ccvs.cvshome.org/servlets/ProjectDownloadList>
+    and should not be necessary with Autoconf 2.58 and later versions of
+    Autoconf.
+
+    Other combinations of autotool versions may or may not work.  If you get
+    other versions to work, please send a report to <bug-cvs@gnu.org>.
 
 2)  Run "configure":
 
