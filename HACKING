@@ -41,11 +41,29 @@ In a submitted patch it is acceptable to refrain from changing to
 indentation of large blocks of code to minimize the size of the patch;
 the person checking in such a patch should reindent it.
 
+* Portability
+
+If it is in ANSI C and it is in SunOS4 (using /bin/cc), generally it
+is OK to use it without ifdefs (for example, assert() and void * as
+long as you add more casts to and from void * than ANSI requires.  But
+not function prototypes).  Such constructs are generally portable
+enough, including to NT, OS/2, VMS, etc.
+
+* Run-time behaviors
+
+Use assert() to check "can't happen" conditions internal to CVS.  We
+realize that there are functions in CVS which instead return NULL or
+some such value (thus confusing the meaning of such a returned value),
+but we want to fix that code.  Of course, bad input data, a corrupt
+repository, bad options, etc., should always print a real error
+message instead.
+
 * Coding standards in general
 
 Generally speaking the GNU coding standards are mostly used by CVS
-(there are exceptions, such as indentation style).  This is the file
-standards.text at the GNU FTP sites.
+(but see the exceptions mentioned above, such as indentation style,
+and perhaps an exception or two we haven't mentioned).  This is the
+file standards.text at the GNU FTP sites.
 
 * Submitting patches
 
