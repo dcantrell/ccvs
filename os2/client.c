@@ -2073,7 +2073,6 @@ supported_request (name)
 void
 start_server ()
 {
-  /* From old start_server(): */
   int tofd, fromfd;
   int pid;
   char *log = getenv ("CVS_CLIENT_LOG");
@@ -2128,23 +2127,19 @@ start_server ()
       putc ('\n', stderr);
     }
   
+  /* Do the deed. */
   pid = popenRW (rsh_argv, pipes);
-  
-  to_server   = pipes[0];
-  from_server = pipes[1];
-  
-  fflush (stdout);
-  
   if (pid < 0)
     error (1, errno, "cannot start server via rsh");
+  tofd   = pipes[0];
+  fromfd = pipes[1];
   
-  /* Do we need to do this now?  Probably not. */
-  /* close_on_exec (tofd);
-     close_on_exec (fromfd); */
-  
-#if 0 /* later */
+  /* todo: Do we need to do this now?  Probably not. */
+  /* close_on_exec (tofd); close_on_exec (fromfd); */
+
   if (log)
     {
+      /* Log client/server conversation to a file. */
       int len = strlen (log);
       char *buf = xmalloc (5 + len);
       char *p;
@@ -2162,12 +2157,16 @@ start_server ()
       
       free (buf);
     }
-#endif /* 0 -- log stuff */
-  
-  /* kff: */
-  /* Cleared out a bunch of stuff having to do with to_server and */
-  /* from_server here; only thing to worry about is whether the */
-  /* setting of binary mode on the stream was important. */
+
+  if ((to_server = fdopen (tofd, "wb")) == NULL)
+    {
+      error (1, errno, "cannot fdopen %d for write", tofd);
+    }
+  else if ((from_server = fdopen (fromfd, "rb")) == NULL)
+    {
+      fclose (to_server);
+      error (1, errno, "cannot fdopen %d for read", fromfd);
+    }
   
   /* Clear static variables.  */
   if (toplevel_repos != NULL)
