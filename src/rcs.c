@@ -18,7 +18,6 @@ static int parse_rcs_proc PROTO((Node * file, void *closure));
 static int checkmagic_proc PROTO((Node *p, void *closure));
 static void do_branches PROTO((List * list, char *val));
 static void do_symbols PROTO((List * list, char *val));
-static void null_delproc PROTO((Node * p));
 static void rcsnode_delproc PROTO((Node * p));
 static void rcsvers_delproc PROTO((Node * p));
 
@@ -288,7 +287,7 @@ RCS_reparsercsfile (rdata)
     FILE *fp;
     char *rcsfile;
 
-    Node *q, *r;
+    Node *q;
     RCSVers *vnode;
     int n;
     char *cp;
@@ -308,7 +307,6 @@ RCS_reparsercsfile (rdata)
 
     /* make a node */
     rdata->versions = getlist ();
-    rdata->dates = getlist ();
 
     /*
      * process all the special header information, break out when we get to
@@ -371,25 +369,18 @@ RCS_reparsercsfile (rdata)
 	char *valp;
 	char date[MAXDATELEN];
 
+        vnode = (RCSVers *) xmalloc (sizeof (RCSVers));
+	memset (vnode, 0, sizeof (RCSVers));
+
+	/* fill in the version before we forget it */
+	vnode->version = xstrdup (key);
+
 	/* grab the value of the date from value */
 	valp = value + strlen (RCSDATE);/* skip the "date" keyword */
 	while (whitespace (*valp))		/* take space off front of value */
 	    valp++;
-	(void) strcpy (date, valp);
 
-	/* get the nodes (q is by version, r is by date) */
-	q = getnode ();
-	r = getnode ();
-	q->type = RCSVERS;
-	r->type = RCSVERS;
-	q->delproc = rcsvers_delproc;
-	r->delproc = null_delproc;
-	q->data = r->data = xmalloc (sizeof (RCSVers));
-	memset (q->data, 0, sizeof (RCSVers));
-	vnode = (RCSVers *) q->data;
-
-	/* fill in the version before we forget it */
-	q->key = vnode->version = xstrdup (key);
+	vnode->date = xstrdup (valp);
 
 	/* throw away the author field */
 	(void) getrcskey (fp, &key, &value);
@@ -407,9 +398,6 @@ unable to parse rcs file; `state' not in the expected place");
 	    vnode->dead = 1;
 	}
 #endif
-
-	/* fill in the date field */
-	r->key = vnode->date = xstrdup (date);
 
 	/* fill in the branch list (if any branches exist) */
 	(void) getrcskey (fp, &key, &value);
@@ -446,9 +434,22 @@ unable to parse rcs file; `state' not in the expected place");
 		break;
 	}
 
-	/* add the nodes to the lists */
-	(void) addnode (rdata->versions, q);
-	(void) addnode (rdata->dates, r);
+	/* get the node */
+	q = getnode ();
+	q->type = RCSVERS;
+	q->delproc = rcsvers_delproc;
+	q->data = (char *) vnode;
+	q->key = vnode->version;
+
+	/* add the nodes to the list */
+	if (addnode (rdata->versions, q) != 0)
+	{
+#if 0
+		purify_printf("WARNING: Adding duplicate version: %s (%s)\n",
+			 q->key, rcsfile);
+		freenode (q);
+#endif
+	}
 
 	/*
 	 * if we left the loop because there were no more keys, we break out
@@ -490,7 +491,6 @@ freercsnode (rnodep)
     }
     free ((*rnodep)->path);
     dellist (&(*rnodep)->versions);
-    dellist (&(*rnodep)->dates);
     if ((*rnodep)->symbols != (List *) NULL)
 	dellist (&(*rnodep)->symbols);
     if ((*rnodep)->symbols_data != (char *) NULL)
@@ -518,20 +518,11 @@ rcsvers_delproc (p)
 
     if (rnode->branches != (List *) NULL)
 	dellist (&rnode->branches);
+    if (rnode->date != (char *) NULL)
+	free (rnode->date);
     if (rnode->next != (char *) NULL)
 	free (rnode->next);
     free ((char *) rnode);
-}
-
-/*
- * null_delproc - don't free anything since it will be free'd by someone else
- */
-/* ARGSUSED */
-static void
-null_delproc (p)
-    Node *p;
-{
-    /* don't do anything */
 }
 
 /*
