@@ -1,3 +1,8 @@
+1999-02-25  Larry Jones  <larry.jones@sdrc.com>
+
+	* sanity.sh (keyword2-12): Use ${QUESTION} instead of ? in the
+	expected result.
+
 1999-02-24  Jim Kingdon  <http://www.cyclic.com>
 
 	* sanity.sh (keyword2): Restore the original \\\$ instead of $.
