@@ -100,6 +100,13 @@ static List *locklist;
    with locklist, sort of.  */
 static List *lock_tree_list;
 
+/* If we set locks with lock_dir_for_write, then locked_dir contains
+   the malloc'd name of the repository directory which we have locked.
+   locked_list is the same thing packaged into a list and is redundant
+   with locklist the same way that lock_tree_list is.  */
+static char *locked_dir;
+static List *locked_list;
+
 /*
  * Clean up all outstanding locks
  */
@@ -119,7 +126,16 @@ Lock_Cleanup ()
 	(void) walklist (locklist, unlock_proc, NULL);
 	locklist = (List *) NULL;
     }
+
     dellist (&lock_tree_list);
+
+    if (locked_dir != NULL)
+    {
+	dellist (&locked_list);
+	free (locked_dir);
+	locked_dir = NULL;
+	locked_list = NULL;
+    }
 }
 
 /*
@@ -273,7 +289,10 @@ Reader_Lock (xrepository)
  */
 static char *lock_error_repos;
 static int lock_error;
-int
+
+static int Writer_Lock PROTO ((List * list));
+
+static int
 Writer_Lock (list)
     List *list;
 {
@@ -733,4 +752,30 @@ lock_tree_for_write (argc, argv, local, aflag)
     sortlist (lock_tree_list, fsortcmp);
     if (Writer_Lock (lock_tree_list) != 0)
 	error (1, 0, "lock failed - giving up");
+}
+
+/* Lock a single directory in REPOSITORY.  It is OK to call this if
+   a lock has been set with lock_dir_for_write; the new lock will replace
+   the old one.  If REPOSITORY is NULL, don't do anything.  */
+void
+lock_dir_for_write (repository)
+     char *repository;
+{
+    if (repository != NULL
+	&& (locked_dir == NULL
+	    || strcmp (locked_dir, repository) != 0))
+    {
+	Node *node;
+
+	if (locked_dir != NULL)
+	    Lock_Cleanup ();
+
+	locked_dir = xstrdup (repository);
+	locked_list = getlist ();
+	node = getnode ();
+	node->type = LOCK;
+	node->key = xstrdup (repository);
+	(void) addnode (locked_list, node);
+	Writer_Lock (locked_list);
+    }
 }

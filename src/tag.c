@@ -430,7 +430,13 @@ tag_fileproc (callerdat, finfo)
     /* Lock the directory if it is not already locked.  We can't rely
        on tag_dirproc because it won't handle the case where the user
        specifies a list of files on the command line.  */
-    tag_lockdir (finfo->repository);
+    /* We do not need to acquire a full write lock for the tag operation:
+       the revisions are obtained from the working directory, so we do not
+       require consistency across the entire repository.  However, we do
+       need to prevent simultaneous tag operations from interfering with
+       each other.  Therefore, we write lock each directory as we enter
+       it, and unlock it as we leave it.  */
+    lock_dir_for_write (finfo->repository);
 
     vers = Version_TS (finfo, NULL, NULL, NULL, 0, 0);
 
@@ -602,7 +608,7 @@ tag_filesdoneproc (callerdat, err, repos, update_dir, entries)
     char *update_dir;
     List *entries;
 {
-    tag_unlockdir ();
+    Lock_Cleanup ();
 
     return (err);
 }
@@ -622,66 +628,6 @@ tag_dirproc (callerdat, dir, repos, update_dir, entries)
     if (!quiet)
 	error (0, 0, "%s %s", delete_flag ? "Untagging" : "Tagging", update_dir);
     return (R_PROCESS);
-}
-
-/* We do not need to acquire a full write lock for the tag operation:
-   the revisions are obtained from the working directory, so we do not
-   require consistency across the entire repository.  However, we do
-   need to prevent simultaneous tag operations from interfering with
-   each other.  Therefore, we write lock each directory as we enter
-   it, and unlock it as we leave it.
-
-   In the rtag case, it would be nice to provide consistency with
-   respect to commits; however CVS lacks the infrastructure to do that
-   (see Concurrency in cvs.texinfo and comment in do_recursion).  We
-   can and will prevent simultaneous tag operations from interfering
-   with each other, by write locking each directory as we enter it,
-   and unlocking it as we leave it.  */
-static char *locked_dir;
-static List *locked_list;
-
-/*
- * Lock the directory for a tag operation.  This is also called by the
- * rtag code.
- */
-void
-tag_lockdir (repository)
-     char *repository;
-{
-    if (repository != NULL
-	&& (locked_dir == NULL
-	    || strcmp (locked_dir, repository) != 0))
-    {
-        Node *node;
-
-	if (locked_dir != NULL)
-	    tag_unlockdir ();
-
-	locked_dir = xstrdup (repository);
-	locked_list = getlist ();
-	node = getnode ();
-	node->type = LOCK;
-	node->key = xstrdup (repository);
-	(void) addnode (locked_list, node);
-	Writer_Lock (locked_list);
-    }
-}
-
-/*
- * Unlock the directory for a tag operation.  This is also called by
- * the rtag code.
- */
-void
-tag_unlockdir ()
-{
-    if (locked_dir != NULL)
-    {
-        Lock_Cleanup ();
-	dellist (&locked_list);
-	free (locked_dir);
-	locked_dir = NULL;
-	locked_list = NULL;
-    }
 }
 
 /* Code relating to the val-tags file.  Note that this file has no way
