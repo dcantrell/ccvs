@@ -1,3 +1,8 @@
+Fri Jan  5 13:30:00 1996  Jim Kingdon   <kingdon@peary.cyclic.com>
+
+	* release.c (release_delete): Call unlink_file_dir rather 
+	than "rm -rf".
+
 Thu Jan  4 09:58:30 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* commit.c (find_fileproc): Print "nothing known about foo" and

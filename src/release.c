@@ -287,9 +287,6 @@ release_delete (dir)
      * XXX - shouldn't this just delete the CVS-controlled files and, perhaps,
      * the files that would normally be ignored and leave everything else?
      */
-    run_setup ("%s -fr", RM);
-    run_arg (dir);
-    if ((retcode = run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL)) != 0)
-	error (0, retcode == -1 ? errno : 0, 
-	       "deletion of module %s failed.", dir);
+    if (unlink_file_dir (dir) < 0)
+	error (0, errno, "deletion of directory %s failed", dir);
 }
