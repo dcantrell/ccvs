@@ -1,5 +1,7 @@
 Wed Jul 30 19:15:41 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* filesubr.c (os2_chdir): If ENODEV is not defined, return ENOENT.
+
 	* README: Talk about srcdir, top_srcdir, and rule to generate
 	"Makefile".
 	* Makefile.in: Add comment about Makefile rule.
