@@ -11683,17 +11683,18 @@ to the file @file{$CVSROOT/CVSROOT/commitlog},
 and any commits to the administrative files (inside
 the @file{CVSROOT} directory) are also logged in
 @file{/usr/adm/cvsroot-log}.
-@c and mailed to @t{ceder}.
+Commits to the @file{prog1} directory are mailed to @t{ceder}.
 
 @c FIXME: is it a CVS feature or bug that only the
 @c first matching line is used?  It is documented
-@c above, but is it useful?  This example (with the
-@c mail to ceder put back in) is awkward to write if
+@c above, but is it useful?  For example, if we wanted
+@c to run both "cvs-log" and "Mail" for the CVSROOT
+@c directory, it is kind of awkward if
 @c only the first matching line is used.
 @example
-ALL             /usr/local/bin/cvs-log $CVSROOT/CVSROOT/commitlog
-@c ^CVSROOT        Mail -s %s ceder
+ALL             /usr/local/bin/cvs-log $CVSROOT/CVSROOT/commitlog $USER
 ^CVSROOT        /usr/local/bin/cvs-log /usr/adm/cvsroot-log
+^prog1          Mail -s %s ceder
 @end example
 
 The shell-script @file{/usr/local/bin/cvs-log} looks
@@ -11702,10 +11703,10 @@ like this:
 @example
 #!/bin/sh
 (echo "------------------------------------------------------";
- echo -n $USER"  ";
+ echo -n $2"  ";
  date;
  echo;
- sed '1s+'$@{CVSROOT@}'++') >> $1
+ cat) >> $1
 @end example
 
 @node Keeping a checked out copy
