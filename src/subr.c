@@ -917,7 +917,7 @@ sleep_past (desttime)
 
 
 /* char *
- * locate_file_in_dir ( char *dir, char *file )
+ * locate_file_in_dir (const char *dir, const char *file)
  *
  * Search a directory for a filename, case insensitively when appropriate.
  *
@@ -937,9 +937,9 @@ sleep_past (desttime)
  *  When this function returns NULL, errno will be set appropriately.
  */
 char *
-locate_file_in_dir ( dir, file )
-    char *dir;
-    char *file;
+locate_file_in_dir (dir, file)
+    const char *dir;
+    const char *file;
 {
     char *retval;
 

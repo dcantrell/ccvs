@@ -973,11 +973,11 @@ expand_wild (argc, argv, pargc, pargv)
    not).  */
 int
 cvs_casecmp (str1, str2)
-    char *str1;
-    char *str2;
+    const char *str1;
+    const char *str2;
 {
-    char *p;
-    char *q;
+    const char *p;
+    const char *q;
     int pqdiff;
 
     p = str1;
