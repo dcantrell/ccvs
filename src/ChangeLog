@@ -1,3 +1,8 @@
+Mon Jun 17 15:11:09 1996  Ian Lance Taylor  <ian@cygnus.com>
+
+	* sanity.sh (import): Remove sleep.  Requiring it was a bug, and
+	it is fixed in the current sources.
+
 Mon Jun 17 1996  Ian Lance Taylor  <ian@cygnus.com>
 		 and Jim Kingdon  <kingdon@harvey.cyclic.com>
 

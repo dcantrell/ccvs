@@ -1872,9 +1872,6 @@ rcsmerge: warning: conflicts during merge'
 		fi
 
 		# change
-		# this sleep is significant.  Otherwise, on some machines, things happen so
-		# fast that the file mod times do not differ.
-		sleep 1
 		echo local-change >> imported-file2
 
 		# commit
