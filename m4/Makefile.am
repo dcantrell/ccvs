@@ -26,6 +26,7 @@ EXTRA_DIST = \
 	cvs_func_printf_ptr.m4 \
 	alloca.m4 \
 	atexit.m4 \
+	bison.m4 \
 	clock_time.m4 \
 	codeset.m4 \
 	dirname.m4 \
@@ -33,6 +34,7 @@ EXTRA_DIST = \
 	exitfail.m4 \
 	extensions.m4 \
 	fnmatch.m4 \
+	getdate.m4 \
 	getline.m4 \
 	getnline.m4 \
 	getopt.m4 \
@@ -75,6 +77,7 @@ EXTRA_DIST = \
 	stdint_h.m4 \
 	time_r.m4 \
 	timespec.m4 \
+	tm_gmtoff.m4 \
 	uintmax_t.m4 \
 	ulonglong.m4 \
 	unlocked-io.m4 \
