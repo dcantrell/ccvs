@@ -1,5 +1,8 @@
 Thu Jun 13 1996  Ian Lance Taylor  <ian@cygnus.com>
 
+	* ignore.c (ignore_files): Skip based on the file name before
+	calling lstat.
+
 	* client.c (last_register_time): New static variable.
 	(update_entries): Set last_register_time when calling Register.
 	(get_responses_and_close): If the current time is the same as
