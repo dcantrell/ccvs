@@ -142,3 +142,8 @@ lib/strncasecmp.c
 m4/strcase.m4
 
 m4/onceonly_2_57.m4
+lib/getpass.h
+lib/getpass.c
+m4/getpass.m4
+
+m4/onceonly_2_57.m4

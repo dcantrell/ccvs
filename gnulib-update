@@ -23,7 +23,7 @@ GNULIB_TOOL=$GNULIB/gnulib-tool
 # Which modules to update.
 MODULES="gettext vasnprintf regex atexit save-cwd dirname exit exitfail
 	 extensions fnmatch-posix fnmatch mkstemp getopt stdbool getline
-	 getnline getndelim2 gethostname strcase"
+	 getnline getndelim2 gethostname strcase getpass-gnu"
 
 # Are the GNULIB sources really where we expect them?
 if test -r $GNULIB && test -d $GNULIB \
