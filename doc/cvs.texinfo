@@ -2316,10 +2316,14 @@ sending an entire file accomplishes the same thing.
 Someone else has committed a newer revision to the repository, and you
 have also made modifications to the file.
 
-@item Unresolved Conflict
-@cindex Unresolved Conflict
+@item File had conflicts on merge
+@cindex File had conflicts on merge
+@c is it worth saying that this message was "Unresolved
+@c Conflict" in CVS 1.9 and earlier?  I'm inclined to
+@c think that is unnecessarily confusing to new users.
 This is like Locally Modified, except that a previous
-@code{update} command gave a conflict.  You need to
+@code{update} command gave a conflict.  If you have not
+already done so, you need to
 resolve the conflict as described in @ref{Conflicts example}.
 
 @item Unknown
