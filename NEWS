@@ -3,6 +3,8 @@ Changes since 1.12.11:
 
 NEW FEATURES
 
+* CVS now compiles correctly configured with --disable-client again.
+
 * CVS now accepts the <tag>:<date> format, which has long been acceptable as an
   argument to -j options, in most places where <tag> used to be acceptable.  An
   empty tag in this format (e.g. ":<date>"), which used to be rejected, is now
