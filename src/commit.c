@@ -815,9 +815,7 @@ check_fileproc (callerdat, finfo)
     switch (status)
     {
 	case T_CHECKOUT:
-#ifdef SERVER_SUPPORT
 	case T_PATCH:
-#endif
 	case T_NEEDS_MERGE:
 	case T_CONFLICT:
 	case T_REMOVE_ENTRY:

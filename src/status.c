@@ -135,11 +135,9 @@ status_fileproc (callerdat, finfo)
 	case T_CHECKOUT:
 	    sstat = "Needs Checkout";
 	    break;
-#ifdef SERVER_SUPPORT
 	case T_PATCH:
 	    sstat = "Needs Patch";
 	    break;
-#endif
 	case T_CONFLICT:
 	    /* I _think_ that "unresolved" is correct; that if it has
 	       been resolved then the status will change.  But I'm not

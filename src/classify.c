@@ -388,7 +388,6 @@ conflict: %s created independently by second party",
 		/*
 		 * The user file is still unmodified, so just get it as well
 		 */
-#ifdef SERVER_SUPPORT
 		if (strcmp (vers->entdata->options ?
 			    vers->entdata->options : "", vers->options) != 0
 		    || (vers->srcfile != NULL
@@ -396,16 +395,12 @@ conflict: %s created independently by second party",
 		    ret = T_CHECKOUT;
 		else
 		    ret = T_PATCH;
-#else
-		ret = T_CHECKOUT;
-#endif
 	    }
 	    else
 	    {
 		if (No_Difference (finfo, vers))
 		    /* really modified, needs to merge */
 		    ret = T_NEEDS_MERGE;
-#ifdef SERVER_SUPPORT
 	        else if ((strcmp (vers->entdata->options ?
 				  vers->entdata->options : "", vers->options)
 			  != 0)
@@ -415,11 +410,6 @@ conflict: %s created independently by second party",
 		    ret = T_CHECKOUT;
 		else
 		    ret = T_PATCH;
-#else
-		else
-		    /* not really modified, check it out */
-		    ret = T_CHECKOUT;
-#endif
 	    }
 	}
     }
