@@ -223,3 +223,8 @@ m4/tm_gmtoff.m4
 m4/strftime.m4
 
 m4/onceonly_2_57.m4
+lib/xsize.h
+m4/xsize.m4
+m4/size_max.m4
+
+m4/onceonly_2_57.m4
