@@ -3257,9 +3257,11 @@ done'
 	  cd ../1/first-dir
 	  # "Needs Patch" is a rather strange output here.  Something like
 	  # "Removed in Repository" would make more sense.
+	  # The "Need Checkout" output is what CVS does if configured
+	  # --disable-server.
 	  dotest newb-123j0 "${testcvs} status a" \
 "===================================================================
-File: a                	Status: Needs Patch
+File: a                	Status: Needs \(Patch\|Checkout\)
 
    Working revision:	1\.1.*
    Repository revision:	1\.1\.2\.1	/tmp/cvs-sanity/cvsroot/first-dir/a,v
