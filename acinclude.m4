@@ -85,7 +85,7 @@ AC_MSG_RESULT([$acx_gssapi_cv_gssapi])
 # Set up GSSAPI includes for later use.  We don't bother to check for
 # $acx_gssapi_cv_gssapi=no here since that will be caught later.
 #
-if test x$acx_gssapi_cv_gssapi = yes; then
+if test x$acx_gssapi_cv_gssapi = xyes; then
   # no special includes necessary
   GSSAPI_INCLUDES=""
 else
