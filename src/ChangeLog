@@ -1,3 +1,8 @@
+2002-05-20  Derek Price  <oberon@umich.edu>
+
+	* main.c (main): Add 2002 to the copyright years output with the
+	version string.
+
 2002-05-15  Larry Jones  <lawrence.jones@eds.com>
 
 	* log.c (log_parse_list): Fix off-by-one error which caused
