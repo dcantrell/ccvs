@@ -411,7 +411,7 @@ rename_rcsfile (temp, real)
 /*
  * For error() only
  */
-void
+static void
 Lock_Cleanup ()
 {
 }
