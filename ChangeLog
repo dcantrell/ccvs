@@ -1,6 +1,6 @@
 2004-04-13  Derek Price  <derek@ximbiot.com>
 
-	* NEWS: Note restriction of modules to within $CVSROOT.
+	* NEWS: Note validation of paths passed to the client.
 
 2004-04-07  Derek Price  <derek@ximbiot.com>
 
