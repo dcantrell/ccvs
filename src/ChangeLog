@@ -1,3 +1,8 @@
+Mon May  8 11:25:07 1995  J.T. Conklin  <jtc@rtl.cygnus.com>
+
+	* lock.c (write_lock): Missed one instance where rmdir(tmp) should
+	  have been changed to clear_lock().
+
 Wed May  3 11:08:32 1995  J.T. Conklin  <jtc@rtl.cygnus.com>
 
 	* create_adm.c, entries.c, import.c, root.c: Changed conditionals
