@@ -1,3 +1,11 @@
+2002-03-21  Derek Price  <oberon@umich.edu>
+
+	* vers_ts.c (time_stamp): Return the timestamp for the newer of the
+	link and the link's source when the file is a link.
+	(Patch from RedHat cvs-1.11.1p1-7 SRPM.)
+
+	* sanity.sh (rcslib): Test for same.
+
 2002-03-17  Larry Jones  <larry.jones@sdrc.com>
 
 	* log.c (cvslog, log_fileproc): Add -S option to suppress head or
