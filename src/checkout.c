@@ -441,10 +441,14 @@ safe_location ()
     int  x;
     int retval;
 
+#ifdef HAVE_READLINK
     /* FIXME-arbitrary limit: should be retrying this like xgetwd.
        But how does readlink let us know that the buffer was too small?
        (by returning sizeof hardpath - 1?).  */
     x = readlink(CVSroot_directory, hardpath, sizeof hardpath - 1);
+#else
+    x = -1;
+#endif
     if (x == -1)
     {
         strcpy(hardpath, CVSroot_directory);
