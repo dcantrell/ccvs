@@ -411,3 +411,279 @@ Annotations for sdir/ssdir/ssfile
 ])
 
 AT_CLEANUP # annotate
+
+
+
+AT_CVS_SETUP([top of repository])
+
+# More basic tests, including non-branch tags and co -d.
+
+cd ..
+mkdir 1
+cd 1
+AT_CHECK([cvs -q co -l .])
+
+touch topfile
+AT_CHECK_NOESCAPE([cvs add topfile],,,
+[$SPROG add: scheduling file \`topfile' for addition
+$SPROG add: use \`$SPROG commit' to add this file permanently
+])
+
+AT_CHECK_NOESCAPE([cvs -q ci -m add-it topfile],,
+[RCS file: $CVSROOT_DIR/topfile,v
+done
+Checking in topfile;
+$CVSROOT_DIR/topfile,v  <--  topfile
+initial revision: 1.1
+done
+])
+
+cd ..
+mkdir 2; cd 2
+AT_CHECK([cvs -q co -l .],,[U topfile
+])
+
+# Now test the ability to run checkout on an existing working
+# directory without having it lose its mind.  I don't know
+# whether this is tested elsewhere.  A more elaborate
+# test might also have modified files, make sure it works if
+# the modules file was modified to add new directories to the
+# module, and such.
+AT_CHECK([cvs -q co -l .])
+
+mkdir first-dir
+AT_CHECK_NOESCAPE([cvs add first-dir],,
+[Directory $CVSROOT_DIR/first-dir added to the repository
+])
+
+cd ..
+AT_CHECK([cvs -q co first-dir])
+
+# The top-level CVS directory is not created by default.
+# I'm leaving basicb-1a and basicb-1b untouched, mostly, in
+# case we decide that the default should be reversed...
+AT_CHECK([test -d CVS],[1])
+
+AT_CHECK([cat first-dir/CVS/Repository],,[first-dir
+])
+
+AT_CLEANUP # top of repository
+
+
+
+AT_CVS_SETUP([Emptydir not special])
+
+# Note that the name Emptydir is chosen to test that CVS just
+# treats it like any other directory name.  It should be
+# special only when it is directly in $CVSROOT/CVSROOT.
+mkdir Emptydir sdir2
+AT_CHECK_NOESCAPE([cvs add Emptydir sdir2],,
+[Directory $CVSROOT_DIR/project/Emptydir added to the repository
+Directory $CVSROOT_DIR/project/sdir2 added to the repository
+])
+
+cd Emptydir
+echo sfile1 starts >sfile1
+AT_CHECK_NOESCAPE([cvs -n add sfile1],,,
+[$SPROG add: scheduling file \`sfile1' for addition
+$SPROG add: use \`$SPROG commit' to add this file permanently
+])
+
+AT_CHECK_NOESCAPE([cvs status sfile1],,
+[===================================================================
+File: sfile1           	Status: Unknown
+
+   Working revision:	No entry for sfile1
+   Repository revision:	No revision control file
+
+],
+[$SPROG status: use \`$SPROG add' to create an entry for sfile1
+])
+
+AT_CHECK_NOESCAPE([cvs add sfile1],,,
+[$SPROG add: scheduling file \`sfile1' for addition
+$SPROG add: use \`$SPROG commit' to add this file permanently
+])
+
+AT_CHECK([cvs status sfile1],,
+[===================================================================
+File: sfile1           	Status: Locally Added
+
+   Working revision:	New file!
+   Repository revision:	No revision control file
+   Sticky Tag:		(none)
+   Sticky Date:		(none)
+   Sticky Options:	(none)
+
+])
+
+cd ../sdir2
+echo sfile2 starts >sfile2
+AT_CHECK_NOESCAPE([cvs add sfile2],,,
+[$SPROG add: scheduling file \`sfile2' for addition
+$SPROG add: use \`$SPROG commit' to add this file permanently
+])
+
+AT_CHECK_NOESCAPE([cvs -q ci CVS],,,
+[$CPROG commit: warning: directory CVS specified in argument
+$CPROG commit: but CVS uses CVS for its own purposes; skipping CVS directory
+])
+
+cd ..
+AT_CHECK_NOESCAPE([cvs -q ci -m add],,
+[RCS file: $CVSROOT_DIR/project/Emptydir/sfile1,v
+done
+Checking in Emptydir/sfile1;
+$CVSROOT_DIR/project/Emptydir/sfile1,v  <--  sfile1
+initial revision: 1.1
+done
+RCS file: $CVSROOT_DIR/project/sdir2/sfile2,v
+done
+Checking in sdir2/sfile2;
+$CVSROOT_DIR/project/sdir2/sfile2,v  <--  sfile2
+initial revision: 1.1
+done
+])
+
+echo sfile1 develops >Emptydir/sfile1
+AT_CHECK_NOESCAPE([cvs -q ci -m modify],,
+[Checking in Emptydir/sfile1;
+$CVSROOT_DIR/project/Emptydir/sfile1,v  <--  sfile1
+new revision: 1.2; previous revision: 1.1
+done
+])
+
+AT_CLEANUP # Emptydir not special
+
+
+
+AT_CVS_SETUP([unprocessed])
+
+AT_CHECK([exit 77])
+
+	  dotest basicb-7 "${testcvs} -q tag release-1" 'T Emptydir/sfile1
+T sdir2/sfile2'
+	  echo not in time for release-1 >sdir2/sfile2
+	  dotest basicb-8 "${testcvs} -q ci -m modify-2" \
+"Checking in sdir2/sfile2;
+${CVSROOT_DIR}/first-dir/sdir2/sfile2,v  <--  sfile2
+new revision: 1\.2; previous revision: 1\.1
+done"
+	  # See if CVS can correctly notice when an invalid numeric
+	  # revision is specified.
+	  # Commented out until we get around to fixing CVS
+:	  dotest basicb-8a0 "${testcvs} diff -r 1.5 -r 1.7 sfile2" 'error msg'
+	  cd ..
+
+	  # Test that we recurse into the correct directory when checking
+	  # for existing files, even if co -d is in use.
+	  touch first-dir/extra
+	  dotest basicb-cod-1 "${testcvs} -q co -d first-dir1 first-dir" \
+'U first-dir1/Emptydir/sfile1
+U first-dir1/sdir2/sfile2'
+	  rm -r first-dir1
+
+	  rm -r first-dir
+
+	  # FIXME? basicb-9 used to check things out like this:
+	  #   U newdir/Emptydir/sfile1
+	  #   U newdir/sdir2/sfile2
+	  # but that's difficult to do.  The whole "shorten" thing
+	  # is pretty bogus, because it will break on things
+	  # like "cvs co foo/bar baz/quux".  Unless there's some
+	  # pretty detailed expansion and analysis of the command-line
+	  # arguments, we shouldn't do "shorten" stuff at all.
+
+	  dotest basicb-9 \
+"${testcvs} -q co -d newdir -r release-1 first-dir/Emptydir first-dir/sdir2" \
+'U newdir/first-dir/Emptydir/sfile1
+U newdir/first-dir/sdir2/sfile2'
+
+	  # basicb-9a and basicb-9b: see note about basicb-1a
+
+	  dotest_fail basicb-9a "test -d CVS" ''
+
+	  dotest basicb-9c "cat newdir/CVS/Repository" "\."
+	  dotest basicb-9d "cat newdir/first-dir/CVS/Repository" \
+"${CVSROOT_DIR}/first-dir" \
+"first-dir"
+	  dotest basicb-9e "cat newdir/first-dir/Emptydir/CVS/Repository" \
+"${CVSROOT_DIR}/first-dir/Emptydir" \
+"first-dir/Emptydir"
+	  dotest basicb-9f "cat newdir/first-dir/sdir2/CVS/Repository" \
+"${CVSROOT_DIR}/first-dir/sdir2" \
+"first-dir/sdir2"
+
+	  dotest basicb-10 "cat newdir/first-dir/Emptydir/sfile1 newdir/first-dir/sdir2/sfile2" \
+"sfile1 develops
+sfile2 starts"
+
+	  rm -r newdir
+
+	  # Hmm, this might be a case for CVSNULLREPOS, but CVS doesn't
+	  # seem to deal with it...
+	  if false; then
+	  dotest basicb-11 "${testcvs} -q co -d sub1/sub2 first-dir" \
+"U sub1/sub2/Emptydir/sfile1
+U sub1/sub2/sdir2/sfile2"
+	  cd sub1
+	  dotest basicb-12 "${testcvs} -q update ./." ''
+	  touch xx
+	  dotest basicb-13 "${testcvs} add xx" fixme
+	  cd ..
+	  rm -r sub1
+	  # to test: sub1/sub2/sub3
+	  fi # end of tests commented out.
+
+	  # Create a second directory.
+	  mkdir 1
+	  cd 1
+	  dotest basicb-14 "${testcvs} -q co -l ." 'U topfile'
+	  mkdir second-dir
+	  dotest basicb-15 "${testcvs} add second-dir" \
+"Directory ${CVSROOT_DIR}/second-dir added to the repository"
+	  cd second-dir
+	  touch aa
+	  dotest basicb-16 "${testcvs} add aa" \
+"${SPROG} add: scheduling file .aa. for addition
+${SPROG} add: use .${SPROG} commit. to add this file permanently"
+	  dotest basicb-17 "${testcvs} -q ci -m add" \
+"RCS file: ${CVSROOT_DIR}/second-dir/aa,v
+done
+Checking in aa;
+${CVSROOT_DIR}/second-dir/aa,v  <--  aa
+initial revision: 1\.1
+done"
+	  cd ..
+
+	  # Try to remove all revisions in a file.
+	  dotest_fail basicb-o1 "${testcvs} admin -o1.1 topfile" \
+"RCS file: ${CVSROOT_DIR}/topfile,v
+deleting revision 1\.1
+${SPROG} \[admin aborted\]: attempt to delete all revisions"
+	  dotest basicb-o2 "${testcvs} -q update -d first-dir" \
+"U first-dir/Emptydir/sfile1
+U first-dir/sdir2/sfile2"
+	  dotest_fail basicb-o3 \
+"${testcvs} admin -o1.1:1.2 first-dir/sdir2/sfile2" \
+"RCS file: ${CVSROOT_DIR}/first-dir/sdir2/sfile2,v
+deleting revision 1\.2
+deleting revision 1\.1
+${SPROG} \[admin aborted\]: attempt to delete all revisions"
+	  cd ..
+	  rm -r 1
+
+	  mkdir 1; cd 1
+	  # Note that -H is an invalid option.
+	  # I suspect that the choice between "illegal" and "invalid"
+	  # depends on the user's environment variables, the phase
+	  # of the moon (weirdness with optind), and who knows what else.
+	  # I've been seeing "illegal"...
+	  # And I switched it to "invalid". -DRP
+	  dotest_fail basicb-21 "${testcvs} -q admin -H" \
+"admin: invalid option -- H
+${CPROG} \[admin aborted\]: specify ${CPROG} -H admin for usage information"
+	  cd ..
+	  rmdir 1
+
+AT_CLEANUP # unprocessed

@@ -1,3 +1,8 @@
+2003-11-08  Derek R. Price  <derek@ximbiot.com>
+
+	* basic.at: Add about half of basicb.
+	* suite.at: Regenerated.
+
 2003-11-07  Derek R. Price  <derek@ximbiot.com>
 
 	Import the rest of the basica tests.
