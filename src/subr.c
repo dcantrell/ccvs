@@ -554,10 +554,8 @@ void
 run_setup (char *fmt,...)
 #else
 void 
-run_setup (fmt, va_alist)
+run_setup (fmt, a1, a2, a3, a4, a5, a6, a7, a8)
     char *fmt;
-    va_dcl
-
 #endif
 {
 #ifdef HAVE_VPRINTF
@@ -607,10 +605,8 @@ void
 run_args (char *fmt,...)
 #else
 void 
-run_args (fmt, va_alist)
+run_args (fmt, a1, a2, a3, a4, a5, a6, a7, a8)
     char *fmt;
-    va_dcl
-
 #endif
 {
 #ifdef HAVE_VPRINTF

@@ -832,7 +832,7 @@ update_entries (data_arg, ent_list, short_pathname, filename)
 	        retcode = 0;
 	    else
 	    {
-	        run_setup ("%s -f -s -b~ %s %s", PATCH_PROGRAM,
+	        run_setup ("%s -f -s -b ~ %s %s", PATCH_PROGRAM,
 			   filename, temp_filename);
 		retcode = run_exec (DEVNULL, RUN_TTY, RUN_TTY, RUN_NORMAL);
 	    }
@@ -1342,8 +1342,11 @@ do_deferred_progs ()
 
     char fname[PATH_MAX];
     FILE *f;
-    if (chdir (toplevel_wd) < 0)
-	error (1, errno, "could not chdir to %s", toplevel_wd);
+    if (toplevel_wd[0] != '\0')
+      {
+	if (chdir (toplevel_wd) < 0)
+	  error (1, errno, "could not chdir to %s", toplevel_wd);
+      }
     for (p = checkin_progs; p != NULL; )
     {
 	sprintf (fname, "%s/%s", p->dir, CVSADM_CIPROG);
@@ -1443,8 +1446,11 @@ process_prune_candidates ()
     struct save_dir *p;
     struct save_dir *q;
 
-    if (chdir (toplevel_wd) < 0)
-	error (1, errno, "could not chdir to %s", toplevel_wd);
+    if (toplevel_wd[0] != '\0')
+      {
+	if (chdir (toplevel_wd) < 0)
+	  error (1, errno, "could not chdir to %s", toplevel_wd);
+      }
     for (p = prune_candidates; p != NULL; )
     {
 	if (client_isemptydir (p->dir))
@@ -1791,9 +1797,8 @@ handle_m (args, len)
     char *args;
     int len;
 {
-    for (; len > 0; --len)
-	putc (*args++, stdout);
-    putc ('\n', stdout);
+  fwrite (args, len, sizeof (*args), stdout);
+  putc ('\n', stdout);
 }
 
 static void
@@ -1801,11 +1806,11 @@ handle_e (args, len)
     char *args;
     int len;
 {
-    for (; len > 0; --len)
-	putc (*args++, stderr);
-    putc ('\n', stderr);
+  fwrite (args, len, sizeof (*args), stderr);
+  putc ('\n', stderr);
 }
 
+/* This table must be writeable if the server code is included.  */
 struct response responses[] =
 {
     {"ok", handle_ok, response_type_ok, rs_essential},
@@ -2796,16 +2801,6 @@ client_senddate (date)
     option_with_arg ("-D", buf);
 }
 
-static char *client_commit_usage[] =
-{
-    "Usage: %s %s [-nl] [-m msg] [-r rev] files...\n",
-    "\t-n\tDo not run the module program (if any).\n",
-    "\t-l\tLocal directory only (not recursive).\n",
-    "\t-m msg\tLog message.\n",
-    "\t-r rev\tCommit to this branch or trunk revision.\n",
-    NULL
-};
-
 int
 client_commit (argc, argv)
     int argc;

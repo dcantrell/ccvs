@@ -47,7 +47,7 @@ char *alloca ();
 #endif
 
 #if __GNUC__ == 2
-#define USE(var) static char sizeof##var = sizeof(sizeof##var) + sizeof(var);
+#define USE(var) static const char sizeof##var = sizeof(sizeof##var) + sizeof(var);
 #else
 #define USE(var) 
 #endif
@@ -191,7 +191,7 @@ extern int errno;
 /* #define CVSDEA		"CVS.dea" */
 
 /* Define to enable alternate death support (which uses the RCS state).  */
-/* #define DEATH_STATE 1 */
+#define DEATH_STATE 1
 
 #define DEATH_SUPPORT 1
 
@@ -358,6 +358,8 @@ extern int trace;		/* Show all commands */
 extern int noexec;		/* Don't modify disk anywhere */
 extern int logoff;		/* Don't write history entry */
 
+extern char hostname[];	
+
 /* Externs that are included directly in the CVS sources */
 DBM *open_module PROTO((void));
 FILE *Fopen PROTO((char *name, char *mode));
@@ -423,13 +425,18 @@ void make_directories PROTO((char *name));
 void make_directory PROTO((char *name));
 void rename_file PROTO((char *from, char *to));
 void run_arg PROTO((char *s));
-void run_args PROTO((char *fmt,...));
 void run_print PROTO((FILE * fp));
+#ifdef HAVE_VPRINTF
 void run_setup PROTO((char *fmt,...));
+void run_args PROTO((char *fmt,...));
+#else
+void run_setup ();
+void run_args ();
+#endif
 void strip_path PROTO((char *path));
 void strip_trailing_slashes PROTO((char *path));
 void update_delproc PROTO((Node * p));
-void usage PROTO((char **cpp));
+void usage PROTO((const char *const *cpp));
 void xchmod PROTO((char *fname, int writable));
 int Checkin PROTO((int type, char *file, char *update_dir,
 		   char *repository, char *rcs, char *rev,

@@ -23,7 +23,7 @@ static int admin_fileproc PROTO((char *file, char *update_dir,
 			   char *repository, List *entries,
 			   List *srcfiles));
 
-static char *admin_usage[] =
+static const char *const admin_usage[] =
 {
     "Usage: %s %s rcs-options files...\n",
     NULL

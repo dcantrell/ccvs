@@ -55,7 +55,7 @@ install: all $(libdir)/cvs/examples
 .PHONY: install
 
 $(libdir)/cvs/examples:
-	../mkinstalldirs $(libdir)/cvs/examples
+	$(srcdir)/../mkinstalldirs $(libdir)/cvs/examples
 
 tags:
 .PHONY: tags

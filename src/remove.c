@@ -32,7 +32,7 @@ static int local;
 static int removed_files;
 static int existing_files;
 
-static char *remove_usage[] =
+static const char *const remove_usage[] =
 {
     "Usage: %s %s [-flR] [files...]\n",
     "\t-f\tDelete the file before removing it.\n",

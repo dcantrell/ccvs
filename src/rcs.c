@@ -312,7 +312,9 @@ RCS_parsercsfile_i (fp, rcsfile)
 
 	/* throw away the state field */
 	(void) getrcskey (fp, &key, &value);
-#ifdef DEATH_STATE
+#ifdef DEATH_SUPPORT
+	/* Accept this regardless of DEATH_STATE, so that we can read
+	   repositories created with different versions of CVS.  */
 	if (strcmp (key, "state") != 0)
 	    error (1, 0, "\
 unable to parse rcs file; `state' not in the expected place");
@@ -345,14 +347,13 @@ unable to parse rcs file; `state' not in the expected place");
 	while ((n = getrcskey (fp, &key, &value)) >= 0)
 	{
 #ifdef DEATH_SUPPORT
-	    /* CYGNUS LOCAL--this code needs to stay here unless our
-	       repository is converted to use CVSDEA.  */
+	    /* Enable use of repositories created with a CVS which defines
+	       DEATH_SUPPORT and not DEATH_STATE or CVSDEA.  */
 	    if (strcmp(key, RCSDEAD) == 0)
 	    {
 		vnode->dead = 1;
 		continue;
 	    }
-	    /* end CYGNUS LOCAL */
 #endif
 	    /* if we have a revision, break and do it */
 	    for (cp = key; (isdigit (*cp) || *cp == '.') && *cp != '\0'; cp++)
@@ -361,6 +362,10 @@ unable to parse rcs file; `state' not in the expected place");
 		break;
 	}
 #ifdef CVSDEA
+	/* Accept this only #ifdef CVSDEA, because (a) all that extra file
+	   access presumably slows things down, (b) I don't think anyone
+	   is actually using CVSDEA.  It probably could be flushed
+	   entirely.  */
 	/* Check whether vnode->version is listed in CVSDEA file.  */
 	{
 	    char *p;
