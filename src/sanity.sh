@@ -618,7 +618,7 @@ if test x"$*" = x; then
 	tests="${tests} ignore binfiles binfiles2 binfiles3"
 	tests="${tests} mcopy binwrap binwrap2"
 	tests="${tests} binwrap3 mwrap info taginfo config"
-	tests="${tests} serverpatch log log2 ann ann-id"
+	tests="${tests} serverpatch log log2 logopt ann ann-id"
 	# Repository Storage (RCS file format, CVS lock files, creating
 	# a repository without "cvs init", &c).
 	tests="${tests} crerepos rcs rcs2 rcs3 lockfiles backuprecover"
@@ -12477,8 +12477,10 @@ U file1'
 	  #   -h: admin-19a-log
 	  #   -N: log, log2, admin-19a-log
 	  #   -b, -r: log
-	  #   -d: rcs
-	  #   -s, -R: rcs3
+	  #   -d: logopt, rcs
+	  #   -s: logopt, rcs3
+	  #   -R: logopt, rcs3
+	  #   -w, -t: not tested yet (TODO)
 
 	  # Check in a file with a few revisions and branches.
 	  mkdir ${CVSROOT_DIRNAME}/first-dir
@@ -12712,6 +12714,18 @@ description:
 ${log_rev2b}
 ${log_trailer}"
 
+	  # Multiple -r options are undocumented; see comments in
+	  # cvs.texinfo about whether they should be deprecated.
+	  dotest log-18a "${testcvs} log -r1.2.2.2 -r1.3:1.3 file1" \
+"${log_header}
+${log_tags}
+${log_header2}
+total revisions: 5;	selected revisions: 2
+description:
+${log_rev3}
+${log_rev2b}
+${log_trailer}"
+
 	  # This test would fail with the old invocation of rlog, but it
 	  # works with the builtin log support.
 	  dotest log-19 "${testcvs} log -rbranch. file1" \
@@ -12911,6 +12925,45 @@ date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
 	  rm -r first-dir
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
 
+	  ;;
+
+	logopt)
+	  # Some tests of log.c's option parsing and such things.
+	  mkdir 1; cd 1
+	  dotest logopt-1 "${testcvs} -q co -l ." ''
+	  mkdir first-dir
+	  dotest logopt-2 "${testcvs} add first-dir" \
+"Directory ${TESTDIR}/cvsroot/first-dir added to the repository"
+	  cd first-dir
+	  echo hi >file1
+	  dotest logopt-3 "${testcvs} add file1" \
+"${PROG} [a-z]*: scheduling file .file1. for addition
+${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
+	  dotest logopt-4 "${testcvs} -q ci -m add file1" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
+done
+Checking in file1;
+${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
+initial revision: 1\.1
+done"
+	  cd ..
+
+	  dotest logopt-5 "${testcvs} log -R -d 2038-01-01" \
+"${PROG} [a-z]*: Logging \.
+${PROG} [a-z]*: Logging first-dir
+${TESTDIR}/cvsroot/first-dir/file1,v"
+	  dotest logopt-6 "${testcvs} log -d 2038-01-01 -R" \
+"${PROG} [a-z]*: Logging \.
+${PROG} [a-z]*: Logging first-dir
+${TESTDIR}/cvsroot/first-dir/file1,v"
+	  dotest logopt-7 "${testcvs} log -s Exp -R" \
+"${PROG} [a-z]*: Logging \.
+${PROG} [a-z]*: Logging first-dir
+${TESTDIR}/cvsroot/first-dir/file1,v"
+
+	  cd ..
+	  rm -r 1
+	  rm -rf ${CVSROOT_DIRNAME}/first-dir
 	  ;;
 
 	ann)
@@ -13743,6 +13796,71 @@ revision 1\.2\.6\.1
 date: 1971/01/01 08:00:05;  author: joe;  state: Exp;  lines: ${PLUS}1 -1
 \*\*\* empty log message \*\*\*
 ============================================================================="
+	  # Now test each date format for "cvs log -d".
+	  # Earlier than 1971-01-01
+	  if ${testcvs} -q log -d '<1971-01-01 00:00 GMT' file2 \
+	    >${TESTDIR}/rcs4.tmp
+	  then
+	    dotest rcs-15 "grep revision ${TESTDIR}/rcs4.tmp" \
+"total revisions: 7;	selected revisions: 3
+revision 1\.3
+revision 1\.2
+revision 1\.1"
+	  else
+	    fail rcs-15
+	  fi
+	  # Later than 1971-01-01
+	  if ${testcvs} -q log -d '1971-01-01 00:00 GMT<' file2 \
+	    >${TESTDIR}/rcs4.tmp
+	  then
+	    dotest rcs-16 "grep revision ${TESTDIR}/rcs4.tmp" \
+"total revisions: 7;	selected revisions: 4
+revision 1\.5
+revision 1\.4
+revision 1\.2\.6\.2
+revision 1\.2\.6\.1"
+	  else
+	    fail rcs-16
+	  fi
+	  # Alternate syntaxes for later and earlier; multiple -d options
+	  if ${testcvs} -q log -d '>1971-01-01 00:00 GMT' \
+	    -d '1970-12-31 12:15 GMT>' file2 >${TESTDIR}/rcs4.tmp
+	  then
+	    dotest rcs-17 "grep revision ${TESTDIR}/rcs4.tmp" \
+"total revisions: 7;	selected revisions: 5
+revision 1\.5
+revision 1\.4
+revision 1\.1
+revision 1\.2\.6\.2
+revision 1\.2\.6\.1"
+	  else
+	    fail rcs-17
+	  fi
+	  # Range, and single date
+	  if ${testcvs} -q log -d '1970-12-31 11:30 GMT' \
+	    -d '1971-01-01 00:00:05 GMT<1971-01-01 01:00:01 GMT' \
+	    file2 >${TESTDIR}/rcs4.tmp
+	  then
+	    dotest rcs-18 "grep revision ${TESTDIR}/rcs4.tmp" \
+"total revisions: 7;	selected revisions: 2
+revision 1\.5
+revision 1\.1"
+	  else
+	    fail rcs-18
+	  fi
+	  # Alternate range syntax; equality
+	  if ${testcvs} -q log \
+	    -d '1971-01-01 01:00:01 GMT>=1971-01-01 00:00:05 GMT' \
+	    file2 >${TESTDIR}/rcs4.tmp
+	  then
+	    dotest rcs-19 "grep revision ${TESTDIR}/rcs4.tmp" \
+"total revisions: 7;	selected revisions: 2
+revision 1\.5
+revision 1\.4"
+	  else
+	    fail rcs-19
+	  fi
+
 	  cd ..
 
 	  rm -r first-dir ${TESTDIR}/rcs4.tmp
