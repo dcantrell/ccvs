@@ -1,3 +1,21 @@
+2003-03-03  Mark D. Baushke  <mdb@cvshome.org>
+
+	* rcs.c (RCS_magicrev): CVS_LOCAL_BRANCH_NUM feature.
+	Port of the FreeBSD hack for setting the next magic branch number
+	to be used. The original patch was written by Peter Wemm
+	<peter@FreeBSD.org> and may be found by visiting the URL:
+	http://www.freebsd.org/cgi/cvsweb.cgi/src/contrib/cvs/src/rcs.c.diff?r1=1.1&r2=1.2
+	Implement a horrible (but simple) hack to allow some control over the
+	branch number that is assigned. This is specifically to support the
+	local commit feature of cvsup. If one sets $CVS_LOCAL_BRANCH_NUM to
+	(say) 1000 then branches the local repository, the revision numbers
+	will look like 1.66.1000.xx. This is almost a dead-set certainty that
+	there will be no conflicts with version numbers.
+	(This needs to be something more than an option to 'cvs tag' or 'cvs
+	rtag' as various parts of cvs "know" how to automatically branch files
+	(eg: cvs add). Trying to remember state is getting "Too Hard (TM)")
+	* sanity.sh (branches3): Test the CVS_LOCAL_BRANCH_NUM feature.
+	
 2003-03-04  Derek Price  <derek@ximbiot.com>
 
 	* history.c (history_write): Remove unneeded O_CREAT in the call to

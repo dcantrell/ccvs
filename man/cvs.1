@@ -2078,6 +2078,15 @@ If this variable is set then
 .B cvs
 will ignore all references to remote repositories in the CVS/Root file.
 .TP
+.SM CVS_LOCAL_BRANCH_NUM
+Setting this variable allows some control over the
+branch number that is assigned. This is specifically to
+support the local commit feature of CVSup. If one sets
+CVS_LOCAL_BRANCH_NUM to (say) 1000 then branches
+the local repository, the revision numbers will look
+like 1.66.1000.xx. There is almost a dead-set certainty
+that there will be no conflicts with version numbers.
+.TP
 .SM CVS_RSH
 .B cvs
 uses the contents of this variable to determine the name of the
