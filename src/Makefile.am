@@ -121,8 +121,10 @@ EXTRA_DIST = \
 	build_src.com \
 	sanity.sh
 
-check-local: localcheck remotecheck
-	$(SHELL) $(srcdir)/tests/suite
+TESTSUITE = $(srcdir)/tests/suite
+
+check-local:
+	$(SHELL) $(TESTSUITE)
 
 .PHONY: localcheck
 localcheck:
@@ -134,7 +136,7 @@ remotecheck: all
 
 # Our distclean targets
 distclean-local:
-	rm -f check.log check.plog
+	test ! -f $(TESTSUITE) || $(SHELL) $(TESTSUITE) --clean
 
 ## MAINTAINER Targets
 
