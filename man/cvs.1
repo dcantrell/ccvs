@@ -65,7 +65,8 @@ A necessary preliminary for most \fBcvs\fP work: creates your private
 copy of the source for \fImodules\fP (named collections of source; you
 can also use a path relative to the source repository here).  You can
 work with this copy without interfering with others' work.  At least
-one subdirectory level is always created.
+one subdirectory level is always created.  You should only use this
+command once to create a new private working directory.
 .TP
 .B cvs update
 Execute this command from \fIwithin\fP your private source
@@ -304,13 +305,13 @@ on the same file.
 Can only be done from within sources created by a previous
 .` "cvs checkout"
 invocation.
-Use
+Note you should use
 .` "cvs import"
 to place whole new hierarchies of sources under
 .B cvs
 control.
 (Does not directly affect repository; changes
-working directory.)
+working directory.
 .TP
 .B admin
 Execute
@@ -357,8 +358,8 @@ file; see
 .BR cvs ( 5 ).
 .TP
 .B import
-Incorporate a set of updates from off-site into the source repository,
-as a ``vendor branch''.  (Changes repository.)
+Incorporate a set of updates from off-site into the source repository.
+By default it creates a ``vendor branch''.  (Changes repository.)
 .TP
 .B log
 Display
@@ -508,7 +509,8 @@ only compatible with
 .SM RCS
 version 5.7 or later), and \-kv which is useful for an
 .B export
-where you wish to retain keyword information after an
+where you wish to prevent keyword information from being changed after
+an
 .B import
 at some other site.
 .TP
@@ -1308,10 +1310,10 @@ The \fIrepository\fP argument gives a directory name (or a path to a
 directory) under the CVS root directory for repositories; if the
 directory did not exist, \fBimport\fP creates it.
 .SP
-When you use \fBimport\fP for updates to source that has been modified in your
-source repository (since a prior \fBimport\fP), it
-will notify you of any files that conflict in the two branches of
-development; use
+When you use \fBimport\fP for updates to source on the vendor branch
+that has been modified in your source repository (since a prior
+\fBimport\fP), it will notify you of any files that conflict in the two
+branches of development; use
 .` "cvs checkout -j"
 to reconcile the differences, as \fBimport\fP instructs you to do.
 .SP
@@ -1366,6 +1368,14 @@ Use
 to specify a first-level branch other
 than
 .` "1.1.1".
+You may specify
+.` "1"
+to import sources onto the ``trunk'' branch.  You will want to do this
+if you are incorporating local sources into
+.SM CVS
+for the first time, or you wish to be able to more effectively maintain
+several local patches to a set of third party source files (maintaining
+multiple patch branches with a vendor branch is difficult at best).
 .SP
 Use
 .` "\-I \fIname\fP"
@@ -1476,6 +1486,41 @@ to explicitly specify the
 .` "diff \-c"
 form of context diffs
 (which is the default), if you like.
+.SP
+You can use
+.B \-k
+.I opt
+to specify the way keywords should be expanded prior to running the
+diff.  For example to generate a patch against a release that had been
+generated with
+.B "cvs export \-k v ..."
+you would also specify
+.B "\-k v"
+when generating the patch.  In this way the patch would properly update
+a previous release to match what would be generated in a new release.
+.SP
+You can use
+.B \-K
+.I opt
+to specify the way keywords should be expanded for the ``old'' file
+only (this overrides any
+.B \-k
+option).
+.SP
+If neither
+.B \-K
+nor
+.B \-k
+are specified then
+.B "\-k o"
+is used to expand keywords for the ``old'' file.  This has the effect of
+ensuring that for modules with a vendor branch the vendor's original
+keywords will be used to compare against thus producing a patch which
+will always properly apply against the vendor's original distribution.
+You can override this to get default local keyword expansion by
+specifying the
+.B "\-K kv"
+option.
 .TP
 \fBrelease\fP [\fB\-dQq\fP] \fImodules\fP\|.\|.\|.
 .I Requires:
