@@ -4817,11 +4817,16 @@ server_cleanup (void)
 	    }
 #endif /* SUNOS_KLUDGE */
 
+	    /* Make sure our working directory isn't inside the tree we're
+	       going to delete.  */
+	    CVS_CHDIR (Tmpdir);
+
 	    /* Temporarily clear noexec, so that we clean up our temp directory
 	       regardless of it (this could more cleanly be handled by moving
 	       the noexec check to all the unlink_file_dir callers from
 	       unlink_file_dir itself).  */
 	    save_noexec = noexec;
+
 	    SIG_beginCrSect();
 	    noexec = 0;
 	    unlink_file_dir (orig_server_temp_dir);
