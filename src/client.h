@@ -98,6 +98,8 @@ send_arg PROTO((char *string));
 void
 send_option_string PROTO((char *string));
 
+extern void send_a_repository PROTO ((char *, char *, char *));
+
 #endif /* CLIENT_SUPPORT */
 
 /*

@@ -5089,13 +5089,10 @@ initial revision: 1\.1
 done"
 	  mkdir sdir
 	  cd ..
-	  dotest_fail errmsg2-8 "${testcvs} add first-dir/sdir" \
-"${PROG} [a-z]*: cannot add files with '/' in their name; first-dir/sdir not added"
-	  cd first-dir
-	  # Make sure that errmsg2-8 didn't leave any droppings which
-	  # prevent us from proceeding normally.
-	  dotest errmsg2-9 "${testcvs} add sdir" \
+	  dotest errmsg2-8 "${testcvs} add first-dir/sdir" \
 "Directory ${TESTDIR}/cvsroot/first-dir/sdir added to the repository"
+
+	  cd first-dir
 
 	  touch file10
 	  mkdir sdir10
@@ -5110,28 +5107,58 @@ Checking in file10;
 ${TESTDIR}/cvsroot/first-dir/file10,v  <--  file10
 initial revision: 1\.1
 done"
-	  # Again, try to see that there are no droppings.
+	  # Try to see that there are no droppings left by
+	  # any of the previous tests.
 	  dotest errmsg2-12 "${testcvs} -q update" ""
 
 	  # Now test adding files with '/' in the name, both one level
 	  # down and more than one level down.
 	  cd ..
 	  mkdir first-dir/sdir10/ssdir
-	  dotest_fail errmsg2-13 "${testcvs} add first-dir/sdir10/ssdir" \
-"${PROG} [a-z]*: cannot add files with '/' in their name; first-dir/sdir10/ssdir not added"
+	  dotest errmsg2-13 "${testcvs} add first-dir/sdir10/ssdir" \
+"Directory ${TESTDIR}/cvsroot/first-dir/sdir10/ssdir added to the repository"
+
 	  touch first-dir/sdir10/ssdir/ssfile
-	  dotest_fail errmsg2-14 "${testcvs} add first-dir/sdir10/ssdir/ssfile" \
-"${PROG} [a-z]*: cannot add files with '/' in their name; first-dir/sdir10/ssdir/ssfile not added"
+	  dotest errmsg2-14 \
+	    "${testcvs} add first-dir/sdir10/ssdir/ssfile" \
+"${PROG} [a-z]*: scheduling file .first-dir/sdir10/ssdir/ssfile. for addition
+${PROG} [a-z]*: use .cvs commit. to add this file permanently"
 	  touch first-dir/file15
-	  dotest_fail errmsg2-15 "${testcvs} add first-dir/file15" \
-"${PROG} [a-z]*: cannot add files with '/' in their name; first-dir/file15 not added"
+	  dotest errmsg2-15 "${testcvs} add first-dir/file15" \
+"${PROG} [a-z]*: scheduling file .first-dir/file15. for addition
+${PROG} [a-z]*: use .cvs commit. to add this file permanently"
 
 	  # Now the case where we try to give it a directory which is not
 	  # under CVS control.
 	  mkdir bogus-dir
 	  touch bogus-dir/file16
+	  # The first message, from local CVS, is nice.  The second one
+	  # is not nice; would be good to fix remote CVS to give a clearer
+	  # message (e.g. the one from local CVS).  But at least it is an
+	  # error message.
 	  dotest_fail errmsg2-16 "${testcvs} add bogus-dir/file16" \
-"${PROG} [a-z]*: cannot add files with '/' in their name; bogus-dir/file16 not added"
+"${PROG} [a-z]*: in directory bogus-dir:
+${PROG} \[[a-z]* aborted\]: there is no version here; do .cvs checkout. first" \
+"${PROG} [a-z]*: cannot open CVS/Entries for reading: No such file or directory
+${PROG} \[add aborted\]: no repository"
+	  rm -r bogus-dir
+
+	  # One error condition we don't test for is trying to add a file
+	  # or directory which already is there.
+
+	  dotest errmsg2-17 "${testcvs} -q ci -m checkin" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/file15,v
+done
+Checking in first-dir/file15;
+${TESTDIR}/cvsroot/first-dir/file15,v  <--  file15
+initial revision: 1\.1
+done
+RCS file: ${TESTDIR}/cvsroot/first-dir/sdir10/ssdir/ssfile,v
+done
+Checking in first-dir/sdir10/ssdir/ssfile;
+${TESTDIR}/cvsroot/first-dir/sdir10/ssdir/ssfile,v  <--  ssfile
+initial revision: 1\.1
+done"
 
 	  cd ..
 	  rm -r 1
