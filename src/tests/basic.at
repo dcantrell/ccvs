@@ -14,7 +14,6 @@ dnl GNU General Public License for more details.
 AT_CVS_BANNER([Basic Functionality])
 
 AT_CVS_SETUP([Operations on empty projects])
-
 AT_KEYWORDS([update diff status])
 
 # Test a few operations, to ensure they gracefully do
@@ -30,6 +29,7 @@ AT_CLEANUP # Operations on empty projects
 
 
 AT_CVS_SETUP([Adding directories and files])
+AT_KEYWORDS([add])
 
 mkdir sdir
 
@@ -132,6 +132,7 @@ cd ../..
 
 
 AT_CVS_SETUP([tag, update, & diff])
+AT_KEYWORDS([tag update diff])
 
 cvs_project_init_simple
 
@@ -191,7 +192,6 @@ AT_CLEANUP # tag, update, & diff
 
 
 AT_CVS_SETUP([strange revision numbers])
-
 AT_KEYWORDS([commit commit-r diff diff-r admin admin-o resurrection])
 
 cvs_project_init_simple
@@ -420,6 +420,7 @@ AT_CLEANUP # annotate
 
 
 AT_CVS_SETUP([top of repository])
+AT_KEYWORDS([tag tags co-d])
 
 # More basic tests, including non-branch tags and co -d.
 
@@ -672,7 +673,6 @@ AT_CLEANUP # Emptydir not special
 
 
 AT_CVS_SETUP([delete last revision])
-
 AT_KEYWORDS([admin admin-o])
 
 cvs_project_init_simple
@@ -718,7 +718,6 @@ AT_CLEANUP # delete last revision
 
 
 AT_CVS_SETUP([no admin -H])
-
 AT_KEYWORDS([admin])
 
 # Why in the world do we check for this?
