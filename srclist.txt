@@ -8,7 +8,8 @@ Stream compression and decompression libraries.
 License: zlib/README (Public Domain, but do not misrepresent source.)
 Bug Report Email: bug-zlib@gnu.org
 GNU Web Page: http://www.gnu.org/directory/GNU/zlib.html
-Last Web Location: http://www.gzip.org/zlib
+Last Web Location: http://www.zlib.net
+Previous Web Location: http://www.gzip.org/zlib
 
 Imported files					CVS		Local
 						Directory	Modifications
