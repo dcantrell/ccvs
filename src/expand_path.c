@@ -15,14 +15,14 @@
 #include "cvs.h"
 #include <sys/types.h>
 
-static char *expand_variable PROTO((char *env, char *file, int line));
+static char *expand_variable (char *env, char *file, int line);
 
 
 /* User variables.  */
 
 List *variable_list = NULL;
 
-static void variable_delproc PROTO ((Node *));
+static void variable_delproc (Node *);
 
 static void
 variable_delproc (node)

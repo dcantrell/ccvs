@@ -18,13 +18,13 @@
 #include "cvs.h"
 
 #ifdef CLIENT_SUPPORT
-static int remove_force_fileproc PROTO ((void *callerdat,
-					 struct file_info *finfo));
+static int remove_force_fileproc (void *callerdat,
+					 struct file_info *finfo);
 #endif
-static int remove_fileproc PROTO ((void *callerdat, struct file_info *finfo));
-static Dtype remove_dirproc PROTO ((void *callerdat, char *dir,
+static int remove_fileproc (void *callerdat, struct file_info *finfo);
+static Dtype remove_dirproc (void *callerdat, char *dir,
 				    char *repos, char *update_dir,
-				    List *entries));
+				    List *entries);
 
 static int force;
 static int local;

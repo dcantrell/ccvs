@@ -36,7 +36,7 @@ extern char *GETPASS ();
 /* If non-NULL, get_cvs_password() will just return this. */
 static char *cvs_password = NULL;
 
-static char *construct_cvspass_filename PROTO ((void));
+static char *construct_cvspass_filename (void);
 
 /* The return value will need to be freed. */
 static char *

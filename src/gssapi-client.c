@@ -191,9 +191,9 @@ struct cvs_gssapi_wrap_data
     gss_ctx_id_t gcontext;
 };
 
-static int cvs_gssapi_wrap_input PROTO((void *, const char *, char *, int));
-static int cvs_gssapi_wrap_output PROTO((void *, const char *, char *, int,
-					 int *));
+static int cvs_gssapi_wrap_input (void *, const char *, char *, int);
+static int cvs_gssapi_wrap_output (void *, const char *, char *, int,
+					 int *);
 
 /* Create a GSSAPI wrapping buffer.  We use a packetizing buffer with
    GSSAPI wrapping routines.  */
@@ -203,7 +203,7 @@ cvs_gssapi_wrap_buffer_initialize (buf, input, gcontext, memory)
      struct buffer *buf;
      int input;
      gss_ctx_id_t gcontext;
-     void (*memory) PROTO((struct buffer *));
+     void (*memory) (struct buffer *);
 {
     struct cvs_gssapi_wrap_data *gd;
 

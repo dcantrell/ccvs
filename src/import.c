@@ -20,19 +20,19 @@
 #include "savecwd.h"
 #include <assert.h>
 
-static char *get_comment PROTO((char *user));
-static int add_rev PROTO((char *message, RCSNode *rcs, char *vfile,
-			  char *vers));
-static int add_tags PROTO((RCSNode *rcs, char *vfile, char *vtag, int targc,
-		     char *targv[]));
-static int import_descend PROTO((char *message, char *vtag, int targc, char *targv[]));
-static int import_descend_dir PROTO((char *message, char *dir, char *vtag,
-			       int targc, char *targv[]));
-static int process_import_file PROTO((char *message, char *vfile, char *vtag,
-				int targc, char *targv[]));
-static int update_rcs_file PROTO((char *message, char *vfile, char *vtag, int targc,
-			    char *targv[], int inattic));
-static void add_log PROTO((int ch, char *fname));
+static char *get_comment (char *user);
+static int add_rev (char *message, RCSNode *rcs, char *vfile,
+			  char *vers);
+static int add_tags (RCSNode *rcs, char *vfile, char *vtag, int targc,
+		     char *targv[]);
+static int import_descend (char *message, char *vtag, int targc, char *targv[]);
+static int import_descend_dir (char *message, char *dir, char *vtag,
+			       int targc, char *targv[]);
+static int process_import_file (char *message, char *vfile, char *vtag,
+				int targc, char *targv[]);
+static int update_rcs_file (char *message, char *vfile, char *vtag, int targc,
+			    char *targv[], int inattic);
+static void add_log (int ch, char *fname);
 
 static int repos_len;
 static char *vhead;

@@ -10,11 +10,11 @@
 
 #include "cvs.h"
 
-static Dtype status_dirproc PROTO ((void *callerdat, char *dir,
+static Dtype status_dirproc (void *callerdat, char *dir,
 				    char *repos, char *update_dir,
-				    List *entries));
-static int status_fileproc PROTO ((void *callerdat, struct file_info *finfo));
-static int tag_list_proc PROTO((Node * p, void *closure));
+				    List *entries);
+static int status_fileproc (void *callerdat, struct file_info *finfo);
+static int tag_list_proc (Node * p, void *closure);
 
 static int local = 0;
 static int long_format = 0;

@@ -24,10 +24,10 @@ static char *date = NULL;
 
 static int is_rannotate;
 
-static int annotate_fileproc PROTO ((void *callerdat, struct file_info *));
-static int rannotate_proc PROTO((int argc, char **argv, char *xwhere,
+static int annotate_fileproc (void *callerdat, struct file_info *);
+static int rannotate_proc (int argc, char **argv, char *xwhere,
 				 char *mwhere, char *mfile, int shorten,
-				 int local, char *mname, char *msg));
+				 int local, char *mname, char *msg);
 
 static const char *const annotate_usage[] =
 {

@@ -22,7 +22,7 @@
 #   define O_ACCMODE (O_RDONLY | O_WRONLY | O_RDWR)
 # endif /* defined O_ACCMODE */
 
-static void mydbm_load_file PROTO ((FILE *, List *, char *));
+static void mydbm_load_file (FILE *, List *, char *);
 
 /* Returns NULL on error in which case errno has been set to indicate
    the error.  Can also call error() itself.  */
@@ -55,7 +55,7 @@ mydbm_open (file, flags, mode)
     return (db);
 }
 
-static int write_item PROTO ((Node *, void *));
+static int write_item (Node *, void *);
 
 static int
 write_item (node, data)

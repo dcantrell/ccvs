@@ -16,7 +16,7 @@
 #include "edit.h"
 #include "fileattr.h"
 
-static int watch_onoff PROTO ((int, char **));
+static int watch_onoff (int, char **);
 
 static int setting_default;
 static int turning_on;
@@ -25,7 +25,7 @@ static int setting_tedit;
 static int setting_tunedit;
 static int setting_tcommit;
 
-static int onoff_fileproc PROTO ((void *callerdat, struct file_info *finfo));
+static int onoff_fileproc (void *callerdat, struct file_info *finfo);
 
 static int
 onoff_fileproc (callerdat, finfo)
@@ -36,7 +36,7 @@ onoff_fileproc (callerdat, finfo)
     return 0;
 }
 
-static int onoff_filesdoneproc PROTO ((void *, int, char *, char *, List *));
+static int onoff_filesdoneproc (void *, int, char *, char *, List *);
 
 static int
 onoff_filesdoneproc (callerdat, err, repository, update_dir, entries)
@@ -129,7 +129,7 @@ watch_off (argc, argv)
     return watch_onoff (argc, argv);
 }
 
-static int dummy_fileproc PROTO ((void *callerdat, struct file_info *finfo));
+static int dummy_fileproc (void *callerdat, struct file_info *finfo);
 
 static int
 dummy_fileproc (callerdat, finfo)
@@ -142,7 +142,7 @@ dummy_fileproc (callerdat, finfo)
     return 0;
 }
 
-static int ncheck_fileproc PROTO ((void *callerdat, struct file_info *finfo));
+static int ncheck_fileproc (void *callerdat, struct file_info *finfo);
 
 /* Check for and process notifications.  Local only.  I think that doing
    this as a fileproc is the only way to catch all the
@@ -221,7 +221,7 @@ ncheck_fileproc (callerdat, finfo)
     return 0;
 }
 
-static int send_notifications PROTO ((int, char **, int));
+static int send_notifications (int, char **, int);
 
 /* Look through the CVSADM_NOTIFY file and process each item there
    accordingly.  */
@@ -273,7 +273,7 @@ send_notifications (argc, argv, local)
     return err;
 }
 
-static int edit_fileproc PROTO ((void *callerdat, struct file_info *finfo));
+static int edit_fileproc (void *callerdat, struct file_info *finfo);
 
 static int
 edit_fileproc (callerdat, finfo)
@@ -455,7 +455,7 @@ edit (argc, argv)
     return err;
 }
 
-static int unedit_fileproc PROTO ((void *callerdat, struct file_info *finfo));
+static int unedit_fileproc (void *callerdat, struct file_info *finfo);
 
 static int
 unedit_fileproc (callerdat, finfo)
@@ -677,7 +677,7 @@ struct notify_proc_args {
     char *file;
 };
 
-static int notify_proc PROTO(( char *repository, char *filter, void *closure ));
+static int notify_proc ( char *repository, char *filter, void *closure );
 
 static int
 notify_proc( repository, filter, closure )
@@ -1035,7 +1035,7 @@ static const char *const editors_usage[] =
     NULL
 };
 
-static int editors_fileproc PROTO ((void *callerdat, struct file_info *finfo));
+static int editors_fileproc (void *callerdat, struct file_info *finfo);
 
 static int
 editors_fileproc (callerdat, finfo)

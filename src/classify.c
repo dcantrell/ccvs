@@ -9,8 +9,8 @@
 
 #include "cvs.h"
 
-static void sticky_ck PROTO ((struct file_info *finfo, int aflag,
-			      Vers_TS * vers));
+static void sticky_ck (struct file_info *finfo, int aflag,
+			      Vers_TS * vers);
 
 /*
  * Classify the state of a file

@@ -112,34 +112,34 @@ struct log_data_and_rcs
     RCSNode *rcs;
 };
 
-static int rlog_proc PROTO((int argc, char **argv, char *xwhere,
+static int rlog_proc (int argc, char **argv, char *xwhere,
 			    char *mwhere, char *mfile, int shorten,
-			    int local_specified, char *mname, char *msg));
-static Dtype log_dirproc PROTO ((void *callerdat, char *dir,
+			    int local_specified, char *mname, char *msg);
+static Dtype log_dirproc (void *callerdat, char *dir,
 				 char *repository, char *update_dir,
-				 List *entries));
-static int log_fileproc PROTO ((void *callerdat, struct file_info *finfo));
-static struct option_revlist *log_parse_revlist PROTO ((const char *));
-static void log_parse_date PROTO ((struct log_data *, const char *));
-static void log_parse_list PROTO ((List **, const char *));
-static struct revlist *log_expand_revlist PROTO ((RCSNode *,
+				 List *entries);
+static int log_fileproc (void *callerdat, struct file_info *finfo);
+static struct option_revlist *log_parse_revlist (const char *);
+static void log_parse_date (struct log_data *, const char *);
+static void log_parse_list (List **, const char *);
+static struct revlist *log_expand_revlist (RCSNode *,
 						  struct option_revlist *,
-						  int));
-static void log_free_revlist PROTO ((struct revlist *));
-static int log_version_requested PROTO ((struct log_data *, struct revlist *,
-					 RCSNode *, RCSVers *));
-static int log_symbol PROTO ((Node *, void *));
-static int log_count PROTO ((Node *, void *));
-static int log_fix_singledate PROTO ((Node *, void *));
-static int log_count_print PROTO ((Node *, void *));
-static void log_tree PROTO ((struct log_data *, struct revlist *,
-			     RCSNode *, const char *));
-static void log_abranch PROTO ((struct log_data *, struct revlist *,
-				RCSNode *, const char *));
-static void log_version PROTO ((struct log_data *, struct revlist *,
-				RCSNode *, RCSVers *, int));
-static int log_branch PROTO ((Node *, void *));
-static int version_compare PROTO ((const char *, const char *, int));
+						  int);
+static void log_free_revlist (struct revlist *);
+static int log_version_requested (struct log_data *, struct revlist *,
+					 RCSNode *, RCSVers *);
+static int log_symbol (Node *, void *);
+static int log_count (Node *, void *);
+static int log_fix_singledate (Node *, void *);
+static int log_count_print (Node *, void *);
+static void log_tree (struct log_data *, struct revlist *,
+			     RCSNode *, const char *);
+static void log_abranch (struct log_data *, struct revlist *,
+				RCSNode *, const char *);
+static void log_version (struct log_data *, struct revlist *,
+				RCSNode *, RCSVers *, int);
+static int log_branch (Node *, void *);
+static int version_compare (const char *, const char *, int);
 
 static struct log_data log_data;
 static int is_rlog;
@@ -176,7 +176,7 @@ static const char *const log_usage[] =
 #ifdef CLIENT_SUPPORT
 
 /* Helper function for send_arg_list.  */
-static int send_one PROTO ((Node *, void *));
+static int send_one (Node *, void *);
 
 static int
 send_one (node, closure)
@@ -200,7 +200,7 @@ send_one (node, closure)
 
 /* For each element in ARG, send an argument consisting of OPTION
    concatenated with that element.  */
-static void send_arg_list PROTO ((char *, List *));
+static void send_arg_list (char *, List *);
 
 static void
 send_arg_list (option, arg)
@@ -773,7 +773,7 @@ log_parse_list (plist, argstring)
     }
 }
 
-static int printlock_proc PROTO ((Node *, void *));
+static int printlock_proc (Node *, void *);
 
 static int
 printlock_proc (lock, foo)

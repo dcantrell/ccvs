@@ -14,6 +14,6 @@
 #ifndef RSH_CLIENT_H__
 #define RSH_CLIENT_H__
 
-void start_rsh_server PROTO((cvsroot_t *, struct buffer **, struct buffer **));
+void start_rsh_server (cvsroot_t *, struct buffer **, struct buffer **);
 
 #endif

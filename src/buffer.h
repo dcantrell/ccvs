@@ -35,25 +35,25 @@ struct buffer
        
        If there are a nonzero number of bytes available, less than NEED,
        followed by end of file, just read those bytes and return 0.  */
-    int (*input) PROTO((void *closure, char *data, int need, int size,
-			int *got));
+    int (*input) (void *closure, char *data, int need, int size,
+			int *got);
 
     /* Write data.  This should write up to HAVE bytes from DATA.
        This should return 0 on success, or an errno code.  It should
        set the number of bytes written in *WROTE.  */
-    int (*output) PROTO((void *closure, const char *data, int have,
-			 int *wrote));
+    int (*output) (void *closure, const char *data, int have,
+			 int *wrote);
 
     /* Flush any data which may be buffered up after previous calls to
        OUTPUT.  This should return 0 on success, or an errno code.  */
-    int (*flush) PROTO((void *closure));
+    int (*flush) (void *closure);
 
     /* Change the blocking mode of the underlying communication
        stream.  If BLOCK is non-zero, it should be placed into
        blocking mode.  Otherwise, it should be placed into
        non-blocking mode.  This should return 0 on success, or an
        errno code.  */
-    int (*block) PROTO ((void *closure, int block));
+    int (*block) (void *closure, int block);
 
     /* Shut down the communication stream.  This does not mean that it
        should be closed.  It merely means that no more data will be
@@ -61,13 +61,13 @@ struct buffer
        appropriate should be done at this point.  This may be NULL.
        It should return 0 on success, or an errno code.  This entry
        point exists for the compression code.  */
-    int (*shutdown) PROTO((struct buffer *));
+    int (*shutdown) (struct buffer *);
 
     /* This field is passed to the INPUT, OUTPUT, and BLOCK functions.  */
     void *closure;
 
     /* Function to call if we can't allocate memory.  */
-    void (*memory_error) PROTO((struct buffer *));
+    void (*memory_error) (struct buffer *);
 };
 
 /* Data is stored in lists of these structures.  */
@@ -97,9 +97,9 @@ struct buffer_data
 #define BUFFER_DATA_SIZE (4096)
 
 /* The type of a function passed as a memory error handler.  */
-typedef void (*BUFMEMERRPROC) PROTO ((struct buffer *));
+typedef void (*BUFMEMERRPROC) (struct buffer *);
 
-extern struct buffer *buf_initialize PROTO((int (*) (void *, char *, int,
+extern struct buffer *buf_initialize (int (*) (void *, char *, int,
 						     int, int *),
 					    int (*) (void *, const char *,
 						     int, int *),
@@ -107,47 +107,47 @@ extern struct buffer *buf_initialize PROTO((int (*) (void *, char *, int,
 					    int (*) (void *, int),
 					    int (*) (struct buffer *),
 					    void (*) (struct buffer *),
-					    void *));
-extern void buf_free PROTO((struct buffer *));
-extern struct buffer *buf_nonio_initialize PROTO((void (*) (struct buffer *)));
+					    void *);
+extern void buf_free (struct buffer *);
+extern struct buffer *buf_nonio_initialize (void (*) (struct buffer *));
 extern struct buffer *stdio_buffer_initialize
-  PROTO((FILE *, int, int, void (*) (struct buffer *)));
-extern FILE *stdio_buffer_get_file PROTO((struct buffer *));
+  (FILE *, int, int, void (*) (struct buffer *));
+extern FILE *stdio_buffer_get_file (struct buffer *);
 extern struct buffer *compress_buffer_initialize
-  PROTO((struct buffer *, int, int, void (*) (struct buffer *)));
+  (struct buffer *, int, int, void (*) (struct buffer *));
 extern struct buffer *packetizing_buffer_initialize
-  PROTO((struct buffer *, int (*) (void *, const char *, char *, int),
+  (struct buffer *, int (*) (void *, const char *, char *, int),
 	 int (*) (void *, const char *, char *, int, int *), void *,
-	 void (*) (struct buffer *)));
-extern int buf_empty_p PROTO((struct buffer *));
-extern void buf_output PROTO((struct buffer *, const char *, int));
-extern void buf_output0 PROTO((struct buffer *, const char *));
-extern void buf_append_char PROTO((struct buffer *, int));
-extern int buf_send_output PROTO((struct buffer *));
-extern int buf_flush PROTO((struct buffer *, int));
-extern int set_nonblock PROTO((struct buffer *));
-extern int set_block PROTO((struct buffer *));
-extern int buf_send_counted PROTO((struct buffer *));
-extern int buf_send_special_count PROTO((struct buffer *, int));
-extern void buf_append_data PROTO((struct buffer *,
+	 void (*) (struct buffer *));
+extern int buf_empty_p (struct buffer *);
+extern void buf_output (struct buffer *, const char *, int);
+extern void buf_output0 (struct buffer *, const char *);
+extern void buf_append_char (struct buffer *, int);
+extern int buf_send_output (struct buffer *);
+extern int buf_flush (struct buffer *, int);
+extern int set_nonblock (struct buffer *);
+extern int set_block (struct buffer *);
+extern int buf_send_counted (struct buffer *);
+extern int buf_send_special_count (struct buffer *, int);
+extern void buf_append_data (struct buffer *,
 				   struct buffer_data *,
-				   struct buffer_data *));
-extern void buf_append_buffer PROTO((struct buffer *, struct buffer *));
-extern int buf_read_file PROTO((FILE *, long, struct buffer_data **,
-				struct buffer_data **));
-extern int buf_read_file_to_eof PROTO((FILE *, struct buffer_data **,
-				       struct buffer_data **));
-extern int buf_input_data PROTO((struct buffer *, int *));
-extern int buf_read_line PROTO((struct buffer *, char **, int *));
-extern int buf_read_data PROTO((struct buffer *, int, char **, int *));
-extern void buf_copy_lines PROTO((struct buffer *, struct buffer *, int));
-extern int buf_copy_counted PROTO((struct buffer *, struct buffer *, int *));
-extern int buf_chain_length PROTO((struct buffer_data *));
-extern int buf_length PROTO((struct buffer *));
-extern int buf_shutdown PROTO((struct buffer *));
+				   struct buffer_data *);
+extern void buf_append_buffer (struct buffer *, struct buffer *);
+extern int buf_read_file (FILE *, long, struct buffer_data **,
+				struct buffer_data **);
+extern int buf_read_file_to_eof (FILE *, struct buffer_data **,
+				       struct buffer_data **);
+extern int buf_input_data (struct buffer *, int *);
+extern int buf_read_line (struct buffer *, char **, int *);
+extern int buf_read_data (struct buffer *, int, char **, int *);
+extern void buf_copy_lines (struct buffer *, struct buffer *, int);
+extern int buf_copy_counted (struct buffer *, struct buffer *, int *);
+extern int buf_chain_length (struct buffer_data *);
+extern int buf_length (struct buffer *);
+extern int buf_shutdown (struct buffer *);
 
 #ifdef SERVER_FLOWCONTROL
-extern int buf_count_mem PROTO((struct buffer *));
+extern int buf_count_mem (struct buffer *);
 #endif /* SERVER_FLOWCONTROL */
 
 #endif /* defined (SERVER_SUPPORT) || defined (CLIENT_SUPPORT) */

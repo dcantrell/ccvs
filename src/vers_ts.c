@@ -9,7 +9,7 @@
 #include "cvs.h"
 
 #ifdef SERVER_SUPPORT
-static void time_stamp_server PROTO((char *, Vers_TS *, Entnode *));
+static void time_stamp_server (char *, Vers_TS *, Entnode *);
 #endif
 
 /* Fill in and return a Vers_TS structure for the file FINFO.  TAG and

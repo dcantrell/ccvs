@@ -14,6 +14,6 @@
 #ifndef LOG_BUFFER_H__
 #define LOG_BUFFER_H__
 
-void setup_logfiles PROTO ((struct buffer** to_server_p, struct buffer** from_server_p));
+void setup_logfiles (struct buffer** to_server_p, struct buffer** from_server_p);
 
 #endif /* LOG_BUFFER_H__ */

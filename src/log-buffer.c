@@ -33,11 +33,11 @@ struct log_buffer
     FILE *log;
 };
 
-static int log_buffer_input PROTO((void *, char *, int, int, int *));
-static int log_buffer_output PROTO((void *, const char *, int, int *));
-static int log_buffer_flush PROTO((void *));
-static int log_buffer_block PROTO((void *, int));
-static int log_buffer_shutdown PROTO((struct buffer *));
+static int log_buffer_input (void *, char *, int, int, int *);
+static int log_buffer_output (void *, const char *, int, int *);
+static int log_buffer_flush (void *);
+static int log_buffer_block (void *, int);
+static int log_buffer_shutdown (struct buffer *);
 
 /* Create a log buffer.  */
 
@@ -46,7 +46,7 @@ log_buffer_initialize (buf, fp, input, memory)
      struct buffer *buf;
      FILE *fp;
      int input;
-     void (*memory) PROTO((struct buffer *));
+     void (*memory) (struct buffer *);
 {
     struct log_buffer *n;
 

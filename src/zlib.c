@@ -50,13 +50,13 @@ struct compress_buffer
     z_stream zstr;
 };
 
-static void compress_error PROTO((int, int, z_stream *, const char *));
-static int compress_buffer_input PROTO((void *, char *, int, int, int *));
-static int compress_buffer_output PROTO((void *, const char *, int, int *));
-static int compress_buffer_flush PROTO((void *));
-static int compress_buffer_block PROTO((void *, int));
-static int compress_buffer_shutdown_input PROTO((struct buffer *));
-static int compress_buffer_shutdown_output PROTO((struct buffer *));
+static void compress_error (int, int, z_stream *, const char *);
+static int compress_buffer_input (void *, char *, int, int, int *);
+static int compress_buffer_output (void *, const char *, int, int *);
+static int compress_buffer_flush (void *);
+static int compress_buffer_block (void *, int);
+static int compress_buffer_shutdown_input (struct buffer *);
+static int compress_buffer_shutdown_output (struct buffer *);
 
 /* Report an error from one of the zlib functions.  */
 
@@ -92,7 +92,7 @@ compress_buffer_initialize (buf, input, level, memory)
      struct buffer *buf;
      int input;
      int level;
-     void (*memory) PROTO((struct buffer *));
+     void (*memory) (struct buffer *);
 {
     struct compress_buffer *n;
     int zstatus;

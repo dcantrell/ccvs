@@ -18,16 +18,16 @@
 
 #include "cvs.h"
 
-static int find_dirs PROTO((char *dir, List * list, int checkadm,
-			    List *entries));
-static int find_rcs PROTO((char *dir, List * list));
-static int add_subdir_proc PROTO((Node *, void *));
-static int register_subdir_proc PROTO((Node *, void *));
+static int find_dirs (char *dir, List * list, int checkadm,
+			    List *entries);
+static int find_rcs (char *dir, List * list);
+static int add_subdir_proc (Node *, void *);
+static int register_subdir_proc (Node *, void *);
 
 /*
  * add the key from entry on entries list to the files list
  */
-static int add_entries_proc PROTO((Node *, void *));
+static int add_entries_proc (Node *, void *);
 static int
 add_entries_proc (node, closure)
      Node *node;

@@ -17,7 +17,7 @@
 static List *listcache = NULL;
 static Node *nodecache = NULL;
 
-static void freenode_mem PROTO((Node * p));
+static void freenode_mem (Node * p);
 
 /* hash function */
 static int
@@ -354,7 +354,7 @@ findnode_fn (list, key)
 int
 walklist (list, proc, closure)
     List *list;
-    int (*proc) PROTO ((Node *, void *));
+    int (*proc) (Node *, void *);
     void *closure;
 {
     Node *head, *p;
@@ -385,8 +385,8 @@ list_isempty (list)
     return list == NULL || list->list->next == list->list;
 }
 
-static int (*client_comp) PROTO ((const Node *, const Node *));
-static int qsort_comp PROTO ((const void *, const void *));
+static int (*client_comp) (const Node *, const Node *);
+static int qsort_comp (const void *, const void *);
 
 static int
 qsort_comp (elem1, elem2)
@@ -404,7 +404,7 @@ qsort_comp (elem1, elem2)
 void
 sortlist (list, comp)
     List *list;
-    int (*comp) PROTO ((const Node *, const Node *));
+    int (*comp) (const Node *, const Node *);
 {
     Node *head, *remain, *p, **array;
     int i, n;
@@ -459,7 +459,7 @@ fsortcmp (p, q)
 
 /* Debugging functions.  Quite useful to call from within gdb. */
 
-static char *nodetypestring PROTO ((Ntype));
+static char *nodetypestring (Ntype);
 
 static char *
 nodetypestring (type)
@@ -486,7 +486,7 @@ nodetypestring (type)
     return("<trash>");
 }
 
-static int printnode PROTO ((Node *, void *));
+static int printnode (Node *, void *);
 static int
 printnode (node, closure)
      Node *node;
@@ -516,7 +516,7 @@ printnode (node, closure)
 /* This is global, not static, so that its name is unique and to avoid
    compiler warnings about it not being used.  But it is not used by CVS;
    it exists so one can call it from a debugger.  */
-void printlist PROTO ((List *));
+void printlist (List *);
 
 void
 printlist (list)

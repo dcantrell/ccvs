@@ -75,12 +75,12 @@ static int wrap_saved_tempcount=0;
 
 #define WRAPPER_GROW	8
 
-void wrap_add_entry PROTO((WrapperEntry *e,int temp));
-void wrap_kill PROTO((void));
-void wrap_kill_temp PROTO((void));
-void wrap_free_entry PROTO((WrapperEntry *e));
-void wrap_free_entry_internal PROTO((WrapperEntry *e));
-void wrap_restore_saved PROTO((void));
+void wrap_add_entry (WrapperEntry *e,int temp);
+void wrap_kill (void);
+void wrap_kill_temp (void);
+void wrap_free_entry (WrapperEntry *e);
+void wrap_free_entry_internal (WrapperEntry *e);
+void wrap_restore_saved (void);
 
 void wrap_setup()
 {
@@ -499,7 +499,7 @@ wrap_name_has (name,has)
     return (0);
 }
 
-static WrapperEntry *wrap_matching_entry PROTO ((const char *));
+static WrapperEntry *wrap_matching_entry (const char *);
 
 static WrapperEntry *
 wrap_matching_entry (name)

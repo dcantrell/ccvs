@@ -16,7 +16,7 @@
 #include <config.h>
 
 struct buffer *socket_buffer_initialize
-  PROTO ((int, int, void (*) (struct buffer *)));
+  (int, int, void (*) (struct buffer *));
 
 # if defined(AUTH_CLIENT_SUPPORT) || defined(HAVE_KERBEROS) || defined(HAVE_GSSAPI) || defined(SOCK_ERRNO) || defined(SOCK_STRERROR)
 #   ifdef HAVE_WINSOCK_H
@@ -52,6 +52,6 @@ extern char *strerror ();
 #   endif
 # endif /* ! SOCK_STRERROR */
 
-struct hostent *init_sockaddr PROTO ((struct sockaddr_in *, char *, unsigned int));
+struct hostent *init_sockaddr (struct sockaddr_in *, char *, unsigned int);
 
 #endif /* SOCKET_CLIENT_H__ */

@@ -15,24 +15,24 @@
 #include "cvs.h"
 #include "savecwd.h"
 
-static int rtag_proc PROTO((int argc, char **argv, char *xwhere,
+static int rtag_proc (int argc, char **argv, char *xwhere,
 		      char *mwhere, char *mfile, int shorten,
-		      int local_specified, char *mname, char *msg));
-static int check_fileproc PROTO ((void *callerdat, struct file_info *finfo));
-static int check_filesdoneproc PROTO ((void *callerdat, int err,
+		      int local_specified, char *mname, char *msg);
+static int check_fileproc (void *callerdat, struct file_info *finfo);
+static int check_filesdoneproc (void *callerdat, int err,
 				       char *repos, char *update_dir,
-				       List *entries));
-static int pretag_proc PROTO(( char *repository, char *filter, void *closure ));
-static void masterlist_delproc PROTO((Node *p));
-static void tag_delproc PROTO((Node *p));
-static int pretag_list_proc PROTO((Node *p, void *closure));
+				       List *entries);
+static int pretag_proc ( char *repository, char *filter, void *closure );
+static void masterlist_delproc (Node *p);
+static void tag_delproc (Node *p);
+static int pretag_list_proc (Node *p, void *closure);
 
-static Dtype tag_dirproc PROTO ((void *callerdat, char *dir,
+static Dtype tag_dirproc (void *callerdat, char *dir,
 				 char *repos, char *update_dir,
-				 List *entries));
-static int rtag_fileproc PROTO ((void *callerdat, struct file_info *finfo));
-static int rtag_delete PROTO((RCSNode *rcsfile));
-static int tag_fileproc PROTO ((void *callerdat, struct file_info *finfo));
+				 List *entries);
+static int rtag_fileproc (void *callerdat, struct file_info *finfo);
+static int rtag_delete (RCSNode *rcsfile);
+static int tag_fileproc (void *callerdat, struct file_info *finfo);
 
 static char *numtag;			/* specific revision to tag */
 static int numtag_validated = 0;
@@ -1153,7 +1153,7 @@ struct val_args {
     int found;
 };
 
-static int val_fileproc PROTO ((void *callerdat, struct file_info *finfo));
+static int val_fileproc (void *callerdat, struct file_info *finfo);
 
 static int
 val_fileproc (callerdat, finfo)
@@ -1179,7 +1179,7 @@ val_fileproc (callerdat, finfo)
     return 0;
 }
 
-static Dtype val_direntproc PROTO ((void *, char *, char *, char *, List *));
+static Dtype val_direntproc (void *, char *, char *, char *, List *);
 
 static Dtype
 val_direntproc (callerdat, dir, repository, update_dir, entries)

@@ -15,10 +15,10 @@
 #include "cvs.h"
 
 #ifndef HAVE_UNISTD_H
-extern int execvp PROTO((char *file, char **argv));
+extern int execvp (char *file, char **argv);
 #endif
 
-static void run_add_arg PROTO((const char *s));
+static void run_add_arg (const char *s);
 
 extern char *strtok ();
 
@@ -40,8 +40,7 @@ static int run_argc_allocated;
 
 /* VARARGS */
 void 
-run_setup (prog)
-    const char *prog;
+run_setup( const char *prog )
 {
     char *cp;
     int i;
@@ -352,7 +351,7 @@ run_print (fp)
     FILE *fp;
 {
     int i;
-    void (*outfn) PROTO ((const char *, size_t));
+    void (*outfn) (const char *, size_t);
 
     if (fp == stderr)
 	outfn = cvs_outerr;
