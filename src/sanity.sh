@@ -4236,6 +4236,9 @@ Are you sure you want to release (and delete) directory .first-dir.: "
 ${SPROG} rtag: Tagging first-dir/dir1
 ${SPROG} rtag: Tagging first-dir/dir1/dir2"
 
+		dotest basic2-21a "cat $CVSROOT_DIRNAME/CVSROOT/val-tags" \
+"${DOTSTAR}rtagged-by-head y"
+
 		dotest basic2-21b "${testcvs} co -p -r rtagged-by-head first-dir/file6" \
 "===================================================================
 Checking out first-dir/file6
