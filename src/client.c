@@ -2553,7 +2553,7 @@ connect_to_pserver (tofdp, fromfdp, verify_only)
 	memset (read_buf, 0, PATH_MAX);
 	for (i = 0; (i < (PATH_MAX - 1)) && (ch != '\n'); i++)
 	{
-	    if (recv (sock, &ch, 1, MSG_WAITALL) < 0)
+	    if (recv (sock, &ch, 1, 0) < 0)
                 error (1, errno, "recv() from server %s", server_host);
 
             read_buf[i] = ch;
