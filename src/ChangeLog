@@ -1,6 +1,12 @@
 Wed Jun 05 10:07:29 1996  Mike Ladwig  <mike@twinpeaks.prc.com>
+			  and Jim Kingdon  <kingdon@cyclic.com>
 
-	* src/client.c (read_line): Changed an occurence of '\n' to '\012'.
+	* update.c (update):  If DONT_USE_PATCH, don't request patches.
+	Also call supported_request rather than reimplementing it.
+
+Wed Jun 05 10:07:29 1996  Mike Ladwig  <mike@twinpeaks.prc.com>
+
+	* client.c (read_line): Changed an occurence of '\n' to '\012'.
 
 Wed Jun  5 17:18:46 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 

@@ -242,19 +242,13 @@ update (argc, argv)
 	       means to send patches instead of complete files.  */
 	    if (failed_patches == NULL)
 	    {
-		struct request *rq;
-
-		for (rq = requests; rq->name != NULL; rq++)
-		{
-		    if (strcmp (rq->name, "update-patches") == 0)
-		    {
-			if (rq->status == rq_supported)
-			{
-			    send_arg("-u");
-			}
-			break;
-		    }
-		}
+#ifndef DONT_USE_PATCH
+		/* Systems which don't have the patch program ported to them
+		   will want to define DONT_USE_PATCH; then CVS won't try to
+		   invoke patch.  */
+		if (supported_request ("update-patches"))
+		    send_arg ("-u");
+#endif
 	    }
 
 	    if (failed_patches == NULL)
