@@ -15,26 +15,58 @@
 /* This file, rcs.h, and rcs.c, are intended to define our interface
    to RCS files.  As of July, 1996, there are still a few places that
    still exec RCS commands directly.  The intended long-term direction
-   is to have CVS access RCS files directly, for performance,
-   cleanliness (CVS has some awful hacks to work around RCS behaviors
-   which don't make sense for CVS), installation hassles, ease of
-   implementing the CVS server (I don't think that the
-   output-out-of-order bug can be completely fixed as long as CVS
-   calls RCS), and perhaps other reasons.
+   is to have CVS access RCS files via an RCS library (rcs.c can be
+   considered a start at one), for performance, cleanliness (CVS has
+   some awful hacks to work around RCS behaviors which don't make
+   sense for CVS), installation hassles, ease of implementing the CVS
+   server (I don't think that the output-out-of-order bug can be
+   completely fixed as long as CVS calls RCS), and perhaps other
+   reasons.
 
-   It is often suggested that this should be a common library shared
-   between RCS and CVS.  It is not clear that this is the most natural
-   way (at least for the first-cut implementation).  Some
-   considerations:
+   Whether there will also be a version of RCS which uses this
+   library, or whether the library will be packaged for uses beyond
+   CVS or RCS (many people would like such a thing) is an open
+   question.  Some considerations:
 
-   1.  CVS already has data structures and a fair bit of code dedicated
-   to handling RCS files.
+   1.  An RCS library for CVS must have the capabilities of the
+   existing CVS code which accesses RCS files.  In particular, simple
+   approaches will often be slow.
 
-   2.  The existing RCS code can be hard to understand.  Too few
-   comments and too many layers of abstraction.  I don't know whether it
-   gets better if you know the code better.
+   2.  An RCS library should not use the code from the current RCS
+   (5.7 and its ancestors).  The code has many problems.  Too few
+   comments, too many layers of abstraction, too many global variables
+   (the correct number for a library is zero), too much intricately
+   interwoven functionality, and too many clever hacks.  Paul Eggert,
+   the current RCS maintainer, agrees.
 
-   3.  CVS does not need all the functionality of RCS.  */
+   3.  More work needs to be done in terms of separating out the RCS
+   library from the rest of CVS (for example, cvs_output should be
+   replaced by a callback, and the declarations should be centralized
+   into rcs.h, and probably other such cleanups).
+
+   4.  To be useful for RCS and perhaps for other uses, the library
+   may need features beyond those needed by CVS.
+
+   5.  Any changes to the RCS file format *must* be compatible.  Many,
+   many tools (not just CVS and RCS) can at least import this format.
+   RCS and CVS must preserve the current ability to import/export it
+   (preferably improved--magic branches are currently a roadblock).
+   TODO: improve rcsfile.5 in the RCS distribution so that it more
+   completely documents this format.
+
+   On somewhat related notes:
+
+   1.  A library for diff is an obvious idea.  The one thing which I'm
+   not so sure about is that I think CVS probably wants the ability to
+   allow arbitrarily-bizarre (and possibly customized for particular
+   file formats) external diff programs.
+
+   2.  A library for patch is another such idea.  CVS's needs are
+   smaller than the functionality of the standalone patch program (it
+   only calls patch in the client, and only needs to be able to patch
+   unmodified versions, which is something that RCS_deltas already
+   does in a different context).  But it is silly for CVS to be making
+   people install patch as well as CVS for such a simple purpose.  */
 
 /* For RCS file PATH, make symbolic tag TAG point to revision REV.
    This validates that TAG is OK for a user to use.  Return value is
