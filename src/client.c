@@ -3613,12 +3613,14 @@ get_responses_and_close ()
     status = buf_shutdown (to_server);
     if (status != 0)
 	error (0, status, "shutting down buffer to server");
+    buf_free (to_server);
+    to_server = NULL;
+
     status = buf_shutdown (from_server);
     if (status != 0)
 	error (0, status, "shutting down buffer from server");
-
-    buf_free (to_server);
     buf_free (from_server);
+    from_server = NULL;
     server_started = 0;
 
     /* see if we need to sleep before returning to avoid time-stamp races */
@@ -3915,12 +3917,14 @@ connect_to_pserver (root, to_server_p, from_server_p, verify_only, do_gssapi)
 	status = buf_shutdown (to_server);
 	if (status != 0)
 	    error (0, status, "shutting down buffer to server");
+	buf_free (to_server);
+	to_server = NULL;
+
 	status = buf_shutdown (from_server);
 	if (status != 0)
 	    error (0, status, "shutting down buffer from server");
-
-	buf_free (to_server);
 	buf_free (from_server);
+	from_server = NULL;
 
 	/* Don't need to set server_started = 0 since we don't set it to 1
 	 * until returning from this call.
