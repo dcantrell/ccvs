@@ -10,6 +10,8 @@
 	(start_server): Handle response_type_redirect.
 	* client.h (supported_request): Update proto.
 	(type): Add response_type_redirect.
+	* main.c (lookup_command_attribute): Declare arg const.
+	* sever.c (requests): Create dummy `Command-prep' request.
 
 2004-08-12  Derek Price  <derek@ximbiot.com>
 
