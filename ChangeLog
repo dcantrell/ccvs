@@ -1,3 +1,7 @@
+2004-02-09  Derek Price  <derek@ximbiot.com>
+
+	* NEWS: Note new tests in sanity.sh.
+
 2004-02-06  Derek Price  <derek@ximbiot.com>
 
 	* README: Undo accidental overwrite.
