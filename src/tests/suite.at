@@ -47,3 +47,5 @@ dnl FIXME - This should be ${PROG}
 ##
 
 AT_CVS_INCLUDE([init.at])
+
+AT_CVS_INCLUDE([version.at])

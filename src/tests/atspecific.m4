@@ -19,7 +19,21 @@ m4_define([AT_CVS_BANNER],
 
 
 # AT_CVS_SETUP(DESCRIPTION)
-# ------------
+# -------------------------
+# Set up a CVS test with description DESCRIPTION.
+#
+# This macro sets up a CVSROOT and initializes it.  It also puts some
+# information in the envirionment that might be needed by tests:
+#
+#   $CVS_SERVER		The path to the CVS server executable to use.
+#   $CVSROOT		The CVSROOT.
+#   $CVSROOT_DIR	The path portion of $CVSROOT.
+#   $method		The method portion of $CVSROOT.
+#
+# INPUTS
+#   AT_CVS_clientserver		empty or `-r', per AT_CVS_INCLUDE
+#   AT_CVS_linkroot		empty ot `-l', per AT_CVS_INCLUDE
+#
 m4_define([AT_CVS_SETUP],
 [AT_SETUP([$1]m4_quote(AT_CVS_clientserver)m4_quote(AT_CVS_linkroot))dnl
 dnl This is minor overhead and it avoids us having to run the init.at
@@ -47,23 +61,38 @@ method=])dnl m4_ifvaln AT_CVS_clientserver
 CVSROOT=$method$CVSROOT_DIR
 export CVSROOT
 
-AT_CHECK([cvs init || exit 77])dnl
+AT_CHECK([cvs init])dnl
 ])dnl AT_CVS_SETUP
 
 
 
-# AT_CVS_REMOTE_ONLY
-# ------------------
-# Exit with a SKIP error code if not testing client/server code.
-dnl m4_define([AT_CVS_REMOTE_ONLY], [AT_CHECK(
-dnl [if $remote; then
-dnl   if $client_support && $server_support; then :; else
-dnl     exit 77
-dnl   fi
-dnl fi
-dnl :
-dnl ])dnl AT_CHECK
-dnl ])dnl AT_CVS_REMOTE_ONLY
+# AT_CVS_CHECK_REMOTE
+# -------------------
+# Like AT_CHECK, but skip this test when not setting up a clientserver test.
+#
+# INPUTS
+#   AT_CVS_clientserver		empty or `-r', per AT_CVS_INCLUDE
+#
+m4_define([AT_CVS_CHECK_REMOTE],
+[m4_ifval(m4_quote(AT_CVS_clientserver),
+[AT_CHECK($@)])dnl m4_ifval(AT_CVS_clientserver)
+])dnl AT_CVS_CHECK_REMOTE
+
+
+
+# AT_CVS_CHECK_LOCAL
+# -------------------
+# Like AT_CHECK, but skip this test when not setting up a local test.
+#
+# INPUTS
+#   AT_CVS_clientserver		empty or `-r', per AT_CVS_INCLUDE
+#
+m4_define([AT_CVS_CHECK_LOCAL],
+[m4_ifval(m4_quote(AT_CVS_clientserver),,
+[AT_CHECK($@)])dnl m4_ifval(AT_CVS_clientserver)
+])dnl AT_CVS_CHECK_LOCAL
+
+
 
 # AT_CVS_INCLUDE(FILE)
 # --------------------

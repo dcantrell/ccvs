@@ -167,8 +167,9 @@ with_default_rsh = @with_default_rsh@
 
 TESTSUITE = $(srcdir)/suite
 TESTSUITE_AT = \
+	suite.at \
 	init.at \
-	suite.at
+	version.at
 
 
 EXTRA_DIST = \

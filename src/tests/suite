@@ -315,7 +315,7 @@ server=
 # List of the tested programs.
 at_tested='cvs'
 # List of the all the test groups.
-at_groups_all=' banner-1 1 2 3 4'
+at_groups_all=' banner-1 1 2 3 4 banner-2 5 6 7 8'
 # As many dots as there are digits in the last test group number.
 # Used to normalize the test group numbers so that `ls' lists them in
 # numerical order.
@@ -329,6 +329,14 @@ at_help_all=$at_help_all'2;init.at:16;init-l;link-root local;
 at_help_all=$at_help_all'3;init.at:16;init-r;no-link-root remote;
 '
 at_help_all=$at_help_all'4;init.at:16;init-r-l;link-root remote;
+'
+at_help_all=$at_help_all'5;version.at:16;version;no-link-root local;
+'
+at_help_all=$at_help_all'6;version.at:16;version-l;link-root local;
+'
+at_help_all=$at_help_all'7;version.at:16;version-r;no-link-root remote;
+'
+at_help_all=$at_help_all'8;version.at:16;version-r-l;link-root remote;
 '
 
 
@@ -871,7 +879,7 @@ _ATEOF
 
   1 ) # 1. init.at:16: init
     at_setup_line='init.at:16'
-    $at_quiet $ECHO_N "  1: init.at:16        $ECHO_C"
+    $at_quiet $ECHO_N "  1: init.at:16        : init                                                $ECHO_C"
     at_xfail=no
     (
       echo "1. init.at:16: testing ..."
@@ -883,9 +891,9 @@ CVSROOT=$method$CVSROOT_DIR
 export CVSROOT
 
 $at_traceoff
-echo "init.at:16: cvs init || exit 77"
+echo "init.at:16: cvs init"
 echo init.at:16 >$at_check_line_file
-( $at_traceon; cvs init || exit 77 ) >$at_stdout 2>$at_stder1
+( $at_traceon; cvs init ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
 grep -v '^ *+' $at_stder1 >$at_stderr
@@ -973,7 +981,7 @@ $at_traceon
 
   2 ) # 2. init.at:16: init-l
     at_setup_line='init.at:16'
-    $at_quiet $ECHO_N "  2: init.at:16        $ECHO_C"
+    $at_quiet $ECHO_N "  2: init.at:16        : init-l                                              $ECHO_C"
     at_xfail=no
     (
       echo "2. init.at:16: testing ..."
@@ -1014,9 +1022,9 @@ CVSROOT=$method$CVSROOT_DIR
 export CVSROOT
 
 $at_traceoff
-echo "init.at:16: cvs init || exit 77"
+echo "init.at:16: cvs init"
 echo init.at:16 >$at_check_line_file
-( $at_traceon; cvs init || exit 77 ) >$at_stdout 2>$at_stder1
+( $at_traceon; cvs init ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
 grep -v '^ *+' $at_stder1 >$at_stderr
@@ -1104,7 +1112,7 @@ $at_traceon
 
   3 ) # 3. init.at:16: init-r
     at_setup_line='init.at:16'
-    $at_quiet $ECHO_N "  3: init.at:16        $ECHO_C"
+    $at_quiet $ECHO_N "  3: init.at:16        : init-r                                              $ECHO_C"
     at_xfail=no
     (
       echo "3. init.at:16: testing ..."
@@ -1168,9 +1176,9 @@ CVSROOT=$method$CVSROOT_DIR
 export CVSROOT
 
 $at_traceoff
-echo "init.at:16: cvs init || exit 77"
+echo "init.at:16: cvs init"
 echo init.at:16 >$at_check_line_file
-( $at_traceon; cvs init || exit 77 ) >$at_stdout 2>$at_stder1
+( $at_traceon; cvs init ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
 grep -v '^ *+' $at_stder1 >$at_stderr
@@ -1258,7 +1266,7 @@ $at_traceon
 
   4 ) # 4. init.at:16: init-r-l
     at_setup_line='init.at:16'
-    $at_quiet $ECHO_N "  4: init.at:16        $ECHO_C"
+    $at_quiet $ECHO_N "  4: init.at:16        : init-r-l                                            $ECHO_C"
     at_xfail=no
     (
       echo "4. init.at:16: testing ..."
@@ -1351,9 +1359,9 @@ CVSROOT=$method$CVSROOT_DIR
 export CVSROOT
 
 $at_traceoff
-echo "init.at:16: cvs init || exit 77"
+echo "init.at:16: cvs init"
 echo init.at:16 >$at_check_line_file
-( $at_traceon; cvs init || exit 77 ) >$at_stdout 2>$at_stder1
+( $at_traceon; cvs init ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
 grep -v '^ *+' $at_stder1 >$at_stderr
@@ -1440,6 +1448,707 @@ $at_traceon
     ;;
 
 
+  banner-2 ) # Banner 2. version.at:14
+    cat <<\_ATEOF
+
+CVS Version Strings
+
+_ATEOF
+    ;;
+
+  5 ) # 5. version.at:16: version
+    at_setup_line='version.at:16'
+    $at_quiet $ECHO_N "  5: version.at:16     : version                                             $ECHO_C"
+    at_xfail=no
+    (
+      echo "5. version.at:16: testing ..."
+      $at_traceon
+
+CVSROOT_DIR=$at_group_dir/cvsroot
+method=
+CVSROOT=$method$CVSROOT_DIR
+export CVSROOT
+
+$at_traceoff
+echo "version.at:16: cvs init"
+echo version.at:16 >$at_check_line_file
+( $at_traceon; cvs init ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+$at_diff $at_devnull $at_stderr || at_failed=:
+$at_diff $at_devnull $at_stdout || at_failed=:
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   0) ;;
+   *) echo "version.at:16: exit code was $at_status, expected 0"
+      at_failed=:;;
+esac
+if $at_failed; then
+
+  echo 1 > $at_status_file
+  exit 1
+fi
+
+$at_traceon
+
+
+
+
+#
+# There is some sense to sedding out the years as I do some of the other
+# details below, but I think it is better to have a distcheck blocked because
+# someone neglected to update the copyright notice than to avoid a few spurious
+# failures when testing old versions of CVS.
+#
+this_year=`date +%Y`
+$at_traceoff
+echo "version.at:41: cvs --version |
+  sed 's# 1\\.[0-9][0-9]*\\(\\.[0-9][0-9p]*\\)*\\( ([a-z/]*)\\)\\?\$##
+       s# *\$##'"
+echo version.at:41 >$at_check_line_file
+( $at_traceon; cvs --version |
+  sed 's# 1\.[0-9][0-9]*\(\.[0-9][0-9p]*\)*\( ([a-z/]*)\)\?$##
+       s# *$##' ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+$at_diff $at_devnull $at_stderr || at_failed=:
+echo >>$at_stdout; echo "
+Concurrent Versions System (CVS)
+
+Copyright (c) 1989-$this_year Brian Berliner, david d \`zoo' zuhn,
+                        Jeff Polk, and other authors
+
+CVS may be copied only under the terms of the GNU General Public License,
+a copy of which can be found with the CVS distribution kit.
+
+Specify the --help option for further information about CVS
+" | $at_diff - $at_stdout || at_failed=:
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   0) ;;
+   *) echo "version.at:41: exit code was $at_status, expected 0"
+      at_failed=:;;
+esac
+if $at_failed; then
+
+  echo 1 > $at_status_file
+  exit 1
+fi
+
+$at_traceon
+
+
+
+
+
+
+
+
+$at_traceoff
+echo "version.at:59: cvs version |
+  sed 's# 1\\.[0-9][0-9]*\\(\\.[0-9][0-9p]*\\)*\\( ([a-z/]*)\\)\\?\$##'"
+echo version.at:59 >$at_check_line_file
+( $at_traceon; cvs version |
+  sed 's# 1\.[0-9][0-9]*\(\.[0-9][0-9p]*\)*\( ([a-z/]*)\)\?$##' ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+$at_diff $at_devnull $at_stderr || at_failed=:
+echo >>$at_stdout; echo "Concurrent Versions System (CVS)
+" | $at_diff - $at_stdout || at_failed=:
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   0) ;;
+   *) echo "version.at:59: exit code was $at_status, expected 0"
+      at_failed=:;;
+esac
+if $at_failed; then
+
+  echo 1 > $at_status_file
+  exit 1
+fi
+
+$at_traceon
+
+
+
+
+      $at_traceoff
+      $at_times_skip || times >$at_times_file
+    ) 5>&1 2>&1 | eval $at_tee_pipe
+    at_status=`cat $at_status_file`
+    ;;
+
+  6 ) # 6. version.at:16: version-l
+    at_setup_line='version.at:16'
+    $at_quiet $ECHO_N "  6: version.at:16     : version-l                                           $ECHO_C"
+    at_xfail=no
+    (
+      echo "6. version.at:16: testing ..."
+      $at_traceon
+mkdir $at_group_dir/realcvsroot ||
+  { { echo "$as_me:$LINENO: error: Cannot create directory \`$at_group_dir/realcvsroot'" >&5
+echo "$as_me: error: Cannot create directory \`$at_group_dir/realcvsroot'" >&2;}
+   { (exit 1); exit 1; }; }
+$at_traceoff
+echo "version.at:16: ln -s realcvsroot \$at_group_dir/cvsroot || exit 77"
+echo version.at:16 >$at_check_line_file
+( $at_traceon; ln -s realcvsroot $at_group_dir/cvsroot || exit 77 ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+$at_diff $at_devnull $at_stderr || at_failed=:
+$at_diff $at_devnull $at_stdout || at_failed=:
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   0) ;;
+   *) echo "version.at:16: exit code was $at_status, expected 0"
+      at_failed=:;;
+esac
+if $at_failed; then
+
+  echo 1 > $at_status_file
+  exit 1
+fi
+
+$at_traceon
+
+
+CVSROOT_DIR=$at_group_dir/cvsroot
+method=
+CVSROOT=$method$CVSROOT_DIR
+export CVSROOT
+
+$at_traceoff
+echo "version.at:16: cvs init"
+echo version.at:16 >$at_check_line_file
+( $at_traceon; cvs init ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+$at_diff $at_devnull $at_stderr || at_failed=:
+$at_diff $at_devnull $at_stdout || at_failed=:
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   0) ;;
+   *) echo "version.at:16: exit code was $at_status, expected 0"
+      at_failed=:;;
+esac
+if $at_failed; then
+
+  echo 1 > $at_status_file
+  exit 1
+fi
+
+$at_traceon
+
+
+
+
+#
+# There is some sense to sedding out the years as I do some of the other
+# details below, but I think it is better to have a distcheck blocked because
+# someone neglected to update the copyright notice than to avoid a few spurious
+# failures when testing old versions of CVS.
+#
+this_year=`date +%Y`
+$at_traceoff
+echo "version.at:41: cvs --version |
+  sed 's# 1\\.[0-9][0-9]*\\(\\.[0-9][0-9p]*\\)*\\( ([a-z/]*)\\)\\?\$##
+       s# *\$##'"
+echo version.at:41 >$at_check_line_file
+( $at_traceon; cvs --version |
+  sed 's# 1\.[0-9][0-9]*\(\.[0-9][0-9p]*\)*\( ([a-z/]*)\)\?$##
+       s# *$##' ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+$at_diff $at_devnull $at_stderr || at_failed=:
+echo >>$at_stdout; echo "
+Concurrent Versions System (CVS)
+
+Copyright (c) 1989-$this_year Brian Berliner, david d \`zoo' zuhn,
+                        Jeff Polk, and other authors
+
+CVS may be copied only under the terms of the GNU General Public License,
+a copy of which can be found with the CVS distribution kit.
+
+Specify the --help option for further information about CVS
+" | $at_diff - $at_stdout || at_failed=:
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   0) ;;
+   *) echo "version.at:41: exit code was $at_status, expected 0"
+      at_failed=:;;
+esac
+if $at_failed; then
+
+  echo 1 > $at_status_file
+  exit 1
+fi
+
+$at_traceon
+
+
+
+
+
+
+
+
+$at_traceoff
+echo "version.at:59: cvs version |
+  sed 's# 1\\.[0-9][0-9]*\\(\\.[0-9][0-9p]*\\)*\\( ([a-z/]*)\\)\\?\$##'"
+echo version.at:59 >$at_check_line_file
+( $at_traceon; cvs version |
+  sed 's# 1\.[0-9][0-9]*\(\.[0-9][0-9p]*\)*\( ([a-z/]*)\)\?$##' ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+$at_diff $at_devnull $at_stderr || at_failed=:
+echo >>$at_stdout; echo "Concurrent Versions System (CVS)
+" | $at_diff - $at_stdout || at_failed=:
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   0) ;;
+   *) echo "version.at:59: exit code was $at_status, expected 0"
+      at_failed=:;;
+esac
+if $at_failed; then
+
+  echo 1 > $at_status_file
+  exit 1
+fi
+
+$at_traceon
+
+
+
+
+      $at_traceoff
+      $at_times_skip || times >$at_times_file
+    ) 5>&1 2>&1 | eval $at_tee_pipe
+    at_status=`cat $at_status_file`
+    ;;
+
+  7 ) # 7. version.at:16: version-r
+    at_setup_line='version.at:16'
+    $at_quiet $ECHO_N "  7: version.at:16     : version-r                                           $ECHO_C"
+    at_xfail=no
+    (
+      echo "7. version.at:16: testing ..."
+      $at_traceon
+
+CVSROOT_DIR=$at_group_dir/cvsroot
+$at_traceoff
+echo "version.at:16: cvs --version |grep client || exit 77"
+echo version.at:16 >$at_check_line_file
+( $at_traceon; cvs --version |grep client || exit 77 ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+$at_diff $at_devnull $at_stderr || at_failed=:
+echo stdout:; cat $at_stdout
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   0) ;;
+   *) echo "version.at:16: exit code was $at_status, expected 0"
+      at_failed=:;;
+esac
+if $at_failed; then
+
+  echo 1 > $at_status_file
+  exit 1
+fi
+
+$at_traceon
+
+$at_traceoff
+echo "version.at:16: \$server --version |grep server || exit 77"
+echo version.at:16 >$at_check_line_file
+( $at_traceon; $server --version |grep server || exit 77 ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+$at_diff $at_devnull $at_stderr || at_failed=:
+echo stdout:; cat $at_stdout
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   0) ;;
+   *) echo "version.at:16: exit code was $at_status, expected 0"
+      at_failed=:;;
+esac
+if $at_failed; then
+
+  echo 1 > $at_status_file
+  exit 1
+fi
+
+$at_traceon
+
+CVS_SERVER=$server
+export CVS_SERVER
+method=:fork:
+CVSROOT=$method$CVSROOT_DIR
+export CVSROOT
+
+$at_traceoff
+echo "version.at:16: cvs init"
+echo version.at:16 >$at_check_line_file
+( $at_traceon; cvs init ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+$at_diff $at_devnull $at_stderr || at_failed=:
+$at_diff $at_devnull $at_stdout || at_failed=:
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   0) ;;
+   *) echo "version.at:16: exit code was $at_status, expected 0"
+      at_failed=:;;
+esac
+if $at_failed; then
+
+  echo 1 > $at_status_file
+  exit 1
+fi
+
+$at_traceon
+
+
+
+
+#
+# There is some sense to sedding out the years as I do some of the other
+# details below, but I think it is better to have a distcheck blocked because
+# someone neglected to update the copyright notice than to avoid a few spurious
+# failures when testing old versions of CVS.
+#
+this_year=`date +%Y`
+$at_traceoff
+echo "version.at:41: cvs --version |
+  sed 's# 1\\.[0-9][0-9]*\\(\\.[0-9][0-9p]*\\)*\\( ([a-z/]*)\\)\\?\$##
+       s# *\$##'"
+echo version.at:41 >$at_check_line_file
+( $at_traceon; cvs --version |
+  sed 's# 1\.[0-9][0-9]*\(\.[0-9][0-9p]*\)*\( ([a-z/]*)\)\?$##
+       s# *$##' ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+$at_diff $at_devnull $at_stderr || at_failed=:
+echo >>$at_stdout; echo "
+Concurrent Versions System (CVS)
+
+Copyright (c) 1989-$this_year Brian Berliner, david d \`zoo' zuhn,
+                        Jeff Polk, and other authors
+
+CVS may be copied only under the terms of the GNU General Public License,
+a copy of which can be found with the CVS distribution kit.
+
+Specify the --help option for further information about CVS
+" | $at_diff - $at_stdout || at_failed=:
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   0) ;;
+   *) echo "version.at:41: exit code was $at_status, expected 0"
+      at_failed=:;;
+esac
+if $at_failed; then
+
+  echo 1 > $at_status_file
+  exit 1
+fi
+
+$at_traceon
+
+
+
+
+$at_traceoff
+echo "version.at:51: cvs version |
+  sed 's#^\\(Client.*\\) 1\\.[0-9][0-9]*\\(\\.[0-9][0-9p]*\\)* (client\\(/server\\)\\?)\$#\\1 (client)#
+       s#^\\(Server.*\\) 1\\.[0-9][0-9]*\\(\\.[0-9][0-9p]*\\)* (\\(client/\\)\\?server)\$#\\1 (server)#'"
+echo version.at:51 >$at_check_line_file
+( $at_traceon; cvs version |
+  sed 's#^\(Client.*\) 1\.[0-9][0-9]*\(\.[0-9][0-9p]*\)* (client\(/server\)\?)$#\1 (client)#
+       s#^\(Server.*\) 1\.[0-9][0-9]*\(\.[0-9][0-9p]*\)* (\(client/\)\?server)$#\1 (server)#' ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+$at_diff $at_devnull $at_stderr || at_failed=:
+echo >>$at_stdout; echo "Client: Concurrent Versions System (CVS) (client)
+Server: Concurrent Versions System (CVS) (server)
+" | $at_diff - $at_stdout || at_failed=:
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   0) ;;
+   *) echo "version.at:51: exit code was $at_status, expected 0"
+      at_failed=:;;
+esac
+if $at_failed; then
+
+  echo 1 > $at_status_file
+  exit 1
+fi
+
+$at_traceon
+
+
+
+
+
+
+
+
+      $at_traceoff
+      $at_times_skip || times >$at_times_file
+    ) 5>&1 2>&1 | eval $at_tee_pipe
+    at_status=`cat $at_status_file`
+    ;;
+
+  8 ) # 8. version.at:16: version-r-l
+    at_setup_line='version.at:16'
+    $at_quiet $ECHO_N "  8: version.at:16     : version-r-l                                         $ECHO_C"
+    at_xfail=no
+    (
+      echo "8. version.at:16: testing ..."
+      $at_traceon
+mkdir $at_group_dir/realcvsroot ||
+  { { echo "$as_me:$LINENO: error: Cannot create directory \`$at_group_dir/realcvsroot'" >&5
+echo "$as_me: error: Cannot create directory \`$at_group_dir/realcvsroot'" >&2;}
+   { (exit 1); exit 1; }; }
+$at_traceoff
+echo "version.at:16: ln -s realcvsroot \$at_group_dir/cvsroot || exit 77"
+echo version.at:16 >$at_check_line_file
+( $at_traceon; ln -s realcvsroot $at_group_dir/cvsroot || exit 77 ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+$at_diff $at_devnull $at_stderr || at_failed=:
+$at_diff $at_devnull $at_stdout || at_failed=:
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   0) ;;
+   *) echo "version.at:16: exit code was $at_status, expected 0"
+      at_failed=:;;
+esac
+if $at_failed; then
+
+  echo 1 > $at_status_file
+  exit 1
+fi
+
+$at_traceon
+
+
+CVSROOT_DIR=$at_group_dir/cvsroot
+$at_traceoff
+echo "version.at:16: cvs --version |grep client || exit 77"
+echo version.at:16 >$at_check_line_file
+( $at_traceon; cvs --version |grep client || exit 77 ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+$at_diff $at_devnull $at_stderr || at_failed=:
+echo stdout:; cat $at_stdout
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   0) ;;
+   *) echo "version.at:16: exit code was $at_status, expected 0"
+      at_failed=:;;
+esac
+if $at_failed; then
+
+  echo 1 > $at_status_file
+  exit 1
+fi
+
+$at_traceon
+
+$at_traceoff
+echo "version.at:16: \$server --version |grep server || exit 77"
+echo version.at:16 >$at_check_line_file
+( $at_traceon; $server --version |grep server || exit 77 ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+$at_diff $at_devnull $at_stderr || at_failed=:
+echo stdout:; cat $at_stdout
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   0) ;;
+   *) echo "version.at:16: exit code was $at_status, expected 0"
+      at_failed=:;;
+esac
+if $at_failed; then
+
+  echo 1 > $at_status_file
+  exit 1
+fi
+
+$at_traceon
+
+CVS_SERVER=$server
+export CVS_SERVER
+method=:fork:
+CVSROOT=$method$CVSROOT_DIR
+export CVSROOT
+
+$at_traceoff
+echo "version.at:16: cvs init"
+echo version.at:16 >$at_check_line_file
+( $at_traceon; cvs init ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+$at_diff $at_devnull $at_stderr || at_failed=:
+$at_diff $at_devnull $at_stdout || at_failed=:
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   0) ;;
+   *) echo "version.at:16: exit code was $at_status, expected 0"
+      at_failed=:;;
+esac
+if $at_failed; then
+
+  echo 1 > $at_status_file
+  exit 1
+fi
+
+$at_traceon
+
+
+
+
+#
+# There is some sense to sedding out the years as I do some of the other
+# details below, but I think it is better to have a distcheck blocked because
+# someone neglected to update the copyright notice than to avoid a few spurious
+# failures when testing old versions of CVS.
+#
+this_year=`date +%Y`
+$at_traceoff
+echo "version.at:41: cvs --version |
+  sed 's# 1\\.[0-9][0-9]*\\(\\.[0-9][0-9p]*\\)*\\( ([a-z/]*)\\)\\?\$##
+       s# *\$##'"
+echo version.at:41 >$at_check_line_file
+( $at_traceon; cvs --version |
+  sed 's# 1\.[0-9][0-9]*\(\.[0-9][0-9p]*\)*\( ([a-z/]*)\)\?$##
+       s# *$##' ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+$at_diff $at_devnull $at_stderr || at_failed=:
+echo >>$at_stdout; echo "
+Concurrent Versions System (CVS)
+
+Copyright (c) 1989-$this_year Brian Berliner, david d \`zoo' zuhn,
+                        Jeff Polk, and other authors
+
+CVS may be copied only under the terms of the GNU General Public License,
+a copy of which can be found with the CVS distribution kit.
+
+Specify the --help option for further information about CVS
+" | $at_diff - $at_stdout || at_failed=:
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   0) ;;
+   *) echo "version.at:41: exit code was $at_status, expected 0"
+      at_failed=:;;
+esac
+if $at_failed; then
+
+  echo 1 > $at_status_file
+  exit 1
+fi
+
+$at_traceon
+
+
+
+
+$at_traceoff
+echo "version.at:51: cvs version |
+  sed 's#^\\(Client.*\\) 1\\.[0-9][0-9]*\\(\\.[0-9][0-9p]*\\)* (client\\(/server\\)\\?)\$#\\1 (client)#
+       s#^\\(Server.*\\) 1\\.[0-9][0-9]*\\(\\.[0-9][0-9p]*\\)* (\\(client/\\)\\?server)\$#\\1 (server)#'"
+echo version.at:51 >$at_check_line_file
+( $at_traceon; cvs version |
+  sed 's#^\(Client.*\) 1\.[0-9][0-9]*\(\.[0-9][0-9p]*\)* (client\(/server\)\?)$#\1 (client)#
+       s#^\(Server.*\) 1\.[0-9][0-9]*\(\.[0-9][0-9p]*\)* (\(client/\)\?server)$#\1 (server)#' ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+$at_diff $at_devnull $at_stderr || at_failed=:
+echo >>$at_stdout; echo "Client: Concurrent Versions System (CVS) (client)
+Server: Concurrent Versions System (CVS) (server)
+" | $at_diff - $at_stdout || at_failed=:
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   0) ;;
+   *) echo "version.at:51: exit code was $at_status, expected 0"
+      at_failed=:;;
+esac
+if $at_failed; then
+
+  echo 1 > $at_status_file
+  exit 1
+fi
+
+$at_traceon
+
+
+
+
+
+
+
+
+      $at_traceoff
+      $at_times_skip || times >$at_times_file
+    ) 5>&1 2>&1 | eval $at_tee_pipe
+    at_status=`cat $at_status_file`
+    ;;
+
+
   * )
     echo "$as_me: no such test group: $at_group" >&2
     continue
@@ -1464,6 +2173,7 @@ _ATEOF
       at_group_count=`expr 1 + $at_group_count`
       $at_verbose $ECHO_N "$at_group. $at_setup_line: $ECHO_C"
       echo $ECHO_N "$at_group. $at_setup_line: $ECHO_C" >> $at_group_log
+      at_skip_line=:
       case $at_xfail:$at_status in
 	yes:0)
 	    at_msg="UNEXPECTED PASS"
@@ -1471,6 +2181,7 @@ _ATEOF
 	    at_errexit=$at_errexit_p
 	    ;;
 	no:0)
+            at_skip_line=false
 	    at_msg="ok"
 	    at_pass_list="$at_pass_list $at_group"
 	    at_errexit=false
@@ -1491,6 +2202,10 @@ _ATEOF
 	    at_errexit=$at_errexit_p
 	    ;;
       esac
+      if $at_skip_line; then
+        echo
+        echo $ECHO_N "                         $ECHO_C"
+      fi
       echo $at_msg
       at_log_msg="$at_group. $at_setup_line: $at_msg"
       case $at_status in
@@ -1599,7 +2314,7 @@ else
 
     # Some unexpected failures
     0:*:0) at_result="$at_result $at_were run,
-$at_xfail_count failed unexpectedly." ;;
+$at_fail_count failed unexpectedly." ;;
 
     # Some failures, both expected and unexpected
     0:*:1) at_result="$at_result $at_were run,
