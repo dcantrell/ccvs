@@ -1,5 +1,7 @@
 Mon Sep 16 16:18:38 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvs.texinfo (Common options): Clarify that CVS uses MM/DD/YY dates.
+
 	* cvs.texinfo (Common options): Add comment about what HEAD means.
 
 Mon Sep 16 10:52:04 1996  Norbert Kiesel  <nk@col.sw-ley.de>
