@@ -204,6 +204,10 @@ saber:
 check:
 	cd src ; $(MAKE) $(FLAGS_TO_PASS) check
 
+.PHONY: remotecheck
+remotecheck:
+	cd src ; $(MAKE) $(FLAGS_TO_PASS) remotecheck
+
 .PHONY: installcheck
 installcheck:
 	cd src ; $(MAKE) $(FLAGS_TO_PASS) installcheck
