@@ -81,5 +81,7 @@ clean:
 	@echo make clean does nothing in vms subdir
 
 subdir = vms
+.PRECIOUS: Makefile
 Makefile: ../config.status Makefile.in
 	cd .. && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= ./config.status
+	@echo 'run "make" again...' && exit 1
