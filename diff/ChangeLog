@@ -1,3 +1,10 @@
+Tue Nov 11 10:48:19 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* diff.c (diff_run): Change #ifdef on HAVE_SETMODE to #if to match
+	the other uses (fixes compilation error on unix).
+
+	* diff.c (diff_run): Don't set stdout to binary mode.
+
 Mon, 10 Nov 1997  Jim Kingdon
 
 	* diff.c (run_diff): Open outfile in binary mode if --binary.
