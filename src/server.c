@@ -1630,7 +1630,7 @@ input_memory_error (buf)
  * Else just return 0 to indicate that command is illegal.
  */
 static int
-check_command_legal_p (char *cmd_name, int croak_on_illegal)
+check_command_legal_p (char *cmd_name)
 {
     /* Right now, only pserver notices illegal commands -- namely,
      * write attempts by a read-only user.  Therefore, if CVS_Username
@@ -1770,14 +1770,7 @@ check_command_legal_p (char *cmd_name, int croak_on_illegal)
          {
          handle_illegal:
              fclose (fp);
-             if (croak_on_illegal)
-             {
-                 error (1, 0,
-                        "\"%s %s\" requires write access to the repository",
-                        program_name, cmd_name);
-             }
-             else
-                 return 0;
+	     return 0;
          }
     }
 #endif /* AUTH_SERVER_SUPPORT */
@@ -1822,15 +1815,6 @@ do_cvs_command (cmd_name, command)
 
     int errs;
 
-    /* Global `command_name' is probably "server" right now -- only
-     * serve_export() sets it to anything else.  So we will use local
-     * parameter `cmd_name' to determine if this command is legal for
-     * this user.
-     *
-     * Second argument non-zero below means exit if cmd not legal.
-     */
-    check_command_legal_p (cmd_name, 1);
-
     command_pid = -1;
     stdout_pipe[0] = -1;
     stdout_pipe[1] = -1;
@@ -1843,6 +1827,21 @@ do_cvs_command (cmd_name, command)
 
     if (print_pending_error ())
 	goto free_args_and_return;
+
+    /* Global `command_name' is probably "server" right now -- only
+       serve_export() sets it to anything else.  So we will use local
+       parameter `cmd_name' to determine if this command is legal for
+       this user.  */
+    if (!check_command_legal_p (cmd_name))
+    {
+	buf_output0 (buf_to_net, "E \"");
+	buf_output0 (buf_to_net, program_name);
+	buf_output0 (buf_to_net, " ");
+	buf_output0 (buf_to_net, cmd_name);
+	buf_output0 (buf_to_net, "\" requires write access to the repository\n\
+error  \n");
+	goto free_args_and_return;
+    }
 
     (void) server_notify ();
 
