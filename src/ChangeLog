@@ -1,3 +1,7 @@
+2004-07-13  Derek Price  <derek@ximbiot.com>
+
+	* .cvsignore: Ignore GCC profiling data.
+
 2004-07-12  Derek Price  <derek@ximbiot.com>
 
 	* client.c: Misc reformatting.
