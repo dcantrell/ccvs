@@ -594,9 +594,13 @@ and \fBwatchers\fR.
 .IP "" 0
 \fB-r \fItag\fB\fR
 .IP "" 2
+.IP "" 0
+\fB-r \fItag\fB[:\fIdate\fB]\fR
+.IP "" 2
 .IX "HEAD, special tag"
 .IX "BASE, special tag"
-Use the revision specified by the \fItag\fR argument instead of the
+Use the revision specified by the \fItag\fR argument (and the \fIdate\fR
+argument for the commands which accept it) instead of the
 default \fIhead\fR revision.  As well as arbitrary tags defined
 with the \fBtag\fR or \fBrtag\fR command, two special tags are
 always available: \fBHEAD\fR refers to the most recent version
@@ -611,7 +615,9 @@ on sticky tags/dates, see node `Sticky tags\(aq in the CVS manual).
 .SP
 The tag can be either a symbolic or numeric tag, as
 described in see node `Tags\(aq in the CVS manual, or the name of a branch, as
-described in see node `Branching and merging\(aq in the CVS manual.
+described in see node `Branching and merging\(aq in the CVS manual.  When \fItag\fR is the name of a
+branch, some commands accept the optional \fIdate\fR argument to specify
+the revisions as of the given date on the branch.
 .SP
 Specifying the \fB-q\fR global option along with the
 \fB-r\fR command option is often useful, to suppress
@@ -621,9 +627,12 @@ does not contain the specified tag.
 \fBNote: this is not the same as the overall \fBcvs -r\fB option,
 which you can specify to the left of a \fBcvs\fB command!\fR
 .SP
-\fB-r\fR is available with the \fBannotate\fR, \fBcheckout\fR,
-\fBcommit\fR, \fBdiff\fR, \fBhistory\fR, \fBexport\fR, \fBrdiff\fR, 
-\fBrtag\fR, and \fBupdate\fR commands.
+\fB-r \fItag\fB\fR is available with the \fBcommit\fR and \fBhistory\fR
+commands.
+.SP
+\fB-r \fItag\fB[:\fIdate\fB]\fR is available with the \fBannotate\fR,
+\fBcheckout\fR, \fBdiff\fR, \fBexport\fR, \fBrdiff\fR, \fBrtag\fR,
+and \fBupdate\fR commands.
 .SP
 .IP "" 0
 \fB-W\fR
@@ -1070,9 +1079,11 @@ Use head revision if tag/date not found.
 Annotate binary files.
 .SP
 .IP "" 0
-\fB-r \fIrevision\fB\fR
+\fB-r \fItag\fB[:\fIdate\fB]\fR
 .IP "" 2
-Annotate file as of specified revision/tag.
+Annotate file as of specified revision/tag or, when \fIdate\fR is specified
+and \fItag\fR is a branch tag, the version from the branch \fItag\fR as it
+existed on \fIdate\fR.  See see node `Common options\(aq in the CVS manual.
 .SP
 .IP "" 0
 \fB-D \fIdate\fB\fR
@@ -1201,10 +1212,8 @@ see node `Sticky tags\(aq in the CVS manual, for more information on sticky tags
 .IP "" 0
 \fB-f\fR
 .IP "" 2
-Only useful with the \fB-D \fIdate\fB\fR or \fB-r
-\fItag\fB\fR flags.  If no matching revision is found,
-retrieve the most recent revision (instead of ignoring
-the file).
+Only useful with the \fB-D\fR or \fB-r\fR flags.  If no matching revision is
+found, retrieve the most recent revision (instead of ignoring the file).
 .SP
 .IP "" 0
 \fB-k \fIkflag\fB\fR
@@ -1245,10 +1254,13 @@ Pipe files to the standard output.
 Checkout directories recursively.  This option is on by default.
 .SP
 .IP "" 0
-\fB-r \fItag\fB\fR
+\fB-r \fItag\fB[:\fIdate\fB]\fR
 .IP "" 2
-Use revision \fItag\fR.  This option is sticky, and implies \fB-P\fR.
-See see node `Sticky tags\(aq in the CVS manual, for more information on sticky tags/dates.
+Checkout the revision specified by \fItag\fR or, when \fIdate\fR is specified
+and \fItag\fR is a branch tag, the version from the branch \fItag\fR as it
+existed on \fIdate\fR.  This option is sticky, and implies \fB-P\fR.
+See see node `Sticky tags\(aq in the CVS manual, for more information on sticky tags/dates.  Also,
+see see node `Common options\(aq in the CVS manual.
 .SP
 In addition to those, you can use these special command
 options with \fBcheckout\fR:
@@ -1591,7 +1603,7 @@ $ cvs checkout -r EXPR1 whatever_module
 .IX "diff (subcommand)"
 .SP
 .IP "\(bu" 2
-Synopsis: diff [-lR] [-k kflag] [format_options] [[-r rev1 | -D date1] [-r rev2 |  -D date2]] [files\&...]
+Synopsis: diff [-lR] [-k kflag] [format_options] [(-r rev1[:date1] | -D date1) [-r rev2[:date2] | -D date2]] [files\&...]
 .IP "\(bu" 2
 Requires: working directory, repository.
 .IP "\(bu" 2
@@ -1639,9 +1651,11 @@ Examine directories recursively.  This option is on by
 default.
 .SP
 .IP "" 0
-\fB-r \fItag\fB\fR
+\fB-r \fItag\fB[:\fIdate\fB]\fR
 .IP "" 2
-Compare with revision \fItag\fR.  Zero, one or two
+Compare with revision specified by \fItag\fR or, when \fIdate\fR is specified
+and \fItag\fR is a branch tag, the version from the branch \fItag\fR as it
+existed on \fIdate\fR.  Zero, one or two
 \fB-r\fR options can be present.  With no \fB-r\fR
 option, the working file will be compared with the
 revision it was based on.  With one \fB-r\fR, that
@@ -2441,7 +2455,7 @@ $ cvs diff -u | less
 .IX "export (subcommand)"
 .SP
 .IP "\(bu" 2
-Synopsis: export [-flNnR] [-r rev|-D date] [-k subst] [-d dir] module\&...
+Synopsis: export [-flNnR] (-r rev[:date] | -D date) [-k subst] [-d dir] module\&...
 .IP "\(bu" 2
 Requires: repository.
 .IP "\(bu" 2
@@ -2501,9 +2515,11 @@ Do not run any checkout program.
 Export directories recursively.  This is on by default.
 .SP
 .IP "" 0
-\fB-r \fItag\fB\fR
+\fB-r \fItag\fB[:\fIdate\fB]\fR
 .IP "" 2
-Use revision \fItag\fR.
+Export the revision specified by \fItag\fR or, when \fIdate\fR is specified
+and \fItag\fR is a branch tag, the version from the branch \fItag\fR as it
+existed on \fIdate\fR.  See see node `Common options\(aq in the CVS manual.
 .SP
 In addition, these options (that are common to
 \fBcheckout\fR and \fBexport\fR) are also supported:
@@ -3164,7 +3180,7 @@ you would need to prefix the examples above with \fBenv\fR.)
 .IX "rls (subcommand)"
 .SP
 .IP "\(bu" 2
-ls [-e | -l] [-RP] [-r revision] [-D date] [path\&...]
+ls [-e | -l] [-RP] [-r tag[:date]] [-D date] [path\&...]
 .IP "\(bu" 2
 Requires: repository for \fBrls\fR, repository & working directory for
 \fBls\fR.
@@ -3221,9 +3237,11 @@ Don\(aqt list contents of empty directories when recursing.
 List recursively.
 .SP
 .IP "" 0
-\fB-r \fIrevision\fB\fR
+\fB-r \fItag\fB[:\fIdate\fB]\fR
 .IP "" 2
-Show files with revision or tag.
+Show files specified by \fItag\fR or, when \fIdate\fR is specified
+and \fItag\fR is a branch tag, the version from the branch \fItag\fR as it
+existed on \fIdate\fR.  See see node `Common options\(aq in the CVS manual.
 .SP
 .IP "" 0
 \fB-D \fIdate\fB\fR
@@ -3282,7 +3300,7 @@ verifymsg
 .IX "rdiff (subcommand)"
 .SP
 .IP "\(bu" 2
-rdiff [-flags] [-V vn] [-r t|-D d [-r t2|-D d2]] modules\&...
+rdiff [-flags] [-V vn] (-r tag1[:date1] | -D date1) [-r tag2[:date2] | -D date2] modules\&...
 .IP "\(bu" 2
 Requires: repository.
 .IP "\(bu" 2
@@ -3341,7 +3359,9 @@ Examine directories recursively.  This option is on by default.
 .IP "" 0
 \fB-r \fItag\fB\fR
 .IP "" 2
-Use revision \fItag\fR.
+Use the revision specified by \fItag\fR, or when \fIdate\fR is specified
+and \fItag\fR is a branch tag, the version from the branch \fItag\fR as it
+existed on \fIdate\fR.  See see node `Common options\(aq in the CVS manual.
 .SP
 In addition to the above, these options are available:
 .SP
@@ -3551,7 +3571,7 @@ $
 .IX "update (subcommand)"
 .SP
 .IP "\(bu" 2
-update [-ACdflPpR] [-I name] [-j rev [-j rev]] [-k kflag] [-r tag|-D date] [-W spec] files\&...
+update [-ACdflPpR] [-I name] [-j rev [-j rev]] [-k kflag] [-r tag[:date] | -D date] [-W spec] files\&...
 .IP "\(bu" 2
 Requires: repository, working directory.
 .IP "\(bu" 2
@@ -3586,10 +3606,8 @@ See see node `Sticky tags\(aq in the CVS manual, for more information on sticky 
 .IP "" 0
 \fB-f\fR
 .IP "" 2
-Only useful with the \fB-D \fIdate\fB\fR or \fB-r
-\fItag\fB\fR flags.  If no matching revision is found,
-retrieve the most recent revision (instead of ignoring
-the file).
+Only useful with the \fB-D\fR or \fB-r\fR flags.  If no matching revision
+is found, retrieve the most recent revision (instead of ignoring the file).
 .SP
 .IP "" 0
 \fB-k \fIkflag\fB\fR
@@ -3624,11 +3642,13 @@ Update directories recursively (default).  see node `Recursive
 behavior\(aq in the CVS manual.
 .SP
 .IP "" 0
-\fB-r rev\fR
+\fB-r \fItag\fB[:\fIdate\fB]\fR
 .IP "" 2
-Retrieve revision/tag \fIrev\fR.  This option is sticky,
-and implies \fB-P\fR.
-See see node `Sticky tags\(aq in the CVS manual, for more information on sticky tags/dates.
+Retrieve the revisions specified by \fItag\fR or, when \fIdate\fR is specified
+and \fItag\fR is a branch tag, the version from the branch \fItag\fR as it
+existed on \fIdate\fR.  This option is sticky, and implies \fB-P\fR.
+See see node `Sticky tags\(aq in the CVS manual, for more information on sticky tags/dates. Also
+see see node `Common options\(aq in the CVS manual.
 .SP
 These special options are also available with
 \fBupdate\fR.
