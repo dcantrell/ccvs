@@ -93,12 +93,15 @@ Version_TS (finfo, options, tag, date, force_tag_match, set_time)
 		if (!(sdtp && sdtp->aflag))
 		    vers_ts->date = xstrdup (entdata->date);
 	    }
-	    if (!options || (options && *options == '\0'))
-	    {
-		if (!(sdtp && sdtp->aflag))
-		    vers_ts->options = xstrdup (entdata->options);
-	    }
 	    vers_ts->entdata = entdata;
+	}
+	/* Even if we don't have an "entries line" as such
+	   (vers_ts->entdata), we want to pick up options which could
+	   have been from a Kopt protocol request.  */
+	if (!options || (options && *options == '\0'))
+	{
+	    if (!(sdtp && sdtp->aflag))
+		vers_ts->options = xstrdup (entdata->options);
 	}
     }
 

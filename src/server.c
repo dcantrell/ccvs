@@ -469,6 +469,8 @@ alloc_pending (size)
     return 1;
 }
 
+static void serve_is_modified PROTO ((char *));
+
 static int supported_response PROTO ((char *));
 
 static int
@@ -1085,6 +1087,11 @@ receive_file (size, file, gzipped)
     }
 }
 
+/* Kopt for the next file sent in Modified or Is-modified.  */
+static char *kopt;
+
+static void serve_modified PROTO ((char *));
+
 static void
 serve_modified (arg)
      char *arg;
@@ -1199,6 +1206,13 @@ serve_modified (arg)
 	    return;
 	}
     }
+
+    /* Make sure that the Entries indicate the right kopt.  We probably
+       could do this even in the non-kopt case and, I think, save a stat()
+       call in time_stamp_server.  But for conservatism I'm leaving the
+       non-kopt case alone.  */
+    if (kopt != NULL)
+	serve_is_modified (arg);
 }
 
 
@@ -1255,8 +1269,6 @@ serve_unchanged (arg)
     }
 }
 
-static void serve_is_modified PROTO ((char *));
-
 static void
 serve_is_modified (arg)
     char *arg;
@@ -1293,6 +1305,16 @@ serve_is_modified (arg)
 		}
 		*timefield = 'M';
 	    }
+	    if (kopt != NULL)
+	    {
+		if (alloc_pending (strlen (name) + 80))
+		    sprintf (pending_error_text,
+			     "E protocol error: both Kopt and Entry for %s",
+			     arg);
+		free (kopt);
+		kopt = NULL;
+		return;
+	    }
 	    found = 1;
 	    break;
 	}
@@ -1311,11 +1333,20 @@ serve_is_modified (arg)
 	p->entry = xmalloc (strlen (arg) + 80);
 	strcpy (p->entry, "/");
 	strcat (p->entry, arg);
-	strcat (p->entry, "//D//");
+	strcat (p->entry, "//D/");
+	if (kopt != NULL)
+	{
+	    strcat (p->entry, kopt);
+	    free (kopt);
+	    kopt = NULL;
+	}
+	strcat (p->entry, "/");
 	p->next = entries;
 	entries = p;
     }
 }
+
+static void serve_entry PROTO ((char *));
 
 static void
 serve_entry (arg)
@@ -1341,6 +1372,32 @@ serve_entry (arg)
     p->next = entries;
     p->entry = cp;
     entries = p;
+}
+
+static void serve_kopt PROTO ((char *));
+
+static void
+serve_kopt (arg)
+     char *arg;
+{
+    if (error_pending ())
+	return;
+
+    if (kopt != NULL)
+    {
+	if (alloc_pending (80 + strlen (arg)))
+	    sprintf (pending_error_text,
+		     "E protocol error: duplicate Kopt request: %s", arg);
+	return;
+    }
+
+    kopt = malloc (strlen (arg) + 1);
+    if (kopt == NULL)
+    {
+	pending_error = ENOMEM;
+	return;
+    }
+    strcpy (kopt, arg);
 }
 
 static void
@@ -3957,6 +4014,7 @@ struct request requests[] =
   REQ_LINE("Checkin-prog", serve_checkin_prog, rq_optional),
   REQ_LINE("Update-prog", serve_update_prog, rq_optional),
   REQ_LINE("Entry", serve_entry, rq_essential),
+  REQ_LINE("Kopt", serve_kopt, rq_optional),
   REQ_LINE("Modified", serve_modified, rq_essential),
   REQ_LINE("Is-modified", serve_is_modified, rq_optional),
 
