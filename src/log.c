@@ -17,21 +17,38 @@
 
 #include "cvs.h"
 
-static Dtype log_dirproc PROTO ((void *callerdat, char *dir,
-				 char *repository, char *update_dir));
-static int log_fileproc PROTO ((void *callerdat, struct file_info *finfo));
-static int log_symbol PROTO ((Node *, void *));
-static int log_count PROTO ((Node *, void *));
-static void log_tree PROTO ((RCSNode *, const char *));
-static void log_abranch PROTO ((RCSNode *, const char *));
-static void log_version PROTO ((RCSNode *, RCSVers *, int));
-static int log_branch PROTO ((Node *, void *));
+/* This structure holds information parsed from the -r option.  */
 
-static const char *const log_usage[] =
+struct option_revlist
 {
-    "Usage: %s %s [-l] [rlog-options] [files...]\n",
-    "\t-l\tLocal directory only, no recursion.\n",
-    NULL
+    /* The next -r option.  */
+    struct option_revlist *next;
+    /* The first revision to print.  This is NULL if the range is
+       :rev, or if no revision is given.  */
+    char *first;
+    /* The last revision to print.  This is NULL if the range is rev:,
+       or if no revision is given.  If there is no colon, first and
+       last are the same.  */
+    char *last;
+    /* Nonzero if there was a trailing `.', which means to print only
+       the head revision of a branch.  */
+    int branchhead;
+};
+
+/* This structure holds information derived from option_revlist given
+   a particular RCS file.  */
+
+struct revlist
+{
+    /* The next pair.  */
+    struct revlist *next;
+    /* The first numeric revision to print.  */
+    char *first;
+    /* The last numeric revision to print.  */
+    char *last;
+    /* The number of fields in these revisions (one more than
+       numdots).  */
+    int fields;
 };
 
 /* This structure is used to pass information through start_recursion.  */
@@ -43,9 +60,55 @@ struct log_data
     /* Nonzero if the -N option was seen, meaning that tag information
        should not be printed.  */
     int notags;
+    /* Nonzero if the -b option was seen, meaning that only revisions
+       on the default branch should be printed.  */
+    int default_branch;
+    /* If not NULL, the value given for the -r option, which lists
+       sets of revisions to be printed.  */
+    struct option_revlist *revlist;
     /* Argument count and vector for rlog, if dorlog is set.  */
     int argc;
     char **argv;
+};
+
+/* This structure is used to pass information through walklist.  */
+struct log_data_and_rcs
+{
+    struct log_data *log_data;
+    struct revlist *revlist;
+    RCSNode *rcs;
+};
+
+static Dtype log_dirproc PROTO ((void *callerdat, char *dir,
+				 char *repository, char *update_dir));
+static int log_fileproc PROTO ((void *callerdat, struct file_info *finfo));
+static struct option_revlist *log_parse_revlist PROTO ((const char *));
+static struct revlist *log_expand_revlist PROTO ((RCSNode *,
+						  struct option_revlist *,
+						  int));
+static void log_free_revlist PROTO ((struct revlist *));
+static int log_version_requested PROTO ((struct log_data *, struct revlist *,
+					 RCSNode *, RCSVers *));
+static int log_symbol PROTO ((Node *, void *));
+static int log_count PROTO ((Node *, void *));
+static int log_count_print PROTO ((Node *, void *));
+static void log_tree PROTO ((struct log_data *, struct revlist *,
+			     RCSNode *, const char *));
+static void log_abranch PROTO ((struct log_data *, struct revlist *,
+				RCSNode *, const char *));
+static void log_version PROTO ((struct log_data *, struct revlist *,
+				RCSNode *, RCSVers *, int));
+static int log_branch PROTO ((Node *, void *));
+static int version_compare PROTO ((const char *, const char *, int));
+
+static const char *const log_usage[] =
+{
+    "Usage: %s %s [-blN] [-r[revisions]] [rlog-options] [files...]\n",
+    "\t-b\tOnly list revisions on the default branch.\n",
+    "\t-l\tLocal directory only, no recursion.\n",
+    "\t-N\tDo not list tags.\n",
+    "\t-r[revisions]\tSpecify revision(s)s to list.\n",
+    NULL
 };
 
 int
@@ -57,12 +120,12 @@ cvslog (argc, argv)
     int err = 0;
     int local = 0;
     struct log_data log_data;
+    struct option_revlist *rl, **prl;
 
     if (argc == -1)
 	usage (log_usage);
 
-    log_data.dorlog = 0;
-    log_data.notags = 0;
+    memset (&log_data, 0, sizeof log_data);
 
     /*
      * All 'log' command options except -l are passed directly on to 'rlog'.
@@ -71,15 +134,26 @@ cvslog (argc, argv)
      */
     opterr = 0;
     optind = 1;
-    while ((c = getopt (argc, argv, "lN")) != -1)
+    while ((c = getopt (argc, argv, "blNr::")) != -1)
     {
 	switch (c)
 	{
+	    case 'b':
+		log_data.default_branch = 1;
+		break;
 	    case 'l':
 		local = 1;
 		break;
 	    case 'N':
 		log_data.notags = 1;
+		break;
+	    case 'r':
+		rl = log_parse_revlist (optarg);
+		for (prl = &log_data.revlist;
+		     *prl != NULL;
+		     prl = &(*prl)->next)
+		  ;
+		*prl = rl;
 		break;
 	    case '?':
 	    default:
@@ -128,11 +202,91 @@ cvslog (argc, argv)
     return (err);
 }
 
+/*
+ * Parse a revision list specification.
+ */
+
+static struct option_revlist *
+log_parse_revlist (argstring)
+    const char *argstring;
+{
+    char *copy;
+    struct option_revlist *ret, **pr;
+
+    /* Unfortunately, rlog accepts -r without an argument to mean that
+       latest revision on the default branch, so we must support that
+       for compatibility.  */
+    if (argstring == NULL)
+    {
+	ret = (struct option_revlist *) xmalloc (sizeof *ret);
+	ret->first = NULL;
+	ret->last = NULL;
+	ret->next = NULL;
+	ret->branchhead = 0;
+	return ret;
+    }
+
+    ret = NULL;
+    pr = &ret;
+
+    /* Copy the argument into memory so that we can change it.  We
+       don't want to change the argument because, at least as of this
+       writing, we will use it if we send the arguments to the server.
+       We never bother to free up our copy.  */
+    copy = xstrdup (argstring);
+    while (copy != NULL)
+    {
+	char *comma;
+	char *cp;
+	char *first, *last;
+	struct option_revlist *r;
+
+	comma = strchr (copy, ',');
+	if (comma != NULL)
+	    *comma++ = '\0';
+
+	first = copy;
+	cp = strchr (copy, ':');
+	if (cp == NULL)
+	    last = copy;
+	else
+	{
+	    *cp++ = '\0';
+	    last = cp;
+	}
+
+	if (*first == '\0')
+	    first = NULL;
+	if (*last == '\0')
+	    last = NULL;
+
+	r = (struct option_revlist *) xmalloc (sizeof *r);
+	r->next = NULL;
+	r->first = first;
+	r->last = last;
+	if (first != last
+	    || first[strlen (first) - 1] != '.')
+	{
+	    r->branchhead = 0;
+	}
+	else
+	{
+	    r->branchhead = 1;
+	    first[strlen (first) - 1] = '\0';
+	}
+
+	*pr = r;
+	pr = &r->next;
+
+	copy = comma;
+    }
+
+    return ret;
+}
 
 /*
  * Do an rlog on a file
  */
-/* ARGSUSED */
 static int
 log_fileproc (callerdat, finfo)
     void *callerdat;
@@ -143,6 +297,8 @@ log_fileproc (callerdat, finfo)
     RCSNode *rcsfile;
     int retcode = 0;
     char buf[50];
+    struct revlist *revlist;
+    struct log_data_and_rcs log_data_and_rcs;
 
     if ((rcsfile = finfo->rcs) == NULL)
     {
@@ -202,13 +358,19 @@ log_fileproc (callerdat, finfo)
 	return (retcode);
     }
 
+    /* We will need all the information in the RCS file.  */
+    RCS_fully_parse (rcsfile);
+
+    /* Turn any symbolic revisions in the revision list into numeric
+       revisions.  */
+    revlist = log_expand_revlist (rcsfile, log_data->revlist,
+				  log_data->default_branch);
+
     /* The output here is intended to be exactly compatible with the
        output of rlog.  I'm not sure whether this code should be here
        or in rcs.c; I put it here because it is specific to the log
        function, even though it uses information gathered by the
        functions in rcs.c.  */
-
-    RCS_fully_parse (rcsfile);
 
     cvs_output ("\n", 1);
 
@@ -365,7 +527,13 @@ log_fileproc (callerdat, finfo)
     cvs_output ("\ntotal revisions: ", 0);
     sprintf (buf, "%d", walklist (rcsfile->versions, log_count, NULL));
     cvs_output (buf, 0);
+
     cvs_output (";\tselected revisions: ", 0);
+    log_data_and_rcs.log_data = log_data;
+    log_data_and_rcs.revlist = revlist;
+    log_data_and_rcs.rcs = rcsfile;
+    sprintf (buf, "%d", walklist (rcsfile->versions, log_count_print,
+				  (void *) &log_data_and_rcs));
     cvs_output (buf, 0);
 
     cvs_output ("\n", 1);
@@ -389,7 +557,7 @@ log_fileproc (callerdat, finfo)
 	    RCSVers *vers;
 
 	    vers = (RCSVers *) p->data;
-	    log_version (rcsfile, vers, 1);
+	    log_version (log_data, revlist, rcsfile, vers, 1);
 	    if (vers->next == NULL)
 		p = NULL;
 	    else
@@ -401,14 +569,273 @@ log_fileproc (callerdat, finfo)
 	    }
 	}
 
-	log_tree (rcsfile, rcsfile->head);
+	log_tree (log_data, revlist, rcsfile, rcsfile->head);
     }
 
     cvs_output("\
 =============================================================================\n",
 	       0);
 
+    /* Free up the new revlist and restore the old one.  */
+    log_free_revlist (revlist);
+
     return 0;
+}
+
+/*
+ * Fix up a revision list in order to compare it against versions.
+ * Expand any symbolic revisions.
+ */
+static struct revlist *
+log_expand_revlist (rcs, revlist, default_branch)
+    RCSNode *rcs;
+    struct option_revlist *revlist;
+    int default_branch;
+{
+    struct option_revlist *r;
+    struct revlist *ret, **pr;
+
+    ret = NULL;
+    pr = &ret;
+    for (r = revlist; r != NULL; r = r->next)
+    {
+	struct revlist *nr;
+
+	nr = (struct revlist *) xmalloc (sizeof *nr);
+
+	if (r->first == NULL && r->last == NULL)
+	{
+	    /* If both first and last are NULL, it means that we want
+	       just the head of the default branch, which is RCS_head.  */
+	    nr->first = RCS_head (rcs);
+	    nr->last = xstrdup (nr->first);
+	    nr->fields = numdots (nr->first) + 1;
+	}
+	else if (r->branchhead)
+	{
+	    char *branch;
+
+	    /* Print just the head of the branch.  */
+	    if (isdigit (r->first[0]))
+		nr->first = RCS_getbranch (rcs, r->first, 1);
+	    else
+	    {
+		branch = RCS_whatbranch (rcs, r->first);
+		if (branch == NULL)
+		{
+		    error (0, 0, "warning: `%s' is not a branch in `%s'",
+			   r->first, rcs->path);
+		    free (nr);
+		    continue;
+		}
+		nr->first = RCS_getbranch (rcs, branch, 1);
+		free (branch);
+	    }
+	    if (nr->first == NULL)
+	    {
+		error (0, 0, "warning: no revision `%s' in `%s'",
+		       r->first, rcs->path);
+		free (nr);
+		continue;
+	    }
+	    nr->last = xstrdup (nr->first);
+	    nr->fields = numdots (nr->first) + 1;
+	}
+	else
+	{
+	    if (r->first == NULL || isdigit (r->first[0]))
+		nr->first = xstrdup (r->first);
+	    else
+	    {
+		if (RCS_nodeisbranch (rcs, r->first))
+		    nr->first = RCS_whatbranch (rcs, r->first);
+		else
+		    nr->first = RCS_gettag (rcs, r->first, 1, 0);
+		if (nr->first == NULL)
+		{
+		    error (0, 0, "warning: no revision `%s' in `%s'",
+			   r->first, rcs->path);
+		    free (nr);
+		    continue;
+		}
+	    }
+
+	    if (r->last == r->first)
+		nr->last = xstrdup (nr->first);
+	    else if (r->last == NULL || isdigit (r->last[0]))
+		nr->last = xstrdup (r->last);
+	    else
+	    {
+		if (RCS_nodeisbranch (rcs, r->last))
+		    nr->last = RCS_whatbranch (rcs, r->last);
+		else
+		    nr->last = RCS_gettag (rcs, r->last, 1, 0);
+		if (nr->last == NULL)
+		{
+		    error (0, 0, "warning: no revision `%s' in `%s'",
+			   r->last, rcs->path);
+		    if (nr->first != NULL)
+			free (nr->first);
+		    free (nr);
+		    continue;
+		}
+	    }
+
+	    /* Process the revision numbers the same way that rlog
+               does.  This code is a bit cryptic for my tastes, but
+               keeping the same implementation as rlog ensures a
+               certain degree of compatibility.  */
+	    if (r->first == NULL)
+	    {
+		nr->fields = numdots (nr->last) + 1;
+		if (nr->fields < 2)
+		    nr->first = xstrdup (".0");
+		else
+		{
+		    char *cp;
+
+		    nr->first = xstrdup (nr->last);
+		    cp = strrchr (nr->first, '.');
+		    strcpy (cp, ".0");
+		}
+	    }
+	    else if (r->last == NULL)
+	    {
+		nr->fields = numdots (nr->first) + 1;
+		nr->last = xstrdup (nr->first);
+		if (nr->fields < 2)
+		    nr->last[0] = '\0';
+		else
+		{
+		    char *cp;
+
+		    cp = strrchr (nr->last, '.');
+		    *cp = '\0';
+		}
+	    }
+	    else
+	    {
+		nr->fields = numdots (nr->first) + 1;
+		if (nr->fields != numdots (nr->last) + 1
+		    || (nr->fields > 2
+			&& version_compare (nr->first, nr->last,
+					    nr->fields - 1) != 0))
+		{
+		    error (0, 0,
+			   "invalid branch or revision pair %s:%s in `%s'",
+			   r->first, r->last, rcs->path);
+		    free (nr->first);
+		    free (nr->last);
+		    free (nr);
+		    continue;
+		}
+		if (version_compare (nr->first, nr->last, nr->fields) > 0)
+		{
+		    char *tmp;
+
+		    tmp = nr->first;
+		    nr->first = nr->last;
+		    nr->last = tmp;
+		}
+	    }
+	}
+
+	nr->next = NULL;
+	*pr = nr;
+	pr = &nr->next;
+    }
+
+    /* If the default branch was requested, add a revlist entry for
+       it.  This is how rlog handles this option.  */
+    if (default_branch
+	&& (rcs->head != NULL || rcs->branch != NULL))
+    {
+	struct revlist *nr;
+
+	nr = (struct revlist *) xmalloc (sizeof *nr);
+	if (rcs->branch != NULL)
+	    nr->first = xstrdup (rcs->branch);
+	else
+	{
+	    char *cp;
+
+	    nr->first = xstrdup (rcs->head);
+	    cp = strrchr (nr->first, '.');
+	    *cp = '\0';
+	}
+	nr->last = xstrdup (nr->first);
+	nr->fields = numdots (nr->first) + 1;
+
+	nr->next = NULL;
+	*pr = nr;
+    }
+
+    return ret;
+}
+
+/*
+ * Free a revlist created by log_expand_revlist.
+ */
+static void
+log_free_revlist (revlist)
+    struct revlist *revlist;
+{
+    struct revlist *r;
+
+    r = revlist;
+    while (r != NULL)
+    {
+	struct revlist *next;
+
+	if (r->first != NULL)
+	    free (r->first);
+	if (r->last != NULL)
+	    free (r->last);
+	next = r->next;
+	free (r);
+	r = next;
+    }
+}
+
+/*
+ * Return nonzero if a revision should be printed, based on the
+ * options provided.  */
+static int
+log_version_requested (log_data, revlist, rcs, vnode)
+    struct log_data *log_data;
+    struct revlist *revlist;
+    RCSNode *rcs;
+    RCSVers *vnode;
+{
+    /* If the -r or -b options were used, REVLIST will be non NULL,
+       and we print the union of the specified revisions.  */
+    if (revlist != NULL)
+    {
+	char *v;
+	int vfields;
+	struct revlist *r;
+
+	/* This code is taken from rlog.  */
+	v = vnode->version;
+	vfields = numdots (v) + 1;
+	for (r = revlist; r != NULL; r = r->next)
+	{
+	    if (vfields == r->fields + (r->fields & 1)
+		&& version_compare (v, r->first, r->fields) >= 0
+		&& version_compare (v, r->last, r->fields) <= 0)
+	    {
+		return 1;
+	    }
+	}
+
+	/* If we get here, then the -b and/or the -r option was used,
+           but did not match this revision, so we reject it.  */
+
+	return 0;
+    }
+
+    /* By default, we print all revisions.  */
+    return 1;
 }
 
 /*
@@ -440,11 +867,35 @@ log_count (p, closure)
 }
 
 /*
+ * Count the number of revisions we are going to print.
+ */
+static int
+log_count_print (p, closure)
+    Node *p;
+    void *closure;
+{
+    struct log_data_and_rcs *data = (struct log_data_and_rcs *) closure;
+    Node *pv;
+
+    pv = findnode (data->rcs->versions, p->key);
+    if (pv == NULL)
+	error (1, 0, "missing version `%s' in RCS file `%s'",
+	       p->key, data->rcs->path);
+    if (log_version_requested (data->log_data, data->revlist, data->rcs,
+			       (RCSVers *) pv->data))
+	return 1;
+    else
+	return 0;
+}
+
+/*
  * Print the list of changes, not including the trunk, in reverse
  * order for each branch.
  */
 static void
-log_tree (rcs, ver)
+log_tree (log_data, revlist, rcs, ver)
+    struct log_data *log_data;
+    struct revlist *revlist;
     RCSNode *rcs;
     const char *ver;
 {
@@ -457,7 +908,7 @@ log_tree (rcs, ver)
 	       ver, rcs->path);
     vnode = (RCSVers *) p->data;
     if (vnode->next != NULL)
-	log_tree (rcs, vnode->next);
+	log_tree (log_data, revlist, rcs, vnode->next);
     if (vnode->branches != NULL)
     {
 	Node *head, *branch;
@@ -468,8 +919,8 @@ log_tree (rcs, ver)
 	head = vnode->branches->list;
 	for (branch = head->prev; branch != head; branch = branch->next)
 	{
-	    log_abranch (rcs, branch->key);
-	    log_tree (rcs, branch->key);
+	    log_abranch (log_data, revlist, rcs, branch->key);
+	    log_tree (log_data, revlist, rcs, branch->key);
 	}
     }
 }
@@ -478,7 +929,9 @@ log_tree (rcs, ver)
  * Log the changes for a branch, in reverse order.
  */
 static void
-log_abranch (rcs, ver)
+log_abranch (log_data, revlist, rcs, ver)
+    struct log_data *log_data;
+    struct revlist *revlist;
     RCSNode *rcs;
     const char *ver;
 {
@@ -491,15 +944,17 @@ log_abranch (rcs, ver)
 	       ver, rcs->path);
     vnode = (RCSVers *) p->data;
     if (vnode->next != NULL)
-	log_abranch (rcs, vnode->next);
-    log_version (rcs, vnode, 0);
+	log_abranch (log_data, revlist, rcs, vnode->next);
+    log_version (log_data, revlist, rcs, vnode, 0);
 }
 
 /*
  * Print the log output for a single version.
  */
 static void
-log_version (rcs, ver, trunk)
+log_version (log_data, revlist, rcs, ver, trunk)
+    struct log_data *log_data;
+    struct revlist *revlist;
     RCSNode *rcs;
     RCSVers *ver;
     int trunk;
@@ -508,6 +963,9 @@ log_version (rcs, ver, trunk)
     int year, mon, mday, hour, min, sec;
     char buf[100];
     Node *padd, *pdel;
+
+    if (! log_version_requested (log_data, revlist, rcs, ver))
+	return;
 
     cvs_output ("----------------------------\nrevision ", 0);
     cvs_output (ver->version, 0);
@@ -633,4 +1091,53 @@ log_dirproc (callerdat, dir, repository, update_dir)
     if (!quiet)
 	error (0, 0, "Logging %s", update_dir);
     return (R_PROCESS);
+}
+
+/*
+ * Compare versions.  This is taken from RCS compartial.
+ */
+static int
+version_compare (v1, v2, len)
+    const char *v1;
+    const char *v2;
+    int len;
+{
+    while (1)
+    {
+	int d1, d2, r;
+
+	if (*v1 == '\0')
+	    return 1;
+	if (*v2 == '\0')
+	    return -1;
+
+	while (*v1 == '0')
+	    ++v1;
+	for (d1 = 0; isdigit (v1[d1]); ++d1)
+	    ;
+
+	while (*v2 == '0')
+	    ++v2;
+	for (d2 = 0; isdigit (v2[d2]); ++d2)
+	    ;
+
+	if (d1 != d2)
+	    return d1 < d2 ? -1 : 1;
+
+	r = memcmp (v1, v2, d1);
+	if (r != 0)
+	    return r;
+
+	--len;
+	if (len == 0)
+	    return 0;
+
+	v1 += d1;
+	v2 += d1;
+
+	if (*v1 == '.')
+	    ++v1;
+	if (*v2 == '.')
+	    ++v2;
+    }
 }
