@@ -1,3 +1,11 @@
+2001-04-29  Derek Price  <dprice@collab.net>
+
+	* Makefile.am (check-local): Make dependent on localcheck and
+	remotecheck and move old check target...
+	(localcheck): here.
+
+	* Makefile.in: Regenerated.
+
 2001-04-27  Larry Jones  <larry.jones@sdrc.com>
 
 	* sanity.sh (pserver): Add tests for readers and writers.
