@@ -20,7 +20,6 @@
 EXTRA_DIST = \
 	config.h \
 	ndir.h \
-	options.h \
 	pwd.h \
 	rcmd.h \
 	filesubr.c \
