@@ -1,5 +1,8 @@
 2001-03-30  Larry Jones  <larry.jones@sdrc.com>
 
+	* log.c (log_fileproc): Don't output working file for rlog.
+	* sanity.sh (log): New tests for rlog.
+
 	* cvs.h (mtype): Add MISC type.
 	* log.c (cvslog): Support rlog as well as log.
 	(rlog_proc): New.

@@ -14452,6 +14452,12 @@ head: 1\.3
 branch:
 locks: strict
 access list:"
+	  rlog_header="
+RCS file: ${CVSROOT_DIRNAME}/first-dir/file1,v
+head: 1\.3
+branch:
+locks: strict
+access list:"
 	  log_tags='symbolic names:
 	tag: 1\.2\.2\.1
 	branch: 1\.2\.0\.2'
@@ -14711,6 +14717,228 @@ description:
 ${log_rev2}
 ${log_trailer}"
 
+	  # Now the same tests but with rlog
+
+	  dotest log-r11 "${testcvs} rlog first-dir/file1" \
+"${rlog_header}
+${log_tags}
+${log_header2}
+total revisions: 5;	selected revisions: 5
+description:
+${log_rev3}
+${log_rev2}
+${log_rev1}
+${log_rev2b}
+${log_rev1b}
+${log_trailer}"
+
+	  dotest log-r12 "${testcvs} rlog -N first-dir/file1" \
+"${rlog_header}
+${log_header2}
+total revisions: 5;	selected revisions: 5
+description:
+${log_rev3}
+${log_rev2}
+${log_rev1}
+${log_rev2b}
+${log_rev1b}
+${log_trailer}"
+
+	  dotest log-r13 "${testcvs} rlog -b first-dir/file1" \
+"${rlog_header}
+${log_tags}
+${log_header2}
+total revisions: 5;	selected revisions: 3
+description:
+${log_rev3}
+${log_rev2}
+${log_rev1}
+${log_trailer}"
+
+	  dotest log-r14 "${testcvs} rlog -r first-dir/file1" \
+"${rlog_header}
+${log_tags}
+${log_header2}
+total revisions: 5;	selected revisions: 1
+description:
+${log_rev3}
+${log_trailer}"
+
+	  dotest log-r14a "${testcvs} rlog -rHEAD first-dir/file1" \
+"${rlog_header}
+${log_tags}
+${log_header2}
+total revisions: 5;	selected revisions: 1
+description:
+${log_rev3}
+${log_trailer}"
+
+	  dotest_fail log-r14b "${testcvs} rlog -r HEAD first-dir/file1" \
+"${PROG} [a-z]*: cannot find module .HEAD. - ignored
+${rlog_header}
+${log_tags}
+${log_header2}
+total revisions: 5;	selected revisions: 1
+description:
+${log_rev3}
+${log_trailer}"
+
+	  dotest log-r14c "${testcvs} rlog -r: first-dir/file1" \
+"${rlog_header}
+${log_tags}
+${log_header2}
+total revisions: 5;	selected revisions: 1
+description:
+${log_rev3}
+${log_trailer}"
+	  dotest log-r14d "${testcvs} rlog -r, first-dir/file1" \
+"${rlog_header}
+${log_tags}
+${log_header2}
+total revisions: 5;	selected revisions: 1
+description:
+${log_rev3}
+${log_trailer}"
+	  dotest log-r14e "${testcvs} rlog -r. first-dir/file1" \
+"${rlog_header}
+${log_tags}
+${log_header2}
+total revisions: 5;	selected revisions: 1
+description:
+${log_rev3}
+${log_trailer}"
+	  dotest log-r14f "${testcvs} rlog -r:: first-dir/file1" \
+"${rlog_header}
+${log_tags}
+${log_header2}
+total revisions: 5;	selected revisions: 0
+description:
+${log_trailer}"
+
+	  dotest log-r15 "${testcvs} rlog -r1.2 first-dir/file1" \
+"${rlog_header}
+${log_tags}
+${log_header2}
+total revisions: 5;	selected revisions: 1
+description:
+${log_rev2}
+${log_trailer}"
+
+	  dotest log-r16 "${testcvs} rlog -r1.2.2 first-dir/file1" \
+"${rlog_header}
+${log_tags}
+${log_header2}
+total revisions: 5;	selected revisions: 2
+description:
+${log_rev2b}
+${log_rev1b}
+${log_trailer}"
+
+	  dotest log-r17 "${testcvs} rlog -rbranch first-dir/file1" \
+"${rlog_header}
+${log_tags}
+${log_header2}
+total revisions: 5;	selected revisions: 2
+description:
+${log_rev2b}
+${log_rev1b}
+${log_trailer}"
+
+	  dotest log-r18 "${testcvs} rlog -r1.2.2. first-dir/file1" \
+"${rlog_header}
+${log_tags}
+${log_header2}
+total revisions: 5;	selected revisions: 1
+description:
+${log_rev2b}
+${log_trailer}"
+
+	  dotest log-r18a "${testcvs} rlog -r1.2.2.2 -r1.3:1.3 first-dir/file1" \
+"${rlog_header}
+${log_tags}
+${log_header2}
+total revisions: 5;	selected revisions: 2
+description:
+${log_rev3}
+${log_rev2b}
+${log_trailer}"
+
+	  dotest log-r19 "${testcvs} rlog -rbranch. first-dir/file1" \
+"${rlog_header}
+${log_tags}
+${log_header2}
+total revisions: 5;	selected revisions: 1
+description:
+${log_rev2b}
+${log_trailer}"
+
+	  dotest log-r20 "${testcvs} rlog -r1.2: first-dir/file1" \
+"${rlog_header}
+${log_tags}
+${log_header2}
+total revisions: 5;	selected revisions: 2
+description:
+${log_rev3}
+${log_rev2}
+${log_trailer}"
+
+	  dotest log-r20a "${testcvs} rlog -r1.2:: first-dir/file1" \
+"${rlog_header}
+${log_tags}
+${log_header2}
+total revisions: 5;	selected revisions: 1
+description:
+${log_rev3}
+${log_trailer}"
+
+	  dotest log-r21 "${testcvs} rlog -r:1.2 first-dir/file1" \
+"${rlog_header}
+${log_tags}
+${log_header2}
+total revisions: 5;	selected revisions: 2
+description:
+${log_rev2}
+${log_rev1}
+${log_trailer}"
+
+	  dotest log-r21a "${testcvs} rlog -r::1.2 first-dir/file1" \
+"${rlog_header}
+${log_tags}
+${log_header2}
+total revisions: 5;	selected revisions: 1
+description:
+${log_rev1}
+${log_trailer}"
+
+	  dotest log-r22 "${testcvs} rlog -r1.1:1.2 first-dir/file1" \
+"${rlog_header}
+${log_tags}
+${log_header2}
+total revisions: 5;	selected revisions: 2
+description:
+${log_rev2}
+${log_rev1}
+${log_trailer}"
+
+	  dotest log-r22a "${testcvs} rlog -r1.1::1.2 first-dir/file1" \
+"${rlog_header}
+${log_tags}
+${log_header2}
+total revisions: 5;	selected revisions: 0
+description:
+${log_trailer}"
+
+	  dotest log-r22b "${testcvs} rlog -r1.1::1.3 first-dir/file1" \
+"${rlog_header}
+${log_tags}
+${log_header2}
+total revisions: 5;	selected revisions: 1
+description:
+${log_rev2}
+${log_trailer}"
+
+	  # Now test outdating revisions
+
 	  dotest log-o0 "${testcvs} admin -o 1.2.2.2:: file1" \
 "RCS file: ${CVSROOT_DIRNAME}/first-dir/file1,v
 done"
@@ -14723,6 +14951,17 @@ deleting revision 1\.2\.2\.2
 done"
 	  dotest log-o3 "${testcvs} log file1" \
 "${log_header}
+${log_tags}
+${log_header2}
+total revisions: 4;	selected revisions: 4
+description:
+${log_rev3}
+${log_rev2}
+${log_rev1}
+${log_rev1b}
+${log_trailer}"
+	  dotest log-ro3 "${testcvs} rlog first-dir/file1" \
+"${rlog_header}
 ${log_tags}
 ${log_header2}
 total revisions: 4;	selected revisions: 4
