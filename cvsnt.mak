@@ -111,6 +111,7 @@ BSC32_SBRS= \
 	$(INTDIR)/login.sbr \
 	$(INTDIR)/scramble.sbr \
 	$(INTDIR)/buffer.sbr \
+	$(INTDIR)/zlib.sbr \
 	$(INTDIR)/getwd.sbr \
 	$(INTDIR)/sighandle.sbr \
 	$(INTDIR)/getopt.sbr \
@@ -136,7 +137,21 @@ BSC32_SBRS= \
 	$(INTDIR)/strippath.sbr \
 	$(INTDIR)/stripslash.sbr \
 	$(INTDIR)/rcmd.sbr \
-	$(INTDIR)/startserver.sbr
+	$(INTDIR)/startserver.sbr \
+	$(INTDIR)/zutil.sbr \
+	$(INTDIR)/infutil.sbr \
+	$(INTDIR)/infblock.sbr \
+	$(INTDIR)/compress.sbr \
+	$(INTDIR)/uncompr.sbr \
+	$(INTDIR)/inflate.sbr \
+	$(INTDIR)/inftrees.sbr \
+	$(INTDIR)/gzio.sbr \
+	$(INTDIR)/infcodes.sbr \
+	$(INTDIR)/deflate.sbr \
+	$(INTDIR)/adler32.sbr \
+	$(INTDIR)/crc32.sbr \
+	$(INTDIR)/inffast.sbr \
+	$(INTDIR)/trees.sbr
 
 $(OUTDIR)/cvsnt.bsc : $(OUTDIR)  $(BSC32_SBRS)
     $(BSC32) @<<
@@ -200,6 +215,7 @@ LINK32_OBJS= \
 	$(INTDIR)/login.obj \
 	$(INTDIR)/scramble.obj \
 	$(INTDIR)/buffer.obj \
+	$(INTDIR)/zlib.obj \
 	$(INTDIR)/getwd.obj \
 	$(INTDIR)/sighandle.obj \
 	$(INTDIR)/getopt.obj \
@@ -225,7 +241,21 @@ LINK32_OBJS= \
 	$(INTDIR)/strippath.obj \
 	$(INTDIR)/stripslash.obj \
 	$(INTDIR)/rcmd.obj \
-	$(INTDIR)/startserver.obj
+	$(INTDIR)/startserver.obj \
+	$(INTDIR)/zutil.obj \
+	$(INTDIR)/infutil.obj \
+	$(INTDIR)/infblock.obj \
+	$(INTDIR)/compress.obj \
+	$(INTDIR)/uncompr.obj \
+	$(INTDIR)/inflate.obj \
+	$(INTDIR)/inftrees.obj \
+	$(INTDIR)/gzio.obj \
+	$(INTDIR)/infcodes.obj \
+	$(INTDIR)/deflate.obj \
+	$(INTDIR)/adler32.obj \
+	$(INTDIR)/crc32.obj \
+	$(INTDIR)/inffast.obj \
+	$(INTDIR)/trees.obj
 
 $(OUTDIR)/cvs.exe : $(OUTDIR)  $(DEF_FILE) $(LINK32_OBJS)
     $(LINK32) @<<
@@ -251,10 +281,9 @@ $(OUTDIR) :
     if not exist $(OUTDIR)/nul mkdir $(OUTDIR)
 
 # ADD BASE CPP /nologo /W3 /GX /Zi /YX /Od /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /FR /c
-# ADD CPP /nologo /W3 /GX /Zi /YX /Ob1 /I "windows-NT" /I "lib" /I "src" /D "_DEBUG" /D "WIN32" /D "_CONSOLE" /D "HAVE_CONFIG_H" /FR /c
-# SUBTRACT CPP /WX
-CPP_PROJ=/nologo /W3 /GX /Zi /YX /Ob1 /I "windows-NT" /I "lib" /I "src" /D\
- "_DEBUG" /D "WIN32" /D "_CONSOLE" /D "HAVE_CONFIG_H" /FR$(INTDIR)/\
+# ADD CPP /nologo /W3 /GX /Zi /YX /Ob1 /I "windows-NT" /I "lib" /I "src" /I "zlib" /D "_DEBUG" /D "WIN32" /D "_CONSOLE" /D "HAVE_CONFIG_H" /FR /c
+CPP_PROJ=/nologo /W3 /GX /Zi /YX /Ob1 /I "windows-NT" /I "lib" /I "src" /I\
+ "zlib" /D "_DEBUG" /D "WIN32" /D "_CONSOLE" /D "HAVE_CONFIG_H" /FR$(INTDIR)/\
  /Fp$(OUTDIR)/"cvsnt.pch" /Fo$(INTDIR)/ /Fd$(OUTDIR)/"cvsnt.pdb" /c 
 CPP_OBJS=.\WinDebug/
 # ADD BASE RSC /l 0x409 /d "_DEBUG"
@@ -314,6 +343,7 @@ BSC32_SBRS= \
 	$(INTDIR)/login.sbr \
 	$(INTDIR)/scramble.sbr \
 	$(INTDIR)/buffer.sbr \
+	$(INTDIR)/zlib.sbr \
 	$(INTDIR)/getwd.sbr \
 	$(INTDIR)/sighandle.sbr \
 	$(INTDIR)/getopt.sbr \
@@ -339,7 +369,21 @@ BSC32_SBRS= \
 	$(INTDIR)/strippath.sbr \
 	$(INTDIR)/stripslash.sbr \
 	$(INTDIR)/rcmd.sbr \
-	$(INTDIR)/startserver.sbr
+	$(INTDIR)/startserver.sbr \
+	$(INTDIR)/zutil.sbr \
+	$(INTDIR)/infutil.sbr \
+	$(INTDIR)/infblock.sbr \
+	$(INTDIR)/compress.sbr \
+	$(INTDIR)/uncompr.sbr \
+	$(INTDIR)/inflate.sbr \
+	$(INTDIR)/inftrees.sbr \
+	$(INTDIR)/gzio.sbr \
+	$(INTDIR)/infcodes.sbr \
+	$(INTDIR)/deflate.sbr \
+	$(INTDIR)/adler32.sbr \
+	$(INTDIR)/crc32.sbr \
+	$(INTDIR)/inffast.sbr \
+	$(INTDIR)/trees.sbr
 
 $(OUTDIR)/cvsnt.bsc : $(OUTDIR)  $(BSC32_SBRS)
     $(BSC32) @<<
@@ -404,6 +448,7 @@ LINK32_OBJS= \
 	$(INTDIR)/login.obj \
 	$(INTDIR)/scramble.obj \
 	$(INTDIR)/buffer.obj \
+	$(INTDIR)/zlib.obj \
 	$(INTDIR)/getwd.obj \
 	$(INTDIR)/sighandle.obj \
 	$(INTDIR)/getopt.obj \
@@ -429,7 +474,21 @@ LINK32_OBJS= \
 	$(INTDIR)/strippath.obj \
 	$(INTDIR)/stripslash.obj \
 	$(INTDIR)/rcmd.obj \
-	$(INTDIR)/startserver.obj
+	$(INTDIR)/startserver.obj \
+	$(INTDIR)/zutil.obj \
+	$(INTDIR)/infutil.obj \
+	$(INTDIR)/infblock.obj \
+	$(INTDIR)/compress.obj \
+	$(INTDIR)/uncompr.obj \
+	$(INTDIR)/inflate.obj \
+	$(INTDIR)/inftrees.obj \
+	$(INTDIR)/gzio.obj \
+	$(INTDIR)/infcodes.obj \
+	$(INTDIR)/deflate.obj \
+	$(INTDIR)/adler32.obj \
+	$(INTDIR)/crc32.obj \
+	$(INTDIR)/inffast.obj \
+	$(INTDIR)/trees.obj
 
 $(OUTDIR)/cvs.exe : $(OUTDIR)  $(DEF_FILE) $(LINK32_OBJS)
     $(LINK32) @<<
@@ -1839,6 +1898,34 @@ $(INTDIR)/buffer.obj :  $(SOURCE)  $(DEP_BUFFE) $(INTDIR)
    $(CPP) $(CPP_PROJ)  $(SOURCE) 
 
 # End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=.\src\zlib.c
+DEP_ZLIB_=\
+	.\src\cvs.h\
+	.\src\buffer.h\
+	".\windows-NT\config.h"\
+	".\windows-NT\options.h"\
+	.\lib\fnmatch.h\
+	".\windows-NT\pwd.h"\
+	.\lib\system.h\
+	.\src\hash.h\
+	.\src\client.h\
+	.\src\myndbm.h\
+	.\lib\regex.h\
+	.\lib\getopt.h\
+	.\lib\wait.h\
+	.\src\rcs.h\
+	.\src\error.h\
+	.\src\update.h\
+	.\src\server.h\
+	".\windows-NT\ndir.h"
+
+$(INTDIR)/zlib.obj :  $(SOURCE)  $(DEP_ZLIB_) $(INTDIR)
+   $(CPP) $(CPP_PROJ)  $(SOURCE) 
+
+# End Source File
 # End Group
 ################################################################################
 # Begin Group "lib"
@@ -2206,6 +2293,210 @@ DEP_START=\
 	".\windows-NT\ndir.h"
 
 $(INTDIR)/startserver.obj :  $(SOURCE)  $(DEP_START) $(INTDIR)
+   $(CPP) $(CPP_PROJ)  $(SOURCE) 
+
+# End Source File
+# End Group
+################################################################################
+# Begin Group "zlib"
+
+################################################################################
+# Begin Source File
+
+SOURCE=.\zlib\zutil.c
+DEP_ZUTIL=\
+	.\zlib\zutil.h\
+	.\zlib\zlib.h\
+	.\zlib\zconf.h
+
+$(INTDIR)/zutil.obj :  $(SOURCE)  $(DEP_ZUTIL) $(INTDIR)
+   $(CPP) $(CPP_PROJ)  $(SOURCE) 
+
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=.\zlib\infutil.c
+DEP_INFUT=\
+	.\zlib\zutil.h\
+	.\zlib\infblock.h\
+	.\zlib\inftrees.h\
+	.\zlib\infcodes.h\
+	.\zlib\infutil.h\
+	.\zlib\zlib.h\
+	.\zlib\zconf.h
+
+$(INTDIR)/infutil.obj :  $(SOURCE)  $(DEP_INFUT) $(INTDIR)
+   $(CPP) $(CPP_PROJ)  $(SOURCE) 
+
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=.\zlib\infblock.c
+DEP_INFBL=\
+	.\zlib\zutil.h\
+	.\zlib\infblock.h\
+	.\zlib\inftrees.h\
+	.\zlib\infcodes.h\
+	.\zlib\infutil.h\
+	.\zlib\zlib.h\
+	.\zlib\zconf.h
+
+$(INTDIR)/infblock.obj :  $(SOURCE)  $(DEP_INFBL) $(INTDIR)
+   $(CPP) $(CPP_PROJ)  $(SOURCE) 
+
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=.\zlib\compress.c
+DEP_COMPR=\
+	.\zlib\zlib.h\
+	.\zlib\zconf.h
+
+$(INTDIR)/compress.obj :  $(SOURCE)  $(DEP_COMPR) $(INTDIR)
+   $(CPP) $(CPP_PROJ)  $(SOURCE) 
+
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=.\zlib\uncompr.c
+DEP_UNCOM=\
+	.\zlib\zlib.h\
+	.\zlib\zconf.h
+
+$(INTDIR)/uncompr.obj :  $(SOURCE)  $(DEP_UNCOM) $(INTDIR)
+   $(CPP) $(CPP_PROJ)  $(SOURCE) 
+
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=.\zlib\inflate.c
+DEP_INFLA=\
+	.\zlib\zutil.h\
+	.\zlib\infblock.h\
+	.\zlib\zlib.h\
+	.\zlib\zconf.h
+
+$(INTDIR)/inflate.obj :  $(SOURCE)  $(DEP_INFLA) $(INTDIR)
+   $(CPP) $(CPP_PROJ)  $(SOURCE) 
+
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=.\zlib\inftrees.c
+DEP_INFTR=\
+	.\zlib\zutil.h\
+	.\zlib\inftrees.h\
+	.\zlib\zlib.h\
+	.\zlib\zconf.h
+
+$(INTDIR)/inftrees.obj :  $(SOURCE)  $(DEP_INFTR) $(INTDIR)
+   $(CPP) $(CPP_PROJ)  $(SOURCE) 
+
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=.\zlib\gzio.c
+DEP_GZIO_=\
+	.\zlib\zutil.h\
+	.\zlib\zlib.h\
+	.\zlib\zconf.h
+
+$(INTDIR)/gzio.obj :  $(SOURCE)  $(DEP_GZIO_) $(INTDIR)
+   $(CPP) $(CPP_PROJ)  $(SOURCE) 
+
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=.\zlib\infcodes.c
+DEP_INFCO=\
+	.\zlib\zutil.h\
+	.\zlib\inftrees.h\
+	.\zlib\infblock.h\
+	.\zlib\infcodes.h\
+	.\zlib\infutil.h\
+	.\zlib\inffast.h\
+	.\zlib\zlib.h\
+	.\zlib\zconf.h
+
+$(INTDIR)/infcodes.obj :  $(SOURCE)  $(DEP_INFCO) $(INTDIR)
+   $(CPP) $(CPP_PROJ)  $(SOURCE) 
+
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=.\zlib\deflate.c
+DEP_DEFLA=\
+	.\zlib\deflate.h\
+	.\zlib\zutil.h\
+	.\zlib\zlib.h\
+	.\zlib\zconf.h
+
+$(INTDIR)/deflate.obj :  $(SOURCE)  $(DEP_DEFLA) $(INTDIR)
+   $(CPP) $(CPP_PROJ)  $(SOURCE) 
+
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=.\zlib\adler32.c
+DEP_ADLER=\
+	.\zlib\zlib.h\
+	.\zlib\zconf.h
+
+$(INTDIR)/adler32.obj :  $(SOURCE)  $(DEP_ADLER) $(INTDIR)
+   $(CPP) $(CPP_PROJ)  $(SOURCE) 
+
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=.\zlib\crc32.c
+DEP_CRC32=\
+	.\zlib\zlib.h\
+	.\zlib\zconf.h
+
+$(INTDIR)/crc32.obj :  $(SOURCE)  $(DEP_CRC32) $(INTDIR)
+   $(CPP) $(CPP_PROJ)  $(SOURCE) 
+
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=.\zlib\inffast.c
+DEP_INFFA=\
+	.\zlib\zutil.h\
+	.\zlib\inftrees.h\
+	.\zlib\infblock.h\
+	.\zlib\infcodes.h\
+	.\zlib\infutil.h\
+	.\zlib\inffast.h\
+	.\zlib\zlib.h\
+	.\zlib\zconf.h
+
+$(INTDIR)/inffast.obj :  $(SOURCE)  $(DEP_INFFA) $(INTDIR)
+   $(CPP) $(CPP_PROJ)  $(SOURCE) 
+
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=.\zlib\trees.c
+DEP_TREES=\
+	.\zlib\deflate.h\
+	.\zlib\zutil.h\
+	.\zlib\zlib.h\
+	.\zlib\zconf.h
+
+$(INTDIR)/trees.obj :  $(SOURCE)  $(DEP_TREES) $(INTDIR)
    $(CPP) $(CPP_PROJ)  $(SOURCE) 
 
 # End Source File
