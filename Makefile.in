@@ -499,7 +499,7 @@ distclean-tags:
 distdir: $(DISTFILES)
 	$(am__remove_distdir)
 	mkdir $(distdir)
-	$(mkdir_p) $(distdir)/$(top_srcdir)/m4 $(distdir)/. $(distdir)/contrib $(distdir)/doc $(distdir)/emx $(distdir)/m4 $(distdir)/os2 $(distdir)/src $(distdir)/windows-NT $(distdir)/zlib
+	$(mkdir_p) $(distdir)/$(top_srcdir)/m4 $(distdir)/. $(distdir)/contrib $(distdir)/doc $(distdir)/emx $(distdir)/m4 $(distdir)/os2 $(distdir)/src $(distdir)/zlib
 	@srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`; \
 	topsrcdirstrip=`echo "$(top_srcdir)" | sed 's|.|.|g'`; \
 	list='$(DISTFILES)'; for file in $$list; do \
