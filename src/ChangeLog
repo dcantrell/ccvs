@@ -1,5 +1,8 @@
 Fri Apr  7 06:57:20 1995  Jim Kingdon  (kingdon@lioth.cygnus.com)
 
+	* server.c: Include the word "server" in error message for memory
+	exhausted, so the user knows which machine ran out of memory.
+
 	* sanity.sh: For remote, set CVS_SERVER to test the right server,
 	rather than a random one from the PATH.
 

@@ -1869,7 +1869,7 @@ static void
 outbuf_memory_error (buf)
     struct buffer *buf;
 {
-    static const char msg[] = "E Fatal error\n\
+    static const char msg[] = "E Fatal server error\n\
 error ENOMEM Virtual memory exhausted.\n";
     if (command_pid > 0)
 	kill (command_pid, SIGTERM);
@@ -3377,7 +3377,7 @@ server (argc, argv)
 	}
 	if (env == NULL)
 	{
-	    printf ("E Fatal error, aborting.\n\
+	    printf ("E Fatal server error, aborting.\n\
 error ENOMEM Virtual memory exhausted.\n");
 	    exit (1);
 	}
@@ -3401,7 +3401,7 @@ error ENOMEM Virtual memory exhausted.\n");
 	     * Strictly speaking, we're not supposed to output anything
 	     * now.  But we're about to exit(), give it a try.
 	     */
-	    printf ("E Fatal error, aborting.\n\
+	    printf ("E Fatal server error, aborting.\n\
 error ENOMEM Virtual memory exhausted.\n");
 	    exit (1);
 	}
@@ -3441,7 +3441,7 @@ error ENOMEM Virtual memory exhausted.\n");
 	 * Strictly speaking, we're not supposed to output anything
 	 * now.  But we're about to exit(), give it a try.
 	 */
-	printf ("E Fatal error, aborting.\n\
+	printf ("E Fatal server error, aborting.\n\
 error ENOMEM Virtual memory exhausted.\n");
 	exit (1);
     }
@@ -3460,7 +3460,7 @@ error ENOMEM Virtual memory exhausted.\n");
 	    break;
 	if (cmd == NO_MEM_ERROR)
 	{
-	    printf ("E Fatal error, aborting.\n\
+	    printf ("E Fatal server error, aborting.\n\
 error ENOMEM Virtual memory exhausted.\n");
 	    break;
 	}
