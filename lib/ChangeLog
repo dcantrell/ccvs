@@ -1,5 +1,10 @@
 2004-10-05  Derek Price  <derek@ximbiot.com>
 
+	* basename.c, dirname.c, dirname.h, stripslash.c: Updated from GNULIB.
+	* system.h: s/FILESYSTEM_PREFIX_LEN/FILE_SYSTEM_PREFIX_LEN/.
+
+2004-10-05  Derek Price  <derek@ximbiot.com>
+
 	* Makefile.gnulib: New file.
 
 2004-10-05  Derek Price  <derek@ximbiot.com>
