@@ -1,5 +1,8 @@
 Wed Sep 24 10:27:00 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* Makefile.in: Also set top_srcdir.  Needed to make today's other
+	Makefile.in change work.
+
 	* .cvsignore: New file.
 
 	* Makefile.in (COMPILE): Add -I options for srcdir (perhaps
