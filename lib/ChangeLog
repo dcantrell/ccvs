@@ -1,5 +1,7 @@
 Tue Sep  9 20:51:45 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* build_lib.com: Add vasprintf.c and vasprintf.obj.
+
 	* build_lib.com: Remove strippath.obj from library/create command.
 
 Sun Sep  7 17:35:27 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
