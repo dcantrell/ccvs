@@ -78,8 +78,19 @@ static Key_schedule sched;
 
 #ifdef HAVE_GSSAPI
 
+#ifdef HAVE_GSSAPI_H
+#include <gssapi.h>
+#endif
+#ifdef HAVE_GSSAPI_GSSAPI_H
 #include <gssapi/gssapi.h>
+#endif
+#ifdef HAVE_GSSAPI_GSSAPI_GENERIC_H
 #include <gssapi/gssapi_generic.h>
+#endif
+
+#ifndef GSS_C_NT_HOSTBASED_SERVICE
+#define GSS_C_NT_HOSTBASED_SERVICE gss_nt_service_name
+#endif
 
 /* This is needed for GSSAPI encryption.  */
 static gss_ctx_id_t gcontext;
@@ -3861,7 +3872,8 @@ connect_to_gserver (sock, hostinfo)
     sprintf (buf, "cvs@%s", hostinfo->h_name);
     tok_in.length = strlen (buf);
     tok_in.value = buf;
-    gss_import_name (&stat_min, &tok_in, gss_nt_service_name, &server_name);
+    gss_import_name (&stat_min, &tok_in, GSS_C_NT_HOSTBASED_SERVICE,
+		     &server_name);
 
     tok_in_ptr = GSS_C_NO_BUFFER;
     gcontext = GSS_C_NO_CONTEXT;

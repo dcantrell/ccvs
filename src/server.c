@@ -42,8 +42,20 @@ static Key_schedule sched;
 #ifdef HAVE_GSSAPI
 
 #include <netdb.h>
+
+#ifdef HAVE_GSSAPI_H
+#include <gssapi.h>
+#endif
+#ifdef HAVE_GSSAPI_GSSAPI_H
 #include <gssapi/gssapi.h>
+#endif
+#ifdef HAVE_GSSAPI_GSSAPI_GENERIC_H
 #include <gssapi/gssapi_generic.h>
+#endif
+
+#ifndef GSS_C_NT_HOSTBASED_SERVICE
+#define GSS_C_NT_HOSTBASED_SERVICE gss_nt_service_name
+#endif
 
 /* We use Kerberos 5 routines to map the GSSAPI credential to a user
    name.  */
@@ -5218,7 +5230,7 @@ gserver_authenticate_connection ()
     tok_in.value = buf;
     tok_in.length = strlen (buf);
 
-    if (gss_import_name (&stat_min, &tok_in, gss_nt_service_name,
+    if (gss_import_name (&stat_min, &tok_in, GSS_C_NT_HOSTBASED_SERVICE,
 			 &server_name) != GSS_S_COMPLETE)
 	error (1, 0, "could not import GSSAPI service name %s", buf);
 

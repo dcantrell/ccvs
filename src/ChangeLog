@@ -1,3 +1,17 @@
+1998-06-01  Assar Westerlund  <assar@sics.se>
+	and Ian Lance Taylor  <ian@cygnus.com>
+
+	* client.c: If HAVE_GSSAPI_H, include <gssapi.h>.  Only include
+	<gssapi/gssapi.h> if HAVE_GSSAPI_GSSAPI_H.  Only include
+	<gssapi/gssapi_generic.h> if HAVE_GSSAPI_GSSAPI_GENERIC_H.
+	(GSS_C_NT_HOSTBASED_SERVICE): Define if not defined.
+	(connect_to_gserver): Use GSS_C_NT_HOSTBASED_SERVICE instead of
+	gss_nt_service_name.
+	* server.c: Same header file changes.
+	(GSS_C_NT_HOSTBASED_SERVICE): Define if not defined.
+	(gserver_authenticate_connection): Use GSS_C_NT_HOSTBASED_SERVICE
+	instead of gss_nt_service_name.
+
 1998-06-01  Jim Meyering  <meyering@ascend.com>
 
 	* sanity.sh (tag8k): Add a test for the 1998-05-02 rcs.c bug fix.
