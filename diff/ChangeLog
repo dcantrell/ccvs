@@ -1,3 +1,7 @@
+2004-11-01  Conrad T. Pino  <Conrad@Pino.com>
+
+	* libdiff.dep: Regenerated for "../lib/libcvs.dsp" change.
+
 2004-10-26  Conrad T. Pino  <Conrad@Pino.com>
 
 	* libdiff.dep: Regenerate for "../cvsnt.dsp" and "../lib/libcvs.dsp" change.
