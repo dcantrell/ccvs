@@ -2,7 +2,8 @@ Thu Jan 18 21:46:56 1996  Jim Blandy  <jimb@totoro.cyclic.com>
 
 	* BUGS: Remove all mention of the outdated cyclic-cvs@cyclic.com
 	and remote-cvs@cyclic.com addresses.  It turns out that people see
-	these addresses and use them.
+	these addresses and use them.  Mention the proper way to report
+	bugs.
 
 Wed Jan 17 16:40:01 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
