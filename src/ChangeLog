@@ -1,5 +1,14 @@
 2003-11-13  Derek Price  <derek@ximbiot.com>
 
+	* rcs.c (RCS_delete_revs): It's `&&', not `and'.
+
+2003-11-13  Derek Price  <derek@ximbiot.com>
+
+	* sanity.sh: Create the empty log to make it easier to tail immediately
+	after the script is started.
+
+2003-11-13  Derek Price  <derek@ximbiot.com>
+
 	* sanity.sh (exit_help): Correct help to specify `-H' and not `-h' as
 	the help option.
 

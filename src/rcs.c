@@ -6371,7 +6371,7 @@ RCS_delete_revs (RCSNode *rcs, char *tag1, char *tag2, int inclusive)
 	char *diffbuf;
 	size_t bufsize, len;
 
-#if defined (WOE32) and !defined (__CYGWIN32__)
+#if defined (WOE32) && !defined (__CYGWIN32__)
 	/* FIXME: This is an awful kludge, but at least until I have
 	   time to work on it a little more and test it, I'd rather
 	   give a fatal error than corrupt the file.  I think that we
