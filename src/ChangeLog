@@ -1,3 +1,10 @@
+2001-05-03  Derek Price  <dprice@collab.net>
+
+	* cvs.h: s/allocate_and_strcat/xrealloc_and_strcat/ since that is what
+	I wrote in the ChangeLog, oh, so long ago.
+	* diff.c (diff): Ditto.
+	* subr.c (allocate_and_strcat, xrealloc_and_strcat): Ditto.
+
 2001-05-02  Larry Jones  <larry.jones@sdrc.com>
 
 	* rcs.c (RCS_getdate): Handle the (unusual!) case where we
