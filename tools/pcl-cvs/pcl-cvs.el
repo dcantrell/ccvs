@@ -1223,6 +1223,9 @@ This function returns the last cons-cell in the list that is built."
 	 ((looking-at
 	   "^cvs \\(update\\|server\\): \\[..:..:..\\] waiting for .*lock in ")
 	  (forward-line 1))
+	 ((looking-at
+	   "^cvs \\(update\\|server\\): \\[..:..:..\\] obtained lock in ")
+	  (forward-line 1))
 
 	 ;; File removed in repository, but edited by you.
 
