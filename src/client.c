@@ -3670,7 +3670,7 @@ start_server ()
 
 #if HAVE_KERBEROS
 	case kserver_method:
-	    start_tcp_server (current_parsed_root, &global_to_server, &global_from_server);
+	    start_kerberos4_server (current_parsed_root, &global_to_server, &global_from_server);
 	    break;
 #endif /* HAVE_KERBEROS */
 

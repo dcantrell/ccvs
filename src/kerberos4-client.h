@@ -14,9 +14,9 @@
 #ifndef KERBEROS4_CLIENT_H__
 #define KERBEROS4_CLIENT_H__
 
-extern void start_tcp_server PROTO((cvsroot_t *root,
-				    struct buffer **to_server_p,
-				    struct buffer **from_server_p));
+extern void start_kerberos4_server PROTO((cvsroot_t *root,
+					  struct buffer **to_server_p,
+					  struct buffer **from_server_p));
 
 extern void initialize_kerberos4_encryption_buffers PROTO((struct buffer **to_server_p,
 							   struct buffer **from_server_p));

@@ -1,3 +1,9 @@
+2003-06-23  Derek Price  <derek@ximbiot.com>
+
+	* kerberos4-client.h, kerberos4-client.c, client.c: Rename
+	start_tcp_server() to start_kerberos4_server().
+	(Patch from Alexey Mahotkin  <alexm@hsys.msk.ru>.)
+
 2003-06-20  Derek Price  <derek@ximbiot.com>
 
 	* kerberos-client.c, kerberos-client.h, client.c: Split out
