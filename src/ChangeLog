@@ -5,6 +5,10 @@
 	bug-cvs, claiming that the test is invalid and the code
 	is correct.
 
+	and then, an hour later, undid the previous change.
+	I'll resolve the status of the basicc-11 test with some
+	more digging, and fix up all the comments.
+
 1999-07-18  Karl Fogel  <kfogel@floss.red-bean.com>
 
 	* edit.c (notify_do): chop newline, if any, from the value
