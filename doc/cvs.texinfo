@@ -979,6 +979,21 @@ repository anywhere you like.
 @xref{Remote repositories} to learn how the repository can be on a
 different machine than your working copy of the sources.
 
+@cindex :local:
+@emph{Note:} For compatibility with older versions,
+@sc{cvs} will treat any repository name that contains a
+colon as an indication of a remote repository
+(@xref{Remote repositories}).  If the name of your
+local repository contains a colon, you should prepend
+the string @samp{:local:} to the pathname to tell
+@sc{cvs} that it is, indeed, a local repository.  For
+example, you might use this command line under Windows
+NT:
+
+@example
+cvs -d :local:c:\src\cvsroot checkout yoyodyne/tc
+@end example
+
 The repository is split in two parts.  @file{$CVSROOT/CVSROOT} contains
 administrative files for @sc{cvs}.  The other directories contain the actual
 user-defined modules.
@@ -1180,7 +1195,7 @@ using a remote repository is just like using a local
 one, except that the format of the repository name is:
 
 @example
-        user@@hostname:/path/to/repository
+        :method:user@@hostname:/path/to/repository
 @end example
 
 The details of exactly what needs to be set up depend
@@ -1218,6 +1233,7 @@ rsh -l bach chainsaw.brickyard.com echo $PATH
 @end example
 
 @cindex CVS_SERVER
+@cindex :server:
 Next you have to make sure that @code{rsh} will be able
 to find the server.  Make sure that the path which
 @code{rsh} printed in the above example includes the
@@ -1238,7 +1254,7 @@ the module @file{foo} in the repository
 @file{chainsaw.brickyard.com}, you are ready to go:
 
 @example
-cvs -d bach@@chainsaw.brickyard.com:/user/local/cvsroot checkout foo
+cvs -d :server:bach@@chainsaw.brickyard.com:/usr/local/cvsroot checkout foo
 @end example
 
 (The @file{bach@@} can be omitted if the username is
@@ -1351,6 +1367,7 @@ passwd} command.
 @cindex Login (subcommand)
 @cindex password client, using
 @cindex authenticated client, using
+@cindex :pserver:
 Before connecting to the server, the client must @dfn{log
 in} with the command @code{cvs login}.  Logging in
 verifies a password with the server, and also records
@@ -1364,7 +1381,7 @@ argument or the @code{CVSROOT} environment variable.
 password:
 
 @example
-cvs -d bach@@chainsaw.brickyard.com:/usr/local/cvsroot login 
+cvs -d :pserver:bach@@chainsaw.brickyard.com:/usr/local/cvsroot login 
 CVS password: 
 @end example
 
@@ -1374,8 +1391,7 @@ complaining that the password was incorrect.
 
 Once you have logged in, you can force @sc{cvs} to
 connect directly to the server and authenticate with
-the stored password by prefixing the repository with
-@samp{:pserver:}:
+the stored password:
 
 @example
 cvs -d :pserver:bach@@chainsaw.brickyard.com:/usr/local/cvsroot checkout foo
@@ -1447,6 +1463,7 @@ security, get Kerberos.
 @subsection Direct connection with kerberos
 
 @cindex kerberos
+@cindex :kserver:
 The main disadvantage of using rsh is that all the data
 needs to pass through additional programs, so it may be
 slower.  So if you have kerberos installed you can
@@ -1464,8 +1481,7 @@ You need to edit @code{inetd.conf} on the server
 machine to run @code{cvs kserver}.  The client uses
 port 1999 by default; if you want to use another port
 specify it in the @code{CVS_CLIENT_PORT} environment
-variable on the client.  Set @code{CVS_CLIENT_PORT} to
-@samp{-1} to force an rsh connection.
+variable on the client.
 
 @cindex kinit
 When you want to use @sc{cvs}, get a ticket in the
@@ -1474,11 +1490,11 @@ which allows you to log into the server machine.  Then
 you are ready to go:
 
 @example
-cvs -d chainsaw.brickyard.com:/user/local/cvsroot checkout foo
+cvs -d :kserver:chainsaw.brickyard.com:/user/local/cvsroot checkout foo
 @end example
 
-If @sc{cvs} fails to connect, it will fall back to
-trying rsh.
+Previous versions of @sc{cvs} would fall back to a
+connection via rsh; this version will not do so.
 
 @c ---------------------------------------------------------------------
 @node Starting a new project
