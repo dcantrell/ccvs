@@ -1,5 +1,10 @@
 /*
- * Copyright (c) 1995, Cyclic Software, Bloomington, IN, USA
+ * Copyright (C) 1986-2005 The Free Software Foundation, Inc.
+ *
+ * Portions Copyright (C) 1998-2005 Derek Price, Ximbiot <http://ximbiot.com>,
+ *                                  and others.
+ *
+ * Portions Copyright (c) 1995, Cyclic Software, Bloomington, IN, USA
  * 
  * You may distribute under the terms of the GNU General Public License as
  * specified in the README file that comes with CVS.

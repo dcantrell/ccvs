@@ -1,10 +1,14 @@
 /*
- *    Copyright (c) 1992, Brian Berliner and Jeff Polk
- *    Copyright (c) 1989-1992, Brian Berliner
+ * Copyright (C) 1986-2005 The Free Software Foundation, Inc.
  *
- *    You may distribute under the terms of the GNU General Public License
- *    as specified in the README file that comes with the CVS source
- *    distribution.
+ * Portions Copyright (C) 1998-2005 Derek Price, Ximbiot <http://ximbiot.com>,
+ *                                  and others.
+ *
+ * Portions Copyright (C) 1992, Brian Berliner and Jeff Polk
+ * Portions Copyright (C) 1989-1992, Brian Berliner
+ *
+ * You may distribute under the terms of the GNU General Public License
+ * as specified in the README file that comes with the CVS source distribution.
  *
  * This is the main C driver for the CVS system.
  *
@@ -571,17 +575,22 @@ main (int argc, char **argv)
 		logoff = 1;
 		break;
 	    case 'v':
-		fputs ("\n", stdout);
+		(void) fputs ("\n", stdout);
 		version (0, NULL);    
-		fputs (
-"\n"
-"Copyright (c) 1989-2004 Brian Berliner, david d `zoo' zuhn,\n"
-"                        Jeff Polk, and other authors\n"
-"\n"
-"CVS may be copied only under the terms of the GNU General Public License,\n"
-"a copy of which can be found with the CVS distribution kit.\n"
-"\n"
-"Specify the --help option for further information about CVS\n", stdout);
+		(void) fputs ("\n", stdout);
+		(void) fputs ("\
+Copyright (C) 2005 Free Software Foundation, Inc.\n\
+\n\
+Senior active maintainers include Larry Jones, Derek R. Price,\n\
+and Mark D. Baushke.  Please see the AUTHORS and README files from the CVS\n\
+distribution kit for a complete list of contributors and copyrights.\n",
+		              stdout);
+		(void) fputs ("\n", stdout);
+		(void) fputs ("CVS may be copied only under the terms of the GNU General Public License,\n", stdout);
+		(void) fputs ("a copy of which can be found with the CVS distribution kit.\n", stdout);
+		(void) fputs ("\n", stdout);
+
+		(void) fputs ("Specify the --help option for further information about CVS\n", stdout);
 
 		exit (0);
 		break;
