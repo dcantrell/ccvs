@@ -1,5 +1,21 @@
 Fri Feb 21 16:40:03 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* NOTES: Removed.  bcopy->memcpy is done.  "static buffers" I
+	assume refers to what is covered by reentrancy text in HACKING.
+ 	Obstack idea moved to comment in hash.c (at nodecache).  Checking
+	system calls for error returns largely done, and isn't a very
+	helpful suggestion unless you know where the bogus calls are
+	anyway.  Sizing limits--we're in the progress of removing them
+	(assuming it meant things like PATH_MAX and earlier, already
+	nuked, limits).  Removed various items about changes which were
+	done a long time ago (I realize that the ChangeLog's probably
+	aren't reliable that far back, but I'm not convinced anyone cares
+	anymore).  CONFIRM_DIRECTORY_ADDS: I assume this is a
+	reference to the #if 0'd code in add_directory which asks for
+	confirmation--a better way of making it harder to accidentally add
+	directories would be to have to add and commit directories like
+	for files.  I don't know what FORCE_MESSAGE_ON_ADD meant.
+
 	* rcs.c (RCS_getrevtime): Fix documentation (in particular, the
 	size of the array that DATE must point to, but many other things
 	too).
