@@ -491,8 +491,10 @@ printnode (node, closure)
 	return(0);
     }
 
-    (void) printf("Node at 0x%p: type = %s, key = 0x%p = \"%s\", data = 0x%p, next = 0x%p, prev = 0x%p\n",
-	   node, nodetypestring(node->type), node->key, node->key, node->data, node->next, node->prev);
+    (void) printf("Node at %p: type = %s, key = %p = \"%s\", data = %p, next = %p, prev = %p\n",
+	   (void *)node, nodetypestring(node->type),
+	   (void *)node->key, node->key, (void *)node->data,
+	   (void *)node->next, (void *)node->prev);
 
     return(0);
 }
@@ -512,8 +514,8 @@ printlist (list)
 	return;
     }
 
-    (void) printf("List at 0x%p: list = 0x%p, HASHSIZE = %d, next = 0x%p\n",
-	   list, list->list, HASHSIZE, list->next);
+    (void) printf("List at %p: list = %p, HASHSIZE = %d, next = %p\n",
+	   (void *)list, (void *)list->list, HASHSIZE, (void *)list->next);
     
     (void) walklist(list, printnode, NULL);
 
