@@ -1,3 +1,8 @@
+2004-10-22  Derek Price  <derek@ximbiot.com>
+
+	* validate_repo.in: Loosen revision regex, trusting later verification.
+	(Patch from Dan Peterson <dbpete@aol.com>.)
+
 2004-10-20  Mark D. Baushke  <mdb@cvshome.org>
 
 	* Makefile.in: Regenerate for new configure.in.
