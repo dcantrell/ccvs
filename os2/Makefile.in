@@ -66,6 +66,7 @@ COMMON_HEADERS = \
 OS2_SOURCES = \
        mkdir.c \
        pwd.c \
+       filesubr.c \
        dirent.c
 
 # sources we use from the common src dir, ../src
@@ -109,7 +110,6 @@ COMMON_SOURCES = \
        ${cvs_srcdir}/server.c \
        ${cvs_srcdir}/status.c \
        ${cvs_srcdir}/subr.c \
-       ${cvs_srcdir}/filesubr.c \
        ${cvs_srcdir}/run.c \
        ${cvs_srcdir}/tag.c \
        ${cvs_srcdir}/update.c \
