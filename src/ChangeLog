@@ -1,9 +1,13 @@
-2003-07-23  Derek Price  <derek@ximbiot.com>
+2003-07-24  Derek Price  <derek@ximbiot.com>
+
+	* main.c: But the GNULIB gethostname accepts an int not ssize_t.
+
+2003-07-24  Derek Price  <derek@ximbiot.com>
 
 	* main.c: Don't declare gethostname when we already have it to avoid
 	decl conflicts.
 
-2003-07-23  Derek Price  <derek@ximbiot.com>
+2003-07-24  Derek Price  <derek@ximbiot.com>
 
 	* server.c (server_directory): Add a TRACE for OS X debugging.
 
