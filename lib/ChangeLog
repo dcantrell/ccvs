@@ -1,3 +1,8 @@
+Tue Oct 24 13:01:25 1995  Norbert Kiesel  <nk@col.sw-ley.de>
+
+	* wait.h: include sys/resource.h if available. This is needed at
+	  least under AIX-3.2 where <sys/wait.h> doesn't include it.
+
 Mon Oct 23 17:39:11 1995  Norbert Kiesel  <nk@col.sw-ley.de>
 
 	* valloc.c (valloc): change parameter definition
