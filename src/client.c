@@ -3478,7 +3478,7 @@ auth_server (cvsroot_t *root, struct buffer *to_server,
 
 
 
-#ifdef CLIENT_SUPPORT
+#if defined (CLIENT_SUPPORT) || defined (SERVER_SUPPORT)
 /* 
  * Connect to a forked server process.
  */
@@ -3530,7 +3530,7 @@ connect_to_forked_server (cvsroot_t *root, struct buffer **to_server_p,
     make_bufs_from_fds (tofd, fromfd, child_pid, root, to_server_p,
                         from_server_p, 0);
 }
-#endif /* CLIENT_SUPPORT */
+#endif /* CLIENT_SUPPORT || SERVER_SUPPORT */
 
 
 
