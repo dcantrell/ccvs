@@ -3,7 +3,8 @@ Changes since 1.11.12:
 
 GENERAL USER ISSUES
 
-* Thanks to Ville Skyttä the man page has a few less spelling errors.
+* Thanks to Ville Skyttä the man page has a few less spelling errors and is
+  slightly more accurate.
 
 * An unlikely potential segfault when using the :fork: connection method has
   been fixed.
