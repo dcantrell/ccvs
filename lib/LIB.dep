@@ -1,9 +1,5 @@
 # Microsoft Developer Studio Generated Dependency File, included by LIB.mak
 
-.\alloca.c : \
-	"..\windows-NT\config.h"\
-	
-
 .\exitfail.c : \
 	"..\windows-NT\config.h"\
 	".\exit.h"\
