@@ -2691,6 +2691,11 @@ start_server ()
 
 #ifdef START_RSH_WITH_POPEN_RW
 
+/* This is actually a crock -- it's OS/2-specific, for no one else
+   uses it.  If I get time, I want to make piped_child and all the
+   other stuff in os2/run.c work right.  In the meantime, this gets us
+   up and running, and that's most important. */
+
 static void
 start_rsh_server (tofdp, fromfdp)
      int *tofdp, *fromfdp;
@@ -2721,8 +2726,10 @@ start_rsh_server (tofdp, fromfdp)
   /* The command line starts out with rsh. */
   rsh_argv[i++] = cvs_rsh;
   
+#ifdef RSH_NEEDS_BINARY_FLAG
   /* "-b" for binary, under OS/2. */
   rsh_argv[i++] = "-b";
+#endif /* RSH_NEEDS_BINARY_FLAG */
 
   /* Then we strcat more things on the end one by one. */
   if (server_user != NULL)
