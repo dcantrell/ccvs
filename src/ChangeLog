@@ -1,3 +1,7 @@
+2003-08-16  Derek Price  <derek@ximbiot.com>
+
+	* add.c (add): Use consistent quoting style in user messages.
+
 2003-08-13  Derek Price  <derek@ximbiot.com>
 
 	* sanity.sh (tests): Remove version.
