@@ -1,5 +1,7 @@
 13 Jan 1998  Jim Kingdon
 
+	* fncase.c: Include config.h before system.h.
+
 	* system.h: Just include string.h unconditionally.  We already
 	include it unconditionally elsewhere.
 
