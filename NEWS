@@ -1,5 +1,11 @@
 Changes since 1.9:
 
+* There is a new administrative file CVSROOT/config which allows one
+to specify miscellaneous aspects of CVS configuration.  Currently the
+only setting here is RCSBIN, as an alternate place to specify the
+directory where CVS should look for RCS binaries.  For more
+information see the "config" section of cvs.texinfo.
+
 * When setting up the pserver server, one now must specify the
 allowable CVSROOT directories in inetd.conf.  See the Password
 authentication server section of cvs.texinfo for details.  Note that
