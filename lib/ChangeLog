@@ -1,5 +1,10 @@
 2003-07-19  Derek Price  <derek@ximbiot.com>
 
+	* savecwd.c: Move the MD5 stuff that shifted here a few commits back...
+	* md5.c: ...back to here.
+
+2003-07-19  Derek Price  <derek@ximbiot.com>
+
 	* getndelim2.c: Make limit an ssize_t rather than int, as per the
 	return type.
 	* getndelim2.h: Ditto.
