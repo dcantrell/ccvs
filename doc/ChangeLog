@@ -1,3 +1,9 @@
+2004-07-17  Derek Price  <derek@ximbiot.com>
+
+	* cvs.texinfo (Password authentication server): Added documentation for
+	the now required session configuration for PAM.
+	(Patch from Brian Murphy <brian@murphy.dk>.)
+
 2004-06-29  Derek Price  <derek@ximbiot.com>
 
 	* cvsclient.texi (Requests): Note new `Relative-directory request' as
