@@ -1,3 +1,8 @@
+Tue Dec 23 08:28:44 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* README: Change bug-cvs address from prep.ai.mit.edu to gnu.org
+	per email from Martin Hamilton.
+
 Sat Nov 29 22:20:42 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* options.h: Remove declaration of getwd; see lib/ChangeLog for
