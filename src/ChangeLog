@@ -1,3 +1,15 @@
+2003-03-07  Derek Price  <derek@ximbiot.com>
+
+	* sanity.sh (usage): Show users long --help rather than less
+	informative -h.
+
+2003-03-07  Derek Price  <derek@ximbiot.com>
+
+	* sanity.sh: Add support for long options.
+	(exit_usage): Move the actual generation of usage text to...
+	(usage): ...this new function and improve the usage message.
+	(exit_help): New function.
+
 2003-03-07  Mark D. Baushke  <mdb@cvshome.org>
 
 	* sanity.sh: Drop the clientcvs option. Add usage info for
