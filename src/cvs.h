@@ -456,7 +456,7 @@ char *Short_Repository PROTO((char *repository));
 void Sanitize_Repository_Name PROTO((char *repository));
 
 char *Name_Root PROTO((char *dir, char *update_dir));
-void free_CVSroot_t PROTO((cvsroot_t *root_in));
+void free_cvsroot_t PROTO((cvsroot_t *root_in));
 cvsroot_t *parse_cvsroot PROTO((char *root));
 cvsroot_t *local_cvsroot PROTO((char *dir));
 void Create_Root PROTO((char *dir, char *rootdir));
