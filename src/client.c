@@ -1421,6 +1421,20 @@ update_entries (data_arg, ent_list, short_pathname, filename)
 
 	    char buf[8192];
 
+	    /* This error might be confusing; it isn't really clear to the
+	       user what to do about it.  Keep in mind that it has several
+	       causes: (1) something/someone creates the file during the time
+	       that CVS is running, (2) the repository has two files whose
+	       names clash for the client because of case-insensitivity or
+	       similar causes, (3) a special case of this is that a file
+	       gets renamed for example from a.c to A.C.  A "cvs update" on
+	       a case-insensitive client will get this error.  Repeating
+	       the update takes care of the problem, but is it clear to the
+	       user what is going on and what to do about it?, (4) classify.c
+	       will print the same message for other reasons.
+
+	       I hope the above paragraph makes it clear that making this
+	       clearer is not a one-line fix.  */
 	    error (0, 0, "move away %s; it is in the way", short_pathname);
 
 	discard_file_and_return:

@@ -1,3 +1,8 @@
+Tue Mar  4 17:39:15 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* client.c (update_entries): Add comment about "move away <file>"
+	message.
+
 Mon Mar  3 21:51:40 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* sanity.sh (basicb): Clean up topfile,v at end of test.  Fixes
