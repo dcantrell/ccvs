@@ -186,6 +186,7 @@ static RETSIGTYPE
 main_cleanup (sig)
     int sig;
 {
+#ifndef DONT_USE_SIGNALS
     const char *name;
     char temp[10];
 
@@ -225,6 +226,7 @@ main_cleanup (sig)
     }
 
     error (1, 0, "received %s signal", name);
+#endif /* !DONT_USE_SIGNALS */
 }
 
 static void
@@ -655,6 +657,7 @@ main (argc, argv)
 	    }
 	}
 
+#ifndef DONT_USE_SIGNALS
 	/* make sure we clean up on error */
 #ifdef SIGHUP
 	(void) SIG_register (SIGHUP, main_cleanup);
@@ -676,6 +679,7 @@ main (argc, argv)
 	(void) SIG_register (SIGTERM, main_cleanup);
 	(void) SIG_register (SIGTERM, Lock_Cleanup);
 #endif
+#endif /* !DONT_USE_SIGNALS */
 
 	gethostname(hostname, sizeof (hostname));
 

@@ -1,3 +1,9 @@
+Wed Jun 05 10:07:29 1996  Mike Ladwig  <mike@twinpeaks.prc.com>
+			  and Jim Kingdon  <kingdon@cyclic.com>
+
+	* main.c (main): Don't mess with signals if DONT_USE_SIGNALS is
+	defined.
+
 Thu Jun  6 15:32:41 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* modules.c (cat_module): Always format for 80 columns rather than
