@@ -388,3 +388,13 @@ $CVSid: @(#)TODO 1.26 94/09/21 $
 180. "cvs edit" should show you who is already editing the files,
      probably (that is, do "cvs editors" before executing, or some
      similar result).
+
+181.  Make a "cvs message" command which prompts for a log message and
+     stores it in the CVS directory.  Then "cvs ci" would use it.
+     This solves the problem with where in the client to prompt for
+     the log message (see comment in commit.c at call to
+     start_server), allows users more flexibility in specifying
+     messages per-directory ("cvs message -l") or per-tree ("cvs
+     message") or per-file ("cvs message foo.c"), and fixes the
+     incompatibility between client/server (per-tree) and
+     non-client/server (per-directory).
