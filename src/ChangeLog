@@ -1,5 +1,10 @@
 Wed Jun 25 11:21:52 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* main.c: New option --help-options, with much of the text
+	from --help.  Fix a few capitalization and punctuation problems.
+	Rewrite text for --help to be an intro to all the --help-*
+	options.
+
 	* sanity.sh (head): New tests, concerning meaning of HEAD.
 
 Tue Jun 24 10:14:18 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
