@@ -1,3 +1,7 @@
+Tue Jun 17 09:58:03 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (Error messages): Add "unknown option" from RCS.
+
 Fri Jun 13 12:11:09 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (Global options): Add note about how -n might affect
