@@ -43,6 +43,11 @@ rename (from, to)
 	return -1;
       if ((from_stats.st_mode & S_IFMT) == S_IFDIR)
 	{
+#ifdef MVDIR
+	  /* I don't think MVDIR ever gets defined, but I don't think
+	     it matters, because I don't think CVS ever calls rename()
+	     on directories.  */
+
 	  /* Need a setuid root process to link and unlink directories. */
 	  pid = fork ();
 	  switch (pid)
@@ -61,6 +66,9 @@ rename (from, to)
 	      errno = 0;	/* mvdir printed the system error message. */
 	      return status != 0 ? -1 : 0;
 	    }
+#else /* no MVDIR */
+	  error (1, 0, "internal error: cannot move directories");
+#endif /* no MVDIR */
 	}
       else
 	{

@@ -1,3 +1,8 @@
+Fri Jun 30 16:27:18 1995  James Kingdon  <kingdon@harvey.cyclic.com>
+
+	* rename.c (rename): If MVDIR is not defined, just give an error
+	on attempt to rename a directory.
+
 Thu Jun 29 00:46:31 1995  James Kingdon  <kingdon@harvey.cyclic.com>
 
 	* system.h: Check HAVE_SYS_TIMEB_H not non-existent HAVE_TIMEB_H.
