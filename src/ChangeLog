@@ -1,3 +1,11 @@
+Fri Dec 15 18:21:16 1995  Karl Fogel  (kfogel@floss.cyclic.com)
+
+        * client.c (auth_server_port_number): don't call htons();
+        init_sockaddr() does that for us.
+        (init_sockaddr): zero the sockadder_in struct before doing
+        anything with it.  IBM TCP/IP docs recommend this, and it can't
+        hurt.
+
 Fri Dec 15 15:21:53 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
         * client.c (connect_to_pserver): new var `port_number', initialize

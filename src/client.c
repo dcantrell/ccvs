@@ -2247,6 +2247,7 @@ init_sockaddr (name, hostname, port)
 {
   struct hostent *hostinfo;
   
+  memset (name, 0, sizeof (*name));
   name->sin_family = AF_INET;
   name->sin_port = htons (port);
   hostinfo = gethostbyname (hostname);
@@ -2262,7 +2263,7 @@ init_sockaddr (name, hostname, port)
 int
 auth_server_port_number ()
 {
-  return htons (CVS_AUTH_PORT);
+  return CVS_AUTH_PORT;
 }
 
 
@@ -2336,24 +2337,31 @@ connect_to_pserver (tofdp, fromfdp, log)
       }
 
     if (strcmp (read_buf, "I HATE YOU\n") == 0)
-      {
+    {
         /* Authorization not granted. */
-	if (shutdown (sock, 2) < 0)
-	    error (1, errno, "shutdown() failed (server %s)", server_host);
+        if (shutdown (sock, 2) < 0)
+            error (1, errno,
+                   "both auth and shutdown() failed (server %s)",
+                   server_host);
         error (1, 0, 
                "authorization failed: server %s rejected access", 
                server_host);
-      }
+    }     
     else if (strcmp (read_buf, "I LOVE YOU\n") != 0)
-      {
+    {
         /* Unrecognized response from server. */
-	if (shutdown (sock, 2) < 0)
-	    error (1, errno, "shutdown() failed (server %s)", server_host);
+        if (shutdown (sock, 2) < 0)
+            error (1, errno,
+                   "unrecognized auth response, and shutdown() failed (server %s)",
+                   server_host);
         error (1, 0, 
                "unrecognized auth response from %s: %s", 
                server_host, read_buf);
-      }
+    }
+
     /* Else authorization granted, so we can go on... */
+    printf ("*** auth succeeded: %s\n", read_buf);
+    fflush (stdout);
   }
 
   /* This was stolen straight from start_kerberos_server(). */
