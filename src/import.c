@@ -278,7 +278,7 @@ import (argc, argv)
     }
 #endif
 
-    if (!safe_location ())
+    if (!safe_location ( NULL ))
     {
 	error (1, 0, "attempt to import the repository");
     }

@@ -1,3 +1,12 @@
+2001-05-25  Derek Price  <dprice@collab.net>
+	for Donald Sharp  <sharpd@cisco.com>
+
+    * checkout.c:  Modified safe_location() to refuse checkout if
+    the -d option to co specifies inside of the repository.
+    * import.c:  New parameter to safe_location needed to be added.
+    * cvs.h:  New parameter to safe_location needed to be added.
+    * sanity.sh:  Test case to test for failure mode.
+
 2001-05-23  Larry Jones  <larry.jones@sdrc.com>
 
 	* checkout.c (checkout_proc): Don't build top_level_admin directory
