@@ -179,7 +179,7 @@ static const char *const usg[] =
        version control means.  */
 
     "For CVS updates and additional information, see\n",
-    "    Cyclic Software at http://www.cyclic.com/ or\n",
+    "    the CVS home page at http://www.cvshome.org/ or\n",
     "    Pascal Molli's CVS site at http://www.loria.fr/~molli/cvs-index.html\n",
     NULL,
 };
@@ -667,7 +667,10 @@ Copyright (c) 1989-2000 Brian Berliner, david d `zoo' zuhn, \n\
     }
 
     if (!cm->fullname)
-	usage (cmd_usage);	        /* no match */
+    {
+	fprintf (stderr, "Unknown command: `%s'\n\n", command_name);
+	usage (cmd_usage);
+    }
     else
 	command_name = cm->fullname;	/* Global pointer for later use */
 

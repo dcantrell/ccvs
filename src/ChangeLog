@@ -1,3 +1,10 @@
+2000-06-08  Larry Jones  <larry.jones@sdrc.com>
+
+	* main.c (usg): Update CVS home page URL.
+
+	* main.c (main): Provide an actual error message for an unknown
+	command in addition to the usage message.
+
 2000-06-07  Larry Jones  <larry.jones@sdrc.com>
 
 	* server.c (serve_root, dirswitch, serve_repository,
