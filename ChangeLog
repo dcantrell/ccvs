@@ -1,3 +1,11 @@
+Mon Oct  2 10:42:37 1995  Karl Fogel  <kfogel@totoro.cyclic.com>
+
+        * (configure): Re-ran autoconf.
+
+Mon Oct  2 10:33:58 1995  Michael Finken  <finken@conware.de>
+
+        * configure.in: AC_REPLACE `strstr'.
+
 Sun Oct  1 23:22:28 1995  Bryan O'Sullivan  <bos@serpentine.com>
 
 	* (INSTALL): noted that CVS works fine on Solaris 2.4 with both
