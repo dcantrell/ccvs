@@ -346,7 +346,7 @@ HOME=${TESTDIR}/home; export HOME
 # tests.
 
 if test x"$*" = x; then
-	tests="basica basic1 deep basic2 death branches import new conflicts modules mflag errmsg1 devcom ignore binfiles info"
+	tests="basica basic1 deep basic2 death branches import new conflicts conflicts2 modules mflag errmsg1 devcom ignore binfiles info"
 else
 	tests="$*"
 fi
@@ -1937,32 +1937,26 @@ rcsmerge: warning: conflicts during merge'
 		;;
 
 	conflicts)
-		rm -rf first-dir ${CVSROOT_DIRNAME}/first-dir
 		mkdir ${CVSROOT_DIRNAME}/first-dir
 
 		mkdir 1
 		cd 1
 
-		if ${CVS} co first-dir ; then
-			echo 'PASS: test 124' >>${LOGFILE}
-		else
-			echo 'FAIL: test 124' | tee -a ${LOGFILE}
-		fi
+		dotest conflicts-124 "${testcvs} -q co first-dir" ''
 
 		cd first-dir
 		touch a
 
-		if ${CVS} add a 2>>${LOGFILE} ; then
-			echo 'PASS: test 125' >>${LOGFILE}
-		else
-			echo 'FAIL: test 125' | tee -a ${LOGFILE}
-		fi
-
-		if ${CVS} ci -m added >>${LOGFILE} 2>&1; then
-			echo 'PASS: test 126' >>${LOGFILE}
-		else
-			echo 'FAIL: test 126' | tee -a ${LOGFILE}
-		fi
+		dotest conflicts-125 "${testcvs} add a" \
+"${PROG} [a-z]*: scheduling file .a. for addition
+${PROG} [a-z]*: use .cvs commit. to add this file permanently"
+		dotest conflicts-126 "${testcvs} -q ci -m added" \
+'RCS file: /tmp/cvs-sanity/cvsroot/first-dir/a,v
+done
+Checking in a;
+/tmp/cvs-sanity/cvsroot/first-dir/a,v  <--  a
+initial revision: 1\.1
+done'
 
 		cd ../..
 		mkdir 2
@@ -2117,10 +2111,105 @@ C a'
 		else
 		  echo 'FAIL: test 142' | tee -a ${LOGFILE}
 		fi
-
-		cd ../.. 
+		cd ../..
 		rm -rf 1 2 3 ; rm -rf ${CVSROOT_DIRNAME}/first-dir
 		;;
+
+	conflicts2)
+	  # More conflicts tests; separate from conflicts to keep each
+	  # test a manageable size.
+	  mkdir ${CVSROOT_DIRNAME}/first-dir
+
+	  mkdir 1
+	  cd 1
+
+	  dotest conflicts2-142a1 "${testcvs} -q co first-dir" ''
+
+	  cd first-dir
+	  touch a abc
+
+	  dotest conflicts2-142a2 "${testcvs} add a abc" \
+"${PROG} [a-z]*: scheduling file .a. for addition
+${PROG} [a-z]*: scheduling file .abc. for addition
+${PROG} [a-z]*: use .cvs commit. to add these files permanently"
+	  dotest conflicts2-142a3 "${testcvs} -q ci -m added" \
+'RCS file: /tmp/cvs-sanity/cvsroot/first-dir/a,v
+done
+Checking in a;
+/tmp/cvs-sanity/cvsroot/first-dir/a,v  <--  a
+initial revision: 1\.1
+done
+RCS file: /tmp/cvs-sanity/cvsroot/first-dir/abc,v
+done
+Checking in abc;
+/tmp/cvs-sanity/cvsroot/first-dir/abc,v  <--  abc
+initial revision: 1\.1
+done'
+
+	  cd ../..
+	  mkdir 2
+	  cd 2
+
+	  dotest conflicts2-142a4 "${testcvs} -q co first-dir" 'U first-dir/a
+U first-dir/abc'
+	  cd ..
+
+	  # Now test that if one person modifies and commits a
+	  # file and a second person removes it, it is a
+	  # conflict
+	  cd 1/first-dir
+	  echo modify a >>a
+	  dotest conflicts2-142b2 "${testcvs} -q ci -m modify-a" \
+'Checking in a;
+/tmp/cvs-sanity/cvsroot/first-dir/a,v  <--  a
+new revision: 1\.2; previous revision: 1\.1
+done'
+	  cd ../../2/first-dir
+	  rm a
+	  dotest conflicts2-142b3 "${testcvs} rm a" \
+"${PROG} [a-z]*: scheduling .a. for removal
+${PROG} [a-z]*: use .cvs commit. to remove this file permanently"
+	  dotest_fail conflicts2-142b4 "${testcvs} -q update" \
+"${PROG} [a-z]*: conflict: removed a was modified by second party
+C a"
+	  # Resolve the conflict by deciding not to remove the file
+	  # after all.
+	  dotest conflicts2-142b5 "${testcvs} add a" "U a
+${PROG} [a-z]*: a, version 1\.1, resurrected"
+	  dotest conflicts2-142b6 "${testcvs} -q update" ''
+	  cd ../..
+
+	  # Now test that if one person removes a file and
+	  # commits it, and a second person removes it, is it
+	  # not a conflict.
+	  cd 1/first-dir
+	  rm abc
+	  dotest conflicts2-142c0 "${testcvs} rm abc" \
+"${PROG} [a-z]*: scheduling .abc. for removal
+${PROG} [a-z]*: use .cvs commit. to remove this file permanently"
+	  dotest conflicts2-142c1 "${testcvs} -q ci -m remove-abc" \
+'Removing abc;
+/tmp/cvs-sanity/cvsroot/first-dir/abc,v  <--  abc
+new revision: delete; previous revision: 1\.1
+done'
+	  cd ../../2/first-dir
+	  rm abc
+	  dotest conflicts2-142c2 "${testcvs} rm abc" \
+"${PROG} [a-z]*: scheduling .abc. for removal
+${PROG} [a-z]*: use .cvs commit. to remove this file permanently"
+	  # The presence of the "unable to remove" message is a bug
+	  # in remote cvs, but noone has fixed it yet.  We don't use -q
+	  # to work around the fact that dotest can't deal with
+	  # a fourth argument if the third one is ''.
+	  dotest conflicts2-142c3 "${testcvs} update" \
+"${PROG} [a-z]*: Updating \." \
+"${PROG} [a-z]*: Updating \.
+${PROG} update: unable to remove ./abc: No such file or directory"
+	  cd ../..
+
+	  rm -rf 1 2 ; rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  ;;
+
 	modules)
 	  rm -rf first-dir ${CVSROOT_DIRNAME}/first-dir
 	  mkdir ${CVSROOT_DIRNAME}/first-dir
@@ -2656,6 +2745,12 @@ abc	[a-z0-9]*	edit	unedit	commit'
 	  dotest devcom-a3 "${testcvs} watch remove -a unedit abb" ''
 	  dotest devcom-a4 "${testcvs} watchers abb" \
 'abb	[a-z0-9]*	edit	commit'
+
+	  # Now remove all the file attributes
+	  dotest devcom-b0 "${testcvs} watch off" ''
+	  dotest devcom-b1 "${testcvs} watch remove" ''
+	  # Test that CVS 1.6 and earlier can handle the repository.
+	  dotest_fail devcom-b2 "test -d ${CVSROOT_DIRNAME}/first-dir/CVS"
 
 	  cd ../..
 	  rm -rf 1 2 ${CVSROOT_DIRNAME}/first-dir
