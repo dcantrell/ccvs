@@ -667,6 +667,7 @@ if test x"$*" = x; then
 	# Basic/miscellaneous functionality
 	tests="version basica basicb basicc basic1 deep basic2"
 	tests="${tests} files spacefiles commit-readonly"
+	tests="${tests} commit-add-missing"
 	# Branching, tagging, removing, adding, multiple directories
 	tests="${tests} rdiff diff death death2 rm-update-message rmadd rmadd2"
 	tests="${tests} dirs dirs2 branches branches2 tagc tagf"
@@ -24319,6 +24320,33 @@ Server: \1'
 	      rm -rf fork
 	    fi
 	  fi
+	  ;;
+
+	commit-add-missing)
+	  # Make sure that a commit fails when a `cvs add'ed file has
+	  # been removed from the working directory.
+
+	  mkdir 1; cd 1
+	  module=c-a-m
+	  echo > unused-file
+	  dotest commit-add-missing-1 \
+	    "$testcvs -Q import -m. $module X Y" ''
+
+	  file=F
+	  # Check it out and tag it.
+	  dotest commit-add-missing-2 "$testcvs -Q co $module" ''
+	  cd $module
+	  dotest commit-add-missing-3 "$testcvs -Q tag -b B" ''
+	  echo v1 > $file
+	  dotest commit-add-missing-4 "$testcvs -Q add $file" ''
+	  rm -f $file
+	  dotest_fail commit-add-missing-5 "$testcvs -Q ci -m. $file" \
+"${PROG} [a-z]*: Up-to-date check failed for .$file'
+${PROG} \[[a-z]* aborted\]: correct above errors first!"
+
+	  cd ../..
+	  rm -rf 1
+	  rm -rf ${CVSROOT_DIRNAME}/$module
 	  ;;
 
 	*)

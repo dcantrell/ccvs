@@ -1,3 +1,10 @@
+2002-07-26  Jim Meyering  <meyering@lucent.com>
+
+	* commit.c (find_fileproc): When committing in client mode,
+	arrange to fail if a `cvs add'ed file no longer exists in the
+	working directory.
+	* sanity.sh (commit-add-missing): New test for above.
+
 2002-07-25  Larry Jones  <lawrence.jones@eds.com>
 
 	* sanity.sh: Set $TMPDIR if it's not already set and use it rather

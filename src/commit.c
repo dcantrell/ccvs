@@ -250,12 +250,23 @@ find_fileproc (callerdat, finfo)
     vers = Version_TS (&xfinfo, NULL, saved_tag, NULL, 0, 0);
     if (vers->ts_user == NULL
 	&& vers->vn_user != NULL
-	&& vers->vn_user[0] == '-')
-	/* FIXME: If vn_user is starts with "-" but ts_user is
-	   non-NULL, what classify_file does is print "%s should be
-	   removed and is still there".  I'm not sure what it does
-	   then.  We probably should do the same.  */
-	status = T_REMOVED;
+	&& (vers->vn_user[0] == '0' || vers->vn_user[0] == '-'))
+    {
+	if ( vers->vn_user[0] == '0')
+	{
+	    /* This happens when one has `cvs add'ed a file, but it no
+	       longer exists in the working directory at commit time.  */
+	    status = T_ADDED;
+	}
+	else
+	{
+	    /* FIXME: If vn_user is starts with "-" but ts_user is
+	       non-NULL, what classify_file does is print "%s should be
+	       removed and is still there".  I'm not sure what it does
+	       then.  We probably should do the same.  */
+	    status = T_REMOVED;
+	}
+    }
     else if (vers->vn_user == NULL)
     {
 	if (vers->ts_user == NULL)
@@ -271,7 +282,8 @@ find_fileproc (callerdat, finfo)
 	     && vers->vn_user[0] == '0')
 	/* FIXME: If vn_user is "0" but ts_user is NULL, what classify_file
 	   does is print "new-born %s has disappeared" and removes the entry.
-	   We probably should do the same.  */
+	   We probably should do the same.  No!  Not here.  Otherwise, a commit
+	   would succeed in some cases when it should fail.  See above.  */
 	status = T_ADDED;
     else if (vers->ts_user != NULL
 	     && vers->ts_rcs != NULL
@@ -1224,7 +1236,7 @@ commit_fileproc (callerdat, finfo)
 	if (!server_active && use_editor)
 	    do_editor (finfo->update_dir, &saved_message,
 		       finfo->repository, ulist);
-	do_verify (&saved_message, finfo->repository);  
+	do_verify (&saved_message, finfo->repository);
     }
 
     p = findnode (cilist, finfo->file);
