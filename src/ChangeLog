@@ -1,5 +1,11 @@
 2004-10-19 Derek Price <derek@ximbiot.com>
 
+	* add.c (add): Avoid attempting to resurrect a dead rev 1.1.
+	* sanity.sh (resurrection): Add test for the above.
+	(Report from Dan Peterson <dbpete@aol.com>.)
+
+2004-10-19 Derek Price <derek@ximbiot.com>
+
 	* add.c (add): Avoid unnecessary typecasts.
 
 2004-10-19 Derek Price <derek@ximbiot.com>
