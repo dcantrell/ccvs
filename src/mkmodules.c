@@ -481,16 +481,16 @@ static const char *const config_contents[] = {
     "# Be warned that these strings could be disabled in any new version of CVS.\n",
     "UseNewInfoFmtStrings=yes\n",
 #endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
-#ifdef PROXY_SUPPORT
     "\n",
     "# Set `PrimaryServer' to the CVSROOT to the primary, or write, server when\n",
     "# establishing one or more read-only mirrors which serve as proxies for\n",
-    "# the write server in write mode.\n",
+    "# the write server in write mode or redirect the client to the primary for\n",
+    "# write requests.\n",
     "#\n",
     "# For example:\n",
     "#\n",
     "#   PrimaryServer=:fork:localhost/cvsroot\n",
-# ifndef TRUST_OS_FILE_CACHE
+#if defined PROXY_SUPPORT && ! defined TRUST_OS_FILE_CACHE
     "\n",
     "# Set `MaxProxyBufferSize' to the the maximum allowable secondary\n",
     "# buffer memory cache size before the buffer begins being stored to disk, in\n",
@@ -507,8 +507,7 @@ static const char *const config_contents[] = {
     "# For example:\n",
     "#\n",
     "#   MaxProxyBufferSize=1G\n",
-# endif /* !TRUST_OS_FILE_CACHE */
-#endif /* PROXY_SUPPORT */
+#endif /* PROXY_SUPPORT && ! TRUST_OS_FILE_CACHE */
     NULL
 };
 

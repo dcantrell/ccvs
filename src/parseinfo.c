@@ -436,7 +436,6 @@ warning: this CVS does not support PreservePermissions");
 	    }
 	}
 #endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
-#ifdef PROXY_SUPPORT
 	else if (strcmp (line, "PrimaryServer") == 0)
 	{
 	    PrimaryServer = parse_cvsroot (p);
@@ -449,7 +448,7 @@ warning: this CVS does not support PreservePermissions");
 "Only PrimaryServers with :ext: methods are valid, not `%s'.",
 		       p);
 	}
-# ifndef TRUST_OS_FILE_CACHE
+#if defined PROXY_SUPPORT && ! defined TRUST_OS_FILE_CACHE
 	else if (strcmp (line, "MaxProxyBufferSize") == 0)
 	{
 	    size_t factor = 1;
@@ -496,8 +495,7 @@ warning: this CVS does not support PreservePermissions");
 	    MaxProxyBufferSize = strtoul (p, NULL, 10);
 	    MaxProxyBufferSize = xtimes (MaxProxyBufferSize, factor);
 	}
-# endif /* !TRUST_OS_FILE_CACHE */
-#endif /* PROXY_SUPPORT */
+#endif /* PROXY_SUPPORT && ! TRUST_OS_FILE_CACHE */
 	else
 	{
 	    /* We may be dealing with a keyword which was added in a
