@@ -1,3 +1,8 @@
+2000-03-21  Larry Jones  <larry.jones@sdrc.com>
+
+	* sanity.sh (client-1): May get "Broken pipe" message from the
+	"server" in addition to the expected output.
+
 2000-03-17  Larry Jones  <larry.jones@sdrc.com>
 
 	* server.c (switch_to_user): Set CVS_Username if it hasn't already

@@ -20354,7 +20354,7 @@ EOF
 	    CVS_SERVER=${TESTDIR}/serveme; export CVS_SERVER
 	    mkdir 1; cd 1
 	    dotest_fail client-1 "${testcvs} -q co first-dir" \
-"${PROG} \[checkout aborted\]: This server does not support the global -q option\."
+"${PROG} \[checkout aborted\]: This server does not support the global -q option${DOTSTAR}"
 	    dotest client-2 "${testcvs} co first-dir" "special message"
 
 	    cat >${TESTDIR}/serveme <<EOF
