@@ -1,3 +1,10 @@
+Thu Jun 13 1996  Ian Lance Taylor  <ian@cygnus.com>
+
+	* client.c (last_register_time): New static variable.
+	(update_entries): Set last_register_time when calling Register.
+	(get_responses_and_close): If the current time is the same as
+	last_register_time, sleep for a section to avoid timestamp races.
+
 Thu Jun 13 17:24:38 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* client.c (supported_request): Reindent.
