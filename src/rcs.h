@@ -68,7 +68,10 @@ struct rcsnode
     /* Use when printing paths.  */
     char *print_path;
 
-    /* Value for head keyword from RCS header, or NULL if empty.  */
+    /* Value for head keyword from RCS header, or NULL if empty.  HEAD may only
+     * be empty in a valid RCS file when the file has no revisions, a state
+     * that should not be able to occur with CVS.
+     */
     char *head;
 
     /* Value for branch keyword from RCS header, or NULL if omitted.  */

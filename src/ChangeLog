@@ -1,5 +1,10 @@
 2005-03-17  Derek Price  <derek@ximbiot.com>
 
+	* rcs.h (RCSNode): Improve comment.
+	* rcs.c (RCS_head): Ditto, plus gratuitous reformatting.
+
+2005-03-17  Derek Price  <derek@ximbiot.com>
+
 	* rcs.c (RCS_deltas): Use rcs->print_path.
 
 2005-03-17  Derek Price  <derek@ximbiot.com>
