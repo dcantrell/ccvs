@@ -100,7 +100,8 @@ static const char *const commit_usage[] =
 
 #ifdef CLIENT_SUPPORT
 /* Identify a file which needs "? foo" or a Questionable request.  */
-struct question {
+struct question
+{
     /* The two fields for the Directory request.  */
     char *dir;
     char *repos;
@@ -111,7 +112,8 @@ struct question {
     struct question *next;
 };
 
-struct find_data {
+struct find_data
+{
     List *ulist;
     int argc;
     char **argv;
@@ -398,7 +400,7 @@ commit (int argc, char **argv)
 		    saved_message = NULL;
 		}
 
-		saved_message = xstrdup(optarg);
+		saved_message = xstrdup (optarg);
 		break;
 	    case 'r':
 		if (saved_tag)
@@ -501,7 +503,7 @@ commit (int argc, char **argv)
 	    find_args.argc = 0;
 	    return 0;
 	}
-	find_args.argv = xmalloc (xtimes (find_args.argc, sizeof (char **)));
+	find_args.argv = xnmalloc (find_args.argc, sizeof (char **));
 	find_args.argc = 0;
 	walklist (find_args.ulist, copy_ulist, &find_args);
 
@@ -584,11 +586,11 @@ commit (int argc, char **argv)
 	}
 
 	if (local)
-	    send_arg("-l");
+	    send_arg ("-l");
         if (check_valid_edit)
-            send_arg("-c");
+            send_arg ("-c");
 	if (force_ci)
-	    send_arg("-f");
+	    send_arg ("-f");
 	option_with_arg ("-r", saved_tag);
 	send_arg ("--");
 

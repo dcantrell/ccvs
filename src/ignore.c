@@ -73,11 +73,9 @@ ign_setup (void)
     if (!current_parsed_root->isremote)
 #endif
     {
-	char *file = xmalloc (strlen (current_parsed_root->directory) + sizeof (CVSROOTADM)
-			      + sizeof (CVSROOTADM_IGNORE) + 10);
+	char *file = Xasprintf ("%s/%s/%s", current_parsed_root->directory,
+				CVSROOTADM, CVSROOTADM_IGNORE);
 	/* Then add entries found in repository, if it exists */
-	(void) sprintf (file, "%s/%s/%s", current_parsed_root->directory,
-			CVSROOTADM, CVSROOTADM_IGNORE);
 	ign_add_file (file, 0);
 	free (file);
     }
@@ -246,13 +244,13 @@ ign_add (char *ign, int hold)
 		else
 		{
 		    /* Save the ignore list for later.  */
-		    s_ign_list = xmalloc (ign_count * sizeof (char *));
+		    s_ign_list = xnmalloc (ign_count, sizeof (char *));
 		    for (i = 0; i < ign_count; i++)
 			s_ign_list[i] = ign_list[i];
 		    s_ign_count = ign_count;
 		}
 		ign_count = 1;
-		/* Always ignore the "CVS" directory.  */
+		    /* Always ignore the "CVS" directory.  */
 		ign_list[0] = xstrdup ("CVS");
 		ign_list[1] = NULL;
 		continue;
@@ -419,8 +417,7 @@ ignore_files (List *ilist, List *entries, const char *update_dir,
 		   this directory if there is a CVS subdirectory.
 		   This will normally be the case, but the user may
 		   have messed up the working directory somehow.  */
-		p = xmalloc (strlen (file) + sizeof CVSADM + 10);
-		sprintf (p, "%s/%s", file, CVSADM);
+		p = Xasprintf ("%s/%s", file, CVSADM);
 		dir = isdir (p);
 		free (p);
 		if (dir)
@@ -435,9 +432,9 @@ ignore_files (List *ilist, List *entries, const char *update_dir,
 
 	if (
 #ifdef DT_DIR
-		dp->d_type != DT_UNKNOWN ||
+	    dp->d_type != DT_UNKNOWN ||
 #endif
-		CVS_LSTAT( file, &sb ) != -1 ) 
+	    CVS_LSTAT (file, &sb) != -1)
 	{
 
 	    if (
@@ -449,12 +446,9 @@ ignore_files (List *ilist, List *entries, const char *update_dir,
 #endif
 		)
 	    {
-		if (! subdirs)
+		if (!subdirs)
 		{
-		    char *temp;
-
-		    temp = xmalloc (strlen (file) + sizeof (CVSADM) + 10);
-		    (void) sprintf (temp, "%s/%s", file, CVSADM);
+		    char *temp = Xasprintf ("%s/%s", file, CVSADM);
 		    if (isdir (temp))
 		    {
 			free (temp);
@@ -467,7 +461,7 @@ ignore_files (List *ilist, List *entries, const char *update_dir,
 	    else if (
 #ifdef DT_DIR
 		     dp->d_type == DT_LNK
-		     || (dp->d_type == DT_UNKNOWN && S_ISLNK(sb.st_mode))
+		     || (dp->d_type == DT_UNKNOWN && S_ISLNK (sb.st_mode))
 #else
 		     S_ISLNK (sb.st_mode)
 #endif

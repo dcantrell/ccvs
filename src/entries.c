@@ -42,7 +42,7 @@ Entnode_Create (enum ent_type type, const char *user, const char *vn,
     Entnode *ent;
     
     /* Note that timestamp and options must be non-NULL */
-    ent = (Entnode *) xmalloc (sizeof (Entnode));
+    ent = xmalloc (sizeof (Entnode));
     ent->type      = type;
     ent->user      = xstrdup (user);
     ent->version   = xstrdup (vn);
@@ -88,10 +88,10 @@ write_ent_proc (Node *node, void *closure)
     if (closure != NULL && entnode->type != ENT_FILE)
 	*(int *) closure = 1;
 
-    if (fputentent(entfile, entnode))
+    if (fputentent (entfile, entnode))
 	error (1, errno, "cannot write %s", entfilename);
 
-    return (0);
+    return 0;
 }
 
 /*
@@ -262,7 +262,7 @@ freesdt (Node *p)
    On error, prints an error message and returns NULL.  */
 
 static Entnode *
-fgetentent(FILE *fpin, char *cmd, int *sawdir)
+fgetentent (FILE *fpin, char *cmd, int *sawdir)
 {
     Entnode *ent;
     char *line;
@@ -331,8 +331,8 @@ fgetentent(FILE *fpin, char *cmd, int *sawdir)
 	if ((cp = strchr (tag_or_date, '\n')) == NULL)
 	    continue;
 	*cp = '\0';
-	tag = (char *) NULL;
-	date = (char *) NULL;
+	tag = NULL;
+	date = NULL;
 	if (*tag_or_date == 'T')
 	    tag = tag_or_date + 1;
 	else if (*tag_or_date == 'D')
@@ -382,7 +382,7 @@ fgetentent(FILE *fpin, char *cmd, int *sawdir)
 }
 
 static int
-fputentent(FILE *fp, Entnode *p)
+fputentent (FILE *fp, Entnode *p)
 {
     switch (p->type)
     {
@@ -451,8 +451,8 @@ Entries_Open (int aflag, char *update_dir)
     ParseTag (&dirtag, &dirdate, &dirnonbranch);
     if (aflag || dirtag || dirdate)
     {
-	sdtp = (struct stickydirtag *) xmalloc (sizeof (*sdtp));
-	memset ((char *) sdtp, 0, sizeof (*sdtp));
+	sdtp = xmalloc (sizeof (*sdtp));
+	memset (sdtp, 0, sizeof (*sdtp));
 	sdtp->aflag = aflag;
 	sdtp->tag = xstrdup (dirtag);
 	sdtp->date = xstrdup (dirdate);
@@ -474,7 +474,7 @@ Entries_Open (int aflag, char *update_dir)
     }
     else
     {
-	while ((ent = fgetentent (fpin, (char *) NULL, &sawdir)) != NULL) 
+	while ((ent = fgetentent (fpin, NULL, &sawdir)) != NULL) 
 	{
 	    (void) AddEntryNode (entries, ent);
 	}
@@ -522,8 +522,8 @@ Entries_Open (int aflag, char *update_dir)
 	sdtp->subdirs = sawdir;
     else if (! sawdir)
     {
-	sdtp = (struct stickydirtag *) xmalloc (sizeof (*sdtp));
-	memset ((char *) sdtp, 0, sizeof (*sdtp));
+	sdtp = xmalloc (sizeof (*sdtp));
+	memset (sdtp, 0, sizeof (*sdtp));
 	sdtp->subdirs = 0;
 	entries->list->data = sdtp;
 	entries->list->delproc = freesdt;
@@ -537,11 +537,11 @@ Entries_Open (int aflag, char *update_dir)
 	free (dirtag);
     if (dirdate)
 	free (dirdate);
-    return (entries);
+    return entries;
 }
 
 void
-Entries_Close(List *list)
+Entries_Close (List *list)
 {
     if (list)
     {
@@ -550,7 +550,7 @@ Entries_Close(List *list)
             if (isfile (CVSADM_ENTLOG))
 		write_entries (list);
 	}
-	dellist(&list);
+	dellist (&list);
     }
 }
 
@@ -564,7 +564,7 @@ Entries_delproc (Node *node)
 {
     Entnode *p = node->data;
 
-    Entnode_Destroy(p);
+    Entnode_Destroy (p);
 }
 
 /*
@@ -597,7 +597,7 @@ AddEntryNode (List *list, Entnode *entdata)
 
     /* put the node into the list */
     addnode (list, p);
-    return (p);
+    return p;
 }
 
 
@@ -702,9 +702,9 @@ ParseTag (char **tagp, char **datep, int *nonbranchp)
     FILE *fp;
 
     if (tagp)
-	*tagp = (char *) NULL;
+	*tagp = NULL;
     if (datep)
-	*datep = (char *) NULL;
+	*datep = NULL;
     /* Always store a value here, even in the 'D' case where the value
        is unspecified.  Shuts up tools which check for references to
        uninitialized memory.  */
@@ -956,7 +956,8 @@ Subdir_Deregister (List *entries, const char *parent, const char *dir)
    "cvs release" on the client side; see comment at src/release.c
    (release).  Would also allow us to stop needing Questionable.  */
 
-enum base_walk {
+enum base_walk
+{
     /* Set the revision for FILE to *REV.  */
     BASE_REGISTER,
     /* Get the revision for FILE and put it in a newly malloc'd string

@@ -138,7 +138,7 @@ import (int argc, char **argv)
 		use_editor = 0;
 #endif
 		if (message) free (message);
-		message = xstrdup(optarg);
+		message = xstrdup (optarg);
 		break;
 	    case 'I':
 		ign_add (optarg, 0);
@@ -186,9 +186,9 @@ import (int argc, char **argv)
      * Could abstract this to valid_module_path, but I don't think we'll need
      * to call it from anywhere else.
      */
-    if ((cp = strstr(argv[0], "CVS")) &&   /* path contains "CVS" AND ... */
-        ((cp == argv[0]) || ISSLASH(*(cp-1))) && /* /^CVS/ OR m#/CVS# AND ... */
-        ((*(cp+3) == '\0') || ISSLASH(*(cp+3))) /* /CVS$/ OR m#CVS/# */
+    if ((cp = strstr (argv[0], "CVS")) &&   /* path contains "CVS" AND ... */
+        ((cp == argv[0]) || ISSLASH (*(cp-1))) && /* /^CVS/ OR m#/CVS# AND ... */
+        ((*(cp+3) == '\0') || ISSLASH (*(cp+3))) /* /CVS$/ OR m#CVS/# */
        )
     {
         error (0, 0,
@@ -263,12 +263,12 @@ import (int argc, char **argv)
 #endif
         use_editor)
     {
-	do_editor ((char *) NULL, &message,
+	do_editor (NULL, &message,
 #ifdef CLIENT_SUPPORT
-		   current_parsed_root->isremote ? (char *) NULL :
+		   current_parsed_root->isremote ? NULL :
 #endif
 			repository,
-		   (List *) NULL);
+		   NULL);
     }
     do_verify (&message, repository);
     msglen = message == NULL ? 0 : strlen (message);
@@ -328,7 +328,7 @@ import (int argc, char **argv)
     }
 #endif
 
-    if (!safe_location ( NULL ))
+    if (!safe_location (NULL))
     {
 	error (1, 0, "attempt to import the repository");
     }
@@ -367,7 +367,7 @@ import (int argc, char **argv)
 	    if (conflicts)
 	        sprintf (buf, "%d", conflicts);
 	    else
-	        sprintf (buf, "%s", "No");
+	        strcpy (buf, "No");
 	    cvs_output_tagged ("conflicts", buf);
 	    cvs_output_tagged ("text", " conflicts created by this import.");
 	    cvs_output_tagged ("newline", NULL);
@@ -424,7 +424,7 @@ import (int argc, char **argv)
     p->type = UPDATE;
     p->delproc = update_delproc;
     p->key = xstrdup ("- Imported sources");
-    li = (struct logfile_info *) xmalloc (sizeof (struct logfile_info));
+    li = xmalloc (sizeof (struct logfile_info));
     li->type = T_TITLE;
     li->tag = xstrdup (vbranch);
     li->rev_old = li->rev_new = NULL;
@@ -447,7 +447,7 @@ import (int argc, char **argv)
     free (vbranch);
     free (vhead);
 
-    return (err);
+    return err;
 }
 
 /* Process all the files in ".", then descend into other directories.
@@ -503,11 +503,11 @@ import_descend (char *message, char *vtag, int targc, char **targv)
 		Node *n;
 
 		if (dirlist == NULL)
-		    dirlist = getlist();
+		    dirlist = getlist ();
 
-		n = getnode();
+		n = getnode ();
 		n->key = xstrdup (dp->d_name);
-		addnode(dirlist, n);
+		addnode (dirlist, n);
 	    }
 	    else if (
 #ifdef DT_DIR
@@ -557,24 +557,23 @@ import_descend (char *message, char *vtag, int targc, char **targv)
 	    err += import_descend_dir (message, p->key, vtag, targc, targv);
 	}
 
-	dellist(&dirlist);
+	dellist (&dirlist);
     }
 
-    return (err);
+    return err;
 }
 
 /*
  * Process the argument import file.
  */
 static int
-process_import_file (char *message, char *vfile, char *vtag, int targc, char **targv)
+process_import_file (char *message, char *vfile, char *vtag, int targc,
+		     char **targv)
 {
     char *rcs;
     int inattic = 0;
 
-    rcs = xmalloc (strlen (repository) + strlen (vfile) + sizeof (RCSEXT)
-		   + 5);
-    (void) sprintf (rcs, "%s/%s%s", repository, vfile, RCSEXT);
+    rcs = Xasprintf ("%s/%s%s", repository, vfile, RCSEXT);
     if (!isfile (rcs))
     {
 	char *attic_name;
@@ -663,7 +662,7 @@ process_import_file (char *message, char *vfile, char *vtag, int targc, char **t
     /*
      * an rcs file exists. have to do things the official, slow, way.
      */
-    return (update_rcs_file (message, vfile, vtag, targc, targv, inattic));
+    return update_rcs_file (message, vfile, vtag, targc, targv, inattic);
 }
 
 /*
@@ -671,7 +670,8 @@ process_import_file (char *message, char *vfile, char *vtag, int targc, char **t
  * (possibly already existing) vendor branch.
  */
 static int
-update_rcs_file (char *message, char *vfile, char *vtag, int targc, char **targv, int inattic)
+update_rcs_file (char *message, char *vfile, char *vtag, int targc,
+		 char **targv, int inattic)
 {
     Vers_TS *vers;
     int letter;
@@ -687,10 +687,9 @@ update_rcs_file (char *message, char *vfile, char *vtag, int targc, char **targv
     finfo.repository = repository;
     finfo.entries = NULL;
     finfo.rcs = NULL;
-    vers = Version_TS (&finfo, (char *) NULL, vbranch, (char *) NULL,
-		       1, 0);
+    vers = Version_TS (&finfo, NULL, vbranch, NULL, 1, 0);
     if (vers->vn_rcs != NULL
-	&& !RCS_isdead(vers->srcfile, vers->vn_rcs))
+	&& !RCS_isdead (vers->srcfile, vers->vn_rcs))
     {
 	int different;
 
@@ -706,10 +705,10 @@ update_rcs_file (char *message, char *vfile, char *vtag, int targc, char **targv
 	tocvsPath = wrap_tocvs_process_file (vfile);
 	/* FIXME: Why don't we pass tocvsPath to RCS_cmp_file if it is
            not NULL?  */
-	expand = vers->srcfile->expand != NULL &&
-			vers->srcfile->expand[0] == 'b' ? "-kb" : "-ko";
-	different = RCS_cmp_file( vers->srcfile, vers->vn_rcs, (char **)NULL,
-	                          (char *)NULL, expand, vfile );
+	expand = (vers->srcfile->expand != NULL
+		  && vers->srcfile->expand[0] == 'b') ? "-kb" : "-ko";
+	different = RCS_cmp_file (vers->srcfile, vers->vn_rcs, NULL,
+	                          NULL, expand, vfile);
 	if (tocvsPath)
 	    if (unlink_file_dir (tocvsPath) < 0)
 		error (0, errno, "cannot remove %s", tocvsPath);
@@ -727,7 +726,7 @@ update_rcs_file (char *message, char *vfile, char *vtag, int targc, char **targv
 		retval = 1;
 	    add_log ('U', vfile);
 	    freevers_ts (&vers);
-	    return (retval);
+	    return retval;
 	}
     }
 
@@ -737,7 +736,7 @@ update_rcs_file (char *message, char *vfile, char *vtag, int targc, char **targv
 	add_tags (vers->srcfile, vfile, vtag, targc, targv))
     {
 	freevers_ts (&vers);
-	return (1);
+	return 1;
     }
 
     if (vers->srcfile->branch == NULL || inattic ||
@@ -751,7 +750,7 @@ update_rcs_file (char *message, char *vfile, char *vtag, int targc, char **targv
     add_log (letter, vfile);
 
     freevers_ts (&vers);
-    return (0);
+    return 0;
 }
 
 /*
@@ -764,7 +763,7 @@ add_rev (char *message, RCSNode *rcs, char *vfile, char *vers)
     char *tocvsPath;
 
     if (noexec)
-	return (0);
+	return 0;
 
     locked = 0;
     if (vers != NULL)
@@ -803,12 +802,12 @@ add_rev (char *message, RCSNode *rcs, char *vfile, char *vers)
 	}
 	if (locked)
 	{
-	    (void) RCS_unlock(rcs, vbranch, 0);
+	    (void) RCS_unlock (rcs, vbranch, 0);
 	    RCS_rewrite (rcs, NULL, NULL);
 	}
-	return (1);
+	return 1;
     }
-    return (0);
+    return 0;
 }
 
 /*
@@ -826,16 +825,16 @@ add_tags (RCSNode *rcs, char *vfile, char *vtag, int targc, char **targv)
     struct file_info finfo;
 
     if (noexec)
-	return (0);
+	return 0;
 
-    if ((retcode = RCS_settag(rcs, vtag, vbranch)) != 0)
+    if ((retcode = RCS_settag (rcs, vtag, vbranch)) != 0)
     {
 	ierrno = errno;
 	fperrmsg (logfp, 0, retcode == -1 ? ierrno : 0,
 		  "ERROR: Failed to set tag %s in %s", vtag, rcs->path);
 	error (0, retcode == -1 ? ierrno : 0,
 	       "ERROR: Failed to set tag %s in %s", vtag, rcs->path);
-	return (1);
+	return 1;
     }
     RCS_rewrite (rcs, NULL, NULL);
 
@@ -864,7 +863,7 @@ add_tags (RCSNode *rcs, char *vfile, char *vtag, int targc, char **targv)
 	}
     }
     freevers_ts (&vers);
-    return (0);
+    return 0;
 }
 
 /*
@@ -1475,7 +1474,7 @@ add_rcs_file (const char *message, const char *rcs, const char *user,
 		error (0, errno, "cannot remove %s", tocvsPath);
     if (free_opt != NULL)
 	free (free_opt);
-    return (err);
+    return err;
 
 write_error:
     ierrno = errno;
@@ -1503,7 +1502,7 @@ read_error:
     if (free_opt != NULL)
 	free (free_opt);
 
-    return (err + 1);
+    return err + 1;
 }
 
 #ifdef PRESERVE_PERMISSIONS_SUPPORT
@@ -1728,10 +1727,7 @@ import_descend_dir (char *message, char *dir, char *vtag, int targc,
     }
     else
     {
-	char *new = xmalloc (strlen (repository) + strlen (dir) + 10);
-	strcpy (new, repository);
-	(void) strcat (new, "/");
-	(void) strcat (new, dir);
+	char *new = Xasprintf ("%s/%s", repository, dir);
 	free (repository);
 	repository = new;
     }
@@ -1743,7 +1739,7 @@ import_descend_dir (char *message, char *dir, char *vtag, int targc,
 #endif
 	error (0, 0, "Importing %s", repository);
 
-    if ( CVS_CHDIR (dir) < 0)
+    if (CVS_CHDIR (dir) < 0)
     {
 	ierrno = errno;
 	fperrmsg (logfp, 0, ierrno, "ERROR: cannot chdir to %s", repository);
@@ -1757,9 +1753,8 @@ import_descend_dir (char *message, char *dir, char *vtag, int targc,
     if (!isdir (repository))
 #endif
     {
-	rcs = xmalloc (strlen (repository) + sizeof (RCSEXT) + 5);
-	(void) sprintf (rcs, "%s%s", repository, RCSEXT);
-	if (isfile (repository) || isfile(rcs))
+	rcs = Xasprintf ("%s%s", repository, RCSEXT);
+	if (isfile (repository) || isfile (rcs))
 	{
 	    fperrmsg (logfp, 0, 0,
 		      "ERROR: %s is a file, should be a directory!",
