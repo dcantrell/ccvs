@@ -1,3 +1,8 @@
+2003-07-07  Larry Jones  <lawrence.jones@eds.com>
+
+	* rcs2log.1: New file from Paul Eggert <eggert@twinsun.com>
+	via Eric Seidel <eseidel@apple.com>.
+
 2003-06-23  Derek Price  <derek@ximbiot.com>
 
 	* Don't call CVS with the -l option since CVS no longer accepts it.
