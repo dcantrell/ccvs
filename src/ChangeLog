@@ -1,5 +1,9 @@
 2004-05-20  Derek Price  <derek@ximbiot.com>
 
+	* sanity.sh: s/GMT/UTC/ where appropriate.
+
+2004-05-20  Derek Price  <derek@ximbiot.com>
+
 	* server.c (cvs_output_tagged): Move new server code inside a
 	SERVER_SUPPORT block.
 
