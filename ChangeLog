@@ -1,5 +1,13 @@
 2002-09-24  Derek Price  <derek@ximbiot.com>
 
+	* configure.in (--enable-password-authenticated-client): New option.
+	(--enable-encryption): Increase the readability of the help text.
+
+	* configure: Regenerated.
+	* config.h.in: Ditto.
+
+2002-09-24  Derek Price  <derek@ximbiot.com>
+
 	* configure.in (enable-encryption): Move to a more sensible location
 	and print a warning if it is specified with neither the client or the
 	server enabled.
