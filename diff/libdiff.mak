@@ -1,11 +1,10 @@
 # Microsoft Developer Studio Generated NMAKE File, Based on libdiff.dsp
 !IF "$(CFG)" == ""
-CFG=libdiff - Win32 Release
-!MESSAGE No configuration specified. Defaulting to libdiff - Win32 Release.
+CFG=libdiff - Win32 Debug
+!MESSAGE No configuration specified. Defaulting to libdiff - Win32 Debug
 !ENDIF 
 
-!IF "$(CFG)" != "libdiff - Win32 Release" && "$(CFG)" !=\
- "libdiff - Win32 Debug"
+!IF "$(CFG)" != "libdiff - Win32 Release" && "$(CFG)" != "libdiff - Win32 Debug"
 !MESSAGE Invalid configuration "$(CFG)" specified.
 !MESSAGE You can specify a configuration when running NMAKE
 !MESSAGE by defining the macro CFG on the command line. For example:
@@ -61,52 +60,47 @@ CLEAN :
 	-@erase "$(INTDIR)\normal.obj"
 	-@erase "$(INTDIR)\side.obj"
 	-@erase "$(INTDIR)\util.obj"
-	-@erase "$(INTDIR)\vc50.idb"
+	-@erase "$(INTDIR)\vc60.idb"
 	-@erase "$(INTDIR)\version.obj"
 	-@erase "$(OUTDIR)\libdiff.lib"
 
 "$(OUTDIR)" :
     if not exist "$(OUTDIR)/$(NULL)" mkdir "$(OUTDIR)"
 
-RSC=rc.exe
 CPP=cl.exe
-CPP_PROJ=/nologo /ML /W3 /GX /O2 /I "..\windows-NT" /I "..\lib" /D "_WINDOWS"\
- /D "HAVE_TIME_H" /D "CLOSEDIR_VOID" /D "NDEBUG" /D "WIN32" /D\
- "WANT_WIN_COMPILER_VERSION" /Fp"$(INTDIR)\libdiff.pch" /YX /Fo"$(INTDIR)\\"\
- /Fd"$(INTDIR)\\" /FD /c 
-CPP_OBJS=.\WinRel/
-CPP_SBRS=.
+CPP_PROJ=/nologo /ML /W3 /GX /O2 /I "..\windows-NT" /I "..\lib" /D "_WINDOWS" /D "HAVE_TIME_H" /D "CLOSEDIR_VOID" /D "NDEBUG" /D "WIN32" /D "WANT_WIN_COMPILER_VERSION" /Fp"$(INTDIR)\libdiff.pch" /YX /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c 
 
-.c{$(CPP_OBJS)}.obj::
+.c{$(INTDIR)}.obj::
    $(CPP) @<<
    $(CPP_PROJ) $< 
 <<
 
-.cpp{$(CPP_OBJS)}.obj::
+.cpp{$(INTDIR)}.obj::
    $(CPP) @<<
    $(CPP_PROJ) $< 
 <<
 
-.cxx{$(CPP_OBJS)}.obj::
+.cxx{$(INTDIR)}.obj::
    $(CPP) @<<
    $(CPP_PROJ) $< 
 <<
 
-.c{$(CPP_SBRS)}.sbr::
+.c{$(INTDIR)}.sbr::
    $(CPP) @<<
    $(CPP_PROJ) $< 
 <<
 
-.cpp{$(CPP_SBRS)}.sbr::
+.cpp{$(INTDIR)}.sbr::
    $(CPP) @<<
    $(CPP_PROJ) $< 
 <<
 
-.cxx{$(CPP_SBRS)}.sbr::
+.cxx{$(INTDIR)}.sbr::
    $(CPP) @<<
    $(CPP_PROJ) $< 
 <<
 
+RSC=rc.exe
 BSC32=bscmake.exe
 BSC32_FLAGS=/nologo /o"$(OUTDIR)\libdiff.bsc" 
 BSC32_SBRS= \
@@ -169,51 +163,47 @@ CLEAN :
 	-@erase "$(INTDIR)\normal.obj"
 	-@erase "$(INTDIR)\side.obj"
 	-@erase "$(INTDIR)\util.obj"
-	-@erase "$(INTDIR)\vc50.idb"
+	-@erase "$(INTDIR)\vc60.idb"
 	-@erase "$(INTDIR)\version.obj"
 	-@erase "$(OUTDIR)\libdiff.lib"
 
 "$(OUTDIR)" :
     if not exist "$(OUTDIR)/$(NULL)" mkdir "$(OUTDIR)"
 
-RSC=rc.exe
 CPP=cl.exe
-CPP_PROJ=/nologo /MLd /W3 /GX /Z7 /Od /I "..\windows-NT" /I "..\lib" /D\
- "_DEBUG" /D "_WINDOWS" /D "WIN32" /D "HAVE_TIME_H" /D "CLOSEDIR_VOID"\
- /Fp"$(INTDIR)\libdiff.pch" /YX /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c 
-CPP_OBJS=.\WinDebug/
-CPP_SBRS=.
+CPP_PROJ=/nologo /MLd /W3 /GX /Z7 /Od /I "..\windows-NT" /I "..\lib" /D "_DEBUG" /D "_WINDOWS" /D "WIN32" /D "HAVE_TIME_H" /D "CLOSEDIR_VOID" /Fp"$(INTDIR)\libdiff.pch" /YX /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c 
 
-.c{$(CPP_OBJS)}.obj::
+.c{$(INTDIR)}.obj::
    $(CPP) @<<
    $(CPP_PROJ) $< 
 <<
 
-.cpp{$(CPP_OBJS)}.obj::
+.cpp{$(INTDIR)}.obj::
    $(CPP) @<<
    $(CPP_PROJ) $< 
 <<
 
-.cxx{$(CPP_OBJS)}.obj::
+.cxx{$(INTDIR)}.obj::
    $(CPP) @<<
    $(CPP_PROJ) $< 
 <<
 
-.c{$(CPP_SBRS)}.sbr::
+.c{$(INTDIR)}.sbr::
    $(CPP) @<<
    $(CPP_PROJ) $< 
 <<
 
-.cpp{$(CPP_SBRS)}.sbr::
+.cpp{$(INTDIR)}.sbr::
    $(CPP) @<<
    $(CPP_PROJ) $< 
 <<
 
-.cxx{$(CPP_SBRS)}.sbr::
+.cxx{$(INTDIR)}.sbr::
    $(CPP) @<<
    $(CPP_PROJ) $< 
 <<
 
+RSC=rc.exe
 BSC32=bscmake.exe
 BSC32_FLAGS=/nologo /o"$(OUTDIR)\libdiff.bsc" 
 BSC32_SBRS= \
@@ -244,447 +234,103 @@ LIB32_OBJS= \
 !ENDIF 
 
 
-!IF "$(CFG)" == "libdiff - Win32 Release" || "$(CFG)" ==\
- "libdiff - Win32 Debug"
+!IF "$(NO_EXTERNAL_DEPS)" != "1"
+!IF EXISTS("libdiff.dep")
+!INCLUDE "libdiff.dep"
+!ELSE 
+!MESSAGE Warning: cannot find "libdiff.dep"
+!ENDIF 
+!ENDIF 
+
+
+!IF "$(CFG)" == "libdiff - Win32 Release" || "$(CFG)" == "libdiff - Win32 Debug"
 SOURCE=.\analyze.c
 
-!IF  "$(CFG)" == "libdiff - Win32 Release"
+"$(INTDIR)\analyze.obj" : $(SOURCE) "$(INTDIR)"
 
-DEP_CPP_ANALY=\
-	"..\LIB\regex.h"\
-	"..\windows-NT\config.h"\
-	"..\windows-NT\ndir.h"\
-	".\cmpbuf.h"\
-	".\diff.h"\
-	".\diffrun.h"\
-	".\system.h"\
-	
-
-"$(INTDIR)\analyze.obj" : $(SOURCE) $(DEP_CPP_ANALY) "$(INTDIR)"
-
-
-!ELSEIF  "$(CFG)" == "libdiff - Win32 Debug"
-
-DEP_CPP_ANALY=\
-	"..\LIB\regex.h"\
-	"..\windows-NT\config.h"\
-	"..\windows-NT\ndir.h"\
-	".\cmpbuf.h"\
-	".\diff.h"\
-	".\diffrun.h"\
-	".\system.h"\
-	{$(INCLUDE)}"sys\stat.h"\
-	{$(INCLUDE)}"sys\types.h"\
-	
-
-"$(INTDIR)\analyze.obj" : $(SOURCE) $(DEP_CPP_ANALY) "$(INTDIR)"
-
-
-!ENDIF 
 
 SOURCE=.\cmpbuf.c
 
-!IF  "$(CFG)" == "libdiff - Win32 Release"
+"$(INTDIR)\cmpbuf.obj" : $(SOURCE) "$(INTDIR)"
 
-DEP_CPP_CMPBU=\
-	"..\windows-NT\config.h"\
-	"..\windows-NT\ndir.h"\
-	".\cmpbuf.h"\
-	".\system.h"\
-	
-
-"$(INTDIR)\cmpbuf.obj" : $(SOURCE) $(DEP_CPP_CMPBU) "$(INTDIR)"
-
-
-!ELSEIF  "$(CFG)" == "libdiff - Win32 Debug"
-
-DEP_CPP_CMPBU=\
-	"..\windows-NT\config.h"\
-	"..\windows-NT\ndir.h"\
-	".\cmpbuf.h"\
-	".\system.h"\
-	{$(INCLUDE)}"sys\stat.h"\
-	{$(INCLUDE)}"sys\types.h"\
-	
-
-"$(INTDIR)\cmpbuf.obj" : $(SOURCE) $(DEP_CPP_CMPBU) "$(INTDIR)"
-
-
-!ENDIF 
 
 SOURCE=.\context.c
 
-!IF  "$(CFG)" == "libdiff - Win32 Release"
+"$(INTDIR)\context.obj" : $(SOURCE) "$(INTDIR)"
 
-DEP_CPP_CONTE=\
-	"..\LIB\regex.h"\
-	"..\windows-NT\config.h"\
-	"..\windows-NT\ndir.h"\
-	".\diff.h"\
-	".\diffrun.h"\
-	".\system.h"\
-	
-
-"$(INTDIR)\context.obj" : $(SOURCE) $(DEP_CPP_CONTE) "$(INTDIR)"
-
-
-!ELSEIF  "$(CFG)" == "libdiff - Win32 Debug"
-
-DEP_CPP_CONTE=\
-	"..\LIB\regex.h"\
-	"..\windows-NT\config.h"\
-	"..\windows-NT\ndir.h"\
-	".\diff.h"\
-	".\diffrun.h"\
-	".\system.h"\
-	{$(INCLUDE)}"sys\stat.h"\
-	{$(INCLUDE)}"sys\types.h"\
-	
-
-"$(INTDIR)\context.obj" : $(SOURCE) $(DEP_CPP_CONTE) "$(INTDIR)"
-
-
-!ENDIF 
 
 SOURCE=.\diff.c
 
-!IF  "$(CFG)" == "libdiff - Win32 Release"
+"$(INTDIR)\diff.obj" : $(SOURCE) "$(INTDIR)"
 
-DEP_CPP_DIFF_=\
-	"..\lib\fnmatch.h"\
-	"..\lib\getopt.h"\
-	"..\LIB\regex.h"\
-	"..\windows-NT\config.h"\
-	"..\windows-NT\ndir.h"\
-	".\diff.h"\
-	".\diffrun.h"\
-	".\system.h"\
-	
-
-"$(INTDIR)\diff.obj" : $(SOURCE) $(DEP_CPP_DIFF_) "$(INTDIR)"
-
-
-!ELSEIF  "$(CFG)" == "libdiff - Win32 Debug"
-
-DEP_CPP_DIFF_=\
-	"..\lib\fnmatch.h"\
-	"..\lib\getopt.h"\
-	"..\LIB\regex.h"\
-	"..\windows-NT\config.h"\
-	"..\windows-NT\ndir.h"\
-	".\diff.h"\
-	".\diffrun.h"\
-	".\system.h"\
-	{$(INCLUDE)}"sys\stat.h"\
-	{$(INCLUDE)}"sys\types.h"\
-	
-
-"$(INTDIR)\diff.obj" : $(SOURCE) $(DEP_CPP_DIFF_) "$(INTDIR)"
-
-
-!ENDIF 
 
 SOURCE=.\diff3.c
 
-!IF  "$(CFG)" == "libdiff - Win32 Release"
+"$(INTDIR)\diff3.obj" : $(SOURCE) "$(INTDIR)"
 
-DEP_CPP_DIFF3=\
-	"..\lib\getopt.h"\
-	"..\windows-NT\config.h"\
-	"..\windows-NT\ndir.h"\
-	".\diffrun.h"\
-	".\system.h"\
-	
-
-"$(INTDIR)\diff3.obj" : $(SOURCE) $(DEP_CPP_DIFF3) "$(INTDIR)"
-
-
-!ELSEIF  "$(CFG)" == "libdiff - Win32 Debug"
-
-DEP_CPP_DIFF3=\
-	"..\lib\getopt.h"\
-	"..\windows-NT\config.h"\
-	"..\windows-NT\ndir.h"\
-	".\diffrun.h"\
-	".\system.h"\
-	{$(INCLUDE)}"sys\stat.h"\
-	{$(INCLUDE)}"sys\types.h"\
-	
-
-"$(INTDIR)\diff3.obj" : $(SOURCE) $(DEP_CPP_DIFF3) "$(INTDIR)"
-
-
-!ENDIF 
 
 SOURCE=.\dir.c
 
-!IF  "$(CFG)" == "libdiff - Win32 Release"
+"$(INTDIR)\dir.obj" : $(SOURCE) "$(INTDIR)"
 
-DEP_CPP_DIR_C=\
-	"..\LIB\regex.h"\
-	"..\windows-NT\config.h"\
-	"..\windows-NT\ndir.h"\
-	".\diff.h"\
-	".\diffrun.h"\
-	".\system.h"\
-	
-
-"$(INTDIR)\dir.obj" : $(SOURCE) $(DEP_CPP_DIR_C) "$(INTDIR)"
-
-
-!ELSEIF  "$(CFG)" == "libdiff - Win32 Debug"
-
-DEP_CPP_DIR_C=\
-	"..\LIB\regex.h"\
-	"..\windows-NT\config.h"\
-	"..\windows-NT\ndir.h"\
-	".\diff.h"\
-	".\diffrun.h"\
-	".\system.h"\
-	{$(INCLUDE)}"sys\stat.h"\
-	{$(INCLUDE)}"sys\types.h"\
-	
-
-"$(INTDIR)\dir.obj" : $(SOURCE) $(DEP_CPP_DIR_C) "$(INTDIR)"
-
-
-!ENDIF 
 
 SOURCE=.\ed.c
 
-!IF  "$(CFG)" == "libdiff - Win32 Release"
+"$(INTDIR)\ed.obj" : $(SOURCE) "$(INTDIR)"
 
-DEP_CPP_ED_Cc=\
-	"..\LIB\regex.h"\
-	"..\windows-NT\config.h"\
-	"..\windows-NT\ndir.h"\
-	".\diff.h"\
-	".\diffrun.h"\
-	".\system.h"\
-	
-
-"$(INTDIR)\ed.obj" : $(SOURCE) $(DEP_CPP_ED_Cc) "$(INTDIR)"
-
-
-!ELSEIF  "$(CFG)" == "libdiff - Win32 Debug"
-
-DEP_CPP_ED_Cc=\
-	"..\LIB\regex.h"\
-	"..\windows-NT\config.h"\
-	"..\windows-NT\ndir.h"\
-	".\diff.h"\
-	".\diffrun.h"\
-	".\system.h"\
-	{$(INCLUDE)}"sys\stat.h"\
-	{$(INCLUDE)}"sys\types.h"\
-	
-
-"$(INTDIR)\ed.obj" : $(SOURCE) $(DEP_CPP_ED_Cc) "$(INTDIR)"
-
-
-!ENDIF 
 
 SOURCE=.\ifdef.c
 
-!IF  "$(CFG)" == "libdiff - Win32 Release"
+"$(INTDIR)\ifdef.obj" : $(SOURCE) "$(INTDIR)"
 
-DEP_CPP_IFDEF=\
-	"..\LIB\regex.h"\
-	"..\windows-NT\config.h"\
-	"..\windows-NT\ndir.h"\
-	".\diff.h"\
-	".\diffrun.h"\
-	".\system.h"\
-	
-
-"$(INTDIR)\ifdef.obj" : $(SOURCE) $(DEP_CPP_IFDEF) "$(INTDIR)"
-
-
-!ELSEIF  "$(CFG)" == "libdiff - Win32 Debug"
-
-DEP_CPP_IFDEF=\
-	"..\LIB\regex.h"\
-	"..\windows-NT\config.h"\
-	"..\windows-NT\ndir.h"\
-	".\diff.h"\
-	".\diffrun.h"\
-	".\system.h"\
-	{$(INCLUDE)}"sys\stat.h"\
-	{$(INCLUDE)}"sys\types.h"\
-	
-
-"$(INTDIR)\ifdef.obj" : $(SOURCE) $(DEP_CPP_IFDEF) "$(INTDIR)"
-
-
-!ENDIF 
 
 SOURCE=.\io.c
 
-!IF  "$(CFG)" == "libdiff - Win32 Release"
+"$(INTDIR)\io.obj" : $(SOURCE) "$(INTDIR)"
 
-DEP_CPP_IO_C10=\
-	"..\LIB\regex.h"\
-	"..\windows-NT\config.h"\
-	"..\windows-NT\ndir.h"\
-	".\diff.h"\
-	".\diffrun.h"\
-	".\system.h"\
-	
-
-"$(INTDIR)\io.obj" : $(SOURCE) $(DEP_CPP_IO_C10) "$(INTDIR)"
-
-
-!ELSEIF  "$(CFG)" == "libdiff - Win32 Debug"
-
-DEP_CPP_IO_C10=\
-	"..\LIB\regex.h"\
-	"..\windows-NT\config.h"\
-	"..\windows-NT\ndir.h"\
-	".\diff.h"\
-	".\diffrun.h"\
-	".\system.h"\
-	{$(INCLUDE)}"sys\stat.h"\
-	{$(INCLUDE)}"sys\types.h"\
-	
-
-"$(INTDIR)\io.obj" : $(SOURCE) $(DEP_CPP_IO_C10) "$(INTDIR)"
-
-
-!ENDIF 
 
 SOURCE=.\normal.c
 
-!IF  "$(CFG)" == "libdiff - Win32 Release"
+"$(INTDIR)\normal.obj" : $(SOURCE) "$(INTDIR)"
 
-DEP_CPP_NORMA=\
-	"..\LIB\regex.h"\
-	"..\windows-NT\config.h"\
-	"..\windows-NT\ndir.h"\
-	".\diff.h"\
-	".\diffrun.h"\
-	".\system.h"\
-	
-
-"$(INTDIR)\normal.obj" : $(SOURCE) $(DEP_CPP_NORMA) "$(INTDIR)"
-
-
-!ELSEIF  "$(CFG)" == "libdiff - Win32 Debug"
-
-DEP_CPP_NORMA=\
-	"..\LIB\regex.h"\
-	"..\windows-NT\config.h"\
-	"..\windows-NT\ndir.h"\
-	".\diff.h"\
-	".\diffrun.h"\
-	".\system.h"\
-	{$(INCLUDE)}"sys\stat.h"\
-	{$(INCLUDE)}"sys\types.h"\
-	
-
-"$(INTDIR)\normal.obj" : $(SOURCE) $(DEP_CPP_NORMA) "$(INTDIR)"
-
-
-!ENDIF 
 
 SOURCE=.\side.c
 
-!IF  "$(CFG)" == "libdiff - Win32 Release"
+"$(INTDIR)\side.obj" : $(SOURCE) "$(INTDIR)"
 
-DEP_CPP_SIDE_=\
-	"..\LIB\regex.h"\
-	"..\windows-NT\config.h"\
-	"..\windows-NT\ndir.h"\
-	".\diff.h"\
-	".\diffrun.h"\
-	".\system.h"\
-	
-
-"$(INTDIR)\side.obj" : $(SOURCE) $(DEP_CPP_SIDE_) "$(INTDIR)"
-
-
-!ELSEIF  "$(CFG)" == "libdiff - Win32 Debug"
-
-DEP_CPP_SIDE_=\
-	"..\LIB\regex.h"\
-	"..\windows-NT\config.h"\
-	"..\windows-NT\ndir.h"\
-	".\diff.h"\
-	".\diffrun.h"\
-	".\system.h"\
-	{$(INCLUDE)}"sys\stat.h"\
-	{$(INCLUDE)}"sys\types.h"\
-	
-
-"$(INTDIR)\side.obj" : $(SOURCE) $(DEP_CPP_SIDE_) "$(INTDIR)"
-
-
-!ENDIF 
 
 SOURCE=.\util.c
 
-!IF  "$(CFG)" == "libdiff - Win32 Release"
+"$(INTDIR)\util.obj" : $(SOURCE) "$(INTDIR)"
 
-DEP_CPP_UTIL_=\
-	"..\LIB\regex.h"\
-	"..\windows-NT\config.h"\
-	"..\windows-NT\ndir.h"\
-	".\diff.h"\
-	".\diffrun.h"\
-	".\system.h"\
-	
-
-"$(INTDIR)\util.obj" : $(SOURCE) $(DEP_CPP_UTIL_) "$(INTDIR)"
-
-
-!ELSEIF  "$(CFG)" == "libdiff - Win32 Debug"
-
-DEP_CPP_UTIL_=\
-	"..\LIB\regex.h"\
-	"..\windows-NT\config.h"\
-	"..\windows-NT\ndir.h"\
-	".\diff.h"\
-	".\diffrun.h"\
-	".\system.h"\
-	{$(INCLUDE)}"sys\stat.h"\
-	{$(INCLUDE)}"sys\types.h"\
-	
-
-"$(INTDIR)\util.obj" : $(SOURCE) $(DEP_CPP_UTIL_) "$(INTDIR)"
-
-
-!ENDIF 
 
 SOURCE=.\version.c
-DEP_CPP_VERSI=\
-	"..\windows-NT\config.h"\
-	
 
-"$(INTDIR)\version.obj" : $(SOURCE) $(DEP_CPP_VERSI) "$(INTDIR)"
+"$(INTDIR)\version.obj" : $(SOURCE) "$(INTDIR)"
 
 
 !IF  "$(CFG)" == "libdiff - Win32 Release"
 
 "LIB - Win32 Release" : 
-   cd "..\LIB"
-   $(MAKE) /$(MAKEFLAGS) /F .\LIB.mak CFG="LIB - Win32 Release" 
+   cd "..\lib"
+   $(MAKE) /$(MAKEFLAGS) /F ".\LIB.mak" CFG="LIB - Win32 Release" 
    cd "..\diff"
 
 "LIB - Win32 ReleaseCLEAN" : 
-   cd "..\LIB"
-   $(MAKE) /$(MAKEFLAGS) CLEAN /F .\LIB.mak CFG="LIB - Win32 Release" RECURSE=1\
- 
+   cd "..\lib"
+   $(MAKE) /$(MAKEFLAGS) /F ".\LIB.mak" CFG="LIB - Win32 Release" RECURSE=1 CLEAN 
    cd "..\diff"
 
 !ELSEIF  "$(CFG)" == "libdiff - Win32 Debug"
 
 "LIB - Win32 Debug" : 
-   cd "..\LIB"
-   $(MAKE) /$(MAKEFLAGS) /F .\LIB.mak CFG="LIB - Win32 Debug" 
+   cd "..\lib"
+   $(MAKE) /$(MAKEFLAGS) /F ".\LIB.mak" CFG="LIB - Win32 Debug" 
    cd "..\diff"
 
 "LIB - Win32 DebugCLEAN" : 
-   cd "..\LIB"
-   $(MAKE) /$(MAKEFLAGS) CLEAN /F .\LIB.mak CFG="LIB - Win32 Debug" RECURSE=1 
+   cd "..\lib"
+   $(MAKE) /$(MAKEFLAGS) /F ".\LIB.mak" CFG="LIB - Win32 Debug" RECURSE=1 CLEAN 
    cd "..\diff"
 
 !ENDIF 
