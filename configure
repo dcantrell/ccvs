@@ -9063,6 +9063,9 @@ done
     :
 
 
+    :
+
+
 
 
 
@@ -10767,7 +10770,6 @@ _ACEOF
 
 
 
-
 for ac_func in \
 	fchdir \
 	fchmod \
@@ -10775,7 +10777,6 @@ for ac_func in \
 	ftime \
 	geteuid \
 	getgroups \
-	getopt \
 	getpagesize \
 	gettimeofday \
 	initgroups \
