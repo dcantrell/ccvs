@@ -1,4 +1,3 @@
-# line 2 "./getdate.y"
 /*
 **  Originally written by Steven M. Bellovin <smb@research.att.com> while
 **  at the University of North Carolina at Chapel Hill.  Later tweaked by
@@ -177,7 +176,6 @@ static time_t	yyRelMonth;
 static time_t	yyRelSeconds;
 
 
-# line 175 "./getdate.y"
 typedef union  {
     time_t		Number;
     enum _MERIDIAN	Meridian;
@@ -205,7 +203,6 @@ extern int yyerrflag;
 YYSTYPE yylval, yyval;
 # define YYERRCODE 256
 
-# line 387 "./getdate.y"
 
 
 /* Month and day table. */
@@ -961,7 +958,6 @@ char * yyreds[] =
 	"o_merid : tMERIDIAN",
 };
 #endif /* YYDEBUG */
-#line 1 "/usr/lib/yaccpar"
 /*	@(#)yaccpar 1.10 89/04/04 SMI; from S5R3 1.10	*/
 
 /*
@@ -1402,32 +1398,26 @@ yyparse()
 	{
 		
 case 3:
-# line 193 "./getdate.y"
 {
 	    yyHaveTime++;
 	} break;
 case 4:
-# line 196 "./getdate.y"
 {
 	    yyHaveZone++;
 	} break;
 case 5:
-# line 199 "./getdate.y"
 {
 	    yyHaveDate++;
 	} break;
 case 6:
-# line 202 "./getdate.y"
 {
 	    yyHaveDay++;
 	} break;
 case 7:
-# line 205 "./getdate.y"
 {
 	    yyHaveRel++;
 	} break;
 case 9:
-# line 211 "./getdate.y"
 {
 	    yyHour = yypvt[-1].Number;
 	    yyMinutes = 0;
@@ -1435,7 +1425,6 @@ case 9:
 	    yyMeridian = yypvt[-0].Meridian;
 	} break;
 case 10:
-# line 217 "./getdate.y"
 {
 	    yyHour = yypvt[-3].Number;
 	    yyMinutes = yypvt[-1].Number;
@@ -1443,7 +1432,6 @@ case 10:
 	    yyMeridian = yypvt[-0].Meridian;
 	} break;
 case 11:
-# line 223 "./getdate.y"
 {
 	    yyHour = yypvt[-3].Number;
 	    yyMinutes = yypvt[-1].Number;
@@ -1452,7 +1440,6 @@ case 11:
 	    yyTimezone = - (yypvt[-0].Number % 100 + (yypvt[-0].Number / 100) * 60);
 	} break;
 case 12:
-# line 230 "./getdate.y"
 {
 	    yyHour = yypvt[-5].Number;
 	    yyMinutes = yypvt[-3].Number;
@@ -1460,7 +1447,6 @@ case 12:
 	    yyMeridian = yypvt[-0].Meridian;
 	} break;
 case 13:
-# line 236 "./getdate.y"
 {
 	    yyHour = yypvt[-5].Number;
 	    yyMinutes = yypvt[-3].Number;
@@ -1470,56 +1456,47 @@ case 13:
 	    yyTimezone = - (yypvt[-0].Number % 100 + (yypvt[-0].Number / 100) * 60);
 	} break;
 case 14:
-# line 246 "./getdate.y"
 {
 	    yyTimezone = yypvt[-0].Number;
 	    yyDSTmode = DSToff;
 	} break;
 case 15:
-# line 250 "./getdate.y"
 {
 	    yyTimezone = yypvt[-0].Number;
 	    yyDSTmode = DSTon;
 	} break;
 case 16:
-# line 255 "./getdate.y"
 {
 	    yyTimezone = yypvt[-1].Number;
 	    yyDSTmode = DSTon;
 	} break;
 case 17:
-# line 261 "./getdate.y"
 {
 	    yyDayOrdinal = 1;
 	    yyDayNumber = yypvt[-0].Number;
 	} break;
 case 18:
-# line 265 "./getdate.y"
 {
 	    yyDayOrdinal = 1;
 	    yyDayNumber = yypvt[-1].Number;
 	} break;
 case 19:
-# line 269 "./getdate.y"
 {
 	    yyDayOrdinal = yypvt[-1].Number;
 	    yyDayNumber = yypvt[-0].Number;
 	} break;
 case 20:
-# line 275 "./getdate.y"
 {
 	    yyMonth = yypvt[-2].Number;
 	    yyDay = yypvt[-0].Number;
 	} break;
 case 21:
-# line 279 "./getdate.y"
 {
 	    yyMonth = yypvt[-4].Number;
 	    yyDay = yypvt[-2].Number;
 	    yyYear = yypvt[-0].Number;
 	} break;
 case 22:
-# line 284 "./getdate.y"
 {
 	    /* ISO 8601 format.  yyyy-mm-dd.  */
 	    yyYear = yypvt[-2].Number;
@@ -1527,7 +1504,6 @@ case 22:
 	    yyDay = -yypvt[-0].Number;
 	} break;
 case 23:
-# line 290 "./getdate.y"
 {
 	    /* e.g. 17-JUN-1992.  */
 	    yyDay = yypvt[-2].Number;
@@ -1535,84 +1511,69 @@ case 23:
 	    yyYear = -yypvt[-0].Number;
 	} break;
 case 24:
-# line 296 "./getdate.y"
 {
 	    yyMonth = yypvt[-1].Number;
 	    yyDay = yypvt[-0].Number;
 	} break;
 case 25:
-# line 300 "./getdate.y"
 {
 	    yyMonth = yypvt[-3].Number;
 	    yyDay = yypvt[-2].Number;
 	    yyYear = yypvt[-0].Number;
 	} break;
 case 26:
-# line 305 "./getdate.y"
 {
 	    yyMonth = yypvt[-0].Number;
 	    yyDay = yypvt[-1].Number;
 	} break;
 case 27:
-# line 309 "./getdate.y"
 {
 	    yyMonth = yypvt[-1].Number;
 	    yyDay = yypvt[-2].Number;
 	    yyYear = yypvt[-0].Number;
 	} break;
 case 28:
-# line 316 "./getdate.y"
 {
 	    yyRelSeconds = -yyRelSeconds;
 	    yyRelMonth = -yyRelMonth;
 	} break;
 case 30:
-# line 323 "./getdate.y"
 {
 	    yyRelSeconds += yypvt[-1].Number * yypvt[-0].Number * 60L;
 	} break;
 case 31:
-# line 326 "./getdate.y"
 {
 	    yyRelSeconds += yypvt[-1].Number * yypvt[-0].Number * 60L;
 	} break;
 case 32:
-# line 329 "./getdate.y"
 {
 	    yyRelSeconds += yypvt[-0].Number * 60L;
 	} break;
 case 33:
-# line 332 "./getdate.y"
 {
 	    yyRelSeconds += yypvt[-1].Number;
 	} break;
 case 34:
-# line 335 "./getdate.y"
 {
 	    yyRelSeconds += yypvt[-1].Number;
 	} break;
 case 35:
-# line 338 "./getdate.y"
 {
 	    yyRelSeconds++;
 	} break;
 case 36:
-# line 341 "./getdate.y"
 {
 	    yyRelMonth += yypvt[-1].Number * yypvt[-0].Number;
 	} break;
 case 37:
-# line 344 "./getdate.y"
 {
 	    yyRelMonth += yypvt[-1].Number * yypvt[-0].Number;
 	} break;
 case 38:
-# line 347 "./getdate.y"
 {
 	    yyRelMonth += yypvt[-0].Number;
 	} break;
 case 39:
-# line 352 "./getdate.y"
 {
 	    if (yyHaveTime && yyHaveDate && !yyHaveRel)
 		yyYear = yypvt[-0].Number;
@@ -1639,12 +1600,10 @@ case 39:
 	    }
 	} break;
 case 40:
-# line 379 "./getdate.y"
 {
 	    yyval.Meridian = MER24;
 	} break;
 case 41:
-# line 382 "./getdate.y"
 {
 	    yyval.Meridian = yypvt[-0].Meridian;
 	} break;
