@@ -815,13 +815,13 @@ format_cmdline (char *format, ...)
 		    length = sizeof (size_t);
 		    s++;
 		    break;
+#ifdef HAVE_LONG_DOUBLE
 		case 'L':
 		    decimal_conversion = 1;
-#ifdef HAVE_LONG_DOUBLE
 		    length = sizeof (long double);
-#endif
 		    s++;
 		    break;
+#endif
 		default:
 		    char_conversion = 1;
 		    decimal_conversion = 1;
@@ -998,7 +998,9 @@ format_cmdline (char *format, ...)
 			b->data = asnprintf(NULL, &dummy, buf, arg_double);
 			break;
 		    }
-#ifdef HAVE_LONG_DOUBLE
+/* UNIQUE_FLOAT_TYPE_LONG_DOUBLE implies HAVE_LONG_DOUBLE since configure.in
+ * will not run the uniqueness tests if there is no long double.
+ */
 #ifdef UNIQUE_FLOAT_TYPE_LONG_DOUBLE
 		    case sizeof(long double):
 		    {
@@ -1007,7 +1009,6 @@ format_cmdline (char *format, ...)
 			break;
 		    }
 #endif /* UNIQUE_FLOAT_TYPE_LONG_DOUBLE */
-#endif /* HAVE_LONG_DOUBLE */
 		    default:
 	    		dellist(&pflist);
 	    		free(b);
