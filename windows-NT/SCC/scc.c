@@ -3,6 +3,7 @@
 
 #include <Wtypes.h>
 #include <stdio.h>
+#include <direct.h> /* For chdir */
 
 
 /* Bits of the interface.
@@ -53,6 +54,11 @@ typedef BOOL (*SCC_popul_proc) (LPVOID callerdat, BOOL add_keep,
 #define SCC_cap_GetProjPath 0x200L
 #define SCC_cap_AddFromScc 0x400L
 #define SCC_cap_want_outproc 0x8000L
+
+/* Flags for SccGet.  */
+#define SCC_RECURSE 2L
+/* This means to get all the files in a directory.  */
+#define SCC_DIR 1L
 
 
 /* We get to put whatever we want here, and the caller will pass it
@@ -180,9 +186,7 @@ SccOpenProject (void *context_arg, HWND window, LPSTR user,
     }
     context->outproc = outproc;
 
-    (*context->outproc) ("SccOpenProject (aux_proj=", SCC_outproc_info);
-    (*context->outproc) (aux_proj, SCC_outproc_info);
-    (*context->outproc) (")\n", SCC_outproc_info);
+    fprintf (context->debuglog, "SccOpenProject (aux_proj=%s)\n", aux_proj);
 
     context->local = malloc (strlen (local_proj) + 5);
     if (context->local == NULL)
@@ -197,6 +201,8 @@ SCC_return
 SccCloseProject (void *context_arg)
 {
     struct context *context = (struct context *)context_arg;
+    fprintf (context->debuglog, "SccCloseProject\n");
+    fflush (context->debuglog);
     if (context->root != NULL)
 	free (context->root);
     context->root = NULL;
@@ -210,40 +216,38 @@ SccGet (void *context_arg, HWND window, LONG num_files,
 {
     struct context *context = (struct context *)context_arg;
     int i;
-    char buf[20];
     char *fname;
 
-    (*context->outproc) ("SccGet: ", SCC_outproc_info);
-    sprintf (buf, "%d", num_files);
-    (*context->outproc) (buf, SCC_outproc_info);
-    (*context->outproc) ("; files: ", SCC_outproc_info);
+    fprintf (context->debuglog, "SccGet: %d; files:", num_files);
 #if 1
     for (i = 0; i < num_files; ++i)
     {
-	(*context->outproc) (file_names[i], SCC_outproc_info);
-	(*context->outproc) (" ", SCC_outproc_info);
+	fprintf (context->debuglog, "%s ", file_names[i]);
     }
 #endif
-    (*context->outproc) ("\n", SCC_outproc_info);
-    Sleep (3000);
+    fprintf (context->debuglog, "\n");
+    if (options & SCC_DIR)
+	fprintf (context->debuglog, "  Get all\n");
+    /* Should be using this flag to set -R vs. -l.  */
+    if (options & SCC_RECURSE)
+	fprintf (context->debuglog, "  recurse\n");
 
     for (i = 0; i < num_files; ++i)
     {
 	FILE *fp;
 
-	fname = malloc (strlen (file_names[i])
-			+ strlen (context->local)
-			+ 10);
-	strcpy (fname, context->local);
-	strcat (fname, "\\");
-	strcat (fname, file_names[i]);
-	(*context->outproc) (fname, SCC_outproc_info);
+	/* As with all file names passed to us by the SCC, these
+	   file names are absolute pathnames.  I think they will
+	   tend to be paths within context->local, although I
+	   don't know whether there are any exceptions to that.  */
+	fname = file_names[i];
+	fprintf (context->debuglog, "%s ", fname);
 #if 0
 	fp = fopen (fname, "w");
 #endif
-	(*context->outproc) (" ", SCC_outproc_info);
     }
-    (*context->outproc) ("\n", SCC_outproc_info);
+    fprintf (context->debuglog, "\nExiting SccGet\n");
+    fflush (context->debuglog);
     return SCC_return_success;
 }
 
@@ -412,6 +416,11 @@ SccGetProjPath (void *context_arg, HWND window, LPSTR user,
 	     SCC_max_path);
     if (local_proj[0] == '\0' && allow_change)
 	strncpy (local_proj, "d:\\sccwork", SCC_max_path);
+    /* I don't think I saw anything in the spec about this,
+       but let's see if it helps.  */
+    if (_chdir (local_proj) < 0)
+	fprintf (context->debuglog, "Error in chdir: %s", strerror (errno));
+
     if (*new)
 	/* It is OK for us to prompt the user for creating a new
 	   project.  */
@@ -440,9 +449,7 @@ SccAddFromScc (void *context_arg, HWND window, LONG *files,
 	   file_names.  */
 	for (p = *file_names; *p != NULL; ++p)
 	{
-	    (*context->outproc) ("Freeing ", SCC_outproc_info);
-	    (*context->outproc) (*p, SCC_outproc_info);
-	    (*context->outproc) ("\n", SCC_outproc_info);
+	    fprintf (context->debuglog, "Freeing %s\n", *p);
 	    free (*p);
 	}
     }
@@ -466,6 +473,8 @@ SccAddFromScc (void *context_arg, HWND window, LONG *files,
 	   next going to call SccGet on each one?  The spec doesn't
 	   say explicitly.  */
     }
+    fprintf (context->debuglog, "Success in SccAddFromScc\n");
+    fflush (context->debuglog);
     return SCC_return_success;
 }
 
