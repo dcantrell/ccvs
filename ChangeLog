@@ -1,5 +1,9 @@
 2004-09-03  Derek Price  <derek@ximbiot.com>
 
+	* NEWS: Note new commit message format.
+
+2004-09-03  Derek Price  <derek@ximbiot.com>
+
 	* HACKING: Codify backwards compatibility conventions.  Remove outdated
 	reference to very old MSVC++ releases.
 
