@@ -6,7 +6,7 @@
  */
 
 #include "cvs.h"
-#include "savecwd.h"
+#include "save-cwd.h"
 #include "getline.h"
 
 static const char *const release_usage[] =
@@ -135,7 +135,7 @@ release (int argc, char **argv)
        all args are relative to this directory and we chdir around.
        */
     if (save_cwd (&cwd))
-        exit (EXIT_FAILURE);
+	error (1, errno, "Failed to save current directory.");
 
     arg_start_idx = 0;
 
@@ -155,8 +155,10 @@ release (int argc, char **argv)
 	    {
 		if (!really_quiet)
 		    error (0, 0, "no repository directory: %s", thisarg);
-		if (restore_cwd (&cwd, NULL))
-		    exit (EXIT_FAILURE);
+		if (restore_cwd (&cwd))
+		    error (1, errno,
+		           "Failed to restore current directory, `%s'.",
+		           cwd.name);
 		continue;
 	    }
 	}
@@ -202,8 +204,10 @@ release (int argc, char **argv)
 	    {
 		error (0, 0, "unable to release `%s'", thisarg);
 		free (repository);
-		if (restore_cwd (&cwd, NULL))
-		    exit (EXIT_FAILURE);
+		if (restore_cwd (&cwd))
+		    error (1, errno,
+		           "Failed to restore current directory, `%s'.",
+		           cwd.name);
 		continue;
 	    }
 
@@ -217,8 +221,10 @@ release (int argc, char **argv)
 		(void) fprintf (stderr, "** `%s' aborted by user choice.\n",
 				cvs_cmd_name);
 		free (repository);
-		if (restore_cwd (&cwd, NULL))
-		    exit (EXIT_FAILURE);
+		if (restore_cwd (&cwd))
+		    error (1, errno,
+		           "Failed to restore current directory, `%s'.",
+		           cwd.name);
 		continue;
 	    }
 	}
@@ -231,8 +237,9 @@ release (int argc, char **argv)
            through release-23. */
 
         free (repository);
-	if (restore_cwd (&cwd, NULL))
-	    exit (EXIT_FAILURE);
+	if (restore_cwd (&cwd))
+	    error (1, errno, "Failed to restore current directory, `%s'.",
+		   cwd.name);
 
 	if (1
 #ifdef CLIENT_SUPPORT
@@ -248,8 +255,9 @@ release (int argc, char **argv)
 	    argv[1] = thisarg;
 	    argv[2] = NULL;
 	    err += unedit (argc, argv);
-            if (restore_cwd (&cwd, NULL))
-                exit (EXIT_FAILURE);
+            if (restore_cwd (&cwd))
+		error (1, errno, "Failed to restore current directory, `%s'.",
+		       cwd.name);
 	}
 
 #ifdef CLIENT_SUPPORT
@@ -286,14 +294,16 @@ release (int argc, char **argv)
 	     */
             err += get_server_responses ();
 
-            if (restore_cwd (&cwd, NULL))
-                exit (EXIT_FAILURE);
+            if (restore_cwd (&cwd))
+		error (1, errno, "Failed to restore current directory, `%s'.",
+		       cwd.name);
         }
 #endif /* CLIENT_SUPPORT */
     }
 
-    if (restore_cwd (&cwd, NULL))
-	exit (EXIT_FAILURE);
+    if (restore_cwd (&cwd))
+	error (1, errno, "Failed to restore current directory, `%s'.",
+	       cwd.name);
     free_cwd (&cwd);
 
 #ifdef CLIENT_SUPPORT

@@ -8,7 +8,7 @@
 #include "cvs.h"
 #include "getline.h"
 #include "history.h"
-#include "savecwd.h"
+#include "save-cwd.h"
 
 #ifndef DBLKSIZ
 #define	DBLKSIZ	4096			/* since GNU ndbm doesn't define it */
@@ -634,7 +634,7 @@ mkmodules (char *dir)
 	return 0;
 
     if (save_cwd (&cwd))
-	exit (EXIT_FAILURE);
+	error (1, errno, "Failed to save current directory.");
 
     if (CVS_CHDIR (dir) < 0)
 	error (1, errno, "cannot chdir to %s", dir);
@@ -757,8 +757,9 @@ mkmodules (char *dir)
 	    error (0, errno, "cannot open %s", CVSROOTADM_CHECKOUTLIST);
     }
 
-    if (restore_cwd (&cwd, NULL))
-	exit (EXIT_FAILURE);
+    if (restore_cwd (&cwd))
+	error (1, errno, "Failed to restore current directory, `%s'.",
+	       cwd.name);
     free_cwd (&cwd);
 
     return 0;

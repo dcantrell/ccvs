@@ -17,7 +17,7 @@
  */
 
 #include "cvs.h"
-#include "savecwd.h"
+#include "save-cwd.h"
 
 static char *get_comment (const char *user);
 static int add_rev (char *message, RCSNode *rcs, char *vfile,
@@ -1682,7 +1682,8 @@ add_log (int ch, char *fname)
  * Note that we do not follow symbolic links here, which is a feature!
  */
 static int
-import_descend_dir (char *message, char *dir, char *vtag, int targc, char **targv)
+import_descend_dir (char *message, char *dir, char *vtag, int targc,
+		    char **targv)
 {
     struct saved_cwd cwd;
     char *cp;
@@ -1690,11 +1691,11 @@ import_descend_dir (char *message, char *dir, char *vtag, int targc, char **targ
     char *rcs = NULL;
 
     if (islink (dir))
-	return (0);
+	return 0;
     if (save_cwd (&cwd))
     {
-	fperrmsg (logfp, 0, 0, "ERROR: cannot get working directory");
-	return (1);
+	fperrmsg (logfp, 0, errno, "Failed to save current directory.");
+	return 1;
     }
 
     /* Concatenate DIR to the end of REPOSITORY.  */
@@ -1766,8 +1767,9 @@ import_descend_dir (char *message, char *dir, char *vtag, int targc, char **targ
 	*cp = '\0';
     else
 	repository[0] = '\0';
-    if (restore_cwd (&cwd, NULL))
-	exit (EXIT_FAILURE);
+    if (restore_cwd (&cwd))
+	error (1, errno, "Failed to restore current directory, `%s'.",
+	       cwd.name);
     free_cwd (&cwd);
-    return (err);
+    return err;
 }

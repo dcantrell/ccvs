@@ -19,7 +19,7 @@
 #include "edit.h"
 #include "buffer.h"
 #include "log-buffer.h"
-#include "savecwd.h"
+#include "save-cwd.h"
 
 #ifdef CLIENT_SUPPORT
 

@@ -26,7 +26,7 @@
 
 #include <assert.h>
 #include "cvs.h"
-#include "savecwd.h"
+#include "save-cwd.h"
 #include "fileattr.h"
 
 static int add_directory (struct file_info *finfo);
@@ -198,7 +198,7 @@ add (int argc, char **argv)
 		char *filedir;
 
 		if (save_cwd (&cwd))
-		    exit (EXIT_FAILURE);
+		    error (1, errno, "Failed to save current directory.");
 
 		filedir = xstrdup (argv[j]);
                 /* Deliberately discard the const below since we know we just
@@ -245,8 +245,10 @@ add (int argc, char **argv)
 		if (found_slash)
 		    send_a_repository ("", repository, update_dir);
 
-		if (restore_cwd (&cwd, NULL))
-		    exit (EXIT_FAILURE);
+		if (restore_cwd (&cwd))
+		    error (1, errno,
+		           "Failed to restore current directory, `%s'.",
+		           cwd.name);
 		free_cwd (&cwd);
 
 		if (tag)
@@ -287,7 +289,7 @@ add (int argc, char **argv)
 	memset (&finfo, 0, sizeof finfo);
 
 	if (save_cwd (&cwd))
-	    exit (EXIT_FAILURE);
+	    error (1, errno, "Failed to save current directory.");
 
 	finfo.fullname = xstrdup (argv[i]);
 	filename = xstrdup (argv[i]);
@@ -666,8 +668,9 @@ add (int argc, char **argv)
 	free (repository);
 	Entries_Close (entries);
 
-	if (restore_cwd (&cwd, NULL))
-	    exit (EXIT_FAILURE);
+	if (restore_cwd (&cwd))
+	    error (1, errno, "Failed to restore current directory, `%s'.",
+	           cwd.name);
 	free_cwd (&cwd);
 
 	/* It's okay to discard the const to free this - we allocated this
@@ -736,7 +739,10 @@ add_directory (struct file_info *finfo)
 
     /* now, remember where we were, so we can get back */
     if (save_cwd (&cwd))
+    {
+	error (0, errno, "Failed to save current directory.");
 	return 1;
+    }
     if (CVS_CHDIR (dir) < 0)
     {
 	error (0, errno, "cannot chdir to %s", finfo->fullname);
@@ -847,8 +853,9 @@ add_directory (struct file_info *finfo)
     if (date)
 	free (date);
 
-    if (restore_cwd (&cwd, NULL))
-	exit (EXIT_FAILURE);
+    if (restore_cwd (&cwd))
+	error (1, errno, "Failed to restore current directory, `%s'.",
+	       cwd.name);
     free_cwd (&cwd);
 
     Subdir_Register (entries, (char *) NULL, dir);
@@ -862,8 +869,9 @@ add_directory (struct file_info *finfo)
     return 0;
 
 out:
-    if (restore_cwd (&cwd, NULL))
-	exit (EXIT_FAILURE);
+    if (restore_cwd (&cwd))
+	error (1, errno, "Failed to restore current directory, `%s'.",
+	       cwd.name);
     free_cwd (&cwd);
     if (rcsdir != NULL)
 	free (rcsdir);

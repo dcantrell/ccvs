@@ -1,8 +1,13 @@
 2004-10-05  Derek Price  <derek@ximbiot.com>
 
-	* src/checkout.c, src/client.c, src/commit.c, src/create_adm.c,
-	src/cvs.h, src/filesubr.c, src/hardlink.c, src/history.c, src/logmsg.c,
-	src/main.c, src/recurse.c, src/update.c: s/xgetwd/xgetcwd/.
+	* add.c, client.c, history.c, import.c, mkmodules.c, modules.c,
+	recurse.c, release.c, tag.c, update.c: Use new save-cwd API.
+
+2004-10-05  Derek Price  <derek@ximbiot.com>
+
+	* checkout.c, client.c, commit.c, create_adm.c, cvs.h, filesubr.c,
+	hardlink.c, history.c, logmsg.c, main.c, recurse.c, update.c:
+	s/xgetwd/xgetcwd/.
 
 2004-10-04  Derek Price  <derek@ximbiot.com>
 
