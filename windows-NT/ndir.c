@@ -43,7 +43,7 @@ static void free_dircontents (struct _dircontents *);
 
 
 DIR *
-opendir (char *name)
+opendir (const char *name)
 {
   struct _finddata_t find_buf;
   DIR *dirp;
@@ -56,7 +56,7 @@ opendir (char *name)
     name = "";
   else if (*name)
     {
-      char *s;
+      const char *s;
       int l = strlen (name);
 
       s = name + l - 1;
