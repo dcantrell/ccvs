@@ -1,3 +1,9 @@
+1999-05-27  Jim Kingdon  <http://www.cyclic.com>
+
+	* cvsclient.texi (Requests): Clarify that Modified, Is-modified,
+	Notify and Unchanged must specify a file within the current
+	directory.
+
 1999-05-24  Jim Kingdon  <http://www.cyclic.com>
 
 	* cvs.texinfo (checkoutlist): New node, contains more complete

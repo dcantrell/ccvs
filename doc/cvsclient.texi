@@ -808,7 +808,8 @@ affect the @code{ci} request or other relevant requests if any.
 @item Modified @var{filename} \n
 Response expected: no.  Additional data: mode, \n, file transmission.
 Send the server a copy of one locally modified file.  @var{filename} is
-relative to the most recent repository sent with @code{Directory}.  If
+a file within the most recent directory sent with @code{Directory}; it
+must not contain @samp{/}.  If
 the user is operating on only some files in a directory, only those
 files need to be included.  This can also be sent without @code{Entry},
 if there is no entry for the file.
@@ -850,8 +851,9 @@ investigation, the more conservative course of action is to stick to
 
 @item Unchanged @var{filename} \n
 Response expected: no.  Tell the server that @var{filename} has not been
-modified in the checked out directory.  The name is relative to the most
-recent repository sent with @code{Directory}.
+modified in the checked out directory.  The @var{filename} is
+a file within the most recent directory sent with @code{Directory}; it
+must not contain @samp{/}.
 
 @item UseUnchanged \n
 Response expected: no.  To specify the version of the protocol described
@@ -863,7 +865,10 @@ Response expected: no.
 Tell the server that an @code{edit} or @code{unedit} command has taken
 place.  The server needs to send a @code{Notified} response, but such
 response is deferred until the next time that the server is sending
-responses.  Additional data:
+responses.
+The @var{filename} is a file within the most recent directory sent with
+@code{Directory}; it must not contain @samp{/}.
+Additional data:
 @example
 @var{notification-type} \t @var{time} \t @var{clienthost} \t
 @var{working-dir} \t @var{watches} \n
