@@ -3860,7 +3860,7 @@ error 0 %s: no such user\n", username);
     initgroups (pw->pw_name, pw->pw_gid);
 #endif /* HAVE_INITGROUPS */
 
-#if SETXID_SUPPORT
+#ifdef SETXID_SUPPORT
     /* honor the setgid bit iff set*/
     if (getgid() != getegid())
     {
