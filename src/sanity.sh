@@ -557,7 +557,7 @@ RCSINIT=; export RCSINIT
 
 if test x"$*" = x; then
 	# Basic/miscellaneous functionality
-	tests="basica basicb basicc basic1 deep basic2 commit-readonly"
+	tests="basica basicb basicc basic1 deep basic2 files commit-readonly"
 	# Branching, tagging, removing, adding, multiple directories
 	tests="${tests} rdiff diff death death2 rmadd rmadd2 dirs dirs2"
 	tests="${tests} branches branches2 tagc"
@@ -2088,6 +2088,108 @@ O [0-9/]* [0-9:]* ${PLUS}0000 ${username} \[1\.1\] first-dir           =first-di
 		rm -rf ${CVSROOT_DIRNAME}/first-dir
 		rm -rf ${CVSROOT_DIRNAME}/second-dir
 		;;
+
+	files)
+	  # Test of how we specify files on the command line
+	  # (recurse.c and that sort of thing).  Vaguely similar to
+	  # tests like basic* and deep.  See modules and such tests
+	  # for what happens when we throw in modules and co -d, &c.
+
+	  # This particular test is fairly carefully crafted, to spot
+	  # one particular issue with remote.
+	  mkdir 1; cd 1
+	  dotest files-1 "${testcvs} -q co -l ." ""
+	  mkdir first-dir
+	  dotest files-2 "${testcvs} add first-dir" \
+"Directory ${TESTDIR}/cvsroot/first-dir added to the repository"
+	  cd first-dir
+	  touch tfile
+	  dotest files-3 "${testcvs} add tfile" \
+"${PROG} [a-z]*: scheduling file .tfile. for addition
+${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
+	  dotest files-4 "${testcvs} -q ci -m add" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/tfile,v
+done
+Checking in tfile;
+${TESTDIR}/cvsroot/first-dir/tfile,v  <--  tfile
+initial revision: 1\.1
+done"
+	  dotest files-5 "${testcvs} -q tag -b C" "T tfile"
+	  dotest files-6 "${testcvs} -q update -r C" ""
+	  mkdir dir
+	  dotest files-7 "${testcvs} add dir" \
+"Directory ${TESTDIR}/cvsroot/first-dir/dir added to the repository
+--> Using per-directory sticky tag .C'"
+	  cd dir
+	  touch .file
+	  dotest files-6 "${testcvs} add .file" \
+"${PROG} [a-z]*: scheduling file .\.file' for addition on branch .C.
+${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
+	  mkdir sdir
+	  dotest files-7 "${testcvs} add sdir" \
+"Directory ${TESTDIR}/cvsroot/first-dir/dir/sdir added to the repository
+--> Using per-directory sticky tag .C'"
+	  cd sdir
+	  mkdir ssdir
+	  dotest files-8 "${testcvs} add ssdir" \
+"Directory ${TESTDIR}/cvsroot/first-dir/dir/sdir/ssdir added to the repository
+--> Using per-directory sticky tag .C'"
+	  cd ssdir
+	  touch .file
+	  dotest files-9 "${testcvs} add .file" \
+"${PROG} [a-z]*: scheduling file .\.file' for addition on branch .C.
+${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
+	  cd ../..
+	  dotest files-10 "${testcvs} -q ci -m test" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/dir/Attic/\.file,v
+done
+Checking in \.file;
+${TESTDIR}/cvsroot/first-dir/dir/Attic/\.file,v  <--  \.file
+new revision: 1\.1\.2\.1; previous revision: 1\.1
+done
+RCS file: ${TESTDIR}/cvsroot/first-dir/dir/sdir/ssdir/Attic/\.file,v
+done
+Checking in sdir/ssdir/\.file;
+${TESTDIR}/cvsroot/first-dir/dir/sdir/ssdir/Attic/\.file,v  <--  \.file
+new revision: 1\.1\.2\.1; previous revision: 1\.1
+done"
+	  dotest files-11 \
+"${testcvs} commit -m test -f ./.file ./sdir/ssdir/.file" \
+"Checking in \.file;
+${TESTDIR}/cvsroot/first-dir/dir/Attic/\.file,v  <--  \.file
+new revision: 1\.1\.2\.2; previous revision: 1\.1\.2\.1
+done
+Checking in \./sdir/ssdir/\.file;
+${TESTDIR}/cvsroot/first-dir/dir/sdir/ssdir/Attic/\.file,v  <--  \.file
+new revision: 1\.1\.2\.2; previous revision: 1\.1\.2\.1
+done"
+	  if test "$remote" = yes; then
+	    # This is a bug, looks like that toplevel_repos cruft in
+	    # client.c is coming back to haunt us.
+	    # May want to think about the whole issue, toplevel_repos
+	    # has always been crufty and trying to patch it up again
+	    # might be a mistake.
+	    dotest_fail files-12 \
+"${testcvs} commit -f -m test ./sdir/ssdir/.file ./.file" \
+"${PROG} server: Up-to-date check failed for .\.file'
+${PROG} \[server aborted\]: correct above errors first!"
+	  else
+	    dotest files-12 \
+"${testcvs} commit -f -m test ./sdir/ssdir/.file ./.file" \
+"Checking in \./sdir/ssdir/\.file;
+${TESTDIR}/cvsroot/first-dir/dir/sdir/ssdir/Attic/\.file,v  <--  \.file
+new revision: 1\.1\.2\.3; previous revision: 1\.1\.2\.2
+done
+Checking in \.file;
+${TESTDIR}/cvsroot/first-dir/dir/Attic/\.file,v  <--  \.file
+new revision: 1\.1\.2\.3; previous revision: 1\.1\.2\.2
+done"
+	  fi
+	  cd ../../..
+
+	  rm -r 1
+	  rm -rf ${CVSROOT_DIRECTORY}/first-dir
+	  ;;
 
 	commit-readonly)
 	  mkdir 1; cd 1

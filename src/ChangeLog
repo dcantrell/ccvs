@@ -1,5 +1,8 @@
 1999-02-18  Jim Kingdon  <http://www.cyclic.com>
 
+	* sanity.sh (files): New test, for a relatively obscure spurious
+	"Up-to-date check failed" in client/server.
+
 	* main.c (lookup_command_attribute): Don't check for "history"
 	twice.
 
