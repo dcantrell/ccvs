@@ -57,9 +57,6 @@ $GNULIB/lib/getdate.y				lib		no NI
 $GNULIB/m4/bison.m4				m4		yes NI
 $GNULIB/m4/getdate.m4				m4		no NI
 $GNULIB/m4/tm_gmtoff.m4				m4		no NI
-# $GNULIB/modules/realloc
-$GNULIB/lib/realloc.c				lib		no NI
-$GNULIB/m4/realloc.m4				m4		no NI
 # $GNULIB/modules/strftime
 $GNULIB/lib/strftime.c				lib		no NI
 $GNULIB/m4/mbstate_t.m4				m4		no NI
