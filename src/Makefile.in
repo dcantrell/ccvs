@@ -533,8 +533,8 @@ remotecheck: all
 #   $(srcdir)/version.c when looking for a dependency for version.c
 version.o: $(srcdir)/version.c
 $(srcdir)/version.c: $(srcdir)/version.c.in $(top_srcdir)/configure.in
-	sed 's,@VERSION\@,$(VERSION),g' $(srcdir)/version.c.in >version.tc
-	mv version.tc $(srcdir)/version.c
+	sed 's,@VERSION\@,$(VERSION),g' $(srcdir)/version.c.in >$(srcdir)/version.tc
+	mv $(srcdir)/version.tc $(srcdir)/version.c
 
 # for backwards compatibility with the old makefiles
 .PHONY: realclean
