@@ -178,20 +178,102 @@ static const char *const taginfo_contents[] = {
     "#    %p = path relative to repository\n",
     "#    %r = repository (path portion of $CVSROOT)\n",
     "#    %t = tagname\n",
-    "#    %{sVv} = attribute list = file name, old version tag will be deleted from,\n",
-    "#           new version tag will be added to (or deleted from, but this feature is\n",
-    "#           deprecated.  When either old or new revision is unknown, doesn't exist,\n",
-    "#           or isn't applicable, the string \"NONE\" will be placed on the command\n",
-    "#           line.\n",
+    "#    %{sVv} = attribute list = file name, old version tag will be deleted\n",
+    "#             from, new version tag will be added to (or deleted from, but\n",
+    "#             this feature is deprecated.  When either old or new revision is\n",
+    "#             unknown, doesn't exist, or isn't applicable, the string \"NONE\"\n",
+    "#             will be placed on the command line.\n",
     "#\n",
-    "# Note that %{sVv} is a list operator and not all elements are necessary.  Thus %{sV} is\n",
-    "# a legal format string, but will only be replaced with file name and old revision.\n",
-    "# it also generates multiple arguments for each file being operated upon.  i.e. if two\n",
-    "# files, file1 & file2, are having a tag moved from version 1.1 to versoin 1.1.2.9, %{sVv}\n",
-    "# will generate the following six arguments in this order: file1, 1.1, 1.1.2.9, file2, 1.1,\n",
+    "# Note that %{sVv} is a list operator and not all elements are necessary.\n",
+    "# Thus %{sV} is a legal format string, but will only be replaced with file\n",
+    "# name and old revision. it also generates multiple arguments for each file\n",
+    "# being operated upon.  i.e. if two files, file1 & file2, are having a tag\n",
+    "# moved from version 1.1 to version 1.1.2.9, %{sVv} will generate the\n",
+    "# following six arguments in this order: file1, 1.1, 1.1.2.9, file2, 1.1,\n",
     "# 1.1.2.9.\n",
     "#\n",
     "# A non-zero exit of the filter program will cause the tag to be aborted.\n",
+    "#\n",
+    "# The first entry on a line is a regular expression which is tested\n",
+    "# against the directory that the change is being committed to, relative\n",
+    "# to the $CVSROOT.  For the first match that is found, then the remainder\n",
+    "# of the line is the name of the filter to run.\n",
+    "#\n",
+    "# If the repository name does not match any of the regular expressions in this\n",
+    "# file, the \"DEFAULT\" line is used, if it is specified.\n",
+    "#\n",
+    "# If the name \"ALL\" appears as a regular expression it is always used\n",
+    "# in addition to the first matching regex or \"DEFAULT\".\n",
+    NULL
+};
+
+static const char *const postadmin_contents[] = {
+    "# The \"postadmin\" file is called after the \"admin\" command finishes",
+    "# processing a directory.",
+    "#\n",
+    "# If any format strings are present in the filter, they will be replaced",
+    "# as follows:\n",
+    "#    %p = path relative to repository\n",
+    "#    %r = repository (path portion of $CVSROOT)\n",
+    "#\n",
+    "# The first entry on a line is a regular expression which is tested\n",
+    "# against the directory that the change is being committed to, relative\n",
+    "# to the $CVSROOT.  For the first match that is found, then the remainder\n",
+    "# of the line is the name of the filter to run.\n",
+    "#\n",
+    "# If the repository name does not match any of the regular expressions in this\n",
+    "# file, the \"DEFAULT\" line is used, if it is specified.\n",
+    "#\n",
+    "# If the name \"ALL\" appears as a regular expression it is always used\n",
+    "# in addition to the first matching regex or \"DEFAULT\".\n",
+    NULL
+};
+
+static const char *const posttag_contents[] = {
+    "# The \"posttag\" file is called after the \"tag\" command finishes",
+    "# processing a directory.",
+    "#\n",
+    "# If any format strings are present in the filter, they will be replaced as follows:\n",
+    "#    %b = branch mode = \"?\" (delete ops - unknown) | \"T\" (branch) | \"N\" (not branch)\n",
+    "#    %o = operation = \"add\" | \"mov\" | \"del\"\n",
+    "#    %p = path relative to repository\n",
+    "#    %r = repository (path portion of $CVSROOT)\n",
+    "#    %t = tagname\n",
+    "#    %{sVv} = attribute list = file name, old version tag will be deleted\n",
+    "#             from, new version tag will be added to (or deleted from, but\n",
+    "#             this feature is deprecated.  When either old or new revision is\n",
+    "#             unknown, doesn't exist, or isn't applicable, the string \"NONE\"\n",
+    "#             will be placed on the command line.\n",
+    "#\n",
+    "# Note that %{sVv} is a list operator and not all elements are necessary.\n",
+    "# Thus %{sV} is a legal format string, but will only be replaced with file\n",
+    "# name and old revision. it also generates multiple arguments for each file\n",
+    "# being operated upon.  i.e. if two files, file1 & file2, are having a tag\n",
+    "# moved from version 1.1 to version 1.1.2.9, %{sVv} will generate the\n",
+    "# following six arguments in this order: file1, 1.1, 1.1.2.9, file2, 1.1,\n",
+    "# 1.1.2.9.\n",
+    "#\n",
+    "# The first entry on a line is a regular expression which is tested\n",
+    "# against the directory that the change is being committed to, relative\n",
+    "# to the $CVSROOT.  For the first match that is found, then the remainder\n",
+    "# of the line is the name of the filter to run.\n",
+    "#\n",
+    "# If the repository name does not match any of the regular expressions in this\n",
+    "# file, the \"DEFAULT\" line is used, if it is specified.\n",
+    "#\n",
+    "# If the name \"ALL\" appears as a regular expression it is always used\n",
+    "# in addition to the first matching regex or \"DEFAULT\".\n",
+    NULL
+};
+
+static const char *const postwatch_contents[] = {
+    "# The \"postwatch\" file is called after any command finishes writing new\n",
+    "# file attibute (watch/edit) information in a directory.\n",
+    "#\n",
+    "# If any format strings are present in the filter, they will be replaced",
+    "# as follows:\n",
+    "#    %p = path relative to repository\n",
+    "#    %r = repository (path portion of $CVSROOT)\n",
     "#\n",
     "# The first entry on a line is a regular expression which is tested\n",
     "# against the directory that the change is being committed to, relative\n",
@@ -358,40 +440,49 @@ static const char *const config_contents[] = {
 };
 
 static const struct admin_file filelist[] = {
-    {CVSROOTADM_LOGINFO, 
-	"no logging of 'cvs commit' messages is done without a %s file",
-	&loginfo_contents[0]},
-    {CVSROOTADM_RCSINFO,
-	"a %s file can be used to configure 'cvs commit' templates",
-	rcsinfo_contents},
-    {CVSROOTADM_VERIFYMSG,
-	"a %s file can be used to validate log messages",
-	verifymsg_contents},
-    {CVSROOTADM_COMMITINFO,
-	"a %s file can be used to configure 'cvs commit' checking",
-	commitinfo_contents},
-    {CVSROOTADM_TAGINFO,
-	"a %s file can be used to configure 'cvs tag' checking",
-	taginfo_contents},
-    {CVSROOTADM_IGNORE,
-	"a %s file can be used to specify files to ignore",
-	NULL},
     {CVSROOTADM_CHECKOUTLIST,
 	"a %s file can specify extra CVSROOT files to auto-checkout",
 	checkoutlist_contents},
-    {CVSROOTADM_WRAPPER,
-	"a %s file can be used to specify files to treat as wrappers",
-	cvswrappers_contents},
-    {CVSROOTADM_NOTIFY,
-	"a %s file can be used to specify where notifications go",
-	notify_contents},
+    {CVSROOTADM_COMMITINFO,
+	"a %s file can be used to configure 'cvs commit' checking",
+	commitinfo_contents},
+    {CVSROOTADM_IGNORE,
+	"a %s file can be used to specify files to ignore",
+	NULL},
+    {CVSROOTADM_LOGINFO, 
+	"no logging of 'cvs commit' messages is done without a %s file",
+	&loginfo_contents[0]},
     {CVSROOTADM_MODULES,
 	/* modules is special-cased in mkmodules.  */
 	NULL,
 	modules_contents},
+    {CVSROOTADM_NOTIFY,
+	"a %s file can be used to specify where notifications go",
+	notify_contents},
+    {CVSROOTADM_POSTADMIN,
+	"a %s file can be used to configure 'cvs admin' logging",
+	postadmin_contents},
+    {CVSROOTADM_POSTTAG,
+	"a %s file can be used to configure 'cvs tag' logging",
+	posttag_contents},
+    {CVSROOTADM_POSTWATCH,
+	"a %s file can be used to configure 'cvs watch' logging",
+	postwatch_contents},
+    {CVSROOTADM_RCSINFO,
+	"a %s file can be used to configure 'cvs commit' templates",
+	rcsinfo_contents},
     {CVSROOTADM_READERS,
 	"a %s file specifies read-only users",
 	NULL},
+    {CVSROOTADM_TAGINFO,
+	"a %s file can be used to configure 'cvs tag' checking",
+	taginfo_contents},
+    {CVSROOTADM_VERIFYMSG,
+	"a %s file can be used to validate log messages",
+	verifymsg_contents},
+    {CVSROOTADM_WRAPPER,
+	"a %s file can be used to specify files to treat as wrappers",
+	cvswrappers_contents},
     {CVSROOTADM_WRITERS,
 	"a %s file specifies read/write users",
 	NULL},
@@ -440,7 +531,7 @@ mkmodules (char *dir)
     if (save_cwd (&cwd))
 	exit (EXIT_FAILURE);
 
-    if ( CVS_CHDIR (dir) < 0)
+    if (CVS_CHDIR (dir) < 0)
 	error (1, errno, "cannot chdir to %s", dir);
 
     /*
@@ -565,8 +656,10 @@ mkmodules (char *dir)
 	exit (EXIT_FAILURE);
     free_cwd (&cwd);
 
-    return (0);
+    return 0;
 }
+
+
 
 /*
  * Yeah, I know, there are NFS race conditions here.
@@ -594,10 +687,11 @@ make_tempfile (void)
     return temp;
 }
 
+
+
 /* Get a file.  If the file does not exist, return 1 silently.  If
    there is an error, print a message and return 1 (FIXME: probably
    not a very clean convention).  On success, return 0.  */
-
 static int
 checkout_file (char *file, char *temp)
 {
@@ -614,11 +708,10 @@ checkout_file (char *file, char *temp)
     if (!isfile (rcs))
     {
 	free (rcs);
-	return (1);
+	return 1;
     }
     rcsnode = RCS_parsercsfile (rcs);
-    retcode = RCS_checkout (rcsnode, NULL, NULL, NULL, NULL, temp,
-			    (RCSCHECKOUTPROC) NULL, (void *) NULL);
+    retcode = RCS_checkout (rcsnode, NULL, NULL, NULL, NULL, temp, NULL, NULL);
     if (retcode != 0)
     {
 	/* Probably not necessary (?); RCS_checkout already printed a
@@ -628,8 +721,10 @@ checkout_file (char *file, char *temp)
     }
     freercsnode (&rcsnode);
     free (rcs);
-    return (retcode);
+    return retcode;
 }
+
+
 
 #ifndef MY_NDBM
 

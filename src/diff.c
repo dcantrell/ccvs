@@ -413,9 +413,9 @@ diff (int argc, char **argv)
 #endif
 
     if (diff_rev1 != NULL)
-	tag_check_valid (diff_rev1, argc, argv, local, 0, "");
+	tag_check_valid (diff_rev1, argc, argv, local, 0, "", false);
     if (diff_rev2 != NULL)
-	tag_check_valid (diff_rev2, argc, argv, local, 0, "");
+	tag_check_valid (diff_rev2, argc, argv, local, 0, "", false);
 
     which = W_LOCAL;
     if (diff_rev1 != NULL || diff_date1 != NULL)

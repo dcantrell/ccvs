@@ -1022,7 +1022,7 @@ internal error: %s doesn't start with %s in checkout_proc",
 	which = W_REPOS;
 	if (tag != NULL && !tag_validated)
 	{
-	    tag_check_valid (tag, argc - 1, argv + 1, 0, aflag, NULL);
+	    tag_check_valid (tag, argc - 1, argv + 1, 0, aflag, NULL, false);
 	    tag_validated = 1;
 	}
     }
@@ -1032,7 +1032,7 @@ internal error: %s doesn't start with %s in checkout_proc",
 	if (tag != NULL && !tag_validated)
 	{
 	    tag_check_valid (tag, argc - 1, argv + 1, 0, aflag,
-			     repository);
+			     repository, false);
 	    tag_validated = 1;
 	}
     }

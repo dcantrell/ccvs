@@ -617,7 +617,7 @@ commit (int argc, char **argv)
 #endif
 
     if (saved_tag != NULL)
-	tag_check_valid (saved_tag, argc, argv, local, aflag, "");
+	tag_check_valid (saved_tag, argc, argv, local, aflag, "", false);
 
     /* XXX - this is not the perfect check for this */
     if (argc <= 0)

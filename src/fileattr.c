@@ -450,6 +450,8 @@ fileattr_setall (const char *filename, const char *attrs)
     attrs_modified = 1;
 }
 
+
+
 void
 fileattr_newfile (const char *filename)
 {
@@ -478,6 +480,8 @@ fileattr_newfile (const char *filename)
     attrs_modified = 1;
 }
 
+
+
 static int
 writeattr_proc (Node *node, void *data)
 {
@@ -489,6 +493,53 @@ writeattr_proc (Node *node, void *data)
     fputs ("\012", fp);
     return 0;
 }
+
+
+
+/*
+ * callback proc to run a script when watch command finishes.
+ */
+static int
+postwatch_proc (const char *repository, const char *filter, void *closure)
+{
+    char *cmdline;
+    const char *srepos = Short_Repository (repository);
+
+    TRACE (TRACE_FUNCTION, "postwatch_proc (%s, %s)", repository, filter);
+
+    /* %p = shortrepos
+     * %r = repository
+     */
+    cmdline = format_cmdline (
+#ifdef SUPPORT_OLD_INFO_FMT_STRINGS
+	                      0, srepos,
+#endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
+	                      filter,
+	                      "c", "s", cvs_cmd_name,
+	                      "p", "s", srepos,
+	                      "r", "s", current_parsed_root->directory,
+	                      (char *)NULL
+	                     );
+
+    if (!cmdline || !strlen (cmdline))
+    {
+	if (cmdline) free (cmdline);
+	error (0, 0, "postwatch proc resolved to the empty string!");
+	return 1;
+    }
+
+    run_setup (cmdline);
+
+    free (cmdline);
+
+    /* FIXME - read the comment in verifymsg_proc() about why we use abs()
+     * below() and shouldn't.
+     */
+    return abs (run_exec (RUN_TTY, RUN_TTY, RUN_TTY,
+			  RUN_NORMAL | RUN_SIGIGNORE));
+}
+
+
 
 void
 fileattr_write (void)
@@ -610,7 +661,12 @@ fileattr_write (void)
 	error (0, errno, "cannot close %s", fname);
     attrs_modified = 0;
     free (fname);
+
+    Parse_Info (CVSROOTADM_POSTWATCH, fileattr_stored_repos, postwatch_proc,
+		PIOPT_ALL, NULL);
 }
+
+
 
 void
 fileattr_free (void)
