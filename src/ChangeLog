@@ -1,5 +1,9 @@
 2003-10-03  Derek Price  <derek@ximbiot.com>
 
+	* lock.c (remove_locks): Eliminate unecessary typecasting.
+
+2003-10-03  Derek Price  <derek@ximbiot.com>
+
 	Move calls to rcs_cleanup to the atexit handler.
 
 	* error.c (error_exit): Don't call rcs_cleanup.
