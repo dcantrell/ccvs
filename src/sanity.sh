@@ -1191,26 +1191,17 @@ ${PROG} [a-z]*: Updating second-dir"
 "" "${PROG} release: deletion of directory \. failed: .*"
 	  dotest basicc-9 "test -d ../second-dir" ""
 	  # For CVS to make a syntactic check for "." wouldn't suffice.
-########
-# OOPS -- the following change has been reversed, for now.
-#   Larry Jones (larry.jones@sdrc.com)
-#   questioned the validity of the change I just made, and I
-#   want to look into it further.  So, the basicc-11 test
-#   is currently being executed, and the comment below about its
-#   deletion is invalid.  Once we figure out which is correct,
-#   we'll clean up these comments.  In the meantime, I want to
-#   leave things the way they were before.
-# EWS:  I've commented out basicc-11.  The test is currently failing,
-# but there are indications that the test is now invalid while the code
-# is okay.  Steve Dodd (dirk@loth.demon.co.uk) submitted a patch to
-# bug-cvs on 16 July 1999 which had the same effect, except that his
-# patch removed basicc-8 as well.  I'm leaving basicc-8 for now, since
-# that test is passing for me, and I want to keep this change minimal.
-#
+	  # On Linux 2.2 systems, the cwd may be gone, so we recreate it
+          # to allow basicc-11 to actually happen 
+	  if ! test -d ../first-dir; then
+	    cd ..
+	    mkdir ./first-dir
+            cd ./first-dir
+	  fi
 	  dotest basicc-11 "${testcvs} -Q release -d ./." \
 "" "${PROG} release: deletion of directory \./\. failed: .*"
-########
 	  dotest basicc-11a "test -d ../second-dir" ""
+
 	  cd ..
 	  cd ..
 
