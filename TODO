@@ -804,3 +804,6 @@ backwards compatibility with old CVSROOTs.
 200.  Make a 'cvs add' without write access a non-fatal error so that the
 user's Entries file is updated and future 'cvs diffs' will work properly.  This
 should ease patch submission.
+
+201.  cvs_temp_file should be creating temporary files in a privately owned
+subdirectory of of temp due to security issues on some systems.
