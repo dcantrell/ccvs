@@ -7334,7 +7334,7 @@ RCS_deltas (RCSNode *rcs, FILE *fp, struct rcsbuffer *rcsbuf,
 		if (*log != NULL)
 		{
 		    error (0, 0, "Duplicate `log' keyword in RCS file (`%s').",
-		           rcs->path);
+		           rcs->print_path);
 		    free (*log);
 		}
 		*log = rcsbuf_valcopy (rcsbuf, value, 0, loglen);
