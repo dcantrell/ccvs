@@ -3561,6 +3561,13 @@ does not require that you have a working copy of the
 module.  @xref{rtag}.  (You can also use the @code{tag}
 command; @pxref{tag}).
 
+@c Why does this example use -r?  That seems like a
+@c confusing thing to do in an example where we are
+@c introducing branches.  One user thought it was
+@c a mandatory part of creating a branch for example.
+@c And we are not sufficiently
+@c "step by step" in terms of explaining
+@c what argument one should give to -r.
 @example
 $ cvs rtag -b -r release-1-0 release-1-0-patches tc
 @end example
