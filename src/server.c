@@ -3169,7 +3169,18 @@ server_updated (finfo, vers, updated, file_info, checksum)
     unsigned char *checksum;
 {
     if (noexec)
+    {
+	/* Hmm, maybe if we did the same thing for entries_file, we
+	   could get rid of the kludges in server_register and
+	   server_scratch which refrain from warning if both
+	   Scratch_Entry and Register get called.  Maybe.  */
+	if (scratched_file)
+	{
+	    free (scratched_file);
+	    scratched_file = NULL;
+	}
 	return;
+    }
 
     if (entries_line != NULL && scratched_file == NULL)
     {

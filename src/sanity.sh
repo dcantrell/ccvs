@@ -4836,7 +4836,29 @@ U file2"
 	  dotest conflicts3-8 "${testcvs} -q update" \
 "U file1
 U file2"
-	  dotest conflicts3-7 "test -f file2" ''
+	  dotest conflicts3-9 "test -f file2" ''
+
+	  # OK, now remove two files at once
+	  dotest conflicts3-10 "${testcvs} rm -f file1 file2" \
+"${PROG} [a-z]*: scheduling .file1. for removal
+${PROG} [a-z]*: scheduling .file2. for removal
+${PROG} [a-z]*: use .${PROG} commit. to remove these files permanently"
+	  dotest conflicts3-11 "${testcvs} -q ci -m remove-them" \
+"Removing file1;
+${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
+new revision: delete; previous revision: 1\.1
+done
+Removing file2;
+${TESTDIR}/cvsroot/first-dir/file2,v  <--  file2
+new revision: delete; previous revision: 1\.1
+done"
+	  cd ../../1/first-dir
+	  dotest conflicts3-12 "${testcvs} -n -q update" \
+"${PROG} [a-z]*: warning: file1 is not (any longer) pertinent
+${PROG} [a-z]*: warning: file2 is not (any longer) pertinent"
+	  dotest conflicts3-13 "${testcvs} -q update" \
+"${PROG} [a-z]*: warning: file1 is not (any longer) pertinent
+${PROG} [a-z]*: warning: file2 is not (any longer) pertinent"
 	  cd ../..
 
 	  rm -r 1 2
