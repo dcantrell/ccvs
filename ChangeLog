@@ -1,3 +1,11 @@
+Fri Mar  1 09:21:56 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* README.VMS: Remove distribution information (since it is no
+	longer different for VMS).  Various wording fixes to reflect the
+	fact that using rsh is just one of several ways to connect to a
+	cvs server, not "the official" one.  Say that the unsuitable rsh
+	is the UCX one.  Clarify what rsh uses privileged ports for.
+
 Fri Mar  1 01:26:28 1996  Benjamin J. Lee  <benjamin@cyclic.com>
 
 	* README.VMS, build.com: Added for VMS.
