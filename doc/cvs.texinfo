@@ -798,6 +798,18 @@ will not show up in future editor sessions.
 @c FIXCVS: Might be nice if "commit" and other commands
 @c would reset that timestamp too, but currently commit
 @c doesn't.
+@c FIXME: Need to talk more about the process of
+@c prompting for the log message.  Like show an example
+@c of what it pops up in the editor, for example.  Also
+@c a discussion of how to get the "a)bort, c)ontinue,
+@c e)dit" prompt and what to do with it.  Might also
+@c work in the suggestion that if you want a diff, you
+@c should make it before running commit (someone
+@c suggested that the diff pop up in the editor.  I'm
+@c not sure that is better than telling people to run
+@c "cvs diff" first if that is what they want, but if
+@c we want to tell people that, the manual possibly
+@c should say it).
 
 If you want to avoid
 starting an editor you can specify the log message on
