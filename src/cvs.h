@@ -657,11 +657,12 @@ void read_cvsrc (int *argc, char ***argv, const char *cmdname);
 #define	RUN_SIGIGNORE         0x0010    /* ignore interrupts for command */
 #define	RUN_TTY               (char *)0 /* for the benefit of lint */
 
-void run_arg (const char *s);
+void run_add_arg (const char *s);
 void run_print (FILE * fp);
 void run_setup (const char *prog);
 int run_exec (const char *stin, const char *stout, const char *sterr,
               int flags);
+int run_piped (int *, int *);
 
 /* other similar-minded stuff from run.c.  */
 FILE *run_popen (const char *, const char *);
