@@ -78,24 +78,6 @@
 #endif
 
 /*
- * The Repository file holds the path to the directory within the
- * source repository that contains the RCS ,v files for each CVS
- * working directory.  This path is either a full-path or a path
- * relative to CVSROOT.
- * 
- * The big advantage that I can see to having a relative path is that
- * one can change the physical location of the master source
- * repository, change the contents of CVS/Root files in your
- * checked-out code, and CVS will work without problems.
- *
- * Therefore, RELATIVE_REPOS is now the default.  In the future, this
- * is likely to disappear entirely as a compile-time (or other) option,
- * so if you have other software which relies on absolute pathnames,
- * update them.
- */
-#define RELATIVE_REPOS 1
-
-/*
  * When committing or importing files, you must enter a log message.
  * Normally, you can do this either via the -m flag on the command line or an
  * editor will be started for you.  If you like to use logging templates (the
@@ -120,18 +102,6 @@
  */
 #ifndef CVS_FUDGELOCKS
 /* #define CVS_FUDGELOCKS */
-#endif
-
-/* There is some pretty unixy code in src/commit.c which tries to
-   prevent people from commiting changes as "root" (which would prevent
-   CVS from making a log entry with the actual user).  On VMS, I suppose
-   one could say that SYSTEM is equivalent, but I would think that it
-   actually is not necessary; at least at the VMS sites I've worked at
-   people just used their own accounts (turning privileges on and off
-   as desired).  */
-
-#ifndef CVS_BADROOT
-/* #define	CVS_BADROOT */
 #endif
 
 /*

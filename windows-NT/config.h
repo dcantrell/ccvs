@@ -338,3 +338,21 @@ extern char *sock_strerror (int errnum);
 
 /* ssize_t not available under Windows */
 typedef int ssize_t;
+
+/*
+ * When committing a permanent change, CVS and RCS make a log entry of
+ * who committed the change.  If you are committing the change logged in
+ * as "root" (not under "su" or other root-priv giving program), CVS/RCS
+ * cannot determine who is actually making the change.
+ *
+ * As such, by default, CVS disallows changes to be committed by users
+ * logged in as "root".  You can disable this option by commenting
+ * out the lines below.
+ *
+ * Under Windows NT, privileges are associated with groups, not users,
+ * so the case in which someone has logged in as root does not occur.
+ * Thus, there is no need for this hack.
+ *
+ * Are we sure this doesn't happen with Administrator? -DRP
+ */
+#undef CVS_BADROOT
