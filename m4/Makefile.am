@@ -31,20 +31,25 @@ EXTRA_DIST = \
 	codeset.m4 \
 	dirname.m4 \
 	dos.m4 \
+	eoverflow.m4 \
 	exitfail.m4 \
 	extensions.m4 \
 	fnmatch.m4 \
 	getcwd.m4 \
 	getdate.m4 \
+	gethostname.m4 \
 	getline.m4 \
 	getnline.m4 \
+	getndelim2.m4 \
 	getopt.m4 \
+	getpass.m4 \
 	gettext.m4 \
 	glibc21.m4 \
 	gettime.m4 \
 	gettimeofday.m4 \
 	iconv.m4 \
 	intdiv0.m4 \
+	intmax.m4 \
 	intmax_t.m4 \
 	inttypes_h.m4 \
 	inttypes.m4 \
@@ -59,6 +64,7 @@ EXTRA_DIST = \
 	lstat.m4 \
 	malloc.m4 \
 	mbstate_t.m4 \
+	memmove.m4 \
 	mkstemp.m4 \
 	mktime.m4 \
 	nanosleep.m4 \
@@ -66,6 +72,7 @@ EXTRA_DIST = \
 	onceonly_2_57.m4 \
 	pathmax.m4 \
 	po.m4 \
+	printf-posix.m4 \
 	progtest.m4 \
 	realloc.m4 \
 	regex.m4 \
@@ -73,6 +80,7 @@ EXTRA_DIST = \
 	save-cwd.m4 \
 	signed.m4 \
 	size_max.m4 \
+	ssize_t.m4 \
 	st_mtim.m4 \
 	stat.m4 \
 	stdbool.m4 \

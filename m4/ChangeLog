@@ -1,5 +1,14 @@
 2004-10-05  Derek Price  <derek@ximbiot.com>
 
+	* Makefile.am (EXTRA_DIST): Add new and previously missing files.
+	* eoverflow.m4, intmax.m4, printf-posix.m4: New files from GNULIB.
+	* gettext.m4, glibc21.m4, intmax_t.m4, inttypes_h.m4, lib-ld.m4,
+	lib-link.m4, lib-prefix.m4, longlong.m4, po.m4, stdint_h.m4,
+	uintmax_t.m4, ulonglong.m4, vasnprintf.m4: Import most recent versions
+	from GNULIB.
+
+2004-10-05  Derek Price  <derek@ximbiot.com>
+
 	* save-cwd.m4: New file from GNULIB.
 
 2004-10-05  Derek Price  <derek@ximbiot.com>
