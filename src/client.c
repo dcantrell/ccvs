@@ -3361,7 +3361,10 @@ connect_to_pserver (cvsroot_t *root, struct buffer **to_server_p,
     int sock;
     int port_number,
 	proxy_port_number = 0; /* Initialize to silence -Wall.  Dumb.  */
-    struct sockaddr_in client_sai;
+    union sai {
+	struct sockaddr_in addr_in;
+	struct sockaddr addr;
+    } client_sai;
     struct hostent *hostinfo;
     struct buffer *to_server, *from_server;
 
@@ -3374,25 +3377,25 @@ connect_to_pserver (cvsroot_t *root, struct buffer **to_server_p,
     if (root->proxy_hostname)
     {
         proxy_port_number = get_proxy_port_number (root);
-	hostinfo = init_sockaddr (&client_sai, root->proxy_hostname,
+	hostinfo = init_sockaddr (&client_sai.addr_in, root->proxy_hostname,
                                   proxy_port_number);
         TRACE (1, "Connecting to %s:%d via proxy %s(%s):%d.",
                root->hostname, port_number, root->proxy_hostname,
-               inet_ntoa (client_sai.sin_addr), proxy_port_number);
+               inet_ntoa (client_sai.addr_in.sin_addr), proxy_port_number);
     }
     else
     {
-	hostinfo = init_sockaddr (&client_sai, root->hostname, port_number);
+	hostinfo = init_sockaddr (&client_sai.addr_in, root->hostname, port_number);
         TRACE (1, "Connecting to %s(%s):%d.",
                root->hostname,
-               inet_ntoa (client_sai.sin_addr), port_number);
+               inet_ntoa (client_sai.addr_in.sin_addr), port_number);
     }
 
-    if (connect (sock, &client_sai, sizeof (client_sai))
+    if (connect (sock, &client_sai.addr, sizeof (client_sai))
 	< 0)
 	error (1, 0, "connect to %s(%s):%d failed: %s",
 	       root->proxy_hostname ? root->proxy_hostname : root->hostname,
-	       inet_ntoa (client_sai.sin_addr),
+	       inet_ntoa (client_sai.addr_in.sin_addr),
 	       root->proxy_hostname ? proxy_port_number : port_number,
                SOCK_STRERROR (SOCK_ERRNO));
 
@@ -4682,7 +4685,7 @@ send_file_names (int argc, char **argv, unsigned int flags)
 		    CVS_CHDIR (q);
 		free (q);
 	    }
-	    restore_cwd (&sdir, NULL);
+	    restore_cwd (&sdir);
 	    free_cwd (&sdir);
 
 	    /* Now put everything we didn't find entries for back on. */

@@ -1,3 +1,9 @@
+2004-10-06  Mark D. Baushke  <mdb@cvshome.org>
+
+	* client.c (send_file_names): Use new save-cwd API.
+	(connect_to_pserver): Use a union to avoid incompatible pointer
+	type warnings.
+
 2004-10-05  Derek Price  <derek@ximbiot.com>
 
 	* cvs.h (Xstrdup): New proto mapped via define to xstrdup.

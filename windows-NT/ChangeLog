@@ -1,3 +1,7 @@
+2004-10-06  Mark D. Baushke  <mdb@cvshome.org>
+
+	* unistd.h: Add prototype entries for chdir and close
+
 2004-10-05  Derek Price  <derek@ximbiot.com>
 
 	* config.h.in.in: s/FILESYSTEM/FILE_SYSTEM/ in keeping with GNULIB.
