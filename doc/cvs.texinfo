@@ -6055,8 +6055,8 @@ a new revision of the file.
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node Keyword list
-@section RCS Keywords
-@cindex RCS keywords
+@section Keyword List
+@cindex Keyword List
 
 @c FIXME: need some kind of example here I think, 
 @c perhaps in a
@@ -6220,7 +6220,7 @@ static char *id="@@(#) $@asis{}Id: ab.c,v 1.5 1993/10/19 14:57:32 ceder Exp $";
 Keyword substitution has its disadvantages.  Sometimes
 you might want the literal text string
 @samp{$@asis{}Author$} to appear inside a file without
-@sc{rcs} interpreting it as a keyword and expanding it
+@sc{cvs} interpreting it as a keyword and expanding it
 into something like @samp{$@asis{}Author: ceder $}.  
 
 There is unfortunately no way to selectively turn off
