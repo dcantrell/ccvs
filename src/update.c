@@ -2544,8 +2544,8 @@ special_file_mismatch (finfo, rev1, rev2)
     dev_t rev1_dev, rev2_dev;
     char *rev1_symlink = NULL;
     char *rev2_symlink = NULL;
-    List *rev1_hardlinks;
-    List *rev2_hardlinks;
+    List *rev1_hardlinks = NULL;
+    List *rev2_hardlinks = NULL;
     int check_uids, check_gids, check_modes;
     int result;
 
