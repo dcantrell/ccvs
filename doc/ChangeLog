@@ -1,3 +1,7 @@
+1999-09-24  Larry Jones  <larry.jones@sdrc.com>
+
+	* cvs.texinfo: Misc. formatting cleanups.
+
 1999-07-16  Tom Tromey  <tromey@cygnus.com>
 
 	* cvs.texinfo (admin): Mention admin -k exception.  Add cvsadmin

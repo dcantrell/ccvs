@@ -1043,7 +1043,7 @@ directory; such files have the permissions which are
 typical for newly created files, except that sometimes
 @sc{cvs} creates them read-only (see the sections on
 watches, @ref{Setting a watch}; -r, @ref{Global
-options}; or CVSREAD, @ref{Environment variables}).
+options}; or @code{CVSREAD}, @ref{Environment variables}).
 @c FIXME: Need more discussion of which
 @c group should own the file in the repository.
 @c Include a somewhat detailed example of the usual
@@ -2179,7 +2179,7 @@ There is no need to edit @code{inetd.conf} or start a
 @cindex Kerberos, using kerberized rsh
 @cindex SSH (rsh replacement)
 @cindex rsh replacements (Kerberized, SSH, &c)
-There are two access methods that you use in CVSROOT
+There are two access methods that you use in @code{CVSROOT}
 for rsh.  @code{:server:} specifies an internal rsh
 client, which is supported only by some CVS ports.
 @code{:ext:} specifies an external rsh program.  By
@@ -2444,7 +2444,6 @@ longer any need to specify the repository explicitly,
 because @sc{cvs} records it in the working copy's
 @file{CVS} subdirectory.)
 
-@cindex CVS_PASSFILE, environment variable
 Passwords are stored by default in the file
 @file{$HOME/.cvspass}.  Its format is human-readable,
 but don't edit it unless you know what you are doing.
@@ -2453,19 +2452,20 @@ trivially encoded to protect them from "innocent"
 compromise (i.e., inadvertently being seen by a system
 administrator who happens to look at that file).
 
-@c FIXME: seems to me this needs somewhat more
-@c explanation.
-@cindex Logout (subcommand)
-The password for the currently chosen remote repository
-can be removed from the CVS_PASSFILE by using the
-@code{cvs logout} command.
-
+@cindex CVS_PASSFILE, environment variable
 The @code{CVS_PASSFILE} environment variable overrides
 this default.  If you use this variable, make sure you
 set it @emph{before} @code{cvs login} is run.  If you
 were to set it after running @code{cvs login}, then
 later @sc{cvs} commands would be unable to look up the
 password for transmission to the server.
+
+@c FIXME: seems to me this needs somewhat more
+@c explanation.
+@cindex Logout (subcommand)
+The password for the currently chosen remote repository
+can be removed from the @code{CVS_PASSFILE} by using the
+@code{cvs logout} command.
 
 @node Password authentication security
 @subsubsection Security considerations with password authentication
@@ -2775,7 +2775,7 @@ cvs-serv@var{pid}
 @noindent
 where @var{pid} is the process identification number of
 the server.  They are located in the directory
-specified by the @samp{TMPDIR} environment variable
+specified by the @code{TMPDIR} environment variable
 (@pxref{Environment variables}), the @samp{-T} global
 option (@pxref{Global options}), or failing that
 @file{/tmp}.
@@ -2897,7 +2897,7 @@ examples) or a path name relative to @code{$CVSROOT},
 as it did in the example above.
 
 It is a good idea to check that the permissions
-@sc{cvs} sets on the directories inside @samp{$CVSROOT}
+@sc{cvs} sets on the directories inside @code{$CVSROOT}
 are reasonable, and that they belong to the proper
 groups.  @xref{File permissions}.
 
@@ -3033,7 +3033,7 @@ Then, use @code{add} to add files (and new directories)
 as they appear.
 
 Check that the permissions @sc{cvs} sets on the
-directories inside @samp{$CVSROOT} are reasonable.
+directories inside @code{$CVSROOT} are reasonable.
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node Defining the module
@@ -10199,7 +10199,7 @@ options}.
 Print a help message.  See @ref{Global options}.
 
 @item -l
-Do not log in CVSROOT/history file.  See @ref{Global
+Do not log in @file{$CVSROOT/CVSROOT/history} file.  See @ref{Global
 options}.
 
 @item -n
@@ -12339,6 +12339,7 @@ format changes with future releases of @sc{cvs}.
 
 @node Variables
 @appendixsec Expansions in administrative files
+@cindex Internal variables
 
 Sometimes in writing an administrative file, you might
 want the file to be able to know various things based
@@ -12370,11 +12371,13 @@ internal variables are:
 
 @table @code
 @item CVSROOT
+@cindex CVSROOT, internal variable
 This is the value of the @sc{cvs} root in use.
 @xref{Repository}, for a description of the various
 ways to specify this.
 
 @item RCSBIN
+@cindex RCSBIN, internal variable
 In @sc{cvs} 1.9.18 and older, this specified the
 directory where @sc{cvs} was looking for @sc{rcs}
 programs.  Because @sc{cvs} no longer runs @sc{rcs}
@@ -12382,13 +12385,17 @@ programs, specifying this internal variable is now an
 error.
 
 @item CVSEDITOR
+@cindex CVSEDITOR, internal variable
 @itemx VISUAL
+@cindex VISUAL, internal variable
 @itemx EDITOR
+@cindex EDITOR, internal variable
 These all expand to the same value, which is the editor
 that @sc{cvs} is using.  @xref{Global options}, for how
 to specify this.
 
 @item USER
+@cindex USER, internal variable
 Username of the user running @sc{cvs} (on the @sc{cvs}
 server machine).
 @end table
@@ -12481,10 +12488,10 @@ The default value is @samp{no}.
 This option is useful if you find yourself performing
 many commands at the top level of your working
 directory, rather than in one of the checked out
-subdirectories.  The @samp{CVS} directory created there
-will mean you don't have to specify @samp{CVSROOT} for
+subdirectories.  The @file{CVS} directory created there
+will mean you don't have to specify @code{CVSROOT} for
 each command.  It also provides a place for the
-@samp{CVS/Template} file (@pxref{Working directory
+@file{CVS/Template} file (@pxref{Working directory
 storage}).
 
 @cindex LockDir, in CVSROOT/config
@@ -12577,10 +12584,10 @@ programs it uses.
 @item $HOMEDRIVE
 Used to locate the directory where the @file{.cvsrc}
 file, and other such files, are searched.  On Unix, CVS
-just checks for HOME.  On Windows NT, the system will
-set HOMEDRIVE, for example to @samp{d:} and HOMEPATH,
+just checks for @code{HOME}.  On Windows NT, the system will
+set @code{HOMEDRIVE}, for example to @samp{d:} and @code{HOMEPATH},
 for example to @file{\joe}.  On Windows 95, you'll
-probably need to set HOMEDRIVE and HOMEPATH yourself.
+probably need to set @code{HOMEDRIVE} and @code{HOMEPATH} yourself.
 @c We are being vague about whether HOME works on
 @c Windows; see long comment in windows-NT/filesubr.c.
 
@@ -12616,9 +12623,9 @@ the server side. (Currently not used for Unix clients).
 @cindex CVS_CLIENT_LOG, environment variable
 @item $CVS_CLIENT_LOG
 Used for debugging only in client-server
-mode.  If set, everything send to the server is logged
+mode.  If set, everything sent to the server is logged
 into @file{@code{$CVS_CLIENT_LOG}.in} and everything
-send from the server is logged into
+sent from the server is logged into
 @file{@code{$CVS_CLIENT_LOG}.out}.
 
 @cindex CVS_SERVER_SLEEP, environment variable
@@ -12634,7 +12641,7 @@ For @sc{cvs} 1.10 and older, setting this variable
 prevents @sc{cvs} from overwriting the @file{CVS/Root}
 file when the @samp{-d} global option is specified.
 Later versions of @sc{cvs} do not rewrite
-@file{CVS/Root}, so CVS_IGNORE_REMOTE_ROOT has no
+@file{CVS/Root}, so @code{CVS_IGNORE_REMOTE_ROOT} has no
 effect.
 
 @cindex COMSPEC, environment variable
@@ -12809,7 +12816,7 @@ This is a generic response when trying to connect to a
 pserver server which chooses not to provide a
 specific reason for denying authorization.  Check that
 the username and password specified are correct and
-that the CVSROOT specified is allowed by --allow-root
+that the @code{CVSROOT} specified is allowed by --allow-root
 in inetd.conf.  See @ref{Password authenticated}.
 
 @item @var{file}:@var{line}: Assertion '@var{text}' failed
@@ -12929,7 +12936,7 @@ bug (@pxref{BUGS}).
 @item cvs [login aborted]: could not find out home directory
 This means that you need to set the environment
 variables that CVS uses to locate your home directory.
-See the discussion of HOME, HOMEDRIVE, and HOMEPATH in
+See the discussion of @code{HOME}, @code{HOMEDRIVE}, and @code{HOMEPATH} in
 @ref{Environment variables}.
 
 @item cvs update: could not merge revision @var{rev} of @var{file}: No such file or directory
