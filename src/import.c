@@ -39,8 +39,8 @@ static int update_rcs_file PROTO((char *message, char *vfile, char *vtag, int ta
 static void add_log PROTO((int ch, char *fname));
 
 static int repos_len;
-static char vhead[50];
-static char vbranch[50];
+static char *vhead;
+static char *vbranch;
 static FILE *logfp;
 static char *repository;
 static int conflicts;
@@ -79,7 +79,7 @@ import (argc, argv)
     ign_setup ();
     wrap_setup ();
 
-    (void) strcpy (vbranch, CVSBRANCH);
+    vbranch = xstrdup (CVSBRANCH);
     optind = 1;
     while ((c = getopt (argc, argv, "Qqdb:m:I:k:W:")) != -1)
     {
@@ -100,7 +100,8 @@ import (argc, argv)
 		use_file_modtime = 1;
 		break;
 	    case 'b':
-		(void) strcpy (vbranch, optarg);
+		free (vbranch);
+		vbranch = xstrdup (optarg);
 		break;
 	    case 'm':
 #ifdef FORCE_USE_EDITOR
@@ -176,7 +177,7 @@ import (argc, argv)
 	    error (1, 0, "%s is not a numeric branch", vbranch);
     if (numdots (vbranch) != 2)
 	error (1, 0, "Only branches with two dots are supported: %s", vbranch);
-    (void) strcpy (vhead, vbranch);
+    vhead = xstrdup (vbranch);
     cp = strrchr (vhead, '.');
     *cp = '\0';
 
@@ -329,6 +330,8 @@ import (argc, argv)
     if (message)
 	free (message);
     free (repository);
+    free (vbranch);
+    free (vhead);
 
     return (err);
 }

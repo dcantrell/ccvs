@@ -1,3 +1,13 @@
+Thu Mar  6 12:44:42 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* import.c: Allocate vhead and vbranch dynamically; removes
+	arbitrary limit.
+	* history.c: Likewise (since_rev, since_tag, backto, rec_types).
+	* ignore.c: Likewise (line).  Also check for errors from getline
+	and add 'copyright' notice to top of file.
+	* wrapper.c (wrap_add_file): Likewise (line).  Also check for
+	errors from various calls and add 'copyright' notice to top of file.
+
 Tue Mar  4 17:39:15 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* client.c (update_entries): Add comment about "move away <file>"
