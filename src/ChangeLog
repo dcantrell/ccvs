@@ -1,3 +1,8 @@
+2000-05-20  Ian Lance Taylor  <ian@zembu.com>
+
+	* client.c (connect_to_gserver): Handle server error messages
+	reasonably.
+
 2000-05-19  Larry Jones  <larry.jones@sdrc.com>
 
 	* server.c (requests): Make Global_option RQ_ROOTLESS so it can be

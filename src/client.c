@@ -4152,7 +4152,29 @@ connect_to_gserver (sock, hostinfo)
 
 	    recv_bytes (sock, cbuf, 2);
 	    need = ((cbuf[0] & 0xff) << 8) | (cbuf[1] & 0xff);
-	    assert (need <= sizeof buf);
+
+	    if (need > sizeof buf)
+	    {
+		int got;
+
+		/* This usually means that the server sent us an error
+		   message.  Read it byte by byte and print it out.
+		   FIXME: This is a terrible error handling strategy.
+		   However, even if we fix the server, we will still
+		   want to do this to work with older servers.  */
+		buf[0] = cbuf[0];
+		buf[1] = cbuf[1];
+		got = recv (sock, buf + 2, sizeof buf - 2, 0);
+		if (got < 0)
+		    error (1, 0, "recv() from server %s: %s",
+			   CVSroot_hostname, SOCK_STRERROR (SOCK_ERRNO));
+		buf[got + 2] = '\0';
+		if (buf[got + 1] == '\n')
+		    buf[got + 1] = '\0';
+		error (1, 0, "error from server %s: %s", CVSroot_hostname,
+		       buf);
+	    }
+
 	    recv_bytes (sock, buf, need);
 	    tok_in.length = need;
 	}
