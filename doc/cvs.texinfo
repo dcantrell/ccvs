@@ -7453,6 +7453,34 @@ directory, treating files whose name ends in
 cvs import -I ! -W "*.exe -k 'b'" first-dir vendortag reltag
 @end example
 
+@c Another good example, would be storing files
+@c (e.g. binary files) compressed in the repository.
+@c 	::::::::::::::::::
+@c 	cvswrappers
+@c 	::::::::::::::::::
+@c 	*.t12 -m 'COPY'
+@c 	*.t[0-9][0-9] -f 'gunzipcp %s' -t 'gzipcp %s %s' -m 'COPY'
+@c 
+@c	::::::::::::::::::
+@c	gunzipcp
+@c	::::::::::::::::::
+@c	:
+@c	[ -f $1 ] || exit 1
+@c	zcat $1 > /tmp/.#$1.$$
+@c	mv /tmp/.#$1.$$ $1
+@c
+@c	::::::::::::::::::
+@c	gzipcp
+@c	::::::::::::::::::
+@c	:
+@c	DIRNAME=`echo $1 | sed -e "s|/.*/||g"`
+@c	if [ ! -d $DIRNAME ] ; then
+@c	      DIRNAME=`echo $1 | sed -e "s|.*/||g"`
+@c	fi
+@c	gzip -c  $DIRNAME  > $2
+@c One catch--"cvs diff" will not invoke the wrappers
+@c (probably a CVS bug, although I haven't thought it out).
+
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node commit files
 @appendixsec The commit support files
