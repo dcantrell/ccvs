@@ -1363,7 +1363,7 @@ VERS: ", 0);
 	{
 	    revbuf = buf_nonio_initialize ((BUFMEMERRPROC) NULL);
 	    status = RCS_checkout (vers_ts->srcfile, (char *) NULL,
-				   vers_ts->vn_rcs, vers_ts->vn_tag,
+				   vers_ts->vn_rcs, vers_ts->tag,
 				   vers_ts->options, RUN_TTY,
 				   checkout_to_buffer, revbuf);
 	}
@@ -1371,7 +1371,7 @@ VERS: ", 0);
 #endif
 	    status = RCS_checkout (vers_ts->srcfile,
 				   pipeout ? NULL : finfo->file,
-				   vers_ts->vn_rcs, vers_ts->vn_tag,
+				   vers_ts->vn_rcs, vers_ts->tag,
 				   vers_ts->options, RUN_TTY,
 				   (RCSCHECKOUTPROC) NULL, (void *) NULL);
     }
@@ -1703,8 +1703,20 @@ patch_file (finfo, vers_ts, docheckout, file_info, checksum)
     data.final_nl = 0;
     data.compute_checksum = 0;
 
+    /* FIXME - Passing vers_ts->tag here is wrong in the least number
+     * of cases.  Since we don't know whether vn_user was checked out
+     * using a tag, we pass vers_ts->tag, which, assuming the user did
+     * not specify a new TAG to -r, will be the branch we are on.
+     *
+     * The only thing it is used for is to substitute in for the Name
+     * RCS keyword, so in the error case, the patch fails to apply on
+     * the client end and we end up resending the whole file.
+     *
+     * At least, if we are keeping track of the tag vn_user came from,
+     * I don't know where yet. -DRP
+     */
     retcode = RCS_checkout (vers_ts->srcfile, (char *) NULL,
-			    vers_ts->vn_user, (char *) NULL,
+			    vers_ts->vn_user, vers_ts->tag,
 			    vers_ts->options, RUN_TTY,
 			    patch_file_write, (void *) &data);
 
@@ -1727,7 +1739,7 @@ patch_file (finfo, vers_ts, docheckout, file_info, checksum)
 	cvs_MD5Init (&data.context);
 
 	retcode = RCS_checkout (vers_ts->srcfile, (char *) NULL,
-				vers_ts->vn_rcs, vers_ts->vn_tag,
+				vers_ts->vn_rcs, vers_ts->tag,
 				vers_ts->options, RUN_TTY,
 				patch_file_write, (void *) &data);
 
@@ -2460,8 +2472,11 @@ join_file (finfo, vers)
     {
 	int retcode;
 	/* The file is up to date.  Need to check out the current contents.  */
+	/* FIXME - see the FIXME comment above the call to RCS_checkout in the
+	 * patch_file function.
+	 */
 	retcode = RCS_checkout (vers->srcfile, finfo->file,
-				vers->vn_user, (char *) NULL,
+				vers->vn_user, vers->tag,
 				(char *) NULL, RUN_TTY,
 				(RCSCHECKOUTPROC) NULL, (void *) NULL);
 	if (retcode != 0)
@@ -2507,16 +2522,29 @@ join_file (finfo, vers)
 	&& vers->ts_user != NULL
 	&& strcmp (vers->ts_user, vers->ts_rcs) == 0
 
-	/* This is because of the worry below about $Name.  If that
-	   isn't a problem, I suspect this code probably works for
-	   text files too.  */
+	/* Avoid this in the text file case.  See below for why.
+	 */
 	&& (strcmp (t_options, "-kb") == 0
 	    || wrap_merge_is_copy (finfo->file)))
     {
-	/* FIXME: what about nametag?  What does RCS_merge do with
-	   $Name?  */
-	if (RCS_checkout (finfo->rcs, finfo->file, rev2, NULL, t_options,
-			  RUN_TTY, (RCSCHECKOUTPROC)0, NULL) != 0)
+	/* FIXME: Verify my comment below:
+	 *
+	 * RCS_merge does nothing with keywords.  It merges the changes between
+	 * two revisions without expanding the keywords (it might expand in
+	 * -kk mode before computing the diff between rev1 and rev2 - I'm not
+	 * sure).  In other words, the keyword lines in the current work file
+	 * get left alone.
+	 *
+	 * Therfore, checking out the destination revision (rev2) is probably
+	 * incorrect in the text case since we should see the keywords that were
+	 * substituted into the original file at the time it was checked out
+	 * and not the keywords from rev2.
+	 *
+	 * Also, it is safe to pass in NULL for nametag since we know no
+	 * substitution is happening during the binary mode checkout.
+	 */
+	if (RCS_checkout ( finfo->rcs, finfo->file, rev2, (char *)NULL, t_options,
+			   RUN_TTY, (RCSCHECKOUTPROC)0, NULL) != 0 )
 	    status = 2;
 	else
 	    status = 0;
@@ -2544,13 +2572,14 @@ join_file (finfo, vers)
 	     || special_file_mismatch (finfo, rev1, rev2))
     {
 	/* We are dealing with binary files, or files with a
-	   permission/linkage mismatch, and real merging would
+	   permission/linkage mismatch (this second case only occurs when
+	   PRESERVE_PERMISSIONS_SUPPORT is enabled), and real merging would
 	   need to take place.  This is a conflict.  We give the user
 	   the two files, and let them resolve it.  It is possible
 	   that we should require a "touch foo" or similar step before
 	   we allow a checkin.  */
-	if (RCS_checkout (finfo->rcs, finfo->file, rev2, NULL, t_options,
-			  RUN_TTY, (RCSCHECKOUTPROC)0, NULL) != 0)
+	if (RCS_checkout ( finfo->rcs, finfo->file, rev2, (char *)NULL,
+			   t_options, RUN_TTY, (RCSCHECKOUTPROC)0, NULL) != 0)
 	    status = 2;
 	else
 	    status = 0;

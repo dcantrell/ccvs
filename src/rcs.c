@@ -4062,14 +4062,14 @@ expand_keywords (rcs, ver, name, log, loglen, expand, buf, len, retbuf, retlen)
 
 int
 RCS_checkout (rcs, workfile, rev, nametag, options, sout, pfn, callerdat)
-     RCSNode *rcs;
-     char *workfile;
-     char *rev;
-     char *nametag;
-     char *options;
-     char *sout;
-     RCSCHECKOUTPROC pfn;
-     void *callerdat;
+    RCSNode *rcs;
+    char *workfile;
+    char *rev;
+    char *nametag;
+    char *options;
+    char *sout;
+    RCSCHECKOUTPROC pfn;
+    void *callerdat;
 {
     int free_rev = 0;
     enum kflag expand;
@@ -4094,9 +4094,10 @@ RCS_checkout (rcs, workfile, rev, nametag, options, sout, pfn, callerdat)
     dev_t devnum = 0;
 #endif
 
-    TRACE ( 1, "checkout (%s, %s, %s, %s)",
+    TRACE ( 1, "RCS_checkout (%s, %s, %s, %s, %s)",
 	    rcs->path,
 	    rev != NULL ? rev : "",
+	    nametag != NULL ? nametag : "",
 	    options != NULL ? options : "",
 	    (pfn != NULL ? "(function)"
 	      : (workfile != NULL ? workfile
@@ -4360,7 +4361,7 @@ RCS_checkout (rcs, workfile, rev, nametag, options, sout, pfn, callerdat)
 		       workfile, info->data);
 	}
     }
-#endif
+#endif /* PRESERVE_PERMISSIONS_SUPPORT */
 
     if (expand != KFLAG_O && expand != KFLAG_B)
     {
