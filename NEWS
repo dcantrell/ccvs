@@ -11,7 +11,7 @@ by default and the corresponding "P" history record type is now documented.
 If you're setting the LogHistory option in your CVSROOT/config file, you may
 want to add "P" to the list of record types.
 
-* CVS now will always compile and its own getpass() function (originally from
+* CVS now will always compile its own getpass() function (originally from
 GNULIB) in favor of any system one that may exist.  This avoids some problems
 with long passwords on some systems and updates us to POSIX.2 compliance, since
 getpass() was removed from the POSIX.2 specification.
