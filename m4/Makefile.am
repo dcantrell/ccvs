@@ -16,13 +16,17 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 
+# The first five files (through cvs_func_printf_ptr.m4) are NOT imported
+# from GNULIB.
 EXTRA_DIST = \
-	codeset.m4
-	cvs_func_printf_ptr.m4 \
 	acx_extract_cpp_defn.m4 \
 	acx_with_gssapi.m4 \
 	acx_with_external_zlib.m4 \
 	asx_version_compare.m4 \
+	cvs_func_printf_ptr.m4 \
+	codeset.m4 \
+	getline.m4 \
+	getnline.m4 \
 	gettext.m4 \
 	glibc21.m4 \
 	iconv.m4 \

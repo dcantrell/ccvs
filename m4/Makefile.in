@@ -167,8 +167,42 @@ sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 with_default_rsh = @with_default_rsh@
 
+# The first five files (through cvs_func_printf_ptr.m4) are NOT imported
+# from GNULIB.
 EXTRA_DIST = \
-	codeset.m4
+	acx_extract_cpp_defn.m4 \
+	acx_with_gssapi.m4 \
+	acx_with_external_zlib.m4 \
+	asx_version_compare.m4 \
+	cvs_func_printf_ptr.m4 \
+	codeset.m4 \
+	getline.m4 \
+	getnline.m4 \
+	gettext.m4 \
+	glibc21.m4 \
+	iconv.m4 \
+	intdiv0.m4 \
+	inttypes_h.m4 \
+	inttypes.m4 \
+	inttypes-pri.m4 \
+	isc-posix.m4 \
+	lcmessage.m4 \
+	lib-ld.m4 \
+	lib-link.m4 \
+	lib-prefix.m4 \
+	lstat.m4 \
+	malloc.m4 \
+	mkstemp.m4 \
+	nls.m4 \
+	onceonly_2_57.m4 \
+	po.m4 \
+	progtest.m4 \
+	realloc.m4 \
+	stat.m4 \
+	stdint_h.m4 \
+	uintmax_t.m4 \
+	ulonglong.m4 \
+	unlocked-io.m4
 
 subdir = m4
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -306,36 +340,6 @@ uninstall-am: uninstall-info-am
 	mostlyclean-generic pdf pdf-am ps ps-am uninstall uninstall-am \
 	uninstall-info-am
 
-	cvs_func_printf_ptr.m4 \
-	acx_extract_cpp_defn.m4 \
-	acx_with_gssapi.m4 \
-	acx_with_external_zlib.m4 \
-	asx_version_compare.m4 \
-	gettext.m4 \
-	glibc21.m4 \
-	iconv.m4 \
-	intdiv0.m4 \
-	inttypes_h.m4 \
-	inttypes.m4 \
-	inttypes-pri.m4 \
-	isc-posix.m4 \
-	lcmessage.m4 \
-	lib-ld.m4 \
-	lib-link.m4 \
-	lib-prefix.m4 \
-	lstat.m4 \
-	malloc.m4 \
-	mkstemp.m4 \
-	nls.m4 \
-	onceonly_2_57.m4 \
-	po.m4 \
-	progtest.m4 \
-	realloc.m4 \
-	stat.m4 \
-	stdint_h.m4 \
-	uintmax_t.m4 \
-	ulonglong.m4 \
-	unlocked-io.m4
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:
