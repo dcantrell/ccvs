@@ -1,5 +1,8 @@
 Mon Nov 25 12:48:31 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* login.c: Reindent (all of get_cvs_password, a handful of lines
+	elsewhere).
+
 	Cleanups to release, mostly cosmetic:
 	* release.c (release_server): New function; breaks out server code
 	from the release function.
