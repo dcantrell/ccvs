@@ -9,5 +9,6 @@ WinDebug
 WinRel
 alloca.h
 fnmatch.h
+getopt.h
 stdbool.h
 getdate
