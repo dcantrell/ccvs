@@ -1,5 +1,10 @@
 2004-11-03 Derek Price <derek@ximbiot.com>
 
+	* sanity.sh (depends_on_rsync): Verify that `rsync --delete' actually
+	does what it is supposed ot do.
+
+2004-11-03 Derek Price <derek@ximbiot.com>
+
 	* subr.c (Xreadlink): Remove MAXSIZE macro.  Minor reformatting.
 
 2004-11-03  Mark D. Baushke  <mdb@cvshome.org>
