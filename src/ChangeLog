@@ -1,5 +1,9 @@
 2004-11-22  Mark D. Baushke  <mdb@cvshome.org>
 
+	* sanity.sh (info): Ignore comments in verifymsg test.
+
+2004-11-22  Mark D. Baushke  <mdb@cvshome.org>
+
 	* mkmodules.c (loginfo_contents, verifymsg_contents,
 	commitinfo_contents, taginfo_contents, preproxy_contents,
 	postadmin_contents, postproxy_contents, posttag_contents,

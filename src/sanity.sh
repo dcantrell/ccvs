@@ -18775,7 +18775,7 @@ EOF
 	  else
 	    chmod +x ${TESTDIR}/vscript*
 	  fi
-	  echo "^first-dir/yet-another\\(/\\|\$\\) ${TESTDIR}/vscript2 %l" >>verifymsg
+	  echo "^first-dir/yet-another\\(/\\|\$\\) ${TESTDIR}/vscript2 %l" >verifymsg
 	  echo "^first-dir\\(/\\|\$\\) ${TESTDIR}/vscript %l" >>verifymsg
 	  echo "^missing-script\$ ${TESTDIR}/bogus %l" >>verifymsg
 	  echo "^missing-var\$ ${TESTDIR}/vscript %l \${=Bogus}" >>verifymsg
@@ -18856,7 +18856,7 @@ ${SPROG} \[import aborted\]: Message verification failed" \
 "${SPROG} \[import aborted\]: Message verification failed"
 
 	  dotest_fail info-v8 "${testcvs} import -m bogus missing-var x y" \
-"${SPROG} import: verifymsg:33: no such user variable \${=Bogus}
+"${SPROG} import: verifymsg:4: no such user variable \${=Bogus}
 ${SPROG} \[import aborted\]: Message verification failed"
 
 	  rm file2
