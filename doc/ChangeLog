@@ -1,3 +1,14 @@
+2004-04-30  Derek Price  <derek@ximbiot.com>
+
+	First pass at closing issue #3 on cvshome.org.
+	* .cvsignore: Ignore mkman.
+	* cvs.1, mkman.in, cvs.man.header, cvs.man.footer: New files.
+	* cvs.texinfo: Add cut tags for mkman.
+	* Makefile.in (man_MANS): Add cvs.1.
+	(EXTRA_DIST): Add cvs.man.header & cvs.man.footer.
+	(cvs.1, mkman): New targets.
+	* Makefile.in: Regenerated.
+
 2004-04-27  Derek Price  <derek@ximbiot.com>
 
 	* stamp-1, version-client.texi: Regenerated.
