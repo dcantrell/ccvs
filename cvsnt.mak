@@ -151,6 +151,7 @@ LINK32_OBJS= \
 	".\WinRel\admin.obj" \
 	".\WinRel\annotate.obj" \
 	".\WinRel\argmatch.obj" \
+	"$(INTDIR)\asnprintf.obj" \
 	".\WinRel\buffer.obj" \
 	".\WinRel\checkin.obj" \
 	".\WinRel\checkout.obj" \
@@ -216,6 +217,7 @@ LINK32_OBJS= \
 	".\WinRel\tag.obj" \
 	".\WinRel\update.obj" \
 	".\WinRel\valloc.obj" \
+	"$(INTDIR)\vasnprintf.obj" \
 	".\WinRel\vers_ts.obj" \
 	".\WinRel\version.obj" \
 	".\WinRel\waitpid.obj" \
@@ -223,12 +225,10 @@ LINK32_OBJS= \
 	".\WinRel\woe32.obj" \
 	".\WinRel\wrapper.obj" \
 	".\WinRel\xgetwd.obj" \
-	".\WinRel\yesno.obj" \
-	".\WinRel\zlib.obj" \
-	"$(INTDIR)\vasnprintf.obj" \
-	"$(INTDIR)\asnprintf.obj" \
 	"$(INTDIR)\xmalloc.obj" \
 	"$(INTDIR)\xstrdup.obj" \
+	".\WinRel\yesno.obj" \
+	".\WinRel\zlib.obj" \
 	".\diff\WinRel\libdiff.lib" \
 	".\zlib\WinRel\zlib.lib" \
 	".\LIB\WinRel\libcvs.lib"
@@ -358,12 +358,13 @@ BSC32_FLAGS=/nologo /o"$(OUTDIR)\cvsnt.bsc"
 BSC32_SBRS= \
 	
 LINK32=link.exe
-LINK32_FLAGS=wsock32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib zlib\WinDebug\zlib.lib diff\WinDebug\libdiff.lib  lib\WinDebug\libcvs.lib /nologo /subsystem:console /incremental:yes /pdb:"$(OUTDIR)\cvs.pdb" /debug /machine:I386 /nodefaultlib:"libcmtd.lib" /out:"$(OUTDIR)\cvs.exe" 
+LINK32_FLAGS=wsock32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib zlib\WinDebug\zlib.lib diff\WinDebug\libdiff.lib lib\WinDebug\libcvs.lib /nologo /subsystem:console /incremental:yes /pdb:"$(OUTDIR)\cvs.pdb" /debug /machine:I386 /nodefaultlib:"libcmtd.lib" /out:"$(OUTDIR)\cvs.exe" 
 LINK32_OBJS= \
 	".\WinDebug\add.obj" \
 	".\WinDebug\admin.obj" \
 	".\WinDebug\annotate.obj" \
 	".\WinDebug\argmatch.obj" \
+	"$(INTDIR)\asnprintf.obj" \
 	".\WinDebug\buffer.obj" \
 	".\WinDebug\checkin.obj" \
 	".\WinDebug\checkout.obj" \
@@ -429,6 +430,7 @@ LINK32_OBJS= \
 	".\WinDebug\tag.obj" \
 	".\WinDebug\update.obj" \
 	".\WinDebug\valloc.obj" \
+	"$(INTDIR)\vasnprintf.obj" \
 	".\WinDebug\vers_ts.obj" \
 	".\WinDebug\version.obj" \
 	".\WinDebug\waitpid.obj" \
@@ -436,12 +438,10 @@ LINK32_OBJS= \
 	".\WinDebug\woe32.obj" \
 	".\WinDebug\wrapper.obj" \
 	".\WinDebug\xgetwd.obj" \
-	".\WinDebug\yesno.obj" \
-	".\WinDebug\zlib.obj" \
-	"$(INTDIR)\vasnprintf.obj" \
-	"$(INTDIR)\asnprintf.obj" \
 	"$(INTDIR)\xmalloc.obj" \
 	"$(INTDIR)\xstrdup.obj" \
+	".\WinDebug\yesno.obj" \
+	".\WinDebug\zlib.obj" \
 	".\diff\WinDebug\libdiff.lib" \
 	".\zlib\WinDebug\zlib.lib" \
 	".\LIB\WinDebug\libcvs.lib"
