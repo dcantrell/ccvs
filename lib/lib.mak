@@ -33,8 +33,15 @@ INTDIR=.\WinRel
 OutDir=.\WinRel
 # End Custom Macros
 
+!IF "$(RECURSE)" == "0" 
+
 ALL : ".\fnmatch.h" ".\alloca.h" "$(OUTDIR)\libcvs.lib"
 
+!ELSE 
+
+ALL : ".\fnmatch.h" ".\alloca.h" "$(OUTDIR)\libcvs.lib"
+
+!ENDIF 
 
 CLEAN :
 	-@erase "$(INTDIR)\exitfail.obj"
@@ -47,7 +54,7 @@ CLEAN :
 	-@erase "$(INTDIR)\printf-parse.obj"
 	-@erase "$(INTDIR)\realloc.obj"
 	-@erase "$(INTDIR)\regex.obj"
-	-@erase "$(INTDIR)\vc60.idb"
+	-@erase "$(INTDIR)\vc50.idb"
 	-@erase "$(OUTDIR)\libcvs.lib"
 	-@erase ".\alloca.h"
 	-@erase ".\fnmatch.h"
@@ -55,40 +62,44 @@ CLEAN :
 "$(OUTDIR)" :
     if not exist "$(OUTDIR)/$(NULL)" mkdir "$(OUTDIR)"
 
-CPP=cl.exe
-CPP_PROJ=/nologo /ML /W3 /GX /O2 /I "..\windows-NT" /I "." /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "_LIB" /D "HAVE_CONFIG_H" /Fp"$(INTDIR)\LIB.pch" /YX /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c 
-
-.c{$(INTDIR)}.obj::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-.cpp{$(INTDIR)}.obj::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-.cxx{$(INTDIR)}.obj::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-.c{$(INTDIR)}.sbr::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-.cpp{$(INTDIR)}.sbr::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-.cxx{$(INTDIR)}.sbr::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
 RSC=rc.exe
+CPP=cl.exe
+CPP_PROJ=/nologo /ML /W3 /GX /O2 /I "..\windows-NT" /I "." /D "WIN32" /D\
+ "NDEBUG" /D "_MBCS" /D "_LIB" /D "HAVE_CONFIG_H" /Fp"$(INTDIR)\LIB.pch" /YX\
+ /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c 
+CPP_OBJS=.\WinRel/
+CPP_SBRS=.
+
+.c{$(CPP_OBJS)}.obj::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+.cpp{$(CPP_OBJS)}.obj::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+.cxx{$(CPP_OBJS)}.obj::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+.c{$(CPP_SBRS)}.sbr::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+.cpp{$(CPP_SBRS)}.sbr::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+.cxx{$(CPP_SBRS)}.sbr::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
 BSC32=bscmake.exe
 BSC32_FLAGS=/nologo /o"$(OUTDIR)\LIB.bsc" 
 BSC32_SBRS= \
@@ -120,8 +131,15 @@ INTDIR=.\WinDebug
 OutDir=.\WinDebug
 # End Custom Macros
 
-ALL : ".\fnmatch.h" ".\alloca.h" "$(OUTDIR)\libcvs.lib"
+!IF "$(RECURSE)" == "0" 
 
+ALL : ".\fnmatch.h" "$(OUTDIR)\libcvs.lib"
+
+!ELSE 
+
+ALL : ".\fnmatch.h" "$(OUTDIR)\libcvs.lib"
+
+!ENDIF 
 
 CLEAN :
 	-@erase "$(INTDIR)\exitfail.obj"
@@ -134,49 +152,51 @@ CLEAN :
 	-@erase "$(INTDIR)\printf-parse.obj"
 	-@erase "$(INTDIR)\realloc.obj"
 	-@erase "$(INTDIR)\regex.obj"
-	-@erase "$(INTDIR)\vc60.idb"
-	-@erase "$(INTDIR)\vc60.pdb"
+	-@erase "$(INTDIR)\vc50.idb"
 	-@erase "$(OUTDIR)\libcvs.lib"
-	-@erase ".\alloca.h"
 	-@erase ".\fnmatch.h"
 
 "$(OUTDIR)" :
     if not exist "$(OUTDIR)/$(NULL)" mkdir "$(OUTDIR)"
 
-CPP=cl.exe
-CPP_PROJ=/nologo /MLd /W3 /Gm /GX /ZI /Od /I "..\windows-NT" /I "." /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /D "HAVE_CONFIG_H" /Fp"$(INTDIR)\LIB.pch" /YX /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /GZ /c 
-
-.c{$(INTDIR)}.obj::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-.cpp{$(INTDIR)}.obj::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-.cxx{$(INTDIR)}.obj::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-.c{$(INTDIR)}.sbr::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-.cpp{$(INTDIR)}.sbr::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-.cxx{$(INTDIR)}.sbr::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
 RSC=rc.exe
+CPP=cl.exe
+CPP_PROJ=/nologo /MLd /W3 /GX /Od /I "..\windows-NT" /I "." /D "WIN32" /D\
+ "_DEBUG" /D "_MBCS" /D "_LIB" /D "HAVE_CONFIG_H" /Fp"$(INTDIR)\LIB.pch" /YX\
+ /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /ZI /GZ /c 
+CPP_OBJS=.\WinDebug/
+CPP_SBRS=.
+
+.c{$(CPP_OBJS)}.obj::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+.cpp{$(CPP_OBJS)}.obj::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+.cxx{$(CPP_OBJS)}.obj::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+.c{$(CPP_SBRS)}.sbr::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+.cpp{$(CPP_SBRS)}.sbr::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+.cxx{$(CPP_SBRS)}.sbr::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
 BSC32=bscmake.exe
 BSC32_FLAGS=/nologo /o"$(OUTDIR)\LIB.bsc" 
 BSC32_SBRS= \
@@ -203,65 +223,227 @@ LIB32_OBJS= \
 !ENDIF 
 
 
-!IF "$(NO_EXTERNAL_DEPS)" != "1"
-!IF EXISTS("LIB.dep")
-!INCLUDE "LIB.dep"
-!ELSE 
-!MESSAGE Warning: cannot find "LIB.dep"
-!ENDIF 
-!ENDIF 
-
-
 !IF "$(CFG)" == "LIB - Win32 Release" || "$(CFG)" == "LIB - Win32 Debug"
 SOURCE=.\exitfail.c
+DEP_CPP_EXITF=\
+	"..\windows-NT\config.h"\
+	".\exit.h"\
+	".\exitfail.h"\
+	
 
-"$(INTDIR)\exitfail.obj" : $(SOURCE) "$(INTDIR)"
+"$(INTDIR)\exitfail.obj" : $(SOURCE) $(DEP_CPP_EXITF) "$(INTDIR)"
 
 
 SOURCE=.\getdate.c
 
-"$(INTDIR)\getdate.obj" : $(SOURCE) "$(INTDIR)"
+!IF  "$(CFG)" == "LIB - Win32 Release"
 
+DEP_CPP_GETDA=\
+	"..\windows-NT\config.h"\
+	".\xtime.h"\
+	
+
+"$(INTDIR)\getdate.obj" : $(SOURCE) $(DEP_CPP_GETDA) "$(INTDIR)"
+
+
+!ELSEIF  "$(CFG)" == "LIB - Win32 Debug"
+
+DEP_CPP_GETDA=\
+	"..\windows-NT\config.h"\
+	".\xtime.h"\
+	{$(INCLUDE)}"sys\timeb.h"\
+	{$(INCLUDE)}"sys\types.h"\
+	
+
+"$(INTDIR)\getdate.obj" : $(SOURCE) $(DEP_CPP_GETDA) "$(INTDIR)"
+
+
+!ENDIF 
 
 SOURCE=.\getline.c
 
-"$(INTDIR)\getline.obj" : $(SOURCE) "$(INTDIR)"
+!IF  "$(CFG)" == "LIB - Win32 Release"
 
+DEP_CPP_GETLI=\
+	"..\windows-NT\config.h"\
+	".\getline.h"\
+	".\getndelim2.h"\
+	
+
+"$(INTDIR)\getline.obj" : $(SOURCE) $(DEP_CPP_GETLI) "$(INTDIR)"
+
+
+!ELSEIF  "$(CFG)" == "LIB - Win32 Debug"
+
+DEP_CPP_GETLI=\
+	"..\windows-NT\config.h"\
+	".\getline.h"\
+	".\getndelim2.h"\
+	{$(INCLUDE)}"sys\types.h"\
+	
+
+"$(INTDIR)\getline.obj" : $(SOURCE) $(DEP_CPP_GETLI) "$(INTDIR)"
+
+
+!ENDIF 
 
 SOURCE=.\getndelim2.c
 
-"$(INTDIR)\getndelim2.obj" : $(SOURCE) "$(INTDIR)"
+!IF  "$(CFG)" == "LIB - Win32 Release"
 
+DEP_CPP_GETND=\
+	"..\windows-NT\config.h"\
+	".\getndelim2.h"\
+	".\unlocked-io.h"\
+	
+
+"$(INTDIR)\getndelim2.obj" : $(SOURCE) $(DEP_CPP_GETND) "$(INTDIR)"
+
+
+!ELSEIF  "$(CFG)" == "LIB - Win32 Debug"
+
+DEP_CPP_GETND=\
+	"..\windows-NT\config.h"\
+	".\getndelim2.h"\
+	".\unlocked-io.h"\
+	{$(INCLUDE)}"sys\types.h"\
+	
+
+"$(INTDIR)\getndelim2.obj" : $(SOURCE) $(DEP_CPP_GETND) "$(INTDIR)"
+
+
+!ENDIF 
 
 SOURCE=.\getopt.c
 
-"$(INTDIR)\getopt.obj" : $(SOURCE) "$(INTDIR)"
+!IF  "$(CFG)" == "LIB - Win32 Release"
 
+DEP_CPP_GETOP=\
+	"..\windows-NT\config.h"\
+	".\getopt.h"\
+	".\gettext.h"\
+	
+
+"$(INTDIR)\getopt.obj" : $(SOURCE) $(DEP_CPP_GETOP) "$(INTDIR)"
+
+
+!ELSEIF  "$(CFG)" == "LIB - Win32 Debug"
+
+DEP_CPP_GETOP=\
+	"..\windows-NT\config.h"\
+	".\getopt.h"\
+	".\gettext.h"\
+	
+
+"$(INTDIR)\getopt.obj" : $(SOURCE) $(DEP_CPP_GETOP) "$(INTDIR)"
+
+
+!ENDIF 
 
 SOURCE=.\getopt1.c
+DEP_CPP_GETOPT=\
+	"..\windows-NT\config.h"\
+	".\getopt.h"\
+	
 
-"$(INTDIR)\getopt1.obj" : $(SOURCE) "$(INTDIR)"
+"$(INTDIR)\getopt1.obj" : $(SOURCE) $(DEP_CPP_GETOPT) "$(INTDIR)"
 
 
 SOURCE=".\printf-args.c"
 
-"$(INTDIR)\printf-args.obj" : $(SOURCE) "$(INTDIR)"
+!IF  "$(CFG)" == "LIB - Win32 Release"
 
+DEP_CPP_PRINT=\
+	"..\windows-NT\config.h"\
+	".\printf-args.h"\
+	
+
+"$(INTDIR)\printf-args.obj" : $(SOURCE) $(DEP_CPP_PRINT) "$(INTDIR)"
+
+
+!ELSEIF  "$(CFG)" == "LIB - Win32 Debug"
+
+DEP_CPP_PRINT=\
+	"..\windows-NT\config.h"\
+	".\printf-args.h"\
+	
+
+"$(INTDIR)\printf-args.obj" : $(SOURCE) $(DEP_CPP_PRINT) "$(INTDIR)"
+
+
+!ENDIF 
 
 SOURCE=".\printf-parse.c"
 
-"$(INTDIR)\printf-parse.obj" : $(SOURCE) "$(INTDIR)"
+!IF  "$(CFG)" == "LIB - Win32 Release"
 
+DEP_CPP_PRINTF=\
+	"..\windows-NT\config.h"\
+	".\printf-args.h"\
+	".\printf-parse.h"\
+	".\xsize.h"\
+	
+
+"$(INTDIR)\printf-parse.obj" : $(SOURCE) $(DEP_CPP_PRINTF) "$(INTDIR)"
+
+
+!ELSEIF  "$(CFG)" == "LIB - Win32 Debug"
+
+DEP_CPP_PRINTF=\
+	"..\windows-NT\config.h"\
+	".\printf-args.h"\
+	".\printf-parse.h"\
+	".\xsize.h"\
+	
+NODEP_CPP_PRINTF=\
+	".\wprintf-parse.h"\
+	
+
+"$(INTDIR)\printf-parse.obj" : $(SOURCE) $(DEP_CPP_PRINTF) "$(INTDIR)"
+
+
+!ENDIF 
 
 SOURCE=.\realloc.c
+DEP_CPP_REALL=\
+	"..\windows-NT\config.h"\
+	
 
-"$(INTDIR)\realloc.obj" : $(SOURCE) "$(INTDIR)"
+"$(INTDIR)\realloc.obj" : $(SOURCE) $(DEP_CPP_REALL) "$(INTDIR)"
 
 
 SOURCE=.\regex.c
 
-"$(INTDIR)\regex.obj" : $(SOURCE) "$(INTDIR)"
+!IF  "$(CFG)" == "LIB - Win32 Release"
 
+DEP_CPP_REGEX=\
+	"..\windows-NT\config.h"\
+	".\regex.h"\
+	
+
+"$(INTDIR)\regex.obj" : $(SOURCE) $(DEP_CPP_REGEX) "$(INTDIR)"
+
+
+!ELSEIF  "$(CFG)" == "LIB - Win32 Debug"
+
+DEP_CPP_REGEX=\
+	"..\windows-NT\config.h"\
+	".\alloca.h"\
+	".\regex.h"\
+	{$(INCLUDE)}"sys\types.h"\
+	
+NODEP_CPP_REGEX=\
+	".\buffer.h"\
+	".\category.h"\
+	".\charset.h"\
+	".\lisp.h"\
+	".\syntax.h"\
+	
+
+"$(INTDIR)\regex.obj" : $(SOURCE) $(DEP_CPP_REGEX) "$(INTDIR)" ".\alloca.h"
+
+
+!ENDIF 
 
 SOURCE=.\alloca_.h
 
@@ -269,23 +451,15 @@ SOURCE=.\alloca_.h
 
 InputPath=.\alloca_.h
 
-".\alloca.h" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	<<tempfile.bat 
-	@echo off 
+".\alloca.h"	 : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
 	copy .\alloca_.h .\alloca.h
-<< 
-	
 
 !ELSEIF  "$(CFG)" == "LIB - Win32 Debug"
 
 InputPath=.\alloca_.h
 
-".\alloca.h" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	<<tempfile.bat 
-	@echo off 
+".\alloca.h"	 : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
 	copy .\alloca_.h .\alloca.h
-<< 
-	
 
 !ENDIF 
 
@@ -293,25 +467,17 @@ SOURCE="..\lib\fnmatch.h.in"
 
 !IF  "$(CFG)" == "LIB - Win32 Release"
 
-InputPath="..\lib\fnmatch.h.in"
+InputPath=.\fnmatch.h.in
 
-".\fnmatch.h" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	<<tempfile.bat 
-	@echo off 
+".\fnmatch.h"	 : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
 	copy .\fnmatch.h.in .\fnmatch.h
-<< 
-	
 
 !ELSEIF  "$(CFG)" == "LIB - Win32 Debug"
 
-InputPath="..\lib\fnmatch.h.in"
+InputPath=.\fnmatch.h.in
 
-".\fnmatch.h" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	<<tempfile.bat 
-	@echo off 
+".\fnmatch.h"	 : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
 	copy .\fnmatch.h.in .\fnmatch.h
-<< 
-	
 
 !ENDIF 
 

@@ -1,3 +1,9 @@
+2004-03-29  Derek Price  <derek@ximbiot.com>
+
+	* lib.mak: Regenerated with VC++ 5.0.
+	(Sent by Dennis Jones <djones@oregon.com>.)
+	* LIB.dep: Removed.
+
 2004-03-28  Derek Price  <derek@ximbiot.com>
 
 	* lib.mak: Regenerated.
