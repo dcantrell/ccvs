@@ -15,6 +15,7 @@ Fri Oct  6 21:50:48 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
 	(HEADERS): Remove error.h.
 	* acconfig.h, configure.in: Remove CVS_SUPPORT.
 	* configure, config.h.in: Rebuilt using autoconf and autoheader.
+	* windows-NT/config.h: Remove CVS_SUPPORT.
 
 Thu Oct  5 17:26:38 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
 

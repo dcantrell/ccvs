@@ -6,10 +6,6 @@
    and use ../cvsnt.mak for your project.  Thus, this is the right place to
    put configuration information for Windows NT.  */
 
-/* All code which #includes this file is part of CVS, so it should provide
-   any CVS-specific features it can.  */
-#define CVS_SUPPORT
-
 /* We just want the client stuff.  No server support yet.  
    Note that you don't have to define CLIENT_SUPPORT or SERVER_SUPPORT
    to enable the non-remote code; that's always there.  */
