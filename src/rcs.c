@@ -3409,6 +3409,8 @@ RCS_checkin (rcs, workfile, message, rev, flags)
     struct tm *ftm;
     time_t modtime;
 
+    commitpt = NULL;
+
     if (rcs->flags & PARTIAL)
 	RCS_reparsercsfile (rcs, NULL);
 
@@ -4430,7 +4432,8 @@ RCS_delete_revs (rcs, tag1, tag2, inclusive)
 {
     char *next;
     Node *nodep;
-    RCSVers *revp, *beforep;
+    RCSVers *revp = NULL;
+    RCSVers *beforep;
     int status, found;
 
     char *branchpoint = NULL;
@@ -6179,8 +6182,7 @@ RCS_copydeltas (rcs, fin, fout, newdtext, insertpt)
 
     /* Make a note of whether NEWDTEXT should be inserted
        before or after its INSERTPT. */
-    if (newdtext != NULL)
-	insertbefore = (numdots (newdtext->version) == 1);
+    insertbefore = (newdtext != NULL && numdots (newdtext->version) == 1);
 
     found = 0;
     while ((dtext = RCS_getdeltatext (rcs, fin)) != NULL)
