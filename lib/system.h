@@ -11,8 +11,6 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.  */
 
-/* $CVSid: @(#)system.h 1.18 94/09/25 $ */
-
 #include <sys/types.h>
 #include <sys/stat.h>
 

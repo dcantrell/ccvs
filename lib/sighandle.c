@@ -26,8 +26,6 @@
  *             must not themselves make calls to the signal handling
  *             facilities.
  *
- * $CVSid: @(#)sighandle.c 1.13 94/10/07 $
- *
  *************************************************************************/
 
 #ifdef HAVE_CONFIG_H
