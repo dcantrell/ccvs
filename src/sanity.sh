@@ -3172,20 +3172,32 @@ ${PROG} [a-z]*: Importing ${TESTDIR}/cvsroot/dir1/sdir"
 	  # behavior.
 	  rm -rf ${CVSROOT_DIRNAME}/dir1/sdir
 
-	  dotest_fail dirs-3 "${testcvs} update" \
+	  dotest dirs-3 "${testcvs} update" \
 "${PROG} [a-z]*: Updating dir1
 ${PROG} [a-z]*: Updating dir1/sdir
-${PROG} \[[a-z]* aborted\]: cannot open directory ${TESTDIR}/cvsroot/dir1/sdir: No such file or directory"
-	  dotest_fail dirs-3a "${testcvs} update -d" \
+${PROG} [a-z]*: cannot open directory ${TESTDIR}/cvsroot/dir1/sdir: No such file or directory
+${PROG} [a-z]*: skipping directory dir1/sdir"
+	  dotest dirs-3a "${testcvs} update -d" \
 "${PROG} [a-z]*: Updating dir1
 ${PROG} [a-z]*: Updating dir1/sdir
-${PROG} \[[a-z]* aborted\]: cannot open directory ${TESTDIR}/cvsroot/dir1/sdir: No such file or directory"
+${PROG} [a-z]*: cannot open directory ${TESTDIR}/cvsroot/dir1/sdir: No such file or directory
+${PROG} [a-z]*: skipping directory dir1/sdir"
 
-	  # Hmm, a successful exit status seems a bit odd.  But it
-	  # seems to be current behavior for whatever that's worth.
-	  dotest dirs-4 "${testcvs} release -d dir1/sdir" \
-"${PROG} \[[a-z]* aborted\]: cannot open directory ${TESTDIR}/cvsroot/dir1/sdir: No such file or directory
-${PROG} release: unable to release .dir1/sdir."
+	  # If we say "yes", then CVS gives errors about not being able to
+	  # create lock files.
+	  if echo no | ${testcvs} release -d dir1/sdir \
+	      >${TESTDIR}/output.tmp 2>&1; then
+	    pass dirs-4
+	  else
+	    fail dirs-4
+	  fi
+	  # The fact that it says "skipping directory " rather than
+	  # "skipping directory dir1/sdir" is some kind of bug.
+	  dotest dirs-4a "cat ${TESTDIR}/output.tmp" \
+"${PROG} [a-z]*: cannot open directory ${TESTDIR}/cvsroot/dir1/sdir: No such file or directory
+${PROG} [a-z]*: skipping directory 
+You have \[0\] altered files in this repository\.
+Are you sure you want to release (and delete) directory .dir1/sdir': .. .release' aborted by user choice."
 
 	  # OK, if "cvs release" won't help, we'll try it the other way...
 	  rm -r dir1/sdir
@@ -3203,6 +3215,7 @@ D/sdir////"
 	  cd ..
 
 	  rm -r imp-dir 1
+	  rm ${TESTDIR}/output.tmp
 
 	  # clean up our repositories
 	  rm -rf ${CVSROOT_DIRNAME}/dir1
