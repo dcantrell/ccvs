@@ -1,5 +1,13 @@
 2004-03-25  Derek Price  <derek@ximbiot.com>
 
+	* NEWS: Note failure of Cygwin to convert back slashes to slashes.
+
+2004-03-25  Derek Price  <derek@ximbiot.com>
+
+	* cvs.spec.in (BuildRoot): Use a more unique directory name.
+
+2004-03-25  Derek Price  <derek@ximbiot.com>
+
 	* Makefile.in: Regenerated.
 
 2004-03-25  Derek Price  <derek@ximbiot.com>

@@ -470,7 +470,7 @@ off_t ftello (FILE *);
 int fseeko (FILE *, off_t, int);
 #endif /* HAVE_FSEEKO */
 
-#if defined (__CYGWIN32__) || defined (WIN32)
+#ifdef WIN32
 /*
  * According to GNU conventions, we should avoid referencing any macro
  * containing "WIN" as a reference to Microsoft Windows, as we would like to
@@ -483,14 +483,17 @@ int fseeko (FILE *, off_t, int);
  * convention, and reference only tested features of the system.
  */
 # define WOE32 1
-#endif /* defined (__CYGWIN32__) || defined (WIN32) */
+#endif /* WIN32 */
 
 
 
-#ifdef WOE32
+/* This is the only WOE32 hack we need for Cygwin anymore, so we don't use
+ * __Cygwin__ as a way to set WOE32.
+ */
+#if defined (__CYGWIN32__) || defined (WOE32)
   /* Under Windows NT, filenames are case-insensitive.  */
 # define FILENAMES_CASE_INSENSITIVE 1
-#endif /* WOE32 */
+#endif /* __CYGWIN__ || WOE32 */
 
 
 
@@ -505,10 +508,12 @@ extern unsigned char WNT_filename_classes[];
        Windows NT, you can use either / or \.  */
 #   define ISDIRSEP(c) (FOLD_FN_CHAR(c) == '/')
 # else /* ! WOE32 */
-  /* The only system that I know of that gets FILENAME_CASE_INSENSITIVE
-   * defined that isn't WOE32 is currently Macintosh OS X.
+  /* As far as I know, both Cygwin and Macintosh OS X can make it here,
+   * but since the OS X fold just folds a-z into A-Z or visa-versa, I'm just
+   * using it for Cygwin too.  The var name below could probably use a
+   * rename.
    *
-   * Under Mac OS X, filenames are case-insensitive.
+   * Under Mac OS X & Cygwin, filenames are case-insensitive.
    */
 #   define FOLD_FN_CHAR(c) (OSX_filename_classes[(unsigned char) (c)])
 extern unsigned char OSX_filename_classes[];

@@ -1,5 +1,9 @@
 2004-03-25  Derek Price  <derek@ximbiot.com>
 
+	* system.h: No longer fold back slashes in paths into slashes.
+
+2004-03-25  Derek Price  <derek@ximbiot.com>
+
 	* realloc.c: Update to more recent version from GNULIB to fix a WOE32
 	compilation problem.
 
