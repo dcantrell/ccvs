@@ -1,3 +1,16 @@
+Mon Jan  1 09:49:16 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* client.c (send_files): No longer call send_file_names.
+	* client.h: Update comment.
+	* add.c, admin.c, commit.c, diff.c, edit.c, log.c, remove.c,
+	status.c, tag.c, update.c, watch.c: Call send_file_names before
+	send_files.
+	* client.c: New variables module_argc, module_argv.
+	(client_expand_modules): Set them, to arguments.
+	(client_send_expansions): Use them instead of modules_vector to
+	send arguments.
+	* sanity.sh (modules): Add test of modules -d flag.
+
 Sun Dec 31 17:33:47 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* import.c (add_rev): Revert portion of 31 Aug 95 change which

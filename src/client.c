@@ -2006,6 +2006,7 @@ send_a_repository (dir, repository, update_dir)
     send_repository (dir, repository, update_dir);
 }
 
+/* The "expanded" modules.  */
 static int modules_count;
 static int modules_allocated;
 static char **modules_vector;
@@ -2033,6 +2034,10 @@ handle_module_expansion (args, len)
     ++modules_count;
 }
 
+/* Original, not "expanded" modules.  */
+static int module_argc;
+static char **module_argv;
+
 void
 client_expand_modules (argc, argv, local)
     int argc;
@@ -2041,6 +2046,12 @@ client_expand_modules (argc, argv, local)
 {
     int errs;
     int i;
+
+    module_argc = argc;
+    module_argv = (char **) xmalloc ((argc + 1) * sizeof (module_argv[0]));
+    for (i = 0; i < argc; ++i)
+	module_argv[i] = xstrdup (argv[i]);
+    module_argv[argc] = NULL;
 
     for (i = 0; i < argc; ++i)
 	send_arg (argv[i]);
@@ -2065,13 +2076,20 @@ client_send_expansions (local)
 {
     int i;
     char *argv[1];
+
+    /* Send the original module names.  The "expanded" module name might
+       not be suitable as an argument to a co request (e.g. it might be
+       the result of a -d argument in the modules file).  It might be
+       cleaner if we genuinely expanded module names, all the way to a
+       local directory and repository, but that isn't the way it works
+       now.  */
+    send_file_names (module_argc, module_argv);
+
     for (i = 0; i < modules_count; ++i)
     {
 	argv[0] = modules_vector[i];
 	if (isfile (argv[0]))
 	    send_files (1, argv, local, 0);
-	else
-	    send_file_names (1, argv);
     }
     send_a_repository ("", server_cvsroot, "");
 }
@@ -3635,8 +3653,6 @@ send_files (argc, argv, local, aflag)
     int aflag;
 {
     int err;
-
-    send_file_names (argc, argv);
 
     /*
      * aflag controls whether the tag/date is copied into the vers_ts.

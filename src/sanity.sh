@@ -1605,6 +1605,7 @@ for what in $tests; do
 
 	  echo realmodule first-dir/subdir a >>CVSROOT/modules
 	  echo dirmodule first-dir/subdir >>CVSROOT/modules
+	  echo namedmodule -d nameddir first-dir/subdir >>CVSROOT/modules
 	  echo aliasmodule -a first-dir/subdir/a >>CVSROOT/modules
 	  if ${testcvs} ci -m 'add modules' CVSROOT/modules \
 	      >>${LOGFILE} 2>&1; then
@@ -1693,6 +1694,25 @@ for what in $tests; do
 	    echo 'PASS: test 150g2' >>${LOGFILE}
 	  fi
 	  rm -rf dirmodule
+
+	  # Now test that a module using -d checks out to the specified
+	  # directory.
+	  dotest 150h1 "${testcvs} -q co namedmodule" 'U nameddir/a
+U nameddir/b'
+	  if test -f nameddir/a && test -f nameddir/b; then
+	    pass 150h2
+	  else
+	    fail 150h2
+	  fi
+	  echo add line >>nameddir/a
+	  dotest 150h3 "${testcvs} -q co namedmodule" 'M nameddir/a'
+	  rm nameddir/a
+	  dotest 150h4 "${testcvs} -q co namedmodule" 'U nameddir/a'
+	  if echo "yes" | ${testcvs} release -d nameddir >>${LOGFILE} ; then
+	    pass 150h99
+	  else
+	    fail 150h99
+	  fi
 
 	  # Now test that alias modules check out to subdir/a, not
 	  # aliasmodule/a.

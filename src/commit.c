@@ -237,6 +237,7 @@ commit (argc, argv)
 	    send_arg("-n");
 	option_with_arg ("-r", tag);
 
+	send_file_names (argc, argv);
 	send_files (argc, argv, local, 0);
 
 	send_to_server ("ci\n", 0);

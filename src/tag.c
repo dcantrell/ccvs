@@ -169,14 +169,11 @@ tag (argc, argv)
 
 	send_arg (symtag);
 
-#if 0
+	send_file_names (argc, argv);
 	/* FIXME:  We shouldn't have to send current files, but I'm not sure
 	   whether it works.  So send the files --
 	   it's slower but it works.  */
-	send_file_names (argc, argv);
-#else
 	send_files (argc, argv, local, 0);
-#endif
 	send_to_server ("tag\n", 0);
         return get_responses_and_close ();
     }

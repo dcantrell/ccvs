@@ -183,27 +183,16 @@ diff (argc, argv)
 	if (diff_date2)
 	    client_senddate (diff_date2);
 
+	send_file_names (argc, argv);
 #if 0
-/* FIXME:  We shouldn't have to send current files to diff two revs, but it
-   doesn't work yet and I haven't debugged it.  So send the files --
-   it's slower but it works.  gnu@cygnus.com  Apr94  */
-
-/* Idea: often times the changed region of a file is relatively small.
-   It would be cool if the client could just divide the file into 4k
-   blocks or whatever and send hash values for the blocks.  Send hash
-   values for blocks aligned with the beginning of the file and the
-   end of the file.  Then the server can tell how much of the head and
-   tail of the file is unchanged.  Well, hash collisions will screw
-   things up, but MD5 has 128 bits of hash value...  */
-
+	/* FIXME: We shouldn't have to send current files to diff two
+	   revs, but it doesn't work yet and I haven't debugged it.
+	   So send the files -- it's slower but it works.
+	   gnu@cygnus.com Apr94 */
 	/* Send the current files unless diffing two revs from the archive */
 	if (diff_rev2 == NULL && diff_date2 == NULL)
-	    send_files (argc, argv, local);
-	else
-	    send_file_names (argc, argv);
-#else
-	send_files (argc, argv, local, 0);
 #endif
+	send_files (argc, argv, local, 0);
 
 	send_to_server ("diff\n", 0);
         err = get_responses_and_close ();
