@@ -952,6 +952,7 @@ user-defined modules.
 * Backing up::                  Backing up a repository
 * Remote repositories::         Accessing repositories on remote machines
 * Read-only access::            Granting read-only access to the repository
+* Server temporary directory::  The server creates temporary directories
 @end menu
 
 @node Specifying a repository
@@ -2301,6 +2302,45 @@ listed in both files.  This is resolved in the more
 conservative way, it being better to protect the
 repository too much than too little: such a user gets
 read-only access.
+
+@node Server temporary directory
+@section Temporary directories for the server
+@cindex temporary directories, and server
+@cindex server, temporary directories
+
+While running, the @sc{cvs} server creates temporary
+directories.  They are named @file{cvs-serv@var{pid}},
+where @var{pid} is the process identification number of
+the server.  They are located in the directory
+specified by the @samp{TMPDIR} environment variable
+(@pxref{Environment variables}), the @samp{-T} global
+option (@pxref{Global options}), or failing that
+@file{/tmp}.
+
+In most cases the server will remove the temporary
+directory when it is done, whether it finishes normally
+or abnormally.  However, there are a few cases in which
+the server does not or cannot remove the temporary
+directory, for example:
+
+@itemize @bullet
+@item
+If the server aborts due to an internal server error,
+it may preserve the directory to aid in debugging
+
+@item
+If the server is killed in a way that it has no way of
+cleaning up (most notably, @samp{kill -KILL} on unix).
+
+@item
+If the system shuts down without an orderly shutdown,
+which tells the server to clean up.
+@end itemize
+
+In cases such as this, you will need to manually remove
+the @file{cvs-serv@var{pid}} directories.  As long as
+there is no server running with process identification
+number @var{pid}, it is safe to do so.
 
 @c ---------------------------------------------------------------------
 @node Starting a new project
