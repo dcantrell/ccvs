@@ -314,7 +314,7 @@ static int rsh_pid = -1;
 
 
 /*
- * Read a line from the server.
+ * Read a line from the server.  Result does not include the terminating \n.
  *
  * Space for the result is malloc'd and should be freed by the caller.
  *
@@ -395,17 +395,20 @@ read_line (resultp, eof_ok)
 #ifdef NO_SOCKET_TO_FD
     if (! use_socket_style)
 #endif /* NO_SOCKET_TO_FD */
-      {
-        /*
-         * If we're using socket style, then everything has already
-         * been logged because read_from_server() was used to get the
-         * individual chars, and read_from_server() logs already.
-         */
-        if (from_server_logfile)
-          if (fwrite (result, 1, input_index, from_server_logfile)
-              < input_index)
-            error (0, errno, "writing to from-server logfile");
-      }
+    {
+	/*
+	 * If we're using socket style, then everything has already
+	 * been logged because read_from_server() was used to get the
+	 * individual chars, and read_from_server() logs already.
+	 */
+	if (from_server_logfile)
+	{
+	    if (fwrite (result, 1, input_index, from_server_logfile)
+		< input_index)
+		error (0, errno, "writing to from-server logfile");
+	    putc ('\n', from_server_logfile);
+	}
+    }
     
     if (resultp == NULL)
 	free (result);
