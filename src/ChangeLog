@@ -1,3 +1,7 @@
+Thu Dec  7 11:06:51 1995  Karl Fogel  <kfogel@floss.cyclic.com>
+
+        * client.c, login.c: memset() instead of bzero().
+
 Thu Dec  7 00:08:53 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
         * server.c (authenticate_connection): document server's side of
