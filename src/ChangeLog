@@ -1,5 +1,9 @@
 2004-04-07  Derek Price  <derek@ximbiot.com>
 
+	* sanity.sh (parseroot): s/oberon/$username/.
+
+2004-04-07  Derek Price  <derek@ximbiot.com>
+
 	* client.c (start_tcp_server): Use xstrdup rather than
 	xmalloc(strlen)/strcpy.
 
