@@ -871,6 +871,8 @@ update_dirleave_proc (callerdat, dir, err, update_dir, entries)
     return (err);
 }
 
+static int isremoved PROTO ((Node *, void *));
+
 /* Returns 1 if the file indicated by node has been removed.  */
 static int
 isremoved (node, closure)

@@ -333,6 +333,7 @@ list_isempty (list)
 }
 
 static int (*client_comp) PROTO ((const Node *, const Node *));
+static int qsort_comp PROTO ((const void *, const void *));
 
 static int
 qsort_comp (elem1, elem2)

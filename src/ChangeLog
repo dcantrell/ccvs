@@ -1,3 +1,9 @@
+1996-11-19  Jim Kingdon
+
+	Visual C++ lint:
+	* hash.c: Declare qsort_comp.
+	* update.c: Declare isremoved.
+	
 1996-11-19  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* root.c, repos.c, modules.c, create_adm.c: Change all calls to
