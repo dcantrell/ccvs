@@ -1,5 +1,11 @@
 Changes since 1.12.2:
 
+* The configure script now tests whether it is building CVS on a case
+  insensitive file system.  If it is, it assumes that all file systems on this
+  platform will be case insensitive.  This is useful for getting the case
+  insensitivity flag set correctly when compiling on Mac OS X and under Cygwin
+  on Windows.
+
 Changes between 1.12.1 and 1.12.2:
 
 * Misc cleanup, reorganization, and other minor fixes.
