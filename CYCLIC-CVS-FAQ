@@ -23,12 +23,6 @@ Here are some of Cyclic CVS's features:
 - The server never holds CVS locks while waiting for a reply from the client;
   this makes the system robust when used over flaky networks.
 
-Cyclic CVS was written by the talented folks at Cygnus Support
-<info@cygnus.com>, but they can't spare the time to support it or
-distribute it themselves.  They don't want bug reports or questions.
-Instead, send those to the cyclic-cvs mailing list, described below.
-
-
 * Aren't there other similar CVS hacks out there?
 
 There have been several CVS variants designed with similar goals.
