@@ -1,3 +1,8 @@
+2004-10-23  Conrad T. Pino  <Conrad@Pino.com>
+
+	* libcvs.dsp: Add "../windows-NT/stdint.h" to project.
+	* libcvs.dep: Regenerate for "libcvs.dsp" change.
+
 2004-10-22  Mark D. Baushke  <mdb@cvshome.org>
 
 	* Makefile.am (libcvs_a_OBJECTS): Fix typo for $(ALLOCA_H) and

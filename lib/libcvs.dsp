@@ -390,6 +390,10 @@ SOURCE="..\windows-NT\stdbool.h"
 # End Source File
 # Begin Source File
 
+SOURCE="..\windows-NT\stdint.h"
+# End Source File
+# Begin Source File
+
 SOURCE=.\system.h
 # End Source File
 # Begin Source File
