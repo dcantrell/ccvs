@@ -1,3 +1,7 @@
+1998-09-03  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* sanity.sh: Set LC_ALL rather than just LC_COLLATE.
+
 Wed Sep  2 02:30:22 1998  Jim Kingdon  <kingdon@pennington.cyclic.com>
 
 	* version.c: Bump version number to 1.10.1.1.

@@ -43,9 +43,14 @@
 # required to make this script work properly.
 unset CVSREAD
 
-# Make sure the POSIX conforming versions of 'sort' do what we expect.
-LC_COLLATE=C
-export LC_COLLATE
+# We want to invoke a predictable set of i18n behaviors, not whatever
+# the user running this script might have set.
+# In particular:
+#   'sort' and tabs and spaces (LC_COLLATE).
+#   Messages from getopt (LC_MESSAGES) (in the future, CVS itself might 
+#     also alter its messages based on LC_MESSAGES).
+LC_ALL=C
+export LC_ALL
 
 # The default value of /tmp/cvs-sanity for TESTDIR is dubious,
 # because it loses if two people/scripts try to run the tests
