@@ -1,5 +1,17 @@
 Thu Jul 24 13:29:15 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* server.c (pserver_authenticate_connection): Call parse_config
+	here too.
+	* parseinfo.c (parse_config): If we are called several times, the
+	times beyond the first do nothing.
+	* cvs.h, parseinfo.c (parse_config): New argument cvsroot.
+	* server.c, main.c: Update callers.
+	* server.c, server.h (system_auth): New variable.
+	* parseinfo.c (parse_config): Parse new keyword SystemAuth.
+	* mkmodules.c (config_contents): Add comments for SystemAuth.
+	* server.c (check_password): If !system_auth, then skip the check
+	for a system username/password.
+
 	* main.c (main): No fatal error if parse_config returned an error.
 	* server.c (serve_root): Likewise.
 	* error.c (error): Add comment about calling from the server.

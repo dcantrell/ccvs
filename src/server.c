@@ -95,6 +95,10 @@ char *CVS_Username = NULL;
    later CVS protocol.  Exported because root.c also uses. */
 char *Pserver_Repos = NULL;
 
+/* Should we check for system usernames/passwords?  Can be changed by
+   CVSROOT/config.  */
+int system_auth = 1;
+
 #endif /* AUTH_SERVER_SUPPORT */
 
 
@@ -546,11 +550,9 @@ serve_root (arg)
 
     set_local_cvsroot (arg);
 
-    /* If there was an error parsing the config file, parse_config
-       already printed an error.  We keep going.  Why?  Because
-       if we didn't, then there would be no way to check in a new
-       CVSROOT/config file to fix the broken one!  */
-    parse_config ();
+    /* For pserver, this will already have happened, and the call will do
+       nothing.  But for rsh, we need to do it now.  */
+    parse_config (CVSroot_directory);
 
     path = xmalloc (strlen (CVSroot_directory)
 		    + sizeof (CVSROOTADM)
@@ -4499,7 +4501,7 @@ check_password (username, password, repository)
         /* host_user already set by reference, so just return. */
         goto handle_return;
     }
-    else if (rc == 0)
+    else if (rc == 0 && system_auth)
     {
 	/* No cvs password found, so try /etc/passwd. */
 
@@ -4557,6 +4559,27 @@ error 0 %s: no such user\n", username);
 	    host_user = NULL;
             goto handle_return;
         }
+    }
+    else if (rc == 0)
+    {
+	/* Note that the message _does_ distinguish between the case in
+	   which we check for a system password and the case in which
+	   we do not.  It is a real pain to track down why it isn't
+	   letting you in if it won't say why, and I am not convinced
+	   that the potential information disclosure to an attacker
+	   outweighs this.  */
+	printf ("error 0 no such user %s in CVSROOT/passwd\n", username);
+
+	/* I'm doing this manually rather than via error_exit ()
+	   because I'm not sure whether we want to call server_cleanup.
+	   Needs more investigation....  */
+
+#ifdef SYSTEM_CLEANUP
+	/* Hook for OS-specific behavior, for example socket subsystems on
+	   NT and OS2 or dealing with windows and arguments on Mac.  */
+	SYSTEM_CLEANUP ();
+#endif
+	exit (EXIT_FAILURE);
     }
     else
     {
@@ -4691,6 +4714,13 @@ pserver_authenticate_connection ()
 	   won't say why, and I am not convinced that the potential
 	   information disclosure to an attacker outweighs this).  */
 	goto i_hate_you;
+
+    /* OK, now parse the config file, so we can use it to control how
+       to check passwords.  If there was an error parsing the config
+       file, parse_config already printed an error.  We keep going.
+       Why?  Because if we didn't, then there would be no way to check
+       in a new CVSROOT/config file to fix the broken one!  */
+    parse_config (repository);
 
     /* We need the real cleartext before we hash it. */
     descrambled_password = descramble (password);
