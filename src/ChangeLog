@@ -1,3 +1,9 @@
+Sun Sep 29 16:43:28 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* rcscmds.c: Replace comment at top of file concerning RCS library
+	with a reworded version based on discussion between me, Ian, Paul
+	Eggert, and JimB.
+
 Sun Sep 29 13:09:45 1996  Noel Cragg  <noel@kiva.rain.org>
 
 	* main.c (main): don't create/update CVS/Root when doing the "cvs
