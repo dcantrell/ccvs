@@ -1181,6 +1181,8 @@ buf_shutdown (struct buffer *buf)
     return 0;
 }
 
+
+
 /* The simplest type of buffer is one built on top of a stdio FILE.
    For simplicity, and because it is all that is required, we do not
    implement setting this type of buffer into nonblocking mode.  The
@@ -1191,13 +1193,16 @@ static int stdio_buffer_output (void *, const char *, int, int *);
 static int stdio_buffer_flush (void *);
 static int stdio_buffer_shutdown (struct buffer *buf);
 
-/* Initialize a buffer built on a stdio FILE.  */
 
+
+/* Initialize a buffer built on a stdio FILE.  */
 struct stdio_buffer_closure
 {
     FILE *fp;
     int child_pid;
 };
+
+
 
 struct buffer *
 stdio_buffer_initialize (FILE *fp, int child_pid, int input,
@@ -1208,14 +1213,14 @@ stdio_buffer_initialize (FILE *fp, int child_pid, int input,
     bc->fp = fp;
     bc->child_pid = child_pid;
 
-    return buf_initialize( input ? stdio_buffer_input : NULL,
+    return buf_initialize (input ? stdio_buffer_input : NULL,
 			   input ? NULL : stdio_buffer_output,
 			   input ? NULL : stdio_buffer_flush,
-			   (int (*) (void *, int)) NULL,
-			   stdio_buffer_shutdown,
-			   memory,
-			   (void *) bc );
+			   NULL, stdio_buffer_shutdown, memory,
+			   bc);
 }
+
+
 
 /* Return the file associated with a stdio buffer. */
 FILE *
@@ -1223,19 +1228,20 @@ stdio_buffer_get_file (struct buffer *buf)
 {
     struct stdio_buffer_closure *bc;
 
-    assert(buf->shutdown == stdio_buffer_shutdown);
+    assert (buf->shutdown == stdio_buffer_shutdown);
 
-    bc = (struct stdio_buffer_closure *) buf->closure;
+    bc = buf->closure;
 
-    return(bc->fp);
+    return bc->fp;
 }
 
-/* The buffer input function for a buffer built on a stdio FILE.  */
 
+
+/* The buffer input function for a buffer built on a stdio FILE.  */
 static int
 stdio_buffer_input (void *closure, char *data, int need, int size, int *got)
 {
-    struct stdio_buffer_closure *bc = (struct stdio_buffer_closure *) closure;
+    struct stdio_buffer_closure *bc = closure;
     int nbytes;
 
     /* Since stdio does its own buffering, we don't worry about
@@ -1280,12 +1286,13 @@ stdio_buffer_input (void *closure, char *data, int need, int size, int *got)
     return 0;
 }
 
-/* The buffer output function for a buffer built on a stdio FILE.  */
 
+
+/* The buffer output function for a buffer built on a stdio FILE.  */
 static int
 stdio_buffer_output (void *closure, const char *data, int have, int *wrote)
 {
-    struct stdio_buffer_closure *bc = (struct stdio_buffer_closure *) closure;
+    struct stdio_buffer_closure *bc = closure;
 
     *wrote = 0;
 
@@ -1311,8 +1318,9 @@ stdio_buffer_output (void *closure, const char *data, int have, int *wrote)
     return 0;
 }
 
-/* The buffer flush function for a buffer built on a stdio FILE.  */
 
+
+/* The buffer flush function for a buffer built on a stdio FILE.  */
 static int
 stdio_buffer_flush (void *closure)
 {
@@ -1334,13 +1342,12 @@ stdio_buffer_flush (void *closure)
 static int
 stdio_buffer_shutdown (struct buffer *buf)
 {
-    struct stdio_buffer_closure *bc =
-	(struct stdio_buffer_closure *) buf->closure;
+    struct stdio_buffer_closure *bc = buf->closure;
     struct stat s;
     int closefp = 1;
 
     /* Must be a pipe or a socket.  What could go wrong? */
-    assert (fstat ( fileno (bc->fp), &s ) != -1);
+    assert (fstat (fileno (bc->fp), &s) != -1);
 
     /* Flush the buffer if we can */
     if (buf->flush)
@@ -1363,8 +1370,8 @@ stdio_buffer_shutdown (struct buffer *buf)
 # ifndef NO_SOCKET_TO_FD
 	{
 	    /* shutdown() sockets */
-	    if (S_ISSOCK(s.st_mode))
-		shutdown ( fileno (bc->fp), 0);
+	    if (S_ISSOCK (s.st_mode))
+		shutdown (fileno (bc->fp), 0);
 	}
 # endif /* NO_SOCKET_TO_FD */
 # ifdef START_RSH_WITH_POPEN_RW
@@ -1386,13 +1393,13 @@ stdio_buffer_shutdown (struct buffer *buf)
 	 * SHUTDOWN_SERVER_OUTPUT
 	 */
 	if (current_parsed_root->method == server_method)
-	    SHUTDOWN_SERVER ( fileno (bc->fp) );
+	    SHUTDOWN_SERVER (fileno (bc->fp));
 	else
 # endif
 # ifndef NO_SOCKET_TO_FD
 	/* shutdown() sockets */
-	if (S_ISSOCK(s.st_mode))
-	    shutdown ( fileno (bc->fp), 1);
+	if (S_ISSOCK (s.st_mode))
+	    shutdown (fileno (bc->fp), 1);
 # else
 	{
 	/* I'm not sure I like this empty block, but the alternative
@@ -1405,9 +1412,22 @@ stdio_buffer_shutdown (struct buffer *buf)
     }
 
     if (closefp && fclose (bc->fp) == EOF)
-	error (1, errno,
-	       "closing down connection to %s",
-	       current_parsed_root->hostname);
+    {
+	if (0
+# ifdef SERVER_SUPPORT
+	    || server_active
+# endif /* SERVER_SUPPORT */
+           )
+	{
+            /* Syslog this? */
+	}
+# ifdef CLIENT_SUPPORT
+	else
+            error (1, errno,
+                   "closing down connection to %s",
+                   current_parsed_root->hostname);
+# endif /* CLIENT_SUPPORT */
+    }
 
     /* If we were talking to a process, make sure it exited */
     if (bc->child_pid)
@@ -1482,14 +1502,17 @@ struct packetizing_buffer
     char *holddata;
 };
 
+
+
 static int packetizing_buffer_input (void *, char *, int, int, int *);
 static int packetizing_buffer_output (void *, const char *, int, int *);
 static int packetizing_buffer_flush (void *);
 static int packetizing_buffer_block (void *, int);
 static int packetizing_buffer_shutdown (struct buffer *);
 
-/* Create a packetizing buffer.  */
 
+
+/* Create a packetizing buffer.  */
 struct buffer *
 packetizing_buffer_initialize (struct buffer *buf,
                                int (*inpfn) (void *, const char *, char *,
@@ -1527,13 +1550,14 @@ packetizing_buffer_initialize (struct buffer *buf,
 			   pb);
 }
 
-/* Input data from a packetizing buffer.  */
 
+
+/* Input data from a packetizing buffer.  */
 static int
 packetizing_buffer_input (void *closure, char *data, int need, int size,
                           int *got)
 {
-    struct packetizing_buffer *pb = (struct packetizing_buffer *) closure;
+    struct packetizing_buffer *pb = closure;
 
     *got = 0;
 
@@ -1736,13 +1760,14 @@ packetizing_buffer_input (void *closure, char *data, int need, int size,
     return 0;
 }
 
-/* Output data to a packetizing buffer.  */
 
+
+/* Output data to a packetizing buffer.  */
 static int
 packetizing_buffer_output (void *closure, const char *data, int have,
                            int *wrote)
 {
-    struct packetizing_buffer *pb = (struct packetizing_buffer *) closure;
+    struct packetizing_buffer *pb = closure;
     char inbuf[BUFFER_DATA_SIZE + 2];
     char stack_outbuf[BUFFER_DATA_SIZE + PACKET_SLOP + 4];
     struct buffer_data *outdata;
@@ -1812,8 +1837,9 @@ packetizing_buffer_output (void *closure, const char *data, int have,
     return buf_send_output (pb->buf);
 }
 
-/* Flush data to a packetizing buffer.  */
 
+
+/* Flush data to a packetizing buffer.  */
 static int
 packetizing_buffer_flush (void *closure)
 {
@@ -1826,8 +1852,9 @@ packetizing_buffer_flush (void *closure)
     return buf_flush (pb->buf, 0);
 }
 
-/* The block routine for a packetizing buffer.  */
 
+
+/* The block routine for a packetizing buffer.  */
 static int
 packetizing_buffer_block (void *closure, int block)
 {
@@ -1839,12 +1866,13 @@ packetizing_buffer_block (void *closure, int block)
 	return set_nonblock (pb->buf);
 }
 
-/* Shut down a packetizing buffer.  */
 
+
+/* Shut down a packetizing buffer.  */
 static int
 packetizing_buffer_shutdown (struct buffer *buf)
 {
-    struct packetizing_buffer *pb = (struct packetizing_buffer *) buf->closure;
+    struct packetizing_buffer *pb = buf->closure;
 
     return buf_shutdown (pb->buf);
 }

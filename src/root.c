@@ -290,12 +290,14 @@ new_cvsroot_t (void)
 
     newroot->original = NULL;
     newroot->method = null_method;
+#ifdef CLIENT_SUPPORT
     newroot->username = NULL;
     newroot->password = NULL;
     newroot->hostname = NULL;
     newroot->port = 0;
     newroot->directory = NULL;
-#ifdef CLIENT_SUPPORT
+    newroot->proxy_hostname = NULL;
+    newroot->proxy_port = 0;
     newroot->isremote = 0;
 #endif /* CLIENT_SUPPORT */
 
@@ -310,6 +312,9 @@ free_cvsroot_t (cvsroot_t *root)
 {
     if (root->original != NULL)
 	free (root->original);
+    if (root->directory != NULL)
+	free (root->directory);
+#ifdef CLIENT_SUPPORT
     if (root->username != NULL)
 	free (root->username);
     if (root->password != NULL)
@@ -320,8 +325,9 @@ free_cvsroot_t (cvsroot_t *root)
     }
     if (root->hostname != NULL)
 	free (root->hostname);
-    if (root->directory != NULL)
-	free (root->directory);
+    if (root->proxy_hostname != NULL)
+	free (root->proxy_hostname);
+#endif /* CLIENT_SUPPORT */
     free (root);
 }
 
@@ -361,11 +367,13 @@ parse_cvsroot (const char *root_in)
 					 * [[user][:password]@]host[:[port]]
 					 */
     char *cvsroot_copy, *p, *q;		/* temporary pointers for parsing */
+#ifdef CLIENT_SUPPORT
     int check_hostname, no_port, no_password;
+#endif /* CLIENT_SUPPORT */
 
     assert (root_in != NULL);
 
-    TRACE ( TRACE_FUNCTION, "parse_cvsroot ( %s )", root_in );
+    TRACE (TRACE_FUNCTION, "parse_cvsroot ( %s )", root_in);
 
     /* allocate some space */
     newroot = new_cvsroot_t();
@@ -435,7 +443,7 @@ parse_cvsroot (const char *root_in)
      */
 #ifndef DEBUG
     /* Why do we avoid these checks when DEBUG is set?  How is this used?  */
-# if ! defined (CLIENT_SUPPORT)
+# ifndef CLIENT_SUPPORT
     if (newroot->method != local_method)
     {
 	error (0, 0, "CVSROOT is set for a remote access method but your");
@@ -448,14 +456,14 @@ parse_cvsroot (const char *root_in)
 #ifdef CLIENT_SUPPORT
     newroot->isremote = (newroot->method != local_method);
 
-    if ( readonlyfs && newroot->isremote )
+    if (readonlyfs && newroot->isremote)
 	error (1, 0,
-	       "Read-only repository feature unavailable with remote roots (cvsroot = %s)",
+"Read-only repository feature unavailable with remote roots (cvsroot = %s)",
 	       cvsroot_copy);
 
     if ((newroot->method != local_method)
 #ifdef CLIENT_SUPPORT
-	&& ( newroot->method != fork_method )
+	&& (newroot->method != fork_method)
 #endif /* SERVER_SUPPORT */
        )
     {
@@ -467,7 +475,8 @@ parse_cvsroot (const char *root_in)
 	if ((p = strchr (cvsroot_copy, '/')) == NULL)
 	{
 	    error (0, 0, "CVSROOT requires a path spec:");
-	    error (0, 0, ":(gserver|kserver|pserver):[[user][:password]@]host[:[port]]/path");
+	    error (0, 0,
+":(gserver|kserver|pserver):[[user][:password]@]host[:[port]]/path");
 	    error (0, 0, "[:(ext|server):][[user]@]host[:]/path");
 	    goto error_exit;
 	}
@@ -515,15 +524,18 @@ parse_cvsroot (const char *root_in)
 		{
 		    if (!isdigit(*q++))
 		    {
-			error (0, 0, "CVSROOT may only specify a positive, non-zero, integer port (not `%s').",
+			error (0, 0,
+"CVSROOT may only specify a positive, non-zero, integer port (not `%s').",
 				p);
-			error (0, 0, "Perhaps you entered a relative pathname?");
+			error (0, 0,
+                               "Perhaps you entered a relative pathname?");
 			goto error_exit;
 		    }
 		}
 		if ((newroot->port = atoi (p)) <= 0)
 		{
-		    error (0, 0, "CVSROOT may only specify a positive, non-zero, integer port (not `%s').",
+		    error (0, 0,
+"CVSROOT may only specify a positive, non-zero, integer port (not `%s').",
 			    p);
 		    error (0, 0, "Perhaps you entered a relative pathname?");
 		    goto error_exit;
@@ -551,20 +563,20 @@ parse_cvsroot (const char *root_in)
      * called on a CVSROOT now.  cvsroot->original is saved for error messages
      * and, otherwise, we want no trailing slashes.
      */
-    Sanitize_Repository_Name( cvsroot_copy );
-    newroot->directory = xstrdup(cvsroot_copy);
+    Sanitize_Repository_Name (cvsroot_copy);
+    newroot->directory = xstrdup (cvsroot_copy);
 
     /*
      * Do various sanity checks.
      */
 
+#ifdef CLIENT_SUPPORT
     if (newroot->username && ! newroot->hostname)
     {
 	error (0, 0, "Missing hostname in CVSROOT.");
 	goto error_exit;
     }
 
-#ifdef CLIENT_SUPPORT
     /* We won't have attempted to parse these without CLIENT_SUPPORT */
     check_hostname = 0;
     no_password = 1;
@@ -573,12 +585,14 @@ parse_cvsroot (const char *root_in)
     switch (newroot->method)
     {
     case local_method:
+#ifdef CLIENT_SUPPORT
 	if (newroot->username || newroot->hostname)
 	{
 	    error (0, 0, "Can't specify hostname and username in CVSROOT");
 	    error (0, 0, "when using local access method.");
 	    goto error_exit;
 	}
+#endif /* CLIENT_SUPPORT */
 	/* cvs.texinfo has always told people that CVSROOT must be an
 	   absolute pathname.  Furthermore, attempts to use a relative
 	   pathname produced various errors (I couldn't get it to work),
