@@ -56,12 +56,10 @@ COMMON_HEADERS = \
        ${cvs_srcdir}/error.h
 
 # sources specific to OS/2
-# was        ${srcdir}/rcmd.c \
 OS2_SOURCES = \
        ${srcdir}/filesubr.c \
        ${srcdir}/startserver.c \
        ${srcdir}/stripslash.c \
-       ${top_srcdir}/windows-NT/rcmd.c \
        ${srcdir}/system.c
 
 # sources we use from the common src dir, ../src
