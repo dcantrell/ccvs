@@ -1467,6 +1467,7 @@ automating that process.  @xref{Informing others}.
 * Conflicts example::           An informative example
 * Informing others::            To cooperate you must inform
 * Concurrency::                 Simultaneous repository access
+* Watches::                     Mechanisms to track who is editing files
 @end menu
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -1786,6 +1787,254 @@ cvs ci a/two.c b/three.c
 and someone else runs @code{cvs update}, the person
 running update might get only the change to
 @file{b/three.c} and not the change to @file{a/two.c}.
+
+@node Watches
+@section Mechanisms to track who is editing files
+@cindex Watches
+
+For many groups, use of @sc{cvs} in its default mode is
+perfectly satisfactory.  Users may sometimes go to
+check in a modification only to find that another
+modification has intervened, but they deal with it and
+proceed with their check in.  Other groups prefer to be
+able to know who is editing what files, so that if two
+people try to edit the same file they can choose to
+talk about who is doing what when rather than be
+surprised at check in time.  The features in this
+section allow such coordination, while retaining the
+ability of two developers to edit the same file at the
+same time.
+
+For maximum benefit developers should use @code{cvs
+edit} (not @code{chmod}) to make files read-write to
+edit them, and @code{cvs release} (not @code{rm}) to
+discard a working directory which is no longer in use,
+but @sc{cvs} is not able to enforce this behavior.
+
+@c I'm a little dissatisfied with this presentation,
+@c because "watch on"/"edit"/"editors" are one set of
+@c functionality, and "watch add"/"watchers" is another
+@c which is somewhat orthogonal even though they interact in
+@c various ways.  But I think it might be
+@c confusing to describe them separately (e.g. "watch
+@c add" with loginfo).  I don't know.
+
+@menu
+* Setting a watch::             Telling CVS to watch certain files
+* Getting Notified::            Telling CVS to notify you
+* Editing files::               How to edit a file which is being watched
+* Watch information::           Information about who is watching and editing
+* Watches Compatibility::       Watches interact poorly with CVS 1.6 or earlier
+@end menu
+
+@node Setting a watch
+@subsection Telling CVS to watch certain files
+
+To enable the watch features, you first specify that
+certain files are to be watched.
+
+@cindex watch on (subcommand)
+@deffn Command {cvs watch on} [@code{-l}] files @dots{}
+
+Specify that developers should run @code{cvs edit}
+before editing @var{files}.  CVS will create working
+copies of @var{files} read-only, to remind developers
+to run the @code{cvs edit} command before working on
+them.
+
+If @var{files} includes the name of a directory, CVS
+arranges to watch all files added to the corresponding
+repository directory, and sets a default for files
+added in the future; this allows the user to set
+notification policies on a per-directory basis.  The
+contents of the directory are processed recursively,
+unless the @code{-l} option is given.
+
+If @var{files} is omitted, it defaults to the current directory.
+
+@cindex watch off (subcommand)
+@end deffn
+
+@deffn Command {cvs watch off} [@code{-l}] files @dots{}
+
+Do not provide notification about work on @var{files}.  CVS will create
+working copies of @var{files} read-write.
+
+The @var{files} and @code{-l} arguments are processed as for @code{cvs
+watch on}.
+
+@end deffn
+
+@node Getting Notified
+@subsection Telling CVS to notify you
+
+You can tell @sc{cvs} that you want to receive
+notifications about various actions taken on a file.
+You can do this without using @code{cvs watch on} for
+the file, but generally you will want to use @code{cvs
+watch on}, so that developers use the @code{cvs edit}
+command.
+
+@cindex watch add (subcommand)
+@deffn Command {cvs watch add} [@code{-a} action] [@code{-l}] files @dots{}
+
+Add the current user to the list of people to receive notification of
+work done on @var{files}.
+
+The @code{-a} option specifies what kinds of events CVS should notify
+the user about.  @var{action} is one of the following:
+
+@table @code
+
+@item edit
+Another user has applied the @code{cvs edit} command (described
+below) to a file.
+
+@item unedit
+Another user has applied the @code{cvs unedit} command (described
+below) or the @code{cvs release} command to a file, or has deleted
+the file and allowed @code{cvs update} to recreate it.
+
+@item commit
+Another user has committed changes to a file.
+
+@item all
+All of the above.
+
+@item none
+None of the above.  (This is useful with @code{cvs edit},
+described below.)
+
+@end table
+
+The @code{-a} option may appear more than once, or not at all.  If
+omitted, the action defaults to @code{all}.
+
+The @var{files} and @code{-l} option are processed as for the
+@code{cvs watch} commands.
+
+@end deffn
+
+
+@cindex watch remove (subcommand)
+@deffn Command {cvs watch remove} [@code{-a} action] [@code{-l}] files @dots{}
+
+Remove a notification request established using @code{cvs watch add};
+the arguments are the same.  If the @code{-a} option is present, only
+watches for the specified actions are removed.
+
+@end deffn
+
+When the conditions exist for notification, @sc{cvs}
+calls the @file{notify} administrative file, passing it
+the user to receive the notification and the user who
+is taking the action which results in notification.
+Normally @file{notify} will just send an email message.
+@c FIXME: Need to provide example, or perhaps ship one
+@c with CVS, of what notify script looks like.
+
+@node Editing files
+@subsection How to edit a file which is being watched
+
+Since a file which is being watched is checked out
+read-only, you cannot simply edit it.  To make it
+read-write, and inform others that you are planning
+to edit it, use the @code{cvs edit} command.
+
+@cindex edit (subcommand)
+@deffn Command {cvs edit} [options] files @dots{}
+
+Prepare to edit the working files @var{files}.  CVS makes the
+@var{files} read-write, and notifies users who have requested
+@code{edit} notification for any of @var{files}.
+
+The @code{cvs edit} command accepts the same @var{options} as the
+@code{cvs watch add} command, and establishes a temporary watch for the
+user on @var{files}; CVS will remove the watch when @var{files} are
+@code{unedit}ed or @code{commit}ted.  If the user does not wish to
+receive notifications, she should specify @code{-a none}.
+
+The @var{files} and @code{-l} option are processed as for the @code{cvs
+watch} commands.
+
+@end deffn
+
+Normally when you are done with a set of changes, you
+use the @code{cvs commit} command, which checks in your
+changes and returns the watched files to their usual
+read-only state.  But if you instead decide to abandon
+your changes, or not to make any changes, you can use
+the @code{cvs unedit} command.
+
+@cindex unedit (subcommand)
+@deffn Command {cvs unedit} [@code{-l}] files @dots{}
+
+Abandon work on the working files @var{files}, and revert them to the
+repository versions on which they are based.  CVS makes those
+@var{files} read-only for which users have requested notification using
+@code{cvs watch on}.  CVS notifies users who have requested @code{unedit}
+notification for any of @var{files}.
+
+The @var{files} and @code{-l} option are processed as for the
+@code{cvs watch} commands.
+
+@end deffn
+
+When using client/server @sc{cvs}, you can use the
+@code{cvs edit} and @code{cvs unedit} commands even if
+@sc{cvs} is unable to succesfully communicate with the
+server; the notifications will be sent upon the next
+successful @sc{cvs} command.
+
+@node Watch information
+@subsection Information about who is watching and editing
+
+@cindex watchers (subcommand)
+@deffn Command {cvs watchers} [@code{-l}] files @dots{}
+
+List the users currently watching changes to @var{files}.  The report
+includes the files being watched, and the mail address of each watcher.
+
+The @var{files} and @code{-l} arguments are processed as for the
+@code{cvs watch} commands.
+
+@end deffn
+
+
+@cindex editors (subcommand)
+@deffn Command {cvs editors} [@code{-l}] files @dots{}
+
+List the users currently working on @var{files}.  The report
+includes the mail address of each user, the time when the user began
+working with the file, and the host and path of the working directory
+containing the file.
+
+The @var{files} and @code{-l} arguments are processed as for the
+@code{cvs watch} commands.
+
+@end deffn
+
+@node Watches Compatibility
+@subsection Using watches with old versions of CVS
+
+@cindex CVS 1.6, and watches
+If you use the watch features on a repository, it
+creates @file{CVS} directories in the repository and
+stores the information about watches in that directory.
+If you attempt to use @sc{cvs} 1.6 or earlier with the
+repository, you get an error message such as
+
+@example
+cvs update: cannot open CVS/Entries for reading: No such file or directory
+@end example
+
+and your operation will likely be aborted.  To use the
+watch features, you must upgrade all copies of @sc{cvs}
+which use that repository in local or server mode.  If
+you cannot upgrade, use the @code{watch off} and
+@code{watch remove} commands to remove all watches, and
+that will restore the repository to a state which
+@sc{cvs} 1.6 can cope with.
 
 @c ---------------------------------------------------------------------
 @node Branches
@@ -3174,8 +3423,10 @@ goal, which is to get software written.
 @cindex Reference, commands
 @cindex Invoking CVS
 
-This appendix describes every subcommand of @sc{cvs} in
-detail.  It also describes how to invoke CVS.
+This appendix describes how to invoke @sc{cvs}, and
+describes in detail those subcommands of @sc{cvs} which
+are not fully described elsewhere.  To look up a
+particular subcommand, see @ref{Index}.
 
 @menu
 * Structure::                   Overall structure of CVS commands
@@ -4089,6 +4340,16 @@ sure that it will be a sub-directory, and that
 each file as it is extracted into your private work
 area (unless you specify the @samp{-Q} global option).
 
+The files created by @code{checkout} are created
+read-write, unless the @samp{-r} option to @sc{cvs}
+(@pxref{Global options}) is specified, the
+@code{CVSREAD} environment variable is specified
+(@pxref{Environment variables}), or a watch is in
+effect for that file (@pxref{Watches}).
+
+@c FIXME: misleading--checkout takes a module as
+@c argument, and update does not--so -d behavior is not the only
+@c difference.
 Running @code{checkout} on a directory that was already
 built by a prior @code{checkout} is also permitted, and
 has the same effect as specifying the @samp{-d} option
