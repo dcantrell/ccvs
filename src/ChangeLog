@@ -1,3 +1,9 @@
+2002-07-09  Larry Jones  <lawrence.jones@eds.com>
+
+	* lock.c (lock_wait, lock_obtained): Display time in UTC if possible
+	to reduce confusion in client/server mode.
+	(Original patch from Eduardo Perez Ureta <eperez@it.uc3m.es>.)
+
 2002-06-26  Larry Jones  <lawrence.jones@eds.com>
 
 	* tag.c (check_fileproc): When checking up-to-date, T_REMOVE_ENTRY
