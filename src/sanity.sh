@@ -29306,6 +29306,18 @@ No conflicts created by this import"
 
 	  # There were some duplicated warnings and such; only test
 	  # for the part of the error message which makes sense.
+	  #
+	  # FIXCVS then FIXME
+	  # Now the duplicated error messages only occur on some platforms,
+	  # including, apparently, NetBSD 1.6.1, RedHat Linux 7.3, whatever
+	  # kernel that is using, and Solaris 9.  These platforms somehow
+	  # decide to call Name_Root() up to four times, via do_recursion, but
+	  # I'm not sure of the rest of the details.  Other platforms,
+	  # including Fedora Core 1 (Linux 2.4.22-1.2199.nptl), RH Linux 9
+	  # (Linux 2.4.20-37.9.legacy), and probably AIX 3.4, Solaris 8, 
+	  # BSD/OS 4.2, & IRIX 6.5 only call Name_Root() once as a result of
+	  # this test.
+	  #
 	  # Bug: "skipping directory " without filename.
 	  if $remote; then
 	    dotest_fail reposmv-2r "${testcvs} update" \
@@ -29313,10 +29325,10 @@ No conflicts created by this import"
 No such file or directory"
 	  else
 	    dotest reposmv-2 "$testcvs update" \
-"$CPROG update: in directory \.:
+"$DOTSTAR$CPROG update: in directory \.:
 $CPROG update: ignoring CVS/Root because it specifies a non-existent repository $TESTDIR/root1
 $CPROG update: Updating \.
-$CPROG update: cannot open directory $CVSROOT_DIRNAME/dir1: No such file or directory
+$DOTSTAR$CPROG update: cannot open directory $CVSROOT_DIRNAME/dir1: No such file or directory
 $CPROG update: skipping directory "
 	  fi
 
@@ -29332,9 +29344,9 @@ No such file or directory"
 	    CVSROOT_save=$CVSROOT
 	    CVSROOT=$TESTDIR/root-moved; export CVSROOT
 	    dotest reposmv-3 "$testcvs update" \
-"$CPROG update: in directory \.:
+"$DOTSTAR$CPROG update: in directory \.:
 $CPROG update: ignoring CVS/Root because it specifies a non-existent repository $TESTDIR/root1
-$CPROG update: Updating \."
+$CPROG update: Updating \.$DOTSTAR"
 	    CVSROOT=$CVSROOT_save; export CVSROOT
 	  fi
 

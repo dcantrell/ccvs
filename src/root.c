@@ -36,6 +36,10 @@ Name_Root (const char *dir, const char *update_dir)
     char *cp;
     int len;
 
+    TRACE (TRACE_FUNCTION, "Name_Root (%s, %s)",
+	   dir ? dir : "(null)",
+	   update_dir ? update_dir : "(null)");
+
     if (update_dir && *update_dir)
 	xupdate_dir = update_dir;
     else
@@ -115,7 +119,6 @@ Name_Root (const char *dir, const char *update_dir)
 	error (0, 0,
 	       "ignoring %s because it specifies a non-existent repository %s",
 	       CVSADM_ROOT, root);
-	free_cvsroot_t (ret);
 	ret = NULL;
 	goto out;
     }

@@ -5611,7 +5611,8 @@ serve_command_prep (char *arg)
  *
  * ASSUMPTIONS
  *   The `Root' request has already been processed.
- *   If referrer is set it may be disposed.
+ *   There is no need to dispose of REFERRER if it is set.  It's memory is
+ *   tracked by parse_root().
  *
  * RETURNS
  *   Nothing.
@@ -5621,14 +5622,12 @@ serve_referrer (char *arg)
 {
     if (error_pending ()) return;
 
-    if (referrer)
-	free_cvsroot_t (referrer);
     referrer = parse_cvsroot (arg);
 
     if (!referrer
 	&& alloc_pending (80 + strlen (arg)))
-	sprintf (pending_error_text, "\
-E Protocol error: Invalid Referrer: `%s'",
+	sprintf (pending_error_text,
+		 "E Protocol error: Invalid Referrer: `%s'",
 		 arg);
 }
 
