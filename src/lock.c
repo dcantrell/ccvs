@@ -286,7 +286,7 @@ lock_name (const char *repository, const char *name)
 static void
 remove_lock_files (struct lock *lock, int free_repository)
 {
-    TRACE (TRACE_FLOW, "remove_lock_files(%s)", lock->repository);
+    TRACE (TRACE_FLOW, "remove_lock_files (%s)", lock->repository);
 
     /* If lock->file is set, the lock *might* have been created, but since
      * Reader_Lock & lock_dir_for_write don't use SIG_beginCrSect the way that
@@ -1265,7 +1265,7 @@ lock_dir_for_write (const char *repository)
 		Node *p = findnode (locklist, repository);
 		if (p)
 		{
-		    remove_lock_files ((struct lock *)p->data, 1);
+		    remove_lock_files (p->data, 1);
 		    delnode (p);
 		}
 	    }

@@ -11,7 +11,7 @@
 
 /* Access method specified in CVSroot. */
 typedef enum {
-    null_method,
+    null_method = 0,
     local_method,
     server_method,
     pserver_method,
@@ -40,3 +40,7 @@ typedef struct cvsroot_s {
     unsigned char isremote;	/* Nonzero if we are doing remote access. */
 #endif /* CLIENT_SUPPORT */
 } cvsroot_t;
+
+void primary_root_add (const char *arg);
+char *primary_root_translate (const char *root_in);
+char *primary_root_inverse_translate (const char *root_in);

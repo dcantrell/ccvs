@@ -14,6 +14,23 @@
 #ifndef LOG_BUFFER_H__
 #define LOG_BUFFER_H__
 
-void setup_logfiles (struct buffer** to_server_p, struct buffer** from_server_p);
+void setup_logfiles (char *var, struct buffer** to_server_p,
+                     struct buffer** from_server_p);
+
+struct buffer *
+log_buffer_initialize (struct buffer *buf, FILE *fp,
+# ifdef PROXY_SUPPORT
+		       bool fatal_errors,
+#   ifndef TRUST_OS_FILE_CACHE
+		       size_t max,
+#   endif /* !TRUST_OS_FILE_CACHE */
+# endif /* PROXY_SUPPORT */
+                       bool input,
+		       void (*memory) (struct buffer *));
+
+# ifdef PROXY_SUPPORT
+struct buffer *log_buffer_rewind (struct buffer *buf);
+void log_buffer_closelog (struct buffer *buf);
+# endif /* PROXY_SUPPORT */
 
 #endif /* LOG_BUFFER_H__ */

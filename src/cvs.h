@@ -41,6 +41,7 @@
 
 /* begin GNULIB headers */
 #include "exit.h"
+#include "minmax.h"
 #include "vasnprintf.h"
 #include "xalloc.h"
 #include "xsize.h"
@@ -151,16 +152,18 @@ char *strerror (int);
 #define	CVSROOTADM		"CVSROOT"
 #define	CVSROOTADM_CHECKOUTLIST "checkoutlist"
 #define CVSROOTADM_COMMITINFO	"commitinfo"
-#define	CVSROOTADM_CONFIG	"config"
-#define	CVSROOTADM_IGNORE	"cvsignore"
+#define CVSROOTADM_CONFIG	"config"
 #define	CVSROOTADM_HISTORY	"history"
+#define	CVSROOTADM_IGNORE	"cvsignore"
 #define	CVSROOTADM_LOGINFO	"loginfo"
 #define	CVSROOTADM_MODULES	"modules"
 #define CVSROOTADM_NOTIFY	"notify"
 #define CVSROOTADM_PASSWD	"passwd"
 #define CVSROOTADM_POSTADMIN	"postadmin"
+#define CVSROOTADM_POSTPROXY	"postproxy"
 #define CVSROOTADM_POSTTAG	"posttag"
 #define CVSROOTADM_POSTWATCH	"postwatch"
+#define CVSROOTADM_PREPROXY	"preproxy"
 #define	CVSROOTADM_RCSINFO	"rcsinfo"
 #define CVSROOTADM_READERS	"readers"
 #define CVSROOTADM_TAGINFO      "taginfo"
@@ -381,6 +384,11 @@ extern int top_level_admin;
 extern bool UseNewInfoFmtStrings;
 #endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
 extern int ImportNewFilesToVendorBranchOnly;
+#ifdef PROXY_SUPPORT
+extern cvsroot_t *PrimaryServer;
+extern size_t MaxProxyBufferSize;
+#endif /* PROXY_SUPPORT */
+
 
 
 #define LOGMSG_REREAD_NEVER 0	/* do_verify - never  reread message */
@@ -934,7 +942,7 @@ int cvsstatus (int argc, char **argv);
 int cvstag (int argc, char **argv);
 int version (int argc, char **argv);
 
-unsigned long int lookup_command_attribute (char *);
+unsigned long int lookup_command_attribute (const char *);
 
 #if defined(AUTH_CLIENT_SUPPORT) || defined(AUTH_SERVER_SUPPORT)
 char *scramble (char *str);

@@ -81,15 +81,17 @@ compress_error (int status, int zstatus, z_stream *zstr, const char *msg)
 	   "%s: %s", msg, zmsg);
 }
 
-/* Create a compression buffer.  */
 
+
+/* Create a compression buffer.  */
 struct buffer *
-compress_buffer_initialize (struct buffer *buf, int input, int level, void (*memory) (struct buffer *))
+compress_buffer_initialize (struct buffer *buf, int input, int level,
+                            void (*memory) (struct buffer *))
 {
     struct compress_buffer *n;
     int zstatus;
 
-    n = (struct compress_buffer *) xmalloc (sizeof *n);
+    n = xmalloc (sizeof *n);
     memset (n, 0, sizeof *n);
 
     n->buf = buf;
@@ -111,7 +113,8 @@ compress_buffer_initialize (struct buffer *buf, int input, int level, void (*mem
        be modified to handle multiple input buffers.  */
     assert (! input || buf->data == NULL || buf->data->next == NULL);
 
-    return buf_initialize (input ? compress_buffer_input : NULL,
+    return buf_initialize (buf->last_index, buf->last_count,
+                           input ? compress_buffer_input : NULL,
 			   input ? NULL : compress_buffer_output,
 			   input ? NULL : compress_buffer_flush,
 			   compress_buffer_block, compress_buffer_get_fd,
@@ -122,16 +125,16 @@ compress_buffer_initialize (struct buffer *buf, int input, int level, void (*mem
 			   n);
 }
 
-/* Input data from a compression buffer.  */
 
+
+/* Input data from a compression buffer.  */
 static int
 compress_buffer_input (void *closure, char *data, int need, int size, int *got)
 {
-    struct compress_buffer *cb = (struct compress_buffer *) closure;
+    struct compress_buffer *cb = closure;
     struct buffer_data *bd;
 
-    if (cb->buf->input == NULL)
-	abort ();
+    assert (cb->buf->input);
 
     /* We use a single buffer_data structure to buffer up data which
        the z_stream structure won't use yet.  We can safely store this
@@ -144,10 +147,10 @@ compress_buffer_input (void *closure, char *data, int need, int size, int *got)
     bd = cb->buf->data;
     if (bd == NULL)
     {
-	bd = ((struct buffer_data *) xmalloc (sizeof (struct buffer_data)));
+	bd = xmalloc (sizeof (struct buffer_data));
 	if (bd == NULL)
 	    return -2;
-	bd->text = (char *) xmalloc (BUFFER_DATA_SIZE);
+	bd->text = xmalloc (BUFFER_DATA_SIZE);
 	if (bd->text == NULL)
 	{
 	    free (bd);
@@ -236,12 +239,13 @@ compress_buffer_input (void *closure, char *data, int need, int size, int *got)
     return 0;
 }
 
-/* Output data to a compression buffer.  */
 
+
+/* Output data to a compression buffer.  */
 static int
 compress_buffer_output (void *closure, const char *data, int have, int *wrote)
 {
-    struct compress_buffer *cb = (struct compress_buffer *) closure;
+    struct compress_buffer *cb = closure;
 
     cb->zstr.avail_in = have;
     cb->zstr.next_in = (unsigned char *) data;
@@ -274,12 +278,13 @@ compress_buffer_output (void *closure, const char *data, int have, int *wrote)
     return buf_send_output (cb->buf);
 }
 
-/* Flush a compression buffer.  */
 
+
+/* Flush a compression buffer.  */
 static int
 compress_buffer_flush (void *closure)
 {
-    struct compress_buffer *cb = (struct compress_buffer *) closure;
+    struct compress_buffer *cb = closure;
 
     cb->zstr.avail_in = 0;
     cb->zstr.next_in = NULL;
@@ -323,12 +328,13 @@ compress_buffer_flush (void *closure)
     return buf_flush (cb->buf, 0);
 }
 
-/* The block routine for a compression buffer.  */
 
+
+/* The block routine for a compression buffer.  */
 static int
 compress_buffer_block (void *closure, int block)
 {
-    struct compress_buffer *cb = (struct compress_buffer *) closure;
+    struct compress_buffer *cb = closure;
 
     if (block)
 	return set_block (cb->buf);
@@ -352,7 +358,7 @@ compress_buffer_get_fd (void *closure)
 static int
 compress_buffer_shutdown_input (struct buffer *buf)
 {
-    struct compress_buffer *cb = (struct compress_buffer *) buf->closure;
+    struct compress_buffer *cb = buf->closure;
     int zstatus;
 
     /* Pick up any trailing data, such as the checksum.  */
@@ -378,12 +384,13 @@ compress_buffer_shutdown_input (struct buffer *buf)
     return buf_shutdown (cb->buf);
 }
 
-/* Shut down an output buffer.  */
 
+
+/* Shut down an output buffer.  */
 static int
 compress_buffer_shutdown_output (struct buffer *buf)
 {
-    struct compress_buffer *cb = (struct compress_buffer *) buf->closure;
+    struct compress_buffer *cb = buf->closure;
     int zstatus, status;
 
     do

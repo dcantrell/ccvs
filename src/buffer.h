@@ -21,6 +21,14 @@ struct buffer
     /* Nonzero if the buffer is in nonblocking mode.  */
     int nonblocking;
 
+    /* The start index of the last data returned to a caller, relative to when
+     * this buffer was instantiated.
+     */
+    size_t last_index;
+
+    /* The number of bytes last returned to a caller.  */
+    size_t last_count;
+
     /* Functions must be provided to transfer data in and out of the
        buffer.  Either the input or output field must be set, but not
        both.  */
@@ -104,7 +112,8 @@ struct buffer_data
 /* The type of a function passed as a memory error handler.  */
 typedef void (*BUFMEMERRPROC) (struct buffer *);
 
-struct buffer *buf_initialize (int (*) (void *, char *, int, int, int *),
+struct buffer *buf_initialize (size_t, size_t,
+                               int (*) (void *, char *, int, int, int *),
 			       int (*) (void *, const char *, int, int *),
 			       int (*) (void *),
 			       int (*) (void *, int),

@@ -1265,7 +1265,7 @@ Checking out ", 0);
 		cvs_outerr (finfo->fullname, 0);
 		cvs_outerr ("\n\
 RCS:  ", 0);
-		cvs_outerr (vers_ts->srcfile->path, 0);
+		cvs_outerr (vers_ts->srcfile->print_path, 0);
 		cvs_outerr ("\n\
 VERS: ", 0);
 		cvs_outerr (vers_ts->vn_rcs, 0);

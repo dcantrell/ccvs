@@ -113,9 +113,12 @@ fileattr_read (void)
 
 	    p = strchr (line, '\t');
 	    if (p == NULL)
+	    {
+		char *pfname = primary_root_inverse_translate (fname);
 		error (1, 0,
 		       "file attribute database corruption: tab missing in %s",
-		       fname);
+		       pfname);
+	    }
 	    *p++ = '\0';
 	    newnode = getnode ();
 	    newnode->type = FILEATTR;
@@ -164,6 +167,8 @@ fileattr_read (void)
     free (fname);
 }
 
+
+
 char *
 fileattr_get (const char *filename, const char *attrname)
 {
@@ -205,6 +210,8 @@ fileattr_get (const char *filename, const char *attrname)
     return NULL;
 }
 
+
+
 char *
 fileattr_get0 (const char *filename, const char *attrname)
 {
@@ -223,6 +230,8 @@ fileattr_get0 (const char *filename, const char *attrname)
     retval[cpend - cp] = '\0';
     return retval;
 }
+
+
 
 char *
 fileattr_modify (char *list, const char *attrname, const char *attrval, int namevalsep, int entsep)
@@ -373,6 +382,8 @@ fileattr_set (const char *filename, const char *attrname, const char *attrval)
     attrs_modified = 1;
 }
 
+
+
 char *
 fileattr_getall (const char *filename)
 {
@@ -398,6 +409,8 @@ fileattr_getall (const char *filename)
     }
     return xstrdup (p);
 }
+
+
 
 void
 fileattr_setall (const char *filename, const char *attrs)
@@ -497,7 +510,7 @@ writeattr_proc (Node *node, void *data)
 
 
 /*
- * callback proc to run a script when watch command finishes.
+ * callback proc to run a script when fileattrs are updated.
  */
 static int
 postwatch_proc (const char *repository, const char *filter, void *closure)
@@ -507,7 +520,8 @@ postwatch_proc (const char *repository, const char *filter, void *closure)
 
     TRACE (TRACE_FUNCTION, "postwatch_proc (%s, %s)", repository, filter);
 
-    /* %p = shortrepos
+    /* %c = command name
+     * %p = shortrepos
      * %r = repository
      */
     cmdline = format_cmdline (

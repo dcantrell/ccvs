@@ -44,6 +44,13 @@ int noexec = 0;
 int readonlyfs = 0;
 int logoff = 0;
 
+
+
+/***
+ ***
+ ***   CVSROOT/config options
+ ***
+ ***/
 /* Set if we should be writing CVSADM directories at top level.  At
    least for now we'll make the default be off (the CVS 1.9, not CVS
    1.9.2, behavior). */
@@ -51,6 +58,14 @@ int top_level_admin = 0;
 #ifdef SUPPORT_OLD_INFO_FMT_STRINGS
 bool UseNewInfoFmtStrings = false;
 #endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
+cvsroot_t *PrimaryServer;
+#if defined PROXY_SUPPORT && ! defined TRUST_OS_FILE_CACHE
+size_t MaxProxyBufferSize = (size_t)(8 * 2^10 * 2^10); /* 8 megabytes,
+                                                       * by default.
+                                                       */
+#endif /* PROXY_SUPPORT && ! TRUST_OS_FILE_CACHE */
+
+
 
 /* Control default behavior of 'cvs import' (-X option on or off) in
    CVSROOT/config.  Defaults to off, for backward compatibility. */
@@ -332,8 +347,9 @@ cmd_synonyms (void)
 }
 
 
+
 unsigned long int
-lookup_command_attribute (char *cmd_name)
+lookup_command_attribute (const char *cmd_name)
 {
     const struct cmd *cm;
 
@@ -442,7 +458,12 @@ main (int argc, char **argv)
 	{"help-commands", 0, NULL, 1},
 	{"help-synonyms", 0, NULL, 2},
 	{"help-options", 0, NULL, 4},
+#ifdef SERVER_SUPPORT
 	{"allow-root", required_argument, NULL, 3},
+# ifdef PROXY_SUPPORT
+	{"primary-root", required_argument, NULL, 5},
+# endif /* PROXY_SUPPORT */
+#endif /* SERVER_SUPPORT */
         {0, 0, 0, 0}
     };
     /* `getopt_long' stores the option index here, but right now we
@@ -553,10 +574,16 @@ main (int argc, char **argv)
 		/* --help-options */
 		usage (opt_usage);
 		break;
+#ifdef SERVER_SUPPORT
 	    case 3:
 		/* --allow-root */
 		root_allow_add (optarg);
 		break;
+	    case 5:
+		/* --primary-root */
+		primary_root_add (optarg);
+		break;
+#endif /* SERVER_SUPPORT */
 	    case 'Q':
 		really_quiet = 1;
 		/* FALL THROUGH */

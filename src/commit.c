@@ -1182,6 +1182,7 @@ precommit_proc (const char *repository, const char *filter, void *closure)
         false, srepos,
 #endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
         filter,
+	"c", "s", cvs_cmd_name,
         "p", "s", srepos,
         "r", "s", current_parsed_root->directory,
         "s", ",", ulist, precommit_list_to_args_proc, (void *) NULL,
@@ -1488,8 +1489,6 @@ commit_filesdoneproc (void *callerdat, int err, const char *repository,
 
     got_message = 0;
 
-    Update_Logfile (repository, saved_message, (FILE *) 0, ulist);
-
     /* Build the administrative files if necessary.  */
     {
 	const char *p;
@@ -1535,6 +1534,16 @@ commit_filesdoneproc (void *callerdat, int err, const char *repository,
 	    WriteTemplate (".", 1, repository);
 	}
     }
+
+    /* FIXME: This used to be above the block above.  The advantage of being
+     * here is that it is not called until after all possible writes from this
+     * process are complete.  The disadvantage is that a fatal error during
+     * update of CVSROOT can prevent the loginfo script from being called.
+     *
+     * A more general solution I have been considering is calling a generic
+     * "postwrite" hook from the remove write lock routine.
+     */
+    Update_Logfile (repository, saved_message, NULL, ulist);
 
     return err;
 }

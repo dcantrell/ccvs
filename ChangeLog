@@ -1,3 +1,42 @@
+2004-08-11  Derek Price  <derek@ximbiot.com>
+
+	* NEWS: Mention Juniper's funding for other items.
+
+2004-08-10  Derek Price  <derek@ximbiot.com>
+
+	* configure.in: Enable proxy support by default.
+	* NEWS: Note this.
+
+2004-08-10  Derek Price  <derek@ximbiot.com>
+
+	* configure.in: s/SECONDARY_SUPPORT/PROXY_SUPPORT/.
+
+2004-08-10  Derek Price  <derek@ximbiot.com>
+
+	* NEWS: Note recent attempts at improving I/O efficiency.
+	* configure.in (--enable-file-cache-trust): New option.
+
+2004-08-10  Derek Price  <derek@ximbiot.com>
+
+	* NEWS: Credit Juniper Networks funding for writeproxy code and add a
+	few other details.
+
+2004-08-05  Derek Price  <derek@ximbiot.com>
+
+	* configure.in (--enable-proxy): Switch to turn off writeproxy support.
+
+2004-06-29  Derek Price  <derek@ximbiot.com>
+
+	* NEWS: Note new scripting hooks and new loginfo behavior.
+
+2004-06-28  Derek Price  <derek@ximbiot.com>
+
+	* srclist.txt: Note minmax imported from GNULIB.
+
+2004-06-10  Derek Price  <derek@ximbiot.com>
+
+	* Note addition of write proxy functionality.
+
 2004-08-30  Derek Price  <derek@ximbiot.com>
 
 	* NEWS: Note compliance of log_accum.pl with Perl 5.8.5.
