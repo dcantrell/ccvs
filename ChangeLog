@@ -1,3 +1,8 @@
+1998-09-22  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* NEWS: Add items about multiple roots and -d not updating
+	CVS/Root.
+
 1998-09-09  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* configure.in (AC_OUTPUT): Remove tools/pcl-cvs/Makefile.
