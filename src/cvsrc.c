@@ -60,7 +60,7 @@ read_cvsrc (argc, argv)
 
     /* determine filename for ~/.cvsrc */
 
-    homedir = getenv ("HOME");
+    homedir = get_homedir ();
     if (!homedir)
 	return;
 

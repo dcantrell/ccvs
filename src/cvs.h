@@ -453,6 +453,7 @@ int iswritable PROTO((const char *file));
 int isaccessible PROTO((const char *file, const int mode));
 int isabsolute PROTO((const char *filename));
 char *last_component PROTO((char *path));
+char *get_homedir PROTO ((void));
 
 int numdots PROTO((const char *s));
 int unlink_file PROTO((const char *f));

@@ -139,7 +139,7 @@ expand_path (name, file, line)
 	char *t;
 	char *p=s;
 	if (*s=='/' || *s==0)
-	    t = getenv ("HOME");
+	    t = get_homedir ();
 	else
 	{
 	    struct passwd *ps;

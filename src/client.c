@@ -9,9 +9,13 @@
 #include "md5.h"
 
 #if defined(AUTH_CLIENT_SUPPORT) || HAVE_KERBEROS
+#ifdef HAVE_WINSOCK_H
+#include <winsock.h>
+#else /* No winsock.h */
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netdb.h>
+#endif /* No winsock.h */
 #endif /* defined(AUTH_CLIENT_SUPPORT) || HAVE_KERBEROS */
 
 #ifdef AUTH_CLIENT_SUPPORT
