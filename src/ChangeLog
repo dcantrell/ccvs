@@ -1,5 +1,10 @@
 2003-10-01  Derek Price  <derek@ximbiot.com>
 
+	* client.c (connect_to_forked_server): Use TRACE macro rather than the
+	old style.
+
+2003-10-01  Derek Price  <derek@ximbiot.com>
+
 	* server.c (protocol): Initialize the protocol buffer to NULL so that
 	use before initialization may be detected.
 	(cvs_output, cvs_outerr): Syslog messages when the appropriate buffers
