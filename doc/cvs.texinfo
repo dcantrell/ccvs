@@ -1078,9 +1078,21 @@ create a UNIX group (see group(5)) consisting of the
 persons that are to edit the files in a project, and
 set up the repository so that it is that group that
 owns the directory.
+@c See also comment in commitinfo node regarding cases
+@c which are really awkward with unix groups.
 
 This means that you can only control access to files on
 a per-directory basis.
+
+Note that users must also have write access to check
+out files, because @sc{cvs} needs to create lock files
+(@pxref{Concurrency}).
+
+Also note that users must have write access to the
+@file{CVSROOT/val-tags} file.  @sc{Cvs} uses it to keep
+track of what tags are valid tag names (it is sometimes
+updated when tags are used, as well as when they are
+created, though).
 
 @sc{cvs} tries to set up reasonable file permissions
 for new directories that are added inside the tree, but
