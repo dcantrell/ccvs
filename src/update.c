@@ -50,6 +50,7 @@ static int patch_file PROTO ((struct file_info *finfo,
 			      Vers_TS *vers_ts, 
 			      int *docheckout, struct stat *file_info,
 			      unsigned char *checksum));
+static void patch_file_write PROTO ((void *, const char *, size_t));
 #endif
 static int merge_file PROTO ((struct file_info *finfo, Vers_TS *vers));
 static int scratch_file PROTO((struct file_info *finfo));
@@ -1096,7 +1097,8 @@ VERS: ", 0);
 	status = RCS_checkout (vers_ts->srcfile,
 			       pipeout ? NULL : finfo->file,
 			       vers_ts->vn_rcs, vers_ts->vn_tag,
-			       vers_ts->options, RUN_TTY);
+			       vers_ts->options, RUN_TTY,
+			       (RCSCHECKOUTPROC) NULL, (void *) NULL);
     }
     if (file_is_dead || status == 0)
     {
@@ -1222,6 +1224,24 @@ VERS: ", 0);
 }
 
 #ifdef SERVER_SUPPORT
+
+/* This structure is used to pass information between patch_file and
+   patch_file_write.  */
+
+struct patch_file_data
+{
+    /* File name, for error messages.  */
+    const char *filename;
+    /* File to which to write.  */
+    FILE *fp;
+    /* Whether to compute the MD5 checksum.  */
+    int compute_checksum;
+    /* Data structure for computing the MD5 checksum.  */
+    struct MD5Context context;
+    /* Set if the file has a final newline.  */
+    int final_nl;
+};
+
 /* Patch a file.  Runs rcsdiff.  This is only done when running as the
  * server.  The hope is that the diff will be smaller than the file
  * itself.
@@ -1241,10 +1261,19 @@ patch_file (finfo, vers_ts, docheckout, file_info, checksum)
     int retcode = 0;
     int fail;
     FILE *e;
+    struct patch_file_data data;
 
     *docheckout = 0;
 
-    if (pipeout || joining ())
+    if (noexec || pipeout || joining ())
+    {
+	*docheckout = 1;
+	return 0;
+    }
+
+    /* If this file has been marked as being binary, then never send a
+       patch.  */
+    if (strcmp (vers_ts->options, "-kb") == 0)
     {
 	*docheckout = 1;
 	return 0;
@@ -1276,72 +1305,51 @@ patch_file (finfo, vers_ts, docheckout, file_info, checksum)
     /* We need to check out both revisions first, to see if either one
        has a trailing newline.  Because of this, we don't use rcsdiff,
        but just use diff.  */
-    if (noexec)
-	retcode = 0;
-    else
-	retcode = RCS_checkout (vers_ts->srcfile, (char *) NULL,
-				vers_ts->vn_user, (char *) NULL,
-				vers_ts->options, file1);
-    if (retcode != 0)
-        fail = 1;
-    else
-    {
-        e = CVS_FOPEN (file1, "r");
-	if (e == NULL)
-	    fail = 1;
-	else
-	{
-	    if (fseek (e, (long) -1, SEEK_END) == 0
-		&& getc (e) != '\n')
-	    {
-	        fail = 1;
-	    }
-	    fclose (e);
-	}
-    }
+
+    e = CVS_FOPEN (file1, "w");
+    if (e == NULL)
+	error (1, errno, "cannot open %s", file1);
+
+    data.filename = file1;
+    data.fp = e;
+    data.final_nl = 0;
+    data.compute_checksum = 0;
+
+    retcode = RCS_checkout (vers_ts->srcfile, (char *) NULL,
+			    vers_ts->vn_user, (char *) NULL,
+			    vers_ts->options, RUN_TTY,
+			    patch_file_write, (void *) &data);
+
+    if (fclose (e) < 0)
+	error (1, errno, "cannot close %s", file1);
+
+    if (retcode != 0 || ! data.final_nl)
+	fail = 1;
 
     if (! fail)
     {
-	retcode = RCS_checkout (vers_ts->srcfile, file2,
+	e = CVS_FOPEN (file2, "w");
+	if (e == NULL)
+	    error (1, errno, "cannot open %s", file2);
+
+	data.filename = file2;
+	data.fp = e;
+	data.final_nl = 0;
+	data.compute_checksum = 1;
+	MD5Init (&data.context);
+
+	retcode = RCS_checkout (vers_ts->srcfile, (char *) NULL,
 				vers_ts->vn_rcs, (char *) NULL,
-				vers_ts->options, RUN_TTY);
-	if (retcode != 0)
+				vers_ts->options, RUN_TTY,
+				patch_file_write, (void *) &data);
+
+	if (fclose (e) < 0)
+	    error (1, errno, "cannot close %s", file2);
+
+	if (retcode != 0 || ! data.final_nl)
 	    fail = 1;
 	else
-	{
-	    if (cvswrite == TRUE
-		&& !fileattr_get (finfo->file, "_watched"))
-		xchmod (file2, 1);
-	    e = CVS_FOPEN (file2, "r");
-	    if (e == NULL)
-		fail = 1;
-	    else
-	    {
-		struct MD5Context context;
-		int nl;
-		unsigned char buf[8192];
-		unsigned len;
-
-		nl = 0;
-
-		/* Compute the MD5 checksum and make sure there is
-		   a trailing newline.  */
-		MD5Init (&context);
-		while ((len = fread (buf, 1, sizeof buf, e)) != 0)
-		{
-		    nl = buf[len - 1] == '\n';
-		    MD5Update (&context, buf, len);
-		}
-		MD5Final (checksum, &context);
-
-		if (ferror (e) || ! nl)
-		{
-		    fail = 1;
-		}
-
-		fclose (e);
-	    }
-	}
+	    MD5Final (checksum, &data.context);
     }	  
 
     retcode = 0;
@@ -1369,6 +1377,19 @@ patch_file (finfo, vers_ts, docheckout, file_info, checksum)
 #define BINARY "Binary"
 	    char buf[sizeof BINARY];
 	    unsigned int c;
+
+	    /* Stat the original RCS file, and then adjust it the way
+	       that RCS_checkout would.  FIXME: This is an abstraction
+	       violation.  */
+	    if (CVS_STAT (vers_ts->srcfile->path, file_info) < 0)
+		error (1, errno, "could not stat %s", vers_ts->srcfile->path);
+	    if (chmod (finfo->file,
+		       file_info->st_mode & ~(S_IWRITE | S_IWGRP | S_IWOTH))
+		< 0)
+		error (0, errno, "cannot change mode of file %s", finfo->file);
+	    if (cvswrite == TRUE
+		&& !fileattr_get (finfo->file, "_watched"))
+		xchmod (finfo->file, 1);
 
 	    /* Check the diff output to make sure patch will be handle it.  */
 	    e = CVS_FOPEN (finfo->file, "r");
@@ -1402,8 +1423,8 @@ patch_file (finfo, vers_ts, docheckout, file_info, checksum)
 		  xvers_ts->ts_user, xvers_ts->options,
 		  xvers_ts->tag, xvers_ts->date, NULL);
 
-	if ( CVS_STAT (file2, file_info) < 0)
-	    error (1, errno, "could not stat %s", file2);
+	if (CVS_STAT (finfo->file, file_info) < 0)
+	    error (1, errno, "could not stat %s", finfo->file);
 
 	/* If this is really Update and not Checkout, recode history */
 	if (strcmp (command_name, "update") == 0)
@@ -1441,7 +1462,30 @@ patch_file (finfo, vers_ts, docheckout, file_info, checksum)
     free (file2);
     return (retval);
 }
-#endif
+
+/* Write data to a file.  Record whether the last byte written was a
+   newline.  Optionally compute a checksum.  This is called by
+   patch_file via RCS_checkout.  */
+
+static void
+patch_file_write (callerdat, buffer, len)
+     void *callerdat;
+     const char *buffer;
+     size_t len;
+{
+    struct patch_file_data *data = (struct patch_file_data *) callerdat;
+
+    if (fwrite (buffer, 1, len, data->fp) != len)
+	error (1, errno, "cannot write %s", data->filename);
+
+    if (buffer[len - 1] == '\n')
+	data->final_nl = 1;
+
+    if (data->compute_checksum)
+	MD5Update (&data->context, buffer, len);
+}
+
+#endif /* SERVER_SUPPORT */
 
 /*
  * Several of the types we process only print a bit of information consisting
@@ -1937,7 +1981,8 @@ join_file (finfo, vers)
 	/* The file is up to date.  Need to check out the current contents.  */
 	retcode = RCS_checkout (vers->srcfile, finfo->file,
 				vers->vn_user, (char *) NULL,
-				(char *) NULL, RUN_TTY);
+				(char *) NULL, RUN_TTY,
+				(RCSCHECKOUTPROC) NULL, (void *) NULL);
 	if (retcode != 0)
 	    error (1, retcode == -1 ? errno : 0,
 		   "failed to check out %s file", finfo->fullname);

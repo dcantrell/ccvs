@@ -35,6 +35,7 @@ static char *escape_keyword_value PROTO ((const char *, int *));
 static void expand_keywords PROTO((RCSNode *, RCSVers *, const char *,
 				   const char *, size_t, enum kflag, char *,
 				   size_t, char **, size_t *));
+static void cmp_file_buffer PROTO((void *, const char *, size_t));
 
 enum rcs_delta_op {RCS_ANNOTATE, RCS_FETCH};
 static void RCS_deltas PROTO ((RCSNode *, FILE *, char *, enum rcs_delta_op,
@@ -2750,26 +2751,44 @@ expand_keywords (rcs, ver, name, log, loglen, expand, buf, len, retbuf, retlen)
     }
 }
 
-/* Check out a revision from RCS.  This function optimizes by reading
-   the head version directly if it is easy.  Check out the revision
-   into WORKFILE, or to standard output if WORKFILE is NULL.  REV is
-   the numeric revision to check out; it may be NULL, which means to
-   check out the head of the default branch.  If NAMETAG is not NULL,
-   and is not a numeric revision, then it is the tag that should be
-   used when expanding the RCS Name keyword.  OPTIONS is a string such
-   as -kb or -kkv, for keyword expansion options, or NULL if there are
-   none.  If WORKFILE is NULL, run regardless of noexec; if non-NULL,
-   noexec inhibits execution.  SOUT is what to do with standard output
-   (typically RUN_TTY).  */
+/* Check out a revision from an RCS file.
+
+   If PFN is not NULL, then ignore WORKFILE and SOUT.  Call PFN zero
+   or more times with the contents of the file.  CALLERDAT is passed,
+   uninterpreted, to PFN.  (The current code will always call PFN
+   exactly once for a non empty file; however, the current code
+   assumes that it can hold the entire file contents in memory, which
+   is not a good assumption, and might change in the future).
+
+   Otherwise, if WORKFILE is not NULL, check out the revision to
+   WORKFILE.  However, if WORKFILE is not NULL, and noexec is set,
+   then don't do anything.
+
+   Otherwise, if WORKFILE is NULL, check out the revision to SOUT.  If
+   SOUT is RUN_TTY, then write the contents of the revision to
+   standard output.  When using SOUT, the output is generally a
+   temporary file; don't bother to get the file modes correct.
+
+   REV is the numeric revision to check out.  It may be NULL, which
+   means to check out the head of the default branch.
+
+   If NAMETAG is not NULL, and is not a numeric revision, then it is
+   the tag that should be used when expanding the RCS Name keyword.
+
+   OPTIONS is a string such as "-kb" or "-kv" for keyword expansion
+   options.  It may be NULL to use the default expansion mode of the
+   file, typically "-kkv".  */
 
 int
-RCS_checkout (rcs, workfile, rev, nametag, options, sout)
+RCS_checkout (rcs, workfile, rev, nametag, options, sout, pfn, callerdat)
      RCSNode *rcs;
      char *workfile;
      char *rev;
      char *nametag;
      char *options;
      char *sout;
+     RCSCHECKOUTPROC pfn;
+     void *callerdat;
 {
     int free_rev = 0;
     enum kflag expand;
@@ -2794,9 +2813,10 @@ RCS_checkout (rcs, workfile, rev, nametag, options, sout)
 			rcs->path,
 			rev != NULL ? rev : "",
 			options != NULL ? options : "",
-			(workfile != NULL
-			 ? workfile
-			 : (sout != RUN_TTY ? sout : "(stdout)")));
+			(pfn != NULL ? "(function)"
+			 : (workfile != NULL
+			    ? workfile
+			    : (sout != RUN_TTY ? sout : "(stdout)"))));
     }
 
     assert (rev == NULL || isdigit (*rev));
@@ -2805,6 +2825,7 @@ RCS_checkout (rcs, workfile, rev, nametag, options, sout)
 	return 0;
 
     assert (sout == RUN_TTY || workfile == NULL);
+    assert (pfn == NULL || (sout == RUN_TTY && workfile == NULL));
 
     /* Some callers, such as Checkin or remove_file, will pass us a
        branch.  */
@@ -2814,39 +2835,6 @@ RCS_checkout (rcs, workfile, rev, nametag, options, sout)
 	if (rev == NULL)
 	    error (1, 0, "internal error: bad branch tag in checkout");
 	free_rev = 1;
-    }
-
-    /* If OPTIONS is NULL or the empty string, then the old code would
-       invoke the RCS co program with no -k option, which means that
-       co would use the string we have stored in rcs->expand.  */
-    if ((options == NULL || options[0] == '\0') && rcs->expand == NULL)
-	expand = KFLAG_KV;
-    else
-    {
-	const char *ouroptions;
-	const char * const *cpp;
-
-	if (options != NULL && options[0] != '\0')
-	{
-	    assert (options[0] == '-' && options[1] == 'k');
-	    ouroptions = options + 2;
-	}
-	else
-	    ouroptions = rcs->expand;
-
-	for (cpp = kflags; *cpp != NULL; cpp++)
-	    if (strcmp (*cpp, ouroptions) == 0)
-		break;
-
-	if (*cpp != NULL)
-	    expand = (enum kflag) (cpp - kflags);
-	else
-	{
-	    error (0, 0,
-		   "internal error: unsupported substitution string -k%s",
-		   ouroptions);
-	    expand = KFLAG_KV;
-	}
     }
 
     if (rev == NULL || strcmp (rev, rcs->head) == 0)
@@ -2929,6 +2917,39 @@ RCS_checkout (rcs, workfile, rev, nametag, options, sout)
 	free_value = 1;
     }
 
+    /* If OPTIONS is NULL or the empty string, then the old code would
+       invoke the RCS co program with no -k option, which means that
+       co would use the string we have stored in rcs->expand.  */
+    if ((options == NULL || options[0] == '\0') && rcs->expand == NULL)
+	expand = KFLAG_KV;
+    else
+    {
+	const char *ouroptions;
+	const char * const *cpp;
+
+	if (options != NULL && options[0] != '\0')
+	{
+	    assert (options[0] == '-' && options[1] == 'k');
+	    ouroptions = options + 2;
+	}
+	else
+	    ouroptions = rcs->expand;
+
+	for (cpp = kflags; *cpp != NULL; cpp++)
+	    if (strcmp (*cpp, ouroptions) == 0)
+		break;
+
+	if (*cpp != NULL)
+	    expand = (enum kflag) (cpp - kflags);
+	else
+	{
+	    error (0, 0,
+		   "internal error: unsupported substitution string -k%s",
+		   ouroptions);
+	    expand = KFLAG_KV;
+	}
+    }
+
     if (expand != KFLAG_O && expand != KFLAG_B)
     {
 	Node *p;
@@ -2957,51 +2978,61 @@ RCS_checkout (rcs, workfile, rev, nametag, options, sout)
 	log = NULL;
     }
 
-    if (workfile == NULL)
+    if (pfn != NULL)
     {
-	if (sout == RUN_TTY)
-	    ofp = stdout;
+	/* The PFN interface is very simple to implement right now, as
+           we always have the entire file in memory.  */
+	if (len != 0)
+	    pfn (callerdat, value, len);
+    }
+    else
+    {
+	if (workfile == NULL)
+	{
+	    if (sout == RUN_TTY)
+		ofp = stdout;
+	    else
+	    {
+		ofp = CVS_FOPEN (sout, expand == KFLAG_B ? "wb" : "w");
+		if (ofp == NULL)
+		    error (1, errno, "cannot open %s", sout);
+	    }
+	}
 	else
 	{
-	    ofp = CVS_FOPEN (sout, expand == KFLAG_B ? "wb" : "w");
+	    ofp = CVS_FOPEN (workfile, expand == KFLAG_B ? "wb" : "w");
 	    if (ofp == NULL)
-		error (1, errno, "cannot open %s", sout);
+		error (1, errno, "cannot open %s", workfile);
 	}
-    }
-    else
-    {
-	ofp = CVS_FOPEN (workfile, expand == KFLAG_B ? "wb" : "w");
-	if (ofp == NULL)
-	    error (1, errno, "cannot open %s", workfile);
-    }
 
-    if (workfile == NULL && sout == RUN_TTY)
-    {
-	if (len > 0)
-	    cvs_output (value, len);
-    }
-    else
-    {
-	if (fwrite (value, 1, len, ofp) != len)
-	    error (1, errno, "cannot write %s",
-		   (workfile != NULL
-		    ? workfile
-		    : (sout != RUN_TTY ? sout : "stdout")));
-    }
+	if (workfile == NULL && sout == RUN_TTY)
+	{
+	    if (len > 0)
+		cvs_output (value, len);
+	}
+	else
+	{
+	    if (fwrite (value, 1, len, ofp) != len)
+		error (1, errno, "cannot write %s",
+		       (workfile != NULL
+			? workfile
+			: (sout != RUN_TTY ? sout : "stdout")));
+	}
 
-    if (workfile != NULL)
-    {
-	if (fclose (ofp) < 0)
-	    error (1, errno, "cannot close %s", workfile);
-	if (chmod (workfile,
-		   sb.st_mode & ~(S_IWRITE | S_IWGRP | S_IWOTH)) < 0)
-	    error (0, errno, "cannot change mode of file %s",
-		   workfile);
-    }
-    else if (sout != RUN_TTY)
-    {
-	if (fclose (ofp) < 0)
-	    error (1, errno, "cannot close %s", sout);
+	if (workfile != NULL)
+	{
+	    if (fclose (ofp) < 0)
+		error (1, errno, "cannot close %s", workfile);
+	    if (chmod (workfile,
+		       sb.st_mode & ~(S_IWRITE | S_IWGRP | S_IWOTH)) < 0)
+		error (0, errno, "cannot change mode of file %s",
+		       workfile);
+	}
+	else if (sout != RUN_TTY)
+	{
+	    if (fclose (ofp) < 0)
+		error (1, errno, "cannot close %s", sout);
+	}
     }
 
     if (free_value)
@@ -3010,6 +3041,121 @@ RCS_checkout (rcs, workfile, rev, nametag, options, sout)
 	free (rev);
 
     return 0;
+}
+
+/* This structure is passed between RCS_cmp_file and cmp_file_buffer.  */
+
+struct cmp_file_data
+{
+    const char *filename;
+    FILE *fp;
+    int different;
+};
+
+/* Compare the contents of revision REV of RCS file RCS with the
+   contents of the file FILENAME.  OPTIONS is a string for the keyword
+   expansion options.  Return 0 if the contents of the revision are
+   the same as the contents of the file, 1 if they are different.  */
+
+int
+RCS_cmp_file (rcs, rev, options, filename)
+     RCSNode *rcs;
+     char *rev;
+     char *options;
+     const char *filename;
+{
+    int binary;
+    FILE *fp;
+    struct cmp_file_data data;
+    int retcode;
+
+    if (options != NULL && options[0] != '\0')
+	binary = (strcmp (options, "-kb") == 0);
+    else
+    {
+	char *expand;
+
+	expand = RCS_getexpand (rcs);
+	if (expand != NULL && strcmp (expand, "b") == 0)
+	    binary = 1;
+	else
+	    binary = 0;
+    }
+
+    fp = CVS_FOPEN (filename, binary ? FOPEN_BINARY_READ : "r");
+
+    data.filename = filename;
+    data.fp = fp;
+    data.different = 0;
+
+    retcode = RCS_checkout (rcs, (char *) NULL, rev, (char *) NULL,
+			    options, (char *) NULL, cmp_file_buffer,
+			    (void *) &data);
+
+    /* If we have not yet found a difference, make sure that we are at
+       the end of the file.  */
+    if (! data.different)
+    {
+	if (getc (fp) != EOF)
+	    data.different = 1;
+    }
+
+    fclose (fp);
+
+    if (retcode != 0)
+	return 1;
+
+    return data.different;
+}
+
+/* This is a subroutine of RCS_cmp_file.  It is passed to
+   RCS_checkout.  */
+
+#define CMP_BUF_SIZE (8 * 1024)
+
+static void
+cmp_file_buffer (callerdat, buffer, len)
+     void *callerdat;
+     const char *buffer;
+     size_t len;
+{
+    struct cmp_file_data *data = (struct cmp_file_data *) callerdat;
+    char *filebuf;
+
+    /* If we've already found a difference, we don't need to check
+       further.  */
+    if (data->different)
+	return;
+
+    filebuf = xmalloc (len > CMP_BUF_SIZE ? CMP_BUF_SIZE : len);
+
+    while (len > 0)
+    {
+	size_t checklen;
+
+	checklen = len > CMP_BUF_SIZE ? CMP_BUF_SIZE : len;
+	if (fread (filebuf, 1, checklen, data->fp) != checklen)
+	{
+	    if (ferror (data->fp))
+		error (1, errno, "cannot read file %s for comparing",
+		       data->filename);
+	    data->different = 1;
+	    free (filebuf);
+	    return;
+	}
+
+	if (memcmp (filebuf, buffer, checklen) != 0)
+	{
+	    data->different = 1;
+	    free (filebuf);
+	    return;
+	}
+
+	buffer += checklen;
+	len -= checklen;
+    }
+
+    free (filebuf);
 }
 
 /* For RCS file RCS, make symbolic tag TAG point to revision REV.
