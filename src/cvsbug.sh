@@ -233,11 +233,14 @@ fi
 
 case "$FORMAT" in
   lisp) echo "$CATEGORIES" | \
-        awk 'BEGIN {printf "( "} {printf "(\"%s\") ",$0} END {printf ")\n"}'
+        awk 'BEGIN {printf "( "}
+	     {printf "(\"%s\") ",$0}
+	     END {printf ")\n"}'
         exit 0
         ;;
   norm) l=`echo "$CATEGORIES" | \
-	awk 'BEGIN {max = 0; } { if (length($0) > max) { max = length($0); } }
+	awk 'BEGIN {max = 0; }
+	     { if (length($0) > max) { max = length($0); } }
 	     END {print max + 1;}'`
 	c=`expr 70 / $l`
 	if [ $c -eq 0 ]; then c=1; fi
@@ -312,7 +315,8 @@ __EOF__
 
       # Format the categories so they fit onto lines.
 	l=`echo "$CATEGORIES" | \
-	awk 'BEGIN {max = 0; } { if (length($0) > max) { max = length($0); } }
+	awk 'BEGIN {max = 0; }
+	     { if (length($0) > max) { max = length($0); } }
 	     END {print max + 1;}'`
 	c=`expr 61 / $l`
 	if [ $c -eq 0 ]; then c=1; fi
