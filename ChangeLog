@@ -1,4 +1,9 @@
-Wed Jun 21 16:12:14 1995  James Kingdon  <kingdon@harvey>
+Wed Jun 21 16:33:04 1995  James Kingdon  <kingdon@harvey.cyclic.com>
+
+	* PROJECTS: New file.
+	* Makefile.in (DISTFILES): Add it.
+
+Wed Jun 21 16:12:14 1995  James Kingdon  <kingdon@harvey.cyclic.com>
 
 	* Makefile.in (FLAGS_TO_PASS): Don't pass INSTALL to sub-makes.
 	The reason for passing it is gone now that we are using autoconf
