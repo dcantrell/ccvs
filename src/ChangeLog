@@ -1,3 +1,7 @@
+2001-09-14  Derek Price  <dprice@collab.net>
+
+	* logmsg.c (do_verify): Dispose memory when finished with it.
+
 2001-09-07  Larry Jones  <larry.jones@sdrc.com>
 
 	* mkmodules.c (notify_contents): In the example, move the %s to
