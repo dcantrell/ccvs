@@ -624,7 +624,7 @@ notify_proc (repository, filter)
 	free (prog);
 	return 1;
 	}
-    pipefp = Popen (expanded_prog, "w");
+    pipefp = run_popen (expanded_prog, "w");
     if (pipefp == NULL)
     {
 	error (0, errno, "cannot write entry to notify filter: %s", prog);
