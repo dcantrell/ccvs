@@ -889,6 +889,8 @@ Optional Packages:
   --without-PACKAGE       do not use PACKAGE (same as --with-PACKAGE=no)
   --with-krb4             Kerberos 4 directory (default /usr/kerberos)
   --with-gssapi           GSSAPI directory (default autoselects)
+  --with-external-zlib    Use the specified ZLIB library (defaults to the
+                          version distributed with the CVS source)
   --with-rsh              The default remote shell CVS will use for :ext:
                           transport (default rsh)
   --with-editor           The default text editor CVS should use for log
@@ -4528,7 +4530,7 @@ for ac_header in \
 	sys/timeb.h \
 	unistd.h \
 	utime.h\
-	varargs.h\
+	varargs.h \
 
 do
 as_ac_Header=`echo "ac_cv_header_$ac_header" | $as_tr_sh`
@@ -10089,6 +10091,280 @@ fi
 
 
 
+#
+# Use --with-zlib to build with a zlib other than the version distributed
+# with CVS.
+#
+# defaults to the included snapshot of zlib
+#
+
+# Check whether --with-external-zlib or --without-external-zlib was given.
+if test "${with_external_zlib+set}" = set; then
+  withval="$with_external_zlib"
+  with_external_zlib=$withval
+else
+  with_external_zlib=no
+fi;
+
+#
+# Try to locate a ZLIB installation if no location was specified, assuming
+# external ZLIB was enabled.
+#
+if test -n "$acx_zlib_cv_zlib"; then
+  # Granted, this is a slightly ugly way to print this info, but the
+  # AC_CHECK_HEADER used in the search for a ZLIB installation makes using
+  # AC_CACHE_CHECK worse
+  echo "$as_me:$LINENO: checking for external ZLIB" >&5
+echo $ECHO_N "checking for external ZLIB... $ECHO_C" >&6
+else :; fi
+if test "${acx_zlib_cv_zlib+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+
+if test x$with_external_zlib = xyes; then
+  #
+  # --with but no location specified
+  # assume zlib.h locates our install.
+  #
+  acx_zlib_save_CPPFLAGS=$CPPFLAGS
+  for acx_zlib_cv_zlib in yes /usr/local no; do
+    if test x$acx_zlib_cv_zlib = xno; then
+      break
+    fi
+    if test x$acx_zlib_cv_zlib = xyes; then
+      echo "$as_me:$LINENO: checking for external ZLIB" >&5
+echo $ECHO_N "checking for external ZLIB... $ECHO_C" >&6
+      echo "$as_me:$LINENO: result: " >&5
+echo "${ECHO_T}" >&6
+    else
+      CPPFLAGS="$acx_zlib_save_CPPFLAGS -I$acx_zlib_cv_zlib/include"
+      echo "$as_me:$LINENO: checking for external ZLIB in $acx_zlib_cv_zlib" >&5
+echo $ECHO_N "checking for external ZLIB in $acx_zlib_cv_zlib... $ECHO_C" >&6
+      echo "$as_me:$LINENO: result: " >&5
+echo "${ECHO_T}" >&6
+    fi
+    unset ac_cv_header_zlib_h
+
+for ac_header in zlib.h
+do
+as_ac_Header=`echo "ac_cv_header_$ac_header" | $as_tr_sh`
+if eval "test \"\${$as_ac_Header+set}\" = set"; then
+  echo "$as_me:$LINENO: checking for $ac_header" >&5
+echo $ECHO_N "checking for $ac_header... $ECHO_C" >&6
+if eval "test \"\${$as_ac_Header+set}\" = set"; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+fi
+echo "$as_me:$LINENO: result: `eval echo '${'$as_ac_Header'}'`" >&5
+echo "${ECHO_T}`eval echo '${'$as_ac_Header'}'`" >&6
+else
+  # Is the header compilable?
+echo "$as_me:$LINENO: checking $ac_header usability" >&5
+echo $ECHO_N "checking $ac_header usability... $ECHO_C" >&6
+cat >conftest.$ac_ext <<_ACEOF
+#line $LINENO "configure"
+#include "confdefs.h"
+$ac_includes_default
+#include <$ac_header>
+_ACEOF
+rm -f conftest.$ac_objext
+if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
+  (eval $ac_compile) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } &&
+         { ac_try='test -s conftest.$ac_objext'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then
+  ac_header_compiler=yes
+else
+  echo "$as_me: failed program was:" >&5
+cat conftest.$ac_ext >&5
+ac_header_compiler=no
+fi
+rm -f conftest.$ac_objext conftest.$ac_ext
+echo "$as_me:$LINENO: result: $ac_header_compiler" >&5
+echo "${ECHO_T}$ac_header_compiler" >&6
+
+# Is the header present?
+echo "$as_me:$LINENO: checking $ac_header presence" >&5
+echo $ECHO_N "checking $ac_header presence... $ECHO_C" >&6
+cat >conftest.$ac_ext <<_ACEOF
+#line $LINENO "configure"
+#include "confdefs.h"
+#include <$ac_header>
+_ACEOF
+if { (eval echo "$as_me:$LINENO: \"$ac_cpp conftest.$ac_ext\"") >&5
+  (eval $ac_cpp conftest.$ac_ext) 2>conftest.er1
+  ac_status=$?
+  egrep -v '^ *\+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } >/dev/null; then
+  if test -s conftest.err; then
+    ac_cpp_err=$ac_c_preproc_warn_flag
+  else
+    ac_cpp_err=
+  fi
+else
+  ac_cpp_err=yes
+fi
+if test -z "$ac_cpp_err"; then
+  ac_header_preproc=yes
+else
+  echo "$as_me: failed program was:" >&5
+  cat conftest.$ac_ext >&5
+  ac_header_preproc=no
+fi
+rm -f conftest.err conftest.$ac_ext
+echo "$as_me:$LINENO: result: $ac_header_preproc" >&5
+echo "${ECHO_T}$ac_header_preproc" >&6
+
+# So?  What about this header?
+case $ac_header_compiler:$ac_header_preproc in
+  yes:no )
+    { echo "$as_me:$LINENO: WARNING: $ac_header: accepted by the compiler, rejected by the preprocessor!" >&5
+echo "$as_me: WARNING: $ac_header: accepted by the compiler, rejected by the preprocessor!" >&2;}
+    { echo "$as_me:$LINENO: WARNING: $ac_header: proceeding with the preprocessor's result" >&5
+echo "$as_me: WARNING: $ac_header: proceeding with the preprocessor's result" >&2;};;
+  no:yes )
+    { echo "$as_me:$LINENO: WARNING: $ac_header: present but cannot be compiled" >&5
+echo "$as_me: WARNING: $ac_header: present but cannot be compiled" >&2;}
+    { echo "$as_me:$LINENO: WARNING: $ac_header: check for missing prerequisite headers?" >&5
+echo "$as_me: WARNING: $ac_header: check for missing prerequisite headers?" >&2;}
+    { echo "$as_me:$LINENO: WARNING: $ac_header: proceeding with the preprocessor's result" >&5
+echo "$as_me: WARNING: $ac_header: proceeding with the preprocessor's result" >&2;};;
+esac
+echo "$as_me:$LINENO: checking for $ac_header" >&5
+echo $ECHO_N "checking for $ac_header... $ECHO_C" >&6
+if eval "test \"\${$as_ac_Header+set}\" = set"; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  eval "$as_ac_Header=$ac_header_preproc"
+fi
+echo "$as_me:$LINENO: result: `eval echo '${'$as_ac_Header'}'`" >&5
+echo "${ECHO_T}`eval echo '${'$as_ac_Header'}'`" >&6
+
+fi
+if test `eval echo '${'$as_ac_Header'}'` = yes; then
+  cat >>confdefs.h <<_ACEOF
+#define `echo "HAVE_$ac_header" | $as_tr_cpp` 1
+_ACEOF
+
+fi
+
+done
+
+    if test "$ac_cv_header_zlib_h" = yes; then
+      break
+    fi
+  done
+  CPPFLAGS=$acx_zlib_save_CPPFLAGS
+else
+  acx_zlib_cv_zlib=$with_external_zlib
+fi
+echo "$as_me:$LINENO: checking for external ZLIB" >&5
+echo $ECHO_N "checking for external ZLIB... $ECHO_C" >&6
+
+fi
+echo "$as_me:$LINENO: result: $acx_zlib_cv_zlib" >&5
+echo "${ECHO_T}$acx_zlib_cv_zlib" >&6
+
+#
+# Set up ZLIB includes for later use.
+#
+if test x$acx_zlib_cv_zlib != xyes \
+   && test x$acx_zlib_cv_zlib != no; then
+  if test -z "$CPPFLAGS"; then
+    CPPFLAGS="-I$acx_zlib_cv_zlib/include"
+  else
+    CPPFLAGS="$CPPFLAGS -I$acx_zlib_cv_zlib/include"
+  fi
+  if test -z "$LDFLAGS"; then
+    LDFLAGS="-I$acx_zlib_cv_zlib/lib"
+  else
+    LDFLAGS="$LDFLAGS -I$acx_zlib_cv_zlib/lib"
+  fi
+fi
+
+ZLIB_CPPFLAGS=
+ZLIB_LIBS=
+ZLIB_SUBDIRS=
+if test x$acx_zlib_cv_zlib = xno; then
+  ZLIB_CPPFLAGS='-I$(top_srcdir)/zlib'
+  ZLIB_LIBS='$(top_builddir)/zlib/libz.a'
+  # ZLIB_SUBDIRS is only used in the top level Makefiles.
+  ZLIB_SUBDIRS=zlib
+else
+  # We know what to do now, so set up the CPPFLAGS, LDFLAGS, and LIBS for later
+  # use.
+  if test -z "$LIBS"; then
+    LIBS=-lz
+  else
+    LIBS="$LIBS -lz"
+  fi
+
+  #
+  # Verify external installed zlib works
+  #
+  # Ideally, we would also check that the version is newer
+  #
+  echo "$as_me:$LINENO: checking ZLIB library works" >&5
+echo $ECHO_N "checking ZLIB library works... $ECHO_C" >&6
+  cat >conftest.$ac_ext <<_ACEOF
+#line $LINENO "configure"
+#include "confdefs.h"
+#include <zlib.h>
+#ifdef F77_DUMMY_MAIN
+#  ifdef __cplusplus
+     extern "C"
+#  endif
+   int F77_DUMMY_MAIN() { return 1; }
+#endif
+int
+main ()
+{
+int i = Z_OK; const char *version = zlibVersion();
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext conftest$ac_exeext
+if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
+  (eval $ac_link) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } &&
+         { ac_try='test -s conftest$ac_exeext'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then
+  echo "$as_me:$LINENO: result: yes" >&5
+echo "${ECHO_T}yes" >&6
+else
+  echo "$as_me: failed program was:" >&5
+cat conftest.$ac_ext >&5
+echo "$as_me:$LINENO: result: no" >&5
+echo "${ECHO_T}no" >&6
+               { { echo "$as_me:$LINENO: error: ZLIB failed to link" >&5
+echo "$as_me: error: ZLIB failed to link" >&2;}
+   { (exit 1); exit 1; }; }
+fi
+rm -f conftest.$ac_objext conftest$ac_exeext conftest.$ac_ext
+fi
+
+# Subst for the local case
+
+
+
+
+
+
 # What remote shell transport should our client cvs default to using?
 
 # Check whether --with-rsh or --without-rsh was given.
@@ -11472,6 +11748,9 @@ s,@LIBOBJS@,$LIBOBJS,;t t
 s,@HAVE_PUTENV@,$HAVE_PUTENV,;t t
 s,@cvs_client_objects@,$cvs_client_objects,;t t
 s,@KRB4@,$KRB4,;t t
+s,@ZLIB_SUBDIRS@,$ZLIB_SUBDIRS,;t t
+s,@ZLIB_CPPFLAGS@,$ZLIB_CPPFLAGS,;t t
+s,@ZLIB_LIBS@,$ZLIB_LIBS,;t t
 s,@with_default_rsh@,$with_default_rsh,;t t
 s,@EDITOR@,$EDITOR,;t t
 CEOF

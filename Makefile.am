@@ -17,7 +17,7 @@
 ## Subdirectories to run make in for the primary targets.
 # Unix source subdirs, where we'll want to run lint and etags:
 # This is a legacy variable from b4 Automake
-USOURCE_SUBDIRS = lib zlib diff src
+USOURCE_SUBDIRS = lib $(ZLIB_SUBDIRS) diff src
 # All other subdirs:
 SUBDIRS = $(USOURCE_SUBDIRS) man doc contrib tools \
 	windows-NT os2 emx vms m4

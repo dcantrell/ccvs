@@ -1,3 +1,16 @@
+2003-05-20  Derek Price  <derek@ximbiot.com>
+
+	* configure.in: Add call to ACX_WITH_SYSTEM_VLIB.
+	* Makefile.am: Macro substitution for "zlib" subdir.
+	(Original patch from Anthon Pang <apang@telus.net>.)
+
+	* TODO (230): Add note about possible improvements to
+	ACX_WITH_EXTERNAL_ZLIB.
+	* aclocal.m4: Regenerated
+	* config.h.in: Ditto
+	* configure: Ditto
+	* Makefile.in: Ditto
+
 2003-05-19  Derek Price  <derek@ximbiot.com>
 
 	* configure.in: Add calls to support lib/malloc.c from GNULIB.
