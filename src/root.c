@@ -16,7 +16,7 @@
 /* Printable names for things in the current_parsed_root->method enum variable.
    Watch out if the enum is changed in cvs.h! */
 
-const char *const method_names[] = {
+const char method_names[][16] = {
     "undefined", "local", "server (rsh)", "pserver",
     "kserver", "gserver", "ext", "fork"
 };
