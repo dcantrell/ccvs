@@ -160,10 +160,13 @@ login (argc, argv)
     
   passfile = construct_cvspass_filename ();
   typed_password = getpass ("Enter CVS password: ");
-  scramble (typed_password);
+  typed_password = scramble (typed_password);
 
-  /* Force get_cvs_password() to use this one, instead of consulting
-     the file. */
+  /* Force get_cvs_password() to use this one (when the client
+   * confirms the new password with the server), instead of consulting
+   * the file.  We make a new copy because cvs_password will get
+   * zeroed by connect_to_server().
+   */
   cvs_password = xstrdup (typed_password);
 
   if (connect_to_pserver (NULL, NULL, 1) == 0)
@@ -251,7 +254,7 @@ login (argc, argv)
               if (strncmp (CVSroot, linebuf, root_len))
                 fprintf (tmp_fp, "%s", linebuf);
               else
-                fprintf (tmp_fp, "%s A%s\n", CVSroot, typed_password);
+                fprintf (tmp_fp, "%s %s\n", CVSroot, typed_password);
 
               free (linebuf);
               linebuf = (char *) NULL;
@@ -271,13 +274,14 @@ login (argc, argv)
           return 1;
         }
 
-      fprintf (fp, "%s A%s\n", CVSroot, typed_password);
+      fprintf (fp, "%s %s\n", CVSroot, typed_password);
       fclose (fp);
     }
 
   /* Utter, total, raving paranoia, I know. */
   chmod (passfile, 0600);
   memset (typed_password, 0, strlen (typed_password));
+  free (typed_password);
 
   free (passfile);
   free (cvs_password);
@@ -316,7 +320,7 @@ get_cvs_password ()
       /* If we got it from the environment, then it wasn't properly
          scrambled.  Since unscrambling is done on the server side, we
          need to transmit it scrambled. */
-      scramble (p);
+      p = scramble (p);
       return p;
     }
 

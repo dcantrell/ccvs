@@ -72,21 +72,58 @@ shifts[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16,
 253, 240, 194, 250, 191, 155, 142, 137, 245, 235, 163, 242, 178, 152 };
 
 
-/* Encode the string in place. */
-void
-scramble (char *str)
+/* SCRAMBLE and DESCRAMBLE work like this:
+ *
+ * scramble(STR) returns SCRM, a scrambled copy of STR.  SCRM[0] is a
+ * single letter indicating the scrambling method.  As of this
+ * writing, the only legal method is 'A', but check the code for more
+ * up-to-date information.  The copy will have been allocated with
+ * malloc(). 
+ *
+ * descramble(SCRM) returns STR, again in its own malloc'd space.
+ * descramble() uses SCRM[0] to determine which method of unscrambling
+ * to use.  If it does not recognize the method, it dies with error.
+ */
+
+/* Return a malloc'd, scrambled version of STR. */
+char *
+scramble (str)
+     char *str;
 {
   int i;
+  char *s;
 
-  for (i = 0; str[i]; i++)
-    str[i] = shifts[(str[i])];
+  /* +2 to hold the 'A' prefix that indicates which version of
+   * scrambling this is (the first, obviously, since we only do one
+   * kind of scrambling so far), and then the '\0' of course.
+   */
+  s = xmalloc (strlen (str) + 2);
+
+  s[0] = 'A';   /* Scramble (TM) version prefix. */
+  strcpy (s + 1, str);
+
+  for (i = 1; s[i]; i++)
+    s[i] = shifts[(s[i])];
+
+  return s;
 }
 
 /* Decode the string in place. */
-void
-descramble (char *str)
+char *
+descramble (str)
+     char *str;
 {
-  scramble (str);
+  char *s;
+
+  /* For now we can only handle one kind of scrambling.  In the future
+   * there may be other kinds, and this `if' will become a `switch'.
+   */
+  if (str[0] != 'A')
+    error (1, 0, "descramble: unknown scrambling method");
+
+  s = scramble (str + 1);
+  ++s;  /* scoot past the 'A' */
+  return s;
 }
 
 #endif /* (AUTH_CLIENT_SUPPORT || AUTH_SERVER_SUPPORT) from top of file */
