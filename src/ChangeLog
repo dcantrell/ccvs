@@ -1,3 +1,8 @@
+2002-02-26  Larry Jones  <larry.jones@sdrc.com>
+
+	* diff.c (diff): Remove -V and --paginate options: they aren't valid.
+	(diff_usage): Document all the diff options.
+
 2002-02-13  Larry Jones  <larry.jones@sdrc.com>
 
 	* rcs.c (RCS_gettag): Do not interpret an empty tag as HEAD (nothing
