@@ -1,5 +1,20 @@
 2004-05-19  Derek Price  <derek@ximbiot.com>
 
+	* cvs.h (gmformat_time_t, entries_time, unix_time_stamp): New protos.
+	* ls.c (struct long_format_data): New structure.
+	(ls_print): Print datetimes using cvs_output_tagged.
+	(long_format_data_delproc): New function.
+	(ls_fileproc, ls_direntproc): Keep track of long_format_data.
+	* main.c (Make_Date): Use standard quotes.
+	(format_time_t, gmformat_time_t): New functions.
+	(format_date_alloc): Use new functions.  Improve comments.
+	* server.c (cvs_output_tagged): Only output in localtime in local mode.
+	* vers_ts.c (entries_time, unix_time_stamp): New functions.
+	(time_stamp): Use new functions.
+	* sanity.sh (ls, branches2): Use $ISO8601DATE where applicable.
+
+2004-05-19  Derek Price  <derek@ximbiot.com>
+
 	Output `cvs log' times in the local timezone.
 
 	* client.c (handle_mt): Handle the new "date" MT response

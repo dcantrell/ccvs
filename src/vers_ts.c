@@ -337,22 +337,56 @@ time_stamp_server (const char *file, Vers_TS *vers_ts, Entnode *entdata)
 }
 
 #endif /* SERVER_SUPPORT */
-/*
- * Gets the time-stamp for the file "file" and returns it in space it
- * allocates
+
+
+
+/* Given a UNIX seconds since the epoch, return a string in the format used by
+ * the Entries file.
+ *
+ *
+ * INPUTS
+ *   UNIXTIME	The timestamp to be formatted.
+ *
+ * RETURNS
+ *   A freshly allocated string the caller is responsible for disposing of.
  */
 char *
-time_stamp (const char *file)
+entries_time (time_t unixtime)
+{
+    struct tm *tm_p;
+    char *cp;
+    int length;
+
+    /* We want to use the same timestamp format as is stored in the
+       st_mtime.  For unix (and NT I think) this *must* be universal
+       time (UT), so that files don't appear to be modified merely
+       because the timezone has changed.  For VMS, or hopefully other
+       systems where gmtime returns NULL, the modification time is
+       stored in local time, and therefore it is not possible to cause
+       st_mtime to be out of sync by changing the timezone.  */
+    tm_p = gmtime (&unixtime);
+    cp = tm_p ? asctime (tm_p) : ctime (&unixtime);
+    /* Get rid of the EOL */
+    cp[24] = '\0';
+    /* Fix non-standard format.  */
+    if (cp[8] == '0') cp[8] = ' ';
+
+    return asnprintf (NULL, &length, "%s", cp);
+}
+
+
+
+time_t
+unix_time_stamp (const char *file)
 {
     struct stat sb;
-    char *cp;
-    char *ts = NULL;
     time_t mtime = 0L;
 
     if (!CVS_LSTAT (file, &sb))
     {
 	mtime = sb.st_mtime;
     }
+
     /* If it's a symlink, return whichever is the newest mtime of
        the link and its target, for safety.
     */
@@ -361,27 +395,25 @@ time_stamp (const char *file)
         if (mtime < sb.st_mtime)
 	    mtime = sb.st_mtime;
     }
-    if (mtime)
-    {
-	struct tm *tm_p;
-	ts = xmalloc (25);
-	/* We want to use the same timestamp format as is stored in the
-	   st_mtime.  For unix (and NT I think) this *must* be universal
-	   time (UT), so that files don't appear to be modified merely
-	   because the timezone has changed.  For VMS, or hopefully other
-	   systems where gmtime returns NULL, the modification time is
-	   stored in local time, and therefore it is not possible to cause
-	   st_mtime to be out of sync by changing the timezone.  */
-	tm_p = gmtime (&sb.st_mtime);
-	cp = tm_p ? asctime (tm_p) : ctime (&sb.st_mtime);
-	cp[24] = 0;
-	/* Fix non-standard format.  */
-	if (cp[8] == '0') cp[8] = ' ';
-	(void) strcpy (ts, cp);
-    }
 
-    return (ts);
+    return mtime;
 }
+
+
+
+/*
+ * Gets the time-stamp for the file "file" and returns it in space it
+ * allocates
+ */
+char *
+time_stamp (const char *file)
+{
+    struct stat sb;
+    time_t mtime = unix_time_stamp (file);
+    return mtime ? entries_time (mtime) : NULL;
+}
+
+
 
 /*
  * free up a Vers_TS struct

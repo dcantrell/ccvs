@@ -1089,16 +1089,18 @@ cause intermittent sandbox corruption.");
 	return 0;
 }
 
+
+
 char *
 Make_Date (char *rawdate)
 {
-    time_t unixtime;
-
-    unixtime = get_date (rawdate, (struct timeb *) NULL);
-    if (unixtime == (time_t) - 1)
-	error (1, 0, "Can't parse date/time: %s", rawdate);
+    time_t unixtime = get_date (rawdate, NULL);
+    if (unixtime == (time_t)-1)
+	error (1, 0, "Can't parse date/time: `%s'", rawdate);
     return date_from_time_t (unixtime);
 }
+
+
 
 /* Convert a time_t to an RCS format date.  This is mainly for the
    use of "cvs history", because the CVSROOT/history file contains
@@ -1200,38 +1202,91 @@ tm_to_internet (char *dest, const struct tm *source)
 /*
  * Format a date for the current locale.
  *
- * Input looks like
- *	2004-04-29 20:24:22
- * Output looks the same (for GMT) or with +/-HHMM added to the end, like
- *	2004-04-29 13:24:22-0700
+ * INPUT
+ *   UNIXTIME	The UNIX seconds since the epoch.
+ *
+ * RETURNS
+ *   If strftime() encounters an error, this function can return NULL.
+ *
+ *   Otherwise, returns a date string in ISO8601 format, e.g.:
+ *
+ *	2004-04-29 13:24:22 -0700
+ *
+ *   It is the responsibility of the caller to return of this string.
+ */
+static char *
+format_time_t (time_t unixtime)
+{
+    static char buf[sizeof ("yyyy-mm-dd HH:MM:SS -HHMM")];
+    /* Convert to a time in the local time zone.  */
+    struct tm ltm = *(gmtime (&unixtime));
+
+    if (strftime (buf, sizeof (buf), "%Y-%m-%d %H:%M:%S %z", &ltm) == 0)
+	return NULL;
+
+    return xstrdup (buf);
+}
+
+
+
+/* Like format_time_t(), but return time in UTC.
+ */
+char *
+gmformat_time_t (time_t unixtime)
+{
+    static char buf[sizeof ("yyyy-mm-dd HH:MM:SS -HHMM")];
+    /* Convert to a time in the local time zone.  */
+    struct tm ltm = *(gmtime (&unixtime));
+
+    if (strftime (buf, sizeof (buf), "%Y-%m-%d %H:%M:%S %z", &ltm) == 0)
+	return NULL;
+
+    return xstrdup (buf);
+}
+
+
+
+/* Format a date in the local timezone using format_time_t() given a date from
+ * an arbitrary timezone in a string.
+ *
+ * INPUT
+ *   DATESTR	A string that looks like anything get_date() can parse, e.g.:
+ *
+ *                      2004-04-29 20:24:22
+ *
+ * ERRORS
+ *   As get_date() & format_time_t().  Prints a warning if either provide
+ *   error return values.  See RETURNS.
+ *
+ * RETURNS
+ *   A freshly allocated string that is a copy of the input string if either
+ *   get_date() or format_time_t() encounter an error and as format_time_t()
+ *   otherwise.
  */
 char *
 format_date_alloc (char *datestr)
 {
     time_t unixtime;
-    struct tm ltm;
-    char buf[sizeof ("yyyy-mm-dd HH:MM:SS -HHMM")];
-    size_t len;
+    char *buf;
 
     TRACE (TRACE_FUNCTION, "format_date (%s)", datestr);
 
-    /* Get the date string as a local struct tm. */
+    /* Convert the date string to seconds since the epoch. */
     unixtime = get_date (datestr, NULL);
     if (unixtime == (time_t)-1)
     {
-	error (0, 0, "Unable to parse date `%s'.", datestr);
+	error (0, 0, "Can't parse date/time: `%s'.", datestr);
 	goto as_is;
     }
 
-    ltm = *(localtime (&unixtime));
-
-    if ((len = strftime (buf, sizeof (buf), "%Y-%m-%d %H:%M:%S %z", &ltm)) == 0)
+    /* Get the time into a string.  */
+    if ((buf = format_time_t (unixtime)) == NULL)
     {
 	error (0, 0, "Unable to reformat date `%s'.", datestr);
 	goto as_is;
     }
 
-    datestr = buf;
+    return buf;
 
  as_is:
     return xstrdup (datestr);

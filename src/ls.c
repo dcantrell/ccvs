@@ -251,10 +251,28 @@ ls (int argc, char **argv)
 
 
 
+struct long_format_data
+{
+    char *header;
+    char *time;
+    char *footer;
+};
+
 static int
 ls_print (Node *p, void *closure)
 {
-    cvs_output (p->key, 0);
+    if (long_format)
+    {
+	struct long_format_data *data = p->data;
+	cvs_output_tagged ("text", data->header);
+	if (data->time)
+	    cvs_output_tagged ("date", data->time);
+	if (data->footer)
+	    cvs_output_tagged ("text", data->footer);
+	cvs_output_tagged ("newline", NULL);
+    }
+    else
+	cvs_output (p->data, 0);
     return 0;
 }
 
@@ -289,6 +307,21 @@ ls_print_dir (Node *p, void *closure)
 
 
 /*
+ * Delproc for a node containing a struct long_format_data as data.
+ */
+static void
+long_format_data_delproc (Node *n)
+{
+	struct long_format_data *data = (struct long_format_data *)n->data;
+	if (data->header) free (data->header);
+	if (data->time) free (data->time);
+	if (data->footer) free (data->footer);
+	free (data);
+}
+
+
+
+/*
  * Add a file to our list of data to print for a directory.
  */
 /* ARGSUSED */
@@ -296,12 +329,10 @@ static int
 ls_fileproc (void *callerdat, struct file_info *finfo)
 {
     Vers_TS *vers;
-    char outdate[32];
-    time_t t;
     char *regex_err;
-    char *buf;
+    void *buf;
     size_t length;
-    Node *p;
+    Node *p, *n;
     bool isdead;
 
     if (regexp_match)
@@ -332,31 +363,42 @@ ls_fileproc (void *callerdat, struct file_info *finfo)
 	return 0;
     }
 
-    /* FIXME: The date format should mimic a real `ls' as much as possible
-     * in long_format and should be asctime(gmtime(&t)) in entries_format.
-     */
-    t = RCS_getrevtime (finfo->rcs, vers->vn_rcs, 0, 0);
-    strcpy (outdate, asctime (gmtime(&t)));
-    outdate[strlen (outdate) - 1] = '\0';
-
+    n = getnode();
     if (entries_format)
-	buf = asnprintf (NULL, &length, "/%s/%s/%s/%s/%s%s\n",
-                         finfo->file, vers->vn_rcs,
-                         outdate, vers->options,
-                         show_tag ? "T" : "", show_tag ? show_tag : "");
+    {
+	char *outdate = entries_time (RCS_getrevtime (finfo->rcs, vers->vn_rcs,
+                                                      0, 0));
+	n->data = asnprintf (NULL, &length, "/%s/%s/%s/%s/%s%s\n",
+                             finfo->file, vers->vn_rcs,
+                             outdate, vers->options,
+                             show_tag ? "T" : "", show_tag ? show_tag : "");
+	free (outdate);
+    }
     else if (long_format)
-	buf = asnprintf (NULL, &length, "%-5.5s%s %-9.9s%s %s%s\n",
-                         vers->options[0] != '\0' ? vers->options : "----",
-                         outdate, vers->vn_rcs,
-                         strlen (vers->vn_rcs) > 9 ? "+" : " ",
-                         show_dead_revs ? (isdead ? "dead " : "     ") : "",
-                         finfo->file);
+    {
+	struct long_format_data *out =
+		xmalloc (sizeof (struct long_format_data));
+	out->header = asnprintf (NULL, &length, "%-5.5s",
+                                 vers->options[0] != '\0' ? vers->options
+                                                          : "----");
+	/* FIXME: Do we want to mimc the real `ls' command's date format?  */
+	out->time = gmformat_time_t (RCS_getrevtime (finfo->rcs, vers->vn_rcs,
+                                                     0, 0));
+	out->footer = asnprintf (NULL, &length, " %-9.9s%s %s%s",
+                                 vers->vn_rcs,
+                                 strlen (vers->vn_rcs) > 9 ? "+" : " ",
+                                 show_dead_revs ? (isdead ? "dead " : "     ")
+                                               : "",
+                                finfo->file);
+	n->data = out;
+	n->delproc = long_format_data_delproc;
+    }
     else
-	buf = asnprintf (NULL, &length, "%s\n", finfo->file);
+	n->data = asnprintf (NULL, &length, "%s\n", finfo->file);
 
     p = findnode (callerdat, finfo->update_dir);
     assert (p);
-    push_string (p->data, buf);
+    addnode (p->data, n);
 
     freevers_ts (&vers);
     return 0;
@@ -406,18 +448,26 @@ ls_direntproc (void *callerdat, const char *dir, const char *repos,
     if (p)
     {
 	/* Push this dir onto our parent directory's listing.  */
-	char *buf;
 	size_t length;
+	Node *n = getnode();
 
 	if (entries_format)
-	    buf = asnprintf (NULL, &length, "D/%s////\n", dir);
+	    n->data = asnprintf (NULL, &length, "D/%s////\n", dir);
 	else if (long_format)
-	    buf = asnprintf (NULL, &length, "d--- %36s%s%s\n", "",
-                             show_dead_revs ? "     " : "", dir);
+	{
+	    struct long_format_data *out =
+		    xmalloc (sizeof (struct long_format_data));
+	    out->header = xstrdup ("d--- ");
+	    out->time = gmformat_time_t (unix_time_stamp (repos));
+	    out->footer = asnprintf (NULL, &length, "%12s%s%s", "",
+                                     show_dead_revs ? "     " : "", dir);
+	    n->data = out;
+	    n->delproc = long_format_data_delproc;
+	}
 	else
-	    buf = asnprintf (NULL, &length, "%s\n", dir);
+	    n->data = asnprintf (NULL, &length, "%s\n", dir);
 
-	push_string (p->data, buf);
+	addnode (p->data, n);
     }
 
     if (!p || recurse)

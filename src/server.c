@@ -6668,9 +6668,20 @@ cvs_output_tagged (const char *tag, const char *text)
 	    cvs_output ("\n", 1);
 	else if (strcmp (tag, "date") == 0)
 	{
-	    char *date = format_date_alloc (text);
-	    cvs_output (date, 0);
-	    free (date);
+	    if (server_active)
+		/* Output UTC when running as a server without MT support in
+		 * the client since it is likely to be more meaningful than
+	         * localtime.
+		 */
+		cvs_output (text, 0);
+	    else
+	    {
+		char *date_in = xstrdup (text);
+		char *date = format_date_alloc (date_in);
+		cvs_output (date, 0);
+		free (date);
+		free (date_in);
+	    }
 	}
 	else if (text != NULL)
 	    cvs_output (text, 0);
