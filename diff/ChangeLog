@@ -1,7 +1,7 @@
 Thu Sep 25 14:34:22 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
-	* util.c (begin_output): If PR_PROGRAM is not defined (VMS), just
-	give a fatal error if --paginate specified.
+	* util.c (begin_output, finish_output): If PR_PROGRAM is not
+	defined (VMS), just give a fatal error if --paginate specified.
 
 	* Makefile.in (DISTFILES): Add ChangeLog build_diff.com
 	Makefile.in.
