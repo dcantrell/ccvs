@@ -39,12 +39,12 @@ ALL : "$(OUTDIR)\cvs.exe"
 
 !ELSE 
 
-ALL : "LIB - Win32 Release" "zlib - Win32 Release" "libdiff - Win32 Release" "$(OUTDIR)\cvs.exe"
+ALL : "libcvs - Win32 Release" "libz - Win32 Release" "libdiff - Win32 Release" "$(OUTDIR)\cvs.exe"
 
 !ENDIF 
 
 !IF "$(RECURSE)" == "1" 
-CLEAN :"libdiff - Win32 ReleaseCLEAN" "zlib - Win32 ReleaseCLEAN" "LIB - Win32 ReleaseCLEAN" 
+CLEAN :"libdiff - Win32 ReleaseCLEAN" "libz - Win32 ReleaseCLEAN" "libcvs - Win32 ReleaseCLEAN" 
 !ELSE 
 CLEAN :
 !ENDIF 
@@ -175,7 +175,7 @@ BSC32_FLAGS=/nologo /o"$(OUTDIR)\cvsnt.bsc"
 BSC32_SBRS= \
 	
 LINK32=link.exe
-LINK32_FLAGS=diff\WinRel\libdiff.lib lib\WinRel\libcvs.lib zlib\WinRel\zlib.lib wsock32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib /nologo /subsystem:console /incremental:no /pdb:"$(OUTDIR)\cvs.pdb" /machine:I386 /out:"$(OUTDIR)\cvs.exe" 
+LINK32_FLAGS=diff\WinRel\libdiff.lib lib\WinRel\libcvs.lib zlib\WinRel\libz.lib wsock32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib /nologo /subsystem:console /incremental:no /pdb:"$(OUTDIR)\cvs.pdb" /machine:I386 /out:"$(OUTDIR)\cvs.exe" 
 LINK32_OBJS= \
 	"$(INTDIR)\add.obj" \
 	"$(INTDIR)\admin.obj" \
@@ -260,8 +260,8 @@ LINK32_OBJS= \
 	"$(INTDIR)\yesno.obj" \
 	"$(INTDIR)\zlib.obj" \
 	".\diff\WinRel\libdiff.lib" \
-	".\zlib\WinRel\zlib.lib" \
-	".\LIB\WinRel\libcvs.lib"
+	".\zlib\WinRel\libz.lib" \
+	".\lib\WinRel\libcvs.lib"
 
 "$(OUTDIR)\cvs.exe" : "$(OUTDIR)" $(DEF_FILE) $(LINK32_OBJS)
     $(LINK32) @<<
@@ -282,12 +282,12 @@ ALL : "$(OUTDIR)\cvs.exe"
 
 !ELSE 
 
-ALL : "LIB - Win32 Debug" "zlib - Win32 Debug" "libdiff - Win32 Debug" "$(OUTDIR)\cvs.exe"
+ALL : "libcvs - Win32 Debug" "libz - Win32 Debug" "libdiff - Win32 Debug" "$(OUTDIR)\cvs.exe"
 
 !ENDIF 
 
 !IF "$(RECURSE)" == "1" 
-CLEAN :"libdiff - Win32 DebugCLEAN" "zlib - Win32 DebugCLEAN" "LIB - Win32 DebugCLEAN" 
+CLEAN :"libdiff - Win32 DebugCLEAN" "libz - Win32 DebugCLEAN" "libcvs - Win32 DebugCLEAN" 
 !ELSE 
 CLEAN :
 !ENDIF 
@@ -421,7 +421,7 @@ BSC32_FLAGS=/nologo /o"$(OUTDIR)\cvsnt.bsc"
 BSC32_SBRS= \
 	
 LINK32=link.exe
-LINK32_FLAGS=diff\WinDebug\libdiff.lib lib\WinDebug\libcvs.lib zlib\WinDebug\zlib.lib wsock32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib /nologo /subsystem:console /incremental:yes /pdb:"$(OUTDIR)\cvs.pdb" /debug /machine:I386 /out:"$(OUTDIR)\cvs.exe" 
+LINK32_FLAGS=diff\WinDebug\libdiff.lib lib\WinDebug\libcvs.lib zlib\WinDebug\libz.lib wsock32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib /nologo /subsystem:console /incremental:yes /pdb:"$(OUTDIR)\cvs.pdb" /debug /machine:I386 /out:"$(OUTDIR)\cvs.exe" 
 LINK32_OBJS= \
 	"$(INTDIR)\add.obj" \
 	"$(INTDIR)\admin.obj" \
@@ -506,8 +506,8 @@ LINK32_OBJS= \
 	"$(INTDIR)\yesno.obj" \
 	"$(INTDIR)\zlib.obj" \
 	".\diff\WinDebug\libdiff.lib" \
-	".\zlib\WinDebug\zlib.lib" \
-	".\LIB\WinDebug\libcvs.lib"
+	".\zlib\WinDebug\libz.lib" \
+	".\lib\WinDebug\libcvs.lib"
 
 "$(OUTDIR)\cvs.exe" : "$(OUTDIR)" $(DEF_FILE) $(LINK32_OBJS)
     $(LINK32) @<<
@@ -1047,52 +1047,52 @@ SOURCE=.\src\zlib.c
 
 !IF  "$(CFG)" == "cvsnt - Win32 Release"
 
-"zlib - Win32 Release" : 
+"libz - Win32 Release" : 
    cd ".\zlib"
-   $(MAKE) /$(MAKEFLAGS) /F ".\zlib.mak" CFG="zlib - Win32 Release" 
+   $(MAKE) /$(MAKEFLAGS) /F ".\libz.mak" CFG="libz - Win32 Release" 
    cd ".."
 
-"zlib - Win32 ReleaseCLEAN" : 
+"libz - Win32 ReleaseCLEAN" : 
    cd ".\zlib"
-   $(MAKE) /$(MAKEFLAGS) /F ".\zlib.mak" CFG="zlib - Win32 Release" RECURSE=1 CLEAN 
+   $(MAKE) /$(MAKEFLAGS) /F ".\libz.mak" CFG="libz - Win32 Release" RECURSE=1 CLEAN 
    cd ".."
 
 !ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
 
-"zlib - Win32 Debug" : 
+"libz - Win32 Debug" : 
    cd ".\zlib"
-   $(MAKE) /$(MAKEFLAGS) /F ".\zlib.mak" CFG="zlib - Win32 Debug" 
+   $(MAKE) /$(MAKEFLAGS) /F ".\libz.mak" CFG="libz - Win32 Debug" 
    cd ".."
 
-"zlib - Win32 DebugCLEAN" : 
+"libz - Win32 DebugCLEAN" : 
    cd ".\zlib"
-   $(MAKE) /$(MAKEFLAGS) /F ".\zlib.mak" CFG="zlib - Win32 Debug" RECURSE=1 CLEAN 
+   $(MAKE) /$(MAKEFLAGS) /F ".\libz.mak" CFG="libz - Win32 Debug" RECURSE=1 CLEAN 
    cd ".."
 
 !ENDIF 
 
 !IF  "$(CFG)" == "cvsnt - Win32 Release"
 
-"LIB - Win32 Release" : 
-   cd ".\LIB"
-   $(MAKE) /$(MAKEFLAGS) /F ".\LIB.mak" CFG="LIB - Win32 Release" 
+"libcvs - Win32 Release" : 
+   cd ".\lib"
+   $(MAKE) /$(MAKEFLAGS) /F ".\libcvs.mak" CFG="libcvs - Win32 Release" 
    cd ".."
 
-"LIB - Win32 ReleaseCLEAN" : 
-   cd ".\LIB"
-   $(MAKE) /$(MAKEFLAGS) /F ".\LIB.mak" CFG="LIB - Win32 Release" RECURSE=1 CLEAN 
+"libcvs - Win32 ReleaseCLEAN" : 
+   cd ".\lib"
+   $(MAKE) /$(MAKEFLAGS) /F ".\libcvs.mak" CFG="libcvs - Win32 Release" RECURSE=1 CLEAN 
    cd ".."
 
 !ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
 
-"LIB - Win32 Debug" : 
-   cd ".\LIB"
-   $(MAKE) /$(MAKEFLAGS) /F ".\LIB.mak" CFG="LIB - Win32 Debug" 
+"libcvs - Win32 Debug" : 
+   cd ".\lib"
+   $(MAKE) /$(MAKEFLAGS) /F ".\libcvs.mak" CFG="libcvs - Win32 Debug" 
    cd ".."
 
-"LIB - Win32 DebugCLEAN" : 
-   cd ".\LIB"
-   $(MAKE) /$(MAKEFLAGS) /F ".\LIB.mak" CFG="LIB - Win32 Debug" RECURSE=1 CLEAN 
+"libcvs - Win32 DebugCLEAN" : 
+   cd ".\lib"
+   $(MAKE) /$(MAKEFLAGS) /F ".\libcvs.mak" CFG="libcvs - Win32 Debug" RECURSE=1 CLEAN 
    cd ".."
 
 !ENDIF 

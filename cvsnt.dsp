@@ -49,8 +49,8 @@ BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo
 LINK32=link.exe
-# ADD BASE LINK32 diff\WinRel\libdiff.lib lib\WinRel\libcvs.lib zlib\WinRel\zlib.lib wsock32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib /nologo /subsystem:console /machine:I386 /out:".\WinRel\cvs.exe"
-# ADD LINK32 diff\WinRel\libdiff.lib lib\WinRel\libcvs.lib zlib\WinRel\zlib.lib wsock32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib /nologo /subsystem:console /machine:I386 /out:".\WinRel\cvs.exe"
+# ADD BASE LINK32 diff\WinRel\libdiff.lib lib\WinRel\libcvs.lib zlib\WinRel\libz.lib wsock32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib /nologo /subsystem:console /machine:I386 /out:".\WinRel\cvs.exe"
+# ADD LINK32 diff\WinRel\libdiff.lib lib\WinRel\libcvs.lib zlib\WinRel\libz.lib wsock32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib /nologo /subsystem:console /machine:I386 /out:".\WinRel\cvs.exe"
 
 !ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
 
@@ -72,9 +72,9 @@ BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo
 LINK32=link.exe
-# ADD BASE LINK32 diff\WinDebug\libdiff.lib lib\WinDebug\libcvs.lib zlib\WinDebug\zlib.lib wsock32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib /nologo /subsystem:console /pdb:".\WinDebug\cvs.pdb" /debug /machine:I386 /out:".\WinDebug\cvs.exe"
+# ADD BASE LINK32 diff\WinDebug\libdiff.lib lib\WinDebug\libcvs.lib zlib\WinDebug\libz.lib wsock32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib /nologo /subsystem:console /pdb:".\WinDebug\cvs.pdb" /debug /machine:I386 /out:".\WinDebug\cvs.exe"
 # SUBTRACT BASE LINK32 /pdb:none
-# ADD LINK32 diff\WinDebug\libdiff.lib lib\WinDebug\libcvs.lib zlib\WinDebug\zlib.lib wsock32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib /nologo /subsystem:console /pdb:".\WinDebug\cvs.pdb" /debug /machine:I386 /out:".\WinDebug\cvs.exe"
+# ADD LINK32 diff\WinDebug\libdiff.lib lib\WinDebug\libcvs.lib zlib\WinDebug\libz.lib wsock32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib /nologo /subsystem:console /pdb:".\WinDebug\cvs.pdb" /debug /machine:I386 /out:".\WinDebug\cvs.exe"
 # SUBTRACT LINK32 /pdb:none
 
 !ENDIF 
