@@ -400,14 +400,14 @@ echo 'nothing seems to happen for a long time.)'
 # FIXME: we don't properly quote this--if the name contains . we'll
 # just spuriously match a few things; if the name contains other regexp
 # special characters we are probably in big trouble.
-CPROG=`basename ${testcvs}`
+CPROG=`basename ${testcvs} |sed 's/\.exe$//'`
 # And the regexp for the CVS server when we have one.  In local mode, this
 # defaults to $CPROG since $servercvs already did.
 # FIXCVS: There are a few places in error messages where CVS suggests a command
 # and outputs $SPROG as the suggested executable.  This could hopefully use
 # MT (tagged text - see doc/cvs-client.texi) to request that the client print
 # its own name.
-SPROG=`basename ${servercvs}`
+SPROG=`basename ${servercvs} |sed 's/\.exe$//'`
 
 
 # Regexp to match an author name.  I'm not really sure what characters
@@ -18101,21 +18101,21 @@ D file1"
 	  # I suppose passing "1.1.branch" or "branch" for "br"
 	  # would be an improvement.
 	  dotest taginfo-newfmt-examine-2 "cat ${TESTDIR}/1/taglog" \
-"tag1 N add first-dir file 2 1.1 1.1 file1 1.1 1.1
-br T add first-dir file 2 NONE 1\.1 file1 1\.1\.2\.1 1\.1
+"tag1 N add first-dir
+br T add first-dir file 2 NONE 1\.1
 br T add first-dir/sdir file3 NONE 1\.1
 brtag N mov first-dir file 2 NONE 1\.1 file1 1\.1\.2\.1 1\.1\.2\.2
 brtag N mov first-dir/sdir file3 NONE 1\.1
 tag1 ? del first-dir file 2 1\.1 1\.1 file1 1\.1 1\.1
-tag1 ? del first-dir/sdir file3 NONE 1\.1
-tag1 ? del first-dir file 2 NONE 1\.1 file1 NONE 1\.1\.2\.2
-tag1 ? del first-dir/sdir file3 NONE 1\.1
+tag1 ? del first-dir/sdir
+tag1 ? del first-dir
+tag1 ? del first-dir/sdir
 tag1 N add first-dir file 2 NONE 1\.1 file1 NONE 1\.1
 tag1 N add first-dir/sdir file3 NONE 1\.1
 tag1 ? del first-dir file 2 1\.1 1\.1 file1 1\.1 1\.1
 tag1 ? del first-dir/sdir file3 1\.1 1\.1
-tag1 ? del first-dir file 2 NONE 1\.1 file1 NONE 1\.1
-tag1 ? del first-dir/sdir file3 NONE 1\.1"
+tag1 ? del first-dir
+tag1 ? del first-dir/sdir"
 
 	  cd ..
 	  cd CVSROOT
