@@ -1,7 +1,11 @@
-2001-10-21  Conrad T. Pino  <Conrad@Pino.com>
+2004-10-26  Conrad T. Pino  <Conrad@Pino.com>
 
-	* libdiff.dep: Regenerated for "../zlib/lib.dsp" change.
-	* libdiff.mak: Regenerated for "../zlib/lib.dsp" change.
+	* libdiff.dep: Regenerate for "../cvsnt.dsp" and "../lib/libcvs.dsp" change.
+
+2004-10-21  Conrad T. Pino  <Conrad@Pino.com>
+
+	* libdiff.dep: Regenerated for "../zlib/libz.dsp" change.
+	* libdiff.mak: Regenerated for "../zlib/libz.dsp" change.
 
 2004-10-20  Mark D. Baushke  <mdb@cvshome.org>
 
