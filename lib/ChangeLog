@@ -1,3 +1,8 @@
+2003-12-10  Mark D. Baushke  <mdb@cvshome.org>
+
+	* xgetwd.c (pathmax.h): Add new include.
+	(Patch from Rob Clevenger <rob@robsite.org>.)
+
 2003-12-09  Derek Price  <derek@ximbiot.com>
 
 	* system.h: Correct spelling in comment.

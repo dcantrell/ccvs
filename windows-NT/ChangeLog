@@ -1,3 +1,9 @@
+2003-12-10  Mark D. Baushke  <mdb@cvshome.org>
+
+	* config.h (SYSTEM_CLEANUP): Update macro to be a name replacement
+	rather than a macro function.
+	(Patch from Rob Clevenger <rob@robsite.org>.)
+	
 2003-12-09  Derek Price  <derek@ximbiot.com>
 
 	* config.h, stamp-ch: Regenerated for release 1.12.4.1.
