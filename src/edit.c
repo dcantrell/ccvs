@@ -898,7 +898,8 @@ notify_check (repository, update_dir)
 
 	client_notify (repository, update_dir, filename, notif_type, val);
     }
-
+    if (line)
+	free (line);
     if (ferror (fp))
 	error (0, errno, "cannot read %s", CVSADM_NOTIFY);
     if (fclose (fp) < 0)

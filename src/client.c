@@ -4881,6 +4881,7 @@ notified_a_file (data, ent_list, short_pathname, filename)
     {
 	if (feof (fp))
 	{
+	    free (line);
 	    if (fclose (fp) < 0)
 		error (0, errno, "cannot close %s", CVSADM_NOTIFY);
 	    if ( CVS_UNLINK (CVSADM_NOTIFY) < 0)
@@ -4923,6 +4924,7 @@ notified_a_file (data, ent_list, short_pathname, filename)
 	error (0, errno, "cannot close %s", CVSADM_NOTIFYTMP);
 	goto error_exit;
     }
+    free (line);
     if (fclose (fp) < 0)
     {
 	error (0, errno, "cannot close %s", CVSADM_NOTIFY);
@@ -4941,6 +4943,7 @@ notified_a_file (data, ent_list, short_pathname, filename)
   error2:
     (void) fclose (newf);
   error_exit:
+    free (line);
     (void) fclose (fp);
 }
 

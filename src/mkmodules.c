@@ -446,6 +446,8 @@ mkmodules (dir)
 	    }
 	    free (temp);
 	}
+	if (line)
+	    free (line);
 	if (ferror (fp))
 	    error (0, errno, "cannot read %s", CVSROOTADM_CHECKOUTLIST);
 	if (fclose (fp) < 0)

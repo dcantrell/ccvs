@@ -894,6 +894,8 @@ cat_module (status)
 	    save_d (key.dptr, key.dsize, val.dptr, val.dsize);
     }
 
+    close_module (db);
+
     /* Sort the list as requested */
     qsort ((PTR) s_head, s_count, sizeof (struct sortrec), sort_order);
 
