@@ -29,6 +29,8 @@ EXTRA_DIST = \
 	config.h.in.in \
 	config.h.in.footer \
 	stamp-chi \
+	mkconfig.pl \
+	fix-msvc-mak.pl \
 	ndir.h \
 	pwd.h \
 	rcmd.h \
@@ -91,10 +93,12 @@ config.h.in: @MAINTAINER_MODE_TRUE@ stamp-chi
 #
 # This file is distributed since without it config.h.in will always be rebuilt
 # on the first run in maintainer mode, even if its dependencies are unchanged.
-stamp-chi: mkconfig $(top_srcdir)/config.h.in $(srcdir)/config.h.in.in \
-	   $(srcdir)/config.h.in.footer
-	@./mkconfig -q $(top_srcdir)/config.h.in $(srcdir)/config.h.in \
-	               $(srcdir)/config.h.in.in $(srcdir)/config.h.in.footer
+stamp-chi: $(srcdir)/mkconfig.pl $(top_srcdir)/config.h.in \
+	   $(srcdir)/config.h.in.in $(srcdir)/config.h.in.footer
+	@$(PERL) mkconfig.pl -q $(top_srcdir)/config.h.in \
+	                        $(srcdir)/config.h.in \
+	                        $(srcdir)/config.h.in.in \
+	                        $(srcdir)/config.h.in.footer
 	@cp $(srcdir)/config.h.in $(srcdir)/$@
 MAINTAINERCLEANFILES += $(srcdir)/config.h.in $(srcdir)/stamp-chi
 

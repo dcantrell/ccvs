@@ -1,3 +1,5 @@
+#! perl -w
+
 use strict;
 
 # For the `mv' function which is smart enough to cross device boundries.

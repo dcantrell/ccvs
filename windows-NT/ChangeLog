@@ -1,3 +1,11 @@
+2005-03-09  Derek Price  <derek@ximbiot.com>
+
+	* .cvsignore: Remove mkconfig & fix-msvc-mak.
+	* Makefile.am (EXTRA_DIST): Include mkconfig.pl & fix-msvc-mak.pl.
+	(stamp-chi): Call $(PERL) mkconfig.pl explicitly.
+	* plhead.pl: Remove this file.
+	* mkconfig.pl, fix-msvc-mak.pl: Turn on warnings.
+
 2005-03-07  Conrad T. Pino  <Conrad@Pino.com>
 
 	* config.h, config.h.in: Regenerate for config.h.in.in change.
