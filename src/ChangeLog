@@ -1,3 +1,15 @@
+Mon Mar 25 1996  Jim Kingdon  <kingdon@cyclic.com>
+
+	* cvs.h, filesubr.c (expand_wild): New function.
+	* recurse.c (start_recursion): Call expand_wild at beginning and
+	free its results at the end.
+	* cvs.h, subr.c (xrealloc): Make argument and return value void *.
+	* client.h, client.c (send_file_names): Add flags argument.   If
+	SEND_EXPAND_WILD flag is passed, call expand_wild at beginning and
+	free its results at the end.
+	* admin.c, add.c, log.c, tag.c, status.c, edit.c, watch.c,
+	update.c, commit.c, remove.c, client.c, diff.c: Update callers.
+
 Fri Mar 22 10:09:55 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* error.c (error, fperror): Exit with status EXIT_FAILURE rather

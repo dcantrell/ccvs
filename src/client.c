@@ -2164,7 +2164,7 @@ client_send_expansions (local)
        cleaner if we genuinely expanded module names, all the way to a
        local directory and repository, but that isn't the way it works
        now.  */
-    send_file_names (module_argc, module_argv);
+    send_file_names (module_argc, module_argv, 0);
 
     for (i = 0; i < modules_count; ++i)
     {
@@ -3732,15 +3732,21 @@ send_option_string (string)
 /* Send the names of all the argument files to the server.  */
 
 void
-send_file_names (argc, argv)
+send_file_names (argc, argv, flags)
     int argc;
     char **argv;
+    unsigned int flags;
 {
     int i;
     char *p;
     char *q;
     int level;
     int max_level;
+
+    /* The fact that we do this here as well as start_recursion is a bit 
+       of a performance hit.  Perhaps worth cleaning up someday.  */
+    if (flags & SEND_EXPAND_WILD)
+	expand_wild (argc, argv, &argc, &argv);
 
     /* Send Max-dotdot if needed.  */
     max_level = 0;
@@ -3813,6 +3819,14 @@ send_file_names (argc, argv)
 	    ++p;
 	}
 	send_to_server ("\012", 1);
+    }
+
+    if (flags & SEND_EXPAND_WILD)
+    {
+	int i;
+	for (i = 0; i < argc; ++i)
+	    free (argv[i]);
+	free (argv);
     }
 }
 

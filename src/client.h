@@ -83,7 +83,11 @@ start_server PROTO((void));
 
 /* Send the names of all the argument files to the server.  */
 void
-send_file_names PROTO((int argc, char **argv));
+send_file_names PROTO((int argc, char **argv, unsigned int flags));
+
+/* Flags for send_file_names.  */
+/* Expand wild cards?  */
+#define SEND_EXPAND_WILD 1
 
 /*
  * Send Repository, Modified and Entry.  argc and argv contain only

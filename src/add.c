@@ -123,7 +123,7 @@ add (argc, argv)
 		free (date);
 	      free (rcsdir);
 	    }
-	send_file_names (argc, argv);
+	send_file_names (argc, argv, SEND_EXPAND_WILD);
 	send_files (argc, argv, 0, 0);
 	send_to_server ("add\012", 0);
 	return get_responses_and_close ();

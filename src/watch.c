@@ -331,7 +331,7 @@ watch_addremove (argc, argv)
 	    send_arg ("-a");
 	    send_arg ("none");
 	}
-	send_file_names (argc, argv);
+	send_file_names (argc, argv, SEND_EXPAND_WILD);
 	/* FIXME:  We shouldn't have to send current files, but I'm not sure
 	   whether it works.  So send the files --
 	   it's slower but it works.  */
@@ -504,7 +504,7 @@ watchers (argc, argv)
 
 	if (local)
 	    send_arg ("-l");
-	send_file_names (argc, argv);
+	send_file_names (argc, argv, SEND_EXPAND_WILD);
 	/* FIXME:  We shouldn't have to send current files, but I'm not sure
 	   whether it works.  So send the files --
 	   it's slower but it works.  */

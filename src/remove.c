@@ -75,7 +75,7 @@ cvsremove (argc, argv)
 	ign_setup ();
 	if (local)
 	    send_arg("-l");
-	send_file_names (argc, argv);
+	send_file_names (argc, argv, SEND_EXPAND_WILD);
 	send_files (argc, argv, local, 0);
 	send_to_server ("remove\012", 0);
         return get_responses_and_close ();
