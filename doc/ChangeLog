@@ -1,3 +1,10 @@
+Mon Jan 13 15:41:02 1997  Karl Fogel  <kfogel@ynu38.ynu.edu.cn>
+
+	* cvs.texinfo (Read-only access): rephrase to imply that there may
+        be other administrative files, besides history and locks, which
+        read-only users can also affect (in the future, for example, the
+        `passwd' file).
+
 Wed Jan  8 14:50:47 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* Makefile.in: Remove CVSid; we decided to get rid
