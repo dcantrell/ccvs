@@ -1392,6 +1392,22 @@ stdio_buffer_shutdown (buf)
 
     if (buf->input)
     {
+	/* This used to check for getc (bc->fp) != EOF too, but there was an
+	 * odd race condition that would sometimes cause a dead server child
+	 * process to cause a SIGPIPE to be delivered to the server parent
+	 * before the SIGCHILD while the client was in a read state and the
+	 * buffer was empty.  The previous server assumption was that a
+	 * SIGPIPE meant that the _network_ pipe, to the client, broke, so it
+	 * was okay to assume that the blocking getc() would return a char or
+	 * EOF.  When the SIGPIPE is received due to a problem writing to a
+	 * server child, however, and the client pipe still exists, and the
+	 * client is reading, this call to getc() would block indefinitely
+	 * waiting for info from the client while the client blocked waiting
+	 * for a read from the server...  in other words, deadlock occurred.
+	 *
+	 * Anyhow, if that old getc() could be replaced with a non-blocking
+	 * read of the client pipe, that would be okay too.
+	 */
 	if ( !buf_empty_p (buf) )
 	{
 # ifdef SERVER_SUPPORT
