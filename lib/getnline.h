@@ -25,7 +25,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
 # include <stddef.h>
 # include <stdio.h>
 
-# define GETNLINE_NO_LIMIT -1
+# define GETNDELIM_NO_LIMIT -1
 
 int getnline( char **_lineptr, size_t *_n, int limit, FILE *_stream );
 

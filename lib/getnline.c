@@ -84,7 +84,7 @@ getdelim2( char **lineptr, size_t *n, size_t offset, int limit,
 
       c = getc (stream);
 
-      if (limit != GETNLINE_NO_LIMIT)
+      if (limit != GETNDELIM_NO_LIMIT)
 	limit--;
 
       /* We always want at least one char left in the buffer, since we
@@ -128,7 +128,6 @@ getdelim2( char **lineptr, size_t *n, size_t offset, int limit,
   ret = read_pos - (*lineptr + offset);
   return ret;
 }
-
 
 int
 getnline( char **lineptr, size_t *n, int limit, FILE *stream )

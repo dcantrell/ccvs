@@ -1,5 +1,12 @@
 2003-07-16  Derek Price  <derek@ximbiot.com>
 
+	* getline.c: Don't include the unneeded unlocked-io.h.
+	* getnline.c: Remove extra blank line.  Use GETNDELIM_NO_LIMIT rather
+	than GETNLINE_NO_LIMIT.
+	* getnline.h: Define GETNDELIM_NO_LIMIT rather than GETNLINE_NO_LIMIT.
+
+2003-07-16  Derek Price  <derek@ximbiot.com>
+
 	* PROTO.h: Remove this file since some of our GNULIB sources no longer
 	support compilers that can't handle prototypes.
 
