@@ -1,3 +1,8 @@
+2003-03-03  Mark D. Baushke  <mdb@cvshome.org>
+
+	* cvs.texinfo (CVS_LOCAL_BRANCH_NUM): Document new environment
+	variable.
+
 2003-02-27  Derek Price  <derek@ximbiot.com>
 
 	* cvs.texinfo (Environment variables): Make the information on
