@@ -1,3 +1,7 @@
+1998-08-20  Ian Lance Taylor  <ian@cygnus.com>
+
+	* sanity.sh (import): Rewrite tests to use dotest.
+
 1998-08-20  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* sanity.sh: Add comments about binary files and cvs import.
