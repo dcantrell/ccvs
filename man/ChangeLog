@@ -1,3 +1,9 @@
+2003-03-24  Derek Price  <derek@ximbiot.com>
+
+	* Makefile.am: Update copyright notice.
+
+	* Makefile.in: Regenerated.
+
 2003-03-19  Mark D. Baushke  <mdb@cvshome.org>
 
 	* cvs.1 (CVS_RSH): Note that the default "rsh" value may be set by
