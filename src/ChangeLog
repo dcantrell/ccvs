@@ -1,3 +1,8 @@
+Sat Apr  8 14:52:55 1995  Jim Blandy  <jimb@totoro.bio.indiana.edu>
+
+	* Makefile.in (CFLAGS): Let configure set the default for CFLAGS.
+	Under GCC, we want -g -O.
+
 Fri Apr  7 15:49:25 1995  J.T. Conklin  <jtc@rtl.cygnus.com>
 
 	* root.c (Name_Root): merge identical adjacent conditionals.

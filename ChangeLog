@@ -1,3 +1,8 @@
+Sat Apr  8 14:52:46 1995  Jim Blandy  <jimb@totoro.bio.indiana.edu>
+
+	* Makefile.in (CFLAGS): Let configure set the default for CFLAGS.
+	Under GCC, we want -g -O.
+
 Wed Feb  8 06:49:49 1995  Roland McGrath  <roland@churchy.gnu.ai.mit.edu>
 
 	* Makefile.in (stamp-h): Pass CONFIG_FILES=$@ to config.status so
