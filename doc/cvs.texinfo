@@ -2171,7 +2171,7 @@ for example @file{/usr/local/bin/cvs-1.6}.
 @c different ones for different roots.  e.g. ":server;cvs=cvs-1.6:"
 @c instead of ":server:".
 
-There is no need to edit @code{inetd.conf} or start a
+There is no need to edit @file{inetd.conf} or start a
 @sc{cvs} server daemon.
 
 @cindex :server:, setting up
@@ -2272,7 +2272,7 @@ single line in @file{inetd.conf}) should be sufficient:
 
 @example
 2401  stream  tcp  nowait  root  /usr/local/bin/cvs
-cvs --allow-root=/usr/cvsroot pserver
+cvs -f --allow-root=/usr/cvsroot pserver
 @end example
 
 You could also use the
@@ -2680,7 +2680,7 @@ on.  You must then use the @code{-x} global option to
 request encryption.
 
 @cindex CVS_CLIENT_PORT
-You need to edit @code{inetd.conf} on the server
+You need to edit @file{inetd.conf} on the server
 machine to run @code{cvs kserver}.  The client uses
 port 1999 by default; if you want to use another port
 specify it in the @code{CVS_CLIENT_PORT} environment
@@ -12911,8 +12911,8 @@ This is a generic response when trying to connect to a
 pserver server which chooses not to provide a
 specific reason for denying authorization.  Check that
 the username and password specified are correct and
-that the @code{CVSROOT} specified is allowed by --allow-root
-in inetd.conf.  See @ref{Password authenticated}.
+that the @code{CVSROOT} specified is allowed by @samp{--allow-root}
+in @file{inetd.conf}.  See @ref{Password authenticated}.
 
 @item @var{file}:@var{line}: Assertion '@var{text}' failed
 The exact format of this message may vary depending on
@@ -13317,7 +13317,7 @@ cvs [pserver aborted]: bad auth protocol start: foo
 @end example
 
 If this fails to work, then make sure inetd is working
-right.  Change the invocation in inetd.conf to run the
+right.  Change the invocation in @file{inetd.conf} to run the
 echo program instead of cvs.  For example:
 
 @example
@@ -13340,6 +13340,20 @@ to address this problem.
 Another good debugging tool is the @samp{-d}
 (debugging) option to inetd.  Consult your system
 documentation for more information.
+
+If you seem to be connecting but get errors like:
+
+@example
+cvs server: cannot open /root/.cvsignore: Permission denied
+cvs [server aborted]: can't chdir(/root): Permission denied
+@end example
+
+then either you haven't specified @samp{-f} in @file{inetd.conf}
+or your system is setting the @code{HOME} environment variable
+for programs being run by inetd.  In the latter case, you can either
+have inetd run a shell script that unsets @code{HOME} and then runs
+@sc{cvs}, or you can use @code{env} to run @sc{cvs} with a pristine
+environment.
 @end table
 
 @node Other problems
