@@ -1,0 +1,27 @@
+# I use this for single compilation while porting; once the port is
+# done it can be removed.
+
+LIB = s:\ibmcpp\lib;s:\toolkt21\os2lib;
+CINC = -Is:/ibmcpp/include -Is:/toolkt21/c/os2h
+CFLAGS = -C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm ${CINC}
+CFLAGS += -DIBM_CPP
+CFLAGS += -I. -I../lib
+
+# TCP/IP stuff
+TCPIPLIB = s:\ibmtcpip\lib\tcp32dll.lib	s:\ibmtcpip\lib\so32dll.lib porttcp.obj
+
+# We probably don't need these.
+# RPCLIB   = s:\ibmtcpip\lib\rpc32dll.lib
+# FTPLIB   = s:\ibmtcpip\lib\ftpapi.lib
+
+CFLAGS 	 += -DTCPIP_IBM -Is:\ibmtcpip\include
+
+THIS_BASENAME = ../src/add
+
+all: ${THIS_BASENAME}.obj
+
+${THIS_BASENAME}.obj: ../src/${THIS_BASENAME}.c
+	@echo
+	@echo ${CFLAGS}
+	@echo
+	icc ${CFLAGS} /Fo${THIS_BASENAME}.obj ${THIS_BASENAME}.c
