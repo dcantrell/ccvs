@@ -8,9 +8,20 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.  */
 
+#undef TEST
+
 #include <stdio.h>
 #include <iodef.h>
 #include <descrip.h>
+#include <starlet.h>
+#include <string.h>
+
+#ifdef TEST
+#include <stdlib.h>
+static void error (int, int, char *);
+#else
+#  include "cvs.h"
+#endif
 
 char *
 getpass (char *prompt)
@@ -24,7 +35,12 @@ getpass (char *prompt)
        think.  */
     static char buf[2048];
 
-    status = sys$assign (&sys_command, &chan);
+    /* Try to ensure that we avoid stepping on whatever output has
+       been sent to stdout.  */
+    printf ("\n");
+    fflush (stdout);
+
+    status = sys$assign (&sys_command, &chan, 0, 0);
     if (!(status & 1))
 	error (1, 0, "sys$assign failed in getpass");
     status = sys$qiow (0, chan, IO$_READPROMPT | IO$M_NOECHO, &iosb, 0, 0,
@@ -37,14 +53,23 @@ getpass (char *prompt)
     status = sys$dassgn (chan);
     if (!(status & 1))
 	error (0, 0, "sys$dassgn failed in getpass");
+    /* Since there is no echo, we better go to the next line ourselves.  */
+    printf ("\n");
     return buf;
 }
 
-#if 0
+#ifdef TEST
 int
 main ()
 {
     printf ("thank you for saying \"%s\"\n", getpass ("What'll it be? "));
     return 0;
+}
+
+static void error (int x, int y, char *msg)
+{
+    printf ("error: %s\n", msg);
+    if (x)
+        exit (EXIT_FAILURE);
 }
 #endif
