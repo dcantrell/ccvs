@@ -1,3 +1,8 @@
+Wed Nov 15 15:33:37 1995  Karl Fogel  <kfogel@floss.cyclic.com>
+
+        * main.c (main): ifdef NEED_CALL_SOCKINIT, then call SockInit().
+        Only OS/2 needs this initialization.
+
 Tue Nov 14 18:54:01 1995  Greg A. Woods  <woods@most.weird.com>
 
 	* patch.c:
