@@ -1,5 +1,13 @@
 Sun Apr 14 11:06:44 1996  Karl Fogel  <kfogel@floss.red-bean.com>
 
+        * configure.in (AC_OUTPUT): generate contrib/elib/Makefile,
+        tools/Makefile, and tools/pcl-cvs/Makefile.  Do not any longer
+        generate contrib/pcl-cvs/Makefile.
+        
+        * Makefile.in: deal w/ above changes.
+        
+        * configure: regenerated.
+
         * Added `tools' subdir (pcl-cvs will live there, as will other
         things maintained along with the CVS distribution).
 

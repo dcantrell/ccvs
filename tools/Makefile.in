@@ -1,8 +1,4 @@
-# Makefile for elib distributed with GNU CVS.
-
-# NOTE: this is only used for `make dist'.  To actually make elib
-# itself, you must unpack the elib tar file, build and install.
-
+# Makefile for GNU CVS auxiliary tools.
 # Do not use this makefile directly, but only from `../Makefile'.
 # Copyright (C) 1986, 1988-1990 Free Software Foundation, Inc.
 
@@ -37,13 +33,13 @@ mandir = $(prefix)/man
 # Use cp if you don't have install.
 INSTALL = @INSTALL@
 
-DISTFILES = ChangeLog README Makefile.in elib-1.0.tar.gz
+DISTFILES = ChangeLog README .cvsignore Makefile.in
 
 all: Makefile
 .PHONY: all
 
 install: all
-	@echo "You must unpack, build, and install elib yourself."
+	@echo "pcl-cvs not installed"
 .PHONY: install
 
 tags:
@@ -61,7 +57,7 @@ clean:
 .PHONY: clean
 
 distclean: clean
-	rm -f Makefile
+	rm -f Makefile pcl-cvs/Makefile
 .PHONY: distclean
 
 realclean: distclean
@@ -72,8 +68,9 @@ dist-dir:
 	for i in ${DISTFILES}; do \
 	  ln $(srcdir)/$${i} ${DISTDIR}; \
 	done
+	cd pcl-cvs; ${MAKE} dist-dir DISTDIR="../${DISTDIR}/pcl-cvs"
 .PHONY: dist-dir
 
-subdir = contrib/elib
-Makefile: ../../config.status Makefile.in
-	cd ../.. && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= ./config.status
+subdir = tools
+Makefile: ../config.status Makefile.in
+	cd .. && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= ./config.status

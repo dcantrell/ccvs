@@ -43,7 +43,7 @@ mandir = $(prefix)/man
 # Used to batch-byte-compile files.
 EMACS = emacs
 # compile with noninteractive and relatively clean environment
-BATCHFLAGS = -batch -n -q
+BATCHFLAGS = -batch -q
 
 # This is the directory in which the ELCFILES will be installed.
 lispdir = $(libdir)/emacs/site-lisp
@@ -62,7 +62,19 @@ DISTFILES = \
 	${ELFILES} \
 	pcl-cvs.texinfo texinfo.tex
 
-OBJDIR_DISTFILES = $(ELCFILES) pcl-cvs.aux pcl-cvs.ps
+
+# OBJDIR_DISTFILES used to include the byte-compiled elisp files, but
+# this seems wrong because the person building the dist cannot have
+# made the appropriate site-specific modifications to pcl-cvs.el.
+# Therefore, I've taken the .elc files out of OBJDIR_DISTFILES for
+# now, pending the Right Solution to this problem (which probably
+# involves moving the site-specific modification section of pcl-cvs.el
+# to a separate file and having autoconf generate as much of the file
+# as possible).     -Karl
+#
+# OBJDIR_DISTFILES = $(ELCFILES) pcl-cvs.aux pcl-cvs.ps
+OBJDIR_DISTFILES = pcl-cvs.aux pcl-cvs.ps
+
 
 # files that contain key macro definitions.  almost everything
 # depends on them because the byte-compiler inlines macro
@@ -209,7 +221,7 @@ dist-dir: ${OBJDIR_DISTFILES} ${DISTFILES} pcl-cvs.info
 	fi
 .PHONY: dist-dir
 
-subdir = contrib/pcl-cvs
+subdir = tools/pcl-cvs
 Makefile: ../../config.status Makefile.in
 	cd ../.. && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= ./config.status
 

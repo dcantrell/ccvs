@@ -23,6 +23,13 @@
 
 ;;; See below for installation instructions.
 
+;;; This package requires ELIB-1.0 to run.  Elib is included in the
+;;; CVS distribution in the contrib/elib/ subdirectory, but you can
+;;; also download it at the following URL:
+;;;
+;;;       ftp://ftp.lysator.liu.se/pub/emacs/elib-1.0.tar.gz
+;;;
+
 ;;; There is an TeXinfo file that describes this package.  You should read it
 ;;; to get the most from this package.
 
@@ -33,11 +40,8 @@
 ;;; or newer.  Use the version of RCS best suited for the version of CVS you're
 ;;; using.
 
-; (require 'cookie)			; from ELIB-1.0
-(load "cookie.el")
+(require 'cookie)			; from ELIB-1.0
 (require 'add-log)			; for all the ChangeLog goodies
-
-(provide 'pcl-cvs)
 
 ;;; -------------------------------------------------------
 ;;;	    START OF THINGS TO CHECK WHEN INSTALLING
@@ -3440,5 +3444,7 @@ To select default log text, we:
       (make-local-variable 'cvs-commit-list)
       (setq cvs-commit-list marked)
       (message "Press C-c C-c when you are done editing."))))
+
+(provide 'pcl-cvs)
 
 ;;;; end of file pcl-cvs.el
