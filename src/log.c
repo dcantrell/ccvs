@@ -151,7 +151,7 @@ static const char *const log_usage[] =
     "\t-t\tOnly print header and descriptive text.\n",
     "\t-N\tDo not list tags.\n",
     "\t-b\tOnly list revisions on the default branch.\n",
-    "\t-r[revisions]\tSpecify revision(s)s to list.\n",
+    "\t-r[revisions]\tA comma-separated list of revisions to print:\n",
     "\t   rev1:rev2   Between rev1 and rev2, including rev1 and rev2.\n",
     "\t   rev1::rev2  Between rev1 and rev2, excluding rev1 and rev2.\n",
     "\t   rev:        rev and following revisions on the same branch.\n",
@@ -161,7 +161,8 @@ static const char *const log_usage[] =
     "\t   rev         Just rev.\n",
     "\t   branch      All revisions on the branch.\n",
     "\t   branch.     The last revision on the branch.\n",
-    "\t-d dates\tSpecify dates (D1<D2 for range, D for latest before).\n",
+    "\t-d dates\tA semicolon-separated list of dates\n",
+    "\t        \t(D1<D2 for range, D for latest before).\n",
     "\t-s states\tOnly list revisions with specified states.\n",
     "\t-w[logins]\tOnly list revisions checked in by specified logins.\n",
     "(Specify the --help global option for a list of other help options)\n",
@@ -1088,7 +1089,7 @@ log_expand_revlist (rcs, revlist, default_branch)
                does.  This code is a bit cryptic for my tastes, but
                keeping the same implementation as rlog ensures a
                certain degree of compatibility.  */
-	    if (r->first == NULL)
+	    if (r->first == NULL && nr->last != NULL)
 	    {
 		nr->fields = numdots (nr->last) + 1;
 		if (nr->fields < 2)
@@ -1102,7 +1103,7 @@ log_expand_revlist (rcs, revlist, default_branch)
 		    strcpy (cp, ".0");
 		}
 	    }
-	    else if (r->last == NULL)
+	    else if (r->last == NULL && nr->first != NULL)
 	    {
 		nr->fields = numdots (nr->first) + 1;
 		nr->last = xstrdup (nr->first);
