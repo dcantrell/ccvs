@@ -208,6 +208,7 @@ AC_REPLACE_FUNCS(\
 # Look for functions from GNULIB and replace with versions in lib/ when
 # necessary.
 gl_PATHMAX
+gl_GETNDELIM2
 gl_GETNLINE
 jm_FUNC_MALLOC
 jm_FUNC_REALLOC
