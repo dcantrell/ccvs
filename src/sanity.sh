@@ -551,7 +551,7 @@ if test x"$*" = x; then
 	# Basic/miscellaneous functionality
 	tests="basica basicb basicc basic1 deep basic2"
 	# Branching, tagging, removing, adding, multiple directories
-	tests="${tests} rdiff death death2 branches"
+	tests="${tests} rdiff death death2 branches branches2"
 	tests="${tests} rcslib multibranch import importb join join2 join3"
 	tests="${tests} new newb conflicts conflicts2 conflicts3"
 	# Checking out various places (modules, checkout -d, &c)
@@ -3084,6 +3084,272 @@ done"
 
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
 	  rm -r first-dir
+	  ;;
+
+	branches2)
+	  # More branch tests.
+	  # Test that when updating a new subdirectory in a directory
+	  # which was checked out on a branch, the new subdirectory is
+	  # created on the appropriate branch.  Test this when joining
+	  # as well.
+
+	  mkdir ${CVSROOT_DIRNAME}/first-dir
+	  mkdir trunk; cd trunk
+
+	  # Create a file.
+	  dotest branches2-1 "${testcvs} -q co first-dir"
+	  cd first-dir
+	  echo "file1 first revision" > file1
+	  dotest branches2-2 "${testcvs} add file1" \
+"${PROG} [a-z]*: scheduling file .file1. for addition
+${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
+	  dotest branches2-3 "${testcvs} commit -m add file1" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
+done
+Checking in file1;
+${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
+initial revision: 1\.1
+done"
+
+	  # Tag the file.
+	  dotest branches2-4 "${testcvs} -q tag tag1" 'T file1'
+
+	  # Make two branches.
+	  dotest branches2-5 "${testcvs} -q rtag -b -r tag1 b1 first-dir" ''
+	  dotest branches2-6 "${testcvs} -q rtag -b -r tag1 b2 first-dir" ''
+
+	  # Create some files and a subdirectory on branch b1.
+	  cd ../..
+	  mkdir b1; cd b1
+	  dotest branches2-7 "${testcvs} -q co -r b1 first-dir" \
+"U first-dir/file1"
+	  cd first-dir
+	  echo "file2 first revision" > file2
+	  dotest branches2-8 "${testcvs} add file2" \
+"${PROG}"' [a-z]*: scheduling file `file2'\'' for addition on branch `b1'\''
+'"${PROG}"' [a-z]*: use .'"${PROG}"' commit. to add this file permanently'
+	  mkdir dir1
+	  dotest branches2-9 "${testcvs} add dir1" \
+"Directory ${TESTDIR}/cvsroot/first-dir/dir1 added to the repository
+--> Using per-directory sticky tag "'`'"b1'"
+	  echo "file3 first revision" > dir1/file3
+	  dotest branches2-10 "${testcvs} add dir1/file3" \
+"${PROG}"' [a-z]*: scheduling file `dir1/file3'\'' for addition on branch `b1'\''
+'"${PROG}"' [a-z]*: use .'"${PROG}"' commit. to add this file permanently'
+	  dotest branches2-11 "${testcvs} -q ci -madd ." \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/Attic/file2,v
+done
+Checking in file2;
+${TESTDIR}/cvsroot/first-dir/Attic/file2,v  <--  file2
+new revision: 1\.1\.2\.1; previous revision: 1\.1
+done
+RCS file: ${TESTDIR}/cvsroot/first-dir/dir1/Attic/file3,v
+done
+Checking in dir1/file3;
+${TESTDIR}/cvsroot/first-dir/dir1/Attic/file3,v  <--  file3
+new revision: 1\.1\.2\.1; previous revision: 1\.1
+done"
+
+	  # Check out the second branch, and update the working
+	  # directory to the first branch, to make sure the right
+	  # happens with dir1.
+	  cd ../..
+	  mkdir b2; cd b2
+	  dotest branches2-12 "${testcvs} -q co -r b2 first-dir" \
+'U first-dir/file1'
+	  cd first-dir
+	  dotest branches2-13 "${testcvs} update -d -r b1 dir1" \
+"${PROG} [a-z]*: Updating dir1
+U dir1/file3"
+	  dotest branches2-14 "${testcvs} -q status" \
+"===================================================================
+File: file1            	Status: Up-to-date
+
+   Working revision:	1\.1.*
+   Repository revision:	1\.1	${TESTDIR}/cvsroot/first-dir/file1,v
+   Sticky Tag:		b2 (branch: 1\.1\.4)
+   Sticky Date:		(none)
+   Sticky Options:	(none)
+
+===================================================================
+File: file3            	Status: Up-to-date
+
+   Working revision:	1\.1\.2\.1.*
+   Repository revision:	1\.1\.2\.1	${TESTDIR}/cvsroot/first-dir/dir1/Attic/file3,v
+   Sticky Tag:		b1 (branch: 1\.1\.2)
+   Sticky Date:		(none)
+   Sticky Options:	(none)"
+
+	  # FIXME: Just clobbering the directory like this is a bit
+	  # tacky, although people generally expect it to work.  Maybe
+	  # we should release it instead.  We do it a few other places
+	  # below as well.
+	  rm -r dir1
+	  dotest branches2-15 "${testcvs} update -d -j b1 dir1" \
+"${PROG} [a-z]*: Updating dir1
+U dir1/file3"
+	  # FIXCVS: The `No revision control file' stuff seems to be
+	  # CVS's way of telling us that we're adding the file on a
+	  # branch, and the file is not on that branch yet.  This
+	  # should be nicer.
+	  dotest branches2-16 "${testcvs} -q status" \
+"===================================================================
+File: file1            	Status: Up-to-date
+
+   Working revision:	1\.1.*
+   Repository revision:	1\.1	${TESTDIR}/cvsroot/first-dir/file1,v
+   Sticky Tag:		b2 (branch: 1\.1\.4)
+   Sticky Date:		(none)
+   Sticky Options:	(none)
+
+===================================================================
+File: file3            	Status: Locally Added
+
+   Working revision:	New file!
+   Repository revision:	No revision control file
+   Sticky Tag:		b2 - MISSING from RCS file!
+   Sticky Date:		(none)
+   Sticky Options:	(none)"
+
+	  cd ../../trunk/first-dir
+	  dotest branches2-17 "${testcvs} update -d -P dir1" \
+"${PROG} [a-z]*: Updating dir1"
+	  dotest_fail branches2-18 "test -d dir1"
+	  dotest branches2-19 "${testcvs} update -d -P -r b1 dir1" \
+"${PROG} [a-z]*: Updating dir1
+U dir1/file3"
+	  dotest branches2-20 "${testcvs} -q status" \
+"===================================================================
+File: file1            	Status: Up-to-date
+
+   Working revision:	1\.1.*
+   Repository revision:	1\.1	${TESTDIR}/cvsroot/first-dir/file1,v
+   Sticky Tag:		(none)
+   Sticky Date:		(none)
+   Sticky Options:	(none)
+
+===================================================================
+File: file3            	Status: Up-to-date
+
+   Working revision:	1\.1\.2\.1.*
+   Repository revision:	1\.1\.2\.1	${TESTDIR}/cvsroot/first-dir/dir1/Attic/file3,v
+   Sticky Tag:		b1 (branch: 1\.1\.2)
+   Sticky Date:		(none)
+   Sticky Options:	(none)"
+
+	  rm -r dir1
+	  dotest branches2-21 "${testcvs} update -d -P -j b1 dir1" \
+"${PROG} [a-z]*: Updating dir1
+U dir1/file3"
+	  dotest branches2-22 "${testcvs} -q status" \
+"===================================================================
+File: file1            	Status: Up-to-date
+
+   Working revision:	1\.1.*
+   Repository revision:	1\.1	${TESTDIR}/cvsroot/first-dir/file1,v
+   Sticky Tag:		(none)
+   Sticky Date:		(none)
+   Sticky Options:	(none)
+
+===================================================================
+File: file3            	Status: Locally Added
+
+   Working revision:	New file!
+   Repository revision:	1\.1	${TESTDIR}/cvsroot/first-dir/dir1/Attic/file3,v
+   Sticky Tag:		(none)
+   Sticky Date:		(none)
+   Sticky Options:	(none)"
+
+	  cd ../..
+	  rm -r b1 b2
+
+	  # Check out branch b1 twice.  Crate a new directory in one
+	  # working directory, then do a cvs update in the other
+	  # working directory and see if the tags are right.
+	  mkdir b1a
+	  mkdir b1b
+	  cd b1b
+	  dotest branches2-23 "${testcvs} -q co -r b1 first-dir" \
+'U first-dir/file1
+U first-dir/file2
+U first-dir/dir1/file3'
+	  cd ../b1a
+	  dotest branches2-24 "${testcvs} -q co -r b1 first-dir" \
+'U first-dir/file1
+U first-dir/file2
+U first-dir/dir1/file3'
+	  cd first-dir
+	  mkdir dir2
+	  dotest branches2-25 "${testcvs} add dir2" \
+"Directory ${TESTDIR}/cvsroot/first-dir/dir2 added to the repository
+--> Using per-directory sticky tag "'`'"b1'"
+	  echo "file4 first revision" > dir2/file4
+	  dotest branches2-26 "${testcvs} add dir2/file4" \
+"${PROG}"' [a-z]*: scheduling file `dir2/file4'\'' for addition on branch `b1'\''
+'"${PROG}"' [a-z]*: use .'"${PROG}"' commit. to add this file permanently'
+	  dotest branches2-27 "${testcvs} -q commit -madd" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/dir2/Attic/file4,v
+done
+Checking in dir2/file4;
+${TESTDIR}/cvsroot/first-dir/dir2/Attic/file4,v  <--  file4
+new revision: 1\.1\.2\.1; previous revision: 1\.1
+done"
+
+	  cd ../../b1b/first-dir
+	  dotest branches2-28 "${testcvs} update -d dir2" \
+"${PROG} [a-z]*: Updating dir2
+U dir2/file4"
+	  cd dir2
+	  dotest branches2-29 "${testcvs} -q status" \
+"===================================================================
+File: file4            	Status: Up-to-date
+
+   Working revision:	1\.1\.2\.1.*
+   Repository revision:	1\.1\.2\.1	${TESTDIR}/cvsroot/first-dir/dir2/Attic/file4,v
+   Sticky Tag:		b1 (branch: 1\.1\.2)
+   Sticky Date:		(none)
+   Sticky Options:	(none)"
+	  dotest branches2-30 "cat CVS/Tag" 'Tb1'
+
+	  # Test update -A on a subdirectory
+	  cd ..
+	  rm -r dir2
+	  dotest branches2-31 "${testcvs} update -A -d dir2" \
+"${PROG} [a-z]*: Updating dir2"
+	  cd dir2
+	  dotest branches2-32 "${testcvs} -q status" ''
+	  dotest_fail branches2-33 "test -f CVS/Tag"
+
+	  # Add a file on the trunk.
+	  echo "file5 first revision" > file5
+	  dotest branches2-34 "${testcvs} add file5" \
+"${PROG}"' [a-z]*: scheduling file `file5'\'' for addition
+'"${PROG}"' [a-z]*: use .'"${PROG}"' commit. to add this file permanently'
+	  dotest branches2-35 "${testcvs} -q commit -madd" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/dir2/file5,v
+done
+Checking in file5;
+${TESTDIR}/cvsroot/first-dir/dir2/file5,v  <--  file5
+initial revision: 1\.1
+done"
+
+	  cd ../../../trunk/first-dir
+	  dotest branches2-36 "${testcvs} -q update -d dir2" 'U dir2/file5'
+	  cd dir2
+	  dotest branches2-37 "${testcvs} -q status" \
+"===================================================================
+File: file5            	Status: Up-to-date
+
+   Working revision:	1\.1.*
+   Repository revision:	1\.1	${TESTDIR}/cvsroot/first-dir/dir2/file5,v
+   Sticky Tag:		(none)
+   Sticky Date:		(none)
+   Sticky Options:	(none)"
+	  dotest_fail branches2-38 "test -f CVS/status"
+
+	  cd ../../..
+	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  rm -r trunk b1a b1b
 	  ;;
 
 	rcslib)
