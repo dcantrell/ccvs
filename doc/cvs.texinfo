@@ -4511,8 +4511,11 @@ The examples below assume that the file @var{old} is renamed to
 The normal way to move a file is to copy @var{old} to
 @var{new}, and then issue the normal @sc{cvs} commands
 to remove @var{old} from the repository, and add
-@var{new} to it.  (Both @var{old} and @var{new} could
-contain relative paths, for example @file{foo/bar.c}).
+@var{new} to it.
+@c The following sentence is not true: one must cd into
+@c the directory to run "cvs add".
+@c  (Both @var{old} and @var{new} could
+@c contain relative paths, for example @file{foo/bar.c}).
 
 @example
 $ mv @var{old} @var{new}

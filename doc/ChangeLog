@@ -1,3 +1,8 @@
+Wed Mar 26 10:54:21 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (Outside): Comment out sentence which incorrectly
+	stated that "cvs add" can operate on "foo/bar.c".
+
 Tue Mar 25 22:21:29 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (Error messages): New node.
