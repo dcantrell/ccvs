@@ -990,6 +990,7 @@ internal error: %s doesn't start with %s in checkout_proc",
 		free (line);
 	    }
 	    freevers_ts (&vers);
+	    freercsnode (&finfo.rcs);
 	}
 
 	Entries_Close (entries);
