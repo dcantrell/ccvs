@@ -8260,6 +8260,25 @@ supported by import, not \`1\.1\.'\.  For example: \`1\.1\.1'\."
 "$PROG \[import aborted\]: Only numeric branch specifications with two dots are
 supported by import, not \`1\.1\.1\.\.'\.  For example: \`1\.1\.1'\."
 
+	  # Try a few odd numbers.  This is hardly comprehensive.
+	  dotest_sort import-quirks-2 \
+"$testcvs import -b10.10.101 -mthis-ones-ok import-quirks-2 VB RT" \
+"
+
+N import-quirks-2/file1
+N import-quirks-2/file2
+N import-quirks-2/file3
+No conflicts created by this import"
+
+	  dotest_sort import-quirks-3 \
+"$testcvs import -b2345678901.2345678901.2345678901 -mthis-ones-ok import-quirks-3 VB RT" \
+"
+
+N import-quirks-3/file1
+N import-quirks-3/file2
+N import-quirks-3/file3
+No conflicts created by this import"
+
 	  if $keep; then
 	    echo Keeping $TESTDIR and exiting due to --keep
 	    exit 0
@@ -8267,6 +8286,8 @@ supported by import, not \`1\.1\.1\.\.'\.  For example: \`1\.1\.1'\."
 
 	  cd ..
 	  rm -r import-quirks
+	  rm -rf $CVSROOT_DIRNAME/import-quirks-2 \
+		 $CVSROOT_DIRNAME/import-quirks-3
 	  ;;
 
 
