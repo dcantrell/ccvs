@@ -1,3 +1,7 @@
+13 Jan 1998  Jim Kingdon
+
+	* run.c (run_exec): Change parameters from char * to const char *.
+
 Tue Jan 13 16:57:56 1998  Ian Lance Taylor  <ian@cygnus.com>
 
 	* config.h (FOLD_FN_CHAR): Don't define; instead move to
