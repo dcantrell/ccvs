@@ -1,3 +1,7 @@
+Tue Sep 23 16:00:25 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* BUGS: Add item about cvs add and -k wrappers.
+
 Mon Sep 22 11:21:11 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* TODO: Revise item #191 in response to xdelta 1.10 release and a
