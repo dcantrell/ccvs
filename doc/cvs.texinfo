@@ -940,6 +940,7 @@ repository anywhere you like.
 @xref{Remote repositories} to learn how the repository can be on a
 different machine than your working copy of the sources.
 
+@cindex :local:
 @emph{Note:} For compatibility with older versions,
 @sc{cvs} will treat any repository name that contains a
 colon as an indication of a remote repository
@@ -1193,6 +1194,7 @@ rsh -l bach chainsaw.brickyard.com echo $PATH
 @end example
 
 @cindex CVS_SERVER
+@cindex :server:
 Next you have to make sure that @code{rsh} will be able
 to find the server.  Make sure that the path which
 @code{rsh} printed in the above example includes the
@@ -1213,7 +1215,7 @@ the module @file{foo} in the repository
 @file{chainsaw.brickyard.com}, you are ready to go:
 
 @example
-cvs -d :server:bach@@chainsaw.brickyard.com:/user/local/cvsroot checkout foo
+cvs -d :server:bach@@chainsaw.brickyard.com:/usr/local/cvsroot checkout foo
 @end example
 
 (The @file{bach@@} can be omitted if the username is
@@ -1288,11 +1290,11 @@ regular passwords when they access the repository.
 This file is @file{$CVSROOT/CVSROOT/passwd}
 (@pxref{Intro administrative files}).  Its format is
 similar to @file{/etc/passwd}, except that it only has
-two fields, CVSROOT and password.  For example:
+two fields, username and password.  For example:
 
 @example
-:pserver:bach@@chainsaw.brickyard.com:/usr/local/cvsroot ULtgRLXo7NRxs
-:pserver:cwang@@holy-cow.floyd.org 1sOp854gDF3DY
+bach:ULtgRLXo7NRxs
+cwang:1sOp854gDF3DY
 @end example
 
 The password is encrypted according to the standard
@@ -1326,6 +1328,7 @@ passwd} command.
 @cindex Login (subcommand)
 @cindex password client, using
 @cindex authenticated client, using
+@cindex :pserver:
 Before connecting to the server, the client must @dfn{log
 in} with the command @code{cvs login}.  Logging in
 verifies a password with the server, and also records
@@ -1422,6 +1425,7 @@ security, get Kerberos.
 @subsection Direct connection with kerberos
 
 @cindex kerberos
+@cindex :kserver:
 The main disadvantage of using rsh is that all the data
 needs to pass through additional programs, so it may be
 slower.  So if you have kerberos installed you can
