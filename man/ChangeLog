@@ -1,3 +1,8 @@
+2003-02-26  Larry Jones  <lawrence.jones@eds.com>
+
+	* cvs.1: Note using "cvs" in .cvsrc for global options.
+	(Patch from "Mark D. Baushke" <mdb@cvshome.org>).
+
 2003-02-25  Derek Price  <derek@ximbiot.com>
 
 	* Makefile.in: Regenerated.
