@@ -1,3 +1,10 @@
+Tue Jan  2 11:25:22 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* sanity.sh: Test that the commit in test 43 actually worked.
+	Merge tests basic2 and basic3 and make them independent of basic1.
+	(pass,fail): Don't insert spurious space.
+	(45.5): Fix typo in directory name.
+
 Tue Jan  2 13:00:00 1996  Jim Kingdon  <kingdon@peary.cyclic.com>
 
 	Visual C++ lint:

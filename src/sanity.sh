@@ -81,12 +81,12 @@ fi
 
 pass ()
 {
-  echo "PASS: " $1 >>${LOGFILE}
+  echo "PASS: $1" >>${LOGFILE}
 }
 
 fail ()
 {
-  echo "FAIL: " $1 | tee -a ${LOGFILE}
+  echo "FAIL: $1" | tee -a ${LOGFILE}
   # This way the tester can go and see what remnants were left
   exit 1
 }
@@ -187,14 +187,14 @@ cd ${TESTDIR}
 
 # Remaining arguments are the names of tests to run.
 #
-# FIXME: not all combinations are possible; basic3 depends on files set up
-# by previous tests, for example.  This should be changed.
-# The goal is that tests can be run in manageably-sized chunks, so
-# that one can quickly get a result from a cvs or testsuite change,
-# and to facilitate understanding the tests.
+# FIXME: not all combinations are possible; rtags depends on files set
+# up by basic2, for example.  This should be changed.  The goal is
+# that tests can be run in manageably-sized chunks, so that one can
+# quickly get a result from a cvs or testsuite change, and to
+# facilitate understanding the tests.
 
 if test x"$*" = x; then
-	tests="basic0 basic1 basic2 basic3 rtags death import new conflicts modules mflag errmsg1 devcom ignore"
+	tests="basic0 basic1 basic2 rtags death import new conflicts modules mflag errmsg1 devcom ignore"
 else
 	tests="$*"
 fi
@@ -563,9 +563,15 @@ for what in $tests; do
 		  echo "FAIL: test 28" | tee -a ${LOGFILE} ; exit 1
 		fi
 		cd ..
+		rm -rf ${CVSROOT_DIRNAME}/first-dir
+		rm -rf first-dir
 		;;
 
-	basic2) # second dive - add bunch o' files in bunch o' added directories
+	basic2)
+		# second dive - add bunch o' files in bunch o' added
+		#  directories
+		mkdir ${CVSROOT_DIRNAME}/first-dir
+		dotest basic2-1 "${testcvs} -q co first-dir" ''
 		for i in first-dir dir1 dir2 dir3 dir4 ; do
 			if [ ! -d $i ] ; then
 				mkdir $i
@@ -625,9 +631,10 @@ for what in $tests; do
 		else
 			echo "FAIL: test 36" | tee -a ${LOGFILE} ; exit 1
 		fi
-		;;
 
-	basic3) # third dive - in bunch o' directories, add bunch o' files, delete some, change some.
+		# third dive - in bunch o' directories, add bunch o' files,
+		# delete some, change some.
+
 		for i in first-dir dir1 dir2 dir3 dir4 ; do
 			cd $i
 
@@ -687,6 +694,7 @@ for what in $tests; do
 		else
 			echo "FAIL: test 43" | tee -a ${LOGFILE} ; exit 1
 		fi
+		dotest 43.5 "${testcvs} -q update first-dir" ''
 
 		if ${CVS} tag third-dive first-dir  ; then
 			echo "PASS: test 44" >>${LOGFILE}
@@ -701,7 +709,7 @@ for what in $tests; do
 		fi
 
 		# end of third dive
-		if [ -d test-dir ] ; then
+		if [ -d first-dir ] ; then
 			echo "FAIL: test 45.5" | tee -a ${LOGFILE} ; exit 1
 		else
 			echo "PASS: test 45.5" >>${LOGFILE}
