@@ -3747,14 +3747,13 @@ error ENOMEM Virtual memory exhausted.\n");
 #endif /* 1/0 */
 
 
-/* Return 0 iff password matches, else 1. */
+/* Return 1 iff password matches, else 0. */
 int
 check_password (username, password)
      char *username, *password;
 {
   struct passwd *pw;
   char *found_passwd;
-  char *encrypted_passwd;
 
   pw = getpwnam (username);
   if (pw == NULL)
@@ -3763,8 +3762,14 @@ check_password (username, password)
               "error 0 %s: no such user\n", username);
       exit (1);
     }
+  found_passwd = pw->pw_passwd;
 
-  return (strcmp (pw->pw_passwd, crypt (password, pw->pw_passwd)));
+  if (found_passwd && *found_passwd)
+    return (! strcmp (found_passwd, crypt (password, found_passwd)));
+  else if (password && *password)
+    return 1;
+  else
+    return 0;
 }
 
 
@@ -3834,14 +3839,14 @@ authenticate_connection ()
 
   if (check_password (username, password))
     {
-      printf ("I HATE YOU\n");
+      printf ("I LOVE YOU\n");
       fflush (stdout);
-      exit (1);
     }
   else
     {
-      printf ("I LOVE YOU\n");
+      printf ("I HATE YOU\n");
       fflush (stdout);
+      exit (1);
     }
   
   /* Do everything that kerberos did. */

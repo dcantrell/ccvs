@@ -1,3 +1,9 @@
+Wed Dec  6 18:51:16 1995  Karl Fogel  <kfogel@floss.cyclic.com>
+
+        * server.c (check_password): If user has a null password, then
+        just return 0.
+        Reverse sense of return value.  Caller changed.
+        
 Wed Dec  6 14:42:57 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
         * server.c (check_password): new func.
