@@ -1,5 +1,9 @@
 2004-10-21  Derek Price  <derek@ximbiot.com>
 
+	* srclist.txt (error): Update from GNULIB.
+
+2004-10-21  Derek Price  <derek@ximbiot.com>
+
 	* gnulib-update (MODULES): Add rpmatch & yesno.
 
 2004-10-21  Derek Price  <derek@ximbiot.com>
