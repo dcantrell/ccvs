@@ -12617,6 +12617,33 @@ description:
 ${log_rev3}
 ${log_trailer}"
 
+#	  Check that unusual syntax works correctly.
+
+	  dotest log-14c "${testcvs} log -r: file1" \
+"${log_header}
+${log_tags}
+${log_header2}
+total revisions: 5;	selected revisions: 1
+description:
+${log_rev3}
+${log_trailer}"
+	  dotest log-14d "${testcvs} log -r, file1" \
+"${log_header}
+${log_tags}
+${log_header2}
+total revisions: 5;	selected revisions: 1
+description:
+${log_rev3}
+${log_trailer}"
+	  dotest log-14e "${testcvs} log -r. file1" \
+"${log_header}
+${log_tags}
+${log_header2}
+total revisions: 5;	selected revisions: 1
+description:
+${log_rev3}
+${log_trailer}"
+
 	  dotest log-15 "${testcvs} log -r1.2 file1" \
 "${log_header}
 ${log_tags}
