@@ -1,3 +1,8 @@
+2000-04-03  Pavel Roskin  <pavel_roskin@geocities.com>
+
+	* cvs.texinfo (Telling CVS to notify you): Remove backslashes
+	before quotes.
+
 2000-05-24  Larry Jones  <larry.jones@sdrc.com>
 
 	* cvs.texinfo (From files): Clean up @var{wdir}/@var{rdir} vs.
