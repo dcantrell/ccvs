@@ -379,7 +379,8 @@ checkout (argc, argv)
    reasons, probably want to move them.  */
 
 int
-safe_location ( char * where )
+safe_location (where)
+    char *where;
 {
     char *current;
     char *where_location;
