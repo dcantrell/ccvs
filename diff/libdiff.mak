@@ -324,7 +324,7 @@ SOURCE=.\version.c
 !ELSEIF  "$(CFG)" == "libdiff - Win32 Debug"
 
 "LIB - Win32 Debug" : 
-   cd "..LIB"
+   cd "..\LIB"
    $(MAKE) /$(MAKEFLAGS) /F ".\LIB.mak" CFG="LIB - Win32 Debug" 
    cd "..\diff"
 

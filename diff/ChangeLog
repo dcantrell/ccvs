@@ -1,5 +1,9 @@
 2004-03-28  Derek Price  <derek@ximbiot.com>
 
+	* libdiff.mak: ...and correct a typo in the path.
+
+2004-03-28  Derek Price  <derek@ximbiot.com>
+
 	* libdiff.mak: Remove absolute path again.
 
 2004-03-28  Derek Price  <derek@ximbiot.com>
