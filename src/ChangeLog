@@ -1,3 +1,11 @@
+2004-03-25  Derek Price  <derek@ximbiot.com>
+
+	* client.c (send_file_names): Initialize string to NULL rather than to
+	a single byte string containing only a null byte.
+	* subr.c (xrealloc_and_strcat): If the destination string is NULL,
+	simply allocate a new string.
+	(Original report from Chris Bohn <cbohn@rrinc.com>.)
+
 2004-03-24  Mark D. Baushke  <mdb@cvshome.org>
 
 	* sanity.sh (ISODATE): Fix ISO 8601 format comment.
