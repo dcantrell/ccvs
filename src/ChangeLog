@@ -1,3 +1,11 @@
+Fri Feb 20 12:47:14 1998  Larry Jones  <larry.jones@sdrc.com>
+
+	* admin.c (admin_fileproc): Better fix for -b.
+
+	* rcs.c (RCS_whatbranch): Back out previous change.
+	(RCS_getversion): Ditto.
+	(RCS_setbranch): Treat an empty revision string like a null pointer.
+
 1998-02-18  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* rcs.c (RCS_whatbranch): Fix indentation.
