@@ -1,3 +1,7 @@
+2004-01-30  Derek Price  <derek@ximbiot.com>
+
+	* NEWS: Note contrib/log_accum tidy.
+
 2004-01-25  Derek Price  <derek@ximbiot.com>
 
 	* NEWS: Note Kerberos 4 fix.
