@@ -1,3 +1,9 @@
+Sun May 26 21:57:09 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* client.c (start_server): Don't include %s in error message;
+	there is no argument to go with it.  Do include "internal error"
+	in error message since that might not be clear to the user otherwise.
+
 Sun May 26 11:58:13 1996  Greg A. Woods  <woods@most.weird.com>
 
 	* mkmodules.c (modules_contents): updated notes about what must be
