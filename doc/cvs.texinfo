@@ -2735,6 +2735,25 @@ instead of passing the name of the user to be notified
 to @file{notify}, @sc{cvs} will pass the @var{value}
 (normally an email address on some other machine).
 
+@sc{Cvs} does not notify you for your own changes.
+Currently this check is done based on whether the user
+name of the person taking the action which triggers
+notification matches the user name of the person
+getting notification.  In fact, in general, the watches
+features only track one edit by each user.  It probably
+would be more useful if watches tracked each working
+directory separately, so this behavior might be worth
+changing.
+@c "behavior might be worth changing" is an effort to
+@c point to future directions while also not promising
+@c that "they" (as in "why don't they fix CVS to....")
+@c will do this.
+@c one implementation issue is identifying whether a
+@c working directory is same or different.  Comparing
+@c pathnames/hostnames is hopeless, but having the server
+@c supply a serial number which the client stores in the
+@c CVS directory as a magic cookie should work.
+
 @node Editing files
 @subsection How to edit a file which is being watched
 
