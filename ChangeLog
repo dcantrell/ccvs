@@ -1,5 +1,9 @@
 2003-07-19  Derek Price  <derek@ximbiot.com>
 
+	* srclist.txt: Add a few missed files and reorganize slightly.
+
+2003-07-19  Derek Price  <derek@ximbiot.com>
+
 	* srclist.txt: New file which describes where various external source
 	files come from.
 

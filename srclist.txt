@@ -43,17 +43,26 @@ Imported files					CVS		Local
 						Directory	Modifications
 ----------------------------------------------- --------------- ---------------
 # $GNULIB/modules/getline
-$GNULIB/lib/getline.h				lib		yes NI
 $GNULIB/lib/getline.c				lib		yes NI
+$GNULIB/lib/getline.h				lib		yes NI
+$GNULIB/lib/getndelim2.c			lib		yes NI
+$GNULIB/lib/getndelim2.h			lib		yes NI
+$GNULIB/lib/getnline.c				lib		yes NI
+$GNULIB/lib/getnline.h				lib		yes NI
 $GNULIB/m4/getline.m4				m4		yes NI
+$GNULIB/m4/getndelim2.m4			m4		yes NI
+$GNULIB/m4/getnline.m4				m4		yes NI
+$GNULIB/m4/ssize_t.m4				m4		no NI
 # $GNULIB/modules/getndelim2
 $GNULIB/lib/getndelim2.c			lib		yes NI
 $GNULIB/lib/getndelim2.h			lib		yes NI
 $GNULIB/m4/getndelim2.m4			m4		yes NI
+$GNULIB/m4/ssize_t.m4				m4		no NI
 # $GNULIB/modules/getnline
 $GNULIB/lib/getnline.c				lib		yes NI
 $GNULIB/lib/getnline.h				lib		yes NI
 $GNULIB/m4/getnline.m4				m4		yes NI
+$GNULIB/m4/ssize_t.m4				m4		no NI
 # $GNULIB/modules/gettext
 $GNULIB/lib/gettext.h				lib		no NI
 $GNULIB/m4/codeset.m4				m4		no NI
@@ -79,12 +88,17 @@ $GNULIB/m4/ulonglong.m4				m4		no NI
 $GNULIB/lib/lstat.c				lib		yes NI
 $GNULIB/m4/lstat.m4				m4		no NI
 # $GNULIB/modules/malloc
-$GNULIB/m4/malloc.m4				m4		no NI
 $GNULIB/lib/malloc.c				lib		no NI
+$GNULIB/m4/malloc.m4				m4		no NI
 # $GNULIB/modules/mkstemp
-$GNULIB/m4/mkstemp.m4				m4		no NI
 $GNULIB/lib/mkstemp.c				lib		no NI
+$GNULIB/lib/tempname.c				lib		no NI
+$GNULIB/m4/mkstemp.m4				m4		no NI
+$GNULIB/m4/inttypes_h.m4			m4		no NI
 $GNULIB/m4/onceonly_2_57.m4			m4		no NI
+$GNULIB/m4/stdint_h.m4				m4		no NI
+$GNULIB/m4/uintmax_t.m4				m4		no NI
+$GNULIB/m4/ulonglong.m4				m4		no NI
 # $GNULIB/modules/pathmax
 $GNULIB/lib/pathmax.h				lib		no NI
 $GNULIB/m4/onceonly_2_57.m4			m4		no NI
@@ -100,4 +114,15 @@ $GNULIB/lib/unlocked-io.h			lib		no NI
 $GNULIB/m4/onceonly_2_57.m4			m4		no NI
 $GNULIB/m4/unlocked-io.m4			m4		no NI
 # shared
+$GNULIB/lib/getndelim2.c			lib		yes NI
+$GNULIB/lib/getndelim2.h			lib		yes NI
+$GNULIB/lib/getnline.c				lib		yes NI
+$GNULIB/lib/getnline.h				lib		yes NI
+$GNULIB/m4/getndelim2.m4			m4		yes NI
+$GNULIB/m4/getnline.m4				m4		yes NI
+$GNULIB/m4/inttypes_h.m4			m4		no NI
 $GNULIB/m4/onceonly_2_57.m4			m4		no NI
+$GNULIB/m4/ssize_t.m4				m4		no NI
+$GNULIB/m4/stdint_h.m4				m4		no NI
+$GNULIB/m4/uintmax_t.m4				m4		no NI
+$GNULIB/m4/ulonglong.m4				m4		no NI
