@@ -1,5 +1,8 @@
 Changes since 1.12.1:
 
+* A segfault that could occur in very rare cases where the stat of a file
+  failed during a diff has been fixed.
+
 * Any user with write privleges to the CVSROOT/checkoutlist file could pass
 arbitrary format strings directly through to a printf function.  This was
 probably bad and has been fixed.  White space at the beginning of error strings

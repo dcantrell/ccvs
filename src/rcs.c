@@ -8268,15 +8268,17 @@ make_file_label (char *path, char *rev, RCSNode *rcs)
     else
     {
 	struct stat sb;
-	struct tm *wm = NULL;
+	struct tm *wm;
 
 	if (strcmp(DEVNULL, path))
 	{
 	    char *file = last_component (path);
 	    if (CVS_STAT (file, &sb) < 0)
-		error (0, 1, "could not get info for `%s'", path);
-	    else
-		wm = gmtime (&sb.st_mtime);
+		/* Assume that if the stat fails,then the later read for the
+		 * diff will too.
+		 */
+		error (1, errno, "could not get info for `%s'", path);
+	    wm = gmtime (&sb.st_mtime);
 	}
 	else
 	{
@@ -8284,16 +8286,8 @@ make_file_label (char *path, char *rev, RCSNode *rcs)
 	    wm = gmtime(&t);
 	}
 
-	if (wm)
-	{
-	    (void) tm_to_internet (datebuf, wm);
-	    (void) sprintf (label, "-L%s\t%s", path, datebuf);
-	}
-	else
-	{
-	    free (label);
-	    label = NULL;
-	}
+	(void) tm_to_internet (datebuf, wm);
+	(void) sprintf (label, "-L%s\t%s", path, datebuf);
     }
     return label;
 }
