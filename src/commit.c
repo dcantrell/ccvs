@@ -543,10 +543,10 @@ check_fileproc (file, update_dir, repository, entries, srcfiles)
 		 * If the timestamps differ, look for Conflict indicators
 		 * in the file to see if we should block the commit anyway
 		 */
-		run_setup ("%s -s", GREP);
+		run_setup ("%s", GREP);
 		run_arg (RCS_MERGE_PAT);
 		run_arg (file);
-		retcode = run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL);
+		retcode = run_exec (RUN_TTY, DEVNULL, RUN_TTY, RUN_NORMAL);
 		    
 		if (retcode == -1)
 		{

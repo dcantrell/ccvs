@@ -552,10 +552,10 @@ update_file_proc (file, update_dir, repository, entries, srcfiles)
 			 * If the timestamps differ, look for Conflict
 			 * indicators to see if 'C' anyway.
 			 */
-			run_setup ("%s -s", GREP);
+			run_setup ("%s", GREP);
 			run_arg (RCS_MERGE_PAT);
 			run_arg (file);
-			retcode = run_exec (RUN_TTY, RUN_TTY,
+			retcode = run_exec (RUN_TTY, DEVNULL,
 					    RUN_TTY,RUN_NORMAL);
 			if (retcode == -1)
 			{
