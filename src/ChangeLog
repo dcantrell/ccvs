@@ -1,10 +1,10 @@
 Fri Jul 21 17:07:42 1995  James Kingdon  <kingdon@harvey.cyclic.com>
 
 	* update.c, status.c, patch.c, checkout.c, import.c, release.c,
-	rtag.c: Now -q and -Q options just print an error message telling
-	you to use global -q and -Q options.  The non-global options were
-	a mess because some commands accepted them and some did not, and
-	they were redundant with -q and -Q global options.
+	rtag.c, tag.c: Now -q and -Q options just print an error message
+	telling you to use global -q and -Q options.  The non-global
+	options were a mess because some commands accepted them and some
+	did not, and they were redundant with -q and -Q global options.
 
 	* rcs.c, cvs.h, commit.c, log.c, find_names.c: Remove CVS.dea
 	stuff.  It is slower than the alternatives and I don't think
