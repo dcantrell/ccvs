@@ -1,4 +1,6 @@
-Changes since 1.11.8:
+Changes since 1.11.9:
+
+Changes from 1.11.8 to 1.11.9:
 
 * CVS now knows how to report, as well as record, `P' record types.
 
