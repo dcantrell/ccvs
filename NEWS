@@ -1,15 +1,19 @@
 Changes since 1.11.5:
 
-* Autoconf and Automake are no longer run automatically unless you run
-configure with --enable-maintainer-mode.  Accordingly, noautomake.sh is
-no longer needed and has been removed.
-
-* Corrected the path in a failed write error message.
-
 * The Checkin.prog and Update.prog functionality has been removed.  This
 fuctionality previously allowed executables to be specified in the modules file
 to be run at update and checkin time, but users could edit these files on a per
 workspace basis, creating a security hole.
+
+* Corrected the path in a failed write error message.
+
+* Autoconf and Automake are no longer run automatically unless you run
+configure with --enable-maintainer-mode.  Accordingly, noautomake.sh is
+no longer needed and has been removed.
+
+* We've standardized on Autoconf version 2.57 to get at a few new macros.
+Again, this should only really affect developers.  See the section of the
+INSTALL file about using the autotools if you are compiling CVS yourself.
 
 Changes from 1.11.4 to 1.11.5:
 
