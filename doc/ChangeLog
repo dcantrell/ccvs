@@ -1,5 +1,9 @@
 2001-05-21  Larry Jones  <larry.jones@sdrc.com>
 
+	* cvs.texinfo: Lots of minor editorial corrections.  Mostly adding
+	@noindent after examples where the following text is intended to
+	be a continuation of the preceding text, not a new paragraph.
+
 	* cvs.texinfo (Connection): Replace information about unsetting
 	$HOME for people with old releases.
 
