@@ -4026,16 +4026,22 @@ add
 
 	importc)
 	  # Test importing a bunch o' files in a bunch o' directories.
+	  # Also the -d option.
 	  mkdir 1; cd 1
 	  mkdir adir bdir cdir
 	  mkdir adir/sub1 adir/sub2
 	  mkdir adir/sub1/ssdir
 	  mkdir bdir/subdir
 	  touch adir/sub1/file1 adir/sub2/file2 adir/sub1/ssdir/ssfile
-	  touch bdir/subdir/file1
-	  touch cdir/cfile
+	  # If I'm correctly reading the Single Unix Specification,
+	  # version 2, then "touch -t 197107040343" or "touch -t 203412251801"
+	  # should work.  But GNU touch seems to have other ideas.
+	  # I sort of wonder if this is lossage by the standards bodies,
+	  # I'm not sure.
+	  touch 0704034371 bdir/subdir/file1
+	  touch 1225180134 cdir/cfile
 	  dotest_sort importc-1 \
-"${testcvs} import -m import-it first-dir vendor release" \
+"${testcvs} import -d -m import-it first-dir vendor release" \
 "
 
 N first-dir/adir/sub1/file1
@@ -4094,6 +4100,63 @@ ${TESTDIR}/cvsroot/first-dir/cdir/cfile,v  <--  cfile
 new revision: 1\.1\.1\.1\.2\.1; previous revision: 1\.1\.1\.1
 done"
 	  fi
+
+	  # TODO: should also be testing "import -d" when we update
+	  # an existing file.
+	  dotest importc-8 "${testcvs} -q log cdir/cfile" "
+RCS file: ${TESTDIR}/cvsroot/first-dir/cdir/cfile,v
+Working file: cdir/cfile
+head: 1\.1
+branch: 1\.1\.1
+locks: strict
+access list:
+symbolic names:
+	wip_test: 1\.1\.1\.1\.0\.2
+	release: 1\.1\.1\.1
+	vendor: 1\.1\.1
+keyword substitution: kv
+total revisions: 3;	selected revisions: 3
+description:
+----------------------------
+revision 1\.1
+date: 2034/12/2[4-6] [0-9][0-9]:01:00;  author: ${username};  state: Exp;
+branches:  1\.1\.1;
+Initial revision
+----------------------------
+revision 1\.1\.1\.1
+date: 2034/12/2[4-6] [0-9][0-9]:01:00;  author: ${username};  state: Exp;  lines: ${PLUS}0 -0
+branches:  1\.1\.1\.1\.2;
+import-it
+----------------------------
+revision 1\.1\.1\.1\.2\.1
+date: [0-9/]* [0-9:]*;  author: kingdon;  state: Exp;  lines: ${PLUS}1 -0
+modify
+============================================================================="
+
+	  dotest importc-9 "${testcvs} -q log bdir/subdir/file1" "
+RCS file: ${TESTDIR}/cvsroot/first-dir/bdir/subdir/file1,v
+Working file: bdir/subdir/file1
+head: 1\.1
+branch: 1\.1\.1
+locks: strict
+access list:
+symbolic names:
+	wip_test: 1\.1\.1\.1\.0\.2
+	release: 1\.1\.1\.1
+	vendor: 1\.1\.1
+keyword substitution: kv
+total revisions: 2;	selected revisions: 2
+description:
+----------------------------
+revision 1\.1
+date: 1971/07/0[3-5] [0-9][0-9]:43:00;  author: ${username};  state: Exp;
+branches:  1\.1\.1;
+Initial revision
+----------------------------
+revision 1\.1\.1\.1
+date: 1971/07/0[3-5] [0-9][0-9]:43:00;  author: ${username};  state: Exp;  lines: ${PLUS}0 -0
+import-it
+============================================================================="
 	  cd ..
 
 	  cd ..

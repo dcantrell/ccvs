@@ -1,3 +1,22 @@
+1998-08-19  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	Make import -d work client/server:
+	* client.c, client.h (client_process_import_file): Take new
+	argument, for whether -d is specified, and send Checkin-time
+	request if it is set.
+	* import.c (import_descend): Pass it.
+	* main.c, cvs.h (date_to_internet): New function.
+	* server.c (server_modtime): Call date_to_internet.
+	* server.c (serve_checkin_time): New function.
+	(requests): Add "Checkin-time" request.
+	(serve_modified): If it was sent, set the timestamp in the
+	temporary directory.
+	* import.c (import): If the client sends a -d option, complain.
+	(import): For the server, always use the timestamps from the temp
+	directory.
+	(import): Don't send a -d option to the server.
+	* sanity.sh (importc): Add tests for import -d.
+
 Wed Aug 19 15:19:13 1998  Larry Jones  <larry.jones@sdrc.com>
 
 	* sanity.sh (unedit-without-baserev-5): use ${DOTSTAR} instead

@@ -94,6 +94,17 @@ import (argc, argv)
 			   command_name);
 		break;
 	    case 'd':
+#ifdef SERVER_SUPPORT
+		if (server_active)
+		{
+		    /* CVS 1.10 and older clients will send this, but it
+		       doesn't do any good.  So tell the user we can't
+		       cope, rather than silently losing.  */
+		    error (0, 0,
+			   "warning: not setting the time of import from the file");
+		    error (0, 0, "due to client limitations");
+		}
+#endif
 		use_file_modtime = 1;
 		break;
 	    case 'b':
@@ -131,6 +142,20 @@ import (argc, argv)
     argv += optind;
     if (argc < 3)
 	usage (import_usage);
+
+#ifdef SERVER_SUPPORT
+    /* This is for handling the Checkin-time request.  It might seem a
+       bit odd to enable the use_file_modtime code even in the case
+       where Checkin-time was not sent for a particular file.  The
+       effect is that we use the time of upload, rather than the time
+       when we call RCS_checkin.  Since those times are both during
+       CVS's run, that seems OK, and it is easier to implement than
+       putting the "was Checkin-time sent" flag in CVS/Entries or some
+       such place.  */
+
+    if (server_active)
+	use_file_modtime = 1;
+#endif
 
     for (i = 1; i < argc; i++)		/* check the tags for validity */
     {
@@ -211,9 +236,6 @@ import (argc, argv)
     if (client_active)
     {
 	int err;
-
-	if (use_file_modtime)
-	    send_arg("-d");
 
 	if (vbranch[0] != '\0')
 	    option_with_arg ("-b", vbranch);
@@ -426,7 +448,8 @@ import_descend (message, vtag, targc, targv)
                                                        vtag, targc, targv,
                                                        repository,
                                                        keyword_opt != NULL &&
-                                                       keyword_opt[0] == 'b');
+						       keyword_opt[0] == 'b',
+						       use_file_modtime);
 		else
 #endif
 		    err += process_import_file (message, dp->d_name,
