@@ -182,7 +182,6 @@ do_editor (dir, messagep, repository, changes)
     char *fname;
     struct stat pre_stbuf, post_stbuf;
     int retcode = 0;
-    char *p;
 
     if (noexec || reuse_log_message)
 	return;
@@ -216,7 +215,6 @@ do_editor (dir, messagep, repository, changes)
     {
 	FILE *tfp;
 	char buf[1024];
-	char *p;
 	size_t n;
 	size_t nwrite;
 
@@ -231,9 +229,9 @@ do_editor (dir, messagep, repository, changes)
 	{
 	    while (!feof (tfp))
 	    {
+		char *p = buf;
 		n = fread (buf, 1, sizeof buf, tfp);
 		nwrite = n;
-		p = buf;
 		while (nwrite > 0)
 		{
 		    n = fwrite (p, 1, nwrite, fp);
@@ -316,7 +314,7 @@ do_editor (dir, messagep, repository, changes)
     if (*messagep)
     {
 	size_t message_len = post_stbuf.st_size + 1;
-	p = *messagep;
+	size_t offset = 0;
 	while (1)
 	{
 	    line_length = getline (&line, &line_chars_allocated, fp);
@@ -328,11 +326,11 @@ do_editor (dir, messagep, repository, changes)
 	    }
 	    if (strncmp (line, CVSEDITPREFIX, CVSEDITPREFIXLEN) == 0)
 		continue;
-	    if (p - *messagep + line_length >= message_len)
+	    if (offset + line_length >= message_len)
 		expand_string (messagep, &message_len,
-				p - *messagep + line_length);
-	    (void) strcpy (p, line);
-	    p += line_length;
+				offset + line_length + 1);
+	    (void) strcpy (*messagep + offset, line);
+	    offset += line_length;
 	}
     }
     if (fclose (fp) < 0)
