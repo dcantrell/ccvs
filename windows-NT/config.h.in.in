@@ -62,6 +62,9 @@
 /* Define to enable encryption support. */
 #undef ENCRYPTION
 
+/* Define as good substitute value for EOVERFLOW. */
+#define EOVERFLOW EINVAL
+
 /* Define if this executable will be running on case insensitive file systems.
    In the client case, this means that it will request that the server pretend
    to be case insensitive if it isn't already. */
@@ -226,6 +229,12 @@
 
 /* Define to 1 if you have the `ftruncate' function. */
 #undef HAVE_FTRUNCATE
+
+/* Define to 1 if you have the `getcwd' function. */
+#define HAVE_GETCWD 1
+
+/* Define if getcwd (NULL, 0) allocates memory for result. */
+#define HAVE_GETCWD_NULL 1
 
 /* Define to 1 if you have the `getdelim' function. */
 #undef HAVE_GETDELIM
