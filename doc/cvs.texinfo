@@ -9,7 +9,7 @@ Copyright @copyright{} 1993, 1994, 1995, 1996, 1997, 1998, 1999, 2000,
 @multitable @columnfractions .12 .88
 @item Portions
 @item @tab Copyright @copyright{} 1999, 2000, 2001, 2002, 2003 Derek R. Price,
-@item @tab Copyright @copyright{} 2002, 2003 Ximbiot <http://ximbiot.com>,
+@item @tab Copyright @copyright{} 2002, 2003 Ximbiot @url{http://ximbiot.com},
 @item @tab Copyright @copyright{} 1992, 1993, 1999 Signum Support AB,
 @item @tab and Copyright @copyright{} others.
 @end multitable
@@ -259,38 +259,40 @@ free download from the internet.  For more information
 on downloading @sc{cvs} and other @sc{cvs} topics, see:
 
 @example
-http://www.cvshome.org/
-http://www.loria.fr/~molli/cvs-index.html
+@url{http://www.cvshome.org/}
+@url{http://www.loria.fr/~molli/cvs-index.html}
 @end example
 
 @cindex Mailing list
 @cindex List, mailing list
 @cindex Newsgroups
-There is a mailing list, known as @w{@code{info-cvs}},
+There is a mailing list, known as @email{info-cvs@@gnu.org},
 devoted to @sc{cvs}.  To subscribe or
 unsubscribe
 write to
-@w{@code{info-cvs-request@@gnu.org}}.
-If you prefer a usenet group, the right
-group is @code{comp.software.config-mgmt} which is for
+@email{info-cvs-request@@gnu.org}.
+If you prefer a usenet group, there is a one-way mirror (posts to the email
+list are usually sent to the news group, but not visa versa) of
+@email{info-cvs@@gnu.org} at @url{news:gnu.cvs.help}.  The right
+usenet group for posts is @url{news:comp.software.config-mgmt} which is for
 @sc{cvs} discussions (along with other configuration
 management systems).  In the future, it might be
 possible to create a
 @code{comp.software.config-mgmt.cvs}, but probably only
 if there is sufficient @sc{cvs} traffic on
-@code{comp.software.config-mgmt}.
-@c Other random data is that past attempts to create a
-@c gnu.* group have failed (the relevant authorities
-@c say they'll do it, but don't), and that tale was very
+@url{news:comp.software.config-mgmt}.
+@c Other random data is that the tale was very
 @c skeptical of comp.software.config-mgmt.cvs when the
 @c subject came up around 1995 or so (for one
 @c thing, because creating it would be a "reorg" which
 @c would need to take a more comprehensive look at the
 @c whole comp.software.config-mgmt.* hierarchy).
 
-You can also subscribe to the @code{bug-cvs} mailing list,
+You can also subscribe to the @email{bug-cvs@@gnu.org} mailing list,
 described in more detail in @ref{BUGS}.  To subscribe
-send mail to @code{bug-cvs-request@@gnu.org}.
+send mail to @email{bug-cvs-request@@gnu.org}.  There is a two-way
+usenet mirror (posts to the usenet group are usually sent to the email list and
+visa versa) of @email{bug-cvs@@gnu.org} named @url{news:gnu.cvs.bug}.
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node What is CVS not?
@@ -14557,7 +14559,7 @@ USA
 Email: info@@ximbiot.com
 Phone: (717) 579-6168
 Fax:   (717) 234-3125
-http://ximbiot.com/
+@url{http://ximbiot.com/}
 
 @end example
 
@@ -14582,8 +14584,8 @@ There may be resources on the net which can help.  Two
 good places to start are:
 
 @example
-http://www.cvshome.org
-http://www.loria.fr/~molli/cvs-index.html
+@url{http://www.cvshome.org}
+@url{http://www.loria.fr/~molli/cvs-index.html}
 @end example
 
 If you are so inspired, increasing the information
@@ -14596,7 +14598,7 @@ page on mailing lists or newsgroups when the subject
 came up.
 
 @item
-It is also possible to report bugs to @code{bug-cvs}.
+It is also possible to report bugs to @email{bug-cvs@@gnu.org}.
 Note that someone may or may not want to do anything
 with your bug report---if you need a solution consider
 one of the options mentioned above.  People probably do
@@ -14605,20 +14607,20 @@ in consequences and/or easy to fix, however.  You can
 also increase your odds by being as clear as possible
 about the exact nature of the bug and any other
 relevant information.  The way to report bugs is to
-send email to @code{bug-cvs@@gnu.org}.  Note
-that submissions to @code{bug-cvs} may be distributed
+send email to @email{bug-cvs@@gnu.org}.  Note
+that submissions to @email{bug-cvs@@gnu.org} may be distributed
 under the terms of the @sc{gnu} Public License, so if
 you don't like this, don't submit them.  There is
 usually no justification for sending mail directly to
 one of the @sc{cvs} maintainers rather than to
-@code{bug-cvs}; those maintainers who want to hear
-about such bug reports read @code{bug-cvs}.  Also note
+@email{bug-cvs@@gnu.org}; those maintainers who want to hear
+about such bug reports read @email{bug-cvs@@gnu.org}.  Also note
 that sending a bug report to other mailing lists or
 newsgroups is @emph{not} a substitute for sending it to
-@code{bug-cvs}.  It is fine to discuss @sc{cvs} bugs on
+@email{bug-cvs@@gnu.org}.  It is fine to discuss @sc{cvs} bugs on
 whatever forum you prefer, but there are not
 necessarily any maintainers reading bug reports sent
-anywhere except @code{bug-cvs}.
+anywhere except @email{bug-cvs@@gnu.org}.
 @end itemize
 
 @cindex Known bugs in this manual or CVS

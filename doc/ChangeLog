@@ -1,3 +1,12 @@
+2003-10-21  Derek Price  <derek@ximbiot.com>
+
+	* cvs.texinfo: Note gnu.cvs.* usenet mirrors of the email lists.
+	(Suggestion from Paul Edwards, from somewhere in Australia.)
+
+	* cvs.texinfo: Put email addresses in @email{} tags and URLs in @url{}
+	tags rather than relying on markup like @code{}.
+	* stamp-vti, version.texi: Regenerated.
+
 2003-10-14  Derek Price  <derek@ximbiot.com>
 
 	Port to pedantic POSIX 1003.1-2001 hosts, such as Debian GNU/Linux
