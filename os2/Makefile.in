@@ -7,6 +7,9 @@ project: cvs.exe
 # .SUFFIXES .c .obj .exe
 
 # path slash
+# Maintainers: always leave this set to "/", because `make dist' has
+# to work on Unix systems.  See os2/README to find out why we have
+# this var.
 PS = /
 
 # I don't want to fool around with autoconf right now.  First get it
