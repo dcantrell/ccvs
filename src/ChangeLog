@@ -1,7 +1,10 @@
 Thu Apr 24 13:21:15 1997  Norbert Kiesel  <nk@cosa.de>
 
+	* filesubr.c (cvs_temp_name): Use tempnam if available, else
+ 	mktemp, else tmpnam. See the comment for rationale.
+
 	* sanity.sh: use "tar cf - ." instead of "tar cf - *" for
-		  directory copies.
+ 	directory copies.
 
 Wed Apr 23 23:41:47 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
