@@ -1,3 +1,10 @@
+2004-10-23  Conrad T. Pino  <Conrad@Pino.com>
+
+	* config.h.in.in: Change #undef HAVE_STDINT_H to #define ... 1.
+	Change #undef HAVE_STDINT_H_WITH_UINTMAX to #define ... 1.
+	* config.h.in: Regenerated for "config.h.in.in" change.
+	* config.h Regenerated for "config.h.in.in" change.
+
 2004-10-22  Mark D. Baushke  <mdb@cvshome.org>
 
 	* .cvsignore: Ignore stamp-sh2
@@ -8,7 +15,7 @@
 	* stdint.h: Regenerated.
 	* Makefile.in: Ditto.
 	
-	* confi.h.in.in (HAVE_SYS_INTTYPES_H): Update from GNULIB.
+	* config.h.in.in (HAVE_SYS_INTTYPES_H): Update from GNULIB.
 	* Makefile.am (stamp-sh2): Add stdint from GNULIB.
 
 2004-10-22  Derek Price  <derek@ximbiot.com>
