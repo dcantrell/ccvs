@@ -1182,14 +1182,93 @@ non-@code{dead} state.
 
 The @file{CVS} directory in each repository directory
 contains information such as file attributes (in a file
-called @file{CVS/fileattr}; see fileattr.h in the CVS
-source distribution for more documentation).  In the
+called @file{CVS/fileattr}.  In the
 future additional files may be added to this directory,
 so implementations should silently ignore additional
 files.
 
 This behavior is implemented only by @sc{cvs} 1.7 and
 later; for details see @ref{Watches Compatibility}.
+
+The format of the fileattr file is a series of entries
+of the following form (where @samp{@{} and @samp{@}}
+means the text between the braces can be repeated zero
+or more times):
+
+@var{ent-type} @var{filename} <tab> @var{attrname} = @var{attrval}
+  @{; @var{attrname} = @var{attrval}@} <linefeed>
+
+@var{ent-type} is @samp{F} for a file, in which case the entry specifies the
+attributes for that file.
+
+@var{ent-type} is @samp{D},
+and @var{filename} empty, to specify default attributes
+to be used for newly added files.
+
+Other @var{ent-type} are reserved for future expansion.  CVS 1.9 and older
+will delete them any time it writes file attributes.
+CVS 1.10 and later will preserve them.
+
+Note that the order of the lines is not significant;
+a program writing the fileattr file may
+rearrange them at its convenience.
+
+There is currently no way of quoting tabs or linefeeds in the
+filename, @samp{=} in @var{attrname},
+@samp{;} in @var{attrval}, etc.  Note: some implementations also
+don't handle a NUL character in any of the fields, but
+implementations are encouraged to allow it.
+
+By convention, @var{attrname} starting with @samp{_} is for an attribute given
+special meaning by CVS; other @var{attrname}s are for user-defined attributes
+(or will be, once implementations start supporting user-defined attributes).
+
+Builtin attributes:
+
+@table @code
+@item _watched
+Present means the file is watched and should be checked out
+read-only.
+
+@item _watchers
+Users with watches for this file.  Value is
+@var{watcher} > @var{type} @{ , @var{watcher} > @var{type} @}
+where @var{watcher} is a username, and @var{type}
+is zero or more of edit,unedit,commit separated by
+@samp{+} (that is, nothing if none; there is no "none" or "all" keyword).
+
+@item _editors
+Users editing this file.  Value is
+@var{editor} > @var{val} @{ , @var{editor} > @var{val} @}
+where @var{editor} is a username, and @var{val} is
+@var{time}+@var{hostname}+@var{pathname}, where
+@var{time} is when the @code{cvs edit} command (or
+equivalent) happened,
+and @var{hostname} and @var{pathname} are for the working directory.
+@end table
+
+Example:
+
+@c FIXME: sanity.sh should contain a similar test case
+@c so we can compare this example from something from
+@c Real Life(TM).  See cvsclient.texi (under Notify) for more
+@c discussion of the date format of _editors.
+@example
+Ffile1 _watched=;_watchers=joe>edit,mary>commit
+Ffile2 _watched=;_editors=sue>8 Jan 1975+workstn1+/home/sue/cvs
+D _watched=
+@end example
+
+means that the file @file{file1} should be checked out
+read-only.  Furthermore, joe is watching for edits and
+mary is watching for commits.  The file @file{file2}
+should be checked out read-only; sue started editing it
+on 8 Jan 1975 in the directory @file{/home/sue/cvs} on
+the machine @code{workstn1}.  Future files which are
+added should be checked out read-only.  To represent
+this example here, we have shown a space after
+@samp{D}, @samp{Ffile1}, and @samp{Ffile2}, but in fact
+there must be a single tab character there and no spaces.
 
 @node Locks
 @subsection CVS locks in the repository

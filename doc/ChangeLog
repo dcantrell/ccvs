@@ -1,3 +1,8 @@
+1999-04-14  Jim Kingdon  <http://www.cyclic.com>
+
+	* cvs.texinfo (CVS in repository): Include the format of the
+	fileattr file here, rather than referring to the CVS source code.
+
 1999-04-09  Jim Kingdon  <http://www.cyclic.com>
 
 	* cvs.texinfo (Working directory storage): Whether the timestamp
