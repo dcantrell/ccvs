@@ -26,17 +26,6 @@
 #endif
 
 /*
- * The cvs admin command is restricted to the members of the group
- * CVS_ADMIN_GROUP.  If this group does not exist, all users are
- * allowed to run cvs admin.  To disable the cvs admin for all users,
- * create an empty group CVS_ADMIN_GROUP.  To disable access control
- * for cvs admin, comment out the define below.
- */
-#ifndef CVS_ADMIN_GROUP
-#define CVS_ADMIN_GROUP "cvsadmin"
-#endif
-
-/*
  * When locking the repository, some sites like to remove locks and
  * assume the program that created them went away if the lock has
  * existed for a long time.  This used to be the default for previous
