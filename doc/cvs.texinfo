@@ -929,10 +929,13 @@ repository, it will remember where its repository is
 (the information is recorded in the
 @file{CVS/Root} file in the working copy).  
 
-The @code{-d} option and the @file{CVS/Root} file
-both override the @code{$CVSROOT} environment variable;
-however, @sc{CVS} will complain if the @file{-d}
-argument and the @file{CVS/Root} file disagree.
+The @code{-d} option and the @file{CVS/Root} file both
+override the @code{$CVSROOT} environment variable.  If
+@code{-d} option differs from @file{CVS/Root}, the
+former is used (and specifying @code{-d} will cause
+@file{CVS/Root} to be updated).  Of course, for proper
+operation they should be two ways of referring to the
+same repository.
 
 There is nothing magical about the name
 @file{/usr/local/cvsroot}.  You can choose to place the
