@@ -1,3 +1,7 @@
+2004-10-09  Derek Price  <derek@ximbiot.com>
+
+	* Makefile.am (libcvs_a_SOURCES): Move minmax.h to its own section.
+
 2004-10-07  Derek Price  <derek@ximbiot.com>
 
 	* system.h: Reorganize slightly.

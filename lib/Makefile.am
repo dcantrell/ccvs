@@ -28,7 +28,6 @@ libcvs_a_SOURCES = \
 	error.h \
 	getpagesize.h \
 	md5.h \
-	minmax.h \
 	system.h \
 	wait.h \
 	xselect.h \
@@ -143,6 +142,9 @@ libcvs_a_SOURCES += gettext.h
 
 ## For GNULIB's gettime module.
 libcvs_a_SOURCES += gettime.c
+
+## For GNULIB's minmax module.
+libcvs_a_SOURCES += minmax.h
 
 ## For GNULIB's pathmax module.
 libcvs_a_SOURCES += pathmax.h
