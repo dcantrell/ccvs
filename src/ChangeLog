@@ -1,5 +1,11 @@
 Mon Jan 13 11:04:32 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* server.c (check_command_legal_p): Do not call error (1, ...)
+ 	here; that will always cause a protocol violation by shutting down
+	the connection prematurely.  Remove croak_on_illegal arg.
+	(do_cvs_command): Move call to check_command_legal_p until after
+	the call to print_pending_error.  Print the error message ourself.
+
 	* mkmodules.c (filelist): Add readers and writers.  Add comment
 	about why passwd is not included.  Add comment about meaning of
 	NULL contents field.
