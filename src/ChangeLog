@@ -1,5 +1,9 @@
 2003-11-25  Derek Price  <derek@ximbiot.com>
 
+	* sanity.sh (release): Perform forgotten cleanup.
+
+2003-11-25  Derek Price  <derek@ximbiot.com>
+
 	* sanity.sh (env): Enable to work with $remotehost.
 
 2003-11-25  Mark D. Baushke  <mdb@cvshome.org>
