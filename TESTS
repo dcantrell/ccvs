@@ -1,0 +1,41 @@
+To run the tests:
+
+	$ make check
+
+Note that if your /bin/sh doesn't support shell functions, you'll
+have to try something like this, where "/bin/sh5" is replaced by the
+pathname of a shell which handles normal shell functions:
+
+	$ make SHELL=/bin/sh5 check
+
+WARNING:  This test can take quite a while to run, esp. if your
+disks are slow or over-loaded.
+
+If there is some unexpected output, that is a failure which can be
+somewhat hard to track down.  Finding out which test is producing the
+output is not always easy.  The newer tests (that is, ones using
+dotest*) will not have this problem, but there are many old tests
+which have not been converted.
+
+If running the tests produces the output "FAIL:" followed by the name
+of the test that failed, then the details on the failure are in the
+file check.log.  If it says "exit status is " followed by a number,
+then the exit status of the command under test was not what the test
+expected.  If it says "** expected:" followed by a regular expression
+followed by "** got:" followed by some text, then the regular
+expression is the output which the test expected, and the text is the
+output which the command under test actually produced.  In some cases
+you'll have to look closely to see how they differ.
+
+For more information on what goes in check.log, and how the tests are
+run in general, you'll have to read sanity.sh.  Depending on just what
+you are looking for, and how familiar you are with the Bourne shell
+and regular expressions, it will range from relatively straightforward
+to obscure.
+
+If you choose to submit a bug report based on tests failing, be
+aware that, as with all bug reports, you may or may not get a
+response, and your odds might be better if you include enough
+information to reproduce the bug, an analysis of what is going
+wrong (if you have the time to provide one), etc.  The check.log
+file is the first place to look.

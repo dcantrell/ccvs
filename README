@@ -112,9 +112,9 @@ Please read the INSTALL file for installation instructions.  Brief summary:
 
 	$ ./configure
 	$ make
-	$ make check	# optional, long-running, step
+	(run the regression tests if desired)
 	$ make install
-	$ cvsinit
+	(create a repository if you don't already have one)
 
 The documentation is in the doc subdirectory.  cvs.texinfo is the main
 manual; cvs.info* and cvs.ps are the info and postscript versions,

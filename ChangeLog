@@ -1,3 +1,12 @@
+Tue May 28 13:10:42 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* INSTALL: Remove $CVSId$.  More strongly encourage people to skip
+	the tests if they don't have the time to look at the results.
+	Move most of the discussion of tests to new file TESTS, and add
+	some information on interpreting check.log output.
+	* README: In brief summary of install, don't spell out details of
+	"make check" or "cvs init" steps.
+
 Sun May 26 17:59:46 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* NEWS: Change "up-to-date" to "not locally modified"; the file
