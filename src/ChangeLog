@@ -1,3 +1,7 @@
+Sun Mar  2 18:11:09 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.h: Move copyright notice to top of file.
+
 Sun Mar  2 13:44:36 1997  Ian Lance Taylor  <ian@cygnus.com>
 
 	* sanity.sh: Use -n when testing whether rsh works.
