@@ -1,6 +1,6 @@
 Changes since 1.11.3:
 
-* Dummy change set for automake.
+* Some minor changes to allow the code to compile on Windows platforms.
 
 Changes from 1.11.2 to 1.11.3:
 
