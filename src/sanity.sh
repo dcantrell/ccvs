@@ -2,7 +2,7 @@
 :
 #	sanity.sh -- a growing testsuite for cvs.
 #
-# Copyright (C) 1992, 1993 Cygnus Support
+# Copyright (C) 1992, 1993, 1997 Cygnus Support
 #
 # Original Author: K. Richard Pixley
 
@@ -9603,6 +9603,106 @@ done"
 	  rm -r 1
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
 	  ;;
+
+	multibranch2)
+	  # Commit the first delta on branch A when there is an older
+	  # branch, B, that already has a delta.  A and B come from the
+	  # same branch point.  Then verify that branches A and B are
+	  # in the right order.
+	  mkdir 1; cd 1
+	  dotest multibranch2-1 "${testcvs} -q co -l ." ''
+	  mkdir first-dir
+	  dotest multibranch2-2 "${testcvs} add first-dir" \
+"Directory ${TESTDIR}/cvsroot/first-dir added to the repository"
+	  cd first-dir
+
+	  echo trunk-1 >file1
+	  dotest multibranch2-3 "${testcvs} add file1" \
+"${PROG} [a-z]*: scheduling file .file1. for addition
+${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
+	  dotest multibranch2-4 "${testcvs} -q ci -m add" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
+done
+Checking in file1;
+${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
+initial revision: 1\.1
+done"
+	  dotest multibranch2-5 "${testcvs} -q tag -b A" "T file1"
+	  dotest multibranch2-6 "${testcvs} -q tag -b B" "T file1"
+
+	  dotest multibranch2-7 "${testcvs} -q update -r B" ''
+	  echo branch-B >file1
+	  dotest multibranch2-8 "${testcvs} -q ci -m modify-on-B" \
+"Checking in file1;
+${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
+new revision: 1\.1\.4\.1; previous revision: 1\.1
+done"
+
+	  dotest multibranch2-9 "${testcvs} -q update -r A" 'U file1'
+	  echo branch-A >file1
+	  # When using cvs-1.9.20, this commit gets a failed assertion in rcs.c.
+	  dotest multibranch2-10 "${testcvs} -q ci -m modify-on-A" \
+"Checking in file1;
+${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
+new revision: 1\.1\.2\.1; previous revision: 1\.1
+done"
+
+	  dotest multibranch2-11 "${testcvs} -q log" \
+"
+RCS file: /tmp/cvs-sanity/cvsroot/first-dir/file1,v
+Working file: file1
+head: 1\.1
+branch:
+locks: strict
+access list:
+symbolic names:
+	B: 1\.1\.0\.4
+	A: 1\.1\.0\.2
+keyword substitution: kv
+total revisions: 3;	selected revisions: 3
+description:
+----------------------------
+revision 1\.1
+date: [0-9/]* [0-9:]*;  author: $username;  state: Exp;
+branches:  1\.1\.2;  1\.1\.4;
+add
+----------------------------
+revision 1\.1\.4\.1
+date: [0-9/]* [0-9:]*;  author: $username;  state: Exp;  lines: ${PLUS}1 -1
+modify-on-B
+----------------------------
+revision 1\.1\.2\.1
+date: [0-9/]* [0-9:]*;  author: $username;  state: Exp;  lines: ${PLUS}1 -1
+modify-on-A
+============================================================================="
+
+	  # This one is more concise.
+	  dotest multibranch2-12 "${testcvs} -q log -r1.1" \
+"
+RCS file: /tmp/cvs-sanity/cvsroot/first-dir/file1,v
+Working file: file1
+head: 1\.1
+branch:
+locks: strict
+access list:
+symbolic names:
+	B: 1\.1\.0\.4
+	A: 1\.1\.0\.2
+keyword substitution: kv
+total revisions: 3;	selected revisions: 1
+description:
+----------------------------
+revision 1\.1
+date: [0-9/]* [0-9:]*;  author: $username;  state: Exp;
+branches:  1\.1\.2;  1\.1\.4;
+add
+============================================================================="
+
+	  cd ../..
+	  rm -r 1
+	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  ;;
+
 
 	admin)
 	  # More "cvs admin" tests.
