@@ -1,5 +1,7 @@
 Sat Oct 28 14:41:38 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
+        * Makefile.in (DISTFILES): include `test-makefile'.
+
         * test-makefile: new file; to be removed when the port is done.
 
 Fri Oct 27 13:03:28 1995  Karl Fogel  <kfogel@floss.cyclic.com>
