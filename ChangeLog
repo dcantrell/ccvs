@@ -1,8 +1,7 @@
-2004-06-26  Mark D. Baushke  <mdb@cvshome.org>
+2004-06-29  Derek Price  <derek@ximbiot.com>
 
-	* NEWS: Note Chris Demetriou's new cvs import -X feature.
-	(New feature from Chris Demetriou <cgd@broadcom.com>.)
-	
+	* NEWS: Note client/server sending short repositories.
+
 2004-06-24  Derek Price  <derek@ximbiot.com>
 
 	* cvsnt.dsp: Add "./lib/xsize.h" to Header file list.
