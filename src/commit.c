@@ -627,6 +627,7 @@ commit (argc, argv)
     mulist = getlist ();
     hardlist = getlist ();
 
+#ifdef PRESERVE_PERMISSIONS_SUPPORT
     if (preserve_perms)
     {
 	/*
@@ -635,6 +636,7 @@ commit (argc, argv)
 	 */
 	working_dir = xgetwd();
     }
+#endif
 
     /*
      * Run the recursion processor to verify the files are all up-to-date
@@ -648,6 +650,7 @@ commit (argc, argv)
 	error (1, 0, "correct above errors first!");
     }
 
+#ifdef PRESERVE_PERMISSIONS_SUPPORT
     if (preserve_perms)
     {
 	/* hardlist now includes a complete index of the files
@@ -656,6 +659,7 @@ commit (argc, argv)
 	   and save this list in each file's hardlink_info node. */
 	(void) walklist (hardlist, cache_hardlinks_proc, NULL);
     }
+#endif
 
     /*
      * Run the recursion processor to commit the files
@@ -1012,6 +1016,7 @@ warning: file `%s' seems to still contain conflict indicators",
 	    p->data = (char *) ci;
 	    (void) addnode (cilist, p);
 
+#ifdef PRESERVE_PERMISSIONS_SUPPORT
 	    if (preserve_perms)
 	    {
 		/* Add this file to hardlist, indexed on its inode.  When
@@ -1045,6 +1050,7 @@ warning: file `%s' seems to still contain conflict indicators",
 		    linkp->data = (char *) hlinfo;
 		}
 	    }
+#endif
 
 	    break;
 	case T_UNKNOWN:
@@ -2268,9 +2274,11 @@ fix_rcs_modes (rcs, user)
     struct stat sb;
     mode_t rcs_mode;
 
+#ifdef PRESERVE_PERMISSIONS_SUPPORT
     /* Do ye nothing to the modes on a symbolic link. */
     if (preserve_perms && islink (user))
 	return;
+#endif
 
     if (CVS_STAT (user, &sb) < 0)
     {

@@ -69,7 +69,9 @@ static int update_fileproc PROTO ((void *callerdat, struct file_info *));
 static int update_filesdone_proc PROTO ((void *callerdat, int err,
 					 char *repository, char *update_dir,
 					 List *entries));
+#ifdef PRESERVE_PERMISSIONS_SUPPORT
 static int get_linkinfo_proc PROTO ((void *callerdat, struct file_info *));
+#endif
 static void write_letter PROTO ((struct file_info *finfo, int letter));
 static void join_file PROTO ((struct file_info *finfo, Vers_TS *vers_ts));
 
@@ -447,6 +449,7 @@ do_update (argc, argv, xoptions, xtag, xdate, xforce, local, xbuild, xaflag,
     else
 	date_rev2 = (char *) NULL;
 
+#ifdef PRESERVE_PERMISSIONS_SUPPORT
     if (preserve_perms)
     {
 	/* We need to do an extra recursion, bleah.  It's to make sure
@@ -462,7 +465,7 @@ do_update (argc, argv, xoptions, xtag, xdate, xforce, local, xbuild, xaflag,
 			       argc, argv, local, which, aflag, 1,
 			       preload_update_dir, 1);
 	if (err)
-	    goto done;
+	    return (err);
 
 	/* FIXME-twp: at this point we should walk the hardlist
 	   and update the `links' field of each hardlink_info struct
@@ -470,6 +473,7 @@ do_update (argc, argv, xoptions, xtag, xdate, xforce, local, xbuild, xaflag,
 	   it easier & more efficient to compare the disk linkage with
 	   the repository linkage (a simple strcmp). */
     }
+#endif
 
     /* call the recursion processor */
     err = start_recursion (update_fileproc, update_filesdone_proc,
@@ -487,10 +491,10 @@ do_update (argc, argv, xoptions, xtag, xdate, xforce, local, xbuild, xaflag,
 	    sleep (1);			/* to avoid time-stamp races */
     }
 
-  done:
     return (err);
 }
 
+#ifdef PRESERVE_PERMISSIONS_SUPPORT
 /*
  * The get_linkinfo_proc callback adds each file to the hardlist
  * (see hardlink.c).
@@ -532,6 +536,7 @@ get_linkinfo_proc (callerdat, finfo)
 
     return 0;
 }
+#endif
 
 /*
  * This is the callback proc for update.  It is called for each file in each
@@ -2478,6 +2483,7 @@ special_file_mismatch (finfo, rev1, rev2)
     char *rev1;
     char *rev2;
 {
+#ifdef PRESERVE_PERMISSIONS_SUPPORT
     struct stat sb;
     RCSVers *vp;
     Node *n;
@@ -2758,6 +2764,9 @@ special_file_mismatch (finfo, rev1, rev2)
 	free (rev2_hardlinks);
 
     return result;
+#else
+    return 0;
+#endif
 }
 
 int

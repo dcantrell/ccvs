@@ -1143,6 +1143,7 @@ add_rcs_file (message, rcs, user, add_vhead, key_opt,
 	if (fprintf (fprcs, "next     ;\012") < 0)
 	    goto write_error;
 
+#ifdef PRESERVE_PERMISSIONS_SUPPORT
 	/* Store initial permissions if necessary. */
 	if (preserve_perms)
 	{
@@ -1183,6 +1184,7 @@ add_rcs_file (message, rcs, user, add_vhead, key_opt,
 		}
 	    }
 	}
+#endif
 
 	if (add_vbranch != NULL)
 	{
@@ -1193,6 +1195,7 @@ add_rcs_file (message, rcs, user, add_vhead, key_opt,
 		fprintf (fprcs, "next     ;\012") < 0)
 		goto write_error;
 
+#ifdef PRESERVE_PERMISSIONS_SUPPORT
 	    /* Store initial permissions if necessary. */
 	    if (preserve_perms)
 	    {
@@ -1232,6 +1235,7 @@ add_rcs_file (message, rcs, user, add_vhead, key_opt,
 		    }
 		}
 	    }
+#endif
 
 	    if (fprintf (fprcs, "\012") < 0)
 		goto write_error;

@@ -489,6 +489,7 @@ diff_exec (file1, file2, options, out)
 {
     char *args;
 
+#ifdef PRESERVE_PERMISSIONS_SUPPORT
     /* If either file1 or file2 are special files, pretend they are
        /dev/null.  Reason: suppose a file that represents a block
        special device in one revision becomes a regular file.  CVS
@@ -519,6 +520,7 @@ diff_exec (file1, file2, options, out)
 	if (!S_ISREG (sb2.st_mode) && !S_ISDIR (sb2.st_mode))
 	    file2 = DEVNULL;
     }
+#endif
 
     args = xmalloc (strlen (options) + 10);
     /* The first word in this string is used only for error reporting. */
@@ -542,6 +544,7 @@ diff_execv (file1, file2, label1, label2, options, out)
 {
     char *args;
 
+#ifdef PRESERVE_PERMISSIONS_SUPPORT
     /* Pretend that special files are /dev/null for purposes of making
        diffs.  See comments in diff_exec. */
 
@@ -561,6 +564,7 @@ diff_execv (file1, file2, label1, label2, options, out)
 	if (!S_ISREG (sb2.st_mode) && !S_ISDIR (sb2.st_mode))
 	    file2 = DEVNULL;
     }
+#endif
 
     args = xmalloc (strlen (options) + 10);
     /* The first word in this string is used only for error reporting.  */

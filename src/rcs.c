@@ -3524,6 +3524,7 @@ RCS_checkout (rcs, workfile, rev, nametag, options, sout, pfn, callerdat)
     char *log = NULL;
     size_t loglen;
     Node *vp = NULL;
+#ifdef PRESERVE_PERMISSIONS_SUPPORT
     uid_t rcs_owner;
     gid_t rcs_group;
     mode_t rcs_mode;
@@ -3533,6 +3534,7 @@ RCS_checkout (rcs, workfile, rev, nametag, options, sout, pfn, callerdat)
     int special_file = 0;
     unsigned long devnum_long;
     dev_t devnum = 0;
+#endif
 
     if (trace)
     {
@@ -3673,6 +3675,7 @@ RCS_checkout (rcs, workfile, rev, nametag, options, sout, pfn, callerdat)
 	}
     }
 
+#ifdef PRESERVE_PERMISSIONS_SUPPORT
     /* Handle special files and permissions, if that is desired. */
     if (preserve_perms)
     {
@@ -3836,6 +3839,7 @@ RCS_checkout (rcs, workfile, rev, nametag, options, sout, pfn, callerdat)
 		       workfile, info->data);
 	}
     }
+#endif
 
     if (expand != KFLAG_O && expand != KFLAG_B)
     {
@@ -3870,14 +3874,17 @@ RCS_checkout (rcs, workfile, rev, nametag, options, sout, pfn, callerdat)
 
     if (pfn != NULL)
     {
+#ifdef PRESERVE_PERMISSIONS_SUPPORT
 	if (special_file)
 	    error (1, 0, "special file %s cannot be piped to anything",
 		   rcs->path);
+#endif
 	/* The PFN interface is very simple to implement right now, as
            we always have the entire file in memory.  */
 	if (len != 0)
 	    pfn (callerdat, value, len);
     }
+#ifdef PRESERVE_PERMISSIONS_SUPPORT
     else if (special_file)
     {
 	char *dest;
@@ -3901,6 +3908,7 @@ RCS_checkout (rcs, workfile, rev, nametag, options, sout, pfn, callerdat)
 	    error (1, errno, "could not create special file %s",
 		   dest);
     }
+#endif
     else
     {
 	/* Not a special file: write to WORKFILE or SOUT. */
@@ -3977,6 +3985,7 @@ RCS_checkout (rcs, workfile, rev, nametag, options, sout, pfn, callerdat)
     {
 	int ret;
 
+#ifdef PRESERVE_PERMISSIONS_SUPPORT
 	if (!special_file && fclose (ofp) < 0)
 	    error (1, errno, "cannot close %s", workfile);
 
@@ -3991,6 +4000,13 @@ RCS_checkout (rcs, workfile, rev, nametag, options, sout, pfn, callerdat)
 		     change_rcs_mode
 		     ? rcs_mode
 		     : sb.st_mode & ~(S_IWRITE | S_IWGRP | S_IWOTH));
+#else
+	if (fclose (ofp) < 0)
+	    error (1, errno, "cannot close %s", workfile);
+
+	ret = chmod (workfile,
+		     sb.st_mode & ~(S_IWRITE | S_IWGRP | S_IWOTH));
+#endif
 	if (ret < 0)
 	{
 	    error (0, errno, "cannot change mode of file %s",
@@ -3999,14 +4015,20 @@ RCS_checkout (rcs, workfile, rev, nametag, options, sout, pfn, callerdat)
     }
     else if (sout != RUN_TTY)
     {
-	if (!special_file && fclose (ofp) < 0)
+	if (
+#ifdef PRESERVE_PERMISSIONS_SUPPORT
+	    !special_file &&
+#endif
+	    fclose (ofp) < 0)
 	    error (1, errno, "cannot close %s", sout);
     }
 
+#ifdef PRESERVE_PERMISSIONS_SUPPORT
     /* If we are in the business of preserving hardlinks, then
        mark this file as having been checked out. */
     if (preserve_perms && workfile != NULL)
 	update_hardlink_info (workfile);
+#endif
 
     if (free_value)
 	free (value);
@@ -4397,6 +4419,7 @@ RCS_checkin (rcs, workfile, message, rev, flags)
     else
 	delta->state = xstrdup ("Exp");
 
+#ifdef PRESERVE_PERMISSIONS_SUPPORT
     /* If permissions should be preserved on this project, then
        save the permission info. */
     if (preserve_perms)
@@ -4480,6 +4503,7 @@ RCS_checkin (rcs, workfile, message, rev, flags)
 	    }
 	}
     }
+#endif
 
     /* Create a new deltatext node. */
     dtext = (Deltatext *) xmalloc (sizeof (Deltatext));
@@ -4926,7 +4950,6 @@ RCS_cmp_file (rcs, rev, options, filename)
     FILE *fp;
     struct cmp_file_data data;
     int retcode;
-    char *tmp;
 
     if (options != NULL && options[0] != '\0')
 	binary = STREQ (options, "-kb");
@@ -4941,6 +4964,7 @@ RCS_cmp_file (rcs, rev, options, filename)
 	    binary = 0;
     }
 
+#ifdef PRESERVE_PERMISSIONS_SUPPORT
     /* If CVS is to deal properly with special files (when
        PreservePermissions is on), the best way is to check out the
        revision to a temporary file and call `xcmp' on the two disk
@@ -4952,6 +4976,8 @@ RCS_cmp_file (rcs, rev, options, filename)
 
     if (preserve_perms)
     {
+	char *tmp;
+
 	tmp = cvs_temp_name();
 	retcode = RCS_checkout(rcs, NULL, rev, NULL, options, tmp, NULL, NULL);
 	if (retcode != 0)
@@ -4963,6 +4989,7 @@ RCS_cmp_file (rcs, rev, options, filename)
 	return retcode;
     }
     else
+#endif
     {
         fp = CVS_FOPEN (filename, binary ? FOPEN_BINARY_READ : "r");
 	
