@@ -2542,11 +2542,13 @@ U first-dir/file3'
 
 	  cd first-dir
 
-	  # Add a file on the trunk.
+	  # Add two files on the trunk.
 	  echo "first revision" > file1
-	  dotest death2-2 "${testcvs} add file1" \
+	  echo "file4 first revision" > file4
+	  dotest death2-2 "${testcvs} add file1 file4" \
 "${PROG}"' [a-z]*: scheduling file `file1'\'' for addition
-'"${PROG}"' [a-z]*: use .'"${PROG}"' commit. to add this file permanently'
+'"${PROG}"' [a-z]*: scheduling file `file4'\'' for addition
+'"${PROG}"' [a-z]*: use .'"${PROG}"' commit. to add these files permanently'
 
 	  dotest death2-3 "${testcvs} -q commit -m add" \
 "RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
@@ -2554,11 +2556,21 @@ done
 Checking in file1;
 ${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
 initial revision: 1\.1
+done
+RCS file: ${TESTDIR}/cvsroot/first-dir/file4,v
+done
+Checking in file4;
+${TESTDIR}/cvsroot/first-dir/file4,v  <--  file4
+initial revision: 1\.1
 done"
 
 	  # Make a branch and a non-branch tag.
-	  dotest death2-4 "${testcvs} -q tag -b branch" 'T file1'
-	  dotest death2-5 "${testcvs} -q tag tag" 'T file1'
+	  dotest death2-4 "${testcvs} -q tag -b branch" \
+'T file1
+T file4'
+	  dotest death2-5 "${testcvs} -q tag tag" \
+'T file1
+T file4'
 
 	  # Switch over to the branch.
 	  dotest death2-6 "${testcvs} -q update -r branch" ''
@@ -2669,8 +2681,20 @@ ${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
 new revision: 1\.1\.2\.2; previous revision: 1\.1\.2\.1
 done"
 
+	  # Delete file4 from the branch
+	  dotest death2-10a "${testcvs} rm -f file4" \
+"${PROG} [a-z]*: scheduling .file4. for removal
+${PROG} [a-z]*: use .${PROG} commit. to remove this file permanently"
+	  dotest death2-10b "${testcvs} -q ci -m removed" \
+"Removing file4;
+${TESTDIR}/cvsroot/first-dir/file4,v  <--  file4
+new revision: delete; previous revision: 1\.1\.2
+done"
+
 	  # Back to the trunk.
-	  dotest death2-11 "${testcvs} -q update -A" 'U file1' 'P file1'
+	  dotest death2-11 "${testcvs} -q update -A" \
+"[UP] file1
+U file4"
 
 	  # Add another file on the trunk.
 	  echo "first revision" > file2
@@ -2685,15 +2709,22 @@ ${TESTDIR}/cvsroot/first-dir/file2,v  <--  file2
 initial revision: 1\.1
 done"
 
+	  # Modify file4 on the trunk.
+	  echo "new file4 revision" > file4
+	  dotest death2-13a "${testcvs} -q commit -m mod" \
+"Checking in file4;
+${TESTDIR}/cvsroot/first-dir/file4,v  <--  file4
+new revision: 1\.2; previous revision: 1\.1
+done"
+
 	  # Back to the branch.
 	  # The ``no longer in the repository'' message doesn't really
 	  # look right to me, but that's what CVS currently prints for
 	  # this case.
 	  dotest death2-14 "${testcvs} -q update -r branch" \
-"U file1
-${PROG} [a-z]*: file2 is no longer in the repository" \
-"P file1
-${PROG} [a-z]*: file2 is no longer in the repository"
+"[UP] file1
+${PROG} [a-z]*: file2 is no longer in the repository
+${PROG} [a-z]*: warning: file4 is not (any longer) pertinent"
 
 	  # Add a file on the branch with the same name.
 	  echo "branch revision" > file2
@@ -2750,7 +2781,8 @@ diff -c -r1\.1 -r1\.1\.2\.2
 --- 1 ----
 ! second revision
 ${PROG} [a-z]*: tag tag is not in file file2
-${PROG} [a-z]*: tag tag is not in file file3"
+${PROG} [a-z]*: tag tag is not in file file3
+${PROG} [a-z]*: file4 no longer exists, no comparison available"
 
 	  dotest_fail death2-diff-12 "${testcvs} -q diff -rtag -c -N ." \
 "Index: file1
@@ -2785,16 +2817,24 @@ diff -N file3
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
 \*\*\* 0 \*\*\*\*
 --- 1 ----
-${PLUS} first revision"
+${PLUS} first revision
+Index: file4
+===================================================================
+RCS file: file4
+diff -N file4
+\*\*\* ${tempname}[ 	][ 	]*[a-zA-Z0-9: ]*
+--- /dev/null[ 	][ 	]*[a-zA-Z0-9: ]*
+\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
+\*\*\* 1 \*\*\*\*
+- file4 first revision
+--- 0 ----"
 
 	  # Switch to the nonbranch tag.
 	  dotest death2-19 "${testcvs} -q update -r tag" \
-"U file1
+"[UP] file1
 ${PROG} [a-z]*: file2 is no longer in the repository
-${PROG} [a-z]*: file3 is no longer in the repository" \
-"P file1
-${PROG} [a-z]*: file2 is no longer in the repository
-${PROG} [a-z]*: file3 is no longer in the repository"
+${PROG} [a-z]*: file3 is no longer in the repository
+U file4"
 
 	  dotest_fail death2-20 "test -f file2"
 

@@ -1,5 +1,11 @@
 Sun Feb 22 13:31:51 1998  Ian Lance Taylor  <ian@cygnus.com>
 
+	* update.c (patch_file): If the revision is dead, let
+	checkout_file handle it.
+	* sanity.sh (death2): Add test for above patch: add
+	death2-10a, death2-10b, death2-13a, and adjust
+	death2-{2,4,5,11,14,diff-11,diff-12,19}.
+
 	* cvs.h (RCS_FLAGS_KEEPFILE): Define.
 	* rcs.c (RCS_checkin): If RCS_FLAGS_KEEPFILE is set in the flags
 	parameter, don't unlink the working file.
