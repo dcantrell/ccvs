@@ -6953,6 +6953,9 @@ dir1:
 D/dir1////
 
 dir1:"
+	  # Nonexistant tags used to cause assertion failures.
+	  dotest_fail branches2-14-ls-7 "$testcvs ls -eRrnosuchtag" \
+"$SPROG \[ls aborted\]: no such tag nosuchtag"
 
 	  # FIXME: Just clobbering the directory like this is a bit
 	  # tacky, although people generally expect it to work.  Maybe
