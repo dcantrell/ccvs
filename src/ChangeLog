@@ -1,6 +1,8 @@
 Fri Nov 29 09:06:41 1996  fnf@ninemoons.com (Fred Fish)
 			  and Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* checkout.c (safe_location): Only call readlink if HAVE_READLINK.
+
 	* run.c (piped_child, filter_stream_through_program): If
 	HAVE_VFORK, call vfork not fork.
 	* run.c (run_exec): Add comment about why we use vfork.
