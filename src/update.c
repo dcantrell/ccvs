@@ -549,14 +549,9 @@ update_fileproc (finfo)
 					    RUN_TTY,RUN_NORMAL);
 			if (retcode == -1)
 			{
-			    if (finfo->update_dir[0] == '\0')
-				error (1, errno,
+			    error (1, errno,
 				"fork failed while examining conflict in `%s'",
-				       finfo->file);
-			    else
-				error (1, errno,
-			     "fork failed while examining conflict in `%s/%s'",
-				       finfo->update_dir, finfo->file);
+				       finfo->fullname);
 			}
 		    }
 		    if (!retcode)

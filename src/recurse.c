@@ -473,6 +473,17 @@ do_file_proc (p, closure)
     int ret;
 
     finfo->file = p->key;
+    finfo->fullname = xmalloc (strlen (finfo->file)
+			       + strlen (finfo->update_dir)
+			       + 2);
+    finfo->fullname[0] = '\0';
+    if (finfo->update_dir[0] != '\0')
+    {
+	strcat (finfo->fullname, finfo->update_dir);
+	strcat (finfo->fullname, "/");
+    }
+    strcat (finfo->fullname, finfo->file);
+
     if (dosrcs && repository)
 	finfo->rcs = RCS_parse (finfo->file, repository);
     else 
@@ -480,6 +491,7 @@ do_file_proc (p, closure)
     ret = fileproc (finfo);
 
     freercsnode(&finfo->rcs);
+    free (finfo->fullname);
 
     return (ret);
 }

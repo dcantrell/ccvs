@@ -109,16 +109,6 @@ find_fileproc (finfo)
     enum classify_type status;
     Node *node;
     struct find_data *args = find_data_static;
-    char *fullname;
-
-    fullname = xmalloc (strlen (finfo->update_dir) + strlen (finfo->file) + 10);
-    fullname[0] = '\0';
-    if (finfo->update_dir[0] != '\0')
-    {
-	strcat (fullname, finfo->update_dir);
-	strcat (fullname, "/");
-    }
-    strcat (fullname, finfo->file);
 
     vers = Version_TS ((char *)NULL, (char *)NULL, (char *)NULL,
 		       (char *)NULL,
@@ -130,10 +120,10 @@ find_fileproc (finfo)
     else if (vers->vn_user == NULL)
     {
 	if (vers->ts_user == NULL)
-	    error (0, 0, "nothing known about `%s'", fullname);
+	    error (0, 0, "nothing known about `%s'", finfo->fullname);
 	else
-	    error (0, 0, "use `cvs add' to create an entry for %s", fullname);
-	free (fullname);
+	    error (0, 0, "use `cvs add' to create an entry for %s",
+		   finfo->fullname);
 	return 1;
     }
     else if (vers->ts_user != NULL
@@ -150,19 +140,11 @@ find_fileproc (finfo)
 	   cases.  FIXME: we probably should be printing a message and
 	   returning 1 for many of those cases (but I'm not sure
 	   exactly which ones).  */
-	free (fullname);
 	return 0;
     }
 
     node = getnode ();
-    node->key = xmalloc (strlen (finfo->update_dir) + strlen (finfo->file) + 8);
-    node->key[0] = '\0';
-    if (finfo->update_dir[0] != '\0')
-    {
-	strcpy (node->key, finfo->update_dir);
-	strcat (node->key, "/");
-    }
-    strcat (node->key, finfo->file);
+    node->key = xstrdup (finfo->fullname);
 
     node->type = UPDATE;
     node->delproc = update_delproc;
@@ -170,8 +152,6 @@ find_fileproc (finfo)
     (void)addnode (args->ulist, node);
 
     ++args->argc;
-
-    free (fullname);
 
     return 0;
 }
@@ -543,11 +523,7 @@ check_fileproc (finfo)
 	case T_NEEDS_MERGE:
 	case T_CONFLICT:
 	case T_REMOVE_ENTRY:
-	    if (finfo->update_dir[0] == '\0')
-		error (0, 0, "Up-to-date check failed for `%s'", finfo->file);
-	    else
-		error (0, 0, "Up-to-date check failed for `%s/%s'",
-		       finfo->update_dir, finfo->file);
+	    error (0, 0, "Up-to-date check failed for `%s'", finfo->fullname);
 	    freevers_ts (&vers);
 	    return (1);
 	case T_MODIFIED:
@@ -569,30 +545,18 @@ check_fileproc (finfo)
 	    {
 		if (vers->date)
 		{
-		    if (finfo->update_dir[0] == '\0')
-			error (0, 0,
-			       "cannot commit with sticky date for file `%s'",
-			       finfo->file);
-		    else
-			error
-			  (0, 0,
-			   "cannot commit with sticky date for file `%s/%s'",
-			   finfo->update_dir, finfo->file);
+		    error (0, 0,
+			   "cannot commit with sticky date for file `%s'",
+			   finfo->fullname);
 		    freevers_ts (&vers);
 		    return (1);
 		}
 		if (status == T_MODIFIED && vers->tag &&
 		    !RCS_isbranch (finfo->rcs, vers->tag))
 		{
-		    if (finfo->update_dir[0] == '\0')
-			error (0, 0,
-			       "sticky tag `%s' for file `%s' is not a branch",
-			       vers->tag, finfo->file);
-		    else
-			error
-			  (0, 0,
-			   "sticky tag `%s' for file `%s/%s' is not a branch",
-			   vers->tag, finfo->update_dir, finfo->file);
+		    error (0, 0,
+			   "sticky tag `%s' for file `%s' is not a branch",
+			   vers->tag, finfo->fullname);
 		    freevers_ts (&vers);
 		    return (1);
 		}
@@ -623,14 +587,9 @@ check_fileproc (finfo)
 #endif
 		if (retcode == 0)
 		{
-		    if (finfo->update_dir[0] == '\0')
-			error (0, 0,
+		    error (0, 0,
 			  "file `%s' had a conflict and has not been modified",
-			       finfo->file);
-		    else
-			error (0, 0,
-		       "file `%s/%s' had a conflict and has not been modified",
-			       finfo->update_dir, finfo->file);
+			   finfo->fullname);
 		    freevers_ts (&vers);
 		    return (1);
 		}
@@ -646,25 +605,15 @@ check_fileproc (finfo)
 		    
 		if (retcode == -1)
 		{
-		    if (finfo->update_dir[0] == '\0')
-			error (1, errno,
-			       "fork failed while examining conflict in `%s'",
-			       finfo->file);
-		    else
-			error (1, errno,
-			     "fork failed while examining conflict in `%s/%s'",
-			       finfo->update_dir, finfo->file);
+		    error (1, errno,
+			   "fork failed while examining conflict in `%s'",
+			   finfo->fullname);
 		}
 		else if (retcode == 0)
 		{
-		    if (finfo->update_dir[0] == '\0')
-			error (0, 0,
-			       "file `%s' still contains conflict indicators",
-			       finfo->file);
-		    else
-			error (0, 0,
-			     "file `%s/%s' still contains conflict indicators",
-			       finfo->update_dir, finfo->file);
+		    error (0, 0,
+			   "file `%s' still contains conflict indicators",
+			   finfo->fullname);
 		    freevers_ts (&vers);
 		    return (1);
 		}
@@ -672,14 +621,9 @@ check_fileproc (finfo)
 
 	    if (status == T_REMOVED && vers->tag && isdigit (*vers->tag))
 	    {
-		if (finfo->update_dir[0] == '\0')
-		    error (0, 0,
+		error (0, 0,
 	"cannot remove file `%s' which has a numeric sticky tag of `%s'",
-			   finfo->file, vers->tag);
-		else
-		    error (0, 0,
-	"cannot remove file `%s/%s' which has a numeric sticky tag of `%s'",
-			   finfo->update_dir, finfo->file, vers->tag);
+			   finfo->fullname, vers->tag);
 		freevers_ts (&vers);
 		return (1);
 	    }
@@ -692,28 +636,18 @@ check_fileproc (finfo)
 		sprintf(rcs, "%s/%s%s", finfo->repository, finfo->file, RCSEXT);
 		if (isreadable (rcs))
 		{
-		    if (finfo->update_dir[0] == '\0')
-			error (0, 0,
+		    error (0, 0,
 		"cannot add file `%s' when RCS file `%s' already exists",
-			       finfo->file, rcs);
-		    else
-			error (0, 0,
-		"cannot add file `%s/%s' when RCS file `%s' already exists",
-			       finfo->update_dir, finfo->file, rcs);
+			   finfo->fullname, rcs);
 		    freevers_ts (&vers);
 		    return (1);
 		}
 		if (vers->tag && isdigit (*vers->tag) &&
 		    numdots (vers->tag) > 1)
 		{
-		    if (finfo->update_dir[0] == '\0')
-			error (0, 0,
+		    error (0, 0,
 		"cannot add file `%s' with revision `%s'; must be on trunk",
-			       finfo->file, vers->tag);
-		    else
-			error (0, 0,
-		"cannot add file `%s/%s' with revision `%s'; must be on trunk",
-			       finfo->update_dir, finfo->file, vers->tag);
+			       finfo->fullname, vers->tag);
 		    freevers_ts (&vers);
 		    return (1);
 		}
@@ -774,10 +708,7 @@ check_fileproc (finfo)
 	    (void) addnode (cilist, p);
 	    break;
 	case T_UNKNOWN:
-	    if (finfo->update_dir[0] == '\0')
-		error (0, 0, "nothing known about `%s'", finfo->file);
-	    else
-		error (0, 0, "nothing known about `%s/%s'", finfo->update_dir, finfo->file);
+	    error (0, 0, "nothing known about `%s'", finfo->fullname);
 	    freevers_ts (&vers);
 	    return (1);
 	case T_UPTODATE:

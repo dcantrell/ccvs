@@ -118,11 +118,7 @@ remove_fileproc (finfo)
 	{
 	    if (unlink (finfo->file) < 0 && ! existence_error (errno))
 	    {
-		if (finfo->update_dir[0] == '\0')
-		    error (0, errno, "unable to remove %s", finfo->file);
-		else
-		    error (0, errno, "unable to remove %s/%s", finfo->update_dir,
-			   finfo->file);
+		error (0, errno, "unable to remove %s", finfo->fullname);
 	    }
 	}
 	/* else FIXME should probably act as if the file doesn't exist
@@ -136,12 +132,13 @@ remove_fileproc (finfo)
     {
 	existing_files++;
 	if (!quiet)
-	    error (0, 0, "file `%s' still in working directory", finfo->file);
+	    error (0, 0, "file `%s' still in working directory",
+		   finfo->fullname);
     }
     else if (vers->vn_user == NULL)
     {
 	if (!quiet)
-	    error (0, 0, "nothing known about `%s'", finfo->file);
+	    error (0, 0, "nothing known about `%s'", finfo->fullname);
     }
     else if (vers->vn_user[0] == '0' && vers->vn_user[1] == '\0')
     {
@@ -153,7 +150,7 @@ remove_fileproc (finfo)
 	(void) sprintf (fname, "%s/%s%s", CVSADM, finfo->file, CVSEXT_LOG);
 	(void) unlink_file (fname);
 	if (!quiet)
-	    error (0, 0, "removed `%s'", finfo->file);
+	    error (0, 0, "removed `%s'", finfo->fullname);
 
 #ifdef SERVER_SUPPORT
 	if (server_active)
@@ -163,7 +160,8 @@ remove_fileproc (finfo)
     else if (vers->vn_user[0] == '-')
     {
 	if (!quiet)
-	    error (0, 0, "file `%s' already scheduled for removal", finfo->file);
+	    error (0, 0, "file `%s' already scheduled for removal",
+		   finfo->fullname);
     }
     else
     {
@@ -173,7 +171,7 @@ remove_fileproc (finfo)
 	Register (finfo->entries, finfo->file, fname, vers->ts_rcs, vers->options,
 		  vers->tag, vers->date, vers->ts_conflict);
 	if (!quiet)
-	    error (0, 0, "scheduling `%s' for removal", finfo->file);
+	    error (0, 0, "scheduling `%s' for removal", finfo->fullname);
 	removed_files++;
 
 #ifdef SERVER_SUPPORT

@@ -336,9 +336,8 @@ patch_fileproc (finfo)
 {
     struct utimbuf t;
     char *vers_tag, *vers_head;
-    char rcsspace[2][PATH_MAX];
+    char rcsspace[1][PATH_MAX];
     char *rcs = rcsspace[0];
-    char *path = rcsspace[1];
     RCSNode *rcsfile;
     FILE *fp1, *fp2, *fp3;
     int ret = 0;
@@ -358,8 +357,6 @@ patch_fileproc (finfo)
 	isattic = 1;
 
     (void) sprintf (rcs, "%s%s", finfo->file, RCSEXT);
-    (void) sprintf (path, "%s%s%s", finfo->update_dir,
-		    finfo->update_dir[0] ? "/" : "", finfo->file);
 
     /* if vers_head is NULL, may have been removed from the release */
     if (isattic && rev2 == NULL && date2 == NULL)
@@ -393,7 +390,7 @@ patch_fileproc (finfo)
 
     if (patch_short)
     {
-	(void) printf ("File %s ", path);
+	(void) printf ("File %s ", finfo->fullname);
 	if (vers_tag == NULL)
 	    (void) printf ("is new; current revision %s\n", vers_head);
 	else if (vers_head == NULL)
@@ -486,7 +483,7 @@ patch_fileproc (finfo)
 
 	    /* Output an "Index:" line for patch to use */
 	    (void) fflush (stdout);
-	    (void) printf ("Index: %s\n", path);
+	    (void) printf ("Index: %s\n", finfo->fullname);
 	    (void) fflush (stdout);
 
 	    fp = open_file (tmpfile3, "r");
@@ -533,13 +530,13 @@ patch_fileproc (finfo)
 		rcs += strlen (strippath);
 	    if (vers_tag != NULL)
 	    {
-		(void) sprintf (file1, "%s:%s", path, vers_tag);
+		(void) sprintf (file1, "%s:%s", finfo->fullname, vers_tag);
 	    }
 	    else
 	    {
 		(void) strcpy (file1, DEVNULL);
 	    }
-	    (void) sprintf (file2, "%s:%s", path,
+	    (void) sprintf (file2, "%s:%s", finfo->fullname,
 			    vers_head ? vers_head : "removed");
 
 	    /* Note that this prints "diff" not DIFF.  The format of a diff
@@ -556,14 +553,14 @@ patch_fileproc (finfo)
 		(void) printf ("*** %s%s--- ", file1, cp1);
 	    }
 
-	    (void) printf ("%s%s", path, cp2);
+	    (void) printf ("%s%s", finfo->fullname, cp2);
 	    /* spew the rest of the diff out */
 	    while (getline (&line1, &line1_chars_allocated, fp) >= 0)
 		(void) fputs (line1, stdout);
 	    (void) fclose (fp);
 	    break;
 	default:
-	    error (0, 0, "diff failed for %s", path);
+	    error (0, 0, "diff failed for %s", finfo->fullname);
     }
   out:
     if (line1)

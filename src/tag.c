@@ -446,10 +446,7 @@ tag_fileproc (finfo)
 	/* warm fuzzies */
 	if (!really_quiet)
 	{
-	    if (finfo->update_dir[0])
-		(void) printf ("D %s/%s\n", finfo->update_dir, finfo->file);
-	    else
-		(void) printf ("D %s\n", finfo->file);
+	    (void) printf ("D %s\n", finfo->fullname);
 	}
 
 	freevers_ts (&vers);
@@ -507,34 +504,33 @@ tag_fileproc (finfo)
     oversion = RCS_getversion (vers->srcfile, symtag, (char *) NULL, 1, 0);
     if (oversion != NULL)
     {
-       int isbranch = RCS_isbranch (finfo->rcs, symtag);
+	int isbranch = RCS_isbranch (finfo->rcs, symtag);
 
-       /*
-	* if versions the same and neither old or new are branches don't have 
-	* to do anything
-	*/
-       if (strcmp (version, oversion) == 0 && !branch_mode && !isbranch)
-       {
-	  free (oversion);
-	  freevers_ts (&vers);
-	  return (0);
-       }
-       
-       if (!force_tag_move) {		/* we're NOT going to move the tag */
-	  if (finfo->update_dir[0])
-	     (void) printf ("W %s/%s", finfo->update_dir, finfo->file);
-	  else
-	     (void) printf ("W %s", finfo->file);
+	/*
+	 * if versions the same and neither old or new are branches don't have 
+	 * to do anything
+	 */
+	if (strcmp (version, oversion) == 0 && !branch_mode && !isbranch)
+	{
+	    free (oversion);
+	    freevers_ts (&vers);
+	    return (0);
+	}
 
-	  (void) printf (" : %s already exists on %s %s", 
-			 symtag, isbranch ? "branch" : "version", oversion);
-	  (void) printf (" : NOT MOVING tag to %s %s\n", 
-			 branch_mode ? "branch" : "version", rev);
-	  free (oversion);
-	  freevers_ts (&vers);
-	  return (0);
-       }
-       free (oversion);
+	if (!force_tag_move)
+	{
+	    /* we're NOT going to move the tag */
+	    (void) printf ("W %s", finfo->fullname);
+
+	    (void) printf (" : %s already exists on %s %s", 
+			   symtag, isbranch ? "branch" : "version", oversion);
+	    (void) printf (" : NOT MOVING tag to %s %s\n", 
+			   branch_mode ? "branch" : "version", rev);
+	    free (oversion);
+	    freevers_ts (&vers);
+	    return (0);
+	}
+	free (oversion);
     }
 
     if ((retcode = RCS_settag(vers->srcfile->path, symtag, rev)) != 0)
@@ -549,15 +545,12 @@ tag_fileproc (finfo)
     /* more warm fuzzies */
     if (!really_quiet)
     {
-	if (finfo->update_dir[0])
-	    (void) printf ("T %s/%s\n", finfo->update_dir, finfo->file);
-	else
-	    (void) printf ("T %s\n", finfo->file);
+	(void) printf ("T %s\n", finfo->fullname);
     }
 
     if (nversion != NULL)
     {
-        free(nversion);
+        free (nversion);
     }
     freevers_ts (&vers);
     return (0);
