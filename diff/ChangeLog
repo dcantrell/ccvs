@@ -1,3 +1,10 @@
+1999-01-12  Jim Kingdon  <http://www.cyclic.com>
+
+	* Makefile.in, analyze.c, cmpbuf.c, cmpbuf.h, context.c, diff.c,
+	diff.h, diff3.c, diffrun.h, dir.c, ed.c, io.c, normal.c, system.h,
+	util.c: Remove paragraph containing the old snail mail address of
+	the Free Software Foundation.
+
 1998-09-21  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* util.c (printf_output): Make msg static; avoids auto
