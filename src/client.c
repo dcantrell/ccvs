@@ -1246,7 +1246,21 @@ update_entries (data_arg, ent_list, short_pathname, filename)
                            temp_filename);
 	    }
 	    else
+#ifdef BROKEN_READWRITE_CONVERSION
+	    {
+		/* If only stdio, not open/write/etc., do text/binary
+		   conversion, use convert_file which can compensate
+		   (FIXME: we could just use stdio instead which would
+		   avoid the whole problem).  */
+		convert_file (temp_filename, O_RDONLY | OPEN_BINARY,
+	    		      filename, O_WRONLY | O_CREAT | O_TRUNC);
+		if (CVS_UNLINK (temp_filename) < 0)
+		    error (0, errno, "warning: couldn't delete %s",
+			   temp_filename);
+	    }
+#else
 		rename_file (temp_filename, filename);
+#endif
 	        
 #else /* ! LINES_CRLF_TERMINATED */
 	    rename_file (temp_filename, filename);
@@ -3480,7 +3494,23 @@ send_modified (file, short_pathname, vers)
     else
       bin = 0;
 
+#ifdef BROKEN_READWRITE_CONVERSION
+    if (!bin)
+    {
+	/* If only stdio, not open/write/etc., do text/binary
+	   conversion, use convert_file which can compensate
+	   (FIXME: we could just use stdio instead which would
+	   avoid the whole problem).  */
+	char tfile[1024]; strcpy(tfile, file); strcat(tfile, ".CVSBFCTMP");
+	convert_file (file, O_RDONLY,
+		      tfile, O_WRONLY | O_CREAT | O_TRUNC | OPEN_BINARY);
+	fd = CVS_OPEN (tfile, O_RDONLY | OPEN_BINARY);
+	if (fd < 0)
+	    error (1, errno, "reading %s", short_pathname);
+    }
+#else
     fd = CVS_OPEN (file, O_RDONLY | (bin ? OPEN_BINARY : 0));
+#endif
 
     if (fd < 0)
 	error (1, errno, "reading %s", short_pathname);
@@ -3636,6 +3666,14 @@ send_modified (file, short_pathname, vers)
           sprintf (tmp, "%lu\012", (unsigned long) newsize);
           send_to_server (tmp, 0);
         }
+#ifdef BROKEN_READWRITE_CONVERSION
+	if (!bin)
+	{
+	    char tfile[1024]; strcpy(tfile, file); strcat(tfile, ".CVSBFCTMP");
+	    if (CVS_UNLINK (tfile) < 0)
+		error (0, errno, "warning: can't remove temp file %s", tfile);
+	}
+#endif
 
 	/*
 	 * Note that this only ends with a newline if the file ended with
