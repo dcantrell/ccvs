@@ -31,9 +31,8 @@ rcsfile.5 also showed the order of the revisions (and the "next" and
 "branch" fields and anything else where it would be useful to have an
 example of how a revision tree is represented in an RCS file).
 
-The rcsfile.5 page has an error concerning the "next" field of the
-delta.  The grammar shows the {num} as required; in fact it is omitted
-to indicate that there is no next delta node (for example 1.1 or the
+The rcsfile.5 grammar shows the {num} after "next" as optional; if it
+is omitted then there is no next delta node (for example 1.1 or the
 head of a branch will typically have no next).
 
 There is one case where CVS uses CVS-specific, non-compatible changes
