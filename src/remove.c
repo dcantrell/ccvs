@@ -73,11 +73,34 @@ cvsremove (argc, argv)
 
 #ifdef CLIENT_SUPPORT
     if (client_active) {
+	/* Call expand_wild so that the local removal of files will
+           work.  It's ok to do it always because we have to send the
+           file names expanded anyway.  */
+	expand_wild (argc, argv, &argc, &argv);
+	
+	if (force)
+	{
+	    if (!noexec)
+	    {
+		int i;
+
+		for (i = 0; i < argc; i++)
+		{
+		    if ( CVS_UNLINK (argv[i]) < 0 && ! existence_error (errno))
+		    {
+			error (0, errno, "unable to remove %s", argv[i]);
+		    }
+		}
+	    }
+	    /* else FIXME should probably act as if the file doesn't exist
+	       in doing the following checks.  */
+	}
+
 	start_server ();
 	ign_setup ();
 	if (local)
 	    send_arg("-l");
-	send_file_names (argc, argv, SEND_EXPAND_WILD);
+	send_file_names (argc, argv, 0);
 	send_files (argc, argv, local, 0);
 	send_to_server ("remove\012", 0);
         return get_responses_and_close ();
@@ -133,10 +156,11 @@ remove_fileproc (callerdat, finfo)
 
     if (vers->ts_user != NULL)
     {
+	char wd[1000];
 	existing_files++;
 	if (!quiet)
-	    error (0, 0, "file `%s' still in working directory",
-		   finfo->fullname);
+	    error (0, 0, "file `%s' still in working directory [%s:%s]",
+		   finfo->fullname, getwd(wd), finfo->file);
     }
     else if (vers->vn_user == NULL)
     {
