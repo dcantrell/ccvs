@@ -1,3 +1,18 @@
+Sun May  4 14:38:35 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (BUGS): Rewrite to reflect the many different ways
+	that one might want to handle bugs.  Move information on Signum
+	and Cyclic from Preface to here.  Remove information on known
+	deficiencies in the manual (some of them I'm not sure were really
+	things in need of improvement; others were too general to be
+	useful).  For the most part FIXME comments are probably better for
+	this.  Remove "Linkoping, October 1993, Per Cederqvist"--many
+	parts of the manual are now from other people, dates, and places.
+	(What is CVS): For the most part, just refer to BUGS concerning
+	bug-cvs.  Also tell people how to subscribe to bug-cvs.
+	(Credits): Say that list is not comprehensive and refer to
+	ChangeLog.
+
 Sat May  3 10:51:58 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (rcsinfo): Add comment about checkoutlist and
