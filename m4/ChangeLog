@@ -1,3 +1,12 @@
+2005-03-22  Mark D. Baushke  <mdb@cvshome.org>
+
+	* chdir-long.m4, closeout.m4, dirname.m4, exitfail.m4,
+	fpending.m4, getcwd.m4, getdate.m4, getline.m4, getpagesize.m4,
+	getpass.m4, gettext.m4, gnulib.m4, lib-link.m4, md5.m4,
+	memrchr.m4, nanosleep.m4, nls.m4, pathmax.m4, po.m4, quotearg.m4,
+	stat-macros.m4, stdint.m4, strftime.m4, timespec.m4,
+	unlocked-io.m4, xalloc.m4, yesno.m4: Update from GNULIB.
+
 2005-03-10  Mark D. Baushke  <mdb@cvshome.org>
 
 	* save-cwd.m4: Update from GNULIB.

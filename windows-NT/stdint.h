@@ -5,7 +5,7 @@
  *
  * Edit ../lib/stdint_.h instead.
  */
-/* Copyright (C) 2001-2002, 2004 Free Software Foundation, Inc.
+/* Copyright (C) 2001-2002, 2004-2005 Free Software Foundation, Inc.
    Written by Bruno Haible, Sam Steingold, Peter Burwood.
    This file is part of gnulib.
 

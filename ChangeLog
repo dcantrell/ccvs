@@ -1,3 +1,8 @@
+2005-03-22  Mark D. Baushke  <mdb@cvshome.org>
+
+	* aclocal.m4, gnulib.txt: Update from GNULIB.
+	* Makefile.in, config.h.in, configure: Regenerated.
+
 2005-03-16  Mark Baushke  <mdb@cvshome.org>
 
 	* cvs-format.el: Update to work with modern GNU Emacs versions

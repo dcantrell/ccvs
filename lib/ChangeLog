@@ -1,3 +1,8 @@
+2005-03-22  Mark D. Baushke  <mdb@cvshome.org>
+
+	* mktime.c, regex.c, stdint_.h, strftime.c, strtol.c: Update from
+	GNULIB.
+
 2005-03-10  Mark D. Baushke  <mdb@cvshome.org>
 
 	* mktime.c, save-cwd.c, strftime.c, strtol.c: Update from GNULIB.
