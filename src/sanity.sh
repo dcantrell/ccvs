@@ -7285,7 +7285,7 @@ done"
 	  if test "x$remote" = xyes; then
 	    dotest_fail modules3-11b \
 "${testcvs} -q update ${TESTDIR}/1/src/sub1/sub2/sub3/dir/file1" \
-"${PROG} .server aborted.: absolute pathname .${TESTDIR}/1/src/sub1/sub2/sub3/dir/file1. illegal for server"
+"absolute pathname .${TESTDIR}/1/src/sub1/sub2/sub3/dir. illegal for server"
 	  fi # end of remote-only tests
 
 	  cd ..
