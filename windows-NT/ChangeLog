@@ -1,3 +1,11 @@
+Mon Dec 11 12:43:35 1995  adamg  <adamg@microsoft.com>
+
+	* config.h: Add INITIALIZE_SOCKET_SUBSYSTEM macro to ensure that
+	winsock is initialized early enough for the gethostname() in
+	main.c to succeed.
+	* rcmd.c: Remove from init_winsock(), and rcmd() code that
+	initialized winsock on demand.
+
 Thu Dec  7 14:49:16 1995  Jim Meyering  (meyering@comco.com)
 
 	* filesubr.c (isaccessible): Rename from isaccessable.
