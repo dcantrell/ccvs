@@ -65,11 +65,7 @@ static int update_filesdone_proc PROTO ((void *callerdat, int err,
 					 char *repository, char *update_dir,
 					 List *entries));
 static void write_letter PROTO ((struct file_info *finfo, int letter));
-#ifdef SERVER_SUPPORT
 static void join_file PROTO ((struct file_info *finfo, Vers_TS *vers_ts));
-#else
-static void join_file PROTO ((struct file_info *finfo, Vers_TS *vers_ts));
-#endif
 
 static char *options = NULL;
 static char *tag = NULL;

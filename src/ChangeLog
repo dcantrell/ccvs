@@ -1,3 +1,7 @@
+Tue Dec 16 12:59:00 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* update.c: Collapse two identical declarations for join_file.
+
 Mon Dec 15 16:01:49 1997  Ian Lance Taylor  <ian@cygnus.com>
 
 	* client.c (start_tcp_server): Remove calls to htons and add one
