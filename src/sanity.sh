@@ -15705,21 +15705,19 @@ ${testcvs} -d ${TESTDIR}/crerepos release -d CVSROOT >>${LOGFILE}; then
 	    # manner of things and the server better protect itself.
 	    dotest_fail crerepos-6a-r \
 "${testcvs} -q -d :ext:`hostname`:../crerepos get ." \
-"${PROG} [a-z]*: CVSROOT (\":ext:${hostname}:\.\./crerepos\")
-${PROG} [a-z]*: may only specify a positive, non-zero, integer port (not \"\.\.\")\.
-${PROG} [a-z]*: perhaps you entered a relative pathname${QUESTION}
-${PROG} \[[a-z]* aborted\]: Bad CVSROOT\."
+"${PROG} [a-z]*: CVSROOT may only specify a positive, non-zero, integer port (not .\.\..)\.
+${PROG} [a-z]*: Perhaps you entered a relative pathname${QUESTION}
+${PROG} \[[a-z]* aborted\]: Bad CVSROOT: .:ext:${hostname}:\.\./crerepos.\."
 	    cd ..
 	    rm -r 1
 
 	    mkdir 1; cd 1
 	    dotest_fail crerepos-6b-r \
 "${testcvs} -d :ext:`hostname`:crerepos init" \
-"${PROG} [a-z]*: CVSROOT (\":ext:${hostname}:crerepos\")
-${PROG} [a-z]*: requires a path spec
+"${PROG} [a-z]*: CVSROOT requires a path spec:
 ${PROG} [a-z]*: :(gserver|kserver|pserver):\[\[user\]\[:password\]@\]host\[:\[port\]\]/path
 ${PROG} [a-z]*: \[:(ext|server):\]\[\[user\]@\]host\[:\]/path
-${PROG} \[[a-z]* aborted\]: Bad CVSROOT\."
+${PROG} \[[a-z]* aborted\]: Bad CVSROOT: .:ext:${hostname}:crerepos.\."
 	    cd ..
 	    rm -r 1
 	  else # local
@@ -15739,8 +15737,9 @@ ${PROG} \[[a-z]* aborted\]: Bad CVSROOT\."
 
 	    mkdir 1; cd 1
 	    dotest_fail crerepos-6b "${testcvs} -d crerepos init" \
-"${PROG} [a-z]*: CVSROOT \"crerepos\" must be an absolute pathname
-${PROG} \[[a-z]* aborted\]: Bad CVSROOT\."
+"${PROG} [a-z]*: CVSROOT must be an absolute pathname (not .crerepos.)
+${PROG} [a-z]*: when using local access method\.
+${PROG} \[[a-z]* aborted\]: Bad CVSROOT: .crerepos.\."
 	    cd ..
 	    rm -r 1
 	  fi # end of tests to be skipped for remote

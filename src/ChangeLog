@@ -1,3 +1,11 @@
+2001-06-11  Derek Price  <dprice@collab.net>
+
+	* main.c (main): Always print $CVSROOT when parse_cvsroot fails.
+	* root.c (parse_cvsroot): Tidy error messages and provide more
+	consistent behavior.
+	* sanity.sh (crerepos): Adapt to new error messages.
+	(Suggested by  Alexey Mahotkin <alexm@hsys.msk.ru>.)
+
 2001-06-08  Derek Price  <dprice@collab.net>
 
 	* sanity.sh (tagf-28): Use $CVSROOT_DIRNAME.

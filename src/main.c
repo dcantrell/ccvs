@@ -894,7 +894,7 @@ Copyright (c) 1989-2001 Brian Berliner, david d `zoo' zuhn, \n\
 		if (current_parsed_root != NULL)
 		    free_cvsroot_t (current_parsed_root);
 		if ((current_parsed_root = parse_cvsroot (current_root)) == NULL)
-		    error (1, 0, "Bad CVSROOT.");
+		    error (1, 0, "Bad CVSROOT: `%s'.", current_root);
 
 		if (trace)
 		    fprintf (stderr, "%s-> main loop with CVSROOT=%s\n",
