@@ -507,7 +507,7 @@ if test x"$*" = x; then
 	tests="${tests} modules modules2 modules3 mflag editor errmsg1 errmsg2"
 	tests="${tests} devcom devcom2 devcom3 watch4"
 	tests="${tests} ignore binfiles binfiles2 mcopy binwrap binwrap2"
-	tests="${tests} mwrap info config"
+	tests="${tests} binwrap3 mwrap info config"
 	tests="${tests} serverpatch log log2 crerepos rcs big modes stamps"
 	tests="${tests} sticky keyword toplevel head tagdate admin reserved"
 	tests="${tests} cvsadm diffmerge1 diffmerge2"
@@ -7210,6 +7210,197 @@ File: foo\.exe          	Status: Up-to-date
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
 	  ;;
 
+        binwrap3)
+          # Test communication of file-specified -k wrappers between
+          # client and server, in `import':
+          #
+          #   1. Set up a directory tree, populate it with files.
+          #   2. Give each directory a different .cvswrappers file. 
+          #   3. Give the server its own .cvswrappers file.
+          #   4. Import the whole tree, see if the right files got set
+          #      to binary.
+          #
+          # The tree has a top ("0th") level, and two subdirs, sub1/
+          # and sub2/; sub2/ contains directory subsub/.  Every
+          # directory has a .cvswrappers file as well as regular
+          # files.
+          #
+          # In the file names, "foo-b.*" should end up binary, and
+          # "foo-t.*" should end up text.  Don't worry about the two
+          # letter extensions; they're just there to help me keep
+          # things straight.
+          #
+          # Here's the directory tree:
+          #
+          # ./
+          #    .cvswrappers
+          #    foo-b.c0
+          #    foo-b.sb
+          #    foo-t.c1
+          #    foo-t.st
+          #
+          #    sub1/             sub2/
+          #      .cvswrappers      .cvswrappers
+          #      foo-b.c1          foo-b.sb
+          #      foo-b.sb          foo-b.st
+          #      foo-t.c0          foo-t.c0
+          #      foo-t.st          foo-t.c1
+          #                        foo-t.c2
+          #                        foo-t.c3
+          #
+          #                        subsub/
+          #                          .cvswrappers
+          #                          foo-b.c3
+          #                          foo-b.sb
+          #                          foo-t.c0
+          #                          foo-t.c1
+          #                          foo-t.c2
+          #                          foo-t.st
+
+          binwrap3_line1="This is a test file "
+          binwrap3_line2="containing little of use "
+          binwrap3_line3="except this non-haiku"
+
+          binwrap3_text="${binwrap3_line1}${binwrap3_line2}${binwrap3_line3}"
+
+          cd ${TESTDIR}
+          mkdir binwrap3 # the 0th dir
+          mkdir binwrap3/sub1
+          mkdir binwrap3/sub2
+          mkdir binwrap3/sub2/subsub
+          
+          echo "*.c0 -k 'b'" > binwrap3/.cvswrappers
+          echo "whatever -k 'b'" >> binwrap3/.cvswrappers
+          echo ${binwrap3_text} > binwrap3/foo-b.c0
+          echo ${binwrap3_text} > binwrap3/foo-b.sb
+          echo ${binwrap3_text} > binwrap3/foo-t.c1
+          echo ${binwrap3_text} > binwrap3/foo-t.st
+
+          echo "*.c1 -k 'b'" > binwrap3/sub1/.cvswrappers
+          echo "whatever -k 'b'" >> binwrap3/sub1/.cvswrappers
+          echo ${binwrap3_text} > binwrap3/sub1/foo-b.c1
+          echo ${binwrap3_text} > binwrap3/sub1/foo-b.sb
+          echo ${binwrap3_text} > binwrap3/sub1/foo-t.c0
+          echo ${binwrap3_text} > binwrap3/sub1/foo-t.st
+
+          echo "*.st -k 'b'" > binwrap3/sub2/.cvswrappers
+          echo ${binwrap3_text} > binwrap3/sub2/foo-b.sb
+          echo ${binwrap3_text} > binwrap3/sub2/foo-b.st
+          echo ${binwrap3_text} > binwrap3/sub2/foo-t.c0
+          echo ${binwrap3_text} > binwrap3/sub2/foo-t.c1
+          echo ${binwrap3_text} > binwrap3/sub2/foo-t.c2
+          echo ${binwrap3_text} > binwrap3/sub2/foo-t.c3
+
+          echo "*.c3 -k 'b'" > binwrap3/sub2/subsub/.cvswrappers
+          echo "foo -k 'b'" >> binwrap3/sub2/subsub/.cvswrappers
+          echo "c0* -k 'b'" >> binwrap3/sub2/subsub/.cvswrappers
+          echo ${binwrap3_text} > binwrap3/sub2/subsub/foo-b.c3
+          echo ${binwrap3_text} > binwrap3/sub2/subsub/foo-b.sb
+          echo ${binwrap3_text} > binwrap3/sub2/subsub/foo-t.c0
+          echo ${binwrap3_text} > binwrap3/sub2/subsub/foo-t.c1
+          echo ${binwrap3_text} > binwrap3/sub2/subsub/foo-t.c2
+          echo ${binwrap3_text} > binwrap3/sub2/subsub/foo-t.st
+
+          # Now set up CVSROOT/cvswrappers, the easy way:
+	  dotest binwrap3-1 "${testcvs} -q co CVSROOT" "[UP] CVSROOT${DOTSTAR}"
+	  cd CVSROOT
+          # This destroys anything currently in cvswrappers, but
+	  # presumably other tests will take care of it themselves if
+	  # they use cvswrappers:
+	  echo "foo*.sb  -k 'b'" > cvswrappers
+	  dotest binwrap3-2 "${testcvs} -q ci -m cvswrappers-mod" \
+"Checking in cvswrappers;
+${TESTDIR}/cvsroot/CVSROOT/cvswrappers,v  <--  cvswrappers
+new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
+done
+${PROG} [a-z]*: Rebuilding administrative file database"
+          cd ..
+
+          # Avoid environmental interference
+          CVSWRAPPERS_SAVED=${CVSWRAPPERS}
+          unset CVSWRAPPERS
+
+          # Do the import
+          cd binwrap3
+          dotest binwrap3-3 "${testcvs} import -m . binwrap3 tag1 tag2" \
+"N ${DOTSTAR}"
+
+          # Now check out the module and see which files are binary.
+          cd ..
+          mv binwrap3 was_binwrap3
+          dotest binwrap3-3 "${testcvs} co binwrap3" "${DOTSTAR}"
+          cd binwrap3
+
+          # Running "cvs status" and matching output is too
+          # error-prone, too likely to falsely fail.  Instead, we'll
+          # just grep the Entries lines:
+
+          dotest binwrap3-top1 "grep foo-b.c0 ./CVS/Entries" \
+                 "/foo-b.c0/1.1.1.1/[A-Za-z0-9 	:]*/-kb/"
+
+          dotest binwrap3-top2 "grep foo-b.sb ./CVS/Entries" \
+                 "/foo-b.sb/1.1.1.1/[A-Za-z0-9 	:]*/-kb/"
+
+          dotest binwrap3-top3 "grep foo-t.c1 ./CVS/Entries" \
+                 "/foo-t.c1/1.1.1.1/[A-Za-z0-9 	:]*//"
+
+          dotest binwrap3-top4 "grep foo-t.st ./CVS/Entries" \
+                 "/foo-t.st/1.1.1.1/[A-Za-z0-9 	:]*//"
+
+          dotest binwrap3-sub1-1 "grep foo-b.c1 sub1/CVS/Entries" \
+                 "/foo-b.c1/1.1.1.1/[A-Za-z0-9 	:]*/-kb/"
+
+          dotest binwrap3-sub1-2 "grep foo-b.sb sub1/CVS/Entries" \
+                 "/foo-b.sb/1.1.1.1/[A-Za-z0-9 	:]*/-kb/"
+
+          dotest binwrap3-sub1-3 "grep foo-t.c0 sub1/CVS/Entries" \
+                 "/foo-t.c0/1.1.1.1/[A-Za-z0-9 	:]*//"
+
+          dotest binwrap3-sub1-4 "grep foo-t.st sub1/CVS/Entries" \
+                 "/foo-t.st/1.1.1.1/[A-Za-z0-9 	:]*//"
+
+          dotest binwrap3-sub2-1 "grep foo-b.sb sub2/CVS/Entries" \
+                 "/foo-b.sb/1.1.1.1/[A-Za-z0-9 	:]*/-kb/"
+
+          dotest binwrap3-sub2-2 "grep foo-b.st sub2/CVS/Entries" \
+                 "/foo-b.st/1.1.1.1/[A-Za-z0-9 	:]*/-kb/"
+
+          dotest binwrap3-sub2-3 "grep foo-t.c0 sub2/CVS/Entries" \
+                 "/foo-t.c0/1.1.1.1/[A-Za-z0-9 	:]*//"
+
+          dotest binwrap3-sub2-4 "grep foo-t.c1 sub2/CVS/Entries" \
+                 "/foo-t.c1/1.1.1.1/[A-Za-z0-9 	:]*//"
+
+          dotest binwrap3-sub2-5 "grep foo-t.c2 sub2/CVS/Entries" \
+                 "/foo-t.c2/1.1.1.1/[A-Za-z0-9 	:]*//"
+
+          dotest binwrap3-sub2-6 "grep foo-t.c3 sub2/CVS/Entries" \
+                 "/foo-t.c3/1.1.1.1/[A-Za-z0-9 	:]*//"
+
+          dotest binwrap3-subsub1 "grep foo-b.c3 sub2/subsub/CVS/Entries" \
+                 "/foo-b.c3/1.1.1.1/[A-Za-z0-9 	:]*/-kb/"
+
+          dotest binwrap3-subsub2 "grep foo-b.sb sub2/subsub/CVS/Entries" \
+                 "/foo-b.sb/1.1.1.1/[A-Za-z0-9 	:]*/-kb/"
+
+          dotest binwrap3-subsub3 "grep foo-t.c0 sub2/subsub/CVS/Entries" \
+                 "/foo-t.c0/1.1.1.1/[A-Za-z0-9 	:]*//"
+
+          dotest binwrap3-subsub4 "grep foo-t.c1 sub2/subsub/CVS/Entries" \
+                 "/foo-t.c1/1.1.1.1/[A-Za-z0-9 	:]*//"
+
+          dotest binwrap3-subsub5 "grep foo-t.c2 sub2/subsub/CVS/Entries" \
+                 "/foo-t.c2/1.1.1.1/[A-Za-z0-9 	:]*//"
+
+          dotest binwrap3-subsub6 "grep foo-t.st sub2/subsub/CVS/Entries" \
+                 "/foo-t.st/1.1.1.1/[A-Za-z0-9 	:]*//"
+
+          # Restore and clean up
+          cd ..
+          rm -rf binwrap3
+          CVSWRAPPERS=${CVSWRAPPERS_SAVED}
+          ;; 
+
 	mwrap)
 	  # Tests of various wrappers features:
 	  # -m 'COPY' and cvs update: mwrap
@@ -7220,7 +7411,8 @@ File: foo\.exe          	Status: Up-to-date
 	  # Tests of different ways of specifying wrappers:
 	  # CVSROOT/cvswrappers: mwrap
 	  # -W: binwrap, binwrap2
-	  # .cvswrappers in working directory: mcopy
+	  # .cvswrappers in working directory, local: mcopy
+	  # CVSROOT/cvswrappers, .cvswrappers remote: binwrap3
 	  # CVSWRAPPERS environment variable: mcopy
 
 	  # This test is similar to binfiles-con1; -m 'COPY' specifies

@@ -57,12 +57,17 @@ static int wrap_size=0;
 static int wrap_count=0;
 static int wrap_tempcount=0;
 
-/* FIXME: wrap_saved_count is never set to any non-zero value.
-   wrap_name_has and wrap_matching_entry should be using
-   wrap_tempcount instead.  I believe the consequence of this is that
-   .cvswrappers files are ignored (that was my own experience when I
-   tried to use one).  If this bug is fixed, would be nice to write a
-   sanity.sh testcase for .cvswrappers files.  */
+/* FIXME: the relationship between wrap_count, wrap_tempcount,
+ * wrap_saved_count, and wrap_saved_tempcount is not entirely clear;
+ * it is certainly suspicious that wrap_saved_count is never set to a
+ * value other than zero!  If the variable isn't being used, it should
+ * be removed.  And in general, we should describe how temporary
+ * vs. permanent wrappers are implemented, and then make sure the
+ * implementation is actually doing that.
+ *
+ * Right now things seem to be working, but that's no guarantee there
+ * isn't a bug lurking somewhere in the murk.
+ */
 
 static int wrap_saved_count=0;
 
@@ -383,7 +388,7 @@ wrap_name_has (name,has)
     const char   *name;
     WrapMergeHas  has;
 {
-    int x,count=wrap_count+wrap_saved_count;
+    int x,count=wrap_count+wrap_tempcount;
     char *temp;
 
     for(x=0;x<count;++x)
@@ -415,7 +420,7 @@ static WrapperEntry *
 wrap_matching_entry (name)
     const char *name;
 {
-    int x,count=wrap_count+wrap_saved_count;
+    int x,count=wrap_count+wrap_tempcount;
 
     for(x=0;x<count;++x)
 	if (CVS_FNMATCH (wrap_list[x]->wildCard, name, 0) == 0)
