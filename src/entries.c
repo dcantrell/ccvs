@@ -27,7 +27,12 @@ static char *entfilename;		/* for error messages */
 /*
  * Construct an Entnode
  */
-Entnode *
+static Entnode *Entnode_Create PROTO ((enum ent_type, const char *,
+				       const char *, const char *,
+				       const char *, const char *,
+				       const char *, const char *));
+
+static Entnode *
 Entnode_Create(type, user, vn, ts, options, tag, date, ts_conflict)
     enum ent_type type;
     const char *user;
@@ -57,7 +62,9 @@ Entnode_Create(type, user, vn, ts, options, tag, date, ts_conflict)
 /*
  * Destruct an Entnode
  */
-void
+static void Entnode_Destroy PROTO ((Entnode *));
+
+static void
 Entnode_Destroy (ent)
     Entnode *ent;
 {

@@ -63,23 +63,6 @@ static Key_schedule sched;
 #endif /* AUTH_SERVER_SUPPORT */
 
 
-/* Functions which the server calls.  */
-int add PROTO((int argc, char **argv));
-int admin PROTO((int argc, char **argv));
-int checkout PROTO((int argc, char **argv));
-int commit PROTO((int argc, char **argv));
-int diff PROTO((int argc, char **argv));
-int history PROTO((int argc, char **argv));
-int import PROTO((int argc, char **argv));
-int cvslog PROTO((int argc, char **argv));
-int patch PROTO((int argc, char **argv));
-int release PROTO((int argc, char **argv));
-int cvsremove PROTO((int argc, char **argv));
-int rtag PROTO((int argc, char **argv));
-int status PROTO((int argc, char **argv));
-int tag PROTO((int argc, char **argv));
-int update PROTO((int argc, char **argv));
-
 /* While processing requests, this buffer accumulates data to be sent to
    the client, and then once we are in do_cvs_command, we use it
    for all the data to be sent.  */
@@ -395,7 +378,9 @@ print_pending_error ()
 /* Is an error pending?  */
 #define error_pending() (pending_error || pending_error_text)
 
-int
+static int supported_response PROTO ((char *));
+
+static int
 supported_response (name)
      char *name;
 {
@@ -2572,7 +2557,7 @@ static void
 serve_tag (arg)
     char *arg;
 {
-    do_cvs_command (tag);
+    do_cvs_command (cvstag);
 }
 
 static void

@@ -1,3 +1,21 @@
+Wed Oct  9 10:59:11 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	Clean up gcc -Wmissing-prototypes lint:
+	* cvs.h (admin, add, checkout, commit, diff, history, import,
+	cvslog, login, patch, release, cvsremove, rtag, status, tag):
+	Declare.
+	* server.c, main.c: Don't declare them here.  Don't declare update
+	either (which is already declared in cvs.h).
+	* tag.c, cvs.h, main.c, server.c: Rename tag to cvstag to avoid
+	name conflicts.
+	* client.c (init_sockaddr, auth_server_port_number), entries.c
+	(Entnode_Create, Entnode_Destroy), hash.c (nodetypestring),
+	login.c (construct_cvspass_filename), server.c
+	(supported_response), wrapper.c (wrap_matching_entry): Make static;
+	prototype.
+	* hash.c (printlist): Prototype.
+	* myndbm.c (mydbm_load_file): Change declaration to prototype.
+
 Tue Oct  8 22:35:34 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* sanity.sh (log2): Re-add these tests; they were deleted for 1.9
