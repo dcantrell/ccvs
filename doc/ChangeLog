@@ -1,5 +1,16 @@
 2003-08-07  Derek Price  <derek@ximbiot.com>
 
+	* .cvsignore: Ignore {cvs,cvsclient}.txt.
+
+2003-08-07  Derek Price  <derek@ximbiot.com>
+
+	* cvs.texinfo: Use the @dircategory and @direntry commands from texinfo
+	rather than rolling our own.
+
+	* stamp-vti, version.texi: Regenerated.
+
+2003-08-07  Derek Price  <derek@ximbiot.com>
+
 	* Makefile.am (POSTSCRIPTS): Rename to...
 	(PSS): ...to sync with and override Automakes default targets.
 	(PDFS): Reorder to match PSS.
