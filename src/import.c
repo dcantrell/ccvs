@@ -978,7 +978,7 @@ add_rcs_file (message, rcs, user, vtag, targc, targv)
 
     /* Now copy over the contents of the file, expanding at signs.  */
     {
-	unsigned char buf[8192];
+	char buf[8192];
 	unsigned int len;
 
 	while (1)
