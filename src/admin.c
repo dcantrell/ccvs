@@ -491,8 +491,8 @@ admin_fileproc (callerdat, finfo)
 
     if (admin_data->branch != NULL)
     {
-	char *branch = NULL;
-	if (admin_data->branch[2] != '\0')
+	char *branch = &admin_data->branch[2];
+	if (*branch != '\0' && ! isdigit (*branch))
 	{
 	    branch = RCS_whatbranch (rcs, admin_data->branch + 2);
 	    if (branch == NULL)
@@ -504,7 +504,7 @@ admin_fileproc (callerdat, finfo)
 	}
 	if (status == 0)
 	    RCS_setbranch (rcs, branch);
-	if (branch != NULL)
+	if (branch != NULL && branch != &admin_data->branch[2])
 	    free (branch);
     }
     if (admin_data->comment != NULL)
