@@ -90,14 +90,6 @@ static Key_schedule sched;
 #   define O_NONBLOCK O_NDELAY
 # endif
 
-/* EWOULDBLOCK is not defined by POSIX, but some BSD systems will
-   return it, rather than EAGAIN, for nonblocking writes.  */
-# ifdef EWOULDBLOCK
-#   define blocking_error(err) ((err) == EWOULDBLOCK || (err) == EAGAIN)
-# else
-#   define blocking_error(err) ((err) == EAGAIN)
-# endif
-
 /* For initgroups().  */
 # if HAVE_INITGROUPS
 #   include <grp.h>
@@ -172,180 +164,6 @@ static char *orig_server_temp_dir;
 static int dont_delete_temp;
 
 static void server_write_entries (void);
-
-
-
-/* All server communication goes through buffer structures.  Most of
-   the buffers are built on top of a file descriptor.  This structure
-   is used as the closure field in a buffer.  */
-
-struct fd_buffer
-{
-    /* The file descriptor.  */
-    int fd;
-    /* Nonzero if the file descriptor is in blocking mode.  */
-    int blocking;
-};
-
-
-
-static int fd_buffer_input (void *, char *, int, int, int *);
-static int fd_buffer_output (void *, const char *, int, int *);
-static int fd_buffer_flush (void *);
-static int fd_buffer_block (void *, int);
-static int fd_buffer_shutdown (struct buffer *);
-
-/* Initialize a buffer built on a file descriptor.  FD is the file
-   descriptor.  INPUT is nonzero if this is for input, zero if this is
-   for output.  MEMORY is the function to call when a memory error
-   occurs.  */
-
-static struct buffer *
-fd_buffer_initialize (int fd, int input, void (*memory) (struct buffer *))
-{
-    struct fd_buffer *n;
-
-    n = (struct fd_buffer *) xmalloc (sizeof *n);
-    n->fd = fd;
-    n->blocking = 1;
-    return buf_initialize (input ? fd_buffer_input : NULL,
-			   input ? NULL : fd_buffer_output,
-			   input ? NULL : fd_buffer_flush,
-			   fd_buffer_block,
-			   fd_buffer_shutdown,
-			   memory,
-			   n);
-}
-
-/* The buffer input function for a buffer built on a file descriptor.  */
-
-static int
-fd_buffer_input (void *closure, char *data, int need, int size, int *got)
-{
-    struct fd_buffer *fd = closure;
-    int nbytes;
-
-    if (! fd->blocking)
-	nbytes = read (fd->fd, data, size);
-    else
-    {
-	/* This case is not efficient.  Fortunately, I don't think it
-	   ever actually happens.  */
-	nbytes = read (fd->fd, data, need == 0 ? 1 : need);
-    }
-
-    if (nbytes > 0)
-    {
-	*got = nbytes;
-	return 0;
-    }
-
-    *got = 0;
-
-    if (nbytes == 0)
-    {
-	/* End of file.  This assumes that we are using POSIX or BSD
-	   style nonblocking I/O.  On System V we will get a zero
-	   return if there is no data, even when not at EOF.  */
-	return -1;
-    }
-
-    /* Some error occurred.  */
-
-    if (blocking_error (errno))
-    {
-	/* Everything's fine, we just didn't get any data.  */
-	return 0;
-    }
-
-    return errno;
-}
-
-/* The buffer output function for a buffer built on a file descriptor.  */
-
-static int
-fd_buffer_output (void *closure, const char *data, int have, int *wrote)
-{
-    struct fd_buffer *fd = closure;
-
-    *wrote = 0;
-
-    while (have > 0)
-    {
-	int nbytes;
-
-	nbytes = write (fd->fd, data, have);
-
-	if (nbytes <= 0)
-	{
-	    if (! fd->blocking
-		&& (nbytes == 0 || blocking_error (errno)))
-	    {
-		/* A nonblocking write failed to write any data.  Just
-		   return.  */
-		return 0;
-	    }
-
-	    /* Some sort of error occurred.  */
-
-	    if (nbytes == 0)
-		return EIO;
-
-	    return errno;
-	}
-
-	*wrote += nbytes;
-	data += nbytes;
-	have -= nbytes;
-    }
-
-    return 0;
-}
-
-/* The buffer flush function for a buffer built on a file descriptor.  */
-
-/*ARGSUSED*/
-static int
-fd_buffer_flush (void *closure)
-{
-    /* Nothing to do.  File descriptors are always flushed.  */
-    return 0;
-}
-
-/* The buffer block function for a buffer built on a file descriptor.  */
-
-static int
-fd_buffer_block (void *closure, int block)
-{
-    struct fd_buffer *fd = closure;
-    int flags;
-
-    flags = fcntl (fd->fd, F_GETFL, 0);
-    if (flags < 0)
-	return errno;
-
-    if (block)
-	flags &= ~O_NONBLOCK;
-    else
-	flags |= O_NONBLOCK;
-
-    if (fcntl (fd->fd, F_SETFL, flags) < 0)
-	return errno;
-
-    fd->blocking = block;
-
-    return 0;
-}
-
-/* The buffer shutdown function for a buffer built on a file descriptor.  */
-
-static int
-fd_buffer_shutdown (struct buffer *buf)
-{
-    free (buf->closure);
-    buf->closure = NULL;
-    return 0;
-}
 
 
 
@@ -724,9 +542,12 @@ isSecondaryServer (void)
     if (!PrimaryServer) return false;
 
     /* The directory must not match for fork.  */
-    if (PrimaryServer->method == fork_method
-	&& strcmp (PrimaryServer->directory, current_parsed_root->directory))
-	return true;
+    if (PrimaryServer->method == fork_method)
+    {
+	if (strcmp (PrimaryServer->directory, current_parsed_root->directory))
+	    return true;
+	return false;
+    }
 
     /* Must be :ext: method, then.  This is enforced when CVSROOT/config is
      * parsed.
@@ -914,6 +735,48 @@ error ENOMEM Virtual memory exhausted.\n");
 
 
 
+/* Close the secondary log and reopen it for read.
+ *
+ * GLOBALS
+ *   secondary_log		The write proxy log buffer.
+ *   secondary_log_name		The file backing the above.
+ *
+ * RETURNS
+ *   A file descriptor to be read from.
+ *
+ * ERRORS
+ *   This function exits with a fatal error if it fails to repoen the log for
+ *   read.
+ */
+static int
+read_secondary_log (void)
+{
+    int fd;
+
+    /* Close the secondary log.  */
+    if (secondary_log)
+    {
+	log_buffer_disable (secondary_log);
+	secondary_log = NULL;
+    }
+
+    /* And reprocess the log.  */
+    fd = open (secondary_log_name, O_RDONLY | O_LARGEFILE);
+    if (fd < 0)
+    {
+	int err = errno;
+	buf_output0 (buf_to_net,
+"E  Failed to open write proxy log for read: ");
+	buf_output0 (buf_to_net, strerror (err));
+	buf_output0 (buf_to_net, "\n");
+	exit (EXIT_FAILURE);
+    }
+
+    return fd;
+}
+
+
+
 /* This function reprocesses the write proxy log file if it exists.  If it
  * does not exist, this function will return without errors.  This has the
  * effect of both allowing this function to be called twice in certain cases
@@ -932,27 +795,11 @@ reprocess_secondary_log (void)
 {
     if (secondary_log)
     {
-	int fd;
-
-	/* Close the secondary log.  */
-	log_buffer_disable (secondary_log);
-	secondary_log = NULL;
-
-	/* And reprocess the log.  */
-	fd = open (secondary_log_name, O_RDONLY | O_LARGEFILE);
-	if (fd < 0)
-	{
-	    int err = errno;
-	    buf_output0 (buf_to_net,
-"E  Failed to open write proxy log for read: ");
-	    buf_output0 (buf_to_net, strerror (err));
-	    buf_output0 (buf_to_net, "\n");
-	    exit (EXIT_FAILURE);
-	}
+	int fd = read_secondary_log ();
 
 	SIG_beginCrSect();
 	buf_from_net_save = buf_from_net;
-	buf_from_net = fd_buffer_initialize (fd, true,
+	buf_from_net = fd_buffer_initialize (fd, 0, NULL, true,
 					     outbuf_memory_error);
 	SIG_endCrSect();
 
@@ -972,6 +819,117 @@ reprocess_secondary_log (void)
 	buf_from_net_save = NULL;
 	SIG_endCrSect();
     }
+}
+
+
+
+/* Relocate the bytes from SRC to the end of the file FD to DEST.  If
+ * DEST < SRC, truncate the file.
+ *
+ * Resets the file position to EOF when done.
+ */
+void
+move_file_offset (int fd, off_t src, off_t dest)
+{
+    off_t end;
+    off_t p, q;
+    char buf[4096];
+    int flags;
+
+    /* Make sure all data written to this file has been committed to disk
+     * before mucking around with it.
+     */
+    if (fdatasync (fd) < 0)
+	error (1, 0, "Failed to sync file data before moving");
+
+    /* Find EOF.  */
+    end = lseek (fd, 0, SEEK_END);
+    if (end < 0) error (1, errno, "Failed to find end of file");
+
+    /* Save current blocking status and set file descriptor to block.  */
+    flags = fcntl (fd, F_GETFL, 0);
+    if (flags < 0) error (1, errno, "Failed to retrieve FD flags");
+    if (fcntl (fd, F_SETFL, flags & ~O_NONBLOCK) < 0)
+	error (1, errno, "Failed to set FD flags.");
+
+    /* Move the data.  */
+    if (src < dest)
+    {
+	q = end;
+	while (q != src)
+	{
+	    size_t len;
+
+	    p = lseek (fd, q - 4096 <= src ? src : q - 4096, SEEK_SET);
+	    if (p < 0)
+		error (1, errno, "Failed to set file position for read");
+	    /* Preserve len when we reset p.  */
+	    len = q - p;
+	    if (read (fd, buf, len) < 0)
+		error (1, errno, "Failed to read from file");
+	    p = lseek (fd, q - 4096 <= src ? dest : q - 4096 + dest - src,
+	               SEEK_SET);
+	    if (p < 0)
+		error (1, errno, "Failed to set file position for write 1");
+	    if (write (fd, buf, len) < 0)
+		error (1, errno, "Failed to write to file");
+	    q -= len;
+	}
+	if (lseek (fd, 0, SEEK_END) < 0)
+	    error (1, errno, "Failed to set file position to EOF");
+    }
+    else /* src > dest */
+    {
+	q = src;
+	while (q != end)
+	{
+	    size_t len;
+
+	    q = lseek (fd, q, SEEK_SET);
+	    if (q < 0)
+		error (1, errno, "Failed to set file position for read");
+	    p = q + 4096 > end ? end : q + 4096;
+	    /* Preserve len when we reset p.  */
+	    len = p - q;
+	    if (read (fd, buf, len) < 0)
+		error (1, errno, "Failed to read from file");
+	    p = lseek (fd, q - src + dest, SEEK_SET);
+	    if (p < 0)
+		error (1, errno, "Failed to set file position for write 2");
+	    if (write (fd, buf, len) < 0)
+		error (1, errno, "Failed to write to file");
+	    q += len;
+	}
+	ftruncate (fd, end - src + dest);
+    }
+
+    /* Restore blocking status.  */
+    if (fcntl (fd, F_SETFL, flags) < 0)
+	error (1, errno, "Failed to restore FD flags.");
+}
+
+
+
+/*
+ * Replace RLEN bytes at OFFSET in FD open for read/write with the LEN bytes
+ * found at BUF.
+ *
+ * Resets the file position to EOF when done.
+ *
+ * ERRORS
+ *   Are fatal.
+ */
+static void
+replace_file_offset (int fd, off_t offset, size_t rlen, void *buf, size_t len)
+{
+    move_file_offset (fd, offset + rlen, offset + len);
+    if (!len) return;
+    if (lseek (fd, offset, SEEK_SET) < 0)
+	error (1, errno, "Failed to set file position for replace write");
+    if (write (fd, buf, len) < 0)
+	error (1, errno, "Failed to write to file");
+    if (lseek (fd, 0, SEEK_END) < 0)
+	error (1, errno, "Failed to set file position to EOF after replace");
 }
 
 
@@ -1040,11 +998,25 @@ E Protocol error: Root says \"%s\" but pserver says \"%s\"",
      */
     if (isSecondaryServer ())
     {
+	size_t len;
+	char *buf;
+
 	if (!secondary_log)
 	    /* Exit with an error since we must have failed to open the
 	     * secondary log in server().
 	     */
 	    error (1, 0, "No secondary log found for write proxy.");
+
+	/* Replace the `Root' request in the log with a request for our
+	 * primary.
+	 */
+	len = 5 + strlen (PrimaryServer->directory);
+	buf = xmalloc (len + 1);
+	sprintf (buf, "Root %s", PrimaryServer->directory);
+	replace_file_offset (log_buffer_get_log_fd (secondary_log),
+	                     buf_from_net->last_index,
+	                     buf_from_net->last_count,
+	                     buf, len);
     }
     else
 	/* We are not a secondary server, so reprocess the secondary log and
@@ -1540,7 +1512,9 @@ serve_sticky (char *arg)
 	return;
     }
 }
-
+
+
+
 /*
  * Read SIZE bytes from buf_from_net, write them to FILE.
  *
@@ -3027,6 +3001,231 @@ set_nonblock_fd (fd)
 
 
 
+/* Become a secondary write proxy to a master server.
+ *
+ * This function opens the connection to the primary, dumps the secondary log
+ * to the primary, then reads data from any available connection and writes it
+ * to its partner:
+ *
+ *   buf_from_net -> buf_to_primary
+ *   buf_from_primary -> buf_to_net
+ *
+ * When all "from" connections have sent EOF and all data has been sent to
+ * "to" connections, this function closes the "to" pipes and returns.
+ */
+static void
+become_proxy (void)
+{
+    struct buffer *buf_to_primary;
+    struct buffer *buf_from_primary;
+
+    /* Close the log and open it for read.  */
+    int log_fd = read_secondary_log ();
+    int status, to_primary_fd, from_primary_fd, to_net_fd, from_net_fd;
+    struct buffer *buf_from_net_l;
+
+    /* WRITEPROXY: Call presecondary script.  */
+
+    /* Open connection to primary server.  */
+    open_connection_to_server (PrimaryServer, &buf_to_primary,
+                               &buf_from_primary);
+    setup_logfiles ("CVS_SECONDARY_LOG", &buf_to_primary, &buf_from_primary);
+    if (status = set_nonblock (buf_from_primary))
+	error (1, status, "failed to set nonblocking io from primary");
+    if (status = set_nonblock (buf_from_net))
+	error (1, status, "failed to set nonblocking io from client");
+    if (status = set_nonblock (buf_to_primary))
+	error (1, status, "failed to set nonblocking io to primary");
+    if (status = set_nonblock (buf_to_net))
+	error (1, status, "failed to set nonblocking io to client");
+
+    to_primary_fd = buf_get_fd (buf_to_primary);
+    from_primary_fd = buf_get_fd (buf_from_primary);
+    to_net_fd = buf_get_fd (buf_to_net);
+    assert (to_primary_fd >= 0 && from_primary_fd >= 0 && to_net_fd >= 0);
+
+    buf_from_net_l = fd_buffer_initialize (log_fd, 0, NULL, true,
+                                           outbuf_memory_error);
+    from_net_fd = log_fd;
+    while (from_primary_fd >= 0 || from_net_fd >= 0
+           || to_primary_fd >= 0 || to_net_fd >= 0)
+    {
+	fd_set readfds, writefds;
+	int status, numfds = -1;
+	struct timeval *timeout_ptr;
+	struct timeval timeout;
+
+	FD_ZERO (&readfds);
+	FD_ZERO (&writefds);
+
+	if (!buf_empty_p (buf_from_net) || !buf_empty_p (buf_from_primary))
+	{
+	    /* There is data pending so don't block if we don't find any new
+	     * data on the fds.
+	     */
+	    timeout.tv_sec = 0;
+	    timeout.tv_usec = 0;
+	    timeout_ptr = &timeout;
+	}
+	else
+	    /* block indefinately */
+	    timeout_ptr = NULL;
+
+	/* Set writefds if data is pending.  */
+	if (to_net_fd >= 0 && !buf_empty_p (buf_to_net))
+	{
+	    FD_SET (to_net_fd, &writefds);
+	    numfds = MAX (numfds, to_net_fd);
+	}
+	if (to_primary_fd >= 0 && !buf_empty_p (buf_to_primary))
+	{
+	    FD_SET (to_primary_fd, &writefds);
+	    numfds = MAX (numfds, to_primary_fd);
+	}
+
+	/* Set readfds if descriptors are still open.  */
+	if (from_net_fd >= 0)
+	{
+	    FD_SET (from_net_fd, &readfds);
+	    numfds = MAX (numfds, from_net_fd);
+	}
+	if (from_primary_fd >= 0)
+	{
+	    FD_SET (from_primary_fd, &readfds);
+	    numfds = MAX (numfds, from_primary_fd);
+	}
+
+	do {
+	    /* This used to select on exceptions too, but as far
+	       as I know there was never any reason to do that and
+	       SCO doesn't let you select on exceptions on pipes.  */
+	    numfds = select (numfds, &readfds, &writefds,
+			     NULL, timeout_ptr);
+	    if (numfds < 0 && errno != EINTR)
+	    {
+		/* Sending an error to the client, possibly in the middle of a
+		 * separate protocol message, will likely not mean much to the
+		 * client, but it's better than nothing, I guess.
+		 */
+		buf_output0 (buf_to_net, "E select failed\n");
+		print_error (errno);
+		exit (EXIT_FAILURE);
+	    }
+	} while (numfds < 0);
+
+	if (numfds == 0)
+	{
+	    FD_ZERO (&readfds);
+	    FD_ZERO (&writefds);
+	}
+
+	if (to_net_fd >= 0 && FD_ISSET (to_net_fd, &writefds))
+	{
+	    /* What should we do with errors?  syslog() them?  */
+	    buf_send_output (buf_to_net);
+	    buf_flush (buf_to_net, false);
+	}
+
+	status = 0;
+	if (from_net_fd >= 0 && (FD_ISSET (from_net_fd, &readfds)))
+	    status = buf_input_data (buf_from_net_l, NULL);
+
+	if (!buf_empty_p (buf_from_net_l))
+	    buf_append_buffer (buf_to_primary, buf_from_net_l);
+
+	if (status == -1 /* EOF */)
+	{
+	    if (from_net_fd == log_fd)
+	    {
+		buf_shutdown (buf_from_net_l);
+		buf_free (buf_from_net_l);
+		buf_from_net_l = buf_from_net;
+		assert ((from_net_fd = buf_get_fd (buf_from_net)) >= 0);
+	    }
+	    else
+	    {
+		SIG_beginCrSect();
+		/* Need only to shut this down and set to NULL, really, in
+		 * crit sec, to ensure no double-dispose and to make sure
+		 * network pipes are closed as properly as possible, but I
+		 * don't see much optimization potential in saving values and
+		 * postponing the free.
+		 */
+		buf_shutdown (buf_from_net);
+		buf_free (buf_from_net);
+		buf_from_net = NULL;
+		SIG_endCrSect();
+		from_net_fd = -1;
+	    }
+	}
+	else if (status > 0 /* ERRNO */)
+	{
+	    buf_output0 (buf_to_net,
+			 "E buf_input_data failed reading from client\n");
+	    print_error (status);
+	    exit (EXIT_FAILURE);
+	}
+
+	if (to_primary_fd >= 0 && FD_ISSET (to_primary_fd, &writefds))
+	{
+	    /* What should we do with errors?  syslog() them?  */
+	    buf_send_output (buf_to_primary);
+	    buf_flush (buf_to_primary, false);
+	}
+
+	status = 0;
+	if (from_primary_fd >= 0 && FD_ISSET (from_primary_fd, &readfds))
+	    status = buf_input_data (buf_from_primary, NULL);
+
+	if (!buf_empty_p (buf_from_primary))
+	    buf_append_buffer (buf_to_net, buf_from_primary);
+
+	if (status == -1 /* EOF */)
+	{
+	    buf_shutdown (buf_from_primary);
+	    buf_from_primary = NULL;
+	    from_primary_fd = -1;
+	}
+	else if (status > 0 /* ERRNO */)
+	{
+	    buf_output0 (buf_to_net,
+			 "E buf_input_data failed reading from primary\n");
+	    print_error (status);
+	    exit (EXIT_FAILURE);
+	}
+
+	/* If our "source pipe" is closed and all data has been sent, close
+	 * the corresponding "dest pipe".
+	 */
+	if (from_primary_fd < 0 && buf_empty_p (buf_to_net))
+	{
+	    SIG_beginCrSect();
+	    /* Need only to shut this down and set to NULL, really, in
+	     * crit sec, to ensure no double-dispose and to make sure
+	     * network pipes are closed as properly as possible, but I
+	     * don't see much optimization potential in saving values and
+	     * postponing the free.
+	     */
+	    buf_shutdown (buf_to_net);
+	    buf_free (buf_to_net);
+	    buf_to_net = NULL;
+	    SIG_endCrSect();
+	    to_net_fd = -1;
+	}
+	if (from_net_fd < 0 && buf_empty_p (buf_to_primary))
+	{
+	    buf_shutdown (buf_to_primary);
+	    buf_free (buf_to_primary);
+	    buf_to_primary = NULL;
+	    to_primary_fd = -1;
+	}
+    }
+
+    /* WRITEPROXY: Call postsecondary script.  */
+}
+
+
+
 static void
 do_cvs_command (char *cmd_name, int (*command) (int, char **))
 {
@@ -3063,16 +3262,10 @@ do_cvs_command (char *cmd_name, int (*command) (int, char **))
 	if (lookup_command_attribute (cmd_name) & CVS_CMD_MODIFIES_REPOSITORY
 	    || !strcmp (cmd_name, "version"))
 	{
-	    /* Close the log.  */
-	    log_buffer_disable (secondary_log);
-
-	    /* WRITEPROXY: Call presecondary script.  */
-	    /* WRITEPROXY: Feed the log to the primary server.  */
-	    /* WRITEPROXY: Transfer data between client & primary server.  */
-	    /* WRITEPROXY: Call postsecondary script.  */
+	    become_proxy ();
 	    if (!strcmp (cmd_name, "version"))
 		/* WRITEPROXY: Generate secondary version output.  */;
-	    /* WRITEPROXY: Exit.  */
+	    exit (EXIT_SUCCESS);
 	}
 	else
 	    reprocess_secondary_log ();
@@ -3190,7 +3383,7 @@ error  \n");
 	   flag.  */
 	error_use_protocol = 0;
 
-	protocol = fd_buffer_initialize (protocol_pipe[1], 0,
+	protocol = fd_buffer_initialize (protocol_pipe[1], 0, NULL, false,
 					 protocol_memory_error);
 
 	/* At this point we should no longer be using buf_to_net and
@@ -3329,13 +3522,13 @@ error  \n");
 	    goto error_exit;
 	}
 
-	stdoutbuf = fd_buffer_initialize (stdout_pipe[0], 1,
+	stdoutbuf = fd_buffer_initialize (stdout_pipe[0], 0, NULL, true,
 					  input_memory_error);
 
-	stderrbuf = fd_buffer_initialize (stderr_pipe[0], 1,
+	stderrbuf = fd_buffer_initialize (stderr_pipe[0], 0, NULL, true,
 					  input_memory_error);
 
-	protocol_inbuf = fd_buffer_initialize (protocol_pipe[0], 1,
+	protocol_inbuf = fd_buffer_initialize (protocol_pipe[0], 0, NULL, true,
 					       input_memory_error);
 
 	set_nonblock (buf_to_net);
@@ -3749,7 +3942,9 @@ E CVS locks may need cleaning up.\n");
 
     return;
 }
-
+
+
+
 #ifdef SERVER_FLOWCONTROL
 /*
  * Called by the child at convenient points in the server's execution for
@@ -4654,9 +4849,7 @@ CVS server internal error: unhandled case in server_updated");
 	else if (filebuf == NULL)
 	    buf_append_data (protocol, list, last);
 	else
-	{
 	    buf_append_buffer (protocol, filebuf);
-	}
 	/* Note we only send a newline here if the file ended with one.  */
 
 	/*
@@ -4930,11 +5123,18 @@ serve_gzip_contents (char *arg)
     file_gzip_level = level;
 }
 
+
+
 static void
 serve_gzip_stream (char *arg)
 {
     int level;
 
+    /* If we received this request before the `Root' request, the buffer index
+     * maintained to allow the write proxy to replace the `Root' request would
+     * be relative to the decompressed stream rather than the secondary log.
+     */
+    assert (current_parsed_root);
 
     level = atoi (arg);
     if (level == 0)
@@ -5579,12 +5779,25 @@ server (int argc, char **argv)
     if (getenv ("CVS_PARENT_SERVER_SLEEP"))
     {
 	int secs = atoi (getenv ("CVS_PARENT_SERVER_SLEEP"));
+	TRACE (TRACE_DATA, "Sleeping CVS_PARENT_SERVER_SLEEP (%d) seconds",
+	       secs);
 	sleep (secs);
     }
+    else
+	TRACE (TRACE_DATA, "CVS_PARENT_SERVER_SLEEP not set.");
 
-    buf_to_net = fd_buffer_initialize (STDOUT_FILENO, 0,
-				       outbuf_memory_error);
-    buf_from_net = stdio_buffer_initialize (stdin, 0, 1, outbuf_memory_error);
+    /* pserver_authenticate_connection () (called from main ()) can initialize
+     * these.
+     */
+    if (!buf_to_net)
+    {
+	buf_to_net = fd_buffer_initialize (STDOUT_FILENO, 0, NULL, false,
+					   outbuf_memory_error);
+	buf_from_net = fd_buffer_initialize (STDIN_FILENO, 0, NULL, true,
+					     outbuf_memory_error);
+    }
+
+    setup_logfiles ("CVS_SERVER_LOG", &buf_to_net, &buf_from_net);
 
     /* We have to set up the recording for all servers.  Until we receive the
      * `Root' request and load CVSROOT/config, we can't tell if we are a
@@ -6291,21 +6504,45 @@ handle_return:
 
 #if defined (AUTH_SERVER_SUPPORT) || defined (HAVE_GSSAPI)
 
+static void
+pserver_read_line (char **tmp, size_t *tmp_len)
+{
+    int status;
+
+    /* Make sure the protocol starts off on the right foot... */
+    status = buf_read_short_line (buf_from_net, tmp, tmp_len, PATH_MAX);
+    if (status == -1)
+    {
+#ifdef HAVE_SYSLOG_H
+	syslog (LOG_DAEMON | LOG_NOTICE,
+	        "unexpected EOF encountered during authentication");
+#endif
+	error (1, 0, "unexpected EOF encountered during authentication");
+    }
+    if (status == -2)
+	status = ENOMEM;
+    if (status != 0)
+    {
+#ifdef HAVE_SYSLOG_H
+	syslog (LOG_DAEMON | LOG_NOTICE,
+                "error reading from net while validating pserver");
+#endif
+	error (1, status, "error reading from net while validating pserver");
+    }
+}
+
 /* Read username and password from client (i.e., stdin).
    If correct, then switch to run as that user and send an ACK to the
    client via stdout, else send NACK and die. */
 void
 pserver_authenticate_connection (void)
 {
-    char *tmp = NULL;
-    size_t tmp_allocated = 0;
+    char *tmp;
+    size_t tmp_len;
 #ifdef AUTH_SERVER_SUPPORT
     char *repository = NULL;
-    size_t repository_allocated = 0;
     char *username = NULL;
-    size_t username_allocated = 0;
     char *password = NULL;
-    size_t password_allocated = 0;
 
     char *host_user;
     char *descrambled_password;
@@ -6354,6 +6591,12 @@ pserver_authenticate_connection (void)
      * big deal.
      */
 
+    /* Initialize buffers.  */
+    buf_to_net = fd_buffer_initialize (STDOUT_FILENO, 0, NULL, false,
+				       outbuf_memory_error);
+    buf_from_net = fd_buffer_initialize (STDIN_FILENO, 0, NULL, true,
+					 outbuf_memory_error);
+
 #ifdef SO_KEEPALIVE
     /* Set SO_KEEPALIVE on the socket, so that we don't hang forever
        if the client dies while we are waiting for input.  */
@@ -6371,19 +6614,13 @@ pserver_authenticate_connection (void)
 #endif
 
     /* Make sure the protocol starts off on the right foot... */
-    if( getnline( &tmp, &tmp_allocated, PATH_MAX, stdin ) < 0 )
-	{
-#ifdef HAVE_SYSLOG_H
-	    syslog (LOG_DAEMON | LOG_NOTICE, "bad auth protocol start: EOF");
-#endif
-	    error (1, 0, "bad auth protocol start: EOF");
-	}
+    pserver_read_line (&tmp, NULL);
 
-    if (strcmp (tmp, "BEGIN VERIFICATION REQUEST\n") == 0)
+    if (strcmp (tmp, "BEGIN VERIFICATION REQUEST") == 0)
 	verify_and_exit = 1;
-    else if (strcmp (tmp, "BEGIN AUTH REQUEST\n") == 0)
+    else if (strcmp (tmp, "BEGIN AUTH REQUEST") == 0)
 	;
-    else if (strcmp (tmp, "BEGIN GSSAPI REQUEST\n") == 0)
+    else if (strcmp (tmp, "BEGIN GSSAPI REQUEST") == 0)
     {
 #ifdef HAVE_GSSAPI
 	free (tmp);
@@ -6402,36 +6639,29 @@ pserver_authenticate_connection (void)
 
 #else /* AUTH_SERVER_SUPPORT */
 
+    free (tmp);
+
     /* Get the three important pieces of information in order. */
     /* See above comment about error handling.  */
-    getnline( &repository, &repository_allocated, PATH_MAX, stdin );
-    getnline( &username, &username_allocated, PATH_MAX, stdin );
-    getnline( &password, &password_allocated, PATH_MAX, stdin );
-
-    /* Make them pure.
-     *
-     * We check that none of the lines were truncated by getnline in order
-     * to be sure that we don't accidentally allow a blind DOS attack to
-     * authenticate, however slim the odds of that might be.
-     */
-    if (!strip_trailing_newlines (repository)
-	|| !strip_trailing_newlines (username)
-	|| !strip_trailing_newlines (password))
-	error (1, 0, "Maximum line length exceeded during authentication.");
+    pserver_read_line (&repository, NULL);
+    pserver_read_line (&username, NULL);
+    pserver_read_line (&password, NULL);
 
     /* ... and make sure the protocol ends on the right foot. */
     /* See above comment about error handling.  */
-    getnline( &tmp, &tmp_allocated, PATH_MAX, stdin );
+    pserver_read_line (&tmp, NULL);
     if (strcmp (tmp,
 		verify_and_exit ?
-		"END VERIFICATION REQUEST\n" : "END AUTH REQUEST\n")
+		"END VERIFICATION REQUEST" : "END AUTH REQUEST")
 	!= 0)
     {
 	error (1, 0, "bad auth protocol end: %s", tmp);
     }
+    free (tmp);
+
     if (!root_allow_ok (repository))
     {
-	printf ("error 0 %s: no such repository\n", repository);
+	error (1, 0, "%s: no such repository", repository);
 #ifdef HAVE_SYSLOG_H
 	syslog (LOG_DAEMON | LOG_NOTICE, "login refused for %s", repository);
 #endif
@@ -6456,8 +6686,8 @@ pserver_authenticate_connection (void)
 	memset (descrambled_password, 0, strlen (descrambled_password));
 	free (descrambled_password);
     i_hate_you:
-	printf ("I HATE YOU\n");
-	fflush (stdout);
+	buf_output0 (buf_to_net, "I HATE YOU\n");
+	buf_flush (buf_to_net, true);
 
 	/* Don't worry about server_cleanup, server_active isn't set
 	   yet.  */
@@ -6469,9 +6699,9 @@ pserver_authenticate_connection (void)
     /* Don't go any farther if we're just responding to "cvs login". */
     if (verify_and_exit)
     {
-	printf ("I LOVE YOU\n");
-	fflush (stdout);
-	exit (0);
+	buf_output0 (buf_to_net, "I LOVE YOU\n");
+	buf_flush (buf_to_net, true);
+	exit (EXIT_SUCCESS);
     }
 
     /* Set Pserver_Repos so that we can check later that the same
@@ -6482,13 +6712,12 @@ pserver_authenticate_connection (void)
     /* Switch to run as this user. */
     switch_to_user (username, host_user);
     free (host_user);
-    free (tmp);
     free (repository);
     free (username);
     free (password);
 
-    printf ("I LOVE YOU\n");
-    fflush (stdout);
+    buf_output0 (buf_to_net, "I LOVE YOU\n");
+    buf_flush (buf_to_net, true);
 #endif /* AUTH_SERVER_SUPPORT */
 }
 

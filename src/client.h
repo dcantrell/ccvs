@@ -9,10 +9,8 @@ extern int file_gzip_level;
 
 struct buffer;
 
-void make_bufs_from_fds ( int, int, int,
-			        struct buffer **,
-			        struct buffer **,
-			        int );
+void make_bufs_from_fds (int, int, int, cvsroot_t *,
+			 struct buffer **, struct buffer **, int );
 
 
 #if defined (CLIENT_SUPPORT) || defined (SERVER_SUPPORT)
@@ -81,6 +79,9 @@ extern int get_responses_and_close (void);
 extern int get_server_responses (void);
 
 /* Start up the connection to the server on the other end.  */
+void
+open_connection_to_server (cvsroot_t *root, struct buffer **to_server_p,
+                           struct buffer **from_server_p);
 void
 start_server (void);
 

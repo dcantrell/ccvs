@@ -41,6 +41,7 @@
 
 /* begin GNULIB headers */
 #include "exit.h"
+#include "minmax.h"
 #include "vasnprintf.h"
 #include "xalloc.h"
 #include "xsize.h"

@@ -1,3 +1,57 @@
+2004-06-28  Derek Price  <derek@ximbiot.com>
+
+	Intermediate checkin on the way to enabling the write proxy.
+
+	* server.c (isSecondaryServer): Handle forked primary.
+	(read_secondary_log, move_file_offset, replace_file_offset,
+	become_proxy, pserver_read_line): New functions.
+	(reprocess_secondary_log): Use new read_secondary_log().
+	(serve_root): Replace `Root' request with new version for primary.
+	(do_cvs_command): Use new become_proxy() function.
+	(*): Gratuitous reformatting.  Provide new args for
+	fd_buffer_initialize().
+	(server): Open new logs and avoid opening pipes to pserver twice.
+	(pserver_authenticate_connection): Use pserver_read_line().
+	(fd_buffer*): Move to...
+	* buffer.c (fd_buffer*): ...here.
+	(buf_initialize): Handle new LAST_INDEX, LAST_COUNT, &
+	GET_FD() initializers.
+	(buf_nonio_initialize, packetizing_buffer_initialize): Provide new
+	arguments to buf_initialize.
+	(*): Remove unnecessary typecasts.  Gratuitous reformatting.  Use
+	assert() rather than if()/abort().
+	(buf_append_buffer, buf_read_datai, buf_copy_lines, buf_copy_counted):
+	Track LAST_INDEX & LAST_COUNT.
+	(buf_read_line): Move content to...
+	(buf_read_short_line): ...this new function.  Track LAST_INDEX &
+	LAST_COUNT.
+	(buf_get_fd, packetizing_buffer_get_fd): New functions.
+	(stdio_buffer_*): Comment out for now.
+	* buffer.h (struct buffer): Add LAST_INDEX, LAST_COUNT, & GET_FD.
+	(fd_buffer_*): New protos.
+	(*): Update & de"extern" protos.
+	* client.c: Compile when HAVE_SERVER.
+	(make_bufs_from_fds): Accept root argument.
+	(connect_to_pserver): Use new args to make_bufs_from_fds().
+	(connect_to_forked_server): Ditto && accept root arga
+	(start_server): Factor some functionality into...
+	(open_connection_to_server): ...this new function.
+	* client.h: Update protos to match.
+	* cvs.h: Include minmax.h.
+	* log-buffer.c (log_buffer_get_fd, log_buffer_get_log_fd): New
+	functions.
+	(log_buffer_flush): fdatasync after a flush.
+	(setup_logfiles): Accept env var name to initialize log from.
+	(*): Gratuitous reformatting.  Provide new arguments for
+	buf_initialize().  Prefer assert() to if()/abort().
+	* log-buffer.h: Update protos to match.
+	* root.h (enum CVSmethod): Force null_method to 0.
+	* rsh-client.c (start_rsh_server): Pass root to make_bufs_from_fd().
+	* zlib.c (compress_buffer_get_fd): New function.
+	(compress_buffer_initialize): Provide new arguments to buf_initialize.
+	(*): Remove unnecessary typecasts.  Gratuitous reformatting.  Use
+	assert() rather than if()/abort().
+
 2004-06-23  Derek Price  <derek@ximbiot.com>
 
 	Checkout and probably other read-only commands now work.

@@ -11,7 +11,7 @@
 
 /* Access method specified in CVSroot. */
 typedef enum {
-    null_method,
+    null_method = 0,
     local_method,
     server_method,
     pserver_method,

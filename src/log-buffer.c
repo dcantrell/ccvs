@@ -39,6 +39,7 @@ static int log_buffer_input (void *, char *, int, int, int *);
 static int log_buffer_output (void *, const char *, int, int *);
 static int log_buffer_flush (void *);
 static int log_buffer_block (void *, int);
+static int log_buffer_get_fd (void *);
 static int log_buffer_shutdown (struct buffer *);
 
 /* Create a log buffer.  */
@@ -47,22 +48,24 @@ struct buffer *
 log_buffer_initialize (struct buffer *buf, FILE *fp, bool fatal_errors,
                        bool input, void (*memory) (struct buffer *))
 {
-    struct log_buffer *n;
-    n = xmalloc (sizeof *n);
+    struct log_buffer *n = xmalloc (sizeof *n);
+
     n->buf = buf;
     n->log = fp;
     n->fatal_errors = fatal_errors;
-    return buf_initialize (input ? log_buffer_input : NULL,
+    return buf_initialize (0, 0,
+                           input ? log_buffer_input : NULL,
 			   input ? NULL : log_buffer_output,
 			   input ? NULL : log_buffer_flush,
-			   log_buffer_block,
+			   log_buffer_block, log_buffer_get_fd,
 			   log_buffer_shutdown,
 			   memory,
 			   n);
 }
 
-/* The input function for a log buffer.  */
 
+
+/* The input function for a log buffer.  */
 static int
 log_buffer_input (void *closure, char *data, int need, int size, int *got)
 {
@@ -87,8 +90,9 @@ log_buffer_input (void *closure, char *data, int need, int size, int *got)
     return 0;
 }
 
-/* The output function for a log buffer.  */
 
+
+/* The output function for a log buffer.  */
 static int
 log_buffer_output (void *closure, const char *data, int have, int *wrote)
 {
@@ -120,20 +124,20 @@ log_buffer_flush (void *closure)
 {
     struct log_buffer *lb = closure;
 
-    if (lb->buf->flush == NULL)
-	abort ();
+    assert (lb->buf->flush);
 
     /* We don't really have to flush the log file here, but doing it
        will let tail -f on the log file show what is sent to the
        network as it is sent.  */
-    if (lb->log && fflush (lb->log) != 0)
+    if (lb->log && fflush (lb->log) || fdatasync (fileno (lb->log)))
         error (0, errno, "flushing log file");
 
     return (*lb->buf->flush) (lb->buf->closure);
 }
 
-/* The block function for a log buffer.  */
 
+
+/* The block function for a log buffer.  */
 static int
 log_buffer_block (void *closure, int block)
 {
@@ -143,18 +147,6 @@ log_buffer_block (void *closure, int block)
 	return set_block (lb->buf);
     else
 	return set_nonblock (lb->buf);
-}
-
-/* The shutdown function for a log buffer.  */
-
-static int
-log_buffer_shutdown (struct buffer *buf)
-{
-    struct log_buffer *lb = buf->closure;
-    int retval;
-
-    log_buffer_disable (buf);
-    return buf_shutdown (lb->buf);
 }
 
 
@@ -174,10 +166,48 @@ log_buffer_disable (struct buffer *buf)
 
 
 
-void
-setup_logfiles (struct buffer **to_server_p, struct buffer **from_server_p)
+/* Return the file descriptor of our log, flushing the stream first.
+ */
+int
+log_buffer_get_log_fd (struct buffer *buf)
 {
-  char *log = getenv ("CVS_CLIENT_LOG");
+    struct log_buffer *lb = buf->closure;
+    assert (lb->log);
+    if (fflush (lb->log) == EOF)
+	error (1, errno, "Failed to flush log stream");
+    return fileno (lb->log);
+}
+
+
+
+/* Return the file descriptor underlying any child buffers.  */
+static int
+log_buffer_get_fd (void *closure)
+{
+    struct log_buffer *lb = closure;
+    return buf_get_fd (lb->buf);
+}
+
+
+
+/* The shutdown function for a log buffer.  */
+static int
+log_buffer_shutdown (struct buffer *buf)
+{
+    struct log_buffer *lb = buf->closure;
+    int retval;
+
+    log_buffer_disable (buf);
+    return buf_shutdown (lb->buf);
+}
+
+
+
+void
+setup_logfiles (char *var, struct buffer **to_server_p,
+                struct buffer **from_server_p)
+{
+  char *log = getenv (var);
 
   /* Set up logfiles, if any.
    *

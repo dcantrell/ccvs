@@ -3043,7 +3043,7 @@ supported_request( char *name )
 
 
 
-#if defined (AUTH_CLIENT_SUPPORT) || defined (HAVE_KERBEROS) || defined (HAVE_GSSAPI)
+#if defined (AUTH_CLIENT_SUPPORT) || defined (SERVER_SUPPORT) || defined (HAVE_KERBEROS) || defined (HAVE_GSSAPI)
 
 
 /* Generic function to do port number lookup tasks.
@@ -3140,21 +3140,16 @@ get_proxy_port_number (const cvsroot_t *root)
 
 
 void
-make_bufs_from_fds( int tofd, int fromfd, int child_pid,
-                    struct buffer **to_server_p,
-                    struct buffer **from_server_p, int is_sock )
+make_bufs_from_fds(int tofd, int fromfd, int child_pid, cvsroot_t *root,
+                   struct buffer **to_server_p,
+                   struct buffer **from_server_p, int is_sock)
 {
-    FILE *to_server_fp;
-    FILE *from_server_fp;
-
 # ifdef NO_SOCKET_TO_FD
     if (is_sock)
     {
 	assert (tofd == fromfd);
-	*to_server_p = socket_buffer_initialize (tofd, 0,
-					      (BUFMEMERRPROC) NULL);
-	*from_server_p = socket_buffer_initialize (tofd, 1,
-						(BUFMEMERRPROC) NULL);
+	*to_server_p = socket_buffer_initialize (tofd, 0, NULL);
+	*from_server_p = socket_buffer_initialize (tofd, 1, NULL);
     }
     else
 # endif /* NO_SOCKET_TO_FD */
@@ -3179,20 +3174,12 @@ make_bufs_from_fds( int tofd, int fromfd, int child_pid,
 	 * child_pid in there.  In theory, it should be stored in both
 	 * buffers with a ref count...
 	 */
-	to_server_fp = fdopen (tofd, FOPEN_BINARY_WRITE);
-	if (to_server_fp == NULL)
-	    error (1, errno, "cannot fdopen %d for write", tofd);
-	*to_server_p = stdio_buffer_initialize (to_server_fp, 0, 0,
-					     (BUFMEMERRPROC) NULL);
-
-	from_server_fp = fdopen (fromfd, FOPEN_BINARY_READ);
-	if (from_server_fp == NULL)
-	    error (1, errno, "cannot fdopen %d for read", fromfd);
-	*from_server_p = stdio_buffer_initialize (from_server_fp, child_pid, 1,
-					       (BUFMEMERRPROC) NULL);
+	*to_server_p = fd_buffer_initialize (tofd, 0, root, false, NULL);
+	*from_server_p = fd_buffer_initialize (fromfd, child_pid, root,
+                                               true, NULL);
     }
 }
-#endif /* defined (AUTH_CLIENT_SUPPORT) || defined (HAVE_KERBEROS) || defined(HAVE_GSSAPI) */
+#endif /* defined (AUTH_CLIENT_SUPPORT) || defined (SERVER_SUPPORT) || defined (HAVE_KERBEROS) || defined(HAVE_GSSAPI) */
 
 
 
@@ -3251,7 +3238,7 @@ connect_to_pserver (cvsroot_t *root, struct buffer **to_server_p,
 	       root->proxy_hostname ? proxy_port_number : port_number,
                SOCK_STRERROR (SOCK_ERRNO));
 
-    make_bufs_from_fds (sock, sock, 0, &to_server, &from_server, 1);
+    make_bufs_from_fds (sock, sock, 0, root, &to_server, &from_server, 1);
 
     /* if we have proxy then connect to the proxy first */
     if (root->proxy_hostname)
@@ -3337,8 +3324,7 @@ auth_server (cvsroot_t *root, struct buffer *to_server,
     if (do_gssapi)
     {
 # ifdef HAVE_GSSAPI
-	FILE *fp = stdio_buffer_get_file (to_server);
-	int fd = fp ? fileno (fp) : -1;
+	int fd = buf_get_fd (to_server);
 	struct stat s;
 
 	if ((fd < 0) || (fstat (fd, &s) < 0) || !S_ISSOCK(s.st_mode))
@@ -3497,7 +3483,7 @@ auth_server (cvsroot_t *root, struct buffer *to_server,
  * Connect to a forked server process.
  */
 static void
-connect_to_forked_server (struct buffer **to_server_p,
+connect_to_forked_server (cvsroot_t *root, struct buffer **to_server_p,
                           struct buffer **from_server_p)
 {
     int tofd, fromfd;
@@ -3541,7 +3527,8 @@ connect_to_forked_server (struct buffer **to_server_p,
     if (child_pid < 0)
 	error (1, 0, "could not fork server process");
 
-    make_bufs_from_fds (tofd, fromfd, child_pid, to_server_p, from_server_p, 0);
+    make_bufs_from_fds (tofd, fromfd, child_pid, root, to_server_p,
+                        from_server_p, 0);
 }
 #endif /* CLIENT_SUPPORT */
 
@@ -3560,23 +3547,19 @@ send_variable_proc (Node *node, void *closure)
 
 
 
-/* Contact the server.  */
+/* Open up the connection to the server and perform any necessary
+ * authentication.
+ */
 void
-start_server (void)
+open_connection_to_server (cvsroot_t *root, struct buffer **to_server_p,
+                           struct buffer **from_server_p)
 {
-    int rootless;
-
-    /* Clear our static variables for this invocation. */
-    if (toplevel_repos != NULL)
-	free (toplevel_repos);
-    toplevel_repos = NULL;
-
     /* Note that generally speaking we do *not* fall back to a different
        way of connecting if the first one does not work.  This is slow
        (*really* slow on a 14.4kbps link); the clean way to have a CVS
        which supports several ways of connecting is with access methods.  */
 
-    switch (current_parsed_root->method)
+    switch (root->method)
     {
 
 #ifdef AUTH_CLIENT_SUPPORT
@@ -3584,23 +3567,21 @@ start_server (void)
 	    /* Toss the return value.  It will die with an error message if
 	     * anything goes wrong anyway.
 	     */
-	    connect_to_pserver (current_parsed_root, &global_to_server,
-                                &global_from_server, 0, 0);
+	    connect_to_pserver (root, to_server_p, from_server_p, 0, 0);
 	    break;
 #endif /* AUTH_CLIENT_SUPPORT */
 
 #if HAVE_KERBEROS
 	case kserver_method:
-	    start_kerberos4_server (current_parsed_root, &global_to_server, 
-                                    &global_from_server);
+	    start_kerberos4_server (root, to_server_p, 
+                                    from_server_p);
 	    break;
 #endif /* HAVE_KERBEROS */
 
 #ifdef HAVE_GSSAPI
 	case gserver_method:
 	    /* GSSAPI authentication is handled by the pserver.  */
-	    connect_to_pserver (current_parsed_root, &global_to_server,
-                                &global_from_server, 0, 1);
+	    connect_to_pserver (root, to_server_p, from_server_p, 0, 1);
 	    break;
 #endif /* HAVE_GSSAPI */
 
@@ -3609,8 +3590,8 @@ start_server (void)
 	    error (0, 0, ":ext: method not supported by this port of CVS");
 	    error (1, 0, "try :server: instead");
 #else /* ! NO_EXT_METHOD */
-	    start_rsh_server (current_parsed_root, &global_to_server,
-                              &global_from_server);
+	    start_rsh_server (root, to_server_p,
+                              from_server_p);
 #endif /* NO_EXT_METHOD */
 	    break;
 
@@ -3619,15 +3600,15 @@ start_server (void)
 	    {
 	    int tofd, fromfd;
 	    START_SERVER (&tofd, &fromfd, getcaller (),
-			  current_parsed_root->username,
-                          current_parsed_root->hostname,
-			  current_parsed_root->directory);
+			  root->username,
+                          root->hostname,
+			  root->directory);
 # ifdef START_SERVER_RETURNS_SOCKET
-	    make_bufs_from_fds (tofd, fromfd, 0, &global_to_server,
-                                &global_from_server, 1);
+	    make_bufs_from_fds (tofd, fromfd, 0, root, to_server_p,
+                                from_server_p, 1);
 # else /* ! START_SERVER_RETURNS_SOCKET */
-	    make_bufs_from_fds (tofd, fromfd, 0, &global_to_server,
-                                &global_from_server, 0);
+	    make_bufs_from_fds (tofd, fromfd, 0, root, to_server_p,
+                                from_server_p, 0);
 # endif /* START_SERVER_RETURNS_SOCKET */
 	    }
 #else /* ! START_SERVER */
@@ -3640,7 +3621,7 @@ start_server (void)
 	    break;
 
         case fork_method:
-	    connect_to_forked_server (&global_to_server, &global_from_server);
+	    connect_to_forked_server (root, to_server_p, from_server_p);
 	    break;
 
 	default:
@@ -3652,7 +3633,24 @@ start_server (void)
     /* "Hi, I'm Darlene and I'll be your server tonight..." */
     server_started = 1;
 
-    setup_logfiles(&global_to_server, &global_from_server);
+    setup_logfiles ("CVS_CLIENT_LOG", to_server_p, from_server_p);
+}
+
+
+
+/* Contact the server.  */
+void
+start_server (void)
+{
+    int rootless;
+
+    /* Clear our static variables for this invocation. */
+    if (toplevel_repos != NULL)
+	free (toplevel_repos);
+    toplevel_repos = NULL;
+
+    open_connection_to_server (current_parsed_root, &global_to_server,
+                               &global_from_server);
 
     /* Clear static variables.  */
     if (toplevel_repos != NULL)

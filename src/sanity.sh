@@ -26778,13 +26778,14 @@ EOF
 	    done
 	    dotest_fail pserver-auth-no-dos \
 "${servercvs} --allow-root=${CVSROOT_DIRNAME} pserver" \
-"$CPROG \\[pserver aborted\\]: Maximum line length exceeded during authentication\." <garbageinput
+"$CPROG \\[pserver aborted\\]: error reading from net while validating pserver: Cannot allocate memory" <garbageinput
 	    unset i
 	    rm garbageseg garbageseg2 garbageinput
 
 	    # Sending the Root and noop before waiting for the
 	    # "I LOVE YOU" is bogus, but hopefully we can get
 	    # away with it.
+#export CVS_PARENT_SERVER_SLEEP=30
 	    dotest pserver-4 "${servercvs} --allow-root=${CVSROOT_DIRNAME} pserver" \
 "${DOTSTAR} LOVE YOU
 ok" <<EOF
@@ -27168,7 +27169,7 @@ EOF
 	    # pserver used to try and print from the NULL pointer 
 	    # in this error message in this case
 	    dotest_fail pserver-bufinit "${servercvs} pserver" \
-"$CPROG \[pserver aborted\]: bad auth protocol start: EOF" </dev/null
+"$CPROG \[pserver aborted\]: unexpected EOF encountered during authentication" </dev/null
 
 	    # Clean up.
 	    dotest pserver-cleanup-1 "${testcvs} -q up -pr1.1 config >config" ""
