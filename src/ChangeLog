@@ -1,3 +1,8 @@
+Tue Oct  1 00:32:55 1996  Jim Blandy  <jimb@floss.cyclic.com>
+
+	* import.c: Revert Greg Woods' changes of Sep 30.  We may want
+	them later, but not before 1.9.
+
 Mon Sep 30 23:31:01 1996  Jim Blandy  <jimb@floss.cyclic.com>
 
 	* log.c (log_fileproc): Now that we might actually find a "desc"
