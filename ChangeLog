@@ -1,3 +1,8 @@
+2003-06-20  Derek Price  <derek@ximbiot.com>
+
+	* INSTALL: Add some OS X platforms to the compile list. Correct link to
+	cvsgui.org -> wincvs.org.
+
 2003-06-09  Derek Price  <derek@ximbiot.com>
 
 	* cvsnt.mak: Rename win32.c to woe32.c in accordance with the GNU
