@@ -143,11 +143,7 @@ login (argc, argv)
 
     cvs_password = xstrdup (typed_password);
 
-    if (connect_to_pserver (NULL, NULL, 1) == 0)
-    {
-	/* The password is wrong, according to the server. */
-	error (1, 0, "incorrect password");
-    }
+    connect_to_pserver (NULL, NULL, 1);
 
     /* IF we have a password for this "[user@]host:/path" already
      *  THEN

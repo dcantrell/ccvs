@@ -3241,18 +3241,16 @@ auth_server_port_number ()
 }
 
 
-/*
- * Connect to the authenticating server.
- *
- * If VERIFY_ONLY is non-zero, then just verify that the password is
- * correct and then shutdown the connection.  In this case, the return
- * values is 1 if the password was correct, 0 if not.
- *
- * If VERIFY_ONLY is 0, then really connect to the server.  In this
- * case the return value is 1 on succees, but is probably ignored.  If
- * fail to connect, then die with error.
- */
-int
+/* Connect to the authenticating server.
+
+   If VERIFY_ONLY is non-zero, then just verify that the password is
+   correct and then shutdown the connection.
+
+   If VERIFY_ONLY is 0, then really connect to the server.
+
+   If we fail to connect or if access is denied, then die with fatal
+   error.  */
+void
 connect_to_pserver (tofdp, fromfdp, verify_only)
      int *tofdp, *fromfdp;
      int verify_only;
@@ -3360,12 +3358,9 @@ connect_to_pserver (tofdp, fromfdp, verify_only)
 		       SOCK_STRERROR (SOCK_ERRNO));
 	    }
 
-	    if (verify_only)
-		return 0;
-	    else
-		error (1, 0, 
-		       "authorization failed: server %s rejected access", 
-		       CVSroot_hostname);
+	    error (1, 0, 
+		   "authorization failed: server %s rejected access", 
+		   CVSroot_hostname);
 	}
 	else if (strcmp (read_buf, "I LOVE YOU\n") != 0)
 	{
@@ -3390,7 +3385,7 @@ connect_to_pserver (tofdp, fromfdp, verify_only)
 	if (shutdown (sock, 2) < 0)
 	    error (0, 0, "shutdown() failed, server %s: %s", CVSroot_hostname,
 		   SOCK_STRERROR (SOCK_ERRNO));
-	return 1;
+	return;
     }
     else
     {
@@ -3410,7 +3405,7 @@ connect_to_pserver (tofdp, fromfdp, verify_only)
 #endif /* NO_SOCKET_TO_FD */
     }
 
-    return 1;
+    return;
 }
 #endif /* AUTH_CLIENT_SUPPORT */
 
