@@ -1,5 +1,17 @@
 Wed Sep 25 05:17:50 1996  Jim Blandy  <jimb@floss.cyclic.com>
 
+	* update.c (update): Don't neglect to pass the -kmumble options
+	to the server.
+	* sanity.sh (binfiles-sticky): New tests for above.
+
+	* cvsrc.c (read_cvsrc): Deal correctly with lines that specify a
+	command, but no options; don't corrupt argv.
+
+	* sanity.sh: When testing rsh, use the program specified by
+ 	the CVS_RSH environment variable, if it's set.  Move test to top
+	of file, so it runs before all other tests (it's really a
+	meta-test).
+
 	* filesubr.c (get_homedir): Use getpwuid to find the home
 	directory, if the HOME environment variable isn't set.
 	* ignore.c (ign_add_file): Call get_homedir to find the user's
