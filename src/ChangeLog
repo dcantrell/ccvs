@@ -1,5 +1,10 @@
 Sat Feb 24 01:05:21 1996  Karl Fogel  <kfogel@floss.red-bean.com>
 
+        * scramble.c (descramble): just shift descrambled string to get
+        rid of tag char, instead of allocating a whole new copy.
+        (scramble): cast return value of xmalloc to avoid unsightly
+        compiler warnings.
+
         * options.h.in (RCSBIN_DFLT): don't refer to AUTH_SERVER_SUPPORT
         in comment anymore, now that it's not defined in this file.
 
