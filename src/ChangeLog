@@ -1,3 +1,8 @@
+2003-10-07  Larry Jones  <lawrence.jones@eds.com>
+
+	* server.c (server_cleanup): Remove old code that was commented out
+	with //, which isn't valid in C.
+
 2003-10-04  Derek Price  <derek@ximbiot.com>
 
 	* exithandle.c: New file.
