@@ -216,7 +216,7 @@ isaccessible (file, mode)
     int umask = 0;
     int gmask = 0;
     int omask = 0;
-    int uid;
+    int uid, mask;
     
     if (stat(file, &sb) == -1)
 	return 0;
@@ -226,10 +226,11 @@ isaccessible (file, mode)
     uid = geteuid();
     if (uid == 0)		/* superuser */
     {
-	if (mode & X_OK)
-	    return sb.st_mode & (S_IXUSR|S_IXGRP|S_IXOTH);
-	else
+	if (!(mode & X_OK) || (sb.st_mode & (S_IXUSR|S_IXGRP|S_IXOTH)))
 	    return 1;
+
+	errno = EACCES;
+	return 0;
     }
 	
     if (mode & R_OK)
@@ -251,12 +252,11 @@ isaccessible (file, mode)
 	omask |= S_IXOTH;
     }
 
-    if (sb.st_uid == uid)
-	return (sb.st_mode & umask) == umask;
-    else if (sb.st_gid == getegid())
-	return (sb.st_mode & gmask) == gmask;
-    else
-	return (sb.st_mode & omask) == omask;
+    mask = sb.st_uid == uid ? umask : sb.st_gid == getegid() ? gmask : omask;
+    if ((sb.st_mode & mask) == mask)
+	return 1;
+    errno = EACCES;
+    return 0;
 #else
     return access(file, mode) == 0;
 #endif
