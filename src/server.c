@@ -15,10 +15,11 @@
 #include "getline.h"
 #include "getnline.h"
 #include "buffer.h"
-#include "log-buffer.h"
-#include "ms-buffer.h"
 
 #if defined(SERVER_SUPPORT) || defined(CLIENT_SUPPORT)
+
+#include "log-buffer.h"
+#include "ms-buffer.h"
 
 #if defined(PROXY_SUPPORT) || defined(HAVE_GSSAPI)
 #  include <netdb.h>

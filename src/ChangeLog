@@ -1,5 +1,14 @@
 2004-10-30  Mark D. Baushke  <mdb@cvshome.org>
 
+	* client.c: Adjust include files to avoid problems with incomplete
+	types under --disable-client.
+	* msg-buffer.c: Deal with --disable-client --disable-server
+	implicitly meaning --disable-proxy.
+	* server.c: Adjust include files to avoid problems with incomplete
+	types under --disable-server.
+
+2004-10-30  Mark D. Baushke  <mdb@cvshome.org>
+
 	* server.c (isThisHost): Deal with possibility of a missing
 	hstrerror() function.
 

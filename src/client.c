@@ -18,11 +18,11 @@
 #include "getline.h"
 #include "edit.h"
 #include "buffer.h"
-#include "log-buffer.h"
 #include "save-cwd.h"
 
 #ifdef CLIENT_SUPPORT
 
+# include "log-buffer.h"
 # include "md5.h"
 
 #include "socket-client.h"

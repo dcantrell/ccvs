@@ -18,6 +18,7 @@
 #include "buffer.h"
 #include "ms-buffer.h"
 
+#if defined (SERVER_SUPPORT) || defined (CLIENT_SUPPORT)
 #ifdef PROXY_SUPPORT
 
 /* This structure is the closure field of a multi-source buffer.  */
@@ -158,3 +159,4 @@ ms_buffer_initialize (void (*memory) (struct buffer *),
     return retbuf;
 }
 #endif /* PROXY_SUPPORT */
+#endif /* defined (SERVER_SUPPORT) || defined (CLIENT_SUPPORT) */
