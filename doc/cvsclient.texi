@@ -381,7 +381,9 @@ to a horizontal tab.
 * File transmissions::              How file contents are transmitted
 * Strings::                         Strings in various requests and responses
 * Requests::                    
-* Responses::                   
+* Response intro::                  General conventions relating to responses
+* Response pathnames::              The "pathname" in responses
+* Responses::                       List of responses
 * Example::                     
 * Requirements::
 * Obsolete::                        Former protocol features
@@ -1076,8 +1078,8 @@ a previous command which doesn't expect a response produced an error.
 
 When the client is done, it drops the connection.
 
-@node Responses
-@section Responses
+@node Response intro
+@section Introduction to Responses
 
 After a command which expects a response, the server sends however many
 of the following responses are appropriate.  The server should not send
@@ -1085,9 +1087,16 @@ data at other times (the current implementation may violate this
 principle in a few minor places, where the server is printing an error
 message and exiting---this should be investigated further).
 
+Any set of responses always ends with @samp{error} or @samp{ok}.  This
+indicates that the response is over.
+
+@node Response pathnames
+@section The "pathname" in responses
+
+Many of the responses contain something called @var{pathname}.
 @c FIXME: should better document when the specified repository needs to
 @c end in "/.".
-In the following, @var{pathname} actually indicates a pair of
+The name is somewhat misleading; it actually indicates a pair of
 pathnames.  First, a local directory name
 relative to the directory in which the command was given (i.e. the last
 @code{Directory} before the command).  Then a linefeed and a repository
@@ -1126,8 +1135,10 @@ greatly by only telling the client to create directories if the
 directory in question should exist, but until servers do this, clients
 will need to offer the @samp{-P} behavior described above.
 
-Any response always ends with @samp{error} or @samp{ok}.  This indicates
-that the response is over.
+@node Responses
+@section Responses
+
+Here are the responses:
 
 @table @code
 @item Valid-requests @var{request-list} \n

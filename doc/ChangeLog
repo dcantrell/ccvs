@@ -1,3 +1,8 @@
+Fri Jul 25 10:40:22 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvsclient.texi: Split node Responses into Response intro,
+	Response pathnames, and Responses.
+
 Thu Jul 24 23:13:24 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (config): Document SystemAuth.
