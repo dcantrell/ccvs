@@ -1,3 +1,7 @@
+2004-11-03  Derek Price  <derek@ximbiot.com>
+
+	* getdate.y: Update from GNULIB.
+
 2004-11-02  Mark D. Baushke  <mdb@cvshome.org>
 
 	* getpass.c, setenv.h: Update from GNULIB.
