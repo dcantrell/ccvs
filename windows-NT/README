@@ -84,3 +84,9 @@ The following harmless warnings are known:
 .\lib\getdate.c(760) : warning C4013: 'getdate_yyparse' undefined; assuming extern returning int
 .\lib\getdate.c(1612) : warning C4102: 'yyerrlab' : unreferenced label
 .\lib\getdate.c(1612) : warning C4102: 'yynewstate' : unreferenced label
+
+If you want to browse/edit the sources using Visual C++, we recommend
+setting tab stops to 8 spaces, since that is what the CVS sources
+expect.  The tab stop setting is in the "Editor" section of the "Options..."
+dialog which is in the "Tools..." menu.
+

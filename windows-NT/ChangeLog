@@ -1,3 +1,7 @@
+Mon Jul 15 1996  Jim Kingdon  <kingdon@cyclic.com>
+
+	* README: Add note about tab stop setting.
+
 Fri Jun  7 13:07:37 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* config.h: Change INITIALIZE_SOCKET_SUBSYSTEM to
