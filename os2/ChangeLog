@@ -1,3 +1,13 @@
+Mon Aug 12 17:23:52 1996  Jim Kingdon  (unknown@beezley)
+
+	* Makefile.in (COMMON_OBJECTS): Add buffer.obj.
+	(COMMON_SOURCES): Add buffer.c.
+	(zlib_srcdir,ZLIB_OBJECTS): Added.
+	(cvs.exe): Also link with ZLIB_OBJECTS.
+	(OBJECTS): Add ZLIB_OBJECTS.
+	(LIB_OBJECTS): Add valloc.obj.
+	(COMMON_OBJECTS): Add zlib.obj.
+
 Mon Aug 12 16:25:32 1996  Steffen Siebert <siebert@susan.logware.de>
                           and Jim Kingdon  (unknown@beezley)
 
