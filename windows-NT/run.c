@@ -22,8 +22,6 @@
 #include <io.h>
 #include <fcntl.h>
 
-static void run_add_arg( const char *s );
-
 
 
 /*
@@ -71,12 +69,7 @@ run_setup (const char *prog)
     free (run_prog);
 }
 
-void
-run_arg (s)
-    const char *s;
-{
-    run_add_arg (s);
-}
+
 
 /* Return a malloc'd copy of s, with double quotes around it.  */
 static char *
@@ -107,7 +100,9 @@ quote (const char *s)
     return copy;
 }
 
-static void
+
+
+void
 run_add_arg (s)
     const char *s;
 {
@@ -115,8 +110,7 @@ run_add_arg (s)
     if (run_argc >= run_argc_allocated)
     {
 	run_argc_allocated += 50;
-	run_argv = (char **) xrealloc ((char *) run_argv,
-				     run_argc_allocated * sizeof (char **));
+	run_argv = xrealloc (run_argv, run_argc_allocated * sizeof (char **));
     }
 
     if (s)
@@ -125,8 +119,10 @@ run_add_arg (s)
 	run_argc++;
     }
     else
-	run_argv[run_argc] = (char *) 0;	/* not post-incremented on purpose! */
+	run_argv[run_argc] = NULL;	/* not post-incremented on purpose!  */
 }
+
+
 
 int
 run_exec (stin, stout, sterr, flags)
@@ -694,6 +690,16 @@ filter_stream_through_program (oldfd, dir, prog, pidp)
 	*pidp = child;
     return newfd;    
 }
+
+
+
+int
+run_piped (int *tofdp, int *fromfdp)
+{
+    run_add_arg (NULL);
+    return piped_child (run_argv, tofdp, fromfdp);
+}
+
 
 
 /* Arrange for the file descriptor FD to not be inherited by child
