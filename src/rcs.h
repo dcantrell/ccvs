@@ -251,4 +251,4 @@ extern bool preserve_perms;
 extern int add_rcs_file (const char *, const char *, const char *,
                          const char *, const char *, const char *,
                          const char *, int, char **, const char *, size_t,
-                         FILE *, int);
+                         FILE *, bool);

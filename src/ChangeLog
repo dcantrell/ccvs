@@ -1,5 +1,11 @@
 2004-09-29  Derek Price <derek@ximbiot.com>
 
+	* import.c (killnew): s/int/bool/.
+	(add_rcs_file): Ditto for do_killnew.
+	* rcs.h (add_rcs_file): Change proto to match.
+
+2004-09-29  Derek Price <derek@ximbiot.com>
+
 	* client.c (start_server): Use bool in place of int.
 
 2004-09-29  Derek Price <derek@ximbiot.com>
