@@ -1,5 +1,23 @@
 2003-04-09  Derek Price  <derek@ximbiot.com>
 
+	* check_cvs.pl: Fix copy & paste error in GPL disclaimer.
+	(pod documentation::SYNOPSIS): Show optional --verbose option with
+	--help.
+	(process_file): Print filename when $verbose.  Reduce verbage used to
+	ignore files.  Don't add directories to the count of total files.
+	Add comments.
+	(get_history): Make error message more understandable.
+	(main): Reorganize for readability.  Remove unneeded debugging info.
+	Enable verbose help.  Print some more statistics.  Only print
+	statistics once.
+	(elements_in_branch, get_int_branch_revision,
+	get_int_mainline_revision, remove_duplicate_branches): Remove these
+	unused functions.
+	(verbose): New function for verbose prints.
+	(*): Use new verbose function.
+
+2003-04-09  Derek Price  <derek@ximbiot.com>
+
 	* check_cvs.in: Update for usability.  Add help text.  Add standard
 	GNU GPL disclaimer to avoid being sued.
 
