@@ -150,7 +150,7 @@ add (argc, argv)
 #ifdef CLIENT_SUPPORT
     if (current_parsed_root->isremote)
     {
-	int i;
+	int j;
 
 	if (argc == 0)
 	    /* We snipped out all the arguments in the above sanity
@@ -180,7 +180,7 @@ add (argc, argv)
 	    free (repository);
 	}
 
-	for (i = 0; i < argc; ++i)
+	for (j = 0; j < argc; ++j)
 	{
 	    /* FIXME: Does this erroneously call Create_Admin in error
 	       conditions which are only detected once the server gets its
@@ -195,7 +195,7 @@ add (argc, argv)
 	       "Directory %s added" message), and then Create_Admin,
 	       which should also fix the error handling concerns.  */
 
-	    if (isdir (argv[i]))
+	    if (isdir (argv[j]))
 	    {
 		char *tag;
 		char *date;
@@ -210,7 +210,7 @@ add (argc, argv)
 		if (save_cwd (&cwd))
 		    error_exit ();
 
-		filedir = xstrdup (argv[i]);
+		filedir = xstrdup (argv[j]);
 		p = last_component (filedir);
 		if (p == filedir)
 		{
@@ -246,7 +246,7 @@ add (argc, argv)
 		rcsdir = xmalloc (strlen (repository) + strlen (p) + 5);
 		sprintf (rcsdir, "%s/%s", repository, p);
 
-		Create_Admin (p, argv[i], rcsdir, tag, date,
+		Create_Admin (p, argv[j], rcsdir, tag, date,
 			      nonbranch, 0, 1);
 
 		if (found_slash)
@@ -263,7 +263,7 @@ add (argc, argv)
 		free (rcsdir);
 
 		if (p == filedir)
-		    Subdir_Register ((List *) NULL, (char *) NULL, argv[i]);
+		    Subdir_Register ((List *) NULL, (char *) NULL, argv[j]);
 		else
 		{
 		    Subdir_Register ((List *) NULL, update_dir, p);

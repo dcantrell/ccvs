@@ -16,8 +16,9 @@
 /* Printable names for things in the current_parsed_root->method enum variable.
    Watch out if the enum is changed in cvs.h! */
 
-char *method_names[] = {
-    "undefined", "local", "server (rsh)", "pserver", "kserver", "gserver", "ext", "fork"
+const char *const method_names[] = {
+    "undefined", "local", "server (rsh)", "pserver",
+    "kserver", "gserver", "ext", "fork"
 };
 
 #ifndef DEBUG
@@ -34,6 +35,7 @@ Name_Root (dir, update_dir)
     char *tmp;
     char *cvsadm;
     char *cp;
+    int len;
 
     if (update_dir && *update_dir)
 	xupdate_dir = update_dir;
@@ -73,18 +75,20 @@ Name_Root (dir, update_dir)
      */
     fpin = open_file (tmp, "r");
 
-    if (getline (&root, &root_allocated, fpin) < 0)
+    if ((len = getline (&root, &root_allocated, fpin)) < 0)
     {
+	int saved_errno = errno;
 	/* FIXME: should be checking for end of file separately; errno
 	   is not set in that case.  */
 	error (0, 0, "in directory %s:", xupdate_dir);
-	error (0, errno, "cannot read %s", CVSADM_ROOT);
+	error (0, saved_errno, "cannot read %s", CVSADM_ROOT);
 	error (0, 0, "please correct this problem");
 	ret = NULL;
 	goto out;
     }
-    (void) fclose (fpin);
-    if ((cp = strrchr (root, '\n')) != NULL)
+    fclose (fpin);
+    cp = root + (len - 1);
+    if (*cp == '\n')
 	*cp = '\0';			/* strip the newline */
 
     /*
