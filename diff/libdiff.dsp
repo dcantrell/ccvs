@@ -32,8 +32,8 @@ RSC=rc.exe
 
 # PROP BASE Use_MFC 0
 # PROP BASE Use_Debug_Libraries 0
-# PROP BASE Output_Dir "Release"
-# PROP BASE Intermediate_Dir "Release"
+# PROP BASE Output_Dir "WinRel"
+# PROP BASE Intermediate_Dir "WinRel"
 # PROP BASE Target_Dir ".\libdiff"
 # PROP Use_MFC 0
 # PROP Use_Debug_Libraries 0
@@ -55,8 +55,8 @@ LIB32=link.exe -lib
 
 # PROP BASE Use_MFC 0
 # PROP BASE Use_Debug_Libraries 1
-# PROP BASE Output_Dir "Debug"
-# PROP BASE Intermediate_Dir "Debug"
+# PROP BASE Output_Dir "WinDebug"
+# PROP BASE Intermediate_Dir "WinDebug"
 # PROP BASE Target_Dir ".\libdiff"
 # PROP Use_MFC 0
 # PROP Use_Debug_Libraries 1
