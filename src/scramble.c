@@ -19,18 +19,15 @@
 /* #define DIAGNOSTIC */
 
 #ifndef DIAGNOSTIC
-
 #include "cvs.h"
-
-#else /* DIAGNOSTIC */
-
+#else /* ! DIAGNOSTIC */
 /* cvs.h won't define this for us */
 #define AUTH_CLIENT_SUPPORT
+#define xmalloc malloc
 /* Use "gcc -fwritable-strings". */
 #include <stdio.h>
 #include <stdio.h>
 #include <string.h>
-
 #endif /* ! DIAGNOSTIC */
 
 #if defined(AUTH_CLIENT_SUPPORT) || defined(AUTH_SERVER_SUPPORT)
@@ -119,7 +116,15 @@ descramble (str)
    * there may be other kinds, and this `if' will become a `switch'.
    */
   if (str[0] != 'A')
+#ifndef DIAGNOSTIC
     error (1, 0, "descramble: unknown scrambling method");
+#else  /* DIAGNOSTIC */
+  {
+    fprintf (stderr, "descramble: unknown scrambling method\n", str);
+    fflush (stderr);
+    exit (1);
+  }
+#endif  /* DIAGNOSTIC */
 
   /* Method `A' is symmetrical, so scramble again to decrypt. */
   s = scramble (str + 1);
@@ -139,47 +144,34 @@ int
 main ()
 {
   int i;
+  char *e, *m, biggie[256];
 
-  char *clear1 = "first";
-  char *clear2 = "the second";
-  char *clear3 = "this is third";
-  char *clear4 = "$#% !!\\3";
-  char clear5[256];
+  char *cleartexts[5];
+  cleartexts[0] = "first";
+  cleartexts[1] = "the second";
+  cleartexts[2] = "this is the third";
+  cleartexts[3] = "$#% !!\\3";
+  cleartexts[4] = biggie;
   
-  /* Set up the most important test string. */
-  clear5[0] = '0';
+  /* Set up the most important test string: */
+  /* Can't have a real ASCII zero in the string, because we want to
+     use printf, so we substitute the character zero. */
+  biggie[0] = '0';
+  /* The rest of the string gets straight ascending ASCII. */
   for (i = 1; i < 256; i++)
-    clear5[i] = i;
-  
-  printf ("clear1: %s\n", clear1);
-  scramble (clear1);
-  printf ("scram1: %s\n", clear1);
-  descramble (clear1);
-  printf ("clear1: %s\n", clear1);
+    biggie[i] = i;
 
-  printf ("clear2: %s\n", clear2);
-  scramble (clear2);
-  printf ("scram1: %s\n", clear2);
-  descramble (clear2);
-  printf ("clear2: %s\n", clear2);
-
-  printf ("clear3: %s\n", clear3);
-  scramble (clear3);
-  printf ("scram1: %s\n", clear3);
-  descramble (clear3);
-  printf ("clear3: %s\n", clear3);
-
-  printf ("clear4: %s\n", clear4);
-  scramble (clear4);
-  printf ("scram1: %s\n", clear4);
-  descramble (clear4);
-  printf ("clear4: %s\n", clear4);
-
-  printf ("clear5: %s\n", clear5);
-  scramble (clear5);
-  printf ("scram1: %s\n", clear5);
-  descramble (clear5);
-  printf ("clear5: %s\n", clear5);
+  /* Test all the strings. */
+  for (i = 0; i < 5; i++)
+    {
+      printf ("clear%d: %s\n", i, cleartexts[i]);
+      e = scramble (cleartexts[i]);
+      printf ("scram%d: %s\n", i, e);
+      m = descramble (e);
+      free (e);
+      printf ("clear%d: %s\n\n", i, m);
+      free (m);
+    }
 
   fflush (stdout);
   return 0;
