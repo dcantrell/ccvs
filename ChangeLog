@@ -1,5 +1,13 @@
 2003-05-27  Derek Price  <derek@ximbiot.com>
 
+	* AUTHORS: Give Mark an email address.
+
+2003-05-27  Derek Price  <derek@ximbiot.com>
+
+	* cvs.spec.in: Add some files to doc.  Remove redundant %defattr.
+
+2003-05-27  Derek Price  <derek@ximbiot.com>
+
 	* README (Credits): Move...
 	* AUTHORS: ...here and update.
 

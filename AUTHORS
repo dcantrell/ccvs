@@ -49,7 +49,8 @@ Jim Kingdon and others at Cygnus Support <info@cygnus.com> wrote the
 remote repository access code.
 
 Larry Jones and Derek Price <derek@ximbiot.com> have been maintaining and
-enhancing CVS for some years.  Mark D. Baushke came on in 2003.
+enhancing CVS for some years.  Mark D. Baushke <mdb@cvshome.org> came on in
+2003.
 
 There have been many, many contributions not listed here.  Consult the
 individual ChangeLog files in each directory for a more complete idea.
