@@ -869,38 +869,47 @@ FILE *cvs_temp_file (filename)
  *  This function exits with a fatal error if it fails to read the link for
  *  any reason.
  */
+#define MAXSIZE (SIZE_MAX < SSIZE_MAX ? SIZE_MAX : SSIZE_MAX)
+
 char *
 xreadlink (link)
     const char *link;
 {
     char *file = NULL;
     size_t buflen = 128;
-    ssize_t link_name_len;
 
     /* Get the name of the file to which `from' is linked. */
     while (1)
     {
-	file = xrealloc (file, buflen);
-	link_name_len = readlink (link, file, buflen);
+	ssize_t r;
+	size_t link_name_len;
 
-	if (link_name_len < 0)
+	file = xrealloc (file, buflen);
+	r = readlink (link, file, buflen);
+	link_name_len = r;
+
+	if (r < 0
+#ifdef ERANGE
+	    /* AIX 4 and HP-UX report ERANGE if the buffer is too small. */
+	    && errno != ERANGE
+#endif
+	    )
 	    error (1, errno, "cannot readlink %s", link);
 
 	/* If there is space for the NUL byte, set it and return. */
-	if ((size_t) link_name_len < buflen)
+	if (r >= 0 && link_name_len < buflen)
 	{
 	    file[link_name_len] = '\0';
 	    return file;
 	}
 
-	if (buflen >= SSIZE_MAX)
+	if (buflen <= MAXSIZE / 2)
+	    buflen *= 2;
+	else if (buflen < MAXSIZE)
+	    buflen = MAXSIZE;
+	else
 	    /* Our buffer cannot grow any bigger.  */
 	    error (1, ENAMETOOLONG, "cannot readlink %s", link);
-
-	buflen = xtimes (buflen, 2);
-	if (buflen > SSIZE_MAX)
-	    /* readlink()'s maximum buffer size.  */
-	    buflen = SSIZE_MAX;
     }
 }
 #endif /* HAVE_READLINK */
