@@ -1,3 +1,8 @@
+1999-04-28  Jim Kingdon  <http://www.cyclic.com>
+
+	* cvs.texinfo (Error messages): Add "no such tag" message.
+	(Common options): -f does not override val-tags check.
+
 1999-04-26  Jim Kingdon  <http://www.cyclic.com>
 
 	* cvs.texinfo (Locks): #cvs.rfl locks must start with "#cvs.rfl."
