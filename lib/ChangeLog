@@ -1,3 +1,8 @@
+2004-10-05  Derek Price  <derek@ximbiot.com>
+
+	* regex.c: Back out my change from 2004-04-07 as possibly suppressing
+	useful warnings.
+
 2004-10-05  Mark D. Baushke  <mdb@cvshome.org>
 
 	* regex.c (re_comp): Cast gettext return value to char * to
