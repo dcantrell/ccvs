@@ -1,3 +1,12 @@
+1999-03-24  Derek Price
+	<http://www-personal.engin.umich.edu/~oberon/resume.html>
+	and Jim Kingdon
+
+	* sanity.sh: added a test (files-13) to test .. indirection
+	in a path and another (files-14) to make sure we still fail
+	out when the '..' indirection takes us into the $CVSROOT
+	directory or beyond.
+
 1999-03-24  Larry Jones  <larry.jones@sdrc.com>
 
 	* rcs.c: Change enum constants ADD and DELETE to something less
