@@ -844,7 +844,7 @@ update_filesdone_proc (void *callerdat, int err, const char *repository,
     {
         /* If there is no CVS/Root file, add one */
         if (!isfile (CVSADM_ROOT))
-	    Create_Root (NULL, current_parsed_root->original);
+	    Create_Root (NULL, original_root);
     }
 
     return err;

@@ -41,6 +41,9 @@ typedef struct cvsroot_s {
 #endif /* CLIENT_SUPPORT */
 } cvsroot_t;
 
+extern cvsroot_t *current_parsed_root;
+extern const char *original_root;
+
 cvsroot_t *Name_Root (const char *dir, const char *update_dir);
 void free_cvsroot_t (cvsroot_t *root_in);
 cvsroot_t *parse_cvsroot (const char *root)

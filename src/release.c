@@ -116,13 +116,13 @@ release (int argc, char **argv)
        encryption if we are using them currently, else our child process may
        not be able to communicate with the server.  */
     update_cmd = xmalloc (strlen (program_path)
-                        + strlen (current_parsed_root->original)
+                        + strlen (original_root)
                         + 1 + 3 + 3 + 16 + 1);
     sprintf (update_cmd, "%s %s%s-n -q -d %s update",
              program_path,
              cvsauthenticate ? "-a " : "",
              cvsencrypt ? "-x " : "",
-             current_parsed_root->original);
+             original_root);
 
 #ifdef CLIENT_SUPPORT
     /* Start the server; we'll close it after looping. */

@@ -367,10 +367,10 @@ extern mode_t cvsumask;
    from the CVSROOT environment variable or from a CVS/Root file.  */
 extern char *CVSroot_cmdline;
 
-/* These variables keep track of all of the CVSROOT directories that
-   have been seen by the client and the current one of those selected.  */
+/* This variable keeps track of all of the CVSROOT directories that
+ * have been seen by the client.
+ */
 extern List *root_directories;
-extern cvsroot_t *current_parsed_root;
 
 char *emptydir_name (void);
 int safe_location (char *);

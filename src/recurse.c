@@ -259,7 +259,7 @@ start_recursion (FILEPROC fileproc, FILESDONEPROC filesdoneproc,
 	    cvsroot_t *root = Name_Root (NULL, update_dir);
 	    if (root)
 	    {
-		if (strcmp (root->original, current_parsed_root->original))
+		if (strcmp (root->original, original_root))
 		    /* We're skipping this directory because it is for
 		     * a different root.  Therefore, we just want to
 		     * do the subdirectories only.  Processing files would
@@ -470,7 +470,7 @@ start_recursion (FILEPROC fileproc, FILESDONEPROC filesdoneproc,
 	/* FIXME (njc): in the multiroot case, we don't want to send
 	   argument commands for those top-level directories which do
 	   not contain any subdirectories which have files checked out
-	   from current_parsed_root->original.  If we do, and two repositories
+	   from current_parsed_root.  If we do, and two repositories
 	   have a module with the same name, nasty things could happen.
 
 	   This is hard.  Perhaps we should send the Argument commands
@@ -547,7 +547,7 @@ start_recursion (FILEPROC fileproc, FILESDONEPROC filesdoneproc,
 	   "Directory xxx" command, which forces the server to descend
 	   and serve the files there.  client.c (send_file_names) has
 	   also been modified to send only those arguments which are
-	   appropriate to current_parsed_root->original.
+	   appropriate to current_parsed_root.
 
 	*/
 		
@@ -700,7 +700,7 @@ do_recursion (struct recursion_frame *frame)
 	{
 	    if (findnode (root_directories, this_root->original))
 	    {
-		process_this_directory = !strcmp (current_parsed_root->original,
+		process_this_directory = !strcmp (original_root,
 						  this_root->original);
 		free_cvsroot_t (this_root);
 	    }
@@ -1150,7 +1150,7 @@ but CVS uses %s for its own purposes; skipping %s directory",
 	{
 	    if (findnode (root_directories, this_root->original))
 	    {
-		process_this_directory = !strcmp (current_parsed_root->original,
+		process_this_directory = !strcmp (original_root,
 						  this_root->original);
 		free_cvsroot_t (this_root);
 	    }

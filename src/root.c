@@ -340,7 +340,10 @@ char *CVSroot_cmdline;
 
 /* FIXME - Deglobalize this. */
 cvsroot_t *current_parsed_root = NULL;
-
+/* Used to save the original root being processed so that we can still find it
+ * in lists and the like after a `Redirect' response.
+ */
+const char *original_root;
 
 
 /* allocate and initialize a cvsroot_t
