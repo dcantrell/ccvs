@@ -1096,10 +1096,11 @@ log_expand_revlist (rcs, baserev, revlist, default_branch)
 		    free (branch);
 		}
 	    }
-	    if (nr->first == NULL && !really_quiet)
+	    if (!nr->first)
 	    {
-		error (0, 0, "warning: no branch `%s' in `%s'",
-		       r->first, rcs->path);
+		if (!really_quiet)
+		    error (0, 0, "warning: no branch `%s' in `%s'",
+			   r->first, rcs->path);
 		nr->last = NULL;
 		nr->fields = 0;
 	    }
