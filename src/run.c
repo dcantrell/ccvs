@@ -15,11 +15,6 @@
 #include "cvs.h"
 #include "vasnprintf.h"
 
-/* Get wchar_t.  */
-#ifdef HAVE_WCHAR_T
-# include <stddef.h>
-#endif
-
 /* Get wint_t.  */
 #ifdef HAVE_WINT_T
 # include <wchar.h>
