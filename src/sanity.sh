@@ -15585,6 +15585,8 @@ EOF
 	  chmod +x ${TESTDIR}/vscript*
 	  echo "^first-dir/yet-another\\(/\\|\$\\) ${TESTDIR}/vscript2" >>verifymsg
 	  echo "^first-dir\\(/\\|\$\\) ${TESTDIR}/vscript" >>verifymsg
+	  echo "^missing-script\$ ${TESTDIR}/bogus" >>verifymsg
+	  echo "^missing-var\$ ${TESTDIR}/vscript \${=Bogus}" >>verifymsg
 	  # first test the directory independant verifymsg
 	  dotest info-v1 "${testcvs} -q ci -m add-verification" \
 "Checking in verifymsg;
@@ -15654,6 +15656,16 @@ N first-dir/yet-another/and-another/file2
 
 No conflicts created by this import"
 	  fi
+
+	  # check that errors invoking the script cause verification failure
+	  dotest_fail info-v7 "${testcvs} import -m bogus missing-script x y" \
+"${PROG} [a-x]*: cannot exec ${TESTDIR}/bogus: No such file or directory
+${PROG} \[[a-z]* aborted\]: Message verification failed"
+
+	  dotest_fail info-v8 "${testcvs} import -m bogus missing-var x y" \
+"${PROG} [a-z]*: verifymsg:25: no such user variable \${=Bogus}
+${PROG} \[[a-z]* aborted\]: Message verification failed"
+
 	  rm file2
 	  cd ..
 	  rmdir another-dir
