@@ -18,6 +18,46 @@
 # along with this program; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
 
+# Why are these dates tested?
+#
+# February 29, 2003
+#   Is not a leap year - should be invalid.
+#
+# 2004-12-40
+#   Make sure get_date does not "roll" date forward to January 9th.  Some
+#   versions have been known to do this.
+#
+# Dec-5-1972
+#   This is my birthday.  :)
+#
+# 3/29/1974
+# 1996/05/12 13:57:45
+#   Because.
+#
+# 12-05-12
+#   This will be my 40th birthday.  Ouch.  :)
+#
+# 05/12/96
+#   Because.
+#
+# third tuesday in March, 2078
+#   Wanted this to work.
+#
+# 1969-12-32 2:00:00 UTC
+# 1970-01-01 2:00:00 UTC
+# 1969-12-32 2:00:00 +0400
+# 1970-01-01 2:00:00 +0400
+# 1969-12-32 2:00:00 -0400
+# 1970-01-01 2:00:00 -0400
+#   Playing near the UNIX Epoch boundry condition to make sure date rolling
+#   is also disabled there.
+#
+# 1996-12-12 1 month
+#   Test a relative date.
+#
+# Feb. 29, 2096 8 years
+#   8 years from this date is _not_ a leap year, so Feb. 29th does not exist.
+
 TZ=UTC; export TZ
 
 cat >getdate-expected <<EOF
@@ -36,6 +76,8 @@ Enter date, or blank line to exit.
 	> 1969-12-31 22:00:00.000000000
 	> Bad format - couldn't convert.
 	> 1970-01-01 06:00:00.000000000
+	> 1997-01-12 00:00:00.000000000
+	> Bad format - couldn't convert.
 	> 
 EOF
 
@@ -54,6 +96,8 @@ third tuesday in March, 2078
 1970-01-01 2:00:00 +0400
 1969-12-32 2:00:00 -0400
 1970-01-01 2:00:00 -0400
+1996-12-12 1 month
+Feb. 29, 2096 8 years
 EOF
 
 echo >>getdate-got
