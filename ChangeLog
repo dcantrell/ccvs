@@ -1,6 +1,7 @@
-2003-08-12  Derek Price  <derek@ximbiot.com>
+2003-08-13  Derek Price  <derek@ximbiot.com>
 
-	* aclocal.m4, configure: Regenerated.
+	* configure.in: Set up Autotest.  s/AC_HELP_STRING/AS_HELP_STRING/ for
+	development version of Autoconf.
 
 2003-07-31  Derek Price  <derek@ximbiot.com>
 
@@ -542,6 +543,14 @@
 	* configure.in: Tail the BUGS file for status.
 
 	* configure: Regenerated.
+
+2003-03-31  Derek Price  <derek@ximbiot.com>
+
+	* configure.in: AC_SUBST CLIENT_SUPPORT, AUTH_CLIENT_SUPPORT,
+	SERVER_SUPPORT, & AUTH_SERVER_SUPPORT for the new test suite.
+
+	* Makefile.in: Regenerated.
+	* configure: Ditto.
 
 2003-03-31  Derek Price  <derek@ximbiot.com>
 
