@@ -13,6 +13,8 @@
 	* update.c (update): Ditto.
 	* watch.c (watch_addremove, watchers): Ditto.
 
+	* sanity.sh (client-9): Update to match.
+
 2002-09-24  Derek Price  <derek@ximbiot.com>
 
 	* options.h: Remove prototype of STDC exit() function.  If this breaks
