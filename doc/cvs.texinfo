@@ -10352,6 +10352,9 @@ revision on the default branch, normally the trunk.
 There can be no space between the @samp{-r} option and
 its argument.
 
+@item -S
+Suppress the header if no revisions are selected.
+
 @item -s @var{states}
 Print information about revisions whose state
 attributes match one of the states given in the
