@@ -108,11 +108,11 @@ static char *Pserver_Repos = NULL;
 
 # endif /* AUTH_SERVER_SUPPORT */
 
-#ifdef HAVE_PAM
-# include <security/pam_appl.h>
+# ifdef HAVE_PAM
+#   include <security/pam_appl.h>
 
 static pam_handle_t *pamh = NULL;
-#endif
+# endif /* HAVE_PAM */
 
 
 
@@ -126,7 +126,7 @@ static struct buffer *buf_from_net;
 
 
 
-#ifdef PROXY_SUPPORT
+# ifdef PROXY_SUPPORT
 /* These are the secondary log buffers so that we can disable them after
  * creation, when it is determined that they are unneeded, regardless of what
  * other filters have been prepended to the buffer chain.
@@ -138,7 +138,7 @@ static struct buffer *proxy_log_out;
  * to some requests twice.
  */
 static bool reprocessing;
-#endif /* PROXY_SUPPORT */
+# endif /* PROXY_SUPPORT */
 
 
 
@@ -5588,9 +5588,6 @@ serve_referrer (char *arg)
 
     if (!referrer
 	&& alloc_pending (80 + strlen (arg)))
-	/* The explicitness is to aid people who are writing clients.
-	   I don't see how this information could help an
-	   attacker.  */
 	sprintf (pending_error_text, "\
 E Protocol error: Invalid Referrer: `%s'",
 		 arg);
@@ -6846,10 +6843,10 @@ check_password (char *username, char *password, char *repository)
 
     /* No cvs password found, so try /etc/passwd. */
 #ifdef HAVE_PAM
-    if ( check_pam_password(&username, password) )
-#else
-    if ( check_system_password(username, password) )
-#endif
+    if (check_pam_password (&username, password))
+#else /* !HAVE_PAM */
+    if (check_system_password (username, password))
+#endif /* HAVE_PAM */
 	host_user = xstrdup (username);
     else
 	host_user = NULL;
