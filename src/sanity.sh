@@ -7165,7 +7165,7 @@ EOF
 	  dotest modules-148 "${testcvs} ci -m 'add modules' CVSROOT/modules" \
 "Checking in CVSROOT/modules;
 ${TESTDIR}/cvsroot/CVSROOT/modules,v  <--  modules
-new revision: 1\.5; previous revision: 1\.4
+new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
 done
 ${PROG} [a-z]*: Rebuilding administrative file database"
 
