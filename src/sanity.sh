@@ -4602,7 +4602,6 @@ ${PLUS} first revision"
 	  # FIXME
 	  # local CVS prints a warning message when update notices a missing
 	  # file and client/server CVS doesn't.  These should be identical.
-	  mkdir rm-update-message; cd rm-update-message
 	  mkdir $CVSROOT_DIRNAME/rm-update-message
 	  dotest rm-update-message-setup-1 "$testcvs -q co rm-update-message" ''
 	  cd rm-update-message
