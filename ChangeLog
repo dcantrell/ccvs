@@ -1,3 +1,9 @@
+4 Feb 1998  Jim Kingdon
+
+	* cvsnt.mak: The usual "because Visual C++ feels like it"
+	changes.  These ones seem to have to do with reordering
+	files and release versus debug configurations, mainly.
+
 Fri Jan 30 10:37:40 1998  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* INSTALL: Update which version of CVS was tested with EMX.
