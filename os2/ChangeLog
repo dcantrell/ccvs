@@ -1,3 +1,8 @@
+Wed Dec 13 20:10:50 1995  Karl Fogel  (kfogel@floss.cyclic.com)
+
+        * makefile.in (clean): pass /NOE to the linker, to avoid duplicate
+		symbols when linking with setargv.obj.
+
 Wed Dec 13 18:44:47 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
         * Makefile.in (ARGVLIB): new lib, link with this so command-line
