@@ -120,12 +120,13 @@ expand_path (const char *name, const char *file, int line, int formatsafe)
     {
 	if (*s == '\\')
 	{
-	    /* The next character is a literal.  Leave the \ in the string since
-	     * it will be needed again when the string is split into arguments.
+	    /* The next character is a literal.  Leave the \ in the string
+	     * since it will be needed again when the string is split into
+	     * arguments.
 	     */
-	    /* if we have a \ as the last character of the string, just leave it there
-	     * - this is where we would set the escape flag to tell our parent we want
-	     * another line if we cared.
+	    /* if we have a \ as the last character of the string, just leave
+	     * it there - this is where we would set the escape flag to tell
+	     * our parent we want another line if we cared.
 	     */
 	    if (*++s)
 	    {
@@ -188,9 +189,10 @@ expand_path (const char *name, const char *file, int line, int formatsafe)
 		    d = mybuf + doff;
 		    if (d[-1] == '"')
 		    {
-			/* escape the double quotes if we're between a matched pair of
-			 * double quotes so that this sub will be passed inside as or as
-			 * part of a single argument during the argument split later.
+			/* escape the double quotes if we're between a matched
+			 * pair of double quotes so that this sub will be
+			 * passed inside as or as part of a single argument
+			 * during the argument split later.
 			 */
 			if (inquotes)
 			{
@@ -203,13 +205,14 @@ expand_path (const char *name, const char *file, int line, int formatsafe)
 		    }
 		    else if (formatsafe && d[-1] == '%')
 		    {
-			/* escape '%' to get past printf style format strings later
-			 * (in make_cmdline).
+			/* escape '%' to get past printf style format strings
+			 * later (in make_cmdline).
 			 */
 			doff = d - mybuf;
 			expand_string (&mybuf, &mybuf_size, doff + 1);
 			d = mybuf + doff;
-			*d++ = d[-1];
+			*d = d[-1];
+			d++;
 		    }
 		}
 		--d;
