@@ -106,7 +106,10 @@ shift
 # "debugger"
 #set -x
 
-echo 'This test should produce no other output than this line, and a final "OK".'
+echo 'This test should produce no other output than this message, and a final "OK".'
+echo '(Note that the test can take an hour or more to run and periodically stops'
+echo 'for as long as one minute.  Do not assume there is a problem just because'
+echo 'nothing seems to happen for a long time.)'
 
 # Regexp to match what CVS will call itself in output that it prints.
 # FIXME: we don't properly quote this--if the name contains . we'll

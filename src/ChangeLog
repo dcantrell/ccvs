@@ -1,5 +1,7 @@
 2002-11-22  Larry Jones  <lawrence.jones@eds.com>
 
+	* sanity.sh: Note that the tests run for a long time.
+
 	* checkout.c (safe_location): Use xstrdup, not strdup.
 	(Reported by Terrence Enger <tenger@iSeries-guru.com>.)
 
