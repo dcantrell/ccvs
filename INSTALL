@@ -456,11 +456,9 @@ Building from source code under Windows NT/95/98/2000:
 
 You may find interesting information in windows-NT/README.
 
-* Using Microsoft Visual C++ 5.x (this is currently broken - someone with
-  MVC++ 5.x needs to regenerate the project files, but the builds using `nmake'
-  below will work).
+* Using Microsoft Visual C++ 6.x.
 
-1) Using Microsoft Visual C++ 5.x, open the project `cvsnt.dsp',
+1) Using Microsoft Visual C++ 6.x, open the project `cvsnt.dsp',
    in the top directory of the CVS distribution.  If you have an older
    version of Visual C++, take a look at windows-NT/README.
 2) Choose "Build cvs.exe" from the "Project" menu.
