@@ -1,5 +1,8 @@
 1998-02-16  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* diff.c (diff_fileproc), import.c (import, add_rcs_file), rcs.c
+	(RCS_cmp_file): Don't ignore errors from CVS_UNLINK and fclose.
+
 	* patch.c (patch_fileproc): Check for errors from fclose; if we
 	get -1 from getline check for end of file vs. error.
 

@@ -260,7 +260,11 @@ import (argc, argv)
     tmpfile = cvs_temp_name ();
     if ((logfp = CVS_FOPEN (tmpfile, "w+")) == NULL)
 	error (1, errno, "cannot create temporary file `%s'", tmpfile);
-    (void) CVS_UNLINK (tmpfile);		/* to be sure it goes away */
+    /* On systems where we can unlink an open file, do so, so it will go
+       away no matter how we exit.  FIXME-maybe: Should be checking for
+       errors but I'm not sure which error(s) we get if we are on a system
+       where one can't unlink open files.  */
+    (void) CVS_UNLINK (tmpfile);
     (void) fprintf (logfp, "\nVendor Tag:\t%s\n", argv[1]);
     (void) fprintf (logfp, "Release Tags:\t");
     for (i = 2; i < argc; i++)
@@ -320,11 +324,13 @@ import (argc, argv)
     (void) addnode (ulist, p);
     Update_Logfile (repository, message, logfp, ulist);
     dellist (&ulist);
-    (void) fclose (logfp);
+    if (fclose (logfp) < 0)
+	error (0, errno, "error closing %s", tmpfile);
 
     /* Make sure the temporary file goes away, even on systems that don't let
        you delete a file that's in use.  */
-    CVS_UNLINK (tmpfile);
+    if (CVS_UNLINK (tmpfile) < 0 && !existence_error (errno))
+	error (0, errno, "cannot remove %s", tmpfile);
     free (tmpfile);
 
     if (message)
@@ -1315,7 +1321,10 @@ add_rcs_file (message, rcs, user, add_vhead, key_opt,
     }
     /* Close fpuser only if we opened it to begin with. */
     if (fpuser != NULL)
-	(void) fclose (fpuser);
+    {
+	if (fclose (fpuser) < 0)
+	    error (0, errno, "cannot close %s", user);
+    }
 
     /*
      * Fix the modes on the RCS files.  The user modes of the original
@@ -1346,15 +1355,18 @@ add_rcs_file (message, rcs, user, add_vhead, key_opt,
 
 write_error:
     ierrno = errno;
-    (void) fclose (fprcs);
+    if (fclose (fprcs) < 0)
+	error (0, errno, "cannot close %s", rcs);
 write_error_noclose:
-    (void) fclose (fpuser);
+    if (fclose (fpuser) < 0)
+	error (0, errno, "cannot close %s", user);
     if (add_logfp != NULL)
 	fperror (add_logfp, 0, ierrno, "ERROR: cannot write file %s", rcs);
     error (0, ierrno, "ERROR: cannot write file %s", rcs);
     if (ierrno == ENOSPC)
     {
-	(void) CVS_UNLINK (rcs);
+	if (CVS_UNLINK (rcs) < 0)
+	    error (0, errno, "cannot remove %s", rcs);
 	if (add_logfp != NULL)
 	    fperror (add_logfp, 0, 0, "ERROR: out of space - aborting");
 	error (1, 0, "ERROR: out of space - aborting");
