@@ -2377,33 +2377,29 @@ In this case, the two above commands are equivalent.
 @cindex Renaming files
 @cindex Files, moving
 
-One of the biggest design flaws with the current release of @sc{cvs} is that
-it is very difficult to move a file to a different directory or
-rename it.  There are workarounds, and they all have their strong and weak
-points.  (Moving or renaming a directory is even harder.  @xref{Moving
-directories}).
+Moving files to a different directory or renaming them
+is not difficult, but some of the ways in which this
+works may be non-obvious.  (Moving or renaming a
+directory is even harder.  @xref{Moving directories}).
 
 The examples below assume that the file @var{old} is renamed to
-@var{new}.  Both files reside in the same module,
-@var{module}, but not necessarily in the same directory.
-The relative path to the module inside the repository is assumed
-to be @var{module}.
+@var{new}.
 
 @menu
-* Outside::                     Moving outside the repository
-* Inside::                      Moving the history file
-* Rename by copying::           
+* Outside::                     The normal way to Rename
+* Inside::                      A tricky, alternative way
+* Rename by copying::           Another tricky, alternative way
 @end menu
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node Outside
-@section Moving outside the repository
+@section The Normal way to Rename
 
-One way to move the file is to copy @var{old} to
-@var{new}, and then issue the normal @sc{cvs} commands to
-remove @var{old} from the repository, and add @var{new}
-to it.  (Both @var{old} and @var{new} could contain
-relative paths inside the module).
+The normal way to move a file is to copy @var{old} to
+@var{new}, and then issue the normal @sc{cvs} commands
+to remove @var{old} from the repository, and add
+@var{new} to it.  (Both @var{old} and @var{new} could
+contain relative paths, for example @file{foo/bar.c}).
 
 @example
 $ mv @var{old} @var{new}
@@ -2412,25 +2408,17 @@ $ cvs add @var{new}
 $ cvs commit -m "Renamed @var{old} to @var{new}" @var{old} @var{new}
 @end example
 
-@noindent
-Advantages:
+This is the simplest way to move a file, it is not
+error-prone, and it preserves the history of what was
+done.  Note that to access the history of the file you
+must specify the old or the new name, depending on what
+portion of the history you are accessing.  For example,
+@code{cvs log @var{old}} will give the log up until the
+time of the rename.
 
-@itemize @bullet
-@item
-Checking out old revisions works correctly.
-@end itemize
-
-@noindent
-Disadvantages:
-
-@itemize @bullet
-@item
-You cannot easily see the history of the file across the rename.
-@item
-Unless you use the @samp{-r rev} (@pxref{commit
-options}) flag when @var{new} is committed its revision
-numbers will start at 1.0 again.
-@end itemize
+When @var{new} is committed its revision numbers will
+start at 1.0 again, so if that bothers you, use the
+@samp{-r rev} option to commit (@pxref{commit options})
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node Inside
@@ -2441,7 +2429,7 @@ files inside the repository.  Read this entire section
 before trying it out!
 
 @example
-$ cd $CVSROOT/module
+$ cd $CVSROOT/@var{module}
 $ mv @var{old},v @var{new},v
 @end example
 
@@ -2478,15 +2466,15 @@ commands while you move it.
 @node Rename by copying
 @section Copying the history file
 
-This is probably the best way to do the renaming. It is
-safe, but not without drawbacks.
+This way also involves direct modifications to the
+repository.  It is safe, but not without drawbacks.
 
 @example
 # @r{Copy the @sc{rcs} file inside the repository}
-$ cd $CVSROOT/module
+$ cd $CVSROOT/@var{module}
 $ cp @var{old},v @var{new},v
 # @r{Remove the old file}
-$ cd ~/module
+$ cd ~/@var{module}
 $ rm @var{old}
 $ cvs remove @var{old}
 $ cvs commit @var{old}
