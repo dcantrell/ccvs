@@ -1,3 +1,17 @@
+2003-02-03  Derek Price  <derek@ximbiot.com>
+
+	* cvs.texinfo (Committing your changes): Move index entries closer to
+	their corresponding references.
+	(Environment variables): Include $VISUAL in order of
+	preference.  Add index entries.  Reference Global options node.
+	(Variables): Change order of list to match the Env. Variables node
+	mentioned above.
+
+	* stamp-1: Regenerated.
+	* stamp-vti: Ditto.
+	* version-client.texi: Ditto.
+	* version.texi: Ditto.
+
 2003-01-31  Derek Price  <derek@ximbiot.com>
 
 	* stamp-1: Regenerated.

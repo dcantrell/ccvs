@@ -528,8 +528,6 @@ you want to edit.  @xref{Multiple developers}, for an explanation.
 @subsection Committing your changes
 @cindex Committing changes to files
 @cindex Log message entry
-@cindex CVSEDITOR, environment variable
-@cindex EDITOR, environment variable
 
 When you have checked that the compiler is still compilable you decide
 to make a new version of @file{backend.c}.  This will
@@ -546,6 +544,8 @@ $ cvs commit backend.c
 message.  You type in ``Added an optimization pass.'',
 save the temporary file, and exit the editor.
 
+@cindex CVSEDITOR, environment variable
+@cindex EDITOR, environment variable
 The environment variable @code{$CVSEDITOR} determines
 which editor is started.  If @code{$CVSEDITOR} is not
 set, then if the environment variable @code{$EDITOR} is
@@ -13299,10 +13299,10 @@ error.
 
 @item CVSEDITOR
 @cindex CVSEDITOR, internal variable
-@itemx VISUAL
-@cindex VISUAL, internal variable
 @itemx EDITOR
 @cindex EDITOR, internal variable
+@itemx VISUAL
+@cindex VISUAL, internal variable
 These all expand to the same value, which is the editor
 that @sc{cvs} is using.  @xref{Global options}, for how
 to specify this.
@@ -13539,12 +13539,18 @@ the file @file{CVS/Root}), so normally you only need to
 worry about this when initially checking out a working
 directory.
 
-@item $EDITOR
-@itemx $CVSEDITOR
+@item $CVSEDITOR
+@cindex CVSEDITOR, environment variable
+@itemx $EDITOR
+@cindex EDITOR, environment variable
 @itemx $VISUAL
+@cindex VISUAL, environment variable
 Specifies the program to use for recording log messages
 during commit.  @code{$CVSEDITOR} overrides
-@code{$EDITOR}.  See @ref{Committing your changes}.
+@code{$EDITOR}, which overrides @code{$VISUAL}.
+See @ref{Committing your changes} for more or
+@ref{Global options} for alternative ways of specifying a
+log editor.
 
 @cindex PATH, environment variable
 @item $PATH
