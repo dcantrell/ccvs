@@ -1,5 +1,9 @@
 2003-10-30  Derek Price  <derek@ximbiot.com>
 
+	* stamp-vti, version.texi: Regenerated.
+
+2003-10-30  Derek Price  <derek@ximbiot.com>
+
 	* cvs.texinfo (File permissions, Error messages): Add index entries for
 	CVSROOT/val-tags file.
 
