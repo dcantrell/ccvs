@@ -1,5 +1,8 @@
 1997-10-28  Jim Kingdon
 
+	* .cvsignore: Add Visual C++ files du jour, namely
+	{diff,vc50}.{pdb,idb,pch}.
+
 	* cvsnt.dsp: Add files for diff library.  The custom build
 	stuff for diff/version.c and diff/diff.c was to deal with
 	there also being a src/version.c and src/diff.c.  There
