@@ -1,8 +1,9 @@
 ## Process this file with automake to produce Makefile.in
-# Makefile for GNU CVS documentation (excluding man pages - see ../man).
+# Makefile for GNU CVS documentation (excluding some man pages - see ../man).
 # Copyright (C) 1986, 1987, 1988, 1989, 1990, 1991, 1992, 1993, 1994,
-#               1995, 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003
-#               Free Software Foundation, Inc.
+#               1995, 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003,
+#               2004
+#		Free Software Foundation, Inc.
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -13,6 +14,8 @@
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
+
+SUBDIRS = i18n
 
 info_TEXINFOS = cvs.texinfo cvsclient.texi
 man_MANS = cvs.1
@@ -35,13 +38,15 @@ EXTRA_DIST = \
 	$(PSS) \
 	.cvsignore \
 	ChangeLog.fsf \
+	HACKING.DOCS \
 	RCSFILES \
 	cvs.1 \
 	cvs-paper.ms \
 	cvs.man.header \
 	cvs.man.footer \
 	getdate.texi \
-	mdate-sh
+	mdate-sh \
+	writeproxy.rtf
 
 MOSTLYCLEANFILES = \
 	$(TXTS)
