@@ -29582,7 +29582,7 @@ ${SPROG} update: Updating first/subdir"
 	    continue
 	  fi
 
-	  tryrsync=`which rsync`
+	  tryrsync=`Which rsync`
 	  if test -r "$tryrsync"; then
 	    RSYNC=$tryrsync
 	  else
@@ -29780,7 +29780,7 @@ $SPROG \[update aborted\]: could not find desired version 1\.4 in $PRIMARY_CVSRO
 	    continue
 	  fi
 
-	  tryrsync=`which rsync`
+	  tryrsync=`Which rsync`
 	  if test -r "$tryrsync"; then
 	    RSYNC=$tryrsync
 	  else
