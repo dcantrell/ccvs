@@ -88,7 +88,9 @@ typedef struct deltatext Deltatext;
 
 struct rcsversnode
 {
+    /* Duplicate of the key by which this structure is indexed.  */
     char *version;
+
     char *date;
     char *author;
     char *state;
@@ -156,7 +158,7 @@ int RCS_deltag PROTO ((RCSNode *, const char *));
 int RCS_setbranch PROTO((RCSNode *, const char *));
 int RCS_lock PROTO ((RCSNode *, const char *, int));
 int RCS_unlock PROTO ((RCSNode *, const char *, int));
-int RCS_delete_revs PROTO ((RCSNode *, char *, char *));
+int RCS_delete_revs PROTO ((RCSNode *, char *, char *, int));
 void RCS_addaccess PROTO ((RCSNode *, char *));
 void RCS_delaccess PROTO ((RCSNode *, char *));
 char *RCS_getaccess PROTO ((RCSNode *));
