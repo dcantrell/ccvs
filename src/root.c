@@ -251,63 +251,29 @@ primary_root_inverse_translate (const char *root_in)
 /* The root_allow_* stuff maintains a list of valid CVSROOT
    directories.  Then we can check against them when a remote user
    hands us a CVSROOT directory.  */
-static int root_allow_count;
-static char **root_allow_vector;
-static int root_allow_size;
+static List *root_allow;
 
 void
-root_allow_add (char *arg)
+root_allow_add (const char *arg)
 {
-    char *p;
+    Node *n;
 
-    if (root_allow_size <= root_allow_count)
-    {
-	if (root_allow_size == 0)
-	{
-	    root_allow_size = 1;
-	    root_allow_vector =
-		(char **) xmalloc (root_allow_size * sizeof (char *));
-	}
-	else
-	{
-	    root_allow_size *= 2;
-	    root_allow_vector =
-		(char **) xrealloc (root_allow_vector,
-				   root_allow_size * sizeof (char *));
-	}
-
-	if (root_allow_vector == NULL)
-	{
-	no_memory:
-	    /* Strictly speaking, we're not supposed to output anything
-	       now.  But we're about to exit(), give it a try.  */
-	    printf ("E Fatal server error, aborting.\n\
-error ENOMEM Virtual memory exhausted.\n");
-
-	    exit (EXIT_FAILURE);
-	}
-    }
-    p = xmalloc (strlen (arg) + 1);
-    if (p == NULL)
-	goto no_memory;
-    strcpy (p, arg);
-    root_allow_vector[root_allow_count++] = p;
+    if (!root_allow) root_allow = getlist();
+    n = getnode();
+    n->key = xstrdup (arg);
+    addnode (root_allow, n);
 }
 
 void
 root_allow_free (void)
 {
-    if (root_allow_vector != NULL)
-	free_names (&root_allow_count, root_allow_vector);
-    root_allow_size = 0;
+    dellist (&root_allow);
 }
 
-int
-root_allow_ok (char *arg)
+bool
+root_allow_ok (const char *arg)
 {
-    int i;
-
-    if (root_allow_count == 0)
+    if (!root_allow)
     {
 	/* Probably someone upgraded from CVS before 1.9.10 to 1.9.10
 	   or later without reading the documentation about
@@ -323,10 +289,9 @@ error 0 Server configuration missing --allow-root in inetd.conf\n");
 	exit (EXIT_FAILURE);
     }
 
-    for (i = 0; i < root_allow_count; ++i)
-	if (strcmp (root_allow_vector[i], arg) == 0)
-	    return 1;
-    return 0;
+    if (findnode (root_allow, arg))
+	return true;
+    return false;
 }
 
 

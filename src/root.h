@@ -51,9 +51,9 @@ cvsroot_t *parse_cvsroot (const char *root)
 cvsroot_t *local_cvsroot (const char *dir)
 	__attribute__ ((__malloc__));
 void Create_Root (const char *dir, const char *rootdir);
-void root_allow_add (char *);
+void root_allow_add (const char *);
 void root_allow_free (void);
-int root_allow_ok (char *);
+bool root_allow_ok (const char *);
 void primary_root_add (const char *arg);
 char *primary_root_translate (const char *root_in);
 char *primary_root_inverse_translate (const char *root_in);
