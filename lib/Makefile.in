@@ -242,7 +242,8 @@ getdate_SOURCES = \
 getdate_CPPFLAGS = -DTEST
 getdate_LDADD = \
 	@LIBOBJS@ \
-	$(LIB_CLOCK_GETTIME)
+	$(LIB_CLOCK_GETTIME) \
+	$(LIBINTL)
 
 subdir = lib
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
