@@ -1,5 +1,8 @@
 1998-07-12  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* sanity.sh (ann-id): Write the test so that it tests for the
+	current (buggy) behavior.
+
 	* sanity.sh (taginfo): Also clean up cvsroot/first-dir.
 
 1998-07-12  Jim Meyering  <meyering@ascend.com>

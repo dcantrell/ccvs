@@ -11199,7 +11199,7 @@ done"
 	  dotest ann-id-6 "$testcvs -Q ann $file" \
 "Annotations for $file
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
-1.2          ($username *[0-9a-zA-Z-]*): "'\$'"Id: $file,v 1.2 [0-9/]* [0-9:]* $username Exp "'\$'"
+1.2          ($username *[0-9a-zA-Z-]*): "'\$'"Id: $file,v 1.1 [0-9/]* [0-9:]* $username Exp "'\$'"
 1.2          ($username *[0-9a-zA-Z-]*): line2"
 
 	  cd ../..
