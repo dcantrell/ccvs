@@ -376,6 +376,9 @@ mkmodules (dir)
     size_t line_allocated = 0;
     const struct admin_file *fileptr;
 
+    if (noexec)
+	return 0;
+
     if (save_cwd (&cwd))
 	error_exit ();
 
