@@ -1,4 +1,10 @@
 Mon Jun 17 1996  Ian Lance Taylor  <ian@cygnus.com>
+		 and Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* sanity.sh (TMPPWD): Set to real name of /tmp directory.
+	(basic2-64, conflicts-126.5): Use ${TMPPWD}.
+
+Mon Jun 17 1996  Ian Lance Taylor  <ian@cygnus.com>
 
 	* rcscmds.c (RCS_checkout): Remove noerr parameter.  Change all
 	callers.
