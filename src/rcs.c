@@ -6305,8 +6305,7 @@ rcs_internal_unlockfile (fp, rcsfile)
     if (fclose (fp) == EOF)
 	error (1, errno, "error closing lock file %s", lockfile);
 
-    if (rename (lockfile, rcsfile) < 0)
-	error (1, errno, "error moving lock file %s to %s", lockfile, rcsfile);
+    rename_file (lockfile, rcsfile);
 }
 
 static char *
