@@ -11511,6 +11511,9 @@ The @file{rcsinfo} file contains this line:
 @cindex Distributing log messages
 @cindex Log messages
 
+@c "cvs commit" is not quite right.  What we
+@c mean is "when the repository gets changed" which
+@c also includes "cvs import" and "cvs add" on a directory.
 The @file{loginfo} file is used to control where
 @samp{cvs commit} log information is sent.  The first
 entry on a line is a regular expression which is tested
