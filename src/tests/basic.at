@@ -16,6 +16,8 @@ AT_CVS_BANNER([Basic Functionality])
 AT_CVS_SETUP([Operations on empty projects])
 AT_KEYWORDS([update diff status])
 
+cvs_project_init
+
 # Test a few operations, to ensure they gracefully do
 # nothing in an empty directory.
 AT_CHECK([cvs -q update])
@@ -30,6 +32,8 @@ AT_CLEANUP # Operations on empty projects
 
 AT_CVS_SETUP([Adding directories and files])
 AT_KEYWORDS([add])
+
+cvs_project_init
 
 mkdir sdir
 
@@ -103,6 +107,8 @@ AT_CLEANUP # Adding files
 m4_divert_text([DEFAULTS],
 [cvs_project_init_simple()
 {
+cvs_project_init
+
 mkdir sdir
 AT_CHECK_NOESCAPE([cvs add sdir],,
 [Directory $CVSROOT_DIR/project/sdir added to the repository
@@ -423,6 +429,7 @@ AT_CVS_SETUP([top of repository])
 AT_KEYWORDS([tag tags co-d])
 
 # More basic tests, including non-branch tags and co -d.
+cvs_project_init
 
 cd ..
 mkdir 1
@@ -482,6 +489,8 @@ AT_CVS_SETUP([Emptydir not special])
 # previous test and the following two, but I didn't have time to find where
 # else this one should break since what look like good break points still
 # depend on previous tests for setup.
+
+cvs_project_init
 
 # Note that the name Emptydir is chosen to test that CVS just
 # treats it like any other directory name.  It should be
@@ -719,6 +728,10 @@ AT_CLEANUP # delete last revision
 
 AT_CVS_SETUP([no admin -H])
 AT_KEYWORDS([admin])
+
+# FIXCVS: CVS should not be reporting that the repository does not exist before
+# it reports the usage error below when the repository does not exist.
+AT_CHECK([cvs init])
 
 # Why in the world do we check for this?
 # Note that -H is an invalid option.
