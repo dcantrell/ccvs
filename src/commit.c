@@ -1509,9 +1509,8 @@ checkaddfile (file, repository, tag, options, srcfiles)
 	if (isfile (fname))
 	    run_args ("-t%s/%s%s", CVSADM, file, CVSEXT_LOG);
 
-	/* when adding binary files, make sure the option is stored in the
-	   repository.  */
-	if (options)
+	/* Set RCS keyword expansion options.  */
+	if (options && options[0] == '-' && options[1] == 'k')
 	    run_arg (options);
 	run_arg (rcs);
 	if ((retcode = run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL)) != 0)
@@ -1623,9 +1622,8 @@ checkaddfile (file, repository, tag, options, srcfiles)
 #else /* No DEATH_SUPPORT */
     run_setup ("%s%s -i", Rcsbin, RCS);
     run_args ("-t%s/%s%s", CVSADM, file, CVSEXT_LOG);
-    /* when adding binary files, make sure the option is stored in the
-       repository.  */
-    if (options)
+    /* Set RCS keyword expansion options.  */
+    if (options && options[0] == '-' && options[1] == 'k')
 	run_arg (options);
     run_arg (rcs);
     if ((retcode = run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL)) != 0)
