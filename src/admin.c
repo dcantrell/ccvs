@@ -12,6 +12,9 @@
  */
 
 #include "cvs.h"
+#ifdef CVS_ADMIN_GROUP
+#include <grp.h>
+#endif
 
 #ifndef lint
 static const char rcsid[] = "$CVSid: @(#)admin.c 1.20 94/09/30 $";
@@ -38,9 +41,39 @@ admin (argc, argv)
     char **argv;
 {
     int err;
-
+#ifdef CVS_ADMIN_GROUP
+    struct group *grp;
+#endif
     if (argc <= 1)
 	usage (admin_usage);
+
+#ifdef CVS_ADMIN_GROUP
+    grp = getgrnam(CVS_ADMIN_GROUP);
+     /* skip usage right check if group CVS_ADMIN_GROUP does not exist */
+    if (grp != NULL)
+    {
+	char *me = getlogin();
+	char **grnam = grp->gr_mem;
+	int denied = 1;
+	
+	if (me == NULL) 
+	    me = getpwuid(getuid())->pw_name;
+	
+	while (*grnam)
+	{
+	    if (strcmp(*grnam, me) == 0) 
+	    {
+		denied = 0;
+		break;
+	    }
+	    grnam++;
+	}
+
+	if (denied)
+	    error (1, 0, "usage is restricted to members of the group "
+		   CVS_ADMIN_GROUP "!");
+    }
+#endif
 
     wrap_setup ();
 
