@@ -136,3 +136,9 @@ lib/gethostname.c
 m4/gethostname.m4
 
 m4/onceonly_2_57.m4
+lib/strcase.h
+lib/strcasecmp.c
+lib/strncasecmp.c
+m4/strcase.m4
+
+m4/onceonly_2_57.m4
