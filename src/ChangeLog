@@ -1,5 +1,10 @@
 2002-09-20  Derek Price  <derek@ximbiot.com>
 
+	* options.h: Move definition of SERVER_FLOWCONTROL, SERVER_HI_WATER,
+	and SERVER_LO_WATER into configure.in.
+
+2002-09-20  Derek Price  <derek@ximbiot.com>
+
 	* options.h: Move definition of PATCH_PROGRAM to configure.in.
 
 2002-09-18  Larry Jones  <lawrence.jones@eds.com>

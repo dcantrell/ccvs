@@ -130,23 +130,6 @@
 #define AUTH_CLIENT_SUPPORT 1
 #endif
 
-/*
- * If you are working with a large remote repository and a 'cvs
- * checkout' is swamping your network and memory, define these to
- * enable flow control.  You will end up with even less probability of
- * a consistent checkout (see Concurrency in cvs.texinfo), but CVS
- * doesn't try to guarantee that anyway.  The master server process
- * will monitor how far it is getting behind, if it reaches the high
- * water mark, it will signal the child process to stop generating
- * data when convenient (ie: no locks are held, currently at the
- * beginning of a new directory).  Once the buffer has drained
- * sufficiently to reach the low water mark, it will be signalled to
- * start again.  You may override the default hi/low watermarks here
- * too.
- */
-#define SERVER_FLOWCONTROL
-#define SERVER_HI_WATER (2 * 1024 * 1024)
-#define SERVER_LO_WATER (1 * 1024 * 1024)
 
 /* End of CVS configuration section */
 
