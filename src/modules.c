@@ -719,7 +719,7 @@ do_module (db, mname, m_type, msg, callback_proc, where,
     if (mwhere)
 	free (mwhere);
     if (cwd_saved)
-	free (&cwd);
+	free_cwd (&cwd);
     if (zvalue != NULL)
 	free (zvalue);
 

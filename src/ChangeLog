@@ -1,3 +1,9 @@
+Wed Feb  5 18:57:14 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* modules.c (do_module): Fix typo in 30 Jan 97 PATH_MAX nuking
+	(free -> free_cwd).  Testsuite test 151 gets credit for catching
+	this one.
+
 Mon Feb  3 16:14:54 1997  Ian Lance Taylor  <ian@cygnus.com>
 
 	* main.c (lookup_command_attribute): Don't use an ANSI prototype
