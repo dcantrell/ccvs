@@ -583,9 +583,6 @@ update_fileproc (callerdat, finfo)
     int retval;
     Ctype status;
     Vers_TS *vers;
-    int resurrecting;
-
-    resurrecting = 0;
 
     status = Classify_File (finfo, tag, date, options, force_tag_match,
 			    aflag, &vers, pipeout);
