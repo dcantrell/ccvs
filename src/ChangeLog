@@ -1,3 +1,14 @@
+1998-07-14  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* tag.c (pretag_proc), rtag.c (pretag_proc): Don't pass RUN_REALLY
+	to run_exec.  This means that taginfo does not get executed if the
+	global -n option is specified.  Which makes it like loginfo, -i,
+	-e, -o, -t, -u in modules, editinfo, and verifymsg and unlike
+	commitinfo.  The old behavior was pretty bad in the sense that it
+	doesn't provide any way to log only the tags which actually
+	happen.
+	* sanity.sh (taginfo): New tests taginfo-11 to taginfo-13, for this.
+
 1998-07-12  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* sanity.sh (ann-id): Write the test so that it tests for the
