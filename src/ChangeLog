@@ -1,5 +1,8 @@
 Wed Jan  1 19:50:38 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* options.h.in: Reword comment for TMPDIR_DFLT to make it clear
+	that this isn't specific to the pserver server.
+
 	* modules.c (do_module): Give an error message if one tries to
 	specify -a together with another option.
 	* sanity.sh (modules2): New tests modules2-a* test for above fix.
