@@ -1,3 +1,11 @@
+1998-06-09  Mike Sutton@SAIC
+
+	Make it compile with Sun's bundled K&R C compiler:
+	* rcs.c (count_delta_actions): Change to static to match
+	declaration.
+	* client.c (handle_wrapper_rcs_option): Rename error label to
+	handle_error to avoid clash with function name.
+
 1998-06-09  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* rcs.c (RCS_delete_revs): If we are trying to delete all

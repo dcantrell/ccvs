@@ -8198,7 +8198,7 @@ RCS_copydeltas (rcs, fin, rcsbufin, fout, newdtext, insertpt)
    to count the number of RCS revisions for which some special action
    is required.  */
 
-int
+static int
 count_delta_actions (np, ignore)
     Node *np;
     void *ignore;
