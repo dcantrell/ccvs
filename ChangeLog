@@ -3,6 +3,7 @@ Thu Jun 13 1996  Ian Lance Taylor  <ian@cygnus.com>
 
 	* configure.in: Put -L${krb_libdir} in LDFLAGS temporarily when
 	looking for -ldes.
+	* configure: Regenerated.
 
 Mon Jun 10 13:13:35 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
