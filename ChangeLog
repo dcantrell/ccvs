@@ -1,3 +1,7 @@
+2004-08-11  Derek Price  <derek@ximbiot.com>
+
+	* NEWS: Mention Juniper's funding for other items.
+
 2004-08-10  Derek Price  <derek@ximbiot.com>
 
 	* configure.in: Enable proxy support by default.
