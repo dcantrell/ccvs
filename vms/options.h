@@ -1,4 +1,3 @@
-/* src/options.h.  Generated automatically by configure.  */
 /*
  * Copyright (c) 1992, Brian Berliner and Jeff Polk
  * Copyright (c) 1989-1992, Brian Berliner
