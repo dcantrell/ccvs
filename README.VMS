@@ -26,7 +26,7 @@ of ftp servers which have VMS GNU resources, taken from
     ftp.spc.edu
     ftp.stacken.kth.se
 
-Please send bug reports to bug-cvs@prep.ai.mit.edu.
+Please send bug reports to bug-cvs@gnu.org.
 
 As of CVS 1.5.something, this port passed most of the tests in
 [.src]sanity.sh.  I say "most" because some tests to not apply to the

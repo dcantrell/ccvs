@@ -95,7 +95,7 @@ Tested platforms
 CVS has been tested on the following platforms.  The most recent
 version of CVS reported to have been tested is indicated, but more
 recent versions of CVS probably will work too.  Please send updates to
-this list to bug-cvs@prep.ai.mit.edu (doing so in the form of a diff
+this list to bug-cvs@gnu.org (doing so in the form of a diff
 to this file, or at least exact suggested text, is encouraged).
 "tested" means, at a minimum, that CVS compiles and appears to work on
 simple (manual) testing.  In many cases it also means "make check"

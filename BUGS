@@ -1,12 +1,12 @@
-See the README file for information on how to report bugs (and what
-will happen to your bug reports if you do).
+See the Cederqvist manual (cvs.texinfo) for information on how to
+report bugs (and what will happen to your bug reports if you do).
 
 The following is a list of some of the known bugs.  It may or may not
 be comprehensive.  We would dearly love for people to volunteer to
 help us keep it up to date (for starters, if you notice any
-inaccuracies, please let bug-cvs know as described in README).  There
-are some other reported bugs in MINOR-BUGS; the difference, at least
-in theory, is that those bugs are less serious.
+inaccuracies, please let bug-cvs know as described in the Cederqvist
+manual).  There are some other reported bugs in MINOR-BUGS; the
+difference, at least in theory, is that those bugs are less serious.
 
 
 * For platform-specific information (in some cases including known
