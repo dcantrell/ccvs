@@ -140,7 +140,7 @@ D.C., is included in the "doc" directory.
 Jeff Polk from BSDI <polk@bsdi.com> converted the CVS 1.2
 sources into much more readable and maintainable C code.  He also added a
 whole lot of functionality and modularity to the code in the process.
-See the ChangeLog file.
+See the bottom of the NEWS file (from about 1992).
 
 david d `zoo' zuhn <zoo@armadillo.com> contributed the working base code
 for CVS 1.4 Alpha.  His work carries on from work done by K. Richard Pixley
@@ -160,9 +160,9 @@ K. Richard Pixley, Cygnus Support <rich@cygnus.com> contributed many bug
 fixes/enhancement as well as completing early reviews of the CVS 1.3 manual
 pages.
 
-Roland Pesch, then of Cygnus Support <roland@wrs.com> contributed brand new
-cvs(1) and cvs(5) manual pages.  We should all thank him for saving us from
-my poor use of our language!
+Roland Pesch, then of Cygnus Support <roland@wrs.com> contributed
+brand new cvs(1) and cvs(5) manual pages.  Thanks to him for saving us
+from poor use of our language!
 
 Paul Sander, HaL Computer Systems, Inc. <paul@hal.com> wrote and
 contributed the code in lib/sighandle.c.  I added support for POSIX, BSD,
@@ -171,13 +171,17 @@ and non-POSIX/non-BSD systems.
 Jim Kingdon and others at Cygnus Support <info@cygnus.com> wrote the
 remote repository access code.
 
-In addition to the above contributors, the following Beta testers deserve
-special mention for their support.  If I have left off your name, I
-apologize.  Just write to me and let me know!
+There have been many, many contributions not listed here.  Consult the
+ChangeLog files in each directory for a more complete idea.
+
+In addition to the above contributors, the following Beta testers
+deserve special mention for their support.  This is only a partial
+list; if you have helped in this way and would like to be listed, let
+bug-cvs know (as described elsewhere in this file).
 
 	Mark D. Baushke <mdb@cisco.com>
 	Per Cederqvist <ceder@signum.se>
-	J.T. Conklin (jtc@cygnus.com>
+	J.T. Conklin <jtc@cygnus.com>
 	Vince DeMarco <vdemarco@fdcsrvr.cs.mci.com>
 	Paul Eggert <eggert@twinsun.com>
 	Lal George <george@research.att.com>

@@ -1,3 +1,11 @@
+Wed Jan  8 00:17:13 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* README (Credits): Refer to NEWS not ChangeLog; the ChangeLog in
+	question got renamed a bit but ended up as the bottom of the NEWS
+	file.  Eliminate use of first person in a few places where it is
+	unclear who it refers to.  Explicitly say that the lists
+	of contributors are not comprehensive.
+
 Thu Jan  2 12:59:45 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* README, Makefile.in: Remove paragraph about writing to the Free
