@@ -126,7 +126,11 @@
 /* #undef HAVE_ERRNO_H */
 
 /* Define if you have the <fcntl.h> header file.  */
-/* #undef HAVE_FCNTL_H */
+#ifdef __DECC_VER
+#if __DECC_VER >= 50700000
+# define HAVE_FCNTL_H 1
+#endif
+#endif
 
 /* Define if you have the <memory.h> header file.  */
 /* #undef HAVE_MEMORY_H */
@@ -136,6 +140,12 @@
 
 /* Define if you have the <string.h> header file.  */
 #define HAVE_STRING_H 1
+
+/* Define to force lib/regex.c to use malloc instead of alloca.  */
+#define REGEX_MALLOC 1
+
+/* Define to force lib/regex.c to define re_comp et al.  */
+#define _REGEX_RE_COMP 1
 
 /* Define if you have the <sys/select.h> header file.  */
 /* #undef HAVE_SYS_SELECT_H */
@@ -198,3 +208,5 @@ extern void fnfold (char *FILENAME);
    might be worth messing with, but it also seems fine to just always call
    it "cvs".  */
 #define ARGV0_NOT_PROGRAM_NAME
+
+#define CVS_UNLINK vms_unlink
