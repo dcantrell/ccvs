@@ -1,3 +1,9 @@
+2004-09-23  Derek Price <derek@ximbiot.com>
+
+	* sanity.sh: Accept new -e option to interpret non-fatal calls to skip
+	as errors.
+	(skip, depends_on_rsh, depends_on_ssh): New functions.
+
 2004-09-12  Mark D. Baushke  <mdb@cvshome.org>
 
 	* rcs.c (RCS_checkout): Allow noexec to do checkouts when

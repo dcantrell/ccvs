@@ -22,7 +22,7 @@
 usage ()
 {
     echo "Usage: `basename $0` --help"
-    echo "Usage: `basename $0` [-klr] [-f FROM-TEST] [-h HOSTNAME] CVS-TO-TEST [TESTS-TO-RUN...]"
+    echo "Usage: `basename $0` [-eklr] [-f FROM-TEST] [-h HOSTNAME] CVS-TO-TEST [TESTS-TO-RUN...]"
 }
 
 exit_usage ()
@@ -36,9 +36,11 @@ exit_help ()
     usage
     echo
     echo "-H|--help	display this text"
-    echo "-l|--link-root"
-    echo "		test CVS using a symlink to a real CVSROOT"
-    echo "-r|--remote	test remote instead of local cvs"
+    echo "-e|--skipfail Treat tests that would otherwise be nonfatally skipped"
+    echo "              for reasons like missing tools as failures, exiting"
+    echo "              with an error message."
+    echo "-f FROM-TEST	run TESTS-TO-RUN, skipping all tests in the list before"
+    echo "		FROM-TEST"
     echo "-h HOSTNAME   Use :ext:HOSTNAME to run remote tests rather than"
     echo "              :fork:.  Implies --remote and assumes that \$TESTDIR"
     echo "              resolves to the same directory on both the client and"
@@ -46,8 +48,9 @@ exit_help ()
     echo "-k|--keep	try to keep directories created by individual tests"
     echo "		around, exiting after the first test which supports"
     echo "		--keep"
-    echo "-f FROM-TEST	run TESTS-TO-RUN, skipping all tests in the list before"
-    echo "		FROM-TEST"
+    echo "-l|--link-root"
+    echo "		test CVS using a symlink to a real CVSROOT"
+    echo "-r|--remote	test remote instead of local cvs"
     echo
     echo "CVS-TO-TEST	the path to the CVS executable to be tested"
     echo "TESTS-TO-RUN	the names of the tests to run (defaults to all tests)"
@@ -80,7 +83,8 @@ unset remotehost
 keep=false
 linkroot=false
 remote=false
-while getopts f:h:Hklr-: option ; do
+skipfail=false
+while getopts ef:h:Hklr-: option ; do
     # convert the long opts to short opts
     if test x$option = x-;  then
 	case "$OPTARG" in
@@ -100,12 +104,19 @@ while getopts f:h:Hklr-: option ; do
 		option=k;
 		OPTARG=
 		;;
+	    s|sk|ski|skip|skipf|skipfa|skipfai|skipfail)
+		option=e
+		OPTARG=
+		;;
 	    *)
 		option=\?
 		OPTARG=
 	esac
     fi
     case "$option" in
+	e)
+	    skipfail=:
+	    ;;
 	f)
 	    fromtest="$OPTARG"
 	    ;;
@@ -560,9 +571,70 @@ else
   : good, it works
 fi
 
+# Test that $1 works as a remote shell.  If so, set $CVS_RSH & $save_CVS_RSH to
+# match and return 0.  Otherwise, set $skipreason and return 77.
+depends_on_rsh ()
+{
+  host=${remotehost-"`hostname`"}
+  result=`$1 $host 'echo test'`
+  rc=$?
+  if test $? != 0 || test "x$result" != "xtest"; then
+    skipreason="\`$1 $host' failed rc=$rc result=$result"
+    return 77
+  fi
+
+  save_CVS_RSH=$CVS_RSH
+  CVS_RSH=$1; export CVS_RSH
+  return 0
+}
+
+# Find a usable SSH.  When a usable ssh is found, set $CVS_RSH, $save_CVS_RSH,
+# and return 0.  Otherwise, set $skipreason and return 77.
+depends_on_ssh ()
+{
+  # Are we able to run find and use an ssh?
+  if $remote; then :; else
+    skipreason="ssh is only used during remote testing."
+    return 77
+  fi
+
+  case "$CVS_RSH" in
+    *ssh*|*putty*)
+      tryssh=`Which $CVS_RSH`
+      if [ ! -n "$tryssh" ]; then
+	skipreason="Unable to find CVS_RSH=$CVS_RSH executable"
+	return 77
+      elif [ ! -x "$tryssh" ]; then
+	skipreason="Unable to execute $tryssh program"
+	return 77
+      fi
+      ;;
+    *)
+      # Look in the user's PATH for "ssh"
+      tryssh=`Which ssh`
+      if test ! -r "$tryssh"; then
+	skipreason="Unable to find ssh program"
+	return 77
+      fi
+      ;;
+  esac
+
+  depends_on_rsh $tryssh
+  return $?
+}
+
 pass ()
 {
   echo "PASS: $1" >>${LOGFILE}
+}
+
+skip ()
+{
+  if $skipfail; then
+    fail "$1${2+ ($2)}"
+  else
+    echo "SKIP: $1${2+ ($2)}" >>$LOGFILE
+  fi
 }
 
 fail ()
@@ -3800,6 +3872,8 @@ $PROG logout: Entry not found\."
 	  cd ..
 	  rm -r 1
 	  ;;
+
+
 
 	files)
 	  # Test of how we specify files on the command line
@@ -18863,24 +18937,22 @@ Annotations for $file
 	  # local.
 	  if $remote; then
 
+	    # Use :ext: rather than :fork:.  Most of the tests use :fork:,
+	    # so we want to make sure that we test :ext: _somewhere_.
+	    # Make sure 'rsh' works first.
+	    depends_on_rsh "$CVS_RSH"
+	    if test $? -eq 77; then
+		skip crerepos "$skipreason"
+		continue
+	    fi
+
 	    # For remote, just create the repository.  We don't yet do
 	    # the various other tests above for remote but that should be
 	    # changed.
 	    mkdir crerepos
 	    mkdir crerepos/CVSROOT
 
-	    # Use :ext: rather than :fork:.  Most of the tests use :fork:,
-	    # so we want to make sure that we test :ext: _somewhere_.
-
-	    # Maybe a bit dubious in the sense that people need to
-	    # have rsh working to run the tests, but at least it
-	    # isn't inetd :-).  Might want to think harder about this -
-	    # maybe try :ext:, and if it fails, print a (single, nice)
-	    # message and fall back to :fork:.  Maybe testing :ext:
-	    # with our own CVS_RSH rather than worrying about a system one
-	    # would do the trick.
-
-               # Make sure server ignores real ${HOME}/.cvsrc:
+            # Make sure server ignores real ${HOME}/.cvsrc:
             cat >$TESTDIR/cvs-setHome <<EOF
 #!/bin/sh
 HOME=$HOME
@@ -18897,14 +18969,6 @@ EOF
 	    else
 		CREREPOS_ROOT=:ext:`hostname`:${TESTDIR}/crerepos
 	    fi
-
-	    # If we're going to do remote testing, make sure 'rsh' works first.
-	    host="`hostname`"
-	    if test "x`${CVS_RSH} $host -n 'echo hi'`" != "xhi"; then
-		echo "ERROR: cannot test remote CVS, because \`${CVS_RSH} $host' fails." >&2
-		exit 1
-	    fi
-
 	  else
 
 	    # First, if the repository doesn't exist at all...
@@ -20170,6 +20234,8 @@ done"
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
 	  ;;
 
+
+
         sshstdio)
           # CVS_RSH=ssh can have a problem with a non-blocking stdio
           # in some cases. So, this test is all about testing :ext:
@@ -20177,111 +20243,75 @@ done"
           # will necessarily have ssh available, so be prepared to
           # skip this test.
 
-          if $remote; then
-            [ -n "$CVS_RSH" ] && CVS_RSH_save=$CVS_RSH
+	  depends_on_ssh
+	  if test $? -eq 77; then
+            skip sshstdio "$skipreason"
+	    continue
+	  fi
 
-            # Are we able to run find and use an ssh?
-            case "$CVS_RSH" in
-              *ssh*|*putty*)
-                 tryssh=`Which $CVS_RSH`
-                 if [ ! -n "$tryssh" ]; then
-                   skipreason="Unable to find CVS_RSH=$CVS_RSH executable"
-                 elif [ ! -x "$tryssh" ]; then
-                   skipreason="Unable to execute $tryssh program"
-                 fi
-                 ;;
-              *)
-                 # Look in the user's PATH for "ssh"
-                 tryssh=`Which ssh`
-                 if test ! -r "$tryssh"; then
-                   skipreason="Unable to find ssh program"
-                 fi
-                 ;;
-            esac
-            if [ ! -n "$skipreason" ]; then
-              host=${remotehost-"`hostname`"}
-              result=`$tryssh $host 'echo test'`
-              rc=$?
-              if test $? != 0 || test "x$result" != "xtest"; then
-                skipreason="\`$tryssh $host' failed rc=$rc result=$result"
-              else
-                CVS_RSH=$tryssh; export CVS_RSH
-              fi
+	  if test -n "$remotehost"; then
+	    SSHSTDIO_ROOT=:ext:$remotehost${CVSROOT_DIRNAME}
+	  else
+	    SSHSTDIO_ROOT=:ext:`hostname`:${CVSROOT_DIRNAME}
+	  fi
 
-              if test -n "$remotehost"; then
-                SSHSTDIO_ROOT=:ext:$remotehost${CVSROOT_DIRNAME}
-              else
-                SSHSTDIO_ROOT=:ext:`hostname`:${CVSROOT_DIRNAME}
-              fi
-             fi
-          else
-            skipreason="ssh is only used during remote testing."
-          fi
-
-          if [ -n "$skipreason" ]; then
-            pass "sshstdio (test skipped ... $skipreason)"
-          else
-            mkdir sshstdio; cd sshstdio
-            dotest sshstdio-1 "${testcvs} -d ${SSHSTDIO_ROOT} -q co -l ." ''
-            mkdir first-dir
-            dotest sshstdio-2 "${testcvs} add first-dir" \
-  "Directory ${CVSROOT_DIRNAME}/first-dir added to the repository"
-            cd first-dir
-            a='aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
-            c='aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaacaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
-            # Generate 1024 lines of $a
-            cnt=0
-            echo $a > aaa
-            while [ $cnt -lt 5 ] ; do
-              cnt=`expr $cnt + 1` ;
-              mv aaa aaa.old
-              cat aaa.old aaa.old aaa.old aaa.old > aaa
-            done
-            dotest sshstdio-3 "${testcvs} -q add aaa" \
-"${PROG} add: use .${PROG} commit. to add this file permanently"
-            dotest sshstdio-4 "${testcvs} -q ci -mcreate aaa" \
+          mkdir sshstdio; cd sshstdio
+          dotest sshstdio-1 "$testcvs -d $SSHSTDIO_ROOT -q co -l ."
+          mkdir first-dir
+          dotest sshstdio-2 "$testcvs add first-dir" \
+  "Directory $CVSROOT_DIRNAME/first-dir added to the repository"
+          cd first-dir
+          a='aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
+          c='aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaacaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
+          # Generate 1024 lines of $a
+          cnt=0
+          echo $a > aaa
+          while [ $cnt -lt 5 ] ; do
+            cnt=`expr $cnt + 1` ;
+            mv aaa aaa.old
+            cat aaa.old aaa.old aaa.old aaa.old > aaa
+          done
+          dotest sshstdio-3 "$testcvs -q add aaa" \
+"$PROG add: use .$PROG commit. to add this file permanently"
+          dotest sshstdio-4 "$testcvs -q ci -mcreate aaa" \
 "RCS file: $CVSROOT_DIRNAME/first-dir/aaa,v
 done
 Checking in aaa;
 $CVSROOT_DIRNAME/first-dir/aaa,v  <--  aaa
 initial revision: 1\.1
 done"
-            # replace lines 1, 512, 513, 1024 with $c
-            sed 510q < aaa > aaa.old
-            (echo $c; cat aaa.old; echo $c; \
-             echo $c; cat aaa.old; echo $c) > aaa
-            dotest sshstdio-5 "${testcvs} -q ci -mmodify-it aaa" \
+          # replace lines 1, 512, 513, 1024 with $c
+          sed 510q < aaa > aaa.old
+          (echo $c; cat aaa.old; echo $c; \
+           echo $c; cat aaa.old; echo $c) > aaa
+          dotest sshstdio-5 "$testcvs -q ci -mmodify-it aaa" \
 "Checking in aaa;
-${CVSROOT_DIRNAME}/first-dir/aaa,v  <--  aaa
+$CVSROOT_DIRNAME/first-dir/aaa,v  <--  aaa
 new revision: 1\.2; previous revision: 1\.1
 done"
-            cat > wrapper.sh <<EOF
-#!${TESTSHELL}
+          cat > wrapper.sh <<EOF
+#!$TESTSHELL
 exec "\$@" 2>&1 < /dev/null | cat
 EOF
-            chmod +x wrapper.sh
-            ./wrapper.sh \
-             ${testcvs} -z5 -Q diff --side-by-side -W 500 -r 1.1 -r 1.2 \
-               aaa > wrapper.dif
+          chmod +x wrapper.sh
+          ./wrapper.sh \
+           $testcvs -z5 -Q diff --side-by-side -W 500 -r 1.1 -r 1.2 \
+             aaa > wrapper.dif
   
-            ${testcvs} -z5 -Q diff --side-by-side -W 500 -r 1.1 -r 1.2 \
-               aaa > good.dif
+          $testcvs -z5 -Q diff --side-by-side -W 500 -r 1.1 -r 1.2 \
+             aaa > good.dif
   
-            dotest sshstdio-6 "cmp wrapper.dif good.dif" ""
-  
-            if [ -n "$CVS_RSH_save" ]; then
-              CVS_RSH=$CVS_RSH_save; export CVS_RSH
-            fi
+          dotest sshstdio-6 "cmp wrapper.dif good.dif"
 
-            if $keep; then
-              echo Keeping ${TESTDIR} and exiting due to --keep
-              exit 0
-            fi
-  
-            cd ../..
-            rm -r sshstdio
-            rm -rf ${CVSROOT_DIRNAME}/first-dir
+          if $keep; then
+            echo Keeping $TESTDIR and exiting due to --keep
+            exit 0
           fi
+  
+          cd ../..
+          CVS_RSH=$save_CVS_RSH; export CVS_RSH
+          rm -r sshstdio
+          rm -rf $CVSROOT_DIRNAME/first-dir
           ;;
 
 
