@@ -420,14 +420,13 @@ if echo $with_editor |grep ^/ >/dev/null; then
   if ! test -f $with_editor \
       || ! test -x $with_editor; then
     # warn the user that they may encounter problems
-    AC_MSG_WARN([$with_editor is not a path to an executable file])
+    AC_MSG_WARN([\`$with_editor' is not a path to an executable file])
   fi
 elif test no != "${with_editor}"; then
   # Search for an editor
   AC_CHECK_PROGS([EDITOR], [$with_editor])
 else
-  AC_MSG_CHECKING([for an editor])
-  AC_MSG_RESULT([no])
+  AC_MSG_ERROR([CVS cannot be compiled without a default log message editor.  Try \`configure --with-editor'.])
 fi
 
 if test -n "${EDITOR}"; then

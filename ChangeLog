@@ -1,3 +1,11 @@
+2003-03-26  Derek Price  <derek@ximbiot.com>
+
+	* configure.in (--with-editor): Quit with an error message when
+	--without-error is specified.
+	(Report from Jim Salter <jsalterjim@earthlink.net>.)
+
+	* configure: Regenerated.
+
 2003-03-24  Derek Price  <derek@ximbiot.com>
 
 	* configure.in: Add copyright notice.
