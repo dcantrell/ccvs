@@ -342,8 +342,25 @@ diff_fileproc (callerdat, finfo)
 		empty_file = DIFF_REMOVED;
 	    else
 	    {
-		error (0, 0, "%s no longer exists, no comparison available",
-		       finfo->fullname);
+		int exists;
+
+		exists = 0;
+		/* special handling for TAG_HEAD */
+		if (diff_rev1 && strcmp (diff_rev1, TAG_HEAD) == 0)
+		    exists = vers->vn_rcs != NULL;
+		else
+		{
+		    Vers_TS *xvers;
+
+		    xvers = Version_TS (finfo, NULL, diff_rev1, diff_date1,
+					1, 0);
+		    exists = xvers->vn_rcs != NULL;
+		    freevers_ts (&xvers);
+		}
+		if (exists)
+		    error (0, 0,
+			   "%s no longer exists, no comparison available",
+			   finfo->fullname);
 		freevers_ts (&vers);
 		diff_mark_errors (err);
 		return (err);

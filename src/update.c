@@ -612,7 +612,8 @@ update_fileproc (callerdat, finfo)
 #ifdef SERVER_SUPPORT
 		if (server_active && retval == 0)
 		{
-		    server_scratch_entry_only ();
+		    if (vers->ts_user == NULL)
+			server_scratch_entry_only ();
 		    server_updated (finfo, vers,
 				    SERVER_UPDATED, (struct stat *) NULL,
 				    (unsigned char *) NULL);
