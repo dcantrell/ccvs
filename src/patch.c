@@ -364,7 +364,14 @@ patch_fileproc (finfo)
     if (isattic && rev2 == NULL && date2 == NULL)
 	vers_head = NULL;
     else
+    {
 	vers_head = RCS_getversion (rcsfile, rev2, date2, force_tag_match, 0);
+	if (vers_head != NULL && RCS_isdead (rcsfile, vers_head))
+	{
+	    free (vers_head);
+	    vers_head = NULL;
+	}
+    }
 
     if (toptwo_diffs)
     {
@@ -383,6 +390,11 @@ patch_fileproc (finfo)
 	}
     }
     vers_tag = RCS_getversion (rcsfile, rev1, date1, force_tag_match, 0);
+    if (vers_tag != NULL && RCS_isdead (rcsfile, vers_tag))
+    {
+        free (vers_tag);
+	vers_tag = NULL;
+    }
 
     if (vers_tag == NULL && vers_head == NULL)
 	return (0);			/* nothing known about specified revs */

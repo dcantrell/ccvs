@@ -1674,6 +1674,38 @@ ${PROG} [a-z]*: use .cvs commit. to remove this file permanently"
 new revision: delete; previous revision: 1\.1\.2
 done'
 
+	  # Test diff of a dead file.
+	  dotest_fail death-diff-1 \
+"${testcvs} -q diff -r1.1 -rbranch -c file1" \
+"${PROG} [a-z]*: file1 was removed, no comparison available"
+
+	  dotest_fail death-diff-2 \
+"${testcvs} -q diff -r1.1 -rbranch -N -c file1" \
+"Index: file1
+===================================================================
+RCS file: file1
+diff -N file1
+\*\*\* [a-zA-Z0-9/]*[ 	][	]*[a-zA-Z0-9: ]*
+--- /dev/null[ 	][ 	]*[a-zA-Z0-9: ]*
+\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
+\*\*\* 1 \*\*\*\*
+- first revision
+--- 0 ----"
+
+	  # Test rdiff of a dead file.
+	  dotest death-rdiff-1 \
+"${testcvs} -q rtag -rbranch rdiff-tag first-dir" ''
+
+	  dotest death-rdiff-2 "${testcvs} -q rdiff -rtag -rbranch first-dir" \
+"Index: first-dir/file1
+diff -c first-dir/file1:1\.1 first-dir/file1:removed
+\*\*\* first-dir/file1:1\.1[ 	][	]*[a-zA-Z0-9: ]*
+--- first-dir/file1[ 	][ 	]*[a-zA-Z0-9: ]*
+\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
+\*\*\* 1 \*\*\*\*
+- first revision
+--- 0 ----"
+
 	  # Readd the file to the branch.
 	  echo "second revision" > file1
 	  dotest death2-9 "${testcvs} add file1" \

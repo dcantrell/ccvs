@@ -1,3 +1,12 @@
+Sat Jun 29 20:23:50 1996  Ian Lance Taylor  <ian@cygnus.com>
+
+	* diff.c (diff_fileproc): Always call diff_file_nodiff.  Handle
+	dead versions correctly.  Handle diffs between a specified
+	revision to a dead file correctly.
+	(diff_file_nodiff): Add just_set_rev parameter.  Change caller.
+	* patch.c (patch_fileproc): Check for dead versions.
+	* sanity.sh (death2): Add tests for above patches.
+
 Fri Jun 28 20:30:48 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	For reference, this takes CVS's text segment from 271136 bytes to
