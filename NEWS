@@ -8,6 +8,11 @@ you are compiling CVS yourself.
 
 Changes from 1.11.1p1 to 1.11.2:
 
+* The interpretation of revision ranges using :: in "log" and "rlog"
+has changed: a::b now excludes the log message from revision a but
+includes the log message from revision b.  Also, revision ranges that
+cross branch points should now work.
+
 * zlib has been updated to version 1.4.  There is a security advisory
 out in regards to 1.3.  This should fix that problem.
 
