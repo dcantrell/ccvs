@@ -1,5 +1,5 @@
 /* Analyze file differences for GNU DIFF.
-   Copyright (C) 1988, 1989, 1992, 1993 Free Software Foundation, Inc.
+   Copyright (C) 1988, 1989, 1992, 1993, 1997 Free Software Foundation, Inc.
 
 This file is part of GNU DIFF.
 
@@ -1071,7 +1071,7 @@ diff_2_files (filevec, depth)
 	for (i = 0; i < 2; ++i)
 	  if (filevec[i].missing_newline)
 	    {
-	      error ("No newline at end of file %s", filevec[i].name, "");
+	      diff_error ("No newline at end of file %s", filevec[i].name, "");
 	      changes = 2;
 	    }
     }

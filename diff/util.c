@@ -1,5 +1,5 @@
 /* Support routines for GNU DIFF.
-   Copyright (C) 1988, 1989, 1992, 1993, 1994 Free Software Foundation, Inc.
+   Copyright (C) 1988, 1989, 1992, 1993, 1994, 1997 Free Software Foundation, Inc.
 
 This file is part of GNU DIFF.
 
@@ -52,7 +52,7 @@ perror_with_name (text)
      char const *text;
 {
   int e = errno;
-  fprintf (stderr, "%s: ", program_name);
+  fprintf (stderr, "%s: ", diff_program_name);
   errno = e;
   perror (text);
 }
@@ -65,20 +65,20 @@ pfatal_with_name (text)
 {
   int e = errno;
   print_message_queue ();
-  fprintf (stderr, "%s: ", program_name);
+  fprintf (stderr, "%s: ", diff_program_name);
   errno = e;
   perror (text);
-  exit (2);
+  DIFF_ABORT (2);
 }
 
 /* Print an error message from the format-string FORMAT
    with args ARG1 and ARG2.  */
 
 void
-error (format, arg, arg1)
+diff_error (format, arg, arg1)
      char const *format, *arg, *arg1;
 {
-  fprintf (stderr, "%s: ", program_name);
+  fprintf (stderr, "%s: ", diff_program_name);
   fprintf (stderr, format, arg, arg1);
   fprintf (stderr, "\n");
 }
@@ -90,8 +90,8 @@ fatal (m)
      char const *m;
 {
   print_message_queue ();
-  error ("%s", m, 0);
-  exit (2);
+  diff_error ("%s", m, 0);
+  DIFF_ABORT (2);
 }
 
 /* Like printf, except if -l in effect then save the message and print later.
@@ -123,8 +123,8 @@ message5 (format, arg1, arg2, arg3, arg4)
   else
     {
       if (sdiff_help_sdiff)
-	putchar (' ');
-      printf (format, arg1, arg2, arg3, arg4);
+	putc (' ', outfile);
+      fprintf (outfile, format, arg1, arg2, arg3, arg4);
     }
 }
 
@@ -136,7 +136,7 @@ print_message_queue ()
   struct msg *m;
 
   for (m = msg_chain; m; m = m->next)
-    printf (m->format, m->arg1, m->arg2, m->arg3, m->arg4);
+    fprintf (outfile, m->format, m->arg1, m->arg2, m->arg3, m->arg4);
 }
 
 /* Call before outputting the results of comparing files NAME0 and NAME1
@@ -150,6 +150,8 @@ static char const *current_name0;
 static char const *current_name1;
 static int current_depth;
 
+static int output_in_progress = 0;
+
 void
 setup_output (name0, name1, depth)
      char const *name0, *name1;
@@ -158,7 +160,6 @@ setup_output (name0, name1, depth)
   current_name0 = name0;
   current_name1 = name1;
   current_depth = depth;
-  outfile = 0;
 }
 
 #if HAVE_FORK
@@ -170,8 +171,9 @@ begin_output ()
 {
   char *name;
 
-  if (outfile != 0)
+  if (output_in_progress)
     return;
+  output_in_progress = 1;
 
   /* Construct the header of this piece of diff.  */
   name = xmalloc (strlen (current_name0) + strlen (current_name1)
@@ -237,12 +239,10 @@ begin_output ()
 
       /* If -l was not specified, output the diff straight to `stdout'.  */
 
-      outfile = stdout;
-
       /* If handling multiple files (because scanning a directory),
 	 print which files the following output is about.  */
       if (current_depth > 0)
-	printf ("%s\n", name);
+	fprintf (outfile, "%s\n", name);
     }
 
   free (name);
@@ -264,12 +264,12 @@ begin_output ()
 }
 
 /* Call after the end of output of diffs for one file.
-   Close OUTFILE and get rid of the `pr' subfork.  */
+   If -l was given, close OUTFILE and get rid of the `pr' subfork.  */
 
 void
 finish_output ()
 {
-  if (outfile != 0 && outfile != stdout)
+  if (paginate_flag && outfile != 0 && outfile != stdout)
     {
       int wstatus;
       if (ferror (outfile))
@@ -286,7 +286,7 @@ finish_output ()
 	fatal ("subsidiary pr failed");
     }
 
-  outfile = 0;
+  output_in_progress = 0;
 }
 
 /* Compare two lines (typically one from each input file)
@@ -682,43 +682,6 @@ analyze_hunk (hunk, first0, last0, first1, last1, deletes, inserts)
   *inserts = show_to;
 }
 
-/* malloc a block of memory, with fatal error message if we can't do it. */
-
-VOID *
-xmalloc (size)
-     size_t size;
-{
-  register VOID *value;
-
-  if (size == 0)
-    size = 1;
-
-  value = (VOID *) malloc (size);
-
-  if (!value)
-    fatal ("memory exhausted");
-  return value;
-}
-
-/* realloc a block of memory, with fatal error message if we can't do it. */
-
-VOID *
-xrealloc (old, size)
-     VOID *old;
-     size_t size;
-{
-  register VOID *value;
-
-  if (size == 0)
-    size = 1;
-
-  value = (VOID *) realloc (old, size);
-
-  if (!value)
-    fatal ("memory exhausted");
-  return value;
-}
-
 /* Concatenate three strings, returning a newly malloc'd string.  */
 
 char *

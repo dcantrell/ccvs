@@ -99,10 +99,6 @@ the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 #endif
 #endif
 
-#if !HAVE_DUP2
-#define dup2(f,t)	(close (t),  fcntl (f,F_DUPFD,t))
-#endif
-
 #ifndef O_RDONLY
 #define O_RDONLY 0
 #endif
@@ -146,7 +142,7 @@ the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 #include <vfork.h>
 #endif
 
-#if HAVE_STDLIB_H
+#if HAVE_STDLIB_H || defined(STDC_HEADERS)
 #include <stdlib.h>
 #else
 VOID *malloc ();

@@ -2,4 +2,4 @@
 
 #include <config.h>
 
-char const version_string[] = "2.7";
+char const diff_version_string[] = "2.7";
