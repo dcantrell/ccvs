@@ -6699,27 +6699,12 @@ ${PROG} [a-z]*: Updating bdir/subdir"
 "${testcvs} -q rtag -b -r release wip_test first-dir" ""
 	  dotest importc-6 "${testcvs} -q update -r wip_test" "M cdir/cfile"
 
-	  if $remote; then
-	    # Remote doesn't have the bug in the first place.
-	    dotest importc-7r "${testcvs} -q ci -m modify -r wip_test" \
+	  # This used to fail in local mode
+	  dotest importc-7 "${testcvs} -q ci -m modify -r wip_test" \
 "Checking in cdir/cfile;
 ${CVSROOT_DIRNAME}/first-dir/cdir/cfile,v  <--  cfile
 new revision: 1\.1\.1\.1\.2\.1; previous revision: 1\.1\.1\.1
 done"
-	  else
-	    # This checkin should just succeed.  That it doesn't is a
-	    # bug (CVS 1.9.16 through the present seem to have it; CVS
-	    # 1.9 did not).
-	    dotest_fail importc-7 "${testcvs} -q ci -m modify -r wip_test" \
-"${PROG} [a-z]*: in directory adir/sub1/ssdir:
-${PROG} \[[a-z]* aborted\]: there is no version here; do .${PROG} checkout. first"
-	    # The workaround is to leave off the "-r wip_test".
-	    dotest importc-7a "${testcvs} -q ci -m modify" \
-"Checking in cdir/cfile;
-${CVSROOT_DIRNAME}/first-dir/cdir/cfile,v  <--  cfile
-new revision: 1\.1\.1\.1\.2\.1; previous revision: 1\.1\.1\.1
-done"
-	  fi
 
 	  # TODO: should also be testing "import -d" when we update
 	  # an existing file.
