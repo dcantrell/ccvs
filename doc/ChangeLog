@@ -1,5 +1,8 @@
 Wed Aug 27 08:09:31 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvs.texinfo (Password authentication server): Grammar fix ("under
+	as the username" -> "as the username").
+
 	* cvs.texinfo: Fix doubled 'the the' typos.  Reported by
 	karlb@atg.com.
 
