@@ -1,4 +1,4 @@
-2003-12-07  Mark D. Baushke  <mdb@cvshome.rog>
+2003-12-07  Mark D. Baushke  <mdb@cvshome.org>
 
 	* configure.in (AC_SYS_LARGEFILE): Remove. More work is needed
 	before AC_SYS_LARGEFILE will work on all platforms.
