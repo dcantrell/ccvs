@@ -1,3 +1,8 @@
+Fri Mar  1 00:10:06 1996  Benjamin J. Lee  <benjamin@cyclic.com>
+
+	* startserver.c, rcmd.c: Made privileged/non-privileged
+	rsh communication more adaptive.  Removed USE_PRIVILEGED_RCMD.
+
 Wed Feb 28 11:08:06 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* options.h: Remove comment about automatic generation from
