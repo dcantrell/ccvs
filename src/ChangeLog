@@ -1,5 +1,11 @@
 2004-04-11  Derek Price  <derek@ximbiot.com>
 
+	* client.c (call_in_directory): Check paths the server sends us to make
+	sure they are within a sandbox the user requested be updated.
+	(is_valid_client_path, path_list_prefixed): New functions.
+
+2004-04-11  Derek Price  <derek@ximbiot.com>
+
 	* modules.c (do_module): Don't allow up-level references in paths to
 	step out of the repository.
 	* sanity.sh (multiroot3): Update tests and add a few more.
