@@ -1,3 +1,24 @@
+1999-02-25  Jim Kingdon  <http://www.cyclic.com>
+
+	* cvs.texinfo: Refer to "keywords" not "RCS keywords".  We had
+	only used the latter term in a few places, and it seems like a
+	somewhat odd term in that this style of keyword is by no means
+	specific to RCS.
+	(Merging a branch): Remove spurious ")".  Use ref, not xref, after
+	"see".
+	(Merging a branch, Substitution modes): Make sure that @ref is
+	followed by comma, since info wants that.
+	(Merging and keywords): Use samp not code for "-kk".  Something of
+	a judgement call, but the rest of the manual uses samp and that
+	seems better to me.
+	(Merging and keywords): Rewrite, to (a) better motivate the
+	discussion based on what the user wants to do, (b) fix up lots of
+	convoluted sentences, (c) move the discussion of the binary files
+	to the end, that is get across the basic idea first and then
+	embellish it.  Remove a few unnecessary index entries.  Expand
+	example.  Just tell people to avoid -kk with binary files (comment
+	out the discussion of using -A after the commit).
+
 1999-01-29  Derek Price
 	<http://www-personal.engin.umich.edu/~oberon/resume.html>
 

@@ -4011,9 +4011,9 @@ A conflict can result from a merge operation.  If that
 happens, you should resolve it before committing the
 new revision.  @xref{Conflicts example}.
 
-If your source files contain @sc{rcs} keywords (@pxref{Keyword substitution}),
+If your source files contain keywords (@pxref{Keyword substitution}),
 you might be getting more conflicts than strictly necessary.  See
-@xref{Merging and keywords}) for information on how to avoid this.
+@ref{Merging and keywords}, for information on how to avoid this.
 
 The @code{checkout} command also supports the @samp{-j @var{branch}} flag.  The
 same effect as above could be achieved with this:
@@ -4174,29 +4174,108 @@ file @file{a} will be removed and file @file{d} added in the main branch.
 @section Merging and keywords
 @cindex Merging, and keyword substitution
 @cindex Keyword substitution, and merging
-@cindex Keyword conflicts during merge, avoiding
 @cindex -j (merging branches), and keyword substitution
 @cindex -kk, to avoid conflicts during a merge
 
-Files containing @sc{rcs} keywords (@pxref{Keyword substitution})
-can cause numerous conflicts during a merge if any of the same original files
-(files derived from the same archive file in the repository)
-have been altered and committed on both the destination branch and the
-source branch due to differing keyword strings (e.g. @samp{$@asis{}Revision: 1.2 $}
-and @samp{$@asis{}Revision: 1.1.2.1 $}) in the two copies of the file.
+If you merge files containing keywords (@pxref{Keyword
+substitution}), you will normally get numerous
+conflicts during the merge, because the keywords are
+expanded differently in the revisions which you are
+merging.
 
-This can be avoided by adding the @code{-kk}
-(@pxref{Substitution modes}) switch to the merge command line but
-this overrides any sticky options attached to the working copy of the file
-or present in the @sc{rcs} archive file (such as @samp{-kb} for binary
-files).  This can cause severe problems if any binary files with @sc{rcs}
-keyword strings are included in the merge.
+Therefore, you will often want to specify the
+@samp{-kk} (@pxref{Substitution modes}) switch to the
+merge command line.  By substituting just the name of
+the keyword, not the expanded value of that keyword,
+this option ensures that the revisions which you are
+merging will be the same as each other, and avoid
+spurious conflicts.
 
-In other words, forcing identical strings to be substituted for keywords
-by keyword type will avoid keyword conflicts during a merge.
+For example, suppose you have a file like this:
+
+@example
+       +---------+
+      _! 1.1.2.1 !   <-  br1
+     / +---------+
+    /
+   /
++-----+    +-----+
+! 1.1 !----! 1.2 !
++-----+    +-----+
+@end example
+
+and your working directory is currently on the trunk
+(revision 1.2).  Then you might get the following
+results from a merge:
+
+@example
+$ cat file1
+key $@asis{}Revision: 1.2 $
+. . .
+$ cvs update -j br1
+U file1
+RCS file: /cvsroot/first-dir/file1,v
+retrieving revision 1.1
+retrieving revision 1.1.2.1
+Merging differences between 1.1 and 1.1.2.1 into file1
+rcsmerge: warning: conflicts during merge
+$ cat file1
+<<<<<<< file1
+key $@asis{}Revision: 1.2 $
+=======
+key $@asis{}Revision: 1.1.2.1 $
+>>>>>>> 1.1.2.1
+. . .
+@end example
+
+What happened was that the merge tried to merge the
+differences between 1.1 and 1.1.2.1 into your working
+directory.  So, since the keyword changed from
+@code{Revision: 1.1} to @code{Revision: 1.1.2.1},
+@sc{cvs} tried to merge that change into your working
+directory, which conflicted with the fact that your
+working directory had contained @code{Revision: 1.2}.
+
+Here is what happens if you had used @samp{-kk}:
+
+@example
+$ cat file1
+key $@asis{}Revision: 1.2 $
+. . .
+$ cvs update -kk -j br1
+U file1
+RCS file: /cvsroot/first-dir/file1,v
+retrieving revision 1.1
+retrieving revision 1.1.2.1
+Merging differences between 1.1 and 1.1.2.1 into file1
+$ cat file1
+key $@asis{}Revision$
+. . .
+@end example
+
+What is going on here is that revision 1.1 and 1.1.2.1
+both expand as plain @code{Revision}, and therefore
+merging the changes between them into the working
+directory need not change anything.  Therefore, there
+is no conflict.
+
+There is, however, one major caveat with using
+@samp{-kk} on merges.  Namely, it overrides whatever
+keyword expansion mode @sc{cvs} would normally have
+used.  In particular, this is a problem if the mode had
+been @samp{-kb} for a binary file.  Therefore, if your
+repository contains binary files, you will need to deal
+with the conflicts rather than using @samp{-kk}.
+
+@ignore
+The following seems rather confusing, possibly buggy,
+and in general, in need of much more thought before it
+is a recommended technique.  For one thing, does it
+apply on Windows as well as on Unix?
+
 Unchanged binary files will undergo the same keyword substitution
 but will not be checked in on a subsequent
-@code{cvs commit}.  Be aware that binary files containing @sc{rcs} keyword
+@code{cvs commit}.  Be aware that binary files containing keyword
 strings which are present in or below the working directory
 will most likely remain corrupt until repaired, however.  A simple 
 @code{cvs update -A} is sufficient to fix these otherwise unaltered binary files
@@ -4204,9 +4283,6 @@ if the merge is being done to the main branch but
 this must be done after the merge has been committed or the merge itself
 will be lost.
 
-@cindex Branch merge example, avoiding keyword conflicts
-@cindex Example, branch merge, avoiding keyword conflicts
-@cindex Merge avoiding keyword conflicts, branch example
 For Example:
 @example
 cvs update -Akk -jbranchtag
@@ -4227,6 +4303,7 @@ Unfortunately, this doesn't work as well with an arbitrary branch tag, as the
 switches attached to the working files as @samp{-A} does.  The workaround
 for this is to release the working directory after the merge has been
 committed and check it out again.
+@end ignore
 
 @c ---------------------------------------------------------------------
 @node Recursive behavior
@@ -6578,7 +6655,7 @@ It has a command, @code{what}, which is very similar to
 without @sc{rcs} have @sc{sccs}.  Since @code{what}
 looks for the character sequence @code{@@(#)} it is
 easy to include keywords that are detected by either
-command.  Simply prefix the @sc{rcs} keyword with the
+command.  Simply prefix the keyword with the
 magic @sc{sccs} phrase, like this:
 
 @example
@@ -6624,7 +6701,7 @@ option to @code{cvs add} and @code{cvs admin}; the
 latter is set by the @samp{-k} or @samp{-A} options to @code{cvs
 checkout} or @code{cvs update}.  @code{cvs diff} also
 has a @samp{-k} option.  For some examples,
-see @ref{Binary files} and @ref{Merging and keywords}.
+see @ref{Binary files}, and @ref{Merging and keywords}.
 @c The fact that -A is overloaded to mean both reset
 @c sticky options and reset sticky tags/dates is
 @c somewhat questionable.  Perhaps there should be
