@@ -21,7 +21,6 @@
 
 EXTRA_DIST = \
 	config.h \
-	stamp-chi \
 	config.h.in \
 	config.h.in.in \
 	config.h.in.footer \
@@ -52,7 +51,7 @@ DISTCLEANFILES =
 
 all-local: config.h stdbool.h stdint.h
 config.h: stamp-ch
-stamp-ch: $(srcdir)/config.h.in $(top_srcdir)/configure
+stamp-ch: config.h.in $(top_srcdir)/configure
 	@echo "/* This file is generated via a rule in Makefile.am from the" \
 	  >config.tmp
 	@echo " * config.h.in file." >>config.tmp
@@ -72,10 +71,10 @@ DISTCLEANFILES += stamp-ch
 
 # The shell portion of this target is so that this file will be regenerated
 # when it is missing, even when not in maintainer mode.
-$(srcdir)/config.h.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/stamp-chi
+config.h.in: @MAINTAINER_MODE_TRUE@ stamp-chi
 	@if test ! -f $@; then \
 	  rm -f stamp-chi; \
-	  $(MAKE) $(srcdir)/stamp-chi; \
+	  $(MAKE) stamp-chi; \
 	else :; fi
 
 # The following target exists for two reasons.  The first is so that the rule
@@ -83,17 +82,13 @@ $(srcdir)/config.h.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/stamp-chi
 # built in maintainer mode.  The second reason is so that the config.h.in, and
 # thus the config.h file only gets touched when it actually changes, which
 # could potentially save unnecessary rebuilds of many dependent files.
-#
-# This stamp file is distributed so that a user who enables maintainer mode
-# will only find out that they have a broken Perl install (used by mkconfig),
-# for instance, when they actually need to rebuild this file because one of its
-# dependencies was touched.
-$(srcdir)/stamp-chi: mkconfig $(top_srcdir)/config.h.in \
-		     $(srcdir)/config.h.in.in $(srcdir)/config.h.in.footer
+stamp-chi: mkconfig $(top_srcdir)/config.h.in $(srcdir)/config.h.in.in \
+	   $(srcdir)/config.h.in.footer
 	@./mkconfig -q $(top_srcdir)/config.h.in $(srcdir)/config.h.in \
 	               $(srcdir)/config.h.in.in $(srcdir)/config.h.in.footer
 	@cp $(srcdir)/config.h.in $@
-MAINTAINERCLEANFILES += $(srcdir)/stamp-chi $(srcdir)/config.h.in
+DISTCLEANFILES += stamp-chi
+MAINTAINERCLEANFILES += $(srcdir)/config.h.in
 
 stdbool.h: stamp-sh
 stamp-sh: $(top_srcdir)/lib/stdbool_.h

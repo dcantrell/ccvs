@@ -1,5 +1,12 @@
 2004-11-16  Derek Price  <derek@ximbiot.com>
 
+	* Makefile.am (EXTRA_DIST): Remove stamp-chi.
+	($(srcdir)/stamp-chi, $(srcdir)/config.h.in): Rename to...
+	(stamp-chi, config.h.in): Respectively, including associated required
+	target changes.
+
+2004-11-16  Derek Price  <derek@ximbiot.com>
+
 	* Makefile.am (stamp-ch): Replace dependency on Makefile with a
 	dependency on configure.
 
