@@ -581,6 +581,7 @@ diff_exec (file1, file2, label1, label2, options, out)
 	call_diff_arg (label1);
     if (label2)
 	call_diff_arg (label2);
+    call_diff_arg ("--");
     call_diff_arg (file1);
     call_diff_arg (file2);
     free (args);
