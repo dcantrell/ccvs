@@ -2230,7 +2230,7 @@ done"
 	  cd ../../..
 
 	  rm -r 1
-	  rm -rf ${CVSROOT_DIRECTORY}/first-dir
+	  rm -rf ${CVSROOT_DIRNAME}/first-dir
 	  ;;
 
 	spacefiles)
@@ -2330,7 +2330,9 @@ done"
 	  cd ..
 
 	  rm -r 1 2 3
-	  rm -rf "${CVSROOT_DIRECTORY}/first dir"
+	  rm -rf "${CVSROOT_DIRNAME}/first dir"
+	  rm -r ${CVSROOT_DIRNAME}/${dashb}
+	  rm -f ${CVSROOT_DIRNAME}/${dashc},v ${CVSROOT_DIRNAME}/top,v
 	  ;;
 
 	commit-readonly)
