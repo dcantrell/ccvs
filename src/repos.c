@@ -98,7 +98,7 @@ Name_Repository (dir, update_dir)
     }
     if (! isabsolute(repos))
     {
-	if (CVSroot == NULL)
+	if (CVSroot_original == NULL)
 	{
 	    error (0, 0, "in directory %s:", xupdate_dir);
 	    error (0, 0, "must set the CVSROOT environment variable\n");
@@ -106,10 +106,10 @@ Name_Repository (dir, update_dir)
 	    error (1, 0, "illegal repository setting");
 	}
 	(void) strcpy (path, repos);
-	(void) sprintf (repos, "%s/%s", CVSroot, path);
+	(void) sprintf (repos, "%s/%s", CVSroot_directory, path);
     }
 #ifdef CLIENT_SUPPORT
-    if (!client_active && !isdir (repos))
+    if (!CVSroot_remote && !isdir (repos))
 #else
     if (!isdir (repos))
 #endif
@@ -137,9 +137,10 @@ Short_Repository (repository)
 
     /* If repository matches CVSroot at the beginning, strip off CVSroot */
     /* And skip leading '/' in rep, in case CVSroot ended with '/'. */
-    if (strncmp (CVSroot, repository, strlen (CVSroot)) == 0)
+    if (strncmp (CVSroot_directory, repository,
+		 strlen (CVSroot_directory)) == 0)
     {
-	char *rep = repository + strlen (CVSroot);
+	char *rep = repository + strlen (CVSroot_directory);
 	return (*rep == '/') ? rep+1 : rep;
     }
     else

@@ -289,8 +289,24 @@ serve_root (arg)
     int save_errno;
     
     if (error_pending()) return;
+
+    parse_cvsroot (arg);	/* XXX this won't handle errors
+				   correctly -- fixme! */
+
+    /* Make sure the thing being passed was a local directory. */
+
+    if (CVSroot_method != local_method)
+      {
+	pending_error_text = malloc (80 + strlen (CVSroot_original));
+	if (pending_error_text != NULL)
+	    sprintf (pending_error_text,
+		     "E CVSROOT `%s' is not a local pathname",
+		     CVSroot_original);
+	pending_error = ENOMEM;	/* XXX not really, but... */
+	return;
+      }
     
-    (void) sprintf (path, "%s/%s", arg, CVSROOTADM);
+    (void) sprintf (path, "%s/%s", CVSroot_directory, CVSROOTADM);
     if (!isaccessible (path, R_OK | X_OK))
     {
 	save_errno = errno;
@@ -311,21 +327,14 @@ Sorry, you don't have read/write access to the history file %s", path);
 	pending_error = save_errno;
     }
 
-    CVSroot = malloc (strlen (arg) + 1);
-    if (CVSroot == NULL)
-    {
-	pending_error = ENOMEM;
-	return;
-    }
-    strcpy (CVSroot, arg);
 #ifdef HAVE_PUTENV
-    env = malloc (strlen (CVSROOT_ENV) + strlen (CVSroot) + 1 + 1);
+    env = malloc (strlen (CVSROOT_ENV) + strlen (CVSroot_directory) + 1 + 1);
     if (env == NULL)
     {
 	pending_error = ENOMEM;
 	return;
     }
-    (void) sprintf (env, "%s=%s", CVSROOT_ENV, arg);
+    (void) sprintf (env, "%s=%s", CVSROOT_ENV, CVSroot_directory);
     (void) putenv (env);
     /* do not free env, as putenv has control of it */
 #endif
@@ -3224,13 +3233,8 @@ static void
 serve_init (arg)
     char *arg;
 {
-    CVSroot = malloc (strlen (arg) + 1);
-    if (CVSroot == NULL)
-    {
-	pending_error = ENOMEM;
-	return;
-    }
-    strcpy (CVSroot, arg);
+    parse_cvsroot (arg);	/* XXX this won't do the right error
+				   handling -- fixme! */
 
     do_cvs_command (init);
 }

@@ -1,3 +1,94 @@
+Mon Apr 22 00:38:08 1996  Noel Cragg  <noel@gargle>
+
+	* server.c (serve_root): modify to use PARSE_CVSROOT rather than
+ 	goofing around with other variables.  Will need to fix
+ 	PARSE_CVSROOT to have a return value so we can return an error and
+ 	quit gracefully if in server mode.
+	(serve_init): same.
+
+	* main.c: modify command table to remove client_* routines, since
+ 	they no longer exist.
+	(main): don't try to switch off non-existent field in command
+ 	table! ;-)
+
+        * client.h (client_*): removed prototypes for now non-existent
+ 	functions.
+
+	* client.c: remove proto for GET_CVS_PASSWORD, since it is now in
+ 	cvs.h.  Modify routines to use new globals that describe CVSROOT
+ 	rather than CLIENT_ACTIVE, SERVER_HOST, SERVER_USER, and
+ 	SERVER_CVSROOT.
+	(parse_cvsroot): removed function, since a more generic version
+ 	now lives in root.c.
+	(connect_to_pserver): remove call to PARSE_CVSROOT, since main.c
+ 	has already done it for us.
+	(client_*): removed all of these routines, since they only call
+ 	PARSE_CVSROOT and then their respective operation functions.
+  	Since main.c has already called PARSE_CVSROOT, we shouldn't bother
+ 	with the extra function call, since client-server diffs are
+ 	already handled in the core routines themselves.
+
+	* main.c: remove `CVSroot' as a global variable.  Remove
+ 	USE_AUTHENTICATING_SERVER variable since we have a new
+ 	`CVSroot_method' variable instead.
+	(main): add `CVSroot' as a local variable.  Call PARSE_CVSROOT
+ 	after we're sure we have the right setting for `CVSroot.'
+
+	* login.c (login): update to use new global variables.  Instead of
+ 	old behavior which let the user type in user@host when prompted,
+ 	it makes them do it in CVSROOT proper.  The routine still lets the
+ 	user type the password, however.
+	(get_cvs_password): make sure that CVSROOT is fully qualified
+ 	before trying to find the entry in the .cvspass file.
+	* cvs.h: add prototype for GET_CVS_PASSWORD.
+
+	* add.c: use new globals that describe CVSROOT.
+	* admin.c: same.
+	* checkout.c: same.
+	* commit.c: same.
+	* create_adm.c: same.
+	* diff.c: same.
+	* edit.c: same.
+	* expand_path.c: same.
+	* history.c: same.
+	* ignore.c: same.
+	* import.c: same.
+	* log.c: same.
+	* mkmodules.c: same.
+	* modules.c: same.
+	* parseinfo.c: same.
+	* patch.c: same.
+	* rcs.c: same.
+	* recurse.c: same.
+	* release.c: same.
+	* remove.c: same.
+	* repos.c: same.
+	* rtag.c: same.
+	* status.c: same.
+	* tag.c: same.
+	* update.c: same.
+	* watch.c: same.
+	* wrapper.c: same.
+	
+	* root.c (Name_Root): remove error message that reports missing
+ 	CVSROOT, since new code in main.c will catch it and also print out
+ 	an error.
+	(parse_cvsroot): new function -- takes a CVSROOT string and breaks
+ 	it up into its component parts -- method, hostname, username, and
+ 	repository directory.  Sets new global variables that describe the
+ 	repository location more precisely: CVSroot_original,
+ 	CVSroot_remote, CVSroot_method, CVSroot_username,
+ 	CVSroot_hostname, CVSroot_directory for use by all other
+ 	functions.  Checks for obvious errors in format of string.
+	(main): a short routine to test PARSE_CVSROOT from the command
+ 	line.
+	* cvs.h: add prototype for PARSE_CVSROOT and extern definitions
+ 	for new globals.
+
+	* cvs.h: removed `CVSroot' variable, since we don't want other
+ 	routines using the raw CVSROOT (also helped to find all of the
+ 	refs to the variable!).
+
 Fri Apr 19 11:22:35 1996  Benjamin J. Lee  <benjamin@cyclic.com>
 
         * Version 1.7.86

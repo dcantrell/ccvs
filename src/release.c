@@ -93,11 +93,11 @@ release (argc, argv)
      */
     /* Construct the update command. */
     sprintf (update_cmd, "%s -n -q -d %s update",
-             program_path, CVSroot);
+             program_path, CVSroot_original);
 
 #ifdef CLIENT_SUPPORT
     /* Start the server; we'll close it after looping. */
-    if (client_active)
+    if (CVSroot_remote)
       {
 	start_server ();
 	ign_setup ();
@@ -209,7 +209,7 @@ release (argc, argv)
 	    && !server_active
 #endif
 #ifdef CLIENT_SUPPORT
-	    && !(client_active
+	    && !(CVSroot_remote
 		 && (!supported_request ("noop")
 		     || !supported_request ("Notify")))
 #endif
@@ -225,7 +225,7 @@ release (argc, argv)
 	}
 
 #ifdef CLIENT_SUPPORT
-        if (client_active)
+        if (CVSroot_remote)
         {
           send_to_server ("Argument ", 0);
           send_to_server (thisarg, 0);
@@ -244,7 +244,7 @@ release (argc, argv)
         if (delete_flag) release_delete (thisarg);
         
 #ifdef CLIENT_SUPPORT
-        if (client_active)
+        if (CVSroot_remote)
           return get_responses_and_close ();
         else
 #endif /* CLIENT_SUPPORT */

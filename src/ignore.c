@@ -58,12 +58,12 @@ ign_setup ()
        processing, and only if !ign_inhibit_server), letting the server
        know about the files and letting it decide whether to ignore
        them based on CVSROOOTADM_IGNORE.  */
-    if (!client_active)
+    if (!CVSroot_remote)
 #endif
     {
 	/* Then add entries found in repository, if it exists */
-	(void) sprintf (file, "%s/%s/%s", CVSroot, CVSROOTADM,
-			CVSROOTADM_IGNORE);
+	(void) sprintf (file, "%s/%s/%s", CVSroot_directory,
+			CVSROOTADM, CVSROOTADM_IGNORE);
 	ign_add_file (file, 0);
     }
 

@@ -137,7 +137,7 @@ tag (argc, argv)
     RCS_check_tag (symtag);
 
 #ifdef CLIENT_SUPPORT
-    if (client_active)
+    if (CVSroot_remote)
     {
 	/* We're the client side.  Fire up the remote server.  */
 	start_server ();
@@ -675,9 +675,10 @@ Numeric tag %s contains characters other than digits and '.'", name);
     mytag.dptr = name;
     mytag.dsize = strlen (name);
 
-    valtags_filename = xmalloc (strlen (CVSroot) + sizeof CVSROOTADM
+    valtags_filename = xmalloc (strlen (CVSroot_directory)
+				+ sizeof CVSROOTADM
 				+ sizeof CVSROOTADM_HISTORY + 20);
-    strcpy (valtags_filename, CVSroot);
+    strcpy (valtags_filename, CVSroot_directory);
     strcat (valtags_filename, "/");
     strcat (valtags_filename, CVSROOTADM);
     strcat (valtags_filename, "/");

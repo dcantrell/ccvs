@@ -13,6 +13,8 @@
 
 #include "cvs.h"
 
+#ifndef DEBUG
+
 char *
 Name_Root(dir, update_dir)
      char *dir;
@@ -51,15 +53,7 @@ Name_Root(dir, update_dir)
      * order to continue.
      */
     if ((!isdir (cvsadm)) || (!isreadable (tmp)))
-    {
-	if (CVSroot == NULL)
-	{
-	    error (0, 0, "in directory %s:", xupdate_dir);
-	    error (0, 0, "must set the CVSROOT environment variable");
-	    error (0, 0, "or specify the '-d' option to %s.", program_name);
-	}
-	return (NULL);
-    }
+        return (NULL);
 
     /*
      * The assumption here is that the CVS Root is always contained in the
@@ -175,3 +169,209 @@ Create_Root (dir, rootdir)
 	    error (1, errno, "cannot close %s", tmp);
     }
 }
+
+#endif /* ! DEBUG */
+
+
+/* Parse a CVSROOT variable into its constituent parts -- method,
+ * username, hostname, directory.  The prototypical CVSROOT variable
+ * looks like:
+ *
+ * :method:user@host:path
+ *
+ * Some methods may omit fields; local, for example, doesn't need user
+ * and host. */
+
+char *CVSroot_original = NULL;	/* the CVSroot that was passed in */
+int CVSroot_remote;		/* nonzero if we are doing remote access */
+CVSmethod CVSroot_method;	/* one of the enum values defined in cvs.h */
+char *CVSroot_username;		/* the username or NULL if method == local */
+char *CVSroot_hostname;		/* the hostname or NULL if method == local */
+char *CVSroot_directory;	/* the directory name */
+
+void
+parse_cvsroot (char *CVSroot)
+{
+  static int cvsroot_parsed = 0;
+  char *cvsroot_copy, *p;
+  int have_method = 0;
+
+  /* Don't go through the trouble twice. */
+  if (cvsroot_parsed)
+    {
+      error (0, 0, "WARNING (parse_cvsroot): someone called me twice!\n");
+      return;
+    }
+
+  CVSroot_original = xstrdup (CVSroot);
+  cvsroot_copy = xstrdup (CVSroot);
+
+  if ((*cvsroot_copy == ':'))
+    {
+      char *method = ++cvsroot_copy;
+
+      /* Access method specified, as in
+       * "cvs -d :pserver:user@host:/path",
+       * "cvs -d :local:e\path", or
+       * "cvs -d :kserver:user@host:/path".
+       * We need to get past that part of CVSroot before parsing the
+       * rest of it.
+       */
+
+      if (! (p = strchr (method, ':')))
+        error (1, 0, "bad CVSroot: %s", CVSroot);
+      *p = '\0';
+      cvsroot_copy = ++p;
+
+      /* Now we have an access method -- see if it's valid. */
+
+      if (strcmp (method, "local") == 0)
+	CVSroot_method = local_method;
+      else if (strcmp (method, "pserver") == 0)
+	CVSroot_method = pserver_method;
+      else if (strcmp (method, "kserver") == 0)
+	CVSroot_method = kserver_method;
+      else if (strcmp (method, "server") == 0)
+	CVSroot_method = server_method;
+      else if (strcmp (method, "rsh") == 0)
+	CVSroot_method = server_method;
+      else
+	error (1, 0, "bad method in CVSroot: %s", CVSroot);
+
+      have_method = 1;
+    }
+
+  /* Check to see if there is a username in the string. */
+
+  if (! (p = strchr (cvsroot_copy, '@')))
+    CVSroot_username = NULL;
+  else
+    {
+      CVSroot_username = cvsroot_copy;
+      *p = '\0';
+      cvsroot_copy = ++p;
+      if (*CVSroot_username == '\0')
+	CVSroot_username = NULL;
+    }
+
+  /* Check to see if there is a hostname in the string.  At this point
+   * we'll have something like
+   *
+   * "totoro:/u/src/master"
+   * "/u/src/master"
+   * "e:\path"
+   * "CVS_ROOT:[000000]"
+   *
+   * Be nice to WNT and VMS machines!
+   */
+
+  if ((! (p = strchr (cvsroot_copy, ':')))
+      || (p[1] == '\\')
+      || (p[1] == '['))
+    CVSroot_hostname = NULL;
+  else
+    {
+      CVSroot_hostname = cvsroot_copy;
+      *p = '\0';
+      cvsroot_copy = ++p;
+      
+      if (*CVSroot_hostname == '\0')
+	CVSroot_hostname = NULL;
+
+      if (! have_method)
+	{
+	  CVSroot_method = server_method;
+	  have_method = 1;
+	}
+    }
+
+  if (! have_method)
+    CVSroot_method = local_method;
+
+  if (CVSroot_username && ! CVSroot_hostname)
+    error (1, 0, "missing hostname in CVSROOT: %s", CVSroot);
+
+  CVSroot_directory = cvsroot_copy;
+
+  if (*CVSroot_directory == '\0')
+    error (1, 0, "missing directory in CVSROOT: %s", CVSroot);
+
+  CVSroot_remote = (CVSroot_method != local_method);
+
+#if ! defined (CLIENT_SUPPORT) && ! defined (DEBUG)
+  if (CVSroot_remote)
+    {
+      error (0, 0, "Your CVSROOT is set for a remote access method");
+      error (0, 0, "but your CVS executable doesn't support it");
+      error (1, 0, "(%s)", CVSroot);
+    }
+#endif
+  
+  /* Do various sanity checks. */
+
+  switch (CVSroot_method)
+    {
+    case local_method:
+      if (CVSroot_username || CVSroot_hostname)
+	{
+	  error (0, 0, "can't specify hostname and username in CVSROOT");
+	  error (0, 0, "when using local access method");
+	  error (1, 0, "(%s)", CVSroot);
+	}
+      break;
+    case kserver_method:
+#ifndef HAVE_KERBEROS
+      error (0, 0, "Your CVSROOT is set for a kerberos access method");
+      error (0, 0, "but your CVS executable doesn't support it");
+      error (1, 0, "(%s)", CVSroot);
+#endif
+    case server_method:
+    case pserver_method:
+      if (! CVSroot_hostname)
+	error (1, 0, "didn't specify hostname in CVSROOT: %s", CVSroot);
+      break;
+    }
+}
+
+
+#ifdef DEBUG
+/* This is for testing the parsing function. */
+
+#include <stdio.h>
+
+static char *method_names[] = {
+  "local", "server (rsh)", "pserver", "kserver"
+};
+
+char *CVSroot;
+char *program_name;
+char *command_name = "testing";
+
+void
+error (int a, int b, const char *str, ...)
+{
+  puts (str);
+  if (a)
+    exit (1);
+}
+
+void
+main (int argc, char *argv[])
+{
+  program_name = argv[0];
+
+  if (argc != 2)
+    error (1, 0, "Usage: %s <CVSROOT>\n", program_name);
+
+  parse_cvsroot (argv[1]);
+  printf ("CVSroot: %s\n", argv[1]);
+  printf ("CVSroot_method: %s\n", method_names[CVSroot_method]);
+  printf ("CVSroot_username: %s\n",
+	  CVSroot_username ? CVSroot_username : "NULL");
+  printf ("CVSroot_hostname: %s\n",
+	  CVSroot_hostname ? CVSroot_hostname : "NULL");
+  printf ("CVSroot_directory: %s\n", CVSroot_directory);
+
+  exit (0);
+}
+#endif
