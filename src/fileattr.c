@@ -346,12 +346,13 @@ fileattr_set (filename, attrname, attrval)
     }
 
     p = fileattr_modify (node->data, attrname, attrval, '=', ';');
-    free (node->data);
-    node->data = NULL;
     if (p == NULL)
 	delnode (node);
     else
+    {
+	free (node->data);
 	node->data = p;
+    }
 }
 
 void
