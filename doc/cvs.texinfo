@@ -4935,10 +4935,18 @@ Disadvantages:
 @item
 You cannot easily see the history of the file across the rename.
 
+@ignore
+@c Is this true?  I don't see how the revision numbers
+@c _could_ start over, when new,v is just old,v with
+@c the tags deleted.
+@c If there is some need to reinstate this text,
+@c it is "usually 1.1", not "1.0" and it needs an
+@c xref to Assigning revisions
 @item
 Unless you use the @samp{-r rev} (@pxref{commit
 options}) flag when @var{new} is committed its revision
 numbers will start at 1.0 again.
+@end ignore
 @end itemize
 
 @c ---------------------------------------------------------------------
