@@ -2961,6 +2961,10 @@ ${PROG} [a-z]*: Importing ${TESTDIR}/cvsroot/dir1/sdir"
 "${PROG} [a-z]*: Updating dir1
 ${PROG} [a-z]*: Updating dir1/sdir
 ${PROG} \[[a-z]* aborted\]: cannot open directory ${TESTDIR}/cvsroot/dir1/sdir: No such file or directory"
+	  dotest_fail dirs-3a "${testcvs} update -d" \
+"${PROG} [a-z]*: Updating dir1
+${PROG} [a-z]*: Updating dir1/sdir
+${PROG} \[[a-z]* aborted\]: cannot open directory ${TESTDIR}/cvsroot/dir1/sdir: No such file or directory"
 
 	  # Hmm, a successful exit status seems a bit odd.  But it
 	  # seems to be current behavior for whatever that's worth.
@@ -2975,6 +2979,11 @@ ${PROG} release: unable to release .dir1/sdir."
 "/file1/1.1.1.1/[a-zA-Z0-9 :]*//
 D/sdir////"
 	  dotest dirs-6 "${testcvs} update" "${PROG} [a-z]*: Updating dir1"
+	  dotest dirs-7 "cat dir1/CVS/Entries" \
+"/file1/1.1.1.1/[a-zA-Z0-9 :]*//
+D/sdir////"
+	  dotest dirs-8 "${testcvs} update -d dir1" \
+"${PROG} [a-z]*: Updating dir1"
 
 	  cd ..
 
