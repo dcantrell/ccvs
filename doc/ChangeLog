@@ -1,3 +1,9 @@
+1999-02-26  Jim Kingdon  <http://www.cyclic.com>
+
+	* cvs.texinfo (Merging and keywords): When including conflict
+	markers, put @asis{} at the start of the line, in case this file
+	itself is in CVS.  Thanks to Derek Price for pointing this out.
+
 1999-02-25  Jim Kingdon  <http://www.cyclic.com>
 
 	* cvs.texinfo: Refer to "keywords" not "RCS keywords".  We had

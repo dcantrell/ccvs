@@ -4220,11 +4220,11 @@ retrieving revision 1.1.2.1
 Merging differences between 1.1 and 1.1.2.1 into file1
 rcsmerge: warning: conflicts during merge
 $ cat file1
-<<<<<<< file1
+@asis{}<<<<<<< file1
 key $@asis{}Revision: 1.2 $
-=======
+@asis{}=======
 key $@asis{}Revision: 1.1.2.1 $
->>>>>>> 1.1.2.1
+@asis{}>>>>>>> 1.1.2.1
 . . .
 @end example
 
