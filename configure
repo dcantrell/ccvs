@@ -1471,7 +1471,7 @@ EOF
 
 fi
 
-for ac_func in fnmatch getwd mkdir rename strdup dup2 strerror valloc waitpid memmove
+for ac_func in getwd mkdir rename strdup dup2 strerror valloc waitpid memmove
 do
 echo $ac_n "checking for $ac_func""... $ac_c" 1>&6
 if eval "test \"`echo '$''{'ac_cv_func_$ac_func'+set}'`\" = set"; then
