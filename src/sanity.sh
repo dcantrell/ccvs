@@ -8280,6 +8280,16 @@ new revision: 1\.1\.2\.1; previous revision: 1\.1
 done"
 	  dotest admin-10 "${testcvs} -q update -A" "U file1"
 
+	  # Try to recurse with a numeric revision arg.
+	  # If we wanted to comprehensive about this, we would also test
+	  # this for -l, -u, and all the different -o syntaxes.
+	  dotest_fail admin-10a "${testcvs} -q admin -b1.1.2" \
+"${PROG} [a-z]*: while processing more than one file:
+${PROG} \[[a-z]* aborted\]: attempt to specify a numeric revision"
+	  dotest_fail admin-10b "${testcvs} -q admin -m1.1:bogus file1 file2" \
+"${PROG} [a-z]*: while processing more than one file:
+${PROG} \[[a-z]* aborted\]: attempt to specify a numeric revision"
+
 	  # Note that -s option applies to the new default branch, not
 	  # the old one.
 	  # Also note that the implementation of -a via "rcs" requires
