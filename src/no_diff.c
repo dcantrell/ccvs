@@ -25,7 +25,7 @@ No_Difference (file, vers, entries, repository, update_dir)
     char *update_dir;
 {
     Node *p;
-    char tmp[L_tmpnam+1];
+    char *tmp;
     int ret;
     char *ts, *options;
     int retcode = 0;
@@ -39,8 +39,9 @@ No_Difference (file, vers, entries, repository, update_dir)
     else
 	options = xstrdup ("");
 
+    tmp = cvs_temp_name ();
     retcode = RCS_fast_checkout (vers->srcfile, NULL, vers->vn_user, options,
-				 tmpnam (tmp), 0, 0);
+				 tmp, 0, 0);
     if (retcode == 0)
     {
 #if 0
@@ -124,6 +125,7 @@ No_Difference (file, vers, entries, repository, update_dir)
 #endif
     if (unlink (tmp) < 0)
 	error (0, errno, "could not remove %s", tmp);
+    free (tmp);
     free (options);
     return (ret);
 }

@@ -334,12 +334,14 @@ wrap_tocvs_process_file(fileName)
     const char *fileName;
 {
     WrapperEntry *e=wrap_matching_entry(fileName);
-    static char buf[L_tmpnam+1];
+    static char *buf = NULL;
 
     if(e==NULL || e->tocvsFilter==NULL)
 	return NULL;
 
-    tmpnam(buf);
+    if (buf != NULL)
+	free (buf);
+    buf = cvs_temp_name ();
 
     run_setup(e->tocvsFilter,fileName,buf);
     run_exec(RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL|RUN_REALLY );

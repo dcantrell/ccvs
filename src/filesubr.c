@@ -596,24 +596,42 @@ xcmp (file1, file2)
     (void) close (fd2);
     return (ret);
 }
-
-#ifdef LOSING_TMPNAM_FUNCTION
-char *tmpnam(char *s)
-{
-    static char value[L_tmpnam+1];
-
-    if (s){
-       strcpy(s,"/tmp/cvsXXXXXX");
-       mktemp(s);
-       return s;
-    }else{
-       strcpy(value,"/tmp/cvsXXXXXX");
-       mktemp(s);
-       return value;
-    }
-}
+
+/* Just in case this implementation does not define this.  */
+#ifndef L_tmpnam
+#define	L_tmpnam 50
 #endif
 
+#ifdef LOSING_TMPNAM_FUNCTION
+char *
+cvs_temp_name ()
+{
+    char value[L_tmpnam + 1];
+
+    /* FIXME: Should be using TMPDIR.  */
+    strcpy (value, "/tmp/cvsXXXXXX");
+    mktemp (value);
+    return xstrdup (value);
+}
+#else
+/* Generate a unique temporary filename.  Returns a pointer to a newly
+   malloc'd string containing the name.  Returns successfully or not at
+   all.  */
+char *
+cvs_temp_name ()
+{
+    char value[L_tmpnam + 1];
+    char *retval;
+
+    /* FIXME: should be using TMPDIR, perhaps by using tempnam on systems
+       which have it.  */
+    retval = tmpnam (value);
+    if (retval == NULL)
+	error (1, errno, "cannot generate temporary filename");
+    return xstrdup (retval);
+}
+#endif
+
 /* Return non-zero iff FILENAME is absolute.
    Trivial under Unix, but more complicated under other systems.  */
 int

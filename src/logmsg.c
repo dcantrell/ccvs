@@ -126,7 +126,7 @@ do_editor (dir, messagep, repository, changes)
     char *line;
     int line_length;
     size_t line_chars_allocated;
-    char fname[L_tmpnam+1];
+    char *fname;
     struct stat pre_stbuf, post_stbuf;
     int retcode = 0;
     char *p;
@@ -139,7 +139,7 @@ do_editor (dir, messagep, repository, changes)
 	error(1, 0, "no editor defined, must use -e or -m");
 
     /* Create a temporary file */
-    (void) tmpnam (fname);
+    fname = cvs_temp_name ();
   again:
     if ((fp = fopen (fname, "w+")) == NULL)
 	error (1, 0, "cannot create temporary file %s", fname);
@@ -303,6 +303,7 @@ do_editor (dir, messagep, repository, changes)
 	free (line);
     if (unlink_file (fname) < 0)
 	error (0, errno, "warning: cannot remove temp file %s", fname);
+    free (fname);
 }
 
 /*

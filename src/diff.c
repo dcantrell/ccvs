@@ -232,7 +232,7 @@ diff_fileproc (finfo)
 	DIFF_REMOVED,
 	DIFF_NEITHER
     } empty_file = DIFF_NEITHER;
-    char tmp[L_tmpnam+1];
+    char *tmp;
     char *tocvsPath;
     char fname[PATH_MAX];
 
@@ -359,9 +359,10 @@ diff_fileproc (finfo)
 	     * diff_file_nodiff, and using that revision.  This code
 	     * is broken for "cvs diff -N -r foo".
 	     */
+	    tmp = cvs_temp_name ();
 	    retcode = RCS_fast_checkout (vers->srcfile, NULL, vers->vn_rcs,
 					 *options ? options : vers->options,
-					 tmpnam (tmp), 0, 0);
+					 tmp, 0, 0);
 	    if (retcode == -1)
 	    {
 		(void) unlink (tmp);
@@ -415,7 +416,10 @@ diff_fileproc (finfo)
     }
 
     if (empty_file == DIFF_REMOVED)
+    {
 	(void) unlink (tmp);
+	free (tmp);
+    }
 
     (void) fflush (stdout);
     freevers_ts (&vers);
@@ -495,7 +499,7 @@ diff_file_nodiff (file, repository, entries, rcs, vers)
     Vers_TS *vers;
 {
     Vers_TS *xvers;
-    char tmp[L_tmpnam+1];
+    char *tmp;
     int retcode;
 
     /* free up any old use_rev* variables and reset 'em */
@@ -600,9 +604,10 @@ diff_file_nodiff (file, repository, entries, rcs, vers)
      * with 0 or 1 -r option specified, run a quick diff to see if we
      * should bother with it at all.
      */
+    tmp = cvs_temp_name ();
     retcode = RCS_fast_checkout (vers->srcfile, NULL, use_rev1,
 				 *options ? options : vers->options,
-				 tmpnam (tmp), 0, 0);
+				 tmp, 0, 0);
     switch (retcode)
     {
 	case 0:				/* everything ok */
@@ -620,5 +625,6 @@ diff_file_nodiff (file, repository, entries, rcs, vers)
 	    break;
     }
     (void) unlink (tmp);
+    free (tmp);
     return (0);
 }

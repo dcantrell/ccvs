@@ -1,3 +1,11 @@
+Tue May 14 11:45:41 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* filesubr.c, cvs.h (cvs_temp_name): New function.  Move L_tmpnam
+	define from cvs.h to filesubr.c.
+	* client.c, diff.c, import.c, login.c, logmsg.c, no_diff.c,
+	patch.c, wrapper.c: Call cvs_temp_name not tmpnam.
+	* login.c (login): Reindent function.
+
 Tue May 14 10:56:56 1996  Ian Lance Taylor  <ian@cygnus.com>
 
 	* rcs.c (RCS_fast_checkout): If workfile is NULL, don't call chmod.
