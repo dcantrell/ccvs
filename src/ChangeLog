@@ -1,5 +1,16 @@
 2004-10-27  Mark D. Baushke  <mdb@cvshome.org>
 
+	* cvs.h (RCS_FLAGS_USETIME): New flag.
+	* rcs.c (RCS_checkin): Add citime argument.
+	* rcs.h (RCS_checkin): Ditto.
+	* checkin.c (Checkin): Pass new RCS_checkin argument.
+	* commit.c (remove_file, checkaddfile): Ditto.
+	* import.c (add_rev): Ditto.
+
+	* sanity.sh (tagdate): Delete tagdate-19b as an incorrect test.
+
+2004-10-27  Mark D. Baushke  <mdb@cvshome.org>
+
 	* sanity.sh (tagdate): Provide more output.
 
 2004-10-26  Mark D. Baushke  <mdb@cvshome.org>
