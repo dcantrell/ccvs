@@ -1,5 +1,11 @@
 2005-02-23 Derek Price <derek@ximbiot.com>
 
+	* diff.c: Some reformatting.
+	(diff): Handle -r<tag>:<date>.
+	* sanity.sh (tagdate-13b): New test.
+
+2005-02-23 Derek Price <derek@ximbiot.com>
+
 	* checkout.c (checkout): Use parse_tagdate.
 	* tag.c (tag_check_valid_join): Remove this function.
 	* cvs.h (tag_check_valid_join): Ditto for the proto.
