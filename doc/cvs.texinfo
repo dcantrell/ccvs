@@ -1777,7 +1777,7 @@ approximately one working directory for each developer
 (either the entire tree or a portion of it, depending
 on what each developer uses).
 
-The repository should be accessable
+The repository should be accessible
 (directly or via a networked file system) from all
 machines which want to use @sc{cvs} in server or local
 mode; the client machines need not have any access to
@@ -2356,7 +2356,7 @@ administrator who happens to look at that file).
 @c FIXME: seems to me this needs somewhat more
 @c explanation.
 @cindex Logout (subcommand)
-The password for the currently choosen remote repository
+The password for the currently chosen remote repository
 can be removed from the CVS_PASSFILE by using the
 @code{cvs logout} command.
 
@@ -2831,7 +2831,7 @@ details).  Then create the appropriate directories in
 files into the appropriate directories in the @sc{cvs}
 repository (the name in the repository must be the name
 of the source file with @samp{,v} added; the files go
-directly in the appopriate directory of the repository,
+directly in the appropriate directory of the repository,
 not in an @file{RCS} subdirectory).  This is one of the
 few times when it is a good idea to access the @sc{cvs}
 repository directly, rather than using @sc{cvs}
@@ -5274,7 +5274,7 @@ is almost automatic.
 @c FIXME? should probably use the word "watch" here, to
 @c tie this into the text below and above.
 @sc{Cvs} also supports mechanisms which facilitate
-various kinds of communcation, without actually
+various kinds of communication, without actually
 enforcing rules like reserved checkouts do.
 
 The rest of this chapter describes how these various
@@ -6011,7 +6011,7 @@ files (@pxref{Intro administrative files}).  This
 file follows the usual conventions for administrative
 files (@pxref{syntax}), where each line is a regular
 expression followed by a command to execute.  The
-command should contain a single ocurrence of @samp{%s}
+command should contain a single occurrence of @samp{%s}
 which will be replaced by the user to notify; the rest
 of the information regarding the notification will be
 supplied to the command on standard input.  The
@@ -6147,7 +6147,7 @@ repository since the last time you updated.
 
 When using client/server @sc{cvs}, you can use the
 @code{cvs edit} and @code{cvs unedit} commands even if
-@sc{cvs} is unable to succesfully communicate with the
+@sc{cvs} is unable to successfully communicate with the
 server; the notifications will be sent upon the next
 successful @sc{cvs} command.
 
@@ -7751,7 +7751,7 @@ revision you last checked out into the current working directory.
 @c special tags, ".thead" for the head of the trunk,
 @c and ".bhead" for the head of the current branch.
 @c Then deprecate HEAD.  This has the advantage of
-@c not suprising people with a change to HEAD, and a
+@c not surprising people with a change to HEAD, and a
 @c side benefit of also phasing out the poorly-named
 @c HEAD (see discussion of reserved tag names in node
 @c "Tags").  Of course, .thead and .bhead should be
@@ -11080,7 +11080,7 @@ their way in and out of @sc{cvs}.
 
 The file @file{cvswrappers} defines the script that will be
 run on a file when its name matches a regular
-expresion. There are two scripts that can be run on a
+expression. There are two scripts that can be run on a
 file or directory. One script is executed on the file/directory
 before being checked into the repository (this is denoted
 with the @code{-t} flag) and the other when the file is
@@ -11378,7 +11378,7 @@ regular expressions in this file, the @samp{DEFAULT}
 line is used, if it is specified.
 
 @cindex ALL in commitinfo
-All occurances of the name @samp{ALL} appearing as a
+All occurrences of the name @samp{ALL} appearing as a
 regular expression are used in addition to the first
 matching regular expression or the name @samp{DEFAULT}.
 
@@ -11637,7 +11637,7 @@ If the repository name does not match any of the
 regular expressions in this file, the @samp{DEFAULT}
 line is used, if it is specified.
 
-All occurances of the name @samp{ALL} appearing as a
+All occurrences of the name @samp{ALL} appearing as a
 regular expression are used in addition to the first
 matching regular expression or @samp{DEFAULT}.
 
@@ -11802,7 +11802,7 @@ If the repository name does not match any of the
 regular expressions in this file, the @samp{DEFAULT}
 line is used, if it is specified.
 
-All occurances of the name @samp{ALL} appearing as a
+All occurrences of the name @samp{ALL} appearing as a
 regular expression are used in addition to the first
 matching regular expression or @samp{DEFAULT}.
 
@@ -11813,7 +11813,7 @@ matching regular expression or @samp{DEFAULT}.
 @c whether it is hardwired into CVS or who creates
 @c it or anything.  In particular we should say
 @c how to version control the template file.  A
-@c probably better answer than the /usr/cvsssupport
+@c probably better answer than the /usr/cvssupport
 @c stuff is to use checkoutlist (with xref to the
 @c checkoutlist doc).
 @c Also I am starting to see a connection between
@@ -11986,7 +11986,7 @@ One may want to know about various pieces of
 information internal to @sc{cvs}.  A @sc{cvs} internal
 variable has the syntax @code{$@{@var{variable}@}},
 where @var{variable} starts with a letter and consists
-of alphanumberic characters and @samp{_}.  If the
+of alphanumeric characters and @samp{_}.  If the
 character following @var{variable} is a
 non-alphanumeric character other than @samp{_}, the
 @samp{@{} and @samp{@}} can be omitted.  The @sc{cvs}
@@ -12607,7 +12607,7 @@ every place it appears in your @code{modules}
 file.  For more information on the @code{modules} file,
 see @ref{modules}.
 
-@c This messsage comes from "co", and I believe is
+@c This message comes from "co", and I believe is
 @c possible only with older versions of CVS which call
 @c co.  The problem with being able to create the bogus
 @c RCS file still exists, though (and I think maybe
