@@ -10280,7 +10280,6 @@ fish"
 U CVSROOT/commitinfo
 U CVSROOT/config
 U CVSROOT/cvswrappers
-U CVSROOT/editinfo
 U CVSROOT/loginfo
 U CVSROOT/modules
 U CVSROOT/notify
@@ -10408,7 +10407,6 @@ a change"
 U CVSROOT/commitinfo
 U CVSROOT/config
 U CVSROOT/cvswrappers
-U CVSROOT/editinfo
 U CVSROOT/loginfo
 U CVSROOT/modules
 U CVSROOT/notify
@@ -10432,7 +10430,6 @@ ${SPROG} commit: Rebuilding administrative file database"
 U CVSROOT/commitinfo
 U CVSROOT/config
 U CVSROOT/cvswrappers
-U CVSROOT/editinfo
 U CVSROOT/loginfo
 U CVSROOT/modules
 U CVSROOT/notify
@@ -10459,7 +10456,6 @@ ${SPROG} commit: Rebuilding administrative file database"
 U CVSROOT/commitinfo
 U CVSROOT/config
 U CVSROOT/cvswrappers
-U CVSROOT/editinfo
 U CVSROOT/loginfo
 U CVSROOT/modules
 U CVSROOT/notify
@@ -10527,7 +10523,6 @@ done"
 U CVSROOT/commitinfo
 U CVSROOT/config
 U CVSROOT/cvswrappers
-U CVSROOT/editinfo
 U CVSROOT/loginfo
 U CVSROOT/modules
 U CVSROOT/notify
@@ -11319,7 +11314,6 @@ done"
 U CVSROOT/commitinfo
 U CVSROOT/config
 U CVSROOT/cvswrappers
-U CVSROOT/editinfo
 U CVSROOT/loginfo
 U CVSROOT/modules
 U CVSROOT/notify
@@ -13491,8 +13485,6 @@ ${CPROG} checkout: move away CVSROOT/config; it is in the way
 C CVSROOT/config
 ${CPROG} checkout: move away CVSROOT/cvswrappers; it is in the way
 C CVSROOT/cvswrappers
-${CPROG} checkout: move away CVSROOT/editinfo; it is in the way
-C CVSROOT/editinfo
 ${CPROG} checkout: move away CVSROOT/loginfo; it is in the way
 C CVSROOT/loginfo
 ${CPROG} checkout: move away CVSROOT/modules; it is in the way

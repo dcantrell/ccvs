@@ -20,8 +20,6 @@ static int title_proc (Node * p, void *closure);
 static int update_logfile_proc ( char *repository, char *filter,
                                        void *closure);
 static void setup_tmpfile (FILE * xfp, char *xprefix, List * changes);
-static int editinfo_proc ( char *repository, char *template,
-                                 void *closure );
 static int verifymsg_proc ( char *repository, char *script,
                                   void *closure );
 
@@ -188,7 +186,6 @@ do_editor (char *dir, char **messagep, char *repository, List *changes)
     char *fname;
     struct stat pre_stbuf, post_stbuf;
     int retcode = 0;
-    char *editinfo_editor = NULL;
 
 #ifdef CLIENT_SUPPORT
     assert (!current_parsed_root->isremote != !repository);
@@ -200,16 +197,7 @@ do_editor (char *dir, char **messagep, char *repository, List *changes)
 	return;
 
     /* Abort before creation of the temp file if no editor is defined. */
-#ifdef CLIENT_SUPPORT
-    /* Skip looking for an editinfo_editor in CVSROOT/editinfo when we are
-     * running on a client (leave editinfo_editor NULL).
-     */
-    if (!current_parsed_root->isremote)
-#endif
-    if( repository != NULL )
-        Parse_Info( CVSROOTADM_EDITINFO, repository, editinfo_proc, 0,
-                    &editinfo_editor );
-    if (strcmp (Editor, "") == 0 && !editinfo_editor)
+    if (strcmp (Editor, "") == 0)
         error(1, 0, "no editor defined, must use -e or -m");
 
   again:
@@ -288,13 +276,11 @@ do_editor (char *dir, char **messagep, char *repository, List *changes)
 	pre_stbuf.st_mtime = 0;
 
     /* run the editor */
-    run_setup (editinfo_editor ? editinfo_editor : Editor);
+    run_setup (Editor);
     run_arg (fname);
     if ((retcode = run_exec (RUN_TTY, RUN_TTY, RUN_TTY,
 			     RUN_NORMAL | RUN_SIGIGNORE)) != 0)
-	error (editinfo_editor ? 1 : 0, retcode == -1 ? errno : 0,
-	       editinfo_editor ? "Logfile verification failed" :
-	       "warning: editor session failed");
+	error (0, retcode == -1 ? errno : 0, "warning: editor session failed");
 
     /* put the entire message back into the *messagep variable */
 
@@ -922,29 +908,7 @@ logfile_write (char *repository, char *filter, char *message, FILE *logfp, List 
     return ((pipestatus == -1) || (pipestatus == 127)) ? 1 : 0;
 }
 
-/*
- * We choose to use the *last* match within the editinfo file for this
- * repository.  This allows us to have a global editinfo program for the
- * root of some hierarchy, for example, and different ones within different
- * sub-directories of the root (like a special checker for changes made to
- * the "src" directory versus changes made to the "doc" or "test"
- * directories.
- */
-/* ARGSUSED */
-static int
-editinfo_proc(char *repository, char *editor, void *closure)
-{
-    char **editinfo_editor = (char **)closure;
 
-    /* nothing to do if the last match is the same as this one */
-    if (*editinfo_editor && strcmp (*editinfo_editor, editor) == 0)
-	return (0);
-    if (*editinfo_editor)
-	free (*editinfo_editor);
-
-    *editinfo_editor = xstrdup (editor);
-    return (0);
-}
 
 /*  This routine is calld by Parse_Info.  It picks up the name of the
  *  message verification script.
