@@ -1,3 +1,7 @@
+2004-11-09  Mark D. Baushke  <mdb@cvshome.org>
+
+	* configure: Regenerated.
+
 2004-11-04  Conrad T. Pino  <Conrad@Pino.com>
 
 	* cvsnt.dsp: Remove "lib/allocsa.c", "lib/readlink.c", "lib/xreadlink.c"
@@ -9,7 +13,7 @@
 
 	* TODO (233): New item.
 
-2004-11-04  Mark D. Baushke  <mdb@juniper.net>
+2004-11-04  Mark D. Baushke  <mdb@cvshome.org>
 
 	* cvsnt.dsp: Add entries for allocsa.c and allocsa.h.
 	* cvsnt.dep: Re-order sources in front of includes.
@@ -53,7 +57,7 @@
 
 	* gnulib-update (MODULES): Add allocsa, setenv, getdate.
 
-2004-10-30  Mark D. Baushke  <mdb@juniper.net>
+2004-10-30  Mark D. Baushke  <mdb@cvshome.org>
 
 	* configure.in: Add AC_SEARCH_LIBS for hstrerror in resolv to also
 	define HAVE_HSTRERROR if it is found.

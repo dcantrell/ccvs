@@ -1,3 +1,7 @@
+2004-11-09  Mark D. Baushke  <mdb@cvshome.org>
+
+	* strftime.c: Update from GNULIB.
+
 2004-11-05  Conrad T. Pino  <Conrad@Pino.com>
 
 	* libcvs.dsp: Add "readlink.c" to project.
