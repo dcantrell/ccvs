@@ -11,8 +11,6 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.  */
 
-/* $CVSid: @(#)getopt.h 1.7 94/09/21 $ */
-
 #ifndef _GETOPT_H
 #define _GETOPT_H 1
 

@@ -1,3 +1,8 @@
+Wed Jan  8 14:50:47 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* Makefile.in, getopt.h, sighandle.c, system.h: Remove CVSid; we
+	decided to get rid of these some time ago.
+
 Thu Jan  2 13:30:56 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* Makefile.in, argmatch.c, fnmatch.c, fnmatch.h, getline.c,
