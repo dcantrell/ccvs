@@ -395,11 +395,11 @@ trying to accomplish and what the best way is -kingdon, Jul 1997).
      the checkout and update commands that could turn this invocation of the
      script off, for mature users.
 
-173. We have a tagged branch in CVS.  How do we get the version of that branch
-     (for an entire directory) that corresponds to the files on that branch on a
-     certain day?  I'd like to specify BOTH -r and -D to 'cvs checkout', but I
-     can't.  It looks like I can only specify the date for the main line (as
-     opposed to any branches).  True?  Any workarounds to get what I need?
+173. Need generic date-on-branch handling.  Currently, many commands
+     allow both -r and -D, but that's problematic for commands like diff
+     that interpret that as two revisions rather than a single revision.
+     Checkout and update -j takes tag:date which is probably a better
+     solution overall.
 
 174. I would like to see "cvs release" modified so that it only removes files
      which are known to CVS - all the files in the repository, plus those which
@@ -808,9 +808,9 @@ properly.  This should ease patch submission.
 201.  cvs_temp_file should be creating temporary files in a privately owned
 subdirectory of of temp due to security issues on some systems.
 
-202.  Merge most of the diff & rdiff code.  Enable rdiff to accept most
-diff options.  Make rdiff output look like diff's.  Make CVS diff
-garbage go to stderr and only standard diff output go to stdout.
+202.  Enable rdiff to accept most diff options.  Make rdiff output look
+like diff's.  Make CVS diff garbage go to stderr and only standard diff
+output go to stdout.
 
 203.  Add val-tags additions to the tagging code.  Don't remove the
 update additions since val-tags could still be used as a cache when the
@@ -827,12 +827,6 @@ strategy to address path canonicalization and apply it consistently.
 
 206.  Restore directory-at-a-time locking for tag operations instead of
 locking the entire tree.
-
-207.  Fix the branch following logic in log to work with CVS branching. 
-Right now the code assumes RCS branching where all revisions on the
-branch have the same number of components in their revision numbers and
-that isn't true for CVS (revisions 1.2 and 2.4.6.8 can be on the same
-branch in CVS).
 
 208.  Merge enhancements to the diff package back into the original GNU source.
 

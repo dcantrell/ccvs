@@ -1,5 +1,8 @@
 2002-05-22  Larry Jones  <lawrence.jones@eds.com>
 
+	* TODO (173, 202): Update to reflect current state of affairs.
+	(207): Defunct as of 1.11.2.
+
 	* NEWS (Changes from 1.11.1p1 to 1.11.2): Note new RereadLogAfterVerify
 	config option.
 
