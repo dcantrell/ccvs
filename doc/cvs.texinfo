@@ -1058,7 +1058,7 @@ description of the file format, see the @code{man} page
 @c . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 @node File permissions
 @subsection File permissions
-@c -- Move this to @node Setting up
+@c -- Move this to @node Creating a repository or similar
 @cindex Security
 @cindex File permissions
 @cindex Group
@@ -1177,10 +1177,37 @@ repositories.
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node Creating a repository
 @section Creating a repository
-@c -- Well, how do you do?
 
-See the instructions in the @file{INSTALL} file in the
-@sc{cvs} distribution.
+@cindex Repository, setting up
+@cindex Creating a repository
+@cindex Setting up a repository
+
+To set up a @sc{cvs} repository, choose a directory
+with ample disk space available for the revision
+history of the source files.  It should be accessable
+(directly or via a networked file system) from all
+machines which want to use @sc{cvs} in server or local
+mode; the client machines need not have any access to
+it other than via the @sc{cvs} protocol.
+
+@cindex init (subcommand)
+To create a repository, run the @code{cvs init}
+command.  It will set up an empty repository in the
+@sc{cvs} root specified in the usual way
+(@pxref{Repository}).  For example,
+
+@example
+cvs -d /usr/local/cvsroot init
+@end example
+
+@code{cvs init} is careful to never overwrite any
+existing files in the repository, so no harm is done if
+you run @code{cvs init} on an already set-up
+repository.
+
+@code{cvs init} will enable history logging; if you
+don't want that, remove the history file after running
+@code{cvs init}.  @xref{history file}.
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node Remote repositories
@@ -6811,7 +6838,6 @@ file, which defines the modules inside the repository.
 * rcsinfo::                     Templates for the log messages
 * cvsignore::                   Ignoring files via cvsignore
 * history file::                History information
-* Setting up::                  Setting up the repository
 * Variables::                   Various variables are expanded
 @end menu
 
@@ -7472,46 +7498,13 @@ to log information for the @code{history} command
 (@pxref{history}).  This file must be created to turn
 on logging.  This is done automatically if the
 @code{cvs init} command is used to set up the
-repository (@pxref{Setting up}).
+repository (@pxref{Creating a repository}).
 
 The file format of the @file{history} file is
 documented only in comments in the @sc{cvs} source
 code, but generally programs should use the @code{cvs
 history} command to access it anyway, in case the
 format changes with future releases of @sc{cvs}.
-
-@c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-@node Setting up
-@appendixsec Setting up the repository 
-@cindex Repository, setting up
-@cindex Creating a repository
-@cindex Setting up a repository
-
-To set up a @sc{cvs} repository, choose a directory
-with ample disk space available for the revision
-history of the source files.  It should be accessable
-(directly or via a networked file system) from all
-machines which want to use @sc{cvs} in server or local
-mode; the client machines need not have any access to
-it other than via the @sc{cvs} protocol.
-
-To create a repository, run the @code{cvs init}
-command.  It will set up an empty repository in the
-@sc{cvs} root specified in the usual way
-(@pxref{Repository}).  For example,
-
-@example
-cvs -d /usr/local/cvsroot init
-@end example
-
-@code{cvs init} is careful to never overwrite any
-existing files in the repository, so no harm is done if
-you run @code{cvs init} on an already set-up
-repository.
-
-@code{cvs init} will enable history logging; if you
-don't want that, remove the history file after running
-@code{cvs init}.  @xref{history file}.
 
 @node Variables
 @appendixsec Expansions in administrative files
