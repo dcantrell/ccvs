@@ -1,3 +1,7 @@
+1998-12-22  Martin Buchholz  <martin@xemacs.org>
+
+	* cvs.texinfo: Fixed various trivial typos.
+
 1998-12-17  Jim Kingdon
 
 	* cvsclient.texi (Responses): Explicitly say that Mod-time need
