@@ -99,9 +99,13 @@ FLAGS_TO_PASS = \
 	prefix='$(prefix)' \
 	exec_prefix='$(exec_prefix)'
 
-DISTFILES = COPYING COPYING.LIB ChangeLog INSTALL README TODO \
+DISTFILES = \
+	COPYING COPYING.LIB INSTALL README TODO \
+	BUGS MINOR-BUGS CYCLIC-CVS-FAQ FAQ \
+	ChangeLog ChangeLog.fsf ChangeLog.zoo \
+	configure configure.in stamp-h.in config.h.in Makefile.in acconfig.h \
 	cvs-format.el mkinstalldirs install-sh cvsinit.sh \
-	configure configure.in stamp-h.in config.h.in Makefile.in
+	.cvsignore
 
 PROGS = cvsinit
 
@@ -204,14 +208,29 @@ lint:
 	@for dir in $(SUBDIRS); do cd $$dir; $(MAKE) $(FLAGS_TO_PASS) xlint || exit 1; cd ..; done
 
 .PHONY: dist
+GZIP=gzip --best
+GZIP_EXT=.gz
 dist:
-	echo ccvs-`sed -e '/version_string/!d' -e 's/[^0-9.]*\([0-9.]*\).*/\1/' -e q src/version.c` > .fname
+	echo > .fname \
+	  ccvs-`sed < src/version.c \
+		    -e '/version_string/!d' \
+		    -e 's/[^0-9.]*\([0-9.]*\).*/\1/' \
+		    -e q`
 	rm -rf `cat .fname`
-	mkdir `cat .fname`
-	ln $(DISTFILES) `cat .fname`
-	for dir in $(SUBDIRS); do mkdir `cat .fname`/$$dir; cd $$dir; $(MAKE) $@; cd ..; done
-	tar chzf `cat .fname`.tar.gz `cat .fname`
+	${MAKE} dist-dir DISTDIR="`cat .fname`"
+	for dir in ${SUBDIRS}; do \
+	  ( DISTDIR="../`cat .fname`/$${dir}"; \
+            cd $${dir}; \
+	    ${MAKE} dist-dir DISTDIR="$${DISTDIR}" \
+	  ); \
+	done
+	tar chvf - `cat .fname` | ${GZIP} > "`cat .fname`.tar${GZIP_EXT}"
 	rm -rf `cat .fname` .fname
+
+.PHONY: dist-dir
+dist-dir:
+	mkdir ${DISTDIR}
+	ln ${DISTFILES} ${DISTDIR}
 
 # For the justification of the following Makefile rules, see node
 # `Automatic Remaking' in GNU Autoconf documentation.
