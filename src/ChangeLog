@@ -1,3 +1,8 @@
+Thu May  9 19:45:24 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* main.c: Remove comment listing commands at beginning.  It was
+	out of date and redundant with the help.
+
 Wed May  8 15:02:49 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* sanity.sh: Set EXPR in the case that the expr in the path is the
