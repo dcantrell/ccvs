@@ -1,3 +1,100 @@
+* pcl-cvs doesn't like it when you try to check in a file which isn't
+  up-to-date.  The messages produced by the server perhaps don't match
+  what pcl-cvs is looking for.
+
+* From: Roland McGrath <roland@gnu.ai.mit.edu>
+  To: Cyclic CVS Hackers <cyclic-cvs@cyclic.com>
+  Subject: weird bug
+  Date: Sat, 25 Mar 1995 16:41:41 -0500
+  X-Windows: Even your dog won't like it.
+
+  I just noticed some droppings on my disk from what must be a pretty weird
+  bug in remote CVS.
+
+  In my home directory on a repository machine I use, I find:
+
+  drwxr-xr-x   4 roland   staff         512 Mar  7 14:08 cvs-serv28962
+  drwxr-xr-x   4 roland   staff         512 Mar  7 14:11 cvs-serv28978
+  drwxr-xr-x   4 roland   staff         512 Mar  7 15:13 cvs-serv29141
+
+  OK, so these are leftover cruft from some cvs run that got aborted.
+  Well, it should clean up after itself, but so what.
+
+  The last one is pretty dull; the real weirdness is the contents of the
+  first two directories.
+
+  duality 77 # ls -RF cvs-serv28978/
+  CVS/		cvs-serv28978/
+
+  cvs-serv28978/CVS:
+  Entries	    Repository
+
+  cvs-serv28978/cvs-serv28978:
+  arpa/
+
+  cvs-serv28978/cvs-serv28978/arpa:
+  CVS/		cvs-serv28978/
+
+  cvs-serv28978/cvs-serv28978/arpa/CVS:
+  Entries	    Repository
+
+  cvs-serv28978/cvs-serv28978/arpa/cvs-serv28978:
+  assert/
+
+  cvs-serv28978/cvs-serv28978/arpa/cvs-serv28978/assert:
+  CVS/		cvs-serv28978/
+
+  cvs-serv28978/cvs-serv28978/arpa/cvs-serv28978/assert/CVS:
+  Entries	    Repository
+
+  cvs-serv28978/cvs-serv28978/arpa/cvs-serv28978/assert/cvs-serv28978:
+  bare/
+
+  cvs-serv28978/cvs-serv28978/arpa/cvs-serv28978/assert/cvs-serv28978/bare:
+  CVS/		cvs-serv28978/
+
+  cvs-serv28978/cvs-serv28978/arpa/cvs-serv28978/assert/cvs-serv28978/bare/CVS:
+  Entries	    Repository
+
+  cvs-serv28978/cvs-serv28978/arpa/cvs-serv28978/assert/cvs-serv28978/bare/cvs-serv28978:
+  conf/
+
+  cvs-serv28978/cvs-serv28978/arpa/cvs-serv28978/assert/cvs-serv28978/bare/cvs-serv28978/conf:
+  CVS/		cvs-serv28978/
+
+  cvs-serv28978/cvs-serv28978/arpa/cvs-serv28978/assert/cvs-serv28978/bare/cvs-serv28978/conf/CVS:
+  Entries	    Repository
+
+  cvs-serv28978/cvs-serv28978/arpa/cvs-serv28978/assert/cvs-serv28978/bare/cvs-serv28978/conf/cvs-serv28978:
+  crypt/
+
+  cvs-serv28978/cvs-serv28978/arpa/cvs-serv28978/assert/cvs-serv28978/bare/cvs-serv28978/conf/cvs-serv28978/crypt:
+  CVS/		cvs-serv28978/
+
+  cvs-serv28978/cvs-serv28978/arpa/cvs-serv28978/assert/cvs-serv28978/bare/cvs-serv28978/conf/cvs-serv28978/crypt/CVS:
+  Entries	    Repository
+
+  cvs-serv28978/cvs-serv28978/arpa/cvs-serv28978/assert/cvs-serv28978/bare/cvs-serv28978/conf/cvs-serv28978/crypt/cvs-serv28978:
+  csu/
+
+  cvs-serv28978/cvs-serv28978/arpa/cvs-serv28978/assert/cvs-serv28978/bare/cvs-serv28978/conf/cvs-serv28978/crypt/cvs-serv28978/csu:
+  CVS/		cvs-serv28978/
+
+  cvs-serv28978/cvs-serv28978/arpa/cvs-serv28978/assert/cvs-serv28978/bare/cvs-serv28978/conf/cvs-serv28978/crypt/cvs-serv28978/csu/CVS:
+  Entries	    Repository
+
+  cvs-serv28978/cvs-serv28978/arpa/cvs-serv28978/assert/cvs-serv28978/bare/cvs-serv28978/conf/cvs-serv28978/crypt/cvs-serv28978/csu/cvs-serv28978:
+  ctype/
+
+  cvs-serv28978/cvs-serv28978/arpa/cvs-serv28978/assert/cvs-serv28978/bare/cvs-serv28978/conf/cvs-serv28978/crypt/cvs-serv28978/csu/cvs-serv28978/ctype:
+  CVS/		cvs-serv28978/
+
+  [...]
+
+  ls: cvs-serv28978/cvs-serv28978/arpa/cvs-serv28978/assert/cvs-serv28978/bare/cvs-serv28978/conf/cvs-serv28978/crypt/cvs-serv28978/csu/cvs-serv28978/ctype/cvs-serv28978/dirent/cvs-serv28978/elf/cvs-serv28978/gnu/cvs-serv28978/gnulib/cvs-serv28978/grp/cvs-serv28978/hurd/cvs-serv28978/hurd/hurd/cvs-serv28978/inet/cvs-serv28978/inet/arpa/cvs-serv28978/inet/netinet/cvs-serv28978/inet/protocols/cvs-serv28978/io/cvs-serv28978/io/sys/cvs-serv28978/locale/cvs-serv28978/mach/cvs-serv28978/mach/mach/cvs-serv28978/malloc/cvs-serv28978/manual/cvs-serv28978/manual/examples/cvs-serv28978/math/cvs-serv28978/misc/cvs-serv28978/misc/sys/cvs-serv28978/netinet/cvs-serv28978/posix/cvs-serv28978/posix/glob/cvs-serv28978/posix/gnu/cvs-serv28978/posix/sys/cvs-serv28978/protocols/cvs-serv28978/pwd/cvs-serv28978/resolv/cvs-serv28978/resolv/arpa/cvs-serv28978/resolv/sys/cvs-serv28978/resource/cvs-serv28978/resource/sys/cvs-serv28978/rpc/cvs-serv28978/setjmp/cvs-serv28978/signal/cvs-serv28978/signal/sys/cvs-serv28978/socket/cvs-serv28978/socket: File name too long
+  cvs-serv28978/cvs-serv28978/arpa/cvs-serv28978/assert/cvs-serv28978/bare/cvs-serv28978/conf/cvs-serv28978/crypt/cvs-serv28978/csu/cvs-serv28978/ctype/cvs-serv28978/dirent/cvs-serv28978/elf/cvs-serv28978/gnu/cvs-serv28978/gnulib/cvs-serv28978/grp/cvs-serv28978/hurd/cvs-serv28978/hurd/hurd/cvs-serv28978/inet/cvs-serv28978/inet/arpa/cvs-serv28978/inet/netinet/cvs-serv28978/inet/protocols/cvs-serv28978/io/cvs-serv28978/io/sys/cvs-serv28978/locale/cvs-serv28978/mach/cvs-serv28978/mach/mach/cvs-serv28978/malloc/cvs-serv28978/manual/cvs-serv28978/manual/examples/cvs-serv28978/math/cvs-serv28978/misc/cvs-serv28978/misc/sys/cvs-serv28978/netinet/cvs-serv28978/posix/cvs-serv28978/posix/glob/cvs-serv28978/posix/gnu/cvs-serv28978/posix/sys/cvs-serv28978/protocols/cvs-serv28978/pwd/cvs-serv28978/resolv/cvs-serv28978/resolv/arpa/cvs-serv28978/resolv/sys/cvs-serv28978/resource/cvs-serv28978/resource/sys/cvs-serv28978/rpc/cvs-serv28978/setjmp/cvs-serv28978/signal/cvs-serv28978/signal/sys/cvs-serv28978/socket/cvs-serv28978:
+
+
 * From: billr@mpd.tandem.com (Bill Robertson)
   Subject: Problem with rtag and the -D option
   Date: Fri, 17 Mar 1995 10:53:29 -0600 (CST)
