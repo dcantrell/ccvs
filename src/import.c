@@ -411,8 +411,10 @@ import_descend (message, vtag, targc, targv)
 #ifdef CLIENT_SUPPORT
 		if (client_active)
 		    err += client_process_import_file (message, dp->d_name,
-							   vtag, targc, targv,
-							   repository);
+                                                       vtag, targc, targv,
+                                                       repository,
+                                                       keyword_opt != NULL &&
+                                                       keyword_opt[0] == 'b');
 		else
 #endif
 		    err += process_import_file (message, dp->d_name,
