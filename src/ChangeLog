@@ -1,3 +1,10 @@
+Sun Feb 16 08:16:48 1997  Ian Lance Taylor  <ian@cygnus.com>
+
+	* client.c (client_process_import_file): Rename short_pathname to
+	update_dir (to reflect its function) and make sure that it doesn't
+	point to uninitialized memory if repository and toplevel_repos
+	contain the same string.
+
 Sun Feb 16 08:16:48 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* client.c (start_rsh_server): Nuke comment about weirdnesses with
