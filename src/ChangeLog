@@ -1,3 +1,8 @@
+2000-01-03  Karl Fogel  <kfogel@red-bean.com>
+
+	* filesubr.c, subr.c (backup_file): moved this function from
+	filesubr.c to subr.c, at JimK's suggestion.
+
 2000-01-03  Jim Kingdon  <http://developer.redhat.com/>
 
 	* sanity.sh (clean): Test the contents of the .#cleanme.txt.1.1
