@@ -1,3 +1,56 @@
+2003-01-30  Larry Jones  <lawrence.jones@eds.com>
+
+	* FAQ: Update URL for tkCVS info.
+
+	* NEWS (Changes from 1.11.2 to 1.11.3): Add note about fixing watch
+	in server mode.
+
+2003-01-28  Derek Price  <derek@ximbiot.com>
+
+	* INSTALL: Remove a reference to options.h.
+	(Thanks to Jenn Vesperman <jenn@anthill.echidna.id.au> for the report.)
+
+2003-01-28  Larry Jones  <lawrence.jones@eds.com>
+
+	* NEWS: Update for 1.11.5, add notes about bug fixes in older
+	versions.
+
+2003-01-23  Derek Price  <derek@ximbiot.com>
+
+	* aclocal.m4 (WITH_GSSAPI): Check for libcrypt before libroken to
+	satisfy a FreeBSD 4.6 dependency.
+	(Thanks to Jan Ruzicka <jan.ruzicka@comtechmobile.com> for the bug
+	report and a partial fix.)
+
+	* configure: regenerated.
+
+2003-01-20  Derek Price  <derek@ximbiot.com>
+
+	* NEWS: Update the news for the last release to mention that client
+	builds are not affected by the security vulnerability.
+
+2003-01-20  Derek Price  <derek@ximbiot.com>
+
+	* configure.in: Update to dev version 1.11.5.1.
+	* configure: Regenerated.
+
+2003-01-16  Derek Price  <derek@ximbiot.com>
+
+	* NEWS: Add 1.11.4 entry in regards to
+	<http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2003-0015>.
+	The Common Vulnerabilities and Exposures project (cve.mitre.org)
+	has assigned the name CAN-2003-0015 to this issue.
+	* configure.in: Update to CVS version 1.11.5.
+
+	* configure: Regenerated.
+
+2002-01-16  Derek Price  <derek@ximbiot.com>
+
+	* configure.in (--with-editor): Look for nano, the GNU GPL pico clone.
+	(Reported by Robin Cook <rcook@wyrms.net>.)
+
+	* configure: Regenerated.
+
 2002-01-16  Derek Price  <derek@ximbiot.com>
 
 	* configure.in: Update to dev version (1.11.4.1).

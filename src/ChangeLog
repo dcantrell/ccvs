@@ -1,10 +1,46 @@
+2003-01-31  Derek Price  <derek@ximbiot.com>
+
+	* sanity.sh (keywordname): Change a "FIXME" comment to "FIXCVS".
+
+2003-01-30  Derek Price  <derek@ximbiot.com>
+
+	* sanity.sh (keywordname): New test.
+
+2003-01-23  Larry Jones  <lawrence.jones@eds.com>
+
+	* diff.c (diff_fileproc): Restructure code to simplify and eliminate
+	redundant tests.
+
+	* server.c (do_cvs_command): Use WCOREDUMP macro rather than hard
+	coding test for core file.
+
+2003-01-21  Larry Jones  <lawrence.jones@eds.com>
+
+	* root.c (method_name): Redefine as a 2D array.
+	* root.h (method_name): Ditto.
+
+2003-01-21  Jim Meyering  <jim@meyering.net>
+
+	* add.c (add): Rename local-shadowing `i' to `j'.
+
+	* root.c (method_names): Declare to be a const array of const strings.
+	(Name_Root): Save errno so it doesn't get clobbered
+	by the intervening error call.
+	Use getline's return value, mainly to save a call to strrchr.
+
+2003-01-20  Larry Jones  <lawrence.jones@eds.com>
+
+	* myndbm.c (O_ACCMODE): Parenthesize the replacement string so that
+	it parses correctly.
+	(Reported by Andres Bertens <abertens@entelchile.net>.)
+
 2003-01-15  Karl Fogel  <kfogel@collab.net>
 
 	* server.c (dirswitch): Don't free dir_name until right before
 	allocating it again.  This removes a potential double-free
 	problem, whereby this function could free dir_name and then
 	immediately return due to invalid directory syntax (without ever
-	reassigning dir_name), then reenter and free dir_name again. 
+	reassigning dir_name), then reenter and free dir_name again.
 
         Thanks to Stefan Esser <s.esser@e-matters.de> for the fix.
 

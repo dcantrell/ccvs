@@ -3180,8 +3180,8 @@ error  \n");
 		sprintf (buf, "%d\n", sig);
 		buf_output0 (buf_to_net, buf);
 
-		/* Test for a core dump.  Is this portable?  */
-		if (status & 0x80)
+		/* Test for a core dump.  */
+		if (WCOREDUMP (status))
 		{
 		    buf_output0 (buf_to_net, "E Core dumped; preserving ");
 		    buf_output0 (buf_to_net, orig_server_temp_dir);
