@@ -1007,12 +1007,17 @@ checkout_file (finfo, vers_ts, adding)
 	{
 	    if (!quiet)
 	    {
-		(void) fprintf (stderr, "\
-===================================================================\n");
-		(void) fprintf (stderr, "Checking out %s\n", finfo->fullname);
-		(void) fprintf (stderr, "RCS:  %s\n", vers_ts->srcfile->path);
-		(void) fprintf (stderr, "VERS: %s\n", vers_ts->vn_rcs);
-		(void) fprintf (stderr, "***************\n");
+		cvs_outerr ("\
+===================================================================\n\
+Checking out ", 0);
+		cvs_outerr (finfo->fullname, 0);
+		cvs_outerr ("\n\
+RCS:  ", 0);
+		cvs_outerr (vers_ts->srcfile->path, 0);
+		cvs_outerr ("\n\
+VERS: ", 0);
+		cvs_outerr (vers_ts->vn_rcs, 0);
+		cvs_outerr ("\n***************\n", 0);
 	    }
 	}
 

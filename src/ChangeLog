@@ -1,5 +1,13 @@
 Sun Oct 27 08:34:16 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* sanity.sh (conflicts): New test 128.5 tests "cvs co -p" in an empty
+	directory (like 126.5), but when the file has nonempty contents.
+	* rcs.c (RCS_checkout): If writing to stdout, use cvs_output
+	rather than fwrite.
+	* update.c (checkout_file): Call cvs_stderr not fprintf.
+	These changes should fix some out-of-order bugs which show up in
+	situations like conflicts-126.5 and conflicts-128.5.
+
 	* mkmodules.c (checkout_file): Call RCS_checkout rather than
 	run_exec on RCS_CO.
 
