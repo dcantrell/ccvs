@@ -1,5 +1,8 @@
 2001-03-06  Larry Jones  <larry.jones@sdrc.com>
 
+	* client.c (recv_bytes): Handle EOF as in recv_line().
+	(Reported by Pavel Roskin <proski@gnu.org>.)
+
 	* admin.c (admin_fileproc): Change final error message to clarify
 	that CVS refused to modify the RCS file rather than being unable to.
 

@@ -4157,9 +4157,10 @@ recv_bytes (sock, buf, need)
 	int got;
 
 	got = recv (sock, buf, need, 0);
-	if (got < 0)
+	if (got <= 0)
 	    error (1, 0, "recv() from server %s: %s", current_parsed_root->hostname,
-		   SOCK_STRERROR (SOCK_ERRNO));
+		   got == 0 ? "EOF" : SOCK_STRERROR (SOCK_ERRNO));
+
 	buf += got;
 	need -= got;
     }
