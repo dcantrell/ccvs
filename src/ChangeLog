@@ -1,5 +1,9 @@
 2004-04-27  Derek Price  <derek@ximbiot.com>
 
+	* ls.c (ls_direntproc): Remove unneeded assertion.
+
+2004-04-27  Derek Price  <derek@ximbiot.com>
+
 	* ls.c (ls): Set client_prune_dirs in order to delete any directories
 	created by the server.
 	(ls_dirleaveproc): Always delete directories created by
