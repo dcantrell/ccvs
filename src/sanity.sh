@@ -285,13 +285,18 @@ dotest_internal ()
   # so special-case it.
   if test -z "$3"; then
     if test -s ${TESTDIR}/dotest.tmp; then
-      echo "** expected: " >>${LOGFILE}
-      echo "$3" >>${LOGFILE}
-      echo "$3" > ${TESTDIR}/dotest.exp
-      rm -f ${TESTDIR}/dotest.ex2
-      echo "** got: " >>${LOGFILE}
-      cat ${TESTDIR}/dotest.tmp >>${LOGFILE}
-      fail "$1"
+      if test x"$4" != x; then
+	# We want to match either the empty string or $4.
+	dotest_internal "$1" "$2" "$4"
+      else
+	echo "** expected: " >>${LOGFILE}
+	echo "$3" >>${LOGFILE}
+	echo "$3" > ${TESTDIR}/dotest.exp
+	rm -f ${TESTDIR}/dotest.ex2
+	echo "** got: " >>${LOGFILE}
+	cat ${TESTDIR}/dotest.tmp >>${LOGFILE}
+	fail "$1"
+      fi
     else
       pass "$1"
     fi
@@ -1183,14 +1188,12 @@ ${PROG} [a-z]*: Updating second-dir"
 	  # the point is that CVS must not mess with anything *outside* "."
 	  # the way that CVS 1.10 and older tried to.
 	  dotest basicc-8 "${testcvs} -Q release -d ." \
-"${PROG} release: deletion of directory \. failed: .*" ""
+"" "${PROG} release: deletion of directory \. failed: .*"
 	  dotest basicc-9 "test -d ../second-dir" ""
-	  dotest basicc-10 "test -d ../first-dir" ""
 	  # For CVS to make a syntactic check for "." wouldn't suffice.
 	  dotest basicc-11 "${testcvs} -Q release -d ./." \
-"${PROG} release: deletion of directory \./\. failed: .*" ""
+"" "${PROG} release: deletion of directory \./\. failed: .*"
 	  dotest basicc-11a "test -d ../second-dir" ""
-	  dotest basicc-11b "test -d ../first-dir" ""
 	  cd ..
 	  cd ..
 

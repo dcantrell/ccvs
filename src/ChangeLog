@@ -1,3 +1,11 @@
+1999-06-01  Jim Kingdon  <http://www.cyclic.com>
+
+	* sanity.sh (basicc): To match no output in dotest, put the empty
+	regexp first.  Remove tests which check that first-dir exists,
+	since that isn't true in the case where the OS let us delete it.
+	(dotest_internal): Fix so that things work with two regexps, with
+	an empty one first.
+
 1999-05-28  Larry Jones  <larry.jones@sdrc.com>
 
 	* sanity.sh (server-4): Replace bogus directory with real one since
