@@ -11041,7 +11041,9 @@ add file1
 	  fi
 
 	  # OK, here is another one.  This one was written by hand based on
-	  # doc/RCSFILES and friends.
+	  # doc/RCSFILES and friends.  One subtle point is that none of
+	  # the lines end with newlines; that is a feature which we
+	  # should be testing.
 	  cat <<EOF >${CVSROOT_DIRNAME}/first-dir/file2,v
 head			 	1.5                 ;
      branch        1.2.6;
@@ -11216,10 +11218,6 @@ a1 1
 next branch revision
 @"
 
-	  # For remote, the "update -p -D" usage seems not to work.
-	  # I'm not sure what is going on.
-	  if test "x$remote" = "xno"; then
-
 	  if ${testcvs} -q update -p -D '1970-12-31 11:30 UT' file2 \
 	      >${TESTDIR}/rcs4.tmp
 	  then
@@ -11261,8 +11259,6 @@ next branch revision
 	  else
 	    fail rcs-13
 	  fi
-
-	  fi # end of tests skipped for remote
 
 	  # OK, now make sure cvs log doesn't have any trouble with the
 	  # newphrases and such.
@@ -11358,10 +11354,6 @@ EOF
 	  dotest rcs2-1 "${testcvs} -q co first-dir" 'U first-dir/file1'
 	  cd first-dir
 
-	  # For remote, the "update -p -D" usage seems not to work.
-	  # I'm not sure what is going on.
-	  if test "x$remote" = "xno"; then
-
 	  # 9 Sep 1999
 	  if ${testcvs} -q update -p -D '1999-09-09 11:30 UT' file1 \
 	      >${TESTDIR}/rcs4.tmp
@@ -11399,8 +11391,6 @@ EOF
 "${PROG} \[[a-z]* aborted\]: Can't parse date/time: 2003-02-29 11:30 UT"
 	  fi
 	  rm ${TESTDIR}/rcs4.tmp
-
-	  fi # end of tests skipped for remote
 
 	  cd ..
 	  rm -r first-dir
