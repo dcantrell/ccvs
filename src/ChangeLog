@@ -1,5 +1,9 @@
 Sat Jul 20 00:21:54 1996  Ian Lance Taylor  <ian@cygnus.com>
 
+	* update.c (join_file): Check whether the target of the merge is
+	the same as the working file revision before checking whether the
+	file was added during the merge.
+
 	* update.c (scratch_file): Remove existing parameters, and add a
 	single parameter of type struct file_info.  Change all callers.
 	Warn if unlink_file fails.
