@@ -677,7 +677,7 @@ if test x"$*" = x; then
 	tests="${tests} rdiff diff death death2 rm-update-message rmadd rmadd2"
 	tests="${tests} dirs dirs2 branches branches2 tagc tagf"
 	tests="${tests} rcslib multibranch import importb importc"
-	tests="${tests} update-p import-after-initial"
+	tests="${tests} update-p import-after-initial branch-after-import"
 	tests="${tests} join join2 join3 join-readonly-conflict"
 	tests="${tests} join-admin join-admin-2"
 	tests="${tests} new newb conflicts conflicts2 conflicts3"
@@ -6998,6 +6998,70 @@ done"
 	  cd ../..
 	  rm -rf 1
 	  rm -rf ${CVSROOT_DIRNAME}/$module
+	  ;;
+
+        branch-after-import)
+	  # Test branching after an import via both cvs tag -b and
+	  # cvs add to verify that the HEAD remains at 1.1.1.1
+	  # This was a FreeBSD bug documented at the URL:
+	  # http://www.freebsd.org/cgi/query-pr.cgi?pr=4033
+
+	  mkdir branch-after-import
+	  cd branch-after-import
+
+	  # OK, first we get some sources from the NetMunger project,
+	  # and import them into the 1.1.1 vendor branch.
+	  mkdir imp-dir
+	  cd imp-dir
+	  echo 'OpenMunger sources' >file1
+	  echo 'OpenMunger sources' >file2
+	  dotest_sort branch-after-import-1 \
+"${testcvs} import -m add first-dir openmunger openmunger-1_0" \
+'
+
+N first-dir/file1
+N first-dir/file2
+No conflicts created by this import'
+	  cd ..
+
+	  # Next checkout the new module
+	  dotest branch-after-import-2 \
+"${testcvs} -q co first-dir" \
+'U first-dir/file1
+U first-dir/file2'
+	  cd first-dir
+	  # Branch tag the file1 and cvs add file2,
+	  # the branch should remain the same in both cases
+	  # such that a new import will not require a conflict
+	  # resolution.
+	  dotest branch-after-import-3 \
+"${testcvs} tag -b TESTTOTRON file1" \
+'T file1'
+	  dotest branch-after-import-4 \
+"${testcvs} -q update -r TESTTOTRON" \
+"${PROG} [a-z]*: file2 is no longer in the repository"
+
+	  cp ../imp-dir/file2 .
+	  dotest branch-after-import-5 \
+"${testcvs} add file2" \
+"${PROG} [a-z]*: scheduling file .file2. for addition on branch .TESTTOTRON.
+${PROG} [a-z]*: use .cvs commit. to add this file permanently"
+
+	  dotest branch-after-import-6 \
+"${testcvs} commit -m cvs-add file2" \
+"Checking in file2;
+${CVSROOT_DIRNAME}/first-dir/file2,v  <--  file2
+new revision: 1\.1\.1\.1\.2\.1; previous revision: 1\.1\.1\.1
+done"
+
+	  if $keep; then
+	    echo Keeping ${TESTDIR} and exiting due to --keep
+	    exit 0
+	  fi
+
+	  cd ../..
+	  rm -r branch-after-import
+	  rm -rf ${CVSROOT_DIRNAME}/first-dir
 	  ;;
 
 	join)
