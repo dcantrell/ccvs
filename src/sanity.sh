@@ -1010,6 +1010,8 @@ depends_on_rsync ()
       return 0
     else
       echo $rsync failed to work properly
+      echo "====="; echo "$rsync --version"; $rsync --version; echo "====="
+      (echo "$rsync --version"; $rsync --version) >>$LOGFILE
     fi
   done
 
