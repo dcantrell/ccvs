@@ -1,5 +1,10 @@
 2001-03-16  Derek Price  <dprice@collab.net>
 
+	* sanity.sh (admin-28-5): Confirm that a missing tag during an
+	'admin -n' operation is not a fatal error.
+
+2001-03-16  Derek Price  <dprice@collab.net>
+
 	* admin.c (admin_data): Remove 'quiet' member.
 	(admin_fileproc): Use global 'really_quiet' rather than
 	admin_data->quiet.

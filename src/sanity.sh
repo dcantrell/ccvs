@@ -18056,11 +18056,15 @@ ${PROG} \[[a-z]* aborted\]: revision .2\.1\.2. does not exist"
 "RCS file: ${TESTDIR}/cvsroot/first-dir/file2,v
 ${PROG} \[[a-z]* aborted\]: tag .1\.a\.2. must start with a letter"
 
-	  dotest_fail admin-28-5 "${testcvs} admin -ntagten:BO+GUS file2"  \
+	  # Confirm that a missing tag is not a fatal error.
+	  dotest admin-28-5.1 "${testcvs} -Q tag BO+GUS file1" ''
+	  dotest_fail admin-28-5.2 "${testcvs} admin -ntagten:BO+GUS file2 file1"  \
 "RCS file: ${TESTDIR}/cvsroot/first-dir/file2,v
 ${PROG} [a-z]*: ${TESTDIR}/cvsroot/first-dir/file2,v: Symbolic name or revision BO${PLUS}GUS is undefined\.
-${PROG} [a-z]*: RCS file for .file2. not modified\."
-      	  
+${PROG} [a-z]*: RCS file for .file2. not modified\.
+RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
+done"
+
 	  dotest_fail admin-28-6 "${testcvs} admin -nq.werty:tagfour file2"  \
 "RCS file: ${TESTDIR}/cvsroot/first-dir/file2,v
 ${PROG} \[[a-z]* aborted\]: tag .q\.werty. must not contain the characters ..*"
