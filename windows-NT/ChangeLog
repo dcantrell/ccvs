@@ -1,3 +1,8 @@
+2004-02-26  Derek Price  <derek@ximbiot.com>
+
+	* config.h.in: Add definition for inline for GNULIB xalloc module.
+	* config.h, stamp-ch: Regenerated.
+
 2003-12-18  Derek Price  <derek@ximbiot.com>
 
 	* config.h, stamp-ch: Regenerated for 1.12.5.1.
