@@ -53,12 +53,14 @@
 
 /*
  * The "diff" program to execute when creating patch output.  This "diff"
- * must support the "-c" option for context diffing.  Specify a full pathname
- * if your site wants to use a particular diff.  If you are using the GNU
- * version of diff (version 1.15 or later), this should be "diff -a".
+ * must support the "-c" option for context diffing.  Specify a full
+ * pathname if your site wants to use a particular diff.  If you are
+ * using the GNU version of diff (version 1.15 or later), this should
+ * be "diff -a".
  * 
- * NOTE: this program is only used for the ``patch'' sub-command.  The other
- * commands use rcsdiff which will use whatever version of diff was specified
+ * NOTE: this program is only used for the ``patch'' sub-command (and
+ * for ``update'' if you are using the server).  The other commands
+ * use rcsdiff which will use whatever version of diff was specified
  * when rcsdiff was built on your system.
  */
 
@@ -133,6 +135,33 @@
 #endif
 
 /*
+ * The default umask to use when creating or otherwise setting file or
+ * directory permissions in the repository.  Must be a value in the
+ * range of 0 through 0777.  For example, a value of 002 allows group
+ * rwx access and world rx access; a value of 007 allows group rwx
+ * access but no world access.  This value is overridden by the value
+ * of the CVSUMASK environment variable, which is interpreted as an
+ * octal number.
+ */
+#ifndef UMASK_DFLT
+#define	UMASK_DFLT	002
+#endif
+
+/*
+ * The cvs admin command is restricted to the members of the group
+ * CVS_ADMIN_GROUP.  If this group does not exist, all users are
+ * allowed to run cvs admin.  To disable the cvs admin for all users,
+ * create an empty group CVS_ADMIN_GROUP.  To disable access control for
+ * cvs admin, comment out the define below.
+ *
+ * Under Windows NT, this must not be used because it tries to include
+ * <grp.h>
+ */
+#ifdef CVS_ADMIN_GROUP
+/* #define CVS_ADMIN_GROUP "cvsadmin" */
+#endif
+
+/*
  * The Repository file holds the path to the directory within the source
  * repository that contains the RCS ,v files for each CVS working directory.
  * This path is either a full-path or a path relative to CVSROOT.
@@ -187,8 +216,20 @@
  * so the case in which someone has logged in as root does not occur.
  * Thus, there is no need for this hack.
  */
-#undef	CVS_BADROOT
+#undef CVS_BADROOT
 
+/*
+ * The "cvs admin" command allows people to get around most of the logging
+ * and info procedures within CVS.  For exmaple, "cvs tag tagname filename"
+ * will perform some validity checks on the tag, while "cvs admin -Ntagname"
+ * will not perform those checks.  For this reason, some sites may wish to
+ * disable the admin function completely.
+ *
+ * To disable the admin function, uncomment the lines below.
+ */
+#ifndef CVS_NOADMIN
+/* #define CVS_NOADMIN */
+#endif
 
 /*
  * The "cvs diff" command accepts all the single-character options that GNU
@@ -201,6 +242,12 @@
 #ifndef CVS_DIFFDATE
 #define	CVS_DIFFDATE
 #endif
+
+/*
+ * "cvs login" is under construction.  Don't define this unless you're
+ * testing it, in which case you're me and you already know that.
+ */
+/* #define CVS_LOGIN */
 
 /* End of CVS configuration section */
 
