@@ -1,3 +1,17 @@
+Mon Dec 18 00:52:26 1995  Karl Fogel  <kfogel@floss.cyclic.com>
+
+        * client.c (use_socket_style): new static var, init to 0.
+        (server_socket): new static var.
+        (connect_to_pserver): don't deal with logging here.
+        Caller changed.
+        (start_kerberos_server): don't deal with logging here either.
+        Caller changed.
+
+Mon Dec 18 00:40:46 1995  Karl Fogel  <kfogel@floss.cyclic.com>
+
+        * client.c (send_modified): don't error-check `to_server';
+        send_to_server() does that now.
+
 Mon Dec 18 00:19:16 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
         * login.c (get_cvs_password): Init `linebuf' to NULL.
