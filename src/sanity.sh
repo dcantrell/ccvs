@@ -2071,7 +2071,7 @@ for what in $tests; do
 '
 Concurrent Versions System (CVS) [0-9.]*.*
 
-Copyright (C) [-0-9]* Free Software Foundation, Inc.
+Copyright (C) [0-9]* Free Software Foundation, Inc.
 
 Senior active maintainers include Larry Jones, Derek R. Price,
 and Mark D. Baushke.  Please see the AUTHORS and README files from the CVS

@@ -533,7 +533,7 @@ main (argc, argv)
 		version (0, (char **) NULL);    
 		(void) fputs ("\n", stdout);
 		(void) fputs ("\
-Copyright (C) 1986-2005 Free Software Foundation, Inc.\n\
+Copyright (C) 2005 Free Software Foundation, Inc.\n\
 \n\
 Senior active maintainers include Larry Jones, Derek R. Price,\n\
 and Mark D. Baushke.  Please see the AUTHORS and README files from the CVS\n\
