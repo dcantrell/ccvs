@@ -1,14 +1,8 @@
 This is an experimental attempt to interface to the SCC API.
 
-Here is as far as I got:  I could open the DLL using some
-code (hacked up) that Microsoft distributes along with the
-SCC API.  However, Developer Studio didn't seem to want to
-recognize it (that is, SccInitialize never got called or so
-it seemed because DEBUG.SCC never got written.  I'm not
-sure how to debug this).
-
-Note that even if that problem is solved, this code won't do anything
-useful.  I said experimental, and I mean that in a very extreme sense.
+Note that although Developer Studio does recognize this code (it
+should show a grayed out "Source Control" item on the Tools menu if
+you install it right), it doesn't (yet) do anything useful.
 
 To install it, build scc.dll and then add the following
 to the registry using the registry editor:
