@@ -28,11 +28,15 @@ limitation in the NT command shell.  sanity.sh provides pretty minimal
 feature coverage, but still gives me some confidence it isn't totally
 broken.
 
-Minimally, you will need GNU patch, GNU diffutils, and RCS version 5.7
-installed on your system.  Make sure NOT to get a version of RCS less
-than 5.7 (gr564bnt.zip was particularly bad), because those versions
-insist on putting their files in their own directory structure, making
-them incompatible with CVS.system.  GZIP is useful but not required.
+To operate in server mode, you will need GNU patch.  gzip is useful
+but not required.
+
+To operate in local mode, you will need GNU patch, GNU diffutils, a
+version of grep, and rcs version 5.7 installed on your system.  Make
+sure NOT to get a version of rcs less than 5.7 (gr564bnt.zip was
+particularly bad), because those versions insist on putting their
+files in their own directory structure, making them incompatible with
+CVS.system.
 
 Noel Cragg, who did the latest mods to the Windows NT port, used the
 following packages:

@@ -1,3 +1,12 @@
+Thu May 16 16:52:45 1996  Noel Cragg  <noel@gargle.rain.org>
+
+	* README: explain which utilities are required for client support
+ 	and local support in separate paragraphs.
+
+	* filesubr.c (expand_wild): rename max to cvs_max to avoid
+ 	conflicts with other already-defined routines.
+	(get_homedir): rename min to cvs_min.
+
 Thu May 16 01:18:22 1996  noel  <noel@BOAT_ANCHOR>
 
 	* sanity.sh: Hacked version of src/sanity.sh for use under

@@ -806,10 +806,10 @@ get_homedir ()
     {
 	/* Watch for buffer overruns. */
 
-#define min(x,y) ((x <= y) ? (x) : (y))
+#define cvs_min(x,y) ((x <= y) ? (x) : (y))
 
-	int ld = min (PATH_MAX, strlen (hd));
-	int lp = min (PATH_MAX, strlen (hp));
+	int ld = cvs_min (PATH_MAX, strlen (hd));
+	int lp = cvs_min (PATH_MAX, strlen (hp));
 
 	strncpy (pathbuf, hd, ld);
 	strncpy (pathbuf + ld, hp, lp);
@@ -863,9 +863,9 @@ expand_wild (argc, argv, pargc, pargv)
 	last_forw_slash = strrchr (argv[i], '/');
 	last_back_slash = strrchr (argv[i], '\\');
 
-#define max(x,y) ((x >= y) ? (x) : (y))
+#define cvs_max(x,y) ((x >= y) ? (x) : (y))
 
-	end_of_dirname = max (last_forw_slash, last_back_slash);
+	end_of_dirname = cvs_max (last_forw_slash, last_back_slash);
 
 	if (end_of_dirname == NULL)
 	  dirname_length = 0;	/* no directory name */
