@@ -1,5 +1,12 @@
 2004-05-20  Derek Price  <derek@ximbiot.com>
 
+	* configure.in: Add calls to gl_FUNC_TZSET_CLOBBER &
+	gl_FUNC_GNU_STRFTIME.
+	* Makefile.in, aclocal.m4, config.h.in, configure: Regenerated.
+	* srclist.txt (strftime): New module.
+
+2004-05-20  Derek Price  <derek@ximbiot.com>
+
 	* srclist.txt (tzet): New GNULIB module.
 	* configure: Regenerated.
 
