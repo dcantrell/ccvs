@@ -730,7 +730,12 @@ Numeric tag %s contains characters other than digits and '.'", name);
     /* We didn't find the tag in val-tags, so look through all the RCS files
        to see whether it exists there.  Yes, this is expensive, but there
        is no other way to cope with a tag which might have been created
-       by an old version of CVS, from before val-tags was invented.  */
+       by an old version of CVS, from before val-tags was invented.
+
+       Since we need this code anyway, we also use it to create
+       entries in val-tags in general (that is, the val-tags entry
+       will get created the first time the tag is used, not when the
+       tag is created).  */
 
     the_val_args.name = name;
     the_val_args.found = 0;

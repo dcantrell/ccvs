@@ -1,3 +1,8 @@
+Tue Jun  4 10:02:44 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* tag.c (tag_check_valid): Add comment clarifying when val-tags
+	entries are created.
+
 Mon Jun  3 07:26:35 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* version.c: Increment version number to 1.8.4.
