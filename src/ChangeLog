@@ -1,3 +1,9 @@
+2004-06-22  Derek Price  <derek@ximbiot.com>
+
+	* wrapper.c: Add explicit "void" return type to "wrap_clean_fmt_str"
+	definition.
+	(Patch from Conrad T. Pino <Conrad@Pino.com>.)
+
 2004-06-09  Derek Price  <derek@ximbiot.com>
 
 	* server.c (entries, serve_is_modified): Reorder to remove prototypes.
