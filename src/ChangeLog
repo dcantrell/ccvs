@@ -1,3 +1,10 @@
+Tue Oct 24 14:32:45 1995  Norbert Kiesel  <nk@col.sw-ley.de>
+
+	* admin.c (admin): use getcaller() instead of getpwuid
+
+	* subr.c (getcaller): prefer getlogin() to $USER and $LOGNAME
+	  (especially useful for NT where getuid always returns 0)
+
 Tue Oct 24 06:22:08 1995  Jim Meyering  (meyering@comco.com)
 
 	* cvsrc.c (read_cvsrc): Use getline instead of fgets.

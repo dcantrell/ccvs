@@ -148,8 +148,8 @@ getcaller ()
     if (uid == (uid_t) 0)
     {
 	/* super-user; try getlogin() to distinguish */
-	if (((name = getenv("LOGNAME")) || (name = getenv("USER")) ||
-	     (name = getlogin ())) && *name)
+	if (((name = getlogin ()) || (name = getenv("LOGNAME")) ||
+	     (name = getenv("USER"))) && *name)
 	    return (name);
     }
     if ((pw = (struct passwd *) getpwuid (uid)) == NULL)
