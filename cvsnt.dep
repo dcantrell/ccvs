@@ -119,7 +119,9 @@
 	".\lib\fnmatch.h"\
 	".\lib\getdate.h"\
 	".\lib\getopt.h"\
+	".\lib\getpagesize.h"\
 	".\lib\gettext.h"\
+	".\lib\pagealign_alloc.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
 	".\lib\strcase.h"\
@@ -270,6 +272,7 @@
 	".\lib\getdate.h"\
 	".\lib\getline.h"\
 	".\lib\getopt.h"\
+	".\lib\getpagesize.h"\
 	".\lib\gettext.h"\
 	".\lib\md5.h"\
 	".\lib\pathmax.h"\
@@ -965,6 +968,7 @@
 	".\lib\fnmatch.h"\
 	".\lib\getdate.h"\
 	".\lib\getopt.h"\
+	".\lib\getpagesize.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -1148,6 +1152,7 @@
 	
 
 .\src\main.c : \
+	".\lib\closeout.h"\
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
 	".\lib\fnmatch.h"\
@@ -1777,6 +1782,7 @@
 	".\lib\fnmatch.h"\
 	".\lib\getdate.h"\
 	".\lib\getopt.h"\
+	".\lib\getpagesize.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -1891,6 +1897,7 @@
 	".\lib\getline.h"\
 	".\lib\getnline.h"\
 	".\lib\getopt.h"\
+	".\lib\getpagesize.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -1936,6 +1943,7 @@
 	".\lib\fnmatch.h"\
 	".\lib\getdate.h"\
 	".\lib\getopt.h"\
+	".\lib\getpagesize.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -2165,6 +2173,7 @@
 	".\lib\getdate.h"\
 	".\lib\getline.h"\
 	".\lib\getopt.h"\
+	".\lib\getpagesize.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -2400,6 +2409,7 @@
 	".\lib\fnmatch.h"\
 	".\lib\getdate.h"\
 	".\lib\getopt.h"\
+	".\lib\getpagesize.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
