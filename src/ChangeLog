@@ -1,5 +1,12 @@
 2004-09-03  Derek Price  <derek@ximbiot.com>
 
+	* sanity.sh (secondary-wrapper, writeproxy-secondary-wrapper): Improve
+	comments.  Use exec to launch server.
+	(writeproxy-noredirect): New tests for writeproxy functionality in
+	conjunction with clients that cannot handle the `Redirect' response.
+
+2004-09-03  Derek Price  <derek@ximbiot.com>
+
 	* log-buffer.c, rsh-client.c, client.c: Reformat function headers.
 	Remove unnecessary typecasts and prototypes.
 	* client.h: Remove unnecessary extern declarations on protos.
