@@ -1,5 +1,10 @@
 2004-02-02  Derek Price  <derek@ximbiot.com>
 
+	* NEWS: Ammend last note to specify the continued lack of any server
+	support for case insensitive clients more clearly.
+
+2004-02-02  Derek Price  <derek@ximbiot.com>
+
 	* NEWS: Note that client handling of case insensitivity is restored.
 
 2004-01-30  Derek Price  <derek@ximbiot.com>
