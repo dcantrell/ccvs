@@ -131,10 +131,10 @@ AC_ARG_WITH([rsh],
   [  --with-rsh=<path>       default location of rsh [remsh or rsh]],
   [AC_MSG_RESULT($withval)
    RSH_DFLT=$withval],
-  [AC_PATH_PROGS(RSH_DFLT, rsh)
+  [AC_MSG_RESULT(none)
+   AC_PATH_PROGS(RSH_DFLT, rsh)
    # WARNING: this fails miserably if rsh is the Eric Gisin ksh.
-   if expr "`$RSH_DFLT -? 2>&1 1> /dev/null | sed 's/[-:?]/_/g'`" :
-	   '^.*option' > /dev/null ; then
+   if expr "`$RSH_DFLT -? 2>&1 1>/dev/null | sed 's/[-:?]/_/g'`" : '^.*option' > /dev/null ; then
      AC_MSG_WARN($RSH_DFLT seems to be the ATT System V restricted shell)
      AC_PATH_PROGS(RSH_DFLT, remsh)
    fi]
