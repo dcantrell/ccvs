@@ -1,3 +1,7 @@
+Sun Nov  9 10:28:43 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* rcs.c (rcs_internal_lockfile): Fix typo (thow -> throw).
+
 Sat Nov  8 15:58:53 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* sanity.sh (cvsadm): Remove most of the tests which tested

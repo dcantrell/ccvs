@@ -6253,7 +6253,7 @@ rcs_internal_lockfile (rcsfile)
 
     /* Try to open exclusively.  POSIX.1 guarantees that O_EXCL|O_CREAT
        guarantees an exclusive open.  According to the RCS source, with
-       NFS v2 we must also thow in O_TRUNC and use an open mask that makes
+       NFS v2 we must also throw in O_TRUNC and use an open mask that makes
        the file unwriteable.  For extensive justification, see the comments for
        rcswriteopen() in rcsedit.c, in RCS 5.7.  This is kind of pointless
        in the CVS case; see comment at the start of this file concerning
