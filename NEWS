@@ -1,5 +1,8 @@
 Changes since 1.6:
 
+* The default ignore list has changed slightly: *.obj has been added
+and CVS* has been changed to CVS CVS.adm.
+
 * CVS now supports password authentication when accessing remote
 repositories; this is useful for sites that can't use rsh (because of
 a firewall, for example), and also don't have kerberos.  See node
