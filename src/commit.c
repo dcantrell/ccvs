@@ -233,27 +233,42 @@ find_fileproc (void *callerdat, struct file_info *finfo)
 	freevers_ts (&vers);
 	return 1;
     }
-    if (vers->ts_user == NULL)
+    if (vers->vn_user[0] == '-')
     {
-	if (strcmp (vers->vn_user, "0") == 0)
+	if (vers->ts_user != NULL)
+	{
+	    error (0, 0,
+		   "`%s' should be removed and is still there (or is back"
+		   " again)", finfo->fullname);
+	    return 1;
+	}
+	/* else */
+	status = T_REMOVED;
+    }
+    else if (strcmp (vers->vn_user, "0") == 0)
+    {
+	if (vers->ts_user == NULL)
+	{
 	    /* This happens when one has `cvs add'ed a file, but it no
 	       longer exists in the working directory at commit time.
 	       FIXME: What classify_file does in this case is print
 	       "new-born %s has disappeared" and removes the entry.
 	       We probably should do the same.  */
-	    status = T_ADDED;
-	else if (vers->vn_user[0] == '-')
-	    status = T_REMOVED;
-	else
-	{
-	    /* FIXME: What classify_file does in this case is print
-	       "%s was lost".  We probably should do the same.  */
-	    freevers_ts (&vers);
-	    return 0;
+	    if (!really_quiet)
+		error (0, 0, "warning: new-born %s has disappeared",
+		       finfo->fullname);
+	    status = T_REMOVE_ENTRY;
 	}
+	else
+	    status = T_ADDED;
     }
-    else if (strcmp (vers->vn_user, "0") == 0)
-	status = T_ADDED;
+    else if (vers->ts_user == NULL)
+    {
+	/* FIXME: What classify_file does in this case is print
+	   "%s was lost".  We probably should do the same.  */
+	freevers_ts (&vers);
+	return 0;
+    }
     else if (vers->ts_rcs != NULL
 	     && (args->force || strcmp (vers->ts_user, vers->ts_rcs) != 0))
 	/* If we are forcing commits, pretend that the file is
@@ -806,7 +821,8 @@ check_fileproc (void *callerdat, struct file_info *finfo)
 	     *	- can't have a sticky date
 	     *	- can't have a sticky tag that is not a branch
 	     * Also,
-	     *	- if status is T_REMOVED, can't have a numeric tag
+	     *	- if status is T_REMOVED, file must not exist and its entry
+	     *	  can't have a numeric sticky tag.
 	     *	- if status is T_ADDED, rcs file must not exist unless on
 	     *    a branch or head is dead
 	     *	- if status is T_ADDED, can't have a non-trunk numeric rev
@@ -867,19 +883,29 @@ warning: file `%s' seems to still contain conflict indicators",
 		}
 	    }
 
-	    if (status == T_REMOVED
-		&& vers->tag
-		&& isdigit ((unsigned char) *vers->tag))
+	    if (status == T_REMOVED)
 	    {
-		/* Remove also tries to forbid this, but we should check
-		   here.  I'm only _sure_ about somewhat obscure cases
-		   (hacking the Entries file, using an old version of
-		   CVS for the remove and a new one for the commit), but
-		   there might be other cases.  */
-		error (0, 0,
-	"cannot remove file `%s' which has a numeric sticky tag of `%s'",
-			   finfo->fullname, vers->tag);
-		goto out;
+		if (vers->ts_user != NULL)
+		{
+		    error (0, 0,
+			   "`%s' should be removed and is still there (or is"
+			   " back again)", finfo->fullname);
+		    goto out;
+		}
+
+		if (vers->tag && isdigit ((unsigned char) *vers->tag))
+		{
+		    /* Remove also tries to forbid this, but we should check
+		       here.  I'm only _sure_ about somewhat obscure cases
+		       (hacking the Entries file, using an old version of
+		       CVS for the remove and a new one for the commit), but
+		       there might be other cases.  */
+		    error (0, 0,
+			   "cannot remove file `%s' which has a numeric sticky"
+			   " tag of `%s'", finfo->fullname, vers->tag);
+		    freevers_ts (&vers);
+		    goto out;
+		}
 	    }
 	    if (status == T_ADDED)
 	    {
