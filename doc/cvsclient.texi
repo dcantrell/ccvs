@@ -699,6 +699,13 @@ remainder of @var{tagspec} contains the actual tag or date.
 @item Clear-sticky @var{pathname} \n
 Clear any sticky tag or date set by @code{Set-sticky}.
 
+@item Template @var{pathname} \n
+Additional data: file transmission (note: compressed file transmissions
+are not supported).  @var{pathname} ends in a slash; its purpose is to
+specify a directory, not a file within a directory.  Tell the client to
+store the file transmission as the template log message, and then use
+that template in the future when prompting the user for a log message.
+
 @item Set-checkin-prog @var{dir} \n
 Additional data: @var{prog} \n.  Tell the client to set a checkin
 program, which should be supplied with the @code{Checkin-prog} request

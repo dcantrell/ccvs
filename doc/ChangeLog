@@ -1,3 +1,8 @@
+Wed Apr 17 15:27:03 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (rcsinfo): Rewrite paragraph concerning remote CVS.
+	* cvsclient.texi (Responses): Document Template response.
+
 Sun Apr 14 16:01:39 1996  Karl Fogel  <kfogel@floss.red-bean.com>
 
         * .cvsignore: added CVSvn.texi.

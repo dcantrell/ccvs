@@ -7243,10 +7243,16 @@ template.
 @xref{editinfo example}, for an example @file{rcsinfo}
 file.
 
-Note: when @sc{CVS} is accessing a remote repository,
-@file{rcsinfo} will be run on the @emph{remote}
-(i.e., server) side, not the client side (@pxref{Remote
-repositories}).
+When @sc{CVS} is accessing a remote repository,
+the contents of @file{rcsinfo} at the time a directory
+is first checked out will specify a template which does
+not then change.  If you edit @file{rcsinfo} or its
+templates, you may need to check out a new working
+directory.
+@c Would be nice to fix CVS so this isn't needed.  For
+@c example, a mechanism analogous to CVS/Entries, where
+@c the client keeps track of what version of the template
+@c it has.
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node cvsignore
