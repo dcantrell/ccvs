@@ -8,6 +8,12 @@ synonyms.
 * The "log" command is now implemented internally rather than via the
 RCS "rlog" program.  The main user-visible consequence is that
 symbolic branch names now work (for example "cvs log -rbranch1").
+Also, the date formats accepted by -d have changed.  They previously
+had been a bewildering variety of poorly-documented date formats.  Now
+they are the same as the date formats accepted by the -D options to
+the other CVS commands, which is also a (different) bewildering
+variety of poorly-documented date formats, but at least we are
+consistently bewildering :-).
 
 * Encryption is now supported over a Kerberos client/server
 connection.  The new "-x" global option requests it.  You must

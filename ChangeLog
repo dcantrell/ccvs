@@ -1,5 +1,8 @@
 Wed Sep 25 10:35:06 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* NEWS: Add note about "cvs log -d" date formats changing.  See
+	comment I added to cvs.texinfo for more whining about this situation.
+
 	* BUGS: Remove item about ~/.cvsignore on NT; it is fixed.
 
 Wed Sep 25 08:34:01 1996  Jim Blandy  <jimb@floss.cyclic.com>
