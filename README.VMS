@@ -22,8 +22,7 @@ of ftp servers which have VMS GNU resources, taken from
     ftp.spc.edu
     ftp.stacken.kth.se
 
-Please send bug reports to me directly at <benjamin@cyclic.com>.  I don't
-anticipate a huge amount of traffic, and feel more comfortable going through 
+Please send bug reports to bug-cvs@prep.ai.mit.edu.
 
 This port is known to pass most of the tests in [.src]sanity.sh.  I say
 "most" because some tests to not apply to the CVS client.  The tests
@@ -149,19 +148,17 @@ to their advantage.
 -------------------------------------------------------------------------------
 If you have used CVS before there are will be some important things to note
 with this release with respect to differences between CVS on UNIX and CVS on
-AXP/VMS.
+VMS.
 
-VMS filenames are case insensitive and have restrictions on the characters
-allowed in the file name.  This poses a problem for filenames like
-"Makefile" and "readme.txt.new".  We decided the most intuitive behavior
-is to have CVS fold all filenames to lowercase in checked-out directories.
-Unfortunately, with the way the CVS sources are, this is not a trivial
-modification, so cvs operations on files which are of mixed case in the
-repository have to be committed explicitly.
+VMS filenames are case insensitive and have restrictions on the
+characters allowed in the file name.  This poses a problem for
+filenames like "Makefile" and "readme.txt.new".  The following few
+paragraphs describe how the VMS port used to work, but things might
+have changed since then.
 
-This means that for the VMS client, if I have test-module checked out, and
-it contains a Makefile to which I have made changes, I would commit it like
-this:
+This means that for the VMS client, if I have a directory checked out,
+and it contains a Makefile to which I have made changes, I would
+commit it like this:
 
 $ CVS COMMIT -M "Added a comment to Makefile" "Makefile"
 
