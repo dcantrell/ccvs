@@ -1,3 +1,8 @@
+2002-11-22  Larry Jones  <lawrence.jones@eds.com>
+
+	* checkout.c (safe_location): Use xstrdup, not strdup.
+	(Reported by Terrence Enger <tenger@iSeries-guru.com>.)
+
 2002-11-19  Larry Jones  <lawrence.jones@eds.com>
 
 	* log.c (log_expand_revlist): Fix cross-branch correction code.
