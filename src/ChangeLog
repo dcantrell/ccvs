@@ -1,3 +1,10 @@
+2001-03-29  Larry Jones  <larry.jones@sdrc.com>
+
+	* main.c (cmds[], lookup_command_attribute, main): Include the
+	command attributes in the global command table instead of inferring
+	them from the command names.  Change the sense of the
+	CVS_CMD_IGNORE_ADMROOT attribute to match its name.
+
 2001-03-29  Derek Price  <dprice@collab.net>
 
 	* sanity.sh (*, basic2-64): Remove references to TMPPWD.  Fix FIXME
