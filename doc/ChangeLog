@@ -1,5 +1,9 @@
 2000-12-21  Derek Price  <derek.price@openavenue.com>
 
+	* cvs-paper.ps: Backout accidental regeneration.
+
+2000-12-21  Derek Price  <derek.price@openavenue.com>
+
 	* .cvsignore: Added *.pdf versions of the *.ps docs
 	* CVSvn.texi.in: Use configure to generate CVSvn.texi
 	* Makefile.am: New file needed by Automake
