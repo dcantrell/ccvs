@@ -1748,12 +1748,6 @@ were to set it after running @code{cvs login}, then
 later @sc{cvs} commands would be unable to look up the
 password for transmission to the server.
 
-@cindex CVS_PASSWORD, environment variable
-The @code{CVS_PASSWORD} environment variable overrides
-@emph{all} stored passwords.  If it is set, @sc{cvs}
-will use it for all password-authenticated
-connections.
-
 @node Password authentication security
 @subsubsection Security considerations with password authentication
 
@@ -9509,11 +9503,6 @@ is @code{cvs}.  @pxref{Connecting via rsh}
 @item $CVS_PASSFILE
 Used in client-server mode when accessing the @code{cvs
 login server}.  Default value is @file{$HOME/.cvspass}.
-@pxref{Password authentication client}
-
-@item $CVS_PASSWORD
-Used in client-server mode when accessing the @code{cvs
-login server}.
 @pxref{Password authentication client}
 
 @item $CVS_CLIENT_PORT
