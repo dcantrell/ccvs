@@ -558,7 +558,8 @@ if test x"$*" = x; then
 	# Basic/miscellaneous functionality
 	tests="basica basicb basicc basic1 deep basic2 commit-readonly"
 	# Branching, tagging, removing, adding, multiple directories
-	tests="${tests} rdiff diff death death2 rmadd dirs branches branches2"
+	tests="${tests} rdiff diff death death2 rmadd dirs dirs2"
+	tests="${tests} branches branches2"
 	tests="${tests} rcslib multibranch import importb importc"
 	tests="${tests} join join2 join3 join-readonly-conflict"
 	tests="${tests} new newb conflicts conflicts2 conflicts3"
@@ -3148,6 +3149,7 @@ File: file5            	Status: Up-to-date
 	  #     exists but without CVS/Repository and friends.
 	  #   conflicts3-22.  Similar to conflicts-130 but there is a file
 	  #     in the directory.
+	  #   dirs2.  Sort of similar to conflicts3-22 but somewhat different.
 	  mkdir imp-dir; cd imp-dir
 	  echo file1 >file1
 	  mkdir sdir
@@ -3219,6 +3221,63 @@ D/sdir////"
 
 	  # clean up our repositories
 	  rm -rf ${CVSROOT_DIRNAME}/dir1
+	  ;;
+
+	dirs2)
+	  # See "dirs" for a list of tests involving adding and
+	  # removing directories.
+	  mkdir 1; cd 1
+	  dotest dirs2-1 "${testcvs} -q co -l ." ''
+	  mkdir first-dir
+	  dotest dirs2-2 "${testcvs} add first-dir" \
+"Directory ${TESTDIR}/cvsroot/first-dir added to the repository"
+	  cd first-dir
+	  mkdir sdir
+	  dotest dirs2-3 "${testcvs} add sdir" \
+"Directory ${TESTDIR}/cvsroot/first-dir/sdir added to the repository"
+	  touch sdir/file1
+	  dotest dirs2-4 "${testcvs} add sdir/file1" \
+"${PROG} [a-z]*: scheduling file .sdir/file1. for addition
+${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
+	  dotest dirs2-5 "${testcvs} -q ci -m add" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/sdir/file1,v
+done
+Checking in sdir/file1;
+${TESTDIR}/cvsroot/first-dir/sdir/file1,v  <--  file1
+initial revision: 1\.1
+done"
+	  rm -r sdir/CVS
+	  if test "$remote" = yes; then
+	    # This is just like conflicts3-23
+	    dotest_fail dirs2-6 "${testcvs} update -d" \
+"${QUESTION} sdir
+${PROG} server: Updating \.
+${PROG} update: in directory sdir:
+${PROG} update: cannot open CVS/Entries for reading: No such file or directory
+${PROG} server: Updating sdir
+${PROG} update: move away sdir/file1; it is in the way
+C sdir/file1"
+	    rm sdir/file1
+	    # This is where things are not just like conflicts3-23
+	    dotest_fail dirs2-7 "${testcvs} update -d" \
+"${QUESTION} sdir
+${PROG} server: Updating \.
+${PROG} update: in directory sdir:
+${PROG} update: cannot open CVS/Entries for reading: No such file or directory
+${PROG} server: Updating sdir
+U sdir/file1
+${PROG} \[update aborted\]: cannot open CVS/Entries.Log: No such file or directory"
+	  else
+	    dotest dirs2-6 "${testcvs} update -d" \
+"${PROG} update: Updating \.
+${QUESTION} sdir"
+	    rm sdir/file1
+	    dotest dirs2-7 "${testcvs} update -d" \
+"${PROG} update: Updating \.
+${QUESTION} sdir"
+	  fi
+
+	  rm -rf ${TESTDIR}/cvsroot/first-dir
 	  ;;
 
 	branches)

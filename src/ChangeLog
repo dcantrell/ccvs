@@ -1,5 +1,8 @@
 1998-11-23  Jim Kingdon
 
+	* sanity.sh (dirs2): New test, for some more cases involving
+	deleting directories and such.
+
 	* sanity.sh (dirs): Update for yesterday's change in Find_Names
 	error handling.  The error in dirs-4 is fairly different now; in
 	dirs-3 and dirs-3a it is the obvious change.
