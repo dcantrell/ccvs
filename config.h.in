@@ -107,6 +107,9 @@
 /* Define if you have the getpagesize function.  */
 #undef HAVE_GETPAGESIZE
 
+/* Define if you have the getspnam function.  */
+#undef HAVE_GETSPNAM
+
 /* Define if you have the initgroups function.  */
 #undef HAVE_INITGROUPS
 
