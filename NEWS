@@ -1,6 +1,11 @@
 Changes since 1.12.8:
 *********************
 
+NEW FEATURES
+
+* `cvs log' now outputs local times when both the server and client are 1.12.8
+  or greater.
+
 DEVELOPER NOTES
 
 * The windows-NT/config.h.in file is now generated dynamically from the

@@ -855,19 +855,6 @@ administrative file interfaces do not.)
 of universal character set (ISO 10646?) internally and converting on
 input and output, which opens the locale can of worms.
 
-224.  Better timezone handling.  Many people would like to see times
-output in local time rather than UTC, but that's tricky since the
-conversion from internal form is currently done by the server who has no
-idea what the user's timezone even is, let alone the rules for
-converting to it.
-
-   -  On the contrary, I think the MT server response should be easily adaptable
-for this purpose.  It is defined in cvsclient.texi as processed by the client
-if it knows how and printed to stdout otherwise.  A "time" tag or the like
-could be the usual CVS server UTC time string.  An old client could just print
-the time in UTC and a new client would know that it could convert the time to a
-local time string according to the localization settings before printing it.
-
 225.  Add support for --allow-root to server command.
 
 227.  'cvs release' should use the CVS/Root in the directory being released
