@@ -1,3 +1,9 @@
+Sat Nov 29 22:21:19 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	See lib/ChangeLog for rationale:
+	* options.h: Remove declaration of getwd
+	* getwd.c: Implement xgetwd not getwd.
+
 Thu Sep 25 15:26:43 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* misc.c, misc.h (fatal, xmalloc, xrealloc): Remove; nowhere used.

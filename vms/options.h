@@ -241,9 +241,5 @@
 extern void exit ();
 #endif
 
-#ifndef getwd
-extern char *getwd ();
-#endif
-
 #define NO_SOCKET_TO_FD 1
 #include "vms.h"
