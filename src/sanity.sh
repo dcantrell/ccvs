@@ -3815,9 +3815,12 @@ O [0-9-]* [0-9:]* ${PLUS}0000 ${username} \[1\.1\] first-dir           =first-di
 P [0-9-]* [0-9:]* ${PLUS}0000 ${username} 1\.2 file6     first-dir           == <remote>
 W [0-9-]* [0-9:]* ${PLUS}0000 ${username}     file7     first-dir           == <remote>"
 
-		rm -rf ${CVSROOT_DIRNAME}/first-dir
-		rm -rf ${CVSROOT_DIRNAME}/second-dir
-		;;
+	  dokeep
+	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  rm -rf ${CVSROOT_DIRNAME}/second-dir
+	  ;;
+
+
 
 	ls)
 	  # Test the ls & rls commands.  There are some tests of
@@ -3956,6 +3959,8 @@ $output_dead"
 	  dotest ls-d-12 "$testcvs -q rls -drbranch cemetery" "$output_dead"
 
 	  # Working directory on branch
+	  $testcvs -Q up -r branch
+
 	  ## ls
 	  dotest ls-d-13 "$testcvs ls" "$output_living"
 	  dotest ls-d-14 "$testcvs ls -d" "$output_dead"
@@ -3976,12 +3981,118 @@ $output_dead"
 	  dotest ls-d-23 "$testcvs -q rls -rbranch cemetery" "$output_living"
 	  dotest ls-d-24 "$testcvs -q rls -drbranch cemetery" "$output_dead"
 
+	  # Some tests to cover specifying a file name as an option
+	  # Combinations of factors:
+	  #
+	  #  + file in CVS/Entries or not
+	  #  + current directory or subdirectory
+	  #  + file dead or not
+
+	  # Switch back to the trunk
+	  $testcvs -Q up -A
+
+	  ## file in CVS/Entries
+	  dotest ls-filename-1 "$testcvs ls dead"
+
+	  # FIXCVS: ls'ing a file that already exists causes an assertion
+	  #         failure.
+	  #
+	  # then FIXME: this test should be:
+	  #
+	  # dotest ls-filename-2 "$testcvs ls living" "living"
+	  dotest_fail ls-filename-2 "$testcvs ls living" \
+"${DOTSTAR}ssertion.*failed${DOTSTAR}" "${DOTSTAR}failed assertion${DOTSTAR}"
+
+	  cd ..
+	  dotest ls-filename-3 "$testcvs ls cemetery/dead"
+
+	  # FIXCVS: ls'ing a file that already exists causes an assertion
+	  #         failure.
+	  #
+	  # then FIXME: this test should be:
+	  #
+	  # dotest ls-filename-4 "$testcvs ls cemetery/living" "cemetary/living"
+	  dotest_fail ls-filename-4 "$testcvs ls cemetery/living" \
+"${DOTSTAR}ssertion.*failed${DOTSTAR}" "${DOTSTAR}failed assertion${DOTSTAR}"
+	  cd cemetery
+
+	  ## file not in CVS/Entries
+	  echo D > CVS/Entries
+
+	  dotest ls-filename-5 "$testcvs ls dead"
+
+	  # FIXCVS: ls'ing a file that already exists causes an assertion
+	  #         failure.
+	  #
+	  # then FIXME: this test should be:
+	  #
+	  # dotest ls-filename-6 "$testcvs ls living" "living"
+	  dotest_fail ls-filename-6 "$testcvs ls living" \
+"${DOTSTAR}ssertion.*failed${DOTSTAR}" "${DOTSTAR}failed assertion${DOTSTAR}"
+
+	  cd ..
+	  dotest ls-filename-7 "$testcvs ls cemetery/dead"
+
+	  # FIXCVS: ls'ing a file that already exists causes an assertion
+	  #         failure.
+	  #
+	  # then FIXME: this test should be:
+	  #
+	  # dotest ls-filename-8 "$testcvs ls cemetery/living" "cemetary/living"
+	  dotest_fail ls-filename-8 "$testcvs ls cemetery/living" \
+"${DOTSTAR}ssertion.*failed${DOTSTAR}" "${DOTSTAR}failed assertion${DOTSTAR}"
+
+	  cd cemetery
+
+	  # Test the -D date option to cvs ls
+
+	  # try and list a file before it's created, during an old revision, in
+	  # a period when it was dead and in the future
+	  time_prebirth=`date '+%Y-%m-%d %H:%M:%S'` ; sleep 1
+	  touch dated
+	  dotest ls-D-init-1 "$testcvs -Q add dated"
+	  dotest ls-D-init-2 "$testcvs -Q ci -mm dated"
+	  time_newborn=`date '+%Y-%m-%d %H:%M:%S'` ; sleep 1
+	  echo mm >> dated
+	  dotest ls-D-init-2 "$testcvs -Q ci -mm dated"
+	  time_predeath=`date '+%Y-%m-%d %H:%M:%S'` ; sleep 1
+	  rm dated
+	  dotest ls-D-init-3 "$testcvs -Q rm dated"
+	  dotest ls-D-init-4 "$testcvs -Q ci -mm dated"
+	  time_postdeath=`date '+%Y-%m-%d %H:%M:%S'`
+
+	  dotest ls-D-1 "$testcvs ls -D '$time_prebirth' -e dated"
+
+	  # FIXCVS: ls'ing a file that already exists causes an assertion
+	  #         failure.
+	  #
+	  # then FIXME: this test should be:
+	  #
+	  # dotest ls-D-2 "$testcvs ls -D '$time_newborn' -e dated" \
+	  # "/dated/1\.1/.*"
+	  dotest_fail ls-D-2 "$testcvs ls -D '$time_newborn' -e dated" \
+"${DOTSTAR}ssertion.*failed${DOTSTAR}" "${DOTSTAR}failed assertion${DOTSTAR}"
+
+	  # FIXCVS: ls'ing a file that already exists causes an assertion
+	  #         failure.
+	  #
+	  # then FIXME: this test should be:
+	  #
+	  # dotest ls-D-3 "$testcvs ls -D '$time_predeath' -e dated" \
+	  # "/dated/1.2/.*"
+	  dotest_fail ls-D-3 "$testcvs ls -D '$time_predeath' -e dated" \
+"${DOTSTAR}ssertion.*failed${DOTSTAR}" "${DOTSTAR}failed assertion${DOTSTAR}"
+
+	  dotest ls-D-4 "$testcvs ls -D '$time_postdeath' -e dated"
+
 	  dokeep
 	  cd ../../..
 	  rm -rf ls $CVSROOT_DIRNAME/notcheckedout \
 	            $CVSROOT_DIRNAME/cemetery
 	  unset output_living output_dead
 	  ;;
+
+
 
 	parseroot)
 	  mkdir 1; cd 1
