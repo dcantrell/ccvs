@@ -423,8 +423,6 @@ wrap_add (line, isTemp)
 		error (1, 0, "Correct above errors first");
 	    break;
 	case 'm':
-	    /* FIXME: look into whether this option is still relevant given
-	       the 24 Jun 96 change to merge_file.  */
 	    if(*temp=='C' || *temp=='c')
 		e.mergeMethod=WRAP_COPY;
 	    else
