@@ -394,7 +394,8 @@ dokeep()
 echo 'This test should produce no other output than this message, and a final "OK".'
 echo '(Note that the test can take an hour or more to run and periodically stops'
 echo 'for as long as one minute.  Do not assume there is a problem just because'
-echo 'nothing seems to happen for a long time.)'
+echo 'nothing seems to happen for a long time.  If you cannot live without'
+echo "running status, try the command: \`tail -f check.log' from another window.)"
 
 # Regexp to match what the CVS client will call itself in output that it prints.
 # FIXME: we don't properly quote this--if the name contains . we'll
