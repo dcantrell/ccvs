@@ -656,8 +656,8 @@ call_in_directory (pathname, func, data)
 	if (strcmp (command_name, "export") != 0)
 	{
 	    if (last_entries)
-		dellist (&last_entries);
-	    last_entries = ParseEntries (0);
+		Entries_Close (last_entries);
+	    last_entries = Entries_Open (0);
 	}
     }
     else

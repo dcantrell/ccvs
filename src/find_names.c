@@ -74,8 +74,7 @@ Find_Names (repository, which, aflag, optentries)
     if (which & W_LOCAL)
     {
 	/* parse the entries file (if it exists) */
-	entries = ParseEntries (aflag);
-
+	entries = Entries_Open (aflag);
 	if (entries != NULL)
 	{
 	    /* walk the entries file adding elements to the files list */
@@ -85,7 +84,7 @@ Find_Names (repository, which, aflag, optentries)
 	    if (optentries != NULL)
 		*optentries = entries;
 	    else
-		dellist (&entries);
+		Entries_Close (entries);
 	}
     }
 

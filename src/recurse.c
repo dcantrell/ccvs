@@ -103,7 +103,7 @@ start_recursion (fileproc, filesdoneproc, direntproc, dirleaveproc,
 	repository = (char *) NULL;
     }
     if (entries)
-	dellist (&entries);
+	Entries_Close (entries);
     if (srcfiles)
 	dellist (&srcfiles);
     if (filelist)
@@ -350,7 +350,7 @@ do_recursion (xfileproc, xfilesdoneproc, xdirentproc, xdirleaveproc,
 	{
 	    /* we will process files, so pre-parse entries */
 	    if (which & W_LOCAL)
-		entries = ParseEntries (aflag);
+		entries = Entries_Open (aflag);
 	}
     }
 
@@ -377,7 +377,7 @@ do_recursion (xfileproc, xfilesdoneproc, xdirentproc, xdirleaveproc,
 	/* clean up */
 	dellist (&filelist);
 	dellist (&srcfiles);
-	dellist (&entries);
+	Entries_Close (entries);
     }
 
     /* call-back files done proc (if any) */

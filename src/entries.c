@@ -79,6 +79,9 @@ write_entries (list)
 
     /* now, atomically (on systems that support it) rename it */
     rename_file (entfilename, CVSADM_ENT);
+
+    /* now, remove the log file */
+    unlink_file (CVSADM_ENTLOG);
 }
 
 /*
@@ -121,7 +124,6 @@ Register (list, fname, vn, ts, options, tag, date, ts_conflict)
     char *date;
     char *ts_conflict;
 {
-    int should_write_file = !noexec;
     Node *node;
 
 #ifdef SERVER_SUPPORT
@@ -140,34 +142,16 @@ Register (list, fname, vn, ts, options, tag, date, ts_conflict)
 			options, tag ? tag : "",	date ? date : "");
     }
 
-    /* was it already there? */
-    if ((node = findnode (list, fname)) != NULL)
+    node = AddEntryNode (list, fname, vn, ts, options, tag, date, ts_conflict);
+
+    if (!noexec)
     {
-	/* take it out */
-	delnode (node);
-
-	/* add the new one and re-write the file */
-	(void) AddEntryNode (list, fname, vn, ts, options, tag,
-			     date, ts_conflict);
-
-	if (should_write_file)
-	    write_entries (list);
-    }
-    else
-    {
-	/* add the new one */
-	node = AddEntryNode (list, fname, vn, ts, options, tag,
-			     date, ts_conflict);
-
-	if (should_write_file)
-	{
-	    /* append it to the end */
-	    entfilename = CVSADM_ENT;
-	    entfile = open_file (entfilename, "a");
-	    (void) write_ent_proc (node, NULL);
-	    if (fclose (entfile) == EOF)
-		error (1, errno, "error closing %s", entfilename);
-	}
+	entfile = open_file (CVSADM_ENTLOG, "a");
+	
+	write_ent_proc (node, NULL);
+	
+        if (fclose (entfile) == EOF)
+            error (1, errno, "error closing %s", CVSADM_ENTLOG);
     }
 }
 
@@ -190,22 +174,115 @@ freesdt (p)
     free ((char *) sdtp);
 }
 
+struct entent {
+    char *user;
+    char *vn;
+    char *ts;
+    char *options;
+    char *tag;
+    char *date;
+    char *ts_conflict;
+};
+
+struct entent *
+fgetentent(fpin)
+    FILE *fpin;
+{
+    static struct entent ent;
+    static char line[MAXLINELEN];
+    register char *cp;
+    char *user, *vn, *ts, *options;
+    char *tag_or_date, *tag, *date, *ts_conflict;
+
+    while (fgets (line, sizeof (line), fpin) != NULL)
+    {
+	if (line[0] != '/')
+	    continue;
+
+	user = line + 1;
+	if ((cp = strchr (user, '/')) == NULL)
+	    continue;
+	*cp++ = '\0';
+	vn = cp;
+	if ((cp = strchr (vn, '/')) == NULL)
+	    continue;
+	*cp++ = '\0';
+	ts = cp;
+	if ((cp = strchr (ts, '/')) == NULL)
+	    continue;
+	*cp++ = '\0';
+	options = cp;
+	if ((cp = strchr (options, '/')) == NULL)
+	    continue;
+	*cp++ = '\0';
+	tag_or_date = cp;
+	if ((cp = strchr (tag_or_date, '\n')) == NULL)
+	    continue;
+	*cp = '\0';
+	tag = (char *) NULL;
+	date = (char *) NULL;
+	if (*tag_or_date == 'T')
+	    tag = tag_or_date + 1;
+	else if (*tag_or_date == 'D')
+	    date = tag_or_date + 1;
+	
+	if (ts_conflict = strchr (ts, '+'))
+	    *ts_conflict++ = '\0';
+	    
+	/*
+	 * XXX - Convert timestamp from old format to new format.
+	 *
+	 * If the timestamp doesn't match the file's current
+	 * mtime, we'd have to generate a string that doesn't
+	 * match anyways, so cheat and base it on the existing
+	 * string; it doesn't have to match the same mod time.
+	 *
+	 * For an unmodified file, write the correct timestamp.
+	 */
+	{
+	    struct stat sb;
+	    if (strlen (ts) > 30 && stat (user, &sb) == 0)
+	    {
+		extern char *ctime ();
+		char *c = ctime (&sb.st_mtime);
+		
+		if (!strncmp (ts + 25, c, 24))
+		    ts = time_stamp (user);
+		else
+		{
+		    ts += 24;
+		    ts[0] = '*';
+		}
+	    }
+	}
+
+	ent.user = user;
+	ent.vn = vn;
+	ent.ts = ts;
+	ent.options = options;
+	ent.tag = tag;
+	ent.date = date;
+	ent.ts_conflict = ts_conflict;
+
+	return &ent;
+    }
+
+    return NULL;
+}
+
+
 /*
  * Read the entries file into a list, hashing on the file name.
  */
 List *
-ParseEntries (aflag)
+Entries_Open (aflag)
     int aflag;
 {
     List *entries;
-    char line[MAXLINELEN];
-    char *cp, *user, *vn, *ts, *options;
-    char *tag_or_date, *tag, *date, *ts_conflict;
+    struct entent *ent;
     char *dirtag, *dirdate;
     int do_rewrite = 0;
     FILE *fpin;
-
-    vn = ts = options = tag = date = ts_conflict = 0;
 
     /* get a fresh list... */
     entries = getlist ();
@@ -230,78 +307,39 @@ ParseEntries (aflag)
 	entries->list->delproc = freesdt;
     }
 
-  again:
     fpin = fopen (CVSADM_ENT, "r");
     if (fpin == NULL)
 	error (0, errno, "cannot open %s for reading", CVSADM_ENT);
     else
     {
-	while (fgets (line, sizeof (line), fpin) != NULL)
+	while ((ent = fgetentent (fpin)) != NULL) 
 	{
-	    if (line[0] == '/')
-	    {
-		user = line + 1;
-		if ((cp = strchr (user, '/')) == NULL)
-		    continue;
-		*cp++ = '\0';
-		vn = cp;
-		if ((cp = strchr (vn, '/')) == NULL)
-		    continue;
-		*cp++ = '\0';
-		ts = cp;
-		if ((cp = strchr (ts, '/')) == NULL)
-		    continue;
-		*cp++ = '\0';
-		options = cp;
-		if ((cp = strchr (options, '/')) == NULL)
-		    continue;
-		*cp++ = '\0';
-		tag_or_date = cp;
-		if ((cp = strchr (tag_or_date, '\n')) == NULL)
-		    continue;
-		*cp = '\0';
-		tag = (char *) NULL;
-		date = (char *) NULL;
-		if (*tag_or_date == 'T')
-		    tag = tag_or_date + 1;
-		else if (*tag_or_date == 'D')
-		    date = tag_or_date + 1;
-
-		if (ts_conflict = strchr (ts, '+'))
-		    *ts_conflict++ = '\0';
-
-		/*
-		 * XXX - Convert timestamp from old format to new format.
-		 *
-		 * If the timestamp doesn't match the file's current
-		 * mtime, we'd have to generate a string that doesn't
-		 * match anyways, so cheat and base it on the existing
-		 * string; it doesn't have to match the same mod time.
-		 *
-		 * For an unmodified file, write the correct timestamp.
-		 */
-		{
-		    struct stat sb;
-		    if (strlen (ts) > 30 && stat (user, &sb) == 0)
-		    {
-			extern char *ctime ();
-			char *c = ctime (&sb.st_mtime);
-
-			if (!strncmp (ts + 25, c, 24))
-			    ts = time_stamp (user);
-			else
-			{
-			    ts += 24;
-			    ts[0] = '*';
-			}
-			do_rewrite = 1;
-		    }
-		}
-
-		(void) AddEntryNode (entries, user, vn, ts, options, tag,
-				     date, ts_conflict);
-	    }
+	    (void) AddEntryNode (entries, 
+				 ent->user,
+				 ent->vn,
+				 ent->ts,
+				 ent->options,
+				 ent->tag,
+				 ent->date,
+				 ent->ts_conflict);
 	}
+    }
+
+    fpin = fopen (CVSADM_ENTLOG, "r");
+    if (fpin != NULL) {
+	while ((ent = fgetentent (fpin)) != NULL) 
+	{
+	    (void) AddEntryNode (entries, 
+				 ent->user,
+				 ent->vn,
+				 ent->ts,
+				 ent->options,
+				 ent->tag,
+				 ent->date,
+				 ent->ts_conflict);
+	}
+	do_rewrite = 1;
+	fclose (fpin);
     }
 
     if (do_rewrite && !noexec)
@@ -315,6 +353,18 @@ ParseEntries (aflag)
     if (dirdate)
 	free (dirdate);
     return (entries);
+}
+
+void
+Entries_Close(list)
+    List *list;
+{
+    if (list)
+    {
+	if (!noexec)
+	    write_entries (list);
+	dellist(&list);
+    }
 }
 
 
@@ -359,6 +409,13 @@ AddEntryNode (list, name, version, timestamp, options, tag, date, conflict)
     Node *p;
     Entnode *entdata;
 
+    /* was it already there? */
+    if ((p  = findnode (list, name)) != NULL)
+    {
+	/* take it out */
+	delnode (p);
+    }
+
     /* get a node and fill in the regular stuff */
     p = getnode ();
     p->type = ENTRIES;
@@ -380,10 +437,7 @@ AddEntryNode (list, name, version, timestamp, options, tag, date, conflict)
     entdata->date = xstrdup (date);
 
     /* put the node into the list */
-    if (addnode (list, p) != 0)
-	error (0, 0, "Duplicate filename in entries file (%s) -- ignored",
-	       name);
-
+    addnode (list, p);
     return (p);
 }
 
