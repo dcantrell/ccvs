@@ -61,9 +61,12 @@ the programs which implement the Integrated Development Environment
 worse yet, usenet posting, so it probably should be verified before
 relying on it.
 
-* Microsoft Developer Studio 4.x Professional (not Standard, not 2.x)
-* Powersoft's Optima++, PowerJ, and Power++.
-* CodeWright editor
+* Microsoft Developer Studio 4.x Professional (not Standard, not 2.x).
+* Powersoft's Optima++, PowerJ, and Power++
+  (not sure which versions, but this information was added in 1997 if
+   that helps).
+* Premia's CodeWright editor 
+  (versions 5.00b and 5.00c; not sure about older versions).
 
 SPECIFICATIONS OR OTHER DOCUMENTS DESCRIBING THE SCC
 
