@@ -1162,7 +1162,6 @@ one, except that the format of the repository name is:
 The details of exactly what needs to be set up depend
 on how you are connecting to the server.
 
-@c fooo
 @menu
 * Connecting via rsh::          Using the @code{rsh} program to connect
 * Password authenticated::      Direct connections using passwords
