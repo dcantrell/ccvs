@@ -1,3 +1,10 @@
+2001-10-18  Derek Price  <dprice@collab.net>
+
+	* Makefile.am: Add --batch to texi2dvi invocations.
+	(Thanks to Akim Demaille <akim@epita.fr> for the suggestion.)
+
+	* Makefile.in: Regenerated.
+
 2001-10-04  Larry Jones  <larry.jones@sdrc.com>
 
 	* cvs.texinfo (Connecting via rsh): Add : between host name and

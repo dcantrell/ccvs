@@ -74,13 +74,13 @@ SUFFIXES = .aux .txt .pdf
 # texinfo based targets automake neglects to include
 .texinfo.pdf:
 	TEXINPUTS=$(srcdir):$$TEXINPUTS \
-	  MAKEINFO='$(MAKEINFO) -I $(srcdir)' $(TEXI2DVI) --pdf $<
+	  MAKEINFO='$(MAKEINFO) -I $(srcdir)' $(TEXI2DVI) --pdf --batch $<
 .txi.pdf:
 	TEXINPUTS=$(srcdir):$$TEXINPUTS \
-	  MAKEINFO='$(MAKEINFO) -I $(srcdir)' $(TEXI2DVI) --pdf $<
+	  MAKEINFO='$(MAKEINFO) -I $(srcdir)' $(TEXI2DVI) --pdf --batch $<
 .texi.pdf:
 	TEXINPUTS=$(srcdir):$$TEXINPUTS \
-	  MAKEINFO='$(MAKEINFO) -I $(srcdir)' $(TEXI2DVI) --pdf $<
+	  MAKEINFO='$(MAKEINFO) -I $(srcdir)' $(TEXI2DVI) --pdf --batch $<
 
 .texinfo.txt:
 	TEXINPUTS=$(srcdir):$$TEXINPUTS \
