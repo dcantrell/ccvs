@@ -1,3 +1,8 @@
+Wed Oct 25 15:37:05 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo: Miscellaneous minor changes (clean up CVS/Root
+	stuff, don't say release requires a module entry, etc.).
+
 Tue Oct 24 11:01:22 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo: More precisely describe scope of document.
