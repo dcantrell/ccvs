@@ -3730,17 +3730,16 @@ ${PROG} [a-z]*: Rebuilding administrative file database"
 
 	  # Test ability of cvs release to handle multiple arguments
 	  cd ampermodule
-	  if echo yes | ${testcvs} release -d first-dir second-dir \
-	    >>${LOGFILE}; then
+	  if ${testcvs} release -d first-dir second-dir <<EOF >>${LOGFILE}
+yes
+yes
+EOF
+	  then
 	    pass modules2-6
 	  else
 	    fail modules2-6
 	  fi
 	  dotest_fail modules2-7 "test -d first-dir" ''
-	  # FIXCVS: The previous command was supposed to delete second-dir,
-	  # but CVS is currently broken in this respect.  So until it is
-	  # fixed....
-	  rm -rf second-dir
 	  dotest_fail modules2-8 "test -d second-dir" ''
 
 	  cd ..

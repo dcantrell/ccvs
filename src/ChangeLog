@@ -1,5 +1,11 @@
 Mon Nov 25 12:48:31 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* release.c (release): Don't return after processing the first
+	argument; that kind of defeats the purpose of having a loop, eh?
+	For client, close the connection after we've processed them all.
+	* sanity.sh: Remove workaround for modules2-8 test; tests for
+	above fix.  Adjust modules2-6 test to answer both questions.
+
 	* login.c: Reindent (all of get_cvs_password, a handful of lines
 	elsewhere).
 
