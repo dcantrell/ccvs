@@ -1,3 +1,8 @@
+Thu Apr 11 20:22:34 1996  Karl Fogel  <kfogel@floss.red-bean.com>
+
+        * pcl-cvs.el (cvs-mode-map): conform to Emacs 19 keybinding
+        conventions by not binding any regular letters under C-c.
+
 Fri Feb  9 14:29:07 1996  Jim Blandy  <jimb@totoro.cyclic.com>
 
 	* Makefile.in (mostlyclean clean realclean): Remove 'realclean'
