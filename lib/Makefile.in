@@ -214,7 +214,7 @@ libcvs_a_SOURCES = \
 	xselect.h \
 	xtime.h
 
-libcvs_a_LIBADD = @LIBOBJS@
+libcvs_a_LIBADD = @LIBOBJS@ $(LIBINTL)
 
 EXTRA_DIST = \
 	.cvsignore \
