@@ -1,3 +1,8 @@
+2003-07-20  Derek Price  <derek@ximbiot.com>
+
+	* wrapper.c: Remove mention of obsolete -f and -t wrapper options from
+	a comment.
+
 2003-07-18  Derek Price  <derek@ximbiot.com>
 
 	* sanity.sh (release): Add new tests for release with unrecognized
