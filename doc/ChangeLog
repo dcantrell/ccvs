@@ -1,5 +1,9 @@
 Sun Sep  7 18:38:23 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvs.texinfo (history options): Revise -e to say that it includes
+	future record types (and remove out of date list of what record
+	types it implies).
+
 	* cvs.texinfo (Environment variables): Expand/correct discussion
 	of HOME, HOMEDRIVE, and HOMEPATH.
 	(Error messages): Add "could not find out home directory".
