@@ -108,34 +108,46 @@ const struct cmd
     char *nick1;		/* alternate name (e.g. "ci") */
     char *nick2;		/* another alternate names (e.g. "ci") */
     int (*func) ();		/* Function takes (argc, argv) arguments. */
+#ifdef CLIENT_SUPPORT
     int (*client_func) ();	/* Function to do it via the protocol.  */
+#endif
 } cmds[] =
 
 {
-    { "add", "ad", "new", add, client_add },
-    { "admin", "adm", "rcs", admin, client_admin },
-    { "checkout", "co", "get", checkout, client_checkout },
-    { "commit", "ci", "com", commit, client_commit },
-    { "diff", "di", "dif", diff, client_diff },
-    { "export", "exp", "ex", checkout, client_export },
-    { "history", "hi", "his", history, client_history },
-    { "import", "im", "imp", import, client_import },
-    { "log", "lo", "rlog", cvslog, client_log },
-    { "rdiff", "patch", "pa", patch, client_rdiff },
-    { "release", "re", "rel", release, client_release },
-    { "remove", "rm", "delete", cvsremove, client_remove },
-    { "status", "st", "stat", status, client_status },
-    { "rtag", "rt", "rfreeze", rtag, client_rtag },
-    { "tag", "ta", "freeze", tag, client_tag },
-    { "update", "up", "upd", update, client_update },
+#ifdef CLIENT_SUPPORT
+#define CMD_ENTRY(n1, n2, n3, f1, f2) { n1, n2, n3, f1, f2 }
+#else
+#define CMD_ENTRY(n1, n2, n3, f1, f2) { n1, n2, n3, f1 }
+#endif
 
+    CMD_ENTRY("add",      "ad",    "new",     add,       client_add),
+    CMD_ENTRY("admin",    "adm",   "rcs",     admin,     client_admin),
+    CMD_ENTRY("checkout", "co",    "get",     checkout,  client_checkout),
+    CMD_ENTRY("commit",   "ci",    "com",     commit,    client_commit),
+    CMD_ENTRY("diff",     "di",    "dif",     diff,      client_diff),
+    CMD_ENTRY("export",   "exp",   "ex",      checkout,  client_export),
+    CMD_ENTRY("history",  "hi",    "his",     history,   client_history),
+    CMD_ENTRY("import",   "im",    "imp",     import,    client_import),
+    CMD_ENTRY("log",      "lo",    "rlog",    cvslog,    client_log),
+    CMD_ENTRY("rdiff",    "patch", "pa",      patch,     client_rdiff),
+    CMD_ENTRY("release",  "re",    "rel",     release,   client_release),
+    CMD_ENTRY("remove",   "rm",    "delete",  cvsremove, client_remove),
+    CMD_ENTRY("status",   "st",    "stat",    status,    client_status),
+    CMD_ENTRY("rtag",     "rt",    "rfreeze", rtag,      client_rtag),
+    CMD_ENTRY("tag",      "ta",    "freeze",  tag,       client_tag),
+    CMD_ENTRY("update",   "up",    "upd",     update,    client_update),
+
+#ifdef SERVER_SUPPORT
     /*
      * The client_func is also server because we might have picked up a
      * CVSROOT environment variable containing a colon.  The client will send
      * the real root later.
      */
-    { "server", "server", "server", server, server },
-    { NULL, NULL, NULL, NULL, NULL },
+    CMD_ENTRY("server",   "server", "server", server,    server),
+#endif
+    CMD_ENTRY(NULL, NULL, NULL, NULL, NULL),
+
+#undef CMD_ENTRY
 };
 
 static const char *const usg[] =
@@ -155,7 +167,9 @@ static const char *const usg[] =
     "        -e editor    Use 'editor' for editing log information\n",
     "        -d CVS_root  Overrides $CVSROOT as the root of the CVS tree\n",
     "        -f           Do not use the ~/.cvsrc file\n",
+#ifdef CLIENT_SUPPORT
     "        -z #         Use 'gzip -#' for net traffic if possible.\n",
+#endif
     "\n",
     "    and where 'command' is:\n",
     "        add          Adds a new file/directory to the repository\n",
@@ -183,17 +197,30 @@ main_cleanup ()
     exit (1);
 }
 
+static void
+error_cleanup ()
+{
+    Lock_Cleanup();
+#ifdef SERVER_SUPPORT
+    if (server_active)
+	server_cleanup (0);
+#endif
+}
+
 int
 main (argc, argv)
     int argc;
     char **argv;
 {
     extern char *version_string;
+    extern char *config_string;
     char *cp;
     const struct cmd *cm;
     int c, help = FALSE, err = 0;
     int rcsbin_update_env, cvs_update_env = 0;
     char tmp[PATH_MAX];
+
+    error_set_cleanup (error_cleanup);
 
     /*
      * Just save the last component of the path for error messages
@@ -261,6 +288,7 @@ main (argc, argv)
 		break;
 	    case 'v':
 		(void) fputs (version_string, stdout);
+		(void) fputs (config_string, stdout);
 		(void) sprintf (tmp, "Patch Level: %d\n", PATCHLEVEL);
 		(void) fputs (tmp, stdout);
 		(void) fputs ("\nCopyright (c) 1993-1994 Brian Berliner\nCopyright (c) 1993-1994 david d `zoo' zuhn\nCopyright (c) 1992, Brian Berliner and Jeff Polk\nCopyright (c) 1989-1992, Brian Berliner\n\nCVS may be copied only under the terms of the GNU General Public License,\na copy of which can be found with the CVS distribution kit.\n", stdout);
@@ -284,12 +312,14 @@ main (argc, argv)
             case 'f':
 		use_cvsrc = FALSE;
 		break;
+#ifdef CLIENT_SUPPORT
 	    case 'z':
 		gzip_level = atoi (optarg);
 		if (gzip_level <= 0 || gzip_level > 9)
 		  error (1, 0,
 			 "gzip compression level must be between 1 and 9");
 		break;
+#endif
 	    case '?':
 	    default:
 		usage (usg);

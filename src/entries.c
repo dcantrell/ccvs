@@ -95,15 +95,21 @@ Scratch_Entry (list, fname)
     Node *node;
 
     if (trace)
+#ifdef SERVER_SUPPORT
 	(void) fprintf (stderr, "%c-> Scratch_Entry(%s)\n",
 			(server_active) ? 'S' : ' ', fname);
+#else
+	(void) fprintf (stderr, "-> Scratch_Entry(%s)\n", fname);
+#endif
 
     /* hashlookup to see if it is there */
     if ((node = findnode (list, fname)) != NULL)
     {
 	delnode (node);			/* delete the node */
+#ifdef SERVER_SUPPORT
 	if (server_active)
 	    server_scratch (fname);
+#endif
 	if (!noexec)
 	    write_entries (list);	/* re-write the file */
     }
@@ -135,11 +141,18 @@ Register (list, fname, vn, ts, options, tag, date, ts_conflict)
 
     if (trace)
     {
+#ifdef SERVER_SUPPORT
 	(void) fprintf (stderr, "%c-> Register(%s, %s, %s%s%s, %s, %s %s)\n",
 			(server_active) ? 'S' : ' ',
-                       fname, vn, ts ? ts : "",
+			fname, vn, ts ? ts : "",
 			ts_conflict ? "+" : "", ts_conflict ? ts_conflict : "",
-                       options, tag ? tag : "", date ? date : "");
+			options, tag ? tag : "", date ? date : "");
+#else
+	(void) fprintf (stderr, "-> Register(%s, %s, %s%s%s, %s, %s %s)\n",
+			fname, vn, ts ? ts : "",
+			ts_conflict ? "+" : "", ts_conflict ? ts_conflict : "",
+			options, tag ? tag : "", date ? date : "");
+#endif
     }
 
     node = AddEntryNode (list, fname, vn, ts, options, tag, date, ts_conflict);

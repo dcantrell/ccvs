@@ -1,5 +1,7 @@
 #include "cvs.h"
 
+#ifdef SERVER_SUPPORT
+
 /* for select */
 #include <sys/types.h>
 #include <sys/time.h>
@@ -44,12 +46,6 @@ static char *server_temp_dir;
 
 /* Nonzero if we should keep the temp directory around after we exit.  */
 static int dont_delete_temp;
-
-/*
- * Zero if compression isn't supported or requested; non-zero to indicate
- * a compression level to request from gzip.
- */
-int gzip_level;
 
 static char no_mem_error;
 #define NO_MEM_ERROR (&no_mem_error)
@@ -757,9 +753,15 @@ serve_modified (arg)
 	}
     }
 }
+
+#endif /* SERVER_SUPPORT */
 
-extern int use_unchanged;
+#if defined(SERVER_SUPPORT) || defined(CLIENT_SUPPORT)
+
 int use_unchanged = 0;
+
+#endif
+#ifdef SERVER_SUPPORT
 
 static void
 serve_enable_unchanged (arg)
@@ -3204,47 +3206,67 @@ serve_update_prog (arg)
 
 static void serve_valid_requests PROTO((char *arg));
 
+#endif /* SERVER_SUPPORT */
+#if defined(SERVER_SUPPORT) || defined(CLIENT_SUPPORT)
+
+/*
+ * Parts of this table are shared with the client code,
+ * but the client doesn't need to know about the handler
+ * functions.
+ */
+
 struct request requests[] =
 {
-  {"Root", serve_root, rq_essential},
-  {"Valid-responses", serve_valid_responses, rq_essential},
-  {"valid-requests", serve_valid_requests, rq_essential},
-  {"Repository", serve_repository, rq_essential},
-  {"Directory", serve_directory, rq_optional},
-  {"Max-dotdot", serve_max_dotdot, rq_optional},
-  {"Static-directory", serve_static_directory, rq_optional},
-  {"Sticky", serve_sticky, rq_optional},
-  {"Checkin-prog", serve_checkin_prog, rq_optional},
-  {"Update-prog", serve_update_prog, rq_optional},
-  {"Entry", serve_entry, rq_essential},
-  {"Modified", serve_modified, rq_essential},
-  {"Lost", serve_lost, rq_optional},
-  {"UseUnchanged", serve_enable_unchanged, rq_enableme},
-  {"Unchanged", serve_unchanged, rq_optional},
-  {"Argument", serve_argument, rq_essential},
-  {"Argumentx", serve_argumentx, rq_essential},
-  {"Global_option", serve_global_option, rq_optional},
-  {"expand-modules", serve_expand_modules, rq_optional},
-  {"ci", serve_ci, rq_essential},
-  {"co", serve_co, rq_essential},
-  {"update", serve_update, rq_essential},
-  {"diff", serve_diff, rq_optional},
-  {"log", serve_log, rq_optional},
-  {"add", serve_add, rq_optional},
-  {"remove", serve_remove, rq_optional},
-  {"update-patches", serve_ignore, rq_optional},
-  {"gzip-file-contents", serve_gzip_contents, rq_optional},
-  {"status", serve_status, rq_optional},
-  {"rdiff", serve_rdiff, rq_optional},
-  {"tag", serve_tag, rq_optional},
-  {"rtag", serve_rtag, rq_optional},
-  {"import", serve_import, rq_optional},
-  {"admin", serve_admin, rq_optional},
-  {"export", serve_export, rq_optional},
-  {"history", serve_history, rq_optional},
-  {"release", serve_release, rq_optional},
-  {NULL, NULL, rq_optional}
+#ifdef SERVER_SUPPORT
+#define REQ_LINE(n, f, s) {n, f, s}
+#else
+#define REQ_LINE(n, f, s) {n, s}
+#endif
+
+  REQ_LINE("Root", serve_root, rq_essential),
+  REQ_LINE("Valid-responses", serve_valid_responses, rq_essential),
+  REQ_LINE("valid-requests", serve_valid_requests, rq_essential),
+  REQ_LINE("Repository", serve_repository, rq_essential),
+  REQ_LINE("Directory", serve_directory, rq_optional),
+  REQ_LINE("Max-dotdot", serve_max_dotdot, rq_optional),
+  REQ_LINE("Static-directory", serve_static_directory, rq_optional),
+  REQ_LINE("Sticky", serve_sticky, rq_optional),
+  REQ_LINE("Checkin-prog", serve_checkin_prog, rq_optional),
+  REQ_LINE("Update-prog", serve_update_prog, rq_optional),
+  REQ_LINE("Entry", serve_entry, rq_essential),
+  REQ_LINE("Modified", serve_modified, rq_essential),
+  REQ_LINE("Lost", serve_lost, rq_optional),
+  REQ_LINE("UseUnchanged", serve_enable_unchanged, rq_enableme),
+  REQ_LINE("Unchanged", serve_unchanged, rq_optional),
+  REQ_LINE("Argument", serve_argument, rq_essential),
+  REQ_LINE("Argumentx", serve_argumentx, rq_essential),
+  REQ_LINE("Global_option", serve_global_option, rq_optional),
+  REQ_LINE("expand-modules", serve_expand_modules, rq_optional),
+  REQ_LINE("ci", serve_ci, rq_essential),
+  REQ_LINE("co", serve_co, rq_essential),
+  REQ_LINE("update", serve_update, rq_essential),
+  REQ_LINE("diff", serve_diff, rq_optional),
+  REQ_LINE("log", serve_log, rq_optional),
+  REQ_LINE("add", serve_add, rq_optional),
+  REQ_LINE("remove", serve_remove, rq_optional),
+  REQ_LINE("update-patches", serve_ignore, rq_optional),
+  REQ_LINE("gzip-file-contents", serve_gzip_contents, rq_optional),
+  REQ_LINE("status", serve_status, rq_optional),
+  REQ_LINE("rdiff", serve_rdiff, rq_optional),
+  REQ_LINE("tag", serve_tag, rq_optional),
+  REQ_LINE("rtag", serve_rtag, rq_optional),
+  REQ_LINE("import", serve_import, rq_optional),
+  REQ_LINE("admin", serve_admin, rq_optional),
+  REQ_LINE("export", serve_export, rq_optional),
+  REQ_LINE("history", serve_history, rq_optional),
+  REQ_LINE("release", serve_release, rq_optional),
+  REQ_LINE(NULL, NULL, rq_optional)
+
+#undef REQ_LINE
 };
+
+#endif /* SERVER_SUPPORT or CLIENT_SUPPORT */
+#ifdef SERVER_SUPPORT
 
 static void
 serve_valid_requests (arg)
@@ -3537,3 +3559,5 @@ error ENOMEM Virtual memory exhausted.\n");
     server_cleanup (0);
     return 0;
 }
+
+#endif /* SERVER_SUPPORT */

@@ -208,6 +208,7 @@ commit (argc, argv)
 	message[n] = '\0';
     }
 
+#ifdef CLIENT_SUPPORT
     if (client_active) 
     {
 	/*
@@ -246,6 +247,7 @@ commit (argc, argv)
 	    error (1, errno, "writing to server");
 	return get_responses_and_close ();
     }
+#endif
 
     /* XXX - this is not the perfect check for this */
     if (argc <= 0)
@@ -440,7 +442,9 @@ check_fileproc (file, update_dir, repository, entries, srcfiles)
     switch (status)
     {
 	case T_CHECKOUT:
+#ifdef SERVER_SUPPORT
 	case T_PATCH:
+#endif
 	case T_NEEDS_MERGE:
 	case T_CONFLICT:
 	case T_REMOVE_ENTRY:
@@ -509,13 +513,19 @@ check_fileproc (file, update_dir, repository, entries, srcfiles)
 		 * If the timestamp on the file is the same as the
 		 * timestamp stored in the Entries file, we block the commit.
 		 */
+#ifdef SERVER_SUPPORT
 		if (server_active)
 		    retcode = vers->ts_conflict[0] != '=';
 		else {
+		    filestamp = time_stamp (file);
+		    retcode = strcmp (vers->ts_conflict, filestamp);
+		    free (filestamp);
+		}
+#else
 		filestamp = time_stamp (file);
 		retcode = strcmp (vers->ts_conflict, filestamp);
 		free (filestamp);
-		}
+#endif
 		if (retcode == 0)
 		{
 		    if (update_dir[0] == '\0')
@@ -921,6 +931,7 @@ commit_fileproc (file, update_dir, repository, entries, srcfiles)
     {
 	err = remove_file (file, repository, ci->tag, message,
 			   entries, srcfiles);
+#ifdef SERVER_SUPPORT
 	if (server_active) {
 	    server_scratch_entry_only ();
 	    server_updated (file, update_dir, repository,
@@ -928,6 +939,7 @@ commit_fileproc (file, update_dir, repository, entries, srcfiles)
 			    SERVER_UPDATED, (struct stat *) NULL,
 			    (unsigned char *) NULL);
 	}
+#endif
     }
 
 out:
@@ -1056,9 +1068,11 @@ commit_dirleaveproc (dir, err, update_dir)
     if (err == 0 && write_dirtag != NULL)
     {
 	WriteTag ((char *) NULL, write_dirtag, (char *) NULL);
+#ifdef SERVER_SUPPORT
 	if (server_active)
 	    server_set_sticky (update_dir, Name_Repository (dir, update_dir),
 			       write_dirtag, (char *) NULL);
+#endif
     }
 
     return (err);
@@ -1193,6 +1207,7 @@ remove_file (file, repository, tag, message, entries, srcfiles)
 	}
     }
 
+#ifdef SERVER_SUPPORT
     if (server_active) {
 	/* If this is the server, there will be a file sitting in the
 	   temp directory which is the kludgy way in which server.c
@@ -1200,6 +1215,7 @@ remove_file (file, repository, tag, message, entries, srcfiles)
 	   it so we can create temp files with that name (ignore errors).  */
 	unlink_file (file);
     }
+#endif
 
     /* check something out.  Generally this is the head.  If we have a
        particular rev, then name it.  except when creating a branch,

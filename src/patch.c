@@ -162,6 +162,7 @@ patch (argc, argv)
     if (options == NULL)
 	options = xstrdup ("");
 
+#ifdef CLIENT_SUPPORT
     if (client_active)
     {
 	/* We're the client side.  Fire up the remote server.  */
@@ -205,6 +206,7 @@ patch (argc, argv)
 	    error (1, errno, "writing to server");
         return get_responses_and_close ();
     }
+#endif
 
     /* clean up if we get a signal */
     (void) SIG_register (SIGHUP, patch_cleanup);

@@ -529,6 +529,7 @@ history (argc, argv)
     else if (report_count > 1)
 	error (1, 0, "Only one report type allowed from: \"-Tcomx\".");
 
+#ifdef CLIENT_SUPPORT
     if (client_active)
     {
 	struct file_list_str *f1;
@@ -582,6 +583,7 @@ history (argc, argv)
 	    error (1, errno, "writing to server");
         return get_responses_and_close ();
     }
+#endif
 
     if (all_users)
 	save_user ("");

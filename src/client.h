@@ -4,6 +4,11 @@
 extern char *mode_to_string PROTO((mode_t));
 extern int change_mode PROTO((char *, char *));
 
+extern int gzip_level;
+extern int filter_through_gzip PROTO((int, int, int, pid_t *));
+extern int filter_through_gunzip PROTO((int, int, pid_t *));
+
+#ifdef CLIENT_SUPPORT
 /*
  * Functions to perform CVS commands via the protocol.  argc and argv
  * are the arguments and the return value is the exit status (zero success
@@ -86,6 +91,8 @@ send_arg PROTO((char *string));
 /* Send a string of single-char options to the remote server, one by one.  */
 void
 send_option_string PROTO((char *string));
+
+#endif /* CLIENT_SUPPORT */
 
 /*
  * This structure is used to catalog the responses the client is
@@ -97,6 +104,7 @@ struct response
     /* Name of the response.  */
     char *name;
 
+#ifdef CLIENT_SUPPORT
     /*
      * Function to carry out the response.  ARGS is the text of the
      * command after name and, if present, a single space, have been
@@ -110,6 +118,7 @@ struct response
      * exitstatus.
      */
     enum {response_type_normal, response_type_ok, response_type_error} type;
+#endif
 
     /* Used by the server to indicate whether response is supported by
        the client, as set by the Valid-responses request.  */
@@ -138,6 +147,8 @@ struct response
 
 extern struct response responses[];
 
+#ifdef CLIENT_SUPPORT
+
 extern void client_senddate PROTO((const char *date));
 extern void client_expand_modules PROTO((int argc, char **argv, int local));
 extern void client_send_expansions PROTO((int local));
@@ -151,3 +162,5 @@ extern int client_process_import_file
     PROTO((char *message, char *vfile, char *vtag,
 	   int targc, char *targv[], char *repository));
 extern void client_import_done PROTO((void));
+
+#endif /* CLIENT_SUPPORT */
