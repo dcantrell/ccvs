@@ -64,6 +64,20 @@
 Overrides the $CVSROOT variable by sending \" -d dir\" to all cvs commands.
 This switch is useful if you have multiple CVS repositories.")
 
+(defvar cvs-cvsroot-required t
+  "*Specifies whether CVS needs to be told where the repository is.
+
+In CVS 1.3, if your CVSROOT environment variable is not set, and you
+do not set the `cvs-cvsroot' lisp variable, CVS will have no idea
+where to find the repository, and refuse to run.  CVS 1.4 and later
+store the repository path with the working directories, so most
+operations don't need to be told where the repository is.
+
+If you work with multiple repositories with CVS 1.4, it's probably
+advisable to leave your CVSROOT environment variable unset, set this
+variable to nil, and let CVS figure out where the repository is for
+itself.")
+
 (defvar cvs-stdout-file nil
   "Name of the file that holds the output that CVS sends to stdout.
 This variable is buffer local.")
@@ -450,7 +464,8 @@ Both LOCAL and DONT-CHANGE-DISC may be non-nil simultaneously.
   (if (not (file-exists-p cvs-program))
       (error "%s: file not found (check setting of cvs-program)"
 	     cvs-program))
-  (if (not (or (getenv "CVSROOT") cvs-cvsroot))
+  (if (and cvs-cvsroot-required
+	   (not (or (getenv "CVSROOT") cvs-cvsroot)))
       (error "Both cvs-cvsroot and environment variable CVSROOT unset."))
   (let* ((this-dir (file-name-as-directory (expand-file-name directory)))
 	 (update-buffer (generate-new-buffer
