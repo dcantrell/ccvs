@@ -1,3 +1,9 @@
+2001-10-04  Larry Jones  <larry.jones@sdrc.com>
+
+	* cvs.texinfo (Connecting via rsh): Add : between host name and
+	root directory in example since some versions of CVS require it.
+	(Reported by Trevor Jim <trevor@research.att.com>.)
+
 2001-09-14  Larry Jones  <larry.jones@sdrc.com>
 
 	* cvs.texinfo (commit files): Make following sections (commitinfo,
