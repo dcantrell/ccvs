@@ -1,3 +1,9 @@
+1998-09-24  Noel Cragg  <noel@swish.red-bean.com>
+
+	* server.c (create_adm_p): use Emptydir as the placeholder
+	directory instead of "." to avoid problems with "cvs update -d" et
+	al.
+
 1998-09-22  Noel Cragg  <noel@swish.red-bean.com>
 
 	* sanity.sh (devcom-180): fixed typo in regexp.
