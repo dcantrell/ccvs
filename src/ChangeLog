@@ -1,3 +1,9 @@
+2000-12-22  Derek Price  <derek.price@openavenue.com>
+
+	* Makefile.am (DISTCLEANFILES): added a few files
+	(INCLUDES): commented
+        * Makefile.in: Regenerated
+
 2000-12-21  Derek Price  <derek.price@openavenue.com>
 
 	* .cvsignore: Added .deps directory and a new stamp file
