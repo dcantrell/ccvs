@@ -423,6 +423,12 @@ main (int argc, char **argv)
     SYSTEM_INITIALIZE (&argc, &argv);
 #endif
 
+#ifdef SYSTEM_CLEANUP
+	/* Hook for OS-specific behavior, for example socket subsystems on
+	   NT and OS2 or dealing with windows and arguments on Mac.  */
+	atexit (SYSTEM_CLEANUP);
+#endif
+
 #ifdef HAVE_TZSET
     /* On systems that have tzset (which is almost all the ones I know
        of), it's a good idea to call it.  */
@@ -1051,12 +1057,6 @@ cause intermittent sandbox corruption.");
     if (free_Tmpdir)
 	free (Tmpdir);
     root_allow_free ();
-
-#ifdef SYSTEM_CLEANUP
-    /* Hook for OS-specific behavior, for example socket subsystems on
-       NT and OS2 or dealing with windows and arguments on Mac.  */
-    SYSTEM_CLEANUP ();
-#endif
 
     /* This is exit rather than return because apparently that keeps
        some tools which check for memory leaks happier.  */

@@ -5680,13 +5680,6 @@ pserver_authenticate_connection (void)
     {
 	printf ("I LOVE YOU\n");
 	fflush (stdout);
-
-#ifdef SYSTEM_CLEANUP
-	/* Hook for OS-specific behavior, for example socket subsystems on
-	   NT and OS2 or dealing with windows and arguments on Mac.  */
-	SYSTEM_CLEANUP ();
-#endif
-
 	exit (0);
     }
 

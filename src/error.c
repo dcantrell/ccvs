@@ -31,11 +31,6 @@ error_exit (void)
 {
     rcs_cleanup ();
     Lock_Cleanup ();
-#ifdef SYSTEM_CLEANUP
-    /* Hook for OS-specific behavior, for example socket subsystems on
-       NT and OS2 or dealing with windows and arguments on Mac.  */
-    SYSTEM_CLEANUP ();
-#endif
     exit (EXIT_FAILURE);
 }
 
