@@ -1,3 +1,9 @@
+Sat Apr  8 19:02:21 1995  Roland McGrath  <roland@baalperazim.frob.com>
+
+	* configure.in: Check for fchdir.  
+	(connect check): Use AC_CHECK_LIB instead of (obsolete)
+ 	AC_HAVE_LIBRARY.
+
 Sat Apr  8 14:52:46 1995  Jim Blandy  <jimb@totoro.bio.indiana.edu>
 
 	* Makefile.in (CFLAGS): Let configure set the default for CFLAGS.
