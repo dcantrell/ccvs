@@ -5,6 +5,7 @@
 	(update_dirent_proc): Use dotemplate for Create_Admin, not 1.
 	* checkout.c (checkout_proc): Don't create CVS/Template if
 	exporting.
+	(Reported by Andrey Podkolzin <mdh@zenon.net>.)
 
 2000-11-08  Larry Jones  <larry.jones@sdrc.com>
 
