@@ -395,6 +395,17 @@ call_diff (out)
 {
     extern int optind;
 
+    /* Try to keep the out-of-order bugs at bay (protocol_pipe for cvs_output
+       with has "Index: foo" and such; stdout and/or stderr for diff's
+       output).  I think the only reason that this used to not be such
+       a problem is that the time spent on the fork() and exec() of diff
+       slowed us down enough to let the "Index:" make it through first.
+
+       The real fix, of course, will be to have the diff library do all
+       its output through callbacks (which CVS will supply as cvs_output
+       and cvs_outerr).  */
+    sleep (1);
+
     /* Getopt has already been run by CVS, but we need to run it again
        to process diff options.  Reset it artificially. */
     optind = 0;
