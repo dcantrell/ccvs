@@ -1,3 +1,9 @@
+Wed Aug  7 18:26:25 1996  Ian Lance Taylor  <ian@cygnus.com>
+
+	* server.c (receive_partial_file): Read and discard remaining file
+	data on a write error.
+	(serve_modified): Discard data while size > 0, not >=.
+
 Wed Aug  7 15:11:40 1996  Norbert Kiesel  <nk@col.sw-ley.de>
 
 	* main.c (cmds): Add some aliases for "annotate".
