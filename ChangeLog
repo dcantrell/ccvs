@@ -1,3 +1,7 @@
+2005-03-16  Derek Price  <derek@ximbiot.com>
+
+	* NEWS: Note that failure to open debug logs is no longer fatal.
+
 2005-03-15  Derek Price  <derek@ximbiot.com>
 
 	* HACKING, NEWS: Note new Automake version.
