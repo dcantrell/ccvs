@@ -1,4 +1,9 @@
 2001-05-29  Derek Price  <dprice@collab.net>
+
+	* cvs.texinfo (Repository): Fix explanation of CVSROOT parsing
+	algorithm.
+
+2001-05-29  Derek Price  <dprice@collab.net>
 	patch from Pavel Roskin  <proski@gnu.org>
 
 	* Makefile.am (CVSvn.texi): Double hash comment in rule since single
