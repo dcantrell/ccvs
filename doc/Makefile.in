@@ -105,8 +105,8 @@ install_sh = @install_sh@
 
 
 info_TEXINFOS = cvs.texinfo cvsclient.texi
-cvs_TEXINFOS = CVSvn.texi
-cvsclient_TEXINFOS = CVSvn.texi
+cvs_TEXINFOS = $(srcdir)/CVSvn.texi
+cvsclient_TEXINFOS = $(srcdir)/CVSvn.texi
 
 POSTSCRIPTS = \
 	cvs.ps \
@@ -128,7 +128,6 @@ TXTS = \
 EXTRA_DIST = \
 	$(POSTSCRIPTS) \
 	.cvsignore \
-	CVSvn.texi \
 	CVSvn.texi.in \
 	ChangeLog.fsf \
 	RCSFILES \
@@ -312,6 +311,7 @@ TAGS:
 distdir = $(top_builddir)/$(PACKAGE)-$(VERSION)/$(subdir)
 
 distdir: $(DISTFILES)
+	$(mkinstalldirs) $(distdir)/$(srcdir)
 	@for file in $(DISTFILES); do \
 	  d=$(srcdir); \
 	  if test -d $$d/$$file; then \
@@ -450,9 +450,9 @@ cvs-paper.ps: cvs-paper.ms
 # - It is guaranteed (with GNU Make) that when the version in configure.in
 #   is changed, acversion.m4 is built only after the new version number is
 #   propagated to the Makefile.  (Libtool uses the same guarantee.)
-CVSvn.texi: $(srcdir)/CVSvn.texi.in $(top_srcdir)/configure.in
-	sed 's,@VERSION\@,$(VERSION),g' $(srcdir)/CVSvn.texi.in >CVSvn.ttexi
-	mv CVSvn.ttexi $(srcdir)/CVSvn.texi
+$(srcdir)/CVSvn.texi: $(srcdir)/CVSvn.texi.in $(top_srcdir)/configure.in
+	sed 's,@VERSION\@,$(VERSION),g' $(srcdir)/CVSvn.texi.in >$(srcdir)/CVSvn.ttexi
+	mv $(srcdir)/CVSvn.ttexi $(srcdir)/CVSvn.texi
 
 # for backwards compatibility with the old makefiles
 realclean: maintainer-clean
