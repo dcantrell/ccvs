@@ -4156,10 +4156,8 @@ non-orthogonality of the @sc{cvs} option set.  For
 example, the @samp{cvs log} option @samp{-N} (turn off
 display of tag names) does not have a corresponding
 option to turn the display on.  So if you have
-@samp{-N} in the @file{~/.cvsrc} entry for @samp{diff},
+@samp{-N} in the @file{~/.cvsrc} entry for @samp{log},
 you may need to use @samp{-f} to show the tag names.
-@footnote{Yes, this really should be fixed, and it's
-being worked on}
 
 @item -H
 Display usage information about the specified @samp{cvs_command}

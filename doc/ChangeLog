@@ -1,3 +1,11 @@
+Thu May 23 21:11:56 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (Global options): Fix error ("diff" -> "log")
+	(reported by ian@cygnus.com).
+	Remove footnote "Yes, this really should be fixed, and it's being
+	worked on"--it isn't clear what "this" is, and I doubt anyone is
+	working on it.
+
 Tue May 21 17:22:18 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvsclient.texi (Requests): Clarify Directory with "." as local
