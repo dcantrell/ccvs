@@ -214,7 +214,7 @@ do_editor (dir, messagep, repository, changes)
 	*messagep = NULL;
     else
     {
-	*messagep = (char *) xmalloc (post_stbuf.st_size);
+	*messagep = (char *) xmalloc (post_stbuf.st_size + 1);
  	*messagep[0] = '\0';
     }
 

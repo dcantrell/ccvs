@@ -31,6 +31,10 @@ Tue Jan 31 20:59:19 1995  Ken Raeburn  <raeburn@cujo.cygnus.com>
 
 	* client.c (client_commit_usage): Deleted.
 
+Sat Dec 31 15:51:55 1994  Jim Kingdon  (kingdon@lioth.cygnus.com)
+
+	* logmsg.c (do_editor): Allocate enough space for trailing '\0'.
+
 Fri Mar  3 11:59:49 1995  Jim Blandy  <jimb@totoro.bio.indiana.edu>
 
 	* cvsbug.sh: Call it "Cyclic CVS" now, not "Remote CVS".  Call it
