@@ -14,7 +14,7 @@
 
 #include "md5.h"
 
-#if defined(AUTH_CLIENT_SUPPORT) || HAVE_KERBEROS || USE_DIRECT_TCP
+#if defined(AUTH_CLIENT_SUPPORT) || HAVE_KERBEROS || USE_DIRECT_TCP || defined(SOCK_ERRNO) || defined(SOCK_STRERROR)
 #  ifdef HAVE_WINSOCK_H
 #    include <winsock.h>
 #  else /* No winsock.h */
@@ -22,7 +22,31 @@
 #    include <netinet/in.h>
 #    include <netdb.h>
 #  endif /* No winsock.h */
-#endif /* defined(AUTH_CLIENT_SUPPORT) || HAVE_KERBEROS || USE_DIRECT_TCP */
+#endif /* defined(AUTH_CLIENT_SUPPORT) || HAVE_KERBEROS || USE_DIRECT_TCP
+	  || defined(SOCK_ERRNO) || defined(SOCK_STRERROR) */
+
+/* If SOCK_ERRNO is defined, then send()/recv() and other socket calls
+   do not set errno, but that this macro should be used to obtain an
+   error code.  This probably doesn't make sense unless
+   NO_SOCKET_TO_FD is also defined. */
+#ifndef SOCK_ERRNO
+#define SOCK_ERRNO errno
+#endif
+
+/* If SOCK_STRERROR is defined, then the error codes returned by
+   socket operations are not known to strerror, and this macro must be
+   used instead to convert those error codes to strings. */
+#ifndef SOCK_STRERROR
+#  define SOCK_STRERROR strerror
+
+#  if STDC_HEADERS
+#    include <string.h>
+#  endif
+
+#  ifndef strerror
+extern char *strerror ();
+#  endif
+#endif /* ! SOCK_STRERROR */
 
 #if HAVE_KERBEROS || USE_DIRECT_TCP
 #define CVS_PORT 1999
@@ -426,7 +450,11 @@ log_buffer_shutdown (closure)
    via a socket using send() and recv().  This is because under some
    operating systems (OS/2 and Windows 95 come to mind), a socket
    cannot be converted to a file descriptor -- it must be treated as a
-   socket and nothing else.  */
+   socket and nothing else.
+   
+   We may also need to deal with socket routine error codes differently
+   in these cases.  This is handled through the SOCK_ERRNO and
+   SOCK_STRERROR macros. */
 
 static int use_socket_style = 0;
 static int server_sock;
@@ -434,6 +462,12 @@ static int server_sock;
 /* These routines implement a buffer structure which uses send and
    recv.  The buffer is always in blocking mode so we don't implement
    the block routine.  */
+
+/* Note that it is important that these routines always handle errors
+   internally and never return a positive errno code, since it would in
+   general be impossible for the caller to know in general whether any
+   error code came from a socket routine (to decide whether to use
+   SOCK_STRERROR or simply strerror to print an error message). */
 
 /* We use an instance of this structure as the closure field.  */
 
@@ -496,7 +530,7 @@ socket_buffer_input (closure, data, need, size, got)
     {
 	nbytes = recv (sb->socket, data, size, 0);
 	if (nbytes < 0)
-	    error (1, errno, "reading from server");
+	    error (1, 0, "reading from server: %s", SOCK_STRERROR (SOCK_ERRNO));
 	if (nbytes == 0)
 	{
 	    /* End of file (for example, the server has closed
@@ -536,7 +570,7 @@ socket_buffer_output (closure, data, have, wrote)
        is needed for systems where its return value is something other than
        the number of bytes written.  */
     if (send (sb->socket, data, have, 0) < 0)
-	error (1, errno, "writing to server socket");
+	error (1, 0, "writing to server socket: %s", SOCK_STRERROR (SOCK_ERRNO));
 #else
     while (have > 0)
     {
@@ -544,7 +578,7 @@ socket_buffer_output (closure, data, have, wrote)
 
 	nbytes = send (sb->socket, data, have, 0);
 	if (nbytes < 0)
-	    error (1, errno, "writing to server socket");
+	    error (1, 0, "writing to server socket: %s", SOCK_STRERROR (SOCK_ERRNO));
 
 	have -= nbytes;
 	data += nbytes;
@@ -2869,7 +2903,7 @@ get_responses_and_close ()
     if (use_socket_style)
     {
 	if (shutdown (server_sock, 2) < 0)
-	    error (1, errno, "shutting down server socket");
+	    error (1, 0, "shutting down server socket: %s", SOCK_STRERROR (SOCK_ERRNO));
     }
     else
 #endif /* NO_SOCKET_TO_FD */
@@ -2878,8 +2912,8 @@ get_responses_and_close ()
 	if (server_fd != -1)
 	{
 	    if (shutdown (server_fd, 1) < 0)
-		error (1, errno, "shutting down connection to %s",
-		       CVSroot_hostname);
+		error (1, 0, "shutting down connection to %s: %s",
+		       CVSroot_hostname, SOCK_STRERROR (SOCK_ERRNO));
             /*
              * This test will always be true because we dup the descriptor
              */
@@ -3029,8 +3063,8 @@ connect_to_pserver (tofdp, fromfdp, verify_only)
     init_sockaddr (&client_sai, CVSroot_hostname, port_number);
     if (connect (sock, (struct sockaddr *) &client_sai, sizeof (client_sai))
 	< 0)
-	error (1, errno, "connect to %s:%d failed", CVSroot_hostname,
-	       port_number);
+	error (1, 0, "connect to %s:%d failed: %s", CVSroot_hostname,
+	       port_number, SOCK_STRERROR (SOCK_ERRNO));
 
     /* Run the authorization mini-protocol before anything else. */
     {
@@ -3096,7 +3130,8 @@ connect_to_pserver (tofdp, fromfdp, verify_only)
 	for (i = 0; (i < (LARGEST_RESPONSE - 1)) && (ch != '\n'); i++)
 	{
 	    if (recv (sock, &ch, 1, 0) < 0)
-                error (1, errno, "recv() from server %s", CVSroot_hostname);
+                error (1, 0, "recv() from server %s: %s", CVSroot_hostname,
+		       SOCK_STRERROR (SOCK_ERRNO));
 
             read_buf[i] = ch;
 	}
@@ -3109,8 +3144,9 @@ connect_to_pserver (tofdp, fromfdp, verify_only)
 		error (0, 0, 
 		       "authorization failed: server %s rejected access", 
 		       CVSroot_hostname);
-		error (1, errno,
-		       "shutdown() failed (server %s)", CVSroot_hostname);
+		error (1, 0,
+		       "shutdown() failed (server %s): %s", CVSroot_hostname,
+		       SOCK_STRERROR (SOCK_ERRNO));
 	    }
 
 	    if (verify_only)
@@ -3128,7 +3164,9 @@ connect_to_pserver (tofdp, fromfdp, verify_only)
 		error (0, 0,
 		       "unrecognized auth response from %s: %s", 
 		       CVSroot_hostname, read_buf);
-		error (1, errno, "shutdown() failed, server %s", CVSroot_hostname);
+		error (1, 0,
+		       "shutdown() failed, server %s: %s", CVSroot_hostname,
+		       SOCK_STRERROR (SOCK_ERRNO));
 	    }
 	    error (1, 0, 
 		   "unrecognized auth response from %s: %s", 
@@ -3139,7 +3177,8 @@ connect_to_pserver (tofdp, fromfdp, verify_only)
     if (verify_only)
     {
 	if (shutdown (sock, 2) < 0)
-	    error (0, errno, "shutdown() failed, server %s", CVSroot_hostname);
+	    error (0, 0, "shutdown() failed, server %s: %s", CVSroot_hostname,
+		   SOCK_STRERROR (SOCK_ERRNO));
 	return 1;
     }
     else
@@ -3170,9 +3209,9 @@ connect_to_pserver (tofdp, fromfdp, verify_only)
 /*
  * FIXME: this function has not been changed to deal with
  * NO_SOCKET_TO_FD (i.e., systems on which sockets cannot be converted
- * to file descriptors.  The first person to try building a kerberos
- * client on such a system (OS/2, Windows 95, and maybe others) will
- * have to make take care of this.
+ * to file descriptors) or with SOCK_ERRNO/SOCK_STRERROR.  The first
+ * person to try building a kerberos client on such a system (OS/2,
+ * Windows 95, and maybe others) will have to make take care of this.
  */
 void
 start_tcp_server (tofdp, fromfdp)
