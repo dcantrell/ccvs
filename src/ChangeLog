@@ -1,3 +1,7 @@
+2002-04-19  Larry Jones  <larry.jones@sdrc.com>
+
+	* subr.c (gca): Simplify and optimize.
+
 2002-04-19  Jim Meyering  <meyering@lucent.com>
 	and Ed Santiago <easm@lucent.com>
 
