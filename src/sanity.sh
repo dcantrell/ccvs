@@ -833,6 +833,25 @@ rmproj ()
     done
 }
 
+# chmod a project or projects from the repository
+chproj ()
+{
+    mode=$1
+    shift
+    for proj in "$@"; do
+	if test -n "$remotehost"; then
+	    $CVS_RSH $remotehost "chmod $mode $CVSROOT_DIRNAME/$proj"
+	else
+	    chmod $mode $CVSROOT_DIRNAME/$proj
+	fi
+	if $proxy; then
+	    # Could just sync here but since we know what is going on, this is
+	    # an optimization.
+	    chmod $mode $SECONDARY_CVSROOT_DIRNAME/$proj
+	fi
+    done
+}
+
 # Touch a file or files in the repository.  It's possible I need to come up
 # with a more general way of doing this kind of thing.  It might be useful for
 # The :ext: tests too.
@@ -846,6 +865,16 @@ touchproj ()
 	    touch $SECONDARY_CVSROOT_DIRNAME/$proj
 	fi
     done
+}
+
+# Restore changes to CVSROOT admin files.
+restore_adm ()
+{
+    rmproj CVSROOT
+    cp -rp $TESTDIR/CVSROOT.save/ $CVSROOT_DIRNAME/CVSROOT
+    if $proxy; then
+	cp -rp $TESTDIR/CVSROOT.save/ $SECONDARY_CVSROOT_DIRNAME/CVSROOT
+    fi
 }
 
 pass ()
@@ -2075,7 +2104,7 @@ CVSROOT=`newroot $CVSROOT_DIRNAME`; export CVSROOT
 ###
 ### Initialize the repository
 ###
-dotest 1 "$testcvs init" ''
+dotest 1 "$testcvs init"
 
 # Now hide the primary root above behind a secondary if requested.
 if $proxy; then
@@ -2140,6 +2169,9 @@ EOF
     CVS_SERVER=$TESTDIR/secondary-wrapper
 fi # $proxy
 
+# Save a copy of the initial repository so that it may be restored after the
+# tests that alter it.
+cp -rp $CVSROOT_DIRNAME/CVSROOT/ $TESTDIR/CVSROOT.save/
 
 
 ###
@@ -6002,23 +6034,27 @@ new revision: 1\.1\.2\.1; previous revision: 1\.1"
 	  dotest rmadd-16 "${testcvs} add file4" \
 "${SPROG} add: scheduling file .file4. for addition
 ${SPROG} add: use .${SPROG} commit. to add this file permanently"
-	  # Same "Up-to-date check" issues as in rmadd-14.
-	  # The "no such tag" thing is due to the fact that we only
-	  # update val-tags when the tag is used (might be more of a
-	  # bug than a feature, I dunno).
-	  dotest_fail rmadd-17 \
-"${testcvs} -q ci -r mynonbranch -m add file4" \
-"${SPROG} \[commit aborted\]: no such tag mynonbranch"
+
+	  
 	  # Try to make CVS write val-tags.
-	  dotest rmadd-18 "${testcvs} -q update -p -r mynonbranch file1" \
+	  if $proxy; then :; else
+	    # First remove the tag.
+	    grep -v mynonbranch $CVSROOT_DIRNAME/CVSROOT/val-tags \
+	         >$CVSROOT_DIRNAME/CVSROOT/val-tags-tmp
+	    mv $CVSROOT_DIRNAME/CVSROOT/val-tags-tmp \
+	       $CVSROOT_DIRNAME/CVSROOT/val-tags
+
+	    dotest rmadd-18 "${testcvs} -q update -p -r mynonbranch file1" \
 "first file1"
-	  # Oops, -p suppresses writing val-tags (probably a questionable
-	  # behavior).
-	  dotest_fail rmadd-19 \
+	    # Oops, -p suppresses writing val-tags (probably a questionable
+	    # behavior).
+	    dotest_fail rmadd-19 \
 "${testcvs} -q ci -r mynonbranch -m add file4" \
 "${SPROG} \[commit aborted\]: no such tag mynonbranch"
-	  # Now make CVS write val-tags for real.
-	  dotest rmadd-20 "${testcvs} -q update -r mynonbranch file1" ""
+	    # Now make CVS write val-tags for real.
+	    dotest rmadd-20 "${testcvs} -q update -r mynonbranch file1" ""
+	  fi # !$proxy
+
 	  # Oops - CVS isn't distinguishing between a branch tag and
 	  # a non-branch tag.
 	  dotest rmadd-21 \
@@ -10095,60 +10131,32 @@ File: a                	Status: Up-to-date
 	  rm -r $module
 	  ;;
 
+
+
 	new) # look for stray "no longer pertinent" messages.
-		mkdir ${CVSROOT_DIRNAME}/first-dir
+	  mkproj first-dir
+	  dotest new-init-1 "$testcvs -Q co first-dir"
 
-		if ${CVS} co first-dir  ; then
-		    pass 117
-		else
-		    fail 117
-		fi
+	  cd first-dir
+	  touch a
 
-		cd first-dir
-		touch a
+	  dotest new-1 "$testcvs -Q add a"
 
-		if ${CVS} add a  2>>${LOGFILE}; then
-		    pass 118
-		else
-		    fail 118
-		fi
+	  dotest new-2 "$testcvs -Q ci -m added"
+	  rm a
 
-		if ${CVS} ci -m added  >>${LOGFILE} 2>&1; then
-		    pass 119
-		else
-		    fail 119
-		fi
+	  dotest new-3 "$testcvs -Q rm a"
+	  dotest new-4 "$testcvs -Q ci -m removed"
+	  dotest new-5 "$testcvs -Q update -A"
+	  dotest new-6 "$testcvs -Q update -rHEAD"
 
-		rm a
+	  dokeep
+	  cd ..
+	  rm -r first-dir
+	  rmproj first-dir
+	  ;;
 
-		if ${CVS} rm a  2>>${LOGFILE}; then
-		    pass 120
-		else
-		    fail 120
-		fi
 
-		if ${CVS} ci -m removed >>${LOGFILE} ; then
-		    pass 121
-		else
-		    fail 121
-		fi
-
-		if ${CVS} update -A  2>&1 | grep longer ; then
-		    fail 122
-		else
-		    pass 122
-		fi
-
-		if ${CVS} update -rHEAD 2>&1 | grep longer ; then
-		    fail 123
-		else
-		    pass 123
-		fi
-
-		cd ..
-		rm -r first-dir
-		rm -rf ${CVSROOT_DIRNAME}/first-dir
-		;;
 
 	newb)
 	  # Test removing a file on a branch and then checking it out.
@@ -10158,7 +10166,7 @@ File: a                	Status: Up-to-date
 	  # Not necessarily the most brilliant nomenclature.
 
 	  # Create file 'a'.
-	  mkdir ${CVSROOT_DIRNAME}/first-dir
+	  mkproj first-dir
 	  dotest newb-123a "${testcvs} -q co first-dir" ''
 	  cd first-dir
 	  touch a
@@ -10226,13 +10234,16 @@ File: a                	Status: Entry Invalid
 	    pass newb-123k
 	  fi
 
+	  dokeep
 	  cd ../..
 	  rm -r 1 2
-	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  rmproj first-dir
 	  ;;
 
+
+
 	conflicts)
-		mkdir ${CVSROOT_DIRNAME}/first-dir
+		mkproj first-dir
 
 		mkdir 1
 		cd 1
@@ -10481,9 +10492,14 @@ File: a                	Status: Up-to-date
 		else
 		    fail 142
 		fi
+
+		dokeep
 		cd ../..
-		rm -r 1 2 3 ; rm -rf ${CVSROOT_DIRNAME}/first-dir
+		rm -r 1 2 3
+		rmproj first-dir
 		;;
+
+
 
 	conflicts2)
 	  # More conflicts tests; separate from conflicts to keep each
@@ -14566,11 +14582,10 @@ Action: (continue) ${CPROG} \[commit aborted\]: aborted by user"
 "U CVSROOT/loginfo"
 
           cd CVSROOT
-	  echo 'DEFAULT (echo Start-Log;cat;echo End-Log) >> $CVSROOT/CVSROOT/commitlog' > loginfo
-	  dotest editor-emptylog-continue-2 "${testcvs} commit -m add loginfo" \
-"${CVSROOT_DIRNAME}/CVSROOT/loginfo,v  <--  loginfo
-new revision: 1\.2; previous revision: 1\.1
-${SPROG} commit: Rebuilding administrative file database"
+	  cat <<\EOF >>loginfo
+DEFAULT (echo Start-Log;cat;echo End-Log) >> $CVSROOT/CVSROOT/commitlog
+EOF
+	  dotest editor-emptylog-continue-2 "$testcvs -Q ci -mloggem"
 
 	  cd ../first-dir
 	  cat >${TESTDIR}/editme <<EOF
@@ -14639,18 +14654,16 @@ date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: +0 -0
 	    exit 0
 	  fi
 
-	  # restore the default loginfo script
-	  rm -f ${CVSROOT_DIRNAME}/CVSROOT/loginfo,v \
-                ${CVSROOT_DIRNAME}/CVSROOT/loginfo \
-                ${CVSROOT_DIRNAME}/CVSROOT/commitlog
-	  dotest editor-emptylog-continue-cleanup-1 "${testcvs} init" ''
-
 	  dokeep
+
+	  # restore the default loginfo script
+	  restore_adm
+          rm $CVSROOT_DIRNAME/CVSROOT/commitlog
 
 	  cd ../..
 	  rm -r 1
-	  rm ${TESTDIR}/editme
-	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  rm $TESTDIR/editme
+	  rmproj first-dir
 	  ;;
 
 
@@ -20819,7 +20832,7 @@ O 1997-06-06 08:12 ${PLUS}0000 kingdon   ccvs =ccvs= <remote>/\*"
 	  # on machines which run the tests, without any significant
 	  # benefit.
 
-	  mkdir ${CVSROOT_DIRNAME}/first-dir
+	  mkproj first-dir
 	  dotest big-1 "${testcvs} -q co first-dir" ''
 	  cd first-dir
 	  for i in 0 1 2 3 4 5 6 7 8 9; do
@@ -20849,16 +20862,14 @@ new revision: 1\.2; previous revision: 1\.1"
 	  # The idea here is particularly to test the Rcs-diff response
 	  # and the reallocing thereof, for remote.
 	  dotest big-6 "${testcvs} -q update" "[UP] file1"
+
+	  dokeep
 	  cd ../..
-
-	  if $keep; then
-	    echo Keeping ${TESTDIR} and exiting due to --keep
-	    exit 0
-	  fi
-
 	  rm -r first-dir 2
-	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  rmproj first-dir
 	  ;;
+
+
 
 	modes)
 	  # Test repository permissions (CVSUMASK and so on).
@@ -21050,6 +21061,8 @@ new revision: 1\.2; previous revision: 1\.1"
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
 	  ;;
 
+
+
 	modes3)
 	  # Repository permissions.  Particularly, what happens if we
 	  # can't read/write in the repository.
@@ -21057,7 +21070,7 @@ new revision: 1\.2; previous revision: 1\.1"
 	  # the attic (may that one can remain a fatal error, seems less
 	  # useful for access control).
 	  mkdir 1; cd 1
-	  dotest modes3-1 "${testcvs} -q co -l ." ''
+	  dotest modes3-1 "$testcvs -q co -l ."
 	  mkdir first-dir second-dir
 	  dotest modes3-2 "${testcvs} add first-dir second-dir" \
 "Directory ${CVSROOT_DIRNAME}/first-dir added to the repository
@@ -21072,11 +21085,7 @@ ${SPROG} add: use .${SPROG} commit. to add these files permanently"
 initial revision: 1\.1
 $CVSROOT_DIRNAME/second-dir/ab,v  <--  ab
 initial revision: 1\.1"
-	  if test -n "$remotehost"; then
-	    $CVS_RSH $remotehost "chmod a= ${CVSROOT_DIRNAME}/first-dir"
-	  else
-	    chmod a= ${CVSROOT_DIRNAME}/first-dir
-	  fi
+	  chproj a= first-dir
 	  if ls ${CVSROOT_DIRNAME}/first-dir >/dev/null 2>&1; then
 	    # Avoid this test under Cygwin since permissions work differently
 	    # there.
@@ -21128,9 +21137,11 @@ ${SPROG} update: Updating second-dir"
 
 	  cd ..
 	  rm -r 1
-	  chmod u+rwx ${CVSROOT_DIRNAME}/first-dir
-	  rm -rf ${CVSROOT_DIRNAME}/first-dir ${CVSROOT_DIRNAME}/second-dir
+	  chproj u+rwx first-dir
+	  rmproj first-dir second-dir
 	  ;;
+
+
 
 	stamps)
 	  # Test timestamps.
@@ -21270,17 +21281,20 @@ new revision: 1\.2; previous revision: 1\.1"
 	  fi
 
 	  rm -r 1 2
-	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  rmproj first-dir
 	  ;;
 
-	perms)
-	  # short cut around checking out and committing CVSROOT
-	  rm -f ${CVSROOT_DIRNAME}/CVSROOT/config
-	  echo 'PreservePermissions=yes' > ${CVSROOT_DIRNAME}/CVSROOT/config
-	  chmod 444 ${CVSROOT_DIRNAME}/CVSROOT/config
 
+
+	perms)
 	  mkdir 1; cd 1
-	  dotest perms-1 "${testcvs} -q co -l ." ''
+	  dotest perms-init-1 "$testcvs -Q co CVSROOT"
+	  cd CVSROOT
+	  echo 'PreservePermissions=yes' >> ${CVSROOT_DIRNAME}/CVSROOT/config
+	  dotest perms-init-2 "$testcvs -Q ci -mperms"
+	  cd ..
+
+	  dotest perms-1 "$testcvs -q co -l ."
 	  mkdir first-dir
 	  dotest perms-2 "${testcvs} add first-dir" \
 "Directory ${CVSROOT_DIRNAME}/first-dir added to the repository"
@@ -21305,14 +21319,16 @@ initial revision: 1\.1"
 	    dotest perms-6 "ls -l foo" "-r---wx--x .* foo"
 	  fi
 
+	  dokeep
+
+	  cd ../1/CVSROOT
+	  restore_adm
 	  cd ../..
 	  rm -rf 1 2
-	  rm -rf ${CVSROOT_DIRNAME}/first-dir
-
-	  rm -f ${CVSROOT_DIRNAME}/CVSROOT/config
-	  touch ${CVSROOT_DIRNAME}/CVSROOT/config
-	  chmod 444 ${CVSROOT_DIRNAME}/CVSROOT/config
+	  rmproj first-dir
 	  ;;
+
+
 
 	symlinks)
 	  # short cut around checking out and committing CVSROOT
@@ -31479,10 +31495,13 @@ You have \[0\] altered files in this repository\."
     # which may be in place.
     if $proxy; then
 	problem=false
-	for file in $SECONDARY_CVSROOT_DIRNAME/CVSROOT/loginfo \
-	            $CVSROOT_DIRNAME/CVSROOT/loginfo \
+	for file in \
 	            $SECONDARY_CVSROOT_DIRNAME/CVSROOT/config \
-	            $CVSROOT_DIRNAME/CVSROOT/config; do
+	            $CVSROOT_DIRNAME/CVSROOT/config \
+		    $SECONDARY_CVSROOT_DIRNAME/CVSROOT/loginfo \
+	            $CVSROOT_DIRNAME/CVSROOT/loginfo \
+	            $SECONDARY_CVSROOT_DIRNAME/CVSROOT/posttag \
+	            $CVSROOT_DIRNAME/CVSROOT/posttag; do
 	    if cmp $file $TESTDIR/`basename $file`-clean >/dev/null 2>&1; then
 		:;
 	    else

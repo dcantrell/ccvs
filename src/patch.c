@@ -346,13 +346,13 @@ patch_proc (int argc, char **argv, char *xwhere, char *mwhere, char *mfile,
     if (rev1 != NULL && !rev1_validated)
     {
 	tag_check_valid (rev1, argc - 1, argv + 1, local_specified, 0,
-			 repository);
+			 repository, false);
 	rev1_validated = 1;
     }
     if (rev2 != NULL && !rev2_validated)
     {
 	tag_check_valid (rev2, argc - 1, argv + 1, local_specified, 0,
-			 repository);
+			 repository, false);
 	rev2_validated = 1;
     }
 

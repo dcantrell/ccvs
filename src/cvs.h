@@ -954,7 +954,7 @@ char *normalize_cvsroot (const cvsroot_t *root)
 	__attribute__ ((__malloc__));
 #endif /* AUTH_CLIENT_SUPPORT */
 
-void tag_check_valid (char *, int, char **, int, int, char *);
+void tag_check_valid (char *, int, char **, int, int, char *, bool);
 void tag_check_valid_join (char *, int, char **, int, int,
                            char *);
 

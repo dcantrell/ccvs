@@ -1,3 +1,20 @@
+2004-07-10  Derek Price  <derek@ximbiot.com>
+
+	* tag.c (add_val_tag): Remove function.
+	(cvstag): Call tag_check_valid instead of above function.
+	(rtag_proc, tag_check_valid_join): Pass new argument to
+	tag_check_valid ().
+	(tag_check_valid): Improve comments.  Enable caching of pre-validated
+	tags.
+	* annotate.c (rannotate_proc), checkout.c (checkout_proc), commit.c
+	(commit), diff.c (diff), ls.c (ls_proc), patch.c (patch_proc): Pass new
+	argument to tag_check_valid().
+	* find_names.c (Find_Names): Output primary paths.
+	* cvs.h (tag_check_valid): Update prototype.
+	* server.c (serve_questionable): Handle secondary log.
+	* update.c (update): Pass new argument to tag_check_valid().  Output
+	primary paths.
+
 2004-07-09  Derek Price  <derek@ximbiot.com>
 
 	Cache tags in val-tags on successful creation to avoid problems with

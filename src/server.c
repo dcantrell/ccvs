@@ -2776,7 +2776,7 @@ serve_questionable (char *arg)
 {
     static int initted;
 
-    assert (!secondary_log);
+    if (secondary_log) return;
 
     if (!initted)
     {
