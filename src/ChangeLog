@@ -1,5 +1,8 @@
 Tue Jul 16 11:37:41 1996  Ian Lance Taylor  <ian@cygnus.com>
 
+	* sanity.sh (death2): Accept a '.' in the temporary file name
+	printed by diff.
+
 	* rcscmds.c (RCS_checkin): Remove noerr parameter.  Change all
 	callers.
 	* cvs.h (RCS_checkin): Update declaration.
