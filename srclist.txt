@@ -68,9 +68,6 @@ $GNULIB/lib/memmove.c				lib		no NI
 $GNULIB/m4/memmove.m4				m4		no NI
 # $GNULIB/modules/minmax
 $GNULIB/lib/minmax.h				lib		no NI
-# $GNULIB/modules/mktime
-$GNULIB/lib/mktime.c				lib		no NI
-$GNULIB/m4/mktime.m4				m4		no NI
 # $GNULIB/modules/nanosleep
 $GNULIB/lib/nanosleep.c				lib		no NI
 $GNULIB/m4/nanosleep.m4				m4		no NI
@@ -88,10 +85,6 @@ $GNULIB/lib/strftime.c				lib		no NI
 $GNULIB/m4/mbstate_t.m4				m4		no NI
 $GNULIB/m4/tm_gmtoff.m4				m4		no NI
 $GNULIB/m4/strftime.m4				m4		no NI
-# $GNULIB/modules/time_r
-$GNULIB/lib/time_r.c				lib		no NI
-$GNULIB/lib/time_r.h				lib		no NI
-$GNULIB/m4/time_r.m4				m4		no NI
 
 
 
