@@ -487,7 +487,9 @@ tag_fileproc (callerdat, finfo)
 	/* warm fuzzies */
 	if (!really_quiet)
 	{
-	    (void) printf ("D %s\n", finfo->fullname);
+	    cvs_output ("D ", 2);
+	    cvs_output (finfo->fullname, 0);
+	    cvs_output ("\n", 1);
 	}
 
 	freevers_ts (&vers);
@@ -562,12 +564,19 @@ tag_fileproc (callerdat, finfo)
 	if (!force_tag_move)
 	{
 	    /* we're NOT going to move the tag */
-	    (void) printf ("W %s", finfo->fullname);
-
-	    (void) printf (" : %s already exists on %s %s", 
-			   symtag, isbranch ? "branch" : "version", oversion);
-	    (void) printf (" : NOT MOVING tag to %s %s\n", 
-			   branch_mode ? "branch" : "version", rev);
+	    cvs_output ("W ", 2);
+	    cvs_output (finfo->fullname, 0);
+	    cvs_output (" : ", 0);
+	    cvs_output (symtag, 0);
+	    cvs_output (" already exists on ", 0);
+	    cvs_output (isbranch ? "branch" : "version", 0);
+	    cvs_output (" ", 0);
+	    cvs_output (oversion, 0);
+	    cvs_output (" : NOT MOVING tag to ", 0);
+	    cvs_output (branch_mode ? "branch" : "version", 0);
+	    cvs_output (" ", 0);
+	    cvs_output (rev, 0);
+	    cvs_output ("\n", 1);
 	    free (oversion);
 	    freevers_ts (&vers);
 	    return (0);
@@ -587,7 +596,9 @@ tag_fileproc (callerdat, finfo)
     /* more warm fuzzies */
     if (!really_quiet)
     {
-	(void) printf ("T %s\n", finfo->fullname);
+	cvs_output ("T ", 2);
+	cvs_output (finfo->fullname, 0);
+	cvs_output ("\n", 1);
     }
 
     if (nversion != NULL)

@@ -1,3 +1,12 @@
+Wed Oct 30 08:53:20 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* commit.c (remove_file, commit_filesdoneproc), run.c (run_print,
+	run_exec), modules.c (open_module, cat_module, do_module), update.c
+	(update_dirleave_proc), tag.c (tag_fileproc): Call cvs_out* rather
+	than stdio.
+	* server.c (serve_expand_modules): Remove comment about do_module
+	writing to stdout/stderr; above changes should fix this.
+
 Tue Oct 29 17:23:59 1996  Ian Lance Taylor  <ian@cygnus.com>
 
 	* status.c (tag_list_proc): When printing the tag name, don't

@@ -3184,11 +3184,6 @@ serve_expand_modules (arg)
     DBM *db;
     err = 0;
 
-    /*
-     * FIXME: error handling is bogus; do_module can write to stdout and/or
-     * stderr and we're not using do_cvs_command.
-     */
-
     server_expanding = 1;
     db = open_module ();
     for (i = 1; i < argument_count; i++)

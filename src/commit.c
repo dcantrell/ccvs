@@ -1295,10 +1295,12 @@ commit_filesdoneproc (callerdat, err, repository, update_dir, entries)
 		    line[--line_length] = '\0';
 		repository = Name_Repository ((char *) NULL, update_dir);
 		run_setup ("%s %s", line, repository);
-		(void) printf ("%s %s: Executing '", program_name,
-			       command_name);
+		cvs_output (program_name, 0);
+		cvs_output (" ", 1);
+		cvs_output (command_name, 0);
+		cvs_output (": Executing '", 0);
 		run_print (stdout);
-		(void) printf ("'\n");
+		cvs_output ("'\n", 0);
 		(void) run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL);
 		free (repository);
 	    }
@@ -1469,7 +1471,9 @@ remove_file (finfo, tag, message)
     /* commit a new, dead revision. */
 
     /* Print message indicating that file is going to be removed. */
-    (void) printf ("Removing %s;\n", finfo->fullname);
+    cvs_output ("Removing ", 0);
+    cvs_output (finfo->fullname, 0);
+    cvs_output (";\n", 0);
 
     rev = NULL;
     lockflag = 1;
@@ -1589,10 +1593,12 @@ remove_file (finfo, tag, message)
     }
 
     /* Print message that file was removed. */
-    (void) printf ("%s  <--  %s\n", old_path, finfo->file);
-    (void) printf ("new revision: delete; ");
-    (void) printf ("previous revision: %s\n", prev_rev);
-    (void) printf ("done\n");
+    cvs_output (old_path, 0);
+    cvs_output ("  <--  ", 0);
+    cvs_output (finfo->file, 0);
+    cvs_output ("\nnew revision: delete; previous revision: ", 0);
+    cvs_output (prev_rev, 0);
+    cvs_output ("\ndone\n", 0);
     free(prev_rev);
 
     if (old_path != finfo->rcs->path)
