@@ -1,3 +1,9 @@
+Thu Nov 30 20:44:30 1995  Karl Fogel  <kfogel@floss.cyclic.com>
+        
+        * client.c (get_responses_and_close): undo previous change
+        regarding waitpid().  The problem has been solved by modifying
+        os2/waitpid.c instead of its callers.
+        
 Thu Nov 30 16:37:10 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
         * client.c: All these changes are for OS/2, which will no longer have

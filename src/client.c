@@ -2107,12 +2107,8 @@ get_responses_and_close ()
 #if ! RSH_NOT_TRANSPARENT
     if (rsh_pid != -1
 	&& waitpid (rsh_pid, (int *) 0, 0) == -1)
-      {
-        /* ECHILD most likely means the process has already exited,
-           which would be no surprise. */
-        if (errno != ECHILD)
-          error (1, errno, "waiting for process %d", rsh_pid);
-      }
+      if (errno != ECHILD)
+        error (1, errno, "waiting for process %d", rsh_pid);
 #endif /* ! RSH_NOT_TRANSPARENT */
 
     return errs;
