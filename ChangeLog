@@ -1,5 +1,13 @@
 2002-09-20  Derek Price  <derek@ximbiot.com>
 
+	* configure.in: Set PATCH_PROGRAM as possible, autodetecting with
+	a user override.
+
+	* configure: Regenerated.
+	* config.h.in: Ditto.
+
+2002-09-20  Derek Price  <derek@ximbiot.com>
+
 	* configure.in: Use AC_HELP_STRING to create pretty help strings.
 	Reformat some lines for legibility.
 	(with-krb4): Fix help strings and logging.
