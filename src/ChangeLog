@@ -1,3 +1,8 @@
+2003-04-01  Derek Price  <derek@ximbiot.com>
+
+	* sanity.sh (multiroot2-9): Add newly TRACEd parse_cvsroot() to
+	expected output.
+
 2003-03-31  Derek Price  <derek@ximbiot.com>
 
 	* rcs.c (freercsnode): Revert an accidental change from the previous
