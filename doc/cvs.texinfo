@@ -4293,6 +4293,10 @@ cvs commit: Committing .
 If you change your mind you can easily resurrect the
 file before you commit it, using the @code{add}
 command.
+@c FIXME: what if you change your mind after you commit
+@c it?  (answer is also "cvs add" but we don't say that...).
+@c We need some index entries for thinks like "undoing
+@c removal" too.
 
 @example
 $ ls
