@@ -323,6 +323,7 @@ checkout (argc, argv)
 	    option_with_arg ("-j", join_rev1);
 	if (join_rev2 != NULL)
 	    option_with_arg ("-j", join_rev2);
+	send_arg ("--");
 
 	if (expand_modules)
 	{
