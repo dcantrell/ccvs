@@ -1,3 +1,13 @@
+Thu Aug 29 11:58:03 1996  Jim Blandy  <jimb@totoro.cyclic.com>
+
+	* rcs2log: Update FSF address.
+
+	* rcs2log: Be more aggressive about finding the author's full
+	name; try nismatch and ypmatch.
+
+	* rcs2log: If the hostname appears not to be fully qualified, see
+ 	if domainname provides any useful information.
+
 Fri Aug 16 16:02:36 1996  Norbert Kiesel  <nk@col.sw-ley.de>
 
 	* Makefile.in (installdirs): support this target
