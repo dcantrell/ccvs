@@ -1,5 +1,12 @@
 2004-02-15  Derek Price  <derek@ximbiot.com>
 
+	Import vasnprintf module from GNULIB.
+	* asnprintf.c, printf-args.c, printf-args.h, printf-parse.c,
+	printf-parse.h, vasnprintf.c, vasnprintf.h: New files.
+	* Makefile.am (libcvs_a_SOURCES): Add header files.
+
+2004-02-15  Derek Price  <derek@ximbiot.com>
+
 	Import xsize module from GNULIB for vasnprintf().
 	* xsize.h: New file.
 	* Makefile.am (libcvs_a_SOURCES): Add xsize.h.

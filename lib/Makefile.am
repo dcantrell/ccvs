@@ -81,6 +81,9 @@ alloca.h: alloca_.h
 	cp $(srcdir)/alloca_.h $@-t
 	mv $@-t $@
 
+# For GNULIB's vasnprintf module.
+libcvs_a_SOURCES += printf-args.h printf-parse.h vasnprintf.h
+
 # Until Automake gets its act together
 distclean-local:
 	rm -f fnmatch.h alloca.h
