@@ -51,6 +51,9 @@ Contents of this directory:
 			currently locked by someone else, as might be the
 			case for a binary file.
 			Contributed by John Rouillard <rouilj@cs.umb.edu>.
+	ccvs-rsh.pl	A Perl script which allows "rsh pipelines" to
+			be built in order to use Cyclic CVS from
+			behind some varieties of firewall.
 	cvs_acls.pl	A perl script that implements Access Control Lists
 			by using the "commitinfo" hook provided with the
 			"cvs commit" command.

@@ -1,3 +1,12 @@
+Mon May  8 13:06:29 1995  Bryan O'Sullivan  <bos@serpentine.com>
+
+	* README: added an entry for ccvs-rsh.pl.
+
+Sun Apr 30 23:50:32 1995  Bryan O'Sullivan  <bos@serpentine.com>
+
+	* ccvs-rsh.pl: fixed a typo and added more flexible use of
+	CVS_PROXY_USER.
+
 Sun Apr 30 14:56:21 1995  Jim Blandy  <jimb@totoro.bio.indiana.edu>
 
 	* clmerge: Changes from Tom Tromey --- fix bug in date comparison
