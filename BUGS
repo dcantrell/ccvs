@@ -37,6 +37,12 @@ writing to stdout or stderr when it shouldn't?  But then wouldn't the
 `%s' from cvs server"?).
 
 
+* "make remotecheck" sometimes fails on test 187a3 with
+    cvs server: in directory .:
+    cvs [server aborted]: *PANIC* administration files missing
+This does not happen every time.  (-kingdon, Nov 96, Red Hat linux 3.0.3).
+
+
 * The -m option to "cvs add" does not work with client/server CVS.
 CVS will accept the option, but it won't actually set the
 file's description.
