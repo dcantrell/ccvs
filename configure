@@ -11109,9 +11109,9 @@ cat >>confdefs.h <<\_ACEOF
 _ACEOF
 
   else
-    { echo "$as_me:$LINENO: WARNING: --enable-password-authenticated-server is meaningless with
+    { echo "$as_me:$LINENO: WARNING: --enable-password-authenticated-client is meaningless with
        the CVS client disabled (--disable-client)" >&5
-echo "$as_me: WARNING: --enable-password-authenticated-server is meaningless with
+echo "$as_me: WARNING: --enable-password-authenticated-client is meaningless with
        the CVS client disabled (--disable-client)" >&2;}
   fi
 fi
