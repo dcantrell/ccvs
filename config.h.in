@@ -350,9 +350,6 @@
 /* Define to 1 if you have a working `mmap' system call. */
 #undef HAVE_MMAP
 
-/* Define to 1 if you have the `nanosleep' function. */
-#undef HAVE_NANOSLEEP
-
 /* Define to 1 if you have the <ndbm.h> header file. */
 #undef HAVE_NDBM_H
 
@@ -395,9 +392,6 @@
 
 /* Define to 1 if you have the `rename' function. */
 #undef HAVE_RENAME
-
-/* Define to 1 if you have the `select' function. */
-#undef HAVE_SELECT
 
 /* Define if the diff library should use setmode for binary files. */
 #undef HAVE_SETMODE
@@ -522,9 +516,6 @@
 
 /* Define if you have the 'unsigned long long' type. */
 #undef HAVE_UNSIGNED_LONG_LONG
-
-/* Define to 1 if you have the `usleep' function. */
-#undef HAVE_USLEEP
 
 /* Define to 1 if you have the <utime.h> header file. */
 #undef HAVE_UTIME_H
@@ -888,6 +879,9 @@
 
 /* Define to `int' if <sys/types.h> does not define. */
 #undef mode_t
+
+/* Define to rpl_nanosleep if the replacement function should be used. */
+#undef nanosleep
 
 /* Define to `int' if <sys/types.h> does not define. */
 #undef pid_t
