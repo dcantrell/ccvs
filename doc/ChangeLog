@@ -1,5 +1,8 @@
 1999-04-28  Jim Kingdon  <http://www.cyclic.com>
 
+	* cvsclient.texi (Requests): Say what goes in the "watches" field
+	of the "Notify" request.
+
 	* cvs.texinfo (Common options): -r is for branches too.
 
 	* cvs.texinfo (Error messages): Add "no such tag" message.
