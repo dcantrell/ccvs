@@ -1,3 +1,10 @@
+Sun Apr 13 18:07:50 1997  Ian Lance Taylor  <ian@cygnus.com>
+
+	* update.c (patch_file): Checkout directly to file2, rather than
+	to finfo->file followed by rename.  Remove check for whether
+	result of checkout is readable; that was for an old, obsolete,
+	form of death support.
+
 Sun Apr 13 13:16:40 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* checkout.c (build_one_dir): New function.
