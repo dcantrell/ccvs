@@ -1,5 +1,12 @@
 2002-09-24  Derek Price  <derek@ximbiot.com>
 
+	* configure.in (enable-force-editor): New option.
+
+	* configure: Regenerated.
+	* config.h.in: Ditto.
+
+2002-09-24  Derek Price  <derek@ximbiot.com>
+
 	* acinclude.m4 (ACX_WITH_GSAPI): Use AC_MSG_CHECKING & AC_MSG_RESULT
 	instead of AS_MESSAGE for consistent appearance of the output even
 	though it makes the code look a little clunky.
