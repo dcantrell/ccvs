@@ -1,3 +1,9 @@
+2004-11-24  Derek Price  <derek@ximbiot.com>
+
+	* cvs.texinfo (Write proxies): Mention version limitations on primary
+	and secondary write proxies.
+	(Error messages): List secondary out of sync message.
+
 2004-11-17  Derek Price  <derek@ximbiot.com>
 
 	* getdate.texi: Update from GNULIB.
