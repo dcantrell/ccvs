@@ -1,5 +1,10 @@
 Thu Jul 25 12:06:45 1996  Ian Lance Taylor  <ian@cygnus.com>
 
+	* update.c (join_file): If merging a branch, and the branch
+	revision does not exist, just return without doing anything.
+	* sanity.sh (join): Add cases file7 and file8 to test above
+	patch.
+
 	* server.c (cvsencrypt): Rename from encrypt, to avoid conflict
 	with NetBSD unistd.h.  Rename all uses.
 

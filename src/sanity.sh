@@ -2336,6 +2336,10 @@ rev 2 of file 2
 	  #      Nothing should happen.
 	  #   6) File removed between T1 and T2, also removed on main line.
 	  #      Nothing should happen.
+	  #   7) File added on main line, not added between T1 and T2.
+	  #      Nothing should happen.
+	  #   8) File removed on main line, not modified between T1 and T2.
+	  #      Nothing should happen.
 
 	  # We also check merging changes from a branch into the main
 	  # line.  Here are the interesting cases:
@@ -2350,6 +2354,10 @@ rev 2 of file 2
 	  #   5) File removed on branch, was never on main line.
 	  #      Nothing should happen.
 	  #   6) File removed on branch, also removed on main line.
+	  #      Nothing should happen.
+	  #   7) File added on main line, not added on branch.
+	  #      Nothing should happen.
+	  #   8) File removed on main line, not modified on branch.
 	  #      Nothing should happen.
 
 	  # In the tests below, fileN represents case N in the above
@@ -2366,10 +2374,12 @@ rev 2 of file 2
 	  echo 'first revision of file3' > file3
 	  echo 'first revision of file4' > file4
 	  echo 'first revision of file6' > file6
-	  dotest join-2 "${testcvs} add file3 file4 file6" \
+	  echo 'first revision of file8' > file8
+	  dotest join-2 "${testcvs} add file3 file4 file6 file8" \
 "${PROG}"' [a-z]*: scheduling file `file3'\'' for addition
 '"${PROG}"' [a-z]*: scheduling file `file4'\'' for addition
 '"${PROG}"' [a-z]*: scheduling file `file6'\'' for addition
+'"${PROG}"' [a-z]*: scheduling file `file8'\'' for addition
 '"${PROG}"' [a-z]*: use '\''cvs commit'\'' to add these files permanently'
 
 	  dotest join-3 "${testcvs} -q commit -m add" \
@@ -2390,24 +2400,34 @@ done
 Checking in file6;
 /tmp/cvs-sanity/cvsroot/first-dir/file6,v  <--  file6
 initial revision: 1\.1
+done
+RCS file: /tmp/cvs-sanity/cvsroot/first-dir/file8,v
+done
+Checking in file8;
+/tmp/cvs-sanity/cvsroot/first-dir/file8,v  <--  file8
+initial revision: 1\.1
 done'
 
 	  # Make a branch.
 	  dotest join-4 "${testcvs} -q tag -b branch ." \
 'T file3
 T file4
-T file6'
+T file6
+T file8'
 
-	  # Add file2, modify file4, and remove file6.
+	  # Add file2 and file7, modify file4, and remove file6 and file8.
 	  echo 'first revision of file2' > file2
 	  echo 'second revision of file4' > file4
-	  rm file6
-	  dotest join-5 "${testcvs} add file2" \
+	  echo 'first revision of file7' > file7
+	  rm file6 file8
+	  dotest join-5 "${testcvs} add file2 file7" \
 "${PROG}"' [a-z]*: scheduling file `file2'\'' for addition
-'"${PROG}"' [a-z]*: use '\''cvs commit'\'' to add this file permanently'
-	  dotest join-6 "${testcvs} rm file6" \
+'"${PROG}"' [a-z]*: scheduling file `file7'\'' for addition
+'"${PROG}"' [a-z]*: use '\''cvs commit'\'' to add these files permanently'
+	  dotest join-6 "${testcvs} rm file6 file8" \
 "${PROG}"' [a-z]*: scheduling `file6'\'' for removal
-'"${PROG}"' [a-z]*: use '\''cvs commit'\'' to remove this file permanently'
+'"${PROG}"' [a-z]*: scheduling `file8'\'' for removal
+'"${PROG}"' [a-z]*: use '\''cvs commit'\'' to remove these files permanently'
 	  dotest join-7 "${testcvs} -q ci -mx ." \
 'RCS file: /tmp/cvs-sanity/cvsroot/first-dir/file2,v
 done
@@ -2422,6 +2442,16 @@ done
 Removing file6;
 /tmp/cvs-sanity/cvsroot/first-dir/file6,v  <--  file6
 new revision: delete; previous revision: 1\.1
+done
+RCS file: /tmp/cvs-sanity/cvsroot/first-dir/file7,v
+done
+Checking in file7;
+/tmp/cvs-sanity/cvsroot/first-dir/file7,v  <--  file7
+initial revision: 1\.1
+done
+Removing file8;
+/tmp/cvs-sanity/cvsroot/first-dir/file8,v  <--  file8
+new revision: delete; previous revision: 1\.1
 done'
 
 	  # Check out the branch.
@@ -2431,7 +2461,8 @@ done'
 	  dotest join-8 "${testcvs} -q co -r branch first-dir" \
 'U first-dir/file3
 U first-dir/file4
-U first-dir/file6'
+U first-dir/file6
+U first-dir/file8'
 
 	  cd first-dir
 
@@ -2469,7 +2500,8 @@ done'
 'T file3
 T file4
 T file5
-T file6'
+T file6
+T file8'
 
 	  # Add file1 and file2, and remove the other files.
 	  echo 'first branch revision of file1' > file1
@@ -2516,7 +2548,8 @@ done'
 	  # Tag the current revisions on the branch.
 	  dotest join-15 "${testcvs} -q tag T2 ." \
 'T file1
-T file2'
+T file2
+T file8'
 
 	  # Do a checkout with a merge.
 	  cd ../..
@@ -2529,7 +2562,8 @@ U first-dir/file2
 U first-dir/file3
 '"${PROG}"' [a-z]*: scheduling first-dir/file3 for removal
 U first-dir/file4
-'"${PROG}"' [a-z]*: scheduling first-dir/file4 for removal'
+'"${PROG}"' [a-z]*: scheduling first-dir/file4 for removal
+U first-dir/file7'
 
 	  # Verify that the right changes have been scheduled.
 	  cd first-dir
@@ -2577,7 +2611,8 @@ Merging differences between 1\.1 and 1\.1\.2\.1 into file2
 U first-dir/file3
 '"${PROG}"' [a-z]*: scheduling first-dir/file3 for removal
 U first-dir/file4
-'"${PROG}"' [a-z]*: file first-dir/file4 has been modified, but has been removed in revision branch'
+'"${PROG}"' [a-z]*: file first-dir/file4 has been modified, but has been removed in revision branch
+U first-dir/file7'
 
 	  # Verify that the right changes have been scheduled.
 	  # The M file2 line is a bug; see above join-20.
@@ -2593,7 +2628,8 @@ R file3'
 	  dotest join-22 "${testcvs} -q co first-dir" \
 'U first-dir/file2
 U first-dir/file3
-U first-dir/file4'
+U first-dir/file4
+U first-dir/file7'
 
 	  # Modify file4 locally, and do an update with a merge from a
 	  # single revision.
