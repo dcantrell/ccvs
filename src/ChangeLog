@@ -1,5 +1,7 @@
 Sun Nov 24 11:30:55 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* sanity.sh: Clarify a few items in the todo list.
+
 	* log.c (log_parse_date): Use the "end" of the epoch not "next
 	week" as the time which means "no end time".
 	* sanity.sh (rcs): New test, tests dates and importing RCS files.

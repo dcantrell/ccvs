@@ -5192,15 +5192,16 @@ echo "OK, all tests completed."
 # * use "test" not "[" and see if all test's support `-z'
 # * Test `cvs admin'.
 # * Test `cvs update -d foo' (where foo does not exist).
-# * Test `cvs update foo bar' (where foo and bar are both from the same
-#   repository).  Suppose one is a branch--make sure that both directories
-#   get updated with the respective correct thing.
+# * Test `cvs update foo bar' (where foo and bar are both from the
+#   same directory in the repository).  Suppose one is a branch--make
+#   sure that both directories get updated with the respective correct
+#   thing.
 # * `cvs update ../foo'.  Also ../../foo ./../foo foo/../../bar /foo/bar
 #   foo/.././../bar foo/../bar etc.
 # * Test all flags in modules file.
 #   Test that ciprog gets run both on checkin in that directory, or a
 #     higher-level checkin which recurses into it.
-# * Test that $ followed by "Header" followed by $ gets expanded on checkin.
+# * More tests of keyword expansion.
 # * Test operations on a directory that contains other directories but has
 #   no files of its own.
 # * -t global option
@@ -5212,6 +5213,7 @@ echo "OK, all tests completed."
 #   gives an appropriate error (e.g.
 #     Cannot access /tmp/cvs-sanity/non-existent/CVSROOT
 #     No such file or directory).
+#   (like basica-9, but for remote).
 # * Test ability to send notifications in response to watches.  (currently
 #   hard to test because CVS doesn't send notifications if username is the
 #   same).
