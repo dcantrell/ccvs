@@ -1576,7 +1576,7 @@ commit_dirleaveproc (callerdat, dir, err, update_dir, entries)
        this being a confusing feature!  */
     if (err == 0 && write_dirtag != NULL)
     {
-	char *repos = Name_Repository (dir, update_dir);
+	char *repos = Name_Repository (NULL, update_dir);
 	WriteTag (NULL, write_dirtag, NULL, write_dirnonbranch,
 		  update_dir, repos);
 	free (repos);

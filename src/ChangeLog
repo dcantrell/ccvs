@@ -1,5 +1,10 @@
 2001-07-10  Larry Jones  <larry.jones@sdrc.com>
 
+	* commit.c (commit_dirleaveproc): We're still in the directory when
+	this is called, so the first argument to Name_Repository needs to
+	be NULL, not dir.
+	* sanity.sh (rmadd): New tests for above.
+
 	* commit.c (commit): Reword error messages for committing as root.
 
 2001-07-08  Larry Jones  <larry.jones@sdrc.com>

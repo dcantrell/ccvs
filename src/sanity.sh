@@ -4844,6 +4844,69 @@ File: file5            	Status: Up-to-date
    Sticky Date:		(none)
    Sticky Options:	(none)"
 
+	  # now try forced revision with recursion
+	  mkdir sub
+	  dotest rmadd-26 "${testcvs} -q add sub" \
+"Directory ${CVSROOT_DIRNAME}/first-dir/sub added to the repository"
+	  echo hello >sub/subfile
+	  dotest rmadd-27 "${testcvs} -q add sub/subfile" \
+"${PROG} [a-z]*: use .cvs commit. to add this file permanently"
+
+	  dotest rmadd-28 "${testcvs} -q ci -m. sub" \
+"RCS file: ${CVSROOT_DIRNAME}/first-dir/sub/subfile,v
+done
+Checking in sub/subfile;
+${CVSROOT_DIRNAME}/first-dir/sub/subfile,v  <--  subfile
+initial revision: 1\.1
+done"
+
+	  # lose the branch
+	  dotest rmadd-29 "${testcvs} -q up -A" \
+"${PROG} [a-z]*: file3 is no longer in the repository
+${PROG} [a-z]*: file4 is no longer in the repository"
+
+	  # -f disables recursion
+	  dotest rmadd-30 "${testcvs} -q ci -f -r9 -m." \
+"Checking in file1;
+${CVSROOT_DIRNAME}/first-dir/file1,v  <--  file1
+new revision: 9\.1; previous revision: 7\.1
+done
+Checking in file2;
+${CVSROOT_DIRNAME}/first-dir/file2,v  <--  file2
+new revision: 9\.1; previous revision: 7\.1
+done
+Checking in file5;
+${CVSROOT_DIRNAME}/first-dir/file5,v  <--  file5
+new revision: 9\.1; previous revision: 8\.4
+done"
+
+	  # add -R to force recursion
+	  dotest rmadd-31 "${testcvs} -q ci -f -r9 -R -m." \
+"Checking in file1;
+${CVSROOT_DIRNAME}/first-dir/file1,v  <--  file1
+new revision: 9\.2; previous revision: 9\.1
+done
+Checking in file2;
+${CVSROOT_DIRNAME}/first-dir/file2,v  <--  file2
+new revision: 9\.2; previous revision: 9\.1
+done
+Checking in file5;
+${CVSROOT_DIRNAME}/first-dir/file5,v  <--  file5
+new revision: 9\.2; previous revision: 9\.1
+done
+Checking in sub/subfile;
+${CVSROOT_DIRNAME}/first-dir/sub/subfile,v  <--  subfile
+new revision: 9\.1; previous revision: 1\.1
+done"
+
+	  if $remote; then
+	    # as noted above, remote doesn't set a sticky tag
+	    :
+	  else
+	    dotest rmadd-32 "cat CVS/Tag" "T9"
+	    dotest rmadd-33 "cat sub/CVS/Tag" "T9"
+	  fi
+
 	  cd ../..
 	  rm -r 1
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
