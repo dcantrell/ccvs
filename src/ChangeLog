@@ -1,5 +1,11 @@
 Thu Feb 29 08:39:03 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* client.c (start_server): Revert changes which claimed to fall
+	back to a different way of connecting.  Add comments explaining
+	why.  (I don't think the changes did what they claimed, anyway).
+	Use indentation rather than comments to line up #if, #else, and
+	#endif.
+
 	* patch.c (patch, patch_fileproc): Revert change to add optional
 	arguments to -c and -u.  Optional arguments are evil and in
 	violation of the POSIX argument syntax guidelines.  The correct
