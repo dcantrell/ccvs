@@ -91,7 +91,9 @@ if test "$ac_cv_func_fnmatch_works" = no; then
 fi
 
 # Try to find connect and gethostbyname.
-AC_SEARCH_LIBS(connect, xnet socket inet, AC_DEFINE(HAVE_CONNECT))
+AC_CHECK_LIB(nsl, main,
+  AC_SEARCH_LIBS(connect, xnet socket inet, AC_DEFINE(HAVE_CONNECT),, -lnsl),
+  AC_SEARCH_LIBS(connect, xnet socket inet, AC_DEFINE(HAVE_CONNECT)))
 AC_SEARCH_LIBS(gethostbyname, netinet nsl)
 
 dnl
