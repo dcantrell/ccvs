@@ -747,7 +747,9 @@ xreadlink (link)
     const char *link;
 {
     char *file = NULL;
-    int buflen = BUFSIZ;
+    char *tfile;
+    int buflen = 128;
+    int link_name_len;
 
     if (!islink (link))
 	return NULL;
@@ -758,18 +760,21 @@ xreadlink (link)
     do
     {
 	file = xrealloc (file, buflen);
-	errno = 0;
-	readlink (link, file, buflen);
+	link_name_len = readlink (link, file, buflen - 1);
 	buflen *= 2;
     }
-    while (errno == ENAMETOOLONG);
+    while (link_name_len < 0 && errno == ENAMETOOLONG);
 
-    if (errno)
+    if (link_name_len < 0)
 	error (1, errno, "cannot readlink %s", link);
 
-    return file;
-}
+    file[link_name_len] = '\0';
 
+    tfile = xstrdup (file);
+    free (file);
+
+    return tfile;
+}
 
 
 /* Return a pointer into PATH's last component.  */
