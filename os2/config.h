@@ -304,7 +304,7 @@ extern pid_t getpid (void);
 #endif
 
 /* We definitely have prototypes.  */
-#define USE_PROTOTYPES 1
+#define PROTOTYPES 1
 
 /* Under OS/2, filenames are case-insensitive, and both / and \
    are path component separators.  */

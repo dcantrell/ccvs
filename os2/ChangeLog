@@ -1,3 +1,9 @@
+2002-05-28  Derek Price  <derek@ximbiot.com>
+
+	* config.h: Use standard PROTOTYPES symbol instead of non-standard
+	USE_PROTOTYPES.
+	(Patch from Alexey Mahotkin <alexm@hsys.msk.ru>.)
+
 2002-03-21  Derek Price  <derek@ximbiot.com>
 
 	* Makefile.in: Remove unecessary dependence on $(srcdir) to
