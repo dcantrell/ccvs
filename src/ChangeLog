@@ -1,3 +1,12 @@
+2000-10-24  Jim Meyering  <meyering@lucent.com>
+
+	Fix a bug, introduced with my fix of 2000-07-10, whereby -kk would
+	sometimes be ignored for some of the files involved in an update.
+
+	* update.c (join_file): Restore the original value of `options'
+	right after calling checkout_file.
+	* sanity.sh (join-admin-2): New test for this.
+
 2000-10-23  Derek Price  <derek.price@openavenue.com>
             James Youngman  <jay@gnu.org>
 
@@ -5,7 +14,7 @@
 	<jay@gnu.org> for the bug report and patch.
 
 2000-10-20  Jim Kingdon  <http://sourceforge.net/users/kingdon/>
-	
+
 	* server.c (switch_to_user): Set CVS_USER.  Patch from Sudish
 	Joseph and popularized by dozens (e.g. mozilla.org, also others).
 
