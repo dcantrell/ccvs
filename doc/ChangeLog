@@ -1,3 +1,8 @@
+1999-06-01  Jim Kingdon  <http://www.cyclic.com>
+
+	* cvsclient.texi (Requests): For the import command, the
+	repository given to the Directory requests is ignored.
+
 1999-05-27  Jim Kingdon  <http://www.cyclic.com>
 
 	* cvsclient.texi (Requests): Clarify that Modified, Is-modified,

@@ -1128,7 +1128,9 @@ Response expected: yes.  Actually do a @code{cvs import} command.  This
 uses any previous @code{Argument}, @code{Directory}, @code{Entry}, or
 @code{Modified} requests, if they have been sent.  The
 last @code{Directory} sent specifies the working directory at the time
-of the operation.  The files to be imported are sent in @code{Modified}
+of the operation - unlike most commands, the repository field of each
+@code{Directory} request is ignored (it merely must point somewhere
+within the root).  The files to be imported are sent in @code{Modified}
 requests (files which the client knows should be ignored are not sent;
 the server must still process the CVSROOT/cvsignore file unless -I ! is
 sent).  A log message must have been specified with a @code{-m}
