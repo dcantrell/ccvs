@@ -604,6 +604,7 @@ LINK32_OBJS= \
 SOURCE=.\src\mkmodules.c
 DEP_CPP_MKMOD=\
 	".\src\cvs.h"\
+	".\lib\PROTO.h"\
 	".\lib\savecwd.h"\
 	".\lib\getline.h"\
 	".\windows-NT\config.h"\
@@ -642,6 +643,7 @@ NODEP_CPP_MKMOD=\
 SOURCE=.\src\subr.c
 DEP_CPP_SUBR_=\
 	".\src\cvs.h"\
+	".\lib\PROTO.h"\
 	".\lib\getline.h"\
 	".\windows-NT\config.h"\
 	".\lib\fnmatch.h"\
@@ -679,6 +681,7 @@ NODEP_CPP_SUBR_=\
 SOURCE=.\src\admin.c
 DEP_CPP_ADMIN=\
 	".\src\cvs.h"\
+	".\lib\PROTO.h"\
 	".\windows-NT\config.h"\
 	".\lib\fnmatch.h"\
 	".\windows-NT\pwd.h"\
@@ -715,6 +718,7 @@ NODEP_CPP_ADMIN=\
 SOURCE=.\src\server.c
 DEP_CPP_SERVE=\
 	".\src\cvs.h"\
+	".\lib\PROTO.h"\
 	".\src\watch.h"\
 	".\src\edit.h"\
 	".\src\fileattr.h"\
@@ -767,6 +771,7 @@ SOURCE=.\lib\fnmatch.h.in
 SOURCE=.\src\diff.c
 DEP_CPP_DIFF_=\
 	".\src\cvs.h"\
+	".\lib\PROTO.h"\
 	".\windows-NT\config.h"\
 	".\lib\fnmatch.h"\
 	".\windows-NT\pwd.h"\
@@ -826,6 +831,7 @@ SOURCE=.\src\client.c
 DEP_CPP_CLIEN=\
 	".\windows-NT\config.h"\
 	".\src\cvs.h"\
+	".\lib\PROTO.h"\
 	".\lib\getline.h"\
 	".\src\edit.h"\
 	".\src\buffer.h"\
@@ -865,6 +871,7 @@ NODEP_CPP_CLIEN=\
 SOURCE=.\src\checkout.c
 DEP_CPP_CHECK=\
 	".\src\cvs.h"\
+	".\lib\PROTO.h"\
 	".\windows-NT\config.h"\
 	".\lib\fnmatch.h"\
 	".\windows-NT\pwd.h"\
@@ -901,6 +908,7 @@ NODEP_CPP_CHECK=\
 SOURCE=.\src\no_diff.c
 DEP_CPP_NO_DI=\
 	".\src\cvs.h"\
+	".\lib\PROTO.h"\
 	".\windows-NT\config.h"\
 	".\lib\fnmatch.h"\
 	".\windows-NT\pwd.h"\
@@ -938,6 +946,7 @@ NODEP_CPP_NO_DI=\
 SOURCE=.\src\entries.c
 DEP_CPP_ENTRI=\
 	".\src\cvs.h"\
+	".\lib\PROTO.h"\
 	".\lib\getline.h"\
 	".\windows-NT\config.h"\
 	".\lib\fnmatch.h"\
@@ -975,6 +984,7 @@ NODEP_CPP_ENTRI=\
 SOURCE=.\src\tag.c
 DEP_CPP_TAG_C=\
 	".\src\cvs.h"\
+	".\lib\PROTO.h"\
 	".\lib\savecwd.h"\
 	".\windows-NT\config.h"\
 	".\lib\fnmatch.h"\
@@ -1012,6 +1022,7 @@ NODEP_CPP_TAG_C=\
 SOURCE=.\src\status.c
 DEP_CPP_STATU=\
 	".\src\cvs.h"\
+	".\lib\PROTO.h"\
 	".\windows-NT\config.h"\
 	".\lib\fnmatch.h"\
 	".\windows-NT\pwd.h"\
@@ -1048,6 +1059,7 @@ NODEP_CPP_STATU=\
 SOURCE=.\src\root.c
 DEP_CPP_ROOT_=\
 	".\src\cvs.h"\
+	".\lib\PROTO.h"\
 	".\lib\getline.h"\
 	".\windows-NT\config.h"\
 	".\lib\fnmatch.h"\
@@ -1085,6 +1097,7 @@ NODEP_CPP_ROOT_=\
 SOURCE=.\src\myndbm.c
 DEP_CPP_MYNDB=\
 	".\src\cvs.h"\
+	".\lib\PROTO.h"\
 	".\lib\getline.h"\
 	".\windows-NT\config.h"\
 	".\lib\fnmatch.h"\
@@ -1122,6 +1135,7 @@ NODEP_CPP_MYNDB=\
 SOURCE=.\src\hash.c
 DEP_CPP_HASH_=\
 	".\src\cvs.h"\
+	".\lib\PROTO.h"\
 	".\windows-NT\config.h"\
 	".\lib\fnmatch.h"\
 	".\windows-NT\pwd.h"\
@@ -1158,6 +1172,7 @@ NODEP_CPP_HASH_=\
 SOURCE=.\src\repos.c
 DEP_CPP_REPOS=\
 	".\src\cvs.h"\
+	".\lib\PROTO.h"\
 	".\lib\getline.h"\
 	".\windows-NT\config.h"\
 	".\lib\fnmatch.h"\
@@ -1195,6 +1210,7 @@ NODEP_CPP_REPOS=\
 SOURCE=.\src\parseinfo.c
 DEP_CPP_PARSE=\
 	".\src\cvs.h"\
+	".\lib\PROTO.h"\
 	".\lib\getline.h"\
 	".\windows-NT\config.h"\
 	".\lib\fnmatch.h"\
@@ -1232,6 +1248,7 @@ NODEP_CPP_PARSE=\
 SOURCE=.\src\vers_ts.c
 DEP_CPP_VERS_=\
 	".\src\cvs.h"\
+	".\lib\PROTO.h"\
 	".\windows-NT\config.h"\
 	".\lib\fnmatch.h"\
 	".\windows-NT\pwd.h"\
@@ -1268,6 +1285,7 @@ NODEP_CPP_VERS_=\
 SOURCE=.\src\checkin.c
 DEP_CPP_CHECKI=\
 	".\src\cvs.h"\
+	".\lib\PROTO.h"\
 	".\src\fileattr.h"\
 	".\src\edit.h"\
 	".\windows-NT\config.h"\
@@ -1306,6 +1324,7 @@ NODEP_CPP_CHECKI=\
 SOURCE=.\src\commit.c
 DEP_CPP_COMMI=\
 	".\src\cvs.h"\
+	".\lib\PROTO.h"\
 	".\lib\getline.h"\
 	".\src\edit.h"\
 	".\src\fileattr.h"\
@@ -1346,6 +1365,7 @@ NODEP_CPP_COMMI=\
 SOURCE=.\src\version.c
 DEP_CPP_VERSI=\
 	".\src\cvs.h"\
+	".\lib\PROTO.h"\
 	".\windows-NT\config.h"\
 	".\lib\fnmatch.h"\
 	".\windows-NT\pwd.h"\
@@ -1404,6 +1424,7 @@ INTDIR_SRC=$(INTDIR)/1
 SOURCE=.\src\cvsrc.c
 DEP_CPP_CVSRC=\
 	".\src\cvs.h"\
+	".\lib\PROTO.h"\
 	".\lib\getline.h"\
 	".\windows-NT\config.h"\
 	".\lib\fnmatch.h"\
@@ -1441,6 +1462,7 @@ NODEP_CPP_CVSRC=\
 SOURCE=.\src\remove.c
 DEP_CPP_REMOV=\
 	".\src\cvs.h"\
+	".\lib\PROTO.h"\
 	".\windows-NT\config.h"\
 	".\lib\fnmatch.h"\
 	".\windows-NT\pwd.h"\
@@ -1477,6 +1499,7 @@ NODEP_CPP_REMOV=\
 SOURCE=.\src\update.c
 DEP_CPP_UPDAT=\
 	".\src\cvs.h"\
+	".\lib\PROTO.h"\
 	".\lib\savecwd.h"\
 	".\lib\md5.h"\
 	".\src\watch.h"\
@@ -1522,6 +1545,7 @@ NODEP_CPP_UPDAT=\
 SOURCE=.\src\logmsg.c
 DEP_CPP_LOGMS=\
 	".\src\cvs.h"\
+	".\lib\PROTO.h"\
 	".\lib\getline.h"\
 	".\windows-NT\config.h"\
 	".\lib\fnmatch.h"\
@@ -1559,6 +1583,7 @@ NODEP_CPP_LOGMS=\
 SOURCE=.\src\classify.c
 DEP_CPP_CLASS=\
 	".\src\cvs.h"\
+	".\lib\PROTO.h"\
 	".\windows-NT\config.h"\
 	".\lib\fnmatch.h"\
 	".\windows-NT\pwd.h"\
@@ -1595,6 +1620,7 @@ NODEP_CPP_CLASS=\
 SOURCE=.\src\history.c
 DEP_CPP_HISTO=\
 	".\src\cvs.h"\
+	".\lib\PROTO.h"\
 	".\lib\savecwd.h"\
 	".\windows-NT\config.h"\
 	".\lib\fnmatch.h"\
@@ -1632,6 +1658,7 @@ NODEP_CPP_HISTO=\
 SOURCE=.\src\add.c
 DEP_CPP_ADD_C=\
 	".\src\cvs.h"\
+	".\lib\PROTO.h"\
 	".\lib\savecwd.h"\
 	".\src\fileattr.h"\
 	".\windows-NT\config.h"\
@@ -1670,6 +1697,7 @@ NODEP_CPP_ADD_C=\
 SOURCE=.\src\lock.c
 DEP_CPP_LOCK_=\
 	".\src\cvs.h"\
+	".\lib\PROTO.h"\
 	".\windows-NT\config.h"\
 	".\lib\fnmatch.h"\
 	".\windows-NT\pwd.h"\
@@ -1706,6 +1734,7 @@ NODEP_CPP_LOCK_=\
 SOURCE=.\src\recurse.c
 DEP_CPP_RECUR=\
 	".\src\cvs.h"\
+	".\lib\PROTO.h"\
 	".\lib\savecwd.h"\
 	".\src\fileattr.h"\
 	".\src\edit.h"\
@@ -1745,6 +1774,7 @@ NODEP_CPP_RECUR=\
 SOURCE=.\src\modules.c
 DEP_CPP_MODUL=\
 	".\src\cvs.h"\
+	".\lib\PROTO.h"\
 	".\lib\savecwd.h"\
 	".\windows-NT\config.h"\
 	".\lib\fnmatch.h"\
@@ -1782,6 +1812,7 @@ NODEP_CPP_MODUL=\
 SOURCE=.\src\find_names.c
 DEP_CPP_FIND_=\
 	".\src\cvs.h"\
+	".\lib\PROTO.h"\
 	".\windows-NT\config.h"\
 	".\lib\fnmatch.h"\
 	".\windows-NT\pwd.h"\
@@ -1818,6 +1849,7 @@ NODEP_CPP_FIND_=\
 SOURCE=.\src\rcs.c
 DEP_CPP_RCS_C=\
 	".\src\cvs.h"\
+	".\lib\PROTO.h"\
 	".\src\edit.h"\
 	".\src\hardlink.h"\
 	".\windows-NT\config.h"\
@@ -1856,6 +1888,7 @@ NODEP_CPP_RCS_C=\
 SOURCE=.\src\create_adm.c
 DEP_CPP_CREAT=\
 	".\src\cvs.h"\
+	".\lib\PROTO.h"\
 	".\windows-NT\config.h"\
 	".\lib\fnmatch.h"\
 	".\windows-NT\pwd.h"\
@@ -1892,6 +1925,7 @@ NODEP_CPP_CREAT=\
 SOURCE=.\src\main.c
 DEP_CPP_MAIN_=\
 	".\src\cvs.h"\
+	".\lib\PROTO.h"\
 	".\windows-NT\config.h"\
 	".\lib\fnmatch.h"\
 	".\windows-NT\pwd.h"\
@@ -1928,6 +1962,7 @@ NODEP_CPP_MAIN_=\
 SOURCE=.\src\patch.c
 DEP_CPP_PATCH=\
 	".\src\cvs.h"\
+	".\lib\PROTO.h"\
 	".\lib\getline.h"\
 	".\windows-NT\config.h"\
 	".\lib\fnmatch.h"\
@@ -1965,6 +2000,7 @@ NODEP_CPP_PATCH=\
 SOURCE=.\src\release.c
 DEP_CPP_RELEA=\
 	".\src\cvs.h"\
+	".\lib\PROTO.h"\
 	".\lib\savecwd.h"\
 	".\lib\getline.h"\
 	".\windows-NT\config.h"\
@@ -2003,6 +2039,7 @@ NODEP_CPP_RELEA=\
 SOURCE=.\src\rcscmds.c
 DEP_CPP_RCSCM=\
 	".\src\cvs.h"\
+	".\lib\PROTO.h"\
 	".\windows-NT\config.h"\
 	".\lib\fnmatch.h"\
 	".\windows-NT\pwd.h"\
@@ -2057,6 +2094,7 @@ NODEP_CPP_RCSCM=\
 SOURCE=.\src\import.c
 DEP_CPP_IMPOR=\
 	".\src\cvs.h"\
+	".\lib\PROTO.h"\
 	".\lib\savecwd.h"\
 	".\windows-NT\config.h"\
 	".\lib\fnmatch.h"\
@@ -2094,6 +2132,7 @@ NODEP_CPP_IMPOR=\
 SOURCE=.\src\ignore.c
 DEP_CPP_IGNOR=\
 	".\src\cvs.h"\
+	".\lib\PROTO.h"\
 	".\lib\getline.h"\
 	".\windows-NT\config.h"\
 	".\lib\fnmatch.h"\
@@ -2131,6 +2170,7 @@ NODEP_CPP_IGNOR=\
 SOURCE=.\src\annotate.c
 DEP_CPP_ANNOTATE_C=\
 	".\src\cvs.h"\
+	".\lib\PROTO.h"\
 	".\windows-NT\config.h"\
 	".\lib\fnmatch.h"\
 	".\windows-NT\pwd.h"\
@@ -2167,6 +2207,7 @@ NODEP_CPP_ANNOTATE_C=\
 SOURCE=.\src\socket-client.c
 DEP_CPP_SOCKET_CLIENT_C=\
 	".\src\cvs.h"\
+	".\lib\PROTO.h"\
 	".\windows-NT\config.h"\
 	".\lib\fnmatch.h"\
 	".\windows-NT\pwd.h"\
@@ -2203,6 +2244,7 @@ NODEP_CPP_SOCKET_CLIENT_C=\
 SOURCE=.\src\rsh-client.c
 DEP_CPP_RSH_CLIENT_C=\
 	".\src\cvs.h"\
+	".\lib\PROTO.h"\
 	".\windows-NT\config.h"\
 	".\lib\fnmatch.h"\
 	".\windows-NT\pwd.h"\
@@ -2239,6 +2281,7 @@ NODEP_CPP_RSH_CLIENT_C=\
 SOURCE=.\src\log-buffer.c
 DEP_CPP_LOG_BUFFER_C=\
 	".\src\cvs.h"\
+	".\lib\PROTO.h"\
 	".\windows-NT\config.h"\
 	".\lib\fnmatch.h"\
 	".\windows-NT\pwd.h"\
@@ -2275,6 +2318,7 @@ NODEP_CPP_LOG_BUFFER_C=\
 SOURCE=.\src\log.c
 DEP_CPP_LOG_C=\
 	".\src\cvs.h"\
+	".\lib\PROTO.h"\
 	".\windows-NT\config.h"\
 	".\lib\fnmatch.h"\
 	".\windows-NT\pwd.h"\
@@ -2311,6 +2355,7 @@ NODEP_CPP_LOG_C=\
 SOURCE=.\src\wrapper.c
 DEP_CPP_WRAPP=\
 	".\src\cvs.h"\
+	".\lib\PROTO.h"\
 	".\lib\getline.h"\
 	".\windows-NT\config.h"\
 	".\lib\fnmatch.h"\
@@ -2348,6 +2393,7 @@ NODEP_CPP_WRAPP=\
 SOURCE=.\src\error.c
 DEP_CPP_ERROR=\
 	".\src\cvs.h"\
+	".\lib\PROTO.h"\
 	".\windows-NT\config.h"\
 	".\lib\fnmatch.h"\
 	".\windows-NT\pwd.h"\
@@ -2384,6 +2430,7 @@ NODEP_CPP_ERROR=\
 SOURCE=.\src\expand_path.c
 DEP_CPP_EXPAN=\
 	".\src\cvs.h"\
+	".\lib\PROTO.h"\
 	{$(INCLUDE)}"\sys\Types.h"\
 	".\windows-NT\config.h"\
 	".\lib\fnmatch.h"\
@@ -2420,6 +2467,7 @@ NODEP_CPP_EXPAN=\
 SOURCE=.\src\edit.c
 DEP_CPP_EDIT_=\
 	".\src\cvs.h"\
+	".\lib\PROTO.h"\
 	".\lib\getline.h"\
 	".\src\watch.h"\
 	".\src\edit.h"\
@@ -2460,6 +2508,7 @@ NODEP_CPP_EDIT_=\
 SOURCE=.\src\fileattr.c
 DEP_CPP_FILEA=\
 	".\src\cvs.h"\
+	".\lib\PROTO.h"\
 	".\lib\getline.h"\
 	".\src\fileattr.h"\
 	".\windows-NT\config.h"\
@@ -2498,6 +2547,7 @@ NODEP_CPP_FILEA=\
 SOURCE=.\src\watch.c
 DEP_CPP_WATCH=\
 	".\src\cvs.h"\
+	".\lib\PROTO.h"\
 	".\src\edit.h"\
 	".\src\fileattr.h"\
 	".\src\watch.h"\
@@ -2537,6 +2587,7 @@ NODEP_CPP_WATCH=\
 SOURCE=.\src\login.c
 DEP_CPP_LOGIN=\
 	".\src\cvs.h"\
+	".\lib\PROTO.h"\
 	".\lib\getline.h"\
 	".\windows-NT\config.h"\
 	".\lib\fnmatch.h"\
@@ -2574,6 +2625,7 @@ NODEP_CPP_LOGIN=\
 SOURCE=.\src\scramble.c
 DEP_CPP_SCRAM=\
 	".\src\cvs.h"\
+	".\lib\PROTO.h"\
 	".\windows-NT\config.h"\
 	".\lib\fnmatch.h"\
 	".\windows-NT\pwd.h"\
@@ -2610,6 +2662,7 @@ NODEP_CPP_SCRAM=\
 SOURCE=.\src\buffer.c
 DEP_CPP_BUFFE=\
 	".\src\cvs.h"\
+	".\lib\PROTO.h"\
 	".\src\buffer.h"\
 	".\windows-NT\config.h"\
 	".\lib\fnmatch.h"\
@@ -2647,6 +2700,7 @@ NODEP_CPP_BUFFE=\
 SOURCE=.\src\zlib.c
 DEP_CPP_ZLIB_=\
 	".\src\cvs.h"\
+	".\lib\PROTO.h"\
 	".\src\buffer.h"\
 	".\zlib\zlib.h"\
 	".\windows-NT\config.h"\
@@ -2926,6 +2980,7 @@ DEP_CPP_SAVEC=\
 SOURCE=".\windows-NT\mkdir.c"
 DEP_CPP_MKDIR=\
 	".\src\cvs.h"\
+	".\lib\PROTO.h"\
 	".\windows-NT\config.h"\
 	".\lib\fnmatch.h"\
 	".\windows-NT\pwd.h"\
@@ -2962,6 +3017,7 @@ NODEP_CPP_MKDIR=\
 SOURCE=".\windows-NT\run.c"
 DEP_CPP_RUN_C=\
 	".\src\cvs.h"\
+	".\lib\PROTO.h"\
 	".\windows-NT\config.h"\
 	".\lib\fnmatch.h"\
 	".\windows-NT\pwd.h"\
@@ -3011,6 +3067,7 @@ DEP_CPP_PWD_C=\
 SOURCE=".\windows-NT\filesubr.c"
 DEP_CPP_FILES=\
 	".\src\cvs.h"\
+	".\lib\PROTO.h"\
 	".\windows-NT\config.h"\
 	".\lib\fnmatch.h"\
 	".\windows-NT\pwd.h"\
@@ -3048,6 +3105,7 @@ SOURCE=".\windows-NT\win32.c"
 DEP_CPP_WIN32=\
 	".\windows-NT\config.h"\
 	".\src\cvs.h"\
+	".\lib\PROTO.h"\
 	".\lib\fnmatch.h"\
 	".\windows-NT\pwd.h"\
 	".\lib\system.h"\
@@ -3121,6 +3179,7 @@ SOURCE=".\windows-NT\stripslash.c"
 SOURCE=".\windows-NT\rcmd.c"
 DEP_CPP_RCMD_=\
 	".\src\cvs.h"\
+	".\lib\PROTO.h"\
 	".\windows-NT\rcmd.h"\
 	{$(INCLUDE)}"\sys\Types.h"\
 	".\windows-NT\config.h"\
@@ -3158,6 +3217,7 @@ NODEP_CPP_RCMD_=\
 SOURCE=".\windows-NT\startserver.c"
 DEP_CPP_START=\
 	".\src\cvs.h"\
+	".\lib\PROTO.h"\
 	".\windows-NT\rcmd.h"\
 	".\windows-NT\config.h"\
 	".\lib\fnmatch.h"\
