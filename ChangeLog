@@ -1,3 +1,7 @@
+2003-12-18  Derek Price  <derek@ximbiot.com>
+
+	* NEWS: Note that pserver can no longer run as root.
+
 2003-12-12  Derek Price  <derek@ximbiot.com>
 
 	* cvs.spec.in (%post): Do the same for cvsclient.info.
