@@ -10943,12 +10943,16 @@ before the name of each directory to be excluded.
 For example, if the modules file contains:
 
 @example
-exmodule -a first-dir !first-dir/sdir
+exmodule -a !first-dir/sdir first-dir
 @end example
 
 then checking out the module @samp{exmodule} will check
 out everything in @samp{first-dir} except any files in
 the subdirectory @samp{first-dir/sdir}.
+@c Note that the "!first-dir/sdir" sometimes must be listed
+@c before "first-dir".  That seems like a probable bug, in which
+@c case perhaps it should be fixed (to allow either
+@c order) rather than documented.  See modules4 in testsuite.
 
 @node Module options
 @appendixsubsec Module options

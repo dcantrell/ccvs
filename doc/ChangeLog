@@ -1,3 +1,9 @@
+1998-06-23  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (Excluding directories): Fix order of
+	"!first-dir/sdir" and "first-dir" to match what CVS actually
+	accepts.  Reported by Tim McIntosh of sterling.com.
+
 1998-06-09  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (Using keywords): Rewrite to be less specific to
