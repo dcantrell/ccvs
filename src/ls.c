@@ -471,6 +471,7 @@ ls_dirleaveproc (void *callerdat, const char *dir, int err,
 		free (created_dir);
 		created_dir = NULL;
 	}
+	return err;
 }
 
 
