@@ -111,17 +111,17 @@ static const struct cmd
     { "history",  "hi",       "his",       history },
     { "import",   "im",       "imp",       import },
     { "init",     NULL,       NULL,        init },
-#ifdef SERVER_SUPPORT
+#if defined (HAVE_KERBEROS) && defined (SERVER_SUPPORT)
     { "kserver",  NULL,       NULL,        server }, /* placeholder */
 #endif
     { "log",      "lo",       "rlog",      cvslog },
 #ifdef AUTH_CLIENT_SUPPORT
     { "login",    "logon",    "lgn",       login },
     { "logout",   NULL,       NULL,        logout },
-#ifdef SERVER_SUPPORT
+#endif /* AUTH_CLIENT_SUPPORT */
+#if (defined(AUTH_SERVER_SUPPORT) || defined (HAVE_GSSAPI)) && defined(SERVER_SUPPORT)
     { "pserver",  NULL,       NULL,        server }, /* placeholder */
 #endif
-#endif /* AUTH_CLIENT_SUPPORT */
     { "rdiff",    "patch",    "pa",        patch },
     { "release",  "re",       "rel",       release },
     { "remove",   "rm",       "delete",    cvsremove },
