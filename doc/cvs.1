@@ -1078,6 +1078,91 @@ files.  However, \fBcvs\fR has always required that the
 this option has never done anything useful.
 .SP
 .SP
+.SH "annotate"
+.SS "Show last revision where each line was changed."
+.IX "annotate (subcommand)"
+.SP
+.IP "\(bu" 2
+Synopsis: annotate [options] files\&...
+.IP "\(bu" 2
+Requires: repository.
+.IP "\(bu" 2
+Changes: nothing.
+.SP
+For each file in \fIfiles\fR, print the head revision
+of the trunk, together with information on the last
+modification for each line.  
+.SP
+.SH "annotate options"
+.SP
+These standard options are supported by \fBannotate\fR
+(see node `Common options\(aq in the CVS manual, for a complete description of
+them):
+.SP
+.IP "" 0
+\fB-l\fR
+.IP "" 2
+Local directory only, no recursion.
+.SP
+.IP "" 0
+\fB-R\fR
+.IP "" 2
+Process directories recursively.
+.SP
+.IP "" 0
+\fB-f\fR
+.IP "" 2
+Use head revision if tag/date not found.
+.SP
+.IP "" 0
+\fB-F\fR
+.IP "" 2
+Annotate binary files.
+.SP
+.IP "" 0
+\fB-r \fIrevision\fB\fR
+.IP "" 2
+Annotate file as of specified revision/tag.
+.SP
+.IP "" 0
+\fB-D \fIdate\fB\fR
+.IP "" 2
+Annotate file as of specified date.
+.SP
+.SH "annotate example"
+.SP
+For example:
+.SP
+.PD 0
+.SP
+.IP "" 2
+$ cvs annotate ssfile
+.IP "" 2
+Annotations for ssfile
+.IP "" 2
+***************
+.IP "" 2
+1.1          (mary     27-Mar-96): ssfile line 1
+.IP "" 2
+1.2          (joe      28-Mar-96): ssfile line 2
+
+.PD
+.IP "" 0
+.SP
+The file \fBssfile\fR currently contains two lines.
+The \fBssfile line 1\fR line was checked in by
+\fBmary\fR on March 27.  Then, on March 28, \fBjoe\fR
+added a line \fBssfile line 2\fR, without modifying
+the \fBssfile line 1\fR line.  This report doesn\(aqt
+tell you anything about lines which have been deleted
+or replaced; you need to use \fBcvs diff\fR for that
+(see node `diff\(aq in the CVS manual).
+.SP
+The options to \fBcvs annotate\fR are listed in
+see node `Invoking CVS\(aq in the CVS manual, and can be used to select the files
+and revisions to annotate.  The options are described
+in more detail there and in see node `Common options\(aq in the CVS manual.
+.SP
 .SH "checkout"
 .SS "Check out sources for editing"
 .IX "checkout (subcommand)"
