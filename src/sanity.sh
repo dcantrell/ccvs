@@ -2040,7 +2040,7 @@ Directory ${CVSROOT_DIRNAME}/first-dir/sdir added to the repository"
 	  # that I consider to be more correct, but local cvs prints the
 	  # "nothing known" message and noone has gotten around to fixing it.
 	  dotest_fail basica-notadded "${testcvs} -q ci ssfile" \
-"${CPROG} commit: use .${CPROG} add. to create an entry for ssfile
+"${CPROG} commit: use .${CPROG} add. to create an entry for \`ssfile'
 ${CPROG}"' \[commit aborted\]: correct above errors first!' \
 "${CPROG}"' commit: nothing known about `ssfile'\''
 '"${CPROG}"' \[commit aborted\]: correct above errors first!'
