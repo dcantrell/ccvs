@@ -5,6 +5,9 @@ Mon Oct 23 08:41:25 1995  Jim Meyering  (meyering@comco.com)
 	* logmsg.c (do_editor): Use getline instead of fgets.
 	(rcsinfo_proc): Likewise.
 
+	* logmsg.c (do_editor): Lose if fclose of temp file output
+	stream fails.
+
 Mon Oct 23 11:59:41 1995  Norbert Kiesel  <nk@col.sw-ley.de>
 
 	* cvs.h: add valloc declaration
