@@ -179,9 +179,8 @@ login (argc, argv)
     {
       /* This user/host has a password in the file already. */
 
-      /* todo: what about these charsets??? */
-      strtok (linebuf, " \n");
-      found_password = strtok (NULL, " \n");
+      strtok (linebuf, " ");
+      found_password = strtok (NULL, "\n");
       if (strcmp (found_password, typed_password))
         {
           /* typed_password and found_password don't match, so we'll
@@ -238,8 +237,7 @@ login (argc, argv)
           return 1;
         }
 
-      /* It's safer this way, and blank lines in the file are OK. */
-      fprintf (fp, "\n%s %s\n", CVSroot, typed_password);
+      fprintf (fp, "%s %s\n", CVSroot, typed_password);
       fclose (fp);
     }
 
