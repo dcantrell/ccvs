@@ -1,3 +1,10 @@
+Mon Dec 18 04:59:52 1995  Karl Fogel  (kfogel@floss.cyclic.com)
+
+        * tcpip.h (send, recv): don't define these to be anything else.
+
+        * porttcp.c (IbmSockSend, IbmSockRecv): make `Buffer' argument
+        char * instead of void *, to evade an over-eager compiler.
+
 Sun Dec 17 21:16:17 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
         * options.h (NO_SOCKET_TO_FD): define to 1.

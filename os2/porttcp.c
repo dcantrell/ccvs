@@ -126,7 +126,7 @@ const char *HostStrError(
 
 int IbmSockSend(
 	int			Socket,
-	const void	*Buffer,
+	char    	*Buffer,
 	int			Len,
 	int			Flags
 )
@@ -188,7 +188,7 @@ int IbmSockSend(
 
 int IbmSockRecv(
 	int		Socket,
-	void	*Buffer,
+	char	*Buffer,
 	int		Len,
 	int		Flags
 )

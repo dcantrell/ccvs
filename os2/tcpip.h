@@ -37,8 +37,8 @@
 #if defined( TCPIP_IBM )
 #	include	<types.h>
 #	if !defined( TCPIP_IBM_NOHIDE )
-#		define send		Use_SockSend
-#		define recv		Use_SockRecv
+/* #		define send		IbmSockSend
+   #		define recv		IbmSockRecv */
 #	endif
 #endif
 
@@ -70,8 +70,8 @@ const char
    *HostStrError( int HostErrno ),
    *SockStrError( int SockErrno );
 
-int IbmSockSend( int Socket, const void *Data, int Len, int Flags ),
-    IbmSockRecv( int Socket,       void *Data, int Len, int Flags );
+int IbmSockSend( int Socket, char *Data, int Len, int Flags ),
+    IbmSockRecv( int Socket, char *Data, int Len, int Flags );
 
 #if !defined( h_errno )
 extern int h_errno;    /* IBM forgot to declare this in current header files */
