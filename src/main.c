@@ -704,9 +704,13 @@ main (argc, argv)
 
 	    if (!client_active)
 	    {
-		char path[PATH_MAX];
+		char *path;
 		int save_errno;
 
+		path = xmalloc (strlen (CVSroot_directory)
+				+ sizeof (CVSROOTADM)
+				+ 20
+				+ sizeof (CVSROOTADM_HISTORY));
 		(void) sprintf (path, "%s/%s", CVSroot_directory, CVSROOTADM);
 		if (!isaccessible (path, R_OK | X_OK))
 		{
@@ -725,6 +729,7 @@ main (argc, argv)
 		    error (0, 0, "Sorry, you don't have read/write access to the history file");
 		    error (1, save_errno, "%s", path);
 		}
+		free (path);
 	    }
 
 #ifdef HAVE_PUTENV
@@ -747,15 +752,15 @@ main (argc, argv)
 	   and/or remote path, on the other hand I'm not sure whether
 	   it is worth the trouble.  */
 
-	CurDir = xmalloc (PATH_MAX);
 #ifdef SERVER_SUPPORT
 	if (strcmp (command_name, "server") == 0)
-	    strcpy (CurDir, "<remote>");
+	    CurDir = xstrdup ("<remote>");
 	else
 #endif
 	{
-            if (!getwd (CurDir))
-		error (1, 0, "cannot get working directory: %s", CurDir);
+	    CurDir = xgetwd ();
+            if (CurDir == NULL)
+		error (1, errno, "cannot get working directory");
 	}
 
 	if (Tmpdir == NULL || Tmpdir[0] == '\0')
