@@ -7904,6 +7904,7 @@ reference to @sc{cvs} commands, @pxref{Invoking CVS}).
 * history::                     Show status of files and users
 * import::                      Import sources into CVS, using vendor branches
 * log::                         Show log messages for files
+* ls & rls::                    List files in the repository
 * rdiff::                       'patch' format diffs between releases
 * release::                     Indicate that a directory is no longer in use
 * update::                      Bring work tree in sync with repository
@@ -8264,8 +8265,8 @@ further updates in the same directory will use the same date
 (for more information on sticky tags/dates, @pxref{Sticky tags}).
 
 @samp{-D} is available with the @code{annotate}, @code{checkout},
-@code{diff}, @code{export}, @code{history},
-@code{rdiff}, @code{rtag}, @code{tag}, and @code{update} commands.
+@code{diff}, @code{export}, @code{history}, @code{ls},
+@code{rdiff}, @code{rls}, @code{rtag}, @code{tag}, and @code{update} commands.
 (The @code{history} command uses this option in a
 slightly different way; @pxref{history options}).
 
@@ -10676,6 +10677,80 @@ selected by @samp{-b} and @samp{-r}.
 @appendixsubsec log examples
 
 Contributed examples are gratefully accepted.
+
+@c . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+@node ls & rls
+@appendixsec ls & rls
+@cindex ls (subcommand)
+@cindex rls (subcommand)
+
+@itemize @bullet
+@item
+ls [-e | -l] [-R] [-r revision] [-D date] [path@dots{}]
+@item
+Requires: repository for @code{rls}, repository & working directory for
+@code{ls}.
+@item
+Changes: nothing.
+@item
+Synonym: @code{dir} & @code{list} are synonyms for @code{ls} and @code{rdir}
+& @code{rlist} are synonyms for @code{rls}.
+@end itemize
+
+@menu
+* ls & rls options::         ls & rls options
+* rls examples:              rls examples
+@end menu
+
+@node ls & rls options
+@appendixsubsec ls & rls options
+
+These standard options are supported by @code{ls} & @code{rls}:
+
+@table @code
+@item -e
+Display in CVS/Entries format.  This format is meant to remain easily parsable
+by automation.
+
+@item -l
+Display all details.
+
+@item -R
+List recursively.
+
+@item -r @var{revision}
+Show files with revision or tag.
+
+@item -D @var{date}
+Show files from date.
+@end table
+
+@c . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+@node rls examples
+@appendixsubsec rls examples
+
+@example
+$ cvs rls
+cvs rls: Listing module: `.'
+CVSROOT
+first-dir
+@end example
+
+@example
+$ cvs rls CVSROOT
+cvs rls: Listing module: `CVSROOT'
+checkoutlist
+commitinfo
+config
+cvswrappers
+loginfo
+modules
+notify
+rcsinfo
+taginfo
+verifymsg
+
+@end example
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node rdiff
