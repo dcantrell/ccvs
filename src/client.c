@@ -3244,7 +3244,9 @@ get_responses_and_close ()
     return errs;
 }
 	
+#ifndef NO_EXT_METHOD
 static void start_rsh_server PROTO((int *, int *));
+#endif
 
 int
 supported_request (name)
