@@ -32,6 +32,17 @@ provide a "Option-read-write" request which sends -w, in addition to
 "Global_option -r" which sends -r.
 
 
+* Symbolic links to files will not work with or without LockDir.
+In the repository, you should avoid using symbolic links to files.
+
+
+* Symbolic links to directories will not work with LockDir. In the
+repository, you should avoid using symbolic links to directories if
+you intend to use LockDir as the correct directory will NOT be locked
+by cvs. Directory symlinks are not recommended, but should work
+as long as LockDir is not being used.
+
+
 * "make remotecheck" sometimes fails on test 187a3 with
     cvs server: in directory .:
     cvs [server aborted]: *PANIC* administration files missing
