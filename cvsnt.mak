@@ -91,7 +91,6 @@ CLEAN :
 	-@erase ".\WinRel\patch.obj"
 	-@erase ".\WinRel\classify.obj"
 	-@erase ".\WinRel\2\diff.obj"
-	-@erase ".\WinRel\getwd.obj"
 	-@erase ".\WinRel\history.obj"
 	-@erase ".\WinRel\add.obj"
 	-@erase ".\WinRel\update.obj"
@@ -222,7 +221,6 @@ LINK32_OBJS= \
 	"$(INTDIR)/patch.obj" \
 	"$(INTDIR)/classify.obj" \
 	".\WinRel\2\diff.obj" \
-	"$(INTDIR)/getwd.obj" \
 	"$(INTDIR)/history.obj" \
 	"$(INTDIR)/add.obj" \
 	"$(INTDIR)/update.obj" \
@@ -374,7 +372,6 @@ CLEAN :
 	-@erase ".\WinDebug\gzio.obj"
 	-@erase ".\WinDebug\patch.obj"
 	-@erase ".\WinDebug\rcs.obj"
-	-@erase ".\WinDebug\getwd.obj"
 	-@erase ".\WinDebug\history.obj"
 	-@erase ".\WinDebug\run.obj"
 	-@erase ".\WinDebug\mkdir.obj"
@@ -507,7 +504,6 @@ LINK32_OBJS= \
 	"$(INTDIR)/gzio.obj" \
 	"$(INTDIR)/patch.obj" \
 	"$(INTDIR)/rcs.obj" \
-	"$(INTDIR)/getwd.obj" \
 	"$(INTDIR)/history.obj" \
 	"$(INTDIR)/run.obj" \
 	"$(INTDIR)/mkdir.obj" \
@@ -2543,28 +2539,6 @@ SOURCE=.\src\ChangeLog
 ################################################################################
 # Begin Source File
 
-SOURCE=.\lib\getwd.c
-DEP_CPP_GETWD=\
-	".\windows-NT\config.h"\
-	".\lib\system.h"\
-	{$(INCLUDE)}"\sys\Types.h"\
-	{$(INCLUDE)}"\sys\Stat.h"\
-	{$(INCLUDE)}"\sys\Timeb.h"\
-	{$(INCLUDE)}"\sys\Utime.h"\
-	".\windows-NT\ndir.h"\
-	
-NODEP_CPP_GETWD=\
-	".\lib\tcpip.h"\
-	
-
-"$(INTDIR)\getwd.obj" : $(SOURCE) $(DEP_CPP_GETWD) "$(INTDIR)"
-   $(CPP) $(CPP_PROJ) $(SOURCE)
-
-
-# End Source File
-################################################################################
-# Begin Source File
-
 SOURCE=.\lib\sighandle.c
 DEP_CPP_SIGHA=\
 	".\windows-NT\config.h"\
@@ -3423,7 +3397,7 @@ DEP_CPP_DIR_C=\
 # Begin Source File
 
 SOURCE=.\diff\ed.c
-DEP_CPP_ED_Cbc=\
+DEP_CPP_ED_Cba=\
 	".\diff\diff.h"\
 	".\diff\system.h"\
 	".\lib\regex.h"\
@@ -3433,7 +3407,7 @@ DEP_CPP_ED_Cbc=\
 	".\windows-NT\ndir.h"\
 	
 
-"$(INTDIR)\ed.obj" : $(SOURCE) $(DEP_CPP_ED_Cbc) "$(INTDIR)"
+"$(INTDIR)\ed.obj" : $(SOURCE) $(DEP_CPP_ED_Cba) "$(INTDIR)"
    $(CPP) $(CPP_PROJ) $(SOURCE)
 
 
@@ -3461,7 +3435,7 @@ DEP_CPP_IFDEF=\
 # Begin Source File
 
 SOURCE=.\diff\io.c
-DEP_CPP_IO_Cc0=\
+DEP_CPP_IO_Cbe=\
 	".\diff\diff.h"\
 	".\diff\system.h"\
 	".\lib\regex.h"\
@@ -3471,7 +3445,7 @@ DEP_CPP_IO_Cc0=\
 	".\windows-NT\ndir.h"\
 	
 
-"$(INTDIR)\io.obj" : $(SOURCE) $(DEP_CPP_IO_Cc0) "$(INTDIR)"
+"$(INTDIR)\io.obj" : $(SOURCE) $(DEP_CPP_IO_Cbe) "$(INTDIR)"
    $(CPP) $(CPP_PROJ) $(SOURCE)
 
 
