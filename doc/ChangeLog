@@ -1,5 +1,10 @@
 Sun Nov 24 17:27:24 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvs.texinfo (First import): Don't say what the wdiff program we
+	are using as an example does--that is confusing.  Also don't show
+	untarring it--people might be familiar with cpio, ZIP, VMS BACKUP,
+	etc., instead of tar.
+
 	* cvs.texinfo (Adding files): Update comment about "cvs add -m".
 
 	* cvs.texinfo (Common options): Remove -H; -H is not a command
