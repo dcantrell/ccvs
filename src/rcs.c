@@ -21,7 +21,8 @@ enum kflag { KFLAG_KV = 0, KFLAG_KVL, KFLAG_K, KFLAG_V, KFLAG_O, KFLAG_B };
 
 static RCSNode *RCS_parsercsfile_i PROTO((FILE * fp, const char *rcsfile));
 static char *RCS_getdatebranch PROTO((RCSNode * rcs, char *date, char *branch));
-static int getrcskey PROTO((FILE * fp, char **keyp, char **valp,
+static int getrcskey PROTO((FILE * fp, const char *name,
+			    char **keyp, char **valp,
 			    size_t *lenp));
 static void getrcsrev PROTO ((FILE *fp, char **revp));
 static int checkmagic_proc PROTO((Node *p, void *closure));
@@ -267,7 +268,7 @@ RCS_parsercsfile_i (fp, rcsfile)
        So making the case in which we call RCS_reparsercsfile fast is
        not as important.  */
 
-    if (getrcskey (fp, &key, &value, NULL) == -1 || key == NULL)
+    if (getrcskey (fp, rcsfile, &key, &value, NULL) == -1 || key == NULL)
 	goto l_error;
     if (strcmp (key, RCSDESC) == 0)
 	goto l_error;
@@ -275,7 +276,7 @@ RCS_parsercsfile_i (fp, rcsfile)
     if (strcmp (RCSHEAD, key) == 0 && value != NULL)
 	rdata->head = xstrdup (value);
 
-    if (getrcskey (fp, &key, &value, NULL) == -1 || key == NULL)
+    if (getrcskey (fp, rcsfile, &key, &value, NULL) == -1 || key == NULL)
 	goto l_error;
     if (strcmp (key, RCSDESC) == 0)
 	goto l_error;
@@ -297,18 +298,8 @@ RCS_parsercsfile_i (fp, rcsfile)
     return rdata;
 
 l_error:
-    if (!really_quiet)
-    {
-	if (ferror(fp))
-	{
-	    error (1, 0, "error reading `%s'", rcsfile);
-	}
-	else
-	{
-	    error (0, 0, "`%s' does not appear to be a valid rcs file",
-		   rcsfile);
-	}
-    }
+    error (0, 0, "`%s' does not appear to be a valid rcs file",
+	   rcsfile);
     freercsnode (&rdata);
     return (NULL);
 }
@@ -355,21 +346,21 @@ RCS_reparsercsfile (rdata, pfp)
     for (;;)
     {
 	/* get the next key/value pair */
-
-	/* if key is NULL here, then the file is missing some headers
-	   or we had trouble reading the file. */
-	if ((gotkey ? 0 : getrcskey (fp, &key, &value, NULL) == -1)
-	    || key == NULL)
+	if (!gotkey)
 	{
-	    if (ferror(fp))
-	    {
-		error (1, 0, "error reading `%s'", rcsfile);
-	    }
-	    else
+	    if (getrcskey (fp, rcsfile, &key, &value, NULL) == -1)
 	    {
 		error (1, 0, "`%s' does not appear to be a valid rcs file",
 		       rcsfile);
 	    }
+	}
+
+	/* If key is NULL here, then the file is missing some headers
+	   or we had trouble reading the file.  */
+	if (key == NULL)
+	{
+	    error (1, 0, "`%s' does not appear to be a valid rcs file",
+		   rcsfile);
 	}
 
 	gotkey = 0;
@@ -391,8 +382,11 @@ RCS_reparsercsfile (rdata, pfp)
 	{
 	    if (value != NULL)
 		rdata->locks_data = xstrdup (value);
-	    if (getrcskey (fp, &key, &value, NULL) >= 0 &&
-		strcmp (key, "strict") == 0 &&
+	    if (getrcskey (fp, rcsfile, &key, &value, NULL) < 0)
+	    {
+		error (1, 0, "premature end of file reading %s", rcsfile);
+	    }
+	    if (strcmp (key, "strict") == 0 &&
 		value == NULL)
 	    {
 		rdata->strict_locks = 1;
@@ -538,8 +532,14 @@ RCS_fully_parse (rcs)
 		break;
 	} while (whitespace (c));
 	if (c == EOF)
+	{
+	    if (ferror (fp))
+		error (1, errno, "cannot read %s", rcs->path);
 	    break;
+	}
 	if (ungetc (c, fp) == EOF)
+	    /* Mentioning the filename here is just likely to be confusing,
+	       since (I would imagine) it is a CVS internal error anyway.  */
 	    error (1, errno, "ungetc failed");
 
 	getrcsrev (fp, &key);
@@ -551,7 +551,7 @@ RCS_fully_parse (rcs)
 
 	vnode = (RCSVers *) vers->data;
 
-	while (getrcskey (fp, &key, &value, &vallen) >= 0)
+	while (getrcskey (fp, rcs->path, &key, &value, &vallen) >= 0)
 	{
 	    if (strcmp (key, "text") != 0)
 	    {
@@ -780,6 +780,8 @@ rcsvers_delproc (p)
  *    o if we didn't get an EOF before the semicolon, return 0
  *    o if we got an EOF, set *KEYP and *VALUEP to NULL, and return -1
  *
+ * On error, give a fatal error.
+ *
  * Sets *KEYP and *VALUEP to point to storage managed by the getrcskey
  * function; the contents are only valid until the next call to
  * getrcskey or getrcsrev.  If LENP is not NULL, this sets *LENP to
@@ -793,8 +795,10 @@ static size_t keysize = 0;
 static size_t valsize = 0;
 
 static int
-getrcskey (fp, keyp, valp, lenp)
+getrcskey (fp, name, keyp, valp, lenp)
     FILE *fp;
+    /* Name of file FP, for use in error messages.  */
+    const char *name;
     char **keyp;
     char **valp;
     size_t *lenp;
@@ -814,7 +818,7 @@ getrcskey (fp, keyp, valp, lenp)
 	{
 	    *keyp = (char *) NULL;
 	    *valp = (char *) NULL;
-	    return (-1);
+	    goto stdio_error;
 	}
     } while (whitespace (c));
 
@@ -837,7 +841,7 @@ getrcskey (fp, keyp, valp, lenp)
 	{
 	    *keyp = (char *) NULL;
 	    *valp = (char *) NULL;
-	    return (-1);
+	    goto stdio_error;
 	}
     }
     if (cur >= max)
@@ -857,7 +861,7 @@ getrcskey (fp, keyp, valp, lenp)
 	{
 	    *keyp = (char *) NULL;
 	    *valp = (char *) NULL;
-	    return (-1);
+	    goto stdio_error;
 	}
     } 
 
@@ -890,7 +894,7 @@ getrcskey (fp, keyp, valp, lenp)
 		{
 		    *keyp = (char *) NULL;
 		    *valp = (char *) NULL;
-		    return (-1);
+		    goto stdio_error;
 		}
 
 		if (c == '@')
@@ -900,7 +904,7 @@ getrcskey (fp, keyp, valp, lenp)
 		    {
 			*keyp = (char *) NULL;
 			*valp = (char *) NULL;
-			return (-1);
+			goto stdio_error;
 		    }
 		    
 		    if (c != '@')
@@ -932,7 +936,7 @@ getrcskey (fp, keyp, valp, lenp)
 		{
 		    *keyp = (char *) NULL;
 		    *valp = (char *) NULL;
-		    return (-1);
+		    goto stdio_error;
 		}
 	    } while (whitespace (c));
 
@@ -968,7 +972,7 @@ getrcskey (fp, keyp, valp, lenp)
 	{
 	    *keyp = (char *) NULL;
 	    *valp = (char *) NULL;
-	    return (-1);
+	    goto stdio_error;
 	}
     }
 
@@ -993,6 +997,11 @@ getrcskey (fp, keyp, valp, lenp)
 	*valp = NULL;
     *keyp = key;
     return (0);
+ stdio_error:
+    /* Some stdio function returned EOF.  Could be error or end of file.  */
+    if (ferror (fp))
+	error (1, errno, "cannot read %s", name);
+    return -1;	
 }
 
 /* Read an RCS revision number from FP.  Put a pointer to it in *REVP;
@@ -2979,7 +2988,7 @@ RCS_checkout (rcs, workfile, rev, nametag, options, sout, pfn, callerdat)
 
 	gothead = 0;
 	getrcsrev (fp, &key);
-	while (getrcskey (fp, &key, &value, &len) >= 0)
+	while (getrcskey (fp, rcs->path, &key, &value, &len) >= 0)
 	{
 	    if (strcmp (key, "log") == 0)
 	    {
@@ -5567,7 +5576,7 @@ RCS_deltas (rcs, fp, version, op, text, len, log, loglen)
 	        isversion = 0;
 	}
 
-	while ((n = getrcskey (fp, &key, &value, &vallen)) >= 0)
+	while ((n = getrcskey (fp, rcs->path, &key, &value, &vallen)) >= 0)
 	{
 	    if (log != NULL
 		&& isversion
@@ -5600,7 +5609,8 @@ RCS_deltas (rcs, fp, version, op, text, len, log, loglen)
 	    }
 	}
 	if (n < 0)
-	    goto l_error;
+	    error (1, 0, "%s does not appear to be a valid rcs file",
+		   rcs->path);
 
 	if (isversion)
 	{
@@ -5792,13 +5802,6 @@ RCS_deltas (rcs, fp, version, op, text, len, log, loglen)
     linevector_free (&trunklines);
 
     return;
-
-  l_error:
-    if (ferror (fp))
-	error (1, errno, "cannot read %s", rcs->path);
-    else
-        error (1, 0, "%s does not appear to be a valid rcs file",
-	       rcs->path);
 }
 
 /* Read the information for a single delta from the RCS file FP, whose
@@ -5829,7 +5832,7 @@ getdelta (fp, rcsfile, keyp, valp)
     }
     else
     {
-	if (getrcskey (fp, &key, &value, NULL) < 0)
+	if (getrcskey (fp, rcsfile, &key, &value, NULL) < 0)
 	    error (1, 0, "%s: unexpected EOF", rcsfile);
     }
 
@@ -5857,19 +5860,23 @@ getdelta (fp, rcsfile, keyp, valp)
     vnode->date = xstrdup (cp);
 
     /* Get author field.  */
-    (void) getrcskey (fp, &key, &value, NULL);
-    /* FIXME: should be using errno in case of ferror.  */
+    if (getrcskey (fp, rcsfile, &key, &value, NULL) < 0)
+    {
+	error (1, 0, "unexpected end of file reading %s", rcsfile);
+    }
     if (key == NULL || strcmp (key, "author") != 0)
 	error (1, 0, "\
-unable to parse rcs file; `author' not in the expected place");
+unable to parse %s; `author' not in the expected place", rcsfile);
     vnode->author = xstrdup (value);
 
     /* Get state field.  */
-    (void) getrcskey (fp, &key, &value, NULL);
-    /* FIXME: should be using errno in case of ferror.  */
+    if (getrcskey (fp, rcsfile, &key, &value, NULL) < 0)
+    {
+	error (1, 0, "unexpected end of file reading %s", rcsfile);
+    }
     if (key == NULL || strcmp (key, "state") != 0)
 	error (1, 0, "\
-unable to parse rcs file; `state' not in the expected place");
+unable to parse %s; `state' not in the expected place", rcsfile);
     vnode->state = xstrdup (value);
     if (strcmp (value, "dead") == 0)
     {
@@ -5877,16 +5884,19 @@ unable to parse rcs file; `state' not in the expected place");
     }
 
     /* Note that "branches" and "next" are in fact mandatory, according
-       to doc/RCSFILES.  We perhaps should be giving an error if they
-       are not there.  */
+       to doc/RCSFILES.  */
 
     /* fill in the branch list (if any branches exist) */
-    (void) getrcskey (fp, &key, &value, NULL);
-    /* FIXME: should be handling various error conditions better.  */
+    if (getrcskey (fp, rcsfile, &key, &value, NULL) < 0)
+    {
+	error (1, 0, "unexpected end of file reading %s", rcsfile);
+    }
     if (key != NULL && strcmp (key, RCSDESC) == 0)
     {
 	*keyp = key;
 	*valp = value;
+	/* Probably could/should be a fatal error.  */
+	error (0, 0, "warning: 'branches' keyword missing from %s", rcsfile);
 	return vnode;
     }
     if (value != (char *) NULL)
@@ -5896,12 +5906,16 @@ unable to parse rcs file; `state' not in the expected place");
     }
 
     /* fill in the next field if there is a next revision */
-    (void) getrcskey (fp, &key, &value, NULL);
-    /* FIXME: should be handling various error conditions better.  */
+    if (getrcskey (fp, rcsfile, &key, &value, NULL) < 0)
+    {
+	error (1, 0, "unexpected end of file reading %s", rcsfile);
+    }
     if (key != NULL && strcmp (key, RCSDESC) == 0)
     {
 	*keyp = key;
 	*valp = value;
+	/* Probably could/should be a fatal error.  */
+	error (0, 0, "warning: 'next' keyword missing from %s", rcsfile);
 	return vnode;
     }
     if (value != (char *) NULL)
@@ -5911,11 +5925,10 @@ unable to parse rcs file; `state' not in the expected place");
      * XXX - this is where we put the symbolic link stuff???
      * (into newphrases in the deltas).
      */
-    /* FIXME: Does not correctly handle errors, e.g. from stdio.  */
     while (1)
     {
-	if (getrcskey (fp, &key, &value, NULL) < 0)
-	    break;
+	if (getrcskey (fp, rcsfile, &key, &value, NULL) < 0)
+	    error (1, 0, "unexpected end of file reading %s", rcsfile);
 
 	assert (key != NULL);
 
@@ -5959,7 +5972,7 @@ unable to parse rcs file; `state' not in the expected place");
 		   key, rcsfile);
 	    freenode (kv);
 	}
-     }
+    }
 
     /* Return the key which caused us to fail back to the caller.  */
     *keyp = key;
@@ -6018,7 +6031,7 @@ RCS_getdeltatext (rcs, fp)
     d->version = xstrdup (num);
 
     /* Get the log message. */
-    if (getrcskey (fp, &key, &value, NULL) < 0)
+    if (getrcskey (fp, rcs->path, &key, &value, NULL) < 0)
 	error (1, 0, "%s, delta %s: unexpected EOF", rcs->path, num);
     if (strcmp (key, "log") != 0)
 	error (1, 0, "%s, delta %s: expected `log', got `%s'",
@@ -6027,9 +6040,9 @@ RCS_getdeltatext (rcs, fp)
 
     /* Get random newphrases. */
     d->other = getlist();
-    for (n = getrcskey (fp, &key, &value, &textlen);
+    for (n = getrcskey (fp, rcs->path, &key, &value, &textlen);
 	 n >= 0 && strcmp (key, "text") != 0;
-	 n = getrcskey (fp, &key, &value, &textlen))
+	 n = getrcskey (fp, rcs->path, &key, &value, &textlen))
     {
 	p = getnode();
 	p->type = RCSFIELD;

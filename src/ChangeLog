@@ -1,3 +1,13 @@
+Fri Feb  6 13:23:46 1998  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* rcs.c (RCS_parsercsfile_i): Don't suppress errors on
+	really_quiet.
+	(RCS_parsercsfile_i, RCS_reparsercsfile, RCS_fully_parse,
+	RCS_deltas, getdelta, getrcskey, RCS_getdeltatext):
+	Check for errors.  Include errno in error messages.  Include
+	filename in error messages.  Pass new argument to getrcskey.
+	(getrcskey): New argument NAME, so we can report errors ourself.
+
 Fri Feb  6 12:10:18 1998  Ian Lance Taylor  <ian@cygnus.com>
 
 	* rcs.c (RCS_reparsercsfile): Don't use ftell/fseek; just keep
