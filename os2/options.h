@@ -252,10 +252,11 @@
 #undef SETXID_SUPPORT
 
 /*
- * "cvs login" is under construction.  Don't define this unless you're
+ * This is under construction.  Don't define this unless you're
  * testing it, in which case you're me and you already know that.
  */
-/* #define CVS_LOGIN */
+/* #define CVS_AUTH_CLIENT_SUPPORT */
+/* #define CVS_AUTH_SERVER_SUPPORT */
 
 /* End of CVS configuration section */
 

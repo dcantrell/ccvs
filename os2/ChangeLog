@@ -1,3 +1,8 @@
+Sat Dec 09 15:05:41 1995  Karl Fogel  (kfogel@beezley.cyclic.com)
+
+		* options.h: define CVS_AUTH_CLIENT_SUPPORT and
+		CVS_AUTH_SERVER_SUPPORT, instead of CVS_LOGIN.
+
 Thu Dec  7 14:49:16 1995  Jim Meyering  (meyering@comco.com)
 
 	* filesubr.c (isaccessible): Rename from isaccessable.
