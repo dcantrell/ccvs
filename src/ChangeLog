@@ -1,3 +1,22 @@
+1999-11-04  Karl Fogel  <kfogel@red-bean.com>
+
+	* log.c (log_usage): Revert Jim Kingdon's reversion of my change
+	of 1999-11-03.  Allowing a space between option and argument
+	results in lossage; here is a reproduction recipe: run this from
+	the top of a remote copy of the cvs source tree
+
+	   cvs log -d '>1999-03-01' > log-out.with-space
+
+	and then run this (note there's no space after -d now):
+	
+	   cvs log -d'>1999-03-01' > log-out.no-space
+
+	The resulting files differ; furthermore, a glance at the output of
+	cvs shows that the first command failed to recurse into
+	subdirectories.  Until this misbehavior can be fixed in the source
+	code, the documentation should reflect the true state of affairs:
+	if one simply omits the space, everything works fine.
+
 1999-11-04  Jim Kingdon  <http://developer.redhat.com/>
 
 	* log.c (log_usage): Revert Karl's change regarding -d and

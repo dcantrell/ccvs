@@ -9602,7 +9602,7 @@ available.  All other options restrict the output.
 Print information about the revisions on the default
 branch, normally the highest branch on the trunk.
 
-@item -d @var{dates}
+@item -d@var{dates}
 Print information about revisions with a checkin
 date/time in the range given by the
 semicolon-separated list of dates.  The date formats
@@ -9635,7 +9635,8 @@ The @samp{>} or @samp{<} characters may be followed by
 @samp{=} to indicate an inclusive range rather than an
 exclusive one.
 
-Note that the separator is a semicolon (;).
+There can be no space between the @samp{-d} option and its argument.
+Note also that the separator in the argument list is a semicolon (;).
 
 @item -h
 Print only the name of the @sc{rcs} file, name
@@ -9711,10 +9712,14 @@ revision on the default branch, normally the trunk.
 There can be no space between the @samp{-r} option and
 its argument.
 
-@item -s @var{states}
+@item -s@var{states}
 Print information about revisions whose state
 attributes match one of the states given in the
 comma-separated list @var{states}.
+
+There can be no space between the @samp{-s} option and
+its argument.  Note also that the separator in the
+argument list is a comma (,).
 
 @item -t
 Print the same as @samp{-h}, plus the descriptive text.
@@ -10734,7 +10739,7 @@ Print out history information for files.  See @ref{log}.
 @item -b
 Only list revisions on the default branch.  See @ref{log options}.
 
-@item -d @var{dates}
+@item -d@var{dates}
 Specify dates (@var{d1}<@var{d2} for range, @var{d} for
 latest before).  See @ref{log options}.
 
@@ -10753,7 +10758,7 @@ Only print name of RCS file.  See @ref{log options}.
 @item -r@var{revs}
 Only list revisions @var{revs}.  See @ref{log options}.
 
-@item -s @var{states}
+@item -s@var{states}
 Only list revisions with specified states.  See @ref{log options}.
 
 @item -t
