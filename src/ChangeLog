@@ -1,5 +1,9 @@
 Sun Sep  7 07:45:35 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* server.c (serve_log): Change "cvslog" to "log".  This
+	(accidental, I presume) error had made it impossible for anonymous
+	users to run "cvs log".
+
 	* classify.c (sticky_ck): Change to take an finfo argument rather
 	than several arguments taken from there.  Cleans up the way the
 	calling convention had depended on SERVER_SUPPORT.
