@@ -1,3 +1,8 @@
+Fri Jan 31 12:49:02 1997  Ian Lance Taylor <ian@cygnus.com>
+
+	* modules.c (do_module): Actually goto found if is_found is set
+	(fixes thinko in PATH_MAX nuking of 30 Jan 97).
+
 Fri Jan 31 12:49:02 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* sanity.sh: Add modules3 and big to list of tests to run

@@ -271,6 +271,9 @@ do_module (db, mname, m_type, msg, callback_proc, where,
 	}
 	free (attic_file);
 	free (file);
+
+	if (is_found)
+	    goto found;
     }
 
     /* look up everything to the first / as a module */
