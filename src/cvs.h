@@ -119,17 +119,14 @@ extern int errno;
 #include "rcs.h"
 
 
-/* This actually gets set in system.h.  Note that the _ONLY_ reason for
-   this is if various system calls (getwd, getcwd, readlink) require/want
-   us to use it.  All other parts of CVS allocate pathname buffers
-   dynamically, and we want to keep it that way.  */
-#ifndef PATH_MAX
-#ifdef MAXPATHLEN
-#define	PATH_MAX MAXPATHLEN+2
-#else
-#define	PATH_MAX 1024+2
-#endif
-#endif /* PATH_MAX */
+
+/* Note that the _ONLY_ reason for PATH_MAX is if various system calls (getwd,
+ * getcwd, readlink) require/want us to use it.  All other parts of CVS
+ * allocate pathname buffers dynamically, and we want to keep it that way.
+ */
+#include "pathmax.h"
+
+
 
 /* Definitions for the CVS Administrative directory and the files it contains.
    Here as #define's to make changing the names a simple task.  */
