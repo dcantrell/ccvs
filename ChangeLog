@@ -1,3 +1,8 @@
+Mon Jul 21 09:40:10 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* configure.in: Adjust comment regarding version of autoconf which
+	introduced --bindir.
+
 Fri Jul 18 09:47:12 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* TODO: Remove item 161 (the comments in cvs.texinfo have a much
