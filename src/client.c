@@ -1141,7 +1141,7 @@ warning: server is not creating directories one at a time");
 
 	if (strcmp (command_name, "export") != 0)
 	{
-	    last_entries = Entries_Open (0);
+	    last_entries = Entries_Open (0, dir_name);
 
 	    /* If this is a newly created directory, we will record
 	       all subdirectory information, so call Subdirs_Known in
@@ -5099,7 +5099,7 @@ send_file_names (argc, argv, flags)
 	       command line, not the case of the
 	       directory in the filesystem.  This
 	       is correct behavior.  */
-	    entries = Entries_Open (0);
+	    entries = Entries_Open (0, NULL);
 	    node = findnode_fn (entries, p);
 	    if (node != NULL)
 	    {

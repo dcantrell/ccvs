@@ -67,7 +67,7 @@ Find_Names (repository, which, aflag, optentries)
     if (which & W_LOCAL)
     {
 	/* parse the entries file (if it exists) */
-	entries = Entries_Open (aflag);
+	entries = Entries_Open (aflag, NULL);
 	if (entries != NULL)
 	{
 	    /* walk the entries file adding elements to the files list */
@@ -170,7 +170,7 @@ Find_Directories (repository, which, entries)
 	if (entries != NULL)
 	    tmpentries = entries;
 	else if (isfile (CVSADM_ENT))
-	    tmpentries = Entries_Open (0);
+	    tmpentries = Entries_Open (0, NULL);
 	else
 	    tmpentries = NULL;
 

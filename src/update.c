@@ -1135,7 +1135,7 @@ isemptydir (dir, might_not_exist)
 
 		if (CVS_CHDIR (dir) < 0)
 		    error (1, errno, "cannot change directory to %s", dir);
-		l = Entries_Open (0);
+		l = Entries_Open (0, NULL);
 		files_removed = walklist (l, isremoved, 0);
 		Entries_Close (l);
 
