@@ -570,10 +570,10 @@ void Register PROTO((List * list, char *fname, char *vn, char *ts,
 	       char *options, char *tag, char *date, char *ts_conflict));
 void Update_Logfile PROTO((char *repository, char *xmessage, FILE * xlogfp,
 		     List * xchanges));
-void do_editor PROTO((char *dir, char **messagep,
+int do_editor PROTO((char *dir, char **messagep,
 		      char *repository, List * changes));
 
-void do_verify PROTO((char *message, char *repository));
+void do_verify PROTO((char *message, char *repository, int reused_message));
 
 typedef	int (*CALLBACKPROC)	PROTO((int argc, char *argv[], char *where,
 	char *mwhere, char *mfile, int shorten, int local_specified,

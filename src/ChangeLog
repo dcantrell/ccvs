@@ -1,5 +1,13 @@
 2001-08-22  Derek Price  <dprice@collab.net>
 
+	* logmsg.c (do_editor): Return reused_message.
+	(do_verify): Don't verify the same log message more than once.
+	* cvs.h: Update prototypes for do_verify and do_editor.
+	* commit.c (commit_fileproc, commit_direntproc): Use the new functionality.
+	* import.c (import): Ditto.
+
+2001-08-22  Derek Price  <dprice@collab.net>
+
 	* logmsg.c (do_verify): Remove an unecessary "else" clause following an
 	exit and unindent the former contents.
 
