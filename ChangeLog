@@ -1,3 +1,7 @@
+2004-04-20  Derek Price  <derek@ximbiot.com>
+
+	* NEWS: Note XP directory deletion fix.
+
 2004-04-16  Derek Price  <derek@ximbiot.com>
 
 	* NEWS: Correct CVS name for piped checkout issue now that we have one.
