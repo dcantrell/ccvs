@@ -1,4 +1,15 @@
 2001-06-21  Larry Jones  <larry.jones@sdrc.com>
+
+	* modules.c (do_module): Use run_module_prog and server_active to
+	determine when to call server_prog instead of using server_expanding
+	so that we get the right paths in the replies as long as we take
+	mwhere into account in addition to where.
+	(Reported by Pascal Bourguignon <pjb@informatimago.com>.)
+	* server.c (server_prog): Use protocol pipe instead of buf_to_net.
+	* sanity.sh (modules5): Remove FIXCVS comment and update to match.
+	* server.c, server.h: Remove server_expanding since now unused.
+
+2001-06-21  Larry Jones  <larry.jones@sdrc.com>
         for Stephen Rasku  <stephen@tgivan.com>
 
 	* admin.c: Corrected spelling mistakes in help.
