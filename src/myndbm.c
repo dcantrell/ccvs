@@ -209,7 +209,7 @@ mydbm_load_file (fp, list)
 	if ((cp = strrchr (line, '\012')) != NULL)
 	    *cp = '\0';			/* strip the newline */
 	cp = line + strlen (line);
-	if (cp > line && cp[-1] == '015')
+	if (cp > line && cp[-1] == '\015')
 	    /* If the file (e.g. modules) was written on an NT box, it will
 	       contain CRLF at the ends of lines.  Strip them (we can't do
 	       this by opening the file in text mode because we might be
