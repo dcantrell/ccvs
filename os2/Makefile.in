@@ -33,3 +33,7 @@ lint:
 dist-dir:
 	mkdir ${DISTDIR}
 	ln ${DISTFILES} ${DISTDIR}
+
+
+clean:
+	@echo make clean does nothing right now in os2 subdir

@@ -1,3 +1,5 @@
 Mon Oct 23 17:37:36 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
+        * Makefile.in (clean): new rule.
+
         * init os2 directory.  Made dummy Makefile.in, README.
