@@ -1,3 +1,7 @@
+2004-03-11  Derek Price  <derek@ximbiot.com>
+
+	* config.h.in (SIZE_MAX): Define.
+
 2004-02-26  Derek Price  <derek@ximbiot.com>
 
 	* config.h.in: Add definition for inline for GNULIB xalloc module.
