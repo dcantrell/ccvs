@@ -121,6 +121,11 @@ error (int status, int errnum, const char *message, ...)
 		sprintf (buf, "%x", unum);
 		cvs_outerr (buf, strlen (buf));
 		break;
+	    case 'u':
+		num = va_arg (args, unsigned int);
+		sprintf (buf, "%u", num);
+		cvs_outerr (buf, strlen (buf));
+		break;
 	    case 'c':
 		ch = va_arg (args, int);
 		buf[0] = ch;

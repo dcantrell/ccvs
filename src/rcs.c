@@ -8545,8 +8545,22 @@ make_file_label (const char *path, const char *rev, RCSNode *rcs)
 
 
 
+/*
+ * Set up a local/custom RCS keyword for expansion.
+ *
+ * INPUTS
+ *   infopath		Path to file being parsed, for error messages.
+ *   ln			Line number of INFOPATH being processed, for error
+ *			messages.
+ *   keywords_in
+ *   arg
+ *
+ * OUTPUTS
+ *   keywords_in
+ */
 void
-RCS_setlocalid (void **keywords_in, const char *arg)
+RCS_setlocalid (const char *infopath, unsigned int ln,
+		void **keywords_in, const char *arg)
 {
     char *copy, *next, *key, *s;
     struct rcs_keyword *keywords;
@@ -8567,9 +8581,11 @@ RCS_setlocalid (void **keywords_in, const char *arg)
     {
 	if (! isalpha ((unsigned char) *s))
 	{
-	    error (0, 0,
-		   "LocalKeyword ignored: Bad character `%c' in key `%s'",
-		   *s, key);
+	    if (!parse_error (infopath, ln))
+		    error (0, 0,
+"%s [%u]: LocalKeyword ignored: Bad character `%c' in key `%s'",
+			   primary_root_inverse_translate (infopath),
+			   ln, *s, key);
 	    free (copy);
 	    return;
 	}
@@ -8588,8 +8604,11 @@ RCS_setlocalid (void **keywords_in, const char *arg)
 	else
 	{
 	    keywords[KEYWORD_LOCALID].expandto = save_expandto;
-	    error (0, 0, "LocalKeyword ignored: Unknown LocalId mode: `%s'",
-		   key);
+	    if (!parse_error (infopath, ln))
+		error (0, 0,
+"%s [%u]: LocalKeyword ignored: Unknown LocalId mode: `%s'",
+		       primary_root_inverse_translate (infopath),
+		       ln, key);
 	    free (copy);
 	    return;
 	}

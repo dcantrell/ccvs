@@ -1,3 +1,25 @@
+2005-02-22 Derek Price <derek@ximbiot.com>
+
+	* error.c (error): Handle unsigned int format char.
+	* parseinfo.c (parse_error): New function.
+	(parse_config): Keep track of line number and output it in error
+	messages.
+	* rcs.c (RCS_setlocalid): Accept file path and line number for error
+	messages.  Add header comment block.
+	* rcs.h (RCS_setlocalid): Update prototype to match.
+	* parseinfo.h (parse_error): Declare new function.
+	* sanity.sh: Accept new --noredirect argument.
+	(checklongoptarg): Accept longoptmode as an argument
+	rather than via an environment variable.
+	(notnoredirect): New function.
+	(newroot): Handle root options.
+	(keywordexpand, config): Skip in noredirect mode.  Update for new
+	config error messages.
+	(multiroot): Some reformatting.
+	(writeproxy, writeproxy-noredirect): Skip in noredirect mode.
+	(commit, writeproxy-noredirect): Quote CVSROOT arguments since they
+	might contain semicolons.
+
 2005-02-21  Mark D. Baushke  <mdb@cvshome.org>
 
 	* import.c (import): Avoid using assert with side effects it may

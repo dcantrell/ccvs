@@ -62,6 +62,10 @@ exit_help ()
     echo "		--keep"
     echo "-l|--link-root"
     echo "		test CVS using a symlink to a real CVSROOT"
+    echo "-n|--noredirect"
+    echo "              test a secondary/primary CVS server (writeproxy)"
+    echo "              configuration with the Redirect response disabled"
+    echo "              (implies --proxy)."
     echo "-p|--proxy	test a secondary/primary CVS server (writeproxy)"
     echo "              configuration (implies --remote)."
     echo "-r|--remote	test client/server, as opposed to local, CVS"
@@ -78,10 +82,9 @@ exit_help ()
     exit 2
 }
 
-unset longoptmode
 checklongoptarg()
 {
-    if test "x$longoptmode" != xoptional && test -z "$OPTARG"; then
+    if test "x$1" != xoptional && test -z "$OPTARG"; then
 	echo "option \`--$LONGOPT' requires an argument" >&2
 	exit_usage
     fi
@@ -119,13 +122,15 @@ warnings=0
 unset configfile
 unset fromtest
 unset remotehost
+unset rootoptions
 keep=false
 linkroot=false
+noredirect=false
 proxy=false
 remote=false
 servercvs=false
 skipfail=false
-while getopts Hc:ef:h:klprs:-: option ; do
+while getopts Hc:ef:h:klnprs:-: option ; do
     # convert the long opts to short opts
     if test x$option = x-;  then
 	# remove any argument
@@ -165,6 +170,10 @@ while getopts Hc:ef:h:klprs:-: option ; do
 		;;
 	    l|li|lin|link|link-|link-r]|link-ro|link-roo|link-root)
 		option=l
+		OPTARG=
+		;;
+	    n|no|nor|nore|nored|noredi|noredir|noredire|noredirec|noredirect)
+		option=n
 		OPTARG=
 		;;
 	    p|pr|pro|prox|proxy)
@@ -222,6 +231,11 @@ while getopts Hc:ef:h:klprs:-: option ; do
 	    ;;
 	l)
 	    linkroot=:
+	    ;;
+        n)
+	    proxy=:
+	    noredirect=:
+	    remote=:
 	    ;;
         p)
 	    proxy=:
@@ -1240,6 +1254,12 @@ remoteonly ()
 notproxy ()
 {
   skip_always $1 "not tested in proxy mode"
+}
+
+# Convenience function for skipping tests not run in proxy mode.
+notnoredirect ()
+{
+  skip_always $1 "not tested in proxy-noredirect mode"
 }
 
 warn ()
@@ -2508,9 +2528,9 @@ EOF
 newroot() {
   if $remote; then
     if test -n "$remotehost"; then
-      echo :ext:$remotehost$1
+      echo :ext$rootoptions:$remotehost$1
     else
-      echo :fork:$1
+      echo :fork$rootoptions:$1
     fi
   else
     echo $1
@@ -2552,12 +2572,17 @@ dotest init-1 "$testcvs init"
 
 # Now hide the primary root behind a secondary if requested.
 if $proxy; then
-    # Where the secondary root will be
-    SECONDARY_CVSROOT_DIRNAME=$TESTDIR/secondary_cvsroot
-    SECONDARY_CVSROOT=`newroot $SECONDARY_CVSROOT_DIRNAME`
     # Save the primary root.
     PRIMARY_CVSROOT=$CVSROOT
     PRIMARY_CVSROOT_DIRNAME=$CVSROOT_DIRNAME
+    # Where the secondary root will be
+    SECONDARY_CVSROOT_DIRNAME=$TESTDIR/secondary_cvsroot
+    if $noredirect; then
+	rootoptions=";Redirect=no"
+	SECONDARY_CVSROOT=`newroot $PRIMARY_CVSROOT_DIRNAME`
+    else
+	SECONDARY_CVSROOT=`newroot $SECONDARY_CVSROOT_DIRNAME`
+    fi
     # Now set the global CVSROOT to use the secondary.
     CVSROOT=$SECONDARY_CVSROOT; export CVSROOT
 
@@ -2566,6 +2591,32 @@ if $proxy; then
 	echo "Unable to test in proxy mode: $skipreason" >&2
 	skip all "missing or broken rsync command."
 	exit 0
+    fi
+
+    if $noredirect; then
+	# Wrap the CVS server to allow --primary-root to be set by the
+	# secondary.
+	cat <<EOF >$TESTDIR/secondary-wrapper
+#! $TESTSHELL
+CVS_SERVER=$TESTDIR/primary-wrapper
+export CVS_SERVER
+
+# No need to check the PID of the last client since we are testing with
+# Redirect disabled.
+proot_arg="--allow-root=$SECONDARY_CVSROOT_DIRNAME"
+exec $CVS_SERVER \$proot_arg "\$@"
+EOF
+	cat <<EOF >$TESTDIR/primary-wrapper
+#! $TESTSHELL
+CVS_SERVER_LOG=/tmp/cvsprimarylog; export CVS_SERVER_LOG
+exec $CVS_SERVER "\$@"
+EOF
+
+	CVS_SERVER_secondary=$TESTDIR/secondary-wrapper
+	CVS_SERVER=$CVS_SERVER_secondary
+
+	chmod a+x $TESTDIR/secondary-wrapper \
+	          $TESTDIR/primary-wrapper
     fi
 
     # Script to sync the secondary root.
@@ -3804,7 +3855,7 @@ new revision: delete; previous revision: 1\.1"
 
 	  cd ../../../../..
 
-	  if echo "yes" | ${testcvs} release -d first-dir >>${LOGFILE}; then
+	  if echo "yes" | $testcvs release -d first-dir >>$LOGFILE 2>&1; then
 	    pass deep-5
 	  else
 	    fail deep-5
@@ -9110,7 +9161,8 @@ No conflicts created by this import"
 	  # We use an explicit -d option to test that it is reflected
 	  # in the suggested checkout.
 	  dotest_sort importb-2 \
-"${testcvs} -d ${CVSROOT} import -m add -b 1.1.3 first-dir freemunger freemunger-1_0" \
+"$testcvs -d '$CVSROOT' import -m add -b 1.1.3 \
+          first-dir freemunger freemunger-1_0" \
 "
 
 
@@ -9375,7 +9427,7 @@ Use the following command to help the merge:"
 	  echo 'Munger sources' >file2
 	  echo 'Munger sources 1.1' >file3
 	  dotest_sort importX-3 \
-"${testcvs} -d ${CVSROOT} import -X -m add first-dir munger munger-1_1" \
+"$testcvs -d '$CVSROOT' import -X -m add first-dir munger munger-1_1" \
 "
 
 
@@ -12042,6 +12094,19 @@ fish"
 	keywordexpand)
 	  # Tests of the original *BSD tag= and keywordexpand= features
 	  # are done via the LocalKeyword= and KeywordExpand features.
+
+	  # Skip this in noredirect mode because it is too easy for the primary
+	  # and secondary error messages to get out of sync when the
+	  # CVSROOT/config files are broken.  This is intentional, since it is
+	  # possible and even likely that an administrator might want to set up
+	  # different configurations on the two servers and the paths to the
+	  # config files on the secondary and primary were intentionally left
+	  # intact even though they might be different.
+	  if $noredirect; then
+            notnoredirect keywordexpand
+	    continue
+	  fi
+
 	  mkdir keywordexpand; cd keywordexpand
 
 	  dotest keywordexpand-1 "${testcvs} -q co CVSROOT" \
@@ -12130,31 +12195,29 @@ a change"
 
 	  cd ../CVSROOT
 	  mv config config.old
-	  sed -e 's/LocalKeyword=MyBSD/LocalKeyword=My_BSD/' < config.old > config
-	  dotest keywordexpand-9 "${testcvs} -Q ci -minvalidlocalkeyword config"
-	  dotest keywordexpand-10 "${testcvs} -Q update config" \
-"${SPROG} [a-z]*: LocalKeyword ignored: Bad character \`_' in key \`My_BSD'" \
-"${SPROG} [a-z]*: LocalKeyword ignored: Bad character \`_' in key \`My_BSD'
-${SPROG} [a-z]*: LocalKeyword ignored: Bad character \`_' in key \`My_BSD'"
+	  sed -e 's/LocalKeyword=MyBSD/LocalKeyword=My_BSD/' \
+	      <config.old >config
+	  dotest keywordexpand-9 "$testcvs -Q ci -minvalidlocalkeyword config"
+	  dotest keywordexpand-10 "$testcvs -Q update config" \
+"$SPROG [a-z]*: $SECONDARY_CVSROOT_DIRNAME/CVSROOT/config \[[1-9][0-9]*\]: LocalKeyword ignored: Bad character \`_' in key \`My_BSD'"
 	  cp config.old config
-	  dotest keywordexpand-11 "${testcvs} -Q ci -mfixit config" \
-"${SPROG} [a-z]*: LocalKeyword ignored: Bad character \`_' in key \`My_BSD'" \
-"${SPROG} [a-z]*: LocalKeyword ignored: Bad character \`_' in key \`My_BSD'
-${SPROG} [a-z]*: LocalKeyword ignored: Bad character \`_' in key \`My_BSD'" \
-	  dotest keywordexpand-12 "${testcvs} -Q update config"
+	  dotest keywordexpand-11 "$testcvs -Q ci -mfixit config" \
+"$SPROG [a-z]*: $SECONDARY_CVSROOT_DIRNAME/CVSROOT/config \[[1-9][0-9]*\]: LocalKeyword ignored: Bad character \`_' in key \`My_BSD'" \
+"$SPROG [a-z]*: $SECONDARY_CVSROOT_DIRNAME/CVSROOT/config \[[1-9][0-9]*\]: LocalKeyword ignored: Bad character \`_' in key \`My_BSD'
+$SPROG [a-z]*: $CVSROOT_DIRNAME/CVSROOT/config \[[1-9][0-9]*\]: LocalKeyword ignored: Bad character \`_' in key \`My_BSD'"
+	  dotest keywordexpand-12 "$testcvs -Q update config"
 	  sed -e 's/LocalKeyword=MyBSD=CVSHeader/LocalKeyword=MyBSD=Name/' \
-	    < config.old > config
-	  dotest keywordexpand-13 "${testcvs} -Q ci -minvalidlocalkeyword2 config"
-	  dotest keywordexpand-14 "${testcvs} -Q update config" \
-"${SPROG} [a-z]*: LocalKeyword ignored: Unknown LocalId mode: \`Name'" \
-"${SPROG} [a-z]*: LocalKeyword ignored: Unknown LocalId mode: \`Name'
-${SPROG} [a-z]*: LocalKeyword ignored: Unknown LocalId mode: \`Name'"
+	      <config.old >config
+	  dotest keywordexpand-13 \
+"$testcvs -Q ci -minvalidlocalkeyword2 config"
+	  dotest keywordexpand-14 "$testcvs -Q update config" \
+"$SPROG [a-z]*: $SECONDARY_CVSROOT_DIRNAME/CVSROOT/config \[[1-9][0-9]*\]: LocalKeyword ignored: Unknown LocalId mode: \`Name'"
 	  cp config.old config
-	  dotest keywordexpand-15 "${testcvs} -Q ci -mfixit2 config" \
-"${SPROG} [a-z]*: LocalKeyword ignored: Unknown LocalId mode: \`Name'" \
-"${SPROG} [a-z]*: LocalKeyword ignored: Unknown LocalId mode: \`Name'
-${SPROG} [a-z]*: LocalKeyword ignored: Unknown LocalId mode: \`Name'"
-	  dotest keywordexpand-16 "${testcvs} -Q update config"
+	  dotest keywordexpand-15 "$testcvs -Q ci -mfixit2 config" \
+"$SPROG [a-z]*: $SECONDARY_CVSROOT_DIRNAME/CVSROOT/config \[[1-9][0-9]*\]: LocalKeyword ignored: Unknown LocalId mode: \`Name'" \
+"$SPROG [a-z]*: $SECONDARY_CVSROOT_DIRNAME/CVSROOT/config \[[1-9][0-9]*\]: LocalKeyword ignored: Unknown LocalId mode: \`Name'
+$SPROG [a-z]*: $CVSROOT_DIRNAME/CVSROOT/config \[[1-9][0-9]*\]: LocalKeyword ignored: Unknown LocalId mode: \`Name'"
+	  dotest keywordexpand-16 "$testcvs -Q update config"
 
 	  dokeep
 	  # Done. Clean up.
@@ -19594,6 +19657,13 @@ file1
 	  # Tests of the CVSROOT/config file.  See the comment at the
 	  # "info" tests for a full list of administrative file tests.
 
+	  # See note in keywordexpand about config errors from a proxied
+	  # primary.
+	  if $noredirect; then
+	    notnoredirect config
+	    continue
+	  fi
+
 	  # On Windows, we can't check out CVSROOT, because the case
 	  # insensitivity means that this conflicts with cvsroot.
 	  mkdir wnt
@@ -19608,7 +19678,7 @@ file1
 new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
 $SPROG commit: Rebuilding administrative file database"
 	  dotest config-3a "$testcvs -Q update -jHEAD -jconfig-start" \
-"$SPROG [a-z]*: syntax error in $SECONDARY_CVSROOT_DIRNAME/CVSROOT/config: line 'bogus line' is missing '='
+"$SPROG [a-z]*: $SECONDARY_CVSROOT_DIRNAME/CVSROOT/config \[[1-9][0-9]*\]: syntax error: missing \`=' between keyword and value
 RCS file: $CVSROOT_DIRNAME/CVSROOT/config,v
 retrieving revision 1.[0-9]*
 retrieving revision 1.[0-9]*
@@ -19616,34 +19686,34 @@ Merging differences between 1.[0-9]* and 1.[0-9]* into config"
 	  echo 'BogusOption=yes' >>config
 	  if $proxy; then
 	    dotest config-4p "$testcvs -q ci -m change-to-bogus-opt" \
-"$SPROG [a-z]*: syntax error in $SECONDARY_CVSROOT_DIRNAME/CVSROOT/config: line 'bogus line' is missing '='
-$SPROG [a-z]*: syntax error in $CVSROOT_DIRNAME/CVSROOT/config: line 'bogus line' is missing '='
+"$SPROG [a-z]*: $SECONDARY_CVSROOT_DIRNAME/CVSROOT/config \[99\]: syntax error: missing \`=' between keyword and value
+$SPROG [a-z]*: $CVSROOT_DIRNAME/CVSROOT/config \[99\]: syntax error: missing \`=' between keyword and value
 $CVSROOT_DIRNAME/CVSROOT/config,v  <--  config
 new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
 $SPROG commit: Rebuilding administrative file database"
 	  else
 	    dotest config-4 "$testcvs -q ci -m change-to-bogus-opt" \
-"$SPROG [a-z]*: syntax error in $CVSROOT_DIRNAME/CVSROOT/config: line 'bogus line' is missing '='
+"$SPROG [a-z]*: $SECONDARY_CVSROOT_DIRNAME/CVSROOT/config \[[1-9][0-9]*\]: syntax error: missing \`=' between keyword and value
 $CVSROOT_DIRNAME/CVSROOT/config,v  <--  config
 new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
 $SPROG commit: Rebuilding administrative file database"
 	  fi
 	  dotest config-cleanup-1 "$testcvs -Q update -jHEAD -jconfig-start" \
-"$SPROG [a-z]*: $SECONDARY_CVSROOT_DIRNAME/CVSROOT/config: unrecognized keyword 'BogusOption'
+"$SPROG [a-z]*: $SECONDARY_CVSROOT_DIRNAME/CVSROOT/config \[[1-9][0-9]*\]: unrecognized keyword \`BogusOption'
 RCS file: $CVSROOT_DIRNAME/CVSROOT/config,v
 retrieving revision 1.[0-9]*
 retrieving revision 1.[0-9]*
 Merging differences between 1.[0-9]* and 1.[0-9]* into config"
 	  if $proxy; then
-	    dotest config-cleanup-3 "$testcvs -q ci -m change-to-comment" \
-"$SPROG [a-z]*: $SECONDARY_CVSROOT_DIRNAME/CVSROOT/config: unrecognized keyword 'BogusOption'
-$SPROG [a-z]*: $CVSROOT_DIRNAME/CVSROOT/config: unrecognized keyword 'BogusOption'
+	    dotest config-cleanup-3p "$testcvs -q ci -m change-to-comment" \
+"$SPROG [a-z]*: $SECONDARY_CVSROOT_DIRNAME/CVSROOT/config \[[1-9][0-9]*\]: unrecognized keyword \`BogusOption'
+$SPROG [a-z]*: $CVSROOT_DIRNAME/CVSROOT/config \[[1-9][0-9]*\]: unrecognized keyword \`BogusOption'
 $CVSROOT_DIRNAME/CVSROOT/config,v  <--  config
 new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
 $SPROG commit: Rebuilding administrative file database"
 	  else
 	    dotest config-cleanup-3 "$testcvs -q ci -m change-to-comment" \
-"$SPROG [a-z]*: $CVSROOT_DIRNAME/CVSROOT/config: unrecognized keyword 'BogusOption'
+"$SPROG [a-z]*: $SECONDARY_CVSROOT_DIRNAME/CVSROOT/config \[[1-9][0-9]*\]: unrecognized keyword \`BogusOption'
 $CVSROOT_DIRNAME/CVSROOT/config,v  <--  config
 new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
 $SPROG commit: Rebuilding administrative file database"
@@ -27919,12 +27989,12 @@ C first-dir/FiLe"
 	  CVSROOT2_DIRNAME=${TESTDIR}/root.2
 	  CVSROOT1=`newroot $CVSROOT1_DIRNAME`
 	  CVSROOT2=`newroot $CVSROOT2_DIRNAME`
-	  testcvs1="${testcvs} -d ${CVSROOT1}"
-	  testcvs2="${testcvs} -d ${CVSROOT2}"
+	  testcvs1="$testcvs -d '$CVSROOT1'"
+	  testcvs2="$testcvs -d '$CVSROOT2'"
 
-	  dotest multiroot-setup-1 "mkdir ${CVSROOT1_DIRNAME} ${CVSROOT2_DIRNAME}" ""
-	  dotest multiroot-setup-2 "${testcvs1} init" ""
-	  dotest multiroot-setup-3 "${testcvs2} init" ""
+	  dotest multiroot-setup-1 "mkdir $CVSROOT1_DIRNAME $CVSROOT2_DIRNAME"
+	  dotest multiroot-setup-2 "$testcvs1 init"
+	  dotest multiroot-setup-3 "$testcvs2 init"
 
 	  #
 	  # create some directories in ${CVSROOT1_DIRNAME}
@@ -30729,7 +30799,7 @@ ${SPROG} \[commit aborted\]: correct above errors first!"
 	  echo change >>file1; echo another change >>subdir/file2
 	  # Changing working root, then override with -d
 	  echo nosuchhost:/cvs > CVS/Root
-	  dotest commit-d-3 "$testcvs -q -d $CVSROOT commit -m." \
+	  dotest commit-d-3 "$testcvs -q -d '$CVSROOT' commit -m." \
 "$CVSROOT_DIRNAME/c-d-c/file1,v  <--  file1
 new revision: 1.2; previous revision: 1.1
 $CVSROOT_DIRNAME/c-d-c/subdir/file2,v  <--  subdir/file2
@@ -30937,6 +31007,11 @@ ${SPROG} update: Updating first/subdir"
 	  # These tests are only meaningful in client/server mode.
 	  if $remote; then :; else
 	    remoteonly writeproxy
+	    continue
+	  fi
+
+	  if $noredirect; then
+	    notnoredirect writeproxy
 	    continue
 	  fi
 
@@ -31166,11 +31241,11 @@ $SPROG \[update aborted\]: could not find desired version 1\.4 in $PRIMARY_CVSRO
 
 	  # Initialize the primary repository
 	  dotest writeproxy-noredirect-init-1 \
-"$testcvs -d$PRIMARY_CVSROOT init"
+"$testcvs -d'$PRIMARY_CVSROOT' init"
 	  mkdir writeproxy-noredirect; cd writeproxy-noredirect
 	  mkdir primary; cd primary
 	  dotest writeproxy-noredirect-init-2 \
-"$testcvs -Qd$PRIMARY_CVSROOT co CVSROOT"
+"$testcvs -Qd'$PRIMARY_CVSROOT' co CVSROOT"
 	  cd CVSROOT
 	  cat >>loginfo <<EOF
 ALL $RSYNC -gopr --delete $PRIMARY_CVSROOT_DIRNAME/ $SECONDARY_CVSROOT_DIRNAME
@@ -31224,7 +31299,7 @@ EOF
 	  cd ../..
 	  mkdir secondary; cd secondary
 	  dotest writeproxy-noredirect-1 \
-"$testcvs -qd$PRIMARY_CVSROOT co CVSROOT" \
+"$testcvs -qd'$PRIMARY_CVSROOT' co CVSROOT" \
 "U CVSROOT/checkoutlist
 U CVSROOT/commitinfo
 U CVSROOT/config
@@ -31252,7 +31327,7 @@ PrimaryServer=$PRIMARY_CVSROOT"
 	  # Checkin to secondary
 	  cd ..
 	  dotest writeproxy-noredirect-4 \
-"$testcvs -Qd$PRIMARY_CVSROOT co -ldtop ."
+"$testcvs -Qd'$PRIMARY_CVSROOT' co -ldtop ."
 	  cd top
 	  mkdir firstdir
 
@@ -31365,7 +31440,7 @@ EOF
 	  # Checkout from primary
 	  cd ../../../primary
 	  dotest writeproxy-noredirect-8 \
-"$testcvs -qd$PRIMARY_CVSROOT co firstdir" \
+"$testcvs -qd'$PRIMARY_CVSROOT' co firstdir" \
 "U firstdir/file1"
 
 	  # Confirm data present
@@ -31408,6 +31483,11 @@ EOF
 	  # verifies that the server registers the referrer.
 	  if $remote; then :; else
 	    remoteonly writeproxy-ssh
+	    continue
+	  fi
+
+	  if $noredirect; then
+	    notnoredirect writeproxy-ssh
 	    continue
 	  fi
 
