@@ -383,6 +383,10 @@ do_recursion (frame)
 	       does not make sense, so we insist upon having a
 	       repository at this point.  Name_Repository will give a
 	       reasonable error message.  */
+	    /* In the !(which & W_LOCAL) case, Find_Names will not look at
+	       entries (which won't exist), and Name_Repository will just
+	       give an error.  Is there some reason why this is not an
+	       issue, or is there a subtle bug lurking here?  */
 	    if (repository == NULL)
 		repository = Name_Repository ((char *) NULL, update_dir);
 

@@ -1,5 +1,8 @@
 Wed Jul 24 09:28:33 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* recurse.c (do_recursion): Add comment about calling
+	Name_Repository in !(which & W_LOCAL) case.
+
 	* expand_path.c (expand_variable): Fix typo (varaible -> variable).
 
 Tue Jul 23 15:05:01 1996  Ian Lance Taylor  <ian@cygnus.com>
