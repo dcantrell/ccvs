@@ -1,5 +1,9 @@
 2003-11-08  Derek Price  <derek@ximbiot.com>
 
+	* sanity.sh (tests): Remove basica.
+
+2003-11-08  Derek Price  <derek@ximbiot.com>
+
 	* sanity.sh (basica): Remove these tests since they are imported into
 	the Autotest suite.
 
