@@ -1,3 +1,8 @@
+2001-09-14  Larry Jones  <larry.jones@sdrc.com>
+
+	* cvs.texinfo (commit files): Make following sections (commitinfo,
+	verifymsg, editinfo, and loginfo) subsections of this one.
+
 2001-09-06  Derek Price  <dprice@collab.net>
 
 	* cvs.texinfo (Watch information):  Cleanup some watch/edit
