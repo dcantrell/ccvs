@@ -4243,8 +4243,9 @@ no way to see how the tag was assigned yesterday).
 You can merge changes made on a branch into your working copy by giving
 the @samp{-j @var{branchname}} flag to the @code{update} subcommand.  With one
 @samp{-j @var{branchname}} option it merges the changes made between the
-point where the branch forked and newest revision on that branch (into
-your working copy).
+greatest common ancestor (GCA) of the branch and the destination revision (in
+the simple case below the GCA is the point where the branch forked) and the
+newest revision on that branch into your working copy.
 
 @cindex Join
 The @samp{-j} stands for ``join''.
