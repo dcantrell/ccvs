@@ -11362,12 +11362,8 @@ file, which defines the modules inside the repository.
 @menu
 * modules::                     Defining modules
 * Wrappers::                    Specify binary-ness based on file name
-* commit files::                The commit support files
-* commitinfo::                  Pre-commit checking
-* verifymsg::                   How are log messages evaluated?
-* editinfo::                    Specifying how log messages are created
-                                (obsolete)
-* loginfo::                     Where should log messages be sent?
+* commit files::                The commit support files (commitinfo,
+                                verifymsg, editinfo, loginfo)
 * rcsinfo::                     Templates for the log messages
 * cvsignore::                   Ignoring files via cvsignore
 * checkoutlist::                Adding your own administrative files
@@ -11969,6 +11965,11 @@ imagination is the limit!
 
 @menu
 * syntax::                      The common syntax
+* commitinfo::                  Pre-commit checking
+* verifymsg::                   How are log messages evaluated?
+* editinfo::                    Specifying how log messages are created
+                                (obsolete)
+* loginfo::                     Where should log messages be sent?
 @end menu
 
 @c . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
@@ -12035,7 +12036,7 @@ is used as a file name or command-line as appropriate.
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node commitinfo
-@appendixsec Commitinfo
+@appendixsubsec Commitinfo
 @cindex Commitinfo
 @cindex Checking commits
 @cindex Precommit checking
@@ -12098,7 +12099,7 @@ repositories}).
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node verifymsg
-@appendixsec Verifying log messages
+@appendixsubsec Verifying log messages
 @cindex @file{verifymsg} (admin file)
 @cindex Log message, verifying
 
@@ -12241,7 +12242,7 @@ RereadLogAfterVerify=always
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node editinfo
-@appendixsec Editinfo
+@appendixsubsec Editinfo
 @cindex editinfo (admin file)
 @cindex Editor, specifying per module
 @cindex Per-module editor
@@ -12306,7 +12307,7 @@ There is no good workaround for this; use
 
 @c . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 @node editinfo example
-@appendixsubsec Editinfo example
+@appendixsubsubsec Editinfo example
 
 The following is a little silly example of a
 @file{editinfo} file, together with the corresponding
@@ -12359,7 +12360,7 @@ The @file{rcsinfo} file contains this line:
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node loginfo
-@appendixsec Loginfo
+@appendixsubsec Loginfo
 @cindex loginfo (admin file)
 @cindex Storing log messages
 @cindex Mailing log messages
@@ -12447,7 +12448,7 @@ repositories}).
 
 @c . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 @node loginfo example
-@appendixsubsec Loginfo example
+@appendixsubsubsec Loginfo example
 
 The following @file{loginfo} file, together with the
 tiny shell-script below, appends all log messages
@@ -12482,7 +12483,7 @@ like this:
 @end example
 
 @node Keeping a checked out copy
-@appendixsubsec Keeping a checked out copy
+@appendixsubsubsec Keeping a checked out copy
 
 @c What other index entries?  It seems like
 @c people might want to use a lot of different
