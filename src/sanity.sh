@@ -6631,27 +6631,27 @@ first-dir/dir1:"
           dotest branches2-14-rls-3 "$testcvs rls -l -R" \
 "$SPROG rls: Listing module: \`.'
 \.:
-d---                                     CVSROOT
-d---                                     first-dir
+d--- $ISO8601DATE            CVSROOT
+d--- $ISO8601DATE            first-dir
 
 CVSROOT:
----- $DATE 1\.[0-9][0-9]*        checkoutlist
----- $DATE 1\.[0-9][0-9]*        commitinfo
----- $DATE 1\.[0-9][0-9]*        config
----- $DATE 1\.[0-9][0-9]*        cvswrappers
----- $DATE 1\.[0-9][0-9]*        loginfo
----- $DATE 1\.[0-9][0-9]*        modules
----- $DATE 1\.[0-9][0-9]*        notify
----- $DATE 1\.[0-9][0-9]*        rcsinfo
----- $DATE 1\.[0-9][0-9]*        taginfo
----- $DATE 1\.[0-9][0-9]*        verifymsg
-d---                                     Emptydir
+---- $ISO8601DATE 1\.[0-9][0-9]*        checkoutlist
+---- $ISO8601DATE 1\.[0-9][0-9]*        commitinfo
+---- $ISO8601DATE 1\.[0-9][0-9]*        config
+---- $ISO8601DATE 1\.[0-9][0-9]*        cvswrappers
+---- $ISO8601DATE 1\.[0-9][0-9]*        loginfo
+---- $ISO8601DATE 1\.[0-9][0-9]*        modules
+---- $ISO8601DATE 1\.[0-9][0-9]*        notify
+---- $ISO8601DATE 1\.[0-9][0-9]*        rcsinfo
+---- $ISO8601DATE 1\.[0-9][0-9]*        taginfo
+---- $ISO8601DATE 1\.[0-9][0-9]*        verifymsg
+d--- $ISO8601DATE            Emptydir
 
 CVSROOT/Emptydir:
 
 first-dir:
----- $DATE 1\.1        file1
-d---                                     dir1
+---- $ISO8601DATE 1\.1        file1
+d--- $ISO8601DATE            dir1
 
 first-dir/dir1:"
           dotest branches2-14-rls-4 "$testcvs rls -eR" \
@@ -6707,34 +6707,34 @@ dir1
 first-dir/dir1:"
           dotest branches2-14-rls-6 "$testcvs -q rls -lRrb1" \
 "\.:
-d---                                     CVSROOT
-d---                                     first-dir
+d--- $ISO8601DATE            CVSROOT
+d--- $ISO8601DATE            first-dir
 
 CVSROOT:
-d---                                     Emptydir
+d--- $ISO8601DATE            Emptydir
 
 CVSROOT/Emptydir:
 
 first-dir:
----- $DATE 1\.1        file1
----- $DATE 1\.1\.2\.1    file2
-d---                                     dir1
+---- $ISO8601DATE 1\.1        file1
+---- $ISO8601DATE 1\.1\.2\.1    file2
+d--- $ISO8601DATE            dir1
 
 first-dir/dir1:
----- $DATE 1\.1\.2\.1    file3"
+---- $ISO8601DATE 1\.1\.2\.1    file3"
           dotest branches2-14-rls-7 "$testcvs -q rls -lRrb2" \
 "\.:
-d---                                     CVSROOT
-d---                                     first-dir
+d--- $ISO8601DATE            CVSROOT
+d--- $ISO8601DATE            first-dir
 
 CVSROOT:
-d---                                     Emptydir
+d--- $ISO8601DATE            Emptydir
 
 CVSROOT/Emptydir:
 
 first-dir:
----- $DATE 1\.1        file1
-d---                                     dir1
+---- $ISO8601DATE 1\.1        file1
+d--- $ISO8601DATE            dir1
 
 first-dir/dir1:"
 
@@ -6938,21 +6938,20 @@ File: file5            	Status: Up-to-date
           dotest branches2-39 "$testcvs rls -rb1 -l -R first-dir" \
 "$SPROG rls: Listing module: \`first-dir'
 first-dir:
----- $DATE 1\.1        file1
----- $DATE 1\.1\.2\.1    file2
-d---                                     dir1
-d---                                     dir2
+---- $ISO8601DATE 1\.1        file1
+---- $ISO8601DATE 1\.1\.2\.1    file2
+d--- $ISO8601DATE            dir1
+d--- $ISO8601DATE            dir2
 
 first-dir/dir1:
----- $DATE 1\.1\.2\.1    file3
+---- $ISO8601DATE 1\.1\.2\.1    file3
 
 first-dir/dir2:
----- $DATE 1\.1\.2\.1    file4"
-
-	  cd ../../..
+---- $ISO8601DATE 1\.1\.2\.1    file4"
 
 	  dokeep
 
+	  cd ../../..
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
 	  rm -r trunk b1a b1b
 	  ;;
@@ -19823,7 +19822,7 @@ EOF
 "2000 is also a good year for leaping"
 	  # 29 Feb 2003 is invalid
 	  dotest_fail rcs2-5 "${testcvs} -q update -p -D '2003-02-29 11:30 UT' file1" \
-"${CPROG} \[update aborted\]: Can't parse date/time: 2003-02-29 11:30 UT"
+"$CPROG \[update aborted\]: Can't parse date/time: \`2003-02-29 11:30 UT'"
 
 	  dotest rcs2-6 "${testcvs} -q update -p -D 2007-01-07 file1" \
 "head revision"

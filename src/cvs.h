@@ -430,6 +430,7 @@ char *date_from_time_t (time_t);
 void date_to_internet (char *, const char *);
 void date_to_tm (struct tm *, const char *);
 void tm_to_internet (char *, const struct tm *);
+char *gmformat_time_t (time_t unixtime);
 char *format_date_alloc (char *text);
 
 char *Name_Repository (const char *dir, const char *update_dir);
@@ -451,6 +452,8 @@ char *previous_rev (RCSNode *rcs, const char *rev);
 char *gca (const char *rev1, const char *rev2);
 void check_numeric (const char *, int, char **);
 char *getcaller (void);
+char *entries_time (time_t unixtime);
+time_t unix_time_stamp (const char *file);
 char *time_stamp (const char *file);
 
 void *xmalloc (size_t bytes)
