@@ -1,5 +1,9 @@
 Sun Mar  2 18:11:09 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* error.c (error): Add newline to "out of memory" message.  I think
+	that its omission probably could cause the message to be lost in
+	the bowels of server.c and never passed to the user.
+
 	* client.c (start_rsh_server): Add comment about "remsh" vs. "rsh".
 
 	* cvs.h: Move copyright notice to top of file.
