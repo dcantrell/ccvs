@@ -1,5 +1,7 @@
 Sun Nov 24 17:27:24 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvs.texinfo: Add comment pointing to paper size web page.
+
 	* cvs.texinfo (Common options): Rewrite section on date formats.
 	Executive summary is that RFC822 and ISO8601 are now preferred.
 

@@ -27,6 +27,13 @@
 @c If one prints US letter on A4, reportedly there is
 @c some extra space at the top and/or bottom, and the side
 @c margins are a bit narrow, but no text is lost.
+@c 
+@c See
+@c http://www.ft.uni-erlangen.de/~mskuhn/iso-paper.html
+@c for more on paper sizes.  Insuring that margins are
+@c big enough to print on either A4 or US letter does
+@c indeed  seem to be the usual approach (according to
+@c an internet draft by Jacob Palme).
 
 @setfilename cvs.info
 @include CVSvn.texi
