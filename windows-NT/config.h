@@ -280,6 +280,10 @@ extern void fnfold (char *FILENAME);
    specifically tell them not to.  */
 #define LINES_CRLF_TERMINATED 1
 
+/* Likewise, when writing binary data to stdout, we better set
+   stdout to binary mode using setmode.  */
+#define USE_SETMODE_STDOUT 1
+
 /* Read data from INFILE, and copy it to OUTFILE. 
    Open INFILE using INFLAGS, and OUTFILE using OUTFLAGS.
    This is useful for converting between CRLF and LF line formats.  */
