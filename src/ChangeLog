@@ -1,3 +1,7 @@
+2003-10-08  Derek Price  <derek@ximbiot.com>
+
+	* lock.c (lock_filesdoneproc): Reformat long function prototype.
+
 2003-10-07  Larry Jones  <lawrence.jones@eds.com>
 
 	* server.c (server_cleanup): Remove old code that was commented out
