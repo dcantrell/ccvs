@@ -24,12 +24,11 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
 
 # include <stddef.h>
 # include <stdio.h>
+# include <sys/types.h> /* Included for ssize_t. */
 
-# define GETNDELIM_NO_LIMIT -1
+ssize_t getnline( char **_lineptr, size_t *_n, int limit, FILE *_stream );
 
-int getnline( char **_lineptr, size_t *_n, int limit, FILE *_stream );
-
-int getndelim( char **_lineptr, size_t *_n, int limit, int _delimiter,
-               FILE *_stream );
+ssize_t getndelim( char **_lineptr, size_t *_n, int limit, int _delimiter,
+                   FILE *_stream );
 
 #endif /* not GETNLINE_H_ */

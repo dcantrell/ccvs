@@ -34,11 +34,13 @@
 #endif
 
 #include <stddef.h>
-#include <stdio.h>
 
 #if defined __GNU_LIBRARY__ && HAVE_GETDELIM
 
-int
+# include <stdio.h>
+# include <sys/types.h> /* Included for ssize_t. */
+
+ssize_t
 getline (char **lineptr, size_t *n, FILE *stream)
 {
   return getdelim (lineptr, n, '\n', stream);
@@ -46,17 +48,17 @@ getline (char **lineptr, size_t *n, FILE *stream)
 
 #else /* ! have getdelim */
 
-# include "getnline.h"
+# include "getndelim2.h"
 
-int
+ssize_t
 getline (char **lineptr, size_t *n, FILE *stream)
 {
-  return getnline (lineptr, n, stream, GETNDELIM_NO_LIMIT);
+  return getndelim2( lineptr, n, 0, GETNDELIM_NO_LIMIT, '\n', 0, stream );
 }
 
 int
 getdelim (char **lineptr, size_t *n, int delimiter, FILE *stream)
 {
-  return getndelim (lineptr, n, delimiter, stream, GETNDELIM_NO_LIMIT);
+  return getndelim2( lineptr, n, 0, GETNDELIM_NO_LIMIT, delimiter, 0, stream );
 }
 #endif /* have getdelim */
