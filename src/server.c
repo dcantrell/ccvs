@@ -375,11 +375,15 @@ dirswitch (dir, repos)
 	&& status != EEXIST)
     {
 	pending_error = status;
+	pending_error_text = malloc (80 + strlen(dirname));
+	sprintf(pending_error_text, "E cannot mkdir %s", dirname);
 	return;
     }
     if (chdir (dirname) < 0)
     {
 	pending_error = errno;
+	pending_error_text = malloc (80 + strlen(dirname));
+	sprintf(pending_error_text, "E cannot change to %s", dirname);
 	return;
     }
     /*
@@ -415,11 +419,15 @@ dirswitch (dir, repos)
     if (f == NULL)
     {
 	pending_error = errno;
+	pending_error_text = malloc (80 + strlen(CVSADM_ENT));
+	sprintf(pending_error_text, "E cannot open %s", CVSADM_ENT);
 	return;
     }
     if (fclose (f) == EOF)
     {
 	pending_error = errno;
+	pending_error_text = malloc (80 + strlen(CVSADM_ENT));
+	sprintf(pending_error_text, "E cannot close %s", CVSADM_ENT);
 	return;
     }
     free (dirname);
@@ -477,11 +485,15 @@ serve_static_directory (arg)
     if (f == NULL)
     {
 	pending_error = errno;
+	pending_error_text = malloc (80 + strlen(CVSADM_ENTSTAT));
+	sprintf(pending_error_text, "E cannot open %s", CVSADM_ENTSTAT);
 	return;
     }
     if (fclose (f) == EOF)
     {
 	pending_error = errno;
+	pending_error_text = malloc (80 + strlen(CVSADM_ENTSTAT));
+	sprintf(pending_error_text, "E cannot close %s", CVSADM_ENTSTAT);
 	return;
     }
 }
@@ -495,16 +507,22 @@ serve_sticky (arg)
     if (f == NULL)
     {
 	pending_error = errno;
+	pending_error_text = malloc (80 + strlen(CVSADM_TAG));
+	sprintf(pending_error_text, "E cannot open %s", CVSADM_TAG);
 	return;
     }
     if (fprintf (f, "%s\n", arg) < 0)
     {
 	pending_error = errno;
+	pending_error_text = malloc (80 + strlen(CVSADM_TAG));
+	sprintf(pending_error_text, "E cannot write to %s", CVSADM_TAG);
 	return;
     }
     if (fclose (f) == EOF)
     {
 	pending_error = errno;
+	pending_error_text = malloc (80 + strlen(CVSADM_TAG));
+	sprintf(pending_error_text, "E cannot close %s", CVSADM_TAG);
 	return;
     }
 }
@@ -766,6 +784,8 @@ serve_lost (arg)
 	if (fd < 0 || close (fd) < 0)
 	{
 	    pending_error = errno;
+	    pending_error_text = malloc (80 + strlen(arg));
+	    sprintf(pending_error_text, "E cannot open %s", arg);
 	    return;
 	}
 	/*
@@ -777,6 +797,8 @@ serve_lost (arg)
 	if (utime (arg, &ut) < 0)
 	{
 	    pending_error = errno;
+	    pending_error_text = malloc (80 + strlen(arg));
+	    sprintf(pending_error_text, "E cannot utime %s", arg);
 	    return;
 	}
     }
@@ -878,6 +900,8 @@ server_write_entries ()
 	if (f == NULL)
 	{
 	    pending_error = errno;
+	    pending_error_text = malloc (80 + strlen(CVSADM_ENT));
+	    sprintf(pending_error_text, "E cannot open %s", CVSADM_ENT);
 	}
     }
     for (p = entries; p != NULL;)
@@ -887,6 +911,8 @@ server_write_entries ()
 	    if (fprintf (f, "%s\n", p->entry) < 0)
 	    {
 		pending_error = errno;
+		pending_error_text = malloc (80 + strlen(CVSADM_ENT));
+		sprintf(pending_error_text, "E cannot write to %s", CVSADM_ENT);
 	    }
 	}
 	free (p->entry);
@@ -898,6 +924,8 @@ server_write_entries ()
     if (f != NULL && fclose (f) == EOF && !error_pending ())
     {
 	pending_error = errno;
+	pending_error_text = malloc (80 + strlen(CVSADM_ENT));
+	sprintf(pending_error_text, "E cannot close %s", CVSADM_ENT);
     }
 }
 
@@ -3125,16 +3153,22 @@ serve_checkin_prog (arg)
     if (f == NULL)
     {
 	pending_error = errno;
+	pending_error_text = malloc (80 + strlen(CVSADM_CIPROG));
+	sprintf(pending_error_text, "E cannot open %s", CVSADM_CIPROG);
 	return;
     }
     if (fprintf (f, "%s\n", arg) < 0)
     {
 	pending_error = errno;
+	pending_error_text = malloc (80 + strlen(CVSADM_CIPROG));
+	sprintf(pending_error_text, "E cannot write to %s", CVSADM_CIPROG);
 	return;
     }
     if (fclose (f) == EOF)
     {
 	pending_error = errno;
+	pending_error_text = malloc (80 + strlen(CVSADM_CIPROG));
+	sprintf(pending_error_text, "E cannot close %s", CVSADM_CIPROG);
 	return;
     }
 }
@@ -3148,16 +3182,22 @@ serve_update_prog (arg)
     if (f == NULL)
     {
 	pending_error = errno;
+	pending_error_text = malloc (80 + strlen(CVSADM_UPROG));
+	sprintf(pending_error_text, "E cannot open %s", CVSADM_UPROG);
 	return;
     }
     if (fprintf (f, "%s\n", arg) < 0)
     {
 	pending_error = errno;
+	pending_error_text = malloc (80 + strlen(CVSADM_UPROG));
+	sprintf(pending_error_text, "E cannot write to %s", CVSADM_UPROG);
 	return;
     }
     if (fclose (f) == EOF)
     {
 	pending_error = errno;
+	pending_error_text = malloc (80 + strlen(CVSADM_UPROG));
+	sprintf(pending_error_text, "E cannot close %s", CVSADM_UPROG);
 	return;
     }
 }

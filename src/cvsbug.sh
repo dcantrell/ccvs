@@ -56,7 +56,11 @@ DEFAULT_ORGANIZATION="net"
 
 # What mailer to use.  This must come after the config file, since it is
 # host-dependent.
-MAIL_AGENT="/usr/lib/sendmail -oi -t"
+if [ -f /usr/sbin/sendmail ]; then
+  MAIL_AGENT="/usr/sbin/sendmail -oi -t"
+else
+  MAIL_AGENT="/usr/lib/sendmail -oi -t"
+fi
 MAILER=`echo $MAIL_AGENT | sed -e 's, .*,,'`
 if [ ! -f "$MAILER" ] ; then
 	echo "$COMMAND: Cannot file mail program \"$MAILER\"."
