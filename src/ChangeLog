@@ -1,5 +1,8 @@
 2001-07-19  Larry Jones  <larry.jones@sdrc.com>
 
+	* mkmodules.c (cvswrappers_contents): Remove -t/-f since they're
+	disabled in wrapper.c.
+
 	* checkout.c (checkout): Don't complain about checking out into the
 	repository when piping output.
 	(Reported by der Mouse <mouse@Rodents.Montreal.QC.CA>.)

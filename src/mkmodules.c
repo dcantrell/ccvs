@@ -206,10 +206,12 @@ static const char *const checkoutlist_contents[] = {
 static const char *const cvswrappers_contents[] = {
     "# This file affects handling of files based on their names.\n",
     "#\n",
+#if 0    /* see comments in wrap_add in wrapper.c */
     "# The -t/-f options allow one to treat directories of files\n",
     "# as a single file, or to transform a file in other ways on\n",
     "# its way in and out of CVS.\n",
     "#\n",
+#endif
     "# The -m option specifies whether CVS attempts to merge files.\n",
     "#\n",
     "# The -k option specifies keyword expansion (e.g. -kb for binary).\n",
