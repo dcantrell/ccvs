@@ -88,8 +88,7 @@ socket_buffer_initialize( int socket, int input,
 {
     struct socket_buffer *sbuf = xmalloc (sizeof *sbuf);
     sbuf->socket = socket;
-    return buf_initialize (0, 0,
-			   input ? socket_buffer_input : NULL,
+    return buf_initialize (input ? socket_buffer_input : NULL,
 			   input ? NULL : socket_buffer_output,
 			   input ? NULL : socket_buffer_flush,
 			   NULL, NULL,
