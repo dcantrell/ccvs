@@ -947,6 +947,9 @@ expand_wild (argc, argv, pargc, pargv)
 
 static void check_statbuf (const char *file, struct stat *sb)
 {
+    struct tm *newtime;
+    time_t long_time;
+
     /* Win32 processes file times in a 64 bit format
        (see Win32 functions SetFileTime and GetFileTime).
        If the file time on a file doesn't fit into the
@@ -966,6 +969,23 @@ static void check_statbuf (const char *file, struct stat *sb)
 	error (1, 0, "invalid ctime for %s", file);
     if (sb->st_atime == (time_t) -1)
 	error (1, 0, "invalid access time for %s", file);
+
+    time( &long_time );			/* Get time as long integer. */
+    newtime = localtime( &long_time );	/* Convert to local time. */
+
+    /* we know for a fact that the stat function under Windoze NT 4.0 and,
+     * by all reports, many other Windoze systems, will return file times
+     * 3600 seconds too big when daylight savings time is in effect.  This is
+     * a bug since it is defined as returning the time in UTC.
+     *
+     * So correct for it for now.
+     */
+    if (newtime->tm_isdst == 1)
+    {
+	sb->st_ctime -= 3600;
+	sb->st_mtime -= 3600;
+	sb->st_atime -= 3600;
+    }
 }
 
 int

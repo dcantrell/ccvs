@@ -1,4 +1,11 @@
-2000-10-20  Derek Price  <derek.price@openavenue.com>
+2000-11-21  Derek Price  <derek.price@openavenue.com>
+
+	* filesubr.c (check_statbuf): subtract 3600 from the times returned
+	by the stat function when daylight savings time is in effect due to a
+	bug in Windoze.  Fixes a bug where CVS thinks all files have been
+	touched after a transition to or from daylight savings time.
+
+2000-11-20  Derek Price  <derek.price@openavenue.com>
 
 	* filesubr.c (cvs_temp_file): add this function to match the one in
 	src/filesubr.c
