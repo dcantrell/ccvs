@@ -1,3 +1,8 @@
+1998-02-18  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* patch.c (patch_fileproc): Check for errors from fclose; check
+	for errors from fopen properly.
+
 Wed Feb 18 16:03:37 1998  Larry Jones  <larry.jones@sdrc.com>
 
 	* admin.c (admin_fileproc): Convert -b argument from symbolic name
