@@ -1,7 +1,8 @@
 /*
 	<ndir.h> -- definitions for 4.2BSD-compatible directory access
 
-	last edit:	28-dec-1994	Richard Levitte
+	28-dec-1994	Richard Levitte
+	See ChangeLog for more recent modification history.
 */
 
 #ifndef NDIR_H
@@ -54,7 +55,7 @@ extern struct direct	*readdir();
 extern long		telldir();
 extern void		seekdir();
 #endif
-extern void		closedir();
+extern int		closedir();
 
 #define rewinddir( dirp )	seekdir( dirp, 0L )
 
