@@ -24407,7 +24407,7 @@ EOF
 "${SPROG} update: Updating \.
 ${SPROG} update: Updating first-dir"
 	  cd ..
-	  rm -rf 1
+	  rm -rf 1 $CVSROOT_DIRNAME/first-dir
 	  ;;
 	  
 	multiroot)
