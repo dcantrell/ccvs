@@ -76,6 +76,7 @@ ECHO_T = @ECHO_T@
 EDITOR = @EDITOR@
 EGREP = @EGREP@
 EXEEXT = @EXEEXT@
+FNMATCH_H = @FNMATCH_H@
 GMSGFMT = @GMSGFMT@
 HAVE_PUTENV = @HAVE_PUTENV@
 INSTALL_DATA = @INSTALL_DATA@
@@ -227,7 +228,10 @@ libcvs_a_LIBADD = @LIBOBJS@
 
 
 # For GNULIB's alloca module.
-BUILT_SOURCES = $(ALLOCA_H)
+
+# For GNULIB's fnmatch module.
+BUILT_SOURCES = $(ALLOCA_H) $(FNMATCH_H)
+MOSTLYCLEANFILES = alloca.h alloca.h-t fnmatch.h fnmatch.h-t
 
 EXTRA_DIST = \
 	.cvsignore \
@@ -235,7 +239,7 @@ EXTRA_DIST = \
 	build_lib.com \
 	lib.dsp \
 	lib.mak\
-alloca_.h
+alloca_.h fnmatch_.h fnmatch_loop.c
 subdir = lib
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
@@ -257,27 +261,26 @@ depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
 @AMDEP_TRUE@DEP_FILES = $(DEPDIR)/asnprintf.Po $(DEPDIR)/atexit.Po \
 @AMDEP_TRUE@	$(DEPDIR)/dup2.Po $(DEPDIR)/fncase.Po \
-@AMDEP_TRUE@	$(DEPDIR)/fnmatch.Po $(DEPDIR)/fnmatch.h.in \
-@AMDEP_TRUE@	$(DEPDIR)/fseeko.Po $(DEPDIR)/ftello.Po \
-@AMDEP_TRUE@	$(DEPDIR)/ftruncate.Po $(DEPDIR)/gethostname.Po \
-@AMDEP_TRUE@	$(DEPDIR)/getline.Po $(DEPDIR)/getndelim2.Po \
-@AMDEP_TRUE@	$(DEPDIR)/getpass.Po $(DEPDIR)/lstat.Po \
-@AMDEP_TRUE@	$(DEPDIR)/malloc.Po $(DEPDIR)/memmove.Po \
-@AMDEP_TRUE@	$(DEPDIR)/mkdir.Po $(DEPDIR)/mkstemp.Po \
-@AMDEP_TRUE@	$(DEPDIR)/printf-args.Po $(DEPDIR)/printf-parse.Po \
-@AMDEP_TRUE@	$(DEPDIR)/realloc.Po $(DEPDIR)/regex.Po \
-@AMDEP_TRUE@	$(DEPDIR)/rename.Po $(DEPDIR)/stat.Po \
-@AMDEP_TRUE@	$(DEPDIR)/strerror.Po $(DEPDIR)/strstr.Po \
-@AMDEP_TRUE@	$(DEPDIR)/strtoul.Po $(DEPDIR)/tempname.Po \
-@AMDEP_TRUE@	$(DEPDIR)/valloc.Po $(DEPDIR)/vasnprintf.Po \
-@AMDEP_TRUE@	$(DEPDIR)/waitpid.Po ./$(DEPDIR)/argmatch.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/exitfail.Po ./$(DEPDIR)/getdate.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/getnline.Po ./$(DEPDIR)/getopt.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/getopt1.Po ./$(DEPDIR)/md5.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/savecwd.Po ./$(DEPDIR)/sighandle.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/stripslash.Po ./$(DEPDIR)/xgetwd.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/xmalloc.Po ./$(DEPDIR)/xstrdup.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/yesno.Po
+@AMDEP_TRUE@	$(DEPDIR)/fnmatch.Po $(DEPDIR)/fseeko.Po \
+@AMDEP_TRUE@	$(DEPDIR)/ftello.Po $(DEPDIR)/ftruncate.Po \
+@AMDEP_TRUE@	$(DEPDIR)/gethostname.Po $(DEPDIR)/getline.Po \
+@AMDEP_TRUE@	$(DEPDIR)/getndelim2.Po $(DEPDIR)/getpass.Po \
+@AMDEP_TRUE@	$(DEPDIR)/lstat.Po $(DEPDIR)/malloc.Po \
+@AMDEP_TRUE@	$(DEPDIR)/memmove.Po $(DEPDIR)/mkdir.Po \
+@AMDEP_TRUE@	$(DEPDIR)/mkstemp.Po $(DEPDIR)/printf-args.Po \
+@AMDEP_TRUE@	$(DEPDIR)/printf-parse.Po $(DEPDIR)/realloc.Po \
+@AMDEP_TRUE@	$(DEPDIR)/regex.Po $(DEPDIR)/rename.Po \
+@AMDEP_TRUE@	$(DEPDIR)/stat.Po $(DEPDIR)/strerror.Po \
+@AMDEP_TRUE@	$(DEPDIR)/strstr.Po $(DEPDIR)/strtoul.Po \
+@AMDEP_TRUE@	$(DEPDIR)/tempname.Po $(DEPDIR)/valloc.Po \
+@AMDEP_TRUE@	$(DEPDIR)/vasnprintf.Po $(DEPDIR)/waitpid.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/argmatch.Po ./$(DEPDIR)/exitfail.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/getdate.Po ./$(DEPDIR)/getnline.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/getopt.Po ./$(DEPDIR)/getopt1.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/md5.Po ./$(DEPDIR)/savecwd.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/sighandle.Po ./$(DEPDIR)/stripslash.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/xgetwd.Po ./$(DEPDIR)/xmalloc.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/xstrdup.Po ./$(DEPDIR)/yesno.Po
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 CCLD = $(CC)
@@ -285,8 +288,8 @@ LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 YACCCOMPILE = $(YACC) $(YFLAGS) $(AM_YFLAGS)
 DIST_SOURCES = $(libcvs_a_SOURCES)
 DIST_COMMON = README $(srcdir)/Makefile.in ChangeLog Makefile.am \
-	asnprintf.c atexit.c dup2.c fncase.c fnmatch.c fnmatch.h.in \
-	fseeko.c ftello.c ftruncate.c getdate.c gethostname.c getline.c \
+	asnprintf.c atexit.c dup2.c fncase.c fnmatch.c fseeko.c \
+	ftello.c ftruncate.c getdate.c gethostname.c getline.c \
 	getndelim2.c getpass.c lstat.c malloc.c memmove.c mkdir.c \
 	mkstemp.c printf-args.c printf-parse.c realloc.c regex.c \
 	rename.c stat.c strerror.c strstr.c strtoul.c tempname.c \
@@ -324,7 +327,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/dup2.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/fncase.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/fnmatch.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/fnmatch.h.in@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/fseeko.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/ftello.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/ftruncate.Po@am__quote@
@@ -515,6 +517,7 @@ install-strip:
 	  `test -z '$(STRIP)' || \
 	    echo "INSTALL_PROGRAM_ENV=STRIPPROG='$(STRIP)'"` install
 mostlyclean-generic:
+	-test -z "$(MOSTLYCLEANFILES)" || rm -f $(MOSTLYCLEANFILES)
 
 clean-generic:
 
@@ -534,7 +537,7 @@ distclean: distclean-am
 	-rm -rf $(DEPDIR) ./$(DEPDIR)
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
-	distclean-local distclean-tags
+	distclean-tags
 
 dvi: dvi-am
 
@@ -575,23 +578,24 @@ uninstall-am: uninstall-info-am
 
 .PHONY: CTAGS GTAGS all all-am check check-am clean clean-generic \
 	clean-noinstLIBRARIES ctags distclean distclean-compile \
-	distclean-generic distclean-local distclean-tags distdir dvi \
-	dvi-am info info-am install install-am install-data \
-	install-data-am install-exec install-exec-am install-info \
-	install-info-am install-man install-strip installcheck \
-	installcheck-am installdirs maintainer-clean \
-	maintainer-clean-generic mostlyclean mostlyclean-compile \
-	mostlyclean-generic pdf pdf-am ps ps-am tags uninstall \
-	uninstall-am uninstall-info-am
+	distclean-generic distclean-tags distdir dvi dvi-am info \
+	info-am install install-am install-data install-data-am \
+	install-exec install-exec-am install-info install-info-am \
+	install-man install-strip installcheck installcheck-am \
+	installdirs maintainer-clean maintainer-clean-generic \
+	mostlyclean mostlyclean-compile mostlyclean-generic pdf pdf-am \
+	ps ps-am tags uninstall uninstall-am uninstall-info-am
 
 all-local $(lib_OBJECTS): $(ALLOCA_H)
 alloca.h: alloca_.h
 	cp $(srcdir)/alloca_.h $@-t
 	mv $@-t $@
-
-# Until Automake gets its act together
-distclean-local:
-	rm -f fnmatch.h alloca.h
+# We need the following in order to create an <fnmatch.h> when the system
+# doesn't have one that supports the required API.
+all-local $(libcvs_a_OBJECTS): $(FNMATCH_H)
+fnmatch.h: fnmatch_.h
+	cp $(srcdir)/fnmatch_.h $@-t
+	mv $@-t $@
 
 # for backwards compatibility with the old makefiles
 realclean: maintainer-clean

@@ -67,6 +67,7 @@ libcvs_a_SOURCES = \
 libcvs_a_LIBADD = @LIBOBJS@
 
 BUILT_SOURCES =
+MOSTLYCLEANFILES =
 
 EXTRA_DIST = \
 	.cvsignore \
@@ -82,19 +83,27 @@ all-local $(lib_OBJECTS): $(ALLOCA_H)
 alloca.h: alloca_.h
 	cp $(srcdir)/alloca_.h $@-t
 	mv $@-t $@
+MOSTLYCLEANFILES += alloca.h alloca.h-t
 
 # For GNULIB's exitfail module.
 libcvs_a_SOURCES += exitfail.h exitfail.c
+
+# For GNULIB's fnmatch module.
+BUILT_SOURCES += $(FNMATCH_H)
+EXTRA_DIST += fnmatch_.h fnmatch_loop.c
+# We need the following in order to create an <fnmatch.h> when the system
+# doesn't have one that supports the required API.
+all-local $(libcvs_a_OBJECTS): $(FNMATCH_H)
+fnmatch.h: fnmatch_.h
+	cp $(srcdir)/fnmatch_.h $@-t
+	mv $@-t $@
+MOSTLYCLEANFILES += fnmatch.h fnmatch.h-t
 
 # For GNULIB's vasnprintf module.
 libcvs_a_SOURCES += printf-args.h printf-parse.h vasnprintf.h
 
 # For GNULIB's xalloc module.
 libcvs_a_SOURCES += xalloc.h xmalloc.c xstrdup.c
-
-# Until Automake gets its act together
-distclean-local:
-	rm -f fnmatch.h alloca.h
 
 # for backwards compatibility with the old makefiles
 realclean: maintainer-clean

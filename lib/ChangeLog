@@ -1,5 +1,19 @@
 2004-04-14  Derek Price  <derek@ximbiot.com>
 
+	Update to current fnmatch module from GNULIB.
+
+	* Makefile.am (BUILT_SOURCES, EXTRA_DIST): Add fnmatch sources.
+	(MOSTLYCLEANFILES): Initialize & add fnmatch & alloca headers.
+	(libcvs_a_OBJECTS): Make dependent on $(FNMATCH_H).
+	(fnmatch.h): New target.
+	* fnmatch.h.in: Rename to...
+	* fnmatch_.h: ...this.
+	* fnmatch.c: New version from GNULIB.
+	* fnmatch_loop.c: New file.
+	* Makefile.in: Regenerated.
+
+2004-04-14  Derek Price  <derek@ximbiot.com>
+
 	* Makefile.am (EXTRA_DIST): Remove lib.dep.
 	* Makefile.in: Regenerated.
 
