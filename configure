@@ -15334,6 +15334,8 @@ _ACEOF
 ac_extract_cpp_result=`(eval "$ac_cpp -dM conftest.$ac_ext") 2>&5 |
   sed -n "/^#define ZLIB_VERSION /{
             s/^#define ZLIB_VERSION //;
+	    s/^ *//;
+	    s/ *\$//;
             p;}" 2>&5`
 if test -n "$ac_extract_cpp_result"; then
   ZLIB_VERSION=$ac_extract_cpp_result
