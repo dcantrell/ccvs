@@ -1,3 +1,9 @@
+Sun Nov  9 16:54:28 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* sanity.sh (diffmerge2): Protect keywords against unwanted
+	expansion.  They got clobbered and the testcase stopped working
+	when I checked it in.
+
 Fri Nov  7 13:23:38 1997  Karl Fogel  <kfogel@floss.red-bean.com>
 	and Jim Kingdon  <kingdon@harvey.cyclic.com>
 
