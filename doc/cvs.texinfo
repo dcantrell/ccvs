@@ -9456,6 +9456,20 @@ exclamation mark (@samp{!}) clears the ignore list.
 This can be used if you want to store any file which
 normally is ignored by @sc{cvs}.
 
+Specifying @samp{-I !} to @code{cvs import} will import
+everything, which is generally what you want to do if
+you are importing files from a pristine distribution or
+any other source which is known to not contain any
+extraneous files.  However, looking at the rules above
+you will see there is a fly in the ointment; if the
+distribution contains any @file{.cvsignore} files, then
+the patterns from those files will be processed even if
+@samp{-I !} is specified.  The only workaround is to
+remove the @file{.cvsignore} files in order to do the
+import.  Because this is awkward, in the future
+@samp{-I !} might be modified to override
+@file{.cvsignore} files in each directory.
+
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node history file
 @appendixsec The history file
