@@ -79,6 +79,7 @@ static char *write_dirtag;
 static int write_dirnonbranch;
 static char *logfile;
 static List *mulist;
+static List *saved_ulist;
 static char *saved_message;
 static time_t last_register_time;
 
@@ -599,7 +600,8 @@ commit (argc, argv)
 	    fp = CVS_FOPEN (fname, "w+");
 	    if (fp == NULL)
 		error (1, 0, "cannot create temporary file %s", fname);
-	    if (fwrite (saved_message, 1, strlen (saved_message), fp) != strlen (saved_message))
+	    if (fwrite (saved_message, 1, strlen (saved_message), fp)
+		!= strlen (saved_message))
 		error (1, errno, "cannot write temporary file %s", fname);
 	    if (fclose (fp) < 0)
 		error (0, errno, "cannot close temporary file %s", fname);
@@ -1101,7 +1103,6 @@ precommit_list_proc (p, closure)
 /*
  * Callback proc for pre-commit checking
  */
-static List *ulist;
 static int
 precommit_proc (repository, filter)
     char *repository;
@@ -1130,7 +1131,7 @@ precommit_proc (repository, filter)
 
     run_setup (filter);
     run_arg (repository);
-    (void) walklist (ulist, precommit_list_proc, NULL);
+    (void) walklist (saved_ulist, precommit_list_proc, NULL);
     return (run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL|RUN_REALLY));
 }
 
@@ -1152,12 +1153,12 @@ check_filesdoneproc (callerdat, err, repos, update_dir, entries)
     /* find the update list for this dir */
     p = findnode (mulist, update_dir);
     if (p != NULL)
-	ulist = ((struct master_lists *) p->data)->ulist;
+	saved_ulist = ((struct master_lists *) p->data)->ulist;
     else
-	ulist = (List *) NULL;
+	saved_ulist = (List *) NULL;
 
     /* skip the checks if there's nothing to do */
-    if (ulist == NULL || ulist->list->next == ulist->list)
+    if (saved_ulist == NULL || saved_ulist->list->next == saved_ulist->list)
 	return (err);
 
     /* run any pre-commit checks */
@@ -1225,7 +1226,8 @@ commit_fileproc (callerdat, finfo)
     {
 	got_message = 1;
 	if (use_editor)
-	    do_editor (finfo->update_dir, &saved_message, finfo->repository, ulist);
+	    do_editor (finfo->update_dir, &saved_message,
+		       finfo->repository, ulist);
 	do_verify (saved_message, finfo->repository);
     }
 
@@ -1752,7 +1754,8 @@ remove_file (finfo, tag, message)
 	omask = umask (cvsumask);
 	(void) CVS_MKDIR (tmp, 0777);
 	(void) umask (omask);
-	(void) sprintf (tmp, "%s/%s/%s%s", finfo->repository, CVSATTIC, finfo->file, RCSEXT);
+	(void) sprintf (tmp, "%s/%s/%s%s", finfo->repository, CVSATTIC,
+			finfo->file, RCSEXT);
 
 	if (strcmp (finfo->rcs->path, tmp) != 0
 	    && CVS_RENAME (finfo->rcs->path, tmp) == -1
