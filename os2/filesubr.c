@@ -284,6 +284,11 @@ xchmod (fname, writable)
     char *attrib_cmd;
     char *attrib_option;
     char *whole_cmd;
+    char *p;
+    char *q;
+
+    if (!isfile (fname))
+	return ENOENT;
 
     attrib_cmd = "attrib "; /* No, really? */
 
@@ -299,7 +304,21 @@ xchmod (fname, writable)
 
     strcpy (whole_cmd, attrib_cmd);
     strcat (whole_cmd, attrib_option);
-    strcat (whole_cmd, fname);
+
+    /* Copy fname to the end of whole_cmd, translating / to \.
+	   Attrib doesn't take / but many parts of CVS rely
+       on being able to use it.  */
+    p = whole_cmd + strlen (whole_cmd);
+    q = fname;
+    while (*q)
+    {
+	if (*q == '/')
+	    *p++ = '\\';
+	else
+	    *p++ = *q;
+	++q;
+    }
+    *p = '\0';
 
     system (whole_cmd);
     free (whole_cmd);
@@ -339,7 +358,7 @@ unlink_file (f)
     * name is closer to our interface, what the heck.  Also, we know
     * unlink()'s error code when trying to remove a directory.
     */
-    chmod (f, S_IWRITE);
+    xchmod (f, 1);
     return (unlink (f));
 }
 

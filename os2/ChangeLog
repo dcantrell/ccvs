@@ -1,4 +1,12 @@
-Sun Jan 28 01:51:27 1996  Jim Kingdon
+Sun Jan 28 12:31:03 1996  Jim Kingdon  (kingdon@beezley)
+
+	* filesubr.c (unlink_file): Use xchmod, not chmod, to make the
+	file read-write.
+	(xchmod): Translate / to \ in file name.  If file doesn't exist,
+	return ENOENT rather than passing it to attrib (which will print an
+	error message).
+
+Sun Jan 28 01:51:27 1996  Jim Kingdon  (kingdon@beezley)
 
 	* config.h: Fix unclosed comment.
 
