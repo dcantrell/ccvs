@@ -1395,6 +1395,8 @@ select_hrec (hr)
 		    if (within (cp, cp2))
 		    {
 			hr->mod = fl->l_module;
+			if (cmpfile != NULL)
+			    free (cmpfile);
 			break;
 		    }
 		    if (cmpfile != NULL)
