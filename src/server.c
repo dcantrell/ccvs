@@ -50,6 +50,9 @@ static Key_schedule sched;
 #endif
 
 #ifdef AUTH_SERVER_SUPPORT
+#ifdef HAVE_GETSPNAM
+#include <shadow.h>
+#endif
 /* For initgroups().  */
 #if HAVE_INITGROUPS
 #include <grp.h>
@@ -3835,7 +3838,7 @@ extern char *crypt PROTO((const char *, const char *));
  * 1 means entry found and password matches.
  * 2 means entry found, but password does not match.
  */
-int
+static int
 check_repository_password (username, password, repository, host_user_ptr)
      char *username, *password, *repository, **host_user_ptr;
 {
@@ -3911,7 +3914,7 @@ check_repository_password (username, password, repository, host_user_ptr)
 
 
 /* Return a hosting username if password matches, else NULL. */
-char *
+static char *
 check_password (username, password, repository)
     char *username, *password, *repository;
 {
@@ -3933,18 +3936,32 @@ check_password (username, password, repository)
     {
 	/* No cvs password found, so try /etc/passwd. */
 
+	const char *found_passwd = NULL;
+#ifdef HAVE_GETSPNAM
+	struct spwd *pw;
+
+	pw = getspnam (username);
+	if (pw != NULL)
+	{
+	    found_passwd = pw->sp_pwdp;
+	}
+#else
 	struct passwd *pw;
-	char *found_passwd;
 
 	pw = getpwnam (username);
+	if (pw != NULL)
+	{
+	    found_passwd = pw->pw_passwd;
+	}
+#endif
+	
 	if (pw == NULL)
-        {
+	{
 	    printf ("E Fatal error, aborting.\n\
 error 0 %s: no such user\n", username);
 	    exit (EXIT_FAILURE);
 	}
-	found_passwd = pw->pw_passwd;
-
+	
 	if (found_passwd && *found_passwd)
 	    return ((! strcmp (found_passwd, crypt (password, found_passwd)))
 		    ? username : NULL);
@@ -3961,6 +3978,60 @@ error 0 %s: no such user\n", username);
     }
 }
 
+static void switch_to_user PROTO((const char *));
+
+static void
+switch_to_user (username)
+    const char *username;
+{
+    struct passwd *pw;
+
+    pw = getpwnam (username);
+    if (pw == NULL)
+    {
+	printf ("E Fatal error, aborting.\n\
+error 0 %s: no such user\n", username);
+	exit (EXIT_FAILURE);
+    }
+
+#if HAVE_INITGROUPS
+    initgroups (pw->pw_name, pw->pw_gid);
+#endif /* HAVE_INITGROUPS */
+
+#if SETXID_SUPPORT
+    /* honor the setgid bit iff set*/
+    if (getgid() != getegid())
+    {
+	setgid (getegid ());
+    }
+    else
+#else
+    {
+	setgid (pw->pw_gid);
+    }
+#endif
+    
+    setuid (pw->pw_uid);
+    /* Inhibit access by randoms.  Don't want people randomly
+       changing our temporary tree before we check things in.  */
+    umask (077);
+
+#if HAVE_PUTENV
+    /* Set LOGNAME and USER in the environment, in case they are
+       already set to something else.  */
+    {
+	char *env;
+
+	env = xmalloc (sizeof "LOGNAME=" + strlen (username));
+	(void) sprintf (env, "LOGNAME=%s", username);
+	(void) putenv (env);
+
+	env = xmalloc (sizeof "USER=" + strlen (username));
+	(void) sprintf (env, "USER=%s", username);
+	(void) putenv (env);
+    }
+#endif /* HAVE_PUTENV */
+}
 
 /* Read username and password from client (i.e., stdin).
    If correct, then switch to run as that user and send an ACK to the
@@ -3974,7 +4045,6 @@ pserver_authenticate_connection ()
     char password[PATH_MAX];
     char *host_user;
     char *descrambled_password;
-    struct passwd *pw;
     int verify_and_exit = 0;
 
     /* The Authentication Protocol.  Client sends:
@@ -4049,19 +4119,17 @@ pserver_authenticate_connection ()
     /* We need the real cleartext before we hash it. */
     descrambled_password = descramble (password);
     host_user = check_password (username, descrambled_password, repository);
+    memset (descrambled_password, 0, strlen (descrambled_password));
+    free (descrambled_password);
     if (host_user)
     {
 	printf ("I LOVE YOU\n");
 	fflush (stdout);
-	memset (descrambled_password, 0, strlen (descrambled_password));
-	free (descrambled_password);
     }
     else
     {
 	printf ("I HATE YOU\n");
 	fflush (stdout);
-	memset (descrambled_password, 0, strlen (descrambled_password));
-	free (descrambled_password);
 	exit (EXIT_FAILURE);
     }
 
@@ -4070,39 +4138,7 @@ pserver_authenticate_connection ()
 	exit (0);
 
     /* Switch to run as this user. */
-    pw = getpwnam (host_user);
-    if (pw == NULL)
-    {
-	printf ("E Fatal error, aborting.\n\
-error 0 %s: no such user\n", username);
-	exit (EXIT_FAILURE);
-    }
-
-#if HAVE_INITGROUPS
-    initgroups (pw->pw_name, pw->pw_gid);
-#endif /* HAVE_INITGROUPS */
-
-    setgid (pw->pw_gid);
-    setuid (pw->pw_uid);
-    /* Inhibit access by randoms.  Don't want people randomly
-       changing our temporary tree before we check things in.  */
-    umask (077);
-
-#if HAVE_PUTENV
-    /* Set LOGNAME and USER in the environment, in case they are
-       already set to something else.  */
-    {
-	char *env;
-
-	env = xmalloc (sizeof "LOGNAME=" + strlen (username));
-	(void) sprintf (env, "LOGNAME=%s", username);
-	(void) putenv (env);
-
-	env = xmalloc (sizeof "USER=" + strlen (username));
-	(void) sprintf (env, "USER=%s", username);
-	(void) putenv (env);
-    }
-#endif /* HAVE_PUTENV */
+    switch_to_user (host_user);
 }
 
 #endif /* AUTH_SERVER_SUPPORT */
@@ -4121,7 +4157,6 @@ kserver_authenticate_connection ()
     AUTH_DAT auth;
     char version[KRB_SENDAUTH_VLEN];
     char user[ANAME_SZ];
-    struct passwd *pw;
 
     strcpy (instance, "*");
     len = sizeof peer;
@@ -4155,36 +4190,8 @@ error 0 kerberos: can't get local name: %s\n", krb_get_err_text(status));
 	exit (EXIT_FAILURE);
     }
 
-    pw = getpwnam (user);
-    if (pw == NULL)
-    {
-	printf ("E Fatal error, aborting.\n\
-error 0 %s: no such user\n", user);
-	exit (EXIT_FAILURE);
-    }
-
-    initgroups (pw->pw_name, pw->pw_gid);
-    setgid (pw->pw_gid);
-    setuid (pw->pw_uid);
-    /* Inhibit access by randoms.  Don't want people randomly
-       changing our temporary tree before we check things in.  */
-    umask (077);
-
-#if HAVE_PUTENV
-    /* Set LOGNAME and USER in the environment, in case they are
-       already set to something else.  */
-    {
-	char *env;
-
-	env = xmalloc (sizeof "LOGNAME=" + strlen (user));
-	(void) sprintf (env, "LOGNAME=%s", user);
-	(void) putenv (env);
-
-	env = xmalloc (sizeof "USER=" + strlen (user));
-	(void) sprintf (env, "USER=%s", user);
-	(void) putenv (env);
-    }
-#endif
+    /* Switch to run as this user. */
+    switch_to_user (user);
 }
 #endif /* HAVE_KERBEROS */
 
