@@ -91,14 +91,17 @@ close_module (db)
 	dbm_close (db);
 }
 
+
+
 /*
  * This is the recursive function that processes a module name.
  * It calls back the passed routine for each directory of a module
  * It runs the post checkout or post tag proc from the modules file
  */
-int
-do_module (db, mname, m_type, msg, callback_proc, where, shorten,
-	   local_specified, run_module_prog, build_dirs, extra_arg)
+static int
+_do_module (db, mname, m_type, msg, callback_proc, where, shorten,
+	   local_specified, run_module_prog, build_dirs, extra_arg,
+	   stack)
     DBM *db;
     char *mname;
     enum mtype m_type;
@@ -110,6 +113,7 @@ do_module (db, mname, m_type, msg, callback_proc, where, shorten,
     int run_module_prog;
     int build_dirs;
     char *extra_arg;
+    List *stack;
 {
     char *checkout_prog = NULL;
     char *export_prog = NULL;
@@ -148,7 +152,7 @@ do_module (db, mname, m_type, msg, callback_proc, where, shorten,
 		       + strlen (msg)
 		       + (where ? strlen (where) : 0)
 		       + (extra_arg ? strlen (extra_arg) : 0));
-	sprintf (buf, "%s-> do_module (%s, %s, %s, %s)\n",
+	sprintf (buf, "%s-> _do_module (%s, %s, %s, %s)\n",
 		 CLIENT_SERVER_STR,
 		 mname, msg, where ? where : "",
 		 extra_arg ? extra_arg : "");
@@ -496,32 +500,33 @@ do_module (db, mname, m_type, msg, callback_proc, where, shorten,
 
 	for (i = 0; i < modargc; i++)
 	{
-	    /* FIXME: This recursion check is a hack.  It only catches
-	     * recursion if an alias module calls itself and not if a module
-	     * calls a module which causes the first to be called again.  We
-	     * should really be maintaining a stack of alias modules here.
+	    /* 
+	     * Recursion check: if an alias module calls itself or a module
+	     * which causes the first to be called again, print an error
+	     * message and stop recursing.
+	     *
 	     * Algorithm:
 	     *
 	     *   1. Check that MNAME isn't in the stack.
 	     *   2. Push MNAME onto the stack.
 	     *   3. Call do_module().
 	     *   4. Pop MNAME from the stack.
-	     *
-	     * Note that the strip_trailing_slashes() hackery below would no
-	     * longer be necessary with the above algorithm since MNAME has its
-	     * trailing slashes stripped early on in this function.
 	     */
-	    char *tmp = xstrdup (modargv[i]);
-	    strip_trailing_slashes (tmp);
-	    if (strcmp (mname, tmp) == 0)
+	    if (stack && findnode (stack, mname))
 		error (0, 0,
 		       "module `%s' in modules file contains infinite loop",
 		       mname);
 	    else
-		err += do_module (db, modargv[i], m_type, msg, callback_proc,
-				  where, shorten, local_specified,
-				  run_module_prog, build_dirs, extra_arg);
-	    free (tmp);
+	    {
+		if (!stack) stack = getlist();
+		push_string (stack, mname);
+		err += _do_module (db, modargv[i], m_type, msg, callback_proc,
+                                   where, shorten, local_specified,
+                                   run_module_prog, build_dirs, extra_arg,
+                                   stack);
+		pop_string (stack);
+		if (isempty (stack)) dellist (&stack);
+	    }
 	}
 	goto do_module_return;
     }
@@ -658,9 +663,10 @@ module `%s' is a request for a file in a module which is not a directory",
 	    error (0, 0, "Mal-formed %c option for module %s - ignored",
 		   CVSMODULE_SPEC, mname);
 	else
-	    err += do_module (db, spec_opt, m_type, msg, callback_proc,
-			      (char *) NULL, 0, local_specified,
-			      run_module_prog, build_dirs, extra_arg);
+	    err += _do_module (db, spec_opt, m_type, msg, callback_proc,
+                               (char *) NULL, 0, local_specified,
+                               run_module_prog, build_dirs, extra_arg,
+	                       stack);
 	spec_opt = next_opt;
     }
 
@@ -754,6 +760,33 @@ module `%s' is a request for a file in a module which is not a directory",
 	free (xvalue);
     return (err);
 }
+
+
+
+/* External face of do_module so that we can have an internal version which
+ * accepts a stack argument to track alias recursion.
+ */
+int
+do_module (db, mname, m_type, msg, callback_proc, where, shorten,
+	   local_specified, run_module_prog, build_dirs, extra_arg)
+    DBM *db;
+    char *mname;
+    enum mtype m_type;
+    char *msg;
+    CALLBACKPROC callback_proc;
+    char *where;
+    int shorten;
+    int local_specified;
+    int run_module_prog;
+    int build_dirs;
+    char *extra_arg;
+{
+    return _do_module (db, mname, m_type, msg, callback_proc, where, shorten,
+                       local_specified, run_module_prog, build_dirs, extra_arg,
+                       NULL);
+}
+
+
 
 /* - Read all the records from the modules database into an array.
    - Sort the array depending on what format is desired.
