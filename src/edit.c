@@ -876,7 +876,8 @@ notify_do (type, filename, who, val, watches, repository)
 		    error (0, errno, "cannot close %s", usersname);
 	    }
 	    free (usersname);
-	    free (line);
+	    if (line != NULL)
+		free (line);
 
 	    if (args.notifyee == NULL)
 	    {
