@@ -5,7 +5,9 @@ GENERAL USER ISSUES
 
 * Case insensitive clients once again preserve the case of filenames in
   CVS/Entries for communication with the server, as specified in the CVS
-  client/server protocol spec.
+  client/server protocol spec.  Note that all CVS _servers_ still lack support
+  for case insensitive clients - servers are relying on the client to preserve
+  the case of checked out files.
 
 * Thanks to Ville Skyttä the man page is a bit more accurate.
 
