@@ -3,6 +3,8 @@ Changes since 1.12.10:
 
 NEW FEATURES
 
+* Thanks to Conrad Pino <conrad@pino.com>, the Windows build works once again.
+
 * CVSROOT methods and option names are now case insensitive
 
 * CVSROOT methods :ext: and :fork: now support the CVS_SERVER option.
