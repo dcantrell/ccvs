@@ -1,5 +1,10 @@
 2001-08-22  Derek Price  <dprice@collab.net>
 
+	* logmsg.c (do_verify): Remove an unecessary "else" clause following an
+	exit and unindent the former contents.
+
+2001-08-22  Derek Price  <dprice@collab.net>
+
 	* commit.c (commit): Don't call do_verify in client mode since we know
 	do_verify will just return anyhow.
 

@@ -425,46 +425,43 @@ do_verify (message, repository)
 
     if ((fp = cvs_temp_file (&fname)) == NULL)
 	error (1, errno, "cannot create temporary file %s", fname);
-    else
+
+    fprintf (fp, "%s", message);
+    if ((message)[0] == '\0' ||
+	(message)[strlen (message) - 1] != '\n')
+	(void) fprintf (fp, "%s", "\n");
+    if (fclose (fp) == EOF)
+	error (1, errno, "%s", fname);
+
+    /* Get the name of the verification script to run  */
+
+    if (repository != NULL)
+	(void) Parse_Info (CVSROOTADM_VERIFYMSG, repository, 
+			   verifymsg_proc, 0);
+
+    /* Run the verification script  */
+
+    if (verifymsg_script)
     {
-	fprintf (fp, "%s", message);
-	if ((message)[0] == '\0' ||
-	    (message)[strlen (message) - 1] != '\n')
-	    (void) fprintf (fp, "%s", "\n");
-	if (fclose (fp) == EOF)
-	    error (1, errno, "%s", fname);
-
-	/* Get the name of the verification script to run  */
-
-	if (repository != NULL)
-	    (void) Parse_Info (CVSROOTADM_VERIFYMSG, repository, 
-			       verifymsg_proc, 0);
-
-	/* Run the verification script  */
-
-	if (verifymsg_script)
+	run_setup (verifymsg_script);
+	run_arg (fname);
+	if ((retcode = run_exec (RUN_TTY, RUN_TTY, RUN_TTY,
+				 RUN_NORMAL | RUN_SIGIGNORE)) != 0)
 	{
-	    run_setup (verifymsg_script);
-	    run_arg (fname);
-	    if ((retcode = run_exec (RUN_TTY, RUN_TTY, RUN_TTY,
-				     RUN_NORMAL | RUN_SIGIGNORE)) != 0)
-	    {
-		/* Since following error() exits, delete the temp file
-		   now.  */
-		if (unlink_file (fname) < 0)
-		    error (0, errno, "cannot remove %s", fname);
+	    /* Since following error() exits, delete the temp file now.  */
+	    if (unlink_file (fname) < 0)
+		error (0, errno, "cannot remove %s", fname);
 
-		error (1, retcode == -1 ? errno : 0, 
-		       "Message verification failed");
-	    }
+	    error (1, retcode == -1 ? errno : 0, 
+		   "Message verification failed");
 	}
-
-	/* Delete the temp file  */
-
-	if (unlink_file (fname) < 0)
-	    error (0, errno, "cannot remove %s", fname);
-	free (fname);
     }
+
+    /* Delete the temp file  */
+
+    if (unlink_file (fname) < 0)
+	error (0, errno, "cannot remove %s", fname);
+    free (fname);
 }
 
 /*
