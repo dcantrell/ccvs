@@ -219,3 +219,12 @@ extern void fnfold (char *FILENAME);
 #define ARGV0_NOT_PROGRAM_NAME
 
 #define CVS_UNLINK vms_unlink
+
+/* There is some pretty unixy code in src/commit.c which tries to
+   prevent people from commiting changes as "root" (which would prevent
+   CVS from making a log entry with the actual user).  On VMS, I suppose
+   one could say that SYSTEM is equivalent, but I would think that it
+   actually is not necessary; at least at the VMS sites I've worked at
+   people just used their own accounts (turning privileges on and off
+   as desired).  */
+#undef	CVS_BADROOT
