@@ -1931,12 +1931,34 @@ done"
 ${CVSROOT_DIRNAME}/first-dir/sdir/ssdir/ssfile,v  <--  ssfile
 new revision: 2\.10; previous revision: 2\.9
 done"
+	  dotest basica-8a1c "${testcvs} -q ci -m bump-it -r 2.99" \
+"Checking in ssfile;
+${CVSROOT_DIRNAME}/first-dir/sdir/ssdir/ssfile,v  <--  ssfile
+new revision: 2\.99; previous revision: 2\.10
+done"
+	  # Test string-based revion number increment rollover
+	  dotest basica-8a1d "${testcvs} -q ci -m bump-it -f -r 2" \
+"Checking in ssfile;
+${CVSROOT_DIRNAME}/first-dir/sdir/ssdir/ssfile,v  <--  ssfile
+new revision: 2\.100; previous revision: 2\.99
+done"
+	  dotest basica-8a1e "${testcvs} -q ci -m bump-it -r 2.1099" \
+"Checking in ssfile;
+${CVSROOT_DIRNAME}/first-dir/sdir/ssdir/ssfile,v  <--  ssfile
+new revision: 2\.1099; previous revision: 2\.100
+done"
+	  # Test string-based revion number increment rollover
+	  dotest basica-8a1f "${testcvs} -q ci -m bump-it -f -r 2" \
+"Checking in ssfile;
+${CVSROOT_DIRNAME}/first-dir/sdir/ssdir/ssfile,v  <--  ssfile
+new revision: 2\.1100; previous revision: 2\.1099
+done"
 	  # -f should not be necessary, but it should be harmless.
 	  # Also test the "-r 3" (rather than "-r 3.0") usage.
 	  dotest basica-8a2 "${testcvs} -q ci -m bump-it -f -r 3" \
 "Checking in ssfile;
 ${CVSROOT_DIRNAME}/first-dir/sdir/ssdir/ssfile,v  <--  ssfile
-new revision: 3\.1; previous revision: 2\.10
+new revision: 3\.1; previous revision: 2\.1100
 done"
 
 	  # Test using -r to create a branch
@@ -2023,6 +2045,10 @@ done"
 done"
 	  dotest basica-o5a "${testcvs} -n admin -o 1.2::3.1 ssfile" \
 "RCS file: ${CVSROOT_DIRNAME}/first-dir/sdir/ssdir/ssfile,v
+deleting revision 2\.1100
+deleting revision 2\.1099
+deleting revision 2\.100
+deleting revision 2\.99
 deleting revision 2\.10
 deleting revision 2\.9
 deleting revision 2\.0
@@ -2030,6 +2056,10 @@ deleting revision 1\.3
 done"
 	  dotest basica-o6 "${testcvs} admin -o 1.2::3.1 ssfile" \
 "RCS file: ${CVSROOT_DIRNAME}/first-dir/sdir/ssdir/ssfile,v
+deleting revision 2\.1100
+deleting revision 2\.1099
+deleting revision 2\.100
+deleting revision 2\.99
 deleting revision 2\.10
 deleting revision 2\.9
 deleting revision 2\.0
