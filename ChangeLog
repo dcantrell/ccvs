@@ -1,5 +1,11 @@
 2003-07-18  Derek Price  <derek@ximbiot.com>
 
+	* Makefile.am (EXTRA_DIST): Add cvs.spec so that RPMs can be built
+	directly from tarballs.
+	* Makefile.in: Regenerated.
+
+2003-07-18  Derek Price  <derek@ximbiot.com>
+
 	* TODO (72): Remove mention of the -i/-o in the modules file since they
 	have been removed.
 
