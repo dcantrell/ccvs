@@ -23,6 +23,46 @@ extern char *krb_realmofhost ();
 
 static void add_prune_candidate PROTO((char *));
 
+/* All the commands.  */
+int add PROTO((int argc, char **argv));
+int admin PROTO((int argc, char **argv));
+int checkout PROTO((int argc, char **argv));
+int commit PROTO((int argc, char **argv));
+int diff PROTO((int argc, char **argv));
+int history PROTO((int argc, char **argv));
+int import PROTO((int argc, char **argv));
+int cvslog PROTO((int argc, char **argv));
+int patch PROTO((int argc, char **argv));
+int release PROTO((int argc, char **argv));
+int cvsremove PROTO((int argc, char **argv));
+int rtag PROTO((int argc, char **argv));
+int status PROTO((int argc, char **argv));
+int tag PROTO((int argc, char **argv));
+int update PROTO((int argc, char **argv));
+
+/* All the response handling functions.  */
+static void handle_ok PROTO((char *, int));
+static void handle_error PROTO((char *, int));
+static void handle_valid_requests PROTO((char *, int));
+static void handle_checked_in PROTO((char *, int));
+static void handle_new_entry PROTO((char *, int));
+static void handle_checksum PROTO((char *, int));
+static void handle_copy_file PROTO((char *, int));
+static void handle_updated PROTO((char *, int));
+static void handle_merged PROTO((char *, int));
+static void handle_patched PROTO((char *, int));
+static void handle_removed PROTO((char *, int));
+static void handle_remove_entry PROTO((char *, int));
+static void handle_set_static_directory PROTO((char *, int));
+static void handle_clear_static_directory PROTO((char *, int));
+static void handle_set_sticky PROTO((char *, int));
+static void handle_clear_sticky PROTO((char *, int));
+static void handle_set_checkin_prog PROTO((char *, int));
+static void handle_set_update_prog PROTO((char *, int));
+static void handle_module_expansion PROTO((char *, int));
+static void handle_m PROTO((char *, int));
+static void handle_e PROTO((char *, int));
+
 #endif /* CLIENT_SUPPORT */
 
 #if defined(CLIENT_SUPPORT) || defined(SERVER_SUPPORT)
@@ -176,8 +216,11 @@ parse_cvsroot ()
 FILE *to_server;
 /* Stream to read from the server.  */
 FILE *from_server;
+
+#if ! RSH_NOT_TRANSPARENT
 /* Process ID of rsh subprocess.  */
-int rsh_pid = -1;
+static int rsh_pid = -1;
+#endif
 
 /*
  * Read a line from the server.
@@ -241,78 +284,6 @@ read_line (resultp, eof_ok)
 #endif /* CLIENT_SUPPORT */
 
 #if defined(CLIENT_SUPPORT) || defined(SERVER_SUPPORT)
-
-static void
-close_on_exec (fd)
-     int fd;
-{
-#if defined (FD_CLOEXEC) && defined (F_SETFD)
-  if (fcntl (fd, F_SETFD, 1))
-    error (1, errno, "can't set close-on-exec flag on %d", fd);
-#endif
-}
-
-/*
- * dir = 0 : main proc writes to new proc, which writes to oldfd
- * dir = 1 : main proc reads from new proc, which reads from oldfd
- */
-
-static int
-filter_stream_through_program (oldfd, dir, prog, pidp)
-     int oldfd, dir;
-     char **prog;
-     pid_t *pidp;
-{
-    int p[2], newfd;
-    pid_t newpid;
-
-    if (pipe (p))
-	error (1, errno, "cannot create pipe");
-    newpid = fork ();
-    if (pidp)
-	*pidp = newpid;
-    switch (newpid)
-    {
-      case -1:
-	error (1, errno, "cannot fork");
-      case 0:
-	/* child */
-	if (dir)
-	{
-	    /* write to new pipe */
-	    close (p[0]);
-	    dup2 (oldfd, 0);
-	    dup2 (p[1], 1);
-	}
-	else
-	{
-	    /* read from new pipe */
-	    close (p[1]);
-	    dup2 (p[0], 0);
-	    dup2 (oldfd, 1);
-	}
-	/* Should I be blocking some signals here?  */
-	execvp (prog[0], prog);
-	error (1, errno, "couldn't exec %s", prog[0]);
-      default:
-	/* parent */
-	close (oldfd);
-	if (dir)
-	{
-	    /* read from new pipe */
-	    close (p[1]);
-	    newfd = p[0];
-	}
-	else
-	{
-	    /* write to new pipe */
-	    close (p[0]);
-	    newfd = p[1];
-	}
-	close_on_exec (newfd);
-	return newfd;
-    }
-}
 
 /*
  * Zero if compression isn't supported or requested; non-zero to indicate
@@ -654,7 +625,7 @@ call_in_directory (pathname, func, data)
 		    strcpy (dir, dirname);
 		  }
 
-		if (mkdir (dir, 0777) < 0)
+		if (CVS_MKDIR (dir, 0777) < 0)
 		{
 		    if (errno != EEXIST)
 			error (1, errno, "cannot make directory %s", dir);
@@ -782,7 +753,7 @@ handle_checksum (args, len)
 
 	buf[0] = *s++;
 	buf[1] = *s++;
-	stored_checksum[i] = strtol (buf, &bufend, 16);
+	stored_checksum[i] = (char) strtol (buf, &bufend, 16);
 	if (bufend != buf + 2)
 	    break;
     }
@@ -915,8 +886,29 @@ update_entries (data_arg, ent_list, short_pathname, filename)
 
 	gzip_pid = -1;
 
+	/* Since gunzip writes files without converting LF to CRLF
+	   (a reasonable behavior), we now have a patch file in LF
+	   format.  Leave the file as is if we're just going to feed
+	   it to patch; patch can handle it.  However, if it's the
+	   final source file, convert it.  */
+
 	if (data->contents == UPDATE_ENTRIES_UPDATE)
+	{
+#ifdef LINES_CRLF_TERMINATED
+	    if (use_gzip)
+	    {
+	        convert_file (temp_filename, O_RDONLY | OPEN_BINARY,
+	    		      filename, O_WRONLY | O_CREAT | O_TRUNC);
+	        if (unlink (temp_filename) < 0)
+	            error (0, errno, "warning: couldn't delete %s", temp_filename);
+	    }
+	    else
+		rename_file (temp_filename, filename);
+	        
+#else
 	    rename_file (temp_filename, filename);
+#endif
+	}
 	else
 	{
 	    int retcode;
@@ -994,6 +986,10 @@ update_entries (data_arg, ent_list, short_pathname, filename)
 	     * used when receiving a patch, so we always compute it
 	     * here on the final file, rather than on the received
 	     * data.
+	     *
+	     * Note that if the file is a text file, we should read it
+	     * here using text mode, so its lines will be terminated the same
+	     * way they were transmitted.
 	     */
 	    e = fopen (filename, "r");
 	    if (e == NULL)
@@ -1638,8 +1634,7 @@ send_repository (dir, repos, update_dir)
 	}
 	else
 	{
-	    /* Small for testing.  */
-	    char line[2];
+	    char line[80];
 	    char *nl;
 	    if (fprintf (to_server, "Sticky ") < 0)
 		error (1, errno, "writing to server");
@@ -1674,8 +1669,7 @@ send_repository (dir, repos, update_dir)
 	}
 	else
 	{
-	    /* Small for testing.  */
-	    char line[2];
+	    char line[80];
 	    char *nl;
 	    if (fprintf (to_server, "Checkin-prog ") < 0)
 		error (1, errno, "writing to server");
@@ -1710,8 +1704,7 @@ send_repository (dir, repos, update_dir)
 	}
 	else
 	{
-	    /* Small for testing.  */
-	    char line[2];
+	    char line[80];
 	    char *nl;
 	    if (fprintf (to_server, "Update-prog ") < 0)
 		error (1, errno, "writing to server");
@@ -2037,6 +2030,9 @@ get_responses_and_close ()
     }
     else
 #endif
+#ifdef SHUTDOWN_SERVER
+    SHUTDOWN_SERVER (fileno (to_server));
+#else
     {
 	if (fclose (to_server) == EOF)
 	    error (1, errno, "closing connection to %s", server_host);
@@ -2048,15 +2044,20 @@ get_responses_and_close ()
 	error (0, errno, "reading from %s", server_host);
 
     fclose (from_server);
+#endif
 
+#if !RSH_NOT_TRANSPARENT
     if (rsh_pid != -1
 	&& waitpid (rsh_pid, (int *) 0, 0) == -1)
       error (1, errno, "waiting for process %d", rsh_pid);
+#endif
 
     return errs;
 }
 	
+#ifndef RSH_NOT_TRANSPARENT
 static void start_rsh_server PROTO((int *, int *));
+#endif
 
 int
 supported_request (name)
@@ -2191,15 +2192,30 @@ start_server ()
 	    error (0, 0, "trying to start server using rsh");
 	  try_rsh_no_message:
 	    server_fd = -1;
+#if ! RSH_NOT_TRANSPARENT
 	    start_rsh_server (&tofd, &fromfd);
+#else
+#if defined (START_SERVER)
+            START_SERVER (&tofd, &fromfd, getcaller (),
+                          server_user, server_host, server_cvsroot);
+#endif /* START_SERVER */
+#endif /* RSH_NOT_TRANSPARENT */
 	}
 	free (hname);
     }
 
 #else /* ! HAVE_KERBEROS */
-
+#if ! RSH_NOT_TRANSPARENT
     start_rsh_server (&tofd, &fromfd);
-
+#else
+#if defined(START_SERVER)
+    /* This is all a real mess.  We now have three ways of connecting
+       to the server, and there's a fourth on the horizon.  We should
+       clean this all up before adding the fourth.  */
+    START_SERVER (&tofd, &fromfd, getcaller (),
+                  server_user, server_host, server_cvsroot);
+#endif /* START_SERVER */
+#endif /* RSH_NOT_TRANSPARENT */
 #endif /* ! HAVE_KERBEROS */
 
     close_on_exec (tofd);
@@ -2226,11 +2242,11 @@ start_server ()
     }
 
     /* Should be using binary mode on systems which have it.  */
-    to_server = fdopen (tofd, "w");
+    to_server = fdopen (tofd, FOPEN_BINARY_WRITE);
     if (to_server == NULL)
 	error (1, errno, "cannot fdopen %d for write", tofd);
     /* Should be using binary mode on systems which have it.  */
-    from_server = fdopen (fromfd, "r");
+    from_server = fdopen (fromfd, FOPEN_BINARY_READ);
     if (from_server == NULL)
 	error (1, errno, "cannot fdopen %d for read", fromfd);
 
@@ -2367,6 +2383,7 @@ start_server ()
       }
 }
 
+#ifndef RSH_NOT_TRANSPARENT
 /* Contact the server by starting it with rsh.  */
 
 static void
@@ -2374,75 +2391,75 @@ start_rsh_server (tofdp, fromfdp)
      int *tofdp;
      int *fromfdp;
 {
-    int to_server_pipe[2];
-    int from_server_pipe[2];
+    /* If you're working through firewalls, you can set the
+       CVS_RSH environment variable to a script which uses rsh to
+       invoke another rsh on a proxy machine.  */
+    char *cvs_rsh = getenv ("CVS_RSH");
+    char *cvs_server = getenv ("CVS_SERVER");
+    char *command;
 
-    if (pipe (to_server_pipe) < 0)
-	error (1, errno, "cannot create pipe");
-    if (pipe (from_server_pipe) < 0)
-	error (1, errno, "cannot create pipe");
+    if (!cvs_rsh)
+	cvs_rsh = "rsh";
+    if (!cvs_server)
+	cvs_server = "cvs";
 
-    rsh_pid = fork ();
-    if (rsh_pid < 0)
-	error (1, errno, "cannot fork");
-    if (rsh_pid == 0)
+    /* Pass the command to rsh as a single string.  This shouldn't
+       affect most rsh servers at all, and will pacify some buggy
+       versions of rsh that grab switches out of the middle of the
+       command (they're calling the GNU getopt routines incorrectly).  */
+    command = xmalloc (strlen (cvs_server)
+		       + strlen (server_cvsroot)
+		       + 50);
+
+    /*
+     * The -d here is really cheesy, because it is redundant
+     * with the Root request, inconsistent with how we do things
+     * when we aren't using rsh, and the code in main.c which
+     * prints an error on a bad root just writes to stderr
+     * rather than using the protocol.
+     * 
+     * But I'm leaving it in for now because old (Nov 3, 1994)
+     * versions of the server say "`cvs server' is for internal
+     * use--don't use it directly" if you try to start them up
+     * without -d and your .bashrc sets CVSROOT to something
+     * containing a colon.  */
+    sprintf (command, "%s -d %s server", cvs_server, server_cvsroot);
+
     {
-	if (dup2 (to_server_pipe[0], STDIN_FILENO) < 0)
-	    error (1, errno, "cannot dup2");
-	if (close (to_server_pipe[1]) < 0)
-	    error (1, errno, "cannot close");
-	if (close (from_server_pipe[0]) < 0)
-	    error (1, errno, "cannot close");
-	if (dup2 (from_server_pipe[1], STDOUT_FILENO) < 0)
-	    error (1, errno, "cannot dup2");
+        char *argv[10];
+	char **p = argv;
 
+	*p++ = cvs_rsh;
+	*p++ = server_host;
+
+	/* If the login names differ between client and server
+	 * pass it on to rsh.
+	 */
+	if (server_user != NULL)
 	{
-	  /* If you're working through firewalls, you can set the
-	     CVS_RSH environment variable to rsh and rsh invocation on
-	     a proxy machine.  */
-	  char *cvs_rsh = getenv ("CVS_RSH");
-	  char *cvs_server = getenv ("CVS_SERVER");
-	  char *command;
-
-	  if (!cvs_rsh)
-	    cvs_rsh = "rsh";
-	  if (!cvs_server)
-	    cvs_server = "cvs";
-
-	  /* Pass the command to rsh as a single string.  This
-	     shouldn't affect most rsh servers at all, and will pacify
-	     some buggy versions of rsh that grab switches out of the
-	     middle of the command (they're calling the GNU getopt
-	     routines incorrectly).  */
-	  command = xmalloc (strlen (cvs_server)
-			     + strlen (server_cvsroot)
-			     + 50);
-
-	  /* If you are running a very old (Nov 3, 1994)
-	   * version of the server, you need to make sure that your .bashrc
-	   * on the server machine does not set CVSROOT to something
-	   * containing a colon (or better yet, upgrade the server).  */
-	  sprintf (command, "%s server", cvs_server, server_cvsroot);
-
-          /* If the login names differ between client and server
-           *  pass it on to rsh
-           */
-          if(server_user != NULL) {
-            execlp (cvs_rsh, cvs_rsh, server_host, 
-                    "-l", server_user, command, (char *) NULL);
-          } else {
-            execlp (cvs_rsh, cvs_rsh, server_host, command, (char *)NULL);
-          }			
+	    *p++ = "-l";
+	    *p++ = server_user;
 	}
-	error (1, errno, "cannot exec");
-      }
-    if (close (to_server_pipe[0]) < 0)
-      error (1, errno, "cannot close");
-    if (close (from_server_pipe[1]) < 0)
-      error (1, errno, "cannot close");
-    *tofdp = to_server_pipe[1];
-    *fromfdp = from_server_pipe[0];
+
+	*p++ = command;
+	*p++ = NULL;
+
+	if (trace)
+        {
+	    int i;
+
+            fprintf (stderr, " -> Starting server: ");
+	    for (i = 0; argv[i]; i++)
+	        fprintf (stderr, "%s ", argv[i]);
+	    putc ('\n', stderr);
+	}
+	rsh_pid = piped_child (argv, tofdp, fromfdp);
+
+	if (rsh_pid < 0)
+	    error (1, errno, "cannot start server via rsh");
+    }
 }
+#endif
 
 
 /* Send an argument STRING.  */
@@ -2486,6 +2503,11 @@ send_modified (file, short_pathname)
 
     mode_string = mode_to_string (sb.st_mode);
 
+    /* Beware: on systems using CRLF line termination conventions,
+       the read and write functions will convert CRLF to LF, so the
+       number of characters read is not the same as sb.st_size.  Text
+       files should always be transmitted using the LF convention, so
+       we don't want to disable this conversion.  */
     bufsize = sb.st_size;
     buf = xmalloc (bufsize);
 
@@ -2499,6 +2521,39 @@ send_modified (file, short_pathname)
 	pid_t gzip_pid;
 	char *bufp = buf;
 	int readsize = 8192;
+#ifdef LINES_CRLF_TERMINATED
+	char tempfile[L_tmpnam];
+#endif
+
+#ifdef LINES_CRLF_TERMINATED
+	/* gzip reads and writes files without munging CRLF sequences, as it
+	   should, but files should be transmitted in LF form.  Convert CRLF
+	   to LF before gzipping, on systems where this is necessary.
+
+	   If Windows NT supported fork, we could do this by pushing another
+	   filter on in front of gzip.  But it doesn't.  I'd have to write a
+	   trivial little program to do the conversion and have CVS spawn it
+	   off.  But little executables like that always get lost.
+
+	   Alternatively, this cruft could go away if we switched to a gzip
+	   library instead of a subprocess; then we could tell gzip to open 
+	   the file with CRLF translation enabled.  */
+	if (close (fd) < 0)
+	    error (0, errno, "warning: can't close %s", short_pathname);
+
+	tmpnam (tempfile);
+	convert_file (file, O_RDONLY,
+	              tempfile, O_WRONLY | O_CREAT | O_TRUNC | OPEN_BINARY);
+
+	/* This OPEN_BINARY doesn't make any difference, I think, because
+	   gzip will deal with the inherited handle as it pleases.  But I
+	   do remember something obscure in the manuals about propagating
+	   the translation mode to created processes via environment
+	   variables, ick.  */
+        fd = open (tempfile, O_RDONLY | OPEN_BINARY);
+        if (fd < 0)
+	    error (1, errno, "reading %s", short_pathname);
+#endif
 
 	fd = filter_through_gzip (fd, 1, gzip_level, &gzip_pid);
 	while (1)
@@ -2532,6 +2587,11 @@ send_modified (file, short_pathname)
 	else if (gzip_status != 0)
 	    error (1, errno, "gzip exited %d", gzip_status);
 
+#if LINES_CRLF_TERMINATED
+	if (unlink (tempfile) < 0)
+	    error (0, errno, "warning: can't remove temp file %s", tempfile);
+#endif LINES_CRLF_TERMINATED
+
 	fprintf (to_server, "Modified %s\n%s\nz%lu\n", file, mode_string,
 		 (unsigned long) newsize);
 	fwrite (buf, newsize, 1, to_server);
@@ -2540,21 +2600,33 @@ send_modified (file, short_pathname)
     }
     else
     {
-	if (read (fd, buf, sb.st_size) != sb.st_size)
-	    error (1, errno, "reading %s", short_pathname);
+    	int newsize;
+
+        {
+	    char *bufp = buf;
+	    int len;
+
+	    while ((len = read (fd, bufp, (buf + sb.st_size) - bufp)) > 0)
+	        bufp += len;
+
+	    if (len < 0)
+	        error (1, errno, "reading %s", short_pathname);
+
+	    newsize = bufp - buf;
+	}
 	if (close (fd) < 0)
 	    error (0, errno, "warning: can't close %s", short_pathname);
 
 	if (fprintf (to_server, "Modified %s\n%s\n%lu\n", file,
-		     mode_string, (unsigned long) sb.st_size) < 0)
+		     mode_string, (unsigned long) newsize) < 0)
 	    error (1, errno, "writing to server");
 
 	/*
 	 * Note that this only ends with a newline if the file ended with
 	 * one.
 	 */
-	if (sb.st_size > 0)
-	    if (fwrite (buf, sb.st_size, 1, to_server) != 1)
+	if (newsize > 0)
+	    if (fwrite (buf, newsize, 1, to_server) != 1)
 		error (1, errno, "writing to server");
     }
     free (buf);
