@@ -247,6 +247,7 @@ static int
 ls_print (Node *p, void *closure)
 {
     cvs_output (p->key, 0);
+    return 0;
 }
 
 
