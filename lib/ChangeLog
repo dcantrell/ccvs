@@ -1,5 +1,10 @@
 2003-10-01  Derek Price  <derek@ximbiot.com>
 
+	* getpass.c: Update to new version from GNULIB with Larry's fix
+	incorporated.
+
+2003-10-01  Derek Price  <derek@ximbiot.com>
+
 	* getopt.h, getopt.c, getopt1.c: Update from GNULIB.
 
 2003-10-01  Derek Price  <derek@ximbiot.com>
