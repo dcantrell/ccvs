@@ -4277,10 +4277,12 @@ fi
 
 
 
+
 for ac_header in \
 	errno.h \
 	direct.h \
 	fcntl.h \
+	fnmatch.h \
 	io.h \
 	limits.h \
 	memory.h \

@@ -95,6 +95,7 @@ AC_CHECK_HEADERS(\
 	errno.h \
 	direct.h \
 	fcntl.h \
+	fnmatch.h \
 	io.h \
 	limits.h \
 	memory.h \

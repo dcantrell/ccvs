@@ -48,6 +48,9 @@
 /* Define to 1 if your system has a working `fnmatch' function. */
 #undef HAVE_FNMATCH
 
+/* Define to 1 if you have the <fnmatch.h> header file. */
+#undef HAVE_FNMATCH_H
+
 /* Define to 1 if you have the `fork' function. */
 #undef HAVE_FORK
 
