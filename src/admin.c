@@ -564,14 +564,21 @@ admin_fileproc (callerdat, finfo)
     if (version != NULL && strcmp (version, "0") == 0)
     {
 	error (0, 0, "cannot admin newly added file `%s'", finfo->file);
+	status = 1;
 	goto exitfunc;
     }
 
     rcs = vers->srcfile;
+    if (rcs == NULL)
+    {
+	if (!really_quiet)
+	    error (0, 0, "nothing known about %s", finfo->file);
+	status = 1;
+	goto exitfunc;
+    }
+
     if (rcs->flags & PARTIAL)
 	RCS_reparsercsfile (rcs, (FILE **) NULL, (struct rcsbuffer *) NULL);
-
-    status = 0;
 
     if (!really_quiet)
     {
