@@ -30,6 +30,11 @@ extern int client_admin PROTO((int argc, char **argv));
 extern int client_export PROTO((int argc, char **argv));
 extern int client_history PROTO((int argc, char **argv));
 extern int client_release PROTO((int argc, char **argv));
+extern int client_watch PROTO((int argc, char **argv));
+extern int client_watchers PROTO((int argc, char **argv));
+extern int client_editors PROTO((int argc, char **argv));
+extern int client_edit PROTO((int argc, char **argv));
+extern int client_unedit PROTO((int argc, char **argv));
 
 /*
  * Flag variable for seeing whether common code is running as a client
@@ -159,5 +164,5 @@ extern int client_process_import_file
     PROTO((char *message, char *vfile, char *vtag,
 	   int targc, char *targv[], char *repository));
 extern void client_import_done PROTO((void));
-
+extern void client_notify PROTO((char *, char *, char *, int, char *));
 #endif /* CLIENT_SUPPORT */

@@ -72,6 +72,8 @@ main (argc, argv)
 	"a %s file can specify extra CVSROOT files to auto-checkout"},
     {CVSROOTADM_WRAPPER,
 	"a %s file can be used to specify files to treat as wrappers"},
+    {CVSROOTADM_NOTIFY,
+	"a %s file can be used to specify where notifications go"},
     {NULL, NULL}};
 
     /*

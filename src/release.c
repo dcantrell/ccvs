@@ -27,6 +27,21 @@ static const char *const release_usage[] =
 
 static short delete;
 
+/* FIXME: This implementation is cheezy in quite a few ways:
+
+   1.  The whole "cvs update" junk could be checked locally with a
+   fairly simple start_recursion/classify_file loop--a win for
+   portability, performance, and cleanliness.
+
+   2.  Should be like edit/unedit in terms of working well if disconnected
+   from the network, and then sending a delayed notification.
+
+   3.  Way too many network turnarounds.  More than one for each argument.
+   Puh-leeze.
+
+   4.  Oh, and as a purely stylistic nit, break this out into separate
+   functions for client/local and for server.  Those #ifdefs are a mess.  */
+
 int
 release (argc, argv)
     int argc;
@@ -38,6 +53,7 @@ release (argc, argv)
     char line[PATH_MAX], update_cmd[PATH_MAX];
     char *thisarg;
     int arg_start_idx;
+    int err = 0;
 
 #ifdef SERVER_SUPPORT
     if (!server_active)
@@ -193,6 +209,18 @@ release (argc, argv)
           }
 	}
 
+#ifdef SERVER_SUPPORT
+	if (!server_active)
+#endif
+	{
+	  int argc = 1;
+	  char *argv[3];
+	  argv[0] = "dummy";
+	  argv[1] = thisarg;
+	  argv[2] = NULL;
+	  err += unedit (argc, argv);
+	}
+
 #ifdef CLIENT_SUPPORT
         if (client_active)
         {
@@ -223,7 +251,7 @@ release (argc, argv)
       } /* else server not active */
 #endif  /* SERVER_SUPPORT */
     }   /* `for' loop */
-    return (0);
+    return err;
 }
 
 

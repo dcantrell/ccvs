@@ -69,6 +69,7 @@ static void handle_set_update_prog PROTO((char *, int));
 static void handle_module_expansion PROTO((char *, int));
 static void handle_m PROTO((char *, int));
 static void handle_e PROTO((char *, int));
+static void handle_notified PROTO((char *, int));
 
 #endif /* CLIENT_SUPPORT */
 
@@ -807,8 +808,8 @@ copy_a_file (data, ent_list, short_pathname, filename)
 
 static void
 handle_copy_file (args, len)
-     char *args;
-     int len;
+    char *args;
+    int len;
 {
     call_in_directory (args, copy_a_file, (char *)NULL);
 }
@@ -824,8 +825,8 @@ static unsigned char stored_checksum[16];
 
 static void
 handle_checksum (args, len)
-     char *args;
-     int len;
+    char *args;
+    int len;
 {
     char *s;
     char buf[3];
@@ -851,6 +852,22 @@ handle_checksum (args, len)
         error (1, 0, "Invalid Checksum response: `%s'", args);
 
     stored_checksum_valid = 1;
+}
+
+static int stored_mode_valid;
+static char *stored_mode;
+
+static void
+handle_mode (args, len)
+    char *args;
+    int len;
+{
+    if (stored_mode_valid)
+	error (1, 0, "protocol error: duplicate Mode");
+    if (stored_mode != NULL)
+	free (stored_mode);
+    stored_mode = xstrdup (args);
+    stored_mode_valid = 1;
 }
 
 /*
@@ -1205,6 +1222,10 @@ update_entries (data_arg, ent_list, short_pathname, filename)
 	free (mode_string);
 	free (buf);
     }
+
+    if (stored_mode_valid)
+	change_mode (filename, stored_mode);
+    stored_mode_valid = 0;
 
     /*
      * Process the entries line.  Do this after we've written the file,
@@ -2059,6 +2080,7 @@ struct response responses[] =
     RSP_LINE("Updated", handle_updated, response_type_normal, rs_essential),
     RSP_LINE("Merged", handle_merged, response_type_normal, rs_essential),
     RSP_LINE("Patched", handle_patched, response_type_normal, rs_optional),
+    RSP_LINE("Mode", handle_mode, response_type_normal, rs_optional),
     RSP_LINE("Removed", handle_removed, response_type_normal, rs_essential),
     RSP_LINE("Remove-entry", handle_remove_entry, response_type_normal,
        rs_optional),
@@ -2076,6 +2098,7 @@ struct response responses[] =
        rs_optional),
     RSP_LINE("Set-update-prog", handle_set_update_prog, response_type_normal,
        rs_optional),
+    RSP_LINE("Notified", handle_notified, response_type_normal, rs_optional),
     RSP_LINE("Module-expansion", handle_module_expansion, response_type_normal,
        rs_optional),
     RSP_LINE("M", handle_m, response_type_normal, rs_essential),
@@ -2191,6 +2214,9 @@ get_responses_and_close ()
       if (errno != ECHILD)
         error (1, errno, "waiting for process %d", rsh_pid);
 #endif /* ! RSH_NOT_TRANSPARENT */
+
+    to_server = NULL;
+    from_server = NULL;
 
     return errs;
 }
@@ -2560,6 +2586,7 @@ start_server ()
         free (last_update_dir);
     last_update_dir = NULL;
     stored_checksum_valid = 0;
+    stored_mode_valid = 0;
 
     if (fprintf (to_server, "Root %s\n", server_cvsroot) < 0)
 	error (1, errno, "writing to server");
@@ -3380,6 +3407,125 @@ client_import_done ()
     send_repository ("", toplevel_repos, ".");
 }
 
+static void
+notified_a_file (data, ent_list, short_pathname, filename)
+    char *data;
+    List *ent_list;
+    char *short_pathname;
+    char *filename;
+{
+    FILE *fp;
+    FILE *newf;
+    size_t line_len = 8192;
+    char *line = xmalloc (line_len);
+    char *cp;
+    int nread;
+    int nwritten;
+    char *p;
+
+    fp = open_file (CVSADM_NOTIFY, "r");
+    if (getline (&line, &line_len, fp) < 0)
+    {
+	error (0, errno, "cannot read %s", CVSADM_NOTIFY);
+	goto error_exit;
+    }
+    cp = strchr (line, '\t');
+    if (cp == NULL)
+    {
+	error (0, 0, "malformed %s file", CVSADM_NOTIFY);
+	goto error_exit;
+    }
+    *cp = '\0';
+    if (strcmp (filename, line + 1) != 0)
+    {
+	error (0, 0, "protocol error: notified %s, expected %s", filename,
+	       line + 1);
+    }
+
+    if (getline (&line, &line_len, fp) < 0)
+    {
+	if (feof (fp))
+	{
+	    if (fclose (fp) < 0)
+		error (0, errno, "cannot close %s", CVSADM_NOTIFY);
+	    if (unlink (CVSADM_NOTIFY) < 0)
+		error (0, errno, "cannot remove %s", CVSADM_NOTIFY);
+	    return;
+	}
+	else
+	{
+	    error (0, errno, "cannot read %s", CVSADM_NOTIFY);
+	    goto error_exit;
+	}
+    }
+    newf = open_file (CVSADM_NOTIFYTMP, "w");
+    if (fputs (line, newf) < 0)
+    {
+	error (0, errno, "cannot write %s", CVSADM_NOTIFYTMP);
+	goto error2;
+    }
+    while ((nread = fread (line, 1, line_len, fp)) > 0)
+    {
+	p = line;
+	while ((nwritten = fwrite (p, 1, nread, newf)) > 0)
+	{
+	    nread -= nwritten;
+	    p += nwritten;
+	}
+	if (ferror (newf))
+	{
+	    error (0, errno, "cannot write %s", CVSADM_NOTIFYTMP);
+	    goto error2;
+	}
+    }
+    if (ferror (fp))
+    {
+	error (0, errno, "cannot read %s", CVSADM_NOTIFY);
+	goto error2;
+    }
+    if (fclose (newf) < 0)
+    {
+	error (0, errno, "cannot close %s", CVSADM_NOTIFYTMP);
+	goto error_exit;
+    }
+    if (fclose (fp) < 0)
+    {
+	error (0, errno, "cannot close %s", CVSADM_NOTIFY);
+	return;
+    }
+    if (rename (CVSADM_NOTIFYTMP, CVSADM_NOTIFY) < 0)
+	error (0, errno, "cannot rename %s to %s", CVSADM_NOTIFYTMP,
+	       CVSADM_NOTIFY);
+    return;
+  error2:
+    (void) fclose (newf);
+  error_exit:
+    (void) fclose (fp);
+}
+
+static void
+handle_notified (args, len)
+    char *args;
+    int len;
+{
+    call_in_directory (args, notified_a_file, NULL);
+}
+
+void
+client_notify (repository, update_dir, filename, notif_type, val)
+    char *repository;
+    char *update_dir;
+    char *filename;
+    int notif_type;
+    char *val;
+{
+    send_a_repository ("", repository, update_dir);
+
+    if (fprintf (to_server, "Notify %s\n%c\t%s", filename,
+		 notif_type, val) < 0)
+	error (1, errno, "writing to server");
+}
+
 /*
  * Send an option with an argument, dealing correctly with newlines in
  * the argument.  If ARG is NULL, forget the whole thing.
@@ -3595,6 +3741,61 @@ client_release (argc, argv)
     parse_cvsroot ();
     
     return release (argc, argv);	/* Call real code */
+}
+
+int
+client_watch (argc, argv)
+    int argc;
+    char **argv;
+{
+    
+    parse_cvsroot ();
+    
+    return watch (argc, argv);	/* Call real code */
+}
+
+int
+client_watchers (argc, argv)
+    int argc;
+    char **argv;
+{
+    
+    parse_cvsroot ();
+    
+    return watchers (argc, argv);	/* Call real code */
+}
+
+int
+client_editors (argc, argv)
+    int argc;
+    char **argv;
+{
+    
+    parse_cvsroot ();
+    
+    return editors (argc, argv);	/* Call real code */
+}
+
+int
+client_edit (argc, argv)
+    int argc;
+    char **argv;
+{
+    
+    parse_cvsroot ();
+    
+    return edit (argc, argv);	/* Call real code */
+}
+
+int
+client_unedit (argc, argv)
+    int argc;
+    char **argv;
+{
+    
+    parse_cvsroot ();
+    
+    return unedit (argc, argv);	/* Call real code */
 }
 
 #endif /* CLIENT_SUPPORT */

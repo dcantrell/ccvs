@@ -139,6 +139,8 @@ const struct cmd
     CMD_ENTRY("checkout", "co",    "get",     checkout,  client_checkout),
     CMD_ENTRY("commit",   "ci",    "com",     commit,    client_commit),
     CMD_ENTRY("diff",     "di",    "dif",     diff,      client_diff),
+    CMD_ENTRY("edit",     "edit",  "edit",    edit,      client_edit),
+    CMD_ENTRY("editors",  "editors","editors",editors,   client_editors),
     CMD_ENTRY("export",   "exp",   "ex",      checkout,  client_export),
     CMD_ENTRY("history",  "hi",    "his",     history,   client_history),
     CMD_ENTRY("import",   "im",    "imp",     import,    client_import),
@@ -152,8 +154,10 @@ const struct cmd
     CMD_ENTRY("status",   "st",    "stat",    status,    client_status),
     CMD_ENTRY("rtag",     "rt",    "rfreeze", rtag,      client_rtag),
     CMD_ENTRY("tag",      "ta",    "freeze",  tag,       client_tag),
+    CMD_ENTRY("unedit",   "unedit","unedit",  unedit,    client_unedit),
     CMD_ENTRY("update",   "up",    "upd",     update,    client_update),
-
+    CMD_ENTRY("watch",    "watch", "watch",   watch,     client_watch),
+    CMD_ENTRY("watchers", "watchers","watchers",watchers,client_watchers),
 #ifdef SERVER_SUPPORT
     /*
      * The client_func is also server because we might have picked up a
@@ -188,12 +192,21 @@ static const char *const usg[] =
     "        -z #         Use 'gzip -#' for net traffic if possible.\n",
 #endif
     "\n",
-    "    and where 'command' is:\n",
+    "    and where 'command' is: add, admin, etc. (use the --help-commands\n",
+    "    option for a list of commands)\n",
+    NULL,
+};
+
+static const char *const cmd_usage[] =
+{
+    "CVS commands are:\n",
     "        add          Adds a new file/directory to the repository\n",
     "        admin        Administration front end for rcs\n",
     "        checkout     Checkout sources for editing\n",
     "        commit       Checks files into the repository\n",
     "        diff         Runs diffs between revisions\n",
+    "        edit         Get ready to edit a watched file\n",
+    "        editors      See who is editing a watched file\n",
     "        history      Shows status of files and users\n",
     "        import       Import sources into CVS, using vendor branches\n",
     "        export       Export sources from CVS, similar to checkout\n",
@@ -206,8 +219,11 @@ static const char *const usg[] =
     "        remove       Removes an entry from the repository\n",
     "        status       Status info on the revisions\n",
     "        tag          Add a symbolic tag to checked out version of RCS file\n",
+    "        unedit       Undo an edit command\n",
     "        rtag         Add a symbolic tag to the RCS file\n",
     "        update       Brings work tree in sync with repository\n",
+    "        watch        Set watches\n",
+    "        watchers     See who is watching a file\n",
     NULL,
 };
 
@@ -237,13 +253,16 @@ main (argc, argv)
     char *cp, *end;
     const struct cmd *cm;
     int c, err = 0;
-    static int help = FALSE, version_flag = FALSE;
+    static int help = FALSE;
+    static int version_flag = FALSE;
+    static int help_commands = FALSE;
     int rcsbin_update_env, cvs_update_env = 0;
     char tmp[PATH_MAX];
     static struct option long_options[] =
       {
         {"help", 0, &help, TRUE},
         {"version", 0, &version_flag, TRUE},
+	{"help-commands", 0, &help_commands, TRUE},
         {0, 0, 0, 0}
       };
     /* `getopt_long' stores the option index here, but right now we
@@ -394,6 +413,8 @@ main (argc, argv)
         (void) fputs ("a copy of which can be found with the CVS distribution kit.\n", stdout);
         exit (0);
       }
+    else if (help_commands)
+	usage (cmd_usage);
 
     argc -= optind;
     argv += optind;
