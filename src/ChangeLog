@@ -1,5 +1,9 @@
 2002-11-03  Derek Price  <derek@ximbiot.com>
 
+	* sanity.sh (rcs2-7): Notate with a wild untested hypothesis.
+
+2002-11-03  Derek Price  <derek@ximbiot.com>
+
 	* sanity.sh (rcs2-7): Notate with three more failure dates.
 
 2002-10-25  Derek Price  <derek@ximbiot.com>
