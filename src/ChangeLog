@@ -1,5 +1,7 @@
 Tue Apr 15 00:36:23 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* checkout.c (checkout): Add comment about export -k.
+
 	* root.c (check_root_consistent): Add comment about wording of
 	message.
 
