@@ -7093,76 +7093,88 @@ ${PROG} [a-z]*: Rebuilding administrative file database"
 	  mkdir 1
 	  cd 1
 
-	  if ${testcvs} -q co first-dir; then
-	      pass 143
-	  else
-	      fail 143
-	  fi
+	  dotest modules-143 "${testcvs} -q co first-dir" ""
 
 	  cd first-dir
 	  mkdir subdir
-	  ${testcvs} add subdir >>${LOGFILE}
-	  cd subdir
+	  dotest modules-143a "${testcvs} add subdir" \
+"Directory ${TESTDIR}/cvsroot/first-dir/subdir added to the repository"
 
+	  cd subdir
 	  mkdir ssdir
-	  ${testcvs} add ssdir >>${LOGFILE}
+	  dotest modules-143b "${testcvs} add ssdir" \
+"Directory ${TESTDIR}/cvsroot/first-dir/subdir/ssdir added to the repository"
 
 	  touch a b
 
-	  if ${testcvs} add a b 2>>${LOGFILE} ; then
-	      pass 144
-	  else
-	      fail 144
-	  fi
+	  dotest modules-144 "${testcvs} add a b" \
+"${PROG} [a-z]*: scheduling file .a. for addition
+${PROG} [a-z]*: scheduling file .b. for addition
+${PROG} [a-z]*: use .${PROG} commit. to add these files permanently"
 
-	  if ${testcvs} ci -m added >>${LOGFILE} 2>&1; then
-	      pass 145
-	  else
-	      fail 145
-	  fi
+	  dotest modules-145 "${testcvs} ci -m added" \
+"${PROG} [a-z]*: Examining .
+${PROG} [a-z]*: Examining ssdir
+RCS file: ${TESTDIR}/cvsroot/first-dir/subdir/a,v
+done
+Checking in a;
+${TESTDIR}/cvsroot/first-dir/subdir/a,v  <--  a
+initial revision: 1\.1
+done
+RCS file: ${TESTDIR}/cvsroot/first-dir/subdir/b,v
+done
+Checking in b;
+${TESTDIR}/cvsroot/first-dir/subdir/b,v  <--  b
+initial revision: 1\.1
+done"
 
 	  cd ..
-	  if ${testcvs} -q co CVSROOT >>${LOGFILE}; then
-	      pass 146
-	  else
-	      fail 146
-	  fi
+	  dotest modules-146 "${testcvs} -q co CVSROOT" \
+"U CVSROOT/checkoutlist
+U CVSROOT/commitinfo
+U CVSROOT/config
+U CVSROOT/cvswrappers
+U CVSROOT/editinfo
+U CVSROOT/loginfo
+U CVSROOT/modules
+U CVSROOT/notify
+U CVSROOT/rcsinfo
+U CVSROOT/taginfo
+U CVSROOT/verifymsg"
 
 	  # Here we test that CVS can deal with CVSROOT (whose repository
 	  # is at top level) in the same directory as subdir (whose repository
 	  # is a subdirectory of first-dir).  TODO: Might want to check that
 	  # files can actually get updated in this state.
-	  if ${testcvs} -q update; then
-	      pass 147
-	  else
-	      fail 147
-	  fi
+	  dotest modules-147 "${testcvs} -q update" ""
 
-	  echo realmodule first-dir/subdir a >CVSROOT/modules
-	  echo dirmodule first-dir/subdir >>CVSROOT/modules
-	  echo namedmodule -d nameddir first-dir/subdir >>CVSROOT/modules
-	  echo aliasmodule -a first-dir/subdir/a >>CVSROOT/modules
-	  echo aliasnested -a first-dir/subdir/ssdir >>CVSROOT/modules
-	  echo topfiles -a first-dir/file1 first-dir/file2 >>CVSROOT/modules
-	  echo world -a . >>CVSROOT/modules
-	  echo statusmod -s Mungeable >>CVSROOT/modules
+	  cat >CVSROOT/modules <<EOF
+realmodule first-dir/subdir a
+dirmodule first-dir/subdir
+namedmodule -d nameddir first-dir/subdir
+aliasmodule -a first-dir/subdir/a
+aliasnested -a first-dir/subdir/ssdir
+topfiles -a first-dir/file1 first-dir/file2
+world -a .
+statusmod -s Mungeable
+# Options must come before arguments.  It is possible this should
+# be relaxed at some point (though the result would be bizarre for
+# -a); for now test the current behavior.
+bogusalias first-dir/subdir/a -a
+EOF
+	  dotest modules-148 "${testcvs} ci -m 'add modules' CVSROOT/modules" \
+"Checking in CVSROOT/modules;
+${TESTDIR}/cvsroot/CVSROOT/modules,v  <--  modules
+new revision: 1\.5; previous revision: 1\.4
+done
+${PROG} [a-z]*: Rebuilding administrative file database"
 
-	  # Options must come before arguments.  It is possible this should
-	  # be relaxed at some point (though the result would be bizarre for
-	  # -a); for now test the current behavior.
-	  echo bogusalias first-dir/subdir/a -a >>CVSROOT/modules
-	  if ${testcvs} ci -m 'add modules' CVSROOT/modules \
-	      >>${LOGFILE} 2>&1; then
-	      pass 148
-	  else
-	      fail 148
-	  fi
 	  cd ..
 	  # The "statusmod" module contains an error; trying to use it
 	  # will produce "modules file missing directory" I think.
 	  # However, that shouldn't affect the ability of "cvs co -c" or
 	  # "cvs co -s" to do something reasonable with it.
-	  dotest 148a0 "${testcvs} co -c" 'aliasmodule  -a first-dir/subdir/a
+	  dotest modules-148a0 "${testcvs} co -c" 'aliasmodule  -a first-dir/subdir/a
 aliasnested  -a first-dir/subdir/ssdir
 bogusalias   first-dir/subdir/a -a
 dirmodule    first-dir/subdir
@@ -7174,7 +7186,7 @@ world        -a \.'
 	  # There is code in modules.c:save_d which explicitly skips
 	  # modules defined with -a, which is why aliasmodule is not
 	  # listed.
-	  dotest 148a1 "${testcvs} co -s" \
+	  dotest modules-148a1 "${testcvs} co -s" \
 'statusmod    Mungeable  
 bogusalias   NONE        first-dir/subdir/a -a
 dirmodule    NONE        first-dir/subdir
@@ -7182,112 +7194,60 @@ namedmodule  NONE        first-dir/subdir
 realmodule   NONE        first-dir/subdir a'
 
 	  # Test that real modules check out to realmodule/a, not subdir/a.
-	  if ${testcvs} co realmodule >>${LOGFILE}; then
-	      pass 149a1
-	  else
-	      fail 149a1
-	  fi
-	  if test -d realmodule && test -f realmodule/a; then
-	      pass 149a2
-	  else
-	      fail 149a2
-	  fi
-	  if test -f realmodule/b; then
-	      fail 149a3
-	  else
-	      pass 149a3
-	  fi
-	  if ${testcvs} -q co realmodule; then
-	      pass 149a4
-	  else
-	      fail 149a4
-	  fi
-	  if echo "yes" | ${testcvs} release -d realmodule >>${LOGFILE} ; then
-	      pass 149a5
-	  else
-	      fail 149a5
-	  fi
+	  dotest modules-149a1 "${testcvs} co realmodule" "U realmodule/a"
+	  dotest modules-149a2 "test -d realmodule && test -f realmodule/a" ""
+	  dotest_fail modules-149a3 "test -f realmodule/b" ""
+	  dotest modules-149a4 "${testcvs} -q co realmodule" ""
+	  dotest modules-149a5 "echo yes | ${testcvs} release -d realmodule" \
+"You have \[0\] altered files in this repository\.
+Are you sure you want to release (and delete) directory .realmodule.: "
 
-	  dotest_fail 149b1 "${testcvs} co realmodule/a" \
+	  dotest_fail modules-149b1 "${testcvs} co realmodule/a" \
 "${PROG}"' [a-z]*: module `realmodule/a'\'' is a request for a file in a module which is not a directory' \
 "${PROG}"' [a-z]*: module `realmodule/a'\'' is a request for a file in a module which is not a directory
 '"${PROG}"' \[[a-z]* aborted\]: cannot expand modules'
 
 	  # Now test the ability to check out a single file from a directory
-	  if ${testcvs} co dirmodule/a >>${LOGFILE}; then
-	      pass 150c
-	  else
-	      fail 150c
-	  fi
-	  if test -d dirmodule && test -f dirmodule/a; then
-	      pass 150d
-	  else
-	      fail 150d
-	  fi
-	  if test -f dirmodule/b; then
-	      fail 150e
-	  else
-	      pass 150e
-	  fi
-	  if echo "yes" | ${testcvs} release -d dirmodule >>${LOGFILE} ; then
-	      pass 150f
-	  else
-	      fail 150f
-	  fi
+	  dotest modules-150c "${testcvs} co dirmodule/a" "U dirmodule/a"
+	  dotest modules-150d "test -d dirmodule && test -f dirmodule/a" ""
+	  dotest_fail modules-150e "test -f dirmodule/b" ""
+	  dotest modules-150f "echo yes | ${testcvs} release -d dirmodule" \
+"You have \[0\] altered files in this repository\.
+Are you sure you want to release (and delete) directory .dirmodule.: "
 	  # Now test the ability to correctly reject a non-existent filename.
 	  # For maximum studliness we would check that an error message is
 	  # being output.
-	  if ${testcvs} co dirmodule/nonexist >>${LOGFILE} 2>&1; then
-	    # We accept a zero exit status because it is what CVS does
-	    # (Dec 95).  Probably the exit status should be nonzero,
-	    # however.
-	      pass 150g1
-	  else
-	      pass 150g1
-	  fi
+	  # We accept a zero exit status because it is what CVS does
+	  # (Dec 95).  Probably the exit status should be nonzero,
+	  # however.
+	  dotest modules-150g1 "${testcvs} co dirmodule/nonexist" \
+"${PROG} [a-z]*: warning: new-born dirmodule/nonexist has disappeared"
 	  # We tolerate the creation of the dirmodule directory, since that
 	  # is what CVS does, not because we view that as preferable to not
 	  # creating it.
-	  if test -f dirmodule/a || test -f dirmodule/b; then
-	      fail 150g2
-	  else
-	      pass 150g2
-	  fi
+	  dotest_fail modules-150g2 "test -f dirmodule/a || test -f dirmodule/b" ""
 	  rm -r dirmodule
 
 	  # Now test that a module using -d checks out to the specified
 	  # directory.
-	  dotest 150h1 "${testcvs} -q co namedmodule" 'U nameddir/a
+	  dotest modules-150h1 "${testcvs} -q co namedmodule" \
+'U nameddir/a
 U nameddir/b'
-	  if test -f nameddir/a && test -f nameddir/b; then
-	    pass 150h2
-	  else
-	    fail 150h2
-	  fi
+	  dotest modules-150h2 "test -f nameddir/a && test -f nameddir/b" ""
 	  echo add line >>nameddir/a
-	  dotest 150h3 "${testcvs} -q co namedmodule" 'M nameddir/a'
+	  dotest modules-150h3 "${testcvs} -q co namedmodule" 'M nameddir/a'
 	  rm nameddir/a
-	  dotest 150h4 "${testcvs} -q co namedmodule" 'U nameddir/a'
-	  if echo "yes" | ${testcvs} release -d nameddir >>${LOGFILE} ; then
-	    pass 150h99
-	  else
-	    fail 150h99
-	  fi
+	  dotest modules-150h4 "${testcvs} -q co namedmodule" 'U nameddir/a'
+	  dotest modules-150h99 "echo yes | ${testcvs} release -d nameddir" \
+"You have \[0\] altered files in this repository\.
+Are you sure you want to release (and delete) directory .nameddir.: "
 
 	  # Now test that alias modules check out to subdir/a, not
 	  # aliasmodule/a.
-	  if ${testcvs} co aliasmodule >>${LOGFILE}; then
-	      pass 151
-	  else
-	      fail 151
-	  fi
-	  if test -d aliasmodule; then
-	      fail 152
-	  else
-	      pass 152
-	  fi
+	  dotest modules-151 "${testcvs} co aliasmodule" ""
+	  dotest_fail modules-152 "test -d aliasmodule" ""
 	  echo abc >>first-dir/subdir/a
-	  dotest 153 "${testcvs} -q co aliasmodule" "M first-dir/subdir/a"
+	  dotest modules-153 "${testcvs} -q co aliasmodule" "M first-dir/subdir/a"
 
 	  cd ..
 	  rm -r 1
