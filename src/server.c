@@ -1630,7 +1630,8 @@ input_memory_error (buf)
  * Else just return 0 to indicate that command is illegal.
  */
 static int
-check_command_legal_p (char *cmd_name)
+check_command_legal_p (cmd_name)
+    char *cmd_name;
 {
     /* Right now, only pserver notices illegal commands -- namely,
      * write attempts by a read-only user.  Therefore, if CVS_Username
