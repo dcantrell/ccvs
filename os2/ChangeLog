@@ -2,6 +2,10 @@ Fri Nov 08 11:46:50 1996  Jim Kingdon
 
 	* Makefile.in (CFLAGS): Don't specify -Wpro; there is no way
 	that we could prototype getopt, for example.
+	Don't specify -Wuse.  The EDC0805 warning ("Automatic
+	variable line_allocated is set but not referenced.") warns
+	about unavoidable constructs like line_allocated in
+	client.c (send_file_names).
 
 Sat Oct 26 16:21:26 1996  Jim Blandy  <jimb@totoro.cyclic.com>
 
