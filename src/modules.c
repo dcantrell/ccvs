@@ -21,6 +21,7 @@
  */
 
 #include "cvs.h"
+#include "save-cwd.h"
 
 #ifndef lint
 static const char rcsid[] = "$CVSid: @(#)modules.c 1.62 94/09/29 $";
@@ -94,7 +95,7 @@ do_module (db, mname, m_type, msg, callback_proc, where,
     char *checkout_prog = NULL;
     char *tag_prog = NULL;
     char *update_prog = NULL;
-    char cwd[PATH_MAX];
+    struct saved_cwd cwd;
     char line[MAXLINELEN];
     char *xmodargv[MAXFILEPERDIR];
     char **modargv;
@@ -120,8 +121,8 @@ do_module (db, mname, m_type, msg, callback_proc, where,
 #endif
 
     /* remember where we start */
-    if (getwd (cwd) == NULL)
-	error (1, 0, "cannot get current working directory: %s", cwd);
+    if (save_cwd (&cwd))
+	exit (1);
 
     /* if this is a directory to ignore, add it to that list */
     if (mname[0] == '!' && mname[1] != '\0')
@@ -541,8 +542,9 @@ do_module (db, mname, m_type, msg, callback_proc, where,
     }
 
     /* cd back to where we started */
-    if (chdir (cwd) < 0)
-	error (1, errno, "failed chdir to %s!", cwd);
+    if (restore_cwd (&cwd, NULL))
+	exit (1);
+    free_cwd (&cwd);
 
     /* run checkout or tag prog if appropriate */
     if (err == 0 && run_module_prog)
