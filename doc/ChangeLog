@@ -1,5 +1,8 @@
 Mon Apr 14 12:37:35 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvsclient.texi (Requests): For Notify request, clarify a few
+	future expansion situations.  Specify the format of the time.
+
 	* cvsclient.texi (Requests): Clarify that arguments to co, rdiff,
 	and rtag are module names (and how that differs from file/directory
 	names).

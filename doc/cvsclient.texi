@@ -559,13 +559,21 @@ responses.  Response expected: no.  Additional data:
 @var{notification-type} \t @var{time} \t @var{clienthost} \t
 @var{working-dir} \t @var{watches} \n
 @end example
-where @var{notification-type} is @samp{E} for edit or @samp{U} for
-unedit, @var{time} is the time at which the edit or unedit took place,
+where @var{notification-type} is @samp{E} for edit, @samp{U} for
+unedit, undefined behavior if @samp{C}, and all other letters should be
+silently ignored for future expansion.
+@var{time} is the time at which the edit or unedit took place, in a
+user-readable format of the client's choice (the server should treat the
+time as an opaque string rather than interpreting it).
+@c Might be useful to specify a format, but I don't know if we want to
+@c specify the status quo (ISO C asctime() format plus timezone) without
+@c offering the option of ISO8601 and/or RFC822/1123 (see cvs.texinfo
+@c for much much more on date formats).
 @var{clienthost} is the name of the host on which the edit or unedit
 took place, and @var{working-dir} is the pathname of the working
 directory where the edit or unedit took place.  @var{watches} are the
-temporary watches to set; if it is followed by \t then the tab and the
-rest of the line are ignored.
+temporary watches to set.  If @var{watches} is followed by \t then the
+\t and the rest of the line should be ignored, for future expansion.
 
 Note that a client may be capable of performing an @code{edit} or
 @code{unedit} operation without connecting to the server at that time,
