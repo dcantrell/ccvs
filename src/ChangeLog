@@ -1,3 +1,9 @@
+2004-07-15  Derek Price  <derek@ximbiot.com>
+
+	* sanity.sh (run_filter): New function to allow for filtering of cruft
+	output by Rational Quantify or other profilers.
+	(dotest_*): Call new function.
+
 2004-07-13  Derek Price  <derek@ximbiot.com>
 
 	* .cvsignore: Ignore GCC profiling data.
