@@ -322,6 +322,7 @@ mkdir_p (dir)
  * Print the error response for error code STATUS.  The caller is
  * reponsible for making sure we get back to the command loop without
  * any further output occuring.
+ * Must be called only in contexts where it is OK to send output.
  */
 static void
 print_error (status)
@@ -334,8 +335,6 @@ print_error (status)
 	buf_output0 (buf_to_net, msg);
     buf_append_char (buf_to_net, '\n');
 
-    /* FIXME: This call to buf_send_output could conceivably cause
-       deadlock, as noted in server_cleanup.  */
     buf_send_output (buf_to_net);
 }
 
@@ -346,7 +345,8 @@ static int pending_error;
  */
 static char *pending_error_text;
 
-/* If an error is pending, print it and return 1.  If not, return 0.  */
+/* If an error is pending, print it and return 1.  If not, return 0.
+   Must be called only in contexts where it is OK to send output.  */
 static int
 print_pending_error ()
 {
@@ -359,8 +359,6 @@ print_pending_error ()
 	else
 	    buf_output0 (buf_to_net, "error  \n");
 
-	/* FIXME: This call to buf_send_output could conceivably cause
-	   deadlock, as noted in server_cleanup.  */
 	buf_send_output (buf_to_net);
 
 	pending_error = 0;

@@ -1,3 +1,14 @@
+Wed Jul 10 19:24:22 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* server.c (print_pending_error, print_error): Remove comments
+	about deadlocks; they don't apply here.  Add comments saying
+	that these functions must only be called when it is OK to
+	send output (which is why the deadlock concern doesn't apply).  The
+	comments remain for server_cleanup and serve_valid_responses,
+	where they are an example of the "print a message and exit"
+	behavior which is noted in cvsclient.texi and which also exists
+	places like kserver_authenticate_connection.
+
 Wed Jul 10 18:24:46 1996  Ian Lance Taylor  <ian@cygnus.com>
 
 	* server.c (print_error): Add comment warning about potential
