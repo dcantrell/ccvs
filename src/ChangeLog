@@ -1,3 +1,8 @@
+2005-03-07  Conrad T. Pino  <Conrad@Pino.com>
+
+	* buffer.h (buf_free_data): Compile with proxy disabled.
+	(Thanks to report from Larry Jones <lawrence.jones@ugs.com>.)
+
 2005-03-07  Mark D. Baushke  <mdb@cvshome.org>
 
 	* add.c (add_directory): Xasprintf instead of xmalloc/sprintf+strcat.

@@ -154,8 +154,8 @@ int buf_shutdown (struct buffer *);
 #ifdef PROXY_SUPPORT
 void buf_copy_data (struct buffer *buf, struct buffer_data *data,
                     struct buffer_data *last);
-void buf_free_data (struct buffer *);
 #endif /* PROXY_SUPPORT */
+void buf_free_data (struct buffer *);
 
 #ifdef SERVER_FLOWCONTROL
 int buf_count_mem (struct buffer *);
