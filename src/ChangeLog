@@ -1,5 +1,9 @@
 2004-09-15  Derek Price  <derek@ximbiot.com>
 
+	* sanity.sh: Only find $RSYNC once.
+
+2004-09-15  Derek Price  <derek@ximbiot.com>
+
 	* sanity.sh (writeproxy, writeproxy-noredirect): Find $RSYNC in a
 	portable manner.
 

@@ -878,6 +878,21 @@ else
   : good, it works
 fi
 
+# Find rsync for the writeproxy tests.
+RSYNC=
+if $remote; then
+    tryrsync=`Which rsync`
+    if test -r "$tryrsync"; then
+	RSYNC=$tryrsync
+    fi
+fi
+
+
+
+###
+### Functions used by tests.
+###
+
 # Execute a command on the repository, syncing when done if necessary.
 #
 # Syntax is as `eval'.
@@ -2159,9 +2174,7 @@ if $proxy; then
     SECONDARY_CVSROOT_DIRNAME=$TESTDIR/secondary_cvsroot
 
     tryrsync=`Which rsync`
-    if test -r "$tryrsync"; then
-	RSYNC=$tryrsync
-    else
+    if test -n "$RSYNC" && test -r "$RSYNC"; then :; else
 	echo "Unable to test in proxy mode: No rsync found in $PATH" >&2
 	exit 1
     fi
@@ -29583,9 +29596,7 @@ ${SPROG} update: Updating first/subdir"
 	  fi
 
 	  tryrsync=`Which rsync`
-	  if test -r "$tryrsync"; then
-	    RSYNC=$tryrsync
-	  else
+	  if test -n "$RSYNC" && test -r "$RSYNC"; then :; else
 	    skip writeproxy "No rsync found in $PATH"
 	    continue
 	  fi
@@ -29780,10 +29791,7 @@ $SPROG \[update aborted\]: could not find desired version 1\.4 in $PRIMARY_CVSRO
 	    continue
 	  fi
 
-	  tryrsync=`Which rsync`
-	  if test -r "$tryrsync"; then
-	    RSYNC=$tryrsync
-	  else
+	  if test -n "$RSYNC" && test -r "$RSYNC"; then :; else
 	    skip writeproxy-noredirect "No rsync found in $PATH"
 	    continue
 	  fi
