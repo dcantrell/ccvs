@@ -1,5 +1,8 @@
 Fri May 26 14:34:28 1995  J.T. Conklin  <jtc@rtl.cygnus.com>
 
+	* entries.c (Entries_Open): Added missing fclose().
+	  (Entries_Close): Don't write Entries unless Entries.Log exists.
+
 	* entries.c (Entries_Open): Renamed from ParseEntries; changed to
 	  process Entries Log files left over from previous crashes or
 	  aborted runs.

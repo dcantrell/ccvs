@@ -149,7 +149,7 @@ Register (list, fname, vn, ts, options, tag, date, ts_conflict)
 	entfile = open_file (CVSADM_ENTLOG, "a");
 	
 	write_ent_proc (node, NULL);
-	
+
         if (fclose (entfile) == EOF)
             error (1, errno, "error closing %s", CVSADM_ENTLOG);
     }
@@ -323,6 +323,8 @@ Entries_Open (aflag)
 				 ent->date,
 				 ent->ts_conflict);
 	}
+
+	fclose (fpin);
     }
 
     fpin = fopen (CVSADM_ENTLOG, "r");
@@ -361,8 +363,11 @@ Entries_Close(list)
 {
     if (list)
     {
-	if (!noexec)
-	    write_entries (list);
+	if (!noexec) 
+        {
+            if (isfile (CVSADM_ENTLOG))
+		write_entries (list);
+	}
 	dellist(&list);
     }
 }
