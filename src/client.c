@@ -83,6 +83,7 @@ static void handle_m PROTO((char *, int));
 static void handle_e PROTO((char *, int));
 static void handle_notified PROTO((char *, int));
 
+static size_t try_read_from_server PROTO ((char *, size_t));
 #endif /* CLIENT_SUPPORT */
 
 #if defined(CLIENT_SUPPORT) || defined(SERVER_SUPPORT)
@@ -920,6 +921,86 @@ handle_copy_file (args, len)
     call_in_directory (args, copy_a_file, (char *)NULL);
 }
 
+
+static void read_counted_file PROTO ((char *, char *));
+
+/* Read from the server the count for the length of a file, then read
+   the contents of that file and write them to FILENAME.  FULLNAME is
+   the name of the file for use in error messages.  FIXME-someday:
+   extend this to deal with compressed files and make update_entries
+   use it.  On error, gives a fatal error.  */
+static void
+read_counted_file (filename, fullname)
+    char *filename;
+    char *fullname;
+{
+    char *size_string;
+    size_t size;
+    char *buf;
+
+    /* Pointers in buf to the place to put data which will be read,
+       and the data which needs to be written, respectively.  */
+    char *pread;
+    char *pwrite;
+    /* Number of bytes left to read and number of bytes in buf waiting to
+       be written, respectively.  */
+    size_t nread;
+    size_t nwrite;
+
+    FILE *fp;
+
+    read_line (&size_string, 0);
+    if (size_string[0] == 'z')
+	error (1, 0, "\
+protocol error: compressed files not supported for that operation");
+    /* FIXME: should be doing more error checking, probably.  Like using
+       strtoul and making sure we used up the whole line.  */
+    size = atoi (size_string);
+    free (size_string);
+
+    /* A more sophisticated implementation would use only a limited amount
+       of buffer space (8K perhaps), and read that much at a time.  We allocate
+       a buffer for the whole file only to make it easy to keep track what
+       needs to be read and written.  */
+    buf = xmalloc (size);
+
+    /* FIXME-someday: caller should pass in a flag saying whether it
+       is binary or not.  I haven't carefully looked into whether
+       CVS/Template files should use local text file conventions or
+       not.  */
+    fp = fopen (filename, "wb");
+    if (fp == NULL)
+	error (1, errno, "cannot write %s", fullname);
+    nread = size;
+    nwrite = 0;
+    pread = buf;
+    pwrite = buf;
+    while (nread > 0 || nwrite > 0)
+    {
+	size_t n;
+
+	if (nread > 0)
+	{
+	    n = try_read_from_server (pread, nread);
+	    nread -= n;
+	    pread += n;
+	    nwrite += n;
+	}
+
+	if (nwrite > 0)
+	{
+	    n = fwrite (pwrite, 1, nwrite, fp);
+	    if (ferror (fp))
+		error (1, errno, "cannot write %s", fullname);
+	    nwrite -= n;
+	    pwrite += n;
+	}
+    }
+    free (buf);
+    if (fclose (fp) < 0)
+	error (1, errno, "cannot close %s", fullname);
+}
+
 /*
  * The Checksum response gives the checksum for the file transferred
  * over by the next Updated, Merged or Patch response.  We just store
@@ -1638,6 +1719,32 @@ handle_clear_sticky (pathname, len)
     call_in_directory (pathname, clear_sticky, (char *)NULL);
 }
 
+
+static void template PROTO ((char *, List *, char *, char *));
+
+static void
+template (data, ent_list, short_pathname, filename)
+    char *data;
+    List *ent_list;
+    char *short_pathname;
+    char *filename;
+{
+    /* FIXME: should be computing second argument from CVSADM_TEMPLATE
+       and short_pathname.  */
+    read_counted_file (CVSADM_TEMPLATE, "<CVS/Template file>");
+}
+
+static void handle_template PROTO ((char *, int));
+
+static void
+handle_template (pathname, len)
+    char *pathname;
+    int len;
+{
+    call_in_directory (pathname, template, NULL);
+}
+
+
 struct save_prog {
     char *name;
     char *dir;
@@ -1648,7 +1755,7 @@ static struct save_prog *checkin_progs;
 static struct save_prog *update_progs;
 
 /*
- * Unlike some requests this doesn't include the repository.  So we can't
+ * Unlike some responses this doesn't include the repository.  So we can't
  * just call call_in_directory and have the right thing happen; we save up
  * the requests and do them at the end.
  */
@@ -2237,6 +2344,8 @@ struct response responses[] =
        rs_optional),
     RSP_LINE("Clear-sticky", handle_clear_sticky, response_type_normal,
        rs_optional),
+    RSP_LINE("Template", handle_template, response_type_normal,
+       rs_optional),
     RSP_LINE("Set-checkin-prog", handle_set_checkin_prog, response_type_normal,
        rs_optional),
     RSP_LINE("Set-update-prog", handle_set_update_prog, response_type_normal,
@@ -2317,57 +2426,57 @@ send_to_server (str, len)
       error (0, errno, "writing to to-server logfile");
 }
 
+/* Read up to LEN bytes from the server.  Returns actual number of bytes
+   read.  Gives a fatal error on EOF or error.  */
+static size_t
+try_read_from_server (buf, len)
+    char *buf;
+    size_t len;
+{
+    int nread;
+
+#ifdef NO_SOCKET_TO_FD
+    if (use_socket_style)
+    {
+	nread = recv (server_sock, buf, len, 0);
+	if (nread == -1)
+	    error (1, errno, "reading from server");
+    }
+    else
+#endif
+    {
+	nread = fread (buf, 1, len, from_server);
+	if (ferror (from_server))
+	    error (1, errno, "reading from server");
+	if (feof (from_server))
+	    error (1, 0,
+		   "end of file from server (consult above messages if any)");
+    }
+
+    /* Log, if that's what we're doing. */
+    if (from_server_logfile != NULL && nread > 0)
+	if (fwrite (buf, 1, nread, from_server_logfile) < nread)
+	    error (0, errno, "writing to from-server logfile");
+
+    return nread;
+}
+
 /*
  * Read LEN bytes from the server or die trying.
  */
 void
 read_from_server (buf, len)
-     char *buf;
-     size_t len;
+    char *buf;
+    size_t len;
 {
-#ifdef NO_SOCKET_TO_FD
-  if (use_socket_style)
+    size_t red = 0;
+    while (red < len)
     {
-      int just_red = 0;
-      size_t red = 0;
-
-      while (red < len)
-        {
-          just_red = recv (server_sock, buf + red, len - red, 0);
-
-          if (just_red == -1)
-            error (1, errno, "reading from server");
-
-          red += just_red;
-          if (red == len)
-            break;
-        }
+	red += try_read_from_server (buf + red, len - red);
+	if (red == len)
+	    break;
     }
-  else
-#endif /* NO_SOCKET_TO_FD */
-    {
-      size_t red = 0;
-      
-      while (red < len)
-        {
-          red += fread (buf + red, 1, len - red, from_server);
-          
-          if (red == len)
-            break;
-          
-          if (ferror (from_server))
-            error (1, errno, "reading from server");
-          if (feof (from_server))
-            error (1, 0, "end of file from server (consult above messages if any)");
-        }
-    }
-  
-  /* Log, if that's what we're doing. */
-  if (from_server_logfile)
-    if (fwrite (buf, 1, len, from_server_logfile) < len)
-      error (0, errno, "writing to from-server logfile");
 }
-
 
 /*
  * Get some server responses and process them.  Returns nonzero for

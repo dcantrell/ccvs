@@ -72,6 +72,8 @@ extern void server_clear_entstat PROTO((char *update_dir, char *repository));
 extern void server_set_sticky PROTO((char *update_dir, char *repository,
 				       char *tag,
 				       char *date));
+/* Send Template response.  */
+extern void server_template PROTO ((char *, char *));
 
 extern void server_update_entries
     PROTO((char *file, char *update_dir, char *repository,
