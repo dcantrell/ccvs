@@ -1,3 +1,11 @@
+Thu Jan  2 13:30:56 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* Makefile.in, argmatch.c, fnmatch.c, fnmatch.h, getline.c,
+	getopt.c, getopt.h, getopt1.c, getwd.c, hostname.c, mkdir.c,
+	regex.c, regex.h, rename.c, sighandle.c, strdup.c, strerror.c,
+	stripslash.c, system.h, vasprintf.c, wait.h, xgetwd.c, yesno.c:
+	Remove "675" paragraph;	see ../ChangeLog for rationale.
+
 Sun Nov 24 13:34:25 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* getdate.y (Convert): Change last acceptable year from 1999 to
