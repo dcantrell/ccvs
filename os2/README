@@ -20,7 +20,8 @@ to set $PS in the makefile itself, make sure to quote it ("\\").  On
 the command line (i.e., "make PS=\"), I believe just one will do.
 
         That should be all -- edit the makefile, then run make twice
-(changing $PS the second time), and get os2\cvs.exe.
+(changing $PS the second time), and get os2\cvs.exe.  You will get
+warnings during the compilation; ignore them.
 
         Report bugs to <bug-cvs@prep.ai.mit.edu>.
 
