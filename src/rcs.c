@@ -5485,7 +5485,6 @@ RCS_cmp_file ( rcs, rev1, rev1_cache, rev2, options, filename )
      const char *filename;
 {
     int binary;
-    int retcode;
 
     if (options != NULL && options[0] != '\0')
 	binary = STREQ (options, "-kb");
@@ -5513,6 +5512,7 @@ RCS_cmp_file ( rcs, rev1, rev1_cache, rev2, options, filename )
     if (preserve_perms)
     {
 	char *tmp;
+	int retcode;
 
 	tmp = cvs_temp_name();
 	retcode = RCS_checkout(rcs, NULL, rev, NULL, options, tmp, NULL, NULL);
