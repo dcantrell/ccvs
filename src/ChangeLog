@@ -1,3 +1,10 @@
+1999-01-14  Jim Kingdon  <http://www.cyclic.com>
+
+	* client.c (recv_line): If the line we are reading contains a
+	character which would sign-extend to EOF, don't treat it as end of
+	file.  recv() doesn't report end of file this way and this might
+	fix bugs with 0xff characters.
+
 1999-01-14  Larry Jones  <larry.jones@sdrc.com>
 
 	* client.c (recv_line): Handle EOF from server.

@@ -3750,7 +3750,6 @@ recv_line (sock, resultp)
     int sock;
     char **resultp;
 {
-    int c;
     char *result;
     size_t input_index = 0;
     size_t result_size = 80;
@@ -3765,20 +3764,11 @@ recv_line (sock, resultp)
 	if (n <= 0)
 	    error (1, 0, "recv() from server %s: %s", CVSroot_hostname,
 		   n == 0 ? "EOF" : SOCK_STRERROR (SOCK_ERRNO));
-	c = ch;
 
-	if (c == EOF)
-	{
-	    free (result);
-
-	    /* It's end of file.  */
-	    error (1, 0, "end of file from server");
-	}
-
-	if (c == '\012')
+	if (ch == '\012')
 	    break;
 
-	result[input_index++] = c;
+	result[input_index++] = ch;
 	while (input_index + 1 >= result_size)
 	{
 	    result_size *= 2;
