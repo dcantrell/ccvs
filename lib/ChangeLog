@@ -1,5 +1,8 @@
 Fri Nov 17 20:08:58 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
+        * getdate.c: if STDC_HEADERS, then just include <stdlib.h> instead
+        of declaring malloc() and realloc() to be char *.
+
         * system.h: ifdef NEED_DECOY_PERMISSIONS, then define the S_I*
         permission masks for USR, GRP, and OTH in terms of the simpler
         OS/2 masks.

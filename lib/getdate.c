@@ -1,5 +1,3 @@
-extern char *malloc(), *realloc();
-
 # line 2 "./getdate.y"
 /*
 **  Originally written by Steven M. Bellovin <smb@research.att.com> while
@@ -21,6 +19,12 @@ extern char *malloc(), *realloc();
 #else
 #include "config.h"
 #endif
+#endif
+
+#if STDC_HEADERS
+#include <stdlib.h>
+#else
+char *malloc (), *realloc ();
 #endif
 
 /* Since the code of getdate.y is not included in the Emacs executable
