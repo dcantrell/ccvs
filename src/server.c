@@ -1083,6 +1083,17 @@ struct buffer_data
 /* The size we allocate for each buffer_data structure.  */
 #define BUFFER_DATA_SIZE (4096)
 
+#ifdef SERVER_FLOWCONTROL
+/* The maximum we'll queue to the remote client before blocking.  */
+# ifndef SERVER_HI_WATER
+#  define SERVER_HI_WATER (2 * 1024 * 1024)
+# endif /* SERVER_HI_WATER */
+/* When the buffer drops to this, we restart the child */
+# ifndef SERVER_LO_WATER
+#  define SERVER_LO_WATER (1 * 1024 * 1024)
+# endif /* SERVER_LO_WATER */
+#endif /* SERVER_FLOWCONTROL */
+
 /* Linked list of available buffer_data structures.  */
 static struct buffer_data *free_buffer_data;
 
@@ -1104,6 +1115,11 @@ static int buf_read_file PROTO((FILE *, long, struct buffer_data **,
 static int buf_input_data PROTO((struct buffer *, int *));
 static void buf_copy_lines PROTO((struct buffer *, struct buffer *, int));
 static int buf_copy_counted PROTO((struct buffer *, struct buffer *));
+
+#ifdef SERVER_FLOWCONTROL
+static int buf_count_mem PROTO((struct buffer *));
+static int set_nonblock_fd PROTO((int));
+#endif /* SERVER_FLOWCONTROL */
 
 /* Allocate more buffer_data structures.  */
 
@@ -1162,6 +1178,26 @@ buf_empty_p (buf)
 	    return 0;
     return 1;
 }
+
+#ifdef SERVER_FLOWCONTROL
+/*
+ * Count how much data is stored in the buffer..
+ * Note that each buffer is a malloc'ed chunk BUFFER_DATA_SIZE.
+ */
+
+static int
+buf_count_mem (buf)
+    struct buffer *buf;
+{
+    struct buffer_data *data;
+    int mem = 0;
+
+    for (data = buf->data; data != NULL; data = data->next)
+	mem += BUFFER_DATA_SIZE;
+
+    return mem;
+}
+#endif /* SERVER_FLOWCONTROL */
 
 /* Add data DATA of length LEN to BUF.  */
 
@@ -1326,10 +1362,26 @@ buf_send_output (buf)
     return 0;
 }
 
+#ifdef SERVER_FLOWCONTROL
 /*
  * Set buffer BUF to non-blocking I/O.  Returns 0 for success or errno
  * code.
  */
+
+static int
+set_nonblock_fd (fd)
+     int fd;
+{
+    int flags;
+
+    flags = fcntl (fd, F_GETFL, 0);
+    if (flags < 0)
+	return errno;
+    if (fcntl (fd, F_SETFL, flags | O_NONBLOCK) < 0)
+	return errno;
+    return 0;
+}
+#endif /* SERVER_FLOWCONTROL */
 
 static int
 set_nonblock (buf)
@@ -1919,6 +1971,10 @@ input_memory_error (buf)
 static struct fd_set_wrapper { fd_set fds; } command_fds_to_drain;
 static int max_command_fd;
 
+#ifdef SERVER_FLOWCONTROL
+static int flowcontrol_pipe[2];
+#endif /* SERVER_FLOWCONTROL */
+
 static void
 do_cvs_command (command)
     int (*command) PROTO((int argc, char **argv));
@@ -1979,6 +2035,15 @@ do_cvs_command (command)
 	print_error (errno);
 	goto error_exit;
     }
+#ifdef SERVER_FLOWCONTROL
+    if (pipe (flowcontrol_pipe) < 0)
+    {
+	print_error (errno);
+	goto error_exit;
+    }
+    set_nonblock_fd (flowcontrol_pipe[0]);
+    set_nonblock_fd (flowcontrol_pipe[1]);
+#endif /* SERVER_FLOWCONTROL */
 
     dev_null_fd = open ("/dev/null", O_RDONLY);
     if (dev_null_fd < 0)
@@ -2018,6 +2083,9 @@ do_cvs_command (command)
 	close (stdout_pipe[0]);
 	close (stderr_pipe[0]);
 	close (protocol_pipe[0]);
+#ifdef SERVER_FLOWCONTROL
+	close (flowcontrol_pipe[1]);
+#endif /* SERVER_FLOWCONTROL */
 
 	/*
 	 * Set this in .bashrc if you want to give yourself time to attach
@@ -2047,6 +2115,9 @@ do_cvs_command (command)
 	/* Number of file descriptors to check in select ().  */
 	int num_to_check;
 	int count_needed = 0;
+#ifdef SERVER_FLOWCONTROL
+	int have_flowcontrolled = 0;
+#endif /* SERVER_FLOWCONTROL */
 
 	FD_ZERO (&command_fds_to_drain.fds);
 	num_to_check = stdout_pipe[0];
@@ -2121,6 +2192,15 @@ do_cvs_command (command)
 	}
 	protocol_pipe[1] = -1;
 
+#ifdef SERVER_FLOWCONTROL
+	if (close (flowcontrol_pipe[0]) < 0)
+	{
+	    print_error (errno);
+	    goto error_exit;
+	}
+	flowcontrol_pipe[0] = -1;
+#endif /* SERVER_FLOWCONTROL */
+
 	if (close (dev_null_fd) < 0)
 	{
 	    print_error (errno);
@@ -2135,11 +2215,31 @@ do_cvs_command (command)
 	    fd_set readfds;
 	    fd_set writefds;
 	    int numfds;
+#ifdef SERVER_FLOWCONTROL
+	    int bufmemsize;
+
+	    /*
+	     * See if we are swamping the remote client and filling our VM.
+	     * Tell child to hold off if we do.
+	     */
+	    bufmemsize = buf_count_mem (&outbuf);
+	    if (!have_flowcontrolled && (bufmemsize > SERVER_HI_WATER))
+	    {
+		if (write(flowcontrol_pipe[1], "S", 1) == 1)
+		    have_flowcontrolled = 1;
+	    }
+	    else if (have_flowcontrolled && (bufmemsize < SERVER_LO_WATER))
+	    {
+		if (write(flowcontrol_pipe[1], "G", 1) == 1)
+		    have_flowcontrolled = 0;
+	    }
+#endif /* SERVER_FLOWCONTROL */
 
 	    FD_ZERO (&readfds);
 	    FD_ZERO (&writefds);
 	    if (! buf_empty_p (&outbuf))
-	      FD_SET (STDOUT_FILENO, &writefds);
+	        FD_SET (STDOUT_FILENO, &writefds);
+
 	    if (stdout_pipe[0] >= 0)
 	    {
 		FD_SET (stdout_pipe[0], &readfds);
@@ -2360,6 +2460,61 @@ E CVS locks may need cleaning up.\n",
     }
     return;
 }
+
+#ifdef SERVER_FLOWCONTROL
+/*
+ * Called by the child at convenient points in the server's execution for
+ * the server child to block.. ie: when it has no locks active.
+ */
+void
+server_pause_check()
+{
+    int paused = 0;
+    char buf[1];
+
+    while (read (flowcontrol_pipe[0], buf, 1) == 1)
+    {
+	if (*buf == 'S')	/* Stop */
+	    paused = 1;
+	else if (*buf == 'G')	/* Go */
+	    paused = 0;
+	else
+	    return;		/* ??? */
+    }
+    while (paused) {
+	int numfds, numtocheck;
+	fd_set fds;
+
+	FD_ZERO (&fds);
+	FD_SET (flowcontrol_pipe[0], &fds);
+	numtocheck = flowcontrol_pipe[0] + 1;
+	
+	do {
+	    numfds = select (numtocheck, &fds, (fd_set *)0,
+			     (fd_set *)0, (struct timeval *)NULL);
+	    if (numfds < 0
+		&& errno != EINTR)
+	    {
+		print_error (errno);
+		return;
+	    }
+	} while (numfds < 0);
+	    
+	if (FD_ISSET (flowcontrol_pipe[0], &fds))
+	{
+	    while (read (flowcontrol_pipe[0], buf, 1) == 1)
+	    {
+		if (*buf == 'S')	/* Stop */
+		    paused = 1;
+		else if (*buf == 'G')	/* Go */
+		    paused = 0;
+		else
+		    return;		/* ??? */
+	    }
+	}
+    }
+}
+#endif /* SERVER_FLOWCONTROL */
 
 static void output_dir PROTO((char *, char *));
 
