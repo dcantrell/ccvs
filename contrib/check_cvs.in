@@ -61,6 +61,9 @@
                      rlog, and so on, and NAME is FILE minus the path.
                      An evaluated SCRIPT will find the same three
                      arguments in the same order in @_.
+                     FIXME: This argument should be run once on each
+                     checked out file or the like.  This could have been
+                     implemented with find |xargs...
     -v,--verbose     Print verbose debugging information.
 
 =head1 ARGUMENTS

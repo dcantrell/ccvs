@@ -1,3 +1,8 @@
+2003-04-10  Derek Price  <derek@ximbiot.com>
+
+	* check_cvs.pl (pod documentation::OPTIONS): Add FIXME comment as to
+	the usefulness of --exec.
+
 2003-04-09  Derek Price  <derek@ximbiot.com>
 
 	* check_cvs.pl: Fix copy & paste error in GPL disclaimer.
