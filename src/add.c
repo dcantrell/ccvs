@@ -28,7 +28,7 @@
 
 #ifndef lint
 static char rcsid[] = "$CVSid: @(#)add.c 1.55 94/10/22 $";
-USE(rcsid)
+USE(rcsid);
 #endif
 
 static int add_directory PROTO((char *repository, char *dir));

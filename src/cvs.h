@@ -191,7 +191,7 @@ extern int errno;
 /* #define CVSDEA		"CVS.dea" */
 
 /* Define to enable alternate death support (which uses the RCS state).  */
-/* #define DEATH_STATE 1 */
+#define DEATH_STATE 1
 
 #define DEATH_SUPPORT 1
 

@@ -100,8 +100,10 @@ FLAGS_TO_PASS = \
 	exec_prefix='$(exec_prefix)'
 
 DISTFILES = COPYING COPYING.LIB ChangeLog INSTALL README TODO \
-	cvs-format.el mkinstalldirs install-sh \
+	cvs-format.el mkinstalldirs \
 	configure configure.in stamp-h.in config.h.in Makefile.in
+# install-sh used to be in that list, but it wasn't included in the disty
+# I got, and doesn't seem to be used anymore.
 
 PROGS = cvsinit
 
@@ -210,7 +212,7 @@ dist:
 	mkdir `cat .fname`
 	ln $(DISTFILES) `cat .fname`
 	for dir in $(SUBDIRS); do mkdir `cat .fname`/$$dir; cd $$dir; $(MAKE) $@; cd ..; done
-	tar chZf `cat .fname`.tar.Z `cat .fname`
+	tar chzf `cat .fname`.tar.gz `cat .fname`
 	rm -rf `cat .fname` .fname
 
 # For the justification of the following Makefile rules, see node

@@ -43,7 +43,8 @@ INSTALL_PROGRAM = @INSTALL_PROGRAM@
 
 DISTFILES = Makefile.in README clmerge cln_hist.pl commit_prep.pl cvs_acls.pl \
 	cvscheck cvscheck.man cvshelp.man descend descend.man dirfns \
-	intro.doc log.pl log_accum.pl mfpipe.pl rcs-to-cvs rcslock.pl sccs2rcs
+	log.pl log_accum.pl mfpipe.pl rcs-to-cvs rcslock.pl sccs2rcs
+# intro.doc used to be in the above list, but wasn't in the disty I got.
 
 CONTRIB_FILES = README cln_hist.pl commit_prep.pl cvs_acls.pl cvscheck cvscheck.man \
 	cvshelp.man intro.doc log.pl log_accum.pl mfpipe.pl rcs-to-cvs rcslock.pl sccs2rcs

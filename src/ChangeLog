@@ -1,3 +1,30 @@
+Fri Feb  3 20:28:21 1995  Jim Blandy  <jimb@totoro.bio.indiana.edu>
+
+	* log.c (log_option_with_arg): New function.
+	(cvslog): Use it and send_arg to handle the rlog options that take
+	arguments.  The code used to use send_option_string for
+	everything, which assumes that "-d1995/01/02" is equivalent to
+	"-d -1 -9 -9 -5 ...".
+
+Tue Jan 31 15:02:01 1995  Jim Blandy  <jimb@floss.life.uiuc.edu>
+
+	* server.c: #include <sys/stat.h> for the new stat call in mkdir_p.
+	(mkdir_p): Don't try to create the intermediate directory if it
+	exists already.  Some systems return EEXIST, but others return
+	EACCES, which we can't otherwise distinguish from a real access
+	problem.
+
+Sun Jan 22 15:25:45 1995  Jim Blandy  <jimb@totoro.bio.indiana.edu>
+
+	* update.c (merge_file): My rcsmerge doesn't accept a -E option,
+	and it doesn't look too important, so don't pass it.
+
+Fri Jan 20 14:24:58 1995  Ian Lance Taylor  <ian@sanguine.cygnus.com>
+
+	* client.c (do_deferred_progs): Don't try to chdir to toplevel_wd
+	if it has not been set.
+	(process_prune_candidates): Likewise.
+
 Mon Nov 28 09:59:14 1994  Jim Kingdon  (kingdon@lioth.cygnus.com)
 
 	* client.c (client_commit): Move guts of function from here...
