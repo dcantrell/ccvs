@@ -180,7 +180,7 @@ static const char *const usg[] =
 
     "For CVS updates and additional information, see\n",
     "    the CVS home page at http://www.cvshome.org/ or\n",
-    "    Pascal Molli's CVS site at http://www.loria.fr/~molli/cvs-index.html\n",
+    "    the CVSNT home page at http://www.cvsnt.org/\n",
     NULL,
 };
 

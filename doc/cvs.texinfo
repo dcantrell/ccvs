@@ -8648,7 +8648,7 @@ and @code{update}.
 @end table
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-@include getdate.texi
+@include getdate-cvs.texi
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node admin

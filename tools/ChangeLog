@@ -1,3 +1,8 @@
+2004-12-09  Mark D. Baushke  <mdb@cvshome.org>
+
+	* README: Remove Dr. Pascal Molli's CVS URL from the
+	documentation.
+
 2004-10-20  Mark D. Baushke  <mdb@cvshome.org>
 
 	* Makefile.in: Regenerate for new configure.in.
