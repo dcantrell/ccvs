@@ -1,3 +1,8 @@
+Wed Apr  9 15:29:45 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* filesubr.c (expand_wild): Add comments about "." and comparing
+	NULL pointers.
+
 8 Apr 1997  Jim Kingdon
 
 	* rcmd.c: Instead of returning -1 and passing that back to
