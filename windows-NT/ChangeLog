@@ -1,3 +1,15 @@
+2003-06-04  Derek Price  <derek@ximbiot.com>
+
+	* config.h: Regenerated, but move the contents...
+	* config.h.in: ...into this new file first and stick a token in...
+	(PACKAGE_STRING): ...here in place of the CVS version number.
+	* Makefile.am (all-local, stamp-ch, config.h): New targets providing
+	for dynamic generation of config.h so that I can no longer forget to
+	update the version number in config.h when I update configure.in.
+	* stamp-ch: New file.
+
+	* Makefile.in: Regenerated.
+
 2003-05-21  Derek Price  <derek@ximbiot.com>
 
 	* Makefile.in: Regenerate with Automake version 1.7.5.
