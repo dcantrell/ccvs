@@ -4770,10 +4770,9 @@ RCS_checkin (RCSNode *rcs, char *workfile, char *message, char *rev, int flags)
     RCSVers *delta, *commitpt;
     Deltatext *dtext;
     Node *nodep;
-    char *tmpfile, *changefile, *chtext;
+    char *tmpfile, *changefile;
     char *diffopts;
     size_t bufsize;
-    int buflen, chtextlen;
     int status, checkin_quiet, allocated_workfile;
     struct tm *ftm;
     time_t modtime;
@@ -5194,9 +5193,7 @@ workfile);
 	       "could not check out revision %s of `%s'",
 	       commitpt->version, rcs->path);
 
-    bufsize = buflen = 0;
-    chtext = NULL;
-    chtextlen = 0;
+    bufsize = 0;
     changefile = cvs_temp_name();
 
     /* Diff options should include --binary if the RCS file has -kb set

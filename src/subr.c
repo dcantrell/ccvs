@@ -269,13 +269,12 @@ numdots (const char *s)
 int
 compare_revnums (const char *rev1, const char *rev2)
 {
-    const char *s, *sp;
-    const char *t, *tp;
+    const char *sp, *tp;
     char *snext, *tnext;
     int result = 0;
 
-    sp = s = rev1;
-    tp = t = rev2;
+    sp = rev1;
+    tp = rev2;
     while (result == 0)
     {
 	result = strtoul (sp, &snext, 10) - strtoul (tp, &tnext, 10);

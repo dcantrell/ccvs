@@ -1131,8 +1131,6 @@ lock_filesdoneproc (void *callerdat, int err, char *repository,
 void
 lock_tree_promotably (int argc, char **argv, int local, int which, int aflag)
 {
-    int err;
-
     TRACE (TRACE_FUNCTION, "lock_tree_promotably (%d, argv, %d, %d, %d)",
 	   argc, local, which, aflag);
 
@@ -1141,7 +1139,7 @@ lock_tree_promotably (int argc, char **argv, int local, int which, int aflag)
      * the dirs
      */
     lock_tree_list = getlist ();
-    err = start_recursion
+    start_recursion
 	( (FILEPROC) NULL, lock_filesdoneproc,
 	  (DIRENTPROC) NULL, (DIRLEAVEPROC) NULL, NULL, argc,
 	  argv, local, which, aflag, CVS_LOCK_NONE,
