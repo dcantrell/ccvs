@@ -1,3 +1,7 @@
+2004-08-30  Derek Price  <derek@ximbiot.com>
+
+	* NEWS: Note compliance of log_accum.pl with Perl 5.8.5.
+
 2004-08-27  Derek Price  <derek@ximbiot.com>
 
 	* srclist.txt: Note minmax imported from GNULIB.
