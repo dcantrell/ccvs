@@ -523,6 +523,7 @@ RCS_fully_parse (rcs)
     {
 	int c;
 	char *key, *value;
+	size_t vallen;
 	Node *vers;
 	RCSVers *vnode;
 
@@ -548,7 +549,7 @@ RCS_fully_parse (rcs)
 
 	vnode = (RCSVers *) vers->data;
 
-	while (getrcskey (fp, &key, &value, NULL) >= 0)
+	while (getrcskey (fp, &key, &value, &vallen) >= 0)
 	{
 	    if (strcmp (key, "text") != 0)
 	    {
@@ -587,7 +588,7 @@ warning: duplicate key `%s' in version `%s' of RCS file `%s'",
 		    const char *cp;
 
 		    cp = value;
-		    while (*cp != '\0')
+		    while (cp < value + vallen)
 		    {
 			char op;
 			unsigned long count;
@@ -614,7 +615,7 @@ warning: duplicate key `%s' in version `%s' of RCS file `%s'",
 			    {
 				if (*cp == '\012')
 				    --count;
-				else if (*cp == '\0')
+				else if (cp == value + vallen)
 				{
 				    if (count != 1)
 					error (1, 0, "\
@@ -2150,9 +2151,8 @@ RCS_fast_checkout (rcs, workfile, tag, options, sout, flags)
 	{
 #if 0
 	    /* RCS_deltas for this use is not ready for the prime
-	       time; first we need to (a) fix RCS_deltas so it handles
-	       \0 within the file, (b) check RCS_deltas for memory
-	       leaks, (c) make the thing pass the testsuite (when I
+	       time; first we need to (a) check RCS_deltas for memory
+	       leaks, (b) make the thing pass the testsuite (when I
 	       tried it got partway but not all the way).  */
 
 	    /* It isn't the head revision of the trunk.  We'll need to
@@ -2341,8 +2341,10 @@ block_free ()
 
 struct line
 {
-    /* Text of this line, terminated by \n or \0.  */
+    /* Text of this line.  */
     char *text;
+    /* Length of this line, not counting \n if has_newline is true.  */
+    size_t len;
     /* Version in which it was introduced.  */
     RCSVers *vers;
     /* Nonzero if this line ends with \n.  This will always be true
@@ -2374,19 +2376,22 @@ linevector_init (vec)
 }
 
 static void linevector_add PROTO ((struct linevector *vec, char *text,
-				   RCSVers *vers, unsigned int pos));
+				   size_t len, RCSVers *vers,
+				   unsigned int pos));
 
 /* Given some text TEXT, add each of its lines to VEC before line POS
    (where line 0 is the first line).  The last line in TEXT may or may
    not be \n terminated.  All \n in TEXT are changed to \0.  Set the
    version for each of the new lines to VERS.  */
 static void
-linevector_add (vec, text, vers, pos)
+linevector_add (vec, text, len, vers, pos)
     struct linevector *vec;
     char *text;
+    size_t len;
     RCSVers *vers;
     unsigned int pos;
 {
+    char *textend;
     unsigned int i;
     unsigned int nnew;
     char *p;
@@ -2394,10 +2399,12 @@ linevector_add (vec, text, vers, pos)
 
     assert (vec->lines_alloced > 0);
 
+    textend = text + len;
+
     /* Count the number of lines we will need to add.  */
     nnew = 1;
-    for (p = text; *p != '\0'; ++p)
-	if (*p == '\n' && p[1] != '\0')
+    for (p = text; p < textend; ++p)
+	if (*p == '\n' && p + 1 < textend)
 	    ++nnew;
     /* Allocate the struct line's.  */
     lines = block_alloc (nnew * sizeof (struct line));
@@ -2424,21 +2431,23 @@ linevector_add (vec, text, vers, pos)
     lines[0].vers = vers;
     lines[0].has_newline = 0;
     vec->vector[i++] = &lines[0];
-    for (p = text; *p != '\0'; ++p)
+    for (p = text; p < textend; ++p)
 	if (*p == '\n')
 	{
 	    *p = '\0';
 	    lines[i - pos - 1].has_newline = 1;
-	    if (p[1] == '\0')
+	    if (p + 1 == textend)
 		/* If there are no characters beyond the last newline, we
 		   don't consider it another line.  */
 		break;
+	    lines[i - pos - 1].len = p - lines[i - pos - 1].text;
 	    lines[i - pos].text = p + 1;
 	    lines[i - pos].vers = vers;
 	    lines[i - pos].has_newline = 0;
 	    vec->vector[i] = &lines[i - pos];
 	    ++i;
 	}
+    lines[i - pos - 1].len = p - lines[i - pos - 1].text;
     vec->nlines += nnew;
 }
 
@@ -2544,6 +2553,7 @@ RCS_deltas (rcs, fp, version, op, text, len)
     char *cpversion;
     char *key;
     char *value;
+    size_t vallen;
     RCSVers *vers;
     RCSVers *prev_vers;
     RCSVers *trunk_vers;
@@ -2619,7 +2629,7 @@ RCS_deltas (rcs, fp, version, op, text, len)
 	        isversion = 0;
 	}
 
-	while ((n = getrcskey (fp, &key, &value, NULL)) >= 0)
+	while ((n = getrcskey (fp, &key, &value, &vallen)) >= 0)
 	{
 	    if (strcmp (key, "text") == 0)
 	    {
@@ -2627,11 +2637,11 @@ RCS_deltas (rcs, fp, version, op, text, len)
 		{
 		    char *p;
 
-		    p = block_alloc (strlen (value) + 1);
-		    strcpy (p, value);
+		    p = block_alloc (vallen);
+		    memcpy (p, value, vallen);
 
 		    linevector_init (&curlines);
-		    linevector_add (&curlines, p, NULL, 0);
+		    linevector_add (&curlines, p, vallen, NULL, 0);
 		    ishead = 0;
 		}
 		else if (isnext)
@@ -2648,13 +2658,14 @@ RCS_deltas (rcs, fp, version, op, text, len)
 			unsigned long pos;
 			unsigned long nlines;
 			char *new_lines;
+		        size_t len;
 			struct deltafrag *next;
 		    };
 		    struct deltafrag *dfhead;
 		    struct deltafrag *df;
 
 		    dfhead = NULL;
-		    for (p = value; p != NULL && *p != '\0'; )
+		    for (p = value; p != NULL && p < value + vallen; )
 		    {
 			op = *p++;
 			if (op != 'a' && op != 'd')
@@ -2698,7 +2709,7 @@ RCS_deltas (rcs, fp, version, op, text, len)
 			    for (q = p; i != 0; ++q)
 				if (*q == '\n')
 				    --i;
-				else if (*q == '\0')
+				else if (q == value + vallen)
 				{
 				    if (i != 1)
 					error (1, 0, "\
@@ -2710,9 +2721,9 @@ invalid rcs file %s: premature end of value",
 
 			    /* Copy the text we are adding into allocated
 			       space.  */
-			    df->new_lines = block_alloc (q - p + 1);
-			    strncpy (df->new_lines, p, q - p);
-			    df->new_lines[q - p] = '\0';
+			    df->new_lines = block_alloc (q - p);
+			    memcpy (df->new_lines, p, q - p);
+			    df->len = q - p;
 
 			    p = q;
 			}
@@ -2734,6 +2745,7 @@ invalid rcs file %s: premature end of value",
 			{
 			case ADD:
 			    linevector_add (&curlines, df->new_lines,
+					    df->len,
 					    onbranch ? vers : NULL,
 					    df->pos);
 			    break;
@@ -2894,7 +2906,8 @@ invalid rcs file %s (`d' operand out of range)",
 			cvs_output (ym - 2, 2);
 		    }
 		    cvs_output ("): ", 0);
-		    cvs_output (headlines.vector[ln]->text, 0);
+		    cvs_output (headlines.vector[ln]->text,
+				headlines.vector[ln]->len);
 		    cvs_output ("\n", 1);
 		}
 	    }
@@ -2908,29 +2921,22 @@ invalid rcs file %s (`d' operand out of range)",
 		assert (text != NULL);
 		assert (len != NULL);
 
-		n = 1; /* 1 for final \0 */
+		n = 0;
 		for (ln = 0; ln < curlines.nlines; ++ln)
 		    /* 1 for \n */
-		    n += strlen (curlines.vector[ln]->text) + 1;
+		    n += curlines.vector[ln]->len + 1;
 		p = xmalloc (n);
 		*text = p;
 		for (ln = 0; ln < curlines.nlines; ++ln)
 		{
-		    strcpy (p, curlines.vector[ln]->text);
-		    p += strlen (p);
+		    memcpy (p, curlines.vector[ln]->text,
+			    curlines.vector[ln]->len);
+		    p += curlines.vector[ln]->len;
 		    if (curlines.vector[ln]->has_newline)
-		    {
 			*p++ = '\n';
-			*p = '\0';
-		    }
 		}
-		/* FIXME: totally and utterly broken for (e.g. binary) files
-		   containing \0.  */
-		*len = strlen (*text);
-
-		/* <, not <=, because there is a final \0 (does there need
-		   to be, given the fact that we return the length?)  */
-		assert (*len < n);
+		*len = p - *text;
+		assert (*len <= n);
 	    }
 	    break;
     }
