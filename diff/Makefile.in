@@ -74,6 +74,10 @@ util.o: util.c
 
 install: all
 
+installdirs:
+	@: nothing to do for installdirs
+.PHONY: installdirs
+
 TAGS: $(SOURCES)
 	etags $(SOURCES)
 

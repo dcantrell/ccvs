@@ -1,3 +1,8 @@
+Thu Jan 15 13:36:46 1998  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* Makefile.in (installdirs): New rule, for when ../Makefile
+	recurses into this directory (bug reported by W. L. Estes).
+
 Tue Nov 11 10:48:19 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* diff.c (diff_run): Change #ifdef on HAVE_SETMODE to #if to match
