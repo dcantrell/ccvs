@@ -6,6 +6,10 @@ Changes from 1.11.18 to 1.11.19:
 
 BUG FIXES
 
+* Thanks to a patch from Jim Hyslop <jhyslop@ieee.org>, issuing
+  'cvs watch on' or 'cvs watch off' in an empty directory no longer
+  clears any watchers in that directory.
+
 * An intermittant assertion failure in checkout has been fixed.
 
 * Thanks to a report from Chris Bohn <cbohn@rrinc.com>, all the source files
