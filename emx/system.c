@@ -33,8 +33,8 @@ os2_initialize (pargc, pargv)
 /* Modifies 'stat' so that always the same inode is returned.  EMX never
    returns the same value for st_ino.  Without this modification,
    release_delete in module src/release.c refuses to work.  Care must
-   be taken if someone is using the value of st_ino.  For example, look at
-   same_directories in src/root.c (AFAIK this never gets called).  */
+   be taken if someone is using the value of st_ino (but as far as I know,
+   no callers are).  */
 
 int
 os2_stat (name, buffer)
