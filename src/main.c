@@ -22,11 +22,7 @@ extern int gethostname ();
 
 char *program_name;
 char *program_path;
-/*
- * Initialize comamnd_name to "cvs" so that the first call to
- * read_cvsrc tries to find global cvs options.
- */
-char *command_name = "";
+char *command_name;
 
 /*
  * Since some systems don't define this...
@@ -53,6 +49,7 @@ char *CurDir;
  * Defaults, for the environment variables that are not set
  */
 char *Rcsbin = RCSBIN_DFLT;
+char *Tmpdir = TMPDIR_DFLT;
 char *Editor = EDITOR_DFLT;
 /*
  * The path found in CVS/Root must match $CVSROOT and/or 'cvs -d root'
@@ -159,11 +156,12 @@ static const char *const usg[] =
     "        -t           Show trace of program execution -- Try with -n\n",
     "        -v           CVS version and copyright\n",
     "        -b bindir    Find RCS programs in 'bindir'\n",
+    "        -T tmpdir    Use 'tmpdir' for temporary files\n",
     "        -e editor    Use 'editor' for editing log information\n",
     "        -d CVS_root  Overrides $CVSROOT as the root of the CVS tree\n",
     "        -f           Do not use the ~/.cvsrc file\n",
 #ifdef CLIENT_SUPPORT
-    "        -z #         Use 'gzip -#' for net traffic if possible.\n",
+    "        -z #         Use compression level '#' for net traffic.\n",
 #ifdef ENCRYPTION
     "        -x           Encrypt all net traffic.\n",
 #endif
@@ -309,7 +307,7 @@ main (argc, argv)
     char *cp, *end;
     const struct cmd *cm;
     int c, err = 0;
-    int rcsbin_update_env, cvs_update_env;
+    int rcsbin_update_env, tmpdir_update_env, cvs_update_env;
     int help = 0;		/* Has the user asked for help?  This
 				   lets us support the `cvs -H cmd'
 				   convention to give help for cmd. */
@@ -350,12 +348,18 @@ main (argc, argv)
      * Query the environment variables up-front, so that
      * they can be overridden by command line arguments
      */
-    rcsbin_update_env = *Rcsbin;	/* RCSBIN_DFLT must be set */
     cvs_update_env = 0;
+    rcsbin_update_env = *Rcsbin;	/* RCSBIN_DFLT must be set */
     if ((cp = getenv (RCSBIN_ENV)) != NULL)
     {
 	Rcsbin = cp;
 	rcsbin_update_env = 0;		/* it's already there */
+    }
+    tmpdir_update_env = *Tmpdir;	/* TMPDIR_DFLT must be set */
+    if ((cp = getenv (TMPDIR_ENV)) != NULL)
+    {
+	Tmpdir = cp;
+	tmpdir_update_env = 0;		/* it's already there */
     }
     if ((cp = getenv (EDITOR1_ENV)) != NULL)
  	Editor = cp;
@@ -403,7 +407,7 @@ main (argc, argv)
     opterr = 1;
 
     while ((c = getopt_long
-            (argc, argv, "Qqrwtnlvb:e:d:Hfz:s:x", long_options, &option_index))
+            (argc, argv, "Qqrwtnlvb:T:e:d:Hfz:s:x", long_options, &option_index))
            != EOF)
       {
 	switch (c)
@@ -452,6 +456,10 @@ main (argc, argv)
 	    case 'b':
 		Rcsbin = optarg;
 		rcsbin_update_env = 1;	/* need to update environment */
+		break;
+	    case 'T':
+		Tmpdir = optarg;
+		tmpdir_update_env = 1;	/* need to update environment */
 		break;
 	    case 'e':
 		Editor = optarg;
@@ -715,6 +723,9 @@ main (argc, argv)
 		error (1, 0, "cannot get working directory: %s", CurDir);
 	}
 
+	if (Tmpdir == NULL || Tmpdir[0] == '\0')
+	    Tmpdir = "/tmp";
+
 #ifdef HAVE_PUTENV
 	/* Now, see if we should update the environment with the
            Rcsbin value */
@@ -723,6 +734,14 @@ main (argc, argv)
 	    char *env;
 	    env = xmalloc (strlen (RCSBIN_ENV) + strlen (Rcsbin) + 1 + 1);
 	    (void) sprintf (env, "%s=%s", RCSBIN_ENV, Rcsbin);
+	    (void) putenv (env);
+	    /* do not free env, as putenv has control of it */
+	}
+	if (tmpdir_update_env)
+	{
+	    char *env;
+	    env = xmalloc (strlen (TMPDIR_ENV) + strlen (Tmpdir) + 1 + 1);
+	    (void) sprintf (env, "%s=%s", TMPDIR_ENV, Tmpdir);
 	    (void) putenv (env);
 	    /* do not free env, as putenv has control of it */
 	}

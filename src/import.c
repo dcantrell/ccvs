@@ -478,7 +478,6 @@ update_rcs_file (message, vfile, vtag, targc, targv, inattic)
     Vers_TS *vers;
     int letter;
     int ierrno;
-    char *tmpdir;
     char *tocvsPath;
     struct file_info finfo;
 
@@ -499,11 +498,7 @@ update_rcs_file (message, vfile, vtag, targc, targv, inattic)
 	int different;
 	int retcode = 0;
 
-	tmpdir = getenv ("TMPDIR");
-	if (tmpdir == NULL || tmpdir[0] == '\0')
-	  tmpdir = "/tmp";
-
-	(void) sprintf (xtmpfile, "%s/cvs-imp%ld", tmpdir, (long) getpid());
+	(void) sprintf (xtmpfile, "%s/cvs-imp%ld", Tmpdir, (long) getpid());
 
 	/*
 	 * The rcs file does have a revision on the vendor branch. Compare
