@@ -1,3 +1,8 @@
+2004-09-02  Mark D. Baushke  <mdb@cvshome.org>
+
+	* server.c (serve_directory): C89 compilers do not like mixed
+	declarations and code.
+
 2004-08-19  Mark D. Baushke  <mdb@cvshome.org>
 
 	* sanity.sh (sync-secondary): 'dirname -b' fails during the
