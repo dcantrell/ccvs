@@ -145,7 +145,7 @@ LIB_SOURCES = \
        ${lib_dir}${SL}getopt1.c \
        ${lib_dir}${SL}getline.c \
        ${lib_dir}${SL}getwd.c \
-       ${lib_dir}${SL}save-cwd.c \
+       ${lib_dir}${SL}savecwd.c \
        ${lib_dir}${SL}sighandle.c \
        ${lib_dir}${SL}yesno.c \
        ${lib_dir}${SL}xgetwd.c \
@@ -227,7 +227,7 @@ LIB_OBJECTS = \
        ${lib_dir}${SL}getopt1.obj \
        ${lib_dir}${SL}getline.obj \
        ${lib_dir}${SL}getwd.obj \
-       ${lib_dir}${SL}save-cwd.obj \
+       ${lib_dir}${SL}savecwd.obj \
        ${lib_dir}${SL}sighandle.obj \
        ${lib_dir}${SL}yesno.obj \
        ${lib_dir}${SL}xgetwd.obj \

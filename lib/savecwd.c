@@ -31,7 +31,7 @@
 extern int errno;
 #endif
 
-#include "save-cwd.h"
+#include "savecwd.h"
 #include "error.h"
 
 char *xgetwd __PROTO((void));

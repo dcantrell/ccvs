@@ -1,5 +1,13 @@
 Tue Jan 30 16:09:53 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* Rename lib/save-cwd.c to lib/savecwd.c.  Avoiding a hyphen
+	seems to be the only way to get Visual C++ 2.1 to generate a
+	cvsnt.mak which Visual C++ 4.0 will accept.
+	* Rename lib/save-cwd.h to lib/savecwd.h for consistency.
+	* os2/Makefile.in, lib/Makefile.in, lib/savecwd.c, src/add.c,
+	src/import.c, src/modules.c, src/recurse.c, src/tag.c: Update
+	accordingly.
+
 	* INSTALL, os2/options.h, windows-NT/options.h,
 	macintosh/options.h, src/options.h.in: Remove SORT; it is no
 	longer used.

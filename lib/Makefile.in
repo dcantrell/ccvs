@@ -45,7 +45,7 @@ SOURCES = \
 	mkdir.c \
 	regex.c \
 	rename.c \
-	save-cwd.c \
+	savecwd.c \
 	sighandle.c \
 	strdup.c \
 	strstr.c \
@@ -57,7 +57,7 @@ SOURCES = \
 	xgetwd.c \
 	yesno.c
 
-HEADERS = getline.h getopt.h fnmatch.h regex.h system.h wait.h md5.h save-cwd.h
+HEADERS = getline.h getopt.h fnmatch.h regex.h system.h wait.h md5.h savecwd.h
 
 OBJECTS = \
     @ALLOCA@ @LIBOBJS@ \
@@ -66,7 +66,7 @@ OBJECTS = \
     getopt.o \
     getopt1.o \
     md5.o \
-    save-cwd.o \
+    savecwd.o \
     sighandle.o \
     strippath.o \
     stripslash.o \

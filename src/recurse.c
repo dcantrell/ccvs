@@ -9,7 +9,7 @@
  */
 
 #include "cvs.h"
-#include "save-cwd.h"
+#include "savecwd.h"
 #include "fileattr.h"
 #include "edit.h"
 

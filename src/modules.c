@@ -21,7 +21,7 @@
  */
 
 #include "cvs.h"
-#include "save-cwd.h"
+#include "savecwd.h"
 
 #ifndef lint
 static const char rcsid[] = "$CVSid: @(#)modules.c 1.62 94/09/29 $";
