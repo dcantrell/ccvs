@@ -1,3 +1,10 @@
+1998-08-06  David Masterson of kla-tencor.com
+	and Jim Kingdon
+
+	* commit.c (commit_filesdoneproc): Don't call strlen ("CVSROOT")
+	from within the assert statement.  Apparently HP's cc compiler on
+	HPUX 10.20 has trouble with that.
+
 1998-08-06  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* rcs.c (RCS_checkin): When adding branch, if there is a lock on
