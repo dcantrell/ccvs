@@ -123,8 +123,6 @@ static void handle_set_static_directory PROTO((char *, int));
 static void handle_clear_static_directory PROTO((char *, int));
 static void handle_set_sticky PROTO((char *, int));
 static void handle_clear_sticky PROTO((char *, int));
-static void handle_set_checkin_prog PROTO((char *, int));
-static void handle_set_update_prog PROTO((char *, int));
 static void handle_module_expansion PROTO((char *, int));
 static void handle_wrapper_rcs_option PROTO((char *, int));
 static void handle_m PROTO((char *, int));
@@ -2548,111 +2546,8 @@ handle_template (pathname, len)
     call_in_directory (pathname, template, NULL);
 }
 
-
-struct save_prog {
-    char *name;
-    char *dir;
-    struct save_prog *next;
-};
 
-static struct save_prog *checkin_progs;
-static struct save_prog *update_progs;
 
-/*
- * Unlike some responses this doesn't include the repository.  So we can't
- * just call call_in_directory and have the right thing happen; we save up
- * the requests and do them at the end.
- */
-static void
-handle_set_checkin_prog (args, len)
-    char *args;
-    int len;
-{
-    char *prog;
-    struct save_prog *p;
-
-    read_line (&prog);
-    if (strcmp (command_name, "export") == 0)
-	return;
-
-    p = (struct save_prog *) xmalloc (sizeof (struct save_prog));
-    p->next = checkin_progs;
-    p->dir = xstrdup (args);
-    p->name = prog;
-    checkin_progs = p;
-}
-    
-static void
-handle_set_update_prog (args, len)
-    char *args;
-    int len;
-{
-    char *prog;
-    struct save_prog *p;
-
-    read_line (&prog);
-    if (strcmp (command_name, "export") == 0)
-	return;
-
-    p = (struct save_prog *) xmalloc (sizeof (struct save_prog));
-    p->next = update_progs;
-    p->dir = xstrdup (args);
-    p->name = prog;
-    update_progs = p;
-}
-
-static void do_deferred_progs PROTO((void));
-
-static void
-do_deferred_progs ()
-{
-    struct save_prog *p;
-    struct save_prog *q;
-
-    char *fname;
-    FILE *f;
-
-    if (toplevel_wd != NULL)
-    {
-	if (CVS_CHDIR (toplevel_wd) < 0)
-	    error (1, errno, "could not chdir to %s", toplevel_wd);
-    }
-    for (p = checkin_progs; p != NULL; )
-    {
-	fname = xmalloc (strlen (p->dir) + sizeof CVSADM_CIPROG + 10);
-	sprintf (fname, "%s/%s", p->dir, CVSADM_CIPROG);
-	f = open_file (fname, "w");
-	if (fprintf (f, "%s\n", p->name) < 0)
-	    error (1, errno, "writing %s", fname);
-	if (fclose (f) == EOF)
-	    error (1, errno, "closing %s", fname);
-	free (p->name);
-	free (p->dir);
-	q = p->next;
-	free (p);
-	p = q;
-	free (fname);
-    }
-    checkin_progs = NULL;
-    for (p = update_progs; p != NULL; )
-    {
-	fname = xmalloc (strlen (p->dir) + sizeof CVSADM_UPROG + 10);
-	sprintf (fname, "%s/%s", p->dir, CVSADM_UPROG);
-	f = open_file (fname, "w");
-	if (fprintf (f, "%s\n", p->name) < 0)
-	    error (1, errno, "writing %s", fname);
-	if (fclose (f) == EOF)
-	    error (1, errno, "closing %s", fname);
-	free (p->name);
-	free (p->dir);
-	q = p->next;
-	free (p);
-	p = q;
-	free (fname);
-    }
-    update_progs = NULL;
-}
-
 struct save_dir {
     char *dir;
     struct save_dir *next;
@@ -2851,76 +2746,6 @@ send_repository (dir, repos, update_dir)
 	    }
 	    if (nl == NULL)
                 send_to_server ("\012", 1);
-	    if (fclose (f) == EOF)
-		error (0, errno, "closing %s", adm_name);
-	}
-    }
-    if (supported_request ("Checkin-prog"))
-    {
-	FILE *f;
-	if (dir[0] == '\0')
-	    strcpy (adm_name, CVSADM_CIPROG);
-	else
-	    sprintf (adm_name, "%s/%s", dir, CVSADM_CIPROG);
-
-	f = CVS_FOPEN (adm_name, "r");
-	if (f == NULL)
-	{
-	    if (! existence_error (errno))
-		error (1, errno, "reading %s", adm_name);
-	}
-	else
-	{
-	    char line[80];
-	    char *nl = NULL;
-
-	    send_to_server ("Checkin-prog ", 0);
-
-	    while (fgets (line, sizeof (line), f) != NULL)
-	    {
-		send_to_server (line, 0);
-
-		nl = strchr (line, '\n');
-		if (nl != NULL)
-		    break;
-	    }
-	    if (nl == NULL)
-		send_to_server ("\012", 1);
-	    if (fclose (f) == EOF)
-		error (0, errno, "closing %s", adm_name);
-	}
-    }
-    if (supported_request ("Update-prog"))
-    {
-	FILE *f;
-	if (dir[0] == '\0')
-	    strcpy (adm_name, CVSADM_UPROG);
-	else
-	    sprintf (adm_name, "%s/%s", dir, CVSADM_UPROG);
-
-	f = CVS_FOPEN (adm_name, "r");
-	if (f == NULL)
-	{
-	    if (! existence_error (errno))
-		error (1, errno, "reading %s", adm_name);
-	}
-	else
-	{
-	    char line[80];
-	    char *nl = NULL;
-
-	    send_to_server ("Update-prog ", 0);
-
-	    while (fgets (line, sizeof (line), f) != NULL)
-	    {
-		send_to_server (line, 0);
-
-		nl = strchr (line, '\n');
-		if (nl != NULL)
-		    break;
-	    }
-	    if (nl == NULL)
-		send_to_server ("\012", 1);
 	    if (fclose (f) == EOF)
 		error (0, errno, "closing %s", adm_name);
 	}
@@ -3410,10 +3235,6 @@ struct response responses[] =
        rs_optional),
     RSP_LINE("Template", handle_template, response_type_normal,
        rs_optional),
-    RSP_LINE("Set-checkin-prog", handle_set_checkin_prog, response_type_normal,
-       rs_optional),
-    RSP_LINE("Set-update-prog", handle_set_update_prog, response_type_normal,
-       rs_optional),
     RSP_LINE("Notified", handle_notified, response_type_normal, rs_optional),
     RSP_LINE("Module-expansion", handle_module_expansion, response_type_normal,
        rs_optional),
@@ -3604,7 +3425,19 @@ get_responses_and_close ()
 	last_entries = NULL;
     }
 
-    do_deferred_progs ();
+    /* The following is necessary when working with multiple cvsroots, at least
+     * with commit.  It used to be buried nicely in do_deferred_progs() before
+     * that function was removed.  I suspect it wouldn't be necessary if
+     * call_in_directory() saved its working directory via save_cwd() before
+     * changing its directory and restored the saved working directory via
+     * restore_cwd() before exiting.  Of course, calling CVS_CHDIR only once,
+     * here, may be more efficient.
+     */
+    if( toplevel_wd != NULL )
+    {
+	if( CVS_CHDIR( toplevel_wd ) < 0 )
+	    error( 1, errno, "could not chdir to %s", toplevel_wd );
+    }
 
     if (client_prune_dirs)
 	process_prune_candidates ();
