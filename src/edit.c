@@ -241,7 +241,7 @@ send_notifications (argc, argv, local)
        notifications stay in CVSADM_NOTIFY to be sent next time.  */
     if (current_parsed_root->isremote)
     {
-	if (strcmp (command_name, "release") != 0)
+	if (strcmp (cvs_cmd_name, "release") != 0)
 	{
 	    start_server ();
 	    ign_setup ();
@@ -253,7 +253,7 @@ send_notifications (argc, argv, local)
 				0, (char *) NULL);
 
 	send_to_server ("noop\012", 0);
-	if (strcmp (command_name, "release") == 0)
+	if (strcmp (cvs_cmd_name, "release") == 0)
 	    err += get_server_responses ();
 	else
 	    err += get_responses_and_close ();

@@ -360,7 +360,7 @@ typedef enum direnter_type Dtype;
 #define CVS_LOCK_READ	1
 #define CVS_LOCK_WRITE	2
 
-extern const char *program_name, *program_path, *command_name;
+extern const char *program_name, *program_path, *cvs_cmd_name;
 extern char *Tmpdir, *Editor;
 extern int cvsadmin_root;
 extern char *CurDir;
