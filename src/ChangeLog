@@ -1,4 +1,11 @@
+Tue Jul  8 12:18:16 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* filesubr.c (get_homedir): Add comment about root vs. user
+	directory in pserver server.
+
 Mon Jul  7 14:39:33 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* sanity.sh (big): Also test Rcs-diff case.
 
 	* client.c (update_entries): Reindent a line.
 
