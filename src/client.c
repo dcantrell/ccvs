@@ -2554,7 +2554,7 @@ client_send_expansions (local, where, build_dirs)
     {
 	argv[0] = where ? where : modules_vector[i];
 	if (isfile (argv[0]))
-	    send_files (1, argv, local, 0, build_dirs);
+	    send_files (1, argv, local, 0, build_dirs, 0);
     }
     send_a_repository ("", CVSroot_directory, "");
 }
@@ -4048,6 +4048,16 @@ send_modified (file, short_pathname, vers)
     free (mode_string);
 }
 
+/* The address of an instance of this structure is passed to
+   send_fileproc, send_filesdoneproc, and send_direntproc, as the
+   callerdat parameter.  */
+
+struct send_data
+{
+  int build_dirs;
+  int force;
+};
+
 static int send_fileproc PROTO ((void *callerdat, struct file_info *finfo));
 
 /* Deal with one file.  */
@@ -4056,6 +4066,7 @@ send_fileproc (callerdat, finfo)
     void *callerdat;
     struct file_info *finfo;
 {
+    struct send_data *args = (struct send_data *) callerdat;
     Vers_TS *vers;
     struct file_info xfinfo;
     /* File name to actually use.  Might differ in case from
@@ -4117,6 +4128,7 @@ send_fileproc (callerdat, finfo)
 	   just happen.  */
     }
     else if (vers->ts_rcs == NULL
+	     || args->force
 	     || strcmp (vers->ts_user, vers->ts_rcs) != 0)
     {
 	send_modified (filename, finfo->fullname, vers);
@@ -4203,7 +4215,7 @@ send_dirent_proc (callerdat, dir, repository, update_dir, entries)
     char *update_dir;
     List *entries;
 {
-    int build_dirs = *(int *) callerdat;
+    struct send_data *args = (struct send_data *) callerdat;
     int dir_exists;
     char *cvsadm_name;
     char *cvsadm_repos_name;
@@ -4256,7 +4268,7 @@ send_dirent_proc (callerdat, dir, repository, update_dir, entries)
            new directories (build_dirs is true).  Otherwise, CVS may
            see a D line in an Entries file, and recreate a directory
            which the user removed by hand.  */
-	if (dir_exists || build_dirs)
+	if (dir_exists || args->build_dirs)
 	    send_a_repository (dir, repository, update_dir);
     }
     free (cvsadm_repos_name);
@@ -4442,18 +4454,21 @@ send_file_names (argc, argv, flags)
  * Send Repository, Modified and Entry.  argc and argv contain only
  * the files to operate on (or empty for everything), not options.
  * local is nonzero if we should not recurse (-l option).  build_dirs
- * is nonzero if nonexistent directories should be sent.  Also sends
- * Argument lines for argc and argv, so should be called after options
- * are sent.
+ * is nonzero if nonexistent directories should be sent.  force is
+ * nonzero if we should send unmodified files to the server as though
+ * they were modified.  Also sends Argument lines for argc and argv,
+ * so should be called after options are sent.
  */
 void
-send_files (argc, argv, local, aflag, build_dirs)
+send_files (argc, argv, local, aflag, build_dirs, force)
     int argc;
     char **argv;
     int local;
     int aflag;
     int build_dirs;
+    int force;
 {
+    struct send_data args;
     int err;
 
     /*
@@ -4461,9 +4476,11 @@ send_files (argc, argv, local, aflag, build_dirs)
      * But we don't actually use it, so I don't think it matters what we pass
      * for aflag here.
      */
+    args.build_dirs = build_dirs;
+    args.force = force;
     err = start_recursion
 	(send_fileproc, send_filesdoneproc,
-	 send_dirent_proc, (DIRLEAVEPROC)NULL, (void *) &build_dirs,
+	 send_dirent_proc, (DIRLEAVEPROC)NULL, (void *) &args,
 	 argc, argv, local, W_LOCAL, aflag, 0, (char *)NULL, 0);
     if (err)
 	error_exit ();

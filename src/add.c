@@ -139,7 +139,7 @@ add (argc, argv)
 		}
 	    }
 	send_file_names (argc, argv, SEND_EXPAND_WILD);
-	send_files (argc, argv, 0, 0, 1);
+	send_files (argc, argv, 0, 0, 1, 0);
 	send_to_server ("add\012", 0);
 	return get_responses_and_close ();
     }

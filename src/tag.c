@@ -180,7 +180,7 @@ cvstag (argc, argv)
 	/* FIXME:  We shouldn't have to send current files, but I'm not sure
 	   whether it works.  So send the files --
 	   it's slower but it works.  */
-	send_files (argc, argv, local, 0, 0);
+	send_files (argc, argv, local, 0, 0, 0);
 	send_to_server ("tag\012", 0);
         return get_responses_and_close ();
     }

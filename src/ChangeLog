@@ -1,3 +1,18 @@
+Tue Feb 11 21:14:28 1997  Ian Lance Taylor  <ian@cygnus.com>
+
+	* commit.c (find_fileproc): If force_ci is set, set the status to
+	T_MODIFIED even if the file hasn't changed.
+	(commit): Pass force_ci to send_files as new force argument.
+	* client.c (struct send_data): Define.
+	(send_fileproc): The callerdat parameter now points to a send_data
+	struct.  If force is set, always call send_modified.
+	(send_dirent_proc): The callerdat parameter now points to a
+	send_data struct.
+	(send_files): Add force parameter. Change all callers.  Set up a
+	send_data struct and pass it to start_recursion as callerdat.
+	* client.h (send_files): Update declaration.
+	* sanity.sh (basica): Add a simple test for the above patch.
+
 Sun Feb  9 12:58:59 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* tag.c (cvstag), rtag.c (rtag): Pass -f to server if specified in
