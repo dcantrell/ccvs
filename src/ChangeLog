@@ -1,3 +1,7 @@
+Wed Sep 25 04:44:54 1996  Jim Blandy  <jimb@totoro.cyclic.com>
+
+	* version.c (version_string): Bump to 1.8.86.
+
 Wed Sep 25 05:17:50 1996  Jim Blandy  <jimb@floss.cyclic.com>
 
 	* update.c (update): Don't neglect to pass the -kmumble options
