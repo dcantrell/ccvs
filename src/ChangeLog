@@ -1,3 +1,9 @@
+1999-05-12  Jim Kingdon  <http://www.cyclic.com>
+
+	* import.c (import): Don't allow the user to supply a repository
+	directory which takes us out of the cvsroot.
+	* sanity.sh (importc): New tests importc-10 to importc-12, for this.
+
 1999-05-11  Larry Jones  <larry.jones@sdrc.com>
 
 	* server.c (serve_notify): Allocate enough memory to hold the

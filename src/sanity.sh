@@ -5077,7 +5077,17 @@ import-it
 ============================================================================="
 	  cd ..
 
+	  # Now tests of absolute pathnames and .. as repository directory.
+	  cd ../1
+	  dotest_fail importc-10 \
+"${testcvs} import -m imp ../other vendor release2" \
+"${PROG} \[[a-z]* aborted\]: directory \.\./other not relative within the repository"
+	  dotest_fail importc-11 \
+"${testcvs} import -m imp ${TESTDIR}/other vendor release3" \
+"${PROG} \[[a-z]* aborted\]: directory ${TESTDIR}/other not relative within the repository"
+	  dotest_fail importc-12 "test -e ${TESTDIR}/other" ""
 	  cd ..
+
 	  rm -r 1 2
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
 	  ;;
