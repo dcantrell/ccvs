@@ -1,5 +1,9 @@
 2004-08-27  Derek Price  <derek@ximbiot.com>
 
+	* srclist.txt: Note minmax imported from GNULIB.
+
+2004-08-27  Derek Price  <derek@ximbiot.com>
+
 	* configure.in (--enable-file-cache-trust, --enable-proxy): New
 	options.
 
