@@ -2,9 +2,11 @@
   simpler version -- `cvs checkout -d single-dir <module>' works,
   however.
 
+
 * CVS leaves .#mumble files around when a conflict occurs.  (Note:
   this is intentional and is documented in doc/cvs.texinfo.  Of course
   whether it is a good idea is a separate question).
+
 
 * If patch fails, CCVS tries to transfer the whole file, but it
   doesn't seem to handle this correctly:
@@ -24,12 +26,15 @@
     ? .//.new.BUGS
     Is a directory
 
+
 * The build process isn't configure, make.  The stuff in options.h
   could be derived by autoconf, couldn't it?
+
 
 * pcl-cvs doesn't like it when you try to check in a file which isn't
   up-to-date.  The messages produced by the server perhaps don't match
   what pcl-cvs is looking for.
+
 
 * From: Roland McGrath <roland@gnu.ai.mit.edu>
   To: Cyclic CVS Hackers <cyclic-cvs@cyclic.com>
@@ -132,6 +137,7 @@
   rtag does not recognize the -D option. It is documented to do so and I've
   tested the use of -D with cvs update and cvs diff and it works fine there.
   
+
 *         We need some version numbers really badly.  Are there some
   (and Charles Hannum is just not including them in his reports), or do
   we simply have no reliable way to distinguish between the various
@@ -150,6 +156,7 @@
   development tree, which is the case with the remote-cvs folks.
   
           Thoughts?
+
 
 * Is it still the case that cvs tries to use Perl and fails, so that
   installers need to fix by hand the line in
