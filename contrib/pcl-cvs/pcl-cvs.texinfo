@@ -1,7 +1,7 @@
 \input texinfo  @c -*-texinfo-*-
 
 @comment OrigId: pcl-cvs.texinfo,v 1.45 1993/05/31 22:38:15 ceder Exp 
-@comment @@(#)pcl-cvs:$Name$:$Id$
+@comment @@(#)cvs/contrib/pcl-cvs:$Name$:$Id$
 
 @comment Documentation for the GNU Emacs CVS mode.
 @comment Copyright (C) 1992 Per Cederqvist
@@ -22,7 +22,7 @@
 @comment along with pcl-cvs; see the file COPYING.  If not, write to
 @comment the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
 
-@setfilename pcl-cvs
+@setfilename pcl-cvs.info
 @settitle Pcl-cvs - The Emacs Front-End to CVS
 @setchapternewpage on
      
@@ -64,7 +64,7 @@ Free Software Foundation instead of in the original English.
 @sp
 @center @titlefont{pcl-cvs - the Emacs Front-End to CVS}
 @sp 2
-@center release 1.05-$Name$
+@center release 1.05-CVS-$Name$
 @comment -release-
 @sp 3
 @center Per Cederqvist
@@ -105,8 +105,9 @@ Free Software Foundation instead of in the original English.
 
 @ifinfo
 This info manual describes pcl-cvs which is a GNU Emacs front-end to
-CVS.  It works with CVS version 1.6 and newer, and possibly CVS-1.3 and
-CVS-1.4A2.  This manual is updated to release 1.05-$Name$ of pcl-cvs.
+CVS.  It works with CVS versions 1.5 through 1.7 and newer, and possibly
+CVS-1.3 and CVS-1.4A2.  This manual is updated to release
+1.05-CVS-$Name$ of pcl-cvs.
 @end ifinfo
 @comment -release-
 
@@ -168,7 +169,7 @@ Commands
 
 
 @node   Installation, About pcl-cvs, Top, Top
-@comment  node-name,    next,   previous,       up
+@comment  node-name, next, previous, up
 
 @chapter Installation
 @cindex Installation
@@ -201,15 +202,22 @@ The only things you have to change is the definition of @code{lispdir}
 and @code{infodir}.  The elisp files will be copied to @code{lispdir},
 and the info file to @code{infodir}.
 
+@strong{NOTE:}  The version of pcl-cvs included with CVS uses a
+configuration mechanism integrated with the overall mechanisms used by
+the CVS build and install procedures.  The file @code{Makefile} will be
+generated automatically from the file @code{Makefile.in}, and it should
+not be necessary to edit it further unless @program{configure} made the
+wrong guesses about your local installation policies.
+
 @item
 Configure pcl-cvs.el
 
-There are a couple of paths that you have to check to make sure that
-they match you system.  They appear early in the file @samp{pcl-cvs.el}.
+There are a couple of pathnames that you have to check to make sure that
+they match your system.  They appear early in the file
+@samp{pcl-cvs.el}.
 
 @strong{NOTE:}  If your system is running emacs 18.57 or earlier you MUST
 uncomment the line that says:
-
 @example
 (setq delete-exited-processes nil)
 @end example
@@ -220,23 +228,25 @@ in emacs that causes it to dump core.  The bug was fixed in emacs
 
 @item
 Release 1.05 and later of pcl-cvs requires parts of the Elib library,
-version 0.07 or later.  Elib is available via anonymous ftp from
-prep.ai.mit.edu in @file{pub/gnu/elib-0.07.tar.z}, and from a lot of
+version 1.0 or later.  Elib is available via anonymous ftp from
+prep.ai.mit.edu in @file{pub/gnu/elib-1.0.tar.gz}, and from a lot of
 other sites that mirror prep.  Get Elib, and install it, before
 proceeding.
 
+@strong{NOTE:} The version of pcl-cvs included with CVS includes a copy
+of Elib in the sub-directory @file{elib} under the
+@file{contrib/pcl-cvs} directory.
+
 @item
 Type @samp{make install} in the source directory.  This will
-byte-compile all @file{.el} files and copy both the @file{.el} and the
-@file{.elc} into the directory you specified in step 1.
+byte-compile all @file{.el} files and copy the @file{*.elc} files into
+the directory you specified in step 1.
 
-If you don't want to install the @file{.el} files but only the
-@file{.elc} files (the byte-compiled files), you can type `@samp{make
-install_elc}' instead of `@samp{make install}'.
+If you want to install the @file{*.el} files too, you can type
+@samp{make install-el} to do so.
 
 If you only want to create the compiled elisp files, but don't want to
-install them, you can type @samp{make elcfiles} instead.  This is what
-happens if you only type @samp{make} without parameters.
+install them, you can type @samp{make} without parameters.
 
 @item
 Edit the file @file{default.el} in your emacs lisp directory (usually
@@ -259,25 +269,24 @@ couple of @code{auto-load}s that facilitates the use of pcl-cvs.
 
 @enumerate
 @item
-Create the info file @file{pcl-cvs} from @file{pcl-cvs.texinfo} by
-typing @samp{make info}.  If you don't have the program @samp{makeinfo}
-you can get it by anonymous ftp from e.g. @samp{ftp.gnu.ai.mit.edu} as
-@file{pub/gnu/texinfo-3.1.tar.gz} (there might be a newer version there
-when you read this), or you could use the preformatted info file
-@file{pcl-cvs.info} that is included in the distribution (type @samp{cp
-pcl-cvs.info pcl-cvs}).@refill
+Create the info file(s) @file{pcl-cvs.info*} from @file{pcl-cvs.texinfo}
+by typing @samp{make info}.  If you don't have the program
+@samp{makeinfo} you can get it by anonymous ftp from
+e.g. @samp{prep.ai.mit.edu} as @file{pub/gnu/texinfo-3.7.tar.gz} (there
+might be a newer version there when you read this).@refill
 
 @item
-Move the info file @file{pcl-cvs} to your standard info directory.  This
-might be called something like @file{/usr/gnu/info}.@refill
+Install the info file(s) @file{pcl-cvs.info*} into your standard
+@file{info} directory.  You should be able to do this by typing
+@samp{make install-info}.@refill
 
 @item
-Edit the file @file{dir} in the info directory and enter one line to
-contain a pointer to the info file @file{pcl-cvs}.  The line can, for
-instance, look like this:@refill
+Edit the file @file{dir} in the @file{info} directory and enter one line
+to contain a pointer to the info file(s) @file{pcl-cvs.info*}.  The line
+can, for instance, look like this:@refill
 
 @example
-* Pcl-cvs: (pcl-cvs).       An Emacs front-end to CVS.
+* Pcl-cvs: (pcl-cvs).           An Emacs front-end to CVS.
 @end example
 @end enumerate
 
@@ -316,9 +325,9 @@ you can use.
 @chapter About pcl-cvs
 @cindex About pcl-cvs
 
-Pcl-cvs is a front-end to CVS version 1.6 and newer; and possibly
-verison 1.3 and 1.4A2.  It integrates the most frequently used CVS
-commands into emacs.
+Pcl-cvs is a front-end to CVS versions 1.5 through 1.7 and newer; and
+possibly verison 1.3 and 1.4A2.  It integrates the most frequently used
+CVS commands into an emacs interface.
 
 @menu
 * Contributors::                Contributors to pcl-cvs.
@@ -397,7 +406,7 @@ there would be no new releases of pcl-cvs.
 @cindex Getting pcl-cvs
 @cindex Email archives
 
-The current release of pcl-cvs is included in CVS-1.6.1p2.
+The current release of pcl-cvs is included in CVS-1.7.
 
 The author's release of pcl-cvs can be fetched via anonymous ftp from
 @code{ftp.lysator.liu.se}, (IP no. 130.236.254.1) in the directory
@@ -443,7 +452,7 @@ files that have been checked out from a CVS archive.)  The output from
 @samp{*cvs*}.  It might look something like this:
 
 @example
-PCL-CVS release 1.05-$Name$.
+PCL-CVS release 1.05-CVS-$Name$.
 @comment -release-
 
 In directory /users/ceder/FOO/test:
@@ -490,7 +499,8 @@ The display contains four columns.  They contain, from left to right:
 An asterisk when the file is @dfn{marked} (@pxref{Selected
 files}).@refill
 @item
-The status of the file.  See @xref{File status}, for more information.@refill
+The status of the file.  See @xref{File status}, for more
+information.@refill
 @item
 A "need to be checked in"-marker (@samp{ci}).
 @item
