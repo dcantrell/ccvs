@@ -1,3 +1,7 @@
+Tue Oct 24 06:22:08 1995  Jim Meyering  (meyering@comco.com)
+
+	* cvsrc.c (read_cvsrc): Use getline instead of fgets.
+
 Tue Oct 24 11:13:15 1995  Norbert Kiesel  <nk@col.sw-ley.de>
 
 	* cvs.h: Declare valloc again, but this time with the right
