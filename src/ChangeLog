@@ -1,3 +1,9 @@
+2003-03-26  Larry Jones  <lawrence.jones@eds.com>
+
+	* main.c (main): Use strtol() instead of atoi() when parsing -z
+	to detect errors.
+	(Reported by Eric Siegerman <erics@telepres.com>.)
+
 2003-03-25  Derek Price  <derek@ximbiot.com>
 
 	* cvs.h: Disable GNU attributes as part of PROTO behavior.

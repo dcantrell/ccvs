@@ -601,8 +601,8 @@ Copyright (c) 1989-2003 Brian Berliner, david d `zoo' zuhn, \n\
 		break;
 	    case 'z':
 #ifdef CLIENT_SUPPORT
-		gzip_level = atoi (optarg);
-		if (gzip_level < 0 || gzip_level > 9)
+		gzip_level = strtol (optarg, &end, 10);
+		if (*end != '\0' || gzip_level < 0 || gzip_level > 9)
 		  error (1, 0,
 			 "gzip compression level must be between 0 and 9");
 #endif
