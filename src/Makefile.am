@@ -44,7 +44,7 @@ cvsbug_EXTRA_DIST = cvsbug.sh
 # version.c is in here so we'll notice if configure was run
 cvsbug: cvsbug.sh version.c
 	sed -e 's,xLIBDIRx,$(libdir)/cvs,g' \
-	    -e "s,xVERSIONx,$(VERSION),g" $< > $@-t
+	    -e "s,xVERSIONx,$(VERSION),g" $(srcdir)/cvsbug.sh > $@-t
 	mv $@-t $@
 	chmod a+x $@
 
