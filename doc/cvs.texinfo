@@ -10733,7 +10733,12 @@ with the normal use inside @sc{cvs} (@pxref{Common options}).}
 @appendixsubsec log options
 
 By default, @code{log} prints all information that is
-available.  All other options restrict the output.
+available.  All other options restrict the output.  Note that the revision
+selection options (@code{-d}, @code{-r}, @code{-s}, and @code{-w}) have no
+effect, other than possibly causing a search for files in Attic directories,
+when used in conjunction with the options that restrict the output to only
+@code{log} header fields (@code{-b}, @code{-h}, @code{-R}, and @code{-t})
+unless the @code{-S} option is also specified.
 
 @table @code
 @item -b
