@@ -1329,25 +1329,46 @@ stdio_buffer_shutdown (struct buffer *buf)
 
     if (buf->input)
     {
-	if ( !buf_empty_p (buf) )
+	/* This used to check for getc (bc->fp) != EOF too, but there was an
+	 * odd race condition that would sometimes cause a dead server child
+	 * process to cause a SIGPIPE to be delivered to the server parent
+	 * before the SIGCHILD while the client was in a read state and the
+	 * buffer was empty.  The previous server assumption was that a
+	 * SIGPIPE meant that the _network_ pipe, to the client, broke, so it
+	 * was okay to assume that the blocking getc() would return a char or
+	 * EOF.  When the SIGPIPE is received due to a problem writing to a
+	 * server child, however, and the client pipe still exists, and the
+	 * client is reading, this call to getc() would block indefinitely
+	 * waiting for info from the client while the client blocked waiting
+	 * for a read from the server...  in other words, deadlock occurred.
+	 *
+	 * Anyhow, that old getc() has been replaced with the mess below.
+	 */
+	char junk;
+	if (!buf_empty_p (buf)
+	    || (!feof (bc->fp)
+	        && set_nonblock_fd (fileno (bc->fp)) == 0
+	        && fread (&junk, 1, 1, bc->fp) != 0))
 	{
 	    /* FIXME: Put buffer contents in error message?  */
 # ifdef SERVER_SUPPORT
 	    if (server_active)
 		error (0, 0, "dying gasps from client unexpected");
 	    else
-# endif
+#endif
 		error (0, 0, "dying gasps from %s unexpected",
 		       current_parsed_root->hostname);
 	}
-	else if (ferror (bc->fp))
+	else if (ferror (bc->fp) && errno != EAGAIN)
 	{
 # ifdef SERVER_SUPPORT
 	    if (server_active)
 		error (0, errno, "reading from client");
 	    else
-# endif
-		error (0, errno, "reading from %s", current_parsed_root->hostname);
+#endif
+		error (0, errno, "reading from %s",
+		       current_parsed_root->method == fork_method ?
+		           "server" : current_parsed_root->hostname);
 	}
 
 # ifdef SHUTDOWN_SERVER

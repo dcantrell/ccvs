@@ -100,7 +100,6 @@ static int set_lock (struct lock *lock, int will_wait);
 static void clear_lock (struct lock *lock);
 static void set_lockers_name (struct stat *statp);
 static int unlock_proc (Node * p, void *closure);
-static void lock_simple_remove (struct lock *lock);
 
 /* Malloc'd array containing the username of the whoever has the lock.
    Will always be non-NULL in the cases where it is needed.  */
@@ -279,6 +278,92 @@ lock_name (const char *repository, const char *name)
 
 
 
+/* Remove the lock files.  For interrupt purposes, it can be assumed that the
+ * first thing this function does is set lock->repository to NULL.
+ *
+ * INPUTS
+ *   lock	The lock to remove.
+ *   free	True if this lock directory will not5 be reused (free
+ *		lock->repository if necessary).
+ */
+static void
+_lock_simple_remove (struct lock *lock, int free_repository)
+{
+    TRACE (TRACE_FLOW, "_lock_simple_remove(%s)", lock->repository);
+
+    /* If lock->file is set, the lock *might* have been created, but since
+     * Reader_Lock & lock_dir_for_write don't use SIG_beginCrSect the way that
+     * set_lock does, we don't know that.  That is why we need to check for
+     * existence_error here.
+     */
+    if (lock->file1)
+    {
+	char *tmp = lock->file1;
+	lock->file1 = NULL;
+	if (CVS_UNLINK (tmp) < 0 && ! existence_error (errno))
+	    error (0, errno, "failed to remove lock %s", tmp);
+	free (tmp);
+    }
+#ifdef LOCK_COMPATIBILITY
+    if (lock->file2)
+    {
+	char *tmp = lock->file2;
+	lock->file2 = NULL;
+	if (CVS_UNLINK (tmp) < 0 && ! existence_error (errno))
+	    error (0, errno, "failed to remove lock %s", tmp);
+	free (tmp);
+    }
+#endif /* LOCK_COMPATIBILITY */
+
+    if (lock->have_lckdir)
+    {
+	char *tmp = lock_name (lock->repository, CVSLCK);
+	SIG_beginCrSect ();
+	if (CVS_RMDIR (tmp) < 0)
+	    error (0, errno, "failed to remove lock dir %s", tmp);
+	lock->have_lckdir = 0;
+	SIG_endCrSect ();
+	free (tmp);
+    }
+
+    /* And free the repository string.  We don't really have to set the
+     * repository string to NULL first since there is no harm in running any of
+     * the above code twice.
+     *
+     * Use SIG_beginCrSect since otherwise we might be interrupted between
+     * checking whether free_repository is set and freeing stuff.
+     */
+    if (free)
+    {
+	SIG_beginCrSect ();
+	if (lock->free_repository)
+	{
+	    free ((char *)lock->repository);
+	    lock->repository = NULL;
+	    lock->free_repository = 0;
+	} else
+	    lock->repository = NULL;
+	SIG_endCrSect ();
+    }
+}
+
+
+
+/* Wrappers for _lock_simple_remove.  */
+lock_simple_remove (struct lock *lock)
+{
+    _lock_simple_remove (lock, 0);
+}
+
+
+
+lock_simple_remove_and_free (struct lock *lock)
+{
+    _lock_simple_remove (lock, 1);
+}
+
+
+
 /*
  * Clean up outstanding read and write locks and free their storage.
  */
@@ -294,7 +379,7 @@ Simple_Lock_Cleanup (void)
 
     /* clean up simple read locks (if any) */
     if (global_readlock.repository != NULL)
-	lock_simple_remove (&global_readlock);
+	lock_simple_remove_and_free (&global_readlock);
     /* See note in Lock_Cleanup() below.  */
     SIG_endCrSect();
 
@@ -302,7 +387,7 @@ Simple_Lock_Cleanup (void)
 
     /* clean up simple write locks (if any) */
     if (global_writelock.repository != NULL)
-	lock_simple_remove (&global_writelock);
+	lock_simple_remove_and_free (&global_writelock);
     /* See note in Lock_Cleanup() below.  */
     SIG_endCrSect();
 }
@@ -396,70 +481,8 @@ remove_locks (void)
 static int
 unlock_proc (Node *p, void *closure)
 {
-    lock_simple_remove ((struct lock *)p->data);
+    lock_simple_remove_and_free ((struct lock *)p->data);
     return (0);
-}
-
-
-
-/* Remove the lock files.  For interrupt purposes, it can be assumed that the
- * first thing this function does is set lock->repository to NULL.  */
-static void
-lock_simple_remove (struct lock *lock)
-{
-    TRACE (TRACE_FLOW, "lock_simple_remove(%s)", lock->repository);
-
-    /* If lock->file is set, the lock *might* have been created, but since
-     * Reader_Lock & lock_dir_for_write don't use SIG_beginCrSect the way that
-     * set_lock does, we don't know that.  That is why we need to check for
-     * existence_error here.
-     */
-    if (lock->file1)
-    {
-	char *tmp = lock->file1;
-	lock->file1 = NULL;
-	if (CVS_UNLINK (tmp) < 0 && ! existence_error (errno))
-	    error (0, errno, "failed to remove lock %s", tmp);
-	free (tmp);
-    }
-#ifdef LOCK_COMPATIBILITY
-    if (lock->file2)
-    {
-	char *tmp = lock->file2;
-	lock->file2 = NULL;
-	if (CVS_UNLINK (tmp) < 0 && ! existence_error (errno))
-	    error (0, errno, "failed to remove lock %s", tmp);
-	free (tmp);
-    }
-#endif /* LOCK_COMPATIBILITY */
-
-    if (lock->have_lckdir)
-    {
-	char *tmp = lock_name (lock->repository, CVSLCK);
-	SIG_beginCrSect ();
-	if (CVS_RMDIR (tmp) < 0)
-	    error (0, errno, "failed to remove lock dir %s", tmp);
-	lock->have_lckdir = 0;
-	SIG_endCrSect ();
-	free (tmp);
-    }
-
-    /* And free the repository string.  We don't really have to set the
-     * repository string to NULL first since there is no harm in running any of
-     * the above code twice.
-     *
-     * Use SIG_beginCrSect since otherwise we might be interrupted between
-     * checking whether free_repository is set and freeing stuff.
-     */
-    SIG_beginCrSect ();
-    if (lock->free_repository)
-    {
-	free ((char *)lock->repository);
-	lock->repository = NULL;
-	lock->free_repository = 0;
-    } else
-	lock->repository = NULL;
-    SIG_endCrSect ();
 }
 
 
@@ -1210,7 +1233,7 @@ lock_dir_for_write (const char *repository)
 	}
 
 	if (global_writelock.repository != NULL)
-	    lock_simple_remove (&global_writelock);
+	    lock_simple_remove_and_free (&global_writelock);
 	else
 	    global_writelock.free_repository = 1;
 
@@ -1267,7 +1290,7 @@ lock_dir_for_write (const char *repository)
 		Node *p = findnode (locklist, repository);
 		if (p)
 		{
-		    lock_simple_remove ((struct lock *)p->data);
+		    lock_simple_remove_and_free ((struct lock *)p->data);
 		    delnode (p);
 		}
 	    }

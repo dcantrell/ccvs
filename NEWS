@@ -3,13 +3,17 @@ Changes since 1.12.5:
 
 GENERAL USER ISSUES
 
+* The CVS server has had the protocol check for unused data from the client
+  partially restored.
+
+* A fix has been included that should avoid a very rare race condition that
+  could cause a CVS server to exit with a "broken pipe" message.
+
 * Infinite alias loops in the modules file are now checked for and avoided.
 
 * Clients on case insensitive systems now preserve the case of directories in
   CVS/Entries, in addition to files, for use in communications with the CVS
   server.
-
-* Some previously untested behavior is now being tested.
 
 * Misc status message fixes for consistency.
 

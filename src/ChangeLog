@@ -1,3 +1,32 @@
+2004-02-11  Derek Price  <derek@ximbiot.com>
+
+	* checkout.c (checkout_proc): Remove unneeded variable and enclosing
+	block.
+	* modules.c (_do_modules): Minor whitespace change.
+
+2004-02-10  Derek Price  <derek@ximbiot.com>
+
+	* server.c (do_cvs_command): s/FIXCVS/FIXME/ in comment.
+	(set_block_fd, set_nonblock_fd): Move to...
+	* subr.c: ...here.
+	* cvs.h: Add protos for the above two functions.
+	* buffer.c (stdio_buffer_shutdown): Replace fgetc() which checked for
+	unread data on a pipe with a nonblock read.
+
+2004-02-10  Derek Price  <derek@ximbiot.com>
+
+	* server.c (do_cvs_command): Have the server child close all the pipes
+	but the flow control pipe and wait on an EOF on the flow control pipe
+	from the parent when done to avoid a race condition that could
+	otherwise generate a SIGPIPE for the parent before the SIGCHILD when
+	the other pipes were so full after a child exited that the parent
+	attempted to write a stop byte to the flow control pipe.
+	(Original report from <jesse_off@stchome.com>.)
+
+2004-02-10  Derek Price  <derek@ximbiot.com>
+
+	* buffer.c (stdio_buffer_shutdown): Add a helpful comment.
+
 2004-02-09  Derek Price  <derek@ximbiot.com>
 
 	* lock.c (lock_simple_remove): Add comments.  Use critical sections to
