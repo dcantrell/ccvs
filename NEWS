@@ -3,6 +3,12 @@ Changes since 1.12.9:
 
 NEW FEATURES
 
+* The loginfo scripting hook now runs after the administrative files in CVSROOT
+  are rebuilt, rather than before.
+
+* New scripting hooks have been added to the CVS server.  These are the
+  postadmin, posttag, and postwatch hooks.  See the manual for more info.
+
 * "Write proxy" functionality has been added to the CVS server.  This
   functionality allows clients to any of multiple read-only secondary servers
   which know how to relay write requests to a single primary CVS server,
