@@ -838,7 +838,7 @@ if test x"$*" = x; then
 	tests="${tests} cvsadm emptydir abspath toplevel toplevel2"
         tests="${tests} checkout_repository"
 	# Log messages, error messages.
-	tests="${tests} mflag editor errmsg1 errmsg2 adderrmsg"
+	tests="${tests} mflag editor env errmsg1 errmsg2 adderrmsg"
 	# Watches, binary files, history browsing, &c.
 	tests="${tests} devcom devcom2 devcom3 watch4 watch5"
 	tests="${tests} unedit-without-baserev"
@@ -12806,6 +12806,95 @@ date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;  lines: +0 -0
 	  rm -r 1
 	  rm ${TESTDIR}/editme
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  ;;
+
+	env)
+	  # Test to see if the CVS_PID environment variable is being set
+	  # This will only work on systems with HAVE_PUTENV, so skip
+	  # it if we do not have the putenv() call available.
+	  if test yes = "${HAVE_PUTENV}" ; then
+	    mkdir ${TESTDIR}/env
+	    cd ${TESTDIR}/env
+	    dotest env-1 "${testcvs} -Q co . >>${LOGFILE}" ''
+
+	    cat > ${TESTDIR}/env/test-cvs-pid <<EOF
+#!${TESTSHELL}
+if test "x\$CVS_PID" != "x"; then
+  # In local mode, there is no directory with the pid in it for use.
+  # In remote mode the CVS_PID will be the parent process of the
+  # cvs process that runs the commitinfo script.
+  if test "x$remote" = "x:" ; then
+    ppid=\`pwd | sed -e 's,.*/cvs-serv,,'\`
+  else
+    # This assumes that the -l switch puts PPID in the banner and does
+    # not run the elements together such that whitespace surrounds the
+    # pid and ppid in the output. This could be made slightly simpler
+    # if all hosts had a 'ps' command that supported the -p switch,
+    # but Solaris 7 /usr/ucb/ps does not and that may be the one we use.
+    # It is because this is so messy that the CVS_PID feature exists.
+    ppid=\`ps -l |\\
+    awk '/PPID/ { for (i=1; i <= NF; i++) {
+                    if (\$i == "PPID") ppidx = i; 
+                    if (\$i == "PID") pidx = i;
+		  }
+                  next; 
+                }
+                { print \$pidx " " \$ppidx }' |\\
+    grep "^\$\$ " |\\
+    awk '{ print \$NF }'\`
+  fi
+  if test \$ppid = \${CVS_PID}; then
+    # The PID looks okay to me
+    exit 0
+  else
+    echo The environment variable CVS_PID is not properly set.
+    echo It should have been set to \$ppid but instead was \$CVS_PID
+    echo It is possible that this test is broken for your host.
+    echo Here is the output of the ps -l command:
+    ps -l
+    exit 1
+  fi
+else
+  echo The environment variable CVS_PID is not set.
+  exit 1
+fi
+EOF
+	    chmod +x ${TESTDIR}/env/test-cvs-pid
+	    cd CVSROOT
+	    echo "^env ${TESTDIR}/env/test-cvs-pid" >>commitinfo
+	    dotest env-2 "${testcvs} -q ci -m test-pid commitinfo" \
+"Checking in commitinfo;
+${CVSROOT_DIRNAME}/CVSROOT/commitinfo,v  <--  commitinfo
+new revision: 1\.2; previous revision: 1\.1
+done
+${PROG} [a-z]*: Rebuilding administrative file database"
+	    cd ..
+	    mkdir env
+	    dotest env-3 "${testcvs} -q add env" \
+"Directory ${CVSROOT_DIRNAME}/env added to the repository"
+	    cd env
+	    echo testing >file1
+	    dotest env-4 "${testcvs} add file1" \
+"${PROG} [a-z]*: scheduling file .file1. for addition
+${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
+	    dotest env-5 "${testcvs} -q commit -m test-pid" \
+"RCS file: ${CVSROOT_DIRNAME}/env/file1,v
+done
+Checking in file1;
+${CVSROOT_DIRNAME}/env/file1,v  <--  file1
+initial revision: 1\.1
+done"
+
+	    dokeep
+
+	    # undo commitinfo changes
+	    rm -fr ${CVSROOT_DIRNAME}/CVSROOT/commitinfo,v \
+	           ${CVSROOT_DIRNAME}/CVSROOT/commitinfo
+	    dotest env-cleanup-1 "${testcvs} -Q init" ''
+
+	    cd ../..
+	    rm -fr ${TESTDIR}/env ${CVSROOT_DIRNAME}/env
+	  fi
 	  ;;
 
 	errmsg1)

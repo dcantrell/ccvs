@@ -316,6 +316,7 @@ extern int errno;
 #define	CVSREADONLYFS_ENV "CVSREADONLYFS" /* repository is read-only */
 
 #define	TMPDIR_ENV	"TMPDIR"	/* Temporary directory */
+#define	CVS_PID_ENV	"CVS_PID"	/* pid of running cvs */
 
 #define	EDITOR1_ENV	"CVSEDITOR"	/* which editor to use */
 #define	EDITOR2_ENV	"VISUAL"	/* which editor to use */

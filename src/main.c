@@ -763,6 +763,14 @@ cause intermittent sandbox corruption.");
 	    (void) putenv (env);
 	    /* do not free env, as putenv has control of it */
 	}
+	{
+	    char *env;
+	    /* XXX pid < 10^32 */
+	    env = xmalloc (strlen (CVS_PID_ENV) + 1 + 32 + 1);
+	    (void) sprintf (env, "%s=%ld", CVS_PID_ENV, (long) getpid ());
+	    (void) putenv (env);
+	    /* do not free env, as putenv has control of it */
+	}
 #endif
 
 #ifndef DONT_USE_SIGNALS
