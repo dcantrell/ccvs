@@ -7866,7 +7866,7 @@ reference to @sc{cvs} commands, @pxref{Invoking CVS}).
 @menu
 * Structure::                   Overall structure of CVS commands
 * Exit status::                 Indicating CVS's success or failure
-* ~/.cvsrc::                    Default options with the ~/.csvrc file
+* ~/.cvsrc::                    Default options with the ~/.cvsrc file
 * Global options::              Options you give to the left of cvs_command
 * Common options::              Options you give to the right of cvs_command
 * admin::                       Administration
