@@ -11758,6 +11758,8 @@ later.
 @c For more information on installing @sc{cvs}, see
 @c (FIXME: where?  it depends on whether you are
 @c getting binaries or sources or what).
+@c The message can also say "ci error" or something
+@c instead of "rcs error", I suspect.
 
 @item cvs [server aborted]: received broken pipe signal
 This message seems to be caused by a hard-to-track-down
