@@ -3815,7 +3815,7 @@ check_repository_password (username, password, repository)
   while (fgets (linebuf, MAXPATHLEN - 1, fp))
     {
       if ((strncmp (linebuf, username, len) == 0)
-          && (linebuf[len] == '@'))
+          && (linebuf[len] == ':'))
         {
           found_it = 1;
           break;

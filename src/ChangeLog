@@ -1,3 +1,8 @@
+Thu Dec  7 21:08:39 1995  Karl Fogel  <kfogel@floss.cyclic.com>
+
+        * server.c (check_repository_password): when checking for false
+        prefix-matches, look for ':', not '@'.  Duh.
+
 Thu Dec  7 18:44:51 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
         * options.h.in (CVS_PASSWORDS_CASE_SENSITIVE): replaces
