@@ -524,21 +524,20 @@ main (argc, argv)
 		logoff = TRUE;
 		break;
 	    case 'v':
+		/* Having the year here is a good idea, so people have
+		   some idea of how long ago their version of CVS was
+		   released.  */
 		(void) fputs (version_string, stdout);
 		(void) fputs (config_string, stdout);
 		(void) fputs ("\n", stdout);
-		(void) fputs ("Copyright (c) 1993-1994 Brian Berliner\n", stdout);
-		(void) fputs ("Copyright (c) 1993-1994 david d `zoo' zuhn\n", stdout);
-		(void) fputs ("Copyright (c) 1992, Brian Berliner and Jeff Polk\n", stdout);
-		(void) fputs ("Copyright (c) 1989-1992, Brian Berliner\n", stdout);
+		(void) fputs ("\
+Copyright (c) 1989-1997 Brian Berliner, david d `zoo' zuhn, \n\
+                        Jeff Polk, and other authors\n", stdout);
 		(void) fputs ("\n", stdout);
 		(void) fputs ("CVS may be copied only under the terms of the GNU General Public License,\n", stdout);
 		(void) fputs ("a copy of which can be found with the CVS distribution kit.\n", stdout);
 		(void) fputs ("\n", stdout);
 
-		/* In particular, the URLs in --help should help with
-		   the question of authorship.  The above copyright
-		   notices might be a bit misleading on that score.  */
 		(void) fputs ("Specify the --help option for further information about CVS\n", stdout);
 
 		exit (0);
