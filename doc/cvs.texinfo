@@ -2517,8 +2517,16 @@ is expected that future names which are special to
 @samp{=}, rather than being named analogously to
 @code{BASE} and @code{HEAD}, to avoid conflicts with
 actual tag names.
-@c FIXME: is the above list of valid characters in tag
-@c names complete?
+@c FIXME: CVS actually accepts quite a few characters
+@c in tag names, not just the ones documented above
+@c (see RCS_check_tag).  RCS
+@c defines legitimate tag names by listing illegal
+@c characters rather than legal ones.  CVS is said to lose its
+@c mind if you try to use "/" (try making such a tag sticky
+@c and using "cvs status").  FIXME: The testsuite
+@c should test for whatever are documented above as
+@c officially-OK tag names, and CVS should at least reject
+@c characters that won't work, like "/".
 
 @cindex Adding a tag
 @cindex tag, example
