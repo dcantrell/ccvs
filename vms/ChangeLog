@@ -1,5 +1,11 @@
 2002-09-24  Derek Price  <derek@ximbiot.com>
 
+	* options.h: Remove prototype of STDC exit().  Move definition of
+	NO_SOCKET_TO_FD & include of "vms.h"...
+	* config.h: here.
+
+2002-09-24  Derek Price  <derek@ximbiot.com>
+
 	* Makefile.in: Regenerated using Automake 1.6.3.
 
 2002-09-24  Derek Price  <derek@ximbiot.com>

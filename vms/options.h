@@ -127,14 +127,3 @@
 #endif
 
 /* End of CVS configuration section */
-
-/*
- * Externs that are included in libc, but are used frequently enough to
- * warrant defining here.
- */
-#ifndef STDC_HEADERS
-extern void exit ();
-#endif
-
-#define NO_SOCKET_TO_FD 1
-#include "vms.h"

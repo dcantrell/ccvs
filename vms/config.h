@@ -228,3 +228,6 @@ extern void fnfold (char *FILENAME);
    people just used their own accounts (turning privileges on and off
    as desired).  */
 #undef	CVS_BADROOT
+
+#define NO_SOCKET_TO_FD 1
+#include "vms.h"
