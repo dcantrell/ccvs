@@ -8,6 +8,17 @@ Tue May 30 00:07:15 1995  Jim Meyering  (meyering@comco.com)
 	Reported by Jeff Johnson <jbj@brewster.jbj.org>.
 	(realclean): Likewise.
 
+Mon May 29 22:24:28 1995  J.T. Conklin  <jtc@rtl.cygnus.com>
+
+	* configure.in: Use AC_HEADER_DIRENT instead of AC_DIR_HEADER.
+	Use AC_HEADER_STAT to determine if S_FOO() macros work.  
+	Use AC_HEADER_TIME to determine if both <sys/time.h> and <time.h> 
+	can be included as recommend by autoconf manual.
+	Remove AC_STRUCT_TM test, as above test is better.
+
+	* configure, config.h.in: regenerated with autoconf and
+	autoheader version 2.3.
+
 Fri Apr 28 14:36:49 1995  Ken Raeburn  (raeburn@kr-pc.cygnus.com)
 
 	* Makefile.in: Set "all" as default target instead of ".PHONY".
