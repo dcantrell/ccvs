@@ -1,3 +1,8 @@
+2001-03-06  Larry Jones  <larry.jones@sdrc.com>
+
+	* admin.c (admin_fileproc): Change final error message to clarify
+	that CVS refused to modify the RCS file rather than being unable to.
+
 2001-02-28  Jim Meyering  <meyering@lucent.com>
 
 	* commit.c (commit_usage): Use `-F logfile' (rather than -F file') in
