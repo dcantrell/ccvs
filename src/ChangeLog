@@ -1,3 +1,8 @@
+Mon Sep  8 17:54:14 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* sanity.sh (basicc): Change ls -1 to echo *; according to
+	larry.jones@sdrc.com, ls -1 isn't portable.
+
 Sun Sep  7 07:45:35 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* sanity.sh (basic2): In test basic2-64, match usernames with
