@@ -813,7 +813,7 @@ sub get_ignore_files_from_cvsroot {
 		foreach my $line( @list )
 		{
 			next if( $line =~ /^#/ || $line =~ /^\s*$/ );
-			$line =~ s/^\s*(\S*)\s*$/$1/;
+			$line =~ s/^\s*(\S+)(\s+.*)?$/$1/;
 			push @ignore, qr{^(./)?CVSROOT/$line$};
 		}
 	}	
