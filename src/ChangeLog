@@ -1,3 +1,8 @@
+Fri Mar 29 16:08:28 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* rcs.c (annotate_fileproc): If last line of add-chunk is not
+	newline terminated, end the loop when we find that out.
+
 Fri Mar 29 16:59:34 1996  Norbert Kiesel  <nk@col.sw-ley.de>
 
 	* rcs.c (annotate_fileproc): allow last line of add-chunk not to
