@@ -1,4 +1,5 @@
 Makefile
+check_cvs
 clmerge
 cln_hist
 commit_prep
