@@ -1,3 +1,9 @@
+1999-07-19  Larry Jones  <larry.jones@sdrc.com>
+
+	* rcs.c (RCS_delete_revs): In the WIN32 kludge, be sure that the result
+	of RCS_getexpand is not NULL before trying to use what it points to.
+	(Patch submitted by Timothy L. Taylor <ttaylor@mitre.org>.)
+
 1999-07-16  Tom Tromey  <tromey@cygnus.com>
 
 	* admin.c (admin): Allow `-k' options to be used unrestricted.

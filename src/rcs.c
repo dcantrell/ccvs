@@ -2555,7 +2555,7 @@ RCS_tag2rev (rcs, tag)
     RCS_check_tag (tag); /* exit if not a valid tag */
 
     /* If tag is "HEAD", special case to get head RCS revision */
-    if (tag && (strcmp (tag, TAG_HEAD) == 0))
+    if (tag && STREQ (tag, TAG_HEAD))
         return (RCS_head (rcs));
 
     /* If valid tag let translate_symtag say yea or nay. */
@@ -4595,9 +4595,9 @@ RCS_checkout (rcs, workfile, rev, nametag, options, sout, pfn, callerdat)
 		error (1, 0, "%s:%s has bad `special' newphrase %s",
 		       workfile, vers->version, info->data);
 	    devnum = devnum_long;
-	    if (strcmp (devtype, "character") == 0)
+	    if (STREQ (devtype, "character"))
 		special_file = S_IFCHR;
-	    else if (strcmp (devtype, "block") == 0)
+	    else if (STREQ (devtype, "block"))
 		special_file = S_IFBLK;
 	    else
 		error (0, 0, "%s is a special file of unsupported type `%s'",
@@ -6659,9 +6659,12 @@ RCS_delete_revs (rcs, tag1, tag2, inclusive)
 	   need to use "-kb" and "--binary" and "rb" to get_file
 	   (probably can do it always, not just for binary files, if
 	   we are consistent between the RCS_checkout and the diff).  */
-	if (strcmp (RCS_getexpand (rcs), "b") == 0)
-	    error (1, 0,
+	{
+	    char *expand = RCS_getexpand (rcs);
+	    if (expand != NULL && STREQ (expand, "b"))
+		error (1, 0,
 		   "admin -o not implemented yet for binary on this system");
+	}
 #endif
 
 	afterfile = cvs_temp_name();
