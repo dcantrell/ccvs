@@ -754,7 +754,7 @@ checkout_proc (pargc, argv, where, mwhere, mfile, shorten,
 	}
     }
 
-    if (tag != NULL || date != NULL)
+    if (tag != NULL || date != NULL || join_rev1 != NULL)
 	which |= W_ATTIC;
 
     if (! join_tags_validated)
