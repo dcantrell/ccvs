@@ -3962,7 +3962,7 @@ retrieving revision 1\.1
 retrieving revision 1\.2
 Merging differences between 1\.1 and 1\.2 into tfile
 rcsmerge: warning: conflicts during merge
-cvs [a-z]*: conflicts found in tfile
+${PROG} [a-z]*: conflicts found in tfile
 C tfile"
 
 		# Now note our status
@@ -7665,7 +7665,7 @@ U first-dir/file2'
 	  dotest branch-after-import-5 \
 "${testcvs} add file2" \
 "${PROG} [a-z]*: scheduling file .file2. for addition on branch .TESTTOTRON.
-${PROG} [a-z]*: use .cvs commit. to add this file permanently"
+${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
 
 	  dotest branch-after-import-6 \
 "${testcvs} commit -m cvs-add file2" \
@@ -20101,8 +20101,8 @@ U file1"
 	  # And reverify the trunk update when the change is actually removed.
 	  dotest keywordname-update-11 "${testcvs} -q up -A" "[UP] file1" \
 "P file1
-cvs update: checksum failure after patch to ./file1; will refetch
-cvs client: refetching unpatchable files
+${PROG} update: checksum failure after patch to ./file1; will refetch
+${PROG} client: refetching unpatchable files
 U file1"
 	  dotest keywordname-update-12 "cat file1" \
 '\$'"Name:  "'\$'"
