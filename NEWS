@@ -23,6 +23,14 @@ NEW FEATURES
   support it.  This saves a very small amount of bandwidth but may enable some
   future functionality.
 
+* "cvs import" now has a new option, `-X', which causes new files to be
+  imported in a way that they appear only on the vendor branch, and do not
+  automatically appear on the main trunk.
+
+  This option may be made the default on a repository-wide basis
+  using the new ImportNewFilesToVendorBranchOnly=yes option in
+  CVSROOT/config.
+
 BUG FIXES
 
 * Thanks to Conrad Pino <conrad@pino.com>, the Windows build works once again.

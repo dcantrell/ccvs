@@ -349,6 +349,11 @@ static const char *const config_contents[] = {
     "# Be warned that these strings could be disabled in any new version of CVS.\n",
     "UseNewInfoFmtStrings=yes\n",
 #endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
+    "\n",
+    "# Set `ImportNewFilesToVendorBranchOnly' to `yes' if you wish to force\n",
+    "# every `cvs import' command to behave as if the `-X' flag was\n",
+    "# specified.\n",
+    "#ImportNewFilesToVendorBranchOnly=no\n",
     NULL
 };
 

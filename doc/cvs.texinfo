@@ -10488,6 +10488,10 @@ steps for each file in addition to those normally taken on import:
 creating a new revision on the main trunk indicating that
 the new file is @code{dead}, resetting the new file's default branch,
 and placing the file in the Attic (@pxref{Attic}) directory.
+
+Use of this option can be forced on a repository-wide basis
+by setting the @samp{ImportNewFilesToVendorBranchOnly} option in
+CVSROOT/config (@pxref{config}).
 @end table
 
 @c . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
@@ -14102,6 +14106,16 @@ please see @ref{Updating Commit Files}.
 
 @emph{Note that new repositories (created with the @code{cvs init} command)
 will have this value set to @samp{yes}, but the default value is @samp{no}.}
+
+@cindex import, config admin file
+@cindex config (admin file), import
+@cindex ImportNewFilesToVendorBranchOnly, in CVSROOT/config
+@item ImportNewFilesToVendorBranchOnly=@var{value}
+Specify whether @code{cvs import} should always behave as if the
+@samp{-X} flag was specified on the command line.  
+@var{value} may be either @samp{yes} or @samp{no}.  If set to @samp{yes},
+all uses of @code{cvs import} on the repository will behave as if the
+@samp{-X} flag was set.  The default value is @samp{no}.
 @end table
 
 @c ---------------------------------------------------------------------

@@ -78,6 +78,10 @@ import (int argc, char **argv)
     if (argc == -1)
 	usage (import_usage);
 
+    /* Force -X behaviour or not based on the CVS repository
+       CVSROOT/config setting.  */
+    killnew = ImportNewFilesToVendorBranchOnly;
+
     ign_setup ();
     wrap_setup ();
 

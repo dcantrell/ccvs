@@ -1082,7 +1082,7 @@ if test x"$*" = x; then
 	tests="${tests} dirs dirs2 branches branches2 branches3"
 	tests="${tests} branches4 tagc tagf"
 	tests="${tests} rcslib multibranch import importb importc importX"
-	tests="${tests} import-CVS"
+	tests="${tests} importX2 import-CVS"
 	tests="${tests} update-p import-after-initial branch-after-import"
 	tests="${tests} join join2 join3 join4 join5 join6"
 	tests="${tests} join-readonly-conflict join-admin join-admin-2"
@@ -7908,6 +7908,8 @@ modify-on-br1
 		# importb  -- -b option.
 		# importc -- bunch o' files in bunch o' directories
 		# importX  -- -X option.
+		# importX2 -- CVSROOT/config ImportNewFilesToVendorBranchOnly
+		#             flag
 		# modules3
 		# mflag -- various -m messages
 		# ignore  -- import and cvsignore
@@ -8499,6 +8501,94 @@ add
 
 	  cd ../..
 	  rm -r 1
+	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  ;;
+
+
+
+	importX2)
+	  # Test ImportNewFilesToVendorBranchOnly config file option.
+
+	  # On Windows, we can't check out CVSROOT, because the case
+	  # insensitivity means that this conflicts with cvsroot.
+	  mkdir wnt
+	  cd wnt
+
+	  dotest importX2-1 "${testcvs} -q co CVSROOT" "[UP] CVSROOT${DOTSTAR}"
+	  cd CVSROOT
+          echo "ImportNewFilesToVendorBranchOnly=yes" >> config
+
+	  dotest importX2-2 "$testcvs -q ci -m force-cvs-import-X" \
+"$TESTDIR/cvsroot/CVSROOT/config,v  <--  config
+new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
+$SPROG commit: Rebuilding administrative file database"
+
+	  cd ../..
+
+	  # Import a sources file, but do NOT specify -X.  The new file
+	  # should be killed, anyway (because of the config option).
+	  mkdir imp-dir
+	  cd imp-dir
+	  echo 'source' >file1
+	  dotest_sort importX2-3 \
+"${testcvs} import -m add first-dir source source-1_0" \
+"
+
+
+ ${CPROG} checkout -j<prev_rel_tag> -jsource-1_0 first-dir
+N first-dir/file1
+No conflicts created by this import.
+Use the following command to help the merge:"
+	  cd ..
+	  rm -r imp-dir
+
+	  mkdir 1
+	  cd 1
+	  # **nothing** should be checked out**
+	  dotest importX2-4 "${testcvs} -q co first-dir" ""
+
+	  cd first-dir
+	  dotest importX2-5 "${testcvs} -q log file1" "
+RCS file: ${CVSROOT_DIRNAME}/first-dir/Attic/file1,v
+Working file: file1
+head: 1\.2
+branch:
+locks: strict
+access list:
+symbolic names:
+	source-1_0: 1\.1\.1\.1
+	source: 1\.1\.1
+keyword substitution: kv
+total revisions: 3;	selected revisions: 3
+description:
+----------------------------
+revision 1\.2
+date: ${ISO8601DATE};  author: ${username};  state: dead;  lines: ${PLUS}0 -0
+Revision 1\.1 was added on the vendor branch\.
+----------------------------
+revision 1\.1
+date: ${ISO8601DATE};  author: ${username};  state: Exp;
+branches:  1\.1\.1;
+Initial revision
+----------------------------
+revision 1\.1\.1\.1
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}0 -0
+add
+============================================================================="
+
+	  cd ../..
+
+	  # Restore initial config state.
+	  cd wnt/CVSROOT
+	  dotest importX2-cleanup-1 "${testcvs} -q up -pr1.1 config >config" ""
+	  dotest importX2-cleanup-2 "${testcvs} -q ci -m check-in-admin-files" \
+"${TESTDIR}/cvsroot/CVSROOT/config,v  <--  config
+new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
+${SPROG} commit: Rebuilding administrative file database"
+	  cd ../..
+
+	  rm -r 1
+	  rm -r wnt
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
 	  ;;
 

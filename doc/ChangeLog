@@ -1,3 +1,11 @@
+2004-07-17  Mark D. Baushke  <mdb@cvshome.org>
+
+	* cvs.texinfo (config): Document ImportNewFilesToVendorBranchOnly
+	option.
+	(import options): Mention that ImportNewFilesToVendorBranchOnly
+	can force 'cvs import -X' behaviour for all imports.
+	(New feature from Chris Demetriou <cgd@broadcom.com>.)
+
 2004-07-17  Derek Price  <derek@ximbiot.com>
 
 	* cvs.texinfo (Update imports, import): Add notes on requirement that

@@ -1,5 +1,20 @@
 2004-07-17  Mark D. Baushke  <mdb@cvshome.org>
 
+	* main.c (ImportNewFilesToVendorBranchOnly): New variable.
+	* cvs.h (ImportNewFilesToVendorBranchOnly): Declare new variable.
+	* import.c (import): Respect setting of
+	ImportNewFilesToVendorBranchOnly.
+	* mkmodules.c (config_contents): Document the default
+	ImportNewFilesToVendorBranchOnly=no option in newly generated
+	config files.
+	* parseinfo.c (parse_config): Parse
+	ImportNewFilesToVendorBranchOnly option.
+	* sanity.sh (importX2): New test, to test
+	ImportNewFilesToVendorBranchOnly config file option.
+	(New feature from Chris Demetriou <cgd@broadcom.com>.)
+
+2004-07-17  Mark D. Baushke  <mdb@cvshome.org>
+
 	* sanity.sh (basic2-14): Use DOTSTAR to be more portable.
 	
 	* status.c (status_fileproc): Print datetimes using output_cvs_tagged.

@@ -377,6 +377,7 @@ extern int top_level_admin;
 #ifdef SUPPORT_OLD_INFO_FMT_STRINGS
 extern int UseNewInfoFmtStrings;
 #endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
+extern int ImportNewFilesToVendorBranchOnly;
 
 
 #define LOGMSG_REREAD_NEVER 0	/* do_verify - never  reread message */

@@ -432,6 +432,18 @@ warning: this CVS does not support PreservePermissions");
 	    }
 	}
 #endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
+	else if (strcmp (line, "ImportNewFilesToVendorBranchOnly") == 0)
+	{
+	    if (strcmp (p, "no") == 0)
+		ImportNewFilesToVendorBranchOnly = 0;
+	    else if (strcmp (p, "yes") == 0)
+		ImportNewFilesToVendorBranchOnly = 1;
+	    else
+	    {
+		error (0, 0, "unrecognized value '%s' for ImportNewFilesToVendorBranchOnly", p);
+		goto error_return;
+	    }
+	}
 	else
 	{
 	    /* We may be dealing with a keyword which was added in a
