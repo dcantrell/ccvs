@@ -1,3 +1,8 @@
+Mon Sept 30 13:17:07 1996  Mike Ladwig  <mike@twinpeaks.prc.com>
+
+	* ae_if.c (DoScript): Fixed bug cutting off the last character of
+	the path in the 'SPWD' AE Parameter.
+
 Tue Sep 24 14:39:40 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* options.h: Add TMPDIR_DFLT.

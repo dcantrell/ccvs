@@ -203,7 +203,7 @@ pascal OSErr DoScript(const AppleEvent *event, AppleEvent *reply, long refCon)
 	
 	if ( ! AEGetParamPtr(event, 'SPWD', typeChar, &typeCode, &startPWD, sizeof(startPWD)-1, &size) )
 	{
-		startPWD[size-1] = 0;
+		startPWD[size] = 0;
 		chdir(startPWD);
 	}
 	
