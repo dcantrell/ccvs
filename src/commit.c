@@ -233,7 +233,7 @@ find_fileproc (callerdat, finfo)
     xfinfo.repository = NULL;
     xfinfo.rcs = NULL;
 
-    vers = Version_TS (&xfinfo, NULL, NULL, NULL, 0, 0);
+    vers = Version_TS (&xfinfo, NULL, tag, NULL, 0, 0);
     if (vers->ts_user == NULL
 	&& vers->vn_user != NULL
 	&& vers->vn_user[0] == '-')

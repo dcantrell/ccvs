@@ -1,5 +1,12 @@
 Fri Sep 19 15:08:08 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* commit.c (find_fileproc): Pass tag not NULL to Version_TS for
+	the tag.
+	* vers_ts.c (Version_TS): Improve (somewhat) the introductory
+	comment.
+	* sanity.sh (editor): New test editor-9 tests for above fix.
+	Renumber/tweak surrounding tests to fit.
+
 	* log.c (log_version): If p->data is NULL, it is an empty log
 	message.
 	* sanity.sh (rcs-14): New test, tests for above fix (previously

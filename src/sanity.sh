@@ -5106,26 +5106,47 @@ EOF
 	  dotest editor-2 "${testcvs} add first-dir" \
 "Directory ${TESTDIR}/cvsroot/first-dir added to the repository"
 	  cd first-dir
-	  touch file1
-	  dotest editor-3 "${testcvs} add file1" \
+	  touch file1 file2
+	  dotest editor-3 "${testcvs} add file1 file2" \
 "${PROG} [a-z]*: scheduling file .file1. for addition
-${PROG} [a-z]*: use .cvs commit. to add this file permanently"
+${PROG} [a-z]*: scheduling file .file2. for addition
+${PROG} [a-z]*: use .cvs commit. to add these files permanently"
 	  dotest editor-4 "${testcvs} -e ${TESTDIR}/editme -q ci" \
 "RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
 done
 Checking in file1;
 ${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
 initial revision: 1\.1
+done
+RCS file: ${TESTDIR}/cvsroot/first-dir/file2,v
+done
+Checking in file2;
+${TESTDIR}/cvsroot/first-dir/file2,v  <--  file2
+initial revision: 1\.1
 done"
-	  dotest editor-5 "${testcvs} -q tag -b br" "T file1"
+	  dotest editor-5 "${testcvs} -q tag -b br" "T file1
+T file2"
 	  dotest editor-6 "${testcvs} -q update -r br" ''
 	  echo modify >>file1
-	  dotest editor-6 "${testcvs} -e ${TESTDIR}/editme -q ci" \
+	  dotest editor-7 "${testcvs} -e ${TESTDIR}/editme -q ci" \
 "Checking in file1;
 ${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
 new revision: 1\.1\.2\.1; previous revision: 1\.1
 done"
-	  dotest editor-7 "${testcvs} log -N file1" "
+	  # OK, now we want to make sure "ci -r" puts in the branch
+	  # where appropriate.  Note that we can check in on the branch
+	  # without being on the branch, because there is not a revision
+	  # already on the branch.  If there were a revision on the branch,
+	  # CVS would correctly give an up-to-date check failed.
+	  dotest editor-8 "${testcvs} -q update -A" "U file1"
+	  echo add a line >>file2
+	  dotest editor-9 "${testcvs} -q -e ${TESTDIR}/editme ci -rbr file2" \
+"Checking in file2;
+${TESTDIR}/cvsroot/first-dir/file2,v  <--  file2
+new revision: 1\.1\.2\.1; previous revision: 1\.1
+done"
+
+	  dotest editor-log-file1 "${testcvs} log -N file1" "
 RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
 Working file: file1
 head: 1\.1
@@ -5146,7 +5167,7 @@ xCVS:
 xCVS: Committing in .
 xCVS:
 xCVS: Added Files:
-xCVS: 	file1
+xCVS: 	file1 file2
 xCVS: ----------------------------------------------------------------------
 ----------------------------
 revision 1\.1\.2\.1
@@ -5160,6 +5181,80 @@ xCVS:
 xCVS: Modified Files:
 xCVS:  Tag: br
 xCVS: 	file1
+xCVS: ----------------------------------------------------------------------
+============================================================================="
+
+	  # The only difference between the two expect strings is the
+	  # presence or absence of "Committing in ." for 1.1.2.1.
+	  dotest editor-log-file2 "${testcvs} log -N file2" "
+RCS file: ${TESTDIR}/cvsroot/first-dir/file2,v
+Working file: file2
+head: 1\.1
+branch:
+locks: strict
+access list:
+keyword substitution: kv
+total revisions: 2;	selected revisions: 2
+description:
+----------------------------
+revision 1\.1
+date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
+branches:  1\.1\.2;
+x
+xCVS: ----------------------------------------------------------------------
+xCVS: Enter Log.  Lines beginning with .CVS:. are removed automatically
+xCVS:
+xCVS: Committing in .
+xCVS:
+xCVS: Added Files:
+xCVS: 	file1 file2
+xCVS: ----------------------------------------------------------------------
+----------------------------
+revision 1\.1\.2\.1
+date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
+x
+xCVS: ----------------------------------------------------------------------
+xCVS: Enter Log.  Lines beginning with .CVS:. are removed automatically
+xCVS:
+xCVS: Modified Files:
+xCVS:  Tag: br
+xCVS: 	file2
+xCVS: ----------------------------------------------------------------------
+=============================================================================" "
+RCS file: ${TESTDIR}/cvsroot/first-dir/file2,v
+Working file: file2
+head: 1\.1
+branch:
+locks: strict
+access list:
+keyword substitution: kv
+total revisions: 2;	selected revisions: 2
+description:
+----------------------------
+revision 1\.1
+date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
+branches:  1\.1\.2;
+x
+xCVS: ----------------------------------------------------------------------
+xCVS: Enter Log.  Lines beginning with .CVS:. are removed automatically
+xCVS:
+xCVS: Committing in .
+xCVS:
+xCVS: Added Files:
+xCVS: 	file1 file2
+xCVS: ----------------------------------------------------------------------
+----------------------------
+revision 1\.1\.2\.1
+date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
+x
+xCVS: ----------------------------------------------------------------------
+xCVS: Enter Log.  Lines beginning with .CVS:. are removed automatically
+xCVS:
+xCVS: Committing in .
+xCVS:
+xCVS: Modified Files:
+xCVS:  Tag: br
+xCVS: 	file2
 xCVS: ----------------------------------------------------------------------
 ============================================================================="
 	  cd ../..
