@@ -1,5 +1,8 @@
 Sat Oct 26 18:29:46 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* sanity.sh (info): Adjust tests to reflect fact that loginfo was
+	created by cvs init.
+
 	* sanity.sh (ignore): Change test 187a1 to allow any number of
 	files in CVSROOT, not just modules.
 
