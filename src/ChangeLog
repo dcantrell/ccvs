@@ -1,3 +1,11 @@
+2004-02-12  Larry Jones  <lawrence.jones@ugsplm.com>
+
+	* lock.c (_lock_simple_remove): Rename to remove_lock_files to avoid
+	reserved name.
+	(lock_simple_remove): Delete; use remove_lock_files directly.
+	(lock_simple_remove_and_free): Ditto.
+	(_lock_exists): Rename to lock_exists.
+
 2004-02-11  Larry Jones  <lawrence.jones@ugsplm.com>
 
 	* root.c (parse_cvsroot): Set hostname in fork mode for error messages.
