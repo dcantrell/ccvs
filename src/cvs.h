@@ -39,7 +39,10 @@
 # endif
 #endif /* __attribute__ */
 
+/* begin GNULIB headers */
 #include "exit.h"
+#include "xalloc.h"
+/* end GNULIB headers */
 
 #if ! STDC_HEADERS
 char *getenv();
