@@ -6063,9 +6063,10 @@ is Odin (see
 @c functionality, for example OSF's ODE
 @c (http://www.osf.org/ode/) or mk
 @c (http://www.grin.net/~pzi/mk-3.18.4.docs/mk_toc.html
-@c he has changed providers in the past; a search engine search
+@c He has changed providers in the past; a search engine search
 @c for "Peter Ziobrzynski" probably won't get too many
-@c spurious hits :-)).  But I'm not sure
+@c spurious hits :-).  A more stable URL might be
+@c ftp://ftp.uu.net/pub/cmvc/mk).  But I'm not sure
 @c there is any point in mentioning them here unless they
 @c can work with CVS.
 
