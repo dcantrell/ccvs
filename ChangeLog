@@ -1,3 +1,11 @@
+2002-06-28  Derek Price  <oberon@umich.edu>
+
+	* INSTALL (Building [on] other platforms): Don't reference the Mac
+	README file since it has been missing for several releases.  Mention
+	the UNIXness of Mac OS X and correct references to wincvs.org to point
+	to the new cvsgui.org .
+	(Reported by Sarah Gonzales <slindahl@rice.edu>.)
+
 2002-05-22  Larry Jones  <lawrence.jones@eds.com>
 
 	* TODO (173, 202): Update to reflect current state of affairs.
