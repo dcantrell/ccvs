@@ -1,6 +1,7 @@
 Changes since 1.7:
 
-<none yet>
+* One can now specify environment variables in *info files via the
+${=envname} syntax.  See the Variables node in cvs.texinfo for details.
 
 Changes from 1.6 to 1.7:
 
