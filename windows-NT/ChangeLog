@@ -1,5 +1,10 @@
 2004-11-17  Derek Price  <derek@ximbiot.com>
 
+	* Makefile.am (EXTRA_DIST): Add JmgStat.c & JmgStat.h.
+	(Thanks to a report from Chris Bohn <cbohn@rrinc.com>.)
+
+2004-11-17  Derek Price  <derek@ximbiot.com>
+
 	* Makefile.am (EXTRA_DIST): Add unistd.h.
 	(Thanks to a report from Chris Bohn <cbohn@rrinc.com>.)
 

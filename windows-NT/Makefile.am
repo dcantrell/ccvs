@@ -20,6 +20,8 @@
 # GNU General Public License for more details.
 
 EXTRA_DIST = \
+	JmgStat.c \
+	JmgStat.h \
 	config.h \
 	config.h.in \
 	config.h.in.in \

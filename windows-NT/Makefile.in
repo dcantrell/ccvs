@@ -255,6 +255,8 @@ sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 with_default_rsh = @with_default_rsh@
 EXTRA_DIST = \
+	JmgStat.c \
+	JmgStat.h \
 	config.h \
 	config.h.in \
 	config.h.in.in \
