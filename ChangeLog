@@ -1,4 +1,9 @@
-﻿2005-03-07  Conrad T. Pino  <Conrad@Pino.com>
+2005-03-09 Derek Price <derek@ximbiot.com>
+
+	* configure.in: Don't generate windows-NT/mkconfig or
+	windows-NT/fix-msvc-mak.
+
+2005-03-07  Conrad T. Pino  <Conrad@Pino.com>
 
 	* cvsnt.dsp: Add .\lib\closeout.h, .\lib\getpagesize.h and
 	.\lib\pagealign_alloc.h files.

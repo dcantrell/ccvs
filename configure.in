@@ -1485,11 +1485,6 @@ AC_CONFIG_FILES(contrib/rcslock, [chmod +x contrib/rcslock])
 AC_CONFIG_FILES(contrib/sccs2rcs, [chmod +x contrib/sccs2rcs])
 AC_CONFIG_FILES(doc/mkman:doc/mkman.pl, [chmod +x doc/mkman])
 AC_CONFIG_FILES(src/cvsbug, [chmod +x src/cvsbug])
-AC_CONFIG_FILES(
-    windows-NT/fix-msvc-mak:windows-NT/plhead.pl:windows-NT/fix-msvc-mak.pl,
-    [chmod +x windows-NT/fix-msvc-mak])
-AC_CONFIG_FILES(windows-NT/mkconfig:windows-NT/plhead.pl:windows-NT/mkconfig.pl,
-                [chmod +x windows-NT/mkconfig])
 
 dnl the bulk files
 AC_CONFIG_FILES([Makefile \
