@@ -1466,16 +1466,10 @@ tag_check_valid (char *name, int argc, char **argv, int local, int aflag,
     /* Numeric tags require only a syntactic check.  */
     if (isdigit ((unsigned char) name[0]))
     {
-	char *p;
-	/* insert is not possible for numeric revisions */
-	assert (!valid);
-	for (p = name; *p != '\0'; ++p)
-	{
-	    if (!(isdigit ((unsigned char) *p) || *p == '.'))
-		error (1, 0, "\
-Numeric tag %s contains characters other than digits and '.'", name);
-	}
-	return;
+	if (RCS_valid_rev (name)) return;
+	else
+	    error (1, 0, "\
+Numeric tag %s invalid.  Numeric tags should be of the form X[.X]...", name);
     }
 
     /* Special tags are always valid.  */
@@ -1569,7 +1563,7 @@ Numeric tag %s contains characters other than digits and '.'", name);
 	}
 
 	if (!the_val_args.found)
-	    error (1, 0, "no such tag %s", name);
+	    error (1, 0, "no such tag `%s'", name);
     }
 
     /* The tags is valid but not mentioned in val-tags.  Add it.  */
