@@ -1,5 +1,10 @@
 2001-07-04  Derek Price  <dprice@collab.net>
 
+	* Makefile.in: Regenerated with new Automake release candidate 1.4h.
+	* aclocal.m4: Ditto.
+
+2001-07-04  Derek Price  <dprice@collab.net>
+
 	* configure.in: Tidy and add some comments.
 
 	* configure: Regenerated.
