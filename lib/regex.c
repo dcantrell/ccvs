@@ -4641,7 +4641,7 @@ re_compile_pattern (pattern, length, bufp)
 /* Entry points compatible with 4.2 BSD regex library.  We don't define
    them if this is an Emacs or POSIX compilation.  */
 
-#if !defined (emacs) && (!defined (_POSIX_SOURCE) || defined (ISC))
+#if !defined (emacs) && !defined (_POSIX_SOURCE)
 
 /* BSD has one and only one pattern buffer.  */
 static struct re_pattern_buffer re_comp_buf;

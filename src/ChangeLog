@@ -1,5 +1,9 @@
 Sun Oct  1 18:36:34 1995  Karl Fogel  <kfogel@totoro.cyclic.com>
 
+        * version.c: upped to 1.5.94.
+
+        * server.c: reverted earlier ISC change (of Sep. 28).
+
         * version.c: upped to 1.5.93, for Peter Wemm's new SVR4 patch.
 
 Sun Oct  1 14:51:59 1995  Harlan Stenn  <Harlan.Stenn@pfcs.com>
