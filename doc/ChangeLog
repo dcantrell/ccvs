@@ -1,3 +1,8 @@
+Sat Oct 19 14:32:21 1996  Jim Meyering <meyering@asic.sc.ti.com>
+			  and Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (Choosing a model): Wording/grammar fix.
+
 Sat Oct 19 14:32:21 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvsclient.texi (Obsolete): New node.

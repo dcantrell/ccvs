@@ -2807,7 +2807,7 @@ that will restore the repository to a state which
 Reserved and unreserved checkouts each have pros and
 cons.  Let it be said that a lot of this is a matter of
 opinion or what works given different groups' working
-styles, but here is an attempt to briefly describe the
+styles, but here is a brief description of some of the
 issues.  There are many ways to organize a team of
 developers.  @sc{cvs} does not try to enforce a certain
 organization.  It is a tool that can be used in several
