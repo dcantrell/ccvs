@@ -1,5 +1,17 @@
 2003-06-11  Derek Price  <derek@ximbiot.com>
 
+	* commit.c: Change Parse_Info calling convention to include void *
+	suggested in HACKING file and generalize all argument to opt.
+	* cvs.h: update defs for Parse_Info and its callproc.
+	* edit.c: Change Parse_Info calls for new calling convention.
+	* logmsg.c: Ditto.
+	* parseinfo.c: Change Parse_Info for new calling convention.
+	* server.c: Change Parse_Info calls for new calling convention.
+	* tag.c: Ditto.
+	(Original patch from Ken Lorber <keni@his.com>.)
+
+2003-06-11  Derek Price  <derek@ximbiot.com>
+
 	* Makefile.in: Regenerate for new configure.in.
 
 2003-06-11  Larry Jones  <lawrence.jones@eds.com>

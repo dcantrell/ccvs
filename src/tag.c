@@ -22,7 +22,7 @@ static int check_fileproc PROTO ((void *callerdat, struct file_info *finfo));
 static int check_filesdoneproc PROTO ((void *callerdat, int err,
 				       char *repos, char *update_dir,
 				       List *entries));
-static int pretag_proc PROTO((char *repository, char *filter));
+static int pretag_proc PROTO(( char *repository, char *filter, void *closure ));
 static void masterlist_delproc PROTO((Node *p));
 static void tag_delproc PROTO((Node *p));
 static int pretag_list_proc PROTO((Node *p, void *closure));
@@ -554,6 +554,13 @@ check_fileproc (callerdat, finfo)
     return (0);
 }
 
+struct pretag_proc_data {
+     List *tlist;
+     int delete_flag;
+     int force_tag_move;
+     char *symtag;
+};
+
 static int
 check_filesdoneproc (callerdat, err, repos, update_dir, entries)
     void *callerdat;
@@ -564,6 +571,7 @@ check_filesdoneproc (callerdat, err, repos, update_dir, entries)
 {
     int n;
     Node *p;
+    struct pretag_proc_data ppd;
 
     p = findnode(mtlist, update_dir);
     if (p != NULL)
@@ -578,7 +586,12 @@ check_filesdoneproc (callerdat, err, repos, update_dir, entries)
     {
         return (err);
     }
-    if ((n = Parse_Info(CVSROOTADM_TAGINFO, repos, pretag_proc, 1)) > 0)
+
+    ppd.tlist = tlist;
+    ppd.delete_flag = delete_flag;
+    ppd.force_tag_move = force_tag_move;
+    ppd.symtag = symtag;
+    if ((n = Parse_Info(CVSROOTADM_TAGINFO, repos, pretag_proc, PIOPT_ALL, &ppd)) > 0)
     {
         error (0, 0, "Pre-tag check failed");
         err += n;
@@ -587,10 +600,12 @@ check_filesdoneproc (callerdat, err, repos, update_dir, entries)
 }
 
 static int
-pretag_proc(repository, filter)
+pretag_proc( repository, filter, closure )
     char *repository;
     char *filter;
+    void *closure;
 {
+    struct pretag_proc_data *ppd = (struct pretag_proc_data *)closure;
     if (filter[0] == '/')
     {
         char *s, *cp;
@@ -613,10 +628,10 @@ pretag_proc(repository, filter)
         free(s);
     }
     run_setup (filter);
-    run_arg (symtag);
-    run_arg (delete_flag ? "del" : force_tag_move ? "mov" : "add");
+    run_arg (ppd->symtag);
+    run_arg (ppd->delete_flag ? "del" : ppd->force_tag_move ? "mov" : "add");
     run_arg (repository);
-    walklist(tlist, pretag_list_proc, NULL);
+    walklist(ppd->tlist, pretag_list_proc, NULL);
     return (run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL));
 }
 
