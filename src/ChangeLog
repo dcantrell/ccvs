@@ -1,3 +1,13 @@
+2002-12-19  Derek Price  <derek@ximbiot.com>
+
+	* Makefile.am: Remove reference to options.h.
+	* cvs.h: Ditto.
+	* options.h: Remove this obsolete file.
+	* sanity.sh: Remove comment about external diffs causing tests to fail
+	since CVS hasn't used external diffs in years.
+
+	* Makefile.in: Regenerated.
+
 2002-12-16  Derek Price  <derek@ximbiot.com>
 
 	* admin.c: Disable cvsadmin group checking on the client.
