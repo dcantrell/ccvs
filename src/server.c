@@ -3610,7 +3610,7 @@ CVS server internal error: unhandled case in server_updated");
 	if ((updated == SERVER_UPDATED
 	     || updated == SERVER_PATCHED
 	     || updated == SERVER_RCS_DIFF)
-	    && filebuf != NULL
+	    && filebuf == NULL
 	    /* But if we are joining, we'll need the file when we call
 	       join_file.  */
 	    && !joining ())

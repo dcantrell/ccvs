@@ -1,3 +1,8 @@
+1998-05-22  Ian Lance Taylor  <ian@cygnus.com>
+
+        * server.c (server_updated): Correct test for whether to unlink
+        the file.
+
 1998-05-20  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* wrapper.c (wrap_add): Disable -t/-f wrappers at least until the
