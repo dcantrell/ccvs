@@ -176,18 +176,16 @@
 /* #define CVS_FUDGELOCKS */
 #endif
 
-/*
- * When committing a permanent change, CVS and RCS make a log entry of
- * who committed the change.  If you are committing the change logged in
- * as "root" (not under "su" or other root-priv giving program), CVS/RCS
- * cannot determine who is actually making the change.
- *
- * As such, by default, CVS disallows changes to be committed by users
- * logged in as "root".  You can disable this option by commenting
- * out the lines below.
- */
+/* There is some pretty unixy code in src/commit.c which tries to
+   prevent people from commiting changes as "root" (which would prevent
+   CVS from making a log entry with the actual user).  On VMS, I suppose
+   one could say that SYSTEM is equivalent, but I would think that it
+   actually is not necessary; at least at the VMS sites I've worked at
+   people just used their own accounts (turning privileges on and off
+   as desired).  */
+
 #ifndef CVS_BADROOT
-#define	CVS_BADROOT
+/* #define	CVS_BADROOT */
 #endif
 
 /*
