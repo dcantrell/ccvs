@@ -30056,6 +30056,22 @@ EOF
 # This is where login scripts would usually be
 # stored\."
 
+	  # Check that the client detects redirect loops.
+	  cat >$TESTDIR/serveme <<EOF
+#!$TESTSHELL
+echo "Valid-requests Root Valid-responses valid-requests Command-prep Referrer Repository Directory Relative-directory Max-dotdot Static-directory Sticky Entry Kopt Checkin-time Modified Is-modified UseUnchanged Unchanged Notify Hostname LocalDir Questionable Argument Argumentx Global_option Gzip-stream wrapper-sendme-rcsOptions Set Gssapi-authenticate expand-modules ci co update diff log rlog list rlist global-list-quiet ls add remove update-patches gzip-file-contents status rdiff tag rtag import admin export history release watch-on watch-off watch-add watch-remove watchers editors edit init annotate rannotate noop version"
+echo "ok"
+echo "Redirect $CVSROOT"
+
+# Eat up data from the client to avoid broken pipe errors.
+cat >/dev/null
+EOF
+	  echo newstuff >file1
+	  sleep 1
+	  dotest_fail client-20 "$testcvs ci" \
+"$CPROG commit: Examining \.
+$CPROG \[commit aborted\]: \`Redirect' loop detected\.  Server misconfiguration$QUESTION"
+
 	  dokeep
 	  cd ../..
 	  rm -r 1
