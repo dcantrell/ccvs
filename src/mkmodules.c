@@ -299,6 +299,14 @@ static const char *const config_contents[] = {
     "# Set `LogHistory' to `all' or `TOFEWGCMAR' to log all transactions to the\n",
     "# history file, or a subset as needed (ie `TMAR' logs all write operations)\n",
     "#LogHistory=TOFEWGCMAR\n",
+    "\n",
+    "# Set `RereadLogAfterVerify' to `always' (the default) to allow the verifymsg\n",
+    "# script to change the log message.  Set it to `stat' to force CVS to verify",
+    "# that the file has changed before reading it (this can take up to an extra\n",
+    "# second per directory being committed, so it is not recommended for large\n",
+    "# repositories.  Set it to `never' (the previous CVS behavior) to prevent\n",
+    "# verifymsg scripts from changing the log message.\n",
+    "#RereadLogAfterVerify=always\n",
     NULL
 };
 

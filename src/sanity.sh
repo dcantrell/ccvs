@@ -14661,6 +14661,9 @@ ${PROG} [a-z]*: Rebuilding administrative file database"
 #!${TESTSHELL}
 if head -1 < \$1 | grep '^BugId:[ ]*[0-9][0-9]*$' > /dev/null; then
     exit 0
+elif head -1 < \$1 | grep '^BugId:[ ]*new$' > /dev/null; then
+    echo A new bugid was found. >> \$1
+    exit 0
 else
     echo "No BugId found."
     sleep 1
@@ -14757,11 +14760,97 @@ No conflicts created by this import"
 	  cd ..
 	  rmdir another-dir
 
+	  cd CVSROOT
+	  echo "RereadLogAfterVerify=always" >>config
+	  dotest info-rereadlog-1 "${testcvs} -q ci -m add-RereadLogAfterVerify=always" \
+"Checking in config;
+${CVSROOT_DIRNAME}/CVSROOT/config,v  <--  config
+new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
+done
+${PROG} [a-z]*: Rebuilding administrative file database"
+	  cd ../first-dir
+	  echo line3 >>file1
+	  cat >${TESTDIR}/comment.tmp <<EOF
+BugId: new
+See what happens next.
+EOF
+	  dotest info-reread-2 "${testcvs} -q ci -F ${TESTDIR}/comment.tmp" \
+"Checking in file1;
+${CVSROOT_DIRNAME}/first-dir/file1,v  <--  file1
+new revision: 1\.5; previous revision: 1\.4
+done"
+	  dotest info-reread-3 "${testcvs} -q log -N -r1.5 file1" "
+.*
+BugId: new
+See what happens next.
+A new bugid was found.
+============================================================================="
+
+	  cd ../CVSROOT
+	  grep -v "RereadLogAfterVerify" config > config.new
+	  mv config.new config
+	  echo "RereadLogAfterVerify=stat" >>config
+	  dotest info-reread-4 "${testcvs} -q ci -m add-RereadLogAfterVerify=stat" \
+"Checking in config;
+${CVSROOT_DIRNAME}/CVSROOT/config,v  <--  config
+new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
+done
+${PROG} [a-z]*: Rebuilding administrative file database"
+	  cd ../first-dir
+	  echo line4 >>file1
+	  cat >${TESTDIR}/comment.tmp <<EOF
+BugId: new
+See what happens next with stat.
+EOF
+	  dotest info-reread-5 "${testcvs} -q ci -F ${TESTDIR}/comment.tmp" \
+"Checking in file1;
+${CVSROOT_DIRNAME}/first-dir/file1,v  <--  file1
+new revision: 1\.6; previous revision: 1\.5
+done"
+	  dotest info-reread-6 "${testcvs} -q log -N -r1.6 file1" "
+.*
+BugId: new
+See what happens next with stat.
+A new bugid was found.
+============================================================================="
+
+	  cd ../CVSROOT
+	  grep -v "RereadLogAfterVerify" config > config.new
+	  mv config.new config
+	  echo "RereadLogAfterVerify=never" >>config
+	  dotest info-reread-7 "${testcvs} -q ci -m add-RereadLogAfterVerify=never" \
+"Checking in config;
+${CVSROOT_DIRNAME}/CVSROOT/config,v  <--  config
+new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
+done
+${PROG} [a-z]*: Rebuilding administrative file database"
+	  cd ../first-dir
+	  echo line5 >>file1
+	  cat >${TESTDIR}/comment.tmp <<EOF
+BugId: new
+See what happens next.
+EOF
+	  dotest info-reread-8 "${testcvs} -q ci -F ${TESTDIR}/comment.tmp" \
+"Checking in file1;
+${CVSROOT_DIRNAME}/first-dir/file1,v  <--  file1
+new revision: 1\.7; previous revision: 1\.6
+done"
+	  dotest info-reread-6 "${testcvs} -q log -N -r1.7 file1" "
+.*
+BugId: new
+See what happens next.
+============================================================================="
+	  cd ..
 
 	  cd CVSROOT
 	  echo '# do nothing' >verifymsg
+	  echo '# defaults' >config
 	  dotest info-cleanup-verifymsg "${testcvs} -q ci -m nuke-verifymsg" \
-"Checking in verifymsg;
+"Checking in config;
+${CVSROOT_DIRNAME}/CVSROOT/config,v  <--  config
+new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
+done
+Checking in verifymsg;
 ${CVSROOT_DIRNAME}/CVSROOT/verifymsg,v  <--  verifymsg
 new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
 done
