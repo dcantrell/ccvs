@@ -1,3 +1,7 @@
+Tue Oct  8 12:37:09 1996  Ian Lance Taylor  <ian@cygnus.com>
+
+	* options.h.in (HAD_RCS4): Remove; no longer used.
+
 Sun Oct  6 15:58:11 1996  Noel Cragg  <noel@gargle.rain.org>
 
 	* The following changes address problem #56 in the GNATS database
