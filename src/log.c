@@ -25,9 +25,6 @@ USE(rcsid)
 static Dtype log_dirproc PROTO((char *dir, char *repository, char *update_dir));
 static int log_fileproc PROTO((char *file, char *update_dir, char *repository,
 			 List * entries, List * srcfiles));
-static void log_option_with_arg PROTO((char *name, char **var, char *opt));
-
-static char options[PATH_MAX];
 
 static const char *const log_usage[] =
 {
@@ -36,19 +33,17 @@ static const char *const log_usage[] =
     NULL
 };
 
+static int ac;
+static char **av;
+
 int
 cvslog (argc, argv)
     int argc;
     char **argv;
 {
     int i;
-    int numopt = 1;
     int err = 0;
     int local = 0;
-    char *dates_opt = 0;
-    char *revisions_opt = 0;
-    char *states_opt = 0;
-    char *who_opt = 0;
 
     if (argc == -1)
 	usage (log_usage);
@@ -56,42 +51,9 @@ cvslog (argc, argv)
     /*
      * All 'log' command options except -l are passed directly on to 'rlog'
      */
-    options[0] = '\0';			/* Assume none */
-    for (i = 1; i < argc; i++)
-    {
-	if (argv[i][0] == '-' || argv[i][0] == '\0')
-	{
-	    numopt++;
-	    switch (argv[i][1])
-	    {
-		case 'l':
-		    local = 1;
-		    break;
-		case 'd':
-		    log_option_with_arg ("date list", 
-					 &dates_opt, argv[i]);
-		    break;
-		case 'r':
-		    log_option_with_arg ("revision list",
-					 &revisions_opt, argv[i]);
-		    break;
-		case 's':
-		    log_option_with_arg ("state list",
-					 &states_opt, argv[i]);
-		    break;
-		case 'w':
-		    log_option_with_arg ("user list",
-					 &who_opt, argv[i]);
-		    break;
-		default:
-		    (void) strcat (options, " ");
-		    (void) strcat (options, argv[i]);
-		    break;
-	    }
-	}
-    }
-    argc -= numopt;
-    argv += numopt;
+    for (i = 1; i < argc && argv[i][0] == '-'; i++)
+      if (argv[i][1] == 'l')
+	local = 1;
 
     wrap_setup ();
 
@@ -102,22 +64,16 @@ cvslog (argc, argv)
 	
 	ign_setup ();
 
-	if (local)
-	    send_arg("-l");
-
-	send_option_string (options);
-	if (dates_opt) send_arg (dates_opt);
-	if (revisions_opt) send_arg (revisions_opt);
-	if (states_opt) send_arg (states_opt);
-	if (who_opt) send_arg (who_opt);
+	for (i = 1; i < argc && argv[i][0] == '-'; i++)
+	  send_arg (argv[i]);
 
 #if 0
 /* FIXME:  We shouldn't have to send current files to get log entries, but it
    doesn't work yet and I haven't debugged it.  So send the files --
    it's slower but it works.  gnu@cygnus.com  Apr94  */
-	send_file_names (argc, argv);
+	send_file_names (argc - i, argv + i);
 #else
-	send_files (argc, argv, local, 0);
+	send_files (argc - i, argv + i, local, 0);
 #endif
 
 	if (fprintf (to_server, "log\n") < 0)
@@ -125,38 +81,18 @@ cvslog (argc, argv)
         err = get_responses_and_close ();
 	return err;
     }
+
+    ac = argc;
+    av = argv;
 #endif
 
     err = start_recursion (log_fileproc, (int (*) ()) NULL, log_dirproc,
-			   (int (*) ()) NULL, argc, argv, local,
+			   (int (*) ()) NULL, argc - i, argv + i, local,
 			   W_LOCAL | W_REPOS | W_ATTIC, 0, 1,
 			   (char *) NULL, 1, 0);
     return (err);
 }
 
-
-/* Append an option to the options string.  */
-static void
-log_option_with_arg (name, var, opt)
-     char *name;
-     char **var;
-     char *opt;
-{
-  if (*var)
-    error (1, 0, "only one %s can be specified", name);
-  *var = opt;
-#ifdef CLIENT_SUPPORT
-  if (! client_active)
-    {
-      (void) strcat (options, " ");
-      (void) strcat (options, opt);
-    }
-#else
-  (void) strcat (options, " ");
-  (void) strcat (options, opt);
-#endif
-
-}
 
 /*
  * Do an rlog on a file
@@ -199,7 +135,13 @@ log_fileproc (file, update_dir, repository, entries, srcfiles)
 	return (1);
     }
 
-    run_setup ("%s%s %s", Rcsbin, RCS_RLOG, options);
+    run_setup ("%s%s", Rcsbin, RCS_RLOG);
+    {
+      int i;
+      for (i = 1; i < ac && av[i][0] == '-'; i++)
+	  if (av[i][1] != 'l')
+	      run_arg (av[i]);
+    }
     run_arg (rcsfile->path);
 
     if (*update_dir)
