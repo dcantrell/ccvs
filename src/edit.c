@@ -301,6 +301,8 @@ edit_fileproc (callerdat, finfo)
     (void) time (&now);
     ascnow = asctime (gmtime (&now));
     ascnow[24] = '\0';
+    /* Fix non-standard format.  */
+    if (ascnow[8] == '0') ascnow[8] = ' ';
     fprintf (fp, "E%s\t%s GMT\t%s\t%s\t", finfo->file,
 	     ascnow, hostname, CurDir);
     if (setting_tedit)
@@ -493,6 +495,8 @@ unedit_fileproc (callerdat, finfo)
     (void) time (&now);
     ascnow = asctime (gmtime (&now));
     ascnow[24] = '\0';
+    /* Fix non-standard format.  */
+    if (ascnow[8] == '0') ascnow[8] = ' ';
     fprintf (fp, "U%s\t%s GMT\t%s\t%s\t\n", finfo->file,
 	     ascnow, hostname, CurDir);
 
