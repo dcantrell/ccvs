@@ -1,3 +1,8 @@
+Wed Dec 11 08:55:26 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (update output, release output): Document "P" as
+	well as "U".
+
 Tue Dec 10 16:23:40 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (Builds): Change "make" to "implement" and "build";
