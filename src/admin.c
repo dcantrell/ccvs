@@ -191,11 +191,6 @@ admin (argc, argv)
 		break;
 
 	    case 'e':
-		if (optarg == NULL)
-		{
-		    error (1, 0,
-			   "removing entire access list not yet implemented");
-		}
 		arg_add (&admin_data, 'e', optarg);
 		break;
 
@@ -642,6 +637,8 @@ admin_fileproc (callerdat, finfo)
 		if (arg[1] == 'a')
 		    for (u = 0; u < argc; ++u)
 			RCS_addaccess (rcs, users[u]);
+		else if (argc == 0)
+		    RCS_delaccess (rcs, NULL);
 		else
 		    for (u = 0; u < argc; ++u)
 			RCS_delaccess (rcs, users[u]);
