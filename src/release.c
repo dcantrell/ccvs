@@ -226,11 +226,22 @@ release (argc, argv)
 
 #ifdef CLIENT_SUPPORT
         if (client_active)
-	    return get_responses_and_close ();
-        else
+	    err += get_server_responses ();
 #endif /* CLIENT_SUPPORT */
-	    return 0;
     }
+
+#ifdef CLIENT_SUPPORT
+    if (client_active)
+    {
+	/* Unfortunately, client.c doesn't offer a way to close
+	   the connection without waiting for responses.  The extra
+	   network turnaround here is quite unnecessary other than
+	   that....  */
+	send_to_server ("noop\012", 0);
+	err += get_responses_and_close ();
+    }
+#endif /* CLIENT_SUPPORT */
+
     return err;
 }
 
