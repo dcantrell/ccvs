@@ -1,3 +1,11 @@
+Sun May 18 10:24:57 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (rtag options, tag options): Don't discuss what old
+	versions did with respect to the behavior now controlled by -F; we
+	don't try to document old versions here.  Add comments concerning
+	how -F should be documented.  Add index entries for "renaming
+	tags" and such pointing to "tag -F".
+
 Wed May 14 12:16:19 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (Binary files): Add text and comment about

@@ -8555,8 +8555,15 @@ recent revision (instead of ignoring the file).
 
 @item -F 
 Overwrite an existing tag of the same name on a
-different revision.  This option is new in @sc{cvs}
-1.4.  The old behavior is matched by @samp{cvs tag -F}.
+different revision.
+@c FIXME: Needs an example, and/or more explanation.
+@c Also needs to contrast this with the behavior if -F
+@c is not specified, and the description needs to be
+@c moved somewhere where it is shared between "tag" and
+@c "rtag" (probably some sub-node of Revisions and
+@c branches).  Also should be clear about whether this
+@c applies to branch tags, non-branch tags, or both.
+@c Also this is *not* a common option.
 
 @item -l
 Local; run only in current working directory.
@@ -8673,10 +8680,13 @@ These standard options are supported by @code{tag}
 them):
 
 @table @code
+@cindex renaming tags
+@cindex tags, renaming
+@cindex moving tags
 @item -F 
 Overwrite an existing tag of the same name on a
-different revision.  This option is new in @sc{cvs}
-1.4.  The old behavior is matched by @samp{cvs tag -F}.
+different revision.
+@c FIXME: See "rtag -F" for comments on this.
 
 @item -l
 Local; run only in current working directory.
