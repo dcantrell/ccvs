@@ -1,5 +1,11 @@
 2004-04-27  Derek Price  <derek@ximbiot.com>
 
+	* Makefile.am (EXTRA_DIST): Add new file.
+	* extensions.m4: New file.
+	* Makefile.in: Regenerated.
+
+2004-04-27  Derek Price  <derek@ximbiot.com>
+
 	* dos.m4: Update from GNULIB.
 
 2004-04-27  Derek Price  <derek@ximbiot.com>

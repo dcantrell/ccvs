@@ -187,6 +187,7 @@ EXTRA_DIST = \
 	dirname.m4 \
 	dos.m4 \
 	exitfail.m4 \
+	extensions.m4 \
 	fnmatch.m4 \
 	getline.m4 \
 	getnline.m4 \
