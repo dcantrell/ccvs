@@ -108,6 +108,9 @@
 /* Define if you have the mkfifo function.  */
 #undef HAVE_MKFIFO
 
+/* Define if you have the mktemp function.  */
+#undef HAVE_MKTEMP
+
 /* Define if you have the putenv function.  */
 #undef HAVE_PUTENV
 
@@ -128,6 +131,9 @@
 
 /* Define if you have the sigvec function.  */
 #undef HAVE_SIGVEC
+
+/* Define if you have the tempnam function.  */
+#undef HAVE_TEMPNAM
 
 /* Define if you have the timezone function.  */
 #undef HAVE_TIMEZONE

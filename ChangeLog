@@ -1,3 +1,8 @@
+Thu Apr 24 15:21:17 1997  Norbert Kiesel  <nk@cosa.de>
+
+	* configure.in (AC_CHECK_FUNCS): added tempnam and mktemp
+	* config.h.in, configure: Regenerated with autoconf 2.10.
+
 21 Apr 1997  Jim Kingdon
 
 	* cvsnt.mak: Visual C++, as usual, wants to fiddle with this.
