@@ -199,6 +199,9 @@ no longer interpret its options string and if it can, coincidentally,
 interpret its option string, then the problem may be output in unexpected
 formats.
 
+* `release' of a project subdir does not remove the `subdir' entry from
+  `./CVS/Entries'.
+
 * Status
 
   This experimental version of CVS contains new features which may not have
