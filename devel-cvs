@@ -1,0 +1,26 @@
+The CVS Developers' List <devel-cvs@cyclic.com> exists to help people
+with access to the CVS source repository co-ordinate changes, make
+releases, and administer the repository.
+
+The membership of devel-cvs should be exactly those people who have
+been given access to the repository for the CVS sources.
+
+The devel-cvs list may be used to discuss:
+- administrivia regarding the CVS source repository and release
+  process, and
+- changes and features intended for inclusion in the official CVS
+  release (either source code or documentation), which someone plans
+  to implement, or has implemented.
+
+The devel-cvs list should not be used to discuss:
+- changes or features to packages other than the CVS release
+  (e.g., related packages like tkCVS, RAD/CVS, or other groups'
+  distributions of CVS, like RCVS, etc.),
+- changes which nobody has offered to implement, or
+- the philosophy of CVS (as opposed to a specific change to CVS).
+These topics should either go on info-cvs, or have a new mailing list
+created for them.
+
+The topic restrictions in this charter do not reflect the development
+group's future plans for CVS; rather, they reflect a topic
+classification which the group finds helpful.
