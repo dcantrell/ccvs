@@ -1,3 +1,9 @@
+Thu Aug 31 13:14:34 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* client.c (start_rsh_server): Don't pass -d to "cvs server"
+	invocation via rsh (restore change which was lost when NT stuff
+	was merged in).
+
 Wed Aug 30 12:36:37 1995  Jim Blandy  <jimb@totoro.cyclic.com>
 
 	* sanity.sh (basic1): Make sure first-dir is deleted before
