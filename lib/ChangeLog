@@ -1,5 +1,10 @@
 2003-07-16  Derek Price  <derek@ximbiot.com>
 
+	* getline.h: Include config.h so to use the macros it defines.
+	(Thanks to Steve McIntyre <stevem@cvshome.org> for the report.)
+
+2003-07-16  Derek Price  <derek@ximbiot.com>
+
 	* pathmax.h: New file.
 
 	* Makefile.am (libcvs_a_SOURCES): Add pathmax.h.
