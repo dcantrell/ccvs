@@ -642,6 +642,12 @@ Copyright (c) 1989-2003 Brian Berliner, david d `zoo' zuhn, \n\
     if (argc < 1)
 	usage (usg);
 
+    if (readonlyfs && !quiet && !really_quiet) {
+	error (0, 0,
+	       "WARNING: Read-only repository access mode selected via `cvs -R'.\n\
+Using this option to access a repository which some users write to may\n\
+cause intermittant sandbox corruption.");
+    }
 
     /* Look up the command name. */
 
