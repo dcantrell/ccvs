@@ -2302,18 +2302,18 @@ connect_to_pserver (tofdp, fromfdp, log)
     password = get_cvs_password (server_user, server_host, server_cvsroot);
 
     /* Announce that we're starting the authorization protocol. */
-    write (sock, begin, strlen (begin));
+    send (sock, begin, strlen (begin), 0);
 
     /* Send the data the server needs. */
-    write (sock, repository, strlen (repository));
-    write (sock, "\n", 1);
-    write (sock, username, strlen (username));
-    write (sock, "\n", 1);
-    write (sock, password, strlen (password));
-    write (sock, "\n", 1);
+    send (sock, repository, strlen (repository), 0);
+    send (sock, "\n", 1, 0);
+    send (sock, username, strlen (username), 0);
+    send (sock, "\n", 1, 0);
+    send (sock, password, strlen (password), 0);
+    send (sock, "\n", 1, 0);
 
     /* Announce that we're ending the authorization protocol. */
-    write (sock, end, strlen (end));
+    send (sock, end, strlen (end), 0);
 
     /* Paranoia. */
     memset (password, 0, strlen (password));
@@ -2326,13 +2326,13 @@ connect_to_pserver (tofdp, fromfdp, log)
      * Another Protocol Requirement floating around, and someday
      * someone would make a change that breaks it and spend a hellish
      * day tracking it down.  Therefore, we use "\n" to mark off the
-     * end of both ACK and NACK, and we read until "\n".
+     * end of both ACK and NACK, and we loop, reading until "\n".
      */
     ch = 0;
     memset (read_buf, 0, PATH_MAX);
     for (i = 0; (i < (PATH_MAX - 1)) && (ch != '\n'); i++)
       {
-        read (sock, &ch, 1);
+        recv (sock, &ch, 1, 0);
         read_buf[i] = ch;
       }
 
@@ -2340,9 +2340,13 @@ connect_to_pserver (tofdp, fromfdp, log)
     {
         /* Authorization not granted. */
         if (shutdown (sock, 2) < 0)
-            error (1, errno,
-                   "both auth and shutdown() failed (server %s)",
+          {
+            error (0, 0, 
+                   "authorization failed: server %s rejected access", 
                    server_host);
+            error (1, errno,
+                   "shutdown() failed (server %s)", server_host);
+          }
         error (1, 0, 
                "authorization failed: server %s rejected access", 
                server_host);
@@ -2351,9 +2355,12 @@ connect_to_pserver (tofdp, fromfdp, log)
     {
         /* Unrecognized response from server. */
         if (shutdown (sock, 2) < 0)
-            error (1, errno,
-                   "unrecognized auth response, and shutdown() failed (server %s)",
-                   server_host);
+          {
+            error (0, 0,
+                   "unrecognized auth response from %s: %s", 
+                   server_host, read_buf);
+            error (1, errno, "shutdown() failed", server_host);
+          }
         error (1, 0, 
                "unrecognized auth response from %s: %s", 
                server_host, read_buf);
