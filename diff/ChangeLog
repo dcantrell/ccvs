@@ -1,3 +1,8 @@
+Sat Nov  1 14:17:57 1997  Michael L.H. Brouwer  <michael@thi.nl>
+
+	* Makefile.in: Add call to ranlib to build a table of contents for
+	the library since some systems seem to require this.
+
 1997-10-28  Jim Kingdon
 
 	* .cvsignore: Add files du jour for Visual C++, vc50.pdb and vc50.idb.
