@@ -2813,6 +2813,9 @@ server_register (name, version, timestamp, options, tag, date, conflict)
 {
     int len;
 
+    if (options == NULL)
+	options = "";
+
     if (trace)
     {
 	(void) fprintf (stderr,
@@ -2821,9 +2824,6 @@ server_register (name, version, timestamp, options, tag, date, conflict)
 			name, version, timestamp, options, tag ? tag : "",
 			date ? date : "", conflict ? conflict : "");
     }
-
-    if (options == NULL)
-	options = "";
 
     if (entries_line != NULL)
     {

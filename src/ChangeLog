@@ -1,3 +1,9 @@
+Wed Jan  3 17:30:45 1996  Phi-Long Tran  <ptran@autodesk.com>
+
+	* modules.c (do_module): Honor error_use_protocol in printing trace.
+	* server.c (server_register): Move check for options NULL to above
+	printing of the trace.
+
 Wed Jan  3 01:19:53 1996  Mark Immel <immel@centerline.com>
 			  and Jim Kingdon  <kingdon@harvey.cyclic.com>
 
