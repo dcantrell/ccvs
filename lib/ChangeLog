@@ -1,3 +1,7 @@
+Wed Jun 28 15:24:51 1995  James Kingdon  <kingdon@harvey.cyclic.com>
+
+	* system.h: If NeXT, define utimbuf ourself.
+
 Mon May 29 22:32:40 1995  J.T. Conklin  <jtc@rtl.cygnus.com>
 
 	* system.h: Handle time and directory headers as recommended in

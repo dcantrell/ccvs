@@ -192,7 +192,11 @@ extern long timezone;
 
 
 
-#ifdef HAVE_UTIME_H
+/* The NeXT (without _POSIX_SOURCE, which we don't want) has a utime.h
+   which doesn't define anything.  It would be cleaner to have configure
+   check for struct utimbuf, but for now I'm checking NeXT here (so I don't
+   have to debug the configure check across all the machines).  */
+#if defined (HAVE_UTIME_H) && !defined (NeXT)
 #include <utime.h>
 #else
 #ifndef ALTOS
