@@ -856,22 +856,18 @@ convert_file (char *infile,  int inflags,
 char *
 get_homedir ()
 {
-    static char pathbuf[PATH_MAX * 2];
+    static char *pathbuf;
     char *hd, *hp;
 
-    if ((hd = getenv ("HOME")))
+    if (pathbuf != NULL)
+	return pathbuf;
+    else if ((hd = getenv ("HOME")))
 	return hd;
     else if ((hd = getenv ("HOMEDRIVE")) && (hp = getenv ("HOMEPATH")))
     {
-	/* Watch for buffer overruns. */
-
-#define cvs_min(x,y) ((x <= y) ? (x) : (y))
-
-	int ld = cvs_min (PATH_MAX, strlen (hd));
-	int lp = cvs_min (PATH_MAX, strlen (hp));
-
-	strncpy (pathbuf, hd, ld);
-	strncpy (pathbuf + ld, hp, lp);
+	pathbuf = xmalloc (strlen (hd) + strlen (hp) + 5);
+	strcpy (pathbuf, hd);
+	strcat (pathbuf, hp);
 
 	return pathbuf;
     }
