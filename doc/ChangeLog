@@ -1,3 +1,10 @@
+1998-04-09  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (Global options, Invoking CVS): Fix typo
+	("files files" -> "files").
+	(Invoking CVS): Make -q and -Q more concise.
+	(Invoking CVS): Use @var for metavariables in "diff -r".
+
 1998-03-17  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (~/.cvsrc): In example, put "checkout" rather than
