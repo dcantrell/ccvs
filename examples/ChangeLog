@@ -1,3 +1,17 @@
+Sun Jul  9 19:03:00 1995  Greg A. Woods  <woods@most.weird.com>
+        
+	* modules: fix this up so cvsinit can use it for new
+        repositories
+
+	* loginfo: fix comments to note current perl requirement
+        for log and log_accum
+
+	* Makefile.in: add new template example files
+	(from previous local changes)
+
+	* rcsinfo, loginfo, commitinfo: corrections to comments
+        - corrections to sample control lines (from previous local changes)
+        
 Sat May 27 08:46:00 1995  Jim Meyering  (meyering@comco.com)
 
 	* Makefile.in (Makefile): Regenerate only Makefile in current

@@ -1,3 +1,11 @@
+Sun Jul  9 19:03:00 1995  Greg A. Woods  <woods@most.weird.com>
+
+	* doc/cvs.texinfo:
+	- document '-q' for 'cvs status'
+	- correction to regexp use in *info files
+	- correction to use of 'cvsinit' script
+	(from previous local changes)
+
 Tue Jun 20 18:57:55 1995  James Kingdon  <kingdon@harvey.cyclic.com>
 
 	* Makefile.in (dist-dir): Depend on $(OBJDIR_DISTFILES).

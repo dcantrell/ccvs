@@ -132,7 +132,6 @@ do_editor (dir, messagep, repository, changes)
     char line[MAXLINELEN], fname[L_tmpnam+1];
     struct stat pre_stbuf, post_stbuf;
     int retcode = 0;
-    char *p;
 
     if (noexec || reuse_log_message)
 	return;
@@ -163,7 +162,7 @@ do_editor (dir, messagep, repository, changes)
     (void) fprintf (fp,
   "%sEnter Log.  Lines beginning with `%s' are removed automatically\n%s\n",
 		    CVSEDITPREFIX, CVSEDITPREFIX, CVSEDITPREFIX);
-    if (dir != NULL)
+    if (dir != NULL && *dir)
 	(void) fprintf (fp, "%sCommitting in %s\n%s\n", CVSEDITPREFIX,
 			dir, CVSEDITPREFIX);
     if (changes != NULL)
@@ -215,13 +214,11 @@ do_editor (dir, messagep, repository, changes)
 
     if (*messagep)
     {
-	p = *messagep;
 	while (fgets (line, sizeof (line), fp) != NULL)
 	{
 	    if (strncmp (line, CVSEDITPREFIX, sizeof (CVSEDITPREFIX) - 1) == 0)
 		continue;
-	    (void) strcpy (p, line);
-	    p += strlen (line);
+	    (void) strcat (*messagep, line);
 	}
     }
     (void) fclose (fp);
@@ -407,6 +404,7 @@ logfile_write (repository, filter, title, message, revision, logfp, changes)
     char *cp;
     int c;
 
+    /* XXX <woods@web.net> -- this is gross, ugly, and a hack!  FIXME! */
     /*
      * A maximum of 6 %s arguments are supported in the filter
      */

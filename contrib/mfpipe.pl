@@ -1,4 +1,5 @@
-#!/usr/bin/perl
+#! xPERL_PATHx
+# -*-Perl-*-
 #
 # From: clyne@niwot.scd.ucar.EDU (John Clyne)
 # Date: Fri, 28 Feb 92 09:54:21 MST

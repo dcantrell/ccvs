@@ -1,3 +1,38 @@
+Sun Jul  9 19:03:00 1995  Greg A. Woods  <woods@most.weird.com>
+        
+        * rcs2log.sh: oops, one more thing that should not have been
+        there.
+        - fix interpreter file syntax.
+        - remove "fix" for separating filenames and comments
+
+	* Makefile.in: hmm... thought rcs2log was in RCS-5.7 for some
+        reason -- it's not, so we'll install it from here....
+        - fix typo -- that's what you get for re-doing changes by hand!
+        - updates to support proper transformation and installation of
+        renamed files (from previous local changes)
+
+	* .cvsignore: one more target noted...
+
+	* sccs2rcs.csh: set up the interpreter file for updating by
+        Makefile (from previous local changes)
+
+	* log_accum.pl, log.pl, commit_prep.pl:
+	- set up the interpreter file for updating by Makefile
+	- various modifications, updates, and enhancements
+	(from previous local changes)
+
+	* rcslock.pl, mfpipe.pl, cvs_acls.pl, cln_hist.pl, clmerge.pl:
+	- set up the interpreter file for updating by Makefile
+	(from previous local changes)
+	- include changes from 1.5 here too, if any
+
+	* README:
+	- remove extensions from filenames to match installed names
+	(from previous local changes)
+
+	* .cvsignore: - added $(CONTRIB_PROGS) (from previous local changes)
+
+        
 Thu Jun 29 10:43:07 1995  James Kingdon  <kingdon@harvey.cyclic.com>
 
 	* Makefile.in (distclean): Also remove pcl-cvs/Makefile.

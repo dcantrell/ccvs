@@ -1,5 +1,6 @@
 #
-# CVS Modules file for Prisma sources
+# The CVS Modules File
+#
 # $CVSid: @(#)modules 1.5 92/03/31 $
 #
 # Three different line formats are valid:
@@ -28,7 +29,6 @@
 
 # Convenient aliases
 world		-a .
-kernel		-a sys lang/adb sparcsim
 
 # CVSROOT support
 CVSROOT		-i /usr/local/bin/mkmodules CVSROOT
@@ -36,6 +36,16 @@ modules		-i /usr/local/bin/mkmodules CVSROOT modules
 loginfo		-i /usr/local/bin/mkmodules CVSROOT loginfo
 commitinfo	-i /usr/local/bin/mkmodules CVSROOT commitinfo
 rcsinfo		-i /usr/local/bin/mkmodules CVSROOT rcsinfo
+
+# Add more modules here 
+#
+# END_REQUIRED_CONTENT (this comment for cvsinit)
+#
+# The remainder was for the Prisma OS sources
+#
+
+# another convenient alias
+kernel		-a sys lang/adb sparcsim
 
 # The "sys" entry exists only to make symbolic links after checkout
 sys		-o sys/tools/make_links sys

@@ -41,11 +41,13 @@ INSTALL = @INSTALL@
 INSTALL_DATA = @INSTALL_DATA@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
 
-EXAMPLE_FILES = commitinfo editinfo loginfo modules rcsinfo
+EXAMPLE_FILES = commitinfo editinfo loginfo modules rcsinfo \
+	rcstemplate checkoutlist
 
 DISTFILES = \
 	.cvsignore Makefile.in ChangeLog \
-	commitinfo editinfo loginfo modules rcsinfo
+	commitinfo editinfo loginfo modules rcsinfo \
+	rcstemplate checkoutlist
 
 all: Makefile
 .PHONY: all

@@ -224,6 +224,8 @@ main (argc, argv)
  	Editor = cp;
     else if ((cp = getenv (EDITOR2_ENV)) != NULL)
 	Editor = cp;
+    else if ((cp = getenv (EDITOR3_ENV)) != NULL)
+	Editor = cp;
     if ((cp = getenv (CVSROOT_ENV)) != NULL)
     {
 	CVSroot = cp;

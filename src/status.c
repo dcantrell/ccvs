@@ -32,6 +32,8 @@ static const char *const status_usage[] =
     "\t-v\tVerbose format; includes tag information for the file\n",
     "\t-l\tProcess this directory only (not recursive).\n",
     "\t-R\tProcess directories recursively.\n",
+    "\t-q\tBe somewhat quiet.\n",
+    "\t-Q\tDo not print empty sticky parts.\n",
     NULL
 };
 
@@ -47,7 +49,7 @@ status (argc, argv)
 	usage (status_usage);
 
     optind = 1;
-    while ((c = getopt (argc, argv, "vlR")) != -1)
+    while ((c = getopt (argc, argv, "vlRqQ")) != -1)
     {
 	switch (c)
 	{
@@ -59,6 +61,12 @@ status (argc, argv)
 		break;
 	    case 'R':
 		local = 0;
+		break;
+	    case 'q':
+		quiet = TRUE;
+		break;
+	    case 'Q':
+		really_quiet = TRUE;
 		break;
 	    case '?':
 	    default:
@@ -205,17 +213,17 @@ status_fileproc (file, update_dir, repository, entries, srcfiles)
 		}
 	    }
 	}
-	else
+	else if (!really_quiet)
 	    (void) printf ("   Sticky Tag:\t\t(none)\n");
 
 	if (edata->date)
 	    (void) printf ("   Sticky Date:\t\t%s\n", edata->date);
-	else
+	else if (!really_quiet)
 	    (void) printf ("   Sticky Date:\t\t(none)\n");
 
 	if (edata->options && edata->options[0])
 	    (void) printf ("   Sticky Options:\t%s\n", edata->options);
-	else
+	else if (!really_quiet)
 	    (void) printf ("   Sticky Options:\t(none)\n");
 
 	if (long_format && vers->srcfile)

@@ -326,7 +326,9 @@ xchmod (fname, writable)
     {
 	oumask = umask (0);
 	(void) umask (oumask);
-	mode = sb.st_mode | ((S_IWRITE | S_IWGRP | S_IWOTH) & ~oumask);
+	mode = sb.st_mode | ~oumask & (((sb.st_mode & S_IRUSR) ? S_IWUSR : 0) |
+				       ((sb.st_mode & S_IRGRP) ? S_IWGRP : 0) |
+				       ((sb.st_mode & S_IROTH) ? S_IWOTH : 0));
     }
     else
     {
@@ -692,7 +694,7 @@ run_add_arg (s)
     if (s)
 	run_argv[run_argc++] = xstrdup (s);
     else
-	run_argv[run_argc] = (char *) 0;/* not post-incremented on purpose! */
+	run_argv[run_argc] = (char *) 0;	/* not post-incremented on purpose! */
 }
 
 static void
@@ -929,7 +931,7 @@ run_print (fp)
 
     for (i = 0; i < run_argc; i++)
     {
-	(void) fprintf (fp, "%s", run_argv[i]);
+	(void) fprintf (fp, "'%s'", run_argv[i]);
 	if (i != run_argc - 1)
 	    (void) fprintf (fp, " ");
     }

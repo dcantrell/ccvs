@@ -118,8 +118,14 @@ install: all install-local
 all-local: $(PROGS)
 
 cvsinit: cvsinit.sh
+	echo > .fname \
+	  cvs-`sed < $(srcdir)/src/version.c \
+		    -e '/version_string/!d' \
+		    -e 's/[^0-9.]*\([0-9.]*\).*/\1/' \
+		    -e q`
 	sed -e 's,xLIBDIRx,$(libdir)/cvs,g' \
-	    -e 's,xVERSIONx,$(VERSION),g' $(srcdir)/cvsinit.sh > $@-t
+	    -e "s,xVERSIONx,`cat .fname`,g" $(srcdir)/cvsinit.sh > $@-t
+	rm -f .fname
 	mv $@-t $@
 	chmod a+x $@
 
@@ -133,6 +139,7 @@ install-local: all-local
 	  echo Installing $$prog in $(bindir); \
 	  $(INSTALL) $$prog $(bindir)/$$prog ; \
 	done
+	@echo "Remember to run 'cvsinit' for your repository(ies)"
 
 .PHONY: tags
 tags:

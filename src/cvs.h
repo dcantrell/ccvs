@@ -214,7 +214,8 @@ extern int errno;
 /* #define	RCSBIN_DFLT		   Set by config.h */
 
 #define	EDITOR1_ENV	"CVSEDITOR"	/* which editor to use */
-#define	EDITOR2_ENV	"EDITOR"	/* which editor to use */
+#define	EDITOR2_ENV	"VISUAL"	/* which editor to use */
+#define	EDITOR3_ENV	"EDITOR"	/* which editor to use */
 /* #define	EDITOR_DFLT		   Set by config.h */
 
 #define	CVSROOT_ENV	"CVSROOT"	/* source directory root */
