@@ -1,7 +1,7 @@
 Changes from 1.5 to the present:
 
-* "cvs release" no longer cares whether or not the directory you are
-releasing has an entry in the `modules' file.
+* "cvs release" no longer cares whether or not the directory being
+released has an entry in the `modules' file.
 
 * The modules file now takes a -e option which is used instead of -o
 for "cvs export".  If your modules file has a -o option which you want
