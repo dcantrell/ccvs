@@ -1,3 +1,9 @@
+1999-07-30  Larry Jones  <larry.jones@sdrc.com>
+
+	* rcs.c (RCS_checkin): Terminate cleanly if RCS_addbranch fails
+	rather than blithely continuing on and crashing.
+	* sanity.sh (basica): New tests, for this fix.
+
 1999-07-29  Larry Jones  <larry.jones@sdrc.com>
 
 	* import.c (add_rcs_file): change "cannot lstat" message to include
