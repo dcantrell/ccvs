@@ -1,3 +1,7 @@
+Thu Oct 30 15:55:21 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (Error messages): Add "authorization failed" message.
+
 Wed Oct 29 11:52:05 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo: Remove fake RCSid; we decided to remove rcsid's a
