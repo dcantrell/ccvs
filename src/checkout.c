@@ -931,6 +931,29 @@ build_dirs_and_chdir (dir, prepath, realdir, sticky)
     {
 	*slash = '\0';
 	*slash2 = '\0';
+	if (!isfile (CVSADM) && strcmp (command_name, "export") != 0)
+	{
+	    char *repository;
+
+	    repository = xmalloc (strlen (prepath) + strlen (path2) + 5);
+	    (void) sprintf (repository, "%s/%s", prepath, path2);
+	    /* I'm not sure whether this check is redundant.  */
+	    if (!isdir (repository))
+		error (1, 0, "there is no repository %s", repository);
+	    Create_Admin (".", path, repository, sticky ? (char *) NULL : tag,
+			  sticky ? (char *) NULL : date);
+	    if (!noexec)
+	    {
+		fp = open_file (CVSADM_ENTSTAT, "w+");
+		if (fclose(fp) == EOF)
+		    error(1, errno, "cannot close %s", CVSADM_ENTSTAT);
+#ifdef SERVER_SUPPORT
+		if (server_active)
+		    server_set_entstat (path, repository);
+#endif
+	    }
+	    free (repository);
+	}
 	Subdir_Register ((List *) NULL, (char *) NULL, cp);
 	(void) CVS_MKDIR (cp, 0777);
 	if ( CVS_CHDIR (cp) < 0)
@@ -964,6 +987,29 @@ build_dirs_and_chdir (dir, prepath, realdir, sticky)
 	}
 	*slash = '/';
 	*slash2 = '/';
+    }
+    if (!isfile (CVSADM) && strcmp (command_name, "export") != 0)
+    {
+	char *repository;
+
+	repository = xmalloc (strlen (prepath) + strlen (path2) + 5);
+	(void) sprintf (repository, "%s/%s", prepath, path2);
+	/* I'm not sure whether this check is redundant.  */
+	if (!isdir (repository))
+	    error (1, 0, "there is no repository %s", repository);
+	Create_Admin (".", path, repository, sticky ? (char *) NULL : tag,
+		      sticky ? (char *) NULL : date);
+	if (!noexec)
+	{
+	    fp = open_file (CVSADM_ENTSTAT, "w+");
+	    if (fclose(fp) == EOF)
+		error(1, errno, "cannot close %s", CVSADM_ENTSTAT);
+#ifdef SERVER_SUPPORT
+	    if (server_active)
+		server_set_entstat (path, repository);
+#endif
+	}
+	free (repository);
     }
     Subdir_Register ((List *) NULL, (char *) NULL, cp);
     (void) CVS_MKDIR (cp, 0777);

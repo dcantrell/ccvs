@@ -645,6 +645,7 @@ done'
 	  # More basic tests, including non-branch tags and co -d.
 	  mkdir ${CVSROOT_DIRNAME}/first-dir
 	  dotest basicb-1 "${testcvs} -q co first-dir" ''
+	  dotest basicb-1a "test -d CVS" ''
 	  cd first-dir
 	  mkdir sdir1 sdir2
 	  dotest basicb-2 "${testcvs} add sdir1 sdir2" \
@@ -723,6 +724,7 @@ U first-dir1/sdir2/sfile2'
 "${testcvs} -q co -d newdir -r release-1 first-dir/sdir1 first-dir/sdir2" \
 'U newdir/sdir1/sfile1
 U newdir/sdir2/sfile2'
+	  dotest basicb-9a "test -d CVS" ''
 	  dotest basicb-10 "cat newdir/sdir1/sfile1 newdir/sdir2/sfile2" \
 "sfile1 develops
 sfile2 starts"
