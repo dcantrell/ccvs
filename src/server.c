@@ -1443,7 +1443,7 @@ receive_partial_file (size_t size, int file)
 
 	while (nread > 0)
 	{
-	    size_t nwrote;
+	    ssize_t nwrote;
 
 	    nwrote = write (file, data, nread);
 	    if (nwrote < 0)
