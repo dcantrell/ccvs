@@ -1,3 +1,13 @@
+2003-03-19  Derek Price  <derek@ximbiot.com>
+
+	* sanity.config.sh.in: New file.
+	* sanity.sh: Source new config file when available.  Accept alternate
+	config file as an argument to a -c option.  Accept long options with
+	arguments.
+	(getlongoptarg): New function.
+
+	* Makefile.in: Regenerated.
+
 2003-03-18  Derek Price  <derek@ximbiot.com>
 
 	* root.c (parse_root): Add some more comments and expand
