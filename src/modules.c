@@ -700,7 +700,7 @@ module `%s' is a request for a file in a module which is not a directory",
 		{
 		    cvs_output (program_name, 0);
 		    cvs_output (" ", 1);
-		    cvs_output (command_name, 0);
+		    cvs_output (cvs_cmd_name, 0);
 		    cvs_output (": Executing '", 0);
 		    run_print (stdout);
 		    cvs_output ("'\n", 0);

@@ -456,10 +456,8 @@ add (int argc, char **argv)
 			    /* If this file does not exist locally, assume that
 			     * the last version on the branch is being
 			     * resurrected.
-			     */
-			    struct buffer *revbuf = NULL;
-
-			    /* Compute previous revision.  We assume that it
+			     *
+			     * Compute previous revision.  We assume that it
 			     * exists and that it is not a revision on the
 			     * trunk of the form X.1 (1.1, 2.1, 3.1, ...).  We
 			     * also assume that it is not dead, which seems

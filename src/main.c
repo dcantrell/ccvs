@@ -23,7 +23,7 @@ extern int gethostname (char *, int);
 
 char *program_name;
 char *program_path;
-char *command_name;
+char *cvs_cmd_name;
 
 /* I'd dynamically allocate this, but it seems like gethostname
    requires a fixed size array.  If I'm remembering the RFCs right,
@@ -680,24 +680,24 @@ cause intermittent sandbox corruption.");
 
     /* Look up the command name. */
 
-    command_name = argv[0];
+    cvs_cmd_name = argv[0];
     for (cm = cmds; cm->fullname; cm++)
     {
-	if (cm->nick1 && !strcmp (command_name, cm->nick1))
+	if (cm->nick1 && !strcmp (cvs_cmd_name, cm->nick1))
 	    break;
-	if (cm->nick2 && !strcmp (command_name, cm->nick2))
+	if (cm->nick2 && !strcmp (cvs_cmd_name, cm->nick2))
 	    break;
-	if (!strcmp (command_name, cm->fullname))
+	if (!strcmp (cvs_cmd_name, cm->fullname))
 	    break;
     }
 
     if (!cm->fullname)
     {
-	fprintf (stderr, "Unknown command: `%s'\n\n", command_name);
+	fprintf (stderr, "Unknown command: `%s'\n\n", cvs_cmd_name);
 	usage (cmd_usage);
     }
     else
-	command_name = cm->fullname;	/* Global pointer for later use */
+	cvs_cmd_name = cm->fullname;	/* Global pointer for later use */
 
     if (help)
     {
@@ -733,18 +733,18 @@ cause intermittent sandbox corruption.");
 	   running as Kerberos server as root.  Do the authentication as
 	   the very first thing, to minimize the amount of time we are
 	   running as root.  */
-	if (strcmp (command_name, "kserver") == 0)
+	if (strcmp (cvs_cmd_name, "kserver") == 0)
 	{
 	    kserver_authenticate_connection ();
 
 	    /* Pretend we were invoked as a plain server.  */
-	    command_name = "server";
+	    cvs_cmd_name = "server";
 	}
 # endif /* HAVE_KERBEROS */
 
 
 # if defined (AUTH_SERVER_SUPPORT) || defined (HAVE_GSSAPI)
-	if (strcmp (command_name, "pserver") == 0)
+	if (strcmp (cvs_cmd_name, "pserver") == 0)
 	{
 	    /* The reason that --allow-root is not a command option
 	       is mainly the comment in server() about how argc,argv
@@ -758,11 +758,11 @@ cause intermittent sandbox corruption.");
 	    pserver_authenticate_connection ();
       
 	    /* Pretend we were invoked as a plain server.  */
-	    command_name = "server";
+	    cvs_cmd_name = "server";
 	}
 # endif /* AUTH_SERVER_SUPPORT || HAVE_GSSAPI */
 
-	server_active = strcmp (command_name, "server") == 0;
+	server_active = strcmp (cvs_cmd_name, "server") == 0;
 
 #endif /* SERVER_SUPPORT */
 
@@ -821,7 +821,7 @@ cause intermittent sandbox corruption.");
 #endif /* KLUDGE_FOR_WNT_TESTSUITE */
 
 	if (use_cvsrc)
-	    read_cvsrc (&argc, &argv, command_name);
+	    read_cvsrc (&argc, &argv, cvs_cmd_name);
 
 #ifdef SERVER_SUPPORT
 	/* Fiddling with CVSROOT doesn't make sense if we're running
@@ -962,7 +962,7 @@ cause intermittent sandbox corruption.");
 		    {
 			save_errno = errno;
 			/* If this is "cvs init", the root need not exist yet.  */
-			if (strcmp (command_name, "init") != 0)
+			if (strcmp (cvs_cmd_name, "init") != 0)
 			{
 			    error (1, save_errno, "%s", path);
 			}
@@ -1186,7 +1186,7 @@ tm_to_internet (char *dest, const struct tm *source)
 void
 usage (register const char *const *cpp)
 {
-    (void) fprintf (stderr, *cpp++, program_name, command_name);
+    (void) fprintf (stderr, *cpp++, program_name, cvs_cmd_name);
     for (; *cpp; cpp++)
 	(void) fprintf (stderr, *cpp);
     exit (EXIT_FAILURE);

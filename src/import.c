@@ -88,7 +88,7 @@ import (int argc, char **argv)
 #endif
 		    error (1, 0,
 			   "-q or -Q must be specified before \"%s\"",
-			   command_name);
+			   cvs_cmd_name);
 		break;
 	    case 'd':
 #ifdef SERVER_SUPPORT

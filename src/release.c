@@ -90,7 +90,7 @@ release (int argc, char **argv)
 	    case 'q':
 		error (1, 0,
 		       "-q or -Q must be specified before \"%s\"",
-		       command_name);
+		       cvs_cmd_name);
 		break;
 	    case 'd':
 		delete_flag++;
@@ -217,7 +217,7 @@ release (int argc, char **argv)
 	    if (c)			/* "No" */
 	    {
 		(void) fprintf (stderr, "** `%s' aborted by user choice.\n",
-				command_name);
+				cvs_cmd_name);
 		free (repository);
 		if (restore_cwd (&cwd, NULL))
 		    exit (EXIT_FAILURE);
