@@ -1430,6 +1430,8 @@ VERS: ", 0);
 	    /* fix up the vers structure, in case it is used by join */
 	    if (join_rev1)
 	    {
+		/* FIXME: Throwing away the original revision info is almost
+		   certainly wrong -- what if join_rev1 is "BASE"?  */
 		if (vers_ts->vn_user != NULL)
 		    free (vers_ts->vn_user);
 		if (vers_ts->vn_rcs != NULL)
@@ -2012,6 +2014,8 @@ merge_file (finfo, vers)
     /* fix up the vers structure, in case it is used by join */
     if (join_rev1)
     {
+	/* FIXME: Throwing away the original revision info is almost
+	   certainly wrong -- what if join_rev1 is "BASE"?  */
 	if (vers->vn_user != NULL)
 	    free (vers->vn_user);
 	vers->vn_user = xstrdup (vers->vn_rcs);
@@ -2126,6 +2130,9 @@ join_file (finfo, vers)
 	jdate2 = jdate1;
 	jdate1 = NULL;
     }
+
+    /* FIXME: Need to handle "BASE" for jrev1 and/or jrev2.  Note caveat
+       below about vn_user.  */
 
     /* Convert the second revision, walking branches and dates.  */
     rev2 = RCS_getversion (vers->srcfile, jrev2, jdate2, 1, (int *) NULL);
