@@ -1,5 +1,11 @@
 2001-09-04  Derek Price  <dprice@collab.net>
 
+	* Makefile.in: Regenerated with automake 1.5.
+	* aclocal.m4: Ditto.
+	* configure: Ditto.
+
+2001-09-04  Derek Price  <dprice@collab.net>
+
 	* INSTALL (Building from source code under UNIX): Add a comment about
 	the noautomake.sh script and autotool versions.
 
