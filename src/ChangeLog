@@ -1,3 +1,9 @@
+2004-01-25  Derek Price  <derek@ximbiot.com>
+
+	* server.c (kserver_authenticate_connection): Fix call to
+	switch_to_user().
+	(Original patch from Alexey Mahotkin <alexm@hsys.msk.ru>.)
+
 2004-01-22  Derek Price  <derek@ximbiot.com>
 
 	* modules.c (do_module): Strip trailing slashes before checking for
