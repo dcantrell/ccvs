@@ -6,9 +6,11 @@ GENERAL USER ISSUES
 * A problem with `cvs release' of subdirs that could corrupt CVS/Entries files
   has been fixed (client/server).
 
-* The CVS server has had the protocol check for unused data from the client
-  completely removed.  It is now assumed that the server knows when to shut
-  down or we would detect it via other means.
+* The CVS server's protocol check for unused data from the client is no longer
+  called automatically at program exit in order to avoid potential recursive
+  calls to error when the first close is due to memory allocation or similar
+  problems that cause calls to error() to fail.  The check is still made when
+  the server program exits normally.
 
 * The CVSROOT/*info files want a new command format and the old style strings
   have been deprecated.  Please see the manual for more information on the new

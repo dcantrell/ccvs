@@ -1,5 +1,9 @@
 2004-02-25  Derek Price  <derek@ximbiot.com>
 
+	* NEWS: Update dying gasp note.
+
+2004-02-25  Derek Price  <derek@ximbiot.com>
+
 	* cvsnt.mak (exitfail.obj): s/windows-NT/lib/.
 
 2004-02-25  Derek Price  <derek@ximbiot.com>

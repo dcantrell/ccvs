@@ -137,8 +137,23 @@ get_buffer_data (void)
     return ret;
 }
 
-/* See whether a buffer is empty.  */
 
+
+/* See whether a buffer and its file descriptor is empty.  */
+int
+buf_empty (buf)
+    struct buffer *buf;
+{
+	/* Try and read any data on the file descriptor first.
+	 * We already know the descriptor is non-blocking.
+	 */
+	buf_input_data (buf, NULL);
+	return buf_empty_p (buf);
+}
+
+
+
+/* See whether a buffer is empty.  */
 int
 buf_empty_p (struct buffer *buf)
 {
@@ -149,6 +164,8 @@ buf_empty_p (struct buffer *buf)
 	    return 0;
     return 1;
 }
+
+
 
 # ifdef SERVER_FLOWCONTROL
 /*
