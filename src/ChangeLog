@@ -1,4 +1,12 @@
-Sun Jan 28 01:07:22 1996  Jim Kingdon
+Sun Jan 28 09:45:53 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* edit.c, edit.h (mark_up_to_date): New function, to remove file
+	in CVS/Base.
+	* client.c (update_entries): Call it if file is up to date.
+	* checkin.c (Checkin): Call it in non-server (local) case.
+	* sanity.sh: New test 182.5, tests for above-fixed bug.
+
+Sun Jan 28 01:07:22 1996  Jim Kingdon  (kingdon@beezley)
 
 	* client.c (change_mode): Separate out CHMOD_BROKEN code to parse
 	mode_string, rather than going through a mode_t.  Cleaner than

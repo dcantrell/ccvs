@@ -2101,6 +2101,8 @@ EOF
 	  else
 	    echo 'FAIL: test 182' | tee -a ${LOGFILE}
 	  fi
+	  # Unedit of a file not being edited should be a noop.
+	  dotest 182.5 "${testcvs} unedit abb" ''
 
 	  if ${testcvs} editors >../ans183.tmp; then
 	    echo 'PASS: test 183' >>${LOGFILE}

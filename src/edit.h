@@ -31,6 +31,10 @@ extern void notify_do PROTO ((int type, char *filename, char *who,
 			      char *val, char *watches, char *repository));
 
 /* Set attributes to reflect the fact that EDITOR is editing FILENAME.
-   VAL is time+host+directory, or NULL if we are to saying that EDITOR is
+   VAL is time+host+directory, or NULL if we are to say that EDITOR is
    *not* editing FILENAME.  */
 extern void editor_set PROTO ((char *filename, char *editor, char *val));
+
+/* Take note of the fact that FILE is up to date (this munges CVS/Base;
+   processing of CVS/Entries is done separately).  */
+extern void mark_up_to_date PROTO ((char *file));
