@@ -516,6 +516,7 @@ Reader_Lock (char *xrepository)
 
     /* remember what we're locking (for Lock_Cleanup) */
     global_readlock.repository = xstrdup (xrepository);
+    global_readlock.free_repository = 1;
 
     /* get the lock dir for our own */
     if (set_lock (&global_readlock, 1) != L_OK)
@@ -1220,10 +1221,9 @@ lock_dir_for_write (const char *repository)
 
 	if (global_writelock.repository != NULL)
 	    remove_lock_files (&global_writelock, 1);
-	else
-	    global_writelock.free_repository = 1;
 
 	global_writelock.repository = xstrdup (repository);
+	global_writelock.free_repository = 1;
 
 	for (;;)
 	{
