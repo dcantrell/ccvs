@@ -154,6 +154,21 @@ import (int argc, char **argv)
 	use_file_modtime = 1;
 #endif
 
+    /* Don't allow "CVS" as any directory in module path.
+     *
+     * Could abstract this to valid_module_path, but I don't think we'll need
+     * to call it from anywhere else.
+     */
+    if ((cp = strstr(argv[0], "CVS")) &&   /* path contains "CVS" AND ... */
+        ((cp == argv[0]) || (*(cp-1) == '/')) && /* /^CVS/ OR m#/CVS# AND ... */
+        ((*(cp+3) == '\0') || (*(cp+3) == '/')) /* /CVS$/ OR m#CVS/# */
+       )
+    {
+        error (0, 0,
+               "The word `CVS' is reserved by CVS and may not be used");
+        error (1, 0, "as a directory in a path or as a file name.");
+    }
+
     for (i = 1; i < argc; i++)		/* check the tags for validity */
     {
 	int j;
