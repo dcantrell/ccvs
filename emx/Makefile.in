@@ -304,6 +304,12 @@ cvs.exe: ${OBJECTS} ${lib_dir}/libcvs.a ${zlib_dir}/libz.a
 # cvs.o: ${OBJECTS} ${SOURCES} ${HEADERS}
 
 subdir = emx
+# Hmm.  This rule wants to exist on unix, so that "make dist" works.
+# And it doesn't want to exist on OS/2, because configure doesn't
+# run on OS/2 and so ../config.status won't exist.  For now we just
+# say, in emx/README, that people will need to comment it out.  I'm
+# confused about why this hasn't been a problem with os2/Makefile.in
+# though.
 Makefile: ../config.status $(srcdir)/Makefile.in
 	cd .. && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= ./config.status
 
