@@ -1,5 +1,10 @@
 2004-09-15  Derek Price  <derek@ximbiot.com>
 
+	* sanity.sh (sync-secondary, writeproxy, writeproxy-noredirect): Remove
+	redundant checks for $RSYNC readability.
+
+2004-09-15  Derek Price  <derek@ximbiot.com>
+
 	* sanity.sh: Only find $RSYNC once.
 
 2004-09-15  Derek Price  <derek@ximbiot.com>
