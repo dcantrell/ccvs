@@ -3241,11 +3241,12 @@ server_clear_entstat (update_dir, repository)
 }
 
 void
-server_set_sticky (update_dir, repository, tag, date)
+server_set_sticky (update_dir, repository, tag, date, nonbranch)
     char *update_dir;
     char *repository;
     char *tag;
     char *date;
+    int nonbranch;
 {
     static int set_sticky_supported = -1;
 
@@ -3271,7 +3272,10 @@ server_set_sticky (update_dir, repository, tag, date)
 	buf_output0 (protocol, "\n");
 	if (tag != NULL)
 	{
-	    buf_output0 (protocol, "T");
+	    if (nonbranch)
+		buf_output0 (protocol, "N");
+	    else
+		buf_output0 (protocol, "T");
 	    buf_output0 (protocol, tag);
 	}
 	else

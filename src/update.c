@@ -73,6 +73,15 @@ static void join_file PROTO ((struct file_info *finfo, Vers_TS *vers_ts));
 static char *options = NULL;
 static char *tag = NULL;
 static char *date = NULL;
+/* This is a bit of a kludge.  We call WriteTag at the beginning
+   before we know whether nonbranch is set or not.  And then at the
+   end, once we have the right value for nonbranch, we call WriteTag
+   again.  I don't know whether the first call is necessary or not.
+   rewrite_tag is nonzero if we are going to have to make that second
+   call.  */
+static int rewrite_tag;
+static int nonbranch;
+
 static char *join_rev1, *date_rev1;
 static char *join_rev2, *date_rev2;
 static int aflag = 0;
@@ -342,11 +351,10 @@ update (argc, argv)
 	/* keep the CVS/Tag file current with the specified arguments */
 	if (aflag || tag || date)
 	{
-	    WriteTag ((char *) NULL, tag, date);
-#ifdef SERVER_SUPPORT
-	    if (server_active)
-		server_set_sticky (".", Name_Repository (NULL, NULL), tag, date);
-#endif
+	    WriteTag ((char *) NULL, tag, date, 0,
+		      ".", Name_Repository (NULL, NULL));
+	    rewrite_tag = 1;
+	    nonbranch = 0;
 	}
     }
 
@@ -466,6 +474,23 @@ update_fileproc (callerdat, finfo)
 
     status = Classify_File (finfo, tag, date, options, force_tag_match,
 			    aflag, &vers, pipeout);
+
+    /* Keep track of whether TAG is a branch tag.
+       Note that if it is a branch tag in some files and a nonbranch tag
+       in others, treat it as a nonbranch tag.  It is possible that case
+       should elicit a warning or an error.  */
+    if (rewrite_tag
+	&& tag != NULL
+	&& finfo->rcs != NULL)
+    {
+	char *rev = RCS_getversion (finfo->rcs, tag, NULL, 1, NULL);
+	if (rev != NULL
+	    && !RCS_nodeisbranch (finfo->rcs, tag))
+	    nonbranch = 1;
+	if (rev != NULL)
+	    free (rev);
+    }
+
     if (pipeout)
     {
 	/*
@@ -683,6 +708,12 @@ update_filesdone_proc (callerdat, err, repository, update_dir, entries)
     char *update_dir;
     List *entries;
 {
+    if (rewrite_tag)
+    {
+	WriteTag (NULL, tag, date, nonbranch, update_dir, repository);
+	rewrite_tag = 0;
+    }
+
     /* if this directory has an ignore list, process it then free it */
     if (ignlist)
     {
@@ -753,7 +784,12 @@ update_dirent_proc (callerdat, dir, repository, update_dir, entries)
 	{
 	    /* otherwise, create the dir and appropriate adm files */
 	    make_directory (dir);
-	    Create_Admin (dir, update_dir, repository, tag, date);
+	    Create_Admin (dir, update_dir, repository, tag, date,
+			  /* This is a guess.  We will rewrite it later
+			     via WriteTag.  */
+			  0);
+	    rewrite_tag = 1;
+	    nonbranch = 0;
 	    Subdir_Register (entries, (char *) NULL, dir);
 	}
     }
@@ -805,11 +841,9 @@ update_dirent_proc (callerdat, dir, repository, update_dir, entries)
 	/* keep the CVS/Tag file current with the specified arguments */
 	if (aflag || tag || date)
 	{
-	    WriteTag (dir, tag, date);
-#ifdef SERVER_SUPPORT
-	    if (server_active)
-		server_set_sticky (update_dir, repository, tag, date);
-#endif
+	    WriteTag (dir, tag, date, 0, update_dir, repository);
+	    rewrite_tag = 1;
+	    nonbranch = 0;
 	}
 
 	/* initialize the ignore list for this directory */

@@ -1,5 +1,26 @@
 Tue Mar 25 13:26:52 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvs.h, entries.c (WriteTag): Add arguments nonbranch,
+	update_dir, and repository.  Move the server_set_sticky call from
+	callers to here.
+	* cvs.h, create_adm.c (Create_Admin): New argument nonbranch.
+	* cvs.h, entries.c (ParseTag): Add argument nonbranchp.
+	* cvs.h (struct stickydirtag): Add field nonbranch.
+	* entries.c (Entries_Open): Set it.
+	* cvs.h (Vers_TS): Add field nonbranch.
+	* vers_ts.c (Version_TS): Copy it from struct stickydirtag.
+	* server.c, server.h (server_set_sticky): Add argument nonbranch.
+	* add.c, client.c, checkout.c, modules.c, update.c, create_adm.c,
+	commit.c: Update callers.
+	* add.c (add): If nonbranch, don't add the file on that "branch".
+	* commit.c (write_dirnonbranch): New variable.
+	(commit_fileproc, commit): Set it.
+	(commit_dirleaveproc): Pass it to WriteTag.
+	* update.c (rewrite_tag, nonbranch): New variables.
+	(update, update_dirent_proc, update_fileproc): Set them.
+	(update_filesdoneproc): If rewrite_tag, call WriteTag.
+	* sanity.sh (sticky): New tests, test for above fix.
+
 	* version.c: Change version number to 1.9.7.
 
 	* version.c: Version 1.9.6.

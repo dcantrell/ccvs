@@ -325,6 +325,8 @@ struct stickydirtag
     int aflag;
     char *tag;
     char *date;
+    int nonbranch;
+
     /* This field is set by Entries_Open() if there was subdirectory
        information; Find_Directories() uses it to see whether it needs
        to scan the directory itself.  */
@@ -459,7 +461,8 @@ int yesno PROTO((void));
 void *valloc PROTO((size_t bytes));
 time_t get_date PROTO((char *date, struct timeb *now));
 void Create_Admin PROTO((char *dir, char *update_dir,
-			 char *repository, char *tag, char *date));
+			 char *repository, char *tag, char *date,
+			 int nonbranch));
 
 /* Locking subsystem (implemented in lock.c).  */
 
@@ -473,9 +476,10 @@ void lock_tree_for_write PROTO ((int argc, char **argv, int local, int aflag));
 /* See lock.c for description.  */
 extern void lock_dir_for_write PROTO ((char *));
 
-void ParseTag PROTO((char **tagp, char **datep));
 void Scratch_Entry PROTO((List * list, char *fname));
-void WriteTag PROTO((char *dir, char *tag, char *date));
+void ParseTag PROTO((char **tagp, char **datep, int *nonbranchp));
+void WriteTag PROTO ((char *dir, char *tag, char *date, int nonbranch,
+		      char *update_dir, char *repository));
 void cat_module PROTO((int status));
 void check_entries PROTO((char *dir));
 void close_module PROTO((DBM * db));
@@ -673,6 +677,9 @@ struct vers_ts
     /* Date specified on the command line, or if none, date stored in
        CVS/Entries.  */
     char *date;
+    /* If this is 1, then tag is not a branch tag.  If this is 0, then
+       tag may or may not be a branch tag.  */
+    int nonbranch;
 
     /* Pointer to entries file node  */
     Entnode *entdata;

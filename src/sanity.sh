@@ -466,6 +466,7 @@ RCSINIT=; export RCSINIT
 
 if test x"$*" = x; then
 	tests="basica basicb basic1 deep basic2 rdiff death death2 branches multibranch import join new newb conflicts conflicts2 modules modules2 modules3 mflag errmsg1 devcom devcom2 devcom3 ignore binfiles binwrap info serverpatch log log2 crerepos rcs big modes"
+	tests="${tests} sticky"
 else
 	tests="$*"
 fi
@@ -5715,9 +5716,54 @@ done'
 	  fi
 
 	  cd ../..
-	  rm -rf 1 ${TESTDIR}/first-dir
+	  rm -rf 1 ${CVSROOT_DIRNAME}/first-dir
 	  # Perhaps should restore the umask and CVSUMASK.  But the other
 	  # tests "should" not care about them...
+	  ;;
+
+	sticky)
+	  # More tests of sticky tags, particularly non-branch sticky tags.
+	  mkdir 1; cd 1
+	  dotest sticky-1 "${testcvs} -q co -l ." ''
+	  mkdir first-dir
+	  dotest sticky-2 "${testcvs} add first-dir" \
+"Directory ${TESTDIR}/cvsroot/first-dir added to the repository"
+	  cd first-dir
+
+	  touch file1
+	  dotest sticky-3 "${testcvs} add file1" \
+"${PROG} [a-z]*: scheduling file .file1. for addition
+${PROG} [a-z]*: use .cvs commit. to add this file permanently"
+	  dotest sticky-4 "${testcvs} -q ci -m add" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
+done
+Checking in file1;
+${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
+initial revision: 1\.1
+done"
+	  dotest sticky-5 "${testcvs} -q tag tag1" "T file1"
+	  echo add a line >>file1
+	  dotest sticky-6 "${testcvs} -q ci -m modify" \
+"Checking in file1;
+${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
+new revision: 1\.2; previous revision: 1\.1
+done"
+	  dotest sticky-7 "${testcvs} -q update -r tag1" "[UP] file1"
+	  dotest sticky-8 "cat file1" ''
+	  dotest sticky-9 "${testcvs} -q update" ''
+	  dotest sticky-10 "cat file1" ''
+	  touch file2
+	  dotest_fail sticky-11 "${testcvs} add file2" \
+"${PROG} [a-z]*: cannot add file on non-branch tag tag1"
+	  dotest sticky-12 "${testcvs} -q update -A" "[UP] file1
+${QUESTION} file2" "${QUESTION} file2
+[UP] file1"
+	  dotest sticky-13 "${testcvs} add file2" \
+"${PROG} [a-z]*: scheduling file .file2. for addition
+${PROG} [a-z]*: use .cvs commit. to add this file permanently"
+	  cd ..
+
+	  rm -rf 1 ${TESTDIR}/first-dir
 	  ;;
 
 	*)

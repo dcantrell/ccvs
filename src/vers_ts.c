@@ -114,7 +114,10 @@ Version_TS (finfo, options, tag, date, force_tag_match, set_time)
     else if (!vers_ts->entdata && (sdtp && sdtp->aflag == 0))
     {
 	if (!vers_ts->tag)
+	{
 	    vers_ts->tag = xstrdup (sdtp->tag);
+	    vers_ts->nonbranch = sdtp->nonbranch;
+	}
 	if (!vers_ts->date)
 	    vers_ts->date = xstrdup (sdtp->date);
     }
