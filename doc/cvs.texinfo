@@ -2652,6 +2652,9 @@ edit that file.  (breaking locks, or lack thereof).
 @cindex File status
 @cindex Status of a file
 
+@c Shouldn't this start with an example or something,
+@c introducing the unreserved checkout model?  Before we
+@c dive into listing states?
 Based on what operations you have performed on a
 checked out file, and what operations others have
 performed to that file in the repository, one can
@@ -2761,11 +2764,38 @@ use.
 @c perhaps it should be removed for non-client/server too?
 @c FIXME: Need some examples.
 
-For information on the options to @code{status}, see
-@ref{status}.  For information on its @code{Sticky tag}
+@c Would be nice to have an @example showing output
+@c from cvs status, with comments showing the xref
+@c where each part of the output is described.  This
+@c might fit in nicely if it is desirable to split this
+@c node in two; one to introduce "cvs status" and one
+@c to list each of the states.
+The options to @code{status} are listed in
+@ref{Invoking CVS}.  For information on its @code{Sticky tag}
 and @code{Sticky date} output, see @ref{Sticky tags}.
 For information on its @code{Sticky options} output,
 see the @samp{-k} option in @ref{update options}.
+
+You can think of the @code{status} and @code{update}
+commands as somewhat complementary.  You use
+@code{update} to bring your files up to date, and you
+can use @code{status} to give you some idea of what an
+@code{update} would do (of course, the state of the
+repository might change before you actually run
+@code{update}).  In fact, if you want a command to
+display file status in a more brief format than is
+displayed by the @code{status} command, you can invoke
+
+@cindex update, to display file status
+@example
+$ cvs -n -q update
+@end example
+
+The @samp{-n} option means to not actually do the
+update, but merely to display statuses; the @samp{-q}
+option avoids printing the name of each directory.  For
+more information on the @code{update} command, and
+these options, see @ref{Invoking CVS}.
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node Updating a file
@@ -5905,7 +5935,6 @@ reference to @sc{cvs} commands, @pxref{Invoking CVS}).
 * rdiff::                       'patch' format diffs between releases
 * release::                     Indicate that a Module is no longer in use
 * rtag::                        Add a tag to a module
-* status::                      Status info on the revisions
 * tag::                         Add a tag to checked out version
 * update::                      Bring work tree in sync with repository
 @end menu
@@ -6876,7 +6905,8 @@ Process @sc{rcs} keywords according to @var{kflag}.  See
 co(1).  This option is sticky; future updates of
 this file in this working directory will use the same
 @var{kflag}.  The @code{status} command can be viewed
-to see the sticky options.  @xref{status}.
+to see the sticky options.  See @ref{Invoking CVS}, for
+more information on the @code{status} command.
 
 @item -l
 Local; run only in current working directory.
@@ -8331,78 +8361,6 @@ module).
 @end ignore
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-@node status
-@appendixsec status---Display status information on checked out files
-@cindex Status (subcommand)
-
-@c It is not clear to me what the best home for this
-@c information is.  Probably put a @deffn in "File
-@c status" listing options and documenting -l and -R,
-@c and refer to Sticky tags,
-@c Tags, and <something for sticky options> for the more
-@c obscure features.
-
-@itemize @bullet
-@item
-status [-lR] [-v] [files@dots{}]
-@item
-Requires: working directory, repository.
-@item
-Changes: nothing.
-@end itemize
-
-Display a brief report on the current status of files
-with respect to the source repository.  For information
-on the basic output see @ref{File status}.  For
-information on the @code{Sticky tag} and @code{Sticky
-date} output, see @ref{Sticky tags}.  For information
-on the @code{Sticky options} output, see the @samp{-k}
-option in @ref{update options}.
-
-You can also use this command to determine the
-potential impact of a @samp{cvs update} on your working
-source directory---but remember that things might
-change in the repository before you run @code{update}.
-
-@menu
-* status options::              status options
-@end menu
-
-@c . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
-@node status options
-@appendixsubsec status options
-
-These standard options are supported by @code{status}
-(@pxref{Common options}, for a complete description of
-them):
-
-@table @code
-@item -l
-Local; run only in current working directory.
-
-@item -R
-Commit directories recursively.  This is on by default.
-@end table
-
-There is one additional option:
-
-@table @code
-@item -v
-Verbose.  In addition to the information normally
-displayed, print all symbolic tags, together with the
-numerical value of the revision or branch they refer
-to.  For more information, see @ref{Tags}
-@end table
-
-@ignore
-@c . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
-@c @node status examples
-@appendixsubsec status examples
-
-@c -- FIXME
-@end ignore
-
-@c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node tag
 @appendixsec tag---Add a symbolic tag to checked out versions of files
 @c --                    //////// - unnecessary. Also
@@ -8534,7 +8492,6 @@ since your last checkout or update.
 @menu
 * update options::              update options
 * update output::               update output
-* update examples::             update examples
 @end menu
 
 @c . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
@@ -8562,7 +8519,8 @@ Process @sc{rcs} keywords according to @var{kflag}.  See
 co(1).  This option is sticky; future updates of
 this file in this working directory will use the same
 @var{kflag}.  The @code{status} command can be viewed
-to see the sticky options.  @xref{status}.
+to see the sticky options.  See @ref{Invoking CVS}, for
+more information on the @code{status} command.
 
 @item -l
 Local; run only in current working directory.  @xref{Recursive behavior}.
@@ -8731,19 +8689,6 @@ not in the list of files for @sc{cvs} to ignore (see the
 description of the @samp{-I} option, and
 @pxref{cvsignore}).
 @end table
-
-@c . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
-@node update examples
-@appendixsubsec update examples
-
-The following line will display all files which are not
-up-to-date without actually change anything in your
-working directory.  It can be used to check what has
-been going on with the project.
-
-@example
-$ cvs -n -q update
-@end example
 
 @node Invoking CVS
 @appendix Quick reference to CVS commands
@@ -9260,7 +9205,7 @@ Tag existing tag @var{tag}.  See @ref{rtag options}.
 
 @item status [@var{options}] @var{files}@dots{}
 Display status information in a working directory.  See
-@ref{status}.
+@ref{File status}.
 
 @table @code
 @item -l
@@ -9271,7 +9216,7 @@ Operate recursively (default).  @xref{Recursive
 behavior}.
 
 @item -v
-Include tag information for file.  See @ref{status options}.
+Include tag information for file.  See @ref{Tags}.
 @end table
 
 @item tag [@var{options}] @var{tag} [@var{files}@dots{}]
