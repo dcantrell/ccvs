@@ -1,3 +1,46 @@
+2004-07-08  Derek Price  <derek@ximbiot.com>
+
+	Intermediate checkin.  Adds posttag, postadmin, preproxy, & postproxy
+	hooks and some test cruft to test everything.
+
+	* admin.c (postadmin_proc, admin_filesdoneproc): New functions.
+	(admin): Pass admin_filesdoneproc() to start_recursion().
+	(*): Misc gratuitous cleanup.
+	* commit.c (commit_filesdoneproc): Remove unnecessary typecast.
+	* cvs.h (CVSROOTADM_*): Alphabetize, add new hook config files.
+	(format_cmdline): Fix proto to match change below.
+	* log.c (log_fileproc): Print primary path.
+	* mkmodules.c (*_content): Add init content for new files.  Misc
+	cleanup.
+	(filelist): Add new files.
+	* rcs.c (RCS_parsercsfile_i): Set print_path.  Misc gratuitous cleanup.
+	(freercsnode): Free print_path.
+	* rcs.h (struct rcsnode): Add print_path.
+	* rcscmds.c (RCS_merge, RCS_exec_rcsdiff): Print primary path.
+	* server.c (isSecondaryServer): No longer static.
+	(read_secondary_log): Don't open log O_LARGEFILE.
+	(move_file_offset): Use fsync() rather than fdatasync() for
+	portability.
+	(serve_sticky, serve_argumentx): Handle secondary logging.
+	(prepost_proxy_proc): New function.
+	(become_proxy): Call pre & post proxy hooks.  Handle IO closing better.
+	(do_cvs_command): Attempt to output 3rd version in proxy mode.
+	(*): Misc gratuitous cleanup.
+	* server.h (isSecondaryServer): No longer static.
+	* status.c (status_fileproc): Print primary path.
+	* subr.c (format_cmdline): Use bool in place of 0/1 int.
+	* tag.c (struct pretag_proc_data): Move before first use.
+	(posttag_proc, tag_filesdoneproc): New functions.
+	(rtag_proc): Pass new procs to start_recursion().
+	(*): Misc gratuitous cleanup.
+	* version.c (version): Attempt to generate secondary server output.
+	Route output via cvs_output().
+	* logmsg.c (*), parseinfo.c (*), run.c (run_exec): Misc gratuitous
+	cleanup.
+	* sanity.sh: Accept --proxy argument and run in write proxy mode when
+	seen.  Misc fixes to account for other changes.  Misc gratuitous
+	cleanup.
+
 2004-07-02  Derek Price  <derek@ximbiot.com>
 
 	Woo-hoo!  Write proxies work!

@@ -872,7 +872,7 @@ log_fileproc (void *callerdat, struct file_info *finfo)
     cvs_output ("\n", 1);
 
     cvs_output ("RCS file: ", 0);
-    cvs_output (rcsfile->path, 0);
+    cvs_output (rcsfile->print_path, 0);
 
     if (!is_rlog)
     {

@@ -150,23 +150,27 @@ char *strerror (int);
  * entire source repository beginning at $CVSROOT.
  */
 #define	CVSROOTADM		"CVSROOT"
-#define	CVSROOTADM_MODULES	"modules"
-#define	CVSROOTADM_LOGINFO	"loginfo"
-#define	CVSROOTADM_RCSINFO	"rcsinfo"
-#define CVSROOTADM_COMMITINFO	"commitinfo"
-#define CVSROOTADM_TAGINFO      "taginfo"
-#define CVSROOTADM_VERIFYMSG    "verifymsg"
-#define	CVSROOTADM_HISTORY	"history"
-#define CVSROOTADM_VALTAGS	"val-tags"
-#define	CVSROOTADM_IGNORE	"cvsignore"
 #define	CVSROOTADM_CHECKOUTLIST "checkoutlist"
-#define CVSROOTADM_WRAPPER	"cvswrappers"
-#define CVSROOTADM_NOTIFY	"notify"
-#define CVSROOTADM_USERS	"users"
-#define CVSROOTADM_READERS	"readers"
-#define CVSROOTADM_WRITERS	"writers"
-#define CVSROOTADM_PASSWD	"passwd"
+#define CVSROOTADM_COMMITINFO	"commitinfo"
 #define CVSROOTADM_CONFIG	"config"
+#define	CVSROOTADM_HISTORY	"history"
+#define	CVSROOTADM_IGNORE	"cvsignore"
+#define	CVSROOTADM_LOGINFO	"loginfo"
+#define	CVSROOTADM_MODULES	"modules"
+#define CVSROOTADM_NOTIFY	"notify"
+#define CVSROOTADM_PASSWD	"passwd"
+#define CVSROOTADM_PREPROXY	"postproxy"
+#define CVSROOTADM_POSTADMIN	"postadmin"
+#define CVSROOTADM_POSTPROXY	"postproxy"
+#define CVSROOTADM_POSTTAG	"posttag"
+#define	CVSROOTADM_RCSINFO	"rcsinfo"
+#define CVSROOTADM_READERS	"readers"
+#define CVSROOTADM_TAGINFO      "taginfo"
+#define CVSROOTADM_USERS	"users"
+#define CVSROOTADM_VALTAGS	"val-tags"
+#define CVSROOTADM_VERIFYMSG    "verifymsg"
+#define CVSROOTADM_WRAPPER	"cvswrappers"
+#define CVSROOTADM_WRITERS	"writers"
 
 #define CVSNULLREPOS		"Emptydir"	/* an empty directory */
 
@@ -725,7 +729,7 @@ struct format_cmdline_walklist_closure
 char *cmdlinequote (char quotes, char *s);
 char *cmdlineescape (char quotes, char *s);
 #ifdef SUPPORT_OLD_INFO_FMT_STRINGS
-char *format_cmdline (int oldway, const char *srepos, const char *format, ...);
+char *format_cmdline (bool oldway, const char *srepos, const char *format, ...);
 #else /* SUPPORT_OLD_INFO_FMT_STRINGS */
 char *format_cmdline (const char *format, ...);
 #endif /* SUPPORT_OLD_INFO_FMT_STRINGS */

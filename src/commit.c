@@ -1488,7 +1488,7 @@ commit_filesdoneproc (void *callerdat, int err, const char *repository,
 
     got_message = 0;
 
-    Update_Logfile (repository, saved_message, (FILE *) 0, ulist);
+    Update_Logfile (repository, saved_message, NULL, ulist);
 
     /* Build the administrative files if necessary.  */
     {

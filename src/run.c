@@ -163,6 +163,8 @@ run_exec (const char *stin, const char *stout, const char *sterr, int flags)
     {
 #ifdef SERVER_SUPPORT
 	cvs_outerr (server_active ? "S" : " ", 1);
+#else
+	cvs_outerr (" ", 1);
 #endif
 	cvs_outerr ("-> system(", 0);
 	run_print (stderr);
@@ -172,7 +174,7 @@ run_exec (const char *stin, const char *stout, const char *sterr, int flags)
 	return 0;
 
     /* make sure that we are null terminated, since we didn't calloc */
-    run_add_arg ((char *)0);
+    run_add_arg (NULL);
 
     /* setup default file descriptor numbers */
     shin = 0;
