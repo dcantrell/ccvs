@@ -5844,8 +5844,14 @@ seems that most people with a need for reserved
 checkouts find it adequate.
 @c Or "find it better than worrying about implementing
 @c nicely integrated reserved checkouts" or ...?
-It also may be possible to use the watches
-features described below, together with suitable
+
+As of @sc{cvs} version 1.12.10, another technique for getting most of the
+effect of reserved checkouts is to enable advisory locks.  To enable advisory
+locks, have all developers put "edit -c", "commit -c" in their
+.cvsrc file, and turn on watches in the repository.  This
+prevents them from doing a @code{cvs edit} if anyone is
+already editting the file.  It also may
+be possible to use plain watches together with suitable
 procedures (not enforced by software), to avoid having
 two people edit at the same time.
 
@@ -6495,6 +6501,16 @@ edit them, and @code{cvs release} (not @code{rm}) to
 discard a working directory which is no longer in use,
 but @sc{cvs} is not able to enforce this behavior.
 
+If a development team wants stronger enforcement of
+watches and all team members are using a @sc{cvs} client version 1.12.10 or
+greater to access a @sc{cvs} server version 1.12.10 or greater, they can
+enable advisory locks.  To enable advisory locks, have all developers
+put "edit -c" and "commit -c" into all .cvsrc files,
+and make files default to read only by turning on watches
+or putting "cvs -r" into all .cvsrc files.
+This prevents multiple people from editting a file at
+the same time (unless explicitly overriden with @samp{-f}).
+
 @c I'm a little dissatisfied with this presentation,
 @c because "watch on"/"edit"/"editors" are one set of
 @c functionality, and "watch add"/"watchers" is another
@@ -6734,6 +6750,14 @@ receive notifications, she should specify @code{-a none}.
 The @var{files} and the options are processed as for the @code{cvs
 watch} commands.
 
+There are two additional options that @code{cvs edit} understands as of
+@sc{cvs} client and server versions 1.12.10 but @code{cvs watch} does not.
+The first is @code{-c}, which causes @code{cvs edit} to fail if anyone else
+is editting the file.  This is probably only useful when @samp{edit -c} and
+@samp{commit -c} are specified in all developers' @file{.cvsrc} files.  This
+behavior may be overriden this via the @code{-f} option, which overrides
+@code{-c} and allows multiple edits to succeed.
+
 @ignore
 @strong{Caution: If the @code{PreservePermissions}
 option is enabled in the repository (@pxref{config}),
@@ -6894,9 +6918,19 @@ is editing it.  And rather than having the system
 simply forbid both people editing the file, it can tell
 you what the situation is and let you figure out
 whether it is a problem in that particular case or not.
-Therefore, for some groups it can be considered the
-best of both the reserved checkout and unreserved
+Therefore, for some groups watches can be
+considered the best of both the reserved checkout and unreserved
 checkout worlds.
+
+As of @sc{cvs} client and server versions 1.12.10, you may also enable
+advisory locks by putting @samp{edit -c} and @samp{commit -c} in all
+developers' @file{.cvsrc} files.  After this is done, @code{cvs edit}
+will fail if there are any other editors, and @code{cvs commit} will
+fail if the committer has not registered to edit the file via @code{cvs edit}.
+This is most effective in conjunction with files checked out read-only by
+default, which may be enabled by turning on watches in the repository or by
+putting @samp{cvs -r} in all @file{.cvsrc} files.
+
 
 @c ---------------------------------------------------------------------
 @node Revision management
@@ -9419,6 +9453,15 @@ cannot commit to a specific revision on a branch.
 @code{commit} also supports these options:
 
 @table @code
+@item -c
+Refuse to commit files unless the user has registered a valid edit on the
+file via @code{cvs edit}.  This is most useful when @samp{commit -c}
+and @samp{edit -c} have been placed in all @file{.cvsrc} files.
+A commit can be forced anyways by either regestering an edit retroactively
+via @code{cvs edit} (no changes to the file will be lost) or using the
+@code{-f} option to commit.  Support for @code{commit -c} requires both
+client and a server versions 1.12.10 or greater.
+
 @item -F @var{file}
 Read the log message from @var{file}, instead
 of invoking an editor.
@@ -9428,7 +9471,8 @@ Note that this is not the standard behavior of
 the @samp{-f} option as defined in @ref{Common options}.
 
 Force @sc{cvs} to commit a new revision even if you haven't
-made any changes to the file.  If the current revision
+made any changes to the file.  As of @sc{cvs} version 1.12.10,
+it also causes the @code{-c} option to be ignored.  If the current revision
 of @var{file} is 1.7, then the following two commands
 are equivalent:
 
@@ -11716,6 +11760,10 @@ Like -c, but include module status.  See @ref{checkout options}.
 Check changes into the repository.  See @ref{commit}.
 
 @table @code
+@item -c
+Check for valid edits before committing.  Requires a @sc{cvs} client and server
+both version 1.12.10 or greater.
+
 @item -F @var{file}
 Read log message from @var{file}.  See @ref{commit options}.
 
@@ -11790,6 +11838,13 @@ Specify actions for temporary watch, where
 @var{actions} is @code{edit}, @code{unedit},
 @code{commit}, @code{all}, or @code{none}.  See
 @ref{Editing files}.
+
+@item -c
+Check edits: Edit fails if someone else is already editting the file.
+Requires a @sc{cvs} client and server both of version 1.12.10 or greater.
+
+@item -f
+Force edit; ignore other edits.  Added in CVS 1.12.10.
 
 @item -l
 Local; run only in current working directory.  See @ref{Recursive behavior}.

@@ -1,5 +1,16 @@
 2004-10-04  Derek Price  <derek@ximbiot.com>
 
+	* cvs.texinfo (assorted edit and commit related sections): Add
+	information about new '-c' and '-f' options for reservations
+	patch.  The code (not documentation) for this feature was
+	originally from Noel Yap <yap_noel@yahoo.com>, originally ported
+	forward and enhanced by Matthew Ogilvie <mmo9317bd@mailcan.com>.)
+
+	* cvsclient.texi (Requests): Add "Hostname", "LocalDir", and "edit".
+	(Responses): Add "Edit-file".
+
+2004-10-04  Derek Price  <derek@ximbiot.com>
+
 	* cvs.texinfo (syntax): Note referrer format string.
 	* cvsclient.texi (Requests): Describe Referrer request.
 	(Responses): Note that a client should sent Referrer to the new server
