@@ -236,16 +236,41 @@ trying to accomplish and what the best way is -kingdon, Jul 1997).
      .#foo.c.1.5 or whatever), so they can do the interactive part at
      that point -kingdon, June 1996).
 
-149. On Sun, 2 Feb 92 22:01:38 EST, rouilj@dl5000.bc.edu (John P. Rouillard)
-     said:
-     Maybe there should be an option to cvs admin that allows a user to
-     change the Repository file with some degree of error checking?
+149. Maybe there should be an option to cvs admin that allows a user to
+     change the Repository/Root file with some degree of error checking?
      Something like "cvs admin reposmv /old/path /new/pretty/path".  Before
      it does the replace it check to see that the files
-     /new/pretty/path/<dir>/<files> exist.  (This was written before
-     CVS/Root existed.  Nowadays the more relevant issue is being able to
-     change CVS/Root with some degree of error checking, and RELATIVE_REPOS,
-     so that changing CVS/Root suffices -kingdon, Jul 1997).
+     /new/pretty/path/<dir>/<files> exist.
+
+     The obvious cases are where one moves the repository to another
+     machine or directory.  But there are other cases, like where the
+     user might want to change from :pserver: to :ext:, use a different
+     server (if there are two server machines which share the
+     repository using a networked file system), etc.
+
+     The status quo is a bit of a mess (as of, say, CVS 1.9).  It is
+     that the -d global option has two moderately different uses.  One
+     is to use a totally different repository (in which case we'd
+     probably want to give an error if it disagreed with CVS/Root, as
+     CVS 1.8 and earlier did).  The other is the "reposmv"
+     functionality above (in which the two repositories really are the
+     same, and we want to update the CVS/Root files).  A related issue
+     is that the fact that CVS only sets and looks at the CVS/Root
+     file in the directory where CVS is run; it doesn't do anything
+     about CVS/Root files in subdirectories.
+
+     Note also RELATIVE_REPOS in options.h; it needs to be set for
+     changing CVS/Root (not CVS/Repository) to be sufficient in the
+     case where the directory has changed.
+
+     This whole area is a rather bad pile of individual decisions which
+     accumulated over time, some of them probably bad decisions with
+     hindsight.  But we didn't get into this mess overnight, and we're
+     not going to get out of it overnight (that is, we need to come up
+     with a replacement behavior, document what parts of the status
+     quo are deprecated, probably circulate some unofficial patches, &c).
+
+     (this item originally added 2 Feb 1992 but revised since).
 
 150. I have a customer request for a way to specify log message per
      file, non-interactively before the commit, such that a single, fully
