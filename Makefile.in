@@ -220,7 +220,8 @@ DIST_COMMON = README $(srcdir)/Makefile.in $(srcdir)/configure \
 	ABOUT-NLS AUTHORS COPYING COPYING.LIB ChangeLog INSTALL \
 	Makefile.am NEWS TODO aclocal.m4 compile config.guess \
 	config.h.in config.rpath config.sub configure configure.in \
-	cvs.spec.in depcomp install-sh mdate-sh missing mkinstalldirs
+	cvs.spec.in depcomp install-sh mdate-sh missing mkinstalldirs \
+	ylwrap
 DIST_SUBDIRS = $(SUBDIRS)
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
