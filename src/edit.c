@@ -642,13 +642,14 @@ notify_do (type, filename, who, val, watches, repository)
     char *repository;
 {
     static struct addremove_args blank;
-    /* Initialize fields to 0, NULL, or 0.0.  */
-    struct addremove_args args = blank;
+    struct addremove_args args;
     char *watchers;
     char *p;
     char *endp;
     char *nextp;
 
+    /* Initialize fields to 0, NULL, or 0.0.  */
+    args = blank;
     switch (type)
     {
 	case 'E':
