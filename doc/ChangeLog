@@ -1,5 +1,8 @@
 Sat May  3 10:51:58 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvs.texinfo (rcsinfo): Add comment about checkoutlist and
+	related topics.
+
 	* cvs.texinfo (Server temporary directory): New node.
 
 	* cvs.texinfo (Backing up): New node.
