@@ -7883,6 +7883,11 @@ cat >>confdefs.h <<\_ACEOF
 #define HAVE_WORKING_GETLINE 1
 _ACEOF
 
+
+cat >>confdefs.h <<\_ACEOF
+#define HAVE_GETDELIM 1
+_ACEOF
+
   else
 
 cat >>confdefs.h <<\_ACEOF
