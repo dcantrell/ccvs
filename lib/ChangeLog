@@ -1,3 +1,9 @@
+Mon Dec 18 10:15:05 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* rename.c: Check ENOENT rather than existence_error.  The latter
+	is undefined in this file, and including system.h is said to cause
+	(unspecified) problems.
+
 Sun Dec 17 23:58:06 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* vasprintf.c: Removed (it is no longer used).
