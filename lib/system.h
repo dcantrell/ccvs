@@ -54,34 +54,65 @@ char *alloca ();
 #undef S_ISNWK
 #endif
 
-#if !defined(S_ISBLK) && defined(S_IFBLK)
+/* Not all systems have S_IFMT, but we probably want to use it if we
+   do.  See ChangeLog for a more detailed discussion. */
+
+#if !defined(S_ISBLK) && defined(S_IFBLK) && defined(S_IFMT)
 #define	S_ISBLK(m) (((m) & S_IFMT) == S_IFBLK)
+#else
+#define S_ISBLK(m) ((m) & S_IFBLK)
 #endif
-#if !defined(S_ISCHR) && defined(S_IFCHR)
+
+#if !defined(S_ISCHR) && defined(S_IFCHR) && defined(S_IFMT)
 #define	S_ISCHR(m) (((m) & S_IFMT) == S_IFCHR)
+#else
+#define S_ISCHR(m) ((m) & S_IFCHR)
 #endif
-#if !defined(S_ISDIR) && defined(S_IFDIR)
+
+#if !defined(S_ISDIR) && defined(S_IFDIR) && defined(S_IFMT)
 #define	S_ISDIR(m) (((m) & S_IFMT) == S_IFDIR)
+#else
+#define S_ISDIR(m) ((m) & S_IFDIR)
 #endif
-#if !defined(S_ISREG) && defined(S_IFREG)
+
+#if !defined(S_ISREG) && defined(S_IFREG) && defined(S_IFMT)
 #define	S_ISREG(m) (((m) & S_IFMT) == S_IFREG)
+#else
+#define S_ISREG(m) ((m) & S_IFREG)
 #endif
-#if !defined(S_ISFIFO) && defined(S_IFIFO)
+
+#if !defined(S_ISFIFO) && defined(S_IFIFO) && defined(S_IFMT)
 #define	S_ISFIFO(m) (((m) & S_IFMT) == S_IFIFO)
+#else
+#define S_ISFIFO(m) ((m) & S_IFIFO)
 #endif
-#if !defined(S_ISLNK) && defined(S_IFLNK)
+
+#if !defined(S_ISLNK) && defined(S_IFLNK) && defined(S_IFMT)
 #define	S_ISLNK(m) (((m) & S_IFMT) == S_IFLNK)
+#else
+#define S_ISLNK(m) ((m) & S_IFLNK)
 #endif
-#if !defined(S_ISSOCK) && defined(S_IFSOCK)
+
+#if !defined(S_ISSOCK) && defined(S_IFSOCK) && defined(S_IFMT)
 #define	S_ISSOCK(m) (((m) & S_IFMT) == S_IFSOCK)
+#else
+#define S_ISSOCK(m) ((m) & S_IFSOCK)
 #endif
-#if !defined(S_ISMPB) && defined(S_IFMPB) /* V7 */
+
+#if !defined(S_ISMPB) && defined(S_IFMPB) && defined(S_IFMT) /* V7 */
 #define S_ISMPB(m) (((m) & S_IFMT) == S_IFMPB)
 #define S_ISMPC(m) (((m) & S_IFMT) == S_IFMPC)
+#else
+#define S_ISMPB(m) ((m) & S_IFMPB)
+#define S_ISMPC(m) ((m) & S_IFMPC)
 #endif
-#if !defined(S_ISNWK) && defined(S_IFNWK) /* HP/UX */
+
+#if !defined(S_ISNWK) && defined(S_IFNWK) && defined(S_IFMT) /* HP/UX */
 #define S_ISNWK(m) (((m) & S_IFMT) == S_IFNWK)
+#else
+#define S_ISNWK(m) ((m) & S_IFNWK)
 #endif
+
 #if !defined(HAVE_MKFIFO)
 #define mkfifo(path, mode) (mknod ((path), (mode) | S_IFIFO, 0))
 #endif
