@@ -15,6 +15,8 @@
 #include "cvs.h"
 #include "buffer.h"
 
+#ifdef CLIENT_SUPPORT
+
 #include "socket-client.h"
 
 
@@ -272,3 +274,4 @@ socket_buffer_shutdown (buf)
 
 #endif /* NO_SOCKET_TO_FD */
 
+#endif /* CLIENT_SUPPORT */

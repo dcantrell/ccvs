@@ -17,6 +17,8 @@
 #include "cvs.h"
 #include "buffer.h"
 
+#ifdef CLIENT_SUPPORT
+
 /* We want to be able to log data sent between us and the server.  We
    do it using log buffers.  Each log buffer has another buffer which
    handles the actual I/O, and a file to log information to.
@@ -220,3 +222,5 @@ setup_logfiles (to_server_p, from_server_p)
       free (buf);
     }
 }
+
+#endif /* CLIENT_SUPPORT */
