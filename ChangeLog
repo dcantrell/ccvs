@@ -1,3 +1,7 @@
+Thu Jul  6 17:53:55 1995  Paul Eggert  <eggert@twinsun.com>
+
+	* Makefile.in (mostlyclean-local): Remove $(PROGS).
+
 Sat Jul  1 13:11:41 1995  James Kingdon  <kingdon@harvey.cyclic.com>
 
 	* Version 1.5.1.
