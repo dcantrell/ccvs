@@ -558,7 +558,7 @@ if test x"$*" = x; then
 	# Basic/miscellaneous functionality
 	tests="basica basicb basicc basic1 deep basic2 commit-readonly"
 	# Branching, tagging, removing, adding, multiple directories
-	tests="${tests} rdiff death death2 dirs branches branches2"
+	tests="${tests} rdiff death death2 rmadd dirs branches branches2"
 	tests="${tests} rcslib multibranch import importb importc"
 	tests="${tests} join join2 join3 join-readonly-conflict"
 	tests="${tests} new newb conflicts conflicts2 conflicts3"
@@ -2929,6 +2929,179 @@ diff -N file1
 ${PLUS} first revision"
 
 	  cd .. ; rm -rf first-dir ${CVSROOT_DIRNAME}/first-dir
+	  ;;
+
+	rmadd)
+	  # More tests of adding and removing files.
+	  # In particular ci -r.
+	  # Other ci -r tests:
+	  #   * editor-9: checking in a modified file,
+	  #     where "ci -r" means a branch.
+	  #   * basica-8a1: checking in a modified file with numeric revision.
+	  #   * basica-8a2: likewise.
+	  mkdir 1; cd 1
+	  dotest rmadd-1 "${testcvs} -q co -l ." ''
+	  mkdir first-dir
+	  dotest rmadd-2 "${testcvs} add first-dir" \
+"Directory ${TESTDIR}/cvsroot/first-dir added to the repository"
+	  cd first-dir
+	  echo first file1 >file1
+	  dotest rmadd-3 "${testcvs} add file1" \
+"${PROG} [a-z]*: scheduling file .file1. for addition
+${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
+
+	  dotest_fail rmadd-4 "${testcvs} -q ci -r 1.2.2.4 -m add" \
+"${PROG} [a-z]*: cannot add file .file1' with revision .1\.2\.2\.4'; must be on trunk
+${PROG} \[[a-z]* aborted\]: correct above errors first!"
+	  dotest_fail rmadd-5 "${testcvs} -q ci -r 1.2.2 -m add" \
+"${PROG} [a-z]*: cannot add file .file1' with revision .1\.2\.2'; must be on trunk
+${PROG} \[[a-z]* aborted\]: correct above errors first!"
+	  dotest_fail rmadd-6 "${testcvs} -q ci -r mybranch -m add" \
+"${PROG} \[[a-z]* aborted\]: no such tag mybranch"
+
+	  # The thing with the trailing periods strikes me as a very
+	  # bizarre behavior, but it would seem to be intentional
+	  # (see commit.c).  It probably could go away....
+
+	  # CVS is pretty confused.  It adds as revision 1.2, but put
+	  # it in the attic, and such.  Half the code thinks we are on
+	  # a branch, and half doesn't.
+	  if test "$remote" = yes; then
+	    # This would SIGSEGV with either -r 7.... or -r 1.2.
+	    dotest rmadd-7 "${testcvs} -q ci -m add" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
+done
+Checking in file1;
+${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
+initial revision: 1\.1
+done"
+	    # Total kludge to make this like the local case.
+	    echo T7 >CVS/Tag
+	  else
+	    dotest rmadd-7 "${testcvs} -q ci -r 7.... -m add" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/Attic/file1,v
+done
+Checking in file1;
+${TESTDIR}/cvsroot/first-dir/Attic/file1,v  <--  file1
+new revision: 1\.2; previous revision: 1\.1
+done"
+	  fi
+	  dotest rmadd-8 "${testcvs} -q tag -b mybranch" "T file1"
+	  dotest rmadd-9 "${testcvs} -q tag mynonbranch" "T file1"
+
+	  touch file2
+	  # The previous "cvs ci -r" set a sticky tag of '7'.  Seems a
+	  # bit odd, and I guess commit.c (findmaxrev) takes care of
+	  # this kind of thing.  But I'm not 100% sure that a sticky
+	  # directory tag of '7' is a nonsensical concept.
+	  dotest rmadd-10 "${testcvs} add file2" \
+"${PROG} [a-z]*: scheduling file .file2. for addition on branch .7'
+${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
+	  # As in the previous example, CVS is confused....
+	  if test "$remote" = no; then
+	    dotest rmadd-11 "${testcvs} -q ci -m add" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/Attic/file2,v
+done
+Checking in file2;
+${TESTDIR}/cvsroot/first-dir/Attic/file2,v  <--  file2
+new revision: 1\.2; previous revision: 1\.1
+done"
+	  else
+	    dotest rmadd-11-workaround "${testcvs} -q rm -f file2" \
+""
+	  fi
+
+	  if test "$remote" = no; then
+	    dotest rmadd-12 "${testcvs} -q update -A" "U file2"
+	  else
+	    dotest rmadd-12 "${testcvs} -q update -A" ""
+	  fi
+	  touch file3
+	  dotest rmadd-13 "${testcvs} add file3" \
+"${PROG} [a-z]*: scheduling file .file3. for addition
+${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
+	  if test "$remote" = no; then
+	    # Huh?  file2 is not up to date?  Seems buggy to me....
+	    dotest_fail rmadd-14 "${testcvs} -q ci -r mybranch -m add" \
+"${PROG} [a-z]*: Up-to-date check failed for .file2'
+${PROG} \[[a-z]* aborted\]: correct above errors first!"
+	  else
+	    # Update val-tags.
+	    dotest rmadd-14 "${testcvs} -q update -r mybranch file1" ""
+	  fi
+	  # Whatever, let's not let file2 distract us....
+	  dotest rmadd-15 "${testcvs} -q ci -r mybranch -m add file3" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/Attic/file3,v
+done
+Checking in file3;
+${TESTDIR}/cvsroot/first-dir/Attic/file3,v  <--  file3
+new revision: 1\.1\.2\.1; previous revision: 1\.1
+done"
+
+	  touch file4
+	  dotest rmadd-16 "${testcvs} add file4" \
+"${PROG} [a-z]*: scheduling file .file4. for addition
+${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
+	  # Same "Up-to-date check" issues as in rmadd-14.
+	  # The "no such tag" thing is due to the fact that we only
+	  # update val-tags when the tag is used (might be more of a
+	  # bug than a feature, I dunno).
+	  dotest_fail rmadd-17 \
+"${testcvs} -q ci -r mynonbranch -m add file4" \
+"${PROG} \[[a-z]* aborted\]: no such tag mynonbranch"
+	  # Try to make CVS write val-tags.
+	  dotest rmadd-18 "${testcvs} -q update -p -r mynonbranch file1" \
+"first file1"
+	  # Oops, -p suppresses writing val-tags (probably a questionable
+	  # behavior).
+	  dotest_fail rmadd-19 \
+"${testcvs} -q ci -r mynonbranch -m add file4" \
+"${PROG} \[[a-z]* aborted\]: no such tag mynonbranch"
+	  # Now make CVS write val-tags for real.
+	  dotest rmadd-20 "${testcvs} -q update -r mynonbranch file1" ""
+	  # Oops - CVS isn't distinguishing between a branch tag and
+	  # a non-branch tag.
+	  dotest rmadd-21 \
+"${testcvs} -q ci -r mynonbranch -m add file4" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/Attic/file4,v
+done
+Checking in file4;
+${TESTDIR}/cvsroot/first-dir/Attic/file4,v  <--  file4
+new revision: 1\.1\.2\.1; previous revision: 1\.1
+done"
+
+	  # OK, we add this one in a vanilla way, but then check in
+	  # a modification with ci -r and sniff around for sticky tags.
+	  echo file5 >file5
+	  dotest rmadd-22 "${testcvs} add file5" \
+"${PROG} [a-z]*: scheduling file .file5. for addition
+${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
+	  dotest rmadd-23 "${testcvs} -q ci -m add" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/file5,v
+done
+Checking in file5;
+${TESTDIR}/cvsroot/first-dir/file5,v  <--  file5
+initial revision: 1\.1
+done"
+	  echo change it >file5
+	  dotest rmadd-24 "${testcvs} -q ci -r 4.8 -m change file5" \
+"Checking in file5;
+${TESTDIR}/cvsroot/first-dir/file5,v  <--  file5
+new revision: 4\.8; previous revision: 1\.1
+done"
+	  dotest rmadd-25 "${testcvs} status file5" \
+"===================================================================
+File: file5            	Status: Up-to-date
+
+   Working revision:	4\.8.*
+   Repository revision:	4\.8	${TESTDIR}/cvsroot/first-dir/file5,v
+   Sticky Tag:		4\.8
+   Sticky Date:		(none)
+   Sticky Options:	(none)"
+
+	  cd ../..
+	  rm -r 1
+	  rm -rf ${CVSROOT_DIRNAME}/first-dir
 	  ;;
 
 	dirs)

@@ -1,3 +1,8 @@
+1998-10-11  Jim Kingdon
+
+	* sanity.sh (rmadd): New test, tests for various existing
+	behaviors with "cvs ci -r".
+
 1998-10-09  Jim Kingdon
 
 	* update.c (update_dirent_proc): For local CVS, if the directory
