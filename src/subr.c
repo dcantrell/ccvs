@@ -202,6 +202,9 @@ compare_revnums (const char *rev1, const char *rev2)
     return result;
 }
 
+/* Increment a revision number.  Working on the string is a bit awkward,
+   but it avoid problems with integer overflow should the revision numbers
+   get really big.  */
 char *
 increment_revnum (const char *rev)
 {
@@ -209,17 +212,29 @@ increment_revnum (const char *rev)
     int lastfield;
     size_t len = strlen (rev);
 
-    newrev = (char *) xmalloc (len + 2);
+    newrev = xmalloc (len + 2);
     memcpy (newrev, rev, len + 1);
-    p = strrchr (newrev, '.');
-    if (p == NULL)
+    for (p = newrev + len; p != newrev; )
     {
-	free (newrev);
-	return NULL;
+	--p;
+	if (!isdigit(*p))
+	{
+	    ++p;
+	    break;
+	}
+	if (*p != '9')
+	{
+	    ++*p;
+	    return newrev;
+	}
+	*p = '0';
     }
-    lastfield = atoi (++p);
-    sprintf (p, "%d", lastfield + 1);
-
+    /* The number was all 9s, so change the first character to 1 and add
+       a 0 to the end.  */
+    *p = '1';
+    p = newrev + len;
+    *p++ = '0';
+    *p = '\0';
     return newrev;
 }
 

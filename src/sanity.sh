@@ -2187,11 +2187,18 @@ new revision: 1\.3; previous revision: 1\.2"
 	  dotest basica-8a1 "${testcvs} -q ci -m bump-it -r 2.0" \
 "$CVSROOT_DIRNAME/first-dir/sdir/ssdir/ssfile,v  <--  ssfile
 new revision: 2\.0; previous revision: 1\.3"
+	  dotest basica-8a1a "${testcvs} -q ci -m bump-it -r 2.9" \
+"${CVSROOT_DIRNAME}/first-dir/sdir/ssdir/ssfile,v  <--  ssfile
+new revision: 2\.9; previous revision: 2\.0"
+	  # Test string-based revion number increment rollover
+	  dotest basica-8a1b "${testcvs} -q ci -m bump-it -f -r 2" \
+"${CVSROOT_DIRNAME}/first-dir/sdir/ssdir/ssfile,v  <--  ssfile
+new revision: 2\.10; previous revision: 2\.9"
 	  # -f should not be necessary, but it should be harmless.
 	  # Also test the "-r 3" (rather than "-r 3.0") usage.
 	  dotest basica-8a2 "${testcvs} -q ci -m bump-it -f -r 3" \
 "$CVSROOT_DIRNAME/first-dir/sdir/ssdir/ssfile,v  <--  ssfile
-new revision: 3\.1; previous revision: 2\.0"
+new revision: 3\.1; previous revision: 2\.10"
 
 	  # Test using -r to create a branch
 	  dotest_fail basica-8a3 "${testcvs} -q ci -m bogus -r 3.0.0" \
@@ -2271,11 +2278,15 @@ done"
 done"
 	  dotest basica-o5a "${testcvs} -n admin -o 1.2::3.1 ssfile" \
 "RCS file: ${CVSROOT_DIRNAME}/first-dir/sdir/ssdir/ssfile,v
+deleting revision 2\.10
+deleting revision 2\.9
 deleting revision 2\.0
 deleting revision 1\.3
 done"
 	  dotest basica-o6 "${testcvs} admin -o 1.2::3.1 ssfile" \
 "RCS file: ${CVSROOT_DIRNAME}/first-dir/sdir/ssdir/ssfile,v
+deleting revision 2\.10
+deleting revision 2\.9
 deleting revision 2\.0
 deleting revision 1\.3
 done"
