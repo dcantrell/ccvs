@@ -1400,6 +1400,11 @@ on what each developer uses).  Don't worry about CPU
 and memory requirements for the clients---any machine
 with enough capacity to run the operating system in
 question should have little trouble.
+@c Stuff about memory duplicates Server requirements
+@c to some extent.  I'm not sure this is a bad thing,
+@c though (one is aimed at people who are looking into
+@c this carefully, the other is aimed at people who
+@c want a rule of thumb).
 
 The repository should be accessable
 (directly or via a networked file system) from all
@@ -2179,6 +2184,16 @@ vary).
 @node From scratch
 @subsection Creating a directory tree from scratch
 
+@c Also/instead should be documenting 
+@c $ cvs co -l .
+@c $ mkdir tc
+@c $ cvs add tc
+@c $ cd tc
+@c $ mkdir man
+@c $ cvs add man
+@c etc.
+@c Using import to create the directories only is
+@c probably a somewhat confusing concept.
 For a new project, the easiest thing to do is probably
 to create an empty directory structure, like this:
 

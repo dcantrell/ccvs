@@ -1,5 +1,11 @@
 Sun Mar  2 12:33:26 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvs.texinfo (From scratch): Add comment about creating
+	directories with add rather than import.
+
+	* cvs.texinfo (Creating a repository): Add comment about how this
+	somewhat duplicates Server requirements.
+
 	* cvs.texinfo (Connecting via rsh): Add comment about rsh
 	vs. remsh.  Also wording fix ("incorrect" -> "inapplicable").
 
