@@ -9019,6 +9019,7 @@ done
   fi
 
 
+  LIBOBJS="$LIBOBJS getndelim2.$ac_objext"
 
 
 
