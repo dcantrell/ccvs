@@ -46,9 +46,6 @@ CVS.
 Noel Cragg, who did the latest mods to the Windows NT port, used the
 following packages:
 
-	ftp://wuarchive.wustl.edu/systems/ibmpc/gnuish/grep15.zip
-	  ** use grepb.exe and egrepb.exe, but install as
-	  ** grep.exe and egrep.exe respectively)
 	ftp://wuarchive.wustl.edu/systems/ibmpc/gnuish/patch212.zip
 	ftp://ftp.netcom.com/pub/al/alexande/rcs57nt.zip
 	ftp://ftp.netcom.com/pub/al/alexande/diff57nt.zip
