@@ -1,3 +1,9 @@
+1998-05-02  Jim Meyering  <meyering@ascend.com>
+
+	* rcs.c (rcsbuf_getword): Fix off-by-one error that would result in
+	an abort (the first one in rcsbuf_getkey) when operating on on some
+	,v files with over 8192 bytes of tag and branch info.
+
 1998-05-04  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* sanity.sh (ann): New tests ann-12 and ann-13 test for specifying
@@ -101,7 +107,7 @@
 	unnecessary else if test.
 	* server.c (check_password): Fix uninitialized memory read if
  	shadow passwords are used.  Also added some comments.
-	* rcs.c (RCS_checkout): Make sure to call chown with -1 for uid or 
+	* rcs.c (RCS_checkout): Make sure to call chown with -1 for uid or
 	gid if they should not be changed
 
 1998-04-10  Jim Kingdon  <kingdon@harvey.cyclic.com>
@@ -147,21 +153,21 @@
 	Use ${PLUS}.
 
 1998-03-05  Dan Wilder <dan@gasboy.com>
- 
- 	* Fix problem with cvs admin in which -ntag:branch 
- 	option associated tag with the branch's head revision.  
- 	Should have used branch number.  Entailed in this fix, 
+
+ 	* Fix problem with cvs admin in which -ntag:branch
+ 	option associated tag with the branch's head revision.
+ 	Should have used branch number.  Entailed in this fix,
  	the following.
- 
+
  	* Add new functions "RCS_exist_rev", "RCS_exist_tag",
  	"RCS_tag2rev", and "RCS_valid_rev" to rcs.c.  RCS_tag2rev
  	is similar to RCS_gettag, but does less interpretation.
- 
+
  	* Plug a small memory leak.
 
  	* Add tests admin-26 through admin-29 to sanity.sh,
  	to test "cvs admin -n".
-        
+
 1998-03-17  Samuel Tardieu  <sam@inf.enst.fr>
 
 	* server.c (server_register): protect dereferencing timestamp in
@@ -290,7 +296,7 @@
 	* update.c (special_file_mismatch): Compare the hard links of the
 	two revisions.
 
-	* rcs.c (RCS_checkout): 
+	* rcs.c (RCS_checkout):
 
 	* hardlink.c, hardlink.h: New files.
 	(hardlink_info): New struct.
@@ -495,7 +501,7 @@ Tue Feb 17 02:32:21 1998  Noel Cragg  <noel@swish.red-bean.com>
 
 	[These mods make "checkout" work with "-d /absolute/pathname"
 	once again.]
-	
+
 	* checkout.c (checkout_proc): the -d flag on the command line
  	should override the -d flag in the modules file if the latter is
  	an absolute path.  The loop that assembles the list of directories
@@ -515,7 +521,7 @@ Tue Feb 17 02:32:21 1998  Noel Cragg  <noel@swish.red-bean.com>
 
 	* create_adm.c (Create_Admin): include the directory in the error
  	message.
-	
+
 1998-02-16  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* diff.c (diff_fileproc), import.c (import, add_rcs_file), rcs.c
@@ -554,7 +560,7 @@ Tue Feb 17 02:32:21 1998  Noel Cragg  <noel@swish.red-bean.com>
 
 	Support for device special files, symbolic links, user and group
 	ownerships, and file permissions.
-	
+
 	* parseinfo.c: (parse_config): Handle new config variable
 	`PreservePermissions'.
 	* mkmodules.c (config_contents): Add new PreservePermissions var.
