@@ -1,5 +1,9 @@
 Fri Oct 31 00:04:09 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvs.texinfo (Binary why): New node, talks about diff and merge.
+	(Binary howto): Renamed from Binary files.
+	(Binary files): Now just contains an introduction.
+
 	* cvs.texinfo (Error messages): Add "could not merge" message.  In
 	discussion of "Binary files . . . differ" message, mention that
 	this is only an issue with old verisons of CVS.
