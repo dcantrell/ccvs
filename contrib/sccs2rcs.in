@@ -177,8 +177,8 @@ foreach sfile (SCCS/s.*)
         if ($status != 0) goto ERROR
 
         # get file into current dir and get stats
-	set date = `sccs prs -r$rev $file | grep "^D " | awk '{if (substr($3,0,2)+0 < 70) print "20" $3, $4; else print "19" $3, $4; exit}'`
-        set author = `sccs prs -r$rev $file | grep "^D " | awk '{print $5; exit}'`
+	set date = `sccs prs -r$rev $file | awk '/^D / {if (substr($3,0,2)+0 < 70) print "20" $3, $4; else print "19" $3, $4; exit}'`
+        set author = `sccs prs -r$rev $file | awk '/^D / {print $5; exit}'`
         echo ""
         echo "==> file $file, rev=$rev, date=$date, author=$author"
         sccs edit -r$rev $file >>& $logfile

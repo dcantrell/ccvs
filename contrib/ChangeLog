@@ -1,5 +1,7 @@
 2001-05-23  Larry Jones  <larry.jones@sdrc.com>
 
+	* sccs2rcs.in: No need for grep when you're already using awk.
+
 	* sccs2rcs.in: Fix y2k bug correctly.
 	(Reported by "Hayes, Ted (London)" <HayesRog@exchange.uk.ml.com>.)
 
