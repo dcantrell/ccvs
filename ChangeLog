@@ -1,5 +1,9 @@
 2004-03-15  Derek Price  <derek@ximbiot.com>
 
+	* NEWS: Note cvs release + Kerberos fix.
+
+2004-03-15  Derek Price  <derek@ximbiot.com>
+
 	* configure.in: Correct grammar in help text.
 	* configure: Regenerated.
 
