@@ -1,5 +1,10 @@
 2004-04-30  Derek Price  <derek@ximbiot.com>
 
+	* cvs.man.header: Add copyright notice.
+	* cvs.1: Regenerated.
+
+2004-04-30  Derek Price  <derek@ximbiot.com>
+
 	* mkman.in: Add copyright and license notice.
 
 2004-04-30  Derek Price  <derek@ximbiot.com>
