@@ -212,7 +212,6 @@ libcvs_a_SOURCES = \
 	savecwd.c \
 	sighandle.c \
 	strftime.c \
-	xgetwd.c \
 	yesno.c \
 	error.h \
 	exit.h \
@@ -229,7 +228,7 @@ libcvs_a_SOURCES = \
 	wait.h \
 	xselect.h \
 	xtime.h\
-basename.c dirname.c dirname.h stripslash.c exitfail.h exitfail.c getdate.h getdate.y gettime.c pathmax.h regex.h time_r.h timespec.h unlocked-io.h printf-args.h printf-parse.h vasnprintf.h xalloc.h xmalloc.c xstrdup.c xsize.h
+basename.c dirname.c dirname.h stripslash.c exitfail.h exitfail.c getdate.h getdate.y gettime.c pathmax.h regex.h time_r.h timespec.h unlocked-io.h printf-args.h printf-parse.h vasnprintf.h xalloc.h xmalloc.c xstrdup.c xgetcwd.h xgetcwd.c xsize.h
 libcvs_a_LIBADD = @LIBOBJS@
 
 BUILT_SOURCES = $(ALLOCA_H) $(FNMATCH_H) $(STDBOOL_H)
@@ -258,10 +257,10 @@ libcvs_a_DEPENDENCIES = @LIBOBJS@
 am_libcvs_a_OBJECTS = argmatch.$(OBJEXT) getnline.$(OBJEXT) \
 	getopt.$(OBJEXT) getopt1.$(OBJEXT) md5.$(OBJEXT) \
 	savecwd.$(OBJEXT) sighandle.$(OBJEXT) strftime.$(OBJEXT) \
-	xgetwd.$(OBJEXT) yesno.$(OBJEXT) basename.$(OBJEXT) \
-	dirname.$(OBJEXT) stripslash.$(OBJEXT) exitfail.$(OBJEXT) \
-	getdate.$(OBJEXT) gettime.$(OBJEXT) xmalloc.$(OBJEXT) \
-	xstrdup.$(OBJEXT)
+	yesno.$(OBJEXT) basename.$(OBJEXT) dirname.$(OBJEXT) \
+	stripslash.$(OBJEXT) exitfail.$(OBJEXT) getdate.$(OBJEXT) \
+	gettime.$(OBJEXT) xmalloc.$(OBJEXT) xstrdup.$(OBJEXT) \
+	xgetcwd.$(OBJEXT)
 libcvs_a_OBJECTS = $(am_libcvs_a_OBJECTS)
 check_PROGRAMS =
 
@@ -292,7 +291,7 @@ am__depfiles_maybe = depfiles
 @AMDEP_TRUE@	./$(DEPDIR)/gettime.Po ./$(DEPDIR)/md5.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/savecwd.Po ./$(DEPDIR)/sighandle.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/strftime.Po ./$(DEPDIR)/stripslash.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/xgetwd.Po ./$(DEPDIR)/xmalloc.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/xgetcwd.Po ./$(DEPDIR)/xmalloc.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/xstrdup.Po ./$(DEPDIR)/yesno.Po
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
@@ -387,7 +386,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sighandle.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/strftime.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/stripslash.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xgetwd.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xgetcwd.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xmalloc.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xstrdup.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/yesno.Po@am__quote@

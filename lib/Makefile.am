@@ -28,7 +28,6 @@ libcvs_a_SOURCES = \
 	savecwd.c \
 	sighandle.c \
 	strftime.c \
-	xgetwd.c \
 	yesno.c \
 	error.h \
 	exit.h \
@@ -156,6 +155,9 @@ libcvs_a_SOURCES += printf-args.h printf-parse.h vasnprintf.h
 
 ## For GNULIB's xalloc module.
 libcvs_a_SOURCES += xalloc.h xmalloc.c xstrdup.c
+
+## For GNULIB's xgetcwd module.
+libcvs_a_SOURCES += xgetcwd.h xgetcwd.c
 
 # For the xsize module from GNULIB.
 libcvs_a_SOURCES += xsize.h

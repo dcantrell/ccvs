@@ -1,5 +1,12 @@
 2004-10-05  Derek Price  <derek@ximbiot.com>
 
+	* Makefile.am (libcvs_a_SOURCES): Remove xgetwd.c, add xgetcwd.h &
+	xgetcwd.c in their own section.
+	* xgetwd.c: Removed.
+	* xgetcwd.h, xgetcwd.c: New files imported from GNULIB.
+
+2004-10-05  Derek Price  <derek@ximbiot.com>
+
 	* alloca_.h, alloca.c: Import latest versions from GNULIB.
 
 2004-10-05  Derek Price  <derek@ximbiot.com>
