@@ -1478,8 +1478,7 @@ patch_file_write (callerdat, buffer, len)
     if (fwrite (buffer, 1, len, data->fp) != len)
 	error (1, errno, "cannot write %s", data->filename);
 
-    if (buffer[len - 1] == '\n')
-	data->final_nl = 1;
+    data->final_nl = (buffer[len - 1] == '\n');
 
     if (data->compute_checksum)
 	MD5Update (&data->context, buffer, len);

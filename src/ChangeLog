@@ -1,5 +1,12 @@
 Tue Apr 15 00:36:23 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* update.c (patch_file_write): Always assign to final_nl, so that
+	it ends up reflecting whether the data from the last call had a
+	newline, not whether the data from any of the calls ended in a
+	newline.  Doesn't matter with the current RCS_checkout
+	implementation, but it will if RCS_checkout is changed to pass
+	less than the entire file.
+
 	* rcs.c (RCS_cmp_file): Change NULL to RUN_TTY in passing sout to
 	RCS_checkout, for clarity.
 
