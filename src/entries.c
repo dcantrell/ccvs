@@ -243,7 +243,14 @@ Register (list, fname, vn, ts, options, tag, date, ts_conflict)
     if (!noexec)
     {
 	entfilename = CVSADM_ENTLOG;
-	entfile = open_file (entfilename, "a");
+	entfile = CVS_FOPEN (entfilename, "a");
+
+	if (entfile == NULL)
+	{
+	    /* Warning, not error, as in write_entries.  */
+	    /* FIXME-update-dir: should be including update_dir in message.  */
+	    error (0, errno, "cannot open %s", entfilename);
+	}
 
 	if (fprintf (entfile, "A ") < 0)
 	    error (1, errno, "cannot write %s", entfilename);

@@ -3258,7 +3258,11 @@ ${PROG} server: Updating sdir
 ${PROG} update: move away sdir/file1; it is in the way
 C sdir/file1"
 	    rm sdir/file1
+
 	    # This is where things are not just like conflicts3-23
+	    # As with conflicts3-23, all these CVS/Entries* warnings
+	    # are somewhat doubtful, and we probably should think some
+	    # about whether they should be changed/fixed.
 	    dotest_fail dirs2-7 "${testcvs} update -d" \
 "${QUESTION} sdir
 ${PROG} server: Updating \.
@@ -3266,7 +3270,7 @@ ${PROG} update: in directory sdir:
 ${PROG} update: cannot open CVS/Entries for reading: No such file or directory
 ${PROG} server: Updating sdir
 U sdir/file1
-${PROG} \[update aborted\]: cannot open CVS/Entries.Log: No such file or directory"
+${PROG} update: cannot open CVS/Entries.Log: No such file or directory"
 	  else
 	    dotest dirs2-6 "${testcvs} update -d" \
 "${PROG} update: Updating \.
