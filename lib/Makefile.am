@@ -40,7 +40,6 @@ libcvs_a_SOURCES = \
 	getpagesize.h \
 	md5.h \
 	minmax.h \
-	pathmax.h \
 	savecwd.h \
 	system.h \
 	wait.h \
@@ -124,6 +123,9 @@ libcvs_a_SOURCES += getdate.h getdate.y
 
 ## For GNULIB's gettime module.
 libcvs_a_SOURCES += gettime.c
+
+## For GNULIB's pathmax module.
+libcvs_a_SOURCES += pathmax.h
 
 ## For GNULIB's regex module.
 libcvs_a_SOURCES += regex.h
