@@ -789,7 +789,7 @@ logfile_write (const char *repository, const char *filter, const char *message,
      * %r = repository
      * %{sVv} = file name, old revision (precommit), new revision (postcommit)
      */
-    cmdline = format_cmdline(
+    cmdline = format_cmdline (
 #ifdef SUPPORT_OLD_INFO_FMT_STRINGS
 	                      !UseNewInfoFmtStrings, srepos,
 #endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
@@ -799,7 +799,7 @@ logfile_write (const char *repository, const char *filter, const char *message,
 	                      "sVv", ",", changes,
 			             logmsg_list_to_args_proc, (void *) NULL,
 	                      (char *)NULL
-	                    );
+	                     );
     if( !cmdline || !strlen( cmdline ) )
     {
 	if( cmdline ) free( cmdline );
@@ -908,7 +908,7 @@ verifymsg_proc (const char *repository, const char *script, void *closure)
 
     verifymsg_script = format_cmdline (
 #ifdef SUPPORT_OLD_INFO_FMT_STRINGS
-                                       0, srepos,
+                                       false, srepos,
 #endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
                                        script,
                                        "p", "s", srepos,

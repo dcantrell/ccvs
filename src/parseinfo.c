@@ -422,9 +422,9 @@ warning: this CVS does not support PreservePermissions");
 	else if (strcmp (line, "UseNewInfoFmtStrings") == 0)
 	{
 	    if (strcmp (p, "no") == 0)
-		UseNewInfoFmtStrings = 0;
+		UseNewInfoFmtStrings = false;
 	    else if (strcmp (p, "yes") == 0)
-		UseNewInfoFmtStrings = 1;
+		UseNewInfoFmtStrings = true;
 	    else
 	    {
 		error (0, 0, "unrecognized value '%s' for UseNewInfoFmtStrings", p);

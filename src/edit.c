@@ -664,7 +664,7 @@ notify_proc (const char *repository, const char *filter, void *closure)
 
     cmdline = format_cmdline (
 #ifdef SUPPORT_OLD_INFO_FMT_STRINGS
-		    0, srepos,
+	false, srepos,
 #endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
 	filter,
 	"c", "s", cvs_cmd_name,

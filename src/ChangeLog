@@ -1,5 +1,15 @@
 2004-08-31  Derek Price <derek@ximbiot.com>
 
+	* subr.c (format_cmdline), cvs.h (format_cmdline): Accept bool rather
+	than int.
+	* admin.c, commit.c, edit.c, fileattr.c, logmsg.c, tag.c: Change all
+	callers.
+	* main.c (UseNewInfoFmtStrings), cvs.h (UseNewInfoFmtStrings):
+	s/int/bool/.
+	* parseinfo.c: Change all references.
+
+2004-08-31  Derek Price <derek@ximbiot.com>
+
 	* checkout.c: Reformat function headers.  Remove unnecessary typecasts
 	and prototypes.  Some other reformatting for legibility.
 
