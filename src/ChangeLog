@@ -1,3 +1,8 @@
+Fri Dec 12 10:27:08 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* client.c (start_tcp_server): Revise comment to reflect
+	SOCK_STRERROR and SOCK_ERRNO now being in use.
+
 Thu Dec 11 15:32:31 1997  Ian Lance Taylor  <ian@cygnus.com>
 
 	* client.c (init_sockaddr): Compile if HAVE_KERBEROS, as well as
