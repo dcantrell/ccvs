@@ -1,3 +1,45 @@
+Fri Sep 26 15:40:00 1997  Noel Cragg  <noel@swish.red-bean.com>
+
+	* sanity.sh (modules): add tests modules-[123]* that make sure the
+ 	administrative files get rebuilt in various cases.
+
+	* add.c (combine_dir): removed function, since we no longer need
+ 	to worry about stripping the "." path element out.  Changed the
+ 	two callers to simply concatenate their two arguments.
+
+	* recurse.c (do_dir_proc): don't bother trying to strip off "." in
+ 	the repository name since the below changes fix that behavior --
+ 	simply concatenate the repository and directory names together.
+
+	* checkout.c (checkout_proc): sanitize the repository name after
+ 	constructing it (we may create "/path/to/repos/.", but we don't
+ 	want that to be passed around).  Remove the code that tacks on
+ 	"/." when constructing top_repository, since the below changes fix
+ 	that behavior.  Added comments to the part of this function that
+ 	builds administrative files.
+
+	* sanity.sh (basicb): now that the below weirdness is fixed, the
+ 	extra "." path element in test basicb-0c doesn't appear when a
+ 	top-level file is checked out.  Remove it from the expect string.
+
+	* create_adm.c (Create_Admin): now that the repository name isn't
+ 	floating around with "." as the last path element, make creation
+ 	of the top-level administrative files a special case -- save the
+ 	repository name as "/path/to/repos/."  Why?  I considered not
+ 	including the "." but didn't know how it would affect the remote
+ 	protocol when RELATIVE_REPOS was defined (do we have a way of
+ 	sending "" via the protocol?).  After I make sure that the
+ 	RELATIVE_REPOS patches still work, I'll check the "" possibility
+ 	so we don't have to have a this special case.
+	
+	* repos.c (Sanitize_Repository_Name): new function that removes
+ 	(if present) the trailing slash and "." component from the
+ 	repository name.  Many routines break if we don't guarantee this.
+  	See the comment before the function for complete information.
+	(Name_Repository): call Sanitize_Repository_Name before returning
+ 	the value.
+	* cvs.h: add prototype for Sanitize_Repository_Name.
+
 Fri Sep 26 14:19:25 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.h (CVS_CMD_USES_WORK_DIR): Fix comment (the sense of the

@@ -87,8 +87,20 @@ Create_Admin (dir, update_dir, repository, tag, date, nonbranch, warn)
 	else
 	    error (1, errno, "cannot open %s/%s", update_dir, CVSADM_REP);
     }
-    cp = repository;
-    strip_trailing_slashes (cp);
+    cp = xstrdup (repository);
+    Sanitize_Repository_Name (cp);
+
+    /* The top level of the repository is a special case -- we need to
+       write it with an extra dot at the end.  This trailing `.' stuff
+       rubs me the wrong way -- on the other hand, I don't want to
+       spend the time making sure all of the code can handle it if we
+       don't do it. */
+
+    if (strcmp (cp, CVSroot_directory) == 0)
+    {
+	cp = xrealloc (cp, strlen (cp) + 2);
+	strcat (cp, "/.");
+    }
 
 #ifdef RELATIVE_REPOS
     /*
@@ -100,8 +112,8 @@ Create_Admin (dir, update_dir, repository, tag, date, nonbranch, warn)
 	char *path = xmalloc (strlen (CVSroot_directory) + 10);
 
 	(void) sprintf (path, "%s/", CVSroot_directory);
-	if (strncmp (repository, path, strlen (path)) == 0)
-	    cp = repository + strlen (path);
+	if (strncmp (cp, path, strlen (path)) == 0)
+	    cp += strlen (path);
 	free (path);
     }
 #endif
@@ -158,6 +170,7 @@ Create_Admin (dir, update_dir, repository, tag, date, nonbranch, warn)
     }
 #endif
 
+    free (cp);
     free (tmp);
     return 0;
 }

@@ -563,6 +563,23 @@ checkout_proc (pargc, argv, where, mwhere, mfile, shorten,
     repository = xmalloc (strlen (CVSroot_directory) + strlen (argv[0]) + 5);
     (void) sprintf (repository, "%s/%s", CVSroot_directory, argv[0]);
 
+
+    /* We need to tell build_dirs not only the path we want it to
+       build, but also the repositories we want it to populate the
+       path with. To accomplish this, we walk the path backwards, one
+       pathname component at a time, constucting a linked list of
+       struct dir_to_build.  We grab this before sanitizing because we
+       want the pathname (even if it is "/path/to/repos/.") because of
+       the way the while loop is written (below, near definition of
+       cp2). */
+    prepath = xstrdup (repository);
+
+
+    /* Sanitize the repository name for everyone else's sake. */
+
+    Sanitize_Repository_Name (repository);
+
+
     /* save the original value of preload_update_dir */
     if (preload_update_dir != NULL)
 	oldupdate = xstrdup (preload_update_dir);
@@ -729,13 +746,6 @@ checkout_proc (pargc, argv, where, mwhere, mfile, shorten,
 	struct dir_to_build *head;
 	char *top_repository;
 
-	/* We need to tell build_dirs not only the path we want it to
-	   build, but also the repositories we want it to populate the
-	   path with. To accomplish this, we walk the path backwards,
-	   one pathname component at a time, constucting a linked
-	   list of struct dir_to_build.  */
-	prepath = xstrdup (repository);
-
 	/* We don't want to start stripping elements off prepath after we
 	   get to CVSROOT.  */
 	root_len = strlen (CVSroot_directory);
@@ -764,6 +774,9 @@ internal error: %s doesn't start with %s in checkout_proc",
 	    new->dirpath = xmalloc (strlen (where));
 	    strncpy (new->dirpath, where, cp - where);
 	    new->dirpath[cp - where] = '\0';
+	    
+	    /* Note: if you change this if-else statement, check out
+               the one just below... */
 	    if (cp2 == NULL || cp2 < prepath + root_len)
 	    {
 		/* Don't walk up past CVSROOT; instead put in CVSNULLREPOS.  */
@@ -783,22 +796,21 @@ internal error: %s doesn't start with %s in checkout_proc",
 	}
 
 	/* First build the top-level CVSADM directory.  Need to go up
-	   one more level to compute top_repository.  */
+	   one more level to compute top_repository.  Note that this
+	   code is exactly the same as the if-else statement in the
+	   while loop above with "top_repository" substituted for
+	   "new->repository"... */
 	if (cp2 == NULL || cp2 < prepath + root_len)
+	{
+	    /* Don't walk up past CVSROOT; instead put in CVSNULLREPOS.  */
 	    top_repository = emptydir_name ();
+	}
 	else
 	{
-	    top_repository = xmalloc (strlen (prepath) + 10);
+	    top_repository = xmalloc (strlen (prepath));
 	    strncpy (top_repository, prepath, cp2 - prepath);
 	    top_repository[cp2 - prepath] = '\0';
 	}
-	/* I'm not at all sure that this trailing '.' stuff is a good idea,
-	   but it is what remote CVS does in this case and at least for
-	   the moment I'll preserve that behavior (which avoids the
-	   "existing repository does not match" message a few lines
-	   down).  */
-	if (strcmp (top_repository, CVSroot_directory) == 0)
-	    strcat (top_repository, "/.");
 	build_one_dir (top_repository, ".", *pargc <= 1);
 	free (top_repository);
 

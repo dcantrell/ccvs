@@ -654,26 +654,8 @@ but CVS uses %s for its own purposes; skipping %s directory",
 	    newrepos = xstrdup ("");
 	else
 	{
-	    size_t repos_len;
-
-	    repos_len = strlen (repository);
-	    newrepos = xmalloc (repos_len + strlen (dir) + 5);
-	    if (repository[repos_len - 1] == '.'
-		&& ISDIRSEP (repository[repos_len - 2]))
-	    {
-		/* repository ends with "/."; omit it.  This sort of
-		   thing used to be taken care of by strip_path.  Now we
-		   try to be more selective.  I suspect that it would be
-		   even better to push it back further someday, so that
-		   the trailing "/." doesn't get into repository in the
-		   first place, but we haven't taken things that far yet.  */
-		strncpy (newrepos, repository, repos_len - 2);
-		newrepos[repos_len - 2] = '\0';
-	    }
-	    else
-		strcpy (newrepos, repository);
-	    strcat (newrepos, "/");
-	    strcat (newrepos, dir);
+	    newrepos = xmalloc (strlen (repository) + strlen (dir) + 5);
+	    sprintf (newrepos, "%s/%s", repository, dir);
 	}
     }
     else
