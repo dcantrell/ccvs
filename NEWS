@@ -1,5 +1,7 @@
 Changes since 1.12.1:
 
+* Misc cleanup, reorganization, and other minor fixes.
+
 * A behavior change in `cvs up -jrev1 -jrev2' for files with a base
   revision of rev2 (ie, checked-out version matches rev2). The
   operation is no longer ignored and instead passed to diff3. This

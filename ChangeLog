@@ -1,5 +1,10 @@
 2003-10-24  Derek Price  <derek@ximbiot.com>
 
+	* NEWS: Note things like plugging memory leaks and code cleanup and
+	reorganization under misc.
+
+2003-10-24  Derek Price  <derek@ximbiot.com>
+
 	* BUGS: Remove obsolete bug report.
 	(Patch from Paul Edwards <somewhere in Australia>.)
 
