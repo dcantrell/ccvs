@@ -98,7 +98,6 @@ Installation:
 Please read the INSTALL file for installation instructions.  Brief summary:
 
 	$ ./configure
-	$ cp src/options.h.in src/options.h
 	$ make
 	$ make install
 	$ cvsinit

@@ -2192,6 +2192,11 @@ fi
 fi
 
 
+test -f src/options.h || (
+  echo creating ./src/options.h 
+  cp ${srcdir}/src/options.h.in ./src/options.h
+)
+
 trap '' 1 2 15
 cat > confcache <<\EOF
 # This file is a shell script that caches the results of configure
