@@ -79,12 +79,12 @@ static void rcsbuf_valpolish (struct rcsbuffer *, char *val, int polish,
 				     size_t *lenp);
 static void rcsbuf_valpolish_internal (struct rcsbuffer *, char *to,
 					      const char *from, size_t *lenp);
-static unsigned long rcsbuf_ftell (struct rcsbuffer *);
+static off_t rcsbuf_ftello (struct rcsbuffer *);
 static void rcsbuf_get_buffered (struct rcsbuffer *, char **datap,
 					size_t *lenp);
 static void rcsbuf_cache (RCSNode *, struct rcsbuffer *);
 static void rcsbuf_cache_close (void);
-static void rcsbuf_cache_open (RCSNode *, long, FILE **,
+static void rcsbuf_cache_open (RCSNode *, off_t, FILE **,
 				      struct rcsbuffer *);
 static int checkmagic_proc (Node *p, void *closure);
 static void do_branches (List * list, char *val);
@@ -600,7 +600,7 @@ RCS_reparsercsfile (RCSNode *rdata, FILE **pfp, struct rcsbuffer *rcsbufp)
 	rdata->desc = rcsbuf_valcopy (&rcsbuf, value, 1, (size_t *) NULL);
     }
 
-    rdata->delta_pos = rcsbuf_ftell (&rcsbuf);
+    rdata->delta_pos = rcsbuf_ftello (&rcsbuf);
 
     if (pfp == NULL)
 	rcsbuf_cache (rdata, &rcsbuf);
@@ -1890,8 +1890,8 @@ rcsbuf_valword (rcsbuf, valp)
 
 /* Return the current position of an rcsbuf.  */
 
-static unsigned long
-rcsbuf_ftell (struct rcsbuffer *rcsbuf)
+static off_t
+rcsbuf_ftello (struct rcsbuffer *rcsbuf)
 {
     return rcsbuf->pos + rcsbuf->ptr - rcsbuf_buffer;
 }
@@ -1948,15 +1948,16 @@ rcsbuf_cache_close (void)
    be put at position POS.  */
 
 static void
-rcsbuf_cache_open (RCSNode *rcs, long int pos, FILE **pfp, struct rcsbuffer *prcsbuf)
+rcsbuf_cache_open (RCSNode *rcs, off_t pos, FILE **pfp,
+		   struct rcsbuffer *prcsbuf)
 {
 #ifndef HAVE_MMAP
     if (cached_rcs == rcs)
     {
-	if (rcsbuf_ftell (&cached_rcsbuf) != pos)
+	if (rcsbuf_ftello (&cached_rcsbuf) != pos)
 	{
-	    if (fseek (cached_rcsbuf.fp, pos, SEEK_SET) != 0)
-		error (1, 0, "cannot fseek RCS file %s",
+	    if (fseeko (cached_rcsbuf.fp, pos, SEEK_SET) != 0)
+		error (1, 0, "cannot fseeko RCS file %s",
 		       cached_rcsbuf.filename);
 	    cached_rcsbuf.ptr = rcsbuf_buffer;
 	    cached_rcsbuf.ptrend = rcsbuf_buffer;
@@ -1999,8 +2000,8 @@ rcsbuf_cache_open (RCSNode *rcs, long int pos, FILE **pfp, struct rcsbuffer *prc
 #ifndef HAVE_MMAP
 	if (pos != 0)
 	{
-	    if (fseek (*pfp, pos, SEEK_SET) != 0)
-		error (1, 0, "cannot fseek RCS file %s", rcs->path);
+	    if (fseeko (*pfp, pos, SEEK_SET) != 0)
+		error (1, 0, "cannot fseeko RCS file %s", rcs->path);
 	}
 #endif /* ifndef HAVE_MMAP */
 	rcsbuf_open (prcsbuf, *pfp, rcs->path, pos);
@@ -5030,9 +5031,9 @@ workfile);
 	RCS_putadmin (rcs, fout);
 	RCS_putdtree (rcs, rcs->head, fout);
 	RCS_putdesc (rcs, fout);
-	rcs->delta_pos = ftell (fout);
+	rcs->delta_pos = ftello (fout);
 	if (rcs->delta_pos == -1)
-	    error (1, errno, "cannot ftell for %s", rcs->path);
+	    error (1, errno, "cannot ftello for %s", rcs->path);
 	putdeltatext (fout, dtext);
 	rcs_internal_unlockfile (fout, rcs->path);
 
@@ -8298,9 +8299,9 @@ RCS_rewrite (RCSNode *rcs, Deltatext *newdtext, char *insertpt)
        been positioned at the old delta_pos, but before any delta
        texts have been written to fout.
      */
-    rcs->delta_pos = ftell (fout);
+    rcs->delta_pos = ftello (fout);
     if (rcs->delta_pos == -1)
-	error (1, errno, "cannot ftell in RCS file %s", rcs->path);
+	error (1, errno, "cannot ftello in RCS file %s", rcs->path);
 
     RCS_copydeltas (rcs, fin, &rcsbufin, fout, newdtext, insertpt);
 

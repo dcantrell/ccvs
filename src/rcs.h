@@ -105,7 +105,7 @@ struct rcsnode
     char *desc;
 
     /* File offset of the first deltatext node, so we can seek there.  */
-    long delta_pos;
+    off_t delta_pos;
 
     /* Newphrases from the RCS header.  List of nodes, the key of which
        is the "id" which introduces the newphrase, and the value of which
