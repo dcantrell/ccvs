@@ -187,9 +187,6 @@
 /* Define to 1 if you have the `getpagesize' function. */
 #undef HAVE_GETPAGESIZE
 
-/* Define to 1 if you have the `getpassphrase' function. */
-#undef HAVE_GETPASSPHRASE
-
 /* Define if you have the getspnam function. */
 #undef HAVE_GETSPNAM
 
@@ -613,6 +610,14 @@
 
 /* Define to a replacement function name for getline(). */
 #undef getline
+
+/* We want to always use the GNULIB version of getpass which we have in lib,
+ * so define getpass to something that won't conflict with any existing system
+ * declarations.
+ */
+#ifndef getpass
+# define getpass cvs_getpass
+#endif
 
 /* Define to `int' if <sys/types.h> doesn't define. */
 #undef gid_t

@@ -271,14 +271,6 @@ checkout (int argc, char **argv)
 
 	ign_setup ();
 	
-	/* We have to expand names here because the "expand-modules"
-           directive to the server has the side-effect of having the
-           server send the check-in and update programs for the
-           various modules/dirs requested.  If we turn this off and
-           simply request the names of the modules and directories (as
-           below in !expand_modules), those files (CVS/Checkin.prog
-           or CVS/Update.prog) don't get created.  Grrr.  */
-	
 	expand_modules = (!cat && !pipeout
 			  && supported_request ("expand-modules"));
 	

@@ -1,3 +1,21 @@
+2003-07-29  Derek Price  <derek@ximbiot.com>
+
+	* login.c: Remove GETPASS & HAVE_GETPASSPHRASE cruft in favor of always
+	using the GNULIB getpass since the system getpass was removed from the
+	POSIX.2 specification.
+
+2003-07-28  Derek Price  <derek@ximbiot.com>
+
+	* subr.c (strip_trailiing_newlines): Use size_t rather than int to
+	count string length.
+	(Suggestion from Paul Edwards, who provides a broken return email
+	address in Tonga.  I believe he is actually from Australia.)
+
+2003-07-28  Derek Price  <derek@ximbiot.com>
+
+	* checkout.c (checkout): Remove out-of-date comment about Checkin.prog
+	and Update.prog.
+
 2003-07-25  Derek Price  <derek@ximbiot.com>
 
 	* rcs.c (RCS_parsercsfile): Declare rcsfile argument as const.
