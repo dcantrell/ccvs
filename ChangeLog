@@ -1,3 +1,9 @@
+Fri Nov 22 16:30:27 1996  Brendan Kehoe  <brendan@cygnus.com>
+
+	* configure.in: Check for -lsocket, etc., before checking for
+	Kerberos libraries.
+	* configure: Rebuild.
+
 1996-11-19  Jim Kingdon
 
 	* cvsnt.mak: Remove strippath.c.

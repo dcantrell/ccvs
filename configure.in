@@ -93,6 +93,30 @@ if test $ccvs_cv_sys_working_fnmatch = no; then
 fi
 AC_MSG_RESULT($ccvs_cv_sys_working_fnmatch)
 
+# If we can't find connect, try looking in -lsocket, -lnsl, and -linet.
+# The Irix 5 libc.so has connect and gethostbyname, but Irix 5 also has
+# libsocket.so which has a bad implementation of gethostbyname (it
+# only looks in /etc/hosts), so we only look for -lsocket if we need
+# it.
+AC_CHECK_FUNC(connect, :, 
+[case "$LIBS" in
+*-lnsl*) ;;
+*) AC_CHECK_LIB(nsl_s, printf) ;;
+esac
+case "$LIBS" in
+*-lnsl*) ;;
+*) AC_CHECK_LIB(nsl, printf) ;;
+esac
+case "$LIBS" in
+*-lsocket*) ;;
+*) AC_CHECK_LIB(socket, connect) ;;
+esac
+case "$LIBS" in
+*-linet*) ;;
+*) AC_CHECK_LIB(inet, connect) ;;
+esac
+AC_CHECK_FUNCS(connect)])
+
 dnl
 dnl set $(KRB4) from --with-krb4=value -- WITH_KRB4
 dnl
@@ -172,30 +196,6 @@ AC_ARG_ENABLE(encryption,
 if test "$encryption" = "true"; then
   AC_DEFINE(ENCRYPTION)
 fi
-
-# If we can't find connect, try looking in -lsocket, -lnsl, and -linet.
-# The Irix 5 libc.so has connect and gethostbyname, but Irix 5 also has
-# libsocket.so which has a bad implementation of gethostbyname (it
-# only looks in /etc/hosts), so we only look for -lsocket if we need
-# it.
-AC_CHECK_FUNC(connect, :, 
-[case "$LIBS" in
-*-lnsl*) ;;
-*) AC_CHECK_LIB(nsl_s, printf) ;;
-esac
-case "$LIBS" in
-*-lnsl*) ;;
-*) AC_CHECK_LIB(nsl, printf) ;;
-esac
-case "$LIBS" in
-*-lsocket*) ;;
-*) AC_CHECK_LIB(socket, connect) ;;
-esac
-case "$LIBS" in
-*-linet*) ;;
-*) AC_CHECK_LIB(inet, connect) ;;
-esac
-AC_CHECK_FUNCS(connect)])
 
 AC_CHECK_FUNC(gethostname, :, LIBOBJS="$LIBOBJS hostname.o")
 
