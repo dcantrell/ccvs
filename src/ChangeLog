@@ -1,3 +1,9 @@
+Thu Jan  2 13:30:56 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* Makefile.in, cvsbug.sh, edit.c, edit.h, error.c, error.h,
+	fileattr.c, fileattr.h, filesubr.c, run.c, update.h, watch.c,
+	watch.h: Remove "675" paragraph; see ../ChangeLog for rationale.
+
 Thu Jan  2 12:27:46 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* sanity.sh (info): New test info-cleanup-verifymsg gets rid of
