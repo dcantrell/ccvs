@@ -32,9 +32,12 @@
 /* The __-protected variants of `format' and `printf' attributes
    are accepted by gcc versions 2.6.4 (effectively 2.7) and later.  */
 # if __GNUC__ < 2 || (__GNUC__ == 2 && __GNUC_MINOR__ < 7)
+#  define __const__	const
 #  define __format__	format
-#  define __printf__	printf
+#  define __malloc__	malloc
 #  define __noreturn__	noreturn
+#  define __printf__	printf
+#  define __pure__	pure
 # endif
 #endif
 
@@ -43,7 +46,7 @@ void error PROTO ((int, int, const char *, ...)
 
 /* Exit due to an error.  Similar to error (1, 0, "message"), but call
    it in the case where the message has already been printed.  */
-void error_exit PROTO ((void)) __attribute__ ((__noreturn__));
+void error_exit PROTO ((void) __attribute__ ((__noreturn__)));
 
 /* If non-zero, error will use the CVS protocol to report error
    messages.  This will only be set in the CVS server parent process;

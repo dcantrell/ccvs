@@ -1,5 +1,10 @@
 2003-03-25  Derek Price  <derek@ximbiot.com>
 
+	* cvs.h: Disable GNU attributes as part of PROTO behavior.
+	* error.h: Mirror GNU attribute definitions from cvs.h.
+
+2003-03-25  Derek Price  <derek@ximbiot.com>
+
 	* subr.c (cvs_trace): #ifdef use of server_active.
 	(Report from Jim Salter <jsalter@proofpoint.com>.)
 
