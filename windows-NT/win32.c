@@ -34,7 +34,15 @@ unsigned sleep(unsigned seconds)
 }
 
 #if 0
-/* This is available from the WinSock library.  */
+
+/* WinSock has a gethostname.  But note that WinSock gethostname may
+   want to talk to the network, which is kind of bogus in the
+   non-client/server case.  I'm not sure I can think of any obvious
+   solution.  Most of the ways I can think of to figure out whether
+   to call gethostname or GetComputerName seem kind of kludgey, and/or
+   might result in picking the name in a potentially confusing way
+   (I'm not sure exactly how the name(s) are set).  */
+
 int gethostname(char* name, int namelen)
 {
 	DWORD dw = namelen;

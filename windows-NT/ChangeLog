@@ -1,3 +1,8 @@
+1998-09-04  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* win32.c (gethostname): Expand comment about gethostname
+	vs. GetComputerName (reported by Randy Coulman).
+
 1998-07-01  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* startserver.c (wnt_shutdown_server): Check for errors from close().
