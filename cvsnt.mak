@@ -154,6 +154,7 @@ CLEAN :
 	-@erase ".\WinRel\ndir.obj"
 	-@erase ".\WinRel\getdate.obj"
 	-@erase ".\WinRel\mkdir.obj"
+	-@erase ".\WinRel\fncase.obj"
 
 "$(OUTDIR)" :
     if not exist "$(OUTDIR)/$(NULL)" mkdir "$(OUTDIR)"
@@ -181,109 +182,110 @@ LINK32_FLAGS=wsock32.lib kernel32.lib user32.lib gdi32.lib winspool.lib\
  /subsystem:console /incremental:no /pdb:"$(OUTDIR)/cvs.pdb" /machine:I386\
  /out:"$(OUTDIR)/cvs.exe" 
 LINK32_OBJS= \
-	"$(INTDIR)/inflate.obj" \
-	"$(INTDIR)/trees.obj" \
-	"$(INTDIR)/getline.obj" \
-	"$(INTDIR)/edit.obj" \
-	"$(INTDIR)/zutil.obj" \
-	"$(INTDIR)/ifdef.obj" \
-	"$(INTDIR)/create_adm.obj" \
-	"$(INTDIR)/zlib.obj" \
-	"$(INTDIR)/main.obj" \
-	"$(INTDIR)/cmpbuf.obj" \
-	"$(INTDIR)/crc32.obj" \
-	"$(INTDIR)/infcodes.obj" \
-	"$(INTDIR)/myndbm.obj" \
-	"$(INTDIR)/savecwd.obj" \
-	"$(INTDIR)/client.obj" \
+	".\WinRel\inflate.obj" \
+	".\WinRel\trees.obj" \
+	".\WinRel\getline.obj" \
+	".\WinRel\edit.obj" \
+	".\WinRel\zutil.obj" \
+	".\WinRel\ifdef.obj" \
+	".\WinRel\create_adm.obj" \
+	".\WinRel\zlib.obj" \
+	".\WinRel\main.obj" \
+	".\WinRel\cmpbuf.obj" \
+	".\WinRel\crc32.obj" \
+	".\WinRel\infcodes.obj" \
+	".\WinRel\myndbm.obj" \
+	".\WinRel\savecwd.obj" \
+	".\WinRel\client.obj" \
 	".\WinRel\1\diff.obj" \
-	"$(INTDIR)/scramble.obj" \
-	"$(INTDIR)/filesubr.obj" \
-	"$(INTDIR)/infutil.obj" \
-	"$(INTDIR)/gzio.obj" \
-	"$(INTDIR)/fnmatch.obj" \
-	"$(INTDIR)/side.obj" \
-	"$(INTDIR)/win32.obj" \
-	"$(INTDIR)/inffast.obj" \
-	"$(INTDIR)/startserver.obj" \
-	"$(INTDIR)/ignore.obj" \
-	"$(INTDIR)/expand_path.obj" \
-	"$(INTDIR)/repos.obj" \
-	"$(INTDIR)/rtag.obj" \
-	"$(INTDIR)/valloc.obj" \
-	"$(INTDIR)/cvsrc.obj" \
-	"$(INTDIR)/lock.obj" \
-	"$(INTDIR)/log.obj" \
-	"$(INTDIR)/ed.obj" \
-	"$(INTDIR)/deflate.obj" \
-	"$(INTDIR)/analyze.obj" \
-	"$(INTDIR)/commit.obj" \
-	"$(INTDIR)/patch.obj" \
-	"$(INTDIR)/classify.obj" \
+	".\WinRel\scramble.obj" \
+	".\WinRel\filesubr.obj" \
+	".\WinRel\infutil.obj" \
+	".\WinRel\gzio.obj" \
+	".\WinRel\fnmatch.obj" \
+	".\WinRel\side.obj" \
+	".\WinRel\win32.obj" \
+	".\WinRel\inffast.obj" \
+	".\WinRel\startserver.obj" \
+	".\WinRel\ignore.obj" \
+	".\WinRel\expand_path.obj" \
+	".\WinRel\repos.obj" \
+	".\WinRel\rtag.obj" \
+	".\WinRel\valloc.obj" \
+	".\WinRel\cvsrc.obj" \
+	".\WinRel\lock.obj" \
+	".\WinRel\log.obj" \
+	".\WinRel\ed.obj" \
+	".\WinRel\deflate.obj" \
+	".\WinRel\analyze.obj" \
+	".\WinRel\commit.obj" \
+	".\WinRel\patch.obj" \
+	".\WinRel\classify.obj" \
 	".\WinRel\2\diff.obj" \
-	"$(INTDIR)/history.obj" \
-	"$(INTDIR)/add.obj" \
-	"$(INTDIR)/update.obj" \
+	".\WinRel\history.obj" \
+	".\WinRel\add.obj" \
+	".\WinRel\update.obj" \
 	".\WinRel\2\version.obj" \
-	"$(INTDIR)/uncompr.obj" \
-	"$(INTDIR)/buffer.obj" \
-	"$(INTDIR)/rcmd.obj" \
-	"$(INTDIR)/find_names.obj" \
-	"$(INTDIR)/watch.obj" \
-	"$(INTDIR)/getopt.obj" \
-	"$(INTDIR)/checkin.obj" \
-	"$(INTDIR)/fileattr.obj" \
-	"$(INTDIR)/modules.obj" \
-	"$(INTDIR)/rcs.obj" \
-	"$(INTDIR)/admin.obj" \
-	"$(INTDIR)/mkmodules.obj" \
-	"$(INTDIR)/diff3.obj" \
-	"$(INTDIR)/run.obj" \
-	"$(INTDIR)/compress.obj" \
-	"$(INTDIR)/waitpid.obj" \
-	"$(INTDIR)/normal.obj" \
-	"$(INTDIR)/adler32.obj" \
-	"$(INTDIR)/login.obj" \
-	"$(INTDIR)/sighandle.obj" \
-	"$(INTDIR)/util.obj" \
-	"$(INTDIR)/logmsg.obj" \
-	"$(INTDIR)/remove.obj" \
-	"$(INTDIR)/entries.obj" \
-	"$(INTDIR)/dir.obj" \
-	"$(INTDIR)/getopt1.obj" \
-	"$(INTDIR)/md5.obj" \
-	"$(INTDIR)/xgetwd.obj" \
-	"$(INTDIR)/yesno.obj" \
-	"$(INTDIR)/no_diff.obj" \
-	"$(INTDIR)/root.obj" \
-	"$(INTDIR)/tag.obj" \
-	"$(INTDIR)/server.obj" \
-	"$(INTDIR)/pwd.obj" \
-	"$(INTDIR)/parseinfo.obj" \
-	"$(INTDIR)/infblock.obj" \
-	"$(INTDIR)/inftrees.obj" \
-	"$(INTDIR)/regex.obj" \
-	"$(INTDIR)/io.obj" \
+	".\WinRel\uncompr.obj" \
+	".\WinRel\buffer.obj" \
+	".\WinRel\rcmd.obj" \
+	".\WinRel\find_names.obj" \
+	".\WinRel\watch.obj" \
+	".\WinRel\getopt.obj" \
+	".\WinRel\checkin.obj" \
+	".\WinRel\fileattr.obj" \
+	".\WinRel\modules.obj" \
+	".\WinRel\rcs.obj" \
+	".\WinRel\admin.obj" \
+	".\WinRel\mkmodules.obj" \
+	".\WinRel\diff3.obj" \
+	".\WinRel\run.obj" \
+	".\WinRel\compress.obj" \
+	".\WinRel\waitpid.obj" \
+	".\WinRel\normal.obj" \
+	".\WinRel\adler32.obj" \
+	".\WinRel\login.obj" \
+	".\WinRel\sighandle.obj" \
+	".\WinRel\util.obj" \
+	".\WinRel\logmsg.obj" \
+	".\WinRel\remove.obj" \
+	".\WinRel\entries.obj" \
+	".\WinRel\dir.obj" \
+	".\WinRel\getopt1.obj" \
+	".\WinRel\md5.obj" \
+	".\WinRel\xgetwd.obj" \
+	".\WinRel\yesno.obj" \
+	".\WinRel\no_diff.obj" \
+	".\WinRel\root.obj" \
+	".\WinRel\tag.obj" \
+	".\WinRel\server.obj" \
+	".\WinRel\pwd.obj" \
+	".\WinRel\parseinfo.obj" \
+	".\WinRel\infblock.obj" \
+	".\WinRel\inftrees.obj" \
+	".\WinRel\regex.obj" \
+	".\WinRel\io.obj" \
 	".\WinRel\1\version.obj" \
-	"$(INTDIR)/vasprintf.obj" \
-	"$(INTDIR)/vers_ts.obj" \
-	"$(INTDIR)/checkout.obj" \
-	"$(INTDIR)/stripslash.obj" \
-	"$(INTDIR)/error.obj" \
-	"$(INTDIR)/hash.obj" \
-	"$(INTDIR)/subr.obj" \
-	"$(INTDIR)/import.obj" \
-	"$(INTDIR)/release.obj" \
-	"$(INTDIR)/recurse.obj" \
-	"$(INTDIR)/argmatch.obj" \
-	"$(INTDIR)/sockerror.obj" \
-	"$(INTDIR)/context.obj" \
-	"$(INTDIR)/rcscmds.obj" \
-	"$(INTDIR)/wrapper.obj" \
-	"$(INTDIR)/status.obj" \
-	"$(INTDIR)/ndir.obj" \
-	"$(INTDIR)/getdate.obj" \
-	"$(INTDIR)/mkdir.obj"
+	".\WinRel\vasprintf.obj" \
+	".\WinRel\vers_ts.obj" \
+	".\WinRel\checkout.obj" \
+	".\WinRel\stripslash.obj" \
+	".\WinRel\error.obj" \
+	".\WinRel\hash.obj" \
+	".\WinRel\subr.obj" \
+	".\WinRel\import.obj" \
+	".\WinRel\release.obj" \
+	".\WinRel\recurse.obj" \
+	".\WinRel\argmatch.obj" \
+	".\WinRel\sockerror.obj" \
+	".\WinRel\context.obj" \
+	".\WinRel\rcscmds.obj" \
+	".\WinRel\wrapper.obj" \
+	".\WinRel\status.obj" \
+	".\WinRel\ndir.obj" \
+	".\WinRel\getdate.obj" \
+	".\WinRel\mkdir.obj" \
+	".\WinRel\fncase.obj"
 
 "$(OUTDIR)\cvs.exe" : "$(OUTDIR)" $(DEF_FILE) $(LINK32_OBJS)
     $(LINK32) @<<
@@ -416,6 +418,7 @@ CLEAN :
 	-@erase ".\WinDebug\scramble.obj"
 	-@erase ".\WinDebug\cvsrc.obj"
 	-@erase ".\WinDebug\fnmatch.obj"
+	-@erase ".\WinDebug\fncase.obj"
 	-@erase ".\WinDebug\cvs.ilk"
 	-@erase ".\WinDebug\cvs.pdb"
 
@@ -445,109 +448,110 @@ LINK32_FLAGS=wsock32.lib kernel32.lib user32.lib gdi32.lib winspool.lib\
  /subsystem:console /incremental:yes /pdb:"$(OUTDIR)/cvs.pdb" /debug\
  /machine:I386 /out:"$(OUTDIR)/cvs.exe" 
 LINK32_OBJS= \
-	"$(INTDIR)/regex.obj" \
-	"$(INTDIR)/normal.obj" \
-	"$(INTDIR)/client.obj" \
-	"$(INTDIR)/util.obj" \
-	"$(INTDIR)/create_adm.obj" \
-	"$(INTDIR)/vers_ts.obj" \
-	"$(INTDIR)/logmsg.obj" \
-	"$(INTDIR)/mkmodules.obj" \
-	"$(INTDIR)/remove.obj" \
-	"$(INTDIR)/sighandle.obj" \
-	"$(INTDIR)/watch.obj" \
-	"$(INTDIR)/release.obj" \
-	"$(INTDIR)/server.obj" \
-	"$(INTDIR)/recurse.obj" \
-	"$(INTDIR)/checkout.obj" \
-	"$(INTDIR)/context.obj" \
-	"$(INTDIR)/rcscmds.obj" \
-	"$(INTDIR)/side.obj" \
-	"$(INTDIR)/wrapper.obj" \
-	"$(INTDIR)/getdate.obj" \
-	"$(INTDIR)/parseinfo.obj" \
-	"$(INTDIR)/login.obj" \
-	"$(INTDIR)/hash.obj" \
+	".\WinDebug\regex.obj" \
+	".\WinDebug\normal.obj" \
+	".\WinDebug\client.obj" \
+	".\WinDebug\util.obj" \
+	".\WinDebug\create_adm.obj" \
+	".\WinDebug\vers_ts.obj" \
+	".\WinDebug\logmsg.obj" \
+	".\WinDebug\mkmodules.obj" \
+	".\WinDebug\remove.obj" \
+	".\WinDebug\sighandle.obj" \
+	".\WinDebug\watch.obj" \
+	".\WinDebug\release.obj" \
+	".\WinDebug\server.obj" \
+	".\WinDebug\recurse.obj" \
+	".\WinDebug\checkout.obj" \
+	".\WinDebug\context.obj" \
+	".\WinDebug\rcscmds.obj" \
+	".\WinDebug\side.obj" \
+	".\WinDebug\wrapper.obj" \
+	".\WinDebug\getdate.obj" \
+	".\WinDebug\parseinfo.obj" \
+	".\WinDebug\login.obj" \
+	".\WinDebug\hash.obj" \
 	".\WinDebug\1\version.obj" \
-	"$(INTDIR)/subr.obj" \
-	"$(INTDIR)/vasprintf.obj" \
-	"$(INTDIR)/fileattr.obj" \
-	"$(INTDIR)/import.obj" \
-	"$(INTDIR)/getline.obj" \
-	"$(INTDIR)/ifdef.obj" \
-	"$(INTDIR)/crc32.obj" \
-	"$(INTDIR)/find_names.obj" \
-	"$(INTDIR)/status.obj" \
-	"$(INTDIR)/ndir.obj" \
-	"$(INTDIR)/savecwd.obj" \
-	"$(INTDIR)/log.obj" \
-	"$(INTDIR)/sockerror.obj" \
-	"$(INTDIR)/infutil.obj" \
-	"$(INTDIR)/win32.obj" \
-	"$(INTDIR)/inffast.obj" \
-	"$(INTDIR)/ed.obj" \
-	"$(INTDIR)/edit.obj" \
-	"$(INTDIR)/add.obj" \
-	"$(INTDIR)/repos.obj" \
-	"$(INTDIR)/error.obj" \
-	"$(INTDIR)/zlib.obj" \
-	"$(INTDIR)/main.obj" \
-	"$(INTDIR)/filesubr.obj" \
-	"$(INTDIR)/cmpbuf.obj" \
-	"$(INTDIR)/myndbm.obj" \
-	"$(INTDIR)/xgetwd.obj" \
-	"$(INTDIR)/infblock.obj" \
-	"$(INTDIR)/inftrees.obj" \
-	"$(INTDIR)/deflate.obj" \
+	".\WinDebug\subr.obj" \
+	".\WinDebug\vasprintf.obj" \
+	".\WinDebug\fileattr.obj" \
+	".\WinDebug\import.obj" \
+	".\WinDebug\getline.obj" \
+	".\WinDebug\ifdef.obj" \
+	".\WinDebug\crc32.obj" \
+	".\WinDebug\find_names.obj" \
+	".\WinDebug\status.obj" \
+	".\WinDebug\ndir.obj" \
+	".\WinDebug\savecwd.obj" \
+	".\WinDebug\log.obj" \
+	".\WinDebug\sockerror.obj" \
+	".\WinDebug\infutil.obj" \
+	".\WinDebug\win32.obj" \
+	".\WinDebug\inffast.obj" \
+	".\WinDebug\ed.obj" \
+	".\WinDebug\edit.obj" \
+	".\WinDebug\add.obj" \
+	".\WinDebug\repos.obj" \
+	".\WinDebug\error.obj" \
+	".\WinDebug\zlib.obj" \
+	".\WinDebug\main.obj" \
+	".\WinDebug\filesubr.obj" \
+	".\WinDebug\cmpbuf.obj" \
+	".\WinDebug\myndbm.obj" \
+	".\WinDebug\xgetwd.obj" \
+	".\WinDebug\infblock.obj" \
+	".\WinDebug\inftrees.obj" \
+	".\WinDebug\deflate.obj" \
 	".\WinDebug\1\diff.obj" \
-	"$(INTDIR)/analyze.obj" \
-	"$(INTDIR)/gzio.obj" \
-	"$(INTDIR)/patch.obj" \
-	"$(INTDIR)/rcs.obj" \
-	"$(INTDIR)/history.obj" \
-	"$(INTDIR)/run.obj" \
-	"$(INTDIR)/mkdir.obj" \
-	"$(INTDIR)/uncompr.obj" \
-	"$(INTDIR)/ignore.obj" \
-	"$(INTDIR)/rtag.obj" \
-	"$(INTDIR)/root.obj" \
-	"$(INTDIR)/trees.obj" \
-	"$(INTDIR)/checkin.obj" \
-	"$(INTDIR)/valloc.obj" \
-	"$(INTDIR)/argmatch.obj" \
-	"$(INTDIR)/lock.obj" \
-	"$(INTDIR)/modules.obj" \
-	"$(INTDIR)/classify.obj" \
-	"$(INTDIR)/dir.obj" \
-	"$(INTDIR)/startserver.obj" \
-	"$(INTDIR)/zutil.obj" \
-	"$(INTDIR)/stripslash.obj" \
-	"$(INTDIR)/md5.obj" \
-	"$(INTDIR)/admin.obj" \
-	"$(INTDIR)/commit.obj" \
-	"$(INTDIR)/diff3.obj" \
-	"$(INTDIR)/expand_path.obj" \
+	".\WinDebug\analyze.obj" \
+	".\WinDebug\gzio.obj" \
+	".\WinDebug\patch.obj" \
+	".\WinDebug\rcs.obj" \
+	".\WinDebug\history.obj" \
+	".\WinDebug\run.obj" \
+	".\WinDebug\mkdir.obj" \
+	".\WinDebug\uncompr.obj" \
+	".\WinDebug\ignore.obj" \
+	".\WinDebug\rtag.obj" \
+	".\WinDebug\root.obj" \
+	".\WinDebug\trees.obj" \
+	".\WinDebug\checkin.obj" \
+	".\WinDebug\valloc.obj" \
+	".\WinDebug\argmatch.obj" \
+	".\WinDebug\lock.obj" \
+	".\WinDebug\modules.obj" \
+	".\WinDebug\classify.obj" \
+	".\WinDebug\dir.obj" \
+	".\WinDebug\startserver.obj" \
+	".\WinDebug\zutil.obj" \
+	".\WinDebug\stripslash.obj" \
+	".\WinDebug\md5.obj" \
+	".\WinDebug\admin.obj" \
+	".\WinDebug\commit.obj" \
+	".\WinDebug\diff3.obj" \
+	".\WinDebug\expand_path.obj" \
 	".\WinDebug\2\diff.obj" \
-	"$(INTDIR)/update.obj" \
-	"$(INTDIR)/waitpid.obj" \
-	"$(INTDIR)/adler32.obj" \
-	"$(INTDIR)/inflate.obj" \
-	"$(INTDIR)/tag.obj" \
-	"$(INTDIR)/buffer.obj" \
-	"$(INTDIR)/rcmd.obj" \
-	"$(INTDIR)/pwd.obj" \
-	"$(INTDIR)/getopt.obj" \
-	"$(INTDIR)/entries.obj" \
-	"$(INTDIR)/getopt1.obj" \
+	".\WinDebug\update.obj" \
+	".\WinDebug\waitpid.obj" \
+	".\WinDebug\adler32.obj" \
+	".\WinDebug\inflate.obj" \
+	".\WinDebug\tag.obj" \
+	".\WinDebug\buffer.obj" \
+	".\WinDebug\rcmd.obj" \
+	".\WinDebug\pwd.obj" \
+	".\WinDebug\getopt.obj" \
+	".\WinDebug\entries.obj" \
+	".\WinDebug\getopt1.obj" \
 	".\WinDebug\2\version.obj" \
-	"$(INTDIR)/yesno.obj" \
-	"$(INTDIR)/compress.obj" \
-	"$(INTDIR)/io.obj" \
-	"$(INTDIR)/infcodes.obj" \
-	"$(INTDIR)/no_diff.obj" \
-	"$(INTDIR)/scramble.obj" \
-	"$(INTDIR)/cvsrc.obj" \
-	"$(INTDIR)/fnmatch.obj"
+	".\WinDebug\yesno.obj" \
+	".\WinDebug\compress.obj" \
+	".\WinDebug\io.obj" \
+	".\WinDebug\infcodes.obj" \
+	".\WinDebug\no_diff.obj" \
+	".\WinDebug\scramble.obj" \
+	".\WinDebug\cvsrc.obj" \
+	".\WinDebug\fnmatch.obj" \
+	".\WinDebug\fncase.obj"
 
 "$(OUTDIR)\cvs.exe" : "$(OUTDIR)" $(DEF_FILE) $(LINK32_OBJS)
     $(LINK32) @<<
@@ -3541,6 +3545,28 @@ INTDIR_SRC=.\WinRel\2
 
 
 !ENDIF 
+
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=.\lib\fncase.c
+DEP_CPP_FNCAS=\
+	".\windows-NT\config.h"\
+	".\lib\system.h"\
+	{$(INCLUDE)}"\sys\Types.h"\
+	{$(INCLUDE)}"\sys\Stat.h"\
+	{$(INCLUDE)}"\sys\Timeb.h"\
+	{$(INCLUDE)}"\sys\Utime.h"\
+	".\windows-NT\ndir.h"\
+	
+NODEP_CPP_FNCAS=\
+	".\lib\tcpip.h"\
+	
+
+"$(INTDIR)\fncase.obj" : $(SOURCE) $(DEP_CPP_FNCAS) "$(INTDIR)"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
 
 # End Source File
 # End Target
