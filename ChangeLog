@@ -1,3 +1,9 @@
+2003-11-10  Mark D. Baushke  <mdb@cvshome.org>
+
+	* BUGS: Note bugs symlinks to files will not work with or without
+	LockDir. Note that symlinks to directories will not work with
+	LockDir.
+
 2003-11-10  Derek Price  <derek@ximbiot.com>
 
 	* configure.in: Require Autoconf 2.58.
