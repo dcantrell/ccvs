@@ -1,3 +1,7 @@
+2004-11-01  Derek Price  <derek@ximbiot.com>
+
+	* allocsa.m4, eealloc.m4, setenv.m4: New files from GNULIB.
+
 2004-10-26  Derek Price  <derek@ximbiot.com>
 
 	* bison.m4 (gl_BISON): Update comment to eliminate new spaces from
