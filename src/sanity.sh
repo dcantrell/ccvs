@@ -97,12 +97,16 @@ fi
 # Use full path for CVS executable, so that CVS_SERVER gets set properly
 # for remote.
 case $1 in
+"")
+  echo "Usage: `basename $0` [-r] [--keep] CVS-TO-TEST [TESTS-TO-RUN...]" 1>&2
+  exit 1
+  ;;
 /*)
-	testcvs=$1
-	;;
+  testcvs=$1
+  ;;
 *)
-	testcvs=`pwd`/$1
-	;;
+  testcvs=`pwd`/$1
+  ;;
 esac
 
 shift
