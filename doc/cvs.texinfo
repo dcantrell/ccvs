@@ -8785,8 +8785,7 @@ this module.
 @c problems, then explain how the feature solves it).
 
 Wrappers allow you to set a hook which transforms files on
-their way in and out of @sc{cvs}.  Most or all of the
-wrappers features do not work with client/server @sc{cvs}.
+their way in and out of @sc{cvs}.
 
 The file @file{cvswrappers} defines the script that will be
 run on a file when its name matches a regular
@@ -8795,7 +8794,8 @@ file or directory. One script is executed on the file/directory
 before being checked into the repository (this is denoted
 with the @code{-t} flag) and the other when the file is
 checked out of the repository (this is denoted with the
-@code{-f} flag)
+@code{-f} flag).  The @samp{-t}/@samp{-f} feature does
+not work with client/server @sc{cvs}.
 
 The @file{cvswrappers} also has a @samp{-m} option to
 specify the merge methodology that should be used when
