@@ -1,3 +1,12 @@
+Sat Sep  6 00:08:20 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* FAQ: Re-import from FAQ-O-Matic.  In particular: GIC info
+	updated, binary files updated (e.g. -kb not -ko), rename database
+	and rCVS info updated (refer to TODO), tweaks to section on
+	contributing (HACKING, DEVEL-CVS, &c), Cyclic info updated
+	(e.g. remove Indiana address), usenet info updated
+	(e.g. comp.software.config-mgmt not gnu.*).
+
 Fri Sep  5 20:46:26 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* FAQ: Add another introductory paragraph which talks about out of

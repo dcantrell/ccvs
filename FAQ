@@ -2421,36 +2421,22 @@ Category: /Advanced_Topics_/Related_Software/
    ---------------------------------------------
 
 
-   GIC provides a graphical user interface to the
-   Concurrent Version System (CVS), a powerful
-   revision control system. GIC is implemented in
-   the Tcl/Tk programming language and is intended
-   to augment the sometimes cumbersome CVS command
-   line interface. Novices should find GIC to be
-   much easier to learn than the CVS command line. 
-
-   While GIC is easy to use, it does not contain any
-   documentation on CVS. Users of GIC must first
-   learn the concepts of CVS such as modules and
-   merging, as well as the simple functions, such as
-   committing and updating. The CVS manual page and
-   the README file are good places to look. 
-
-   contact 
-
-                   David Marwood
-                   marwood@cpsc.ucalgary.ca
-
-                           [Extracted from an announcement by David Marwood.]
-
-   GIC can be obtained by anonymous ftp to (on the
-   date of this FAQ) 
-
-                   ftp.cpsc.ucalgary.ca:/pub/users/marwood/gic-1.1.tar.Z
-                   ftp.cpsc.ucalgary.ca:/pub/users/marwood/gic-1.2b1.tar.Z
 
 
-   Last modified: 6/13/1997 
+           GIC provides a graphical user interface to the Concurrent Version
+           System (CVS), a powerful revision control system.  GIC is
+           implemented in the Tcl/Tk programming language and is intended to
+           augment the sometimes cumbersome CVS command line interface.
+           
+           Note that according to the official GIC page at 
+           http://www.cpsc.ucalgary.ca/redirect/grouplab/projects/gic/
+           GIC is no longer being maintained and tkCVS is recommended
+           instead.  For more on tkCVS, see http://www.cyclic.com/tkcvs/
+
+           kingdon@cyclic.com
+
+
+   Last modified: 9/6/1997 
 
    3. What is CAVEMAN? 
    --------------------
@@ -3333,31 +3319,33 @@ Category: /Advanced_Topics_/Tricks_of_the_Trade/
    ---------------
 
 
-   If you configure RCS and CVS to use the GNU
-   version of diff with the '-a' option, CVS and RCS
-   will handle binary files. See section 4A for
-   configuration info. 
+   First of all, if you want to use binary files, you should get RCS 5.7
+   and CVS 1.9 or later (earlier versions had some support, but there have been
+   bug fixes).  Secondly, follow the instructions for installing RCS very
+   carefully (it is easy to get it installed so it works for everything
+   except binary files).
 
-   You may also need to apply the '-ko' flag to the
-   files to avoid expanding RCS keywords, which can
-   be done via: 
+   Then, specify 'cvs add -kb' instead of just 'cvs add' to add a binary
+   file.  If you want to set an existing file to binary, run 'cvs admin
+   -kb' (and then check in a new copy of the file).  Note that old
+   versions of CVS used -ko instead of -kb for binary files, so if you
+   see a reference to -ko in the context of binary files, you should
+   think -kb instead.
 
-                   cvs admin -ko filename
+   Of course when 'cvs update' finds that a merge is needed, it can't
+   do this for binary files the same way as for text files.  With the
+   latest versions (e.g. CVS 1.9.14), it should be able to give you both
+   versions and let you merge manually.  Another approach is to 
+   run 'cvs admin -l' to lock files, as described in 
+   "How can I lock files while I'm working on them the way RCS does?"
+   elsewhere in this FAQ.  See also 
+   "Is there any way to import binary files?" and 
+   "How do I "add" a binary file?" elsewhere in this FAQ.
 
-   The only real problem occurs when "cvs update"
-   attempts to merge binary revisions committed
-   elsewhere into a modified working file. This can
-   be a particular problem if you are trying to use
-   CVS on Frame or Interleaf (document processing
-   systems) that produce non-text output. 
-
-   See 3C.8 for a way to serialize access to binary
-   files. See 3A.8 for adding binary files, 3H.4 for
-   importing binary files and 3B.4 for some more
-   information about "admin". 
+   kingdon@cyclic.com
 
 
-   Last modified: 6/13/1997 
+   Last modified: 9/6/1997 
 
    2. Can I edit the RCS (",v") files in the Repository? 
    ------------------------------------------------------
@@ -8225,65 +8213,52 @@ Category: /Past__Future_/Development/
    ------------------------------------------
 
 
-   A "rename" or "per-directory" database has been
-   bandied about on the net for years. It is needed,
-   but it is a lot of work. 
 
-   CVS version 1.5 supports remote repository
-   access, but Paul 
- o Kunz <Paul_Kunz@slac.stanford.edu> has produced
-   another version (rCVS) that also runs remotely.
-   It is available for testing. 
+   A "rename" or "per-directory" database has been bandied about on
+   the net for years.  Many of the goals of the rename database have
+   been achieved by the so-called "death support" in recent versions of
+   CVS (such as 1.9).  For more information on what may remain to be
+   done, see item #189 in the TODO file of a development version of CVS.
 
-   On the host "preprint.slac.stanford.edu", you can
-   find: 
+   CVS version 1.5 supports remote repository access, but Paul
+   Kunz  has produced another version
+   (rCVS) that also runs remotely.  Note that as far as I know there
+   are no advantages to rCVS over the remote CVS in CVS 1.5 and later,
+   and the rCVS user community has migrated to remote CVS.
+   rCVS is *not* a multisite CVS (see item #186 in TODO for more on
+   multisite).  For more on rCVS, see
 
-                     Paper:        slacpubs/5000/slac-pub-5923.ps.Z
+   ftp://ftp.slac.stanford.edu/software/rcvs
 
-   This was for a conference in Sept, 1993, before
-   first beta. 
-
-   On the host "ftp.slac.stanford.edu", you can
-   find: 
-
-                     Sources:      pub/sources/rcvs-0.8.1.tar.Z
-
-   With the caveat that until version 1.0 is
-   available, rCVS should be considered an
-   unreliable Beta release, you are invited to grab
-   a copy and test it. 
-
-   [[Others?]] 
+   kingdon@cyclic.com
 
 
-   Last modified: 6/13/1997 
+   Last modified: 9/6/1997 
 
    5. I have some time and I'd like to help. What can I do for you? 
    -----------------------------------------------------------------
 
 
-   You can review this document, correct errors and
-   fill in any of the incomplete sections. 
+           You can review this document, correct errors and fill in any of
+           the incomplete sections.
 
-   You can add to the contrib area, which contains
-   useful ways to use some of the programmable CVS
-   facilities (loginfo, commitinfo) or ways of
-   connecting to work environments (pcl-cvs). 
+           You can write scripts or CVS add-ons and make them available by
+           web/FTP/etc.
 
-   You could write a regression test suite. Or at
-   least a scaffold into which we can drop tests. 
+           You could work on the regression test suite (src/sanity.sh in the
+           CVS source distribution).
 
-   You can write specs for new features, fix bugs,
-   review the man page or . . . 
+           You can write specs for new features, fix bugs, review the
+           documentation or . . .
 
-   [[Brian?]] 
+           For more information, see the files HACKING and DEVEL-CVS in the
+           CVS source distribution or 
+           http://www.cyclic.com/cyclic-pages/cvsdev.html
 
-   [[Is there some way we can register someone as
-   working on something or should we just stay in
-   the "implement it and send it to me" mode?]] 
+           kingdon@cyclic.com
 
 
-   Last modified: 6/13/1997 
+   Last modified: 9/6/1997 
 
 Category: /Past__Future_/Professional_Support/
 ++++++++++++++++++++++++++++++++++++++++++++++
@@ -8310,117 +8285,14 @@ Category: /Past__Future_/Professional_Support/
    -------------------------------------------
 
 
-   Cyclic Software exists to provide support for
-   CVS. Here's a copy of their product line sheet: 
+   Cyclic Software exists to provide support for CVS.  For details such
+   as prices and what this covers, see http://www.cyclic.com or ask
+   info@cyclic.com.
 
-                                       Cyclic Software
-                                      Standard Support
-
-   Cyclic Software offers support contracts for CVS.
-   This includes: 
+   kingdon@cyclic.com
 
 
-   * Full source, binaries, and documentation for
-   CVS, RCS, GNU diffutils, patch, and gzip -- that
-   is, CVS and everything it wants to run -- via FTP
-   or tape; 
-
-
-   * guaranteed responses for bugs within 5 business
-   days; 
-
-
-   * guaranteed fixes for reproducible bugs within
-   10 business days. 
-
-   (By "reproducible bugs", we mean instances where
-   the software clearly does not behave as
-   documentation or reasonable expectations indicate
-   it should, and that we are able to reproduce this
-   misbehavior reliably. Naturally, we will make
-   every possible effort to reproduce the bugs you
-   report; our experience has been that it's usually
-   not difficult.) 
-
-   We charge a fixed fee for: 
-
-
-   * one year 
-
-
-   * one host type (hardware & operating system) 
-
-
-   * twenty users at your site, with two of those
-   users designated as "contacts" for CVS, to reduce
-   communication problems. 
-
-   If the host type is not one we have access to for
-   testing purposes, you can either lend us a
-   machine of the appropriate type for the duration
-   of the contract, or pay an additional fee
-   up-front. We have access to Solaris, Irix, HP-UX,
-   Linux and Ultrix. (This list is subject to
-   change; contact us for details.) 
-
-   If the above fee structure is not well-suited to
-   your organization, please say so. We're
-   interested in tailoring our services to be as
-   useful to you as possible. 
-
-                                          Training
-
-   We offer on-site training in the use of CVS at a
-   daily rate, plus expenses (inc. travel,
-   accommodations). The classes target new and
-   intermediate users of CVS; we feel advanced users
-   benefit more from a written manual and the source
-   code. 
-
-                                     Custom Enhancements
-
-   We will implement enhancements to CVS or its
-   documentation, and port CVS to new architectures.
-   Our rates for this work depend on the amount of
-   work to be done. 
-
-   We strongly prefer to work on enhancements
-   suitable for incorporation into the general CVS
-   release upon completion; we will help you design
-   the enhancement in a way that makes this
-   possible. 
-
-                                    Short-Term Consulting
-
-   We will do short-term consulting at hourly rates.
-   These rates are calculated to include the
-   overhead of dealing in short time periods.
-   Therefore, in sufficiently large projects, we
-   recommend arranging a long-term support contract
-   instead of dealing on an hourly basis. 
-
-                                        Anything Else
-
-   Cyclic Software is interested in arranging
-   contracts for work in other areas, to be produced
-   as free software. Everything is negotiable. 
-
-                                      How To Contact Us
-
-   (Email is preferred.) 
-
-   Email: <info@cyclic.com> Phone: +1 812 335 9023
-   Web: http://www.cyclic.com SnailMail: Cyclic
-   Software 
-
-                           P.O. Box 804
-                           Bloomington, IN 47402-0804
-                           USA
-
-                                   Contributed by Jim Blandy
-
-
-   Last modified: 6/13/1997 
+   Last modified: 9/6/1997 
 
 Category: /User_Tasks_/
 +++++++++++++++++++++++
@@ -11264,29 +11136,20 @@ Category: /What_is_CVS_/Where_do_I_find_CVS_/
    ------------------------------------------------------------
 
 
-   A Usenet newsgroup named "gnu.cvs.info" was
-   announced in April 1993, with an expected
-   creation date of August, 1993. 
+           A Usenet newsgroup named "gnu.cvs.info" was announced in April
+           1993, with an expected creation date of August, 1993.  However,
+           nothing came of this.
 
-   As of this writing (October, 1994) it hasn't
-   appeared. 
+           If you want to discuss CVS on usenet, the correct group is
+           comp.software.config-mgmt (which also covers other configuration
+           management systems).  Someday it might be possible to create a
+           comp.software.config-mgmt.cvs, but only if there is sufficient
+           CVS traffic on comp.software.config-mgmt.
 
-   If the newsgroup is ever created, it and the
-   mailing list should be bidirectionally gatewayed,
-   meaning that you only need access to one of them.
-   Anything sent to the mailing list would be
-   automatically posted to "gnu.cvs.info" and
-   anything posted to the newsgroup would be
-   automatically mailed to "info-cvs". 
-
-   A newsgroup would be easier to use than a mailing
-   list. If the CVS newsgroup ever shows up, ask
-   your system administrator whether you get the
-   "gnu" hierarchy. If so, select a news reader and
-   dive in. 
+           kingdon@cyclic.com
 
 
-   Last modified: 6/13/1997 
+   Last modified: 9/6/1997 
 
 
 [Add an answer to this category] 
@@ -11295,7 +11158,7 @@ Category: /What_is_CVS_/Where_do_I_find_CVS_/
 
 Search the FAQ-O-Matic: 
 
-                      
+   
 
 Or look for questions modified in the last:  
      
