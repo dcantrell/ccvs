@@ -340,6 +340,19 @@ if test "$ac_cv_func_crypt" = yes; then
 fi
 fi # enable_server
 
+dnl On cygwin32, we configure like a Unix system, but we use the
+dnl Windows support code in lib/fncase.c to handle the case
+dnl insensitive file system.  We also need some support libraries.  We
+dnl do this at the end so that the new libraries are added at the end
+dnl of LIBS.
+AC_CACHE_CHECK(for cygwin32, ccvs_cv_sys_cygwin32,
+[AC_TRY_COMPILE([], [return __CYGWIN32__;],
+ccvs_cv_sys_cygwin32=yes, ccvs_cv_sys_cygwin32=no)])
+if test $ccvs_cv_sys_cygwin32 = yes; then
+  LIBOBJS="$LIBOBJS fncase.o"
+  LIBS="$LIBS -ladvapi32"
+fi
+
 test -f src/options.h && (
   AC_MSG_WARN(saving ./src/options.h in ./src/options.h-SAVED)
   AC_MSG_WARN(You may wish to check that local options have not been lost.)
