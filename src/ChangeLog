@@ -1,3 +1,11 @@
+2002-05-03  Larry Jones  <lawrence.jones@eds.com>
+
+	* rcs.c (RCS_checkin): Fix bad call to error () in buggy
+	PRESERVE_PERMISSIONS code.
+	(rcs_internal_unlockfile): Include current value of errno in error
+	message even though it may well be irrelevant (it's still better
+	than nothing).
+
 2002-05-02  Derek Price  <oberon@umich.edu>
 
 	* .cvsignore: Remove lines for files obsoleted by new autotools.
