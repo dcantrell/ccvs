@@ -1,3 +1,9 @@
+Sun Sep 29 16:32:47 1996  Greg A. Woods  <woods@most.weird.com>
+
+	* MINOR-BUGS: describe a minor annoyance or two
+
+	* BUGS: describe a couple of new bugs
+
 Sun Sep 29 14:09:49 1996  Noel Cragg  <noel@gargle.rain.org>
 
 	* configure.in: check for shadow password files as well as for

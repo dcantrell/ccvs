@@ -8,6 +8,11 @@ Wed Jul 24 19:01:35 1996  Ian Lance Taylor  <ian@cygnus.com>
 
 	* cvs.1: Document -x.
 
+Fri Sep 13 11:01:59 1996  Greg A. Woods  <woods@clapton.seachange.com>
+
+	* cvs.1: add description of -k and -K for rdiff.  Mention that
+	import allows '-b 1' to import to the trunk.
+
 Tue May 14 10:23:59 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.1: Add cvs.texinfo to the SEE ALSO section.  Replace an out
