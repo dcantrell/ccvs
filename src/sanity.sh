@@ -457,6 +457,9 @@ username="[-a-zA-Z0-9][-a-zA-Z0-9]*"
 author="[-a-zA-Z0-9][-a-zA-Z0-9]*"
 hostname="[-_.a-zA-Z0-9]*"
 
+# Regexp to match a commitid
+commitid="[a-zA-Z0-9]*"
+
 # Regexp to match the name of a temporary file (from cvs_temp_name).
 # This appears in certain diff output.
 tempname="[-a-zA-Z0-9/.%_]*"
@@ -3069,15 +3072,15 @@ total revisions: 3;	selected revisions: 3
 description:
 ----------------------------
 revision 3\.1
-date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}0 -0
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}0 -0;  commitid: ${commitid};
 bump-it
 ----------------------------
 revision 1\.2
-date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0;  commitid: ${commitid};
 modify-it
 ----------------------------
 revision 1\.1
-date: ${ISO8601DATE};  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
 add-it
 ============================================================================="
 	  dotest basica-o8 "${testcvs} -q update -p -r 1.1 ./ssfile" "ssfile"
@@ -3561,6 +3564,7 @@ File: file2            	Status: Up-to-date
 
    Working revision:	1\.1.*
    Repository revision:	1\.1	${CVSROOT_DIRNAME}/first-dir/file2,v
+   Commit Identifier:	${commitid}
    Sticky Tag:		(none)
    Sticky Date:		(none)
    Sticky Options:	(none)
@@ -3570,6 +3574,7 @@ File: file3            	Status: Up-to-date
 
    Working revision:	1\.1.*
    Repository revision:	1\.1	${CVSROOT_DIRNAME}/first-dir/file3,v
+   Commit Identifier:	${commitid}
    Sticky Tag:		(none)
    Sticky Date:		(none)
    Sticky Options:	(none)
@@ -3579,6 +3584,7 @@ File: file4            	Status: Up-to-date
 
    Working revision:	1\.1.*
    Repository revision:	1\.1	${CVSROOT_DIRNAME}/first-dir/file4,v
+   Commit Identifier:	${commitid}
    Sticky Tag:		(none)
    Sticky Date:		(none)
    Sticky Options:	(none)
@@ -3588,6 +3594,7 @@ File: file5            	Status: Up-to-date
 
    Working revision:	1\.1.*
    Repository revision:	1\.1	${CVSROOT_DIRNAME}/first-dir/file5,v
+   Commit Identifier:	${commitid}
    Sticky Tag:		(none)
    Sticky Date:		(none)
    Sticky Options:	(none)"
@@ -3646,6 +3653,7 @@ File: no file file2		Status: Locally Removed
 
    Working revision:	-1\.1.*
    Repository revision:	1\.1	${CVSROOT_DIRNAME}/first-dir/file2,v
+   Commit Identifier:	${commitid}
    Sticky Tag:		(none)
    Sticky Date:		(none)
    Sticky Options:	(none)
@@ -3655,6 +3663,7 @@ File: no file file3		Status: Locally Removed
 
    Working revision:	-1\.1.*
    Repository revision:	1\.1	${CVSROOT_DIRNAME}/first-dir/file3,v
+   Commit Identifier:	${commitid}
    Sticky Tag:		(none)
    Sticky Date:		(none)
    Sticky Options:	(none)
@@ -3664,6 +3673,7 @@ File: no file file4		Status: Locally Removed
 
    Working revision:	-1\.1.*
    Repository revision:	1\.1	${CVSROOT_DIRNAME}/first-dir/file4,v
+   Commit Identifier:	${commitid}
    Sticky Tag:		(none)
    Sticky Date:		(none)
    Sticky Options:	(none)
@@ -3673,6 +3683,7 @@ File: no file file5		Status: Locally Removed
 
    Working revision:	-1\.1.*
    Repository revision:	1\.1	${CVSROOT_DIRNAME}/first-dir/file5,v
+   Commit Identifier:	${commitid}
    Sticky Tag:		(none)
    Sticky Date:		(none)
    Sticky Options:	(none)"
@@ -4072,7 +4083,7 @@ total revisions: 1;	selected revisions: 1
 description:
 ----------------------------
 revision 1\.1
-date: ${ISO8601DATE};  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
 second dive
 =============================================================================
 
@@ -4089,7 +4100,7 @@ total revisions: 1;	selected revisions: 1
 description:
 ----------------------------
 revision 1\.1
-date: ${ISO8601DATE};  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
 second dive
 =============================================================================
 ${SPROG} log: Logging first-dir/dir1
@@ -4108,7 +4119,7 @@ total revisions: 1;	selected revisions: 1
 description:
 ----------------------------
 revision 1\.1
-date: ${ISO8601DATE};  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
 second dive
 =============================================================================
 
@@ -4125,7 +4136,7 @@ total revisions: 1;	selected revisions: 1
 description:
 ----------------------------
 revision 1\.1
-date: ${ISO8601DATE};  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
 second dive
 =============================================================================
 ${SPROG} log: Logging first-dir/dir1/dir2
@@ -4144,7 +4155,7 @@ total revisions: 1;	selected revisions: 1
 description:
 ----------------------------
 revision 1\.1
-date: ${ISO8601DATE};  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
 second dive
 =============================================================================
 
@@ -4161,7 +4172,7 @@ total revisions: 1;	selected revisions: 1
 description:
 ----------------------------
 revision 1\.1
-date: ${ISO8601DATE};  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
 second dive
 ============================================================================="
 
@@ -4181,6 +4192,7 @@ File: file6            	Status: Locally Modified
 
    Working revision:	1\.1.*
    Repository revision:	1\.1	${CVSROOT_DIRNAME}/first-dir/file6,v
+   Commit Identifier:	${commitid}
    Sticky Tag:		(none)
    Sticky Date:		(none)
    Sticky Options:	(none)
@@ -4190,6 +4202,7 @@ File: no file file7		Status: Locally Removed
 
    Working revision:	-1\.1.*
    Repository revision:	1\.1	${CVSROOT_DIRNAME}/first-dir/file7,v
+   Commit Identifier:	${commitid}
    Sticky Tag:		(none)
    Sticky Date:		(none)
    Sticky Options:	(none)
@@ -4209,6 +4222,7 @@ File: file6            	Status: Locally Modified
 
    Working revision:	1\.1.*
    Repository revision:	1\.1	${CVSROOT_DIRNAME}/first-dir/dir1/file6,v
+   Commit Identifier:	${commitid}
    Sticky Tag:		(none)
    Sticky Date:		(none)
    Sticky Options:	(none)
@@ -4218,6 +4232,7 @@ File: no file file7		Status: Locally Removed
 
    Working revision:	-1\.1.*
    Repository revision:	1\.1	${CVSROOT_DIRNAME}/first-dir/dir1/file7,v
+   Commit Identifier:	${commitid}
    Sticky Tag:		(none)
    Sticky Date:		(none)
    Sticky Options:	(none)
@@ -4237,6 +4252,7 @@ File: file6            	Status: Locally Modified
 
    Working revision:	1\.1.*
    Repository revision:	1\.1	${CVSROOT_DIRNAME}/first-dir/dir1/dir2/file6,v
+   Commit Identifier:	${commitid}
    Sticky Tag:		(none)
    Sticky Date:		(none)
    Sticky Options:	(none)
@@ -4246,6 +4262,7 @@ File: no file file7		Status: Locally Removed
 
    Working revision:	-1\.1.*
    Repository revision:	1\.1	${CVSROOT_DIRNAME}/first-dir/dir1/dir2/file7,v
+   Commit Identifier:	${commitid}
    Sticky Tag:		(none)
    Sticky Date:		(none)
    Sticky Options:	(none)${DOTSTAR}"
@@ -5184,6 +5201,7 @@ File: tfile            	Status: File had conflicts on merge
 
    Working revision:	1\.2.*
    Repository revision:	1\.2	${CVSROOT_DIRNAME}/first-dir/tfile,v
+   Commit Identifier:	${commitid}
    Sticky Tag:		(none)
    Sticky Date:		(none)
    Sticky Options:	(none)"
@@ -5197,6 +5215,7 @@ File: tfile            	Status: File had conflicts on merge
 
    Working revision:	1\.2.*
    Repository revision:	1\.2	${CVSROOT_DIRNAME}/first-dir/tfile,v
+   Commit Identifier:	${commitid}
    Sticky Tag:		(none)
    Sticky Date:		(none)
    Sticky Options:	(none)"
@@ -5209,6 +5228,7 @@ File: tfile            	Status: Locally Modified
 
    Working revision:	1\.2.*
    Repository revision:	1\.2	${CVSROOT_DIRNAME}/first-dir/tfile,v
+   Commit Identifier:	${commitid}
    Sticky Tag:		(none)
    Sticky Date:		(none)
    Sticky Options:	(none)"
@@ -5222,6 +5242,7 @@ File: tfile            	Status: Locally Modified
 
    Working revision:	1\.2.*
    Repository revision:	1\.2	${CVSROOT_DIRNAME}/first-dir/tfile,v
+   Commit Identifier:	${commitid}
    Sticky Tag:		(none)
    Sticky Date:		(none)
    Sticky Options:	(none)"
@@ -5264,6 +5285,7 @@ File: tfile            	Status: Locally Modified
 
    Working revision:	1\.2.*
    Repository revision:	1\.2	$CVSROOT_DIRNAME/first-dir/tfile,v
+   Commit Identifier:	${commitid}
    Sticky Tag:		(none)
    Sticky Date:		(none)
    Sticky Options:	(none)"
@@ -5273,6 +5295,7 @@ File: t3file           	Status: Up-to-date
 
    Working revision:	1\.1.*
    Repository revision:	1\.1	$CVSROOT_DIRNAME/fourth-dir/t3file,v
+   Commit Identifier:	${commitid}
    Sticky Tag:		(none)
    Sticky Date:		(none)
    Sticky Options:	(none)"
@@ -5381,6 +5404,7 @@ File: foo              	Status: Up-to-date
 
    Working revision:	1\.2.*
    Repository revision:	1\.2	${CVSROOT_DIRNAME}/trdiff/foo,v
+   Commit Identifier:	${commitid}
    Sticky Tag:		(none)
    Sticky Date:		(none)
    Sticky Options:	-ko
@@ -6674,6 +6698,7 @@ File: file5            	Status: Up-to-date
 
    Working revision:	8\.4.*
    Repository revision:	8\.4	${CVSROOT_DIRNAME}/first-dir/file5,v
+   Commit Identifier:	${commitid}
    Sticky Tag:		8\.4
    Sticky Date:		(none)
    Sticky Options:	(none)"
@@ -6804,6 +6829,7 @@ File: no file file1		Status: Up-to-date
 
    Working revision:	No entry for file1
    Repository revision:	1\.6	${CVSROOT_DIRNAME}/first-dir/Attic/file1,v
+   Commit Identifier:	${commitid}
 
    Existing Tags:
 	tagone                   	(revision: 1.1)"
@@ -7273,29 +7299,29 @@ total revisions: 6;	selected revisions: 6
 description:
 ----------------------------
 revision 1\.3
-date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -1
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -1;  commitid: ${commitid};
 trunk-change-after-branch
 ----------------------------
 revision 1\.2
-date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -1
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -1;  commitid: ${commitid};
 branches:  1\.2\.2;
 trunk-before-branch
 ----------------------------
 revision 1\.1
-date: ${ISO8601DATE};  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
 add-it
 ----------------------------
 revision 1\.2\.2\.2
-date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -1
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -1;  commitid: ${commitid};
 change-on-br1
 ----------------------------
 revision 1\.2\.2\.1
-date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -1
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -1;  commitid: ${commitid};
 branches:  1\.2\.2\.1\.2;
 modify
 ----------------------------
 revision 1\.2\.2\.1\.2\.1
-date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -1
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -1;  commitid: ${commitid};
 modify
 ============================================================================="
 	  dotest_fail branches-14.4 \
@@ -7428,6 +7454,7 @@ File: file1            	Status: Up-to-date
 
    Working revision:	1\.1.*
    Repository revision:	1\.1	${CVSROOT_DIRNAME}/first-dir/file1,v
+   Commit Identifier:	${commitid}
    Sticky Tag:		b2 (branch: 1\.1\.4)
    Sticky Date:		(none)
    Sticky Options:	(none)
@@ -7437,6 +7464,7 @@ File: file3            	Status: Up-to-date
 
    Working revision:	1\.1\.2\.1.*
    Repository revision:	1\.1\.2\.1	${CVSROOT_DIRNAME}/first-dir/dir1/Attic/file3,v
+   Commit Identifier:	${commitid}
    Sticky Tag:		b1 (branch: 1\.1\.2)
    Sticky Date:		(none)
    Sticky Options:	(none)"
@@ -7659,6 +7687,7 @@ File: file1            	Status: Up-to-date
 
    Working revision:	1\.1.*
    Repository revision:	1\.1	${CVSROOT_DIRNAME}/first-dir/file1,v
+   Commit Identifier:	${commitid}
    Sticky Tag:		b2 (branch: 1\.1\.4)
    Sticky Date:		(none)
    Sticky Options:	(none)
@@ -7685,6 +7714,7 @@ File: file1            	Status: Up-to-date
 
    Working revision:	1\.1.*
    Repository revision:	1\.1	${CVSROOT_DIRNAME}/first-dir/file1,v
+   Commit Identifier:	${commitid}
    Sticky Tag:		(none)
    Sticky Date:		(none)
    Sticky Options:	(none)
@@ -7694,6 +7724,7 @@ File: file3            	Status: Up-to-date
 
    Working revision:	1\.1\.2\.1.*
    Repository revision:	1\.1\.2\.1	${CVSROOT_DIRNAME}/first-dir/dir1/Attic/file3,v
+   Commit Identifier:	${commitid}
    Sticky Tag:		b1 (branch: 1\.1\.2)
    Sticky Date:		(none)
    Sticky Options:	(none)"
@@ -7708,6 +7739,7 @@ File: file1            	Status: Up-to-date
 
    Working revision:	1\.1.*
    Repository revision:	1\.1	${CVSROOT_DIRNAME}/first-dir/file1,v
+   Commit Identifier:	${commitid}
    Sticky Tag:		(none)
    Sticky Date:		(none)
    Sticky Options:	(none)
@@ -7717,6 +7749,7 @@ File: file3            	Status: Locally Added
 
    Working revision:	New file!
    Repository revision:	1\.1	${CVSROOT_DIRNAME}/first-dir/dir1/Attic/file3,v
+   Commit Identifier:	${commitid}
    Sticky Tag:		(none)
    Sticky Date:		(none)
    Sticky Options:	(none)"
@@ -7763,6 +7796,7 @@ File: file4            	Status: Up-to-date
 
    Working revision:	1\.1\.2\.1.*
    Repository revision:	1\.1\.2\.1	${CVSROOT_DIRNAME}/first-dir/dir2/Attic/file4,v
+   Commit Identifier:	${commitid}
    Sticky Tag:		b1 (branch: 1\.1\.2)
    Sticky Date:		(none)
    Sticky Options:	(none)"
@@ -7795,6 +7829,7 @@ File: file5            	Status: Up-to-date
 
    Working revision:	1\.1.*
    Repository revision:	1\.1	${CVSROOT_DIRNAME}/first-dir/dir2/file5,v
+   Commit Identifier:	${commitid}
    Sticky Tag:		(none)
    Sticky Date:		(none)
    Sticky Options:	(none)"
@@ -7866,7 +7901,7 @@ total revisions: 1;	selected revisions: 1
 description:
 ----------------------------
 revision 1.1
-date: ${ISO8601DATE};  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
 add
 ============================================================================="
 
@@ -8174,6 +8209,7 @@ File: file1            	Status: Locally Modified
 
    Working revision:	1\.1\.2\.1.*
    Repository revision:	1\.1\.2\.1	${CVSROOT_DIRNAME}/first-dir/file1,v
+   Commit Identifier:	${commitid}
    Sticky Tag:		br (revision: 1\.1\.2\.1)
    Sticky Date:		(none)
    Sticky Options:	(none)
@@ -8632,6 +8668,7 @@ File: file1            	Status: Up-to-date
 
    Working revision:	1\.1.*
    Repository revision:	1\.1	${CVSROOT_DIRNAME}/first-dir/file1,v
+   Commit Identifier:	${commitid}
    Sticky Tag:		patch1 (branch: 1\.1\.2)
    Sticky Date:		(none)
    Sticky Options:	(none)"
@@ -8886,16 +8923,16 @@ total revisions: 3;	selected revisions: 3
 description:
 ----------------------------
 revision 1\.1
-date: ${ISO8601DATE};  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
 branches:  1\.1\.2;  1\.1\.4;
 add-it
 ----------------------------
 revision 1\.1\.4\.1
-date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0;  commitid: ${commitid};
 modify-on-br2
 ----------------------------
 revision 1\.1\.2\.1
-date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -1
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -1;  commitid: ${commitid};
 modify-on-br1
 ============================================================================="
 
@@ -9005,16 +9042,16 @@ total revisions: 3;	selected revisions: 3
 description:
 ----------------------------
 revision 1\.2
-date: ${ISO8601DATE};  author: ${username};  state: dead;  lines: ${PLUS}0 -0
+date: ${ISO8601DATE};  author: ${username};  state: dead;  lines: ${PLUS}0 -0;  commitid: ${commitid};
 local-changes
 ----------------------------
 revision 1\.1
-date: ${ISO8601DATE};  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
 branches:  1\.1\.1;
 Initial revision
 ----------------------------
 revision 1\.1\.1\.1
-date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}0 -0
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}0 -0;  commitid: ${commitid};
 first-import
 ============================================================================="
 
@@ -9219,16 +9256,16 @@ total revisions: 3;	selected revisions: 3
 description:
 ----------------------------
 revision 1\.1
-date: ${ISO8601DATE};  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
 branches:  1\.1\.1;  1\.1\.3;
 Initial revision
 ----------------------------
 revision 1\.1\.3\.1
-date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -1
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -1;  commitid: ${commitid};
 add
 ----------------------------
 revision 1\.1\.1\.1
-date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}0 -0
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}0 -0;  commitid: ${commitid};
 add
 ============================================================================="
 
@@ -9319,17 +9356,17 @@ total revisions: 3;	selected revisions: 3
 description:
 ----------------------------
 revision 1\.1
-date: ${ISO8601DATE2034};  author: ${username};  state: Exp;
+date: ${ISO8601DATE2034};  author: ${username};  state: Exp;  commitid: ${commitid};
 branches:  1\.1\.1;
 Initial revision
 ----------------------------
 revision 1\.1\.1\.1
-date: ${ISO8601DATE2034};  author: ${username};  state: Exp;  lines: ${PLUS}0 -0
+date: ${ISO8601DATE2034};  author: ${username};  state: Exp;  lines: ${PLUS}0 -0;  commitid: ${commitid};
 branches:  1\.1\.1\.1\.2;
 import-it
 ----------------------------
 revision 1\.1\.1\.1\.2\.1
-date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0;  commitid: ${commitid};
 modify
 ============================================================================="
 
@@ -9349,12 +9386,12 @@ total revisions: 2;	selected revisions: 2
 description:
 ----------------------------
 revision 1\.1
-date: ${ISO8601DATE1971};  author: ${username};  state: Exp;
+date: ${ISO8601DATE1971};  author: ${username};  state: Exp;  commitid: ${commitid};
 branches:  1\.1\.1;
 Initial revision
 ----------------------------
 revision 1\.1\.1\.1
-date: ${ISO8601DATE1971};  author: ${username};  state: Exp;  lines: ${PLUS}0 -0
+date: ${ISO8601DATE1971};  author: ${username};  state: Exp;  lines: ${PLUS}0 -0;  commitid: ${commitid};
 import-it
 ============================================================================="
 	  cd ..
@@ -9468,16 +9505,16 @@ total revisions: 3;	selected revisions: 3
 description:
 ----------------------------
 revision 1\.1
-date: ${ISO8601DATE};  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
 branches:  1\.1\.1;
 Initial revision
 ----------------------------
 revision 1\.1\.1\.2
-date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -1
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -1;  commitid: ${commitid};
 add
 ----------------------------
 revision 1\.1\.1\.1
-date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}0 -0
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}0 -0;  commitid: ${commitid};
 add
 ============================================================================="
 
@@ -9497,20 +9534,20 @@ total revisions: 4;	selected revisions: 4
 description:
 ----------------------------
 revision 1\.2
-date: ${ISO8601DATE};  author: ${username};  state: dead;  lines: ${PLUS}0 -0
+date: ${ISO8601DATE};  author: ${username};  state: dead;  lines: ${PLUS}0 -0;  commitid: ${commitid};
 Revision 1\.1 was added on the vendor branch\.
 ----------------------------
 revision 1\.1
-date: ${ISO8601DATE};  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
 branches:  1\.1\.1;
 Initial revision
 ----------------------------
 revision 1\.1\.1\.2
-date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -1
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -1;  commitid: ${commitid};
 add
 ----------------------------
 revision 1\.1\.1\.1
-date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}0 -0
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}0 -0;  commitid: ${commitid};
 add
 ============================================================================="
 
@@ -9578,16 +9615,16 @@ total revisions: 3;	selected revisions: 3
 description:
 ----------------------------
 revision 1\.2
-date: ${ISO8601DATE};  author: ${username};  state: dead;  lines: ${PLUS}0 -0
+date: ${ISO8601DATE};  author: ${username};  state: dead;  lines: ${PLUS}0 -0;  commitid: ${commitid};
 Revision 1\.1 was added on the vendor branch\.
 ----------------------------
 revision 1\.1
-date: ${ISO8601DATE};  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
 branches:  1\.1\.1;
 Initial revision
 ----------------------------
 revision 1\.1\.1\.1
-date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}0 -0
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}0 -0;  commitid: ${commitid};
 add
 ============================================================================="
 
@@ -10337,6 +10374,7 @@ File: file1            	Status: Up-to-date
 
    Working revision:	1\.1.*
    Repository revision:	1\.1	${CVSROOT_DIRNAME}/first-dir/file1,v
+   Commit Identifier:	${commitid}
    Sticky Tag:		(none)
    Sticky Date:		(none)
    Sticky Options:	(none)"
@@ -10356,6 +10394,7 @@ File: file1            	Status: Locally Modified
 
    Working revision:	1\.1.*
    Repository revision:	1\.1	${CVSROOT_DIRNAME}/first-dir/file1,v
+   Commit Identifier:	${commitid}
    Sticky Tag:		(none)
    Sticky Date:		(none)
    Sticky Options:	(none)"
@@ -10389,6 +10428,7 @@ File: bradd            	Status: Locally Added
 
    Working revision:	New file!
    Repository revision:	1\.1	${CVSROOT_DIRNAME}/first-dir/Attic/bradd,v
+   Commit Identifier:	${commitid}
    Sticky Tag:		(none)
    Sticky Date:		(none)
    Sticky Options:	(none)"
@@ -11082,6 +11122,7 @@ File: b                	Status: Up-to-date
 
    Working revision:	1\.1.*
    Repository revision:	1\.1	${CVSROOT_DIRNAME}/x/b,v
+   Commit Identifier:	${commitid}
    Sticky Tag:		(none)
    Sticky Date:		(none)
    Sticky Options:	(none)"
@@ -11228,16 +11269,16 @@ total revisions: 3;	selected revisions: 3
 description:
 ----------------------------
 revision 1\.2
-date: ${ISO8601DATE};  author: $username;  state: dead;  lines: ${PLUS}0 -0
+date: ${ISO8601DATE};  author: $username;  state: dead;  lines: ${PLUS}0 -0;  commitid: ${commitid};
 save the merge
 ----------------------------
 revision 1\.1
-date: ${ISO8601DATE};  author: $username;  state: Exp;
+date: ${ISO8601DATE};  author: $username;  state: Exp;  commitid: ${commitid};
 branches:  1.1.2;
 add-em
 ----------------------------
 revision 1\.1\.2\.1
-date: ${ISO8601DATE};  author: $username;  state: dead;  lines: ${PLUS}0 -0
+date: ${ISO8601DATE};  author: $username;  state: dead;  lines: ${PLUS}0 -0;  commitid: ${commitid};
 rm
 ============================================================================="
 
@@ -11259,6 +11300,7 @@ File: a                	Status: Up-to-date
 
    Working revision:	1\.1.*
    Repository revision:	1\.1	$CVSROOT_DIRNAME/join-rm/a,v
+   Commit Identifier:	${commitid}
    Sticky Tag:		(none)
    Sticky Date:		(none)
    Sticky Options:	(none)"
@@ -11360,6 +11402,7 @@ File: a                	Status: Entry Invalid
 
    Working revision:	1\.1.*
    Repository revision:	1\.1\.2\.1	${CVSROOT_DIRNAME}/first-dir/a,v
+   Commit Identifier:	${commitid}
    Sticky Tag:		branch (branch: 1\.1\.2)
    Sticky Date:		(none)
    Sticky Options:	(none)${DOTSTAR}"
@@ -11453,6 +11496,7 @@ File: a                	Status: Needs Merge
 
    Working revision:	1\.1.*
    Repository revision:	1\.2	${CVSROOT_DIRNAME}/first-dir/a,v
+   Commit Identifier:	${commitid}
    Sticky Tag:		(none)
    Sticky Date:		(none)
    Sticky Options:	(none)"
@@ -11491,6 +11535,7 @@ File: a                	Status: File had conflicts on merge
 
    Working revision:	1\.2.*
    Repository revision:	1\.2	${CVSROOT_DIRNAME}/first-dir/a,v
+   Commit Identifier:	${commitid}
    Sticky Tag:		(none)
    Sticky Date:		(none)
    Sticky Options:	(none)"
@@ -11521,6 +11566,7 @@ File: a                	Status: File had conflicts on merge
 
    Working revision:	1\.2.*
    Repository revision:	1\.2	${CVSROOT_DIRNAME}/first-dir/a,v
+   Commit Identifier:	${commitid}
    Sticky Tag:		(none)
    Sticky Date:		(none)
    Sticky Options:	(none)"
@@ -11538,6 +11584,7 @@ File: a                	Status: Locally Modified
 
    Working revision:	1\.3.*
    Repository revision:	1\.3	${CVSROOT_DIRNAME}/first-dir/a,v
+   Commit Identifier:	${commitid}
    Sticky Tag:		(none)
    Sticky Date:		(none)
    Sticky Options:	(none)"
@@ -11550,6 +11597,7 @@ File: a                	Status: Up-to-date
 
    Working revision:	1\.4.*
    Repository revision:	1\.4	${CVSROOT_DIRNAME}/first-dir/a,v
+   Commit Identifier:	${commitid}
    Sticky Tag:		(none)
    Sticky Date:		(none)
    Sticky Options:	(none)"
@@ -11669,6 +11717,7 @@ File: a                	Status: Needs Patch
 
    Working revision:	1\.1.*
    Repository revision:	1\.2	$CVSROOT_DIRNAME/first-dir/a,v
+   Commit Identifier:	${commitid}
    Sticky Tag:		(none)
    Sticky Date:		(none)
    Sticky Options:	(none)"
@@ -11790,7 +11839,8 @@ U same\.c"
 File: aa\.c             	Status: Unresolved Conflict
 
    Working revision:	No entry for aa\.c
-   Repository revision:	1\.1	${CVSROOT_DIRNAME}/first-dir/aa\.c,v"
+   Repository revision:	1\.1	${CVSROOT_DIRNAME}/first-dir/aa\.c,v
+   Commit Identifier:	${commitid}"
 	  dotest conflicts2-142d3a "${testcvs} -q status bb.c" \
 "${SPROG} status: conflict: \`bb\.c' created independently by second party
 ===================================================================
@@ -11798,6 +11848,7 @@ File: bb\.c             	Status: Unresolved Conflict
 
    Working revision:	New file!
    Repository revision:	1\.1	${CVSROOT_DIRNAME}/first-dir/bb\.c,v
+   Commit Identifier:	${commitid}
    Sticky Tag:		(none)
    Sticky Date:		(none)
    Sticky Options:	(none)"
@@ -13138,7 +13189,7 @@ total revisions: 1;	selected revisions: 1
 description:
 ----------------------------
 revision 1\.1
-date: ${ISO8601DATE};  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
 add-it
 ============================================================================="
 
@@ -15640,7 +15691,7 @@ total revisions: 2;	selected revisions: 2
 description:
 ----------------------------
 revision 1\.1
-date: ${ISO8601DATE};  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
 branches:  1\.1\.2;
 xCVS: ----------------------------------------------------------------------
 xCVS: Enter Log.  Lines beginning with .CVS:. are removed automatically
@@ -15652,7 +15703,7 @@ xCVS: 	file1 file2
 xCVS: ----------------------------------------------------------------------
 ----------------------------
 revision 1\.1\.2\.1
-date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0;  commitid: ${commitid};
 xCVS: ----------------------------------------------------------------------
 xCVS: Enter Log.  Lines beginning with .CVS:. are removed automatically
 xCVS:
@@ -15678,7 +15729,7 @@ total revisions: 2;	selected revisions: 2
 description:
 ----------------------------
 revision 1\.1
-date: ${ISO8601DATE};  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
 branches:  1\.1\.2;
 xCVS: ----------------------------------------------------------------------
 xCVS: Enter Log.  Lines beginning with .CVS:. are removed automatically
@@ -15690,7 +15741,7 @@ xCVS: 	file1 file2
 xCVS: ----------------------------------------------------------------------
 ----------------------------
 revision 1\.1\.2\.1
-date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0;  commitid: ${commitid};
 xCVS: ----------------------------------------------------------------------
 xCVS: Enter Log.  Lines beginning with .CVS:. are removed automatically
 xCVS:
@@ -15710,7 +15761,7 @@ total revisions: 2;	selected revisions: 2
 description:
 ----------------------------
 revision 1\.1
-date: ${ISO8601DATE};  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
 branches:  1\.1\.2;
 xCVS: ----------------------------------------------------------------------
 xCVS: Enter Log.  Lines beginning with .CVS:. are removed automatically
@@ -15722,7 +15773,7 @@ xCVS: 	file1 file2
 xCVS: ----------------------------------------------------------------------
 ----------------------------
 revision 1\.1\.2\.1
-date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0;  commitid: ${commitid};
 xCVS: ----------------------------------------------------------------------
 xCVS: Enter Log.  Lines beginning with .CVS:. are removed automatically
 xCVS:
@@ -15878,7 +15929,7 @@ total revisions: 3;	selected revisions: 1
 description:
 ----------------------------
 revision 1\.2
-date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: +0 -0
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: +0 -0;  commitid: ${commitid};
 \*\*\* empty log message \*\*\*
 ============================================================================="
 
@@ -17465,6 +17516,7 @@ File: binfile          	Status: Up-to-date
 
    Working revision:	1\.1.*
    Repository revision:	1\.1	${CVSROOT_DIRNAME}/first-dir/binfile,v
+   Commit Identifier:	${commitid}
    Sticky Tag:		(none)
    Sticky Date:		(none)
    Sticky Options:	-kb"
@@ -17483,6 +17535,7 @@ File: binfile          	Status: Up-to-date
 
    Working revision:	1\.1.*
    Repository revision:	1\.1	${CVSROOT_DIRNAME}/first-dir/binfile,v
+   Commit Identifier:	${commitid}
    Sticky Tag:		(none)
    Sticky Date:		(none)
    Sticky Options:	-kb"
@@ -17502,6 +17555,7 @@ File: binfile          	Status: Up-to-date
 
    Working revision:	1\.1.*
    Repository revision:	1\.1	${CVSROOT_DIRNAME}/first-dir/binfile,v
+   Commit Identifier:	${commitid}
    Sticky Tag:		(none)
    Sticky Date:		(none)
    Sticky Options:	-kb"
@@ -17518,6 +17572,7 @@ File: binfile          	Status: Up-to-date
 
    Working revision:	1\.1.*
    Repository revision:	1\.1	${CVSROOT_DIRNAME}/first-dir/binfile,v
+   Commit Identifier:	${commitid}
    Sticky Tag:		(none)
    Sticky Date:		(none)
    Sticky Options:	-kb"
@@ -17577,6 +17632,7 @@ File: binfile          	Status: Up-to-date
 
    Working revision:	1\.4.*
    Repository revision:	1\.4	${CVSROOT_DIRNAME}/first-dir/binfile,v
+   Commit Identifier:	${commitid}
    Sticky Tag:		HEAD (revision: 1\.4)
    Sticky Date:		(none)
    Sticky Options:	-kb"
@@ -17596,6 +17652,7 @@ File: binfile          	Status: Up-to-date
 
    Working revision:	1\.5.*
    Repository revision:	1\.5	${CVSROOT_DIRNAME}/first-dir/binfile,v
+   Commit Identifier:	${commitid}
    Sticky Tag:		(none)
    Sticky Date:		(none)
    Sticky Options:	-kb"
@@ -17613,6 +17670,7 @@ File: binfile          	Status: Up-to-date
 
    Working revision:	1\.5.*
    Repository revision:	1\.5	${CVSROOT_DIRNAME}/first-dir/binfile,v
+   Commit Identifier:	${commitid}
    Sticky Tag:		(none)
    Sticky Date:		(none)
    Sticky Options:	-kb"
@@ -17624,6 +17682,7 @@ File: binfile          	Status: Up-to-date
 
    Working revision:	1\.5.*
    Repository revision:	1\.5	${CVSROOT_DIRNAME}/first-dir/binfile,v
+   Commit Identifier:	${commitid}
    Sticky Tag:		(none)
    Sticky Date:		(none)
    Sticky Options:	-kv"
@@ -17643,6 +17702,7 @@ File: nibfile          	Status: Up-to-date
 
    Working revision:	1\.1.*
    Repository revision:	1\.1	${CVSROOT_DIRNAME}/first-dir/nibfile,v
+   Commit Identifier:	${commitid}
    Sticky Tag:		(none)
    Sticky Date:		(none)
    Sticky Options:	-kb"
@@ -17656,6 +17716,7 @@ File: nibfile          	Status: Up-to-date
 
    Working revision:	1\.1.*
    Repository revision:	1\.1	${CVSROOT_DIRNAME}/first-dir/nibfile,v
+   Commit Identifier:	${commitid}
    Sticky Tag:		(none)
    Sticky Date:		(none)
    Sticky Options:	(none)"
@@ -17669,6 +17730,7 @@ File: nibfile          	Status: Up-to-date
 
    Working revision:	1\.1.*
    Repository revision:	1\.1	${CVSROOT_DIRNAME}/first-dir/nibfile,v
+   Commit Identifier:	${commitid}
    Sticky Tag:		(none)
    Sticky Date:		(none)
    Sticky Options:	-kb"
@@ -17853,7 +17915,7 @@ total revisions: 1;	selected revisions: 1
 description:
 ----------------------------
 revision 1\.3
-date: ${ISO8601DATE};  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
 checkin
 ============================================================================="
 
@@ -18100,6 +18162,7 @@ File: foo\.c            	Status: Up-to-date
 
    Working revision:	1\.1\.1\.1.*
    Repository revision:	1\.1\.1\.1	${CVSROOT_DIRNAME}/first-dir/foo\.c,v
+   Commit Identifier:	${commitid}
    Sticky Tag:		(none)
    Sticky Date:		(none)
    Sticky Options:	(none)
@@ -18109,6 +18172,7 @@ File: foo\.exe          	Status: Up-to-date
 
    Working revision:	1\.1\.1\.1.*
    Repository revision:	1\.1\.1\.1	${CVSROOT_DIRNAME}/first-dir/foo\.exe,v
+   Commit Identifier:	${commitid}
    Sticky Tag:		(none)
    Sticky Date:		(none)
    Sticky Options:	-kb"
@@ -18149,6 +18213,7 @@ File: foo\.c            	Status: Up-to-date
 
    Working revision:	1\.1\.1\.1.*
    Repository revision:	1\.1\.1\.1	${CVSROOT_DIRNAME}/first-dir/foo\.c,v
+   Commit Identifier:	${commitid}
    Sticky Tag:		(none)
    Sticky Date:		(none)
    Sticky Options:	-ko
@@ -18158,6 +18223,7 @@ File: foo\.exe          	Status: Up-to-date
 
    Working revision:	1\.1\.1\.1.*
    Repository revision:	1\.1\.1\.1	${CVSROOT_DIRNAME}/first-dir/foo\.exe,v
+   Commit Identifier:	${commitid}
    Sticky Tag:		(none)
    Sticky Date:		(none)
    Sticky Options:	-kb"
@@ -19894,24 +19960,25 @@ access list:"
 	  log_dash='----------------------------
 revision'
 	  log_date="date: ${ISO8601DATE};  author: ${username};  state: Exp;"
-	  log_lines="  lines: ${PLUS}1 -1"
+	  log_lines="  lines: ${PLUS}1 -1;"
+	  log_commitid="  commitid: ${commitid};"
 	  log_rev1="${log_dash} 1\.1
-${log_date}
+${log_date}${log_commitid}
 line 1
 
 line 2"
 	  log_rev2="${log_dash} 1\.2
-${log_date}${log_lines}
+${log_date}${log_lines}${log_commitid}
 branches:  1\.2\.2;
 2"
 	  log_rev3="${log_dash} 1\.3
-${log_date}${log_lines}
+${log_date}${log_lines}${log_commitid}
 3"
 	  log_rev1b="${log_dash} 1\.2\.2\.1
-${log_date}${log_lines}
+${log_date}${log_lines}${log_commitid}
 1b"
 	  log_rev2b="${log_dash} 1\.2\.2\.2
-${log_date}${log_lines}
+${log_date}${log_lines}${log_commitid}
 2b"
 	  log_trailer='============================================================================='
 
@@ -20527,10 +20594,10 @@ access list:"
 	tag2: 1\.3
 	tag1: 1\.2'
 	  log_rev4="${log_dash} 1\.4
-date: ${ISO8601DATE};  author: ${username};  state: dead;  lines: ${PLUS}0 -0
+date: ${ISO8601DATE};  author: ${username};  state: dead;  lines: ${PLUS}0 -0;  commitid: ${commitid};
 4"
 	  log_rev22="${log_dash} 1\.2
-${log_date}${log_lines}
+${log_date}${log_lines}${log_commitid}
 2"
 
 	  dotest log-d3 "${testcvs} log -rbranch file1" \
@@ -20882,7 +20949,7 @@ description:
 file1-is-for-testing
 ----------------------------
 revision 1\.1
-date: ${ISO8601DATE};  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
 1
 ============================================================================="
 
@@ -20904,7 +20971,7 @@ description:
 change-description
 ----------------------------
 revision 1\.1
-date: ${ISO8601DATE};  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
 1
 ============================================================================="
 
@@ -20929,7 +20996,7 @@ longer description
 with two lines
 ----------------------------
 revision 1\.1
-date: ${ISO8601DATE};  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
 1
 ============================================================================="
 
@@ -20952,7 +21019,7 @@ description:
 change from stdin
 ----------------------------
 revision 1\.1
-date: ${ISO8601DATE};  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
 1
 ============================================================================="
 
@@ -21545,11 +21612,11 @@ description:
 file1 is for testing CVS
 ----------------------------
 revision 1\.3
-date: ${ISO8601DATE2000A};  author: kingdon;  state: Exp;  lines: ${PLUS}1 -2
+date: ${ISO8601DATE2000A};  author: kingdon;  state: Exp;  lines: ${PLUS}1 -2;
 delete second line; modify twelfth line
 ----------------------------
 revision 1\.2
-date: ${ISO8601DATE1996A};  author: kingdon;  state: Exp;  lines: ${PLUS}12 -0
+date: ${ISO8601DATE1996A};  author: kingdon;  state: Exp;  lines: ${PLUS}12 -0;
 add more lines
 ----------------------------
 revision 1\.1
@@ -21579,7 +21646,7 @@ description:
 file1 is for testing CVS
 ----------------------------
 revision 1\.3
-date: ${ISO8601DATE2000A};  author: kingdon;  state: Exp;  lines: ${PLUS}1 -2
+date: ${ISO8601DATE2000A};  author: kingdon;  state: Exp;  lines: ${PLUS}1 -2;
 delete second line; modify twelfth line
 ============================================================================="
 
@@ -21599,7 +21666,7 @@ description:
 file1 is for testing CVS
 ----------------------------
 revision 1\.2
-date: ${ISO8601DATE1996A};  author: kingdon;  state: Exp;  lines: ${PLUS}12 -0
+date: ${ISO8601DATE1996A};  author: kingdon;  state: Exp;  lines: ${PLUS}12 -0;
 add more lines
 ----------------------------
 revision 1\.1
@@ -21740,6 +21807,7 @@ next	1\.2\.6\.2;
 date	[0-9.]*;	author ${username};	state Exp;
 branches;
 next	;
+commitid	${commitid};
 
 
 desc
@@ -21843,19 +21911,19 @@ total revisions: 7;	selected revisions: 7
 description:
 ----------------------------
 revision 1\.5
-date: 1971-01-01 01:00:00 [+-]0000;  author: joe;  state: bogus;  lines: ${PLUS}1 -1
+date: 1971-01-01 01:00:00 [+-]0000;  author: joe;  state: bogus;  lines: ${PLUS}1 -1;
 \*\*\* empty log message \*\*\*
 ----------------------------
 revision 1\.4
-date: 1971-01-01 00:00:05 [+-]0000;  author: joe;  state: bogus;  lines: ${PLUS}1 -1
+date: 1971-01-01 00:00:05 [+-]0000;  author: joe;  state: bogus;  lines: ${PLUS}1 -1;
 \*\*\* empty log message \*\*\*
 ----------------------------
 revision 1\.3
-date: 1970-12-31 15:00:05 [+-]0000;  author: joe;  state: bogus;  lines: ${PLUS}1 -1
+date: 1970-12-31 15:00:05 [+-]0000;  author: joe;  state: bogus;  lines: ${PLUS}1 -1;
 \*\*\* empty log message \*\*\*
 ----------------------------
 revision 1\.2
-date: 1970-12-31 12:15:05 [+-]0000;  author: me;  state: bogus;  lines: ${PLUS}1 -1
+date: 1970-12-31 12:15:05 [+-]0000;  author: me;  state: bogus;  lines: ${PLUS}1 -1;
 branches:  1\.2\.6;
 \*\*\* empty log message \*\*\*
 ----------------------------
@@ -21864,11 +21932,11 @@ date: 1970-12-31 11:00:05 [+-]0000;  author: joe;  state: bogus;
 \*\*\* empty log message \*\*\*
 ----------------------------
 revision 1\.2\.6\.2
-date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -1
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -1;  commitid: ${commitid};
 mod
 ----------------------------
 revision 1\.2\.6\.1
-date: 1971-01-01 08:00:05 [+-]0000;  author: joe;  state: Exp;  lines: ${PLUS}1 -1
+date: 1971-01-01 08:00:05 [+-]0000;  author: joe;  state: Exp;  lines: ${PLUS}1 -1;
 \*\*\* empty log message \*\*\*
 ============================================================================="
 	  # Now test each date format for "cvs log -d".
@@ -22155,6 +22223,7 @@ File: file1            	Status: Up-to-date
 
    Working revision:	1\.1\.1\.1.*
    Repository revision:	1\.1\.1\.1	'${CVSROOT_DIRNAME}'/rcs4-dir/file1,v
+   Commit Identifier:	${commitid}
    Sticky Tag:		(none)
    Sticky Date:		2001\.10\.01\.00\.00\.00
    Sticky Options:	(none)'
@@ -24866,6 +24935,7 @@ File: file1            	Status: Up-to-date
 
    Working revision:	1\.1[^.]*
    Repository revision:	1\.1	${CVSROOT_DIRNAME}/first-dir/file1,v
+   Commit Identifier:	${commitid}
    Sticky Tag:		(none)
    Sticky Date:		${RCSDELTADATE}
    Sticky Options:	(none)"
@@ -24877,6 +24947,7 @@ File: file1            	Status: Needs Patch
 
    Working revision:	1\.1[^.]*
    Repository revision:	1\.1\.4\.2	${CVSROOT_DIRNAME}/first-dir/file1,v
+   Commit Identifier:	${commitid}
    Sticky Tag:		br2 (branch: 1\.1\.4)
    Sticky Date:		(none)
    Sticky Options:	(none)"
@@ -24888,6 +24959,7 @@ File: file1            	Status: Up-to-date
 
    Working revision:	1\.2[^.]*
    Repository revision:	1\.2	${CVSROOT_DIRNAME}/first-dir/file1,v
+   Commit Identifier:	${commitid}
    Sticky Tag:		(none)
    Sticky Date:		${RCSDELTADATE}
    Sticky Options:	(none)"
@@ -24899,6 +24971,7 @@ File: file1            	Status: Needs Patch
 
    Working revision:	1\.1[^.]*
    Repository revision:	1\.1\.4\.2	${CVSROOT_DIRNAME}/first-dir/file1,v
+   Commit Identifier:	${commitid}
    Sticky Tag:		br2 (branch: 1\.1\.4)
    Sticky Date:		(none)
    Sticky Options:	(none)"
@@ -24910,6 +24983,7 @@ File: file1            	Status: Needs Patch
 
    Working revision:	1\.1\.4\.1[^.]*
    Repository revision:	1\.1\.4\.2	${CVSROOT_DIRNAME}/first-dir/file1,v
+   Commit Identifier:	${commitid}
    Sticky Tag:		br2 (branch: 1\.1\.4)
    Sticky Date:		(none)
    Sticky Options:	(none)"
@@ -24921,6 +24995,7 @@ File: file1            	Status: Up-to-date
 
    Working revision:	1\.1\.4\.2[^.]*
    Repository revision:	1\.1\.4\.2	${CVSROOT_DIRNAME}/first-dir/file1,v
+   Commit Identifier:	${commitid}
    Sticky Tag:		br2 (branch: 1\.1\.4)
    Sticky Date:		(none)
    Sticky Options:	(none)"
@@ -24932,6 +25007,7 @@ File: file1            	Status: Up-to-date
 
    Working revision:	1\.1\.4\.2[^.]*
    Repository revision:	1\.1\.4\.2	${CVSROOT_DIRNAME}/first-dir/file1,v
+   Commit Identifier:	${commitid}
    Sticky Tag:		br2 (branch: 1\.1\.4)
    Sticky Date:		(none)
    Sticky Options:	(none)
@@ -24941,6 +25017,7 @@ File: file3            	Status: Up-to-date
 
    Working revision:	1\.1\.2\.1[^.]*
    Repository revision:	1\.1\.2\.1	${CVSROOT_DIRNAME}/first-dir/Attic/file3,v
+   Commit Identifier:	${commitid}
    Sticky Tag:		br2 (branch: 1\.1\.2)
    Sticky Date:		(none)
    Sticky Options:	(none)"
@@ -24952,6 +25029,7 @@ File: file1            	Status: Up-to-date
 
    Working revision:	1\.2[^.]*
    Repository revision:	1\.2	${CVSROOT_DIRNAME}/first-dir/file1,v
+   Commit Identifier:	${commitid}
    Sticky Tag:		(none)
    Sticky Date:		${RCSDELTADATE}
    Sticky Options:	(none)
@@ -24961,6 +25039,7 @@ File: file2            	Status: Up-to-date
 
    Working revision:	1\.1[^.]*
    Repository revision:	1\.1	${CVSROOT_DIRNAME}/first-dir/file2,v
+   Commit Identifier:	${commitid}
    Sticky Tag:		(none)
    Sticky Date:		${RCSDELTADATE}
    Sticky Options:	(none)"
@@ -24972,6 +25051,7 @@ File: file1            	Status: Up-to-date
 
    Working revision:	1\.1\.4\.2[^.]*
    Repository revision:	1\.1\.4\.2	${CVSROOT_DIRNAME}/first-dir/file1,v
+   Commit Identifier:	${commitid}
    Sticky Tag:		br2 (branch: 1\.1\.4)
    Sticky Date:		(none)
    Sticky Options:	(none)
@@ -24981,6 +25061,7 @@ File: file3            	Status: Up-to-date
 
    Working revision:	1\.1\.2\.1[^.]*
    Repository revision:	1\.1\.2\.1	${CVSROOT_DIRNAME}/first-dir/Attic/file3,v
+   Commit Identifier:	${commitid}
    Sticky Tag:		br2 (branch: 1\.1\.2)
    Sticky Date:		(none)
    Sticky Options:	(none)"
@@ -24992,6 +25073,7 @@ File: file1            	Status: Up-to-date
 
    Working revision:	1\.2[^.]*
    Repository revision:	1\.2	${CVSROOT_DIRNAME}/first-dir/file1,v
+   Commit Identifier:	${commitid}
    Sticky Tag:		(none)
    Sticky Date:		${RCSDELTADATE}
    Sticky Options:	(none)
@@ -25001,6 +25083,7 @@ File: file2            	Status: Up-to-date
 
    Working revision:	1\.2[^.]*
    Repository revision:	1\.2	${CVSROOT_DIRNAME}/first-dir/file2,v
+   Commit Identifier:	${commitid}
    Sticky Tag:		(none)
    Sticky Date:		${RCSDELTADATE}
    Sticky Options:	(none)"
@@ -25012,6 +25095,7 @@ File: file1            	Status: Up-to-date
 
    Working revision:	1\.1\.4\.2[^.]*
    Repository revision:	1\.1\.4\.2	${CVSROOT_DIRNAME}/first-dir/file1,v
+   Commit Identifier:	${commitid}
    Sticky Tag:		br2 (branch: 1\.1\.4)
    Sticky Date:		(none)
    Sticky Options:	(none)
@@ -25021,6 +25105,7 @@ File: file3            	Status: Up-to-date
 
    Working revision:	1\.1\.2\.1[^.]*
    Repository revision:	1\.1\.2\.1	${CVSROOT_DIRNAME}/first-dir/Attic/file3,v
+   Commit Identifier:	${commitid}
    Sticky Tag:		br2 (branch: 1\.1\.2)
    Sticky Date:		(none)
    Sticky Options:	(none)"
@@ -25032,6 +25117,7 @@ File: file1            	Status: Up-to-date
 
    Working revision:	1\.1\.4\.2[^.]*
    Repository revision:	1\.1\.4\.2	${CVSROOT_DIRNAME}/first-dir/file1,v
+   Commit Identifier:	${commitid}
    Sticky Tag:		br2 (branch: 1\.1\.4)
    Sticky Date:		(none)
    Sticky Options:	(none)
@@ -25041,6 +25127,7 @@ File: file2            	Status: Up-to-date
 
    Working revision:	1\.2\.2\.2[^.]*
    Repository revision:	1\.2\.2\.2	${CVSROOT_DIRNAME}/first-dir/file2,v
+   Commit Identifier:	${commitid}
    Sticky Tag:		br2 (branch: 1\.2\.2)
    Sticky Date:		(none)
    Sticky Options:	(none)
@@ -25050,6 +25137,7 @@ File: file3            	Status: Up-to-date
 
    Working revision:	1\.1\.2\.1[^.]*
    Repository revision:	1\.1\.2\.1	${CVSROOT_DIRNAME}/first-dir/Attic/file3,v
+   Commit Identifier:	${commitid}
    Sticky Tag:		br2 (branch: 1\.1\.2)
    Sticky Date:		(none)
    Sticky Options:	(none)"
@@ -25148,16 +25236,16 @@ total revisions: 3;	selected revisions: 3
 description:
 ----------------------------
 revision 1\.1
-date: ${ISO8601DATE};  author: $username;  state: Exp;
+date: ${ISO8601DATE};  author: $username;  state: Exp;  commitid: ${commitid};
 branches:  1\.1\.2;  1\.1\.4;
 add
 ----------------------------
 revision 1\.1\.4\.1
-date: ${ISO8601DATE};  author: $username;  state: Exp;  lines: ${PLUS}1 -1
+date: ${ISO8601DATE};  author: $username;  state: Exp;  lines: ${PLUS}1 -1;  commitid: ${commitid};
 modify-on-B
 ----------------------------
 revision 1\.1\.2\.1
-date: ${ISO8601DATE};  author: $username;  state: Exp;  lines: ${PLUS}1 -1
+date: ${ISO8601DATE};  author: $username;  state: Exp;  lines: ${PLUS}1 -1;  commitid: ${commitid};
 modify-on-A
 ============================================================================="
 
@@ -25178,7 +25266,7 @@ total revisions: 3;	selected revisions: 1
 description:
 ----------------------------
 revision 1\.1
-date: ${ISO8601DATE};  author: $username;  state: Exp;
+date: ${ISO8601DATE};  author: $username;  state: Exp;  commitid: ${commitid};
 branches:  1\.1\.2;  1\.1\.4;
 add
 ============================================================================="
@@ -25427,12 +25515,12 @@ total revisions: 2;	selected revisions: 2
 description:
 ----------------------------
 revision 1\.1
-date: ${ISO8601DATE};  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
 branches:  1\.1\.2;
 add
 ----------------------------
 revision 1\.1\.2\.1
-date: ${ISO8601DATE};  author: ${username};  state: foo;  lines: ${PLUS}1 -0
+date: ${ISO8601DATE};  author: ${username};  state: foo;  lines: ${PLUS}1 -0;  commitid: ${commitid};
 modify-on-branch
 ============================================================================="
 	  dotest admin-12 "${testcvs} -q admin -bbr file1" \
@@ -25453,12 +25541,12 @@ total revisions: 2;	selected revisions: 2
 description:
 ----------------------------
 revision 1\.1
-date: ${ISO8601DATE};  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
 branches:  1\.1\.2;
 add
 ----------------------------
 revision 1\.1\.2\.1
-date: ${ISO8601DATE};  author: ${username};  state: foo;  lines: ${PLUS}1 -0
+date: ${ISO8601DATE};  author: ${username};  state: foo;  lines: ${PLUS}1 -0;  commitid: ${commitid};
 modify-on-branch
 ============================================================================="
 
@@ -25491,11 +25579,13 @@ date	${RCSDELTADATE};	author ${username};	state Exp;
 branches
 	1\.1\.2\.1;
 next	;
+commitid	${commitid};
 
 1\.1\.2\.1
 date	${RCSDELTADATE};	author ${username};	state foo;
 branches;
 next	;
+commitid	${commitid};
 
 
 desc
@@ -25537,7 +25627,7 @@ total revisions: 1;	selected revisions: 1
 description:
 ----------------------------
 revision 1\.1
-date: ${ISO8601DATE};  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
 add
 ============================================================================="
 
@@ -25563,7 +25653,7 @@ total revisions: 1;	selected revisions: 1
 description:
 ----------------------------
 revision 1\.1
-date: ${ISO8601DATE};  author: ${username};  state: oneone;
+date: ${ISO8601DATE};  author: ${username};  state: oneone;  commitid: ${commitid};
 changed-log-message
 ============================================================================="
 
@@ -25590,12 +25680,12 @@ total revisions: 2;	selected revisions: 2
 description:
 ----------------------------
 revision 1\.1
-date: ${ISO8601DATE};  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
 branches:  1\.1\.2;
 add
 ----------------------------
 revision 1\.1\.2\.1
-date: ${ISO8601DATE};  author: ${username};  state: foo;  lines: ${PLUS}1 -0
+date: ${ISO8601DATE};  author: ${username};  state: foo;  lines: ${PLUS}1 -0;  commitid: ${commitid};
 modify-on-branch
 ============================================================================="
 
@@ -25621,12 +25711,12 @@ total revisions: 2;	selected revisions: 2
 description:
 ----------------------------
 revision 1\.1
-date: ${ISO8601DATE};  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
 branches:  1\.1\.2;
 add
 ----------------------------
 revision 1.1.2.1
-date: ${ISO8601DATE};  author: ${username};  state: foo;  lines: ${PLUS}1 -0
+date: ${ISO8601DATE};  author: ${username};  state: foo;  lines: ${PLUS}1 -0;  commitid: ${commitid};
 modify-on-branch
 ============================================================================="
 
@@ -25741,7 +25831,7 @@ total revisions: 6;	selected revisions: 1
 description:
 ----------------------------
 revision 1\.6	locked by: ${username};
-date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0;  commitid: ${commitid};
 sixth
 ============================================================================="
 	  dotest_fail admin-22-o10 "${testcvs} admin -o1.5: aaa" \
@@ -25770,19 +25860,19 @@ total revisions: 4;	selected revisions: 4
 description:
 ----------------------------
 revision 1\.4
-date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0;  commitid: ${commitid};
 fourth
 ----------------------------
 revision 1\.3
-date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0;  commitid: ${commitid};
 third
 ----------------------------
 revision 1\.2
-date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0;  commitid: ${commitid};
 second
 ----------------------------
 revision 1\.1
-date: ${ISO8601DATE};  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
 first
 ============================================================================="
 
@@ -25839,24 +25929,24 @@ total revisions: 5;	selected revisions: 5
 description:
 ----------------------------
 revision 1\.4
-date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0;  commitid: ${commitid};
 fourth
 ----------------------------
 revision 1\.3
-date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0;  commitid: ${commitid};
 branches:  1\.3\.2;
 third
 ----------------------------
 revision 1\.2
-date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0;  commitid: ${commitid};
 second
 ----------------------------
 revision 1\.1
-date: ${ISO8601DATE};  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
 first
 ----------------------------
 revision 1\.3\.2\.4
-date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}4 -0
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}4 -0;  commitid: ${commitid};
 branch-four
 ============================================================================="
 
@@ -25891,7 +25981,7 @@ total revisions: 1;	selected revisions: 1
 description:
 ----------------------------
 revision 1\.2
-date: ${ISO8601DATE};  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
 modify
 ============================================================================="
 
@@ -25910,11 +26000,13 @@ date	${RCSDELTADATE};	author ${username};	state Exp;
 branches
 	1\.1\.2\.1;
 next	;
+commitid	${commitid};
 
 1\.1\.2\.1
 date	${RCSDELTADATE};	author ${username};	state foo;
 branches;
 next	;
+commitid	${commitid};
 
 
 desc
@@ -25977,6 +26069,7 @@ File: file2            	Status: Up-to-date
 
    Working revision:	1\.2.*
    Repository revision:	1\.2	${CVSROOT_DIRNAME}/first-dir/file2,v
+   Commit Identifier:	${commitid}
    Sticky Tag:		(none)
    Sticky Date:		(none)
    Sticky Options:	(none)
@@ -26082,16 +26175,19 @@ comment	@# @;
 date	${RCSDELTADATE};	author ${username};	state Exp;
 branches;
 next	1\.3;
+commitid	${commitid};
 
 1\.3
 date	${RCSDELTADATE};	author ${username};	state Exp;
 branches;
 next	1\.2;
+commitid	${commitid};
 
 1\.2
 date	${RCSDELTADATE};	author ${username};	state Exp;
 branches;
 next	;
+commitid	${commitid};
 
 
 desc
@@ -26152,24 +26248,24 @@ total revisions: 5;	selected revisions: 5
 description:
 ----------------------------
 revision 1\.4
-date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0;  commitid: ${commitid};
 fourth
 ----------------------------
 revision 1\.3
-date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0;  commitid: ${commitid};
 branches:  1\.3\.2;
 third
 ----------------------------
 revision 1\.2
-date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0;  commitid: ${commitid};
 second
 ----------------------------
 revision 1\.1
-date: ${ISO8601DATE};  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
 first
 ----------------------------
 revision 1\.3\.2\.4
-date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}4 -0
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}4 -0;  commitid: ${commitid};
 branch-four
 =============================================================================
 
@@ -26189,12 +26285,12 @@ total revisions: 2;	selected revisions: 2
 description:
 ----------------------------
 revision 1\.1
-date: ${ISO8601DATE};  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
 branches:  1\.1\.2;
 add
 ----------------------------
 revision 1\.1\.2\.1
-date: ${ISO8601DATE};  author: ${username};  state: foo;  lines: ${PLUS}1 -0
+date: ${ISO8601DATE};  author: ${username};  state: foo;  lines: ${PLUS}1 -0;  commitid: ${commitid};
 modify-on-branch
 =============================================================================
 
@@ -26221,15 +26317,15 @@ total revisions: 3;	selected revisions: 3
 description:
 ----------------------------
 revision 1\.4
-date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0;  commitid: ${commitid};
 yet_another
 ----------------------------
 revision 1\.3
-date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0;  commitid: ${commitid};
 nuthr_line
 ----------------------------
 revision 1\.2
-date: ${ISO8601DATE};  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
 modify
 =============================================================================
 
@@ -26246,12 +26342,12 @@ total revisions: 2;	selected revisions: 2
 description:
 ----------------------------
 revision 1\.1
-date: ${ISO8601DATE};  author: ${username};  state: dead;
+date: ${ISO8601DATE};  author: ${username};  state: dead;  commitid: ${commitid};
 branches:  1\.1\.2;
 file file3 was initially added on branch br\.
 ----------------------------
 revision 1\.1\.2\.1
-date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0;  commitid: ${commitid};
 another-log-message
 ============================================================================="
 
@@ -26315,7 +26411,7 @@ total revisions: 1;	selected revisions: 1
 description:
 ----------------------------
 revision 1\.1	locked by: ${username};
-date: ${ISO8601DATE};  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
 add
 ============================================================================="
 
@@ -26338,7 +26434,7 @@ total revisions: 1;	selected revisions: 1
 description:
 ----------------------------
 revision 1\.1
-date: ${ISO8601DATE};  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
 add
 ============================================================================="
 
@@ -27560,7 +27656,8 @@ new revision: 1\.3; previous revision: 1\.2"
 File: no file file		Status: Up-to-date
 
    Working revision:	No entry for file
-   Repository revision:	1\.2	$CVSROOT_DIRNAME/first-dir/Attic/file,v"
+   Repository revision:	1\.2	$CVSROOT_DIRNAME/first-dir/Attic/file,v
+   Commit Identifier:	${commitid}"
 	      dotest recase-5sscs "$testcvs log file" \
 "
 RCS file: $CVSROOT_DIRNAME/first-dir/Attic/file,v
@@ -27576,11 +27673,11 @@ total revisions: 2;	selected revisions: 2
 description:
 ----------------------------
 revision 1\.2
-date: ${ISO8601DATE};  author: $username;  state: dead;  lines: +0 -0
+date: ${ISO8601DATE};  author: $username;  state: dead;  lines: +0 -0;  commitid: ${commitid};
 rm
 ----------------------------
 revision 1\.1
-date: ${ISO8601DATE};  author: $username;  state: Exp;
+date: ${ISO8601DATE};  author: $username;  state: Exp;  commitid: ${commitid};
 add
 ============================================================================="
 	      dotest recase-6sscs "$testcvs status FiLe" \
@@ -27589,6 +27686,7 @@ File: FiLe             	Status: Up-to-date
 
    Working revision:	1\.1.*
    Repository revision:	1\.1	$CVSROOT_DIRNAME/first-dir/FiLe,v
+   Commit Identifier:	${commitid}
    Sticky Tag:		(none)
    Sticky Date:		(none)
    Sticky Options:	(none)"
@@ -27606,7 +27704,7 @@ total revisions: 1;	selected revisions: 1
 description:
 ----------------------------
 revision 1\.1
-date: ${ISO8601DATE};  author: $username;  state: Exp;
+date: ${ISO8601DATE};  author: $username;  state: Exp;  commitid: ${commitid};
 recase
 ============================================================================="
 	    else # server sensitive && client insensitive
@@ -27617,6 +27715,7 @@ File: FiLe             	Status: Up-to-date
 
    Working revision:	1\.1.*
    Repository revision:	1\.1	$CVSROOT_DIRNAME/first-dir/FiLe,v
+   Commit Identifier:	${commitid}
    Sticky Tag:		(none)
    Sticky Date:		(none)
    Sticky Options:	(none)"
@@ -27634,7 +27733,7 @@ total revisions: 1;	selected revisions: 1
 description:
 ----------------------------
 revision 1\.1
-date: ${ISO8601DATE};  author: $username;  state: Exp;
+date: ${ISO8601DATE};  author: $username;  state: Exp;  commitid: ${commitid};
 recase
 ============================================================================="
 	      dotest recase-6ss "$testcvs status FiLe" \
@@ -27643,6 +27742,7 @@ File: FiLe             	Status: Up-to-date
 
    Working revision:	1\.1.*
    Repository revision:	1\.1	$CVSROOT_DIRNAME/first-dir/FiLe,v
+   Commit Identifier:	${commitid}
    Sticky Tag:		(none)
    Sticky Date:		(none)
    Sticky Options:	(none)"
@@ -27660,7 +27760,7 @@ total revisions: 1;	selected revisions: 1
 description:
 ----------------------------
 revision 1\.1
-date: ${ISO8601DATE};  author: $username;  state: Exp;
+date: ${ISO8601DATE};  author: $username;  state: Exp;  commitid: ${commitid};
 recase
 ============================================================================="
 	    fi
@@ -27673,6 +27773,7 @@ File: $file             	Status: Up-to-date
 
    Working revision:	1\.3.*
    Repository revision:	1\.3	$CVSROOT_DIRNAME/first-dir/$file,v
+   Commit Identifier:	${commitid}
    Sticky Tag:		(none)
    Sticky Date:		(none)
    Sticky Options:	(none)"
@@ -27691,15 +27792,15 @@ total revisions: 3;	selected revisions: 3
 description:
 ----------------------------
 revision 1\.3
-date: ${ISO8601DATE};  author: $username;  state: Exp;  lines: +1 -1
+date: ${ISO8601DATE};  author: $username;  state: Exp;  lines: +1 -1;  commitid: ${commitid};
 recase
 ----------------------------
 revision 1\.2
-date: ${ISO8601DATE};  author: $username;  state: dead;  lines: +0 -0
+date: ${ISO8601DATE};  author: $username;  state: dead;  lines: +0 -0;  commitid: ${commitid};
 rm
 ----------------------------
 revision 1\.1
-date: ${ISO8601DATE};  author: $username;  state: Exp;
+date: ${ISO8601DATE};  author: $username;  state: Exp;  commitid: ${commitid};
 add
 ============================================================================="
 	    dotest recase-6si "$testcvs status FiLe" \
@@ -27708,6 +27809,7 @@ File: FiLe             	Status: Up-to-date
 
    Working revision:	1\.3.*
    Repository revision:	1\.3	$CVSROOT_DIRNAME/first-dir/FiLe,v
+   Commit Identifier:	${commitid}
    Sticky Tag:		(none)
    Sticky Date:		(none)
    Sticky Options:	(none)"
@@ -27726,15 +27828,15 @@ total revisions: 3;	selected revisions: 3
 description:
 ----------------------------
 revision 1\.3
-date: ${ISO8601DATE};  author: $username;  state: Exp;  lines: +1 -1
+date: ${ISO8601DATE};  author: $username;  state: Exp;  lines: +1 -1;  commitid: ${commitid};
 recase
 ----------------------------
 revision 1\.2
-date: ${ISO8601DATE};  author: $username;  state: dead;  lines: +0 -0
+date: ${ISO8601DATE};  author: $username;  state: dead;  lines: +0 -0;  commitid: ${commitid};
 rm
 ----------------------------
 revision 1\.1
-date: ${ISO8601DATE};  author: $username;  state: Exp;
+date: ${ISO8601DATE};  author: $username;  state: Exp;  commitid: ${commitid};
 add
 ============================================================================="
 	  fi
@@ -27756,6 +27858,7 @@ File: $fIlE             	Status: Up-to-date
 
    Working revision:	1\.[0-9]*.*
    Repository revision:	1\.[0-9]*	$CVSROOT_DIRNAME/first-dir/$fIlE,v
+   Commit Identifier:	${commitid}
    Sticky Tag:		(none)
    Sticky Date:		(none)
    Sticky Options:	(none)"
@@ -27821,7 +27924,8 @@ C FILE"
 File: no file file		Status: Up-to-date
 
    Working revision:	No entry for file
-   Repository revision:	1\.2	$CVSROOT_DIRNAME/first-dir/Attic/file,v"
+   Repository revision:	1\.2	$CVSROOT_DIRNAME/first-dir/Attic/file,v
+   Commit Identifier:	${commitid}"
 	    dotest recase-14sscs "$testcvs log file" \
 "
 RCS file: $CVSROOT_DIRNAME/first-dir/Attic/file,v
@@ -27837,11 +27941,11 @@ total revisions: 2;	selected revisions: 2
 description:
 ----------------------------
 revision 1\.2
-date: ${ISO8601DATE};  author: $username;  state: dead;  lines: +0 -0
+date: ${ISO8601DATE};  author: $username;  state: dead;  lines: +0 -0;  commitid: ${commitid};
 rm
 ----------------------------
 revision 1\.1
-date: ${ISO8601DATE};  author: $username;  state: Exp;
+date: ${ISO8601DATE};  author: $username;  state: Exp;  commitid: ${commitid};
 add
 ============================================================================="
 	    dotest recase-15sscs "$testcvs status FiLe" \
@@ -27850,6 +27954,7 @@ File: FiLe             	Status: Up-to-date
 
    Working revision:	1\.1.*
    Repository revision:	1\.1	$CVSROOT_DIRNAME/first-dir/FiLe,v
+   Commit Identifier:	${commitid}
    Sticky Tag:		(none)
    Sticky Date:		(none)
    Sticky Options:	(none)"
@@ -27867,7 +27972,7 @@ total revisions: 1;	selected revisions: 1
 description:
 ----------------------------
 revision 1\.1
-date: ${ISO8601DATE};  author: $username;  state: Exp;
+date: ${ISO8601DATE};  author: $username;  state: Exp;  commitid: ${commitid};
 recase
 ============================================================================="
 	      dotest recase-17sscs "$testcvs status FILE" \
@@ -27876,6 +27981,7 @@ File: FILE             	Status: Up-to-date
 
    Working revision:	1.1.*
    Repository revision:	1.1	${CVSROOT_DIRNAME}/first-dir/FILE,v
+   Commit Identifier:	${commitid}
    Sticky Tag:		(none)
    Sticky Date:		(none)
    Sticky Options:	(none)"
@@ -27893,7 +27999,7 @@ total revisions: 1;	selected revisions: 1
 description:
 ----------------------------
 revision 1\.1
-date: ${ISO8601DATE};  author: $username;  state: Exp;
+date: ${ISO8601DATE};  author: $username;  state: Exp;  commitid: ${commitid};
 recase
 ============================================================================="
 	    else # $server_sensitive && !$client_sensitive
@@ -27904,6 +28010,7 @@ File: FiLe             	Status: Up-to-date
 
    Working revision:	1\.1.*
    Repository revision:	1\.1	$CVSROOT_DIRNAME/first-dir/FiLe,v
+   Commit Identifier:	${commitid}
    Sticky Tag:		(none)
    Sticky Date:		(none)
    Sticky Options:	(none)"
@@ -27921,7 +28028,7 @@ total revisions: 1;	selected revisions: 1
 description:
 ----------------------------
 revision 1\.1
-date: ${ISO8601DATE};  author: $username;  state: Exp;
+date: ${ISO8601DATE};  author: $username;  state: Exp;  commitid: ${commitid};
 recase
 ============================================================================="
 	      dotest recase-17ssci "$testcvs status FILE" \
@@ -27930,6 +28037,7 @@ File: FiLe             	Status: Up-to-date
 
    Working revision:	1\.1.*
    Repository revision:	1\.1	$CVSROOT_DIRNAME/first-dir/FiLe,v
+   Commit Identifier:	${commitid}
    Sticky Tag:		(none)
    Sticky Date:		(none)
    Sticky Options:	(none)"
@@ -27947,7 +28055,7 @@ total revisions: 1;	selected revisions: 1
 description:
 ----------------------------
 revision 1\.1
-date: ${ISO8601DATE};  author: $username;  state: Exp;
+date: ${ISO8601DATE};  author: $username;  state: Exp;  commitid: ${commitid};
 recase
 ============================================================================="
 	    fi
@@ -27972,6 +28080,7 @@ File: $fIlE             	Status: Up-to-date
 
    Working revision:	1\.[0-9]*.*
    Repository revision:	1\.[0-9]*	$CVSROOT_DIRNAME/first-dir/$fIlE,v
+   Commit Identifier:	${commitid}
    Sticky Tag:		(none)
    Sticky Date:		(none)
    Sticky Options:	(none)"
@@ -28375,6 +28484,7 @@ File: file1-1          	Status: Up-to-date
 
    Working revision:	1\.2.*
    Repository revision:	1\.2	${CVSROOT1_DIRNAME}/mod1-1/file1-1,v
+   Commit Identifier:	${commitid}
    Sticky Tag:		(none)
    Sticky Date:		(none)
    Sticky Options:	(none)
@@ -28388,6 +28498,7 @@ File: file1-2          	Status: Up-to-date
 
    Working revision:	1\.2.*
    Repository revision:	1\.2	${CVSROOT1_DIRNAME}/mod1-2/file1-2,v
+   Commit Identifier:	${commitid}
    Sticky Tag:		(none)
    Sticky Date:		(none)
    Sticky Options:	(none)
@@ -28410,6 +28521,7 @@ File: file1-2          	Status: Up-to-date
 
    Working revision:	1\.2.*
    Repository revision:	1\.2	${CVSROOT1_DIRNAME}/mod1-2/file1-2,v
+   Commit Identifier:	${commitid}
    Sticky Tag:		(none)
    Sticky Date:		(none)
    Sticky Options:	(none)
@@ -28432,6 +28544,7 @@ File: file2-2          	Status: Up-to-date
 
    Working revision:	1\.2.*
    Repository revision:	1\.2	${CVSROOT2_DIRNAME}/mod2-2/file2-2,v
+   Commit Identifier:	${commitid}
    Sticky Tag:		(none)
    Sticky Date:		(none)
    Sticky Options:	(none)
@@ -28454,6 +28567,7 @@ File: file2-1          	Status: Up-to-date
 
    Working revision:	1\.2.*
    Repository revision:	1\.2	${CVSROOT2_DIRNAME}/mod2-1/file2-1,v
+   Commit Identifier:	${commitid}
    Sticky Tag:		(none)
    Sticky Date:		(none)
    Sticky Options:	(none)
@@ -28467,6 +28581,7 @@ File: file2-2          	Status: Up-to-date
 
    Working revision:	1\.2.*
    Repository revision:	1\.2	${CVSROOT2_DIRNAME}/mod2-2/file2-2,v
+   Commit Identifier:	${commitid}
    Sticky Tag:		(none)
    Sticky Date:		(none)
    Sticky Options:	(none)
@@ -28489,6 +28604,7 @@ File: file1-1          	Status: Up-to-date
 
    Working revision:	1\.2.*
    Repository revision:	1\.2	${CVSROOT1_DIRNAME}/mod1-1/file1-1,v
+   Commit Identifier:	${commitid}
    Sticky Tag:		(none)
    Sticky Date:		(none)
    Sticky Options:	(none)
@@ -28502,6 +28618,7 @@ File: file1-2          	Status: Up-to-date
 
    Working revision:	1\.2.*
    Repository revision:	1\.2	${CVSROOT1_DIRNAME}/mod1-2/file1-2,v
+   Commit Identifier:	${commitid}
    Sticky Tag:		(none)
    Sticky Date:		(none)
    Sticky Options:	(none)
@@ -28525,6 +28642,7 @@ File: file1-2          	Status: Up-to-date
 
    Working revision:	1\.2.*
    Repository revision:	1\.2	${CVSROOT1_DIRNAME}/mod1-2/file1-2,v
+   Commit Identifier:	${commitid}
    Sticky Tag:		(none)
    Sticky Date:		(none)
    Sticky Options:	(none)
@@ -28548,6 +28666,7 @@ File: file2-2          	Status: Up-to-date
 
    Working revision:	1\.2.*
    Repository revision:	1\.2	${CVSROOT2_DIRNAME}/mod2-2/file2-2,v
+   Commit Identifier:	${commitid}
    Sticky Tag:		(none)
    Sticky Date:		(none)
    Sticky Options:	(none)
@@ -28570,6 +28689,7 @@ File: file2-1          	Status: Up-to-date
 
    Working revision:	1\.2.*
    Repository revision:	1\.2	${CVSROOT2_DIRNAME}/mod2-1/file2-1,v
+   Commit Identifier:	${commitid}
    Sticky Tag:		(none)
    Sticky Date:		(none)
    Sticky Options:	(none)
@@ -28583,6 +28703,7 @@ File: file2-2          	Status: Up-to-date
 
    Working revision:	1\.2.*
    Repository revision:	1\.2	${CVSROOT2_DIRNAME}/mod2-2/file2-2,v
+   Commit Identifier:	${commitid}
    Sticky Tag:		(none)
    Sticky Date:		(none)
    Sticky Options:	(none)
@@ -28645,7 +28766,7 @@ total revisions: 1;	selected revisions: 1
 description:
 ----------------------------
 revision 1\.1
-date: ${ISO8601DATE};  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
 reading
 =============================================================================
 
@@ -28662,11 +28783,11 @@ total revisions: 2;	selected revisions: 2
 description:
 ----------------------------
 revision 1\.2
-date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0;  commitid: ${commitid};
 actually
 ----------------------------
 revision 1\.1
-date: ${ISO8601DATE};  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
 is
 =============================================================================
 ${SPROG} log: Logging mod1-2
@@ -28683,7 +28804,7 @@ total revisions: 1;	selected revisions: 1
 description:
 ----------------------------
 revision 1\.1
-date: ${ISO8601DATE};  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
 reading
 =============================================================================
 
@@ -28700,11 +28821,11 @@ total revisions: 2;	selected revisions: 2
 description:
 ----------------------------
 revision 1\.2
-date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0;  commitid: ${commitid};
 actually
 ----------------------------
 revision 1\.1
-date: ${ISO8601DATE};  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
 is
 =============================================================================
 ${SPROG} log: Logging mod2-2/mod1-2
@@ -28721,7 +28842,7 @@ total revisions: 1;	selected revisions: 1
 description:
 ----------------------------
 revision 1\.1
-date: ${ISO8601DATE};  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
 reading
 =============================================================================
 
@@ -28738,11 +28859,11 @@ total revisions: 2;	selected revisions: 2
 description:
 ----------------------------
 revision 1\.2
-date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0;  commitid: ${commitid};
 actually
 ----------------------------
 revision 1\.1
-date: ${ISO8601DATE};  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
 is
 =============================================================================
 ${SPROG} log: Logging mod1-2/mod2-2
@@ -28759,7 +28880,7 @@ total revisions: 1;	selected revisions: 1
 description:
 ----------------------------
 revision 1\.1
-date: ${ISO8601DATE};  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
 reading
 =============================================================================
 
@@ -28776,11 +28897,11 @@ total revisions: 2;	selected revisions: 2
 description:
 ----------------------------
 revision 1\.2
-date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0;  commitid: ${commitid};
 actually
 ----------------------------
 revision 1\.1
-date: ${ISO8601DATE};  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
 anyone
 =============================================================================
 ${SPROG} log: Logging mod2-1
@@ -28797,7 +28918,7 @@ total revisions: 1;	selected revisions: 1
 description:
 ----------------------------
 revision 1\.1
-date: ${ISO8601DATE};  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
 reading
 =============================================================================
 
@@ -28814,11 +28935,11 @@ total revisions: 2;	selected revisions: 2
 description:
 ----------------------------
 revision 1\.2
-date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0;  commitid: ${commitid};
 actually
 ----------------------------
 revision 1\.1
-date: ${ISO8601DATE};  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
 anyone
 =============================================================================
 ${SPROG} log: Logging mod2-2
@@ -28835,7 +28956,7 @@ total revisions: 1;	selected revisions: 1
 description:
 ----------------------------
 revision 1\.1
-date: ${ISO8601DATE};  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
 reading
 =============================================================================
 
@@ -28852,11 +28973,11 @@ total revisions: 2;	selected revisions: 2
 description:
 ----------------------------
 revision 1\.2
-date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0;  commitid: ${commitid};
 actually
 ----------------------------
 revision 1\.1
-date: ${ISO8601DATE};  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
 anyone
 =============================================================================" \
 "${SPROG} log: Logging \.
@@ -28874,7 +28995,7 @@ total revisions: 1;	selected revisions: 1
 description:
 ----------------------------
 revision 1\.1
-date: ${ISO8601DATE};  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
 reading
 =============================================================================
 
@@ -28891,11 +29012,11 @@ total revisions: 2;	selected revisions: 2
 description:
 ----------------------------
 revision 1\.2
-date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0;  commitid: ${commitid};
 actually
 ----------------------------
 revision 1\.1
-date: ${ISO8601DATE};  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
 is
 =============================================================================
 ${SPROG} log: Logging mod1-2
@@ -28912,7 +29033,7 @@ total revisions: 1;	selected revisions: 1
 description:
 ----------------------------
 revision 1\.1
-date: ${ISO8601DATE};  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
 reading
 =============================================================================
 
@@ -28929,11 +29050,11 @@ total revisions: 2;	selected revisions: 2
 description:
 ----------------------------
 revision 1\.2
-date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0;  commitid: ${commitid};
 actually
 ----------------------------
 revision 1\.1
-date: ${ISO8601DATE};  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
 is
 =============================================================================
 ${SPROG} log: Logging mod2-2
@@ -28951,7 +29072,7 @@ total revisions: 1;	selected revisions: 1
 description:
 ----------------------------
 revision 1\.1
-date: ${ISO8601DATE};  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
 reading
 =============================================================================
 
@@ -28968,11 +29089,11 @@ total revisions: 2;	selected revisions: 2
 description:
 ----------------------------
 revision 1\.2
-date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0;  commitid: ${commitid};
 actually
 ----------------------------
 revision 1\.1
-date: ${ISO8601DATE};  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
 is
 =============================================================================
 ${SPROG} log: Logging mod1-2
@@ -28990,7 +29111,7 @@ total revisions: 1;	selected revisions: 1
 description:
 ----------------------------
 revision 1\.1
-date: ${ISO8601DATE};  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
 reading
 =============================================================================
 
@@ -29007,11 +29128,11 @@ total revisions: 2;	selected revisions: 2
 description:
 ----------------------------
 revision 1\.2
-date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0;  commitid: ${commitid};
 actually
 ----------------------------
 revision 1\.1
-date: ${ISO8601DATE};  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
 anyone
 =============================================================================
 ${SPROG} log: Logging mod2-1
@@ -29028,7 +29149,7 @@ total revisions: 1;	selected revisions: 1
 description:
 ----------------------------
 revision 1\.1
-date: ${ISO8601DATE};  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
 reading
 =============================================================================
 
@@ -29045,11 +29166,11 @@ total revisions: 2;	selected revisions: 2
 description:
 ----------------------------
 revision 1\.2
-date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0;  commitid: ${commitid};
 actually
 ----------------------------
 revision 1\.1
-date: ${ISO8601DATE};  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
 anyone
 =============================================================================
 ${SPROG} log: Logging mod2-2
@@ -29066,7 +29187,7 @@ total revisions: 1;	selected revisions: 1
 description:
 ----------------------------
 revision 1\.1
-date: ${ISO8601DATE};  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
 reading
 =============================================================================
 
@@ -29083,11 +29204,11 @@ total revisions: 2;	selected revisions: 2
 description:
 ----------------------------
 revision 1\.2
-date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0;  commitid: ${commitid};
 actually
 ----------------------------
 revision 1\.1
-date: ${ISO8601DATE};  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
 anyone
 ============================================================================="
 
@@ -29181,7 +29302,8 @@ ${SPROG} update: Updating dir1/sdir/ssdir"
 	  # to work around).
 	  if $remote; then :; else
 	    dotest multiroot2-9a "${testcvs} -t update" \
-" *-> main loop with CVSROOT=${TESTDIR}/root1
+" *-> Session ID is ${commitid}
+ *-> main loop with CVSROOT=${TESTDIR}/root1
  *-> parse_config ($TESTDIR/root1)
  *-> do_update ((null), (null), (null), 1, 0, 0, 0, 0, 0, 3, (null), (null), (null), (null), (null), 1, (null))
  *-> Write_Template (\., ${TESTDIR}/root1)
@@ -33004,9 +33126,9 @@ branch: 1\.1\.1
 branches:  1\.1\.1;
 ${SPROG} log: Logging \.
 ${SPROG} log: Logging subdir
-date: ${ISO8601DATE};  author: ${username};  state: Exp;
-date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}0 -0
-date: ${ISO8601DATE};  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}0 -0;  commitid: ${commitid};
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
 description:
 description:
 head: 1\.1
@@ -33141,9 +33263,9 @@ branch: 1\.1\.1
 branches:  1\.1\.1;
 ${SPROG} log: Logging \.
 ${SPROG} log: Logging subdir
-date: ${ISO8601DATE};  author: ${username};  state: Exp;
-date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}0 -0
-date: ${ISO8601DATE};  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}0 -0;  commitid: ${commitid};
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
 description:
 description:
 head: 1\.1

@@ -896,3 +896,5 @@ void cvs_outerr (const char *, size_t);
 void cvs_flusherr (void);
 void cvs_flushout (void);
 void cvs_output_tagged (const char *, const char *);
+
+extern const char *global_session_id;

@@ -4954,6 +4954,7 @@ RCS_checkin (RCSNode *rcs, const char *update_dir, const char *workfile_in,
 #ifdef PRESERVE_PERMISSIONS_SUPPORT
     struct stat sb;
 #endif
+    Node *np;
 
     commitpt = NULL;
 
@@ -5022,6 +5023,16 @@ RCS_checkin (RCSNode *rcs, const char *update_dir, const char *workfile_in,
     }
     else
 	delta->state = xstrdup ("Exp");
+
+    delta->other_delta = getlist();
+
+    /* save the commit ID */
+    np = getnode();
+    np->type = RCSFIELD;
+    np->key = xstrdup ("commitid");
+    np->data = xstrdup(global_session_id);
+    addnode (delta->other_delta, np);
+
 
 #ifdef PRESERVE_PERMISSIONS_SUPPORT
     /* If permissions should be preserved on this project, then
