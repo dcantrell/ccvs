@@ -1,3 +1,8 @@
+Sun Nov  9 17:39:41 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* DIFFUTILS-2.7-BUG: Removed; the bug is fixed and the testcases
+	are incorporated into sanity.sh.
+
 Sat Nov  8 09:49:38 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (Binary why): Try to be a little clearer about how
