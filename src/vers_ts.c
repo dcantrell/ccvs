@@ -86,9 +86,9 @@ Version_TS (repository, options, tag, date, user, force_tag_match,
      */
     if (options)
 	vers_ts->options = xstrdup (options);
-    else if (sdtp && !vers_ts->options)
+    else if (!vers_ts->options)
     {
-	if (sdtp->aflag == 0)
+	if (sdtp && sdtp->aflag == 0)
 	    vers_ts->options = xstrdup (sdtp->options);
 	else if (rcs != NULL)
 	{

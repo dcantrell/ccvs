@@ -2682,8 +2682,9 @@ done'
 	  dotest binfiles-4 "${testcvs} -q co first-dir" 'U first-dir/binfile'
 	  cd first-dir
 	  dotest binfiles-5 "cmp ../../1/binfile.dat binfile" ''
-	  # FIXME: is this right or should sticky options be -kb?
-	  # Are there user-visible consequences other than "cvs status"?
+	  # Testing that sticky options is -kb is the closest thing we have
+	  # to testing that binary files work right on non-unix machines
+	  # (until there is automated testing for such machines, of course).
 	  dotest binfiles-5.5 "${testcvs} status binfile" \
 '===================================================================
 File: binfile          	Status: Up-to-date
@@ -2692,7 +2693,7 @@ File: binfile          	Status: Up-to-date
    Repository revision:	1\.1	/tmp/cvs-sanity/cvsroot/first-dir/binfile,v
    Sticky Tag:		(none)
    Sticky Date:		(none)
-   Sticky Options:	(none)'
+   Sticky Options:	-kb'
 	  cp ../../1/binfile2.dat binfile
 	  dotest binfiles-6 "${testcvs} -q ci -m modify-it" \
 'Checking in binfile;
@@ -2720,8 +2721,7 @@ done'
 new revision: 1.3; previous revision: 1.2
 done'
 	  dotest binfiles-14b "cat binfile" 'this file is $''RCSfile$'
-	  # FIXME: is this right or should sticky options be -kb?
-	  # Are there user-visible consequences other than "cvs status"?
+	  # See binfiles-5.5 for discussion of -kb.
 	  dotest binfiles-14c "${testcvs} status binfile" \
 '===================================================================
 File: binfile          	Status: Up-to-date
@@ -2730,7 +2730,7 @@ File: binfile          	Status: Up-to-date
    Repository revision:	1\.3	/tmp/cvs-sanity/cvsroot/first-dir/binfile,v
    Sticky Tag:		(none)
    Sticky Date:		(none)
-   Sticky Options:	(none)'
+   Sticky Options:	-kb'
 	  dotest binfiles-14d "${testcvs} admin -kv binfile" \
 'RCS file: /tmp/cvs-sanity/cvsroot/first-dir/binfile,v
 done'
@@ -2739,8 +2739,6 @@ done'
 	  # what if the file is modified?  And do we try to version
 	  # control the kopt setting?)
 	  dotest binfiles-14e "cat binfile" 'this file is $''RCSfile$'
-	  # FIXME: is this right or should sticky options be -kb?
-	  # Are there user-visible consequences other than "cvs status"?
 	  dotest binfiles-14f "${testcvs} status binfile" \
 '===================================================================
 File: binfile          	Status: Up-to-date
@@ -2749,7 +2747,7 @@ File: binfile          	Status: Up-to-date
    Repository revision:	1\.3	/tmp/cvs-sanity/cvsroot/first-dir/binfile,v
    Sticky Tag:		(none)
    Sticky Date:		(none)
-   Sticky Options:	(none)'
+   Sticky Options:	-kb'
 	  dotest binfiles-14g "${testcvs} -q update -A" '[UP] binfile'
 	  dotest binfiles-14h "cat binfile" 'this file is binfile,v'
 	  dotest binfiles-14i "${testcvs} status binfile" \
