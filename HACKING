@@ -146,7 +146,7 @@ context diffs or unidiffs for patches.
 
 Note that all submitted changes may be distributed under the terms of
 the GNU Public License, so if you don't like this, don't submit them.
-Submit changes to bug-cvs@prep.ai.mit.edu.
+Submit changes to bug-cvs@gnu.org.
 
 Generally speaking if you follow the guidelines in this file you can
 expect a yes or no answer about whether your patch is accepted.  But
@@ -186,7 +186,7 @@ test-results.
 
 One other list related to CVS development is bug-cvs.  This is the
 list which users are requested to send bug reports to.  Anyone can
-subscribe; to do so send mail to bug-cvs-request@prep.ai.mit.edu.
+subscribe; to do so send mail to bug-cvs-request@gnu.org.
 
 Other CVS discussions take place on the info-cvs mailing list
 (send mail to info-cvs-request@prep.ai.mit.edu to subscribe) or on

@@ -1,3 +1,10 @@
+Tue Dec 23 08:28:44 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* README.VMS, INSTALL, HACKING, BUGS, README: Change bug-cvs
+	address from prep.ai.mit.edu to gnu.org per email from Martin
+	Hamilton.  When referring to bug-reporting procedure refer to
+	Cederqvist not README.
+
 Tue Dec 16 13:13:53 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* FAQ: Re-import from FAQ-O-Matic.  The content is the same, but
