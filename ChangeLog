@@ -1,3 +1,7 @@
+Wed Oct 29 08:40:05 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* TODO: Add item 193, about alternatives to timestamps in CVS/Entries.
+
 Tue Oct 28 19:59:48 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* TODO (190): "rcs failed" message is no longer affected by global
