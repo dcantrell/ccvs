@@ -60,7 +60,7 @@ like to finish it off and post patches, Morten Hindsholm's port of CVS
 I get the following warnings when compiling this port of CVS 1.5 under
 Microsoft Visual C++.  They are all harmless.
 
-- main.c: This is a very wierd warning message!  If you understand
+- main.c: This is a very weird warning message!  If you understand
   what it's trying to say, let me know:
 	'void (__cdecl *)(void)' differs in parameter lists from
 	'void (__cdecl *)(void )'
