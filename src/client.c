@@ -591,6 +591,8 @@ handle_valid_requests (char *args, int len)
 static void
 handle_redirect (char *args, int len)
 {
+    TRACE (TRACE_FUNCTION, "handle_redirect (%s)", args);
+
     client_referrer = current_parsed_root;
     current_parsed_root = parse_cvsroot (args);
     /* We deliberately do not set ORIGINAL_ROOT here.  ORIGINAL_ROOT is used
@@ -3128,6 +3130,8 @@ close_connection_to_server (struct buffer **to, struct buffer **from)
      * at which point our shut down of GLOBAL_FROM_SERVER will complete.
      */
 
+    TRACE (TRACE_FUNCTION, "close_connection_to_server ()");
+
     status = buf_shutdown (*to);
     if (status != 0)
 	error (0, status, "shutting down buffer to server");
@@ -3724,6 +3728,8 @@ open_connection_to_server (cvsroot_t *root, struct buffer **to_server_p,
        way of connecting if the first one does not work.  This is slow
        (*really* slow on a 14.4kbps link); the clean way to have a CVS
        which supports several ways of connecting is with access methods.  */
+
+    TRACE (TRACE_FUNCTION, "open_connection_to_server (%s)", root->original);
 
     switch (root->method)
     {
