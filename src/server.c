@@ -4948,6 +4948,21 @@ error ENOMEM Virtual memory exhausted.\n");
 		if (!(rq->flags & RQ_ROOTLESS)
 		    && CVSroot_directory == NULL)
 		{
+		    /* For commands which change the way in which data
+		       is sent and received, for example Gzip-stream,
+		       this does the wrong thing.  Since the client
+		       assumes that everything is being compressed,
+		       unconditionally, there is no way to give this
+		       error to the client without turning on
+		       compression.  The obvious fix would be to make
+		       Gzip-stream RQ_ROOTLESS (with the corresponding
+		       change to the spec), and that might be a good
+		       idea but then again I can see some settings in
+		       CVSROOT about what compression level to allow.
+		       I suppose a more baroque answer would be to
+		       turn on compression (say, at level 1), just
+		       enough to give the "Root request missing"
+		       error.  For now we just lose.  */
 		    if (alloc_pending (80))
 			sprintf (pending_error_text,
 				 "E Protocol error: Root request missing");
