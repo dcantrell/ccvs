@@ -1,3 +1,7 @@
+1999-07-16  Tom Tromey  <tromey@cygnus.com>
+
+	* admin.c (admin): Allow `-k' options to be used unrestricted.
+
 1999-06-23  Jim Kingdon  <http://www.cyclic.com>
 
 	* sanity.sh (symlinks2): New test, for symlinks in working
