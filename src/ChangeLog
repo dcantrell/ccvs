@@ -1,3 +1,12 @@
+Fri Oct 27 13:44:20 1995  Karl Fogel  <kfogel@floss.cyclic.com>
+
+        * cvs.h: do nothing about alloca ifdef ALLOCA_IN_STDLIB.  I am
+        rather suspicious of this solution, and will not be surprised to
+        find out that there's a Right Way to handle this situation ("this
+        situation" being that OS/2 simply declares alloca in <stdlib.h>).
+        Suggestions are welcome; see src/cvs.h and lib/system.h to see why
+        I was getting a conflict in the first place.
+
 Wed Oct 25 16:03:20 1995  J.T. Conklin  <jtc@slave.cygnus.com>
 
 	* cvs.h (struct entnode): Add user field.

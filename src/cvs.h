@@ -21,7 +21,11 @@
 #ifdef _AIX
  #pragma alloca
 #else /* not _AIX */
+#ifdef ALLOCA_IN_STDLIB
+ /* then we need do nothing */
+#else
 char *alloca ();
+#endif /* not ALLOCA_IN_STDLIB */
 #endif /* not _AIX */
 #endif /* not HAVE_ALLOCA_H */
 #endif /* not __GNUC__ */

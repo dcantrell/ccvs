@@ -37,13 +37,14 @@
 #define gid_t int
 
 /* Define if you have alloca, as a function or macro.  */
-/* OS/2 has `_alloca'  */
 #define HAVE_ALLOCA 1
+/* OS/2 has alloca() in <stdlib.h>! */
+#define ALLOCA_IN_STDLIB 1
 
 /* Define if you have <alloca.h> and it should be used (not on Ultrix).  */
 /* but calls it _alloca and says it returns void *.  We provide our
    own header file.  */
-/* OS/2 defines [_]alloca in `stdlib.h'. */
+/* OS/2 declares alloca in `stdlib.h'. */
 /* #define HAVE_ALLOCA_H 1 */
 #undef HAVE_ALLOCA_H
 
