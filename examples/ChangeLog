@@ -1,3 +1,9 @@
+Wed Jan 10 08:38:27 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* Makefile.in (DISTFILES): Include EXAMPLE_FILES rather than
+	duplicating the list.
+	(EXAMPLE_FILES): Add notify.
+
 Sun Dec 10 23:10:32 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* notify: New file.

@@ -42,12 +42,10 @@ INSTALL_DATA = @INSTALL_DATA@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
 
 EXAMPLE_FILES = commitinfo editinfo loginfo modules rcsinfo taginfo \
-	rcstemplate checkoutlist cvswrappers wrap unwrap
+	rcstemplate checkoutlist cvswrappers wrap unwrap notify
 
 DISTFILES = \
-	.cvsignore Makefile.in ChangeLog \
-	commitinfo editinfo loginfo modules rcsinfo taginfo \
-	rcstemplate checkoutlist cvswrappers wrap unwrap
+	.cvsignore Makefile.in ChangeLog $(EXAMPLE_FILES)
 
 all: Makefile
 .PHONY: all
