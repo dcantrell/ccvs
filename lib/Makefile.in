@@ -32,7 +32,6 @@ SOURCES = \
 	getline.c \
 	getopt.c \
 	getopt1.c \
-	getwd.c \
 	hostname.c \
 	md5.c \
 	mkdir.c \
@@ -143,7 +142,6 @@ getdate.c: getdate.y
 fnmatch.o: fnmatch.h
 getopt1.o: getopt.h
 regex.o: regex.h
-getwd.o: system.h
 md5.o: md5.h
 
 xlint:

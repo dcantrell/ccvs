@@ -153,6 +153,7 @@
 #include <limits.h>
 #else
 off_t lseek ();
+char *getcwd ();
 #endif
 
 #if TIME_WITH_SYS_TIME
@@ -333,12 +334,6 @@ extern int errno;
 /* SunOS4 apparently does not define this in stdlib.h.  */
 #ifndef EXIT_FAILURE
 #define EXIT_FAILURE 1
-#endif
-
-#if defined(USG) || defined(POSIX)
-char *getcwd ();
-#else
-char *getwd ();
 #endif
 
 /* check for POSIX signals */
