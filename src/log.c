@@ -1,6 +1,11 @@
 /*
- * Copyright (c) 1992, Brian Berliner and Jeff Polk
- * Copyright (c) 1989-1992, Brian Berliner
+ * Copyright (C) 1986-2005 The Free Software Foundation, Inc.
+ *
+ * Portions Copyright (C) 1998-2005 Derek Price, Ximbiot <http://ximbiot.com>,
+ *                                  and others.
+ *
+ * Portions Copyright (C) 1992, Brian Berliner and Jeff Polk
+ * Portions Copyright (C) 1989-1992, Brian Berliner
  * 
  * You may distribute under the terms of the GNU General Public License as
  * specified in the README file that comes with the CVS source distribution.
@@ -122,8 +127,8 @@ static int log_fileproc (void *callerdat, struct file_info *finfo);
 static struct option_revlist *log_parse_revlist (const char *);
 static void log_parse_date (struct log_data *, const char *);
 static void log_parse_list (List **, const char *);
-static struct revlist *log_expand_revlist (RCSNode *, struct option_revlist *,
-                                           int);
+static struct revlist *log_expand_revlist (RCSNode *, char *,
+                                           struct option_revlist *, int);
 static void log_free_revlist (struct revlist *);
 static int log_version_requested (struct log_data *, struct revlist *,
 					 RCSNode *, RCSVers *);
@@ -791,21 +796,30 @@ log_fileproc (void *callerdat, struct file_info *finfo)
 {
     struct log_data *log_data = callerdat;
     Node *p;
+    char *baserev;
     int selrev = -1;
     RCSNode *rcsfile;
     char buf[50];
     struct revlist *revlist = NULL;
     struct log_data_and_rcs log_data_and_rcs;
 
-    if ((rcsfile = finfo->rcs) == NULL)
+    rcsfile = finfo->rcs;
+    p = findnode (finfo->entries, finfo->file);
+    if (p != NULL)
+    {
+	Entnode *e = p->data;
+	baserev = e->version;
+	if (baserev[0] == '-') ++baserev;
+    }
+    else
+	baserev = NULL;
+
+    if (rcsfile == NULL)
     {
 	/* no rcs file.  What *do* we know about this file? */
-	p = findnode (finfo->entries, finfo->file);
-	if (p != NULL)
+	if (baserev != NULL)
 	{
-	    Entnode *e = p->data;
-
-	    if (e->version[0] == '0' && e->version[1] == '\0')
+	    if (baserev[0] == '0' && baserev[1] == '\0')
 	    {
 		if (!really_quiet)
 		    error (0, 0, "%s has been added, but not committed",
@@ -828,7 +842,7 @@ log_fileproc (void *callerdat, struct file_info *finfo)
 
 	/* Turn any symbolic revisions in the revision list into numeric
 	   revisions.  */
-	revlist = log_expand_revlist (rcsfile, log_data->revlist,
+	revlist = log_expand_revlist (rcsfile, baserev, log_data->revlist,
 				      log_data->default_branch);
 	if (log_data->sup_header
             || (!log_data->header && !log_data->long_header))
@@ -1018,8 +1032,8 @@ log_fileproc (void *callerdat, struct file_info *finfo)
  * Expand any symbolic revisions.
  */
 static struct revlist *
-log_expand_revlist (RCSNode *rcs, struct option_revlist *revlist,
-                    int default_branch)
+log_expand_revlist (RCSNode *rcs, char *baserev,
+                    struct option_revlist *revlist, int default_branch)
 {
     struct option_revlist *r;
     struct revlist *ret, **pr;
@@ -1078,7 +1092,9 @@ log_expand_revlist (RCSNode *rcs, struct option_revlist *revlist,
 		nr->first = xstrdup (r->first);
 	    else
 	    {
-		if (RCS_nodeisbranch (rcs, r->first))
+		if (baserev && strcmp (r->first, TAG_BASE) == 0)
+		    nr->first = xstrdup (baserev);
+		else if (RCS_nodeisbranch (rcs, r->first))
 		    nr->first = RCS_whatbranch (rcs, r->first);
 		else
 		    nr->first = RCS_gettag (rcs, r->first, 1, NULL);
@@ -1096,7 +1112,9 @@ log_expand_revlist (RCSNode *rcs, struct option_revlist *revlist,
 		nr->last = xstrdup (r->last);
 	    else
 	    {
-		if (RCS_nodeisbranch (rcs, r->last))
+		if (baserev && strcmp (r->last, TAG_BASE) == 0)
+		    nr->last = xstrdup (baserev);
+		else if (RCS_nodeisbranch (rcs, r->last))
 		    nr->last = RCS_whatbranch (rcs, r->last);
 		else
 		    nr->last = RCS_gettag (rcs, r->last, 1, NULL);

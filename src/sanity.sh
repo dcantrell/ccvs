@@ -20109,6 +20109,28 @@ total revisions: 5;	selected revisions: 0
 description:
 ${log_trailer}"
 
+	  # Test BASE pseudotag
+	  dotest log-27 "${testcvs} log -rBASE file1" \
+"${log_header1}
+${log_tags1}
+${log_keyword}
+total revisions: 5;	selected revisions: 1
+description:
+${log_rev2b}
+${log_trailer}"
+
+	  dotest log-28 "${testcvs} -q up -r1.2 file1" "[UP] file1"
+	  dotest log-29 "${testcvs} log -rBASE file1" \
+"${log_header1}
+${log_tags1}
+${log_keyword}
+total revisions: 5;	selected revisions: 1
+description:
+${log_rev2}
+${log_trailer}"
+
+	  dotest log-30 "${testcvs} -q up -rbranch file1" "[UP] file1"
+
 	  # Now the same tests but with rlog
 
 	  dotest log-r11 "${testcvs} rlog first-dir/file1" \
@@ -20361,6 +20383,26 @@ ${log_trailer}"
 
 	  dotest log-r26 "${testcvs} rlog -r1.1::foo first-dir/file1" \
 "${SPROG} rlog: warning: no revision .foo. in .${CVSROOT_DIRNAME}/first-dir/file1,v.
+${rlog_header1}
+${log_tags1}
+${log_keyword}
+total revisions: 5;	selected revisions: 0
+description:
+${log_trailer}"
+
+	  # Test BASE pseudotag
+	  dotest log-r27 "${testcvs} rlog -rBASE first-dir/file1" \
+"${SPROG} rlog: warning: no revision .BASE. in .${CVSROOT_DIRNAME}/first-dir/file1,v.
+${rlog_header1}
+${log_tags1}
+${log_keyword}
+total revisions: 5;	selected revisions: 0
+description:
+${log_trailer}"
+
+	  dotest log-r28 "${testcvs} -q up -r1.2 file1" "[UP] file1"
+	  dotest log-r29 "${testcvs} rlog -rBASE first-dir/file1" \
+"${SPROG} rlog: warning: no revision .BASE. in .${CVSROOT_DIRNAME}/first-dir/file1,v.
 ${rlog_header1}
 ${log_tags1}
 ${log_keyword}
