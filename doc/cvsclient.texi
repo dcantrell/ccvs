@@ -378,12 +378,20 @@ C: /home/kingdon/zwork/cvsroot/1dir
 C: update
 @end example
 
-For a given working directory, the repository will be the same for each
-of the responses, so one can use the repository from whichever response
-is most convenient.  Typically a client will store the repository along
-with the sources for each working directory, use that same setting
-whenever operating on that working directory, and not update the setting
-as long as the working directory exists.
+For a given @var{local-directory}, the repository will be the same for
+each of the responses, so one can use the repository from whichever
+response is most convenient.  Typically a client will store the
+repository along with the sources for each @var{local-directory}, use
+that same setting whenever operating on that @var{local-directory}, and
+not update the setting as long as the @var{local-directory} exists.
+
+A client is free to rename a @var{local-directory} at any time (for
+example, in response to an explicit user request).  While it is true
+that the server supplies a @var{local-directory} to the client, as noted
+above, this is only the default place to put the directory.  Of course,
+the various @code{Directory} requests for a single command (for example,
+@code{update} or @code{ci} request) should name a particular directory
+with the same @var{local-directory}.
 
 @item Max-dotdot @var{level} \n
 Response expected: no.
