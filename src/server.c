@@ -3,6 +3,7 @@
 #include "watch.h"
 #include "edit.h"
 #include "fileattr.h"
+#include "getline.h"
 #include "buffer.h"
 
 #ifdef SERVER_SUPPORT
@@ -71,7 +72,10 @@ int update PROTO((int argc, char **argv));
 /* While processing requests, this buffer accumulates data to be sent to
    the client, and then once we are in do_cvs_command, we use it
    for all the data to be sent.  */
-static struct buffer buf_to_net;
+static struct buffer *buf_to_net;
+
+/* This buffer is used to read input from the client.  */
+static struct buffer *buf_from_net;
 
 /*
  * This is where we stash stuff we are going to use.  Format string
@@ -82,61 +86,181 @@ static char *server_temp_dir;
 /* Nonzero if we should keep the temp directory around after we exit.  */
 static int dont_delete_temp;
 
-static char no_mem_error;
-#define NO_MEM_ERROR (&no_mem_error)
-
 static void server_write_entries PROTO((void));
 
-/*
- * Read a line from the stream "instream" without command line editing.
- *
- * Action is compatible with "readline", e.g. space for the result is
- * malloc'd and should be freed by the caller.
- *
- * A NULL return means end of file.  A return of NO_MEM_ERROR means
- * that we are out of memory.
- */
-static char *read_line PROTO((FILE *));
+/* All server communication goes through buffer structures.  Most of
+   the buffers are built on top of a file descriptor.  This structure
+   is used as the closure field in a buffer.  */
 
-static char *
-read_line (stream)
-    FILE *stream;
+struct fd_buffer
 {
-    int c;
-    char *result;
-    int input_index = 0;
-    int result_size = 80;
+    /* The file descriptor.  */
+    int fd;
+    /* Nonzero if the file descriptor is in blocking mode.  */
+    int blocking;
+};
 
-    buf_send_output (&buf_to_net);
-    result = (char *) malloc (result_size);
-    if (result == NULL)
-	return NO_MEM_ERROR;
-    
-    while (1)
+static struct buffer *fd_buffer_initialize
+  PROTO ((int, int, void (*) (struct buffer *)));
+static int fd_buffer_input PROTO((void *, char *, int, int, int *));
+static int fd_buffer_output PROTO((void *, const char *, int, int *));
+static int fd_buffer_flush PROTO((void *));
+static int fd_buffer_block PROTO((void *, int));
+
+/* Initialize a buffer built on a file descriptor.  FD is the file
+   descriptor.  INPUT is nonzero if this is for input, zero if this is
+   for output.  MEMORY is the function to call when a memory error
+   occurs.  */
+
+static struct buffer *
+fd_buffer_initialize (fd, input, memory)
+     int fd;
+     int input;
+     void (*memory) PROTO((struct buffer *));
+{
+    struct fd_buffer *n;
+
+    n = (struct fd_buffer *) xmalloc (sizeof *n);
+    n->fd = fd;
+    n->blocking = 1;
+    return buf_initialize (input ? fd_buffer_input : NULL,
+			   input ? NULL : fd_buffer_output,
+			   input ? NULL : fd_buffer_flush,
+			   fd_buffer_block,
+			   memory,
+			   n);
+}
+
+/* The buffer input function for a buffer built on a file descriptor.  */
+
+static int
+fd_buffer_input (closure, data, need, size, got)
+     void *closure;
+     char *data;
+     int need;
+     int size;
+     int *got;
+{
+    struct fd_buffer *fd = (struct fd_buffer *) closure;
+    int nbytes;
+
+    if (! fd->blocking)
+	nbytes = read (fd->fd, data, size);
+    else
     {
-	c = fgetc (stream);
-	
-	if (c == EOF)
-	{
-	    free (result);
-	    return NULL;
-	}
-	
-	if (c == '\n')
-	    break;
-	
-	result[input_index++] = c;
-	while (input_index >= result_size)
-	{
-	    result_size *= 2;
-	    result = (char *) realloc (result, result_size);
-	    if (result == NULL)
-		return NO_MEM_ERROR;
-	}
+	/* This case is not efficient.  Fortunately, I don't think it
+           ever actually happens.  */
+	nbytes = read (fd->fd, data, need == 0 ? 1 : need);
     }
-    
-    result[input_index++] = '\0';
-    return result;
+
+    if (nbytes > 0)
+    {
+	*got = nbytes;
+	return 0;
+    }
+
+    *got = 0;
+
+    if (nbytes == 0)
+    {
+	/* End of file.  This assumes that we are using POSIX or BSD
+           style nonblocking I/O.  On System V we will get a zero
+           return if there is no data, even when not at EOF.  */
+	return -1;
+    }
+
+    /* Some error occurred.  */
+
+    if (blocking_error (errno))
+    {
+	/* Everything's fine, we just didn't get any data.  */
+	return 0;
+    }
+
+    return errno;
+}
+
+/* The buffer output function for a buffer built on a file descriptor.  */
+
+static int
+fd_buffer_output (closure, data, have, wrote)
+     void *closure;
+     const char *data;
+     int have;
+     int *wrote;
+{
+    struct fd_buffer *fd = (struct fd_buffer *) closure;
+
+    *wrote = 0;
+
+    while (have > 0)
+    {
+	int nbytes;
+
+	nbytes = write (fd->fd, data, have);
+
+	if (nbytes <= 0)
+	{
+	    if (! fd->blocking
+		&& (nbytes == 0 || blocking_error (errno)))
+	    {
+		/* A nonblocking write failed to write any data.  Just
+                   return.  */
+		return 0;
+	    }
+
+	    /* Some sort of error occurred.  */
+
+	    if (nbytes == 0)
+	        return EIO;
+
+	    return errno;
+	}
+
+	*wrote += nbytes;
+	data += nbytes;
+	have -= nbytes;
+    }
+
+    return 0;
+}
+
+/* The buffer flush function for a buffer built on a file descriptor.  */
+
+/*ARGSUSED*/
+static int
+fd_buffer_flush (closure)
+     void *closure;
+{
+    /* Nothing to do.  File descriptors are always flushed.  */
+    return 0;
+}
+
+/* The buffer block function for a buffer built on a file descriptor.  */
+
+static int
+fd_buffer_block (closure, block)
+     void *closure;
+     int block;
+{
+    struct fd_buffer *fd = (struct fd_buffer *) closure;
+    int flags;
+
+    flags = fcntl (fd->fd, F_GETFL, 0);
+    if (flags < 0)
+	return errno;
+
+    if (block)
+	flags &= ~O_NONBLOCK;
+    else
+	flags |= O_NONBLOCK;
+
+    if (fcntl (fd->fd, F_SETFL, flags) < 0)
+        return errno;
+
+    fd->blocking = block;
+
+    return 0;
 }
 
 /*
@@ -204,12 +328,12 @@ print_error (status)
     int status;
 {
     char *msg;
-    buf_output0 (&buf_to_net, "error  ");
+    buf_output0 (buf_to_net, "error  ");
     msg = strerror (status);
     if (msg)
-	buf_output0 (&buf_to_net, msg);
-    buf_append_char (&buf_to_net, '\n');
-    buf_send_output (&buf_to_net);
+	buf_output0 (buf_to_net, msg);
+    buf_append_char (buf_to_net, '\n');
+    buf_send_output (buf_to_net);
 }
 
 static int pending_error;
@@ -225,13 +349,13 @@ print_pending_error ()
 {
     if (pending_error_text)
     {
-	buf_output0 (&buf_to_net, pending_error_text);
-	buf_append_char (&buf_to_net, '\n');
+	buf_output0 (buf_to_net, pending_error_text);
+	buf_append_char (buf_to_net, '\n');
 	if (pending_error)
 	    print_error (pending_error);
 	else
-	    buf_output0 (&buf_to_net, "error  \n");
-	buf_send_output (&buf_to_net);
+	    buf_output0 (buf_to_net, "error  \n");
+	buf_send_output (buf_to_net);
 	pending_error = 0;
 	free (pending_error_text);
 	pending_error_text = NULL;
@@ -295,11 +419,11 @@ serve_valid_responses (arg)
     {
 	if (rs->status == rs_essential)
 	{
-	    buf_output0 (&buf_to_net, "E response `");
-	    buf_output0 (&buf_to_net, rs->name);
-	    buf_output0 (&buf_to_net, "' not supported by client\nerror  \n");
-	    set_block (&buf_to_net);
-	    buf_send_output (&buf_to_net);
+	    buf_output0 (buf_to_net, "E response `");
+	    buf_output0 (buf_to_net, rs->name);
+	    buf_output0 (buf_to_net, "' not supported by client\nerror  \n");
+	    set_block (buf_to_net);
+	    buf_send_output (buf_to_net);
 	    exit (EXIT_FAILURE);
 	}
 	else if (rs->status == rs_optional)
@@ -504,35 +628,39 @@ static void
 serve_directory (arg)
     char *arg;
 {
+    int status;
     char *repos;
+
     use_dir_and_repos = 1;
-    repos = read_line (stdin);
-    if (repos == NULL)
-    {
-	pending_error_text = malloc (80 + strlen (arg));
-	if (pending_error_text)
-	{
-	    if (feof (stdin))
-		sprintf (pending_error_text,
-			 "E end of file reading mode for %s", arg);
-	    else
-	    {
-		sprintf (pending_error_text,
-			 "E error reading mode for %s", arg);
-		pending_error = errno;
-	    }
-	}
-	else
-	    pending_error = ENOMEM;
-    }
-    else if (repos == NO_MEM_ERROR)
-    {
-	pending_error = ENOMEM;
-    }
-    else
+    buf_send_output (buf_to_net);
+    status = buf_read_line (buf_from_net, &repos);
+    if (status == 0)
     {
 	dirswitch (arg, repos);
 	free (repos);
+    }
+    else if (status == -2)
+    {
+        pending_error = ENOMEM;
+    }
+    else
+    {
+	pending_error_text = malloc (80 + strlen (arg));
+	if (pending_error_text == NULL)
+	{
+	    pending_error = ENOMEM;
+	}
+	else if (status == -1)
+	{
+	    sprintf (pending_error_text,
+		     "E end of file reading mode for %s", arg);
+	}
+	else
+	{
+	    sprintf (pending_error_text,
+		     "E error reading mode for %s", arg);
+	    pending_error = status;
+	}
     }
 }
 
@@ -594,7 +722,7 @@ serve_sticky (arg)
 }
 
 /*
- * Read SIZE bytes from stdin, write them to FILE.
+ * Read SIZE bytes from buf_from_net, write them to FILE.
  *
  * Currently this isn't really used for receiving parts of a file --
  * the file is still sent over in one chunk.  But if/when we get
@@ -607,62 +735,54 @@ receive_partial_file (size, file)
      int size;
      int file;
 {
-    char buf[16*1024], *bufp;
-    int toread, nread, nwrote;
     while (size > 0)
     {
-	toread = sizeof (buf);
-	if (toread > size)
-	    toread = size;
+	int status, nread;
+	char *data;
 
-	nread = fread (buf, 1, toread, stdin);
-	if (nread <= 0)
+	status = buf_read_data (buf_from_net, size, &data, &nread);
+	if (status != 0)
 	{
-	    if (feof (stdin))
+	    if (status == -2)
+		pending_error = ENOMEM;
+	    else
 	    {
 		pending_error_text = malloc (80);
-		if (pending_error_text)
+		if (pending_error_text == NULL)
+		    pending_error = ENOMEM;
+		else if (status == -1)
 		{
 		    sprintf (pending_error_text,
 			     "E premature end of file from client");
 		    pending_error = 0;
 		}
 		else
-		    pending_error = ENOMEM;
-	    }
-	    else if (ferror (stdin))
-	    {
-		pending_error_text = malloc (40);
-		if (pending_error_text)
+		{
 		    sprintf (pending_error_text,
 			     "E error reading from client");
-		pending_error = errno;
-	    }
-	    else
-	    {
-		pending_error_text = malloc (40);
-		if (pending_error_text)
-		    sprintf (pending_error_text,
-			     "E short read from client");
-		pending_error = 0;
+		    pending_error = status;
+		}
 	    }
 	    return;
 	}
+
 	size -= nread;
-	bufp = buf;
-	while (nread)
+
+	while (nread > 0)
 	{
-	    nwrote = write (file, bufp, nread);
+	    int nwrote;
+
+	    nwrote = write (file, data, nread);
 	    if (nwrote < 0)
 	    {
 		pending_error_text = malloc (40);
-		if (pending_error_text)
+		if (pending_error_text != NULL)
 		    sprintf (pending_error_text, "E unable to write");
 		pending_error = errno;
 		return;
 	    }
 	    nread -= nwrote;
-	    bufp += nwrote;
+	    data += nwrote;
 	}
     }
 }
@@ -737,7 +857,7 @@ static void
 serve_modified (arg)
      char *arg;
 {
-    int size;
+    int size, status;
     char *size_text;
     char *mode_text;
 
@@ -752,54 +872,56 @@ serve_modified (arg)
      * read the file if we can.
      */
 
-    mode_text = read_line (stdin);
-    if (mode_text == NULL)
+    buf_send_output (buf_to_net);
+    status = buf_read_line (buf_from_net, &mode_text);
+    if (status != 0)
     {
-	pending_error_text = malloc (80 + strlen (arg));
-	if (pending_error_text)
+        if (status == -2)
+	    pending_error = ENOMEM;
+	else
 	{
-	    if (feof (stdin))
-		sprintf (pending_error_text,
-			 "E end of file reading mode for %s", arg);
+	    pending_error_text = malloc (80 + strlen (arg));
+	    if (pending_error_text == NULL)
+		pending_error = ENOMEM;
 	    else
 	    {
-		sprintf (pending_error_text,
-			 "E error reading mode for %s", arg);
-		pending_error = errno;
+		if (status == -1)
+		    sprintf (pending_error_text,
+			     "E end of file reading mode for %s", arg);
+		else
+		{
+		    sprintf (pending_error_text,
+			     "E error reading mode for %s", arg);
+		    pending_error = status;
+		}
 	    }
 	}
-	else
-	    pending_error = ENOMEM;
-	return;
-    } 
-    else if (mode_text == NO_MEM_ERROR)
-    {
-	pending_error = ENOMEM;
 	return;
     }
-    size_text = read_line (stdin);
-    if (size_text == NULL)
+
+    status = buf_read_line (buf_from_net, &size_text);
+    if (status != 0)
     {
-	pending_error_text = malloc (80 + strlen (arg));
-	if (pending_error_text)
+	if (status == -2)
+	    pending_error = ENOMEM;
+	else
 	{
-	    if (feof (stdin))
-		sprintf (pending_error_text,
-			 "E end of file reading size for %s", arg);
+	    pending_error_text = malloc (80 + strlen (arg));
+	    if (pending_error_text == NULL)
+		pending_error = ENOMEM;
 	    else
 	    {
-		sprintf (pending_error_text,
-			 "E error reading size for %s", arg);
-		pending_error = errno;
+		if (status == -1)
+		    sprintf (pending_error_text,
+			     "E end of file reading size for %s", arg);
+		else
+		{
+		    sprintf (pending_error_text,
+			     "E error reading size for %s", arg);
+		    pending_error = errno;
+		}
 	    }
 	}
-	else
-	    pending_error = ENOMEM;
-	return;
-    } 
-    else if (size_text == NO_MEM_ERROR)
-    {
-	pending_error = ENOMEM;
 	return;
     }
     if (size_text[0] == 'z')
@@ -816,15 +938,12 @@ serve_modified (arg)
         /* Now that we know the size, read and discard the file data.  */
         while (size >= 0)
 	{
-	    char buf[1024];
-	    int toread, nread;
+	    int status, nread;
+	    char *data;
 
-	    toread = sizeof (buf);
-	    if (toread > size)
-	        toread = size;
-	    nread = fread (buf, 1, toread, stdin);
-	    if (nread <= 0)
-	        return;
+	    status = buf_read_data (buf_from_net, size, &data, &nread);
+	    if (status != 0)
+		return;
 	    size -= nread;
 	}
 	return;
@@ -1058,6 +1177,7 @@ serve_notify (arg)
 {
     struct notify_note *new;
     char *data;
+    int status;
 
     if (error_pending ()) return;
 
@@ -1084,28 +1204,30 @@ serve_notify (arg)
     }
     strcpy (new->filename, arg);
 
-    data = read_line (stdin);
-    if (data == NULL)
+    buf_send_output (buf_to_net);
+    status = buf_read_line (buf_from_net, &data);
+    if (status != 0)
     {
-	pending_error_text = malloc (80 + strlen (arg));
-	if (pending_error_text)
+	if (status == -2)
+	    pending_error = ENOMEM;
+	else
 	{
-	    if (feof (stdin))
-		sprintf (pending_error_text,
-			 "E end of file reading mode for %s", arg);
+	    pending_error_text = malloc (80 + strlen (arg));
+	    if (pending_error_text == NULL)
+		pending_error = ENOMEM;
 	    else
 	    {
-		sprintf (pending_error_text,
-			 "E error reading mode for %s", arg);
-		pending_error = errno;
+		if (status == -1)
+		    sprintf (pending_error_text,
+			     "E end of file reading notification for %s", arg);
+		else
+		{
+		    sprintf (pending_error_text,
+			     "E error reading notification for %s", arg);
+		    pending_error = status;
+		}
 	    }
 	}
-	else
-	    pending_error = ENOMEM;
-    }
-    else if (data == NO_MEM_ERROR)
-    {
-	pending_error = ENOMEM;
     }
     else
     {
@@ -1193,21 +1315,21 @@ server_notify ()
 	notify_do (*notify_list->type, notify_list->filename, getcaller(),
 		   notify_list->val, notify_list->watches, repos);
 
-	buf_output0 (&buf_to_net, "Notified ");
+	buf_output0 (buf_to_net, "Notified ");
 	if (use_dir_and_repos)
 	{
 	    char *dir = notify_list->dir + strlen (server_temp_dir) + 1;
 	    if (dir[0] == '\0')
-	        buf_append_char (&buf_to_net, '.');
+	        buf_append_char (buf_to_net, '.');
 	    else
-	        buf_output0 (&buf_to_net, dir);
-	    buf_append_char (&buf_to_net, '/');
-	    buf_append_char (&buf_to_net, '\n');
+	        buf_output0 (buf_to_net, dir);
+	    buf_append_char (buf_to_net, '/');
+	    buf_append_char (buf_to_net, '\n');
 	}
-	buf_output0 (&buf_to_net, repos);
-	buf_append_char (&buf_to_net, '/');
-	buf_output0 (&buf_to_net, notify_list->filename);
-	buf_append_char (&buf_to_net, '\n');
+	buf_output0 (buf_to_net, repos);
+	buf_append_char (buf_to_net, '/');
+	buf_output0 (buf_to_net, notify_list->filename);
+	buf_append_char (buf_to_net, '\n');
 
 	p = notify_list->next;
 	free (notify_list->filename);
@@ -1382,7 +1504,7 @@ serve_questionable (arg)
 
     if (dir_name == NULL)
     {
-	buf_output0 (&buf_to_net, "E Protocol error: 'Directory' missing");
+	buf_output0 (buf_to_net, "E Protocol error: 'Directory' missing");
 	return;
     }
 
@@ -1390,15 +1512,15 @@ serve_questionable (arg)
     {
 	char *update_dir;
 
-	buf_output (&buf_to_net, "M ? ", 4);
+	buf_output (buf_to_net, "M ? ", 4);
 	update_dir = dir_name + strlen (server_temp_dir) + 1;
 	if (!(update_dir[0] == '.' && update_dir[1] == '\0'))
 	{
-	    buf_output0 (&buf_to_net, update_dir);
-	    buf_output (&buf_to_net, "/", 1);
+	    buf_output0 (buf_to_net, update_dir);
+	    buf_output (buf_to_net, "/", 1);
 	}
-	buf_output0 (&buf_to_net, arg);
-	buf_output (&buf_to_net, "\n", 1);
+	buf_output0 (buf_to_net, arg);
+	buf_output (buf_to_net, "\n", 1);
     }
 }
 
@@ -1411,14 +1533,14 @@ serve_case (arg)
     ign_case = 1;
 }
 
-static struct buffer protocol;
+static struct buffer *protocol;
 
 /* This is the output which we are saving up to send to the server, in the
    child process.  We will push it through, via the `protocol' buffer, when
    we have a complete line.  */
-static struct buffer saved_output;
+static struct buffer *saved_output;
 /* Likewise, but stuff which will go to stderr.  */
-static struct buffer saved_outerr;
+static struct buffer *saved_outerr;
 
 static void
 protocol_memory_error (buf)
@@ -1551,19 +1673,19 @@ do_cvs_command (command)
 
     /* We shouldn't have any partial lines from cvs_output and
        cvs_outerr, but we handle them here in case there is a bug.  */
-    if (! buf_empty_p (&saved_output))
+    if (! buf_empty_p (saved_output))
     {
-	buf_append_char (&saved_output, '\n');
-	buf_copy_lines (&buf_to_net, &saved_output, 'M');
+	buf_append_char (saved_output, '\n');
+	buf_copy_lines (buf_to_net, saved_output, 'M');
     }
-    if (! buf_empty_p (&saved_outerr))
+    if (! buf_empty_p (saved_outerr))
     {
-	buf_append_char (&saved_outerr, '\n');
-	buf_copy_lines (&buf_to_net, &saved_outerr, 'E');
+	buf_append_char (saved_outerr, '\n');
+	buf_copy_lines (buf_to_net, saved_outerr, 'E');
     }
 
     /* Flush out any pending data.  */
-    buf_send_output (&buf_to_net);
+    buf_send_output (buf_to_net);
 
     /* Don't use vfork; we're not going to exec().  */
     command_pid = fork ();
@@ -1581,17 +1703,14 @@ do_cvs_command (command)
 	   flag.  */
 	error_use_protocol = 0;
 
-	protocol.data = protocol.last = NULL;
-	protocol.fd = protocol_pipe[1];
-	protocol.output = 1;
-	protocol.nonblocking = 0;
-	protocol.memory_error = protocol_memory_error;
+	protocol = fd_buffer_initialize (protocol_pipe[1], 0,
+					 protocol_memory_error);
 
 	/* These were originally set up to use outbuf_memory_error.
            Since we're now in the child, we should use the simpler
            protocol_memory_error function.  */
-	saved_output.memory_error = protocol_memory_error;
-	saved_outerr.memory_error = protocol_memory_error;
+	saved_output->memory_error = protocol_memory_error;
+	saved_outerr->memory_error = protocol_memory_error;
 
 	if (dup2 (dev_null_fd, STDIN_FILENO) < 0)
 	    error (1, errno, "can't set up pipes");
@@ -1627,9 +1746,9 @@ do_cvs_command (command)
 
     /* OK, sit around getting all the input from the child.  */
     {
-	struct buffer stdoutbuf;
-	struct buffer stderrbuf;
-	struct buffer protocol_inbuf;
+	struct buffer *stdoutbuf;
+	struct buffer *stderrbuf;
+	struct buffer *protocol_inbuf;
 	/* Number of file descriptors to check in select ().  */
 	int num_to_check;
 	int count_needed = 0;
@@ -1656,34 +1775,25 @@ do_cvs_command (command)
 	++num_to_check;
 	if (num_to_check > FD_SETSIZE)
 	{
-	    buf_output0 (&buf_to_net,
+	    buf_output0 (buf_to_net,
 			 "E internal error: FD_SETSIZE not big enough.\n\
 error  \n");
 	    goto error_exit;
 	}
 
-	stdoutbuf.data = stdoutbuf.last = NULL;
-	stdoutbuf.fd = stdout_pipe[0];
-	stdoutbuf.output = 0;
-	stdoutbuf.nonblocking = 0;
-	stdoutbuf.memory_error = input_memory_error;
+	stdoutbuf = fd_buffer_initialize (stdout_pipe[0], 1,
+					  input_memory_error);
 
-	stderrbuf.data = stderrbuf.last = NULL;
-	stderrbuf.fd = stderr_pipe[0];
-	stderrbuf.output = 0;
-	stderrbuf.nonblocking = 0;
-	stderrbuf.memory_error = input_memory_error;
+	stderrbuf = fd_buffer_initialize (stderr_pipe[0], 1,
+					  input_memory_error);
 
-	protocol_inbuf.data = protocol_inbuf.last = NULL;
-	protocol_inbuf.fd = protocol_pipe[0];
-	protocol_inbuf.output = 0;
-	protocol_inbuf.nonblocking = 0;
-	protocol_inbuf.memory_error = input_memory_error;
+	protocol_inbuf = fd_buffer_initialize (protocol_pipe[0], 1,
+					       input_memory_error);
 
-	set_nonblock (&buf_to_net);
-	set_nonblock (&stdoutbuf);
-	set_nonblock (&stderrbuf);
-	set_nonblock (&protocol_inbuf);
+	set_nonblock (buf_to_net);
+	set_nonblock (stdoutbuf);
+	set_nonblock (stderrbuf);
+	set_nonblock (protocol_inbuf);
 
 	if (close (stdout_pipe[1]) < 0)
 	{
@@ -1736,7 +1846,7 @@ error  \n");
 	     * See if we are swamping the remote client and filling our VM.
 	     * Tell child to hold off if we do.
 	     */
-	    bufmemsize = buf_count_mem (&buf_to_net);
+	    bufmemsize = buf_count_mem (buf_to_net);
 	    if (!have_flowcontrolled && (bufmemsize > SERVER_HI_WATER))
 	    {
 		if (write(flowcontrol_pipe[1], "S", 1) == 1)
@@ -1751,7 +1861,7 @@ error  \n");
 
 	    FD_ZERO (&readfds);
 	    FD_ZERO (&writefds);
-	    if (! buf_empty_p (&buf_to_net))
+	    if (! buf_empty_p (buf_to_net))
 	        FD_SET (STDOUT_FILENO, &writefds);
 
 	    if (stdout_pipe[0] >= 0)
@@ -1792,7 +1902,7 @@ error  \n");
 	    if (FD_ISSET (STDOUT_FILENO, &writefds))
 	    {
 		/* What should we do with errors?  syslog() them?  */
-		buf_send_output (&buf_to_net);
+		buf_send_output (buf_to_net);
 	    }
 
 	    if (stdout_pipe[0] >= 0
@@ -1800,9 +1910,9 @@ error  \n");
 	    {
 	        int status;
 
-	        status = buf_input_data (&stdoutbuf, (int *) NULL);
+	        status = buf_input_data (stdoutbuf, (int *) NULL);
 
-		buf_copy_lines (&buf_to_net, &stdoutbuf, 'M');
+		buf_copy_lines (buf_to_net, stdoutbuf, 'M');
 
 		if (status == -1)
 		    stdout_pipe[0] = -1;
@@ -1813,7 +1923,7 @@ error  \n");
 		}
 
 		/* What should we do with errors?  syslog() them?  */
-		buf_send_output (&buf_to_net);
+		buf_send_output (buf_to_net);
 	    }
 
 	    if (stderr_pipe[0] >= 0
@@ -1821,9 +1931,9 @@ error  \n");
 	    {
 	        int status;
 
-	        status = buf_input_data (&stderrbuf, (int *) NULL);
+	        status = buf_input_data (stderrbuf, (int *) NULL);
 
-		buf_copy_lines (&buf_to_net, &stderrbuf, 'E');
+		buf_copy_lines (buf_to_net, stderrbuf, 'E');
 
 		if (status == -1)
 		    stderr_pipe[0] = -1;
@@ -1834,7 +1944,7 @@ error  \n");
 		}
 
 		/* What should we do with errors?  syslog() them?  */
-		buf_send_output (&buf_to_net);
+		buf_send_output (buf_to_net);
 	    }
 
 	    if (protocol_pipe[0] >= 0
@@ -1843,7 +1953,7 @@ error  \n");
 		int status;
 		int count_read;
 		
-		status = buf_input_data (&protocol_inbuf, &count_read);
+		status = buf_input_data (protocol_inbuf, &count_read);
 
 		/*
 		 * We only call buf_copy_counted if we have read
@@ -1853,8 +1963,8 @@ error  \n");
 		 */
 		count_needed -= count_read;
 		if (count_needed <= 0)
-		    count_needed = buf_copy_counted (&buf_to_net,
-						     &protocol_inbuf);
+		    count_needed = buf_copy_counted (buf_to_net,
+						     protocol_inbuf);
 
 		if (status == -1)
 		    protocol_pipe[0] = -1;
@@ -1865,7 +1975,7 @@ error  \n");
 		}
 
 		/* What should we do with errors?  syslog() them?  */
-		buf_send_output (&buf_to_net);
+		buf_send_output (buf_to_net);
 	    }
 	}
 
@@ -1874,18 +1984,18 @@ error  \n");
 	 * anything left on stdoutbuf or stderrbuf (this could only
 	 * happen if there was no trailing newline), send it over.
 	 */
-	if (! buf_empty_p (&stdoutbuf))
+	if (! buf_empty_p (stdoutbuf))
 	{
-	    buf_append_char (&stdoutbuf, '\n');
-	    buf_copy_lines (&buf_to_net, &stdoutbuf, 'M');
+	    buf_append_char (stdoutbuf, '\n');
+	    buf_copy_lines (buf_to_net, stdoutbuf, 'M');
 	}
-	if (! buf_empty_p (&stderrbuf))
+	if (! buf_empty_p (stderrbuf))
 	{
-	    buf_append_char (&stderrbuf, '\n');
-	    buf_copy_lines (&buf_to_net, &stderrbuf, 'E');
+	    buf_append_char (stderrbuf, '\n');
+	    buf_copy_lines (buf_to_net, stderrbuf, 'E');
 	}
-	if (! buf_empty_p (&protocol_inbuf))
-	    buf_output0 (&buf_to_net,
+	if (! buf_empty_p (protocol_inbuf))
+	    buf_output0 (buf_to_net,
 			 "E Protocol error: uncounted data discarded\n");
 
 	errs = 0;
@@ -1917,16 +2027,16 @@ error  \n");
 		 * variety).  But cvs doesn't currently use libiberty...we
 		 * could roll our own....  FIXME.
 		 */
-		buf_output0 (&buf_to_net, "E Terminated with fatal signal ");
+		buf_output0 (buf_to_net, "E Terminated with fatal signal ");
 		sprintf (buf, "%d\n", sig);
-		buf_output0 (&buf_to_net, buf);
+		buf_output0 (buf_to_net, buf);
 
 		/* Test for a core dump.  Is this portable?  */
 		if (status & 0x80)
 		{
-		    buf_output0 (&buf_to_net, "E Core dumped; preserving ");
-		    buf_output0 (&buf_to_net, server_temp_dir);
-		    buf_output0 (&buf_to_net, " on server.\n\
+		    buf_output0 (buf_to_net, "E Core dumped; preserving ");
+		    buf_output0 (buf_to_net, server_temp_dir);
+		    buf_output0 (buf_to_net, " on server.\n\
 E CVS locks may need cleaning up.\n");
 		    dont_delete_temp = 1;
 		}
@@ -1940,15 +2050,15 @@ E CVS locks may need cleaning up.\n");
 	 * OK, we've waited for the child.  By now all CVS locks are free
 	 * and it's OK to block on the network.
 	 */
-	set_block (&buf_to_net);
-	buf_send_output (&buf_to_net);
+	set_block (buf_to_net);
+	buf_send_output (buf_to_net);
     }
 
     if (errs)
 	/* We will have printed an error message already.  */
-	buf_output0 (&buf_to_net, "error  \n");
+	buf_output0 (buf_to_net, "error  \n");
     else
-	buf_output0 (&buf_to_net, "ok\n");
+	buf_output0 (buf_to_net, "ok\n");
     goto free_args_and_return;
 
  error_exit:
@@ -1987,8 +2097,8 @@ E CVS locks may need cleaning up.\n");
     }
 
     /* Flush out any data not yet sent.  */
-    set_block (&buf_to_net);
-    buf_send_output (&buf_to_net);
+    set_block (buf_to_net);
+    buf_send_output (buf_to_net);
 
     return;
 }
@@ -2070,13 +2180,13 @@ output_dir (update_dir, repository)
     if (use_dir_and_repos)
     {
 	if (update_dir[0] == '\0')
-	    buf_output0 (&protocol, ".");
+	    buf_output0 (protocol, ".");
 	else
-	    buf_output0 (&protocol, update_dir);
-	buf_output0 (&protocol, "/\n");
+	    buf_output0 (protocol, update_dir);
+	buf_output0 (protocol, "/\n");
     }
-    buf_output0 (&protocol, repository);
-    buf_output0 (&protocol, "/");
+    buf_output0 (protocol, repository);
+    buf_output0 (protocol, "/");
 }
 
 /*
@@ -2188,9 +2298,9 @@ server_scratch (fname)
 
     if (scratched_file != NULL)
     {
-	buf_output0 (&protocol,
+	buf_output0 (protocol,
 		     "E CVS server internal error: duplicate Scratch_Entry\n");
-	buf_send_counted (&protocol);
+	buf_send_counted (protocol);
 	return;
     }
     scratched_file = xstrdup (fname);
@@ -2209,12 +2319,12 @@ new_entries_line ()
 {
     if (entries_line)
     {
-	buf_output0 (&protocol, entries_line);
-	buf_output (&protocol, "\n", 1);
+	buf_output0 (protocol, entries_line);
+	buf_output (protocol, "\n", 1);
     }
     else
 	/* Return the error message as the Entries line.  */
-	buf_output0 (&protocol,
+	buf_output0 (protocol,
 		     "CVS server internal error: Register missing\n");
     free (entries_line);
     entries_line = NULL;
@@ -2247,18 +2357,18 @@ checked_in_response (file, update_dir, repository)
 	}
 	else
 	{
-	    buf_output0 (&protocol, "Mode ");
+	    buf_output0 (protocol, "Mode ");
 	    mode_string = mode_to_string (sb.st_mode);
-	    buf_output0 (&protocol, mode_string);
-	    buf_output0 (&protocol, "\n");
+	    buf_output0 (protocol, mode_string);
+	    buf_output0 (protocol, "\n");
 	    free (mode_string);
 	}
     }
 
-    buf_output0 (&protocol, "Checked-in ");
+    buf_output0 (protocol, "Checked-in ");
     output_dir (update_dir, repository);
-    buf_output0 (&protocol, file);
-    buf_output (&protocol, "\n", 1);
+    buf_output0 (protocol, file);
+    buf_output (protocol, "\n", 1);
     new_entries_line ();
 }
 
@@ -2276,10 +2386,10 @@ server_checked_in (file, update_dir, repository)
 	 * This happens if we are now doing a "cvs remove" after a previous
 	 * "cvs add" (without a "cvs ci" in between).
 	 */
-	buf_output0 (&protocol, "Remove-entry ");
+	buf_output0 (protocol, "Remove-entry ");
 	output_dir (update_dir, repository);
-	buf_output0 (&protocol, file);
-	buf_output (&protocol, "\n", 1);
+	buf_output0 (protocol, file);
+	buf_output (protocol, "\n", 1);
 	free (scratched_file);
 	scratched_file = NULL;
     }
@@ -2287,7 +2397,7 @@ server_checked_in (file, update_dir, repository)
     {
 	checked_in_response (file, update_dir, repository);
     }
-    buf_send_counted (&protocol);
+    buf_send_counted (protocol);
 }
 
 void
@@ -2305,14 +2415,14 @@ server_update_entries (file, update_dir, repository, updated)
     {
 	if (!supported_response ("New-entry"))
 	    return;
-	buf_output0 (&protocol, "New-entry ");
+	buf_output0 (protocol, "New-entry ");
 	output_dir (update_dir, repository);
-	buf_output0 (&protocol, file);
-	buf_output (&protocol, "\n", 1);
+	buf_output0 (protocol, file);
+	buf_output (protocol, "\n", 1);
 	new_entries_line ();
     }
 
-    buf_send_counted (&protocol);
+    buf_send_counted (protocol);
 }
 
 static void
@@ -2518,7 +2628,7 @@ serve_co (arg)
 	tempdir = malloc (strlen (server_temp_dir) + 80);
 	if (tempdir == NULL)
 	{
-	    buf_output0 (&buf_to_net, "E Out of memory\n");
+	    buf_output0 (buf_to_net, "E Out of memory\n");
 	    return;
 	}
 	strcpy (tempdir, server_temp_dir);
@@ -2526,9 +2636,9 @@ serve_co (arg)
 	status = mkdir_p (tempdir);
 	if (status != 0 && status != EEXIST)
 	{
-	    buf_output0 (&buf_to_net, "E Cannot create ");
-	    buf_output0 (&buf_to_net, tempdir);
-	    buf_append_char (&buf_to_net, '\n');
+	    buf_output0 (buf_to_net, "E Cannot create ");
+	    buf_output0 (buf_to_net, tempdir);
+	    buf_append_char (buf_to_net, '\n');
 	    print_error (errno);
 	    free (tempdir);
 	    return;
@@ -2536,9 +2646,9 @@ serve_co (arg)
 
 	if ( CVS_CHDIR (tempdir) < 0)
 	{
-	    buf_output0 (&buf_to_net, "E Cannot change to directory ");
-	    buf_output0 (&buf_to_net, tempdir);
-	    buf_append_char (&buf_to_net, '\n');
+	    buf_output0 (buf_to_net, "E Cannot change to directory ");
+	    buf_output0 (buf_to_net, tempdir);
+	    buf_append_char (buf_to_net, '\n');
 	    print_error (errno);
 	    free (tempdir);
 	    return;
@@ -2566,12 +2676,12 @@ server_copy_file (file, update_dir, repository, newfile)
 {
     if (!supported_response ("Copy-file"))
 	return;
-    buf_output0 (&protocol, "Copy-file ");
+    buf_output0 (protocol, "Copy-file ");
     output_dir (update_dir, repository);
-    buf_output0 (&protocol, file);
-    buf_output0 (&protocol, "\n");
-    buf_output0 (&protocol, newfile);
-    buf_output0 (&protocol, "\n");
+    buf_output0 (protocol, file);
+    buf_output0 (protocol, "\n");
+    buf_output0 (protocol, newfile);
+    buf_output0 (protocol, "\n");
 }
 
 /* See server.h for description.  */
@@ -2625,13 +2735,13 @@ server_updated (finfo, vers, updated, file_info, checksum)
 	        int i;
 		char buf[3];
 
-	        buf_output0 (&protocol, "Checksum ");
+	        buf_output0 (protocol, "Checksum ");
 		for (i = 0; i < 16; i++)
 		{
 		    sprintf (buf, "%02x", (unsigned int) checksum[i]);
-		    buf_output0 (&protocol, buf);
+		    buf_output0 (protocol, buf);
 		}
-		buf_append_char (&protocol, '\n');
+		buf_append_char (protocol, '\n');
 	    }
 	}
 
@@ -2639,25 +2749,25 @@ server_updated (finfo, vers, updated, file_info, checksum)
 	{
 	    if (!(supported_response ("Created")
 		  && supported_response ("Update-existing")))
-		buf_output0 (&protocol, "Updated ");
+		buf_output0 (protocol, "Updated ");
 	    else
 	    {
 		assert (vers != NULL);
 		if (vers->ts_user == NULL)
-		    buf_output0 (&protocol, "Created ");
+		    buf_output0 (protocol, "Created ");
 		else
-		    buf_output0 (&protocol, "Update-existing ");
+		    buf_output0 (protocol, "Update-existing ");
 	    }
 	}
 	else if (updated == SERVER_MERGED)
-	    buf_output0 (&protocol, "Merged ");
+	    buf_output0 (protocol, "Merged ");
 	else if (updated == SERVER_PATCHED)
-	    buf_output0 (&protocol, "Patched ");
+	    buf_output0 (protocol, "Patched ");
 	else
 	    abort ();
 	output_dir (finfo->update_dir, finfo->repository);
-	buf_output0 (&protocol, finfo->file);
-	buf_output (&protocol, "\n", 1);
+	buf_output0 (protocol, finfo->file);
+	buf_output (protocol, "\n", 1);
 
 	new_entries_line ();
 
@@ -2672,8 +2782,8 @@ server_updated (finfo, vers, updated, file_info, checksum)
 	        mode_string = mode_to_string (file_info->st_mode);
 	    else
 	        mode_string = mode_to_string (sb.st_mode);
-	    buf_output0 (&protocol, mode_string);
-	    buf_output0 (&protocol, "\n");
+	    buf_output0 (protocol, mode_string);
+	    buf_output0 (protocol, "\n");
 	    free (mode_string);
 	}
 
@@ -2705,7 +2815,7 @@ server_updated (finfo, vers, updated, file_info, checksum)
 		status = buf_read_file_to_eof (f, &list, &last);
 		size = buf_chain_length (list);
 		if (status == -2)
-		    (*protocol.memory_error) (&protocol);
+		    (*protocol->memory_error) (protocol);
 		else if (status != 0)
 		    error (1, ferror (f) ? errno : 0, "reading %s",
 			   finfo->fullname);
@@ -2717,7 +2827,7 @@ server_updated (finfo, vers, updated, file_info, checksum)
 		else if (gzip_status != 0)
 		    error (1, 0, "gzip exited %d", gzip_status);
 		/* Prepending length with "z" is flag for using gzip here.  */
-		buf_output0 (&protocol, "z");
+		buf_output0 (protocol, "z");
 	    }
 	    else
 	    {
@@ -2729,7 +2839,7 @@ server_updated (finfo, vers, updated, file_info, checksum)
 		    error (1, errno, "reading %s", finfo->fullname);
 		status = buf_read_file (f, sb.st_size, &list, &last);
 		if (status == -2)
-		    (*protocol.memory_error) (&protocol);
+		    (*protocol->memory_error) (protocol);
 		else if (status != 0)
 		    error (1, ferror (f) ? errno : 0, "reading %s",
 			   finfo->fullname);
@@ -2739,9 +2849,9 @@ server_updated (finfo, vers, updated, file_info, checksum)
 	}
 
 	sprintf (size_text, "%lu\n", size);
-	buf_output0 (&protocol, size_text);
+	buf_output0 (protocol, size_text);
 
-	buf_append_data (&protocol, list, last);
+	buf_append_data (protocol, list, last);
 	/* Note we only send a newline here if the file ended with one.  */
 
 	/*
@@ -2768,12 +2878,12 @@ server_updated (finfo, vers, updated, file_info, checksum)
 	scratched_file = NULL;
 
 	if (kill_scratched_file)
-	    buf_output0 (&protocol, "Removed ");
+	    buf_output0 (protocol, "Removed ");
 	else
-	    buf_output0 (&protocol, "Remove-entry ");
+	    buf_output0 (protocol, "Remove-entry ");
 	output_dir (finfo->update_dir, finfo->repository);
-	buf_output0 (&protocol, finfo->file);
-	buf_output (&protocol, "\n", 1);
+	buf_output0 (protocol, finfo->file);
+	buf_output (protocol, "\n", 1);
     }
     else if (scratched_file == NULL && entries_line == NULL)
     {
@@ -2785,7 +2895,7 @@ server_updated (finfo, vers, updated, file_info, checksum)
     else
 	error (1, 0,
 	       "CVS server internal error: Register *and* Scratch_Entry.\n");
-    buf_send_counted (&protocol);
+    buf_send_counted (protocol);
   done:;
 }
 
@@ -2799,10 +2909,10 @@ server_set_entstat (update_dir, repository)
 	set_static_supported = supported_response ("Set-static-directory");
     if (!set_static_supported) return;
 
-    buf_output0 (&protocol, "Set-static-directory ");
+    buf_output0 (protocol, "Set-static-directory ");
     output_dir (update_dir, repository);
-    buf_output0 (&protocol, "\n");
-    buf_send_counted (&protocol);
+    buf_output0 (protocol, "\n");
+    buf_send_counted (protocol);
 }
 
 void
@@ -2818,10 +2928,10 @@ server_clear_entstat (update_dir, repository)
     if (noexec)
 	return;
 
-    buf_output0 (&protocol, "Clear-static-directory ");
+    buf_output0 (protocol, "Clear-static-directory ");
     output_dir (update_dir, repository);
-    buf_output0 (&protocol, "\n");
-    buf_send_counted (&protocol);
+    buf_output0 (protocol, "\n");
+    buf_send_counted (protocol);
 }
 
 void
@@ -2844,28 +2954,28 @@ server_set_sticky (update_dir, repository, tag, date)
 
     if (tag == NULL && date == NULL)
     {
-	buf_output0 (&protocol, "Clear-sticky ");
+	buf_output0 (protocol, "Clear-sticky ");
 	output_dir (update_dir, repository);
-	buf_output0 (&protocol, "\n");
+	buf_output0 (protocol, "\n");
     }
     else
     {
-	buf_output0 (&protocol, "Set-sticky ");
+	buf_output0 (protocol, "Set-sticky ");
 	output_dir (update_dir, repository);
-	buf_output0 (&protocol, "\n");
+	buf_output0 (protocol, "\n");
 	if (tag != NULL)
 	{
-	    buf_output0 (&protocol, "T");
-	    buf_output0 (&protocol, tag);
+	    buf_output0 (protocol, "T");
+	    buf_output0 (protocol, tag);
 	}
 	else
 	{
-	    buf_output0 (&protocol, "D");
-	    buf_output0 (&protocol, date);
+	    buf_output0 (protocol, "D");
+	    buf_output0 (protocol, date);
 	}
-	buf_output0 (&protocol, "\n");
+	buf_output0 (protocol, "\n");
     }
-    buf_send_counted (&protocol);
+    buf_send_counted (protocol);
 }
 
 struct template_proc_data
@@ -2892,9 +3002,9 @@ template_proc (repository, template)
     if (!supported_response ("Template"))
 	/* Might want to warn the user that the rcsinfo feature won't work.  */
 	return 0;
-    buf_output0 (&protocol, "Template ");
+    buf_output0 (protocol, "Template ");
     output_dir (data->update_dir, data->repository);
-    buf_output0 (&protocol, "\n");
+    buf_output0 (protocol, "\n");
 
     fp = CVS_FOPEN (template, "rb");
     if (fp == NULL)
@@ -2908,11 +3018,11 @@ template_proc (repository, template)
 	return 1;
     }
     sprintf (buf, "%ld\n", (long) sb.st_size);
-    buf_output0 (&protocol, buf);
+    buf_output0 (protocol, buf);
     while (!feof (fp))
     {
 	n = fread (buf, 1, sizeof buf, fp);
-	buf_output (&protocol, buf, n);
+	buf_output (protocol, buf, n);
 	if (ferror (fp))
 	{
 	    error (0, errno, "cannot read rcsinfo template file %s", template);
@@ -2983,14 +3093,14 @@ expand_proc (pargc, argv, where, mwhere, mfile, shorten,
 
     if (mwhere != NULL)
     {
-	buf_output0 (&buf_to_net, "Module-expansion ");
-	buf_output0 (&buf_to_net, mwhere);
+	buf_output0 (buf_to_net, "Module-expansion ");
+	buf_output0 (buf_to_net, mwhere);
 	if (mfile != NULL)
 	{
-	    buf_append_char (&buf_to_net, '/');
-	    buf_output0 (&buf_to_net, mfile);
+	    buf_append_char (buf_to_net, '/');
+	    buf_output0 (buf_to_net, mfile);
 	}
-	buf_append_char (&buf_to_net, '\n');
+	buf_append_char (buf_to_net, '\n');
     }
     else
     {
@@ -2998,19 +3108,19 @@ expand_proc (pargc, argv, where, mwhere, mfile, shorten,
            of aliases before removing */
 	if (*pargc == 1)
 	{
-	    buf_output0 (&buf_to_net, "Module-expansion ");
-	    buf_output0 (&buf_to_net, dir);
-	    buf_append_char (&buf_to_net, '\n');
+	    buf_output0 (buf_to_net, "Module-expansion ");
+	    buf_output0 (buf_to_net, dir);
+	    buf_append_char (buf_to_net, '\n');
 	}
 	else
 	{
 	    for (i = 1; i < *pargc; ++i)
 	    {
-	        buf_output0 (&buf_to_net, "Module-expansion ");
-		buf_output0 (&buf_to_net, dir);
-		buf_append_char (&buf_to_net, '/');
-		buf_output0 (&buf_to_net, argv[i]);
-		buf_append_char (&buf_to_net, '\n');
+	        buf_output0 (buf_to_net, "Module-expansion ");
+		buf_output0 (buf_to_net, dir);
+		buf_append_char (buf_to_net, '/');
+		buf_output0 (buf_to_net, argv[i]);
+		buf_append_char (buf_to_net, '\n');
 	    }
 	}
     }
@@ -3052,9 +3162,9 @@ serve_expand_modules (arg)
     }
     if (err)
 	/* We will have printed an error message already.  */
-	buf_output0 (&buf_to_net, "error  \n");
+	buf_output0 (buf_to_net, "error  \n");
     else
-	buf_output0 (&buf_to_net, "ok\n");
+	buf_output0 (buf_to_net, "ok\n");
 }
 
 void
@@ -3065,23 +3175,23 @@ server_prog (dir, name, which)
 {
     if (!supported_response ("Set-checkin-prog"))
     {
-	buf_output0 (&buf_to_net, "E \
+	buf_output0 (buf_to_net, "E \
 warning: this client does not support -i or -u flags in the modules file.\n");
 	return;
     }
     switch (which)
     {
 	case PROG_CHECKIN:
-	    buf_output0 (&buf_to_net, "Set-checkin-prog ");
+	    buf_output0 (buf_to_net, "Set-checkin-prog ");
 	    break;
 	case PROG_UPDATE:
-	    buf_output0 (&buf_to_net, "Set-update-prog ");
+	    buf_output0 (buf_to_net, "Set-update-prog ");
 	    break;
     }
-    buf_output0 (&buf_to_net, dir);
-    buf_append_char (&buf_to_net, '\n');
-    buf_output0 (&buf_to_net, name);
-    buf_append_char (&buf_to_net, '\n');
+    buf_output0 (buf_to_net, dir);
+    buf_append_char (buf_to_net, '\n');
+    buf_output0 (buf_to_net, name);
+    buf_append_char (buf_to_net, '\n');
 }
 
 static void
@@ -3226,16 +3336,16 @@ serve_valid_requests (arg)
     struct request *rq;
     if (print_pending_error ())
 	return;
-    buf_output0 (&buf_to_net, "Valid-requests");
+    buf_output0 (buf_to_net, "Valid-requests");
     for (rq = requests; rq->name != NULL; rq++)
     {
 	if (rq->func != NULL)
 	{
-	    buf_append_char (&buf_to_net, ' ');
-	    buf_output0 (&buf_to_net, rq->name);
+	    buf_append_char (buf_to_net, ' ');
+	    buf_output0 (buf_to_net, rq->name);
 	}
     }
-    buf_output0 (&buf_to_net, "\nok\n");
+    buf_output0 (buf_to_net, "\nok\n");
 }
 
 #ifdef sun
@@ -3263,8 +3373,8 @@ server_cleanup (sig)
     char *cmd;
     char *temp_dir;
 
-    set_block (&buf_to_net);
-    buf_send_output (&buf_to_net);
+    set_block (buf_to_net);
+    buf_send_output (buf_to_net);
 
     if (dont_delete_temp)
 	return;
@@ -3353,10 +3463,10 @@ server_cleanup (sig)
     cmd = malloc (len);
     if (cmd == NULL)
     {
-        buf_output0 (&buf_to_net, "E Cannot delete ");
-	buf_output0 (&buf_to_net, server_temp_dir);
-	buf_output0 (&buf_to_net, " on server; out of memory\n");
-	buf_send_output (&buf_to_net);
+        buf_output0 (buf_to_net, "E Cannot delete ");
+	buf_output0 (buf_to_net, server_temp_dir);
+	buf_output0 (buf_to_net, " on server; out of memory\n");
+	buf_send_output (buf_to_net);
 	return;
     }
     sprintf (cmd, "rm -rf %s", server_temp_dir);
@@ -3485,18 +3595,11 @@ error ENOMEM Virtual memory exhausted.\n");
     argument_count = 1;
     argument_vector[0] = "Dummy argument 0";
 
-    buf_to_net.data = buf_to_net.last = NULL;
-    buf_to_net.fd = STDOUT_FILENO;
-    buf_to_net.output = 1;
-    buf_to_net.nonblocking = 0;
-    buf_to_net.memory_error = outbuf_memory_error;
+    buf_to_net = fd_buffer_initialize (STDOUT_FILENO, 0, outbuf_memory_error);
+    buf_from_net = stdio_buffer_initialize (stdin, 1, outbuf_memory_error);
 
-    saved_output.data = saved_output.last = NULL;
-    saved_output.fd = -1;
-    saved_output.output = 0;
-    saved_output.nonblocking = 0;
-    saved_output.memory_error = outbuf_memory_error;
-    saved_outerr = saved_output;
+    saved_output = buf_nonio_initialize (outbuf_memory_error);
+    saved_outerr = buf_nonio_initialize (outbuf_memory_error);
 
     server_active = 1;
 
@@ -3504,16 +3607,20 @@ error ENOMEM Virtual memory exhausted.\n");
     {
 	char *cmd, *orig_cmd;
 	struct request *rq;
+	int status;
 	
-	orig_cmd = cmd = read_line (stdin);
-	if (cmd == NULL)
-	    break;
-	if (cmd == NO_MEM_ERROR)
+	buf_send_output (buf_to_net);
+	status = buf_read_line (buf_from_net, &cmd);
+	if (status == -2)
 	{
-	    buf_output0 (&buf_to_net, "E Fatal server error, aborting.\n\
+	    buf_output0 (buf_to_net, "E Fatal server error, aborting.\n\
 error ENOMEM Virtual memory exhausted.\n");
 	    break;
 	}
+	if (status != 0)
+	    break;
+
+	orig_cmd = cmd;
 	for (rq = requests; rq->name != NULL; ++rq)
 	    if (strncmp (cmd, rq->name, strlen (rq->name)) == 0)
 	    {
@@ -3536,10 +3643,10 @@ error ENOMEM Virtual memory exhausted.\n");
 	{
 	    if (!print_pending_error ())
 	    {
-	        buf_output0 (&buf_to_net, "error  unrecognized request `");
-		buf_output0 (&buf_to_net, cmd);
-		buf_append_char (&buf_to_net, '\'');
-		buf_append_char (&buf_to_net, '\n');
+	        buf_output0 (buf_to_net, "error  unrecognized request `");
+		buf_output0 (buf_to_net, cmd);
+		buf_append_char (buf_to_net, '\'');
+		buf_append_char (buf_to_net, '\n');
 	    }
 	}
 	free (orig_cmd);
@@ -3579,7 +3686,8 @@ check_repository_password (username, password, repository, host_user_ptr)
     int retval = 0;
     FILE *fp;
     char *filename;
-    char *linebuf;
+    char *linebuf = NULL;
+    size_t linebuf_len;
     int found_it = 0;
     int namelen;
 
@@ -3604,19 +3712,8 @@ check_repository_password (username, password, repository, host_user_ptr)
 
     /* Look for a relevant line -- one with this user's name. */
     namelen = strlen (username);
-    while (1)
+    while (getline (&linebuf, &linebuf_len, fp) >= 0)
     {
-	linebuf = read_line(fp);
-	if (linebuf == NULL)
-        {
-            free (linebuf);
-	    break;
-        }
-	if (linebuf == NO_MEM_ERROR)
-	{
-            error (0, errno, "out of memory");
-	    break;
-	}
 	if ((strncmp (linebuf, username, namelen) == 0)
 	    && (linebuf[namelen] == ':'))
         {
@@ -3624,7 +3721,7 @@ check_repository_password (username, password, repository, host_user_ptr)
 	    break;
         }
         free (linebuf);
-        
+        linebuf = NULL;
     }
     if (ferror (fp))
 	error (0, errno, "cannot read %s", filename);
@@ -3953,14 +4050,14 @@ cvs_output (str, len)
 #ifdef SERVER_SUPPORT
     if (error_use_protocol)
     {
-        buf_output (&saved_output, str, len);
-	buf_copy_lines (&buf_to_net, &saved_output, 'M');
+	buf_output (saved_output, str, len);
+	buf_copy_lines (buf_to_net, saved_output, 'M');
     }
     else if (server_active)
     {
-	buf_output (&saved_output, str, len);
-	buf_copy_lines (&protocol, &saved_output, 'M');
-	buf_send_counted (&protocol);
+	buf_output (saved_output, str, len);
+	buf_copy_lines (protocol, saved_output, 'M');
+	buf_send_counted (protocol);
     }
     else
 #endif
@@ -3992,15 +4089,15 @@ cvs_outerr (str, len)
 #ifdef SERVER_SUPPORT
     if (error_use_protocol)
     {
-        buf_output (&saved_outerr, str, len);
-	buf_copy_lines (&buf_to_net, &saved_outerr, 'E');
-	buf_send_output (&buf_to_net);
+	buf_output (saved_outerr, str, len);
+	buf_copy_lines (buf_to_net, saved_outerr, 'E');
+	buf_send_output (buf_to_net);
     }
     else if (server_active)
     {
-	buf_output (&saved_outerr, str, len);
-	buf_copy_lines (&protocol, &saved_outerr, 'E');
-	buf_send_counted (&protocol);
+	buf_output (saved_outerr, str, len);
+	buf_copy_lines (protocol, saved_outerr, 'E');
+	buf_send_counted (protocol);
     }
     else
 #endif
