@@ -1,3 +1,11 @@
+Wed Jan  3 01:19:53 1996  Mark Immel <immel@centerline.com>
+			  and Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* update.c (checkout_file): Do not resurrect file on join if it
+	doesn't contain the revisions we are joining.  Probably not a
+	perfect test, but should be an improvement.
+	* sanity.sh (death): New death-file4-* tests, for bug fixed above.
+
 Wed Jan  3 01:19:53 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* add.c, admin.c, checkout.c, client.c, commit.c, diff.c, edit.c,
