@@ -1,8 +1,15 @@
+2004-10-25 Derek Price <derek@ximbiot.com>
+
+	* import.c (import): Repair regex for regressions introduced in last
+	commit.
+	* sanity.sh (import-quirks): Test a few branch numbers import shouldn't
+	have a problem with.
+
 2004-10-25  Mark D. Baushke  <mdb@cvshome.org>
 
 	* sanity.sh (modes3): Quiet rsync messages in proxy mode when
 	permissions are removed. They are expected and not a problem here.
-	
+
 2004-10-25 Derek Price <derek@ximbiot.com>
 
 	* import.c (import): Anchor and simplify branch verification regex.
