@@ -162,6 +162,7 @@ char *strerror (int);
 #define CVSROOTADM_POSTADMIN	"postadmin"
 #define CVSROOTADM_POSTPROXY	"postproxy"
 #define CVSROOTADM_POSTTAG	"posttag"
+#define CVSROOTADM_POSTWATCH	"postwatch"
 #define CVSROOTADM_PREPROXY	"preproxy"
 #define	CVSROOTADM_RCSINFO	"rcsinfo"
 #define CVSROOTADM_READERS	"readers"

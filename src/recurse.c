@@ -872,15 +872,14 @@ do_recursion (struct recursion_frame *frame)
 
     /* free the saved copy of the pointer if necessary */
     if (srepository)
-    {
 	free (srepository);
-    }
     repository = NULL;
 
 #ifdef HAVE_PRINT_PTR
-    TRACE (TRACE_FLOW, "Leaving do_recursion ( frame=%p )", (void *) frame);
+    TRACE (TRACE_FLOW, "Leaving do_recursion (frame=%p)", (void *)frame);
 #else
-    TRACE (TRACE_FLOW, "Leaving do_recursion ( frame=%lx )", (unsigned long) frame);
+    TRACE (TRACE_FLOW, "Leaving do_recursion (frame=%lx)",
+	   (unsigned long)frame);
 #endif
 
     return err;

@@ -316,6 +316,28 @@ static const char *const posttag_contents[] = {
     NULL
 };
 
+static const char *const postwatch_contents[] = {
+    "# The \"postwatch\" file is called after any command finishes writing new\n",
+    "# file attibute (watch/edit) information in a directory.\n",
+    "#\n",
+    "# If any format strings are present in the filter, they will be replaced",
+    "# as follows:\n",
+    "#    %p = path relative to repository\n",
+    "#    %r = repository (path portion of $CVSROOT)\n",
+    "#\n",
+    "# The first entry on a line is a regular expression which is tested\n",
+    "# against the directory that the change is being committed to, relative\n",
+    "# to the $CVSROOT.  For the first match that is found, then the remainder\n",
+    "# of the line is the name of the filter to run.\n",
+    "#\n",
+    "# If the repository name does not match any of the regular expressions in this\n",
+    "# file, the \"DEFAULT\" line is used, if it is specified.\n",
+    "#\n",
+    "# If the name \"ALL\" appears as a regular expression it is always used\n",
+    "# in addition to the first matching regex or \"DEFAULT\".\n",
+    NULL
+};
+
 static const char *const checkoutlist_contents[] = {
     "# The \"checkoutlist\" file is used to support additional version controlled\n",
     "# administrative files in $CVSROOT/CVSROOT, such as template files.\n",
@@ -499,6 +521,9 @@ static const struct admin_file filelist[] = {
     {CVSROOTADM_POSTTAG,
 	"a %s file can be used to configure 'cvs tag' logging",
 	posttag_contents},
+    {CVSROOTADM_POSTWATCH,
+	"a %s file can be used to configure 'cvs watch' logging",
+	postwatch_contents},
     {CVSROOTADM_PREPROXY,
 	"a %s file can be used to open or log connections to a primary server",
 	preproxy_contents},

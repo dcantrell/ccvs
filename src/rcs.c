@@ -3615,13 +3615,13 @@ expand_keywords (RCSNode *rcs, RCSVers *ver, const char *name, const char *log, 
 		    if (kw == KEYWORD_HEADER ||
 			    (kw == KEYWORD_LOCALID &&
 			     keyword_local == KEYWORD_HEADER))
-			path = rcs->path;
+			path = rcs->print_path;
 		    else if (kw == KEYWORD_CVSHEADER ||
 			     (kw == KEYWORD_LOCALID &&
 			      keyword_local == KEYWORD_CVSHEADER))
-			path = getfullCVSname(rcs->path, &old_path);
+			path = getfullCVSname(rcs->print_path, &old_path);
 		    else
-			path = last_component (rcs->path);
+			path = last_component (rcs->print_path);
 		    path = escape_keyword_value (path, &free_path);
 		    date = printable_date (ver->date);
 		    value = xmalloc (strlen (path)
@@ -3655,7 +3655,7 @@ expand_keywords (RCSNode *rcs, RCSVers *ver, const char *name, const char *log, 
 
 	    case KEYWORD_LOG:
 	    case KEYWORD_RCSFILE:
-		value = escape_keyword_value (last_component (rcs->path),
+		value = escape_keyword_value (last_component (rcs->print_path),
 					      &free_value);
 		break;
 
@@ -3671,7 +3671,7 @@ expand_keywords (RCSNode *rcs, RCSVers *ver, const char *name, const char *log, 
 		break;
 
 	    case KEYWORD_SOURCE:
-		value = escape_keyword_value (rcs->path, &free_value);
+		value = escape_keyword_value (rcs->print_path, &free_value);
 		break;
 
 	    case KEYWORD_STATE:
@@ -4852,13 +4852,13 @@ RCS_checkin (RCSNode *rcs, const char *workfile_in, const char *message,
     }
 
     /* Create new delta node. */
-    delta = (RCSVers *) xmalloc (sizeof (RCSVers));
+    delta = xmalloc (sizeof (RCSVers));
     memset (delta, 0, sizeof (RCSVers));
     delta->author = xstrdup (getcaller ());
     if (flags & RCS_FLAGS_MODTIME)
     {
 	struct stat ws;
-	if( CVS_STAT( workfile, &ws ) < 0 )
+	if (CVS_STAT (workfile, &ws) < 0)
 	{
 	    error (1, errno, "cannot stat %s", workfile);
 	}
@@ -4867,7 +4867,7 @@ RCS_checkin (RCSNode *rcs, const char *workfile_in, const char *message,
     else
 	(void) time (&modtime);
     ftm = gmtime (&modtime);
-    delta->date = (char *) xmalloc (MAXDATELEN);
+    delta->date = xmalloc (MAXDATELEN);
     (void) sprintf (delta->date, DATEFORM,
 		    ftm->tm_year + (ftm->tm_year < 100 ? 0 : 1900),
 		    ftm->tm_mon + 1, ftm->tm_mday, ftm->tm_hour,
