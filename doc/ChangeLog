@@ -1,3 +1,7 @@
+2004-11-29  Larry Jones  <lawrence.jones@ugs.com>
+
+	* cvs.texinfo: s/KeywordExpansion/KeywordExpand/.
+
 2004-11-24  Derek Price  <derek@ximbiot.com>
 
 	* cvs.texinfo (Write proxies): Mention version limitations on primary
