@@ -348,6 +348,17 @@ parse_config (cvsroot)
 	}
 	else
 	{
+	    /* We may be dealing with a keyword which was added in a
+	       subsequent version of CVS.  In that case it is a good idea
+	       to complain, as (1) the keyword might enable a behavior like
+	       alternate locking behavior, in which it is dangerous and hard
+	       to detect if some CVS's have it one way and others have it
+	       the other way, (2) in general, having us not do what the user
+	       had in mind when they put in the keyword violates the
+	       principle of least surprise.  Note that one corollary is
+	       adding new keywords to your CVSROOT/config file is not
+	       particularly recommended unless you are planning on using
+	       the new features.  */
 	    error (0, 0, "%s: unrecognized keyword '%s'",
 		   infopath, line);
 	    goto error_return;
