@@ -1,3 +1,11 @@
+2003-02-06  Derek Price  <derek@ximbiot.com>
+
+	* cvs.texinfo (Working directory storage, Module options,
+	Module program options): Correct description of where Checkin.prog
+	and Update.prog are run.  Provide more index entries and cross
+	references.  Remove some FIXME comments.  Add a FIXCVS THEN FIXME.
+	(Thanks to Art Manion at the CERT Coordination Center <cert@cert.org>.)
+
 2003-02-04  Derek Price  <derek@ximbiot.com>
 
 	* cvs.texinfo (File status): Mention the "Unresolved Conflict" status
