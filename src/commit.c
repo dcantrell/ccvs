@@ -1977,10 +1977,14 @@ checkaddfile (file, repository, tag, options, rcsnode)
 			  NULL, NULL, 0, NULL,
 			  desc, desclen, NULL) != 0)
 	{
+	    if (rcsname != NULL)
+	        free (rcsname);
 	    goto out;
 	}
 	rcs = RCS_parsercsfile (rcsname);
 	newfile = 1;
+	if (rcsname != NULL)
+	    free (rcsname);
 	if (desc != NULL)
 	    free (desc);
 	*rcsnode = rcs;
