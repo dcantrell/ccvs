@@ -1,5 +1,9 @@
 2002-05-02  Derek Price  <oberon@umich.edu>
 
+	* .cvsignore: Remove config.cache and add autom4te.cache.
+
+2002-05-02  Derek Price  <oberon@umich.edu>
+
 	* noautoconf.sh: Update this script for operation with the new autotools.
 	* stamp-h1.in: Remove this obsolete file.
 
