@@ -1,3 +1,7 @@
+2003-10-08  Larry Jones  <lawrence.jones@eds.com>
+
+	* TESTS: Add pointer to debug_check_log script.
+
 2003-10-08  Derek Price  <derek@ximbiot.com>
 
 	* NEWS: Improve syntax and punctuation of my last entry.
