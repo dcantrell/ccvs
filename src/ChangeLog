@@ -1,3 +1,9 @@
+Mon Feb 12 03:01:48 1996  Benjamin J. Lee  <benjamin@cyclic.com>
+
+	* mkmodules.c: changed 'void Lock_Cleanup()' to 'void static
+	Lock_Cleanup() to avoid conflict with more substantial
+	Lock_Cleanup() in lock.c
+
 Mon Feb 12 02:50:19 1996  Benjamin J. Lee  <benjamin@cyclic.com>
 
 	* edit.c, logmsg.c, release.c, run.c: Changed Popen() to
