@@ -1,3 +1,22 @@
+2004-06-26  Mark D. Baushke  <mdb@cvshome.org>
+
+	* import.c (import_usage): Add new -X flag.
+	(import): Handle new -X flag.
+	(process_import_file): Handle new -X flag.
+	(killnew): New static flag variable to indicate use of -X flag.
+	(preserve_initial_permissions): New function, extracted from
+	add_rcs_file().
+	(expand_and_copy_contents): Likewise.
+	(add_rcs_file): New argument, do_killnew, to cause "import -X" flag
+	processing.  Implement -X flag, and use newly abstracted functions.
+	* rcs.h (add_rcs_file): Update prototype for do_killnew argument.
+	* commit.c (checkaddfile): Update for add_rcs_file function change.
+	* mkmodules.c (init): Likewise.
+	* client.c (handle_mt): Handle an importmergecmd tag without
+	any conflicts (for 'import -X' support).
+	* sanity.sh (importX): New test.
+	(New feature from Chris Demetriou <cgd@broadcom.com>.)
+	
 2004-06-22  Derek Price  <derek@ximbiot.com>
 
 	* wrapper.c: Add explicit "void" return type to "wrap_clean_fmt_str"

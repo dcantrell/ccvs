@@ -961,7 +961,7 @@ init (int argc, char **argv)
 				    /* No vendor branch.  */
 				    NULL, NULL, 0, NULL,
 
-				    NULL, 0, NULL);
+				    NULL, 0, NULL, 0);
 	    if (retcode != 0)
 		/* add_rcs_file already printed an error message.  */
 		err = 1;

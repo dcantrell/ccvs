@@ -2663,8 +2663,11 @@ handle_mt( char *args, int len )
 		    break;
 		}
 
-		sprintf (buf, "\n%d conflicts created by this import.\n",
-			 importmergecmd.conflicts);
+		if (importmergecmd.conflicts == -1)
+ 		    sprintf (buf, "\nNo conflicts created by this import.\n");
+		else
+		    sprintf (buf, "\n%d conflicts created by this import.\n",
+			     importmergecmd.conflicts);
 		cvs_output (buf, 0);
 		cvs_output ("Use the following command to help the merge:\n\n",
 			    0);
@@ -2720,7 +2723,12 @@ handle_mt( char *args, int len )
 	    else if (importmergecmd.seen)
 	    {
 		if (strcmp (tag, "conflicts") == 0)
-		    importmergecmd.conflicts = atoi (text);
+		{
+		    if (strcmp (text, "No") == 0)
+			importmergecmd.conflicts = -1;
+		    else
+			importmergecmd.conflicts = atoi (text);
+		}
 		else if (strcmp (tag, "mergetag1") == 0)
 		    importmergecmd.mergetag1 = xstrdup (text);
 		else if (strcmp (tag, "mergetag2") == 0)

@@ -2000,7 +2000,7 @@ checkaddfile (const char *file, const char *repository, const char *tag,
 
 	if (add_rcs_file (NULL, rcsname, file, NULL, opt,
 			  NULL, NULL, 0, NULL,
-			  desc, desclen, NULL) != 0)
+			  desc, desclen, NULL, 0) != 0)
 	{
 	    if (rcsname != NULL)
 	        free (rcsname);

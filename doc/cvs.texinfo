@@ -7418,7 +7418,7 @@ and copy the modifications onto the main trunk.
 
 Use the @code{import} command to create and update
 the vendor branch.  When you import a new file,
-the vendor branch is made the `head' revision, so
+(usually) the vendor branch is made the `head' revision, so
 anyone that checks out a copy of the file gets that
 revision.  When a local modification is committed it is
 placed on the main trunk, and made the `head'
@@ -10470,6 +10470,17 @@ import.  You can use this option repeatedly.
 @var{spec} can be a file name pattern of the same type
 that you can specify in the @file{.cvswrappers}
 file. @xref{Wrappers}.
+
+@item -X
+Modify the algorithm used by @sc{cvs} when importing new files
+so that new files do not immediately appear on the main trunk.
+
+Specifically, this flag causes @sc{cvs} to mark new files as
+if they were deleted on the main trunk, by taking the following
+steps for each file in addition to those normally taken on import:
+creating a new revision on the main trunk indicating that
+the new file is @code{dead}, resetting the new file's default branch,
+and placing the file in the Attic (@pxref{Attic}) directory.
 @end table
 
 @c . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
