@@ -19,6 +19,9 @@ fuctionality previously allowed executables to be specified in the modules file
 to be run at update and checkin time, but users could edit these files on a per
 workspace basis, creating a security hole.
 
+* contrib/rcs2log and src/cvsbug now use the BSD mktemp program to create
+their temp files and directories on systems which provide it.
+
 * Corrected the path in a failed write error message.
 
 * Autoconf and Automake are no longer run automatically unless you run
