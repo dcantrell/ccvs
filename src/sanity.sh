@@ -5291,6 +5291,22 @@ done"
 "U first-dir/file1
 U first-dir/file2"
 	  dotest modules-155c5 "${testcvs} -q co topfiles" ""
+
+	  # Make sure the right thing happens if we remove a file.
+	  cd first-dir
+	  dotest modules-155c6 "${testcvs} -q rm -f file1" \
+"${PROG} [a-z]*: use .${PROG} commit. to remove this file permanently"
+	  dotest modules-155c7 "${testcvs} -q ci -m remove-it" \
+"Removing file1;
+${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
+new revision: delete; previous revision: 1\.1
+done"
+	  cd ..
+	  rm -r first-dir
+	  dotest modules-155c8 "${testcvs} -q co topfiles" \
+"${PROG} [a-z]*: warning: first-dir/file1 is not (any longer) pertinent
+U first-dir/file2"
+
 	  cd ..
 	  rm -r 1
 

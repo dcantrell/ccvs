@@ -1,3 +1,11 @@
+Tue Jan 13 13:49:53 1998  Ian Lance Taylor  <ian@cygnus.com>
+
+	* update.c (checkout_file): Don't pass set_time as true to
+	Version_TS if the file is dead.
+	* sanity.sh (modules): Add tests modules-155c6 through
+ 	modules-155c8 to test for above patch (without the above patch,
+ 	modules-155c8 will fail when remote).
+
 Tue Jan 13 10:37:02 1998  Larry Jones  <larry.jones@sdrc.com>
 
 	* client.c (send_modified): Change bufsize and newsize from int
