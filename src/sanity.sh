@@ -953,6 +953,27 @@ ${PROG} [a-z]*: invalid context length argument"
 1\.1          .'"${username}"' *[0-9a-zA-Z-]*.: ssfile
 1\.2          .'"${username}"' *[0-9a-zA-Z-]*.: ssfile line 2'
 
+	  # Test resurrecting with strange revision numbers
+	  cd sdir/ssdir
+	  dotest basica-r1 "${testcvs} rm -f ssfile" \
+"${PROG} [a-z]*: scheduling .ssfile. for removal
+${PROG} [a-z]*: use .${PROG} commit. to remove this file permanently"
+	  dotest basica-r2 "${testcvs} -q ci -m remove" \
+"Removing ssfile;
+${TESTDIR}/cvsroot/first-dir/sdir/ssdir/ssfile,v  <--  ssfile
+new revision: delete; previous revision: 3\.1
+done"
+	  dotest basica-r3 "${testcvs} -q up -p -r 3.1 ssfile >ssfile" ""
+	  dotest basica-r4 "${testcvs} add ssfile" \
+"${PROG} [a-z]*: re-adding file ssfile (in place of dead revision 3\.2)
+${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
+	  dotest basica-r5 "${testcvs} -q ci -m resurrect" \
+"Checking in ssfile;
+${TESTDIR}/cvsroot/first-dir/sdir/ssdir/ssfile,v  <--  ssfile
+new revision: 3\.3; previous revision: 3\.2
+done"
+	  cd ../..
+
 	  # As long as we have a file with a few revisions, test
 	  # a few "cvs admin -o" invocations.
 	  cd sdir/ssdir
@@ -974,6 +995,8 @@ ${PROG} [a-z]*: RCS file for .ssfile. not modified"
 done"
 	  dotest basica-o4 "${testcvs} admin -o 3.1:: ssfile" \
 "RCS file: ${TESTDIR}/cvsroot/first-dir/sdir/ssdir/ssfile,v
+deleting revision 3\.3
+deleting revision 3\.2
 done"
 	  dotest basica-o5 "${testcvs} admin -o ::1.1 ssfile" \
 "RCS file: ${TESTDIR}/cvsroot/first-dir/sdir/ssdir/ssfile,v
