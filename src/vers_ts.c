@@ -142,21 +142,17 @@ Version_TS (finfo, options, tag, date, force_tag_match, set_time)
 	}
 	else
 	{
+	    int simple;
+
 	    vers_ts->vn_rcs = RCS_getversion (rcsdata, vers_ts->tag,
-					vers_ts->date, force_tag_match, 1);
+					      vers_ts->date, force_tag_match,
+					      &simple);
 	    if (vers_ts->vn_rcs == NULL)
 		vers_ts->vn_tag = NULL;
+	    else if (simple)
+		vers_ts->vn_tag = xstrdup (vers_ts->tag);
 	    else
-	    {
-		char *colon = strchr (vers_ts->vn_rcs, ':');
-		if (colon)
-		{
-		    vers_ts->vn_tag = xstrdup (colon+1);
-		    *colon = '\0';
-		}
-		else
-		    vers_ts->vn_tag = xstrdup (vers_ts->vn_rcs);
-	    }
+		vers_ts->vn_tag = xstrdup (vers_ts->vn_rcs);
 	}
 
 	/*

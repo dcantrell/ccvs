@@ -605,10 +605,10 @@ struct vers_ts
     /* Numeric revision number corresponding to ->vn_tag (->vn_tag
        will often be symbolic).  */
     char *vn_rcs;
-    /* If ->tag corresponds to a tag which really exists in this file,
-       this is just a copy of ->tag.  If not, this is either NULL or
-       the head revision.  (Or something like that, see RCS_getversion
-       and friends).  */
+    /* If ->tag is a simple tag in the RCS file--a tag which really
+       exists which is not a magic revision--and if ->date is NULL,
+       then this is a copy of ->tag.  Otherwise, it is a copy of
+       ->vn_rcs.  */
     char *vn_tag;
 
     /* This is the timestamp from stating the file in the working directory.

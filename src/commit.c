@@ -1439,7 +1439,7 @@ remove_file (finfo, tag, message)
 	{
 	    /* no revision exists on this branch.  use the previous
 	       revision but do not lock. */
-	    corev = RCS_gettag (finfo->rcs, tag, 1, 0);
+	    corev = RCS_gettag (finfo->rcs, tag, 1, (int *) NULL);
 	    prev_rev = xstrdup(rev);
 	    lockflag = 0;
 	} else
@@ -1705,7 +1705,7 @@ checkaddfile (file, repository, tag, options, rcsnode)
 	    rcsfile->path = xstrdup (rcs);
 	}
 
-	rev = RCS_getversion (rcsfile, tag, NULL, 1, 0);
+	rev = RCS_getversion (rcsfile, tag, NULL, 1, (int *) NULL);
 	/* and lock it */
 	if (lock_RCS (file, rcsfile, rev, repository)) {
 	    error (0, 0, "cannot lock `%s'.", rcs);
@@ -1811,7 +1811,7 @@ checkaddfile (file, repository, tag, options, rcsnode)
 	    char *head;
 	    char *magicrev;
 	    
-	    head = RCS_getversion (rcsfile, NULL, NULL, 0, 0);
+	    head = RCS_getversion (rcsfile, NULL, NULL, 0, (int *) NULL);
 	    magicrev = RCS_magicrev (rcsfile, head);
 
 	    retcode = RCS_settag (rcsfile, tag, magicrev);

@@ -89,9 +89,9 @@ void RCS_fully_parse PROTO((RCSNode *));
 char *RCS_check_kflag PROTO((const char *arg));
 char *RCS_getdate PROTO((RCSNode * rcs, char *date, int force_tag_match));
 char *RCS_gettag PROTO((RCSNode * rcs, char *symtag, int force_tag_match,
-			int return_both));
+			int *simple_tag));
 char *RCS_getversion PROTO((RCSNode * rcs, char *tag, char *date,
-		      int force_tag_match, int return_both));
+		      int force_tag_match, int *simple_tag));
 char *RCS_magicrev PROTO((RCSNode *rcs, char *rev));
 int RCS_isbranch PROTO((RCSNode *rcs, const char *rev));
 int RCS_nodeisbranch PROTO((RCSNode *rcs, const char *tag));

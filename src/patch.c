@@ -369,7 +369,8 @@ patch_fileproc (callerdat, finfo)
 	vers_head = NULL;
     else
     {
-	vers_head = RCS_getversion (rcsfile, rev2, date2, force_tag_match, 0);
+	vers_head = RCS_getversion (rcsfile, rev2, date2, force_tag_match,
+				    (int *) NULL);
 	if (vers_head != NULL && RCS_isdead (rcsfile, vers_head))
 	{
 	    free (vers_head);
@@ -393,7 +394,8 @@ patch_fileproc (callerdat, finfo)
 	    return (1);
 	}
     }
-    vers_tag = RCS_getversion (rcsfile, rev1, date1, force_tag_match, 0);
+    vers_tag = RCS_getversion (rcsfile, rev1, date1, force_tag_match,
+			       (int *) NULL);
     if (vers_tag != NULL && RCS_isdead (rcsfile, vers_tag))
     {
         free (vers_tag);
