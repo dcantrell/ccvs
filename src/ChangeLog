@@ -1,3 +1,8 @@
+Wed Feb  4 23:31:08 1998  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* rcs.c (max_rev): Don't prototype.  Interesting that noone
+	complained about this until now.
+
 4 Feb 1998  Jim Kingdon
 
 	* rcs.c (RCS_checkin): When adding a new file, read it
