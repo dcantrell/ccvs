@@ -1,5 +1,13 @@
 2003-11-25  Derek Price  <derek@ximbiot.com>
 
+	* add.c (add): Disable ign_case for the purposes of adding a file so
+	that recasing the name of a file is possible from a case insensitive
+	client.
+	* sanity.sh (recase): New tests for behavior which varies when the
+	client and/or the server are case insensitive.
+
+2003-11-25  Derek Price  <derek@ximbiot.com>
+
 	* sanity.sh (devcom3-9ar): Ignore the stderr output since it varies
 	considerably between platforms.
 
