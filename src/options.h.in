@@ -57,8 +57,9 @@
  * if your site wants to use a particular diff.  If you are using the GNU
  * version of diff (version 1.15 or later), this should be "diff -a".
  * 
- * NOTE: this program is only used for the ``patch'' sub-command.  The other
- * commands use rcsdiff which will use whatever version of diff was specified
+ * NOTE: this program is only used for the ``patch'' sub-command (and
+ * for ``update'' if you are using the server).  The other commands
+ * use rcsdiff which will use whatever version of diff was specified
  * when rcsdiff was built on your system.
  */
 
