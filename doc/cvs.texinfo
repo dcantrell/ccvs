@@ -9741,9 +9741,121 @@ description of the @samp{-I} option, and
 
 This appendix describes how to invoke @sc{cvs}, with
 references to where each command or feature is
-described in detail.  Other relevant references are the
-@samp{--help}/@samp{-H} option to @sc{cvs}
-(@pxref{Global options}) and @ref{Index}.
+described in detail.  For other references run the
+@code{cvs --help} command, or see @ref{Index}.
+
+A @sc{cvs} command looks like:
+
+@example
+cvs [ @var{global_options} ] @var{command} [ @var{command_options} ] [ @var{command_args} ]
+@end example
+
+Global options:
+
+@table @code
+@item --allow-root=@var{rootdir}
+Specify legal @sc{cvsroot} directory (server only) (not
+in @sc{cvs} 1.9 and older).  See @ref{Password
+authentication server}.
+
+@item -a
+Authenticate all communication (client only) (not in @sc{cvs}
+1.9 and older).  See @ref{Global options}.
+
+@item -b
+Specify RCS location (@sc{cvs} 1.9 and older).  See
+@ref{Global options}.
+
+@item -d @var{root}
+Specify the @sc{cvsroot}.  See @ref{Repository}.
+
+@item -e @var{editor}
+Edit messages with @var{editor}.  See @ref{Committing
+your changes}.
+
+@item -f
+Do not read the @file{~/.cvsrc} file.  See @ref{Global
+options}.
+
+@item -H
+@itemx --help
+Print a help message.  See @ref{Global options}.
+
+@item -l
+Do not log in CVSROOT/history file.  See @ref{Global
+options}.
+
+@item -n
+Do not change any files.  See @ref{Global options}.
+
+@item -Q
+Cause the command to be really quiet.  See @ref{Global options}.
+
+@item -q
+Cause the command to be somewhat quiet.  See @ref{Global options}.
+
+@item -r
+Make new working files files read-only.  See @ref{Global options}.
+
+@item -s @var{variable}=@var{value}
+Set a user variable.  See @ref{Variables}.
+
+@item -T @var{tempdir}
+Put temporary files in @var{tempdir}.  See @ref{Global
+options}.
+
+@item -t
+Trace @sc{cvs} execution.  See @ref{Global options}.
+
+@item -v
+@item --version
+Display version and copyright information for @sc{cvs}.
+
+@item -w
+Make new working files read-write.  See @ref{Global
+options}.
+
+@item -x
+Encrypt all communication (client only).  See
+@ref{Global options}.
+
+@item -z @var{gzip-level}
+Set the compression level (client only).
+@c FIXME: what are the valid values for gzip-level.
+@c And shouldn't this be documented in at least a
+@c little bit of detail somewhere?
+
+@end table
+
+Keyword expansion modes (@pxref{Substitution modes}):
+
+@example
+-kkv  $@asis{}Id: file1,v 1.1 1993/12/09 03:21:13 joe Exp $
+-kkvl $@asis{}Id: file1,v 1.1 1993/12/09 03:21:13 joe Exp harry $
+-kk   $@asis{}Id$
+-kv   file1,v 1.1 1993/12/09 03:21:13 joe Exp
+-ko   @i{no expansion}
+-kb   @i{no expansion, file is binary}
+@end example
+
+Keywords (@pxref{Keyword list}):
+
+@example
+$@asis{}Author: joe $
+$@asis{}Date: 1993/12/09 03:21:13 $
+$@asis{}Header: /home/files/file1,v 1.1 1993/12/09 03:21:13 joe Exp harry $
+$@asis{}Id: file1,v 1.1 1993/12/09 03:21:13 joe Exp harry $
+$@asis{}Locker: harry $
+$@asis{}Name: snapshot_1_14 $
+$@asis{}RCSfile: file1,v $
+$@asis{}Revision: 1.1 $
+$@asis{}Source: /home/files/file1,v $
+$@asis{}State: Exp $
+$@asis{}Log: file1,v $
+Revision 1.1  1993/12/09 03:30:17  joe
+Initial revision
+
+@end example
 
 @c The idea behind this table is that we want each item
 @c to be a sentence or two at most.  Preferably a
@@ -9752,6 +9864,8 @@ described in detail.  Other relevant references are the
 @c In some cases refs to "foo options" are just to get
 @c this thing written quickly, not because the "foo
 @c options" node is really the best place to point.
+Commands, command options, and command arguments:
+
 @table @code
 @item add [@var{options}] [@var{files}@dots{}]
 Add a new file/directory.  See @ref{Adding files}.
