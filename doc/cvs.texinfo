@@ -7447,6 +7447,12 @@ to run @code{cvs admin -b}: to revert to the vendor's
 version when using vendor branches (@pxref{Reverting
 local changes}).
 There can be no space between @samp{-b} and its argument.
+@c Hmm, we don't document the usage where rev is
+@c omitted.  Maybe that usage can/should be deprecated
+@c (and replaced with -bHEAD or something?) (so we can toss
+@c the optional argument).  Note that -bHEAD does not
+@c work, as of 17 Sep 1997, but probably will once "cvs
+@c admin" is internal to CVS.
 
 @cindex comment leader
 @item -c@var{string}
