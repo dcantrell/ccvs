@@ -39,6 +39,12 @@ extern void server_scratch PROTO((char *name));
 extern void server_scratch_entry_only PROTO((void));
 
 /*
+ * We just changed directories in the process of expanding submodules
+ * indicated with the "&" option in the modules file.
+ */
+extern void server_change_dir PROTO((char* dir));
+ 
+/*
  * We just successfully checked in FILE (which is just the bare
  * filename, with no directory).  REPOSITORY is the directory for the
  * repository.
