@@ -188,7 +188,7 @@ iswritable (file)
  * bits set.
  */
 int
-isaccessable (file, mode)
+isaccessible (file, mode)
     const char *file;
     const int mode;
 {

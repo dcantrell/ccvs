@@ -1,3 +1,7 @@
+Thu Dec  7 14:49:16 1995  Jim Meyering  (meyering@comco.com)
+
+	* filesubr.c (isaccessible): Rename from isaccessable.
+
 Mon Dec  4 11:28:10 1995  Norbert Kiesel  <nk@col.sw-ley.de>
 
 	* Makefile.in (DISTFILES): prefix all filenames with
@@ -93,7 +97,7 @@ Sat Nov 18 13:39:06 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
         * client.c:
         (rsh_pid): no more need for this var; the handle-to-PID library in
-        popen.c manages PID's for us now. 
+        popen.c manages PID's for us now.
         (start_rsh_server): removed this func, since we don't use it -- we
         do use `rsh', but we call it directly from popenRW().
         (get_responses_and_close): removed cruft that doesn't apply to
@@ -140,7 +144,7 @@ Fri Nov 17 14:53:22 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 Thu Nov 16 21:47:22 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
 	* startserver.c: removed.  We don't need this anymore.
-        
+
         * config.h (RSH_NOT_TRANSPARENT): undef this.  We have a
         transparent rsh.
         (HAVE_POPEN_RW): define to 1.
@@ -177,7 +181,7 @@ Mon Nov 13 07:28:04 1995  Karl Fogel  <kfogel@floss.cyclic.com>
         Ahem, "save-cwd" with a hyphen, not an underscore.  Oops.
 
         * strippath.c: new file.
-        
+
         * popen.c: set DIAGNOSTIC off.  Reformat for readability.
 
         * popen.h: new file.
@@ -185,10 +189,10 @@ Mon Nov 13 07:28:04 1995  Karl Fogel  <kfogel@floss.cyclic.com>
         * config.h (USE_OWN_POPEN): define to 1.
 
         * run.c (Popen): make this work now that we have popen().
-        
+
 Mon Nov 13 01:23:27 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
-        * Makefile.in: 
+        * Makefile.in:
 	(cvs.exe): broke up OBJECTS into components to create icc.in in
         more steps.  OBJECTS had gotten so big that it formed too long a
         command line all by itself.  Sheesh.
@@ -198,15 +202,15 @@ Mon Nov 13 01:23:27 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
         * popen.c, rcmd.c, rcmd.h, startserver.c, stripslash.c, waitpid.c:
         New files.
-        
+
         * run.c (close_on_exec): new func (skeleton).
         (sleep): new func (OS/2 doesn't seem to have this).
-        
-        * pwd.c (getlogin): Don't call win32getlogin(), obviously.        
+
+        * pwd.c (getlogin): Don't call win32getlogin(), obviously.
 
         * config.h (W_OK, R_OK, X_OK, F_OK): define masks for access().
         Include <process.h> for getpid().
-        
+
         * filesubr.c (isaccessable): define.  Don't know why I left it out
         before.  For that matter, I don't know how the Windows NT port
         gets along without it.  Hmmm.
@@ -234,7 +238,7 @@ Fri Nov 10 14:21:14 1995  Karl Fogel  <kfogel@floss.cyclic.com>
         (SHELL): got rid of this var, no need for it here.
         Use a pattern rule for obj files.
         Some other minor tweaks for OS/2.
-        
+
         * threads.c: new file.
 
 Wed Nov  8 11:14:46 1995  Karl Fogel  <kfogel@floss.cyclic.com>
@@ -244,7 +248,7 @@ Wed Nov  8 11:14:46 1995  Karl Fogel  <kfogel@floss.cyclic.com>
         Don't ask HAVE_VPRINTF -- this is an OS/2-specific file and we can
         take things for granted.
         Started simplifying old NT `HANDLE' code.
-        
+
         * Makefile.in (OS2_SOURCES): added run.c.
 
         * run.c: new file, copied from ../windows-NT/run.c.  Started
@@ -321,7 +325,7 @@ Wed Oct 25 12:52:54 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
         * config.h: new file; will maintain by hand.
         Made first pass through to cast it into OS/2-ish condition.
-        
+
         * Makefile.in: started adding lots of OS/2 gunk.
         Took out autoconf stuff; just don't want to fool around with that
         until after it compiles on beezley.

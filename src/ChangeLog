@@ -1,3 +1,11 @@
+Thu Dec  7 14:49:16 1995  Jim Meyering  (meyering@comco.com)
+
+	* filesubr.c (isaccessible): Rename from isaccessable.
+	Update callers.
+	* cvs.h: Update prototype.
+	* main.c (main): Update callers.
+	* server.c (main): Update callers.
+
 Thu Dec  7 12:50:20 1995  Adam Glass <glass@NetBSD.ORG>
 
         * cvs.h: "isaccessible" is the correct spelling.
@@ -22,13 +30,13 @@ Thu Dec  7 00:08:53 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
         * options.h.in (CVS_PASSWORDS_CASE_INSENSITIVE): new define, unset
         by default.
-        
+
 Wed Dec  6 18:51:16 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
         * server.c (check_password): If user has a null password, then
         return 1 if arg is also null.
         Reverse sense of return value.  Caller changed.
-        
+
 Wed Dec  6 14:42:57 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
         * server.c (check_password): new func.
@@ -50,7 +58,7 @@ Wed Dec  6 14:42:57 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
         * client.c (connect_to_pserver): use new func get_cvs_password().
         Prototype it at top of file.  Hmmm.
-        
+
 Wed Dec  6 13:29:22 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
         * server.c: same as below (AUTH_SERVER_SUPPORT).
@@ -88,7 +96,7 @@ Tue Dec  5 22:46:37 1995  Karl Fogel  <kfogel@floss.cyclic.com>
         Use new func strip_trailing_newlines() to purify `repository',
         `username', and `password'.
         Run a primitive password check, just for testing.
-        
+
         * client.c (connect_to_pserver): use CVS_AUTH_PORT.
         Take tofdp, fromfdp, and log args.  Caller changed.
         (get_responses_and_close): either kerberos and CVS_LOGIN might
@@ -96,7 +104,7 @@ Tue Dec  5 22:46:37 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
         * cvs.h (CVS_AUTH_PORT): new define, default to 2401.
         Prototype strip_trailing_newlines().
-        
+
 Tue Dec  5 16:53:35 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
         * server.c (authenticate_connection): new func.
@@ -104,14 +112,14 @@ Tue Dec  5 16:53:35 1995  Karl Fogel  <kfogel@floss.cyclic.com>
         * client.c (init_sockaddr): func moved here from login.c.
         (connect_to_pserver): same as above.  Take no args, now.
         Include <sys/socket.h>, <netinet/in.h>, <netdb.h>, if CVS_LOGIN.
-        
+
         * cvs.h: Declare use_authenticating_server, as extern int.
         Declare connect_to_pserver().
 
         * main.c (main): call authenticate_connection().  Removed testing
         code.
         Add 'a' to the short-option string in the getopt() call.
-        
+
         * login.c (connect_to_pserver): moved to client.c.
 
 Tue Dec  5 16:01:42 1995  Peter Chubb <peterc@bookworm.sw.oz.au>
@@ -180,11 +188,11 @@ Fri Dec  1 11:53:19 1995  Norbert Kiesel  <nk@col.sw-ley.de>
 	  calling 'rcs co' to allow rcs expansion of :$Name :
 
 Thu Nov 30 20:44:30 1995  Karl Fogel  <kfogel@floss.cyclic.com>
-        
+
         * client.c (get_responses_and_close): undo previous change
         regarding waitpid().  The problem has been solved by modifying
         os2/waitpid.c instead of its callers.
-        
+
 Thu Nov 30 16:37:10 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
         * client.c: All these changes are for OS/2, which will no longer have
@@ -219,7 +227,7 @@ Wed Nov 29 12:55:10 1995  Karl Fogel  <kfogel@floss.cyclic.com>
         * login.c: Include <sys/socket.h>
         (connect_to_pserver): new func.
         (init_sockaddr): new func.
-        
+
 Mon Nov 20 14:07:41 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* Makefile.in (TAGFILES): Separate out from DISTFILES, for C code.
