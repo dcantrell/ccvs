@@ -758,8 +758,7 @@ checkout_proc (int argc, char **argv, char *where_orig, char *mwhere,
 
 	/* Now mfile is a single path element. */
 
-	path = xmalloc (strlen (repository) + strlen (mfile) + 5);
-	(void) sprintf (path, "%s/%s", repository, mfile);
+	path = Xasprintf ("%s/%s", repository, mfile);
 	if (isdir (path))
 	{
 	    /* It's a directory, so tack it on to repository and
@@ -1125,8 +1124,7 @@ internal error: %s doesn't start with %s in checkout_proc",
 			       force_tag_match, 0);
 	    if (vers->ts_user == NULL)
 	    {
-		line = xmalloc (strlen (finfo.file) + 15);
-		(void) sprintf (line, "Initial %s", finfo.file);
+		line = Xasprintf ("Initial %s", finfo.file);
 		Register (entries, finfo.file,
 			  vers->vn_rcs ? vers->vn_rcs : "0",
 			  line, vers->options, vers->tag,

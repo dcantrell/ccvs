@@ -1038,7 +1038,7 @@ warning: server is not creating directories one at a time");
 	} while (dirp != NULL);
 	free (dir);
 	/* Now it better work.  */
-	if ( CVS_CHDIR (dir_name) < 0)
+	if (CVS_CHDIR (dir_name) < 0)
 	    error (1, errno, "could not chdir to %s", dir_name);
     }
     else if (strcmp (cvs_cmd_name, "export") == 0)
@@ -1057,14 +1057,7 @@ warning: server is not creating directories one at a time");
 	if (reposdirname_absolute)
 	    repo = reposdirname;
 	else
-	{
-	    repo = xmalloc (strlen (reposdirname)
-			    + strlen (toplevel_repos)
-			    + 10);
-	    strcpy (repo, toplevel_repos);
-	    strcat (repo, "/");
-	    strcat (repo, reposdirname);
-	}
+	    repo = Xasprintf ("%s/%s", toplevel_repos, reposdirname);
 
 	Create_Admin (".", ".", repo, NULL, NULL, 0, 1, 1);
 	if (repo != reposdirname)
@@ -2236,12 +2229,9 @@ static void
 template (void *data, List *ent_list, const char *short_pathname,
 	  const char *filename)
 {
-    char *buf = xmalloc ( strlen ( short_pathname )
-	    		  + strlen ( CVSADM_TEMPLATE )
-			  + 2 );
-    sprintf ( buf, "%s/%s", short_pathname, CVSADM_TEMPLATE );
-    read_counted_file ( CVSADM_TEMPLATE, buf );
-    free ( buf );
+    char *buf = Xasprintf ("%s/%s", short_pathname, CVSADM_TEMPLATE);
+    read_counted_file (CVSADM_TEMPLATE, buf);
+    free (buf);
 }
 
 
@@ -4579,8 +4569,7 @@ send_dirent_proc (void *callerdat, const char *dir, const char *repository,
      * This case will happen when checking out a module defined as
      * ``-a .''.
      */
-    cvsadm_name = xmalloc (strlen (dir) + sizeof (CVSADM) + 10);
-    sprintf (cvsadm_name, "%s/%s", dir, CVSADM);
+    cvsadm_name = Xasprintf ("%s/%s", dir, CVSADM);
     dir_exists = isdir (cvsadm_name);
     free (cvsadm_name);
 
@@ -4962,16 +4951,13 @@ client_process_import_file (char *message, char *vfile, char *vtag, int targc,
     {
 	update_dir = repository + strlen (toplevel_repos) + 1;
 
-	fullname = xmalloc (strlen (vfile) + strlen (update_dir) + 10);
-	strcpy (fullname, update_dir);
-	strcat (fullname, "/");
-	strcat (fullname, vfile);
+	fullname = Xasprintf ("%s/%s", update_dir, vfile);
     }
 
     send_a_repository ("", repository, update_dir);
     if (all_files_binary)
     {
-	vers.options = xmalloc (4); /* strlen("-kb") + 1 */
+	vers.options = xmalloc (4); /* strlen ("-kb") + 1 */
 	strcpy (vers.options, "-kb");
     }
     else

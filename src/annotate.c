@@ -156,7 +156,8 @@ annotate (int argc, char **argv)
     
 
 static int
-rannotate_proc (int argc, char **argv, char *xwhere, char *mwhere, char *mfile, int shorten, int local, char *mname, char *msg)
+rannotate_proc (int argc, char **argv, char *xwhere, char *mwhere,
+		char *mfile, int shorten, int local, char *mname, char *msg)
 {
     /* Begin section which is identical to patch_proc--should this
        be abstracted out somehow?  */
@@ -193,8 +194,7 @@ rannotate_proc (int argc, char **argv, char *xwhere, char *mwhere, char *mfile, 
 	    }
 
 	    /* take care of the rest */
-	    path = xmalloc (strlen (repository) + strlen (mfile) + 5);
-	    (void) sprintf (path, "%s/%s", repository, mfile);
+	    path = Xasprintf ("%s/%s", repository, mfile);
 	    if (isdir (path))
 	    {
 		/* directory means repository gets the dir tacked on */
@@ -213,11 +213,11 @@ rannotate_proc (int argc, char **argv, char *xwhere, char *mwhere, char *mfile, 
 	}
 
 	/* cd to the starting repository */
-	if ( CVS_CHDIR (repository) < 0)
+	if (CVS_CHDIR (repository) < 0)
 	{
 	    error (0, errno, "cannot chdir to %s", repository);
 	    free (repository);
-	    return (1);
+	    return 1;
 	}
 	/* End section which is identical to patch_proc.  */
 
@@ -239,13 +239,12 @@ rannotate_proc (int argc, char **argv, char *xwhere, char *mwhere, char *mfile, 
 	tag_validated = 1;
     }
 
-    err = start_recursion ( annotate_fileproc, (FILESDONEPROC) NULL,
-			    (DIRENTPROC) NULL, (DIRLEAVEPROC) NULL, NULL,
-			    argc - 1, argv + 1, local, which, 0, CVS_LOCK_READ,
-			    where, 1, repository );
-    if ( which & W_REPOS )
-	free ( repository );
-    if ( where != NULL )
+    err = start_recursion (annotate_fileproc, NULL, NULL, NULL, NULL,
+			   argc - 1, argv + 1, local, which, 0, CVS_LOCK_READ,
+			   where, 1, repository);
+    if (which & W_REPOS)
+	free (repository);
+    if (where != NULL)
 	free (where);
     return err;
 }

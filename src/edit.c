@@ -1006,15 +1006,8 @@ notify_do (int type, const char *filename, const char *update_dir,
 	    size_t line_len = 0;
 
 	    args.notifyee = NULL;
-	    usersname = xmalloc (strlen (current_parsed_root->directory)
-				 + sizeof CVSROOTADM
-				 + sizeof CVSROOTADM_USERS
-				 + 20);
-	    strcpy (usersname, current_parsed_root->directory);
-	    strcat (usersname, "/");
-	    strcat (usersname, CVSROOTADM);
-	    strcat (usersname, "/");
-	    strcat (usersname, CVSROOTADM_USERS);
+	    usersname = Xasprintf ("%s/%s/%s", current_parsed_root->directory,
+				   CVSROOTADM, CVSROOTADM_USERS);
 	    fp = CVS_FOPEN (usersname, "r");
 	    if (fp == NULL && !existence_error (errno))
 		error (0, errno, "cannot read %s", usersname);
