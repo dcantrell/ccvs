@@ -6236,6 +6236,8 @@ fi
 
 if test "$ac_cv_func_fnmatch_works" = no; then
   LIBOBJS="$LIBOBJS fnmatch.$ac_objext"
+  ac_config_links="$ac_config_links lib/fnmatch.h:lib/fnmatch.h.in"
+
 
 fi
 
@@ -9608,6 +9610,9 @@ $config_files
 Configuration headers:
 $config_headers
 
+Configuration links:
+$config_links
+
 Configuration commands:
 $config_commands
 
@@ -9736,6 +9741,7 @@ do
   "windows-NT/Makefile" ) CONFIG_FILES="$CONFIG_FILES windows-NT/Makefile" ;;
   "windows-NT/SCC/Makefile" ) CONFIG_FILES="$CONFIG_FILES windows-NT/SCC/Makefile" ;;
   "zlib/Makefile" ) CONFIG_FILES="$CONFIG_FILES zlib/Makefile" ;;
+  "lib/fnmatch.h" ) CONFIG_LINKS="$CONFIG_LINKS lib/fnmatch.h:lib/fnmatch.h.in" ;;
   "depfiles" ) CONFIG_COMMANDS="$CONFIG_COMMANDS depfiles" ;;
   "config.h" ) CONFIG_HEADERS="$CONFIG_HEADERS config.h" ;;
   *) { { echo "$as_me:$LINENO: error: invalid argument: $ac_config_target" >&5
@@ -9751,6 +9757,7 @@ done
 if $ac_need_defaults; then
   test "${CONFIG_FILES+set}" = set || CONFIG_FILES=$config_files
   test "${CONFIG_HEADERS+set}" = set || CONFIG_HEADERS=$config_headers
+  test "${CONFIG_LINKS+set}" = set || CONFIG_LINKS=$config_links
   test "${CONFIG_COMMANDS+set}" = set || CONFIG_COMMANDS=$config_commands
 fi
 
@@ -10303,6 +10310,105 @@ done; }
 echo 'timestamp for config.h' >"./stamp-h1"
  ;;
   esac
+done
+_ACEOF
+cat >>$CONFIG_STATUS <<\_ACEOF
+
+#
+# CONFIG_LINKS section.
+#
+
+for ac_file in : $CONFIG_LINKS; do test "x$ac_file" = x: && continue
+  ac_dest=`echo "$ac_file" | sed 's,:.*,,'`
+  ac_source=`echo "$ac_file" | sed 's,[^:]*:,,'`
+
+  { echo "$as_me:$LINENO: linking $srcdir/$ac_source to $ac_dest" >&5
+echo "$as_me: linking $srcdir/$ac_source to $ac_dest" >&6;}
+
+  if test ! -r $srcdir/$ac_source; then
+    { { echo "$as_me:$LINENO: error: $srcdir/$ac_source: file not found" >&5
+echo "$as_me: error: $srcdir/$ac_source: file not found" >&2;}
+   { (exit 1); exit 1; }; }
+  fi
+  rm -f $ac_dest
+
+  # Make relative symlinks.
+  ac_dest_dir=`(dirname "$ac_dest") 2>/dev/null ||
+$as_expr X"$ac_dest" : 'X\(.*[^/]\)//*[^/][^/]*/*$' \| \
+         X"$ac_dest" : 'X\(//\)[^/]' \| \
+         X"$ac_dest" : 'X\(//\)$' \| \
+         X"$ac_dest" : 'X\(/\)' \| \
+         .     : '\(.\)' 2>/dev/null ||
+echo X"$ac_dest" |
+    sed '/^X\(.*[^/]\)\/\/*[^/][^/]*\/*$/{ s//\1/; q; }
+  	  /^X\(\/\/\)[^/].*/{ s//\1/; q; }
+  	  /^X\(\/\/\)$/{ s//\1/; q; }
+  	  /^X\(\/\).*/{ s//\1/; q; }
+  	  s/.*/./; q'`
+  { case "$ac_dest_dir" in
+  [\\/]* | ?:[\\/]* ) as_incr_dir=;;
+  *)                      as_incr_dir=.;;
+esac
+as_dummy="$ac_dest_dir"
+for as_mkdir_dir in `IFS='/\\'; set X $as_dummy; shift; echo "$@"`; do
+  case $as_mkdir_dir in
+    # Skip DOS drivespec
+    ?:) as_incr_dir=$as_mkdir_dir ;;
+    *)
+      as_incr_dir=$as_incr_dir/$as_mkdir_dir
+      test -d "$as_incr_dir" ||
+        mkdir "$as_incr_dir" ||
+	{ { echo "$as_me:$LINENO: error: cannot create \"$ac_dest_dir\"" >&5
+echo "$as_me: error: cannot create \"$ac_dest_dir\"" >&2;}
+   { (exit 1); exit 1; }; }
+    ;;
+  esac
+done; }
+
+  ac_builddir=.
+
+if test "$ac_dest_dir" != .; then
+  ac_dir_suffix=/`echo "$ac_dest_dir" | sed 's,^\.[\\/],,'`
+  # A "../" for each directory in $ac_dir_suffix.
+  ac_top_builddir=`echo "$ac_dir_suffix" | sed 's,/[^\\/]*,../,g'`
+else
+  ac_dir_suffix= ac_top_builddir=
+fi
+
+case $srcdir in
+  .)  # No --srcdir option.  We are building in place.
+    ac_srcdir=.
+    if test -z "$ac_top_builddir"; then
+       ac_top_srcdir=.
+    else
+       ac_top_srcdir=`echo $ac_top_builddir | sed 's,/$,,'`
+    fi ;;
+  [\\/]* | ?:[\\/]* )  # Absolute path.
+    ac_srcdir=$srcdir$ac_dir_suffix;
+    ac_top_srcdir=$srcdir ;;
+  *) # Relative path.
+    ac_srcdir=$ac_top_builddir$srcdir$ac_dir_suffix
+    ac_top_srcdir=$ac_top_builddir$srcdir ;;
+esac
+# Don't blindly perform a `cd "$ac_dest_dir"/$ac_foo && pwd` since $ac_foo can be
+# absolute.
+ac_abs_builddir=`cd "$ac_dest_dir" && cd $ac_builddir && pwd`
+ac_abs_top_builddir=`cd "$ac_dest_dir" && cd $ac_top_builddir && pwd`
+ac_abs_srcdir=`cd "$ac_dest_dir" && cd $ac_srcdir && pwd`
+ac_abs_top_srcdir=`cd "$ac_dest_dir" && cd $ac_top_srcdir && pwd`
+
+
+  case $srcdir in
+  [\\/$]* | ?:[\\/]* ) ac_rel_source=$srcdir/$ac_source ;;
+      *) ac_rel_source=$ac_top_builddir$srcdir/$ac_source ;;
+  esac
+
+  # Make a symlink if possible; otherwise try a hard link.
+  ln -s $ac_rel_source $ac_dest 2>/dev/null ||
+    ln $srcdir/$ac_source $ac_dest ||
+    { { echo "$as_me:$LINENO: error: cannot link $ac_dest to $srcdir/$ac_source" >&5
+echo "$as_me: error: cannot link $ac_dest to $srcdir/$ac_source" >&2;}
+   { (exit 1); exit 1; }; }
 done
 _ACEOF
 cat >>$CONFIG_STATUS <<\_ACEOF
