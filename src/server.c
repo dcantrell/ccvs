@@ -2830,9 +2830,8 @@ server_updated (finfo, vers, updated, file_info, checksum)
 	    char *mode_string;
 
 	    /* FIXME: When we check out files the umask of the server
-	       (set in .bashrc if rsh is in use, or set in main.c in
-	       the kerberos case, I think) affects what mode we send,
-	       and it shouldn't.  */
+	       (set in .bashrc if rsh is in use) affects what mode we
+	       send, and it shouldn't.  */
 	    if (file_info != NULL)
 	        mode_string = mode_to_string (file_info->st_mode);
 	    else
@@ -3686,6 +3685,8 @@ error ENOMEM Virtual memory exhausted.\n");
 	}
 	else
 	{
+	    int status;
+
 	    server_temp_dir = malloc (strlen (Tmpdir) + 80);
 	    if (server_temp_dir == NULL)
 	    {
@@ -3727,6 +3728,22 @@ error ENOMEM Virtual memory exhausted.\n");
 	    sprintf (p, "%ld", (long) getpid ());
 
 	    orig_server_temp_dir = server_temp_dir;
+
+	    /* Create the temporary directory, and set the mode to
+               700, to discourage random people from tampering with
+               it.  */
+	    status = mkdir_p (server_temp_dir);
+	    if (status == EEXIST)
+		status = 0;
+#ifndef CHMOD_BROKEN
+	    if (status == 0)
+		status = chmod (server_temp_dir, S_IRWXU);
+#endif
+	    if (status != 0)
+	    {
+		pending_error_text = "E can't create temporary directory";
+		pending_error = status;
+	    }
 	}
     }
 
@@ -3884,9 +3901,10 @@ error 0 %s: no such user\n", username);
 #endif
     
     setuid (pw->pw_uid);
-    /* Inhibit access by randoms.  Don't want people randomly
-       changing our temporary tree before we check things in.  */
-    umask (077);
+    /* We don't want our umask to change file modes.  The modes should
+       be set by the modes used in the repository, and by the umask of
+       the client.  */
+    umask (0);
 
 #if HAVE_PUTENV
     /* Set LOGNAME and USER in the environment, in case they are

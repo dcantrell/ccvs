@@ -1,3 +1,11 @@
+Mon Dec  9 12:35:43 1996  Ian Lance Taylor  <ian@cygnus.com>
+
+	* server.c (server_updated): Change comment to only worry about
+	umask in the rsh case.
+	(server): Create the temporary directory, and change the mode to
+	S_IRWXU.
+	(switch_to_user): Set the umask to 0, not 077.
+
 Mon Dec  9 10:58:28 1996  Jim Blandy  <jimb@floss.cyclic.com>
 
 	* login.c (get_cvs_password): Remove code to check for value of
