@@ -1,3 +1,9 @@
+Mon Sep 16 17:42:30 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* HACKING: Also mention arbitrary limits and reentrancy.
+	User-visible changes should be documented in cvs.texinfo as well
+	as NEWS.
+
 Thu Sep 12 16:06:33 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* README.VMS: Put authorship info at end.  Add disclaimer.  Say
