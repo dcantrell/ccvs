@@ -1,5 +1,8 @@
 Sun Dec 31 10:53:47 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvs.texinfo (Password authentication server): Suggest specifying
+	-b in inetd.conf.
+
 	* cvs.texinfo (Password authentication): Variety of cleanups and
 	minor fixes, including shorter node names.
 

@@ -1253,25 +1253,27 @@ were compiled with @code{CVS_AUTH_PORT} defined to
 something else, though.
 
         If your @code{inetd} allows raw port numbers in
-@file{/etc/inetd.conf}, then a line like this should be
-sufficient:
+@file{/etc/inetd.conf}, then the following (all on a
+single line in @file{inetd.conf}) should be sufficient:
 
 @example
-2401  stream  tcp  nowait  root  /usr/local/bin/cvs cvs pserver
+2401  stream  tcp  nowait  root  /usr/local/bin/cvs
+cvs -b /usr/local/bin pserver
 @end example
 
-        If it wants a symbolic service name, then put
-this in @file{/etc/services}:
+The @samp{-b} option specifies the directory which contains
+the @sc{rcs} binaries on the server.
+
+        If your @code{inetd} wants a symbolic service
+name instead of a raw port number, then put this in
+@file{/etc/services}:
 
 @example
 cvspserver      2401/tcp
 @end example
 
-        and this in @file{inetd.conf}:
-
-@example
-cvspserver  stream  tcp  nowait  root  /usr/local/bin/cvs cvs pserver
-@end example
+        and put @code{cvspserver} instead of
+@code{2401} in @file{inetd.conf}.
 
         Once the above is taken care of, restart your
 @code{inetd}, or do whatever is necessary to force it
