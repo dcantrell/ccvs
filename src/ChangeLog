@@ -1,3 +1,8 @@
+Tue Oct 10 12:02:37 1995  Thorsten Lockert  <tholo@sigmasoft.com>
+
+	* cvsbug.sh: Cater to lame versions of sh (4.4BSD ash) by using
+	${foo-bar} instead of `if....`.
+
 Tue Oct 10 12:02:37 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* remove.c (remove_fileproc): If noexec, don't remove file.  Check
