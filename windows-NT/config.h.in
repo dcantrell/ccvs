@@ -259,7 +259,7 @@
 #define HAVE_SYS_TIMEB_H 1
 
 /* Define if you have the <unistd.h> header file.  */
-#undef HAVE_UNISTD_H
+#define HAVE_UNISTD_H 1
 
 /* Define if you have the <utime.h> header file.  */
 #undef HAVE_UTIME_H

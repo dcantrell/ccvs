@@ -1,3 +1,10 @@
+2004-05-12  Mark D. Baushke  <mdb@cvshome.org>
+
+	* unistd.h: New file (to provide a getpass prototype).
+	* config.h.in (HAVE_UNISTD_H): #define instead of #undef.
+	* config.h: Regenerated.
+	(Original from Conrad Pino <conrad@pino.com>)
+
 2004-05-11  Derek Price  <derek@ximbiot.com>
 
 	* filesubr.c (last_component): s/ISDIRSEP/ISSLASH/.
