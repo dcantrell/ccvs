@@ -113,6 +113,7 @@ bin_SCRIPTS = cvsbug
 cvs_SOURCES = \
 	add.c \
 	admin.c \
+	annotate.c \
 	buffer.c \
 	checkin.c \
 	checkout.c \
@@ -216,7 +217,7 @@ DEFS = @DEFS@
 CPPFLAGS = @CPPFLAGS@
 LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
-am_cvs_OBJECTS = add.$(OBJEXT) admin.$(OBJEXT) buffer.$(OBJEXT) \
+am_cvs_OBJECTS = add.$(OBJEXT) admin.$(OBJEXT) annotate.$(OBJEXT) buffer.$(OBJEXT) \
 checkin.$(OBJEXT) checkout.$(OBJEXT) classify.$(OBJEXT) \
 client.$(OBJEXT) commit.$(OBJEXT) create_adm.$(OBJEXT) cvsrc.$(OBJEXT) \
 diff.$(OBJEXT) edit.$(OBJEXT) entries.$(OBJEXT) error.$(OBJEXT) \
@@ -243,7 +244,7 @@ CCLD = $(CC)
 LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 DIST_SOURCES = $(cvs_SOURCES)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
-@AMDEP@DEP_FILES = $(DEPDIR)/add.Po $(DEPDIR)/admin.Po \
+@AMDEP@DEP_FILES = $(DEPDIR)/add.Po $(DEPDIR)/admin.Po  $(DEPDIR)/annotate.Po \
 @AMDEP@ $(DEPDIR)/buffer.Po $(DEPDIR)/checkin.Po $(DEPDIR)/checkout.Po \
 @AMDEP@ $(DEPDIR)/classify.Po $(DEPDIR)/client.Po $(DEPDIR)/commit.Po \
 @AMDEP@ $(DEPDIR)/create_adm.Po $(DEPDIR)/cvsrc.Po $(DEPDIR)/diff.Po \
@@ -397,6 +398,7 @@ distclean-tags:
 
 @AMDEP@@_am_include@ $(DEPDIR)/add.Po
 @AMDEP@@_am_include@ $(DEPDIR)/admin.Po
+@AMDEP@@_am_include@ $(DEPDIR)/annotate.Po
 @AMDEP@@_am_include@ $(DEPDIR)/buffer.Po
 @AMDEP@@_am_include@ $(DEPDIR)/checkin.Po
 @AMDEP@@_am_include@ $(DEPDIR)/checkout.Po

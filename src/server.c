@@ -3814,6 +3814,17 @@ serve_annotate (arg)
 {
     do_cvs_command ("annotate", annotate);
 }
+
+static void serve_rannotate PROTO ((char *));
+
+static void
+serve_rannotate (arg)
+    char *arg;
+{
+    /* Tell annotate() to behave like rannotate not annotate.  */
+    command_name = "rannotate";
+    do_cvs_command ("rannotate", annotate);
+}
 
 static void
 serve_co (arg)
@@ -4784,6 +4795,7 @@ struct request requests[] =
   REQ_LINE("editors", serve_editors, 0),
   REQ_LINE("init", serve_init, RQ_ROOTLESS),
   REQ_LINE("annotate", serve_annotate, 0),
+  REQ_LINE("rannotate", serve_rannotate, 0),
   REQ_LINE("noop", serve_noop, RQ_ROOTLESS),
   REQ_LINE("version", serve_version, RQ_ROOTLESS),
   REQ_LINE(NULL, NULL, 0)

@@ -179,6 +179,9 @@ typedef void (*RCSCHECKOUTPROC) PROTO ((void *, const char *, size_t));
 struct rcsbuffer;
 #endif
 
+/* What RCS_deltas is supposed to do.  */
+enum rcs_delta_op {RCS_ANNOTATE, RCS_FETCH};
+
 /*
  * exported interfaces
  */
@@ -234,6 +237,9 @@ void RCS_rewrite PROTO ((RCSNode *, Deltatext *, char *));
 void RCS_abandon PROTO ((RCSNode *));
 int rcs_change_text PROTO ((const char *, char *, size_t, const char *,
 			    size_t, char **, size_t *));
+void RCS_deltas PROTO ((RCSNode *, FILE *, struct rcsbuffer *, char *,
+			enum rcs_delta_op, char **, size_t *,
+			char **, size_t *));
 char *make_file_label PROTO ((char *, char *, RCSNode *));
 
 extern int preserve_perms;

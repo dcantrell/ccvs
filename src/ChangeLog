@@ -1,3 +1,16 @@
+2001-03-30  Larry Jones  <larry.jones@sdrc.com>
+
+	* annotate.c: Move annotate() here from rcs.c, support rannotate.
+	* Makefile.am, Makefile.in: Add annotate.c.
+	* main.c (cmds[], cmd_usage[]): Add rannotate.
+	* rcs.c: Move declarations of rcs_delta_op and RCS_deltas to...
+	* rcs.h:    ... here.
+	* server.c (serve_rannotate): New.
+	(requests[]): Add rannotate.
+	* sanity.sh (ann): New tests for rannotate.
+
+	* log.c (rlog_proc): Remove dead code.
+
 2001-03-30  Derek Price  <dprice@collab.net>
 
 	* sanity.sh (join-readonly-conflict): Run more of this through dotest.
