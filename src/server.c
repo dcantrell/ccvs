@@ -2832,6 +2832,10 @@ server_updated (file, update_dir, repository, updated, file_info, checksum)
         {
 	    char *mode_string;
 
+	    /* FIXME: When we check out files the umask of the server
+	       (set in .bashrc if rsh is in use, or set in main.c in
+	       the kerberos case, I think) affects what mode we send,
+	       and it shouldn't.  */
 	    if (file_info != NULL)
 	        mode_string = mode_to_string (file_info->st_mode);
 	    else

@@ -1032,6 +1032,7 @@ update_entries (data_arg, ent_list, short_pathname, filename)
 	}
 
         {
+	    /* FIXME: we should be respecting the umask.  */
 	    int status = change_mode (filename, mode_string);
 	    if (status != 0)
 		error (0, status, "cannot change mode of %s", short_pathname);

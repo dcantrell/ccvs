@@ -1,3 +1,7 @@
+Tue Aug 22 10:09:29 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* server.c, client.c: Add comments about modes and umasks.
+
 Mon Aug 21 16:11:16 1995  Jim Blandy  <jimb@totoro.cyclic.com>
 
 	* sanity.sh (basic1): Make sure first-dir is deleted before
