@@ -1,3 +1,9 @@
+Wed Aug 14 12:01:39 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* MacCVS68k.sit.hqx, MacCVSPPC.sit.hqx: New copies of these files
+	from Mike Ladwig (gets rid of alloca.c; presumably adds
+	mac_config.h; not sure if there are other changes).
+
 Tue Aug 13 15:02:15 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* ae_if.c: Part of the 9 Aug change didn't get checked in.  Fix it.
