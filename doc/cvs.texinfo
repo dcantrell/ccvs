@@ -3451,6 +3451,8 @@ example, the current directory contains files whose
 highest numbered revisions are @code{1.7}, @code{3.1},
 and @code{4.12}, then an added file will be given the
 numeric revision @code{4.1}.
+(When using client/server @sc{cvs},
+only files that are actually sent to the server are considered.)
 
 @c This is sort of redundant with something we said a
 @c while ago.  Somewhere we need a better way of
