@@ -1,3 +1,11 @@
+2001-01-10  Derek Price  <derek.price@openavenue.com>
+
+	* Makefile.am (CVSvn.texi): specify $(srcdir) explicitly in target rule
+	so CVSvn.texi gets built properly for all makes.
+	(cvs_TEXINFOS): specify $(srcdir) explicitly for CVSvn.texi
+	(cvsclient_TEXINFOS): ditto
+	* Makefile.in: regenerated
+
 2000-12-26  Derek Price  <derek.price@openavenue.com>
 
 	* Makefile.in: update timestamp

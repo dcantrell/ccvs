@@ -19,8 +19,8 @@
 # AUTOMAKE_OPTIONS = no-texinfo.tex
 
 info_TEXINFOS = cvs.texinfo cvsclient.texi
-cvs_TEXINFOS = CVSvn.texi
-cvsclient_TEXINFOS = CVSvn.texi
+cvs_TEXINFOS = $(srcdir)/CVSvn.texi
+cvsclient_TEXINFOS = $(srcdir)/CVSvn.texi
 
 POSTSCRIPTS = \
 	cvs.ps \
@@ -39,7 +39,6 @@ TXTS = \
 EXTRA_DIST = \
 	$(POSTSCRIPTS) \
 	.cvsignore \
-	CVSvn.texi \
 	CVSvn.texi.in \
 	ChangeLog.fsf \
 	RCSFILES \
@@ -118,9 +117,9 @@ SUFFIXES = .aux .txt .pdf
 # - It is guaranteed (with GNU Make) that when the version in configure.in
 #   is changed, acversion.m4 is built only after the new version number is
 #   propagated to the Makefile.  (Libtool uses the same guarantee.)
-CVSvn.texi: $(srcdir)/CVSvn.texi.in $(top_srcdir)/configure.in
-	sed 's,@VERSION\@,$(VERSION),g' $(srcdir)/CVSvn.texi.in >CVSvn.ttexi
-	mv CVSvn.ttexi $(srcdir)/CVSvn.texi
+$(srcdir)/CVSvn.texi: $(srcdir)/CVSvn.texi.in $(top_srcdir)/configure.in
+	sed 's,@VERSION\@,$(VERSION),g' $(srcdir)/CVSvn.texi.in >$(srcdir)/CVSvn.ttexi
+	mv $(srcdir)/CVSvn.ttexi $(srcdir)/CVSvn.texi
 
 ## realclean ##
 # for backwards compatibility with the old makefiles
