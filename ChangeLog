@@ -1,3 +1,8 @@
+2001-09-28  Larry Jones  <larry.jones@sdr.com>
+
+	* noautomake.sh: Protect wildcards from shell expansion.
+	(Patch submitted by Stephen Cameron <smcameron@yahoo.com>.)
+
 2001-09-22  Derek Price  <dprice@collab.net>
 
 	* INSTALL (Building from source code under Unix): Continue
