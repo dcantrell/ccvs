@@ -28,6 +28,7 @@ EXTRA_DIST = \
 	atexit.m4 \
 	codeset.m4 \
 	exitfail.m4 \
+	fnmatch.m4 \
 	getline.m4 \
 	getnline.m4 \
 	getopt.m4 \
@@ -48,6 +49,7 @@ EXTRA_DIST = \
 	longlong.m4 \
 	lstat.m4 \
 	malloc.m4 \
+	mbstate_t.m4 \
 	mkstemp.m4 \
 	nls.m4 \
 	onceonly_2_57.m4 \
