@@ -1,5 +1,11 @@
 Mon Aug 11 10:14:47 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* vers_ts.c (Version_TS): If vers_ts->vn_rcs == NULL, skip setting
+	modification time in server case as well as local case.
+	* server.c (server_modtime): Add assertion to clarify that caller
+	must assure that vers_ts->vn_rcs != NULL.
+	* sanity.sh (join3): Add file "file2" to test for above fix.
+
 	* modules.c (save_d): When parsing -s option, don't assume that
 	we will hit a space before we hit the '\0'.
 	(struct sortrec): Document allocation policies (status quo except

@@ -3713,24 +3713,39 @@ ${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
 new revision: 1\.1\.2\.1; previous revision: 1\.1
 done"
 
-	  # Now back to the trunk for another revision and another branch.
+	  # Now back to the trunk for:
+	  # another revision and another branch for file1.
+	  # add file2, which will exist on trunk and br2 but not br1.
 	  dotest join3-8 "${testcvs} -q update -A" "[UP] file1"
+	  echo 'trunk:line1' > file2
+	  dotest join3-8a "${testcvs} add file2" \
+"${PROG} [a-z]*: scheduling file .file2. for addition
+${PROG} [a-z]*: use .cvs commit. to add this file permanently"
 	  echo 'trunk:line1' >>file1
 	  dotest join3-9 "${testcvs} -q ci -m modify" \
 "Checking in file1;
 ${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
 new revision: 1\.2; previous revision: 1\.1
+done
+RCS file: ${TESTDIR}/cvsroot/first-dir/file2,v
+done
+Checking in file2;
+${TESTDIR}/cvsroot/first-dir/file2,v  <--  file2
+initial revision: 1\.1
 done"
-	  dotest join3-10 "${testcvs} -q tag -b br2" "T file1"
+	  dotest join3-10 "${testcvs} -q tag -b br2" "T file1
+T file2"
 
 	  # Before we actually have any revision on br2, let's try a join
-	  dotest join3-11 "${testcvs} -q update -r br1" "[UP] file1"
+	  dotest join3-11 "${testcvs} -q update -r br1" "[UP] file1
+${PROG} [a-z]*: file2 is no longer in the repository"
 	  dotest join3-12 "${testcvs} -q update -j br2" \
 "RCS file: /tmp/cvs-sanity/cvsroot/first-dir/file1,v
 retrieving revision 1\.1
 retrieving revision 1\.2
 Merging differences between 1\.1 and 1\.2 into file1
-rcsmerge: warning: conflicts during merge"
+rcsmerge: warning: conflicts during merge
+U file2"
 	  dotest join3-13 "cat file1" \
 "initial contents of file1
 <<<<<<< file1
@@ -3741,23 +3756,23 @@ trunk:line1
 	  rm file1
 
 	  # OK, we'll try the same thing with a revision on br2.
-	  dotest join3-14 "${testcvs} -q update -r br2" \
+	  dotest join3-14 "${testcvs} -q update -r br2 file1" \
 "${PROG} [a-z]*: warning: file1 was lost
 U file1" "U file1"
 	  echo 'br2:line1' >>file1
-	  dotest join3-15 "${testcvs} -q ci -m modify" \
+	  dotest join3-15 "${testcvs} -q ci -m modify file1" \
 "Checking in file1;
 ${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
 new revision: 1\.2\.2\.1; previous revision: 1\.2
 done"
 
 	  # OK, now we can join br2 to br1
-	  dotest join3-16 "${testcvs} -q update -r br1" "[UP] file1"
+	  dotest join3-16 "${testcvs} -q update -r br1 file1" "[UP] file1"
 	  # It may seem odd, to merge a higher branch into a lower
 	  # branch, but in fact CVS defines the ancestor as 1.1
 	  # and so it merges both the 1.1->1.2 and 1.2->1.2.2.1 changes.
 	  # This seems like a reasonably plausible behavior.
-	  dotest join3-17 "${testcvs} -q update -j br2" \
+	  dotest join3-17 "${testcvs} -q update -j br2 file1" \
 "RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
 retrieving revision 1\.1
 retrieving revision 1\.2\.2\.1

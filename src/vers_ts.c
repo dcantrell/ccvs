@@ -187,7 +187,7 @@ Version_TS (finfo, options, tag, date, force_tag_match, set_time)
 	 * get the Date the revision was checked in.  If "user" exists, set
 	 * its mtime.
 	 */
-	if (set_time)
+	if (set_time && vers_ts->vn_rcs != NULL)
 	{
 #ifdef SERVER_SUPPORT
 	    if (server_active)
@@ -198,15 +198,12 @@ Version_TS (finfo, options, tag, date, force_tag_match, set_time)
 		struct utimbuf t;
 
 		memset (&t, 0, sizeof (t));
-		if (vers_ts->vn_rcs)
+		t.modtime =
+		    RCS_getrevtime (rcsdata, vers_ts->vn_rcs, 0, 0);
+		if (t.modtime != (time_t) -1)
 		{
-		    t.modtime =
-			RCS_getrevtime (rcsdata, vers_ts->vn_rcs, 0, 0);
-		    if (t.modtime != (time_t) -1)
-		    {
-			t.actime = t.modtime;
-			(void) utime (finfo->file, &t);
-		    }
+		    t.actime = t.modtime;
+		    (void) utime (finfo->file, &t);
 		}
 	    }
 	}
