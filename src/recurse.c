@@ -1132,6 +1132,7 @@ addfile (listp, dir, file)
     char *file;
 {
     Node *n;
+    List *fl;
 
     /* add this dir. */
     addlist (listp, dir);
@@ -1144,7 +1145,9 @@ addfile (listp, dir, file)
     }
 
     n->type = DIRS;
-    addlist ((List **) &n->data, file);
+    fl = (List *) n->data;
+    addlist (&fl, file);
+    n->data = (char *) fl;
     return;
 }
 
@@ -1204,6 +1207,7 @@ unroll_files_proc (p, closure)
     }
 
     dirlist = save_dirlist;
-    filelist = NULL;
+    if (filelist)
+	dellist (&filelist);
     return(err);
 }
