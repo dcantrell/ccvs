@@ -634,3 +634,26 @@ of -q; I don't know whether anyone has done a similar investigation of
       glance seems even worse, as this would seem to be a "can't happen"
       condition)
 
+191.  Storing binary files takes rather more space than it could,
+typically.
+  - The virtue of the status quo is that it is simple to implement.
+  - Just storing the revisions as separate gzipped files is a common 
+    technique.  It also is pretty simple (no new algorithms, CVS
+    already has zlib around).
+  - Josh MacDonald has written a tool called xdelta which produces
+    differences (that is, sufficient information to transform the old
+    to the new) which compare bytes, like RCS currently does, but
+    which can look for comparisons at all byte boundaries (which is of
+    course slower), or every 8 bytes, or such things.  He posted some
+    numbers to info-cvs which made it look like this perhaps did not
+    reduce sizes over just storing separate gzipped revisions (this is
+    a guess, not based on actually gzipping those particular files and
+    looking at the size), but his examples were moderately dissimilar
+    files; a possibly more apropos example would be changing a single
+    word in a document stored in a binary word processor format, or
+    doing some minor touch-ups to an image.
+  - Karl Fogel has thought some about using a difference technique
+    analogous to fractal compression (see the comp.compression FAQ for
+    more on fractal compression, including at least one patent to
+    watch for; I don't know how analogous Karl's ideas are to the
+    techniques described there).
