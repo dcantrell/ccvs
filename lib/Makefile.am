@@ -73,6 +73,7 @@ EXTRA_DIST = \
 	.cvsignore \
 	ChangeLog.fsf \
 	build_lib.com \
+	LIB.dep \
 	lib.dsp \
 	lib.mak
 
