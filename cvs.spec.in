@@ -1,5 +1,5 @@
 Summary: A version control system.
-Name: cvs
+Name: @PACKAGE@
 Version: @VERSION@
 Release: 1
 Copyright: GPL

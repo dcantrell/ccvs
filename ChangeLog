@@ -1,5 +1,17 @@
 2001-08-14  Derek Price  <dprice@collab.net>
 
+	* configure.in (AC_OUTPUT): Add cvs.spec.
+	* Makefile.am (EXTRA_DIST): Remove cvs.spec.in and cvs.spec.
+	(Original patch from Alexey Mahotkin <alexm@hsys.msk.ru>.)
+
+	* cvs.spec.in: Use @PACKAGE@ from configure.
+	* cvs.spec: Remove this file.
+
+	* configure: Regenerated.
+	* Makefile.in: Ditto.
+
+2001-08-14  Derek Price  <dprice@collab.net>
+
 	* DEVEL-CVS: Update mailing list addresses.
 	* HACKING: Ditto.
 

@@ -5481,6 +5481,7 @@ ac_given_srcdir=$srcdir
 ac_given_INSTALL="$INSTALL"
 
 trap 'rm -fr `echo "Makefile \
+	  cvs.spec \
 	  contrib/Makefile \
 	  contrib/clmerge \
 	  contrib/cln_hist \
@@ -5618,6 +5619,7 @@ EOF
 cat >> $CONFIG_STATUS <<EOF
 
 CONFIG_FILES=\${CONFIG_FILES-"Makefile \
+	  cvs.spec \
 	  contrib/Makefile \
 	  contrib/clmerge \
 	  contrib/cln_hist \
