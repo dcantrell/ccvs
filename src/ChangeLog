@@ -1,3 +1,8 @@
+Sat Sep  7 21:28:27 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* main.c (struct cmd): Add comment concerning recognizing unique
+	abbreviations.
+
 Fri Sep  6 22:31:52 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* rcs.c (RCS_checkout): Fix indentation.
