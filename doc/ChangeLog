@@ -1,3 +1,11 @@
+2004-04-06  Derek Price  <derek@ximbiot.com>
+
+	* cvs.texinfo (Remote repositories): Describe how to use a web proxy to
+	contact a CVS server.
+	(GSSAPI authenticated): Use slightly clearer language.
+	(Kerberos authenticated): Remove incomplete note on server setup.
+	(Environment variables): Add CVS_PROXY_PORT.
+
 2004-04-06  Larry Jones  <lawrence.jones@ugsplm.com>
 
 	* cvs.texinfo (Assigning revisions): Note that client/server mode
