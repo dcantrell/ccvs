@@ -821,8 +821,12 @@ Copyright (c) 1989-1998 Brian Berliner, david d `zoo' zuhn, \n\
 	       specify a different repository than the one we are
 	       importing to.  */
 
-	    if (lookup_command_attribute (command_name)
-		& CVS_CMD_IGNORE_ADMROOT)
+	    if ((lookup_command_attribute (command_name)
+		 & CVS_CMD_IGNORE_ADMROOT)
+
+		/* -d overrides CVS/Root, so don't give an error if the
+		   latter points to a nonexistent repository.  */
+		&& CVSroot_cmdline == NULL)
 	    {
 		CVSADM_Root = Name_Root((char *) NULL, (char *) NULL);
 	    }

@@ -592,7 +592,7 @@ if test x"$*" = x; then
 	# Release of multiple directories
 	tests="${tests} release"
 	# Multiple root directories and low-level protocol tests.
-	tests="${tests} multiroot multiroot2 pserver client"
+	tests="${tests} multiroot multiroot2 reposmv pserver client"
 else
 	tests="$*"
 fi
@@ -15938,7 +15938,22 @@ done"
 	  # check out a few directories, from simple/shallow to
 	  # complex/deep
 	  mkdir 1; cd 1
-	  
+
+	  # OK, this case is kind of weird.  If we just run things from
+	  # here, without CVS/Root, then CVS will contact the server
+	  # mentioned in CVSROOT (which is irrelevant) which will print
+	  # some messages.  Our workaround is to make sure we have a
+	  # CVS/Root file at top level.  In the future, it is possible
+	  # the best behavior will be to extend the existing behavior
+	  # ("being called from a directory without CVS administration
+	  # has always meant to process each of the sub-dirs") to also
+	  # do that if there is no CVSROOT, CVS/Root, or -d at top level.
+	  # 
+	  # The local case could stumble through the tests without creating
+	  # the top-level CVS/Root, but we create it for local and for
+	  # remote to reduce special cases later in the test.
+	  dotest multiroot-workaround "${testcvs1} -q co -l ." ""
+
 	  dotest multiroot-setup-11 "${testcvs1} co mod1-1 mod1-2" \
 "${PROG} [a-z]*: Updating mod1-1
 U mod1-1/file1-1
@@ -16004,38 +16019,41 @@ U mod1-2/file1-2"
 	  # that there's not some kind of unexpected dependency on the
 	  # choice of which CVSROOT is specified on the command line.
 
-	  dotest multiroot-update-1a "${testcvs1} update" \
-"${PROG} [a-z]*: Updating mod1-1
-${PROG} [a-z]*: Updating mod1-2
-${PROG} [a-z]*: Updating mod2-2/mod1-2
-${PROG} [a-z]*: Updating mod1-2/mod2-2
-${PROG} [a-z]*: Updating mod2-1
-${PROG} [a-z]*: Updating mod2-2" \
-"${PROG} [a-z]*: Updating mod1-1
-${PROG} [a-z]*: Updating mod1-2
-${PROG} [a-z]*: Updating mod2-2
-${PROG} [a-z]*: Updating mod2-2/mod1-2
-${PROG} [a-z]*: Updating mod1-2
-${PROG} [a-z]*: Updating mod1-2/mod2-2
-${PROG} [a-z]*: Updating mod2-1
-${PROG} [a-z]*: Updating mod2-2"
-
-	  dotest multiroot-update-1b "${testcvs2} update" \
-"${PROG} [a-z]*: Updating mod1-2/mod2-2
-${PROG} [a-z]*: Updating mod2-1
-${PROG} [a-z]*: Updating mod2-2
+	  if test "$remote" = no; then
+	    # The basic idea is that -d overrides CVS/Root.
+	    # With RELATIVE_REPOS, CVS could print an error when it
+	    # tries to recurse to mod2-2, which doesn't exist in
+	    # this repository (?)  With absolute, CVS will just look at the
+	    # CVS/Repository for the other root (and log to the wrong
+	    # history file and that sort of thing).
+	    dotest multiroot-update-1a "${testcvs1} update" \
+"${PROG} update: Updating \.
 ${PROG} [a-z]*: Updating mod1-1
 ${PROG} [a-z]*: Updating mod1-2
-${PROG} [a-z]*: Updating mod2-2/mod1-2" \
-"${PROG} [a-z]*: Updating mod1-2
 ${PROG} [a-z]*: Updating mod1-2/mod2-2
 ${PROG} [a-z]*: Updating mod2-1
-${PROG} [a-z]*: Updating mod2-2
-${PROG} [a-z]*: Updating mod1-1
-${PROG} [a-z]*: Updating mod1-2
 ${PROG} [a-z]*: Updating mod2-2
 ${PROG} [a-z]*: Updating mod2-2/mod1-2"
+	  else
+	    # Hmm, this one is specific to non-RELATIVE_REPOS too I think.
+	    dotest_fail multiroot-update-1a "${testcvs1} update" \
+"protocol error: directory '${TESTDIR}/root2/mod2-2' not within root '${TESTDIR}/root1'"
+	  fi
 
+	  # Same deal but with -d ${CVSROOT2}.
+	  if test "$remote" = no; then
+	    dotest multiroot-update-1b "${testcvs2} update" \
+"${PROG} update: Updating \.
+${PROG} [a-z]*: Updating mod1-1
+${PROG} [a-z]*: Updating mod1-2
+${PROG} [a-z]*: Updating mod1-2/mod2-2
+${PROG} [a-z]*: Updating mod2-1
+${PROG} [a-z]*: Updating mod2-2
+${PROG} [a-z]*: Updating mod2-2/mod1-2"
+	  else
+	    dotest_fail multiroot-update-1b "${testcvs2} update" \
+"protocol error: directory '${TESTDIR}/root1' not within root '${TESTDIR}/root2'"
+	  fi
 
 	  # modify all files and do a diff
 
@@ -16044,8 +16062,9 @@ ${PROG} [a-z]*: Updating mod2-2/mod1-2"
 	  echo goes >> mod2-1/file2-1
 	  echo down >> mod2-2/file2-2
 
-	  dotest_status multiroot-diff-1 1 "${testcvs1} diff" \
-"${PROG} [a-z]*: Diffing mod1-1
+	  dotest_status multiroot-diff-1 1 "${testcvs} diff" \
+"${PROG} diff: Diffing \.
+${PROG} [a-z]*: Diffing mod1-1
 Index: mod1-1/file1-1
 ===================================================================
 RCS file: ${TESTDIR}/root1/mod1-1/file1-1,v
@@ -16079,7 +16098,8 @@ retrieving revision 1\.1
 diff -r1\.1 file2-2
 1a2
 > down" \
-"${PROG} [a-z]*: Diffing mod1-1
+"${PROG} server: Diffing \.
+${PROG} [a-z]*: Diffing mod1-1
 Index: mod1-1/file1-1
 ===================================================================
 RCS file: ${TESTDIR}/root1/mod1-1/file1-1,v
@@ -16097,6 +16117,7 @@ diff -r1\.1 file1-2
 > brown
 ${PROG} [a-z]*: Diffing mod2-2
 ${PROG} [a-z]*: Diffing mod2-2/mod1-2
+${PROG} server: Diffing \.
 ${PROG} [a-z]*: Diffing mod1-2
 ${PROG} [a-z]*: Diffing mod1-2/mod2-2
 ${PROG} [a-z]*: Diffing mod2-1
@@ -16117,8 +16138,9 @@ diff -r1\.1 file2-2
 > down"
 
 
-	  dotest multiroot-commit-1 "${testcvs1} commit -m actually" \
-"${PROG} [a-z]*: Examining mod1-1
+	  dotest multiroot-commit-1 "${testcvs} commit -m actually" \
+"${PROG} [a-z]*: Examining \.
+${PROG} [a-z]*: Examining mod1-1
 ${PROG} [a-z]*: Examining mod1-2
 ${PROG} [a-z]*: Examining mod2-2/mod1-2
 Checking in mod1-1/file1-1;
@@ -16141,28 +16163,32 @@ ${TESTDIR}/root2/mod2-2/file2-2,v  <--  file2-2
 new revision: 1.2; previous revision: 1.1
 done"
 
-	  dotest multiroot-update-2 "${testcvs2} update" \
-"${PROG} [a-z]*: Updating mod1-2/mod2-2
-U mod1-2/mod2-2/file2-2
-${PROG} [a-z]*: Updating mod2-1
-${PROG} [a-z]*: Updating mod2-2
+	  dotest multiroot-update-2 "${testcvs} update" \
+"${PROG} update: Updating \.
 ${PROG} [a-z]*: Updating mod1-1
 ${PROG} [a-z]*: Updating mod1-2
 ${PROG} [a-z]*: Updating mod2-2/mod1-2
-U mod2-2/mod1-2/file1-2" \
-"${PROG} [a-z]*: Updating mod1-2
+U mod2-2/mod1-2/file1-2
+${PROG} [a-z]*: Updating mod1-2/mod2-2
+U mod1-2/mod2-2/file2-2
+${PROG} [a-z]*: Updating mod2-1
+${PROG} [a-z]*: Updating mod2-2" \
+"${PROG} server: Updating \.
+${PROG} [a-z]*: Updating mod1-1
+${PROG} [a-z]*: Updating mod1-2
+${PROG} [a-z]*: Updating mod2-2
+${PROG} [a-z]*: Updating mod2-2/mod1-2
+P mod2-2/mod1-2/file1-2
+${PROG} server: Updating \.
+${PROG} [a-z]*: Updating mod1-2
 ${PROG} [a-z]*: Updating mod1-2/mod2-2
 P mod1-2/mod2-2/file2-2
 ${PROG} [a-z]*: Updating mod2-1
-${PROG} [a-z]*: Updating mod2-2
-${PROG} [a-z]*: Updating mod1-1
-${PROG} [a-z]*: Updating mod1-2
-${PROG} [a-z]*: Updating mod2-2
-${PROG} [a-z]*: Updating mod2-2/mod1-2
-P mod2-2/mod1-2/file1-2"
+${PROG} [a-z]*: Updating mod2-2"
 
-	  dotest multiroot-tag-1 "${testcvs1} tag cattle" \
-"${PROG} [a-z]*: Tagging mod1-1
+	  dotest multiroot-tag-1 "${testcvs} tag cattle" \
+"${PROG} tag: Tagging \.
+${PROG} [a-z]*: Tagging mod1-1
 T mod1-1/file1-1
 ${PROG} [a-z]*: Tagging mod1-2
 T mod1-2/file1-2
@@ -16172,12 +16198,14 @@ T mod1-2/mod2-2/file2-2
 ${PROG} [a-z]*: Tagging mod2-1
 T mod2-1/file2-1
 ${PROG} [a-z]*: Tagging mod2-2" \
-"${PROG} [a-z]*: Tagging mod1-1
+"${PROG} server: Tagging \.
+${PROG} [a-z]*: Tagging mod1-1
 T mod1-1/file1-1
 ${PROG} [a-z]*: Tagging mod1-2
 T mod1-2/file1-2
 ${PROG} [a-z]*: Tagging mod2-2
 ${PROG} [a-z]*: Tagging mod2-2/mod1-2
+${PROG} server: Tagging \.
 ${PROG} [a-z]*: Tagging mod1-2
 ${PROG} [a-z]*: Tagging mod1-2/mod2-2
 T mod1-2/mod2-2/file2-2
@@ -16191,7 +16219,7 @@ ${PROG} [a-z]*: Tagging mod2-2"
 	  echo anotherfile2-2 > mod1-2/mod2-2/anotherfile2-2
 
 	  if test "x$remote" = xno; then
-	    dotest multiroot-add-1 "${testcvs1} add mod1-1/anotherfile1-1 mod2-1/anotherfile2-1 mod2-2/mod1-2/anotherfile1-2 mod1-2/mod2-2/anotherfile2-2" \
+	    dotest multiroot-add-1 "${testcvs} add mod1-1/anotherfile1-1 mod2-1/anotherfile2-1 mod2-2/mod1-2/anotherfile1-2 mod1-2/mod2-2/anotherfile2-2" \
 "${PROG} [a-z]*: scheduling file .mod1-1/anotherfile1-1. for addition
 ${PROG} [a-z]*: scheduling file .mod2-1/anotherfile2-1. for addition
 ${PROG} [a-z]*: scheduling file .mod2-2/mod1-2/anotherfile1-2. for addition
@@ -16199,82 +16227,26 @@ ${PROG} [a-z]*: scheduling file .mod1-2/mod2-2/anotherfile2-2. for addition
 ${PROG} [a-z]*: use 'cvs commit' to add these files permanently"
           else
 	    cd mod1-1
-	    dotest multiroot-add-1a "${testcvs1} add anotherfile1-1" \
+	    dotest multiroot-add-1a "${testcvs} add anotherfile1-1" \
 "${PROG} [a-z]*: scheduling file .anotherfile1-1. for addition
 ${PROG} [a-z]*: use 'cvs commit' to add this file permanently"
 	    cd ../mod2-1
-	    dotest multiroot-add-1b "${testcvs2} add anotherfile2-1" \
+	    dotest multiroot-add-1b "${testcvs} add anotherfile2-1" \
 "${PROG} [a-z]*: scheduling file .anotherfile2-1. for addition
 ${PROG} [a-z]*: use 'cvs commit' to add this file permanently"
 	    cd ../mod2-2/mod1-2
-	    dotest multiroot-add-1c "${testcvs1} add anotherfile1-2" \
+	    dotest multiroot-add-1c "${testcvs} add anotherfile1-2" \
 "${PROG} [a-z]*: scheduling file .anotherfile1-2. for addition
 ${PROG} [a-z]*: use 'cvs commit' to add this file permanently"
 	    cd ../../mod1-2/mod2-2
-	    dotest multiroot-add-1d "${testcvs2} add anotherfile2-2" \
+	    dotest multiroot-add-1d "${testcvs} add anotherfile2-2" \
 "${PROG} [a-z]*: scheduling file .anotherfile2-2. for addition
 ${PROG} [a-z]*: use 'cvs commit' to add this file permanently"
 	    cd ../..
           fi
 
-	  dotest multiroot-status-1 "${testcvs2} status -v" \
-"${PROG} [a-z]*: Examining mod1-2/mod2-2
-===================================================================
-File: anotherfile2-2   	Status: Locally Added
-
-   Working revision:	New file!
-   Repository revision:	No revision control file
-   Sticky Tag:		(none)
-   Sticky Date:		(none)
-   Sticky Options:	(none)
-
-===================================================================
-File: file2-2          	Status: Up-to-date
-
-   Working revision:	1\.2.*
-   Repository revision:	1\.2	${CVSROOT2_DIRNAME}/mod2-2/file2-2,v
-   Sticky Tag:		(none)
-   Sticky Date:		(none)
-   Sticky Options:	(none)
-
-   Existing Tags:
-	cattle                   	(revision: 1\.2)
-
-${PROG} [a-z]*: Examining mod2-1
-===================================================================
-File: anotherfile2-1   	Status: Locally Added
-
-   Working revision:	New file!
-   Repository revision:	No revision control file
-   Sticky Tag:		(none)
-   Sticky Date:		(none)
-   Sticky Options:	(none)
-
-===================================================================
-File: file2-1          	Status: Up-to-date
-
-   Working revision:	1\.2.*
-   Repository revision:	1\.2	${CVSROOT2_DIRNAME}/mod2-1/file2-1,v
-   Sticky Tag:		(none)
-   Sticky Date:		(none)
-   Sticky Options:	(none)
-
-   Existing Tags:
-	cattle                   	(revision: 1\.2)
-
-${PROG} [a-z]*: Examining mod2-2
-===================================================================
-File: file2-2          	Status: Up-to-date
-
-   Working revision:	1\.2.*
-   Repository revision:	1\.2	${CVSROOT2_DIRNAME}/mod2-2/file2-2,v
-   Sticky Tag:		(none)
-   Sticky Date:		(none)
-   Sticky Options:	(none)
-
-   Existing Tags:
-	cattle                   	(revision: 1\.2)
-
+	  dotest multiroot-status-1 "${testcvs} status -v" \
+"${PROG} status: Examining \.
 ${PROG} [a-z]*: Examining mod1-1
 ===================================================================
 File: anotherfile1-1   	Status: Locally Added
@@ -16330,8 +16302,8 @@ File: file1-2          	Status: Up-to-date
    Sticky Options:	(none)
 
    Existing Tags:
-	cattle                   	(revision: 1\.2)" \
-"${PROG} [a-z]*: Examining mod1-2
+	cattle                   	(revision: 1\.2)
+
 ${PROG} [a-z]*: Examining mod1-2/mod2-2
 ===================================================================
 File: anotherfile2-2   	Status: Locally Added
@@ -16387,8 +16359,8 @@ File: file2-2          	Status: Up-to-date
    Sticky Options:	(none)
 
    Existing Tags:
-	cattle                   	(revision: 1\.2)
-
+	cattle                   	(revision: 1\.2)" \
+"${PROG} server: Examining \.
 ${PROG} [a-z]*: Examining mod1-1
 ===================================================================
 File: anotherfile1-1   	Status: Locally Added
@@ -16445,10 +16417,70 @@ File: file1-2          	Status: Up-to-date
    Sticky Options:	(none)
 
    Existing Tags:
+	cattle                   	(revision: 1\.2)
+
+${PROG} server: Examining \.
+${PROG} [a-z]*: Examining mod1-2
+${PROG} [a-z]*: Examining mod1-2/mod2-2
+===================================================================
+File: anotherfile2-2   	Status: Locally Added
+
+   Working revision:	New file!
+   Repository revision:	No revision control file
+   Sticky Tag:		(none)
+   Sticky Date:		(none)
+   Sticky Options:	(none)
+
+===================================================================
+File: file2-2          	Status: Up-to-date
+
+   Working revision:	1\.2.*
+   Repository revision:	1\.2	${CVSROOT2_DIRNAME}/mod2-2/file2-2,v
+   Sticky Tag:		(none)
+   Sticky Date:		(none)
+   Sticky Options:	(none)
+
+   Existing Tags:
+	cattle                   	(revision: 1\.2)
+
+${PROG} [a-z]*: Examining mod2-1
+===================================================================
+File: anotherfile2-1   	Status: Locally Added
+
+   Working revision:	New file!
+   Repository revision:	No revision control file
+   Sticky Tag:		(none)
+   Sticky Date:		(none)
+   Sticky Options:	(none)
+
+===================================================================
+File: file2-1          	Status: Up-to-date
+
+   Working revision:	1\.2.*
+   Repository revision:	1\.2	${CVSROOT2_DIRNAME}/mod2-1/file2-1,v
+   Sticky Tag:		(none)
+   Sticky Date:		(none)
+   Sticky Options:	(none)
+
+   Existing Tags:
+	cattle                   	(revision: 1\.2)
+
+${PROG} [a-z]*: Examining mod2-2
+===================================================================
+File: file2-2          	Status: Up-to-date
+
+   Working revision:	1\.2.*
+   Repository revision:	1\.2	${CVSROOT2_DIRNAME}/mod2-2/file2-2,v
+   Sticky Tag:		(none)
+   Sticky Date:		(none)
+   Sticky Options:	(none)
+
+   Existing Tags:
 	cattle                   	(revision: 1\.2)"
 
-	  dotest multiroot-commit-2 "${testcvs1} commit -m reading" \
-"${PROG} [a-z]*: Examining mod1-1
+	  dotest multiroot-commit-2 "${testcvs} commit -m reading" \
+"${PROG} [a-z]*: Examining \.
+${PROG} [a-z]*: Examining mod1-1
 ${PROG} [a-z]*: Examining mod1-2
 ${PROG} [a-z]*: Examining mod2-2/mod1-2
 RCS file: ${CVSROOT1_DIRNAME}/mod1-1/anotherfile1-1,v
@@ -16479,8 +16511,9 @@ ${CVSROOT2_DIRNAME}/mod2-1/anotherfile2-1,v  <--  anotherfile2-1
 initial revision: 1\.1
 done"
 
-	  dotest multiroot-update-3 "${testcvs1} update" \
-"${PROG} [a-z]*: Updating mod1-1
+	  dotest multiroot-update-3 "${testcvs} update" \
+"${PROG} update: Updating \.
+${PROG} [a-z]*: Updating mod1-1
 ${PROG} [a-z]*: Updating mod1-2
 U mod1-2/anotherfile1-2
 ${PROG} [a-z]*: Updating mod2-2/mod1-2
@@ -16488,19 +16521,22 @@ ${PROG} [a-z]*: Updating mod1-2/mod2-2
 ${PROG} [a-z]*: Updating mod2-1
 ${PROG} [a-z]*: Updating mod2-2
 U mod2-2/anotherfile2-2" \
-"${PROG} [a-z]*: Updating mod1-1
+"${PROG} server: Updating \.
+${PROG} [a-z]*: Updating mod1-1
 ${PROG} [a-z]*: Updating mod1-2
 U mod1-2/anotherfile1-2
 ${PROG} [a-z]*: Updating mod2-2
 ${PROG} [a-z]*: Updating mod2-2/mod1-2
+${PROG} server: Updating \.
 ${PROG} [a-z]*: Updating mod1-2
 ${PROG} [a-z]*: Updating mod1-2/mod2-2
 ${PROG} [a-z]*: Updating mod2-1
 ${PROG} [a-z]*: Updating mod2-2
 U mod2-2/anotherfile2-2"
 
-	  dotest multiroot-log-1 "${testcvs1} log" \
-"${PROG} [a-z]*: Logging mod1-1
+	  dotest multiroot-log-1 "${testcvs} log" \
+"${PROG} log: Logging \.
+${PROG} [a-z]*: Logging mod1-1
 
 RCS file: ${CVSROOT1_DIRNAME}/mod1-1/anotherfile1-1,v
 Working file: mod1-1/anotherfile1-1
@@ -16728,7 +16764,8 @@ revision 1\.1
 date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
 anyone
 =============================================================================" \
-"${PROG} [a-z]*: Logging mod1-1
+"${PROG} server: Logging \.
+${PROG} [a-z]*: Logging mod1-1
 
 RCS file: ${CVSROOT1_DIRNAME}/mod1-1/anotherfile1-1,v
 Working file: mod1-1/anotherfile1-1
@@ -16843,6 +16880,7 @@ revision 1\.1
 date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
 is
 =============================================================================
+${PROG} server: Logging \.
 ${PROG} [a-z]*: Logging mod1-2
 ${PROG} [a-z]*: Logging mod1-2/mod2-2
 
@@ -17069,6 +17107,97 @@ ${PROG} update: Updating dir1/sdir/ssdir"
 
 	  # clean up our repositories
 	  rm -rf root1 root2
+	  ;;
+
+	reposmv)
+	  # More tests of repositories and specifying them.
+	  # Similar to crerepos but that test is probably getting big
+	  # enough.
+
+	  if test "x$remote" = xyes; then
+	    CVSROOT1=:fork:${TESTDIR}/root1 ; export CVSROOT1
+	    CVSROOT_MOVED=:fork:${TESTDIR}/root-moved ; export CVSROOT1
+	  else
+	    CVSROOT1=${TESTDIR}/root1 ; export CVSROOT1
+	    CVSROOT_MOVED=${TESTDIR}/root-moved ; export CVSROOT1
+	  fi
+
+	  dotest reposmv-setup-1 "${testcvs} -d ${CVSROOT1} init" ""
+	  mkdir imp-dir; cd imp-dir
+	  echo file1 >file1
+	  dotest reposmv-setup-2 \
+"${testcvs} -d ${CVSROOT1} import -m add dir1 vendor release" \
+"N dir1/file1
+
+No conflicts created by this import"
+	  cd ..
+
+	  mkdir 1; cd 1
+	  dotest reposmv-1 "${testcvs} -d ${CVSROOT1} -Q co dir1" ""
+	  mv ${TESTDIR}/root1 ${TESTDIR}/root-moved
+	  cd dir1
+
+	  # If we didn't have a relative repository, get one now.
+	  dotest reposmv-1a "cat CVS/Repository" \
+"${TESTDIR}/root1/dir1" "dir1"
+	  echo dir1 >CVS/Repository
+
+	  # There were some duplicated warnings and such; only test
+	  # for the part of the error message which makes sense.
+	  dotest_fail reposmv-2 "${testcvs} update" "${DOTSTAR}
+${PROG} update: ignoring CVS/Root because it specifies a non-existent repository ${TESTDIR}/root1
+${PROG} \[update aborted\]: cannot open directory ${TESTDIR}/cvsroot/dir1: No such file or directory" \
+"Cannot access ${TESTDIR}/root1/CVSROOT
+No such file or directory"
+
+	  # CVS/Root overrides $CVSROOT
+	  if test "$remote" = no; then
+	    CVSROOT=${TESTDIR}/root-moved dotest reposmv-3 \
+	      "${testcvs} update" \
+"${DOTSTAR}
+${PROG} update: ignoring CVS/Root because it specifies a non-existent repository ${TESTDIR}/root1
+${PROG} update: Updating \.
+${DOTSTAR}"
+	  else
+	    CVSROOT=:fork:${TESTDIR}/root-moved dotest_fail reposmv-3 \
+	      "${testcvs} update" \
+"Cannot access ${TESTDIR}/root1/CVSROOT
+No such file or directory"
+	  fi
+
+	  if test "$remote" = no; then
+	    # CVS/Root doesn't seem to quite completely override $CVSROOT
+	    # Bug?  Not necessarily a big deal if it only affects error
+	    # messages.
+	    CVSROOT=${TESTDIR}/root-none dotest_fail reposmv-4 \
+	      "${testcvs} update" \
+"${PROG} update: in directory \.:
+${PROG} update: ignoring CVS/Root because it specifies a non-existent repository ${TESTDIR}/root1
+${PROG} \[update aborted\]: ${TESTDIR}/root-none/CVSROOT: No such file or directory"
+	  else
+	    CVSROOT=:fork:${TESTDIR}/root-none dotest_fail reposmv-4 \
+	      "${testcvs} update" \
+"Cannot access ${TESTDIR}/root1/CVSROOT
+No such file or directory"
+	  fi
+
+	  # -d overrides CVS/Root
+	  # 
+	  # Oddly enough, with CVS 1.10 I think this didn't work for
+	  # local (that is, it would appear that CVS/Root would not
+	  # get used, but would produce an error if it didn't exist).
+	  dotest reposmv-5 "${testcvs} -d ${CVSROOT_MOVED} update" \
+"${PROG} [a-z]*: Updating \."
+
+	  # TODO: could also test various other things, like what if the
+	  # user removes CVS/Root (which is legit).  Or another set of
+	  # tests would be if both repositories exist but we want to make
+	  # sure that CVS is using the correct one.
+
+	  cd ../..
+	  rm -r imp-dir 1
+	  rm -rf root1 root2
+	  unset CVSROOT1
 	  ;;
 
 	pserver)

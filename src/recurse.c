@@ -543,7 +543,18 @@ do_recursion (frame)
        our own.  */
 
 #ifdef SERVER_SUPPORT
-    if (! server_active)
+    if (! server_active
+
+	/* If -d was specified, it should override CVS/Root.
+
+	   In the single-repository case, it is long-standing CVS behavior
+	   and makes sense - the user might want another access method,
+	   another server (which mounts the same repository), &c.
+
+	   In the multiple-repository case, -d overrides all CVS/Root
+	   files.  That is the only plausible generalization I can
+	   think of.  */
+	&& CVSroot_cmdline == NULL)
 #endif
     {
 	char *this_root = Name_Root ((char *) NULL, update_dir);
@@ -927,7 +938,18 @@ but CVS uses %s for its own purposes; skipping %s directory",
        duplicates code in do_recursion. */
 
 #ifdef SERVER_SUPPORT
-    if (! server_active)
+    if (! server_active
+
+	/* If -d was specified, it should override CVS/Root.
+
+	   In the single-repository case, it is long-standing CVS behavior
+	   and makes sense - the user might want another access method,
+	   another server (which mounts the same repository), &c.
+
+	   In the multiple-repository case, -d overrides all CVS/Root
+	   files.  That is the only plausible generalization I can
+	   think of.  */
+	&& CVSroot_cmdline == NULL)
 #endif
     {
 	char *this_root = Name_Root (dir, update_dir);
