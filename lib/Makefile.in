@@ -194,6 +194,8 @@ noinst_LIBRARIES = libcvs.a
 
 # For GNULIB's exitfail module.
 
+# For GNULIB's timespec module.
+
 # For GNULIB's vasnprintf module.
 
 # For GNULIB's xalloc module.
@@ -226,7 +228,7 @@ libcvs_a_SOURCES = \
 	xselect.h \
 	xsize.h \
 	xtime.h\
-basename.c dirname.c dirname.h stripslash.c exitfail.h exitfail.c printf-args.h printf-parse.h vasnprintf.h xalloc.h xmalloc.c xstrdup.c
+basename.c dirname.c dirname.h stripslash.c exitfail.h exitfail.c timespec.h printf-args.h printf-parse.h vasnprintf.h xalloc.h xmalloc.c xstrdup.c
 libcvs_a_LIBADD = @LIBOBJS@
 
 
