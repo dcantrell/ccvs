@@ -449,7 +449,7 @@ patch_fileproc (callerdat, finfo)
     if (vers_tag != NULL)
     {
 	retcode = RCS_checkout (rcsfile, (char *) NULL, vers_tag,
-				(char *) NULL, options, tmpfile1);
+				rev1, options, tmpfile1);
 	if (retcode != 0)
 	{
 	    if (!really_quiet)
@@ -471,7 +471,7 @@ patch_fileproc (callerdat, finfo)
     if (vers_head != NULL)
     {
 	retcode = RCS_checkout (rcsfile, (char *) NULL, vers_head,
-				(char *) NULL, options, tmpfile2);
+				rev2, options, tmpfile2);
 	if (retcode != 0)
 	{
 	    if (!really_quiet)
