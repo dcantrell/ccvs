@@ -1,3 +1,9 @@
+2003-03-06  Larry Jones  <lawrence.jones@eds.com>
+
+	* sanity.sh (branches3-4): Set and export CVS_LOCAL_BRANCH_NUM
+	to be sure it really gets into the environment, then unset it
+	when finished (ala CVSWRAPPERS et al).
+
 2003-03-03  Mark D. Baushke  <mdb@cvshome.org>
 
 	* sanith.sh (branches3): Localize the setting of
