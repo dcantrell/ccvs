@@ -1,3 +1,8 @@
+2002-04-18  Derek Price  <oberon@umich.edu>
+
+	* sanity.sh: Move test for regex metacharacters in username until
+	after we're sure we found the version of expr that we're going to use.
+
 2002-04-18  Larry Jones  <larry.jones@sdrc.com>
 
 	* admin.c (admin_fileproc): Allow admin to be used on RCS files with
