@@ -1,3 +1,8 @@
+1998-08-15  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* rcscmds.c (call_diff_write_output): Update to reflect new
+	calling convention for the write_output callback.
+
 1998-08-15  Jim Meyering  <meyering@ascend.com>
 
 	* update.c (merge_file): Warn about failed unlink when not due
