@@ -1,3 +1,43 @@
+2004-09-02  Derek Price <derek@ximbiot.com>
+
+	* server.c (do_cvs_command): Pass new args to fd_buffer_initialize().
+	(server): Don't initialize BUF_TO_NET & BUF_FROM_NET when
+	pserver_authenticate already did.
+	(pserver_read_line): New function to access pserver auth dialogue via
+	buffers.
+	(pserver_authenticate_connection): Init buffers to/from net and access
+	via pserver_read_line() and the buffer output functions.
+	(fd_buffer_*): Move to...
+	* buffer.c (fd_buffer_*): ...here.  Handle blocking input more
+	efficiently.
+	(buf_initialize): Handle get_fd() argument.
+	(buf_nonio_initialize, packetizing_buffer_initialize): Pass new
+	get_fd() argument.
+	(buf_copy_data, buf_free_data, buf_read_short_line, buf_get_fd,
+	packetizing_buffer_get_fd): New functions.
+	(bufread_line): Wrap buf_read_short_line().
+	(stdio_buffer_*): Remove these functions.
+	(*): Some reformatting of function headers.
+	* buffer.h (struct buffer, buf_initialize): Add get_fd().
+	(buf_read_short_line, buf_get_fd, buf_copy_data, buf_free_data,
+	fd_buffer_initialize): New prototypes.
+	* client.c (get_port_number, get_cvs_port_number,
+	get_proxy_port_number): Compile with SERVER_SUPPORT.
+	(make_bufs_from_fds): Likewise, and accept new ROOT arg and pass on to
+	fd_buffer_initialize().
+	(connect_to_pserver, connect_to_forked_server): Pass ROOT to
+	make_bufs_from_fds().
+	(start_server): Factor much functionality into...
+	(open_connection_to_server): ...this new function.
+	* client.h (make_bufs_from_fds): Update proto.
+	(open_connection_to_server): New proto.
+	* log-buffer.c (log_buffer_initialize): Handle get_gd().
+	(log_buffer_get_fd): New function.
+	* zlib.c (compress_buffer_initialize, compress_buffer_get_fd): Ditto
+	twice.
+	* rsh-client.c (start_rsh_server): Pass ROOT to make_bufs_from_fds().
+	* sanity.sh (pserver): Expect new error messages.
+
 2004-09-01  Derek Price <derek@ximbiot.com>
 
 	* run.c: Remove unneeded typecasts.  Reformat function headers.  Fix

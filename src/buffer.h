@@ -55,6 +55,11 @@ struct buffer
        errno code.  */
     int (*block) (void *closure, int block);
 
+    /* Return the file descriptor underlying this buffer, if any, or -1
+     * otherwise.
+     */
+    int (*get_fd) (void *closure);
+
     /* Shut down the communication stream.  This does not mean that it
        should be closed.  It merely means that no more data will be
        read or written, and that any final processing that is
@@ -103,6 +108,7 @@ struct buffer *buf_initialize (int (*) (void *, char *, int, int, int *),
 			       int (*) (void *, const char *, int, int *),
 			       int (*) (void *),
 			       int (*) (void *, int),
+			       int (*) (void *),
 			       int (*) (struct buffer *),
 			       void (*) (struct buffer *),
 			       void *);
@@ -114,7 +120,7 @@ FILE *stdio_buffer_get_file (struct buffer *);
 struct buffer *compress_buffer_initialize (struct buffer *, int, int,
 					   void (*) (struct buffer *));
 struct buffer *packetizing_buffer_initialize
-  (struct buffer *, int (*) (void *, const char *, char *, int),
+	(struct buffer *, int (*) (void *, const char *, char *, int),
 	 int (*) (void *, const char *, char *, int, int *), void *,
 	 void (*) (struct buffer *));
 int buf_empty (struct buffer *);
@@ -136,15 +142,36 @@ int buf_read_file_to_eof (FILE *, struct buffer_data **,
 			  struct buffer_data **);
 int buf_input_data (struct buffer *, int *);
 int buf_read_line (struct buffer *, char **, int *);
+int buf_read_short_line (struct buffer *buf, char **line, size_t *lenp,
+                         size_t max);
 int buf_read_data (struct buffer *, int, char **, int *);
 void buf_copy_lines (struct buffer *, struct buffer *, int);
 int buf_copy_counted (struct buffer *, struct buffer *, int *);
 int buf_chain_length (struct buffer_data *);
 int buf_length (struct buffer *);
+int buf_get_fd (struct buffer *);
 int buf_shutdown (struct buffer *);
+#ifdef PROXY_SUPPORT
+# ifndef TRUST_OS_FILE_CACHE
+void buf_copy_data (struct buffer *buf, struct buffer_data *data,
+                    struct buffer_data *last);
+# endif /* !TRUST_OS_FILE_CACHE */
+void buf_free_data (struct buffer *);
+#endif /* PROXY_SUPPORT */
 
 #ifdef SERVER_FLOWCONTROL
 int buf_count_mem (struct buffer *);
 #endif /* SERVER_FLOWCONTROL */
 
+struct buffer *
+fd_buffer_initialize (int fd, pid_t child_pid, cvsroot_t *root, bool input,
+                      void (*memory) (struct buffer *));
+
+/* EWOULDBLOCK is not defined by POSIX, but some BSD systems will
+   return it, rather than EAGAIN, for nonblocking writes.  */
+# ifdef EWOULDBLOCK
+#   define blocking_error(err) ((err) == EWOULDBLOCK || (err) == EAGAIN)
+# else
+#   define blocking_error(err) ((err) == EAGAIN)
+# endif
 #endif /* defined (SERVER_SUPPORT) || defined (CLIENT_SUPPORT) */

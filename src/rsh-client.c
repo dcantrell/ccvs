@@ -121,7 +121,8 @@ start_rsh_server( cvsroot_t *root, struct buffer **to_server_p,
 # else /* ! START_RSH_WITH_POPEN_RW */
 
 void
-start_rsh_server (cvsroot_t *root, struct buffer **to_server_p, struct buffer **from_server_p)
+start_rsh_server (cvsroot_t *root, struct buffer **to_server_p,
+                  struct buffer **from_server_p)
 {
     /* If you're working through firewalls, you can set the
        CVS_RSH environment variable to a script which uses rsh to
@@ -184,7 +185,8 @@ start_rsh_server (cvsroot_t *root, struct buffer **to_server_p, struct buffer **
     }
     free (command);
 
-    make_bufs_from_fds (tofd, fromfd, child_pid, to_server_p, from_server_p, 0);
+    make_bufs_from_fds (tofd, fromfd, child_pid, root, to_server_p,
+                        from_server_p, 0);
 }
 
 # endif /* START_RSH_WITH_POPEN_RW */

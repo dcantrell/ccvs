@@ -33,6 +33,7 @@ buf_initialize (int (*input) (void *, char *, int, int, int *),
 	        int (*output) (void *, const char *, int, int *),
                 int (*flush) (void *),
                 int (*block) (void *, int),
+                int (*get_fd) (void *),
                 int (*shutdown) (struct buffer *),
                 void (*memory) (struct buffer *),
                 void *closure)
@@ -47,6 +48,7 @@ buf_initialize (int (*input) (void *, char *, int, int, int *),
     buf->output = output;
     buf->flush = flush;
     buf->block = block;
+    buf->get_fd = get_fd;
     buf->shutdown = shutdown;
     buf->memory_error = memory ? memory : buf_default_memory_error;
     buf->closure = closure;
@@ -78,14 +80,7 @@ buf_free (struct buffer *buf)
 struct buffer *
 buf_nonio_initialize( void (*memory) (struct buffer *) )
 {
-    return (buf_initialize
-	    ((int (*) (void *, char *, int, int, int *)) NULL,
-	     (int (*) (void *, const char *, int, int *)) NULL,
-	     (int (*) (void *)) NULL,
-	     (int (*) (void *, int)) NULL,
-	     (int (*) (struct buffer *)) NULL,
-	     memory,
-	     (void *) NULL));
+    return buf_initialize (NULL, NULL, NULL, NULL, NULL, NULL, memory, NULL);
 }
 
 
@@ -252,8 +247,9 @@ buf_output0 (struct buffer *buf, const char *string)
     buf_output (buf, string, strlen (string));
 }
 
-/* Add a single character to BUF.  */
 
+
+/* Add a single character to BUF.  */
 void
 buf_append_char (struct buffer *buf, int ch)
 {
@@ -273,12 +269,13 @@ buf_append_char (struct buffer *buf, int ch)
     }
 }
 
+
+
 /*
  * Send all the output we've been saving up.  Returns 0 for success or
  * errno code.  If the buffer has been set to be nonblocking, this
  * will just write until the write would block.
  */
-
 int
 buf_send_output (struct buffer *buf)
 {
@@ -458,7 +455,7 @@ buf_send_counted (struct buffer *buf)
 
 /*
  * Send a special count.  COUNT should be negative.  It will be
- * handled speciallyi by buf_copy_counted.  This function returns 0 or
+ * handled specially by buf_copy_counted.  This function returns 0 or
  * an errno code.
  *
  * Sending the count in binary is OK since this is only used on a pipe
@@ -508,12 +505,69 @@ buf_append_data (struct buffer *buf, struct buffer_data *data,
 
 
 
+#ifdef PROXY_SUPPORT
+# ifndef TRUST_OS_FILE_CACHE
+/* Copy data structures and append them to a buffer.
+ *
+ * ERRORS
+ *   Failure to allocate memory here is fatal.
+ */
+void
+buf_copy_data (struct buffer *buf, struct buffer_data *data,
+               struct buffer_data *last)
+{
+    struct buffer_data *first, *new, *cur, *prev;
+
+    assert (buf);
+    assert (data);
+
+    prev = first = NULL;
+    cur = data;
+    while (1)
+    {
+	new = get_buffer_data ();
+	if (!new) error (1, errno, "Failed to allocate buffer data.");
+
+	if (!first) first = new;
+	memcpy (new->text, cur->bufp, cur->size);
+	new->bufp = new->text;
+	new->size = cur->size;
+	new->next = NULL;
+	if (prev) prev->next = new;
+	if (cur == last) break;
+	prev = new;
+	cur = cur->next;
+    }
+
+    buf_append_data (buf, first, cur);
+}
+# endif /* !TRUST_OS_FILE_CACHE */
+
+
+
+/* Dispose of any remaining data in the buffer.  */
+void
+buf_free_data (struct buffer *buffer)
+{
+    if (buf_empty_p (buffer)) return;
+    buffer->last->next = free_buffer_data;
+    free_buffer_data = buffer->data;
+    buffer->data = buffer->last = NULL;
+}
+#endif /* PROXY_SUPPORT */
+
+
+
 /* Append the data on one buffer to another.  This removes the data
-   from the source buffer.  */
+ * from the source buffer.
+ */
 void
 buf_append_buffer (struct buffer *to, struct buffer *from)
 {
+    /* Copy the data pointer to the new buf.  */
     buf_append_data (to, from->data, from->last);
+
+    /* Remove from the original location.  */
     from->data = NULL;
     from->last = NULL;
 }
@@ -760,13 +814,24 @@ buf_input_data (struct buffer *buf, int *countp)
 int
 buf_read_line (struct buffer *buf, char **line, int *lenp)
 {
+    buf_read_short_line (buf, line, lenp, SIZE_MAX);
+}
+
+
+
+/* Like buf_read_line, but return -2 if no newline is found in MAX characters.
+ */
+int
+buf_read_short_line (struct buffer *buf, char **line, size_t *lenp,
+                     size_t max)
+{
     assert (buf->input != NULL);
 
     *line = NULL;
 
     while (1)
     {
-	int len, finallen = 0;
+	size_t len, finallen, predicted_len;
 	struct buffer_data *data;
 	char *nl;
 
@@ -778,9 +843,11 @@ buf_read_line (struct buffer *buf, char **line, int *lenp)
 	    if (nl != NULL)
 	    {
 	        finallen = nl - data->bufp;
+		if (xsum (len, finallen) >= max) return -2;
 	        len += finallen;
 		break;
 	    }
+	    else if (xsum (len, data->size) >= max) return -2;
 	    len += data->size;
 	}
 
@@ -823,7 +890,8 @@ buf_read_line (struct buffer *buf, char **line, int *lenp)
 	    return 0;
 	}
 
-	/* Read more data until we get a newline.  */
+	/* Read more data until we get a newline or MAX characters.  */
+	predicted_len = 0;
 	while (1)
 	{
 	    int size, status, nbytes;
@@ -862,10 +930,10 @@ buf_read_line (struct buffer *buf, char **line, int *lenp)
 	    if (status != 0)
 		return status;
 
+	    predicted_len += nbytes;
 	    buf->last->size += nbytes;
 
-	    /* Optimize slightly to avoid an unnecessary call to
-               memchr.  */
+	    /* Optimize slightly to avoid an unnecessary call to memchr.  */
 	    if (nbytes == 1)
 	    {
 		if (*mem == '\012')
@@ -876,6 +944,7 @@ buf_read_line (struct buffer *buf, char **line, int *lenp)
 		if (memchr (mem, '\012', nbytes) != NULL)
 		    break;
 	    }
+	    if (xsum (len, predicted_len) >= max) return -2;
 	}
     }
 }
@@ -957,10 +1026,9 @@ buf_read_data (struct buffer *buf, int want, char **retdata, int *got)
 
 
 /*
- * Copy lines from an input buffer to an output buffer.  This copies
- * all complete lines (characters up to a newline) from INBUF to
- * OUTBUF.  Each line in OUTBUF is preceded by the character COMMAND
- * and a space.
+ * Copy lines from an input buffer to an output buffer.  This copies all
+ * complete lines (characters up to a newline) from INBUF to OUTBUF.  Each line
+ * in OUTBUF is preceded by the character COMMAND and a space.
  */
 void
 buf_copy_lines (struct buffer *outbuf, struct buffer *inbuf, int command)
@@ -1188,274 +1256,22 @@ buf_copy_counted (struct buffer *outbuf, struct buffer *inbuf, int *special)
 
 
 
+int
+buf_get_fd (struct buffer *buf)
+{
+    if (buf->get_fd)
+	return (*buf->get_fd) (buf->closure);
+    return -1;
+}
+
+
+
 /* Shut down a buffer.  This returns 0 on success, or an errno code.  */
 int
 buf_shutdown (struct buffer *buf)
 {
     if (buf->shutdown)
 	return (*buf->shutdown) (buf);
-    return 0;
-}
-
-
-
-/* The simplest type of buffer is one built on top of a stdio FILE.
-   For simplicity, and because it is all that is required, we do not
-   implement setting this type of buffer into nonblocking mode.  The
-   closure field is just a FILE *.  */
-
-static int stdio_buffer_input (void *, char *, int, int, int *);
-static int stdio_buffer_output (void *, const char *, int, int *);
-static int stdio_buffer_flush (void *);
-static int stdio_buffer_shutdown (struct buffer *buf);
-
-
-
-/* Initialize a buffer built on a stdio FILE.  */
-struct stdio_buffer_closure
-{
-    FILE *fp;
-    int child_pid;
-};
-
-
-
-struct buffer *
-stdio_buffer_initialize (FILE *fp, int child_pid, int input,
-                         void (*memory) (struct buffer *))
-{
-    struct stdio_buffer_closure *bc = xmalloc (sizeof (*bc));
-
-    bc->fp = fp;
-    bc->child_pid = child_pid;
-
-    return buf_initialize (input ? stdio_buffer_input : NULL,
-			   input ? NULL : stdio_buffer_output,
-			   input ? NULL : stdio_buffer_flush,
-			   NULL, stdio_buffer_shutdown, memory,
-			   bc);
-}
-
-
-
-/* Return the file associated with a stdio buffer. */
-FILE *
-stdio_buffer_get_file (struct buffer *buf)
-{
-    struct stdio_buffer_closure *bc;
-
-    assert (buf->shutdown == stdio_buffer_shutdown);
-
-    bc = buf->closure;
-
-    return bc->fp;
-}
-
-
-
-/* The buffer input function for a buffer built on a stdio FILE.  */
-static int
-stdio_buffer_input (void *closure, char *data, int need, int size, int *got)
-{
-    struct stdio_buffer_closure *bc = closure;
-    int nbytes;
-
-    /* Since stdio does its own buffering, we don't worry about
-       getting more bytes than we need.  */
-
-    if (need == 0 || need == 1)
-    {
-        int ch;
-
-	ch = getc (bc->fp);
-
-	if (ch == EOF)
-	{
-	    if (feof (bc->fp))
-		return -1;
-	    else if (errno == 0)
-		return EIO;
-	    else
-		return errno;
-	}
-
-	*data = ch;
-	*got = 1;
-	return 0;
-    }
-
-    nbytes = fread (data, 1, need, bc->fp);
-
-    if (nbytes == 0)
-    {
-	*got = 0;
-	if (feof (bc->fp))
-	    return -1;
-	else if (errno == 0)
-	    return EIO;
-	else
-	    return errno;
-    }
-
-    *got = nbytes;
-
-    return 0;
-}
-
-
-
-/* The buffer output function for a buffer built on a stdio FILE.  */
-static int
-stdio_buffer_output (void *closure, const char *data, int have, int *wrote)
-{
-    struct stdio_buffer_closure *bc = closure;
-
-    *wrote = 0;
-
-    while (have > 0)
-    {
-	int nbytes;
-
-	nbytes = fwrite (data, 1, have, bc->fp);
-
-	if (nbytes != have)
-	{
-	    if (errno == 0)
-		return EIO;
-	    else
-		return errno;
-	}
-
-	*wrote += nbytes;
-	have -= nbytes;
-	data += nbytes;
-    }
-
-    return 0;
-}
-
-
-
-/* The buffer flush function for a buffer built on a stdio FILE.  */
-static int
-stdio_buffer_flush (void *closure)
-{
-    struct stdio_buffer_closure *bc = closure;
-
-    if (fflush (bc->fp) != 0)
-    {
-	if (errno == 0)
-	    return EIO;
-	else
-	    return errno;
-    }
-
-    return 0;
-}
-
-
-
-static int
-stdio_buffer_shutdown (struct buffer *buf)
-{
-    struct stdio_buffer_closure *bc = buf->closure;
-    struct stat s;
-    int closefp = 1;
-
-    /* Must be a pipe or a socket.  What could go wrong? */
-    assert (fstat (fileno (bc->fp), &s) != -1);
-
-    /* Flush the buffer if we can */
-    if (buf->flush)
-    {
-	buf_flush (buf, 1);
-	buf->flush = NULL;
-    }
-
-    if (buf->input)
-    {
-	/* There used to be a check here for unread data in the buffer of on
-	 * the pipe, but it was deemed unnecessary and possibly dangerous.  In
-	 * some sense it could be second-guessing the caller who requested it
-	 * closed, as well.
-	 */
-
-# ifdef SHUTDOWN_SERVER
-	if (current_parsed_root->method != server_method)
-# endif
-# ifndef NO_SOCKET_TO_FD
-	{
-	    /* shutdown() sockets */
-	    if (S_ISSOCK (s.st_mode))
-		shutdown (fileno (bc->fp), 0);
-	}
-# endif /* NO_SOCKET_TO_FD */
-# ifdef START_RSH_WITH_POPEN_RW
-	/* Can't be set with SHUTDOWN_SERVER defined */
-	else if (pclose (bc->fp) == EOF)
-	{
-	    error (1, errno, "closing connection to %s",
-		   current_parsed_root->hostname);
-	    closefp = 0;
-	}
-# endif /* START_RSH_WITH_POPEN_RW */
-
-	buf->input = NULL;
-    }
-    else if (buf->output)
-    {
-# ifdef SHUTDOWN_SERVER
-	/* FIXME:  Should have a SHUTDOWN_SERVER_INPUT &
-	 * SHUTDOWN_SERVER_OUTPUT
-	 */
-	if (current_parsed_root->method == server_method)
-	    SHUTDOWN_SERVER (fileno (bc->fp));
-	else
-# endif
-# ifndef NO_SOCKET_TO_FD
-	/* shutdown() sockets */
-	if (S_ISSOCK (s.st_mode))
-	    shutdown (fileno (bc->fp), 1);
-# else
-	{
-	/* I'm not sure I like this empty block, but the alternative
-	 * is a another nested NO_SOCKET_TO_FD switch above.
-	 */
-	}
-# endif /* NO_SOCKET_TO_FD */
-
-	buf->output = NULL;
-    }
-
-    if (closefp && fclose (bc->fp) == EOF)
-    {
-	if (0
-# ifdef SERVER_SUPPORT
-	    || server_active
-# endif /* SERVER_SUPPORT */
-           )
-	{
-            /* Syslog this? */
-	}
-# ifdef CLIENT_SUPPORT
-	else
-            error (1, errno,
-                   "closing down connection to %s",
-                   current_parsed_root->hostname);
-# endif /* CLIENT_SUPPORT */
-    }
-
-    /* If we were talking to a process, make sure it exited */
-    if (bc->child_pid)
-    {
-	int w;
-
-	do
-	    w = waitpid (bc->child_pid, NULL, 0);
-	while (w == -1 && errno == EINTR);
-	if (w == -1)
-	    error (1, errno, "waiting for process %d", bc->child_pid);
-    }
     return 0;
 }
 
@@ -1524,6 +1340,7 @@ static int packetizing_buffer_input (void *, char *, int, int, int *);
 static int packetizing_buffer_output (void *, const char *, int, int *);
 static int packetizing_buffer_flush (void *);
 static int packetizing_buffer_block (void *, int);
+static int packetizing_buffer_get_fd (void *);
 static int packetizing_buffer_shutdown (struct buffer *);
 
 
@@ -1561,6 +1378,7 @@ packetizing_buffer_initialize (struct buffer *buf,
 			   inpfn != NULL ? NULL : packetizing_buffer_output,
 			   inpfn != NULL ? NULL : packetizing_buffer_flush,
 			   packetizing_buffer_block,
+			   packetizing_buffer_get_fd,
 			   packetizing_buffer_shutdown,
 			   memory,
 			   pb);
@@ -1880,6 +1698,16 @@ packetizing_buffer_block (void *closure, int block)
 
 
 
+/* Return the file descriptor underlying any child buffers.  */
+static int
+packetizing_buffer_get_fd (void *closure)
+{
+    struct packetizing_buffer *cb = closure;
+    return buf_get_fd (cb->buf);
+}
+
+
+
 /* Shut down a packetizing buffer.  */
 static int
 packetizing_buffer_shutdown (struct buffer *buf)
@@ -1889,4 +1717,448 @@ packetizing_buffer_shutdown (struct buffer *buf)
     return buf_shutdown (pb->buf);
 }
 
+
+
+/* All server communication goes through buffer structures.  Most of
+   the buffers are built on top of a file descriptor.  This structure
+   is used as the closure field in a buffer.  */
+
+struct fd_buffer
+{
+    /* The file descriptor.  */
+    int fd;
+    /* Nonzero if the file descriptor is in blocking mode.  */
+    int blocking;
+    /* The child process id when fd is a pipe.  */
+    pid_t child_pid;
+    /* The connection info, when fd is a pipe to a server.  */
+    cvsroot_t *root;
+};
+
+static int fd_buffer_input (void *, char *, int, int, int *);
+static int fd_buffer_output (void *, const char *, int, int *);
+static int fd_buffer_flush (void *);
+static int fd_buffer_block (void *, int);
+static int fd_buffer_get_fd (void *);
+static int fd_buffer_shutdown (struct buffer *);
+
+/* Initialize a buffer built on a file descriptor.  FD is the file
+   descriptor.  INPUT is nonzero if this is for input, zero if this is
+   for output.  MEMORY is the function to call when a memory error
+   occurs.  */
+
+struct buffer *
+fd_buffer_initialize (int fd, pid_t child_pid, cvsroot_t *root, bool input,
+                      void (*memory) (struct buffer *))
+{
+    struct fd_buffer *n;
+
+    n = xmalloc (sizeof *n);
+    n->fd = fd;
+    fd_buffer_block (n, true);
+    n->child_pid = child_pid;
+    n->root = root;
+    return buf_initialize (input ? fd_buffer_input : NULL,
+			   input ? NULL : fd_buffer_output,
+			   input ? NULL : fd_buffer_flush,
+			   fd_buffer_block, fd_buffer_get_fd,
+			   fd_buffer_shutdown,
+			   memory,
+			   n);
+}
+
+
+
+/* The buffer input function for a buffer built on a file descriptor.
+ *
+ * In non-blocing mode, this function will read as many bytes as it can in a
+ * single try, up to SIZE bytes, and return.
+ *
+ * In blocking mode with NEED > 0, this function will read as many bytes as it
+ * can but will not return until it has read at least NEED bytes.
+ *
+ * In blocking mode with NEED == 0, this function will block until it can read
+ * either at least one byte or EOF, then read as many bytes as are available
+ * and return.  At the very least, compress_buffer_shutdown depends on this
+ * behavior to read EOF and can loop indefinitely without it.
+ *
+ * ASSUMPTIONS
+ *   NEED <= SIZE.
+ *
+ * INPUTS
+ *   closure	Our FD_BUFFER struct.
+ *   data	The start of our input buffer.
+ *   need	How many bytes our caller needs.
+ *   size	How many bytes are available in DATA.
+ *   got	Where to store the number of bytes read.
+ *
+ * OUTPUTS
+ *   data	Filled with bytes read.
+ *   *got	Number of bytes actually read into DATA.
+ *
+ * RETURNS
+ *   errno	On error.
+ *   -1		On EOF.
+ *   0		Otherwise.
+ *
+ * ERRORS
+ *   This function can return an error if fd_buffer_block(), or the system
+ *   read() or select() calls do.
+ */
+static int
+fd_buffer_input (void *closure, char *data, int need, int size, int *got)
+{
+    struct fd_buffer *fb = closure;
+    int nbytes;
+
+    assert (need <= size);
+
+    *got = 0;
+
+    if (fb->blocking)
+    {
+	int status;
+	fd_set readfds;
+
+	/* Always attempt at least one non-blocking read.  Some areas of the
+	 * code call us with NEED == 0 hoping to read an EOF.
+	 */
+
+#ifndef TRUST_OS_FILE_CACHE
+	/* Set non-block.  */
+        status = fd_buffer_block (fb, false);
+	if (status != 0) return status;
+
+	FD_ZERO (&readfds);
+	FD_SET (fb->fd, &readfds);
+	do
+	{
+	    int numfds;
+
+	    do {
+		/* This used to select on exceptions too, but as far
+		   as I know there was never any reason to do that and
+		   SCO doesn't let you select on exceptions on pipes.  */
+		numfds = select (fb->fd + 1, &readfds, NULL, NULL, NULL);
+		if (numfds < 0 && errno != EINTR)
+		{
+		    status = errno;
+		    goto block_done;
+		}
+	    } while (numfds < 0);
+
+	    nbytes = read (fb->fd, data + *got, size - *got);
+
+	    if (nbytes == 0)
+	    {
+		/* End of file.  This assumes that we are using POSIX or BSD
+		   style nonblocking I/O.  On System V we will get a zero
+		   return if there is no data, even when not at EOF.  */
+		if (*got)
+		{
+		    /* We already read some data, so return no error, counting
+		     * on the fact that we will read EOF again next time.
+		     */
+		    status = 0;
+		    break;
+		}
+		else
+		{
+		    /* Return EOF.  */
+		    status = -1;
+		    break;
+		}
+	    }
+
+	    if (nbytes < 0)
+	    {
+		/* Some error occurred.  */
+		if (!blocking_error (errno))
+		{
+		    status = errno;
+		    break;
+		}
+		/* else Everything's fine, we just didn't get any data.  */
+	    }
+
+	    *got += nbytes;
+	} while (*got < need);
+
+block_done:
+	if (status == 0 || status == -1)
+	{
+	    int newstatus;
+
+	    /* OK or EOF - Reset block.  */
+	    newstatus = fd_buffer_block (fb, true);
+	    if (newstatus) status = newstatus;
+	}
+	return status;
+    }
+#else /* TRUST_OS_FILE_CACHE */
+	nbytes = read (fb->fd, data, need);
+    }
+    else
+#endif /* !TRUST_OS_FILE_CACHE */
+	/* The above will always return.  Handle non-blocking read.  */
+	nbytes = read (fb->fd, data, size);
+
+    if (nbytes > 0)
+    {
+	*got = nbytes;
+	return 0;
+    }
+
+    if (nbytes == 0)
+	/* End of file.  This assumes that we are using POSIX or BSD
+	   style nonblocking I/O.  On System V we will get a zero
+	   return if there is no data, even when not at EOF.  */
+	return -1;
+
+    /* Some error occurred.  */
+    if (blocking_error (errno))
+	/* Everything's fine, we just didn't get any data.  */
+	return 0;
+
+    return errno;
+}
+
+
+
+/* The buffer output function for a buffer built on a file descriptor.  */
+
+static int
+fd_buffer_output (void *closure, const char *data, int have, int *wrote)
+{
+    struct fd_buffer *fd = closure;
+
+    *wrote = 0;
+
+    while (have > 0)
+    {
+	int nbytes;
+
+	nbytes = write (fd->fd, data, have);
+
+	if (nbytes <= 0)
+	{
+	    if (! fd->blocking
+		&& (nbytes == 0 || blocking_error (errno)))
+	    {
+		/* A nonblocking write failed to write any data.  Just
+		   return.  */
+		return 0;
+	    }
+
+	    /* Some sort of error occurred.  */
+
+	    if (nbytes == 0)
+		return EIO;
+
+	    return errno;
+	}
+
+	*wrote += nbytes;
+	data += nbytes;
+	have -= nbytes;
+    }
+
+    return 0;
+}
+
+
+
+/* The buffer flush function for a buffer built on a file descriptor.  */
+static int
+fd_buffer_flush (void *closure)
+{
+    /* We don't need to do anything here.  Our fd doesn't have its own buffer
+     * and syncing won't do anything but slow us down.
+     *
+     * struct fd_buffer *fb = closure;
+     *
+     * if (fsync (fb->fd) < 0 && errno != EROFS && errno != EINVAL)
+     *     return errno;
+     */
+    return 0;
+}
+
+
+
+/* The buffer block function for a buffer built on a file descriptor.  */
+static int
+fd_buffer_block (void *closure, int block)
+{
+    struct fd_buffer *fb = closure;
+    int flags;
+
+    flags = fcntl (fb->fd, F_GETFL, 0);
+    if (flags < 0)
+	return errno;
+
+    if (block)
+	flags &= ~O_NONBLOCK;
+    else
+	flags |= O_NONBLOCK;
+
+    if (fcntl (fb->fd, F_SETFL, flags) < 0)
+	return errno;
+
+    fb->blocking = block;
+
+    return 0;
+}
+
+
+
+static int
+fd_buffer_get_fd (void *closure)
+{
+    struct fd_buffer *fb = closure;
+    return fb->fd;
+}
+
+
+
+/* The buffer shutdown function for a buffer built on a file descriptor.
+ *
+ * This function disposes of memory allocated for this buffer.
+ */
+static int
+fd_buffer_shutdown (struct buffer *buf)
+{
+    struct fd_buffer *fb = buf->closure;
+    struct stat s;
+    bool closefd, statted;
+
+    /* Must be an open pipe, socket, or file.  What could go wrong? */
+    if (fstat (fb->fd, &s) == -1) statted = false;
+    else statted = true;
+    /* Don't bother to try closing the FD if we couldn't stat it.  This
+     * probably won't work.
+     *
+     * (buf_shutdown() on some of the server/child communication pipes is
+     * getting EBADF on both the fstat and the close.  I'm not sure why -
+     * perhaps they were alredy closed somehow?
+     */
+    closefd = statted;
+
+    /* Flush the buffer if possible.  */
+    if (buf->flush)
+    {
+	buf_flush (buf, 1);
+	buf->flush = NULL;
+    }
+
+    if (buf->input)
+    {
+	/* There used to be a check here for unread data in the buffer of
+	 * the pipe, but it was deemed unnecessary and possibly dangerous.  In
+	 * some sense it could be second-guessing the caller who requested it
+	 * closed, as well.
+	 */
+
+/* FIXME:
+ *
+ * This mess of #ifdefs is hard to read.  There must be some relation between
+ * the macros being checked which at least deserves comments - if
+ * SHUTDOWN_SERVER, NO_SOCKET_TO_FD, & START_RSH_WITH_POPEN_RW were completely
+ * independant, then the next few lines could easily refuse to compile.
+ *
+ * The note below about START_RSH_WITH_POPEN_RW never being set when
+ * SHUTDOWN_SERVER is defined means that this code would always break on
+ * systems with SHUTDOWN_SERVER defined and thus the comment must now be
+ * incorrect or the code was broken since the comment was written.
+ */
+# ifdef SHUTDOWN_SERVER
+	if (fb->root && fb->root->method != server_method)
+# endif
+# ifndef NO_SOCKET_TO_FD
+	{
+	    /* shutdown() sockets */
+	    if (statted && S_ISSOCK (s.st_mode))
+		shutdown (fb->fd, 0);
+	}
+# endif /* NO_SOCKET_TO_FD */
+# ifdef START_RSH_WITH_POPEN_RW
+/* Can't be set with SHUTDOWN_SERVER defined */
+	/* FIXME: This is now certainly broken since pclose is defined by ANSI
+	 * C to accept a FILE * argument.  The switch will need to happen at a
+	 * higher abstraction level to switch between initializing stdio & fd
+	 * buffers on systems that need this (or maybe an fd buffer that keeps
+	 * track of the FILE * could be used - I think flushing the stream
+	 * before beginning exclusive access via the FD is OK.
+	 */
+	else if (fb->root && pclose (fb->fd) == EOF)
+	{
+	    error (1, errno, "closing connection to %s",
+		   fb->root->hostname);
+	    closefd = false;
+	}
+# endif /* START_RSH_WITH_POPEN_RW */
+
+	buf->input = NULL;
+    }
+    else if (buf->output)
+    {
+# ifdef SHUTDOWN_SERVER
+	/* FIXME:  Should have a SHUTDOWN_SERVER_INPUT &
+	 * SHUTDOWN_SERVER_OUTPUT
+	 */
+	if (fb->root && fb->root->method == server_method)
+	    SHUTDOWN_SERVER (fb->fd);
+	else
+# endif
+# ifndef NO_SOCKET_TO_FD
+	/* shutdown() sockets */
+	if (statted && S_ISSOCK (s.st_mode))
+	    shutdown (fb->fd, 1);
+# else
+	{
+	/* I'm not sure I like this empty block, but the alternative
+	 * is another nested NO_SOCKET_TO_FD switch as above.
+	 */
+	}
+# endif /* NO_SOCKET_TO_FD */
+
+	buf->output = NULL;
+    }
+
+    if (statted && closefd && close (fb->fd) == -1)
+    {
+	if (0
+# ifdef SERVER_SUPPORT
+	    || server_active
+# endif /* SERVER_SUPPORT */
+           )
+	{
+            /* Syslog this? */
+	}
+# ifdef CLIENT_SUPPORT
+	else if (fb->root)
+            error (1, errno, "closing down connection to %s",
+                   fb->root->hostname);
+	    /* EXITS */
+# endif /* CLIENT_SUPPORT */
+
+	error (0, errno, "closing down buffer");
+    }
+
+    /* If we were talking to a process, make sure it exited */
+    if (fb->child_pid)
+    {
+	int w;
+
+	do
+	    w = waitpid (fb->child_pid, (int *) 0, 0);
+	while (w == -1 && errno == EINTR);
+	if (w == -1)
+	    error (1, errno, "waiting for process %d", fb->child_pid);
+    }
+
+    free (buf->closure);
+    buf->closure = NULL;
+
+    return 0;
+}
 #endif /* defined (SERVER_SUPPORT) || defined (CLIENT_SUPPORT) */
