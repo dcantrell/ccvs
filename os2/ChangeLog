@@ -1,5 +1,10 @@
 Fri Oct 27 13:03:28 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
+        * config.h: oops, don't forget second argument, MODE.
+
+        * mkdir.c (os2_mkdir): new file, new function.
+        Can probably be merged with wnt_mkdir at some point.
+
         * config.h (ALLOCA_IN_STDLIB): new #define.
 
         * pwd.h, pwd.c: new files (for now, copied from ../windows-NT

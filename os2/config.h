@@ -7,6 +7,10 @@
  * right place to put configuration information for OS/2.
  */
 
+
+/* You bet! */
+#define __STDC__ 1
+
 /* Define if on AIX 3.
    System headers sometimes define this.
    We just want to avoid a redefinition error message.  */
@@ -289,7 +293,7 @@
 /* Under OS/2, mkdir only takes one argument.  */
 /* todo: remember to define this! */
 #define CVS_MKDIR os2_mkdir
-extern int os2_mkdir (const char *PATH);
+extern int os2_mkdir (const char *PATH, int MODE);
 
 /* This function doesn't exist under OS/2; we provide a stub. */
 extern int readlink (char *path, char *buf, int buf_size);
