@@ -802,43 +802,6 @@ update_dirleave_proc (dir, err, update_dir)
 	free (repository);
     }
 
-    /* Clean up CVS admin dirs if we are export */
-    if (strcmp (command_name, "export") == 0)
-    {
-	run_setup ("%s -fr", RM);
-	run_arg (CVSADM);
-	(void) run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL);
-    }
-#ifdef CVSADM_ROOT
-    else if (!server_active)
-    {
-        /* If there is no CVS/Root file, add one */
-        if (!isreadable (CVSADM_ROOT))
-	{
-	    if (isfile (CVSADM_ROOT))
-	    {
-	        error (0, 0, "bad permissions %s/%s deleteing it", update_dir,
-		       CVSADM_ROOT);
-		if (unlink_file (CVSADM_ROOT) == -1)
-		{
-		    error (0, errno, "delete failed for %s/%s",
-			   update_dir, CVSADM_ROOT);
-		}
-	    }
-	    Create_Root( (char *) NULL, CVSroot );
-	}
-	else
-	{
-	    char *root = Name_Root( (char *) NULL, update_dir);
-
-	    if (root == NULL)
-	        Create_Root( (char *) NULL, CVSroot );
-	    else
-	        free (root);		/* all is well, release the storage */
-	}
-    }
-#endif /* CVSADM_ROOT */
-
     /* Prune empty dirs on the way out - if necessary */
     (void) chdir ("..");
     if (update_prune_dirs && isemptydir (dir))
