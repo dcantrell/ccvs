@@ -120,6 +120,33 @@
    that's always there.  */
 #undef SERVER_SUPPORT
 
+/* Define if this executable will be running on case insensitive file systems.
+   In the client case, this means that it will request that the server pretend
+   to be case insensitive if it isn't already. */
+#define FILENAMES_CASE_INSENSITIVE 1
+
+/* Define on systems for which file names may have a so-called `drive letter'
+   prefix, define this to compute the length of that prefix, including the
+   colon. */
+#define FILESYSTEM_ACCEPTS_DRIVE_LETTER_PREFIX 1
+
+/* Define if the backslash character may also serve as a file name component
+   separator. */
+#define FILESYSTEM_BACKSLASH_IS_FILE_NAME_SEPARATOR 1
+
+#if FILESYSTEM_ACCEPTS_DRIVE_LETTER_PREFIX
+# define FILESYSTEM_PREFIX_LEN(Filename) \
+  ((Filename)[0] && (Filename)[1] == ':' ? 2 : 0)
+#else
+# define FILESYSTEM_PREFIX_LEN(Filename) 0
+#endif
+
+#if FILESYSTEM_BACKSLASH_IS_FILE_NAME_SEPARATOR
+# define ISSLASH(C) ((C) == '/' || (C) == '\\')
+#else
+# define ISSLASH(C) ((C) == '/')
+#endif
+
 /* Define to 1 if you have `alloca', as a function or macro. */
 #undef HAVE_ALLOCA
 
