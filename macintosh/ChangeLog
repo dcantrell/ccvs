@@ -1,3 +1,8 @@
+Wed Feb 28 11:31:11 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* config.h: Remove alloca cruft.
+	* server_if.c (macos_start_server): Don't use alloca.
+
 Mon Feb 12 03:33:27 1996  Benjamin J. Lee  <benjamin@cyclic.com>
 
 	* run.c: Changed Popen() to run_popen() for the benefit of

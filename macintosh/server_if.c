@@ -26,9 +26,9 @@ macos_start_server (int *tofd, int *fromfd,
 
     if (! (cvs_server = getenv ("CVS_SERVER")))
         cvs_server = "cvs";
-    command = alloca (strlen (cvs_server)
-    		      + strlen (server_cvsroot)
-		      + 50);
+    command = xmalloc (strlen (cvs_server)
+		       + strlen (server_cvsroot)
+		       + 50);
     sprintf (command, "%s -d %s server", cvs_server, server_cvsroot);
 
     if ((s = getservbyname("shell", "tcp")) == NULL)
@@ -52,6 +52,7 @@ macos_start_server (int *tofd, int *fromfd,
     
     *tofd = write_fd;
     *fromfd = read_fd;
+    free (command);
 }
 
 
