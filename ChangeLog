@@ -1,3 +1,24 @@
+2003-10-14  Derek Price  <derek@ximbiot.com>
+
+	* NEWS: Note POSIX 1003.1-2001 compatibility of docs and scripts.
+
+2003-10-14  Derek Price  <derek@ximbiot.com>
+
+	Port to pedantic POSIX 1003.1-2001 hosts, such as Debian GNU/Linux
+	testing with _POSIX2_VERSION=200112 in the environment.
+
+	* BUGS: Suggest 'diff -C2', not 'diff -c2'.
+	* FAQ: Suggest 'sort -k 1.2', not 'sort +0.1'.
+	* depcomp: Sync to the depcomp shipped with Automake 1.7.8, as
+	it has the bug fixed and that's better than maintaining our
+	own depcomp.
+	(Patch from Paul Eggert <eggert@twinsun.com>.)
+
+2003-10-14  Derek Price  <derek@ximbiot.com>
+
+	* INSTALL: Add HPPA 2.0 running HP-UX 10.20 for CVS 1.11.9.
+	(Report from Tom Kuiper <kuiper@DSNra.JPL.NASA.gov>.)
+
 2003-10-09  Derek Price  <derek@ximbiot.com>
 
 	* HACKING (Other style issues): Note the dev team's preference for

@@ -12884,9 +12884,9 @@ evaluate the log message.
 #  Verify that the log message contains a valid bugid
 #  on the first line.
 #
-if head -1 < $1 | grep '^BugId:[ ]*[0-9][0-9]*$' > /dev/null; then
+if sed 1q < $1 | grep '^BugId:[ ]*[0-9][0-9]*$' > /dev/null; then
     exit 0
-elif head -1 < $1 | grep '^BugId:[ ]*none$' > /dev/null; then
+elif sed 1q < $1 | grep '^BugId:[ ]*none$' > /dev/null; then
     # It is okay to allow commits with 'BugId: none',
     # but do not put that text into the real log message.
     grep -v '^BugId:[ ]*none$' > $1.rewrite
