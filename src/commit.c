@@ -54,7 +54,7 @@ static void fixbranch PROTO((RCSNode *, char *branch));
 static void unlockrcs PROTO((RCSNode *rcs));
 static void ci_delproc PROTO((Node *p));
 static void masterlist_delproc PROTO((Node *p));
-static void locate_rcs PROTO((char *file, char *repository, char *rcs));
+static char *locate_rcs PROTO((char *file, char *repository));
 
 struct commit_info
 {
@@ -1617,20 +1617,23 @@ finaladd (finfo, rev, tag, options)
     char *options;
 {
     int ret;
-    char tmp[PATH_MAX];
-    char rcs[PATH_MAX];
+    char *rcs;
 
-    locate_rcs (finfo->file, finfo->repository, rcs);
+    rcs = locate_rcs (finfo->file, finfo->repository);
     ret = Checkin ('A', finfo, rcs, rev, tag, options, message);
     if (ret == 0)
     {
+	char *tmp = xmalloc (strlen (finfo->file) + sizeof (CVSADM)
+			     + sizeof (CVSEXT_LOG) + 10);
 	(void) sprintf (tmp, "%s/%s%s", CVSADM, finfo->file, CVSEXT_LOG);
 	(void) unlink_file (tmp);
+	free (tmp);
     }
     else
 	fixaddfile (finfo->file, finfo->repository);
 
     (void) time (&last_register_time);
+    free (rcs);
 
     return (ret);
 }
@@ -1658,10 +1661,10 @@ fixaddfile (file, repository)
     char *repository;
 {
     RCSNode *rcsfile;
-    char rcs[PATH_MAX];
+    char *rcs;
     int save_really_quiet;
 
-    locate_rcs (file, repository, rcs);
+    rcs = locate_rcs (file, repository);
     save_really_quiet = really_quiet;
     really_quiet = 1;
     if ((rcsfile = RCS_parsercsfile (rcs)) == NULL)
@@ -1669,6 +1672,7 @@ fixaddfile (file, repository)
     else
 	freercsnode (&rcsfile);
     really_quiet = save_really_quiet;
+    free (rcs);
 }
 
 /*
@@ -1703,15 +1707,18 @@ checkaddfile (file, repository, tag, options, rcsnode)
     char *options;
     RCSNode **rcsnode;
 {
-    char rcs[PATH_MAX];
-    char fname[PATH_MAX];
+    char *rcs;
+    char *fname;
     mode_t omask;
     int retcode = 0;
     int newfile = 0;
     RCSNode *rcsfile = NULL;
+    int retval;
 
     if (tag)
     {
+	rcs = xmalloc (strlen (repository) + strlen (file)
+		       + sizeof (RCSEXT) + sizeof (CVSATTIC) + 10);
         (void) sprintf (rcs, "%s/%s%s", repository, file, RCSEXT);
 	if (! isreadable (rcs))
 	{
@@ -1725,36 +1732,53 @@ checkaddfile (file, repository, tag, options, rcsnode)
 	}
     }
     else
-	locate_rcs (file, repository, rcs);
+	rcs = locate_rcs (file, repository);
 
-    if (isreadable(rcs))
+    if (isreadable (rcs))
     {
 	/* file has existed in the past.  Prepare to resurrect. */
-	char oldfile[PATH_MAX];
 	char *rev;
 
 	if ((rcsfile = *rcsnode) == NULL)
 	{
 	    error (0, 0, "could not find parsed rcsfile %s", file);
-	    return (1);
+	    retval = 1;
+	    goto out;
 	}
 
 	if (tag == NULL)
 	{
+	    char *oldfile;
+
 	    /* we are adding on the trunk, so move the file out of the
 	       Attic. */
-	    strcpy (oldfile, rcs);
+	    oldfile = xstrdup (rcs);
 	    sprintf (rcs, "%s/%s%s", repository, file, RCSEXT);
 	    
-	    if (strcmp (oldfile, rcs) == 0
-		|| CVS_RENAME (oldfile, rcs) != 0
-		|| isreadable (oldfile)
+	    if (strcmp (oldfile, rcs) == 0)
+	    {
+		error (0, 0, "internal error: confused about attic for %s",
+		       oldfile);
+	    out1:
+		free (oldfile);
+		retval = 1;
+		goto out;
+	    }
+	    if (CVS_RENAME (oldfile, rcs) != 0)
+	    {
+		error (0, errno, "failed to move `%s' out of the attic",
+		       oldfile);
+		goto out1;
+	    }
+	    if (isreadable (oldfile)
 		|| !isreadable (rcs))
 	    {
-		error (0, 0, "failed to move `%s' out of the attic.",
-		       file);
-		return (1);
+		error (0, 0, "\
+internal error: `%s' didn't move out of the attic",
+		       oldfile);
+		goto out1;
 	    }
+	    free (oldfile);
 	    free (rcsfile->path);
 	    rcsfile->path = xstrdup (rcs);
 	}
@@ -1766,7 +1790,8 @@ checkaddfile (file, repository, tag, options, rcsnode)
 	    error (0, 0, "cannot lock `%s'.", rcs);
 	    if (rev != NULL)
 		free (rev);
-	    return (1);
+	    retval = 1;
+	    goto out;
 	}
 
 	if (rev != NULL)
@@ -1778,11 +1803,14 @@ checkaddfile (file, repository, tag, options, rcsnode)
 	   an rcs file.  */
 	run_setup ("%s%s -x,v/ -i", Rcsbin, RCS);
 
+	fname = xmalloc (strlen (file) + sizeof (CVSADM)
+			 + sizeof (CVSEXT_LOG) + 10);
 	(void) sprintf (fname, "%s/%s%s", CVSADM, file, CVSEXT_LOG);
 	/* If the file does not exist, no big deal.  In particular, the
 	   server does not (yet at least) create CVSEXT_LOG files.  */
 	if (isfile (fname))
 	    run_args ("-t%s/%s%s", CVSADM, file, CVSEXT_LOG);
+	free (fname);
 
 	/* Set RCS keyword expansion options.  */
 	if (options && options[0] == '-' && options[1] == 'k')
@@ -1792,7 +1820,8 @@ checkaddfile (file, repository, tag, options, rcsnode)
 	{
 	    error (retcode == -1 ? 1 : 0, retcode == -1 ? errno : 0,
 		   "could not create %s", rcs);
-	    return (1);
+	    retval = 1;
+	    goto out;
 	}
 	newfile = 1;
     }
@@ -1804,6 +1833,8 @@ checkaddfile (file, repository, tag, options, rcsnode)
 	char *tmp;
 
 	/* move the new file out of the way. */
+	fname = xmalloc (strlen (file) + sizeof (CVSADM)
+			 + sizeof (CVSPREFIX) + 10);
 	(void) sprintf (fname, "%s/%s%s", CVSADM, CVSPREFIX, file);
 	rename_file (file, fname);
 	copy_file (DEVNULL, file);
@@ -1819,18 +1850,21 @@ checkaddfile (file, repository, tag, options, rcsnode)
 	{
 	    error (retcode == -1 ? 1 : 0, retcode == -1 ? errno : 0,
 		   "could not create initial dead revision %s", rcs);
-	    return (1);
+	    retval = 1;
+	    goto out;
 	}
 
 	/* put the new file back where it was */
 	rename_file (fname, file);
+	free (fname);
 
 	assert (rcsfile == NULL);
 	rcsfile = RCS_parse (file, repository);
 	if (rcsfile == NULL)
 	{
 	    error (0, 0, "could not read %s", rcs);
-	    return (1);
+	    retval = 1;
+	    goto out;
 	}
 	if (rcsnode != NULL)
 	{
@@ -1839,9 +1873,11 @@ checkaddfile (file, repository, tag, options, rcsnode)
 	}
 
 	/* and lock it once again. */
-	if (lock_RCS (file, rcsfile, NULL, repository)) {
+	if (lock_RCS (file, rcsfile, NULL, repository))
+	{
 	    error (0, 0, "cannot lock `%s'.", rcs);
-	    return (1);
+	    retval = 1;
+	    goto out;
 	}
     }
 
@@ -1860,16 +1896,18 @@ checkaddfile (file, repository, tag, options, rcsnode)
 		if (rcsfile == NULL)
 		{
 		    error (0, 0, "could not read %s", rcs);
-		    return (1);
+		    retval = 1;
+		    goto out;
 		}
 	    }
 	}
 
-	if (!RCS_nodeisbranch (rcsfile, tag)) {
+	if (!RCS_nodeisbranch (rcsfile, tag))
+	{
 	    /* branch does not exist.  Stub it.  */
 	    char *head;
 	    char *magicrev;
-	    
+
 	    head = RCS_getversion (rcsfile, NULL, NULL, 0, (int *) NULL);
 	    magicrev = RCS_magicrev (rcsfile, head);
 
@@ -1882,15 +1920,18 @@ checkaddfile (file, repository, tag, options, rcsnode)
 	    {
 		error (retcode == -1 ? 1 : 0, retcode == -1 ? errno : 0,
 		       "could not stub branch %s for %s", tag, rcs);
-		return (1);
+		retval = 1;
+		goto out;
 	    }
 	}
 	else
 	{
 	    /* lock the branch. (stubbed branches need not be locked.)  */
-	    if (lock_RCS (file, rcsfile, NULL, repository)) {
+	    if (lock_RCS (file, rcsfile, NULL, repository))
+	    {
 		error (0, 0, "cannot lock `%s'.", rcs);
-		return (1);
+		retval = 1;
+		goto out;
 	    }
 	} 
 
@@ -1904,7 +1945,11 @@ checkaddfile (file, repository, tag, options, rcsnode)
     fileattr_newfile (file);
 
     fix_rcs_modes (rcs, file);
-    return (0);
+    retval = 0;
+
+ out:
+    free (rcs);
+    return retval;
 }
 
 /*
@@ -2047,15 +2092,23 @@ masterlist_delproc (p)
     free (ml);
 }
 
-/*
- * Find an RCS file in the repository.
- */
-static void
-locate_rcs (file, repository, rcs)
+/* Find an RCS file in the repository.  Most parts of CVS will want to
+   rely instead on RCS_parse which performs a similar operation and is
+   called by recurse.c which then puts the result in useful places
+   like the rcs field of struct file_info.
+
+   REPOSITORY is the repository (including the directory) and FILE is
+   the filename within that directory (without RCSEXT).  Returns a
+   newly-malloc'd array containing the absolute pathname of the RCS
+   file that was found.  */
+static char *
+locate_rcs (file, repository)
     char *file;
     char *repository;
-    char *rcs;
 {
+    char *rcs;
+
+    rcs = xmalloc (strlen (repository) + strlen (file) + sizeof (RCSEXT) + 10);
     (void) sprintf (rcs, "%s/%s%s", repository, file, RCSEXT);
     if (!isreadable (rcs))
     {
@@ -2063,4 +2116,5 @@ locate_rcs (file, repository, rcs)
 	if (!isreadable (rcs))
 	    (void) sprintf (rcs, "%s/%s%s", repository, file, RCSEXT);
     }
+    return rcs;
 }

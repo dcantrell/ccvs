@@ -178,6 +178,7 @@
  */
 
 #include "cvs.h"
+#include "savecwd.h"
 
 static struct hrec
 {
@@ -368,7 +369,7 @@ history (argc, argv)
     char **argv;
 {
     int i, c;
-    char fname[PATH_MAX];
+    char *fname;
 
     if (argc == -1)
 	usage (history_usg);
@@ -648,14 +649,19 @@ history (argc, argv)
 	save_file ("", argv[i], (char *) NULL);
 
     if (histfile)
-	(void) strcpy (fname, histfile);
+	fname = xstrdup (histfile);
     else
+    {
+	fname = xmalloc (strlen (CVSroot_directory) + sizeof (CVSROOTADM)
+			 + sizeof (CVSROOTADM_HISTORY) + 10);
 	(void) sprintf (fname, "%s/%s/%s", CVSroot_directory,
 			CVSROOTADM, CVSROOTADM_HISTORY);
+    }
 
     read_hrecs (fname);
     qsort ((PTR) hrec_head, hrec_count, sizeof (struct hrec), sort_order);
     report_hrecs ();
+    free (fname);
 
     return (0);
 }
@@ -668,7 +674,8 @@ history_write (type, update_dir, revs, name, repository)
     char *name;
     char *repository;
 {
-    char fname[PATH_MAX], workdir[PATH_MAX], homedir[PATH_MAX];
+    char *fname;
+    char *workdir;
     char *username = getcaller ();
     int fd;
     char *line;
@@ -679,6 +686,8 @@ history_write (type, update_dir, revs, name, repository)
 
     if (logoff)			/* History is turned off by cmd line switch */
 	return;
+    fname = xmalloc (strlen (CVSroot_directory) + sizeof (CVSROOTADM)
+		     + sizeof (CVSROOTADM_HISTORY) + 10);
     (void) sprintf (fname, "%s/%s/%s", CVSroot_directory,
 		    CVSROOTADM, CVSROOTADM_HISTORY);
 
@@ -686,7 +695,7 @@ history_write (type, update_dir, revs, name, repository)
     if (!isfile (fname))
     {
 	logoff = 1;
-	return;
+	goto out;
     }
 
     if (trace)
@@ -697,7 +706,7 @@ history_write (type, update_dir, revs, name, repository)
 	fprintf (stderr, "-> fopen(%s,a)\n", fname);
 #endif
     if (noexec)
-	return;
+	goto out;
     fd = CVS_OPEN (fname, O_WRONLY | O_APPEND | O_CREAT | OPEN_BINARY, 0666);
     if (fd < 0)
 	error (1, errno, "cannot open history file: %s", fname);
@@ -722,13 +731,21 @@ history_write (type, update_dir, revs, name, repository)
 	    else
 	    {
 		/* Try harder to find a "homedir" */
-		if (!getwd (workdir))
-		    error (1, errno, "can't getwd in history");
+		struct saved_cwd cwd;
+		char *homedir;
+
+		if (save_cwd (&cwd))
+		    error_exit ();
+
 		if ( CVS_CHDIR (pwdir) < 0)
 		    error (1, errno, "can't chdir(%s)", pwdir);
-		if (!getwd (homedir))
+		homedir = xgetwd ();
+		if (homedir == NULL)
 		    error (1, errno, "can't getwd in %s", pwdir);
-		(void) CVS_CHDIR (workdir);
+
+		if (restore_cwd (&cwd, NULL))
+		    error_exit ();
+		free_cwd (&cwd);
 
 		i = strlen (homedir);
 		if (!strncmp (CurDir, homedir, i))
@@ -736,6 +753,7 @@ history_write (type, update_dir, revs, name, repository)
 		    PrCurDir += i;	/* Point to '/' separator */
 		    tilde = "~";
 		}
+		free (homedir);
 	    }
 	}
     }
@@ -750,6 +768,8 @@ history_write (type, update_dir, revs, name, repository)
     else
 	update_dir = "";
 
+    workdir = xmalloc (strlen (tilde) + strlen (PrCurDir) + strlen (slash)
+		       + strlen (update_dir) + 10);
     (void) sprintf (workdir, "%s%s%s%s", tilde, PrCurDir, slash, update_dir);
 
     /*
@@ -823,6 +843,9 @@ history_write (type, update_dir, revs, name, repository)
     free (line);
     if (close (fd) != 0)
 	error (1, errno, "cannot close history file: %s", fname);
+    free (workdir);
+ out:
+    free (fname);
 }
 
 /*
@@ -1232,7 +1255,7 @@ select_hrec (hr)
 		 *    the concatenation of the repository and file from hrec.
 		 * 3. Else compare the file_list entry against the hrec file.
 		 */
-		char cmpfile[PATH_MAX];
+		char *cmpfile = NULL;
 
 		if (*(cp = fl->l_file) == '*')
 		{
@@ -1248,8 +1271,12 @@ select_hrec (hr)
 		{
 		    if (strchr (cp, '/'))
 		    {
-			(void) sprintf (cp2 = cmpfile, "%s/%s",
+			cmpfile = xmalloc (strlen (hr->repos)
+					   + strlen (hr->file)
+					   + 10);
+			(void) sprintf (cmpfile, "%s/%s",
 					hr->repos, hr->file);
+			cp2 = cmpfile;
 		    }
 		    else
 		    {
@@ -1262,6 +1289,8 @@ select_hrec (hr)
 			hr->mod = fl->l_module;
 			break;
 		    }
+		    if (cmpfile != NULL)
+			free (cmpfile);
 		}
 	    }
 	    if (!count)
@@ -1320,7 +1349,7 @@ report_hrecs ()
     hr++;
     for (count = hrec_count; count--; lr = hr, hr++)
     {
-	char repos[PATH_MAX];
+	char *repos;
 
 	if (!count)
 	    hr = NULL;
@@ -1328,7 +1357,7 @@ report_hrecs ()
 	    continue;
 
 	ty = *(lr->type);
-	(void) strcpy (repos, lr->repos);
+	repos = xstrdup (lr->repos);
 	if ((cp = strrchr (repos, '/')) != NULL)
 	{
 	    if (lr->mod && !strcmp (++cp, lr->mod))
@@ -1346,6 +1375,7 @@ report_hrecs ()
 	    rev_len = i;
 	if (lr->mod && (i = strlen (lr->mod)) > mod_len)
 	    mod_len = i;
+	free (repos);
     }
 
     /* Walk through hrec array setting "lr" (Last Record) to each element.
@@ -1359,7 +1389,8 @@ report_hrecs ()
      */
     for (lr = hrec_head, hr = (lr + 1); hrec_count--; lr = hr, hr++)
     {
-	char workdir[PATH_MAX], repos[PATH_MAX];
+	char *workdir;
+	char *repos;
 
 	if (!hrec_count)
 	    hr = NULL;
@@ -1380,6 +1411,7 @@ report_hrecs ()
 		  tm->tm_mday, tm->tm_hour, tm->tm_min, tz_name,
 		  user_len, lr->user);
 
+	workdir = xmalloc (strlen (lr->dir) + strlen (lr->end) + 10);
 	(void) sprintf (workdir, "%s%s", lr->dir, lr->end);
 	if ((cp = strrchr (workdir, '/')) != NULL)
 	{
@@ -1388,6 +1420,7 @@ report_hrecs ()
 		(void) strcpy (cp, "*");
 	    }
 	}
+	repos = xmalloc (strlen (lr->repos) + 10);
 	(void) strcpy (repos, lr->repos);
 	if ((cp = strrchr (repos, '/')) != NULL)
 	{
@@ -1431,6 +1464,8 @@ report_hrecs ()
 		break;
 	}
 	(void) putchar ('\n');
+	free (workdir);
+	free (repos);
     }
 }
 

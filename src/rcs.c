@@ -68,8 +68,11 @@ RCS_parse (file, repos)
 {
     RCSNode *rcs;
     FILE *fp;
-    char rcsfile[PATH_MAX];
+    RCSNode *retval;
+    char *rcsfile;
 
+    rcsfile = xmalloc (strlen (repos) + strlen (file)
+		       + sizeof (RCSEXT) + sizeof (CVSATTIC) + 10);
     (void) sprintf (rcsfile, "%s/%s%s", repos, file, RCSEXT);
     if ((fp = CVS_FOPEN (rcsfile, FOPEN_BINARY_READ)) != NULL) 
     {
@@ -78,12 +81,14 @@ RCS_parse (file, repos)
 	    rcs->flags |= VALID;
 
 	fclose (fp);
-	return (rcs);
+	retval = rcs;
+	goto out;
     }
     else if (! existence_error (errno))
     {
 	error (0, errno, "cannot open %s", rcsfile);
-	return NULL;
+	retval = NULL;
+	goto out;
     }
 
     (void) sprintf (rcsfile, "%s/%s/%s%s", repos, CVSATTIC, file, RCSEXT);
@@ -97,15 +102,21 @@ RCS_parse (file, repos)
 	}
 
 	fclose (fp);
-	return (rcs);
+	retval = rcs;
+	goto out;
     }
     else if (! existence_error (errno))
     {
 	error (0, errno, "cannot open %s", rcsfile);
-	return NULL;
+	retval = NULL;
+	goto out;
     }
+    retval = NULL;
 
-    return (NULL);
+ out:
+    free (rcsfile);
+
+    return retval;
 }
 
 /*

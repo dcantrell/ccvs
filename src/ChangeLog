@@ -1,3 +1,25 @@
+Thu Jan  9 16:32:47 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* checkout.c (build_dirs_and_chdir): Partially revert 3 Jan
+	change--move call to Subdir_Register back above the CVS_CHDIR call
+	(we need to register in the old, not the new, directory).  Instead
+	of calling CVS_MKDIR and ignoring errors, call mkdir_if_needed;
+	this is an effort to catch errors there rather than catching them
+	in the CVS_CHDIR.  This makes test 27-add-add in sanity.sh work
+	again.
+
+	* find_names.c (Find_Directories): Remove code inside
+	#ifdef ATTIC_DIR_SUPPORT and replace it with a comment explaining
+	why we don't look in the attic.  ATTIC_DIR_SUPPORT was never defined.
+
+	* find_names.c (find_dirs): Add comment about tmp being unset.
+
+	* commit.c (checkaddfile): Report errors with errno and specific
+	error messages.
+
+	* rcs.c, commit.c, create_adm.c, entries.c, find_names.c,
+	ignore.c, history.c: Nuke PATH_MAX arbitrary limits.
+
 Wed Jan  8 23:07:41 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* add.c (add): Reindent a portion which needed it.
