@@ -1,4 +1,3 @@
-
 /*
  * Copyright (c) 1992, Brian Berliner and Jeff Polk
  * Copyright (c) 1989-1992, Brian Berliner
@@ -84,16 +83,14 @@ static void call_diff_write_stdout (const char *);
 static void call_diff_error (const char *, const char *, const char *);
 
 /* VARARGS */
-static void
+static void 
 call_diff_setup (const char *prog)
 {
     char *cp;
     int i;
     char *call_diff_prog;
 
-    /*
-       clean out any malloc'ed values from call_diff_argv 
-     */
+    /* clean out any malloc'ed values from call_diff_argv */
     for (i = 0; i < call_diff_argc; i++)
     {
 	if (call_diff_argv[i])
@@ -106,11 +103,10 @@ call_diff_setup (const char *prog)
 
     call_diff_prog = xstrdup (prog);
 
-    /*
-       put each word into call_diff_argv, allocating it as we go 
-     */
+    /* put each word into call_diff_argv, allocating it as we go */
     for (cp = strtok (call_diff_prog, " \t");
-	 cp != NULL; cp = strtok ((char *) NULL, " \t"))
+	 cp != NULL;
+	 cp = strtok ((char *) NULL, " \t"))
 	call_diff_add_arg (cp);
     free (call_diff_prog);
 }
@@ -124,9 +120,7 @@ call_diff_arg (const char *s)
 static void
 call_diff_add_arg (const char *s)
 {
-    /*
-       allocate more argv entries if we've run out 
-     */
+    /* allocate more argv entries if we've run out */
     if (call_diff_argc >= call_diff_argc_allocated)
     {
 	call_diff_argc_allocated += 50;
@@ -138,9 +132,7 @@ call_diff_add_arg (const char *s)
     if (s)
 	call_diff_argv[call_diff_argc++] = xstrdup (s);
     else
-	/*
-	   Not post-incremented on purpose!  
-	 */
+	/* Not post-incremented on purpose!  */
 	call_diff_argv[call_diff_argc] = (char *) 0;
 }
 
@@ -176,17 +168,16 @@ call_diff_write_stdout (const char *text)
 static void
 call_diff_error (const char *format, const char *a1, const char *a2)
 {
-    /*
-       FIXME: Should we somehow indicate that this error is coming from
-       the diff library?  
-     */
+    /* FIXME: Should we somehow indicate that this error is coming from
+       the diff library?  */
     error (0, 0, format, a1, a2);
 }
 
 /* This set of callback functions is used if we are sending the diff
    to stdout.  */
 
-static struct diff_callbacks call_diff_stdout_callbacks = {
+static struct diff_callbacks call_diff_stdout_callbacks =
+{
     call_diff_write_output,
     call_diff_flush_output,
     call_diff_write_stdout,
@@ -196,9 +187,10 @@ static struct diff_callbacks call_diff_stdout_callbacks = {
 /* This set of callback functions is used if we are sending the diff
    to a file.  */
 
-static struct diff_callbacks call_diff_file_callbacks = {
-    (void (*)(const char *, size_t)) NULL,
-    (void (*)(void)) NULL,
+static struct diff_callbacks call_diff_file_callbacks =
+{
+    (void (*) (const char *, size_t)) NULL,
+    (void (*) (void)) NULL,
     call_diff_write_stdout,
     call_diff_error
 };
@@ -207,11 +199,11 @@ static int
 call_diff (char *out)
 {
     if (out == RUN_TTY)
-	return diff_run (call_diff_argc, call_diff_argv, NULL,
-			 &call_diff_stdout_callbacks);
+	return diff_run( call_diff_argc, call_diff_argv, NULL,
+			 &call_diff_stdout_callbacks );
     else
-	return diff_run (call_diff_argc, call_diff_argv, out,
-			 &call_diff_file_callbacks);
+	return diff_run( call_diff_argc, call_diff_argv, out,
+			 &call_diff_file_callbacks );
 }
 
 static int
@@ -230,8 +222,7 @@ call_diff3 (char *out)
 /* Merge revisions REV1 and REV2. */
 
 int
-RCS_merge (RCSNode * rcs, char *path, char *workfile, char *options,
-	   char *rev1, char *rev2)
+RCS_merge(RCSNode *rcs, char *path, char *workfile, char *options, char *rev1, char *rev2)
 {
     char *xrev1, *xrev2;
     char *tmp1, *tmp2;
@@ -239,53 +230,47 @@ RCS_merge (RCSNode * rcs, char *path, char *workfile, char *options,
     int retval;
 
     if (options != NULL && options[0] != '\0')
-	assert (options[0] == '-' && options[1] == 'k');
+      assert (options[0] == '-' && options[1] == 'k');
 
     cvs_output ("RCS file: ", 0);
     cvs_output (rcs->path, 0);
     cvs_output ("\n", 1);
 
-    /*
-       Calculate numeric revision numbers from rev1 and rev2 (may be
+    /* Calculate numeric revision numbers from rev1 and rev2 (may be
        symbolic).
        FIXME - No they can't.  Both calls to RCS_merge are passing in
-       numeric revisions.  
-     */
+       numeric revisions.  */
     xrev1 = RCS_gettag (rcs, rev1, 0, NULL);
     xrev2 = RCS_gettag (rcs, rev2, 0, NULL);
 
-    /*
-       Check out chosen revisions.  The error message when RCS_checkout
+    /* Check out chosen revisions.  The error message when RCS_checkout
        fails is not very informative -- it is taken verbatim from RCS 5.7,
-       and relies on RCS_checkout saying something intelligent upon failure. 
-     */
+       and relies on RCS_checkout saying something intelligent upon failure. */
     cvs_output ("retrieving revision ", 0);
     cvs_output (xrev1, 0);
     cvs_output ("\n", 1);
 
-    tmp1 = cvs_temp_name ();
+    tmp1 = cvs_temp_name();
     if (RCS_checkout (rcs, NULL, xrev1, rev1, options, tmp1,
-		      (RCSCHECKOUTPROC) 0, NULL))
+		      (RCSCHECKOUTPROC)0, NULL))
     {
 	cvs_outerr ("rcsmerge: co failed\n", 0);
-	error_exit ();
+	error_exit();
     }
 
     cvs_output ("retrieving revision ", 0);
     cvs_output (xrev2, 0);
     cvs_output ("\n", 1);
 
-    tmp2 = cvs_temp_name ();
+    tmp2 = cvs_temp_name();
     if (RCS_checkout (rcs, NULL, xrev2, rev2, options, tmp2,
-		      (RCSCHECKOUTPROC) 0, NULL))
+		      (RCSCHECKOUTPROC)0, NULL))
     {
 	cvs_outerr ("rcsmerge: co failed\n", 0);
-	error_exit ();
+	error_exit();
     }
 
-    /*
-       Merge changes. 
-     */
+    /* Merge changes. */
     cvs_output ("Merging differences between ", 0);
     cvs_output (xrev1, 0);
     cvs_output (" and ", 0);
@@ -294,11 +279,9 @@ RCS_merge (RCSNode * rcs, char *path, char *workfile, char *options,
     cvs_output (workfile, 0);
     cvs_output ("\n", 1);
 
-    /*
-       Remember that the first word in the `call_diff_setup' string is used now
-       only for diagnostic messages -- CVS no longer forks to run diff3. 
-     */
-    diffout = cvs_temp_name ();
+    /* Remember that the first word in the `call_diff_setup' string is used now
+       only for diagnostic messages -- CVS no longer forks to run diff3. */
+    diffout = cvs_temp_name();
     call_diff_setup ("diff3");
     call_diff_arg ("-E");
     call_diff_arg ("-am");
@@ -319,17 +302,14 @@ RCS_merge (RCSNode * rcs, char *path, char *workfile, char *options,
     if (retval == 1)
 	cvs_outerr ("rcsmerge: warning: conflicts during merge\n", 0);
     else if (retval == 2)
-	error_exit ();
+	error_exit();
 
     if (diffout)
 	copy_file (diffout, workfile);
 
-    /*
-       Clean up. 
-     */
+    /* Clean up. */
     {
 	int save_noexec = noexec;
-
 	noexec = 0;
 	if (unlink_file (tmp1) < 0)
 	{
@@ -381,9 +361,7 @@ RCS_merge (RCSNode * rcs, char *path, char *workfile, char *options,
    about this--any such features are undocumented in the context of
    CVS, and I'm not sure how important to users.  */
 int
-RCS_exec_rcsdiff (RCSNode * rcsfile, char *opts, char *options, char *rev1,
-		  char *rev1_cache, char *rev2, char *label1, char *label2,
-		  char *workfile)
+RCS_exec_rcsdiff(RCSNode *rcsfile, char *opts, char *options, char *rev1, char *rev1_cache, char *rev2, char *label1, char *label2, char *workfile)
 {
     char *tmpfile1 = NULL;
     char *tmpfile2 = NULL;
@@ -397,25 +375,23 @@ RCS file: ", 0);
     cvs_output (rcsfile->path, 0);
     cvs_output ("\n", 1);
 
-    /*
-       Historically, `cvs diff' has expanded the $Name keyword to the
+    /* Historically, `cvs diff' has expanded the $Name keyword to the
        empty string when checking out revisions.  This is an accident,
        but no one has considered the issue thoroughly enough to determine
        what the best behavior is.  Passing NULL for the `nametag' argument
-       preserves the existing behavior. 
-     */
+       preserves the existing behavior. */
 
     cvs_output ("retrieving revision ", 0);
     cvs_output (rev1, 0);
     cvs_output ("\n", 1);
 
-    if (rev1_cache != NULL)
+    if( rev1_cache != NULL )
 	use_file1 = rev1_cache;
     else
     {
-	tmpfile1 = cvs_temp_name ();
-	status = RCS_checkout (rcsfile, NULL, rev1, NULL, options, tmpfile1,
-			       (RCSCHECKOUTPROC) 0, NULL);
+	tmpfile1 = cvs_temp_name();
+	status = RCS_checkout( rcsfile, NULL, rev1, NULL, options, tmpfile1,
+	                       (RCSCHECKOUTPROC)0, NULL );
 	if (status > 0)
 	{
 	    retval = status;
@@ -423,8 +399,8 @@ RCS file: ", 0);
 	}
 	else if (status < 0)
 	{
-	    error (0, errno,
-		   "cannot check out revision %s of %s", rev1, rcsfile->path);
+	    error( 0, errno,
+	           "cannot check out revision %s of %s", rev1, rcsfile->path );
 	    retval = 1;
 	    goto error_return;
 	}
@@ -443,7 +419,7 @@ RCS file: ", 0);
 	cvs_output (rev2, 0);
 	cvs_output ("\n", 1);
 	status = RCS_checkout (rcsfile, NULL, rev2, NULL, options,
-			       tmpfile2, (RCSCHECKOUTPROC) 0, NULL);
+			       tmpfile2, (RCSCHECKOUTPROC)0, NULL);
 	if (status > 0)
 	{
 	    retval = status;
@@ -459,7 +435,7 @@ RCS file: ", 0);
     }
 
     RCS_output_diff_options (opts, rev1, rev2, workfile);
-    status = diff_exec (use_file1, use_file2, label1, label2, opts, RUN_TTY);
+    status = diff_exec( use_file1, use_file2, label1, label2, opts, RUN_TTY );
     if (status >= 0)
     {
 	retval = status;
@@ -467,32 +443,32 @@ RCS file: ", 0);
     }
     else if (status < 0)
     {
-	error (0, errno, "cannot diff %s and %s", use_file1, use_file2);
+	error (0, errno,
+	       "cannot diff %s and %s", use_file1, use_file2);
 	retval = 1;
 	goto error_return;
     }
 
-  error_return:
+ error_return:
     {
-	/*
-	   Call CVS_UNLINK() below rather than unlink_file to avoid the check
-	   * for noexec.
+	/* Call CVS_UNLINK() below rather than unlink_file to avoid the check
+	 * for noexec.
 	 */
-	if (tmpfile1 != NULL)
+	if( tmpfile1 != NULL )
 	{
-	    if (CVS_UNLINK (tmpfile1) < 0)
+	    if( CVS_UNLINK( tmpfile1 ) < 0 )
 	    {
-		if (!existence_error (errno))
-		    error (0, errno, "cannot remove temp file %s", tmpfile1);
+		if( !existence_error( errno ) )
+		    error( 0, errno, "cannot remove temp file %s", tmpfile1 );
 	    }
-	    free (tmpfile1);
+	    free( tmpfile1 );
 	}
-	if (tmpfile2 != NULL)
+	if( tmpfile2 != NULL )
 	{
-	    if (CVS_UNLINK (tmpfile2) < 0)
+	    if( CVS_UNLINK( tmpfile2 ) < 0 )
 	    {
-		if (!existence_error (errno))
-		    error (0, errno, "cannot remove temp file %s", tmpfile2);
+		if( !existence_error( errno ) )
+		    error( 0, errno, "cannot remove temp file %s", tmpfile2 );
 	    }
 	    free (tmpfile2);
 	}
@@ -537,14 +513,12 @@ RCS file: ", 0);
    message on stderr.  */
 
 int
-diff_exec (char *file1, char *file2, char *label1, char *label2,
-	   char *options, char *out)
+diff_exec (char *file1, char *file2, char *label1, char *label2, char *options, char *out)
 {
     char *args;
 
 #ifdef PRESERVE_PERMISSIONS_SUPPORT
-    /*
-       If either file1 or file2 are special files, pretend they are
+    /* If either file1 or file2 are special files, pretend they are
        /dev/null.  Reason: suppose a file that represents a block
        special device in one revision becomes a regular file.  CVS
        must find the `difference' between these files, but a special
@@ -556,11 +530,11 @@ diff_exec (char *file1, char *file2, char *label1, char *label2,
        very rare anyway.
 
        There may be ways around this, but I think they are fraught
-       with danger. -twp 
-     */
+       with danger. -twp */
 
     if (preserve_perms &&
-	strcmp (file1, DEVNULL) != 0 && strcmp (file2, DEVNULL) != 0)
+	strcmp (file1, DEVNULL) != 0 &&
+	strcmp (file2, DEVNULL) != 0)
     {
 	struct stat sb1, sb2;
 
@@ -577,9 +551,7 @@ diff_exec (char *file1, char *file2, char *label1, char *label2,
 #endif
 
     args = xmalloc (strlen (options) + 10);
-    /*
-       The first word in this string is used only for error reporting. 
-     */
+    /* The first word in this string is used only for error reporting. */
     sprintf (args, "diff %s", options);
     call_diff_setup (args);
     if (label1)

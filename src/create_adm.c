@@ -1,4 +1,3 @@
-
 /*
  * Copyright (c) 1992, Brian Berliner and Jeff Polk
  * Copyright (c) 1989-1992, Brian Berliner
@@ -23,17 +22,16 @@
    don't print warnings; all errors are fatal then.  */
 
 int
-Create_Admin (char *dir, char *update_dir, char *repository, char *tag,
-	      char *date, int nonbranch, int warn, int dotemplate)
+Create_Admin (char *dir, char *update_dir, char *repository, char *tag, char *date, int nonbranch, int warn, int dotemplate)
 {
     FILE *fout;
     char *cp;
     char *reposcopy;
     char *tmp;
 
-    TRACE (1, "Create_Admin (%s, %s, %s, %s, %s, %d, %d, %d)",
-	   dir, update_dir, repository, tag ? tag : "",
-	   date ? date : "", nonbranch, warn, dotemplate);
+    TRACE ( 1, "Create_Admin (%s, %s, %s, %s, %s, %d, %d, %d)",
+	    dir, update_dir, repository, tag ? tag : "",
+	    date ? date : "", nonbranch, warn, dotemplate );
 
     if (noexec)
 	return 0;
@@ -45,23 +43,19 @@ Create_Admin (char *dir, char *update_dir, char *repository, char *tag,
 
     if (CVS_MKDIR (tmp, 0777) < 0)
     {
-	/*
-	   We want to print out the entire update_dir, since a lot of
+	/* We want to print out the entire update_dir, since a lot of
 	   our code calls this function with dir == "." or dir ==
 	   NULL.  I hope that gives enough information in cases like
 	   absolute pathnames; printing out xgetwd or something would
-	   be way too verbose in the common cases.  
-	 */
+	   be way too verbose in the common cases.  */
 
 	if (warn)
 	{
-	    /*
-	       The reason that this is a warning, rather than silently
+	    /* The reason that this is a warning, rather than silently
 	       just skipping creating the directory, is that we don't want
 	       CVS's behavior to vary subtly based on factors (like directory
 	       permissions) which are not made clear to the user.  With
-	       the warning at least we let them know what is going on.  
-	     */
+	       the warning at least we let them know what is going on.  */
 	    error (0, errno, "warning: cannot make directory %s in %s",
 		   CVSADM, update_dir);
 	    free (tmp);
@@ -72,9 +66,7 @@ Create_Admin (char *dir, char *update_dir, char *repository, char *tag,
 		   CVSADM, update_dir);
     }
 
-    /*
-       record the current cvs root for later use 
-     */
+    /* record the current cvs root for later use */
 
     Create_Root (dir, current_parsed_root->original);
     if (dir != NULL)
@@ -92,13 +84,11 @@ Create_Admin (char *dir, char *update_dir, char *repository, char *tag,
     reposcopy = xstrdup (repository);
     Sanitize_Repository_Name (reposcopy);
 
-    /*
-       The top level of the repository is a special case -- we need to
+    /* The top level of the repository is a special case -- we need to
        write it with an extra dot at the end.  This trailing `.' stuff
        rubs me the wrong way -- on the other hand, I don't want to
        spend the time making sure all of the code can handle it if we
-       don't do it. 
-     */
+       don't do it. */
 
     if (strcmp (reposcopy, current_parsed_root->directory) == 0)
     {
@@ -113,12 +103,12 @@ Create_Admin (char *dir, char *update_dir, char *repository, char *tag,
      * the leading CVSroot argument.
      */
     {
-	char *path = xmalloc (strlen (current_parsed_root->directory) + 2);
+    char *path = xmalloc (strlen (current_parsed_root->directory) + 2);
 
-	(void) sprintf (path, "%s/", current_parsed_root->directory);
-	if (strncmp (cp, path, strlen (path)) == 0)
-	    cp += strlen (path);
-	free (path);
+    (void) sprintf (path, "%s/", current_parsed_root->directory);
+    if (strncmp (cp, path, strlen (path)) == 0)
+	cp += strlen (path);
+    free (path);
     }
 
     if (fprintf (fout, "%s\n", cp) < 0)
@@ -136,9 +126,7 @@ Create_Admin (char *dir, char *update_dir, char *repository, char *tag,
 	    error (1, errno, "cannot close %s/%s", update_dir, CVSADM_REP);
     }
 
-    /*
-       now, do the Entries file 
-     */
+    /* now, do the Entries file */
     if (dir != NULL)
 	(void) sprintf (tmp, "%s/%s", dir, CVSADM_ENT);
     else
@@ -159,12 +147,10 @@ Create_Admin (char *dir, char *update_dir, char *repository, char *tag,
 	    error (1, errno, "cannot close %s/%s", update_dir, CVSADM_ENT);
     }
 
-    /*
-       Create a new CVS/Tag file 
-     */
+    /* Create a new CVS/Tag file */
     WriteTag (dir, tag, date, nonbranch, update_dir, repository);
 
-    TRACE (1, "Create_Admin");
+    TRACE ( 1, "Create_Admin" );
 
     free (reposcopy);
     free (tmp);

@@ -1,4 +1,3 @@
-
 /*
  * Copyright (c) 1992, Brian Berliner and Jeff Polk
  * Copyright (c) 1989-1992, Brian Berliner
@@ -10,67 +9,61 @@
 
 #include "cvs.h"
 
-static void sticky_ck (struct file_info *finfo, int aflag, Vers_TS * vers);
+static void sticky_ck (struct file_info *finfo, int aflag,
+			      Vers_TS * vers);
 
 /*
  * Classify the state of a file
  */
 Ctype
-Classify_File (struct file_info *finfo, char *tag, char *date, char *options,
-	       int force_tag_match, int aflag, Vers_TS ** versp, int pipeout)
-    /*
-       Keyword expansion options.  Can be either NULL or "" to
-       indicate none are specified here.  
-     */
+Classify_File (struct file_info *finfo, char *tag, char *date, char *options, int force_tag_match, int aflag, Vers_TS **versp, int pipeout)
+                            
+              
+               
+
+    /* Keyword expansion options.  Can be either NULL or "" to
+       indicate none are specified here.  */
+                  
+
+                        
+              
+                    
+                
 {
     Vers_TS *vers;
     Ctype ret;
 
-    /*
-       get all kinds of good data about the file 
-     */
-    vers = Version_TS (finfo, options, tag, date, force_tag_match, 0);
+    /* get all kinds of good data about the file */
+    vers = Version_TS (finfo, options, tag, date,
+		       force_tag_match, 0);
 
     if (vers->vn_user == NULL)
     {
-	/*
-	   No entry available, ts_rcs is invalid 
-	 */
+	/* No entry available, ts_rcs is invalid */
 	if (vers->vn_rcs == NULL)
 	{
-	    /*
-	       there is no RCS file either 
-	     */
+	    /* there is no RCS file either */
 	    if (vers->ts_user == NULL)
 	    {
-		/*
-		   there is no user file 
-		 */
-		/*
-		   FIXME: Why do we skip this message if vers->tag or
+		/* there is no user file */
+		/* FIXME: Why do we skip this message if vers->tag or
 		   vers->date is set?  It causes "cvs update -r tag98 foo"
 		   to silently do nothing, which is seriously confusing
 		   behavior.  "cvs update foo" gives this message, which
-		   is what I would expect.  
-		 */
+		   is what I would expect.  */
 		if (!force_tag_match || !(vers->tag || vers->date))
 		    if (!really_quiet)
-			error (0, 0, "nothing known about %s",
-			       finfo->fullname);
+			error (0, 0, "nothing known about %s", finfo->fullname);
 		ret = T_UNKNOWN;
 	    }
 	    else
 	    {
-		/*
-		   there is a user file 
-		 */
-		/*
-		   FIXME: Why do we skip this message if vers->tag or
+		/* there is a user file */
+		/* FIXME: Why do we skip this message if vers->tag or
 		   vers->date is set?  It causes "cvs update -r tag98 foo"
 		   to silently do nothing, which is seriously confusing
 		   behavior.  "cvs update foo" gives this message, which
-		   is what I would expect.  
-		 */
+		   is what I would expect.  */
 		if (!force_tag_match || !(vers->tag || vers->date))
 		    if (!really_quiet)
 			error (0, 0, "use `%s add' to create an entry for %s",
@@ -80,9 +73,7 @@ Classify_File (struct file_info *finfo, char *tag, char *date, char *options,
 	}
 	else if (RCS_isdead (vers->srcfile, vers->vn_rcs))
 	{
-	    /*
-	       there is an RCS file, but it's dead 
-	     */
+	    /* there is an RCS file, but it's dead */
 	    if (vers->ts_user == NULL)
 		ret = T_UPTODATE;
 	    else
@@ -94,25 +85,19 @@ Classify_File (struct file_info *finfo, char *tag, char *date, char *options,
 	}
 	else if (!pipeout && vers->ts_user && No_Difference (finfo, vers))
 	{
-	    /*
-	       the files were different so it is a conflict 
-	     */
+	    /* the files were different so it is a conflict */
 	    if (!really_quiet)
 		error (0, 0, "move away %s; it is in the way",
 		       finfo->fullname);
 	    ret = T_CONFLICT;
 	}
 	else
-	    /*
-	       no user file or no difference, just checkout 
-	     */
+	    /* no user file or no difference, just checkout */
 	    ret = T_CHECKOUT;
     }
     else if (strcmp (vers->vn_user, "0") == 0)
     {
-	/*
-	   An entry for a new-born file; ts_rcs is dummy 
-	 */
+	/* An entry for a new-born file; ts_rcs is dummy */
 
 	if (vers->ts_user == NULL)
 	{
@@ -134,9 +119,7 @@ Classify_File (struct file_info *finfo, char *tag, char *date, char *options,
 	}
 	else if (vers->vn_rcs == NULL ||
 		 RCS_isdead (vers->srcfile, vers->vn_rcs))
-	    /*
-	       No RCS file or RCS file revision is dead  
-	     */
+	    /* No RCS file or RCS file revision is dead  */
 	    ret = T_ADDED;
 	else
 	{
@@ -149,14 +132,12 @@ Classify_File (struct file_info *finfo, char *tag, char *date, char *options,
 		if (vers->srcfile->flags & INATTIC
 		    && vers->srcfile->flags & VALID)
 		{
-		    /*
-		       This file has been added on some branch other than
+		    /* This file has been added on some branch other than
 		       the one we are looking at.  In the branch we are
-		       looking at, the file was already valid.  
-		     */
+		       looking at, the file was already valid.  */
 		    if (!really_quiet)
 			error (0, 0,
-			       "conflict: %s has been added, but already exists",
+			   "conflict: %s has been added, but already exists",
 			       finfo->fullname);
 		}
 		else
@@ -167,7 +148,7 @@ Classify_File (struct file_info *finfo, char *tag, char *date, char *options,
 		     */
 		    if (!really_quiet)
 			error (0, 0,
-			       "conflict: %s created independently by second party",
+			   "conflict: %s created independently by second party",
 			       finfo->fullname);
 		}
 		ret = T_CONFLICT;
@@ -176,15 +157,11 @@ Classify_File (struct file_info *finfo, char *tag, char *date, char *options,
     }
     else if (vers->vn_user[0] == '-')
     {
-	/*
-	   An entry for a removed file, ts_rcs is invalid 
-	 */
+	/* An entry for a removed file, ts_rcs is invalid */
 
 	if (vers->ts_user == NULL)
 	{
-	    /*
-	       There is no user file (as it should be) 
-	     */
+	    /* There is no user file (as it should be) */
 
 	    if (vers->vn_rcs == NULL
 		|| RCS_isdead (vers->srcfile, vers->vn_rcs))
@@ -224,9 +201,7 @@ Classify_File (struct file_info *finfo, char *tag, char *date, char *options,
 	}
 	else
 	{
-	    /*
-	       The user file shouldn't be there 
-	     */
+	    /* The user file shouldn't be there */
 	    if (!really_quiet)
 		error (0, 0, "%s should be removed and is still there",
 		       finfo->fullname);
@@ -235,20 +210,14 @@ Classify_File (struct file_info *finfo, char *tag, char *date, char *options,
     }
     else
     {
-	/*
-	   A normal entry, TS_Rcs is valid 
-	 */
+	/* A normal entry, TS_Rcs is valid */
 	if (vers->vn_rcs == NULL || RCS_isdead (vers->srcfile, vers->vn_rcs))
 	{
-	    /*
-	       There is no RCS file 
-	     */
+	    /* There is no RCS file */
 
 	    if (vers->ts_user == NULL)
 	    {
-		/*
-		   There is no user file, so just remove the entry 
-		 */
+		/* There is no user file, so just remove the entry */
 		if (!really_quiet)
 		    error (0, 0, "warning: %s is not (any longer) pertinent",
 			   finfo->fullname);
@@ -268,20 +237,16 @@ Classify_File (struct file_info *finfo, char *tag, char *date, char *options,
 	    }
 	    else if (No_Difference (finfo, vers))
 	    {
-		/*
-		   they are different -> conflict 
-		 */
+		/* they are different -> conflict */
 		if (!really_quiet)
 		    error (0, 0,
-			   "conflict: %s is modified but no longer in the repository",
+	       "conflict: %s is modified but no longer in the repository",
 			   finfo->fullname);
 		ret = T_CONFLICT;
 	    }
 	    else
 	    {
-		/*
-		   they weren't really different 
-		 */
+		/* they weren't really different */
 		if (!really_quiet)
 		    error (0, 0,
 			   "warning: %s is not (any longer) pertinent",
@@ -291,9 +256,7 @@ Classify_File (struct file_info *finfo, char *tag, char *date, char *options,
 	}
 	else if (strcmp (vers->vn_rcs, vers->vn_user) == 0)
 	{
-	    /*
-	       The RCS file is the same version as the user file 
-	     */
+	    /* The RCS file is the same version as the user file */
 
 	    if (vers->ts_user == NULL)
 	    {
@@ -302,16 +265,14 @@ Classify_File (struct file_info *finfo, char *tag, char *date, char *options,
 		 * There is no user file, so note that it was lost and
 		 * extract a new version
 		 */
-		/*
-		   Comparing the command_name against "update", in
+		/* Comparing the command_name against "update", in
 		   addition to being an ugly way to operate, means
 		   that this message does not get printed by the
 		   server.  That might be considered just a straight
 		   bug, although there is one subtlety: that case also
 		   gets hit when a patch fails and the client fetches
 		   a file.  I'm not sure there is currently any way
-		   for the server to distinguish those two cases.  
-		 */
+		   for the server to distinguish those two cases.  */
 		if (strcmp (command_name, "update") == 0)
 		    if (!really_quiet)
 			error (0, 0, "warning: %s was lost", finfo->fullname);
@@ -326,10 +287,8 @@ Classify_File (struct file_info *finfo, char *tag, char *date, char *options,
 		 * has changed.  If the sticky tag has changed, we just need
 		 * to re-register the entry
 		 */
-		/*
-		   TODO: decide whether we need to check file permissions
-		   for a mismatch, and return T_CONFLICT if so. 
-		 */
+		/* TODO: decide whether we need to check file permissions
+		   for a mismatch, and return T_CONFLICT if so. */
 		if (vers->entdata->options &&
 		    strcmp (vers->entdata->options, vers->options) != 0)
 		    ret = T_CHECKOUT;
@@ -348,7 +307,7 @@ Classify_File (struct file_info *finfo, char *tag, char *date, char *options,
 		 */
 #ifdef XXX_FIXME_WHEN_RCSMERGE_IS_FIXED
 		if (strcmp (vers->entdata->options ?
-			    vers->entdata->options : "", vers->options) == 0)
+		       vers->entdata->options : "", vers->options) == 0)
 		    ret = T_MODIFIED;
 		else
 		    ret = T_NEEDS_MERGE;
@@ -358,11 +317,9 @@ Classify_File (struct file_info *finfo, char *tag, char *date, char *options,
 #endif
 	    }
 	    else if (strcmp (vers->entdata->options ?
-			     vers->entdata->options : "", vers->options) != 0)
+		       vers->entdata->options : "", vers->options) != 0)
 	    {
-		/*
-		   file has not changed; check out if -k changed 
-		 */
+		/* file has not changed; check out if -k changed */
 		ret = T_CHECKOUT;
 	    }
 	    else
@@ -378,20 +335,14 @@ Classify_File (struct file_info *finfo, char *tag, char *date, char *options,
 	}
 	else
 	{
-	    /*
-	       The RCS file is a newer version than the user file 
-	     */
+	    /* The RCS file is a newer version than the user file */
 
 	    if (vers->ts_user == NULL)
 	    {
-		/*
-		   There is no user file, so just get it 
-		 */
+		/* There is no user file, so just get it */
 
-		/*
-		   See comment at other "update" compare, for more
-		   thoughts on this comparison.  
-		 */
+		/* See comment at other "update" compare, for more
+		   thoughts on this comparison.  */
 		if (strcmp (command_name, "update") == 0)
 		    if (!really_quiet)
 			error (0, 0, "warning: %s was lost", finfo->fullname);
@@ -412,40 +363,32 @@ Classify_File (struct file_info *finfo, char *tag, char *date, char *options,
 		    ret = T_PATCH;
 	    }
 	    else if (No_Difference (finfo, vers))
-		/*
-		   really modified, needs to merge 
-		 */
+		/* really modified, needs to merge */
 		ret = T_NEEDS_MERGE;
 	    else if ((strcmp (vers->entdata->options ?
 			      vers->entdata->options : "", vers->options)
 		      != 0)
 		     || (vers->srcfile != NULL
-			 && (vers->srcfile->flags & INATTIC) != 0))
-		/*
-		   not really modified, check it out 
-		 */
+		         && (vers->srcfile->flags & INATTIC) != 0))
+		/* not really modified, check it out */
 		ret = T_CHECKOUT;
 	    else
 		ret = T_PATCH;
 	}
     }
 
-    /*
-       free up the vers struct, or just return it 
-     */
+    /* free up the vers struct, or just return it */
     if (versp != (Vers_TS **) NULL)
 	*versp = vers;
     else
 	freevers_ts (&vers);
 
-    /*
-       return the status of the file 
-     */
+    /* return the status of the file */
     return (ret);
 }
 
 static void
-sticky_ck (struct file_info *finfo, int aflag, Vers_TS * vers)
+sticky_ck (struct file_info *finfo, int aflag, Vers_TS *vers)
 {
     if (aflag || vers->tag || vers->date)
     {
@@ -457,22 +400,19 @@ sticky_ck (struct file_info *finfo, int aflag, Vers_TS * vers)
 	    (entdate && vers->date && strcmp (entdate, vers->date)) ||
 	    ((entdate && !vers->date) || (!entdate && vers->date)))
 	{
-	    Register (finfo->entries, finfo->file, vers->vn_user,
-		      vers->ts_rcs, vers->options, vers->tag, vers->date,
-		      vers->ts_conflict);
+	    Register (finfo->entries, finfo->file, vers->vn_user, vers->ts_rcs,
+		      vers->options, vers->tag, vers->date, vers->ts_conflict);
 
 #ifdef SERVER_SUPPORT
 	    if (server_active)
 	    {
-		/*
-		   We need to update the entries line on the client side.
+		/* We need to update the entries line on the client side.
 		   It is possible we will later update it again via
-		   server_updated or some such, but that is OK.  
-		 */
+		   server_updated or some such, but that is OK.  */
 		server_update_entries
-		    (finfo->file, finfo->update_dir, finfo->repository,
-		     strcmp (vers->ts_rcs, vers->ts_user) == 0 ?
-		     SERVER_UPDATED : SERVER_MERGED);
+		  (finfo->file, finfo->update_dir, finfo->repository,
+		   strcmp (vers->ts_rcs, vers->ts_user) == 0 ?
+		   SERVER_UPDATED : SERVER_MERGED);
 	    }
 #endif
 	}

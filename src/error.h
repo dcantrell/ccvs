@@ -1,4 +1,3 @@
-
 /* error.h -- declaration for error-reporting function
    Copyright (C) 1995 Software Foundation, Inc.
 
@@ -17,19 +16,17 @@
 
 /* Add GNU attribute suppport.  */
 #ifndef __attribute__
-
 /* This feature is available in gcc versions 2.5 and later.  */
 # if __GNUC__ < 2 || (__GNUC__ == 2 && __GNUC_MINOR__ < 5) || __STRICT_ANSI__
-#  define __attribute__(Spec)		/* empty */
+#  define __attribute__(Spec) /* empty */
 # else
 #   if __GNUC__ == 2 && __GNUC_MINOR__ < 96
-#    define __pure__			/* empty */
+#    define __pure__	/* empty */
 #   endif
 #   if __GNUC__ < 3
-#    define __malloc__			/* empty */
+#    define __malloc__	/* empty */
 #   endif
 # endif
-
 /* The __-protected variants of `format' and `printf' attributes
    are accepted by gcc versions 2.6.4 (effectively 2.7) and later.  */
 # if __GNUC__ < 2 || (__GNUC__ == 2 && __GNUC_MINOR__ < 7)
@@ -41,7 +38,7 @@
 #endif
 
 void error (int, int, const char *, ...)
-    __attribute__ ((__format__ (__printf__, 3, 4)));
+  __attribute__ ((__format__ (__printf__, 3, 4)));
 
 /* Exit due to an error.  Similar to error (1, 0, "message"), but call
    it in the case where the message has already been printed.  */

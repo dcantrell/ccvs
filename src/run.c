@@ -1,4 +1,3 @@
-
 /* run.c --- routines for executing subprocesses.
    
    This file is part of GNU CVS.
@@ -40,16 +39,14 @@ static int run_argc;
 static int run_argc_allocated;
 
 /* VARARGS */
-void
-run_setup (const char *prog)
+void 
+run_setup( const char *prog )
 {
     char *cp;
     int i;
     char *run_prog;
 
-    /*
-       clean out any malloc'ed values from run_argv 
-     */
+    /* clean out any malloc'ed values from run_argv */
     for (i = 0; i < run_argc; i++)
     {
 	if (run_argv[i])
@@ -62,11 +59,8 @@ run_setup (const char *prog)
 
     run_prog = xstrdup (prog);
 
-    /*
-       put each word into run_argv, allocating it as we go 
-     */
-    for (cp = strtok (run_prog, " \t"); cp;
-	 cp = strtok ((char *) NULL, " \t"))
+    /* put each word into run_argv, allocating it as we go */
+    for (cp = strtok (run_prog, " \t"); cp; cp = strtok ((char *) NULL, " \t"))
 	run_add_arg (cp);
     free (run_prog);
 }
@@ -80,14 +74,12 @@ run_arg (const char *s)
 static void
 run_add_arg (const char *s)
 {
-    /*
-       allocate more argv entries if we've run out 
-     */
+    /* allocate more argv entries if we've run out */
     if (run_argc >= run_argc_allocated)
     {
 	run_argc_allocated += 50;
 	run_argv = (char **) xrealloc ((char *) run_argv,
-				       run_argc_allocated * sizeof (char **));
+				     run_argc_allocated * sizeof (char **));
     }
 
     if (s)
@@ -132,21 +124,15 @@ run_exec (const char *stin, const char *stout, const char *sterr, int flags)
     if (noexec && (flags & RUN_REALLY) == 0)
 	return (0);
 
-    /*
-       make sure that we are null terminated, since we didn't calloc 
-     */
+    /* make sure that we are null terminated, since we didn't calloc */
     run_add_arg ((char *) 0);
 
-    /*
-       setup default file descriptor numbers 
-     */
+    /* setup default file descriptor numbers */
     shin = 0;
     shout = 1;
     sherr = 2;
 
-    /*
-       set the file modes for stdout and stderr 
-     */
+    /* set the file modes for stdout and stderr */
     mode_out = mode_err = O_WRONLY | O_CREAT;
     mode_out |= ((flags & RUN_STDOUT_APPEND) ? O_APPEND : O_TRUNC);
     mode_err |= ((flags & RUN_STDERR_APPEND) ? O_APPEND : O_TRUNC);
@@ -176,22 +162,18 @@ run_exec (const char *stin, const char *stout, const char *sterr, int flags)
 	}
     }
 
-    /*
-       Make sure we don't flush this twice, once in the subprocess.  
-     */
+    /* Make sure we don't flush this twice, once in the subprocess.  */
     fflush (stdout);
     fflush (stderr);
 
-    /*
-       The output files, if any, are now created.  Do the fork and dups.
+    /* The output files, if any, are now created.  Do the fork and dups.
 
        We use vfork not so much for a performance boost (the
        performance boost, if any, is modest on most modern unices),
        but for the sake of systems without a memory management unit,
        which find it difficult or impossible to implement fork at all
        (e.g. Amiga).  The other solution is spawn (see
-       windows-NT/run.c).  
-     */
+       windows-NT/run.c).  */
 
 #ifdef HAVE_VFORK
     pid = vfork ();
@@ -220,9 +202,9 @@ run_exec (const char *stin, const char *stout, const char *sterr, int flags)
 
 #ifdef SETXID_SUPPORT
 	/*
-	 ** This prevents a user from creating a privileged shell
-	 ** from the text editor when the SETXID_SUPPORT option is selected.
-	 */
+	** This prevents a user from creating a privileged shell
+	** from the text editor when the SETXID_SUPPORT option is selected.
+	*/
 	if (!strcmp (run_argv[0], Editor) && setegid (getgid ()))
 	{
 	    error (0, errno, "cannot set egid to gid");
@@ -230,9 +212,7 @@ run_exec (const char *stin, const char *stout, const char *sterr, int flags)
 	}
 #endif
 
-	/*
-	   dup'ing is done.  try to run it now 
-	 */
+	/* dup'ing is done.  try to run it now */
 	(void) execvp (run_argv[0], run_argv);
 	error (0, errno, "cannot exec %s", run_argv[0]);
 	_exit (127);
@@ -243,9 +223,7 @@ run_exec (const char *stin, const char *stout, const char *sterr, int flags)
 	goto out;
     }
 
-    /*
-       the parent.  Ignore some signals for now 
-     */
+    /* the parent.  Ignore some signals for now */
 #ifdef POSIX_SIGNALS
     if (flags & RUN_SIGIGNORE)
     {
@@ -279,9 +257,7 @@ run_exec (const char *stin, const char *stout, const char *sterr, int flags)
 #endif
 #endif
 
-    /*
-       wait for our process to die and munge return status 
-     */
+    /* wait for our process to die and munge return status */
 #ifdef POSIX_SIGNALS
     while ((w = waitpid (pid, &status, 0)) == -1 && errno == EINTR)
 	;
@@ -298,7 +274,7 @@ run_exec (const char *stin, const char *stout, const char *sterr, int flags)
 	rc = -1;
 	rerrno = errno;
     }
-#ifndef VMS				/* status is return status */
+#ifndef VMS /* status is return status */
     else if (WIFEXITED (status))
 	rc = WEXITSTATUS (status);
     else if (WIFSIGNALED (status))
@@ -313,9 +289,7 @@ run_exec (const char *stin, const char *stout, const char *sterr, int flags)
     rc = WEXITSTATUS (status);
 #endif /* VMS */
 
-    /*
-       restore the signals 
-     */
+    /* restore the signals */
 #ifdef POSIX_SIGNALS
     if (flags & RUN_SIGIGNORE)
     {
@@ -339,27 +313,23 @@ run_exec (const char *stin, const char *stout, const char *sterr, int flags)
 #endif
 #endif
 
-    /*
-       cleanup the open file descriptors 
-     */
+    /* cleanup the open file descriptors */
   out:
     if (sterr)
 	(void) close (sherr);
     else
-	/*
-	   ensure things are received by the parent in the correct order
-	   * relative to the protocol pipe
+	/* ensure things are received by the parent in the correct order
+	 * relative to the protocol pipe
 	 */
-	cvs_flusherr ();
+	cvs_flusherr();
   out2:
     if (stout)
 	(void) close (shout);
     else
-	/*
-	   ensure things are received by the parent in the correct order
-	   * relative to the protocol pipe
+	/* ensure things are received by the parent in the correct order
+	 * relative to the protocol pipe
 	 */
-	cvs_flushout ();
+	cvs_flushout();
   out1:
     if (stin)
 	(void) close (shin);
@@ -371,7 +341,7 @@ run_exec (const char *stin, const char *stout, const char *sterr, int flags)
 }
 
 void
-run_print (FILE * fp)
+run_print (FILE *fp)
 {
     int i;
     void (*outfn) (const char *, size_t);
@@ -383,11 +353,9 @@ run_print (FILE * fp)
     else
     {
 	error (1, 0, "internal error: bad argument to run_print");
-	/*
-	   Solely to placate gcc -Wall.
+	/* Solely to placate gcc -Wall.
 	   FIXME: it'd be better to use a function named `fatal' that
-	   is known never to return.  Then kludges wouldn't be necessary.  
-	 */
+	   is known never to return.  Then kludges wouldn't be necessary.  */
 	outfn = NULL;
     }
 
@@ -409,7 +377,7 @@ run_print (FILE * fp)
 FILE *
 run_popen (const char *cmd, const char *mode)
 {
-    TRACE (1, "run_popen(%s,%s)", cmd, mode);
+    TRACE ( 1, "run_popen(%s,%s)", cmd, mode );
     if (noexec)
 	return (NULL);
 

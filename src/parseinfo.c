@@ -1,4 +1,3 @@
-
 /*
  * Copyright (c) 1992, Brian Berliner and Jeff Polk
  * Copyright (c) 1989-1992, Brian Berliner
@@ -21,8 +20,7 @@ extern char *logHistory;
  * Return 0 for success, -1 if there was not an INFOFILE, and >0 for failure.
  */
 int
-Parse_Info (char *infofile, char *repository, CALLPROC callproc, int opt,
-	    void *closure)
+Parse_Info(char *infofile, char *repository, CALLPROC callproc, int opt, void *closure)
 {
     int err = 0;
     FILE *fp_info;
@@ -38,83 +36,63 @@ Parse_Info (char *infofile, char *repository, CALLPROC callproc, int opt,
 
     if (current_parsed_root == NULL)
     {
-	/*
-	   XXX - should be error maybe? 
-	 */
+	/* XXX - should be error maybe? */
 	error (0, 0, "CVSROOT variable not set");
 	return (1);
     }
 
-    /*
-       find the info file and open it 
-     */
+    /* find the info file and open it */
     infopath = xmalloc (strlen (current_parsed_root->directory)
-			+ strlen (infofile) + sizeof (CVSROOTADM) + 3);
+			+ strlen (infofile)
+			+ sizeof (CVSROOTADM)
+			+ 3);
     (void) sprintf (infopath, "%s/%s/%s", current_parsed_root->directory,
 		    CVSROOTADM, infofile);
     fp_info = CVS_FOPEN (infopath, "r");
     if (fp_info == NULL)
     {
-	/*
-	   If no file, don't do anything special.  
-	 */
+	/* If no file, don't do anything special.  */
 	if (!existence_error (errno))
 	    error (0, errno, "cannot open %s", infopath);
 	free (infopath);
 	return 0;
     }
 
-    /*
-       strip off the CVSROOT if repository was absolute 
-     */
+    /* strip off the CVSROOT if repository was absolute */
     srepos = Short_Repository (repository);
 
-    TRACE (1, "Parse_Info (%s, %s, %s)",
-	   infopath, srepos, (opt & PIOPT_ALL) ? "ALL" : "not ALL");
+    TRACE ( 1, "Parse_Info (%s, %s, %s)",
+	    infopath, srepos,  (opt & PIOPT_ALL) ? "ALL" : "not ALL");
 
-    /*
-       search the info file for lines that match 
-     */
+    /* search the info file for lines that match */
     callback_done = line_number = 0;
     while (getline (&line, &line_allocated, fp_info) >= 0)
     {
 	line_number++;
 
-	/*
-	   skip lines starting with # 
-	 */
+	/* skip lines starting with # */
 	if (line[0] == '#')
 	    continue;
 
-	/*
-	   skip whitespace at beginning of line 
-	 */
+	/* skip whitespace at beginning of line */
 	for (cp = line; *cp && isspace ((unsigned char) *cp); cp++)
 	    ;
 
-	/*
-	   if *cp is null, the whole line was blank 
-	 */
+	/* if *cp is null, the whole line was blank */
 	if (*cp == '\0')
 	    continue;
 
-	/*
-	   the regular expression is everything up to the first space 
-	 */
+	/* the regular expression is everything up to the first space */
 	for (exp = cp; *cp && !isspace ((unsigned char) *cp); cp++)
 	    ;
 	if (*cp != '\0')
 	    *cp++ = '\0';
 
-	/*
-	   skip whitespace up to the start of the matching value 
-	 */
+	/* skip whitespace up to the start of the matching value */
 	while (*cp && isspace ((unsigned char) *cp))
 	    cp++;
 
-	/*
-	   no value to match with the regular expression is an error 
-	 */
+	/* no value to match with the regular expression is an error */
 	if (*cp == '\0')
 	{
 	    error (0, 0, "syntax error at line %d file %s; ignored",
@@ -123,9 +101,7 @@ Parse_Info (char *infofile, char *repository, CALLPROC callproc, int opt,
 	}
 	value = cp;
 
-	/*
-	   strip the newline off the end of the value 
-	 */
+	/* strip the newline off the end of the value */
 	if ((cp = strrchr (value, '\n')) != NULL)
 	    *cp = '\0';
 
@@ -136,19 +112,16 @@ Parse_Info (char *infofile, char *repository, CALLPROC callproc, int opt,
 	 * if it matches.
 	 */
 
-	/*
-	   save the default value so we have it later if we need it 
-	 */
+	/* save the default value so we have it later if we need it */
 	if (strcmp (exp, "DEFAULT") == 0)
 	{
 	    if (default_value != NULL)
 	    {
-		error (0, 0,
-		       "Multiple `DEFAULT' lines (%d and %d) in %s file",
+		error (0, 0, "Multiple `DEFAULT' lines (%d and %d) in %s file",
 		       default_line, line_number, infofile);
 		free (default_value);
 	    }
-	    default_value = xstrdup (value);
+	    default_value = xstrdup(value);
 	    default_line = line_number;
 	    continue;
 	}
@@ -160,13 +133,12 @@ Parse_Info (char *infofile, char *repository, CALLPROC callproc, int opt,
 	 */
 	if (strcmp (exp, "ALL") == 0)
 	{
-	    if (!(opt & PIOPT_ALL))
-		error (0, 0, "Keyword `ALL' is ignored at line %d in %s file",
-		       line_number, infofile);
-	    else if ((expanded_value =
-		      expand_path (value, infofile, line_number)) != NULL)
+	    if (! (opt & PIOPT_ALL))
+		error(0, 0, "Keyword `ALL' is ignored at line %d in %s file",
+		      line_number, infofile);
+	    else if ((expanded_value = expand_path (value, infofile, line_number)) != NULL)
 	    {
-		err += callproc (repository, expanded_value, closure);
+		err += callproc( repository, expanded_value, closure );
 		free (expanded_value);
 	    }
 	    else
@@ -175,14 +147,10 @@ Parse_Info (char *infofile, char *repository, CALLPROC callproc, int opt,
 	}
 
 	if (callback_done)
-	    /*
-	       only first matching, plus "ALL"'s 
-	     */
+	    /* only first matching, plus "ALL"'s */
 	    continue;
 
-	/*
-	   see if the repository matched this regular expression 
-	 */
+	/* see if the repository matched this regular expression */
 	if ((regex_err = re_comp (exp)) != NULL)
 	{
 	    error (0, 0, "bad regular expression at line %d file %s: %s",
@@ -190,15 +158,12 @@ Parse_Info (char *infofile, char *repository, CALLPROC callproc, int opt,
 	    continue;
 	}
 	if (re_exec (srepos) == 0)
-	    continue;			/* no match */
+	    continue;				/* no match */
 
-	/*
-	   it did, so do the callback and note that we did one 
-	 */
-	if ((expanded_value =
-	     expand_path (value, infofile, line_number)) != NULL)
+	/* it did, so do the callback and note that we did one */
+	if ((expanded_value = expand_path (value, infofile, line_number)) != NULL)
 	{
-	    err += callproc (repository, expanded_value, closure);
+	    err += callproc( repository, expanded_value, closure );
 	    free (expanded_value);
 	}
 	else
@@ -210,24 +175,19 @@ Parse_Info (char *infofile, char *repository, CALLPROC callproc, int opt,
     if (fclose (fp_info) < 0)
 	error (0, errno, "cannot close %s", infopath);
 
-    /*
-       if we fell through and didn't callback at all, do the default 
-     */
+    /* if we fell through and didn't callback at all, do the default */
     if (callback_done == 0 && default_value != NULL)
     {
-	if ((expanded_value =
-	     expand_path (default_value, infofile, default_line)) != NULL)
+	if ((expanded_value = expand_path (default_value, infofile, default_line)) != NULL)
 	{
-	    err += callproc (repository, expanded_value, closure);
+	    err += callproc( repository, expanded_value, closure );
 	    free (expanded_value);
 	}
 	else
 	    err++;
     }
 
-    /*
-       free up space if necessary 
-     */
+    /* free up space if necessary */
     if (default_value != NULL)
 	free (default_value);
     free (infopath);
@@ -259,24 +219,20 @@ parse_config (char *cvsroot)
     size_t line_allocated = 0;
     size_t len;
     char *p;
-
-    /*
-       FIXME-reentrancy: If we do a multi-threaded server, this would need
-       to go to the per-connection data structures.  
-     */
+    /* FIXME-reentrancy: If we do a multi-threaded server, this would need
+       to go to the per-connection data structures.  */
     static int parsed = 0;
 
-    /*
-       Authentication code and serve_root might both want to call us.
-       Let this happen smoothly.  
-     */
+    /* Authentication code and serve_root might both want to call us.
+       Let this happen smoothly.  */
     if (parsed)
 	return 0;
     parsed = 1;
 
     infopath = xmalloc (strlen (cvsroot)
 			+ sizeof (CVSROOTADM_CONFIG)
-			+ sizeof (CVSROOTADM) + 10);
+			+ sizeof (CVSROOTADM)
+			+ 10);
     if (infopath == NULL)
     {
 	error (0, 0, "out of memory; cannot allocate infopath");
@@ -292,15 +248,11 @@ parse_config (char *cvsroot)
     fp_info = CVS_FOPEN (infopath, "r");
     if (fp_info == NULL)
     {
-	/*
-	   If no file, don't do anything special.  
-	 */
+	/* If no file, don't do anything special.  */
 	if (!existence_error (errno))
 	{
-	    /*
-	       Just a warning message; doesn't affect return
-	       value, currently at least.  
-	     */
+	    /* Just a warning message; doesn't affect return
+	       value, currently at least.  */
 	    error (0, errno, "cannot open %s", infopath);
 	}
 	free (infopath);
@@ -309,14 +261,11 @@ parse_config (char *cvsroot)
 
     while (getline (&line, &line_allocated, fp_info) >= 0)
     {
-	/*
-	   Skip comments.  
-	 */
+	/* Skip comments.  */
 	if (line[0] == '#')
 	    continue;
 
-	/*
-	   At least for the moment we don't skip whitespace at the start
+	/* At least for the moment we don't skip whitespace at the start
 	   of the line.  Too picky?  Maybe.  But being insufficiently
 	   picky leads to all sorts of confusion, and it is a lot easier
 	   to start out picky and relax it than the other way around.
@@ -329,34 +278,25 @@ parse_config (char *cvsroot)
 	   Along the same lines, we might want a table of keywords,
 	   with various types (boolean, string, &c), as a mechanism
 	   for making sure the syntax is consistent.  Any good examples
-	   to follow there (Apache?)?  
-	 */
+	   to follow there (Apache?)?  */
 
-	/*
-	   Strip the training newline.  There will be one unless we
+	/* Strip the training newline.  There will be one unless we
 	   read a partial line without a newline, and then got end of
-	   file (or error?).  
-	 */
+	   file (or error?).  */
 
 	len = strlen (line) - 1;
 	if (line[len] == '\n')
 	    line[len] = '\0';
 
-	/*
-	   Skip blank lines.  
-	 */
+	/* Skip blank lines.  */
 	if (line[0] == '\0')
 	    continue;
 
-	/*
-	   The first '=' separates keyword from value.  
-	 */
+	/* The first '=' separates keyword from value.  */
 	p = strchr (line, '=');
 	if (p == NULL)
 	{
-	    /*
-	       Probably should be printing line number.  
-	     */
+	    /* Probably should be printing line number.  */
 	    error (0, 0, "syntax error in %s: line '%s' is missing '='",
 		   infopath, line);
 	    goto error_return;
@@ -366,12 +306,10 @@ parse_config (char *cvsroot)
 
 	if (strcmp (line, "RCSBIN") == 0)
 	{
-	    /*
-	       This option used to specify the directory for RCS
+	    /* This option used to specify the directory for RCS
 	       executables.  But since we don't run them any more,
 	       this is a noop.  Silently ignore it so that a
-	       repository can work with either new or old CVS.  
-	     */
+	       repository can work with either new or old CVS.  */
 	    ;
 	}
 	else if (strcmp (line, "SystemAuth") == 0)
@@ -380,11 +318,9 @@ parse_config (char *cvsroot)
 #ifdef AUTH_SERVER_SUPPORT
 		system_auth = 0;
 #else
-		/*
-		   Still parse the syntax but ignore the
+		/* Still parse the syntax but ignore the
 		   option.  That way the same config file can
-		   be used for local and server.  
-		 */
+		   be used for local and server.  */
 		;
 #endif
 	    else if (strcmp (p, "yes") == 0)
@@ -401,13 +337,13 @@ parse_config (char *cvsroot)
 	}
 	else if (strcmp (line, "LocalKeyword") == 0)
 	{
-	    RCS_setlocalid (p);
-
+	    RCS_setlocalid(p);
+		
 	}
 	else if (strcmp (line, "KeywordExpand") == 0)
 	{
-	    RCS_setincexc (p);
-
+	    RCS_setincexc(p);
+		
 	}
 	else if (strcmp (line, "PreservePermissions") == 0)
 	{
@@ -424,8 +360,8 @@ warning: this CVS does not support PreservePermissions");
 	    }
 	    else
 	    {
-		error (0, 0,
-		       "unrecognized value '%s' for PreservePermissions", p);
+		error (0, 0, "unrecognized value '%s' for PreservePermissions",
+		       p);
 		goto error_return;
 	    }
 	}
@@ -446,38 +382,35 @@ warning: this CVS does not support PreservePermissions");
 	    if (lock_dir != NULL)
 		free (lock_dir);
 	    lock_dir = xstrdup (p);
-	    /*
-	       Could try some validity checking, like whether we can
+	    /* Could try some validity checking, like whether we can
 	       opendir it or something, but I don't see any particular
-	       reason to do that now rather than waiting until lock.c.  
-	     */
+	       reason to do that now rather than waiting until lock.c.  */
 	}
 	else if (strcmp (line, "LogHistory") == 0)
 	{
 	    if (strcmp (p, "all") != 0)
 	    {
-		logHistory = xmalloc (strlen (p) + 1);
+		logHistory=xmalloc(strlen (p) + 1);
 		strcpy (logHistory, p);
 	    }
 	}
 	else if (strcmp (line, "RereadLogAfterVerify") == 0)
 	{
 	    if (strcmp (p, "no") == 0 || strcmp (p, "never") == 0)
-		RereadLogAfterVerify = LOGMSG_REREAD_NEVER;
+	      RereadLogAfterVerify = LOGMSG_REREAD_NEVER;
 	    else if (strcmp (p, "yes") == 0 || strcmp (p, "always") == 0)
-		RereadLogAfterVerify = LOGMSG_REREAD_ALWAYS;
+	      RereadLogAfterVerify = LOGMSG_REREAD_ALWAYS;
 	    else if (strcmp (p, "stat") == 0)
-		RereadLogAfterVerify = LOGMSG_REREAD_STAT;
+	      RereadLogAfterVerify = LOGMSG_REREAD_STAT;
 	}
 	else if (strcmp (line, "UserAdminOptions") == 0)
 	{
-	    UserAdminOptions = xmalloc (strlen (p) + 1);
-	    strcpy (UserAdminOptions, p);
+	    UserAdminOptions = xmalloc(strlen(p) + 1);
+	    strcpy(UserAdminOptions, p);
 	}
 	else
 	{
-	    /*
-	       We may be dealing with a keyword which was added in a
+	    /* We may be dealing with a keyword which was added in a
 	       subsequent version of CVS.  In that case it is a good idea
 	       to complain, as (1) the keyword might enable a behavior like
 	       alternate locking behavior, in which it is dangerous and hard
@@ -487,9 +420,9 @@ warning: this CVS does not support PreservePermissions");
 	       principle of least surprise.  Note that one corollary is
 	       adding new keywords to your CVSROOT/config file is not
 	       particularly recommended unless you are planning on using
-	       the new features.  
-	     */
-	    error (0, 0, "%s: unrecognized keyword '%s'", infopath, line);
+	       the new features.  */
+	    error (0, 0, "%s: unrecognized keyword '%s'",
+		   infopath, line);
 	    goto error_return;
 	}
     }
@@ -508,7 +441,7 @@ warning: this CVS does not support PreservePermissions");
 	free (line);
     return 0;
 
-  error_return:
+ error_return:
     if (infopath != NULL)
 	free (infopath);
     if (line != NULL)

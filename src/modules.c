@@ -1,4 +1,3 @@
-
 /*
  *    Copyright (c) 1992, Brian Berliner and Jeff Polk
  *    Copyright (c) 1989-1992, Brian Berliner
@@ -24,8 +23,8 @@
 #include <assert.h>
 #include "cvs.h"
 #include "savecwd.h"
-
 
+
 /* Defines related to the syntax of the modules file.  */
 
 /* Options in modules file.  Note that it is OK to use GNU getopt features;
@@ -38,21 +37,15 @@
 
 struct sortrec
 {
-    /*
-       Name of the module, malloc'd.  
-     */
+    /* Name of the module, malloc'd.  */
     char *modname;
-    /*
-       If Status variable is set, this is either def_status or the malloc'd
+    /* If Status variable is set, this is either def_status or the malloc'd
        name of the status.  If Status is not set, the field is left
-       uninitialized.  
-     */
+       uninitialized.  */
     char *status;
-    /*
-       Pointer to a malloc'd array which contains (1) the raw contents
+    /* Pointer to a malloc'd array which contains (1) the raw contents
        of the options and arguments, excluding comments, (2) a '\0',
-       and (3) the storage for the "comment" field.  
-     */
+       and (3) the storage for the "comment" field.  */
     char *rest;
     char *comment;
 };
@@ -78,7 +71,8 @@ open_module (void)
 	error (1, 0, "or specify the '-d' global option");
     }
     mfile = xmalloc (strlen (current_parsed_root->directory)
-		     + sizeof (CVSROOTADM) + sizeof (CVSROOTADM_MODULES) + 3);
+		     + sizeof (CVSROOTADM)
+		     + sizeof (CVSROOTADM_MODULES) + 3);
     (void) sprintf (mfile, "%s/%s/%s", current_parsed_root->directory,
 		    CVSROOTADM, CVSROOTADM_MODULES);
     retval = dbm_open (mfile, O_RDONLY, 0666);
@@ -90,7 +84,7 @@ open_module (void)
  * Close the modules file, if the open succeeded, that is
  */
 void
-close_module (DBM * db)
+close_module (DBM *db)
 {
     if (db != NULL)
 	dbm_close (db);
@@ -102,10 +96,7 @@ close_module (DBM * db)
  * It runs the post checkout or post tag proc from the modules file
  */
 int
-do_module (DBM * db, char *mname, enum mtype m_type, char *msg,
-	   CALLBACKPROC callback_proc, char *where, int shorten,
-	   int local_specified, int run_module_prog, int build_dirs,
-	   char *extra_arg)
+do_module (DBM *db, char *mname, enum mtype m_type, char *msg, CALLBACKPROC callback_proc, char *where, int shorten, int local_specified, int run_module_prog, int build_dirs, char *extra_arg)
 {
     char *checkout_prog = NULL;
     char *export_prog = NULL;
@@ -117,10 +108,7 @@ do_module (DBM * db, char *mname, enum mtype m_type, char *msg,
     int xmodargc;
     char **modargv;
     char **xmodargv = NULL;
-
-    /*
-       Found entry from modules file, including options and such.  
-     */
+    /* Found entry from modules file, including options and such.  */
     char *value = NULL;
     char *mwhere = NULL;
     char *mfile = NULL;
@@ -135,16 +123,13 @@ do_module (DBM * db, char *mname, enum mtype m_type, char *msg,
 #ifdef SERVER_SUPPORT
     int restore_server_dir = 0;
     char *server_dir_to_restore = NULL;
-
     if (trace)
     {
 	char *buf;
 
-	/*
-	   We use cvs_outerr, rather than fprintf to stderr, because
+	/* We use cvs_outerr, rather than fprintf to stderr, because
 	   this may be called by server code with error_use_protocol
-	   set.  
-	 */
+	   set.  */
 	buf = xmalloc (100
 		       + strlen (mname)
 		       + strlen (msg)
@@ -152,38 +137,33 @@ do_module (DBM * db, char *mname, enum mtype m_type, char *msg,
 		       + (extra_arg ? strlen (extra_arg) : 0));
 	sprintf (buf, "%s-> do_module (%s, %s, %s, %s)\n",
 		 CLIENT_SERVER_STR,
-		 mname, msg, where ? where : "", extra_arg ? extra_arg : "");
+		 mname, msg, where ? where : "",
+		 extra_arg ? extra_arg : "");
 	cvs_outerr (buf, 0);
 	free (buf);
     }
 #endif
 
-    /*
-       if this is a directory to ignore, add it to that list 
-     */
+    /* if this is a directory to ignore, add it to that list */
     if (mname[0] == '!' && mname[1] != '\0')
     {
-	ign_dir_add (mname + 1);
+	ign_dir_add (mname+1);
 	goto do_module_return;
     }
 
-    /*
-       strip extra stuff from the module name 
-     */
+    /* strip extra stuff from the module name */
     strip_trailing_slashes (mname);
 
     /*
      * Look up the module using the following scheme:
-     *  1) look for mname as a module name
-     *  2) look for mname as a directory
-     *  3) look for mname as a file
+     *	1) look for mname as a module name
+     *	2) look for mname as a directory
+     *	3) look for mname as a file
      *  4) take mname up to the first slash and look it up as a module name
-     *     (this is for checking out only part of a module)
+     *	   (this is for checking out only part of a module)
      */
 
-    /*
-       look it up as a module name 
-     */
+    /* look it up as a module name */
     key.dptr = mname;
     key.dsize = strlen (key.dptr);
     if (db != NULL)
@@ -192,24 +172,18 @@ do_module (DBM * db, char *mname, enum mtype m_type, char *msg,
 	val.dptr = NULL;
     if (val.dptr != NULL)
     {
-	/*
-	   copy and null terminate the value 
-	 */
+	/* copy and null terminate the value */
 	value = xmalloc (val.dsize + 1);
 	memcpy (value, val.dptr, val.dsize);
 	value[val.dsize] = '\0';
 
-	/*
-	   If the line ends in a comment, strip it off 
-	 */
+	/* If the line ends in a comment, strip it off */
 	if ((cp = strchr (value, '#')) != NULL)
 	    *cp = '\0';
 	else
 	    cp = value + val.dsize;
 
-	/*
-	   Always strip trailing spaces 
-	 */
+	/* Always strip trailing spaces */
 	while (cp > value && isspace ((unsigned char) *--cp))
 	    *cp = '\0';
 
@@ -223,11 +197,9 @@ do_module (DBM * db, char *mname, enum mtype m_type, char *msg,
 	char *acp;
 	int is_found = 0;
 
-	/*
-	   check to see if mname is a directory or file 
-	 */
+	/* check to see if mname is a directory or file */
 	file = xmalloc (strlen (current_parsed_root->directory)
-			+ strlen (mname) + sizeof (RCSEXT) + 2);
+			+ strlen (mname) + sizeof(RCSEXT) + 2);
 	(void) sprintf (file, "%s/%s", current_parsed_root->directory, mname);
 	attic_file = xmalloc (strlen (current_parsed_root->directory)
 			      + strlen (mname)
@@ -235,15 +207,13 @@ do_module (DBM * db, char *mname, enum mtype m_type, char *msg,
 	if ((acp = strrchr (mname, '/')) != NULL)
 	{
 	    *acp = '\0';
-	    (void) sprintf (attic_file, "%s/%s/%s/%s%s",
-			    current_parsed_root->directory, mname, CVSATTIC,
-			    acp + 1, RCSEXT);
+	    (void) sprintf (attic_file, "%s/%s/%s/%s%s", current_parsed_root->directory,
+			    mname, CVSATTIC, acp + 1, RCSEXT);
 	    *acp = '/';
 	}
 	else
-	    (void) sprintf (attic_file, "%s/%s/%s%s",
-			    current_parsed_root->directory, CVSATTIC, mname,
-			    RCSEXT);
+	    (void) sprintf (attic_file, "%s/%s/%s%s", current_parsed_root->directory,
+			    CVSATTIC, mname, RCSEXT);
 
 	if (isdir (file))
 	{
@@ -257,9 +227,7 @@ do_module (DBM * db, char *mname, enum mtype m_type, char *msg,
 	    (void) strcat (file, RCSEXT);
 	    if (isfile (file) || isfile (attic_file))
 	    {
-		/*
-		   if mname was a file, we have to split it into "dir file" 
-		 */
+		/* if mname was a file, we have to split it into "dir file" */
 		if ((cp = strrchr (mname, '/')) != NULL && cp != mname)
 		{
 		    modargv = xmalloc (2 * sizeof (*modargv));
@@ -278,9 +246,7 @@ do_module (DBM * db, char *mname, enum mtype m_type, char *msg,
 		     */
 		    if (cp == mname)
 		    {
-			/*
-			   drop the leading / if specified 
-			 */
+			/* drop the leading / if specified */
 			modargv = xmalloc (2 * sizeof (*modargv));
 			modargv[0] = xstrdup (".");
 			modargv[1] = xstrdup (mname + 1);
@@ -288,9 +254,7 @@ do_module (DBM * db, char *mname, enum mtype m_type, char *msg,
 		    }
 		    else
 		    {
-			/*
-			   otherwise just copy it 
-			 */
+			/* otherwise just copy it */
 			modargv = xmalloc (2 * sizeof (*modargv));
 			modargv[0] = xstrdup (".");
 			modargv[1] = xstrdup (mname);
@@ -307,26 +271,23 @@ do_module (DBM * db, char *mname, enum mtype m_type, char *msg,
 	{
 	    assert (value == NULL);
 
-	    /*
-	       OK, we have now set up modargv with the actual
+	    /* OK, we have now set up modargv with the actual
 	       file/directory we want to work on.  We duplicate a
 	       small amount of code here because the vast majority of
 	       the code after the "found" label does not pertain to
 	       the case where we found a file/directory rather than
-	       finding an entry in the modules file.  
-	     */
+	       finding an entry in the modules file.  */
 	    if (save_cwd (&cwd))
 		error_exit ();
 	    cwd_saved = 1;
 
 	    err += callback_proc (modargc, modargv, where, mwhere, mfile,
-				  shorten, local_specified, mname, msg);
+				  shorten,
+				  local_specified, mname, msg);
 
 	    free_names (&modargc, modargv);
 
-	    /*
-	       cd back to where we started.  
-	     */
+	    /* cd back to where we started.  */
 	    if (restore_cwd (&cwd, NULL))
 		error_exit ();
 	    free_cwd (&cwd);
@@ -336,77 +297,55 @@ do_module (DBM * db, char *mname, enum mtype m_type, char *msg,
 	}
     }
 
-    /*
-       look up everything to the first / as a module 
-     */
+    /* look up everything to the first / as a module */
     if (mname[0] != '/' && (cp = strchr (mname, '/')) != NULL)
     {
-	/*
-	   Make the slash the new end of the string temporarily 
-	 */
+	/* Make the slash the new end of the string temporarily */
 	*cp = '\0';
 	key.dptr = mname;
 	key.dsize = strlen (key.dptr);
 
-	/*
-	   do the lookup 
-	 */
+	/* do the lookup */
 	if (db != NULL)
 	    val = dbm_fetch (db, key);
 	else
 	    val.dptr = NULL;
 
-	/*
-	   if we found it, clean up the value and life is good 
-	 */
+	/* if we found it, clean up the value and life is good */
 	if (val.dptr != NULL)
 	{
 	    char *cp2;
 
-	    /*
-	       copy and null terminate the value 
-	     */
+	    /* copy and null terminate the value */
 	    value = xmalloc (val.dsize + 1);
 	    memcpy (value, val.dptr, val.dsize);
 	    value[val.dsize] = '\0';
 
-	    /*
-	       If the line ends in a comment, strip it off 
-	     */
+	    /* If the line ends in a comment, strip it off */
 	    if ((cp2 = strchr (value, '#')) != NULL)
 		*cp2 = '\0';
 	    else
 		cp2 = value + val.dsize;
 
-	    /*
-	       Always strip trailing spaces 
-	     */
-	    while (cp2 > value && isspace ((unsigned char) *--cp2))
+	    /* Always strip trailing spaces */
+	    while (cp2 > value  &&  isspace ((unsigned char) *--cp2))
 		*cp2 = '\0';
 
-	    /*
-	       mwhere gets just the module name 
-	     */
+	    /* mwhere gets just the module name */
 	    mwhere = xstrdup (mname);
 	    mfile = cp + 1;
 
-	    /*
-	       put the / back in mname 
-	     */
+	    /* put the / back in mname */
 	    *cp = '/';
 
 	    goto found;
 	}
 
-	/*
-	   put the / back in mname 
-	 */
+	/* put the / back in mname */
 	*cp = '/';
     }
 
-    /*
-       if we got here, we couldn't find it using our search, so give up 
-     */
+    /* if we got here, we couldn't find it using our search, so give up */
     error (0, 0, "cannot find module `%s' - ignored", mname);
     err++;
     goto do_module_return;
@@ -418,63 +357,49 @@ do_module (DBM * db, char *mname, enum mtype m_type, char *msg,
      */
   found:
 
-    /*
-       remember where we start 
-     */
+    /* remember where we start */
     if (save_cwd (&cwd))
 	error_exit ();
     cwd_saved = 1;
 
     assert (value != NULL);
 
-    /*
-       search the value for the special delimiter and save for later 
-     */
+    /* search the value for the special delimiter and save for later */
     if ((cp = strchr (value, CVSMODULE_SPEC)) != NULL)
     {
 	*cp = '\0';			/* null out the special char */
 	spec_opt = cp + 1;		/* save the options for later */
 
-	/*
-	   strip whitespace if necessary 
-	 */
-	while (cp > value && isspace ((unsigned char) *--cp))
+	/* strip whitespace if necessary */
+	while (cp > value  &&  isspace ((unsigned char) *--cp))
 	    *cp = '\0';
     }
 
-    /*
-       don't do special options only part of a module was specified 
-     */
+    /* don't do special options only part of a module was specified */
     if (mfile != NULL)
 	spec_opt = NULL;
 
     /*
      * value now contains one of the following:
      *    1) dir
-     *    2) dir file
+     *	  2) dir file
      *    3) the value from modules without any special args
-     *              [ args ] dir [file] [file] ...
-     *       or     -a module [ module ] ...
+     *		    [ args ] dir [file] [file] ...
+     *	     or     -a module [ module ] ...
      */
 
-    /*
-       Put the value on a line with XXX prepended for getopt to eat 
-     */
+    /* Put the value on a line with XXX prepended for getopt to eat */
     line = xmalloc (strlen (value) + 5);
-    strcpy (line, "XXX ");
-    strcpy (line + 4, value);
+    strcpy(line, "XXX ");
+    strcpy(line + 4, value);
 
-    /*
-       turn the line into an argv[] array 
-     */
+    /* turn the line into an argv[] array */
     line2argv (&xmodargc, &xmodargv, line, " \t");
     free (line);
     modargc = xmodargc;
     modargv = xmodargv;
 
-    /*
-       parse the args 
-     */
+    /* parse the args */
     optind = 0;
     while ((c = getopt (modargc, modargv, CVSMODULE_OPTS)) != -1)
     {
@@ -521,7 +446,7 @@ do_module (DBM * db, char *mname, enum mtype m_type, char *msg,
     }
     modargc -= optind;
     modargv += optind;
-    if (modargc == 0 && spec_opt == NULL)
+    if (modargc == 0  &&  spec_opt == NULL)
     {
 	error (0, 0, "modules file missing directory for module %s", mname);
 	++err;
@@ -530,21 +455,17 @@ do_module (DBM * db, char *mname, enum mtype m_type, char *msg,
 
     if (alias && nonalias_opt)
     {
-	/*
-	   The documentation has never said it is valid to specify
+	/* The documentation has never said it is valid to specify
 	   -a along with another option.  And I believe that in the past
 	   CVS has ignored the options other than -a, more or less, in this
-	   situation.  
-	 */
+	   situation.  */
 	error (0, 0, "\
 -a cannot be specified in the modules file along with other options");
 	++err;
 	goto do_module_return;
     }
 
-    /*
-       if this was an alias, call ourselves recursively for each module 
-     */
+    /* if this was an alias, call ourselves recursively for each module */
     if (alias)
     {
 	int i;
@@ -566,14 +487,13 @@ do_module (DBM * db, char *mname, enum mtype m_type, char *msg,
     if (mfile != NULL && modargc > 1)
     {
 	error (0, 0, "\
-module `%s' is a request for a file in a module which is not a directory", mname);
+module `%s' is a request for a file in a module which is not a directory",
+	       mname);
 	++err;
 	goto do_module_return;
     }
 
-    /*
-       otherwise, process this module 
-     */
+    /* otherwise, process this module */
     if (modargc > 0)
     {
 	err += callback_proc (modargc, modargv, where, mwhere, mfile, shorten,
@@ -591,12 +511,10 @@ module `%s' is a request for a file in a module which is not a directory", mname
 	    goto do_special;
 
 	dir = where ? where : (mwhere ? mwhere : mname);
-	/*
-	   XXX - think about making null repositories at each dir here
-	   instead of just at the bottom 
-	 */
+	/* XXX - think about making null repositories at each dir here
+		 instead of just at the bottom */
 	make_directories (dir);
-	if (CVS_CHDIR (dir) < 0)
+	if ( CVS_CHDIR (dir) < 0)
 	{
 	    error (0, errno, "cannot chdir to %s", dir);
 	    spec_opt = NULL;
@@ -627,24 +545,19 @@ module `%s' is a request for a file in a module which is not a directory", mname
 	}
     }
 
-    /*
-       if there were special include args, process them now 
-     */
+    /* if there were special include args, process them now */
 
   do_special:
 
     free_names (&xmodargc, xmodargv);
     xmodargv = NULL;
 
-    /*
-       blow off special options if -l was specified 
-     */
+    /* blow off special options if -l was specified */
     if (local_specified)
 	spec_opt = NULL;
 
 #ifdef SERVER_SUPPORT
-    /*
-       We want to check out into the directory named by the module.
+    /* We want to check out into the directory named by the module.
        So we set a global variable which tells the server to glom that
        directory name onto the front.  A cleaner approach would be some
        way of passing it down to the recursive call, through the
@@ -653,8 +566,7 @@ module `%s' is a request for a file in a module which is not a directory", mname
        print the actual directory we are checking out into.
 
        For local CVS, this is handled by the chdir call above
-       (directly or via the callback_proc).  
-     */
+       (directly or via the callback_proc).  */
     if (server_active && spec_opt != NULL)
     {
 	char *change_to;
@@ -665,7 +577,9 @@ module `%s' is a request for a file in a module which is not a directory", mname
 	server_dir =
 	    xmalloc ((server_dir_to_restore != NULL
 		      ? strlen (server_dir_to_restore)
-		      : 0) + strlen (change_to) + 5);
+		      : 0)
+		     + strlen (change_to)
+		     + 5);
 	server_dir[0] = '\0';
 	if (server_dir_to_restore != NULL)
 	{
@@ -683,24 +597,18 @@ module `%s' is a request for a file in a module which is not a directory", mname
 	cp = strchr (spec_opt, CVSMODULE_SPEC);
 	if (cp != NULL)
 	{
-	    /*
-	       save the beginning of the next arg 
-	     */
+	    /* save the beginning of the next arg */
 	    next_opt = cp + 1;
 
-	    /*
-	       strip whitespace off the end 
-	     */
+	    /* strip whitespace off the end */
 	    do
 		*cp = '\0';
-	    while (cp > spec_opt && isspace ((unsigned char) *--cp));
+	    while (cp > spec_opt  &&  isspace ((unsigned char) *--cp));
 	}
 	else
 	    next_opt = NULL;
 
-	/*
-	   strip whitespace from front 
-	 */
+	/* strip whitespace from front */
 	while (isspace ((unsigned char) *spec_opt))
 	    spec_opt++;
 
@@ -722,17 +630,13 @@ module `%s' is a request for a file in a module which is not a directory", mname
     }
 #endif
 
-    /*
-       cd back to where we started 
-     */
+    /* cd back to where we started */
     if (restore_cwd (&cwd, NULL))
 	error_exit ();
     free_cwd (&cwd);
     cwd_saved = 0;
 
-    /*
-       run checkout or tag prog if appropriate 
-     */
+    /* run checkout or tag prog if appropriate */
     if (err == 0 && run_module_prog)
     {
 	if ((m_type == TAG && tag_prog != NULL) ||
@@ -760,9 +664,7 @@ module `%s' is a request for a file in a module which is not a directory", mname
 		    prog = real_prog;
 	    }
 
-	    /*
-	       XXX can we determine the line number for this entry??? 
-	     */
+	    /* XXX can we determine the line number for this entry??? */
 	    expanded_path = expand_path (prog, "modules", 0);
 	    if (expanded_path != NULL)
 	    {
@@ -789,10 +691,8 @@ module `%s' is a request for a file in a module which is not a directory", mname
 	}
     }
 
-  do_module_return:
-    /*
-       clean up 
-     */
+ do_module_return:
+    /* clean up */
     if (xmodargv != NULL)
 	free_names (&xmodargc, xmodargv);
     if (mwhere)
@@ -839,13 +739,13 @@ module `%s' is a request for a file in a module which is not a directory", mname
 
 static struct sortrec *s_head;
 
-static int s_max = 0;		/* Number of elements allocated */
-static int s_count = 0;		/* Number of elements used */
+static int s_max = 0;			/* Number of elements allocated */
+static int s_count = 0;			/* Number of elements used */
 
-static int Status;		/* Nonzero if the user is
-				   interested in status
-				   information as well as
-				   module name */
+static int Status;		        /* Nonzero if the user is
+					   interested in status
+					   information as well as
+					   module name */
 static char def_status[] = "NONE";
 
 /* Sort routine for qsort:
@@ -862,9 +762,7 @@ sort_order (const void *l, const void *r)
 
     if (Status)
     {
-	/*
-	   If Sort by status field, compare them. 
-	 */
+	/* If Sort by status field, compare them. */
 	if ((i = strcmp (left->status, right->status)) != 0)
 	    return (i);
     }
@@ -883,9 +781,7 @@ save_d (char *k, int ks, char *d, int ds)
     if (s_count == s_max)
     {
 	s_max += 64;
-	s_head =
-	    (struct sortrec *) xrealloc ((char *) s_head,
-					 s_max * sizeof (*s_head));
+	s_head = (struct sortrec *) xrealloc ((char *) s_head, s_max * sizeof (*s_head));
     }
     s_rec = &s_head[s_count];
     s_rec->modname = cp = xmalloc (ks + 1);
@@ -894,13 +790,11 @@ save_d (char *k, int ks, char *d, int ds)
 
     s_rec->rest = cp2 = xmalloc (ds + 1);
     cp = d;
-    *(cp + ds) = '\0';			/* Assumes an extra byte at end of static dbm buffer */
+    *(cp + ds) = '\0';	/* Assumes an extra byte at end of static dbm buffer */
 
     while (isspace ((unsigned char) *cp))
 	cp++;
-    /*
-       Turn <spaces> into one ' ' -- makes the rest of this routine simpler 
-     */
+    /* Turn <spaces> into one ' ' -- makes the rest of this routine simpler */
     while (*cp)
     {
 	if (isspace ((unsigned char) *cp))
@@ -914,9 +808,7 @@ save_d (char *k, int ks, char *d, int ds)
     }
     *cp2 = '\0';
 
-    /*
-       Look for the "-s statusvalue" text 
-     */
+    /* Look for the "-s statusvalue" text */
     if (Status)
     {
 	s_rec->status = def_status;
@@ -942,9 +834,7 @@ save_d (char *k, int ks, char *d, int ds)
     else
 	cp = s_rec->rest;
 
-    /*
-       Find comment field, clean up on all three sides & compress blanks 
-     */
+    /* Find comment field, clean up on all three sides & compress blanks */
     if ((cp2 = cp = strchr (cp, '#')) != NULL)
     {
 	if (*--cp2 == ' ')
@@ -975,9 +865,7 @@ cat_module (int status)
 
     Status = status;
 
-    /*
-       Read the whole modules file into allocated records 
-     */
+    /* Read the whole modules file into allocated records */
     if (!(db = open_module ()))
 	error (1, 0, "failed to open the modules file");
 
@@ -990,9 +878,7 @@ cat_module (int status)
 
     close_module (db);
 
-    /*
-       Sort the list as requested 
-     */
+    /* Sort the list as requested */
     qsort ((void *) s_head, s_count, sizeof (struct sortrec), sort_order);
 
     /*
@@ -1005,9 +891,7 @@ cat_module (int status)
     {
 	char *line;
 
-	/*
-	   Print module name (and status, if wanted) 
-	 */
+	/* Print module name (and status, if wanted) */
 	line = xmalloc (strlen (s_h->modname) + 15);
 	sprintf (line, "%-12s", s_h->modname);
 	cvs_output (line, 0);
@@ -1021,9 +905,7 @@ cat_module (int status)
 	}
 
 	line = xmalloc (strlen (s_h->modname) + strlen (s_h->rest) + 15);
-	/*
-	   Parse module file entry as command line and print options 
-	 */
+	/* Parse module file entry as command line and print options */
 	(void) sprintf (line, "%s %s", s_h->modname, s_h->rest);
 	line2argv (&moduleargc, &moduleargv, line, " \t");
 	free (line);
@@ -1067,9 +949,7 @@ cat_module (int status)
 	argc -= optind;
 	argv += optind;
 
-	/*
-	   Format and Print all the files and directories 
-	 */
+	/* Format and Print all the files and directories */
 	for (; argc--; argv++)
 	{
 	    if (strlen (*argv) + wid > (unsigned) fill)
@@ -1087,9 +967,7 @@ cat_module (int status)
 	}
 	cvs_output ("\n", 1);
 
-	/*
-	   Format the comment field -- save_d (), compressed spaces 
-	 */
+	/* Format the comment field -- save_d (), compressed spaces */
 	for (cp2 = cp = s_h->comment; *cp; cp2 = cp)
 	{
 	    int j;
@@ -1118,16 +996,12 @@ cat_module (int status)
 	    cvs_output ("\n", 1);
 	}
 
-	free_names (&moduleargc, moduleargv);
-	/*
-	   FIXME-leak: here is where we would free s_h->modname, s_h->rest,
+	free_names(&moduleargc, moduleargv);
+	/* FIXME-leak: here is where we would free s_h->modname, s_h->rest,
 	   and if applicable, s_h->status.  Not exactly a memory leak,
 	   in the sense that we are about to exit(), but may be worth
 	   noting if we ever do a multithreaded server or something of
-	   the sort.  
-	 */
+	   the sort.  */
     }
-    /*
-       FIXME-leak: as above, here is where we would free s_head.  
-     */
+    /* FIXME-leak: as above, here is where we would free s_head.  */
 }

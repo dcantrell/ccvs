@@ -1,4 +1,3 @@
-
 /*
  * Copyright (c) 1992, Brian Berliner and Jeff Polk
  * Copyright (c) 1989-1992, Brian Berliner
@@ -16,13 +15,16 @@ static int find_type (Node * p, void *closure);
 static int fmt_proc (Node * p, void *closure);
 static int logfile_write (char *repository, char *filter,
 			  char *message, FILE * logfp, List * changes);
-static int rcsinfo_proc (char *repository, char *template, void *closure);
+static int rcsinfo_proc ( char *repository, char *template,
+                                void *closure );
 static int title_proc (Node * p, void *closure);
-static int update_logfile_proc (char *repository, char *filter,
-				void *closure);
+static int update_logfile_proc ( char *repository, char *filter,
+                                       void *closure);
 static void setup_tmpfile (FILE * xfp, char *xprefix, List * changes);
-static int editinfo_proc (char *repository, char *template, void *closure);
-static int verifymsg_proc (char *repository, char *script, void *closure);
+static int editinfo_proc ( char *repository, char *template,
+                                 void *closure );
+static int verifymsg_proc ( char *repository, char *script,
+                                  void *closure );
 
 static FILE *fp;
 static char *str_list;
@@ -46,11 +48,9 @@ static char *prefix;
 static int col;
 static char *tag;
 static void
-setup_tmpfile (FILE * xfp, char *xprefix, List * changes)
+setup_tmpfile (FILE *xfp, char *xprefix, List *changes)
 {
-    /*
-       set up statics 
-     */
+    /* set up statics */
     fp = xfp;
     prefix = xprefix;
 
@@ -99,7 +99,7 @@ setup_tmpfile (FILE * xfp, char *xprefix, List * changes)
  * Looks for nodes of a specified type and returns 1 if found
  */
 static int
-find_type (Node * p, void *closure)
+find_type (Node *p, void *closure)
 {
     struct logfile_info *li;
 
@@ -116,38 +116,37 @@ find_type (Node * p, void *closure)
  * match the one we're looking for
  */
 static int
-fmt_proc (Node * p, void *closure)
+fmt_proc (Node *p, void *closure)
 {
     struct logfile_info *li;
 
     li = (struct logfile_info *) p->data;
     if (li->type == type)
     {
-	if (li->tag == NULL
-	    ? tag != NULL : tag == NULL || strcmp (tag, li->tag) != 0)
+        if (li->tag == NULL
+	    ? tag != NULL
+	    : tag == NULL || strcmp (tag, li->tag) != 0)
 	{
 	    if (col > 0)
-		(void) fprintf (fp, "\n");
+	        (void) fprintf (fp, "\n");
 	    (void) fputs (prefix, fp);
 	    col = strlen (prefix);
 	    while (col < 6)
 	    {
-		(void) fprintf (fp, " ");
+	        (void) fprintf (fp, " ");
 		++col;
 	    }
 
 	    if (li->tag == NULL)
-		(void) fprintf (fp, "No tag");
+	        (void) fprintf (fp, "No tag");
 	    else
-		(void) fprintf (fp, "Tag: %s", li->tag);
+	        (void) fprintf (fp, "Tag: %s", li->tag);
 
 	    if (tag != NULL)
-		free (tag);
+	        free (tag);
 	    tag = xstrdup (li->tag);
 
-	    /*
-	       Force a new line.  
-	     */
+	    /* Force a new line.  */
 	    col = 70;
 	}
 
@@ -177,7 +176,7 @@ fmt_proc (Node * p, void *closure)
  * NULL when running in client mode.
  */
 void
-do_editor (char *dir, char **messagep, char *repository, List * changes)
+do_editor (char *dir, char **messagep, char *repository, List *changes)
 {
     static int reuse_log_message = 0;
     char *line;
@@ -197,23 +196,17 @@ do_editor (char *dir, char **messagep, char *repository, List * changes)
     if (noexec || reuse_log_message)
 	return;
 
-    /*
-       Abort creation of temp file if no editor is defined 
-     */
-    /*
-       FIXME - why test this here?  Editor is set by configure and
-       * editinfo_editor is really set later in this function.  This test
-       * should either be deleted or moved below the call to Parse_Info().
+    /* Abort creation of temp file if no editor is defined */
+    /* FIXME - why test this here?  Editor is set by configure and
+     * editinfo_editor is really set later in this function.  This test
+     * should either be deleted or moved below the call to Parse_Info().
      */
     if (strcmp (Editor, "") == 0 && !editinfo_editor)
-	error (1, 0, "no editor defined, must use -e or -m");
+	error(1, 0, "no editor defined, must use -e or -m");
 
-    /*
-       Create a temporary file 
-     */
-    /*
-       FIXME - It's possible we should be relying on cvs_temp_file to open
-       * the file here - we get race conditions otherwise.
+    /* Create a temporary file */
+    /* FIXME - It's possible we should be relying on cvs_temp_file to open
+     * the file here - we get race conditions otherwise.
      */
     fname = cvs_temp_name ();
   again:
@@ -230,11 +223,9 @@ do_editor (char *dir, char **messagep, char *repository, List * changes)
     }
 
     if (repository != NULL)
-	/*
-	   tack templates on if necessary 
-	 */
+	/* tack templates on if necessary */
 	(void) Parse_Info (CVSROOTADM_RCSINFO, repository, rcsinfo_proc,
-			   PIOPT_ALL, 0);
+		PIOPT_ALL, 0);
     else
     {
 	FILE *tfp;
@@ -242,9 +233,7 @@ do_editor (char *dir, char **messagep, char *repository, List * changes)
 	size_t n;
 	size_t nwrite;
 
-	/*
-	   Why "b"?  
-	 */
+	/* Why "b"?  */
 	tfp = CVS_FOPEN (CVSADM_TEMPLATE, "rb");
 	if (tfp == NULL)
 	{
@@ -256,7 +245,6 @@ do_editor (char *dir, char **messagep, char *repository, List * changes)
 	    while (!feof (tfp))
 	    {
 		char *p = buf;
-
 		n = fread (buf, 1, sizeof buf, tfp);
 		nwrite = n;
 		while (nwrite > 0)
@@ -274,10 +262,10 @@ do_editor (char *dir, char **messagep, char *repository, List * changes)
     }
 
     (void) fprintf (fp,
-		    "%s----------------------------------------------------------------------\n",
+  "%s----------------------------------------------------------------------\n",
 		    CVSEDITPREFIX);
     (void) fprintf (fp,
-		    "%sEnter Log.  Lines beginning with `%.*s' are removed automatically\n%s\n",
+  "%sEnter Log.  Lines beginning with `%.*s' are removed automatically\n%s\n",
 		    CVSEDITPREFIX, CVSEDITPREFIXLEN, CVSEDITPREFIX,
 		    CVSEDITPREFIX);
     if (dir != NULL && *dir)
@@ -286,15 +274,13 @@ do_editor (char *dir, char **messagep, char *repository, List * changes)
     if (changes != NULL)
 	setup_tmpfile (fp, CVSEDITPREFIX, changes);
     (void) fprintf (fp,
-		    "%s----------------------------------------------------------------------\n",
+  "%s----------------------------------------------------------------------\n",
 		    CVSEDITPREFIX);
 
-    /*
-       finish off the temp file 
-     */
+    /* finish off the temp file */
     if (fclose (fp) == EOF)
-	error (1, errno, "%s", fname);
-    if (CVS_STAT (fname, &pre_stbuf) == -1)
+        error (1, errno, "%s", fname);
+    if ( CVS_STAT (fname, &pre_stbuf) == -1)
 	pre_stbuf.st_mtime = 0;
 
     if (editinfo_editor)
@@ -302,16 +288,14 @@ do_editor (char *dir, char **messagep, char *repository, List * changes)
     editinfo_editor = (char *) NULL;
 #ifdef CLIENT_SUPPORT
     if (current_parsed_root->isremote)
-	;				/* nothing, leave editinfo_editor NULL */
+	; /* nothing, leave editinfo_editor NULL */
     else
 #endif
     if (repository != NULL)
 	(void) Parse_Info (CVSROOTADM_EDITINFO, repository, editinfo_proc, 0,
-			   &editinfo_editor);
+		 &editinfo_editor);
 
-    /*
-       run the editor 
-     */
+    /* run the editor */
     run_setup (editinfo_editor ? editinfo_editor : Editor);
     run_arg (fname);
     if ((retcode = run_exec (RUN_TTY, RUN_TTY, RUN_TTY,
@@ -320,28 +304,24 @@ do_editor (char *dir, char **messagep, char *repository, List * changes)
 	       editinfo_editor ? "Logfile verification failed" :
 	       "warning: editor session failed");
 
-    /*
-       put the entire message back into the *messagep variable 
-     */
+    /* put the entire message back into the *messagep variable */
 
     fp = open_file (fname, "r");
 
     if (*messagep)
 	free (*messagep);
 
-    if (CVS_STAT (fname, &post_stbuf) != 0)
-	error (1, errno, "cannot find size of temp file %s", fname);
+    if ( CVS_STAT (fname, &post_stbuf) != 0)
+	    error (1, errno, "cannot find size of temp file %s", fname);
 
     if (post_stbuf.st_size == 0)
 	*messagep = NULL;
     else
     {
-	/*
-	   On NT, we might read less than st_size bytes, but we won't
-	   read more.  So this works.  
-	 */
+	/* On NT, we might read less than st_size bytes, but we won't
+	   read more.  So this works.  */
 	*messagep = (char *) xmalloc (post_stbuf.st_size + 1);
-	(*messagep)[0] = '\0';
+ 	(*messagep)[0] = '\0';
     }
 
     line = NULL;
@@ -351,7 +331,6 @@ do_editor (char *dir, char **messagep, char *repository, List * changes)
     {
 	size_t message_len = post_stbuf.st_size + 1;
 	size_t offset = 0;
-
 	while (1)
 	{
 	    line_length = getline (&line, &line_chars_allocated, fp);
@@ -365,7 +344,7 @@ do_editor (char *dir, char **messagep, char *repository, List * changes)
 		continue;
 	    if (offset + line_length >= message_len)
 		expand_string (messagep, &message_len,
-			       offset + line_length + 1);
+				offset + line_length + 1);
 	    (void) strcpy (*messagep + offset, line);
 	    offset += line_length;
 	}
@@ -373,11 +352,9 @@ do_editor (char *dir, char **messagep, char *repository, List * changes)
     if (fclose (fp) < 0)
 	error (0, errno, "warning: cannot close %s", fname);
 
-    /*
-       canonicalize emply messages 
-     */
+    /* canonicalize emply messages */
     if (*messagep != NULL &&
-	(**messagep == '\0' || strcmp (*messagep, "\n") == 0))
+        (**messagep == '\0' || strcmp (*messagep, "\n") == 0))
     {
 	free (*messagep);
 	*messagep = NULL;
@@ -388,9 +365,7 @@ do_editor (char *dir, char **messagep, char *repository, List * changes)
 	for (;;)
 	{
 	    (void) printf ("\nLog message unchanged or not specified\n");
-	    (void)
-		printf
-		("a)bort, c)ontinue, e)dit, !)reuse this message unchanged for remaining dirs\n");
+	    (void) printf ("a)bort, c)ontinue, e)dit, !)reuse this message unchanged for remaining dirs\n");
 	    (void) printf ("Action: (continue) ");
 	    (void) fflush (stdout);
 	    line_length = getline (&line, &line_chars_allocated, stdin);
@@ -406,12 +381,11 @@ do_editor (char *dir, char **messagep, char *repository, List * changes)
 		     || *line == '\n' || *line == 'c' || *line == 'C')
 		break;
 	    if (*line == 'a' || *line == 'A')
-	    {
-		if (unlink_file (fname) < 0)
-		    error (0, errno, "warning: cannot remove temp file %s",
-			   fname);
-		error (1, 0, "aborted by user");
-	    }
+		{
+		    if (unlink_file (fname) < 0)
+			error (0, errno, "warning: cannot remove temp file %s", fname);
+		    error (1, 0, "aborted by user");
+		}
 	    if (*line == 'e' || *line == 'E')
 		goto again;
 	    if (*line == '!')
@@ -446,35 +420,25 @@ do_verify (char **messagep, char *repository)
 
 #ifdef CLIENT_SUPPORT
     if (current_parsed_root->isremote)
-	/*
-	   The verification will happen on the server.  
-	 */
+	/* The verification will happen on the server.  */
 	return;
 #endif
 
-    /*
-       FIXME? Do we really want to skip this on noexec?  What do we do
-       for the other administrative files?  
-     */
+    /* FIXME? Do we really want to skip this on noexec?  What do we do
+       for the other administrative files?  */
     if (noexec || repository == NULL)
 	return;
 
-    /*
-       Get the name of the verification script to run  
-     */
+    /* Get the name of the verification script to run  */
 
-    if (Parse_Info
-	(CVSROOTADM_VERIFYMSG, repository, verifymsg_proc, 0,
-	 &verifymsg_script) > 0)
+    if (Parse_Info (CVSROOTADM_VERIFYMSG, repository, verifymsg_proc, 0, &verifymsg_script) > 0)
 	error (1, 0, "Message verification failed");
 
     if (!verifymsg_script)
 	return;
 
-    /*
-       open a temporary file, write the message to the 
-       temp file, and close the file.  
-     */
+    /* open a temporary file, write the message to the 
+       temp file, and close the file.  */
 
     if ((fp = cvs_temp_file (&fname)) == NULL)
 	error (1, errno, "cannot create temporary file %s", fname);
@@ -482,17 +446,16 @@ do_verify (char **messagep, char *repository)
     if (*messagep != NULL)
 	fputs (*messagep, fp);
     if (*messagep == NULL ||
-	(*messagep)[0] == '\0' || (*messagep)[strlen (*messagep) - 1] != '\n')
+	(*messagep)[0] == '\0' ||
+	(*messagep)[strlen (*messagep) - 1] != '\n')
 	putc ('\n', fp);
     if (fclose (fp) == EOF)
 	error (1, errno, "%s", fname);
 
     if (RereadLogAfterVerify == LOGMSG_REREAD_STAT)
     {
-	/*
-	   Remember the status of the temp file for later 
-	 */
-	if (CVS_STAT (fname, &pre_stbuf) != 0)
+	/* Remember the status of the temp file for later */
+	if ( CVS_STAT (fname, &pre_stbuf) != 0 )
 	    error (1, errno, "cannot stat temp file %s", fname);
 
 	/*
@@ -507,41 +470,35 @@ do_verify (char **messagep, char *repository)
     if ((retcode = run_exec (RUN_TTY, RUN_TTY, RUN_TTY,
 			     RUN_NORMAL | RUN_SIGIGNORE)) != 0)
     {
-	/*
-	   Since following error() exits, delete the temp file now.  
-	 */
+	/* Since following error() exits, delete the temp file now.  */
 	if (unlink_file (fname) < 0)
 	    error (0, errno, "cannot remove %s", fname);
 
-	error (1, retcode == -1 ? errno : 0, "Message verification failed");
+	error (1, retcode == -1 ? errno : 0, 
+	       "Message verification failed");
     }
 
-    /*
-       Get the mod time and size of the possibly new log message
-       * in always and stat modes.
+    /* Get the mod time and size of the possibly new log message
+     * in always and stat modes.
      */
     if (RereadLogAfterVerify == LOGMSG_REREAD_ALWAYS ||
 	RereadLogAfterVerify == LOGMSG_REREAD_STAT)
     {
-	if (CVS_STAT (fname, &post_stbuf) != 0)
+	if ( CVS_STAT (fname, &post_stbuf) != 0 )
 	    error (1, errno, "cannot find size of temp file %s", fname);
     }
 
-    /*
-       And reread the log message in `always' mode or in `stat' mode when it's
-       * changed
+    /* And reread the log message in `always' mode or in `stat' mode when it's
+     * changed
      */
     if (RereadLogAfterVerify == LOGMSG_REREAD_ALWAYS ||
 	(RereadLogAfterVerify == LOGMSG_REREAD_STAT &&
-	 (pre_stbuf.st_mtime != post_stbuf.st_mtime ||
-	  pre_stbuf.st_size != post_stbuf.st_size)))
+	    (pre_stbuf.st_mtime != post_stbuf.st_mtime ||
+	     pre_stbuf.st_size != post_stbuf.st_size)))
     {
-	/*
-	   put the entire message back into the *messagep variable 
-	 */
+	/* put the entire message back into the *messagep variable */
 
-	if (*messagep)
-	    free (*messagep);
+	if (*messagep) free (*messagep);
 
 	if (post_stbuf.st_size == 0)
 	    *messagep = NULL;
@@ -552,25 +509,24 @@ do_verify (char **messagep, char *repository)
 	    size_t line_chars_allocated = 0;
 	    char *p;
 
-	    if ((fp = open_file (fname, "r")) == NULL)
+	    if ( (fp = open_file (fname, "r")) == NULL )
 		error (1, errno, "cannot open temporary file %s", fname);
 
-	    /*
-	       On NT, we might read less than st_size bytes,
-	       but we won't read more.  So this works.  
-	     */
+	    /* On NT, we might read less than st_size bytes,
+	       but we won't read more.  So this works.  */
 	    p = *messagep = (char *) xmalloc (post_stbuf.st_size + 1);
 	    *messagep[0] = '\0';
 
 	    while (1)
 	    {
-		line_length = getline (&line, &line_chars_allocated, fp);
+		line_length = getline (&line,
+				       &line_chars_allocated,
+				       fp);
 		if (line_length == -1)
 		{
 		    if (ferror (fp))
-			/*
-			   Fail in this case because otherwise we will have no
-			   * log message
+			/* Fail in this case because otherwise we will have no
+			 * log message
 			 */
 			error (1, errno, "cannot read %s", fname);
 		    break;
@@ -580,21 +536,18 @@ do_verify (char **messagep, char *repository)
 		(void) strcpy (p, line);
 		p += line_length;
 	    }
-	    if (line)
-		free (line);
+	    if (line) free (line);
 	    if (fclose (fp) < 0)
-		error (0, errno, "warning: cannot close %s", fname);
+	        error (0, errno, "warning: cannot close %s", fname);
 	}
     }
 
-    /*
-       Delete the temp file  
-     */
+    /* Delete the temp file  */
 
     if (unlink_file (fname) < 0)
 	error (0, errno, "cannot remove %s", fname);
     free (fname);
-    free (verifymsg_script);
+    free( verifymsg_script );
 }
 
 /*
@@ -602,17 +555,14 @@ do_verify (char **messagep, char *repository)
  * copies the matching template onto the end of the tempfile we are setting
  * up
  */
-
 /* ARGSUSED */
 static int
-rcsinfo_proc (char *repository, char *template, void *closure)
+rcsinfo_proc(char *repository, char *template, void *closure)
 {
     static char *last_template;
     FILE *tfp;
 
-    /*
-       nothing to do if the last one included is the same as this one 
-     */
+    /* nothing to do if the last one included is the same as this one */
     if (last_template && strcmp (last_template, template) == 0)
 	return (0);
     if (last_template)
@@ -647,47 +597,38 @@ rcsinfo_proc (char *repository, char *template, void *closure)
  * directory in the source repository.  The log information is fed into the
  * specified program as standard input.
  */
-struct ulp_data
-{
+struct ulp_data {
     FILE *logfp;
     char *message;
     List *changes;
 };
 
 void
-Update_Logfile (char *repository, char *xmessage, FILE * xlogfp,
-		List * xchanges)
+Update_Logfile (char *repository, char *xmessage, FILE *xlogfp, List *xchanges)
 {
     struct ulp_data ud;
 
-    /*
-       nothing to do if the list is empty 
-     */
+    /* nothing to do if the list is empty */
     if (xchanges == NULL || xchanges->list->next == xchanges->list)
 	return;
 
-    /*
-       set up vars for update_logfile_proc 
-     */
+    /* set up vars for update_logfile_proc */
     ud.message = xmessage;
     ud.logfp = xlogfp;
     ud.changes = xchanges;
 
-    /*
-       call Parse_Info to do the actual logfile updates 
-     */
+    /* call Parse_Info to do the actual logfile updates */
     (void) Parse_Info (CVSROOTADM_LOGINFO, repository, update_logfile_proc,
-		       PIOPT_ALL, &ud);
+		PIOPT_ALL, &ud);
 }
 
 /*
  * callback proc to actually do the logfile write from Update_Logfile
  */
 static int
-update_logfile_proc (char *repository, char *filter, void *closure)
+update_logfile_proc(char *repository, char *filter, void *closure)
 {
-    struct ulp_data *udp = (struct ulp_data *) closure;
-
+    struct ulp_data *udp = (struct ulp_data *)closure;
     return (logfile_write (repository, filter, udp->message, udp->logfp,
 			   udp->changes));
 }
@@ -696,7 +637,7 @@ update_logfile_proc (char *repository, char *filter, void *closure)
  * concatenate each filename/version onto str_list
  */
 static int
-title_proc (Node * p, void *closure)
+title_proc (Node *p, void *closure)
 {
     struct logfile_info *li;
     char *c;
@@ -704,13 +645,11 @@ title_proc (Node * p, void *closure)
     li = (struct logfile_info *) p->data;
     if (li->type == type)
     {
-	/*
-	   Until we decide on the correct logging solution when we add
+	/* Until we decide on the correct logging solution when we add
 	   directories or perform imports, T_TITLE nodes will only
 	   tack on the name provided, regardless of the format string.
 	   You can verify that this assumption is safe by checking the
-	   code in add.c (add_directory) and import.c (import). 
-	 */
+	   code in add.c (add_directory) and import.c (import). */
 
 	str_list = xrealloc (str_list, strlen (str_list) + 5);
 	(void) strcat (str_list, " ");
@@ -723,57 +662,48 @@ title_proc (Node * p, void *closure)
 	}
 	else
 	{
-	    /*
-	       All other nodes use the format string. 
-	     */
+	    /* All other nodes use the format string. */
 
 	    for (c = str_list_format; *c != '\0'; c++)
 	    {
 		switch (*c)
 		{
-		    case 's':
-			str_list =
-			    xrealloc (str_list,
-				      strlen (str_list) + strlen (p->key) +
-				      5);
-			(void) strcat (str_list, p->key);
-			break;
-		    case 'V':
-			str_list =
-			    xrealloc (str_list,
-				      (strlen (str_list)
-				       +
-				       (li->
-					rev_old ? strlen (li->rev_old) : 0) +
-				       10));
-			(void) strcat (str_list,
-				       (li->rev_old ? li->rev_old : "NONE"));
-			break;
-		    case 'v':
-			str_list =
-			    xrealloc (str_list,
-				      (strlen (str_list)
-				       +
-				       (li->
-					rev_new ? strlen (li->rev_new) : 0) +
-				       10));
-			(void) strcat (str_list,
-				       (li->rev_new ? li->rev_new : "NONE"));
-			break;
-			/*
-			   All other characters, we insert an empty field (but
-			   we do put in the comma separating it from other
-			   fields).  This way if future CVS versions add formatting
-			   characters, one can write a loginfo file which at least
-			   won't blow up on an old CVS.  
-			 */
-			/*
-			   Note that people who have to deal with spaces in file
-			   and directory names are using space to get a known
-			   delimiter for the directory name, so it's probably
-			   not a good idea to ever define that as a formatting
-			   character.  
-			 */
+		case 's':
+		    str_list =
+			xrealloc (str_list,
+				  strlen (str_list) + strlen (p->key) + 5);
+		    (void) strcat (str_list, p->key);
+		    break;
+		case 'V':
+		    str_list =
+			xrealloc (str_list,
+				  (strlen (str_list)
+				   + (li->rev_old ? strlen (li->rev_old) : 0)
+				   + 10)
+				  );
+		    (void) strcat (str_list, (li->rev_old
+					      ? li->rev_old : "NONE"));
+		    break;
+		case 'v':
+		    str_list =
+			xrealloc (str_list,
+				  (strlen (str_list)
+				   + (li->rev_new ? strlen (li->rev_new) : 0)
+				   + 10)
+				  );
+		    (void) strcat (str_list, (li->rev_new
+					      ? li->rev_new : "NONE"));
+		    break;
+		/* All other characters, we insert an empty field (but
+		   we do put in the comma separating it from other
+		   fields).  This way if future CVS versions add formatting
+		   characters, one can write a loginfo file which at least
+		   won't blow up on an old CVS.  */
+		/* Note that people who have to deal with spaces in file
+		   and directory names are using space to get a known
+		   delimiter for the directory name, so it's probably
+		   not a good idea to ever define that as a formatting
+		   character.  */
 		}
 		if (*(c + 1) != '\0')
 		{
@@ -791,8 +721,7 @@ title_proc (Node * p, void *closure)
  * filter program.
  */
 static int
-logfile_write (char *repository, char *filter, char *message, FILE * logfp,
-	       List * changes)
+logfile_write (char *repository, char *filter, char *message, FILE *logfp, List *changes)
 {
     FILE *pipefp;
     char *prog;
@@ -802,12 +731,11 @@ logfile_write (char *repository, char *filter, char *message, FILE * logfp,
     char *fmt_percent;		/* the location of the percent sign
 				   that starts the format string. */
 
-    /*
-       The user may specify a format string as part of the filter.
+    /* The user may specify a format string as part of the filter.
        Originally, `%s' was the only valid string.  The string that
        was substituted for it was:
 
-       <repository-name> <file1> <file2> <file3> ...
+         <repository-name> <file1> <file2> <file3> ...
 
        Each file was either a new directory/import (T_TITLE), or a
        added (T_ADDED), modified (T_MODIFIED), or removed (T_REMOVED)
@@ -824,16 +752,16 @@ logfile_write (char *repository, char *filter, char *message, FILE * logfp,
        or followed by a set of format characters surrounded by `{' and
        `}' as separators.  The format characters are:
 
-       s = file name
-       V = old version number (pre-checkin)
-       v = new version number (post-checkin)
+         s = file name
+	 V = old version number (pre-checkin)
+	 v = new version number (post-checkin)
 
        For example, valid format strings are:
 
-       %{}
-       %s
-       %{s}
-       %{sVv}
+         %{}
+	 %s
+	 %{s}
+	 %{sVv}
 
        There's no reason that more items couldn't be added (like
        modification date or file status [added, modified, updated,
@@ -849,11 +777,10 @@ logfile_write (char *repository, char *filter, char *message, FILE * logfp,
        (ChangeLog, Makefile, foo.c) were modified, the output might
        be:
 
-       /u/src/master ChangeLog,1.1,1.2 Makefile,1.3,1.4 foo.c,1.12,1.13
+         /u/src/master ChangeLog,1.1,1.2 Makefile,1.3,1.4 foo.c,1.12,1.13
 
        Why this duplicates the old behavior when the format string is
-       `%s' is left as an exercise for the reader. 
-     */
+       `%s' is left as an exercise for the reader. */
 
     fmt_percent = strchr (filter, '%');
     if (fmt_percent)
@@ -863,59 +790,44 @@ logfile_write (char *repository, char *filter, char *message, FILE * logfp,
 	char *fmt_begin, *fmt_end;	/* beginning and end of the
 					   format string specified in
 					   filter. */
-	char *fmt_continue;	/* where the string continues
-				   after the format string (we
-				   might skip a '}') somewhere
-				   in there... */
+	char *fmt_continue;		/* where the string continues
+					   after the format string (we
+					   might skip a '}') somewhere
+					   in there... */
 
-	/*
-	   Grab the format string. 
-	 */
+	/* Grab the format string. */
 
 	if ((*(fmt_percent + 1) == ' ') || (*(fmt_percent + 1) == '\0'))
 	{
-	    /*
-	       The percent stands alone.  This is an error.  We could
+	    /* The percent stands alone.  This is an error.  We could
 	       be treating ' ' like any other formatting character, but
 	       using it as a formatting character seems like it would be
-	       a mistake.  
-	     */
+	       a mistake.  */
 
-	    /*
-	       Would be nice to also be giving the line number.  
-	     */
-	    error (0, 0,
-		   "loginfo: '%%' not followed by formatting character");
+	    /* Would be nice to also be giving the line number.  */
+	    error (0, 0, "loginfo: '%%' not followed by formatting character");
 	    fmt_begin = fmt_percent + 1;
 	    fmt_end = fmt_begin;
 	    fmt_continue = fmt_begin;
 	}
 	else if (*(fmt_percent + 1) == '{')
 	{
-	    /*
-	       The percent has a set of characters following it. 
-	     */
+	    /* The percent has a set of characters following it. */
 
 	    fmt_begin = fmt_percent + 2;
 	    fmt_end = strchr (fmt_begin, '}');
 	    if (fmt_end)
 	    {
-		/*
-		   Skip over the '}' character. 
-		 */
+		/* Skip over the '}' character. */
 
 		fmt_continue = fmt_end + 1;
 	    }
 	    else
 	    {
-		/*
-		   There was no close brace -- assume that format
-		   string continues to the end of the line. 
-		 */
+		/* There was no close brace -- assume that format
+                   string continues to the end of the line. */
 
-		/*
-		   Would be nice to also be giving the line number.  
-		 */
+		/* Would be nice to also be giving the line number.  */
 		error (0, 0, "loginfo: '}' missing");
 		fmt_end = fmt_begin + strlen (fmt_begin);
 		fmt_continue = fmt_end;
@@ -923,10 +835,8 @@ logfile_write (char *repository, char *filter, char *message, FILE * logfp,
 	}
 	else
 	{
-	    /*
-	       The percent has a single character following it.  FIXME:
-	       %% should expand to a regular percent sign.  
-	     */
+	    /* The percent has a single character following it.  FIXME:
+	       %% should expand to a regular percent sign.  */
 
 	    fmt_begin = fmt_percent + 1;
 	    fmt_end = fmt_begin + 1;
@@ -938,18 +848,14 @@ logfile_write (char *repository, char *filter, char *message, FILE * logfp,
 	strncpy (str_list_format, fmt_begin, len);
 	str_list_format[len] = '\0';
 
-	/*
-	   Allocate an initial chunk of memory.  As we build up the string
-	   we will realloc it.  
-	 */
+	/* Allocate an initial chunk of memory.  As we build up the string
+	   we will realloc it.  */
 	if (!str_list)
 	    str_list = xmalloc (1);
 	str_list[0] = '\0';
 
-	/*
-	   Add entries to the string.  Don't bother looking for
-	   entries if the format string is empty. 
-	 */
+	/* Add entries to the string.  Don't bother looking for
+           entries if the format string is empty. */
 
 	if (str_list_format[0] != '\0')
 	{
@@ -964,16 +870,14 @@ logfile_write (char *repository, char *filter, char *message, FILE * logfp,
 	}
 
 	free (str_list_format);
-
-	/*
-	   Construct the final string. 
-	 */
+	
+	/* Construct the final string. */
 
 	srepos = Short_Repository (repository);
 
 	prog = cp = xmalloc ((fmt_percent - filter) + 2 * strlen (srepos)
-			     + 2 * strlen (str_list) + strlen (fmt_continue)
-			     + 10);
+			+ 2 * strlen (str_list) + strlen (fmt_continue)
+			+ 10);
 	(void) memcpy (cp, filter, fmt_percent - filter);
 	cp += fmt_percent - filter;
 	*cp++ = '"';
@@ -981,19 +885,15 @@ logfile_write (char *repository, char *filter, char *message, FILE * logfp,
 	cp = shell_escape (cp, str_list);
 	*cp++ = '"';
 	(void) strcpy (cp, fmt_continue);
-
-	/*
-	   To be nice, free up some memory. 
-	 */
+	    
+	/* To be nice, free up some memory. */
 
 	free (str_list);
 	str_list = (char *) NULL;
     }
     else
     {
-	/*
-	   There's no format string. 
-	 */
+	/* There's no format string. */
 	prog = xstrdup (filter);
     }
 
@@ -1038,16 +938,13 @@ logfile_write (char *repository, char *filter, char *message, FILE * logfp,
  * the "src" directory versus changes made to the "doc" or "test"
  * directories.
  */
-
 /* ARGSUSED */
 static int
-editinfo_proc (char *repository, char *editor, void *closure)
+editinfo_proc(char *repository, char *editor, void *closure)
 {
-    char **editinfo_editor = (char **) closure;
+    char **editinfo_editor = (char **)closure;
 
-    /*
-       nothing to do if the last match is the same as this one 
-     */
+    /* nothing to do if the last match is the same as this one */
     if (*editinfo_editor && strcmp (*editinfo_editor, editor) == 0)
 	return (0);
     if (*editinfo_editor)
@@ -1061,10 +958,9 @@ editinfo_proc (char *repository, char *editor, void *closure)
  *  message verification script.
  */
 static int
-verifymsg_proc (char *repository, char *script, void *closure)
+verifymsg_proc(char *repository, char *script, void *closure)
 {
-    char **verifymsg_script = (char **) closure;
-
+    char **verifymsg_script = (char **)closure;
     if (*verifymsg_script && strcmp (*verifymsg_script, script) == 0)
 	return (0);
     if (*verifymsg_script)

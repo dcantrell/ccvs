@@ -1,4 +1,3 @@
-
 /*
  * Copyright (c) 1992, Brian Berliner and Jeff Polk
  *
@@ -27,15 +26,12 @@ hashp (const char *key)
     unsigned int h = 0;
     unsigned int g;
 
-    assert (key != NULL);
+    assert(key != NULL);
 
     while (*key != 0)
     {
 	unsigned int c = *key++;
-
-	/*
-	   The FOLD_FN_CHAR is so that findnode_fn works.  
-	 */
+	/* The FOLD_FN_CHAR is so that findnode_fn works.  */
 	h = (h << 4) + FOLD_FN_CHAR (c);
 	if ((g = h & 0xf0000000) != 0)
 	    h = (h ^ (g >> 24)) ^ g;
@@ -56,9 +52,7 @@ getlist (void)
 
     if (listcache != NULL)
     {
-	/*
-	   get a list from the cache and clear it 
-	 */
+	/* get a list from the cache and clear it */
 	list = listcache;
 	listcache = listcache->next;
 	list->next = (List *) NULL;
@@ -67,9 +61,7 @@ getlist (void)
     }
     else
     {
-	/*
-	   make a new list from scratch 
-	 */
+	/* make a new list from scratch */
 	list = (List *) xmalloc (sizeof (List));
 	memset ((char *) list, 0, sizeof (List));
 	node = getnode ();
@@ -84,7 +76,7 @@ getlist (void)
  * free up a list
  */
 void
-dellist (List ** listp)
+dellist (List **listp)
 {
     int i;
     Node *p;
@@ -94,45 +86,33 @@ dellist (List ** listp)
 
     p = (*listp)->list;
 
-    /*
-       free each node in the list (except header) 
-     */
+    /* free each node in the list (except header) */
     while (p->next != p)
 	delnode (p->next);
 
-    /*
-       free any list-private data, without freeing the actual header 
-     */
+    /* free any list-private data, without freeing the actual header */
     freenode_mem (p);
 
-    /*
-       free up the header nodes for hash lists (if any) 
-     */
+    /* free up the header nodes for hash lists (if any) */
     for (i = 0; i < HASHSIZE; i++)
     {
 	if ((p = (*listp)->hasharray[i]) != (Node *) NULL)
 	{
-	    /*
-	       put the nodes into the cache 
-	     */
+	    /* put the nodes into the cache */
 #ifndef NOCACHE
 	    p->type = NT_UNKNOWN;
 	    p->next = nodecache;
 	    nodecache = p;
 #else
-	    /*
-	       If NOCACHE is defined we turn off the cache.  This can make
+	    /* If NOCACHE is defined we turn off the cache.  This can make
 	       it easier to tools to determine where items were allocated
-	       and freed, for tracking down memory leaks and the like.  
-	     */
+	       and freed, for tracking down memory leaks and the like.  */
 	    free (p);
 #endif
 	}
     }
 
-    /*
-       put it on the cache 
-     */
+    /* put it on the cache */
 #ifndef NOCACHE
     (*listp)->next = listcache;
     listcache = *listp;
@@ -153,23 +133,17 @@ getnode (void)
 
     if (nodecache != (Node *) NULL)
     {
-	/*
-	   get one from the cache 
-	 */
+	/* get one from the cache */
 	p = nodecache;
 	nodecache = p->next;
     }
     else
     {
-	/*
-	   make a new one 
-	 */
+	/* make a new one */
 	p = (Node *) xmalloc (sizeof (Node));
     }
 
-    /*
-       always make it clean 
-     */
+    /* always make it clean */
     memset ((char *) p, 0, sizeof (Node));
     p->type = NT_UNKNOWN;
 
@@ -180,29 +154,23 @@ getnode (void)
  * remove a node from it's list (maybe hash list too) and free it
  */
 void
-delnode (Node * p)
+delnode (Node *p)
 {
     if (p == (Node *) NULL)
 	return;
 
-    /*
-       take it out of the list 
-     */
+    /* take it out of the list */
     p->next->prev = p->prev;
     p->prev->next = p->next;
 
-    /*
-       if it was hashed, remove it from there too 
-     */
+    /* if it was hashed, remove it from there too */
     if (p->hashnext != (Node *) NULL)
     {
 	p->hashnext->hashprev = p->hashprev;
 	p->hashprev->hashnext = p->hashnext;
     }
 
-    /*
-       free up the storage 
-     */
+    /* free up the storage */
     freenode (p);
 }
 
@@ -210,9 +178,9 @@ delnode (Node * p)
  * free up the storage associated with a node
  */
 static void
-freenode_mem (Node * p)
+freenode_mem (Node *p)
 {
-    if (p->delproc != (void (*)()) NULL)
+    if (p->delproc != (void (*) ()) NULL)
 	p->delproc (p);			/* call the specified delproc */
     else
     {
@@ -222,27 +190,21 @@ freenode_mem (Node * p)
     if (p->key != NULL)			/* free the key if necessary */
 	free (p->key);
 
-    /*
-       to be safe, re-initialize these 
-     */
+    /* to be safe, re-initialize these */
     p->key = p->data = (char *) NULL;
-    p->delproc = (void (*)()) NULL;
+    p->delproc = (void (*) ()) NULL;
 }
 
 /*
  * free up the storage associated with a node and recycle it
  */
 void
-freenode (Node * p)
+freenode (Node *p)
 {
-    /*
-       first free the memory 
-     */
+    /* first free the memory */
     freenode_mem (p);
 
-    /*
-       then put it in the cache 
-     */
+    /* then put it in the cache */
 #ifndef NOCACHE
     p->type = NT_UNKNOWN;
     p->next = nodecache;
@@ -260,7 +222,7 @@ freenode (Node * p)
  * return 0 on success
  */
 int
-insert_before (List * list, Node * marker, Node * p)
+insert_before (List *list, Node *marker, Node *p)
 {
     if (p->key != NULL)			/* hash it too? */
     {
@@ -275,9 +237,7 @@ insert_before (List * list, Node * marker, Node * p)
 	    list->hasharray[hashval] = q->hashnext = q->hashprev = q;
 	}
 
-	/*
-	   put it into the hash list if it's not already there 
-	 */
+	/* put it into the hash list if it's not already there */
 	for (q = list->hasharray[hashval]->hashnext;
 	     q != list->hasharray[hashval]; q = q->hashnext)
 	{
@@ -306,9 +266,9 @@ insert_before (List * list, Node * marker, Node * p)
  * return 0 on success
  */
 int
-addnode (List * list, Node * p)
+addnode (List *list, Node *p)
 {
-    return insert_before (list, list->list, p);
+  return insert_before (list, list->list, p);
 }
 
 /*
@@ -316,9 +276,9 @@ addnode (List * list, Node * p)
  * necessary to preserve last-to-first output order for some RCS functions.
  */
 int
-addnode_at_front (List * list, Node * p)
+addnode_at_front (List *list, Node *p)
 {
-    return insert_before (list, list->list->next, p);
+  return insert_before (list, list->list->next, p);
 }
 
 /* Look up an entry in hash list table and return a pointer to the
@@ -326,7 +286,7 @@ addnode_at_front (List * list, Node * p)
  * error for errors.
  */
 Node *
-findnode (List * list, const char *key)
+findnode (List *list, const char *key)
 {
     Node *head, *p;
 
@@ -337,9 +297,7 @@ findnode (List * list, const char *key)
 
     head = list->hasharray[hashp (key)];
     if (head == (Node *) NULL)
-	/*
-	   Not found.  
-	 */
+	/* Not found.  */
 	return ((Node *) NULL);
 
     for (p = head->hashnext; p != head; p = p->hashnext)
@@ -352,15 +310,13 @@ findnode (List * list, const char *key)
  * Like findnode, but for a filename.
  */
 Node *
-findnode_fn (List * list, const char *key)
+findnode_fn (List *list, const char *key)
 {
     Node *head, *p;
 
-    /*
-       This probably should be "assert (list != NULL)" (or if not we
+    /* This probably should be "assert (list != NULL)" (or if not we
        should document the current behavior), but only if we check all
-       the callers to see if any are relying on this behavior.  
-     */
+       the callers to see if any are relying on this behavior.  */
     if (list == (List *) NULL)
 	return ((Node *) NULL);
 
@@ -380,18 +336,18 @@ findnode_fn (List * list, const char *key)
  * walk a list with a specific proc
  */
 int
-walklist (List * list, int (*proc) (Node *, void *), void *closure)
+walklist (List *list, int (*proc) (Node *, void *), void *closure)
 {
     Node *head, *p;
     int err = 0;
 
 #ifdef HAVE_PRINTF_PTR
-    TRACE (TRACE_FLOW, "walklist ( list=%p, proc=%p, closure=%p )",
-	   (void *) list, (void *) proc, closure);
+    TRACE ( TRACE_FLOW, "walklist ( list=%p, proc=%p, closure=%p )",
+	    (void *) list, (void *) proc, closure );
 #else
-    TRACE (TRACE_FLOW, "walklist ( list=%lx, proc=%lx, closure=%lx )",
-	   (unsigned long) list, (unsigned long) proc,
-	   (unsigned long) closure);
+    TRACE ( TRACE_FLOW, "walklist ( list=%lx, proc=%lx, closure=%lx )",
+	    (unsigned long) list, (unsigned long) proc,
+	    (unsigned long) closure );
 #endif
 
     if (list == NULL)
@@ -404,7 +360,7 @@ walklist (List * list, int (*proc) (Node *, void *), void *closure)
 }
 
 int
-list_isempty (List * list)
+list_isempty (List *list)
 {
     return list == NULL || list->list->next == list->list;
 }
@@ -417,7 +373,6 @@ qsort_comp (const void *elem1, const void *elem2)
 {
     Node **node1 = (Node **) elem1;
     Node **node2 = (Node **) elem2;
-
     return client_comp (*node1, *node2);
 }
 
@@ -425,7 +380,7 @@ qsort_comp (const void *elem1, const void *elem2)
  * sort the elements of a list (in place)
  */
 void
-sortlist (List * list, int (*comp) (const Node *, const Node *))
+sortlist (List *list, int (*comp) (const Node *, const Node *))
 {
     Node *head, *remain, *p, **array;
     int i, n;
@@ -433,36 +388,26 @@ sortlist (List * list, int (*comp) (const Node *, const Node *))
     if (list == NULL)
 	return;
 
-    /*
-       save the old first element of the list 
-     */
+    /* save the old first element of the list */
     head = list->list;
     remain = head->next;
 
-    /*
-       count the number of nodes in the list 
-     */
+    /* count the number of nodes in the list */
     n = 0;
     for (p = remain; p != head; p = p->next)
 	n++;
 
-    /*
-       allocate an array of nodes and populate it 
-     */
-    array = (Node **) xmalloc (sizeof (Node *) * n);
+    /* allocate an array of nodes and populate it */
+    array = (Node **) xmalloc (sizeof(Node *) * n);
     i = 0;
     for (p = remain; p != head; p = p->next)
 	array[i++] = p;
 
-    /*
-       sort the array of nodes 
-     */
+    /* sort the array of nodes */
     client_comp = comp;
-    qsort (array, n, sizeof (Node *), qsort_comp);
+    qsort (array, n, sizeof(Node *), qsort_comp);
 
-    /*
-       rebuild the list from beginning to end 
-     */
+    /* rebuild the list from beginning to end */
     head->next = head->prev = head;
     for (i = 0; i < n; i++)
     {
@@ -473,9 +418,7 @@ sortlist (List * list, int (*comp) (const Node *, const Node *))
 	head->prev = p;
     }
 
-    /*
-       release the array of nodes 
-     */
+    /* release the array of nodes */
     free (array);
 }
 
@@ -483,7 +426,7 @@ sortlist (List * list, int (*comp) (const Node *, const Node *))
  * compare two files list node (for sort)
  */
 int
-fsortcmp (const Node * p, const Node * q)
+fsortcmp (const Node *p, const Node *q)
 {
     return (strcmp (p->key, q->key));
 }
@@ -495,70 +438,50 @@ static char *nodetypestring (Ntype);
 static char *
 nodetypestring (Ntype type)
 {
-    switch (type)
-    {
-	case NT_UNKNOWN:
-	    return ("UNKNOWN");
-	case HEADER:
-	    return ("HEADER");
-	case ENTRIES:
-	    return ("ENTRIES");
-	case FILES:
-	    return ("FILES");
-	case LIST:
-	    return ("LIST");
-	case RCSNODE:
-	    return ("RCSNODE");
-	case RCSVERS:
-	    return ("RCSVERS");
-	case DIRS:
-	    return ("DIRS");
-	case UPDATE:
-	    return ("UPDATE");
-	case LOCK:
-	    return ("LOCK");
-	case NDBMNODE:
-	    return ("NDBMNODE");
-	case FILEATTR:
-	    return ("FILEATTR");
-	case VARIABLE:
-	    return ("VARIABLE");
-	case RCSFIELD:
-	    return ("RCSFIELD");
-	case RCSCMPFLD:
-	    return ("RCSCMPFLD");
+    switch (type) {
+    case NT_UNKNOWN:	return("UNKNOWN");
+    case HEADER:	return("HEADER");
+    case ENTRIES:	return("ENTRIES");
+    case FILES:		return("FILES");
+    case LIST:		return("LIST");
+    case RCSNODE:	return("RCSNODE");
+    case RCSVERS:	return("RCSVERS");
+    case DIRS:		return("DIRS");
+    case UPDATE:	return("UPDATE");
+    case LOCK:		return("LOCK");
+    case NDBMNODE:	return("NDBMNODE");
+    case FILEATTR:	return("FILEATTR");
+    case VARIABLE:	return("VARIABLE");
+    case RCSFIELD:	return("RCSFIELD");
+    case RCSCMPFLD:	return("RCSCMPFLD");
     }
 
-    return ("<trash>");
+    return("<trash>");
 }
 
 static int printnode (Node *, void *);
 static int
-printnode (Node * node, void *closure)
+printnode (Node *node, void *closure)
 {
     if (node == NULL)
     {
-	(void) printf ("NULL node.\n");
-	return (0);
+	(void) printf("NULL node.\n");
+	return(0);
     }
 
 #ifdef HAVE_PRINTF_PTR
-    (void)
-	printf
-	("Node at %p: type = %s, key = %p = \"%s\", data = %p, next = %p, prev = %p\n",
-	 (void *) node, nodetypestring (node->type), (void *) node->key,
-	 node->key, (void *) node->data, (void *) node->next,
-	 (void *) node->prev);
+    (void) printf("Node at %p: type = %s, key = %p = \"%s\", data = %p, next = %p, prev = %p\n",
+	   (void *) node, nodetypestring(node->type),
+	   (void *) node->key, node->key, (void *) node->data,
+	   (void *) node->next, (void *) node->prev);
 #else
-    (void)
-	printf
-	("Node at 0x%lx: type = %s, key = 0x%lx = \"%s\", data = 0x%lx, next = 0x%lx, prev = 0x%lx\n",
-	 (unsigned long) node, nodetypestring (node->type),
-	 (unsigned long) node->key, node->key, (unsigned long) node->data,
-	 (unsigned long) node->next, (unsigned long) node->prev);
+    (void) printf("Node at 0x%lx: type = %s, key = 0x%lx = \"%s\", data = 0x%lx, next = 0x%lx, prev = 0x%lx\n",
+	   (unsigned long) node, nodetypestring(node->type),
+	   (unsigned long) node->key, node->key, (unsigned long) node->data,
+	   (unsigned long) node->next, (unsigned long) node->prev);
 #endif
 
-    return (0);
+    return(0);
 }
 
 /* This is global, not static, so that its name is unique and to avoid
@@ -567,26 +490,24 @@ printnode (Node * node, void *closure)
 void printlist (List *);
 
 void
-printlist (List * list)
+printlist (List *list)
 {
     if (list == NULL)
     {
-	(void) printf ("NULL list.\n");
+	(void) printf("NULL list.\n");
 	return;
     }
 
 #ifdef HAVE_PRINTF_PTR
-    (void) printf ("List at %p: list = %p, HASHSIZE = %d, next = %p\n",
-		   (void *) list, (void *) list->list, HASHSIZE,
-		   (void *) list->next);
+    (void) printf("List at %p: list = %p, HASHSIZE = %d, next = %p\n",
+	   (void *) list, (void *) list->list, HASHSIZE, (void *) list->next);
 #else
-    (void)
-	printf ("List at 0x%lx: list = 0x%lx, HASHSIZE = %d, next = 0x%lx\n",
-		(unsigned long) list, (unsigned long) list->list, HASHSIZE,
-		(unsigned long) list->next);
+    (void) printf("List at 0x%lx: list = 0x%lx, HASHSIZE = %d, next = 0x%lx\n",
+	   (unsigned long) list, (unsigned long) list->list, HASHSIZE,
+	   (unsigned long) list->next);
 #endif
 
-    (void) walklist (list, printnode, NULL);
+    (void) walklist(list, printnode, NULL);
 
     return;
 }

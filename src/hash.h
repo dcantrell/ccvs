@@ -1,4 +1,3 @@
-
 /*
  * Copyright (c) 1992, Brian Berliner and Jeff Polk
  * 
@@ -51,8 +50,8 @@ Node *getnode (void);
 int insert_before (List * list, Node * marker, Node * p);
 int addnode (List * list, Node * p);
 int addnode_at_front (List * list, Node * p);
-int walklist (List * list, int (*)(Node * n, void *closure), void *closure);
-int list_isempty (List * list);
+int walklist (List * list, int (*)(Node *n, void *closure), void *closure);
+int list_isempty (List *list);
 void dellist (List ** listp);
 void delnode (Node * p);
 void freenode (Node * p);

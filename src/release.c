@@ -1,4 +1,3 @@
-
 /*
  * Release: "cancel" a checkout in the history log.
  * 
@@ -10,7 +9,8 @@
 #include "savecwd.h"
 #include "getline.h"
 
-static const char *const release_usage[] = {
+static const char *const release_usage[] =
+{
     "Usage: %s %s [-d] directories...\n",
     "\t-d\tDelete the given directory.\n",
     "(Specify the --help global option for a list of other help options)\n",
@@ -26,9 +26,7 @@ release_server (int argc, char **argv)
 {
     int i;
 
-    /*
-       Note that we skip argv[0].  
-     */
+    /* Note that we skip argv[0].  */
     for (i = 1; i < argc; ++i)
 	history_write ('F', argv[i], "", argv[i], "");
     return 0;
@@ -80,9 +78,7 @@ release (int argc, char **argv)
 	return release_server (argc, argv);
 #endif
 
-    /*
-       Everything from here on is client or local.  
-     */
+    /* Everything from here on is client or local.  */
     if (argc == -1)
 	usage (release_usage);
     optind = 0;
@@ -108,27 +104,23 @@ release (int argc, char **argv)
     argc -= optind;
     argv += optind;
 
-    /*
-       We're going to run "cvs -n -q update" and check its output; if
-       * the output is sufficiently unalarming, then we release with no
-       * questions asked.  Else we prompt, then maybe release.
-       * (Well, actually we ask no matter what.  Our notion of "sufficiently
-       * unalarming" doesn't take into account "? foo.c" files, so it is
-       * up to the user to take note of them, at least currently
-       * (ignore-193 in testsuite)).
+    /* We're going to run "cvs -n -q update" and check its output; if
+     * the output is sufficiently unalarming, then we release with no
+     * questions asked.  Else we prompt, then maybe release.
+     * (Well, actually we ask no matter what.  Our notion of "sufficiently
+     * unalarming" doesn't take into account "? foo.c" files, so it is
+     * up to the user to take note of them, at least currently
+     * (ignore-193 in testsuite)).
      */
-    /*
-       Construct the update command. 
-     */
+    /* Construct the update command. */
     update_cmd = xmalloc (strlen (program_path)
-			  + strlen (current_parsed_root->original) + 20);
+			  + strlen (current_parsed_root->original)
+			  + 20);
     sprintf (update_cmd, "%s -n -q -d %s update",
-	     program_path, current_parsed_root->original);
+             program_path, current_parsed_root->original);
 
 #ifdef CLIENT_SUPPORT
-    /*
-       Start the server; we'll close it after looping. 
-     */
+    /* Start the server; we'll close it after looping. */
     if (current_parsed_root->isremote)
     {
 	start_server ();
@@ -136,12 +128,11 @@ release (int argc, char **argv)
     }
 #endif /* CLIENT_SUPPORT */
 
-    /*
-       Remember the directory where "cvs release" was invoked because
+    /* Remember the directory where "cvs release" was invoked because
        all args are relative to this directory and we chdir around.
-     */
+       */
     if (save_cwd (&cwd))
-	error_exit ();
+        error_exit ();
 
     arg_start_idx = 0;
 
@@ -149,8 +140,8 @@ release (int argc, char **argv)
     {
 	thisarg = argv[i];
 
-	if (isdir (thisarg))
-	{
+        if (isdir (thisarg))
+        {
 	    if (CVS_CHDIR (thisarg) < 0)
 	    {
 		if (!really_quiet)
@@ -167,7 +158,7 @@ release (int argc, char **argv)
 	    }
 	}
 	else
-	{
+        {
 	    if (!really_quiet)
 		error (0, 0, "no such directory: %s", thisarg);
 	    continue;
@@ -179,14 +170,12 @@ release (int argc, char **argv)
 	{
 	    int line_length;
 
-	    /*
-	       The "release" command piggybacks on "update", which
+	    /* The "release" command piggybacks on "update", which
 	       does the real work of finding out if anything is not
 	       up-to-date with the repository.  Then "release" prompts
 	       the user, telling her how many files have been
 	       modified, and asking if she still wants to do the
-	       release.  
-	     */
+	       release.  */
 	    fp = run_popen (update_cmd, "r");
 	    if (fp == NULL)
 		error (1, 0, "cannot run command %s", update_cmd);
@@ -202,12 +191,10 @@ release (int argc, char **argv)
 	    if (line_length < 0 && !feof (fp))
 		error (0, errno, "cannot read from subprocess");
 
-	    /*
-	       If the update exited with an error, then we just want to
+	    /* If the update exited with an error, then we just want to
 	       complain and go on to the next arg.  Especially, we do
 	       not want to delete the local copy, since it's obviously
-	       not what the user thinks it is.  
-	     */
+	       not what the user thinks it is.  */
 	    if ((pclose (fp)) != 0)
 	    {
 		error (0, 0, "unable to release `%s'", thisarg);
@@ -217,7 +204,8 @@ release (int argc, char **argv)
 		continue;
 	    }
 
-	    printf ("You have [%d] altered files in this repository.\n", c);
+	    printf ("You have [%d] altered files in this repository.\n",
+		    c);
 	    printf ("Are you sure you want to release %sdirectory `%s': ",
 		    delete_flag ? "(and delete) " : "", thisarg);
 	    c = !yesno ();
@@ -240,51 +228,46 @@ release (int argc, char **argv)
 #endif
 	    )
 	{
-	    /*
-	       We are chdir'ed into the directory in question.  
-	       So don't pass args to unedit.  
-	     */
+	    /* We are chdir'ed into the directory in question.  
+	       So don't pass args to unedit.  */
 	    int argc = 1;
 	    char *argv[3];
-
 	    argv[0] = "dummy";
 	    argv[1] = NULL;
 	    err += unedit (argc, argv);
 	}
 
 #ifdef CLIENT_SUPPORT
-	if (current_parsed_root->isremote)
-	{
+        if (current_parsed_root->isremote)
+        {
 	    send_to_server ("Argument ", 0);
 	    send_to_server (thisarg, 0);
 	    send_to_server ("\012", 1);
 	    send_to_server ("release\012", 0);
 	}
-	else
+        else
 #endif /* CLIENT_SUPPORT */
-	{
-	    history_write ('F', thisarg, "", thisarg, "");	/* F == Free */
-	}
+        {
+	    history_write ('F', thisarg, "", thisarg, ""); /* F == Free */
+        }
 
-	free (repository);
+        free (repository);
 
 	if (restore_cwd (&cwd, NULL))
 	    error_exit ();
 
 	if (delete_flag)
 	{
-	    /*
-	       FIXME?  Shouldn't this just delete the CVS-controlled
+	    /* FIXME?  Shouldn't this just delete the CVS-controlled
 	       files and, perhaps, the files that would normally be
-	       ignored and leave everything else?  
-	     */
+	       ignored and leave everything else?  */
 
 	    if (unlink_file_dir (thisarg) < 0)
 		error (0, errno, "deletion of directory %s failed", thisarg);
 	}
 
 #ifdef CLIENT_SUPPORT
-	if (current_parsed_root->isremote)
+        if (current_parsed_root->isremote)
 	    err += get_server_responses ();
 #endif /* CLIENT_SUPPORT */
     }
@@ -296,12 +279,10 @@ release (int argc, char **argv)
 #ifdef CLIENT_SUPPORT
     if (current_parsed_root->isremote)
     {
-	/*
-	   Unfortunately, client.c doesn't offer a way to close
+	/* Unfortunately, client.c doesn't offer a way to close
 	   the connection without waiting for responses.  The extra
 	   network turnaround here is quite unnecessary other than
-	   that....  
-	 */
+	   that....  */
 	send_to_server ("noop\012", 0);
 	err += get_responses_and_close ();
     }
