@@ -34,6 +34,14 @@
 #define O_NONBLOCK O_NDELAY
 #endif
 
+/* EWOULDBLOCK is not defined by POSIX, but some BSD systems will
+   return it, rather than EAGAIN, for nonblocking writes.  */
+#ifdef EWOULDBLOCK
+#define blocking_error(err) ((err) == EWOULDBLOCK || (err) == EAGAIN)
+#else
+#define blocking_error(err) ((err) == EAGAIN)
+#endif
+
 #ifdef AUTH_SERVER_SUPPORT
 /* For initgroups().  */
 #if HAVE_INITGROUPS
@@ -1577,10 +1585,7 @@ buf_send_output (buf)
 
 		if (buf->nonblocking
 		    && (nbytes == 0
-#ifdef EWOULDBLOCK
-			|| errno == EWOULDBLOCK
-#endif
-			|| errno == EAGAIN))
+			|| blocking_error (errno)))
 		{
 		    /*
 		     * A nonblocking write failed to write any data.
@@ -1944,11 +1949,7 @@ buf_input_data (buf, countp)
 		return -1;
 	    }
 
-	    if (errno == EAGAIN
-#ifdef EWOULDBLOCK
-		|| errno == EWOULDBLOCK
-#endif
-		)
+	    if (blocking_error (errno))
 	      return 0;
 
 	    return errno;
