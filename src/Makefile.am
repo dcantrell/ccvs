@@ -93,10 +93,7 @@ cvs_SOURCES = \
 	root.h \
 	server.h \
 	update.h \
-	version.h \
 	watch.h
-
-BUILT_SOURCES = version.h
 
 cvs_LDADD = \
 	../diff/libdiff.a \
