@@ -1,6 +1,7 @@
 Sat Apr 12 17:32:59 1997  Ian Lance Taylor  <ian@cygnus.com>
 
 	* sanity.sh (modules3): Remove second-dir at end of tests.
+	(sticky): Correct removal of directories at end of tests.
 
 	* sanity.sh (keyword): New tests for RCS keyword expansion.
 
