@@ -2684,9 +2684,8 @@ send_repository (dir, repos, update_dir)
 }
 
 /* Send a Repository line and set toplevel_repos.  */
-static void send_a_repository PROTO((char *, char *, char *));
 
-static void
+void
 send_a_repository (dir, repository, update_dir)
     char *dir;
     char *repository;

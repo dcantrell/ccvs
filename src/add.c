@@ -28,7 +28,7 @@
 #include "savecwd.h"
 #include "fileattr.h"
 
-static int add_directory PROTO((char *repository, List *, char *dir));
+static int add_directory PROTO ((struct file_info *finfo));
 static int build_entry PROTO((char *repository, char *user, char *options,
 		        char *message, List * entries, char *tag));
 
@@ -88,7 +88,6 @@ add (argc, argv)
     char **argv;
 {
     char *message = NULL;
-    char *user;
     int i;
     char *repository;
     int c;
@@ -97,6 +96,7 @@ add (argc, argv)
     char *options = NULL;
     List *entries;
     Vers_TS *vers;
+    struct saved_cwd cwd;
 
     if (argc == 1 || argc == -1)
 	usage (add_usage);
@@ -149,25 +149,6 @@ add (argc, argv)
 	    error (0, 0, "cannot add special file `%s'; skipping", argv[i]);
 	    skip_file = 1;
 	}
-	else
-	{
-	    char *p;
-	    p = argv[i];
-	    while (*p != '\0')
-	    {
-		if (ISDIRSEP (*p))
-		{
-		    /* In the client case, better check this before we start
-		       calling Create_Admin and such.  */
-		    error (0, 0, "\
-cannot add files with '/' in their name; %s not added",
-			   argv[i]);
-		    skip_file = 1;
-		    break;
-		}
-		++p;
-	    }
-	}
 
 	if (skip_file)
 	{
@@ -186,9 +167,6 @@ cannot add files with '/' in their name; %s not added",
 	}
     }
 
-    /* find the repository associated with our current dir */
-    repository = Name_Repository ((char *) NULL, (char *) NULL);
-
 #ifdef CLIENT_SUPPORT
     if (client_active)
     {
@@ -205,6 +183,11 @@ cannot add files with '/' in their name; %s not added",
 	ign_setup ();
 	if (options) send_arg(options);
 	option_with_arg ("-m", message);
+
+	repository = Name_Repository (NULL, NULL);
+	send_a_repository ("", repository, "");
+	free (repository);
+
 	for (i = 0; i < argc; ++i)
 	    /* FIXME: Does this erroneously call Create_Admin in error
 	       conditions which are only detected once the server gets its
@@ -215,17 +198,47 @@ cannot add files with '/' in their name; %s not added",
 		char *date;
 		int nonbranch;
 		char *rcsdir;
+		char *p;
+		char *update_dir;
+		/* This is some mungeable storage into which we can point
+		   with p and/or update_dir.  */
+		char *filedir;
+
+		if (save_cwd (&cwd))
+		    error_exit ();
+
+		filedir = xstrdup (argv[i]);
+		p = last_component (filedir);
+		if (p == filedir)
+		{
+		    update_dir = "";
+		}
+		else
+		{
+		    p[-1] = '\0';
+		    update_dir = filedir;
+		    if (CVS_CHDIR (update_dir) < 0)
+			error (1, errno,
+			       "could not chdir to %s", update_dir);
+		}
+
+		/* find the repository associated with our current dir */
+		repository = Name_Repository (NULL, update_dir);
 
 		/* before we do anything else, see if we have any
 		   per-directory tags */
 		ParseTag (&tag, &date, &nonbranch);
 
-		rcsdir = combine_dir (repository, argv[i]);
+		rcsdir = combine_dir (repository, p);
 
-		strip_trailing_slashes (argv[i]);
-
-		Create_Admin (argv[i], argv[i], rcsdir, tag, date,
+		Create_Admin (p, argv[i], rcsdir, tag, date,
 			      nonbranch, 0);
+
+		send_a_repository ("", repository, update_dir);
+
+		if (restore_cwd (&cwd, NULL))
+		    error_exit ();
+		free_cwd (&cwd);
 
 		if (tag)
 		    free (tag);
@@ -233,18 +246,14 @@ cannot add files with '/' in their name; %s not added",
 		    free (date);
 		free (rcsdir);
 
-		if (strchr (argv[i], '/') == NULL)
+		if (p == filedir)
 		    Subdir_Register ((List *) NULL, (char *) NULL, argv[i]);
 		else
 		{
-		    char *cp, *b;
-
-		    cp = xstrdup (argv[i]);
-		    b = strrchr (cp, '/');
-		    *b++ = '\0';
-		    Subdir_Register ((List *) NULL, cp, b);
-		    free (cp);
+		    Subdir_Register ((List *) NULL, update_dir, p);
 		}
+		free (repository);
+		free (filedir);
 	    }
 	send_file_names (argc, argv, SEND_EXPAND_WILD);
 	/* FIXME: should be able to pass SEND_NO_CONTENTS, I think.  */
@@ -252,12 +261,9 @@ cannot add files with '/' in their name; %s not added",
 	send_to_server ("add\012", 0);
 	if (message)
 	    free (message);
-	free (repository);
 	return err + get_responses_and_close ();
     }
 #endif
-
-    entries = Entries_Open (0);
 
     /* walk the arg list adding files/dirs */
     for (i = 0; i < argc; i++)
@@ -267,15 +273,38 @@ cannot add files with '/' in their name; %s not added",
 	int begin_added_files = added_files;
 #endif
 	struct file_info finfo;
+	char *p;
 
-	user = argv[i];
 	memset (&finfo, 0, sizeof finfo);
-	finfo.file = user;
-	finfo.update_dir = "";
-	finfo.fullname = user;
+
+	if (save_cwd (&cwd))
+	    error_exit ();
+
+	finfo.fullname = xstrdup (argv[i]);
+	p = last_component (argv[i]);
+	if (p == argv[i])
+	{
+	    finfo.update_dir = "";
+	    finfo.file = p;
+	}
+	else
+	{
+	    p[-1] = '\0';
+	    finfo.update_dir = argv[i];
+	    finfo.file = p;
+	    if (CVS_CHDIR (finfo.update_dir) < 0)
+		error (1, errno, "could not chdir to %s", finfo.update_dir);
+	}
+
+	finfo.rcs = NULL;
+
+	/* Find the repository associated with our current dir.  */
+	repository = Name_Repository (NULL, finfo.update_dir);
+
+	entries = Entries_Open (0);
+
 	finfo.repository = repository;
 	finfo.entries = entries;
-	finfo.rcs = NULL;
 
 	/* We pass force_tag_match as 1.  If the directory has a
            sticky branch tag, and there is already an RCS file which
@@ -291,23 +320,25 @@ cannot add files with '/' in their name; %s not added",
 		if (vers->ts_user == NULL)
 		{
 		    /* There is no user file either */
-		    error (0, 0, "nothing known about %s", user);
+		    error (0, 0, "nothing known about %s", finfo.fullname);
 		    err++;
 		}
-		else if (!isdir (user) || wrap_name_has (user, WRAP_TOCVS))
+		else if (!isdir (finfo.file)
+			 || wrap_name_has (finfo.file, WRAP_TOCVS))
 		{
 		    /*
 		     * See if a directory exists in the repository with
 		     * the same name.  If so, blow this request off.
 		     */
-		    char *dname = xmalloc (strlen (repository) + strlen (user)
+		    char *dname = xmalloc (strlen (repository)
+					   + strlen (finfo.file)
 					   + 10);
-		    (void) sprintf (dname, "%s/%s", repository, user);
+		    (void) sprintf (dname, "%s/%s", repository, finfo.file);
 		    if (isdir (dname))
 		    {
 			error (0, 0,
 			       "cannot add file `%s' since the directory",
-			       user);
+			       finfo.fullname);
 			error (0, 0, "`%s' already exists in the repository",
 			       dname);
 			error (1, 0, "illegal filename overlap");
@@ -320,11 +351,11 @@ cannot add files with '/' in their name; %s not added",
 			   rcs file if it existed, e.g. the file exists
 			   on another branch).  Check for a value from
 			   the wrapper stuff.  */
-			if (wrap_name_has (user, WRAP_RCSOPTION))
+			if (wrap_name_has (finfo.file, WRAP_RCSOPTION))
 			{
 			    if (vers->options)
 				free (vers->options);
-			    vers->options = wrap_rcsoption (user, 1);
+			    vers->options = wrap_rcsoption (finfo.file, 1);
 			}
 		    }
 
@@ -338,7 +369,7 @@ cannot add files with '/' in their name; %s not added",
 		    else
 		    {
 			/* There is a user file, so build the entry for it */
-			if (build_entry (repository, user, vers->options,
+			if (build_entry (repository, finfo.file, vers->options,
 					 message, entries, vers->tag) != 0)
 			    err++;
 			else
@@ -349,17 +380,19 @@ cannot add files with '/' in their name; %s not added",
 				if (vers->tag)
 				    error (0, 0, "\
 scheduling %s `%s' for addition on branch `%s'",
-					   (wrap_name_has (user, WRAP_TOCVS)
+					   (wrap_name_has (finfo.file,
+							   WRAP_TOCVS)
 					    ? "wrapper"
 					    : "file"),
-					   user, vers->tag);
+					   finfo.fullname, vers->tag);
 				else
 				    error (0, 0,
 					   "scheduling %s `%s' for addition",
-					   (wrap_name_has (user, WRAP_TOCVS)
+					   (wrap_name_has (finfo.file,
+							   WRAP_TOCVS)
 					    ? "wrapper"
 					    : "file"),
-					   user);
+					   finfo.fullname);
 			    }
 			}
 		    }
@@ -367,10 +400,11 @@ scheduling %s `%s' for addition on branch `%s'",
 	    }
 	    else if (RCS_isdead (vers->srcfile, vers->vn_rcs))
 	    {
-		if (isdir (user) && !wrap_name_has (user, WRAP_TOCVS))
+		if (isdir (finfo.file)
+		    && !wrap_name_has (finfo.file, WRAP_TOCVS))
 		{
 		    error (0, 0, "\
-the directory `%s' cannot be added because a file of the", user);
+the directory `%s' cannot be added because a file of the", finfo.fullname);
 		    error (1, 0, "\
 same name already exists in the repository.");
 		}
@@ -388,7 +422,7 @@ same name already exists in the repository.");
 			if (vers->tag)
 			    error (0, 0, "\
 file `%s' will be added on branch `%s' from version %s",
-				   user, vers->tag, vers->vn_rcs);
+				   finfo.fullname, vers->tag, vers->vn_rcs);
 			else
 			    /* I'm not sure that mentioning
 			       vers->vn_rcs makes any sense here; I
@@ -396,8 +430,9 @@ file `%s' will be added on branch `%s' from version %s",
 			       message which is not confusing.  */
 			    error (0, 0, "\
 re-adding file %s (in place of dead revision %s)",
-				   user, vers->vn_rcs);
-			Register (entries, user, "0", vers->ts_user, NULL,
+				   finfo.fullname, vers->vn_rcs);
+			Register (entries, finfo.file, "0", vers->ts_user,
+				  NULL,
 				  vers->tag, NULL, NULL);
 			++added_files;
 		    }
@@ -409,7 +444,8 @@ re-adding file %s (in place of dead revision %s)",
 		 * There is an RCS file already, so somebody else must've
 		 * added it
 		 */
-		error (0, 0, "%s added independently by second party", user);
+		error (0, 0, "%s added independently by second party",
+		       finfo.fullname);
 		err++;
 	    }
 	}
@@ -420,7 +456,7 @@ re-adding file %s (in place of dead revision %s)",
 	     * An entry for a new-born file, ts_rcs is dummy, but that is
 	     * inappropriate here
 	     */
-	    error (0, 0, "%s has already been entered", user);
+	    error (0, 0, "%s has already been entered", finfo.fullname);
 	    err++;
 	}
 	else if (vers->vn_user[0] == '-')
@@ -437,7 +473,7 @@ re-adding file %s (in place of dead revision %s)",
 		     * it from under us
 		     */
 		    error (0, 0, "\
-cannot resurrect %s; RCS file removed by second party", user);
+cannot resurrect %s; RCS file removed by second party", finfo.fullname);
 		    err++;
 		}
 		else
@@ -447,12 +483,13 @@ cannot resurrect %s; RCS file removed by second party", user);
 		     * There is an RCS file, so remove the "-" from the
 		     * version number and restore the file
 		     */
-		    char *tmp = xmalloc (strlen (user) + 50);
+		    char *tmp = xmalloc (strlen (finfo.file) + 50);
 
 		    (void) strcpy (tmp, vers->vn_user + 1);
 		    (void) strcpy (vers->vn_user, tmp);
-		    (void) sprintf (tmp, "Resurrected %s", user);
-		    Register (entries, user, vers->vn_user, tmp, vers->options,
+		    (void) sprintf (tmp, "Resurrected %s", finfo.file);
+		    Register (entries, finfo.file, vers->vn_user, tmp,
+			      vers->options,
 			      vers->tag, vers->date, vers->ts_conflict);
 		    free (tmp);
 
@@ -462,12 +499,13 @@ cannot resurrect %s; RCS file removed by second party", user);
 		       check the file out.  */
 		    if (update (2, argv + i - 1) == 0)
 		    {
-			error (0, 0, "%s, version %s, resurrected", user,
+			error (0, 0, "%s, version %s, resurrected",
+			       finfo.fullname,
 			       vers->vn_user);
 		    }
 		    else
 		    {
-			error (0, 0, "could not resurrect %s", user);
+			error (0, 0, "could not resurrect %s", finfo.fullname);
 			err++;
 		    }
 		}
@@ -476,14 +514,15 @@ cannot resurrect %s; RCS file removed by second party", user);
 	    {
 		/* The user file shouldn't be there */
 		error (0, 0, "\
-%s should be removed and is still there (or is back again)", user);
+%s should be removed and is still there (or is back again)", finfo.fullname);
 		err++;
 	    }
 	}
 	else
 	{
 	    /* A normal entry, ts_rcs is valid, so it must already be there */
-	    error (0, 0, "%s already exists, with version number %s", user,
+	    error (0, 0, "%s already exists, with version number %s",
+		   finfo.fullname,
 		   vers->vn_user);
 	    err++;
 	}
@@ -491,26 +530,31 @@ cannot resurrect %s; RCS file removed by second party", user);
 
 	/* passed all the checks.  Go ahead and add it if its a directory */
 	if (begin_err == err
-	    && isdir (user)
-	    && !wrap_name_has (user, WRAP_TOCVS))
+	    && isdir (finfo.file)
+	    && !wrap_name_has (finfo.file, WRAP_TOCVS))
 	{
-	    err += add_directory (repository, entries, user);
+	    err += add_directory (&finfo);
 	    continue;
 	}
 #ifdef SERVER_SUPPORT
 	if (server_active && begin_added_files != added_files)
-	    server_checked_in (user, ".", repository);
+	    server_checked_in (finfo.file, finfo.update_dir, repository);
 #endif
+	free (repository);
+	Entries_Close (entries);
+
+	if (restore_cwd (&cwd, NULL))
+	    error_exit ();
+	free_cwd (&cwd);
+
+	free (finfo.fullname);
     }
     if (added_files)
 	error (0, 0, "use 'cvs commit' to add %s permanently",
 	       (added_files == 1) ? "this file" : "these files");
 
-    Entries_Close (entries);
-
     if (message)
 	free (message);
-    free (repository);
 
     return (err);
 }
@@ -523,11 +567,13 @@ cannot resurrect %s; RCS file removed by second party", user);
  * Returns 1 on failure, 0 on success.
  */
 static int
-add_directory (repository, entries, dir)
-    char *repository;
-    List *entries;
-    char *dir;
+add_directory (finfo)
+    struct file_info *finfo;
 {
+    char *repository = finfo->repository;
+    List *entries = finfo->entries;
+    char *dir = finfo->file;
+
     char *rcsdir = NULL;
     struct saved_cwd cwd;
     char *message = NULL;
@@ -537,6 +583,7 @@ add_directory (repository, entries, dir)
 
     if (strchr (dir, '/') != NULL)
     {
+	/* "Can't happen".  */
 	error (0, 0,
 	       "directory %s not added; must be a direct sub-directory", dir);
 	return (1);
@@ -561,7 +608,7 @@ add_directory (repository, entries, dir)
 	return (1);
     if ( CVS_CHDIR (dir) < 0)
     {
-	error (0, errno, "cannot chdir to %s", dir);
+	error (0, errno, "cannot chdir to %s", finfo->fullname);
 	return (1);
     }
 #ifdef SERVER_SUPPORT
@@ -570,14 +617,15 @@ add_directory (repository, entries, dir)
     if (isfile (CVSADM))
 #endif
     {
-	error (0, 0, "%s/%s already exists", dir, CVSADM);
+	error (0, 0, "%s/%s already exists", finfo->fullname, CVSADM);
 	goto out;
     }
 
     rcsdir = combine_dir (repository, dir);
     if (isfile (rcsdir) && !isdir (rcsdir))
     {
-	error (0, 0, "%s is not a directory; %s not added", rcsdir, dir);
+	error (0, 0, "%s is not a directory; %s not added", rcsdir,
+	       finfo->fullname);
 	goto out;
     }
 
@@ -656,9 +704,9 @@ add_directory (repository, entries, dir)
 
 #ifdef SERVER_SUPPORT
     if (!server_active)
-	Create_Admin (".", dir, rcsdir, tag, date, nonbranch, 0);
+	Create_Admin (".", finfo->fullname, rcsdir, tag, date, nonbranch, 0);
 #else
-    Create_Admin (".", dir, rcsdir, tag, date, nonbranch, 0);
+    Create_Admin (".", finfo->fullname, rcsdir, tag, date, nonbranch, 0);
 #endif
     if (tag)
 	free (tag);

@@ -1,5 +1,19 @@
 Sun Aug 31 12:03:15 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* add.c (add): Remove checks for '/' in pathnames.
+	(add): Move code which handles entries and repository inside loop,
+	since these now might be different for each argument.  Add code to
+	set finfo.update_dir, finfo.file, and finfo.fullname appropriately
+	even if pathname contains '/'.  Replace user variable with
+	finfo.file or finfo.fullname, depending on which is meant.  chdir
+	into update_dir for each argument.  Likewise for the client code
+	which creates directories.
+	(add_directory): Replace arguments with a single finfo argument.
+	Replace dir with finfo->fullname as needed.
+	(add): Update call to add_directory.
+	* client.c, client.h (send_a_repository): No longer static.
+	* sanity.sh (errmsg2): Adjust tests to test for '/' in pathname.
+
 	* sanity.sh (errmsg2): New tests errmsg2-13 through errmsg2-16
 	test the status quo with respect to '/' in cvs add argument.
 
