@@ -1886,17 +1886,22 @@ mark_dead (file, repository, new_rev)
     char *repository;
     char *new_rev;
 {
-    mode_t omask;
     char *deafilename = xmalloc (sizeof (CVSDEA) + strlen (repository)
 				 + strlen (file) + 80);
     FILE *deafile;
+	struct stat st;
 
     /* Make the CVSDEA directory if we need to.  */
     sprintf (deafilename, "%s/%s", repository, CVSDEA);
-    omask = umask (2);
     if (mkdir (deafilename, 0777) != 0 && errno != EEXIST)
 	error (1, errno, "cannot make directory `%s'", deafilename);
-    (void) umask (omask);
+
+	/* The CVSDEA should have the same mode and group (if possible) than
+	   its father. stat() on the repository cannot fail, since we just
+	   created a directory (or found an existing directory) in it */
+	(void) stat (repository, &st);
+	(void) chown (deafilename, (uid_t) -1, (gid_t) st.st_gid);
+	(void) chmod (deafilename, (mode_t) st.st_mode);
 
     /* Now add NEW_REV to the revisions in the CVSDEA file for this file.  */
     sprintf (deafilename, "%s/%s/%s", repository, CVSDEA, file);
@@ -1905,6 +1910,12 @@ mark_dead (file, repository, new_rev)
 	error (1, errno, "cannot write %s", deafilename);
     if (fclose (deafile) == EOF)
 	error (1, errno, "cannot close %s", deafilename);
+
+	/* Set the same mode (minus 'x' flags, sticky, suid and sgid bits)
+	   and group (if possible) than CVSDEA */
+	(void) chown (deafilename, (uid_t) -1, (gid_t) st.st_gid);
+	(void) chmod (deafilename, (mode_t) st.st_mode & ~07111);
+
     free (deafilename);
 }
 #endif
