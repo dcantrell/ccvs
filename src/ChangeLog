@@ -1,3 +1,9 @@
+2004-09-23  Mark D. Baushke  <mdb@cvshome.org>
+
+	* server.c (cvs_output, cvs_output_binary): fflush (stderr)
+	here to avoid problems with 'cvs status 2>&1'.
+	(Report by Frank Hemer <frank@hemer.org>.)
+
 2004-09-17  Derek Price  <derek@ximbiot.com>
 
 	* buffer.c, buffer.h, log-buffer.c, log-buffer.h, main.c, mkmodules.c,

@@ -7435,12 +7435,10 @@ cvs_output (const char *str, size_t len)
 	size_t to_write = len;
 	const char *p = str;
 
-	/* For symmetry with cvs_outerr we would call fflush (stderr)
-	   here.  I guess the assumption is that stderr will be
-	   unbuffered, so we don't need to.  That sounds like a sound
-	   assumption from the manpage I looked at, but if there was
-	   something fishy about it, my guess is that calling fflush
-	   would not produce a significant performance problem.  */
+	/* Local users that do 'cvs status 2>&1' on a local repository
+	   may see the informational messages out-of-order with the
+	   status messages unless we use the fflush (stderr) here. */
+	fflush (stderr);
 
 	while (to_write > 0)
 	{
@@ -7497,16 +7495,16 @@ this client does not support writing binary files to stdout");
 	size_t written;
 	size_t to_write = len;
 	const char *p = str;
-
-	/* For symmetry with cvs_outerr we would call fflush (stderr)
-	   here.  I guess the assumption is that stderr will be
-	   unbuffered, so we don't need to.  That sounds like a sound
-	   assumption from the manpage I looked at, but if there was
-	   something fishy about it, my guess is that calling fflush
-	   would not produce a significant performance problem.  */
 #ifdef USE_SETMODE_STDOUT
 	int oldmode;
+#endif
 
+	/* Local users that do 'cvs status 2>&1' on a local repository
+	   may see the informational messages out-of-order with the
+	   status messages unless we use the fflush (stderr) here. */
+	fflush (stderr);
+
+#ifdef USE_SETMODE_STDOUT
 	/* It is possible that this should be the same ifdef as
 	   USE_SETMODE_BINARY but at least for the moment we keep them
 	   separate.  Mostly this is just laziness and/or a question
