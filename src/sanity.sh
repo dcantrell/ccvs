@@ -3264,7 +3264,7 @@ C sdir/file1"
 	    # As with conflicts3-23, all these CVS/Entries* warnings
 	    # are somewhat doubtful, and we probably should think some
 	    # about whether they should be changed/fixed.
-	    dotest_fail dirs2-7 "${testcvs} update -d" \
+	    dotest dirs2-7 "${testcvs} update -d" \
 "${QUESTION} sdir
 ${PROG} server: Updating \.
 ${PROG} update: in directory sdir:
@@ -12977,17 +12977,7 @@ EOF
 ${PROG} \[log aborted\]: no repository"
 	    cd first-dir
 	    dotest_fail rcs3-5a "${testcvs} log -s nostate file1" \
-"${PROG}: .*hash\.c:[0-9]*: findnode: Assertion .key != ((void \*)0)' failed.
-
-RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
-Working file: file1
-head: 1\.1
-branch:
-locks:
-access list:
-symbolic names:
-keyword substitution: o
-Terminated with fatal signal 6"
+".*[Aa]ssertion.*failed${DOTSTAR}"
 	    cd ..
 	  fi # remote
 
@@ -18109,8 +18099,7 @@ Root ${CVSROOT_DIRNAME}
 noop
 EOF
 	    dotest pserver-4 "cat ${TESTDIR}/pserver.tmp" \
-"I LOVE YOU
-ok"
+"I LOVE YOU${DOTSTAR}ok"
 
 	    ${testcvs} --allow-root=${CVSROOT_DIRNAME} pserver >${TESTDIR}/pserver.tmp 2>&1 <<EOF
 BEGIN AUTH REQUEST
@@ -18122,8 +18111,7 @@ Root ${TESTDIR}/1
 noop
 EOF
 	    dotest pserver-5 "cat ${TESTDIR}/pserver.tmp" \
-"I LOVE YOU
-E Protocol error: Root says \"${TESTDIR}/1\" but pserver says \"${CVSROOT_DIRNAME}\"
+"I LOVE YOU${DOTSTAR}E Protocol error: Root says \"${TESTDIR}/1\" but pserver says \"${CVSROOT_DIRNAME}\"
 error  "
 
 	    ${testcvs} --allow-root=${CVSROOT_DIRNAME} pserver >${TESTDIR}/pserver.tmp 2>&1 <<EOF

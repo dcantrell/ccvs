@@ -1,3 +1,12 @@
+1998-12-28  Larry Jones  <larry.jones@sdrc.com>
+
+	* entries.c (Register): Return if unable to open log file to avoid
+	referencing the invalid file pointer.
+	* sanity.sh (dirs2-7): With above change, no longer fails.
+	* sanity.sh (rcs3-5a): Another assertion failure message.
+	* sanity.sh (pserver-4, pserver-5): Some 4.4BSD derived systems spit
+	out bogus error messages when initgroups is called as non-root.
+
 1998-12-23  Larry Jones  <larry.jones@sdrc.com>
 
 	* sanity.sh (rcs3, dotest_fail): The assertion failure message varies
