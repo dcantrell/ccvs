@@ -574,9 +574,9 @@ commit (argc, argv)
 	   "cvs commit -r 2" across a whole bunch of files a very slow
 	   operation (and it isn't documented in cvsclient.texi).  I
 	   haven't looked at the server code carefully enough to be
-	   _sure_ why this is needed, but if it is because RCS_CI
-	   wants the file to exist, then it would be relatively simple
-	   (but not trivial) to fix in the server.  */
+	   _sure_ why this is needed, but if it is because the "ci"
+	   program, which we used to call, wanted the file to exist,
+	   then it would be relatively simple to fix in the server.  */
 	send_files (find_args.argc, find_args.argv, local, 0,
 		    find_args.force ? SEND_FORCE : 0);
 

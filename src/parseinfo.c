@@ -297,31 +297,11 @@ parse_config (cvsroot)
 
 	if (strcmp (line, "RCSBIN") == 0)
 	{
-	    if (free_Rcsbin)
-		free (Rcsbin);
-
-	    len = strlen (p);
-	    /* 2 is for '/' and '\0'.  */
-	    Rcsbin = malloc (len + 2);
-	    if (Rcsbin == NULL)
-	    {
-		free_Rcsbin = 0;
-		/* Could be a fatal error, I guess, except we don't
-		   currently have the machinery to do fatal error from
-		   here.  */
-		error (0, ENOMEM, "Cannot allocate Rcsbin");
-		goto error_return;
-	    }
-	    free_Rcsbin = 1;
-	    strcpy (Rcsbin, p);
-
-	    /* If Rcsbin does not end in a ISDIRSEP character, add a
-	       trailing slash.  */
-	    if (!ISDIRSEP (Rcsbin[len - 1]))
-	    {
-		Rcsbin[len] = '/';
-		Rcsbin[len + 1] = '\0';
-	    }
+	    /* This option used to specify the directory for RCS
+	       executables.  But since we don't run them any more,
+	       this is a noop.  Silently ignore it so that a
+	       repository can work with either new or old CVS.  */
+	    ;
 	}
 	else if (strcmp (line, "SystemAuth") == 0)
 	{

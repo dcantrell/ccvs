@@ -12,16 +12,8 @@
 #include "cvs.h"
 #include <assert.h>
 
-/* This file, rcs.h, and rcs.c, are intended to define our interface
-   to RCS files.  There is only one place outside this file that execs
-   RCS commands directly--admin.c.  The intended long-term direction
-   is to have CVS access RCS files via an RCS library (rcs.c can be
-   considered a start at one), for performance, cleanliness (CVS has
-   some awful hacks to work around RCS behaviors which don't make
-   sense for CVS), installation hassles, ease of implementing the CVS
-   server (I don't think that the output-out-of-order bug can be
-   completely fixed as long as CVS calls RCS), and perhaps other
-   reasons.
+/* This file, rcs.h, and rcs.c, together sometimes known as the "RCS
+   library", are intended to define our interface to RCS files.
 
    Whether there will also be a version of RCS which uses this
    library, or whether the library will be packaged for uses beyond
@@ -32,7 +24,7 @@
    existing CVS code which accesses RCS files.  In particular, simple
    approaches will often be slow.
 
-   2.  An RCS library should not use the code from the current RCS
+   2.  An RCS library should not use code from the current RCS
    (5.7 and its ancestors).  The code has many problems.  Too few
    comments, too many layers of abstraction, too many global variables
    (the correct number for a library is zero), too much intricately
@@ -55,7 +47,7 @@
    file format.
 
    On a related note, see the comments at diff_exec, later in this file,
-   for more on a diff library.  */
+   for more on the diff library.  */
 
 static void RCS_output_diff_options PROTO ((char *, char *, char *, char *));
 
@@ -350,15 +342,13 @@ RCS_merge(rcs, path, workfile, options, rev1, rev2)
    Return value is 0 for success, -1 for a failure which set errno,
    or positive for a failure which printed a message on stderr.
 
-   This used to exec rcsdiff, but now uses RCS_checkout and execs only
-   DIFF.  The comments in options.h.in regarding the selection of
-   a diff program need some revision, but I don't see a big
-   issue here.  Another issue (which probably is an issue with or without
-   changes to DIFF vs. rcsdiff), is what timezone is used for the dates
-   which appear in the diff output.  rcsdiff uses the -z flag, which is not
-   presently processed by CVS diff, but I'm not sure exactly how hard to worry
-   about this--any such features are undocumented in the context
-   of CVS, and I'm not sure how important to users.  */
+   This used to exec rcsdiff, but now calls RCS_checkout and diff_exec.
+
+   An issue is what timezone is used for the dates which appear in the
+   diff output.  rcsdiff uses the -z flag, which is not presently
+   processed by CVS diff, but I'm not sure exactly how hard to worry
+   about this--any such features are undocumented in the context of
+   CVS, and I'm not sure how important to users.  */
 int
 RCS_exec_rcsdiff (rcsfile, opts, options, rev1, rev2, label1, label2, workfile)
     RCSNode *rcsfile;
@@ -521,7 +511,7 @@ diff_exec (file1, file2, options, out)
     char *out;
 {
     /* The first word in this string is used only for error reporting. */
-    call_diff_setup ("%s %s %s %s", DIFF, options, file1, file2);
+    call_diff_setup ("diff %s %s %s", options, file1, file2);
 
     return call_diff (out);
 }
@@ -535,7 +525,8 @@ diff_execv (file1, file2, label1, label2, options, out)
     char *options;
     char *out;
 {
-    call_diff_setup ("%s%s", DIFF, options);
+    /* The first word in this string is used only for error reporting.  */
+    call_diff_setup ("diff%s", options);
     if (label1)
 	call_diff_arg (label1);
     if (label2)

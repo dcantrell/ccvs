@@ -270,8 +270,11 @@ expand_variable (name, file, line)
 {
     if (strcmp (name, CVSROOT_ENV) == 0)
 	return CVSroot_original;
-    else if (strcmp (name, RCSBIN_ENV)  == 0)
-	return Rcsbin;
+    else if (strcmp (name, "RCSBIN") == 0)
+    {
+	error (0, 0, "RCSBIN internal variable is no longer supported");
+	return NULL;
+    }
     else if (strcmp (name, EDITOR1_ENV) == 0)
 	return Editor;
     else if (strcmp (name, EDITOR2_ENV) == 0)

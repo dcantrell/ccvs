@@ -48,10 +48,6 @@ char *CurDir;
 /*
  * Defaults, for the environment variables that are not set
  */
-char *Rcsbin = RCSBIN_DFLT;
-/* Nonzero if Rcsbin points to a malloc'd array which needs to be free'd
-   when we are done with it.  */
-int free_Rcsbin = 0;
 char *Tmpdir = TMPDIR_DFLT;
 char *Editor = EDITOR_DFLT;
 
@@ -376,7 +372,7 @@ main (argc, argv)
     char *cp, *end;
     const struct cmd *cm;
     int c, err = 0;
-    int rcsbin_update_env, tmpdir_update_env, cvs_update_env;
+    int tmpdir_update_env, cvs_update_env;
     int free_CVSroot = 0;
     int free_Editor = 0;
     int free_Tmpdir = 0;
@@ -428,12 +424,6 @@ main (argc, argv)
      * they can be overridden by command line arguments
      */
     cvs_update_env = 0;
-    rcsbin_update_env = *Rcsbin;	/* RCSBIN_DFLT must be set */
-    if ((cp = getenv (RCSBIN_ENV)) != NULL)
-    {
-	Rcsbin = cp;
-	rcsbin_update_env = 0;		/* it's already there */
-    }
     tmpdir_update_env = *Tmpdir;	/* TMPDIR_DFLT must be set */
     if ((cp = getenv (TMPDIR_ENV)) != NULL)
     {
@@ -543,9 +533,11 @@ Copyright (c) 1989-1997 Brian Berliner, david d `zoo' zuhn, \n\
 		exit (0);
 		break;
 	    case 'b':
-		Rcsbin = xstrdup (optarg);
-		free_Rcsbin = 1;
-		rcsbin_update_env = 1;	/* need to update environment */
+		/* This option used to specify the directory for RCS
+		   executables.  But since we don't run them any more,
+		   this is a noop.  Silently ignore it so that .cvsrc
+		   and scripts and inetd.conf and such can work with
+		   either new or old CVS.  */
 		break;
 	    case 'T':
 		Tmpdir = xstrdup (optarg);
@@ -853,16 +845,6 @@ Copyright (c) 1989-1997 Brian Berliner, david d `zoo' zuhn, \n\
 	    Tmpdir = "/tmp";
 
 #ifdef HAVE_PUTENV
-	/* Now, see if we should update the environment with the
-           Rcsbin value */
-	if (rcsbin_update_env)
-	{
-	    char *env;
-	    env = xmalloc (strlen (RCSBIN_ENV) + strlen (Rcsbin) + 1 + 1);
-	    (void) sprintf (env, "%s=%s", RCSBIN_ENV, Rcsbin);
-	    (void) putenv (env);
-	    /* do not free env, as putenv has control of it */
-	}
 	if (tmpdir_update_env)
 	{
 	    char *env;
@@ -872,24 +854,6 @@ Copyright (c) 1989-1997 Brian Berliner, david d `zoo' zuhn, \n\
 	    /* do not free env, as putenv has control of it */
 	}
 #endif
-
-	/*
-	 * If Rcsbin is set to something, make sure it is terminated with
-	 * a slash character.  If not, add one.
-	 */
-	if (*Rcsbin)
-	{
-	    int len = strlen (Rcsbin);
-	    char *rcsbin;
-
-	    if (Rcsbin[len - 1] != '/')
-	    {
-		rcsbin = Rcsbin;
-		Rcsbin = xmalloc (len + 2);	/* one for '/', one for NULL */
-		(void) strcpy (Rcsbin, rcsbin);
-		(void) strcat (Rcsbin, "/");
-	    }
-	}
 
 #ifndef DONT_USE_SIGNALS
 	/* make sure we clean up on error */
@@ -974,8 +938,6 @@ Copyright (c) 1989-1997 Brian Berliner, david d `zoo' zuhn, \n\
 	free (Editor);
     if (free_Tmpdir)
 	free (Tmpdir);
-    if (free_Rcsbin)
-	free (Rcsbin);
     root_allow_free ();
 
 #ifdef SYSTEM_CLEANUP

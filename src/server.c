@@ -4076,50 +4076,6 @@ server (argc, argv)
        protocol to report error messages.  */
     error_use_protocol = 1;
 
-    /*
-     * Put Rcsbin at the start of PATH, so that rcs programs can find
-     * themselves.
-     */
-#ifdef HAVE_PUTENV
-    if (Rcsbin != NULL && *Rcsbin)
-    {
-        char *p;
-	char *env;
-
-	p = getenv ("PATH");
-	if (p != NULL)
-	{
-	    env = malloc (strlen (Rcsbin) + strlen (p) + sizeof "PATH=:");
-	    if (env != NULL)
-	        sprintf (env, "PATH=%s:%s", Rcsbin, p);
-	}
-	else
-	{
-	    env = malloc (strlen (Rcsbin) + sizeof "PATH=");
-	    if (env != NULL)
-	        sprintf (env, "PATH=%s", Rcsbin);
-	}
-	if (env == NULL)
-	{
-	    printf ("E Fatal server error, aborting.\n\
-error ENOMEM Virtual memory exhausted.\n");
-
-	    /* I'm doing this manually rather than via error_exit ()
-	       because I'm not sure whether we want to call server_cleanup.
-	       Needs more investigation....  */
-
-#ifdef SYSTEM_CLEANUP
-	    /* Hook for OS-specific behavior, for example socket subsystems on
-	       NT and OS2 or dealing with windows and arguments on Mac.  */
-	    SYSTEM_CLEANUP ();
-#endif
-
-	    exit (EXIT_FAILURE);
-	}
-	putenv (env);
-    }
-#endif
-
     /* OK, now figure out where we stash our temporary files.  */
     {
 	char *p;

@@ -256,9 +256,6 @@ extern int errno;
 #define	CVSREAD_ENV	"CVSREAD"	/* make files read-only */
 #define	CVSREAD_DFLT	0		/* writable files by default */
 
-#define	RCSBIN_ENV	"RCSBIN"	/* RCS binary directory */
-/* #define	RCSBIN_DFLT		   Set by options.h */
-
 #define	TMPDIR_ENV	"TMPDIR"	/* Temporary directory */
 /* #define	TMPDIR_DFLT		   Set by options.h */
 
@@ -354,8 +351,7 @@ typedef enum direnter_type Dtype;
 #endif
 
 extern char *program_name, *program_path, *command_name;
-extern char *Rcsbin, *Tmpdir, *Editor;
-extern int free_Rcsbin;
+extern char *Tmpdir, *Editor;
 extern int cvsadmin_root;
 extern char *CurDir;
 extern int really_quiet, quiet;
