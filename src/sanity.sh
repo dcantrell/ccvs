@@ -2939,6 +2939,7 @@ ${PLUS} first revision"
 	  #     where "ci -r" means a branch.
 	  #   * basica-8a1: checking in a modified file with numeric revision.
 	  #   * basica-8a2: likewise.
+	  #   * keywordlog-4: adding a new file with numeric revision.
 	  mkdir 1; cd 1
 	  dotest rmadd-1 "${testcvs} -q co -l ." ''
 	  mkdir first-dir
@@ -2962,73 +2963,53 @@ ${PROG} \[[a-z]* aborted\]: correct above errors first!"
 	  # The thing with the trailing periods strikes me as a very
 	  # bizarre behavior, but it would seem to be intentional
 	  # (see commit.c).  It probably could go away....
-
-	  # CVS is pretty confused.  It adds as revision 1.2, but put
-	  # it in the attic, and such.  Half the code thinks we are on
-	  # a branch, and half doesn't.
-	  if test "$remote" = yes; then
-	    # This would SIGSEGV with either -r 7.... or -r 1.2.
-	    dotest rmadd-7 "${testcvs} -q ci -m add" \
+	  dotest rmadd-7 "${testcvs} -q ci -r 7.... -m add" \
 "RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
 done
 Checking in file1;
 ${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
-initial revision: 1\.1
+initial revision: 7\.1
 done"
-	    # Total kludge to make this like the local case.
+	  if test "$remote" = yes; then
+	    # I guess remote doesn't set a sticky tag in this case.
+	    # Kind of odd, in the sense that rmadd-24a does set one
+	    # both local and remote.
+	    dotest_fail rmadd-7a "test -f CVS/Tag"
 	    echo T7 >CVS/Tag
 	  else
-	    dotest rmadd-7 "${testcvs} -q ci -r 7.... -m add" \
-"RCS file: ${TESTDIR}/cvsroot/first-dir/Attic/file1,v
-done
-Checking in file1;
-${TESTDIR}/cvsroot/first-dir/Attic/file1,v  <--  file1
-new revision: 1\.2; previous revision: 1\.1
-done"
+	    dotest rmadd-7a "cat CVS/Tag" "T7"
 	  fi
+
 	  dotest rmadd-8 "${testcvs} -q tag -b mybranch" "T file1"
 	  dotest rmadd-9 "${testcvs} -q tag mynonbranch" "T file1"
 
 	  touch file2
 	  # The previous "cvs ci -r" set a sticky tag of '7'.  Seems a
-	  # bit odd, and I guess commit.c (findmaxrev) takes care of
-	  # this kind of thing.  But I'm not 100% sure that a sticky
-	  # directory tag of '7' is a nonsensical concept.
+	  # bit odd, and I guess commit.c (findmaxrev) makes '7' sticky
+	  # tags unnecessary (?).  I kind of suspect that it should be
+	  # saying "sticky tag is not a branch" like keywordlog-4b.
+	  # Or something.
 	  dotest rmadd-10 "${testcvs} add file2" \
 "${PROG} [a-z]*: scheduling file .file2. for addition on branch .7'
 ${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
 	  # As in the previous example, CVS is confused....
-	  if test "$remote" = no; then
-	    dotest rmadd-11 "${testcvs} -q ci -m add" \
-"RCS file: ${TESTDIR}/cvsroot/first-dir/Attic/file2,v
+	  dotest rmadd-11 "${testcvs} -q ci -m add" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/file2,v
 done
 Checking in file2;
-${TESTDIR}/cvsroot/first-dir/Attic/file2,v  <--  file2
-new revision: 1\.2; previous revision: 1\.1
+${TESTDIR}/cvsroot/first-dir/file2,v  <--  file2
+initial revision: 7\.1
 done"
-	  else
-	    dotest rmadd-11-workaround "${testcvs} -q rm -f file2" \
-""
-	  fi
 
-	  if test "$remote" = no; then
-	    dotest rmadd-12 "${testcvs} -q update -A" "U file2"
-	  else
-	    dotest rmadd-12 "${testcvs} -q update -A" ""
-	  fi
+	  dotest rmadd-12 "${testcvs} -q update -A" ""
 	  touch file3
 	  dotest rmadd-13 "${testcvs} add file3" \
 "${PROG} [a-z]*: scheduling file .file3. for addition
 ${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
-	  if test "$remote" = no; then
-	    # Huh?  file2 is not up to date?  Seems buggy to me....
-	    dotest_fail rmadd-14 "${testcvs} -q ci -r mybranch -m add" \
+	  # Huh?  file2 is not up to date?  Seems buggy to me....
+	  dotest_fail rmadd-14 "${testcvs} -q ci -r mybranch -m add" \
 "${PROG} [a-z]*: Up-to-date check failed for .file2'
 ${PROG} \[[a-z]* aborted\]: correct above errors first!"
-	  else
-	    # Update val-tags.
-	    dotest rmadd-14 "${testcvs} -q update -r mybranch file1" ""
-	  fi
 	  # Whatever, let's not let file2 distract us....
 	  dotest rmadd-15 "${testcvs} -q ci -r mybranch -m add file3" \
 "RCS file: ${TESTDIR}/cvsroot/first-dir/Attic/file3,v
@@ -3076,26 +3057,53 @@ done"
 	  dotest rmadd-22 "${testcvs} add file5" \
 "${PROG} [a-z]*: scheduling file .file5. for addition
 ${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
-	  dotest rmadd-23 "${testcvs} -q ci -m add" \
+	  if test "$remote" = yes; then
+	    # Interesting bug (or missing feature) here.  findmaxrev
+	    # gets the major revision from the Entries.  Well, remote
+	    # doesn't send the entries for files which are not involved.
+	    dotest rmadd-23 "${testcvs} -q ci -m add" \
 "RCS file: ${TESTDIR}/cvsroot/first-dir/file5,v
 done
 Checking in file5;
 ${TESTDIR}/cvsroot/first-dir/file5,v  <--  file5
 initial revision: 1\.1
 done"
-	  echo change it >file5
-	  dotest rmadd-24 "${testcvs} -q ci -r 4.8 -m change file5" \
+	    dotest rmadd-23-workaround \
+"${testcvs} -q ci -r 7 -m bump-it file5" \
 "Checking in file5;
 ${TESTDIR}/cvsroot/first-dir/file5,v  <--  file5
-new revision: 4\.8; previous revision: 1\.1
+new revision: 7\.1; previous revision: 1\.1
 done"
+	  else
+	    dotest rmadd-23 "${testcvs} -q ci -m add" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/file5,v
+done
+Checking in file5;
+${TESTDIR}/cvsroot/first-dir/file5,v  <--  file5
+initial revision: 7\.1
+done"
+	  fi
+	  echo change it >file5
+	  dotest_fail rmadd-24 "${testcvs} -q ci -r 4.8 -m change file5" \
+"Checking in file5;
+${TESTDIR}/cvsroot/first-dir/file5,v  <--  file5
+${PROG} [a-z]*: ${TESTDIR}/cvsroot/first-dir/file5,v: revision 4\.8 too low; must be higher than 7\.1
+${PROG} [a-z]*: could not check in file5
+7\.1 unlocked"
+	  dotest rmadd-24a "${testcvs} -q ci -r 8.4 -m change file5" \
+"Checking in file5;
+${TESTDIR}/cvsroot/first-dir/file5,v  <--  file5
+new revision: 8\.4; previous revision: 7\.1
+done"
+	  # I'm not really sure that a sticky tag make sense here.
+	  # It seems to be longstanding behavior for what that is worth.
 	  dotest rmadd-25 "${testcvs} status file5" \
 "===================================================================
 File: file5            	Status: Up-to-date
 
-   Working revision:	4\.8.*
-   Repository revision:	4\.8	${TESTDIR}/cvsroot/first-dir/file5,v
-   Sticky Tag:		4\.8
+   Working revision:	8\.4.*
+   Repository revision:	8\.4	${TESTDIR}/cvsroot/first-dir/file5,v
+   Sticky Tag:		8\.4
    Sticky Date:		(none)
    Sticky Options:	(none)"
 
@@ -13586,17 +13594,13 @@ done"
 "${PROG} [a-z]*: scheduling file .file1. for addition
 ${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
 
-	  # Note that we wanted to try "ci -r 1.3 -m add file1" and CVS
-	  # seemed to get all confused, thinking it was adding on a branch
-	  # or something.  FIXME?  Do something about this?  Document it
-	  # in BUGS or someplace?
-
-	  dotest keywordlog-4 "${testcvs} -q ci -m add file1" \
+	  # See "rmadd" for a list of other tests of cvs ci -r.
+	  dotest keywordlog-4 "${testcvs} -q ci -r 1.3 -m add file1" \
 "RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
 done
 Checking in file1;
 ${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
-initial revision: 1\.1
+initial revision: 1\.3
 done"
 
 	  cd ../..
@@ -13609,16 +13613,23 @@ done"
 First log line
 Second log line
 EOF
+	  # As with rmadd-25, "cvs ci -r" sets a sticky tag.
+	  dotest_fail keywordlog-4b \
+"${testcvs} ci -F ${TESTDIR}/comment.tmp file1" \
+"${PROG} [a-z]*: sticky tag .1\.3. for file .file1. is not a branch
+${PROG} \[[a-z]* aborted\]: correct above errors first!"
+	  dotest keywordlog-4c "${testcvs} -q update -A" "M file1"
+
 	  dotest keywordlog-5 "${testcvs} ci -F ${TESTDIR}/comment.tmp file1" \
 "Checking in file1;
 ${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
-new revision: 1\.2; previous revision: 1\.1
+new revision: 1\.4; previous revision: 1\.3
 done"
 	  rm -f ${TESTDIR}/comment.tmp
 	  dotest keywordlog-6 "${testcvs} -q tag -b br" "T file1"
 	  dotest keywordlog-7 "cat file1" \
 "xx "'\$'"Log: file1,v "'\$'"
-xx Revision 1\.2  [0-9/]* [0-9:]*  ${username}
+xx Revision 1\.4  [0-9/]* [0-9:]*  ${username}
 xx First log line
 xx Second log line
 xx"
@@ -13627,7 +13638,7 @@ xx"
 	  dotest keywordlog-8 "${testcvs} -q update" "[UP] file1"
 	  dotest keywordlog-9 "cat file1" \
 "xx "'\$'"Log: file1,v "'\$'"
-xx Revision 1\.2  [0-9/]* [0-9:]*  ${username}
+xx Revision 1\.4  [0-9/]* [0-9:]*  ${username}
 xx First log line
 xx Second log line
 xx"
@@ -13637,14 +13648,14 @@ xx"
 	  dotest keywordlog-10 "${testcvs} ci -m modify file1" \
 "Checking in file1;
 ${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
-new revision: 1\.3; previous revision: 1\.2
+new revision: 1\.5; previous revision: 1\.4
 done"
 	  dotest keywordlog-11 "cat file1" \
 "xx "'\$'"Log: file1,v "'\$'"
-xx Revision 1\.3  [0-9/]* [0-9:]*  ${username}
+xx Revision 1\.5  [0-9/]* [0-9:]*  ${username}
 xx modify
 xx
-xx Revision 1\.2  [0-9/]* [0-9:]*  ${username}
+xx Revision 1\.4  [0-9/]* [0-9:]*  ${username}
 xx First log line
 xx Second log line
 xx
@@ -13654,10 +13665,10 @@ change"
 	  dotest keywordlog-12 "${testcvs} -q update" "[UP] file1"
 	  dotest keywordlog-13 "cat file1" \
 "xx "'\$'"Log: file1,v "'\$'"
-xx Revision 1\.3  [0-9/]* [0-9:]*  ${username}
+xx Revision 1\.5  [0-9/]* [0-9:]*  ${username}
 xx modify
 xx
-xx Revision 1\.2  [0-9/]* [0-9:]*  ${username}
+xx Revision 1\.4  [0-9/]* [0-9:]*  ${username}
 xx First log line
 xx Second log line
 xx
@@ -13669,14 +13680,14 @@ change"
 	  dotest keywordlog-15 "${testcvs} -q ci -m br-modify" \
 "Checking in file1;
 ${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
-new revision: 1\.2\.2\.1; previous revision: 1\.2
+new revision: 1\.4\.2\.1; previous revision: 1\.4
 done"
 	  dotest keywordlog-16 "cat file1" \
 "xx "'\$'"Log: file1,v "'\$'"
-xx Revision 1\.2\.2\.1  [0-9/]* [0-9:]*  ${username}
+xx Revision 1\.4\.2\.1  [0-9/]* [0-9:]*  ${username}
 xx br-modify
 xx
-xx Revision 1\.2  [0-9/]* [0-9:]*  ${username}
+xx Revision 1\.4  [0-9/]* [0-9:]*  ${username}
 xx First log line
 xx Second log line
 xx
@@ -13685,10 +13696,10 @@ br-change"
 	  dotest keywordlog-17 "${testcvs} -q update -r br" "[UP] file1"
 	  dotest keywordlog-18 "cat file1" \
 "xx "'\$'"Log: file1,v "'\$'"
-xx Revision 1\.2\.2\.1  [0-9/]* [0-9:]*  ${username}
+xx Revision 1\.4\.2\.1  [0-9/]* [0-9:]*  ${username}
 xx br-modify
 xx
-xx Revision 1\.2  [0-9/]* [0-9:]*  ${username}
+xx Revision 1\.4  [0-9/]* [0-9:]*  ${username}
 xx First log line
 xx Second log line
 xx
@@ -13696,27 +13707,27 @@ br-change"
 	  cd ../..
 	  dotest keywordlog-19 "${testcvs} -q co -p -r br first-dir/file1" \
 "xx "'\$'"Log: file1,v "'\$'"
-xx Revision 1\.2\.2\.1  [0-9/]* [0-9:]*  ${username}
+xx Revision 1\.4\.2\.1  [0-9/]* [0-9:]*  ${username}
 xx br-modify
 xx
-xx Revision 1\.2  [0-9/]* [0-9:]*  ${username}
+xx Revision 1\.4  [0-9/]* [0-9:]*  ${username}
 xx First log line
 xx Second log line
 xx
 br-change"
 	  dotest keywordlog-20 "${testcvs} -q co -p first-dir/file1" \
 "xx "'\$'"Log: file1,v "'\$'"
-xx Revision 1\.3  [0-9/]* [0-9:]*  ${username}
+xx Revision 1\.5  [0-9/]* [0-9:]*  ${username}
 xx modify
 xx
-xx Revision 1\.2  [0-9/]* [0-9:]*  ${username}
+xx Revision 1\.4  [0-9/]* [0-9:]*  ${username}
 xx First log line
 xx Second log line
 xx
 change"
-	  dotest keywordlog-21 "${testcvs} -q co -p -r 1.2 first-dir/file1" \
+	  dotest keywordlog-21 "${testcvs} -q co -p -r 1.4 first-dir/file1" \
 "xx "'\$'"Log: file1,v "'\$'"
-xx Revision 1\.2  [0-9/]* [0-9:]*  ${username}
+xx Revision 1\.4  [0-9/]* [0-9:]*  ${username}
 xx First log line
 xx Second log line
 xx"
