@@ -1,5 +1,8 @@
 Thu Jul 18 19:24:08 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* lock.c: Add comment explaining what locks are for.  Also discuss
+	various changes to locking which get proposed from time to time.
+
 	* sanity.sh (death2): Change a number of test names from death-*
 	to death2-*.
 

@@ -10,6 +10,64 @@
  * Lock file support for CVS.
  */
 
+/* The node Concurrency in doc/cvs.texinfo has a brief introduction to
+   how CVS locks function, and some of the user-visible consequences of
+   their existence.  Here is a summary of why they exist (and therefore,
+   the consequences of hacking CVS to read a repository without creating
+   locks):
+
+   There are two uses.  One is the ability to prevent there from being
+   two writers at the same time.  This is necessary for any number of
+   reasons (fileattr code, probably others).  Commit needs to lock the
+   whole tree so that nothing happens between the up-to-date check and
+   the actual checkin.
+
+   The second use is the ability to ensure that there is not a writer
+   and a reader at the same time (several readers are allowed).  Reasons
+   for this are:
+
+   * Readlocks ensure that once CVS has found a collection of rcs
+   files using Find_Names, the files will still exist when it reads
+   them (they may have moved in or out of the attic).
+
+   * Readlocks provide some modicum of consistency, although this is
+   kind of limited--see the node Concurrency in cvs.texinfo.
+
+   * Readlocks ensure that the RCS file does not change between
+   RCS_parse and RCS_reparsercsfile time.  This one strikes me as
+   important, although I haven't thought up what bad scenarios might
+   be.
+
+   * Readlocks ensure that we won't find the file in the state in
+   which it is in between the "rcs -i" and the RCS_checkin in commit.c
+   (when a file is being added).  This state is a state in which the
+   RCS file parsing routines in rcs.c cannot parse the file.
+
+   (see also the description of anonymous read-only access in
+   "Password authentication security" node in doc/cvs.texinfo).
+
+   While I'm here, I'll try to summarize a few random suggestions
+   which periodically get made about how locks might be different:
+
+   1.  Check for EROFS.  Maybe useful, although in the presence of NFS
+   EROFS does *not* mean that the file system is unchanging.
+
+   2.  Provide a means to put the cvs locks in some directory apart from
+   the repository (CVSROOT/locks; a -l option in modules; etc.).
+
+   3.  Provide an option to disable locks for operations which only
+   read (see above for some of the consequences).
+
+   4.  Have a server internally do the locking.  Probably a good
+   long-term solution, and many people have been working hard on code
+   changes which would eventually make it possible to have a server
+   which can handle various connections in one process, but there is
+   much, much work still to be done before this is feasible.
+
+   5.  Like #4 but use shared memory or something so that the servers
+   merely need to all be on the same machine.  This is a much smaller
+   change to CVS.  */
+
 #include "cvs.h"
 
 static int readers_exist PROTO((char *repository));
