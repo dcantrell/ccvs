@@ -1,3 +1,12 @@
+2003-08-27  Larry Jones  <lawrence.jones@eds.com>
+
+	* cvs.texinfo (history options): Note the 'P' record type which
+	has been around for a long time but never actually appeared in
+	the history file due to bugs in the code.
+	(Invoking CVS): Ditto.
+	(config): Ditto.
+	* stamp-vti, version.texi: Regenerated.
+
 2003-08-12  Derek Price  <derek@ximbiot.com>
 
 	* stamp-vti, version.texi: Regenerated.

@@ -1,3 +1,9 @@
+2003-08-27  Larry Jones  <lawrence.jones@eds.com>
+
+	* NEWS: Note client/server messages have real command name, client/
+	server updates get logged in history file, history file has "P"
+	record type.
+
 2003-08-19  Derek Price  <derek@ximbiot.com>
 
 	* HACKING (Portability): Add further comments about which headers we
