@@ -1,3 +1,7 @@
+2002-05-02  Derek Price  <oberon@umich.edu>
+
+	* stamp-h2.in: Remove this uneeded file.
+
 2002-05-01  Derek Price  <oberon@umich.edu>
 
 	* options.h.in: Move to...
