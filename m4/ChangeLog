@@ -1,3 +1,8 @@
+2004-02-15  Derek Price  <derek@ximbiot.com>
+
+	Import alloca module from GNULIB for vasnprintf().
+	* alloca.m4: New file.
+
 2003-11-25  Mark D. Baushke  <mdb@cvshome.org>
 
 	* Makefile.in: Regenerate for new configure.in.
