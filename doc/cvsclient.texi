@@ -15,7 +15,6 @@ means.
 @menu
 * Introduction::      What is CVS and what is the client/server protocol for?
 * Goals::             Basic design decisions, requirements, scope, etc.
-* Notes::             Notes on the current implementation
 * Protocol Notes::    Possible enhancements, limitations, etc. of the protocol
 * Connection and Authentication::  Various ways to connect to the server
 * Protocol::          Complete description of the protocol
@@ -60,7 +59,7 @@ versions of this specification.  Although the specification is currently
 maintained in conjunction with the CVS implementation, and carries the
 same version number, it also intends to document what is involved with
 interoperating with other implementations (such as other versions of
-CVS); see @xref{Requirements}.  This version number should not be used
+CVS); see @ref{Requirements}.  This version number should not be used
 by clients or servers to determine what variant of the protocol to
 speak; they should instead use the @code{valid-requests} and
 @code{Valid-responses} mechanism (@pxref{Protocol}), which is more
@@ -83,45 +82,28 @@ Security and authentication are handled outside this protocol (but see
 below about @samp{cvs kserver} and @samp{cvs pserver}).
 
 @item
-This might be a first step towards adding transactions to CVS (i.e. a
-set of operations is either executed atomically or none of them is
-executed), improving the locking, or other features.  The current server
-implementation is a long way from being able to do any of these
-things.  The protocol, however, is not known to contain any defects
-which would preclude them.
+The protocol makes it possible for updates to be atomic with respect to
+checkins; that is if someone commits changes to several files in one cvs
+command, then an update by someone else would either get all the
+changes, or none of them.  The current @sc{cvs} server can't do this,
+but that isn't the protocol's fault.
 
 @item
-The server never has to have any CVS locks in place while it is waiting
-for communication with the client.  This makes things robust in the face
-of flaky networks.
-
-@item
-Data is transferred in large chunks, which is necessary for good
-performance.  In fact, currently the client uploads all the data
-(without waiting for server responses), and then waits for one server
-response (which consists of a massive download of all the data).  There
-may be cases in which it is better to have a richer interraction, but
-the need for the server to release all locks whenever it waits for the
-client makes it complicated.
+The protocol is, with a few exceptions, transaction-based.  That is, the
+client sends all its requests (without waiting for server responses),
+and then waits for the server to send back all responses (without
+waiting for further client requests).  This has the advantage of
+minimizing network turnarounds and the disadvantage of sometimes
+transferring more data than would be necessary if there were a richer
+interaction.  Another, more subtle, advantage is that there is no need
+for the protocol to provide locking for features such as making checkins
+atomic with respect to updates.  Any such locking can be handled
+entirely by the server.  A good server implementation (such as the
+current @sc{cvs} server) will make sure that it does not have any such
+locks in place whenever it is waiting for communication with the client;
+this prevents one client on a slow or flaky network from interfering
+with the work of others.
 @end itemize
-
-@node Notes
-@chapter Notes on the Current Implementation
-
-The client is built in to the normal @code{cvs} program, triggered by a
-specially-formatted @code{CVSROOT} variable, for example
-@code{:server:cygnus.com:/rel/cvsfiles}.
-
-The client stores what is stored in checked-out directories (including
-@file{CVS}).  The way these are stored is totally compatible with
-standard CVS.  The server requires no storage other than the repository,
-which also is totally compatible with standard CVS.
-
-The current server implementation can use up huge amounts of memory
-when transmitting a lot of data over a slow link (i.e. the network is
-slower than the server can generate the data).  There is some
-experimental code (see @code{SERVER_FLOWCONTROL} in options.h) which
-should help significantly.
 
 @node Protocol Notes
 @chapter Notes on the Protocol
@@ -137,6 +119,10 @@ of "cvs edit" in this case is the most sensible course (the "cvs edit"
 could be handled by a package like VC for emacs).  This would also allow
 local operation of @code{cvs diff} without arguments.
 
+@c It isn't clear exactly how this should relate to a more general
+@c multisite feature (in which one can modify the local copy even if the
+@c network is down between the local and the master, and then they get
+@c reconciled by a potentially manual process).
 @item
 Have the client keep a copy of some part of the repository.  This allows
 all of @code{cvs diff} and large parts of @code{cvs update} and
@@ -873,14 +859,17 @@ s> ok
 The following are part of every known implementation of the CVS protocol
 (except obsolete, pre-1.5, versions of CVS) and it is considered
 reasonable behavior to completely fail to work if you are connected with
-an implementation which attempts to not support them.  Requests: Root,
-Valid-responses, valid-requests, Directory, Entry, Modified, Unchanged,
-Argument, Argumentx, ci, co, update.  Responses: ok, error,
-Valid-requests, Checked-in, Updated, Merged, Removed, M, E.
+an implementation which attempts to not support them.  Requests:
+@code{Root}, @code{Valid-responses}, @code{valid-requests},
+@code{Directory}, @code{Entry}, @code{Modified}, @code{Unchanged},
+@code{Argument}, @code{Argumentx}, @code{ci}, @code{co}, @code{update}.
+Responses: @code{ok}, @code{error}, @code{Valid-requests},
+@code{Checked-in}, @code{Updated}, @code{Merged}, @code{Removed},
+@code{M}, @code{E}.
 
-A server need not implement Repository, but in order to interoperate
+A server need not implement @code{Repository}, but in order to interoperate
 with CVS 1.5 through 1.9 it must claim to implement it (in
-Valid-requests).  The client will not actually send the request.
+@code{Valid-requests}).  The client will not actually send the request.
 
 @node Obsolete
 @section Obsolete protocol elements
