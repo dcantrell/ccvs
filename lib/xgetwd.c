@@ -15,7 +15,7 @@
    along with this program; if not, write to the Free Software
    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.  */
 
-/* Written by David MacKenzie <djm@gnu.ai.mit.edu>.  */
+/* Derived from xgetcwd.c in e.g. the GNU sh-utils.  */
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
@@ -43,7 +43,6 @@ char *getcwd ();
 
 char *xmalloc ();
 char *xrealloc ();
-void free ();
 
 /* Return the current directory, newly allocated, arbitrarily long.
    Return NULL and set errno on error. */
