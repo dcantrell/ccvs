@@ -56,6 +56,9 @@
 /* Ditto for this POSIX.2 header.  */
 #include <fnmatch.h>
 
+/* For struct timespec.  */
+#include "timespec.h"
+
 
 
 #if HAVE_SYS_STAT_H
@@ -230,8 +233,6 @@
 off_t lseek ();
 char *getcwd ();
 #endif
-
-#include "xtime.h"
 
 #ifdef HAVE_IO_H
 #include <io.h>
