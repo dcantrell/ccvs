@@ -1,6 +1,7 @@
 Fri Nov 17 15:02:05 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
-        * (send_repository): take into account the cornucopia of error codes 
+        * (send_repository): take into account the cornucopia of error
+        codes so generously offered by OS/2.
 
 Fri Nov 17 14:53:22 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
