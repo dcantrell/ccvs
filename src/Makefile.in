@@ -125,7 +125,7 @@ ls:
 .PHONY: ls
 
 clean:
-	/bin/rm -f $(PROGS) *.o core check.log check.plog
+	rm -f $(PROGS) *.o core check.log check.plog
 .PHONY: clean
 
 distclean: clean
