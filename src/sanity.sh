@@ -19681,8 +19681,8 @@ EOF
 	    dotest server-3 "test -d ${TESTDIR}/crerepos/CVSROOT" ""
 
 	    # Now some tests of gzip-file-contents (used by jCVS).
-	    awk 'BEGIN {
-printf "%c%c%c%c%c%c.6%c%c+I-.%c%c%c%c5%c;%c%c%c%c", 
+	    awk 'BEGIN { \
+printf "%c%c%c%c%c%c.6%c%c+I-.%c%c%c%c5%c;%c%c%c%c", \
 31, 139, 8, 64, 5, 7, 64, 3, 225, 2, 64, 198, 185, 5, 64, 64, 64}' \
 	      </dev/null | tr '\100' '\000' >gzipped.dat
 	    echo Root ${TESTDIR}/crerepos >session.dat

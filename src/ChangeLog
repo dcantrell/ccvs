@@ -1,5 +1,11 @@
 1999-05-25 Derek Price
 	<http://www-personal.engin.umich.edu/~oberon/resume.html>
+
+	* sanity.sh (server): Escaped a few more newlines in
+	another awk script.  Solaris awk still don't like 'em.
+
+1999-05-25 Derek Price
+	<http://www-personal.engin.umich.edu/~oberon/resume.html>
 	and Jim Kingdon
 
 	* log.c: Remove comment which said "you can delete [this line]"
