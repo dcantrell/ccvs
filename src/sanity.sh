@@ -4007,6 +4007,7 @@ mod1 -a first-dir/file1
 bigmod -a mod1 first-dir/file1
 namednest -d src/sub/dir first-dir
 nestdeeper -d src/sub1/sub2/sub3/dir first-dir
+nestshallow -d src/dir second-dir/suba/subb
 path/in/modules &mod1
 EOF
 	  dotest modules3-5 "${testcvs} -q ci -m add-modules" \
@@ -4022,6 +4023,74 @@ ${PROG} [a-z]*: Rebuilding administrative file database"
 	  dotest modules3-7 "${testcvs} -q co bigmod" 'U first-dir/file1'
 	  cd ..
 	  rm -r 1
+
+	  mkdir 1; cd 1
+	  mkdir suba
+	  mkdir suba/subb
+	  # This fails to work remote (it doesn't notice the directories,
+	  # I suppose because they contain no files).  Bummer, especially
+	  # considering this is a documented technique and everything.
+	  dotest modules3-7a \
+"${testcvs} import -m add-dirs second-dir tag1 tag2" \
+"${PROG} [a-z]*: Importing /tmp/cvs-sanity/cvsroot/second-dir/suba
+${PROG} [a-z]*: Importing /tmp/cvs-sanity/cvsroot/second-dir/suba/subb
+
+No conflicts created by this import" "
+No conflicts created by this import"
+	  cd ..; rm -r 1
+	  mkdir 1; cd 1
+	  dotest modules3-7b "${testcvs} co second-dir" \
+"${PROG} [a-z]*: Updating second-dir
+${PROG} [a-z]*: Updating second-dir/suba
+${PROG} [a-z]*: Updating second-dir/suba/subb" \
+"${PROG} server: Updating second-dir"
+
+	  if test "x$remote" = xyes; then
+	    cd second-dir
+	    mkdir suba
+	    dotest modules3-7-workaround1 "${testcvs} add suba" \
+"Directory ${TESTDIR}/cvsroot/second-dir/suba added to the repository"
+	    cd suba
+	    mkdir subb
+	    dotest modules3-7-workaround2 "${testcvs} add subb" \
+"Directory ${TESTDIR}/cvsroot/second-dir/suba/subb added to the repository"
+	    cd ../..
+	  fi
+
+	  cd second-dir/suba/subb
+	  touch fileb
+	  dotest modules3-7c "${testcvs} add fileb" \
+"${PROG} [a-z]*: scheduling file .fileb. for addition
+${PROG} [a-z]*: use .cvs commit. to add this file permanently"
+	  dotest modules3-7d "${testcvs} -q ci -m add-it" \
+'RCS file: /tmp/cvs-sanity/cvsroot/second-dir/suba/subb/fileb,v
+done
+Checking in fileb;
+/tmp/cvs-sanity/cvsroot/second-dir/suba/subb/fileb,v  <--  fileb
+initial revision: 1\.1
+done'
+	  cd ../../..
+	  cd ..; rm -r 1
+
+	  mkdir 1; cd 1
+	  dotest modules3-7e "${testcvs} -q co nestshallow" \
+"U src/dir/fileb"
+
+	  # Using ${TESTDIR}/cvsroot/second-dir/suba instead of
+	  # ${TESTDIR}/cvsroot/second-dir seems wrong, it seems like the
+	  # 30 Dec 1996 change to build_dirs_and_chdir simply failed
+	  # to consider what to put in CVS/Repository.
+	  # Remote does "${TESTDIR}/cvsroot/\." which seems equally wrong,
+	  # if in a different way, but variety is the spice of life,
+	  # eh?
+	  dotest modules3-7f "cat CVS/Repository" \
+"${TESTDIR}/cvsroot/second-dir/suba" "${TESTDIR}/cvsroot/\."
+
+	  dotest modules3-7g "cat src/CVS/Repository" \
+"${TESTDIR}/cvsroot/second-dir/suba"
+	  dotest modules3-7h "cat src/dir/CVS/Repository" \
+"${TESTDIR}/cvsroot/second-dir/suba/subb"
+	  cd ..; rm -r 1
 
 	  if test "x$remote" = xno; then
 	  # Remote fails with:

@@ -1,3 +1,10 @@
+Fri Apr 11 23:54:56 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* sanity.sh (modules3): New tests modules3-7* test for ability to
+	supply a path in -d in modules.  Similar to modules3-8 through
+	modules3-11 except because the nesting is different, these ones
+	work.
+
 Thu Apr 10 00:14:47 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* sanity.sh (modules3): New tests modules3-12 through modules3-15
