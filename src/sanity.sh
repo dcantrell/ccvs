@@ -593,12 +593,6 @@ depends_on_rsh ()
 # $save_CVS_RSH and return 0.  Otherwise, set $skipreason and return 77.
 depends_on_ssh ()
 {
-  # Are we able to run find and use an ssh?
-  if $remote; then :; else
-    skipreason="ssh is only used during remote testing."
-    return 77
-  fi
-
   case "$CVS_RSH" in
     *ssh*|*putty*)
       tryssh=`Which $CVS_RSH`
@@ -20238,6 +20232,11 @@ done"
           # with CVS_RSH=ssh. The problem is that not all machines
           # will necessarily have ssh available, so be prepared to
           # skip this test.
+
+	  # Are we able to run find and use an ssh?
+	  if $remote; then :; else
+	    continue
+	  fi
 
 	  depends_on_ssh
 	  if test $? -eq 77; then
