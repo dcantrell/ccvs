@@ -1,3 +1,7 @@
+Thu Sep 28 13:37:04 1995  Larry Jones <larry.jones@sdrc.com>
+        
+        * regexp.c: check for ISC.
+        
 Thu Sep 7  19:18:00 1995  Jim Blandy  <jimb@cyclic.com>
 
 	* save-cwd.c: #include <direct.h> and <io.h>, on systems that
