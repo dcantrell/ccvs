@@ -16511,7 +16511,8 @@ new revision: 1\.6; previous revision: 1\.5"
           dotest edit-check-29b "$testcvs editors" "$O_editorsLineRE"
           dotest edit-check-29c "cat file1" "unofficial change"
 
-          cp "$backupFileattrName" $CVSROOT_DIRNAME/first-dir/CVS/fileattr
+          modify_repo cp "$backupFileattrName" \
+			 $CVSROOT_DIRNAME/first-dir/CVS/fileattr
           dotest edit-check-30 "$testcvs editors"
 
           # Make sure earlier unreported editors are reported properly
@@ -26408,16 +26409,9 @@ $SPROG update: Updating first-dir"
 initial revision: 1\.1"
 	  dotest release-21 "$testcvs edit file1"
 	  cd ..
-	  if $proxy; then
-	    dotest_fail release-22p \
-"echo yes | $testcvs release -d second-dir" \
-"You have \[0\] altered files in this repository.
-Are you sure you want to release (and delete) directory \`second-dir': This CVS server does not support disconnected \`cvs edit'\.  For now, remove all \`CVS/Notify' files in your workspace and try your command again\."
-	  else
-	    dotest release-22 "echo yes | $testcvs release -d second-dir" \
+	  dotest release-22 "echo yes | $testcvs release -d second-dir" \
 "You have \[0\] altered files in this repository.
 Are you sure you want to release (and delete) directory \`second-dir': "
-	  fi
 	  dotest release-23 "$testcvs -q update -d" "U second-dir/file1"
 	  dotest release-24 "$testcvs edit"
 
