@@ -30393,6 +30393,8 @@ fi
 
           ac_config_files="$ac_config_files contrib/sccs2rcs"
 
+          ac_config_files="$ac_config_files doc/mkman"
+
           ac_config_files="$ac_config_files src/cvsbug"
 
           ac_config_files="$ac_config_files windows-NT/fix-msvc-mak:windows-NT/fix-msvc-mak-head.pl:windows-NT/fix-msvc-mak.pl"
@@ -30990,6 +30992,7 @@ do
   "contrib/rcs2log" ) CONFIG_FILES="$CONFIG_FILES contrib/rcs2log:contrib/rcs2log.sh" ;;
   "contrib/rcslock" ) CONFIG_FILES="$CONFIG_FILES contrib/rcslock" ;;
   "contrib/sccs2rcs" ) CONFIG_FILES="$CONFIG_FILES contrib/sccs2rcs" ;;
+  "doc/mkman" ) CONFIG_FILES="$CONFIG_FILES doc/mkman" ;;
   "src/cvsbug" ) CONFIG_FILES="$CONFIG_FILES src/cvsbug" ;;
   "windows-NT/fix-msvc-mak" ) CONFIG_FILES="$CONFIG_FILES windows-NT/fix-msvc-mak:windows-NT/fix-msvc-mak-head.pl:windows-NT/fix-msvc-mak.pl" ;;
   "Makefile" ) CONFIG_FILES="$CONFIG_FILES Makefile" ;;
@@ -31439,6 +31442,7 @@ s,@INSTALL@,$ac_INSTALL,;t t
     contrib/rcs2log ) chmod +x contrib/rcs2log ;;
     contrib/rcslock ) chmod +x contrib/rcslock ;;
     contrib/sccs2rcs ) chmod +x contrib/sccs2rcs ;;
+    doc/mkman ) chmod +x doc/mkman ;;
     src/cvsbug ) chmod +x src/cvsbug ;;
     windows-NT/fix-msvc-mak ) chmod +x windows-NT/fix-msvc-mak ;;
   esac
