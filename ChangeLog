@@ -1,3 +1,11 @@
+2003-06-23  Derek Price  <derek@ximbiot.com>
+
+	* configure.in: Debian Woody has -lkrb4, so check for that.
+	(Patch from Alexey Mahotkin <alexm@hsys.msk.ru>.)
+
+	* config.h.in: Regenerated.
+	* configure: Ditto.
+
 2003-06-20  Derek Price  <derek@ximbiot.com>
 
 	* INSTALL: Add some OS X platforms to the compile list. Correct link to

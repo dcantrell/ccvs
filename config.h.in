@@ -158,6 +158,9 @@
 /* Define to 1 if you have the `krb' library (-lkrb). */
 #undef HAVE_LIBKRB
 
+/* Define to 1 if you have the `krb4' library (-lkrb4). */
+#undef HAVE_LIBKRB4
+
 /* Define to 1 if you have the `nsl' library (-lnsl). */
 #undef HAVE_LIBNSL
 
