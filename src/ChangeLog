@@ -1,8 +1,8 @@
 Fri Mar 22 10:09:55 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
-	* error.c: Exit with status EXIT_FAILURE rather than STATUS.  We
-	had been neglecting to check for 256, and the value of providing a
-	count of errors is probably minimal anyway.
+	* error.c (error, fperror): Exit with status EXIT_FAILURE rather
+	than STATUS.  We had been neglecting to check for 256, and the
+	value of providing a count of errors is probably minimal anyway.
 	* add.c, modules.c, mkmodules.c, tag.c, server.c, main.c,
 	import.c, client.c, scramble.c, recurse.c: Exit with status
 	EXIT_FAILURE rather than 1.  On VMS, 1 is success, not failure.
