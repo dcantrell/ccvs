@@ -6006,13 +6006,15 @@ cvs_output (const char *str, size_t len)
     if (len == 0)
 	len = strlen (str);
 #ifdef SERVER_SUPPORT
-    if (error_use_protocol && buf_to_net != NULL)
+    if (error_use_protocol)
     {
+	assert(buf_to_net);
 	buf_output (saved_output, str, len);
 	buf_copy_lines (buf_to_net, saved_output, 'M');
     }
-    else if (server_active && protocol != NULL)
+    else if (server_active)
     {
+	assert(protocol);
 	buf_output (saved_output, str, len);
 	buf_copy_lines (protocol, saved_output, 'M');
 	buf_send_counted (protocol);
@@ -6134,11 +6136,13 @@ cvs_outerr (const char *str, size_t len)
 #ifdef SERVER_SUPPORT
     if (error_use_protocol)
     {
+	assert(buf_to_net);
 	buf_output (saved_outerr, str, len);
 	buf_copy_lines (buf_to_net, saved_outerr, 'E');
     }
     else if (server_active)
     {
+	assert(protocol);
 	buf_output (saved_outerr, str, len);
 	buf_copy_lines (protocol, saved_outerr, 'E');
 	buf_send_counted (protocol);

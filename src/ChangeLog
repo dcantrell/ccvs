@@ -1,5 +1,10 @@
 2003-09-30  Derek Price  <derek@ximbiot.com>
 
+	* server.c (buf_output): Don't check that the buffers exist before
+	using them since cvs_outerr does this without problems.
+
+2003-09-30  Derek Price  <derek@ximbiot.com>
+
 	* server.c: Remove some unecessary function prototypes.
 
 2003-09-29  Derek Price  <derek@ximbiot.com>
