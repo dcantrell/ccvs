@@ -1,5 +1,9 @@
 2004-11-04 Derek Price <derek@ximbiot.com>
 
+	* sanity.sh (set_bad_tool): Remove unnecessary quotes.
+
+2004-11-04 Derek Price <derek@ximbiot.com>
+
 	* sanity.sh: s/depends_on_/require/.
 
 2004-11-04 Derek Price <derek@ximbiot.com>

@@ -702,7 +702,7 @@ fi
 badtools=
 set_bad_tool ()
 {
-   badtools="$badtools:$1"
+   badtools=$badtools:$1
 }
 is_bad_tool ()
 {
