@@ -497,9 +497,7 @@ commit (argc, argv)
 	    do_editor (".", &saved_message, (char *)NULL, find_args.ulist);
 
 	/* We always send some sort of message, even if empty.  */
-	/* FIXME: is that true?  There seems to be some code in do_editor
-	   which can leave the message NULL.  */
-	option_with_arg ("-m", saved_message);
+	option_with_arg ("-m", saved_message ? saved_message : "");
 
 	/* OK, now process all the questionable files we have been saving
 	   up.  */
