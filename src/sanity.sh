@@ -559,7 +559,7 @@ if test x"$*" = x; then
 	# Basic/miscellaneous functionality
 	tests="basica basicb basicc basic1 deep basic2 commit-readonly"
 	# Branching, tagging, removing, adding, multiple directories
-	tests="${tests} rdiff diff death death2 rmadd dirs dirs2"
+	tests="${tests} rdiff diff death death2 rmadd rmadd2 dirs dirs2"
 	tests="${tests} branches branches2"
 	tests="${tests} rcslib multibranch import importb importc"
 	tests="${tests} import-after-initial"
@@ -3142,6 +3142,74 @@ File: file5            	Status: Up-to-date
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
 	  ;;
 
+	rmadd2)
+	  # Tests of undoing commits, including in the presence of
+	  # adding and removing files.  See join for a list of -j tests.
+	  mkdir 1; cd 1
+	  dotest rmadd2-1 "${testcvs} -q co -l ." ''
+	  mkdir first-dir
+	  dotest rmadd2-2 "${testcvs} add first-dir" \
+"Directory ${TESTDIR}/cvsroot/first-dir added to the repository"
+	  cd first-dir
+	  echo 'initial contents' >file1
+	  dotest rmadd2-3 "${testcvs} add file1" \
+"${PROG} [a-z]*: scheduling file .file1. for addition
+${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
+	  dotest rmadd2-4 "${testcvs} -q ci -m add" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
+done
+Checking in file1;
+${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
+initial revision: 1\.1
+done"
+	  dotest rmadd2-5 "${testcvs} rm -f file1" \
+"${PROG} [a-z]*: scheduling .file1. for removal
+${PROG} [a-z]*: use .${PROG} commit. to remove this file permanently"
+	  dotest rmadd2-6 "${testcvs} -q ci -m remove" \
+"Removing file1;
+${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
+new revision: delete; previous revision: 1\.1
+done"
+	  dotest rmadd2-7 "${testcvs} -q update -j 1.2 -j 1.1 file1" "U file1"
+	  dotest rmadd2-8 "${testcvs} -q ci -m readd" \
+"Checking in file1;
+${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
+new revision: 1\.3; previous revision: 1\.2
+done"
+	  echo 'new contents' >file1
+	  dotest rmadd2-9 "${testcvs} -q ci -m modify" \
+"Checking in file1;
+${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
+new revision: 1\.4; previous revision: 1\.3
+done"
+	  dotest rmadd2-10 "${testcvs} -q update -j 1.4 -j 1.3 file1" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
+retrieving revision 1\.4
+retrieving revision 1\.3
+Merging differences between 1\.4 and 1\.3 into file1"
+	  dotest rmadd2-11 "${testcvs} -q ci -m undo" \
+"Checking in file1;
+${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
+new revision: 1\.5; previous revision: 1\.4
+done"
+	  dotest rmadd2-12 "cat file1" "initial contents"
+	  dotest rmadd2-13 "${testcvs} -q update -p -r 1.3" "initial contents"
+
+	  # Hmm, might be a bit odd that this works even if 1.3 is not
+	  # the head.
+	  dotest rmadd2-14 "${testcvs} -q update -j 1.3 -j 1.2 file1" \
+"${PROG} [a-z]*: scheduling file1 for removal"
+	  dotest rmadd2-15 "${testcvs} -q ci -m re-remove" \
+"Removing file1;
+${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
+new revision: delete; previous revision: 1\.5
+done"
+	  cd ../..
+
+	  rm -r 1
+	  rm -rf ${TESTDIR}/cvsroot/first-dir
+	  ;;
+
 	dirs)
 	  # Tests related to removing and adding directories.
 	  # See also:
@@ -4736,6 +4804,8 @@ done"
 	  # See also binfile2, which does similar things with binary files.
 	  # See also join2, which tests joining (and update -A) on only
 	  # a single file, rather than a directory.
+	  # See also rmadd2, which tests -j cases not involving branches
+	  #   (e.g. undoing a commit)
 	  # See also join3, which tests some cases involving the greatest
 	  # common ancestor.  Here is a list of tests according to branch
 	  # topology:
