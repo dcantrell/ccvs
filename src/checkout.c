@@ -311,7 +311,7 @@ checkout (argc, argv)
 
 	if (expand_modules)
 	{
-	    client_send_expansions (local, where);
+	    client_send_expansions (local, where, 1);
 	}
 	else
 	{
