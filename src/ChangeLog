@@ -1,3 +1,8 @@
+1999-05-07  Jim Kingdon  <http://www.cyclic.com>
+
+	* server.c (server_notify): Also set last_node to NULL.
+	* sanity.sh (server): New tests server-6 and server-7, for this.
+
 1999-05-05  Jim Kingdon  <http://www.cyclic.com>
 
 	* rcs.c (rcs_internal_lockfile): Remove unused variable lockfile.

@@ -2008,6 +2008,8 @@ server_notify ()
 	Lock_Cleanup ();
     }
 
+    last_node = NULL;
+
     /* The code used to call fflush (stdout) here, but that is no
        longer necessary.  The data is now buffered in buf_to_net,
        which will be flushed by the caller, do_cvs_command.  */

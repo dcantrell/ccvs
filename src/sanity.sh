@@ -19572,6 +19572,49 @@ ok"
 	    dotest server-5 \
 "${testcvs} -q -d ${TESTDIR}/crerepos co -p dir1/file1" "test"
 
+	    # OK, here are some notify tests.
+	    if ${testcvs} server >${TESTDIR}/server.tmp <<EOF; then
+Root ${TESTDIR}/crerepos
+Directory .
+${TESTDIR}/crerepos/dir1
+Notify file1
+E	Fri May  7 13:21:09 1999 GMT	myhost	some-work-dir	EUC
+noop
+EOF
+	      dotest server-6 "cat ${TESTDIR}/server.tmp" \
+"Notified \./
+${TESTDIR}/crerepos/dir1/file1
+ok"
+	    else
+	      echo "exit status was $?" >>${LOGFILE}
+	      fail server-6
+	    fi
+	    # Sending the second "noop" before waiting for the output
+	    # from the first is bogus but hopefully we can get away
+	    # with it.
+	    if ${testcvs} server >${TESTDIR}/server.tmp <<EOF; then
+Root ${TESTDIR}/crerepos
+Directory .
+${TESTDIR}/crerepos/dir1
+Notify file1
+E	Fri May  7 13:21:09 1999 GMT	myhost	some-work-dir	EUC
+noop
+Notify file1
+E	Fri May  7 13:21:09 1999 GMT	myhost	some-work-dir	EUC
+noop
+EOF
+	      dotest server-7 "cat ${TESTDIR}/server.tmp" \
+"Notified \./
+${TESTDIR}/crerepos/dir1/file1
+ok
+Notified \./
+${TESTDIR}/crerepos/dir1/file1
+ok"
+	    else
+	      echo "exit status was $?" >>${LOGFILE}
+	      fail server-7
+	    fi
+
 	    if test "$keep" = yes; then
 	      echo Keeping ${TESTDIR} and exiting due to --keep
 	      exit 0
