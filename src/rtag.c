@@ -349,7 +349,7 @@ rtag_fileproc (file, update_dir, repository, entries, srcfiles)
 	 * the branch.  Use a symbolic tag for that.
 	 */
 	rev = branch_mode ? RCS_magicrev (rcsfile, version) : numtag;
-	run_setup ("%s%s -q -N%s:%s", Rcsbin, RCS, symtag, numtag);
+	retcode = RCS_settag(rcsfile->path, symtag, numtag);
     }
     else
     {
@@ -397,10 +397,10 @@ rtag_fileproc (file, update_dir, repository, entries, srcfiles)
 	  }
 	  free (oversion);
        }
-       run_setup ("%s%s -q -N%s:%s", Rcsbin, RCS, symtag, rev);
+       retcode = RCS_settag(rcsfile->path, symtag, rev);
     }
-    run_arg (rcsfile->path);
-    if ((retcode = run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL)) != 0)
+
+    if (retcode != 0)
     {
 	error (1, retcode == -1 ? errno : 0,
 	       "failed to set tag `%s' to revision `%s' in `%s'",
@@ -443,9 +443,7 @@ rtag_delete (rcsfile)
 	return (0);
     free (version);
 
-    run_setup ("%s%s -q -N%s", Rcsbin, RCS, symtag);
-    run_arg (rcsfile->path);
-    if ((retcode = run_exec (RUN_TTY, RUN_TTY, DEVNULL, RUN_NORMAL)) != 0)
+    if ((retcode = RCS_deltag(rcsfile->path, symtag)) != 0)
     {
 	if (!quiet)
 	    error (0, retcode == -1 ? errno : 0,

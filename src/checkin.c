@@ -111,9 +111,7 @@ Checkin (type, file, update_dir, repository,
 	    /* for added files with symbolic tags, need to add the tag too */
 	    if (type == 'A' && tag && !isdigit (*tag))
 	    {
-		run_setup ("%s%s -q -N%s:%s", Rcsbin, RCS, tag, rev);
-		run_arg (rcs);
-		(void) run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL);
+		(void) RCS_settag(rcs, tag, rev);
 	    }
 #endif /* No DEATH_SUPPORT */
 
@@ -155,9 +153,7 @@ Checkin (type, file, update_dir, repository,
      */
     if (rev)
     {
-	run_setup ("%s%s -q -u", Rcsbin, RCS);
-	run_arg (rcs);
-	(void) run_exec (RUN_TTY, RUN_TTY, DEVNULL, RUN_NORMAL);
+	(void) RCS_unlock (rcs, NULL);
     }
 
     if (server_active)

@@ -563,15 +563,12 @@ add_rev (message, rcs, vfile, vers)
     locked = 0;
     if (vers != NULL)
     {
-	run_setup ("%s%s -q -l%s", Rcsbin, RCS, vbranch);
-	run_arg (rcs);
-	if ((retcode = run_exec (RUN_TTY, DEVNULL, DEVNULL, RUN_NORMAL)) == 0)
-	    locked = 1;
-	else if (retcode == -1)
+        if ((retcode = RCS_lock (rcs, vbranch)) != 0)
 	{
 	    error (0, errno, "fork failed");
 	    return (1);
 	}
+	locked = 1;
     }
     if (link_file (vfile, FILE_HOLDER) < 0)
     {
@@ -605,9 +602,7 @@ add_rev (message, rcs, vfile, vers)
 	}
 	if (locked)
 	{
-	    run_setup ("%s%s -q -u%s", Rcsbin, RCS, vbranch);
-	    run_arg (rcs);
-	    (void) run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL);
+	    (void) RCS_unlock(rcs, vbranch);
 	}
 	return (1);
     }
@@ -635,9 +630,7 @@ add_tags (rcs, vfile, vtag, targc, targv)
     if (noexec)
 	return (0);
 
-    run_setup ("%s%s -q -N%s:%s", Rcsbin, RCS, vtag, vbranch);
-    run_arg (rcs);
-    if ((retcode = run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL)) != 0)
+    if ((retcode = RCS_settag(rcs, vtag, vbranch)) != 0)
     {
 	ierrno = errno;
 	fperror (logfp, 0, retcode == -1 ? ierrno : 0, 
@@ -650,9 +643,7 @@ add_tags (rcs, vfile, vtag, targc, targv)
 		       1, 0, (List *) NULL, (List *) NULL);
     for (i = 0; i < targc; i++)
     {
-	run_setup ("%s%s -q -N%s:%s", Rcsbin, RCS, targv[i], vers->vn_rcs);
-	run_arg (rcs);
-	if ((retcode = run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL)) != 0)
+	if ((retcode = RCS_settag (rcs, targv[i], vers->vn_rcs)) != 0)
 	{
 	    ierrno = errno;
 	    fperror (logfp, 0, retcode == -1 ? ierrno : 0, 

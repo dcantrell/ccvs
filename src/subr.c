@@ -48,7 +48,7 @@ USE(rcsid)
 #endif
 #endif
 
-static void run_add_arg PROTO((char *s));
+static void run_add_arg PROTO((const char *s));
 static void run_init_prog PROTO((void));
 
 extern char *getlogin ();
@@ -304,7 +304,7 @@ xrealloc (ptr, bytes)
  */
 char *
 xstrdup (str)
-    char *str;
+    const char *str;
 {
     char *s;
 
@@ -564,7 +564,7 @@ static int run_argc_allocated;
 /* VARARGS */
 #if defined (HAVE_VPRINTF) && (defined (USE_PROTOTYPES) ? USE_PROTOTYPES : defined (__STDC__))
 void 
-run_setup (char *fmt,...)
+run_setup (const char *fmt,...)
 #else
 void 
 run_setup (fmt, a1, a2, a3, a4, a5, a6, a7, a8)
@@ -607,7 +607,7 @@ run_setup (fmt, a1, a2, a3, a4, a5, a6, a7, a8)
 
 void
 run_arg (s)
-    char *s;
+    const char *s;
 {
     run_add_arg (s);
 }
@@ -615,7 +615,7 @@ run_arg (s)
 /* VARARGS */
 #if defined (HAVE_VPRINTF) && (defined (USE_PROTOTYPES) ? USE_PROTOTYPES : defined (__STDC__))
 void 
-run_args (char *fmt,...)
+run_args (const char *fmt,...)
 #else
 void 
 run_args (fmt, a1, a2, a3, a4, a5, a6, a7, a8)
@@ -644,7 +644,7 @@ run_args (fmt, a1, a2, a3, a4, a5, a6, a7, a8)
 
 static void
 run_add_arg (s)
-    char *s;
+    const char *s;
 {
     /* allocate more argv entries if we've run out */
     if (run_argc >= run_argc_allocated)
