@@ -477,10 +477,7 @@ admin_fileproc (callerdat, finfo)
 
     rcs = vers->srcfile;
     if (rcs->flags & PARTIAL)
-	/* FIXME: why is this calling RCS_fully_parse rather than
-	   RCS_reparsercsfile?  Do we look at the ";add" and ";delete"
-	   fields anywhere?  If so, where?  */
-	RCS_fully_parse (rcs);
+	RCS_reparsercsfile (rcs, NULL);
 
     status = 0;
 
@@ -752,8 +749,6 @@ admin_fileproc (callerdat, finfo)
 
 		n = findnode (rcs->versions, rev);
 		delta = (RCSVers *) n->data;
-		if (delta->other == NULL)
-		    delta->other = getlist();
 		if (delta->text == NULL)
 		{
 		    delta->text = (Deltatext *) xmalloc (sizeof (Deltatext));
@@ -793,7 +788,7 @@ admin_fileproc (callerdat, finfo)
 	   RCS data structure.  Forcing a reparse does the trick,
 	   but leaks memory and is kludgey.  Should we export
 	   free_rcsnode_contents for this purpose? */
-	RCS_fully_parse (rcs);
+	RCS_reparsercsfile (rcs, NULL);
     }
 
   exitfunc:

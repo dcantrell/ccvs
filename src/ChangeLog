@@ -1,4 +1,14 @@
 Sat Nov  1 10:01:56 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* admin.c (admin_fileproc): Call RCS_reparsercsfile not
+	RCS_fully_parse.  Don't muck with ->other field in RCSVers (it
+	doesn't need to be set).
+	* rcs.h, rcs.h (RCS_reparsercsfile): No longer static.  No point
+	in having this static when RCS_rewrite and RCS_fully_parse are not.
+	* rcs.c (getdelta): Remove obsolete comment about not storing the
+	newphrases from the deltas, since we now do.
+
+Sat Nov  1 10:01:56 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 			  and Paul Eggert
 
 	* rcs.c (rcs_internal_lockfile): Clarify the comments about O_EXCL

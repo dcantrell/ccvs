@@ -20,7 +20,6 @@ static const char *const kflags[] =
 enum kflag { KFLAG_KV = 0, KFLAG_KVL, KFLAG_K, KFLAG_V, KFLAG_O, KFLAG_B };
 
 static RCSNode *RCS_parsercsfile_i PROTO((FILE * fp, const char *rcsfile));
-static void RCS_reparsercsfile PROTO((RCSNode *, FILE **));
 static char *RCS_getdatebranch PROTO((RCSNode * rcs, char *date, char *branch));
 static int getrcskey PROTO((FILE * fp, char **keyp, char **valp,
 			    size_t *lenp));
@@ -321,7 +320,7 @@ l_error:
 
    If PFP is NULL, close the file when done.  Otherwise, leave it open
    and store the FILE * in *PFP.  */
-static void
+void
 RCS_reparsercsfile (rdata, pfp)
     RCSNode *rdata;
     FILE **pfp;
@@ -5681,13 +5680,8 @@ unable to parse rcs file; `state' not in the expected place");
 	vnode->next = xstrdup (value);
 
     /*
-     * At this point, we skip any user-defined fields.  This is because
-     * the RCSVers->other field is actually used by RCS_fully_parse to
-     * store newphrase fields from deltatext nodes, *not* from delta nodes,
-     * and we don't want to confuse data from the two nodes.  TODO: solve
-     * this problem so we don't mix delta and deltatext information.
-     *
      * XXX - this is where we put the symbolic link stuff???
+     * (into newphrases in the deltas).
      */
     /* FIXME: Does not correctly handle errors, e.g. from stdio.  */
     while (1)
