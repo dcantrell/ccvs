@@ -1,3 +1,7 @@
+Wed Aug 30 10:35:46 1995  Stefan Monnier <stefan.monnier@epfl.ch>
+
+        * main.c (main): Allow -d to override CVSROOT_ENV.
+
 Thu Aug 24 18:57:49 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.h, rcscmds.c (RCS_unlock, RCS_deltag, RCS_lock): Add extra
