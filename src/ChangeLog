@@ -125,7 +125,8 @@ Tue Feb 17 02:32:21 1998  Noel Cragg  <noel@swish.red-bean.com>
 
 	* classify.c (Classify_File): Doc fix.
 
-Fri Feb 13 17:07:32 1998  Ian Lance Taylor  <ian@cygnus.com>
+Fri Feb 13 17:07:32 1998  Eric Mumpower  <nocturne@cygnus.com>
+	and Ian Lance Taylor  <ian@cygnus.com>
 
 	Fix some file system ordering problems found on Irix 6.4:
 	* sanity.sh (basic2): Use dotest_sort for test 56.
