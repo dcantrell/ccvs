@@ -1472,9 +1472,9 @@ report_hrecs ()
 	else
 	    tm = localtime (&(lr->date));
 
-	(void) printf ("%c %02d/%02d %02d:%02d %s %-*s", ty, tm->tm_mon + 1,
-		  tm->tm_mday, tm->tm_hour, tm->tm_min, tz_name,
-		  user_len, lr->user);
+	(void) printf ("%c %04d-%02d-%02d %02d:%02d %s %-*s", ty,
+		  tm->tm_year+1900, tm->tm_mon + 1, tm->tm_mday, tm->tm_hour,
+		  tm->tm_min, tz_name, user_len, lr->user);
 
 	workdir = xmalloc (strlen (lr->dir) + strlen (lr->end) + 10);
 	(void) sprintf (workdir, "%s%s", lr->dir, lr->end);

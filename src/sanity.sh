@@ -2137,50 +2137,50 @@ ${PROG} [a-z]*: Importing ${TESTDIR}/cvsroot/second-dir/dir1/dir2"
 		# which don't exist in the remote output?  would seem to be
 		# a CVS bug.
 		dotest basic2-64 "${testcvs} his -x TOFWUCGMAR -a" \
-"O [0-9/]* [0-9:]* ${PLUS}0000 ${username} first-dir           =first-dir= ${TMPPWD}/\*
-A [0-9/]* [0-9:]* ${PLUS}0000 ${username} 1\.1 file6     first-dir           == ${TMPPWD}
-A [0-9/]* [0-9:]* ${PLUS}0000 ${username} 1\.1 file7     first-dir           == ${TMPPWD}
-A [0-9/]* [0-9:]* ${PLUS}0000 ${username} 1\.1 file6     first-dir/dir1      == ${TMPPWD}
-A [0-9/]* [0-9:]* ${PLUS}0000 ${username} 1\.1 file7     first-dir/dir1      == ${TMPPWD}
-A [0-9/]* [0-9:]* ${PLUS}0000 ${username} 1\.1 file6     first-dir/dir1/dir2 == ${TMPPWD}
-A [0-9/]* [0-9:]* ${PLUS}0000 ${username} 1\.1 file7     first-dir/dir1/dir2 == ${TMPPWD}
-A [0-9/]* [0-9:]* ${PLUS}0000 ${username} 1\.1 file14    first-dir           == ${TMPPWD}
-M [0-9/]* [0-9:]* ${PLUS}0000 ${username} 1\.2 file6     first-dir           == ${TMPPWD}
-R [0-9/]* [0-9:]* ${PLUS}0000 ${username} 1\.2 file7     first-dir           == ${TMPPWD}
-A [0-9/]* [0-9:]* ${PLUS}0000 ${username} 1\.1 file14    first-dir/dir1      == ${TMPPWD}
-M [0-9/]* [0-9:]* ${PLUS}0000 ${username} 1\.2 file6     first-dir/dir1      == ${TMPPWD}
-R [0-9/]* [0-9:]* ${PLUS}0000 ${username} 1\.2 file7     first-dir/dir1      == ${TMPPWD}
-A [0-9/]* [0-9:]* ${PLUS}0000 ${username} 1\.1 file14    first-dir/dir1/dir2 == ${TMPPWD}
-M [0-9/]* [0-9:]* ${PLUS}0000 ${username} 1\.2 file6     first-dir/dir1/dir2 == ${TMPPWD}
-R [0-9/]* [0-9:]* ${PLUS}0000 ${username} 1\.2 file7     first-dir/dir1/dir2 == ${TMPPWD}
-F [0-9/]* [0-9:]* ${PLUS}0000 ${username}                     =first-dir= ${TMPPWD}/\*
-T [0-9/]* [0-9:]* ${PLUS}0000 ${username} first-dir \[rtagged-by-head:A\]
-T [0-9/]* [0-9:]* ${PLUS}0000 ${username} first-dir \[rtagged-by-tag:rtagged-by-head\]
-T [0-9/]* [0-9:]* ${PLUS}0000 ${username} first-dir \[rtagged-by-revision:1\.1\]
-O [0-9/]* [0-9:]* ${PLUS}0000 ${username} \[1\.1\] first-dir           =first-dir= ${TMPPWD}/\*
-U [0-9/]* [0-9:]* ${PLUS}0000 ${username} 1\.2 file6     first-dir           == ${TMPPWD}/first-dir
-U [0-9/]* [0-9:]* ${PLUS}0000 ${username} 1\.2 file7     first-dir           == ${TMPPWD}/first-dir" \
-"O [0-9/]* [0-9:]* ${PLUS}0000 ${username} first-dir           =first-dir= <remote>/\*
-A [0-9/]* [0-9:]* ${PLUS}0000 ${username} 1\.1 file6     first-dir           == <remote>
-A [0-9/]* [0-9:]* ${PLUS}0000 ${username} 1\.1 file7     first-dir           == <remote>
-A [0-9/]* [0-9:]* ${PLUS}0000 ${username} 1\.1 file6     first-dir/dir1      == <remote>
-A [0-9/]* [0-9:]* ${PLUS}0000 ${username} 1\.1 file7     first-dir/dir1      == <remote>
-A [0-9/]* [0-9:]* ${PLUS}0000 ${username} 1\.1 file6     first-dir/dir1/dir2 == <remote>
-A [0-9/]* [0-9:]* ${PLUS}0000 ${username} 1\.1 file7     first-dir/dir1/dir2 == <remote>
-A [0-9/]* [0-9:]* ${PLUS}0000 ${username} 1\.1 file14    first-dir           == <remote>
-M [0-9/]* [0-9:]* ${PLUS}0000 ${username} 1\.2 file6     first-dir           == <remote>
-R [0-9/]* [0-9:]* ${PLUS}0000 ${username} 1\.2 file7     first-dir           == <remote>
-A [0-9/]* [0-9:]* ${PLUS}0000 ${username} 1\.1 file14    first-dir/dir1      == <remote>
-M [0-9/]* [0-9:]* ${PLUS}0000 ${username} 1\.2 file6     first-dir/dir1      == <remote>
-R [0-9/]* [0-9:]* ${PLUS}0000 ${username} 1\.2 file7     first-dir/dir1      == <remote>
-A [0-9/]* [0-9:]* ${PLUS}0000 ${username} 1\.1 file14    first-dir/dir1/dir2 == <remote>
-M [0-9/]* [0-9:]* ${PLUS}0000 ${username} 1\.2 file6     first-dir/dir1/dir2 == <remote>
-R [0-9/]* [0-9:]* ${PLUS}0000 ${username} 1\.2 file7     first-dir/dir1/dir2 == <remote>
-F [0-9/]* [0-9:]* ${PLUS}0000 ${username}                     =first-dir= <remote>/\*
-T [0-9/]* [0-9:]* ${PLUS}0000 ${username} first-dir \[rtagged-by-head:A\]
-T [0-9/]* [0-9:]* ${PLUS}0000 ${username} first-dir \[rtagged-by-tag:rtagged-by-head\]
-T [0-9/]* [0-9:]* ${PLUS}0000 ${username} first-dir \[rtagged-by-revision:1\.1\]
-O [0-9/]* [0-9:]* ${PLUS}0000 ${username} \[1\.1\] first-dir           =first-dir= <remote>/\*"
+"O [0-9-]* [0-9:]* ${PLUS}0000 ${username} first-dir           =first-dir= ${TMPPWD}/\*
+A [0-9-]* [0-9:]* ${PLUS}0000 ${username} 1\.1 file6     first-dir           == ${TMPPWD}
+A [0-9-]* [0-9:]* ${PLUS}0000 ${username} 1\.1 file7     first-dir           == ${TMPPWD}
+A [0-9-]* [0-9:]* ${PLUS}0000 ${username} 1\.1 file6     first-dir/dir1      == ${TMPPWD}
+A [0-9-]* [0-9:]* ${PLUS}0000 ${username} 1\.1 file7     first-dir/dir1      == ${TMPPWD}
+A [0-9-]* [0-9:]* ${PLUS}0000 ${username} 1\.1 file6     first-dir/dir1/dir2 == ${TMPPWD}
+A [0-9-]* [0-9:]* ${PLUS}0000 ${username} 1\.1 file7     first-dir/dir1/dir2 == ${TMPPWD}
+A [0-9-]* [0-9:]* ${PLUS}0000 ${username} 1\.1 file14    first-dir           == ${TMPPWD}
+M [0-9-]* [0-9:]* ${PLUS}0000 ${username} 1\.2 file6     first-dir           == ${TMPPWD}
+R [0-9-]* [0-9:]* ${PLUS}0000 ${username} 1\.2 file7     first-dir           == ${TMPPWD}
+A [0-9-]* [0-9:]* ${PLUS}0000 ${username} 1\.1 file14    first-dir/dir1      == ${TMPPWD}
+M [0-9-]* [0-9:]* ${PLUS}0000 ${username} 1\.2 file6     first-dir/dir1      == ${TMPPWD}
+R [0-9-]* [0-9:]* ${PLUS}0000 ${username} 1\.2 file7     first-dir/dir1      == ${TMPPWD}
+A [0-9-]* [0-9:]* ${PLUS}0000 ${username} 1\.1 file14    first-dir/dir1/dir2 == ${TMPPWD}
+M [0-9-]* [0-9:]* ${PLUS}0000 ${username} 1\.2 file6     first-dir/dir1/dir2 == ${TMPPWD}
+R [0-9-]* [0-9:]* ${PLUS}0000 ${username} 1\.2 file7     first-dir/dir1/dir2 == ${TMPPWD}
+F [0-9-]* [0-9:]* ${PLUS}0000 ${username}                     =first-dir= ${TMPPWD}/\*
+T [0-9-]* [0-9:]* ${PLUS}0000 ${username} first-dir \[rtagged-by-head:A\]
+T [0-9-]* [0-9:]* ${PLUS}0000 ${username} first-dir \[rtagged-by-tag:rtagged-by-head\]
+T [0-9-]* [0-9:]* ${PLUS}0000 ${username} first-dir \[rtagged-by-revision:1\.1\]
+O [0-9-]* [0-9:]* ${PLUS}0000 ${username} \[1\.1\] first-dir           =first-dir= ${TMPPWD}/\*
+U [0-9-]* [0-9:]* ${PLUS}0000 ${username} 1\.2 file6     first-dir           == ${TMPPWD}/first-dir
+U [0-9-]* [0-9:]* ${PLUS}0000 ${username} 1\.2 file7     first-dir           == ${TMPPWD}/first-dir" \
+"O [0-9-]* [0-9:]* ${PLUS}0000 ${username} first-dir           =first-dir= <remote>/\*
+A [0-9-]* [0-9:]* ${PLUS}0000 ${username} 1\.1 file6     first-dir           == <remote>
+A [0-9-]* [0-9:]* ${PLUS}0000 ${username} 1\.1 file7     first-dir           == <remote>
+A [0-9-]* [0-9:]* ${PLUS}0000 ${username} 1\.1 file6     first-dir/dir1      == <remote>
+A [0-9-]* [0-9:]* ${PLUS}0000 ${username} 1\.1 file7     first-dir/dir1      == <remote>
+A [0-9-]* [0-9:]* ${PLUS}0000 ${username} 1\.1 file6     first-dir/dir1/dir2 == <remote>
+A [0-9-]* [0-9:]* ${PLUS}0000 ${username} 1\.1 file7     first-dir/dir1/dir2 == <remote>
+A [0-9-]* [0-9:]* ${PLUS}0000 ${username} 1\.1 file14    first-dir           == <remote>
+M [0-9-]* [0-9:]* ${PLUS}0000 ${username} 1\.2 file6     first-dir           == <remote>
+R [0-9-]* [0-9:]* ${PLUS}0000 ${username} 1\.2 file7     first-dir           == <remote>
+A [0-9-]* [0-9:]* ${PLUS}0000 ${username} 1\.1 file14    first-dir/dir1      == <remote>
+M [0-9-]* [0-9:]* ${PLUS}0000 ${username} 1\.2 file6     first-dir/dir1      == <remote>
+R [0-9-]* [0-9:]* ${PLUS}0000 ${username} 1\.2 file7     first-dir/dir1      == <remote>
+A [0-9-]* [0-9:]* ${PLUS}0000 ${username} 1\.1 file14    first-dir/dir1/dir2 == <remote>
+M [0-9-]* [0-9:]* ${PLUS}0000 ${username} 1\.2 file6     first-dir/dir1/dir2 == <remote>
+R [0-9-]* [0-9:]* ${PLUS}0000 ${username} 1\.2 file7     first-dir/dir1/dir2 == <remote>
+F [0-9-]* [0-9:]* ${PLUS}0000 ${username}                     =first-dir= <remote>/\*
+T [0-9-]* [0-9:]* ${PLUS}0000 ${username} first-dir \[rtagged-by-head:A\]
+T [0-9-]* [0-9:]* ${PLUS}0000 ${username} first-dir \[rtagged-by-tag:rtagged-by-head\]
+T [0-9-]* [0-9:]* ${PLUS}0000 ${username} first-dir \[rtagged-by-revision:1\.1\]
+O [0-9-]* [0-9:]* ${PLUS}0000 ${username} \[1\.1\] first-dir           =first-dir= <remote>/\*"
 
 		rm -rf ${CVSROOT_DIRNAME}/first-dir
 		rm -rf ${CVSROOT_DIRNAME}/second-dir
@@ -14419,69 +14419,69 @@ C3b235f50|kingdon|<remote>|ccvs/emx|1.3|README
 M3b23af50|kingdon|~/work/*0|ccvs/doc|1.281|cvs.texinfo
 EOF
 	  dotest history-1 "${testcvs} history -e -a" \
-"O 06/04 19:48 ${PLUS}0000 anonymous ccvs     =ccvs= <remote>/\*
-O 06/05 14:00 ${PLUS}0000 anonymous ccvs     =src=  <remote>/\*
-M 06/10 01:38 ${PLUS}0000 anonymous 1\.23  Makefile    ccvs/src == <remote>
-W 06/17 19:51 ${PLUS}0000 anonymous       Makefile\.in ccvs/emx == <remote>/emx
-O 06/06 08:12 ${PLUS}0000 kingdon   ccvs     =ccvs= <remote>/\*
-M 06/10 21:12 ${PLUS}0000 kingdon   1\.231 sanity\.sh   ccvs/src == ~/work/ccvs/src
-C 06/10 11:51 ${PLUS}0000 kingdon   1\.3   README      ccvs/emx == <remote>
-M 06/10 17:33 ${PLUS}0000 kingdon   1\.281 cvs\.texinfo ccvs/doc == ~/work/ccvs/doc
-M 06/10 01:36 ${PLUS}0000 nk        1\.229 sanity\.sh   ccvs/src == <remote>"
+"O 1997-06-04 19:48 ${PLUS}0000 anonymous ccvs     =ccvs= <remote>/\*
+O 1997-06-05 14:00 ${PLUS}0000 anonymous ccvs     =src=  <remote>/\*
+M 1997-06-10 01:38 ${PLUS}0000 anonymous 1\.23  Makefile    ccvs/src == <remote>
+W 1997-06-17 19:51 ${PLUS}0000 anonymous       Makefile\.in ccvs/emx == <remote>/emx
+O 1997-06-06 08:12 ${PLUS}0000 kingdon   ccvs     =ccvs= <remote>/\*
+M 1997-06-10 21:12 ${PLUS}0000 kingdon   1\.231 sanity\.sh   ccvs/src == ~/work/ccvs/src
+C 2001-06-10 11:51 ${PLUS}0000 kingdon   1\.3   README      ccvs/emx == <remote>
+M 2001-06-10 17:33 ${PLUS}0000 kingdon   1\.281 cvs\.texinfo ccvs/doc == ~/work/ccvs/doc
+M 1997-06-10 01:36 ${PLUS}0000 nk        1\.229 sanity\.sh   ccvs/src == <remote>"
 
 	  dotest history-2 "${testcvs} history -e -a -D '10 Jun 1997 13:00 UT'" \
-"W 06/17 19:51 ${PLUS}0000 anonymous       Makefile\.in ccvs/emx == <remote>/emx
-M 06/10 21:12 ${PLUS}0000 kingdon   1\.231 sanity\.sh   ccvs/src == ~/work/ccvs/src
-C 06/10 11:51 ${PLUS}0000 kingdon   1\.3   README      ccvs/emx == <remote>
-M 06/10 17:33 ${PLUS}0000 kingdon   1\.281 cvs\.texinfo ccvs/doc == ~/work/ccvs/doc"
+"W 1997-06-17 19:51 ${PLUS}0000 anonymous       Makefile\.in ccvs/emx == <remote>/emx
+M 1997-06-10 21:12 ${PLUS}0000 kingdon   1\.231 sanity\.sh   ccvs/src == ~/work/ccvs/src
+C 2001-06-10 11:51 ${PLUS}0000 kingdon   1\.3   README      ccvs/emx == <remote>
+M 2001-06-10 17:33 ${PLUS}0000 kingdon   1\.281 cvs\.texinfo ccvs/doc == ~/work/ccvs/doc"
 
 	  dotest history-3 "${testcvs} history -e -a -D '10 Jun 2001 13:00 UT'" \
-"M 06/10 17:33 ${PLUS}0000 kingdon 1\.281 cvs\.texinfo ccvs/doc == ~/work/ccvs/doc"
+"M 2001-06-10 17:33 ${PLUS}0000 kingdon 1\.281 cvs\.texinfo ccvs/doc == ~/work/ccvs/doc"
 
 	  dotest history-4 "${testcvs} history -ac sanity.sh" \
-"M 06/10 21:12 ${PLUS}0000 kingdon 1\.231 sanity\.sh ccvs/src == ~/work/ccvs/src
-M 06/10 01:36 ${PLUS}0000 nk      1\.229 sanity\.sh ccvs/src == <remote>"
+"M 1997-06-10 21:12 ${PLUS}0000 kingdon 1\.231 sanity\.sh ccvs/src == ~/work/ccvs/src
+M 1997-06-10 01:36 ${PLUS}0000 nk      1\.229 sanity\.sh ccvs/src == <remote>"
 
 	  dotest history-5 "${testcvs} history -a -xCGUWAMR README sanity.sh" \
-"M 06/10 21:12 ${PLUS}0000 kingdon 1\.231 sanity\.sh ccvs/src == ~/work/ccvs/src
-C 06/10 11:51 ${PLUS}0000 kingdon 1\.3   README    ccvs/emx == <remote>
-M 06/10 01:36 ${PLUS}0000 nk      1\.229 sanity\.sh ccvs/src == <remote>"
+"M 1997-06-10 21:12 ${PLUS}0000 kingdon 1\.231 sanity\.sh ccvs/src == ~/work/ccvs/src
+C 2001-06-10 11:51 ${PLUS}0000 kingdon 1\.3   README    ccvs/emx == <remote>
+M 1997-06-10 01:36 ${PLUS}0000 nk      1\.229 sanity\.sh ccvs/src == <remote>"
 
 	  dotest history-6 "${testcvs} history -xCGUWAMR -a -f README -f sanity.sh" \
-"M 06/10 21:12 ${PLUS}0000 kingdon 1\.231 sanity\.sh ccvs/src == ~/work/ccvs/src
-C 06/10 11:51 ${PLUS}0000 kingdon 1\.3   README    ccvs/emx == <remote>
-M 06/10 01:36 ${PLUS}0000 nk      1\.229 sanity\.sh ccvs/src == <remote>"
+"M 1997-06-10 21:12 ${PLUS}0000 kingdon 1\.231 sanity\.sh ccvs/src == ~/work/ccvs/src
+C 2001-06-10 11:51 ${PLUS}0000 kingdon 1\.3   README    ccvs/emx == <remote>
+M 1997-06-10 01:36 ${PLUS}0000 nk      1\.229 sanity\.sh ccvs/src == <remote>"
 
 	  dotest history-7 "${testcvs} history -xCGUWAMR -a -f sanity.sh README" \
-"M 06/10 21:12 ${PLUS}0000 kingdon 1\.231 sanity\.sh ccvs/src == ~/work/ccvs/src
-C 06/10 11:51 ${PLUS}0000 kingdon 1\.3   README    ccvs/emx == <remote>
-M 06/10 01:36 ${PLUS}0000 nk      1\.229 sanity\.sh ccvs/src == <remote>"
+"M 1997-06-10 21:12 ${PLUS}0000 kingdon 1\.231 sanity\.sh ccvs/src == ~/work/ccvs/src
+C 2001-06-10 11:51 ${PLUS}0000 kingdon 1\.3   README    ccvs/emx == <remote>
+M 1997-06-10 01:36 ${PLUS}0000 nk      1\.229 sanity\.sh ccvs/src == <remote>"
 
 	  dotest history-8 "${testcvs} history -ca -D '1970-01-01 00:00 UT'" \
-"M 06/10 01:36 ${PLUS}0000 nk        1\.229 sanity.sh   ccvs/src == <remote>
-M 06/10 01:38 ${PLUS}0000 anonymous 1\.23  Makefile    ccvs/src == <remote>
-M 06/10 21:12 ${PLUS}0000 kingdon   1\.231 sanity.sh   ccvs/src == ~/work/ccvs/src
-M 06/10 17:33 ${PLUS}0000 kingdon   1\.281 cvs.texinfo ccvs/doc == ~/work/ccvs/doc"
+"M 1997-06-10 01:36 ${PLUS}0000 nk        1\.229 sanity.sh   ccvs/src == <remote>
+M 1997-06-10 01:38 ${PLUS}0000 anonymous 1\.23  Makefile    ccvs/src == <remote>
+M 1997-06-10 21:12 ${PLUS}0000 kingdon   1\.231 sanity.sh   ccvs/src == ~/work/ccvs/src
+M 2001-06-10 17:33 ${PLUS}0000 kingdon   1\.281 cvs.texinfo ccvs/doc == ~/work/ccvs/doc"
 
 	  dotest history-9 "${testcvs} history -acl" \
-"M 06/10 17:33 ${PLUS}0000 kingdon   1\.281 cvs.texinfo ccvs/doc == ~/work/ccvs/doc
-M 06/10 01:38 ${PLUS}0000 anonymous 1\.23  Makefile    ccvs/src == <remote>
-M 06/10 21:12 ${PLUS}0000 kingdon   1\.231 sanity.sh   ccvs/src == ~/work/ccvs/src"
+"M 2001-06-10 17:33 ${PLUS}0000 kingdon   1\.281 cvs.texinfo ccvs/doc == ~/work/ccvs/doc
+M 1997-06-10 01:38 ${PLUS}0000 anonymous 1\.23  Makefile    ccvs/src == <remote>
+M 1997-06-10 21:12 ${PLUS}0000 kingdon   1\.231 sanity.sh   ccvs/src == ~/work/ccvs/src"
 
 	  dotest history-10 "${testcvs} history -lca -D '1970-01-01 00:00 UT'" \
-"M 06/10 17:33 ${PLUS}0000 kingdon   1\.281 cvs.texinfo ccvs/doc == ~/work/ccvs/doc
-M 06/10 01:38 ${PLUS}0000 anonymous 1\.23  Makefile    ccvs/src == <remote>
-M 06/10 21:12 ${PLUS}0000 kingdon   1\.231 sanity.sh   ccvs/src == ~/work/ccvs/src"
+"M 2001-06-10 17:33 ${PLUS}0000 kingdon   1\.281 cvs.texinfo ccvs/doc == ~/work/ccvs/doc
+M 1997-06-10 01:38 ${PLUS}0000 anonymous 1\.23  Makefile    ccvs/src == <remote>
+M 1997-06-10 21:12 ${PLUS}0000 kingdon   1\.231 sanity.sh   ccvs/src == ~/work/ccvs/src"
 
 	  dotest history-11 "${testcvs} history -aw" \
-"O 06/04 19:48 ${PLUS}0000 anonymous ccvs =ccvs= <remote>/\*
-O 06/05 14:00 ${PLUS}0000 anonymous ccvs =src=  <remote>/\*
-O 06/06 08:12 ${PLUS}0000 kingdon   ccvs =ccvs= <remote>/\*"
+"O 1997-06-04 19:48 ${PLUS}0000 anonymous ccvs =ccvs= <remote>/\*
+O 1997-06-05 14:00 ${PLUS}0000 anonymous ccvs =src=  <remote>/\*
+O 1997-06-06 08:12 ${PLUS}0000 kingdon   ccvs =ccvs= <remote>/\*"
 
 	  dotest history-12 "${testcvs} history -aw -D'1970-01-01 00:00 UT'" \
-"O 06/04 19:48 ${PLUS}0000 anonymous ccvs =ccvs= <remote>/\*
-O 06/05 14:00 ${PLUS}0000 anonymous ccvs =src=  <remote>/\*
-O 06/06 08:12 ${PLUS}0000 kingdon   ccvs =ccvs= <remote>/\*"
+"O 1997-06-04 19:48 ${PLUS}0000 anonymous ccvs =ccvs= <remote>/\*
+O 1997-06-05 14:00 ${PLUS}0000 anonymous ccvs =src=  <remote>/\*
+O 1997-06-06 08:12 ${PLUS}0000 kingdon   ccvs =ccvs= <remote>/\*"
 	  ;;
 
 	big)
