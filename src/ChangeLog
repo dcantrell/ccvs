@@ -1,5 +1,10 @@
 2004-10-06  Derek Price  <derek@ximbiot.com>
 
+	* client.c (send_file_names): Back out broken portion of previous
+	change.
+
+2004-10-06  Derek Price  <derek@ximbiot.com>
+
 	* client.c (call_in_directory): Make args of function arg const.
 	* client.h, client.c, edit.h, edit.c, server.h, zlib.c: Carry change
 	through to called functions and functions passed in as args.
