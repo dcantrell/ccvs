@@ -3,6 +3,9 @@ Changes since 1.11.14:
 
 GENERAL USER ISSUES
 
+* File resurrection from a previously existing revision no longer just reports
+  that it works.
+
 * Misc error & status message corrections.
 
 * Diffing of locally added files against arbitrary revisions in an RCS archive
