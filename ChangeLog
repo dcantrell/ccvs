@@ -1,3 +1,11 @@
+1999-04-26  Jim Kingdon
+
+	* cvsnt.mak: Revert to the version before today's changes
+	(modulo one "because the IDE feels like it" change).  I
+	couldn't get O'Connor's cvsnt.mak to work with MSVC 4.0 at
+	all (I tried the IDE, which tried to wrap the makefile and
+	wouldn't build even with the wrap, and the command line NMAKE).
+
 1999-04-26  Jim Kingdon  <http://www.cyclic.com>
 
 	* Makefile.in (DISTFILES): Add cvsnt.dsw.
