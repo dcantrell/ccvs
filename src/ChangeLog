@@ -1,5 +1,9 @@
 2004-02-10  Derek Price  <derek@ximbiot.com>
 
+	* server.c (do_cvs_command): s/FIXCVS/FIXME/ in comment.
+
+2004-02-10  Derek Price  <derek@ximbiot.com>
+
 	* server.c (do_cvs_command): Have the server child close all the pipes
 	but the flow control pipe and wait on an EOF on the flow control pipe
 	from the parent when done to avoid a race condition that could

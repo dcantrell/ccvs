@@ -2282,7 +2282,9 @@ serve_gssapi_authenticate (arg)
 }
 
 #endif /* HAVE_GSSAPI */
-
+
+
+
 #ifdef SERVER_FLOWCONTROL
 /* The maximum we'll queue to the remote client before blocking.  */
 # ifndef SERVER_HI_WATER
@@ -2292,52 +2294,6 @@ serve_gssapi_authenticate (arg)
 # ifndef SERVER_LO_WATER
 #  define SERVER_LO_WATER (1 * 1024 * 1024)
 # endif /* SERVER_LO_WATER */
-
-
-
-/* Protos */
-static int set_nonblock_fd PROTO((int));
-static int set_block_fd PROTO((int));
-
-
-
-/*
- * Set buffer FD to non-blocking I/O.  Returns 0 for success or errno
- * code.
- */
-static int
-set_nonblock_fd (fd)
-     int fd;
-{
-    int flags;
-
-    flags = fcntl (fd, F_GETFL, 0);
-    if (flags < 0)
-	return errno;
-    if (fcntl (fd, F_SETFL, flags | O_NONBLOCK) < 0)
-	return errno;
-    return 0;
-}
-
-
-
-/*
- * Set buffer FD to non-blocking I/O.  Returns 0 for success or errno
- * code.
- */
-static int
-set_block_fd (fd)
-     int fd;
-{
-    int flags;
-
-    flags = fcntl (fd, F_GETFL, 0);
-    if (flags < 0)
-	return errno;
-    if (fcntl (fd, F_SETFL, flags & ~O_NONBLOCK) < 0)
-	return errno;
-    return 0;
-}
 #endif /* SERVER_FLOWCONTROL */
 
 
@@ -2846,7 +2802,7 @@ error  \n");
 	  char junk;
 	  while (read (flowcontrol_pipe[0], &junk, 1) != 0);
 	}
-	/* FIXCVS: No point in printing an error message with error(),
+	/* FIXME: No point in printing an error message with error(),
 	 * as STDERR is already closed, but perhaps this could be syslogged?
 	 */
 #endif
