@@ -1,3 +1,8 @@
+1998-06-25  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* update.c (patch_file): Update comments regarding context diffs
+	to reflect diff library.
+
 1998-06-23  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* sanity.sh (modules4): Add tests for reversing the order of the

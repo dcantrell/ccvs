@@ -1638,8 +1638,6 @@ patch_file (finfo, vers_ts, docheckout, file_info, checksum)
     {
 	char *diff_options;
 
-	/* FIXME: It might be better to come up with a diff library
-           which can be shared with the diffutils.  */
 	/* If the client does not support the Rcs-diff command, we
            send a context diff, and the client must invoke patch.
            That approach was problematical for various reasons.  The
@@ -1648,8 +1646,10 @@ patch_file (finfo, vers_ts, docheckout, file_info, checksum)
            program.  */
 	if (! rcs_diff_patches)
 	{
-	    /* We use -c, not -u, because we have no way of knowing
-	       which DIFF is in use.  */
+	    /* We use -c, not -u, because that is what CVS has
+	       traditionally used.  Kind of a moot point, now that
+	       Rcs-diff is preferred, so there is no point in making
+	       the compatibility issues worse.  */
 	    diff_options = "-c";
 	}
 	else
