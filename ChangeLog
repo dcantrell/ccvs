@@ -1,3 +1,7 @@
+Wed Sep 11 11:08:39 1996  Jim Blandy  <jimb@totoro.cyclic.com>
+
+	* configure.in (AC_OUTPUT): Don't forget to create vms/Makefile.
+
 Tue Sep 10 19:55:07 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* Makefile.in (DISTFILES): Add build.com and README.VMS.
