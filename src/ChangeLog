@@ -1,3 +1,7 @@
+2005-03-11  Mark D. Baushke  <mdb@cvshome.org>
+
+	* modules.c (my_module): Protect against free (NULL) code path.
+
 2005-03-11  Derek Price  <derek@ximbiot.com>
 
 	* annotate.c (rannotate_proc), fileattr.c (fileattr_write), rcs.c
