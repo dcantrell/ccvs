@@ -1821,13 +1821,17 @@ RCS_datecmp (date1, date2)
     return (length_diff ? length_diff : strcmp (date1, date2));
 }
 
-/*
- * Lookup the specified revision in the ,v file and return, in the date
- * argument, the date specified for the revision *minus one second*, so that
- * the logically previous revision will be found later.
- * 
- * Returns zero on failure, RCS revision time as a Unix "time_t" on success.
- */
+/* Look up revision REV in RCS and return the date specified for the
+   revision minus FUDGE seconds (FUDGE will generally be one, so that the
+   logically previous revision will be found later, or zero, if we want
+   the exact date).
+
+   The return value is the date being returned as a time_t, or (time_t)-1
+   on error (previously was documented as zero on error; I haven't checked
+   the callers to make sure that they really check for (time_t)-1, but
+   the latter is what this function really returns).  If DATE is non-NULL,
+   then it must point to MAXDATELEN characters, and we store the same
+   return value there in DATEFORM format.  */
 time_t
 RCS_getrevtime (rcs, rev, date, fudge)
     RCSNode *rcs;
