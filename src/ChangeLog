@@ -1,3 +1,9 @@
+2005-02-21  Mark D. Baushke  <mdb@cvshome.org>
+
+	* import.c (import): Avoid using assert with side effects it may
+	be configured away using NDEBUG.
+	(Patch from Frank Hemer <frank@hemer.org>.)
+
 2005-02-20  Mark D. Baushke  <mdb@cvshome.org>
 
 	* main.c (main): Check the results from xgethostname(). Print a
