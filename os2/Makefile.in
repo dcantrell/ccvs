@@ -80,7 +80,6 @@ OS2_SOURCES = \
        dirent.c \
        run.c \
        stripslash.c \
-       startserver.c \
        rcmd.c \
        waitpid.c \
        popen.c \
@@ -157,7 +156,6 @@ OS2_OBJECTS = \
        dirent.obj \
        run.obj \
        stripslash.obj \
-       startserver.obj \
        rcmd.obj \
        waitpid.obj \
        popen.obj \
