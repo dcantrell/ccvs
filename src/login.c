@@ -10,8 +10,6 @@
 #include "cvs.h"
 #include "getline.h"
 
-#ifdef AUTH_CLIENT_SUPPORT   /* This covers the rest of the file. */
-
 /* There seems to be very little agreement on which system header
    getpass is declared in.  With a lot of fancy autoconfiscation,
    we could perhaps detect this, but for now we'll just rely on
@@ -19,6 +17,10 @@
    declaration won't work (some Crays declare the 2#$@% thing as
    varadic, believe it or not).  On Cray, getpass will be declared
    in either stdlib.h or unistd.h.  */
+#include "getpass.h"
+
+#ifdef AUTH_CLIENT_SUPPORT   /* This covers the rest of the file. */
+
 
 #ifndef CVS_PASSWORD_FILE 
 #define CVS_PASSWORD_FILE ".cvspass"
