@@ -1,5 +1,7 @@
 Sun Sep  7 07:45:35 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* version.c: Change version number to 1.9.17.
+
 	* Version 1.9.16.
 
 	* recurse.c (do_dir_proc): In combining repository and dir, omit
