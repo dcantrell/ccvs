@@ -22,13 +22,20 @@ m4_define([AT_CVS_BANNER],
 # -------------------------
 # Set up a CVS test with description DESCRIPTION.
 #
-# This macro sets up a CVSROOT and initializes it.  It also puts some
-# information in the envirionment that might be needed by tests:
+# This macro sets up a CVSROOT, initializes it, initializes a project at the
+# top level named, `project', checks out the project, and cds into the project
+# directory.
+#
+# This macro also puts some information in the envirionment that might be
+# needed by tests:
 #
 #   $CVS_SERVER		The path to the CVS server executable to use.
 #   $CVSROOT		The CVSROOT.
 #   $CVSROOT_DIR	The path portion of $CVSROOT.
 #   $method		The method portion of $CVSROOT.
+#
+#   $HOME		A "home" directory for our test user.
+#   $RCSINIT		Cleared, to avoid interfering with CVS's RCS library.
 #
 # INPUTS
 #   AT_CVS_clientserver		empty or `-r', per AT_CVS_INCLUDE
@@ -36,11 +43,15 @@ m4_define([AT_CVS_BANNER],
 #
 m4_define([AT_CVS_SETUP],
 [AT_SETUP([$1]m4_quote(AT_CVS_clientserver)m4_quote(AT_CVS_linkroot))dnl
-dnl This is minor overhead and it avoids us having to run the init.at
-dnl tests every run.
-dnl AT_KEYWORDS([testthis])
+###
+### Begin AT_CVS_SETUP([$1])
+###
+
 m4_ifval(m4_quote(AT_CVS_linkroot),
 [AT_KEYWORDS([link-root])dnl
+#
+# Create a symlinked CVSROOT_DIR
+#
 mkdir $at_group_dir/realcvsroot ||
   AS_ERROR([Cannot create directory \`$at_group_dir/realcvsroot'])
 dnl Skip this test if we cannot create a link
@@ -48,6 +59,9 @@ AT_CHECK([ln -s realcvsroot $at_group_dir/cvsroot || exit 77])
 ],
 [AT_KEYWORDS([no-link-root])])dnl m4_ifval AT_CVS_linkroot
 
+#
+# Set CVSROOT_DIR, method, & CVSROOT
+#
 CVSROOT_DIR=$at_group_dir/cvsroot
 m4_ifvaln(m4_quote(AT_CVS_clientserver),
 [AT_KEYWORDS([remote])dnl
@@ -61,36 +75,77 @@ method=])dnl m4_ifvaln AT_CVS_clientserver
 CVSROOT=$method$CVSROOT_DIR
 export CVSROOT
 
-AT_CHECK([cvs init])dnl
+#
+# Clear a possibly damaging inherited environment.
+#
+
+# Avoid picking up any stray .cvsrc, etc., from the user running the tests
+mkdir home
+HOME=$at_group_dir/home; export HOME
+
+# Make sure this variable is not defined to anything that would
+# change the format of RCS dates.  Otherwise people using e.g.,
+# RCSINIT=-zLT get lots of spurious failures.
+RCSINIT=
+
+#
+# Initialize the repository
+#
+AT_CHECK([cvs init])
+
+#
+# Create the default project
+#
+mkdir top
+cd top
+AT_CHECK([cvs -Q co -l .])
+mkdir project
+AT_CHECK([cvs -Q add project])
+cd ..
+rm -r top
+
+#
+# Check out the default project and cd into the workspace.
+#
+# I'm checking for error returns form the cd and printing error messages since,
+# for instance, if the CVS executable picks up a ~/.cvsrc which causes empty
+# directories to be pruned by checkout, the project directory will not be
+# created but the `cvs co' will not return an error.
+#
+AT_CHECK([cvs -Q co project])
+cd project ||
+  AS_ERROR([Couldn't cd to \`project'.  Did \$HOME get set incorrectly?])
+
+###
+### End AT_CVS_SETUP([$1])
+###
 ])dnl AT_CVS_SETUP
 
 
 
-# AT_CVS_CHECK_REMOTE
+# AT_CVS_REMOTE(TEXT-IF-REMOTE,TEXT-OTHERWISE)
 # -------------------
-# Like AT_CHECK, but skip this test when not setting up a clientserver test.
+# Replace with TEXT-IF-REMOTE in remote mode, otherwise replace with
+# TEXT-OTHERWISE.
 #
 # INPUTS
 #   AT_CVS_clientserver		empty or `-r', per AT_CVS_INCLUDE
 #
-m4_define([AT_CVS_CHECK_REMOTE],
+m4_define([AT_CVS_REMOTE],
 [m4_ifval(m4_quote(AT_CVS_clientserver),
-[AT_CHECK($@)])dnl m4_ifval(AT_CVS_clientserver)
-])dnl AT_CVS_CHECK_REMOTE
+[$1],[$2])dnl m4_ifval(AT_CVS_clientserver)
+])dnl AT_CVS_REMOTE
 
 
 
-# AT_CVS_CHECK_LOCAL
-# -------------------
-# Like AT_CHECK, but skip this test when not setting up a local test.
+# AT_CVS_LOCAL(TEXT)
+# ------------------
+# Replace with TEXT only in local mode.
 #
 # INPUTS
 #   AT_CVS_clientserver		empty or `-r', per AT_CVS_INCLUDE
 #
-m4_define([AT_CVS_CHECK_LOCAL],
-[m4_ifval(m4_quote(AT_CVS_clientserver),,
-[AT_CHECK($@)])dnl m4_ifval(AT_CVS_clientserver)
-])dnl AT_CVS_CHECK_LOCAL
+m4_define([AT_CVS_LOCAL],[AT_CVS_REMOTE([$2],[$1])])dnl AT_CVS_LOCAL
 
 
 

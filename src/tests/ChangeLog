@@ -1,3 +1,13 @@
+2003-08-14  Derek R. Price  <derek@ximbiot.com>
+
+	* atspecific.m4 (AT_CVS_SETUP): Set up a default project and check it
+	out.  Unset $HOME and $RCSINIT.  Add comment blocks which will appear
+	around the default setup.
+	(AT_CVS_CHECK_LOCAL, AT_CVS_CHECK_REMOTE): Rename to...
+	(AT_CVS_LOCAL, AT_CVS_REMOTE): ...these and rewrite to pass any text
+	through rather than wrapping AT_CHECK explicitly.
+	* version.at: Use new AT_CVS_LOCAL & AT_CVS_REMOTE.
+
 2003-08-13  Derek R. Price  <derek@ximbiot.com>
 
 	* version.at: New file.
