@@ -49,16 +49,25 @@ No_Difference (file, vers, entries, repository, update_dir)
     run_arg (vers->srcfile->path);
     if ((retcode = run_exec (RUN_TTY, tmpnam (tmp), RUN_TTY, RUN_REALLY)) == 0)
     {
+#if 0
+	/* Why would we want to munge the modes?  And only if the timestamps
+	   are different?  And even for commands like "cvs status"????  */
 	if (!iswritable (file))		/* fix the modes as a side effect */
 	    xchmod (file, 1);
+#endif
 
 	tocvsPath = wrap_tocvs_process_file (file);
 
 	/* do the byte by byte compare */
 	if (xcmp (tocvsPath == NULL ? file : tocvsPath, tmp) == 0)
 	{
+#if 0
+	    /* Why would we want to munge the modes?  And only if the
+	       timestamps are different?  And even for commands like
+	       "cvs status"????  */
 	    if (cvswrite == FALSE)	/* fix the modes as a side effect */
 		xchmod (file, 0);
+#endif
 
 	    /* no difference was found, so fix the entries file */
 	    ts = time_stamp (file);
