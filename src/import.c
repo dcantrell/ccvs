@@ -138,14 +138,14 @@ import (argc, argv)
     /* XXX - this should be a module, not just a pathname */
     if (! isabsolute (argv[0]))
     {
-	if (CVSroot == NULL)
+	if (CVSroot_directory == NULL)
 	{
 	    error (0, 0, "missing CVSROOT environment variable\n");
 	    error (1, 0, "Set it or specify the '-d' option to %s.",
 		   program_name);
 	}
-	(void) sprintf (repository, "%s/%s", CVSroot, argv[0]);
-	repos_len = strlen (CVSroot);
+	(void) sprintf (repository, "%s/%s", CVSroot_directory, argv[0]);
+	repos_len = strlen (CVSroot_directory);
     }
     else
     {
@@ -169,7 +169,7 @@ import (argc, argv)
     *cp = '\0';
 
 #ifdef CLIENT_SUPPORT
-    if (client_active)
+    if (CVSroot_remote)
     {
 	/* Do this now; don't ask for a log message if we can't talk to the
 	   server.  But if there is a syntax error in the options, give
@@ -198,7 +198,7 @@ import (argc, argv)
     }
 
 #ifdef CLIENT_SUPPORT
-    if (client_active)
+    if (CVSroot_remote)
     {
 	int err;
 
@@ -387,7 +387,7 @@ import_descend (message, vtag, targc, targv)
 	    else
 	    {
 #ifdef CLIENT_SUPPORT
-		if (client_active)
+		if (CVSroot_remote)
 		    err += client_process_import_file (message, dp->d_name,
 							   vtag, targc, targv,
 							   repository);
@@ -1151,7 +1151,7 @@ import_descend_dir (message, dir, vtag, targc, targv)
 	(void) strcat (repository, dir);
     }
 #ifdef CLIENT_SUPPORT
-    if (!quiet && !client_active)
+    if (!quiet && !CVSroot_remote)
 #else
     if (!quiet)
 #endif
@@ -1166,7 +1166,7 @@ import_descend_dir (message, dir, vtag, targc, targv)
 	goto out;
     }
 #ifdef CLIENT_SUPPORT
-    if (!client_active && !isdir (repository))
+    if (!CVSroot_remote && !isdir (repository))
 #else
     if (!isdir (repository))
 #endif

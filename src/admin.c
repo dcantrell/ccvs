@@ -79,7 +79,7 @@ admin (argc, argv)
 	usage (admin_usage);
 
 #ifdef CLIENT_SUPPORT
-    if (client_active)
+    if (CVSroot_remote)
     {
 	int i;
 

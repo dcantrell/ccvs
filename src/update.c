@@ -203,7 +203,7 @@ update (argc, argv)
     argv += optind;
 
 #ifdef CLIENT_SUPPORT
-    if (client_active) 
+    if (CVSroot_remote) 
     {
 	/* The first pass does the regular update.  If we receive at least
 	   one patch which failed, we do a second pass and just fetch
@@ -694,7 +694,7 @@ update_filesdone_proc (err, repository, update_dir)
     {
         /* If there is no CVS/Root file, add one */
         if (!isfile (CVSADM_ROOT))
-	    Create_Root( (char *) NULL, CVSroot );
+	    Create_Root( (char *) NULL, CVSroot_directory );
     }
 
     return (err);

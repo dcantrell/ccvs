@@ -56,14 +56,15 @@ open_module ()
 {
     char mfile[PATH_MAX];
 
-    if (CVSroot == NULL)
+    if (CVSroot_original == NULL)
     {
 	(void) fprintf (stderr, 
 			"%s: must set the CVSROOT environment variable\n",
 			program_name);
 	error (1, 0, "or specify the '-d' option to %s", program_name);
     }
-    (void) sprintf (mfile, "%s/%s/%s", CVSroot, CVSROOTADM, CVSROOTADM_MODULES);
+    (void) sprintf (mfile, "%s/%s/%s", CVSroot_directory,
+		    CVSROOTADM, CVSROOTADM_MODULES);
     return (dbm_open (mfile, O_RDONLY, 0666));
 }
 
@@ -188,17 +189,17 @@ do_module (db, mname, m_type, msg, callback_proc, where,
 
 	/* check to see if mname is a directory or file */
 
-	(void) sprintf (file, "%s/%s", CVSroot, mname);
+	(void) sprintf (file, "%s/%s", CVSroot_directory, mname);
 	if ((acp = strrchr (mname, '/')) != NULL)
 	{
 	    *acp = '\0';
-	    (void) sprintf (attic_file, "%s/%s/%s/%s%s", CVSroot, mname,
-			    CVSATTIC, acp + 1, RCSEXT);
+	    (void) sprintf (attic_file, "%s/%s/%s/%s%s", CVSroot_directory,
+			    mname, CVSATTIC, acp + 1, RCSEXT);
 	    *acp = '/';
 	}
 	else
-	    (void) sprintf (attic_file, "%s/%s/%s%s", CVSroot, CVSATTIC,
-			    mname, RCSEXT);
+	    (void) sprintf (attic_file, "%s/%s/%s%s", CVSroot_directory,
+			    CVSATTIC, mname, RCSEXT);
 
 	if (isdir (file))
 	{
@@ -354,7 +355,7 @@ do_module (db, mname, m_type, msg, callback_proc, where,
 	    {
 		char nullrepos[PATH_MAX];
 
-		(void) sprintf (nullrepos, "%s/%s/%s", CVSroot,
+		(void) sprintf (nullrepos, "%s/%s/%s", CVSroot_directory,
 				CVSROOTADM, CVSNULLREPOS);
 		if (!isfile (nullrepos))
 		{

@@ -52,7 +52,7 @@ cvslog (argc, argv)
     wrap_setup ();
 
 #ifdef CLIENT_SUPPORT
-    if (client_active) {
+    if (CVSroot_remote) {
 	/* We're the local client.  Fire up the remote server.  */
 	start_server ();
 	

@@ -157,7 +157,7 @@ diff (argc, argv)
 	options = xstrdup ("");
 
 #ifdef CLIENT_SUPPORT
-    if (client_active) {
+    if (CVSroot_remote) {
 	/* We're the client side.  Fire up the remote server.  */
 	start_server ();
 	

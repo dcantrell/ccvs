@@ -288,7 +288,7 @@ commit (argc, argv)
     }
 
 #ifdef CLIENT_SUPPORT
-    if (client_active) 
+    if (CVSroot_remote) 
     {
 	struct find_data find_args;
 
@@ -1017,9 +1017,10 @@ commit_filesdoneproc (err, repository, update_dir)
     {
 	char *p;
 
-	if (strncmp (CVSroot, repository, strlen (CVSroot)) != 0)
+	if (strncmp (CVSroot_directory, repository,
+		     strlen (CVSroot_directory)) != 0)
 	    error (0, 0, "internal error: repository doesn't begin with root");
-	p = repository + strlen (CVSroot);
+	p = repository + strlen (CVSroot_directory);
 	if (*p == '/')
 	    ++p;
 	if (strcmp ("CVSROOT", p) == 0)

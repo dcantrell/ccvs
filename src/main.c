@@ -67,9 +67,6 @@ char *command_name = "";
 
 char hostname[MAXHOSTNAMELEN];
 
-#ifdef AUTH_CLIENT_SUPPORT
-int use_authenticating_server = FALSE;
-#endif /* AUTH_CLIENT_SUPPORT */
 int use_editor = TRUE;
 int use_cvsrc = TRUE;
 int cvswrite = !CVSREAD_DFLT;
@@ -87,7 +84,6 @@ char *CurDir;
  */
 char *Rcsbin = RCSBIN_DFLT;
 char *Editor = EDITOR_DFLT;
-char *CVSroot = CVSROOT_DFLT;
 /*
  * The path found in CVS/Root must match $CVSROOT and/or 'cvs -d root'
  */
@@ -118,55 +114,44 @@ const struct cmd
     char *nick1;		/* alternate name (e.g. "ci") */
     char *nick2;		/* another alternate names (e.g. "ci") */
     int (*func) ();		/* Function takes (argc, argv) arguments. */
-#ifdef CLIENT_SUPPORT
-    int (*client_func) ();	/* Function to do it via the protocol.  */
-#endif
 } cmds[] =
 
 {
-#ifdef CLIENT_SUPPORT
-#define CMD_ENTRY(n1, n2, n3, f1, f2) { n1, n2, n3, f1, f2 }
-#else
-#define CMD_ENTRY(n1, n2, n3, f1, f2) { n1, n2, n3, f1 }
-#endif
-
-    CMD_ENTRY("add",      "ad",    "new",     add,       client_add),
-    CMD_ENTRY("admin",    "adm",   "rcs",     admin,     client_admin),
-    CMD_ENTRY("annotate", NULL,    NULL,      annotate,  client_annotate),
-    CMD_ENTRY("checkout", "co",    "get",     checkout,  client_checkout),
-    CMD_ENTRY("commit",   "ci",    "com",     commit,    client_commit),
-    CMD_ENTRY("diff",     "di",    "dif",     diff,      client_diff),
-    CMD_ENTRY("edit",     "edit",  "edit",    edit,      client_edit),
-    CMD_ENTRY("editors",  "editors","editors",editors,   client_editors),
-    CMD_ENTRY("export",   "exp",   "ex",      checkout,  client_export),
-    CMD_ENTRY("history",  "hi",    "his",     history,   client_history),
-    CMD_ENTRY("import",   "im",    "imp",     import,    client_import),
-    CMD_ENTRY("init",     NULL,    NULL,      init,      client_init),
-    CMD_ENTRY("log",      "lo",    "rlog",    cvslog,    client_log),
+    { "add",      "ad",       "new",       add },
+    { "admin",    "adm",      "rcs",       admin },
+    { "annotate", NULL,       NULL,        annotate },
+    { "checkout", "co",       "get",       checkout },
+    { "commit",   "ci",       "com",       commit },
+    { "diff",     "di",       "bdif",      diff },
+    { "edit",     "edit",     "edit",      edit },
+    { "editors",  "editors",  "editors",   editors },
+    { "export",   "exp",      "ex",        checkout },
+    { "history",  "hi",       "his",       history },
+    { "import",   "im",       "imp",       import },
+    { "init",     NULL,       NULL,        init },
+    { "log",      "lo",       "rlog",      cvslog },
 #ifdef AUTH_CLIENT_SUPPORT
-    CMD_ENTRY("login",    "logon", "lgn",     login,     login),
+    { "login",    "logon",    "lgn",       login },
 #endif /* AUTH_CLIENT_SUPPORT */
-    CMD_ENTRY("rdiff",    "patch", "pa",      patch,     client_rdiff),
-    CMD_ENTRY("release",  "re",    "rel",     release,   client_release),
-    CMD_ENTRY("remove",   "rm",    "delete",  cvsremove, client_remove),
-    CMD_ENTRY("status",   "st",    "stat",    status,    client_status),
-    CMD_ENTRY("rtag",     "rt",    "rfreeze", rtag,      client_rtag),
-    CMD_ENTRY("tag",      "ta",    "freeze",  tag,       client_tag),
-    CMD_ENTRY("unedit",   "unedit","unedit",  unedit,    client_unedit),
-    CMD_ENTRY("update",   "up",    "upd",     update,    client_update),
-    CMD_ENTRY("watch",    "watch", "watch",   watch,     client_watch),
-    CMD_ENTRY("watchers", "watchers","watchers",watchers,client_watchers),
+    { "rdiff",    "patch",    "pa",        patch },
+    { "release",  "re",       "rel",       release },
+    { "remove",   "rm",       "delete",    cvsremove },
+    { "status",   "st",       "stat",      status },
+    { "rtag",     "rt",       "rfreeze",   rtag },
+    { "tag",      "ta",       "freeze",    tag },
+    { "unedit",   "unedit",   "unedit",    unedit },
+    { "update",   "up",       "upd",       update },
+    { "watch",    "watch",    "watch",     watch },
+    { "watchers", "watchers", "watchers",  watchers },
 #ifdef SERVER_SUPPORT
     /*
      * The client_func is also server because we might have picked up a
      * CVSROOT environment variable containing a colon.  The client will send
      * the real root later.
      */
-    CMD_ENTRY("server",   "server", "server", server,    server),
+    { "server",   "server",   "server",    server },
 #endif
-    CMD_ENTRY(NULL, NULL, NULL, NULL, NULL),
-
-#undef CMD_ENTRY
+    { NULL, NULL, NULL, NULL },
 };
 
 static const char *const usg[] =
@@ -248,6 +233,7 @@ main (argc, argv)
     int argc;
     char **argv;
 {
+    char *CVSroot = CVSROOT_DFLT;
     extern char *version_string;
     extern char *config_string;
     char *cp, *end;
@@ -585,20 +571,6 @@ error 0 %s: no such user\n", user);
         }
     }
 
-    /* CVSroot may need fixing up, if an access-method was specified,
-     * but not a user.  Later code assumes that if CVSroot contains an
-     * access-method, then it also has a user.  We print a warning and
-     * die if we can't guarantee that.
-     */
-    if (CVSroot
-        && *CVSroot
-        && (CVSroot[0] == ':')
-        && (strchr (CVSroot, '@') == NULL))
-      {
-        error (1, 0,
-               "must also give a username if specifying access method");
-      }
-
     /*
      * Specifying just the '-H' flag to the sub-command causes a Usage
      * message to be displayed.
@@ -623,36 +595,39 @@ error 0 %s: no such user\n", user);
 	    if (!CVSroot || !*CVSroot)
 		error (1, 0, "You don't have a %s environment variable",
 		       CVSROOT_ENV);
-	    (void) sprintf (path, "%s/%s", CVSroot, CVSROOTADM);
-	    if (!isaccessible (path, R_OK | X_OK))
-	    {
-		save_errno = errno;
-		/* If this is "cvs init", the root need not exist yet.  */
-		if (strcmp (command_name, "init") != 0
-#ifdef CLIENT_SUPPORT
-		    /* If we are a remote client, the root need not exist
-		       on the client machine (FIXME: we should also skip
-		       the check for CVSROOTADM_HISTORY being writable;
-		       it shouldn't matter if there is a read-only file
-		       which happens to have the same name on the client
-		       machine).  */
-		    && strchr (CVSroot, ':') == NULL)
-#endif
-		{
-		error (0, 0,
-		    "Sorry, you don't have sufficient access to %s", CVSroot);
-		error (1, save_errno, "%s", path);
-		}
-	    }
-	    (void) strcat (path, "/");
-	    (void) strcat (path, CVSROOTADM_HISTORY);
-	    if (isfile (path) && !isaccessible (path, R_OK | W_OK))
-	    {
-		save_errno = errno;
-		error (0, 0,
-		 "Sorry, you don't have read/write access to the history file");
-		error (1, save_errno, "%s", path);
-	    }
+
+	    /* Now we're sure that we have a valid CVSROOT variable
+	     * (either from * the command line, a CVSROOT environment
+	     * variable, or read from the CVS/Root file in the control
+	     * directory).  Parse it to see if we're supposed to do
+	     * remote accesses or use a special access method. */
+
+	    parse_cvsroot (CVSroot);
+
+	    if (!CVSroot_remote)
+	      {
+		(void) sprintf (path, "%s/%s", CVSroot_directory, CVSROOTADM);
+		if (!isaccessible (path, R_OK | X_OK))
+		  {
+		    save_errno = errno;
+		    /* If this is "cvs init", the root need not exist yet.  */
+		    if (strcmp (command_name, "init") != 0)
+		      {
+			error (0, 0,
+			       "Sorry, you don't have sufficient access to %s",
+			       CVSroot_directory);
+			error (1, save_errno, "%s", path);
+		      }
+		  }
+		(void) strcat (path, "/");
+		(void) strcat (path, CVSROOTADM_HISTORY);
+		if (isfile (path) && !isaccessible (path, R_OK | W_OK))
+		  {
+		    save_errno = errno;
+		    error (0, 0, "Sorry, you don't have read/write access to the history file");
+		    error (1, save_errno, "%s", path);
+		  }
+	      }
 	}
     }
 
@@ -672,8 +647,9 @@ error 0 %s: no such user\n", user);
     {
 	char *env;
 
-	env = xmalloc (strlen (CVSROOT_ENV) + strlen (CVSroot) + 1 + 1);
-	(void) sprintf (env, "%s=%s", CVSROOT_ENV, CVSroot);
+	env = xmalloc (strlen (CVSROOT_ENV) + strlen (CVSroot_original)
+		       + 1 + 1);
+	(void) sprintf (env, "%s=%s", CVSROOT_ENV, CVSroot_original);
 	(void) putenv (env);
 	/* do not free env, as putenv has control of it */
     }
@@ -758,19 +734,7 @@ error 0 %s: no such user\n", user);
 	if (use_cvsrc)
 	  read_cvsrc (&argc, &argv, command_name);
 
-#ifdef CLIENT_SUPPORT
-	/* If cvsroot contains a colon, try to do it via the protocol.  */
-        {
-	    char *p = CVSroot == NULL ? NULL : strchr (CVSroot, ':');
-	    if (p)
-		err = (*(cm->client_func)) (argc, argv);
-	    else
-		err = (*(cm->func)) (argc, argv);
-	}
-#else /* No CLIENT_SUPPORT */
 	err = (*(cm->func)) (argc, argv);
-
-#endif /* No CLIENT_SUPPORT */
     }
     Lock_Cleanup ();
     if (err)
