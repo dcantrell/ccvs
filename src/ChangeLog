@@ -1,3 +1,9 @@
+Fri Oct  4 15:11:46 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* server.c (server_cleanup): Temporarily clear noexec when calling
+	unlink_file_dir.  This is so we clean up the temp directory even
+	when the -n global option is specified.
+
 Wed Oct  2 10:47:33 1996  Norbert Kiesel  <nk@col.sw-ley.de>
 
 	* client.c (send_repository): initialize some variables before
