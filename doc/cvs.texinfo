@@ -9889,9 +9889,7 @@ Administration of history files in the repository.  See
 
 @table @code
 @item -b[@var{rev}]
-Set default branch.
-@c FIXME: Should xref to a section which describes how
-@c to use this with the vendor branch.
+Set default branch.  See @ref{Reverting local changes}.
 
 @item -c@var{string}
 Set comment leader.
