@@ -637,7 +637,8 @@ if test x"$*" = x; then
 	tests="${tests} branches branches2 tagc tagf"
 	tests="${tests} rcslib multibranch import importb importc"
 	tests="${tests} import-after-initial"
-	tests="${tests} join join2 join3 join-readonly-conflict join-admin"
+	tests="${tests} join join2 join3 join-readonly-conflict"
+	tests="${tests} join-admin join-admin-2"
 	tests="${tests} new newb conflicts conflicts2 conflicts3"
 	tests="${tests} clean"
 	# Checking out various places (modules, checkout -d, &c)
@@ -6121,6 +6122,50 @@ File: b                	Status: Up-to-date
    Sticky Tag:		(none)
    Sticky Date:		(none)
    Sticky Options:	(none)"
+
+	  cd ../..
+	  rm -rf 1
+	  rm -rf ${CVSROOT_DIRNAME}/$module
+	  ;;
+
+	join-admin-2)
+	  # Show that when a merge (via update -kk -jtag1 -jtag2) first
+	  # removes a file, then modifies another containing an $Id...$ line,
+	  # the resulting file contains the unexpanded `$Id.$' string, as
+	  # -kk requires.
+	  mkdir 1; cd 1
+	  dotest join-admin-2-1 "$testcvs -q co -l ." ''
+	  module=x
+	  mkdir $module
+	  $testcvs -q add $module >>$LOGFILE 2>&1
+	  cd $module
+
+	  # Create a file so applying the first tag works.
+	  echo '$''Id$' > e0
+	  cp e0 e
+	  $testcvs -Q add e > /dev/null 2>&1
+	  $testcvs -Q ci -m. e > /dev/null 2>&1
+
+	  $testcvs -Q tag -b T
+	  $testcvs -Q update -r T
+	  cp e0 e
+	  $testcvs -Q ci -m. e > /dev/null 2>&1
+
+	  $testcvs -Q update -A > /dev/null 2>&1
+	  $testcvs -Q tag -b M1 > /dev/null 2>&1
+
+	  echo '$''Id$' > b
+	  $testcvs -Q add b > /dev/null 2>&1
+	  cp e0 e
+	  $testcvs -Q ci -m. b e > /dev/null 2>&1
+
+	  $testcvs -Q tag -b M2
+
+	  $testcvs -Q update -r T > /dev/null 2>&1
+	  $testcvs update -kk -jM1 -jM2 > /dev/null 2>&1
+
+	  # Verify that $Id$ is not expanded.
+	  dotest join-admin-2-2 "cat e" '$''Id$'
 
 	  cd ../..
 	  rm -rf 1
