@@ -187,3 +187,7 @@ lib/memmove.c
 m4/memmove.m4
 
 m4/onceonly_2_57.m4
+lib/nanosleep.c
+m4/nanosleep.m4
+
+m4/onceonly_2_57.m4

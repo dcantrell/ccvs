@@ -63,9 +63,6 @@ $GNULIB/m4/lstat.m4				m4		yes NI
 # $GNULIB/modules/malloc
 $GNULIB/lib/malloc.c				lib		no NI
 $GNULIB/m4/malloc.m4				m4		no NI
-# $GNULIB/modules/nanosleep
-$GNULIB/lib/nanosleep.c				lib		no NI
-$GNULIB/m4/nanosleep.m4				m4		no NI
 # $GNULIB/modules/realloc
 $GNULIB/lib/realloc.c				lib		no NI
 $GNULIB/m4/realloc.m4				m4		no NI
