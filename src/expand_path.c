@@ -265,7 +265,7 @@ static char *
 expand_variable (char *name, char *file, int line)
 {
     if (strcmp (name, CVSROOT_ENV) == 0)
-	return current_parsed_root->original;
+	return current_parsed_root->directory;
     else if (strcmp (name, "RCSBIN") == 0)
     {
 	error (0, 0, "RCSBIN internal variable is no longer supported");
