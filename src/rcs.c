@@ -575,8 +575,14 @@ RCS_reparsercsfile (rdata, pfp, rcsbufp)
 
 	if (STREQ (key, "comment"))
 	{
-	    rdata->comment = rcsbuf_valcopy (&rcsbuf, value, 0,
-					     (size_t *) NULL);
+	    if (rdata->comment)
+	    {
+		error (0, 0,
+		       "warning: duplicate key `%s' in RCS file `%s'",
+		       key, rcsfile);
+		free (rdata->comment);
+	    }
+	    rdata->comment = rcsbuf_valcopy (&rcsbuf, value, 0, NULL);
 	    continue;
 	}
 	if (rdata->other == NULL)
