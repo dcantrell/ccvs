@@ -1,3 +1,8 @@
+2004-02-25  Larry Jones  <lawrence.jones@ugsplm.com>
+
+	* update.c (join_file): Fix optimization to avoid dereferencing NULL.
+	(Reported by Steve McIntyre <steve@einval.com>.)
+
 2004-02-25  Derek Price  <derek@ximbiot.com>
 
 	No longer require directories specified to `checkout -d' to exist.
