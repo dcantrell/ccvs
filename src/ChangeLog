@@ -1,5 +1,10 @@
 2001-09-04  Derek Price  <dprice@collab.net>
 
+	* main.c (main): Fix empty CVSROOT message to specify `valid' instead
+	of `legal'.
+
+2001-09-04  Derek Price  <dprice@collab.net>
+
 	* server.c (pserver_authenticate_connection): Back out changes from the
 	30th and...
 	* getline.c (getstr): init the buffer instead.

@@ -834,7 +834,7 @@ Copyright (c) 1989-2001 Brian Berliner, david d `zoo' zuhn, \n\
 		error (0, 0,
 		       "CVSROOT is set but empty!  Make sure that the");
 		error (0, 0,
-		       "specification of CVSROOT is legal, either via the");
+		       "specification of CVSROOT is valid, either via the");
 		error (0, 0,
 		       "`-d' option, the %s environment variable, or the",
 		       CVSROOT_ENV);
