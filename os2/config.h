@@ -276,6 +276,9 @@
 /* Define if you have the <utime.h> header file.  */
 #undef HAVE_UTIME_H
 
+/* Define if you have the <sys/utime.h> header file.  */
+#define HAVE_SYS_UTIME_H 1
+
 /* Define if you have the inet library (-linet).  */
 #undef HAVE_LIBINET
 

@@ -257,6 +257,9 @@ extern long timezone;
 #if defined (HAVE_UTIME_H) && !defined (NeXT)
 #include <utime.h>
 #else
+#if defined (HAVE_SYS_UTIME_H)
+#include <sys/utime.h>
+#else
 #ifndef ALTOS
 struct utimbuf
 {
