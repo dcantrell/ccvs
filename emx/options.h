@@ -27,15 +27,6 @@
 #define	MY_NDBM
 #endif
 
-/*
- * The "patch" program to run when using the CVS server and accepting
- * patches across the network.  Specify a full pathname if your site
- * wants to use a particular patch.
- */
-#ifndef PATCH_PROGRAM
-#define PATCH_PROGRAM	"patch"
-#endif
-
 /* Directory used for storing temporary files, if not overridden by
    environment variables or the -T global option.  There should be little
    need to change this (-T is a better mechanism if you need to use a
