@@ -133,6 +133,8 @@ case $servercvs in
 "")
   exit_usage
   ;;
+false)
+  ;;
 /*)
   ;;
 *)
@@ -1650,7 +1652,7 @@ if $remote; then
 	# :ext:, you can run the tests that way.  There is a known
 	# difference in modes-15 (see comments there).
 	CVSROOT=:fork:${CVSROOT_DIRNAME} ; export CVSROOT
-	if [ $servercvs = "false" ]; then
+	if [ "$servercvs" = "false" ]; then
 	    CVS_SERVER=${testcvs}; export CVS_SERVER
         else
 	    CVS_SERVER=${servercvs}; export CVS_SERVER
