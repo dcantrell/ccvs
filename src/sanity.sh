@@ -27,18 +27,12 @@
 
 # You can't run CVS as root; print a nice error message here instead
 # of somewhere later, after making a mess.
-# Commented out because:
-# (1) whoami is not portable.  If memory serves the POSIX way is "id -un".
-#     ("logname" or "who am i" are similar but different--they have more to
-#      do with who logged in on your tty than your uid).
-# (2) This definition of "root" doesn't quite match CVS's (which is based
-#     on uid 0, not username "root").
-#case "`whoami`" in
-#  "root" )
-#    echo "sanity.sh: test suite does not work correctly when run as root" >&2
-#    exit 1
-#  ;;
-#esac
+case "`id -u`" in
+  "0" )
+    echo "sanity.sh: test suite does not work correctly when run as root" >&2
+    exit 1
+  ;;
+esac
 
 # required to make this script work properly.
 unset CVSREAD
@@ -474,7 +468,7 @@ dotest_internal_debug ()
 dotest ()
 {
   rm -f ${TESTDIR}/dotest.ex? 2>&1
-  if $2 >${TESTDIR}/dotest.tmp 2>&1; then
+  if eval "$2" >${TESTDIR}/dotest.tmp 2>&1; then
     : so far so good
   else
     status=$?
@@ -489,7 +483,7 @@ dotest ()
 dotest_lit ()
 {
   rm -f ${TESTDIR}/dotest.ex? 2>&1
-  if $2 >${TESTDIR}/dotest.tmp 2>&1; then
+  if eval "$2" >${TESTDIR}/dotest.tmp 2>&1; then
     : so far so good
   else
     status=$?
@@ -513,7 +507,7 @@ dotest_lit ()
 dotest_fail ()
 {
   rm -f ${TESTDIR}/dotest.ex? 2>&1
-  if $2 >${TESTDIR}/dotest.tmp 2>&1; then
+  if eval "$2" >${TESTDIR}/dotest.tmp 2>&1; then
     status=$?
     cat ${TESTDIR}/dotest.tmp >>${LOGFILE}
     echo "exit status was $status" >>${LOGFILE}
@@ -528,7 +522,7 @@ dotest_fail ()
 # Like dotest except second argument is the required exitstatus.
 dotest_status ()
 {
-  $3 >${TESTDIR}/dotest.tmp 2>&1
+  eval "$3" >${TESTDIR}/dotest.tmp 2>&1
   status=$?
   if test "$status" = "$2"; then
     : so far so good
@@ -544,7 +538,7 @@ dotest_status ()
 dotest_sort ()
 {
   rm -f ${TESTDIR}/dotest.ex? 2>&1
-  if $2 >${TESTDIR}/dotest.tmp1 2>&1; then
+  if eval "$2" >${TESTDIR}/dotest.tmp1 2>&1; then
     : so far so good
   else
     status=$?
@@ -2305,10 +2299,9 @@ done"
 
 	spacefiles)
 	  # More filename tests, in particular spaces in file names.
-	  # If we start using eval in dotest, this test should become
-	  # easier to write (in fact, it may be possible to just
-	  # change a few of the names in basica or some other test,
-	  # always good to keep the testsuite concise).
+	  # (it might be better to just change a few of the names in
+	  # basica or some other test instead, always good to keep the
+	  # testsuite concise).
 
 	  # I wrote this test to worry about problems in do_module;
 	  # but then I found that the CVS server has its own problems
@@ -2342,24 +2335,16 @@ ${TESTDIR}/cvsroot/top,v  <--  top
 initial revision: 1\.1
 done"
 	  mkdir 'first dir'
-	  if ${testcvs} add 'first dir' >${TESTDIR}/output.tmp 2>&1; then
-	    dotest spacefiles-4 "cat ${TESTDIR}/output.tmp" \
+	  dotest spacefiles-4 "${testcvs} add 'first dir'" \
 "Directory ${TESTDIR}/cvsroot/first dir added to the repository"
-	  else
-	    fail spacefiles-4
-	  fi
 	  mkdir ./${dashb}
 	  dotest spacefiles-5 "${testcvs} add -- ${dashb}" \
 "Directory ${TESTDIR}/cvsroot/${dashb} added to the repository"
 	  cd 'first dir'
 	  touch 'a file'
-	  if ${testcvs} add 'a file' >${TESTDIR}/output.tmp 2>&1; then
-	    dotest spacefiles-6 "cat ${TESTDIR}/output.tmp" \
+	  dotest spacefiles-6 "${testcvs} add 'a file'" \
 "${PROG} [a-z]*: scheduling file .a file. for addition
 ${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
-	  else
-	    fail spacefiles-6
-	  fi
 	  dotest spacefiles-7 "${testcvs} -q ci -m add" \
 "RCS file: ${TESTDIR}/cvsroot/first dir/a file,v
 done
@@ -2381,22 +2366,13 @@ done"
 	  dotest spacefiles-11 "${testcvs} -q co -- ${dashc}" "U \./${dashc}"
 	  rm ./${dashc}
 	  dotest spacefiles-12 "${testcvs} -q co -- /${dashc}" "U \./${dashc}"
-	  if ${testcvs} -q co 'first dir' >${TESTDIR}/output.tmp 2>&1; then
-	    dotest spacefiles-13 "cat ${TESTDIR}/output.tmp" \
+	  dotest spacefiles-13 "${testcvs} -q co 'first dir'" \
 "U first dir/a file"
-	  else
-	    fail spacefiles-13
-	  fi
 	  cd ..
 
 	  mkdir 3; cd 3
-	  if ${testcvs} -q co 'first dir/a file' >${TESTDIR}/output.tmp 2>&1
-	  then
-	    dotest spacefiles-14 "cat ${TESTDIR}/output.tmp" \
+	  dotest spacefiles-14 "${testcvs} -q co 'first dir/a file'" \
 "U first dir/a file"
-	  else
-	    fail spacefiles-14
-	  fi
 	  cd ..
 
 	  rm -r 1 2 3
@@ -3632,15 +3608,9 @@ ${PROG} [a-z]*: skipping directory dir1/sdir"
 
 	  # If we say "yes", then CVS gives errors about not being able to
 	  # create lock files.
-	  if echo no | ${testcvs} release -d dir1/sdir \
-	      >${TESTDIR}/output.tmp 2>&1; then
-	    pass dirs-4
-	  else
-	    fail dirs-4
-	  fi
 	  # The fact that it says "skipping directory " rather than
 	  # "skipping directory dir1/sdir" is some kind of bug.
-	  dotest dirs-4a "cat ${TESTDIR}/output.tmp" \
+	  echo no | dotest dirs-4 "${testcvs} release -d dir1/sdir" \
 "${PROG} [a-z]*: cannot open directory ${TESTDIR}/cvsroot/dir1/sdir: No such file or directory
 ${PROG} [a-z]*: skipping directory 
 You have \[0\] altered files in this repository\.
@@ -3662,7 +3632,6 @@ D/sdir////"
 	  cd ..
 
 	  rm -r imp-dir 1
-	  rm ${TESTDIR}/output.tmp
 
 	  # clean up our repositories
 	  rm -rf ${CVSROOT_DIRNAME}/dir1
@@ -4573,7 +4542,7 @@ mumble;
 }
 EOF
 	  # Use dotest_fail because exit status from `cvs diff' must be 1.
-	  dotest_fail rcslib-diffrgx-3 "${testcvs} diff -c -F.*( rgx.c" \
+	  dotest_fail rcslib-diffrgx-3 "${testcvs} diff -c -F'.*(' rgx.c" \
 "Index: rgx\.c
 ===================================================================
 RCS file: ${TESTDIR}/cvsroot/first-dir/rgx\.c,v
@@ -7146,18 +7115,7 @@ U nameddir/b'
 	      pass 152
 	  fi
 	  echo abc >>first-dir/subdir/a
-	  if (${testcvs} -q co aliasmodule | tee test153.tmp) \
-	      >>${LOGFILE}; then
-	      pass 153
-	  else
-	      fail 153
-	  fi
-	  echo 'M first-dir/subdir/a' >ans153.tmp
-	  if cmp test153.tmp ans153.tmp; then
-	      pass 154
-	  else
-	      fail 154
-	  fi
+	  dotest 153 "${testcvs} -q co aliasmodule" "M first-dir/subdir/a"
 
 	  cd ..
 	  rm -r 1
@@ -10724,14 +10682,9 @@ done"
 	  rm -f CVS/Baserev
 
 	  # This will fail on most systems.
-	  if echo "yes" | ${testcvs} -Q unedit $file \
-	    >${TESTDIR}/test.tmp 2>&1 ; then
-	    dotest unedit-without-baserev-4 "cat ${TESTDIR}/test.tmp" \
+	  echo "yes" | dotest unedit-without-baserev-4 "${testcvs} -Q unedit $file" \
 "m has been modified; revert changes${QUESTION} ${PROG} unedit: m not mentioned in CVS/Baserev
 ${PROG} unedit: run update to complete the unedit"
-	  else
-	    fail unedit-without-baserev-4
-	  fi
 
 	  # SunOS4.1.4 systems make it this far, but with a corrupted
 	  # CVS/Entries file.  Demonstrate the corruption!
@@ -10779,13 +10732,9 @@ rcsmerge: warning: conflicts during merge
 ${PROG} [a-z]*: conflicts found in m
 C m"
 	  rm CVS/Baserev
-	  if (echo yes | ${testcvs} unedit m) >${TESTDIR}/test.tmp 2>&1; then
-	    dotest unedit-without-baserev-14 "cat ${TESTDIR}/test.tmp" \
+	  echo yes | dotest unedit-without-baserev-14 "${testcvs} unedit m" \
 "m has been modified; revert changes${QUESTION} ${PROG} unedit: m not mentioned in CVS/Baserev
 ${PROG} unedit: run update to complete the unedit"
-	  else
-	    fail unedit-without-baserev-14
-	  fi
 	  if test "$remote" = yes; then
 	    dotest unedit-without-baserev-15 "${testcvs} -q update" "U m"
 	  else
@@ -10929,26 +10878,14 @@ ${QUESTION} first-dir/rootig.c
 ${QUESTION} second-dir/.cvsignore
 ${QUESTION} second-dir/notig.c"
 
-	  if echo yes | ${testcvs} release -d first-dir \
-	    >${TESTDIR}/ignore.tmp; then
-	    pass ignore-192
-	  else
-	    fail ignore-192
-	  fi
-	  dotest ignore-193 "cat ${TESTDIR}/ignore.tmp" \
+	  echo yes | dotest ignore-192 "${testcvs} release -d first-dir" \
 "${QUESTION} \.cvsignore
 You have \[0\] altered files in this repository.
 Are you sure you want to release (and delete) directory .first-dir': "
 
 	  echo add a line >>second-dir/foobar.c
 	  rm second-dir/notig.c second-dir/.cvsignore
-	  if echo yes | ${testcvs} release -d second-dir \
-	    >${TESTDIR}/ignore.tmp; then
-	    pass ignore-194
-	  else
-	    fail ignore-194
-	  fi
-	  dotest ignore-195 "cat ${TESTDIR}/ignore.tmp" \
+	  echo yes | dotest ignore-194 "${testcvs} release -d second-dir" \
 "M foobar.c
 You have \[1\] altered files in this repository.
 Are you sure you want to release (and delete) directory .second-dir': "
@@ -10956,7 +10893,6 @@ Are you sure you want to release (and delete) directory .second-dir': "
 	  rm -r 1
 	  cd ..
 	  rm -r wnt
-	  rm ${TESTDIR}/ignore.tmp
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir ${CVSROOT_DIRNAME}/second-dir
 	  ;;
 
@@ -13465,7 +13401,7 @@ add file1
 
 	  # ISO8601 format.  There are many, many, other variations
 	  # specified by ISO8601 which we should be testing too.
-	  dotest rcs-3 "${testcvs} -q log -d 1996-12-11<" "
+	  dotest rcs-3 "${testcvs} -q log -d '1996-12-11<'" "
 RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
 Working file: file1
 head: 1\.3
@@ -13484,9 +13420,8 @@ delete second line; modify twelfth line
 ============================================================================="
 
 	  # RFC822 format (as amended by RFC1123).
-	  if ${testcvs} -q log -d '<3 Apr 2000 00:00' >${TESTDIR}/rcs4.tmp
-	  then
-	    dotest rcs-4 "cat ${TESTDIR}/rcs4.tmp" "
+	  dotest rcs-4 "${testcvs} -q log -d '<3 Apr 2000 00:00'" \
+"
 RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
 Working file: file1
 head: 1\.3
@@ -13507,9 +13442,6 @@ revision 1\.1
 date: 1996/11/24 15:56:05;  author: kingdon;  state: Exp;
 add file1
 ============================================================================="
-	  else
-	    fail rcs-4
-	  fi
 
 	  # Intended behavior for "cvs annotate" is that it displays the
 	  # last two digits of the year.  Make sure it does that rather
@@ -13714,47 +13646,22 @@ a1 1
 next branch revision
 @"
 
-	  if ${testcvs} -q update -p -D '1970-12-31 11:30 UT' file2 \
-	      >${TESTDIR}/rcs4.tmp
-	  then
-	    dotest rcs-9 "cat ${TESTDIR}/rcs4.tmp" "start revision"
-	  else
-	    fail rcs-9
-	  fi
+	  dotest rcs-9 "${testcvs} -q update -p -D '1970-12-31 11:30 UT' file2" \
+"start revision"
 
-	  if ${testcvs} -q update -p -D '1970-12-31 12:30 UT' file2 \
-	      >${TESTDIR}/rcs4.tmp
-	  then
-	    dotest rcs-10 "cat ${TESTDIR}/rcs4.tmp" "mid revision"
-	  else
-	    fail rcs-10
-	  fi
+	  dotest rcs-10 "${testcvs} -q update -p -D '1970-12-31 12:30 UT' file2" \
+"mid revision"
 
-	  if ${testcvs} -q update -p -D '1971-01-01 00:30 UT' file2 \
-	      >${TESTDIR}/rcs4.tmp
-	  then
-	    dotest rcs-11 "cat ${TESTDIR}/rcs4.tmp" "new year revision"
-	  else
-	    fail rcs-11
-	  fi
+	  dotest rcs-11 "${testcvs} -q update -p -D '1971-01-01 00:30 UT' file2" \
+"new year revision"
 
 	  # Same test as rcs-10, but with am/pm.
-	  if ${testcvs} -q update -p -D 'December 31, 1970 12:30pm UT' file2 \
-	      >${TESTDIR}/rcs4.tmp
-	  then
-	    dotest rcs-12 "cat ${TESTDIR}/rcs4.tmp" "mid revision"
-	  else
-	    fail rcs-12
-	  fi
+	  dotest rcs-12 "${testcvs} -q update -p -D 'December 31, 1970 12:30pm UT' file2" \
+"mid revision"
 
 	  # Same test as rcs-11, but with am/pm.
-	  if ${testcvs} -q update -p -D 'January 1, 1971 12:30am UT' file2 \
-	      >${TESTDIR}/rcs4.tmp
-	  then
-	    dotest rcs-13 "cat ${TESTDIR}/rcs4.tmp" "new year revision"
-	  else
-	    fail rcs-13
-	  fi
+	  dotest rcs-13 "${testcvs} -q update -p -D 'January 1, 1971 12:30am UT' file2" \
+"new year revision"
 
 	  # OK, now make sure cvs log doesn't have any trouble with the
 	  # newphrases and such.
@@ -13802,72 +13709,47 @@ date: 1971/01/01 08:00:05;  author: joe;  state: Exp;  lines: ${PLUS}1 -1
 ============================================================================="
 	  # Now test each date format for "cvs log -d".
 	  # Earlier than 1971-01-01
-	  if ${testcvs} -q log -d '<1971-01-01 00:00 GMT' file2 \
-	    >${TESTDIR}/rcs4.tmp
-	  then
-	    dotest rcs-15 "grep revision ${TESTDIR}/rcs4.tmp" \
+	  dotest rcs-15 "${testcvs} -q log -d '<1971-01-01 00:00 GMT' file2 \
+	    | grep revision" \
 "total revisions: 7;	selected revisions: 3
 revision 1\.3
 revision 1\.2
 revision 1\.1"
-	  else
-	    fail rcs-15
-	  fi
 	  # Later than 1971-01-01
-	  if ${testcvs} -q log -d '1971-01-01 00:00 GMT<' file2 \
-	    >${TESTDIR}/rcs4.tmp
-	  then
-	    dotest rcs-16 "grep revision ${TESTDIR}/rcs4.tmp" \
+	  dotest rcs-16 "${testcvs} -q log -d '1971-01-01 00:00 GMT<' file2 \
+	    | grep revision" \
 "total revisions: 7;	selected revisions: 4
 revision 1\.5
 revision 1\.4
 revision 1\.2\.6\.2
 revision 1\.2\.6\.1"
-	  else
-	    fail rcs-16
-	  fi
 	  # Alternate syntaxes for later and earlier; multiple -d options
-	  if ${testcvs} -q log -d '>1971-01-01 00:00 GMT' \
-	    -d '1970-12-31 12:15 GMT>' file2 >${TESTDIR}/rcs4.tmp
-	  then
-	    dotest rcs-17 "grep revision ${TESTDIR}/rcs4.tmp" \
+	  dotest rcs-17 "${testcvs} -q log -d '>1971-01-01 00:00 GMT' \
+	    -d '1970-12-31 12:15 GMT>' file2 | grep revision" \
 "total revisions: 7;	selected revisions: 5
 revision 1\.5
 revision 1\.4
 revision 1\.1
 revision 1\.2\.6\.2
 revision 1\.2\.6\.1"
-	  else
-	    fail rcs-17
-	  fi
 	  # Range, and single date
-	  if ${testcvs} -q log -d '1970-12-31 11:30 GMT' \
+	  dotest rcs-18 "${testcvs} -q log -d '1970-12-31 11:30 GMT' \
 	    -d '1971-01-01 00:00:05 GMT<1971-01-01 01:00:01 GMT' \
-	    file2 >${TESTDIR}/rcs4.tmp
-	  then
-	    dotest rcs-18 "grep revision ${TESTDIR}/rcs4.tmp" \
+	    file2 | grep revision" \
 "total revisions: 7;	selected revisions: 2
 revision 1\.5
 revision 1\.1"
-	  else
-	    fail rcs-18
-	  fi
 	  # Alternate range syntax; equality
-	  if ${testcvs} -q log \
+	  dotest rcs-19 "${testcvs} -q log \
 	    -d '1971-01-01 01:00:01 GMT>=1971-01-01 00:00:05 GMT' \
-	    file2 >${TESTDIR}/rcs4.tmp
-	  then
-	    dotest rcs-19 "grep revision ${TESTDIR}/rcs4.tmp" \
+	    file2 | grep revision" \
 "total revisions: 7;	selected revisions: 2
 revision 1\.5
 revision 1\.4"
-	  else
-	    fail rcs-19
-	  fi
 
 	  cd ..
 
-	  rm -r first-dir ${TESTDIR}/rcs4.tmp
+	  rm -r first-dir
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
 	  ;;
 
@@ -13918,41 +13800,17 @@ EOF
 	  cd first-dir
 
 	  # 9 Sep 1999
-	  if ${testcvs} -q update -p -D '1999-09-09 11:30 UT' file1 \
-	      >${TESTDIR}/rcs4.tmp
-	  then
-	    dotest rcs2-2 "cat ${TESTDIR}/rcs4.tmp" \
+	  dotest rcs2-2 "${testcvs} -q update -p -D '1999-09-09 11:30 UT' file1" \
 "Tonight we're going to party like it's a certain year"
-	  else
-	    fail rcs2-2
-	  fi
 	  # 1 Jan 2001.
-	  if ${testcvs} -q update -p -D '2001-01-01 11:30 UT' file1 \
-	      >${TESTDIR}/rcs4.tmp
-	  then
-	    dotest rcs2-3 "cat ${TESTDIR}/rcs4.tmp" \
+	  dotest rcs2-3 "${testcvs} -q update -p -D '2001-01-01 11:30 UT' file1" \
 "two year hiatus"
-	  else
-	    fail rcs2-3
-	  fi
 	  # 29 Feb 2000
-	  if ${testcvs} -q update -p -D '2000-02-29 11:30 UT' file1 \
-	      >${TESTDIR}/rcs4.tmp
-	  then
-	    dotest rcs2-4 "cat ${TESTDIR}/rcs4.tmp" \
+	  dotest rcs2-4 "${testcvs} -q update -p -D '2000-02-29 11:30 UT' file1" \
 "2000 is also a good year for leaping"
-	  else
-	    fail rcs2-4
-	  fi
 	  # 29 Feb 2003 is invalid
-	  if ${testcvs} -q update -p -D '2003-02-29 11:30 UT' file1 \
-	      >${TESTDIR}/rcs4.tmp 2>&1
-	  then
-	    fail rcs2-5
-	  else
-	    dotest rcs2-5 "cat ${TESTDIR}/rcs4.tmp" \
+	  dotest_fail rcs2-5 "${testcvs} -q update -p -D '2003-02-29 11:30 UT' file1" \
 "${PROG} \[[a-z]* aborted\]: Can't parse date/time: 2003-02-29 11:30 UT"
-	  fi
 
 	  dotest rcs2-6 "${testcvs} -q update -p -D 2007-01-07 file1" \
 "head revision"
@@ -13970,22 +13828,10 @@ EOF
 	  # 31 May 1999), it seems to fail.
 	  # 
 	  # Sigh.
-	  if ${testcvs} -q update -p -D '100 months' file1 \
-	      >${TESTDIR}/rcs4.tmp 2>&1
-	  then
-	    dotest rcs2-7 "cat ${TESTDIR}/rcs4.tmp" "head revision"
-	  else
-	    fail rcs2-7
-	  fi
-	  if ${testcvs} -q update -p -D '8 years' file1 \
-	      >${TESTDIR}/rcs4.tmp 2>&1
-	  then
-	    dotest rcs2-8 "cat ${TESTDIR}/rcs4.tmp" "head revision"
-	  else
-	    fail rcs2-8
-	  fi
-
-	  rm ${TESTDIR}/rcs4.tmp
+	  dotest rcs2-7 "${testcvs} -q update -p -D '100 months' file1" \
+"head revision"
+	  dotest rcs2-8 "${testcvs} -q update -p -D '8 years' file1" \
+"head revision"
 
 	  cd ..
 	  rm -r first-dir
@@ -14441,29 +14287,18 @@ M 06/10 21:12 ${PLUS}0000 kingdon   1\.231 sanity\.sh   ccvs/src == ~/work/ccvs/
 C 06/10 11:51 ${PLUS}0000 kingdon   1\.3   README      ccvs/emx == <remote>
 M 06/10 17:33 ${PLUS}0000 kingdon   1\.281 cvs\.texinfo ccvs/doc == ~/work/ccvs/doc
 M 06/10 01:36 ${PLUS}0000 nk        1\.229 sanity\.sh   ccvs/src == <remote>"
-	  if ${testcvs} history -e -a -D '10 Jun 1997 13:00 UT' \
-	      >${TESTDIR}/output.tmp
-	  then
-	    dotest history-2 "cat ${TESTDIR}/output.tmp" \
+
+	  dotest history-2 "${testcvs} history -e -a -D '10 Jun 1997 13:00 UT'" \
 "W 06/17 19:51 ${PLUS}0000 anonymous       Makefile\.in ccvs/emx == <remote>/emx
 M 06/10 21:12 ${PLUS}0000 kingdon   1\.231 sanity\.sh   ccvs/src == ~/work/ccvs/src
 C 06/10 11:51 ${PLUS}0000 kingdon   1\.3   README      ccvs/emx == <remote>
 M 06/10 17:33 ${PLUS}0000 kingdon   1\.281 cvs\.texinfo ccvs/doc == ~/work/ccvs/doc"
-	  else
-	    fail history-2
-	  fi
-	  if ${testcvs} history -e -a -D '10 Jun 2001 13:00 UT' \
-	      >${TESTDIR}/output.tmp
-	  then
+
 	    # For reasons that are completely unclear to me, the number
 	    # of spaces betwen "kingdon" and "1.281" is different than
 	    # for the other tests.
-	    dotest history-3 "cat ${TESTDIR}/output.tmp" \
+	  dotest history-3 "${testcvs} history -e -a -D '10 Jun 2001 13:00 UT'" \
 "M 06/10 17:33 ${PLUS}0000 kingdon 1\.281 cvs\.texinfo ccvs/doc == ~/work/ccvs/doc"
-	  else
-	    fail history-3
-	  fi
-	  rm ${TESTDIR}/output.tmp
 	  ;;
 
 	big)
@@ -16075,51 +15910,16 @@ new revision: 1\.1\.4\.2; previous revision: 1\.1\.4\.1
 done"
 	  cd ../..
 	  mkdir 2; cd 
-	  if ${testcvs} -q export -r br2 -D'1 minute ago' first-dir \
-			>${TESTDIR}/tagdate.tmp 2>&1; then
-	    if ${EXPR} "`cat ${TESTDIR}/tagdate.tmp`" : \
-"[UP] first-dir/file1" >/dev/null; then
-	      pass tagdate-14
-	    else
-	      echo "** expected: " >>${LOGFILE}
-	      echo "[UP] first-dir/file1" >>${LOGFILE}
-	      echo "** got: " >>${LOGFILE}
-	      cat ${TESTDIR}/tagdate.tmp >>${LOGFILE}
-	      fail tagdate-14
-	    fi
-	  else
-	    echo "Bad exit status" >>${LOGFILE}
-	    fail tagdate-14
-	  fi
-
-	  if ${EXPR} "`cat first-dir/file1`" : "br2-1" >/dev/null; then
-	    pass tagdate-15
-	  else
-	    fail tagdate-15
-	  fi
+	  dotest tagdate-14 "${testcvs} -q export -r br2 -D'1 minute ago' first-dir" \
+"[UP] first-dir/file1"
+	  dotest tagdate-15 "cat first-dir/file1" "br2-1"
 
 	  # Now for annotate
 	  cd ../1/first-dir
-	  if ${testcvs} annotate -rbr2 -D'1 minute ago' \
-			>${TESTDIR}/tagdate.tmp 2>&1; then
-	    if ${EXPR} "`cat ${TESTDIR}/tagdate.tmp`" : \
+	  dotest tagdate-16 "${testcvs} annotate -rbr2 -D'1 minute ago'" \
 "Annotations for file1
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
-1\.1\.4\.1      (${username} *[0-9a-zA-Z-]*): br2-1" >/dev/null; then
-	      pass tagdate-16
-	    else
-	      echo "** expected: " >>${LOGFILE}
-	      echo "Annotations for file1
-\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
-1\.1\.4\.1      (${username} *[0-9a-zA-Z-]*): br2-1" >>${LOGFILE}
-	      echo "** got: " >>${LOGFILE}
-	      cat ${TESTDIR}/tagdate.tmp >>${LOGFILE}
-	      fail tagdate-16
-	    fi
-	  else
-	    echo "Bad exit status" >>${LOGFILE}
-	    fail tagdate-16
-	  fi
+1\.1\.4\.1      (${username} *[0-9a-zA-Z-]*): br2-1"
 
 	  dotest tagdate-17 "${testcvs} annotate -rbr2 -Dnow" \
 "Annotations for file1
@@ -16132,7 +15932,6 @@ done"
 	  fi
 
 	  cd ../..
-	  rm ${TESTDIR}/tagdate.tmp
 	  rm -r 1 2
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
 	  ;;
@@ -19981,28 +19780,27 @@ ${TESTDIR}/cvsroot/CVSROOT/config,v  <--  config
 new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
 done
 ${PROG} [a-z]*: Rebuilding administrative file database"
-	    echo "testme:q6WV9d2t848B2:`id -un`" \
-	      >${CVSROOT_DIRNAME}/CVSROOT/passwd
-	    echo "anonymous::`id -un`" \
-	      >>${CVSROOT_DIRNAME}/CVSROOT/passwd
-	    echo "`id -un`:" \
-	      >>${CVSROOT_DIRNAME}/CVSROOT/passwd
-	    echo "willfail:   :whocares" \
-	      >>${CVSROOT_DIRNAME}/CVSROOT/passwd
-	    ${testcvs} pserver >${TESTDIR}/pserver.tmp 2>&1 <<EOF
+	    cat >${CVSROOT_DIRNAME}/CVSROOT/passwd <<EOF
+testme:q6WV9d2t848B2:`id -un`
+anonymous::`id -un`
+`id -un`:
+willfail:   :whocares
+EOF
+	    dotest_fail pserver-3 "${testcvs} pserver" \
+"error 0 Server configuration missing --allow-root in inetd.conf" <<EOF
 BEGIN AUTH REQUEST
 ${CVSROOT_DIRNAME}
 testme
 Ay::'d
 END AUTH REQUEST
 EOF
-	    dotest pserver-3 "cat ${TESTDIR}/pserver.tmp" \
-"error 0 Server configuration missing --allow-root in inetd.conf"
 
 	    # Sending the Root and noop before waiting for the
 	    # "I LOVE YOU" is bogus, but hopefully we can get
 	    # away with it.
-	    ${testcvs} --allow-root=${CVSROOT_DIRNAME} pserver >${TESTDIR}/pserver.tmp 2>&1 <<EOF
+	    dotest pserver-4 "${testcvs} --allow-root=${CVSROOT_DIRNAME} pserver" \
+"${DOTSTAR} LOVE YOU
+ok" <<EOF
 BEGIN AUTH REQUEST
 ${CVSROOT_DIRNAME}
 testme
@@ -20011,11 +19809,11 @@ END AUTH REQUEST
 Root ${CVSROOT_DIRNAME}
 noop
 EOF
-	    dotest pserver-4 "cat ${TESTDIR}/pserver.tmp" \
-"${DOTSTAR} LOVE YOU
-ok"
 
-	    ${testcvs} --allow-root=${CVSROOT_DIRNAME} pserver >${TESTDIR}/pserver.tmp 2>&1 <<EOF
+	    dotest pserver-5 "${testcvs} --allow-root=${CVSROOT_DIRNAME} pserver" \
+"${DOTSTAR} LOVE YOU
+E Protocol error: Root says \"${TESTDIR}/1\" but pserver says \"${CVSROOT_DIRNAME}\"
+error  " <<EOF
 BEGIN AUTH REQUEST
 ${CVSROOT_DIRNAME}
 testme
@@ -20024,98 +19822,86 @@ END AUTH REQUEST
 Root ${TESTDIR}/1
 noop
 EOF
-	    dotest pserver-5 "cat ${TESTDIR}/pserver.tmp" \
-"${DOTSTAR} LOVE YOU
-E Protocol error: Root says \"${TESTDIR}/1\" but pserver says \"${CVSROOT_DIRNAME}\"
-error  "
 
-	    ${testcvs} --allow-root=${CVSROOT_DIRNAME} pserver >${TESTDIR}/pserver.tmp 2>&1 <<EOF
+	    dotest_fail pserver-6 "${testcvs} --allow-root=${CVSROOT_DIRNAME} pserver" \
+"I HATE YOU" <<EOF
 BEGIN AUTH REQUEST
 ${CVSROOT_DIRNAME}
 testme
 Ay::'d^b?hd
 END AUTH REQUEST
 EOF
-	    dotest pserver-6 "cat ${TESTDIR}/pserver.tmp" \
-"I HATE YOU"
 
-	    ${testcvs} --allow-root=${CVSROOT_DIRNAME} pserver >${TESTDIR}/pserver.tmp 2>&1 <<EOF
+	    dotest_fail pserver-7 "${testcvs} --allow-root=${CVSROOT_DIRNAME} pserver" \
+"I HATE YOU" <<EOF
 BEGIN VERIFICATION REQUEST
 ${CVSROOT_DIRNAME}
 testme
 Ay::'d^b?hd
 END VERIFICATION REQUEST
 EOF
-	    dotest pserver-7 "cat ${TESTDIR}/pserver.tmp" \
-"I HATE YOU"
 
-	    ${testcvs} --allow-root=${CVSROOT_DIRNAME} pserver >${TESTDIR}/pserver.tmp 2>&1 <<EOF
+	    dotest pserver-8 "${testcvs} --allow-root=${CVSROOT_DIRNAME} pserver" \
+"${DOTSTAR} LOVE YOU" <<EOF
 BEGIN VERIFICATION REQUEST
 ${CVSROOT_DIRNAME}
 testme
 Ay::'d
 END VERIFICATION REQUEST
 EOF
-	    dotest pserver-8 "cat ${TESTDIR}/pserver.tmp" \
-"${DOTSTAR} LOVE YOU"
 
 # Tests pserver-9 through pserver-13 are about empty passwords
 
             # Test empty password (both sides) for aliased user
-	    ${testcvs} --allow-root=${CVSROOT_DIRNAME} pserver >${TESTDIR}/pserver.tmp 2>&1 <<EOF
+	    dotest pserver-9 "${testcvs} --allow-root=${CVSROOT_DIRNAME} pserver" \
+"${DOTSTAR} LOVE YOU" <<EOF
 BEGIN AUTH REQUEST
 ${CVSROOT_DIRNAME}
 anonymous
 A
 END AUTH REQUEST
 EOF
-            dotest pserver-9 "cat ${TESTDIR}/pserver.tmp" \
-"${DOTSTAR} LOVE YOU"
 
             # Test empty password (server side only) for aliased user
-	    ${testcvs} --allow-root=${CVSROOT_DIRNAME} pserver >${TESTDIR}/pserver.tmp 2>&1 <<EOF
+	    dotest pserver-10 "${testcvs} --allow-root=${CVSROOT_DIRNAME} pserver" \
+"${DOTSTAR} LOVE YOU" <<EOF
 BEGIN AUTH REQUEST
 ${CVSROOT_DIRNAME}
 anonymous
 Aanythingwouldworkhereittrulydoesnotmatter
 END AUTH REQUEST
 EOF
-            dotest pserver-10 "cat ${TESTDIR}/pserver.tmp" \
-"${DOTSTAR} LOVE YOU"
 
             # Test empty (both sides) password for non-aliased user
             P_THISUSER=`id -un`
-	    ${testcvs} --allow-root=${CVSROOT_DIRNAME} pserver >${TESTDIR}/pserver.tmp 2>&1 <<EOF
+	    dotest pserver-11 "${testcvs} --allow-root=${CVSROOT_DIRNAME} pserver" \
+"${DOTSTAR} LOVE YOU" <<EOF
 BEGIN AUTH REQUEST
 ${CVSROOT_DIRNAME}
 ${P_THISUSER}
 A
 END AUTH REQUEST
 EOF
-            dotest pserver-11 "cat ${TESTDIR}/pserver.tmp" \
-"${DOTSTAR} LOVE YOU"
 
             # Test empty (server side only) password for non-aliased user
-	    ${testcvs} --allow-root=${CVSROOT_DIRNAME} pserver >${TESTDIR}/pserver.tmp 2>&1 <<EOF
+	    dotest pserver-12 "${testcvs} --allow-root=${CVSROOT_DIRNAME} pserver" \
+"${DOTSTAR} LOVE YOU" <<EOF
 BEGIN AUTH REQUEST
 ${CVSROOT_DIRNAME}
 ${P_THISUSER}
 Anypasswordwouldworkwhynotthisonethen
 END AUTH REQUEST
 EOF
-            dotest pserver-12 "cat ${TESTDIR}/pserver.tmp" \
-"${DOTSTAR} LOVE YOU"
 
             # Test failure of whitespace password
-	    ${testcvs} --allow-root=${CVSROOT_DIRNAME} pserver >${TESTDIR}/pserver.tmp 2>&1 <<EOF
+	    dotest_fail pserver-13 "${testcvs} --allow-root=${CVSROOT_DIRNAME} pserver" \
+"${DOTSTAR} HATE YOU" <<EOF
 BEGIN AUTH REQUEST
 ${CVSROOT_DIRNAME}
 willfail
 Amquiteunabletocomeupwithinterestingpasswordsanymore
 END AUTH REQUEST
 EOF
-            dotest pserver-13 "cat ${TESTDIR}/pserver.tmp" \
-"${DOTSTAR} HATE YOU"
 
 	    # Clean up.
 	    echo "# comments only" >config
@@ -20134,31 +19920,21 @@ ${PROG} [a-z]*: Rebuilding administrative file database"
 	server)
 	  # Some tests of the server (independent of the client).
 	  if test "$remote" = yes; then
-	    if ${testcvs} server >${TESTDIR}/server.tmp <<EOF; then
+	    dotest server-1 "${testcvs} server" \
+"E Protocol error: Root request missing
+error  " <<EOF
 Directory bogus
 mumble/bar
 update
 EOF
-	      dotest server-1 "cat ${TESTDIR}/server.tmp" \
-"E Protocol error: Root request missing
-error  "
-	    else
-	      echo "exit status was $?" >>${LOGFILE}
-	      fail server-1
-	    fi
 
 	    # Could also test for relative pathnames here (so that crerepos-6a
 	    # and crerepos-6b can use :fork:).
-	    if ${testcvs} server >${TESTDIR}/server.tmp <<EOF; then
+	    dotest server-2 "${testcvs} server" "ok" <<EOF
 Set OTHER=variable
 Set MYENV=env-value
 init ${TESTDIR}/crerepos
 EOF
-	      dotest server-2 "cat ${TESTDIR}/server.tmp" "ok"
-	    else
-	      echo "exit status was $?" >>${LOGFILE}
-	      fail server-2
-	    fi
 	    dotest server-3 "test -d ${TESTDIR}/crerepos/CVSROOT" ""
 
 	    # Now some tests of gzip-file-contents (used by jCVS).
@@ -20186,21 +19962,20 @@ z25
 EOF
 	    cat gzipped.dat >>session.dat
 	    echo import >>session.dat
-	    if ${testcvs} server >${TESTDIR}/server.tmp <session.dat; then
-	      dotest server-4 "cat ${TESTDIR}/server.tmp" "M N dir1/file1
+	    dotest server-4 "${testcvs} server" \
+"M N dir1/file1
 M 
 M No conflicts created by this import
 M 
-ok"
-	    else
-	      echo "exit status was $?" >>${LOGFILE}
-	      fail server-4
-	    fi
+ok" <session.dat
 	    dotest server-5 \
 "${testcvs} -q -d ${TESTDIR}/crerepos co -p dir1/file1" "test"
 
 	    # OK, here are some notify tests.
-	    if ${testcvs} server >${TESTDIR}/server.tmp <<EOF; then
+	    dotest server-6 "${testcvs} server" \
+"Notified \./
+${TESTDIR}/crerepos/dir1/file1
+ok" <<EOF
 Root ${TESTDIR}/crerepos
 Directory .
 ${TESTDIR}/crerepos/dir1
@@ -20208,18 +19983,16 @@ Notify file1
 E	Fri May  7 13:21:09 1999 GMT	myhost	some-work-dir	EUC
 noop
 EOF
-	      dotest server-6 "cat ${TESTDIR}/server.tmp" \
-"Notified \./
-${TESTDIR}/crerepos/dir1/file1
-ok"
-	    else
-	      echo "exit status was $?" >>${LOGFILE}
-	      fail server-6
-	    fi
 	    # Sending the second "noop" before waiting for the output
 	    # from the first is bogus but hopefully we can get away
 	    # with it.
-	    if ${testcvs} server >${TESTDIR}/server.tmp <<EOF; then
+	    dotest server-7 "${testcvs} server" \
+"Notified \./
+${TESTDIR}/crerepos/dir1/file1
+ok
+Notified \./
+${TESTDIR}/crerepos/dir1/file1
+ok" <<EOF
 Root ${TESTDIR}/crerepos
 Directory .
 ${TESTDIR}/crerepos/dir1
@@ -20230,20 +20003,14 @@ Notify file1
 E	The 57th day of Discord in the YOLD 3165	myhost	some-work-dir	EUC
 noop
 EOF
-	      dotest server-7 "cat ${TESTDIR}/server.tmp" \
-"Notified \./
-${TESTDIR}/crerepos/dir1/file1
-ok
-Notified \./
-${TESTDIR}/crerepos/dir1/file1
-ok"
-	    else
-	      echo "exit status was $?" >>${LOGFILE}
-	      fail server-7
-	    fi
 
 	    # OK, now test a few error conditions.
-	    if ${testcvs} server >${TESTDIR}/server.tmp <<EOF; then
+	    # FIXCVS: should give "error" and no "Notified", like server-9
+	    dotest server-8 "${testcvs} server" \
+"E ${PROG} server: invalid character in editor value
+Notified \./
+${TESTDIR}/crerepos/dir1/file1
+ok" <<EOF
 Root ${TESTDIR}/crerepos
 Directory .
 ${TESTDIR}/crerepos/dir1
@@ -20251,18 +20018,10 @@ Notify file1
 E	Setting Orange, the 52th day of Discord in the YOLD 3165	myhost	some-work-dir	EUC
 noop
 EOF
-	      # FIXCVS: should give "error" and no "Notified", like server-9
-	      dotest server-8 "cat ${TESTDIR}/server.tmp" \
-"E ${PROG} server: invalid character in editor value
-Notified \./
-${TESTDIR}/crerepos/dir1/file1
-ok"
-	    else
-	      echo "exit status was $?" >>${LOGFILE}
-	      fail server-8
-	    fi
 
-	    if ${testcvs} server >${TESTDIR}/server.tmp <<EOF; then
+	    dotest server-9 "${testcvs} server" \
+"E Protocol error; misformed Notify request
+error  " <<EOF
 Root ${TESTDIR}/crerepos
 Directory .
 ${TESTDIR}/crerepos/dir1
@@ -20270,64 +20029,43 @@ Notify file1
 E	Setting Orange+57th day of Discord	myhost	some-work-dir	EUC
 noop
 EOF
-	      dotest server-9 "cat ${TESTDIR}/server.tmp" \
-"E Protocol error; misformed Notify request
-error  "
-	    else
-	      echo "exit status was $?" >>${LOGFILE}
-	      fail server-9
-	    fi
 
 	    # First demonstrate an interesting quirk in the protocol.
 	    # The "watchers" request selects the files to operate based
 	    # on files which exist in the working directory.  So if we
 	    # don't send "Entry" or the like, it won't do anything.
 	    # Wants to be documented in cvsclient.texi...
-	    if ${testcvs} server >${TESTDIR}/server.tmp <<EOF; then
+	    dotest server-10 "${testcvs} server" "ok" <<EOF
 Root ${TESTDIR}/crerepos
 Directory .
 ${TESTDIR}/crerepos/dir1
 watchers
 EOF
-	      dotest server-10 "cat ${TESTDIR}/server.tmp" \
-"ok"
-	    else
-	      echo "exit status was $?" >>${LOGFILE}
-	      fail server-10
-	    fi
-
 	    # See if "watchers" and "editors" display the right thing.
-	    if ${testcvs} server >${TESTDIR}/server.tmp <<EOF; then
+	    dotest server-11 "${testcvs} server" \
+"M file1	${username}	tedit	tunedit	tcommit
+ok" <<EOF
 Root ${TESTDIR}/crerepos
 Directory .
 ${TESTDIR}/crerepos/dir1
 Entry /file1/1.1////
 watchers
 EOF
-	      dotest server-11 "cat ${TESTDIR}/server.tmp" \
-"M file1	${username}	tedit	tunedit	tcommit
-ok"
-	    else
-	      echo "exit status was $?" >>${LOGFILE}
-	      fail server-11
-	    fi
-	    if ${testcvs} server >${TESTDIR}/server.tmp <<EOF; then
+	    dotest server-12 "${testcvs} server" \
+"M file1	${username}	The 57th day of Discord in the YOLD 3165	myhost	some-work-dir
+ok" <<EOF
 Root ${TESTDIR}/crerepos
 Directory .
 ${TESTDIR}/crerepos/dir1
 Entry /file1/1.1////
 editors
 EOF
-	      dotest server-12 "cat ${TESTDIR}/server.tmp" \
-"M file1	${username}	The 57th day of Discord in the YOLD 3165	myhost	some-work-dir
-ok"
-	    else
-	      echo "exit status was $?" >>${LOGFILE}
-	      fail server-12
-	    fi
 
 	    # Now do an unedit.
-	    if ${testcvs} server >${TESTDIR}/server.tmp <<EOF; then
+	    dotest server-13 "${testcvs} server" \
+"Notified \./
+${TESTDIR}/crerepos/dir1/file1
+ok" <<EOF
 Root ${TESTDIR}/crerepos
 Directory .
 ${TESTDIR}/crerepos/dir1
@@ -20335,40 +20073,20 @@ Notify file1
 U	7 May 1999 15:00 GMT	myhost	some-work-dir	EUC
 noop
 EOF
-	      dotest server-13 "cat ${TESTDIR}/server.tmp" \
-"Notified \./
-${TESTDIR}/crerepos/dir1/file1
-ok"
-	    else
-	      echo "exit status was $?" >>${LOGFILE}
-	      fail server-13
-	    fi
 
 	    # Now try "watchers" and "editors" again.
-	    if ${testcvs} server >${TESTDIR}/server.tmp <<EOF; then
+	    dotest server-14 "${testcvs} server" "ok" <<EOF
 Root ${TESTDIR}/crerepos
 Directory .
 ${TESTDIR}/crerepos/dir1
 watchers
 EOF
-	      dotest server-14 "cat ${TESTDIR}/server.tmp" \
-"ok"
-	    else
-	      echo "exit status was $?" >>${LOGFILE}
-	      fail server-14
-	    fi
-	    if ${testcvs} server >${TESTDIR}/server.tmp <<EOF; then
+	    dotest server-15 "${testcvs} server" "ok" <<EOF
 Root ${TESTDIR}/crerepos
 Directory .
 ${TESTDIR}/crerepos/dir1
 editors
 EOF
-	      dotest server-15 "cat ${TESTDIR}/server.tmp" \
-"ok"
-	    else
-	      echo "exit status was $?" >>${LOGFILE}
-	      fail server-15
-	    fi
 
 	    if test "$keep" = yes; then
 	      echo Keeping ${TESTDIR} and exiting due to --keep
@@ -20377,7 +20095,6 @@ EOF
 
 	    rm -rf ${TESTDIR}/crerepos
 	    rm gzipped.dat session.dat
-	    rm ${TESTDIR}/server.tmp
 	  fi # skip the whole thing for local
 	  ;;
 
@@ -20385,66 +20102,46 @@ EOF
 	  # More server tests, in particular testing that various
 	  # possible security holes are plugged.
 	  if test "$remote" = yes; then
-	    if ${testcvs} server >${TESTDIR}/server.tmp <<EOF; then
+	    dotest server2-1 "${testcvs} server" \
+"E protocol error: directory '${TESTDIR}/cvsroot/\.\./dir1' not within root '${TESTDIR}/cvsroot'
+error  " <<EOF
 Root ${TESTDIR}/cvsroot
 Directory .
 ${TESTDIR}/cvsroot/../dir1
 noop
 EOF
-	      dotest server2-1 "cat ${TESTDIR}/server.tmp" \
-"E protocol error: directory '${TESTDIR}/cvsroot/\.\./dir1' not within root '${TESTDIR}/cvsroot'
-error  "
-	    else
-	      echo "exit status was $?" >>${LOGFILE}
-	      fail server2-1
-	    fi
 
-	    if ${testcvs} server >${TESTDIR}/server.tmp <<EOF; then
+	    dotest server2-2 "${testcvs} server" \
+"E protocol error: directory '${TESTDIR}/cvsrootdir1' not within root '${TESTDIR}/cvsroot'
+error  " <<EOF
 Root ${TESTDIR}/cvsroot
 Directory .
 ${TESTDIR}/cvsrootdir1
 noop
 EOF
-	      dotest server2-2 "cat ${TESTDIR}/server.tmp" \
-"E protocol error: directory '${TESTDIR}/cvsrootdir1' not within root '${TESTDIR}/cvsroot'
-error  "
-	    else
-	      echo "exit status was $?" >>${LOGFILE}
-	      fail server2-2
-	    fi
 
-	    if ${testcvs} server >${TESTDIR}/server.tmp <<EOF; then
+	    dotest 2-3 "${testcvs} server" \
+"E protocol error: directory '${TESTDIR}' not within root '${TESTDIR}/cvsroot'
+error  " <<EOF
 Root ${TESTDIR}/cvsroot
 Directory .
 ${TESTDIR}
 noop
 EOF
-	      dotest server2-3 "cat ${TESTDIR}/server.tmp" \
-"E protocol error: directory '${TESTDIR}' not within root '${TESTDIR}/cvsroot'
-error  "
-	    else
-	      echo "exit status was $?" >>${LOGFILE}
-	      fail server2-3
-	    fi
 
 	    # OK, now a few tests for the rule that one cannot pass a
 	    # filename containing a slash to Modified, Is-modified,
 	    # Notify, Questionable, or Unchanged.  For completeness
 	    # we'd try them all.  For lazyness/conciseness we don't.
-	    if ${testcvs} server >${TESTDIR}/server.tmp <<EOF; then
+	    dotest server2-4 "${testcvs} server" \
+"E protocol error: directory 'foo/bar' not within current directory
+error  " <<EOF
 Root ${TESTDIR}/cvsroot
 Directory .
 ${TESTDIR}/cvsroot
 Unchanged foo/bar
 noop
 EOF
-	      dotest server2-4 "cat ${TESTDIR}/server.tmp" \
-"E protocol error: directory 'foo/bar' not within current directory
-error  "
-	    else
-	      echo "exit status was $?" >>${LOGFILE}
-	      fail server2-4
-	    fi
 	  fi
 	  ;;
 
