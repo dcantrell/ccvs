@@ -1,3 +1,14 @@
+2004-11-02  Mark D. Baushke  <mdb@cvshome.org>
+
+	* config.h.in.in (HAVE_DECL_FLOCKFILE, HAVE_DECL_FUNLOCKFILE,
+	HAVE_ENVIRON_DECL, HAVE_ERRNO_DECL, HAVE_SEARCH_H, HAVE_SETENV,
+	HAVE_TSEARCH, HAVE_UNSETENV, MALLOC_0_IS_NONNULL, VOID_UNSETENV):
+	Add new config options from top-level config.h.in using #undef.
+	Some of these probably exist under Windows and need to be defined.
+	(nanosleep): Move into alphabetical order.
+	(TRUST_OS_FILE_CACHE): Removed as obsolete.
+	* config.h.in, config.h, stamp-chi: Regenerated.
+	
 2004-10-30  Mark D. Baushke  <mdb@juniper.net>
 
 	* config.h.in.in, config.h.in, config.h: Regenerated
