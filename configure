@@ -7949,6 +7949,68 @@ _ACEOF
 
    fi
 
+  echo "$as_me:$LINENO: checking for ssize_t" >&5
+echo $ECHO_N "checking for ssize_t... $ECHO_C" >&6
+if test "${gt_cv_ssize_t+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+#include <sys/types.h>
+int
+main ()
+{
+int x = sizeof (ssize_t *) + sizeof (ssize_t);
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext
+if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
+  (eval $ac_compile) 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } &&
+	 { ac_try='test -z "$ac_c_werror_flag"
+			 || test ! -s conftest.err'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; } &&
+	 { ac_try='test -s conftest.$ac_objext'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then
+  gt_cv_ssize_t=yes
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+gt_cv_ssize_t=no
+fi
+rm -f conftest.err conftest.$ac_objext conftest.$ac_ext
+fi
+echo "$as_me:$LINENO: result: $gt_cv_ssize_t" >&5
+echo "${ECHO_T}$gt_cv_ssize_t" >&6
+  if test $gt_cv_ssize_t = no; then
+
+cat >>confdefs.h <<\_ACEOF
+#define ssize_t int
+_ACEOF
+
+  fi
+
+
 
 
 
@@ -11608,6 +11670,327 @@ _ACEOF
 
   fi
 
+
+
+
+
+  am_getline_needs_run_time_check=no
+  echo "$as_me:$LINENO: checking for getline" >&5
+echo $ECHO_N "checking for getline... $ECHO_C" >&6
+if test "${ac_cv_func_getline+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+/* Define getline to an innocuous variant, in case <limits.h> declares getline.
+   For example, HP-UX 11i <limits.h> declares gettimeofday.  */
+#define getline innocuous_getline
+
+/* System header to define __stub macros and hopefully few prototypes,
+    which can conflict with char getline (); below.
+    Prefer <limits.h> to <assert.h> if __STDC__ is defined, since
+    <limits.h> exists even on freestanding compilers.  */
+
+#ifdef __STDC__
+# include <limits.h>
+#else
+# include <assert.h>
+#endif
+
+#undef getline
+
+/* Override any gcc2 internal prototype to avoid an error.  */
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+/* We use char because int might match the return type of a gcc2
+   builtin and then its argument prototype would still apply.  */
+char getline ();
+/* The GNU C library defines this for functions which it implements
+    to always fail with ENOSYS.  Some functions are actually named
+    something starting with __ and the normal name is an alias.  */
+#if defined (__stub_getline) || defined (__stub___getline)
+choke me
+#else
+char (*f) () = getline;
+#endif
+#ifdef __cplusplus
+}
+#endif
+
+int
+main ()
+{
+return f != getline;
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext conftest$ac_exeext
+if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
+  (eval $ac_link) 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } &&
+	 { ac_try='test -z "$ac_c_werror_flag"
+			 || test ! -s conftest.err'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; } &&
+	 { ac_try='test -s conftest$ac_exeext'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then
+  ac_cv_func_getline=yes
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+ac_cv_func_getline=no
+fi
+rm -f conftest.err conftest.$ac_objext \
+      conftest$ac_exeext conftest.$ac_ext
+fi
+echo "$as_me:$LINENO: result: $ac_cv_func_getline" >&5
+echo "${ECHO_T}$ac_cv_func_getline" >&6
+if test $ac_cv_func_getline = yes; then
+  		am_getline_needs_run_time_check=yes
+else
+  am_cv_func_working_getline=no
+fi
+
+  if test $am_getline_needs_run_time_check = yes; then
+    echo "$as_me:$LINENO: checking for working getline function" >&5
+echo $ECHO_N "checking for working getline function... $ECHO_C" >&6
+if test "${am_cv_func_working_getline+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  echo fooN |tr -d '\012'|tr N '\012' > conftest.data
+    if test "$cross_compiling" = yes; then
+  am_cv_func_working_getline=no
+else
+  cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+
+#    include <stdio.h>
+#    include <stdlib.h>
+#    include <string.h>
+    int main ()
+    { /* Based on a test program from Karl Heuer.  */
+      char *line = NULL;
+      size_t siz = 0;
+      int len;
+      FILE *in = fopen ("./conftest.data", "r");
+      if (!in)
+	return 1;
+      len = getline (&line, &siz, in);
+      exit ((len == 4 && line && strcmp (line, "foo\n") == 0) ? 0 : 1);
+    }
+
+_ACEOF
+rm -f conftest$ac_exeext
+if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
+  (eval $ac_link) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } && { ac_try='./conftest$ac_exeext'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then
+  am_cv_func_working_getline=yes
+else
+  echo "$as_me: program exited with status $ac_status" >&5
+echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+( exit $ac_status )
+am_cv_func_working_getline=no
+fi
+rm -f core *.core gmon.out bb.out conftest$ac_exeext conftest.$ac_objext conftest.$ac_ext
+fi
+fi
+echo "$as_me:$LINENO: result: $am_cv_func_working_getline" >&5
+echo "${ECHO_T}$am_cv_func_working_getline" >&6
+  fi
+
+  if test $am_cv_func_working_getline = no; then
+
+cat >>confdefs.h <<\_ACEOF
+#define getline gnu_getline
+_ACEOF
+
+    case $LIBOBJS in
+    "getline.$ac_objext"   | \
+  *" getline.$ac_objext"   | \
+    "getline.$ac_objext "* | \
+  *" getline.$ac_objext "* ) ;;
+  *) LIBOBJS="$LIBOBJS getline.$ac_objext" ;;
+esac
+
+
+    # Avoid multiple inclusions of getndelim2.o into LIBOBJS.
+    # This hack won't be needed after gnulib requires Autoconf 2.58 or later.
+    case " $LIBOBJS " in
+    *" getndelim2.$ac_objext "* ) ;;
+    *) case $LIBOBJS in
+    "getndelim2.$ac_objext"   | \
+  *" getndelim2.$ac_objext"   | \
+    "getndelim2.$ac_objext "* | \
+  *" getndelim2.$ac_objext "* ) ;;
+  *) LIBOBJS="$LIBOBJS getndelim2.$ac_objext" ;;
+esac
+;;
+    esac
+
+
+
+for ac_func in getdelim
+do
+as_ac_var=`echo "ac_cv_func_$ac_func" | $as_tr_sh`
+echo "$as_me:$LINENO: checking for $ac_func" >&5
+echo $ECHO_N "checking for $ac_func... $ECHO_C" >&6
+if eval "test \"\${$as_ac_var+set}\" = set"; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+/* Define $ac_func to an innocuous variant, in case <limits.h> declares $ac_func.
+   For example, HP-UX 11i <limits.h> declares gettimeofday.  */
+#define $ac_func innocuous_$ac_func
+
+/* System header to define __stub macros and hopefully few prototypes,
+    which can conflict with char $ac_func (); below.
+    Prefer <limits.h> to <assert.h> if __STDC__ is defined, since
+    <limits.h> exists even on freestanding compilers.  */
+
+#ifdef __STDC__
+# include <limits.h>
+#else
+# include <assert.h>
+#endif
+
+#undef $ac_func
+
+/* Override any gcc2 internal prototype to avoid an error.  */
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+/* We use char because int might match the return type of a gcc2
+   builtin and then its argument prototype would still apply.  */
+char $ac_func ();
+/* The GNU C library defines this for functions which it implements
+    to always fail with ENOSYS.  Some functions are actually named
+    something starting with __ and the normal name is an alias.  */
+#if defined (__stub_$ac_func) || defined (__stub___$ac_func)
+choke me
+#else
+char (*f) () = $ac_func;
+#endif
+#ifdef __cplusplus
+}
+#endif
+
+int
+main ()
+{
+return f != $ac_func;
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext conftest$ac_exeext
+if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
+  (eval $ac_link) 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } &&
+	 { ac_try='test -z "$ac_c_werror_flag"
+			 || test ! -s conftest.err'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; } &&
+	 { ac_try='test -s conftest$ac_exeext'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then
+  eval "$as_ac_var=yes"
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+eval "$as_ac_var=no"
+fi
+rm -f conftest.err conftest.$ac_objext \
+      conftest$ac_exeext conftest.$ac_ext
+fi
+echo "$as_me:$LINENO: result: `eval echo '${'$as_ac_var'}'`" >&5
+echo "${ECHO_T}`eval echo '${'$as_ac_var'}'`" >&6
+if test `eval echo '${'$as_ac_var'}'` = yes; then
+  cat >>confdefs.h <<_ACEOF
+#define `echo "HAVE_$ac_func" | $as_tr_cpp` 1
+_ACEOF
+
+fi
+done
+
+
+
+
+
+  fi
+
+
+  # Avoid multiple inclusions of getndelim2.o into LIBOBJS.
+  # This hack won't be needed after gnulib requires Autoconf 2.58 or later.
+  case " $LIBOBJS " in
+  *" getndelim2.$ac_objext "* ) ;;
+  *) case $LIBOBJS in
+    "getndelim2.$ac_objext"   | \
+  *" getndelim2.$ac_objext"   | \
+    "getndelim2.$ac_objext "* | \
+  *" getndelim2.$ac_objext "* ) ;;
+  *) LIBOBJS="$LIBOBJS getndelim2.$ac_objext" ;;
+esac
+;;
+  esac
+
+
+
+
+
+
+
+    :
 
 
   :
@@ -15803,366 +16186,6 @@ _ACEOF
 fi
 
 
-  echo "$as_me:$LINENO: checking for ssize_t" >&5
-echo $ECHO_N "checking for ssize_t... $ECHO_C" >&6
-if test "${gt_cv_ssize_t+set}" = set; then
-  echo $ECHO_N "(cached) $ECHO_C" >&6
-else
-  cat >conftest.$ac_ext <<_ACEOF
-/* confdefs.h.  */
-_ACEOF
-cat confdefs.h >>conftest.$ac_ext
-cat >>conftest.$ac_ext <<_ACEOF
-/* end confdefs.h.  */
-#include <sys/types.h>
-int
-main ()
-{
-int x = sizeof (ssize_t *) + sizeof (ssize_t);
-  ;
-  return 0;
-}
-_ACEOF
-rm -f conftest.$ac_objext
-if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
-  (eval $ac_compile) 2>conftest.er1
-  ac_status=$?
-  grep -v '^ *+' conftest.er1 >conftest.err
-  rm -f conftest.er1
-  cat conftest.err >&5
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); } &&
-	 { ac_try='test -z "$ac_c_werror_flag"
-			 || test ! -s conftest.err'
-  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
-  (eval $ac_try) 2>&5
-  ac_status=$?
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); }; } &&
-	 { ac_try='test -s conftest.$ac_objext'
-  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
-  (eval $ac_try) 2>&5
-  ac_status=$?
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); }; }; then
-  gt_cv_ssize_t=yes
-else
-  echo "$as_me: failed program was:" >&5
-sed 's/^/| /' conftest.$ac_ext >&5
-
-gt_cv_ssize_t=no
-fi
-rm -f conftest.err conftest.$ac_objext conftest.$ac_ext
-fi
-echo "$as_me:$LINENO: result: $gt_cv_ssize_t" >&5
-echo "${ECHO_T}$gt_cv_ssize_t" >&6
-  if test $gt_cv_ssize_t = no; then
-
-cat >>confdefs.h <<\_ACEOF
-#define ssize_t int
-_ACEOF
-
-  fi
-
-
-
-
-  am_getline_needs_run_time_check=no
-  echo "$as_me:$LINENO: checking for getline" >&5
-echo $ECHO_N "checking for getline... $ECHO_C" >&6
-if test "${ac_cv_func_getline+set}" = set; then
-  echo $ECHO_N "(cached) $ECHO_C" >&6
-else
-  cat >conftest.$ac_ext <<_ACEOF
-/* confdefs.h.  */
-_ACEOF
-cat confdefs.h >>conftest.$ac_ext
-cat >>conftest.$ac_ext <<_ACEOF
-/* end confdefs.h.  */
-/* Define getline to an innocuous variant, in case <limits.h> declares getline.
-   For example, HP-UX 11i <limits.h> declares gettimeofday.  */
-#define getline innocuous_getline
-
-/* System header to define __stub macros and hopefully few prototypes,
-    which can conflict with char getline (); below.
-    Prefer <limits.h> to <assert.h> if __STDC__ is defined, since
-    <limits.h> exists even on freestanding compilers.  */
-
-#ifdef __STDC__
-# include <limits.h>
-#else
-# include <assert.h>
-#endif
-
-#undef getline
-
-/* Override any gcc2 internal prototype to avoid an error.  */
-#ifdef __cplusplus
-extern "C"
-{
-#endif
-/* We use char because int might match the return type of a gcc2
-   builtin and then its argument prototype would still apply.  */
-char getline ();
-/* The GNU C library defines this for functions which it implements
-    to always fail with ENOSYS.  Some functions are actually named
-    something starting with __ and the normal name is an alias.  */
-#if defined (__stub_getline) || defined (__stub___getline)
-choke me
-#else
-char (*f) () = getline;
-#endif
-#ifdef __cplusplus
-}
-#endif
-
-int
-main ()
-{
-return f != getline;
-  ;
-  return 0;
-}
-_ACEOF
-rm -f conftest.$ac_objext conftest$ac_exeext
-if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
-  (eval $ac_link) 2>conftest.er1
-  ac_status=$?
-  grep -v '^ *+' conftest.er1 >conftest.err
-  rm -f conftest.er1
-  cat conftest.err >&5
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); } &&
-	 { ac_try='test -z "$ac_c_werror_flag"
-			 || test ! -s conftest.err'
-  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
-  (eval $ac_try) 2>&5
-  ac_status=$?
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); }; } &&
-	 { ac_try='test -s conftest$ac_exeext'
-  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
-  (eval $ac_try) 2>&5
-  ac_status=$?
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); }; }; then
-  ac_cv_func_getline=yes
-else
-  echo "$as_me: failed program was:" >&5
-sed 's/^/| /' conftest.$ac_ext >&5
-
-ac_cv_func_getline=no
-fi
-rm -f conftest.err conftest.$ac_objext \
-      conftest$ac_exeext conftest.$ac_ext
-fi
-echo "$as_me:$LINENO: result: $ac_cv_func_getline" >&5
-echo "${ECHO_T}$ac_cv_func_getline" >&6
-if test $ac_cv_func_getline = yes; then
-  		am_getline_needs_run_time_check=yes
-else
-  am_cv_func_working_getline=no
-fi
-
-  if test $am_getline_needs_run_time_check = yes; then
-    echo "$as_me:$LINENO: checking for working getline function" >&5
-echo $ECHO_N "checking for working getline function... $ECHO_C" >&6
-if test "${am_cv_func_working_getline+set}" = set; then
-  echo $ECHO_N "(cached) $ECHO_C" >&6
-else
-  echo fooN |tr -d '\012'|tr N '\012' > conftest.data
-    if test "$cross_compiling" = yes; then
-  am_cv_func_working_getline=no
-else
-  cat >conftest.$ac_ext <<_ACEOF
-/* confdefs.h.  */
-_ACEOF
-cat confdefs.h >>conftest.$ac_ext
-cat >>conftest.$ac_ext <<_ACEOF
-/* end confdefs.h.  */
-
-#    include <stdio.h>
-#    include <stdlib.h>
-#    include <string.h>
-    int main ()
-    { /* Based on a test program from Karl Heuer.  */
-      char *line = NULL;
-      size_t siz = 0;
-      int len;
-      FILE *in = fopen ("./conftest.data", "r");
-      if (!in)
-	return 1;
-      len = getline (&line, &siz, in);
-      exit ((len == 4 && line && strcmp (line, "foo\n") == 0) ? 0 : 1);
-    }
-
-_ACEOF
-rm -f conftest$ac_exeext
-if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
-  (eval $ac_link) 2>&5
-  ac_status=$?
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); } && { ac_try='./conftest$ac_exeext'
-  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
-  (eval $ac_try) 2>&5
-  ac_status=$?
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); }; }; then
-  am_cv_func_working_getline=yes
-else
-  echo "$as_me: program exited with status $ac_status" >&5
-echo "$as_me: failed program was:" >&5
-sed 's/^/| /' conftest.$ac_ext >&5
-
-( exit $ac_status )
-am_cv_func_working_getline=no
-fi
-rm -f core *.core gmon.out bb.out conftest$ac_exeext conftest.$ac_objext conftest.$ac_ext
-fi
-fi
-echo "$as_me:$LINENO: result: $am_cv_func_working_getline" >&5
-echo "${ECHO_T}$am_cv_func_working_getline" >&6
-  fi
-
-  if test $am_cv_func_working_getline = no; then
-
-cat >>confdefs.h <<\_ACEOF
-#define getline gnu_getline
-_ACEOF
-
-    case $LIBOBJS in
-    "getline.$ac_objext"   | \
-  *" getline.$ac_objext"   | \
-    "getline.$ac_objext "* | \
-  *" getline.$ac_objext "* ) ;;
-  *) LIBOBJS="$LIBOBJS getline.$ac_objext" ;;
-esac
-
-
-    # Avoid multiple inclusions of getndelim2.o into LIBOBJS.
-    # This hack won't be needed after gnulib requires Autoconf 2.58 or later.
-    case " $LIBOBJS " in
-    *" getndelim2.$ac_objext "* ) ;;
-    *) case $LIBOBJS in
-    "getndelim2.$ac_objext"   | \
-  *" getndelim2.$ac_objext"   | \
-    "getndelim2.$ac_objext "* | \
-  *" getndelim2.$ac_objext "* ) ;;
-  *) LIBOBJS="$LIBOBJS getndelim2.$ac_objext" ;;
-esac
-;;
-    esac
-
-
-
-for ac_func in getdelim
-do
-as_ac_var=`echo "ac_cv_func_$ac_func" | $as_tr_sh`
-echo "$as_me:$LINENO: checking for $ac_func" >&5
-echo $ECHO_N "checking for $ac_func... $ECHO_C" >&6
-if eval "test \"\${$as_ac_var+set}\" = set"; then
-  echo $ECHO_N "(cached) $ECHO_C" >&6
-else
-  cat >conftest.$ac_ext <<_ACEOF
-/* confdefs.h.  */
-_ACEOF
-cat confdefs.h >>conftest.$ac_ext
-cat >>conftest.$ac_ext <<_ACEOF
-/* end confdefs.h.  */
-/* Define $ac_func to an innocuous variant, in case <limits.h> declares $ac_func.
-   For example, HP-UX 11i <limits.h> declares gettimeofday.  */
-#define $ac_func innocuous_$ac_func
-
-/* System header to define __stub macros and hopefully few prototypes,
-    which can conflict with char $ac_func (); below.
-    Prefer <limits.h> to <assert.h> if __STDC__ is defined, since
-    <limits.h> exists even on freestanding compilers.  */
-
-#ifdef __STDC__
-# include <limits.h>
-#else
-# include <assert.h>
-#endif
-
-#undef $ac_func
-
-/* Override any gcc2 internal prototype to avoid an error.  */
-#ifdef __cplusplus
-extern "C"
-{
-#endif
-/* We use char because int might match the return type of a gcc2
-   builtin and then its argument prototype would still apply.  */
-char $ac_func ();
-/* The GNU C library defines this for functions which it implements
-    to always fail with ENOSYS.  Some functions are actually named
-    something starting with __ and the normal name is an alias.  */
-#if defined (__stub_$ac_func) || defined (__stub___$ac_func)
-choke me
-#else
-char (*f) () = $ac_func;
-#endif
-#ifdef __cplusplus
-}
-#endif
-
-int
-main ()
-{
-return f != $ac_func;
-  ;
-  return 0;
-}
-_ACEOF
-rm -f conftest.$ac_objext conftest$ac_exeext
-if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
-  (eval $ac_link) 2>conftest.er1
-  ac_status=$?
-  grep -v '^ *+' conftest.er1 >conftest.err
-  rm -f conftest.er1
-  cat conftest.err >&5
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); } &&
-	 { ac_try='test -z "$ac_c_werror_flag"
-			 || test ! -s conftest.err'
-  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
-  (eval $ac_try) 2>&5
-  ac_status=$?
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); }; } &&
-	 { ac_try='test -s conftest$ac_exeext'
-  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
-  (eval $ac_try) 2>&5
-  ac_status=$?
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); }; }; then
-  eval "$as_ac_var=yes"
-else
-  echo "$as_me: failed program was:" >&5
-sed 's/^/| /' conftest.$ac_ext >&5
-
-eval "$as_ac_var=no"
-fi
-rm -f conftest.err conftest.$ac_objext \
-      conftest$ac_exeext conftest.$ac_ext
-fi
-echo "$as_me:$LINENO: result: `eval echo '${'$as_ac_var'}'`" >&5
-echo "${ECHO_T}`eval echo '${'$as_ac_var'}'`" >&6
-if test `eval echo '${'$as_ac_var'}'` = yes; then
-  cat >>confdefs.h <<_ACEOF
-#define `echo "HAVE_$ac_func" | $as_tr_cpp` 1
-_ACEOF
-
-fi
-done
-
-
-
-
-
-  fi
-
-
 
 for ac_func in gethostname
 do
@@ -20139,29 +20162,6 @@ fi
 
 
 
-
-
-  # Avoid multiple inclusions of getndelim2.o into LIBOBJS.
-  # This hack won't be needed after gnulib requires Autoconf 2.58 or later.
-  case " $LIBOBJS " in
-  *" getndelim2.$ac_objext "* ) ;;
-  *) case $LIBOBJS in
-    "getndelim2.$ac_objext"   | \
-  *" getndelim2.$ac_objext"   | \
-    "getndelim2.$ac_objext "* | \
-  *" getndelim2.$ac_objext "* ) ;;
-  *) LIBOBJS="$LIBOBJS getndelim2.$ac_objext" ;;
-esac
-;;
-  esac
-
-
-
-
-
-
-
-    :
 
 
 

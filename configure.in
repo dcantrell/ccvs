@@ -212,7 +212,6 @@ AM_GNU_GETTEXT([external])
 AM_GNU_GETTEXT_VERSION dnl work around for autoconf-2.57 bug.
 AC_FUNC_GETTIMEOFDAY_CLOBBER
 AC_FUNC_STRERROR_R
-AM_FUNC_GETLINE
 gl_FUNC_GETHOSTNAME
 dnl Always use the GNULIB getpass to work around 8 character password limits on
 dnl HP-UX.
@@ -225,8 +224,6 @@ gl_FUNC_NANOSLEEP
 gl_FUNC_STRERROR
 gl_FUNC_TZSET_CLOBBER
 gl_GETDATE
-gl_GETNDELIM2
-gl_GETNLINE
 gl_GETTIME
 gl_TIME_R
 gl_TIMESPEC
