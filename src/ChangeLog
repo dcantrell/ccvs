@@ -1,3 +1,9 @@
+Thu Feb  6 10:55:37 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* diff.c (diff): Also send "options" to server.  Pretty much the
+	patch submitted independently by josef.nelissen@munich.ixos.de and
+	Ronald Khoo <ronald@demon.net>.
+
 Wed Feb  5 18:57:14 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* modules.c (do_module): Fix typo in 30 Jan 97 PATH_MAX nuking
