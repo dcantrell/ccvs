@@ -1,3 +1,7 @@
+1999-05-17  Jim Kingdon  <http://www.cyclic.com>
+
+	* version.c: Version 1.10.6.
+
 1999-05-16  Jim Kingdon  <http://www.cyclic.com>
 
 	* update.c (patch_file): When we are passing vn_rcs to
