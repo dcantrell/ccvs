@@ -22285,7 +22285,15 @@ if test $keep = yes; then
 fi
 
 # Remove the test directory, but first change out of it.
-cd
+#
+# FIXME
+# I've never heard a bug report, so I guess it's probably not a big problem,
+# but we don't require TESTDIR be a child of '/tmp'.  Therefore, we should
+# probably be cd'ing somewhere we know is safe like `dirname ${TESTDIR}`, the
+# ${HOME} from before this script sets it, or '/'.  I'm avoiding the simple
+# '/' solution because I don't want some user running this script as root,
+# setting TESTDIR=etc, TESTDIR=., or the like, and flaming us.
+cd /tmp
 rm -rf ${TESTDIR}
 
 # end of sanity.sh
