@@ -1,3 +1,10 @@
+2001-08-07  Derek Price  <dprice@collab.net>
+
+	* build_vms.com: Verify.
+	* filesubr.c: Cut/paste 1.11.1 cvs_temp_file, cvs_temp_name from
+	../src/filesubr.c.   Include assert.h so that assert's work.
+	(Patch from Mike Marciniszyn <Mike.Marciniszyn@sanchez.com>.)
+
 2001-08-06  Derek Price  <dprice@collab.net>
 
 	* Makefile.in: Regenerated.
