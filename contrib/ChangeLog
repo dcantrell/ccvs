@@ -1,6 +1,10 @@
 2003-02-24  Larry Jones  <lawrence.jones@eds.com>
 	and Donald Sharp <sharpd@cisco.com>
 
+	* check_cvs.in: Filenames with funky characters need to be quoted
+	correctly.  Also needed to modify regex due to locked revisions of
+	files cause output to be different.
+
 	* check_cvs.in: Fixed multiple symlinks in your cvsroot,
 	improved CVSROOT/CVSROOT handling (Patch from Shlomo Reinstein
 	<shlomo.reinstein@intel.com).  Fixed retrieving revisions of ,v
