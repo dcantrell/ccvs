@@ -1,3 +1,8 @@
+2003-02-26  Larry Jones  <lawrence.jones@eds.com>
+
+	* checkout.c (checkout): Send "--" before file names.
+	* sanity.sh (spacefiles): Remote now works just like local.
+
 2003-02-25  Derek Price  <derek@ximbiot.com>
 
 	* sanity.sh (rcs4): Use UTC to work across timezones.
