@@ -17,7 +17,7 @@ i386 family:
 	Gateway P5-66 (pentium) running Solaris 2.4 using gcc (about 1.4A2)
 	PC Clone running UnixWare v1.1.1 using gcc (about 1.4A2)
 	PC Clone running ISC 4.0.1 (1.4.93) (footnote 5)
-        PC Clone running Fintronic Linux 1.2.5 (1.4.93)
+        PC Clone running Fintronic Linux 1.2.5 (1.5)
         PC Clone running BSDI 2.0 (1.4.93) (footnote 6)
 	NextSTEP 3.3 (1.4.92, a few tweaks needed)
 	SCO Unix 3.2.4.2 (1.4.93) (footnote 4)
@@ -25,7 +25,7 @@ m68k:
 	NextSTEP 3.3 (1.4.92, a few tweaks needed)
 MIPS:
 	DECstation running Ultrix 4.2a (1.4.90)
-	DECstation running Ultrix 4.3 (1.4.90)
+	DECstation running Ultrix 4.3 (1.5)
 	SGI running Irix 4.0.5H using gcc and cc (about 1.4A2) (footnote 2)
 	SGI running Irix 5.3 (1.4.93)
 	SGI running Irix-6 (about 1.4.90) (footnote 3)
