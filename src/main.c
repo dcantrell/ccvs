@@ -60,7 +60,7 @@ int UseNewInfoFmtStrings = 0;
 #endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
 #ifdef PROXY_SUPPORT
 cvsroot_t *PrimaryServer;
-size_t MaxSecondaryBufferSize = (size_t)0; /* 0 bytes = disabled. */
+size_t MaxProxyBufferSize = (size_t)0; /* 0 bytes = disabled. */
 #endif /* PROXY_SUPPORT */
 
 

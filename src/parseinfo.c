@@ -449,7 +449,7 @@ warning: this CVS does not support PreservePermissions");
 "Only PrimaryServers with :ext: methods are valid, not `%s'.",
 		       p);
 	}
-	else if (strcmp (line, "MaxSecondaryBufferSize") == 0)
+	else if (strcmp (line, "MaxProxyBufferSize") == 0)
 	{
 	    size_t factor = 1;
 	    char *q = p;
@@ -471,7 +471,7 @@ warning: this CVS does not support PreservePermissions");
 		{
 		    char *pinfopath = primary_root_inverse_translate (infopath);
 		    error (0, 0,
-"%s: Unknown MaxSecondaryBufferSize factor: `%c'",
+"%s: Unknown MaxProxyBufferSize factor: `%c'",
 			   pinfopath, p[strlen(p)]);
 		    free (pinfopath);
 		}
@@ -484,7 +484,7 @@ warning: this CVS does not support PreservePermissions");
 		{
 		    char *pinfopath = primary_root_inverse_translate (infopath);
 		    error (0, 0,
-"%s: MaxSecondaryBufferSize must be a postitive integer, not '%s'",
+"%s: MaxProxyBufferSize must be a postitive integer, not '%s'",
 			   pinfopath, p);
 		    free (pinfopath);
 		}
@@ -492,8 +492,8 @@ warning: this CVS does not support PreservePermissions");
 	    }
 
 	    /* Compute final value.  */
-	    MaxSecondaryBufferSize = strtoul (p, NULL, 10);
-	    MaxSecondaryBufferSize = xtimes (MaxSecondaryBufferSize, factor);
+	    MaxProxyBufferSize = strtoul (p, NULL, 10);
+	    MaxProxyBufferSize = xtimes (MaxProxyBufferSize, factor);
 	}
 #endif /* PROXY_SUPPORT */
 	else
