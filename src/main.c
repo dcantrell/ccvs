@@ -577,7 +577,7 @@ main (int argc, char **argv)
 		version (0, NULL);    
 		fputs (
 "\n"
-"Copyright (c) 1989-2003 Brian Berliner, david d `zoo' zuhn,\n"
+"Copyright (c) 1989-2004 Brian Berliner, david d `zoo' zuhn,\n"
 "                        Jeff Polk, and other authors\n"
 "\n"
 "CVS may be copied only under the terms of the GNU General Public License,\n"
