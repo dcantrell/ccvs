@@ -1,3 +1,9 @@
+Tue Oct 24 13:51:05 1995  Norbert Kiesel  <nk@col.sw-ley.de>
+
+	* Makefile.in: add autoconf variables
+
+	* Makefile.in (dist): use $(srcdir)
+
 Mon Oct 23 17:37:36 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
         * Makefile.in (clean): new rule.
