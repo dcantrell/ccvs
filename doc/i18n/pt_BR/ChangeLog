@@ -1,3 +1,7 @@
+2004-12-14  Derek Price  <derek@ximbiot.com>
+
+	* .cvsignore, Makefile.am: New files.
+
 2004-12-07  Mark D. Baushke  <mdb@cvshome.org>
 
 	* cvs.texinfo (BUGS, What is CVS?): Remove references to Dr.
