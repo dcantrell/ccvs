@@ -1,5 +1,9 @@
 2004-06-10  Derek Price  <derek@ximbiot.com>
 
+	* writeproxy.rtf: Update with latest modifications.
+
+2004-06-10  Derek Price  <derek@ximbiot.com>
+
 	* cvs.texinfo (Write proxies): Reference new script hooks.
 	(Administrative files): Move relevant parts of FIXME and references to
 	*info files...
