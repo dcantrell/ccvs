@@ -50,7 +50,8 @@ MOSTLYCLEANFILES = \
 # These Automake generates MOSTLYCLEAN targets for PostScripts genersted from
 # TEXINFOS, but it shouldn't when those files are in EXTRA_DIST
 MAINTAINERCLEANFILES = \
-	$(PSS)
+	$(PSS) \
+	cvs.1
 
 doc: info ps
 .PHONY: doc
@@ -81,7 +82,9 @@ cvs-paper.pdf: cvs-paper.ps
 # Targets to build a man page from cvs.texinfo.
 cvs.1: @MAINTAINER_MODE_TRUE@ mkman cvs.man.header cvs.texinfo cvs.man.footer
 	$(PERL) ./mkman $(srcdir)/cvs.man.header $(srcdir)/cvs.texinfo \
-		$(srcdir)/cvs.man.footer >$@
+		$(srcdir)/cvs.man.footer >cvs.tmp
+	cp cvs.tmp $(srcdir)/$@
+	-@rm -f cvs.tmp
 
 # texinfo based targets automake neglects to include
 SUFFIXES = .txt
