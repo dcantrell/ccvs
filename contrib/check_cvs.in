@@ -431,7 +431,7 @@ sub look_at_cvs_file
 #      $file - The file to retrieve the revision numbers for
 #
 #    GLOBALS :
-#      NONE
+#      $cvsroot - the CVSROOT we are examining
 #
 #    RETURNS :
 #      On Success - A hash of revision info, indexed by revision numbers.
@@ -452,7 +452,7 @@ sub get_history
 	my %rinfo;		# Info about revisions in the file.
 	my $revision;
 
-	my $fh = new IO::File( "cvs rlog -N \"$file\" 2>&1 |" )
+	my $fh = new IO::File( "cvs -d $cvsroot rlog -N \"$file\" 2>&1 |" )
 		or die( "unable to run `cvs rlog', help" );
 
 	my $ignore = -1;
