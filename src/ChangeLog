@@ -1,3 +1,16 @@
+2004-02-03  Derek Price  <derek@ximbiot.com>
+
+	Preserve the case of checked out directories in a path as well as file
+	names for client communication with the server.
+
+	* Makefile.am (cvs_SOURCES): Add stack.c & stack.h.
+	* stack.c, stack.h: New files.
+	* cvs.h: Include stack.h.
+	* client.c (send_file_names): Preserve the case of directories in a
+	path as well as file names for communication with the server.
+
+	* Makefile.in: Regenerated.
+
 2004-02-04  Derek Price  <derek@ximbiot.com>
 
 	* checkout.c (find_fileproc): Update error message for consistency.

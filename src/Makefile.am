@@ -71,6 +71,7 @@ cvs_SOURCES = \
 	scramble.c \
 	server.c \
 	socket-client.c socket-client.h \
+	stack.c stack.h \
 	status.c \
 	subr.c \
 	tag.c \

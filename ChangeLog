@@ -1,3 +1,7 @@
+2004-02-03  Derek Price  <derek@ximbiot.com>
+
+	* NEWS: Note case insensitive client directory case preservation.
+
 2004-02-02  Derek Price  <derek@ximbiot.com>
 
 	* NEWS: Correct "error message" from two commits back to read
