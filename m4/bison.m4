@@ -2,6 +2,10 @@
 
 AC_DEFUN([gl_BISON],
 [
+  dnl All this cruft, which tries to fail harmlessly when bison is not present,
+  dnl will no be necessary after we require an Automake release later than
+  dnl 2.59, as those avoid generating .c files from .y when not in maintainer
+  dnl mode.  This is currently a fork from the GNULIB version of this file.
   # getdate.y works with bison only.
   AM_MISSING_PROG(YACC, bison -y)
   AC_ARG_VAR(YACC,
