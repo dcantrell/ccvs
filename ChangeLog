@@ -1,3 +1,8 @@
+2002-12-16  Derek Price  <derek@ximbiot.com>
+
+	* INSTALL: Add a platform to the tested platforms list.
+	(Thanks to Johan Vermeire <Johan.Vermeire@skynet.be>.)
+
 2002-12-04  Derek Price  <derek@ximbiot.com>
 
 	* configure.in: Add --with switch for specifying CVS_ADMIN_GROUP.
