@@ -1,3 +1,15 @@
+Wed Jun 19 15:41:11 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (Administrative files): Add xref to Intro
+	administrative files.
+	(Intro administrative files): Add comment suggesting future
+	reorganizations of this material.
+	(syntax): Add comment regarding this node.
+	(Getting Notified): Actually document the notify file.  It hadn't
+	really been documented to speak of.
+	(editinfo,loginfo,rcsfino,cvsignore): Make the index entries
+	follow the standard "foo (admin file)" format.
+
 Fri Jun 14 18:14:32 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (editinfo): Discuss the way editinfo falls down in

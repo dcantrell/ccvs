@@ -1095,6 +1095,15 @@ setuid features of @sc{rcs} together with @sc{cvs}.
 @cindex CVSROOT, module name
 @cindex Defining modules (intro)
 
+@c FIXME: this node should be reorganized into "general
+@c information about admin files" and put the "editing
+@c admin files" stuff up front rather than jumping into
+@c the details of modules right away.  Then the
+@c Administrative files node can go away, the information
+@c on each admin file distributed to a place appropriate
+@c to its function, and this node can contain a table
+@c listing each file and a @ref to its detailed description.
+
 The directory @file{$CVSROOT/CVSROOT} contains some @dfn{administrative
 files}.  @xref{Administrative files}, for a complete description.
 You can use @sc{cvs} without any of these files, but
@@ -1130,6 +1139,7 @@ uses features that are not explained here.
 @xref{modules}, for a full explanation of all the
 available features.
 
+@c FIXME: subsection without node is bogus
 @subsection Editing administrative files
 @cindex Editing administrative files
 @cindex Administrative files, editing them
@@ -1347,7 +1357,7 @@ cvspserver      2401/tcp
 to reread its initialization files.
 
 @cindex CVS passwd file
-@cindex passwd file
+@cindex passwd (admin file)
 Because the client stores and transmits passwords in
 cleartext (almost---see @ref{Password authentication
 security} for details), a separate @sc{cvs} password
@@ -2264,11 +2274,32 @@ watches for the specified actions are removed.
 
 @end deffn
 
+@cindex notify (admin file)
 When the conditions exist for notification, @sc{cvs}
-calls the @file{notify} administrative file, passing it
-the user to receive the notification and the user who
-is taking the action which results in notification.
-Normally @file{notify} will just send an email message.
+calls the @file{notify} administrative file.  Edit
+@file{notify} as one edits the other administrative
+files (@pxref{Intro administrative files}).  This
+file follows the usual conventions for administrative
+files (@pxref{syntax}), where each line is a regular
+expression followed by a command to execute.  The
+command should contain a single ocurrence of @samp{%s}
+which will be replaced by the user to notify; the rest
+of the information regarding the notification will be
+supplied to the command on standard input.  The
+standard thing to put in the @code{notify} file is the
+single line:
+
+@example
+ALL mail %s -s \"CVS notification\"
+@end example
+
+This causes users to be notified by electronic mail.
+@c FIXME: should it be this hard to set up this
+@c behavior (and the result when one fails to do so,
+@c silent failure to notify, so non-obvious)?  Should
+@c CVS give a warning if no line in notify matches (and
+@c document the use of "DEFAULT :" for the case where
+@c skipping the notification is indeed desired)?
 
 @cindex users (admin file)
 Note that if you set this up in the straightforward
@@ -6836,7 +6867,9 @@ Inside the repository, in the directory
 @file{$CVSROOT/CVSROOT}, there are a number of
 supportive files for @sc{cvs}.  You can use @sc{cvs} in a limited
 fashion without any of them, but if they are set up
-properly they can help make life easier.
+properly they can help make life easier.  For a
+discussion of how to edit them, @xref{Intro
+administrative files}.
 
 The most important of these files is the @file{modules}
 file, which defines the modules inside the repository.
@@ -7118,6 +7151,10 @@ imagination is the limit!
 @cindex Syntax of info files
 @cindex Common syntax of info files
 
+@c FIXME: having this so totally separate from the
+@c Variables node is rather bogus.  Also, this syntax
+@c applies to taginfo and others, but we don't say so.
+
 The four files @file{commitinfo}, @file{loginfo},
 @file{rcsinfo} and @file{editinfo} all have a common
 format.  The purpose of the files are described later
@@ -7192,7 +7229,7 @@ repositories}).
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node editinfo
 @appendixsec Editinfo
-@cindex Editinfo
+@cindex editinfo (admin file)
 @cindex Editor, specifying per module
 @cindex Per-module editor
 @cindex Log messages, editing
@@ -7306,7 +7343,7 @@ The @file{rcsinfo} file contains this line:
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node loginfo
 @appendixsec Loginfo
-@cindex Loginfo
+@cindex loginfo (admin file)
 @cindex Storing log messages
 @cindex Mailing log messages
 @cindex Distributing log messages
@@ -7385,7 +7422,7 @@ like this:
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node rcsinfo
 @appendixsec Rcsinfo
-@cindex Rcsinfo
+@cindex rcsinfo (admin file)
 @cindex Form for log message
 @cindex Log message template
 @cindex Template for log message
@@ -7430,7 +7467,7 @@ directory.
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node cvsignore
 @appendixsec Ignoring files via cvsignore
-@cindex Cvsignore, global
+@cindex cvsignore (admin file), global
 @cindex Global cvsignore
 @cindex Ignoring files
 @c -- This chapter should maybe be moved to the
