@@ -11,4 +11,5 @@ alloca.h
 fnmatch.h
 getopt.h
 stdbool.h
+stdint.h
 getdate
