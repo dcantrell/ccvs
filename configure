@@ -2356,6 +2356,7 @@ fi
 
 test -f src/options.h || (
   echo creating ./src/options.h 
+  test -d src || mkdir src
   cp ${srcdir}/src/options.h.in ./src/options.h
 )
 

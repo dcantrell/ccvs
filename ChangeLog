@@ -1,3 +1,8 @@
+Tue Jun 20 18:14:54 1995  James Kingdon  <kingdon@harvey.cyclic.com>
+
+	* configure.in, configure: Make sure src directory exists before
+	trying to copy options.h to it.
+
 Mon Jun 19 13:47:20 1995  Jim Blandy  <jimb@totoro.cyclic.com>
 
 	* Makefile.in: Add a "remotecheck" target here, for consistency;
