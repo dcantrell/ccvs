@@ -1,3 +1,7 @@
+2004-10-05  Derek Price  <derek@ximbiot.com>
+
+	* config.h.in.in: #undef USE_UNLOCKED_IO.
+
 2004-09-17  Derek Price  <derek@ximbiot.com>
 
 	* config.h.in: Remove TRUST_OS_FILE_CACHE.
