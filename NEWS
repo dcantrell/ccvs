@@ -5,6 +5,11 @@ GENERAL USER ISSUES
 
 * Some user messages have been updated for consistency.
 
+DEVELOPER ISSUES
+
+* The message source differentiation in the test suite between client and
+  server executables has been repaired.
+
 Changes from 1.12.5 to 1.12.6:
 ******************************
 

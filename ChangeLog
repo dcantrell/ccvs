@@ -1,5 +1,9 @@
 2004-03-14  Derek Price  <derek@ximbiot.com>
 
+	* NEWS: Note sanity.sh client/server message fix.
+
+2004-03-14  Derek Price  <derek@ximbiot.com>
+
 	* NEWS: Remove header comment fix note, per GNU coding standards.
 
 2004-03-14  Derek Price  <derek@ximbiot.com>
