@@ -10180,6 +10180,10 @@ argument lists of most @sc{rcs} commands.
 @node Magic branch numbers
 @appendixsec Magic branch numbers
 
+@c Where does this go?  I think probably in with
+@c the details of where things are stored in the
+@c repository (plus an xref from "log" and "admin").
+
 Externally, branch numbers consist of an odd number of
 dot-separated decimal integers.  @xref{Revision
 numbers}.  That is not the whole truth, however.  For
