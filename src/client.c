@@ -130,6 +130,8 @@ change_mode (filename, mode_string)
 
 /* The host part of CVSROOT.  */
 static char *server_host;
+/* The user part of CVSROOT */
+static char *server_user;
 /* The repository part of CVSROOT.  */
 static char *server_cvsroot;
 
@@ -141,11 +143,22 @@ int client_prune_dirs;
 static void
 parse_cvsroot ()
 {
+    char *p;
+
     server_host = xstrdup (CVSroot);
     server_cvsroot = strchr (server_host, ':');
     *server_cvsroot = '\0';
     ++server_cvsroot;
 
+    if ( (p = strchr (server_host, '@')) == NULL) {
+      server_user = NULL;
+    } else {
+      server_user = server_host;
+      server_host = p;
+      ++server_host;
+      *p = '\0';
+    }
+ 			
     client_active = 1;
 }
 
@@ -2361,14 +2374,22 @@ start_rsh_server (tofdp, fromfdp)
 	   * containing a colon.  */
 	  sprintf (command, "%s -d %s server", cvs_server, server_cvsroot);
 
-	  execlp (cvs_rsh, cvs_rsh, server_host, command, (char *)NULL);
+          /* If the login names differ between client and server
+           *  pass it on to rsh
+           */
+          if(server_user != NULL) {
+            execlp (cvs_rsh, cvs_rsh, server_host, 
+                    "-l", server_user, command, (char *) NULL);
+          } else {
+            execlp (cvs_rsh, cvs_rsh, server_host, command, (char *)NULL);
+          }			
 	}
 	error (1, errno, "cannot exec");
-    }
+      }
     if (close (to_server_pipe[0]) < 0)
-	error (1, errno, "cannot close");
+      error (1, errno, "cannot close");
     if (close (from_server_pipe[1]) < 0)
-	error (1, errno, "cannot close");
+      error (1, errno, "cannot close");
     *tofdp = to_server_pipe[1];
     *fromfdp = from_server_pipe[0];
 }

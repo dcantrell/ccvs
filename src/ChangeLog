@@ -1,3 +1,9 @@
+Wed Jul 12 19:45:24 1995  Dominik Westner (dominik@gowest.ppp.informatik.uni-muenchen.de)
+
+        * client.c (server_user): new var.
+        (parse_cvsroot): set above if repo is "user@host:/dir".
+        (start_rsh_server): if server_user set, then use it.
+        
 Wed Jul 12 10:53:36 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
         * sanity.sh: remove the TESTDIR after done.
