@@ -24,6 +24,13 @@
 int chdir (const char *path);
 int close (int fd);
 
+/*
+FIXME:	gethostname prototype for lib/xgethostname.c, no #include <winsock.h>
+		Remove when GNULib folks provide a permenant fix.
+		Requested by Mark D. Baushke and committed by Conrad T. Pino
+*/
+int __stdcall gethostname (char * name, int namelen);
+
 #if 0 /* someday maybe these should be added here as well */
 
 int mkdir (const char *pathname, mode_t mode);

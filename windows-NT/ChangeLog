@@ -1,3 +1,7 @@
+2004-11-29  Conrad T. Pino  <Conrad@Pino.com>
+
+	* unistd.h: FIXME gethostname prototype for lib/xgethostname.c
+
 2004-11-17  Derek Price  <derek@ximbiot.com>
 
 	* mkconfig.pl (make_config_h): Use stricter regex to avoid warning of
