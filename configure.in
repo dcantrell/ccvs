@@ -17,6 +17,7 @@ AC_PROG_LN_S
 AC_PATH_PROG(PERL, perl, no)
 AC_PATH_PROG(CSH, csh, no)
 AC_PATH_PROG(PR, pr, no)
+# For diff/util.c
 if test x"$PR" != xno; then
 	AC_DEFINE_UNQUOTED([PR_PROGRAM], ["$PR"], [Path to the pr utility])
 fi
