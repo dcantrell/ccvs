@@ -325,6 +325,7 @@ RCS_parsercsfile (const char *rcsfile)
 }
 
 
+
 /*
  */ 
 static RCSNode *
@@ -336,7 +337,7 @@ RCS_parsercsfile_i (FILE *fp, const char *rcsfile)
 
     /* make a node */
     rdata = (RCSNode *) xmalloc (sizeof (RCSNode));
-    memset ((char *) rdata, 0, sizeof (RCSNode));
+    memset ((char *)rdata, 0, sizeof (RCSNode));
     rdata->refcount = 1;
     rdata->path = xstrdup (rcsfile);
 
@@ -354,7 +355,7 @@ RCS_parsercsfile_i (FILE *fp, const char *rcsfile)
 	goto l_error;
 
     if (STREQ (RCSHEAD, key) && value != NULL)
-	rdata->head = rcsbuf_valcopy (&rcsbuf, value, 0, (size_t *) NULL);
+	rdata->head = rcsbuf_valcopy (&rcsbuf, value, 0, (size_t *)NULL);
 
     if (! rcsbuf_getkey (&rcsbuf, &key, &value))
 	goto l_error;
@@ -365,7 +366,7 @@ RCS_parsercsfile_i (FILE *fp, const char *rcsfile)
     {
 	char *cp;
 
-	rdata->branch = rcsbuf_valcopy (&rcsbuf, value, 0, (size_t *) NULL);
+	rdata->branch = rcsbuf_valcopy (&rcsbuf, value, 0, (size_t *)NULL);
 	if ((numdots (rdata->branch) & 1) != 0)
 	{
 	    /* turn it into a branch if it's a revision */
@@ -383,12 +384,12 @@ RCS_parsercsfile_i (FILE *fp, const char *rcsfile)
 	if (STREQ (RCSEXPAND, key))
 	{
 	    rdata->expand = rcsbuf_valcopy (&rcsbuf, value, 0,
-					    (size_t *) NULL);
+					    (size_t *)NULL);
 	    break;
 	}
 
 	for (cp = key;
-	     (isdigit ((unsigned char) *cp) || *cp == '.') && *cp != '\0';
+	     (isdigit ((unsigned char)*cp) || *cp == '.') && *cp != '\0';
 	     cp++)
 	    /* do nothing */ ;
 	if (*cp == '\0')
@@ -413,8 +414,9 @@ l_error:
     rcsbuf_close (&rcsbuf);
     freercsnode (&rdata);
     fclose (fp);
-    return (NULL);
+    return NULL;
 }
+
 
 
 /* Do the real work of parsing an RCS file.
@@ -724,7 +726,7 @@ RCS_fully_parse (RCSNode *rcs)
 
 	/* Rather than try to keep track of how much information we
            have read, just read to the end of the file.  */
-	if (! rcsbuf_getrevnum (&rcsbuf, &key))
+	if (!rcsbuf_getrevnum (&rcsbuf, &key))
 	    break;
 
 	vers = findnode (rcs->versions, key);
@@ -737,7 +739,7 @@ RCS_fully_parse (RCSNode *rcs)
 
 	while (rcsbuf_getkey (&rcsbuf, &key, &value))
 	{
-	    if (! STREQ (key, "text"))
+	    if (!STREQ (key, "text"))
 	    {
 		Node *kv;
 
@@ -747,7 +749,7 @@ RCS_fully_parse (RCSNode *rcs)
 		kv->type = rcsbuf_valcmp (&rcsbuf) ? RCSCMPFLD : RCSFIELD;
 		kv->key = xstrdup (key);
 		kv->data = rcsbuf_valcopy (&rcsbuf, value, kv->type == RCSFIELD,
-					   (size_t *) NULL);
+					   (size_t *)NULL);
 		if (addnode (vnode->other, kv) != 0)
 		{
 		    error (0, 0,
@@ -760,7 +762,7 @@ warning: duplicate key `%s' in version `%s' of RCS file `%s'",
 		continue;
 	    }
 
-	    if (! STREQ (vnode->version, rcs->head))
+	    if (!STREQ (vnode->version, rcs->head))
 	    {
 		unsigned long add, del;
 		char buf[50];
@@ -858,6 +860,8 @@ warning: duplicate key `%s' in version `%s' of RCS file `%s'",
 
     rcsbuf_cache (rcs, &rcsbuf);
 }
+
+
 
 /*
  * freercsnode - free up the info for an RCSNode
@@ -5405,8 +5409,9 @@ workfile);
     return status;
 }
 
-/* This structure is passed between RCS_cmp_file and cmp_file_buffer.  */
 
+
+/* This structure is passed between RCS_cmp_file and cmp_file_buffer.  */
 struct cmp_file_data
 {
     const char *filename;
@@ -5419,17 +5424,16 @@ struct cmp_file_data
    the file FILENAME.  OPTIONS is a string for the keyword
    expansion options.  Return 0 if the contents of the revision are
    the same as the contents of the file, 1 if they are different.  */
-
 int
 RCS_cmp_file (RCSNode *rcs, const char *rev1, char **rev1_cache,
               const char *rev2, const char *options, const char *filename)
 {
     int binary;
 
-    TRACE( TRACE_FUNCTION, "RCS_cmp_file( %s, %s, %s, %s, %s )",
+    TRACE (TRACE_FUNCTION, "RCS_cmp_file( %s, %s, %s, %s, %s )",
            rcs->path ? rcs->path : "(null)",
 	   rev1 ? rev1 : "(null)", rev2 ? rev2 : "(null)",
-	   options ? options : "(null)", filename ? filename : "(null)" );
+	   options ? options : "(null)", filename ? filename : "(null)");
 
     if (options != NULL && options[0] != '\0')
 	binary = STREQ (options, "-kb");
@@ -5478,23 +5482,23 @@ RCS_cmp_file (RCSNode *rcs, const char *rev1, char **rev1_cache,
 	const char *use_file1;
 	char *tmpfile = NULL;
 
-	if( rev2 != NULL )
+	if (rev2 != NULL)
 	{
 	    /* Open & cache rev1 */
 	    tmpfile = cvs_temp_name();
-	    if( RCS_checkout( rcs, NULL, rev1, NULL, options, tmpfile,
-	                      (RCSCHECKOUTPROC)0, NULL ) )
-		error( 1, errno,
+	    if (RCS_checkout (rcs, NULL, rev1, NULL, options, tmpfile,
+	                      (RCSCHECKOUTPROC)0, NULL))
+		error (1, errno,
 		       "cannot check out revision %s of %s",
-		       rev1, rcs->path );
+		       rev1, rcs->path);
 	    use_file1 = tmpfile;
-	    if( rev1_cache != NULL )
+	    if (rev1_cache != NULL)
 		*rev1_cache = tmpfile;
 	}
 	else
 	    use_file1 = filename;
 
-        fp = CVS_FOPEN( use_file1, binary ? FOPEN_BINARY_READ : "r" );
+        fp = CVS_FOPEN (use_file1, binary ? FOPEN_BINARY_READ : "r");
 	if (fp == NULL)
 	    /* FIXME-update-dir: should include update_dir in message.  */
 	    error (1, errno, "cannot open file %s for comparing", use_file1);
@@ -5503,43 +5507,42 @@ RCS_cmp_file (RCSNode *rcs, const char *rev1, char **rev1_cache,
         data.fp = fp;
         data.different = 0;
 	
-        if( RCS_checkout( rcs, (char *) NULL, rev2 ? rev2 : rev1,
-	                        (char *) NULL,
-				options, RUN_TTY, cmp_file_buffer,
-				(void *) &data ) )
-		error( 1, errno,
+        if (RCS_checkout (rcs, NULL, rev2 ? rev2 : rev1, NULL, options,
+                          RUN_TTY, cmp_file_buffer, &data ))
+		error (1, errno,
 		       "cannot check out revision %s of %s",
-		       rev2 ? rev2 : rev1, rcs->path );
+		       rev2 ? rev2 : rev1, rcs->path);
 
         /* If we have not yet found a difference, make sure that we are at
            the end of the file.  */
-        if (! data.different)
+        if (!data.different)
         {
 	    if (getc (fp) != EOF)
 		data.different = 1;
         }
 	
         fclose (fp);
-	if( rev1_cache == NULL && tmpfile )
+	if (rev1_cache == NULL && tmpfile)
 	{
-	    if( CVS_UNLINK( tmpfile ) < 0 )
-		error( 0, errno, "cannot remove %s", tmpfile );
-	    free( tmpfile );
+	    if (CVS_UNLINK (tmpfile ) < 0)
+		error (0, errno, "cannot remove %s", tmpfile);
+	    free (tmpfile);
 	}
 
         return data.different;
     }
 }
 
+
+
 /* This is a subroutine of RCS_cmp_file.  It is passed to
    RCS_checkout.  */
-
 #define CMP_BUF_SIZE (8 * 1024)
 
 static void
 cmp_file_buffer (void *callerdat, const char *buffer, size_t len)
 {
-    struct cmp_file_data *data = (struct cmp_file_data *) callerdat;
+    struct cmp_file_data *data = callerdat;
     char *filebuf;
 
     /* If we've already found a difference, we don't need to check
@@ -5578,6 +5581,8 @@ cmp_file_buffer (void *callerdat, const char *buffer, size_t len)
     free (filebuf);
 }
 
+
+
 /* For RCS file RCS, make symbolic tag TAG point to revision REV.
    This validates that TAG is OK for a user to use.  Return value is
    -1 for error (and errno is set to indicate the error), positive for
@@ -5590,7 +5595,7 @@ RCS_settag (RCSNode *rcs, const char *tag, const char *rev)
     Node *node;
 
     if (rcs->flags & PARTIAL)
-	RCS_reparsercsfile (rcs, (FILE **) NULL, (struct rcsbuffer *) NULL);
+	RCS_reparsercsfile (rcs, NULL, NULL);
 
     /* FIXME: This check should be moved to RCS_check_tag.  There is no
        reason for it to be here.  */
@@ -5631,11 +5636,13 @@ RCS_settag (RCSNode *rcs, const char *tag, const char *rev)
 	node = getnode ();
 	node->key = xstrdup (tag);
 	node->data = xstrdup (rev);
-	(void) addnode_at_front (symbols, node);
+	(void)addnode_at_front (symbols, node);
     }
 
     return 0;
 }
+
+
 
 /* Delete the symbolic tag TAG from the RCS file RCS.  Return 0 if
    the tag was found (and removed), or 1 if it was not present.  (In
@@ -5647,7 +5654,7 @@ RCS_deltag (RCSNode *rcs, const char *tag)
     List *symbols;
     Node *node;
     if (rcs->flags & PARTIAL)
-	RCS_reparsercsfile (rcs, (FILE **) NULL, (struct rcsbuffer *) NULL);
+	RCS_reparsercsfile (rcs, NULL, NULL);
 
     symbols = RCS_symbols (rcs);
     if (symbols == NULL)
@@ -5662,13 +5669,14 @@ RCS_deltag (RCSNode *rcs, const char *tag)
     return 0;
 }
 
-/* Set the default branch of RCS to REV.  */
 
+
+/* Set the default branch of RCS to REV.  */
 int
 RCS_setbranch (RCSNode *rcs, const char *rev)
 {
     if (rcs->flags & PARTIAL)
-	RCS_reparsercsfile (rcs, (FILE **) NULL, (struct rcsbuffer *) NULL);
+	RCS_reparsercsfile (rcs, NULL, NULL);
 
     if (rev && ! *rev)
 	rev = NULL;
@@ -5685,6 +5693,8 @@ RCS_setbranch (RCSNode *rcs, const char *rev)
     return 0;
 }
 
+
+
 /* Lock revision REV.  LOCK_QUIET is 1 to suppress output.  FIXME:
    Most of the callers only call us because RCS_checkin still tends to
    like a lock (a relic of old behavior inherited from the RCS ci
@@ -5695,7 +5705,6 @@ RCS_setbranch (RCSNode *rcs, const char *rev)
    send mail to the lock owner?  Prompt user?  It seems like such an
    obscure situation for CVS as almost not worth worrying much
    about. */
-
 int
 RCS_lock (RCSNode *rcs, const char *rev, int lock_quiet)
 {
@@ -5705,7 +5714,7 @@ RCS_lock (RCSNode *rcs, const char *rev, int lock_quiet)
     char *xrev = NULL;
 
     if (rcs->flags & PARTIAL)
-	RCS_reparsercsfile (rcs, (FILE **) NULL, (struct rcsbuffer *) NULL);
+	RCS_reparsercsfile (rcs, NULL, NULL);
 
     locks = RCS_getlocks (rcs);
     if (locks == NULL)
@@ -5716,7 +5725,7 @@ RCS_lock (RCSNode *rcs, const char *rev, int lock_quiet)
     if (rev == NULL)
 	xrev = RCS_head (rcs);
     else
-	xrev = RCS_gettag (rcs, rev, 1, (int *) NULL);
+	xrev = RCS_gettag (rcs, rev, 1, NULL);
 
     /* Make sure that the desired revision exists.  Technically,
        we can update the locks list without even checking this,
@@ -5760,7 +5769,8 @@ RCS_lock (RCSNode *rcs, const char *rev, int lock_quiet)
 	}
 	delnode (p);
 #else
-	error (1, 0, "Revision %s is already locked by %s", xrev, (char *)p->data);
+	error (1, 0, "Revision %s is already locked by %s",
+               xrev, (char *)p->data);
 #endif
     }
 
@@ -5768,7 +5778,7 @@ RCS_lock (RCSNode *rcs, const char *rev, int lock_quiet)
     p = getnode();
     p->key = xrev;	/* already xstrdupped */
     p->data = xstrdup (getcaller());
-    (void) addnode_at_front (locks, p);
+    (void)addnode_at_front (locks, p);
 
     if (!lock_quiet)
     {
@@ -5779,6 +5789,8 @@ RCS_lock (RCSNode *rcs, const char *rev, int lock_quiet)
     return 0;
 }
 
+
+
 /* Unlock revision REV.  UNLOCK_QUIET is 1 to suppress output.  FIXME:
    Like RCS_lock, this can become a no-op if we do the checkin
    ourselves.
@@ -5786,7 +5798,6 @@ RCS_lock (RCSNode *rcs, const char *rev, int lock_quiet)
    If REV is not null and is locked by someone else, break their
    lock and notify them.  It is an open issue whether RCS_unlock
    queries the user about whether or not to break the lock. */
-
 int
 RCS_unlock (RCSNode *rcs, char *rev, int unlock_quiet)
 {
@@ -5797,7 +5808,7 @@ RCS_unlock (RCSNode *rcs, char *rev, int unlock_quiet)
 
     user = getcaller();
     if (rcs->flags & PARTIAL)
-	RCS_reparsercsfile (rcs, (FILE **) NULL, (struct rcsbuffer *) NULL);
+	RCS_reparsercsfile (rcs, NULL, NULL);
 
     /* If rev is NULL, unlock the revision held by the caller; if more
        than one, make the user specify the revision explicitly.  This
@@ -5892,6 +5903,8 @@ RCS_unlock (RCSNode *rcs, char *rev, int unlock_quiet)
     return 0;
 }
 
+
+
 /* Add USER to the access list of RCS.  Do nothing if already present.
    FIXME-twp: check syntax of USER to make sure it's a valid id. */
 
@@ -5901,7 +5914,7 @@ RCS_addaccess (RCSNode *rcs, char *user)
     char *access, *a;
 
     if (rcs->flags & PARTIAL)
-	RCS_reparsercsfile (rcs, (FILE **) NULL, (struct rcsbuffer *) NULL);
+	RCS_reparsercsfile (rcs, NULL, NULL);
 
     if (rcs->access == NULL)
 	rcs->access = xstrdup (user);
@@ -5924,8 +5937,9 @@ RCS_addaccess (RCSNode *rcs, char *user)
     }
 }
 
-/* Remove USER from the access list of RCS. */
 
+
+/* Remove USER from the access list of RCS. */
 void
 RCS_delaccess (RCSNode *rcs, char *user)
 {
@@ -5933,7 +5947,7 @@ RCS_delaccess (RCSNode *rcs, char *user)
     int ulen;
 
     if (rcs->flags & PARTIAL)
-	RCS_reparsercsfile (rcs, (FILE **) NULL, (struct rcsbuffer *) NULL);
+	RCS_reparsercsfile (rcs, NULL, NULL);
 
     if (rcs->access == NULL)
 	return;
@@ -5965,6 +5979,8 @@ RCS_delaccess (RCSNode *rcs, char *user)
     *p = '\0';
 }
 
+
+
 char *
 RCS_getaccess (RCSNode *rcs)
 {
@@ -5974,20 +5990,21 @@ RCS_getaccess (RCSNode *rcs)
     return rcs->access;
 }
 
-static int findtag (Node *, void *);
+
 
 /* Return a nonzero value if the revision specified by ARG is found.  */
-
 static int
 findtag (Node *node, void *arg)
 {
-    char *rev = (char *)arg;
+    char *rev = arg;
 
     if (STREQ (node->data, rev))
 	return 1;
     else
 	return 0;
 }
+
+
 
 /* Delete revisions between REV1 and REV2.  The changes between the two
    revisions must be collapsed, and the result stored in the revision
@@ -6007,7 +6024,6 @@ findtag (Node *node, void *arg)
    delete up to but not including that revision (cvs admin -o tag1::tag2).
    This does not affect TAG1 or TAG2 being NULL; the meaning of the start
    point in ::tag2 and :tag2 is the same and likewise for end points.  */
-
 int
 RCS_delete_revs (RCSNode *rcs, char *tag1, char *tag2, int inclusive)
 {
@@ -6368,7 +6384,8 @@ RCS_delete_revs (RCSNode *rcs, char *tag1, char *tag2, int inclusive)
 		goto delrev_done;
 
 	    outfile = cvs_temp_name();
-	    status = diff_exec (beforefile, afterfile, NULL, NULL, "-an", outfile);
+	    status = diff_exec (beforefile, afterfile, NULL, NULL, "-an",
+                                outfile);
 
 	    if (status == 2)
 	    {
@@ -6499,6 +6516,8 @@ RCS_delete_revs (RCSNode *rcs, char *tag1, char *tag2, int inclusive)
 
     return status;
 }
+
+
 
 /*
  * TRUE if there exists a symbolic tag "tag" in file.
