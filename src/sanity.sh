@@ -5575,6 +5575,26 @@ ${PROG} remove: use '${PROG} commit' to remove this file permanently"
 	  dotest_fail rmadd3-2 "${testcvs} add file1" \
 "${PROG} add: file1 should be removed and is still there (or is back again)"
 
+	  # FIXCVS
+	  # This is the problem - the file should not be removed here since CVS
+	  # does not know what is in it - this should generate an error like
+	  # the add above:
+	  dotest rmadd3-3 "${testcvs} -q ci -m." \
+"Removing file1;
+${CVSROOT_DIRNAME}/first-dir/file1,v  <--  file1
+new revision: delete; previous revision: 1\.1
+done"
+
+	  # Then this should pass too:
+	  # dotest rmadd3-4 "cat file1" "desired future contents for file1"
+
+	  # But instead we see inconsistent behavior between local and remote
+	  if $remote; then
+	    dotest rmadd3-4r "test -f file1"
+	  else
+	    dotest_fail rmadd3-4 "test -f file1"
+	  fi
+
 	  if $keep; then
 	    echo Keeping ${TESTDIR} and exiting due to --keep
 	    exit 0
