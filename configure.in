@@ -103,6 +103,7 @@ AC_CHECK_FUNCS(\
 	getgroups \
 	getpagesize \
 	getpassphrase \
+	gettimeofday \
 	initgroups \
 	mknod \
 	mkstemp \
