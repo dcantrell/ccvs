@@ -1,5 +1,7 @@
 Tue Sep 16 00:07:17 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* sanity.sh (editor): Clean up first-dir at end of test.
+
 	* sanity.sh (editor): New tests test do_editor.
 
 	* commit.c (commit): For the client, if we got the log message

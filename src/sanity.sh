@@ -5165,6 +5165,7 @@ xCVS: ----------------------------------------------------------------------
 	  cd ../..
 	  rm -r 1
 	  rm ${TESTDIR}/editme
+	  rm -rf ${CVSROOT_DIRNAME}/first-dir
 	  ;;
 
 	errmsg1)
