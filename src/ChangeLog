@@ -1,3 +1,11 @@
+Mon May  1 13:58:53 1995  J.T. Conklin  <jtc@rtl.cygnus.com>
+
+	* rcs.c, rcs.h: Implemented lazy parsing of rcs files.
+	  RCS_parsercsfile_i modified to read only the first two records
+	  of rcs files, a new function RCS_reparsercsfile is called only
+	  when additional information (tags, revision numbers, dates,
+	  etc.) is required.
+
 Mon May  1 12:20:02 1995  Jim Kingdon  (kingdon@lioth.cygnus.com)
 
 	* Makefile.in (INCLUDES): Include -I. for options.h.
