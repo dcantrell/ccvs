@@ -1,5 +1,9 @@
 2004-02-10  Derek Price  <derek@ximbiot.com>
 
+	* NEWS: Note dying gasp check.
+
+2004-02-10  Derek Price  <derek@ximbiot.com>
+
 	* NEWS: Note flow control pipe race fix.
 
 2004-02-10  Derek Price  <derek@ximbiot.com>
