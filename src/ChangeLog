@@ -1,3 +1,9 @@
+Mon Dec 25 12:20:06 1995  Peter Wemm  <peter@haywire.DIALix.COM>
+
+	* logmsg.c (rcsinfo_proc): initialise line and
+	line_chars_allocated so they dont cause malloc problems within
+	getline().  This was causing rcsinfo templates to not work.
+
 Sun Dec 24 01:38:36 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
         * server.c (authenticate_connection): clarify protocol.
