@@ -172,6 +172,7 @@ fi
 #     if we wanted to get baroque we could start making symlinks
 #     to ensure the two are different.
 tmp=`(cd /tmp; /bin/pwd || pwd) 2>/dev/null`
+: ${TMPDIR=$tmp}
 
 # Now:
 #	1) Set TESTDIR if it's not set already
@@ -9810,7 +9811,7 @@ ${PROG} [a-z]*: Rebuilding administrative file database"
 	    dotest modules5-8 "${testcvs} co realmodule" \
 "U realmodule/a
 ${PROG} [a-z]*: Executing ..${CVSROOT_DIRNAME}/checkout\.sh. .realmodule..
-checkout script invoked in ${tmp}/cvs-serv[0-9a-z]*
+checkout script invoked in ${TMPDIR}/cvs-serv[0-9a-z]*
 args: realmodule"
 	  else
 	    dotest modules5-8 "${testcvs} co realmodule" \
@@ -9823,11 +9824,11 @@ args: realmodule"
 	  dotest_fail modules5-10 "test -f realmodule/b" ""
 	  if $remote; then
 	    dotest modules5-11 "${testcvs} -q co realmodule" \
-"checkout script invoked in ${tmp}/cvs-serv[0-9a-z]*
+"checkout script invoked in ${TMPDIR}/cvs-serv[0-9a-z]*
 args: realmodule"
 	    dotest modules5-12 "${testcvs} -q update" \
 "${PROG} [a-z]*: Executing ..${CVSROOT_DIRNAME}/update\.sh. .${CVSROOT_DIRNAME}/first-dir/subdir..
-update script invoked in ${tmp}/cvs-serv[0-9a-z]*/realmodule
+update script invoked in ${TMPDIR}/cvs-serv[0-9a-z]*/realmodule
 args: ${CVSROOT_DIRNAME}/first-dir/subdir"
 	    echo "change" >>realmodule/a
 	    dotest modules5-13 "${testcvs} -q ci -m." \
@@ -9836,7 +9837,7 @@ ${CVSROOT_DIRNAME}/first-dir/subdir/a,v  <--  a
 new revision: 1\.2; previous revision: 1\.1
 done
 ${PROG} [a-z]*: Executing ..${CVSROOT_DIRNAME}/checkin\.sh. .${CVSROOT_DIRNAME}/first-dir/subdir..
-checkin script invoked in ${tmp}/cvs-serv[0-9a-z]*/realmodule
+checkin script invoked in ${TMPDIR}/cvs-serv[0-9a-z]*/realmodule
 args: ${CVSROOT_DIRNAME}/first-dir/subdir"
 	  else
 	    dotest modules5-11 "${testcvs} -q co realmodule" \
@@ -9862,12 +9863,12 @@ Are you sure you want to release (and delete) directory .realmodule.: "
 	  dotest modules5-15 "${testcvs} -q rtag -Dnow MYTAG realmodule" \
 "tag script invoked in ${TESTDIR}/1
 args: realmodule MYTAG" \
-"tag script invoked in ${tmp}/cvs-serv[0-9a-z]*
+"tag script invoked in ${TMPDIR}/cvs-serv[0-9a-z]*
 args: realmodule MYTAG"
 	  if $remote; then
 	    dotest modules5-16 "${testcvs} -q export -r MYTAG realmodule" \
 "U realmodule/a
-export script invoked in ${tmp}/cvs-serv[0-9a-z]*
+export script invoked in ${TMPDIR}/cvs-serv[0-9a-z]*
 args: realmodule"
 	  else
 	    dotest modules5-16 "${testcvs} -q export -r MYTAG realmodule" \
@@ -9887,7 +9888,7 @@ args: realmodule"
 	    dotest modules5-18 "${testcvs} co dirmodule/a" \
 "U dirmodule/a
 ${PROG} [a-z]*: Executing ..${CVSROOT_DIRNAME}/checkout\.sh. .dirmodule..
-checkout script invoked in ${tmp}/cvs-serv[0-9a-z]*
+checkout script invoked in ${TMPDIR}/cvs-serv[0-9a-z]*
 args: dirmodule"
 	  else
 	    dotest modules5-18 "${testcvs} co dirmodule/a" \
@@ -9912,7 +9913,7 @@ Are you sure you want to release (and delete) directory .dirmodule.: "
 	    dotest modules5-22 "${testcvs} co dirmodule/nonexist" \
 "${PROG} [a-z]*: warning: new-born dirmodule/nonexist has disappeared
 ${PROG} [a-z]*: Executing ..${CVSROOT_DIRNAME}/checkout\.sh. .dirmodule..
-checkout script invoked in ${tmp}/cvs-serv[0-9a-z]*
+checkout script invoked in ${TMPDIR}/cvs-serv[0-9a-z]*
 args: dirmodule"
 	  else
 	    dotest modules5-22 "${testcvs} co dirmodule/nonexist" \
@@ -9933,7 +9934,7 @@ args: dirmodule"
 	    dotest modules5-24 "${testcvs} -q co namedmodule" \
 "U nameddir/a
 U nameddir/b
-checkout script invoked in ${tmp}/cvs-serv[0-9a-z]*
+checkout script invoked in ${TMPDIR}/cvs-serv[0-9a-z]*
 args: nameddir"
 	  else
 	    dotest modules5-24 "${testcvs} -q co namedmodule" \
@@ -9951,9 +9952,9 @@ args: nameddir"
 	    dotest modules5-26 "${testcvs} -q co namedmodule" \
 "M nameddir/a
 ${PROG} [a-z]*: Executing ..${CVSROOT_DIRNAME}/update\.sh. .${CVSROOT_DIRNAME}/first-dir/subdir..
-update script invoked in ${tmp}/cvs-serv[0-9a-z]*/nameddir
+update script invoked in ${TMPDIR}/cvs-serv[0-9a-z]*/nameddir
 args: ${CVSROOT_DIRNAME}/first-dir/subdir
-checkout script invoked in ${tmp}/cvs-serv[0-9a-z]*
+checkout script invoked in ${TMPDIR}/cvs-serv[0-9a-z]*
 args: nameddir"
 	  else
 	    dotest modules5-26 "${testcvs} -q co namedmodule" \
@@ -9970,9 +9971,9 @@ args: nameddir"
 	    dotest modules5-27 "${testcvs} -q co namedmodule" \
 "U nameddir/a
 ${PROG} [a-z]*: Executing ..${CVSROOT_DIRNAME}/update\.sh. .${CVSROOT_DIRNAME}/first-dir/subdir..
-update script invoked in ${tmp}/cvs-serv[0-9a-z]*/nameddir
+update script invoked in ${TMPDIR}/cvs-serv[0-9a-z]*/nameddir
 args: ${CVSROOT_DIRNAME}/first-dir/subdir
-checkout script invoked in ${tmp}/cvs-serv[0-9a-z]*
+checkout script invoked in ${TMPDIR}/cvs-serv[0-9a-z]*
 args: nameddir"
 	  else
 	    dotest modules5-27 "${testcvs} -q co namedmodule" \
@@ -9994,7 +9995,7 @@ Are you sure you want to release (and delete) directory .nameddir.: "
 	    dotest modules5-29 "${testcvs} co -d mydir realmodule" \
 "U mydir/a
 ${PROG} [a-z]*: Executing ..${CVSROOT_DIRNAME}/checkout\.sh. .mydir..
-checkout script invoked in ${tmp}/cvs-serv[0-9a-z]*
+checkout script invoked in ${TMPDIR}/cvs-serv[0-9a-z]*
 args: mydir"
 	  else
 	    dotest modules5-29 "${testcvs} co -d mydir realmodule" \
@@ -10007,11 +10008,11 @@ args: mydir"
 	  dotest_fail modules5-31 "test -d realmodule || test -f mydir/b" ""
 	  if $remote; then
 	    dotest modules5-32 "${testcvs} -q co -d mydir realmodule" \
-"checkout script invoked in ${tmp}/cvs-serv[0-9a-z]*
+"checkout script invoked in ${TMPDIR}/cvs-serv[0-9a-z]*
 args: mydir"
 	    dotest modules5-33 "${testcvs} -q update" \
 "${PROG} [a-z]*: Executing ..${CVSROOT_DIRNAME}/update\.sh. .${CVSROOT_DIRNAME}/first-dir/subdir..
-update script invoked in ${tmp}/cvs-serv[0-9a-z]*/mydir
+update script invoked in ${TMPDIR}/cvs-serv[0-9a-z]*/mydir
 args: ${CVSROOT_DIRNAME}/first-dir/subdir"
 	    echo "change" >>mydir/a
 	    dotest modules5-34 "${testcvs} -q ci -m." \
@@ -10020,7 +10021,7 @@ ${CVSROOT_DIRNAME}/first-dir/subdir/a,v  <--  a
 new revision: 1\.3; previous revision: 1\.2
 done
 ${PROG} [a-z]*: Executing ..${CVSROOT_DIRNAME}/checkin\.sh. .${CVSROOT_DIRNAME}/first-dir/subdir..
-checkin script invoked in ${tmp}/cvs-serv[0-9a-z]*/mydir
+checkin script invoked in ${TMPDIR}/cvs-serv[0-9a-z]*/mydir
 args: ${CVSROOT_DIRNAME}/first-dir/subdir"
 	  else
 	    dotest modules5-32 "${testcvs} -q co -d mydir realmodule" \
@@ -10045,11 +10046,11 @@ args: ${CVSROOT_DIRNAME}/first-dir/subdir"
 Are you sure you want to release (and delete) directory .mydir.: "
 	  if $remote; then
 	    dotest modules5-36 "${testcvs} -q rtag -Dnow MYTAG2 realmodule" \
-"tag script invoked in ${tmp}/cvs-serv[0-9a-z]*
+"tag script invoked in ${TMPDIR}/cvs-serv[0-9a-z]*
 args: realmodule MYTAG2"
 	    dotest modules5-37 "${testcvs} -q export -r MYTAG2 -d mydir realmodule" \
 "U mydir/a
-export script invoked in ${tmp}/cvs-serv[0-9a-z]*
+export script invoked in ${TMPDIR}/cvs-serv[0-9a-z]*
 args: mydir"
 	  else
 	    dotest modules5-36 "${testcvs} -q rtag -Dnow MYTAG2 realmodule" \
@@ -10067,7 +10068,7 @@ args: mydir"
 	    dotest modules5-38 "${testcvs} co -d mydir dirmodule/a" \
 "U mydir/a
 ${PROG} [a-z]*: Executing ..${CVSROOT_DIRNAME}/checkout\.sh. .mydir..
-checkout script invoked in ${tmp}/cvs-serv[0-9a-z]*
+checkout script invoked in ${TMPDIR}/cvs-serv[0-9a-z]*
 args: mydir"
 	  else
 	    dotest modules5-38 "${testcvs} co -d mydir dirmodule/a" \
@@ -10092,7 +10093,7 @@ Are you sure you want to release (and delete) directory .mydir.: "
 	    dotest modules5-42 "${testcvs} co -d mydir dirmodule/nonexist" \
 "${PROG} [a-z]*: warning: new-born mydir/nonexist has disappeared
 ${PROG} [a-z]*: Executing ..${CVSROOT_DIRNAME}/checkout\.sh. .mydir..
-checkout script invoked in ${tmp}/cvs-serv[0-9a-z]*
+checkout script invoked in ${TMPDIR}/cvs-serv[0-9a-z]*
 args: mydir"
 	  else
 	    dotest modules5-42 "${testcvs} co -d mydir dirmodule/nonexist" \
@@ -10111,7 +10112,7 @@ args: mydir"
 	    dotest modules5-44 "${testcvs} -q co -d mydir namedmodule" \
 "U mydir/a
 U mydir/b
-checkout script invoked in ${tmp}/cvs-serv[0-9a-z]*
+checkout script invoked in ${TMPDIR}/cvs-serv[0-9a-z]*
 args: mydir"
 	  else
 	    dotest modules5-44 "${testcvs} -q co -d mydir namedmodule" \
@@ -10130,9 +10131,9 @@ args: mydir"
 	    dotest modules5-47 "${testcvs} -q co -d mydir namedmodule" \
 "M mydir/a
 ${PROG} [a-z]*: Executing ..${CVSROOT_DIRNAME}/update\.sh. .${CVSROOT_DIRNAME}/first-dir/subdir..
-update script invoked in ${tmp}/cvs-serv[0-9a-z]*/mydir
+update script invoked in ${TMPDIR}/cvs-serv[0-9a-z]*/mydir
 args: ${CVSROOT_DIRNAME}/first-dir/subdir
-checkout script invoked in ${tmp}/cvs-serv[0-9a-z]*
+checkout script invoked in ${TMPDIR}/cvs-serv[0-9a-z]*
 args: mydir"
 	  else
 	    dotest modules5-47 "${testcvs} -q co -d mydir namedmodule" \
@@ -10149,9 +10150,9 @@ args: mydir"
 	    dotest modules5-48 "${testcvs} -q co -d mydir namedmodule" \
 "U mydir/a
 ${PROG} [a-z]*: Executing ..${CVSROOT_DIRNAME}/update\.sh. .${CVSROOT_DIRNAME}/first-dir/subdir..
-update script invoked in ${tmp}/cvs-serv[0-9a-z]*/mydir
+update script invoked in ${TMPDIR}/cvs-serv[0-9a-z]*/mydir
 args: ${CVSROOT_DIRNAME}/first-dir/subdir
-checkout script invoked in ${tmp}/cvs-serv[0-9a-z]*
+checkout script invoked in ${TMPDIR}/cvs-serv[0-9a-z]*
 args: mydir"
 	  else
 	    dotest modules5-48 "${testcvs} -q co -d mydir namedmodule" \
