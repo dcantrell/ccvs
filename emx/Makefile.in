@@ -24,8 +24,8 @@ zlib_dir = ${top_srcdir}/zlib
 # prefix = /usr/local
 # exec_prefix = ${prefix}
 
-# taken straight from the example project
-LIB = -lufc -lsocket
+# Used to say -lufc, but that would only be needed for crypt().
+LIB = -lsocket
 CINC =
 # This says we are building an object file, not a full executable.
 OBJ_CFLAGS = -c
@@ -41,7 +41,7 @@ CFLAGS = -pedantic -Wall -fno-builtin ${CINC} \
 OS2_HEADERS = \
        ${srcdir}/config.h \
        ${srcdir}/options.h \
-       ${srcdir}/rcmd.h
+       ${top_srcdir}/windows-NT/rcmd.h # ${srcdir}/rcmd.h
 
 # headers we use from the common src dir, ../src
 COMMON_HEADERS = \
@@ -56,11 +56,12 @@ COMMON_HEADERS = \
        ${cvs_srcdir}/error.h
 
 # sources specific to OS/2
+# was        ${srcdir}/rcmd.c \
 OS2_SOURCES = \
        ${srcdir}/filesubr.c \
        ${srcdir}/startserver.c \
        ${srcdir}/stripslash.c \
-       ${srcdir}/rcmd.c \
+       ${top_srcdir}/windows-NT/rcmd.c \
        ${srcdir}/system.c
 
 # sources we use from the common src dir, ../src
@@ -137,11 +138,12 @@ LIB_SOURCES = \
        ${lib_dir}/getdate.c
 
 # object files from OS/2 sources
+# was       ${srcdir}/rcmd.o
 OS2_OBJECTS = \
        ${srcdir}/filesubr.o \
        ${srcdir}/startserver.o \
        ${srcdir}/stripslash.o \
-       ${srcdir}/rcmd.o \
+       ${top_srcdir}/windows-NT/rcmd.o \
        ${srcdir}/system.o
 
 # object files from ../src

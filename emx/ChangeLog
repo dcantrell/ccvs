@@ -1,3 +1,15 @@
+Tue Jun 17 14:44:02 1997  Jim Kingdon  (unknown@beezley)
+
+	* README: Replace text concerning warnings with a more
+	specific list of exactly what the warnings are.  For the
+	most part there should be no warnings.
+	Update note about -lufc.
+	* Makefile.in (LIB): Remove -lufc.
+	* config.h (RSH_NOT_TRANSPARENT): Define.
+	* Makefile.in: Use ${top_srcdir}/windows-NT/rcmd.* not our
+	own rcmd.* (for better error messages).
+	* .cvsignore: Add cvs.out.
+
 Tue Jun 17 13:19:53 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* README: Revise paragraph on -Zsys to discuss problem with

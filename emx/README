@@ -32,8 +32,10 @@ To compile CVS for OS/2, you must install the following packages:
       GNUMAKE.ZIP
 
  - ufc.a (ufc-crypt) as a replacement for crypt (this may be something
-   different if you live inside the USA).  I don't think you need this
-   one currently, because the port of the server to OS/2 isn't done yet.
+   different if you live inside the USA).  You don't need this one currently,
+   because the port of the server to OS/2 isn't done yet, but I'm mentioning
+   in case it is useful for future reference (we're probably better off
+   using a different password hash instead, as noted in item #184 of ../TODO).
 
       GNUUFC.ZIP
 
@@ -55,5 +57,10 @@ local, the big known problem is that -Zsys doesn't have fork().  This
 one isn't as bad--using os2/run.c or something similar instead of
 src/run.c should solve this problem.
 
-You will get warnings during the compilation; ignore them.
+You will get warnings in lib/getdate.c.  These are yacc's fault; ignore
+them.
+
+You will get about 5 warnings in lib/regex.c concerning "unused variable
+destination".  Ignore them.
+
 Report bugs to tepting@swol.de and bug-cvs@prep.ai.mit.edu.
