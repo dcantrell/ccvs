@@ -432,7 +432,7 @@ int isfile PROTO((const char *file));
 int islink PROTO((const char *file));
 int isreadable PROTO((const char *file));
 int iswritable PROTO((const char *file));
-int isacessable PROTO((const char *file, int mode));
+int isaccessable PROTO((const char *file, const int mode));
 int isabsolute PROTO((const char *filename));
 char *last_component PROTO((char *path));
 
