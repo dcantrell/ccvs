@@ -1,3 +1,10 @@
+Tue Mar 18 09:36:26 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* recurse.c (struct recursion_frame): Reindent.
+	(do_dir_proc): Print message if we try to recurse into a CVSADM
+	directory.
+	* sanity.sh (basicb): New test basicb-4a tests for above fix.
+
 Sun Mar 16 10:18:28 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* sanity.sh (death2): Replace regexp matching temporary file name
