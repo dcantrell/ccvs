@@ -1,3 +1,7 @@
+2004-02-19  Larry Jones  <lawrence.jones@ugsplm.com>
+
+	* login.c (password_entry_operation): Initialize line.
+
 2004-02-19  Derek Price  <derek@ximbiot.com>
 
 	* sanity.sh (tests): Add errmsg3.
