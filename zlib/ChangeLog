@@ -1,3 +1,11 @@
+2004-10-21  Conrad T. Pino  <Conrad@Pino.com>
+
+	* libz.dsp: Add "crc32.h" and "inflate.h" to project.
+	Remove "infblock.c", "infblock.h", "infcodes.c", "infcodes.h",
+	"infutil.c", and "infutil.h" from project.
+	* libz.dep: Regenerated for "libz.dsp" changes.
+	* libz.mak: Regenerated for "libz.dsp" changes.
+
 2004-10-21  Derek Price  <derek@ximbiot.com>
 
 	* Makefile.in: Merge changes from zlib 1.2.1.
