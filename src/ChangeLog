@@ -1,3 +1,7 @@
+2005-02-26  Derek Price  <derek@ximbiot.com>
+
+	* root.c: Gratuitous reformatting.
+
 2005-02-26  Mark D. Baushke  <mdb@cvshome.org>
 
 	* root.c (parse_cvsroot): Handle another Bad CVSROOT.
