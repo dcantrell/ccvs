@@ -1,3 +1,7 @@
+2004-10-27  Mark D. Baushke  <mdb@cvshome.org>
+
+	* sanity.sh (tagdate): Provide more output.
+
 2004-10-26  Mark D. Baushke  <mdb@cvshome.org>
 
 	* commit.c (checkaddfile): Create a dead version for a new file
