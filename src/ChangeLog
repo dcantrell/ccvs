@@ -1,3 +1,9 @@
+2003-07-12  Larry Jones  <lawrence.jones@eds.com>
+
+	* sanity.sh (diffnl): New tests for diff on files with no newline
+	at end.
+	(Patch from Andrew Moise <chops@demiurgestudios.com>.)
+
 2003-07-09  Larry Jones  <lawrence.jones@eds.com>
 
 	* add.c (add): Update "re-adding" message to have quotes around
