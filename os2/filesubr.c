@@ -698,9 +698,9 @@ convert_file (char *infile,  int inflags,
     char buf[8192];
     int len;
 
-    if ((infd = open (infile, inflags)) < 0)
+    if ((infd = open (infile, inflags, S_IREAD | S_IWRITE)) < 0)
         error (1, errno, "couldn't read %s", infile);
-    if ((outfd = open (outfile, outflags)) < 0)
+    if ((outfd = open (outfile, outflags, S_IREAD | S_IWRITE)) < 0)
         error (1, errno, "couldn't write %s", outfile);
 
     while ((len = read (infd, buf, sizeof (buf))) > 0)
