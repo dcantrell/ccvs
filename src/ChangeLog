@@ -1,5 +1,7 @@
 Wed Sep 11 12:46:23 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* build_src.com: Add zlib.c.
+
 	* rcs.c (RCS_deltas): When looking for our branch in ->branches,
 	check the branch number.
 	* sanity.sh (multibranch): New tests test for above fix.

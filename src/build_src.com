@@ -49,6 +49,7 @@ $ CC version.c
 $ CC vers_ts.c
 $ CC watch.c
 $ CC wrapper.c
+$ CC/INCLUDE_DIR=([-],[-.VMS],[-.LIB],[-.zlib]) zlib.c
 $ LIBRARY/CREATE cvslib.olb add.obj,admin.obj,buffer.obj,checkin.obj,-
 checkout.obj,-
 classify.obj,client.obj,commit.obj,create_adm.obj,cvsrc.obj,-
@@ -57,6 +58,7 @@ find_names.obj,hash.obj,history.obj,ignore.obj,import.obj,-
 lock.obj,log.obj,logmsg.obj,mkmodules.obj,modules.obj,myndbm.obj,no_diff.obj,-
 parseinfo.obj,patch.obj,rcs.obj,rcscmds.obj,recurse.obj,release.obj,-
 remove.obj,repos.obj,root.obj,rtag.obj,run.obj,server.obj,status.obj,-
-subr.obj,tag.obj,update.obj,version.obj,vers_ts.obj,watch.obj,wrapper.obj
+subr.obj,tag.obj,update.obj,version.obj,vers_ts.obj,watch.obj,wrapper.obj,-
+zlib.obj
 $ link/nodeb/exe=cvs.exe main.obj,cvslib.olb/lib,[-.lib]gnulib.olb/lib,-
 [-.vms]openvmslib.olb/lib,[-.zlib]zlib.olb/lib
