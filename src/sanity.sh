@@ -9306,7 +9306,7 @@ ${PROG} unedit: run update to complete the unedit"
 	  # SunOS4.1.4 systems make it this far, but with a corrupted
 	  # CVS/Entries file.  Demonstrate the corruption!
 	  dotest unedit-without-baserev-5 "cat CVS/Entries" \
-	    "/$file/1\.1\.1\.1/.*"
+	    "/$file/1\.1\.1\.1/${DOTSTAR}"
 
 	  if test "$remote" = yes; then
 	    dotest unedit-without-baserev-6 "${testcvs} -q update" "U m"
