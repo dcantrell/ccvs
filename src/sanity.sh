@@ -18,10 +18,18 @@
 #
 # Original Author: K. Richard Pixley
 
-# usage: sanity.sh [-r] @var{cvs-to-test} @var{tests-to-run}
-# -r means to test remote instead of local cvs.
-# @var{tests-to-run} are the names of the tests to run; if omitted run all
-# tests.
+# usage:
+exit_usage ()
+{
+    echo "Usage: `basename $0` [-kr] [-f FROM-TEST] CVS-TO-TEST [TESTS-TO-RUN...]" 1>&2
+    exit 2
+}
+# -r		test remote instead of local cvs.
+# -k 		try to keep directories created by individual tests around
+# -f FROM-TEST	run TESTS-TO-RUN, skipping all tests in the list before
+#		FROM-TEST
+#
+# TESTS-TO-RUN are the names of the tests to run; if omitted default to all tests.
 
 # See TODO list at end of file.
 
@@ -37,37 +45,11 @@ unset CVSREAD
 LC_ALL=C
 export LC_ALL
 
-# The default value of /tmp/cvs-sanity for TESTDIR is dubious,
-# because it loses if two people/scripts try to run the tests
-# at the same time.  Some possible solutions:
-# 1.  Use /tmp/cvs-test$$.  One disadvantage is that the old
-#     cvs-test* directories would pile up, because they wouldn't
-#     necessarily get removed.
-# 2.  Have everyone/everything running the testsuite set
-#     TESTDIR to some appropriate directory.
-# 3.  Have the default value of TESTDIR be some variation of
-#     `pwd`/cvs-sanity.  The biggest problem here is that we have
-#     been fairly careful to test that CVS prints in messages the
-#     actual pathnames that we pass to it, rather than a different
-#     pathname for the same directory, as may come out of `pwd`.
-#     So this would be lost if everything was `pwd`-based.  I suppose
-#     if we wanted to get baroque we could start making symlinks
-#     to ensure the two are different.
-tmp=`(cd /tmp; /bin/pwd || pwd) 2>/dev/null`
-: ${TESTDIR=$tmp/cvs-sanity}
 
-# "debugger"
-#set -x
 
-echo 'This test should produce no other output than this line, and a final "OK".'
-
-exit_usage ()
-{
-    echo "Usage: `basename $0` [-kr] [-f FROM-TEST] CVS-TO-TEST [TESTS-TO-RUN...]" 1>&2
-    exit 2
-}
-
+#
 # read our options
+#
 unset fromtest
 keep=false
 remote=false
@@ -114,6 +96,15 @@ esac
 shift
 
 
+
+###
+### GUTS
+###
+
+# "debugger"
+#set -x
+
+echo 'This test should produce no other output than this line, and a final "OK".'
 
 # Regexp to match what CVS will call itself in output that it prints.
 # FIXME: we don't properly quote this--if the name contains . we'll
@@ -164,14 +155,43 @@ if test -f check.log; then
 	mv check.log check.plog
 fi
 
+# The default value of /tmp/cvs-sanity for TESTDIR is dubious,
+# because it loses if two people/scripts try to run the tests
+# at the same time.  Some possible solutions:
+# 1.  Use /tmp/cvs-test$$.  One disadvantage is that the old
+#     cvs-test* directories would pile up, because they wouldn't
+#     necessarily get removed.
+# 2.  Have everyone/everything running the testsuite set
+#     TESTDIR to some appropriate directory.
+# 3.  Have the default value of TESTDIR be some variation of
+#     `pwd`/cvs-sanity.  The biggest problem here is that we have
+#     been fairly careful to test that CVS prints in messages the
+#     actual pathnames that we pass to it, rather than a different
+#     pathname for the same directory, as may come out of `pwd`.
+#     So this would be lost if everything was `pwd`-based.  I suppose
+#     if we wanted to get baroque we could start making symlinks
+#     to ensure the two are different.
+tmp=`(cd /tmp; /bin/pwd || pwd) 2>/dev/null`
+
+# Now:
+#	1) Set TESTDIR if it's not set already
+#	2) Remove any old test remnants
+#	3) Create $TESTDIR
+#	4) Normalize TESTDIR with `cd && (/bin/pwd || pwd)`
+#	   (This will match CVS output later)
+: ${TESTDIR=$tmp/cvs-sanity}
 # clean any old remnants (we need the chmod because some tests make
 # directories read-only)
 if test -d ${TESTDIR}; then
     chmod -R a+wx ${TESTDIR}
     rm -rf ${TESTDIR}
 fi
-mkdir ${TESTDIR}
-cd ${TESTDIR}
+# These exits are important.  The first time I tried this, if the `mkdir && cd`
+# failed then the build directory would get blown away.  Some people probably
+# wouldn't appreciate that.
+mkdir ${TESTDIR} || exit 1
+cd ${TESTDIR} || exit 1
+TESTDIR=`(/bin/pwd || pwd) 2>/dev/null`
 
 # Make sure various tools work the way we expect, or try to find
 # versions that do.
