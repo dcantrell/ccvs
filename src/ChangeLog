@@ -1,3 +1,20 @@
+2003-05-08  Derek Price  <derek@ximbiot.com>
+
+	* client.c (send_to_server): Move most of the functionality to and
+	wrap...
+	(send_to_server_via): ...this new function which accepts the buffer
+	pointer as an argument.
+	(read_line): Ditto, but to...
+	(read_line_via): ...here.
+	(auth_server): Rename lto_server & lfrom_server to s/^l//.  Remove
+	ugly code which sets the global versions of these variables
+	temporarily for function calls.
+	s/send_to_server(/send_to_server_via(to_server,/g,
+	s/read_line(/read_line(from_server,/g,
+	Remove emotional FIXME comment to the effect that all this is
+	necessary.
+	(Patch from Alexey Mahotkin <alexm@hsys.msk.ru>.)
+
 2003-05-07  Derek Price  <derek@ximbiot.com>
 
 	* client.c (from_server, to_server): Rename these global buffer
