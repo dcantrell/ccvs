@@ -1293,7 +1293,16 @@ rcsbuf_getkey (rcsbuf, keyp, valp)
    rcsbuf_getstring, rcsbuf_getword.  These last three functions were
    all created by hacking monstrous swaths of code from rcsbuf_getkey,
    and some engineering would make the code easier to read and
-   maintain. */
+   maintain.
+
+   Note that the extreme hair in rcsbuf_getkey is because profiling
+   statistics show that it was worth it.
+
+   We probably could be processing "hardlinks" by first calling
+   rcsbuf_getkey, and breaking up the value afterwards; the code to
+   break it up would not need to be hacked for speed.  This would
+   remove the need for rcsbuf_getword, rcsbuf_getid, and
+   rcsbuf_getstring, as the other calls are easy to remove.  */
 
 /* Read an `id' (in the sense of rcsfile(5)) from RCSBUF, and store in
    IDP. */
