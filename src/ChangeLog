@@ -1,3 +1,8 @@
+2003-02-01  Larry Jones  <lawrence.jones@eds.com>
+
+	* buffer.c (stdio_buffer_shutdown): Handle EINTR from waitpid.
+	(Patch from Johannes Grødem <johs+n@ifi.uio.no>.)
+
 2003-02-01  Derek Price  <derek@ximbiot.com>
 
 	* lock.c: Remove extra line feed on TRACE output.
