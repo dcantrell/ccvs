@@ -26,8 +26,8 @@ AT_CVS_SETUP([version])
 this_year=`date +%Y`
 AT_CHECK_NOESCAPE(
 [cvs --version |
-  sed 's# 1\.[0-9][0-9]*\(\.[0-9][0-9p]*\)*\( ([a-z/]*)\)\?$##
-       s# *$##'], [0],
+  sed 's#  *1[.][0-9][.0-9p]* ([a-z/]*)$##;s#  *1[.][0-9][.0-9p]*$##;s# *$##'],
+[0],
 [
 Concurrent Versions System (CVS)
 
@@ -44,8 +44,8 @@ Specify the --help option for further information about CVS
 
 AT_CVS_REMOTE(
 [AT_CHECK([cvs version |
-  sed 's#^\(Client.*\) 1\.[0-9][0-9]*\(\.[0-9][0-9p]*\)* (client\(/server\)\?)$#\1 (client)#
-       s#^\(Server.*\) 1\.[0-9][0-9]*\(\.[0-9][0-9p]*\)* (\(client/\)\?server)$#\1 (server)#'], [0],
+  sed 's#^\(Client.*\)  *1[.][0-9][.0-9p]* (client[a-z/]*)$#\1 (client)#
+       s#^\(Server.*\)  *1[.][0-9][.0-9p]* ([a-z/]*server)$#\1 (server)#'], [0],
 [Client: Concurrent Versions System (CVS) (client)
 Server: Concurrent Versions System (CVS) (server)
 ])])
@@ -54,7 +54,7 @@ Server: Concurrent Versions System (CVS) (server)
 
 AT_CVS_LOCAL(
 [AT_CHECK([cvs version |
-  sed 's# 1\.[0-9][0-9]*\(\.[0-9][0-9p]*\)*\( ([a-z/]*)\)\?$##'], [0],
+  sed 's#  *1[.][0-9][.0-9p]* ([a-z/]*)$##;s#  *1[.][0-9][.0-9p]*$##'], [0],
 [Concurrent Versions System (CVS)
 ])])
 

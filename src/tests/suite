@@ -2202,12 +2202,10 @@ echo "$as_me: error: Couldn't cd to \\`project'.  Did \$HOME get set incorrectly
 this_year=`date +%Y`
 $at_traceoff
 echo "version.at:41: cvs --version |
-  sed 's# 1\\.[0-9][0-9]*\\(\\.[0-9][0-9p]*\\)*\\( ([a-z/]*)\\)\\?\$##
-       s# *\$##'"
+  sed 's#  *1[.][0-9][.0-9p]* ([a-z/]*)\$##;s#  *1[.][0-9][.0-9p]*\$##;s# *\$##'"
 echo version.at:41 >$at_check_line_file
 ( $at_traceon; cvs --version |
-  sed 's# 1\.[0-9][0-9]*\(\.[0-9][0-9p]*\)*\( ([a-z/]*)\)\?$##
-       s# *$##' ) >$at_stdout 2>$at_stder1
+  sed 's#  *1[.][0-9][.0-9p]* ([a-z/]*)$##;s#  *1[.][0-9][.0-9p]*$##;s# *$##' ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
 grep -v '^ *+' $at_stder1 >$at_stderr
@@ -2248,10 +2246,10 @@ $at_traceon
 
 $at_traceoff
 echo "version.at:59: cvs version |
-  sed 's# 1\\.[0-9][0-9]*\\(\\.[0-9][0-9p]*\\)*\\( ([a-z/]*)\\)\\?\$##'"
+  sed 's#  *1[.][0-9][.0-9p]* ([a-z/]*)\$##;s#  *1[.][0-9][.0-9p]*\$##'"
 echo version.at:59 >$at_check_line_file
 ( $at_traceon; cvs version |
-  sed 's# 1\.[0-9][0-9]*\(\.[0-9][0-9p]*\)*\( ([a-z/]*)\)\?$##' ) >$at_stdout 2>$at_stder1
+  sed 's#  *1[.][0-9][.0-9p]* ([a-z/]*)$##;s#  *1[.][0-9][.0-9p]*$##' ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
 grep -v '^ *+' $at_stder1 >$at_stderr
@@ -2491,12 +2489,10 @@ echo "$as_me: error: Couldn't cd to \\`project'.  Did \$HOME get set incorrectly
 this_year=`date +%Y`
 $at_traceoff
 echo "version.at:41: cvs --version |
-  sed 's# 1\\.[0-9][0-9]*\\(\\.[0-9][0-9p]*\\)*\\( ([a-z/]*)\\)\\?\$##
-       s# *\$##'"
+  sed 's#  *1[.][0-9][.0-9p]* ([a-z/]*)\$##;s#  *1[.][0-9][.0-9p]*\$##;s# *\$##'"
 echo version.at:41 >$at_check_line_file
 ( $at_traceon; cvs --version |
-  sed 's# 1\.[0-9][0-9]*\(\.[0-9][0-9p]*\)*\( ([a-z/]*)\)\?$##
-       s# *$##' ) >$at_stdout 2>$at_stder1
+  sed 's#  *1[.][0-9][.0-9p]* ([a-z/]*)$##;s#  *1[.][0-9][.0-9p]*$##;s# *$##' ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
 grep -v '^ *+' $at_stder1 >$at_stderr
@@ -2537,10 +2533,10 @@ $at_traceon
 
 $at_traceoff
 echo "version.at:59: cvs version |
-  sed 's# 1\\.[0-9][0-9]*\\(\\.[0-9][0-9p]*\\)*\\( ([a-z/]*)\\)\\?\$##'"
+  sed 's#  *1[.][0-9][.0-9p]* ([a-z/]*)\$##;s#  *1[.][0-9][.0-9p]*\$##'"
 echo version.at:59 >$at_check_line_file
 ( $at_traceon; cvs version |
-  sed 's# 1\.[0-9][0-9]*\(\.[0-9][0-9p]*\)*\( ([a-z/]*)\)\?$##' ) >$at_stdout 2>$at_stder1
+  sed 's#  *1[.][0-9][.0-9p]* ([a-z/]*)$##;s#  *1[.][0-9][.0-9p]*$##' ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
 grep -v '^ *+' $at_stder1 >$at_stderr
@@ -2799,12 +2795,10 @@ echo "$as_me: error: Couldn't cd to \\`project'.  Did \$HOME get set incorrectly
 this_year=`date +%Y`
 $at_traceoff
 echo "version.at:41: cvs --version |
-  sed 's# 1\\.[0-9][0-9]*\\(\\.[0-9][0-9p]*\\)*\\( ([a-z/]*)\\)\\?\$##
-       s# *\$##'"
+  sed 's#  *1[.][0-9][.0-9p]* ([a-z/]*)\$##;s#  *1[.][0-9][.0-9p]*\$##;s# *\$##'"
 echo version.at:41 >$at_check_line_file
 ( $at_traceon; cvs --version |
-  sed 's# 1\.[0-9][0-9]*\(\.[0-9][0-9p]*\)*\( ([a-z/]*)\)\?$##
-       s# *$##' ) >$at_stdout 2>$at_stder1
+  sed 's#  *1[.][0-9][.0-9p]* ([a-z/]*)$##;s#  *1[.][0-9][.0-9p]*$##;s# *$##' ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
 grep -v '^ *+' $at_stder1 >$at_stderr
@@ -2841,12 +2835,12 @@ $at_traceon
 
 $at_traceoff
 echo "version.at:51: cvs version |
-  sed 's#^\\(Client.*\\) 1\\.[0-9][0-9]*\\(\\.[0-9][0-9p]*\\)* (client\\(/server\\)\\?)\$#\\1 (client)#
-       s#^\\(Server.*\\) 1\\.[0-9][0-9]*\\(\\.[0-9][0-9p]*\\)* (\\(client/\\)\\?server)\$#\\1 (server)#'"
+  sed 's#^\\(Client.*\\)  *1[.][0-9][.0-9p]* (client[a-z/]*)\$#\\1 (client)#
+       s#^\\(Server.*\\)  *1[.][0-9][.0-9p]* ([a-z/]*server)\$#\\1 (server)#'"
 echo version.at:51 >$at_check_line_file
 ( $at_traceon; cvs version |
-  sed 's#^\(Client.*\) 1\.[0-9][0-9]*\(\.[0-9][0-9p]*\)* (client\(/server\)\?)$#\1 (client)#
-       s#^\(Server.*\) 1\.[0-9][0-9]*\(\.[0-9][0-9p]*\)* (\(client/\)\?server)$#\1 (server)#' ) >$at_stdout 2>$at_stder1
+  sed 's#^\(Client.*\)  *1[.][0-9][.0-9p]* (client[a-z/]*)$#\1 (client)#
+       s#^\(Server.*\)  *1[.][0-9][.0-9p]* ([a-z/]*server)$#\1 (server)#' ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
 grep -v '^ *+' $at_stder1 >$at_stderr
@@ -3142,12 +3136,10 @@ echo "$as_me: error: Couldn't cd to \\`project'.  Did \$HOME get set incorrectly
 this_year=`date +%Y`
 $at_traceoff
 echo "version.at:41: cvs --version |
-  sed 's# 1\\.[0-9][0-9]*\\(\\.[0-9][0-9p]*\\)*\\( ([a-z/]*)\\)\\?\$##
-       s# *\$##'"
+  sed 's#  *1[.][0-9][.0-9p]* ([a-z/]*)\$##;s#  *1[.][0-9][.0-9p]*\$##;s# *\$##'"
 echo version.at:41 >$at_check_line_file
 ( $at_traceon; cvs --version |
-  sed 's# 1\.[0-9][0-9]*\(\.[0-9][0-9p]*\)*\( ([a-z/]*)\)\?$##
-       s# *$##' ) >$at_stdout 2>$at_stder1
+  sed 's#  *1[.][0-9][.0-9p]* ([a-z/]*)$##;s#  *1[.][0-9][.0-9p]*$##;s# *$##' ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
 grep -v '^ *+' $at_stder1 >$at_stderr
@@ -3184,12 +3176,12 @@ $at_traceon
 
 $at_traceoff
 echo "version.at:51: cvs version |
-  sed 's#^\\(Client.*\\) 1\\.[0-9][0-9]*\\(\\.[0-9][0-9p]*\\)* (client\\(/server\\)\\?)\$#\\1 (client)#
-       s#^\\(Server.*\\) 1\\.[0-9][0-9]*\\(\\.[0-9][0-9p]*\\)* (\\(client/\\)\\?server)\$#\\1 (server)#'"
+  sed 's#^\\(Client.*\\)  *1[.][0-9][.0-9p]* (client[a-z/]*)\$#\\1 (client)#
+       s#^\\(Server.*\\)  *1[.][0-9][.0-9p]* ([a-z/]*server)\$#\\1 (server)#'"
 echo version.at:51 >$at_check_line_file
 ( $at_traceon; cvs version |
-  sed 's#^\(Client.*\) 1\.[0-9][0-9]*\(\.[0-9][0-9p]*\)* (client\(/server\)\?)$#\1 (client)#
-       s#^\(Server.*\) 1\.[0-9][0-9]*\(\.[0-9][0-9p]*\)* (\(client/\)\?server)$#\1 (server)#' ) >$at_stdout 2>$at_stder1
+  sed 's#^\(Client.*\)  *1[.][0-9][.0-9p]* (client[a-z/]*)$#\1 (client)#
+       s#^\(Server.*\)  *1[.][0-9][.0-9p]* ([a-z/]*server)$#\1 (server)#' ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
 grep -v '^ *+' $at_stder1 >$at_stderr
