@@ -150,7 +150,7 @@ compress_buffer_input (void *closure, char *data, size_t need, size_t size,
 	bd = xmalloc (sizeof (struct buffer_data));
 	if (bd == NULL)
 	    return -2;
-	bd->text = xmalloc (BUFFER_DATA_SIZE);
+	bd->text = pagealign_xalloc (BUFFER_DATA_SIZE);
 	if (bd->text == NULL)
 	{
 	    free (bd);
@@ -272,12 +272,18 @@ compress_buffer_output (void *closure, const char *data, size_t have,
 {
     struct compress_buffer *cb = closure;
 
+    /* This is only used within the while loop below, but allocated here for
+     * efficiency.
+     */
+    static char *buffer = NULL;
+    if (!buffer)
+	buffer = pagealign_xalloc (BUFFER_DATA_SIZE);
+
     cb->zstr.avail_in = have;
     cb->zstr.next_in = (unsigned char *) data;
 
     while (cb->zstr.avail_in > 0)
     {
-	char buffer[BUFFER_DATA_SIZE];
 	int zstatus;
 
 	cb->zstr.avail_out = BUFFER_DATA_SIZE;
@@ -311,12 +317,18 @@ compress_buffer_flush (void *closure)
 {
     struct compress_buffer *cb = closure;
 
+    /* This is only used within the while loop below, but allocated here for
+     * efficiency.
+     */
+    static char *buffer = NULL;
+    if (!buffer)
+	buffer = pagealign_xalloc (BUFFER_DATA_SIZE);
+
     cb->zstr.avail_in = 0;
     cb->zstr.next_in = NULL;
 
     while (1)
     {
-	char buffer[BUFFER_DATA_SIZE];
 	int zstatus;
 
 	cb->zstr.avail_out = BUFFER_DATA_SIZE;
@@ -419,10 +431,15 @@ compress_buffer_shutdown_output (struct buffer *buf)
     struct compress_buffer *cb = buf->closure;
     int zstatus, status;
 
+    /* This is only used within the while loop below, but allocated here for
+     * efficiency.
+     */
+    static char *buffer = NULL;
+    if (!buffer)
+	buffer = pagealign_xalloc (BUFFER_DATA_SIZE);
+
     do
     {
-	char buffer[BUFFER_DATA_SIZE];
-
 	cb->zstr.avail_out = BUFFER_DATA_SIZE;
 	cb->zstr.next_out = (unsigned char *) buffer;
 

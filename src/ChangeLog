@@ -1,3 +1,12 @@
+2005-03-08  Derek Price  <derek@ximbiot.com>
+
+	* zlib.c (compress_buffer_input): Use pagealign_xalloc when allocating
+	buffer datas.
+	(compress_buffer_output, compress_buffer_flush,
+	compress_buffer_shutdown_output): Don't assume that BUFFER_DATA_SIZE is
+	a constant.
+	(Thanks to report from Larry Jones <lawrence.jones@ugs.com>.)
+
 2005-03-08  Larry Jones  <lawrence.jones@ugs.com>
 
 	* release.c (release): Remove unneeded code.
