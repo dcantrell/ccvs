@@ -1,3 +1,9 @@
+Thu Jun 29 00:46:31 1995  James Kingdon  <kingdon@harvey.cyclic.com>
+
+	* system.h: Check HAVE_SYS_TIMEB_H not non-existent HAVE_TIMEB_H.
+
+	* system.h: Don't define alloca if it is already defined.
+
 Wed Jun 28 15:24:51 1995  James Kingdon  <kingdon@harvey.cyclic.com>
 
 	* system.h: If NeXT, define utimbuf ourself.

@@ -18,7 +18,9 @@
 /* $CVSid: @(#)system.h 1.18 94/09/25 $ */
 
 #ifdef __GNUC__
+#ifndef alloca
 #define alloca __builtin_alloca
+#endif
 #else
 #ifdef HAVE_ALLOCA_H
 #include <alloca.h>
@@ -122,7 +124,7 @@ off_t lseek ();
 #undef timezone /* needed for sgi */
 #endif
 
-#ifdef HAVE_TIMEB_H
+#ifdef HAVE_SYS_TIMEB_H
 #include <sys/timeb.h>
 #else
 struct timeb {
