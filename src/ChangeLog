@@ -1,5 +1,10 @@
 Fri Oct 24 10:22:15 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* sanity.sh (reserved-16): Remove commitinfo change with "cvs
+	commit" not "cvs admin -o".  In addition to commit being The Right
+	Thing on general principles, cvs admin -o doesn't work because it
+	doesn't rebuild the administrative file database.
+
 	* update.c (patch_file): If the first revision does not exist in
 	the RCS file, fall back to sending entire file.  Fixes
 	admin-22-o15 in make remotecheck.
