@@ -1,5 +1,9 @@
 2004-10-20  Derek Price  <derek@ximbiot.com>
 
+	* validate_repo.in: Minor changes to help text.
+
+2004-10-20  Derek Price  <derek@ximbiot.com>
+
 	* validate_repo.in (get_ignore_files_from_cvsroot): Add new script
 	hooks to default ignore list and alphabetize.
 

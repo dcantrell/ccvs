@@ -33,7 +33,7 @@ Script to check the integrity of the Repository.
     perldoc validate_repo.pl
     validate_repo.pl --help [--verbose!]
     validate_repo.pl [--verbose!] [--cvsroot=CVSROOT] [--exec=SCRIPT]...
-                 [--all-revisions!] [module]...
+                     [--all-revisions!] [module]...
 
 =head1 DESCRIPTION
 
@@ -55,7 +55,8 @@ it too fail.
 
 =item C<--help>
 
-Print this very help text.
+Print this very help text (or, with C<--verbose>, act like
+C<perldoc validate_repo.pl>).
 
 =item C<-a> or C<--all-revisions>
 
@@ -88,7 +89,8 @@ version of each revsion in the RCS archive.
 
 =item C<-v> or C<--verbose>
 
-Print verbose debugging information.
+Print verbose debugging information (or, when specified with C<--help>, act
+like C<perldoc validate_repo.pl>).
 
 =head1 ARGUMENTS
 
@@ -109,7 +111,7 @@ F<./CVS/Repository> file when it exists and is readable, then to F<.>
     validate_repo.pl -d /another/cvsroot --verbose --exec '
     system "grep \"This string means Im a bad, bad file!\" <&"
            . fileno( $_[3] )
-	       . ">/dev/null"
+           . ">/dev/null"
         or die "Revision $_[2] of $_[0]/$_[1],v is bad, bad, bad!"'
 
 =head1 SEE ALSO
