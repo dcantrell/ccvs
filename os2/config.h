@@ -36,6 +36,14 @@
 #define _cwait          cwait
 #endif
 
+/* Some more WATCOM stuff: The watcom compiler defines va_list as an array,
+ * not as a pointer, which will make the vasprintf code break without the
+ * following define:
+ */
+#ifdef  __WATCOMC__
+#define VA_LIST_IS_ARRAY
+#endif
+
 /* Define if on AIX 3.
    System headers sometimes define this.
    We just want to avoid a redefinition error message.  */
