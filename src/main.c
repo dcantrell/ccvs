@@ -1030,7 +1030,7 @@ cause intermittent sandbox corruption.");
 	    /* Parse the CVSROOT/config file, but only for local.  For the
 	       server, we parse it after we know $CVSROOT.  For the
 	       client, it doesn't get parsed at all, obviously.  The
-	       presence of the parse_config call here is not mean to
+	       presence of the parse_config call here is not meant to
 	       predetermine whether CVSROOT/config overrides things from
 	       read_cvsrc and other such places or vice versa.  That sort
 	       of thing probably needs more thought.  */
