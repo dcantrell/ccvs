@@ -15,14 +15,10 @@
 /* For functions with variable numbers of arguments */
 #include <stdarg.h>
 
-#ifdef HAVE_NANOSLEEP
-# include "xtime.h"
-#else /* HAVE_NANOSLEEP */
-# if !defined HAVE_USLEEP && defined HAVE_SELECT
-    /* use select as a workaround */
-#   include "xselect.h"
-# endif /* !defined HAVE_USLEEP && defined HAVE_SELECT */
-#endif /* !HAVE_NANOSLEEP */
+#if !defined HAVE_NANOSLEEP && !defined HAVE_USLEEP && defined HAVE_SELECT
+  /* use select as a workaround */
+# include "xselect.h"
+#endif /* !defined HAVE_NANOSLEEP && !defined HAVE_USLEEP && defined HAVE_SELECT */
 
 extern char *getlogin (void);
 
