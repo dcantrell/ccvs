@@ -1,3 +1,8 @@
+1998-09-18  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (Keyword list): Describe $Name and checking out with
+	a revision.
+
 1998-09-16  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo: RFC2346 is out; update comment.
