@@ -1,3 +1,8 @@
+2000-05-24  Larry Jones  <larry.jones@sdrc.com>
+
+	* cvs.texinfo (From files): Clean up @var{wdir}/@var{rdir} vs.
+	@var{dir} usage.
+
 2000-05-19  Larry Jones  <larry.jones@sdrc.com>
 
 	* cvsclient.texi (Requests): Note that Global_option is now
