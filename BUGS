@@ -68,14 +68,6 @@ file's description.
       Exit 134
 
 
-* From: billr@mpd.tandem.com (Bill Robertson)
-  Subject: Problem with rtag and the -D option
-  Date: Fri, 17 Mar 1995 10:53:29 -0600 (CST)
-
-  I have been trying to use the -D option to specify a date for tagging, but
-  rtag does not recognize the -D option. It is documented to do so and I've
-  tested the use of -D with cvs update and cvs diff and it works fine there.
-
 * From: "Charles M. Hannum" <mycroft@ai.mit.edu>
   To: info-cvs@prep.ai.mit.edu
   Subject: Still one more bug
