@@ -1,3 +1,23 @@
+1999-04-05  Jim Kingdon
+
+	* sanity.sh (watch5): Remove nonstandard --keep code.  Don't pass
+	-f to rm when cleaning up (that tends to mask bugs).  Add watch5
+	to list of tests at start.  Add comment explaining why we consider
+	the behavior we test for the right one.  Rename a few tests which
+	had been erroneously named watch6* instead of watch5*.
+	* client.c (update_entries): Add comment with brief discussion of
+	whether there is a better way.
+
+1999-04-05  Derek Price
+	<http://www-personal.engin.umich.edu/~oberon/resume.html>
+
+	* client.c (update_entries):  Only call mark_up_to_date
+	(which deletes the CVS/Base/<filename> file for watched
+	and edited files) on commit.
+	* sanity.sh:  Make sure the CVS/Base/<filename> file for
+	a watched and edited file is not removed on a status or
+	update of a touched/unmodfied file.
+
 1999-03-30  Larry Jones  <larry.jones@sdrc.com>
 
 	* client.c (get_responses_and_close), commit.c (commit),

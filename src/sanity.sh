@@ -572,7 +572,7 @@ if test x"$*" = x; then
 	# Log messages, error messages.
 	tests="${tests} mflag editor errmsg1 errmsg2"
 	# Watches, binary files, history browsing, &c.
-	tests="${tests} devcom devcom2 devcom3 watch4"
+	tests="${tests} devcom devcom2 devcom3 watch4 watch5"
 	tests="${tests} unedit-without-baserev"
 	tests="${tests} ignore binfiles binfiles2 binfiles3"
 	tests="${tests} mcopy binwrap binwrap2"
@@ -10332,6 +10332,71 @@ C file1"
 	  dotest watch4-cleanup-1 "test -d 2" ''
 	  # Specify -f because of the readonly files.
 	  rm -rf 1 2
+	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  ;;
+
+	watch5)
+	  # This test was designed to catch a problem in server
+	  # mode where an 'cvs edit'd file disappeared from the
+	  # CVS/Base directory when 'cvs status' or 'cvs update'
+	  # was called on the file after the file was touched.
+	  #
+	  # This test is still here to prevent the bug from
+	  # being reintroduced.
+	  #
+	  # The rationale for having CVS/Base stay around is that
+	  # CVS/Base should be there if "cvs edit" has been run (this
+	  # may be helpful as a "cvs editors" analogue, it is
+	  # client-side and based on working directory not username;
+	  # but more importantly, it isn't clear why a "cvs status"
+	  # would act like an unedit, and even if it does, it would
+	  # need to make the file read-only again).
+
+	  mkdir watch5; cd watch5
+	  dotest watch5-0a "${testcvs} -q co -l ." ''
+	  mkdir first-dir
+	  dotest watch5-0b "${testcvs} add first-dir" \
+"Directory ${TESTDIR}/cvsroot/first-dir added to the repository"
+
+	  cd first-dir
+	  dotest watch5-1 "${testcvs} watch on" ''
+	  # This is just like the 173 test
+	  touch file1
+	  dotest watch5-2 "${testcvs} add file1" \
+"${PROG} [a-z]*: scheduling file .file1. for addition
+${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
+	  dotest watch5-3 "${testcvs} -q ci -m add" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
+done
+Checking in file1;
+${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
+initial revision: 1\.1
+done"
+	  dotest watch5-4 "${testcvs} edit file1" ''
+	  dotest watch5-5 "test -f CVS/Base/file1" ''
+	  if ${testcvs} status file1 >>${LOGFILE} 2>&1; then
+		pass watch5-6
+	  else
+		fail watch5-6
+	  fi
+	  dotest watch5-7 "test -f CVS/Base/file1" ''
+
+	  # Here's where the file used to dissappear
+	  touch file1
+	  if ${testcvs} status file1 >>${LOGFILE} 2>&1; then
+		pass watch5-8
+	  else
+		fail watch5-8
+	  fi
+	  dotest watch5-10 "test -f CVS/Base/file1" ''
+
+	  # Make sure update won't remove the file either
+	  touch file1
+	  dotest watch5-11 "${testcvs} -q up" ''
+	  dotest watch5-12 "test -f CVS/Base/file1" ''
+
+	  cd ../..
+	  rm -r watch5
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
 	  ;;
 
