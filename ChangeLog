@@ -1,3 +1,8 @@
+Wed Dec 31 09:25:20 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* FAQ: Re-import from FAQ-O-Matic.  Features a change regarding
+	removing directories.
+
 Tue Dec 23 08:28:44 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* README.VMS, INSTALL, HACKING, BUGS, README: Change bug-cvs

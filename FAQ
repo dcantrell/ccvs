@@ -5280,12 +5280,16 @@ kingdon@cyclic.com
     
    Oversight. It should be able to delete an empty directory, but you
    still don't have a way to remember when it was there and when it
-   disappeared to allow the "-D <date>" option to work.
+   disappeared to allow the "-D " option to work.
    
    You'll have to remove the working directory and the matching directory
    in the Repository.
    
-   Last modified: _6/13/1997_
+   Note that you want to do a _cvs remove dir_ in the working directory,
+   do a cvs commit, and then do a _rmdir dir_ in the Repository.
+   (msusrtsp.mark at eds dot com)
+   
+   Last modified: _12/18/1997_
    
     3. I don't like removing files. Is there another way to ignore them? 
     
