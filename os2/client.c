@@ -2125,14 +2125,7 @@ start_server ()
       putc ('\n', stderr);
     }
   
-  /* kff: testing. */
-  printf ("command[]: %s\n", command);
-  fflush (stdout);
-  
-  printf ("*** Starting server:\n");
-  fflush (stdout);
   rc = popenRW (command, pipes);
-  printf ("*** Started server!\n");
   
   to_server   = pipes[0];
   from_server = pipes[1];
