@@ -420,15 +420,15 @@ handle_valid_requests (args, len)
 
 static int use_directory = -1;
 
-static char *get_short_pathname PROTO((char *));
+static char *get_short_pathname PROTO((const char *));
 
 static char *
 get_short_pathname (name)
-    char *name;
+    const char *name;
 {
-    char *retval;
+    const char *retval;
     if (use_directory)
-	return name;
+	return (char *) name;
     if (strncmp (name, toplevel_repos, strlen (toplevel_repos)) != 0)
 	error (1, 0, "server bug: name `%s' doesn't specify file in `%s'",
 	       name, toplevel_repos);
@@ -436,7 +436,7 @@ get_short_pathname (name)
     if (retval[-1] != '/')
 	error (1, 0, "server bug: name `%s' doesn't specify file in `%s'",
 	       name, toplevel_repos);
-    return retval;
+    return (char *) retval;
 }
 
 /*
@@ -699,10 +699,9 @@ copy_a_file (data, ent_list, short_pathname, filename)
     char *short_pathname;
     char *filename;
 {
-    int len;
     char *newname;
 
-    len = read_line (&newname, 0);
+    read_line (&newname, 0);
     copy_file (filename, newname);
     free (newname);
 }
@@ -1228,16 +1227,12 @@ handle_clear_static_directory (pathname, len)
     char *pathname;
     int len;
 {
-    /* Just the part of pathname relative to toplevel_repos.  */
-    char *short_pathname;
-
     if (strcmp (command_name, "export") == 0)
     {
 	/* Swallow the repository.  */
 	read_line (NULL, 0);
 	return;
     }
-    short_pathname = get_short_pathname (pathname);
 
     if (is_cvsroot_level (pathname))
     {
@@ -1258,10 +1253,9 @@ set_sticky (data, ent_list, short_pathname, filename)
     char *filename;
 {
     char *tagspec;
-    int len;
     FILE *f;
 
-    len = read_line (&tagspec, 0);
+    read_line (&tagspec, 0);
     f = open_file (CVSADM_TAG, "w+");
     if (fprintf (f, "%s\n", tagspec) < 0)
 	error (1, errno, "writing %s", CVSADM_TAG);
@@ -1275,9 +1269,6 @@ handle_set_sticky (pathname, len)
     char *pathname;
     int len;
 {
-    /* Just the part of pathname relative to toplevel_repos.  */
-    char *short_pathname;
-
     if (strcmp (command_name, "export") == 0)
     {
 	/* Swallow the repository.  */
@@ -1286,7 +1277,6 @@ handle_set_sticky (pathname, len)
 	(void) read_line (NULL, 0);
 	return;
     }
-    short_pathname = get_short_pathname (pathname);
     if (is_cvsroot_level (pathname))
     {
         /*
@@ -1320,16 +1310,12 @@ handle_clear_sticky (pathname, len)
     char *pathname;
     int len;
 {
-    /* Just the part of pathname relative to toplevel_repos.  */
-    char *short_pathname;
-
     if (strcmp (command_name, "export") == 0)
     {
 	/* Swallow the repository.  */
 	read_line (NULL, 0);
 	return;
     }
-    short_pathname = get_short_pathname (pathname);
 
     if (is_cvsroot_level (pathname))
     {
@@ -2348,8 +2334,10 @@ start_rsh_server (tofdp, fromfdp)
 	  char *cvs_server = getenv ("CVS_SERVER");
 	  char *command;
 
-	  cvs_rsh || (cvs_rsh = "rsh");
-	  cvs_server || (cvs_server = "cvs");
+	  if (!cvs_rsh)
+	    cvs_rsh = "rsh";
+	  if (!cvs_server)
+	    cvs_server = "cvs";
 
 	  /* Pass the command to rsh as a single string.  This
 	     shouldn't affect most rsh servers at all, and will pacify
@@ -2394,7 +2382,6 @@ start_rsh_server (tofdp, fromfdp)
     *fromfdp = from_server_pipe[0];
 }
 
-static int send_contents;
 
 /* Send an argument STRING.  */
 void
