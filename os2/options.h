@@ -112,15 +112,3 @@
 #define AUTH_CLIENT_SUPPORT 1
 
 /* End of CVS configuration section */
-
-/*
- * Externs that are included in libc, but are used frequently enough to
- * warrant defining here.
- */
-#ifndef STDC_HEADERS
-extern void exit ();
-#endif
-
-#ifdef AUTH_CLIENT_SUPPORT
-char *getpass (char *passbuf);
-#endif /* AUTH_CLIENT_SUPPORT */
