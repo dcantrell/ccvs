@@ -125,7 +125,7 @@ struct deltatext {
 
     /* Change text, or NULL if we do not intend to change the change text
        (that is, RCS_copydeltas should just use the change text from the
-       file).  Note that it is perfectly legal to have log be NULL and
+       file).  Note that it is perfectly valid to have log be NULL and
        text non-NULL, or vice-versa.  */
     char *text;
     size_t len;

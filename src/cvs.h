@@ -697,7 +697,7 @@ void SIG_endCrSect PROTO((void));
 int SIG_inCrSect PROTO((void));
 void read_cvsrc PROTO((int *argc, char ***argv, char *cmdname));
 
-char *make_message_rcslegal PROTO((char *message));
+char *make_message_rcsvalid PROTO((char *message));
 extern int file_has_markers PROTO ((const struct file_info *));
 extern void get_file PROTO ((const char *, const char *, const char *,
 			     char **, size_t *, size_t *));
@@ -742,9 +742,9 @@ struct vers_ts
 
        NULL = file is not mentioned in Entries (this is also used for a
 	      directory).
-       "" = ILLEGAL!  The comment used to say that it meant "no user file"
+       "" = INVALID!  The comment used to say that it meant "no user file"
 	    but as far as I know CVS didn't actually use it that way.
-	    Note that according to cvs.texinfo, "" is not legal in the
+	    Note that according to cvs.texinfo, "" is not valid in the
 	    Entries file.
        0 = user file is new
        -vers = user file to be removed.  */

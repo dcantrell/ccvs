@@ -227,12 +227,12 @@ admin (argc, argv)
 		break;
 
 	    case 'l':
-		/* Note that multiple -l options are legal.  */
+		/* Note that multiple -l options are valid.  */
 		arg_add (&admin_data, 'l', optarg);
 		break;
 
 	    case 'u':
-		/* Note that multiple -u options are legal.  */
+		/* Note that multiple -u options are valid.  */
 		arg_add (&admin_data, 'u', optarg);
 		break;
 
@@ -264,7 +264,7 @@ admin (argc, argv)
 		/* Mostly similar to cvs tag.  Could also be parsing
 		   the syntax of optarg, although for now we just pass
 		   it to rcs as-is.  Note that multiple -n options are
-		   legal.  */
+		   valid.  */
 		arg_add (&admin_data, 'n', optarg);
 		break;
 
@@ -272,14 +272,14 @@ admin (argc, argv)
 		/* Mostly similar to cvs tag.  Could also be parsing
 		   the syntax of optarg, although for now we just pass
 		   it to rcs as-is.  Note that multiple -N options are
-		   legal.  */
+		   valid.  */
 		arg_add (&admin_data, 'N', optarg);
 		break;
 
 	    case 'm':
 		/* Change log message.  Could also be parsing the syntax
 		   of optarg, although for now we just pass it to rcs
-		   as-is.  Note that multiple -m options are legal.  */
+		   as-is.  Note that multiple -m options are valid.  */
 		arg_add (&admin_data, 'm', optarg);
 		break;
 
@@ -290,7 +290,7 @@ admin (argc, argv)
 		   Other than that I'm not sure whether it matters much
 		   whether we parse it here or in admin_fileproc.
 
-		   Note that multiple -o options are illegal, in RCS
+		   Note that multiple -o options are invalid, in RCS
 		   as well as here.  */
 
 		if (admin_data.delete_revs != NULL)
@@ -304,7 +304,7 @@ admin (argc, argv)
 		break;
 
 	    case 's':
-		/* Note that multiple -s options are legal.  */
+		/* Note that multiple -s options are valid.  */
 		arg_add (&admin_data, 's', optarg);
 		break;
 
@@ -869,7 +869,7 @@ admin_fileproc (callerdat, finfo)
 		    memset ((void *) delta->text, 0, sizeof (Deltatext));
 		}
 		delta->text->version = xstrdup (delta->version);
-		delta->text->log = make_message_rcslegal (msg);
+		delta->text->log = make_message_rcsvalid (msg);
 		break;
 
 	    case 'l':

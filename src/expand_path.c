@@ -46,7 +46,8 @@ variable_set (nameval)
     while (isalnum ((unsigned char) *p) || *p == '_')
 	++p;
     if (*p != '=')
-	error (1, 0, "illegal character in user variable name in %s", nameval);
+	error ( 1, 0, "invalid character in user variable name in %s",
+		nameval );
     if (p == nameval)
 	error (1, 0, "empty user variable name in %s", nameval);
     name = xmalloc (p - nameval + 1);

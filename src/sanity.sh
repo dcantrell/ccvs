@@ -2112,13 +2112,14 @@ ${PROG} \[[a-z]* aborted\]: attempt to delete all revisions"
 	  rm -r 1
 
 	  mkdir 1; cd 1
-	  # Note that -H is an illegal option.
+	  # Note that -H is an invalid option.
 	  # I suspect that the choice between "illegal" and "invalid"
 	  # depends on the user's environment variables, the phase
 	  # of the moon (weirdness with optind), and who knows what else.
 	  # I've been seeing "illegal"...
+	  # And I switched it to "invalid". -DRP
 	  dotest_fail basicb-21 "${testcvs} -q admin -H" \
-"admin: illegal option -- H
+"admin: invalid option -- H
 ${PROG} \[admin aborted\]: specify ${PROG} -H admin for usage information" \
 "admin: invalid option -- H
 ${PROG} \[admin aborted\]: specify ${PROG} -H admin for usage information"
@@ -2150,7 +2151,7 @@ Directory ${CVSROOT_DIRNAME}/second-dir added to the repository"
 	  # directory in the first place.  I think that maybe the only
 	  # way to get it to work currently is to let CVS create it,
 	  # and then blow it away (don't complain if it does not
-	  # exist).  But that is perfectly legal; people who are used
+	  # exist).  But that is perfectly valid; people who are used
 	  # to the old behavior especially may be interested.
 	  # FIXME: this test is intended for the TopLevelAdmin=yes case;
 	  # should adjust/move it accordingly.
@@ -9587,7 +9588,7 @@ done"
 	  if $remote; then
 	    dotest_fail modules3-11b \
 "${testcvs} -q update ${TESTDIR}/1/src/sub1/sub2/sub3/dir/file1" \
-"absolute pathname .${TESTDIR}/1/src/sub1/sub2/sub3/dir. illegal for server"
+"absolute pathnames invalid for server (specified .${TESTDIR}/1/src/sub1/sub2/sub3/dir.)"
 	  fi # end of remote-only tests
 
 	  cd ..
@@ -11597,7 +11598,7 @@ done"
 	  # Try checking out the module in a local directory
 	  if $remote; then
 	    dotest_fail abspath-2a "${testcvs} co -d ${TESTDIR}/1 mod1" \
-"${PROG} \[server aborted\]: absolute pathname .${TESTDIR}/1. illegal for server"
+"${PROG} \[server aborted\]: absolute pathnames invalid for server (specified .${TESTDIR}/1.)"
 	    dotest abspath-2a-try2 "${testcvs} co -d 1 mod1" \
 "${PROG} [a-z]*: Updating 1
 U 1/file1"
@@ -11663,7 +11664,7 @@ U ${TESTDIR}/1/2/file1"
 	  chmod -w ${TESTDIR}/barf
 	  if $remote; then
 	    dotest_fail abspath-4r "${testcvs} co -d ${TESTDIR}/barf/sub mod1" \
-"${PROG} \[server aborted\]: absolute pathname .${TESTDIR}/barf/sub. illegal for server"
+"${PROG} \[server aborted\]: absolute pathnames invalid for server (specified .${TESTDIR}/barf/sub.)"
 	  else
 	    dotest_fail abspath-4 "${testcvs} co -d ${TESTDIR}/barf/sub mod1" \
 "${PROG} \[[a-z]* aborted\]: cannot make directory sub: No such file or directory"
@@ -19719,7 +19720,7 @@ done"
 
 	admin)
 	  # More "cvs admin" tests.
-	  # The basicb-21 test tests rejecting an illegal option.
+	  # The basicb-21 test tests rejecting an invalid option.
 	  # For -l and -u, see "reserved" and "keyword" tests.
 	  # "binfiles" test has a test of "cvs admin -k".
 	  # "log2" test has tests of -t and -q options to cvs admin.
@@ -19870,7 +19871,7 @@ modify-on-branch
 	  # directly.  This also serves as a test of exporting RCS files
 	  # (analogous to the import tests in "rcs").
 	  # Rather than try to write a rigorous check for whether the
-	  # file CVS exports is legal, we just write a simpler
+	  # file CVS exports is valid, we just write a simpler
 	  # test for what CVS actually exports, and figure we can revise
 	  # the check as needed (within the confines of the RCS5 format as
 	  # documented in RCSFILES).
@@ -23052,25 +23053,25 @@ ${PROG} \[[a-z]* aborted\]: read lock failed - giving up"
 "${testcvs} -d ${CVSROOT1} -q co ../root2/dir2" \
 "${PROG} [a-z]*: in directory \.\./root2/dir2:
 ${PROG} [a-z]*: .\.\..-relative repositories are not supported.
-${PROG} \[[a-z]* aborted\]: illegal source repository"
+${PROG} \[[a-z]* aborted\]: invalid source repository"
 	  rm -rf ../root2
 	  dotest_fail multiroot3-13 \
 "${testcvs} -d ${CVSROOT2} -q co ../root1/dir1" \
 "${PROG} [a-z]*: in directory \.\./root1/dir1:
 ${PROG} [a-z]*: .\.\..-relative repositories are not supported.
-${PROG} \[[a-z]* aborted\]: illegal source repository"
+${PROG} \[[a-z]* aborted\]: invalid source repository"
 	  rm -rf ../root1
 	  dotest_fail multiroot3-14 \
 "${testcvs} -d ${CVSROOT1} -q co ./../root2/dir2" \
 "${PROG} [a-z]*: in directory \./\.\./root2/dir2:
 ${PROG} [a-z]*: .\.\..-relative repositories are not supported.
-${PROG} \[[a-z]* aborted\]: illegal source repository"
+${PROG} \[[a-z]* aborted\]: invalid source repository"
 	  rm -rf ../root2
 	  dotest_fail multiroot3-15 \
 "${testcvs} -d ${CVSROOT2} -q co ./../root1/dir1" \
 "${PROG} [a-z]*: in directory \./\.\./root1/dir1:
 ${PROG} [a-z]*: .\.\..-relative repositories are not supported.
-${PROG} \[[a-z]* aborted\]: illegal source repository"
+${PROG} \[[a-z]* aborted\]: invalid source repository"
 	  rm -rf ../root1
 
 	  cd ../..

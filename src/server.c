@@ -734,7 +734,7 @@ serve_root (arg)
 	return;
     }
 
-    /* Sending "Root" twice is illegal.
+    /* Sending "Root" twice is invalid.
 
        The other way to handle a duplicate Root requests would be as a
        request to clear out all state and start over as if it was a
@@ -827,7 +827,9 @@ server_pathname_check (path)
 	   turn it into "cd /foo/bar; cvs co -d baz" (more or less).
 	   This probably has some problems with pathnames which appear
 	   in messages.  */
-	error (1, 0, "absolute pathname `%s' illegal for server", path);
+	error ( 1, 0,
+		"absolute pathnames invalid for server (specified `%s')",
+		path );
     if (pathname_levels (path) > max_dotdot_limit)
     {
 	/* Similar to the isabsolute case in security implications.  */
@@ -959,8 +961,9 @@ dirswitch (dir, repos)
     if (isabsolute (dir))
     {
 	if (alloc_pending (80 + strlen (dir)))
-	    sprintf (pending_error_text,
-		     "E absolute pathname `%s' illegal for server", dir);
+	    sprintf ( pending_error_text,
+		      "E absolute pathnames invalid for server (specified `%s')",
+		      dir);
 	return;
     }
     if (pathname_levels (dir) > max_dotdot_limit)
@@ -2402,7 +2405,7 @@ error ENOMEM Virtual memory exhausted.\n";
 
     /*
      * We have arranged things so that printing this now either will
-     * be legal, or the "E fatal error" line will get glommed onto the
+     * be valid, or the "E fatal error" line will get glommed onto the
      * end of an existing "E" or "M" response.
      */
 
@@ -2423,15 +2426,15 @@ input_memory_error (buf)
 
 
 
-/* If command is legal, return 1.
- * Else if command is illegal and croak_on_illegal is set, then die.
- * Else just return 0 to indicate that command is illegal.
+/* If command is valid, return 1.
+ * Else if command is invalid and croak_on_invalid is set, then die.
+ * Else just return 0 to indicate that command is invalid.
  */
 static int
-check_command_legal_p (cmd_name)
+check_command_valid_p (cmd_name)
     char *cmd_name;
 {
-    /* Right now, only pserver notices illegal commands -- namely,
+    /* Right now, only pserver notices invalid commands -- namely,
      * write attempts by a read-only user.  Therefore, if CVS_Username
      * is not set, this just returns 1, because CVS_Username unset
      * means pserver is not active.
@@ -2505,7 +2508,7 @@ check_command_legal_p (cmd_name)
                      linebuf[num_red - 1] = '\0';
 
                  if (strcmp (linebuf, CVS_Username) == 0)
-                     goto handle_illegal;
+                     goto handle_invalid;
              }
 	     if (num_red < 0 && !feof (fp))
 		 error (0, errno, "cannot read %s", fname);
@@ -2579,7 +2582,7 @@ check_command_legal_p (cmd_name)
          }
          else   /* writers file exists, but this user not listed in it */
          {
-         handle_illegal:
+         handle_invalid:
              if (fclose (fp) < 0)
 		 error (0, errno, "cannot close %s", fname);
              if (linebuf)
@@ -2590,7 +2593,7 @@ check_command_legal_p (cmd_name)
     }
 #endif /* AUTH_SERVER_SUPPORT */
 
-    /* If ever reach end of this function, command must be legal. */
+    /* If ever reach end of this function, command must be valid. */
     return 1;
 }
 
@@ -2645,9 +2648,9 @@ do_cvs_command (cmd_name, command)
 
     /* Global `command_name' is probably "server" right now -- only
        serve_export() sets it to anything else.  So we will use local
-       parameter `cmd_name' to determine if this command is legal for
+       parameter `cmd_name' to determine if this command is valid for
        this user.  */
-    if (!check_command_legal_p (cmd_name))
+    if (!check_command_valid_p (cmd_name))
     {
 	buf_output0 (buf_to_net, "E ");
 	buf_output0 (buf_to_net, program_name);
@@ -4674,7 +4677,7 @@ serve_update_prog (arg)
 
     /* Before we do anything we need to make sure we are not in readonly
        mode.  */
-    if (!check_command_legal_p ("commit"))
+    if (!check_command_valid_p ("commit"))
     {
 	/* I might be willing to make this a warning, except we lack the
 	   machinery to do so.  */

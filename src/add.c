@@ -429,7 +429,7 @@ add (argc, argv)
 			       finfo.fullname);
 			error (0, 0, "`%s' already exists in the repository",
 			       dname);
-			error (1, 0, "illegal filename overlap");
+			error (1, 0, "invalid filename overlap");
 		    }
 		    free (dname);
 
