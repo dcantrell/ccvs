@@ -2258,7 +2258,8 @@ RCS_fast_checkout (rcs, workfile, tag, options, sout, flags)
 	    }
 
 	    if (fwrite (value, 1, len, ofp) != len)
-	        error (1, errno, "cannot write %s", workfile);
+		error (1, errno, "cannot write %s",
+		       workfile == NULL ? "stdout" : workfile);
 
 	    if (workfile != NULL)
 	    {
