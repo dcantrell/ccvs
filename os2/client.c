@@ -1640,7 +1640,7 @@ send_repository (dir, repos, update_dir)
 	{
 	    if (errno != ENOENT
                 && errno != ENOTEXIST
-                && errno != EOS2ERROR)
+                && errno != EOS2ERR)
 		error (1, errno, "reading %s", adm_name);
 	}
 	else
