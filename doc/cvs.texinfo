@@ -8032,6 +8032,7 @@ Might not work together with @sc{cvs}.  Erase the login
 names appearing in the comma-separated list
 @var{logins} from the access list of the RCS file.  If
 @var{logins} is omitted, erase the entire access list.
+There can be no space between @samp{-e} and its argument.
 
 @item -I
 Run interactively, even if the standard input is not a
