@@ -114,11 +114,8 @@ Please read the INSTALL file for installation instructions.  Brief summary:
 The documentation is in the doc subdirectory.  cvs.texinfo is the main
 manual; cvs.info* and cvs.ps are the info and postscript versions,
 respectively, generated from cvs.texinfo.  The postscript version is
-for US letter size paper; we do this not because we consider this size
-"better" than A4, but because we believe that the US letter version
-will print better on A4 paper than the other way around. If you want a
-version formatted for A4, add the line @afourpaper near the start of
-cvs.texinfo and re-generate cvs.ps using TeX.
+for A4 paper; if you want US letter size, you need to remove the line
+@afourpaper from cvs.texinfo and re-generate cvs.ps using TeX.
 
 -------------------------------------------------------------------------------
 
