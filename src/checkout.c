@@ -324,9 +324,8 @@ checkout (argc, argv)
 	    client_nonexpanded_setup ();
 	  }
 
-	if (fprintf
-	    (to_server,
-	     strcmp (command_name, "export") == 0 ? "export\n" : "co\n")
+	if (send_to_server
+            (strcmp (command_name, "export") == 0 ? "export\n" : "co\n")
 	    < 0)
 	  error (1, errno, "writing to server");
 

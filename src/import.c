@@ -329,11 +329,26 @@ import_descend (message, vtag, targc, targv)
     }
     else
     {
+	struct stat sb;
+
 	while ((dp = readdir (dirp)) != NULL)
 	{
-	    if (strcmp (dp->d_name, ".") == 0 || strcmp (dp->d_name, "..") == 0)
+	    if (strcmp (dp->d_name, ".") == 0 ||
+		strcmp (dp->d_name, "..") == 0 ||
+		lstat (dp->d_name, &sb) != 0)
 		continue;
-	    if (ign_name (dp->d_name))
+
+	    /* We ignore an entry if it is
+	     *	1. not a file, nor a link, nor a directory, or
+	     *	2. a file and on the ignore list.
+	     */
+#ifdef S_ISLNK
+#define IGNORE_ENTRY(f)	(!S_ISLNK(f) && !S_ISDIR(f) && !S_ISREG (f))
+#else
+#define IGNORE_ENTRY(f)	(!S_ISDIR(f) && !S_ISREG (f))
+#endif
+	    if (IGNORE_ENTRY (sb.st_mode) ||
+		(S_ISREG (sb.st_mode) && ign_name (dp->d_name)))
 	    {
 #ifdef SERVER_SUPPORT
 		/* CVS directories are created by server.c because it doesn't
