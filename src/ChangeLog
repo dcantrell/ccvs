@@ -1,3 +1,8 @@
+2004-04-11  Derek Price  <derek@ximbiot.com>
+
+	* client.c (get_proxy_port_number): Use CVS_PROXY_PORT as the default
+	proxy port rather than CVS_AUTH_PORT.
+
 2004-04-10  Mark D. Baushke  <mdb@cvshome.org>
 
 	* client.c (get_cvs_port_number): Use CVS_AUTH_PORT as the default
