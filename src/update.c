@@ -110,7 +110,7 @@ static int dotemplate = 0;
 static int patches = 0;
 static int rcs_diff_patches = 0;
 #endif
-static List *ignlist = (List *) NULL;
+static List *ignlist = NULL;
 static time_t last_register_time;
 static const char *const update_usage[] =
 {
@@ -722,7 +722,7 @@ update_fileproc (void *callerdat, struct file_info *finfo)
                             Register (finfo->entries, finfo->file, 
                                       vers->vn_rcs, vers->ts_rcs,
                                       vers->options, vers->tag,
-                                      vers->date, (char *)0);
+                                      vers->date, NULL);
                         }
                     }
                     if (!retval)
@@ -748,7 +748,7 @@ update_fileproc (void *callerdat, struct file_info *finfo)
 					     ? SERVER_RCS_DIFF
 					     : SERVER_PATCHED),
 					    file_info.st_mode, checksum,
-					    (struct buffer *) NULL);
+					    NULL);
 			break;
 		    }
 		}
@@ -1458,7 +1458,7 @@ VERS: ", 0);
 	if (update_server && server_active)
 	    server_updated (finfo, vers_ts,
 			    merging ? SERVER_MERGED : SERVER_UPDATED,
-			    mode, (unsigned char *) NULL, revbuf);
+			    mode, NULL, revbuf);
 #endif
     }
     else
@@ -1634,7 +1634,7 @@ patch_file (struct file_info *finfo, Vers_TS *vers_ts, int *docheckout,
      * At least, if we are keeping track of the tag vn_user came from,
      * I don't know where yet. -DRP
      */
-    retcode = RCS_checkout (vers_ts->srcfile, (char *) NULL,
+    retcode = RCS_checkout (vers_ts->srcfile, NULL,
 			    vers_ts->vn_user, vers_ts->tag,
 			    vers_ts->options, RUN_TTY,
 			    patch_file_write, (void *) &data);
@@ -1657,7 +1657,7 @@ patch_file (struct file_info *finfo, Vers_TS *vers_ts, int *docheckout,
 	data.compute_checksum = 1;
 	md5_init_ctx (&data.context);
 
-	retcode = RCS_checkout (vers_ts->srcfile, (char *) NULL,
+	retcode = RCS_checkout (vers_ts->srcfile, NULL,
 				vers_ts->vn_rcs, vers_ts->tag,
 				vers_ts->options, RUN_TTY,
 				patch_file_write, (void *) &data);
@@ -2011,9 +2011,7 @@ merge_file (struct file_info *finfo, Vers_TS *vers)
     {
         server_copy_file (finfo->file, finfo->update_dir, finfo->repository,
 			  backup);
-	server_updated (finfo, vers, SERVER_MERGED,
-			(mode_t) -1, (unsigned char *) NULL,
-			(struct buffer *) NULL);
+	server_updated (finfo, vers, SERVER_MERGED, (mode_t) -1, NULL, NULL);
     }
 #endif
 
@@ -2122,14 +2120,14 @@ join_file (struct file_info *finfo, Vers_TS *vers)
        below about vn_user.  */
 
     /* Convert the second revision, walking branches and dates.  */
-    rev2 = RCS_getversion (vers->srcfile, jrev2, jdate2, 1, (int *) NULL);
+    rev2 = RCS_getversion (vers->srcfile, jrev2, jdate2, 1, NULL);
 
     /* If this is a merge of two revisions, get the first revision.
        If only one join tag was specified, then the first revision is
        the greatest common ancestor of the second revision and the
        working file.  */
     if (jrev1 != NULL)
-	rev1 = RCS_getversion (vers->srcfile, jrev1, jdate1, 1, (int *) NULL);
+	rev1 = RCS_getversion (vers->srcfile, jrev1, jdate1, 1, NULL);
     else
     {
 	/* Note that we use vn_rcs here, since vn_user may contain a
@@ -2279,7 +2277,7 @@ join_file (struct file_info *finfo, Vers_TS *vers)
 	{
 	    server_scratch (finfo->file);
 	    server_updated (finfo, vers, SERVER_UPDATED, (mode_t) -1,
-			    (unsigned char *) NULL, (struct buffer *) NULL);
+			    NULL, NULL);
 	}
 #endif
 	Register (finfo->entries, finfo->file, mrev, vers->ts_rcs,
@@ -2420,8 +2418,7 @@ join_file (struct file_info *finfo, Vers_TS *vers)
 	 */
 	retcode = RCS_checkout (vers->srcfile, finfo->file,
 				vers->vn_user, vers->tag,
-				(char *) NULL, RUN_TTY,
-				(RCSCHECKOUTPROC) NULL, (void *) NULL);
+				NULL, RUN_TTY, NULL, NULL);
 	if (retcode != 0)
 	    error (1, 0,
 		   "failed to check out %s file", finfo->fullname);
@@ -2482,8 +2479,8 @@ join_file (struct file_info *finfo, Vers_TS *vers)
 	 * Also, it is safe to pass in NULL for nametag since we know no
 	 * substitution is happening during the binary mode checkout.
 	 */
-	if (RCS_checkout ( finfo->rcs, finfo->file, rev2, (char *)NULL, t_options,
-			   RUN_TTY, (RCSCHECKOUTPROC)0, NULL) != 0 )
+	if (RCS_checkout (finfo->rcs, finfo->file, rev2, NULL, t_options,
+			  RUN_TTY, NULL, NULL) != 0)
 	    status = 2;
 	else
 	    status = 0;
@@ -2517,8 +2514,8 @@ join_file (struct file_info *finfo, Vers_TS *vers)
 	   the two files, and let them resolve it.  It is possible
 	   that we should require a "touch foo" or similar step before
 	   we allow a checkin.  */
-	if (RCS_checkout ( finfo->rcs, finfo->file, rev2, (char *)NULL,
-			   t_options, RUN_TTY, (RCSCHECKOUTPROC)0, NULL) != 0)
+	if (RCS_checkout (finfo->rcs, finfo->file, rev2, NULL,
+			  t_options, RUN_TTY, NULL, NULL) != 0)
 	    status = 2;
 	else
 	    status = 0;
@@ -2614,9 +2611,7 @@ join_file (struct file_info *finfo, Vers_TS *vers)
     {
 	server_copy_file (finfo->file, finfo->update_dir, finfo->repository,
 			  backup);
-	server_updated (finfo, vers, SERVER_MERGED,
-			(mode_t) -1, (unsigned char *) NULL,
-			(struct buffer *) NULL);
+	server_updated (finfo, vers, SERVER_MERGED, (mode_t) -1, NULL, NULL);
     }
 #endif
 

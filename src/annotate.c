@@ -140,15 +140,14 @@ annotate (int argc, char **argv)
 	for (i = 0; i < argc; i++)
 	{
 	    err += do_module (db, argv[i], MISC, "Annotating", rannotate_proc,
-			     (char *) NULL, 0, local, 0, 0, (char *) NULL);
+			      NULL, 0, local, 0, 0, NULL);
 	}
 	close_module (db);
     }
     else
     {
-	err = rannotate_proc (argc + 1, argv - 1, (char *) NULL,
-			 (char *) NULL, (char *) NULL, 0, local, (char *) NULL,
-			 (char *) NULL);
+	err = rannotate_proc (argc + 1, argv - 1, NULL, NULL, NULL, 0,
+			      local, NULL, NULL);
     }
 
     return err;

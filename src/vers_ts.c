@@ -259,7 +259,7 @@ Version_TS (struct file_info *finfo, char *options, char *tag, char *date,
     }
 
     /* get user file time-stamp in ts_user */
-    if (finfo->entries != (List *) NULL)
+    if (finfo->entries != NULL)
     {
 #ifdef SERVER_SUPPORT
 	if (server_active)
@@ -445,5 +445,5 @@ freevers_ts (Vers_TS **versp)
     if ((*versp)->ts_conflict)
 	free ((*versp)->ts_conflict);
     free ((char *) *versp);
-    *versp = (Vers_TS *) NULL;
+    *versp = NULL;
 }

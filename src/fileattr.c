@@ -528,8 +528,7 @@ postwatch_proc (const char *repository, const char *filter, void *closure)
 #endif /* SERVER_SUPPORT */
 	                      "p", "s", srepos,
 	                      "r", "s", current_parsed_root->directory,
-	                      (char *)NULL
-	                     );
+	                      NULL);
 
     if (!cmdline || !strlen (cmdline))
     {

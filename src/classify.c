@@ -392,7 +392,7 @@ Classify_File (struct file_info *finfo, char *tag, char *date, char *options,
     }
 
     /* free up the vers struct, or just return it */
-    if (versp != (Vers_TS **) NULL)
+    if (versp != NULL)
 	*versp = vers;
     else
 	freevers_ts (&vers);

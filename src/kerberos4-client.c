@@ -104,10 +104,8 @@ initialize_kerberos4_encryption_buffers( struct buffer **to_server_p,
                                          struct buffer **from_server_p )
 {
   *to_server_p = krb_encrypt_buffer_initialize (*to_server_p, 0, sched,
-						kblock,
-						(BUFMEMERRPROC) NULL);
+						kblock, NULL);
   *from_server_p = krb_encrypt_buffer_initialize (*from_server_p, 1,
-						  sched, kblock,
-						  (BUFMEMERRPROC) NULL);
+						  sched, kblock, NULL);
 }
 

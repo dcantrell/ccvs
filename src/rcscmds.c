@@ -101,7 +101,7 @@ call_diff_setup (const char *prog)
 	if (call_diff_argv[i])
 	{
 	    free (call_diff_argv[i]);
-	    call_diff_argv[i] = (char *) 0;
+	    call_diff_argv[i] = NULL;
 	}
     }
     call_diff_argc = 0;
@@ -111,7 +111,7 @@ call_diff_setup (const char *prog)
     /* put each word into call_diff_argv, allocating it as we go */
     for (cp = strtok (call_diff_prog, " \t");
 	 cp != NULL;
-	 cp = strtok ((char *) NULL, " \t"))
+	 cp = strtok (NULL, " \t"))
 	call_diff_add_arg (cp);
     free (call_diff_prog);
 }
@@ -138,7 +138,7 @@ call_diff_add_arg (const char *s)
 	call_diff_argv[call_diff_argc++] = xstrdup (s);
     else
 	/* Not post-incremented on purpose!  */
-	call_diff_argv[call_diff_argc] = (char *) 0;
+	call_diff_argv[call_diff_argc] = NULL;
 }
 
 /* Callback function for the diff library to write data to the output
@@ -194,8 +194,8 @@ static struct diff_callbacks call_diff_stdout_callbacks =
 
 static struct diff_callbacks call_diff_file_callbacks =
 {
-    (void (*) (const char *, size_t)) NULL,
-    (void (*) (void)) NULL,
+    NULL,
+    NULL,
     call_diff_write_stdout,
     call_diff_error
 };
@@ -262,8 +262,7 @@ RCS_merge (RCSNode *rcs, const char *path, const char *workfile,
     cvs_output ("\n", 1);
 
     tmp1 = cvs_temp_name();
-    if (RCS_checkout (rcs, NULL, xrev1, rev1, options, tmp1,
-		      (RCSCHECKOUTPROC)0, NULL))
+    if (RCS_checkout (rcs, NULL, xrev1, rev1, options, tmp1, NULL, NULL))
     {
 	cvs_outerr ("rcsmerge: co failed\n", 0);
 	exit (EXIT_FAILURE);
@@ -274,8 +273,7 @@ RCS_merge (RCSNode *rcs, const char *path, const char *workfile,
     cvs_output ("\n", 1);
 
     tmp2 = cvs_temp_name();
-    if (RCS_checkout (rcs, NULL, xrev2, rev2, options, tmp2,
-		      (RCSCHECKOUTPROC)0, NULL))
+    if (RCS_checkout (rcs, NULL, xrev2, rev2, options, tmp2, NULL, NULL))
     {
 	cvs_outerr ("rcsmerge: co failed\n", 0);
 	exit (EXIT_FAILURE);
@@ -405,7 +403,7 @@ RCS file: ", 0);
     {
 	tmpfile1 = cvs_temp_name();
 	status = RCS_checkout (rcsfile, NULL, rev1, NULL, options, tmpfile1,
-	                       (RCSCHECKOUTPROC)0, NULL);
+	                       NULL, NULL);
 	if (status > 0)
 	{
 	    retval = status;
@@ -433,7 +431,7 @@ RCS file: ", 0);
 	cvs_output (rev2, 0);
 	cvs_output ("\n", 1);
 	status = RCS_checkout (rcsfile, NULL, rev2, NULL, options,
-			       tmpfile2, (RCSCHECKOUTPROC)0, NULL);
+			       tmpfile2, NULL, NULL);
 	if (status > 0)
 	{
 	    retval = status;

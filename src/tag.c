@@ -321,22 +321,23 @@ posttag_proc (const char *repository, const char *filter, void *closure)
      */
     cmdline = format_cmdline (
 #ifdef SUPPORT_OLD_INFO_FMT_STRINGS
-	false, srepos,
+			      false, srepos,
 #endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
-	filter,
-	"t", "s", ppd->symtag,
-	"o", "s", ppd->delete_flag ? "del" :
-	          ppd->force_tag_move ? "mov" : "add",
-    	"b", "c", delete_flag ? '?' : branch_mode ? 'T' : 'N',
-        "c", "s", cvs_cmd_name,
+			      filter,
+			      "t", "s", ppd->symtag,
+			      "o", "s", ppd->delete_flag
+			      ? "del" : ppd->force_tag_move ? "mov" : "add",
+			      "b", "c", delete_flag
+			      ? '?' : branch_mode ? 'T' : 'N',
+			      "c", "s", cvs_cmd_name,
 #ifdef SERVER_SUPPORT
-        "R", "s", referrer ? referrer->original : "NONE",
+			      "R", "s", referrer ? referrer->original : "NONE",
 #endif /* SERVER_SUPPORT */
-    	"p", "s", srepos,
-	"r", "s", current_parsed_root->directory,
-	"sVv", ",", ppd->tlist, pretag_list_to_args_proc, (void *)NULL,
-	(char *)NULL
-	);
+			      "p", "s", srepos,
+			      "r", "s", current_parsed_root->directory,
+			      "sVv", ",", ppd->tlist,
+			      pretag_list_to_args_proc, NULL,
+			      NULL);
 
     if (!cmdline || !strlen (cmdline))
     {
@@ -751,22 +752,23 @@ pretag_proc (const char *repository, const char *filter, void *closure)
      */
     cmdline = format_cmdline (
 #ifdef SUPPORT_OLD_INFO_FMT_STRINGS
-	false, srepos,
+			      false, srepos,
 #endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
-	filter,
-	"t", "s", ppd->symtag,
-	"o", "s", ppd->delete_flag ? "del" :
-	          ppd->force_tag_move ? "mov" : "add",
-    	"b", "c", delete_flag ? '?' : branch_mode ? 'T' : 'N',
-        "c", "s", cvs_cmd_name,
+			      filter,
+			      "t", "s", ppd->symtag,
+			      "o", "s", ppd->delete_flag ? "del" :
+			      ppd->force_tag_move ? "mov" : "add",
+			      "b", "c", delete_flag
+			      ? '?' : branch_mode ? 'T' : 'N',
+			      "c", "s", cvs_cmd_name,
 #ifdef SERVER_SUPPORT
-        "R", "s", referrer ? referrer->original : "NONE",
+			      "R", "s", referrer ? referrer->original : "NONE",
 #endif /* SERVER_SUPPORT */
-    	"p", "s", srepos,
-	"r", "s", current_parsed_root->directory,
-	"sVv", ",", ppd->tlist, pretag_list_to_args_proc, (void *) NULL,
-	(char *)NULL
-	);
+			      "p", "s", srepos,
+			      "r", "s", current_parsed_root->directory,
+			      "sVv", ",", ppd->tlist,
+			      pretag_list_to_args_proc, NULL,
+			      NULL);
 
     if (newfilter) free (newfilter);
 

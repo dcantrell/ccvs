@@ -60,7 +60,7 @@ construct_cvspass_filename (void)
 	   right thing for a GUI is to just store the password in
 	   memory only)...  */
 	error (1, 0, "could not find out home directory");
-	return (char *) NULL;
+	return NULL;
     }
 
     passfile = strcat_filename_onto_homedir (homedir, CVS_PASSWORD_FILE);

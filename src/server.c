@@ -314,8 +314,7 @@ create_adm_p (char *base_dir, char *dir)
 	       might need to change this later on to make sure that we
 	       only write one entry.  */
 
-	    Subdir_Register ((List *) NULL, dir_where_cvsadm_lives,
-			     dir_to_register);
+	    Subdir_Register (NULL, dir_where_cvsadm_lives, dir_to_register);
 	}
 
 	if (done)
@@ -2243,8 +2242,7 @@ prepost_proxy_proc (const char *repository, const char *filter, void *closure)
 	                      "p", "s", ".",
 	                      "r", "s", current_parsed_root->directory,
 	                      "P", "s", config->PrimaryServer->original,
-	                      (char *)NULL
-	                     );
+	                      NULL);
 
     if (!cmdline || !strlen (cmdline))
     {
@@ -4062,7 +4060,7 @@ E CVS locks may need cleaning up.\n");
     while (command_pid > 0)
     {
 	pid_t waited_pid;
-	waited_pid = waitpid (command_pid, (int *) 0, 0);
+	waited_pid = waitpid (command_pid, NULL, 0);
 	if (waited_pid < 0 && errno == EINTR)
 	    continue;
 	if (waited_pid == command_pid)
@@ -5558,8 +5556,7 @@ serve_expand_modules (char *arg)
 	for (i = 1; i < argument_count; i++)
 	    err += do_module (db, argument_vector[i],
 			      CHECKOUT, "Updating", expand_proc,
-			      NULL, 0, 0, 0, 0,
-			      (char *) NULL);
+			      NULL, 0, 0, 0, 0, NULL);
 	close_module (db);
     }
 

@@ -799,9 +799,8 @@ logfile_write (const char *repository, const char *filter, const char *message,
 	                      "p", "s", srepos,
 	                      "r", "s", current_parsed_root->directory,
 	                      "sVv", ",", changes,
-			             logmsg_list_to_args_proc, (void *) NULL,
-	                      (char *)NULL
-	                     );
+			      logmsg_list_to_args_proc, NULL,
+	                      NULL);
     if (!cmdline || !strlen (cmdline))
     {
 	if (cmdline) free (cmdline);
@@ -915,15 +914,14 @@ verifymsg_proc (const char *repository, const char *script, void *closure)
                                        script,
 				       "c", "s", cvs_cmd_name,
 #ifdef SERVER_SUPPORT
-				       "R", "s", referrer ? referrer->original
-							  : "NONE",
+				       "R", "s", referrer
+				       ? referrer->original : "NONE",
 #endif /* SERVER_SUPPORT */
                                        "p", "s", srepos,
                                        "r", "s",
                                        current_parsed_root->directory,
                                        "l", "s", vpd->fname,
-                                       (char *)NULL
-                                      );
+                                       NULL);
 
 #ifdef SUPPORT_OLD_INFO_FMT_STRINGS
     if (newscript) free (newscript);
