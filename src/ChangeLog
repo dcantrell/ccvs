@@ -1,5 +1,9 @@
 2001-04-20  Larry Jones  <larry.jones@sdrc.com>
 
+	* annotate.c (annotate_usage): -r and -D are not mutually exclusive.
+	* main.c (cmd_usage): Add missing version subcommand.
+	* update.c (update_usage): Add missing -C option.
+
 	* sanity.sh (death2): New tests for previous change.
 
 	* classify.c (Classify_File): Treat a dead revision like the RCS
