@@ -773,7 +773,24 @@ do_file_proc (p, closure)
     strcat (finfo->fullname, finfo->file);
 
     if (frfile->frame->dosrcs && repository)
+    {
 	finfo->rcs = RCS_parse (finfo->file, repository);
+
+	/* OK, without W_LOCAL the error handling becomes relatively
+	   simple.  The file names came from readdir() on the
+	   repository and so we know any ENOENT is an error
+	   (e.g. symlink pointing to nothing).  Now, the logic could
+	   be simpler - since we got the name from readdir, we could
+	   just be calling RCS_parsercsfile.  */
+	if (finfo->rcs == NULL
+	    && !(frfile->frame->which & W_LOCAL))
+	{
+	    error (0, 0, "could not read RCS file for %s", finfo->fullname);
+	    free (finfo->fullname);
+	    cvs_flushout ();
+	    return 0;
+	}
+    }
     else 
         finfo->rcs = (RCSNode *) NULL;
     ret = frfile->frame->fileproc (frfile->frame->callerdat, finfo);
