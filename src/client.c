@@ -32,20 +32,9 @@
 #   include "gssapi-client.h"
 # endif
 
-# if HAVE_KERBEROS
-
-#   include <krb.h>
-
-extern char *krb_realmofhost ();
-#   ifndef HAVE_KRB_GET_ERR_TEXT
-#     define krb_get_err_text(status) krb_err_txt[status]
-#   endif /* HAVE_KRB_GET_ERR_TEXT */
-
-/* Information we need if we are going to use Kerberos encryption.  */
-static C_Block kblock;
-static Key_schedule sched;
-
-# endif /* HAVE_KERBEROS */
+# ifdef HAVE_KERBEROS
+#   include "kerberos4-client.h"
+# endif
 
 static void add_prune_candidate PROTO((char *));
 
@@ -3545,83 +3534,6 @@ connect_to_forked_server (to_server_p, from_server_p)
 
 
 
-#ifdef HAVE_KERBEROS
-/* This function has not been changed to deal with NO_SOCKET_TO_FD
-   (i.e., systems on which sockets cannot be converted to file
-   descriptors).  The first person to try building a kerberos client
-   on such a system (OS/2, Windows 95, and maybe others) will have to
-   take care of this.  */
-void
-start_tcp_server (root, to_server_p, from_server_p)
-    cvsroot_t *root;
-    struct buffer **to_server_p;
-    struct buffer **from_server_p;
-{
-    int s;
-    const char *portenv;
-    int port;
-    struct hostent *hp;
-    struct sockaddr_in sin;
-    char *hname;
-
-    s = socket (AF_INET, SOCK_STREAM, 0);
-    if (s < 0)
-	error (1, 0, "cannot create socket: %s", SOCK_STRERROR (SOCK_ERRNO));
-
-    port = get_cvs_port_number (root);
-
-    hp = init_sockaddr (&sin, root->hostname, port);
-
-    hname = xmalloc (strlen (hp->h_name) + 1);
-    strcpy (hname, hp->h_name);
-  
-    TRACE ( 1, "Connecting to %s(%s):%d",
-	    root->hostname,
-	    inet_ntoa (sin.sin_addr),
-	    port );
-
-    if (connect (s, (struct sockaddr *) &sin, sizeof sin) < 0)
-	error (1, 0, "connect to %s(%s):%d failed: %s",
-	       root->hostname,
-	       inet_ntoa (sin.sin_addr),
-	       port, SOCK_STRERROR (SOCK_ERRNO));
-
-    {
-	const char *realm;
-	struct sockaddr_in laddr;
-	int laddrlen;
-	KTEXT_ST ticket;
-	MSG_DAT msg_data;
-	CREDENTIALS cred;
-	int status;
-
-	realm = krb_realmofhost (hname);
-
-	laddrlen = sizeof (laddr);
-	if (getsockname (s, (struct sockaddr *) &laddr, &laddrlen) < 0)
-	    error (1, 0, "getsockname failed: %s", SOCK_STRERROR (SOCK_ERRNO));
-
-	/* We don't care about the checksum, and pass it as zero.  */
-	status = krb_sendauth (KOPT_DO_MUTUAL, s, &ticket, "rcmd",
-			       hname, realm, (unsigned long) 0, &msg_data,
-			       &cred, sched, &laddr, &sin, "KCVSV1.0");
-	if (status != KSUCCESS)
-	    error (1, 0, "kerberos authentication failed: %s",
-		   krb_get_err_text (status));
-	memcpy (kblock, cred.session, sizeof (C_Block));
-    }
-
-    close_on_exec (s);
-
-    free (hname);
-
-    /* Give caller the values it wants. */
-    make_bufs_from_fds (s, s, 0, to_server_p, from_server_p, 1);
-}
-
-#endif /* HAVE_KERBEROS */
-
-
 static int send_variable_proc PROTO ((Node *, void *));
 
 static int
@@ -3874,12 +3786,7 @@ start_server ()
 	    if (! supported_request ("Kerberos-encrypt"))
 		error (1, 0, "This server does not support encryption");
 	    send_to_server ("Kerberos-encrypt\012", 0);
-	    global_to_server = krb_encrypt_buffer_initialize (global_to_server,
-							      0, sched, kblock,
-							      (BUFMEMERRPROC) NULL);
-	    global_from_server = krb_encrypt_buffer_initialize (global_from_server,
-								1, sched, kblock,
-								(BUFMEMERRPROC) NULL);
+           initialize_kerberos4_encryption_buffers(&global_to_server, &global_from_server);
 	}
 	else
 #endif /* HAVE_KERBEROS */

@@ -1,5 +1,10 @@
 2003-06-23  Derek Price  <derek@ximbiot.com>
 
+	* client.c: Reapply Alexey's changes to client.c from three commits
+	back they were left out of the diff.
+ 
+2003-06-23  Derek Price  <derek@ximbiot.com>
+
 	* add.c (add): Fix xmalloc's strlen() of wrong variable.
 	* checkout.c (safe_location): leak: reused where_location without free.
 	* log.c (rlog_proc): leak: free where before exit.
