@@ -1,5 +1,9 @@
 2004-10-01  Derek Price <derek@ximbiot.com>
 
+	* release.c (release): Simplify string construction with asnprintf().
+
+2004-10-01  Derek Price <derek@ximbiot.com>
+
 	* recurse.c (do_file_proc): Improve header comment.  Replace
 	xmalloc()/strcat() combination with asnprintf().
 

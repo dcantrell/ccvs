@@ -67,6 +67,7 @@ release (int argc, char **argv)
     char *line = NULL;
     size_t line_allocated = 0;
     char *update_cmd;
+    size_t dummy;
     char *thisarg;
     int arg_start_idx;
     int err = 0;
@@ -115,14 +116,11 @@ release (int argc, char **argv)
     /* Construct the update command.  Be sure to add authentication and
        encryption if we are using them currently, else our child process may
        not be able to communicate with the server.  */
-    update_cmd = xmalloc (strlen (program_path)
-                        + strlen (original_root)
-                        + 1 + 3 + 3 + 16 + 1);
-    sprintf (update_cmd, "%s %s%s-n -q -d %s update",
-             program_path,
-             cvsauthenticate ? "-a " : "",
-             cvsencrypt ? "-x " : "",
-             original_root);
+    update_cmd = asnprintf (NULL, &dummy, "%s %s%s-n -q -d %s update",
+			    program_path,
+			    cvsauthenticate ? "-a " : "",
+			    cvsencrypt ? "-x " : "",
+			    original_root);
 
 #ifdef CLIENT_SUPPORT
     /* Start the server; we'll close it after looping. */
