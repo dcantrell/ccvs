@@ -138,6 +138,9 @@
 /* Define if you have the timezone function.  */
 #undef HAVE_TIMEZONE
 
+/* Define if you have the tzset function.  */
+#undef HAVE_TZSET
+
 /* Define if you have the vfork function.  */
 #undef HAVE_VFORK
 
