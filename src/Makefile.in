@@ -116,9 +116,8 @@ check: all
 	$(SHELL) $(srcdir)/sanity.sh `pwd`/cvs
 .PHONY: check
 
-# This is not yet ready to be part of the standard `make check'.
-# We need to fix the problem with making sure we get the server we just built,
-# for one thing.
+# I'm not sure there is any remaining reason for this to be separate from
+# `make check'.
 remotecheck: all
 	$(SHELL) $(srcdir)/sanity.sh -r `pwd`/cvs
 .PHONY: remotecheck
