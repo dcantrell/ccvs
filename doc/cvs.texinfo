@@ -6150,8 +6150,8 @@ Tag name used to check out this file.
 @cindex Locker keyword
 @item $@asis{Locker}$
 The login name of the user who locked the revision
-(empty if not locked, and thus almost always useless
-when you are using @sc{cvs}).
+(empty if not locked, which is the normal case unless
+@code{cvs admin -l} is in use).
 
 @cindex Log keyword
 @item $@asis{Log}$
@@ -6323,7 +6323,8 @@ keyword.
 @item -kkvl
 Like @samp{-kkv}, except that a locker's name is always
 inserted if the given revision is currently locked.
-This option is normally not useful when @sc{cvs} is used.
+The locker's name is only relevant if @code{cvs admin
+-l} is in use.
 
 @item -kk
 Generate only keyword names in keyword strings; omit
