@@ -1,5 +1,8 @@
 Mon Nov 13 15:00:26 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvs.texinfo (Concurrency): New node, to describe user-visible
+	behaviors associated with cvs locks.
+
 	* cvs.texinfo (Remote repositories): Add more details of how to
 	set things up (with rsh and kerberos).
 

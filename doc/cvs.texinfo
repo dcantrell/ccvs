@@ -1210,11 +1210,11 @@ There is no need to edit @code{inetd.conf} or start a
 
 Continuing our example, supposing you want to access
 the module @file{foo} in the repository
-@file{/usr/local/sources/}, on machine
+@file{/usr/local/cvsroot/}, on machine
 @file{chainsaw.brickyard.com}, you are ready to go:
 
 @example
-cvs -d bach@@chainsaw.brickyard.com:/user/local/sources checkout foo
+cvs -d bach@@chainsaw.brickyard.com:/user/local/cvsroot checkout foo
 @end example
 
 @node Kerberos authenticated
@@ -1248,7 +1248,7 @@ which allows you to log into the server machine.  Then
 you are ready to go:
 
 @example
-cvs -d chainsaw.brickyard.com:/user/local/sources checkout foo
+cvs -d chainsaw.brickyard.com:/user/local/cvsroot checkout foo
 @end example
 
 If @sc{cvs} fails to connect, it will fall back to
@@ -1466,6 +1466,7 @@ automating that process.  @xref{Informing others}.
 * Updating a file::             Bringing a file up-to-date
 * Conflicts example::           An informative example
 * Informing others::            To cooperate you must inform
+* Concurrency::                 Simultaneous repository access
 @end menu
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -1726,6 +1727,65 @@ to, for instance, instruct @sc{cvs} to mail a
 message to all developers, or post a message to a local
 newsgroup.
 @c -- More text would be nice here.
+
+@node Concurrency
+@section Several developers simultaneously attempting to run CVS
+
+@cindex locks, cvs
+If several developers try to run @sc{cvs} at the same
+time, one may get the following message:
+
+@example
+[11:43:23] waiting for bach's lock in /usr/local/cvsroot/foo
+@end example
+
+@sc{cvs} will try again every 30 seconds, and either
+continue with the operation or print the message again,
+if it still needs to wait.  If a lock seems to stick
+around for an undue amount of time, find the person
+holding the lock and ask them about the cvs command
+they are running.  If they aren't running a cvs
+command, look for and remove files starting with
+@file{#cvs.tfl}, @file{#cvs.rfl}, or @file{#cvs.wfl}
+from the repository.
+
+Note that these locks are to protect @sc{cvs}'s
+internal data structures and have no relationship to
+the word @dfn{lock} in the sense used by @sc{rcs}--a
+way to prevent other developers from working on a
+particular file.
+
+Any number of people can be reading from a given
+repository at a time; only when someone is writing do
+the locks prevent other people from reading or writing.
+
+One might hope for the following property
+
+@example
+If someone commits some changes in one cvs command,
+then an update by someone else will either get all the
+changes, or none of them.
+@end example
+
+but @sc{cvs} does @emph{not} have this property.  For
+example, given the files
+
+@example
+a/one.c
+a/two.c
+b/three.c
+b/four.c
+@end example
+
+if someone runs
+
+@example
+cvs ci a/two.c b/three.c
+@end example
+
+and someone else runs @code{cvs update}, the person
+running update might get only the change to
+@file{b/three.c} and not the change to @file{a/two.c}.
 
 @c ---------------------------------------------------------------------
 @node Branches
