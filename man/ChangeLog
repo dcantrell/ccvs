@@ -1,3 +1,7 @@
+Mon Jul 24 19:11:15 1995  James Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.1: Remove references to -q and -Q command options.
+
 Fri Jul 14 23:30:33 1995  Jim Blandy  <jimb@totoro.cyclic.com>
 
 	* Makefile.in (prefix): Don't forget to give this a value.
