@@ -1,3 +1,7 @@
+2002-03-22  Larry Jones  <larry.jones@sdrc.com>
+
+	* wrapper.c (wrap_add): Update URL of -t/-f wrapper discussion.
+
 2002-04-18  Derek Price  <oberon@umich.edu>
 
 	* version.h: Regenerated for 1.11.2.1 version update.
