@@ -496,7 +496,7 @@ if test -n "$remotehost"; then
 	    echo "$CVS_RSH $remotehost failed." >&2
 	    exit 1
 	fi
-else
+elif test -z "${tmp+set}"; then
 	tmp=`(cd /tmp; /bin/pwd || pwd) 2>/dev/null`
 fi
 : ${TMPDIR=$tmp}
@@ -31224,15 +31224,26 @@ You have \[0\] altered files in this repository\."
 	   echo $what is not the name of a test -- ignored
 	   ;;
 	esac
-done
 
-# Sanity check sanity.sh.  :)
-#
-# Test our exit directory so that tests that exit in an incorrect directory are
-# noticed during single test runs.
-if test "x$TESTDIR" != "x`pwd`"; then
-	fail "cleanup: PWD != TESTDIR (\``pwd`' != \`$TESTDIR')"
-fi
+    # Sanity check sanity.sh.  :)
+    #
+    # Test our exit directory so that tests that exit in an incorrect directory
+    # are noticed during single test runs.
+    if test "x$TESTDIR" != "x`pwd`"; then
+	    fail "cleanup: PWD != TESTDIR (\``pwd`' != \`$TESTDIR')"
+    fi
+
+    # Test our temp directory for cvs-serv* directories.  We would like to not
+    # leave any behind.
+    if $remote && ls $tmp/cvs-serv* >/dev/null 2>&1; then
+	# A true value means ls found files/directories with these names.
+	fail \
+"Found cvs-serv* directories in $tmp.
+If you are testing on a system with an active CVS server, please consider
+setting an alternate value for \$tmp."
+    fi
+
+done # The big loop
 
 echo "OK, all tests completed."
 
