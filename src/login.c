@@ -134,12 +134,12 @@ login (argc, argv)
 
     if (current_parsed_root->method != pserver_method)
     {
-	error (0, 0, "can only use pserver method with `login' command");
+	error (0, 0, "can only use `login' command with the 'pserver' method");
 	error (1, 0, "CVSROOT: %s", current_parsed_root->original);
     }
 
     cvsroot_canonical = normalize_cvsroot(	getcaller(),
-		    				get_port_number ("CVS_CLIENT_PORT", "cvspserver", CVS_AUTH_PORT));
+		    				get_cvs_port_number (current_parsed_root));
     printf ("Logging in to %s\n", cvsroot_canonical);
     fflush (stdout);
 
@@ -342,7 +342,7 @@ get_cvs_password ()
 	error (1, 0, "CVSROOT: %s", current_parsed_root->original);
     }
 
-    cvsroot_canonical = normalize_cvsroot(getcaller(), get_port_number ("CVS_CLIENT_PORT", "cvspserver", CVS_AUTH_PORT));
+    cvsroot_canonical = normalize_cvsroot(getcaller(), get_cvs_port_number (current_parsed_root));
 
     passfile = construct_cvspass_filename ();
     fp = CVS_FOPEN (passfile, "r");
@@ -432,7 +432,7 @@ logout (argc, argv)
        .cvspass files but the current one.  */
 
     cvsroot_canonical = normalize_cvsroot(	getcaller(),
-		    				get_port_number ("CVS_CLIENT_PORT", "cvspserver", CVS_AUTH_PORT));
+		    				get_cvs_port_number (current_parsed_root));
     printf ("Logging out of %s\n", cvsroot_canonical);
     fflush (stdout);
 

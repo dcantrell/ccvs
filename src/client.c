@@ -3664,7 +3664,8 @@ supported_request (name)
     return 0;
 }
 
-
+
+
 #if defined (AUTH_CLIENT_SUPPORT) || defined (HAVE_KERBEROS)
 static struct hostent *init_sockaddr PROTO ((struct sockaddr_in *, char *,
 					     unsigned int));
@@ -3693,13 +3694,18 @@ init_sockaddr (name, hostname, port)
 
 #endif /* defined (AUTH_CLIENT_SUPPORT) || defined (HAVE_KERBEROS) */
 
+
+
 #ifdef AUTH_CLIENT_SUPPORT
 
-int get_port_number PROTO((	const char *envname,
-				const char *portname,
-				int defaultport));
-
-int
+/* Generic function to do port number lookup tasks.
+ *
+ * In order of precedence, will return:
+ * 	getenv (envname), if defined
+ * 	getservbyname (portname), if defined
+ * 	defaultport
+ */
+static int
 get_port_number (envname, portname, defaultport)
     const char *envname;
     const char *portname;
@@ -3713,20 +3719,52 @@ get_port_number (envname, portname, defaultport)
 	int port = atoi (port_s);
 	if (port <= 0)
 	{
-	    error (0, 0, "CVS_CLIENT_PORT must be a positive number!  If you");
+	    error (0, 0, "%s must be a positive integer!  If you", envname);
 	    error (0, 0, "are trying to force a connection via rsh, please");
 	    error (0, 0, "put \":server:\" at the beginning of your CVSROOT");
 	    error (1, 0, "variable.");
 	}
-	if (trace)
-	    fprintf(stderr, " -> Using TCP port %d to contact server.\n", port);
-	return (port);
+	return port;
     }
     else if (portname && (s = getservbyname (portname, "tcp")))
 	return ntohs (s->s_port);
     else
 	return defaultport;
 }
+
+
+
+/* get the port number for a client to connect to based on the port
+ * and method of a cvsroot_t.
+ *
+ * we do this here instead of in parse_cvsroot so that we can keep network
+ * code confined to a localized area and also to delay the lookup until the
+ * last possible moment so it is possible to run cvs client commands that skip
+ * opening connections to the server (i.e. skip network operations entirely)
+ */
+int
+get_cvs_port_number (root)
+    cvsroot_t *root;
+{
+
+    if (root->port) return root->port;
+
+    switch (root->method)
+    {
+	case gserver_method:
+	case pserver_method:
+	    return get_port_number ("CVS_CLIENT_PORT", "cvspserver", CVS_AUTH_PORT);
+#ifdef HAVE_KERBEROS
+	case kserver_method:
+	    return get_port_number ("CVS_CLIENT_PORT", "cvs", CVS_PORT);
+#endif
+	default:
+	    error(1, EINVAL, "internal error: get_cvs_port_number called for invalid connection method (%s)",
+		    method_names[root->method]);
+	    break;
+    }
+}
+
 
 
 /* Read a line from socket SOCK.  Result does not include the
@@ -3836,9 +3874,7 @@ connect_to_pserver (tofdp, fromfdp, verify_only, do_gssapi)
     {
 	error (1, 0, "cannot create socket: %s", SOCK_STRERROR (SOCK_ERRNO));
     }
-    port_number = current_parsed_root->port
-	    	  ? current_parsed_root->port
-		  : get_port_number ("CVS_CLIENT_PORT", "cvspserver", CVS_AUTH_PORT);
+    port_number = get_cvs_port_number (current_parsed_root);
     hostinfo = init_sockaddr (&client_sai, current_parsed_root->hostname, port_number);
     if (connect (sock, (struct sockaddr *) &client_sai, sizeof (client_sai))
 	< 0)
@@ -4039,7 +4075,8 @@ connect_to_pserver (tofdp, fromfdp, verify_only, do_gssapi)
 }
 #endif /* AUTH_CLIENT_SUPPORT */
 
-
+
+
 #ifdef HAVE_KERBEROS
 
 /* This function has not been changed to deal with NO_SOCKET_TO_FD
@@ -4062,8 +4099,7 @@ start_tcp_server (tofdp, fromfdp)
     if (s < 0)
 	error (1, 0, "cannot create socket: %s", SOCK_STRERROR (SOCK_ERRNO));
 
-    /* Get CVS_CLIENT_PORT or look up cvs/tcp with CVS_PORT as default */
-    port = current_parsed_root->port ? current_parsed_root->port : get_port_number ("CVS_CLIENT_PORT", "cvs", CVS_PORT);
+    port = get_cvs_port_number (current_parsed_root);
 
     hp = init_sockaddr (&sin, current_parsed_root->hostname, port);
 
