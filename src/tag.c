@@ -498,20 +498,20 @@ check_fileproc (void *callerdat, struct file_info *finfo)
        version we are going to tag.  There probably are some subtle races
        (e.g. numtag is "foo" which gets moved between here and
        tag_fileproc).  */
-    p->data = (void *) ti = xmalloc( sizeof( struct tag_info ) );
+    p->data = ti = xmalloc (sizeof (struct tag_info));
     if (!is_rtag && numtag == NULL && date == NULL)
-	ti->rev = xstrdup( vers->vn_user );
+	ti->rev = xstrdup (vers->vn_user);
     else
-	ti->rev = RCS_getversion( vers->srcfile, numtag, date,
-				  force_tag_match, NULL );
+	ti->rev = RCS_getversion (vers->srcfile, numtag, date,
+				  force_tag_match, NULL);
 
-    if( ti->rev != NULL )
+    if (ti->rev != NULL)
     {
         int addit = 1;
-        ti->oldrev = RCS_getversion( vers->srcfile, symtag, (char *) NULL, 1,
-	                             (int *) NULL );
+        ti->oldrev = RCS_getversion (vers->srcfile, symtag, (char *) NULL, 1,
+	                             (int *) NULL);
 
-	if( ti->oldrev == NULL ) 
+	if (ti->oldrev == NULL)
         {
             if (delete_flag)
             {

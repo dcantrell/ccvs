@@ -1,5 +1,8 @@
 2004-02-20  Larry Jones  <lawrence.jones@ugsplm.com>
 
+	* tag.c (check_fileproc): Remove spurious invalid cast, clean up
+	coding style.
+
 	* commit.c (precommit_list_proc): Remove vestigial prototype.
 
 2004-02-19  Derek Price  <derek@ximbiot.com>
