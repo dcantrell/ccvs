@@ -1,3 +1,10 @@
+1997-10-11  Noel Cragg  <noel@swish.red-bean.com>
+
+	* cvs.texinfo (checkout options): describe how the `-d' and `-N'
+	flags really work.  Give examples.
+	(export options): refer the reader to the descriptions for `-d'
+	and `-N' in checkout options, since the behavior is the same.
+
 Thu Oct  9 12:01:35 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (log options): Add comment about "cvs log -r".
