@@ -1,9 +1,3 @@
-Mon Feb 17 10:57:18 1997  Greg A. Woods  <woods@most.weird.com>
-
-	* Makefile.in (Makefile): cause this target to fail after
- 	rebuilding Makefile to force you to run make again to use the new
- 	Makefile.
-
 Mon Oct 14 19:19:17 1996  Jim Blandy  <jimb@totoro.cyclic.com>
 
 	* pcl-cvs.el (cvs-parse-stderr): Ignore messages about patch hunks

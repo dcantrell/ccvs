@@ -81,10 +81,8 @@ dist-dir:
 .PHONY: dist-dir
 
 subdir = man
-.PRECIOUS: Makefile
 Makefile: ../config.status Makefile.in
 	cd .. && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= ./config.status
-	@echo 'run "make" again..." && exit 1
 
 #../config.status: ../configure
 #	cd .. ; $(SHELL) config.status --recheck

@@ -84,7 +84,7 @@ YACC = @YACC@
 	$(CC) $(CPPFLAGS) -I.. -I$(srcdir) -I$(cvs_srcdir) \
               $(DEFS) $(CFLAGS) -c $<
 
-all: Makefile libcvs.a
+all: libcvs.a
 .PHONY: all
 
 install: all
@@ -139,8 +139,6 @@ getdate.c: getdate.y
 	   fi ;\
 	fi
 
-$(OBJECTS): ../config.h
-
 fnmatch.o: fnmatch.h
 getopt1.o: getopt.h
 regex.o: regex.h
@@ -151,10 +149,8 @@ xlint:
 	@echo xlint does nothing
 
 subdir = lib
-.PRECIOUS: Makefile
 Makefile: ../config.status Makefile.in
 	cd .. && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= ./config.status
-	@echo 'run "make" again...' && exit 1
 
 #../config.status: ../configure
 #	cd .. ; $(SHELL) config.status --recheck

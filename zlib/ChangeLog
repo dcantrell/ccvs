@@ -1,9 +1,3 @@
-Mon Feb 17 08:59:53 1997  Greg A. Woods  <woods@most.weird.com>
-
-	* Makefile.in (Makefile): cause this target to fail after
- 	rebuilding Makefile to force you to run make again to use the new
- 	Makefile.
-
 1997-01-01  Fred Fish  <fnf@ninemoons.com>
 
 	* Makefile.in (CC): Use @CC@ rather than hard coded "cc".
