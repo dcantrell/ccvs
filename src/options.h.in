@@ -62,14 +62,8 @@
  * when rcsdiff was built on your system.
  */
 
-/* Waiting on some patches to configure.in from Greg Woods.
- * #ifndef DIFF
- * #define	DIFF	"@gdiff_path@"
- * #endif
- */
-
 #ifndef DIFF
-#define	DIFF "diff"
+#define	DIFF	"@gdiff_path@"
 #endif
 
 /*
@@ -79,14 +73,8 @@
  * wants to use a particular grep.
  */
 
-/* Waiting on some patches to configure.in from Greg Woods.
- * #ifndef GREP
- * #define GREP "@ggrep_path@"
- * #endif
- */      
-
 #ifndef GREP
-#define GREP "grep"
+#define GREP "@ggrep_path@"
 #endif
 
 /*

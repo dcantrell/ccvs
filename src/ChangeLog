@@ -1,4 +1,13 @@
-Tue Jul 11 14:20:0 1995  Loren James Rittle  <rittle@supra.comm.mot.com>
+Tue Jul 11 15:53:08 1995  Greg A. Woods  <woods@most.weird.com>
+
+        * options.h.in: depend on configure for grep and diff, now that
+        changes to configure.in are applied.
+
+Tue Jul 11 14:32:14 1995 Michael Shields  <shields@tembel.org>
+
+	* Makefile.in (LDFLAGS): Pick up from configure.
+
+Tue Jul 11 14:20:00 1995  Loren James Rittle  <rittle@supra.comm.mot.com>
 
 	* import.c (add_rev), commit.c (remove_file, ci_new_rev),
 	checkin.c (Checkin), subr.c (make_message_rcslegal), cvs.h:

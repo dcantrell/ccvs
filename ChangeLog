@@ -1,3 +1,18 @@
+Tue Jul 11 15:47:20 1995  Greg A. Woods  <woods@most.weird.com>
+
+        * configure.in: add some FIXME comments
+	- add a hack to restore src/options.h if AC_OUTPUT() didn't modify
+        it. Note that this does *not* work for config.status, thus one
+        FIXME comment.
+        - add test for #! (to warn about possible failure of perl scripts
+	- add test for diff and grep paths (for src/options.h.in)
+	- fix up handling of src/options.h.in
+	- add checks for PERL_PATH and CSH_PATH (from previous local changes)
+
+Tue Jul 11 14:31:18 1995  Michael Shields  <shields@tembel.org>
+
+	* Makefile.in (LDFLAGS): Pick up from configure.
+
 Sun Jul  9 19:03:00 1995  Greg A. Woods  <woods@most.weird.com>
 
 	* configure: re-ran autoconf-2.4

@@ -15,6 +15,57 @@ AC_C_INLINE
 AC_PROG_INSTALL
 AC_PROG_RANLIB
 AC_PROG_YACC
+
+AC_PATH_PROG(perl_path, perl, no)
+AC_PATH_PROG(csh_path, csh, no)
+
+AC_SYS_INTERPRETER
+if test X"$ac_cv_sys_interpreter" != X"yes" ; then
+  # silly trick to avoid problems in AC macros...
+  ac_msg='perl scripts using #! may not be invoked properly'
+  AC_MSG_WARN($ac_msg)
+fi
+
+AC_PATH_PROGS(gdiff_path, gdiff gnudiff diff, diff)
+AC_MSG_CHECKING(to see if $gdiff_path supports -a)
+if $gdiff_path -a /dev/null /dev/null > /dev/null 2>&1 ; then
+  AC_MSG_RESULT(yes; appending -a to $gdiff_path)
+  gdiff_path="$gdiff_path -a"
+fi
+
+AC_PATH_PROGS(ggrep_path, ggrep gnugrep grep, grep)
+AC_MSG_CHECKING(to see if $ggrep_path supports -s)
+[echo foostring | $ggrep_path -s foostring > conftest.out 2>/dev/null]
+dnl
+dnl FIXME: We use a work-around for SunOS users with /usr/5bin first in their
+dnl FIXME: path but we should really iterate through all the possible grep's
+dnl FIXME: for one that works the way we want it to.
+dnl FIXME: On the other hand, we should handle the failure to find a "working"
+dnl FIXME: -s option by doing the old fashioned ">/dev/null".....
+dnl
+if test $? -ne 0 ; then
+  AC_MSG_WARN($ggrep_path does not support -s, used when checking for merge conflicts)
+else
+  AC_MSG_RESULT(yes)
+  AC_MSG_CHECKING(to see if $ggrep_path -s means to work silently)
+  if test -s conftest.out ; then
+    AC_MSG_RESULT(no)
+    if test "$ggrep_path" != /usr/bin/grep ; then
+      AC_MSG_CHECKING(to see if /usr/bin/grep has the right -s)
+      [echo foostring | /usr/bin/grep -s foostring > conftest.out 2>/dev/null]
+      if test $? -eq 0 -a ! -s foostring ; then
+	AC_MSG_RESULT(yes; using /usr/bin/grep)
+	ggrep_path=/usr/bin/grep
+      else
+	AC_MSG_RESULT(no)
+      fi
+    fi
+  else
+    AC_MSG_RESULT(yes)
+  fi
+fi
+rm -f conftest*
+
 AC_HEADER_STDC
 AC_CHECK_HEADERS(errno.h unistd.h string.h memory.h utime.h fcntl.h ndbm.h sys/select.h sys/timeb.h)
 AC_HEADER_SYS_WAIT
@@ -86,11 +137,22 @@ AC_CHECK_FUNCS(krb_get_err_text)
 AC_CHECK_FUNC(connect, :, 
 [AC_CHECK_LIB(socket, connect) AC_CHECK_LIB(nsl, connect)])
 
-test -f src/options.h || (
-  echo creating ./src/options.h 
-  test -d src || mkdir src
-  cp ${srcdir}/src/options.h.in ./src/options.h
+test -f src/options.h && (
+  AC_MSG_WARN(saving ./src/options.h in ./src/options.h-SAVED)
+  AC_MSG_WARN(You may wish to check that local options have not been lost.)
+  AC_MSG_WARN(Do not re-run ./configure or ./config.status until you have....)
+  mv ./src/options.h ./src/options.h-SAVED
 )
 
-AC_OUTPUT(Makefile lib/Makefile src/Makefile doc/Makefile man/Makefile \
- 	  contrib/Makefile contrib/pcl-cvs/Makefile examples/Makefile stamp-h)
+dnl FIXME: AC needs another feature to not touch files that don't change....
+dnl FIXME: particularly for src/options.h
+dnl FIXME: We'll use an ugly hack for now, but it won't work for config.status....
+
+AC_OUTPUT(Makefile lib/Makefile src/Makefile src/options.h doc/Makefile \
+	man/Makefile contrib/Makefile contrib/pcl-cvs/Makefile \
+	examples/Makefile stamp-h)
+
+if cmp src/options.h-SAVED src/options.h > /dev/null 2>&1 ; then
+  AC_MSG_WARN(src/options.h unchanged)
+  mv src/options.h-SAVED src/options.h
+fi
