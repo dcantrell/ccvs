@@ -1,5 +1,7 @@
 Fri Oct 27 13:03:28 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
+        * config.h (ALLOCA_IN_STDLIB): new #define.
+
         * pwd.h, pwd.c: new files (for now, copied from ../windows-NT
         directory.  We'll modify/merge them as necessary.)
 
