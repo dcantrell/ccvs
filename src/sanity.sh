@@ -9531,26 +9531,36 @@ retrieving revision 1\.3
 Merging differences between 1\.2 and 1\.3 into temp\.txt"
 	  dotest join6-13 "${testcvs} diff temp.txt" ""
 
-	  cd ../..
-
-	  mkdir 2; cd 2
-	  echo hello > subfile1
-	  dotest join6-14 "${testcvs} -Q import -madd join6/sub vendor oldver" ""
-	  echo hello > subfile2
-	  dotest join6-15 "${testcvs} -Q import -madd join6/sub vendor newver" ""
-	  cd ../1/join6
-	  dotest_sort join6-16 "${testcvs} update -dP" \
-"? temp2\.txt
-? temp3\.txt
-U sub/subfile1
-U sub/subfile2
-${SPROG} update: Updating \.
-${SPROG} update: Updating sub"
-	  dotest_sort join6-17 "${testcvs} update -dP -j oldver -j newver" \
-"? temp2\.txt
-? temp3\.txt
-${SPROG} update: Updating \.
-${SPROG} update: Updating sub"
+	  # The case where the merge target wasn't created until after the
+	  # first tag was applied
+	  rm temp2.txt temp3.txt
+	  dotest join6-20 "${testcvs} -q tag -r1.1 t1" \
+"T temp.txt"
+	  echo xxx >temp2.txt
+	  dotest join6-21 "${testcvs} -Q add temp2.txt"
+	  dotest join6-22 "${testcvs} -q ci -m." \
+"RCS file: ${CVSROOT_DIRNAME}/join6/temp2.txt,v
+done
+Checking in temp2\.txt;
+${CVSROOT_DIRNAME}/join6/temp2\.txt,v  <--  temp2\.txt
+initial revision: 1\.1
+done"
+	  dotest join6-23 "${testcvs} -q tag t2" \
+"T temp.txt
+T temp2.txt"
+	  echo xxx >>temp.txt
+	  dotest join6-24 "${testcvs} -q ci -m." \
+"Checking in temp\.txt;
+${CVSROOT_DIRNAME}/join6/temp.txt,v  <--  temp\.txt
+new revision: 1\.4; previous revision: 1\.3
+done"
+	  dotest join6-25 "${testcvs} -q up -jt1 -jt2" \
+"RCS file: ${CVSROOT_DIRNAME}/join6/temp.txt,v
+retrieving revision 1\.1
+retrieving revision 1\.3
+Merging differences between 1\.1 and 1\.3 into temp.txt
+temp.txt already contains the differences between 1\.1 and 1\.3
+temp2.txt already contains the differences between creation and 1\.1"
 
 	  cd ../../..
 
