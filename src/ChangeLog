@@ -1,3 +1,9 @@
+1999-02-10  Jim Kingdon  <http://www.cyclic.com>
+
+	* tag.c (cvstag): Don't pass SEND_NO_CONTENTS if -c specified.
+	* sanity.sh (tagc): New test, for various tag -c behaviors.
+	Test tagc-6 tests for this fix.
+
 1999-02-09  Jim Kingdon  <http://www.cyclic.com>
 
 	* error.c (error): Rewrite to no longer use vasprintf (see
