@@ -1,5 +1,10 @@
 2004-02-02  Derek Price  <derek@ximbiot.com>
 
+	* NEWS: Correct "error message" from two commits back to read
+	"status mesage".
+
+2004-02-02  Derek Price  <derek@ximbiot.com>
+
 	* NEWS: Note new join-rm tests.
 
 2004-02-02  Derek Price  <derek@ximbiot.com>
