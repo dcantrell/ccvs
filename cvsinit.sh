@@ -124,9 +124,9 @@ else
 	# try to find perl; use fancy log script if we can
 	for perlpath in `echo $PATH | sed -e 's/:/ /g'` x; do
 	    if [ -f $perlpath/perl ]; then
-		echo "#!$perlpath/perl" > $CVSROOT/CVSROOT/log.pl
-		cat $CVSLIB/contrib/log.pl >> $CVSROOT/CVSROOT/log.pl
-		chmod 755 $CVSROOT/CVSROOT/log.pl
+		echo "#!$perlpath/perl" > $CVSROOT/CVSROOT/log
+		cat $CVSLIB/contrib/log >> $CVSROOT/CVSROOT/log
+		chmod 755 $CVSROOT/CVSROOT/log
 		cp $CVSLIB/examples/loginfo $CVSROOT/CVSROOT/loginfo
 		break
 	    fi
@@ -169,7 +169,7 @@ for info in commitinfo rcsinfo editinfo rcstemplate checkoutlist; do
 done
 
 # These files are generated from the contrib files.
-for contrib in log commit_prep log_accum cln_hist; do
+for contrib in commit_prep log_accum cln_hist; do
     echo "Copying the new version of '${contrib}' to $CVSROOT/CVSROOT for you..."
     cp $CVSLIB/contrib/$contrib $CVSROOT/CVSROOT/$contrib
 done

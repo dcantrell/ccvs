@@ -1,5 +1,7 @@
 Sat Jul 29 16:48:05 1995  James Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvsinit.sh: Rename log.pl to log.  Don't install log twice.
+
 	* Makefile.in (install-local), contrib/Makefile.in (install):
 	Remove "reminder" to run cvsinit; running cvsinit is not required.
 
