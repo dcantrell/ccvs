@@ -818,7 +818,7 @@ save_d (char *k, int ks, char *d, int ds)
     if (s_count == s_max)
     {
 	s_max += 64;
-	s_head = (struct sortrec *) xrealloc ((char *) s_head, s_max * sizeof (*s_head));
+	s_head = xnrealloc (s_head, s_max, sizeof (*s_head));
     }
     s_rec = &s_head[s_count];
     s_rec->modname = cp = xmalloc (ks + 1);

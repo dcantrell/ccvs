@@ -52,8 +52,7 @@ start_kerberos4_server (cvsroot_t *root, struct buffer **to_server_p,
 
     hp = init_sockaddr (&sin, root->hostname, port);
 
-    hname = xmalloc (strlen (hp->h_name) + 1);
-    strcpy (hname, hp->h_name);
+    hname = xstrdup (hp->h_name);
   
     TRACE (TRACE_FUNCTION, "Connecting to %s(%s):%d",
 	   root->hostname,

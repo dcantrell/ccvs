@@ -1,3 +1,30 @@
+2005-03-22  Mark D. Baushke  <mdb@cvshome.org>
+
+	* rcs.c (linevector_copy): Use xtimes in argument.
+
+	* patch.c (patch): Remove dead code.
+
+	* lock.c (set_readlock_name): Use Xasprintf instead of
+	xmalloc/sprintf.
+	(lock_exists, set_promotable_lock, lock_wait): Ditto.
+	(lock_obtained, lock_dir_for_write): Ditto.
+	* log.c (rlog_proc): Ditto.
+
+	* ignore.c (ign_dir_add): Use xnrealloc.
+	* modules.c (save_d): Ditto.
+	* rcs.c (linevector_copy): Ditto.
+
+	* add.c (add): Use xstrdup instead of xmalloc/strcpy.
+	* client.c (client_process_import_file): Ditto.
+	* kerberos4-client.c (start_kerberos4_server): Ditto.
+	* logmsg.c (verifymsg_proc): Ditto.
+	* log.c (log_expand_revlist): Ditto.
+	* patch.c (patch_fileproc): Ditto.
+	* rcs.c (RCS_tag2rev, RCS_nodeisbranch, RCS_getbranch): Ditto.
+	(RCS_getdatebranch, expand_keywords, RCS_addbranch): Ditto.
+	(RCS_checkin): Ditto.
+	* remove.c (remove_fileproc): Ditto.
+
 2005-03-18  Derek Price  <derek@ximbiot.com>
 
 	* server.c: Reindent pragmas.
