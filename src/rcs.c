@@ -2522,6 +2522,16 @@ RCS_tag2rev (rcs, tag)
 	    }
 	}
 
+	/* Try for a real (that is, exists in the RCS deltas) branch
+	   (RCS_exist_rev just checks for real revisions and revisions
+	   which have tags pointing to them).  */
+	pa = RCS_getbranch (rcs, rev, 1);
+	if (pa != NULL)
+	{
+	    free (pa);
+	    return rev;
+	}
+
        /* Tag is branch, but does not exist, try corresponding 
 	* magic branch tag.
 	*

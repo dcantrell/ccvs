@@ -4225,24 +4225,22 @@ D file2"
 	  # which will notice that there is a (non-magic) 1.1.2 and thus
 	  # skip that number.
 	  dotest tagf-11 "${testcvs} -q tag -r 1.1 -b br file1" "T file1"
-	  # The error would seem to be a bug in RCS_exist_rev (at least as
-	  # applied here).  Whether 1.1.2 exists or not shouldn't depend
-	  # on whether a tag points to it (cf admin-18, admin-26-4).
-	  # I'm not sure I see a workaround.
-	  dotest_fail tagf-12 "${testcvs} -q admin -nbr:1.1.2 file2" \
+	  # Fix it with admin -n (cf admin-18, admin-26-4).
+	  dotest tagf-12 "${testcvs} -q admin -nbr:1.1.2 file2" \
 "RCS file: ${TESTDIR}/cvsroot/first-dir/file2,v
-${PROG} \[[a-z]* aborted\]: revision .1\.1\.2' does not exist"
+done"
 	  # Another variation on the file2 test would be to use two working
 	  # directories so that the update -r br would need to
 	  # a merge to get from 1.1.2.1 to the head of the 1.1.2 branch.
-	  dotest tagf-13 "${testcvs} -q update -r br file1" \
+	  dotest tagf-13 "${testcvs} -q update -r br" \
 "RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
 retrieving revision 1\.1\.2\.1
 retrieving revision 1\.1
 Merging differences between 1\.1\.2\.1 and 1\.1 into file1
 rcsmerge: warning: conflicts during merge
 cvs [a-z]*: conflicts found in file1
-C file1"
+C file1
+M file2"
 	  # CVS is giving a conflict because we are trying to get back to
 	  # 1.1.4.  I'm not sure why it is a conflict rather than just
 	  # "M file1".
@@ -4253,10 +4251,14 @@ moremod
 [=]======
 [>]>>>>>> 1\.1"
 	  echo resolve >file1
-	  dotest tagf-15 "${testcvs} -q ci -m recovered file1" \
+	  dotest tagf-15 "${testcvs} -q ci -m recovered" \
 "Checking in file1;
 ${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
 new revision: 1\.1\.4\.1; previous revision: 1\.1
+done
+Checking in file2;
+${TESTDIR}/cvsroot/first-dir/file2,v  <--  file2
+new revision: 1\.1\.2\.2; previous revision: 1\.1\.2\.1
 done"
 	  cd ../..
 
