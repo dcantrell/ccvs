@@ -10365,16 +10365,9 @@ U temp2\.txt
 "${testcvs} -Q import -minitial join7 vendor vers-2" \
 ""
 	  cd ../join7
-	  if $remote; then
-            # FIXCVS: This test should NOT return a
-	    # "temp.txt: No such file or directory" error message.
-	    skip join7-5 "${testcvs} -n update -jvers-1 -jvers-2 temp.txt" \
-"RCS file: $CVSROOT_DIRNAME/join7/temp.txt,v
-retrieving revision 1\.1\.1\.1
-retrieving revision 1\.1\.1\.2
-Merging differences between 1\.1\.1\.1 and 1\.1\.1\.2 into temp.txt
-rcsmerge: warning: conflicts during merge"
-	  else
+	  # FIXCVS: This test should NOT return a
+	  # "temp.txt: No such file or directory" error message.
+	  if $remote; then :; else
 	    dotest join7-5 \
 "${testcvs} -n update -jvers-1 -jvers-2 temp.txt" \
 "RCS file: $CVSROOT_DIRNAME/join7/temp.txt,v
