@@ -806,6 +806,24 @@ serve_directory (arg)
     status = buf_read_line (buf_from_net, &repos, (int *) NULL);
     if (status == 0)
     {
+	/* I think isabsolute (repos) should always be true, and that
+	   any RELATIVE_REPOS stuff should only be in CVS/Repository
+	   files, not the protocol (for compatibility), but I'm putting
+	   in the in isabsolute check just in case.  */
+	if (isabsolute (repos)
+	    && strncmp (CVSroot_directory,
+			repos,
+			strlen (CVSroot_directory)) != 0)
+	{
+	    if (alloc_pending (strlen (CVSroot_directory)
+			       + strlen (repos)
+			       + 80))
+		sprintf (pending_error_text, "\
+E protocol error: directory '%s' not within root '%s'",
+			 repos, CVSroot_directory);
+	    return;
+	}
+
 	dirswitch (arg, repos);
 	free (repos);
     }

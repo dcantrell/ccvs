@@ -1,5 +1,8 @@
 Fri Jul 25 09:51:49 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* server.c (serve_directory): Repository must start with
+	CVSroot_directory rather than some random pathname.
+
 	* remove.c (remove_fileproc): If there is a numeric sticky tag,
 	don't allow the remove.
 	* commit.c (check_fileproc): Add comment about this case.
