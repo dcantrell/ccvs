@@ -1,3 +1,20 @@
+Tue Dec  5 16:53:35 1995  Karl Fogel  <kfogel@floss.cyclic.com>
+
+        * server.c (authenticate_connection): new func.
+
+        * client.c (init_sockaddr): func moved here from login.c.
+        (connect_to_pserver): same as above.  Take no args, now.
+        Include <sys/socket.h>, <netinet/in.h>, <netdb.h>, if CVS_LOGIN.
+        
+        * cvs.h: Declare use_authenticating_server, as extern int.
+        Declare connect_to_pserver().
+
+        * main.c (main): call authenticate_connection().  Removed testing
+        code.
+        Add 'a' to the short-option string in the getopt() call.
+        
+        * login.c (connect_to_pserver): moved to client.c.
+
 Tue Dec  5 16:01:42 1995  Peter Chubb <peterc@bookworm.sw.oz.au>
                           (patch applied by Karl Fogel <kfogel@cyclic.com>)
 

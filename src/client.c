@@ -7,6 +7,12 @@
 #include "update.h"		/* Things shared with update.c */
 #include "md5.h"
 
+#ifdef CVS_LOGIN
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <netdb.h>
+#endif /* CVS_LOGIN */
+
 #if HAVE_KERBEROS
 #define CVS_PORT 1999
 
@@ -2146,6 +2152,86 @@ supported_request (name)
   error (1, 0, "internal error: testing support for unknown option?");
 }
 
+
+#ifdef CVS_LOGIN
+void
+init_sockaddr (name, hostname, port)
+     struct sockaddr_in *name;
+     const char *hostname;
+     unsigned short int port;
+{
+  struct hostent *hostinfo;
+  
+  name->sin_family = AF_INET;
+  name->sin_port = htons (port);
+  hostinfo = gethostbyname (hostname);
+  if (hostinfo == NULL)
+    {
+      fprintf (stderr, "Unknown host %s.\n", hostname);
+      exit (EXIT_FAILURE);
+    }
+  name->sin_addr = *(struct in_addr *) hostinfo->h_addr;
+}
+
+void
+connect_to_pserver ()
+{
+  int sock;
+  struct hostent *host;
+  struct sockaddr_in client_sai;
+  char *test_str = "this is a test\n";
+  char read_buf[1];
+  char c;
+  int i, len;
+
+  sock = socket (AF_INET, SOCK_STREAM, 0);
+  if (sock == -1)
+    {
+      fprintf (stderr, "socket() failed\n");
+      exit (1);
+    }
+  init_sockaddr (&client_sai, server_host, 2401);
+  connect (sock, (struct sockaddr *) &client_sai, sizeof (client_sai));
+
+  {
+    char *begin      = "BEGIN AUTH REQUEST\n";
+    char *repository = server_cvsroot;
+    char *username   = server_user;
+    char *password   = "unguessable";
+    char *end        = "END AUTH REQUEST\n";
+
+    write (sock, begin, strlen (begin));
+
+    write (sock, repository, strlen (repository));
+    write (sock, "\n", 1);
+    write (sock, username, strlen (username));
+    write (sock, "\n", 1);
+    write (sock, password, strlen (password));
+    write (sock, "\n", 1);
+
+    write (sock, end, strlen (end));
+  }
+
+  /* This sends EOF to the server, which on receiving EOF breaks out
+     of the print loop. */
+  /* shutdown (sock, 1); */
+
+  while (read (sock, read_buf, 1) > 0)
+    {
+      c = read_buf[0];
+      if (c == '\n')
+        printf ("%c", c);
+      else
+        printf ("|%c", c);
+      fflush (stdout);
+    }
+  
+  printf ("*** Done.\n");
+  fflush (stdout);
+  exit (0);
+}
+#endif /* CVS_LOGIN */
+
 #if HAVE_KERBEROS
 void
 start_kerberos_server (tofdp, fromfdp, log)
@@ -2298,8 +2384,12 @@ start_server ()
 #ifdef CVS_LOGIN
     if (use_authenticating_server)
       {
-        error (1, 0, "authenticating server not implemented yet");
-        exit (1); /* this should never be reached, actually */
+        printf ("*** start_server: connecting (authenticated)...\n");
+        fflush (stdout);
+        connect_to_pserver ();
+        printf ("*** start_server: finished (authenticated).\n");
+        fflush (stdout);
+        exit (0);
       }
     else
       {
