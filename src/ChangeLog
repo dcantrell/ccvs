@@ -1,3 +1,12 @@
+2003-07-25  Derek Price  <derek@ximbiot.com>
+
+	* cvs.h (strip_trailing_newlines): Update prototype.
+	* subr.c (strip_trailing_newlines): Return true when newlines are
+	removed.
+	* server.c (pserver_authenticate_connection): Don't give a DOS attack a
+	chance to authenticate accidentally because I like to be paranoid.
+	* sanity.sh (pserver): New test for same.
+
 2003-07-20  Derek Price  <derek@ximbiot.com>
 
 	* wrapper.c: Remove mention of obsolete -f and -t wrapper options from
