@@ -1094,7 +1094,7 @@ if test x"$*" = x; then
 	tests="${tests} clean"
 	# Checking out various places (modules, checkout -d, &c)
 	tests="${tests} modules modules2 modules3 modules4 modules5 modules6"
-	tests="${tests} mkmodules co-d"
+	tests="${tests} modules7 mkmodules co-d"
 	tests="${tests} cvsadm emptydir abspath abspath2 toplevel toplevel2"
         tests="${tests} rstar-toplevel trailingslashes checkout_repository"
 	# Log messages, error messages.
