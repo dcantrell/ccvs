@@ -1,5 +1,11 @@
 2004-10-05  Derek Price  <derek@ximbiot.com>
 
+	* Makefile.am (libcvs_a_SOURCES): Add xalloc-die.c.
+	* xalloc-die.c: New file from GNULIB.
+	* xalloc.h, xmalloc.c: Update from GNULIB.
+
+2004-10-05  Derek Price  <derek@ximbiot.com>
+
 	* Makefile.am (libcvs_a_SOURCES): Move gettext.h to its own section.
 	* gettext.h, vasnprintf.c, vasnprintf.h: Update from GNULIB.
 

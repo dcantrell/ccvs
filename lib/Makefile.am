@@ -159,6 +159,9 @@ libcvs_a_SOURCES += printf-args.h printf-parse.h vasnprintf.h
 ## For GNULIB's xalloc module.
 libcvs_a_SOURCES += xalloc.h xmalloc.c xstrdup.c
 
+## For GNULIB's xalloc-die module.
+libcvs_a_SOURCES += xalloc-die.c
+
 ## For GNULIB's xgetcwd module.
 libcvs_a_SOURCES += xgetcwd.h xgetcwd.c
 
