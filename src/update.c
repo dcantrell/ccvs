@@ -952,7 +952,7 @@ isemptydir (dir)
 	}
 	errno = 0;			/* going around again.... */
     }
-    if (!errno)
+    if (errno)
     {
 	error (0, errno, "cannot read directory %s", dir);
 	(void) closedir (dirp);
