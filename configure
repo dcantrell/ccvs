@@ -2616,6 +2616,16 @@ fi
 fi
 
 
+# On Unix systems, we want the full client & server arrangement.
+cat >> confdefs.h <<\EOF
+#define  1
+EOF
+ (SERVER_SUPPORT)
+cat >> confdefs.h <<\EOF
+#define  1
+EOF
+ (CLIENT_SUPPORT)
+
 test -f src/options.h && (
   echo "configure: warning: saving ./src/options.h in ./src/options.h-SAVED" 1>&2
   echo "configure: warning: You may wish to check that local options have not been lost." 1>&2
@@ -2712,8 +2722,8 @@ ac_given_srcdir=$srcdir
 ac_given_INSTALL="$INSTALL"
 
 trap 'rm -fr `echo "Makefile lib/Makefile src/Makefile src/options.h doc/Makefile \
-	man/Makefile contrib/Makefile contrib/pcl-cvs/Makefile \
-	examples/Makefile stamp-h config.h" | sed "s/:[^ ]*//g"` conftest*; exit 1' 1 2 15
+	  man/Makefile contrib/Makefile contrib/pcl-cvs/Makefile \
+	  examples/Makefile windows-NT/Makefile stamp-h config.h" | sed "s/:[^ ]*//g"` conftest*; exit 1' 1 2 15
 
 # Protect against being on the right side of a sed subst in config.status. 
 sed 's/%@/@@/; s/@%/@@/; s/%g$/@g/; /@g$/s/[\\\\&%]/\\\\&/g; 
@@ -2750,8 +2760,8 @@ EOF
 cat >> $CONFIG_STATUS <<EOF
 
 CONFIG_FILES=\${CONFIG_FILES-"Makefile lib/Makefile src/Makefile src/options.h doc/Makefile \
-	man/Makefile contrib/Makefile contrib/pcl-cvs/Makefile \
-	examples/Makefile stamp-h"}
+	  man/Makefile contrib/Makefile contrib/pcl-cvs/Makefile \
+	  examples/Makefile windows-NT/Makefile stamp-h"}
 EOF
 cat >> $CONFIG_STATUS <<\EOF
 for ac_file in .. $CONFIG_FILES; do if test "x$ac_file" != x..; then
