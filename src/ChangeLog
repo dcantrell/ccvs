@@ -1,3 +1,15 @@
+Wed Feb 18 01:56:04 1998  Ian Lance Taylor  <ian@cygnus.com>
+
+	* rcs.c (rcsbuf_get_buffered): New static function.
+	(RCS_copydeltas): After we have done all the required special
+ 	actions, and inserted any new revision, just copy the file bytes
+ 	directly, rather than interpreting all the data.
+	(count_delta_actions): New static function.
+	* sanity.sh (rcs): Add rcs-6a and rcs-6b to commit a new branch
+	revision, to force CVS to interpret all the data, rather than just
+	copying it.  Adjust rcs-5 to add a branch tag.  Adjust rcs-8a and
+	rcs-14 for the changes created by rcs-6b.
+
 Tue Feb 17 18:34:01 1998  Ian Lance Taylor  <ian@cygnus.com>
 
 	* sanity.sh (cvsadm, diffmerge2): Remove directories at the end of

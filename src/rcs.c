@@ -66,6 +66,8 @@ static void rcsbuf_valpolish PROTO ((struct rcsbuffer *, char *val, int polish,
 static void rcsbuf_valpolish_internal PROTO ((struct rcsbuffer *, char *to,
 					      const char *from, size_t *lenp));
 static unsigned long rcsbuf_ftell PROTO ((struct rcsbuffer *));
+static void rcsbuf_get_buffered PROTO ((struct rcsbuffer *, char **datap,
+					size_t *lenp));
 static int checkmagic_proc PROTO((Node *p, void *closure));
 static void do_branches PROTO((List * list, char *val));
 static void do_symbols PROTO((List * list, char *val));
@@ -101,6 +103,7 @@ static int putrcsfield_proc PROTO ((Node *, void *));
 static int putsymbol_proc PROTO ((Node *, void *));
 static void RCS_copydeltas PROTO ((RCSNode *, FILE *, struct rcsbuffer *,
 				   FILE *, Deltatext *, char *));
+static int count_delta_actions PROTO ((Node *, void *));
 static void putdeltatext PROTO ((FILE *, Deltatext *));
 
 static FILE *rcs_internal_lockfile PROTO ((char *));
@@ -1600,6 +1603,19 @@ rcsbuf_ftell (rcsbuf)
     struct rcsbuffer *rcsbuf;
 {
     return rcsbuf->pos + (rcsbuf->ptr - rcsbuf_buffer);
+}
+
+/* Return a pointer to any data buffered for RCSBUF, along with the
+   length.  */
+
+static void
+rcsbuf_get_buffered (rcsbuf, datap, lenp)
+    struct rcsbuffer *rcsbuf;
+    char **datap;
+    size_t *lenp;
+{
+    *datap = rcsbuf->ptr;
+    *lenp = rcsbuf->ptrend - rcsbuf->ptr;
 }
 
 /*
@@ -7045,33 +7061,60 @@ RCS_copydeltas (rcs, fin, rcsbufin, fout, newdtext, insertpt)
     Deltatext *newdtext;
     char *insertpt;
 {
-    Deltatext *dtext;
+    int actions;
     RCSVers *dadmin;
     Node *np;
     int insertbefore, found;
+    char *bufrest;
+    int nls;
+    size_t buflen;
+    char buf[8192];
+    int got;
+
+    /* Count the number of versions for which we have to do some
+       special operation.  */
+    actions = walklist (rcs->versions, count_delta_actions, (void *) NULL);
 
     /* Make a note of whether NEWDTEXT should be inserted
        before or after its INSERTPT. */
     insertbefore = (newdtext != NULL && numdots (newdtext->version) == 1);
 
-    found = 0;
-    while ((dtext = RCS_getdeltatext (rcs, fin, rcsbufin)) != NULL)
+    while (actions != 0 || newdtext != NULL)
     {
+	Deltatext *dtext;
+
+	dtext = RCS_getdeltatext (rcs, fin, rcsbufin);
+
+	/* We shouldn't hit EOF here, because that would imply that
+           some action was not taken, or that we could not insert
+           NEWDTEXT.  */
+	if (dtext == NULL)
+	    error (1, 0, "internal error: EOF too early in RCS_copydeltas");
+
 	found = (insertpt != NULL && STREQ (dtext->version, insertpt));
 	if (found && insertbefore)
+	{
 	    putdeltatext (fout, newdtext);
+	    newdtext = NULL;
+	    insertpt = NULL;
+	}
 
 	np = findnode (rcs->versions, dtext->version);
 	dadmin = (RCSVers *) np->data;
 
 	/* If this revision has been outdated, just skip it. */
 	if (dadmin->outdated)
+	{
+	    --actions;
 	    continue;
+	}
 	   
 	/* Update the change text for this delta.  New change text
 	   data may come from cvs admin -m, cvs admin -o, or cvs ci. */
 	if (dadmin->text != NULL)
 	{
+	    if (dadmin->text->log != NULL || dadmin->text->text != NULL)
+		--actions;
 	    if (dadmin->text->log != NULL)
 	    {
 		free (dtext->log);
@@ -7090,9 +7133,89 @@ RCS_copydeltas (rcs, fin, rcsbufin, fout, newdtext, insertpt)
 	freedeltatext (dtext);
 
 	if (found && !insertbefore)
+	{
 	    putdeltatext (fout, newdtext);
+	    newdtext = NULL;
+	    insertpt = NULL;
+	}
     }
-    putc ('\n', fout);
+
+    /* Copy the rest of the file directly, without bothering to
+       interpret it.  The caller will handle error checking by calling
+       ferror.
+
+       We just wrote a newline to the file, either in putdeltatext or
+       in the caller.  However, we may not have read the corresponding
+       newline from the file, because rcsbuf_getkey returns as soon as
+       it finds the end of the '@' string for the desc or text key.
+       Therefore, we may read three newlines when we should really
+       only write two, and we check for that case here.  This is not
+       an semantically important issue; we only do it to make our RCS
+       files look traditional.  */
+
+    nls = 3;
+
+    rcsbuf_get_buffered (rcsbufin, &bufrest, &buflen);
+    if (buflen > 0)
+    {
+	if (bufrest[0] != '\n' || strncmp (bufrest, "\n\n\n", buflen) != 0)
+	    nls = 0;
+	else
+	{
+	    if (buflen < 3)
+		nls -= buflen;
+	    else
+	    {
+		++bufrest;
+		--buflen;
+		nls = 0;
+	    }
+	}
+
+	fwrite (bufrest, 1, buflen, fout);
+    }
+
+    while ((got = fread (buf, 1, sizeof buf, fin)) != 0)
+    {
+	if (nls > 0
+	    && got >= nls
+	    && buf[0] == '\n'
+	    && strncmp (buf, "\n\n\n", nls) == 0)
+	{
+	    fwrite (buf + 1, 1, got - 1, fout);
+	}
+	else
+	{
+	    fwrite (buf, 1, got, fout);
+	}
+
+	nls = 0;
+    }
+}
+
+/* A helper procedure for RCS_copydeltas.  This is called via walklist
+   to count the number of RCS revisions for which some special action
+   is required.  */
+
+int
+count_delta_actions (np, ignore)
+    Node *np;
+    void *ignore;
+{
+    RCSVers *dadmin;
+
+    dadmin = (RCSVers *) np->data;
+
+    if (dadmin->outdated)
+	return 1;
+
+    if (dadmin->text != NULL
+	&& (dadmin->text->log != NULL || dadmin->text->text != NULL))
+    {
+	return 1;
+    }
+
+    return 0;
 }
 
 /* RCS_internal_lockfile and RCS_internal_unlockfile perform RCS-style
