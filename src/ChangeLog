@@ -1,5 +1,9 @@
 1998-03-16  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* options.h.in (MY_NDBM): Rewrite the comment explaining this
+	option.  It was not clear to everyone who "my" referred to, for
+	example.
+
 	* hardlink.c (list_linked_files_on_disk): Remove unused variables
 	err and p.
 	(list_linked_files_on_disk): Add comment about memory allocation
