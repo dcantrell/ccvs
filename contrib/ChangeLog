@@ -1,3 +1,8 @@
+2001-12-06  Derek Price  <dprice@collab.net>
+
+	* cvs_acls.in: Allow ACL specification based on branch matching.
+	(Patch from Aaron Voisine <voisine@bytemobile.com>.)
+
 2001-10-16  Derek Price  <dprice@collab.net>
 
 	* sccs2rcs.in: Replace Y2K bug fix with something more succint.
