@@ -1,3 +1,8 @@
+Thu Nov 13 10:20:39 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (Common options): Remove also has a -f option with a
+	different meaning than most.
+
 Wed Nov 12 21:57:40 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (File permissions, Connecting via rsh, Environment

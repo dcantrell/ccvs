@@ -7396,9 +7396,11 @@ will be used).
 @code{annotate}, @code{checkout}, @code{export},
 @code{rdiff}, @code{rtag}, and @code{update}.
 
-@strong{Warning:}  The @code{commit} command also has a
+@strong{Warning:}  The @code{commit} and @code{remove}
+commands also have a
 @samp{-f} option, but it has a different behavior for
-that command.  @xref{commit options}.
+those commands.  See @ref{commit options}, and
+@ref{Removing files}.
 
 @item -k @var{kflag}
 Alter the default processing of keywords.
