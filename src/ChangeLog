@@ -1,5 +1,15 @@
 2004-11-30  Derek Price  <derek@ximbiot.com>
 
+	* parseinfo.c (readBool): Update quotes in error message for
+	consistency.  Move function to...
+	* subr.c (readBool): ...here.
+	(*): Gratuitous reformatting.
+	* cvs.h: Move all subr.c function prototypes to...
+	* subr.h: ...this new file.
+	* Makefile.am (cvs_SOURCES): Add subr.h.
+
+2004-11-30  Derek Price  <derek@ximbiot.com>
+
 	* parseinfo.c (readBool): Reorder arguments to error() and improve
 	header comment.
 

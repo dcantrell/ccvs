@@ -77,7 +77,7 @@ cvs_SOURCES = \
 	socket-client.c socket-client.h \
 	stack.c stack.h \
 	status.c \
-	subr.c \
+	subr.c subr.h \
 	tag.c \
 	update.c \
 	version.c \

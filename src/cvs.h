@@ -459,28 +459,9 @@ char *Name_Repository (const char *dir, const char *update_dir);
 const char *Short_Repository (const char *repository);
 void Sanitize_Repository_Name (char *repository);
 
-char *previous_rev (RCSNode *rcs, const char *rev);
-char *gca (const char *rev1, const char *rev2);
-void check_numeric (const char *, int, char **);
-char *getcaller (void);
 char *entries_time (time_t unixtime);
 time_t unix_time_stamp (const char *file);
 char *time_stamp (const char *file);
-
-void expand_string (char **, size_t *, size_t);
-void xrealloc_and_strcat (char **, size_t *, const char *);
-/* Many, many CVS calls to xstrdup depend on it to return NULL when its
- * argument is NULL.
- */
-#define xstrdup Xstrdup
-char *Xstrdup (const char *str)
-	__attribute__ ((__malloc__));
-char *Xasprintf (const char *format, ...)
-	__attribute__ ((__malloc__, __format__ (__printf__, 1, 2)));
-char *Xasnprintf (char *resultbuf, size_t *lengthp, const char *format, ...)
-        __attribute__ ((__malloc__, __format__ (__printf__, 3, 4)));
-int strip_trailing_newlines (char *str);
-int pathname_levels (const char *path);
 
 typedef	int (*CALLPROC)	(const char *repository, const char *value,
                          void *closure);
@@ -496,8 +477,6 @@ bool isdevice (const char *file);
 bool isreadable (const char *file);
 bool iswritable (const char *file);
 bool isaccessible (const char *file, const int mode);
-bool isabsolute (const char *filename);
-char *Xreadlink (const char *link, size_t size);
 char *xresolvepath (const char *path);
 const char *last_component (const char *path);
 char *get_homedir (void);
@@ -505,9 +484,6 @@ char *strcat_filename_onto_homedir (const char *, const char *);
 char *cvs_temp_name (void);
 FILE *cvs_temp_file (char **filename);
 
-int numdots (const char *s);
-char *increment_revnum (const char *);
-int compare_revnums (const char *, const char *);
 int ls (int argc, char *argv[]);
 int unlink_file (const char *f);
 int unlink_file_dir (const char *f);
@@ -540,6 +516,11 @@ struct file_info
 
     RCSNode *rcs;
 };
+
+/* This needs to be included after the struct file_info definition since some
+ * of the functions subr.h defines refer to struct file_info.
+ */
+#include "subr.h"
 
 int update (int argc, char *argv[]);
 /* The only place this is currently used outside of update.c is add.c.
@@ -581,7 +562,6 @@ void check_entries (char *dir);
 void close_module (DBM * db);
 void copy_file (const char *from, const char *to);
 void fperrmsg (FILE * fp, int status, int errnum, char *message,...);
-void free_names (int *pargc, char *argv[]);
 
 int ign_name (char *name);
 void ign_add (char *ign, int hold);
@@ -595,7 +575,6 @@ extern int ign_inhibit_server;
 
 #include "update.h"
 
-void line2argv (int *pargc, char ***argv, char *line, char *sepchars);
 void make_directories (const char *name);
 void make_directory (const char *name);
 int mkdir_if_needed (const char *name);
@@ -664,17 +643,6 @@ void SIG_endCrSect (void);
 int SIG_inCrSect (void);
 void read_cvsrc (int *argc, char ***argv, const char *cmdname);
 
-char *make_message_rcsvalid (const char *message);
-int file_has_conflict (const struct file_info *,
-                       const char *ts_conflict);
-int file_has_markers (const struct file_info *);
-void get_file (const char *, const char *, const char *,
-               char **, size_t *, size_t *);
-char *shell_escape (char *buf, const char *str);
-char *backup_file (const char *file, const char *suffix);
-void resolve_symlink (char **filename);
-void sleep_past (time_t desttime);
-
 /* flags for run_exec(), the fast system() for CVS */
 #define	RUN_NORMAL            0x0000    /* no special behaviour */
 #define	RUN_COMBINED          0x0001    /* stdout is duped to stderr */
@@ -689,35 +657,6 @@ void run_print (FILE * fp);
 void run_setup (const char *prog);
 int run_exec (const char *stin, const char *stout, const char *sterr,
               int flags);
-/* for format_cmdline function - when a list variable is bound to a user string,
- * we need to pass some data through walklist into the callback function.
- * We use this struct.
- */
-struct format_cmdline_walklist_closure
-{
-    const char *format;	/* the format string the user passed us */
-    char **buf;		/* *dest = our NUL terminated and possibly too short
-			 * destination string
-			 */
-    size_t *length;	/* *dlen = how many bytes have already been allocated to
-			 * *dest.
-			 */
-    char **d;		/* our pointer into buf where the next char should go */
-    char quotes;	/* quotes we are currently between, if any */
-#ifdef SUPPORT_OLD_INFO_FMT_STRINGS
-    int onearg;
-    int firstpass;
-    const char *srepos;
-#endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
-    void *closure;	/* our user defined closure */
-};
-char *cmdlinequote (char quotes, char *s);
-char *cmdlineescape (char quotes, char *s);
-#ifdef SUPPORT_OLD_INFO_FMT_STRINGS
-char *format_cmdline (bool oldway, const char *srepos, const char *format, ...);
-#else /* SUPPORT_OLD_INFO_FMT_STRINGS */
-char *format_cmdline (const char *format, ...);
-#endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
 
 /* other similar-minded stuff from run.c.  */
 FILE *run_popen (const char *, const char *);
@@ -952,21 +891,3 @@ void cvs_outerr (const char *, size_t);
 void cvs_flusherr (void);
 void cvs_flushout (void);
 void cvs_output_tagged (const char *, const char *);
-
-/* The trace function from subr.c */
-void cvs_trace (int level, const char *fmt, ...)
-  __attribute__ ((__format__ (__printf__, 2, 3)));
-#define TRACE cvs_trace
-/* Trace levels:
- *
- * TRACE_FUNCTION	Trace function calls, often including function
- * 			arguments.  This is the trace level that, historically,
- * 			applied to all trace calls.
- * TRACE_FLOW		Include the flow control functions, such as
- * 			start_recursion, do_recursion, and walklist in the
- * 			function traces.
- * TRACE_DATA		Trace important internal function data.
- */ 
-#define TRACE_FUNCTION		1
-#define TRACE_FLOW		2
-#define TRACE_DATA		3
