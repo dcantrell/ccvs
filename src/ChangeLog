@@ -1,3 +1,13 @@
+2003-02-21  Larry Jones  <lawrence.jones@eds.com>
+
+	* server.c (switch_to_user): Update comment, change error message
+	so it's not an exact duplicate of the one in check_password.
+	(check_repository_password): Add syslog call for password mismatches.
+	(check_password): Add syslog call for password mismatches, rearrange
+	code to simplify and eliminate redundancy.
+	(pserver_authenticate_connection): Remove syslog call, now done by
+	lower-level routines.
+
 2003-02-19  Larry Jones  <lawrence.jones@eds.com>
 
 	* sanity.sh (admin-10): Add test for repository files not in
