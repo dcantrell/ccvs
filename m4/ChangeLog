@@ -1,5 +1,9 @@
 2004-10-09  Derek Price  <derek@ximbiot.com>
 
+	* lstat.m4: Update from GNULIB.
+
+2004-10-09  Derek Price  <derek@ximbiot.com>
+
 	* stat.m4: Update from GNULIB.
 
 2004-10-07  Derek Price  <derek@ximbiot.com>
