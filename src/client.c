@@ -3328,7 +3328,8 @@ connect_to_pserver (cvsroot_t *root, struct buffer **to_server_p,
                     int do_gssapi)
 {
     int sock;
-    int port_number, proxy_port_number;
+    int port_number,
+	proxy_port_number = 0; /* Initialize to silence -Wall.  Dumb.  */
     struct sockaddr_in client_sai;
     struct hostent *hostinfo;
     struct buffer *to_server, *from_server;

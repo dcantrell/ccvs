@@ -17,8 +17,6 @@ static int ls_proc (int argc, char **argv, char *xwhere, char *mwhere,
                     char *mfile, int shorten, int local, char *mname,
                     char *msg);
 
-static RCSNode *xrcsnode;
-
 static const char *const ls_usage[] =
 {
     "Usage: %s %s [-e | -l] [-RP] [-r rev] [-D date] [path...]\n",
@@ -356,7 +354,9 @@ ls_fileproc (void *callerdat, struct file_info *finfo)
      */
     if (vers->vn_rcs && (!show_dead_revs || long_format))
 	isdead = RCS_isdead (finfo->rcs, vers->vn_rcs);
-    if (!vers->vn_rcs || !show_dead_revs && isdead)
+    else
+	isdead = false;
+    if (!vers->vn_rcs || (!show_dead_revs && isdead))
     {
         freevers_ts (&vers);
 	return 0;

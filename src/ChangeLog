@@ -1,3 +1,15 @@
+2004-09-04  Derek Price  <derek@ximbiot.com>
+
+	Silence `gcc -Wall'.
+
+	* buffer.c (buf_initialize): Remove unnecessary typecasts by using
+	size_t instead of int or bool as args.  
+	* buffer.c, import.c, log-buffer.c, ms-buffer.c, zlib.c: Change all
+	callers.
+	* buffer.h, cvs.h: Update protos.
+	* client.c, ls.c, main.c, rcs.c, root.c, server.c: Remove unused vars,
+	add parens, as requested by `gcc -Wall'.
+
 2004-09-04  Mark D. Baushke  <mdb@cvshome.org>
 
 	* sanity.sh (writeproxy-noredirect): Between "Set" and

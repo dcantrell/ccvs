@@ -4036,7 +4036,10 @@ RCS_checkout (RCSNode *rcs, const char *workfile, const char *rev,
 {
     int free_rev = 0;
     enum kflag expand;
-    FILE *fp, *ofp;
+    FILE *fp,
+	 *ofp = NULL; /* Initialize since -Wall doesn't understand that
+		       * error (1, ...) does not return.
+		       */
     struct stat sb;
     struct rcsbuffer rcsbuf;
     char *key;

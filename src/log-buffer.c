@@ -117,10 +117,10 @@ log_buffer_force_file (struct log_buffer *lb)
  * RETURNS
  *   A pointer to a new buffer structure.
  */
-static int log_buffer_input (void *, char *, int, int, int *);
-static int log_buffer_output (void *, const char *, int, int *);
+static int log_buffer_input (void *, char *, size_t, size_t, size_t *);
+static int log_buffer_output (void *, const char *, size_t, size_t *);
 static int log_buffer_flush (void *);
-static int log_buffer_block (void *, int);
+static int log_buffer_block (void *, bool);
 static int log_buffer_get_fd (void *);
 static int log_buffer_shutdown (struct buffer *);
 struct buffer *
@@ -171,7 +171,7 @@ log_buffer_initialize (struct buffer *buf, FILE *fp,
 	size_t total = 0;
 #endif /* PROXY_SUPPORT && !TRUST_OS_FILE_CACHE */
 
-	for (data = buf->data; data = data->next; data != NULL)
+	for (data = buf->data; data != NULL; data = data->next)
 	{
 #ifdef PROXY_SUPPORT
 # ifndef TRUST_OS_FILE_CACHE
@@ -218,7 +218,8 @@ log_buffer_initialize (struct buffer *buf, FILE *fp,
 
 /* The input function for a log buffer.  */
 static int
-log_buffer_input (void *closure, char *data, int need, int size, int *got)
+log_buffer_input (void *closure, char *data, size_t need, size_t size,
+		  size_t *got)
 {
     struct log_buffer *lb = closure;
     int status;
@@ -248,7 +249,7 @@ log_buffer_input (void *closure, char *data, int need, int size, int *got)
 	    if (lb->log)
 	    {
 #endif /* PROXY_SUPPORT */
-		if (fwrite (data, 1, *got, lb->log) != (size_t) *got)
+		if (fwrite (data, 1, *got, lb->log) != *got)
 		    error (
 #ifdef PROXY_SUPPORT
 			   lb->fatal_errors,
@@ -275,7 +276,7 @@ log_buffer_input (void *closure, char *data, int need, int size, int *got)
 
 /* The output function for a log buffer.  */
 static int
-log_buffer_output (void *closure, const char *data, int have, int *wrote)
+log_buffer_output (void *closure, const char *data, size_t have, size_t *wrote)
 {
     struct log_buffer *lb = closure;
     int status;
@@ -305,7 +306,7 @@ log_buffer_output (void *closure, const char *data, int have, int *wrote)
 	    if (lb->log)
 	    {
 #endif /* PROXY_SUPPORT */
-		if (fwrite (data, 1, *wrote, lb->log) != (size_t) *wrote)
+		if (fwrite (data, 1, *wrote, lb->log) != *wrote)
 		    error (
 #ifdef PROXY_SUPPORT
 			   lb->fatal_errors,
@@ -352,7 +353,7 @@ log_buffer_flush (void *closure)
 
 /* The block function for a log buffer.  */
 static int
-log_buffer_block (void *closure, int block)
+log_buffer_block (void *closure, bool block)
 {
     struct log_buffer *lb = closure;
 

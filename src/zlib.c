@@ -50,10 +50,10 @@ struct compress_buffer
 };
 
 static void compress_error (int, int, z_stream *, const char *);
-static int compress_buffer_input (void *, char *, int, int, int *);
-static int compress_buffer_output (void *, const char *, int, int *);
+static int compress_buffer_input (void *, char *, size_t, size_t, size_t *);
+static int compress_buffer_output (void *, const char *, size_t, size_t *);
 static int compress_buffer_flush (void *);
-static int compress_buffer_block (void *, int);
+static int compress_buffer_block (void *, bool);
 static int compress_buffer_get_fd (void *);
 static int compress_buffer_shutdown_input (struct buffer *);
 static int compress_buffer_shutdown_output (struct buffer *);
@@ -129,7 +129,8 @@ compress_buffer_initialize (struct buffer *buf, int input, int level,
 
 /* Input data from a compression buffer.  */
 static int
-compress_buffer_input (void *closure, char *data, int need, int size, int *got)
+compress_buffer_input (void *closure, char *data, size_t need, size_t size,
+		       size_t *got)
 {
     struct compress_buffer *cb = closure;
     struct buffer_data *bd;
@@ -243,7 +244,8 @@ compress_buffer_input (void *closure, char *data, int need, int size, int *got)
 
 /* Output data to a compression buffer.  */
 static int
-compress_buffer_output (void *closure, const char *data, int have, int *wrote)
+compress_buffer_output (void *closure, const char *data, size_t have,
+			size_t *wrote)
 {
     struct compress_buffer *cb = closure;
 
@@ -332,7 +334,7 @@ compress_buffer_flush (void *closure)
 
 /* The block routine for a compression buffer.  */
 static int
-compress_buffer_block (void *closure, int block)
+compress_buffer_block (void *closure, bool block)
 {
     struct compress_buffer *cb = closure;
 

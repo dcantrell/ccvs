@@ -30,10 +30,10 @@ static struct buffer_data *get_buffer_data (void);
 /* Initialize a buffer structure.  */
 struct buffer *
 buf_initialize (size_t last_index, size_t last_count,
-                int (*input) (void *, char *, int, int, int *),
-	        int (*output) (void *, const char *, int, int *),
+                int (*input) (void *, char *, size_t, size_t, size_t *),
+	        int (*output) (void *, const char *, size_t, size_t *),
                 int (*flush) (void *),
-                int (*block) (void *, int),
+                int (*block) (void *, bool),
                 int (*get_fd) (void *),
                 int (*shutdown) (struct buffer *),
                 void (*memory) (struct buffer *),
@@ -44,7 +44,7 @@ buf_initialize (size_t last_index, size_t last_count,
     buf = xmalloc (sizeof (struct buffer));
     buf->data = NULL;
     buf->last = NULL;
-    buf->nonblocking = 0;
+    buf->nonblocking = false;
     buf->input = input;
     buf->last_index = last_index;
     buf->last_count = last_count;
@@ -343,7 +343,7 @@ buf_send_output (struct buffer *buf)
  * code.
  */
 int
-buf_flush (struct buffer *buf, int block)
+buf_flush (struct buffer *buf, bool block)
 {
     int nonblocking;
     int status;
@@ -391,7 +391,7 @@ set_nonblock (struct buffer *buf)
     status = (*buf->block) (buf->closure, 0);
     if (status != 0)
 	return status;
-    buf->nonblocking = 1;
+    buf->nonblocking = true;
     return 0;
 }
 
@@ -412,7 +412,7 @@ set_block (struct buffer *buf)
     status = (*buf->block) (buf->closure, 1);
     if (status != 0)
 	return status;
-    buf->nonblocking = 0;
+    buf->nonblocking = false;
     return 0;
 }
 
@@ -833,7 +833,7 @@ buf_input_data (struct buffer *buf, int *countp)
 int
 buf_read_line (struct buffer *buf, char **line, int *lenp)
 {
-    buf_read_short_line (buf, line, lenp, SIZE_MAX);
+    return buf_read_short_line (buf, line, lenp, SIZE_MAX);
 }
 
 
@@ -1375,10 +1375,10 @@ struct packetizing_buffer
 
 
 
-static int packetizing_buffer_input (void *, char *, int, int, int *);
-static int packetizing_buffer_output (void *, const char *, int, int *);
+static int packetizing_buffer_input (void *, char *, size_t, size_t, size_t *);
+static int packetizing_buffer_output (void *, const char *, size_t, size_t *);
 static int packetizing_buffer_flush (void *);
-static int packetizing_buffer_block (void *, int);
+static int packetizing_buffer_block (void *, bool);
 static int packetizing_buffer_get_fd (void *);
 static int packetizing_buffer_shutdown (struct buffer *);
 
@@ -1428,8 +1428,8 @@ packetizing_buffer_initialize (struct buffer *buf,
 
 /* Input data from a packetizing buffer.  */
 static int
-packetizing_buffer_input (void *closure, char *data, int need, int size,
-                          int *got)
+packetizing_buffer_input (void *closure, char *data, size_t need, size_t size,
+                          size_t *got)
 {
     struct packetizing_buffer *pb = closure;
 
@@ -1638,13 +1638,14 @@ packetizing_buffer_input (void *closure, char *data, int need, int size,
 
 /* Output data to a packetizing buffer.  */
 static int
-packetizing_buffer_output (void *closure, const char *data, int have,
-                           int *wrote)
+packetizing_buffer_output (void *closure, const char *data, size_t have,
+                           size_t *wrote)
 {
     struct packetizing_buffer *pb = closure;
     char inbuf[BUFFER_DATA_SIZE + 2];
     char stack_outbuf[BUFFER_DATA_SIZE + PACKET_SLOP + 4];
-    struct buffer_data *outdata;
+    struct buffer_data *outdata = NULL; /* Initialize to silence -Wall.  Dumb.
+					 */
     char *outbuf;
     int size, status, translated;
 
@@ -1726,7 +1727,7 @@ packetizing_buffer_flush (void *closure)
 
 /* The block routine for a packetizing buffer.  */
 static int
-packetizing_buffer_block (void *closure, int block)
+packetizing_buffer_block (void *closure, bool block)
 {
     struct packetizing_buffer *pb = closure;
 
@@ -1775,10 +1776,10 @@ struct fd_buffer
     cvsroot_t *root;
 };
 
-static int fd_buffer_input (void *, char *, int, int, int *);
-static int fd_buffer_output (void *, const char *, int, int *);
+static int fd_buffer_input (void *, char *, size_t, size_t, size_t *);
+static int fd_buffer_output (void *, const char *, size_t, size_t *);
 static int fd_buffer_flush (void *);
-static int fd_buffer_block (void *, int);
+static int fd_buffer_block (void *, bool);
 static int fd_buffer_get_fd (void *);
 static int fd_buffer_shutdown (struct buffer *);
 
@@ -1847,7 +1848,8 @@ fd_buffer_initialize (int fd, pid_t child_pid, cvsroot_t *root, bool input,
  *   read() or select() calls do.
  */
 static int
-fd_buffer_input (void *closure, char *data, int need, int size, int *got)
+fd_buffer_input (void *closure, char *data, size_t need, size_t size,
+		 size_t *got)
 {
     struct fd_buffer *fb = closure;
     int nbytes;
@@ -1858,10 +1860,10 @@ fd_buffer_input (void *closure, char *data, int need, int size, int *got)
 
     if (fb->blocking)
     {
+#ifndef TRUST_OS_FILE_CACHE
 	int status;
 	fd_set readfds;
 
-#ifndef TRUST_OS_FILE_CACHE
 	/* Set non-block.  */
         status = fd_buffer_block (fb, false);
 	if (status != 0) return status;
@@ -1965,7 +1967,7 @@ block_done:
 /* The buffer output function for a buffer built on a file descriptor.  */
 
 static int
-fd_buffer_output (void *closure, const char *data, int have, int *wrote)
+fd_buffer_output (void *closure, const char *data, size_t have, size_t *wrote)
 {
     struct fd_buffer *fd = closure;
 
@@ -2024,7 +2026,7 @@ fd_buffer_flush (void *closure)
 
 /* The buffer block function for a buffer built on a file descriptor.  */
 static int
-fd_buffer_block (void *closure, int block)
+fd_buffer_block (void *closure, bool block)
 {
     struct fd_buffer *fb = closure;
     int flags;
