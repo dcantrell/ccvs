@@ -7733,16 +7733,11 @@ done"
 	  
 	  # Try checking out the module in a local directory
 	  if test "$remote" = yes; then
-	    # Work around the http://www.cyclic.com/cvs/dev-abspath.html race.
-	    # The exit status differs between the "cannot rename" and the
-	    # normal case.
-	    ${testcvs} co -d ${TESTDIR}/1 mod1 >${TESTDIR}/abspath.tmp 2>&1
-	    dotest abspath-2a "cat ${TESTDIR}/abspath.tmp" \
-"${PROG} [a-z]*: Updating ${TESTDIR}/1
-U ${TESTDIR}/1/file1" \
-"${PROG} [a-z]*: Updating ${TESTDIR}/1
-U ${TESTDIR}/1/file1
-${PROG} \[server aborted\]: cannot rename file CVS/Entries.Backup to CVS/Entries: No such file or directory"
+	    dotest_fail abspath-2a "${testcvs} co -d ${TESTDIR}/1 mod1" \
+"${PROG} \[server aborted\]: absolute pathname .${TESTDIR}/1. illegal for server"
+	    dotest abspath-2a-try2 "${testcvs} co -d 1 mod1" \
+"${PROG} [a-z]*: Updating 1
+U 1/file1"
 	  else
 	  dotest abspath-2a "${testcvs} co -d ${TESTDIR}/1 mod1" \
 "${PROG} [a-z]*: Updating ${TESTDIR}/1
@@ -7776,20 +7771,29 @@ U ${TESTDIR}/1/file1"
 	  # "touch 1/2/3" requires directories 1 and 1/2 to already
 	  # exist, we expect ${TESTDIR}/1 to already exist.  I believe
 	  # this is the behavior of CVS 1.9 and earlier.
+	  if test "$remote" = no; then
 	  dotest_fail abspath-3.1 "${testcvs} co -d ${TESTDIR}/1/2 mod1" \
+"${PROG} [a-z]*: cannot chdir to 1: No such file or directory
+${PROG} [a-z]*: ignoring module mod1"
+	  fi
+	  dotest_fail abspath-3.2 "${testcvs} co -d 1/2 mod1" \
 "${PROG} [a-z]*: cannot chdir to 1: No such file or directory
 ${PROG} [a-z]*: ignoring module mod1"
 	  mkdir 1
 
 	  if test "$remote" = yes; then
-	    # Work around the http://www.cyclic.com/cvs/dev-abspath.html race.
-	    ${testcvs} co -d ${TESTDIR}/1/2 mod1 >${TESTDIR}/abspath.tmp 2>&1
-	    dotest abspath-3a "cat ${TESTDIR}/abspath.tmp" \
-"${PROG} [a-z]*: Updating ${TESTDIR}/1/2
-U ${TESTDIR}/1/2/file1" \
-"${PROG} [a-z]*: Updating ${TESTDIR}/1/2
-U ${TESTDIR}/1/2/file1
-${PROG} \[server aborted\]: cannot rename file CVS/Entries.Backup to CVS/Entries: No such file or directory"
+	    # The server wants the directory to exist, but that is
+	    # a bug, it should only need to exist on the client side.
+	    # See also cvsadm-2d3.
+	    dotest_fail abspath-3a "${testcvs} co -d 1/2 mod1" \
+"${PROG} [a-z]*: cannot chdir to 1: No such file or directory
+${PROG} [a-z]*: ignoring module mod1"
+	    cd 1
+	    dotest abspath-3a-try2 "${testcvs} co -d 2 mod1" \
+"${PROG} [a-z]*: Updating 2
+U 2/file1"
+	    cd ..
+	    rm -r 1/CVS
 	  else
 	  dotest abspath-3a "${testcvs} co -d ${TESTDIR}/1/2 mod1" \
 "${PROG} [a-z]*: Updating ${TESTDIR}/1/2
@@ -7810,19 +7814,32 @@ U ${TESTDIR}/1/2/file1"
 	  # Now try someplace where we don't have permission.
 	  mkdir ${TESTDIR}/barf
 	  chmod -w ${TESTDIR}/barf
-	  dotest_fail abspath-4 "${testcvs} co -d ${TESTDIR}/barf/sub mod1" \
+	  if test "$remote" = yes; then
+	    dotest_fail abspath-4 "${testcvs} co -d ${TESTDIR}/barf/sub mod1" \
+"${PROG} \[server aborted\]: absolute pathname .${TESTDIR}/barf/sub. illegal for server"
+	  else
+	    dotest_fail abspath-4 "${testcvs} co -d ${TESTDIR}/barf/sub mod1" \
 "${PROG} \[[a-z]* aborted\]: cannot make directory sub: No such file or directory"
+	  fi
 	  chmod +w ${TESTDIR}/barf
 	  rmdir ${TESTDIR}/barf
 	  # Done.  Nothing to clean up.
 
 
 	  # Try checking out two modules into the same directory.
-	  dotest abspath-5a "${testcvs} co -d ${TESTDIR}/1 mod1 mod2" \
+	  if test "$remote" = yes; then
+	    dotest abspath-5a "${testcvs} co -d 1 mod1 mod2" \
+"${PROG} [a-z]*: Updating 1/mod1
+U 1/mod1/file1
+${PROG} [a-z]*: Updating 1/mod2
+U 1/mod2/file2"
+	  else
+	    dotest abspath-5a "${testcvs} co -d ${TESTDIR}/1 mod1 mod2" \
 "${PROG} [a-z]*: Updating ${TESTDIR}/1/mod1
 U ${TESTDIR}/1/mod1/file1
 ${PROG} [a-z]*: Updating ${TESTDIR}/1/mod2
 U ${TESTDIR}/1/mod2/file2"
+	  fi # end remote workaround
 	  dotest abspath-5b "cat ${TESTDIR}/1/CVS/Repository" \
 "${AREP}."
 	  dotest abspath-5c "cat ${TESTDIR}/1/mod1/CVS/Repository" \
@@ -7834,7 +7851,17 @@ U ${TESTDIR}/1/mod2/file2"
 
 
 	  # Try checking out the top-level module.
-	  dotest abspath-6a "${testcvs} co -d ${TESTDIR}/1 ." \
+	  if test "$remote" = yes; then
+	    dotest abspath-6a "${testcvs} co -d 1 ." \
+"${PROG} [a-z]*: Updating 1
+${PROG} [a-z]*: Updating 1/CVSROOT
+${DOTSTAR}
+${PROG} [a-z]*: Updating 1/mod1
+U 1/mod1/file1
+${PROG} [a-z]*: Updating 1/mod2
+U 1/mod2/file2"
+	  else
+	    dotest abspath-6a "${testcvs} co -d ${TESTDIR}/1 ." \
 "${PROG} [a-z]*: Updating ${TESTDIR}/1
 ${PROG} [a-z]*: Updating ${TESTDIR}/1/CVSROOT
 ${DOTSTAR}
@@ -7842,6 +7869,7 @@ ${PROG} [a-z]*: Updating ${TESTDIR}/1/mod1
 U ${TESTDIR}/1/mod1/file1
 ${PROG} [a-z]*: Updating ${TESTDIR}/1/mod2
 U ${TESTDIR}/1/mod2/file2"
+	  fi # end of remote workaround
 	  dotest abspath-6b "cat ${TESTDIR}/1/CVS/Repository" \
 "${AREP}."
 	  dotest abspath-6c "cat ${TESTDIR}/1/CVSROOT/CVS/Repository" \
@@ -7858,30 +7886,26 @@ U ${TESTDIR}/1/mod2/file2"
 	  mkdir 1
 	  cd 1
 	  if test "$remote" = yes; then
-	    # Work around the http://www.cyclic.com/cvs/dev-abspath.html race.
-	    ${testcvs} -q co -d ${TESTDIR}/2 mod2 >${TESTDIR}/abspath.tmp 2>&1
-	    dotest abspath-7a "cat ${TESTDIR}/abspath.tmp" \
-"U ${TESTDIR}/2/file2" \
-"U ${TESTDIR}/2/file2
-${PROG} \[server aborted\]: cannot rename file CVS/Entries.Backup to CVS/Entries: No such file or directory"
+	    dotest_fail abspath-7a "${testcvs} -q co -d ../2 mod2" \
+"${PROG} server: protocol error: .\.\./2. contains more leading \.\.
+${PROG} \[server aborted\]: than the 0 which Max-dotdot specified"
+	    cd ..
+	    dotest abspath-7a-try2 "${testcvs} -q co -d 2 mod2" \
+"U 2/file2"
+	    cd 1
 	  else
 	  dotest abspath-7a "${testcvs} -q co -d ${TESTDIR}/2 mod2" \
 "U ${TESTDIR}/2/file2"
 	  fi # remote workaround
-	  if test "$remote" = no; then
-	    # Remote is creating a CVS directory.  Grr.
-	    dotest abspath-7b "ls" ""
-	  fi
+	  dotest abspath-7b "ls" ""
 	  dotest abspath-7c "${testcvs} -q co mod1" \
 "U mod1/file1"
 	  cd mod1
 	  if test "$remote" = yes; then
-	    # Work around the http://www.cyclic.com/cvs/dev-abspath.html race.
-	    ${testcvs} -q co -d ${TESTDIR}/3 mod2 >${TESTDIR}/abspath.tmp 2>&1
-	    dotest abspath-7d "cat ${TESTDIR}/abspath.tmp" \
-"U ${TESTDIR}/3/file2" \
-"U ${TESTDIR}/3/file2
-${PROG} \[server aborted\]: cannot rename file CVS/Entries.Backup to CVS/Entries: No such file or directory"
+	    cd ../..
+	    dotest abspath-7d "${testcvs} -q co -d 3 mod2" \
+"U 3/file2"
+	    cd 1/mod1
 	  else
 	  dotest abspath-7d "${testcvs} -q co -d ${TESTDIR}/3 mod2" \
 "U ${TESTDIR}/3/file2"

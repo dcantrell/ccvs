@@ -636,6 +636,18 @@ server_pathname_check (path)
        and is unlikely to do us any good here.  It also is probably capable
        of being a security hole in the anonymous readonly case.  */
     if (isabsolute (path))
+	/* Giving an error is actually kind of a cop-out, in the sense
+	   that it would be nice for "cvs co -d /foo/bar/baz" to work.
+	   A quick fix in the server would be requiring Max-dotdot of
+	   at least one if pathnames are absolute, and then putting
+	   /abs/foo/bar/baz in the temp dir beside the /d/d/d stuff.
+	   A cleaner fix in the server might be to decouple the
+	   pathnames we pass back to the client from pathnames in our
+	   temp directory (this would also probably remove the need
+	   for Max-dotdot).  A fix in the client would have the client
+	   turn it into "cd /foo/bar; cvs co -d baz" (more or less).
+	   This probably has some problems with pathnames which appear
+	   in messages.  */
 	error (1, 0, "absolute pathname `%s' illegal for server", path);
     if (pathname_levels (path) > max_dotdot_limit)
     {

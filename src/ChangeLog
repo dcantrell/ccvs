@@ -1,5 +1,12 @@
 1998-05-15  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* checkout.c (checkout): Call server_pathname_check on the
+	argument to "cvs co -d".
+	* server.c (server_pathname_check): Add comment about how we could
+	be handling absolute pathnames.
+	* sanity.sh (abspath): Rewrite the tests which run "cvs co -d /foo"
+	for remote, to reflect this.
+
 	* sanity.sh (abspath): Also do the "cannot rename" work-around for
 	abspath-7d.
 
