@@ -374,7 +374,7 @@ int filter_through_gunzip (fd, dir, pidp)
      int fd, dir;
      pid_t *pidp;
 {
-  static char *gunzip_argv[2] = { "gunzip" };
+  static char *gunzip_argv[3] = { "gunzip", "-d" };
   return filter_stream_through_program (fd, dir, &gunzip_argv[0], pidp);
 }
 

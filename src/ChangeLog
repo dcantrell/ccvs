@@ -1,3 +1,10 @@
+Thu Dec 14 11:56:13 1995  Karl Fogel  <kfogel@floss.cyclic.com>
+
+        * client.c (filter_through_gunzip): pass the supposedly
+        superfluous "-d" option to gunzip, to avoid stimulating what seems
+        to be an argument-passing bug in spawn() under OS/2 with IBM
+        C/C++.  Yucko.
+
 Wed Dec 13 20:08:37 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* options.h.in (RCSBIN_DFLT): Recommend specifying -b in
