@@ -1,3 +1,9 @@
+2004-07-17  Derek Price  <derek@ximbiot.com>
+
+	* cvs.texinfo (Update imports, import): Add notes on requirement that
+	release tags be unique.
+	(Original patch from Ilya N. Golubev <gin@mo.msk.ru>.)
+
 2004-06-10  Derek Price  <derek@ximbiot.com>
 
 	* cvs.texinfo (commit files): Remove reference to the obsolete -i
