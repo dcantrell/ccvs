@@ -1,3 +1,9 @@
+2000-02-17  Larry Jones  <larry.jones@sdrc.com>
+
+	* cvs.texinfo: Remove references to PreservePermissions.
+
+	* cvs.texinfo (history options): Note default report type.
+
 2000-01-18  Larry Jones  <larry.jones@sdrc.com>
 
 	* cvs.texinfo (Global options): Document compression levels.
