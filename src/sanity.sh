@@ -910,7 +910,15 @@ done"
 	  # option.  It probably should be an error message.  But 
 	  # currently it is one error message for each file operated on,
 	  # which in this case is zero files.
-	  dotest basicb-21 "${testcvs} -q admin -H" ""
+	  # I suspect that the choice between "illegal" and "invalid"
+	  # depends on the user's environment variables, the phase
+	  # of the moon (weirdness with optind), and who knows what else.
+	  # I've been seeing "illegal"...
+	  dotest_fail basicb-21 "${testcvs} -q admin -H" \
+"admin: illegal option -- H
+${PROG} \[admin aborted\]: specify ${PROG} -H admin for usage information" \
+"admin: invalid option -- H
+${PROG} \[admin aborted\]: specify ${PROG} -H admin for usage information"
 	  cd ..
 	  rmdir 1
 
@@ -7691,11 +7699,10 @@ ${PLUS} modify on branch after brtag"
 "Directory ${TESTDIR}/cvsroot/first-dir added to the repository"
           cd first-dir
 
-	  # In cvs.texinfo -i is listed as useless.  I suppose it
-	  # should be an error.  Currently admin has no ability to create 
-	  # new RCS files (which probably is as it should be;
-	  # see test for vers->vn_user being NULL in admin_fileproc).
-	  dotest admin-3 "${testcvs} -q admin -i file1" ""
+	  dotest_fail admin-3 "${testcvs} -q admin -i file1" \
+"${PROG} admin: the -i option to admin is not supported
+${PROG} admin: run add or import to create an RCS file
+${PROG} \[admin aborted\]: specify ${PROG} -H admin for usage information"
 	  dotest_fail admin-4 "${testcvs} -q log file1" \
 "${PROG} [a-z]*: nothing known about file1"
 
