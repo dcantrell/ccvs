@@ -28178,6 +28178,16 @@ PrimaryServer=$PRIMARY_CVSROOT"
 	    # Confirm data present
 	    dotest writeproxy-12 "cat file1" "now you see me again"
 
+	    # Test a failing rsync
+	    cd ../CVSROOT
+	    sed \$d <loginfo >tmp
+	    mv tmp loginfo
+	    echo \
+"ALL echo >&2 'Im rsync and I encountered an error!'; exit 1" >>loginfo
+	    dotest writeproxy-init-4 "$testcvs -Q ci -mbreak-rsync"
+	    echo "# a comment" >>loginfo
+	    dotest writeproxy-13 "$testcvs -Q ci -mtest-broken-rsync"
+
 	    dokeep
 	    cd ../../..
 	    rm -r writeproxy
