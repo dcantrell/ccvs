@@ -1,3 +1,8 @@
+2003-07-24  Mark D. Baushke  <mdb@cvshome.org>
+
+	* server.c (check_system_password): Cleanup pam_* return code
+	checking. (Original patch from Brian Murphy <brian@murphy.dk>.)
+
 2003-07-24  Derek Price  <derek@ximbiot.com>
 
 	* main.c: But the GNULIB gethostname accepts an int not ssize_t.
