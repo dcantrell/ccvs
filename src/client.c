@@ -597,6 +597,11 @@ read_line (resultp)
  */
 int gzip_level;
 
+/*
+ * Level of compression to use when running gzip on a single file.
+ */
+int file_gzip_level;
+
 int filter_through_gzip (fd, dir, level, pidp)
     int fd, dir, level;
     pid_t *pidp;
@@ -3555,10 +3560,6 @@ start_server ()
 	    from_server = compress_buffer_initialize (from_server, 1,
 						      gzip_level,
 						      buf_memory_error);
-
-	    /* Set gzip_level to 0 so that we don't try to gzip file
-               contents.  */
-	    gzip_level = 0;
 	}
 	else if (supported_request ("gzip-file-contents"))
 	{
@@ -3568,10 +3569,15 @@ start_server ()
 	    send_to_server (gzip_level_buf, 0);
 
 	    send_to_server ("\012", 1);
+
+	    file_gzip_level = gzip_level;
 	}
 	else
 	{
 	    fprintf (stderr, "server doesn't support gzip-file-contents\n");
+	    /* Setting gzip_level to 0 prevents us from giving the
+               error twice if update has to contact the server again
+               to fetch unpatchable files.  */
 	    gzip_level = 0;
 	}
     }
@@ -3836,7 +3842,7 @@ send_modified (file, short_pathname, vers)
     if (fd < 0)
 	error (1, errno, "reading %s", short_pathname);
 
-    if (gzip_level && sb.st_size > 100)
+    if (file_gzip_level && sb.st_size > 100)
     {
 	int nread, newsize = 0, gzip_status;
 	pid_t gzip_pid;
@@ -3891,7 +3897,7 @@ send_modified (file, short_pathname, vers)
 	}
 #endif /* LINES_CRLF_TERMINATED */
 
-	fd = filter_through_gzip (fd, 1, gzip_level, &gzip_pid);
+	fd = filter_through_gzip (fd, 1, file_gzip_level, &gzip_pid);
 
 	/* FIXME: is there any reason to go through all this realloc'ing
 	   when we could just be writing the data to the network as we read

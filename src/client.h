@@ -5,6 +5,7 @@ extern char *mode_to_string PROTO((mode_t));
 extern int change_mode PROTO((char *, char *));
 
 extern int gzip_level;
+extern int file_gzip_level;
 extern int filter_through_gzip PROTO((int, int, int, pid_t *));
 extern int filter_through_gunzip PROTO((int, int, pid_t *));
 
