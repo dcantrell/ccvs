@@ -1,5 +1,15 @@
 2004-02-24  Derek Price  <derek@ximbiot.com>
 
+	* sanity.sh (crerepos): Fix it so that it ignores the user's
+	.cvsrc file (.cvsrc "checkout -r" used to cause the "rm -r 1"
+	command to print warnings and wait for input).
+	(Original patch from Matthew Ogilvie  <mmo9317bd@mailcan.com>.)
+
+	* sanity.sh (reposmv, parseroot, devcom3, binwrap3):
+	s/_SAVED\>/_save/ for consistency.
+
+2004-02-24  Derek Price  <derek@ximbiot.com>
+
 	* sanity.sh (taginfo-newfmt-examine-2): Correct expected results.
 
 2004-02-23  Larry Jones  <lawrence.jones@ugsplm.com>
