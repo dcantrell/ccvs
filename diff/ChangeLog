@@ -2,6 +2,7 @@
 
 	* system.h: Source some header files when present to eliminate warning
 	messages under Windows.
+	(Patch from "Manfred Klug" <manklu@web.de>.)
 
 2001-08-07  Derek Price  <dprice@collab.net>
 
