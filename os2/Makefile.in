@@ -334,7 +334,5 @@ cvs.exe: ${OBJECTS}
 # cvs.obj: ${OBJECTS} ${SOURCES} ${HEADERS}
 
 subdir = os2
-.PRECIOUS: Makefile
 Makefile: ../config.status $(srcdir)/Makefile.in
 	cd .. && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= ./config.status
-	@echo 'run "make" again...' && exit 1

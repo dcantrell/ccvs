@@ -511,7 +511,7 @@ patch_fileproc (callerdat, finfo)
 						    (char *) 0, 0)) != -1)
 		(void) utime (tmpfile2, &t);
     }
-    run_setup ("%s -%c", Diff, unidiff ? 'u' : 'c');
+    run_setup ("%s -%c", DIFF, unidiff ? 'u' : 'c');
     run_arg (tmpfile1);
     run_arg (tmpfile2);
 

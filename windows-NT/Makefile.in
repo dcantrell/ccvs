@@ -73,7 +73,5 @@ clean:
 	@echo make clean does nothing in windows-NT subdir
 
 subdir = windows-NT
-.PRECIOUS: Makefile
 Makefile: ../config.status Makefile.in
 	cd .. && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= ./config.status
-	@echo 'run "make" again...' && exit 1

@@ -245,44 +245,36 @@ spec:
 
 # For the justification of the following Makefile rules, see node
 # `Automatic Remaking' in GNU Autoconf documentation.
+Makefile: Makefile.in config.status
+	CONFIG_FILES=$@ CONFIG_HEADERS= ./config.status
+
+# Use @CFLAGS@ not $(CFLAGS) because it would be confusing for "make CFLAGS="
+# to sometimes (i.e., if configure is modified) change the configured CFLAGS,
+# and sometimes not.
+config.status: configure
+	CFLAGS="@CFLAGS@" ./config.status --recheck
 
 # The rules to run autoconf and autoheader are commented out.  This is because
 # when the user unpacks a tarfile, configure.in might end up newer than 
 # configure, but the user might not have (and does not need to have) autoconf
 # installed.
-#
-#  FIXME:  Ideally these comments will be added only by 'make dist'.
-
-.PRECIOUS: ${srcdir}/configure
-${srcdir}/configure: configure.in #aclocal.m4
-#	cd $(srcdir) && autoconf
-	@echo "$@ is apparently out of date.  Not running autoconf."
-
-# autoheader might not change config.h.in, so touch a stamp file.
-.PRECIOUS: ${srcdir}/config.h.in
-${srcdir}/config.h.in: stamp-h.in
-	@echo "$@ is apparently out of date."
-.PRECIOUS: ${srcdir}/stamp-h.in
-${srcdir}/stamp-h.in: configure.in acconfig.h #aclocal.m4 config.h.top config.h.bot
-#	cd ${srcdir} && autoheader
-#	echo timestamp > ${srcdir}/stamp-h.in
-	@echo "$@ is apparently out of date.  Not running autoheader."
+#configure: configure.in #aclocal.m4
+#	cd $(srcdir); autoconf
 
 config.h: stamp-h
+
+# This used to do a ./config.status --recheck, to update config.status with
+# any new #defines from config.h.in.  The problem was that the rule itself
+# depends on config.status, so that the --recheck would get run several
+# times, which is bad if the user was trying to specify CFLAGS manually.
+# It was a big pain in the neck.
 stamp-h: config.h.in config.status
-	CONFIG_FILES=stamp-h CONFIG_HEADERS=config.h ./config.status
+	CONFIG_FILES=$@ CONFIG_HEADERS=config.h ./config.status
 
-.PRECIOUS: Makefile
-Makefile: Makefile.in config.status
-	CONFIG_FILES=Makefile CONFIG_HEADERS= ./config.status
-	@echo 'run "make" again...' && exit 1
-
-# Use @CFLAGS@ not $(CFLAGS) because it would be confusing for "make CFLAGS="
-# to sometimes (i.e., if configure is modified) change the configured CFLAGS,
-# and sometimes not.
-.PRECIOUS: config.status
-config.status: configure
-	CC="@CC@" CFLAGS="@CFLAGS@" ./config.status --recheck
+#config.h.in: stamp-h.in
+#stamp-h.in: configure.in #aclocal.m4 acconfig.h
+#	cd $(srcdir); autoheader
+#	date > $(srcdir)/stamp-h.in
 
 # Tell versions [3.59,3.63) of GNU make not to export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

@@ -6,3 +6,5 @@ check.plog
 cvs
 cvsbug
 mkmodules
+options.h
+options.h-SAVED
