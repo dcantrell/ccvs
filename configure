@@ -26429,9 +26429,9 @@ cat >>confdefs.h <<\_ACEOF
 _ACEOF
 
   else
-    { echo "$as_me:$LINENO: WARNING: --enable-encryption is meaningless with neither the CVS client
+    { echo "$as_me:$LINENO: WARNING: --enable-encryption is meaningless when neither the CVS client
        nor the CVS server is enabled (--disable-client and --disable-server)." >&5
-echo "$as_me: WARNING: --enable-encryption is meaningless with neither the CVS client
+echo "$as_me: WARNING: --enable-encryption is meaningless when neither the CVS client
        nor the CVS server is enabled (--disable-client and --disable-server)." >&2;}
   fi
 fi

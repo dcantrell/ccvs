@@ -3,6 +3,8 @@ Changes since 1.12.6:
 
 GENERAL USER ISSUES
 
+* `cvs release' now works with Kerberos or GSSAPI encryption enabled.
+
 * File resurrection from a previously existing revision no longer just reports
   that it works.
 
