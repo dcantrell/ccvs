@@ -1,5 +1,9 @@
 Changes since 1.8:
 
+* Remote CVS with the "-z" option now uses the zlib library to
+compress all communication between the client and the server, rather
+than invoking gzip on each file separately.
+
 * The "cvs rlog" command is deprecated and running it will print a
 warning; use the synonymous "cvs log" command instead.  It is
 confusing for rlog to mean the same as log because some other CVS
