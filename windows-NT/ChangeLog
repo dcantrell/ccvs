@@ -1,3 +1,7 @@
+Thu Apr 17 00:15:36 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* Makefile.in: Add sockerror.c.
+
 Wed Apr  9 15:29:45 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* filesubr.c (expand_wild): Add comments about "." and comparing
