@@ -1,3 +1,8 @@
+2004-04-19  Derek Price  <derek@ximbiot.com>
+
+	* libdiff.mak: Regenerated for "zlib/libz.dsp" change.
+	(Patch from Conrad T. Pino <Conrad@Pino.com>.)
+
 2004-04-17  Derek Price  <derek@ximbiot.com>
 
 	* libdiff.dep, libdiff.mak: Regenerated for "../cvsnt.dsw" changes.
