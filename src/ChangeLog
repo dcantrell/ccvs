@@ -1,3 +1,9 @@
+2003-10-08  Derek Price  <derek@ximbiot.com>
+
+	* lock.c (remove_locks): Copy global struct and set status variable to
+	NULL before calling disposal functions that might try to access it
+	during calls to error(1,...).
+
 2003-10-08  Larry Jones  <lawrence.jones@eds.com>
 
 	* history.c (history): Don't conflate -e with -x since the client's
