@@ -351,9 +351,10 @@ commit (argc, argv)
 	struct passwd *pw;
 
 	if ((pw = (struct passwd *) getpwnam (getcaller ())) == NULL)
-	    error (1, 0, "you are unknown to this system");
+	    error (1, 0, "your apparent username (%s) is unknown to this system",
+			 getcaller ());
 	if (pw->pw_uid == (uid_t) 0)
-	    error (1, 0, "cannot commit files as 'root'");
+	    error (1, 0, "'root' is not allowed to commit files");
     }
 #endif /* CVS_BADROOT */
 
