@@ -1,3 +1,14 @@
+Sat Jul  8 20:33:57 1995  Paul Eggert  <eggert@twinsun.com>
+
+	* history.c: (history_write): Don't assume that fopen(..., "a")
+	lets one interleave writes to the history file from different processes
+	without interlocking.  Use open's O_APPEND option instead.
+	Throw in an lseek to lessen the race bugs on non-Posix hosts.
+	* cvs.h, subr.c (Fopen): Remove.
+
+	* log.c (log_fileproc): Pass working file name to rlog, so that
+	the name is reported correctly.
+
 Fri Jul  7 18:29:37 1995  Michael Hohmuth  <hohmuth@inf.tu-dresden.de>
 
 	* client.c, client.h (client_import_setup): New function.
