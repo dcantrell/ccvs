@@ -1,3 +1,14 @@
+Sat Jan 25 21:34:19 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* subr.c, cvs.h (expand_string): New function.
+	* rcs.c (getrcskey, getrcsrev): Call it.  This greatly reduces the
+	number of calls to realloc if there is a very large file in the
+	RCS file.  Credit goes to Mike Heath <mike@pswtech.com> for
+	pointing out the problem and the basic solution (MIN_INCR,
+	MAX_INCR); I adapted it into the separate function expand_string.
+	* sanity.sh (big): New test helps insure this hasn't broken
+	anything obvious.
+
 Wed Jan 22 10:06:13 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* status.c (status_fileproc): Change message which is printed for

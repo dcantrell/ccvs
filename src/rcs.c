@@ -813,9 +813,9 @@ getrcskey (fp, keyp, valp, lenp)
     {
 	if (cur >= max)
 	{
-	    key = xrealloc (key, keysize + ALLOCINCR);
-	    cur = key + keysize;
-	    keysize += ALLOCINCR;
+	    size_t curoff = cur - key;
+	    expand_string (&key, &keysize, keysize + 1);
+	    cur = key + curoff;
 	    max = key + keysize;
 	}
 	*cur++ = c;
@@ -830,9 +830,9 @@ getrcskey (fp, keyp, valp, lenp)
     }
     if (cur >= max)
     {
-	key = xrealloc (key, keysize + ALLOCINCR);
-	cur = key + keysize;
-	keysize += ALLOCINCR;
+	size_t curoff = cur - key;
+	expand_string (&key, &keysize, keysize + 1);
+	cur = key + curoff;
 	max = key + keysize;
     }
     *cur = '\0';
@@ -897,9 +897,9 @@ getrcskey (fp, keyp, valp, lenp)
 
 		if (cur >= max)
 		{
-		    value = xrealloc (value, valsize + ALLOCINCR);
-		    cur = value + valsize;
-		    valsize += ALLOCINCR;
+		    size_t curoff = cur - value;
+		    expand_string (&value, &valsize, valsize + 1);
+		    cur = value + curoff;
 		    max = value + valsize;
 		}
 		*cur++ = c;
@@ -926,9 +926,9 @@ getrcskey (fp, keyp, valp, lenp)
 
 	    if (cur >= max)
 	    {
-		value = xrealloc (value, valsize + ALLOCINCR);
-		cur = value + valsize;
-		valsize += ALLOCINCR;
+		size_t curoff = cur - value;
+		expand_string (&value, &valsize, valsize + 1);
+		cur = value + curoff;
 		max = value + valsize;
 	    }
 	    *cur++ = ' ';
@@ -940,9 +940,9 @@ getrcskey (fp, keyp, valp, lenp)
 
 	if (cur >= max)
 	{
-	    value = xrealloc (value, valsize + ALLOCINCR);
-	    cur = value + valsize;
-	    valsize += ALLOCINCR;
+	    size_t curoff = cur - value;
+	    expand_string (&value, &valsize, valsize + 1);
+	    cur = value + curoff;
 	    max = value + valsize;
 	}
 	*cur++ = c;
@@ -959,9 +959,9 @@ getrcskey (fp, keyp, valp, lenp)
     /* terminate the string */
     if (cur >= max)
     {
-	value = xrealloc (value, valsize + ALLOCINCR);
-	cur = value + valsize;
-	valsize += ALLOCINCR;
+	size_t curoff = cur - value;
+	expand_string (&value, &valsize, valsize + 1);
+	cur = value + curoff;
 	max = value + valsize;
     }
     *cur = '\0';
@@ -1008,9 +1008,9 @@ getrcsrev (fp, revp)
     {
 	if (cur >= max)
 	{
-	    key = xrealloc (key, keysize + ALLOCINCR);
-	    cur = key + keysize;
-	    keysize += ALLOCINCR;
+	    size_t curoff = cur - key;
+	    expand_string (&key, &keysize, keysize + 1);
+	    cur = key + curoff;
 	    max = key + keysize;
 	}
 	*cur++ = c;
@@ -1025,9 +1025,9 @@ getrcsrev (fp, revp)
 
     if (cur >= max)
     {
-	key = xrealloc (key, keysize + ALLOCINCR);
-	cur = key + keysize;
-	keysize += ALLOCINCR;
+	size_t curoff = cur - key;
+	expand_string (&key, &keysize, keysize + 1);
+	cur = key + curoff;
 	max = key + keysize;
     }
     *cur = '\0';
