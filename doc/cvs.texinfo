@@ -1540,7 +1540,7 @@ it; for example the Windows NT @code{rsh} is not
 suitable since it by default translates between CRLF
 and LF.  The OS/2 CVS port has a hack to pass @samp{-b}
 to @code{rsh} to get around this, but since this could
-potentially cause programs for programs other than the
+potentially cause problems for programs other than the
 standard @code{rsh}, it may change in the future.  If
 you set @code{CVS_RSH} to @code{SSH} or some other rsh
 replacement, the instructions in the rest of this

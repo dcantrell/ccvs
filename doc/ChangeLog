@@ -1,3 +1,7 @@
+Mon Feb  3 10:55:41 1997  joel boutros <nihilis@moral.addiction.com>
+
+	* cvs.texinfo (Connecting via rsh): Fix typo (programs -> problems).
+
 Fri Jan 31 12:18:47 1997  Ian Lance Taylor  <ian@cygnus.com>
 
 	* cvsclient.texi (Connection and Authentication): Correct typo
