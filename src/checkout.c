@@ -47,6 +47,7 @@ static int checkout_proc PROTO((int *pargc, char **argv, char *where,
 		          char *mwhere, char *mfile, int shorten,
 		          int local_specified, char *omodule,
 		          char *msg));
+static int safe_location PROTO((void));
 
 static const char *const checkout_usage[] =
 {
@@ -403,7 +404,8 @@ checkout (argc, argv)
     return (err);
 }
 
-static int safe_location PROTO((void))
+static int
+safe_location ()
 {
     char current[MAXPATHLEN];
     char hardpath[MAXPATHLEN+5];
@@ -415,7 +417,7 @@ static int safe_location PROTO((void))
         strcpy(hardpath, CVSroot);
     }
     hardpath[x] = '\0';
-    getcwd(current, sizeof current);
+    getwd (current);
     if (strncmp(current, hardpath, strlen(hardpath)) == 0)
     {
         return (0);
