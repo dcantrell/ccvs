@@ -180,3 +180,6 @@ lib/mktime.c
 m4/mktime.m4
 
 m4/onceonly_2_57.m4
+lib/minmax.h
+
+m4/onceonly_2_57.m4

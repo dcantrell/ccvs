@@ -66,8 +66,6 @@ $GNULIB/m4/malloc.m4				m4		no NI
 # $GNULIB/modules/memmove
 $GNULIB/lib/memmove.c				lib		no NI
 $GNULIB/m4/memmove.m4				m4		no NI
-# $GNULIB/modules/minmax
-$GNULIB/lib/minmax.h				lib		no NI
 # $GNULIB/modules/nanosleep
 $GNULIB/lib/nanosleep.c				lib		no NI
 $GNULIB/m4/nanosleep.m4				m4		no NI
