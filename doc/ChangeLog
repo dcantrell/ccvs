@@ -1,3 +1,16 @@
+Tue May 14 08:56:41 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (From files): Say directory tree instead of module
+	where that is what we mean.  Use @var{wdir} and @var{rdir} in the
+	example instead of using @var{dir} for two different things.
+	(From files): Say directory tree instead of module
+	where that is what we mean.
+	(Binary files): When using cvs admin -kb, one needs an extra
+	commit step on non-unix systems.
+	(Binary files in imports): New node.
+	(Wrappers): Add comment regarding indent example.
+	(Top): Don't refer to modules when that is not what we mean.
+
 Fri May 10 09:39:49 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (Sticky tags): Explain what sticky dates and

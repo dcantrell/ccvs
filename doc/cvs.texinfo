@@ -131,8 +131,8 @@ This info manual describes how to use and administer
 * Branches::                    Parallel development explained
 * Merging::                     How to move changes between branches
 * Recursive behavior::          CVS descends directories
-* Adding files::                Adding files to a module
-* Removing files::              Removing files from a module
+* Adding files::                Adding files
+* Removing files::              Removing files
 * Tracking sources::            Tracking third-party sources
 * Moving files::                Moving and renaming files
 * Moving directories::          Moving and renaming directories
@@ -1479,12 +1479,12 @@ be done in a couple of different ways.
                                 where files already exists.
 * From other version control systems::  Old projects where you want to
                                         preserve history from another system.
-* From scratch::                Creating a module from scratch.
+* From scratch::                Creating a directory tree from scratch.
 @end menu
 
 @c . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 @node From files
-@subsection Creating a module from a number of files
+@subsection Creating a directory tree from a number of files
 @cindex Importing files
 
 When you begin using @sc{cvs}, you will probably already have several
@@ -1492,12 +1492,12 @@ projects that can be
 put under @sc{cvs} control.  In these cases the easiest way is to use the
 @code{import} command.  An example is probably the easiest way to
 explain how to use it.  If the files you want to install in
-@sc{cvs} reside in @file{@var{dir}}, and you want them to appear in the
-repository as @file{$CVSROOT/yoyodyne/@var{dir}}, you can do this:
+@sc{cvs} reside in @file{@var{wdir}}, and you want them to appear in the
+repository as @file{$CVSROOT/yoyodyne/@var{rdir}}, you can do this:
 
 @example
-$ cd @var{dir}
-$ cvs import -m "Imported sources" yoyodyne/@var{dir} yoyo start
+$ cd @var{wdir}
+$ cvs import -m "Imported sources" yoyodyne/@var{rdir} yoyo start
 @end example
 
 Unless you supply a log message with the @samp{-m}
@@ -1590,7 +1590,7 @@ vary).
 
 @c . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 @node From scratch
-@subsection Creating a module from scratch
+@subsection Creating a directory tree from scratch
 
 For a new project, the easiest thing to do is probably
 to create an empty directory structure, like this:
@@ -3090,6 +3090,7 @@ revision.
 @menu
 * First import::                Importing a module for the first time
 * Update imports::              Updating a module with the import command
+* Binary files in imports::     Binary files require special handling
 @end menu
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -3167,6 +3168,16 @@ $ cvs checkout -jWDIFF_0_04 -jWDIFF_0_05 wdiff
 
 @noindent
 In this case, the two above commands are equivalent.
+
+@node Binary files in imports
+@section How to handle binary files with cvs import
+
+There is no way to tell @sc{cvs} that some of the files
+which are added in a @code{cvs import} are binary.  So
+if you import files, and some of the new ones are
+binary, you need to go back and use @code{cvs admin
+-kb} on the binary files, as described in @ref{Binary
+files}.
 
 @c ---------------------------------------------------------------------
 @node Moving files
@@ -3892,6 +3903,7 @@ $ cvs add -m"A test file" kotest
 $ cvs ci -m"First checkin; contains a keyword" kotest
 $ cvs admin -kb kotest
 $ cvs update -A kotest
+$ cvs commit -m "make it binary" kotest  # @r{For non-unix systems}
 @end example
 
 When you check in the file @file{kotest} the keywords
@@ -3901,7 +3913,11 @@ admin -kb} command sets the default keyword
 substitution method for this file, but it does not
 alter the working copy of the file that you have.  The
 easiest way to get the unexpanded version of
-@file{kotest} is @code{cvs update -A}.
+@file{kotest} is @code{cvs update -A}.  If you need to
+cope with line endings (that is, you are using a
+@sc{cvs} client on a non-unix system), then you need to
+check in a new copy of the file, as shown by the
+@code{cvs commit} command above.
 
 @c ---------------------------------------------------------------------
 @node Revision management
@@ -6901,6 +6917,11 @@ file is checked out of the repository. The
 methodology should be used when updating the files in
 the repository (that is no merging should be performed).
 
+@c What pitfalls arise when using indent this way?  Is
+@c it a winning thing to do?  Would be nice to at least
+@c hint at those issues; we want our examples to tell
+@c how to solve problems, not just to say that cvs can
+@c do certain things.
 The last example line says that all files that end with
 a @code{*.c} should be filtered with @file{indent}
 before being checked into the repository. Unlike the previous
