@@ -1,3 +1,8 @@
+Thu Feb 29 17:02:22 1996  Samuel Tardieu  <sam@inf.enst.fr>
+
+	* fileattr.c (fileattr_get): Removed NULL pointer dereference
+	which occurred in the absence of default attribute.
+
 Thu Feb 29 07:36:57 1996  J.T. Conklin  <jtc@rtl.cygnus.com>
 
 	* rcs.c (RCS_isbranch, RCS_whatbranch): Remove no longer used file

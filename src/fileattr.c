@@ -159,7 +159,7 @@ fileattr_get (filename, attrname)
 	    return NULL;
 	p = node->data;
     }
-    while (1)
+    while (p)
     {
 	if (strncmp (attrname, p, attrname_len) == 0
 	    && p[attrname_len] == '=')
