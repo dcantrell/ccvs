@@ -379,7 +379,8 @@ AC_DEFUN([AM_INTL_SUBDIR],
     [AC_DEFINE([ptrdiff_t], [long],
        [Define as the type of the result of subtracting two pointers, if the system doesn't define it.])
     ])
-  AC_CHECK_HEADERS([argz.h locale.h nl_types.h malloc.h unistd.h sys/param.h])
+  AC_CHECK_HEADERS([argz.h limits.h locale.h nl_types.h malloc.h stddef.h \
+stdlib.h string.h unistd.h sys/param.h])
   AC_CHECK_FUNCS([asprintf fwprintf getcwd getegid geteuid getgid getuid \
 mempcpy munmap putenv setenv setlocale snprintf stpcpy strcasecmp strdup \
 strtoul tsearch wcslen __argz_count __argz_stringify __argz_next \

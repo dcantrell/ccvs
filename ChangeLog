@@ -1,5 +1,11 @@
 2004-10-22  Mark D. Baushke  <mdb@cvshome.org>
 
+	* gnulib-update (MODULES): Add stdint.
+	* Makefile.in, aclocal.m4, config.h.in, configure, gnulib.txt:
+	Regenerated.
+
+2004-10-22  Mark D. Baushke  <mdb@cvshome.org>
+
 	* Makefile.am (proxycheck): Add new test target.
 	* Makefile.in: Regenerated.
 
