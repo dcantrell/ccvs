@@ -1,3 +1,30 @@
+2004-06-23  Derek Price  <derek@ximbiot.com>
+
+	Operate correctly in non-write proxy mode, delaying processing of most
+	commands until after the `Root' request is received.
+
+	* server.c (buf_from_net_save): New global variable to store the input
+	buffer from the client while the secondary log is being reprocessed.
+	(reprocessing): Global to track whether we are reprocessing.
+	(various redundant prototypes): Removed.
+	(fd_buffer_*): Remove unneeded typecasts.
+	(serve_valid_responses, serve_global_option, serve_set,
+	serve_valid_requests): Avoid processing twice.
+	(command_pid, outbuf_memory_error, input_memory_error): Moved above new
+	references.
+	(server): Factor loop over the client inputs to...
+	(loop_over_inputs): ...this new function.
+	(serve_root): Loop over secondary log of client inputs when we
+	discover we are not the secondary.
+	(*): Add !secondary_log assertions to verify that certain code paths
+	are not yet taken.
+	(do_cvs_command, serve_init): Add switch and pseudo-code comments about
+	what will need to be done on secondary servers.
+	(seve_noop): Print errors & "ok" in the first pass, skip "ok" but
+	restore handling of entries and notification in the second.
+	(serve_co): Note what will need to be done on secondaries.
+	(server_cleanup): Deal with buf_from_net_save when necessary.
+
 2004-06-22  Derek Price  <derek@ximbiot.com>
 
 	* server.c (server): Move previously fatal error on failure to open a
