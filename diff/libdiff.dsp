@@ -136,5 +136,45 @@ SOURCE=.\util.c
 SOURCE=.\version.c
 # End Source File
 # End Group
+# Begin Group "Header Files"
+
+# PROP Default_Filter "h;hpp;hxx;hm;inl;fi;fd"
+# Begin Source File
+
+SOURCE=.\cmpbuf.h
+# End Source File
+# Begin Source File
+
+SOURCE="..\windows-NT\config.h"
+# End Source File
+# Begin Source File
+
+SOURCE=.\diff.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\diffrun.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\lib\fnmatch.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\lib\getopt.h
+# End Source File
+# Begin Source File
+
+SOURCE="..\windows-NT\ndir.h"
+# End Source File
+# Begin Source File
+
+SOURCE=..\lib\regex.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\system.h
+# End Source File
+# End Group
 # End Target
 # End Project
