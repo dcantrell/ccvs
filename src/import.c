@@ -503,7 +503,6 @@ update_rcs_file (message, vfile, vtag, targc, targv, inattic)
 {
     Vers_TS *vers;
     int letter;
-    int ierrno;
     char *tocvsPath;
     struct file_info finfo;
 

@@ -1,5 +1,7 @@
 Tue Apr 15 00:36:23 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* import.c (update_rcs_file): Remove unused variable ierrno.
+
 	* add.c, checkout.c, commit.c, diff.c, edit.c, import.c,
 	history.c, log.c, main.c, patch.c, release.c, remove.c, rtag.c,
 	status.c, tag.c, update.c, watch.c: Pass "+" to all calls to
