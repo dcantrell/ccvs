@@ -61,7 +61,7 @@ extern char *server_hostname;
 #   ifndef LOG_DAEMON   /* for ancient syslogs */
 #     define LOG_DAEMON 0
 #   endif
-# endif
+# endif /* HAVE_SYSLOG_H */
 
 # ifdef HAVE_KERBEROS
 #   include <netinet/in.h>
@@ -718,7 +718,7 @@ error ENOMEM Virtual memory exhausted.\n";
     write (STDOUT_FILENO, msg, sizeof (msg) - 1);
 # ifdef HAVE_SYSLOG_H
     syslog (LOG_DAEMON | LOG_ERR, "virtual memory exhausted");
-# endif
+# endif /* HAVE_SYSLOG_H */
     exit (EXIT_FAILURE);
 }
 
@@ -2560,13 +2560,13 @@ become_proxy (void)
 	    && (/* Assume that there is no further reason to keep the buffer to
 	         * the primary open if we can no longer read its responses.
 	         */
-	        from_primary_fd < 0 && buf_to_primary
+	        (from_primary_fd < 0 && buf_to_primary)
 	        /* Also close buf_to_primary when it becomes impossible to find
 	         * more data to send to it.  We don't close buf_from_primary
 	         * yet since there may be data pending or the primary may react
 	         * to the EOF on its input pipe.
 	         */
-	        || from_net_fd < 0 && buf_empty_p (buf_to_primary)))
+	        || (from_net_fd < 0 && buf_empty_p (buf_to_primary))))
 	{
 	    buf_shutdown (buf_to_primary);
 	    buf_free (buf_to_primary);
@@ -6416,7 +6416,7 @@ error ENOMEM Virtual memory exhausted.\n");
 	 * and printed here?
 	 */
 	syslog (LOG_DAEMON | LOG_ERR, "Dying gasps received from client.");
-#endif
+#endif /* HAVE_SYSLOG_H */
 	error (0, 0, "Dying gasps received from client.");
     }
 
@@ -6426,22 +6426,22 @@ error ENOMEM Virtual memory exhausted.\n");
         int retval;
 
         retval = pam_close_session (pamh, 0);
-#ifdef HAVE_SYSLOG_H
+# ifdef HAVE_SYSLOG_H
         if (retval != PAM_SUCCESS)
             syslog (LOG_DAEMON | LOG_ERR, 
                     "PAM close session error: %s",
                     pam_strerror (pamh, retval));
-#endif
+# endif /* HAVE_SYSLOG_H */
 
         retval = pam_end (pamh, retval);
-#ifdef HAVE_SYSLOG_H
+# ifdef HAVE_SYSLOG_H
         if (retval != PAM_SUCCESS)
             syslog (LOG_DAEMON | LOG_ERR, 
                     "PAM failed to release authenticator, error: %s",
                     pam_strerror (pamh, retval));
-#endif
+# endif /* HAVE_SYSLOG_H */
     }
-#endif
+#endif /* HAVE_PAM */
 
     /* server_cleanup() will be called on a normal exit and close the buffers
      * explicitly.
@@ -6498,7 +6498,7 @@ error 0 %s: no such system user\n", username);
 	    syslog (LOG_DAEMON | LOG_ALERT,
 		    "attempt to root from account: %s", cvs_username
 		   );
-#endif
+#endif /* HAVE_SYSLOG_H */
         printf("error 0: root not allowed\n");
 	exit (EXIT_FAILURE);
     }
@@ -6557,7 +6557,7 @@ error 0 %s: no such system user\n", username);
 	    syslog (LOG_DAEMON | LOG_ERR,
 		    "setgid to %d failed (%m): real %d/%d, effective %d/%d ",
 		    pw->pw_gid, getuid(), getgid(), geteuid(), getegid());
-#endif
+#endif /* HAVE_SYSLOG_H */
 	    exit (EXIT_FAILURE);
 	}
     }
@@ -6575,7 +6575,7 @@ error 0 %s: no such system user\n", username);
 	    syslog (LOG_DAEMON | LOG_ERR,
 		    "setuid to %d failed (%m): real %d/%d, effective %d/%d ",
 		    pw->pw_uid, getuid(), getgid(), geteuid(), getegid());
-#endif
+#endif /* HAVE_SYSLOG_H */
 	exit (EXIT_FAILURE);
     }
 
@@ -7023,20 +7023,20 @@ pserver_read_line (char **tmp, size_t *tmp_len)
     status = buf_read_short_line (buf_from_net, tmp, tmp_len, PATH_MAX);
     if (status == -1)
     {
-#ifdef HAVE_SYSLOG_H
+# ifdef HAVE_SYSLOG_H
 	syslog (LOG_DAEMON | LOG_NOTICE,
 	        "unexpected EOF encountered during authentication");
-#endif
+# endif /* HAVE_SYSLOG_H */
 	error (1, 0, "unexpected EOF encountered during authentication");
     }
     if (status == -2)
 	status = ENOMEM;
     if (status != 0)
     {
-#ifdef HAVE_SYSLOG_H
+# ifdef HAVE_SYSLOG_H
 	syslog (LOG_DAEMON | LOG_NOTICE,
                 "error reading from net while validating pserver");
-#endif
+# endif /* HAVE_SYSLOG_H */
 	error (1, status, "error reading from net while validating pserver");
     }
 }
@@ -7115,9 +7115,9 @@ pserver_authenticate_connection (void)
 	if (setsockopt (STDIN_FILENO, SOL_SOCKET, SO_KEEPALIVE,
 			&on, sizeof on) < 0)
 	{
-#ifdef HAVE_SYSLOG_H
+# ifdef HAVE_SYSLOG_H
 	    syslog (LOG_DAEMON | LOG_ERR, "error setting KEEPALIVE: %m");
-#endif
+# endif /* HAVE_SYSLOG_H */
 	}
     }
 #endif
@@ -7171,9 +7171,9 @@ pserver_authenticate_connection (void)
     if (!root_allow_ok (repository))
     {
 	error (1, 0, "%s: no such repository", repository);
-#ifdef HAVE_SYSLOG_H
+# ifdef HAVE_SYSLOG_H
 	syslog (LOG_DAEMON | LOG_NOTICE, "login refused for %s", repository);
-#endif
+# endif /* HAVE_SYSLOG_H */
 	goto i_hate_you;
     }
 
@@ -7189,9 +7189,9 @@ pserver_authenticate_connection (void)
     host_user = check_password (username, descrambled_password, repository);
     if (host_user == NULL)
     {
-#ifdef HAVE_SYSLOG_H
+# ifdef HAVE_SYSLOG_H
 	syslog (LOG_DAEMON | LOG_NOTICE, "login failure (for %s)", repository);
-#endif
+# endif /* HAVE_SYSLOG_H */
 	memset (descrambled_password, 0, strlen (descrambled_password));
 	free (descrambled_password);
     i_hate_you:
@@ -7268,9 +7268,9 @@ error %s getpeername or getsockname failed\n", strerror (errno));
 	if (setsockopt (STDIN_FILENO, SOL_SOCKET, SO_KEEPALIVE,
 			   (char *) &on, sizeof on) < 0)
 	{
-#ifdef HAVE_SYSLOG_H
+# ifdef HAVE_SYSLOG_H
 	    syslog (LOG_DAEMON | LOG_ERR, "error setting KEEPALIVE: %m");
-#endif
+# endif /* HAVE_SYSLOG_H */
 	}
     }
 #endif
@@ -7572,7 +7572,7 @@ cvs_output (const char *str, size_t len)
 		    "Attempt to write message after close of network buffer.  "
 		    "Message was: %s",
 		    str);
-# endif /* HAVE_SYSLOG */
+# endif /* HAVE_SYSLOG_H */
     }
     else if (server_active)
     {
@@ -7588,7 +7588,7 @@ cvs_output (const char *str, size_t len)
 		    "Attempt to write message before initialization of "
 		    "protocol buffer.  Message was: %s",
 		    str);
-# endif /* HAVE_SYSLOG */
+# endif /* HAVE_SYSLOG_H */
     }
     else
 #endif
@@ -7719,7 +7719,7 @@ cvs_outerr (const char *str, size_t len)
 		    "Attempt to write error message after close of network "
 		    "buffer.  Message was: `%s'",
 		    str);
-# endif /* HAVE_SYSLOG */
+# endif /* HAVE_SYSLOG_H */
     }
     else if (server_active)
     {
@@ -7735,7 +7735,7 @@ cvs_outerr (const char *str, size_t len)
 		    "Attempt to write error message before initialization of "
 		    "protocol buffer.  Message was: `%s'",
 		    str);
-# endif /* HAVE_SYSLOG */
+# endif /* HAVE_SYSLOG_H */
     }
     else
 #endif
