@@ -50,18 +50,6 @@ add_entries_proc (node, closure)
     return (0);
 }
 
-/*
- * compare two files list node (for sort)
- */
-static int fsortcmp PROTO ((const Node *, const Node *));
-static int
-fsortcmp (p, q)
-    const Node *p;
-    const Node *q;
-{
-    return (strcmp (p->key, q->key));
-}
-
 List *
 Find_Names (repository, which, aflag, optentries)
     char *repository;

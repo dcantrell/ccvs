@@ -43,6 +43,7 @@
 #include "edit.h"
 #include "getline.h"
 #include "buffer.h"
+#include "hardlink.h"
 
 static int checkout_file PROTO ((struct file_info *finfo, Vers_TS *vers_ts,
 				 int adding, int merging, int update_server));
@@ -68,6 +69,7 @@ static int update_fileproc PROTO ((void *callerdat, struct file_info *));
 static int update_filesdone_proc PROTO ((void *callerdat, int err,
 					 char *repository, char *update_dir,
 					 List *entries));
+static int get_linkinfo_proc PROTO ((void *callerdat, struct file_info *));
 static void write_letter PROTO ((struct file_info *finfo, int letter));
 static void join_file PROTO ((struct file_info *finfo, Vers_TS *vers_ts));
 
@@ -445,6 +447,30 @@ do_update (argc, argv, xoptions, xtag, xdate, xforce, local, xbuild, xaflag,
     else
 	date_rev2 = (char *) NULL;
 
+    if (preserve_perms)
+    {
+	/* We need to do an extra recursion, bleah.  It's to make sure
+	   that we know as much as possible about file linkage. */
+	hardlist = getlist();
+	working_dir = xgetwd();		/* save top-level working dir */
+
+	/* FIXME-twp: the arguments to start_recursion make me dizzy.  This
+	   function call was copied from the update_fileproc call that
+	   follows it; someone should make sure that I did it right. */
+	err = start_recursion (get_linkinfo_proc, (FILESDONEPROC) NULL,
+			       (DIRENTPROC) NULL, (DIRLEAVEPROC) NULL, NULL,
+			       argc, argv, local, which, aflag, 1,
+			       preload_update_dir, 1);
+	if (err)
+	    goto done;
+
+	/* FIXME-twp: at this point we should walk the hardlist
+	   and update the `links' field of each hardlink_info struct
+	   to list the files that are linked on dist.  That would make
+	   it easier & more efficient to compare the disk linkage with
+	   the repository linkage (a simple strcmp). */
+    }
+
     /* call the recursion processor */
     err = start_recursion (update_fileproc, update_filesdone_proc,
 			   update_dirent_proc, update_dirleave_proc, NULL,
@@ -461,7 +487,50 @@ do_update (argc, argv, xoptions, xtag, xdate, xforce, local, xbuild, xaflag,
 	    sleep (1);			/* to avoid time-stamp races */
     }
 
+  done:
     return (err);
+}
+
+/*
+ * The get_linkinfo_proc callback adds each file to the hardlist
+ * (see hardlink.c).
+ */
+
+static int
+get_linkinfo_proc (callerdat, finfo)
+    void *callerdat;
+    struct file_info *finfo;
+{
+    char *fullpath;
+    Node *linkp;
+    struct hardlink_info *hlinfo;
+
+    /* Get the full pathname of the current file. */
+    fullpath = xmalloc (strlen(working_dir) +
+			strlen(finfo->fullname) + 2);
+    sprintf (fullpath, "%s/%s", working_dir, finfo->fullname);
+
+    /* To permit recursing into subdirectories, files
+       are keyed on the full pathname and not on the basename. */
+    linkp = lookup_file_by_inode (fullpath);
+    if (linkp == NULL)
+    {
+	/* The file isn't on disk; we are probably restoring
+	   a file that was removed. */
+	return 0;
+    }
+    
+    /* Create a new, empty hardlink_info node. */
+    hlinfo = (struct hardlink_info *)
+	xmalloc (sizeof (struct hardlink_info));
+
+    hlinfo->status = (Ctype) 0;	/* is this dumb? */
+    hlinfo->checked_out = 0;
+    hlinfo->links = NULL;
+
+    linkp->data = (char *) hlinfo;
+
+    return 0;
 }
 
 /*
@@ -2396,12 +2465,13 @@ join_file (finfo, vers)
  *   . permissions
  *   . major and minor device numbers
  *   . symbolic links
- *   . hard links (not done yet)
+ *   . hard links
  *
  * If either REV1 or REV2 is NULL, the working copy is used instead.
  *
  * Return 1 if the files differ on these data.
  */
+
 int
 special_file_mismatch (finfo, rev1, rev2)
     struct file_info *finfo;
@@ -2418,6 +2488,8 @@ special_file_mismatch (finfo, rev1, rev2)
     dev_t rev1_dev, rev2_dev;
     char *rev1_symlink = NULL;
     char *rev2_symlink = NULL;
+    char *rev1_hardlinks = NULL;
+    char *rev2_hardlinks = NULL;
     int check_uids, check_gids, check_modes;
     int result;
 
@@ -2425,6 +2497,13 @@ special_file_mismatch (finfo, rev1, rev2)
        don't report a mismatch in any case. */
     if (!preserve_perms)
 	return 0;
+
+    /* When special_file_mismatch is called from No_Difference, the
+       RCS file has been only partially parsed.  We must read the
+       delta tree in order to compare special file info recorded in
+       the delta nodes.  (I think this is safe. -twp) */
+    if (finfo->rcs->flags & PARTIAL)
+	RCS_reparsercsfile (finfo->rcs, NULL, NULL);
 
     check_uids = check_gids = check_modes = 1;
 
@@ -2448,6 +2527,7 @@ special_file_mismatch (finfo, rev1, rev2)
 	    if (S_ISBLK (rev1_mode) || S_ISCHR (rev1_mode))
 		rev1_dev = sb.st_rdev;
 	}
+	rev1_hardlinks = list_files_linked_to (finfo->file);
     }
     else
     {
@@ -2497,6 +2577,12 @@ special_file_mismatch (finfo, rev1, rev2)
 		    error (0, 0, "%s:%s unknown file type `%s'",
 			   finfo->file, rev1, ftype);
 	    }
+
+	    n = findnode (vp->other_delta, "hardlinks");
+	    if (n == NULL)
+		rev1_hardlinks = xstrdup ("");
+	    else
+		rev1_hardlinks = xstrdup (n->data);
 	}
     }
 
@@ -2516,6 +2602,7 @@ special_file_mismatch (finfo, rev1, rev2)
 	    if (S_ISBLK (rev2_mode) || S_ISCHR (rev2_mode))
 		rev2_dev = sb.st_rdev;
 	}
+	rev2_hardlinks = list_files_linked_to (finfo->file);
     }
     else
     {
@@ -2565,6 +2652,12 @@ special_file_mismatch (finfo, rev1, rev2)
 		    error (0, 0, "%s:%s unknown file type `%s'",
 			   finfo->file, rev2, ftype);
 	    }
+
+	    n = findnode (vp->other_delta, "hardlinks");
+	    if (n == NULL)
+		rev2_hardlinks = xstrdup ("");
+	    else
+		rev2_hardlinks = xstrdup (n->data);
 	}
     }
 
@@ -2643,12 +2736,26 @@ special_file_mismatch (finfo, rev1, rev2)
 		result = 1;
 	    }
 	}
+
+	/* Compare hard links. */
+	if (strcmp (rev1_hardlinks, rev2_hardlinks) != 0)
+	{
+	    error (0, 0, "%s: hard linkage of %s and %s do not match",
+		   finfo->file,
+		   (rev1 == NULL ? "working file" : rev1),
+		   (rev2 == NULL ? "working file" : rev2));
+	    result = 1;
+	}
     }
 
     if (rev1_symlink != NULL)
 	free (rev1_symlink);
     if (rev2_symlink != NULL)
 	free (rev2_symlink);
+    if (rev1_hardlinks != NULL)
+	free (rev1_hardlinks);
+    if (rev2_hardlinks != NULL)
+	free (rev2_hardlinks);
 
     return result;
 }

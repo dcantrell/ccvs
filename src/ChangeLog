@@ -1,3 +1,50 @@
+1998-03-04  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* hardlink.c, hardlink.h: Use the 'standard' copyright (as found
+	in server.c).
+	* commit.c, rcs.c: Minor whitespace changes to Tim's submission.
+	* commit.c (check_fileproc), update.c (get_linkinfo_proc): Remove
+	unused variable delta.
+	* hardlink.c (set_hardlink_field_proc), update.c
+	(get_linkinfo_proc): Return a value rather than falling off the
+	end of the function.
+
+1998-03-02  Tim Pierce  <twp@skepsis.com>
+
+	* update.c (special_file_mismatch): Compare the hard links of the
+	two revisions.
+
+	* rcs.c (RCS_checkout): 
+
+	* hardlink.c, hardlink.h: New files.
+	(hardlink_info): New struct.
+	(hardlist, working_dir): New variables.
+	(list_files_proc, cache_hardlinks_proc, set_hardlink_field_proc,
+	lookup_file_by_inode, update_hardlink_info, list_files_linked_to):
+	New functions.
+
+	* Makefile.in (SOURCES): Add hardlink.c.
+	(OBJECTS): Add hardlink.o.
+	(HEADERS): Add hardlink.h.
+	* commit.c: Include hardlink.h.
+	(commit): Save the working directory before recursing.  Walk the
+	hardlink list, calling set_hardlink_field_proc on each node.
+	(check_fileproc): Add each file's link information to hardlist.
+	* rcs.c: Include hardlink.h.
+	(RCS_checkin): Save list of hardlinks in delta node.
+	(RCS_checkout): Look up the file's `hardlinks' delta field, and
+	see if any of the files linked to it have been checked out
+	already.  Link to one of those files if so.
+	* update.c: Include hardlink.h.
+	(get_linkinfo_proc): New function.
+	(do_update): Extra recursion to collect hardlink info.
+	(special_file_mismatch): Reparse the RCS file if necessary.
+
+	fsortcmp is now used by several files, so let's make it extern.
+	* hash.c, hash.h (fsortcmp): New function.
+	* find_names.c (fsortcmp): Removed.
+	* lock.c (fsortcmp): Removed.
+
 1998-03-03  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* sanity.sh (conflicts3): New tests conflicts3-14a,
