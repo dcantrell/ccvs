@@ -2484,6 +2484,25 @@ become_proxy (void)
 				       &got);
 			/* Verify that we are throwing away what we think we
 			 * are.
+			 *
+			 * It is valid to assume that the secondary and primary
+			 * are closely enough in sync that this portion of the
+			 * communication will be in sync beacuse if they were
+			 * not, then the secondary might provide a
+			 * valid-request string to the client which contained a
+			 * request that the primary didn't support.  If the
+			 * client later used the request, the primary server
+			 * would exit anyhow.
+			 *
+			 * FIXME?
+			 * An alternative approach might be to make sure that
+			 * the secondary provides the same string as the
+			 * primary regardless, for purposes like pointing a
+			 * secondary at an unwitting primary, in which case it
+			 * might be useful to have some way to override the
+			 * valid-requests string on a secondary, but it seems
+			 * much easier to simply sync the versions, at the
+			 * moment.
 			 */
 			if (memcmp (data, newdata, got))
 			    error (1, 0, "Secondary out of sync with primary!");
