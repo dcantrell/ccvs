@@ -15,6 +15,13 @@ around.
 is a "cvs history -x E" command to select history file entries
 produced by export.
 
+* CVS no longer uses the CVS_PASSWORD environment variable.  Storing
+passwords in cleartext in an environment variable is a security risk,
+especially since (on BSD variants) any user on the system can display
+any process's environment using 'ps'.  Users should use the 'cvs
+login' command instead.
+
+
 Changes from 1.8 to 1.9:
 
 * Windows NT client should now work on Windows 95 as well.
