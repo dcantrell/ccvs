@@ -1,3 +1,17 @@
+2005-02-08  Derek Price  <derek@ximbiot.com>
+
+	* Makefile.am (config.h, stamp-ch): New targets.
+	* config.h.in: New file.
+	(PACKAGE_STRING): Generate automatically.
+	(FOLD_FN_CHAR): Delete this macro...
+	(fncmp, fnfold): ...and these prototypes to pick up default definitions
+	from lib/system.h.
+	* filesubr.c (VMS_filename_classes): Ditto for this global var.
+	(Inspired by report Piet Schuermans <pschuermans@mac.com>.)
+
+	* config.h.in: (inline, SIZE_MAX): Define.
+	(Original patch from Piet Schuermans <pschuermans@mac.com>.)
+
 2005-01-31  Derek Price  <derek@ximbiot.com>
 
 	* Makefile.am: Back copyright date off since Makefile.am hasn't changed
