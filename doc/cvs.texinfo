@@ -5820,6 +5820,8 @@ slightly different way; @pxref{history options}).
 @c   ISO 1996-06-11 02:54:53
 @c   note: date possibly should be omitted entirely for
 @c   other reasons.
+@c cvs editors
+@c   current Tue Jun 11 02:54:53 1996 GMT
 @c any others?
 @c There is a good chance the proper solution has to
 @c involve at least some level of letting the user
