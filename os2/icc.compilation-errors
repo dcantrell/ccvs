@@ -1,7 +1,7 @@
 ICC compilation errors, warnings, and informationals.
 
 ------------------------------------------------------------------------
-::: add
+::: src/add
 
 cd c:/src/cvs-1.6.1/os2/
 make -f test-makefile THIS_BASENAME=../src/add
@@ -16,7 +16,7 @@ C:\src\cvs-1.6.1\src\add.c(539:0) : informational EDC0802: Static variable stand
 Compilation finished at Mon Nov 06 14:02:55
 
 ------------------------------------------------------------------------
-::: admin
+::: src/admin
 
 cd c:/src/cvs-1.6.1/os2/
 make -f test-makefile THIS_BASENAME=../src/admin
@@ -29,7 +29,7 @@ C:\src\cvs-1.6.1\src\admin.c(179:0) : informational EDC0802: Static variable sta
 Compilation finished at Mon Nov 06 14:03:12
 
 ------------------------------------------------------------------------
-::: checkin
+::: src/checkin
 
 cd c:/src/cvs-1.6.1/os2/
 make -f test-makefile THIS_BASENAME=../src/checkin
@@ -42,7 +42,7 @@ C:\src\cvs-1.6.1\src\checkin.c(204:0) : informational EDC0802: Static variable s
 Compilation finished at Mon Nov 06 14:03:25
 
 ------------------------------------------------------------------------
-::: checkout
+::: src/checkout
 
 cd c:/src/cvs-1.6.1/os2/
 make -f test-makefile THIS_BASENAME=../src/checkout
@@ -57,7 +57,7 @@ C:\src\cvs-1.6.1\src\checkout.c(874:0) : informational EDC0802: Static variable 
 Compilation finished at Mon Nov 06 14:03:38
 
 ------------------------------------------------------------------------
-::: classify
+::: src/classify
 
 cd c:/src/cvs-1.6.1/os2/
 make -f test-makefile THIS_BASENAME=../src/classify
@@ -70,7 +70,7 @@ C:\src\cvs-1.6.1\src\classify.c(504:0) : informational EDC0802: Static variable 
 Compilation finished at Mon Nov 06 14:03:50
 
 ------------------------------------------------------------------------
-::: client [after installing dirent]
+::: src/client [after installing dirent]
 
 cd c:/src/cvs-1.6.1/os2/
 make -f test-makefile THIS_BASENAME=../src/client
@@ -98,7 +98,7 @@ C:\src\cvs-1.6.1\src\client.c(3033:5) : warning EDC0185: Function parse_cvsroot 
 Compilation finished at Mon Nov 06 19:10:36
 
 ------------------------------------------------------------------------
-::: commit
+::: src/commit
 
 cd c:/src/cvs-1.6.1/os2/
 make -f test-makefile THIS_BASENAME=../src/commit
@@ -112,7 +112,7 @@ C:\src\cvs-1.6.1\src\commit.c(1834:0) : informational EDC0802: Static variable s
 Compilation finished at Mon Nov 06 14:04:21
 
 ------------------------------------------------------------------------
-::: create_adm
+::: src/create_adm
 
 cd c:/src/cvs-1.6.1/os2/
 make -f test-makefile THIS_BASENAME=../src/create_adm
@@ -125,7 +125,7 @@ C:\src\cvs-1.6.1\src\create_adm.c(144:0) : informational EDC0802: Static variabl
 Compilation finished at Mon Nov 06 14:04:34
 
 ------------------------------------------------------------------------
-::: cvsrc
+::: src/cvsrc
 
 cd c:/src/cvs-1.6.1/os2/
 make -f test-makefile THIS_BASENAME=../src/cvsrc
@@ -139,7 +139,7 @@ C:\src\cvs-1.6.1\src\cvsrc.c(151:0) : informational EDC0802: Static variable sta
 Compilation finished at Mon Nov 06 14:04:51
 
 ------------------------------------------------------------------------
-::: diff
+::: src/diff
 
 cd c:/src/cvs-1.6.1/os2/
 make -f test-makefile THIS_BASENAME=../src/diff
@@ -153,7 +153,7 @@ C:\src\cvs-1.6.1\src\diff.c(633:0) : informational EDC0802: Static variable stan
 Compilation finished at Mon Nov 06 14:05:17
 
 ------------------------------------------------------------------------
-::: entries
+::: src/entries
 
 cd c:/src/cvs-1.6.1/os2/
 make -f test-makefile THIS_BASENAME=../src/entries
@@ -172,7 +172,7 @@ C:\src\cvs-1.6.1\src\entries.c(556:0) : informational EDC0802: Static variable s
 Compilation finished at Mon Nov 06 14:05:29
 
 ------------------------------------------------------------------------
-::: error
+::: src/error
 
 cd c:/src/cvs-1.6.1/os2/
 make -f test-makefile THIS_BASENAME=../src/error
@@ -185,7 +185,7 @@ C:\src\cvs-1.6.1\src\error.c(188:0) : informational EDC0802: Static variable sta
 Compilation finished at Mon Nov 06 14:05:40
 
 ------------------------------------------------------------------------
-::: expand_path
+::: src/expand_path
 
 cd c:/src/cvs-1.6.1/os2/
 make -f test-makefile THIS_BASENAME=../src/expand_path
@@ -197,7 +197,7 @@ icc -C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/inclu
 Compilation finished at Mon Nov 06 14:06:02
 
 ------------------------------------------------------------------------
-::: filesubr
+::: src/filesubr
 
 cd c:/src/cvs-1.6.1/os2/
 make -f test-makefile THIS_BASENAME=../src/filesubr
@@ -251,7 +251,7 @@ make: *** [../src/filesubr.obj] Error 12
 Compilation exited abnormally with code 2 at Mon Nov 06 14:06:39
 
 ------------------------------------------------------------------------
-::: find_names [after installing dirent]
+::: src/find_names [after installing dirent]
 
 cd c:/src/cvs-1.6.1/os2/
 make -f test-makefile THIS_BASENAME=../src/find_names
@@ -264,7 +264,7 @@ C:\src\cvs-1.6.1\src\find_names.c(275:0) : informational EDC0802: Static variabl
 Compilation finished at Mon Nov 06 19:17:28
 
 ------------------------------------------------------------------------
-::: hash
+::: src/hash
 
 cd c:/src/cvs-1.6.1/os2/
 make -f test-makefile THIS_BASENAME=../src/hash
@@ -279,7 +279,7 @@ C:\src\cvs-1.6.1\src\hash.c(400:0) : informational EDC0802: Static variable stan
 Compilation finished at Mon Nov 06 14:07:06
 
 ------------------------------------------------------------------------
-::: history
+::: src/history
 
 cd c:/src/cvs-1.6.1/os2/
 make -f test-makefile THIS_BASENAME=../src/history
@@ -294,7 +294,7 @@ C:\src\cvs-1.6.1\src\history.c(1489:0) : informational EDC0802: Static variable 
 Compilation finished at Mon Nov 06 14:07:28
 
 ------------------------------------------------------------------------
-::: ignore
+::: src/ignore
 
 cd c:/src/cvs-1.6.1/os2/
 make -f test-makefile THIS_BASENAME=../src/ignore
@@ -307,7 +307,7 @@ C:\src\cvs-1.6.1\src\ignore.c(286:0) : informational EDC0802: Static variable st
 Compilation finished at Mon Nov 06 14:07:38
 
 ------------------------------------------------------------------------
-::: import
+::: src/import
 
 cd c:/src/cvs-1.6.1/os2/
 make -f test-makefile THIS_BASENAME=../src/import
@@ -321,7 +321,7 @@ C:\src\cvs-1.6.1\src\import.c(1181:0) : informational EDC0802: Static variable s
 Compilation finished at Mon Nov 06 19:19:04
 
 ------------------------------------------------------------------------
-::: lock
+::: src/lock
 
 cd c:/src/cvs-1.6.1/os2/
 make -f test-makefile THIS_BASENAME=../src/lock
@@ -334,7 +334,7 @@ C:\src\cvs-1.6.1\src\lock.c(608:0) : informational EDC0802: Static variable stan
 Compilation finished at Mon Nov 06 19:20:35
 
 ------------------------------------------------------------------------
-::: log
+::: src/log
 
 cd c:/src/cvs-1.6.1/os2/
 make -f test-makefile THIS_BASENAME=../src/log
@@ -347,7 +347,7 @@ C:\src\cvs-1.6.1\src\log.c(178:0) : informational EDC0802: Static variable stand
 Compilation finished at Mon Nov 06 14:09:46
 
 ------------------------------------------------------------------------
-::: login
+::: src/login
 
 cd c:/src/cvs-1.6.1/os2/
 make -f test-makefile THIS_BASENAME=../src/login
@@ -359,7 +359,7 @@ icc -C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/inclu
 Compilation finished at Mon Nov 06 14:10:03
 
 ------------------------------------------------------------------------
-::: logmsg
+::: src/logmsg
 
 cd c:/src/cvs-1.6.1/os2/
 make -f test-makefile THIS_BASENAME=../src/logmsg
@@ -374,7 +374,7 @@ C:\src\cvs-1.6.1\src\logmsg.c(486:0) : informational EDC0802: Static variable st
 Compilation finished at Mon Nov 06 14:10:15
 
 ------------------------------------------------------------------------
-::: main
+::: src/main
 
 cd c:/src/cvs-1.6.1/os2/
 make -f test-makefile THIS_BASENAME=../src/main
@@ -390,7 +390,7 @@ C:\src\cvs-1.6.1\src\main.c(785:0) : informational EDC0802: Static variable stan
 Compilation finished at Mon Nov 06 14:10:29
 
 ------------------------------------------------------------------------
-::: mkmodules
+::: src/mkmodules
 
 cd c:/src/cvs-1.6.1/os2/
 make -f test-makefile THIS_BASENAME=../src/mkmodules
@@ -403,7 +403,7 @@ C:\src\cvs-1.6.1\src\mkmodules.c(435:0) : informational EDC0802: Static variable
 Compilation finished at Mon Nov 06 14:10:42
 
 ------------------------------------------------------------------------
-::: modules
+::: src/modules
 
 cd c:/src/cvs-1.6.1/os2/
 make -f test-makefile THIS_BASENAME=../src/modules
@@ -417,7 +417,7 @@ C:\src\cvs-1.6.1\src\modules.c(884:0) : informational EDC0802: Static variable s
 Compilation finished at Mon Nov 06 14:11:26
 
 ------------------------------------------------------------------------
-::: myndbm
+::: src/myndbm
 
 cd c:/src/cvs-1.6.1/os2/
 make -f test-makefile THIS_BASENAME=../src/myndbm
@@ -431,7 +431,7 @@ C:\src\cvs-1.6.1\src\myndbm.c(213:0) : informational EDC0802: Static variable st
 Compilation finished at Mon Nov 06 14:11:36
 
 ------------------------------------------------------------------------
-::: no_diff
+::: src/no_diff
 
 cd c:/src/cvs-1.6.1/os2/
 make -f test-makefile THIS_BASENAME=../src/no_diff
@@ -444,7 +444,7 @@ C:\src\cvs-1.6.1\src\no_diff.c(135:0) : informational EDC0802: Static variable s
 Compilation finished at Mon Nov 06 14:11:46
 
 ------------------------------------------------------------------------
-::: parseinfo
+::: src/parseinfo
 
 cd c:/src/cvs-1.6.1/os2/
 make -f test-makefile THIS_BASENAME=../src/parseinfo
@@ -457,7 +457,7 @@ C:\src\cvs-1.6.1\src\parseinfo.c(171:0) : informational EDC0802: Static variable
 Compilation finished at Mon Nov 06 14:11:59
 
 ------------------------------------------------------------------------
-::: patch
+::: src/patch
 
 cd c:/src/cvs-1.6.1/os2/
 make -f test-makefile THIS_BASENAME=../src/patch
@@ -473,7 +473,7 @@ C:\src\cvs-1.6.1\src\patch.c(613:0) : informational EDC0802: Static variable sta
 Compilation finished at Mon Nov 06 14:12:12
 
 ------------------------------------------------------------------------
-::: rcs
+::: src/rcs
 
 cd c:/src/cvs-1.6.1/os2/
 make -f test-makefile THIS_BASENAME=../src/rcs
@@ -487,7 +487,7 @@ C:\src\cvs-1.6.1\src\rcs.c(1710:0) : informational EDC0802: Static variable stan
 Compilation finished at Mon Nov 06 14:12:35
 
 ------------------------------------------------------------------------
-::: rcscmds
+::: src/rcscmds
 
 cd c:/src/cvs-1.6.1/os2/
 make -f test-makefile THIS_BASENAME=../src/rcscmds
@@ -499,7 +499,7 @@ icc -C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/inclu
 Compilation finished at Mon Nov 06 14:12:45
 
 ------------------------------------------------------------------------
-::: recurse
+::: src/recurse
 
 cd c:/src/cvs-1.6.1/os2/
 make -f test-makefile THIS_BASENAME=../src/recurse
@@ -513,7 +513,7 @@ C:\src\cvs-1.6.1\src\recurse.c(634:0) : informational EDC0802: Static variable s
 Compilation finished at Mon Nov 06 14:13:05
 
 ------------------------------------------------------------------------
-::: release
+::: src/release
 
 cd c:/src/cvs-1.6.1/os2/
 make -f test-makefile THIS_BASENAME=../src/release
@@ -533,7 +533,7 @@ C:\src\cvs-1.6.1\src\release.c(261:0) : informational EDC0802: Static variable s
 Compilation finished at Mon Nov 06 14:13:21
 
 ------------------------------------------------------------------------
-::: remove
+::: src/remove
 
 cd c:/src/cvs-1.6.1/os2/
 make -f test-makefile THIS_BASENAME=../src/remove
@@ -547,7 +547,7 @@ C:\src\cvs-1.6.1\src\remove.c(213:0) : informational EDC0802: Static variable st
 Compilation finished at Mon Nov 06 14:13:32
 
 ------------------------------------------------------------------------
-::: repos
+::: src/repos
 
 cd c:/src/cvs-1.6.1/os2/
 make -f test-makefile THIS_BASENAME=../src/repos
@@ -560,7 +560,7 @@ C:\src\cvs-1.6.1\src\repos.c(147:0) : informational EDC0802: Static variable sta
 Compilation finished at Mon Nov 06 14:13:40
 
 ------------------------------------------------------------------------
-::: root
+::: src/root
 
 cd c:/src/cvs-1.6.1/os2/
 make -f test-makefile THIS_BASENAME=../src/root
@@ -573,7 +573,7 @@ C:\src\cvs-1.6.1\src\root.c(182:0) : informational EDC0802: Static variable stan
 Compilation finished at Mon Nov 06 14:13:55
 
 ------------------------------------------------------------------------
-::: rtag
+::: src/rtag
 
 cd c:/src/cvs-1.6.1/os2/
 make -f test-makefile THIS_BASENAME=../src/rtag
@@ -587,7 +587,7 @@ C:\src\cvs-1.6.1\src\rtag.c(692:0) : informational EDC0802: Static variable stan
 Compilation finished at Mon Nov 06 14:14:15
 
 ------------------------------------------------------------------------
-::: run
+::: src/run
 
 cd c:/src/cvs-1.6.1/os2/
 make -f test-makefile THIS_BASENAME=../src/run
@@ -609,7 +609,7 @@ make: *** [../src/run.obj] Error 12
 Compilation exited abnormally with code 2 at Mon Nov 06 14:14:23
 
 ------------------------------------------------------------------------
-::: server
+::: src/server
 
 cd c:/src/cvs-1.6.1/os2/
 make -f test-makefile THIS_BASENAME=../src/server
@@ -621,7 +621,7 @@ icc -C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/inclu
 Compilation finished at Mon Nov 06 14:14:34
 
 ------------------------------------------------------------------------
-::: status
+::: src/status
 
 cd c:/src/cvs-1.6.1/os2/
 make -f test-makefile THIS_BASENAME=../src/status
@@ -635,7 +635,7 @@ C:\src\cvs-1.6.1\src\status.c(282:0) : informational EDC0802: Static variable st
 Compilation finished at Mon Nov 06 14:14:42
 
 ------------------------------------------------------------------------
-::: subr
+::: src/subr
 
 cd c:/src/cvs-1.6.1/os2/
 make -f test-makefile THIS_BASENAME=../src/subr
@@ -648,7 +648,7 @@ C:\src\cvs-1.6.1\src\subr.c(310:0) : informational EDC0802: Static variable stan
 Compilation finished at Mon Nov 06 14:14:54
 
 ------------------------------------------------------------------------
-::: tag
+::: src/tag
 
 cd c:/src/cvs-1.6.1/os2/
 make -f test-makefile THIS_BASENAME=../src/tag
@@ -662,7 +662,7 @@ C:\src\cvs-1.6.1\src\tag.c(582:0) : informational EDC0802: Static variable stand
 Compilation finished at Mon Nov 06 14:15:04
 
 ------------------------------------------------------------------------
-::: update [after fixing S_IF* macros]
+::: src/update [after fixing S_IF* macros]
 
 cd c:/src/cvs-1.6.1/os2/
 make -f test-makefile THIS_BASENAME=../src/update
@@ -676,7 +676,7 @@ C:\src\cvs-1.6.1\src\update.c(1882:0) : informational EDC0802: Static variable s
 Compilation finished at Mon Nov 06 20:29:55
 
 ------------------------------------------------------------------------
-::: vers_ts
+::: src/vers_ts
 
 cd c:/src/cvs-1.6.1/os2/
 make -f test-makefile THIS_BASENAME=../src/vers_ts
@@ -690,7 +690,7 @@ C:\src\cvs-1.6.1\src\vers_ts.c(312:0) : informational EDC0802: Static variable s
 Compilation finished at Mon Nov 06 14:15:27
 
 ------------------------------------------------------------------------
-::: version
+::: src/version
 
 cd c:/src/cvs-1.6.1/os2/
 make -f test-makefile THIS_BASENAME=../src/version
@@ -703,7 +703,7 @@ C:\src\cvs-1.6.1\src\version.c(34:0) : informational EDC0802: Static variable st
 Compilation finished at Mon Nov 06 14:15:36
 
 ------------------------------------------------------------------------
-::: wrapper
+::: src/wrapper
 
 cd c:/src/cvs-1.6.1/os2/
 make -f test-makefile THIS_BASENAME=../src/wrapper
@@ -714,3 +714,151 @@ icc -C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/inclu
 C:\src\cvs-1.6.1\src\wrapper.c(333:21) : warning EDC0185: Function wrap_matching_entry has not been prototyped prior to use.
 
 Compilation finished at Mon Nov 06 14:15:46
+
+------------------------------------------------------------------------
+::: lib/argmatch [albeit without HAVE_CONFIG_H defined]
+
+cd c:/src/cvs-1.6.1/os2/
+make -f test-makefile
+ECHO is on.
+-C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I../os2 -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include
+ECHO is on.
+icc -C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I../os2 -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include /Fo../lib/argmatch.obj ../lib/argmatch.c
+C:\src\cvs-1.6.1\lib\argmatch.c(48:12) : warning EDC0185: Function strlen has not been prototyped prior to use.
+C:\src\cvs-1.6.1\lib\argmatch.c(53:12) : warning EDC0185: Function strncmp has not been prototyped prior to use.
+
+Compilation finished at Mon Nov 06 20:43:26
+
+------------------------------------------------------------------------
+::: lib/dup2 [albeit without HAVE_CONFIG_H defined]
+
+cd c:/src/cvs-1.6.1/os2/
+make -f test-makefile
+ECHO is on.
+-C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I../os2 -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include
+ECHO is on.
+icc -C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I../os2 -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include /Fo../lib/dup2.obj ../lib/dup2.c
+C:\src\cvs-1.6.1\lib\dup2.c(28:9) : warning EDC0185: Function close has not been prototyped prior to use.
+C:\src\cvs-1.6.1\lib\dup2.c(31:8) : warning EDC0185: Function fcntl has not been prototyped prior to use.
+C:\src\cvs-1.6.1\lib\dup2.c(31:22) : error EDC0041: Identifier F_DUPFD must be declared before it is used.
+make: *** [../lib/dup2.obj] Error 12
+
+Compilation exited abnormally with code 2 at Mon Nov 06 20:44:32
+
+------------------------------------------------------------------------
+::: lib/fnmatch [albeit without HAVE_CONFIG_H defined]
+
+cd c:/src/cvs-1.6.1/os2/
+make -f test-makefile
+ECHO is on.
+-C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I../os2 -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include
+ECHO is on.
+icc -C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I../os2 -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include /Fo../lib/fnmatch.obj ../lib/fnmatch.c
+C:\src\cvs-1.6.1\lib\fnmatch.c(104:5) : warning EDC0185: Function fnmatch has not been prototyped prior to use.
+
+Compilation finished at Mon Nov 06 21:02:57
+
+------------------------------------------------------------------------
+::: lib/ftruncate [albeit without HAVE_CONFIG_H defined]
+
+cd c:/src/cvs-1.6.1/os2/
+make -f test-makefile
+ECHO is on.
+-C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I../os2 -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include
+ECHO is on.
+icc -C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I../os2 -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include /Fo../lib/ftruncate.obj ../lib/ftruncate.c
+C:\src\cvs-1.6.1\lib\ftruncate.c(73:10) : warning EDC0185: Function chsize has not been prototyped prior to use.
+
+Compilation finished at Mon Nov 06 21:03:52
+
+------------------------------------------------------------------------
+::: lib/getdate [albeit without HAVE_CONFIG_H defined]
+
+cd c:/src/cvs-1.6.1/os2/
+make -f test-makefile
+ECHO is on.
+-C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I../os2 -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include
+ECHO is on.
+icc -C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I../os2 -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include /Fo../lib/getdate.obj ../lib/getdate.c
+/usr/lib/bison.simple(294:4) : warning EDC0185: Function getdate_yyerror has not been prototyped prior to use.
+/usr/lib/bison.simple(300:24) : warning EDC0185: Function alloca has not been prototyped prior to use.
+/usr/lib/bison.simple(301:7) : warning EDC0185: Function __yy_bcopy has not been prototyped prior to use.
+/usr/lib/bison.simple(354:16) : warning EDC0185: Function getdate_yylex has not been prototyped prior to use.
+./getdate.y(608:2) : warning EDC0185: Function abort has not been prototyped prior to use.
+./getdate.y(650:16) : warning EDC0185: Function ToSeconds has not been prototyped prior to use.
+./getdate.y(687:12) : warning EDC0185: Function DSTcorrect has not been prototyped prior to use.
+./getdate.y(707:6) : warning EDC0185: Function Convert has not been prototyped prior to use.
+./getdate.y(728:9) : warning EDC0185: Function strcmp has not been prototyped prior to use.
+./getdate.y(738:9) : warning EDC0185: Function strlen has not been prototyped prior to use.
+./getdate.y(749:10) : warning EDC0185: Function strncmp has not been prototyped prior to use.
+./getdate.y(855:13) : warning EDC0185: Function LookupWord has not been prototyped prior to use.
+./getdate.y(918:17) : warning EDC0185: Function difftm has not been prototyped prior to use.
+./getdate.y(941:9) : warning EDC0185: Function getdate_yyparse has not been prototyped prior to use.
+./getdate.y(958:14) : warning EDC0185: Function RelativeMonth has not been prototyped prior to use.
+./getdate.y(961:8) : warning EDC0185: Function RelativeDate has not been prototyped prior to use.
+
+Compilation finished at Mon Nov 06 21:04:17
+
+------------------------------------------------------------------------
+::: lib/getline [albeit without HAVE_CONFIG_H defined]
+
+cd c:/src/cvs-1.6.1/os2/
+make -f test-makefile
+ECHO is on.
+-C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I../os2 -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include
+ECHO is on.
+icc -C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I../os2 -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include /Fo../lib/getline.obj ../lib/getline.c
+C:\src\cvs-1.6.1\lib\getline.c(63:18) : warning EDC0185: Function malloc has not been prototyped prior to use.
+C:\src\cvs-1.6.1\lib\getline.c(88:15) : warning EDC0185: Function realloc has not been prototyped prior to use.
+C:\src\cvs-1.6.1\lib\getline.c(125:10) : warning EDC0185: Function getstr has not been prototyped prior to use.
+
+Compilation finished at Mon Nov 06 21:04:52
+
+------------------------------------------------------------------------
+::: lib/getopt [albeit without HAVE_CONFIG_H defined]
+
+cd c:/src/cvs-1.6.1/os2/
+make -f test-makefile
+ECHO is on.
+-C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I../os2 -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include
+ECHO is on.
+icc -C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I../os2 -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include /Fo../lib/getopt.obj ../lib/getopt.c
+C:\src\cvs-1.6.1\lib\getopt.c(303:21) : warning EDC0185: Function getenv has not been prototyped prior to use.
+C:\src\cvs-1.6.1\lib\getopt.c(393:17) : warning EDC0185: Function _getopt_initialize has not been prototyped prior to use.
+C:\src\cvs-1.6.1\lib\getopt.c(405:6) : warning EDC0185: Function exchange has not been prototyped prior to use.
+C:\src\cvs-1.6.1\lib\getopt.c(423:30) : warning EDC0185: Function strcmp has not been prototyped prior to use.
+C:\src\cvs-1.6.1\lib\getopt.c(483:42) : warning EDC0185: Function my_index has not been prototyped prior to use.
+C:\src\cvs-1.6.1\lib\getopt.c(499:7) : warning EDC0185: Function strncmp has not been prototyped prior to use.
+C:\src\cvs-1.6.1\lib\getopt.c(501:38) : warning EDC0185: Function strlen has not been prototyped prior to use.
+C:\src\cvs-1.6.1\lib\getopt.c(685:10) : warning EDC0185: Function _getopt_internal has not been prototyped prior to use.
+
+Compilation finished at Mon Nov 06 21:05:42
+
+------------------------------------------------------------------------
+::: lib/getopt1 [albeit without HAVE_CONFIG_H defined]
+
+cd c:/src/cvs-1.6.1/os2/
+make -f test-makefile
+ECHO is on.
+-C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I../os2 -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include
+ECHO is on.
+icc -C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I../os2 -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include /Fo../lib/getopt1.obj ../lib/getopt1.c
+C:\src\cvs-1.6.1\lib\getopt1.c(73:10) : warning EDC0185: Function _getopt_internal has not been prototyped prior to use.
+
+Compilation finished at Mon Nov 06 21:06:14
+
+------------------------------------------------------------------------
+::: lib/getwd
+
+cd c:/src/cvs-1.6.1/os2/
+make -f test-makefile
+ECHO is on.
+-C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I../os2 -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include
+ECHO is on.
+icc -C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I../os2 -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include /Fo../lib/getopt1.obj ../lib/getopt1.c
+C:\src\cvs-1.6.1\lib\getopt1.c(73:10) : warning EDC0185: Function _getopt_internal has not been prototyped prior to use.
+
+Compilation finished at Mon Nov 06 21:06:14
+
+------------------------------------------------------------------------
+::: lib/? [albeit without HAVE_CONFIG_H defined]

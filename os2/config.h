@@ -224,8 +224,8 @@
 #define HAVE_DIRECT_H 1
 
 /* Define if you have the <dirent.h> header file.  */
-/* No, but we have the <direct.h> header file...  */
-#undef HAVE_DIRENT_H
+/* We have our own dirent.h and dirent.c. */
+#define HAVE_DIRENT_H 1
 
 /* Define if you have the <errno.h> header file.  */
 #define HAVE_ERRNO_H 1
