@@ -89,6 +89,89 @@ static const char *const commit_usage[] =
     NULL
 };
 
+#ifdef CLIENT_SUPPORT
+struct find_data {
+    List *ulist;
+    int argc;
+    char **argv;
+};
+
+/* Pass as a static until we get around to fixing start_recursion to
+   pass along a void * where we can stash it.  */
+struct find_data *find_data_static;
+
+static int find_fileproc PROTO ((char *, char *, char *, List *, List *));
+
+/* Machinery to find out what is modified, added, and removed.  It is
+   possible this should be broken out into a new client_classify function;
+   merging it with classify_file is almost sure to be a mess, though,
+   because classify_file has all kinds of repository processing.  */
+static int
+find_fileproc (file, update_dir, repository, entries, srcfiles)
+    char *file;
+    char *update_dir;
+    char *repository;
+    List *entries;
+    List *srcfiles;
+{
+    Vers_TS *vers;
+    enum classify_type status;
+    Node *node;
+    struct find_data *args = find_data_static;
+
+    vers = Version_TS ((char *)NULL, (char *)NULL, (char *)NULL,
+		       (char *)NULL,
+		       file, 0, 0, entries, (List *)NULL);
+    if (vers->ts_user == NULL
+	&& vers->vn_user != NULL
+	&& vers->vn_user[0] == '-')
+	status = T_REMOVED;
+    else if (vers->ts_user != NULL
+	     && vers->vn_user != NULL
+	     && vers->vn_user[0] == '0')
+	status = T_ADDED;
+    else if (vers->ts_user != NULL
+	     && vers->ts_rcs != NULL
+	     && strcmp (vers->ts_user, vers->ts_rcs) != 0)
+	status = T_MODIFIED;
+    else
+	/* This covers unmodified files, as well as a variety of other cases
+	   (e.g. "cvs add foo", "rm foo", "cvs ci"), which I don't *think* we
+	   need to deal with here.  */
+	return 0;
+
+    node = getnode ();
+    node->key = xmalloc (strlen (update_dir) + strlen (file) + 8);
+    node->key[0] = '\0';
+    if (update_dir[0] != '\0')
+    {
+	strcpy (node->key, update_dir);
+	strcat (node->key, "/");
+    }
+    strcat (node->key, file);
+
+    node->type = UPDATE;
+    node->delproc = update_delproc;
+    node->data = (char *) status;
+    (void)addnode (args->ulist, node);
+
+    ++args->argc;
+
+    return 0;
+}
+
+static int copy_ulist PROTO ((Node *, void *));
+
+static int
+copy_ulist (node, data)
+    Node *node;
+    void *data;
+{
+    struct find_data *args = (struct find_data *)data;
+    args->argv[args->argc++] = node->key;
+}
+#endif /* CLIENT_SUPPORT */
+
 int
 commit (argc, argv)
     int argc;
@@ -207,24 +290,48 @@ commit (argc, argv)
 #ifdef CLIENT_SUPPORT
     if (client_active) 
     {
+	struct find_data find_args;
+
 	/*
 	 * Do this now; don't ask for a log message if we can't talk to the
 	 * server.  But if there is a syntax error in the options, give
 	 * an error message without connecting.
 	 */
 	start_server ();
-	
+
 	ign_setup ();
+
+	/* Note that we don't do ignore file processing here, and we
+	   don't call ignore_files.  This means that we won't print "?
+	   foo" for stray files.  Sounds OK, the doc only promises
+	   that update does that.  */
+	find_args.ulist = getlist ();
+	find_args.argc = 0;
+	find_data_static = &find_args;
+	err = start_recursion (find_fileproc, (FILESDONEPROC) NULL,
+				(DIRENTPROC) NULL, (DIRLEAVEPROC) NULL,
+				argc, argv, local, W_LOCAL, 0, 0,
+				(char *)NULL, 0, 0);
+	if (err)
+	    exit (1);
+
+	if (find_args.argc == 0)
+	    return 0;
+
+	/* Now we keep track of which files we actually are going to
+	   operate on, and only work with those files in the future.
+	   This saves time--we don't want to search the file system
+	   of the working directory twice.  */
+	find_args.argv = (char **) xmalloc (find_args.argc * sizeof (char **));
+	find_args.argc = 0;
+	walklist (find_args.ulist, copy_ulist, &find_args);
 
 	/*
 	 * We do this once, not once for each directory as in normal CVS.
 	 * The protocol is designed this way.  This is a feature.
-	 *
-	 * We could provide the lists of changed, modified, etc. files,
-	 * however.  Our failure to do so is just laziness, not design.
 	 */
 	if (use_editor)
-	    do_editor (".", &message, (char *)NULL, (List *)NULL);
+	    do_editor (".", &message, (char *)NULL, find_args.ulist);
 
 	/* We always send some sort of message, even if empty.  */
 	option_with_arg ("-m", message);
@@ -238,7 +345,7 @@ commit (argc, argv)
 	option_with_arg ("-r", tag);
 
 	send_file_names (argc, argv);
-	send_files (argc, argv, local, 0);
+	send_files (find_args.argc, find_args.argv, local, 0);
 
 	send_to_server ("ci\n", 0);
 	return get_responses_and_close ();

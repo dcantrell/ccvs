@@ -1,5 +1,11 @@
 Mon Jan  1 09:49:16 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvs.h (struct vers_ts): Fix comments.
+	* commit.c (commit): Before we ask for a log message, figure out
+	what is modified and what is not and pass the information to
+	do_editor.
+	(copy_ulist,find_fileproc): New helper functions for above code.
+
 	* client.c (read_line): When writing to from_server_logfile, write
 	the \n too.
 
