@@ -1,5 +1,8 @@
 Changes since 1.9:
 
+* New "logout" command to remove the password for a remote cvs
+repository from the cvspass file.
+
 * Read-only repository access is implemented for the
 password-authenticated server (other access methods are just governed
 by Unix file permissions, since they require login access to the
