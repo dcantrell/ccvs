@@ -581,6 +581,8 @@ void Scratch_Entry PROTO((List * list, char *fname));
 void ParseTag PROTO((char **tagp, char **datep, int *nonbranchp));
 void WriteTag PROTO ((char *dir, char *tag, char *date, int nonbranch,
 		      char *update_dir, char *repository));
+void WriteTemplate PROTO ((char *update_dir, int dotemplate,
+			   char *repository));
 void cat_module PROTO((int status));
 void check_entries PROTO((char *dir));
 void close_module PROTO((DBM * db));
