@@ -32,40 +32,55 @@ fi
 
 # Prevent lib/Makefile.am from being overwritten.
 mv lib/Makefile.am lib/Makefile.am.save
+# Prevent m4/error.m4 from being overwritten unless necessary.
+mv m4/error.m4 m4/error.m4.save
 
 # Run the update.
 $GNULIB_TOOL --import $MODULES >/dev/null
 
-# Correct this file for our purposes.
+# Correct this file for our purposes, but try to avoid munging timestamps
+# unless necessary.
 sed '/AC_FUNC_ERROR_AT_LINE/d' <m4/error.m4 >tmp
-mv tmp m4/error.m4
+if cmp tmp m4/error.m4.save >/dev/null 2>&1; then
+  mv m4/error.m4.save m4/error.m4
+  rm tmp
+else
+  mv tmp m4/error.m4
+  rm m4/error.m4.save
+fi
 
 # Extract the names of the files we imported.
 $GNULIB_TOOL --extract-filelist $MODULES >gnulib.new
 
-# Wartn the user if the filelist has changed.
-if cmp gnulib.txt gnulib.new >/dev/null; then :; else
+# Warn the user if the filelist has changed.
+if cmp gnulib.txt gnulib.new >/dev/null; then
+  # Avoid munging timestamps when nothing's changed.
+  rm gnulib.new
+else
   echo '********************************************************************' >&2
   echo The file list has changed.  You may need to add or remove files from >&2
   echo CVS and/or EXTRA_DIST in m4/Makefile.am.  Use \`cvs diff gnulib.txt\'
 >&2
   echo to view changes. >&2
   echo '********************************************************************' >&2
+  # Save the file list for next time.
+  mv gnulib.new gnulib.txt
 fi
 
-# Save the file list for next time.
-mv gnulib.new gnulib.txt
 
 # Warn the user if changes have been made to the Makefile.am.
-if cmp lib/Makefile.am lib/Makefile.gnulib >/dev/null; then :; else
+if cmp lib/Makefile.am lib/Makefile.gnulib >/dev/null; then
+  # Avoid munging timestamps when nothing's changed.
+  rm lib/Makefile.am
+else
   echo '********************************************************************' >&2
   echo Makefile.am needs updating. Use \`cvs diff lib/Makefile.gnulib\' >&2
   echo to view changes. >&2
   echo '********************************************************************' >&2
+  # Save the generated lib/Makefile.am for next time.
+  mv lib/Makefile.am lib/Makefile.gnulib
 fi
 
-# Save the generated lib/Makefile.am for next time.
-mv lib/Makefile.am lib/Makefile.gnulib
 
 # Restore lib/Makefile.am.
 mv lib/Makefile.am.save lib/Makefile.am

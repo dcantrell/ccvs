@@ -1,3 +1,11 @@
+2005-03-02 Derek Price <derek@ximbiot.com>
+
+	* gnulib-update: Redirect gnulib-tool output back to /dev/null.
+
+2005-03-02 Derek Price <derek@ximbiot.com>
+
+	* gnulib-update: Avoid munging timestamps when files haven't changed.
+
 2005-03-01 Derek Price <derek@ximbiot.com>
 
 	* NEWS: Note GNULIB update.  Expand --disables-* note.
