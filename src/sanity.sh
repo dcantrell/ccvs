@@ -21687,7 +21687,7 @@ ${PROG} admin: RCS file for .aaa. not modified.
 RCS file: ${CVSROOT_DIRNAME}/first-dir/Attic/file3,v
 done"
 	  dotest admin-31 "${testcvs} log" \
-"cvs log: Logging \.
+"${PROG} log: Logging \.
 
 RCS file: /tmp/cvs-sanity/cvsroot/first-dir/aaa,v
 Working file: aaa
