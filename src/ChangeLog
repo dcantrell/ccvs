@@ -1,3 +1,7 @@
+2003-11-06  Derek Price  <derek@ximbiot.com>
+
+	* remove.c (cvsremove): Use consistent quoting in messages.
+
 2003-08-16  Derek Price  <derek@ximbiot.com>
 
 	* add.c (add): Use consistent quoting style in user messages.
