@@ -132,9 +132,7 @@ const struct cmd
 #endif
 
     CMD_ENTRY("add",      "ad",    "new",     add,       client_add),
-#ifndef CVS_NOADMIN
     CMD_ENTRY("admin",    "adm",   "rcs",     admin,     client_admin),
-#endif
     CMD_ENTRY("checkout", "co",    "get",     checkout,  client_checkout),
     CMD_ENTRY("commit",   "ci",    "com",     commit,    client_commit),
     CMD_ENTRY("diff",     "di",    "dif",     diff,      client_diff),

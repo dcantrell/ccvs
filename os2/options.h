@@ -232,19 +232,6 @@
 #undef CVS_BADROOT
 
 /*
- * The "cvs admin" command allows people to get around most of the logging
- * and info procedures within CVS.  For exmaple, "cvs tag tagname filename"
- * will perform some validity checks on the tag, while "cvs admin -Ntagname"
- * will not perform those checks.  For this reason, some sites may wish to
- * disable the admin function completely.
- *
- * To disable the admin function, uncomment the lines below.
- */
-#ifndef CVS_NOADMIN
-/* #define CVS_NOADMIN */
-#endif
-
-/*
  * The "cvs diff" command accepts all the single-character options that GNU
  * diff (1.15) accepts.  Except -D.  GNU diff uses -D as a way to put
  * cpp-style #define's around the output differences.  CVS, by default, uses
