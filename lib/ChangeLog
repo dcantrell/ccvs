@@ -1,3 +1,7 @@
+2004-11-15  Derek Price  <derek@ximbiot.com>
+
+	* Makefile.am (libcvs_a_LIBADD): Add @ALLOCA@.
+
 2004-11-11  Derek Price  <derek@ximbiot.com>
 
 	* Makefile.am (EXTRA_DIST): Add test-getdate.sh.

@@ -122,7 +122,7 @@ LIBRARIES = $(noinst_LIBRARIES)
 AR = ar
 ARFLAGS = cru
 libcvs_a_AR = $(AR) $(ARFLAGS)
-libcvs_a_DEPENDENCIES = @LIBOBJS@
+libcvs_a_DEPENDENCIES = @LIBOBJS@ @ALLOCA@
 am_libcvs_a_OBJECTS = sighandle.$(OBJEXT) allocsa.$(OBJEXT) \
 	basename.$(OBJEXT) dirname.$(OBJEXT) stripslash.$(OBJEXT) \
 	exitfail.$(OBJEXT) getdate.$(OBJEXT) getnline.$(OBJEXT) \
@@ -302,7 +302,10 @@ libcvs_a_SOURCES = sighandle.c system.h wait.h xselect.h xtime.h \
 	printf-args.h printf-parse.h vasnprintf.h vasprintf.h xalloc.h \
 	xmalloc.c xalloc-die.c xgetcwd.h xgetcwd.c xreadlink.h \
 	xreadlink.c xsize.h yesno.c yesno.h
-libcvs_a_LIBADD = @LIBOBJS@
+libcvs_a_LIBADD = \
+	@LIBOBJS@ \
+	@ALLOCA@
+
 BUILT_SOURCES = $(ALLOCA_H) $(FNMATCH_H) $(GETOPT_H) $(STDBOOL_H) \
 	$(STDINT_H)
 MOSTLYCLEANFILES = alloca.h alloca.h-t fnmatch.h fnmatch.h-t \
