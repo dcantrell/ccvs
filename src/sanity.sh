@@ -8,8 +8,10 @@
 #
 # Original Author: K. Richard Pixley
 
-# usage: sanity.sh [-r] @var{cvs-to-test}
+# usage: sanity.sh [-r] @var{cvs-to-test} @var{tests-to-run}
 # -r means to test remote instead of local cvs.
+# @var{tests-to-run} are the names of the tests to run; if omitted run all
+# tests.
 
 # See TODO list at end of file.
 
@@ -58,83 +60,86 @@ CVS="${testcvs} -Q -f"
 
 LOGFILE=`pwd`/check.log
 
+# Save the previous log in case the person running the tests decides
+# they want to look at it.  The extension ".plog" is chosen for consistency
+# with dejagnu.
 if test -f check.log; then
-	mv check.log check.olog
+	mv check.log check.plog
 fi
+
+# clean any old remnants
+rm -rf ${TESTDIR}
+mkdir ${TESTDIR}
+cd ${TESTDIR}
 
 # Remaining arguments are the names of tests to run.
 #
-# WARNING: FIXME: this should probably be removed as it's basically
-# useless except for testing sanity.sh itself....
-#
+# FIXME: not all combinations are possible; basic3 depends on files set up
+# by previous tests, for example.  This should be changed.
+# The goal is that tests can be run in manageably-sized chunks, so
+# that one can quickly get a result from a cvs or testsuite change,
+# and to facilitate understanding the tests.
+
 if test x"$*" = x; then
 	tests="basic0 basic1 basic2 basic3 rtags death import new conflicts modules mflag errmsg1"
-	# clean any old remnants
-	rm -rf ${TESTDIR}
-	mkdir ${TESTDIR}
-	cd ${TESTDIR}
-	# this should die
-	if ${CVS} -d `pwd`/cvsroot co cvs-sanity 2>> ${LOGFILE} ; then
-		echo "FAIL: test 1" | tee -a ${LOGFILE}
-		exit 1
-	else
-		echo "PASS: test 1" >>${LOGFILE}
-	fi
-
-	# this should still die
-	mkdir cvsroot
-	if ${CVS} -d `pwd`/cvsroot co cvs-sanity 2>> ${LOGFILE} ; then
-		echo "FAIL: test 2" | tee -a ${LOGFILE}
-		exit 1
-	else
-		echo "PASS: test 2" >>${LOGFILE}
-	fi
-
-	# this should still die
-	mkdir cvsroot/CVSROOT
-	if ${CVS} -d `pwd`/cvsroot co cvs-sanity 2>> ${LOGFILE} ; then
-		echo "FAIL: test 3" | tee -a ${LOGFILE}
-		exit 1
-	else
-		echo "PASS: test 3" >>${LOGFILE}
-	fi
-
-	# This one should work, although it should spit a warning.
-	mkdir tmp ; cd tmp
-	${CVS} -d `pwd`/../cvsroot co CVSROOT 2>> ${LOGFILE}
-	cd .. ; rm -rf tmp
-
-	# set up a minimal modules file...
-	echo "CVSROOT		-i ${testmkmodules} CVSROOT" > cvsroot/CVSROOT/modules
-
-	# This one should succeed.  No warnings.
-	mkdir tmp ; cd tmp
-	if ${CVS} -d `pwd`/../cvsroot co CVSROOT ; then
-		echo "PASS: test 4" >>${LOGFILE}
-	else
-		echo "FAIL: test 4" | tee -a ${LOGFILE}
-		exit 1
-	fi
-
-	if echo "yes" | ${CVS} -d `pwd`/../cvsroot release -d CVSROOT ; then
-		echo "PASS: test 4.5" >>${LOGFILE}
-	else
-		echo "FAIL: test 4.5" | tee -a ${LOGFILE}
-		exit 1
-	fi
-	# this had better be empty
-	cd ..; rmdir tmp
-	if [ -d tmp ] ; then
-		echo "FAIL: test 4.75" | tee -a ${LOGFILE}
-		exit 1
-	fi
-
 else
 	tests="$*"
-	# run with the left-overs to test guts of sanity.sh
-	# it is too complicated to ship around a good result of all the
-	# basic? tests
-	cd ${TESTDIR}
+fi
+
+# this should die
+if ${CVS} -d `pwd`/cvsroot co cvs-sanity 2>> ${LOGFILE} ; then
+	echo "FAIL: test 1" | tee -a ${LOGFILE}
+	exit 1
+else
+	echo "PASS: test 1" >>${LOGFILE}
+fi
+
+# this should still die
+mkdir cvsroot
+if ${CVS} -d `pwd`/cvsroot co cvs-sanity 2>> ${LOGFILE} ; then
+	echo "FAIL: test 2" | tee -a ${LOGFILE}
+	exit 1
+else
+	echo "PASS: test 2" >>${LOGFILE}
+fi
+
+# this should still die
+mkdir cvsroot/CVSROOT
+if ${CVS} -d `pwd`/cvsroot co cvs-sanity 2>> ${LOGFILE} ; then
+	echo "FAIL: test 3" | tee -a ${LOGFILE}
+	exit 1
+else
+	echo "PASS: test 3" >>${LOGFILE}
+fi
+
+# This one should work, although it should spit a warning.
+mkdir tmp ; cd tmp
+${CVS} -d `pwd`/../cvsroot co CVSROOT 2>> ${LOGFILE}
+cd .. ; rm -rf tmp
+
+# set up a minimal modules file...
+echo "CVSROOT		-i ${testmkmodules} CVSROOT" > cvsroot/CVSROOT/modules
+
+# This one should succeed.  No warnings.
+mkdir tmp ; cd tmp
+if ${CVS} -d `pwd`/../cvsroot co CVSROOT ; then
+	echo "PASS: test 4" >>${LOGFILE}
+else
+	echo "FAIL: test 4" | tee -a ${LOGFILE}
+	exit 1
+fi
+
+if echo "yes" | ${CVS} -d `pwd`/../cvsroot release -d CVSROOT ; then
+	echo "PASS: test 4.5" >>${LOGFILE}
+else
+	echo "FAIL: test 4.5" | tee -a ${LOGFILE}
+	exit 1
+fi
+# this had better be empty
+cd ..; rmdir tmp
+if [ -d tmp ] ; then
+	echo "FAIL: test 4.75" | tee -a ${LOGFILE}
+	exit 1
 fi
 
 # a simple function to compare directory contents
@@ -396,34 +401,36 @@ for what in $tests; do
 
 					# update all.
 					if ${CVS} update first-dir  ; then
-						true
+					  echo "PASS: test 24-${do}-$j" >>${LOGFILE}
 					else
-						echo '***' failed test 24-${do}-$j. ; exit 1
+					  echo "FAIL: test 24-${do}-$j" | tee -a ${LOGFILE} ; exit 1
 					fi
 
 					if test "x${do}-$j" = "xadd-add" || test "x${do}-$j" = "xrm-rm" ; then
-					  true
+					  echo "PASS: test 25-${do}-$j" >>${LOGFILE}
 					else
 					  # diff all
 					  if ${CVS} diff -u  >> ${LOGFILE} || [ $? = 1 ] ; then
-					    true
+					    echo "PASS: test 25-${do}-$j" >>${LOGFILE}
 					  else
-					    echo '***' failed test 25-${do}-$j. # FIXME; exit 1
+					    echo "FAIL: test 25-${do}-$j" | tee -a ${LOGFILE}
+					    # FIXME; exit 1
 					  fi
 
 					  # diff all
 					  if ${CVS} diff -u first-dir  >> ${LOGFILE} || [ $? = 1 ] ; then
-					    true
+					    echo "PASS: test 26-${do}-$j" >>${LOGFILE}
 					  else
-					    echo '***' failed test 26-${do}-$j. # FIXME; exit 1
+					    echo "FAIL: test 26-${do}-$j" | tee -a ${LOGFILE}
+					    # FIXME; exit 1
 					  fi
 					fi
 
 					# update all.
 					if ${CVS} co first-dir  ; then
-						true
+					  echo "PASS: test 27-${do}-$j" >>${LOGFILE}
 					else
-						echo '***' failed test 27-${do}-$j. ; exit 1
+					  echo "FAIL: test 27-${do}-$j" | tee -a ${LOGFILE} ; exit 1
 					fi
 
 					cd first-dir
@@ -434,9 +441,9 @@ for what in $tests; do
 			files="file2 file3 file4 file5"
 		done
 		if ${CVS} tag first-dive  ; then
-			true
+		  echo "PASS: test 28" >>${LOGFILE}
 		else
-			echo '***' failed test 28. ; exit 1
+		  echo "FAIL: test 28" | tee -a ${LOGFILE} ; exit 1
 		fi
 		cd ..
 		;;
@@ -446,9 +453,9 @@ for what in $tests; do
 			if [ ! -d $i ] ; then
 				mkdir $i
 				if ${CVS} add $i  >> ${LOGFILE}; then
-					true
+				  echo "PASS: test 29-$i" >>${LOGFILE}
 				else
-					echo '***' failed test 29-$i. ; exit 1
+				  echo "FAIL: test 29-$i" | tee -a ${LOGFILE} ; exit 1
 				fi
 			fi
 
@@ -459,47 +466,47 @@ for what in $tests; do
 			done
 
 			if ${CVS} add file6 file7 file8 file9 file10 file11 file12 file13  2>> ${LOGFILE}; then
-				true
+				echo "PASS: test 30-$i-$j" >>${LOGFILE}
 			else
-				echo '***' failed test 30-$i-$j. ; exit 1
+				echo "FAIL: test 30-$i-$j" | tee -a ${LOGFILE} ; exit 1
 			fi
 		done
 		cd ../../../../..
 		if ${CVS} update first-dir  ; then
-			true
+			echo "PASS: test 31" >>${LOGFILE}
 		else
-			echo '***' failed test 31. ; exit 1
+			echo "FAIL: test 31" | tee -a ${LOGFILE} ; exit 1
 		fi
 
 		# fixme: doesn't work right for added files.
 		if ${CVS} log first-dir  >> ${LOGFILE}; then
-			true
+			echo "PASS: test 32" >>${LOGFILE}
 		else
-			echo '***' failed test 32. # ; exit 1
+			echo "FAIL: test 32" | tee -a ${LOGFILE} # ; exit 1
 		fi
 
 		if ${CVS} status first-dir  >> ${LOGFILE}; then
-			true
+			echo "PASS: test 33" >>${LOGFILE}
 		else
-			echo '***' failed test 33. ; exit 1
+			echo "FAIL: test 33" | tee -a ${LOGFILE} ; exit 1
 		fi
 
 #		if ${CVS} diff -u first-dir   >> ${LOGFILE} || [ $? = 1 ] ; then
-#			true
+#			echo "PASS: test 34" >>${LOGFILE}
 #		else
-#			echo '***' failed test 34. # ; exit 1
+#			echo "FAIL: test 34" | tee -a ${LOGFILE} # ; exit 1
 #		fi
 
 		if ${CVS} ci -m "second dive" first-dir  >> ${LOGFILE} 2>&1; then
-			true
+			echo "PASS: test 35" >>${LOGFILE}
 		else
-			echo '***' failed test 35. ; exit 1
+			echo "FAIL: test 35" | tee -a ${LOGFILE} ; exit 1
 		fi
 
 		if ${CVS} tag second-dive first-dir  ; then
-			true
+			echo "PASS: test 36" >>${LOGFILE}
 		else
-			echo '***' failed test 36. ; exit 1
+			echo "FAIL: test 36" | tee -a ${LOGFILE} ; exit 1
 		fi
 		;;
 
@@ -516,9 +523,9 @@ for what in $tests; do
 			rm file7 file9 file11 file13
 
 			if ${CVS} rm file7 file9 file11 file13  2>> ${LOGFILE}; then
-				true
+				echo "PASS: test 37-$i" >>${LOGFILE}
 			else
-				echo '***' failed test 37-$i. ; exit 1
+				echo "FAIL: test 37-$i" | tee -a ${LOGFILE} ; exit 1
 			fi
 
 			# and add some new ones
@@ -527,58 +534,60 @@ for what in $tests; do
 			done
 
 			if ${CVS} add file14 file15 file16 file17  2>> ${LOGFILE}; then
-				true
+				echo "PASS: test 38-$i" >>${LOGFILE}
 			else
-				echo '***' failed test 38-$i. ; exit 1
+				echo "FAIL: test 38-$i" | tee -a ${LOGFILE} ; exit 1
 			fi
 		done
 		cd ../../../../..
 		if ${CVS} update first-dir  ; then
-			true
+			echo "PASS: test 39" >>${LOGFILE}
 		else
-			echo '***' failed test 39. ; exit 1
+			echo "FAIL: test 39" | tee -a ${LOGFILE} ; exit 1
 		fi
 
 		# fixme: doesn't work right for added files
 		if ${CVS} log first-dir  >> ${LOGFILE}; then
-			true
+			echo "PASS: test 40" >>${LOGFILE}
 		else
-			echo '***' failed test 40. # ; exit 1
+			echo "FAIL: test 40" | tee -a ${LOGFILE} # ; exit 1
 		fi
 
 		if ${CVS} status first-dir  >> ${LOGFILE}; then
-			true
+			echo "PASS: test 41" >>${LOGFILE}
 		else
-			echo '***' failed test 41. ; exit 1
+			echo "FAIL: test 41" | tee -a ${LOGFILE} ; exit 1
 		fi
 
 #		if ${CVS} diff -u first-dir  >> ${LOGFILE} || [ $? = 1 ] ; then
-#			true
+#			echo "PASS: test 42" >>${LOGFILE}
 #		else
-#			echo '***' failed test 42. # ; exit 1
+#			echo "FAIL: test 42" | tee -a ${LOGFILE} # ; exit 1
 #		fi
 
 		if ${CVS} ci -m "third dive" first-dir  >>${LOGFILE} 2>&1; then
-			true
+			echo "PASS: test 43" >>${LOGFILE}
 		else
-			echo '***' failed test 43. ; exit 1
+			echo "FAIL: test 43" | tee -a ${LOGFILE} ; exit 1
 		fi
 
 		if ${CVS} tag third-dive first-dir  ; then
-			true
+			echo "PASS: test 44" >>${LOGFILE}
 		else
-			echo '***' failed test 44. ; exit 1
+			echo "FAIL: test 44" | tee -a ${LOGFILE} ; exit 1
 		fi
 
 		if echo "yes" | ${CVS} release -d first-dir  ; then
-			true
+			echo "PASS: test 45" >>${LOGFILE}
 		else
-			echo '***' failed test 45. ; exit 1
+			echo "FAIL: test 45" | tee -a ${LOGFILE} ; exit 1
 		fi
 
 		# end of third dive
 		if [ -d test-dir ] ; then
-			echo '***' failed test 45.5 ; exit 1
+			echo "FAIL: test 45.5" | tee -a ${LOGFILE} ; exit 1
+		else
+			echo "PASS: test 45.5" >>${LOGFILE}
 		fi
 
 		;;
@@ -586,67 +595,67 @@ for what in $tests; do
 	rtags) # now try some rtags
 		# rtag HEADS
 		if ${CVS} rtag rtagged-by-head first-dir  ; then
-			true
+			echo "PASS: test 46" >>${LOGFILE}
 		else
-			echo '***' failed test 46. ; exit 1
+			echo "FAIL: test 46" | tee -a ${LOGFILE} ; exit 1
 		fi
 
 		# tag by tag
 		if ${CVS} rtag -r rtagged-by-head rtagged-by-tag first-dir  ; then
-			true
+			echo "PASS: test 47" >>${LOGFILE}
 		else
-			echo '***' failed test 47. ; exit 1
+			echo "FAIL: test 47" | tee -a ${LOGFILE} ; exit 1
 		fi
 
 		# tag by revision
 		if ${CVS} rtag -r1.1 rtagged-by-revision first-dir  ; then
-			true
+			echo "PASS: test 48" >>${LOGFILE}
 		else
-			echo '***' failed test 48. ; exit 1
+			echo "FAIL: test 48" | tee -a ${LOGFILE} ; exit 1
 		fi
 
 		# rdiff by revision
 		if ${CVS} rdiff -r1.1 -rrtagged-by-head first-dir  >> ${LOGFILE} || [ $? = 1 ] ; then
-			true
+			echo "PASS: test 49" >>${LOGFILE}
 		else
-			echo '***' failed test 49. ; exit 1
+			echo "FAIL: test 49" | tee -a ${LOGFILE} ; exit 1
 		fi
 
 		# now export by rtagged-by-head and rtagged-by-tag and compare.
 		rm -rf first-dir
 		if ${CVS} export -r rtagged-by-head first-dir  ; then
-			true
+			echo "PASS: test 50" >>${LOGFILE}
 		else
-			echo '***' failed test 50. ; exit 1
+			echo "FAIL: test 50" | tee -a ${LOGFILE} ; exit 1
 		fi
 
 		mv first-dir 1dir
 		if ${CVS} export -r rtagged-by-tag first-dir  ; then
-			true
+			echo "PASS: test 51" >>${LOGFILE}
 		else
-			echo '***' failed test 51. ; exit 1
+			echo "FAIL: test 51" | tee -a ${LOGFILE} ; exit 1
 		fi
 
 		directory_cmp 1dir first-dir
 
 		if $ISDIFF ; then
-			echo '***' failed test 52. ; exit 1
+			echo "FAIL: test 52" | tee -a ${LOGFILE} ; exit 1
 		else
-			:
+			echo "PASS: test 52" >>${LOGFILE}
 		fi
 		rm -rf 1dir first-dir
 
 		# checkout by revision vs export by rtagged-by-revision and compare.
 		if ${CVS} export -rrtagged-by-revision -d export-dir first-dir  ; then
-			true
+			echo "PASS: test 53" >>${LOGFILE}
 		else
-			echo '***' failed test 53. ; exit 1
+			echo "FAIL: test 53" | tee -a ${LOGFILE} ; exit 1
 		fi
 
 		if ${CVS} co -r1.1 first-dir  ; then
-			true
+			echo "PASS: test 54" >>${LOGFILE}
 		else
-			echo '***' failed test 54. ; exit 1
+			echo "FAIL: test 54" | tee -a ${LOGFILE} ; exit 1
 		fi
 
 		# directory copies are done in an oblique way in order to avoid a bug in sun's tmp filesystem.
@@ -654,33 +663,33 @@ for what in $tests; do
 
 		directory_cmp first-dir export-dir
 
-		if $ISDIFF ; then
-			echo '***' failed test 55. ; exit 1
+		if $ISDIFF ; then 
+			echo "FAIL: test 55" | tee -a ${LOGFILE} ; exit 1
 		else
-			:
+			echo "PASS: test 55" >>${LOGFILE}
 		fi
 
 		# interrupt, while we've got a clean 1.1 here, let's import it into another tree.
 		cd export-dir
 		if ${CVS} import -m "first-import" second-dir first-immigration immigration1 immigration1_0  ; then
-			true
+			echo "PASS: test 56" >>${LOGFILE}
 		else
-			echo '***' failed test 56. ; exit 1
+			echo "FAIL: test 56" | tee -a ${LOGFILE} ; exit 1
 		fi
 		cd ..
 
 		if ${CVS} export -r HEAD second-dir  ; then
-			true
+			echo "PASS: test 57" >>${LOGFILE}
 		else
-			echo '***' failed test 57. ; exit 1
+			echo "FAIL: test 57" | tee -a ${LOGFILE} ; exit 1
 		fi
 
 		directory_cmp first-dir second-dir
 
 		if $ISDIFF ; then
-			echo '***' failed test 58. ; exit 1
+			echo "FAIL: test 58" | tee -a ${LOGFILE} ; exit 1
 		else
-			:
+			echo "PASS: test 58" >>${LOGFILE}
 		fi
 
 		rm -rf export-dir first-dir
@@ -690,22 +699,22 @@ for what in $tests; do
 		# update the top, cancelling sticky tags, retag, update other copy, compare.
 		cd first-dir
 		if ${CVS} update -A -l *file*  2>> ${LOGFILE}; then
-			true
+			echo "PASS: test 59" >>${LOGFILE}
 		else
-			echo '***' failed test 59. ; exit 1
+			echo "FAIL: test 59" | tee -a ${LOGFILE} ; exit 1
 		fi
 
 		# If we don't delete the tag first, cvs won't retag it.
 		# This would appear to be a feature.
 		if ${CVS} tag -l -d rtagged-by-revision  ; then
-			true
+			echo "PASS: test 60a" >>${LOGFILE}
 		else
-			echo '***' failed test 60a. ; exit 1
+			echo "FAIL: test 60a" | tee -a ${LOGFILE} ; exit 1
 		fi
 		if ${CVS} tag -l rtagged-by-revision  ; then
-			true
+			echo "PASS: test 60b" >>${LOGFILE}
 		else
-			echo '***' failed test 60b. ; exit 1
+			echo "FAIL: test 60b" | tee -a ${LOGFILE} ; exit 1
 		fi
 
 		cd ..
@@ -714,33 +723,34 @@ for what in $tests; do
 		cd first-dir
 
 		if ${CVS} diff -u  >> ${LOGFILE} || [ $? = 1 ] ; then
-			true
+			echo "PASS: test 61" >>${LOGFILE}
 		else
-			echo '***' failed test 61. ; exit 1
+			echo "FAIL: test 61" | tee -a ${LOGFILE} ; exit 1
 		fi
 
 		if ${CVS} update  ; then
-			true
+			echo "PASS: test 62" >>${LOGFILE}
 		else
-			echo '***' failed test 62. ; exit 1
+			echo "FAIL: test 62" | tee -a ${LOGFILE} ; exit 1
 		fi
 
 		cd ..
 
-### XXX: is this expected to work???
+		#### FIXME: is this expected to work???  Need to investigate
+		#### and fix or remove the test.
 #		directory_cmp 1dir first-dir
 #
 #		if $ISDIFF ; then
-#			echo '***' failed test 63. ; exit 1
+#			echo "FAIL: test 63" | tee -a ${LOGFILE} # ; exit 1
 #		else
-#			:
+#			echo "PASS: test 63" >>${LOGFILE}
 #		fi
 		rm -rf 1dir first-dir
 
 		if ${CVS} his -e -a  >> ${LOGFILE}; then
-			true
+			echo "PASS: test 64" >>${LOGFILE}
 		else
-			echo '***' failed test 64. ; exit 1
+			echo "FAIL: test 64" | tee -a ${LOGFILE} ; exit 1
 		fi
 		;;
 
@@ -748,9 +758,9 @@ for what in $tests; do
 		rm -rf ${CVSROOT_DIRNAME}/first-dir
 		mkdir  ${CVSROOT_DIRNAME}/first-dir
 		if ${CVS} co first-dir  ; then
-			true
+			echo "PASS: test 65" >>${LOGFILE}
 		else
-			echo '***' failed test 65 ; exit 1
+			echo "FAIL: test 65" | tee -a ${LOGFILE} ; exit 1
 		fi
 
 		cd first-dir
@@ -758,113 +768,113 @@ for what in $tests; do
 		# add a file.
 		touch file1
 		if ${CVS} add file1  2>> ${LOGFILE}; then
-			true
+			echo "PASS: test 66" >>${LOGFILE}
 		else
-			echo '***' failed test 66 ; exit 1
+			echo "FAIL: test 66" | tee -a ${LOGFILE} ; exit 1
 		fi
 
 		# commit
 		if ${CVS} ci -m test  >> ${LOGFILE} 2>&1; then
-			true
+			echo "PASS: test 67" >>${LOGFILE}
 		else
-			echo '***' failed test 67 ; exit 1
+			echo "FAIL: test 67" | tee -a ${LOGFILE} ; exit 1
 		fi
 
 		# remove
 		rm file1
 		if ${CVS} rm file1  2>> ${LOGFILE}; then
-			true
+			echo "PASS: test 68" >>${LOGFILE}
 		else
-			echo '***' failed test 68 ; exit 1
+			echo "FAIL: test 68" | tee -a ${LOGFILE} ; exit 1
 		fi
 
 		# commit
 		if ${CVS} ci -m test  >>${LOGFILE} ; then
-			true
+			echo "PASS: test 69" >>${LOGFILE}
 		else
-			echo '***' failed test 69 ; exit 1
+			echo "FAIL: test 69" | tee -a ${LOGFILE} ; exit 1
 		fi
 
 		# add again and create second file
 		touch file1 file2
 		if ${CVS} add file1 file2  2>> ${LOGFILE}; then
-			true
+			echo "PASS: test 70" >>${LOGFILE}
 		else
-			echo '***' failed test 70 ; exit 1
+			echo "FAIL: test 70" | tee -a ${LOGFILE} ; exit 1
 		fi
 
 		# commit
 		if ${CVS} ci -m test  >> ${LOGFILE} 2>&1; then
-			true
+			echo "PASS: test 71" >>${LOGFILE}
 		else
-			echo '***' failed test 71 ; exit 1
+			echo "FAIL: test 71" | tee -a ${LOGFILE} ; exit 1
 		fi
 
 		# log
 		if ${CVS} log file1  >> ${LOGFILE}; then
-			true
+			echo "PASS: test 72" >>${LOGFILE}
 		else
-			echo '***' failed test 72 ; exit 1
+			echo "FAIL: test 72" | tee -a ${LOGFILE} ; exit 1
 		fi
 
 
 		# branch1
 		if ${CVS} tag -b branch1  ; then
-			true
+			echo "PASS: test 73" >>${LOGFILE}
 		else
-			echo '***' failed test 73 ; exit 1
+			echo "FAIL: test 73" | tee -a ${LOGFILE} ; exit 1
 		fi
 
 		# and move to the branch.
 		if ${CVS} update -r branch1  ; then
-			true
+			echo "PASS: test 74" >>${LOGFILE}
 		else
-			echo '***' failed test 74 ; exit 1
+			echo "FAIL: test 74" | tee -a ${LOGFILE} ; exit 1
 		fi
 
 		# add a file in the branch
 		echo line1 from branch1 >> file3
 		if ${CVS} add file3  2>> ${LOGFILE}; then
-			true
+			echo "PASS: test 75" >>${LOGFILE}
 		else
-			echo '***' failed test 75 ; exit 1
+			echo "FAIL: test 75" | tee -a ${LOGFILE} ; exit 1
 		fi
 
 		# commit
 		if ${CVS} ci -m test  >> ${LOGFILE} 2>&1; then
-			true
+			echo "PASS: test 76" >>${LOGFILE}
 		else
-			echo '***' failed test 76 ; exit 1
+			echo "FAIL: test 76" | tee -a ${LOGFILE} ; exit 1
 		fi
 
 		# remove
 		rm file3
 		if ${CVS} rm file3  2>> ${LOGFILE}; then
-			true
+			echo "PASS: test 77" >>${LOGFILE}
 		else
-			echo '***' failed test 77 ; exit 1
+			echo "FAIL: test 77" | tee -a ${LOGFILE} ; exit 1
 		fi
 
 		# commit
 		if ${CVS} ci -m test  >>${LOGFILE} ; then
-			true
+			echo "PASS: test 78" >>${LOGFILE}
 		else
-			echo '***' failed test 78 ; exit 1
+			echo "FAIL: test 78" | tee -a ${LOGFILE} ; exit 1
 		fi
 
 		# add again
 		echo line1 from branch1 >> file3
 		if ${CVS} add file3  2>> ${LOGFILE}; then
-			true
+			echo "PASS: test 79" >>${LOGFILE}
 		else
-			echo '***' failed test 79 ; exit 1
+			echo "FAIL: test 79" | tee -a ${LOGFILE} ; exit 1
 		fi
 
 		# commit
 		if ${CVS} ci -m test  >> ${LOGFILE} 2>&1; then
-			true
+			echo "PASS: test 80" >>${LOGFILE}
 		else
-			echo '***' failed test 80 ; exit 1
+			echo "FAIL: test 80" | tee -a ${LOGFILE} ; exit 1
 		fi
 
 		# change the first file
@@ -872,50 +882,50 @@ for what in $tests; do
 
 		# commit
 		if ${CVS} ci -m test  >> ${LOGFILE} 2>&1; then
-			true
+			echo "PASS: test 81" >>${LOGFILE}
 		else
-			echo '***' failed test 81 ; exit 1
+			echo "FAIL: test 81" | tee -a ${LOGFILE} ; exit 1
 		fi
 
 		# remove the second
 		rm file2
 		if ${CVS} rm file2  2>> ${LOGFILE}; then
-			true
+			echo "PASS: test 82" >>${LOGFILE}
 		else
-			echo '***' failed test 82 ; exit 1
+			echo "FAIL: test 82" | tee -a ${LOGFILE} ; exit 1
 		fi
 
 		# commit
 		if ${CVS} ci -m test  >>${LOGFILE}; then
-			true
+			echo "PASS: test 83" >>${LOGFILE}
 		else
-			echo '***' failed test 83 ; exit 1
+			echo "FAIL: test 83" | tee -a ${LOGFILE} ; exit 1
 		fi
 
 		# back to the trunk.
 		if ${CVS} update -A  2>> ${LOGFILE}; then
-			true
+			echo "PASS: test 84" >>${LOGFILE}
 		else
-			echo '***' failed test 84 ; exit 1
+			echo "FAIL: test 84" | tee -a ${LOGFILE} ; exit 1
 		fi
 
 		if [ -f file3 ] ; then
-			echo '***' failed test 85 ; exit 1
+			echo "FAIL: test 85" | tee -a ${LOGFILE} ; exit 1
 		else
-			true
+			echo "PASS: test 85" >>${LOGFILE}
 		fi
 
 		# join
 		if ${CVS} update -j branch1  >> ${LOGFILE} 2>&1; then
-			true
+			echo "PASS: test 86" >>${LOGFILE}
 		else
-			echo '***' failed test 86 ; exit 1
+			echo "FAIL: test 86" | tee -a ${LOGFILE} ; exit 1
 		fi
 
 		if [ -f file3 ] ; then
-			true
+			echo "PASS: test 87" >>${LOGFILE}
 		else
-			echo '***' failed test 87 ; exit 1
+			echo "FAIL: test 87" | tee -a ${LOGFILE} ; exit 1
 		fi
 
 		# Make sure that we joined the correct change to file1
@@ -928,57 +938,57 @@ for what in $tests; do
 
 		# update
 		if ${CVS} update  ; then
-			true
+			echo "PASS: test 88" >>${LOGFILE}
 		else
-			echo '***' failed test 88 ; exit 1
+			echo "FAIL: test 88" | tee -a ${LOGFILE} ; exit 1
 		fi
 
 		# commit
 		if ${CVS} ci -m test  >>${LOGFILE} 2>&1; then
-			true
+			echo "PASS: test 89" >>${LOGFILE}
 		else
-			echo '***' failed test 89 ; exit 1
+			echo "FAIL: test 89" | tee -a ${LOGFILE} ; exit 1
 		fi
 
 		# remove first file.
 		rm file1
 		if ${CVS} rm file1  2>> ${LOGFILE}; then
-			true
+			echo "PASS: test 90" >>${LOGFILE}
 		else
-			echo '***' failed test 90 ; exit 1
+			echo "FAIL: test 90" | tee -a ${LOGFILE} ; exit 1
 		fi
 
 		# commit
 		if ${CVS} ci -m test  >>${LOGFILE}; then
-			true
+			echo "PASS: test 91" >>${LOGFILE}
 		else
-			echo '***' failed test 91 ; exit 1
+			echo "FAIL: test 91" | tee -a ${LOGFILE} ; exit 1
 		fi
 
 		if [ -f file1 ] ; then
-			echo '***' failed test 92 ; exit 1
+			echo "FAIL: test 92" | tee -a ${LOGFILE} ; exit 1
 		else
-			true
+			echo "PASS: test 92" >>${LOGFILE}
 		fi
 
 		# back to branch1
 		if ${CVS} update -r branch1  2>> ${LOGFILE}; then
-			true
+			echo "PASS: test 93" >>${LOGFILE}
 		else
-			echo '***' failed test 93 ; exit 1
+			echo "FAIL: test 93" | tee -a ${LOGFILE} ; exit 1
 		fi
 
 		if [ -f file1 ] ; then
-			true
+			echo "PASS: test 94" >>${LOGFILE}
 		else
-			echo '***' failed test 94 ; exit 1
+			echo "FAIL: test 94" | tee -a ${LOGFILE} ; exit 1
 		fi
 
 		# and join
 		if ${CVS} update -j HEAD  >> ${LOGFILE} 2>&1; then
-			true
+			echo "PASS: test 95" >>${LOGFILE}
 		else
-			echo '***' failed test 95 ; exit 1
+			echo "FAIL: test 95" | tee -a ${LOGFILE} ; exit 1
 		fi
 
 		cd .. ; rm -rf first-dir ${CVSROOT_DIRNAME}/first-dir
@@ -993,34 +1003,34 @@ for what in $tests; do
 		done
 
 		if ${CVS} import -m first-import first-dir vendor-branch junk-1_0  ; then
-			true
+			echo "PASS: test 96" >>${LOGFILE}
 		else
-			echo '***' failed test 96 ; exit 1
+			echo "FAIL: test 96" | tee -a ${LOGFILE} ; exit 1
 		fi
 		cd ..
 
 		# co
 		if ${CVS} co first-dir  ; then
-			true
+			echo "PASS: test 97" >>${LOGFILE}
 		else
-			echo '***' failed test 97 ; exit 1
+			echo "FAIL: test 97" | tee -a ${LOGFILE} ; exit 1
 		fi
 
 		cd first-dir
 		for i in 1 2 3 4 ; do
 			if [ -f imported-file"$i" ] ; then
-				true
+				echo "PASS: test 98-$i" >>${LOGFILE}
 			else
-				echo '***' failed test 98-$i ; exit 1
+				echo "FAIL: test 98-$i" | tee -a ${LOGFILE} ; exit 1
 			fi
 		done
 
 		# remove
 		rm imported-file1
 		if ${CVS} rm imported-file1  2>> ${LOGFILE}; then
-			true
+			echo "PASS: test 99" >>${LOGFILE}
 		else
-			echo '***' failed test 99 ; exit 1
+			echo "FAIL: test 99" | tee -a ${LOGFILE} ; exit 1
 		fi
 
 		# change
@@ -1031,46 +1041,46 @@ for what in $tests; do
 
 		# commit
 		if ${CVS} ci -m local-changes  >> ${LOGFILE} 2>&1; then
-			true
+			echo "PASS: test 100" >>${LOGFILE}
 		else
-			echo '***' failed test 100 ; exit 1
+			echo "FAIL: test 100" | tee -a ${LOGFILE} ; exit 1
 		fi
 
 		# log
 		if ${CVS} log imported-file1 | grep '1.1.1.2 (dead)'  ; then
-			echo '***' failed test 101 ; exit 1
+			echo "FAIL: test 101" | tee -a ${LOGFILE} ; exit 1
 		else
-			true
+			echo "PASS: test 101" >>${LOGFILE}
 		fi
 
 		# update into the vendor branch.
 		if ${CVS} update -rvendor-branch  ; then
-			true
+			echo "PASS: test 102" >>${LOGFILE}
 		else
-			echo '***' failed test 102 ; exit 1
+			echo "FAIL: test 102" | tee -a ${LOGFILE} ; exit 1
 		fi
 
 		# remove file4 on the vendor branch
 		rm imported-file4
 
 		if ${CVS} rm imported-file4  2>> ${LOGFILE}; then
-			true
+			echo "PASS: test 103" >>${LOGFILE}
 		else
-			echo '***' failed test 103 ; exit 1
+			echo "FAIL: test 103" | tee -a ${LOGFILE} ; exit 1
 		fi
 
 		# commit
 		if ${CVS} ci -m vendor-removed imported-file4 >>${LOGFILE}; then
-			true
+			echo "PASS: test 104" >>${LOGFILE}
 		else
-			echo '***' failed test 104 ; exit 1
+			echo "FAIL: test 104" | tee -a ${LOGFILE} ; exit 1
 		fi
 
 		# update to main line
 		if ${CVS} update -A  2>> ${LOGFILE}; then
-			true
+			echo "PASS: test 105" >>${LOGFILE}
 		else
-			echo '***' failed test 105 ; exit 1
+			echo "FAIL: test 105" | tee -a ${LOGFILE} ; exit 1
 		fi
 
 		# second import - file4 deliberately unchanged
@@ -1080,83 +1090,83 @@ for what in $tests; do
 		done
 
 		if ${CVS} import -m second-import first-dir vendor-branch junk-2_0  ; then
-			true
+			echo "PASS: test 106" >>${LOGFILE}
 		else
-			echo '***' failed test 106 ; exit 1
+			echo "FAIL: test 106" | tee -a ${LOGFILE} ; exit 1
 		fi
 		cd ..
 
 		# co
 		if ${CVS} co first-dir  ; then
-			true
+			echo "PASS: test 107" >>${LOGFILE}
 		else
-			echo '***' failed test 107 ; exit 1
+			echo "FAIL: test 107" | tee -a ${LOGFILE} ; exit 1
 		fi
 
 		cd first-dir
 
 		if [ -f imported-file1 ] ; then
-			echo '***' failed test 108 ; exit 1
+			echo "FAIL: test 108" | tee -a ${LOGFILE} ; exit 1
 		else
-			true
+			echo "PASS: test 108" >>${LOGFILE}
 		fi
 
 		for i in 2 3 ; do
 			if [ -f imported-file"$i" ] ; then
-				true
+				echo "PASS: test 109-$i" >>${LOGFILE}
 			else
-				echo '***' failed test 109-$i ; exit 1
+				echo "FAIL: test 109-$i" | tee -a ${LOGFILE} ; exit 1
 			fi
 		done
 
 		# check vendor branch for file4
 		if ${CVS} update -rvendor-branch  ; then
-			true
+			echo "PASS: test 110" >>${LOGFILE}
 		else
-			echo '***' failed test 110 ; exit 1
+			echo "FAIL: test 110" | tee -a ${LOGFILE} ; exit 1
 		fi
 
 		if [ -f imported-file4 ] ; then
-			true
+			echo "PASS: test 111" >>${LOGFILE}
 		else
-			echo '***' failed test 111 ; exit 1
+			echo "FAIL: test 111" | tee -a ${LOGFILE} ; exit 1
 		fi
 
 		# update to main line
 		if ${CVS} update -A  2>> ${LOGFILE}; then
-			true
+			echo "PASS: test 112" >>${LOGFILE}
 		else
-			echo '***' failed test 112 ; exit 1
+			echo "FAIL: test 112" | tee -a ${LOGFILE} ; exit 1
 		fi
 
 		cd ..
 
 		if ${CVS} co -jjunk-1_0 -jjunk-2_0 first-dir  >>${LOGFILE} 2>&1; then
-			true
+			echo "PASS: test 113" >>${LOGFILE}
 		else
-			echo '***' failed test 113 ; exit 1
+			echo "FAIL: test 113" | tee -a ${LOGFILE} ; exit 1
 		fi
 
 		cd first-dir
 
 		if [ -f imported-file1 ] ; then
-			echo '***' failed test 114 ; exit 1
+			echo "FAIL: test 114" | tee -a ${LOGFILE} ; exit 1
 		else
-			true
+			echo "PASS: test 114" >>${LOGFILE}
 		fi
 
 		for i in 2 3 ; do
 			if [ -f imported-file"$i" ] ; then
-				true
+				echo "PASS: test 115-$i" >>${LOGFILE}
 			else
-				echo '***' failed test 115-$i ; exit 1
+				echo "FAIL: test 115-$i" | tee -a ${LOGFILE} ; exit 1
 			fi
 		done
 
 		if cat imported-file2 | grep '===='  >> ${LOGFILE}; then
-			true
+			echo "PASS: test 116" >>${LOGFILE}
 		else
-			echo '***' failed test 116 ; exit 1
+			echo "FAIL: test 116" | tee -a ${LOGFILE} ; exit 1
 		fi
 		cd .. ; rm -rf first-dir ${CVSROOT_DIRNAME}/first-dir
 		;;
@@ -1166,50 +1176,50 @@ for what in $tests; do
 		mkdir ${CVSROOT_DIRNAME}/first-dir
 
 		if ${CVS} co first-dir  ; then
-			true
+			echo "PASS: test 117" >>${LOGFILE}
 		else
-			echo '***' failed test 117 ; exit 1
+			echo "FAIL: test 117" | tee -a ${LOGFILE} ; exit 1
 		fi
 
 		cd first-dir
 		touch a
 
 		if ${CVS} add a  2>>${LOGFILE}; then
-			true
+			echo "PASS: test 118" >>${LOGFILE}
 		else
-			echo '***' failed test 118 ; exit 1
+			echo "FAIL: test 118" | tee -a ${LOGFILE} ; exit 1
 		fi
 
 		if ${CVS} ci -m added  >>${LOGFILE} 2>&1; then
-			true
+			echo "PASS: test 119" >>${LOGFILE}
 		else
-			echo '***' failed test 119 ; exit 1
+			echo "FAIL: test 119" | tee -a ${LOGFILE} ; exit 1
 		fi
 
 		rm a
 
 		if ${CVS} rm a  2>>${LOGFILE}; then
-			true
+			echo "PASS: test 120" >>${LOGFILE}
 		else
-			echo '***' failed test 120 ; exit 1
+			echo "FAIL: test 120" | tee -a ${LOGFILE} ; exit 1
 		fi
 
 		if ${CVS} ci -m removed >>${LOGFILE} ; then
-			true
+			echo "PASS: test 121" >>${LOGFILE}
 		else
-			echo '***' failed test 121 ; exit 1
+			echo "FAIL: test 121" | tee -a ${LOGFILE} ; exit 1
 		fi
 
 		if ${CVS} update -A  2>&1 | grep longer ; then
-			echo '***' failed test 122 ; exit 1
+			echo "FAIL: test 122" | tee -a ${LOGFILE} ; exit 1
 		else
-			true
+			echo "PASS: test 122" >>${LOGFILE}
 		fi
 
 		if ${CVS} update -rHEAD 2>&1 | grep longer ; then
-			echo '***' failed test 123 ; exit 1
+			echo "FAIL: test 123" | tee -a ${LOGFILE} ; exit 1
 		else
-			true
+			echo "PASS: test 123" >>${LOGFILE}
 		fi
 
 		cd .. ; rm -rf first-dir ; rm -rf ${CVSROOT_DIRNAME}/first-dir
@@ -1629,7 +1639,7 @@ EOF
 	esac
 done
 
-echo "OK, all tests completed successfully."
+echo "OK, all tests completed."
 
 # TODO:
 # * Test `cvs admin'.

@@ -1,3 +1,16 @@
+Tue Nov 14 13:28:17 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* sanity.sh: Call old log file check.plog, not check.olog.
+
+	* sanity.sh: Convert remaining tests from old-style ('***' on fail
+	and nothing on pass), to new-style (FAIL on fail and PASS on pass).
+
+	* sanity.sh: Fix ability to run only some of the tests (always run
+	tests 1-4.75 to set up repository, document better how it works).
+
+	* sanity.sh: Change "completed successfully" to "completed" in
+	message--many tests, but not all, exit if they fail.
+
 Tue Nov 14 15:10:00 1995  Greg A. Woods  <woods@most.weird.com>
 
 	* sanity.sh: test 63 doesn't work and probably can't
