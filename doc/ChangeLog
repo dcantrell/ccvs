@@ -1,3 +1,8 @@
+Wed Oct  8 10:24:19 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (rtag options): Add comment about how this is
+	confusing.
+
 Tue Sep 30 12:31:25 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (Working directory storage): Add comment about

@@ -9238,6 +9238,10 @@ Do not run any tag program that was specified with the
 @item -R
 Tag directories recursively.  This is on by default.
 
+@c FIXME: this discussion is confusing.  What part of
+@c the rename operation being discussed relates to
+@c "rtag -r" (that whole discussion needs an example,
+@c and probably to be moved somewhere else)?
 @item -r @var{tag}
 Only tag those files that contain @var{tag}.  This can
 be used to rename a tag: tag only the files identified
