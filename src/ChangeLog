@@ -1,3 +1,10 @@
+Sun Feb  9 12:37:09 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* checkin.c (Checkin): Use cvs_output to print message (should
+	make out of order bugs no worse, as it merely substitues a
+	protocol_pipe vs. stderr_pipe race instead of a stdout_pipe
+	vs. stderr_pipe race).  Add comment about stdout vs. stderr.
+
 Fri Feb  7 08:29:52 1997  Josef Nelissen  <josef.nelissen@munich.ixos.de>
 
 	* server.c (check_command_legal_p): Don't use ANSI-style definition.
