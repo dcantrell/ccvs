@@ -1,3 +1,20 @@
+2000-10-06  Derek Price  <derek.price@openavenue.com>
+
+	* add.c (add): Made quiet mode affect some warning messages as seemed
+	appropriate.  Specifically, some of the messages which a user might
+	want to ignore so they don't have to be quite so specific on the
+	command line: files added twice, files already in the repository and
+	check out properly (i.e. but picked up by 'cvs add *'), & files which
+	are readded in place of a dead revision or onto a branch.  '-q' will
+	not change the non-zero exit code for the cases where at least one
+	passed in file name was already in the Entries file.  There seems to
+	be a precedent in remove.c.
+	* remove.c (cvsremove): switched the "use cvs ci to make these changes
+	permanent message" to only print w/o '-Q' to match the new behavior of
+	add.  This seems appropriate as '-Q' is defined to restrict messages
+	to critical errors.
+	* sanity.sh (adderrmsg): Added some tests for the above behavior.
+
 2000-10-05  Larry Jones  <larry.jones@sdrc.com>
 
 	* client.c (call_in_directory): Create CVSADM directory if it doesn't
