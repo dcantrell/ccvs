@@ -296,9 +296,16 @@ check_fileproc (callerdat, finfo)
         {
             if (delete_flag)
             {
+		/* Deleting a tag which did not exist is a noop and
+		   should not be logged.  */
                 addit = 0;
             }
         }
+	else if (delete_flag)
+	{
+	    free (p->data);
+	    p->data = xstrdup (oversion);
+	}
         else if (strcmp(oversion, p->data) == 0)
         {
             addit = 0;

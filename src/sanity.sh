@@ -11090,8 +11090,6 @@ ${PROG} [a-z]*: Rebuilding administrative file database"
 
 	  # Tests to add:
 	  #   -F to move
-	  #   -d
-	  #   rtag
 
 	  mkdir 1; cd 1
 	  dotest taginfo-1 "${testcvs} -q co CVSROOT" "U CVSROOT/${DOTSTAR}"
@@ -11159,6 +11157,16 @@ ${PROG} \[[a-z]* aborted\]: correct the above errors first!"
 	  # specified or not.
 	  dotest taginfo-13 "${testcvs} -nq tag would-be-tag" "T file1"
 
+	  # Deleting: the cases are basically either the tag existed,
+	  # or it didn't exist.
+	  dotest taginfo-14 "${testcvs} -q tag -d tag1" "D file1"
+	  dotest taginfo-15 "${testcvs} -q tag -d tag1" ""
+
+	  # Likewise with rtag.
+	  dotest taginfo-16 "${testcvs} -q rtag tag1 first-dir" ""
+	  dotest taginfo-17 "${testcvs} -q rtag -d tag1 first-dir" ""
+	  dotest taginfo-18 "${testcvs} -q rtag -d tag1 first-dir" ""
+
 	  # The "br" example should be passing 1.1.2 or 1.1.0.2.
 	  # But it turns out that is very hard to implement, since
 	  # check_fileproc doesn't know what branch number it will
@@ -11173,7 +11181,12 @@ ${PROG} \[[a-z]* aborted\]: correct the above errors first!"
 	  dotest taginfo-examine "cat ${TESTDIR}/1/taglog" \
 "tag1 add ${TESTDIR}/cvsroot/first-dir file1 1.1
 br add ${TESTDIR}/cvsroot/first-dir file1 1.1
-brtag mov ${TESTDIR}/cvsroot/first-dir file1 1.1.2.1"
+brtag mov ${TESTDIR}/cvsroot/first-dir file1 1.1.2.1
+tag1 del ${TESTDIR}/cvsroot/first-dir file1 1.1
+tag1 del ${TESTDIR}/cvsroot/first-dir
+tag1 add ${TESTDIR}/cvsroot/first-dir file1 1.1
+tag1 del ${TESTDIR}/cvsroot/first-dir file1 1.1
+tag1 del ${TESTDIR}/cvsroot/first-dir"
 
 	  cd ..
 	  cd CVSROOT
