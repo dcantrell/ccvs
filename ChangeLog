@@ -1,6 +1,13 @@
 2001-04-27  Derek Price  <dprice@collab.net>
 
 	* configure.in: Update version number.
+
+	* configure: Regenerated.
+	* cvs.spec: Ditto.
+
+2001-04-27  Derek Price  <dprice@collab.net>
+
+	* configure.in: Update version number.
 	* NEWS (new since 1.11.1): Broke read-only fix.
 	(new since 1.11): Diff fix.
 

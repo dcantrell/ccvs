@@ -903,7 +903,7 @@ fi
 
 # Define the identity of the package.
 PACKAGE=cvs
-VERSION=1.11.1p1
+VERSION=1.11.1.1
 cat >> confdefs.h <<EOF
 #define PACKAGE "$PACKAGE"
 EOF

@@ -1,6 +1,6 @@
 Summary: A version control system.
 Name: cvs
-Version: 1.11.1p1
+Version: 1.11.1.1
 Release: 1
 Copyright: GPL
 Group: Development/Tools
