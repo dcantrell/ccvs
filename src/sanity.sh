@@ -425,7 +425,46 @@ tempname="[-a-zA-Z0-9/.%_]*"
 # Regexp to match a date in RFC822 format (as amended by RFC1123).
 RFCDATE="[a-zA-Z0-9 ][a-zA-Z0-9 ]* [0-9:][0-9:]* -0000"
 RFCDATE_EPOCH="1 Jan 1970 00:00:00 -0000"
-RCSDATE="[0-9/]* [0-9:]*"
+
+# Special times used in touch -t commands and the regular expresions
+# to match them. Now that they are in sub-shells that set TZ=GMT, it
+# should be easier to be more exact in their regexp. However, if the
+# cvs log output starts to include the timezone, these may need to
+# change once more.
+TOUCH1971="197107040343"
+# This date regexp was 1971/07/0[3-5] [0-9][0-9]:43:[0-9][0-9]
+ISO8601DATE1971="1971[-/]07[-/]04 03:43:[0-9][0-9][-+ 0-9]*"
+
+TOUCH2034="203412251801"
+# This date regexp was 2034/12/2[4-6] [0-9][0-9]:01:[0-9][0-9]
+ISO8601DATE2034="2034[-/]12[-/]25 18:01:[0-9][0-9][-+ 0-9]*"
+
+# Used in admin tests for exporting RCS files.
+# The RAWRCSDATE..... format is for internal ,v files and
+# the ISO8601DATE..... format is to allow for a regular expression in
+# 'cvs log' output patterns. The tests that use this set of specific
+# ${ISO8601DATE.....} variables also force TZ=GMT for the test.
+RAWRCSDATE2000A="2000.11.24.15.58.37"
+RAWRCSDATE1996A="96.11.24.15.57.41"
+RAWRCSDATE1996B="96.11.24.15.56.05"
+ISO8601DATE2000A="2000[-/]11[-/]24 15:58:37[+ 0]*"
+ISO8601DATE1996A="1996[-/]11[-/]24 15:57:41[+ 0]*"
+ISO8601DATE1996B="1996[-/]11[-/]24 15:56:05[+ 0]*"
+
+# Regexp to match the date in cvs log command output
+# This format has been enhanced in the future to accept either
+# old-style cvs log output dates or new-style ISO8601 timezone
+# information similar to the ISODATE format. The RCSKEYDATE is
+# similar, but uses '/' instead of '-' to sepearate year/month/day
+# and does not include the optional timezone offset.
+ISO8601DATE="[0-9][0-9][0-9][0-9][-/][0-9][0-9][-/][0-9][0-9] [0-9][0-9]:[0-9][0-9]:[0-9][0-9][-+ 0-9]*"
+
+# Regexp to match the dates found in rcs keyword strings
+RCSKEYDATE="[0-9][0-9][0-9][0-9]/[0-9][0-9]/[0-9][0-9] [0-9][0-9]:[0-9][0-9]:[0-9][0-9]"
+
+# Regexp to match the date in the delta section of rcs format files.
+# Dates in very old RCS files may not have included the century.
+RCSDELTADATE="[0-9][0-9]*\.[0-9][0-9]\.[0-9][0-9]\.[0-9][0-9]\.[0-9][0-9]\.[0-9][0-9]"
 
 # Regexp to match a date in standard Unix format as used by rdiff
 # FIXCVS: There's no reason for rdiff to use a different date format
@@ -2258,15 +2297,15 @@ total revisions: 3;	selected revisions: 3
 description:
 ----------------------------
 revision 3\.1
-date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;  lines: ${PLUS}0 -0
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}0 -0
 bump-it
 ----------------------------
 revision 1\.2
-date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
 modify-it
 ----------------------------
 revision 1\.1
-date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;
 add-it
 ============================================================================="
 	  dotest basica-o8 "${testcvs} -q update -p -r 1.1 ./ssfile" "ssfile"
@@ -3246,7 +3285,7 @@ total revisions: 1;	selected revisions: 1
 description:
 ----------------------------
 revision 1\.1
-date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;
 second dive
 =============================================================================
 
@@ -3263,7 +3302,7 @@ total revisions: 1;	selected revisions: 1
 description:
 ----------------------------
 revision 1\.1
-date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;
 second dive
 =============================================================================
 ${SPROG} log: Logging first-dir/dir1
@@ -3282,7 +3321,7 @@ total revisions: 1;	selected revisions: 1
 description:
 ----------------------------
 revision 1\.1
-date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;
 second dive
 =============================================================================
 
@@ -3299,7 +3338,7 @@ total revisions: 1;	selected revisions: 1
 description:
 ----------------------------
 revision 1\.1
-date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;
 second dive
 =============================================================================
 ${SPROG} log: Logging first-dir/dir1/dir2
@@ -3318,7 +3357,7 @@ total revisions: 1;	selected revisions: 1
 description:
 ----------------------------
 revision 1\.1
-date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;
 second dive
 =============================================================================
 
@@ -3335,7 +3374,7 @@ total revisions: 1;	selected revisions: 1
 description:
 ----------------------------
 revision 1\.1
-date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;
 second dive
 ============================================================================="
 
@@ -6278,29 +6317,29 @@ total revisions: 6;	selected revisions: 6
 description:
 ----------------------------
 revision 1\.3
-date: [0-9/: ]*;  author: ${username};  state: Exp;  lines: ${PLUS}1 -1
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -1
 trunk-change-after-branch
 ----------------------------
 revision 1\.2
-date: [0-9/: ]*;  author: ${username};  state: Exp;  lines: ${PLUS}1 -1
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -1
 branches:  1\.2\.2;
 trunk-before-branch
 ----------------------------
 revision 1\.1
-date: [0-9/: ]*;  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;
 add-it
 ----------------------------
 revision 1\.2\.2\.2
-date: [0-9/: ]*;  author: ${username};  state: Exp;  lines: ${PLUS}1 -1
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -1
 change-on-br1
 ----------------------------
 revision 1\.2\.2\.1
-date: [0-9/: ]*;  author: ${username};  state: Exp;  lines: ${PLUS}1 -1
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -1
 branches:  1\.2\.2\.1\.2;
 modify
 ----------------------------
 revision 1\.2\.2\.1\.2\.1
-date: [0-9/: ]*;  author: ${username};  state: Exp;  lines: ${PLUS}1 -1
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -1
 modify
 ============================================================================="
 	  dotest_fail branches-14.4 \
@@ -6853,7 +6892,7 @@ total revisions: 1;	selected revisions: 1
 description:
 ----------------------------
 revision 1.1
-date: [0-9/: ]*;  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;
 add
 ============================================================================="
 
@@ -7676,16 +7715,16 @@ total revisions: 3;	selected revisions: 3
 description:
 ----------------------------
 revision 1\.1
-date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;
 branches:  1\.1\.2;  1\.1\.4;
 add-it
 ----------------------------
 revision 1\.1\.4\.1
-date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
 modify-on-br2
 ----------------------------
 revision 1\.1\.2\.1
-date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;  lines: ${PLUS}1 -1
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -1
 modify-on-br1
 ============================================================================="
 	  cd ..
@@ -7793,16 +7832,16 @@ total revisions: 3;	selected revisions: 3
 description:
 ----------------------------
 revision 1\.2
-date: [0-9/]* [0-9:]*;  author: ${username};  state: dead;  lines: ${PLUS}0 -0
+date: ${ISO8601DATE};  author: ${username};  state: dead;  lines: ${PLUS}0 -0
 local-changes
 ----------------------------
 revision 1\.1
-date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;
 branches:  1\.1\.1;
 Initial revision
 ----------------------------
 revision 1\.1\.1\.1
-date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;  lines: ${PLUS}0 -0
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}0 -0
 first-import
 ============================================================================="
 
@@ -8002,16 +8041,16 @@ total revisions: 3;	selected revisions: 3
 description:
 ----------------------------
 revision 1\.1
-date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;
 branches:  1\.1\.1;  1\.1\.3;
 Initial revision
 ----------------------------
 revision 1\.1\.3\.1
-date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;  lines: ${PLUS}1 -1
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -1
 add
 ----------------------------
 revision 1\.1\.1\.1
-date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;  lines: ${PLUS}0 -0
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}0 -0
 add
 ============================================================================="
 
@@ -8029,8 +8068,8 @@ add
 	  mkdir adir/sub1/ssdir
 	  mkdir bdir/subdir
 	  touch adir/sub1/file1 adir/sub2/file2 adir/sub1/ssdir/ssfile
-	  touch -t 197107040343 bdir/subdir/file1
-	  touch -t 203412251801 cdir/cfile
+	  (TZ=GMT; export TZ; touch -t ${TOUCH1971} bdir/subdir/file1)
+	  (TZ=GMT; export TZ; touch -t ${TOUCH2034} cdir/cfile)
 	  dotest_sort importc-1 \
 "${testcvs} import -d -m import-it first-dir vendor release" \
 "
@@ -8093,17 +8132,17 @@ total revisions: 3;	selected revisions: 3
 description:
 ----------------------------
 revision 1\.1
-date: 2034/12/2[4-6] [0-9][0-9]:01:[0-9][0-9];  author: ${username};  state: Exp;
+date: ${ISO8601DATE2034};  author: ${username};  state: Exp;
 branches:  1\.1\.1;
 Initial revision
 ----------------------------
 revision 1\.1\.1\.1
-date: 2034/12/2[4-6] [0-9][0-9]:01:[0-9][0-9];  author: ${username};  state: Exp;  lines: ${PLUS}0 -0
+date: ${ISO8601DATE2034};  author: ${username};  state: Exp;  lines: ${PLUS}0 -0
 branches:  1\.1\.1\.1\.2;
 import-it
 ----------------------------
 revision 1\.1\.1\.1\.2\.1
-date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
 modify
 ============================================================================="
 
@@ -8123,12 +8162,12 @@ total revisions: 2;	selected revisions: 2
 description:
 ----------------------------
 revision 1\.1
-date: 1971/07/0[3-5] [0-9][0-9]:43:[0-9][0-9];  author: ${username};  state: Exp;
+date: ${ISO8601DATE1971};  author: ${username};  state: Exp;
 branches:  1\.1\.1;
 Initial revision
 ----------------------------
 revision 1\.1\.1\.1
-date: 1971/07/0[3-5] [0-9][0-9]:43:[0-9][0-9];  author: ${username};  state: Exp;  lines: ${PLUS}0 -0
+date: ${ISO8601DATE1971};  author: ${username};  state: Exp;  lines: ${PLUS}0 -0
 import-it
 ============================================================================="
 	  cd ..
@@ -9660,16 +9699,16 @@ total revisions: 3;	selected revisions: 3
 description:
 ----------------------------
 revision 1\.2
-date: [0-9/]* [0-9:]*;  author: $username;  state: dead;  lines: ${PLUS}0 -0
+date: ${ISO8601DATE};  author: $username;  state: dead;  lines: ${PLUS}0 -0
 save the merge
 ----------------------------
 revision 1\.1
-date: [0-9/]* [0-9:]*;  author: $username;  state: Exp;
+date: ${ISO8601DATE};  author: $username;  state: Exp;
 branches:  1.1.2;
 add-em
 ----------------------------
 revision 1\.1\.2\.1
-date: [0-9/]* [0-9:]*;  author: $username;  state: dead;  lines: ${PLUS}0 -0
+date: ${ISO8601DATE};  author: $username;  state: dead;  lines: ${PLUS}0 -0
 rm
 ============================================================================="
 
@@ -11524,7 +11563,7 @@ total revisions: 1;	selected revisions: 1
 description:
 ----------------------------
 revision 1\.1
-date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;
 add-it
 ============================================================================="
 
@@ -13946,7 +13985,7 @@ total revisions: 2;	selected revisions: 2
 description:
 ----------------------------
 revision 1\.1
-date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;
 branches:  1\.1\.2;
 xCVS: ----------------------------------------------------------------------
 xCVS: Enter Log.  Lines beginning with .CVS:. are removed automatically
@@ -13958,7 +13997,7 @@ xCVS: 	file1 file2
 xCVS: ----------------------------------------------------------------------
 ----------------------------
 revision 1\.1\.2\.1
-date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
 xCVS: ----------------------------------------------------------------------
 xCVS: Enter Log.  Lines beginning with .CVS:. are removed automatically
 xCVS:
@@ -13984,7 +14023,7 @@ total revisions: 2;	selected revisions: 2
 description:
 ----------------------------
 revision 1\.1
-date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;
 branches:  1\.1\.2;
 xCVS: ----------------------------------------------------------------------
 xCVS: Enter Log.  Lines beginning with .CVS:. are removed automatically
@@ -13996,7 +14035,7 @@ xCVS: 	file1 file2
 xCVS: ----------------------------------------------------------------------
 ----------------------------
 revision 1\.1\.2\.1
-date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
 xCVS: ----------------------------------------------------------------------
 xCVS: Enter Log.  Lines beginning with .CVS:. are removed automatically
 xCVS:
@@ -14016,7 +14055,7 @@ total revisions: 2;	selected revisions: 2
 description:
 ----------------------------
 revision 1\.1
-date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;
 branches:  1\.1\.2;
 xCVS: ----------------------------------------------------------------------
 xCVS: Enter Log.  Lines beginning with .CVS:. are removed automatically
@@ -14028,7 +14067,7 @@ xCVS: 	file1 file2
 xCVS: ----------------------------------------------------------------------
 ----------------------------
 revision 1\.1\.2\.1
-date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
 xCVS: ----------------------------------------------------------------------
 xCVS: Enter Log.  Lines beginning with .CVS:. are removed automatically
 xCVS:
@@ -14167,7 +14206,7 @@ total revisions: 3;	selected revisions: 1
 description:
 ----------------------------
 revision 1\.2
-date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;  lines: +0 -0
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: +0 -0
 \*\*\* empty log message \*\*\*
 ============================================================================="
 
@@ -15776,7 +15815,7 @@ total revisions: 1;	selected revisions: 1
 description:
 ----------------------------
 revision 1\.3
-date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;
 checkin
 ============================================================================="
 	  cd ..
@@ -17580,7 +17619,7 @@ access list:"
 	  log_keyword='keyword substitution: kv'
 	  log_dash='----------------------------
 revision'
-	  log_date="date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;"
+	  log_date="date: ${ISO8601DATE};  author: ${username};  state: Exp;"
 	  log_lines="  lines: ${PLUS}1 -1"
 	  log_rev1="${log_dash} 1\.1
 ${log_date}
@@ -18172,7 +18211,7 @@ access list:"
 	tag2: 1\.3
 	tag1: 1\.2'
 	  log_rev4="${log_dash} 1\.4
-date: [0-9/]* [0-9:]*;  author: ${username};  state: dead;  lines: ${PLUS}0 -0
+date: ${ISO8601DATE};  author: ${username};  state: dead;  lines: ${PLUS}0 -0
 4"
 	  log_rev22="${log_dash} 1\.2
 ${log_date}${log_lines}
@@ -18524,7 +18563,7 @@ description:
 file1-is-for-testing
 ----------------------------
 revision 1\.1
-date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;
 1
 ============================================================================="
 
@@ -18546,7 +18585,7 @@ description:
 change-description
 ----------------------------
 revision 1\.1
-date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;
 1
 ============================================================================="
 
@@ -18571,7 +18610,7 @@ longer description
 with two lines
 ----------------------------
 revision 1\.1
-date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;
 1
 ============================================================================="
 
@@ -18594,7 +18633,7 @@ description:
 change from stdin
 ----------------------------
 revision 1\.1
-date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;
 1
 ============================================================================="
 
@@ -19111,17 +19150,17 @@ comment	@# @;
 
 
 1.3
-date	2000.11.24.15.58.37;	author kingdon;	state Exp;
+date	${RAWRCSDATE2000A};	author kingdon;	state Exp;
 branches;
 next	1.2;
 
 1.2
-date	96.11.24.15.57.41;	author kingdon;	state Exp;
+date	${RAWRCSDATE1996A};	author kingdon;	state Exp;
 branches;
 next	1.1;
 
 1.1
-date	96.11.24.15.56.05;	author kingdon;	state Exp;
+date	${RAWRCSDATE1996B};	author kingdon;	state Exp;
 branches;
 next	;
 
@@ -19174,6 +19213,7 @@ text
 EOF
 	  dotest rcs-1 "${testcvs} -q co first-dir" 'U first-dir/file1'
 	  cd first-dir
+	  (TZ=GMT; export TZ;
 	  dotest rcs-2 "${testcvs} -q log" "
 RCS file: ${CVSROOT_DIRNAME}/first-dir/file1,v
 Working file: file1
@@ -19188,17 +19228,17 @@ description:
 file1 is for testing CVS
 ----------------------------
 revision 1\.3
-date: 2000/11/24 15:58:37;  author: kingdon;  state: Exp;  lines: ${PLUS}1 -2
+date: ${ISO8601DATE2000A};  author: kingdon;  state: Exp;  lines: ${PLUS}1 -2
 delete second line; modify twelfth line
 ----------------------------
 revision 1\.2
-date: 1996/11/24 15:57:41;  author: kingdon;  state: Exp;  lines: ${PLUS}12 -0
+date: ${ISO8601DATE1996A};  author: kingdon;  state: Exp;  lines: ${PLUS}12 -0
 add more lines
 ----------------------------
 revision 1\.1
-date: 1996/11/24 15:56:05;  author: kingdon;  state: Exp;
+date: ${ISO8601DATE1996B};  author: kingdon;  state: Exp;
 add file1
-============================================================================="
+=============================================================================")
 
 	  # Note that the dates here are chosen so that (a) we test
 	  # at least one date after 2000, (b) we will notice if the
@@ -19208,6 +19248,7 @@ add file1
 
 	  # ISO8601 format.  There are many, many, other variations
 	  # specified by ISO8601 which we should be testing too.
+	  (TZ=GMT; export TZ;
 	  dotest rcs-3 "${testcvs} -q log -d '1996-12-11<'" "
 RCS file: ${CVSROOT_DIRNAME}/first-dir/file1,v
 Working file: file1
@@ -19222,11 +19263,12 @@ description:
 file1 is for testing CVS
 ----------------------------
 revision 1\.3
-date: 2000/11/24 15:58:37;  author: kingdon;  state: Exp;  lines: ${PLUS}1 -2
+date: ${ISO8601DATE2000A};  author: kingdon;  state: Exp;  lines: ${PLUS}1 -2
 delete second line; modify twelfth line
-============================================================================="
+=============================================================================")
 
 	  # RFC822 format (as amended by RFC1123).
+	  (TZ=GMT; export TZ;
 	  dotest rcs-4 "${testcvs} -q log -d '<3 Apr 2000 00:00'" \
 "
 RCS file: ${CVSROOT_DIRNAME}/first-dir/file1,v
@@ -19242,13 +19284,13 @@ description:
 file1 is for testing CVS
 ----------------------------
 revision 1\.2
-date: 1996/11/24 15:57:41;  author: kingdon;  state: Exp;  lines: ${PLUS}12 -0
+date: ${ISO8601DATE1996A};  author: kingdon;  state: Exp;  lines: ${PLUS}12 -0
 add more lines
 ----------------------------
 revision 1\.1
-date: 1996/11/24 15:56:05;  author: kingdon;  state: Exp;
+date: ${ISO8601DATE1996B};  author: kingdon;  state: Exp;
 add file1
-============================================================================="
+=============================================================================")
 
 	  # Intended behavior for "cvs annotate" is that it displays the
 	  # last two digits of the year.  Make sure it does that rather
@@ -19506,7 +19548,7 @@ date: 1970/12/31 11:00:05;  author: joe;  state: bogus;
 \*\*\* empty log message \*\*\*
 ----------------------------
 revision 1\.2\.6\.2
-date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;  lines: ${PLUS}1 -1
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -1
 mod
 ----------------------------
 revision 1\.2\.6\.1
@@ -19736,7 +19778,7 @@ EOF
 	  echo 'OpenMunger sources' >file1
 
 	  # choose a time in the past to demonstrate the problem
-	  TZ=GMT touch -t 200012010123 file1
+	  (TZ=GMT; export TZ; touch -t 200012010123 file1)
 
 	  dotest_sort rcs4-1 \
 "${testcvs} import -d -m add rcs4-dir openmunger openmunger-1_0" \
@@ -19745,7 +19787,7 @@ EOF
 N rcs4-dir/file1
 No conflicts created by this import'
 	  echo 'OpenMunger sources release 1.1 extras' >>file1
-	  TZ=GMT touch -t 200112011234 file1
+	  (TZ=GMT; export TZ; touch -t 200112011234 file1)
 	  dotest_sort rcs4-2 \
 "${testcvs} import -d -m add rcs4-dir openmunger openmunger-1_1" \
 '
@@ -21197,9 +21239,9 @@ xx"
 	  dotest keyword-9 "${testcvs} update -kkvl file1" "U file1"
 	  dotest keyword-10 "cat file1" \
 '\$'"Author: ${username} "'\$'"
-"'\$'"Date: [0-9][0-9][0-9][0-9]/[0-9][0-9]/[0-9][0-9] [0-9][0-9]:[0-9][0-9]:[0-9][0-9] "'\$'"
-"'\$'"Header: ${CVSROOT_DIRNAME}/first-dir/file1,v 1\.1 [0-9/]* [0-9:]* ${username} Exp ${username} "'\$'"
-"'\$'"Id: file1,v 1\.1 [0-9/]* [0-9:]* ${username} Exp ${username} "'\$'"
+"'\$'"Date: ${RCSKEYDATE} "'\$'"
+"'\$'"Header: ${CVSROOT_DIRNAME}/first-dir/file1,v 1\.1 ${RCSKEYDATE} ${username} Exp ${username} "'\$'"
+"'\$'"Id: file1,v 1\.1 ${RCSKEYDATE} ${username} Exp ${username} "'\$'"
 "'\$'"Locker: ${username} "'\$'"
 "'\$'"Name:  "'\$'"
 "'\$'"RCSfile: file1,v "'\$'"
@@ -21210,7 +21252,7 @@ xx"
 "'\$'"Date
 "'\$'"State: Exp "'\$'" "'\$'"State: Exp "'\$'"
 xx "'\$'"Log: file1,v "'\$'"
-xx Revision 1\.1  [0-9/]* [0-9:]*  ${username}
+xx Revision 1\.1  ${RCSKEYDATE}  ${username}
 xx add
 xx"
 
@@ -21230,16 +21272,16 @@ xx"
 "'\$'"Date
 "'\$'"State"'\$'" "'\$'"State"'\$'"
 xx "'\$'"Log"'\$'"
-xx Revision 1\.1  [0-9/]* [0-9:]*  ${username}
+xx Revision 1\.1  ${RCSKEYDATE}  ${username}
 xx add
 xx"
 
 	  dotest keyword-13 "${testcvs} update -kv file1" "U file1"
 	  dotest keyword-14 "cat file1" \
 "${username}
-[0-9][0-9][0-9][0-9]/[0-9][0-9]/[0-9][0-9] [0-9][0-9]:[0-9][0-9]:[0-9][0-9]
-${CVSROOT_DIRNAME}/first-dir/file1,v 1\.1 [0-9/]* [0-9:]* ${username} Exp
-file1,v 1\.1 [0-9/]* [0-9:]* ${username} Exp
+${RCSKEYDATE}
+${CVSROOT_DIRNAME}/first-dir/file1,v 1\.1 ${RCSKEYDATE} ${username} Exp
+file1,v 1\.1 ${RCSKEYDATE} ${username} Exp
 
 
 file1,v
@@ -21250,7 +21292,7 @@ Exp
 "'\$'"Date
 Exp Exp
 xx file1,v
-xx Revision 1\.1  [0-9/]* [0-9:]*  ${username}
+xx Revision 1\.1  ${RCSKEYDATE}  ${username}
 xx add
 xx"
 
@@ -21359,7 +21401,7 @@ new revision: 1\.4; previous revision: 1\.3"
 	  dotest keywordlog-7 "cat file1" \
 "initial
 xx "'\$'"Log: file1,v "'\$'"
-xx Revision 1\.4  [0-9/]* [0-9:]*  ${username}
+xx Revision 1\.4  ${RCSKEYDATE}  ${username}
 xx First log line
 xx Second log line
 xx"
@@ -21369,7 +21411,7 @@ xx"
 	  dotest keywordlog-9 "cat file1" \
 "initial
 xx "'\$'"Log: file1,v "'\$'"
-xx Revision 1\.4  [0-9/]* [0-9:]*  ${username}
+xx Revision 1\.4  ${RCSKEYDATE}  ${username}
 xx First log line
 xx Second log line
 xx"
@@ -21382,10 +21424,10 @@ new revision: 1\.5; previous revision: 1\.4"
 	  dotest keywordlog-11 "cat file1" \
 "initial
 xx "'\$'"Log: file1,v "'\$'"
-xx Revision 1\.5  [0-9/]* [0-9:]*  ${username}
+xx Revision 1\.5  ${RCSKEYDATE}  ${username}
 xx modify
 xx
-xx Revision 1\.4  [0-9/]* [0-9:]*  ${username}
+xx Revision 1\.4  ${RCSKEYDATE}  ${username}
 xx First log line
 xx Second log line
 xx
@@ -21396,10 +21438,10 @@ change"
 	  dotest keywordlog-13 "cat file1" \
 "initial
 xx "'\$'"Log: file1,v "'\$'"
-xx Revision 1\.5  [0-9/]* [0-9:]*  ${username}
+xx Revision 1\.5  ${RCSKEYDATE}  ${username}
 xx modify
 xx
-xx Revision 1\.4  [0-9/]* [0-9:]*  ${username}
+xx Revision 1\.4  ${RCSKEYDATE}  ${username}
 xx First log line
 xx Second log line
 xx
@@ -21414,10 +21456,10 @@ new revision: 1\.4\.2\.1; previous revision: 1\.4"
 	  dotest keywordlog-16 "cat file1" \
 "initial
 xx "'\$'"Log: file1,v "'\$'"
-xx Revision 1\.4\.2\.1  [0-9/]* [0-9:]*  ${username}
+xx Revision 1\.4\.2\.1  ${RCSKEYDATE}  ${username}
 xx br-modify
 xx
-xx Revision 1\.4  [0-9/]* [0-9:]*  ${username}
+xx Revision 1\.4  ${RCSKEYDATE}  ${username}
 xx First log line
 xx Second log line
 xx
@@ -21427,10 +21469,10 @@ br-change"
 	  dotest keywordlog-18 "cat file1" \
 "initial
 xx "'\$'"Log: file1,v "'\$'"
-xx Revision 1\.4\.2\.1  [0-9/]* [0-9:]*  ${username}
+xx Revision 1\.4\.2\.1  ${RCSKEYDATE}  ${username}
 xx br-modify
 xx
-xx Revision 1\.4  [0-9/]* [0-9:]*  ${username}
+xx Revision 1\.4  ${RCSKEYDATE}  ${username}
 xx First log line
 xx Second log line
 xx
@@ -21439,10 +21481,10 @@ br-change"
 	  dotest keywordlog-19 "${testcvs} -q co -p -r br first-dir/file1" \
 "initial
 xx "'\$'"Log: file1,v "'\$'"
-xx Revision 1\.4\.2\.1  [0-9/]* [0-9:]*  ${username}
+xx Revision 1\.4\.2\.1  ${RCSKEYDATE}  ${username}
 xx br-modify
 xx
-xx Revision 1\.4  [0-9/]* [0-9:]*  ${username}
+xx Revision 1\.4  ${RCSKEYDATE}  ${username}
 xx First log line
 xx Second log line
 xx
@@ -21450,10 +21492,10 @@ br-change"
 	  dotest keywordlog-20 "${testcvs} -q co -p first-dir/file1" \
 "initial
 xx "'\$'"Log: file1,v "'\$'"
-xx Revision 1\.5  [0-9/]* [0-9:]*  ${username}
+xx Revision 1\.5  ${RCSKEYDATE}  ${username}
 xx modify
 xx
-xx Revision 1\.4  [0-9/]* [0-9:]*  ${username}
+xx Revision 1\.4  ${RCSKEYDATE}  ${username}
 xx First log line
 xx Second log line
 xx
@@ -21461,7 +21503,7 @@ change"
 	  dotest keywordlog-21 "${testcvs} -q co -p -r 1.4 first-dir/file1" \
 "initial
 xx "'\$'"Log: file1,v "'\$'"
-xx Revision 1\.4  [0-9/]* [0-9:]*  ${username}
+xx Revision 1\.4  ${RCSKEYDATE}  ${username}
 xx First log line
 xx Second log line
 xx"
@@ -21482,7 +21524,7 @@ Annotations for file1
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
 1\.3          (${username} *[0-9a-zA-Z-]*): initial
 1\.4\.2\.1      (${username} *[0-9a-zA-Z-]*): xx "'\$'"Log: file1,v "'\$'"
-1\.4\.2\.1      (${username} *[0-9a-zA-Z-]*): xx Revision 1\.4  [0-9/]* [0-9:]*  ${username}
+1\.4\.2\.1      (${username} *[0-9a-zA-Z-]*): xx Revision 1\.4  ${RCSKEYDATE}  ${username}
 1\.4\.2\.1      (${username} *[0-9a-zA-Z-]*): xx First log line
 1\.4\.2\.1      (${username} *[0-9a-zA-Z-]*): xx Second log line
 1\.4\.2\.1      (${username} *[0-9a-zA-Z-]*): xx
@@ -21493,7 +21535,7 @@ Annotations for file1
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
 1\.3          (${username} *[0-9a-zA-Z-]*): initial
 1\.5          (${username} *[0-9a-zA-Z-]*): xx "'\$'"Log: file1,v "'\$'"
-1\.5          (${username} *[0-9a-zA-Z-]*): xx Revision 1\.4  [0-9/]* [0-9:]*  ${username}
+1\.5          (${username} *[0-9a-zA-Z-]*): xx Revision 1\.4  ${RCSKEYDATE}  ${username}
 1\.5          (${username} *[0-9a-zA-Z-]*): xx First log line
 1\.5          (${username} *[0-9a-zA-Z-]*): xx Second log line
 1\.5          (${username} *[0-9a-zA-Z-]*): xx
@@ -21515,7 +21557,7 @@ done"
 "${testcvs} -q co -p first-dir/file1" \
 "initial
 xx "'\$'"Log: file1,v "'\$'"
-xx Revision 1\.4  [0-9/]* [0-9:]*  ${username}
+xx Revision 1\.4  ${RCSKEYDATE}  ${username}
 xx First log line
 xx Second log line
 xx"
@@ -22107,16 +22149,16 @@ total revisions: 3;	selected revisions: 3
 description:
 ----------------------------
 revision 1\.1
-date: [0-9/]* [0-9:]*;  author: $username;  state: Exp;
+date: ${ISO8601DATE};  author: $username;  state: Exp;
 branches:  1\.1\.2;  1\.1\.4;
 add
 ----------------------------
 revision 1\.1\.4\.1
-date: [0-9/]* [0-9:]*;  author: $username;  state: Exp;  lines: ${PLUS}1 -1
+date: ${ISO8601DATE};  author: $username;  state: Exp;  lines: ${PLUS}1 -1
 modify-on-B
 ----------------------------
 revision 1\.1\.2\.1
-date: [0-9/]* [0-9:]*;  author: $username;  state: Exp;  lines: ${PLUS}1 -1
+date: ${ISO8601DATE};  author: $username;  state: Exp;  lines: ${PLUS}1 -1
 modify-on-A
 ============================================================================="
 
@@ -22137,7 +22179,7 @@ total revisions: 3;	selected revisions: 1
 description:
 ----------------------------
 revision 1\.1
-date: [0-9/]* [0-9:]*;  author: $username;  state: Exp;
+date: ${ISO8601DATE};  author: $username;  state: Exp;
 branches:  1\.1\.2;  1\.1\.4;
 add
 ============================================================================="
@@ -22365,12 +22407,12 @@ total revisions: 2;	selected revisions: 2
 description:
 ----------------------------
 revision 1\.1
-date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;
 branches:  1\.1\.2;
 add
 ----------------------------
 revision 1\.1\.2\.1
-date: [0-9/]* [0-9:]*;  author: ${username};  state: foo;  lines: ${PLUS}1 -0
+date: ${ISO8601DATE};  author: ${username};  state: foo;  lines: ${PLUS}1 -0
 modify-on-branch
 ============================================================================="
 	  dotest admin-12 "${testcvs} -q admin -bbr file1" \
@@ -22391,12 +22433,12 @@ total revisions: 2;	selected revisions: 2
 description:
 ----------------------------
 revision 1\.1
-date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;
 branches:  1\.1\.2;
 add
 ----------------------------
 revision 1\.1\.2\.1
-date: [0-9/]* [0-9:]*;  author: ${username};  state: foo;  lines: ${PLUS}1 -0
+date: ${ISO8601DATE};  author: ${username};  state: foo;  lines: ${PLUS}1 -0
 modify-on-branch
 ============================================================================="
 
@@ -22425,13 +22467,13 @@ comment	@xx@;
 
 
 1\.1
-date	[0-9][0-9]*\.[0-9][0-9]\.[0-9][0-9]\.[0-9][0-9]\.[0-9][0-9]\.[0-9][0-9];	author ${username};	state Exp;
+date	${RCSDELTADATE};	author ${username};	state Exp;
 branches
 	1\.1\.2\.1;
 next	;
 
 1\.1\.2\.1
-date	[0-9][0-9]*\.[0-9][0-9]\.[0-9][0-9]\.[0-9][0-9]\.[0-9][0-9]\.[0-9][0-9];	author ${username};	state foo;
+date	${RCSDELTADATE};	author ${username};	state foo;
 branches;
 next	;
 
@@ -22475,7 +22517,7 @@ total revisions: 1;	selected revisions: 1
 description:
 ----------------------------
 revision 1\.1
-date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;
 add
 ============================================================================="
 
@@ -22501,7 +22543,7 @@ total revisions: 1;	selected revisions: 1
 description:
 ----------------------------
 revision 1\.1
-date: [0-9/]* [0-9:]*;  author: ${username};  state: oneone;
+date: ${ISO8601DATE};  author: ${username};  state: oneone;
 changed-log-message
 ============================================================================="
 
@@ -22528,12 +22570,12 @@ total revisions: 2;	selected revisions: 2
 description:
 ----------------------------
 revision 1\.1
-date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;
 branches:  1\.1\.2;
 add
 ----------------------------
 revision 1\.1\.2\.1
-date: [0-9/]* [0-9:]*;  author: ${username};  state: foo;  lines: ${PLUS}1 -0
+date: ${ISO8601DATE};  author: ${username};  state: foo;  lines: ${PLUS}1 -0
 modify-on-branch
 ============================================================================="
 
@@ -22559,12 +22601,12 @@ total revisions: 2;	selected revisions: 2
 description:
 ----------------------------
 revision 1\.1
-date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;
 branches:  1\.1\.2;
 add
 ----------------------------
 revision 1.1.2.1
-date: [0-9/]* [0-9:]*;  author: ${username};  state: foo;  lines: ${PLUS}1 -0
+date: ${ISO8601DATE};  author: ${username};  state: foo;  lines: ${PLUS}1 -0
 modify-on-branch
 ============================================================================="
 
@@ -22679,7 +22721,7 @@ total revisions: 6;	selected revisions: 1
 description:
 ----------------------------
 revision 1\.6	locked by: ${username};
-date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
 sixth
 ============================================================================="
 	  dotest_fail admin-22-o10 "${testcvs} admin -o1.5: aaa" \
@@ -22708,19 +22750,19 @@ total revisions: 4;	selected revisions: 4
 description:
 ----------------------------
 revision 1\.4
-date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
 fourth
 ----------------------------
 revision 1\.3
-date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
 third
 ----------------------------
 revision 1\.2
-date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
 second
 ----------------------------
 revision 1\.1
-date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;
 first
 ============================================================================="
 
@@ -22777,24 +22819,24 @@ total revisions: 5;	selected revisions: 5
 description:
 ----------------------------
 revision 1\.4
-date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
 fourth
 ----------------------------
 revision 1\.3
-date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
 branches:  1\.3\.2;
 third
 ----------------------------
 revision 1\.2
-date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
 second
 ----------------------------
 revision 1\.1
-date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;
 first
 ----------------------------
 revision 1\.3\.2\.4
-date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;  lines: ${PLUS}4 -0
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}4 -0
 branch-four
 ============================================================================="
 
@@ -22829,7 +22871,7 @@ total revisions: 1;	selected revisions: 1
 description:
 ----------------------------
 revision 1\.2
-date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;
 modify
 ============================================================================="
 
@@ -22844,13 +22886,13 @@ comment	@xx@;
 
 
 1\.1
-date	[0-9][0-9]*\.[0-9][0-9]\.[0-9][0-9]\.[0-9][0-9]\.[0-9][0-9]\.[0-9][0-9];	author ${username};	state Exp;
+date	${RCSDELTADATE};	author ${username};	state Exp;
 branches
 	1\.1\.2\.1;
 next	;
 
 1\.1\.2\.1
-date	[0-9][0-9]*\.[0-9][0-9]\.[0-9][0-9]\.[0-9][0-9]\.[0-9][0-9]\.[0-9][0-9];	author ${username};	state foo;
+date	${RCSDELTADATE};	author ${username};	state foo;
 branches;
 next	;
 
@@ -23017,17 +23059,17 @@ comment	@# @;
 
 
 1\.4
-date	[0-9][0-9]*\.[0-9][0-9]\.[0-9][0-9]\.[0-9][0-9]\.[0-9][0-9]\.[0-9][0-9];	author ${username};	state Exp;
+date	${RCSDELTADATE};	author ${username};	state Exp;
 branches;
 next	1\.3;
 
 1\.3
-date	[0-9][0-9]*\.[0-9][0-9]\.[0-9][0-9]\.[0-9][0-9]\.[0-9][0-9]\.[0-9][0-9];	author ${username};	state Exp;
+date	${RCSDELTADATE};	author ${username};	state Exp;
 branches;
 next	1\.2;
 
 1\.2
-date	[0-9][0-9]*\.[0-9][0-9]\.[0-9][0-9]\.[0-9][0-9]\.[0-9][0-9]\.[0-9][0-9];	author ${username};	state Exp;
+date	${RCSDELTADATE};	author ${username};	state Exp;
 branches;
 next	;
 
@@ -23090,24 +23132,24 @@ total revisions: 5;	selected revisions: 5
 description:
 ----------------------------
 revision 1\.4
-date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
 fourth
 ----------------------------
 revision 1\.3
-date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
 branches:  1\.3\.2;
 third
 ----------------------------
 revision 1\.2
-date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
 second
 ----------------------------
 revision 1\.1
-date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;
 first
 ----------------------------
 revision 1\.3\.2\.4
-date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;  lines: ${PLUS}4 -0
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}4 -0
 branch-four
 =============================================================================
 
@@ -23127,12 +23169,12 @@ total revisions: 2;	selected revisions: 2
 description:
 ----------------------------
 revision 1\.1
-date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;
 branches:  1\.1\.2;
 add
 ----------------------------
 revision 1\.1\.2\.1
-date: [0-9/]* [0-9:]*;  author: ${username};  state: foo;  lines: ${PLUS}1 -0
+date: ${ISO8601DATE};  author: ${username};  state: foo;  lines: ${PLUS}1 -0
 modify-on-branch
 =============================================================================
 
@@ -23159,15 +23201,15 @@ total revisions: 3;	selected revisions: 3
 description:
 ----------------------------
 revision 1\.4
-date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
 yet_another
 ----------------------------
 revision 1\.3
-date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
 nuthr_line
 ----------------------------
 revision 1\.2
-date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;
 modify
 =============================================================================
 
@@ -23184,12 +23226,12 @@ total revisions: 2;	selected revisions: 2
 description:
 ----------------------------
 revision 1\.1
-date: [0-9/]* [0-9:]*;  author: ${username};  state: dead;
+date: ${ISO8601DATE};  author: ${username};  state: dead;
 branches:  1\.1\.2;
 file file3 was initially added on branch br\.
 ----------------------------
 revision 1\.1\.2\.1
-date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
 another-log-message
 ============================================================================="
 
@@ -23246,7 +23288,7 @@ total revisions: 1;	selected revisions: 1
 description:
 ----------------------------
 revision 1\.1	locked by: ${username};
-date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;
 add
 ============================================================================="
 
@@ -23269,7 +23311,7 @@ total revisions: 1;	selected revisions: 1
 description:
 ----------------------------
 revision 1\.1
-date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;
 add
 ============================================================================="
 
@@ -24503,11 +24545,11 @@ total revisions: 2;	selected revisions: 2
 description:
 ----------------------------
 revision 1\.2
-date: [0-9/]* [0-9:]*;  author: $username;  state: dead;  lines: +0 -0
+date: ${ISO8601DATE};  author: $username;  state: dead;  lines: +0 -0
 rm
 ----------------------------
 revision 1\.1
-date: [0-9/]* [0-9:]*;  author: $username;  state: Exp;
+date: ${ISO8601DATE};  author: $username;  state: Exp;
 add
 ============================================================================="
 	      dotest recase-6sscs "$testcvs status FiLe" \
@@ -24533,7 +24575,7 @@ total revisions: 1;	selected revisions: 1
 description:
 ----------------------------
 revision 1\.1
-date: [0-9/]* [0-9:]*;  author: $username;  state: Exp;
+date: ${ISO8601DATE};  author: $username;  state: Exp;
 recase
 ============================================================================="
 	    else # server sensitive && client insensitive
@@ -24561,7 +24603,7 @@ total revisions: 1;	selected revisions: 1
 description:
 ----------------------------
 revision 1\.1
-date: [0-9/]* [0-9:]*;  author: $username;  state: Exp;
+date: ${ISO8601DATE};  author: $username;  state: Exp;
 recase
 ============================================================================="
 	      dotest recase-6ss "$testcvs status FiLe" \
@@ -24587,7 +24629,7 @@ total revisions: 1;	selected revisions: 1
 description:
 ----------------------------
 revision 1\.1
-date: [0-9/]* [0-9:]*;  author: $username;  state: Exp;
+date: ${ISO8601DATE};  author: $username;  state: Exp;
 recase
 ============================================================================="
 	    fi
@@ -24618,15 +24660,15 @@ total revisions: 3;	selected revisions: 3
 description:
 ----------------------------
 revision 1\.3
-date: [0-9/]* [0-9:]*;  author: $username;  state: Exp;  lines: +1 -1
+date: ${ISO8601DATE};  author: $username;  state: Exp;  lines: +1 -1
 recase
 ----------------------------
 revision 1\.2
-date: [0-9/]* [0-9:]*;  author: $username;  state: dead;  lines: +0 -0
+date: ${ISO8601DATE};  author: $username;  state: dead;  lines: +0 -0
 rm
 ----------------------------
 revision 1\.1
-date: [0-9/]* [0-9:]*;  author: $username;  state: Exp;
+date: ${ISO8601DATE};  author: $username;  state: Exp;
 add
 ============================================================================="
 	    dotest recase-6si "$testcvs status FiLe" \
@@ -24653,15 +24695,15 @@ total revisions: 3;	selected revisions: 3
 description:
 ----------------------------
 revision 1\.3
-date: [0-9/]* [0-9:]*;  author: $username;  state: Exp;  lines: +1 -1
+date: ${ISO8601DATE};  author: $username;  state: Exp;  lines: +1 -1
 recase
 ----------------------------
 revision 1\.2
-date: [0-9/]* [0-9:]*;  author: $username;  state: dead;  lines: +0 -0
+date: ${ISO8601DATE};  author: $username;  state: dead;  lines: +0 -0
 rm
 ----------------------------
 revision 1\.1
-date: [0-9/]* [0-9:]*;  author: $username;  state: Exp;
+date: ${ISO8601DATE};  author: $username;  state: Exp;
 add
 ============================================================================="
 	  fi
@@ -24763,11 +24805,11 @@ total revisions: 2;	selected revisions: 2
 description:
 ----------------------------
 revision 1\.2
-date: [0-9/]* [0-9:]*;  author: $username;  state: dead;  lines: +0 -0
+date: ${ISO8601DATE};  author: $username;  state: dead;  lines: +0 -0
 rm
 ----------------------------
 revision 1\.1
-date: [0-9/]* [0-9:]*;  author: $username;  state: Exp;
+date: ${ISO8601DATE};  author: $username;  state: Exp;
 add
 ============================================================================="
 	    dotest recase-15sscs "$testcvs status FiLe" \
@@ -24793,7 +24835,7 @@ total revisions: 1;	selected revisions: 1
 description:
 ----------------------------
 revision 1\.1
-date: [0-9/]* [0-9:]*;  author: $username;  state: Exp;
+date: ${ISO8601DATE};  author: $username;  state: Exp;
 recase
 ============================================================================="
 	      dotest recase-17sscs "$testcvs status FILE" \
@@ -24819,7 +24861,7 @@ total revisions: 1;	selected revisions: 1
 description:
 ----------------------------
 revision 1\.1
-date: [0-9/]* [0-9:]*;  author: $username;  state: Exp;
+date: ${ISO8601DATE};  author: $username;  state: Exp;
 recase
 ============================================================================="
 	    else # $server_sensitive && !$client_sensitive
@@ -24847,7 +24889,7 @@ total revisions: 1;	selected revisions: 1
 description:
 ----------------------------
 revision 1\.1
-date: [0-9/]* [0-9:]*;  author: $username;  state: Exp;
+date: ${ISO8601DATE};  author: $username;  state: Exp;
 recase
 ============================================================================="
 	      dotest recase-17ssci "$testcvs status FILE" \
@@ -24873,7 +24915,7 @@ total revisions: 1;	selected revisions: 1
 description:
 ----------------------------
 revision 1\.1
-date: [0-9/]* [0-9:]*;  author: $username;  state: Exp;
+date: ${ISO8601DATE};  author: $username;  state: Exp;
 recase
 ============================================================================="
 	    fi
@@ -25570,7 +25612,7 @@ total revisions: 1;	selected revisions: 1
 description:
 ----------------------------
 revision 1\.1
-date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;
 reading
 =============================================================================
 
@@ -25587,11 +25629,11 @@ total revisions: 2;	selected revisions: 2
 description:
 ----------------------------
 revision 1\.2
-date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
 actually
 ----------------------------
 revision 1\.1
-date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;
 is
 =============================================================================
 ${SPROG} log: Logging mod1-2
@@ -25608,7 +25650,7 @@ total revisions: 1;	selected revisions: 1
 description:
 ----------------------------
 revision 1\.1
-date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;
 reading
 =============================================================================
 
@@ -25625,11 +25667,11 @@ total revisions: 2;	selected revisions: 2
 description:
 ----------------------------
 revision 1\.2
-date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
 actually
 ----------------------------
 revision 1\.1
-date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;
 is
 =============================================================================
 ${SPROG} log: Logging mod2-2/mod1-2
@@ -25646,7 +25688,7 @@ total revisions: 1;	selected revisions: 1
 description:
 ----------------------------
 revision 1\.1
-date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;
 reading
 =============================================================================
 
@@ -25663,11 +25705,11 @@ total revisions: 2;	selected revisions: 2
 description:
 ----------------------------
 revision 1\.2
-date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
 actually
 ----------------------------
 revision 1\.1
-date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;
 is
 =============================================================================
 ${SPROG} log: Logging mod1-2/mod2-2
@@ -25684,7 +25726,7 @@ total revisions: 1;	selected revisions: 1
 description:
 ----------------------------
 revision 1\.1
-date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;
 reading
 =============================================================================
 
@@ -25701,11 +25743,11 @@ total revisions: 2;	selected revisions: 2
 description:
 ----------------------------
 revision 1\.2
-date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
 actually
 ----------------------------
 revision 1\.1
-date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;
 anyone
 =============================================================================
 ${SPROG} log: Logging mod2-1
@@ -25722,7 +25764,7 @@ total revisions: 1;	selected revisions: 1
 description:
 ----------------------------
 revision 1\.1
-date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;
 reading
 =============================================================================
 
@@ -25739,11 +25781,11 @@ total revisions: 2;	selected revisions: 2
 description:
 ----------------------------
 revision 1\.2
-date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
 actually
 ----------------------------
 revision 1\.1
-date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;
 anyone
 =============================================================================
 ${SPROG} log: Logging mod2-2
@@ -25760,7 +25802,7 @@ total revisions: 1;	selected revisions: 1
 description:
 ----------------------------
 revision 1\.1
-date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;
 reading
 =============================================================================
 
@@ -25777,11 +25819,11 @@ total revisions: 2;	selected revisions: 2
 description:
 ----------------------------
 revision 1\.2
-date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
 actually
 ----------------------------
 revision 1\.1
-date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;
 anyone
 =============================================================================" \
 "${SPROG} log: Logging \.
@@ -25799,7 +25841,7 @@ total revisions: 1;	selected revisions: 1
 description:
 ----------------------------
 revision 1\.1
-date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;
 reading
 =============================================================================
 
@@ -25816,11 +25858,11 @@ total revisions: 2;	selected revisions: 2
 description:
 ----------------------------
 revision 1\.2
-date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
 actually
 ----------------------------
 revision 1\.1
-date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;
 is
 =============================================================================
 ${SPROG} log: Logging mod1-2
@@ -25837,7 +25879,7 @@ total revisions: 1;	selected revisions: 1
 description:
 ----------------------------
 revision 1\.1
-date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;
 reading
 =============================================================================
 
@@ -25854,11 +25896,11 @@ total revisions: 2;	selected revisions: 2
 description:
 ----------------------------
 revision 1\.2
-date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
 actually
 ----------------------------
 revision 1\.1
-date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;
 is
 =============================================================================
 ${SPROG} log: Logging mod2-2
@@ -25876,7 +25918,7 @@ total revisions: 1;	selected revisions: 1
 description:
 ----------------------------
 revision 1\.1
-date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;
 reading
 =============================================================================
 
@@ -25893,11 +25935,11 @@ total revisions: 2;	selected revisions: 2
 description:
 ----------------------------
 revision 1\.2
-date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
 actually
 ----------------------------
 revision 1\.1
-date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;
 is
 =============================================================================
 ${SPROG} log: Logging mod1-2
@@ -25915,7 +25957,7 @@ total revisions: 1;	selected revisions: 1
 description:
 ----------------------------
 revision 1\.1
-date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;
 reading
 =============================================================================
 
@@ -25932,11 +25974,11 @@ total revisions: 2;	selected revisions: 2
 description:
 ----------------------------
 revision 1\.2
-date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
 actually
 ----------------------------
 revision 1\.1
-date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;
 anyone
 =============================================================================
 ${SPROG} log: Logging mod2-1
@@ -25953,7 +25995,7 @@ total revisions: 1;	selected revisions: 1
 description:
 ----------------------------
 revision 1\.1
-date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;
 reading
 =============================================================================
 
@@ -25970,11 +26012,11 @@ total revisions: 2;	selected revisions: 2
 description:
 ----------------------------
 revision 1\.2
-date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
 actually
 ----------------------------
 revision 1\.1
-date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;
 anyone
 =============================================================================
 ${SPROG} log: Logging mod2-2
@@ -25991,7 +26033,7 @@ total revisions: 1;	selected revisions: 1
 description:
 ----------------------------
 revision 1\.1
-date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;
 reading
 =============================================================================
 
@@ -26008,11 +26050,11 @@ total revisions: 2;	selected revisions: 2
 description:
 ----------------------------
 revision 1\.2
-date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
 actually
 ----------------------------
 revision 1\.1
-date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;
 anyone
 ============================================================================="
 
@@ -29069,9 +29111,9 @@ branch: 1\.1\.1
 branches:  1\.1\.1;
 ${SPROG} log: Logging \.
 ${SPROG} log: Logging subdir
-date: ${RCSDATE};  author: ${username};  state: Exp;
-date: ${RCSDATE};  author: ${username};  state: Exp;  lines: ${PLUS}0 -0
-date: ${RCSDATE};  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}0 -0
+date: ${ISO8601DATE};  author: ${username};  state: Exp;
 description:
 description:
 head: 1\.1
@@ -29206,9 +29248,9 @@ branch: 1\.1\.1
 branches:  1\.1\.1;
 ${SPROG} log: Logging \.
 ${SPROG} log: Logging subdir
-date: ${RCSDATE};  author: ${username};  state: Exp;
-date: ${RCSDATE};  author: ${username};  state: Exp;  lines: ${PLUS}0 -0
-date: ${RCSDATE};  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}0 -0
+date: ${ISO8601DATE};  author: ${username};  state: Exp;
 description:
 description:
 head: 1\.1
