@@ -134,8 +134,8 @@ static struct buffer *buf_from_net;
  * creation, when it is determined that they are unneeded, regardless of what
  * other filters have been prepended to the buffer chain.
  */
-static struct buffer *secondary_log;
-static struct buffer *secondary_log_out;
+static struct buffer *proxy_log;
+static struct buffer *proxy_log_out;
 
 /* Set while we are reprocessing a log so that we can avoid sending responses
  * to some requests twice.
@@ -527,7 +527,7 @@ supported_response (char *name)
  *   false                Otherwise.
  */
 static bool
-isSecondaryServer (void)
+isProxyServer (void)
 {
     char hostname[MAXHOSTNAMELEN];
     assert (current_parsed_root);
@@ -670,18 +670,18 @@ input_memory_error (struct buffer *buf)
  * needed.
  *
  * GLOBALS
- *   secondary_log	The buffer object containing the write proxy log.
+ *   proxy_log	The buffer object containing the write proxy log.
  *
  * RETURNS
  *   Nothing.
  */
 static void
-reprocess_secondary_log (void)
+reprocess_proxy_log (void)
 {
     int fd;
     struct buffer *log;
 
-    assert (secondary_log);
+    assert (proxy_log);
 
     /* Free the arguments since we processed some of them in the first pass.
      */
@@ -698,8 +698,8 @@ reprocess_secondary_log (void)
 	argument_count = 1;
     }
 
-    log = log_buffer_rewind (secondary_log);
-    secondary_log = NULL;
+    log = log_buffer_rewind (proxy_log);
+    proxy_log = NULL;
     /* Dispose of any read but unused data in the net buffer since it will
      * already be in the log.
      */
@@ -896,9 +896,9 @@ E Protocol error: Root says \"%s\" but pserver says \"%s\"",
     /* At this point we have enough information to determine if we are a
      * secondary server or not.
      */
-    if (isSecondaryServer ())
+    if (isProxyServer ())
     {
-	if (!secondary_log)
+	if (!proxy_log)
 	    /* Exit with an error since we must have failed to open the
 	     * secondary log in server().
 	     */
@@ -914,25 +914,25 @@ E Protocol error: Root says \"%s\" but pserver says \"%s\"",
 	len = 5 + strlen (PrimaryServer->directory);
 	buf = xmalloc (len + 1);
 	sprintf (buf, "Root %s", PrimaryServer->directory);
-	replace_file_offset (log_buffer_get_log_fd (secondary_log),
+	replace_file_offset (log_buffer_get_log_fd (proxy_log),
 	                     buf_from_net->last_index,
 	                     buf_from_net->last_count,
 	                     buf, len);
 #endif
     }
-    else if (secondary_log)
+    else if (proxy_log)
     {
 	/* Else we are not a secondary server.  There is no point in
 	 * reprocessing since we handle all the requests we can receive
 	 * before `Root' as we receive them.  But close the logs.
 	 */
-	log_buffer_closelog (secondary_log);
-	log_buffer_closelog (secondary_log_out);
-	secondary_log = NULL;
+	log_buffer_closelog (proxy_log);
+	log_buffer_closelog (proxy_log_out);
+	proxy_log = NULL;
 	/*
-	 * Don't need this.  We assume it when secondary_log == NULL.
+	 * Don't need this.  We assume it when proxy_log == NULL.
 	 *
-	 *   secondary_log_out = NULL;
+	 *   proxy_log_out = NULL;
 	 */
     }
 #endif /* PROXY_SUPPORT */
@@ -1086,7 +1086,7 @@ serve_max_dotdot (char *arg)
     char *p;
 
 #ifdef PROXY_SUPPORT
-    if (secondary_log) return;
+    if (proxy_log) return;
 #endif /* PROXY_SUPPORT */
 
     if (lim < 0 || lim > 10000)
@@ -1310,7 +1310,7 @@ static void
 serve_repository (char *arg)
 {
 #ifdef PROXY_SUPPORT
-    assert (!secondary_log);
+    assert (!proxy_log);
 #endif /* PROXY_SUPPORT */
 
     if (alloc_pending (80))
@@ -1363,7 +1363,7 @@ serve_directory (char *arg)
 	free (repos);
 	if (
 #ifdef PROXY_SUPPORT
-	    !secondary_log &&
+	    !proxy_log &&
 #endif /* PROXY_SUPPORT */
 	    !outside_root (lrepos))
 	    dirswitch (arg, lrepos);
@@ -1380,7 +1380,7 @@ serve_static_directory (char *arg)
 
     if (error_pending ()
 #ifdef PROXY_SUPPORT
-	|| secondary_log
+	|| proxy_log
 #endif /* PROXY_SUPPORT */
        ) return;
 
@@ -1412,7 +1412,7 @@ serve_sticky (char *arg)
 
     if (error_pending ()
 #ifdef PROXY_SUPPORT
-	|| secondary_log
+	|| proxy_log
 #endif /* PROXY_SUPPORT */
        ) return;
 
@@ -1746,7 +1746,7 @@ serve_modified (char *arg)
 
     if (
 #ifdef PROXY_SUPPORT
-	!secondary_log &&
+	!proxy_log &&
 #endif /* PROXY_SUPPORT */
 	outside_dir (arg))
     {
@@ -1758,7 +1758,7 @@ serve_modified (char *arg)
     {
 	receive_file (size,
 #ifdef PROXY_SUPPORT
-	              secondary_log ? DEVNULL :
+	              proxy_log ? DEVNULL :
 #endif /* PROXY_SUPPORT */
 				      arg,
 		      gzipped);
@@ -1773,7 +1773,7 @@ serve_modified (char *arg)
     /* We've read all the data that needed to be read if we're still logging
      * for a secondary.  Return.
      */
-    if (secondary_log) return;
+    if (proxy_log) return;
 #endif /* PROXY_SUPPORT */
 
     if (checkin_time_valid)
@@ -1851,7 +1851,7 @@ serve_unchanged (char *arg)
 
     if (error_pending ()
 #ifdef PROXY_SUPPORT
-	|| secondary_log
+	|| proxy_log
 #endif /* PROXY_SUPPORT */
        ) return;
 
@@ -1948,7 +1948,7 @@ serve_is_modified (char *arg)
 
     if (error_pending ()
 #ifdef PROXY_SUPPORT
-	|| secondary_log
+	|| proxy_log
 #endif /* PROXY_SUPPORT */
        ) return;
 
@@ -2064,7 +2064,7 @@ serve_entry (char *arg)
 
     if (error_pending()
 #ifdef PROXY_SUPPORT
-	|| secondary_log
+	|| proxy_log
 #endif /* PROXY_SUPPORT */
        ) return;
 
@@ -2113,7 +2113,7 @@ serve_kopt (char *arg)
 {
     if (error_pending ()
 #ifdef PROXY_SUPPORT
-	|| secondary_log
+	|| proxy_log
 #endif /* PROXY_SUPPORT */
        )
 	return;
@@ -2155,7 +2155,7 @@ serve_checkin_time (char *arg)
 {
     if (error_pending ()
 #ifdef PROXY_SUPPORT
-	|| secondary_log
+	|| proxy_log
 #endif /* PROXY_SUPPORT */
        )
 	return;
@@ -2310,7 +2310,7 @@ become_proxy (void)
     struct buffer *buf_from_primary;
 
     /* Close the client log and open it for read.  */
-    struct buffer *buf_clientlog = log_buffer_rewind (secondary_log_out);
+    struct buffer *buf_clientlog = log_buffer_rewind (proxy_log_out);
     int status, to_primary_fd, from_primary_fd, to_net_fd, from_net_fd;
 
     /* Call presecondary script.  */
@@ -2343,7 +2343,7 @@ become_proxy (void)
     assert (to_primary_fd >= 0 && from_primary_fd >= 0 && to_net_fd >= 0);
 
     /* Close the client log and open it for read.  */
-    reprocess_secondary_log ();
+    reprocess_proxy_log ();
 
     while (from_primary_fd >= 0 || to_primary_fd >= 0)
     {
@@ -2624,7 +2624,7 @@ serve_notify (char *arg)
     if (error_pending ()) return;
 
 #ifdef PROXY_SUPPORT
-    if (isSecondaryServer())
+    if (isProxyServer())
     {
 	/* This is effectively a write command, so run it on the primary.  */
 	become_proxy ();
@@ -2959,7 +2959,7 @@ static void
 serve_kerberos_encrypt( char *arg )
 {
 #ifdef PROXY_SUPPORT
-    assert (!secondary_log);
+    assert (!proxy_log);
 #endif /* PROXY_SUPPORT */
 
     /* All future communication with the client will be encrypted.  */
@@ -2980,7 +2980,7 @@ static void
 serve_gssapi_encrypt( char *arg )
 {
 #ifdef PROXY_SUPPORT
-    assert (!secondary_log);
+    assert (!proxy_log);
 #endif /* PROXY_SUPPORT */
 
     if (cvs_gssapi_wrapping)
@@ -3019,7 +3019,7 @@ static void
 serve_gssapi_authenticate (char *arg)
 {
 #ifdef PROXY_SUPPORT
-    assert (!secondary_log);
+    assert (!proxy_log);
 #endif /* PROXY_SUPPORT */
 
     if (cvs_gssapi_wrapping)
@@ -3063,7 +3063,7 @@ serve_questionable (char *arg)
     static int initted;
 
 #ifdef PROXY_SUPPORT
-    if (secondary_log) return;
+    if (proxy_log) return;
 #endif /* PROXY_SUPPORT */
 
     if (!initted)
@@ -3356,7 +3356,7 @@ do_cvs_command (char *cmd_name, int (*command) (int, char **))
      * Therefore, we wish to avoid reprocessing the command since that would
      * cause endless recursion.
      */
-    if (isSecondaryServer())
+    if (isProxyServer())
     {
 	if (reprocessing)
 	    /* This must be the second time we've reached this point.
@@ -3377,10 +3377,10 @@ do_cvs_command (char *cmd_name, int (*command) (int, char **))
 	    else if (/* serve_co may have called this already and missing logs
 		      * should have generated an error in serve_root().
 		      */
-		     secondary_log)
+		     proxy_log)
 	    {
 		/* Set up the log for reprocessing.  */
-		reprocess_secondary_log ();
+		reprocess_proxy_log ();
 		/* And return to the main loop in server(), where we will now
 		 * find the logged secondary data and reread it.
 		 */
@@ -4151,7 +4151,7 @@ output_dir (const char *update_dir, const char *repository)
 	buf_output0 (protocol, update_dir);
     buf_output0 (protocol, "/\n");
 #ifdef PROXY_SUPPORT
-    if (isSecondaryServer())
+    if (isProxyServer())
     {
 	char *prepo = primary_root_inverse_translate (repository);
 	buf_output0 (protocol, prepo);
@@ -4549,7 +4549,7 @@ serve_noop (char *arg)
 #ifdef PROXY_SUPPORT
     /* The portions below need not be handled until reprocessing anyhow since
      * there should be no entries or notifications prior to that.  */
-    if (!secondary_log)
+    if (!proxy_log)
 #endif /* PROXY_SUPPORT */
     {
 	server_write_entries ();
@@ -4638,14 +4638,14 @@ serve_co (char *arg)
     /* If we are not a secondary server, the write proxy log will already have
      * been processed.
      */
-    if (isSecondaryServer () && secondary_log)
+    if (isProxyServer () && proxy_log)
     {
 	if (reprocessing)
 	    reprocessing = false;
 	else
 	{
 	    /* Set up the log for reprocessing.  */
-	    reprocess_secondary_log ();
+	    reprocess_proxy_log ();
 	    /* And return to the main loop in server(), where we will now find
 	     * the logged secondary data and reread it.
 	     */
@@ -5249,7 +5249,7 @@ serve_gzip_contents (char *arg)
     int level;
 
 #ifdef PROXY_SUPPORT
-    assert (!secondary_log);
+    assert (!proxy_log);
 #endif /* PROXY_SUPPORT */
 
     level = atoi (arg);
@@ -5340,7 +5340,7 @@ serve_ignore (char *arg)
      * to the client that update will accept the -u argument.
      */
 #ifdef PROXY_SUPPORT
-    assert (!secondary_log);
+    assert (!proxy_log);
 #endif /* PROXY_SUPPORT */
 }
 
@@ -5932,13 +5932,13 @@ server (int argc, char **argv)
 	buf_from_net = log_buffer_initialize (buf_from_net, NULL, true,
 					      true, MaxSecondaryBufferSize,
 					      outbuf_memory_error);
-	secondary_log = buf_from_net;
+	proxy_log = buf_from_net;
 
 	/* And again for the out log.  */
 	buf_to_net = log_buffer_initialize (buf_to_net, NULL, true, false,
 					    MaxSecondaryBufferSize,
 					    outbuf_memory_error);
-	secondary_log_out = buf_to_net;
+	proxy_log_out = buf_to_net;
     }
 #endif /* PROXY_SUPPORT */
 
