@@ -1,5 +1,9 @@
 Sun Apr 27 16:17:06 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvs.texinfo (commit): Only document the current flags (where -f
+	is force and -F file gets the message from a log file).  We had
+	partly made this change on 9 Feb 1997, but some places got missed.
+
 	* RCSFILES: Add discussion of the common concern regarding
 	applying deltas to get to a branch head.
 
