@@ -1,3 +1,8 @@
+2001-12-03  Larry Jones  <larry.jones@sdr.com>
+
+	* NEWS (Changes since 1.11.1p1): Note -F flag for [r]annotate.
+	(Changes from 1.11 to 1.11.1): Note :: for log.
+
 2001-10-18  Derek Price  <dprice@collab.net>
 
 	* TESTS: Remove outdated note about tests that don't use the dotest
