@@ -1004,6 +1004,11 @@ create a UNIX group (see group(5)) consisting of the
 persons that are to edit the files in a project, and
 set up the repository so that it is that group that
 owns the directory.
+(On some systems, you also need to set the set-group-ID-on-execution bit
+on the repository directories (see chmod(1)) so that newly-created files
+and directories get the group-ID of the parent directory rather than
+that of the current process.)
+
 @c See also comment in commitinfo node regarding cases
 @c which are really awkward with unix groups.
 
@@ -1012,7 +1017,10 @@ a per-directory basis.
 
 Note that users must also have write access to check
 out files, because @sc{cvs} needs to create lock files
-(@pxref{Concurrency}).
+(@pxref{Concurrency}).  You can use LockDir in CVSROOT/config
+to put the lock files somewhere other than in the repository
+if you want to allow read-only access to some directories
+(@pxref{config}).
 
 @c CVS seems to use CVSUMASK in picking permissions for
 @c val-tags, but maybe we should say more about this.
