@@ -1,5 +1,11 @@
 How to write code for CVS
 
+* Source
+
+Patches against the development version of CVS are most likely to be accepted:
+
+	$ cvs -d:pserver:anoncvs@cvs.cvshome.org/cvsroot co ccvs
+
 * Compiler options
 
 If you are using GCC, you'll want to configure with -Wall, which can
