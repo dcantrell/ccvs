@@ -837,7 +837,7 @@ xresolvepath (const char *path)
     if ( CVS_CHDIR ( path ) < 0)
 	error ( 1, errno, "cannot chdir to %s", path );
     if ( ( hardpath = xgetwd() ) == NULL )
-	error (1, errno, "cannot readlink %s", hardpath);
+	error (1, errno, "cannot getwd in %s", path);
     if ( CVS_CHDIR ( owd ) < 0)
 	error ( 1, errno, "cannot chdir to %s", owd );
     free (owd);

@@ -1,3 +1,8 @@
+2004-02-24  Larry Jones  <lawrence.jones@ugsplm.com>
+
+	* filesubr.c (xresolvepath): Fix crash in error case.
+	(Reported by Reinhard Zierke <zierke@informatik.uni-hamburg.de>.)
+
 2004-02-24  Derek Price  <derek@ximbiot.com>
 
 	* sanity.sh (crerepos): Fix it so that it ignores the user's
