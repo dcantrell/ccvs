@@ -109,7 +109,7 @@ dellist (listp)
 	    /* If NOCACHE is defined we turn off the cache.  This can make
 	       it easier to tools to determine where items were allocated
 	       and freed, for tracking down memory leaks and the like.  */
-	    free(p);
+	    free (p);
 #endif
 	}
     }
@@ -119,7 +119,7 @@ dellist (listp)
     (*listp)->next = listcache;
     listcache = *listp;
 #else
-    free(*listp);
+    free (*listp);
 #endif
     *listp = (List *) NULL;
 }
@@ -214,7 +214,7 @@ freenode (p)
     p->next = nodecache;
     nodecache = p;
 #else
-    free(p);
+    free (p);
 #endif
 }
 
