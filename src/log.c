@@ -1109,26 +1109,21 @@ log_expand_revlist (rcs, revlist, default_branch)
                does.  This code is a bit cryptic for my tastes, but
                keeping the same implementation as rlog ensures a
                certain degree of compatibility.  */
-	    if (r->first == NULL)
+	    if (r->first == NULL && nr->last != NULL)
 	    {
-		if (nr->last == NULL)
-		    nr->fields = 0;
+		nr->fields = numdots (nr->last) + 1;
+		if (nr->fields < 2)
+		    nr->first = xstrdup (".0");
 		else
 		{
-		    nr->fields = numdots (nr->last) + 1;
-		    if (nr->fields < 2)
-			nr->first = xstrdup (".0");
-		    else
-		    {
-			char *cp;
+		    char *cp;
 
-			nr->first = xstrdup (nr->last);
-			cp = strrchr (nr->first, '.');
-			strcpy (cp + 1, "0");
-		    }
+		    nr->first = xstrdup (nr->last);
+		    cp = strrchr (nr->first, '.');
+		    strcpy (cp + 1, "0");
 		}
 	    }
-	    else if (r->last == NULL)
+	    else if (r->last == NULL && nr->first != NULL)
 	    {
 		nr->fields = numdots (nr->first) + 1;
 		nr->last = xstrdup (nr->first);
