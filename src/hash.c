@@ -294,8 +294,9 @@ addnode_at_front (list, p)
 }
 
 /* Look up an entry in hash list table and return a pointer to the
-   node.  Return NULL if not found.  Abort with a fatal error for
-   errors.  */
+ * node.  Return NULL if not found or if list is NULL.  Abort with a fatal
+ * error for errors.
+ */
 Node *
 findnode (list, key)
     List *list;
@@ -303,9 +304,6 @@ findnode (list, key)
 {
     Node *head, *p;
 
-    /* This probably should be "assert (list != NULL)" (or if not we
-       should document the current behavior), but only if we check all
-       the callers to see if any are relying on this behavior.  */
     if ((list == (List *) NULL))
 	return ((Node *) NULL);
 
