@@ -405,6 +405,8 @@ int RCS_merge PROTO((const char *, const char *, const char *, const char *));
 #define RCS_FLAGS_MODTIME 8
 int RCS_checkin PROTO ((char *rcsfile, char *workfile, char *message,
 			char *rev, int flags));
+extern int RCS_exec_rcsdiff PROTO ((char *rcsfile, char *opts, char *options,
+				    char *rev1, char *rev2));
 
 
 
