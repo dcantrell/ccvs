@@ -221,13 +221,13 @@ RCS_parsercsfile_i (fp, rcsfile)
      * RCS file.  */
 
     if (getrcskey (fp, &key, &value) == -1 || key == NULL)
-	goto error;
+	goto l_error;
 
     if (strcmp (RCSHEAD, key) == 0 && value != NULL)
 	rdata->head = xstrdup (value);
 
     if (getrcskey (fp, &key, &value) == -1 || key == NULL)
-	goto error;
+	goto l_error;
 
     if (strcmp (RCSBRANCH, key) == 0 && value != NULL)
     {
@@ -245,7 +245,7 @@ RCS_parsercsfile_i (fp, rcsfile)
     rdata->flags |= PARTIAL;
     return rdata;
 
-error:
+l_error:
     if (!really_quiet)
     {
 	if (ferror(fp))
