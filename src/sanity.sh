@@ -7773,7 +7773,7 @@ ${testcvs} -d ${TESTDIR}/crerepos release -d CVSROOT >>${LOGFILE}; then
 	  # implements this format, will be out there "forever" and
 	  # CVS must always be able to import such files.
 
-	  # See test admin-13 for exporting RCS files.
+	  # See tests admin-13 and rcs-8a for exporting RCS files.
 
 	  mkdir ${CVSROOT_DIRNAME}/first-dir
 
@@ -7995,6 +7995,105 @@ done"
 	  dotest rcs-8 \
 "grep testofanewphrase ${CVSROOT_DIRNAME}/first-dir/file2,v" \
 "testofanewphrase[	 ][ 	]*@without newphrase we'd have trouble extending @@ all@[	 ]*;"
+	  # The easiest way to test for newphrases in deltas and deltatexts
+	  # is to just look at the whole file, I guess.
+	  dotest rcs-8a "cat ${CVSROOT_DIRNAME}/first-dir/file2,v" \
+"head	1\.5;
+access;
+symbols;
+locks;
+
+testofanewphrase	@without newphrase we'd have trouble extending @@ all@;
+
+1\.5
+date	71\.01\.01\.01\.00\.00;	author joe;	state bogus;
+branches;
+next	1\.4;
+
+1\.4
+date	71\.01\.01\.00\.00\.05;	author joe;	state bogus;
+branches;
+next	1\.3;
+
+1\.3
+date	70\.12\.31\.15\.00\.05;	author joe;	state bogus;
+branches;
+next	1\.2;
+
+1\.2
+date	70\.12\.31\.12\.15\.05;	author me;	state bogus;
+branches
+	1\.2\.6\.1;
+next	1\.1;
+
+1\.1
+date	70\.12\.31\.11\.00\.05;	author joe;	state bogus;
+branches;
+next	;
+newph	;
+
+1\.2\.6\.1
+date	71\.01\.01\.08\.00\.05;	author joe;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1\.5
+log
+@@
+newphrase1	;
+newphrase2	42;
+text
+@head revision@
+
+
+1\.4
+log
+@@
+text
+@d1 1
+a1 1
+new year revision@
+
+
+1\.3
+log
+@@
+text
+@d1 1
+a1 1
+old year revision@
+
+
+1\.2
+log
+@@
+text
+@d1 1
+a1 1
+mid revision@
+
+
+1\.1
+log
+@@
+text
+@d1 1
+a1 1
+start revision@
+
+
+1\.2\.6\.1
+log
+@@
+text
+@d1 1
+a1 1
+branch revision@"
 
 	  # For remote, the "update -p -D" usage seems not to work.
 	  # I'm not sure what is going on.
