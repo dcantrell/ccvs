@@ -1,3 +1,8 @@
+2003-10-01  Derek Price  <derek@ximbiot.com>
+
+	* gettext.m4: Don't check for headers we assume per the notes in
+	HACKING.
+
 2003-09-30  Derek Price  <derek@ximbiot.com>
 
 	Provide an atexit() function on systems which provide on_exit() but not
