@@ -510,7 +510,6 @@ buf_append_data (struct buffer *buf, struct buffer_data *data,
 
 
 #ifdef PROXY_SUPPORT
-# ifndef TRUST_OS_FILE_CACHE
 /* Copy data structures and append them to a buffer.
  *
  * ERRORS
@@ -545,7 +544,6 @@ buf_copy_data (struct buffer *buf, struct buffer_data *data,
 
     buf_append_data (buf, first, new);
 }
-# endif /* !TRUST_OS_FILE_CACHE */
 
 
 
@@ -1862,7 +1860,6 @@ fd_buffer_input (void *closure, char *data, size_t need, size_t size,
 
     if (fb->blocking)
     {
-#ifndef TRUST_OS_FILE_CACHE
 	int status;
 	fd_set readfds;
 
@@ -1936,13 +1933,9 @@ block_done:
 	}
 	return status;
     }
-#else /* TRUST_OS_FILE_CACHE */
-	nbytes = read (fb->fd, data, need);
-    }
-    else
-#endif /* !TRUST_OS_FILE_CACHE */
-	/* The above will always return.  Handle non-blocking read.  */
-	nbytes = read (fb->fd, data, size);
+
+    /* The above will always return.  Handle non-blocking read.  */
+    nbytes = read (fb->fd, data, size);
 
     if (nbytes > 0)
     {

@@ -547,11 +547,9 @@ warning: this CVS does not support PreservePermissions");
 		free (pinfopath);
 	    }
 	}
-#endif /* PROXY_SUPPORT */
-#if defined PROXY_SUPPORT && ! defined TRUST_OS_FILE_CACHE
 	else if (strcmp (line, "MaxProxyBufferSize") == 0)
-	    readSizeT (infopath, "MaxProxyBufferSize", p, MaxProxyBufferSize);
-#endif /* PROXY_SUPPORT && ! TRUST_OS_FILE_CACHE */
+	    readSizeT (infopath, "MaxProxyBufferSize", p, &MaxProxyBufferSize);
+#endif /* PROXY_SUPPORT */
 	else if (!strcmp (line, "MaxCommentLeaderLength"))
 	    readSizeT (infopath, "MaxCommentLeaderLength", p,
 		       &MaxCommentLeaderLength);

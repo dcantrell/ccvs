@@ -495,7 +495,7 @@ static const char *const config_contents[] = {
     "# For example:\n",
     "#\n",
     "#   PrimaryServer=:fork:localhost/cvsroot\n",
-#if defined PROXY_SUPPORT && ! defined TRUST_OS_FILE_CACHE
+#ifdef PROXY_SUPPORT
     "\n",
     "# Set `MaxProxyBufferSize' to the the maximum allowable secondary\n",
     "# buffer memory cache size before the buffer begins being stored to disk, in\n",
@@ -512,7 +512,7 @@ static const char *const config_contents[] = {
     "# For example:\n",
     "#\n",
     "#   MaxProxyBufferSize=1G\n",
-#endif /* PROXY_SUPPORT && ! TRUST_OS_FILE_CACHE */
+#endif /* PROXY_SUPPORT */
     "\n",
     "# Set `MaxCommentLeaderLength' to the maximum length permitted for the\n",
     "# automagically determined comment leader used when expanding the Log\n",

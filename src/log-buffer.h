@@ -21,9 +21,7 @@ struct buffer *
 log_buffer_initialize (struct buffer *buf, FILE *fp,
 # ifdef PROXY_SUPPORT
 		       bool fatal_errors,
-#   ifndef TRUST_OS_FILE_CACHE
 		       size_t max,
-#   endif /* !TRUST_OS_FILE_CACHE */
 # endif /* PROXY_SUPPORT */
                        bool input,
 		       void (*memory) (struct buffer *));
