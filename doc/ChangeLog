@@ -1,3 +1,8 @@
+1999-01-16  Jim Kingdon  <http://www.cyclic.com>
+
+	* cvs.texinfo (Wrappers): Comment out all the -t/-f documentation,
+	since that feature is currently disabled.
+
 1999-01-14  Jim Kingdon  <http://www.cyclic.com>
 
 	* cvs.texinfo (Connecting via rsh): Add some more index entries so
