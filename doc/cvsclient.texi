@@ -130,6 +130,7 @@ to a horizontal tab.
 * Requests::                    
 * Responses::                   
 * Example::                     
+* Requirements::
 @end menu
 
 @node Entries Lines
@@ -664,4 +665,24 @@ s> M new revision: 1.5; previous revision: 1.4
 s> M done
 s> ok
 @end example
+
+@node Requirements
+@section Required versus optional parts of the protocol
+
+The following are part of every known implementation of the CVS
+protocol and it is considered reasonable behavior to completely fail
+to work if you are connected with an implementation which attempts to
+not support them.  Requests: Root, Valid-responses, valid-requests,
+Repository, Entry, Modified, Argument, Argumentx, ci, co, update.
+Responses: ok, error, Valid-requests, Checked-in, Updated, Merged,
+Removed, M, E.
+
+Failure to support the Directory, UseUnchanged, and Unchanged requests
+is deprecated.  CVS 1.5 and later have supported these requests and in
+the future it will be considered reasonable behavior to completely
+fail to work with an implementation which attempts to not support
+them.  Support for the Repository and Lost requests is deprecated; CVS
+clients 1.5 and later will not use them if communicating with a server
+which supports Directory and UseUnchanged.
+
 @bye
