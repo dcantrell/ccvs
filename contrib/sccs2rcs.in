@@ -177,7 +177,11 @@ foreach sfile (SCCS/s.*)
         if ($status != 0) goto ERROR
 
         # get file into current dir and get stats
-	set date = `sccs prs -r$rev $file | awk '/^D / {if (substr($3,0,2)+0 < 70) print "20" $3, $4; else print "19" $3, $4; exit}'`
+
+	# Is the substr stuff and the +0 in the following awk script really
+	# necessary?  It seems to me that if we didn't find the date format
+	# we expected in the output we have other problems.
+	set date = `sccs prs -r$rev $file | awk '/^D / {print (substr($3,0,2)+0<70?20:19) $3, $4; exit}'`
         set author = `sccs prs -r$rev $file | awk '/^D / {print $5; exit}'`
         echo ""
         echo "==> file $file, rev=$rev, date=$date, author=$author"
