@@ -120,7 +120,7 @@ release (int argc, char **argv)
 			    program_path,
 			    cvsauthenticate ? "-a " : "",
 			    cvsencrypt ? "-x " : "",
-			    original_root);
+			    original_parsed_root->original);
 
 #ifdef CLIENT_SUPPORT
     /* Start the server; we'll close it after looping. */

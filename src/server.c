@@ -894,7 +894,7 @@ E Protocol error: Root says \"%s\" but pserver says \"%s\"",
     }
 #endif
 
-    current_parsed_root = local_cvsroot (arg);
+    original_parsed_root = current_parsed_root = local_cvsroot (arg);
     free (arg);
 
     /* For pserver, this will already have happened, and the call will do

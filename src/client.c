@@ -217,7 +217,7 @@ arg_should_not_be_sent_to_server (char *arg)
 
 	/* Now check the value for root. */
 	if (root_string && current_parsed_root
-	    && (strcmp (root_string, original_root) != 0))
+	    && (strcmp (root_string, original_parsed_root->original) != 0))
 	{
 	    /* Don't send this, since the CVSROOTs don't match. */
 	    if (this_root) free_cvsroot_t (this_root);
