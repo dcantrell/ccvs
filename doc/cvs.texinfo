@@ -6386,6 +6386,62 @@ interfere with everyday source file browsing.
 @chapter Handling binary files
 @cindex Binary files
 
+The most common use for @sc{cvs} is to store text
+files.  With text files, @sc{cvs} can merge revisions,
+display the differences between revisions in a
+human-visible fashion, and other such operations.
+However, if you are willing to give up a few of these
+abilities, @sc{cvs} can store binary files.  For
+example, one might store a web site in @sc{cvs}
+including both text files and binary images.
+
+@menu
+* Binary why::     More details on issues with binary files
+* Binary howto::   How to store them
+@end menu
+
+@node Binary why
+@section The issues with binary files
+
+While the need to manage binary files may seem obvious
+if the files that you customarily work with are binary,
+putting them into version control does present some
+additional issues.
+
+One basic function of version control is to show the
+differences between two revisions.  For example, if
+someone else checked in a new version of a file, you
+may wish to look at what they changed and determine
+whether their changes are good.  For text files,
+@sc{cvs} provides this functionality via the @code{cvs
+diff} command.  For binary files, it may be possible to
+extract the two revisions and then compare them with a
+tool external to @sc{cvs} (for example, word processing
+software often has such a feature).  If there is no
+such tool, one must track changes via other mechanisms,
+such as urging people to write good log messages, and
+hoping that the changes they actually made were the
+changes that they intended to make.
+
+Another ability of a version control system is the
+ability to merge two revisions.  In the case of text
+files, @sc{cvs} can merge changes made independently,
+and signal a conflict if the changes conflict.  With
+binary files, the best that @sc{cvs} can do is present
+the two different copies of the file, and leave it to
+the user to resolve the conflict.  The user may choose
+one copy or the other, or may run an external merge
+tool which knows about that particular file format.  If
+no such tool exists, or is thought to be too
+cumbersome, the best choice may be to avoid merging.
+This can be achieved by (1) restricting one's use of
+branches, and (2) file locking.  See the discussion of
+reserved checkouts in @ref{Multiple developers}, for
+more information on the latter.
+
+@node Binary howto
+@section How to store binary files
+
 There are two issues with using @sc{cvs} to store
 binary files.  The first is that @sc{cvs} by default
 converts line endings between the canonical form in
