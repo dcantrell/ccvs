@@ -1,3 +1,11 @@
+Wed Feb 28 21:49:48 1996  Benjamin J. Lee  <benjamin@cyclic.com>
+
+	* find_names.c, recurse.c, cvs.h: Changed Find_Dirs() to
+	Find_Directories().
+	* cvs.h: Added VMS filenames enabled through USE_VMS_FILENAMES
+	VMS POSIX will require to use the regular CVS filenames
+	while VMS is #define'd.
+
 Wed Feb 28 21:26:22 1996  Benjamin J. Lee  <benjamin@cyclic.com>
 
 	* ignore.c: Added the patterns *.olb *.exe _$* *$ to default
