@@ -1,3 +1,7 @@
+Tue Apr  8 14:44:26 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (Error messages): Add diff3 usage message.
+
 Sun Apr  6 19:03:01 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (Removing files): Add comment about undoing a "cvs

@@ -10506,6 +10506,23 @@ and you need to manually resolve the
 conflict.  For more details on this process see
 @ref{Conflicts example}.
 
+@item Usage:	diff3 [-exEX3 [-i | -m] [-L label1 -L label3]] file1 file2 file3
+@example
+Only one of [exEX3] allowed
+@end example
+This indicates a problem with the installation of
+@code{diff3} and @code{rcsmerge}.  Specifically
+@code{rcsmerge} was compiled to look for GNU diff3, but
+it is finding unix diff3 instead.  The exact text of
+the message will vary depending on the system.  The
+solution is to make sure @code{rcsmerge} finds GNU
+diff3.  Depending on how @code{rcsmerge} was compiled,
+it might be sufficient to place GNU diff3 in your
+@code{PATH}, or it might be necessary to recompile
+@code{rcsmerge} or find a binary distribution of
+@code{rcsmerge} which looks in the @code{PATH}.
+@c Should we mention the cvsaux binaries here?
+
 @item cvs commit: warning: editor session failed
 This means that the editor which @sc{cvs} is using exits with a nonzero
 exit status.  Some versions of vi will do this even when there was not
