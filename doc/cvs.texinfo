@@ -3233,6 +3233,10 @@ use.
 @c seems unnecessary (redundant with "ls -l") so
 @c perhaps it should be removed for non-client/server too?
 @c FIXME: Need some examples.
+@c FIXME: Working revision can also be something like
+@c "-1.3" for a locally removed file.  Not at all
+@c self-explanatory (and it is possible that CVS should
+@c be changed rather than documenting this).
 
 @c Would be nice to have an @example showing output
 @c from cvs status, with comments showing the xref

@@ -1,3 +1,8 @@
+Fri Aug  8 10:01:03 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (File status): Add comment about "working revision"
+	in cvs status for a locally removed file.
+
 Thu Aug  7 22:53:45 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (From other version control systems): Mention
