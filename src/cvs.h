@@ -380,7 +380,7 @@ extern List *root_directories;
 extern cvsroot_t *current_parsed_root;
 
 extern char *emptydir_name PROTO ((void));
-extern int safe_location PROTO ((void));
+extern int safe_location PROTO ((char *));
 
 extern int trace;		/* Show all commands */
 extern int noexec;		/* Don't modify disk anywhere */

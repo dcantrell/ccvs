@@ -248,7 +248,7 @@ checkout (argc, argv)
     }
 #endif
 
-    if (!cat && !safe_location()) {
+    if (!cat && !safe_location( where )) {
         error(1, 0, "Cannot check out files into the repository itself");
     }
 
@@ -379,9 +379,10 @@ checkout (argc, argv)
    reasons, probably want to move them.  */
 
 int
-safe_location ()
+safe_location ( char * where )
 {
     char *current;
+    char *where_location;
     char hardpath[PATH_MAX+5];
     size_t hardpath_len;
     int  x;
@@ -403,9 +404,28 @@ safe_location ()
     {
         hardpath[x] = '\0';
     }
+
     current = xgetwd ();
     if (current == NULL)
 	error (1, errno, "could not get working directory");
+
+    if( where != NULL )
+    {
+	char *temp;
+	if( chdir( where ) != -1 )
+	{
+	  where_location = xgetwd();
+	  if( where_location == NULL )
+              error( 1, errno, "could not get working directory" );
+
+          if( chdir( current ) == -1 )
+              error( 1, errno, "Could not change directory" );
+
+          free( current );
+          current = where_location;
+        }
+    }
+
     hardpath_len = strlen (hardpath);
     if (strlen (current) >= hardpath_len
 	&& strncmp (current, hardpath, hardpath_len) == 0)

@@ -677,6 +677,7 @@ if test x"$*" = x; then
 	tests="${tests} modules modules2 modules3 modules4 modules5"
 	tests="${tests} mkmodules-temp-file-removal"
 	tests="${tests} cvsadm emptydir abspath toplevel toplevel2"
+        tests="${tests} checkout_repository"
 	# Log messages, error messages.
 	tests="${tests} mflag editor errmsg1 errmsg2 adderrmsg"
 	# Watches, binary files, history browsing, &c.
@@ -11651,6 +11652,11 @@ ${PROG} [a-z]*: Rebuilding administrative file database"
 	  rm -r 1
 	  rm -rf ${CVSROOT_DIRNAME}/top-dir ${CVSROOT_DIRNAME}/second-dir
 	  ;;
+
+        checkout_repository)
+          dotest_fail check_repository "${testcvs} co -d /tmp/cvs-sanity/cvsroot CVSROOT" \
+"${PROG} \[checkout aborted\]: Cannot check out files into the repository itself"
+          ;;
 
 	mflag)
 	  for message in '' ' ' '	
