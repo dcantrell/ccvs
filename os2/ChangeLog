@@ -1,3 +1,12 @@
+2002-12-06  Derek Price  <derek@ximbiot.com>
+
+	* dirent.c: Replace call to realloc with a call to xrealloc and calls
+	to malloc with calls to xmalloc.
+	* popen.c: Ditto.
+	* pwd.c: Ditto.
+	* run.c: Ditto.
+	(Reported by Dan Peterson <dbpete@aol.com>.)
+
 2002-09-24  Derek Price  <derek@ximbiot.com>
 
 	* options.h: Remove prototype of STDC exit().  Move prototype of
