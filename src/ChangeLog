@@ -1,3 +1,8 @@
+2000-02-15  Derek Price  <derek.price@openavenue.com>
+
+	* Makefile.am (cvs_SOURCES): Correct error from yesterday.
+	* Makefile.in: Regenerated.
+
 2000-02-14  Derek Price  <derek.price@openavenue.com>
 
 	* server.c: Include xselect.h.

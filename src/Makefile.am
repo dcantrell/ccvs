@@ -88,11 +88,9 @@ cvs_SOURCES = \
 	hash.h \
 	myndbm.h \
 	rcs.h \
-	select.h \
 	server.h \
 	update.h \
-	watch.h \
-	xtime.h
+	watch.h
 cvs_LDADD = \
 	../diff/libdiff.a \
 	../lib/libcvs.a \
