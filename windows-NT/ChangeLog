@@ -1,3 +1,9 @@
+2004-03-25  Derek Price  <derek@ximbiot.com>
+
+	* config.h.in: Define realloc to rpl_realloc to use the version from
+	lib/realloc.c.
+	* config.h: Regenerated.
+
 2004-03-20  Derek Price  <derek@ximbiot.com>
 
 	* filesubr.c (mkdir_if_needed, xchmod, last_component), run.c

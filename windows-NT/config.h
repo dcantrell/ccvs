@@ -65,6 +65,9 @@
    is a pointer type anyway.  */
 #define pid_t int
 
+/* Define to rpl_realloc if the replacement function should be used. */
+#define realloc rpl_realloc
+
 /* Define if the system does not provide POSIX.1 features except
    with this defined.  */
 /* This string doesn't appear anywhere in the system header files,
