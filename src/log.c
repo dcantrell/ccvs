@@ -753,7 +753,7 @@ log_parse_list (plist, argstring)
 	    len = cp - argstring;
 	    p->key = xmalloc (len + 1);
 	    strncpy (p->key, argstring, len);
-	    p->key[len + 1] = '\0';
+	    p->key[len] = '\0';
 	}
 
 	if (*plist == NULL)

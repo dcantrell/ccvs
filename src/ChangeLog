@@ -1,3 +1,10 @@
+2002-05-15  Larry Jones  <lawrence.jones@eds.com>
+
+	* log.c (log_parse_list): Fix off-by-one error which caused
+	incorrect handling of 'cvs log -wuser1,user2 foo.c' command.
+	(Patch from Alexey Mahotkin <alexm@hsys.msk.ru>,
+	reported by Alex Morozov <morozov@novosoft.ru>.)
+
 2002-05-09  Larry Jones  <lawrence.jones@eds.com>
 
 	* login.c (password_entry_operation): Get cvsroot_canonical before
