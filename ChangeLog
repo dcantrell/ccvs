@@ -1,3 +1,9 @@
+19 Mar 1997  Jim Kingdon
+
+	* cvsnt.mak: Now Visual C++ wants to add a bunch of dependencies
+	for the Release configuration as well as the Debug one.  Why it
+	didn't do this before, I have no idea.
+
 13 Mar 1997  Jim Kingdon
 
 	* cvsnt.mak: Recent changes have added a number of getline.h
