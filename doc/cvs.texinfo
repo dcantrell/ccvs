@@ -12085,7 +12085,7 @@ repositories}).
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node verifymsg
 @appendixsec Verifying log messages
-@cindex verifymsg (admin file)
+@cindex @file{verifymsg} (admin file)
 @cindex Log message, verifying
 
 Once you have entered a log message, you can evaluate
@@ -12111,22 +12111,61 @@ line is found, the first one is used.  This can be
 useful for specifying a default verification script in a
 directory, and then overriding it in a subdirectory.
 
-@cindex DEFAULT in verifymsg
+@cindex DEFAULT in @file{verifymsg}
 If the repository name does not match any of the
 regular expressions in this file, the @samp{DEFAULT}
 line is used, if it is specified.
 
-@cindex Exit status, of verifymsg
+@cindex Exit status, of @file{verifymsg}
 If the verification script exits with a non-zero exit status,
 the commit is aborted.
 
-Note that the verification script cannot change the log
-message; it can merely accept it or reject it.
-@c FIXME?  Is this an annoying limitation?  It would be
-@c relatively easy to fix (although it would *not* be a
-@c good idea for a verifymsg script to interact with the user
-@c at least in the client/server case because of locks
-@c and all that jazz).
+@cindex @file{verifymsg}, changing the log message
+In the default configuration, CVS allows the
+verification script to change the log message. This is
+controlled via the RereadLogAfterVerify CVSROOT/config
+option.
+
+When @samp{RereadLogAfterVerify=always} or
+@samp{RereadLogAfterVerify=stat}, the log message will
+either always be reread after the verification script
+is run or reread only if the log message file status
+has changed.
+
+@xref{config}, for more on CVSROOT/config options.
+
+It is NOT a good idea for a @file{verifymsg} script to
+interact directly with the user in the various
+client/server methods. For the @code{pserver} method,
+there is no protocol support for communicating between
+@file{verifymsg} and the client on the remote end. For the
+@code{ext} and @code{server} methods, it is possible
+for CVS to become confused by the characters going
+along the same channel as the CVS protocol
+messages. See @ref{Remote repositories}, for more
+information on client/server setups.  In addition, at the time
+the @file{verifymsg} script runs, the CVS
+server has locks in place in the repository.  If control is
+returned to the user here then other users may be stuck waiting
+for access to the repository.
+
+This option can be useful if you find yourself using an
+rcstemplate that needs to be modified to remove empty
+elements or to fill in default values.  It can also be
+useful if the rcstemplate has changed in the repository
+and the CVS/Template was not updated, but is able to be
+adapted to the new format by the verification script
+that is run by @file{verifymsg}.
+
+An example of an update might be to change all
+occurrences of 'BugId:' to be 'DefectId:' (which can be
+useful if the rcstemplate has recently been changed and
+there are still checked-out user trees with cached
+copies in the CVS/Template file of the older version).
+
+Another example of an update might be to delete a line
+that contains 'BugID: none' from the log message after
+validation of that value as being allowed is made.
 
 The following is a little silly example of a
 @file{verifymsg} file, together with the corresponding
@@ -12154,6 +12193,12 @@ evaluate the log message.
 #
 if head -1 < $1 | grep '^BugId:[ ]*[0-9][0-9]*$' > /dev/null; then
     exit 0
+elif head -1 < $1 | grep '^BugId:[ ]*none$' > /dev/null; then
+    # It is okay to allow commits with 'BugId: none',
+    # but do not put that text into the real log message.
+    grep -v '^BugId:[ ]*none$' > $1.rewrite
+    mv $1.rewrite $1
+    exit 0
 else
     echo "No BugId found."
     exit 1
@@ -12170,6 +12215,12 @@ The @file{rcsinfo} file contains this line:
 
 @example
 ^tc     /usr/cvssupport/tc.template
+@end example
+
+The @file{config} file contains this line:
+
+@example
+RereadLogAfterVerify=always
 @end example
 
 
@@ -12911,6 +12962,26 @@ Default of @samp{TOFEWGCMAR} (or simply @samp{all}) will log
 all transactions.  Any subset of the default is
 legal.  (For example, to only log transactions that modify the
 @file{*,v} files, use @samp{LogHistory=TMAR}.)
+
+@cindex RereadLogAfterVerify, in CVSROOT/config
+@cindex @file{verifymsg}, changing the log message
+@item RereadLogAfterVerify=@var{value}
+Modify the @samp{commit} command such that CVS will reread the
+log message after running the program specified by @file{verifymsg}.
+@var{value} may be one of @samp{yes} or @samp{always}, indicating that
+the log message should always be reread; @samp{no}
+or @samp{never}, indicating that it should never be
+reread; or @var{value} may be @samp{stat}, indicating
+that the file should be checked with the filesystem
+@samp{stat()} function to see if it has changed (see warning below)
+before rereading.  The default value is @samp{always}.
+
+@emph{Note that `stat' mode can cause CVS to pause for up to
+one extra second per directory committed.  This can be less IO and
+CPU intensive but is not recommended for use with large repositories}
+
+@xref{verifymsg}, for more information on how verifymsg
+may be used.
 @end table
 
 @c ---------------------------------------------------------------------
