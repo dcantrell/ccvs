@@ -5263,6 +5263,90 @@ cvs_output (str, len)
     }
 }
 
+/* Output LEN bytes at STR in binary mode.  If LEN is zero, then
+   output zero bytes.  */
+
+void
+cvs_output_binary (str, len)
+    char *str;
+    size_t len;
+{
+#ifdef SERVER_SUPPORT
+    if (error_use_protocol || server_active)
+    {
+	struct buffer *buf;
+	char size_text[40];
+
+	if (error_use_protocol)
+	    buf = buf_to_net;
+	else if (server_active)
+	    buf = protocol;
+
+	if (!supported_response ("Mbinary"))
+	{
+	    error (0, 0, "\
+this client does not support writing binary files to stdout");
+	    return;
+	}
+
+	buf_output0 (buf, "Mbinary\012");
+	sprintf (size_text, "%lu\012", (unsigned long) len);
+	buf_output0 (buf, size_text);
+
+	/* Not sure what would be involved in using buf_append_data here
+	   without stepping on the toes of our caller (which is responsible
+	   for the memory allocation of STR).  */
+	buf_output (buf, str, len);
+
+	if (!error_use_protocol)
+	    buf_send_counted (protocol);
+    }
+    else
+#endif
+    {
+	size_t written;
+	size_t to_write = len;
+	const char *p = str;
+
+	/* For symmetry with cvs_outerr we would call fflush (stderr)
+	   here.  I guess the assumption is that stderr will be
+	   unbuffered, so we don't need to.  That sounds like a sound
+	   assumption from the manpage I looked at, but if there was
+	   something fishy about it, my guess is that calling fflush
+	   would not produce a significant performance problem.  */
+#ifdef USE_SETMODE_STDOUT
+	int oldmode;
+
+	/* It is possible that this should be the same ifdef as
+	   USE_SETMODE_BINARY but at least for the moment we keep them
+	   separate.  Mostly this is just laziness and/or a question
+	   of what has been tested where.  Also there might be an
+	   issue of setmode vs. _setmode.  */
+	/* The Windows doc says to call setmode only right after startup.
+	   I assume that what they are talking about can also be helped
+	   by flushing the stream before changing the mode.  */
+	fflush (stdout);
+	oldmode = _setmode (_fileno (stdout), _O_BINARY);
+	if (oldmode < 0)
+	    error (0, errno, "failed to setmode on stdout");
+#endif
+
+	while (to_write > 0)
+	{
+	    written = fwrite (p, 1, to_write, stdout);
+	    if (written == 0)
+		break;
+	    p += written;
+	    to_write -= written;
+	}
+#ifdef USE_SETMODE_STDOUT
+	fflush (stdout);
+	if (_setmode (_fileno (stdout), oldmode) != _O_BINARY)
+	    error (0, errno, "failed to setmode on stdout");
+#endif
+    }
+}
+
 /* Like CVS_OUTPUT but output is for stderr not stdout.  */
 
 void

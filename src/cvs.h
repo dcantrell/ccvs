@@ -827,6 +827,7 @@ extern void tag_check_valid_join PROTO ((char *, int, char **, int, int,
 					 char *));
 
 extern void cvs_output PROTO ((const char *, size_t));
+extern void cvs_output_binary PROTO ((char *, size_t));
 extern void cvs_outerr PROTO ((const char *, size_t));
 extern void cvs_flusherr PROTO ((void));
 extern void cvs_flushout PROTO ((void));

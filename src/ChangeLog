@@ -1,3 +1,11 @@
+Thu Jul 10 00:02:54 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* server.c, cvs.h (cvs_output_binary): New function.
+	* rcs.c (RCS_checkout): For a binary file, call cvs_output_binary
+	rather than cvs_output.
+	* client.c (handle_mbinary): New function.
+	(responses): Add "Mbinary".
+
 Tue Jul  8 12:18:16 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* filesubr.c (get_homedir): Add comment about root vs. user
