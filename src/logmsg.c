@@ -460,7 +460,6 @@ title_proc (p, closure)
 {
     struct logfile_info *li;
     char *c;
-    int title, comma;
 
     li = (struct logfile_info *) p->data;
     if (li->type == type)
