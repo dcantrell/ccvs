@@ -561,7 +561,8 @@ main (argc, argv)
 	       variable.  Parse it to see if we're supposed to do
 	       remote accesses or use a special access method. */
 
-	    parse_cvsroot (CVSroot);
+	    if (parse_cvsroot (CVSroot))
+		error (1, 0, "Couldn't parse CVSROOT.");
 
 	    /*
 	     * Check to see if we can write into the history file.  If not,
