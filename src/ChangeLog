@@ -1,5 +1,14 @@
 1998-09-24  Noel Cragg  <noel@swish.red-bean.com>
 
+	* sanity.sh (basica-6.2, basica-6.3): changed match expressions to
+	reflect new diff output.
+
+	* rcs.c (make_file_label): generate labels for files that include
+	the pathname so that output from "cvs diff" and "cvs rdiff" is
+	useable by patch.  Looks like I came up with the mods as Andy
+	Piper <andyp@parallax.co.uk>; his patch was on the Cyclic
+	unofficial patches page.
+
 	* sanity.sh: change remote access method from ext to fork.  This
 	results in a significant speed improvement when running the
 	testsuite.  The ext method on my machine (i586 120MHz Linux 2.0.35
