@@ -751,9 +751,7 @@ serve_root (arg)
 	return;
     }
 
-    /* Sending "Root" twice is illegal.  It would also be nice to
-       check for the other case, in which there is no Root request
-       prior to a request which requires one.
+    /* Sending "Root" twice is illegal.
 
        The other way to handle a duplicate Root requests would be as a
        request to clear out all state and start over as if it was a
