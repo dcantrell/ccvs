@@ -1,3 +1,8 @@
+1998-08-16  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* sanity.sh (binfiles3): New test, for yet another binary file
+	bug (sigh).  Thanks to Jason Aten for reporting this one.
+
 1998-08-15  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* rcscmds.c (call_diff_write_output): Update to reflect new

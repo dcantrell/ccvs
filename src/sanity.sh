@@ -567,7 +567,8 @@ if test x"$*" = x; then
 	# Watches, binary files, history browsing, &c.
 	tests="${tests} devcom devcom2 devcom3 watch4"
 	tests="${tests} unedit-without-baserev"
-	tests="${tests} ignore binfiles binfiles2 mcopy binwrap binwrap2"
+	tests="${tests} ignore binfiles binfiles2 binfiles3"
+	tests="${tests} mcopy binwrap binwrap2"
 	tests="${tests} binwrap3 mwrap info taginfo config"
 	tests="${tests} serverpatch log log2 ann ann-id crerepos rcs rcs2"
 	tests="${tests} history"
@@ -9531,6 +9532,11 @@ Are you sure you want to release (and delete) directory .second-dir': "
 
 	binfiles)
 	  # Test cvs's ability to handle binary files.
+	  # List of binary file tests:
+	  #   * conflicts, "cvs admin": binfiles
+	  #   * branching and joining: binfiles2
+	  #   * adding and removing files: binfiles3
+	  #   * -k wrappers: binwrap, binwrap2, binwrap3
 	  mkdir ${CVSROOT_DIRNAME}/first-dir
 	  mkdir 1; cd 1
 	  dotest binfiles-1 "${testcvs} -q co first-dir" ''
@@ -9955,6 +9961,61 @@ checkin
 
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
 	  rm -r 1
+	  ;;
+
+	binfiles3)
+	  # More binary file tests, especially removing, adding, &c.
+	  # See "binfiles" for a list of binary file tests.
+	  mkdir ${CVSROOT_DIRNAME}/first-dir
+	  mkdir 1; cd 1
+	  dotest binfiles3-1 "${testcvs} -q co first-dir" ''
+	  awk 'BEGIN { printf "%c%c%c%c%c%c", 2, 10, 137, 0, 13, 10 }' \
+	    </dev/null >binfile.dat
+	  cd first-dir
+	  echo hello >file1
+	  dotest binfiles3-2 "${testcvs} add file1" \
+"${PROG} [a-z]*: scheduling file .file1. for addition
+${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
+	  dotest binfiles3-3 "${testcvs} -q ci -m add-it" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
+done
+Checking in file1;
+${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
+initial revision: 1\.1
+done"
+	  rm file1
+	  dotest binfiles3-4 "${testcvs} rm file1" \
+"${PROG} [a-z]*: scheduling .file1. for removal
+${PROG} [a-z]*: use .${PROG} commit. to remove this file permanently"
+	  dotest binfiles3-5 "${testcvs} -q ci -m remove-it" \
+"Removing file1;
+${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
+new revision: delete; previous revision: 1\.1
+done"
+	  cp ../binfile.dat file1
+	  dotest binfiles3-6 "${testcvs} add -kb file1" \
+"${PROG} [a-z]*: re-adding file file1 (in place of dead revision 1\.2)
+${PROG} [a-z]*: use .cvs commit. to add this file permanently"
+	  dotest binfiles3-7 "${testcvs} -q ci -m readd-it" \
+"Checking in file1;
+${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
+new revision: 1\.3; previous revision: 1\.2
+done"
+	  # Here is the bug; should be "kb" not "kv".  We have clobbered
+	  # yet another user file :-(.
+	  dotest binfiles3-8 "${testcvs} -q log -h -N file1" "
+RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
+Working file: file1
+head: 1\.3
+branch:
+locks: strict
+access list:
+keyword substitution: kv
+total revisions: 3
+============================================================================="
+	  cd ../..
+	  rm -r 1
+	  rm -rf ${CVSROOT_DIRNAME}/first-dir
 	  ;;
 
 	mcopy)
