@@ -101,8 +101,8 @@ FLAGS_TO_PASS = \
 
 DISTFILES = \
 	COPYING COPYING.LIB INSTALL README TODO \
-	BUGS MINOR-BUGS CYCLIC-CVS-FAQ FAQ \
-	ChangeLog ChangeLog.fsf ChangeLog.zoo \
+	BUGS MINOR-BUGS FAQ \
+	ChangeLog NEWS ChangeLog.zoo \
 	configure configure.in stamp-h.in config.h.in Makefile.in acconfig.h \
 	cvs-format.el mkinstalldirs install-sh cvsinit.sh \
 	.cvsignore
