@@ -1,3 +1,11 @@
+2002-12-19  Derek Price  <derek@ximbiot.com>
+
+	* Makefile.am: Remove reference to options.h.
+	* options.h: Remove file and move relevant content...
+	* config.h: ...here.
+
+	* Makefile.in: Regenerated.
+
 2002-12-06  Derek Price  <derek@ximbiot.com>
 
 	* ndir.c: Replace some calls to malloc with calls to xmalloc.
