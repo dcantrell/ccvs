@@ -22,7 +22,7 @@
 @c If one prints US letter on A4, reportedly there is
 @c some extra space at the top and/or bottom, and the side
 @c margins are a bit narrow, but no text is lost.
-@c 
+@c
 @c See
 @c http://www.ft.uni-erlangen.de/~mskuhn/iso-paper.html
 @c for more on paper sizes.  Insuring that margins are
@@ -47,6 +47,14 @@
 @c -- Fix all lines that match "^@c -- "
 @c -- Also places marked with FIXME should be manual
 @c problems (as opposed to FIXCVS for CVS problems).
+
+@ifinfo
+@format
+START-INFO-DIR-ENTRY
+* CVS: (cvs).          Concurrent Versions System
+END-INFO-DIR-ENTRY
+@end format
+@end ifinfo
 
 @ifinfo
 Copyright @copyright{} 1992, 1993 Signum Support AB
@@ -117,7 +125,7 @@ approved by the Free Software Foundation.
 @ifinfo
 @c ---------------------------------------------------------------------
 @node    Top
-@top 
+@top
 @c Note: there is a space after that @top command.
 @c The texinfo-format-buffer Emacs function and
 @c the makeinfo shell command disagree on what arguments
@@ -257,7 +265,7 @@ http://www.loria.fr/~molli/cvs-index.html
 @c line, thus avoiding overfull hboxes.
 There is a mailing list, known as @w{@code{info-cvs}},
 devoted to @sc{cvs}.  To subscribe or
-unsubscribe 
+unsubscribe
 @c could add "to the mailing list,"
 send a message to
 @c or "write to"
@@ -451,10 +459,10 @@ only once they have been proven.
 @c people who read in order get dumped right into all
 @c manner of hair regarding remote repositories,
 @c creating a repository, etc.
-@c 
+@c
 @c The following was in the old Basic concepts node.  I don't
 @c know how good a job it does at introducing modules,
-@c or whether they need to be introduced so soon, but 
+@c or whether they need to be introduced so soon, but
 @c something of this sort might go into some
 @c introductory material somewhere.
 @ignore
@@ -813,7 +821,7 @@ override the @code{$CVSROOT} environment variable.
 Once you've checked a working copy out from the
 repository, it will remember where its repository is
 (the information is recorded in the
-@file{CVS/Root} file in the working copy).  
+@file{CVS/Root} file in the working copy).
 
 The @code{-d} option and the @file{CVS/Root} file both
 override the @code{$CVSROOT} environment variable.  If
@@ -857,7 +865,7 @@ the file permissions appropriate for the repository.
 @c @cindex filenames, legal
 @c @cindex legal filenames
 @c Somewhere we need to say something about legitimate
-@c characters in filenames in working directory and 
+@c characters in filenames in working directory and
 @c repository.  Not "/" (not even on non-unix).  And
 @c here is a specific set of issues:
 @c 	Files starting with a - are handled inconsistently. They can not
@@ -889,31 +897,31 @@ directories):
  +--@t{local}
  |   |
  |   +--@t{cvsroot}
- |   |    | 
+ |   |    |
  |   |    +--@t{CVSROOT}
-          |      (administrative files) 
-          | 
+          |      (administrative files)
+          |
           +--@t{gnu}
-          |   | 
+          |   |
           |   +--@t{diff}
-          |   |   (source code to @sc{gnu} diff) 
-          |   | 
+          |   |   (source code to @sc{gnu} diff)
+          |   |
           |   +--@t{rcs}
           |   |   (source code to @sc{rcs})
-          |   | 
+          |   |
           |   +--@t{cvs}
-          |       (source code to @sc{cvs}) 
-          | 
+          |       (source code to @sc{cvs})
+          |
           +--@t{yoyodyne}
-              | 
+              |
               +--@t{tc}
               |    |
               |    +--@t{man}
               |    |
               |    +--@t{testing}
-              | 
+              |
               +--(other Yoyodyne software)
-@end example                              
+@end example
 
 With the directories are @dfn{history files} for each file
 under version control.  The name of the history file is
@@ -938,7 +946,7 @@ the @file{yoyodyne/tc} directory might look like:
             +--@t{man}
             |    |
             |    +--@t{tc.1,v}
-            |     
+            |
             +--@t{testing}
                  |
                  +--@t{testpgm.t,v}
@@ -1063,18 +1071,18 @@ of @sc{cvs}; do not rely on the setting of
 @code{CVSUMASK} on the client having no effect.
 @c FIXME: need to explain what a umask is or cite
 @c someplace which does.
-@c 
+@c
 @c There is also a larger (largely separate) issue
 @c about the meaning of CVSUMASK in a non-unix context.
 @c For example, whether there is
 @c an equivalent which fits better into other
 @c protection schemes like POSIX.6, VMS, &c.
-@c 
+@c
 @c FIXME: Need one place which discusses this
 @c read-only files thing.  Why would one use -r or
 @c CVSREAD?  Why would one use watches?  How do they
 @c interact?
-@c 
+@c
 @c FIXME: We need to state
 @c whether using CVSUMASK removes the need for manually
 @c fixing permissions (in fact, if we are going to mention
@@ -1272,10 +1280,10 @@ differences.
 For each administrative file, in addition to the
 @sc{rcs} file, there is also a checked out copy of the
 file.  For example, there is an @sc{rcs} file
-@file{loginfo,v} and a file @file{loginfo} which 
+@file{loginfo,v} and a file @file{loginfo} which
 contains the latest revision contained in
 @file{loginfo,v}.  When you check in an administrative
-file, @sc{cvs} should print 
+file, @sc{cvs} should print
 
 @example
 cvs commit: Rebuilding administrative file database
@@ -1673,7 +1681,7 @@ It is possible to commit an erroneous administrative
 file.  You can often fix the error and check in a new
 revision, but sometimes a particularly bad error in the
 administrative file makes it impossible to commit new
-revisions.  
+revisions.
 @c @xref{Bad administrative files} for a hint
 @c about how to solve such situations.
 @c -- administrative file checking--
@@ -1953,7 +1961,7 @@ directory, or two megabytes, whichever is larger.
 @c documenting the default configuration of CVS.  If it
 @c is a "standard" thing to change that value, it
 @c should be some kind of run-time configuration.
-@c 
+@c
 @c See cvsclient.texi for more on the design decision
 @c to not have locks in place while waiting for the
 @c client, which is what results in memory consumption
@@ -2180,8 +2188,8 @@ to reread its initialization files.
 @c this.  One strange situation I ran into recently
 @c was that if inetd.conf specifies a non-existent
 @c cvs (e.g. /usr/local/bin/cvs doesn't exist in
-@c the above example), the client says 
-@c   cvs-1.8 [login aborted]: unrecognized auth response from harvey: 
+@c the above example), the client says
+@c   cvs-1.8 [login aborted]: unrecognized auth response from harvey:
 @c which is a very unhelpful response (can it be
 @c improved?  does inetd log somewhere?)
 
@@ -2294,8 +2302,8 @@ argument or the @code{CVSROOT} environment variable.
 password:
 
 @example
-cvs -d :pserver:bach@@chainsaw.yard.com:/usr/local/cvsroot login 
-CVS password: 
+cvs -d :pserver:bach@@chainsaw.yard.com:/usr/local/cvsroot login
+CVS password:
 @end example
 
 The password is checked with the server; if it is
@@ -2526,7 +2534,7 @@ other access methods do not have explicit support for
 read-only users because those methods all assume login
 access to the repository machine anyway, and therefore
 the user can do whatever local file permissions allow
-her to do.)  
+her to do.)
 
         A user who has read-only access can do only
 those @sc{cvs} operations which do not modify the
@@ -2608,7 +2616,7 @@ read-only access.
 @cindex server, temporary directories
 
 While running, the @sc{cvs} server creates temporary
-directories.  They are named 
+directories.  They are named
 
 @example
 cvs-serv@var{pid}
@@ -2843,7 +2851,7 @@ vary).  See the comments in the script for details.
 @node From scratch
 @subsection Creating a directory tree from scratch
 
-@c Also/instead should be documenting 
+@c Also/instead should be documenting
 @c $ cvs co -l .
 @c $ mkdir tc
 @c $ cvs add tc
@@ -3101,7 +3109,7 @@ is expected that future names which are special to
 starting with @samp{.}, rather than being named analogously to
 @code{BASE} and @code{HEAD}, to avoid conflicts with
 actual tag names.
-@c Including a character such as % or = has also been 
+@c Including a character such as % or = has also been
 @c suggested as the naming convention for future
 @c special tag names.  Starting with . is nice because
 @c that is not a legal tag name as far as RCS is concerned.
@@ -3335,7 +3343,7 @@ Checking in file1;
 /tmp/cvs-sanity/cvsroot/first-dir/file1,v  <--  file1
 new revision: 1.3; previous revision: 1.2
 done
-$ 
+$
 @end example
 
 @c ---------------------------------------------------------------------
@@ -3587,7 +3595,7 @@ However, @sc{cvs} is not limited to linear development.  The
 @dfn{revision tree} can be split into @dfn{branches},
 where each branch is a self-maintained line of
 development.  Changes made on one branch can easily be
-moved back to the main trunk.  
+moved back to the main trunk.
 
 Each branch has a @dfn{branch number}, consisting of an
 odd number of period-separated decimal integers.  The
@@ -3928,7 +3936,7 @@ structure:
             |    +--@t{CVS}
             |    |  (internal @sc{cvs} files)
             |    +--@t{tc.1}
-            |     
+            |
             +--@t{testing}
                  |
                  +--@t{CVS}
@@ -3951,7 +3959,7 @@ cvs update testing/testpgm.t testing/test2.t
 
 @item
 @samp{cvs update testing man} updates all files in the
-subdirectories 
+subdirectories
 
 @item
 @samp{cvs update .} or just @samp{cvs update} updates
@@ -4033,7 +4041,7 @@ not recursive.  You cannot even type @samp{cvs add
 foo/bar}!  Instead, you have to
 @c FIXCVS: This is, of course, not a feature.  It is
 @c just that no one has gotten around to fixing "cvs add
-@c foo/bar". 
+@c foo/bar".
 
 @example
 $ cd foo
@@ -4079,7 +4087,7 @@ For example, the following commands add the file
 @file{backend.c} to the repository:
 
 @c This example used to specify
-@c     -m "Optimizer and code generation passes." 
+@c     -m "Optimizer and code generation passes."
 @c to the cvs add command, but that doesn't work
 @c client/server (see log2 in sanity.sh).  Should fix CVS,
 @c but also seems strange to document things which
@@ -4342,7 +4350,7 @@ to remove @var{old} from the repository, and add
 @example
 $ mv @var{old} @var{new}
 $ cvs remove @var{old}
-$ cvs add @var{new} 
+$ cvs add @var{new}
 $ cvs commit -m "Renamed @var{old} to @var{new}" @var{old} @var{new}
 @end example
 
@@ -4547,7 +4555,7 @@ source.  You are not affected by modifications made by
 others until you decide to incorporate those changes
 (via the @code{update} command---@pxref{update}).
 
-@item 
+@item
 Traceability---When something has changed, you can
 always see @emph{exactly} what changed.
 @end itemize
@@ -4912,7 +4920,7 @@ check it in as a binary file.  The @code{cvs
 admin -kb} command sets the default keyword
 substitution method for this file, but it does not
 alter the working copy of the file that you have.  If you need to
-cope with line endings (that is, you are using 
+cope with line endings (that is, you are using
 @sc{cvs} on a non-unix system), then you need to
 check in a new copy of the file, as shown by the
 @code{cvs commit} command above.
@@ -4956,7 +4964,7 @@ considerably with the operating system.
 @c
 @c Another, probably better, way to tell is to read the
 @c file in text mode, write it to a temp file in text
-@c mode, and then do a binary mode compare of the two 
+@c mode, and then do a binary mode compare of the two
 @c files.  If they differ, it is a binary file.  This
 @c might have problems on VMS (or some other system
 @c with several different text modes), but in general
@@ -5205,7 +5213,7 @@ resolve the conflict as described in @ref{Conflicts example}.
 @sc{Cvs} doesn't know anything about this file.  For
 example, you have created a new file and have not run
 @code{add}.
-@c 
+@c
 @c "Entry Invalid" and "Classify Error" are also in the
 @c status.c.  The latter definitely indicates a CVS bug
 @c (should it be worded more like "internal error" so
@@ -5491,7 +5499,7 @@ check in the file.
 @c The old behavior was really icky; the only way out
 @c was to start hacking on
 @c the @code{CVS/Entries} file or other such workarounds.
-@c 
+@c
 @c If the timestamp thing isn't considered nice enough,
 @c maybe there should be a "cvs resolved" command
 @c which clears the conflict indication.  For a nice user
@@ -6105,7 +6113,7 @@ a new revision of the file.
 @section Keyword List
 @cindex Keyword List
 
-@c FIXME: need some kind of example here I think, 
+@c FIXME: need some kind of example here I think,
 @c perhaps in a
 @c "Keyword intro" node.  The intro in the "Keyword
 @c substitution" node itself seems OK, but to launch
@@ -6165,7 +6173,7 @@ file contains
    * $@asis{}Log: frob.c,v $
    * Revision 1.1  1997/01/03 14:23:51  joe
    * Add the superfrobnicate option
-   * 
+   *
    */
 @end example
 
@@ -6213,7 +6221,7 @@ C source code.  This example shows the first few lines
 of a typical file, after keyword substitution has been
 performed:
 
-@c Hmm.  Someone says that 
+@c Hmm.  Someone says that
 @c "static const char rcsid[] = "foo"
 @c is a simpler way to shut up GCC.  But I really
 @c suspect that we should be avoiding specifics in general
@@ -6227,7 +6235,7 @@ static char *rcsid="$@asis{}Id: samp.c,v 1.5 1993/10/19 14:57:32 ceder Exp $";
 /* @r{The following lines will prevent @code{gcc} version 2.@var{x}}
    @r{from issuing an "unused variable" warning}. */
 #if __GNUC__ == 2
-#define USE(var) static void * use_##var = (&use_##var, (void *) &var) 
+#define USE(var) static void * use_##var = (&use_##var, (void *) &var)
 USE (rcsid);
 #endif
 @end example
@@ -6277,7 +6285,7 @@ Keyword substitution has its disadvantages.  Sometimes
 you might want the literal text string
 @samp{$@asis{}Author$} to appear inside a file without
 @sc{cvs} interpreting it as a keyword and expanding it
-into something like @samp{$@asis{}Author: ceder $}.  
+into something like @samp{$@asis{}Author: ceder $}.
 
 There is unfortunately no way to selectively turn off
 keyword substitution.  You can use @samp{-ko}
@@ -7235,7 +7243,7 @@ further updates in the same directory will use the same date
 @code{diff}, @code{export}, @code{history},
 @code{rdiff}, @code{rtag}, and @code{update} commands.
 (The @code{history} command uses this option in a
-slightly different way; @pxref{history options}).  
+slightly different way; @pxref{history options}).
 
 @c What other formats should we accept?  I don't want
 @c to start accepting a whole mess of non-standard
@@ -7253,19 +7261,19 @@ slightly different way; @pxref{history options}).
 @c VMS to support this format (and if we're going to do
 @c that, better to make CVS support it on all
 @c platforms.  Maybe).
-@c 
+@c
 @c NOTE: The tar manual has some documentation for
 @c getdate.y (just for our info; we don't want to
 @c attempt to document all the formats accepted by
 @c getdate.y).
-@c 
+@c
 @c One more note: In output, CVS should consistently
 @c use one date format, and that format should be one that
 @c it accepts in input as well.  The former isn't
 @c really true (see survey below), and I'm not
 @c sure that either of those formats is accepted in
-@c input. 
-@c 
+@c input.
+@c
 @c cvs log
 @c   current 1996/01/02 13:45:31
 @c   Internet 02 Jan 1996 13:45:31 UT
@@ -7314,7 +7322,7 @@ RFC1123).
 @c So I don't know....
 @c A few specific issues: (1) Maybe should reassure
 @c people that years after 2000
-@c work (they are in the testsuite, so they do indeed 
+@c work (they are in the testsuite, so they do indeed
 @c work).  (2) What do two digit years
 @c mean?  Where do we accept them?  (3) Local times can
 @c be ambiguous or nonexistent if they fall during the
@@ -7372,7 +7380,7 @@ accept all of them.
 @c message from "cvs import" suggesting a merge
 @c command).  What else?  Probably some/all of the "3
 @c weeks ago" family.
-@c 
+@c
 @c Maybe at
 @c some point have CVS start give warnings on "unofficial"
 @c formats (many of which might be typos or user
@@ -7401,7 +7409,7 @@ normally ignore files that do not contain the tag (or did not
 exist prior to the date) that you specified.  Use the @samp{-f} option
 if you want files retrieved even when there is no match for the
 tag or date.  (The most recent revision of the file
-will be used). 
+will be used).
 
 @need 800
 @samp{-f} is available with these commands:
@@ -7431,7 +7439,7 @@ The @samp{-k} option is available with the @code{add},
 
 @item -l
 Local; run only in current working directory, rather than
-recursing through subdirectories.  
+recursing through subdirectories.
 
 @strong{Warning:} this is not the same
 as the overall @samp{cvs -l} option, which you can specify to the
@@ -7455,7 +7463,7 @@ Available with the following commands: @code{add},
 @item -n
 Do not run any checkout/commit/tag program.  (A program can be
 specified to run on each of these activities, in the modules
-database (@pxref{modules}); this option bypasses it). 
+database (@pxref{modules}); this option bypasses it).
 
 @strong{Warning:} this is not the same as the overall @samp{cvs -n}
 option, which you can specify to the left of a cvs command!
@@ -8659,7 +8667,7 @@ kind of report is generated:
 Report on each time commit was used (i.e., each time
 the repository was modified).
 
-@item -e 
+@item -e
 Everything (all record types).  Equivalent to
 specifying @samp{-x} with all record types.  Of course,
 @samp{-e} will also include record types which are
@@ -8680,9 +8688,9 @@ Report on all tags.
 @item -x @var{type}
 Extract a particular set of record types @var{type} from the @sc{cvs}
 history.  The types are indicated by single letters,
-which you may specify in combination.  
+which you may specify in combination.
 
-Certain commands have a single record type: 
+Certain commands have a single record type:
 
 @table @code
 @item F
@@ -8701,7 +8709,7 @@ One of four record types may result from an update:
 @table @code
 @item C
 A merge was necessary but collisions were
-detected (requiring manual merging).  
+detected (requiring manual merging).
 @item G
 A merge was necessary and it succeeded.
 @item U
@@ -8945,7 +8953,7 @@ be changed, but if there is a consensus on what it
 should be changed to, it doesn't seem to be apparent.
 (Various options in the @file{modules} file can be used
 to recreate symbolic links on checkout, update, etc.;
-@pxref{modules}.)  
+@pxref{modules}.)
 @end table
 
 @c . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
@@ -9069,7 +9077,7 @@ Do not print the list of tags for this file.  This
 option can be very useful when your site uses a lot of
 tags, so rather than "more"'ing over 3 pages of tag
 information, the log information is presented without
-tags at all.  
+tags at all.
 
 @item -R
 Print only the name of the @sc{rcs} file.
@@ -9078,7 +9086,7 @@ Print only the name of the @sc{rcs} file.
 @c being explicitly documented here) is potentially
 @c confusing; it shows the log message to get from the
 @c previous revision to that revision.  "-r1.3 -r1.6"
-@c (equivalent to "-r1.3,1.6") is even worse; it 
+@c (equivalent to "-r1.3,1.6") is even worse; it
 @c prints the messages to get from 1.2 to 1.3 and 1.5
 @c to 1.6.  By analogy with "cvs diff", users might
 @c expect that it is more like specifying a range.
@@ -9107,7 +9115,7 @@ the same branch).
 Revisions from the beginning of the branch up to
 and including @var{rev}.
 
-@item @var{rev}: 
+@item @var{rev}:
 Revisions starting with @var{rev} to the end of the
 branch containing @var{rev}.
 
@@ -9354,7 +9362,7 @@ if it is non-empty!
 
 Before @code{release} releases your sources it will
 print a one-line message for any file that is not
-up-to-date.  
+up-to-date.
 
 @strong{Warning:}  Any new directories that you have
 created, but not added to the @sc{cvs} directory hierarchy
@@ -9460,7 +9468,7 @@ Only useful with the @samp{-D @var{date}} or @samp{-r @var{tag}}
 flags.  If no matching revision is found, use the most
 recent revision (instead of ignoring the file).
 
-@item -F 
+@item -F
 Overwrite an existing tag of the same name on a
 different revision.
 @c FIXME: Needs an example, and/or more explanation.
@@ -9601,7 +9609,7 @@ them):
 @c  "How do I move or rename a magic branch tag?"
 @c in the FAQ (I think the issues it talks about still
 @c apply, but this could use some sanity.sh work).
-@item -F 
+@item -F
 Overwrite an existing tag of the same name on a
 different revision.
 @c FIXME: See "rtag -F" for comments on this.
@@ -9735,7 +9743,7 @@ See @ref{Sticky tags}, for more information on sticky tags/dates.
 Create any directories that exist in the repository if
 they're missing from the working directory.  Normally,
 @code{update} acts only on directories and files that
-were already enrolled in your working directory.  
+were already enrolled in your working directory.
 
 This is useful for updating directories that were
 created in the repository since the initial checkout;
@@ -9998,7 +10006,7 @@ Initial revision
 @c The idea behind this table is that we want each item
 @c to be a sentence or two at most.  Preferably a
 @c single line.
-@c 
+@c
 @c In some cases refs to "foo options" are just to get
 @c this thing written quickly, not because the "foo
 @c options" node is really the best place to point.
@@ -10719,7 +10727,7 @@ file, which defines the modules inside the repository.
 * commit files::                The commit support files
 * commitinfo::                  Pre-commit checking
 * verifymsg::                   How are log messages evaluated?
-* editinfo::                    Specifying how log messages are created 
+* editinfo::                    Specifying how log messages are created
                                 (obsolete)
 * loginfo::                     Where should log messages be sent?
 * rcsinfo::                     Templates for the log messages
@@ -11188,7 +11196,7 @@ cvs import -I ! -W "*.exe -k 'b'" first-dir vendortag reltag
 @c 	::::::::::::::::::
 @c 	*.t12 -m 'COPY'
 @c 	*.t[0-9][0-9] -f 'gunzipcp %s' -t 'gzipcp %s %s' -m 'COPY'
-@c 
+@c
 @c	::::::::::::::::::
 @c	gunzipcp
 @c	::::::::::::::::::
@@ -11388,8 +11396,8 @@ repositories}).
 @cindex verifymsg (admin file)
 @cindex log message, verifying
 
-Once you have entered a log message, you can evaluate 
-that message to check for specific content, such as 
+Once you have entered a log message, you can evaluate
+that message to check for specific content, such as
 a bug ID.  Use the @file{verifymsg} file to
 specify a program that is used to verify the log message.
 This program could be a simple script that checks
@@ -11438,7 +11446,7 @@ free text.  The following template is found in the file
 @file{/usr/cvssupport/tc.template}.
 
 @example
-BugId:    
+BugId:
 @end example
 
 The script @file{/usr/cvssupport/bugid.verify} is used to
@@ -11449,7 +11457,7 @@ evaluate the log message.
 #
 #       bugid.verify filename
 #
-#  Verify that the log message contains a valid bugid 
+#  Verify that the log message contains a valid bugid
 #  on the first line.
 #
 if head -1 < $1 | grep '^BugId:[ ]*[0-9][0-9]*$' > /dev/null; then
@@ -11553,7 +11561,7 @@ free text.  The following template is found in the file
 @file{/usr/cvssupport/tc.template}.
 
 @example
-BugId:    
+BugId:
 @end example
 
 The script @file{/usr/cvssupport/bugid.edit} is used to
@@ -11623,7 +11631,7 @@ matching regular expression or @samp{DEFAULT}.
 The first matching regular expression is used.
 
 @xref{commit files}, for a description of the syntax of
-the @file{loginfo} file.  
+the @file{loginfo} file.
 
 The user may specify a format string as
 part of the filter.  The string is composed of a
@@ -11680,7 +11688,7 @@ repositories}).
 @appendixsubsec Loginfo example
 
 The following @file{loginfo} file, together with the
-tiny shell-script below, appends all log messages 
+tiny shell-script below, appends all log messages
 to the file @file{$CVSROOT/CVSROOT/commitlog},
 and any commits to the administrative files (inside
 the @file{CVSROOT} directory) are also logged in
@@ -11862,7 +11870,7 @@ patterns is:
     *~      #*      .#*     ,*      _$*     *$
     *.old   *.bak   *.BAK   *.orig  *.rej   .del-*
     *.a     *.olb   *.o     *.obj   *.so    *.exe
-    *.Z     *.elc   *.ln  
+    *.Z     *.elc   *.ln
     core
 @end example
 
@@ -12116,7 +12124,7 @@ can supply it on the command line: @samp{cvs -d cvsroot
 cvs_command@dots{}} Once you have checked out a working
 directory, @sc{cvs} stores the appropriate root (in
 the file @file{CVS/Root}), so normally you only need to
-worry about this when initially checking out a working 
+worry about this when initially checking out a working
 directory.
 
 @item $EDITOR
@@ -12258,7 +12266,7 @@ to use the optional developer communication features.
 @c state.
 @c Note: this is tricky to document without confusing
 @c people--need to carefully say what CVS version we
-@c are talking about and keep in mind the distinction 
+@c are talking about and keep in mind the distinction
 @c between a
 @c repository created with 1.3 and on which one now
 @c uses 1.5+, and a repository on which one wants to
@@ -12269,7 +12277,7 @@ to use the optional developer communication features.
 @c Not sure whether this should produce a warning or
 @c something, and probably needs further thought, but
 @c it would appear that the situation can be detected.
-@c 
+@c
 @c We might want to separate out the 1.3 compatibility
 @c section (for repository & working directory) from the
 @c rest--that might help avoid confusing people who
