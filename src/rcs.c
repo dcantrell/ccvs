@@ -554,24 +554,14 @@ RCS_fully_parse (rcs)
 
 	/* Rather than try to keep track of how much information we
            have read, just read to the end of the file.  */
-	do
-	{
-	    c = getc (fp);
-	    if (c == EOF)
-		break;
-	} while (whitespace (c));
+	c = getrevnum (fp, &key);
 	if (c == EOF)
 	{
 	    if (ferror (fp))
 		error (1, errno, "cannot read %s", rcs->path);
 	    break;
 	}
-	if (ungetc (c, fp) == EOF)
-	    /* Mentioning the filename here is just likely to be confusing,
-	       since (I would imagine) it is a CVS internal error anyway.  */
-	    error (1, errno, "ungetc failed");
 
-	getrcsrev (fp, &key);
 	vers = findnode (rcs->versions, key);
 	if (vers == NULL)
 	    error (1, 0,

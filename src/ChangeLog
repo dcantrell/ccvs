@@ -1,5 +1,8 @@
 Mon Feb  9 21:05:28 1998  Ian Lance Taylor  <ian@cygnus.com>
 
+	* rcs.c (RCS_fully_parse): Call getrevnum rather than getrcsrev.
+	Don't bother with ungetc.
+
 	* rcs.c (getrcsrev): Rewrite to simply call getrevnum.
 
 Sun Feb  8 15:49:39 1998  Ian Lance Taylor  <ian@cygnus.com>
