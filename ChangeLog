@@ -1,5 +1,7 @@
 Mon Sep 30 08:33:51 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* BUGS: Mention "cvs add -m" client/server bug.
+
 	* NEWS: Document change from A4 to US letter.  It may seem minor,
 	but it affects a *lot* of people.
 

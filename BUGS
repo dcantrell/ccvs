@@ -20,6 +20,11 @@ client/server CVS.  The documented behavior (which is implemented by
 non-client/server CVS) is the correct one.
 
 
+* The -m option to "cvs add" does not work with client/server CVS.
+CVS will accept the option, but it won't actually set the
+file's description.
+
+
 * cvs update walks into a user's work directory if there's a directory
   of the same name in the repository even if the user's directory
   doesn't yet have a CVS admin sub-directory.  This can greatly confuse
