@@ -1,3 +1,10 @@
+2004-09-17  Derek Price  <derek@ximbiot.com>
+
+	* cvs.h (strip_trailing_slashes): Remove proto in favor of including
+	dirname.h from GNULIB.
+	* sever.c (dir_name): Rename to...
+	(gDirname): ...this to avoid conflicts with the GNULIB function.
+
 2004-09-16  Derek Price  <derek@ximbiot.com>
 
 	* expand_path.c (expand_path): Silence `gcc -Wall'.  Reformat some

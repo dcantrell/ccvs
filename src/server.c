@@ -1112,7 +1112,7 @@ serve_max_dotdot (char *arg)
 
 
 
-static char *dir_name;
+static char *gDirname;
 
 static void
 dirswitch (char *dir, char *repos)
@@ -1163,26 +1163,26 @@ dirswitch (char *dir, char *repos)
 	return;
     }
 
-    if (dir_name != NULL)
-	free (dir_name);
+    if (gDirname != NULL)
+	free (gDirname);
 
-    dir_name = xmalloc (strlen (server_temp_dir) + dir_len + 40);
-    if (dir_name == NULL)
+    gDirname = xmalloc (strlen (server_temp_dir) + dir_len + 40);
+    if (gDirname == NULL)
     {
 	pending_error = ENOMEM;
 	return;
     }
 
-    strcpy (dir_name, server_temp_dir);
-    strcat (dir_name, "/");
-    strcat (dir_name, dir);
+    strcpy (gDirname, server_temp_dir);
+    strcat (gDirname, "/");
+    strcat (gDirname, dir);
 
-    status = mkdir_p (dir_name);
+    status = mkdir_p (gDirname);
     if (status != 0
 	&& status != EEXIST)
     {
-	if (alloc_pending (80 + strlen (dir_name)))
-	    sprintf (pending_error_text, "E cannot mkdir %s", dir_name);
+	if (alloc_pending (80 + strlen (gDirname)))
+	    sprintf (pending_error_text, "E cannot mkdir %s", gDirname);
 	pending_error = status;
 	return;
     }
@@ -1196,17 +1196,17 @@ dirswitch (char *dir, char *repos)
     status = create_adm_p (server_temp_dir, dir);
     if (status != 0)
     {
-	if (alloc_pending (80 + strlen (dir_name)))
-	    sprintf (pending_error_text, "E cannot create_adm_p %s", dir_name);
+	if (alloc_pending (80 + strlen (gDirname)))
+	    sprintf (pending_error_text, "E cannot create_adm_p %s", gDirname);
 	pending_error = status;
 	return;
     }
 
-    if ( CVS_CHDIR (dir_name) < 0)
+    if ( CVS_CHDIR (gDirname) < 0)
     {
 	int save_errno = errno;
-	if (alloc_pending (80 + strlen (dir_name)))
-	    sprintf (pending_error_text, "E cannot change to %s", dir_name);
+	if (alloc_pending (80 + strlen (gDirname)))
+	    sprintf (pending_error_text, "E cannot change to %s", gDirname);
 	pending_error = save_errno;
 	return;
     }
@@ -1217,9 +1217,9 @@ dirswitch (char *dir, char *repos)
     if ((CVS_MKDIR (CVSADM, 0777) < 0) && (errno != EEXIST))
     {
 	int save_errno = errno;
-	if (alloc_pending (80 + strlen (dir_name) + strlen (CVSADM)))
+	if (alloc_pending (80 + strlen (gDirname) + strlen (CVSADM)))
 	    sprintf (pending_error_text,
-		     "E cannot mkdir %s/%s", dir_name, CVSADM);
+		     "E cannot mkdir %s/%s", gDirname, CVSADM);
 	pending_error = save_errno;
 	return;
     }
@@ -1233,18 +1233,18 @@ dirswitch (char *dir, char *repos)
     if (f == NULL)
     {
 	int save_errno = errno;
-	if (alloc_pending (80 + strlen (dir_name) + strlen (CVSADM_REP)))
+	if (alloc_pending (80 + strlen (gDirname) + strlen (CVSADM_REP)))
 	    sprintf (pending_error_text,
-		     "E cannot open %s/%s", dir_name, CVSADM_REP);
+		     "E cannot open %s/%s", gDirname, CVSADM_REP);
 	pending_error = save_errno;
 	return;
     }
     if (fprintf (f, "%s", repos) < 0)
     {
 	int save_errno = errno;
-	if (alloc_pending (80 + strlen (dir_name) + strlen (CVSADM_REP)))
+	if (alloc_pending (80 + strlen (gDirname) + strlen (CVSADM_REP)))
 	    sprintf (pending_error_text,
-		     "E error writing %s/%s", dir_name, CVSADM_REP);
+		     "E error writing %s/%s", gDirname, CVSADM_REP);
 	pending_error = save_errno;
 	fclose (f);
 	return;
@@ -1260,9 +1260,9 @@ dirswitch (char *dir, char *repos)
 	if (fprintf (f, "/.") < 0)
 	{
 	    int save_errno = errno;
-	    if (alloc_pending (80 + strlen (dir_name) + strlen (CVSADM_REP)))
+	    if (alloc_pending (80 + strlen (gDirname) + strlen (CVSADM_REP)))
 		sprintf (pending_error_text,
-			 "E error writing %s/%s", dir_name, CVSADM_REP);
+			 "E error writing %s/%s", gDirname, CVSADM_REP);
 	    pending_error = save_errno;
 	    fclose (f);
 	    return;
@@ -1271,9 +1271,9 @@ dirswitch (char *dir, char *repos)
     if (fprintf (f, "\n") < 0)
     {
 	int save_errno = errno;
-	if (alloc_pending (80 + strlen (dir_name) + strlen (CVSADM_REP)))
+	if (alloc_pending (80 + strlen (gDirname) + strlen (CVSADM_REP)))
 	    sprintf (pending_error_text,
-		     "E error writing %s/%s", dir_name, CVSADM_REP);
+		     "E error writing %s/%s", gDirname, CVSADM_REP);
 	pending_error = save_errno;
 	fclose (f);
 	return;
@@ -1281,9 +1281,9 @@ dirswitch (char *dir, char *repos)
     if (fclose (f) == EOF)
     {
 	int save_errno = errno;
-	if (alloc_pending (80 + strlen (dir_name) + strlen (CVSADM_REP)))
+	if (alloc_pending (80 + strlen (gDirname) + strlen (CVSADM_REP)))
 	    sprintf (pending_error_text,
-		     "E error closing %s/%s", dir_name, CVSADM_REP);
+		     "E error closing %s/%s", gDirname, CVSADM_REP);
 	pending_error = save_errno;
 	return;
     }
@@ -2676,7 +2676,7 @@ serve_notify (char *arg)
     if (outside_dir (arg))
 	return;
 
-    if (dir_name == NULL)
+    if (gDirname == NULL)
 	goto error;
 
     new = xmalloc (sizeof (struct notify_note));
@@ -2685,7 +2685,7 @@ serve_notify (char *arg)
 	pending_error = ENOMEM;
 	return;
     }
-    new->dir = xmalloc (strlen (dir_name) + 1);
+    new->dir = xmalloc (strlen (gDirname) + 1);
     new->filename = xmalloc (strlen (arg) + 1);
     if (new->dir == NULL || new->filename == NULL)
     {
@@ -2695,7 +2695,7 @@ serve_notify (char *arg)
 	free (new);
 	return;
     }
-    strcpy (new->dir, dir_name);
+    strcpy (new->dir, gDirname);
     strcpy (new->filename, arg);
 
     status = buf_read_line (buf_from_net, &data, NULL);
@@ -3115,7 +3115,7 @@ serve_questionable (char *arg)
 	initted = 1;
     }
 
-    if (dir_name == NULL)
+    if (gDirname == NULL)
     {
 	buf_output0 (buf_to_net, "E Protocol error: 'Directory' missing");
 	return;
@@ -3129,7 +3129,7 @@ serve_questionable (char *arg)
 	char *update_dir;
 
 	buf_output (buf_to_net, "M ? ", 4);
-	update_dir = dir_name + strlen (server_temp_dir) + 1;
+	update_dir = gDirname + strlen (server_temp_dir) + 1;
 	if (!(update_dir[0] == '.' && update_dir[1] == '\0'))
 	{
 	    buf_output0 (buf_to_net, update_dir);
