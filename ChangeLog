@@ -1,3 +1,8 @@
+Thu Oct 17 15:38:03 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* NEWS, README: Reinstate 30 Sep 96 changes concerning US letter
+	vs. A4 paper.
+
 Wed Oct 16 16:59:57 1996  Jim Blandy  <jimb@totoro.cyclic.com>
 
 	* configure.in: Simplify code to check for crypt.  Check for
