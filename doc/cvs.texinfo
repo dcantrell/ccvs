@@ -9543,11 +9543,9 @@ Synonym: freeze
 @end itemize
 
 Use this command to assign symbolic tags to the nearest
-repository versions to your working sources.  The tags
+repository revisions to your working sources.  The tags
 are applied immediately to the repository, as with
-@code{rtag}, but the versions are supplied implicitly by the
-@sc{cvs} records of your working files' history rather than
-applied explicitly.
+@code{rtag}. 
 
 One use for tags is to record a snapshot of the
 current sources when the software freeze date of a

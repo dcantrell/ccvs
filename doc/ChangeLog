@@ -1,3 +1,8 @@
+1998-09-13  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (tag): Remove confusing wording about supplying
+	revision numbers "implicitly".
+
 1998-09-10  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (rdiff options): Thanks to the diff library, -u is
