@@ -420,7 +420,7 @@ parse_cvsroot (root_in)
     else
     {
 	/* If the method isn't specified, assume
-	   SERVER_METHOD/EXT_METHOD if the string contains a colon or
+	   SERVER_METHOD/EXT_METHOD if the string looks like a relative path or
 	   LOCAL_METHOD otherwise.  */
 
 	newroot->method = ((*cvsroot_copy != '/' && strchr (cvsroot_copy, '/'))
