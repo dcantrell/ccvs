@@ -1,5 +1,10 @@
 2004-11-16  Derek Price  <derek@ximbiot.com>
 
+	* Makefile.am (stamp-ch): Replace dependency on Makefile with a
+	dependency on configure.
+
+2004-11-16  Derek Price  <derek@ximbiot.com>
+
 	* Makefile.am (stamp-chi, config.h.in): Rename to...
 	($(srcdir)/stamp-chi, $(srcdir)/config.h.in): Respectively, including
 	associated required target changes.
