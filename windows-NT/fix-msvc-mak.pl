@@ -1,5 +1,3 @@
-#! @PERL@ -w
-
 use strict;
 
 sub save_edit {
