@@ -262,10 +262,12 @@ WITH_GSSAPI
 
 hold_cppflags=$CPPFLAGS
 CPPFLAGS="$CPPFLAGS -I$GSSAPI/include "
-AC_CHECK_HEADERS(gssapi.h gssapi/gssapi.h gssapi/gssapi_generic.h)
+AC_CHECK_HEADERS(krb5.h gssapi.h gssapi/gssapi.h gssapi/gssapi_generic.h)
 CPPFLAGS=$hold_cppflags
 
-if test "$ac_cv_header_gssapi_h" = "yes" || test "$ac_cv_header_gssapi_gssapi_h" = "yes"; then
+if test "$ac_cv_header_krb5_h" = "yes" && 
+   (test "$ac_cv_header_gssapi_h" = "yes" ||
+    test "$ac_cv_header_gssapi_gssapi_h" = "yes"); then
   AC_DEFINE(HAVE_GSSAPI)
   includeopt="${includeopt} -I$GSSAPI/include"
   # FIXME: This is ugly, but these things don't seem to be standardized.
