@@ -3556,7 +3556,7 @@ start_server ()
 		       "This server does not support the global -l option.");
 	}
     }
-    if (encrypt)
+    if (cvsencrypt)
     {
 	/* Turn on encryption before turning on compression.  We do
            not want to try to compress the encrypted stream.  Instead,

@@ -4144,7 +4144,7 @@ error 0 %s: no such user\n", user);
 
 /* This global variable is non-zero if the user requests encryption on
    the command line.  */
-int encrypt;
+int cvsencrypt;
 
 #ifdef HAVE_KERBEROS
 
