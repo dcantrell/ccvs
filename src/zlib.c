@@ -565,7 +565,7 @@ read_and_gzip (fd, fullname, buf, size, len, level)
 
     while (1)
     {
-	int finish;
+	int finish = 0;
 
 	nread = read (fd, inbuf, sizeof inbuf);
 	if (nread < 0)
