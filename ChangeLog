@@ -1,4 +1,4 @@
-2002-03-19  Larry Jones  <larry.jones@sdrc.com>
+2002-03-31  Derek Price  <oberon@umich.edu>
 
 	* aclocal.m4: Regenerate with recent version of Autoconf.  It looks
 	like things changed because of some RedHat patches or the like which
