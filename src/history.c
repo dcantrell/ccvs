@@ -21,6 +21,7 @@
  *		F	"Release" cmd.
  *		W	"Update" cmd - No User file, Remove from Entries file.
  *		U	"Update" cmd - File was checked out over User file.
+ *		P	"Update" cmd - User file was patched.
  *		G	"Update" cmd - File was merged successfully.
  *		C	"Update" cmd - File was merged and shows overlaps.
  *		M	"Commit" cmd - "Modified" file.
@@ -52,7 +53,7 @@
  *		G,C	The Revision(s) involved in merge.
  *		M,A,R	RCS Revision affected.
  *
- *  argument	The module (for [TOEUF]) or file (for [WUGCMAR]) affected.
+ *  argument	The module (for [TOEUF]) or file (for [WUPGCMAR]) affected.
  *
  *
  *** Report categories: "User" and "Since" modifiers apply to all reports.
@@ -60,7 +61,7 @@
  *
  *   Extract list of record types
  *
- *	-e, -x [TOEFWUGCMAR]
+ *	-e, -x [TOEFWUPGCMAR]
  *
  *		Extracted records are simply printed, No analysis is performed.
  *		All "field" modifiers apply.  -e chooses all types.
@@ -208,7 +209,7 @@ static void save_file (char *dir, char *name, char *module);
 static void save_module (char *module);
 static void save_user (char *name);
 
-#define ALL_REC_TYPES "TOEFWUCGMAR"
+#define ALL_REC_TYPES "TOEFWUPCGMAR"
 #define USER_INCREMENT	2
 #define FILE_INCREMENT	128
 #define MODULE_INCREMENT 5
@@ -290,7 +291,7 @@ static const char *const history_usg[] =
     "        -c              Committed (Modified) files\n",
     "        -o              Checked out modules\n",
     "        -m <module>     Look for specified module (repeatable)\n",
-    "        -x [TOEFWUCGMAR] Extract by record type\n",
+    "        -x [TOEFWUPCGMAR] Extract by record type\n",
     "        -e              Everything (same as -x, but all record types)\n",
     "   Flags:\n",
     "        -a              All users (Default is self)\n",

@@ -1,5 +1,16 @@
 Changes since 1.12.1:
 
+* In client/server mode, most messages from CVS now contain the actual
+command name rather than the generic "server".
+
+* A long-standing bug that prevented most client/server updates from being
+logged in the history file has been fixed.
+
+* Updates done via a patch ("P" status) are now logged in the history file
+by default and the corresponding "P" history record type is now documented.
+If you're setting the LogHistory option in your CVSROOT/config file, you may
+want to add "P" to the list of record types.
+
 * CVS now will always compile and its own getpass() function (originally from
 GNULIB) in favor of any system one that may exist.  This avoids some problems
 with long passwords on some systems and updates us to POSIX.2 compliance, since

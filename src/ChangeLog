@@ -1,3 +1,13 @@
+2003-08-27  Larry Jones  <lawrence.jones@eds.com>
+
+	* history.c: 'P' is a valid record type and has been for a long time.
+	Add it to the comments, usage message, and, most important,
+	ALL_REC_TYPES so it gets recorded by default.
+	* server.c (do_cvs_command): Set global command_name to the real
+	command name rather than leaving it set to "server".
+	* sanity.sh: Update to match.
+	(Reported by Dmitry Ryzhkov <rdim_outside@softhome.net>.)
+
 2003-08-19  Derek Price  <derek@ximbiot.com>
 
 	* filesubr.c (cvs_temp_file): Expand comments.  Check for glibc version

@@ -10164,7 +10164,7 @@ rtag
 @end table
 
 @noindent
-One of four record types may result from an update:
+One of five record types may result from an update:
 
 @table @code
 @item C
@@ -10174,6 +10174,8 @@ detected (requiring manual merging).
 A merge was necessary and it succeeded.
 @item U
 A working file was copied from the repository.
+@item P
+A working file was patched to match the repository.
 @item W
 The working copy of a file was deleted during
 update (because it was gone from the repository).
@@ -11614,7 +11616,7 @@ Working directory must match.  See @ref{history options}.
 
 @item -x @var{types}
 Report on @var{types}, one or more of
-@code{TOEFWUCGMAR}.  See @ref{history options}.
+@code{TOEFWUPCGMAR}.  See @ref{history options}.
 
 @item -z @var{zone}
 Output for time zone @var{zone}.  See @ref{history options}.
@@ -13667,7 +13669,7 @@ repository with LockDir enabled.
 @cindex LogHistory, in CVSROOT/config
 @item LogHistory=@var{value}
 Control what is logged to the @file{CVSROOT/history} file (@pxref{history}).
-Default of @samp{TOEFWUCGMAR} (or simply @samp{all}) will log
+Default of @samp{TOEFWUPCGMAR} (or simply @samp{all}) will log
 all transactions.  Any subset of the default is
 legal.  (For example, to only log transactions that modify the
 @file{*,v} files, use @samp{LogHistory=TMAR}.)
