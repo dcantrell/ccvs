@@ -1,5 +1,13 @@
 Fri Apr 26 07:59:44 1996  Noel Cragg  <noel@gargle>
 
+	* server.c (serve_init): use the new return value from
+ 	PARSE_CVSROOT.
+	(serve_root): same.
+	* main.c (main): same.
+
+	* root.c (parse_cvsroot): fix indentation, add a return value
+ 	which tells whether the command succeeded or failed.
+
 	* main.c (main): move the setting of the UMASK environment
  	variable inside the stuff that gets done if the user is NOT asking
  	for help, so we don't signal any errors prematurely (don't want to

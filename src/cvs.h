@@ -459,7 +459,7 @@ List *Entries_Open PROTO((int aflag));
 char *Make_Date PROTO((char *rawdate));
 char *Name_Repository PROTO((char *dir, char *update_dir));
 char *Name_Root PROTO((char *dir, char *update_dir));
-void parse_cvsroot PROTO((char *CVSroot));
+int parse_cvsroot PROTO((char *CVSroot));
 void Create_Root PROTO((char *dir, char *rootdir));
 int same_directories PROTO((char *dir1, char *dir2));
 char *Short_Repository PROTO((char *repository));
