@@ -31135,7 +31135,7 @@ fi;
 if test no != "$enable_proxy"; then
 
 cat >>confdefs.h <<\_ACEOF
-#define SECONDARY_SUPPORT 1
+#define PROXY_SUPPORT 1
 _ACEOF
 
 fi
