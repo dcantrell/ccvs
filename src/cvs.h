@@ -180,6 +180,7 @@ extern int errno;
 #define CVSROOTADM_USERS	"users"
 #define CVSROOTADM_READERS	"readers"
 #define CVSROOTADM_WRITERS	"writers"
+#define CVSROOTADM_PASSWD	"passwd"
 
 #define CVSNULLREPOS		"Emptydir"	/* an empty directory */
 
@@ -372,6 +373,12 @@ extern char *CVSroot_directory;	/* the directory name */
 extern int trace;		/* Show all commands */
 extern int noexec;		/* Don't modify disk anywhere */
 extern int logoff;		/* Don't write history entry */
+
+#ifdef AUTH_SERVER_SUPPORT
+extern char *Pserver_Repos;     /* used to check that same repos is
+                                   transmitted in pserver auth and in
+                                   CVS protocol. */
+#endif /* AUTH_SERVER_SUPPORT */
 
 extern char hostname[];
 

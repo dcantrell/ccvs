@@ -87,11 +87,19 @@ static Key_schedule sched;
 #endif /* AUTH_SERVER_SUPPORT */
 
 
+#ifdef AUTH_SERVER_SUPPORT
+
 /* The cvs username sent by the client, which might or might not be
    the same as the system username the server eventually switches to
    run as.  CVS_Username gets set iff password authentication is
    successful. */
 static char *CVS_Username = NULL;
+
+/* Used to check that same repos is transmitted in pserver auth and in
+   later CVS protocol.  Exported because root.c also uses. */
+char *Pserver_Repos = NULL;
+
+#endif /* AUTH_SERVER_SUPPORT */
 
 
 /* While processing requests, this buffer accumulates data to be sent to
@@ -1629,6 +1637,7 @@ check_command_legal_p (char *cmd_name, int croak_on_illegal)
      * is not set, this just returns 1, because CVS_Username unset
      * means pserver is not active.
      */
+#ifdef AUTH_SERVER_SUPPORT
     if (CVS_Username == NULL)
         return 1;
 
@@ -1771,6 +1780,7 @@ check_command_legal_p (char *cmd_name, int croak_on_illegal)
                  return 0;
          }
     }
+#endif /* AUTH_SERVER_SUPPORT */
 
     /* If ever reach end of this function, command must be legal. */
     return 1;
@@ -4141,16 +4151,20 @@ check_repository_password (username, password, repository, host_user_ptr)
     int found_it = 0;
     int namelen;
 
+    /* We don't use CVSroot_directory because it hasn't been set yet
+     * -- our `repository' argument came from the authentication
+     * protocol, not the regular CVS protocol.
+     */
+
     filename = xmalloc (strlen (repository)
 			+ 1
-			+ strlen ("CVSROOT")
+			+ strlen (CVSROOTADM)
 			+ 1
-			+ strlen ("passwd")
+			+ strlen (CVSROOTADM_PASSWD)
 			+ 1);
 
-    strcpy (filename, repository);
-    strcat (filename, "/CVSROOT");
-    strcat (filename, "/passwd");
+    (void) sprintf (filename, "%s/%s/%s", repository,
+                    CVSROOTADM, CVSROOTADM_PASSWD);
 
     fp = CVS_FOPEN (filename, "r");
     if (fp == NULL)
@@ -4451,6 +4465,11 @@ pserver_authenticate_connection ()
 
 	exit (0);
     }
+
+    /* Set Pserver_Repos so that we can check later that the same
+       repository is sent in later client/server protocol. */
+    Pserver_Repos = xmalloc (strlen (repository) + 1);
+    strcpy (Pserver_Repos, repository);
 
     /* Switch to run as this user. */
     switch_to_user (host_user);
