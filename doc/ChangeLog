@@ -1,3 +1,7 @@
+Fri Sep  5 14:42:39 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* DIFFUTILS-2.7-BUG: Further info from Eggert.
+
 1997-09-05  Paul Eggert  <eggert@twinsun.com>
 
 	* DIFFUTILS-2.7-BUG: Explain how this bug will probably be
