@@ -1,3 +1,8 @@
+2000-09-07  Larry Jones  <larry.jones@sdrc.com>
+
+	* Makefile.in: Use @bindir@, @libdir@, @infodir@, and @mandir@
+	from autoconf.
+
 2000-02-25  Larry Jones  <larry.jones@sdr.com>
 
 	* log.pl: Get committer from command line instead of getlogin
