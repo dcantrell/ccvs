@@ -1863,32 +1863,6 @@ isabsolute (filename)
 
 
 
-/*
- * void cvs_trace(int level, const char *fmt, ...)
- *
- * Print tracing information to stderr on request.  Levels are implemented
- * as with CVSNT.
- */
-void cvs_trace (int level, const char *fmt, ...)
-{
-    if (trace >= level)
-    {
-	va_list va;
-
-	va_start (va, fmt);
-#ifdef SERVER_SUPPORT
-	fprintf (stderr,"%c -> ",server_active?'S':' ');
-#else /* ! SERVER_SUPPORT */
-	fprintf (stderr,"  -> ");
-#endif
-	vfprintf (stderr, fmt, va);
-	fprintf (stderr,"\n");
-	va_end (va);
-    }
-}
-
-
-
 /* Like xstrdup (), but can handle a NULL argument.
  */
 char *
