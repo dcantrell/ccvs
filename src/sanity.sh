@@ -7368,12 +7368,50 @@ ${PROG} [a-z]*: Rebuilding administrative file database"
 
           # Do the import
           cd binwrap3
-          dotest binwrap3-3 "${testcvs} import -m . binwrap3 tag1 tag2" \
-"N ${DOTSTAR}"
+	  # Not importing .cvswrappers tests whether the client is really
+	  # letting the server know "honestly" whether the file is binary,
+	  # rather than just letting the server see the .cvswrappers file.
+	  # We will add "-I .cvswrappers" when we are ready to test that.
+          dotest binwrap3-2a \
+"${testcvs} import -m . binwrap3 tag1 tag2" \
+"[NI] ${DOTSTAR}"
+
+	  # OK, now test "cvs add".
+          cd ..
+	  rm -r binwrap3
+          dotest binwrap3-2b "${testcvs} co binwrap3" "${DOTSTAR}"
+          cd binwrap3
+	  cd sub2
+	  echo "*.newbin -k 'b'" > .cvswrappers
+	  echo .cvswrappers >.cvsignore
+	  echo .cvsignore >>.cvsignore
+	  touch file1.newbin file1.txt
+	  dotest binwrap3-2c "${testcvs} add file1.newbin file1.txt" \
+"${PROG} [a-z]*: scheduling file .file1\.newbin. for addition
+${PROG} [a-z]*: scheduling file .file1\.txt. for addition
+${PROG} [a-z]*: use .${PROG} commit. to add these files permanently"
+	  dotest binwrap3-2d "${testcvs} -q ci -m add" \
+"Checking in \.cvswrappers;
+${TESTDIR}/cvsroot/binwrap3/sub2/\.cvswrappers,v  <--  \.cvswrappers
+new revision: 1\.2; previous revision: 1\.1
+done
+RCS file: ${TESTDIR}/cvsroot/binwrap3/sub2/file1\.newbin,v
+done
+Checking in file1\.newbin;
+${TESTDIR}/cvsroot/binwrap3/sub2/file1\.newbin,v  <--  file1\.newbin
+initial revision: 1\.1
+done
+RCS file: ${TESTDIR}/cvsroot/binwrap3/sub2/file1\.txt,v
+done
+Checking in file1\.txt;
+${TESTDIR}/cvsroot/binwrap3/sub2/file1\.txt,v  <--  file1\.txt
+initial revision: 1\.1
+done"
+	  cd ..
 
           # Now check out the module and see which files are binary.
           cd ..
-          mv binwrap3 was_binwrap3
+	  rm -r binwrap3
           dotest binwrap3-3 "${testcvs} co binwrap3" "${DOTSTAR}"
           cd binwrap3
 
@@ -7440,6 +7478,13 @@ ${PROG} [a-z]*: Rebuilding administrative file database"
 
           dotest binwrap3-subsub6 "grep foo-t.st sub2/subsub/CVS/Entries" \
                  "/foo-t.st/1.1.1.1/[A-Za-z0-9 	:]*//"
+
+	  if test "$remote" = no; then
+	    dotest binwrap3-sub2-add1 "grep file1.newbin sub2/CVS/Entries" \
+	    "/file1.newbin/1.1/[A-Za-z0-9 	:]*/-kb/"
+	  fi
+	  dotest binwrap3-sub2-add2 "grep file1.txt sub2/CVS/Entries" \
+	    "/file1.txt/1.1/[A-Za-z0-9 	:]*//"
 
           # Restore and clean up
           cd ..
