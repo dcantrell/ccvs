@@ -34,7 +34,8 @@ cvs_SOURCES = \
 	client.c \
 	commit.c \
 	create_adm.c \
-	cvsrc.c diff.c \
+	cvsrc.c \
+	diff.c \
 	edit.c \
 	entries.c \
 	error.c \
@@ -60,7 +61,7 @@ cvs_SOURCES = \
 	ms-buffer.c ms-buffer.h \
 	myndbm.c \
 	no_diff.c \
-	parseinfo.c \
+	parseinfo.c parseinfo.h \
 	patch.c \
 	rcs.c \
 	rcscmds.c \
