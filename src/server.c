@@ -7711,7 +7711,7 @@ cvs_outerr (const char *str, size_t len)
 	else
 	    syslog (LOG_DAEMON | LOG_ERR,
 		    "Attempt to write error message after close of network "
-		    "buffer.  Message was: %s",
+		    "buffer.  Message was: `%s'",
 		    str);
 # endif /* HAVE_SYSLOG */
     }
@@ -7727,7 +7727,7 @@ cvs_outerr (const char *str, size_t len)
 	else
 	    syslog (LOG_DAEMON | LOG_ERR,
 		    "Attempt to write error message before initialization of "
-		    "protocol buffer.  Message was: %s",
+		    "protocol buffer.  Message was: `%s'",
 		    str);
 # endif /* HAVE_SYSLOG */
     }
