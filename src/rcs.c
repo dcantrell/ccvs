@@ -3289,17 +3289,17 @@ RCS_findlock_or_tip (rcs)
 
 static char *
 truncate_revnum (r)
-     const char *r;
+    const char *r;
 {
-  size_t len;
-  char *new_r;
-  char *dot = strrchr (r, '.');
+    size_t len;
+    char *new_r;
+    char *dot = strrchr (r, '.');
 
-  assert (dot);
-  len = dot - r;
-  new_r = xmalloc (len + 1);
-  *(char *) mempcpy (new_r, r, len) = '\0';
-  return new_r;
+    assert (dot);
+    len = dot - r;
+    new_r = xmalloc (len + 1);
+    *(char *) mempcpy (new_r, r, len) = '\0';
+    return new_r;
 }
 
 /* Revision number string, R, must contain a `.'.
@@ -3308,12 +3308,12 @@ truncate_revnum (r)
 
 static char *
 truncate_revnum_in_place (r)
-     char *r;
+    char *r;
 {
-  char *dot = strrchr (r, '.');
-  assert (dot);
-  *dot = '\0';
-  return dot;
+    char *dot = strrchr (r, '.');
+    assert (dot);
+    *dot = '\0';
+    return dot;
 }
 
 /* Revision number strings, R and S, must each contain a `.'.
@@ -3325,21 +3325,21 @@ truncate_revnum_in_place (r)
 
 static int
 compare_truncated_revnums (r, s)
-     char *r;
-     char *s;
+    char *r;
+    char *s;
 {
-  char *r_dot = truncate_revnum_in_place (r);
-  char *s_dot = truncate_revnum_in_place (s);
-  int cmp;
- 
-  assert (numdots (r) == numdots (s));
+    char *r_dot = truncate_revnum_in_place (r);
+    char *s_dot = truncate_revnum_in_place (s);
+    int cmp;
 
-  cmp = compare_revnums (r, s);
+    assert (numdots (r) == numdots (s));
 
-  *r_dot = '.';
-  *s_dot = '.';
+    cmp = compare_revnums (r, s);
 
-  return cmp;
+    *r_dot = '.';
+    *s_dot = '.';
+
+    return cmp;
 }
 
 /* Return a malloc'd copy of the string representing the highest branch
@@ -3432,31 +3432,31 @@ RCS_addbranch (rcs, branch)
 
 	if (branchnode->branches != NULL)
 	{
-	  Node *head;
-	  Node *bp;
+	    Node *head;
+	    Node *bp;
 
-	  /* Find the position of this new branch in the sorted list
-	     of branches.  */
-	  head = branchnode->branches->list;
-	  for (bp = head->next; bp != head; bp = bp->next)
+	    /* Find the position of this new branch in the sorted list
+	       of branches.  */
+	    head = branchnode->branches->list;
+	    for (bp = head->next; bp != head; bp = bp->next)
 	    {
-	      char *dot;
-	      int found_pos;
+		char *dot;
+		int found_pos;
 
-	      /* The existing list must be sorted on increasing revnum.  */
-	      assert (bp->next == head
-		      || compare_truncated_revnums (bp->key,
-						    bp->next->key) < 0);
-	      dot = truncate_revnum_in_place (bp->key);
-	      found_pos = (compare_revnums (branch, bp->key) < 0);
-	      *dot = '.';
+		/* The existing list must be sorted on increasing revnum.  */
+		assert (bp->next == head
+			|| compare_truncated_revnums (bp->key,
+						      bp->next->key) < 0);
+		dot = truncate_revnum_in_place (bp->key);
+		found_pos = (compare_revnums (branch, bp->key) < 0);
+		*dot = '.';
 
-	      if (found_pos)
+		if (found_pos)
 		{
-		  break;
+		    break;
 		}
 	    }
-	  marker = bp;
+	    marker = bp;
 	}
     }
 
@@ -3475,9 +3475,9 @@ RCS_addbranch (rcs, branch)
 	marker = branchnode->branches->list;
 
     {
-      int fail;
-      fail = insert_before (branchnode->branches, marker, bp);
-      assert (!fail);
+	int fail;
+	fail = insert_before (branchnode->branches, marker, bp);
+	assert (!fail);
     }
 
     return newrevnum;
