@@ -1,5 +1,11 @@
 2003-02-25  Derek Price  <derek@ximbiot.com>
 
+	* Makefile.in: Regenerated.
+	* stamp-1: Ditto.
+	* version-client.texi: Ditto.
+
+2003-02-25  Derek Price  <derek@ximbiot.com>
+
 	* cvs.texinfo (admin): Mention UserAdminOptions.
 	(config): Ditto.
 	(Original patch from Dan Peterson <dbpete@aol.com>.)
