@@ -1,5 +1,10 @@
 Changes since 1.11.9:
 
+* We've standardized on Autoconf version 2.58 to avoid a bug and get at a few
+  new macros.  Again, this should only really affect developers.  See the
+  section of the INSTALL file about using the autotools if you are compiling
+  CVS yourself.
+
 * The configure script now tests whether it is building CVS on a case
   insensitive file system.  If it is, CVS assumes that all file systems on this
   platform will be case insensitive.  This is useful for getting the case
