@@ -1,5 +1,11 @@
 2001-06-28  Derek Price  <dprice@collab.net>
 
+	* Makefile.in: Regenerated with new version of Automake.
+	* aclocal.m4: Ditto.
+	* configure: Regenerated.
+
+2001-06-28  Derek Price  <dprice@collab.net>
+
 	* mdate-sh: New file to support doc/version.texi.
 
 2001-06-27  Larry Jones  <larry.jones@sdr.com>
