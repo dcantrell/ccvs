@@ -34,8 +34,8 @@ Create_Admin (dir, update_dir, repository, tag, date)
 
     if (trace)
       {
-	char wd[1000];
-	getcwd (wd, sizeof (wd));
+	char wd[PATH_MAX];
+	getwd (wd);
 	fprintf (stderr, "%c-> Create_Admin (%s, %s, %s, %s, %s) in %s\n",
 		 (server_active) ? 'S' : ' ',
 		 dir, update_dir, repository, tag, date, wd);
