@@ -3148,13 +3148,17 @@ start_server ()
 	strcpy (buf, log);
 	p = buf + len;
 
+	/* Open logfiles in binary mode so that they reflect
+	   exactly what was transmitted and received (that is
+	   more important than that they be maximally
+	   convenient to view).  */
 	strcpy (p, ".in");
-	to_server_logfile = open_file (buf, "w");
+	to_server_logfile = open_file (buf, "wb");
         if (to_server_logfile == NULL)
 	    error (0, errno, "opening to-server logfile %s", buf);
 
 	strcpy (p, ".out");
-	from_server_logfile = open_file (buf, "w");
+	from_server_logfile = open_file (buf, "wb");
         if (from_server_logfile == NULL)
 	    error (0, errno, "opening from-server logfile %s", buf);
 
