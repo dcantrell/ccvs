@@ -1,0 +1,66 @@
+/*
+ * Copyright (c) 1992, Brian Berliner and Jeff Polk
+ * Copyright (c) 1989-1992, Brian Berliner
+ * 
+ * You may distribute under the terms of the GNU General Public License as
+ * specified in the README file that comes with the CVS 1.4 kit.
+ * 
+ * The functions in this file provide an interface for performing 
+ * operations directly on RCS files. 
+ */
+
+#include "cvs.h"
+
+int
+RCS_settag(path, tag, rev)
+    const char *path;
+    const char *tag;
+    const char *rev;
+{
+    run_setup ("%s%s -q -N%s:%s", Rcsbin, RCS, tag, rev);
+    run_arg (path);
+    return run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL);
+}
+
+int
+RCS_deltag(path, tag)
+    const char *path;
+    const char *tag;
+{
+    run_setup ("%s%s -q -N%s", Rcsbin, RCS, tag);
+    run_arg (path);
+    return run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL);
+}
+
+/* set RCS branch to REV */
+int
+RCS_setbranch(path, rev)
+    const char *path;
+    const char *rev;
+{
+    run_setup ("%s%s -q -b%s", Rcsbin, RCS, rev ? rev : "");
+    run_arg (path);
+    return run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL);
+}
+
+/* lock revision REV */
+int
+RCS_lock(path, rev)
+    const char *path;
+    const char *rev;
+{
+    run_setup ("%s%s -q -l%s", Rcsbin, RCS, rev ? rev : "");
+    run_arg (path);
+    return run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL);
+}
+
+/* unlock revision REV */
+int
+RCS_unlock(path, rev)
+    const char *path;
+const char *rev;
+{
+    run_setup ("%s%s -q -u%s", Rcsbin, RCS, rev ? rev : "");
+    run_arg (path);
+    return run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL);
+}

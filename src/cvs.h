@@ -348,6 +348,12 @@ extern int logoff;		/* Don't write history entry */
 extern char hostname[];	
 
 /* Externs that are included directly in the CVS sources */
+int RCS_settag PROTO((const char *, const char *, const char *));
+int RCS_deltag PROTO((const char *, const char *));
+int RCS_setbranch PROTO((const char *, const char *));
+int RCS_lock PROTO((const char *, const char *));
+int RCS_unlock PROTO((const char *, const char *));
+
 DBM *open_module PROTO((void));
 FILE *Fopen PROTO((char *name, char *mode));
 FILE *open_file PROTO((char *name, char *mode));
@@ -367,7 +373,7 @@ char *getcaller PROTO((void));
 char *time_stamp PROTO((char *file));
 char *xmalloc PROTO((size_t bytes));
 char *xrealloc PROTO((char *ptr, size_t bytes));
-char *xstrdup PROTO((char *str));
+char *xstrdup PROTO((const char *str));
 int No_Difference PROTO((char *file, Vers_TS * vers, List * entries,
 			 char *repository, char *update_dir));
 int Parse_Info PROTO((char *infofile, char *repository, int PROTO((*callproc)) PROTO(()), int all));
@@ -412,11 +418,11 @@ void line2argv PROTO((int *pargc, char *argv[], char *line));
 void make_directories PROTO((char *name));
 void make_directory PROTO((char *name));
 void rename_file PROTO((char *from, char *to));
-void run_arg PROTO((char *s));
+void run_arg PROTO((const char *s));
 void run_print PROTO((FILE * fp));
 #ifdef HAVE_VPRINTF
-void run_setup PROTO((char *fmt,...));
-void run_args PROTO((char *fmt,...));
+void run_setup PROTO((const char *fmt,...));
+void run_args PROTO((const char *fmt,...));
 #else
 void run_setup ();
 void run_args ();

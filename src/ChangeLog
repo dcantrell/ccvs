@@ -1,3 +1,18 @@
+Tue Jun  6 15:26:16 1995  J.T. Conklin  <jtc@rtl.cygnus.com>
+
+	* subr.c (run_setup, run_args): Add const qualifier to format
+	  argument.
+	* cvs.h (run_setup, run_args): Likewise.
+
+	* Makefile.in (SOURCES): Added rcscmds.c.
+	  (OBJECTS): Added rcscmds.o.
+
+	* rcscmds.c: New file, with new functions RCS_settag, RCS_deltag,
+	  RCS_setbranch, RCS_lock, RCS_unlock.
+	* checkin.c, commit.c, import.c, rtag.c, tag.c: Call above
+	  functions instead of exec'ing rcs commands.
+	* cvs.h: Declare new functions.
+
 Mon May 29 21:40:54 1995  J.T. Conklin  (jtc@rtl.cygnus.com)
 
 	* recurse.c (start_recursion, do_recursion): Set entries to NULL

@@ -187,9 +187,7 @@ tag_fileproc (file, update_dir, repository, entries, srcfiles)
 	}
 	free (version);
 
-	run_setup ("%s%s -q -N%s", Rcsbin, RCS, symtag);
-	run_arg (vers->srcfile->path);
-	if ((retcode = run_exec (RUN_TTY, RUN_TTY, DEVNULL, RUN_NORMAL)) != 0)
+	if ((retcode = RCS_deltag(vers->srcfile->path, symtag)) != 0) 
 	{
 	    if (!quiet)
 		error (0, retcode == -1 ? errno : 0,
@@ -286,9 +284,7 @@ tag_fileproc (file, update_dir, repository, entries, srcfiles)
        free (oversion);
     }
 
-    run_setup ("%s%s -q -N%s:%s", Rcsbin, RCS, symtag, rev);
-    run_arg (vers->srcfile->path);
-    if ((retcode = run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL)) != 0)
+    if ((retcode = RCS_settag(vers->srcfile->path, symtag, rev)) != 0)
     {
 	error (1, retcode == -1 ? errno : 0,
 	       "failed to set tag %s to revision %s in %s",

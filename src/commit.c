@@ -1135,9 +1135,7 @@ remove_file (file, repository, tag, message, entries, srcfiles)
 #endif
     {
 	/* a symbolic tag is specified; just remove the tag from the file */
-	run_setup ("%s%s -q -N%s", Rcsbin, RCS, tag);
-	run_arg (rcs);
-	if ((retcode = run_exec (RUN_TTY, RUN_TTY, DEVNULL, RUN_NORMAL)) != 0)
+	if ((retcode = RCS_deltag (rcs, tag)) != 0) 
 	{
 	    if (!quiet)
 		error (0, retcode == -1 ? errno : 0,
@@ -1189,9 +1187,7 @@ remove_file (file, repository, tag, message, entries, srcfiles)
        branch is the trunk. */
     if (!tag && !branch)
     {
-	run_setup ("%s%s -q -b", Rcsbin, RCS);
-	run_arg (rcs);
-	if (run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL) != 0)
+        if (RCS_setbranch (rcs, NULL) != 0) 
 	{
 	    error (0, 0, "cannot change branch to default for %s",
 		   rcs);
@@ -1345,10 +1341,8 @@ unlockrcs (file, repository)
     int retcode = 0;
 
     locate_rcs (file, repository, rcs);
-    run_setup ("%s%s -q -u", Rcsbin, RCS);
-    run_arg (rcs);
 
-    if ((retcode = run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL)) != 0)
+    if ((retcode = RCS_unlock (rcs, NULL)) != 0)
 	error (retcode == -1 ? 1 : 0, retcode == -1 ? errno : 0,
 	       "could not unlock %s", rcs);
 }
@@ -1390,9 +1384,7 @@ fixbranch (file, repository, branch)
     if (branch != NULL && branch[0] != '\0')
     {
 	locate_rcs (file, repository, rcs);
-	run_setup ("%s%s -q -b%s", Rcsbin, RCS, branch);
-	run_arg (rcs);
-	if ((retcode = run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL)) != 0)
+	if ((retcode = RCS_setbranch (rcs, branch)) != 0)
 	    error (retcode == -1 ? 1 : 0, retcode == -1 ? errno : 0,
 		   "cannot restore branch to %s for %s", branch, rcs);
     }
@@ -1587,8 +1579,7 @@ checkaddfile (file, repository, tag, srcfiles)
 	    
 	    head = RCS_getversion (rcsfile, NULL, NULL, 0);
 	    magicrev = RCS_magicrev (rcsfile, head);
-	    run_setup ("%s%s -q -N%s:%s %s", Rcsbin, RCS, tag, magicrev, rcs);
-	    if ((retcode = run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL)) != 0)
+	    if ((retcode = RCS_settag(rcs, tag, magicrev)) != 0)
 	    {
 		error (retcode == -1 ? 1 : 0, retcode == -1 ? errno : 0,
 		       "could not stub branch %s for %s", tag, rcs);
@@ -1711,9 +1702,7 @@ lock_RCS (user, rcs, rev, repository)
 	    freercsnode (&rcsfile);
 	    if (branch != NULL)
 	    {
-		run_setup ("%s%s -q -b", Rcsbin, RCS);
-		run_arg (rcs);
-		if (run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL) != 0)
+		if (RCS_setbranch (rcs, NULL) != 0)
 		{
 		    error (0, 0, "cannot change branch to default for %s",
 			   rcs);
@@ -1722,16 +1711,12 @@ lock_RCS (user, rcs, rev, repository)
 		    return (1);
 		}
 	    }
-	    run_setup ("%s%s -q -l", Rcsbin, RCS);
-	    run_arg (rcs);
-	    err = run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL);
+	    err = RCS_lock(rcs, NULL);
 	}
     }
     else
     {
-	run_setup ("%s%s -q -l%s", Rcsbin, RCS, rev ? rev : "");
-	run_arg (rcs);
-	(void) run_exec (RUN_TTY, RUN_TTY, DEVNULL, RUN_NORMAL);
+	(void) RCS_lock(rcs, rev);
     }
 
     if (err == 0)
