@@ -547,20 +547,23 @@ error 0 %s: no such user\n", user);
         else
 #endif /* CLIENT_SUPPORT */
         {
-            /*
-	     * Now for the hard part, compare the two directories. If they
-	     * are not identical, then abort this command.
-	     */
-            if ((fncmp (CVSroot, CVSADM_Root) != 0) &&
-		!same_directories(CVSroot, CVSADM_Root))
+	    /* Let -d override CVS/Root file.  The user might want to
+	       change the access method, use a different server (if there
+	       are two server machines which share the repository using
+	       a networked file system), etc.  */
+	    if (strcmp (CVSroot, CVSADM_Root) != 0)
 	    {
-              error (0, 0, "%s value for CVS Root found in %s",
-                     CVSADM_Root, CVSADM_ROOT);
-              error (0, 0, "does not match command line -d %s setting",
-                     CVSroot);
-              error (1, 0,
-                      "you may wish to try the cvs command again without the -d option ");
+		/* Update the CVS/Root file.  We might want to do this in
+		   all directories that we recurse into, but currently we
+		   don't.  */
+		Create_Root (NULL, CVSroot);
 	    }
+
+	    /* Allocation policy for the string allocated by Name_Root
+	       is that since we will be using it until the end of our
+	       cvs command, we never bother to free it.  So no need to
+	       worry about losing track of what to free.  */
+	    CVSroot = CVSADM_Root;
         }
     }
 
