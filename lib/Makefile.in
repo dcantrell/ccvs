@@ -143,13 +143,13 @@ libcvs_a_SOURCES = \
 	getline.h \
 	getopt.h \
 	fnmatch.h \
+	md5.h \
 	regex.h \
+	savecwd.h \
 	system.h \
 	wait.h \
-	md5.h \
-	savecwd.h
-
-
+	xselect.h \
+	xtime.h
 libcvs_a_LIBADD = @LIBOBJS@
 
 EXTRA_DIST = \
