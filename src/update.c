@@ -1035,6 +1035,12 @@ checkout_file (file, repository, entries, rcsnode, vers_ts, update_dir,
 		       died), merge in the changes (done by the
 		       join_file routine), and treat the result as a
 		       newly added file.  */
+		    /* Is this a bug or a feature?  Seems to me that
+		       proper behavior should be a conflict.  In
+		       particular, treating a dead revision as having
+		       any sort of contents other than the fact that
+		       it is dead strikes me as a questionable concept
+		       -kingdon, Jun 96.  */
 
 		    free (gca_ver);
 		    free (vers1);
@@ -1063,6 +1069,12 @@ checkout_file (file, repository, entries, rcsnode, vers_ts, update_dir,
                        just before it died), merge in the changes
                        (done by the join_file routine), and treat the
                        result as a newly added file.  */
+		    /* Is the latter behavior a bug or a feature?
+		       Seems to me that proper behavior should be a
+		       conflict.  In particular, treating a dead
+		       revision as having any sort of contents other
+		       than the fact that it is dead strikes me as a
+		       questionable concept -kingdon, Jun 96.  */
 
 		    if (RCS_isdead (vers_ts->srcfile, vers2))
 		    {
