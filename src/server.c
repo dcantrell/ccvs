@@ -127,11 +127,6 @@ static struct buffer *buf_to_net;
 /* This buffer is used to read input from the client.  */
 static struct buffer *buf_from_net;
 
-/* Used to store the buffer from the client when we are reprocessing the write
- * proxy log.
- */
-static struct buffer *buf_from_net_save;
-
 
 
 /* These are the secondary log buffers so that we can disable them after
@@ -5644,32 +5639,11 @@ server_cleanup (void)
 	     * global variables in inconsistent states.
 	     */
 	    SIG_beginCrSect();
-	    if (buf_from_net_save)
-	    {
-		tmp = buf_from_net_save;
-		buf_from_net_save = NULL;
-	    }
-	    else
-	    {
-		tmp = buf_from_net;
-		buf_from_net = NULL;
-	    }
-
-	    if (tmp)
-	    {
-		status = buf_shutdown (tmp);
-		if (status != 0)
-		    error (0, status, "shutting down buffer from client");
-		buf_free (tmp);
-	    }
 	    if (buf_from_net)
 	    {
-		/* If BUF_FROM_NET is still set, then it is the buffer which
-		 * wraps the secondary log and I'm not going to worry about
-		 * reporting errors encountered closing the file.  It will be
-		 * deleted shortly anyhow.
-		 */
-		buf_shutdown (buf_from_net);
+		status = buf_shutdown (buf_from_net);
+		if (status != 0)
+		    error (0, status, "shutting down buffer from client");
 		buf_free (buf_from_net);
 		buf_from_net = NULL;
 	    }
