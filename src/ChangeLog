@@ -1,5 +1,10 @@
 Mon Nov 17 14:35:31 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* server.c (server_updated): If scratched_file and noexec are set,
+	clean up so we don't get a "duplicate Scratch_Entry" warning
+	later.
+	* sanity.sh: New tests conflicts3-10 to conflicts3-13, for this.
+
 	* sanity.sh (conflicts3): Don't allow "file1 was lost" messages
 	here; I don't think CVS actually produced them, and they don't
 	belong.
