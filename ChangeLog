@@ -1,3 +1,7 @@
+1996-11-19  Jim Kingdon
+
+	* cvsnt.mak: Remove strippath.c.
+
 Sun Nov  3 21:54:18 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* README: Move detailed information on compatibility to
