@@ -3607,6 +3607,18 @@ serve_rlog (char *arg)
 }
 
 static void
+serve_ls (char *arg)
+{
+  do_cvs_command ("ls", ls);
+}
+
+static void
+serve_rls (char *arg)
+{
+  do_cvs_command ("rls", ls);
+}
+
+static void
 serve_add (char *arg)
 {
     do_cvs_command ("add", add);
@@ -4629,6 +4641,14 @@ struct request requests[] =
   REQ_LINE("diff", serve_diff, 0),
   REQ_LINE("log", serve_log, 0),
   REQ_LINE("rlog", serve_rlog, 0),
+  REQ_LINE("list", serve_ls, 0),
+  REQ_LINE("rlist", serve_rls, 0),
+  /* This allows us to avoid sending `-q' as a command argument to `cvs ls',
+   * or more accurately, allows us to send `-q' to backwards CVSNT servers.
+   */
+  REQ_LINE("global-list-quiet", serve_noop, RQ_ROOTLESS),
+  /* Deprecated synonym for rlist, for compatibility with CVSNT. */
+  REQ_LINE("ls", serve_rls, 0),
   REQ_LINE("add", serve_add, 0),
   REQ_LINE("remove", serve_remove, 0),
   REQ_LINE("update-patches", serve_ignore, 0),

@@ -20,7 +20,6 @@
 #include "buffer.h"
 #include "log-buffer.h"
 #include "savecwd.h"
-#include "vasnprintf.h"
 
 #ifdef CLIENT_SUPPORT
 

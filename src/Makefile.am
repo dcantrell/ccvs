@@ -53,6 +53,7 @@ cvs_SOURCES = \
 	log-buffer.c log-buffer.h \
 	login.c \
 	logmsg.c \
+	ls.c \
 	main.c \
 	mkmodules.c \
 	modules.c \

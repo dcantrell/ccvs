@@ -128,6 +128,7 @@ static const struct cmd
     { "login",    "logon",    "lgn",       login,     0 },
     { "logout",   NULL,       NULL,        logout,    0 },
 #endif /* AUTH_CLIENT_SUPPORT */
+    { "ls",       "dir",      "list",      ls,        0 },
 #if (defined(AUTH_SERVER_SUPPORT) || defined (HAVE_GSSAPI)) && defined(SERVER_SUPPORT)
     { "pserver",  NULL,       NULL,        server,    CVS_CMD_MODIFIES_REPOSITORY | CVS_CMD_USES_WORK_DIR }, /* placeholder */
 #endif
@@ -136,6 +137,7 @@ static const struct cmd
     { "release",  "re",       "rel",       release,   0 },
     { "remove",   "rm",       "delete",    cvsremove, CVS_CMD_MODIFIES_REPOSITORY | CVS_CMD_USES_WORK_DIR },
     { "rlog",     "rl",       NULL,        cvslog,    0 },
+    { "rls",      "rdir",     "rlist",     ls,        0 },
     { "rtag",     "rt",       "rfreeze",   cvstag,    CVS_CMD_MODIFIES_REPOSITORY },
 #ifdef SERVER_SUPPORT
     { "server",   NULL,       NULL,        server,    CVS_CMD_MODIFIES_REPOSITORY | CVS_CMD_USES_WORK_DIR },
@@ -219,6 +221,7 @@ static const char *const cmd_usage[] =
     "        login        Prompt for password for authenticating server\n",
     "        logout       Removes entry in .cvspass for remote repository\n",
 #endif /* AUTH_CLIENT_SUPPORT */
+    "        ls           List files available from CVS\n",
 #if (defined(AUTH_SERVER_SUPPORT) || defined (HAVE_GSSAPI)) && defined(SERVER_SUPPORT)
     "        pserver      Password server mode\n",
 #endif
@@ -227,6 +230,7 @@ static const char *const cmd_usage[] =
     "        release      Indicate that a Module is no longer in use\n",
     "        remove       Remove an entry from the repository\n",
     "        rlog         Print out history information for a module\n",
+    "        rls          List files in a module\n",
     "        rtag         Add a symbolic tag to a module\n",
 #ifdef SERVER_SUPPORT
     "        server       Server mode\n",
