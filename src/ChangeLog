@@ -1,3 +1,7 @@
+2003-06-11  Derek Price  <derek@ximbiot.com>
+
+	* Makefile.in: Regenerate for new configure.in.
+
 2003-06-11  Larry Jones  <lawrence.jones@eds.com>
 
 	* sanity.sh: Change warning messages to note that defective tools

@@ -1,3 +1,7 @@
+2003-06-11  Derek Price  <derek@ximbiot.com>
+
+	* Makefile.in: Regenerate for new configure.in.
+
 2003-06-09  Derek Price  <derek@ximbiot.com>
 
 	* win32.c (gethostname): Remove this function.  It has been commented
