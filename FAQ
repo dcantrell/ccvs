@@ -2238,9 +2238,20 @@ Category: /Advanced_Topics_/Other_Systems/
 
    Last modified: 6/13/1997 
 
-   2. I use OS/2 and/or DOS. Is there anything I need to know? 
-   ------------------------------------------------------------
+   2. I use OS/2 and/or DOS and/or Windows. Is there anything I need to know? 
+   ---------------------------------------------------------------------------
 
+
+   When using a local repository, be sure to specify
+   the local access method or CVS will interpret the
+   drive letter as a remote host name due to the :
+   following it: 
+
+           WRONG:  CVSROOT=C:\SRC\CVSROOT
+
+           RIGHT:  CVSROOT=:local:C:\SRC\CVSROOT
+
+   (larry.jones@sdrc.com) 
 
    You can share RCS files between Unix and DOS
    while avoiding the MS-DOS file name limits by
@@ -2250,8 +2261,8 @@ Category: /Advanced_Topics_/Other_Systems/
    ",v" will still be found if there is no matching
    file in the same directory without the ",v". 
 
-   Erik van Linstee <linstee@dutecaj.et.tudelft.nl>
-   offers an OS/2 and a DOS port of CVS 1.3 in: 
+   Erik van Linstee offers an OS/2 and a DOS port of
+   CVS 1.3 in: 
 
    ftp.informatik.tu-muenchen.de:/pub/comp/os/os2/gnu/devtools
    or ftp.rrzn.uni-hannover.de:/pub/os2-local 
@@ -2275,7 +2286,9 @@ Category: /Advanced_Topics_/Other_Systems/
    [[Updates?]]. 
 
 
-   Last modified: 6/13/1997 
+     
+
+   Last modified: 9/22/1997 
 
    3. I use SCO Unix. Is there anything I need to know? 
    -----------------------------------------------------
