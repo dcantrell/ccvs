@@ -1,3 +1,8 @@
+Wed Apr 10 16:56:21 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (Creating a branch): Add comments about how we
+	should better document tagging the branchpoint.
+
 Tue Apr  9 19:59:45 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (Top): Use @value{CVSVN}, not a vague refenece to 1.4.
