@@ -214,7 +214,6 @@ AC_FUNC_STRERROR_R
 dnl Always use the GNULIB getpass to work around 8 character password limits on
 dnl HP-UX.
 gl_FUNC_GNU_STRFTIME
-gl_FUNC_MEMMOVE
 gl_FUNC_NANOSLEEP
 gl_FUNC_STRERROR
 gl_GETDATE
