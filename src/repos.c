@@ -70,16 +70,15 @@ Name_Repository (char *dir, char *update_dir)
 
 	if (existence_error (save_errno))
 	{
-	    /* FIXME: This is a very poorly worded error message.  It
-	       occurs at least in the case where the user manually
-	       creates a directory named CVS, so the error message
-	       should be more along the lines of "CVS directory found
-	       without administrative files; use CVS to create the CVS
-	       directory, or rename it to something else if the
-	       intention is to store something besides CVS
-	       administrative files".  */
-	    error (0, 0, "in directory %s:", xupdate_dir);
-	    error (1, 0, "*PANIC* administration files missing");
+	    /* This occurs at least in the case where the user manually
+	     * creates a directory named CVS.
+	     */
+	    error (0, 0, "in directory `%s':", xupdate_dir);
+	    error (0, 0, "CVS directory found without administrative files.");
+	    error (0, 0, "Use CVS to create the CVS directory, or rename the");
+	    error (0, 0, "directory if it is intended to store something");
+	    error (0, 0, "besides CVS administrative files.");
+	    error (1, 0, "*PANIC* administration files missing!");
 	}
 
 	error (1, save_errno, "cannot open %s", tmp);

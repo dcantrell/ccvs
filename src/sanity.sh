@@ -14307,6 +14307,25 @@ done"
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
 	  ;;
 
+	errmsg3)
+	  # Test the *PANIC* message caused by missing administration files
+	  mkdir tmp
+	  cd tmp
+	  mkdir CVS
+	  dotest_fail errmsg3-1 "${testcvs} -q up" \
+"${CPROG} update: in directory \`.':
+${CPROG} update: CVS directory found without administrative files\.
+${CPROG} update: Use CVS to create the CVS directory, or rename the
+${CPROG} update: directory if it is intended to store something
+${CPROG} update: besides CVS administrative files\.
+${CPROG} \[update aborted\]: \*PANIC\* administration files missing!"
+
+	  dokeep
+
+	  cd ..
+	  rm -r tmp
+	  ;;
+
 	adderrmsg)
 	  # Test some of the error messages the 'add' command can return and
 	  # their reactions to '-q'.
