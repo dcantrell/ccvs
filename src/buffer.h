@@ -151,14 +151,16 @@ int buf_read_line (struct buffer *, char **, int *);
 int buf_read_short_line (struct buffer *buf, char **line, size_t *lenp,
                          size_t max);
 int buf_read_data (struct buffer *, int, char **, int *);
-void buf_copy_data (struct buffer *buf, struct buffer_data *data,
-                    struct buffer_data *last);
 void buf_copy_lines (struct buffer *, struct buffer *, int);
 int buf_copy_counted (struct buffer *, struct buffer *, int *);
 int buf_chain_length (struct buffer_data *);
 int buf_length (struct buffer *);
 int buf_shutdown (struct buffer *);
+#ifdef PROXY_SUPPORT
 void buf_free_data (struct buffer *);
+void buf_copy_data (struct buffer *buf, struct buffer_data *data,
+                    struct buffer_data *last);
+#endif /* PROXY_SUPPORT */
 
 #ifdef SERVER_FLOWCONTROL
 int buf_count_mem (struct buffer *);
