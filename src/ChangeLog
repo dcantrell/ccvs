@@ -1,5 +1,8 @@
 1998-03-18  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* error.c (error): Save and restore errno.  Should fix test case
+	conflicts3-23 on SCO 5.0.2.  Reported by Steve Cameron.
+
 	* sanity.sh (admin): Rename admin-26-o* to admin-26-*; the "o"
 	stands for "cvs admin -o".  Add comment about length of tests.
 	Use ${PLUS}.
