@@ -3,29 +3,30 @@ Changes since 1.11.14:
 
 GENERAL USER ISSUES
 
-* Relative paths should now work in client/server mode.
+* Relative paths should now work in client/server mode (client fix).
 
 * A race condition between the ordering of messages from CVS and messages from
-  called scripts in client/server mode has been removed.
+  called scripts in client/server mode has been removed (server fix).
 
 * CVS on Cygwin no longer converts back slashes in paths into forward slashes.
 
 * Resurrected files now get their modes and timestamps set correctly and a
   longstanding bug involving resurrection of an uncommitted removal has been
-  fixed.
+  fixed (server fix).
 
 * Some resurrection (cvs add) status messages have changed slightly.
 
-* `cvs release' now works with Kerberos or GSSAPI encryption enabled.
+* `cvs release' now works with Kerberos or GSSAPI encryption enabled (server
+  fix).
 
 * File resurrection from a previously existing revision no longer just reports
-  that it works.
+  that it works (server fix).
 
 * Misc error & status message corrections.
 
 * Diffing of locally added files against arbitrary revisions in an RCS archive
   is now allowed when a file of the same name exists or used to exist on some
-  branch.
+  branch (server fix).
 
 * Misc documentation fixes.
 
