@@ -1,5 +1,21 @@
 Fri May 26 14:34:28 1995  J.T. Conklin  <jtc@rtl.cygnus.com>
 
+	* entries.c (Entries_Open): Renamed from ParseEntries; changed to
+	  process Entries Log files left over from previous crashes or
+	  aborted runs.
+	  (Entries_Close): New function, write out Entries file if
+	  neccessary and erase Log file.  
+	  (Register): Append changed records to Log file instead of
+	  re-writing file.
+	  (fgetentent): New function, parse one Entry record from a file.
+	  (AddEntryNode): It's no longer an error for two records with the
+	  same name to be added to the list.  New records replace older
+	  ones.
+	* cvs.h (Entries_Open, Entries_Close): Add prototypes.
+	  (CVSADM_ENTLOG): New constant, name of Entries Log file.
+	* add.c, checkout.c, client.c, find_names.c, recurse.c: Use
+	  Entries_Open()/Entries_Close() instead of ParseEntries()/dellist().
+
 	* add.c, admin.c, checkout.c, client.c, commit.c, diff.c,
 	  history.c, import.c, log.c, patch.c, release.c, remove.c,
 	  rtag.c, server.c, status.c, tag.c, update.c: Changed

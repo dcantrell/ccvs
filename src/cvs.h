@@ -132,6 +132,7 @@ extern int errno;
 #define	CVSADM		"CVS"
 #define	CVSADM_ENT	"CVS/Entries"
 #define	CVSADM_ENTBAK	"CVS/Entries.Backup"
+#define CVSADM_ENTLOG	"CVS/Entries.Log"
 #define	CVSADM_ENTSTAT	"CVS/Entries.Static"
 #define	CVSADM_REP	"CVS/Repository"
 #define	CVSADM_ROOT	"CVS/Root"
@@ -292,7 +293,7 @@ struct vers_ts
 typedef struct vers_ts Vers_TS;
 
 /*
- * structure used for list-private storage by ParseEntries() and
+ * structure used for list-private storage by Entries_Open() and
  * Version_TS().
  */
 struct stickydirtag
@@ -351,7 +352,8 @@ DBM *open_module PROTO((void));
 FILE *Fopen PROTO((char *name, char *mode));
 FILE *open_file PROTO((char *name, char *mode));
 List *Find_Dirs PROTO((char *repository, int which));
-List *ParseEntries PROTO((int aflag));
+void Entries_Close PROTO((List *entries));
+List *Entries_Open PROTO((int aflag));
 char *Make_Date PROTO((char *rawdate));
 char *Name_Repository PROTO((char *dir, char *update_dir));
 #ifdef CVSADM_ROOT

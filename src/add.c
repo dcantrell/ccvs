@@ -130,7 +130,7 @@ add (argc, argv)
 	return get_responses_and_close ();
       }
 
-    entries = ParseEntries (0);
+    entries = Entries_Open (0);
 
     /* walk the arg list adding files/dirs */
     for (i = 0; i < argc; i++)
@@ -319,7 +319,8 @@ add (argc, argv)
     if (added_files)
 	error (0, 0, "use 'cvs commit' to add %s permanently",
 	       (added_files == 1) ? "this file" : "these files");
-    dellist (&entries);
+
+    Entries_Close (entries);
 
     if (message)
 	free (message);

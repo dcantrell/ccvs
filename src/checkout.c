@@ -715,7 +715,7 @@ checkout_proc (pargc, argv, where, mwhere, mfile, shorten,
 	List *entries;
 
 	/* we are only doing files, so register them */
-	entries = ParseEntries (0);
+	entries = Entries_Open (0);
 	for (i = 1; i < *pargc; i++)
 	{
 	    char line[MAXLINELEN];
@@ -734,7 +734,8 @@ checkout_proc (pargc, argv, where, mwhere, mfile, shorten,
 	    }
 	    freevers_ts (&vers);
 	}
-	dellist (&entries);
+
+	Entries_Close (entries);
     }
 
     /* Don't log "export", just regular "checkouts" */
