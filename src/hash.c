@@ -264,6 +264,8 @@ findnode (list, key)
     if ((list == (List *) NULL))
 	return ((Node *) NULL);
 
+    assert (key != NULL);
+
     head = list->hasharray[hashp (key)];
     if (head == (Node *) NULL)
 	/* Not found.  */
@@ -285,8 +287,13 @@ findnode_fn (list, key)
 {
     Node *head, *p;
 
+    /* This probably should be "assert (list != NULL)" (or if not we
+       should document the current behavior), but only if we check all
+       the callers to see if any are relying on this behavior.  */
     if (list == (List *) NULL)
 	return ((Node *) NULL);
+
+    assert (key != NULL);
 
     head = list->hasharray[hashp (key)];
     if (head == (Node *) NULL)

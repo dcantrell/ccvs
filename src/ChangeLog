@@ -1,3 +1,9 @@
+Tue Mar 12 13:47:09 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* hash.c (findnode, findnode_fn): Assert that key != NULL.  This
+	way the check still happens even if the function is later
+	rewritten to not start out by calling hashp.
+
 Mon Mar 11 10:21:05 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* sanity.sh: If expr accepts multi-line patterns but is too
