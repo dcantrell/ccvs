@@ -1,3 +1,7 @@
+2005-02-26  Larry Jones  <lawrence.jones@ugs.com>
+
+	* release.c (release): Remove unneeded code.
+
 2005-03-07  Derek Price  <derek@ximbiot.com>
 
 	* buffer.c (buf_free_data): Compile with proxy disabled.
