@@ -1,4 +1,8 @@
-Changes since 1.11.2:
+Changes since 1.11.3:
+
+* Dummy change set for automake.
+
+Changes from 1.11.2 to 1.11.3:
 
 * When waiting for another user's lock, the message timestamps are now
 in UTC rather than the server's local time.

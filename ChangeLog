@@ -1,5 +1,11 @@
 2002-12-27  Derek Price  <derek@ximbiot.com>
 
+	* NEWS: Add dummy entry for since 1.11.3.
+	* configure.in: Update to dev version 1.11.3.
+	* configure: Regenerated.
+
+2002-12-27  Derek Price  <derek@ximbiot.com>
+
 	* .cvsignore: Add bz2.
 	* NEWS: Add note about options.h.
 	* configure.in: Set version to 1.11.3.
