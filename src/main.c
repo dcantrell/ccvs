@@ -127,32 +127,47 @@ static const struct cmd
 
 static const char *const usg[] =
 {
-    "Usage: %s [cvs-options] command [command-options] [files...]\n",
-    "    Where 'cvs-options' are:\n",
-    "        -H           Displays Usage information for command\n",
-    "        -Q           Cause CVS to be really quiet.\n",
-    "        -q           Cause CVS to be somewhat quiet.\n",
-    "        -r           Make checked-out files read-only\n",
-    "        -w           Make checked-out files read-write (default)\n",
-    "        -l           Turn History logging off\n",
-    "        -n           Do not execute anything that will change the disk\n",
-    "        -t           Show trace of program execution -- Try with -n\n",
-    "        -v           CVS version and copyright\n",
-    "        -b bindir    Find RCS programs in 'bindir'\n",
-    "        -T tmpdir    Use 'tmpdir' for temporary files\n",
-    "        -e editor    Use 'editor' for editing log information\n",
-    "        -d CVS_root  Overrides $CVSROOT as the root of the CVS tree\n",
-    "        -f           Do not use the ~/.cvsrc file\n",
-#ifdef CLIENT_SUPPORT
-    "        -z #         Use compression level '#' for net traffic.\n",
-#ifdef ENCRYPTION
-    "        -x           Encrypt all net traffic.\n",
-#endif
-#endif
-    "        -s VAR=VAL   Set CVS user variable.\n",
+    /* CVS usage messages never have followed the GNU convention of
+       putting metavariables in uppercase.  I don't know whether that
+       is a good convention or not, but if it changes it would have to
+       change in all the usage messages.  For now, they consistently
+       use lowercase, as far as I know.  Puncutation is pretty funky,
+       though.  Sometimes they use none, as here.  Sometimes they use
+       single quotes (not the TeX-ish `' stuff), as in --help-options.
+       Sometimes they use double quotes, as in cvs -H add.
+
+       Most (not all) of the usage messages seem to have periods at
+       the end of each line.  I haven't tried to duplicate this style
+       in --help as it is a rather different format from the rest.  */
+
+    "Usage: %s [cvs-options] command [command-options-and-arguments]\n",
+    "  where cvs-options are -q, -n, etc.\n",
+    "    (specify --help-options for a list of options)\n",
+    "  where command is add, admin, etc.\n",
+    "    (specify --help-commands for a list of commands\n",
+    "     or --help-synonyms for a list of command synonyms)\n",
+    "  where command-options-and-arguments depend on the specific command\n",
+    "    (specify -H followed by a command name for command-specific help)\n",
+    "  Specify --help to receive this message\n",
     "\n",
-    "    and where 'command' is: add, admin, etc. (use the --help-commands\n",
-    "    option for a list of commands)\n",
+
+    /* Some people think that a bug-reporting address should go here.  IMHO,
+       the web sites are better because anything else is very likely to go
+       obsolete in the years between a release and when someone might be
+       reading this help.  Besides, we could never adequately discuss
+       bug reporting in a concise enough way to put in a help message.  */
+
+    /* I was going to put this at the top, but usage() wants the %s to
+       be in the first line.  */
+    "The Concurrent Versions System (CVS) is a tool for version control.\n",
+    /* I really don't think I want to try to define "version control"
+       in one line.  I'm not sure one can get more concise than the
+       paragraph in ../cvs.spec without assuming the reader knows what
+       version control means.  */
+
+    "For CVS updates and additional information, see\n",
+    "    Cyclic Software at http://www.cyclic.com/ or\n",
+    "    Pascal Molli's CVS site at http://www.loria.fr/~molli/cvs-index.html\n",
     NULL,
 };
 
@@ -186,8 +201,35 @@ static const char *const cmd_usage[] =
     "        update       Bring work tree in sync with repository\n",
     "        watch        Set watches\n",
     "        watchers     See who is watching a file\n",
-    "(Use the --help-synonyms option for a list of alternate command names)\n",
+    "(Use the --help option for a list of other help options)\n",
     NULL,
+};
+
+static const char *const opt_usage[] =
+{
+    "CVS global options (specified before the command name) are:\n",
+    "    -H           Displays usage information for command.\n",
+    "    -Q           Cause CVS to be really quiet.\n",
+    "    -q           Cause CVS to be somewhat quiet.\n",
+    "    -r           Make checked-out files read-only.\n",
+    "    -w           Make checked-out files read-write (default).\n",
+    "    -l           Turn history logging off.\n",
+    "    -n           Do not execute anything that will change the disk.\n",
+    "    -t           Show trace of program execution -- try with -n.\n",
+    "    -v           CVS version and copyright.\n",
+    "    -b bindir    Find RCS programs in 'bindir'.\n",
+    "    -T tmpdir    Use 'tmpdir' for temporary files.\n",
+    "    -e editor    Use 'editor' for editing log information.\n",
+    "    -d CVS_root  Overrides $CVSROOT as the root of the CVS tree.\n",
+    "    -f           Do not use the ~/.cvsrc file.\n",
+#ifdef CLIENT_SUPPORT
+    "    -z #         Use compression level '#' for net traffic.\n",
+#ifdef ENCRYPTION
+    "    -x           Encrypt all net traffic.\n",
+#endif
+#endif
+    "    -s VAR=VAL   Set CVS user variable.\n",
+    NULL
 };
 
 static const char * const*
@@ -345,6 +387,7 @@ main (argc, argv)
         {"version", 0, NULL, 'v'},
 	{"help-commands", 0, NULL, 1},
 	{"help-synonyms", 0, NULL, 2},
+	{"help-options", 0, NULL, 4},
 	{"allow-root", required_argument, NULL, 3},
         {0, 0, 0, 0}
     };
@@ -449,6 +492,10 @@ main (argc, argv)
 	        /* --help-synonyms */
                 usage (cmd_synonyms());
                 break;
+	    case 4:
+		/* --help-options */
+		usage (opt_usage);
+		break;
 	    case 3:
 		/* --allow-root */
 		root_allow_add (optarg);
