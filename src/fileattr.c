@@ -80,14 +80,7 @@ fileattr_read (void)
        at attributes.  */
     assert (fileattr_stored_repos != NULL);
 
-    fname = xmalloc (strlen (fileattr_stored_repos)
-		     + 1
-		     + sizeof (CVSREP_FILEATTR)
-		     + 1);
-
-    strcpy (fname, fileattr_stored_repos);
-    strcat (fname, "/");
-    strcat (fname, CVSREP_FILEATTR);
+    fname = Xasprintf ("%s/%s", fileattr_stored_repos, CVSREP_FILEATTR);
 
     attr_read_attempted = 1;
     fp = CVS_FOPEN (fname, FOPEN_BINARY_READ);
@@ -148,7 +141,7 @@ fileattr_read (void)
 	       changing it, for future expansion.  */
 	    struct unrecog *new;
 
-	    new = (struct unrecog *) xmalloc (sizeof (struct unrecog));
+	    new = xmalloc (sizeof (struct unrecog));
 	    new->line = xstrdup (line);
 	    new->next = unrecog_head;
 	    unrecog_head = new;
@@ -360,10 +353,7 @@ fileattr_set (const char *filename, const char *attrname, const char *attrval)
 	node->type = FILEATTR;
 	node->delproc = fileattr_delproc;
 	node->key = xstrdup (filename);
-	node->data = xmalloc (strlen (attrname) + 1 + strlen (attrval) + 1);
-	strcpy (node->data, attrname);
-	strcat (node->data, "=");
-	strcat (node->data, attrval);
+	node->data = Xasprintf ("%s=%s", attrname, attrval);
 	addnode (attrlist, node);
     }
 
@@ -573,14 +563,7 @@ fileattr_write (void)
        attributes.  */
     assert (fileattr_stored_repos != NULL);
 
-    fname = xmalloc (strlen (fileattr_stored_repos)
-		     + 1
-		     + sizeof (CVSREP_FILEATTR)
-		     + 1);
-
-    strcpy (fname, fileattr_stored_repos);
-    strcat (fname, "/");
-    strcat (fname, CVSREP_FILEATTR);
+    fname = Xasprintf ("%s/%s", fileattr_stored_repos, CVSREP_FILEATTR);
 
     if (list_isempty (attrlist)
 	&& fileattr_default_attrs == NULL
@@ -625,13 +608,7 @@ fileattr_write (void)
 	    /* Maybe the CVSREP directory doesn't exist.  Try creating it.  */
 	    char *repname;
 
-	    repname = xmalloc (strlen (fileattr_stored_repos)
-			       + 1
-			       + sizeof (CVSREP)
-			       + 1);
-	    strcpy (repname, fileattr_stored_repos);
-	    strcat (repname, "/");
-	    strcat (repname, CVSREP);
+	    repname = Xasprintf ("%s/%s", fileattr_stored_repos, CVSREP);
 
 	    if (CVS_MKDIR (repname, 0777) < 0 && errno != EEXIST)
 	    {

@@ -247,7 +247,7 @@ arg_should_not_be_sent_to_server (char *arg)
 char *
 mode_to_string (mode_t mode)
 {
-    char buf[18], u[4], g[4], o[4];
+    char u[4], g[4], o[4];
     int i;
 
     i = 0;
@@ -268,8 +268,7 @@ mode_to_string (mode_t mode)
     if (mode & S_IXOTH) o[i++] = 'x';
     o[i] = '\0';
 
-    sprintf(buf, "u=%s,g=%s,o=%s", u, g, o);
-    return xstrdup(buf);
+    return Xasprintf ("u=%s,g=%s,o=%s", u, g, o);
 }
 
 

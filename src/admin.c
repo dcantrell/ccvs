@@ -118,13 +118,7 @@ struct admin_data
 static void
 arg_add (struct admin_data *dat, int opt, char *arg)
 {
-    char *newelt = xmalloc ((arg == NULL ? 0 : strlen (arg)) + 3);
-    strcpy (newelt, "-");
-    newelt[1] = opt;
-    if (arg == NULL)
-	newelt[2] = '\0';
-    else
-	strcpy (newelt + 2, arg);
+    char *newelt = Xasprintf ("-%c%s", opt, arg ? arg : "");
 
     if (dat->av_alloc == 0)
     {
@@ -168,7 +162,7 @@ postadmin_proc (const char *repository, const char *filter, void *closure)
 #endif /* SERVER_SUPPORT */
 	                      "p", "s", srepos,
 	                      "r", "s", current_parsed_root->directory,
-	                      (char *)NULL
+	                      NULL
 	                     );
 
     if (!cmdline || !strlen (cmdline))
@@ -647,7 +641,7 @@ admin_fileproc (void *callerdat, struct file_info *finfo)
     }
 
     if (rcs->flags & PARTIAL)
-	RCS_reparsercsfile (rcs, (FILE **) NULL, (struct rcsbuffer *) NULL);
+	RCS_reparsercsfile (rcs, NULL, NULL);
 
     if (!really_quiet)
     {
@@ -953,8 +947,8 @@ admin_fileproc (void *callerdat, struct file_info *finfo)
 		delta = n->data;
 		if (delta->text == NULL)
 		{
-		    delta->text = (Deltatext *) xmalloc (sizeof (Deltatext));
-		    memset ((void *) delta->text, 0, sizeof (Deltatext));
+		    delta->text = xmalloc (sizeof (Deltatext));
+		    memset (delta->text, 0, sizeof (Deltatext));
 		}
 		delta->text->version = xstrdup (delta->version);
 		delta->text->log = make_message_rcsvalid (msg);
