@@ -2113,31 +2113,36 @@ month_printname (month)
     return (char *)months[mnum - 1];
 }
 
+/* Options from the command line.  */
+
+static int force_tag_match = 1;
+static char *tag = NULL;
+static char *date = NULL;
+
 static int annotate_fileproc PROTO ((struct file_info *));
 
 static int
 annotate_fileproc (finfo)
     struct file_info *finfo;
 {
+    char *version, *branchversion, *cpversion;
     FILE *fp;
     char *key;
     char *value;
     RCSVers *vers;
     RCSVers *prev_vers;
+    RCSVers *trunk_vers;
+    char *next;
     int n;
-    int ishead, isnext;
+    int ishead, isnext, isversion, onbranch;
     Node *node;
     struct linevector headlines;
     struct linevector curlines;
+    struct linevector trunklines;
+    int foundhead;
 
     if (finfo->rcs == NULL)
         return (1);
-
-    /* Distinguish output for various files if we are processing
-       several files.  */
-    cvs_outerr ("Annotations for ", 0);
-    cvs_outerr (finfo->fullname, 0);
-    cvs_outerr ("\n***************\n", 0);
 
     if (finfo->rcs->flags & PARTIAL)
         RCS_reparsercsfile (finfo->rcs, &fp);
@@ -2150,33 +2155,68 @@ annotate_fileproc (finfo)
 	    error (1, 0, "cannot fseek RCS file");
     }
 
+    version = RCS_getversion (finfo->rcs, tag, date, force_tag_match, 0);
+    if (version == NULL)
+        return 0;
+
+    /* Distinguish output for various files if we are processing
+       several files.  */
+    cvs_outerr ("Annotations for ", 0);
+    cvs_outerr (finfo->fullname, 0);
+    cvs_outerr ("\n***************\n", 0);
+
     ishead = 1;
     vers = NULL;
     prev_vers = NULL;
+    trunk_vers = NULL;
+    next = NULL;
+    onbranch = 0;
+    foundhead = 0;
+
+    /* We set BRANCHVERSION to the version we are currently looking
+       for.  Initially, this is the version on the trunk from which
+       VERSION branches off.  If VERSION is not a branch, then
+       BRANCHVERSION is just VERSION.  */
+    branchversion = xstrdup (version);
+    cpversion = strchr (branchversion, '.');
+    if (cpversion != NULL)
+        cpversion = strchr (cpversion + 1, '.');
+    if (cpversion != NULL)
+        *cpversion = '\0';
 
     do {
 	getrcsrev (fp, &key);
 
-	if (vers == NULL || strcmp (vers->next, key) == 0)
-	    isnext = 1;
-	else
+	if (next != NULL && strcmp (next, key) != 0)
 	{
 	    /* This is not the next version we need.  It is a branch
                version which we want to ignore.  */
 	    isnext = 0;
+	    isversion = 0;
 	}
-
-	/* look up the revision */
-	node = findnode (finfo->rcs->versions, key);
-	if (node == NULL)
-	    error (1, 0, "mismatch in rcs file %s between deltas and deltatexts",
-		   finfo->rcs->path);
-
-	if (isnext)
+	else
 	{
+	    isnext = 1;
+
+	    /* look up the revision */
+	    node = findnode (finfo->rcs->versions, key);
+	    if (node == NULL)
+	        error (1, 0,
+		       "mismatch in rcs file %s between deltas and deltatexts",
+		       finfo->rcs->path);
+
 	    /* Stash the previous version.  */
 	    prev_vers = vers;
+
 	    vers = (RCSVers *) node->data;
+	    next = vers->next;
+
+	    /* Compare key and trunkversion now, because key points to
+	       storage controlled by getrcskey.  */
+	    if (strcmp (branchversion, key) == 0)
+	        isversion = 1;
+	    else
+	        isversion = 0;
 	}
 
 	while ((n = getrcskey (fp, &key, &value, NULL)) >= 0)
@@ -2190,10 +2230,8 @@ annotate_fileproc (finfo)
 		    p = block_alloc (strlen (value) + 1);
 		    strcpy (p, value);
 
-		    linevector_init (&headlines);
 		    linevector_init (&curlines);
-		    linevector_add (&headlines, p, NULL, 0);
-		    linevector_copy (&curlines, &headlines);
+		    linevector_add (&curlines, p, NULL, 0);
 		    ishead = 0;
 		}
 		else if (isnext)
@@ -2296,7 +2334,8 @@ invalid rcs file %s: premature end of value",
 			{
 			case ADD:
 			    linevector_add (&curlines, df->new_lines,
-					    NULL, df->pos);
+					    onbranch ? vers : NULL,
+					    df->pos);
 			    break;
 			case DELETE:
 			    if (df->pos > curlines.nlines
@@ -2304,8 +2343,11 @@ invalid rcs file %s: premature end of value",
 				error (1, 0, "\
 invalid rcs file %s (`d' operand out of range)",
 				       finfo->rcs->path);
-			    for (ln = df->pos; ln < df->pos + df->nlines; ++ln)
-				curlines.vector[ln]->vers = prev_vers;
+			    if (! onbranch)
+			        for (ln = df->pos;
+				     ln < df->pos + df->nlines;
+				     ++ln)
+				    curlines.vector[ln]->vers = prev_vers;
 			    linevector_delete (&curlines, df->pos, df->nlines);
 			    break;
 			}
@@ -2319,10 +2361,91 @@ invalid rcs file %s (`d' operand out of range)",
 	}
 	if (n < 0)
 	    goto l_error;
-    } while (vers->next != NULL);
+
+	if (isversion)
+	{
+	    /* This is either the version we want, or it is the
+               branchpoint to the version we want.  */
+	    if (strcmp (branchversion, version) == 0)
+	    {
+	        /* This is the version we want.  */
+	        linevector_init (&headlines);
+		linevector_copy (&headlines, &curlines);
+		foundhead = 1;
+		if (onbranch)
+		{
+		    /* We have found this version by tracking up a
+                       branch.  Restore back to the lines we saved
+                       when we left the trunk, and continue tracking
+                       down the trunk.  */
+		    onbranch = 0;
+		    vers = trunk_vers;
+		    next = vers->next;
+		    linevector_copy (&curlines, &trunklines);
+		}
+	    }
+	    else
+	    {
+	        Node *p;
+
+	        /* We need to look up the branch.  */
+	        onbranch = 1;
+
+		if (numdots (branchversion) < 2)
+		{
+		    unsigned int ln;
+
+		    /* We are leaving the trunk; save the current
+                       lines so that we can restore them when we
+                       continue tracking down the trunk.  */
+		    trunk_vers = vers;
+		    linevector_init (&trunklines);
+		    linevector_copy (&trunklines, &curlines);
+
+		    /* Reset the version information we have
+                       accumulated so far.  It only applies to the
+                       changes from the head to this version.  */
+		    for (ln = 0; ln < curlines.nlines; ++ln)
+		        curlines.vector[ln]->vers = NULL;
+		}
+
+		/* The next version we want is the entry on
+                   NODE->branches whose prefix is BRANCHVERSION.  */
+		if (vers->branches == NULL)
+		    error (1, 0, "missing expected branches in %s",
+			   finfo->rcs->path);
+		*cpversion = '.';
+		++cpversion;
+		for (p = vers->branches->list->next;
+		     p != vers->branches->list;
+		     p = p->next)
+		    if (strncmp (p->key, branchversion,
+				 cpversion - branchversion) == 0)
+		      break;
+		if (p == vers->branches->list)
+		    error (1, 0, "missing expected branch in %s",
+			   finfo->rcs->path);
+
+		next = p->key;
+
+		cpversion = strchr (cpversion, '.');
+		if (cpversion == NULL)
+		    error (1, 0, "version number confusion in %s",
+			   finfo->rcs->path);
+		cpversion = strchr (cpversion + 1, '.');
+		if (cpversion != NULL)
+		    *cpversion = '\0';
+	    }
+	}
+
+    } while (next != NULL);
 
     if (fclose (fp) < 0)
 	error (0, errno, "cannot close %s", finfo->rcs->path);
+
+    if (! foundhead)
+        error (1, 0, "could not find desired version %s in %s",
+	       version, finfo->rcs->path);
 
     /* Now print out the data we have just computed.  */
     {
@@ -2392,8 +2515,11 @@ invalid rcs file %s (`d' operand out of range)",
 
 static const char *const annotate_usage[] =
 {
-    "Usage: %s %s [-l] [files...]\n",
+    "Usage: %s %s [-lf] [-r rev|-D date] [files...]\n",
     "\t-l\tLocal directory only, no recursion.\n",
+    "\t-f\tUse head revision if tag/date not found.\n",
+    "\t-r rev\tAnnotate file as of specified revision/tag.\n",
+    "\t-D date\tAnnotate file as of specified date.\n",
     NULL
 };
 
@@ -2418,12 +2544,21 @@ annotate (argc, argv)
 	usage (annotate_usage);
 
     optind = 0;
-    while ((c = getopt (argc, argv, "+l")) != -1)
+    while ((c = getopt (argc, argv, "+lr:D:f")) != -1)
     {
 	switch (c)
 	{
 	    case 'l':
 		local = 1;
+		break;
+	    case 'r':
+	        tag = optarg;
+		break;
+	    case 'D':
+	        date = Make_Date (optarg);
+		break;
+	    case 'f':
+	        force_tag_match = 0;
 		break;
 	    case '?':
 	    default:
@@ -2442,6 +2577,11 @@ annotate (argc, argv)
 
 	if (local)
 	    send_arg ("-l");
+	if (force_tag_match)
+	    send_arg ("-f");
+	option_with_arg ("-r", tag);
+	if (date)
+	    client_senddate (date);
 	send_file_names (argc, argv, SEND_EXPAND_WILD);
 	/* FIXME:  We shouldn't have to send current files, but I'm not sure
 	   whether it works.  So send the files --

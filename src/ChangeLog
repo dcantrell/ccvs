@@ -1,3 +1,12 @@
+Wed Jun  5 13:54:57 1996  Ian Lance Taylor  <ian@cygnus.com>
+
+	* rcs.c (force_tag_match, tag, date): New static variables.
+	(annotate_fileproc): Redo the loop to look for the version
+	specified by tag/date/force_tag_match, and handle branches
+	correctly.
+	(annotate_usage): Mention -f, -r, and -D.
+	(annotate): Handle -f, -r, and -D.
+
 Tue Jun  4 13:38:17 1996  Ian Lance Taylor  <ian@cygnus.com>
 
 	* rcs.c (annotate_fileproc): Skip unrelated branch deltas.
