@@ -1,3 +1,16 @@
+Sun Apr 14 12:18:12 1996  Karl Fogel  <kfogel@floss.red-bean.com>
+
+        * pcl-cvs.el (cookie): Changed "(load \"cookie\")" to
+        "(require 'cookie)", since elib is now included again.
+        Moved "(provide 'pcl-cvs)" to the end of the file, so it's not
+        provided if the package didn't load successfully.
+
+        * Makefile.in (subdir): tools/pcl-cvs now, not contrib/pcl-cvs.
+        (BATCHFLAGS): removed "-n" from BATCHFLAGS.  Emacs 19.30 does not
+        know about this flag.
+        (OBJDIR_DISTFILES): don't include .elc files here, add comment
+        explaining why.
+
 Thu Apr 11 20:22:34 1996  Karl Fogel  <kfogel@floss.red-bean.com>
 
         * pcl-cvs.el (cvs-mode-map): conform to Emacs 19 keybinding

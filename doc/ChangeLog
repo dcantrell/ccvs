@@ -1,3 +1,7 @@
+Sun Apr 14 16:01:39 1996  Karl Fogel  <kfogel@floss.red-bean.com>
+
+        * .cvsignore: added CVSvn.texi.
+
 Wed Apr 10 16:56:21 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (~/.cvsrc): Mention setting global options with "cvs".
