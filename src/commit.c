@@ -786,6 +786,19 @@ check_fileproc (callerdat, finfo)
     struct commit_info *ci;
     struct logfile_info *li;
 
+    size_t cvsroot_len = strlen (CVSroot_directory);
+
+    if (strncmp (finfo->repository, CVSroot_directory, cvsroot_len) == 0
+	&& ISDIRSEP (finfo->repository[cvsroot_len])
+	&& strncmp (finfo->repository + cvsroot_len + 1,
+		    CVSROOTADM,
+		    sizeof (CVSROOTADM) - 1) == 0
+	&& ISDIRSEP (finfo->repository[cvsroot_len + sizeof (CVSROOTADM)])
+	&& strcmp (finfo->repository + cvsroot_len + sizeof (CVSROOTADM) + 1,
+		   CVSNULLREPOS) == 0
+	)
+	error (1, 0, "cannot check in to %s", finfo->repository);
+
     status = classify_file_internal (finfo, &vers);
 
     /*
