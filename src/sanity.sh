@@ -2190,7 +2190,7 @@ new revision: delete; previous revision: 3\.1
 done"
 	  dotest basica-r3 "${testcvs} -q up -p -r 3.1 ./ssfile >ssfile" ""
 	  dotest basica-r4 "${testcvs} add ssfile" \
-"${SPROG} add: re-adding file .ssfile. after dead revision 3\.2
+"${SPROG} add: Re-adding file .ssfile. after dead revision 3\.2\.
 ${SPROG} add: use .${SPROG} commit. to add this file permanently"
 	  dotest basica-r5 "${testcvs} -q ci -m resurrect" \
 "Checking in ssfile;
@@ -5313,7 +5313,7 @@ diff -c first-dir/file1:1\.1 first-dir/file1:removed
 	  # Readd the file to the branch.
 	  echo "second revision" > file1
 	  dotest death2-9 "${testcvs} add file1" \
-"${SPROG} add: re-adding file \`file1' on branch \`branch' after dead revision 1\.1\.2\.1
+"${SPROG} add: Re-adding file \`file1' on branch \`branch' after dead revision 1\.1\.2\.1\.
 ${SPROG} add: use \`${SPROG} commit' to add this file permanently"
 
 	  # Test diff of the added file before it is committed.
@@ -6007,7 +6007,7 @@ done"
 
 	  # The first test is that `cvs add' will resurrect a file before it
 	  # has been committed.
-	  dotest resurrection-1 "$testcvs add file1" \
+	  dotest_sort resurrection-1 "$testcvs add file1" \
 "U file1
 $SPROG add: \`file1', version 1\.1, resurrected"
 	  dotest resurrection-2 "$testcvs -Q diff file1" ""
@@ -6023,8 +6023,8 @@ done"
 	  # The next test is that CVS will resurrect a committed removal.
 	  dotest_sort resurrection-3 "$testcvs add file1" \
 "U file1
-$SPROG add: file \`file1' resurrected from revision 1\.1
-$SPROG add: re-adding file \`file1' after dead revision 1\.2
+$SPROG add: Re-adding file \`file1' after dead revision 1\.2\.
+$SPROG add: Resurrecting file \`file1' from revision 1\.1\.
 $SPROG add: use \`$SPROG commit' to add this file permanently"
 	  dotest resurrection-4 "$testcvs -q diff -r1.1 file1" ""
 	  dotest resurrection-5 "$testcvs -q ci -mreadd" \
@@ -6045,8 +6045,8 @@ done"
 	  # branch.
 	  dotest_sort resurrection-6 "$testcvs add file1" \
 "U file1
-$SPROG add: file \`file1' resurrected from revision 1\.1
-$SPROG add: re-adding file \`file1' on branch \`resurrection' after dead revision 1\.1\.2\.1
+$SPROG add: Re-adding file \`file1' on branch \`resurrection' after dead revision 1\.1\.2\.1\.
+$SPROG add: Resurrecting file \`file1' from revision 1\.1\.
 $SPROG add: use \`$SPROG commit' to add this file permanently"
 	  dotest resurrection-7 "$testcvs -Q diff -r1.1 file1" ""
 	  dotest resurrection-8 "$testcvs -q ci -mreadd" \
@@ -6060,7 +6060,7 @@ done"
 	  fi
 
 	  cd ../..
-	  rm -rf 1
+	  rm -r 1
 	  rm -rf $CVSROOT_DIRNAME/first-dir
 	  ;;
 
@@ -7171,8 +7171,8 @@ done"
 	  echo v2 > $file
 	  dotest update-p-undead-7 "$testcvs -Q update -p -rT $file" v1
 	  dotest update-p-undead-8 "$testcvs add $file" \
-"${SPROG} add: re-adding file .$file. after dead revision 1\.2
-${SPROG} add: use .${SPROG} commit. to add this file permanently"
+"$SPROG add: Re-adding file .$file. after dead revision 1\.2\.
+$SPROG add: use \`$SPROG commit' to add this file permanently"
 
 	  dotest update-p-undead-9 "$testcvs -Q update -p -rT $file" v1
 
@@ -10584,9 +10584,18 @@ ${SPROG} remove: use .${SPROG} commit. to remove this file permanently"
 C a"
 	  # Resolve the conflict by deciding not to remove the file
 	  # after all.
-	  dotest conflicts2-142b5 "${testcvs} add a" "U a
+	  dotest_sort conflicts2-142b5 "$testcvs add a" "U a
 ${SPROG} add: \`a', version 1\.1, resurrected"
-	  dotest conflicts2-142b6 "${testcvs} -q update" ''
+	  dotest conflicts2-142b5b1 "$testcvs status a" \
+"===================================================================
+File: a                	Status: Needs Patch
+
+   Working revision:	1\.1.*
+   Repository revision:	1\.2	$CVSROOT_DIRNAME/first-dir/a,v
+   Sticky Tag:		(none)
+   Sticky Date:		(none)
+   Sticky Options:	(none)"
+	  dotest conflicts2-142b6 "$testcvs -q update" 'U a'
 
 	  # Now one level up.
 	  cd ..
@@ -10596,23 +10605,14 @@ ${SPROG} remove: use \`${SPROG} commit' to remove this file permanently"
 
 	  if $remote; then
 	    # Haven't investigated this one.
-	    dotest_fail conflicts2-142b8 "${testcvs} add first-dir/a" \
+	    dotest_fail conflicts2-142b8r "$testcvs add first-dir/a" \
 "${CPROG} add: in directory \`\.':
 ${CPROG} \[add aborted\]: there is no version here; do \`${CPROG} checkout' first"
 	    cd first-dir
 	  else
-	    # The "nothing known" is a bug.  Correct behavior is for a to get
-	    # created, as above.  Cause is pretty obvious - add.c
-	    # calls update() without dealing with the fact we are chdir'd.
-	    # Also note that resurrecting 1.2 instead of 1.1 is also a
-	    # bug, I think (the same part of add.c has a comment which says
-	    # "XXX - bugs here; this really resurrect the head" which
-	    # presumably refers to this).
-	    # The fix for both is presumably to call RCS_checkout() or
-	    # something other than update().
 	    dotest conflicts2-142b8 "${testcvs} add first-dir/a" \
-"${SPROG} add: nothing known about \`first-dir'
-${SPROG} add: \`first-dir/a', version 1\.2, resurrected"
+"U first-dir/a
+$SPROG add: \`first-dir/a', version 1\.2, resurrected"
 	    cd first-dir
 	    # Now recover from the damage that the 142b8 test did.
 	    dotest conflicts2-142b9 "${testcvs} rm -f a" \
@@ -10621,7 +10621,7 @@ ${SPROG} remove: use \`${SPROG} commit' to remove this file permanently"
 	  fi
 
 	  # As before, 1.2 instead of 1.1 is a bug.
-	  dotest conflicts2-142b10 "${testcvs} add a" "U a
+	  dotest_sort conflicts2-142b10 "$testcvs add a" "U a
 ${SPROG} add: \`a', version 1\.2, resurrected"
 	  # As with conflicts2-142b6, check that things are normal again.
 	  dotest conflicts2-142b11 "${testcvs} -q update" ''
@@ -10779,7 +10779,7 @@ File: bb\.c             	Status: Unresolved Conflict
 
 	  cd ../..
 
-	  rm -r 1 2 ; rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  rm -r 1 2; rm -rf ${CVSROOT_DIRNAME}/first-dir
 	  ;;
 
 	conflicts3)
@@ -16602,7 +16602,7 @@ new revision: delete; previous revision: 1\.1
 done"
 	  cp ../binfile.dat file1
 	  dotest binfiles3-6 "${testcvs} add -kb file1" \
-"${SPROG} add: re-adding file .file1. after dead revision 1\.2
+"$SPROG add: Re-adding file .file1. after dead revision 1\.2\.
 ${SPROG} add: use .${SPROG} commit. to add this file permanently"
 	  # The idea behind this test is to make sure that the file
 	  # gets opened in binary mode to send to "cvs ci".
@@ -25746,7 +25746,7 @@ initial revision: 1\.1
 done"
 	  else # server insensitive
 	    dotest recase-1si "$testcvs add FiLe" \
-"$SPROG add: re-adding file \`FiLe' after dead revision 1\.2
+"$SPROG add: Re-adding file \`FiLe' after dead revision 1\.2\.
 $SPROG add: use \`$SPROG commit' to add this file permanently"
 	    dotest recase-2si "$testcvs -q ci -mrecase" \
 "Checking in FiLe;
