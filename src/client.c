@@ -4590,11 +4590,6 @@ start_server ()
 #endif /* ! HAVE_GSSAPI */
     }
 
-#ifdef FILENAMES_CASE_INSENSITIVE
-    if (supported_request ("Case") && !rootless)
-	send_to_server ("Case\012", 0);
-#endif
-
     /* If "Set" is not supported, just silently fail to send the variables.
        Users with an old server should get a useful error message when it
        fails to recognize the ${=foo} syntax.  This way if someone uses

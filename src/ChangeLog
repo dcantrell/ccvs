@@ -1,3 +1,8 @@
+2004-02-02  Derek Price  <derek@ximbiot.com>
+
+	* add.c, client.c, cvs.h, rcs.c, subr.c: Remove server support for case
+	insensitivity.
+
 2004-01-25  Derek Price  <derek@ximbiot.com>
 
 	* server.c (kserver_authenticate_connection): Fix call to
