@@ -781,6 +781,10 @@ diff_file_nodiff (finfo, vers, empty_file)
                true, treat this as an added file.  Otherwise, warn
                about the missing tag.  */
 	    if (use_rev2 == NULL)
+		/* At least in the case where DIFF_REV1 and DIFF_REV2
+		   are both numeric, we should be returning some kind
+		   of error (see basicb-8a0 in testsuite).  The symbolic
+		   case may be more complicated.  */
 		return DIFF_SAME;
 	    else if (empty_files)
 		return DIFF_ADDED;

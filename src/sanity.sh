@@ -735,6 +735,10 @@ T sdir2/sfile2'
 /tmp/cvs-sanity/cvsroot/first-dir/sdir2/sfile2,v  <--  sfile2
 new revision: 1\.2; previous revision: 1\.1
 done'
+	  # See if CVS can correctly notice when an invalid numeric
+	  # revision is specified.
+	  # Commented out until we get around to fixing CVS
+:	  dotest basicb-8a0 "${testcvs} diff -r 1.5 -r 1.7 sfile2" 'error msg'
 	  cd ..
 
 	  # Test that we recurse into the correct directory when checking
