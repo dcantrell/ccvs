@@ -1,17 +1,18 @@
 # Microsoft Developer Studio Generated Dependency File, included by cvsnt.mak
 
 .\src\add.c : \
-	".\LIB\exit.h"\
+	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
-	".\LIB\gettext.h"\
+	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\LIB\regex.h"\
 	".\lib\savecwd.h"\
 	".\lib\system.h"\
-	".\LIB\unlocked-io.h"\
+	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
-	".\LIB\xtime.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\fileattr.h"\
@@ -28,16 +29,17 @@
 	
 
 .\src\admin.c : \
-	".\LIB\exit.h"\
+	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
-	".\LIB\gettext.h"\
+	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\LIB\regex.h"\
 	".\lib\system.h"\
-	".\LIB\unlocked-io.h"\
+	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
-	".\LIB\xtime.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -53,16 +55,17 @@
 	
 
 .\src\annotate.c : \
-	".\LIB\exit.h"\
+	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
-	".\LIB\gettext.h"\
+	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\LIB\regex.h"\
 	".\lib\system.h"\
-	".\LIB\unlocked-io.h"\
+	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
-	".\LIB\xtime.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -87,16 +90,17 @@
 	
 
 .\src\buffer.c : \
-	".\LIB\exit.h"\
+	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
-	".\LIB\gettext.h"\
+	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\LIB\regex.h"\
 	".\lib\system.h"\
-	".\LIB\unlocked-io.h"\
+	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
-	".\LIB\xtime.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -112,16 +116,17 @@
 	
 
 .\src\checkin.c : \
-	".\LIB\exit.h"\
+	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
-	".\LIB\gettext.h"\
+	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\LIB\regex.h"\
 	".\lib\system.h"\
-	".\LIB\unlocked-io.h"\
+	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
-	".\LIB\xtime.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\edit.h"\
@@ -139,16 +144,17 @@
 	
 
 .\src\checkout.c : \
-	".\LIB\exit.h"\
+	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
-	".\LIB\gettext.h"\
+	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\LIB\regex.h"\
 	".\lib\system.h"\
-	".\LIB\unlocked-io.h"\
+	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
-	".\LIB\xtime.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -164,16 +170,17 @@
 	
 
 .\src\classify.c : \
-	".\LIB\exit.h"\
+	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
-	".\LIB\gettext.h"\
+	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\LIB\regex.h"\
 	".\lib\system.h"\
-	".\LIB\unlocked-io.h"\
+	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
-	".\LIB\xtime.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -189,26 +196,25 @@
 	
 
 .\src\client.c : \
-	".\LIB\exit.h"\
+	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getline.h"\
 	".\lib\getopt.h"\
-	".\LIB\gettext.h"\
+	".\lib\gettext.h"\
 	".\lib\md5.h"\
 	".\lib\pathmax.h"\
 	".\LIB\regex.h"\
 	".\lib\savecwd.h"\
 	".\lib\system.h"\
-	".\LIB\unlocked-io.h"\
+	".\lib\unlocked-io.h"\
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
-	".\LIB\xtime.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\edit.h"\
-	".\src\gssapi-client.h"\
 	".\src\hash.h"\
-	".\src\kerberos4-client.h"\
 	".\src\log-buffer.h"\
 	".\src\myndbm.h"\
 	".\src\rcs.h"\
@@ -224,17 +230,18 @@
 	
 
 .\src\commit.c : \
-	".\LIB\exit.h"\
+	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getline.h"\
 	".\lib\getopt.h"\
-	".\LIB\gettext.h"\
+	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\LIB\regex.h"\
 	".\lib\system.h"\
-	".\LIB\unlocked-io.h"\
+	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
-	".\LIB\xtime.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\edit.h"\
@@ -253,16 +260,17 @@
 	
 
 .\src\create_adm.c : \
-	".\LIB\exit.h"\
+	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
-	".\LIB\gettext.h"\
+	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\LIB\regex.h"\
 	".\lib\system.h"\
-	".\LIB\unlocked-io.h"\
+	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
-	".\LIB\xtime.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -278,17 +286,18 @@
 	
 
 .\src\cvsrc.c : \
-	".\LIB\exit.h"\
+	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getline.h"\
 	".\lib\getopt.h"\
-	".\LIB\gettext.h"\
+	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\LIB\regex.h"\
 	".\lib\system.h"\
-	".\LIB\unlocked-io.h"\
+	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
-	".\LIB\xtime.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -304,16 +313,17 @@
 	
 
 .\src\diff.c : \
-	".\LIB\exit.h"\
+	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
-	".\LIB\gettext.h"\
+	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\LIB\regex.h"\
 	".\lib\system.h"\
-	".\LIB\unlocked-io.h"\
+	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
-	".\LIB\xtime.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -329,17 +339,18 @@
 	
 
 .\src\edit.c : \
-	".\LIB\exit.h"\
+	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getline.h"\
 	".\lib\getopt.h"\
-	".\LIB\gettext.h"\
+	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\LIB\regex.h"\
 	".\lib\system.h"\
-	".\LIB\unlocked-io.h"\
+	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
-	".\LIB\xtime.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\edit.h"\
@@ -358,17 +369,18 @@
 	
 
 .\src\entries.c : \
-	".\LIB\exit.h"\
+	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getline.h"\
 	".\lib\getopt.h"\
-	".\LIB\gettext.h"\
+	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\LIB\regex.h"\
 	".\lib\system.h"\
-	".\LIB\unlocked-io.h"\
+	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
-	".\LIB\xtime.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -384,16 +396,17 @@
 	
 
 .\src\error.c : \
-	".\LIB\exit.h"\
+	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
-	".\LIB\gettext.h"\
+	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\LIB\regex.h"\
 	".\lib\system.h"\
-	".\LIB\unlocked-io.h"\
+	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
-	".\LIB\xtime.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -409,16 +422,17 @@
 	
 
 .\src\exithandle.c : \
-	".\LIB\exit.h"\
+	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
-	".\LIB\gettext.h"\
+	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\LIB\regex.h"\
 	".\lib\system.h"\
-	".\LIB\unlocked-io.h"\
+	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
-	".\LIB\xtime.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -434,16 +448,17 @@
 	
 
 .\src\expand_path.c : \
-	".\LIB\exit.h"\
+	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
-	".\LIB\gettext.h"\
+	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\LIB\regex.h"\
 	".\lib\system.h"\
-	".\LIB\unlocked-io.h"\
+	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
-	".\LIB\xtime.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -459,17 +474,18 @@
 	
 
 .\src\fileattr.c : \
-	".\LIB\exit.h"\
+	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getline.h"\
 	".\lib\getopt.h"\
-	".\LIB\gettext.h"\
+	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\LIB\regex.h"\
 	".\lib\system.h"\
-	".\LIB\unlocked-io.h"\
+	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
-	".\LIB\xtime.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\fileattr.h"\
@@ -486,16 +502,17 @@
 	
 
 ".\windows-NT\filesubr.c" : \
-	".\LIB\exit.h"\
+	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
-	".\LIB\gettext.h"\
+	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\LIB\regex.h"\
 	".\lib\system.h"\
-	".\LIB\unlocked-io.h"\
+	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
-	".\LIB\xtime.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -511,16 +528,17 @@
 	
 
 .\src\find_names.c : \
-	".\LIB\exit.h"\
+	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
-	".\LIB\gettext.h"\
+	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\LIB\regex.h"\
 	".\lib\system.h"\
-	".\LIB\unlocked-io.h"\
+	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
-	".\LIB\xtime.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -536,16 +554,17 @@
 	
 
 .\lib\fncase.c : \
-	".\LIB\gettext.h"\
+	".\lib\gettext.h"\
 	".\lib\system.h"\
-	".\LIB\unlocked-io.h"\
-	".\LIB\xtime.h"\
+	".\lib\unlocked-io.h"\
+	".\lib\xtime.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	
 
 .\lib\fnmatch.c : \
+	".\lib\fnmatch.h"\
 	".\lib\fnmatch_loop.c"\
 	".\windows-NT\config.h"\
 	
@@ -559,16 +578,17 @@
 	
 
 .\src\hash.c : \
-	".\LIB\exit.h"\
+	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
-	".\LIB\gettext.h"\
+	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\LIB\regex.h"\
 	".\lib\system.h"\
-	".\LIB\unlocked-io.h"\
+	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
-	".\LIB\xtime.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -584,17 +604,18 @@
 	
 
 .\src\history.c : \
-	".\LIB\exit.h"\
+	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
-	".\LIB\gettext.h"\
+	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\LIB\regex.h"\
 	".\lib\savecwd.h"\
 	".\lib\system.h"\
-	".\LIB\unlocked-io.h"\
+	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
-	".\LIB\xtime.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -611,17 +632,18 @@
 	
 
 .\src\ignore.c : \
-	".\LIB\exit.h"\
+	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getline.h"\
 	".\lib\getopt.h"\
-	".\LIB\gettext.h"\
+	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\LIB\regex.h"\
 	".\lib\system.h"\
-	".\LIB\unlocked-io.h"\
+	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
-	".\LIB\xtime.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -637,17 +659,18 @@
 	
 
 .\src\import.c : \
-	".\LIB\exit.h"\
+	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
-	".\LIB\gettext.h"\
+	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\LIB\regex.h"\
 	".\lib\savecwd.h"\
 	".\lib\system.h"\
-	".\LIB\unlocked-io.h"\
+	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
-	".\LIB\xtime.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -663,17 +686,17 @@
 	
 
 .\src\lock.c : \
-	".\LIB\exit.h"\
+	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
-	".\LIB\gettext.h"\
+	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\LIB\regex.h"\
 	".\lib\system.h"\
-	".\LIB\unlocked-io.h"\
+	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
-	".\lib\xselect.h"\
-	".\LIB\xtime.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -689,16 +712,17 @@
 	
 
 ".\src\log-buffer.c" : \
-	".\LIB\exit.h"\
+	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
-	".\LIB\gettext.h"\
+	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\LIB\regex.h"\
 	".\lib\system.h"\
-	".\LIB\unlocked-io.h"\
+	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
-	".\LIB\xtime.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -714,16 +738,17 @@
 	
 
 .\src\log.c : \
-	".\LIB\exit.h"\
+	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
-	".\LIB\gettext.h"\
+	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\LIB\regex.h"\
 	".\lib\system.h"\
-	".\LIB\unlocked-io.h"\
+	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
-	".\LIB\xtime.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -739,17 +764,18 @@
 	
 
 .\src\login.c : \
-	".\LIB\exit.h"\
+	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getline.h"\
 	".\lib\getopt.h"\
-	".\LIB\gettext.h"\
+	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\LIB\regex.h"\
 	".\lib\system.h"\
-	".\LIB\unlocked-io.h"\
+	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
-	".\LIB\xtime.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -765,17 +791,18 @@
 	
 
 .\src\logmsg.c : \
-	".\LIB\exit.h"\
+	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getline.h"\
 	".\lib\getopt.h"\
-	".\LIB\gettext.h"\
+	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\LIB\regex.h"\
 	".\lib\system.h"\
-	".\LIB\unlocked-io.h"\
+	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
-	".\LIB\xtime.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -791,16 +818,17 @@
 	
 
 .\src\main.c : \
-	".\LIB\exit.h"\
+	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
-	".\LIB\gettext.h"\
+	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\LIB\regex.h"\
 	".\lib\system.h"\
-	".\LIB\unlocked-io.h"\
+	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
-	".\LIB\xtime.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -821,16 +849,17 @@
 	
 
 ".\windows-NT\mkdir.c" : \
-	".\LIB\exit.h"\
+	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
-	".\LIB\gettext.h"\
+	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\LIB\regex.h"\
 	".\lib\system.h"\
-	".\LIB\unlocked-io.h"\
+	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
-	".\LIB\xtime.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -846,18 +875,19 @@
 	
 
 .\src\mkmodules.c : \
-	".\LIB\exit.h"\
+	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getline.h"\
 	".\lib\getopt.h"\
-	".\LIB\gettext.h"\
+	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\LIB\regex.h"\
 	".\lib\savecwd.h"\
 	".\lib\system.h"\
-	".\LIB\unlocked-io.h"\
+	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
-	".\LIB\xtime.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -874,17 +904,18 @@
 	
 
 .\src\modules.c : \
-	".\LIB\exit.h"\
+	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
-	".\LIB\gettext.h"\
+	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\LIB\regex.h"\
 	".\lib\savecwd.h"\
 	".\lib\system.h"\
-	".\LIB\unlocked-io.h"\
+	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
-	".\LIB\xtime.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -900,17 +931,18 @@
 	
 
 .\src\myndbm.c : \
-	".\LIB\exit.h"\
+	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getline.h"\
 	".\lib\getopt.h"\
-	".\LIB\gettext.h"\
+	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\LIB\regex.h"\
 	".\lib\system.h"\
-	".\LIB\unlocked-io.h"\
+	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
-	".\LIB\xtime.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -930,16 +962,17 @@
 	
 
 .\src\no_diff.c : \
-	".\LIB\exit.h"\
+	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
-	".\LIB\gettext.h"\
+	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\LIB\regex.h"\
 	".\lib\system.h"\
-	".\LIB\unlocked-io.h"\
+	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
-	".\LIB\xtime.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -955,17 +988,18 @@
 	
 
 .\src\parseinfo.c : \
-	".\LIB\exit.h"\
+	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getline.h"\
 	".\lib\getopt.h"\
-	".\LIB\gettext.h"\
+	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\LIB\regex.h"\
 	".\lib\system.h"\
-	".\LIB\unlocked-io.h"\
+	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
-	".\LIB\xtime.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -981,17 +1015,18 @@
 	
 
 .\src\patch.c : \
-	".\LIB\exit.h"\
+	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getline.h"\
 	".\lib\getopt.h"\
-	".\LIB\gettext.h"\
+	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\LIB\regex.h"\
 	".\lib\system.h"\
-	".\LIB\unlocked-io.h"\
+	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
-	".\LIB\xtime.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -1011,16 +1046,17 @@
 	
 
 ".\windows-NT\rcmd.c" : \
-	".\LIB\exit.h"\
+	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
-	".\LIB\gettext.h"\
+	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\LIB\regex.h"\
 	".\lib\system.h"\
-	".\LIB\unlocked-io.h"\
+	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
-	".\LIB\xtime.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -1037,17 +1073,17 @@
 	
 
 .\src\rcs.c : \
-	".\LIB\exit.h"\
+	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
-	".\lib\getpagesize.h"\
-	".\LIB\gettext.h"\
+	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\LIB\regex.h"\
 	".\lib\system.h"\
-	".\LIB\unlocked-io.h"\
+	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
-	".\LIB\xtime.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\edit.h"\
@@ -1066,16 +1102,17 @@
 
 .\src\rcscmds.c : \
 	".\diff\diffrun.h"\
-	".\LIB\exit.h"\
+	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
-	".\LIB\gettext.h"\
+	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\LIB\regex.h"\
 	".\lib\system.h"\
-	".\LIB\unlocked-io.h"\
+	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
-	".\LIB\xtime.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -1091,17 +1128,18 @@
 	
 
 .\src\recurse.c : \
-	".\LIB\exit.h"\
+	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
-	".\LIB\gettext.h"\
+	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\LIB\regex.h"\
 	".\lib\savecwd.h"\
 	".\lib\system.h"\
-	".\LIB\unlocked-io.h"\
+	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
-	".\LIB\xtime.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\edit.h"\
@@ -1119,18 +1157,19 @@
 	
 
 .\src\release.c : \
-	".\LIB\exit.h"\
+	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getline.h"\
 	".\lib\getopt.h"\
-	".\LIB\gettext.h"\
+	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\LIB\regex.h"\
 	".\lib\savecwd.h"\
 	".\lib\system.h"\
-	".\LIB\unlocked-io.h"\
+	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
-	".\LIB\xtime.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -1146,16 +1185,17 @@
 	
 
 .\src\remove.c : \
-	".\LIB\exit.h"\
+	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
-	".\LIB\gettext.h"\
+	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\LIB\regex.h"\
 	".\lib\system.h"\
-	".\LIB\unlocked-io.h"\
+	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
-	".\LIB\xtime.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -1171,17 +1211,18 @@
 	
 
 .\src\repos.c : \
-	".\LIB\exit.h"\
+	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getline.h"\
 	".\lib\getopt.h"\
-	".\LIB\gettext.h"\
+	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\LIB\regex.h"\
 	".\lib\system.h"\
-	".\LIB\unlocked-io.h"\
+	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
-	".\LIB\xtime.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -1197,17 +1238,18 @@
 	
 
 .\src\root.c : \
-	".\LIB\exit.h"\
+	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getline.h"\
 	".\lib\getopt.h"\
-	".\LIB\gettext.h"\
+	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\LIB\regex.h"\
 	".\lib\system.h"\
-	".\LIB\unlocked-io.h"\
+	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
-	".\LIB\xtime.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -1223,16 +1265,17 @@
 	
 
 ".\src\rsh-client.c" : \
-	".\LIB\exit.h"\
+	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
-	".\LIB\gettext.h"\
+	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\LIB\regex.h"\
 	".\lib\system.h"\
-	".\LIB\unlocked-io.h"\
+	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
-	".\LIB\xtime.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -1249,16 +1292,17 @@
 	
 
 ".\windows-NT\run.c" : \
-	".\LIB\exit.h"\
+	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
-	".\LIB\gettext.h"\
+	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\LIB\regex.h"\
 	".\lib\system.h"\
-	".\LIB\unlocked-io.h"\
+	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
-	".\LIB\xtime.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -1279,16 +1323,17 @@
 	
 
 .\src\scramble.c : \
-	".\LIB\exit.h"\
+	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
-	".\LIB\gettext.h"\
+	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\LIB\regex.h"\
 	".\lib\system.h"\
-	".\LIB\unlocked-io.h"\
+	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
-	".\LIB\xtime.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -1304,30 +1349,28 @@
 	
 
 .\src\server.c : \
-	".\LIB\exit.h"\
+	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getline.h"\
 	".\lib\getnline.h"\
 	".\lib\getopt.h"\
-	".\LIB\gettext.h"\
+	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\LIB\regex.h"\
 	".\lib\system.h"\
-	".\LIB\unlocked-io.h"\
+	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
-	".\lib\xselect.h"\
-	".\LIB\xtime.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\edit.h"\
 	".\src\fileattr.h"\
-	".\src\gssapi-client.h"\
 	".\src\hash.h"\
 	".\src\myndbm.h"\
 	".\src\rcs.h"\
 	".\src\root.h"\
 	".\src\server.h"\
-	".\src\socket-client.h"\
 	".\src\stack.h"\
 	".\src\update.h"\
 	".\src\watch.h"\
@@ -1337,26 +1380,30 @@
 	
 
 .\lib\sighandle.c : \
-	".\LIB\gettext.h"\
+	".\lib\gettext.h"\
 	".\lib\system.h"\
-	".\LIB\unlocked-io.h"\
-	".\LIB\xtime.h"\
+	".\lib\unlocked-io.h"\
+	".\lib\xtime.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	
 
+".\windows-NT\sockerror.c" : \
+	
+
 ".\src\socket-client.c" : \
-	".\LIB\exit.h"\
+	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
-	".\LIB\gettext.h"\
+	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\LIB\regex.h"\
 	".\lib\system.h"\
-	".\LIB\unlocked-io.h"\
+	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
-	".\LIB\xtime.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -1373,16 +1420,17 @@
 	
 
 .\src\stack.c : \
-	".\LIB\exit.h"\
+	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
-	".\LIB\gettext.h"\
+	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\LIB\regex.h"\
 	".\lib\system.h"\
-	".\LIB\unlocked-io.h"\
+	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
-	".\LIB\xtime.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -1398,16 +1446,17 @@
 	
 
 ".\windows-NT\startserver.c" : \
-	".\LIB\exit.h"\
+	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
-	".\LIB\gettext.h"\
+	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\LIB\regex.h"\
 	".\lib\system.h"\
-	".\LIB\unlocked-io.h"\
+	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
-	".\LIB\xtime.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -1424,16 +1473,17 @@
 	
 
 .\src\status.c : \
-	".\LIB\exit.h"\
+	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
-	".\LIB\gettext.h"\
+	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\LIB\regex.h"\
 	".\lib\system.h"\
-	".\LIB\unlocked-io.h"\
+	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
-	".\LIB\xtime.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -1453,19 +1503,19 @@
 	
 
 .\src\subr.c : \
-	".\LIB\exit.h"\
+	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getline.h"\
 	".\lib\getopt.h"\
-	".\LIB\gettext.h"\
+	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\LIB\regex.h"\
 	".\lib\system.h"\
-	".\LIB\unlocked-io.h"\
+	".\lib\unlocked-io.h"\
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
-	".\lib\xselect.h"\
-	".\LIB\xtime.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -1481,17 +1531,18 @@
 	
 
 .\src\tag.c : \
-	".\LIB\exit.h"\
+	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
-	".\LIB\gettext.h"\
+	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\LIB\regex.h"\
 	".\lib\savecwd.h"\
 	".\lib\system.h"\
-	".\LIB\unlocked-io.h"\
+	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
-	".\LIB\xtime.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -1507,19 +1558,19 @@
 	
 
 .\src\update.c : \
-	".\LIB\exit.h"\
+	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getline.h"\
 	".\lib\getopt.h"\
-	".\LIB\gettext.h"\
-	".\lib\md5.h"\
+	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\LIB\regex.h"\
 	".\lib\savecwd.h"\
 	".\lib\system.h"\
-	".\LIB\unlocked-io.h"\
+	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
-	".\LIB\xtime.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\edit.h"\
@@ -1540,34 +1591,36 @@
 
 .\lib\valloc.c : \
 	".\lib\getpagesize.h"\
-	".\LIB\gettext.h"\
+	".\lib\gettext.h"\
 	".\lib\system.h"\
-	".\LIB\unlocked-io.h"\
-	".\LIB\xtime.h"\
+	".\lib\unlocked-io.h"\
+	".\lib\xtime.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	
 
 .\lib\vasnprintf.c : \
+	".\lib\alloca.h"\
 	".\lib\printf-args.h"\
 	".\lib\printf-parse.h"\
 	".\lib\vasnprintf.h"\
-	".\LIB\xsize.h"\
+	".\lib\xsize.h"\
 	".\windows-NT\config.h"\
 	
 
 .\src\vers_ts.c : \
-	".\LIB\exit.h"\
+	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
-	".\LIB\gettext.h"\
+	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\LIB\regex.h"\
 	".\lib\system.h"\
-	".\LIB\unlocked-io.h"\
+	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
-	".\LIB\xtime.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -1583,16 +1636,17 @@
 	
 
 .\src\version.c : \
-	".\LIB\exit.h"\
+	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
-	".\LIB\gettext.h"\
+	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\LIB\regex.h"\
 	".\lib\system.h"\
-	".\LIB\unlocked-io.h"\
+	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
-	".\LIB\xtime.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -1612,16 +1666,17 @@
 	
 
 .\src\watch.c : \
-	".\LIB\exit.h"\
+	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
-	".\LIB\gettext.h"\
+	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\LIB\regex.h"\
 	".\lib\system.h"\
-	".\LIB\unlocked-io.h"\
+	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
-	".\LIB\xtime.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\edit.h"\
@@ -1640,16 +1695,17 @@
 	
 
 ".\windows-NT\woe32.c" : \
-	".\LIB\exit.h"\
+	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
-	".\LIB\gettext.h"\
+	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\LIB\regex.h"\
 	".\lib\system.h"\
-	".\LIB\unlocked-io.h"\
+	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
-	".\LIB\xtime.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -1665,17 +1721,18 @@
 	
 
 .\src\wrapper.c : \
-	".\LIB\exit.h"\
+	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getline.h"\
 	".\lib\getopt.h"\
-	".\LIB\gettext.h"\
+	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\LIB\regex.h"\
 	".\lib\system.h"\
-	".\LIB\unlocked-io.h"\
+	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
-	".\LIB\xtime.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -1691,11 +1748,11 @@
 	
 
 .\lib\xgetwd.c : \
-	".\LIB\gettext.h"\
+	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\system.h"\
-	".\LIB\unlocked-io.h"\
-	".\LIB\xtime.h"\
+	".\lib\unlocked-io.h"\
+	".\lib\xtime.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
@@ -1703,7 +1760,7 @@
 
 .\lib\xmalloc.c : \
 	".\lib\exitfail.h"\
-	".\LIB\gettext.h"\
+	".\lib\gettext.h"\
 	".\lib\xalloc.h"\
 	".\windows-NT\config.h"\
 	
@@ -1718,16 +1775,17 @@
 	
 
 .\src\zlib.c : \
-	".\LIB\exit.h"\
+	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
-	".\LIB\gettext.h"\
+	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\LIB\regex.h"\
 	".\lib\system.h"\
-	".\LIB\unlocked-io.h"\
+	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
-	".\LIB\xtime.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
