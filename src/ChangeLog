@@ -1,3 +1,8 @@
+Wed May  1 15:15:11 1996  Tom Jarmolowski  <tjj@booklink.com>
+
+	* rcs.c (linevector_delete): Only copy up to vec->nlines - nlines,
+	not to vec->nlines.
+
 Wed May  1 15:43:21 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* rcscmds.c (RCS_settag): Instead of reserving all tag names
