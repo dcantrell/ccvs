@@ -1,5 +1,7 @@
 Sun Mar 16 10:18:28 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* version.c: Change version number to 1.9.5.
+
 	* version.c: Version 1.9.4.
 
 	* rcscmds.c (RCS_checkin): Preserve the mode of the rcsfile.
