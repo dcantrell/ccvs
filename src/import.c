@@ -654,7 +654,7 @@ struct compair
     char *suffix, *comlead;
 };
 
-const struct compair comtable[] =
+static const struct compair comtable[] =
 {
 
 /*
@@ -664,83 +664,83 @@ const struct compair comtable[] =
  * suffix during initial ci (see InitAdmin()). Comment leaders are needed for
  * languages without multiline comments; for others they are optional.
  */
-    "a", "-- ",				/* Ada		 */
-    "ada", "-- ",
-    "adb", "-- ",
-    "asm", ";; ",			/* assembler (MS-DOS) */
-    "ads", "-- ",			/* Ada		 */
-    "bat", ":: ",			/* batch (MS-DOS) */
-    "body", "-- ",			/* Ada		 */
-    "c", " * ",				/* C		 */
-    "c++", "// ",			/* C++ in all its infinite guises */
-    "cc", "// ",
-    "cpp", "// ",
-    "cxx", "// ",
-    "cl", ";;; ",			/* Common Lisp	 */
-    "cmd", ":: ",			/* command (OS/2) */
-    "cmf", "c ",			/* CM Fortran	 */
-    "cs", " * ",			/* C*		 */
-    "csh", "# ",			/* shell	 */
-    "e", "# ",				/* efl		 */
-    "epsf", "% ",			/* encapsulated postscript */
-    "epsi", "% ",			/* encapsulated postscript */
-    "el", "; ",				/* Emacs Lisp	 */
-    "f", "c ",				/* Fortran	 */
-    "for", "c ",
-    "h", " * ",				/* C-header	 */
-    "hh", "// ",			/* C++ header	 */
-    "hpp", "// ",
-    "hxx", "// ",
-    "in", "# ",				/* for Makefile.in */
-    "l", " * ",				/* lex (conflict between lex and
+    {"a", "-- "},			/* Ada		 */
+    {"ada", "-- "},
+    {"adb", "-- "},
+    {"asm", ";; "},			/* assembler (MS-DOS) */
+    {"ads", "-- "},			/* Ada		 */
+    {"bat", ":: "},			/* batch (MS-DOS) */
+    {"body", "-- "},			/* Ada		 */
+    {"c", " * "},			/* C		 */
+    {"c++", "// "},			/* C++ in all its infinite guises */
+    {"cc", "// "},
+    {"cpp", "// "},
+    {"cxx", "// "},
+    {"cl", ";;; "},			/* Common Lisp	 */
+    {"cmd", ":: "},			/* command (OS/2) */
+    {"cmf", "c "},			/* CM Fortran	 */
+    {"cs", " * "},			/* C*		 */
+    {"csh", "# "},			/* shell	 */
+    {"e", "# "},			/* efl		 */
+    {"epsf", "% "},			/* encapsulated postscript */
+    {"epsi", "% "},			/* encapsulated postscript */
+    {"el", "; "},			/* Emacs Lisp	 */
+    {"f", "c "},			/* Fortran	 */
+    {"for", "c "},
+    {"h", " * "},			/* C-header	 */
+    {"hh", "// "},			/* C++ header	 */
+    {"hpp", "// "},
+    {"hxx", "// "},
+    {"in", "# "},			/* for Makefile.in */
+    {"l", " * "},			/* lex (conflict between lex and
 					 * franzlisp) */
-    "mac", ";; ",			/* macro (DEC-10, MS-DOS, PDP-11,
+    {"mac", ";; "},			/* macro (DEC-10, MS-DOS, PDP-11,
 					 * VMS, etc) */
-    "me", ".\\\" ",			/* me-macros	t/nroff	 */
-    "ml", "; ",				/* mocklisp	 */
-    "mm", ".\\\" ",			/* mm-macros	t/nroff	 */
-    "ms", ".\\\" ",			/* ms-macros	t/nroff	 */
-    "man", ".\\\" ",			/* man-macros	t/nroff	 */
-    "1", ".\\\" ",			/* feeble attempt at man pages... */
-    "2", ".\\\" ",
-    "3", ".\\\" ",
-    "4", ".\\\" ",
-    "5", ".\\\" ",
-    "6", ".\\\" ",
-    "7", ".\\\" ",
-    "8", ".\\\" ",
-    "9", ".\\\" ",
-    "p", " * ",				/* pascal	 */
-    "pas", " * ",
-    "pl", "# ",				/* perl	(conflict with Prolog) */
-    "ps", "% ",				/* postscript	 */
-    "r", "# ",				/* ratfor	 */
-    "red", "% ",			/* psl/rlisp	 */
+    {"me", ".\\\" "},			/* me-macros	t/nroff	 */
+    {"ml", "; "},			/* mocklisp	 */
+    {"mm", ".\\\" "},			/* mm-macros	t/nroff	 */
+    {"ms", ".\\\" "},			/* ms-macros	t/nroff	 */
+    {"man", ".\\\" "},			/* man-macros	t/nroff	 */
+    {"1", ".\\\" "},			/* feeble attempt at man pages... */
+    {"2", ".\\\" "},
+    {"3", ".\\\" "},
+    {"4", ".\\\" "},
+    {"5", ".\\\" "},
+    {"6", ".\\\" "},
+    {"7", ".\\\" "},
+    {"8", ".\\\" "},
+    {"9", ".\\\" "},
+    {"p", " * "},			/* pascal	 */
+    {"pas", " * "},
+    {"pl", "# "},			/* perl	(conflict with Prolog) */
+    {"ps", "% "},			/* postscript	 */
+    {"r", "# "},			/* ratfor	 */
+    {"red", "% "},			/* psl/rlisp	 */
 #ifdef sparc
-    "s", "! ",				/* assembler	 */
+    {"s", "! "},			/* assembler	 */
 #endif
 #ifdef mc68000
-    "s", "| ",				/* assembler	 */
+    {"s", "| "},			/* assembler	 */
 #endif
 #ifdef pdp11
-    "s", "/ ",				/* assembler	 */
+    {"s", "/ "},			/* assembler	 */
 #endif
 #ifdef vax
-    "s", "# ",				/* assembler	 */
+    {"s", "# "},			/* assembler	 */
 #endif
 #ifdef __ksr__
-    "s", "# ",				/* assembler	 */
-    "S", "# ",				/* Macro assembler */
+    {"s", "# "},			/* assembler	 */
+    {"S", "# "},			/* Macro assembler */
 #endif
-    "sh", "# ",				/* shell	 */
-    "sl", "% ",				/* psl		 */
-    "spec", "-- ",			/* Ada		 */
-    "tex", "% ",			/* tex		 */
-    "y", " * ",				/* yacc		 */
-    "ye", " * ",			/* yacc-efl	 */
-    "yr", " * ",			/* yacc-ratfor	 */
-    "", "# ",				/* default for empty suffix	 */
-    NULL, "# "				/* default for unknown suffix;	 */
+    {"sh", "# "},			/* shell	 */
+    {"sl", "% "},			/* psl		 */
+    {"spec", "-- "},			/* Ada		 */
+    {"tex", "% "},			/* tex		 */
+    {"y", " * "},			/* yacc		 */
+    {"ye", " * "},			/* yacc-efl	 */
+    {"yr", " * "},			/* yacc-ratfor	 */
+    {"", "# "},				/* default for empty suffix	 */
+    {NULL, "# "}			/* default for unknown suffix;	 */
 /* must always be last		 */
 };
 
