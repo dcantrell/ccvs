@@ -16,10 +16,11 @@
    HAVE_ALLOCA but don't HAVE_ALLOCA_H, you should declare alloca as an
    extern function returning char *.
 
-   This may be fine for most systems, but it makes Visual C++ barf.  So
-   the workaround is to actually have an alloca.h file that declares 
-   things appropriately.  The boilerplate alloca wad says that if you
-   HAVE_ALLOCA_H, let it declare everything for you.  Which suits us fine.  */
+   This may be fine for most systems, but it makes Visual C++ barf,
+   because the return types conflict.  So the workaround is to
+   actually have an alloca.h file that declares things appropriately.
+   The boilerplate alloca wad says that if you HAVE_ALLOCA_H, let it
+   declare everything for you.  Which suits us fine.  */
 
 #define alloca _alloca
 extern void *alloca ();
