@@ -209,18 +209,7 @@ root_allow_add (arg)
 	    printf ("E Fatal server error, aborting.\n\
 error ENOMEM Virtual memory exhausted.\n");
 
-	    /* I'm doing this manually rather than via error_exit ()
-	       because I'm not sure whether we want to call server_cleanup.
-	       Needs more investigation....  */
-
-#ifdef SYSTEM_CLEANUP
-	    /* Hook for OS-specific behavior, for example socket
-	       subsystems on NT and OS2 or dealing with windows
-	       and arguments on Mac.  */
-	    SYSTEM_CLEANUP ();
-#endif
-
-	    exit (EXIT_FAILURE);
+	    error_exit ();
 	}
     }
     p = malloc (strlen (arg) + 1);

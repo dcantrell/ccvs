@@ -710,17 +710,7 @@ serve_valid_responses (arg)
 	       cause deadlock, as noted in server_cleanup.  */
 	    buf_flush (buf_to_net, 1);
 
-	    /* I'm doing this manually rather than via error_exit ()
-	       because I'm not sure whether we want to call server_cleanup.
-	       Needs more investigation....  */
-
-#ifdef SYSTEM_CLEANUP
-	    /* Hook for OS-specific behavior, for example socket subsystems on
-	       NT and OS2 or dealing with windows and arguments on Mac.  */
-	    SYSTEM_CLEANUP ();
-#endif
-
-	    exit (EXIT_FAILURE);
+	    error_exit ();
 	}
 	else if (rs->status == rs_optional)
 	    rs->status = rs_not_supported;
@@ -5080,18 +5070,7 @@ server (argc, argv)
 		printf ("E Fatal server error, aborting.\n\
 error ENOMEM Virtual memory exhausted.\n");
 
-		/* I'm doing this manually rather than via error_exit ()
-		   because I'm not sure whether we want to call server_cleanup.
-		   Needs more investigation....  */
-
-#ifdef SYSTEM_CLEANUP
-		/* Hook for OS-specific behavior, for example socket
-		   subsystems on NT and OS2 or dealing with windows
-		   and arguments on Mac.  */
-		SYSTEM_CLEANUP ();
-#endif
-
-		exit (EXIT_FAILURE);
+		error_exit ();
 	    }
 	    strcpy (server_temp_dir, Tmpdir);
 
@@ -5575,17 +5554,7 @@ check_password (username, password, repository)
 	    printf ("E Fatal error, aborting.\n\
 error 0 %s: no such user\n", username);
 
-	    /* I'm doing this manually rather than via error_exit ()
-	       because I'm not sure whether we want to call server_cleanup.
-	       Needs more investigation....  */
-
-#ifdef SYSTEM_CLEANUP
-	    /* Hook for OS-specific behavior, for example socket subsystems on
-	       NT and OS2 or dealing with windows and arguments on Mac.  */
-	    SYSTEM_CLEANUP ();
-#endif
-
-	    exit (EXIT_FAILURE);
+	    error_exit ();
 	}
 
 	/* Allow for dain bramaged HPUX passwd aging
@@ -5635,16 +5604,7 @@ error 0 %s: no such user\n", username);
 	   outweighs this.  */
 	printf ("error 0 no such user %s in CVSROOT/passwd\n", username);
 
-	/* I'm doing this manually rather than via error_exit ()
-	   because I'm not sure whether we want to call server_cleanup.
-	   Needs more investigation....  */
-
-#ifdef SYSTEM_CLEANUP
-	/* Hook for OS-specific behavior, for example socket subsystems on
-	   NT and OS2 or dealing with windows and arguments on Mac.  */
-	SYSTEM_CLEANUP ();
-#endif
-	exit (EXIT_FAILURE);
+	error_exit ();
     }
     else
     {
@@ -5901,12 +5861,8 @@ kserver_authenticate_connection ()
     {
 	printf ("E Fatal error, aborting.\n\
 error %s getpeername or getsockname failed\n", strerror (errno));
-#ifdef SYSTEM_CLEANUP
-	/* Hook for OS-specific behavior, for example socket subsystems on
-	   NT and OS2 or dealing with windows and arguments on Mac.  */
-	SYSTEM_CLEANUP ();
-#endif
-	exit (EXIT_FAILURE);
+
+	error_exit ();
     }
 
 #ifdef SO_KEEPALIVE
@@ -5932,12 +5888,8 @@ error %s getpeername or getsockname failed\n", strerror (errno));
     {
 	printf ("E Fatal error, aborting.\n\
 error 0 kerberos: %s\n", krb_get_err_text(status));
-#ifdef SYSTEM_CLEANUP
-	/* Hook for OS-specific behavior, for example socket subsystems on
-	   NT and OS2 or dealing with windows and arguments on Mac.  */
-	SYSTEM_CLEANUP ();
-#endif
-	exit (EXIT_FAILURE);
+
+	error_exit ();
     }
 
     memcpy (kblock, auth.session, sizeof (C_Block));
@@ -5948,12 +5900,8 @@ error 0 kerberos: %s\n", krb_get_err_text(status));
     {
 	printf ("E Fatal error, aborting.\n\
 error 0 kerberos: can't get local name: %s\n", krb_get_err_text(status));
-#ifdef SYSTEM_CLEANUP
-	/* Hook for OS-specific behavior, for example socket subsystems on
-	   NT and OS2 or dealing with windows and arguments on Mac.  */
-	SYSTEM_CLEANUP ();
-#endif
-	exit (EXIT_FAILURE);
+
+	error_exit ();
     }
 
     /* Switch to run as this user. */
