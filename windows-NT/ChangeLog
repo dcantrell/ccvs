@@ -1,3 +1,10 @@
+Thu Mar  6 19:46:53 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* README: tab stop setting apparently was under "Editor" in Visual
+	C++ 2.x but it is under "Tabs" in Visual C++ 4.x.
+	List number of warnings for regex.c (103, which is actually down
+	from 121 prior to the change I just made to regex.c).
+
 Sat Feb 15 15:27:39 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* Makefile.in (dist-dir): Also handle SUBDIRS.
