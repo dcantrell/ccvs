@@ -635,10 +635,8 @@ void run_arg PROTO((const char *s));
 void run_print PROTO((FILE * fp));
 #ifdef HAVE_VPRINTF
 void run_setup PROTO((const char *fmt,...));
-void run_args PROTO((const char *fmt,...));
 #else
 void run_setup ();
-void run_args ();
 #endif
 int run_exec PROTO((char *stin, char *stout, char *sterr, int flags));
 

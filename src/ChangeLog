@@ -1,3 +1,7 @@
+Sun Nov 30 18:03:02 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* run.c, cvs.h (run_args): Remove; nowhere used.
+
 Sat Nov 29 22:15:06 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* options.h.in: Remove declaration of getwd; see lib/ChangeLog for
