@@ -2361,10 +2361,11 @@ special_file_mismatch (finfo, rev1, rev2)
     uid_t rev1_uid, rev2_uid;
     gid_t rev1_gid, rev2_gid;
     mode_t rev1_mode, rev2_mode;
+    unsigned long dev_long;
     dev_t rev1_dev, rev2_dev;
     char *rev1_symlink = NULL;
     char *rev2_symlink = NULL;
-    int check_uids, check_gids, check_modes, check_devnums;
+    int check_uids, check_gids, check_modes;
     int result;
 
     /* If we don't care about special file info, then
@@ -2431,9 +2432,10 @@ special_file_mismatch (finfo, rev1, rev2)
 		/* If the size of `ftype' changes, fix the sscanf call also */
 		char ftype[16];
 		if (sscanf (n->data, "%16s %lu", ftype,
-			    (unsigned long *) &rev1_dev) < 2)
+			    &dev_long) < 2)
 		    error (1, 0, "%s:%s has bad `special' newphrase %s",
 			   finfo->file, rev1, n->data);
+		rev1_dev = dev_long;
 		if (strcmp (ftype, "character") == 0)
 		    rev1_mode |= S_IFCHR;
 		else if (strcmp (ftype, "block") == 0)
@@ -2498,9 +2500,10 @@ special_file_mismatch (finfo, rev1, rev2)
 		/* If the size of `ftype' changes, fix the sscanf call also */
 		char ftype[16];
 		if (sscanf (n->data, "%16s %lu", ftype,
-			    (unsigned long *) &rev2_dev) < 2)
+			    &dev_long) < 2)
 		    error (1, 0, "%s:%s has bad `special' newphrase %s",
 			   finfo->file, rev2, n->data);
+		rev2_dev = dev_long;
 		if (strcmp (ftype, "character") == 0)
 		    rev2_mode |= S_IFCHR;
 		else if (strcmp (ftype, "block") == 0)

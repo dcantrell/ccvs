@@ -279,7 +279,7 @@ static const char *const modules_contents[] = {
 static const char *const config_contents[] = {
     "# Set this to \"no\" if pserver shouldn't check system users/passwords\n",
     "#SystemAuth=no\n",
-    "#\n",
+    "\n",
     "# Set `PreservePermissions' to `yes' to save file status information\n",
     "# in the repository.\n",
     "#PreservePermissions=no\n",

@@ -1,3 +1,16 @@
+1998-02-16  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	Cleanups to Tim's checkin:
+	* rcs.c (RCS_checkout): Use existence_error not ENOENT.
+	* commit.c (checkaddfile): Remove comment about whether we want to
+	check for errors from fclose; there is no reason not to.
+	* rcs.c (RCS_checkout), update.c (special_file_mismatch): sscanf
+	on %ld requires an unsigned long, not a dev_t.
+	* update.c (special_file_mismatch): Remove unused variable
+	check_devnums.
+	* mkmodules.c (config_contents): Between two settings, use a blank
+	line not a "#" line.
+
 1998-02-15  Tim Pierce  <twp@skepsis.com>
 
 	[This is the code as submitted.  I'll be checking in my cleanups
