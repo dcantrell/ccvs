@@ -532,6 +532,8 @@ dnl no need to search nsl for gethostbyname here since we should have
 dnl just added libnsl above if we found it.
 AC_SEARCH_LIBS(gethostbyname, netinet)
 
+dnl we need hstrerror from libresolv on some systems.
+AC_SEARCH_LIBS(hstrerror, resolv)
 
 AC_SUBST(cvs_client_objects)
 
