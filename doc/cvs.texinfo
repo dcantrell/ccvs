@@ -9752,12 +9752,23 @@ range formats:
 Revisions @var{rev1} to @var{rev2} (which must be on
 the same branch).
 
+@item @var{rev1}::@var{rev2}
+Revisions between, but not including, @var{rev1} and @var{rev2}.
+
 @item :@var{rev}
 Revisions from the beginning of the branch up to
 and including @var{rev}.
 
+@item ::@var{rev}
+Revisions from the beginning of the branch up to,
+but not including, @var{rev}.
+
 @item @var{rev}:
 Revisions starting with @var{rev} to the end of the
+branch containing @var{rev}.
+
+@item @var{rev}:
+Revisions starting just after @var{rev} to the end of the
 branch containing @var{rev}.
 
 @item @var{branch}
@@ -9765,6 +9776,7 @@ An argument that is a branch means all revisions on
 that branch.
 
 @item @var{branch1}:@var{branch2}
+@itemx @var{branch1}::@var{branch2}
 A range of branches means all revisions
 on the branches in that range.
 
