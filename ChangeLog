@@ -1,5 +1,12 @@
 2003-11-26  Derek Price  <derek@ximbiot.com>
 
+	* configure.in (--enable-case-sensitivity): Remove this option.
+	* NEWS: Note removal of case sensitivity support.
+
+	* config.h.in, configure: Regenerated.
+
+2003-11-26  Derek Price  <derek@ximbiot.com>
+
 	* NEWS: Note recase tests.
 
 2003-11-26  Derek Price  <derek@ximbiot.com>

@@ -11,6 +11,11 @@ SERVER SECURITY ISSUES
 
 GENERAL USER ISSUES
 
+* Support for case insensitive clients has been removed.  This is not as
+  drastic as it sounds, as all of the current tests still pass without
+  modification when run from a case insensitive client to a case sensitive
+  server.  In the end this should provide a major stability improvement.
+
 * A minor problem that prevented the correct version of a system ZLIB from
   being detected on some platforms has been fixed.
 
