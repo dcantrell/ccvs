@@ -1,3 +1,8 @@
+Thu Feb 20 22:43:45 1997  David J MacKenzie  <djm@va.pubnix.com>
+
+	* rcs-to-cvs.sh: Put temporary files in /var/tmp or /usr/tmp
+	whichever one exists.  Just call "vi" not "/usr/ucb/vi".
+
 Mon Feb 17 08:51:37 1997  Greg A. Woods  <woods@most.weird.com>
 
 	* .cvsignore: added 'cvs2vendor' target from Feb. 12 changes.
