@@ -93,20 +93,20 @@ pathname_levels (const char *p)
     do
     {
 	/* Now look for pathname level-ups.  */
-	if (p[0] == '.' && p[1] == '.' && (p[2] == '\0' || ISDIRSEP (p[2])))
+	if (p[0] == '.' && p[1] == '.' && (p[2] == '\0' || ISSLASH (p[2])))
 	{
 	    --level;
 	    if (-level > max_level)
 		max_level = -level;
 	}
-	else if (p[0] == '\0' || ISDIRSEP (p[0]) ||
-		 (p[0] == '.' && (p[1] == '\0' || ISDIRSEP (p[1]))))
+	else if (p[0] == '\0' || ISSLASH (p[0]) ||
+		 (p[0] == '.' && (p[1] == '\0' || ISSLASH (p[1]))))
 	    ;
 	else
 	    ++level;
 
-	/* q = strchr (p, '/'); but sub ISDIRSEP() for '/': */
-	while (*p != '\0' && !ISDIRSEP (*p)) p++;
+	/* q = strchr (p, '/'); but sub ISSLASH() for '/': */
+	while (*p != '\0' && !ISSLASH (*p)) p++;
 	if (*p != '\0') p++;
     } while (*p != '\0');
     return max_level;

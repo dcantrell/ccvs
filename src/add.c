@@ -121,7 +121,7 @@ add (int argc, char **argv)
 	    p = argv[i];
 	    while (*p != '\0')
 	    {
-		if (ISDIRSEP (*p))
+		if (ISSLASH (*p))
 		{
 		    found_slash = 1;
 		    break;
@@ -233,11 +233,11 @@ add (int argc, char **argv)
 
 		/* don't add stuff to Emptydir */
 		if (strncmp (repository, current_parsed_root->directory, cvsroot_len) == 0
-		    && ISDIRSEP (repository[cvsroot_len])
+		    && ISSLASH (repository[cvsroot_len])
 		    && strncmp (repository + cvsroot_len + 1,
 				CVSROOTADM,
 				sizeof CVSROOTADM - 1) == 0
-		    && ISDIRSEP (repository[cvsroot_len + sizeof CVSROOTADM])
+		    && ISSLASH (repository[cvsroot_len + sizeof CVSROOTADM])
 		    && strcmp (repository + cvsroot_len + sizeof CVSROOTADM + 1,
 			       CVSNULLREPOS) == 0)
 		    error (1, 0, "cannot add to `%s'", repository);
@@ -331,11 +331,11 @@ add (int argc, char **argv)
 	/* don't add stuff to Emptydir */
 	if (strncmp (repository, current_parsed_root->directory,
 		     cvsroot_len) == 0
-	    && ISDIRSEP (repository[cvsroot_len])
+	    && ISSLASH (repository[cvsroot_len])
 	    && strncmp (repository + cvsroot_len + 1,
 			CVSROOTADM,
 			sizeof CVSROOTADM - 1) == 0
-	    && ISDIRSEP (repository[cvsroot_len + sizeof CVSROOTADM])
+	    && ISSLASH (repository[cvsroot_len + sizeof CVSROOTADM])
 	    && strcmp (repository + cvsroot_len + sizeof CVSROOTADM + 1,
 		       CVSNULLREPOS) == 0)
 	    error (1, 0, "cannot add to `%s'", repository);

@@ -160,8 +160,8 @@ import (int argc, char **argv)
      * to call it from anywhere else.
      */
     if ((cp = strstr(argv[0], "CVS")) &&   /* path contains "CVS" AND ... */
-        ((cp == argv[0]) || ISDIRSEP(*(cp-1))) && /* /^CVS/ OR m#/CVS# AND ... */
-        ((*(cp+3) == '\0') || ISDIRSEP(*(cp+3))) /* /CVS$/ OR m#CVS/# */
+        ((cp == argv[0]) || ISSLASH(*(cp-1))) && /* /^CVS/ OR m#/CVS# AND ... */
+        ((*(cp+3) == '\0') || ISSLASH(*(cp+3))) /* /CVS$/ OR m#CVS/# */
        )
     {
         error (0, 0,

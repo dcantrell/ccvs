@@ -175,7 +175,7 @@ arg_should_not_be_sent_to_server( char *arg )
 	/* Calculate "dirname arg" */
 	for (t = arg + strlen (arg) - 1; t >= arg; t--)
 	{
-	    if (ISDIRSEP(*t))
+	    if (ISSLASH (*t))
 		break;
 	}
 
@@ -583,7 +583,7 @@ int path_list_prefixed (Node *p, void *closure)
     const char *prefix = p->key;
     if (strncmp (prefix, questionable, strlen (prefix))) return 0;
     questionable += strlen (prefix);
-    while (ISDIRSEP (*questionable)) questionable++;
+    while (ISSLASH (*questionable)) questionable++;
     if (*questionable == '\0') return 1;
     return pathname_levels (questionable);
 }
@@ -2251,7 +2251,7 @@ send_repository (const char *dir, const char *repos, const char *update_dir)
 	while (*p != '\0')
 	{
 	    assert (*p != '\012');
-	    if (ISDIRSEP (*p))
+	    if (ISSLASH (*p))
 	    {
 		buf[0] = '/';
 		send_to_server (buf, 1);
@@ -4521,7 +4521,7 @@ send_file_names (int argc, char **argv, unsigned int flags)
 	    {
 		send_to_server ("\012Argumentx ", 0);
 	    }
-	    else if (ISDIRSEP (*p))
+	    else if (ISSLASH (*p))
 	    {
 		buf[0] = '/';
 		send_to_server (buf, 1);

@@ -228,8 +228,10 @@ ls (int argc, char **argv)
 	{
 	    /* should be ".", but do_recursion() 
 	       fails this: assert ( strstr ( repository, "/./" ) == NULL ); */
-	    err += do_module (db, "", MISC, "Listing",
+	    char *topmod = xstrdup ("");
+	    err += do_module (db, topmod, MISC, "Listing",
 			      ls_proc, NULL, 0, 0, 0, 0, NULL);
+	    free (topmod);
 	}
 	close_module (db);
     }

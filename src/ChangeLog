@@ -1,5 +1,12 @@
 2004-04-27  Derek Price  <derek@ximbiot.com>
 
+	Add dirname module from GNULIB.
+
+	* add.c, client.c, commit.c, find_names.c, import.c, lock.c, ls.c,
+	repos.c, server.c, subr.c: s/ISDIRSEP/ISSLASH/.
+
+2004-04-27  Derek Price  <derek@ximbiot.com>
+
 	* commit.c, create_adm.c, entries.c, filesubr.c, hash.c, update.c:
 	Gratuitious reformatting.
 
