@@ -1,3 +1,8 @@
+Wed Oct 29 11:45:20 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* README.txt: CVSwiz runs the command line CVS; it is not an
+	independent implementation of the protocol.
+
 Sun Oct 26 14:57:33 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* README.txt: Add section "OTHER INTERFACES".

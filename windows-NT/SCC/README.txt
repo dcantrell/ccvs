@@ -91,9 +91,9 @@ best place to make suggestions is bug-cvs@prep.ai.mit.edu (although
 this list is not intended to be CVS-centric).
 
 * The CVS remote protocol is documented in doc/cvsclient.texi in the
-CVS distribution and has at least 3 implementations of the client
-(jCVS, CVS command line client, and CVSwiz), in addition to having
-been implemented at least once by a special-purpose perl script.
+CVS distribution and has at least 2 implementations of the client
+(jCVS and CVS command line client), in addition to having been
+implemented at least once by a special-purpose perl script.
 
 * Microsoft's OLE Automation interface.  The spec is available for
 download at http://www.microsoft.com/ssafe.  I'm not sure whether this
