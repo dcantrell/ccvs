@@ -68,6 +68,10 @@ static void rcsbuf_valpolish_internal PROTO ((struct rcsbuffer *, char *to,
 static unsigned long rcsbuf_ftell PROTO ((struct rcsbuffer *));
 static void rcsbuf_get_buffered PROTO ((struct rcsbuffer *, char **datap,
 					size_t *lenp));
+static void rcsbuf_cache PROTO ((RCSNode *, struct rcsbuffer *));
+static void rcsbuf_cache_close PROTO ((void));
+static void rcsbuf_cache_open PROTO ((RCSNode *, long, FILE **,
+				      struct rcsbuffer *));
 static int checkmagic_proc PROTO((Node *p, void *closure));
 static void do_branches PROTO((List * list, char *val));
 static void do_symbols PROTO((List * list, char *val));
@@ -161,6 +165,10 @@ RCS_parse (file, repos)
     RCSNode *retval;
     char *rcsfile;
 
+    /* We're creating a new RCSNode, so there is no hope of finding it
+       in the cache.  */
+    rcsbuf_cache_close ();
+
     rcsfile = xmalloc (strlen (repos) + strlen (file)
 		       + sizeof (RCSEXT) + sizeof (CVSATTIC) + 10);
     (void) sprintf (rcsfile, "%s/%s%s", repos, file, RCSEXT);
@@ -170,7 +178,6 @@ RCS_parse (file, repos)
 	if (rcs != NULL) 
 	    rcs->flags |= VALID;
 
-	fclose (fp);
 	retval = rcs;
 	goto out;
     }
@@ -191,7 +198,6 @@ RCS_parse (file, repos)
 	    rcs->flags |= VALID;
 	}
 
-	fclose (fp);
 	retval = rcs;
 	goto out;
     }
@@ -220,7 +226,6 @@ RCS_parse (file, repos)
 	    if (rcs != NULL) 
 		rcs->flags |= VALID;
 
-	    fclose (fp);
 	    free (rcs->path);
 	    rcs->path = found_path;
 	    retval = rcs;
@@ -244,7 +249,6 @@ RCS_parse (file, repos)
 		rcs->flags |= VALID;
 	    }
 
-	    fclose (fp);
 	    free (rcs->path);
 	    rcs->path = found_path;
 	    retval = rcs;
@@ -276,6 +280,10 @@ RCS_parsercsfile (rcsfile)
     FILE *fp;
     RCSNode *rcs;
 
+    /* We're creating a new RCSNode, so there is no hope of finding it
+       in the cache.  */
+    rcsbuf_cache_close ();
+
     /* open the rcsfile */
     if ((fp = CVS_FOPEN (rcsfile, FOPEN_BINARY_READ)) == NULL)
     {
@@ -285,7 +293,6 @@ RCS_parsercsfile (rcsfile)
 
     rcs = RCS_parsercsfile_i (fp, rcsfile);
 
-    fclose (fp);
     return (rcs);
 }
 
@@ -311,17 +318,7 @@ RCS_parsercsfile_i (fp, rcsfile)
 
        Most cvs operations on the main branch don't need any more
        information.  Those that do call RCS_reparsercsfile to parse
-       the rest of the header and the deltas.
-
-       People often wonder whether this is inefficient, to open the
-       file once here and once in RCS_reparsercsfile.  Well, it might
-       help a little bit if we kept the file open (I haven't tried
-       timing this myself), but basically the common case, which we
-       want to optimize, is the one in which we call
-       RCS_parsercsfile_i and not RCS_reparsercsfile (for example,
-       "cvs update" on a lot of files most of which are unmodified).
-       So making the case in which we call RCS_reparsercsfile fast is
-       not as important.  */
+       the rest of the header and the deltas.  */
 
     rcsbuf_open (&rcsbuf, fp, rcsfile, 0);
 
@@ -376,9 +373,10 @@ RCS_parsercsfile_i (fp, rcsfile)
 	    break;
     }
 
-    rcsbuf_close (&rcsbuf);
-
     rdata->flags |= PARTIAL;
+
+    rcsbuf_cache (rdata, &rcsbuf);
+
     return rdata;
 
 l_error:
@@ -386,6 +384,7 @@ l_error:
 	   rcsfile);
     rcsbuf_close (&rcsbuf);
     freercsnode (&rdata);
+    fclose (fp);
     return (NULL);
 }
 
@@ -414,11 +413,7 @@ RCS_reparsercsfile (rdata, pfp, rcsbufp)
     assert (rdata != NULL);
     rcsfile = rdata->path;
 
-    fp = CVS_FOPEN (rcsfile, FOPEN_BINARY_READ);
-    if (fp == NULL)
-	error (1, 0, "unable to reopen `%s'", rcsfile);
-
-    rcsbuf_open (&rcsbuf, fp, rcsfile, 0);
+    rcsbuf_cache_open (rdata, 0, &fp, &rcsbuf);
 
     /* make a node */
     /* This probably shouldn't be done until later: if a file has an
@@ -574,11 +569,7 @@ RCS_reparsercsfile (rdata, pfp, rcsbufp)
     rdata->delta_pos = rcsbuf_ftell (&rcsbuf);
 
     if (pfp == NULL)
-    {
-	rcsbuf_close (&rcsbuf);
-	if (fclose (fp) < 0)
-	    error (0, errno, "cannot close %s", rcsfile);
-    }
+	rcsbuf_cache (rdata, &rcsbuf);
     else
     {
 	*pfp = fp;
@@ -746,9 +737,7 @@ warning: duplicate key `%s' in version `%s' of RCS file `%s'",
 	}
     }
 
-    rcsbuf_close (&rcsbuf);
-    if (fclose (fp) < 0)
-	error (0, errno, "cannot close %s", rcs->path);
+    rcsbuf_cache (rcs, &rcsbuf);
 }
 
 /*
@@ -1224,7 +1213,7 @@ rcsbuf_getkey (rcsbuf, keyp, valp)
 		--psemi;
 	    *psemi = '\0';
 
-	    vlen = psemi - *valp;
+	    vlen = psemi - start;
 	    if (vlen == 0)
 		*valp = NULL;
 	    rcsbuf->vlen = vlen;
@@ -1617,6 +1606,102 @@ rcsbuf_get_buffered (rcsbuf, datap, lenp)
     *datap = rcsbuf->ptr;
     *lenp = rcsbuf->ptrend - rcsbuf->ptr;
 }
+
+/* CVS optimizes by quickly reading some header information from a
+   file.  If it decides it needs to do more with the file, it reopens
+   it.  We speed that up here by maintaining a cache of a single open
+   file, to save the time it takes to reopen the file in the common
+   case.  */
+
+static RCSNode *cached_rcs;
+static struct rcsbuffer cached_rcsbuf;
+
+/* Cache RCS and RCSBUF.  This takes responsibility for closing
+   RCSBUF->FP.  */
+
+static void
+rcsbuf_cache (rcs, rcsbuf)
+    RCSNode *rcs;
+    struct rcsbuffer *rcsbuf;
+{
+    if (cached_rcs != NULL)
+	rcsbuf_cache_close ();
+    cached_rcs = rcs;
+    ++rcs->refcount;
+    cached_rcsbuf = *rcsbuf;
+}
+
+/* If there is anything in the cache, close it.  */
+
+static void
+rcsbuf_cache_close ()
+{
+    if (cached_rcs != NULL)
+    {
+	if (fclose (cached_rcsbuf.fp) != 0)
+	    error (0, errno, "cannot close %s", cached_rcsbuf.filename);
+	rcsbuf_close (&cached_rcsbuf);
+	freercsnode (&cached_rcs);
+	cached_rcs = NULL;
+    }
+}
+
+/* Open an rcsbuffer for RCS, getting it from the cache if possible.
+   Set *FPP to the file, and *RCSBUFP to the rcsbuf.  The file should
+   be put at position POS.  */
+
+static void
+rcsbuf_cache_open (rcs, pos, pfp, prcsbuf)
+    RCSNode *rcs;
+    long pos;
+    FILE **pfp;
+    struct rcsbuffer *prcsbuf;
+{
+    if (cached_rcs == rcs)
+    {
+	if (rcsbuf_ftell (&cached_rcsbuf) != pos)
+	{
+	    if (fseek (cached_rcsbuf.fp, pos, SEEK_SET) != 0)
+		error (1, 0, "cannot fseek RCS file %s",
+		       cached_rcsbuf.filename);
+	    cached_rcsbuf.ptr = rcsbuf_buffer;
+	    cached_rcsbuf.ptrend = rcsbuf_buffer;
+	    cached_rcsbuf.pos = pos;
+	}
+	*pfp = cached_rcsbuf.fp;
+
+	/* When RCS_parse opens a file using fopen_case, it frees the
+           filename which we cached in CACHED_RCSBUF and stores a new
+           file name in RCS->PATH.  We avoid problems here by always
+           copying the filename over.  FIXME: This is hackish.  */
+	cached_rcsbuf.filename = rcs->path;
+
+	*prcsbuf = cached_rcsbuf;
+
+	cached_rcs = NULL;
+
+	/* Removing RCS from the cache removes a reference to it.  */
+	--rcs->refcount;
+	if (rcs->refcount <= 0)
+	    error (1, 0, "rcsbuf_cache_open: internal error");
+    }
+    else
+    {
+	if (cached_rcs != NULL)
+	    rcsbuf_cache_close ();
+
+	*pfp = CVS_FOPEN (rcs->path, FOPEN_BINARY_READ);
+	if (*pfp == NULL)
+	    error (1, 0, "unable to reopen `%s'", rcs->path);
+	if (pos != 0)
+	{
+	    if (fseek (*pfp, pos, SEEK_SET) != 0)
+		error (1, 0, "cannot fseek RCS file %s", rcs->path);
+	}
+	rcsbuf_open (prcsbuf, *pfp, rcs->path, pos);
+    }
+}
+
 
 /*
  * process the symbols list of the rcs file
@@ -3493,14 +3578,7 @@ RCS_checkout (rcs, workfile, rev, nametag, options, sout, pfn, callerdat)
 	if (rcs->flags & PARTIAL)
 	    RCS_reparsercsfile (rcs, &fp, &rcsbuf);
 	else
-	{
-	    fp = CVS_FOPEN (rcs->path, FOPEN_BINARY_READ);
-	    if (fp == NULL)
-		error (1, 0, "unable to reopen `%s'", rcs->path);
-	    if (fseek (fp, rcs->delta_pos, SEEK_SET) != 0)
-		error (1, 0, "cannot fseek RCS file");
-	    rcsbuf_open (&rcsbuf, fp, rcs->path, rcs->delta_pos);
-	}
+	    rcsbuf_cache_open (rcs, rcs->delta_pos, &fp, &rcsbuf);
 
 	gothead = 0;
 	if (! rcsbuf_getrevnum (&rcsbuf, &key))
@@ -3526,13 +3604,10 @@ RCS_checkout (rcs, workfile, rev, nametag, options, sout, pfn, callerdat)
 
 	rcsbuf_valpolish (&rcsbuf, value, 0, &len);
 
-	rcsbuf_close (&rcsbuf);
-
 	if (fstat (fileno (fp), &sb) < 0)
 	    error (1, errno, "cannot fstat %s", rcs->path);
 
-	if (fclose (fp) < 0)
-	    error (0, errno, "cannot close %s", rcs->path);
+	rcsbuf_cache (rcs, &rcsbuf);
     }
     else
     {
@@ -4346,6 +4421,9 @@ RCS_checkin (rcs, workfile, message, rev, flags)
 	    cvs_output (rcs->head, 0);
 	    cvs_output ("\n", 1);
 	}
+
+	/* We are probably about to invalidate any cached file.  */
+	rcsbuf_cache_close ();
 
 	fout = rcs_internal_lockfile (rcs->path);
 	RCS_putadmin (rcs, fout);
@@ -6251,12 +6329,7 @@ RCS_deltas (rcs, fp, rcsbuf, version, op, text, len, log, loglen)
 
     if (fp == NULL)
     {
-	fp = CVS_FOPEN (rcs->path, FOPEN_BINARY_READ);
-	if (fp == NULL)
-	    error (1, 0, "unable to reopen `%s'", rcs->path);
-	if (fseek (fp, rcs->delta_pos, SEEK_SET) != 0)
-	    error (1, 0, "cannot fseek RCS file");
-	rcsbuf_open (&rcsbuf_local, fp, rcs->path, rcs->delta_pos);
+	rcsbuf_cache_open (rcs, rcs->delta_pos, &fp, &rcsbuf_local);
 	rcsbuf = &rcsbuf_local;
     }
 
@@ -6440,10 +6513,7 @@ RCS_deltas (rcs, fp, rcsbuf, version, op, text, len, log, loglen)
 
     free (branchversion);
 
-    rcsbuf_close (rcsbuf);
-
-    if (fclose (fp) < 0)
-	error (0, errno, "cannot close %s", rcs->path);
+    rcsbuf_cache (rcs, rcsbuf);
 
     if (! foundhead)
         error (1, 0, "could not find desired version %s in %s",
@@ -7158,8 +7228,11 @@ RCS_copydeltas (rcs, fin, rcsbufin, fout, newdtext, insertpt)
     rcsbuf_get_buffered (rcsbufin, &bufrest, &buflen);
     if (buflen > 0)
     {
-	if (bufrest[0] != '\n' || strncmp (bufrest, "\n\n\n", buflen) != 0)
+	if (bufrest[0] != '\n'
+	    || strncmp (bufrest, "\n\n\n", buflen < 3 ? buflen : 3) != 0)
+	{
 	    nls = 0;
+	}
 	else
 	{
 	    if (buflen < 3)
@@ -7378,11 +7451,7 @@ RCS_rewrite (rcs, newdtext, insertpt)
     RCS_putdesc (rcs, fout);
 
     /* Open the original RCS file and seek to the first delta text. */
-    if ((fin = CVS_FOPEN (rcs->path, FOPEN_BINARY_READ)) == NULL) 
-	error (1, errno, "cannot open RCS file `%s' for reading", rcs->path);
-    if (fseek (fin, rcs->delta_pos, SEEK_SET) < 0)
-	error (1, errno, "cannot fseek in RCS file %s", rcs->path);
-    rcsbuf_open (&rcsbufin, fin, rcs->path, rcs->delta_pos);
+    rcsbuf_cache_open (rcs, rcs->delta_pos, &fin, &rcsbufin);
 
     /* Update delta_pos to the current position in the output file.
        Do NOT move these statements: they must be done after fin has
@@ -7394,6 +7463,8 @@ RCS_rewrite (rcs, newdtext, insertpt)
 
     RCS_copydeltas (rcs, fin, &rcsbufin, fout, newdtext, insertpt);
 
+    /* We don't want to call rcsbuf_cache here, since we're about to
+       delete the file.  */
     rcsbuf_close (&rcsbufin);
     if (ferror (fin))
 	error (0, errno, "warning: when closing RCS file `%s'", rcs->path);
