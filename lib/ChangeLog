@@ -1,3 +1,9 @@
+Sun Nov 24 13:34:25 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* getdate.y (Convert): Change last acceptable year from 1999 to
+	2038.
+	* getdate.c: Regenerated using byacc 1.9.
+
 Tue Nov 19 17:11:17 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* Makefile.in (OBJECTS): Remove strippath.o; we don't use
