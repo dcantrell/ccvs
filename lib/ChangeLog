@@ -1,3 +1,8 @@
+2004-10-18  Derek Price  <derek@ximbiot.com>
+
+	* system.h: Define DEVNULL here when necessary.  Don't include
+	unistd.h twice.
+
 2004-10-16  Conrad T. Pino  <Conrad@Pino.com>
 
 	* libcvs.dsp: Add "vasprintf.c" and "vasprintf.h" to project.

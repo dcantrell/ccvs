@@ -232,11 +232,8 @@
 #endif /* !def S_IRUSR */
 #endif /* NEED_DECOY_PERMISSIONS */
 
-#if defined(POSIX) || defined(HAVE_UNISTD_H)
-# include <unistd.h>
-#else
-off_t lseek ();
-char *getcwd ();
+#ifndef DEVNULL
+# define	DEVNULL		"/dev/null"
 #endif
 
 #ifdef HAVE_IO_H
