@@ -475,7 +475,16 @@ diff_fileproc (callerdat, finfo)
     {
 	freevers_ts (&vers);
 	if (empty_file == DIFF_SAME)
+	{
+	    /* In the server case, would be nice to send a "Checked-in"
+	       response, so that the client can rewrite its timestamp.
+	       server_checked_in by itself isn't the right thing (it
+	       needs a server_register), but I'm not sure what is.
+	       It isn't clear to me how "cvs status" handles this (that
+	       is, for a client which sends Modified not Is-modified to
+	       "cvs status"), but it does.  */
 	    return (0);
+	}
 	else
 	{
 	    diff_mark_errors (err);
