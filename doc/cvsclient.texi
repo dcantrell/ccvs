@@ -1348,8 +1348,8 @@ The command completed successfully.
 @c about whether there is an easy way to provide RFC1543 formatting
 @c (without negating the advantages of texinfo), and whether we should
 @c use RFC822-style BNF (I fear that would be less clear than
-@c what we do now, however).  Plus what about IETF terminology (SHOULD,
-@c MUST, etc.) or ISO terminology (shall, should, or whatever they are)?
+@c what we do now, however).  Plus what about RFC2119 terminology (MUST,
+@c SHOULD, &c) or ISO terminology (shall, should, or whatever they are)?
 Here is an example; lines are prefixed by @samp{C: } to indicate the
 client sends them or @samp{S: } to indicate the server sends them.
 
