@@ -4958,6 +4958,10 @@ $CPROG \[logout aborted\]: Bad CVSROOT: \`:pserver;notanoption=anything:localhos
 "$CPROG logout: CVSROOT proxy specification is only valid for gserver and
 $CPROG logout: pserver connection methods\.
 $CPROG \[logout aborted\]: Bad CVSROOT: \`:local;proxy=localhost:/dev/null'\."
+	    CVSROOT="::pserver@anonymous@test.org:/cvs"
+	    dotest_fail parseroot-8r "$testcvs -d'$CVSROOT' co test" \
+"$CPROG checkout: Unknown method (\`') in CVSROOT\.
+$CPROG \[checkout aborted\]: Bad CVSROOT: \`$CVSROOT'\."
 	  fi
 
 	  dokeep

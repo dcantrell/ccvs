@@ -529,6 +529,11 @@ parse_cvsroot (const char *root_in)
 	 * Calling strtok again is saved until after parsing the method.
 	 */
 	method = strtok (method, ";");
+	if (method == NULL)
+	{
+	    error (0, 0, "Unknown method (`') in CVSROOT.");
+	    goto error_exit;
+	}
 #endif /* defined(CLIENT_SUPPORT) || defined (SERVER_SUPPORT) */
 
 	/* Now we have an access method -- see if it's valid. */

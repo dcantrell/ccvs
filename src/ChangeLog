@@ -1,3 +1,9 @@
+2005-02-26  Mark D. Baushke  <mdb@cvshome.org>
+
+	* root.c (parse_cvsroot): Handle another Bad CVSROOT.
+	* sanity.sh (parseroot-8r): Test for it.
+	(Problem report from Hiroyuki Ikezoe <poincare@ikezoe.net>.)
+	
 2005-02-26  Derek Price  <derek@ximbiot.com>
 
 	* server.c: Include netdb.h with server support.  Other reformatting.
