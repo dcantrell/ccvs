@@ -660,6 +660,13 @@ is a space separated list of tokens.  If the server supports sending
 patches, it will include @samp{update-patches} in this list.  The
 @samp{update-patches} request does not actually do anything.
 
+@item Change-dir @var{dir} \n
+@c FIXME: I've no idea if this could have more generic use, or not.....
+The server is handling a nested sub-module, it will tell the client
+about the directory change necessary to get into the sub-module
+directory @var{dir}, and when to pop back out to the parent module
+directory using this response.
+
 @item Checked-in @var{pathname} \n
 Additional data: New Entries line, \n.  This means a file @var{pathname}
 has been successfully operated on (checked in, added, etc.).  name in
