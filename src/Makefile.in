@@ -75,7 +75,7 @@ PROGS = cvs mkmodules cvsbug
 DEFS = @DEFS@ @includeopt@
 
 CC	 = @CC@
-CFLAGS = -g
+CFLAGS = @CFLAGS@
 CPPFLAGS=
 LDFLAGS=
 
