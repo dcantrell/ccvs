@@ -5771,7 +5771,7 @@ File: no file file1		Status: Up-to-date
 	  echo initial content for file1 >file1
 	  dotest rmadd3-init3 "${testcvs} add file1" \
 "${SPROG} add: scheduling file \`file1' for addition
-${SPROG} add: use '${SPROG} commit' to add this file permanently"
+${SPROG} add: use \`${SPROG} commit' to add this file permanently"
 	  dotest rmadd3-init4 "${testcvs} -q ci -m add" \
 "RCS file: ${CVSROOT_DIRNAME}/first-dir/file1,v
 done
@@ -5783,7 +5783,7 @@ done"
 	  # Here begins the guts of this test, as detailed above.
 	  dotest rmadd3-1 "${testcvs} rm -f file1" \
 "${SPROG} remove: scheduling \`file1' for removal
-${SPROG} remove: use '${SPROG} commit' to remove this file permanently"
+${SPROG} remove: use \`${SPROG} commit' to remove this file permanently"
 
           # Now recreate the file:
 	  echo desired future contents for file1 >file1
