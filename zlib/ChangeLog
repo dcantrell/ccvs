@@ -1,5 +1,9 @@
 2004-11-11  Derek Price  <derek@ximbiot.com>
 
+	* Makefile.in (DISTFILES): Update for zlib 1.2.1.
+
+2004-11-11  Derek Price  <derek@ximbiot.com>
+
 	* Makefile.in (clean): Don't remove Windows build files.
 
 2004-10-27  Mark D. Baushke  <mdb@cvshome.org>
