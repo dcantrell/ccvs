@@ -1,3 +1,8 @@
+Thu Oct 17 10:57:06 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* README: Clarify who it is who needs to be able to mount the
+	repository.
+
 Mon Oct 14 08:30:38 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* README: Remove item about markso Win95 web site now that it is
