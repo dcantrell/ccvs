@@ -1,3 +1,8 @@
+Mon Mar 11 13:11:04 1996  Samuel Tardieu  <sam@inf.enst.fr>
+
+	* modules.c (cat_module): set optind to 0 to force getopt() to
+	reinitialize its internal nextchar
+
 Mon Mar 11 00:09:14 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* hash.c (findnode, findnode_fn): Revert changes of 7-8 Mar 1996.
