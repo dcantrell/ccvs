@@ -119,6 +119,8 @@ assuming its existance.
 CVS has also been assuming <pwd.h> for some time.  I am unsure of the
 rationale.
 
+GNULIB also assumes <sys/stat.h>.  I am unsure of the rationale.
+
 A substitute POSIX.2 <fnmatch.h> header and fnmatch() function is provided for
 systems that lack them.  Similarly for the non-standard <alloca.h> header and
 alloca() function.  Other substitute headers and functions are also provided
