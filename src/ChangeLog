@@ -1,3 +1,10 @@
+Mon Oct 23 08:41:25 1995  Jim Meyering  (meyering@comco.com)
+
+	* commit.c (commit_filesdoneproc): Use getline instead of fgets.
+
+	* logmsg.c (do_editor): Use getline instead of fgets.
+	(rcsinfo_proc): Likewise.
+
 Mon Oct 23 11:59:41 1995  Norbert Kiesel  <nk@col.sw-ley.de>
 
 	* cvs.h: add valloc declaration
@@ -23,18 +30,18 @@ Mon Oct 23 11:59:41 1995  Norbert Kiesel  <nk@col.sw-ley.de>
 
 Sun Oct 22 13:47:53 1995  J.T. Conklin  <jtc@slave.cygnus.com>
 
-	* client.c (update_entries): Fix memory leak; free mode_string and 
+	* client.c (update_entries): Fix memory leak; free mode_string and
 	file_timestamp.
 	(send_fileproc): Fix memory leak; call freevers_ts before exiting.
 
-	* module.c (do_module): Partially fix memory leak; added 
+	* module.c (do_module): Partially fix memory leak; added
 	variable so that the address of memory allocated by line2argv
 	is retained, but comment out the call to free_names.  Freeing
  	the vector at that point loses because some of the elements
 	may be used later in the function.
 	(cat_module): fix memory leak.
 
-	* recurse.c (start_recursion): Fix memory leak; free return 
+	* recurse.c (start_recursion): Fix memory leak; free return
 	value of Name_Repository after it has been used.
 
 Sat Oct 21 23:24:26 1995  Jim Meyering  (meyering@comco.com)
