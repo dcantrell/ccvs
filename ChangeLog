@@ -1,5 +1,7 @@
 Mon Oct 23 18:37:27 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
+        * configure: re-ran autoconf.
+
         * configure.in (AC_OUTPUT): os2/Makefile.
 
         * Makefile.in (SUBDIRS): added os2 subdir.
