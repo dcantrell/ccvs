@@ -19,7 +19,7 @@ static void set_lockers_name PROTO((struct stat *statp));
 static int set_writelock_proc PROTO((Node * p, void *closure));
 static int unlock_proc PROTO((Node * p, void *closure));
 static int write_lock PROTO((char *repository));
-static void unlock PROTO((char *repository));
+static void lock_simple_remove PROTO((char *repository));
 static void lock_wait PROTO((char *repository));
 static int Check_Owner PROTO((char *lockdir));
 
@@ -42,7 +42,7 @@ Lock_Cleanup ()
     /* clean up simple locks (if any) */
     if (repository != NULL)
     {
-	unlock (repository);
+	lock_simple_remove (repository);
 	repository = (char *) NULL;
     }
 
@@ -62,7 +62,7 @@ unlock_proc (p, closure)
     Node *p;
     void *closure;
 {
-    unlock (p->key);
+    lock_simple_remove (p->key);
     return (0);
 }
 
@@ -70,7 +70,7 @@ unlock_proc (p, closure)
  * Remove the lock files (without complaining if they are not there),
  */
 static void
-unlock (repository)
+lock_simple_remove (repository)
     char *repository;
 {
     char tmp[PATH_MAX];
