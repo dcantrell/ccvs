@@ -93,9 +93,6 @@
 	* client.c (handle_redirect): Detect redirect loops.
 	* sanity.sh (client-20): Test that client detects redirect loops.
 
-=======
-
->>>>>>> 1.2336.2.326
 2004-10-28  Mark D. Baushke  <mdb@cvshome.org>
 
 	* release.c (release): Allow builds of cvs with --disable-server
