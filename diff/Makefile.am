@@ -13,6 +13,8 @@
 ## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 ## GNU General Public License for more details.
 
+INCLUDES = -I$(top_srcdir)/lib
+
 noinst_LIBRARIES = libdiff.a
 
 libdiff_a_SOURCES = diff.c diff3.c analyze.c cmpbuf.c cmpbuf.h io.c \

@@ -86,6 +86,8 @@ includeopt = @includeopt@
 install_sh = @install_sh@
 
 
+INCLUDES = -I$(top_srcdir)/lib
+
 noinst_LIBRARIES = libdiff.a
 
 libdiff_a_SOURCES = diff.c diff3.c analyze.c cmpbuf.c cmpbuf.h io.c \
