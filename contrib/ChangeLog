@@ -1,3 +1,11 @@
+Thu Jul 13 23:04:12 CDT 1995  Jim Meyering  (meyering@comco.com)
+
+	* Makefile.in (.pl, .csh): *Never* redirect output directly to
+	the target (usu $@) of a rule.  Instead, redirect to a temporary
+	file, and then move that temporary to the target.  I chose to
+	name temporary files $@-t.  Remember to be careful that the length
+	of the temporary file name not exceed the 14-character limit.
+
 Sun Jul  9 21:16:53 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
         These are actually Greg Woods' changes:
