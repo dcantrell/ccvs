@@ -1,3 +1,8 @@
+2003-08-06  Derek Price  <derek@ximbiot.com>
+
+	* commit_prep.in, log_accum.in: Port copious changes from Karl Fogel
+	and CollabNet.  These changes add features, generalize, and organize.
+
 2003-07-07  Larry Jones  <lawrence.jones@eds.com>
 
 	* rcs2log.1: New file from Paul Eggert <eggert@twinsun.com>
