@@ -1,3 +1,8 @@
+2003-03-24  Larry Jones  <lawrence.jones@eds.com>
+
+	* server.h (server_clear_template): Add declaration.
+	(server_template): Add parameter names to prototype.
+
 2003-03-20  Mark D. Baushke  <mdb@cvshome.org>
 
 	* sanity.sh (env): Try more than one ps command if the first one
