@@ -201,9 +201,9 @@ error (status, errnum, message, va_alist)
 /* VARARGS */
 void
 #if defined (HAVE_VPRINTF) && defined (__STDC__)
-fperror (FILE *fp, int status, int errnum, char *message, ...)
+fperrmsg (FILE *fp, int status, int errnum, char *message, ...)
 #else
-fperror (fp, status, errnum, message, va_alist)
+fperrmsg (fp, status, errnum, message, va_alist)
     FILE *fp;
     int status;
     int errnum;

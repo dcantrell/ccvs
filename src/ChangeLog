@@ -1,3 +1,8 @@
+1999-11-29  Larry Jones <larry.jones@sdrc.com>
+
+	* cvs.h, error.c, import.c: Rename fperror to avoid name clash
+	on LynxOS.  (Reported by Markus Braun <MarkusBraun@gmx.de>.)
+
 1999-11-23  Larry Jones <larry.jones@sdrc.com>
 
 	* checkout.c (checkout_proc): Split declaration and initialization
