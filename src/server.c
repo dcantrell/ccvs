@@ -555,11 +555,15 @@ isThisHost (const char *otherhost)
     if (!thishost)
     {
 	thishost = xmalloc (MAXHOSTNAMELEN);
-	gethostname (thishost, MAXHOSTNAMELEN);
+	if (gethostname (thishost, MAXHOSTNAMELEN))
+	    error (1, errno, "Failed to retrieve hostname.");
 	thishost[MAXHOSTNAMELEN - 1] = '\0';
     }
 
-    hinfo = gethostbyname (otherhost);
+    if (!(hinfo = gethostbyname (otherhost)))
+	error (1, 0, "Name lookup failed for `%s': %s",
+	       otherhost, hstrerror (h_errno));
+
     return !strcasecmp (thishost, hinfo->h_name);
 }
 
