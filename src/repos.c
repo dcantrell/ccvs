@@ -99,14 +99,13 @@ Name_Repository (const char *dir, const char *update_dir)
     if ((cp = strrchr (repos, '\n')) != NULL)
 	*cp = '\0';			/* strip the newline */
 
-    /*
-     * If this is a relative repository pathname, turn it into an absolute
-     * one by tacking on the CVSROOT environment variable. If the CVSROOT
-     * environment variable is not set, die now.
+    /* If this is a relative repository pathname, turn it into an absolute
+     * one by tacking on the current root.
      */
-    if (! isabsolute(repos))
+    if (!isabsolute (repos))
     {
 	char *newrepos;
+	size_t dummy;
 
 	if (current_parsed_root == NULL)
 	{
@@ -121,9 +120,8 @@ Name_Repository (const char *dir, const char *update_dir)
 	    error (0, 0, "`..'-relative repositories are not supported.");
 	    error (1, 0, "invalid source repository");
 	}
-	newrepos = xmalloc (strlen (current_parsed_root->directory)
-	                    + strlen (repos) + 2);
-	sprintf (newrepos, "%s/%s", current_parsed_root->directory, repos);
+	newrepos = sprintf (NULL, &dummy, "%s/%s",
+			    current_parsed_root->directory, repos);
 	free (repos);
 	repos = newrepos;
     }

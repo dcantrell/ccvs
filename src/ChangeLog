@@ -1,6 +1,11 @@
 2004-10-01  Derek Price <derek@ximbiot.com>
 
 	* release.c (release): Simplify string construction with asnprintf().
+	Improve comment.  Some reformatting.
+
+2004-10-01  Derek Price <derek@ximbiot.com>
+
+	* release.c (release): Simplify string construction with asnprintf().
 
 2004-10-01  Derek Price <derek@ximbiot.com>
 
