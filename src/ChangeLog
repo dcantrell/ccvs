@@ -1,3 +1,13 @@
+2001-09-24  Derek Price  <dprice@collab.net>
+
+        * find_names.c (add_entries_proc): Leave closure specified as such in the
+	function definition for clarity.
+
+        * find_names.c (Find_Names): Use 'closure' feature of walklist()
+        to eliminate the static variable.
+	(add_entries_proc): Expect closure to be the file list.
+	(Patch from Alexey Mahotkin  <alexm@hsys.msk.ru>.)
+
 2001-09-19  Derek Price  <dprice@collab.net>
 
 	* rcs.c (rcsbuf_valpolish_internal): Restore one of the
