@@ -95,12 +95,12 @@ different paragraphs are unrelated.
 You could argue that the CVS log entry for a file should contain the
 full ChangeLog paragraph mentioning the change to the file, even though
 it may mention other files, because that gives you the full context you
-need to understand the change.  This is the behavior you get when this
+need to understand the change.  This is the behaviour you get when this
 variable is set to t.
 
 On the other hand, you could argue that the CVS log entry for a change
 should contain only the text for the changes which occurred in that
-file, because the CVS log is per-file.  This is the behavior you get
+file, because the CVS log is per-file.  This is the behaviour you get
 when this variable is set to nil.")
 
 (defvar cvs-cvsroot-required nil
@@ -135,6 +135,14 @@ a modern version of CVS that stores the current repository in CVS/Root.")
 
 (defconst pcl-cvs-version "1.05-CVS-$Name$"
   "A string denoting the current release version of pcl-cvs.")
+
+;; You are NOT allowed to disable this message by default.  However, you
+;; are encouraged to inform your users that by adding
+;;	(setq cvs-inhibit-copyright-message t)
+;; to their .emacs they can get rid of it.  Just don't add that line
+;; to your default.el!
+(defvar cvs-inhibit-copyright-message nil
+  "*Non-nil means don't display a Copyright message in the ``*cvs*'' buffer.")
 
 (defconst cvs-startup-message
   (if cvs-inhibit-copyright-message
@@ -263,14 +271,6 @@ The default (a single $) fits programs without output.")
 (defvar cvs-buffers-to-delete nil
   "List of temporary buffers that should be discarded as soon as possible.
 Due to a bug in emacs 18.57 the sentinel can't discard them reliably.")
-
-;; You are NOT allowed to disable this message by default.  However, you
-;; are encouraged to inform your users that by adding
-;;	(setq cvs-inhibit-copyright-message t)
-;; to their .emacs they can get rid of it.  Just don't add that line
-;; to your default.el!
-(defvar cvs-inhibit-copyright-message nil
-  "*Non-nil means don't display a Copyright message in the ``*cvs*'' buffer.")
 
 (defvar cvs-update-running nil
   "This is set to nil when no process is running, and to
@@ -561,7 +561,7 @@ passed to PREDICATE."
 ;;----------
 (defun cvs-do-update (directory local dont-change-disc)
   "Do a 'cvs update' in DIRECTORY.
-Args:  DIRECTORY LOCAL DONT-CHANGE-DISC &optional NOTTHISWINDOW.
+Args:  DIRECTORY LOCAL DONT-CHANGE-DISC.
 
 If LOCAL is non-nil 'cvs update -l' is executed.
 If DONT-CHANGE-DISC is non-nil 'cvs -n update' is executed.
@@ -705,14 +705,14 @@ Return a list of all buffers that still is alive."
 
 ;;----------
 (defun cvs-mode ()
-  "\\<cvs-mode-map>Mode used for pcl-cvs, a frontend to CVS.
+  "\\<cvs-mode-map>Mode used for pcl-cvs, a front-end to CVS.
 
 To get to the \"*cvs*\" buffer you should use ``\\[execute-extended-command] cvs-update''.
 
 Full documentation is in the Texinfo file.  Here are the most useful commands:
 
 \\[cvs-mode-previous-line] Move up.                    \\[cvs-mode-next-line] Move down.
-\\[cvs-mode-commit]   Commit file.                \\[cvs-mode-update-no-prompt]   Reupdate directory.
+\\[cvs-mode-commit]   Commit file.                \\[cvs-mode-update-no-prompt]   Re-update directory.
 \\[cvs-mode-mark]   Mark file/dir.              \\[cvs-mode-unmark]   Unmark file/dir.
 \\[cvs-mode-mark-all-files]   Mark all files.             \\[cvs-mode-unmark-all-files]   Unmark all files.
 \\[cvs-mode-find-file]   Edit file/run Dired.        \\[cvs-mode-find-file-other-window]   Find file or run Dired in other window.
@@ -1098,7 +1098,7 @@ A TIN is a shadow entry if the previous tin contains the same file."
 
 ;;----------
 (defun cvs-find-backup-file (filename &optional dirname)
-  "Look for a backup file for FILENAME, optionaly in directory DIRNAME, and if
+  "Look for a backup file for FILENAME, optionally in directory DIRNAME, and if
 there is one, return the name of the first file found as a string."
 
   (if (eq dirname nil)
@@ -1108,7 +1108,7 @@ there is one, return the name of the first file found as a string."
 
 ;;----------
 (defun cvs-find-backup-revision (filename)
-  "Take FILENAME as the name of a cvs backup file ane return the revision of
+  "Take FILENAME as the name of a cvs backup file and return the revision of
 that file as a string."
 
     (substring filename
@@ -1832,7 +1832,7 @@ buffer so that it is easy to kill the contents of the buffer with \\[kill-region
 
   (interactive)
   (if (null cvs-commit-list)
-      (error "You have already commited the files"))
+      (error "You have already committed the files"))
   (if (and (> (point-max) 1)
 	   (/= (char-after (1- (point-max))) ?\n)
 	   (or (eq cvs-commit-buffer-require-final-newline t)
@@ -1875,7 +1875,7 @@ buffer so that it is easy to kill the contents of the buffer with \\[kill-region
 
 ;;----------
 (defun cvs-after-commit-function (fileinfo)
-  "Do everything that needs to be done when FILEINFO has been commited.
+  "Do everything that needs to be done when FILEINFO has been committed.
 The fileinfo->handle is set, and if the buffer is present it is reverted."
 
   (cvs-set-fileinfo->handled fileinfo t)
@@ -2614,7 +2614,7 @@ If a prefix argument is given, move by that many lines."
 
 ;;----------
 (defun cvs-add-file-update-buffer (tin)
-  "Subfunction to cvs-mode-add.  Internal use only.  Update the display.  Return
+  "Sub-function to cvs-mode-add.  Internal use only.  Update the display.  Return
 non-nil if `cvs add' should be called on this file.
 Args:  TIN.
 
@@ -2645,7 +2645,7 @@ Args:  CVS-BUF CANDIDATES.
 CANDIDATES is a list of tins.  Updates the CVS-BUF and returns a list of lists.
 The first list is unknown tins that shall be `cvs add -m msg'ed.
 The second list is unknown directory tins that shall be `cvs add -m msg'ed.
-The thrid list is removed files that shall be `cvs add'ed (resurrected)."
+The third list is removed files that shall be `cvs add'ed (resurrected)."
 
   (let (add add-dir resurrect)
     (while candidates
@@ -2685,7 +2685,7 @@ The thrid list is removed files that shall be `cvs add'ed (resurrected)."
 				   '("add"))
 				 "Resurrecting %s from repository...")
 	       (error "CVS exited with non-zero exit status.")
-	     (message "Resurecting files from repository... Done."))))
+	     (message "Resurrecting files from repository... Done."))))
 
     (cond (added
 	   (message "Adding new files to repository...")
@@ -2721,7 +2721,7 @@ The thrid list is removed files that shall be `cvs add'ed (resurrected)."
 		 (setq newdirs (cdr newdirs))))
 	     ;; FIXME: this should really run cvs-update-no-prompt on the
 	     ;; subdir and insert everthing in the current list.
-	     (message "You must re-update to visit the new direcories."))))))
+	     (message "You must re-update to visit the new directories."))))))
 
 ;;----------
 (defun cvs-mode-ignore ()
@@ -2901,6 +2901,7 @@ Args:  POS."
     (princ "\n" stream)))
 
 ;;----------
+;; NOTE: the variable cvs-emerge-tmp-head-file will be "free" when compiling
 (defun cvs-mode-emerge (pos)
   "Emerge appropriate revisions of the selected file.
 Args:  POS."
@@ -2965,6 +2966,7 @@ Args:  POS."
       (error "There is no file to e-merge."))))
 
 ;;----------
+;; NOTE: the variable ediff-version may be "free" when compiling
 (defun cvs-mode-ediff (pos)
   "Ediff appropriate revisions of the selected file.
 Args:  POS."
@@ -3254,7 +3256,7 @@ If we are between paragraphs, return the previous paragraph."
 (defun cvs-changelog-subparagraph ()
   "Return the bounds of the ChangeLog subparagraph containing point.
 A subparagraph is a block of non-blank lines beginning with an asterisk.
-If we are between subparagraphs, return the previous subparagraph."
+If we are between sub-paragraphs, return the previous subparagraph."
   (save-excursion
     (end-of-line)
     (if (search-backward "*" nil t)
@@ -3275,6 +3277,7 @@ for more details."
       (cvs-changelog-paragraph)
     (cvs-changelog-subparagraph)))
 
+;; NOTE: the variable user-full-name may be "free" when compiling
 (defun cvs-changelog-ours-p ()
   "See if ChangeLog entry at point is for the current user, today.
 Return non-nil iff it is."
@@ -3404,12 +3407,12 @@ Sort REGIONS front-to-back first."
 Ask the user for a log message in a buffer.
 
 This is just like `\\[cvs-mode-commit]', except that it tries to provide
-appropriate default log messages by looking at the ChangeLogs.  The
+appropriate default log messages by looking at the ChangeLog.  The
 idea is to write your ChangeLog entries first, and then use this
 command to commit your changes.
 
 To select default log text, we:
-- find the ChangeLogs for the files to be checked in,
+- find the ChangeLog entries for the files to be checked in,
 - verify that the top entry in the ChangeLog is on the current date
   and by the current user; if not, we don't provide any default text,
 - search the ChangeLog entry for paragraphs containing the names of
