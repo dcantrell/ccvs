@@ -181,11 +181,13 @@ mode_to_string (mode)
 /*
  * Change mode of FILENAME to MODE_STRING.
  * Returns 0 for success or errno code.
+ * If RESPECT_UMASK is set, then honor the umask.
  */
 int
-change_mode (filename, mode_string)
+change_mode (filename, mode_string, respect_umask)
     char *filename;
     char *mode_string;
+    int respect_umask;
 {
 #ifdef CHMOD_BROKEN
     char *p;
@@ -216,6 +218,10 @@ change_mode (filename, mode_string)
 	    ++p;
     }
 
+    /* xchmod honors the umask for us.  In the !respect_umask case, we
+       don't try to cope with it (probably to handle that well, the server
+       needs to deal with modes in data structures, rather than via the
+       modes in temporary files).  */
     xchmod (filename, writeable);
 	return 0;
 
@@ -223,6 +229,7 @@ change_mode (filename, mode_string)
 
     char *p;
     mode_t mode = 0;
+    mode_t oumask;
 
     p = mode_string;
     while (*p != '\0')
@@ -274,6 +281,13 @@ change_mode (filename, mode_string)
 	    ++p;
 	if (*p == ',')
 	    ++p;
+    }
+
+    if (respect_umask)
+    {
+	oumask = umask (0);
+	(void) umask (oumask);
+	mode &= ~oumask;
     }
 
     if (chmod (filename, mode) < 0)
@@ -1917,8 +1931,7 @@ update_entries (data_arg, ent_list, short_pathname, filename)
 	}
 
         {
-	    /* FIXME: we should be respecting the umask.  */
-	    int status = change_mode (filename, mode_string);
+	    int status = change_mode (filename, mode_string, 1);
 	    if (status != 0)
 		error (0, status, "cannot change mode of %s", short_pathname);
 	}
@@ -1928,7 +1941,7 @@ update_entries (data_arg, ent_list, short_pathname, filename)
     }
 
     if (stored_mode_valid)
-	change_mode (filename, stored_mode);
+	change_mode (filename, stored_mode, 1);
     stored_mode_valid = 0;
 
     if (stored_modtime_valid)
