@@ -334,7 +334,7 @@ extern void wnt_shutdown_server (int fd);
 #define START_SERVER wnt_start_server
 #define SHUTDOWN_SERVER wnt_shutdown_server
 
-#define INITIALIZE_SOCKET_SUBSYSTEM init_winsock
+#define SYSTEM_INITIALIZE(pargc,pargv) init_winsock()
 extern void init_winsock();
 
 #define HAVE_WINSOCK_H

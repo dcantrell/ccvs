@@ -1,3 +1,8 @@
+Fri Jun  7 13:07:37 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* config.h: Change INITIALIZE_SOCKET_SUBSYSTEM to
+	SYSTEM_INITIALIZE to reflect change in ../src/main.c.
+
 Mon Jun 03 01:00:08 1996  noel  <noel@BOAT_ANCHOR>
 
 	* sanity.sh: include new tests from ../src/sanity.sh.
