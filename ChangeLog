@@ -1,5 +1,12 @@
 2001-08-06  Derek Price  <dprice@collab.net>
 
+	* configure.in: Remove some redundant macros (they appear to be run
+	automatically by AC_INIT).
+
+	* configure: Regenerated.
+
+2001-08-06  Derek Price  <dprice@collab.net>
+
 	* configure.in: Add AC_EXEEXT to get things right when under Windows.
 	(Report and patch from manklu@web.de).
 
