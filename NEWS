@@ -1,5 +1,7 @@
 Changes since 1.11.5:
 
+* CVSROOTs which contain a symlink to a real repository should work.
+
 * contrib/rcs2log and src/cvsbug now use the BSD mktemp program to create
 their temp files and directories on systems which provide it.
 

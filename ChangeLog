@@ -1,3 +1,7 @@
+2003-03-31  Derek Price  <derek@ximbiot.com>
+
+	* NEWS (Changes since 1.11.5): Note sylinked CVSROOT now works.
+
 2003-03-28  Derek Price  <derek@ximbiot.com>
 
 	* configure.in (--with-editor): Quit with an error message when no
