@@ -920,42 +920,6 @@ Copyright (c) 1989-1998 Brian Berliner, david d `zoo' zuhn, \n\
 		    error (0, 0, "notice: main loop with CVSROOT=%s",
 			   current_root);
 
-		/*
-		 * Check to see if we can write into the history file.  If not,
-		 * we assume that we can't work in the repository.
-		 * BUT, only if the history file exists.
-		 */
-
-		if (!client_active)
-		{
-		    char *path;
-		    int save_errno;
-
-		    path = xmalloc (strlen (CVSroot_directory)
-				    + sizeof (CVSROOTADM)
-				    + 20
-				    + sizeof (CVSROOTADM_HISTORY));
-		    (void) sprintf (path, "%s/%s", CVSroot_directory, CVSROOTADM);
-		    if (!isaccessible (path, R_OK | X_OK))
-		    {
-			save_errno = errno;
-			/* If this is "cvs init", the root need not exist yet.  */
-			if (strcmp (command_name, "init") != 0)
-			{
-			    error (1, save_errno, "%s", path);
-			}
-		    }
-		    (void) strcat (path, "/");
-		    (void) strcat (path, CVSROOTADM_HISTORY);
-		    if (isfile (path) && !isaccessible (path, R_OK | W_OK))
-		    {
-			save_errno = errno;
-			error (0, 0, "Sorry, you don't have read/write access to the history file");
-			error (1, save_errno, "%s", path);
-		    }
-		    free (path);
-		}
-
 #ifdef HAVE_PUTENV
 		/* Update the CVSROOT environment variable if necessary. */
 		/* FIXME (njc): should we always set this with the CVSROOT from the command line? */

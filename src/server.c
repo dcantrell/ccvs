@@ -796,7 +796,6 @@ E Protocol error: Root says \"%s\" but pserver says \"%s\"",
 
     path = malloc (strlen (CVSroot_directory)
 		   + sizeof (CVSROOTADM)
-		   + sizeof (CVSROOTADM_HISTORY)
 		   + 10);
     if (path == NULL)
     {
@@ -810,17 +809,6 @@ E Protocol error: Root says \"%s\" but pserver says \"%s\"",
 	pending_error_text = malloc (80 + strlen (path));
 	if (pending_error_text != NULL)
 	    sprintf (pending_error_text, "E Cannot access %s", path);
-	pending_error = save_errno;
-    }
-    (void) strcat (path, "/");
-    (void) strcat (path, CVSROOTADM_HISTORY);
-    if (isfile (path) && !isaccessible (path, R_OK | W_OK))
-    {
-	save_errno = errno;
-	pending_error_text = malloc (80 + strlen (path));
-	if (pending_error_text != NULL)
-	    sprintf (pending_error_text, "E \
-Sorry, you don't have read/write access to the history file %s", path);
 	pending_error = save_errno;
     }
     free (path);
