@@ -186,6 +186,7 @@ ncheck_fileproc (file, update_dir, repository, entries, srcfiles)
 	    error (0, errno, "cannot open %s", CVSADM_NOTIFY);
 	return 0;
     }
+
     while (getline (&line, &line_len, fp) > 0)
     {
 	notif_type = line[0];
@@ -218,6 +219,7 @@ ncheck_fileproc (file, update_dir, repository, entries, srcfiles)
 	notify_do (notif_type, filename, getcaller (), val, watches,
 		   repository);
     }
+    free (line);
 
     if (ferror (fp))
 	error (0, errno, "cannot read %s", CVSADM_NOTIFY);
