@@ -25,6 +25,7 @@
 # include <config.h>
 #endif
 
+/* Specification.  */
 #include "getline.h"
 
 /* The `getdelim' function is only declared if the following symbol
@@ -34,16 +35,16 @@
 #endif
 
 #include <stddef.h>
+#include <stdio.h>
+#include <sys/types.h> /* Included for ssize_t. */
 
 #if defined __GNU_LIBRARY__ && HAVE_GETDELIM
 
-# include <stdio.h>
-# include <sys/types.h> /* Included for ssize_t. */
 
 ssize_t
-getline (char **lineptr, size_t *n, FILE *stream)
+getline (char **lineptr, size_t *linesize, FILE *stream)
 {
-  return getdelim (lineptr, n, '\n', stream);
+  return getdelim (lineptr, linesize, '\n', stream);
 }
 
 #else /* ! have getdelim */
@@ -51,14 +52,16 @@ getline (char **lineptr, size_t *n, FILE *stream)
 # include "getndelim2.h"
 
 ssize_t
-getline (char **lineptr, size_t *n, FILE *stream)
+getline (char **lineptr, size_t *linesize, FILE *stream)
 {
-  return getndelim2( lineptr, n, 0, GETNDELIM_NO_LIMIT, '\n', 0, stream );
+  return getndelim2 (lineptr, linesize, 0, GETNDELIM_NO_LIMIT, '\n', 0,
+                     stream);
 }
 
 int
-getdelim (char **lineptr, size_t *n, int delimiter, FILE *stream)
+getdelim (char **lineptr, size_t *linesize, int delimiter, FILE *stream)
 {
-  return getndelim2( lineptr, n, 0, GETNDELIM_NO_LIMIT, delimiter, 0, stream );
+  return getndelim2 (lineptr, linesize, 0, GETNDELIM_NO_LIMIT, delimiter, 0,
+                     stream);
 }
 #endif /* have getdelim */

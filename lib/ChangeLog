@@ -1,5 +1,15 @@
 2003-07-17  Derek Price  <derek@ximbiot.com>
 
+	* getline.c: Merge some of Bruno Habile's changes from GNULIB including
+	some he didn't quite finish, like renaming of n => linesize.
+	* getline.h: Ditto.
+	* getndelim2.c: Ditto.
+	* getndelim2.h: Ditto.
+	* getnline.c: Ditto.
+	* getnline.h: Ditto.
+
+2003-07-17  Derek Price  <derek@ximbiot.com>
+
 	* getndelim2.c: New file.
 	* getndelim2.h: Ditto.
 
