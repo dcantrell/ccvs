@@ -1,3 +1,9 @@
+Sun Jul  9 21:21:35 1995  Karl Fogel  <kfogel@floss.cyclic.com>
+
+        Greg Woods' change:
+        
+        * checkoutlist, rcstemplate: new files.
+
 Sun Jul  9 19:03:00 1995  Greg A. Woods  <woods@most.weird.com>
         
 	* modules: fix this up so cvsinit can use it for new
