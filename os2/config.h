@@ -303,9 +303,6 @@ extern int readlink (char *path, char *buf, int buf_size);
 extern pid_t getpid (void);
 #endif
 
-/* We definitely have prototypes.  */
-#define PROTOTYPES 1
-
 /* Under OS/2, filenames are case-insensitive, and both / and \
    are path component separators.  */
 #define FOLD_FN_CHAR(c) (OS2_filename_classes[(unsigned char) (c)])
