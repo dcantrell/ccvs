@@ -1,3 +1,7 @@
+Sat Aug  3 19:39:54 1996  Ian Lance Taylor  <ian@cygnus.com>
+
+	* log.c (cvslog): Correct position of CLIENT_SUPPORT #endif.
+
 Thu Jul 25 12:06:45 1996  Ian Lance Taylor  <ian@cygnus.com>
 
 	* update.c (join_file): If merging a branch, and the branch
