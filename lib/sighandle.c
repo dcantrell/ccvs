@@ -220,9 +220,7 @@ static RETSIGTYPE SIG_handle (int sig)
  * restoration later.
  */
 
-int SIG_register(sig,fn)
-int	sig;
-RETSIGTYPE	(*fn)();
+int SIG_register(int sig, RETSIGTYPE (*fn)())
 {
 	int			val;
 	struct SIG_hlist	*this;
@@ -317,15 +315,15 @@ RETSIGTYPE	(*fn)();
 
 	return val;
 }
-
+
+
+
 /*
  * The following deregisters a signal handler.  If the last signal handler for
  * a given signal is deregistered, the default sigvec information is restored.
  */
 
-int SIG_deregister(sig,fn)
-int	sig;
-RETSIGTYPE	(*fn)();
+int SIG_deregister(int sig, RETSIGTYPE (*fn)())
 {
 	int			val;
 	struct SIG_hlist	*this;
@@ -412,7 +410,7 @@ RETSIGTYPE	(*fn)();
  * Otherwise return zero.
  */
 
-int SIG_inCrSect()
+int SIG_inCrSect (void)
 {
 	return SIG_crSectNest > 0;
 }
