@@ -3234,6 +3234,15 @@ serve_init (arg)
 
     do_cvs_command (init);
 }
+
+static void serve_annotate PROTO ((char *));
+
+static void
+serve_annotate (arg)
+    char *arg;
+{
+    do_cvs_command (annotate);
+}
 
 static void
 serve_co (arg)
@@ -3849,6 +3858,7 @@ struct request requests[] =
   REQ_LINE("watchers", serve_watchers, rq_optional),
   REQ_LINE("editors", serve_editors, rq_optional),
   REQ_LINE("init", serve_init, rq_optional),
+  REQ_LINE("annotate", serve_annotate, rq_optional),
   REQ_LINE("noop", serve_noop, rq_optional),
   REQ_LINE(NULL, NULL, rq_optional)
 

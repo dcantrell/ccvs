@@ -674,6 +674,7 @@ int edit PROTO ((int argc, char **argv));
 int unedit PROTO ((int argc, char **argv));
 int editors PROTO ((int argc, char **argv));
 int watchers PROTO ((int argc, char **argv));
+extern int annotate PROTO ((int argc, char **argv));
 
 #if defined(AUTH_CLIENT_SUPPORT) || defined(AUTH_SERVER_SUPPORT)
 char *scramble PROTO ((char *str));
