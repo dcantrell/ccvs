@@ -1,3 +1,16 @@
+Thu May 16 17:06:46 1996  Noel Cragg  <noel@gargle.rain.org>
+
+	* cvsclient.texi (Notes): Removed paragraphs about various server
+ 	invocations which are now described in full in node "Connection
+ 	and Authentication."
+	(Requests): Include a note that "gzip-file-contents" doesn't
+ 	follow the upper/lowercase convention and that unknown reqests
+ 	always elicit a response, regardless of capitalization.
+
+	* cvs.texinfo (Kerberos authenticated): Removed bogus version
+ 	number.
+	(Repository): explain the ":local:" access method.
+
 Wed May 15 23:43:04 1996  Noel Cragg  <noel@gargle.rain.org>
 
 	* cvsclient.texi (Goals): mention access methods.

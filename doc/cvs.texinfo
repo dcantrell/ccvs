@@ -940,6 +940,20 @@ repository anywhere you like.
 @xref{Remote repositories} to learn how the repository can be on a
 different machine than your working copy of the sources.
 
+@emph{Note:} For compatibility with older versions,
+@sc{cvs} will treat any repository name that contains a
+colon as an indication of a remote repository
+(@xref{Remote repositories}).  If the name of your
+local repository contains a colon, you should prepend
+the string @samp{:local:} to the pathname to tell
+@sc{cvs} that it is, indeed, a local repository.  For
+example, you might use this command line under Windows
+NT:
+
+@example
+cvs -d :local:c:\src\cvsroot checkout yoyodyne/tc
+@end example
+
 The repository is split in two parts.  @file{$CVSROOT/CVSROOT} contains
 administrative files for @sc{cvs}.  The other directories contain the actual
 user-defined modules.
@@ -1438,7 +1452,7 @@ cvs -d :kserver:chainsaw.brickyard.com:/user/local/cvsroot checkout foo
 @end example
 
 Previous versions of @sc{cvs} would fall back to a
-connection via rsh; versions 1.8.4 newer do not do so.
+connection via rsh; this version will not do so.
 
 @c ---------------------------------------------------------------------
 @node Starting a new project
