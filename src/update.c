@@ -2095,7 +2095,7 @@ join_file (finfo, vers)
     Vers_TS *vers;
 {
     char *backup;
-    char *options;
+    char *t_options;
     int status;
 
     char *rev1;
@@ -2330,6 +2330,13 @@ join_file (finfo, vers)
 
 	    xvers = Version_TS (finfo, vers->options, jrev2, jdate2, 1, 0);
 
+	    /* Reset any keyword expansion option.  Otherwise, when a
+	       command like `cvs update -kk -jT1 -jT2' creates a new file
+	       (because a file had the T2 tag, but not T1), the subsequent
+	       commit of that just-added file effectively would set the
+	       admin `-kk' option for that file in the repository.  */
+	    options = NULL;
+
 	    /* FIXME: If checkout_file fails, we should arrange to
                return a non-zero exit status.  */
 	    status = checkout_file (finfo, xvers, 1, 0, 1);
@@ -2418,10 +2425,10 @@ join_file (finfo, vers)
     copy_file (finfo->file, backup);
     xchmod (finfo->file, 1);
 
-    options = vers->options;
+    t_options = vers->options;
 #if 0
-    if (*options == '\0')
-	options = "-kk";		/* to ignore keyword expansions */
+    if (*t_options == '\0')
+	t_options = "-kk";		/* to ignore keyword expansions */
 #endif
 
     /* If the source of the merge is the same as the working file
@@ -2439,12 +2446,12 @@ join_file (finfo, vers)
 	/* This is because of the worry below about $Name.  If that
 	   isn't a problem, I suspect this code probably works for
 	   text files too.  */
-	&& (strcmp (options, "-kb") == 0
+	&& (strcmp (t_options, "-kb") == 0
 	    || wrap_merge_is_copy (finfo->file)))
     {
 	/* FIXME: what about nametag?  What does RCS_merge do with
 	   $Name?  */
-	if (RCS_checkout (finfo->rcs, finfo->file, rev2, NULL, options,
+	if (RCS_checkout (finfo->rcs, finfo->file, rev2, NULL, t_options,
 			  RUN_TTY, (RCSCHECKOUTPROC)0, NULL) != 0)
 	    status = 2;
 	else
@@ -2468,7 +2475,7 @@ join_file (finfo, vers)
 	   print.  */
 	write_letter (finfo, 'U');
     }
-    else if (strcmp (options, "-kb") == 0
+    else if (strcmp (t_options, "-kb") == 0
 	     || wrap_merge_is_copy (finfo->file)
 	     || special_file_mismatch (finfo, rev1, rev2))
     {
@@ -2478,7 +2485,7 @@ join_file (finfo, vers)
 	   the two files, and let them resolve it.  It is possible
 	   that we should require a "touch foo" or similar step before
 	   we allow a checkin.  */
-	if (RCS_checkout (finfo->rcs, finfo->file, rev2, NULL, options,
+	if (RCS_checkout (finfo->rcs, finfo->file, rev2, NULL, t_options,
 			  RUN_TTY, (RCSCHECKOUTPROC)0, NULL) != 0)
 	    status = 2;
 	else
@@ -2509,7 +2516,7 @@ join_file (finfo, vers)
     }
     else
 	status = RCS_merge (finfo->rcs, vers->srcfile->path, finfo->file,
-			    options, rev1, rev2);
+			    t_options, rev1, rev2);
 
     if (status != 0 && status != 1)
     {
