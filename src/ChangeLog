@@ -1,3 +1,13 @@
+Fri Apr 28 00:29:49 1995  Noel Cragg  <noel@vo.com>
+
+	* commit.c: Added initializer for FORCE_CI
+
+        * sanity.sh: Fix tests added 25 Apr -- they were expecting the
+        server to make noise, but the CVS_SERVER variable had been
+        accidentally set with the `-Q' flag.  Ran all tests -- both
+        locally and remotely -- to verify that the change didn't break
+        anything.
+
 Thu Apr 27 12:41:52 1995  Jim Kingdon  (kingdon@lioth.cygnus.com)
 
 	* Makefile.in: Revise comment regarding check vs. remotecheck.

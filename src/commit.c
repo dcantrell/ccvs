@@ -69,7 +69,7 @@ struct master_lists
     List *cilist;			/* list with commit_info structs */
 };
 
-static int force_ci;
+static int force_ci = 0;
 static int got_message;
 static int run_module_prog = 1;
 static int aflag;
