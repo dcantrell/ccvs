@@ -916,11 +916,13 @@ expand_wild (argc, argv, pargc, pargv)
     *pargv = new_argv;
 }
 
+/* Change drive and directory to path DIR.  */
+
 int
 os2_chdir (const char *Dir)
-/* Change drive and directory to the path given in Dir */
 {
-    /* If the path includes a drive, change the current drive to the one given */
+    /* If the path includes a drive, change the current drive to the one
+       given.  */
     if (strlen (Dir) >= 2 && Dir [1] == ':')
     {
 	/* A drive is given in Dir. Extract the drive from the string, then
@@ -952,7 +954,12 @@ os2_chdir (const char *Dir)
 	if (DosSetDefaultDisk (Drive) != 0)
 	{
 	    /* We had an error. Assume that the drive does not exist */
+#ifdef ENODEV
 	    errno = ENODEV;
+#else
+	    /* IBM C/C++ Tools 2.01 seems to lack ENODEV.  */
+	    errno = ENOENT;
+#endif
 	    return -1;
 	}
 
