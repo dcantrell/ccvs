@@ -1,3 +1,15 @@
+Fri Jan 16 00:57:31 1998  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* sanity.sh: Remove.  As far as I know the Windows hacks in this
+	file have been superceded by improvements to Cygwin and/or Ian's
+	recent changes to src/sanity.sh.  The ones I noticed: we had been
+	working around lack of /dev/null (apprently Cygwin now has it); we
+	had been not expecting rm -rf to delete readonly files (apparently
+	it now does); there was an issue with case of arguments passed on
+	command line (it would seem like Cygwin has changed this).
+	I also notice that the file had not even been in the distribution
+	because it was missing from Makefile.in (ugh).
+
 13 Jan 1998  Jim Kingdon
 
 	* run.c (run_exec): Change parameters from char * to const char *.
