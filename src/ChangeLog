@@ -1,3 +1,8 @@
+Thu Sep 12 1996  Jim Kingdon  <kingdon@cyclic.com>
+
+	* main.c (main): If ARGV0_NOT_PROGRAM_NAME, then just set
+	program_name to "cvs" rather than argv[0].
+
 Thu Sep 12 12:06:56 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* client.c (update_entries): If we can't write the file, don't
