@@ -23,7 +23,7 @@ SHELL = /bin/sh
 # taken straight from the example project
 LIB = s:\ibmcpp\lib;s:\toolkt21\os2lib;
 CINC = -Is:/ibmcpp/include -Is:/toolkt21/c/os2h
-CFLAGS = -C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm $(CINC)
+CFLAGS = -C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm ${CINC}
 CFLAGS += -DIBM_CPP
 
 # TCP/IP stuff
@@ -37,7 +37,7 @@ CFLAGS 	 += -DTCPIP_IBM -Is:\ibmtcpip\include
 
 # standard source rule
 .c.obj:
-	icc $(CFLAGS) /Fo$@ $*.c
+	icc ${CFLAGS} /Fo$@ $*.c
 
 # headers specific to OS/2
 # tcpip.mak will probably be unnecessary, but I include it for now.
@@ -191,7 +191,7 @@ lint:
 dist-dir:
 	mkdir ${DISTDIR}
 	for i in ${DISTFILES}; do \
-	  ln $(srcdir)/$${i} ${DISTDIR}; \
+	  ln ${srcdir}/$${i} ${DISTDIR}; \
 	done
 
 clean:
