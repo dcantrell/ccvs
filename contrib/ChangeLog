@@ -1,5 +1,9 @@
 2003-09-02  Derek Price  <derek@ximbiot.com>
 
+	* pvcs2rcs.in: Use UNIX EOL instead of DOS EOL.
+
+2003-09-02  Derek Price  <derek@ximbiot.com>
+
 	* check_cvs (main): Strip trailing (/+.)+ off examined directories.
 	(process_file): Log files corrupted by virtue of lacking an RCS
 	extension as they are found in verbose mode.
