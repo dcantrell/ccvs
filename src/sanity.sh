@@ -2190,12 +2190,6 @@ ${PROG} [a-z]*: file3 is no longer in the repository"
 
 	  dotest_fail death2-20 "test -f file2"
 
-	  # Make sure we can't add a file on this nonbranch tag.
-	  # FIXME: Right now CVS will let you add a file on a
-	  # nonbranch tag, so this test is commented out.
-	  # echo "bad revision" > file2
-	  # dotest death2-21 "${testcvs} add file2" "some error message"
-
 	  # Make sure diff only reports appropriate files.
 	  dotest_fail death2-diff-13 "${testcvs} -q diff -r rdiff-tag" \
 "${PROG} [a-z]*: file1 is a new entry, no comparison available"

@@ -1,3 +1,8 @@
+Thu Mar 27 18:14:12 1997  Ian Lance Taylor  <ian@cygnus.com>
+
+	* sanity.sh (death2): Remove commented out test death2-21.  It
+	would now pass, but it duplicates the new test sticky-11.
+
 Thu Mar 27 10:21:19 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* sanity.sh (dotest_internal): Write test output to logfile even
