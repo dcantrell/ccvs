@@ -27,18 +27,6 @@
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-
-# DISTFILES = \
-# 	ChangeLog README .cvsignore intro.doc \
-# 	Makefile.in clmerge.pl cln_hist.pl commit_prep.pl cvs2vendor.sh \
-# 	cvs_acls.pl cvscheck.sh cvscheck.man cvshelp.man debug_check_log.sh \
-# 	descend.sh \
-# 	descend.man dirfns.shar log.pl log_accum.pl mfpipe.pl rcs-to-cvs.sh \
-# 	rcs2log.sh rcslock.pl sccs2rcs.csh rcs2sccs.sh
-
-# files installed in $(pkgdatadir)
-#
-# CONTRIB_FILES = README intro.doc cvscheck.man
 SHELL = @SHELL@
 
 srcdir = @srcdir@
@@ -116,6 +104,7 @@ install_sh = @install_sh@
 contribdir = $(pkgdatadir)/contrib
 
 contrib_SCRIPTS = \
+	check_cvs \
 	clmerge \
 	cln_hist \
 	commit_prep \
@@ -168,16 +157,16 @@ SUFFIXES = .sh
 subdir = contrib
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/config.h
-CONFIG_CLEAN_FILES = clmerge cln_hist commit_prep cvs_acls log log_accum \
-	mfpipe pvcs2rcs rcslock sccs2rcs
+CONFIG_CLEAN_FILES = check_cvs clmerge cln_hist commit_prep cvs_acls log \
+	log_accum mfpipe pvcs2rcs rcslock sccs2rcs
 SCRIPTS = $(contrib_SCRIPTS)
 
 DIST_SOURCES =
 DATA = $(contrib_DATA)
 
-DIST_COMMON = README ChangeLog Makefile.am Makefile.in clmerge.in \
-	cln_hist.in commit_prep.in cvs_acls.in log.in log_accum.in \
-	mfpipe.in pvcs2rcs.in rcslock.in sccs2rcs.in
+DIST_COMMON = README ChangeLog Makefile.am Makefile.in check_cvs.in \
+	clmerge.in cln_hist.in commit_prep.in cvs_acls.in log.in \
+	log_accum.in mfpipe.in pvcs2rcs.in rcslock.in sccs2rcs.in
 all: all-am
 
 .SUFFIXES:
@@ -187,6 +176,8 @@ $(srcdir)/Makefile.in:  Makefile.am  $(top_srcdir)/configure.in $(ACLOCAL_M4)
 	  $(AUTOMAKE) --gnu  contrib/Makefile
 Makefile:  $(srcdir)/Makefile.in  $(top_builddir)/config.status
 	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@ $(am__depfiles_maybe)
+check_cvs: $(top_builddir)/config.status check_cvs.in
+	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
 clmerge: $(top_builddir)/config.status clmerge.in
 	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
 cln_hist: $(top_builddir)/config.status cln_hist.in
