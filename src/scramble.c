@@ -15,22 +15,196 @@
  * we're not trying to provide real security anyway.
  */
 
+/* Set this to test as a standalone program. */
+/* #define DIAGNOSTIC */
+
+#ifndef DIAGNOSTIC
+
 #include "cvs.h"
+
+#else /* DIAGNOSTIC */
+
+/* cvs.h won't define this for us */
+#define AUTH_CLIENT_SUPPORT
+/* Use "gcc -fwritable-strings". */
+#include <stdio.h>
+#include <stdio.h>
+#include <string.h>
+
+#endif /* ! DIAGNOSTIC */
 
 #if defined(AUTH_CLIENT_SUPPORT) || defined(AUTH_SERVER_SUPPORT)
 
+/* Map characters to each other randomly and symmetrically, A <--> B.
+ *
+ * We divide the ASCII character set into 3 domains: control chars (0
+ * thru 31), printing chars (32 through 126), and "meta"-chars (127
+ * through 255).  The control chars map _to_ themselves, the printing
+ * chars map _among_ themselves, and the meta chars map _among_
+ * themselves.  Why is this thus?
+ *
+ * No character in any of these domains maps to a character in another
+ * domain, because I'm not sure what characters are legal in
+ * passwords, or what tools people are likely to use to cut and paste
+ * them.  It seems prudent not to introduce control or meta chars,
+ * unless the user introduced them first.  And having the control
+ * chars all map to themselves insures that newline and
+ * carriage-return are safely handled.
+ */
+
+static unsigned char
+shifts[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16,
+17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 114, 120,
+53, 79, 96, 109, 72, 108, 70, 64, 76, 67, 116, 74, 68, 87, 111, 52,
+75, 119, 49, 34, 82, 81, 95, 65, 112, 86, 118, 110, 122, 105, 41, 57,
+83, 43, 46, 102, 40, 89, 38, 103, 45, 50, 42, 123, 91, 35, 125, 55,
+54, 66, 124, 126, 59, 47, 92, 71, 115, 78, 88, 107, 106, 56, 36, 121,
+117, 104, 101, 100, 69, 73, 99, 63, 94, 93, 39, 37, 61, 48, 58, 113,
+32, 90, 44, 98, 60, 51, 33, 97, 62, 77, 84, 80, 85, 223, 225, 216,
+187, 166, 229, 189, 222, 188, 141, 249, 148, 200, 184, 136, 248, 190,
+199, 170, 181, 204, 138, 232, 218, 183, 255, 234, 220, 247, 213, 203,
+226, 193, 174, 172, 228, 252, 217, 201, 131, 230, 197, 211, 145, 238,
+161, 179, 160, 212, 207, 221, 254, 173, 202, 146, 224, 151, 140, 196,
+205, 130, 135, 133, 143, 246, 192, 159, 244, 239, 185, 168, 215, 144,
+139, 165, 180, 157, 147, 186, 214, 176, 227, 231, 219, 169, 175, 156,
+206, 198, 129, 164, 150, 210, 154, 177, 134, 127, 182, 128, 158, 208,
+162, 132, 167, 209, 149, 241, 153, 251, 237, 236, 171, 195, 243, 233,
+253, 240, 194, 250, 191, 155, 142, 137, 245, 235, 163, 242, 178, 152 };
+
+
 /* Encode the string in place. */
 void
-scramble (char *str)
+scramble (unsigned char *str)
 {
-  /* does nothing yet */
+  int i;
+
+  for (i = 0; str[i]; i++)
+    str[i] = shifts[(str[i])];
 }
 
 /* Decode the string in place. */
 void
 descramble (char *str)
 {
-  /* does nothing yet */
+  scramble (str);
 }
 
 #endif /* (AUTH_CLIENT_SUPPORT || AUTH_SERVER_SUPPORT) from top of file */
+
+#ifdef DIAGNOSTIC
+int
+main ()
+{
+  int i;
+
+  char *clear1 = "first";
+  char *clear2 = "the second";
+  char *clear3 = "this is third";
+  char *clear4 = "$#% !!\\3";
+  char clear5[256];
+  
+  /* Set up the most important test string. */
+  clear5[0] = '0';
+  for (i = 1; i < 256; i++)
+    clear5[i] = i;
+  
+  printf ("clear1: %s\n", clear1);
+  scramble (clear1);
+  printf ("scram1: %s\n", clear1);
+  descramble (clear1);
+  printf ("clear1: %s\n", clear1);
+
+  printf ("clear2: %s\n", clear2);
+  scramble (clear2);
+  printf ("scram1: %s\n", clear2);
+  descramble (clear2);
+  printf ("clear2: %s\n", clear2);
+
+  printf ("clear3: %s\n", clear3);
+  scramble (clear3);
+  printf ("scram1: %s\n", clear3);
+  descramble (clear3);
+  printf ("clear3: %s\n", clear3);
+
+  printf ("clear4: %s\n", clear4);
+  scramble (clear4);
+  printf ("scram1: %s\n", clear4);
+  descramble (clear4);
+  printf ("clear4: %s\n", clear4);
+
+  printf ("clear5: %s\n", clear5);
+  scramble (clear5);
+  printf ("scram1: %s\n", clear5);
+  descramble (clear5);
+  printf ("clear5: %s\n", clear5);
+
+  fflush (stdout);
+  return 0;
+}
+#endif /* DIAGNOSTIC */
+
+/*
+ * ;;; The Emacs Lisp that did the dirty work ;;;
+ * (progn
+ * 
+ *   ;; Helper func.
+ *   (defun random-elt (lst)
+ *     (let* ((len (length lst))
+ *            (rnd (random len)))
+ *       (nth rnd lst)))
+ * 
+ *   ;; A list of all characters under 127, each appearing once.
+ *   (setq non-meta-chars
+ *         (let ((i 0)
+ *               (l nil))
+ *           (while (< i 127)
+ *             (setq l (cons i l) 
+ *                   i (1+ i)))
+ *           l))
+ * 
+ *   ;; A list of all characters 127 and above, each appearing once.
+ *   (setq meta-chars
+ *         (let ((i 127)
+ *               (l nil))
+ *           (while (< i 256)
+ *             (setq l (cons i l) 
+ *                   i (1+ i)))
+ *           l))
+ * 
+ *   ;; A vector that will hold the chars in a random order.
+ *   (setq scrambled-chars (make-vector 256 0))
+ * 
+ *   ;; These characters should map to themselves.
+ *   (let ((i 0))
+ *     (while (< i 32)
+ *       (aset scrambled-chars i i)
+ *       (setq non-meta-chars (delete i non-meta-chars) 
+ *             i (1+ i))))
+ *   
+ *   ;; Assign random (but unique) values, within the non-meta chars. 
+ *   (let ((i 32))
+ *     (while (< i 127)
+ *       (let ((ch (random-elt non-meta-chars)))
+ *         (if (= 0 (aref scrambled-chars i))
+ *             (progn
+ *               (aset scrambled-chars i ch)
+ *               (aset scrambled-chars ch i)
+ *               (setq non-meta-chars (delete ch non-meta-chars)
+ *                     non-meta-chars (delete i non-meta-chars))))
+ *         (setq i (1+ i)))))
+ * 
+ *   ;; Assign random (but unique) values, within the non-meta chars. 
+ *   (let ((i 127))
+ *     (while (< i 256)
+ *       (let ((ch (random-elt meta-chars)))
+ *         (if (= 0 (aref scrambled-chars i))
+ *             (progn
+ *               (aset scrambled-chars i ch)
+ *               (aset scrambled-chars ch i)
+ *               (setq meta-chars (delete ch meta-chars)
+ *                     meta-chars (delete i meta-chars))))
+ *         (setq i (1+ i)))))
+ * 
+ *   ;; Now use the `scrambled-chars' vector to get your C array. */
+ *   )
+ */

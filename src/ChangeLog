@@ -1,3 +1,7 @@
+Wed Dec 20 00:27:36 1995  Karl Fogel  <kfogel@floss.cyclic.com>
+
+        * scramble.c: made this work.
+
 Tue Dec 19 17:45:11 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
         * login.c (cvs_password): new static var, init to NULL.
