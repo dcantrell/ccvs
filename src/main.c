@@ -78,7 +78,7 @@ static const struct cmd
 
     char *nick1;
     char *nick2;
-
+    
     int (*func) ();		/* Function takes (argc, argv) arguments. */
 } cmds[] =
 
@@ -217,6 +217,50 @@ cmd_synonyms ()
     
     return (const char * const*) synonyms; /* will never be freed */
 }
+
+
+unsigned long int
+lookup_command_attribute (char *cmd_name)
+{
+    unsigned long int ret = 0;
+
+    if (strcmp (cmd_name, "import") != 0)
+    {
+        ret |= CVS_CMD_IGNORE_ADMROOT;
+    }
+
+    
+    if ((strcmp (cmd_name, "checkout") != 0) &&
+        (strcmp (cmd_name, "login") != 0) &&
+        (strcmp (cmd_name, "rdiff") != 0) &&
+        (strcmp (cmd_name, "release") != 0) &&
+        (strcmp (cmd_name, "rtag") != 0))
+    {
+        ret |= CVS_CMD_USES_WORK_DIR;
+    }
+        
+
+    /* The following commands do not modify the repository; we
+       conservatively assume that everything else does.  Feel free to
+       add to this list if you are _certain_ something is safe. */
+    if ((strcmp (cmd_name, "checkout") != 0) &&
+        (strcmp (cmd_name, "diff") != 0) &&
+        (strcmp (cmd_name, "update") != 0) &&
+        (strcmp (cmd_name, "history") != 0) &&
+        (strcmp (cmd_name, "editors") != 0) &&
+        (strcmp (cmd_name, "export") != 0) &&
+        (strcmp (cmd_name, "history") != 0) &&
+        (strcmp (cmd_name, "log") != 0) &&
+        (strcmp (cmd_name, "noop") != 0) &&
+        (strcmp (cmd_name, "watchers") != 0) &&
+        (strcmp (cmd_name, "status") != 0))
+    {
+        ret |= CVS_CMD_MODIFIES_REPOSITORY;
+    }
+
+    return ret;
+}
+
 
 static RETSIGTYPE
 main_cleanup (sig)
@@ -576,13 +620,13 @@ main (argc, argv)
 	       ignores CVS directories and CVS/Root is likely to
 	       specify a different repository than the one we are
 	       importing to.  */
-#if 0
-	    if (lookup_command_attribute (command_name) & CVS_CMD_IGNORE_ADMROOT)
+
+	    if (lookup_command_attribute (command_name)
+                & CVS_CMD_IGNORE_ADMROOT)
+            {
 		CVSADM_Root = Name_Root((char *) NULL, (char *) NULL);
-#else
-	    if (strcmp (command_name, "import") != 0)
-		CVSADM_Root = Name_Root((char *) NULL, (char *) NULL);
-#endif
+            }
+
 	    if (CVSADM_Root != NULL)
 	    {
 		if (CVSroot == NULL || !cvs_update_env)
@@ -611,16 +655,12 @@ main (argc, argv)
 		       "cvs login" command.  Ahh, the things one
 		       discovers. */
 
-#if 0
-		    if (lookup_command_attribute (command_name) & CVS_CMD_USES_WORK_DIR)
-#else
-		    if ((strcmp (command_name, "checkout") != 0) &&
-			(strcmp (command_name, "login") != 0) &&
-			(strcmp (command_name, "rdiff") != 0) &&
-			(strcmp (command_name, "release") != 0) &&
-			(strcmp (command_name, "rtag") != 0))
-#endif
+		    if (lookup_command_attribute (command_name)
+                        & CVS_CMD_USES_WORK_DIR)
+                    {
 			need_to_create_root = 1;
+                    }
+
 		}
 	    }
 

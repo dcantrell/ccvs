@@ -178,6 +178,8 @@ extern int errno;
 #define CVSROOTADM_WRAPPER	"cvswrappers"
 #define CVSROOTADM_NOTIFY	"notify"
 #define CVSROOTADM_USERS	"users"
+#define CVSROOTADM_READERS	"readers"
+#define CVSROOTADM_WRITERS	"writers"
 
 #define CVSNULLREPOS		"Emptydir"	/* an empty directory */
 
@@ -198,6 +200,11 @@ extern int errno;
 #define	CVSPREFIX	",,"
 #define CVSDOTIGNORE	".cvsignore"
 #define CVSDOTWRAPPER   ".cvswrappers"
+
+/* Command attributes -- see function lookup_command_attribute(). */
+#define CVS_CMD_IGNORE_ADMROOT        1
+#define CVS_CMD_USES_WORK_DIR         2
+#define CVS_CMD_MODIFIES_REPOSITORY   4
 
 /* miscellaneous CVS defines */
 
@@ -762,6 +769,8 @@ extern int cvsremove PROTO((int argc, char **argv));
 extern int rtag PROTO((int argc, char **argv));
 extern int status PROTO((int argc, char **argv));
 extern int cvstag PROTO((int argc, char **argv));
+
+extern unsigned long int lookup_command_attribute PROTO((char *));
 
 #if defined(AUTH_CLIENT_SUPPORT) || defined(AUTH_SERVER_SUPPORT)
 char *scramble PROTO ((char *str));
