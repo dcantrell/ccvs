@@ -933,9 +933,9 @@ precommit_list_proc (p, closure)
     struct logfile_info *li;
 
     li = (struct logfile_info *) p->data;
-    if (li->status == T_ADDED
-	|| li->status == T_MODIFIED
-	|| li->status == T_REMOVED)
+    if (li->type == T_ADDED
+	|| li->type == T_MODIFIED
+	|| li->type == T_REMOVED)
     {
 	run_arg (p->key);
     }
