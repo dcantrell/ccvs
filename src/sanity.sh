@@ -13235,8 +13235,13 @@ ${PROG} [a-z]*: Rebuilding administrative file database"
 "${PROG} \[[a-z]* aborted\]: cannot stat ${TESTDIR}/locks: No such file or directory
 ${PROG} \[[a-z]* aborted\]: cannot stat ${TESTDIR}/locks: No such file or directory"
 	  mkdir ${TESTDIR}/locks
-	  chmod u=rwx,go= ${TESTDIR}/locks
+	  chmod u=rwx,g=r,o= ${TESTDIR}/locks
+	  umask 0077
+	  CVSUMASK=0077; export CVSUMASK
 	  dotest lockfiles-6 "${testcvs} -q update" ""
+	  # TODO: should also be testing that CVS continues to honor the
+	  # umask and CVSUMASK normally.  In the case of the umask, CVS
+	  # doesn't seem to use it for much (although it perhaps should).
 	  dotest lockfiles-7 "ls ${TESTDIR}/locks/first-dir/sdir/ssdir" ""
 
 	  # The policy is that when CVS creates new lock directories, they
@@ -13244,9 +13249,9 @@ ${PROG} \[[a-z]* aborted\]: cannot stat ${TESTDIR}/locks: No such file or direct
 	  # isn't right, because typically the reason for LockDir is to
 	  # use a different set of permissions.
 	  dotest lockfiles-7a "ls -ld ${TESTDIR}/locks/first-dir" \
-"drwx------ .*first-dir"
+"drwxr----- .*first-dir"
 	  dotest lockfiles-7b "ls -ld ${TESTDIR}/locks/first-dir/sdir/ssdir" \
-"drwx------ .*first-dir/sdir/ssdir"
+"drwxr----- .*first-dir/sdir/ssdir"
 
 	  cd ../../..
 	  dotest lockfiles-8 "${testcvs} -q update" ""
@@ -13260,6 +13265,10 @@ new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
 done
 ${PROG} [a-z]*: Rebuilding administrative file database"
 	  cd ../..
+	  # Perhaps should restore the umask and CVSUMASK to what they
+	  # were before.  But the other tests "should" not care about them...
+	  umask 0077
+	  unset CVSUMASK
 	  rm -r ${TESTDIR}/locks
 	  rm -r 1 2
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir

@@ -155,6 +155,8 @@ lock_name (repository, name)
     char *p;
     char *q;
     char *short_repos;
+    mode_t save_umask;
+    int saved_umask = 0;
 
     if (lock_dir == NULL)
     {
@@ -222,6 +224,8 @@ lock_name (repository, name)
 	if (CVS_STAT (lock_dir, &sb) < 0)
 	    error (1, errno, "cannot stat %s", lock_dir);
 	new_mode = sb.st_mode;
+	save_umask = umask (0000);
+	saved_umask = 1;
 
 	p = short_repos;
 	while (1)
@@ -260,6 +264,12 @@ lock_name (repository, name)
 
 	strcat (retval, "/");
 	strcat (retval, name);
+
+	if (saved_umask)
+	{
+	    assert (umask (save_umask) == 0000);
+	    saved_umask = 0;
+	}
     }
     return retval;
 }
