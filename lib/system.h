@@ -548,7 +548,7 @@ extern void fnfold (char *FILENAME);
  * a path as absolute.
  */
 #ifndef ISABSOLUTE
-# define ISABSOLUTE(s) ISSLASH(s[FILESYSTEM_PREFIX_LEN(s)])
+# define ISABSOLUTE(s) ISSLASH(s[FILE_SYSTEM_PREFIX_LEN(s)])
 #endif
 
 
