@@ -313,10 +313,10 @@ import (argc, argv)
 	    cvs_output_tagged ("text", "\t");
 	    cvs_output_tagged ("text", program_name);
 	    if (CVSroot_cmdline != NULL)
-	      {
+	    {
 		cvs_output_tagged ("text", " -d ");
 		cvs_output_tagged ("text", CVSroot_cmdline);
-	      }
+	    }
 	    cvs_output_tagged ("text", " checkout -j");
 	    buf2 = xmalloc (strlen (argv[1]) + 20);
 	    sprintf (buf2, "%s:yesterday", argv[1]);

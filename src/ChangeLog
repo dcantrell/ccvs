@@ -1,3 +1,12 @@
+1998-09-30  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* main.c (main): Don't call Name_Root if -d specified.
+	* recurse.c (do_recursion, do_dir_proc): Don't check CVS/Root
+	if -d was specified.
+	* import.c (import): Indentation fix.
+	* sanity.sh (multiroot): Update for this change.
+	(reposmv): New test, tests for this.
+
 1998-09-28  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* sanity.sh (multiroot2): New test, tests some nested directory
