@@ -152,7 +152,11 @@ context diffs or unidiffs for patches.
 
 Note that all submitted changes may be distributed under the terms of
 the GNU Public License, so if you don't like this, don't submit them.
-Submit changes to bug-cvs@gnu.org.
+Submit changes to bug-cvs@gnu.org.  Including the magic words "I grant
+permission to distribute this patch under the terms of the GNU Public
+License" with your patch (especially for patches sent somewhere other
+than bug-cvs) may also help clarify that you intend for people to use
+the patch as they see fit.
 
 Generally speaking if you follow the guidelines in this file you can
 expect a yes or no answer about whether your patch is accepted.  But
