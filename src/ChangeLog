@@ -1,3 +1,9 @@
+20 Mar 1997  Jim Kingdon
+
+	* client.c (send_file_names): Don't try to read Entries file if
+	CVSADM directory does not exist.  Fixes fairly serious regression
+	(warning on all fresh checkouts) introduced by 1997-01-08 change.
+
 Tue Mar 18 13:03:33 1997  Jim Meyering  <meyering@totoro.cyclic.com>
 
 	* sanity.sh (RCSINIT): Define to be empty and export, to hide any

@@ -4423,7 +4423,11 @@ send_file_names (argc, argv, flags)
 	/* For now just do this for files in the local
 	   directory.  Would be nice to handle the
 	   non-local case too, though.  */
-	if (p == last_component (p))
+	/* The isdir check could more gracefully be replaced
+	   with a way of having Entries_Open report back the
+	   error to us and letting us ignore existence_error.
+	   Or some such.  */
+	if (p == last_component (p) && isdir (CVSADM))
 	{
 	    List *entries;
 	    Node *node;
