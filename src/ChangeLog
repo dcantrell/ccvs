@@ -1,8 +1,8 @@
 1998-08-14  Jim Meyering  <meyering@ascend.com>
 
-	* sanity.sh (rcsmerge-symlink-4): Don't use `test -L' it's not portable.
-	Instead, match against the output of `ls -l'.
-	(dotest tag8k-16): Simply tag-construction code and at the same
+	* sanity.sh (rcsmerge-symlink-4): Don't use `test -L', it's not
+	portable.  Instead, match against the output of `ls -l'.
+	(dotest tag8k-16): Simplify tag-construction code and at the same
 	time, avoid using expr's `length' and `substr' operators.  Not
 	all versions of expr support those.
 
