@@ -1706,8 +1706,10 @@ to check out the working directory
 (@pxref{Specifying a repository}).
 
 The big advantage of having multiple repositories is
-that they can reside on different servers.  As of
-version 1.10.1, you can check out code from multiple
+that they can reside on different servers.  With @sc{cvs}
+version 1.10, a single command cannot recurse into
+directories from different repositories.  With development
+versions of @sc{cvs}, you can check out code from multiple
 servers into your working directory.  @sc{cvs} will
 recurse and handle all the details of making
 connections to as many server machines as necessary to
