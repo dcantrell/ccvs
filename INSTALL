@@ -140,6 +140,18 @@ distribution, then skip to step 5):
     value is "/usr/local", with binaries in sub-directory "bin", manual
     pages in sub-directory "man", and libraries in sub-directory "lib".
 
+    A normal build of CVS will create an executable which supports
+    local, server, or client CVS (if you don't know the difference,
+    it is described in the Repository chapter of doc/cvs.texinfo).  If
+    you do not intend to use client or server CVS, you may want to
+    prevent these features from being included in the executable you
+    build. You can do this with the --disable-client and
+    --disable-server options:
+
+	$ ./configure --disable-client --disable-server
+
+    Typically this can reduce the size of the executable by around 30%.
+
     If you are using server or local CVS, RCS needs to be installed in
     the user's PATH (or a path you have configured in src/options.h,
     or a path specified with the -b option).  If you don't have RCS,
