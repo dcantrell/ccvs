@@ -1,5 +1,12 @@
 2001-08-20  Derek Price  <dprice@collab.net>
 
+	* configure.in (AC_OUTPUT): Add src/version.h.
+	(Patch from Alexey Mahotkin <alexm@hsys.msk.ru>.)
+
+	* configure: Regenerated.
+
+2001-08-20  Derek Price  <dprice@collab.net>
+
 	* .cvsignore: Add cvs.spec.
 
 2001-08-14  Derek Price  <dprice@collab.net>
