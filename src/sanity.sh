@@ -976,14 +976,14 @@ run_filter ()
 {
   if test -n "$TEST_FILTER"; then
     # Make sure there is an EOL
-    echo >>$TESTDIR/dotest.tmp
-    sed '${/^$/d}' <$TESTDIR/dotest.tmp >$TESTDIR/dotest.tmp.step2
+    echo >>$1
+    sed '${/^$/d}' <$1 >$1.filter1
     # Run the filter
-    eval "$TEST_FILTER" <$TESTDIR/dotest.tmp.step2 >$TESTDIR/dotest.tmp.filtered
-    diff -u $TESTDIR/dotest.tmp $TESTDIR/dotest.tmp.filtered \
-	    >$TESTDIR/dotest.diff
-    mv $TESTDIR/dotest.tmp.filtered $TESTDIR/dotest.tmp
-    rm $TESTDIR/dotest.tmp.step2
+    eval "$TEST_FILTER" <$1.filter1 >$1.filter2
+    diff -u $1 $1.filter2 \
+	    >$1.diff
+    mv $1.filter2 $1
+    rm $1.filter1
   fi
 }
 
@@ -1005,7 +1005,7 @@ dotest ()
   rm -f $TESTDIR/dotest.ex? 2>&1
   eval "$2" >$TESTDIR/dotest.tmp 2>&1
   status=$?
-  run_filter
+  run_filter $TESTDIR/dotest.tmp
   if test "$status" != 0; then
     cat ${TESTDIR}/dotest.tmp >>${LOGFILE}
     echo "exit status was $status" >>${LOGFILE}
@@ -1020,7 +1020,7 @@ dotest_lit ()
   rm -f $TESTDIR/dotest.ex? 2>&1
   eval "$2" >$TESTDIR/dotest.tmp 2>&1
   status=$?
-  run_filter
+  run_filter $TESTDIR/dotest.tmp
   if test "$status" != 0; then
     cat ${TESTDIR}/dotest.tmp >>${LOGFILE}
     echo "exit status was $status" >>${LOGFILE}
@@ -1044,10 +1044,10 @@ dotest_fail ()
   rm -f $TESTDIR/dotest.ex? 2>&1
   eval "$2" >$TESTDIR/dotest.tmp 2>&1
   status=$?
-  run_filter
+  run_filter $TESTDIR/dotest.tmp
   if test "$status" = 0; then
-    cat ${TESTDIR}/dotest.tmp >>${LOGFILE}
-    echo "exit status was $status" >>${LOGFILE}
+    cat $TESTDIR/dotest.tmp >>$LOGFILE
+    echo "exit status was $status" >>$LOGFILE
     fail "$1"
   fi
   dotest_internal "$@"
@@ -1056,16 +1056,16 @@ dotest_fail ()
 # Like dotest except output is sorted.
 dotest_sort ()
 {
-  rm -f ${TESTDIR}/dotest.ex? 2>&1
-  eval "$2" >${TESTDIR}/dotest.tmp1 2>&1
+  rm -f $TESTDIR/dotest.ex? 2>&1
+  eval "$2" >$TESTDIR/dotest.tmp1 2>&1
   status=$?
-  run_filter
+  run_filter $TESTDIR/dotest.tmp1
   if test "$status" != 0; then
-    cat ${TESTDIR}/dotest.tmp1 >>${LOGFILE}
-    echo "exit status was $status" >>${LOGFILE}
+    cat $TESTDIR/dotest.tmp1 >>$LOGFILE
+    echo "exit status was $status" >>$LOGFILE
     fail "$1"
   fi
-  ${TR} '	' ' ' < ${TESTDIR}/dotest.tmp1 | sort > ${TESTDIR}/dotest.tmp
+  $TR '	' ' ' < $TESTDIR/dotest.tmp1 | sort > $TESTDIR/dotest.tmp
   dotest_internal "$@"
 }
 
@@ -1075,13 +1075,13 @@ dotest_fail_sort ()
   rm -f $TESTDIR/dotest.ex? 2>&1
   eval "$2" >$TESTDIR/dotest.tmp1 2>&1
   status=$?
-  run_filter
+  run_filter $TESTDIR/dotest.tmp1
   if test "$status" = 0; then
-    cat ${TESTDIR}/dotest.tmp1 >>${LOGFILE}
-    echo "exit status was $status" >>${LOGFILE}
+    cat $TESTDIR/dotest.tmp1 >>$LOGFILE
+    echo "exit status was $status" >>$LOGFILE
     fail "$1"
   fi
-  ${TR} '	' ' ' < ${TESTDIR}/dotest.tmp1 | sort > ${TESTDIR}/dotest.tmp
+  $TR '	' ' ' < $TESTDIR/dotest.tmp1 | sort > $TESTDIR/dotest.tmp
   dotest_internal "$@"
 }
 
@@ -3876,7 +3876,8 @@ U first-dir/dir1/dir2/file7"
 		# interrupt, while we've got a clean 1.1 here, let's import it
 		# into a couple of other modules.
 		cd export-dir
-		dotest_sort basic2-31 "${testcvs} import -m first-import second-dir first-immigration immigration1 immigration1_0" \
+		dotest_sort basic2-31 \
+"$testcvs import -m first-import second-dir first-immigration immigration1 immigration1_0" \
 "
 
 N second-dir/dir1/dir2/file14

@@ -764,6 +764,8 @@ read_secondary_log (struct buffer **buf_in, const char *name)
 
     assert (buf);
 
+    /* Flush the log so that it will be up to date when we reopen it.  */
+    log_buffer_flush_log (buf);
     /* Close the secondary log.  */
     log_buffer_disable (buf);
     *buf_in = NULL;
