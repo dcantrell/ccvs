@@ -1,5 +1,18 @@
 Thu Nov 14 10:22:58 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvsclient.texi (Introduction): Use @ref, not @xref, after "see".
+	(Goals): Rewrite items about locking, about uploading in big
+	chunks, and about atomicity to be focused more on the protocol
+	than the current implementation.
+	(Notes): Remove this node.  The attempt to describe the basic
+	model has pretty much been replaced by the Introduction.  
+	The material about how to start the client is incomplete and
+	better left to cvs.texinfo.  And the item about the lack of
+	SERVER_FLOWCONTROL is obsolete now that SERVER_FLOWCONTROL is the
+	default.
+	(Protocol Notes): Add comment about multisite features.
+	(Requirements): Use @code for requests and responses.
+
 	* cvs.texinfo (Remote repositories): Add a few sentences defining
 	"client" and "server"; before we had been using the terms without
 	defining them.
