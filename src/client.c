@@ -1550,9 +1550,8 @@ update_entries (data_arg, ent_list, short_pathname, filename)
 
 	if (data->contents == UPDATE_ENTRIES_RCS_DIFF)
 	{
-	    /* This is an RCS change text.  We don't write to
-	       TEMP_FILENAME at all.  We just hold the change text in
-	       memory.  */
+	    /* This is an RCS change text.  We just hold the change
+	       text in memory.  */
 
 	    if (use_gzip)
 		error (1, 0,
@@ -1807,11 +1806,13 @@ update_entries (data_arg, ent_list, short_pathname, filename)
 
 		if (! patch_failed)
 		{
-		    e = open_file (filename, bin ? FOPEN_BINARY_WRITE : "w");
+		    e = open_file (temp_filename,
+				   bin ? FOPEN_BINARY_WRITE : "w");
 		    if (fwrite (patchedbuf, 1, patchedlen, e) != patchedlen)
-			error (1, errno, "cannot write %s", short_pathname);
+			error (1, errno, "cannot write %s", temp_filename);
 		    if (fclose (e) == EOF)
-			error (1, errno, "cannot close %s", short_pathname);
+			error (1, errno, "cannot close %s", temp_filename);
+		    rename_file (temp_filename, filename);
 		}
 
 		free (patchedbuf);
