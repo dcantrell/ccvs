@@ -1,5 +1,9 @@
 2004-11-04 Derek Price <derek@ximbiot.com>
 
+	* gssapi-client.c (connect_to_gserver): Silence gcc -Wall.
+
+2004-11-04 Derek Price <derek@ximbiot.com>
+
 	* sanity.sh (set_bad_tool): Remove unnecessary quotes.
 
 2004-11-04 Derek Price <derek@ximbiot.com>
