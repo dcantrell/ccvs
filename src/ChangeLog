@@ -1,3 +1,17 @@
+Fri Aug 16 17:52:54 1996  Ian Lance Taylor  <ian@cygnus.com>
+
+	* rcs.c (RCS_fully_parse): Use the length of the value, rather
+	than assuming that there are no embedded zero bytes.
+	(struct line): Add len field.
+	(linevector_add): Add len parameter.  Change all callers.  Use
+	len, rather than assuming that there are no embedded zero bytes.
+	Set the len field in new lines.
+	(RCS_deltas): Use the length of the value, rather than assuming
+	that there are no embedded zero bytes.  Use the line length when
+	outputting it and when copying it.
+	(RCS_fast_checkout): Update comment about RCS_deltas to remove
+	note about supporting zero bytes correctly.
+
 Thu Aug 15 23:38:48 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* commit.c, import.c: Revise comments regarding the fact that we
