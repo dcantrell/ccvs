@@ -2769,7 +2769,8 @@ You need to edit @file{inetd.conf} on the server
 machine to run @code{cvs kserver}.  The client uses
 port 1999 by default; if you want to use another port
 specify it in the @code{CVSROOT} (@pxref{Remote repositories})
-or the @code{CVS_CLIENT_PORT} environment variable on the client.
+or the @code{CVS_CLIENT_PORT} environment variable
+(@pxref{Environment variables}) on the client.
 
 @cindex kinit
 When you want to use @sc{cvs}, get a ticket in the
@@ -13658,9 +13659,9 @@ login server}.  Default value is @file{$HOME/.cvspass}.
 @pxref{Password authentication client}
 
 @item $CVS_CLIENT_PORT
-Used in client-server mode when accessing the server
-via Kerberos, GSSAPI, or @sc{cvs}'s password authentication if the port is not
-specified in $CVSROOT.
+Used in client-server mode to set the port to use when accessing the server
+via Kerberos, GSSAPI, or @sc{cvs}'s password authentication protocol
+if the port is not specified in the CVSROOT.
 @pxref{Remote repositories}
 
 @cindex CVS_RCMD_PORT, environment variable
