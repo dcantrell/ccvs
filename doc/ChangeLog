@@ -1,5 +1,9 @@
 2001-06-07  Derek Price  <dprice@collab.net>
 
+	* HACKING.DOCS: Add link to the main texinfo documentation.
+
+2001-06-07  Derek Price  <dprice@collab.net>
+
 	* README.DOCS: Rename to
 	* HACKING.DOCS: this.
 
