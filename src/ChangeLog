@@ -1,4 +1,9 @@
-2005-03-17  Derek Price  <derek@ximbiot.com>
+2005-03-18  Derek Price  <derek@ximbiot.com>
+
+	* server.c: Reindent pragmas.
+	(become_proxy): Add parentheses for -Wall.
+
+2005-03-18  Derek Price  <derek@ximbiot.com>
 
 	* error.c (error): Simplify using vasnprintf.
 
