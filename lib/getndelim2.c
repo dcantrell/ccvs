@@ -52,7 +52,7 @@ char *malloc (), *realloc ();
    including the NUL terminator), or -1 on error or EOF.  */
 
 ssize_t
-getndelim2 (char **lineptr, size_t *linesize, size_t offset, int limit,
+getndelim2 (char **lineptr, size_t *linesize, size_t offset, ssize_t limit,
             int delim1, int delim2, FILE *stream)
 {
   size_t nbytes_avail;		/* Allocated but unused chars in *LINEPTR.  */

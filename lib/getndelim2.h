@@ -27,7 +27,7 @@
 # define GETNDELIM_NO_LIMIT (ssize_t)-1
 
 extern ssize_t getndelim2 (char **_lineptr, size_t *_linesize, size_t _offset,
-                           int _limit, int _delim1, int _delim2,
+                           ssize_t _limit, int _delim1, int _delim2,
                            FILE *_stream);
 
 #endif /* not GETNDELIM2_H */

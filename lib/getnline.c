@@ -34,13 +34,13 @@
 #include "getndelim2.h"
 
 ssize_t
-getnline (char **lineptr, size_t *linesize, int limit, FILE *stream)
+getnline (char **lineptr, size_t *linesize, ssize_t limit, FILE *stream)
 {
   return getndelim2 (lineptr, linesize, 0, limit, '\n', 0, stream);
 }
 
 ssize_t
-getndelim (char **lineptr, size_t *linesize, int limit, int delimiter,
+getndelim (char **lineptr, size_t *linesize, ssize_t limit, int delimiter,
            FILE *stream)
 {
   return getndelim2 (lineptr, linesize, 0, limit, delimiter, 0, stream);
