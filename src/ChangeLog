@@ -1,3 +1,9 @@
+Fri Nov 14 11:56:29 1997  Andy Piper <andyp@parallax.co.uk>
+	and Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* filesubr.c (unlink_file_dir): Don't print trace message in the
+	server.
+
 Fri Nov 14 11:28:55 1997  Jim Meyering and Jim Kingdon
 
 	* rcs.c (RCS_getdatebranch): If the branch we are looking for
