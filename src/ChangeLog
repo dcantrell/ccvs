@@ -10,6 +10,7 @@
 	Joseph and popularized by dozens (e.g. mozilla.org, also others).
 
 2000-10-20  Derek Price  <derek.price@openavenue.com>
+            KOIE Hidetaka  <hide@koie.org>
 
 	* root.c (normalize_cvsroot): plug a memory leak.  Thanks to
 	KOIE Hidetaka <hide@koie.org>
