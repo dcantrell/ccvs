@@ -245,10 +245,12 @@ numdots (s)
 char *
 getcaller ()
 {
+#ifndef SYSTEM_GETCALLER
     static char uidname[20];
     struct passwd *pw;
     char *name;
     uid_t uid;
+#endif
 
     /* If there is a CVS username, return it.  */
 #ifdef AUTH_SERVER_SUPPORT
@@ -256,6 +258,9 @@ getcaller ()
 	return CVS_Username;
 #endif
 
+#ifdef SYSTEM_GETCALLER
+    return SYSTEM_GETCALLER ();
+#else
     /* Get the caller's login from his uid.  If the real uid is "root"
        try LOGNAME USER or getlogin(). If getlogin() and getpwuid()
        both fail, return the uid as a string.  */
@@ -274,6 +279,7 @@ getcaller ()
 	return (uidname);
     }
     return (pw->pw_name);
+#endif
 }
 
 #ifdef lint
