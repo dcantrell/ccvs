@@ -9187,16 +9187,6 @@ _ACEOF
 
 fi
 
-test -f src/options.h && (
-  { echo "$as_me:$LINENO: WARNING: saving ./src/options.h in ./src/options.h-SAVED" >&5
-echo "$as_me: WARNING: saving ./src/options.h in ./src/options.h-SAVED" >&2;}
-  { echo "$as_me:$LINENO: WARNING: You may wish to check that local options have not been lost." >&5
-echo "$as_me: WARNING: You may wish to check that local options have not been lost." >&2;}
-  { echo "$as_me:$LINENO: WARNING: Do not re-run ./configure or ./config.status until you have...." >&5
-echo "$as_me: WARNING: Do not re-run ./configure or ./config.status until you have...." >&2;}
-  cp ./src/options.h ./src/options.h-SAVED
-)
-
 ac_config_files="$ac_config_files contrib/clmerge"
 
 ac_config_files="$ac_config_files contrib/cln_hist"
