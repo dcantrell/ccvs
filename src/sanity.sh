@@ -29302,7 +29302,7 @@ ${SPROG} update: Updating dir1/sdir/ssdir"
 	  # to work around).
 	  if $remote; then :; else
 	    dotest multiroot2-9a "${testcvs} -t update" \
-" *-> Session ID is ${commitid}
+" *-> main: Session ID is ${commitid}
  *-> main loop with CVSROOT=${TESTDIR}/root1
  *-> parse_config ($TESTDIR/root1)
  *-> do_update ((null), (null), (null), 1, 0, 0, 0, 0, 0, 3, (null), (null), (null), (null), (null), 1, (null))
