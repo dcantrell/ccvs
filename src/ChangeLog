@@ -1,5 +1,8 @@
 Thu Mar 14 1996  Jim Kingdon  <kingdon@cyclic.com>
 
+	* vers_ts.c (Version_TS), entries.c (Scratch_Entry, AddEntryNode):
+	Change findnode to findnode_fn.
+
 	* main.c: Depending on HAVE_WINSOCK_H, include winsock.h or
 	declare gethostname.
 	* cvs.h: Don't declare it here.
