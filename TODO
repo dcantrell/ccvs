@@ -573,3 +573,65 @@ on another and try to merge the two?
 
 Ideally, we'd come up with a way to parameterize the problem and
 simply write up a lookup table to determine the correct behavior.
+
+190.  The meaning of the -q and -Q global options is very ad hoc;
+there is no clear definition of which messages are suppressed by them
+and which are not.  Here is a classification of the current meanings
+of -q; I don't know whether anyone has done a similar investigation of
+-Q:
+
+  a.  The "warm fuzzies" printed upon entering each directory (for
+  example, "cvs update: Updating sdir").  The need for these messages
+  may be decreased now that most of CVS uses ->fullname instead of
+  ->file in messages (a project which is *still* not 100% complete,
+  alas).  However, the issue of whether CVS can offer status as it
+  runs is an important one.  Of course from the command line it is
+  hard to do this well and one ends up with options like -q.  But
+  think about emacs, jCVS, or other environments which could flash you
+  the latest status line so you can see whether the system is working
+  or stuck.
+
+  b.  Other cases where the message just offers information (rather
+  than an error) and might be considered unnecessarily verbose.  These
+  have a certain point to them, although it isn't really clear whether
+  it should be the same option as the warm fuzzies or whether it is
+  worth the conceptual hair:
+
+    add.c: scheduling %s `%s' for addition (may be an issue)
+    modules.c: %s %s: Executing '%s' (I can see how that might be noise,
+      but...)
+    remove.c: scheduling `%s' for removal (analogous to the add.c one)
+    update.c: Checking out %s (hmm, that message is a bit on the noisy side...)
+      (but the similar message in annotate is not affected by -q).
+
+  c.  Suppressing various error messages.  This is almost surely
+  bogus.
+
+    admin.c: %s failed for `%s' (questionable; I guess the rationale is
+      that rcs probably already printed a message)
+    commit.c: failed to remove tag `%s' from `%s' (even more questionable.
+      Rationale might be similar but why would it be necessary to avoid
+      the extra message in such an uncommon case)
+    commit.c: failed to check out `%s' (likewise; this one seems to be a
+      vestige from before RCS_checkout was internal.  Take a look at how
+      RCS_checkout handles errors)
+    commit.c: failed to commit dead revision for `%s' (likewise)
+    remove.c: file `%s' still in working directory (see below about rm
+      -f analogy)
+    remove.c: nothing known about `%s' (looks dubious to me, especially in
+      the case where the user specified it explicitly).
+    remove.c: removed `%s' (seems like an obscure enough case that I fail
+      to see the appeal of being cryptically concise here).
+    remove.c: file `%s' already scheduled for removal (now it is starting
+      to look analogous to the infamous rm -f option).
+    rtag.c: cannot find tag `%s' in `%s' (more rm -f like behavior)
+    rtag.c: failed to remove tag `%s' from `%s' (ditto)
+    tag.c: failed to remove tag %s from %s (see above about whether RCS_*
+      has already printed an error message).
+    tag.c: couldn't tag added but un-commited file `%s' (more rm -f
+      like behavior)
+    tag.c: skipping removed but un-commited file `%s' (ditto)
+    tag.c: cannot find revision control file for `%s' (ditto, but at first
+      glance seems even worse, as this would seem to be a "can't happen"
+      condition)
+
