@@ -1,13 +1,13 @@
 \input texinfo  @c -*-texinfo-*-
 @comment Documentation for CVS.
-@comment Copyright (C) 1992, 1993 Signum Support AB
+@comment Copyright (C) 1992, 1993, 1999 Signum Support AB
 @comment Copyright (C) 1993 Free Software Foundation, Inc.
 
 @comment This file is part of the CVS distribution.
 
 @comment CVS is free software; you can redistribute it and/or modify
 @comment it under the terms of the GNU General Public License as published by
-@comment the Free Software Foundation; either version 1, or (at your option)
+@comment the Free Software Foundation; either version 2, or (at your option)
 @comment any later version.
 
 @comment CVS is distributed in the hope that it will be useful,
@@ -8073,13 +8073,16 @@ are likely to disappear in the future.  This command
 @emph{does} work recursively, so extreme care should be
 used.
 
+@cindex cvsadmin
 On unix, if there is a group named @code{cvsadmin},
-only members of that group can run @code{cvs admin}.
-This group should exist on the server, or any system
-running the non-client/server @sc{cvs}.  To disallow
-@code{cvs admin} for all users, create a group with no
-users in it.  On NT, the @code{cvsadmin} feature does
-not exist and all users can run @code{cvs admin}.
+only members of that group can run @code{cvs admin}
+(except for the @code{cvs admin -k} command, which can
+be run by anybody).  This group should exist on the
+server, or any system running the non-client/server
+@sc{cvs}.  To disallow @code{cvs admin} for all users,
+create a group with no users in it.  On NT, the
+@code{cvsadmin} feature does not exist and all users
+can run @code{cvs admin}.
 
 @menu
 * admin options::               admin options

@@ -1,3 +1,8 @@
+1999-07-16  Tom Tromey  <tromey@cygnus.com>
+
+	* cvs.texinfo (admin): Mention admin -k exception.  Add cvsadmin
+	to index.
+
 1999-07-14  Larry Jones  <larry.jones@sdrc.com>
 
 	* cvs.texinfo (Password authentication server): Note inetd limits
