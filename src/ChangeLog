@@ -1,3 +1,7 @@
+Fri Sep 29 15:21:35 1995  Karl Fogel  <kfogel@floss.cyclic.com>
+
+        * version.c: upped to 1.5.91 for another pre-1.6 release.
+
 Fri Sep 29 14:41:14 1995  <bmeier@rzu.unizh.ch>
 
         * root.c: start rcsid[] with "CVSid".
