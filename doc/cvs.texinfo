@@ -743,8 +743,8 @@ access methods, see @ref{Remote repositories}.
 @c Can se say this more concisely?  Like by passing
 @c more of the buck to the Remote repositories node?
 If the access method is omitted, then if the repository
-does not contain @samp{:}, then @code{:local:} is
-assumed.  If it does contain @samp{:} then either
+starts with @samp{/}, then @code{:local:} is
+assumed.  If it does not start with @samp{/} then either
 @code{:ext:} or @code{:server:} is assumed.  For
 example, if you have a local repository in
 @file{/usr/local/cvsroot}, you can use
@@ -752,7 +752,7 @@ example, if you have a local repository in
 @code{:local:/usr/local/cvsroot}.  But if (under
 Windows NT, for example) your local repository is
 @file{c:\src\cvsroot}, then you must specify the access
-method, as in @code{:local:c:\src\cvsroot}.
+method, as in @code{:local:c:/src/cvsroot}.
 
 @c This might appear to go in Repository storage, but
 @c actually it is describing something which is quite
