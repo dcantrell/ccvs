@@ -348,7 +348,19 @@ SOURCE=.\src\client.h
 # End Source File
 # Begin Source File
 
+SOURCE=".\windows-NT\config.h"
+# End Source File
+# Begin Source File
+
+SOURCE=.\src\cvs.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\zlib\deflate.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\diff\diffrun.h
 # End Source File
 # Begin Source File
 
@@ -360,6 +372,10 @@ SOURCE=.\src\fileattr.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\lib\fnmatch.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\lib\getline.h
 # End Source File
 # Begin Source File
@@ -368,7 +384,15 @@ SOURCE=.\lib\getopt.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\src\hardlink.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\src\hash.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\src\history.h
 # End Source File
 # Begin Source File
 
@@ -420,6 +444,10 @@ SOURCE=.\lib\regex.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\src\root.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\lib\savecwd.h
 # End Source File
 # Begin Source File
@@ -428,11 +456,35 @@ SOURCE=.\src\server.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\src\stack.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\lib\system.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\src\update.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\lib\wait.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\src\watch.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\lib\xtime.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\zlib\zconf.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\zlib\zlib.h
 # End Source File
 # Begin Source File
 

@@ -1,6 +1,7 @@
 # Microsoft Developer Studio Generated Dependency File, included by cvsnt.mak
 
 .\src\add.c : \
+	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\regex.h"\
 	".\lib\savecwd.h"\
@@ -17,12 +18,13 @@
 	".\src\server.h"\
 	".\src\stack.h"\
 	".\src\update.h"\
-	".\windows-nt\config.h"\
+	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	
 
 .\src\admin.c : \
+	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\regex.h"\
 	".\lib\system.h"\
@@ -37,12 +39,13 @@
 	".\src\server.h"\
 	".\src\stack.h"\
 	".\src\update.h"\
-	".\windows-nt\config.h"\
+	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	
 
 .\src\annotate.c : \
+	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\regex.h"\
 	".\lib\system.h"\
@@ -57,12 +60,13 @@
 	".\src\server.h"\
 	".\src\stack.h"\
 	".\src\update.h"\
-	".\windows-nt\config.h"\
+	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	
 
 .\src\buffer.c : \
+	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\regex.h"\
 	".\lib\system.h"\
@@ -77,12 +81,13 @@
 	".\src\server.h"\
 	".\src\stack.h"\
 	".\src\update.h"\
-	".\windows-nt\config.h"\
+	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	
 
 .\src\checkin.c : \
+	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\regex.h"\
 	".\lib\system.h"\
@@ -99,12 +104,13 @@
 	".\src\server.h"\
 	".\src\stack.h"\
 	".\src\update.h"\
-	".\windows-nt\config.h"\
+	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	
 
 .\src\checkout.c : \
+	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\regex.h"\
 	".\lib\system.h"\
@@ -119,12 +125,13 @@
 	".\src\server.h"\
 	".\src\stack.h"\
 	".\src\update.h"\
-	".\windows-nt\config.h"\
+	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	
 
 .\src\classify.c : \
+	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\regex.h"\
 	".\lib\system.h"\
@@ -139,12 +146,13 @@
 	".\src\server.h"\
 	".\src\stack.h"\
 	".\src\update.h"\
-	".\windows-nt\config.h"\
+	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	
 
 .\src\client.c : \
+	".\lib\fnmatch.h"\
 	".\lib\getline.h"\
 	".\lib\getopt.h"\
 	".\lib\md5.h"\
@@ -163,12 +171,13 @@
 	".\src\server.h"\
 	".\src\stack.h"\
 	".\src\update.h"\
-	".\windows-nt\config.h"\
+	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	
 
 .\src\commit.c : \
+	".\lib\fnmatch.h"\
 	".\lib\getline.h"\
 	".\lib\getopt.h"\
 	".\lib\regex.h"\
@@ -187,12 +196,13 @@
 	".\src\server.h"\
 	".\src\stack.h"\
 	".\src\update.h"\
-	".\windows-nt\config.h"\
+	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	
 
 .\src\create_adm.c : \
+	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\regex.h"\
 	".\lib\system.h"\
@@ -207,12 +217,13 @@
 	".\src\server.h"\
 	".\src\stack.h"\
 	".\src\update.h"\
-	".\windows-nt\config.h"\
+	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	
 
 .\src\cvsrc.c : \
+	".\lib\fnmatch.h"\
 	".\lib\getline.h"\
 	".\lib\getopt.h"\
 	".\lib\regex.h"\
@@ -228,12 +239,13 @@
 	".\src\server.h"\
 	".\src\stack.h"\
 	".\src\update.h"\
-	".\windows-nt\config.h"\
+	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	
 
 .\src\diff.c : \
+	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\regex.h"\
 	".\lib\system.h"\
@@ -248,12 +260,13 @@
 	".\src\server.h"\
 	".\src\stack.h"\
 	".\src\update.h"\
-	".\windows-nt\config.h"\
+	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	
 
 .\src\edit.c : \
+	".\lib\fnmatch.h"\
 	".\lib\getline.h"\
 	".\lib\getopt.h"\
 	".\lib\regex.h"\
@@ -272,12 +285,13 @@
 	".\src\stack.h"\
 	".\src\update.h"\
 	".\src\watch.h"\
-	".\windows-nt\config.h"\
+	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	
 
 .\src\entries.c : \
+	".\lib\fnmatch.h"\
 	".\lib\getline.h"\
 	".\lib\getopt.h"\
 	".\lib\regex.h"\
@@ -293,12 +307,13 @@
 	".\src\server.h"\
 	".\src\stack.h"\
 	".\src\update.h"\
-	".\windows-nt\config.h"\
+	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	
 
 .\src\error.c : \
+	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\regex.h"\
 	".\lib\system.h"\
@@ -313,12 +328,13 @@
 	".\src\server.h"\
 	".\src\stack.h"\
 	".\src\update.h"\
-	".\windows-nt\config.h"\
+	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	
 
 .\src\expand_path.c : \
+	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\regex.h"\
 	".\lib\system.h"\
@@ -333,12 +349,13 @@
 	".\src\server.h"\
 	".\src\stack.h"\
 	".\src\update.h"\
-	".\windows-nt\config.h"\
+	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	
 
 .\src\fileattr.c : \
+	".\lib\fnmatch.h"\
 	".\lib\getline.h"\
 	".\lib\getopt.h"\
 	".\lib\regex.h"\
@@ -355,12 +372,13 @@
 	".\src\server.h"\
 	".\src\stack.h"\
 	".\src\update.h"\
-	".\windows-nt\config.h"\
+	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	
 
 ".\windows-NT\filesubr.c" : \
+	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\regex.h"\
 	".\lib\system.h"\
@@ -375,12 +393,13 @@
 	".\src\server.h"\
 	".\src\stack.h"\
 	".\src\update.h"\
-	".\windows-nt\config.h"\
+	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	
 
 .\src\find_names.c : \
+	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\regex.h"\
 	".\lib\system.h"\
@@ -395,12 +414,13 @@
 	".\src\server.h"\
 	".\src\stack.h"\
 	".\src\update.h"\
-	".\windows-nt\config.h"\
+	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	
 
 .\src\hash.c : \
+	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\regex.h"\
 	".\lib\system.h"\
@@ -415,12 +435,13 @@
 	".\src\server.h"\
 	".\src\stack.h"\
 	".\src\update.h"\
-	".\windows-nt\config.h"\
+	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	
 
 .\src\history.c : \
+	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\regex.h"\
 	".\lib\savecwd.h"\
@@ -437,12 +458,13 @@
 	".\src\server.h"\
 	".\src\stack.h"\
 	".\src\update.h"\
-	".\windows-nt\config.h"\
+	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	
 
 .\src\ignore.c : \
+	".\lib\fnmatch.h"\
 	".\lib\getline.h"\
 	".\lib\getopt.h"\
 	".\lib\regex.h"\
@@ -458,12 +480,13 @@
 	".\src\server.h"\
 	".\src\stack.h"\
 	".\src\update.h"\
-	".\windows-nt\config.h"\
+	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	
 
 .\src\import.c : \
+	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\regex.h"\
 	".\lib\savecwd.h"\
@@ -479,12 +502,13 @@
 	".\src\server.h"\
 	".\src\stack.h"\
 	".\src\update.h"\
-	".\windows-nt\config.h"\
+	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	
 
 .\src\lock.c : \
+	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\regex.h"\
 	".\lib\system.h"\
@@ -499,12 +523,13 @@
 	".\src\server.h"\
 	".\src\stack.h"\
 	".\src\update.h"\
-	".\windows-nt\config.h"\
+	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	
 
 .\src\log.c : \
+	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\regex.h"\
 	".\lib\system.h"\
@@ -519,12 +544,13 @@
 	".\src\server.h"\
 	".\src\stack.h"\
 	".\src\update.h"\
-	".\windows-nt\config.h"\
+	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	
 
 .\src\login.c : \
+	".\lib\fnmatch.h"\
 	".\lib\getline.h"\
 	".\lib\getopt.h"\
 	".\lib\regex.h"\
@@ -540,12 +566,13 @@
 	".\src\server.h"\
 	".\src\stack.h"\
 	".\src\update.h"\
-	".\windows-nt\config.h"\
+	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	
 
 .\src\logmsg.c : \
+	".\lib\fnmatch.h"\
 	".\lib\getline.h"\
 	".\lib\getopt.h"\
 	".\lib\regex.h"\
@@ -561,12 +588,13 @@
 	".\src\server.h"\
 	".\src\stack.h"\
 	".\src\update.h"\
-	".\windows-nt\config.h"\
+	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	
 
 .\src\main.c : \
+	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\regex.h"\
 	".\lib\system.h"\
@@ -581,12 +609,13 @@
 	".\src\server.h"\
 	".\src\stack.h"\
 	".\src\update.h"\
-	".\windows-nt\config.h"\
+	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	
 
 ".\windows-NT\mkdir.c" : \
+	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\regex.h"\
 	".\lib\system.h"\
@@ -601,12 +630,13 @@
 	".\src\server.h"\
 	".\src\stack.h"\
 	".\src\update.h"\
-	".\windows-nt\config.h"\
+	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	
 
 .\src\mkmodules.c : \
+	".\lib\fnmatch.h"\
 	".\lib\getline.h"\
 	".\lib\getopt.h"\
 	".\lib\regex.h"\
@@ -624,12 +654,13 @@
 	".\src\server.h"\
 	".\src\stack.h"\
 	".\src\update.h"\
-	".\windows-nt\config.h"\
+	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	
 
 .\src\modules.c : \
+	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\regex.h"\
 	".\lib\savecwd.h"\
@@ -645,12 +676,13 @@
 	".\src\server.h"\
 	".\src\stack.h"\
 	".\src\update.h"\
-	".\windows-nt\config.h"\
+	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	
 
 .\src\myndbm.c : \
+	".\lib\fnmatch.h"\
 	".\lib\getline.h"\
 	".\lib\getopt.h"\
 	".\lib\regex.h"\
@@ -666,7 +698,7 @@
 	".\src\server.h"\
 	".\src\stack.h"\
 	".\src\update.h"\
-	".\windows-nt\config.h"\
+	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	
@@ -676,6 +708,7 @@
 	
 
 .\src\no_diff.c : \
+	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\regex.h"\
 	".\lib\system.h"\
@@ -690,12 +723,13 @@
 	".\src\server.h"\
 	".\src\stack.h"\
 	".\src\update.h"\
-	".\windows-nt\config.h"\
+	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	
 
 .\src\parseinfo.c : \
+	".\lib\fnmatch.h"\
 	".\lib\getline.h"\
 	".\lib\getopt.h"\
 	".\lib\regex.h"\
@@ -711,12 +745,13 @@
 	".\src\server.h"\
 	".\src\stack.h"\
 	".\src\update.h"\
-	".\windows-nt\config.h"\
+	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	
 
 .\src\patch.c : \
+	".\lib\fnmatch.h"\
 	".\lib\getline.h"\
 	".\lib\getopt.h"\
 	".\lib\regex.h"\
@@ -732,7 +767,7 @@
 	".\src\server.h"\
 	".\src\stack.h"\
 	".\src\update.h"\
-	".\windows-nt\config.h"\
+	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	
@@ -742,6 +777,7 @@
 	
 
 ".\windows-NT\rcmd.c" : \
+	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\regex.h"\
 	".\lib\system.h"\
@@ -756,13 +792,14 @@
 	".\src\server.h"\
 	".\src\stack.h"\
 	".\src\update.h"\
-	".\windows-nt\config.h"\
+	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\rcmd.h"\
 	
 
 .\src\rcs.c : \
+	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\regex.h"\
 	".\lib\system.h"\
@@ -779,13 +816,14 @@
 	".\src\server.h"\
 	".\src\stack.h"\
 	".\src\update.h"\
-	".\windows-nt\config.h"\
+	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	
 
 .\src\rcscmds.c : \
 	".\diff\diffrun.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\regex.h"\
 	".\lib\system.h"\
@@ -800,12 +838,13 @@
 	".\src\server.h"\
 	".\src\stack.h"\
 	".\src\update.h"\
-	".\windows-nt\config.h"\
+	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	
 
 .\src\recurse.c : \
+	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\regex.h"\
 	".\lib\savecwd.h"\
@@ -823,12 +862,13 @@
 	".\src\server.h"\
 	".\src\stack.h"\
 	".\src\update.h"\
-	".\windows-nt\config.h"\
+	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	
 
 .\src\release.c : \
+	".\lib\fnmatch.h"\
 	".\lib\getline.h"\
 	".\lib\getopt.h"\
 	".\lib\regex.h"\
@@ -845,12 +885,13 @@
 	".\src\server.h"\
 	".\src\stack.h"\
 	".\src\update.h"\
-	".\windows-nt\config.h"\
+	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	
 
 .\src\remove.c : \
+	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\regex.h"\
 	".\lib\system.h"\
@@ -865,12 +906,13 @@
 	".\src\server.h"\
 	".\src\stack.h"\
 	".\src\update.h"\
-	".\windows-nt\config.h"\
+	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	
 
 .\src\repos.c : \
+	".\lib\fnmatch.h"\
 	".\lib\getline.h"\
 	".\lib\getopt.h"\
 	".\lib\regex.h"\
@@ -886,12 +928,13 @@
 	".\src\server.h"\
 	".\src\stack.h"\
 	".\src\update.h"\
-	".\windows-nt\config.h"\
+	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	
 
 .\src\root.c : \
+	".\lib\fnmatch.h"\
 	".\lib\getline.h"\
 	".\lib\getopt.h"\
 	".\lib\regex.h"\
@@ -907,12 +950,13 @@
 	".\src\server.h"\
 	".\src\stack.h"\
 	".\src\update.h"\
-	".\windows-nt\config.h"\
+	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	
 
 ".\windows-NT\run.c" : \
+	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\regex.h"\
 	".\lib\system.h"\
@@ -927,12 +971,13 @@
 	".\src\server.h"\
 	".\src\stack.h"\
 	".\src\update.h"\
-	".\windows-nt\config.h"\
+	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	
 
 .\src\scramble.c : \
+	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\regex.h"\
 	".\lib\system.h"\
@@ -947,12 +992,13 @@
 	".\src\server.h"\
 	".\src\stack.h"\
 	".\src\update.h"\
-	".\windows-nt\config.h"\
+	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	
 
 .\src\server.c : \
+	".\lib\fnmatch.h"\
 	".\lib\getline.h"\
 	".\lib\getopt.h"\
 	".\lib\regex.h"\
@@ -971,7 +1017,7 @@
 	".\src\stack.h"\
 	".\src\update.h"\
 	".\src\watch.h"\
-	".\windows-nt\config.h"\
+	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	
@@ -980,6 +1026,7 @@
 	
 
 .\src\stack.c : \
+	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\regex.h"\
 	".\lib\system.h"\
@@ -994,12 +1041,13 @@
 	".\src\server.h"\
 	".\src\stack.h"\
 	".\src\update.h"\
-	".\windows-nt\config.h"\
+	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	
 
 ".\windows-NT\startserver.c" : \
+	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\regex.h"\
 	".\lib\system.h"\
@@ -1014,13 +1062,14 @@
 	".\src\server.h"\
 	".\src\stack.h"\
 	".\src\update.h"\
-	".\windows-nt\config.h"\
+	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\rcmd.h"\
 	
 
 .\src\status.c : \
+	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\regex.h"\
 	".\lib\system.h"\
@@ -1035,12 +1084,13 @@
 	".\src\server.h"\
 	".\src\stack.h"\
 	".\src\update.h"\
-	".\windows-nt\config.h"\
+	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	
 
 .\src\subr.c : \
+	".\lib\fnmatch.h"\
 	".\lib\getline.h"\
 	".\lib\getopt.h"\
 	".\lib\regex.h"\
@@ -1056,12 +1106,13 @@
 	".\src\server.h"\
 	".\src\stack.h"\
 	".\src\update.h"\
-	".\windows-nt\config.h"\
+	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	
 
 .\src\tag.c : \
+	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\regex.h"\
 	".\lib\savecwd.h"\
@@ -1077,12 +1128,13 @@
 	".\src\server.h"\
 	".\src\stack.h"\
 	".\src\update.h"\
-	".\windows-nt\config.h"\
+	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	
 
 .\src\update.c : \
+	".\lib\fnmatch.h"\
 	".\lib\getline.h"\
 	".\lib\getopt.h"\
 	".\lib\regex.h"\
@@ -1103,12 +1155,13 @@
 	".\src\stack.h"\
 	".\src\update.h"\
 	".\src\watch.h"\
-	".\windows-nt\config.h"\
+	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	
 
 .\src\vers_ts.c : \
+	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\regex.h"\
 	".\lib\system.h"\
@@ -1123,12 +1176,13 @@
 	".\src\server.h"\
 	".\src\stack.h"\
 	".\src\update.h"\
-	".\windows-nt\config.h"\
+	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	
 
 .\src\version.c : \
+	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\regex.h"\
 	".\lib\system.h"\
@@ -1143,16 +1197,17 @@
 	".\src\server.h"\
 	".\src\stack.h"\
 	".\src\update.h"\
-	".\windows-nt\config.h"\
+	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	
 
 ".\windows-NT\waitpid.c" : \
-	".\windows-nt\config.h"\
+	".\windows-NT\config.h"\
 	
 
 .\src\watch.c : \
+	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\regex.h"\
 	".\lib\system.h"\
@@ -1170,12 +1225,13 @@
 	".\src\stack.h"\
 	".\src\update.h"\
 	".\src\watch.h"\
-	".\windows-nt\config.h"\
+	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	
 
 ".\windows-NT\woe32.c" : \
+	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\regex.h"\
 	".\lib\system.h"\
@@ -1190,12 +1246,13 @@
 	".\src\server.h"\
 	".\src\stack.h"\
 	".\src\update.h"\
-	".\windows-nt\config.h"\
+	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	
 
 .\src\wrapper.c : \
+	".\lib\fnmatch.h"\
 	".\lib\getline.h"\
 	".\lib\getopt.h"\
 	".\lib\regex.h"\
@@ -1211,12 +1268,13 @@
 	".\src\server.h"\
 	".\src\stack.h"\
 	".\src\update.h"\
-	".\windows-nt\config.h"\
+	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	
 
 .\src\zlib.c : \
+	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\regex.h"\
 	".\lib\system.h"\
@@ -1231,7 +1289,7 @@
 	".\src\server.h"\
 	".\src\stack.h"\
 	".\src\update.h"\
-	".\windows-nt\config.h"\
+	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	".\zlib\zconf.h"\
