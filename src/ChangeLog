@@ -1,3 +1,14 @@
+1999-12-24  Larry Jones <larry.jones@sdrc.com>
+
+	* release.c (release): Use fputs to echo lines from update instead
+	of printf to avoid problems with lines containing "%".  (Reported
+	by Jean-Luc Simard <Jean-Luc.Simard@matrox.com>.)
+
+	* history.c (read_hrecs): Allocate a single 2-block buffer instead
+	of allocating and freeing a buffer for each block.
+	(fill_hrec): Remove redundant code.
+	(select_hrec): Plug memory leak.
+
 1999-12-22  Larry Jones <larry.jones@sdrc.com>
 
 	* history.c (history): For "modified" or "checkout", sort on
