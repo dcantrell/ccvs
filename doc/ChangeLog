@@ -1,5 +1,7 @@
 2004-05-14  Mark D. Baushke  <mdb@cvshome.org>
 
+	* cvs.texinfo: Fix makeinfo error.
+
 	* cvs.texinfo (Adding files): Cleanup example.
 	(Using keywords): Cleanup text.
 

@@ -5424,7 +5424,6 @@ through the history.
 * log messages::                Log messages
 * history database::            The history database
 * user-defined logging::        User-defined logging
-* annotate::                    What revision modified each line of a file?
 @end menu
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -7866,7 +7865,7 @@ reference to @sc{cvs} commands, @pxref{Invoking CVS}).
 * Global options::              Options you give to the left of cvs_command
 * Common options::              Options you give to the right of cvs_command
 * admin::                       Administration
-* annotate::                    Show last revision where each line was changed.
+* annotate::                    What revision modified each line of a file?
 * checkout::                    Checkout sources for editing
 * commit::                      Check files into the repository
 * diff::                        Show differences between revisions
@@ -8927,7 +8926,7 @@ this option has never done anything useful.
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node annotate
-@appendixsec annotate---Show last revision where each line was changed.
+@appendixsec annotate---What revision modified each line of a file?
 @cindex annotate (subcommand)
 
 @itemize @bullet
@@ -8945,7 +8944,7 @@ modification for each line.
 
 @menu
 * annotate options::            annotate options
-* annotate examples::           annotate examples
+* annotate example::            annotate example
 @end menu
 
 @c . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
