@@ -180,6 +180,22 @@
 /* Define if you have the socket library (-lsocket).  */
 /* #undef HAVE_LIBSOCKET */
 
+/* Under Windows NT, filenames are case-insensitive, and both / and \
+   are path component separators.  */
+#define FOLD_FN_CHAR(c) (VMS_filename_classes[(unsigned char) (c)])
+extern unsigned char VMS_filename_classes[];
+#define FILENAMES_CASE_INSENSITIVE 1
+
+/* Like strcmp, but with the appropriate tweaks for file names.
+   Under Windows NT, filenames are case-insensitive but case-preserving,
+   and both \ and / are path element separators.  */
+extern int fncmp (const char *n1, const char *n2);
+
+/* Fold characters in FILENAME to their canonical forms.  
+   If FOLD_FN_CHAR is not #defined, the system provides a default
+   definition for this.  */
+extern void fnfold (char *FILENAME);
+
 #define RSH_NOT_TRANSPARENT 1
 #define START_SERVER vms_start_server
 #define NO_SOCKET_TO_FD 1
