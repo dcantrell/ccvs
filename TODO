@@ -256,10 +256,10 @@ trying to accomplish and what the best way is -kingdon, Jul 1997).
      probably want to give an error if it disagreed with CVS/Root, as
      CVS 1.8 and earlier did).  The other is the "reposmv"
      functionality above (in which the two repositories really are the
-     same, and we want to update the CVS/Root files).  A related issue
-     is that the fact that CVS only sets and looks at the CVS/Root
-     file in the directory where CVS is run; it doesn't do anything
-     about CVS/Root files in subdirectories.
+     same, and we want to update the CVS/Root files).  In CVS 1.9 and
+     1.10, -d rewrites the CVS/Root file (but not in subdirectories).
+     This behavior was not particularly popular and has been since
+     reverted.
 
      Note also RELATIVE_REPOS in options.h; it needs to be set for
      changing CVS/Root (not CVS/Repository) to be sufficient in the
