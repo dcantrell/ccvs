@@ -1,3 +1,13 @@
+Fri Dec 15 15:21:53 1995  Karl Fogel  <kfogel@floss.cyclic.com>
+
+        * client.c (connect_to_pserver): new var `port_number', initialize
+        with new func auth_server_port_number() and pass to
+        init_sockaddr().
+        (auth_server_port_number): new func.  Right now it just returns
+        `htons (CVS_AUTH_PORT)'.  We'll probably add the ability to
+        specify the port at run time soon, anyway, so having this function
+        will make that easier.
+
 Wed Dec  6 18:08:40 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.h: Add CVSREP.
