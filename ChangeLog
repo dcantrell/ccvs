@@ -1,6 +1,9 @@
 2001-06-27  Larry Jones  <larry.jones@sdr.com>
 
+	* TODO: Add note about non-canonical paths.  Reformat long lines.
+
 	* NEWS (Changes since 1.11): Note new loginfo format string expansion.
+	Reformat some long lines.
 
 2001-06-11  Derek Price  <dprice@collab.net>
 
