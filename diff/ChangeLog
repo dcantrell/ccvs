@@ -1,11 +1,16 @@
+2004-03-26  Derek Price  <derek@ximbiot.com>
+
+	* .cvsignore: Ignore MSVC build cruft.
+	* libdiff.dep, libdiff.mak, libdiff.dsp: Repaired & regnerated.
+
 2004-03-25  Derek Price  <derek@ximbiot.com>
 
 	* Makefile.in: Regenerated.
 
 2004-03-25  Derek Price  <derek@ximbiot.com>
 
-	* diff.dep, diff.mak: New files created by Visual C++ 6.0.
-	* diff.dsp: Updated by Visual C++ 6.0.
+	* libdiff.dep, libdiff.mak: New files created by Visual C++ 6.0.
+	* libdiff.dsp: Updated by Visual C++ 6.0.
 	* Makefile.am (EXTRA_DIST): Add diff.dep & diff.mak.
 	* .cvsignore: Add and remove files for new MSVC++ setup.
 
