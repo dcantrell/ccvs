@@ -56,10 +56,13 @@ dnl Look for shadow password files before we go ahead and set getspnam.
 dnl On some systems (Linux), the C library has getspnam but shadow
 dnl passwords might not be in use.
 dnl
+dnl We used to check for the existence of the /etc/security directory
+dnl here, but that's incorrect, since it's possible to have PAM installed
+dnl without using shadow passwords.
+dnl
 AC_MSG_CHECKING([for evidence of shadow passwords])
 if test -f /etc/shadow \
-   || test -f /etc/security/passwd.adjunct \
-   || test -d /etc/security ; then
+   || test -f /etc/security/passwd.adjunct ; then
   echo "yup"
   AC_CHECK_LIB(sec, getspnam)
   AC_CHECK_FUNCS(getspnam)
