@@ -455,9 +455,12 @@ ignore_files (ilist, entries, update_dir, proc)
 
 	    if (
 #ifdef DT_DIR
-		dp->d_type == DT_DIR || dp->d_type == DT_UNKNOWN &&
+		dp->d_type == DT_DIR
+		|| (dp->d_type == DT_UNKNOWN && S_ISDIR (sb.st_mode))
+#else
+		S_ISDIR (sb.st_mode)
 #endif
-		S_ISDIR(sb.st_mode))
+		)
 	    {
 		if (! subdirs)
 		{
@@ -476,9 +479,12 @@ ignore_files (ilist, entries, update_dir, proc)
 #ifdef S_ISLNK
 	    else if (
 #ifdef DT_DIR
-		dp->d_type == DT_LNK || dp->d_type == DT_UNKNOWN && 
+		     dp->d_type == DT_LNK
+		     || (dp->d_type == DT_UNKNOWN && S_ISLNK(sb.st_mode))
+#else
+		     S_ISLNK (sb.st_mode)
 #endif
-		S_ISLNK(sb.st_mode))
+		     )
 	    {
 		continue;
 	    }
