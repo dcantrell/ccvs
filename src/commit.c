@@ -1236,7 +1236,7 @@ remove_file (file, repository, tag, message, entries, srcfiles)
     }
 #else
 #ifdef DEATH_STATE
-    run_setup ("%s%s -sdead %s%s", Rcsbin, RCS_CI, rev ? "-r" : "",
+    run_setup ("%s%s -f -sdead %s%s", Rcsbin, RCS_CI, rev ? "-r" : "",
 #else
     run_setup ("%s%s -K %s%s", Rcsbin, RCS_CI, rev ? "-r" : "",
 #endif
@@ -1542,7 +1542,7 @@ checkaddfile (file, repository, tag, srcfiles)
 	}
 #else
 #ifdef DEATH_STATE
-	run_setup ("%s%s -q -sdead", Rcsbin, RCS_CI);
+	run_setup ("%s%s -q -f -sdead", Rcsbin, RCS_CI);
 #else
 	run_setup ("%s%s -q -K", Rcsbin, RCS_CI);
 #endif
