@@ -1223,7 +1223,7 @@ log_tree (log_data, revlist, rcs, ver)
            the List abstraction, but so does most of the branch
            manipulation in rcs.c.  */
 	head = vnode->branches->list;
-	for (branch = head->prev; branch != head; branch = branch->next)
+	for (branch = head->prev; branch != head; branch = branch->prev)
 	{
 	    log_abranch (log_data, revlist, rcs, branch->key);
 	    log_tree (log_data, revlist, rcs, branch->key);

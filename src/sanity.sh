@@ -2161,6 +2161,34 @@ done'
 	  dotest multibranch-13 "cat file1" '1:trunk-1
 br2 adds a line'
 
+	  dotest multibranch-14 "${testcvs} log file1" \
+"
+RCS file: /tmp/cvs-sanity/cvsroot/first-dir/file1,v
+Working file: file1
+head: 1\.1
+branch:
+locks: strict
+access list:
+symbolic names:
+	br2: 1\.1\.0\.4
+	br1: 1\.1\.0\.2
+keyword substitution: kv
+total revisions: 3;	selected revisions: 3
+description:
+----------------------------
+revision 1\.1
+date: [0-9/]* [0-9:]*;  author: [0-9a-zA-Z-]*;  state: Exp;
+branches:  1\.1\.2;  1\.1\.4;
+add-it
+----------------------------
+revision 1\.1\.4\.1
+date: [0-9/]* [0-9:]*;  author: [0-9a-zA-Z-]*;  state: Exp;  lines: ${PLUS}1 -0
+modify-on-br2
+----------------------------
+revision 1\.1\.2\.1
+date: [0-9/]* [0-9:]*;  author: [0-9a-zA-Z-]*;  state: Exp;  lines: ${PLUS}1 -1
+modify-on-br1
+============================================================================="
 	  cd ..
 
 	  if test "$keep" = yes; then
