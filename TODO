@@ -409,7 +409,7 @@ about whether there should be some new feature and if so how it should
 be designed.  For example, here is one thought:
 
     rcs' co command needs a new -k option.  The new option should expand
-    $Log$ entries without expanding $Revision$ entries.  This would
+    $Log entries without expanding $Revision entries.  This would
     allow cvs to use rcsmerge in such a way that joining branches into
     main lines would neither generate extra collisions on revisions nor
     drop log lines.
