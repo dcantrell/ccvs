@@ -534,6 +534,13 @@ main (argc, argv)
 		(void) fputs ("\n", stdout);
 		(void) fputs ("CVS may be copied only under the terms of the GNU General Public License,\n", stdout);
 		(void) fputs ("a copy of which can be found with the CVS distribution kit.\n", stdout);
+		(void) fputs ("\n", stdout);
+
+		/* In particular, the URLs in --help should help with
+		   the question of authorship.  The above copyright
+		   notices might be a bit misleading on that score.  */
+		(void) fputs ("Specify the --help option for further information about CVS\n", stdout);
+
 		exit (0);
 		break;
 	    case 'b':
