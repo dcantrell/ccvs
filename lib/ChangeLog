@@ -1,3 +1,7 @@
+2004-11-05  Mark D. Baushke  <mdb@cvshome.org>
+
+	* readlink.c: Update from GNULIB.
+
 2004-11-04  Conrad T. Pino  <Conrad@Pino.com>
 
 	* libcvs.dsp: Add "xreadlink.c" and "xreadlink.h" to project.
