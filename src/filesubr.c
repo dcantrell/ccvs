@@ -20,12 +20,7 @@
 #include <assert.h>
 #include "cvs.h"
 
-#ifndef SIZE_MAX
-# define SIZE_MAX ((size_t) -1)
-#endif
-#ifndef SSIZE_MAX
-# define SSIZE_MAX ((ssize_t) (SIZE_MAX / 2))
-#endif
+#include "xsize.h"
 
 static int deep_remove_dir PROTO((const char *path));
 
@@ -885,27 +880,21 @@ xreadlink (link)
     /* Get the name of the file to which `from' is linked. */
     while (1)
     {
-	file = xmalloc (buflen);
+	file = xrealloc (file, buflen);
 	link_name_len = readlink (link, file, buflen);
 
 	if (link_name_len < 0)
-	{
-	    int saved_errno = errno;
-	    free (file);
-	    errno = saved_errno;
-
 	    error (1, errno, "cannot readlink %s", link);
-	}
+
 	/* If there is space for the NUL byte, set it and return. */
 	if ((size_t) link_name_len < buflen)
 	{
 	    file[link_name_len] = '\0';
 	    return file;
 	}
-	free (file);
 	buflen *= 2;
 	if (! (0 < buflen && buflen < SSIZE_MAX))
-	    error (1, 0, "Memory exhausted - cannot readlink %s", link);
+	    error (1, ENAMETOOLONG, "cannot readlink %s", link);
     }
 }
 #endif /* HAVE_READLINK */
