@@ -5008,7 +5008,7 @@ RCS_checkin (rcs, workfile, message, rev, flags)
 	delta->other_delta = getlist();
 
 	if (CVS_LSTAT (workfile, &sb) < 0)
-	    error (1, 1, "cannot lstat %s", workfile);
+	    error (1, errno, "cannot lstat %s", workfile);
 
 	if (S_ISLNK (sb.st_mode))
 	{
@@ -8379,13 +8379,12 @@ rcs_internal_unlockfile (fp, rcsfile)
        corrupting the repository. */
 
     if (ferror (fp))
-	/* The only case in which using errno here would be meaningful
-	   is if we happen to have left errno unmolested since the call
-	   which produced the error (e.g. fprintf).  That is pretty
-	   fragile even if it happens to sometimes be true.  The real
-	   solution is to check each call to fprintf rather than waiting
+	/* Using errno here may well be misleanding since the most recent
+	   call that set errno may not have anything whatsoever to do with
+	   the error that set the flag, but it's better than nothing.  The
+	   real solution is to check each call to fprintf rather than waiting
 	   until the end like this.  */
-	error (1, 0, "error writing to lock file %s", rcs_lockfile);
+	error (1, errno, "error writing to lock file %s", rcs_lockfile);
     if (fclose (fp) == EOF)
 	error (1, errno, "error closing lock file %s", rcs_lockfile);
     rcs_lockfd = -1;
