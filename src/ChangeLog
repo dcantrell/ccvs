@@ -1,3 +1,15 @@
+2003-08-01  Derek Price  <derek@ximbiot.com>
+
+	* sanity.sh (join5): Use $SPROG rather than $PROG.
+
+2003-08-01  Derek Price  <derek@ximbiot.com>
+
+	* sanity.sh (join5): Use $PROG consistently and escape a `.'.
+
+2003-08-01  Derek Price  <derek@ximbiot.com>
+
+	* sanity.sh (join5): Use `[a-z]*' as opposed to `update'.
+
 2003-07-31  Derek Price  <derek@ximbiot.com>
 
 	* rcscmds.c (RCS_merge): Pass `--' before the filename arguments to
