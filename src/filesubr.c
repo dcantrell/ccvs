@@ -755,9 +755,7 @@ cvs_casecmp (str1, str2)
    case-insensitivity.  Returns errno code or 0 for success.  Puts the
    new file in *FP.  NAME and MODE are as for fopen.  If PATHP is not
    NULL, then put a malloc'd string containing the pathname as found
-   into *PATHP.  Note that a malloc'd string is put into *PATHP
-   even if we return an error.  It doesn't mean anything, but it still
-   must be freed.
+   into *PATHP.  *PATHP is only set if the return value is 0.
 
    Might be cleaner to separate the file finding (which just gives
    *PATHP) from the file opening (which the caller can do).  For one
@@ -843,6 +841,8 @@ fopen_case (name, mode, fp, pathp)
     }
 
     if (pathp == NULL)
+	free (dir);
+    else if (retval != 0)
 	free (dir);
     else
 	*pathp = dir;
