@@ -861,8 +861,10 @@ update_entries (data_arg, ent_list, short_pathname, filename)
 	    while ((size_read = fread (buf2, 1, size_left, from_server)) != size_left)
 	    {
 		if (feof (from_server))
+		    /* FIXME: Should delete temp_filename.  */
 		    error (1, 0, "unexpected end of file from server");
 		else if (ferror (from_server))
+		    /* FIXME: Should delete temp_filename.  */
 		    error (1, errno, "reading from server");
 		else
 		  {
