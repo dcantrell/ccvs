@@ -27,8 +27,7 @@
 @c http://www.ft.uni-erlangen.de/~mskuhn/iso-paper.html
 @c for more on paper sizes.  Insuring that margins are
 @c big enough to print on either A4 or US letter does
-@c indeed  seem to be the usual approach (according to
-@c an internet draft by Jacob Palme).
+@c indeed seem to be the usual approach (RFC2346).
 
 @c This document seems to get overfull hboxes with some
 @c frequency (probably because the tendency is to
