@@ -10021,6 +10021,14 @@ done"
 	  cd ..
 	  dotest errmsg2-8 "${testcvs} add first-dir/sdir" \
 "Directory ${TESTDIR}/cvsroot/first-dir/sdir added to the repository"
+	  # while we're here... check commit with no CVS directory
+	  dotest_fail errmsg2-8a "${testcvs} -q ci first-dir nonexistant" \
+"${PROG} [a-z]*: nothing known about .nonexistant'
+${PROG} \[[a-z]* aborted\]: correct above errors first!"
+	  dotest_fail errmsg2-8b "${testcvs} -q ci nonexistant first-dir" \
+"${PROG} [a-z]*: nothing known about .nonexistant'
+${PROG} \[[a-z]* aborted\]: correct above errors first!"
+	  dotest errmsg2-8c "${testcvs} -q ci first-dir" ""
 
 	  cd first-dir
 
