@@ -1329,7 +1329,7 @@ example, @samp{Sun Apr  7 01:29:26 1996}).  One may
 write a string which is not in that format, for
 example, @samp{Result of merge}, to indicate that the
 file should always be considered to be modified.  This
-is not be a special case; to see whether a file is
+is not a special case; to see whether a file is
 modified a program should take the timestamp of the file
 and simply do a string compare with @var{timestamp}.
 @var{conflict} indicates that there was
@@ -1372,6 +1372,12 @@ the information without having to rewrite the entire
 @file{Entries} file, including the ability to preserve
 the information even if the program writing
 @file{Entries} and @file{Entries.Log} abruptly aborts.
+Programs which are reading the @file{Entries} file
+should also check for @file{Entries.Log}.  If the latter
+exists, they should read @file{Entries} and then apply
+the changes mentioned in @file{Entries.Log}.  After
+applying the changes, the recommended practice is to
+rewrite @file{Entries} and then delete @file{Entries.Log}.
 The format of a line in @file{Entries.Log} is a single
 character command followed by a space followed by a
 line in the format specified for a line in
