@@ -5795,8 +5795,6 @@ pserver_authenticate_connection ()
     /* We need the real cleartext before we hash it. */
     descrambled_password = descramble (password);
     host_user = check_password (username, descrambled_password, repository);
-    memset (descrambled_password, 0, strlen (descrambled_password));
-    free (descrambled_password);
     if (host_user == NULL)
     {
 #ifdef HAVE_SYSLOG_H
@@ -5806,6 +5804,8 @@ pserver_authenticate_connection ()
         	username, descrambled_password, repository);
 #endif
 #endif
+	memset (descrambled_password, 0, strlen (descrambled_password));
+	free (descrambled_password);
     i_hate_you:
 	printf ("I HATE YOU\n");
 	fflush (stdout);
@@ -5814,6 +5814,8 @@ pserver_authenticate_connection ()
 	   yet.  */
 	error_exit ();
     }
+    memset (descrambled_password, 0, strlen (descrambled_password));
+    free (descrambled_password);
 
     /* Don't go any farther if we're just responding to "cvs login". */
     if (verify_and_exit)
