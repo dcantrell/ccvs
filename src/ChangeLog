@@ -1,3 +1,7 @@
+1998-11-24  Jim Kingdon
+
+	* sanity.sh (dirs): Clean up working directory at end of test.
+
 1998-11-23  Jim Kingdon
 
 	* sanity.sh (dirs2): New test, for some more cases involving
