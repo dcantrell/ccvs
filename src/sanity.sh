@@ -5782,8 +5782,8 @@ done"
 
 	  # Here begins the guts of this test, as detailed above.
 	  dotest rmadd3-1 "${testcvs} rm -f file1" \
-"${SROG} remove: scheduling \`file1' for removal
-${SROG} remove: use '${SROG} commit' to remove this file permanently"
+"${SPROG} remove: scheduling \`file1' for removal
+${SPROG} remove: use '${SPROG} commit' to remove this file permanently"
 
           # Now recreate the file:
 	  echo desired future contents for file1 >file1
