@@ -9139,7 +9139,7 @@ D	_watched="
 Fw2	_watched="
 	  # Now write a few more lines, just as if we were a newer version
 	  # of CVS implementing some new feature.
-	  cat <<EOF >>${CVSROOT_DIRNAME}/first-dir/CVS/fileattr
+	  cat <<'EOF' >>${CVSROOT_DIRNAME}/first-dir/CVS/fileattr
 Enew	line	here
 G@#$^!@#=&
 EOF
