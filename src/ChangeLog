@@ -1,5 +1,15 @@
 Fri Oct 24 10:22:15 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* admin.c (admin_fileproc): In handling -A, don't handle relative
+	pathnames differently from absolute pathnames.  See comment for
+	rationale.  If problem opening the file, give a nice error not a
+	coredump.
+	* sanity.sh (admin-19a-admin, admin-19a-log, admin-19a-fix):
+	New tests, test for traditional "cvs admin -A" behavior with
+	relative pathnames.
+	* sanity.sh (admin-19a-nonexist): Test for the core dump fix.
+	* sanity.sh (admin-22-o1): Look for ${PROG} not cvs.
+
 	* sanity.sh (reserved-16): Remove commitinfo change with "cvs
 	commit" not "cvs admin -o".  In addition to commit being The Right
 	Thing on general principles, cvs admin -o doesn't work because it

@@ -7328,10 +7328,14 @@ U file1'
 	log)
 	  # Test selecting revisions with cvs log.
 	  # See also log2 tests for more tests.
-	  # See also rcs tests, for -d option to log.
 	  # See also branches-14.3 for logging with a branch off of a branch.
 	  # See also multibranch-14 for logging with several branches off the
 	  #   same branchpoint.
+	  # Tests of each option to cvs log:
+	  #   -h: admin-19a-log
+	  #   -N: log, log2, admin-19a-log
+	  #   -b, -r: log
+	  #   -d: rcs
 
 	  # Check in a file with a few revisions and branches.
 	  mkdir ${CVSROOT_DIRNAME}/first-dir
@@ -7773,7 +7777,7 @@ ${testcvs} -d ${TESTDIR}/crerepos release -d CVSROOT >>${LOGFILE}; then
 	  # implements this format, will be out there "forever" and
 	  # CVS must always be able to import such files.
 
-	  # See tests admin-13 and rcs-8a for exporting RCS files.
+	  # See tests admin-13, admin-25 and rcs-8a for exporting RCS files.
 
 	  mkdir ${CVSROOT_DIRNAME}/first-dir
 
@@ -9355,6 +9359,42 @@ date: [0-9/]* [0-9:]*;  author: ${username};  state: foo;  lines: ${PLUS}1 -0
 modify-on-branch
 ============================================================================="
 
+	  # OK, this is starting to get ridiculous, in terms of
+	  # testing a feature (access lists) which doesn't do anything
+	  # useful, but what about nonexistent files and
+	  # relative pathnames in admin -A?
+	  dotest_fail admin-19a-nonexist \
+"${testcvs} -q admin -A${TESTDIR}/foo/bar file1" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
+${PROG} [a-z]*: Couldn't open rcs file .${TESTDIR}/foo/bar.: No such file or directory
+${PROG} \[[a-z]* aborted\]: cannot continue"
+
+	  # In the remote case, we are cd'd off into the temp directory
+	  # and so these tests give "No such file or directory" errors.
+	  if test "x$remote" = xno; then
+
+	  dotest admin-19a-admin "${testcvs} -q admin -A../../cvsroot/first-dir/file2,v file1" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
+done"
+	  dotest admin-19a-log "${testcvs} -q log -h -N file1" "
+RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
+Working file: file1
+head: 1\.1
+branch:
+locks: strict
+access list:
+	foo
+	auth2
+	auth3
+keyword substitution: kv
+total revisions: 2
+============================================================================="
+	  # Put the access list back, to avoid special cases later.
+	  dotest admin-19a-fix "${testcvs} -q admin -eauth3 file1" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
+done"
+	  fi # end of tests skipped for remote
+
 	  # Add another revision to file2, so we can delete one.
 	  echo 'add a line' >> file2
 	  dotest admin-21 "${testcvs} -q ci -m modify file2" \
@@ -9376,7 +9416,7 @@ done"
 	  echo first rev > aaa
 	  dotest admin-22-o1 "${testcvs} add aaa" \
 "${PROG} [a-z]*: scheduling file .aaa. for addition
-${PROG} [a-z]*: use .cvs commit. to add this file permanently"
+${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
 	  dotest admin-22-o2 "${testcvs} -q ci -m first aaa" \
 "RCS file: ${TESTDIR}/cvsroot/first-dir/aaa,v
 done

@@ -608,12 +608,21 @@ admin_fileproc (callerdat, finfo)
 		free_names (&argc, users);
 		break;
 	    case 'A':
-		/* If arg does not begin with `/', assume that the pathname is
-		   relative to the current repository. */
-		if (arg[2] == '/')
-		    rcs2 = RCS_parsercsfile (arg + 2);
-		else
-		    rcs2 = RCS_parse (arg + 2, finfo->repository);
+
+		/* See admin-19a-admin and friends in sanity.sh for
+		   relative pathnames.  It makes sense to think in
+		   terms of a syntax which give pathnames relative to
+		   the repository or repository corresponding to the
+		   current directory or some such (and perhaps don't
+		   include ,v), but trying to worry about such things
+		   is a little pointless unless you first worry about
+		   whether "cvs admin -A" as a whole makes any sense
+		   (currently probably not, as access lists don't
+		   affect the behavior of CVS).  */
+
+		rcs2 = RCS_parsercsfile (arg + 2);
+		if (rcs2 == NULL)
+		    error (1, 0, "cannot continue");
 
 		p = xstrdup (RCS_getaccess (rcs2));
 	        line2argv (&argc, &users, p, " \t\n");
