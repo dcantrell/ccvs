@@ -354,7 +354,7 @@ serve_max_dotdot (arg)
     server_temp_dir = p;
 }
 
-static char *dirname;
+static char *dir_name;
 
 static void
 dirswitch (dir, repos)
@@ -368,34 +368,34 @@ dirswitch (dir, repos)
 
     if (error_pending()) return;
 
-    if (dirname != NULL)
-	free (dirname);
+    if (dir_name != NULL)
+	free (dir_name);
 
-    dirname = malloc (strlen (server_temp_dir) + strlen (dir) + 40);
-    if (dirname == NULL)
+    dir_name = malloc (strlen (server_temp_dir) + strlen (dir) + 40);
+    if (dir_name == NULL)
     {
 	pending_error = ENOMEM;
 	return;
     }
     
-    strcpy (dirname, server_temp_dir);
-    strcat (dirname, "/");
-    strcat (dirname, dir);
+    strcpy (dir_name, server_temp_dir);
+    strcat (dir_name, "/");
+    strcat (dir_name, dir);
 
-    status = mkdir_p (dirname);	
+    status = mkdir_p (dir_name);	
     if (status != 0
 	&& status != EEXIST)
     {
 	pending_error = status;
-	pending_error_text = malloc (80 + strlen(dirname));
-	sprintf(pending_error_text, "E cannot mkdir %s", dirname);
+	pending_error_text = malloc (80 + strlen(dir_name));
+	sprintf(pending_error_text, "E cannot mkdir %s", dir_name);
 	return;
     }
-    if (chdir (dirname) < 0)
+    if (chdir (dir_name) < 0)
     {
 	pending_error = errno;
-	pending_error_text = malloc (80 + strlen(dirname));
-	sprintf(pending_error_text, "E cannot change to %s", dirname);
+	pending_error_text = malloc (80 + strlen(dir_name));
+	sprintf(pending_error_text, "E cannot change to %s", dir_name);
 	return;
     }
     /*
@@ -985,15 +985,15 @@ serve_notify (arg)
 	pending_error = ENOMEM;
 	return;
     }
-    if (dirname == NULL)
+    if (dir_name == NULL)
 	goto error;
-    new->dir = malloc (strlen (dirname) + 1);
+    new->dir = malloc (strlen (dir_name) + 1);
     if (new->dir == NULL)
     {
 	pending_error = ENOMEM;
 	return;
     }
-    strcpy (new->dir, dirname);
+    strcpy (new->dir, dir_name);
     new->filename = malloc (strlen (arg) + 1);
     if (new->filename == NULL)
     {
@@ -2153,7 +2153,7 @@ serve_questionable (arg)
 	initted = 1;
     }
 
-    if (dirname == NULL)
+    if (dir_name == NULL)
     {
 	buf_output0 (&buf_to_net, "E Protocol error: 'Directory' missing");
 	return;
@@ -2164,7 +2164,7 @@ serve_questionable (arg)
 	char *update_dir;
 
 	buf_output (&buf_to_net, "M ? ", 4);
-	update_dir = dirname + strlen (server_temp_dir) + 1;
+	update_dir = dir_name + strlen (server_temp_dir) + 1;
 	if (!(update_dir[0] == '.' && update_dir[1] == '\0'))
 	{
 	    buf_output0 (&buf_to_net, update_dir);

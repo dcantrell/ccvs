@@ -579,7 +579,7 @@ get_short_pathname (name)
  * SHORT_PATHNAME.  When we call FUNC, the curent directory points to
  * the directory portion of SHORT_PATHNAME.  */
 
-static char *last_dirname;
+static char *last_dir_name;
 
 static void
 call_in_directory (pathname, func, data)
@@ -590,7 +590,7 @@ call_in_directory (pathname, func, data)
 {
     static List *last_entries;
 
-    char *dirname;
+    char *dir_name;
     char *filename;
     /* Just the part of pathname relative to toplevel_repos.  */
     char *short_pathname = get_short_pathname (pathname);
@@ -651,17 +651,17 @@ call_in_directory (pathname, func, data)
     else
 	*p = '\0';
 
-    dirname = xstrdup (short_pathname);
-    p = strrchr (dirname, '/');
+    dir_name = xstrdup (short_pathname);
+    p = strrchr (dir_name, '/');
     if (p == NULL)
     {
-	dirname = xrealloc (dirname, 2);
-	dirname[0] = '.'; dirname[1] = '\0';
+	dir_name = xrealloc (dir_name, 2);
+	dir_name[0] = '.'; dir_name[1] = '\0';
     }
     else
 	*p = '\0';
     if (client_prune_dirs)
-	add_prune_candidate (dirname);
+	add_prune_candidate (dir_name);
 
     filename = strrchr (short_repos, '/');
     if (filename == NULL)
@@ -678,12 +678,12 @@ call_in_directory (pathname, func, data)
 	strcat (short_pathname, filename);
     }
 
-    if (last_dirname == NULL
-	|| strcmp (last_dirname, dirname) != 0)
+    if (last_dir_name == NULL
+	|| strcmp (last_dir_name, dir_name) != 0)
     {
-	if (last_dirname)
-	    free (last_dirname);
-	last_dirname = dirname;
+	if (last_dir_name)
+	    free (last_dir_name);
+	last_dir_name = dir_name;
 
 	if (toplevel_wd[0] == '\0')
 	    if (getwd (toplevel_wd) == NULL)
@@ -692,17 +692,17 @@ call_in_directory (pathname, func, data)
 
 	if (chdir (toplevel_wd) < 0)
 	    error (1, errno, "could not chdir to %s", toplevel_wd);
-	if (chdir (dirname) < 0)
+	if (chdir (dir_name) < 0)
 	{
 	    char *dir;
 	    char *dirp;
 	    
 	    if (! existence_error (errno))
-		error (1, errno, "could not chdir to %s", dirname);
+		error (1, errno, "could not chdir to %s", dir_name);
 	    
 	    /* Directory does not exist, we need to create it.  */
-	    dir = xmalloc (strlen (dirname) + 1);
-	    dirp = dirname;
+	    dir = xmalloc (strlen (dir_name) + 1);
+	    dirp = dir_name;
 	    rdirp = reposdirname;
 
 	    /* This algorithm makes nested directories one at a time
@@ -714,11 +714,11 @@ call_in_directory (pathname, func, data)
 	       2)     .. foo/bar                   .. <root>/foo/bar
 	       3)     .. foo/bar/baz               .. <root>/foo/bar/baz
 	       
-	       As you can see, we're just stepping along DIRNAME (with
+	       As you can see, we're just stepping along DIR_NAME (with
 	       DIRP) and REPOSDIRNAME (with RDIRP) respectively.
 
 	       We need to be careful when we are checking out a
-	       module, however, since DIRNAME and REPOSDIRNAME are not
+	       module, however, since DIR_NAME and REPOSDIRNAME are not
 	       going to be the same.  Since modules will not have any
 	       slashes in their names, we should watch the output of
 	       STRCHR to decide whether or not we should use STRCHR on
@@ -730,8 +730,8 @@ call_in_directory (pathname, func, data)
 		dirp = strchr (dirp, '/');
 		if (dirp)
 		  {
-		    strncpy (dir, dirname, dirp - dirname);
-		    dir[dirp - dirname] = '\0';
+		    strncpy (dir, dir_name, dirp - dir_name);
+		    dir[dirp - dir_name] = '\0';
 		    /* Skip the slash.  */
 		    ++dirp;
 		    if (rdirp == NULL)
@@ -758,7 +758,7 @@ call_in_directory (pathname, func, data)
                        STRCHR call here). */
 
 		    rdirp = NULL;
-		    strcpy (dir, dirname);
+		    strcpy (dir, dir_name);
 		  }
 
 		if (CVS_MKDIR (dir, 0777) < 0)
@@ -837,8 +837,8 @@ call_in_directory (pathname, func, data)
 	    } while (dirp != NULL);
 	    free (dir);
 	    /* Now it better work.  */
-	    if (chdir (dirname) < 0)
-		error (1, errno, "could not chdir to %s", dirname);
+	    if (chdir (dir_name) < 0)
+		error (1, errno, "could not chdir to %s", dir_name);
 	}
 
 	if (strcmp (command_name, "export") != 0)
@@ -849,7 +849,7 @@ call_in_directory (pathname, func, data)
 	}
     }
     else
-	free (dirname);
+	free (dir_name);
     free (reposdirname);
     (*func) (data, last_entries, short_pathname, filename);
     if (reposname != NULL)
@@ -2851,9 +2851,9 @@ start_server ()
     if (toplevel_repos != NULL)
         free (toplevel_repos);
     toplevel_repos = NULL;
-    if (last_dirname != NULL)
-        free (last_dirname);
-    last_dirname = NULL;
+    if (last_dir_name != NULL)
+        free (last_dir_name);
+    last_dir_name = NULL;
     if (last_repos != NULL)
         free (last_repos);
     last_repos = NULL;

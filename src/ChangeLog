@@ -1,3 +1,12 @@
+Fri Jan 26 00:14:00 1996  Karl Fogel  <kfogel@floss.red-bean.com>
+
+        * server.c: renamed `dirname' to `dir_name', to avoid conflicts
+        with system headers.
+
+        * client.c: renamed `dirname' and `last_dirname' to `dir_name' and
+        last_dir_name' (see above).  Not strictly necessary, but
+        consistency is nice -- as long as you do it all the time.
+
 Thu Jan 25 00:41:59 1996  Karl Fogel  <kfogel@floss.red-bean.com>
 
         * options.h.in (AUTH_SERVER_SUPPORT, AUTH_CLIENT_SUPPORT): change
