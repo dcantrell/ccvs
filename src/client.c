@@ -947,7 +947,7 @@ handle_valid_requests (args, len)
 	    ;
 	else
 	{
-	    if (rq->status == rq_enableme)
+	    if (rq->flags & RQ_ENABLEME)
 	    {
 		/*
 		 * Server wants to know if we have this, to enable the
@@ -957,16 +957,17 @@ handle_valid_requests (args, len)
                 send_to_server ("\012", 0);
 	    }
 	    else
-		rq->status = rq_supported;
+		rq->flags |= RQ_SUPPORTED;
 	}
 	p = q;
     } while (q != NULL);
     for (rq = requests; rq->name != NULL; ++rq)
     {
-	if (rq->status == rq_essential)
+	if ((rq->flags & RQ_SUPPORTED)
+	    || (rq->flags & RQ_ENABLEME))
+	    continue;
+	if (rq->flags & RQ_ESSENTIAL)
 	    error (1, 0, "request `%s' not supported by server", rq->name);
-	else if (rq->status == rq_optional)
-	    rq->status = rq_not_supported;
     }
 }
 
@@ -3685,7 +3686,7 @@ supported_request (name)
 
     for (rq = requests; rq->name; rq++)
 	if (!strcmp (rq->name, name))
-	    return rq->status == rq_supported;
+	    return (rq->flags & RQ_SUPPORTED) != 0;
     error (1, 0, "internal error: testing support for unknown option?");
     /* NOTREACHED */
     return 0;

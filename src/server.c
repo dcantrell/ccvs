@@ -4382,79 +4382,81 @@ struct request requests[] =
 #define REQ_LINE(n, f, s) {n, s}
 #endif
 
-  REQ_LINE("Root", serve_root, rq_essential),
-  REQ_LINE("Valid-responses", serve_valid_responses, rq_essential),
-  REQ_LINE("valid-requests", serve_valid_requests, rq_essential),
-  REQ_LINE("Repository", serve_repository, rq_optional),
-  REQ_LINE("Directory", serve_directory, rq_essential),
-  REQ_LINE("Max-dotdot", serve_max_dotdot, rq_optional),
-  REQ_LINE("Static-directory", serve_static_directory, rq_optional),
-  REQ_LINE("Sticky", serve_sticky, rq_optional),
-  REQ_LINE("Checkin-prog", serve_checkin_prog, rq_optional),
-  REQ_LINE("Update-prog", serve_update_prog, rq_optional),
-  REQ_LINE("Entry", serve_entry, rq_essential),
-  REQ_LINE("Kopt", serve_kopt, rq_optional),
-  REQ_LINE("Checkin-time", serve_checkin_time, rq_optional),
-  REQ_LINE("Modified", serve_modified, rq_essential),
-  REQ_LINE("Is-modified", serve_is_modified, rq_optional),
+  REQ_LINE("Root", serve_root, RQ_ESSENTIAL | RQ_ROOTLESS),
+  REQ_LINE("Valid-responses", serve_valid_responses,
+	   RQ_ESSENTIAL | RQ_ROOTLESS),
+  REQ_LINE("valid-requests", serve_valid_requests,
+	   RQ_ESSENTIAL | RQ_ROOTLESS),
+  REQ_LINE("Repository", serve_repository, 0),
+  REQ_LINE("Directory", serve_directory, RQ_ESSENTIAL),
+  REQ_LINE("Max-dotdot", serve_max_dotdot, 0),
+  REQ_LINE("Static-directory", serve_static_directory, 0),
+  REQ_LINE("Sticky", serve_sticky, 0),
+  REQ_LINE("Checkin-prog", serve_checkin_prog, 0),
+  REQ_LINE("Update-prog", serve_update_prog, 0),
+  REQ_LINE("Entry", serve_entry, RQ_ESSENTIAL),
+  REQ_LINE("Kopt", serve_kopt, 0),
+  REQ_LINE("Checkin-time", serve_checkin_time, 0),
+  REQ_LINE("Modified", serve_modified, RQ_ESSENTIAL),
+  REQ_LINE("Is-modified", serve_is_modified, 0),
 
   /* The client must send this request to interoperate with CVS 1.5
      through 1.9 servers.  The server must support it (although it can
      be and is a noop) to interoperate with CVS 1.5 to 1.9 clients.  */
-  REQ_LINE("UseUnchanged", serve_enable_unchanged, rq_enableme),
+  REQ_LINE("UseUnchanged", serve_enable_unchanged, RQ_ENABLEME | RQ_ROOTLESS),
 
-  REQ_LINE("Unchanged", serve_unchanged, rq_essential),
-  REQ_LINE("Notify", serve_notify, rq_optional),
-  REQ_LINE("Questionable", serve_questionable, rq_optional),
-  REQ_LINE("Case", serve_case, rq_optional),
-  REQ_LINE("Argument", serve_argument, rq_essential),
-  REQ_LINE("Argumentx", serve_argumentx, rq_essential),
-  REQ_LINE("Global_option", serve_global_option, rq_optional),
-  REQ_LINE("Gzip-stream", serve_gzip_stream, rq_optional),
+  REQ_LINE("Unchanged", serve_unchanged, RQ_ESSENTIAL),
+  REQ_LINE("Notify", serve_notify, 0),
+  REQ_LINE("Questionable", serve_questionable, 0),
+  REQ_LINE("Case", serve_case, 0),
+  REQ_LINE("Argument", serve_argument, RQ_ESSENTIAL),
+  REQ_LINE("Argumentx", serve_argumentx, RQ_ESSENTIAL),
+  REQ_LINE("Global_option", serve_global_option, 0),
+  REQ_LINE("Gzip-stream", serve_gzip_stream, 0),
   REQ_LINE("wrapper-sendme-rcsOptions",
            serve_wrapper_sendme_rcs_options,
-           rq_optional),
-  REQ_LINE("Set", serve_set, rq_optional),
+           0),
+  REQ_LINE("Set", serve_set, 0),
 #ifdef ENCRYPTION
 #  ifdef HAVE_KERBEROS
-  REQ_LINE("Kerberos-encrypt", serve_kerberos_encrypt, rq_optional),
+  REQ_LINE("Kerberos-encrypt", serve_kerberos_encrypt, 0),
 #  endif
 #  ifdef HAVE_GSSAPI
-  REQ_LINE("Gssapi-encrypt", serve_gssapi_encrypt, rq_optional),
+  REQ_LINE("Gssapi-encrypt", serve_gssapi_encrypt, 0),
 #  endif
 #endif
 #ifdef HAVE_GSSAPI
-  REQ_LINE("Gssapi-authenticate", serve_gssapi_authenticate, rq_optional),
+  REQ_LINE("Gssapi-authenticate", serve_gssapi_authenticate, 0),
 #endif
-  REQ_LINE("expand-modules", serve_expand_modules, rq_optional),
-  REQ_LINE("ci", serve_ci, rq_essential),
-  REQ_LINE("co", serve_co, rq_essential),
-  REQ_LINE("update", serve_update, rq_essential),
-  REQ_LINE("diff", serve_diff, rq_optional),
-  REQ_LINE("log", serve_log, rq_optional),
-  REQ_LINE("add", serve_add, rq_optional),
-  REQ_LINE("remove", serve_remove, rq_optional),
-  REQ_LINE("update-patches", serve_ignore, rq_optional),
-  REQ_LINE("gzip-file-contents", serve_gzip_contents, rq_optional),
-  REQ_LINE("status", serve_status, rq_optional),
-  REQ_LINE("rdiff", serve_rdiff, rq_optional),
-  REQ_LINE("tag", serve_tag, rq_optional),
-  REQ_LINE("rtag", serve_rtag, rq_optional),
-  REQ_LINE("import", serve_import, rq_optional),
-  REQ_LINE("admin", serve_admin, rq_optional),
-  REQ_LINE("export", serve_export, rq_optional),
-  REQ_LINE("history", serve_history, rq_optional),
-  REQ_LINE("release", serve_release, rq_optional),
-  REQ_LINE("watch-on", serve_watch_on, rq_optional),
-  REQ_LINE("watch-off", serve_watch_off, rq_optional),
-  REQ_LINE("watch-add", serve_watch_add, rq_optional),
-  REQ_LINE("watch-remove", serve_watch_remove, rq_optional),
-  REQ_LINE("watchers", serve_watchers, rq_optional),
-  REQ_LINE("editors", serve_editors, rq_optional),
-  REQ_LINE("init", serve_init, rq_optional),
-  REQ_LINE("annotate", serve_annotate, rq_optional),
-  REQ_LINE("noop", serve_noop, rq_optional),
-  REQ_LINE(NULL, NULL, rq_optional)
+  REQ_LINE("expand-modules", serve_expand_modules, 0),
+  REQ_LINE("ci", serve_ci, RQ_ESSENTIAL),
+  REQ_LINE("co", serve_co, RQ_ESSENTIAL),
+  REQ_LINE("update", serve_update, RQ_ESSENTIAL),
+  REQ_LINE("diff", serve_diff, 0),
+  REQ_LINE("log", serve_log, 0),
+  REQ_LINE("add", serve_add, 0),
+  REQ_LINE("remove", serve_remove, 0),
+  REQ_LINE("update-patches", serve_ignore, 0),
+  REQ_LINE("gzip-file-contents", serve_gzip_contents, 0),
+  REQ_LINE("status", serve_status, 0),
+  REQ_LINE("rdiff", serve_rdiff, 0),
+  REQ_LINE("tag", serve_tag, 0),
+  REQ_LINE("rtag", serve_rtag, 0),
+  REQ_LINE("import", serve_import, 0),
+  REQ_LINE("admin", serve_admin, 0),
+  REQ_LINE("export", serve_export, 0),
+  REQ_LINE("history", serve_history, 0),
+  REQ_LINE("release", serve_release, 0),
+  REQ_LINE("watch-on", serve_watch_on, 0),
+  REQ_LINE("watch-off", serve_watch_off, 0),
+  REQ_LINE("watch-add", serve_watch_add, 0),
+  REQ_LINE("watch-remove", serve_watch_remove, 0),
+  REQ_LINE("watchers", serve_watchers, 0),
+  REQ_LINE("editors", serve_editors, 0),
+  REQ_LINE("init", serve_init, RQ_ROOTLESS),
+  REQ_LINE("annotate", serve_annotate, 0),
+  REQ_LINE("noop", serve_noop, 0),
+  REQ_LINE(NULL, NULL, 0)
 
 #undef REQ_LINE
 };
@@ -4852,7 +4854,16 @@ error ENOMEM Virtual memory exhausted.\n");
 		     * "co".
 		     */
 		    continue;
-		(*rq->func) (cmd);
+
+		if (!(rq->flags & RQ_ROOTLESS)
+		    && CVSroot_directory == NULL)
+		{
+		    if (alloc_pending (80))
+			sprintf (pending_error_text,
+				 "E Protocol error: Root request missing");
+		}
+		else
+		    (*rq->func) (cmd);
 		break;
 	    }
 	if (rq->name == NULL)
