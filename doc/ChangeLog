@@ -1,3 +1,11 @@
+Wed Jan  3 17:01:58 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvsclient.texi: Remove How To node.  It was out of date
+	(again!), and I am getting sick of trying to update it (internals
+	documentation should be in the comments, where it at least has a
+	fighting chance of staying up to date).
+	(Protocol): Say what \n and \t mean in this document.
+
 Tue Jan  2 23:39:32 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (Wrappers): Change comb/uncom to wrap/unwrap.

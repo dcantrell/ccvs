@@ -12,7 +12,6 @@ regular CVS manual for that.
 @menu
 * Goals::             Basic design decisions, requirements, scope, etc.
 * Notes::             Notes on the current implementation
-* How To::            How to remote your favorite CVS command
 * Protocol Notes::    Possible enhancements, limitations, etc. of the protocol
 * Protocol::          Complete description of the protocol
 @end menu
@@ -78,110 +77,9 @@ succeeds, it subsequently runs identically to @code{cvs server}.
 
 The current server implementation can use up huge amounts of memory
 when transmitting a lot of data over a slow link (i.e. the network is
-slower than the server can generate the data).  Avoiding this is
-tricky because of the goal of not having the server block on the
-network when it has locks open (this could lock the repository for
-hours if things are running smoothly or longer if not).  Several
-solutions are possible.  The two-pass design would involve first
-noting what versions of everything we need (with locks in place) and
-then sending the data, blocking on the network, with no locks needed.
-The lather-rinse-repeat design would involve doing things as it does
-now until a certain amount of server memory is being used (10M?), then
-releasing locks, and trying the whole update again (some of it is
-presumably already done).  One problem with this is getting merges to
-work right.  The two-pass design appears to be the more elegant of the
-two (it actually reduces the amount of time that locks need to be in
-place), but people have expressed concerns about whether it would be
-slower (because it traverses the repository twice).  It is not clear
-whether this is a real problem (looking for whether a file needs to be
-updated and actually checking it out are done separately already), but
-I don't think anyone has investigated carefully.  One hybrid approach
-which avoids the problem with merges would be to start out in one-pass
-mode and switch to two-pass mode if data is backing up--but this
-complicates the code and should be undertaken only if the pure
-two-pass design is shown to be flawed.
-
-@node How To
-@chapter How to add more remote commands
-
-It's the usual simple twelve step process.  Let's say you're making
-the existing @code{cvs fix} command work remotely.
-
-@itemize @bullet
-@item
-Add a declaration for the @code{fix} function, which already implements
-the @code{cvs fix} command, to @file{cvs.h}.
-@item
-Now, the client side.
-Add a function @code{client_fix} to @file{client.c}, which calls 
-@code{parse_cvsroot} and then calls the usual @code{fix} function.
-@item
-Add a declaration for @code{client_fix} to @file{client.h}.
-@item
-Add @code{client_fix} to the "fix" entry in the table of commands in
-@file{main.c}.
-@item
-Now for the server side.
-Add the @code{serve_fix} routine to @file{server.c}; make it do:
-@example @code
-static void
-serve_fix (arg)
-    char *arg;
-@{
-    do_cvs_command (fix);
-@}
-@end example
-@item
-Add the server command @code{"fix"} to the table of requests in @file{server.c}.
-@item
-The @code{fix} function can now be entered in three different situations:
-local (the old situation), client, and server.  On the server side it probably
-will not need any changes to cope.
-Modify the @code{fix} function so that if it is run when the variable
-@code{client_active} is set, it starts the server, sends over parsed 
-arguments and possibly files, sends a "fix" command to the server,
-and handles responses from the server.  Sample code:
-@example @code
-    if (!client_active) @{
-        /* Do whatever you used to do */
-    @} else @{
-        /* We're the local client.  Fire up the remote server.  */
-        start_server ();
-
-	ign_setup ();
-
-        if (local)
-            send_arg ("-l");
-        send_option_string (options);
-
-        send_files (argc, argv, local);
-
-        if (fprintf (to_server, "fix\n") < 0)
-            error (1, errno, "writing to server");
-        err = get_responses_and_close ();
-    @}
-@end example
-@item
-Build it locally.  Copy the new version into somewhere on the 
-remote system, in your path so that @code{rsh host cvs} finds it.
-Now you can test it.
-@item
-You may want to set the environment variable @code{CVS_CLIENT_PORT} to
--1 to prevent the client from contacting the server via a direct TCP
-link.  That will force the client to fall back to using @code{rsh},
-which will run your new binary.
-@item
-Set the environment variable @code{CVS_CLIENT_LOG} to a filename prefix
-such as @file{/tmp/cvslog}.  Whenever you run a remote CVS command,
-the commands and responses sent across the client/server connection
-will be logged in @file{/tmp/cvslog.in} and @file{/tmp/cvslog.out}.
-Examine them for problems while you're testing.
-@end itemize
-
-This should produce a good first cut at a working remote @code{cvs fix}
-command.  You may have to change exactly how arguments are passed,
-whether files or just their names are sent, and how some of the deeper
-infrastructure of your command copes with remoteness.
+slower than the server can generate the data).  There is some
+experimental code (see @code{SERVER_FLOWCONTROL} in options.h) which
+should help significantly.
 
 @node Protocol Notes
 @chapter Notes on the Protocol
@@ -222,6 +120,9 @@ repositories are implemented, and the rcsmerge is done by the client.
 
 @node Protocol
 @chapter The CVS client/server protocol
+
+In the following, @samp{\n} refers to a linefeed and @samp{\t} refers
+to a horizontal tab.
 
 @menu
 * Entries Lines::               
