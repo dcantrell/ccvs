@@ -1,3 +1,8 @@
+Sat Oct 25 00:58:24 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* RCSFILES: rcsfile.5 is correct about {num} after next being
+	optional.
+
 Wed Oct 22 10:08:27 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (Error messages): Add message about unrecognized
