@@ -27,6 +27,9 @@ GNU General Public License for more details.
 #include <sys/types.h>
 #include <sys/stat.h>
 
+/* Note that PARAMS is just internal to the diff library; diffrun.h
+   has its own mechanism, which will hopefully be less likely to
+   conflict with the library's caller's namespace.  */
 #if __STDC__
 #define PARAMS(args) args
 #define VOID void

@@ -17,7 +17,7 @@ GNU General Public License for more details.
 
 #include "diff.h"
 
-#ifdef __STDC__
+#if __STDC__
 #include <stdarg.h>
 #else
 #include <varargs.h>
@@ -338,14 +338,14 @@ write_output (text, len)
 
 /* Printf something to the output file.  */
 
-#ifdef __STDC__
+#if __STDC__
 #define VA_START(args, lastarg) va_start(args, lastarg)
 #else /* ! __STDC__ */
 #define VA_START(args, lastarg) va_start(args)
 #endif /* __STDC__ */
 
 void
-#if defined (__STDC__)
+#if __STDC__
 printf_output (const char *format, ...)
 #else
 printf_output (format, va_alist)
