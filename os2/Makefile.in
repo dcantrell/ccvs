@@ -1,0 +1,33 @@
+### OS/2 has a real `make', so we might actually end up using this
+### file.  In any case, we would need it for 'make dist' to work
+### properly on Unix machines.
+
+HEADERS = tcpip.h
+
+SOURCES = 
+
+DISTFILES = ${HEADERS} ${SOURCES} \
+  README ChangeLog Makefile.in .cvsignore
+
+all:
+
+.PHONY: all install uninstall
+all install uninstall:
+
+.PHONY: tags TAGS
+tags TAGS:
+
+.PHONY: ls
+ls:
+	@echo ${DISTFILES}
+
+.PHONY: clean distclean realclean mostlyclean
+clean distclean realclean mostlyclean:
+
+.PHONY: lint
+lint:
+
+.PHONY: dist-dir
+dist-dir:
+	mkdir ${DISTDIR}
+	ln ${DISTFILES} ${DISTDIR}
