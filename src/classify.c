@@ -197,7 +197,7 @@ Classify_File (finfo, tag, date, options, force_tag_match, aflag, versp,
     else
     {
 	/* A normal entry, TS_Rcs is valid */
-	if (vers->vn_rcs == NULL)
+	if (vers->vn_rcs == NULL || RCS_isdead (vers->srcfile, vers->vn_rcs))
 	{
 	    /* There is no RCS file */
 
