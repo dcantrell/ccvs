@@ -6347,7 +6347,7 @@ standard thing to put in the @code{notify} file is the
 single line:
 
 @example
-ALL mail %s -s \"CVS notification\"
+ALL mail %s -s "CVS notification"
 @end example
 
 This causes users to be notified by electronic mail.
