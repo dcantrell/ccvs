@@ -2918,10 +2918,10 @@ error  \n");
 	    fd_set readfds;
 	    fd_set writefds;
 	    int numfds;
-#ifdef SERVER_FLOWCONTROL
-	    int bufmemsize;
 	    struct timeval *timeout_ptr;
 	    struct timeval timeout;
+#ifdef SERVER_FLOWCONTROL
+	    int bufmemsize;
 
 	    /*
 	     * See if we are swamping the remote client and filling our VM.
