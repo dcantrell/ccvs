@@ -1,3 +1,8 @@
+2004-10-01  Derek Price  <derek@ximbiot.com>
+
+	* cvs.texinfo (Write proxies, Global options): Detail operation of
+	global --allow-root option, Remove references to global --primary-root.
+
 2004-09-25  Derek Price  <derek@ximbiot.com>
 
 	* mkman.in: Move to...

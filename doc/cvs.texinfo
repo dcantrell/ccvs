@@ -2978,8 +2978,10 @@ servers.  This is accomplished by means of one or more @dfn{write proxies}, or
 
 When a @sc{cvs} client accesses a secondary server and only sends read
 requests, then the secondary server handles the entire request.  If the client
-sends any write requests, however, the secondary server becomes a transparent
-proxy for the primary server, which actually handles the write request.
+sends any write requests, however, the secondary server asks the client to
+redirect its write request to the primary server, if the client supports
+redirect requests, and otherwise becomes a transparent proxy for the primary
+server, which actually handles the write request.
 
 In this manner, any number of read-only secondary servers may be configured as
 write proxies for the primary server, effectively distributing the load from
@@ -3016,13 +3018,20 @@ Duplicating the primary repository at the new location.
 Setting up the @file{loginfo}, @file{postadmin}, @file{posttag}, and
 @file{postwatch} files on the primary to propagate writes to the new secondary.
 @item
-Configuring local access to the secondary as you would configure access to any
-other CVS server (@pxref{Remote repositories}).
+Configure remote access to the secondary(ies) as you would configure access
+to any other CVS server (@pxref{Remote repositories}).
 @item
-Ensuring that the @code{--primary-root=@var{secondarypath}=@var{primarypath}}
-is passed to all incovations of the secondary server if the path to the
-@sc{cvs} repository directory is different on the two servers.  This will be
-obsoleted shortly.
+Ensuring that @code{--allow-root=@var{secondary-cvsroot}} is passed to
+@strong{all} incovations of the secondary server if the path to the @sc{cvs}
+repository directory is different on the two servers and you wish to support
+clients that do not handle the @samp{Redirect} resopnse (CVS 1.12.9 and earlier
+clients do not handle the @samp{Redirect} response).
+
+Please note, again, that writethrough proxy suport requires
+@code{--allow-root=@var{secondary-cvsroot}} to be specified for @strong{all}
+incovations of the secondary server, not just @samp{pserver} invocations.
+This may require a wrapper script for the @sc{cvs} executable
+on your server machine.
 @end enumerate
 
 
@@ -8121,8 +8130,10 @@ left of @samp{cvs_command}) are:
 
 @table @code
 @item --allow-root=@var{rootdir}
-Specify legal @sc{cvsroot} directory.  See
-@ref{Password authentication server}.
+May be invoked multiple times to specify one legal @sc{cvsroot} directory with
+each invocation.  Also causes CVS to preparse the configuration file for each
+specified root, which can be useful when configuring write proxies,  See
+@ref{Password authentication server} & @ref{Write proxies}.
 
 @cindex Authentication, stream
 @cindex Stream authentication

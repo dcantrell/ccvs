@@ -234,8 +234,10 @@ left of \fBcvs_command\fR) are:
 .IP "" 0
 \fB--allow-root=\fIrootdir\fB\fR
 .IP "" 2
-Specify legal \fBcvsroot\fR directory.  See
-see node `Password authentication server\(aq in the CVS manual.
+May be invoked multiple times to specify one legal \fBcvsroot\fR directory with
+each invocation.  Also causes CVS to preparse the configuration file for each
+specified root, which can be useful when configuring write proxies,  See
+see node `Password authentication server\(aq in the CVS manual & see node `Write proxies\(aq in the CVS manual.
 .SP
 .IX "Authentication, stream"
 .IX "Stream authentication"
