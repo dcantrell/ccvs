@@ -1,5 +1,8 @@
 2002-05-07  Larry Jones  <lawrence.jones@eds.com>
 
+	* commit.c (commit): Always send -m to the server, even if there's
+	no message.
+
 	* create_adm.c (Create_Admin): Add dotemplate parameter to trace.
 	Remove unreachable code.
 
