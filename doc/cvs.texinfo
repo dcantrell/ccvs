@@ -7238,9 +7238,13 @@ If the edit script exits with a non-zero exit status,
 the commit is aborted.
 
 Note: when @sc{CVS} is accessing a remote repository,
-@file{editinfo} will be run on the @emph{remote}
-(i.e., server) side, not the client side (@pxref{Remote
-repositories}).
+or when the @samp{-m} or @samp{-F} options to @code{cvs
+commit} are used, @file{editinfo} will not be consulted.
+There is no good workaround for this.
+@c FORCE_USE_EDITOR in the sources sort of helps a bit,
+@c but doesn't help with remote CVS, and in any event the
+@c whole feature confuses two concepts which should be
+@c separate: (1) getting the message; and (2) validating it.
 
 @menu
 * editinfo example::            Editinfo example
