@@ -1,3 +1,7 @@
+2004-10-07  Derek Price  <derek@ximbiot.com>
+
+	* system.h: Reorganize slightly.
+
 2004-10-07  Conrad T. Pino  <Conrad@Pino.com>
 
 	* libcvs.dsp: Remove "xstrdup.c" from project.

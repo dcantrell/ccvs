@@ -57,9 +57,6 @@
 #include <fnmatch.h>
 #include <getopt.h>	/* Has GNU extensions,  */
 
-/* For struct timespec.  */
-#include "timespec.h"
-
 
 
 #if HAVE_SYS_STAT_H
@@ -83,11 +80,18 @@
 /* Assume these headers. */
 #include <pwd.h>
 
+/* More GNULIB includes */
 /* This include enables the use of the *_unlocked IO functions from glibc. */
 #include "unlocked-io.h"
 
-/* GNULIB includes */
+/* For struct timespec.  */
+#include "timespec.h"
+
+/* This is a replacement stub for gettext provided by GNULIB when gettext is
+ * not available.
+ */
 #include <gettext.h>
+/* End GNULIB includes */
 
 #ifdef STAT_MACROS_BROKEN
 #undef S_ISBLK
