@@ -1,5 +1,9 @@
 Fri Jul 26 16:17:48 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* config.h: Remove alloca cruft.  CVS no longer uses alloca.
+	* Makefile.in (SOURCES): Remove alloca.c.
+	* alloca.c: Removed.
+
 	* server_if.c: Revert to version before Ladwig's 26 Jul 96
 	submission.  In particular, this is to pick up the following
 	changes:
