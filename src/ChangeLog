@@ -1,3 +1,7 @@
+2004-02-12  Derek Price  <derek@ximbiot.com>
+
+	* modules.c: Reformat comment and line to fit in 80 chars.
+
 2004-02-12  Larry Jones  <lawrence.jones@ugsplm.com>
 
 	* modules.c (_do_module): Rename to my_module to avoid reserved name.
