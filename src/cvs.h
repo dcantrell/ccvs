@@ -332,24 +332,52 @@ typedef enum classify_type Ctype;
  */
 struct vers_ts
 {
-    char *vn_user;			/* rcs version user file derives from
-					 * it can have the following special
-					 * values:
-					 *    empty = no user file
-					 *    0 = user file is new
-					 *    -vers = user file to be removed */
-    char *vn_rcs;			/* the version for the rcs file
-					 * (tag version?) 	 */
-    char *vn_tag;		        /* the symbolic tag name */
-    char *ts_user;			/* the timestamp for the user file */
-    char *ts_rcs;			/* the user timestamp from entries */
-    char *options;			/* opts from Entries file
-					 * (keyword expansion)	 */
-    char *ts_conflict;			/* Holds time_stamp of conflict */
-    char *tag;				/* tag stored in the Entries file */
-    char *date;				/* date stored in the Entries file */
-    Entnode *entdata;			/* pointer to entries file node  */
-    RCSNode *srcfile;			/* pointer to parsed src file info */
+    /* rcs version user file derives from, from CVS/Entries.
+     * it can have the following special values:
+     *    empty = no user file
+     *    0 = user file is new
+     *    -vers = user file to be removed.  */
+    char *vn_user;
+
+    /* Numeric revision number corresponding to ->vn_tag (->vn_tag
+       will often be symbolic).  */
+    char *vn_rcs;
+    /* If ->tag corresponds to a tag which really exists in this file,
+       this is just a copy of ->tag.  If not, this is either NULL or
+       the head revision.  (Or something like that, see RCS_getversion
+       and friends).  */
+    char *vn_tag;
+
+    /* This is the timestamp from stating the file in the working directory.
+       It is NULL if there is no file in the working directory.  */
+    char *ts_user;
+    /* Timestamp from CVS/Entries.  For the server, ts_user and ts_rcs
+       are computed in a slightly different way, but the fact remains that
+       if they are equal the file in the working directory is unmodified
+       and if they differ it is modified.  */
+    char *ts_rcs;
+
+    /* Options from CVS/Entries (keyword expansion).  */
+    char *options;
+
+    /* If non-NULL, there was a conflict (or merely a merge?  See merge_file)
+       and the time stamp in this field is the time stamp of the working
+       directory file which was created with the conflict markers in it.
+       This is from CVS/Entries.  */
+    char *ts_conflict;
+
+    /* Tag specified on the command line, or if none, tag stored in
+       CVS/Entries.  */
+    char *tag;
+    /* Date specified on the command line, or if none, date stored in
+       CVS/Entries.  */
+    char *date;
+
+    /* Pointer to entries file node  */
+    Entnode *entdata;
+
+    /* Pointer to parsed src file info */
+    RCSNode *srcfile;
 };
 typedef struct vers_ts Vers_TS;
 
