@@ -1,5 +1,13 @@
 2003-05-19  Derek Price  <derek@ximbiot.com>
 
+	* lstat.m4: New file from
+	<https://savannah.gnu.org/projects/gnulib>.
+	* stat.m4: Ditto.
+
+	* Makefile.in: Regenerated.
+
+2003-05-19  Derek Price  <derek@ximbiot.com>
+
 	* Makefile.am: New file.
 	* acx_have_gssapi.m4: Ditto.
 	* cvs_func_printf_ptr.m4: Ditto.
