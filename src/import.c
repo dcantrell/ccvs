@@ -387,8 +387,7 @@ import (int argc, char **argv)
 	    (void) fprintf (logfp, "\n%d", conflicts);
 	else
 	    (void) fprintf (logfp, "\nNo");
-	(void) fprintf (logfp, " conflicts created by this import.\n",
-			conflicts);
+	(void) fprintf (logfp, " conflicts created by this import.\n");
 	(void) fprintf (logfp,
 			"Use the following command to help the merge:\n\n");
 	(void) fprintf (logfp, "\t%s checkout ", program_name);
@@ -1608,7 +1607,7 @@ write_error:
  * to indicate the error.  If not, return a nonnegative value.
  */
 int
-expand_at_signs (const char *buf, off_t size, FILE *fp)
+expand_at_signs (const char *buf, size_t size, FILE *fp)
 {
     register const char *cp, *next;
 
@@ -1624,7 +1623,7 @@ expand_at_signs (const char *buf, off_t size, FILE *fp)
 	size -= len;
     }
 
-    if (fwrite (cp, 1, size, fp) != (size_t) size)
+    if (fwrite (cp, 1, size, fp) != size)
 	return EOF;
 
     return 1;

@@ -562,7 +562,7 @@ time_t get_date (char *date, struct timeb *now);
 int Create_Admin (const char *dir, const char *update_dir,
                   const char *repository, const char *tag, const char *date,
                   int nonbranch, int warn, int dotemplate);
-int expand_at_signs (const char *, off_t, FILE *);
+int expand_at_signs (const char *, size_t, FILE *);
 
 /* Locking subsystem (implemented in lock.c).  */
 

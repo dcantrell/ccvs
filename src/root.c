@@ -518,7 +518,7 @@ parse_cvsroot (const char *root_in)
 
 #ifdef CLIENT_SUPPORT
 	/* Parse the method options, for instance, proxy, proxyport */
-	while (p = strtok (NULL, ";"))
+	while ((p = strtok (NULL, ";")))
 	{
 	    char *q = strchr (p, '=');
 	    if (q == NULL)

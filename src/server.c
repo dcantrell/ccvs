@@ -683,7 +683,6 @@ input_memory_error (struct buffer *buf)
 static void
 rewind_buf_from_net (void)
 {
-    int fd;
     struct buffer *log;
 
     assert (proxy_log);
@@ -2052,7 +2051,7 @@ serve_unchanged (char *arg)
 		 * depended on the subsequent Unchanged request to overwrite.
 		 */
 		char *d = timefield + 1;
-		if (cp = strchr (d, '/'))
+		if ((cp = strchr (d, '/')))
 		{
 		    while (*cp)
 		    {
@@ -2353,13 +2352,13 @@ become_proxy (void)
     open_connection_to_server (PrimaryServer, &buf_to_primary,
                                &buf_from_primary);
     setup_logfiles ("CVS_SECONDARY_LOG", &buf_to_primary, &buf_from_primary);
-    if (status = set_nonblock (buf_from_primary))
+    if ((status = set_nonblock (buf_from_primary)))
 	error (1, status, "failed to set nonblocking io from primary");
-    if (status = set_nonblock (buf_from_net))
+    if ((status = set_nonblock (buf_from_net)))
 	error (1, status, "failed to set nonblocking io from client");
-    if (status = set_nonblock (buf_to_primary))
+    if ((status = set_nonblock (buf_to_primary)))
 	error (1, status, "failed to set nonblocking io to primary");
-    if (status = set_nonblock (buf_to_net))
+    if ((status = set_nonblock (buf_to_net)))
 	error (1, status, "failed to set nonblocking io to client");
 
     to_primary_fd = buf_get_fd (buf_to_primary);
@@ -2384,8 +2383,8 @@ become_proxy (void)
 	/* The fd for a multi-source buffer can change with any read.  */
 	from_net_fd = buf_from_net ? buf_get_fd (buf_from_net) : -1;
 
-	if (buf_from_net && !buf_empty_p (buf_from_net)
-	    || buf_from_primary && !buf_empty_p (buf_from_primary))
+	if ((buf_from_net && !buf_empty_p (buf_from_net))
+	    || (buf_from_primary && !buf_empty_p (buf_from_primary)))
 	{
 	    /* There is data pending so don't block if we don't find any new
 	     * data on the fds.
@@ -6884,7 +6883,6 @@ void
 pserver_authenticate_connection (void)
 {
     char *tmp;
-    size_t tmp_len;
 #ifdef AUTH_SERVER_SUPPORT
     char *repository = NULL;
     char *username = NULL;

@@ -1071,10 +1071,11 @@ cause intermittent sandbox corruption.");
 		 */
 		server_active ||
 #endif
+	        (
 #ifdef CLIENT_SUPPORT
-		!current_parsed_root->isremote &&
+		 !current_parsed_root->isremote &&
 #endif
-		!lock_cleanup_setup)
+		 !lock_cleanup_setup))
 	    {
 		/* Set up to clean up any locks we might create on exit.  */
 		cleanup_register (Lock_Cleanup);

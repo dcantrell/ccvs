@@ -19,7 +19,7 @@ struct buffer
     struct buffer_data *last;
 
     /* Nonzero if the buffer is in nonblocking mode.  */
-    int nonblocking;
+    bool nonblocking;
 
     /* The start index of the last data returned to a caller, relative to when
      * this buffer was instantiated.
@@ -43,14 +43,14 @@ struct buffer
        
        If there are a nonzero number of bytes available, less than NEED,
        followed by end of file, just read those bytes and return 0.  */
-    int (*input) (void *closure, char *data, int need, int size,
-			int *got);
+    int (*input) (void *closure, char *data, size_t need, size_t size,
+		  size_t *got);
 
     /* Write data.  This should write up to HAVE bytes from DATA.
        This should return 0 on success, or an errno code.  It should
        set the number of bytes written in *WROTE.  */
-    int (*output) (void *closure, const char *data, int have,
-			 int *wrote);
+    int (*output) (void *closure, const char *data, size_t have,
+		   size_t *wrote);
 
     /* Flush any data which may be buffered up after previous calls to
        OUTPUT.  This should return 0 on success, or an errno code.  */
@@ -61,7 +61,7 @@ struct buffer
        blocking mode.  Otherwise, it should be placed into
        non-blocking mode.  This should return 0 on success, or an
        errno code.  */
-    int (*block) (void *closure, int block);
+    int (*block) (void *closure, bool block);
 
     /* Return the file descriptor underlying this buffer, if any, or -1
      * otherwise.
@@ -113,19 +113,17 @@ struct buffer_data
 typedef void (*BUFMEMERRPROC) (struct buffer *);
 
 struct buffer *buf_initialize (size_t, size_t,
-                               int (*) (void *, char *, int, int, int *),
-			       int (*) (void *, const char *, int, int *),
+                               int (*) (void *, char *, size_t, size_t,
+					size_t *),
+			       int (*) (void *, const char *, size_t, size_t *),
 			       int (*) (void *),
-			       int (*) (void *, int),
+			       int (*) (void *, bool),
 			       int (*) (void *),
 			       int (*) (struct buffer *),
 			       void (*) (struct buffer *),
 			       void *);
 void buf_free (struct buffer *);
 struct buffer *buf_nonio_initialize (void (*) (struct buffer *));
-struct buffer *stdio_buffer_initialize (FILE *, int, int,
-					void (*) (struct buffer *));
-FILE *stdio_buffer_get_file (struct buffer *);
 struct buffer *compress_buffer_initialize (struct buffer *, int, int,
 					   void (*) (struct buffer *));
 struct buffer *packetizing_buffer_initialize
@@ -138,7 +136,7 @@ void buf_output (struct buffer *, const char *, int);
 void buf_output0 (struct buffer *, const char *);
 void buf_append_char (struct buffer *, int);
 int buf_send_output (struct buffer *);
-int buf_flush (struct buffer *, int);
+int buf_flush (struct buffer *, bool);
 int set_nonblock (struct buffer *);
 int set_block (struct buffer *);
 int buf_send_counted (struct buffer *);

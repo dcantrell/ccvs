@@ -38,7 +38,7 @@ struct ms_buffer
 
 /* The block function for a multi-source buffer.  */
 static int
-ms_buffer_block (void *closure, int block)
+ms_buffer_block (void *closure, bool block)
 {
     struct ms_buffer *mb = closure;
 
@@ -53,7 +53,8 @@ ms_buffer_block (void *closure, int block)
 
 /* The input function for a log buffer.  */
 static int
-ms_buffer_input (void *closure, char *data, int need, int size, int *got)
+ms_buffer_input (void *closure, char *data, size_t need, size_t size,
+		 size_t *got)
 {
     struct ms_buffer *mb = closure;
     int status;
