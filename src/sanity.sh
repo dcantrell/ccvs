@@ -11985,6 +11985,63 @@ xCVS:  Tag: br
 xCVS: 	file2
 xCVS: ----------------------------------------------------------------------
 ============================================================================="
+
+	  # Test CVS's response to an unchanged log message
+	  cat >${TESTDIR}/editme <<EOF
+#!${TESTSHELL}
+sleep 1
+exit 0
+EOF
+	  chmod +x ${TESTDIR}/editme
+	  dotest_fail editor-emptylog-1 "echo a |${testcvs} -e ${TESTDIR}/editme ci -f file1" \
+"
+Log message unchanged or not specified
+a)bort, c)ontinue, e)dit, !)reuse this message unchanged for remaining dirs
+Action: (continue) ${PROG} \[[a-z]* aborted\]: aborted by user"
+
+	  # Test CVS's response to an empty log message
+	  cat >${TESTDIR}/editme <<EOF
+#!${TESTSHELL}
+sleep 1
+cat /dev/null >\$1
+exit 0
+EOF
+	  chmod +x ${TESTDIR}/editme
+	  dotest_fail editor-emptylog-1 "echo a |${testcvs} -e ${TESTDIR}/editme ci -f file1" \
+"
+Log message unchanged or not specified
+a)bort, c)ontinue, e)dit, !)reuse this message unchanged for remaining dirs
+Action: (continue) ${PROG} \[[a-z]* aborted\]: aborted by user"
+
+	  # Test CVS's response to a log message with one blank line
+	  cat >${TESTDIR}/editme <<EOF
+#!${TESTSHELL}
+sleep 1
+echo >\$1
+exit 0
+EOF
+	  chmod +x ${TESTDIR}/editme
+	  dotest_fail editor-emptylog-1 "echo a |${testcvs} -e ${TESTDIR}/editme ci -f file1" \
+"
+Log message unchanged or not specified
+a)bort, c)ontinue, e)dit, !)reuse this message unchanged for remaining dirs
+Action: (continue) ${PROG} \[[a-z]* aborted\]: aborted by user"
+
+	  # Test CVS's response to a log message with only comments
+	  cat >${TESTDIR}/editme <<EOF
+#!${TESTSHELL}
+sleep 1
+cat \$1 >${TESTDIR}/edit.new
+mv ${TESTDIR}/edit.new \$1
+exit 0
+EOF
+	  chmod +x ${TESTDIR}/editme
+	  dotest_fail editor-emptylog-1 "echo a |${testcvs} -e ${TESTDIR}/editme ci -f file1" \
+"
+Log message unchanged or not specified
+a)bort, c)ontinue, e)dit, !)reuse this message unchanged for remaining dirs
+Action: (continue) ${PROG} \[[a-z]* aborted\]: aborted by user"
+
 	  cd ../..
 	  rm -r 1
 	  rm ${TESTDIR}/editme

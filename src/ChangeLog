@@ -1,3 +1,12 @@
+2001-06-20  Derek Price  <dprice@collab.net>
+
+	* logmsg.c (do_editor): Abort in the case that the file has only
+	comment lines.
+	(Original patch from Mark Valentine <mark@thuvia.demon.co.uk>.)
+
+	* logmsg.c (do_editor): Fix rare memory leak.
+	* sanity.sh (editor): Add tests for aborted log messages.
+
 2001-06-20  Larry Jones  <larry.jones@sdrc.com>
 
 	* server.c (switch_to_user): Only set $CVS_USER if
