@@ -1,3 +1,8 @@
+1999-06-08  Larry Jones  <larry.jones@sdrc.com>
+
+	* sanity.sh (diff-4, dirs2-10, tagf-13, importc-7, conflicts2-142b8):
+	Use ${PROG} instead of "cvs".
+
 1999-06-05  Jim Kingdon  <http://www.cyclic.com>
 
 	* recurse.c (do_recursion, do_dir_proc): Make the SERVER_ACTIVE
