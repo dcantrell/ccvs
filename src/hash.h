@@ -46,6 +46,7 @@ typedef struct list List;
 
 List *getlist PROTO((void));
 Node *findnode PROTO((List * list, const char *key));
+Node *findnode_fn PROTO((List * list, const char *key));
 Node *getnode PROTO((void));
 int addnode PROTO((List * list, Node * p));
 int walklist PROTO((List * list, int (*)(Node *n, void *closure), void *closure));

@@ -1878,7 +1878,7 @@ ignore_files (ilist, update_dir)
 	file = dp->d_name;
 	if (strcmp (file, ".") == 0 || strcmp (file, "..") == 0)
 	    continue;
-	if (findnode (ilist, file) != NULL)
+	if (findnode_fn (ilist, file) != NULL)
 	    continue;
 
 	if (
