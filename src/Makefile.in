@@ -64,8 +64,8 @@ HEADERS = cvs.h rcs.h hash.h myndbm.h patchlevel.h \
 	update.h server.h client.h options.h.in
 
 DISTFILES = .cvsignore Makefile.in ChangeLog ChangeLog.fsf \
-	    NOTES RCS-patches README-rm-add \
-            sanity.sh sanity.el cvsbug.sh convert.sh \
+	    NOTES README-rm-add \
+            sanity.sh sanity.el cvsbug.sh \
             $(HEADERS) $(SOURCES) $(MSOURCES) 
 
 PROGS = cvs mkmodules cvsbug
