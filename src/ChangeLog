@@ -1,3 +1,9 @@
+2001-07-05  Larry Jones  <larry.jones@sdrc.com>
+
+	* rcs.c (rcsbuf_open): Use getpagesize() instead of sysconf() for
+	portability.
+	(RCS_copydeltas, rcsbuf_fill): Fix -Wall warnings.
+
 2001-07-04  Derek Price  <dprice@collab.net>
 
 	* Makefile.in: Regenerated with new Automake release candidate 1.4h.
