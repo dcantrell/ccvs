@@ -54,6 +54,7 @@ libcvs_a_SOURCES = \
 	yesno.c \
 	getline.h \
 	getopt.h \
+	getpagesize.h \
 	fnmatch.h \
 	md5.h \
 	regex.h \
