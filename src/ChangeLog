@@ -1,3 +1,12 @@
+Wed May 14 16:29:50 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* admin.c (admin): When sending options to server, don't try to
+	send av[ac].  It may contain one of the names that we'll send in
+	send_file_names (which caused tests like keyword-6 to work,
+	sort of accidentally), or it may contain NULL (which would tend to
+	cause a coredump).
+	* sanity.sh (basicb): New test basicb-21 tests for above fix.
+
 Mon May 12 16:22:00 1997  Larry Jones  <larry.jones@sdrc.com>
 
 	* add.c (add): Free message and repository in client code.

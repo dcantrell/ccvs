@@ -901,6 +901,19 @@ ${TESTDIR}/cvsroot/CVSROOT/Emptydir/emptyfile,v  <--  emptyfile
 initial revision: 1\.1
 done"
 	  cd ..
+
+	  mkdir 1; cd 1
+	  # "cvs admin" tests are scattered around a bit.  Here we test
+	  # ability to reject an unrecognized option.  The "keyword"
+	  # test has a test of "cvs admin -l" and the "binfiles" test
+	  # has a test of "cvs admin -k".  Note that -H is an illegal
+	  # option.  It probably should be an error message.  But 
+	  # currently it is one error message for each file operated on,
+	  # which in this case is zero files.
+	  dotest basicb-21 "${testcvs} -q admin -H" ""
+	  cd ..
+	  rmdir 1
+
 	  rm -rf test2
 
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
@@ -6560,7 +6573,6 @@ echo "OK, all tests completed."
 
 # TODO:
 # * use "test" not "[" and see if all test's support `-z'
-# * Test `cvs admin'.
 # * Test `cvs update -d foo' (where foo does not exist).
 # * Test `cvs update foo bar' (where foo and bar are both from the
 #   same directory in the repository).  Suppose one is a branch--make
