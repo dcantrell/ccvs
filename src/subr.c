@@ -338,7 +338,7 @@ getcaller (void)
 
 
 #ifdef lint
-#ifndef __GNUC__
+# ifndef __GNUC__
 /* ARGSUSED */
 bool
 get_date (struct timespec *result, char const *p, struct timespec const *now)
@@ -348,7 +348,7 @@ get_date (struct timespec *result, char const *p, struct timespec const *now)
 
     return false;
 }
-#endif
+# endif
 #endif
 
 

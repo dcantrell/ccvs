@@ -1,5 +1,9 @@
 2005-03-01  Derek Price  <derek@ximbiot.com>
 
+	* subr.c (get_date): Minor reformatting.
+
+2005-03-01  Derek Price  <derek@ximbiot.com>
+
 	* subr.c (get_date): Replace obsolete timeb cruft in this stub.
 
 2005-02-28  Mark D. Baushke  <mdb@cvshome.org>
