@@ -1,3 +1,9 @@
+1999-11-09  Jim Kingdon  <http://developer.redhat.com/>
+
+	* cvsclient.texi (Requests): Document the arguments to "log", now
+	that I've changed log.c to be more specific in terms of what it
+	will send.
+
 1999-11-05  Larry Jones  <larry.jones@sdrc.com>
 
 	* cvs.texinfo: Revert Karl's change once again since the code is now
