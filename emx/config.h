@@ -257,12 +257,6 @@ extern int fncmp (const char *n1, const char *n2);
    definition for this.  */
 extern void fnfold (char *FILENAME);
 
-/* #define this if your system terminates lines in text files with
-   CRLF instead of plain LF, and your I/O functions automatically
-   translate between using LF in memory and CRLF on disk, unless you
-   specifically tell them not to.  */
-#define LINES_CRLF_TERMINATED 1
-
 /* Read data from INFILE, and copy it to OUTFILE.
    Open INFILE using INFLAGS, and OUTFILE using OUTFLAGS.
    This is useful for converting between CRLF and LF line formats.  */

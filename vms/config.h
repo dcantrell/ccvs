@@ -15,9 +15,6 @@
 /* More issues with how VMS names files, kind of a kludge.  See login.c.  */
 #define NO_SLASH_AFTER_HOME 1
 
-/* Only good for NT or DOS with hacked open */
-/* #undef LINES_CRLF_TERMINATED */
-
 /* Define to empty if the keyword does not work.  */
 /* #undef const */
 

@@ -1,3 +1,7 @@
+Sat Dec 27 16:57:41 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* config.h (LINES_CRLF_TERMINATED): Remove; no longer used.
+
 Tue Dec 23 08:28:44 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* README: Change bug-cvs address from prep.ai.mit.edu to gnu.org
