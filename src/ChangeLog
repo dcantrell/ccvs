@@ -1,5 +1,8 @@
 1998-10-06  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* Makefile.in (installcheck check): Remove references to RCSBIN;
+	they don't do anything now that RCSBIN is ignored.
+
 	* client.c: Clean up horrible confusion about whether stored_mode
 	or stored_mode_valid (or nothing :-)) indicates whether
 	stored_mode is allocated.  Should fix crashes (for example, on NT
