@@ -5930,13 +5930,13 @@ server (int argc, char **argv)
     {
 	/* Open the secondary log.  */
 	buf_from_net = log_buffer_initialize (buf_from_net, NULL, true,
-					      true, MaxSecondaryBufferSize,
+					      true, MaxProxyBufferSize,
 					      outbuf_memory_error);
 	proxy_log = buf_from_net;
 
 	/* And again for the out log.  */
 	buf_to_net = log_buffer_initialize (buf_to_net, NULL, true, false,
-					    MaxSecondaryBufferSize,
+					    MaxProxyBufferSize,
 					    outbuf_memory_error);
 	proxy_log_out = buf_to_net;
     }
