@@ -1,3 +1,16 @@
+2003-04-21  Derek Price  <derek@ximbiot.com>
+
+	* check_cvs.pl (get_history): Store the keyword expansion mode for
+	archives %finfo.  Store revision data in %rinfo.
+	(process_file): Get new %$finfo and %$rinfo arguments from get_history.
+	Use %$rinfo rather than @$revisions.  Pass $finfo and $rinfo to
+	check_revision.
+	(check_revision): Receive new %$finfo and %$rinfo arguments for
+	scripts.  Check out using -kb when the file is binary, -ko otherwise
+	to preserve keywords as they were committed.  Read any data not read by
+	called scripts before closing the file handle to the `cvs co' process
+	in order to avoid errors on close when data is left in the pipe.
+
 2003-04-16  Derek Price  <derek@ximbiot.com>
 
 	* check_cvs.pl (pod documentation): Add --all-revisions flag and

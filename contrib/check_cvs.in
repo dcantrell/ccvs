@@ -394,9 +394,9 @@ sub look_at_cvs_file
 
     $file = $path . $name if $path =~ s#Attic/$##;
 
-    my $revisions = get_history( $name );
+    my( $finfo, $rinfo ) = get_history( $name );
 
-    if( !defined( $revisions ) )
+    if( !defined( $rinfo ) )
     {
         verbose( "\t`$file' is corrupted.  It was determined to contain no\n"
 		         . "\trevisions via a cvs rlog command\n" );
@@ -404,20 +404,14 @@ sub look_at_cvs_file
         return();
     }
 
-    my @int_revisions;
-	if( $all_revisions )
-	{
-		@int_revisions = @$revisions;
-	}
-	else
-	{
-    	@int_revisions = find_interesting_revisions( @$revisions );
-	}
+    my @int_revisions =
+		$all_revisions ? keys %$rinfo
+    	               : find_interesting_revisions( keys %$rinfo );
 
     foreach my $revision ( @int_revisions )
     {
         verbose( "\t\tLooking at Revision: $revision\n" );
-        if( !check_revision( $file, $revision ) )
+        if( !check_revision( $file, $revision, $finfo, $rinfo ) )
         {
             verbose( "\t$file is corrupted in revision: $revision\n" );
             push( @list_of_broken_files, $file );
@@ -432,7 +426,7 @@ sub look_at_cvs_file
 #      get_history
 #
 #    PURPOSE :
-#      To retrieve a array of revision numbers.
+#      To retrieve an array of revision numbers.
 #
 #    PARAMETERS :
 #      $file - The file to retrieve the revision numbers for
@@ -441,7 +435,7 @@ sub look_at_cvs_file
 #      NONE
 #
 #    RETURNS :
-#      On Success - Reference to the list of revision numbers
+#      On Success - A hash of revision info, indexed by revision numbers.
 #      On Failure - undef.
 #
 #    COMMENTS :
@@ -455,37 +449,81 @@ sub get_history
 {
 	my( $file ) = @_;
 	$file =~ s/(["\$`\\])/\\$1/g;
-	my @revisions;
+	my %finfo;		# Info about the file.
+	my %rinfo;		# Info about revisions in the file.
 	my $revision;
 
 	my $fh = new IO::File( "rlog -N \"$file\" 2>&1 |" )
 		or die( "unable to run rlog, help" );
 
-	my $ignore = 1;
+	my $ignore = -1;
     while( my $line = $fh->getline )
     {
+		if( $ignore == 1 ) 
+		{
+			die "Couldn't read revision from `cvs rlog'.\n"
+			    . "line = $line"
+				unless ( $revision ) = $line =~ /^revision (\S+)/;
+			$ignore++;
+			next;
+        }
+		if( $ignore == 2 )
+		{
+		    if( my ( $date, $author, $state ) =
+		             $line =~ /^date: (\S+ \S+);  author: (\S+);  state: (\S+);/ )
+			{
+				$rinfo{$revision} =
+				{
+					'date' => $date,
+					'author' => $author,
+					'state' => $state
+				}
+			}
+			else
+			{
+				die "Couldn't read date/author/state for revision $revision\n"
+				    . "of $file from `cvs rlog'.\n"
+				    . "line = $line";
+			}
+			$ignore = 0;
+			next;
+		}
+		if( $ignore == -1 )
+		{
+			# Until we find the first ---- below, we can read general file info
+		    if( my ( $kwmode ) =
+		             $line =~ /^keyword substitution: (\S+)$/ )
+			{
+				$finfo{'kwmode'} = $kwmode;
+				next;
+			}
+		}
 		# rlog outputs a "----" line before the actual revision
 		# without this we'll pick up peoples comments if they 
 		# happen to start with revision
 		if( $line =~ /^----------------------------$/ )
 		{
-			$ignore = 0;
+			# Catch this case when $ignore == -1 or 0
+			$ignore = 1;
 			next;
 		}
-
-		if( ( !$ignore ) && ( ( $revision ) = $line =~ m/^revision (\S+)/ ) )
-		{
-			push( @revisions, $revision );
-			$ignore = 1;
-        }
     }
+	if( $verbose )
+	{
+		for (keys %rinfo)
+		{
+			verbose( "Revision $_: " );
+			verbose( join( ", ", %{$rinfo{$_}} ) );
+			verbose( "\n" );
+		}
+	}
 
     if( !$fh->close )
     {
         return( undef );
     }
 
-    return( \@revisions );
+    return( \%finfo, \%rinfo );
 }
 
 ######################################################################
@@ -505,6 +543,10 @@ sub get_history
 #    PARAMETERS :
 #      $file     - The file to look at.
 #      $revision - The revision to look at.
+#      $rinfo    - A reference to a hash containing information about the
+#                  revisions in $file.
+#                  For instance, $rinfo->{$revision}->{'date'} contains the
+#                  date revision $revision was committed.
 #
 #    GLOBALS :
 #      NONE
@@ -522,18 +564,23 @@ sub get_history
 #             option in the modules file
 #        -p - Put all output to standard out.
 #        -r - The revision of the file that we would like to look at.
+#        -ko - Get the revision exactly as checked in - do not allow
+#              RCS keyword substitution.
 #      Please note that cvs will return 0 for being able to successfully
 #      read the file and 1 for failure to read the file.
 #
 ######################################################################
 sub check_revision
 {
-    my( $file, $revision ) = @_;
+    my( $file, $revision, $finfo, $rinfo ) = @_;
 	$file =~ s/(["\$`\\])/\\$1/g;
 
     my $cwd = getcwd();
 
-    my $command = "cvs -d $cvsroot -l co -n -p -r $revision \"$file\"";
+	# Allow binaries to be checked out as such.  Otherwise, use -ko to avoid
+	# replacing keywords in the files.
+	my $kwmode = $finfo->{'kwmode'} eq 'b' ? '' : ' -ko';
+    my $command = "cvs -d $cvsroot -l co$kwmode -npr $revision \"$file\"";
 	my $ret_code;
 	if( @scripts )
 	{
@@ -563,13 +610,16 @@ sub check_revision
 					if $@;
 			}
 		}
+		# Read any data left so the close will work even if our called script
+		# didn't finish reading the data.
+		() = $fh->getlines;		# force list context
 		die "Syserr closing pipe from `cvs co': $!"
 			if !$fh->close && $!;
 		$ret_code = $?;
 	}
 	else
 	{
-    	$ret_code = 0xffff & system "$command > /dev/null 2>&1";
+    	$ret_code = 0xffff & system "$command >/dev/null 2>&1";
 	}
 
     return( 1 ) if $ret_code == 0;
