@@ -1,3 +1,12 @@
+1999-11-08  Jim Kingdon  <http://developer.redhat.com/>
+
+	* log.c (cvslog): If client_active, send options to the server
+	based on our parsed options rather than trying to send the exact
+	strings specified (using canonical forms, like RFC822/1123
+	dates, in the protocol is just cleaner).
+	(send_one, send_arg_list): New functions, helpers for above.
+	* sanity.sh (logopt-6a): New test, for this fix.
+
 1999-11-09  K.J. Paradise <kj@sourcegear.com>
 	
 	* admin.c: made the -H option do what it is documented to 
