@@ -1,3 +1,8 @@
+Tue Jun 10 14:03:32 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* sanity.sh: New tests stamps-9 through stamps-11 test timestamp
+	behavior on cvs update.
+
 Mon Jun  9 22:42:50 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* sanity.sh: Remove "#! /bin/zsh" line at end.  I assume it was
