@@ -7,11 +7,11 @@
 #include "update.h"		/* Things shared with update.c */
 #include "md5.h"
 
-#ifdef CVS_LOGIN
+#ifdef AUTH_CLIENT_SUPPORT
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netdb.h>
-#endif /* CVS_LOGIN */
+#endif /* AUTH_CLIENT_SUPPORT */
 
 #if HAVE_KERBEROS
 #define CVS_PORT 1999
@@ -2085,7 +2085,7 @@ get_responses_and_close ()
     if (client_prune_dirs)
 	process_prune_candidates ();
 
-#if defined(HAVE_KERBEROS) || defined(CVS_LOGIN)
+#if defined(HAVE_KERBEROS) || defined(AUTH_CLIENT_SUPPORT)
     if (server_fd != -1)
     {
 	if (shutdown (server_fd, 1) < 0)
@@ -2101,7 +2101,7 @@ get_responses_and_close ()
 	}
     }
     else
-#endif /* HAVE_KERBEROS || CVS_LOGIN */
+#endif /* HAVE_KERBEROS || AUTH_CLIENT_SUPPORT */
 
 #ifdef SHUTDOWN_SERVER
     SHUTDOWN_SERVER (fileno (to_server));
@@ -2153,7 +2153,7 @@ supported_request (name)
 }
 
 
-#ifdef CVS_LOGIN
+#ifdef AUTH_CLIENT_SUPPORT
 void
 init_sockaddr (name, hostname, port)
      struct sockaddr_in *name;
@@ -2241,7 +2241,7 @@ connect_to_pserver (tofdp, fromfdp, log)
   *tofdp   = tofd;
   *fromfdp = fromfd;
 }
-#endif /* CVS_LOGIN */
+#endif /* AUTH_CLIENT_SUPPORT */
 
 
 #if HAVE_KERBEROS
@@ -2393,13 +2393,13 @@ start_server ()
 
 #else /* ! HAVE_KERBEROS */
 
-#ifdef CVS_LOGIN
+#ifdef AUTH_CLIENT_SUPPORT
     if (use_authenticating_server)
       {
         connect_to_pserver (&tofd, &fromfd, log);
       }
     else
-#endif /* CVS_LOGIN */
+#endif /* AUTH_CLIENT_SUPPORT */
       {
 #if ! RSH_NOT_TRANSPARENT
         start_rsh_server (&tofd, &fromfd);

@@ -1,3 +1,18 @@
+Wed Dec  6 13:29:22 1995  Karl Fogel  <kfogel@floss.cyclic.com>
+
+        * server.c: same as below (AUTH_SERVER_SUPPORT).
+
+        * main.c: same as below (AUTH_SERVER_SUPPORT where appropriate).
+
+        * login.c: same same as below.
+
+        * cvs.h: same as below.
+
+        * client.c: use AUTH_CLIENT_SUPPORT, not CVS_LOGIN.
+
+        * options.h.in (AUTH_CLIENT_SUPPORT, AUTH_SERVER_SUPPORT): these
+        replace CVS_LOGIN.
+
 Wed Dec  6 00:04:58 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
         * server.c (authenticate_connection): expanded comment.

@@ -106,13 +106,13 @@ extern int errno;
 #include "client.h"
 #endif
 
-#ifdef CVS_LOGIN /* Authenticating server stuff. */
+#ifdef AUTH_CLIENT_SUPPORT
 extern int use_authenticating_server;
 void connect_to_pserver();
 # ifndef CVS_AUTH_PORT
 # define CVS_AUTH_PORT 2401
 # endif /* CVS_AUTH_PORT */
-#endif /* CVS_LOGIN */
+#endif /* AUTH_CLIENT_SUPPORT */
 
 #ifdef MY_NDBM
 #include "myndbm.h"

@@ -3731,7 +3731,7 @@ error ENOMEM Virtual memory exhausted.\n");
 }
 
 
-#ifdef CVS_LOGIN
+#ifdef AUTH_SERVER_SUPPORT
 
 /* This was test code, which we may need again. */
 #if 0
@@ -3854,7 +3854,7 @@ authenticate_connection ()
 #endif /* HAVE_PUTENV */
 }
 
-#endif CVS_LOGIN
+#endif AUTH_SERVER_SUPPORT
 
 
 #endif /* SERVER_SUPPORT */
