@@ -1,5 +1,8 @@
 Mon Jun 23 18:24:13 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* NEWS: Adjust mention of read-only access in the light of
+	changes to cvs.texinfo.
+
 	* TODO: Add item 186, concerning multisite.
 
 Sun, 22 Jun 1997  Jim Kingdon
