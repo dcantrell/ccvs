@@ -45,6 +45,12 @@ esac
 
 shift
 
+# Regexp to match what CVS will call itself in output that it prints.
+# FIXME: we don't properly quote this--if the name contains . we'll
+# just spuriously match a few things; if the name contains other regexp
+# special characters we are probably in big trouble.
+PROG=`basename ${testcvs}`
+
 # FIXME: try things (what things? checkins?) without -m.
 #
 # Some of these tests are written to expect -Q.  But testing with
@@ -388,8 +394,8 @@ for what in $tests; do
 	  cd ssdir
 	  echo ssfile >ssfile
 	  dotest basica-4 "${testcvs} add ssfile" \
-'cvs [a-z]*: scheduling file `ssfile'\'' for addition
-cvs [a-z]*: use '\''cvs commit'\'' to add this file permanently'
+"${PROG}"' [a-z]*: scheduling file `ssfile'\'' for addition
+'"${PROG}"' [a-z]*: use '\''cvs commit'\'' to add this file permanently'
 	  cd ../..
 	  dotest basica-5 "${testcvs} -q ci -m add-it" \
 'RCS file: /tmp/cvs-sanity/cvsroot/first-dir/sdir/ssdir/ssfile,v
@@ -406,8 +412,8 @@ done'
 new revision: 1.2; previous revision: 1.1
 done'
 	  dotest_fail basica-nonexist "${testcvs} -q ci nonexist" \
-'cvs [a-z]*: nothing known about `nonexist'\''
-cvs \[[a-z]* aborted\]: correct above errors first!'
+"${PROG}"' [a-z]*: nothing known about `nonexist'\''
+'"${PROG}"' \[[a-z]* aborted\]: correct above errors first!'
 	  dotest basica-8 "${testcvs} -q update" ''
 	  cd ..
 
@@ -805,7 +811,7 @@ N second-dir/file6
 N second-dir/file7
 N second-dir/file8
 N second-dir/file9
-cvs [a-z]*: Importing /tmp/cvs-sanity/cvsroot/second-dir/dir1
+'"${PROG}"' [a-z]*: Importing /tmp/cvs-sanity/cvsroot/second-dir/dir1
 N second-dir/dir1/file10
 N second-dir/dir1/file11
 N second-dir/dir1/file12
@@ -818,7 +824,7 @@ N second-dir/dir1/file6
 N second-dir/dir1/file7
 N second-dir/dir1/file8
 N second-dir/dir1/file9
-cvs [a-z]*: Importing /tmp/cvs-sanity/cvsroot/second-dir/dir1/dir2
+'"${PROG}"' [a-z]*: Importing /tmp/cvs-sanity/cvsroot/second-dir/dir1/dir2
 N second-dir/dir1/dir2/file10
 N second-dir/dir1/dir2/file11
 N second-dir/dir1/dir2/file12
@@ -831,7 +837,7 @@ N second-dir/dir1/dir2/file6
 N second-dir/dir1/dir2/file7
 N second-dir/dir1/dir2/file8
 N second-dir/dir1/dir2/file9
-cvs [a-z]*: Importing /tmp/cvs-sanity/cvsroot/second-dir/dir1/dir2/dir3
+'"${PROG}"' [a-z]*: Importing /tmp/cvs-sanity/cvsroot/second-dir/dir1/dir2/dir3
 N second-dir/dir1/dir2/dir3/file10
 N second-dir/dir1/dir2/dir3/file11
 N second-dir/dir1/dir2/dir3/file12
@@ -844,7 +850,7 @@ N second-dir/dir1/dir2/dir3/file6
 N second-dir/dir1/dir2/dir3/file7
 N second-dir/dir1/dir2/dir3/file8
 N second-dir/dir1/dir2/dir3/file9
-cvs [a-z]*: Importing /tmp/cvs-sanity/cvsroot/second-dir/dir1/dir2/dir3/dir4
+'"${PROG}"' [a-z]*: Importing /tmp/cvs-sanity/cvsroot/second-dir/dir1/dir2/dir3/dir4
 N second-dir/dir1/dir2/dir3/dir4/file10
 N second-dir/dir1/dir2/dir3/dir4/file11
 N second-dir/dir1/dir2/dir3/dir4/file12
@@ -959,8 +965,8 @@ No conflicts created by this import'
 		cd subdir
 		echo file in subdir >sfile
 		dotest 65a1 "${testcvs} add sfile" \
-'cvs [a-z]*: scheduling file `sfile'\'' for addition
-cvs [a-z]*: use '\''cvs commit'\'' to add this file permanently'
+"${PROG}"' [a-z]*: scheduling file `sfile'\'' for addition
+'"${PROG}"' [a-z]*: use '\''cvs commit'\'' to add this file permanently'
 		dotest 65a2 "${testcvs} -q ci -m add-it" \
 'RCS file: /tmp/cvs-sanity/cvsroot/first-dir/subdir/sfile,v
 done
@@ -970,8 +976,8 @@ initial revision: 1.1
 done'
 		rm sfile
 		dotest 65a3 "${testcvs} rm sfile" \
-'cvs [a-z]*: scheduling `sfile'\'' for removal
-cvs [a-z]*: use '\''cvs commit'\'' to remove this file permanently'
+"${PROG}"' [a-z]*: scheduling `sfile'\'' for removal
+'"${PROG}"' [a-z]*: use '\'"${PROG}"' commit'\'' to remove this file permanently'
 		dotest 65a4 "${testcvs} -q ci -m remove-it" \
 'Removing sfile;
 /tmp/cvs-sanity/cvsroot/first-dir/subdir/sfile,v  <--  sfile
@@ -1045,8 +1051,8 @@ done'
 		# file4 will be dead at the time of branching and stay dead.
 		echo file4 > file4
 		dotest death-file4-add "${testcvs} add file4" \
-'cvs [a-z]*: scheduling file `file4'\'' for addition
-cvs [a-z]*: use '\''cvs commit'\'' to add this file permanently'
+"${PROG}"' [a-z]*: scheduling file `file4'\'' for addition
+'"${PROG}"' [a-z]*: use '\''cvs commit'\'' to add this file permanently'
 		dotest death-file4-ciadd "${testcvs} -q ci -m add file4" \
 'RCS file: /tmp/cvs-sanity/cvsroot/first-dir/file4,v
 done
@@ -1056,8 +1062,8 @@ initial revision: 1.1
 done'
 		rm file4
 		dotest death-file4-rm "${testcvs} remove file4" \
-'cvs [a-z]*: scheduling `file4'\'' for removal
-cvs [a-z]*: use '\''cvs commit'\'' to remove this file permanently'
+"${PROG}"' [a-z]*: scheduling `file4'\'' for removal
+'"${PROG}"' [a-z]*: use '\'"${PROG}"' commit'\'' to remove this file permanently'
 		dotest death-file4-cirm "${testcvs} -q ci -m remove file4" \
 'Removing file4;
 /tmp/cvs-sanity/cvsroot/first-dir/file4,v  <--  file4
@@ -1225,7 +1231,7 @@ done'
 
 		# typo; try to get to the branch and fail
 		dotest_fail 92.1a "${testcvs} update -r brnach1" \
-		  'cvs \[[a-z]* aborted\]: no such tag brnach1'
+		  "${PROG}"' \[[a-z]* aborted\]: no such tag brnach1'
 		# Make sure we are still on the trunk
 		if test -f file1 ; then
 			echo "FAIL: 92.1b" | tee -a ${LOGFILE} ; exit 1
@@ -1273,10 +1279,10 @@ done'
 	  echo 2:ancest >file2
 	  echo 3:ancest >file3
 	  dotest branches-2 "${testcvs} add file1 file2 file3" \
-'cvs [a-z]*: scheduling file `file1'\'' for addition
-cvs [a-z]*: scheduling file `file2'\'' for addition
-cvs [a-z]*: scheduling file `file3'\'' for addition
-cvs [a-z]*: use '\''cvs commit'\'' to add these files permanently'
+"${PROG}"' [a-z]*: scheduling file `file1'\'' for addition
+'"${PROG}"' [a-z]*: scheduling file `file2'\'' for addition
+'"${PROG}"' [a-z]*: scheduling file `file3'\'' for addition
+'"${PROG}"' [a-z]*: use '\''cvs commit'\'' to add these files permanently'
 	  dotest branches-3 "${testcvs} -q ci -m add-it" \
 'RCS file: /tmp/cvs-sanity/cvsroot/first-dir/file1,v
 done
@@ -1296,12 +1302,12 @@ Checking in file3;
 /tmp/cvs-sanity/cvsroot/first-dir/file3,v  <--  file3
 initial revision: 1.1
 done'
-	  dotest branches-4 "${testcvs} tag -b br1" 'cvs [a-z]*: Tagging \.
+	  dotest branches-4 "${testcvs} tag -b br1" "${PROG}"' [a-z]*: Tagging \.
 T file1
 T file2
 T file3'
 	  dotest branches-5 "${testcvs} update -r br1" \
-'cvs [a-z]*: Updating \.'
+"${PROG}"' [a-z]*: Updating \.'
 	  echo 1:br1 >file1
 	  echo 2:br1 >file2
 	  dotest branches-6 "${testcvs} -q ci -m modify" \
@@ -2075,7 +2081,9 @@ U nameddir/b'
 	    echo 'FAIL: test 167' | tee -a ${LOGFILE}
 	    exit 1
 	  fi
+
 	  cd ../../2/1dir
+	  # FIXME: should be using dotest and PROG.
 	  ${testcvs} -q update 2>../tst167.err
 	  CVSBASE=`basename $testcvs`	# Get basename of CVS executable.
 	  cat <<EOF >../tst167.ans
@@ -2277,8 +2285,8 @@ abc	[a-z0-9]*	edit	unedit	commit'
 	  dotest 187a1 "${testcvs} -q co CVSROOT" 'U CVSROOT/modules'
 	  cd CVSROOT
 	  echo rootig.c >cvsignore
-	  dotest 187a2 "${testcvs} add cvsignore" 'cvs [a-z]*: scheduling file `cvsignore'"'"' for addition
-cvs [a-z]*: use '"'"'cvs commit'"'"' to add this file permanently'
+	  dotest 187a2 "${testcvs} add cvsignore" "${PROG}"' [a-z]*: scheduling file `cvsignore'"'"' for addition
+'"${PROG}"' [a-z]*: use '"'"'cvs commit'"'"' to add this file permanently'
 
 	  # As of Jan 96, local CVS prints "Examining ." and remote doesn't.
 	  # Accept either.
@@ -2289,7 +2297,7 @@ Checking in cvsignore;
 /tmp/cvs-sanity/cvsroot/CVSROOT/cvsignore,v  <--  cvsignore
 initial revision: 1.1
 done
-cvs [a-z]*: Rebuilding administrative file database'
+'"${PROG}"' [a-z]*: Rebuilding administrative file database'
 
 	  cd ..
 	  if echo "yes" | ${testcvs} release -d CVSROOT >>${LOGFILE} ; then
@@ -2373,8 +2381,8 @@ U first-dir/foobar.c'
 	  cd first-dir
 	  cp ../binfile.dat binfile
 	  dotest binfiles-2 "${testcvs} add -kb binfile" \
-'cvs [a-z]*: scheduling file `binfile'\'' for addition
-cvs [a-z]*: use '\''cvs commit'\'' to add this file permanently'
+"${PROG}"' [a-z]*: scheduling file `binfile'\'' for addition
+'"${PROG}"' [a-z]*: use '\''cvs commit'\'' to add this file permanently'
 	  dotest binfiles-3 "${testcvs} -q ci -m add-it" \
 'RCS file: /tmp/cvs-sanity/cvsroot/first-dir/binfile,v
 done
@@ -2407,8 +2415,8 @@ done'
 	  cd CVSROOT
 	  echo "ALL echo x\${=MYENV}\${=OTHER}y\${=ZEE}=\$USER=\$CVSROOT= >>$TESTDIR/testlog" > loginfo
 	  dotest info-2 "${testcvs} add loginfo" \
-'cvs [a-z]*: scheduling file `loginfo'"'"' for addition
-cvs [a-z]*: use '"'"'cvs commit'"'"' to add this file permanently'
+"${PROG}"' [a-z]*: scheduling file `loginfo'"'"' for addition
+'"${PROG}"' [a-z]*: use '"'"'cvs commit'"'"' to add this file permanently'
 	  dotest info-3 "${testcvs} -q ci -m new-loginfo" \
 'RCS file: /tmp/cvs-sanity/cvsroot/CVSROOT/loginfo,v
 done
@@ -2416,7 +2424,7 @@ Checking in loginfo;
 /tmp/cvs-sanity/cvsroot/CVSROOT/loginfo,v  <--  loginfo
 initial revision: 1.1
 done
-cvs [a-z]*: Rebuilding administrative file database'
+'"${PROG}"' [a-z]*: Rebuilding administrative file database'
 	  cd ..
 	  if echo "yes" | ${testcvs} release -d CVSROOT >>${LOGFILE} ; then
 	    pass info-4
@@ -2429,8 +2437,8 @@ cvs [a-z]*: Rebuilding administrative file database'
 	  cd first-dir
 	  touch file1
 	  dotest info-6 "${testcvs} add file1" \
-'cvs [a-z]*: scheduling file `file1'\'' for addition
-cvs [a-z]*: use '\''cvs commit'\'' to add this file permanently'
+"${PROG}"' [a-z]*: scheduling file `file1'\'' for addition
+'"${PROG}"' [a-z]*: use '\''cvs commit'\'' to add this file permanently'
 	  echo "cvs -s OTHER=not-this -s MYENV=env-" >>$HOME/.cvsrc
 	  dotest info-6a "${testcvs} -q -s OTHER=value ci -m add-it" \
 'RCS file: /tmp/cvs-sanity/cvsroot/first-dir/file1,v
@@ -2439,7 +2447,7 @@ Checking in file1;
 /tmp/cvs-sanity/cvsroot/first-dir/file1,v  <--  file1
 initial revision: 1.1
 done
-cvs [a-z]*: loginfo:1: no such user variable ${=ZEE}'
+'"${PROG}"' [a-z]*: loginfo:1: no such user variable ${=ZEE}'
 	  echo line1 >>file1
 	  dotest info-7 "${testcvs} -q -s OTHER=value -s ZEE=z ci -m mod-it" \
 'Checking in file1;
