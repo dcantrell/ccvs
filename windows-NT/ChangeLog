@@ -1,3 +1,7 @@
+10 Jul 1997  Jim Kingdon
+
+	* config.h: Define USE_SETMODE_STDOUT.
+
 8 Jul 1997  Jim Kingdon
 
 	* rcmd.c (rcmd_authenticate): With error message, print the
