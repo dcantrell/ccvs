@@ -962,41 +962,61 @@ depends_on_rsync ()
 {
   # Save a copy and set the absolute path to our default.
   save_RSYNC=$RSYNC
-  : ${RSYNC=rsync}
-  RSYNC=`Which $RSYNC`
+  for rsync in ${RSYNC} `Which -a rsync`;
+  do
 
-  # Make some data to test rsync on.
-  mkdir $TESTDIR/rsync-test
-  for file in 1 2 3 4 5; do
-    touch $TESTDIR/rsync-test/$file
+    # Make some data to test rsync on.
+    mkdir $TESTDIR/rsync-test
+    mkdir $TESTDIR/rsync-test/Attic && touch $TESTDIR/rsync-test/Attic/6
+    mkdir $TESTDIR/rsync-test/otherdir && touch $TESTDIR/rsync-test/otherdir/7
+    for file in 1 2 3 4 5; do
+      touch $TESTDIR/rsync-test/$file
+    done
+  
+    if test -f "$rsync" && test -r "$rsync" \
+      && $rsync -rglop --delete $TESTDIR/rsync-test/ $TESTDIR/rsync-test-copy \
+  	      >/dev/null 2>&1 \
+      && $rsync -rglop --delete --include Attic --exclude '*/' \
+  	      $TESTDIR/rsync-test/ $TESTDIR/rsync-test-copy2 \
+  	      >/dev/null 2>&1 \
+      && test -f $TESTDIR/rsync-test/5 \
+      && mv $TESTDIR/rsync-test/5 $TESTDIR/rsync-test/Attic/5 \
+      && test -f $TESTDIR/rsync-test-copy/Attic/6 \
+      && $rsync -rglop --delete $TESTDIR/rsync-test/ $TESTDIR/rsync-test-copy \
+  	      >/dev/null 2>&1 \
+      && $rsync -rglop --delete --include Attic --exclude '*/' \
+  	      $TESTDIR/rsync-test/ $TESTDIR/rsync-test-copy2 \
+  	      >/dev/null 2>&1
+    then
+      if test -f $TESTDIR/rsync-test-copy/5 \
+        || test -f $TESTDIR/rsync-test-copy2/5 \
+        || test ! -f $TESTDIR/rsync-test-copy2/Attic/5 \
+        || test -f $TESTDIR/rsync-test-copy2/otherdir/7
+      then
+        rsyncworks=false
+      else
+        # good, it works
+        rsyncworks=:
+	RSYNC=$rsync
+      fi
+    else
+      rsyncworks=false
+    fi
+  
+    rm -rf $TESTDIR/rsync-test $TESTDIR/rsync-test-copy \
+      $TESTDIR/rsync-test-copy2
+
+    if $rsyncworks; then
+      return 0
+    else
+      echo $rsync failed to work properly
+    fi
   done
 
-  if test -f "$RSYNC" && test -r "$RSYNC" \
-    && $RSYNC -gopr --delete $TESTDIR/rsync-test/ $TESTDIR/rsync-test-copy \
-	      >/dev/null 2>&1 \
-    && test -f $TESTDIR/rsync-test/5 && rm $TESTDIR/rsync-test/5 \
-    && $RSYNC -gopr --delete $TESTDIR/rsync-test/ $TESTDIR/rsync-test-copy \
-	      >/dev/null 2>&1
-  then
-    if test -f $TESTDIR/rsync-test-copy/5; then
-      rsyncworks=false
-    else
-      # good, it works
-      rsyncworks=:
-    fi
-  else
-    rsyncworks=false
-  fi
-
-  rm -rf $TESTDIR/rsync-test $TESTDIR/rsync-test-copy
-
   if $rsyncworks; then :; else
-    rm -r $TESTDIR/rsync-test
-    RSYNC=`find_tool rsync`
-    if test -z "$RSYNC" ; then
-      skipreason="unusable or no rsync found"
-      return 77
-    fi
+    unset RSYNC
+    skipreason="unusable or no rsync found"
+    return 77
   fi
 
   return 0
