@@ -1,5 +1,8 @@
 Sun Apr  6 19:03:01 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvs.texinfo (Removing files): Add comment about undoing a "cvs
+	remove".
+
 	* cvsclient.texi (Requests): Explicitly mention the idea of
 	deferring "Notify" requests.
 
