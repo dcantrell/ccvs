@@ -1,3 +1,15 @@
+Wed May 01 21:08:21 1996  noel  <noel@BOAT_ANCHOR>
+
+	* client.c (filter_through_gunzip): use "gzip -d" instead of
+ 	"gunzip," since there's no good reason (on NT at least) to have an
+ 	extra copy of gzip.exe copied to gunzip.exe (Arrrrgh!  No symbolic
+ 	links!).
+
+	* mkmodules.c (init): check to see that we have the correct number
+ 	of arguments or print out the usage message (used to be argc > 1,
+ 	should be argc != 1, because help forces argc == -1 as a special
+ 	case).
+
 Mon Apr 29 10:48:38 1996  Noel Cragg  <noel@gargle>
 
 	* root.c (parse_cvsroot): removed "rsh" as an alias to "server" in
