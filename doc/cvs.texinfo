@@ -2958,6 +2958,7 @@ numeric revision in each file.
 * Versions revisions releases::  Terminology used in this manual
 * Assigning revisions::         Assigning revisions
 * Tags::                        Tags--Symbolic revisions
+* Sticky tags::                 Certain tags are persistent
 @end menu
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -3245,6 +3246,103 @@ like this:
 @end group
 @end example
 
+@c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+@node Sticky tags
+@section Sticky tags
+@cindex Sticky tags
+@cindex Tags, sticky
+
+Sometimes a working copy's revision has extra data
+associated with it, for example it might be on a branch
+(@pxref{Branching and merging}), or restricted to
+versions prior to a certain date by @samp{checkout -D}
+or @samp{update -D}.  Because this data persists --
+that is, it applies to subsequent commands in the
+working copy -- we refer to it as @dfn{sticky}.
+
+Most of the time, stickiness is an obscure aspect of
+@sc{cvs} that you don't need to think about.  However,
+there are occasionally situations where a more thorough
+understanding is useful; for example, when your working
+copy has sticky data that you'd like to clear.
+
+You can use the @code{status} command to see if any
+sticky tags or dates are set:
+
+@example
+$ vi driver.c   # @r{Make changes to the file}
+$ cvs commit -m "Fixed initialization bug" driver.c
+Checking in driver.c;
+/usr/local/cvsroot/yoyodyne/tc/driver.c,v  <--  driver.c
+new revision: 1.7.2.1; previous revision: 1.7
+done
+$ cvs status driver.c
+===================================================================
+File: driver.c          Status: Up-to-date
+
+    Version:            1.7.2.1 Sat Dec  5 19:35:03 1992
+    RCS Version:        1.7.2.1 /u/cvsroot/yoyodyne/tc/driver.c,v
+    Sticky Tag:         release-1-0-patches (branch: 1.7.2)
+    Sticky Date:        (none)
+    Sticky Options:     (none)
+
+@end example
+
+@cindex Resetting sticky tags
+@cindex Sticky tags, resetting
+@cindex Deleting sticky tags
+The sticky tags will remain on your working files until
+you delete them with @samp{cvs update -A}.  The
+@samp{-A} option retrieves the version of the file from
+the head of the trunk, and forgets any sticky tags,
+dates, or options.
+
+@cindex sticky date
+Sticky tags are not just for branches.  For example,
+suppose that you want to avoid updating your working
+directory, to isolate yourself from possibly
+destabilizing changes other people are making.  You
+can, of course, just refrain from running @code{cvs
+update}.  But if you want to avoid updating only a
+portion of a larger tree, then sticky tags can help.
+If you check out a certain revision (such as 1.4) it
+will become sticky.  Subsequent @code{cvs update} will
+not retrieve the latest revision until you reset the
+tag with @code{cvs update -A}.  Likewise, use of the
+@samp{-D} option to @code{update} or @code{checkout}
+sets a @dfn{sticky date}, which, similarly, causes that
+date to be used for future retrievals.
+
+@cindex Restoring old version of removed file
+@cindex Resurrecting old version of dead file
+Many times you will want to retrieve an old version of
+a file without setting a sticky tag.  The way to do
+that is with the @samp{-p} option to @code{checkout} or
+@code{update}, which sends the contents of the file to
+standard output.  For example, suppose you have a file
+named @file{file1} which existed as revision 1.1, and
+you then removed it (thus adding a dead revision 1.2).
+Now suppose you want to add it again, with the same
+contents it had previously.  Here is how to do it:
+
+@example
+$ cvs update -p -r 1.1 file1 >file1
+===================================================================
+Checking out file1
+RCS:  /tmp/cvs-sanity/cvsroot/first-dir/Attic/file1,v
+VERS: 1.1
+***************
+$ cvs add file1
+cvs add: re-adding file file1 (in place of dead revision 1.2)
+cvs add: use 'cvs commit' to add this file permanently
+$ cvs commit -m test
+Checking in file1;
+/tmp/cvs-sanity/cvsroot/first-dir/file1,v  <--  file1
+new revision: 1.3; previous revision: 1.2
+done
+$ 
+@end example
+
 @c ---------------------------------------------------------------------
 @node Branching and merging
 @chapter Branching and merging
@@ -3272,7 +3370,7 @@ copy the changes onto another branch.
 @menu
 * Branches motivation::         What branches are good for
 * Creating a branch::           Creating a branch
-* Sticky tags::                 Sticky tags
+* Accessing branches::          Checking out and updating branches
 * Branches and revisions::      Branches are reflected in revision numbers
 * Magic branch numbers::        Magic branch numbers
 * Merging a branch::            Merging an entire branch
@@ -3348,11 +3446,66 @@ the revision tree) that corresponds to the tag
 name of the new branch is @samp{release-1-0-patches}, and the
 module affected is @samp{tc}.
 
-To fix the problem in release 1.0, you need a working
-copy of the branch you just created.
+@c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+@node Accessing branches
+@section Accessing branches
+@cindex Check out a branch
+@cindex Retrieve a branch
+@cindex Access a branch
+@cindex Identifying a branch
+@cindex Branch, check out
+@cindex Branch, retrieving
+@cindex Branch, accessing
+@cindex Branch, identifying
+
+You can retrieve a branch in one of two ways: by
+checking it out fresh from the repository, or by
+switching an existing working copy over to the branch.
+
+To check out a branch from the repository, invoke
+@samp{checkout} with the @samp{-r} flag, followed by
+the tag name of the branch (@pxref{Creating a branch}):
 
 @example
 $ cvs checkout -r release-1-0-patches tc
+@end example
+
+Or, if you already have a working copy, you can switch
+it to a given branch with @samp{update -r}:
+
+@example
+$ cvs update -r release-1-0-patches tc
+@end example
+
+or equivalently:
+
+@example
+$ cd tc
+$ cvs update -r release-1-0-patches
+@end example
+
+It does not matter if the working copy was originally
+on the main trunk or on some other branch -- the above
+command will switch it to the named branch.  And
+similarly to a regular @samp{update} command,
+@samp{update -r} merges any changes you have made,
+notifying you of conflicts where they occur.
+
+Once you have a working copy tied to a particular
+branch, it remains there until you tell it otherwise.
+This means that changes checked in from the working
+copy will add new revisions on that branch, while
+leaving the main trunk and other branches unaffected
+(but see @pxref{Merging a branch}).
+
+@cindex Branches, sticky
+To find out what branch a working copy is on, you can
+use the @samp{status} command.  In its output, look for
+the field named @samp{Sticky tag} (@pxref{Sticky tags})
+-- that's @sc{cvs}'s way of telling you the branch, if
+any, of the current working files:
+
+@example
 $ cvs status -v driver.c backend.c
 ===================================================================
 File: driver.c          Status: Up-to-date
@@ -3383,126 +3536,18 @@ File: backend.c         Status: Up-to-date
 
 @end example
 
-@cindex Branch numbers
-As the output from the @code{status} command shows the branch
-number is created by adding a digit at the tail of the revision number
-it is based on.  (If @samp{release-1-0} corresponds to revision 1.4, the
-branch's revision number will be 1.4.2.  For obscure reasons @sc{cvs} always
-gives branches even numbers, starting at 2.
-@xref{Branches and revisions}.).
+Don't be confused by the fact that the branch numbers
+for each file are different (@samp{1.7.2} and
+@samp{1.4.2} respectively).  The branch tag is the
+same, @samp{release-1-0-patches}, and the files are
+indeed on the same branch.  The numbers simply reflect
+the point in each file's revision history at which the
+branch was made.  In the above example, one can deduce
+that @samp{driver.c} had been through more changes than
+@samp{backend.c} before this branch was created.
 
-@c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-@node Sticky tags
-@section Sticky tags
-@cindex Sticky tags
-@cindex Tags, sticky
-@cindex Branches, sticky
-
-@c FIXME: Describing this feature in terms of "sticky
-@c tags" is a very confusing formulation; it seems to
-@c describe CVS's implementation.  A better
-@c concept is "switch to branch A (universe A)" or
-@c "switch to branch B".  Non-branch sticky tags, and
-@c sticky dates, are considerably more obscure and
-@c advanced, and should be described separately.
-@c A somewhat related issue is per-directory sticky
-@c tags (see comment at CVS/Tag in node Working
-@c directory storage); we probably want to say
-@c something like "you can set a sticky tag for only
-@c some files, but you don't want to" or some such.
-
-@c FIXME: make this stand alone better; many places
-@c @xref to this node.
-The @samp{-r release-1-0-patches} flag that was given
-to @code{checkout} in the previous example
-is @dfn{sticky}, that is, it will apply to subsequent commands
-in this directory.  If you commit any modifications, they are
-committed on the branch.  You can later merge the modifications into
-the main trunk.  @xref{Branching and merging}.
-
-You can use the @code{status} command to see what
-sticky tags or dates are set:
-
-@c FIXME: This example needs to stand alone better and it
-@c would also better if it didn't use -v which only
-@c clutters the output in this context.
-@example
-$ vi driver.c   # @r{Fix the bugs}
-$ cvs commit -m "Fixed initialization bug" driver.c
-Checking in driver.c;
-/usr/local/cvsroot/yoyodyne/tc/driver.c,v  <--  driver.c
-new revision: 1.7.2.1; previous revision: 1.7
-done
-$ cvs status -v driver.c
-===================================================================
-File: driver.c          Status: Up-to-date
-
-    Version:            1.7.2.1 Sat Dec  5 19:35:03 1992
-    RCS Version:        1.7.2.1 /u/cvsroot/yoyodyne/tc/driver.c,v
-    Sticky Tag:         release-1-0-patches (branch: 1.7.2)
-    Sticky Date:        (none)
-    Sticky Options:     (none)
-
-    Existing Tags:
-        release-1-0-patches             (branch: 1.7.2)
-        release-1-0                     (revision: 1.7)
-
-@end example
-
-@cindex Resetting sticky tags
-@cindex Sticky tags, resetting
-@cindex Deleting sticky tags
-The sticky tags will remain on your working files until
-you delete them with @samp{cvs update -A}.  The
-@samp{-A} option retrieves the version of the file from
-the head of the trunk, and forgets any sticky tags,
-dates, or options.
-
-@cindex sticky date
-Sticky tags are not just for branches.  For example,
-suppose that you want to avoid updating your working
-directory, to isolate yourself from possibly
-destabilizing changes other people are making.  You
-can, of course, just refrain from running @code{cvs
-update}.  But if you want to avoid updating only a
-portion of a larger tree, then sticky tags can help.
-If you check out a certain revision (such as 1.4) it
-will become sticky.  Subsequent @code{cvs update} will
-not retrieve the latest revision until you reset the
-tag with @code{cvs update -A}.  Likewise, use of the
-@samp{-D} option to @code{update} or @code{checkout}
-sets a @dfn{sticky date}, which, similarly, causes that
-date to be used for future retrievals.
-
-@cindex Restoring old version of removed file
-@cindex Resurrecting old version of dead file
-Many times you will want to retrieve an old version of
-a file without setting a sticky tag.  The way to do
-that is with the @samp{-p} option to @code{checkout} or
-@code{update}, which sends the contents of the file to
-standard output.  For example, suppose you have a file
-named @file{file1} which existed as revision 1.1, and
-you then removed it (thus adding a dead revision 1.2).
-Now suppose you want to add it again, with the same
-contents it had previously.  Here is how to do it:
-
-@example
-$ cvs update -p -r 1.1 file1 >file1
-===================================================================
-Checking out file1
-RCS:  /tmp/cvs-sanity/cvsroot/first-dir/Attic/file1,v
-VERS: 1.1
-***************
-$ cvs add file1
-cvs add: re-adding file file1 (in place of dead revision 1.2)
-cvs add: use 'cvs commit' to add this file permanently
-$ cvs commit -m test
-Checking in file1;
-/tmp/cvs-sanity/cvsroot/first-dir/file1,v  <--  file1
-new revision: 1.3; previous revision: 1.2
-done
-$ 
-@end example
+See @ref{Branches and revisions} for details about how
+branch numbers are constructed.
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node Branches and revisions

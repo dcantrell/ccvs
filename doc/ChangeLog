@@ -1,3 +1,18 @@
+Tue Dec 23 10:03:37 1997  Karl Fogel  <kfogel@floss.red-bean.com>
+			  and Jim Kingdon
+
+	* cvs.texinfo: Changes to dehairify the "Sticky tags" situation:
+	(Revisions): "Sticky tags" moved here, description in menu changed
+	to be a little more informative.
+	(Sticky tags): Moved from "Branching and merging" to "Revisions".
+	(Accessing branches): New node in "Branching and merging",
+	explains how to use checkout vs update to retrieve a branch.
+	Text and example inherited from "Sticky tags", but text mostly
+	rewritten.
+	(Sticky tags): Moved under "Revisions", rewritten somewhat (more
+ 	rewrites to follow).
+	Don't use "-v" in "cvs status" example.
+
 Mon Dec 22 11:46:05 1997  Karl Fogel  <kfogel@floss.red-bean.com>
 			  and Jim Kingdon
 
