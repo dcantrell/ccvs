@@ -1,3 +1,8 @@
+Wed Jul 17 10:14:20 1996  Ian Lance Taylor  <ian@cygnus.com>
+
+	* checkout.c (checkout): Remove extraneous else accidentally
+	inserted in last checkin.
+
 Tue Jul 16 11:37:41 1996  Ian Lance Taylor  <ian@cygnus.com>
 
 	* sanity.sh (import): Use quoting to avoid expansion of RCS ID
