@@ -903,6 +903,13 @@ handle_error (args, len)
 	return;
     }
     ++p;
+
+    /* Next we print the text of the message from the server.  We
+       probably should be prefixing it with "server error" or some
+       such, because if it is something like "Out of memory", the
+       current behavior doesn't say which machine is out of
+       memory.  */
+
     len -= p - args;
     something_printed = 0;
     for (; len > 0; --len)

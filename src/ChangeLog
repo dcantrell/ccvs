@@ -1,3 +1,8 @@
+1998-10-03  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* client.c (handle_error): Add comment about indicating which
+	errors are from the server.
+
 1998-10-01  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* sanity.sh (devcom-180): Allow one digit day.
