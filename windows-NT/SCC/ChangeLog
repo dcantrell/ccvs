@@ -1,3 +1,8 @@
+Tue Sep  2 13:39:17 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* README.txt (SPECIFICATIONS OR OTHER DOCUMENTS DESCRIBING THE
+	SCC): New section.
+
 Mon Aug  4 10:46:59 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* pubscc.h: Add comment listing new CodeWright 5.00c functions.
