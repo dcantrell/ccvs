@@ -1,6 +1,19 @@
 Changes since 1.12.6:
 *********************
 
+SERVER SECURITY ISSUES
+
+* Piped checkouts of paths above $CVSROOT no longer work.  Previously, clients
+  could have requested the contents of RCS archive files anywhere on a CVS
+  server.
+
+CLIENT SECURITY ISSUES
+
+* Clients now check paths from the server to verify that they are within one of
+  the sandboxes the user requested be updated.  Previously, a trojan server
+  could have written or overwritten files anywhere the user had access,
+  presenting a serious security risk.
+
 GENERAL USER ISSUES
 
 * Imported the most recent version of regex from GNULIB, which actually means
