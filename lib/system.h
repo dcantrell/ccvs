@@ -334,6 +334,25 @@ int utime ();
 #endif /* not STDC_HEADERS and not HAVE_STRING_H */
 
 #include <errno.h>
+
+/* Not all systems set the same error code on a non-existent-file
+   error.  This tries to ask the question somewhat portably.
+   On systems that don't have ENOTEXIST, this should behave just like
+   x == ENOENT.  "x" is probably errno, of course. */
+
+#ifdef ENOTEXIST
+#  ifdef EOS2ERR
+#    define existence_error(x) \
+     (((x) == ENOTEXIST) || ((x) == ENOENT) || ((x) == EOS2ERR))
+#  else
+#    define existence_error(x) \
+     (((x) == ENOTEXIST) || ((x) == ENOENT))
+#  endif
+#else
+#    define existence_error(x) ((x) == ENOENT)
+#endif
+
+
 #ifdef STDC_HEADERS
 #include <stdlib.h>
 #else
