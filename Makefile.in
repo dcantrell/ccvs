@@ -93,6 +93,7 @@ DISTFILES = \
 	BUGS MINOR-BUGS FAQ \
 	ChangeLog NEWS ChangeLog.zoo \
 	configure configure.in stamp-h.in config.h.in Makefile.in acconfig.h \
+	config.sub config.guess \
 	cvs-format.el mkinstalldirs install-sh cvsinit.sh \
 	cvsnt.mak \
 	.cvsignore
