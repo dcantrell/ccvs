@@ -497,7 +497,7 @@ process_import_file (message, vfile, vtag, targc, targv)
 		/* Reading all the entries for each file is fairly silly, and
 		   probably slow.  But I am too lazy at the moment to do
 		   anything else.  */
-		entries = Entries_Open (0);
+		entries = Entries_Open (0, NULL);
 		node = findnode_fn (entries, vfile);
 		if (node != NULL)
 		{

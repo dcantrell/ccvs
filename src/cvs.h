@@ -423,7 +423,7 @@ DBM *open_module PROTO((void));
 FILE *open_file PROTO((const char *, const char *));
 List *Find_Directories PROTO((char *repository, int which, List *entries));
 void Entries_Close PROTO((List *entries));
-List *Entries_Open PROTO((int aflag));
+List *Entries_Open PROTO ((int aflag, char *update_dir));
 void Subdirs_Known PROTO((List *entries));
 void Subdir_Register PROTO((List *, const char *, const char *));
 void Subdir_Deregister PROTO((List *, const char *, const char *));

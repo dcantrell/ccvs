@@ -5301,9 +5301,33 @@ ${PROG} [a-z]*: ignoring first-dir/sdir (CVS/Entries missing)"
 	  cd first-dir
 	  rm -r newdir
 
+	  # The previous tests have left CVS/Entries in something of a mess.
+	  # While we "should" be able to deal with that (maybe), for now
+	  # we just start over.
+	  cd ..
+	  rm -r first-dir
+	  dotest conflicts3-20a "${testcvs} -q co -l first-dir" ''
+	  cd first-dir
+
 	  dotest conflicts3-21 "${testcvs} -q update -d sdir" "U sdir/sfile"
 	  rm -r sdir/CVS
 	  dotest conflicts3-22 "${testcvs} -q update" "? sdir"
+	  if test "x$remote" = xyes; then
+	    # It isn't particularly swift that CVS prints this
+	    # "cannot open CVS/Entries" where it has already printed
+	    # "? sdir".  At least I don't think so.  But do note: (1)
+	    # non-fatal error, and (2) tells us which directory has
+	    # the problem.
+	    dotest_fail conflicts3-23 "${testcvs} -q update -PdA" \
+"${QUESTION} sdir
+${PROG} update: in directory sdir:
+${PROG} update: cannot open CVS/Entries for reading: No such file or directory
+${PROG} update: move away sdir/sfile; it is in the way
+C sdir/sfile"
+	  else
+	    dotest conflicts3-23 "${testcvs} -q update -PdA" \
+"${QUESTION} sdir"
+	  fi
 
 	  cd ../..
 

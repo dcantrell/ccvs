@@ -1004,7 +1004,7 @@ internal error: %s doesn't start with %s in checkout_proc",
 	List *entries;
 
 	/* we are only doing files, so register them */
-	entries = Entries_Open (0);
+	entries = Entries_Open (0, NULL);
 	for (i = 1; i < *pargc; i++)
 	{
 	    char *line;

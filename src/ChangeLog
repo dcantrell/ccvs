@@ -1,5 +1,14 @@
 1998-03-04  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* entries.c, cvs.h (Entries_Open): New argument update_dir; use it
+	in error message.
+	* add.c, checkout.c, client.c, find_names.c, import.c, recurse.c,
+	update.c: Pass it (as NULL except in call_in_directory).
+	* entries.c (Subdirs_Known): Just return if there is no CVSADM
+	directory (as in subdir_record).
+	* sanity.sh (conflicts3): New tests conflicts3-20a and
+	conflicts3-23 test for these fixes.
+
 	* commit.c (commit): Only set up hardlist if preserve_perms.
 
 	* commit.c, import.c, no_diff.c, parseinfo.c, rcs.c, rcscmds.c,
