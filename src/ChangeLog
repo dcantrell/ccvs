@@ -1,3 +1,7 @@
+Fri Sep  1 00:03:17 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* no_diff.c (No_Difference): Don't change the modes of the files.
+
 Thu Aug 31 13:14:34 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* version.c: Change version to 1.5.1.
