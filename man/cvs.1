@@ -235,6 +235,16 @@ Same effect as if the
 .SM CVSREAD
 environment variable is set.
 .TP
+.B \-R
+Turns on read-only repository mode.  This allows one to check out from a
+read-only repository, such as within an anoncvs server, or from a CDROM
+repository.
+Same effect as if the
+.SM CVSREADONLYFS
+environment variable is set.  Using
+.B \-R
+can also considerably speed up checkout's over NFS.
+.TP
 .B \-v [ --version ]
 Displays version and copyright information for
 .BR cvs .
@@ -2051,6 +2061,13 @@ and
 will try hard to make the files in your working directory read-only.
 When this is not set, the default behavior is to permit modification
 of your working files.
+.TP
+.SM CVSREADONLYFS
+If this is set, the
+.B \-R
+option is assumed, and
+.B cvs
+operates in read-only repository mode.
 .TP
 .SM RCSBIN
 Specifies the full pathname where to find

@@ -410,7 +410,7 @@ Reader_Lock (xrepository)
 
     TRACE (1, "Reader_Lock(%s)", xrepository);
 
-    if (noexec)
+    if (noexec || readonlyfs)
 	return (0);
 
     /* we only do one directory at a time for read locks! */
@@ -484,6 +484,15 @@ Writer_Lock (list)
 
     if (noexec)
 	return (0);
+
+    if (readonlyfs) {
+	error (0, 0,
+	       "write lock failed.
+WARNING: Read-only repository access mode selected via `cvs -R'.\n\
+Using this option to access a repository which some users write to may\n\
+cause intermittant sandbox corruption.");
+	return (1);
+    }
 
     /* We only know how to do one list at a time */
     if (locklist != (List *) NULL)

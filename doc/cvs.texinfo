@@ -7880,6 +7880,16 @@ a command name, @samp{cvs -H} displays overall help for
 Do not log the @samp{cvs_command} in the command history (but execute it
 anyway).  @xref{history}, for information on command history.
 
+@cindex Read-only repository mode
+@item -R
+Turns on read-only repository mode.  This allows one to check out from a
+read-only repository, such as within an anoncvs server, or from a CDROM
+repository.
+
+Same effect as if the @code{CVSREADONLYFS} environment
+variable is set. Using @samp{-R} can also considerably
+speed up checkout's over NFS.
+
 @cindex Read-only mode
 @item -n
 Do not change any files.  Attempt to execute the
@@ -13586,6 +13596,16 @@ If this is set, @code{checkout} and @code{update} will
 try hard to make the files in your working directory
 read-only.  When this is not set, the default behavior
 is to permit modification of your working files.
+
+@cindex CVSREADONLYFS, environment variable
+@item $CVSREADONLYFS
+Turns on read-only repository mode. This allows one to
+check out from a read-only repository, such as within
+an anoncvs server, or from a CDROM repository.
+
+It has the same effect as if the @samp{-R} command-line
+option is used. This can also allow the use of
+read-only NFS repositories.
 
 @item $CVSUMASK
 Controls permissions of files in the repository.  See
