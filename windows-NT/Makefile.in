@@ -46,3 +46,6 @@ lint:
 dist-dir:
 	mkdir ${DISTDIR}
 	ln ${DISTFILES} ${DISTDIR}
+
+clean:
+	@echo make clean does nothing in windows-NT subdir
