@@ -17,8 +17,6 @@ static const char rcsid[] = "$CVSid: @(#)lock.c 1.50 94/09/30 $";
 USE(rcsid);
 #endif
 
-extern char *ctime ();
-
 static int readers_exist PROTO((char *repository));
 static int set_lock PROTO((char *repository, int will_wait));
 static void clear_lock PROTO((void));
