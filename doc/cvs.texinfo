@@ -2353,9 +2353,13 @@ certain revision of a file.  You can use the @samp{-v} flag to the
 @code{status} command to see all tags that a file has, and
 which revision numbers they represent.  Tag names can
 contain uppercase and lowercase letters, digits,
-@samp{-}, and @samp{_}; tag names consisting entirely
-of uppercase letters (for example @code{BASE}) are
-reserved for @sc{cvs}'s use.
+@samp{-}, and @samp{_}.  The two tag names @code{BASE}
+and @code{HEAD} are reserved for use by @sc{cvs}.  It
+is expected that future names which are special to
+@sc{cvs} will contain characters such as @samp{%} or
+@samp{=}, rather than being named analogously to
+@code{BASE} and @code{HEAD}, to avoid conflicts with
+actual tag names.
 @c FIXME: is the above list of valid characters in tag
 @c names complete?
 
