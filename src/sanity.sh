@@ -973,7 +973,7 @@ restore_adm ()
 # Test that $RSYNC supports the options we need or try to find a
 # replacement. If $RSYNC works or we replace it, and return 0.
 # Otherwise, set $skipreason and return 77.
-depends_on_rsync ()
+require_rsync ()
 {
   rsyncworks=false
   # rsync is NOT a GNU tool, so do NOT use find_tool for name munging.
@@ -1035,7 +1035,7 @@ depends_on_rsync ()
 # Test that $1 works as a remote shell.  If so, set $host, $CVS_RSH, &
 # $save_CVS_RSH to match and return 0.  Otherwise, set $skipreason and return
 # 77.
-depends_on_rsh ()
+require_rsh ()
 {
   host=${remotehost-"`hostname`"}
   result=`$1 $host 'echo test'`
@@ -1052,7 +1052,7 @@ depends_on_rsh ()
 
 # Find a usable SSH.  When a usable ssh is found, set $host, $CVS_RSH, and
 # $save_CVS_RSH and return 0.  Otherwise, set $skipreason and return 77.
-depends_on_ssh ()
+require_ssh ()
 {
   case "$CVS_RSH" in
     *ssh*|*putty*)
@@ -1075,7 +1075,7 @@ depends_on_ssh ()
       ;;
   esac
 
-  depends_on_rsh "$tryssh"
+  require_rsh "$tryssh"
   return $?
 }
 
@@ -2369,7 +2369,7 @@ if $proxy; then
     # Now set the global CVSROOT to use the secondary.
     CVSROOT=$SECONDARY_CVSROOT; export CVSROOT
 
-    depends_on_rsync
+    require_rsync
     if test $? -eq 77; then
 	echo "Unable to test in proxy mode: $skipreason" >&2
 	echo "SKIP: all - missing or broken rsync command." >>$LOGFILE
@@ -20827,7 +20827,7 @@ Annotations for $file
 	    # Use :ext: rather than :fork:.  Most of the tests use :fork:,
 	    # so we want to make sure that we test :ext: _somewhere_.
 	    # Make sure 'rsh' works first.
-	    depends_on_rsh "$CVS_RSH"
+	    require_rsh "$CVS_RSH"
 	    if test $? -eq 77; then
 		skip crerepos "$skipreason"
 		continue
@@ -22236,7 +22236,7 @@ new revision: 1\.6; previous revision: 1\.5"
 	    continue
 	  fi
 
-	  depends_on_ssh
+	  require_ssh
 	  if test $? -eq 77; then
             skip sshstdio "$skipreason"
 	    continue
@@ -22302,7 +22302,7 @@ EOF
 	    continue
 	  fi
 
-	  depends_on_rsh "$CVS_RSH"
+	  require_rsh "$CVS_RSH"
 	  if test $? -eq 77; then
 	    skip parseroot2 "$skipreason"
 	    continue
@@ -30513,7 +30513,7 @@ ${SPROG} update: Updating first/subdir"
 	    continue
 	  fi
 
-	  depends_on_rsync
+	  require_rsync
 	  if test $? -eq 77; then
 	    skip writeproxy "$skipreason"
 	    continue
@@ -30710,7 +30710,7 @@ $SPROG \[update aborted\]: could not find desired version 1\.4 in $PRIMARY_CVSRO
 	    continue
 	  fi
 
-	  depends_on_rsync
+	  require_rsync
 	  if test $? -eq 77; then
 	    skip writeproxy-noredirect "$skipreason"
 	    continue
@@ -30970,13 +30970,13 @@ EOF
 	    continue
 	  fi
 
-	  depends_on_rsh "$CVS_RSH"
+	  require_rsh "$CVS_RSH"
 	  if test $? -eq 77; then
 	    skip writeproxy-ssh "$skipreason"
 	    continue
 	  fi
 
-	  depends_on_rsync
+	  require_rsync
 	  if test $? -eq 77; then
 	    skip writeproxy-ssh "$skipreason"
 	    continue
