@@ -289,6 +289,8 @@ findnode_fn (list, key)
 
     if (list == (List *) NULL)
 	return ((Node *) NULL);
+    if (key == NULL)
+	return ((Node *) NULL);
 
     head = list->hasharray[hashp (key)];
     if (head == (Node *) NULL)
