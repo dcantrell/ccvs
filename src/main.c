@@ -94,6 +94,9 @@ int diff PROTO((int argc, char **argv));
 int history PROTO((int argc, char **argv));
 int import PROTO((int argc, char **argv));
 int cvslog PROTO((int argc, char **argv));
+#ifdef CVS_LOGIN
+int login PROTO((int argc, char **argv));
+#endif
 int patch PROTO((int argc, char **argv));
 int release PROTO((int argc, char **argv));
 int cvsremove PROTO((int argc, char **argv));
@@ -131,6 +134,9 @@ const struct cmd
     CMD_ENTRY("history",  "hi",    "his",     history,   client_history),
     CMD_ENTRY("import",   "im",    "imp",     import,    client_import),
     CMD_ENTRY("log",      "lo",    "rlog",    cvslog,    client_log),
+#ifdef CVS_LOGIN
+    CMD_ENTRY("login",    "logon", "lgn",     login,     login),
+#endif
     CMD_ENTRY("rdiff",    "patch", "pa",      patch,     client_rdiff),
     CMD_ENTRY("release",  "re",    "rel",     release,   client_release),
     CMD_ENTRY("remove",   "rm",    "delete",  cvsremove, client_remove),
@@ -183,6 +189,9 @@ static const char *const usg[] =
     "        import       Import sources into CVS, using vendor branches\n",
     "        export       Export sources from CVS, similar to checkout\n",
     "        log          Prints out 'rlog' information for files\n",
+#ifdef CVS_LOGIN
+    "        login        Prompt for password for authenticating server.\n",
+#endif
     "        rdiff        'patch' format diffs between releases\n",
     "        release      Indicate that a Module is no longer in use\n",
     "        remove       Removes an entry from the repository\n",
