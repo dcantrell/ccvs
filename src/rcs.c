@@ -5158,6 +5158,9 @@ RCS_checkin (rcs, workfile, message, rev, flags)
     struct tm *ftm;
     time_t modtime;
     int adding_branch = 0;
+#ifdef PRESERVE_PERMISSIONS_SUPPORT
+    struct stat sb;
+#endif
 
     commitpt = NULL;
 
@@ -5228,7 +5231,6 @@ RCS_checkin (rcs, workfile, message, rev, flags)
     if (preserve_perms)
     {
 	Node *np;
-	struct stat sb;
 	char buf[64];	/* static buffer should be safe: see usage. -twp */
 
 	delta->other_delta = getlist();
@@ -5327,6 +5329,12 @@ RCS_checkin (rcs, workfile, message, rev, flags)
 
 	dtext->version = xstrdup (newrev);
 	bufsize = 0;
+#ifdef PRESERVE_PERMISSIONS_SUPPORT
+	if (preserve_perms && !S_ISREG (sb.st_mode))
+	    /* Pretend file is empty.  */
+	    bufsize = 0;
+	else
+#endif
 	get_file (workfile, workfile,
 		  rcs->expand != NULL && STREQ (rcs->expand, "b") ? "rb" : "r",
 		  &dtext->text, &bufsize, &dtext->len);
@@ -5564,6 +5572,12 @@ RCS_checkin (rcs, workfile, message, rev, flags)
 	/* If this revision is being inserted on the trunk, the change text
 	   for the new delta should be the contents of the working file ... */
 	bufsize = 0;
+#ifdef PRESERVE_PERMISSIONS_SUPPORT
+	if (preserve_perms && !S_ISREG (sb.st_mode))
+	    /* Pretend file is empty.  */
+	    ;
+	else
+#endif
 	get_file (workfile, workfile,
 		  rcs->expand != NULL && STREQ (rcs->expand, "b") ? "rb" : "r",
 		  &dtext->text, &bufsize, &dtext->len);

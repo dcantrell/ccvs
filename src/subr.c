@@ -632,15 +632,14 @@ get_file (name, fullname, mode, buf, bufsize, len)
     }
     else
     {
-	if (CVS_LSTAT (name, &s) < 0)
-	    error (1, errno, "can't stat %s", fullname);
+	/* Although it would be cleaner in some ways to just read
+	   until end of file, reallocating the buffer, this function
+	   does get called on files in the working directory which can
+	   be of arbitrary size, so I think we better do all that
+	   extra allocation.  */
 
-	/* Don't attempt to read special files or symlinks. */
-	if (!S_ISREG (s.st_mode))
-	{
-	    *len = 0;
-	    return;
-	}
+	if (CVS_STAT (name, &s) < 0)
+	    error (1, errno, "can't stat %s", fullname);
 
 	/* Convert from signed to unsigned.  */
 	filesize = s.st_size;
@@ -669,9 +668,7 @@ get_file (name, fullname, mode, buf, bufsize, len)
 	if (feof (e))
 	    break;
 
-	/* It's probably paranoid to think S.ST_SIZE might be
-	   too small to hold the entire file contents, but we
-	   handle it just in case.  */
+	/* Allocate more space if needed.  */
 	if (tobuf == *buf + *bufsize)
 	{
 	    int c;

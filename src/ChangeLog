@@ -1,3 +1,15 @@
+1999-06-23  Jim Kingdon  <http://www.cyclic.com>
+
+	* sanity.sh (symlinks2): New test, for symlinks in working
+	directory without PreservePermissions.  This test (modulo a few
+	details not relevant to testing whether we are following symlinks)
+	worked remote as of now, or either remote or local for CVS 1.9.
+	* subr.c (get_file): Revert 1998-02-15 change to special-case
+	symlinks.  This makes the above test work local too.
+	* rcs.c (RCS_checkin): Move the logic to handle special-case
+	symlinks (and other files other than regular files) here, and make
+	it only happen if PreservePermissions is on.
+
 1999-06-18  Larry Jones  <larry.jones@sdrc.com>
 
 	* sanity.sh (devcom3-9a): Be less specific about the expected
