@@ -3558,6 +3558,12 @@ all its options and arguments to the @code{rcs} command; it does
 no filtering or other processing.  This command @emph{does} work
 recursively, however, so extreme care should be used.
 
+If there is a group whose name matches a compiled in
+value which defaults to @code{cvsadmin}, only members
+of that group can use @code{cvs admin}.  To disallow
+@code{cvs admin} for all users, create a group with no
+users in it.
+
 @menu
 * admin options::               admin options
 * admin examples::              admin examples
