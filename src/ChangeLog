@@ -1,3 +1,8 @@
+2003-06-27  Derek Price  <derek@ximbiot.com>
+
+	* checkout.c (safe_location): Don't try and print from a NULL pointer.
+	(Report and original patch from Sampo Kellomaki <sampo@symlabs.com>.)
+
 2003-06-26  Larry Jones  <lawrence.jones@eds.com>
 
 	* hash.c (sortlist): Avoid crash when list is null.
