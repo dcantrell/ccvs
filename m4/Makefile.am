@@ -37,6 +37,7 @@ EXTRA_DIST = \
 	lib-prefix.m4 \
 	lstat.m4 \
 	malloc.m4 \
+	mkstemp.m4 \
 	nls.m4 \
 	po.m4 \
 	progtest.m4 \
