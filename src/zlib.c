@@ -166,7 +166,7 @@ compress_buffer_input (closure, data, need, size, got)
     }
 
     cb->zstr.avail_out = size;
-    cb->zstr.next_out = data;
+    cb->zstr.next_out = (Bytef *) data;
 
     while (1)
     {
@@ -178,7 +178,7 @@ compress_buffer_input (closure, data, need, size, got)
 	   structure.  */
 
 	cb->zstr.avail_in = bd->size;
-	cb->zstr.next_in = bd->bufp;
+	cb->zstr.next_in = (Bytef *) bd->bufp;
 
 	do
 	{
@@ -194,7 +194,7 @@ compress_buffer_input (closure, data, need, size, got)
 		 && cb->zstr.avail_out > 0);
 
 	bd->size = cb->zstr.avail_in;
-	bd->bufp = cb->zstr.next_in;
+	bd->bufp = (char *) cb->zstr.next_in;
 
 	if (zstatus == Z_STREAM_END)
 	    return -1;
