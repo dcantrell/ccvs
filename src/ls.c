@@ -16,18 +16,15 @@
 static int ls_proc (int argc, char **argv, char *xwhere, char *mwhere,
                     char *mfile, int shorten, int local, char *mname,
                     char *msg);
-static int ls_fileproc (void *callerdat, struct file_info *finfo);
-static Dtype ls_direntproc (void *callerdat, const char *dir,
-                            const char *repos, const char *update_dir,
-                            List *entries);
 
 static RCSNode *xrcsnode;
 
 static const char *const ls_usage[] =
 {
-    "Usage: %s %s [-e | -l] [-R] [-r rev] [-D date] [path...]\n",
+    "Usage: %s %s [-e | -l] [-RP] [-r rev] [-D date] [path...]\n",
     "\t-e\tDisplay in CVS/Entries format.\n",
     "\t-l\tDisplay all details.\n",
+    "\t-P\tPrune empty directories.\n",
     "\t-R\tList recursively.\n",
     "\t-r rev\tShow files with revision or tag.\n",
     "\t-D date\tShow files from date.\n",
@@ -39,13 +36,13 @@ static bool entries_format;
 static bool long_format;
 static char *show_tag;
 static char *show_date;
+static bool set_tag;
+static char *created_dir;
 static bool tag_validated;
 static bool recurse;
+static bool ls_prune_dirs;
 static char *regexp_match;
 static bool is_rls;
-static unsigned long dircount; /* Dircount is used to avoid printing a
-                                * blank line after the last directory.
-                                */
 
 
 
@@ -66,14 +63,15 @@ ls (int argc, char **argv)
     show_date = NULL;
     tag_validated = false;
     recurse = false;
+    ls_prune_dirs = false;
 
     optind = 0;
 
     while ((c = getopt (argc, argv,
 #ifdef SERVER_SUPPORT
-           server_active ? "qelr:D:R" :
+           server_active ? "qelr:D:PR" :
 #endif /* SERVER_SUPPORT */
-           "elr:D:R"
+           "elr:D:RP"
            )) != -1)
     {
 	switch (c)
@@ -102,6 +100,9 @@ ls (int argc, char **argv)
 		break;
 	    case 'D':
 		show_date = Make_Date (optarg);
+		break;
+	    case 'P':
+		ls_prune_dirs = true;
 		break;
 	    case 'R':
 		recurse = true;
@@ -141,6 +142,8 @@ ls (int argc, char **argv)
 	    send_arg ("-e");
 	if (long_format)
 	    send_arg ("-l");
+	if (ls_prune_dirs)
+	    send_arg ("-P");
 	if (recurse)
 	    send_arg ("-R");
 	if (show_tag)
@@ -167,6 +170,7 @@ ls (int argc, char **argv)
 	     * the user pull status information with this command, but why
 	     * don't they just use update or status?
 	     */
+	    client_prune_dirs = ls_prune_dirs;
 	    send_files (argc, argv, !recurse, 0, SEND_NO_CONTENTS);
 	    send_file_names (argc, argv, SEND_EXPAND_WILD);
 	    send_to_server ("list\012", 0);
@@ -242,8 +246,19 @@ ls_print (Node *p, void *closure)
 static int
 ls_print_dir (Node *p, void *closure)
 {
-    if (recurse)
+    static bool printed = false;
+
+    if (recurse && !(ls_prune_dirs && list_isempty (p->data)))
     {
+        /* Keep track of whether we've printed.  If we have, then put a blank
+         * line before directory headers, to separate the header from the
+         * listing of the previous directory.
+         */
+        if (printed)
+            cvs_output ("\n", 1);
+        else
+            printed = true;
+
         if (!strcmp (p->key, ""))
             cvs_output (".", 1);
         else
@@ -251,8 +266,6 @@ ls_print_dir (Node *p, void *closure)
         cvs_output (":\n", 2);
     }
     walklist (p->data, ls_print, NULL);
-    if (recurse && --dircount)
-        cvs_output ("\n", 1);
     return 0;
 }
 
@@ -327,43 +340,50 @@ ls_fileproc (void *callerdat, struct file_info *finfo)
 
 
 
+/* A delproc for a List Node containing a List *.  */
+static void
+ls_delproc (Node *p)
+{
+    dellist ((List **)&p->data);
+}
+
+
+
 /*
  * Add this directory to the list of data to be printed for a directory and
  * decide whether to tell the recursion processor whether to continue
  * recursing or not.
  */
-Dtype
+static Dtype
 ls_direntproc (void *callerdat, const char *dir, const char *repos,
                const char *update_dir, List *entries)
 {
-    Dtype retval = R_SKIP_ALL;
+    Dtype retval;
     Node *p;
-    char *parent;
 
-    if (!strcmp (dir, ".") || recurse)
-    {
-	/* Create a new list for this directory.  */
-	p = getnode ();
-	p->key = xstrdup (strcmp (update_dir, ".") ? update_dir : "");
-	p->data = getlist ();
-        p->delproc = dellist;
-	addnode (callerdat, p);
-        dircount++;
-	retval = R_PROCESS;
-    }
+    /* Due to the way we called start_recursion() from ls_proc() with a single
+     * argument at a time, we can assume that if we don't yet have a parent
+     * directory in DIRS then this directory should be processed.
+     */
 
     if (strcmp (dir, "."))
     {
-	/* Push this dir onto our parent directory's list.  */
+        /* Search for our parent directory.  */
+	char *parent;
+        parent = xmalloc (strlen (update_dir) - strlen (dir) + 1);
+        strncpy (parent, update_dir, strlen (update_dir) - strlen (dir));
+        parent[strlen (update_dir) - strlen (dir)] = '\0';
+        strip_trailing_slashes (parent);
+        p = findnode (callerdat, parent);
+    }
+    else
+        p = NULL;
+
+    if (p)
+    {
+	/* Push this dir onto our parent directory's listing.  */
 	char *buf;
 	size_t length;
-	size_t trailingpathsep = 0;
-	parent = xmalloc (strlen (update_dir) - strlen (dir) + 1);
-	strncpy (parent, update_dir, strlen (update_dir) - strlen (dir));
-	if (ISDIRSEP (parent[strlen (update_dir) - strlen (dir) - 1]))
-            trailingpathsep = 1;
-	parent[strlen (update_dir) - strlen (dir) - trailingpathsep] = '\0';
-	p = findnode (callerdat, parent);
         assert (p);
 
 	if (entries_format)
@@ -376,7 +396,76 @@ ls_direntproc (void *callerdat, const char *dir, const char *repos,
 	push_string (p->data, buf);
     }
 
+    if (!p || recurse)
+    {
+	/* Create a new list for this directory.  */
+	p = getnode ();
+	p->key = xstrdup (strcmp (update_dir, ".") ? update_dir : "");
+	p->data = getlist ();
+        p->delproc = ls_delproc;
+	addnode (callerdat, p);
+
+	/* Create a local directory and mark it as needing deletion.  This is
+         * the behavior the recursion processor relies upon, a la update &
+         * checkout.
+         */
+	if (!isdir (dir))
+        {
+	    int nonbranch;
+	    if (show_tag == NULL && show_date == NULL)
+	    {
+		ParseTag (&show_tag, &show_date, &nonbranch);
+		set_tag = true;
+	    }
+
+	    if (!created_dir)
+		created_dir = xstrdup (update_dir);
+
+	    make_directory (dir);
+	    Create_Admin (dir, update_dir, repos, show_tag, show_date,
+			  nonbranch, 0, 0);
+	    Subdir_Register (entries, NULL, dir);
+	}
+
+	/* Tell do_recursion to keep going.  */
+	retval = R_PROCESS;
+    }
+    else
+        retval = R_SKIP_ALL;
+
     return retval;
+}
+
+
+
+/* Clean up tags, dates, and dirs if we created this directory.
+ */
+static int
+ls_dirleaveproc (void *callerdat, const char *dir, int err,
+                 const char *update_dir, List *entries)
+{
+	if (created_dir && !strcmp (created_dir, update_dir))
+	{
+		if (set_tag)
+		{
+		    if (show_tag) free (show_tag);
+		    if (show_date) free (show_date);
+		    show_tag = show_date = NULL;
+		    set_tag = false;
+		}
+
+		if (ls_prune_dirs)
+		{
+		    (void)CVS_CHDIR ("..");
+		    if (unlink_file_dir (dir))
+			error (0, errno, "Failed to remove directory `%s'",
+			       created_dir);
+		    Subdir_Deregister (entries, NULL, dir);
+		}
+
+		free (created_dir);
+		created_dir = NULL;
+	}
 }
 
 
@@ -387,9 +476,9 @@ ls_proc (int argc, char **argv, char *xwhere, char *mwhere, char *mfile,
 {
     char *repository;
     int err = 0;
-    List *dirs;
     int which;
     char *where;
+    int i;
 
     if (is_rls)
     {
@@ -476,15 +565,33 @@ ls_proc (int argc, char **argv, char *xwhere, char *mwhere, char *mfile,
 	tag_validated = true;
     }
 
-    dirs = getlist ();
-    err = start_recursion (ls_fileproc, NULL, ls_direntproc,
-                           NULL, dirs, argc - 1, argv + 1, local, which, 0,
-                           CVS_LOCK_READ, where, 1, repository);
+    /* Loop on argc so that we are guaranteed that any directory passed to
+     * ls_direntproc should be processed if its parent is not yet in DIRS.
+     */
+    if (argc == 1)
+    {
+	List *dirs = getlist ();
+	err = start_recursion (ls_fileproc, NULL, ls_direntproc,
+			       ls_dirleaveproc, dirs, 0, NULL, local, which, 0,
+			       CVS_LOCK_READ, where, 1, repository);
+	walklist (dirs, ls_print_dir, NULL);
+	dellist (&dirs);
+    }
+    else
+    {
+	for (i = 1; i < argc; i++)
+	{
+	    List *dirs = getlist ();
+	    err = start_recursion (ls_fileproc, NULL, ls_direntproc,
+				   NULL, dirs, 1, argv + i, local, which, 0,
+				   CVS_LOCK_READ, where, 1, repository);
+	    walklist (dirs, ls_print_dir, NULL);
+	    dellist (&dirs);
+	}
+    }
 
     if (!(which & W_LOCAL)) free (repository);
     if (where) free (where);
-
-    walklist (dirs, ls_print_dir, NULL);
 
     return err;
 }

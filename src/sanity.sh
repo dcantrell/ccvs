@@ -1014,7 +1014,7 @@ RCSINIT=; export RCSINIT
 
 if test x"$*" = x; then
 	# Basic/miscellaneous functionality
-	tests="version basica basicb basicc basic1 deep basic2"
+	tests="version basica basicb basicc basic1 deep basic2 ls"
 	tests="${tests} parseroot files spacefiles commit-readonly"
 	tests="${tests} commit-add-missing"
 	tests="${tests} status"
@@ -3928,6 +3928,87 @@ W [0-9-]* [0-9:]* ${PLUS}0000 ${username}     file7     first-dir           == <
 		rm -rf ${CVSROOT_DIRNAME}/first-dir
 		rm -rf ${CVSROOT_DIRNAME}/second-dir
 		;;
+
+	ls)
+	  # Test the ls & rls commands.  There are some tests of
+	  # Interaction of ls, rls, and branches in branches2.
+	  mkdir 1; cd 1
+	  dotest ls-init-1 "$testcvs -Q co -dtop ."
+	  cd top
+	  dotest ls-1 "$testcvs ls CVSROOT" \
+"checkoutlist
+commitinfo
+config
+cvswrappers
+loginfo
+modules
+notify
+rcsinfo
+taginfo
+verifymsg"
+	  dotest ls-2 "$testcvs ls -R" \
+"\.:
+CVSROOT
+
+CVSROOT:
+checkoutlist
+commitinfo
+config
+cvswrappers
+loginfo
+modules
+notify
+rcsinfo
+taginfo
+verifymsg"
+	  # This used to cause a fatal error.
+	  mkdir $CVSROOT_DIRNAME/notcheckedout
+	  dotest ls-3 "$testcvs ls -RP" \
+"\.:
+CVSROOT
+notcheckedout
+
+CVSROOT:
+checkoutlist
+commitinfo
+config
+cvswrappers
+loginfo
+modules
+notify
+rcsinfo
+taginfo
+verifymsg"
+
+	  # Make sure the previous command did not leave the notcheckedout
+	  # directory.
+	  dotest_fail ls-4 "test -d notcheckedout"
+
+	  dotest ls-5 "$testcvs ls -R" \
+"\.:
+CVSROOT
+notcheckedout
+
+CVSROOT:
+checkoutlist
+commitinfo
+config
+cvswrappers
+loginfo
+modules
+notify
+rcsinfo
+taginfo
+verifymsg
+
+notcheckedout:"
+	  dotest ls-6 "test -d notcheckedout"
+
+	  dokeep
+	  cd ../..
+	  rmdir $CVSROOT_DIRNAME/notcheckedout
+	  rm -rf 1 $CVSROOT_DIRNAME/notcheckedout
+	  ;;
 
 	parseroot)
 	  mkdir 1; cd 1
