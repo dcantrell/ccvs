@@ -68,14 +68,7 @@ construct_cvspass_filename ()
     passfile =
 	(char *) xmalloc (strlen (homedir) + strlen (CVS_PASSWORD_FILE) + 3);
     strcpy (passfile, homedir);
-#ifndef NO_SLASH_AFTER_HOME
-    /* NO_SLASH_AFTER_HOME is defined for VMS, where foo:[bar]/.cvspass is not
-       a legal filename but foo:[bar].cvspass is.  A more clean solution would
-       be something more along the lines of a "join a directory to a filename"
-       kind of thing....  */
-    strcat (passfile, "/");
-#endif
-    strcat (passfile, CVS_PASSWORD_FILE);
+    strcat_filename_onto_homedir (passfile, CVS_PASSWORD_FILE);
 
     /* Safety first and last, Scouts. */
     if (isfile (passfile))
