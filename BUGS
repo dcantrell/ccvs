@@ -15,11 +15,6 @@ similar file for the unix-like operating systems (not yet, at least).
 This file also might contain some platform-specific bugs.
 
 
-* The "&" feature of the modules file does not work correctly with
-client/server CVS.  The documented behavior (which is implemented by
-non-client/server CVS) is the correct one.
-
-
 * The -m option to "cvs add" does not work with client/server CVS.
 CVS will accept the option, but it won't actually set the
 file's description.

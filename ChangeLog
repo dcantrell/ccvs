@@ -1,5 +1,8 @@
 Thu Oct 10 09:20:25 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* BUGS: Remove item about & in modules file and client/server; the
+	bug is fixed.
+
 	* README.VMS: Rewrite sections about wildcard expansion and
 	calling editors to suggest technical approaches and to make it
 	clear that fixes will only happen if someone gets around to them.
