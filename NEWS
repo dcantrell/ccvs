@@ -3,6 +3,9 @@ Changes since 1.12.5:
 
 GENERAL USER ISSUES
 
+* A seg fault which always occurred after waiting on another process's lock
+  in order to establish a promotable lock is now avoided.
+
 * An unlikely potential segfault when using the :fork: connection method has
   been fixed.
 
