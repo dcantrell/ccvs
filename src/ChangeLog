@@ -1,3 +1,11 @@
+Tue Apr  8 23:02:22 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* error.h, error.c: Test for #ifdef __STDC__, not #if __STDC__.
+	This is consistent with other parts of CVS; it means that the
+	declaration for fperror will match the definition even if __STDC__
+	is defined to 0 as the SunPro 4.0 compiler does.  Reported by
+	Richard Smith <rjsmith@cisco.com>.
+
 2 Apr 1997  Jim Kingdon
 
 	* entries.c (ParseTag): Add "break;" after "default:" to avoid
