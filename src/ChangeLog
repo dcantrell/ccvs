@@ -1,4 +1,9 @@
 1998-06-23  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* sanity.sh (modules4): Add tests for reversing the order of the
+	"!first-dir/sdir" and "first-dir".
+
+1998-06-23  Jim Kingdon  <kingdon@harvey.cyclic.com>
 	and Dave Wolfe@Motorola.
 
 	* sanity.sh (modes2): Touch the file before chmod'ing it.
