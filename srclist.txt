@@ -44,6 +44,9 @@ Imported files					CVS		Local
 ----------------------------------------------- --------------- ---------------
 # $GNULIB/modules/exit
 $GNULIB/lib/exit.h				lib		no NI
+# $GNULIB/modules/gethostname
+$GNULIB/lib/gethostname.c			lib		no NI
+$GNULIB/m4/gethostname.m4			m4		no NI
 # $GNULIB/modules/getline
 $GNULIB/lib/getline.c				lib		yes NI
 $GNULIB/lib/getline.h				lib		yes NI
