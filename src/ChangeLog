@@ -1,5 +1,11 @@
 2000-12-26  Derek Price  <derek.price@openavenue.com>
 
+	* Makefile.in: update timestamp
+	* stamp-h2.in: ditto
+	* version.c: ditto
+
+2000-12-26  Derek Price  <derek.price@openavenue.com>
+
 	* Makefile.am: new target for version.c
 	(EXTRA_DIST): add version.c.in & version.c so builds work when
 	configure doesn't
