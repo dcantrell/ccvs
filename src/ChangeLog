@@ -1,3 +1,10 @@
+1998-07-12  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* sanity.sh (taginfo): Write the TESTDIR into the script rather
+	than having the script look at the environment.  This means that
+	it will work if TESTDIR is set by sanity.sh as well as if
+	sanity.sh finds TESTDIR in the environment.
+
 1998-07-11  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* tag.c (check_fileproc): Calculate the revision to be tagged the

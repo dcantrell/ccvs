@@ -10459,7 +10459,7 @@ ${PROG} [a-z]*: Rebuilding administrative file database"
 	  cd CVSROOT
 	  cat >${TESTDIR}/1/loggit <<EOF
 #!${TESTSHELL}
-echo "\$@" >>\${TESTDIR}/1/taglog
+echo "\$@" >>${TESTDIR}/1/taglog
 if test "\$1" = rejectme; then
   exit 1
 else
