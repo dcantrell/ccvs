@@ -745,6 +745,11 @@ error ENOMEM Virtual memory exhausted.\n");
 
 /* Close the secondary log and reopen it for read.
  *
+ * NOTES
+ *   This function actually only disables further logging (fflushing the FILE
+ *   *), then rewinds the file pointer and  returns its FD, since this is
+ *   faster than closing and reopening it.
+ *
  * GLOBALS
  *   secondary_log		The write proxy log buffer.
  *   secondary_log_name		The file backing the above.
@@ -765,7 +770,7 @@ read_secondary_log (struct buffer **buf_in, const char *name)
 
     assert (buf);
 
-    /* Close the secondary log.  */
+    /* Disable the secondary log.  */
     fp = log_buffer_disable (buf);
     *buf_in = NULL;
 
