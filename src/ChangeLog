@@ -1,7 +1,18 @@
 2000-06-12  Larry Jones  <larry.jones@sdrc.com>
 
 	* rcs.c (rcsbuf_valword): Set rcsbuf->vlen to keep rcsbuf_valcopy()
-	from allocating more memory than needed for @ strings.
+	from allocating more memory than needed for @ strings.  Don't declare
+	unless PRESERVE_PERMISSIONS_SUPPORT (since not defined).
+
+	* rcs.c (RCS_abandon): New function to abandon changes.
+	* rcs.h: Declare it.
+	* admin.c (admin_fileproc): Use it instead of RCS_reparsercsfile.
+
+	* commit.c (commit_fileproc): Fix memory leaks.
+	* patch.c (patch_fileproc): Ditto.
+	* rcs.c (RCS_nodeisbranch, RCS_copydeltas): Ditto.
+	* tag.c (tag_fileproc): Ditto.
+	* update.c (update): Ditto.
 
 2000-06-09  Larry Jones  <larry.jones@sdrc.com>
 

@@ -230,6 +230,7 @@ void RCS_addaccess PROTO ((RCSNode *, char *));
 void RCS_delaccess PROTO ((RCSNode *, char *));
 char *RCS_getaccess PROTO ((RCSNode *));
 void RCS_rewrite PROTO ((RCSNode *, Deltatext *, char *));
+void RCS_abandon PROTO ((RCSNode *));
 int rcs_change_text PROTO ((const char *, char *, size_t, const char *,
 			    size_t, char **, size_t *));
 char *make_file_label PROTO ((char *, char *, RCSNode *));

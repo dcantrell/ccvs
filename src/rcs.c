@@ -67,7 +67,6 @@ static void rcsbuf_valpolish PROTO ((struct rcsbuffer *, char *val, int polish,
 				     size_t *lenp));
 static void rcsbuf_valpolish_internal PROTO ((struct rcsbuffer *, char *to,
 					      const char *from, size_t *lenp));
-static char *rcsbuf_valword PROTO ((struct rcsbuffer *, char **));
 static unsigned long rcsbuf_ftell PROTO ((struct rcsbuffer *));
 static void rcsbuf_get_buffered PROTO ((struct rcsbuffer *, char **datap,
 					size_t *lenp));
@@ -2505,8 +2504,8 @@ RCS_nodeisbranch (rcs, rev)
 	    return (1);
 	}
 	free (magic);
-	free (version);
     }
+    free (version);
     return (0);
 }
 
@@ -4679,8 +4678,10 @@ RCS_addbranch (rcs, branch)
     if (nodep == NULL)
     {
 	error (0, 0, "%s: can't find branch point %s", rcs->path, branchpoint);
+	free (branchpoint);
 	return NULL;
     }
+    free (branchpoint);
     branchnode = (RCSVers *) nodep->data;
 
     /* If BRANCH was a full branch number, make sure it is higher than MAX. */
@@ -7983,6 +7984,7 @@ RCS_copydeltas (rcs, fin, rcsbufin, fout, newdtext, insertpt)
 	/* If this revision has been outdated, just skip it. */
 	if (dadmin->outdated)
 	{
+	    freedeltatext (dtext);
 	    --actions;
 	    continue;
 	}
@@ -8343,6 +8345,22 @@ RCS_rewrite (rcs, newdtext, insertpt)
 	error (0, errno, "warning: closing RCS file `%s'", rcs->path);
 
     rcs_internal_unlockfile (fout, rcs->path);
+}
+
+/* Abandon changes to an RCS file. */
+
+void
+RCS_abandon (rcs)
+    RCSNode *rcs;
+{
+    free_rcsnode_contents (rcs);
+    rcs->symbols_data = NULL;
+    rcs->expand = NULL;
+    rcs->access = NULL;
+    rcs->locks_data = NULL;
+    rcs->comment = NULL;
+    rcs->desc = NULL;
+    rcs->flags |= PARTIAL;
 }
 
 

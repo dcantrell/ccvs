@@ -383,15 +383,20 @@ update (argc, argv)
 		error (1, errno, "cannot remove file %s", CVSADM_ENTSTAT);
 #ifdef SERVER_SUPPORT
 	    if (server_active)
-		server_clear_entstat (".", Name_Repository (NULL, NULL));
+	    {
+		char *repos = Name_Repository (NULL, NULL);
+		server_clear_entstat (".", repos);
+		free (repos);
+	    }
 #endif
 	}
 
 	/* keep the CVS/Tag file current with the specified arguments */
 	if (aflag || tag || date)
 	{
-	    WriteTag ((char *) NULL, tag, date, 0,
-		      ".", Name_Repository (NULL, NULL));
+	    char *repos = Name_Repository (NULL, NULL);
+	    WriteTag ((char *) NULL, tag, date, 0, ".", repos);
+	    free (repos);
 	    rewrite_tag = 1;
 	    nonbranch = 0;
 	}
