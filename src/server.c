@@ -5689,12 +5689,7 @@ pserver_authenticate_connection ()
 	error (1, 0, "bad auth protocol end: %s", tmp);
     }
     if (!root_allow_ok (repository))
-	/* Just give a generic I HATE YOU.  This is because CVS 1.9.10
-	   and older clients do not support "error".  Once more recent
-	   clients are more widespread, probably want to fix this (it is
-	   a real pain to track down why it isn't letting you in if it
-	   won't say why, and I am not convinced that the potential
-	   information disclosure to an attacker outweighs this).  */
+	printf ("error 0 %s: no such repository\n", repository);
 	goto i_hate_you;
 
     /* OK, now parse the config file, so we can use it to control how

@@ -1,3 +1,8 @@
+2000-10-10  Larry Jones  <larry.jones@sdrc.com>
+
+	* server.c (pserver_authenticate_connection): Give a real error
+	message for an invalid repository.
+
 2000-10-06  Derek Price  <derek.price@openavenue.com>
 
 	* add.c (add): Made quiet mode affect some warning messages as seemed
