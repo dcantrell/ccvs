@@ -1,3 +1,10 @@
+Wed Jan  7 09:41:08 1998  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* TODO: Revise item 149 (concerning changing CVS/Root and such).
+	"This whole area is a rather bad pile of individual decisions which
+	accumulated over time, some of them probably bad decisions with
+	hindsight."
+
 Wed Dec 31 09:25:20 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* FAQ: Re-import from FAQ-O-Matic.  Features a change regarding
