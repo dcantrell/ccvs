@@ -1,3 +1,11 @@
+Fri Apr 28 22:49:25 1995  Jim Blandy  <jimb@totoro.bio.indiana.edu>
+
+	* Makefile.in (SOURCES, OBJECTS): Updated.
+	(HEADERS): New variable.
+	(DISTFILES): Updated.
+	(dist-dir): Renamed from dist; changed to work with DISTDIR
+	variable passed from parent.
+
 Wed Feb  8 06:37:53 1995  Roland McGrath  <roland@churchy.gnu.ai.mit.edu>
 
 	* system.h (S_IRUSR et al): Define if not already defined.
