@@ -13636,11 +13636,9 @@ ${testcvs} -d ${TESTDIR}/crerepos release -d CVSROOT >>${LOGFILE}; then
 	  if test "x$remote" = "xno"; then
 	    # Test that CVS rejects a relative path in CVSROOT.
 	    mkdir 1; cd 1
-	    dotest_fail crerepos-6a "${testcvs} -q -d ../crerepos get ." \
-"\.\.: unknown host
-\.\.: unknown host
-\.\.: Unknown host
-${PROG} \[[a-z]* aborted\]: end of file from server (consult above messages if any)"
+	    # piping the output of this test to /dev/null since we have no way of knowing
+	    # what error messages different rsh implementations will output.
+	    dotest_fail crerepos-6a "${testcvs} -q -d ../crerepos get . >/dev/null 2>&1" ""
 	    cd ..
 	    rm -r 1
 
@@ -13659,9 +13657,9 @@ ${PROG} \[[a-z]* aborted\]: end of file from server (consult above messages if a
 	    dotest_fail crerepos-6a-r \
 "${testcvs} -q -d :ext:`hostname`:../crerepos get ." \
 "${PROG} [a-z]*: CVSROOT (\":ext:${hostname}:\.\./crerepos\")
-${PROG} [a-z]*: may only specify a positive, non-zero, integer port (not \"\.\.\").
-${PROG} [a-z]*: perhaps you entered a relative pathname?
-${PROG} \[[a-z]* aborted\]: Bad CVSROOT."
+${PROG} [a-z]*: may only specify a positive, non-zero, integer port (not \"\.\.\")\.
+${PROG} [a-z]*: perhaps you entered a relative pathname${QUESTION}
+${PROG} \[[a-z]* aborted\]: Bad CVSROOT\."
 	    cd ..
 	    rm -r 1
 
@@ -13672,7 +13670,7 @@ ${PROG} \[[a-z]* aborted\]: Bad CVSROOT."
 ${PROG} [a-z]*: requires a path spec
 ${PROG} [a-z]*: :(gserver|kserver|pserver):\[\[user\]\[:password\]@\]host\[:\[port\]\]/path
 ${PROG} [a-z]*: \[:(ext|server):\]\[\[user\]@\]host\[:\]/path
-${PROG} \[[a-z]* aborted\]: Bad CVSROOT."
+${PROG} \[[a-z]* aborted\]: Bad CVSROOT\."
 	    cd ..
 	    rm -r 1
 	  fi # end of tests to be skipped for remote
