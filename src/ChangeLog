@@ -1,3 +1,19 @@
+2000-06-23  Larry Jones  <larry.jones@sdrc.com>
+
+	* client.c (send_dirent_proc): Don't allocate ignlist if you're
+	going to skip the directory (plugs memory leak).
+	(send_dirleave_proc): New function.
+	(send_files): Use it (plugs memory leak).
+	* root.c (root_allow_free): Plug memory leaks.
+	* server.c (serve_directory, serve_notify, check_password,
+	pserver_authenticate_connection): Ditto.
+	* update.c (update): Ditto.
+
+	This completes the memory leak shoot-out -- the Purify'ed version
+	of CVS now runs the entire test suite, both local and remote (except
+	for remote crerepos, which causes Purify to choke) with *no* memory
+	leaks.
+
 2000-06-21  Larry Jones  <larry.jones@sdrc.com>
 
 	* client.c (update_entries, get_responses_and_close): Plug memory leaks.
