@@ -6,9 +6,10 @@ The "TODO" file!                              -*-Indented-Text-*-
     (If done, this should be configurable via commitinfo or some new
     config file -kingdon, Jun 1995).
 
-30. Add "rdiff" program option to the modules database (and "diff"
-too?).  (perhaps should think a little harder about what this is
-trying to accomplish and what the best way is -kingdon, Jul 1997).
+30. Add "rdiff" & "rtag" program options to the modules database.  These
+    commands seem hard to use since these commands deal directly with the
+    RCS ,v files.  (perhaps should think a little harder about what this is
+    trying to accomplish and what the best way is -kingdon, Jul 1997).
 
 31. Think hard about ^C recovery.
     One particular issue: RCS removes the ,foo.c, file on ^C and CVS
@@ -25,10 +26,6 @@ trying to accomplish and what the best way is -kingdon, Jul 1997).
     track of what has been merged is a pain.  Take a look at PRCS 1.2.
     PRCS 1.0 was particularly bad the way it handled the "invisible
     state", but 1.2 is significantly better.
-
-45. Consider enhancing the "rdiff" and "tag" (rtag??) command support in
-    the module database -- they seem hard to use since these commands
-    deal directly with the RCS ,v files.
 
 49. cvs xxx commands should be able to deal with files in other
     directories.  I want to do a cvs add foo/bar.c.

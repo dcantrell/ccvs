@@ -1,5 +1,8 @@
 Changes since 1.12.1:
 
+* A bug with short patches (`rdiff -s') which caused rdiff to sometimes report
+differences that did not exist has been fixed.
+
 * Some minor corrections were made to the diff code to keep diff & rdiff from
 printing diff headers with empty change texts when two files have different
 revision numbers but the same content.

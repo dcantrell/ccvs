@@ -454,22 +454,21 @@ patch_fileproc (callerdat, finfo)
 	vers_tag = NULL;
     }
 
-    if (vers_tag == NULL && vers_head == NULL)
+    if( vers_tag == NULL && vers_head == NULL
+        || vers_tag && vers_head && strcmp( vers_head, vers_tag ) == 0 )
     {
-	/* Nothing known about specified revs.  */
+	/* Nothing known about specified revs or
+	 * not changed between releases.
+	 */
 	ret = 0;
 	goto out2;
     }
 
-    if (vers_tag && vers_head && strcmp (vers_head, vers_tag) == 0)
+    if( patch_short && ( vers_tag == NULL || vers_head == NULL ) )
     {
-	/* Not changed between releases.  */
-	ret = 0;
-	goto out2;
-    }
-
-    if (patch_short)
-    {
+	/* For adds & removes with a short patch requested, we can print our
+	 * error message now and get out.
+	 */
 	cvs_output ("File ", 0);
 	cvs_output (finfo->fullname, 0);
 	if (vers_tag == NULL)
@@ -478,7 +477,7 @@ patch_fileproc (callerdat, finfo)
 	    cvs_output (vers_head, 0);
 	    cvs_output ("\n", 1);
 	}
-	else if (vers_head == NULL)
+	else
 	{
 	    cvs_output (" is removed; not included in ", 0);
 	    if (rev2 != NULL)
@@ -493,14 +492,6 @@ patch_fileproc (callerdat, finfo)
 	    }
 	    else
 		cvs_output ("current release", 0);
-	    cvs_output ("\n", 1);
-	}
-	else
-	{
-	    cvs_output (" changed from revision ", 0);
-	    cvs_output (vers_tag, 0);
-	    cvs_output (" to ", 0);
-	    cvs_output (vers_head, 0);
 	    cvs_output ("\n", 1);
 	}
 	ret = 0;
@@ -598,14 +589,29 @@ patch_fileproc (callerdat, finfo)
 	    /*
 	     * The two revisions are really different, so read the first two
 	     * lines of the diff output file, and munge them to include more
-	     * reasonable file names that "patch" will understand.
+	     * reasonable file names that "patch" will understand, unless the
+	     * user wanted a short patch.  In that case, just output the short
+	     * message.
 	     */
+	    if( patch_short )
+	    {
+		cvs_output( "File ", 0 );
+		cvs_output( finfo->fullname, 0 );
+		cvs_output( " changed from revision ", 0 );
+		cvs_output( vers_tag, 0 );
+		cvs_output( " to ", 0 );
+		cvs_output( vers_head, 0 );
+		cvs_output( "\n", 1 );
+		ret = 0;
+		goto out;
+	    }
 
 	    /* Output an "Index:" line for patch to use */
 	    cvs_output ("Index: ", 0);
 	    cvs_output (finfo->fullname, 0);
 	    cvs_output ("\n", 1);
 
+	    /* Now the munging. */
 	    fp = open_file (tmpfile3, "r");
 	    if (getline (&line1, &line1_chars_allocated, fp) < 0 ||
 		getline (&line2, &line2_chars_allocated, fp) < 0)

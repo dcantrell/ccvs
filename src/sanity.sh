@@ -904,7 +904,8 @@ if test x"$*" = x; then
 	tests="${tests} commit-add-missing"
 	tests="${tests} status"
 	# Branching, tagging, removing, adding, multiple directories
-	tests="${tests} rdiff rdiff2 diff death death2 rm-update-message rmadd"
+	tests="${tests} rdiff rdiff-add-remove-nodiff"
+	tests="${tests} rdiff2 diff death death2 rm-update-message rmadd"
 	tests="${tests} rmadd2 dirs dirs2 branches branches2 branches3"
 	tests="${tests} branches4 tagc tagf"
 	tests="${tests} rcslib multibranch import importb importc"
@@ -4219,6 +4220,92 @@ diff -c /dev/null trdiff/new:1\.1
 		rm -r testimport
 		rm -rf ${CVSROOT_DIRNAME}/trdiff
 		;;
+
+	rdiff-add-remove-nodiff)
+	  # Test that the short patch behaves as expected
+	  mkdir rdiff-add-remove-nodiff; cd rdiff-add-remove-nodiff
+	  mkdir abc
+	  dotest rdiff-add-remove-nodiff-init-1 \
+"${testcvs} -q import -I ! -m initial-import abc vendor initial" \
+'
+No conflicts created by this import'
+
+	  dotest rdiff-add-remove-nodiff-init-2 "${testcvs} -q get abc" ''
+	  cd abc
+	  echo "abc" >file1.txt
+	  dotest rdiff-add-remove-nodiff-init-3 "${testcvs} add file1.txt" \
+"${SPROG} [a-z]*: scheduling file .file1\.txt' for addition
+${SPROG} [a-z]*: use '${SPROG} commit' to add this file permanently"
+	  dotest rdiff-add-remove-nodiff-init-4 \
+"${testcvs} commit -madd-file1 file1.txt" \
+"RCS file: ${CVSROOT_DIRNAME}/abc/file1\.txt,v
+done
+Checking in file1\.txt;
+${CVSROOT_DIRNAME}/abc/file1\.txt,v  <--  file1\.txt
+initial revision: 1\.1
+done"
+	  echo def >>file1.txt
+	  dotest rdiff-add-remove-nodiff-init-5 \
+"${testcvs} commit -mchange-file1 file1.txt" \
+"Checking in file1\.txt;
+${CVSROOT_DIRNAME}/abc/file1\.txt,v  <--  file1\.txt
+new revision: 1\.2; previous revision: 1\.1
+done"
+	  echo "abc" >file1.txt
+	  dotest rdiff-add-remove-nodiff-init-6 \
+"${testcvs} commit -mrestore-file1-rev1 file1.txt" \
+"Checking in file1\.txt;
+${CVSROOT_DIRNAME}/abc/file1\.txt,v  <--  file1\.txt
+new revision: 1\.3; previous revision: 1\.2
+done"
+	  dotest rdiff-add-remove-nodiff-init-7 \
+"${testcvs} tag -r 1.1 tag1 file1.txt" \
+"T file1\.txt"
+	  dotest rdiff-add-remove-nodiff-init-8 \
+"${testcvs} tag -r 1.2 tag2 file1.txt" \
+"T file1\.txt"
+	  dotest rdiff-add-remove-nodiff-init-9 \
+"${testcvs} tag -r 1.3 tag3 file1.txt" \
+"T file1\.txt"
+	  echo "abc" >file2.txt
+	  dotest rdiff-add-remove-nodiff-init-10 \
+"${testcvs} add file2.txt" \
+"${SPROG} [a-z]*: scheduling file .file2\.txt' for addition
+${SPROG} [a-z]*: use '${SPROG} commit' to add this file permanently"
+	  dotest rdiff-add-remove-nodiff-init-11 \
+"${testcvs} commit -madd-file2 file2.txt" \
+"RCS file: ${CVSROOT_DIRNAME}/abc/file2\.txt,v
+done
+Checking in file2\.txt;
+${CVSROOT_DIRNAME}/abc/file2\.txt,v  <--  file2\.txt
+initial revision: 1\.1
+done"
+	  dotest rdiff-add-remove-nodiff-init-12 \
+"${testcvs} tag -r 1.1 tag4 file2.txt" \
+"T file2\.txt"
+	  dotest rdiff-add-remove-nodiff-init-13 \
+"${testcvs} tag -r 1.1 tag5 file2.txt" \
+"T file2\.txt"
+	  cd ../..
+	  rm -fr rdiff-add-remove-nodiff
+
+	  dotest rdiff-add-remove-nodiff-no-real-change \
+"${testcvs} -q rdiff -s -r tag1 -r tag3 abc"
+
+	  dotest rdiff-add-remove-nodiff-real-change \
+"${testcvs} -q rdiff -s -r tag1 -r tag2 abc" \
+'File abc/file1.txt changed from revision 1\.1 to 1\.2'
+
+	  dotest_sort rdiff-add-remove-nodiff-remove-add \
+"${testcvs} -q rdiff -s -r tag2 -r tag4 abc" \
+'File abc/file1\.txt is removed; not included in release tag tag4
+File abc/file2\.txt is new; current revision 1\.1'
+
+	  dotest rdiff-add-remove-nodiff-no-change \
+ "${testcvs} -q rdiff -s -r tag4 -r tag5 abc"
+
+	  rm -rf ${CVSROOT_DIRNAME}/abc
+	  ;;
 
 	rdiff2)
 	  # Test for the segv problem reported by James Cribb
