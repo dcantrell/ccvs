@@ -46,7 +46,7 @@ RCS 5.7 produces a warning whenever it behaves that way, and current
 versions of CVS do not handle this case in a special way (CVS 1.9 and
 earlier invoke RCS to perform keyword expansion).
 
-Note that the "comment {string};" syntax from rcsfile.1 specifies a
+Note that the "comment {string};" syntax from rcsfile.5 specifies a
 comment leader, which affects expansion of the $Log keyword for old
 versions of RCS.  The comment leader is not used by RCS 5.7 or current
 versions of CVS.
