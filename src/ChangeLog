@@ -1,3 +1,10 @@
+1999-01-13  Larry Jones  <larry.jones@sdrc.com>
+
+	* sanity.sh (dotest_fail): Handle spurrious output from assert better.
+
+	* sanity.sh (rcs3-4, rcs3-5a): Handle even more variants of the
+	assertion failure message.
+
 1999-01-12  Larry Jones  <larry.jones@sdrc.com>
 
 	* sanity.sh (mtfr-3): ls behavior varies wildly on nonexistant files,

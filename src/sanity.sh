@@ -480,7 +480,8 @@ dotest_fail ()
     fail "$1"
   else
     : so far so good
-  fi 2>>${TESTDIR}/dotest.tmp
+  fi 2>${TESTDIR}/dotest.tmp1
+  cat ${TESTDIR}/dotest.tmp1 >>${TESTDIR}/dotest.tmp
   dotest_internal "$@"
 }
 
@@ -13087,7 +13088,7 @@ EOF
 	    # Ouch, didn't expect this one.  FIXCVS.  Or maybe just remove
 	    # the feature, if this is a -s problem?
 	    dotest_fail rcs3-5 "${testcvs} log -s nostate first-dir/file1" \
-".*[Aa]ssertion.*failed${DOTSTAR}"
+".*[Aa]ssertion.*failed${DOTSTAR}" ".*failed assertion${DOTSTAR}"
 	  else # remote
 	    # Is this a reaction to the lack of TopLevelAdmin or something?
 	    # Seems pretty strange to me.  Seems vaguely similar to the
@@ -13099,7 +13100,7 @@ EOF
 ${PROG} \[log aborted\]: no repository"
 	    cd first-dir
 	    dotest_fail rcs3-5a "${testcvs} log -s nostate file1" \
-"${DOTSTAR}ssertion.*failed${DOTSTAR}"
+"${DOTSTAR}ssertion.*failed${DOTSTAR}" "${DOTSTAR}failed assertion${DOTSTAR}"
 	    cd ..
 	  fi # remote
 
