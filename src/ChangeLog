@@ -1,3 +1,15 @@
+Fri Dec 12 15:33:19 1997  Ian Lance Taylor  <ian@cygnus.com>
+
+	* buffer.c (PACKET_SLOP): Define.
+	(packetizing_buffer_initialize): Use PACKET_SLOP when allocating
+	holdbuf.
+	(packetizing_buffer_input): Allow up to PACKET_SLOP bytes in
+	stackoutbuf.
+	(packetizing_buffer_output): Use just BUFFER_DATA_SIZE + 2 for
+	inbuf.  Allow PACKET_SLOP + 4 extra bytes in stack_outbuf.
+	Correct >= to > in test of incoming number of bytes.  Use
+	PACKET_SLOP in other tests.
+
 Fri Dec 12 10:27:08 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* client.c (start_tcp_server): Revise comment to reflect
