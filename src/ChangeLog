@@ -1,10 +1,14 @@
 Thu Jul 18 19:24:08 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* sanity.sh (death2): Change a number of test names from death-*
+	to death2-*.
+
 	* wrapper.c (wrap_setup): Don't look in repository if client_active.
 	* wrapper.c, cvs.h (wrap_send): New function.
 	* update.c (update), import.c (import): Call it.
 	* sanity.sh (binwrap): Do binwrap tests for remote as well as
 	local; tests for above fixes.
+
 	* wrapper.c: Add a few FIXME comments.
 
 Thu Jul 18 18:43:50 1996  Ian Lance Taylor  <ian@cygnus.com>

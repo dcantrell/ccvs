@@ -1685,11 +1685,11 @@ new revision: delete; previous revision: 1\.1\.2
 done'
 
 	  # Test diff of a dead file.
-	  dotest_fail death-diff-1 \
+	  dotest_fail death2-diff-1 \
 "${testcvs} -q diff -r1.1 -rbranch -c file1" \
 "${PROG} [a-z]*: file1 was removed, no comparison available"
 
-	  dotest_fail death-diff-2 \
+	  dotest_fail death2-diff-2 \
 "${testcvs} -q diff -r1.1 -rbranch -N -c file1" \
 "Index: file1
 ===================================================================
@@ -1702,10 +1702,10 @@ diff -N file1
 - first revision
 --- 0 ----"
 
-	  dotest_fail death-diff-3 "${testcvs} -q diff -rtag -c ." \
+	  dotest_fail death2-diff-3 "${testcvs} -q diff -rtag -c ." \
 "${PROG} [a-z]*: file1 no longer exists, no comparison available"
 
-	  dotest_fail death-diff-4 "${testcvs} -q diff -rtag -N -c ." \
+	  dotest_fail death2-diff-4 "${testcvs} -q diff -rtag -N -c ." \
 "Index: file1
 ===================================================================
 RCS file: file1
@@ -1718,10 +1718,10 @@ diff -N file1
 --- 0 ----"
 
 	  # Test rdiff of a dead file.
-	  dotest death-rdiff-1 \
+	  dotest death2-rdiff-1 \
 "${testcvs} -q rtag -rbranch rdiff-tag first-dir" ''
 
-	  dotest death-rdiff-2 "${testcvs} -q rdiff -rtag -rbranch first-dir" \
+	  dotest death2-rdiff-2 "${testcvs} -q rdiff -rtag -rbranch first-dir" \
 "Index: first-dir/file1
 diff -c first-dir/file1:1\.1 first-dir/file1:removed
 \*\*\* first-dir/file1:1\.1[ 	][	]*[a-zA-Z0-9: ]*
@@ -1793,10 +1793,10 @@ new revision: 1\.1\.2\.1; previous revision: 1\.1
 done'
 
 	  # Test diff of a nonexistent tag
-	  dotest_fail death-diff-5 "${testcvs} -q diff -rtag -c file3" \
+	  dotest_fail death2-diff-5 "${testcvs} -q diff -rtag -c file3" \
 "${PROG} [a-z]*: tag tag is not in file file3"
 
-	  dotest_fail death-diff-6 "${testcvs} -q diff -rtag -N -c file3" \
+	  dotest_fail death2-diff-6 "${testcvs} -q diff -rtag -N -c file3" \
 "Index: file3
 ===================================================================
 RCS file: file3
@@ -1808,7 +1808,7 @@ diff -N file3
 --- 1 ----
 ${PLUS} first revision"
 
-	  dotest_fail death-diff-7 "${testcvs} -q diff -rtag -c ." \
+	  dotest_fail death2-diff-7 "${testcvs} -q diff -rtag -c ." \
 "Index: file1
 ===================================================================
 RCS file: /tmp/cvs-sanity/cvsroot/first-dir/file1,v
@@ -1825,7 +1825,7 @@ diff -c -r1\.1 -r1\.1\.2\.2
 ${PROG} [a-z]*: tag tag is not in file file2
 ${PROG} [a-z]*: tag tag is not in file file3"
 
-	  dotest_fail death-diff-8 "${testcvs} -q diff -rtag -c -N ." \
+	  dotest_fail death2-diff-8 "${testcvs} -q diff -rtag -c -N ." \
 "Index: file1
 ===================================================================
 RCS file: /tmp/cvs-sanity/cvsroot/first-dir/file1,v
