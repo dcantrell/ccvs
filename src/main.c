@@ -570,18 +570,17 @@ main (int argc, char **argv)
 		logoff = 1;
 		break;
 	    case 'v':
-		(void) fputs ("\n", stdout);
-		version (0, (char **) NULL);    
-		(void) fputs ("\n", stdout);
-		(void) fputs ("\
-Copyright (c) 1989-2003 Brian Berliner, david d `zoo' zuhn, \n\
-                        Jeff Polk, and other authors\n", stdout);
-		(void) fputs ("\n", stdout);
-		(void) fputs ("CVS may be copied only under the terms of the GNU General Public License,\n", stdout);
-		(void) fputs ("a copy of which can be found with the CVS distribution kit.\n", stdout);
-		(void) fputs ("\n", stdout);
-
-		(void) fputs ("Specify the --help option for further information about CVS\n", stdout);
+		fputs ("\n", stdout);
+		version (0, NULL);    
+		fputs (
+"\n"
+"Copyright (c) 1989-2003 Brian Berliner, david d `zoo' zuhn,\n"
+"                        Jeff Polk, and other authors\n"
+"\n"
+"CVS may be copied only under the terms of the GNU General Public License,\n"
+"a copy of which can be found with the CVS distribution kit.\n"
+"\n"
+"Specify the --help option for further information about CVS\n", stdout);
 
 		exit (0);
 		break;

@@ -1,5 +1,12 @@
 2003-11-12  Derek Price  <derek@ximbiot.com>
 
+	* main.c (main): Remove a trailing newline from the version string.
+	Replace multiple calls to fputs to a single call reformated to C89
+	specifications.  Remove some typecasts unecessary under C89.
+	* sanity.sh (version): Remove trailing newline from the version string.
+
+2003-11-12  Derek Price  <derek@ximbiot.com>
+
 	* add.c (add): Allocate more space for the string I added characters
 	to.
 	(Report from Mark D. Baushke <mdb@cvshome.org>.)
