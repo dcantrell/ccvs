@@ -32,6 +32,12 @@ typedef long (*SCC_out_proc) (LPCSTR, DWORD);
 typedef BOOL (*SCC_popul_proc) (LPVOID callerdat, BOOL add_keep,
                                 LONG status, LPCSTR file);
 
+/* Maximum sizes of various strings.  These are arbitrary limits
+   which are imposed by the SCC.  */
+/* Name argument to SccInitialize.  */
+#define SCC_max_name 31
+/* Path argument to SccInitialize.  */
+#define SCC_max_init_path 31
 
 
 /* We get to put whatever we want here, and the caller will pass it
@@ -71,6 +77,19 @@ SccInitialize (void **contextp, HWND window, LPSTR caller, LPSTR name,
     context->debuglog = fp;
     *contextp = context;
     fprintf (fp, "Made it into SccInitialize!\n");
+    *caps = 0;
+    /* I think maybe this should have some more CVS-like
+       name, like "CVS Root", if we decide that is what
+       a SCC "project" is.  */
+    strncpy (path, "CVS Project:", SCC_max_init_path);
+    fprintf (fp, "Caller name is %s\n", caller);
+    strncpy (name, "CVS", SCC_max_name);
+    /* CVS has no limit on comment length.  But I suppose
+       we need to return a value which is small enough for
+       a caller to allocate a buffer this big.  Not that I
+       would write a caller that way, but.....  */
+    *co_comment_len = 8192;
+    *comment_len = 8192;
     fflush (fp);
     return SCC_return_success;
 }
@@ -79,6 +98,8 @@ SCC_return
 SccUninitialize (void *context_arg)
 {
     struct context *context = (struct context *)context_arg;
+    if (ferror (context->debuglog))
+	/* FIXME: return error value...  */
     if (fclose (context->debuglog) == EOF)
         /* FIXME: return error value, I think.  */
         ;
@@ -91,6 +112,8 @@ SccOpenProject (void *context_arg, HWND window, LPSTR user,
                  LPSTR project, LPSTR local_proj, LPSTR aux_proj,
                  LPSTR comment, SCC_out_proc outproc, LONG flags)
 {
+    struct context *context = (struct context *)context_arg;
+    fprintf (context->debuglog, "SccOpenProject called\n");
     return SCC_return_success;
 }
 
