@@ -3861,13 +3861,11 @@ fi
 $at_traceon
 
 
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stdout >nstdout
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stderr >nstderr
@@ -3881,8 +3879,8 @@ at_status=$?
 grep '^ *+' $at_stder1 >&2
 grep -v '^ *+' $at_stder1 >$at_stderr
 at_failed=false
-echo >>$at_stderr; echo "$SPROG command: scheduling file \`ssfile' for addition
-$SPROG command: use \`$SPROG commit' to add this file permanently
+echo >>$at_stderr; echo "$SPROG add: scheduling file \`ssfile' for addition
+$SPROG add: use \`$SPROG commit' to add this file permanently
 " | $at_diff - $at_stderr || at_failed=:
 $at_diff $at_devnull $at_stdout || at_failed=:
 case $at_status in
@@ -3928,13 +3926,11 @@ fi
 $at_traceon
 
 
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stdout >nstdout
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stderr >nstderr
@@ -3948,8 +3944,8 @@ at_status=$?
 grep '^ *+' $at_stder1 >&2
 grep -v '^ *+' $at_stder1 >$at_stderr
 at_failed=false
-echo >>$at_stderr; echo "$SPROG command: nothing known about ssfile
-$SPROG [command aborted]: correct the above errors first!
+echo >>$at_stderr; echo "$SPROG tag: nothing known about ssfile
+$SPROG [tag aborted]: correct the above errors first!
 " | $at_diff - $at_stderr || at_failed=:
 $at_diff $at_devnull $at_stdout || at_failed=:
 case $at_status in
@@ -4256,13 +4252,11 @@ fi
 $at_traceon
 
 
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stdout >nstdout
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stderr >nstderr
@@ -4276,8 +4270,8 @@ at_status=$?
 grep '^ *+' $at_stder1 >&2
 grep -v '^ *+' $at_stder1 >$at_stderr
 at_failed=false
-echo >>$at_stderr; echo "$SPROG command: scheduling file \`ssfile' for addition
-$SPROG command: use \`$SPROG commit' to add this file permanently
+echo >>$at_stderr; echo "$SPROG add: scheduling file \`ssfile' for addition
+$SPROG add: use \`$SPROG commit' to add this file permanently
 " | $at_diff - $at_stderr || at_failed=:
 $at_diff $at_devnull $at_stdout || at_failed=:
 case $at_status in
@@ -4356,13 +4350,11 @@ fi
 $at_traceon
 
 
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stdout >nstdout
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stderr >nstderr
@@ -4376,8 +4368,8 @@ at_status=$?
 grep '^ *+' $at_stder1 >&2
 grep -v '^ *+' $at_stder1 >$at_stderr
 at_failed=false
-echo >>$at_stderr; echo "$SPROG command: Attempt to add reserved tag name BASE
-$SPROG [command aborted]: failed to set tag BASE to revision 1.1 in $CVSROOT_DIR/project/sdir/ssdir/ssfile,v
+echo >>$at_stderr; echo "$SPROG tag: Attempt to add reserved tag name BASE
+$SPROG [tag aborted]: failed to set tag BASE to revision 1.1 in $CVSROOT_DIR/project/sdir/ssdir/ssfile,v
 " | $at_diff - $at_stderr || at_failed=:
 $at_diff $at_devnull $at_stdout || at_failed=:
 case $at_status in
@@ -4477,13 +4469,11 @@ fi
 $at_traceon
 
 
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stdout >nstdout
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stderr >nstderr
@@ -4554,13 +4544,11 @@ fi
 $at_traceon
 
 
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stdout >nstdout
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stderr >nstderr
@@ -4631,13 +4619,11 @@ fi
 $at_traceon
 
 
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stdout >nstdout
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stderr >nstderr
@@ -4651,7 +4637,7 @@ at_status=$?
 grep '^ *+' $at_stder1 >&2
 grep -v '^ *+' $at_stder1 >$at_stderr
 at_failed=false
-echo >>$at_stderr; echo "$SPROG command: invalid context length argument
+echo >>$at_stderr; echo "$SPROG diff: invalid context length argument
 " | $at_diff - $at_stderr || at_failed=:
 echo >>$at_stdout; echo "Index: sdir/ssdir/ssfile
 ===================================================================
@@ -4930,13 +4916,11 @@ fi
 $at_traceon
 
 
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stdout >nstdout
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stderr >nstderr
@@ -4950,8 +4934,8 @@ at_status=$?
 grep '^ *+' $at_stder1 >&2
 grep -v '^ *+' $at_stder1 >$at_stderr
 at_failed=false
-echo >>$at_stderr; echo "$SPROG command: scheduling file \`ssfile' for addition
-$SPROG command: use \`$SPROG commit' to add this file permanently
+echo >>$at_stderr; echo "$SPROG add: scheduling file \`ssfile' for addition
+$SPROG add: use \`$SPROG commit' to add this file permanently
 " | $at_diff - $at_stderr || at_failed=:
 $at_diff $at_devnull $at_stdout || at_failed=:
 case $at_status in
@@ -5236,13 +5220,11 @@ fi
 $at_traceon
 
 
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stdout >nstdout
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stderr >nstderr
@@ -5256,8 +5238,8 @@ at_status=$?
 grep '^ *+' $at_stder1 >&2
 grep -v '^ *+' $at_stder1 >$at_stderr
 at_failed=false
-echo >>$at_stderr; echo "$SPROG command: $CVSROOT_DIR/project/sdir/ssdir/ssfile,v: can't find branch point 3.0
-$SPROG command: could not check in ssfile
+echo >>$at_stderr; echo "$SPROG commit: $CVSROOT_DIR/project/sdir/ssdir/ssfile,v: can't find branch point 3.0
+$SPROG commit: could not check in ssfile
 " | $at_diff - $at_stderr || at_failed=:
 echo >>$at_stdout; echo "Checking in ssfile;
 $CVSROOT_DIR/project/sdir/ssdir/ssfile,v  <--  ssfile
@@ -5336,13 +5318,11 @@ fi
 $at_traceon
 
 
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stdout >nstdout
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stderr >nstderr
@@ -5457,13 +5437,11 @@ fi
 $at_traceon
 
 
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stdout >nstdout
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stderr >nstderr
@@ -5477,7 +5455,7 @@ at_status=$?
 grep '^ *+' $at_stder1 >&2
 grep -v '^ *+' $at_stder1 >$at_stderr
 at_failed=false
-echo >>$at_stderr; echo "$CPROG [command aborted]: $at_group_dir/nonexist/CVSROOT: No such file or directory
+echo >>$at_stderr; echo "$CPROG [update aborted]: $at_group_dir/nonexist/CVSROOT: No such file or directory
 " | $at_diff - $at_stderr || at_failed=:
 $at_diff $at_devnull $at_stdout || at_failed=:
 case $at_status in
@@ -5524,13 +5502,11 @@ fi
 $at_traceon
 
 
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stdout >nstdout
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stderr >nstderr
@@ -5544,8 +5520,8 @@ at_status=$?
 grep '^ *+' $at_stder1 >&2
 grep -v '^ *+' $at_stder1 >$at_stderr
 at_failed=false
-echo >>$at_stderr; echo "$SPROG command: scheduling \`ssfile' for removal
-$SPROG command: use \`${SPROG} commit' to remove this file permanently
+echo >>$at_stderr; echo "$SPROG remove: scheduling \`ssfile' for removal
+$SPROG remove: use \`${SPROG} commit' to remove this file permanently
 " | $at_diff - $at_stderr || at_failed=:
 $at_diff $at_devnull $at_stdout || at_failed=:
 case $at_status in
@@ -5646,13 +5622,11 @@ fi
 $at_traceon
 
 
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stdout >nstdout
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stderr >nstderr
@@ -5666,8 +5640,8 @@ at_status=$?
 grep '^ *+' $at_stder1 >&2
 grep -v '^ *+' $at_stder1 >$at_stderr
 at_failed=false
-echo >>$at_stderr; echo "$SPROG command: re-adding file \`ssfile' (in place of dead revision 3.2)
-$SPROG command: use \`$SPROG commit' to add this file permanently
+echo >>$at_stderr; echo "$SPROG add: re-adding file \`ssfile' (in place of dead revision 3.2)
+$SPROG add: use \`$SPROG commit' to add this file permanently
 " | $at_diff - $at_stderr || at_failed=:
 $at_diff $at_devnull $at_stdout || at_failed=:
 case $at_status in
@@ -5971,13 +5945,11 @@ fi
 $at_traceon
 
 
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stdout >nstdout
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stderr >nstderr
@@ -5991,8 +5963,8 @@ at_status=$?
 grep '^ *+' $at_stder1 >&2
 grep -v '^ *+' $at_stder1 >$at_stderr
 at_failed=false
-echo >>$at_stderr; echo "$SPROG command: scheduling file \`ssfile' for addition
-$SPROG command: use \`$SPROG commit' to add this file permanently
+echo >>$at_stderr; echo "$SPROG add: scheduling file \`ssfile' for addition
+$SPROG add: use \`$SPROG commit' to add this file permanently
 " | $at_diff - $at_stderr || at_failed=:
 $at_diff $at_devnull $at_stdout || at_failed=:
 case $at_status in
@@ -6431,13 +6403,11 @@ fi
 $at_traceon
 
 
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stdout >nstdout
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stderr >nstderr
@@ -6451,8 +6421,8 @@ at_status=$?
 grep '^ *+' $at_stder1 >&2
 grep -v '^ *+' $at_stder1 >$at_stderr
 at_failed=false
-echo >>$at_stderr; echo "$SPROG command: scheduling file \`ssfile' for addition
-$SPROG command: use \`$SPROG commit' to add this file permanently
+echo >>$at_stderr; echo "$SPROG add: scheduling file \`ssfile' for addition
+$SPROG add: use \`$SPROG commit' to add this file permanently
 " | $at_diff - $at_stderr || at_failed=:
 $at_diff $at_devnull $at_stdout || at_failed=:
 case $at_status in
@@ -7304,13 +7274,11 @@ fi
 $at_traceon
 
 
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stdout >nstdout
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stderr >nstderr
@@ -7324,8 +7292,8 @@ at_status=$?
 grep '^ *+' $at_stder1 >&2
 grep -v '^ *+' $at_stder1 >$at_stderr
 at_failed=false
-echo >>$at_stderr; echo "$SPROG command: scheduling file \`ssfile' for addition
-$SPROG command: use \`$SPROG commit' to add this file permanently
+echo >>$at_stderr; echo "$SPROG add: scheduling file \`ssfile' for addition
+$SPROG add: use \`$SPROG commit' to add this file permanently
 " | $at_diff - $at_stderr || at_failed=:
 $at_diff $at_devnull $at_stdout || at_failed=:
 case $at_status in
@@ -7371,13 +7339,11 @@ fi
 $at_traceon
 
 
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stdout >nstdout
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stderr >nstderr
@@ -7391,8 +7357,8 @@ at_status=$?
 grep '^ *+' $at_stder1 >&2
 grep -v '^ *+' $at_stder1 >$at_stderr
 at_failed=false
-echo >>$at_stderr; echo "$SPROG command: nothing known about ssfile
-$SPROG [command aborted]: correct the above errors first!
+echo >>$at_stderr; echo "$SPROG tag: nothing known about ssfile
+$SPROG [tag aborted]: correct the above errors first!
 " | $at_diff - $at_stderr || at_failed=:
 $at_diff $at_devnull $at_stdout || at_failed=:
 case $at_status in
@@ -7731,13 +7697,11 @@ fi
 $at_traceon
 
 
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stdout >nstdout
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stderr >nstderr
@@ -7751,8 +7715,8 @@ at_status=$?
 grep '^ *+' $at_stder1 >&2
 grep -v '^ *+' $at_stder1 >$at_stderr
 at_failed=false
-echo >>$at_stderr; echo "$SPROG command: scheduling file \`ssfile' for addition
-$SPROG command: use \`$SPROG commit' to add this file permanently
+echo >>$at_stderr; echo "$SPROG add: scheduling file \`ssfile' for addition
+$SPROG add: use \`$SPROG commit' to add this file permanently
 " | $at_diff - $at_stderr || at_failed=:
 $at_diff $at_devnull $at_stdout || at_failed=:
 case $at_status in
@@ -7831,13 +7795,11 @@ fi
 $at_traceon
 
 
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stdout >nstdout
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stderr >nstderr
@@ -7851,8 +7813,8 @@ at_status=$?
 grep '^ *+' $at_stder1 >&2
 grep -v '^ *+' $at_stder1 >$at_stderr
 at_failed=false
-echo >>$at_stderr; echo "$SPROG command: Attempt to add reserved tag name BASE
-$SPROG [command aborted]: failed to set tag BASE to revision 1.1 in $CVSROOT_DIR/project/sdir/ssdir/ssfile,v
+echo >>$at_stderr; echo "$SPROG tag: Attempt to add reserved tag name BASE
+$SPROG [tag aborted]: failed to set tag BASE to revision 1.1 in $CVSROOT_DIR/project/sdir/ssdir/ssfile,v
 " | $at_diff - $at_stderr || at_failed=:
 $at_diff $at_devnull $at_stdout || at_failed=:
 case $at_status in
@@ -7952,13 +7914,11 @@ fi
 $at_traceon
 
 
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stdout >nstdout
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stderr >nstderr
@@ -8029,13 +7989,11 @@ fi
 $at_traceon
 
 
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stdout >nstdout
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stderr >nstderr
@@ -8106,13 +8064,11 @@ fi
 $at_traceon
 
 
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stdout >nstdout
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stderr >nstderr
@@ -8126,7 +8082,7 @@ at_status=$?
 grep '^ *+' $at_stder1 >&2
 grep -v '^ *+' $at_stder1 >$at_stderr
 at_failed=false
-echo >>$at_stderr; echo "$SPROG command: invalid context length argument
+echo >>$at_stderr; echo "$SPROG diff: invalid context length argument
 " | $at_diff - $at_stderr || at_failed=:
 echo >>$at_stdout; echo "Index: sdir/ssdir/ssfile
 ===================================================================
@@ -8437,13 +8393,11 @@ fi
 $at_traceon
 
 
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stdout >nstdout
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stderr >nstderr
@@ -8457,8 +8411,8 @@ at_status=$?
 grep '^ *+' $at_stder1 >&2
 grep -v '^ *+' $at_stder1 >$at_stderr
 at_failed=false
-echo >>$at_stderr; echo "$SPROG command: scheduling file \`ssfile' for addition
-$SPROG command: use \`$SPROG commit' to add this file permanently
+echo >>$at_stderr; echo "$SPROG add: scheduling file \`ssfile' for addition
+$SPROG add: use \`$SPROG commit' to add this file permanently
 " | $at_diff - $at_stderr || at_failed=:
 $at_diff $at_devnull $at_stdout || at_failed=:
 case $at_status in
@@ -8743,13 +8697,11 @@ fi
 $at_traceon
 
 
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stdout >nstdout
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stderr >nstderr
@@ -8763,8 +8715,8 @@ at_status=$?
 grep '^ *+' $at_stder1 >&2
 grep -v '^ *+' $at_stder1 >$at_stderr
 at_failed=false
-echo >>$at_stderr; echo "$SPROG command: $CVSROOT_DIR/project/sdir/ssdir/ssfile,v: can't find branch point 3.0
-$SPROG command: could not check in ssfile
+echo >>$at_stderr; echo "$SPROG commit: $CVSROOT_DIR/project/sdir/ssdir/ssfile,v: can't find branch point 3.0
+$SPROG commit: could not check in ssfile
 " | $at_diff - $at_stderr || at_failed=:
 echo >>$at_stdout; echo "Checking in ssfile;
 $CVSROOT_DIR/project/sdir/ssdir/ssfile,v  <--  ssfile
@@ -8843,13 +8795,11 @@ fi
 $at_traceon
 
 
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stdout >nstdout
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stderr >nstderr
@@ -8964,13 +8914,11 @@ fi
 $at_traceon
 
 
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stdout >nstdout
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stderr >nstderr
@@ -8984,7 +8932,7 @@ at_status=$?
 grep '^ *+' $at_stder1 >&2
 grep -v '^ *+' $at_stder1 >$at_stderr
 at_failed=false
-echo >>$at_stderr; echo "$CPROG [command aborted]: $at_group_dir/nonexist/CVSROOT: No such file or directory
+echo >>$at_stderr; echo "$CPROG [update aborted]: $at_group_dir/nonexist/CVSROOT: No such file or directory
 " | $at_diff - $at_stderr || at_failed=:
 $at_diff $at_devnull $at_stdout || at_failed=:
 case $at_status in
@@ -9031,13 +8979,11 @@ fi
 $at_traceon
 
 
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stdout >nstdout
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stderr >nstderr
@@ -9051,8 +8997,8 @@ at_status=$?
 grep '^ *+' $at_stder1 >&2
 grep -v '^ *+' $at_stder1 >$at_stderr
 at_failed=false
-echo >>$at_stderr; echo "$SPROG command: scheduling \`ssfile' for removal
-$SPROG command: use \`${SPROG} commit' to remove this file permanently
+echo >>$at_stderr; echo "$SPROG remove: scheduling \`ssfile' for removal
+$SPROG remove: use \`${SPROG} commit' to remove this file permanently
 " | $at_diff - $at_stderr || at_failed=:
 $at_diff $at_devnull $at_stdout || at_failed=:
 case $at_status in
@@ -9153,13 +9099,11 @@ fi
 $at_traceon
 
 
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stdout >nstdout
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stderr >nstderr
@@ -9173,8 +9117,8 @@ at_status=$?
 grep '^ *+' $at_stder1 >&2
 grep -v '^ *+' $at_stder1 >$at_stderr
 at_failed=false
-echo >>$at_stderr; echo "$SPROG command: re-adding file \`ssfile' (in place of dead revision 3.2)
-$SPROG command: use \`$SPROG commit' to add this file permanently
+echo >>$at_stderr; echo "$SPROG add: re-adding file \`ssfile' (in place of dead revision 3.2)
+$SPROG add: use \`$SPROG commit' to add this file permanently
 " | $at_diff - $at_stderr || at_failed=:
 $at_diff $at_devnull $at_stdout || at_failed=:
 case $at_status in
@@ -9510,13 +9454,11 @@ fi
 $at_traceon
 
 
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stdout >nstdout
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stderr >nstderr
@@ -9530,8 +9472,8 @@ at_status=$?
 grep '^ *+' $at_stder1 >&2
 grep -v '^ *+' $at_stder1 >$at_stderr
 at_failed=false
-echo >>$at_stderr; echo "$SPROG command: scheduling file \`ssfile' for addition
-$SPROG command: use \`$SPROG commit' to add this file permanently
+echo >>$at_stderr; echo "$SPROG add: scheduling file \`ssfile' for addition
+$SPROG add: use \`$SPROG commit' to add this file permanently
 " | $at_diff - $at_stderr || at_failed=:
 $at_diff $at_devnull $at_stdout || at_failed=:
 case $at_status in
@@ -10002,13 +9944,11 @@ fi
 $at_traceon
 
 
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stdout >nstdout
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stderr >nstderr
@@ -10022,8 +9962,8 @@ at_status=$?
 grep '^ *+' $at_stder1 >&2
 grep -v '^ *+' $at_stder1 >$at_stderr
 at_failed=false
-echo >>$at_stderr; echo "$SPROG command: scheduling file \`ssfile' for addition
-$SPROG command: use \`$SPROG commit' to add this file permanently
+echo >>$at_stderr; echo "$SPROG add: scheduling file \`ssfile' for addition
+$SPROG add: use \`$SPROG commit' to add this file permanently
 " | $at_diff - $at_stderr || at_failed=:
 $at_diff $at_devnull $at_stdout || at_failed=:
 case $at_status in
@@ -10913,13 +10853,11 @@ fi
 $at_traceon
 
 
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stdout >nstdout
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stderr >nstderr
@@ -10933,8 +10871,8 @@ at_status=$?
 grep '^ *+' $at_stder1 >&2
 grep -v '^ *+' $at_stder1 >$at_stderr
 at_failed=false
-echo >>$at_stderr; echo "$SPROG command: scheduling file \`ssfile' for addition
-$SPROG command: use \`$SPROG commit' to add this file permanently
+echo >>$at_stderr; echo "$SPROG add: scheduling file \`ssfile' for addition
+$SPROG add: use \`$SPROG commit' to add this file permanently
 " | $at_diff - $at_stderr || at_failed=:
 $at_diff $at_devnull $at_stdout || at_failed=:
 case $at_status in
@@ -10980,13 +10918,11 @@ fi
 $at_traceon
 
 
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stdout >nstdout
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stderr >nstderr
@@ -11000,8 +10936,8 @@ at_status=$?
 grep '^ *+' $at_stder1 >&2
 grep -v '^ *+' $at_stder1 >$at_stderr
 at_failed=false
-echo >>$at_stderr; echo "$SPROG command: nothing known about ssfile
-$SPROG [command aborted]: correct the above errors first!
+echo >>$at_stderr; echo "$SPROG tag: nothing known about ssfile
+$SPROG [tag aborted]: correct the above errors first!
 " | $at_diff - $at_stderr || at_failed=:
 $at_diff $at_devnull $at_stdout || at_failed=:
 case $at_status in
@@ -11359,13 +11295,11 @@ fi
 $at_traceon
 
 
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stdout >nstdout
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stderr >nstderr
@@ -11379,8 +11313,8 @@ at_status=$?
 grep '^ *+' $at_stder1 >&2
 grep -v '^ *+' $at_stder1 >$at_stderr
 at_failed=false
-echo >>$at_stderr; echo "$SPROG command: scheduling file \`ssfile' for addition
-$SPROG command: use \`$SPROG commit' to add this file permanently
+echo >>$at_stderr; echo "$SPROG add: scheduling file \`ssfile' for addition
+$SPROG add: use \`$SPROG commit' to add this file permanently
 " | $at_diff - $at_stderr || at_failed=:
 $at_diff $at_devnull $at_stdout || at_failed=:
 case $at_status in
@@ -11459,13 +11393,11 @@ fi
 $at_traceon
 
 
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stdout >nstdout
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stderr >nstderr
@@ -11479,8 +11411,8 @@ at_status=$?
 grep '^ *+' $at_stder1 >&2
 grep -v '^ *+' $at_stder1 >$at_stderr
 at_failed=false
-echo >>$at_stderr; echo "$SPROG command: Attempt to add reserved tag name BASE
-$SPROG [command aborted]: failed to set tag BASE to revision 1.1 in $CVSROOT_DIR/project/sdir/ssdir/ssfile,v
+echo >>$at_stderr; echo "$SPROG tag: Attempt to add reserved tag name BASE
+$SPROG [tag aborted]: failed to set tag BASE to revision 1.1 in $CVSROOT_DIR/project/sdir/ssdir/ssfile,v
 " | $at_diff - $at_stderr || at_failed=:
 $at_diff $at_devnull $at_stdout || at_failed=:
 case $at_status in
@@ -11580,13 +11512,11 @@ fi
 $at_traceon
 
 
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stdout >nstdout
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stderr >nstderr
@@ -11657,13 +11587,11 @@ fi
 $at_traceon
 
 
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stdout >nstdout
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stderr >nstderr
@@ -11734,13 +11662,11 @@ fi
 $at_traceon
 
 
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stdout >nstdout
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stderr >nstderr
@@ -11754,7 +11680,7 @@ at_status=$?
 grep '^ *+' $at_stder1 >&2
 grep -v '^ *+' $at_stder1 >$at_stderr
 at_failed=false
-echo >>$at_stderr; echo "$SPROG command: invalid context length argument
+echo >>$at_stderr; echo "$SPROG diff: invalid context length argument
 " | $at_diff - $at_stderr || at_failed=:
 echo >>$at_stdout; echo "Index: sdir/ssdir/ssfile
 ===================================================================
@@ -12084,13 +12010,11 @@ fi
 $at_traceon
 
 
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stdout >nstdout
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stderr >nstderr
@@ -12104,8 +12028,8 @@ at_status=$?
 grep '^ *+' $at_stder1 >&2
 grep -v '^ *+' $at_stder1 >$at_stderr
 at_failed=false
-echo >>$at_stderr; echo "$SPROG command: scheduling file \`ssfile' for addition
-$SPROG command: use \`$SPROG commit' to add this file permanently
+echo >>$at_stderr; echo "$SPROG add: scheduling file \`ssfile' for addition
+$SPROG add: use \`$SPROG commit' to add this file permanently
 " | $at_diff - $at_stderr || at_failed=:
 $at_diff $at_devnull $at_stdout || at_failed=:
 case $at_status in
@@ -12390,13 +12314,11 @@ fi
 $at_traceon
 
 
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stdout >nstdout
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stderr >nstderr
@@ -12410,8 +12332,8 @@ at_status=$?
 grep '^ *+' $at_stder1 >&2
 grep -v '^ *+' $at_stder1 >$at_stderr
 at_failed=false
-echo >>$at_stderr; echo "$SPROG command: $CVSROOT_DIR/project/sdir/ssdir/ssfile,v: can't find branch point 3.0
-$SPROG command: could not check in ssfile
+echo >>$at_stderr; echo "$SPROG commit: $CVSROOT_DIR/project/sdir/ssdir/ssfile,v: can't find branch point 3.0
+$SPROG commit: could not check in ssfile
 " | $at_diff - $at_stderr || at_failed=:
 echo >>$at_stdout; echo "Checking in ssfile;
 $CVSROOT_DIR/project/sdir/ssdir/ssfile,v  <--  ssfile
@@ -12490,13 +12412,11 @@ fi
 $at_traceon
 
 
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stdout >nstdout
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stderr >nstderr
@@ -12611,13 +12531,11 @@ fi
 $at_traceon
 
 
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stdout >nstdout
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stderr >nstderr
@@ -12631,7 +12549,7 @@ at_status=$?
 grep '^ *+' $at_stder1 >&2
 grep -v '^ *+' $at_stder1 >$at_stderr
 at_failed=false
-echo >>$at_stderr; echo "$CPROG [command aborted]: $at_group_dir/nonexist/CVSROOT: No such file or directory
+echo >>$at_stderr; echo "$CPROG [update aborted]: $at_group_dir/nonexist/CVSROOT: No such file or directory
 " | $at_diff - $at_stderr || at_failed=:
 $at_diff $at_devnull $at_stdout || at_failed=:
 case $at_status in
@@ -12678,13 +12596,11 @@ fi
 $at_traceon
 
 
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stdout >nstdout
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stderr >nstderr
@@ -12698,8 +12614,8 @@ at_status=$?
 grep '^ *+' $at_stder1 >&2
 grep -v '^ *+' $at_stder1 >$at_stderr
 at_failed=false
-echo >>$at_stderr; echo "$SPROG command: scheduling \`ssfile' for removal
-$SPROG command: use \`${SPROG} commit' to remove this file permanently
+echo >>$at_stderr; echo "$SPROG remove: scheduling \`ssfile' for removal
+$SPROG remove: use \`${SPROG} commit' to remove this file permanently
 " | $at_diff - $at_stderr || at_failed=:
 $at_diff $at_devnull $at_stdout || at_failed=:
 case $at_status in
@@ -12800,13 +12716,11 @@ fi
 $at_traceon
 
 
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stdout >nstdout
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stderr >nstderr
@@ -12820,8 +12734,8 @@ at_status=$?
 grep '^ *+' $at_stder1 >&2
 grep -v '^ *+' $at_stder1 >$at_stderr
 at_failed=false
-echo >>$at_stderr; echo "$SPROG command: re-adding file \`ssfile' (in place of dead revision 3.2)
-$SPROG command: use \`$SPROG commit' to add this file permanently
+echo >>$at_stderr; echo "$SPROG add: re-adding file \`ssfile' (in place of dead revision 3.2)
+$SPROG add: use \`$SPROG commit' to add this file permanently
 " | $at_diff - $at_stderr || at_failed=:
 $at_diff $at_devnull $at_stdout || at_failed=:
 case $at_status in
@@ -13176,13 +13090,11 @@ fi
 $at_traceon
 
 
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stdout >nstdout
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stderr >nstderr
@@ -13196,8 +13108,8 @@ at_status=$?
 grep '^ *+' $at_stder1 >&2
 grep -v '^ *+' $at_stder1 >$at_stderr
 at_failed=false
-echo >>$at_stderr; echo "$SPROG command: scheduling file \`ssfile' for addition
-$SPROG command: use \`$SPROG commit' to add this file permanently
+echo >>$at_stderr; echo "$SPROG add: scheduling file \`ssfile' for addition
+$SPROG add: use \`$SPROG commit' to add this file permanently
 " | $at_diff - $at_stderr || at_failed=:
 $at_diff $at_devnull $at_stdout || at_failed=:
 case $at_status in
@@ -13687,13 +13599,11 @@ fi
 $at_traceon
 
 
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stdout >nstdout
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stderr >nstderr
@@ -13707,8 +13617,8 @@ at_status=$?
 grep '^ *+' $at_stder1 >&2
 grep -v '^ *+' $at_stder1 >$at_stderr
 at_failed=false
-echo >>$at_stderr; echo "$SPROG command: scheduling file \`ssfile' for addition
-$SPROG command: use \`$SPROG commit' to add this file permanently
+echo >>$at_stderr; echo "$SPROG add: scheduling file \`ssfile' for addition
+$SPROG add: use \`$SPROG commit' to add this file permanently
 " | $at_diff - $at_stderr || at_failed=:
 $at_diff $at_devnull $at_stdout || at_failed=:
 case $at_status in
@@ -14662,13 +14572,11 @@ fi
 $at_traceon
 
 
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stdout >nstdout
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stderr >nstderr
@@ -14682,8 +14590,8 @@ at_status=$?
 grep '^ *+' $at_stder1 >&2
 grep -v '^ *+' $at_stder1 >$at_stderr
 at_failed=false
-echo >>$at_stderr; echo "$SPROG command: scheduling file \`ssfile' for addition
-$SPROG command: use \`$SPROG commit' to add this file permanently
+echo >>$at_stderr; echo "$SPROG add: scheduling file \`ssfile' for addition
+$SPROG add: use \`$SPROG commit' to add this file permanently
 " | $at_diff - $at_stderr || at_failed=:
 $at_diff $at_devnull $at_stdout || at_failed=:
 case $at_status in
@@ -14729,13 +14637,11 @@ fi
 $at_traceon
 
 
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stdout >nstdout
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stderr >nstderr
@@ -14749,8 +14655,8 @@ at_status=$?
 grep '^ *+' $at_stder1 >&2
 grep -v '^ *+' $at_stder1 >$at_stderr
 at_failed=false
-echo >>$at_stderr; echo "$SPROG command: nothing known about ssfile
-$SPROG [command aborted]: correct the above errors first!
+echo >>$at_stderr; echo "$SPROG tag: nothing known about ssfile
+$SPROG [tag aborted]: correct the above errors first!
 " | $at_diff - $at_stderr || at_failed=:
 $at_diff $at_devnull $at_stdout || at_failed=:
 case $at_status in
@@ -15140,13 +15046,11 @@ fi
 $at_traceon
 
 
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stdout >nstdout
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stderr >nstderr
@@ -15160,8 +15064,8 @@ at_status=$?
 grep '^ *+' $at_stder1 >&2
 grep -v '^ *+' $at_stder1 >$at_stderr
 at_failed=false
-echo >>$at_stderr; echo "$SPROG command: scheduling file \`ssfile' for addition
-$SPROG command: use \`$SPROG commit' to add this file permanently
+echo >>$at_stderr; echo "$SPROG add: scheduling file \`ssfile' for addition
+$SPROG add: use \`$SPROG commit' to add this file permanently
 " | $at_diff - $at_stderr || at_failed=:
 $at_diff $at_devnull $at_stdout || at_failed=:
 case $at_status in
@@ -15240,13 +15144,11 @@ fi
 $at_traceon
 
 
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stdout >nstdout
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stderr >nstderr
@@ -15260,8 +15162,8 @@ at_status=$?
 grep '^ *+' $at_stder1 >&2
 grep -v '^ *+' $at_stder1 >$at_stderr
 at_failed=false
-echo >>$at_stderr; echo "$SPROG command: Attempt to add reserved tag name BASE
-$SPROG [command aborted]: failed to set tag BASE to revision 1.1 in $CVSROOT_DIR/project/sdir/ssdir/ssfile,v
+echo >>$at_stderr; echo "$SPROG tag: Attempt to add reserved tag name BASE
+$SPROG [tag aborted]: failed to set tag BASE to revision 1.1 in $CVSROOT_DIR/project/sdir/ssdir/ssfile,v
 " | $at_diff - $at_stderr || at_failed=:
 $at_diff $at_devnull $at_stdout || at_failed=:
 case $at_status in
@@ -15361,13 +15263,11 @@ fi
 $at_traceon
 
 
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stdout >nstdout
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stderr >nstderr
@@ -15438,13 +15338,11 @@ fi
 $at_traceon
 
 
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stdout >nstdout
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stderr >nstderr
@@ -15515,13 +15413,11 @@ fi
 $at_traceon
 
 
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stdout >nstdout
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stderr >nstderr
@@ -15535,7 +15431,7 @@ at_status=$?
 grep '^ *+' $at_stder1 >&2
 grep -v '^ *+' $at_stder1 >$at_stderr
 at_failed=false
-echo >>$at_stderr; echo "$SPROG command: invalid context length argument
+echo >>$at_stderr; echo "$SPROG diff: invalid context length argument
 " | $at_diff - $at_stderr || at_failed=:
 echo >>$at_stdout; echo "Index: sdir/ssdir/ssfile
 ===================================================================
@@ -15897,13 +15793,11 @@ fi
 $at_traceon
 
 
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stdout >nstdout
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stderr >nstderr
@@ -15917,8 +15811,8 @@ at_status=$?
 grep '^ *+' $at_stder1 >&2
 grep -v '^ *+' $at_stder1 >$at_stderr
 at_failed=false
-echo >>$at_stderr; echo "$SPROG command: scheduling file \`ssfile' for addition
-$SPROG command: use \`$SPROG commit' to add this file permanently
+echo >>$at_stderr; echo "$SPROG add: scheduling file \`ssfile' for addition
+$SPROG add: use \`$SPROG commit' to add this file permanently
 " | $at_diff - $at_stderr || at_failed=:
 $at_diff $at_devnull $at_stdout || at_failed=:
 case $at_status in
@@ -16203,13 +16097,11 @@ fi
 $at_traceon
 
 
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stdout >nstdout
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stderr >nstderr
@@ -16223,8 +16115,8 @@ at_status=$?
 grep '^ *+' $at_stder1 >&2
 grep -v '^ *+' $at_stder1 >$at_stderr
 at_failed=false
-echo >>$at_stderr; echo "$SPROG command: $CVSROOT_DIR/project/sdir/ssdir/ssfile,v: can't find branch point 3.0
-$SPROG command: could not check in ssfile
+echo >>$at_stderr; echo "$SPROG commit: $CVSROOT_DIR/project/sdir/ssdir/ssfile,v: can't find branch point 3.0
+$SPROG commit: could not check in ssfile
 " | $at_diff - $at_stderr || at_failed=:
 echo >>$at_stdout; echo "Checking in ssfile;
 $CVSROOT_DIR/project/sdir/ssdir/ssfile,v  <--  ssfile
@@ -16303,13 +16195,11 @@ fi
 $at_traceon
 
 
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stdout >nstdout
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stderr >nstderr
@@ -16424,13 +16314,11 @@ fi
 $at_traceon
 
 
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stdout >nstdout
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stderr >nstderr
@@ -16444,7 +16332,7 @@ at_status=$?
 grep '^ *+' $at_stder1 >&2
 grep -v '^ *+' $at_stder1 >$at_stderr
 at_failed=false
-echo >>$at_stderr; echo "$CPROG [command aborted]: $at_group_dir/nonexist/CVSROOT: No such file or directory
+echo >>$at_stderr; echo "$CPROG [update aborted]: $at_group_dir/nonexist/CVSROOT: No such file or directory
 " | $at_diff - $at_stderr || at_failed=:
 $at_diff $at_devnull $at_stdout || at_failed=:
 case $at_status in
@@ -16491,13 +16379,11 @@ fi
 $at_traceon
 
 
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stdout >nstdout
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stderr >nstderr
@@ -16511,8 +16397,8 @@ at_status=$?
 grep '^ *+' $at_stder1 >&2
 grep -v '^ *+' $at_stder1 >$at_stderr
 at_failed=false
-echo >>$at_stderr; echo "$SPROG command: scheduling \`ssfile' for removal
-$SPROG command: use \`${SPROG} commit' to remove this file permanently
+echo >>$at_stderr; echo "$SPROG remove: scheduling \`ssfile' for removal
+$SPROG remove: use \`${SPROG} commit' to remove this file permanently
 " | $at_diff - $at_stderr || at_failed=:
 $at_diff $at_devnull $at_stdout || at_failed=:
 case $at_status in
@@ -16613,13 +16499,11 @@ fi
 $at_traceon
 
 
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stdout >nstdout
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stderr >nstderr
@@ -16633,8 +16517,8 @@ at_status=$?
 grep '^ *+' $at_stder1 >&2
 grep -v '^ *+' $at_stder1 >$at_stderr
 at_failed=false
-echo >>$at_stderr; echo "$SPROG command: re-adding file \`ssfile' (in place of dead revision 3.2)
-$SPROG command: use \`$SPROG commit' to add this file permanently
+echo >>$at_stderr; echo "$SPROG add: re-adding file \`ssfile' (in place of dead revision 3.2)
+$SPROG add: use \`$SPROG commit' to add this file permanently
 " | $at_diff - $at_stderr || at_failed=:
 $at_diff $at_devnull $at_stdout || at_failed=:
 case $at_status in
@@ -17021,13 +16905,11 @@ fi
 $at_traceon
 
 
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stdout >nstdout
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stderr >nstderr
@@ -17041,8 +16923,8 @@ at_status=$?
 grep '^ *+' $at_stder1 >&2
 grep -v '^ *+' $at_stder1 >$at_stderr
 at_failed=false
-echo >>$at_stderr; echo "$SPROG command: scheduling file \`ssfile' for addition
-$SPROG command: use \`$SPROG commit' to add this file permanently
+echo >>$at_stderr; echo "$SPROG add: scheduling file \`ssfile' for addition
+$SPROG add: use \`$SPROG commit' to add this file permanently
 " | $at_diff - $at_stderr || at_failed=:
 $at_diff $at_devnull $at_stdout || at_failed=:
 case $at_status in
@@ -17564,13 +17446,11 @@ fi
 $at_traceon
 
 
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stdout >nstdout
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stderr >nstderr
@@ -17584,8 +17464,8 @@ at_status=$?
 grep '^ *+' $at_stder1 >&2
 grep -v '^ *+' $at_stder1 >$at_stderr
 at_failed=false
-echo >>$at_stderr; echo "$SPROG command: scheduling file \`ssfile' for addition
-$SPROG command: use \`$SPROG commit' to add this file permanently
+echo >>$at_stderr; echo "$SPROG add: scheduling file \`ssfile' for addition
+$SPROG add: use \`$SPROG commit' to add this file permanently
 " | $at_diff - $at_stderr || at_failed=:
 $at_diff $at_devnull $at_stdout || at_failed=:
 case $at_status in

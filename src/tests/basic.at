@@ -66,13 +66,13 @@ $CPROG [commit aborted]: correct above errors first!
 ]])])
 
 AT_CVS_CHECK_NORMALIZED([cvs add ssfile],,,
-[$SPROG command: scheduling file \`ssfile' for addition
-$SPROG command: use \`$SPROG commit' to add this file permanently
+[$SPROG add: scheduling file \`ssfile' for addition
+$SPROG add: use \`$SPROG commit' to add this file permanently
 ])
 
 AT_CVS_CHECK_NORMALIZED([cvs tag tag0 ssfile],[1],,
-[[$SPROG command: nothing known about ssfile
-$SPROG [command aborted]: correct the above errors first!
+[[$SPROG tag: nothing known about ssfile
+$SPROG [tag aborted]: correct the above errors first!
 ]])
 
 cd ../..
@@ -111,8 +111,8 @@ AT_CHECK_NOESCAPE([cvs add ssdir],,
 cd ssdir
 echo ssfile >ssfile
 AT_CVS_CHECK_NORMALIZED([cvs add ssfile],,,
-[$SPROG command: scheduling file \`ssfile' for addition
-$SPROG command: use \`$SPROG commit' to add this file permanently
+[$SPROG add: scheduling file \`ssfile' for addition
+$SPROG add: use \`$SPROG commit' to add this file permanently
 ])
 AT_CHECK_NOESCAPE([cvs -q ci -m add-it],,
 [RCS file: $CVSROOT_DIR/project/sdir/ssdir/ssfile,v
@@ -132,8 +132,8 @@ AT_CVS_SETUP([tag, update, & diff])
 AT_CVS_BASIC_START_PROJECT()
 
 AT_CVS_CHECK_NORMALIZED([cvs -q tag BASE sdir/ssdir/ssfile],[1],,
-[[$SPROG command: Attempt to add reserved tag name BASE
-$SPROG [command aborted]: failed to set tag BASE to revision 1.1 in $CVSROOT_DIR/project/sdir/ssdir/ssfile,v
+[[$SPROG tag: Attempt to add reserved tag name BASE
+$SPROG [tag aborted]: failed to set tag BASE to revision 1.1 in $CVSROOT_DIR/project/sdir/ssdir/ssfile,v
 ]])
 
 AT_CHECK([cvs -q tag NOT_RESERVED],,[T sdir/ssdir/ssfile
@@ -179,7 +179,7 @@ RCS file: $CVSROOT_DIR/project/sdir/ssdir/ssfile,v
 retrieving revision 1.1
 diff -c -C3isacrowd -r1.1 ssfile
 ],
-[$SPROG command: invalid context length argument
+[$SPROG diff: invalid context length argument
 ])
 
 AT_CLEANUP # tag, update, & diff
@@ -237,8 +237,8 @@ AT_CVS_CHECK_NORMALIZED([cvs -q ci -m bogus -r 3.0.0],[1],
 [Checking in ssfile;
 $CVSROOT_DIR/project/sdir/ssdir/ssfile,v  <--  ssfile
 ],
-[$SPROG command: $CVSROOT_DIR/project/sdir/ssdir/ssfile,v: can't find branch point 3.0
-$SPROG command: could not check in ssfile
+[$SPROG commit: $CVSROOT_DIR/project/sdir/ssdir/ssfile,v: can't find branch point 3.0
+$SPROG commit: could not check in ssfile
 ])
 
 AT_CHECK_NOESCAPE([cvs -q ci -m valid -r 3.1.2],,
@@ -261,13 +261,13 @@ AT_CHECK([cvs -q diff -r1.2 -r1.3 -C 3isacrowd])
 # "No such file or directory".  When rediscovered, they will need to be
 # accomodated below.
 AT_CVS_CHECK_NORMALIZED([cvs -q -d $at_group_dir/nonexist update],[1],,
-[[$CPROG [command aborted]: $at_group_dir/nonexist/CVSROOT: No such file or directory
+[[$CPROG [update aborted]: $at_group_dir/nonexist/CVSROOT: No such file or directory
 ]])
 
 # Test resurrecting with strange revision numbers
 AT_CVS_CHECK_NORMALIZED([cvs rm -f ssfile],,,
-[$SPROG command: scheduling \`ssfile' for removal
-$SPROG command: use \`${SPROG} commit' to remove this file permanently
+[$SPROG remove: scheduling \`ssfile' for removal
+$SPROG remove: use \`${SPROG} commit' to remove this file permanently
 ])
 
 AT_CHECK_NOESCAPE([cvs -q ci -m remove],,
@@ -279,8 +279,8 @@ done
 
 AT_CHECK([cvs -q up -p -r 3.1 ./ssfile >ssfile])
 AT_CVS_CHECK_NORMALIZED([cvs add ssfile],,,
-[$SPROG command: re-adding file \`ssfile' (in place of dead revision 3.2)
-$SPROG command: use \`$SPROG commit' to add this file permanently
+[$SPROG add: re-adding file \`ssfile' (in place of dead revision 3.2)
+$SPROG add: use \`$SPROG commit' to add this file permanently
 ])
 
 AT_CHECK_NOESCAPE([cvs -q ci -m resurrect],,
