@@ -597,8 +597,8 @@ if test x"$*" = x; then
 	tests="${tests} diffmerge1 diffmerge2"
 	# Release of multiple directories
 	tests="${tests} release"
-	# Multiple root directories
-	tests="${tests} multiroot"
+	# Multiple root directories and low-level protocol tests.
+	tests="${tests} multiroot pserver"
 else
 	tests="$*"
 fi
@@ -16964,6 +16964,88 @@ anyone
 
 	  # clean up our repositories
 	  rm -rf root1 root2
+	  ;;
+
+	pserver)
+	  # Test basic pserver functionality.
+	  if test "$remote" = yes; then
+	    # First set SystemAuth=no.  Not really necessary, I don't
+	    # think, but somehow it seems like the clean thing for
+	    # the testsuite.
+	    mkdir 1; cd 1
+	    dotest pserver-1 "${testcvs} -Q co CVSROOT" ""
+	    cd CVSROOT
+	    echo "SystemAuth=no" >config
+	    dotest pserver-2 "${testcvs} -q ci -m config-it" \
+"Checking in config;
+${TESTDIR}/cvsroot/CVSROOT/config,v  <--  config
+new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
+done
+${PROG} [a-z]*: Rebuilding administrative file database"
+	    echo "testme:q6WV9d2t848B2:`id -un`" \
+	      >${CVSROOT_DIRNAME}/CVSROOT/passwd
+	    ${testcvs} pserver >${TESTDIR}/pserver.tmp 2>&1 <<EOF
+BEGIN AUTH REQUEST
+${CVSROOT_DIRNAME}
+testme
+Ay::'d
+END AUTH REQUEST
+EOF
+	    dotest pserver-3 "cat ${TESTDIR}/pserver.tmp" \
+"error 0 Server configuration missing --allow-root in inetd.conf"
+
+	    # Sending the Root and noop before waiting for the
+	    # "I LOVE YOU" is bogus, but hopefully we can get
+	    # away with it.
+	    ${testcvs} --allow-root=${CVSROOT_DIRNAME} pserver >${TESTDIR}/pserver.tmp 2>&1 <<EOF
+BEGIN AUTH REQUEST
+${CVSROOT_DIRNAME}
+testme
+Ay::'d
+END AUTH REQUEST
+Root ${CVSROOT_DIRNAME}
+noop
+EOF
+	    dotest pserver-4 "cat ${TESTDIR}/pserver.tmp" \
+"I LOVE YOU
+ok"
+
+	    ${testcvs} --allow-root=${CVSROOT_DIRNAME} pserver >${TESTDIR}/pserver.tmp 2>&1 <<EOF
+BEGIN AUTH REQUEST
+${CVSROOT_DIRNAME}
+testme
+Ay::'d
+END AUTH REQUEST
+Root ${TESTDIR}/1
+noop
+EOF
+	    dotest pserver-5 "cat ${TESTDIR}/pserver.tmp" \
+"I LOVE YOU
+E Protocol error: Root says \"${TESTDIR}/1\" but pserver says \"${CVSROOT_DIRNAME}\"
+error  "
+
+	    ${testcvs} --allow-root=${CVSROOT_DIRNAME} pserver >${TESTDIR}/pserver.tmp 2>&1 <<EOF
+BEGIN AUTH REQUEST
+${CVSROOT_DIRNAME}
+testme
+Ay::'d^b?hd
+END AUTH REQUEST
+EOF
+	    dotest pserver-6 "cat ${TESTDIR}/pserver.tmp" \
+"I HATE YOU"
+
+	    # Clean up.
+	    echo "# comments only" >config
+	    dotest pserver-cleanup-1 "${testcvs} -q ci -m config-it" \
+"Checking in config;
+${TESTDIR}/cvsroot/CVSROOT/config,v  <--  config
+new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
+done
+${PROG} [a-z]*: Rebuilding administrative file database"
+	    cd ../..
+	    rm -r 1
+	    rm ${CVSROOT_DIRNAME}/CVSROOT/passwd
+	  fi # skip the whole thing for local
 	  ;;
 
 	*)

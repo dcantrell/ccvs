@@ -1,5 +1,17 @@
 1998-09-09  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* root.c (parse_cvsroot): Don't call check_root_consistent;
+	parse_cvsroot is only used for local and client.
+	* root.c (set_local_cvsroot): Move check_root_consistent
+	functionality from here...
+	* server.c (serve_root): ...to here.  Fixes error handling.  Also
+	made the error more explicit, while I am at it.
+	* server.c (Pserver_Repos): Now static.
+	* cvs.h: Don't declare it.
+	* root.c (check_root_consistent): Removed; no longer needed.
+	* sanity.sh (pserver): New test, tests for this behavior and some
+	other basic pserver stuff.
+
 	* update.c (merge_file): Use cvs_output for "already contains the
 	differences" message.  Found this one when I actually observed the
 	out-of-order bug in Real Life(TM).
