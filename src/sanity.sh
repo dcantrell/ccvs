@@ -76,7 +76,7 @@ unset fromtest
 keep=no
 remote=no
 set -- $args
-for i ; do
+for i in "$@" ; do
     case "$i" in
 	-f)
 	    fromtest=$2
