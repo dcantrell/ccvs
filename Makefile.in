@@ -294,8 +294,12 @@ EXTRA_DIST = \
 	cvsnt.dsw \
 	cvsnt.mak \
 	cvs.spec \
+	gnulib.txt \
+	gnulib-update \
 	mktemp.sh \
-	$(top_srcdir)/m4/ChangeLog
+	srclist.txt \
+	$(top_srcdir)/m4/ChangeLog \
+	$(top_srcdir)/m4/README
 
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
