@@ -1,3 +1,8 @@
+2000-06-19  Larry Jones  <larry.jones@sdrc.com>
+
+	* regex.c, regex.h: Version from emacs 20.7 to plug memory leaks
+	and avoid potential portability problems.
+
 2000-03-22  Larry Jones  <larry.jones@sdrc.com>
 
 	* getdate.y: Add logic to allow yyyy/mm/dd in addition to mm/dd/yy
