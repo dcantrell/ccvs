@@ -15,7 +15,7 @@
 
 
 static void
-_push (stack, elem, isstring)
+do_push (stack, elem, isstring)
     List *stack;
     void *elem;
     int isstring;
@@ -37,7 +37,7 @@ push (stack, elem)
     List *stack;
     void *elem;
 {
-    _push (stack, elem, 0);
+    do_push (stack, elem, 0);
 }
 
 
@@ -47,13 +47,13 @@ push_string (stack, elem)
     List *stack;
     char *elem;
 {
-    _push (stack, elem, 1);
+    do_push (stack, elem, 1);
 }
 
 
 
 static void *
-_pop (stack, isstring)
+do_pop (stack, isstring)
     List *stack;
     int isstring;
 {
@@ -82,7 +82,7 @@ void *
 pop (stack)
     List *stack;
 {
-    return _pop (stack, 0);
+    return do_pop (stack, 0);
 }
 
 
@@ -91,13 +91,13 @@ char *
 pop_string (stack)
     List *stack;
 {
-    return _pop (stack, 1);
+    return do_pop (stack, 1);
 }
 
 
 
 static void
-_unshift (stack, elem, isstring)
+do_unshift (stack, elem, isstring)
     List *stack;
     void *elem;
     int isstring;
@@ -119,7 +119,7 @@ unshift (stack, elem)
     List *stack;
     void *elem;
 {
-    _unshift (stack, elem, 0);
+    do_unshift (stack, elem, 0);
 }
 
 
@@ -129,13 +129,13 @@ unshift_string (stack, elem)
     List *stack;
     char *elem;
 {
-    _unshift (stack, elem, 1);
+    do_unshift (stack, elem, 1);
 }
 
 
 
 static void *
-_shift (stack, isstring)
+do_shift (stack, isstring)
     List *stack;
     int isstring;
 {
@@ -163,7 +163,7 @@ void *
 shift (stack)
     List *stack;
 {
-    return _shift (stack, 0);
+    return do_shift (stack, 0);
 }
 
 
@@ -172,7 +172,7 @@ char *
 shift_string (stack)
     List *stack;
 {
-    return _shift (stack, 1);
+    return do_shift (stack, 1);
 }
 
 
