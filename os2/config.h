@@ -395,6 +395,12 @@ extern void init_sockets();
 /* ... and we use popenRW to start the rsh server. */
 #define START_RSH_WITH_POPEN_RW 1
 
+/* Rule Number 1 of OS/2 Programming: If the function you're looking
+   for doesn't exist, try putting "Dos" in front of it. */
+#ifndef sleep
+#define sleep(x) DosSleep(((long)(x))*1000L)
+#endif /* sleep */
+
 /* Set to 1 for some debugging messages. */
 #if 0
 #define KFF_DEBUG(call) printf("*** %s:%d: ", __FILE__, __LINE__); \

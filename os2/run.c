@@ -571,12 +571,8 @@ close_on_exec (int fd)
 }
 
 
-/* That's right, OS/2 doesn't have sleep().
- *
- * todo: Hmmm, actually, I just noticed DosSleep(), but this has been
- * working, so I'll leave it even though it's a cycle hog.  When
- * everything else is happy, then I'll play with this.
- */
+/* Actually, we #define sleep() in config.h now. */
+#ifndef sleep
 unsigned int
 sleep (unsigned int seconds)
 {
@@ -603,3 +599,4 @@ sleep (unsigned int seconds)
 
   return 0;
 }
+#endif /* sleep */
