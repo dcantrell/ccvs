@@ -835,7 +835,7 @@ extern int patch PROTO((int argc, char **argv));
 extern int release PROTO((int argc, char **argv));
 extern int cvsremove PROTO((int argc, char **argv));
 extern int rtag PROTO((int argc, char **argv));
-extern int status PROTO((int argc, char **argv));
+extern int cvsstatus PROTO((int argc, char **argv));
 extern int cvstag PROTO((int argc, char **argv));
 
 extern unsigned long int lookup_command_attribute PROTO((char *));

@@ -3096,7 +3096,7 @@ static void
 serve_status (arg)
     char *arg;
 {
-    do_cvs_command ("status", status);
+    do_cvs_command ("status", cvsstatus);
 }
 
 static void

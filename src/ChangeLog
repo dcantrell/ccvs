@@ -1,5 +1,11 @@
 1998-05-13  Jim Meyering  <meyering@ascend.com>
 
+	* status.c (cvsstatus): Rename from `status' to avoid shadowing
+	lots of locals and parameters by the same name.
+	* server.c (serve_status): Update caller.
+	* main.c (cmds[]): Update table entry.
+	* cvs.h: Update prototype.
+
 	* commit.c (commit_filesdoneproc): Remove trailing blanks.
 	(commit) [CLIENT_SUPPORT]: Remove unnecessary (and local-shadowing)
 	declaration of `err'.
