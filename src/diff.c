@@ -450,6 +450,8 @@ diff_mark_errors (err)
 
 /*
  * Print a warm fuzzy message when we enter a dir
+ *
+ * Don't try to diff directories that don't exist! -- DW
  */
 /* ARGSUSED */
 static Dtype
@@ -459,6 +461,11 @@ diff_dirproc (dir, pos_repos, update_dir)
     char *update_dir;
 {
     /* XXX - check for dirs we don't want to process??? */
+
+    /* YES ... for instance dirs that don't exist!!! -- DW */
+    if (!isdir (dir) )
+      return (R_SKIP_ALL);
+  
     if (!quiet)
 	error (0, 0, "Diffing %s", update_dir);
     return (R_PROCESS);
@@ -522,8 +529,11 @@ diff_file_nodiff (file, repository, entries, srcfiles, vers)
 				diff_date1, file, 1, 0, entries, srcfiles);
 	    if (xvers->vn_rcs == NULL)
 	    {
-		if (diff_rev1)
-		    error (0, 0, "tag %s is not in file %s", diff_rev1, file);
+		/* Don't gripe if it doesn't exist, just ignore! */
+		if (! isfile (file))
+                  /* null statement */ ;
+		else if (diff_rev1)
+                    error (0, 0, "tag %s is not in file %s", diff_rev1, file);
 		else
 		    error (0, 0, "no revision for date %s in file %s",
 			   diff_date1, file);
@@ -544,7 +554,10 @@ diff_file_nodiff (file, repository, entries, srcfiles, vers)
 				diff_date2, file, 1, 0, entries, srcfiles);
 	    if (xvers->vn_rcs == NULL)
 	    {
-		if (diff_rev1)
+		/* Don't gripe if it doesn't exist, just ignore! */
+		if (! isfile (file))
+                  /* null statement */ ;
+		else if (diff_rev1)
 		    error (0, 0, "tag %s is not in file %s", diff_rev2, file);
 		else
 		    error (0, 0, "no revision for date %s in file %s",
