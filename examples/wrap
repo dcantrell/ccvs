@@ -1,7 +1,9 @@
-#!/bin/sh
+#! /bin/sh
 #
-# Combine a directory into a single tar package.
+#	wrap - Combine a directory into a single tar package.
 #
+#ident	"@(#)cvs/examples:$Name$:$Id$"
+
 # This script is always called with the current directory set to
 # where the file to be combined exists. but i may get called with a
 # path to where cvs first started executing. (this probably should be
