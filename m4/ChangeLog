@@ -1,5 +1,9 @@
 2004-10-05  Derek Price  <derek@ximbiot.com>
 
+	* alloca.m4: Import latest version from GNULIB.
+
+2004-10-05  Derek Price  <derek@ximbiot.com>
+
 	* unlocked-io.m4: Import most recent version from GNULIB.
 
 2004-10-05  Derek Price  <derek@ximbiot.com>
