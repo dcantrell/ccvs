@@ -1,5 +1,9 @@
 2001-03-26  Larry Jones  <larry.jones@sdrc.com>
 
+	* cvs.texinfo (admin options): Fix typo: should be @pxref, not @xref.
+
+2001-03-26  Larry Jones  <larry.jones@sdrc.com>
+
 	* cvs.texinfo (admin options): Update description of -u option to
 	refer back to notify.
 
