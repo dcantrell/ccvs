@@ -477,7 +477,7 @@ sub get_history
     {
 		if( $ignore == 1 ) 
 		{
-			if( ( $revision ) = $line =~ /^revision (\S*)(\tlocked by: \S+;)?$/ )
+			if( ( $revision ) = $line =~ /^revision (.*?)(\tlocked by: \S+;)?$/ )
 			{
   				unless($revision =~ m/^\d+\.\d+(?:\.\d+\.\d+)*$/)
 				{
