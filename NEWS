@@ -28,6 +28,12 @@ GENERAL USER ISSUES
 
 DEVELOPER ISSUES
 
+* Support has been added to the test suite to support testing over a :ext: link
+  to another machine, subject to some stringent requirements.  This support can
+  be used, for instance, to test the operation of a case insensitive client
+  against a case sensitive server.  Please see the comments in TEST and the
+  src/sanity.sh test script itself for more.
+
 * We've standardized on Automake 1.7.9 to get a bug fix.  See the note below
   on the Autoconf upgrade for more details.
 
