@@ -2360,7 +2360,7 @@ join_file (finfo, vers)
 	{
 	    cvs_output (finfo->fullname, 0);
 	    cvs_output (" already contains the differences between ", 0);
-	    cvs_output (rev1, 0);
+	    cvs_output (rev1 ? rev1 : "creation", 0);
 	    cvs_output (" and ", 0);
 	    cvs_output (rev2, 0);
 	    cvs_output ("\n", 1);
