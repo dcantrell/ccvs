@@ -1,5 +1,10 @@
 2003-11-12  Derek R. Price  <derek@ximbiot.com>
 
+	* version.at: Comment on the ability to check older versions of CVS.
+	* suite: Regenerated.
+
+2003-11-12  Derek R. Price  <derek@ximbiot.com>
+
 	* version.at: Use a more portable sed script.
 	* suite: Regenerated.
 	(Report from Mark D. Baushke <mdb@cvshome.org>.)

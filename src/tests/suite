@@ -2199,13 +2199,21 @@ echo "$as_me: error: Couldn't cd to \\`project'.  Did \$HOME get set incorrectly
 # someone neglected to update the copyright notice than to avoid a few spurious
 # failures when testing old versions of CVS.
 #
+# FIXME: This could be done with sed branching - if the listed version is the
+# same as the CVS dist version that script was generated with, then check the
+# year.  Otherwise, ignore it.
+#
+# The s# *$## command is necessary to test old versions of CVS since some are
+# known to have generated trailing spaces in their version string.
 this_year=`date +%Y`
 $at_traceoff
-echo "version.at:41: cvs --version |
-  sed 's#  *1[.][0-9][.0-9p]* ([a-z/]*)\$##;s#  *1[.][0-9][.0-9p]*\$##;s# *\$##'"
-echo version.at:41 >$at_check_line_file
+echo "version.at:48: cvs --version |
+  sed -e 's#  *1[.][0-9][.0-9p]* ([a-z/]*)\$##;s#  *1[.][0-9][.0-9p]*\$##' \\
+      -e 's# *\$##'"
+echo version.at:48 >$at_check_line_file
 ( $at_traceon; cvs --version |
-  sed 's#  *1[.][0-9][.0-9p]* ([a-z/]*)$##;s#  *1[.][0-9][.0-9p]*$##;s# *$##' ) >$at_stdout 2>$at_stder1
+  sed -e 's#  *1[.][0-9][.0-9p]* ([a-z/]*)$##;s#  *1[.][0-9][.0-9p]*$##' \
+      -e 's# *$##' ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
 grep -v '^ *+' $at_stder1 >$at_stderr
@@ -2226,7 +2234,7 @@ case $at_status in
    77) echo 77 > $at_status_file
             exit 77;;
    0) ;;
-   *) echo "version.at:41: exit code was $at_status, expected 0"
+   *) echo "version.at:48: exit code was $at_status, expected 0"
       at_failed=:;;
 esac
 if $at_failed; then
@@ -2245,9 +2253,9 @@ $at_traceon
 
 
 $at_traceoff
-echo "version.at:59: cvs version |
+echo "version.at:66: cvs version |
   sed 's#  *1[.][0-9][.0-9p]* ([a-z/]*)\$##;s#  *1[.][0-9][.0-9p]*\$##'"
-echo version.at:59 >$at_check_line_file
+echo version.at:66 >$at_check_line_file
 ( $at_traceon; cvs version |
   sed 's#  *1[.][0-9][.0-9p]* ([a-z/]*)$##;s#  *1[.][0-9][.0-9p]*$##' ) >$at_stdout 2>$at_stder1
 at_status=$?
@@ -2261,7 +2269,7 @@ case $at_status in
    77) echo 77 > $at_status_file
             exit 77;;
    0) ;;
-   *) echo "version.at:59: exit code was $at_status, expected 0"
+   *) echo "version.at:66: exit code was $at_status, expected 0"
       at_failed=:;;
 esac
 if $at_failed; then
@@ -2486,13 +2494,21 @@ echo "$as_me: error: Couldn't cd to \\`project'.  Did \$HOME get set incorrectly
 # someone neglected to update the copyright notice than to avoid a few spurious
 # failures when testing old versions of CVS.
 #
+# FIXME: This could be done with sed branching - if the listed version is the
+# same as the CVS dist version that script was generated with, then check the
+# year.  Otherwise, ignore it.
+#
+# The s# *$## command is necessary to test old versions of CVS since some are
+# known to have generated trailing spaces in their version string.
 this_year=`date +%Y`
 $at_traceoff
-echo "version.at:41: cvs --version |
-  sed 's#  *1[.][0-9][.0-9p]* ([a-z/]*)\$##;s#  *1[.][0-9][.0-9p]*\$##;s# *\$##'"
-echo version.at:41 >$at_check_line_file
+echo "version.at:48: cvs --version |
+  sed -e 's#  *1[.][0-9][.0-9p]* ([a-z/]*)\$##;s#  *1[.][0-9][.0-9p]*\$##' \\
+      -e 's# *\$##'"
+echo version.at:48 >$at_check_line_file
 ( $at_traceon; cvs --version |
-  sed 's#  *1[.][0-9][.0-9p]* ([a-z/]*)$##;s#  *1[.][0-9][.0-9p]*$##;s# *$##' ) >$at_stdout 2>$at_stder1
+  sed -e 's#  *1[.][0-9][.0-9p]* ([a-z/]*)$##;s#  *1[.][0-9][.0-9p]*$##' \
+      -e 's# *$##' ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
 grep -v '^ *+' $at_stder1 >$at_stderr
@@ -2513,7 +2529,7 @@ case $at_status in
    77) echo 77 > $at_status_file
             exit 77;;
    0) ;;
-   *) echo "version.at:41: exit code was $at_status, expected 0"
+   *) echo "version.at:48: exit code was $at_status, expected 0"
       at_failed=:;;
 esac
 if $at_failed; then
@@ -2532,9 +2548,9 @@ $at_traceon
 
 
 $at_traceoff
-echo "version.at:59: cvs version |
+echo "version.at:66: cvs version |
   sed 's#  *1[.][0-9][.0-9p]* ([a-z/]*)\$##;s#  *1[.][0-9][.0-9p]*\$##'"
-echo version.at:59 >$at_check_line_file
+echo version.at:66 >$at_check_line_file
 ( $at_traceon; cvs version |
   sed 's#  *1[.][0-9][.0-9p]* ([a-z/]*)$##;s#  *1[.][0-9][.0-9p]*$##' ) >$at_stdout 2>$at_stder1
 at_status=$?
@@ -2548,7 +2564,7 @@ case $at_status in
    77) echo 77 > $at_status_file
             exit 77;;
    0) ;;
-   *) echo "version.at:59: exit code was $at_status, expected 0"
+   *) echo "version.at:66: exit code was $at_status, expected 0"
       at_failed=:;;
 esac
 if $at_failed; then
@@ -2792,13 +2808,21 @@ echo "$as_me: error: Couldn't cd to \\`project'.  Did \$HOME get set incorrectly
 # someone neglected to update the copyright notice than to avoid a few spurious
 # failures when testing old versions of CVS.
 #
+# FIXME: This could be done with sed branching - if the listed version is the
+# same as the CVS dist version that script was generated with, then check the
+# year.  Otherwise, ignore it.
+#
+# The s# *$## command is necessary to test old versions of CVS since some are
+# known to have generated trailing spaces in their version string.
 this_year=`date +%Y`
 $at_traceoff
-echo "version.at:41: cvs --version |
-  sed 's#  *1[.][0-9][.0-9p]* ([a-z/]*)\$##;s#  *1[.][0-9][.0-9p]*\$##;s# *\$##'"
-echo version.at:41 >$at_check_line_file
+echo "version.at:48: cvs --version |
+  sed -e 's#  *1[.][0-9][.0-9p]* ([a-z/]*)\$##;s#  *1[.][0-9][.0-9p]*\$##' \\
+      -e 's# *\$##'"
+echo version.at:48 >$at_check_line_file
 ( $at_traceon; cvs --version |
-  sed 's#  *1[.][0-9][.0-9p]* ([a-z/]*)$##;s#  *1[.][0-9][.0-9p]*$##;s# *$##' ) >$at_stdout 2>$at_stder1
+  sed -e 's#  *1[.][0-9][.0-9p]* ([a-z/]*)$##;s#  *1[.][0-9][.0-9p]*$##' \
+      -e 's# *$##' ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
 grep -v '^ *+' $at_stder1 >$at_stderr
@@ -2819,7 +2843,7 @@ case $at_status in
    77) echo 77 > $at_status_file
             exit 77;;
    0) ;;
-   *) echo "version.at:41: exit code was $at_status, expected 0"
+   *) echo "version.at:48: exit code was $at_status, expected 0"
       at_failed=:;;
 esac
 if $at_failed; then
@@ -2834,10 +2858,10 @@ $at_traceon
 
 
 $at_traceoff
-echo "version.at:51: cvs version |
+echo "version.at:58: cvs version |
   sed 's#^\\(Client.*\\)  *1[.][0-9][.0-9p]* (client[a-z/]*)\$#\\1 (client)#
        s#^\\(Server.*\\)  *1[.][0-9][.0-9p]* ([a-z/]*server)\$#\\1 (server)#'"
-echo version.at:51 >$at_check_line_file
+echo version.at:58 >$at_check_line_file
 ( $at_traceon; cvs version |
   sed 's#^\(Client.*\)  *1[.][0-9][.0-9p]* (client[a-z/]*)$#\1 (client)#
        s#^\(Server.*\)  *1[.][0-9][.0-9p]* ([a-z/]*server)$#\1 (server)#' ) >$at_stdout 2>$at_stder1
@@ -2853,7 +2877,7 @@ case $at_status in
    77) echo 77 > $at_status_file
             exit 77;;
    0) ;;
-   *) echo "version.at:51: exit code was $at_status, expected 0"
+   *) echo "version.at:58: exit code was $at_status, expected 0"
       at_failed=:;;
 esac
 if $at_failed; then
@@ -3133,13 +3157,21 @@ echo "$as_me: error: Couldn't cd to \\`project'.  Did \$HOME get set incorrectly
 # someone neglected to update the copyright notice than to avoid a few spurious
 # failures when testing old versions of CVS.
 #
+# FIXME: This could be done with sed branching - if the listed version is the
+# same as the CVS dist version that script was generated with, then check the
+# year.  Otherwise, ignore it.
+#
+# The s# *$## command is necessary to test old versions of CVS since some are
+# known to have generated trailing spaces in their version string.
 this_year=`date +%Y`
 $at_traceoff
-echo "version.at:41: cvs --version |
-  sed 's#  *1[.][0-9][.0-9p]* ([a-z/]*)\$##;s#  *1[.][0-9][.0-9p]*\$##;s# *\$##'"
-echo version.at:41 >$at_check_line_file
+echo "version.at:48: cvs --version |
+  sed -e 's#  *1[.][0-9][.0-9p]* ([a-z/]*)\$##;s#  *1[.][0-9][.0-9p]*\$##' \\
+      -e 's# *\$##'"
+echo version.at:48 >$at_check_line_file
 ( $at_traceon; cvs --version |
-  sed 's#  *1[.][0-9][.0-9p]* ([a-z/]*)$##;s#  *1[.][0-9][.0-9p]*$##;s# *$##' ) >$at_stdout 2>$at_stder1
+  sed -e 's#  *1[.][0-9][.0-9p]* ([a-z/]*)$##;s#  *1[.][0-9][.0-9p]*$##' \
+      -e 's# *$##' ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
 grep -v '^ *+' $at_stder1 >$at_stderr
@@ -3160,7 +3192,7 @@ case $at_status in
    77) echo 77 > $at_status_file
             exit 77;;
    0) ;;
-   *) echo "version.at:41: exit code was $at_status, expected 0"
+   *) echo "version.at:48: exit code was $at_status, expected 0"
       at_failed=:;;
 esac
 if $at_failed; then
@@ -3175,10 +3207,10 @@ $at_traceon
 
 
 $at_traceoff
-echo "version.at:51: cvs version |
+echo "version.at:58: cvs version |
   sed 's#^\\(Client.*\\)  *1[.][0-9][.0-9p]* (client[a-z/]*)\$#\\1 (client)#
        s#^\\(Server.*\\)  *1[.][0-9][.0-9p]* ([a-z/]*server)\$#\\1 (server)#'"
-echo version.at:51 >$at_check_line_file
+echo version.at:58 >$at_check_line_file
 ( $at_traceon; cvs version |
   sed 's#^\(Client.*\)  *1[.][0-9][.0-9p]* (client[a-z/]*)$#\1 (client)#
        s#^\(Server.*\)  *1[.][0-9][.0-9p]* ([a-z/]*server)$#\1 (server)#' ) >$at_stdout 2>$at_stder1
@@ -3194,7 +3226,7 @@ case $at_status in
    77) echo 77 > $at_status_file
             exit 77;;
    0) ;;
-   *) echo "version.at:51: exit code was $at_status, expected 0"
+   *) echo "version.at:58: exit code was $at_status, expected 0"
       at_failed=:;;
 esac
 if $at_failed; then
