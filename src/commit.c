@@ -79,7 +79,7 @@ static char *write_dirtag;
 static int write_dirnonbranch;
 static char *logfile;
 static List *mulist;
-static char *message;
+static char *saved_message;
 static time_t last_register_time;
 
 static const char *const commit_usage[] =
@@ -364,13 +364,13 @@ commit (argc, argv)
 #else
 		use_editor = 0;
 #endif
-		if (message)
+		if (saved_message)
 		{
-		    free (message);
-		    message = NULL;
+		    free (saved_message);
+		    saved_message = NULL;
 		}
 
-		message = xstrdup(optarg);
+		saved_message = xstrdup(optarg);
 		break;
 	    case 'r':
 		if (saved_tag)
@@ -419,7 +419,7 @@ commit (argc, argv)
 	int n, logfd;
 	struct stat statbuf;
 
-	if (message)
+	if (saved_message)
 	    error (1, 0, "cannot specify both a message and a log file");
 
 	/* FIXME: Why is this binary?  Needs more investigation.  */
@@ -429,15 +429,15 @@ commit (argc, argv)
 	if (fstat(logfd, &statbuf) < 0)
 	    error (1, errno, "cannot find size of log file %s", logfile);
 
-	message = xmalloc (statbuf.st_size + 1);
+	saved_message = xmalloc (statbuf.st_size + 1);
 
 	/* FIXME: Should keep reading until EOF, rather than assuming the
 	   first read gets the whole thing.  */
-	if ((n = read (logfd, message, statbuf.st_size + 1)) < 0)
+	if ((n = read (logfd, saved_message, statbuf.st_size + 1)) < 0)
 	    error (1, errno, "cannot read log message from %s", logfile);
 
 	(void) close (logfd);
-	message[n] = '\0';
+	saved_message[n] = '\0';
     }
 
 #ifdef CLIENT_SUPPORT
@@ -499,17 +499,17 @@ commit (argc, argv)
 	 * The protocol is designed this way.  This is a feature.
 	 */
 	if (use_editor)
-	    do_editor (".", &message, (char *)NULL, find_args.ulist);
+	    do_editor (".", &saved_message, (char *)NULL, find_args.ulist);
 
 	/* Run the user-defined script to verify/check information in
 	 *the log message
 	 */
-	do_verify (message, (char *)NULL);
+	do_verify (saved_message, (char *)NULL);
 
 	/* We always send some sort of message, even if empty.  */
 	/* FIXME: is that true?  There seems to be some code in do_editor
 	   which can leave the message NULL.  */
-	option_with_arg ("-m", message);
+	option_with_arg ("-m", saved_message);
 
 	/* OK, now process all the questionable files we have been saving
 	   up.  */
@@ -581,7 +581,7 @@ commit (argc, argv)
 
 	send_to_server ("ci\012", 0);
 	err = get_responses_and_close ();
-	if (err != 0 && use_editor && message != NULL)
+	if (err != 0 && use_editor && saved_message != NULL)
 	{
 	    /* If there was an error, don't nuke the user's carefully
 	       constructed prose.  This is something of a kludge; a better
@@ -599,7 +599,7 @@ commit (argc, argv)
 	    fp = CVS_FOPEN (fname, "w+");
 	    if (fp == NULL)
 		error (1, 0, "cannot create temporary file %s", fname);
-	    if (fwrite (message, 1, strlen (message), fp) != strlen (message))
+	    if (fwrite (saved_message, 1, strlen (saved_message), fp) != strlen (saved_message))
 		error (1, errno, "cannot write temporary file %s", fname);
 	    if (fclose (fp) < 0)
 		error (0, errno, "cannot close temporary file %s", fname);
@@ -1225,8 +1225,8 @@ commit_fileproc (callerdat, finfo)
     {
 	got_message = 1;
 	if (use_editor)
-	    do_editor (finfo->update_dir, &message, finfo->repository, ulist);
-	do_verify (message, finfo->repository);
+	    do_editor (finfo->update_dir, &saved_message, finfo->repository, ulist);
+	do_verify (saved_message, finfo->repository);
     }
 
     p = findnode (cilist, finfo->file);
@@ -1266,7 +1266,7 @@ commit_fileproc (callerdat, finfo)
 		error (1, 0, "internal error: no parsed RCS file");
 	    ci->rev = RCS_whatbranch (finfo->rcs, ci->tag);
 	    err = Checkin ('A', finfo, finfo->rcs->path, ci->rev,
-			   ci->tag, ci->options, message);
+			   ci->tag, ci->options, saved_message);
 	    if (err != 0)
 	    {
 		unlockrcs (finfo->rcs);
@@ -1306,7 +1306,7 @@ commit_fileproc (callerdat, finfo)
     {
 	err = Checkin ('M', finfo,
 		       finfo->rcs->path, ci->rev, ci->tag,
-		       ci->options, message);
+		       ci->options, saved_message);
 
 	(void) time (&last_register_time);
 
@@ -1318,7 +1318,7 @@ commit_fileproc (callerdat, finfo)
     }
     else if (ci->status == T_REMOVED)
     {
-	err = remove_file (finfo, ci->tag, message);
+	err = remove_file (finfo, ci->tag, saved_message);
 #ifdef SERVER_SUPPORT
 	if (server_active) {
 	    server_scratch_entry_only ();
@@ -1402,7 +1402,7 @@ commit_filesdoneproc (callerdat, err, repository, update_dir, entries)
     got_message = 0;
 
 
-    Update_Logfile (repository, message, (FILE *) 0, ulist);
+    Update_Logfile (repository, saved_message, (FILE *) 0, ulist);
 
     /* Build the administrative files if necessary.  */
     {
@@ -1531,8 +1531,8 @@ commit_direntproc (callerdat, dir, repos, update_dir, entries)
     real_repos = Name_Repository (dir, update_dir);
     got_message = 1;
     if (use_editor)
-	do_editor (update_dir, &message, real_repos, ulist);
-    do_verify (message, real_repos);
+	do_editor (update_dir, &saved_message, real_repos, ulist);
+    do_verify (saved_message, real_repos);
     free (real_repos);
     return (R_PROCESS);
 }
@@ -1796,7 +1796,7 @@ finaladd (finfo, rev, tag, options)
     char *rcs;
 
     rcs = locate_rcs (finfo->file, finfo->repository);
-    ret = Checkin ('A', finfo, rcs, rev, tag, options, message);
+    ret = Checkin ('A', finfo, rcs, rev, tag, options, saved_message);
     if (ret == 0)
     {
 	char *tmp = xmalloc (strlen (finfo->file) + sizeof (CVSADM)
