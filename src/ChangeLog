@@ -1,6 +1,15 @@
-2004-02-20  Larry Jones  <lawrence.jones@ugsplm.com>
+2004-02-20  Derek Price  <derek@ximbiot.com>
 
-	* tag.c (check_fileproc): Remove unused variable.
+	* subr.c (set_nonblock_fd): Move back to...
+	* server.c: ...here.
+	* cvs.h: Remove protos for the above two functions.
+	* buffer.c (stdio_buffer_shutdown): Remove unexessary and possibly
+	dangerous check for unread data on a pipe with a nonblock read.
+
+2004-02-20  Derek Price  <derek@ximbiot.com>
+
+	* ChangeLog, commit.c, filesubr.c, rcs.c, root.c, sanity.sh, subr.c,
+	update.c: Remove VIM editor commands.
 
 2004-02-20  Derek Price  <derek@ximbiot.com>
 

@@ -646,8 +646,8 @@ int start_recursion (FILEPROC fileproc, FILESDONEPROC filesdoneproc,
 		     DIRENTPROC direntproc, DIRLEAVEPROC dirleaveproc,
 		     void *callerdat,
 		     int argc, char *argv[], int local, int which,
-		     int afag, int locktype, char *update_preload,
-		     int dosrcsi, char *repository);
+		     int aflag, int locktype, char *update_preload,
+		     int dosrcs, char *repository);
 void SIG_beginCrSect (void);
 void SIG_endCrSect (void);
 int SIG_inCrSect (void);
@@ -663,7 +663,6 @@ char *shell_escape (char *buf, const char *str);
 char *backup_file (const char *file, const char *suffix);
 void resolve_symlink (char **filename);
 void sleep_past (time_t desttime);
-int set_nonblock_fd (int _fd);
 
 /* flags for run_exec(), the fast system() for CVS */
 #define	RUN_NORMAL		0x0000	/* no special behaviour */

@@ -31865,4 +31865,3 @@ cd `dirname ${TESTDIR}`
 rm -rf ${TESTDIR}
 
 # end of sanity.sh
-# vim:tabstop=8:shiftwidth=4

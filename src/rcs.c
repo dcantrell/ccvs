@@ -8442,8 +8442,3 @@ getfullCVSname(char *CVSname, char **pathstore)
     }
     return CVSname;
 }
-
-
-
-/* vim:tabstop=8:shiftwidth=4
- */

@@ -2925,5 +2925,3 @@ joining (void)
 {
     return (join_rev1 != NULL);
 }
-/* vim:tabstop=8:shiftwidth=4
- */
