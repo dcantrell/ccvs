@@ -1,3 +1,18 @@
+2004-08-17  Mark D. Baushke  <mdb@cvshome.org>
+
+	* sanity.sh (sshstdio): Fix comment typo plus gratuitous
+	reformatting.
+
+	* client.c (handle_m): Workaround to deal with stdio getting put
+	into non-blocking via redirection of stderr and interaction with
+	ssh on some platforms. On those boxes, stdio can put stdout
+	unexpectedly into non-blocking mode which may lead to fwrite() or
+	fflush() failing with EAGAIN, but cvs not checking for the error.
+	(Patch suggested by Frank Hemer <frank@hemer.org>.)
+
+	* client.c (handle_e): Similar fix for stderr.
+	* sanity.sh (sshstdio): New test for non-blocking stdio via ssh.
+	
 2004-08-11  Derek Price <derek@ximbiot.com>
 
 	* sanity.sh (basicc): Work around a problem in Linux 2.2 & Bash 2.05b

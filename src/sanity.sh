@@ -476,11 +476,33 @@ ISODATE="[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9] [0-9][0-9]:[0-9][0-9] [+-][0
 # that are used in a %p format, add them here.
 PFMT="[0-9a-zA-Z()][0-9a-zA-Z()]*"
 
+# Do not assume that `type -p cmd` is portable
+Which() {
+  # Optional first argument for file type, defaults to -x.
+  # Second argument is the file or directory to be found.
+  # Third argument is the PATH to search.
+  case "$1" in
+    -*) t=$1; shift ;;
+    *) t=-x ;;
+  esac
+  case "$1" in
+    # FIXME: Someday this may need to be fixed
+    # to deal better with C:\some\path\to\ssh values...
+    /*) test $t $1 && echo $1 ;;
+    *) for d in `IFS=:; echo ${2-$PATH}`
+       do
+         test $t $d/$1 && { echo $d/$1; break; }
+       done
+       ;;
+  esac
+}
+
+
 # On cygwin32, we may not have /bin/sh.
 if test -r /bin/sh; then
   TESTSHELL="/bin/sh"
 else
-  TESTSHELL=`type -p sh 2>/dev/null`
+  TESTSHELL=`Which -f sh`
   if test ! -r "$TESTSHELL"; then
     TESTSHELL="/bin/sh"
   fi
@@ -510,6 +532,12 @@ fi
 # which makes for a lot of failed `tail -f' attempts.
 touch check.log
 
+# Workaround any X11Forwarding by ssh. Otherwise this text:
+#   Warning: No xauth data; using fake authentication data for X11 forwarding.
+# has been known to end up in the test results below
+# causing the test to fail.
+[ -n "$DISPLAY" ] && unset DISPLAY
+  
 # The default value of /tmp/cvs-sanity for TESTDIR is dubious,
 # because it loses if two people/scripts try to run the tests
 # at the same time.  Some possible solutions:
@@ -1108,6 +1136,7 @@ if test x"$*" = x; then
 	# Repository Storage (RCS file format, CVS lock files, creating
 	# a repository without "cvs init", &c).
 	tests="${tests} crerepos rcs rcs2 rcs3 lockfiles backuprecover"
+	tests="${tests} sshstdio"
 	# More history browsing, &c.
 	tests="${tests} history"
 	tests="${tests} big modes modes2 modes3 stamps"
@@ -19354,12 +19383,6 @@ Annotations for $file
 	  # local.
 	  if $remote; then
 
-	    # Workaround any X11Forwarding by ssh. Otherwise this text:
-	    #   Warning: No xauth data; using fake authentication data for X11 forwarding.
-	    # has been known to end up in the test results below
-	    # causing the test to fail.
-	    [ -n "$DISPLAY" ] && unset DISPLAY
-
 	    # For remote, just create the repository.  We don't yet do
 	    # the various other tests above for remote but that should be
 	    # changed.
@@ -20742,6 +20765,112 @@ new revision: 1\.6; previous revision: 1\.5"
 	  rm -r backuprecover
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
 	  ;;
+
+        sshstdio)
+          # CVS_RSH=ssh can have a problem with a non-blocking stdio
+          # in some cases. So, this test is all about testing :ext:
+          # with CVS_RSH=ssh. The problem is that not all machines
+          # will necessarily have ssh available, so be prepared to
+          # skip this test.
+
+          if $remote; then
+            [ -n "$CVS_RSH" ] && CVS_RSH_save=$CVS_RSH
+
+            # Are we able to run find and use an ssh?
+            case "$CVS_RSH" in
+              *ssh*|*putty*)
+                 tryssh=`Which $CVS_RSH`
+                 if [ ! -n "$tryssh" ]; then
+                   skipreason="Unable to find CVS_RSH=$CVS_RSH executable"
+                 elif [ ! -x "$tryssh" ]; then
+                   skipreason="Unable to execute $tryssh program"
+                 fi
+                 ;;
+              *)
+                 # Look in the user's PATH for "ssh"
+                 tryssh=`Which ssh`
+                 if test ! -r "$tryssh"; then
+                   skipreason="Unable to find ssh program"
+                 fi
+                 ;;
+            esac
+            if [ ! -n "$skipreason" ]; then
+              host=${remotehost-"`hostname`"}
+              result=`$tryssh $host 'echo test'`
+              rc=$?
+              if test $? != 0 || test "x$result" != "xtest"; then
+                skipreason="\`$tryssh $host' failed rc=$rc result=$result"
+              else
+                CVS_RSH=$tryssh; export CVS_RSH
+              fi
+
+              if test -n "$remotehost"; then
+                SSHSTDIO_ROOT=:ext:$remotehost${CVSROOT_DIRNAME}
+              else
+                SSHSTDIO_ROOT=:ext:`hostname`:${CVSROOT_DIRNAME}
+              fi
+             fi
+          else
+            skipreason="ssh is only used during remote testing."
+          fi
+
+          if [ -n "$skipreason" ]; then
+            pass "sshstdio (test skipped ... $skipreason)"
+          else
+            mkdir sshstdio; cd sshstdio
+            dotest sshstdio-1 "${testcvs} -d ${SSHSTDIO_ROOT} -q co -l ." ''
+            mkdir first-dir
+            dotest sshstdio-2 "${testcvs} add first-dir" \
+  "Directory ${CVSROOT_DIRNAME}/first-dir added to the repository"
+            cd first-dir
+            a='aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
+            c='aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaacaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
+            # Generate 1024 lines of $a
+            cnt=0
+            echo $a > aaa
+            while [ $cnt -lt 5 ] ; do
+              cnt=`expr $cnt + 1` ;
+              mv aaa aaa.old
+              cat aaa.old aaa.old aaa.old aaa.old > aaa
+            done
+            dotest sshstdio-3 "${testcvs} -q add aaa" \
+"${SPROG} add: use \`${SPROG} commit' to add this file permanently"
+            dotest sshstdio-4 "${testcvs} -q ci -mcreate aaa" \
+"$CVSROOT_DIRNAME/first-dir/aaa,v  <--  aaa
+initial revision: 1\.1"
+            # replace lines 1, 512, 513, 1024 with $c
+            sed 510q < aaa > aaa.old
+            (echo $c; cat aaa.old; echo $c; \
+             echo $c; cat aaa.old; echo $c) > aaa
+            dotest sshstdio-5 "${testcvs} -q ci -mmodify-it aaa" \
+"${CVSROOT_DIRNAME}/first-dir/aaa,v  <--  aaa
+new revision: 1\.2; previous revision: 1\.1"
+            cat > wrapper.sh <<EOF
+#!${TESTSHELL}
+exec "\$@" 2>&1 < /dev/null | cat
+EOF
+            chmod +x wrapper.sh
+            ./wrapper.sh \
+             ${testcvs} -z5 -Q diff --side-by-side -W 500 -r 1.1 -r 1.2 \
+               aaa > wrapper.dif
+  
+            ${testcvs} -z5 -Q diff --side-by-side -W 500 -r 1.1 -r 1.2 \
+               aaa > good.dif
+  
+            dotest sshstdio-6 "cmp wrapper.dif good.dif" ""
+  
+            if [ -n "$CVS_RSH_save" ]; then
+              CVS_RSH=$CVS_RSH_save; export CVS_RSH
+            fi
+
+            dokeep
+  
+            cd ../..
+            rm -r sshstdio
+            rm -rf ${CVSROOT_DIRNAME}/first-dir
+          fi
+          ;;
+
 
 	history)
 	  # CVSROOT/history tests:
