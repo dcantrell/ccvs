@@ -1,3 +1,11 @@
+Tue Jan 27 18:27:19 1998  Ian Lance Taylor  <ian@cygnus.com>
+
+	* rtag.c (rtag_dirproc): Call ignore_directory, and skip the
+	directory if it returns true.
+	* sanity.sh (modules4): New set of tests to test some aspects of
+	excluding directories in the modules file, including the above
+	patch.
+
 Thu Jan 22 10:05:55 1998  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* server.c (serve_kopt): Check for length of arg.  Based on
