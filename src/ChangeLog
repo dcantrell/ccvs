@@ -1,3 +1,8 @@
+Tue Jan 13 10:37:02 1998  Larry Jones  <larry.jones@sdrc.com>
+
+	* client.c (send_modified): Change bufsize and newsize from int
+	to size_t to avoid type clashes in call to read_and_gzip.
+
 Tue Jan 13 10:33:02 1998  Larry Jones  <larry.jones@sdrc.com>
 
 	* zlib.c (read_and_gzip): Set finish to 0; it was uninitialized.
