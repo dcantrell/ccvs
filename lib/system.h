@@ -84,13 +84,18 @@
 # endif
 #endif
 
-#if !defined(S_ISSOCK) && defined(S_IFSOCK)
-# if defined(S_IFMT)
-# define	S_ISSOCK(m) (((m) & S_IFMT) == S_IFSOCK)
-# else
-# define S_ISSOCK(m) ((m) & S_IFSOCK)
-# endif
-#endif
+#ifndef S_ISSOCK
+# if defined( S_IFSOCK )
+#   ifdef S_IFMT
+#     define S_ISSOCK(m) (((m) & S_IFMT) == S_IFSOCK)
+#   else
+#     define S_ISSOCK(m) ((m) & S_IFSOCK)
+#   endif /* S_IFMT */
+# elif defined( S_ISNAM )
+    /* SCO OpenServer 5.0.6a */
+#   define S_ISSOCK S_ISNAM
+# endif /* !S_IFSOCK && S_ISNAM */
+#endif /* !S_ISSOCK */
 
 #if !defined(S_ISMPB) && defined(S_IFMPB) /* V7 */
 # if defined(S_IFMT)
