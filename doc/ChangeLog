@@ -1,3 +1,21 @@
+2004-05-06  Derek Price  <derek@ximbiot.com>
+
+	* mkman.in: Require Perl 5.005.  Add comments.  Remove duplicate s///.
+	Handle @:.
+
+2004-05-06  Derek Price  <derek@ximbiot.com>
+
+	* cvs.man.header: Minor text correction.
+	* mkman.in: Ignore @need keyword.  Restore previous font for nested
+	keywords.
+	(do_keyword): Ditto on fonts.  Move some functionality to...
+	(keyword_mode): ...this new function.
+
+2004-05-06  Derek Price  <derek@ximbiot.com>
+
+	* mkman.in: Handle keywords that cross multiple lines.
+	(do_keyword): New function.
+
 2004-05-04  Derek Price  <derek@ximbiot.com>
 
 	* cvs.man.header, cvs.man.footer: Reference `info CVS' rather than
