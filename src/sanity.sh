@@ -14449,14 +14449,14 @@ $SPROG commit: Rebuilding administrative file database"
 
 
 	rstar-toplevel)
-	  # FIXCVS:
-	  # This test confirms a bug that exists in the r* commands currently
-	  # when run against the top-level project.
+	  # This test used to confirm a bug that existed in the r* commands
+	  # run against the top-level project prior to CVS 1.11.18 & 1.12.10.
 	  #
-	  # The assertion failure is something like:
+	  # The assertion failure was something like:
 	  # do_recursion: Assertion \`strstr (repository, \"/\./\") == ((void \*)0)' failed\..*"
-	  dotest_fail rstar-toplevel-1 "$testcvs rlog ." \
-"${DOTSTAR}ssertion.*failed${DOTSTAR}" "${DOTSTAR}failed assertion${DOTSTAR}"
+	  dotest rstar-toplevel-1 "$testcvs -q rlog ." \
+"
+RCS file: $CVSROOT_DIRNAME/CVSROOT$DOTSTAR"
 
 	  dokeep
 	;;
