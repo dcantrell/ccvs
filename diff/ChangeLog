@@ -1,5 +1,11 @@
 2004-10-09  Mark D. Baushke  <mdb@cvshome.org>
 
+	* diff.c, diff3.c: Backout last change.
+	* Makefile.am: Add -I$(top_builddir)/lib to find getopt.h
+	* Makefile.in: Regenerated.
+
+2004-10-09  Mark D. Baushke  <mdb@cvshome.org>
+
 	* diff.c: Add support for systems that do not #include <stio.h>
 	* diff3.c: Ditto.
 
