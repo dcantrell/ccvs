@@ -1,3 +1,9 @@
+1998-10-14  Jim Kingdon
+
+	* Makefile.in (dist-dir, distclean): Remove references to elib.
+	* elib: Remove this subdirectory and all its contents.  It went
+	with pcl-cvs, which is no longer distributed with CVS.
+
 1998-09-22  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* pvcs_to_rcs: Removed; it was not in DISTFILES so it didn't
