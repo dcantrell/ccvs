@@ -19758,12 +19758,35 @@ done"
 T file2"
 	  dotest admin-8 "${testcvs} -q update -r br" ""
 	  echo 'add a line on the branch' >> file1
-	  dotest admin-9 "${testcvs} -q ci -m modify-on-branch" \
+	  echo 'add a file on the branch' >> file3
+	  dotest admin-9a "${testcvs} -q add file3" \
+"${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
+	  dotest admin-9b "${testcvs} -q ci -m modify-on-branch" \
 "Checking in file1;
 ${CVSROOT_DIRNAME}/first-dir/file1,v  <--  file1
 new revision: 1\.1\.2\.1; previous revision: 1\.1
+done
+RCS file: ${CVSROOT_DIRNAME}/first-dir/Attic/file3,v
+done
+Checking in file3;
+${CVSROOT_DIRNAME}/first-dir/Attic/file3,v  <--  file3
+new revision: 1\.1\.2\.1; previous revision: 1\.1
 done"
-	  dotest admin-10 "${testcvs} -q update -A" "U file1"
+	  dotest admin-10 "${testcvs} -q update -A" \
+"U file1
+${PROG} [a-z]*: file3 is no longer in the repository"
+
+	  # Check that we can administer files in the repository that
+	  # aren't in the working directory.
+	  dotest admin-10-1 "${testcvs} admin ." \
+"${PROG} [a-z]*: Administrating .
+RCS file: ${CVSROOT_DIRNAME}/first-dir/file1,v
+done
+RCS file: ${CVSROOT_DIRNAME}/first-dir/file2,v
+done"
+	  dotest admin-10-2 "${testcvs} -q admin file3" \
+"RCS file: ${CVSROOT_DIRNAME}/first-dir/Attic/file3,v
+done"
 
 	  # Try to recurse with a numeric revision arg.
 	  # If we wanted to comprehensive about this, we would also test
