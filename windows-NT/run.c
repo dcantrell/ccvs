@@ -664,6 +664,9 @@ piped_child (char **argv, int *to, int *from)
 /*
  * dir = 0 : main proc writes to new proc, which writes to oldfd
  * dir = 1 : main proc reads from new proc, which reads from oldfd
+ *
+ * Returns: a file descriptor.  On failure (e.g., the exec fails),
+ * then filter_stream_through_program() complains and dies.
  */
 
 int
@@ -681,19 +684,19 @@ filter_stream_through_program (oldfd, dir, prog, pidp)
 
     /* Get the OS handle associated with oldfd, to be passed to the child.  */
     if ((oldfd_handle = (HANDLE) _get_osfhandle (oldfd)) < 0)
-	return -1;
+	error (1, errno, "cannot _get_osfhandle");
 
     if (dir)
     {
         /* insert child before parent, pipe goes child->parent.  */
 	if (my_pipe (pipe, inherit_writing) == -1)
-	    return -1;
+	    error (1, errno, "cannot my_pipe");
 	if ((command = build_command (prog)) == NULL)
-	    return -1;
+	    error (1, errno, "cannot build_command");
 	child = start_child (command, oldfd_handle, pipe[1]);
 	free (command);
 	if (child == (int) INVALID_HANDLE_VALUE)
-	    return -1;
+	    error (1, errno, "cannot start_child");
 	close (oldfd);
 	CloseHandle (pipe[1]);
 	newfd_handle = pipe[0];
@@ -702,20 +705,20 @@ filter_stream_through_program (oldfd, dir, prog, pidp)
     {
         /* insert child after parent, pipe goes parent->child.  */
 	if (my_pipe (pipe, inherit_reading) == -1)
-	    return -1;
+	    error (1, errno, "cannot my_pipe");
 	if ((command = build_command (prog)) == NULL)
-	    return -1;
+	    error (1, errno, "cannot build_command");
 	child = start_child (command, pipe[0], oldfd_handle);
 	free (command);
 	if (child == (int) INVALID_HANDLE_VALUE)
-	    return -1;
+	    error (1, errno, "cannot start_child");
 	close (oldfd);
 	CloseHandle (pipe[0]);
 	newfd_handle = pipe[1];
     }
 
     if ((newfd = _open_osfhandle ((long) newfd_handle, _O_BINARY)) == -1)
-        return -1;
+        error (1, errno, "cannot _open_osfhandle");
 
     *pidp = child;
     return newfd;    
