@@ -828,24 +828,26 @@ else
 fi
 
 # Now check the -f argument for validity.
-# Don't allow spaces - they are our delimiters in tests
-count=0
-for sub in $fromtest; do
-  count=`expr $count + 1`
-done
-if test $count != 1; then
-	echo "No such test \`$fromtest'" >&2
-	exit 2
-fi
-# make sure it is in $tests
-case " $tests " in
-	*" $fromtest "*)
-		;;
-	*)
-		echo "No such test \`$fromtest'" >&2
+if test -n "$fromtest"; then
+	# Don't allow spaces - they are our delimiters in tests
+	count=0
+	for sub in $fromtest; do
+	  count=`expr $count + 1`
+	done
+	if test $count != 1; then
+		echo "No such test \`$fromtest'." >&2
 		exit 2
-		;;
-esac
+	fi
+	# make sure it is in $tests
+	case " $tests " in
+		*" $fromtest "*)
+			;;
+		*)
+			echo "No such test \`$fromtest'." >&2
+			exit 2
+			;;
+	esac
+fi
 
 
 
@@ -27208,11 +27210,15 @@ done"
 	    fail "cleanup: PWD != TESTDIR (\``pwd`' != \`$TESTDIR')"
     fi
 
-    # Test our temp directory for cvs-serv* directories.  We would like to not
-    # leave any behind.
+    # Test our temp directory for cvs-serv* directories and cvsXXXXXX temp
+    # files.  We would like to not leave any behind.
     if $remote && ls $TMPDIR/cvs-serv* >/dev/null 2>&1; then
 	# A true value means ls found files/directories with these names.
 	fail "Found cvs-serv* directories in $TMPDIR."
+    fi
+    if ls $TMPDIR/cvs?????? >/dev/null 2>&1; then
+	# A true value means ls found files/directories with these names.
+	fail "Found cvsXXXXXX temp files in $TMPDIR."
     fi
 
 done # The big loop
