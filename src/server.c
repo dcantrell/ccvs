@@ -360,7 +360,7 @@ create_adm_p (base_dir, dir)
     if (tmp == NULL)
 	return ENOMEM;
 
-    
+
     /* We make several passes through this loop.  On the first pass,
        we simply create the CVSADM directory in the deepest directory.
        For each subsequent pass, we try to remove the last path
@@ -423,8 +423,7 @@ create_adm_p (base_dir, dir)
 		}
 		(void) umask (omask);
 	    }
-	    
-	    
+
 	    f = CVS_FOPEN (tmp, "w");
 	    if (f == NULL)
 	    {
@@ -731,7 +730,7 @@ serve_root (arg)
 {
     char *env;
     char *path;
-    
+
     if (error_pending()) return;
 
     if (!isabsolute (arg))
@@ -912,7 +911,7 @@ E protocol error: directory '%s' not within current directory",
     }
     return 0;
 }
-	
+
 /*
  * Add as many directories to the temp directory as the client tells us it
  * will use "..", so we never try to access something outside the temp
@@ -1001,7 +1000,7 @@ dirswitch (dir, repos)
 	pending_error = ENOMEM;
 	return;
     }
-    
+
     strcpy (dir_name, server_temp_dir);
     strcat (dir_name, "/");
     strcat (dir_name, dir);
@@ -2118,9 +2117,9 @@ serve_argument (arg)
      char *arg;
 {
     char *p;
-    
+
     if (error_pending()) return;
-    
+
     if (argument_vector_size <= argument_count)
     {
 	argument_vector_size *= 2;
@@ -2148,9 +2147,9 @@ serve_argumentx (arg)
      char *arg;
 {
     char *p;
-    
+
     if (error_pending()) return;
-    
+
     p = argument_vector[argument_count - 1];
     p = realloc (p, strlen (p) + 1 + strlen (arg) + 1);
     if (p == NULL)
@@ -2472,7 +2471,7 @@ check_command_legal_p (cmd_name)
          size_t flen;
          FILE *fp;
          int found_it = 0;
-         
+
          /* else */
          flen = strlen (current_parsed_root->directory)
                 + strlen (CVSROOTADM)
@@ -2564,7 +2563,7 @@ check_command_legal_p (cmd_name)
              /* Chop newline by hand, for strcmp()'s sake. */
              if (linebuf[num_red - 1] == '\n')
                  linebuf[num_red - 1] = '\0';
-           
+
              if (strcmp (linebuf, CVS_Username) == 0)
              {
                  found_it = 1;
@@ -2631,7 +2630,7 @@ do_cvs_command (cmd_name, command)
      * interleaved with data from stdout_pipe or stderr_pipe).
      */
     int protocol_pipe[2];
-    
+
     int dev_null_fd = -1;
 
     int errs;
@@ -3010,7 +3009,7 @@ error  \n");
 	    {
 		int status;
 		int count_read;
-		
+
 		status = buf_input_data (protocol_inbuf, &count_read);
 
 		if (status == -1)
@@ -3168,7 +3167,7 @@ error  \n");
 		 */
 		continue;
 	    }
-	    
+
 	    if (WIFEXITED (status))
 		errs += WEXITSTATUS (status);
 	    else
@@ -3295,7 +3294,7 @@ server_pause_check()
 	FD_ZERO (&fds);
 	FD_SET (flowcontrol_pipe[0], &fds);
 	numtocheck = flowcontrol_pipe[0] + 1;
-	
+
 	do {
 	    numfds = select (numtocheck, &fds, (fd_set *)0,
 			     (fd_set *)0, (struct timeval *)NULL);
@@ -3307,7 +3306,7 @@ server_pause_check()
 		return;
 	    }
 	} while (numfds < 0);
-	    
+
 	if (FD_ISSET (flowcontrol_pipe[0], &fds))
 	{
 	    int got;
@@ -3430,7 +3429,7 @@ server_register (name, version, timestamp, options, tag, date, conflict)
 	len += strlen (tag);
     if (date)
 	len += strlen (date);
-    
+
     entries_line = xmalloc (len);
     sprintf (entries_line, "/%s/%s/", name, version);
     if (conflict != NULL)
@@ -5173,7 +5172,7 @@ error ENOMEM Virtual memory exhausted.\n");
 	char *cmd, *orig_cmd;
 	struct request *rq;
 	int status;
-	
+
 	status = buf_read_line (buf_from_net, &cmd, (int *) NULL);
 	if (status == -2)
 	{
@@ -5310,7 +5309,7 @@ error 0 %s: no such user\n", username);
 	    error_exit ();
 	}
     }
-    
+
     if (setuid (pw->pw_uid) < 0)
     {
 	/* Note that this means that if run as a non-root user,
@@ -5334,12 +5333,12 @@ error 0 %s: no such user\n", username);
     if (CVS_Username == NULL)
 	CVS_Username = xstrdup (username);
 #endif
-      
+
 #if HAVE_PUTENV
     /* Set LOGNAME, USER and CVS_USER in the environment, in case they
        are already set to something else.  */
     {
-	char *env, *cvs_user;
+	char *env;
 
 	env = xmalloc (sizeof "LOGNAME=" + strlen (username));
 	(void) sprintf (env, "LOGNAME=%s", username);
@@ -5349,10 +5348,11 @@ error 0 %s: no such user\n", username);
 	(void) sprintf (env, "USER=%s", username);
 	(void) putenv (env);
 
-        cvs_user = NULL != CVS_Username ? CVS_Username : "";
-        env = xmalloc (sizeof "CVS_USER=" + strlen (cvs_user));
-        (void) sprintf (env, "CVS_USER=%s", cvs_user);
+#ifdef AUTH_SERVER_SUPPORT
+        env = xmalloc (sizeof "CVS_USER=" + strlen (CVS_Username));
+        (void) sprintf (env, "CVS_USER=%s", CVS_Username);
         (void) putenv (env);
+#endif
     }
 #endif /* HAVE_PUTENV */
 }
@@ -5363,7 +5363,7 @@ error 0 %s: no such user\n", username);
 extern char *crypt PROTO((const char *, const char *));
 
 
-/* 
+/*
  * 0 means no entry found for this user.
  * 1 means entry found and password matches (or found password is empty)
  * 2 means entry found, but password does not match.
@@ -5432,7 +5432,7 @@ check_repository_password (username, password, repository, host_user_ptr)
 	char *found_password, *host_user_tmp;
         char *non_cvsuser_portion;
 
-        /* We need to make sure lines such as 
+        /* We need to make sure lines such as
          *
          *    "username::sysuser\n"
          *    "username:\n"
@@ -5562,7 +5562,7 @@ check_password (username, password, repository)
 	{
 	    found_passwd = pw->pw_passwd;
 	}
-	
+
 	if (found_passwd == NULL)
 	{
 	    printf ("E Fatal error, aborting.\n\
@@ -5580,7 +5580,7 @@ error 0 %s: no such user\n", username);
 
 	    exit (EXIT_FAILURE);
 	}
-	
+
 	if (*found_passwd)
         {
 	    /* user exists and has a password */
@@ -5635,7 +5635,7 @@ error 0 %s: no such user\n", username);
 handle_return:
     if (host_user)
     {
-        /* Set CVS_Username here, in allocated space. 
+        /* Set CVS_Username here, in allocated space.
            It might or might not be the same as host_user. */
         CVS_Username = xmalloc (strlen (username) + 1);
         strcpy (CVS_Username, username);
@@ -5763,7 +5763,7 @@ pserver_authenticate_connection ()
     getline_safe (&username, &username_allocated, stdin, PATH_MAX);
     getline_safe (&password, &password_allocated, stdin, PATH_MAX);
 
-    /* Make them pure. */ 
+    /* Make them pure. */
     strip_trailing_newlines (repository);
     strip_trailing_newlines (username);
     strip_trailing_newlines (password);
@@ -6501,7 +6501,7 @@ cvs_flusherr ()
     {
 	/* make sure stderr is flushed before we send the flush count on the
 	 * protocol pipe
-	 */ 
+	 */
 	fflush (stderr);
 	/* Send a special count to tell the parent to flush.  */
 	buf_send_special_count (protocol, -2);
@@ -6531,7 +6531,7 @@ cvs_flushout ()
 	   main.c, didn't get called in the server child process.  But
 	   in the future it is quite plausible that we'll want to make
 	   this case work analogously to cvs_flusherr.
-	 
+
 	   FIXME - DRP - I tried to implement this and triggered the following
 	   error: "Protocol error: uncounted data discarded".  I don't need
 	   this feature right now, so I'm not going to bother with it yet.
