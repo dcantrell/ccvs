@@ -37,6 +37,7 @@ cvs_SOURCES = \
 	edit.c \
 	entries.c \
 	error.c \
+	exithandle.c \
 	expand_path.c \
 	fileattr.c \
 	filesubr.c \

@@ -7957,27 +7957,59 @@ count_delta_actions (Node *np, void *ignore)
     return 0;
 }
 
+
+
 /*
- * Clean up temporary files
+ * Clean up temporary files.
  */
-static RETSIGTYPE
+static void
 rcs_cleanup (void)
 {
-    /* Note that the checks for existence_error are because we are
-       called from a signal handler, so we don't know whether the
-       files got created.  */
+    static short int never_run_again = 0;
+
+    TRACE (TRACE_FUNCTION, "rcs_cleanup()");
+
+    /* Since our signal handler must allow cleanup handlers to be called twice
+     * in order to avoid a race condition and still use the exit function,
+     *
+     *   (There must be a few operations in exit() between when this function
+     *    is removed from its list of functions to call and when this function
+     *    is actually called and when the actual signal blocking takes place in
+     *    SIG_beginCrSect().  A signal could theoretically be recieved during
+     *    that time, triggering a call to exit() which would not cause this
+     *    function to be called a second time.)
+     *
+     * if we are already in a signal critical section, assume we were called
+     * via the signal handler and set a flag which will prevent future calls.
+     *
+     * For Lock_Cleanup(), this is not a run_once variable since Lock_Cleanup()
+     * can be called to clean up the current lock set multiple times by the
+     * same run of a CVS command.
+     *
+     * For server_cleanup() and rcs_cleanup(), this is not a run_once variable
+     * since a call to the cleanup function from atexit() could be interrupted
+     * by the interrupt handler.
+     */
+    if (never_run_again) return;
+    if (SIG_inCrSect()) never_run_again = 1;
 
     /* FIXME: Do not perform buffered I/O from an interrupt handler like
      * this (via error).  However, I'm leaving the error-calling code there
      * in the hope that on the rare occasion the error call is actually made
      * (e.g., a fluky I/O error or permissions problem prevents the deletion
      * of a just-created file) reentrancy won't be an issue.
-     *
-     * If I understand what the above is referring to, reentrancy won't be an
-     * issue since this should only be called as the program is exiting.
      */
+
+    /* Avoid being interrupted during calls which set globals to NULL.  This
+     * avoids having interrupt handlers attempt to use these global variables
+     * in inconsistent states.
+     */
+    SIG_beginCrSect();
     if (rcs_lockfile != NULL)
     {
+	/* Use a tmp var since any of these functions could call exit, causing
+	 * us to be called a second time.
+	 */
 	char *tmp = rcs_lockfile;
 	rcs_lockfile = NULL;
 	if (rcs_lockfd >= 0)
@@ -7986,11 +8018,19 @@ rcs_cleanup (void)
 		error (0, errno, "error closing lock file %s", tmp);
 	    rcs_lockfd = -1;
 	}
+
+	/* Note that the checks for existence_error are because we can be
+	 * called from a signal handler, so we don't know whether the
+	 * files got created.
+	 */
 	if (unlink_file (tmp) < 0
 	    && !existence_error (errno))
 	    error (0, errno, "cannot remove %s", tmp);
     }
+    SIG_endCrSect();
 }
+
+
 
 /* RCS_internal_lockfile and RCS_internal_unlockfile perform RCS-style
    locking on the specified RCSFILE: for a file called `foo,v', open
@@ -8029,8 +8069,8 @@ rcs_internal_lockfile (char *rcsfile)
     if (first_call)
     {
 	first_call = 0;
-	/* clean up if we get a signal */
-	atexit (rcs_cleanup);
+	/* Clean up if we get a signal or exit.  */
+	cleanup_register (rcs_cleanup);
     }
 
     /* Get the lock file name: `,file,' for RCS file `file,v'. */

@@ -4605,12 +4605,11 @@ static void wait_sig( int sig )
 }
 #endif /* SUNOS_KLUDGE */
 
-/* void server_cleanup (void)
- *
+/*
  * This function cleans up after the server.  Specifically, it:
  *
  * <ol>
- * <li>Sets buf_to_net to blocking and fluxhes it.</li>
+ * <li>Sets BUF_TO_NET to blocking and fluxhes it.</li>
  * <li>With SUNOS_KLUDGE enabled:
  *   <ol>
  *   <li>Terminates the command process.</li>
@@ -4619,17 +4618,68 @@ static void wait_sig( int sig )
  * </li>
  * <li>Removes the temporary directory.</li>
  * <li>Flush and shutdown the buffers.</li>
- * <li>Set error_use_protocol and server_active to false.</li>
+ * <li>Set ERROR_USE_PROTOCOL and SERVER_ACTIVE to false.</li>
  * </ol>
+ *
+ * GLOBALS
+ *   buf_from_net		The input buffer which brings data from the
+ *   				CVS client.
+ *   buf_to_net			The output buffer which moves data to the CVS
+ *   				client.
+ *   error_use_protocol		Set when the server parent process is active.
+ *   				Cleared for the server child processes.
+ *   dont_delete_temp		Set when a core dump of a child process is
+ *   				detected so that the core and related data may
+ *   				be preserved.
+ *   Tmpdir			The system TMP directory for all temp files.
+ *   noexec			Whether we are supposed to change the disk.
+ *   orig_server_temp_dir	The temporary directory we created within
+ *   				Tmpdir for our duplicate of the client
+ *   				workspace.
+ *
+ * INPUTS
+ *   None.
+ *
+ * ERRORS
+ *   Problems encountered during the cleanup, for instance low memory or
+ *   problems deleting the temp files and directories, can cause the error
+ *   function to be called, which might call exit.  If exit gets called in this
+ *   manner. this routine will not complete, but the other exit handlers
+ *   registered via atexit() will still run.
+ *
+ * RETURNS
+ *   Nothing.
  */
 void
 server_cleanup (void)
 {
-    /* Do "rm -rf" on the temp directory.  */
-    int status;
-    int save_noexec;
+    static short int never_run_again = 0;
 
     TRACE (TRACE_FUNCTION, "server_cleanup()");
+
+    /* Since our signal handler must allow cleanup handlers to be called twice
+     * in order to avoid a race condition and still use the exit function,
+     *
+     *   (There must be a few operations in exit() between when this function
+     *    is removed from its list of functions to call and when this function
+     *    is actually called and when the actual signal blocking takes place in
+     *    SIG_beginCrSect().  A signal could theoretically be recieved during
+     *    that time, triggering a call to exit() which would not cause this
+     *    function to be called a second time.)
+     *
+     * if we are already in a signal critical section, assume we were called
+     * via the signal handler and set a flag which will prevent future calls.
+     *
+     * For Lock_Cleanup(), this is not a run_once variable since Lock_Cleanup()
+     * can be called to clean up the current lock set multiple times by the
+     * same run of a CVS command.
+     *
+     * For server_cleanup() and rcs_cleanup(), this is not a run_once variable
+     * since a call to the cleanup function from atexit() could be interrupted
+     * by the interrupt handler.
+     */
+    if (never_run_again) return;
+    if (SIG_inCrSect()) never_run_again = 1;
 
     assert(server_active);
 
@@ -4655,22 +4705,33 @@ server_cleanup (void)
 	     * generated when the client shuts down its buffer.  Then, after we
 	     * have generated any final output, we shut down BUF_TO_NET.
 	     */
+
+	    /* Avoid being interrupted during calls which set globals to NULL.
+	     * This avoids having interrupt handlers attempt to use these
+	     * global variables in inconsistent states.
+	     */
+	    SIG_beginCrSect();
+
 	    if (buf_from_net != NULL)
 	    {
-		/* Set the buffer to NULL first since I don't know for certain that
-		 * a function called from atexit() cannot be interrupted.
+		/* Use a tmp var since any of these functions could call exit,
+		 * causing us to be called a second time.
 		 */
-		struct buffer *buf_from_net_save = buf_from_net;
+		int status;
+		struct buffer *tmp = buf_from_net;
 		buf_from_net = NULL;
-		status = buf_shutdown (buf_from_net_save);
+		status = buf_shutdown (tmp);
 		if (status != 0)
 		    error (0, status, "shutting down buffer from client");
-		buf_free (buf_from_net_save);
+		buf_free (tmp);
 	    }
+	    SIG_endCrSect();
 	}
 
 	if (!dont_delete_temp)
 	{
+	    int save_noexec;
+
 	    /* What a bogus kludge.  This disgusting code makes all kinds of
 	       assumptions about SunOS, and is only for a bug in that system.
 	       So only enable it on Suns.  */
@@ -4748,22 +4809,20 @@ server_cleanup (void)
 	    }
 #endif /* SUNOS_KLUDGE */
 
-	    CVS_CHDIR (Tmpdir);
+	    // CVS_CHDIR (Tmpdir);
 	    /* Temporarily clear noexec, so that we clean up our temp directory
 	       regardless of it (this could more cleanly be handled by moving
 	       the noexec check to all the unlink_file_dir callers from
 	       unlink_file_dir itself).  */
 	    save_noexec = noexec;
+	    SIG_beginCrSect();
 	    noexec = 0;
-	    /* FIXME?  Would be nice to not ignore errors.  But what should we do?
-	       We could try to do this before we shut down the network connection,
-	       and try to notify the client (but the client might not be waiting
-	       for responses).  We could try something like syslog() or our own
-	       log file.  */
 	    unlink_file_dir (orig_server_temp_dir);
 	    noexec = save_noexec;
+	    SIG_endCrSect();
 	} /* !dont_delete_temp && error_use_protocol */
 
+	SIG_beginCrSect();
 	if (buf_to_net != NULL)
 	{
 	    /* Save BUF_TO_NET and set the global pointer to NULL so that any
@@ -4778,6 +4837,7 @@ server_cleanup (void)
 	    buf_free (buf_to_net_save);
 	    error_use_protocol = 0;
 	}
+	SIG_endCrSect();
     }
 
     server_active = 0;

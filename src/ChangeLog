@@ -1,5 +1,23 @@
 2003-10-04  Derek Price  <derek@ximbiot.com>
 
+	* exithandle.c: New file.
+	* Makefile.am (cvs_SOURCES): Add exithandle.c.
+	* cvs.h (cleanup_register, signals_register): New prototypes.
+	* lock.c (Lock_Cleanup, remove_locks), rcs.c (rcs_cleanup),
+	server.c (server_cleanup): Avoid calling twice when called from a
+	signal handler and then exit.  Avoid being interrupted while globals
+	that the signal handler might touch are in inconsistent states.  Expand
+	comments.
+	* rcs.c (rcs_internal_lockfile): Ditto. Use cleanup_register rather
+	than calling atexit() directly.
+	* main.c (main): Consolidate signal stuff into a call to
+	signals_register().  Call cleanup_register to register cleanup
+	functions rather than calling atexit() directly.
+
+	* Makefile.in: Regenerated.
+
+2003-10-04  Derek Price  <derek@ximbiot.com>
+
 	* error.c, error.h: Remove error_exit() function.
 	* add.c, client.c, history.c, import.c, main.c, mkmodules.c, modules.c,
 	rcscmds.c, recurse.c, release.c, root.c, server.c, socket-client.c,

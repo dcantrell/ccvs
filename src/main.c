@@ -336,6 +336,24 @@ lookup_command_attribute (char *cmd_name)
 }
 
 
+
+/*
+ * Exit with an error code and an informative message about the signal
+ * received.  This function, by virtue of causing an actual call to exit(),
+ * causes all the atexit() handlers to be called.
+ *
+ * INPUTS
+ *   sig	The signal recieved.
+ *
+ * ERRORS
+ *   The cleanup routines registered via atexit() and the error function
+ *   itself can potentially change the exit status.  They shouldn't do this
+ *   unless they encounter problems doing their own jobs.
+ *
+ * RETURNS
+ *   Nothing.  This function will always exit.  It should exit with an exit
+ *   status of 1, but might not, as noted in the ERRORS section above.
+ */
 static RETSIGTYPE
 main_cleanup (int sig)
 {
@@ -387,6 +405,8 @@ main_cleanup (int sig)
 #endif /* !DONT_USE_SIGNALS */
 }
 
+
+
 int
 main (int argc, char **argv)
 {
@@ -426,7 +446,7 @@ main (int argc, char **argv)
 #ifdef SYSTEM_CLEANUP
 	/* Hook for OS-specific behavior, for example socket subsystems on
 	   NT and OS2 or dealing with windows and arguments on Mac.  */
-	atexit (SYSTEM_CLEANUP);
+	cleanup_register (SYSTEM_CLEANUP);
 #endif
 
 #ifdef HAVE_TZSET
@@ -752,7 +772,7 @@ cause intermittent sandbox corruption.");
 	       and/or remote path, on the other hand I'm not sure whether
 	       it is worth the trouble.  */
 	    CurDir = xstrdup ("<remote>");
-	    atexit (server_cleanup);
+	    cleanup_register (server_cleanup);
 	}
 	else
 #endif
@@ -784,27 +804,8 @@ cause intermittent sandbox corruption.");
 	}
 #endif
 
-#ifndef DONT_USE_SIGNALS
 	/* make sure we clean up on error */
-#ifdef SIGABRT
-	(void) SIG_register (SIGABRT, main_cleanup);
-#endif
-#ifdef SIGHUP
-	(void) SIG_register (SIGHUP, main_cleanup);
-#endif
-#ifdef SIGINT
-	(void) SIG_register (SIGINT, main_cleanup);
-#endif
-#ifdef SIGQUIT
-	(void) SIG_register (SIGQUIT, main_cleanup);
-#endif
-#ifdef SIGPIPE
-	(void) SIG_register (SIGPIPE, main_cleanup);
-#endif
-#ifdef SIGTERM
-	(void) SIG_register (SIGTERM, main_cleanup);
-#endif
-#endif /* !DONT_USE_SIGNALS */
+	signals_register (main_cleanup);
 
 	gethostname(hostname, sizeof (hostname));
 
@@ -1034,7 +1035,7 @@ cause intermittent sandbox corruption.");
 		!current_parsed_root->isremote && !lock_cleanup_setup)
 	    {
 		/* Set up to clean up any locks we might create on exit.  */
-		atexit (Lock_Cleanup);
+		cleanup_register (Lock_Cleanup);
 		lock_cleanup_setup = 1;
 	    }
 
