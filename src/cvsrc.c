@@ -21,8 +21,6 @@ char cvsrc[] = CVSRC_FILENAME;
 
 #define	GROW	10
 
-extern char *strtok (char *, const char *);
-
 /* Read cvsrc, processing options matching CMDNAME ("cvs" for global
    options, and update *ARGC and *ARGV accordingly.  */
 
