@@ -62,6 +62,29 @@ rules.
                 the current CVS death support, which uses a state "dead"
                 rather than a "dead" newphrase.
 
+CVS does use newphrases to implement the `PreservePermissions'
+extension introduced in CVS 1.9.26.  The following new keywords are
+defined:
+
+   owner
+   group
+   permissions
+   special
+   symlink
+   hardlinks
+
+The contents of the `owner' and `group' field should be a numeric uid
+and a numeric gid, respectively, representing the user and group who
+own the file.  The `permissions' field contains an octal integer,
+representing the permissions that should be applied to the file.  The
+`special' field contains two words; the first must be either `block'
+or `character', and the second is the file's device number.  The
+`symlink' field should be present only in files which are symbolic
+links to other files, and absent on all regular files.  The
+`hardlinks' field contains a space-separated list of files to which
+the current file is linked, in alphabetical order.  (It should always
+include the name of the current file.)
+
 The rules regarding keyword expansion are not documented along with
 the rest of the RCS file format; they are documented in the co(1)
 manpage in the RCS 5.7 distribution.  See also the "Keyword

@@ -5857,7 +5857,7 @@ receive notifications, she should specify @code{-a none}.
 The @var{files} and options are processed as for the @code{cvs
 watch} commands.
 
-@strong{Caution:} If the @var{PreservePermissions}
+@strong{Caution:} If the @code{PreservePermissions}
 option is enabled in the repository (@pxref{config}),
 CVS will not change the permissions on any of the
 @var{files}.  The reason for this change is to ensure
@@ -6767,6 +6767,13 @@ is Odin (see
 @node Special Files
 @chapter Special Files
 
+@cindex special files
+@cindex device nodes
+@cindex ownership, saving in CVS
+@cindex permissions, saving in CVS
+@cindex hard links
+@cindex symbolic links
+
 In normal circumstances, CVS works only with regular
 files.  Every file in a project is assumed to be
 persistent; it must be possible to open, read and close
@@ -6778,34 +6785,67 @@ if the device file cannot be opened, CVS will refuse to
 handle it.  Files also lose their ownerships and
 permissions during repository transactions.
 
-If the configuration variable @var{PreservePermissions}
+If the configuration variable @code{PreservePermissions}
 (@pxref{config}) is set in the repository, CVS will
-preserve file permissions and ownership across
-repository transactions, and will permit checkin and
-checkout of special files and symbolic links.
+save the following file characteristics in the
+repository:
 
-Using this option affects the behavior of CVS in
-several ways.  First, some of the new operations
-supported by CVS are not accessible to all users.  In
-particular, file ownership and special file
-characteristics may only be changed by the superuser.
-When the @var{PreservePermissions} configuration
-variable is set, therefore, users will have to be
-`root' in order to perform CVS operations.
+@itemize @bullet
+@item user and group ownership
+@item permissions
+@item major and minor device numbers
+@item symbolic links
+@item hard link structure
+@end itemize
+
+Using the @code{PreservePermissions} option affects the
+behavior of CVS in several ways.  First, some of the
+new operations supported by CVS are not accessible to
+all users.  In particular, file ownership and special
+file characteristics may only be changed by the
+superuser.  When the @code{PreservePermissions}
+configuration variable is set, therefore, users will
+have to be `root' in order to perform CVS operations.
+
+When @code{PreservePermissions} is in use, some CVS
+operations (such as @samp{cvs status}) will not
+recognize a file's hard link structure, and so will
+emit spurious warnings about mismatching hard links.
+The reason is that CVS's internal structure does not
+make it easy for these operations to collect all the
+necessary data about hard links, so they check for file
+conflicts with inaccurate data.
 
 A more subtle difference is that CVS considers a file
 to have changed only if its contents have changed
 (specifically, if the modification time of the working
 file does not match that of the repository's file).
-Therefore, if only the permissions or ownership have
-changed, or if a device's major or minor numbers have
-changed, CVS will not notice.  In order to commit such
-a change to the repository, you must force the commit
-with @samp{cvs commit -f}.  This also means that if a
-file's permissions have changed and the repository file
-is newer than the working copy, performing @samp{cvs
-update} will silently change the permissions on the
-working copy.
+Therefore, if only the permissions, ownership or hard
+linkage have changed, or if a device's major or minor
+numbers have changed, CVS will not notice.  In order to
+commit such a change to the repository, you must force
+the commit with @samp{cvs commit -f}.  This also means
+that if a file's permissions have changed and the
+repository file is newer than the working copy,
+performing @samp{cvs update} will silently change the
+permissions on the working copy.
+
+Changing hard links in a CVS repository is particularly
+delicate.  Suppose that file @file{foo} is linked to
+file @file{old}, but is later relinked to file
+@file{new}.  You can wind up in the unusual situation
+where, although @file{foo}, @file{old} and @file{new}
+have all had their underlying link patterns changed,
+only @file{foo} and @file{new} have been modified, so
+@file{old} is not considered a candidate for checking
+in.  It can be very easy to produce inconsistent
+results this way.  Therefore, we recommend that when it
+is important to save hard links in a repository, the
+prudent course of action is to @code{touch} any file
+whose linkage or status has changed since the last
+checkin.  Indeed, it may be wise to @code{touch *}
+before each commit in a directory with complex hard
+link structures.
 
 It is worth noting that only regular files may
 be merged, for reasons that hopefully are obvious.  If
@@ -6818,9 +6858,9 @@ differences between these files, since no meaningful
 textual comparisons can be made on files which contain
 no text.
 
-The PreservePermissions features do not work with
-client/server @sc{cvs}.  Another limitation is that
-hard links must be to other files within the same
+The @code{PreservePermissions} features do not work
+with client/server @sc{cvs}.  Another limitation is
+that hard links must be to other files within the same
 directory; hard links across directories are not
 supported.
 
