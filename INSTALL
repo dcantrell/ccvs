@@ -121,12 +121,11 @@ Installation:
 	*know* you have to if "cvs checkout" core dumps in some ndbm
 	function).  You can do this as follows:
 
-	    $ CC=gcc DEFS=-fpcc-struct-return ./configure
+	    $ CC='gcc -fpcc-struct-return' ./configure
 
 	for sh, bash, and ksh users and:
 
-	    % setenv CC gcc
-	    % setenv DEFS -fpcc-struct-return
+	    % setenv CC 'gcc -fpcc-struct-return'
 	    % ./configure
 
 	for csh and tcsh users.
