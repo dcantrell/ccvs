@@ -1,5 +1,11 @@
 2003-07-29  Derek Price  <derek@ximbiot.com>
 
+	* configure.in: Replace my recent misuse of AH_VERBATIM with a call to
+	AC_DEFINE.
+	* config.h.in, configure: Regenerated.
+	
+2003-07-29  Derek Price  <derek@ximbiot.com>
+
 	* configure.in: Do not check for getpassphrase.  Define `getpass' to
 	`cvs_getpass' in config.h to avoid conflicts with system decls.
 	* srclist.txt ($GNULIB/modules/getpass): New entry.
