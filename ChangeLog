@@ -1,3 +1,8 @@
+2005-02-25 Derek Price <derek@ximbiot.com>
+
+	* NEWS: Note commitid feature.
+	(Patch from Frank Hemer <frank@hemer.org>.)
+
 2005-02-24 Derek Price <derek@ximbiot.com>
 
 	* configure.in:  Disable proxy when either the client or server are
