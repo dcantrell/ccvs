@@ -754,6 +754,11 @@ Numeric tag %s contains characters other than digits and '.'", name);
 	|| strcmp (name, TAG_HEAD) == 0)
 	return;
 
+    /* FIXME: This routine doesn't seem to do any locking whatsoever
+       (and it is called from places which don't have locks in place).
+       If two processes try to write val-tags at the same time, it would
+       seem like we are in trouble.  */
+
     mytag.dptr = name;
     mytag.dsize = strlen (name);
 
