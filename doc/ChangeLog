@@ -3,6 +3,13 @@
 	* Makefile.am: mkman is built in the build dir, not $(srcdir).
 	(Report from Mark D. Baushke <mdb@cvshome.org>.)
 
+2004-05-03  Derek Price  <derek@ximbiot.com>
+
+	* HACKING.DOCS: Fix spelling error.  Add reference for @strong.
+	(Report from Mark D. Baushke <mdb@cvshome.org>.)
+
+	* HACKING.DOCS: Note dependency on `makeinfo' 3.11 & greater.
+
 2004-04-30  Derek Price  <derek@ximbiot.com>
 
 	* mkman.in: Handle single quotes better.  Parse out some redundancy
