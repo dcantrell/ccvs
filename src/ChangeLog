@@ -1,3 +1,11 @@
+Sat Nov 22 10:54:16 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* update.c (update_fileproc): Fix comment; direct checkout is
+	still faster than patches for local but not for quite the
+	same reasons.
+
+	* add.c (add): Pass SEND_NO_CONTENTS to send_files.
+
 Wed Nov 19 18:25:03 1997  Mike Glendinning  <mikeg@sequent.com>
 
 	* update.c (patch_file_write): Missing cast provided.
