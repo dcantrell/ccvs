@@ -86,6 +86,9 @@ config.h.in: @MAINTAINER_MODE_TRUE@ stamp-chi
 # built in maintainer mode.  The second reason is so that the config.h.in, and
 # thus the config.h file only gets touched when it actually changes, which
 # could potentially save unnecessary rebuilds of many dependent files.
+#
+# This file is distributed since without it config.h.in will always be rebuilt
+# on the first run in maintainer mode, even if its dependencies are unchanged.
 stamp-chi: mkconfig $(top_srcdir)/config.h.in $(srcdir)/config.h.in.in \
 	   $(srcdir)/config.h.in.footer
 	@./mkconfig -q $(top_srcdir)/config.h.in $(srcdir)/config.h.in \
