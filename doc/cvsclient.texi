@@ -559,10 +559,22 @@ Ask the server to send back a @code{Valid-requests} response.
 The @code{Root} request need not have been previously sent.
 
 @item Directory @var{local-directory} \n
+@itemx Relative-directory @var{local-directory} \n
 Additional data: @var{repository} \n.  Response expected: no.
-Tell the server what directory to use.  The @var{repository} should be a
-directory name from a previous server response.  Note that
-this both gives a default for @code{Entry} and @code{Modified} and
+Tell the server what directory to use.
+
+The @var{repository} should be a directory name from a previous server
+response and may be specified either relative to the @var{pathname} provided
+with the @code{Root} request or absolute.  Relative or absolute, it must
+specify a path within @var{pathname}.
+
+Prior to @sc{cvs} version @strong{FIXME - release number 1.12.10?},
+@var{repository} had to be absolute and @code{Relative-directory} was not a
+valid request.  The @code{Relative-directory} request is synonymous with
+@code{Directory} and is provided to alert modern clients that a relative
+@var{repository} is acceptable.
+
+Note that this both gives a default for @code{Entry} and @code{Modified} and
 also for @code{ci} and the other commands; normal usage is to send 
 @code{Directory} for each directory in which there will be an
 @code{Entry} or @code{Modified}, and then a final @code{Directory}
@@ -589,10 +601,10 @@ C: Root /home/kingdon/zwork/cvsroot
 . . .
 C: Argument moddir
 C: Directory .
-C: /home/kingdon/zwork/cvsroot
+C: .
 C: co
 S: Clear-sticky moddir/
-S: /home/kingdon/zwork/cvsroot/1dir/
+S: 1dir/
 . . .
 S: ok
 @end example
@@ -607,7 +619,7 @@ request might look like:
 
 @example
 C: Directory moddir
-C: /home/kingdon/zwork/cvsroot/1dir
+C: 1dir
 . . .
 C: update
 @end example
@@ -639,15 +651,15 @@ repository.
 @example
 C: Argument dir1
 C: Directory dir1
-C: /home/foo/repos/mod1
+C: mod1
 . . .
 C: Argument dir2
 C: Directory dir2
-C: /home/foo/repos/mod2
+C: mod2
 . . .
 C: Argument dir3
 C: Directory dir3/subdir3
-C: /home/foo/repos/mod3
+C: mod3
 . . .
 C: update
 @end example
@@ -677,18 +689,18 @@ follows:
 @example
 C: Argument dir1
 C: Directory dir1
-C: /home/foo/repos/mod1
+C: mod1
 . . .
 C: Argument dir2
 C: Directory dir2
-C: /home/foo/repos/mod2
+C: mod2
 . . .
 C: Argument dir3
 C: Directory dir3
-C: /home/foo/repos/.
+C: .
 . . .
 C: Directory dir3/subdir3
-C: /home/foo/repos/mod3
+C: mod3
 . . .
 C: update
 @end example
@@ -707,10 +719,10 @@ must be sent first.  For example, the following would not work to update
 . . .
 C: Argument dir3
 C: Directory dir3/subdir3
-C: /home/foo/repos/mod3
+C: mod3
 . . .
 C: Directory dir3
-C: /home/foo/repos/.
+C: .
 . . .
 C: update
 @end example
@@ -1073,7 +1085,7 @@ C: Root /home/kingdon/zwork/cvsroot
 . . .
 C: Argument aliasmodule
 C: Directory .
-C: /home/kingdon/zwork/cvsroot
+C: .
 C: expand-modules
 S: Module-expansion 1dir
 S: ok
@@ -1229,9 +1241,9 @@ C: Root /u/cvsroot
 . . .
 C: Argument nsdir
 C: Directory nsdir
-C: /u/cvsroot/1dir/nsdir
+C: 1dir/nsdir
 C: Directory .
-C: /u/cvsroot/1dir
+C: 1dir
 C: add
 S: M Directory /u/cvsroot/1dir/nsdir added to the repository
 S: ok
@@ -1249,7 +1261,7 @@ request.  For example:
 @example
 C: Argument nfile
 C: Directory .
-C: /u/cvsroot/1dir
+C: 1dir
 C: Modified nfile
 C: u=rw,g=r,o=r
 C: 6
@@ -1416,15 +1428,21 @@ The name is somewhat misleading; it actually indicates a pair of
 pathnames.  First, a local directory name
 relative to the directory in which the command was given (i.e. the last
 @code{Directory} before the command).  Then a linefeed and a repository
-name.  Then
-a slash and the filename (without a @samp{,v} ending).
+name.  Then a slash and the filename (without a @samp{,v} ending).
+
+The repository name may be absolute or relative to the @var{pathname}
+sent with the @code{Root} request.  If absolute, the repository name must begin
+with the @var{pathname} sent with the @code{Root} request.  Relative or
+absolute, the repository name must specify a path underneath the @code{Root}
+@var{pathname}.
+
 For example, for a file @file{i386.mh}
 which is in the local directory @file{gas.clean/config} and for which
-the repository is @file{/rel/cvsfiles/devo/gas/config}:
+the repository name is @file{devo/gas/config}:
 
 @example
 gas.clean/config/
-/rel/cvsfiles/devo/gas/config/i386.mh
+devo/gas/config/i386.mh
 @end example
 
 If the server wants to tell the client to create a directory, then it
@@ -1884,7 +1902,7 @@ directory rather than a module.
 @example
 C: Argument supermunger
 C: Directory .
-C: /u/cvsroot
+C: .
 C: expand-modules
 @end example
 
@@ -1906,7 +1924,7 @@ for the working directory means that there is not already a
 C: Argument -N
 C: Argument supermunger
 C: Directory .
-C: /u/cvsroot
+C: .
 C: co
 @end example
 
@@ -1960,7 +1978,7 @@ relative to that directory.
 
 @example
 C: Directory .
-C: /u/cvsroot/supermunger
+C: supermunger
 C: Entry /mungeall.c/1.1///
 C: Modified mungeall.c
 C: u=rw,g=r,o=r
