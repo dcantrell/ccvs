@@ -1,11 +1,14 @@
 2004-11-15  Derek Price  <derek@ximbiot.com>
 
+	* Makefile.am (EXTRA_DIST): s/getdate.text/getdate.texi/.
+
+2004-11-15  Derek Price  <derek@ximbiot.com>
+
 	* .cvsignore: Ignore intermediate cvs.vrs.
 
 2004-11-11  Derek Price  <derek@ximbiot.com>
 
-	* Makefile.am (EXTRA_DIST): s/getdate.text/getdate.texi/.
-	(cvs.dvi): Make dependent on getdate-cvs.texi.
+	* Makefile.am (cvs.dvi): Make dependent on getdate-cvs.texi.
 
 2004-11-01  Derek Price  <derek@ximbiot.com>
 
