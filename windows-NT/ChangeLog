@@ -1,3 +1,7 @@
+Thu Mar  7 08:55:39 1996  Jim Blandy  <jimb@totoro.cyclic.com>
+
+	* Makefile.in (HEADERS): Remove alloca.h from list.
+
 Wed Feb 28 11:08:06 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* options.h: Remove AUTH_SERVER_SUPPORT; no longer should be
