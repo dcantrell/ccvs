@@ -80,9 +80,19 @@ typedef struct rcsnode RCSNode;
 
 struct deltatext {
     char *version;
+
+    /* Log message, or NULL if we do not intend to change the log message
+       (that is, RCS_copydeltas should just use the log message from the
+       file).  */
     char *log;
+
+    /* Change text, or NULL if we do not intend to change the change text
+       (that is, RCS_copydeltas should just use the change text from the
+       file).  Note that it is perfectly legal to have log be NULL and
+       text non-NULL, or vice-versa.  */
     char *text;
     int len;
+
     /* Newphrase fields from deltatext nodes.  FIXME: duplicates the
        other field in the rcsversnode, I think.  */
     List *other;
