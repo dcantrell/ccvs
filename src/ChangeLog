@@ -1,3 +1,8 @@
+Tue Jun  6 18:57:21 1995  Jim Blandy  <jimb@totoro.cyclic.com>
+
+	* version.c: Fix up version string, to say that this is Cyclic
+        CVS.
+
 Tue Jun  6 15:26:16 1995  J.T. Conklin  <jtc@rtl.cygnus.com>
 
 	* subr.c (run_setup, run_args, run_add_arg, xstrdup): Add const
