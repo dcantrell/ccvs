@@ -1218,10 +1218,10 @@ commit_fileproc (callerdat, finfo)
      * with files as args from the command line.  In that latter case, we
      * need to get the commit message ourselves
      */
-    if (!(got_message))
+    if (!got_message)
     {
 	got_message = 1;
-	if (use_editor)
+	if (!server_active && use_editor)
 	    do_editor (finfo->update_dir, &saved_message,
 		       finfo->repository, ulist);
 	do_verify (&saved_message, finfo->repository);  
@@ -1544,7 +1544,7 @@ commit_direntproc (callerdat, dir, repos, update_dir, entries)
     /* get commit message */
     real_repos = Name_Repository (dir, update_dir);
     got_message = 1;
-    if (use_editor)
+    if (!server_active && use_editor)
 	do_editor (update_dir, &saved_message, real_repos, ulist);
     do_verify (&saved_message, real_repos);
     free (real_repos);
