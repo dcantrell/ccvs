@@ -1,3 +1,8 @@
+Mon Oct 23 12:37:06 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.h: Don't declare valloc.  Some systems (e.g. linux) declare
+	it in stdlib.h in a conflicting way.
+
 Mon Oct 23 08:41:25 1995  Jim Meyering  (meyering@comco.com)
 
 	* commit.c (commit_filesdoneproc): Use getline instead of fgets.
