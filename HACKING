@@ -55,7 +55,10 @@ what the patch does (sometimes the ChangeLog entry and/or comments in
 the code are appropriate for this, but not always)--patches should not
 be checked in unless there is some reason for them, and the
 description may be helpful if there is a better way to solve the
-problem.  If you solve several unrelated problems, submit a separate
+problem.  In addition to the ChangeLog entry, there should be a change
+to the NEWS file in the case of a new feature.
+
+If you solve several unrelated problems, submit a separate
 patch for each one.  Patches should be tested before submission.  Use
 context diffs or unidiffs for patches.
 
@@ -71,3 +74,11 @@ offer any such guarantee.  If you don't receive an answer one way or
 another within a month, feel free to ask what the status is.  You can,
 if you wish, distribute your patch on mailing lists or newsgroups, if
 you want to make it available before it gets merged.
+
+* When is the schedule for the next release?
+
+There isn't one.  That is, upcoming releases are not announced (or
+even hinted at, really) until the feature freeze which is
+approximately 2 weeks before the final release (at this time test
+releases start appearing and are announced on info-cvs).  This is
+intentional, to avoid a last minute rush to get new features in.
