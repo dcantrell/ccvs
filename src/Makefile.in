@@ -77,7 +77,7 @@ CFLAGS = @CFLAGS@
 CPPFLAGS=
 LDFLAGS=
 
-INCLUDES = -I.. -I$(srcdir) -I$(top_srcdir)/lib
+INCLUDES = -I. -I.. -I$(srcdir) -I$(top_srcdir)/lib
 .c.o:
 	$(CC) $(CPPFLAGS) $(INCLUDES) $(DEFS) $(CFLAGS) -c $<
 
