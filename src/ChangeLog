@@ -1,3 +1,13 @@
+Fri Jul 25 09:51:49 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* client.c (update_entries): Clear the stored mode, modtime, and
+	checksum even on an error.
+	* sanity.sh (contents2-142d*): Also test cvs status.  Also test
+	the case in which the contents of the file are unchanged.  Also
+	test running diff to see the conflict, and resolving the conflict.
+	Without the fix above, the new contents2-142d2 test would get a
+	"duplicate Mod-time" warning.
+
 Thu Jul 24 13:29:15 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* server.c (pserver_authenticate_connection): Call parse_config

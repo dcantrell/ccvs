@@ -1564,6 +1564,16 @@ update_entries (data_arg, ent_list, short_pathname, filename)
 
 	    free (mode_string);
 	    free (entries_line);
+
+	    /* The Mode, Mod-time, and Checksum responses should not carry
+	       over to a subsequent Created (or whatever) response, even
+	       in the error case.  */
+	    stored_mode_valid = 0;
+	    if (stored_mode != NULL)
+		free (stored_mode);
+	    stored_modtime_valid = 0;
+	    stored_checksum_valid = 0;
+
 	    return;
 	}
 
