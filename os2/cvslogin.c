@@ -1,17 +1,42 @@
+/*
+ * CVSLOGIN -- a program that shouldn't have to exist.
+ *
+ * It's difficult to keep secrets under OS/2.  Apparently, files are
+ * either readable or not -- you don't pick and choose which users can
+ * read them and which can't.
+ *
+ * This is a problem for the authenticated CVS client, because it
+ * needs to store cleartext passwords between invocations of CVS.
+ * Under Unix, we just keep them in ~/.cvspass, which is group- and
+ * other-unreadable.  Under OS/2, no file is safe.  So we use a
+ * shared-memory block.  This is still not great, but at least
+ * exporting parts of the filesystem won't compromise your CVS
+ * passwords.  The shared-memory block can only be read by processes
+ * running on the same machine.
+ *
+ * But how to keep that shared memory block alive?  Once its creator
+ * process goes away, the memory disappears too (I confirmed this
+ * experimentally).  The utter^H^H^H^H^H crock^H^H^H^H^H solution is
+ * to start up a small process, "cvslogin", that maintains the memory
+ * block.  When the machine is shut off, the process dies and the
+ * password disappears.
+ *
+ * "cvslogin" is called every time "cvs login" is invoked.  It first
+ * checks to see if the block already exists (i.e., there's another
+ * "cvslogin" process running already).  If so, it just uses it like
+ * any other client.  If not, it creates the block, does whatever was
+ * requested, and then (most importantly) fails to die.
+ * 
+ * The block stores one password at a time.
+ */
+
 #define INCL_DOSMEMMGR
 #include <os2.h>
-#include <stdio.h>
 #include <bsememf.h>
-
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-/*
- * void *base_address;
- * char *name;
- * unsigned long size;
- * int flags;
- */
 
 int
 main (int argc, char **argv)
