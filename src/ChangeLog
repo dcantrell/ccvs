@@ -1,3 +1,7 @@
+Thu Sep 28 13:37:05 1995  Larry Jones <larry.jones@sdrc.com>
+        
+        * server.c: ifdef ISC, include <sys/bsdtypes.h>.
+        
 Fri Sep 29 07:54:22 1995  Mike Sutton  <mws115@llcoolj.dayton.saic.com>
 
 	* filesubr.c (last_component): Don't use ANSI style declaration.
