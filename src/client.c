@@ -253,10 +253,8 @@ static struct buffer *from_server;
 /* The stream underlying from_server, if we are using a stream.  */
 static FILE *from_server_fp;
 
-#if ! RSH_NOT_TRANSPARENT
 /* Process ID of rsh subprocess.  */
 static int rsh_pid = -1;
-#endif /* ! RSH_NOT_TRANSPARENT */
 
 
 /* This routine is called when one of the buffer routines runs out of
@@ -2939,11 +2937,9 @@ get_responses_and_close ()
 #endif /* SHUTDOWN_SERVER */
     }
 
-#if ! RSH_NOT_TRANSPARENT
     if (rsh_pid != -1
 	&& waitpid (rsh_pid, (int *) 0, 0) == -1)
 	error (1, errno, "waiting for process %d", rsh_pid);
-#endif /* ! RSH_NOT_TRANSPARENT */
 
     server_started = 0;
 
@@ -2960,9 +2956,7 @@ get_responses_and_close ()
     return errs;
 }
 	
-#ifndef RSH_NOT_TRANSPARENT
 static void start_rsh_server PROTO((int *, int *));
-#endif /* RSH_NOT_TRANSPARENT */
 
 int
 supported_request (name)
@@ -3198,6 +3192,14 @@ start_tcp_server (tofdp, fromfdp)
 
     int status;
 
+#ifndef HAVE_KERBEROS
+    /* It is a crock to have :kserver: sometimes mean kerberos,
+       and sometimes mean "direct tcp", based on USE_DIRECT_TCP.
+       If we need the "direct tcp" stuff, we need a new access method,
+       like :direct: or something.  */
+    error (1, 0, "this CVS executable does not support kerberos");
+#endif
+
     /*
      * We look up the host to give a better error message if it
      * does not exist.  However, we then pass CVSroot_hostname to
@@ -3362,16 +3364,21 @@ start_server ()
 	    break;
 #endif
 
-	case server_method:
-#if ! RSH_NOT_TRANSPARENT
+	case ext_method:
 	    start_rsh_server (&tofd, &fromfd);
-#else
+	    break;
 
-#  if defined(START_SERVER)
+	case server_method:
+#if defined(START_SERVER)
 	    START_SERVER (&tofd, &fromfd, getcaller (),
 			  CVSroot_username, CVSroot_hostname,
 			  CVSroot_directory);
-#  endif
+#else
+	    /* FIXME: It should be possible to implement this portably,
+	       like pserver, which would get rid of the duplicated code
+	       in {vms,windows-NT,...}/startserver.c.  */
+	    error (1, 0, "\
+the :server: access method is not supported by this port of CVS");
 #endif
 	    break;
 
