@@ -337,7 +337,6 @@ lookup_command_attribute (cmd_name)
         (strcmp (cmd_name, "diff") != 0) &&
         (strcmp (cmd_name, "rdiff") != 0) &&
         (strcmp (cmd_name, "update") != 0) &&
-        (strcmp (cmd_name, "history") != 0) &&
         (strcmp (cmd_name, "editors") != 0) &&
         (strcmp (cmd_name, "export") != 0) &&
         (strcmp (cmd_name, "history") != 0) &&
