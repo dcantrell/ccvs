@@ -121,6 +121,8 @@ do_module (db, mname, m_type, msg, callback_proc, where,
     int c, err = 0;
 
 #ifdef SERVER_SUPPORT
+    int restore_server_dir = 0;
+    char *server_dir_to_restore;
     if (trace)
     {
 	char *buf;
@@ -519,6 +521,40 @@ do_module (db, mname, m_type, msg, callback_proc, where,
     if (local_specified)
 	spec_opt = NULL;
 
+#ifdef SERVER_SUPPORT
+    /* We want to check out into the directory named by the module.
+       So we set a global variable which tells the server to glom that
+       directory name onto the front.  A cleaner approach would be some
+       way of passing it down to the recursive call, through the
+       callback_proc, to start_recursion, and then into the update_dir in
+       the struct file_info.  That way the "Updating foo" message could
+       print the actual directory we are checking out into.
+
+       For local CVS, this is handled by the chdir call above
+       (directly or via the callback_proc).  */
+    if (server_active && spec_opt != NULL)
+    {
+	char *change_to;
+
+	change_to = where ? where : (mwhere ? mwhere : mname);
+	server_dir_to_restore = server_dir;
+	restore_server_dir = 1;
+	server_dir =
+	    xmalloc ((server_dir_to_restore != NULL
+		      ? strlen (server_dir_to_restore)
+		      : 0)
+		     + strlen (change_to)
+		     + 5);
+	server_dir[0] = '\0';
+	if (server_dir_to_restore != NULL)
+	{
+	    strcat (server_dir, server_dir_to_restore);
+	    strcat (server_dir, "/");
+	}
+	strcat (server_dir, change_to);
+    }
+#endif
+
     while (spec_opt != NULL)
     {
 	char *next_opt;
@@ -550,6 +586,14 @@ do_module (db, mname, m_type, msg, callback_proc, where,
 			      run_module_prog, extra_arg);
 	spec_opt = next_opt;
     }
+
+#ifdef SERVER_SUPPORT
+    if (server_active && restore_server_dir)
+    {
+	free (server_dir);
+	server_dir = server_dir_to_restore;
+    }
+#endif
 
     /* write out the checkin/update prog files if necessary */
 #ifdef SERVER_SUPPORT
