@@ -2130,8 +2130,19 @@ calls the @file{notify} administrative file, passing it
 the user to receive the notification and the user who
 is taking the action which results in notification.
 Normally @file{notify} will just send an email message.
-@c FIXME: Need to provide example, or perhaps ship one
-@c with CVS, of what notify script looks like.
+
+@cindex users (admin file)
+Note that if you set this up in the straightforward
+way, users receive notifications on the server machine.
+One could of course write a @file{notify} script which
+directed notifications elsewhere, but to make this
+easy, @sc{cvs} allows you to associate a notification
+address for each user.  To do so create a file
+@file{users} in @file{CVSROOT} with a line for each
+user in the format @var{user}:@var{value}.  Then
+instead of passing the name of the user to be notified
+to @file{notify}, @sc{cvs} will pass the @var{value}
+(normally an email address on some other machine).
 
 @node Editing files
 @subsection How to edit a file which is being watched
