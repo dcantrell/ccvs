@@ -17,6 +17,10 @@
 unset CVSREAD
 
 TESTDIR=/tmp/cvs-sanity
+# This will show up in cvs history output where it prints the working
+# directory.  It should *not* appear in any cvs output referring to the
+# repository; cvs should use the name of the repository as specified.
+TMPPWD=`cd /tmp; /bin/pwd`
 
 # "debugger"
 #set -x
@@ -1190,26 +1194,26 @@ No conflicts created by this import'
 		# which don't exist in the remote output?  would seem to be
 		# a CVS bug.
 		dotest basic2-64 "${testcvs} his -e -a" \
-'O [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z0-9@][a-z0-9@]* first-dir           =first-dir= /tmp/cvs-sanity/\*
-A [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z0-9@][a-z0-9@]* 1.1 file6     first-dir           == /tmp/cvs-sanity
-A [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z0-9@][a-z0-9@]* 1.1 file7     first-dir           == /tmp/cvs-sanity
-A [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z0-9@][a-z0-9@]* 1.1 file6     first-dir/dir1      == /tmp/cvs-sanity
-A [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z0-9@][a-z0-9@]* 1.1 file7     first-dir/dir1      == /tmp/cvs-sanity
-A [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z0-9@][a-z0-9@]* 1.1 file6     first-dir/dir1/dir2 == /tmp/cvs-sanity
-A [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z0-9@][a-z0-9@]* 1.1 file7     first-dir/dir1/dir2 == /tmp/cvs-sanity
-A [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z0-9@][a-z0-9@]* 1.1 file14    first-dir           == /tmp/cvs-sanity
-M [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z0-9@][a-z0-9@]* 1.2 file6     first-dir           == /tmp/cvs-sanity
-A [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z0-9@][a-z0-9@]* 1.1 file14    first-dir/dir1      == /tmp/cvs-sanity
-M [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z0-9@][a-z0-9@]* 1.2 file6     first-dir/dir1      == /tmp/cvs-sanity
-A [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z0-9@][a-z0-9@]* 1.1 file14    first-dir/dir1/dir2 == /tmp/cvs-sanity
-M [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z0-9@][a-z0-9@]* 1.2 file6     first-dir/dir1/dir2 == /tmp/cvs-sanity
-F [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z0-9@][a-z0-9@]*                     =first-dir= /tmp/cvs-sanity/\*
+'O [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z0-9@][a-z0-9@]* first-dir           =first-dir= '"${TMPPWD}"'/cvs-sanity/\*
+A [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z0-9@][a-z0-9@]* 1.1 file6     first-dir           == '"${TMPPWD}"'/cvs-sanity
+A [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z0-9@][a-z0-9@]* 1.1 file7     first-dir           == '"${TMPPWD}"'/cvs-sanity
+A [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z0-9@][a-z0-9@]* 1.1 file6     first-dir/dir1      == '"${TMPPWD}"'/cvs-sanity
+A [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z0-9@][a-z0-9@]* 1.1 file7     first-dir/dir1      == '"${TMPPWD}"'/cvs-sanity
+A [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z0-9@][a-z0-9@]* 1.1 file6     first-dir/dir1/dir2 == '"${TMPPWD}"'/cvs-sanity
+A [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z0-9@][a-z0-9@]* 1.1 file7     first-dir/dir1/dir2 == '"${TMPPWD}"'/cvs-sanity
+A [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z0-9@][a-z0-9@]* 1.1 file14    first-dir           == '"${TMPPWD}"'/cvs-sanity
+M [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z0-9@][a-z0-9@]* 1.2 file6     first-dir           == '"${TMPPWD}"'/cvs-sanity
+A [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z0-9@][a-z0-9@]* 1.1 file14    first-dir/dir1      == '"${TMPPWD}"'/cvs-sanity
+M [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z0-9@][a-z0-9@]* 1.2 file6     first-dir/dir1      == '"${TMPPWD}"'/cvs-sanity
+A [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z0-9@][a-z0-9@]* 1.1 file14    first-dir/dir1/dir2 == '"${TMPPWD}"'/cvs-sanity
+M [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z0-9@][a-z0-9@]* 1.2 file6     first-dir/dir1/dir2 == '"${TMPPWD}"'/cvs-sanity
+F [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z0-9@][a-z0-9@]*                     =first-dir= '"${TMPPWD}"'/cvs-sanity/\*
 T [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z0-9@][a-z0-9@]* first-dir \[rtagged-by-head:A\]
 T [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z0-9@][a-z0-9@]* first-dir \[rtagged-by-tag:rtagged-by-head\]
 T [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z0-9@][a-z0-9@]* first-dir \[rtagged-by-revision:1.1\]
-O [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z0-9@][a-z0-9@]* \[1.1\] first-dir           =first-dir= /tmp/cvs-sanity/\*
-U [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z0-9@][a-z0-9@]* 1.2 file6     first-dir           == /tmp/cvs-sanity/first-dir
-U [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z0-9@][a-z0-9@]* 1.2 file7     first-dir           == /tmp/cvs-sanity/first-dir' \
+O [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z0-9@][a-z0-9@]* \[1.1\] first-dir           =first-dir= '"${TMPPWD}"'/cvs-sanity/\*
+U [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z0-9@][a-z0-9@]* 1.2 file6     first-dir           == '"${TMPPWD}"'/cvs-sanity/first-dir
+U [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z0-9@][a-z0-9@]* 1.2 file7     first-dir           == '"${TMPPWD}"'/cvs-sanity/first-dir' \
 'O [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z0-9@][a-z0-9@]* first-dir           =first-dir= <remote>/\*
 A [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z0-9@][a-z0-9@]* 1.1 file6     first-dir           == <remote>
 A [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z0-9@][a-z0-9@]* 1.1 file7     first-dir           == <remote>
@@ -2167,11 +2171,14 @@ done'
 
 		# TODO-maybe: we could also check this (also in an empty
 		# directory) after the file has nonempty contents.
+		#
+		# The need for TMPPWD here is a (minor) CVS bug; the
+		# output should use the name of the repository as specified.
 		dotest conflicts-126.5 "${testcvs} co -p first-dir" \
 "${PROG} [a-z]*"': Updating first-dir
 ===================================================================
 Checking out first-dir/a
-RCS:  /tmp/cvs-sanity/cvsroot/first-dir/a,v
+RCS:  '"${TMPPWD}"'/cvs-sanity/cvsroot/first-dir/a,v
 VERS: 1\.1
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*'
 		if ${CVS} co first-dir ; then
