@@ -1,3 +1,7 @@
+2004-10-05  Derek Price  <derek@ximbiot.com>
+
+	* config.h.in.in: s/FILESYSTEM/FILE_SYSTEM/ in keeping with GNULIB.
+	
 2004-10-05  Conrad T. Pino  <Conrad@Pino.com>
 
 	* config.h.in.in: Add #define EOVERFLOW, HAVE_GETCWD, HAVE_GETCWD_NULL.

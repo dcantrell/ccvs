@@ -72,7 +72,7 @@
 #undef ENCRYPTION
 
 /* Define as good substitute value for EOVERFLOW. */
-#undef EOVERFLOW
+#define EOVERFLOW EINVAL
 
 /* Define if this executable will be running on case insensitive file systems.
    In the client case, this means that it will request that the server pretend
@@ -82,17 +82,17 @@
 /* Define on systems for which file names may have a so-called `drive letter'
    prefix, define this to compute the length of that prefix, including the
    colon. */
-#define FILESYSTEM_ACCEPTS_DRIVE_LETTER_PREFIX 1
+#define FILE_SYSTEM_ACCEPTS_DRIVE_LETTER_PREFIX 1
 
 /* Define if the backslash character may also serve as a file name component
    separator. */
-#define FILESYSTEM_BACKSLASH_IS_FILE_NAME_SEPARATOR 1
+#define FILE_SYSTEM_BACKSLASH_IS_FILE_NAME_SEPARATOR 1
 
-#if FILESYSTEM_ACCEPTS_DRIVE_LETTER_PREFIX
-# define FILESYSTEM_PREFIX_LEN(Filename) \
+#if FILE_SYSTEM_ACCEPTS_DRIVE_LETTER_PREFIX
+# define FILE_SYSTEM_PREFIX_LEN(Filename) \
   ((Filename)[0] && (Filename)[1] == ':' ? 2 : 0)
 #else
-# define FILESYSTEM_PREFIX_LEN(Filename) 0
+# define FILE_SYSTEM_PREFIX_LEN(Filename) 0
 #endif
 
 /* When committing or importing files, you must enter a log message. Normally,
@@ -248,10 +248,10 @@
 #undef HAVE_FTRUNCATE
 
 /* Define to 1 if you have the `getcwd' function. */
-#undef HAVE_GETCWD
+#define HAVE_GETCWD 1
 
 /* Define if getcwd (NULL, 0) allocates memory for result. */
-#undef HAVE_GETCWD_NULL
+#define HAVE_GETCWD_NULL 1
 
 /* Define to 1 if you have the `getdelim' function. */
 #undef HAVE_GETDELIM
@@ -639,7 +639,7 @@
 /* Define to 1 if you have the `__secure_getenv' function. */
 #undef HAVE___SECURE_GETENV
 
-#if FILESYSTEM_BACKSLASH_IS_FILE_NAME_SEPARATOR
+#if FILE_SYSTEM_BACKSLASH_IS_FILE_NAME_SEPARATOR
 # define ISSLASH(C) ((C) == '/' || (C) == '\\')
 #else
 # define ISSLASH(C) ((C) == '/')
