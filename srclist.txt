@@ -78,11 +78,6 @@ $GNULIB/lib/getnline.c				lib		yes NI
 $GNULIB/lib/getnline.h				lib		yes NI
 $GNULIB/m4/getnline.m4				m4		no NI
 $GNULIB/m4/ssize_t.m4				m4		no NI
-# $GNULIB/modules/getopt
-$GNULIB/lib/getopt.c				lib		no NI
-$GNULIB/lib/getopt1.c				lib		no NI
-$GNULIB/lib/getopt.h				lib		no NI
-$GNULIB/m4/getopt.m4				m4		no NI
 # $GNULIB/modules/getpass-gnu
 $GNULIB/lib/getpass.c				lib		no NI
 $GNULIB/m4/getpass.m4				m4		no NI

@@ -100,3 +100,10 @@ m4/uintmax_t.m4
 m4/mkstemp.m4
 
 m4/onceonly_2_57.m4
+lib/getopt_.h
+lib/getopt.c
+lib/getopt1.c
+lib/getopt_int.h
+m4/getopt.m4
+
+m4/onceonly_2_57.m4
