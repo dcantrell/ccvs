@@ -1,9 +1,6 @@
-/* getnline.c -- Implementation of getnline function, a modification of
-   the GNU C library function getline to allow the caller to set a
-   maximum number of characters to be retrieved.
+/* getnline - Read a line of n characters or less from a stream.
 
-   Copyright (C) 1993, 1996, 1997, 1998, 2000, 2003 Free Software
-   Foundation, Inc.
+   Copyright (C) 2003 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -27,21 +24,24 @@
 # include <config.h>
 #endif
 
+/* Specification.  */
 #include "getnline.h"
 
 #include <stddef.h>
+#include <stdio.h>
 #include <sys/types.h> /* Included for ssize_t. */
 
 #include "getndelim2.h"
 
 ssize_t
-getnline( char **lineptr, size_t *n, int limit, FILE *stream )
+getnline (char **lineptr, size_t *linesize, int limit, FILE *stream)
 {
-  return getndelim2( lineptr, n, 0, limit, '\n', 0, stream );
+  return getndelim2 (lineptr, linesize, 0, limit, '\n', 0, stream);
 }
 
 ssize_t
-getndelim( char **lineptr, size_t *n, int limit, int delimiter, FILE *stream )
+getndelim (char **lineptr, size_t *linesize, int limit, int delimiter,
+           FILE *stream)
 {
-  return getndelim2( lineptr, n, 0, limit, delimiter, 0, stream );
+  return getndelim2 (lineptr, linesize, 0, limit, delimiter, 0, stream);
 }

@@ -31,13 +31,14 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
 /* glibc2 has these functions declared in <stdio.h>.  Avoid redeclarations.  */
 # if !HAVE_WORKING_GETLINE
 
-ssize_t getline (char **_lineptr, size_t *_n, FILE *_stream);
+extern ssize_t getline (char **_lineptr, size_t *_linesize, FILE *_stream);
 
 # endif /* ! have getline */
 
 # if !HAVE_GETDELIM
 
-ssize_t getdelim (char **_lineptr, size_t *_n, int _delimiter, FILE *_stream);
+extern ssize_t getdelim (char **_lineptr, size_t *_linesize, int _delimiter,
+                         FILE *_stream);
 
 # endif /* ! have getdelim */
 

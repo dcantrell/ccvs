@@ -1,6 +1,5 @@
-/* getnline.c -- Implementation of getnline function, a modification of
-   the GNU C library function getline to allow the caller to set a
-   maximum number of characters to be retrieved.
+/* getndelim2 - Read n characters or less from a stream, stopping at one of up
+   to two specified delimiters.
 
    Copyright (C) 1993, 1996, 1997, 1998, 2000, 2003 Free Software
    Foundation, Inc.
@@ -47,78 +46,79 @@ char *malloc (), *realloc ();
 /* Read up to (and including) a delimiter DELIM1 from STREAM into *LINEPTR
    + OFFSET (and NUL-terminate it).  If DELIM2 is non-zero, then read up
    and including the first occurrence of DELIM1 or DELIM2.  *LINEPTR is
-   a pointer returned from malloc (or NULL), pointing to *N characters of
-   space.  It is realloc'd as necessary.  Return the number of characters
-   read (not including the NUL terminator), or -1 on error or EOF.  */
+   a pointer returned from malloc (or NULL), pointing to *LINESIZE bytes of
+   space.  It is realloc'd as necessary.  Read no more than LIMIT bytes.
+   Return the number of bytes read and stored at *LINEPTR + OFFSET (not
+   including the NUL terminator), or -1 on error or EOF.  */
 
 ssize_t
-getndelim2( char **lineptr, size_t *n, size_t offset, int limit,
-            int delim1, int delim2, FILE *stream )
+getndelim2 (char **lineptr, size_t *linesize, size_t offset, int limit,
+            int delim1, int delim2, FILE *stream)
 {
-  size_t nchars_avail;		/* Allocated but unused chars in *LINEPTR.  */
+  size_t nbytes_avail;		/* Allocated but unused chars in *LINEPTR.  */
   char *read_pos;		/* Where we're reading into *LINEPTR. */
-  int ret;
 
-  if( !lineptr || !n || !stream )
+  if (!lineptr || !linesize || !stream)
     return -1;
 
-  if( !*lineptr )
+  if (!*lineptr)
     {
-      *n = MIN_CHUNK;
-      *lineptr = malloc( *n );
-      if( !*lineptr )
+      *linesize = MIN_CHUNK;
+      *lineptr = malloc (*linesize);
+      if (!*lineptr)
 	return -1;
     }
 
-  if( *n < offset )
+  if (*linesize < offset)
     return -1;
 
-  nchars_avail = *n - offset;
+  nbytes_avail = *linesize - offset;
   read_pos = *lineptr + offset;
 
-  for( ;; )
+  for (;;)
     {
+      /* Here always *lineptr + *linesize == read_pos + nbytes_avail.  */
       register int c;
 
-      if( limit == 0 )
+      if (limit == 0)
 	break;
 
-      c = getc( stream );
+      c = getc (stream);
 
-      if( limit != GETNDELIM_NO_LIMIT )
+      if (limit != GETNDELIM_NO_LIMIT)
 	limit--;
 
       /* We always want at least one char left in the buffer, since we
 	 always (unless we get an error while reading the first char)
 	 NUL-terminate the line buffer.  */
 
-      if( nchars_avail < 2 )
+      if (nbytes_avail < 2)
 	{
-	  if( *n > MIN_CHUNK )
-	    *n *= 2;
+	  if (*linesize > MIN_CHUNK)
+	    *linesize *= 2;
 	  else
-	    *n += MIN_CHUNK;
+	    *linesize += MIN_CHUNK;
 
-	  nchars_avail = *n + *lineptr - read_pos;
-	  *lineptr = realloc( *lineptr, *n );
-	  if( !*lineptr )
+	  nbytes_avail = *linesize + *lineptr - read_pos;
+	  *lineptr = realloc (*lineptr, *linesize);
+	  if (!*lineptr)
 	    return -1;
-	  read_pos = *n - nchars_avail + *lineptr;
+	  read_pos = *linesize - nbytes_avail + *lineptr;
 	}
 
-      if( c == EOF || ferror( stream ) )
+      if (c == EOF || ferror (stream))
 	{
 	  /* Return partial line, if any.  */
-	  if( read_pos == *lineptr )
+	  if (read_pos == *lineptr)
 	    return -1;
 	  else
 	    break;
 	}
 
       *read_pos++ = c;
-      nchars_avail--;
+      nbytes_avail--;
 
-      if( c == delim1 || ( delim2 && c == delim2 ) )
+      if (c == delim1 || (delim2 && c == delim2))
 	/* Return the line.  */
 	break;
     }
@@ -126,6 +126,5 @@ getndelim2( char **lineptr, size_t *n, size_t offset, int limit,
   /* Done - NUL terminate and return the number of chars read.  */
   *read_pos = '\0';
 
-  ret = read_pos - ( *lineptr + offset );
-  return ret;
+  return read_pos - (*lineptr + offset);
 }
