@@ -788,7 +788,22 @@ fopen_case (name, mode, fp, pathp)
     found_name = NULL;
     dirp = CVS_OPENDIR (dir);
     if (dirp == NULL)
-	error (1, errno, "cannot read directory %s", dir);
+    {
+	if (existence_error (errno))
+	{
+	    /* This can happen if we are looking in the Attic and the Attic
+	       directory does not exist.  Return the error to the caller;
+	       they know what to do with it.  */
+	    retval = errno;
+	    goto out;
+	}
+	else
+	{
+	    /* Give a fatal error; that way the error message can be
+	       more specific than if we returned the error to the caller.  */
+	    error (1, errno, "cannot read directory %s", dir);
+	}
+    }
     errno = 0;
     while ((dp = readdir (dirp)) != NULL)
     {
@@ -832,6 +847,7 @@ fopen_case (name, mode, fp, pathp)
     else
 	*pathp = dir;
     free (found_name);
+ out:
     return retval;
 }
 #endif /* SERVER_SUPPORT */
