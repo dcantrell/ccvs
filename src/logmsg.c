@@ -202,7 +202,8 @@ do_editor (dir, messagep, repository, changes)
     {
 	(void) fprintf (fp, "%s", *messagep);
 
-	if ((*messagep)[strlen (*messagep) - 1] != '\n')
+	if ((*messagep)[0] == '\0' ||
+	    (*messagep)[strlen (*messagep) - 1] != '\n')
 	    (void) fprintf (fp, "\n");
     }
     else
@@ -416,7 +417,8 @@ do_verify (message, repository)
     else
     {
 	fprintf (fp, "%s", message);
-	if ((message)[strlen (message) - 1] != '\n')
+	if ((message)[0] == '\0' ||
+	    (message)[strlen (message) - 1] != '\n')
 	    (void) fprintf (fp, "%s", "\n");
 	if (fclose (fp) == EOF)
 	    error (1, errno, "%s", fname);

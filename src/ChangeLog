@@ -1,3 +1,11 @@
+Fri Jan 10 13:23:09 1997  Norbert Kiesel  <nk@col.sw-ley.de>
+
+	* release.c (release): Initialize delete_flag before reading it
+	(found by running purify)
+
+	* logmsg.c (do_verify): Fix reading unallocated memory (found by
+ 	running purify)
+
 Thu Jan  9 16:32:47 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* checkout.c (build_dirs_and_chdir): Partially revert 3 Jan
