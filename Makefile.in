@@ -253,8 +253,13 @@ config.status: configure
 #	cd $(srcdir); autoconf
 
 config.h: stamp-h
+
+# The ./config.status --recheck line is to update config.status with
+# any new #defines from config.h.in.
 stamp-h: config.h.in config.status
+	./config.status --recheck
 	CONFIG_FILES=$@ CONFIG_HEADERS=config.h ./config.status
+
 #config.h.in: stamp-h.in
 #stamp-h.in: configure.in #aclocal.m4 acconfig.h
 #	cd $(srcdir); autoheader

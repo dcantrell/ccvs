@@ -1,5 +1,8 @@
 Thu Aug 31 13:47:35 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* Makefile.in (stamp-h): Rebuild config.status before trying to
+	use it to build config.h.
+
 	* Makefile.in: Change "cd foo; make" to "cd foo && make";
 	otherwise we get into an infinite loop if an objdir doesn't exist.
 
