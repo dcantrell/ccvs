@@ -1,3 +1,23 @@
+Sat May  4 12:33:02 1996  Ian Lance Taylor  <ian@cygnus.com>
+
+	Extract the head revision directly from the RCS file when
+	possible, rather than execing co.
+	* rcs.c (RCS_reparsercsfile): Set delta_pos field.
+	(getrcskey): Add lenp parameter.  Change all callers.
+	(RCS_fast_checkout): New function.
+	(annotate_fileproc): If PARTIAL is not set, just fseek to
+	delta_pos.
+	* rcs.h (struct rcsnode): Add delta_pos field.
+	(RCS_fast_checkout): Declare.
+	* diff.c (diff_file_nodiff): Call RCS_fast_checkout rather than
+	RCS_checkout.
+	* import.c (update_rcs_file): Likewise.
+	* no_diff.c (No_Difference): Likewise.
+	* patch.c (patch_fileproc): Likewise.
+	* update.c (checkout_file): Likewise.
+	(patch_file): Likewise.
+	(join_file): Likewise.
+
 Fri May 10 09:39:49 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* main.c (main): -d now overrides CVS/Root.

@@ -39,8 +39,8 @@ No_Difference (file, vers, entries, repository, update_dir)
     else
 	options = xstrdup ("");
 
-    retcode = RCS_checkout (vers->srcfile->path, NULL, vers->vn_user, options,
-                            tmpnam (tmp), 0, 0);
+    retcode = RCS_fast_checkout (vers->srcfile, NULL, vers->vn_user, options,
+				 tmpnam (tmp), 0, 0);
     if (retcode == 0)
     {
 #if 0

@@ -500,13 +500,13 @@ update_rcs_file (message, vfile, vtag, targc, targv, inattic)
 	 */
 	/* Why is RCS_FLAGS_FORCE here?  I wouldn't think that it would have any
 	   effect in conjunction with passing NULL for workfile (i.e. to stdout).  */
-	retcode = RCS_checkout (vers->srcfile->path, NULL, vers->vn_rcs,
+	retcode = RCS_fast_checkout (vers->srcfile, NULL, vers->vn_rcs,
 #ifdef HAVE_RCS5
-	                        "-ko",
+				     "-ko",
 #else
-	                        NULL,
+				     NULL,
 #endif
-	                        xtmpfile, RCS_FLAGS_FORCE, 0);
+				     xtmpfile, RCS_FLAGS_FORCE, 0);
 	if (retcode != 0)
 	{
 	    ierrno = errno;

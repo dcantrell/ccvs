@@ -359,9 +359,9 @@ diff_fileproc (finfo)
 	     * diff_file_nodiff, and using that revision.  This code
 	     * is broken for "cvs diff -N -r foo".
 	     */
-	    retcode = RCS_checkout (vers->srcfile->path, NULL, vers->vn_rcs,
-	                            *options ? options : vers->options, tmpnam (tmp),
-	                            0, 0);
+	    retcode = RCS_fast_checkout (vers->srcfile, NULL, vers->vn_rcs,
+					 *options ? options : vers->options,
+					 tmpnam (tmp), 0, 0);
 	    if (retcode == -1)
 	    {
 		(void) unlink (tmp);
@@ -600,8 +600,9 @@ diff_file_nodiff (file, repository, entries, rcs, vers)
      * with 0 or 1 -r option specified, run a quick diff to see if we
      * should bother with it at all.
      */
-    retcode = RCS_checkout (vers->srcfile->path, NULL, use_rev1,
-                            *options ? options : vers->options, tmpnam (tmp), 0, 0);
+    retcode = RCS_fast_checkout (vers->srcfile, NULL, use_rev1,
+				 *options ? options : vers->options,
+				 tmpnam (tmp), 0, 0);
     switch (retcode)
     {
 	case 0:				/* everything ok */
