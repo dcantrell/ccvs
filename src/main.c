@@ -100,47 +100,48 @@ static const struct cmd
     char *nick2;
     
     int (*func) ();		/* Function takes (argc, argv) arguments. */
+    unsigned long attr;		/* Attributes. */
 } cmds[] =
 
 {
-    { "add",      "ad",       "new",       add },
-    { "admin",    "adm",      "rcs",       admin },
-    { "annotate", "ann",      NULL,        annotate },
-    { "checkout", "co",       "get",       checkout },
-    { "commit",   "ci",       "com",       commit },
-    { "diff",     "di",       "dif",       diff },
-    { "edit",     NULL,	      NULL,	   edit },
-    { "editors",  NULL,       NULL,	   editors },
-    { "export",   "exp",      "ex",        checkout },
-    { "history",  "hi",       "his",       history },
-    { "import",   "im",       "imp",       import },
-    { "init",     NULL,       NULL,        init },
+    { "add",      "ad",       "new",       add,       CVS_CMD_MODIFIES_REPOSITORY | CVS_CMD_USES_WORK_DIR },
+    { "admin",    "adm",      "rcs",       admin,     CVS_CMD_MODIFIES_REPOSITORY | CVS_CMD_USES_WORK_DIR },
+    { "annotate", "ann",      NULL,        annotate,  CVS_CMD_USES_WORK_DIR },
+    { "checkout", "co",       "get",       checkout,  0 },
+    { "commit",   "ci",       "com",       commit,    CVS_CMD_MODIFIES_REPOSITORY | CVS_CMD_USES_WORK_DIR },
+    { "diff",     "di",       "dif",       diff,      CVS_CMD_USES_WORK_DIR },
+    { "edit",     NULL,       NULL,        edit,      CVS_CMD_MODIFIES_REPOSITORY | CVS_CMD_USES_WORK_DIR },
+    { "editors",  NULL,       NULL,        editors,   CVS_CMD_USES_WORK_DIR },
+    { "export",   "exp",      "ex",        checkout,  CVS_CMD_USES_WORK_DIR },
+    { "history",  "hi",       "his",       history,   CVS_CMD_USES_WORK_DIR },
+    { "import",   "im",       "imp",       import,    CVS_CMD_MODIFIES_REPOSITORY | CVS_CMD_USES_WORK_DIR | CVS_CMD_IGNORE_ADMROOT},
+    { "init",     NULL,       NULL,        init,      CVS_CMD_MODIFIES_REPOSITORY },
 #if defined (HAVE_KERBEROS) && defined (SERVER_SUPPORT)
-    { "kserver",  NULL,       NULL,        server }, /* placeholder */
+    { "kserver",  NULL,       NULL,        server,    CVS_CMD_MODIFIES_REPOSITORY | CVS_CMD_USES_WORK_DIR }, /* placeholder */
 #endif
-    { "log",      "lo",       "rlog",      cvslog },
+    { "log",      "lo",       NULL,        cvslog,    CVS_CMD_USES_WORK_DIR },
 #ifdef AUTH_CLIENT_SUPPORT
-    { "login",    "logon",    "lgn",       login },
-    { "logout",   NULL,       NULL,        logout },
+    { "login",    "logon",    "lgn",       login,     0 },
+    { "logout",   NULL,       NULL,        logout,    0 },
 #endif /* AUTH_CLIENT_SUPPORT */
 #if (defined(AUTH_SERVER_SUPPORT) || defined (HAVE_GSSAPI)) && defined(SERVER_SUPPORT)
-    { "pserver",  NULL,       NULL,        server }, /* placeholder */
+    { "pserver",  NULL,       NULL,        server,    CVS_CMD_MODIFIES_REPOSITORY | CVS_CMD_USES_WORK_DIR }, /* placeholder */
 #endif
-    { "rdiff",    "patch",    "pa",        patch },
-    { "release",  "re",       "rel",       release },
-    { "remove",   "rm",       "delete",    cvsremove },
-    { "rtag",     "rt",       "rfreeze",   cvstag },
+    { "rdiff",    "patch",    "pa",        patch,     0 },
+    { "release",  "re",       "rel",       release,   0 },
+    { "remove",   "rm",       "delete",    cvsremove, CVS_CMD_MODIFIES_REPOSITORY | CVS_CMD_USES_WORK_DIR },
+    { "rtag",     "rt",       "rfreeze",   cvstag,    CVS_CMD_MODIFIES_REPOSITORY },
 #ifdef SERVER_SUPPORT
-    { "server",   NULL,       NULL,        server },
+    { "server",   NULL,       NULL,        server,    CVS_CMD_MODIFIES_REPOSITORY | CVS_CMD_USES_WORK_DIR },
 #endif
-    { "status",   "st",       "stat",      cvsstatus },
-    { "tag",      "ta",       "freeze",    cvstag },
-    { "unedit",   NULL,	      NULL,	   unedit },
-    { "update",   "up",       "upd",       update },
-    { "version",  "ve",       "ver",       version },
-    { "watch",    NULL,	      NULL,	   watch },
-    { "watchers", NULL,	      NULL,	   watchers },
-    { NULL, NULL, NULL, NULL },
+    { "status",   "st",       "stat",      cvsstatus, CVS_CMD_USES_WORK_DIR },
+    { "tag",      "ta",       "freeze",    cvstag,    CVS_CMD_MODIFIES_REPOSITORY | CVS_CMD_USES_WORK_DIR },
+    { "unedit",   NULL,       NULL,        unedit,    CVS_CMD_MODIFIES_REPOSITORY | CVS_CMD_USES_WORK_DIR },
+    { "update",   "up",       "upd",       update,    CVS_CMD_USES_WORK_DIR },
+    { "version",  "ve",       "ver",       version,   0 },
+    { "watch",    NULL,       NULL,        watch,     CVS_CMD_MODIFIES_REPOSITORY | CVS_CMD_USES_WORK_DIR },
+    { "watchers", NULL,       NULL,        watchers,  CVS_CMD_USES_WORK_DIR },
+    { NULL, NULL, NULL, NULL, 0 },
 };
 
 static const char *const usg[] =
@@ -319,51 +320,14 @@ unsigned long int
 lookup_command_attribute (cmd_name)
      char *cmd_name;
 {
-    unsigned long int ret = 0;
+    const struct cmd *cm;
 
-    if (strcmp (cmd_name, "import") != 0)
+    for (cm = cmds; cm->fullname; cm++)
     {
-        ret |= CVS_CMD_IGNORE_ADMROOT;
+	if (strcmp (command_name, cm->fullname) == 0)
+	    break;
     }
-
-
-    /* The following commands do not use a checked-out working
-       directory.  We conservatively assume that everything else does.
-       Feel free to add to this list if you are _certain_ something
-       something doesn't use the WD. */
-    if ((strcmp (cmd_name, "checkout") != 0) &&
-        (strcmp (cmd_name, "init") != 0) &&
-        (strcmp (cmd_name, "login") != 0) &&
-	(strcmp (cmd_name, "logout") != 0) &&
-        (strcmp (cmd_name, "rdiff") != 0) &&
-        (strcmp (cmd_name, "release") != 0) &&
-        (strcmp (cmd_name, "rtag") != 0))
-    {
-        ret |= CVS_CMD_USES_WORK_DIR;
-    }
-
-
-    /* The following commands do not modify the repository; we
-       conservatively assume that everything else does.  Feel free to
-       add to this list if you are _certain_ something is safe. */
-    if ((strcmp (cmd_name, "annotate") != 0) &&
-        (strcmp (cmd_name, "checkout") != 0) &&
-        (strcmp (cmd_name, "diff") != 0) &&
-        (strcmp (cmd_name, "rdiff") != 0) &&
-        (strcmp (cmd_name, "update") != 0) &&
-        (strcmp (cmd_name, "editors") != 0) &&
-        (strcmp (cmd_name, "export") != 0) &&
-        (strcmp (cmd_name, "history") != 0) &&
-        (strcmp (cmd_name, "log") != 0) &&
-        (strcmp (cmd_name, "noop") != 0) &&
-        (strcmp (cmd_name, "watchers") != 0) &&
-        (strcmp (cmd_name, "release") != 0) &&
-        (strcmp (cmd_name, "status") != 0))
-    {
-        ret |= CVS_CMD_MODIFIES_REPOSITORY;
-    }
-
-    return ret;
+    return cm->attr;
 }
 
 
@@ -839,8 +803,7 @@ Copyright (c) 1989-2001 Brian Berliner, david d `zoo' zuhn, \n\
 	       specify a different repository than the one we are
 	       importing to.  */
 
-	    if ((lookup_command_attribute (command_name)
-		 & CVS_CMD_IGNORE_ADMROOT)
+	    if (!(cm->attr & CVS_CMD_IGNORE_ADMROOT)
 
 		/* -d overrides CVS/Root, so don't give an error if the
 		   latter points to a nonexistent repository.  */
