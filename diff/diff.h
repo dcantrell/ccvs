@@ -1,5 +1,5 @@
 /* Shared definitions for GNU DIFF
-   Copyright (C) 1988, 89, 91, 92, 93 Free Software Foundation, Inc.
+   Copyright (C) 1988, 89, 91, 92, 93, 97 Free Software Foundation, Inc.
 
 This file is part of GNU DIFF.
 
@@ -19,6 +19,7 @@ the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 
 #include "system.h"
 #include <stdio.h>
+#include <setjmp.h>
 #include "regex.h"
 
 #define TAB_WIDTH 8
@@ -176,7 +177,11 @@ EXTERN char *	switch_string;
 EXTERN int	heuristic;
 
 /* Name of program the user invoked (for error messages).  */
-EXTERN char *program_name;
+EXTERN char *diff_program_name;
+
+/* Jump buffer for nonlocal exits. */
+EXTERN jmp_buf diff_abort_buf;
+#define DIFF_ABORT(retval) longjmp(diff_abort_buf, retval)
 
 /* The result of comparison is an "edit script": a chain of `struct change'.
    Each `struct change' represents one place where some lines are deleted
@@ -321,7 +326,7 @@ struct change *find_reverse_change PARAMS((struct change *));
 void analyze_hunk PARAMS((struct change *, int *, int *, int *, int *, int *, int *));
 void begin_output PARAMS((void));
 void debug_script PARAMS((struct change *));
-void error PARAMS((char const *, char const *, char const *));
+void diff_error PARAMS((char const *, char const *, char const *));
 void fatal PARAMS((char const *));
 void finish_output PARAMS((void));
 void message PARAMS((char const *, char const *, char const *));
@@ -337,4 +342,4 @@ void setup_output PARAMS((char const *, char const *, int));
 void translate_range PARAMS((struct file_data const *, int, int, int *, int *));
 
 /* version.c */
-extern char const version_string[];
+extern char const diff_version_string[];
