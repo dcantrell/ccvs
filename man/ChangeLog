@@ -1,3 +1,7 @@
+Tue Oct 17 17:38:27 1995  Warren Jones  <wjones@tc.fluke.com>
+
+	* cvs.1: Change \. to \&. at start of line.
+
 Tue Oct  3 13:43:33 1995  Del  <del@matra.com.au>
 
 	* cvs.1: Updated man page for all the new features of 1.6
