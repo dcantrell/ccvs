@@ -15890,8 +15890,12 @@ total revisions: 1
 	  # being munged as if in text mode.
 	  ${AWK} 'BEGIN { printf "%c%c%c@%c%c", 2, 10, 137, 13, 10 }' \
 	    </dev/null | ${TR} '@' '\000' >../binfile
-	  cat ../binfile ../binfile >../binfile2
-	  cat ../binfile2 ../binfile >../binfile3
+	  # Use binfl2 rather than binfile2 because of a problem with Cygwin
+	  # and Samba. that causes cat to report that the input and output file
+	  # are the same when outputting to binfile3.  Why?  I don't know, but
+	  # it is consistently reproducible.
+	  cat ../binfile ../binfile >../binfl2
+	  cat ../binfl2 ../binfile >../binfile3
 
 	  # FIXCVS: unless a branch has at least one file on it,
 	  # tag_check_valid won't know it exists.  So if brmod didn't
@@ -15932,9 +15936,9 @@ T brmod-wdmod'
 	  dotest binfiles2-4 "${testcvs} add -kb binfile.dat" \
 "${SPROG} add: scheduling file .binfile\.dat. for addition on branch .br.
 ${SPROG} add: use .${SPROG} commit. to add this file permanently"
-	  cp ../binfile2 brmod
-	  cp ../binfile2 brmod-trmod
-	  cp ../binfile2 brmod-wdmod
+	  cp ../binfl2 brmod
+	  cp ../binfl2 brmod-trmod
+	  cp ../binfl2 brmod-wdmod
 	  dotest binfiles2-5 "${testcvs} -q ci -m br-changes" \
 "RCS file: ${CVSROOT_DIRNAME}/first-dir/Attic/binfile\.dat,v
 done
@@ -15983,9 +15987,9 @@ ${SPROG} update: file from working directory is now in .#brmod-wdmod.1.1
 C brmod-wdmod"
 
 	  dotest binfiles2-9 "cmp ../binfile binfile.dat"
-	  dotest binfiles2-9-brmod "cmp ../binfile2 brmod"
-	  dotest binfiles2-9-brmod-trmod "cmp ../binfile2 brmod-trmod"
-	  dotest binfiles2-9-brmod-trmod "cmp ../binfile2 brmod-wdmod"
+	  dotest binfiles2-9-brmod "cmp ../binfl2 brmod"
+	  dotest binfiles2-9-brmod-trmod "cmp ../binfl2 brmod-trmod"
+	  dotest binfiles2-9-brmod-trmod "cmp ../binfl2 brmod-wdmod"
 	  dotest binfiles2-9a-brmod-trmod "cmp ../binfile3 .#brmod-trmod.1.2"
 	  dotest binfiles2-9a-brmod-wdmod "cmp ../binfile3 .#brmod-wdmod.1.1"
 
