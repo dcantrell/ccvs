@@ -18,7 +18,6 @@
 #include <stdio.h>
 #include <sys/types.h>
 
-#if !defined(HAVE_FSEEKO) && !defined(ftello)
 off_t
 ftello (FILE *stream)
 {
@@ -27,4 +26,3 @@ ftello (FILE *stream)
 
     return (off_t) pos;
 }
-#endif /* !defined(HAVE_FSEEKO) && !defined(ftello) */

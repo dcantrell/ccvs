@@ -18,8 +18,6 @@
 #include <stdio.h>
 #include <sys/types.h>
 
-#if !defined(HAVE_FSEEKO) && !defined(fseeko)
-
 #ifdef HAVE_LIMITS_H
 #include <limits.h>
 #endif
@@ -48,4 +46,3 @@ fseeko (FILE *stream, off_t offset, int whence)
     }
     return fseek (stream, (long) offset, whence);
 }
-#endif /* !defined(HAVE_FSEEKO) && !defined(fseeko) */
