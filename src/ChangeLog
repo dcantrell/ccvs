@@ -1,3 +1,11 @@
+Fri Mar 21 13:37:46 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* rcs.h (struct rcsnode): Add comment about case of PATH.
+	* rcs.c (RCS_parse): If ign_case, then try opening the file with
+	fopen_case.
+	* ignore.c (ign_case): Adjust comment.
+	* cvs.h, filesubr.c (cvs_casecmp, fopen_case): New functions.
+
 20 Mar 1997  Jim Kingdon
 
 	* client.c (send_repository): When sending Directory request,
