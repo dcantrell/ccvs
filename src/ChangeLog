@@ -1,3 +1,10 @@
+1999-11-19  Karl Fogel  <kfogel@red-bean.com>
+
+	* edit.c (unedit_usage, unedit): new struct, use it.  Now "cvs
+	unedit" prints an accurate usage message (formerly it printed the
+	message for "cvs edit", even though the two commands do not have
+	identical usages).
+	
 1999-11-19  Larry Jones <larry.jones@sdrc.com>
 
 	* history.c: Move -e documentation from Flags to Reports.
