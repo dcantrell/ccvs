@@ -752,7 +752,11 @@ error 0 %s: no such user\n", user);
 	 * Patch creates too much output to monitor and it runs slowly.
 	 */
 	if (strcmp (cm->fullname, "patch"))
+#ifdef BUFSIZ  /* traditional SysV chokes when size == 0 */
+	    (void) setvbuf (stdout, (char *) NULL, _IOLBF, BUFSIZ);
+#else
 	    (void) setvbuf (stdout, (char *) NULL, _IOLBF, 0);
+#endif
 #endif
 
 	if (use_cvsrc)
