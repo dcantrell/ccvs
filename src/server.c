@@ -3693,33 +3693,56 @@ error ENOMEM Virtual memory exhausted.\n");
 	if (temp_dir == NULL || temp_dir[0] == '\0')
 	    temp_dir = "/tmp";
 
-	server_temp_dir = malloc (strlen (temp_dir) + 80);
-	if (server_temp_dir == NULL)
+	/* The code which wants to chdir into server_temp_dir is not set
+	   up to deal with it being a relative path.  So give an error
+	   for that case.  */
+	if (!isabsolute (temp_dir))
 	{
-	    /*
-	     * Strictly speaking, we're not supposed to output anything
-	     * now.  But we're about to exit(), give it a try.
-	     */
-	    printf ("E Fatal server error, aborting.\n\
-error ENOMEM Virtual memory exhausted.\n");
-	    exit (EXIT_FAILURE);
+	    pending_error_text = malloc (80 + strlen (temp_dir));
+	    if (pending_error_text == NULL)
+	    {
+		pending_error = ENOMEM;
+	    }
+	    else
+	    {
+		sprintf (pending_error_text,
+			 "E Value of %s for TMPDIR is not absolute", temp_dir);
+	    }
+	    /* FIXME: we would like this error to be persistent, that
+	       is, not cleared by print_pending_error.  The current client
+	       will exit as soon as it gets an error, but the protocol spec
+	       does not require a client to do so.  */
 	}
-	strcpy (server_temp_dir, temp_dir);
+	else
+	{
+	    server_temp_dir = malloc (strlen (temp_dir) + 80);
+	    if (server_temp_dir == NULL)
+	    {
+		/*
+		 * Strictly speaking, we're not supposed to output anything
+		 * now.  But we're about to exit(), give it a try.
+		 */
+		printf ("E Fatal server error, aborting.\n\
+    error ENOMEM Virtual memory exhausted.\n");
+		exit (EXIT_FAILURE);
+	    }
+	    strcpy (server_temp_dir, temp_dir);
 
-	/* Remove a trailing slash from TMPDIR if present.  */
-	p = server_temp_dir + strlen (server_temp_dir) - 1;
-	if (*p == '/')
-	    *p = '\0';
+	    /* Remove a trailing slash from TMPDIR if present.  */
+	    p = server_temp_dir + strlen (server_temp_dir) - 1;
+	    if (*p == '/')
+		*p = '\0';
 
-	/*
-	 * I wanted to use cvs-serv/PID, but then you have to worry about
-	 * the permissions on the cvs-serv directory being right.  So
-	 * use cvs-servPID.
-	 */
-	strcat (server_temp_dir, "/cvs-serv");
+	    /*
+	     * I wanted to use cvs-serv/PID, but then you have to worry about
+	     * the permissions on the cvs-serv directory being right.  So
+	     * use cvs-servPID.
+	     */
+	    strcat (server_temp_dir, "/cvs-serv");
 
-	p = server_temp_dir + strlen (server_temp_dir);
-	sprintf (p, "%ld", (long) getpid ());
+	    p = server_temp_dir + strlen (server_temp_dir);
+	    sprintf (p, "%ld", (long) getpid ());
+	}
     }
 
     (void) SIG_register (SIGHUP, server_cleanup);
