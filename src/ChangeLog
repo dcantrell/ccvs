@@ -1,3 +1,11 @@
+1998-08-14  Jim Meyering  <meyering@ascend.com>
+
+	* sanity.sh (rcsmerge-symlink-4): Don't use `test -L' it's not portable.
+	Instead, match against the output of `ls -l'.
+	(dotest tag8k-16): Simply tag-construction code and at the same
+	time, avoid using expr's `length' and `substr' operators.  Not
+	all versions of expr support those.
+
 1998-08-14  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* version.c: Bump version number to 1.10.0.1.
@@ -71,14 +79,14 @@ Sun Jul 26 05:14:41 1998  Noel Cragg  <noel@swish.red-bean.com>
  	does not create CVS directories at top-level (except for the
  	obvious "cvs co .").  Added a new configuration option to switch
  	between 1.9 and 1.9.2 behavior.
-	
+
 	* recurse.c (do_argument_proc): new function.
 	(start_recursion): in the case that we've done a command from
  	top-level but have no CVS directory there, the behavior should be
  	the same as "cvs <cmd> dir1 dir2 dir3...".  Make sure that the
  	appropriate "Argument" commands are sent to the server by calling
  	walklist with do_argument_proc.
- 
+
 	* client.c (call_in_directory): only create the top-level CVS
  	directory when we're checking out "." explicitly.  The server will
  	force creation of this directory in all other cases.
