@@ -7067,6 +7067,8 @@ collection of source directories and files, or paths to
 directories or files in the repository.  The symbolic
 names are defined in the @samp{modules} file.
 @xref{modules}.
+@c Needs an example, particularly of the non-"modules"
+@c case but probably of both.
 
 Depending on the modules you specify, @code{checkout} may
 recursively create directories and populate them with
