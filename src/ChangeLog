@@ -1,5 +1,7 @@
 Sun Sep  7 07:45:35 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* sanity.sh: Add comment about default value for TESTDIR.
+
 	* server.c (serve_log): Change "cvslog" to "log".  This
 	(accidental, I presume) error had made it impossible for anonymous
 	users to run "cvs log".
