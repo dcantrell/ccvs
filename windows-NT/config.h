@@ -154,6 +154,9 @@
    this function in the code anyway, hmm.  */
 #undef HAVE_TIMEZONE
 
+/* Define if you have the usleep function.  */
+#define HAVE_USLEEP 1
+
 /* Define if you have the vfork function.  */
 #undef HAVE_VFORK
 
@@ -255,6 +258,8 @@ extern pid_t getpid (void);
 
 /* This is just a call to the Win32 Sleep function.  */
 unsigned int sleep (unsigned int);
+/* So is this */
+int usleep (unsigned long);
 
 /* Don't worry, Microsoft, it's okay for these functions to
    be in our namespace.  */
