@@ -1,5 +1,15 @@
 2004-02-19  Derek Price  <derek@ximbiot.com>
 
+	* sanity.sh (crerepos): Don't create directories named `tmp' in
+	$TESTDIR to avoid conflicts with the default value of $TMPDIR.
+
+2004-02-19  Derek Price  <derek@ximbiot.com>
+
+	* sanity.sh (directory_cmp): Use $TESTDIR for temporary files, like the
+	dotest functions.
+
+2004-02-19  Derek Price  <derek@ximbiot.com>
+
 	* sanity.sh: No longer allow user override of $tmp.  Set $TMPDIR to a
 	directory under $TESTDIR, as for $HOME, but still allowing for user
 	override.  Check for cvs-serv* directories under $TMPDIR rather than
