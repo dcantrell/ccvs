@@ -79,6 +79,7 @@
 
 .\getopt.c : \
 	"..\windows-NT\config.h"\
+	"..\windows-NT\unistd.h"\
 	".\getopt.h"\
 	".\getopt_int.h"\
 	".\gettext.h"\
@@ -86,6 +87,7 @@
 
 .\getopt1.c : \
 	"..\windows-NT\config.h"\
+	"..\windows-NT\unistd.h"\
 	".\getopt.h"\
 	".\getopt_int.h"\
 	
@@ -236,9 +238,10 @@
 
 .\xgethostname.c : \
 	"..\windows-NT\config.h"\
-	".\xgethostname.h"\
+	"..\windows-NT\unistd.h"\
 	".\xalloc.h"\
-
+	".\xgethostname.h"\
+	
 
 .\xmalloc.c : \
 	"..\windows-NT\config.h"\
