@@ -1,3 +1,9 @@
+Wed Apr 10 14:55:10 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* checkout.c (build_dirs_and_chdir): Pass path, not cp, to
+	Create_Admin.  The former is the correct update dir.
+	* sanity.sh (modules): New tests modules-155* test, for above fix.
+
 Mon Apr  8 13:53:27 1996  Samuel Tardieu  <sam@inf.enst.fr>
 
 	* rcs.c (annotate_fileproc): If the file is not under CVS control,
