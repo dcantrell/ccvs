@@ -1,3 +1,16 @@
+2002-09-23  Jim Meyering  <meyering@lucent.com>
+
+	If `cvs -d REPO commit ...' was used to override CVS/Root,
+	then modified files in the directory from which cvs is invoked
+	would not be committed.
+	* client.c (arg_should_not_be_sent_to_server): The above would happen
+	because this function would throw out a file name when CVS/Root
+	did not match the current server.  Fix by allowing the command-line-
+	specified repository to take precedence over the value returned
+	by Name_Root.  Patch by Simon Walton <simonw@lucent.com>.
+	* sanity.sh (commit-d): New tests for the above.
+	Patch by Simon Walton <simonw@lucent.com>.
+
 2002-09-20  Derek Price  <derek@ximbiot.com>
 
 	* options.h: Move definition of SERVER_FLOWCONTROL, SERVER_HI_WATER,

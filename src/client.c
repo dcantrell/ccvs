@@ -247,7 +247,8 @@ arg_should_not_be_sent_to_server (arg)
 	{
 	    /* We're at the beginning of the string.  Look at the
                CVSADM files in cwd.  */
-	    this_root = Name_Root ((char *) NULL, (char *) NULL);
+	    this_root = (CVSroot_cmdline ? xstrdup(CVSroot_cmdline)
+			 : Name_Root ((char *) NULL, (char *) NULL));
 	}
 
 	/* Now check the value for root. */
