@@ -247,8 +247,8 @@ find_fileproc (callerdat, finfo)
 	if (vers->ts_user == NULL)
 	    error (0, 0, "nothing known about `%s'", finfo->fullname);
 	else
-	    error (0, 0, "use `cvs add' to create an entry for %s",
-		   finfo->fullname);
+	    error (0, 0, "use `%s add' to create an entry for %s",
+		   program_name, finfo->fullname);
 	return 1;
     }
     else if (vers->ts_user != NULL

@@ -620,14 +620,14 @@ Directory ${TESTDIR}/cvsroot/first-dir/sdir added to the repository"
 	  # that I consider to be more correct, but local cvs prints the
 	  # "nothing known" message and noone has gotten around to fixing it.
 	  dotest_fail basica-notadded "${testcvs} -q ci ssfile" \
-"${PROG} [a-z]*: use "'`cvs add'\'' to create an entry for ssfile
-'"${PROG}"' \[[a-z]* aborted\]: correct above errors first!' \
+"${PROG} [a-z]*: use .${PROG} add. to create an entry for ssfile
+${PROG}"' \[[a-z]* aborted\]: correct above errors first!' \
 "${PROG}"' [a-z]*: nothing known about `ssfile'\''
 '"${PROG}"' \[[a-z]* aborted\]: correct above errors first!'
 
 	  dotest basica-4 "${testcvs} add ssfile" \
 "${PROG}"' [a-z]*: scheduling file `ssfile'\'' for addition
-'"${PROG}"' [a-z]*: use '\''cvs commit'\'' to add this file permanently'
+'"${PROG}"' [a-z]*: use .'"${PROG}"' commit. to add this file permanently'
 	  dotest_fail basica-4a "${testcvs} tag tag0 ssfile" \
 "${PROG} [a-z]*: nothing known about ssfile
 ${PROG} "'\[[a-z]* aborted\]: correct the above errors first!'
@@ -740,7 +740,7 @@ diff -r1\.2 -r1\.3"
 	  touch topfile
 	  dotest basicb-0b "${testcvs} add topfile" \
 "${PROG} [a-z]*: scheduling file .topfile. for addition
-${PROG} [a-z]*: use .cvs commit. to add this file permanently"
+${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
 	  dotest basicb-0c "${testcvs} -q ci -m add-it topfile" \
 "RCS file: ${TESTDIR}/cvsroot/topfile,v
 done
@@ -778,9 +778,9 @@ Directory ${TESTDIR}/cvsroot/first-dir/sdir2 added to the repository"
 	  echo sfile1 starts >sfile1
 	  dotest basicb-2a10 "${testcvs} -n add sfile1" \
 "${PROG} [a-z]*: scheduling file .sfile1. for addition
-${PROG} [a-z]*: use .cvs commit. to add this file permanently"
+${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
 	  dotest basicb-2a11 "${testcvs} status sfile1" \
-"${PROG} [a-z]*: use .cvs add' to create an entry for sfile1
+"${PROG} [a-z]*: use .${PROG} add. to create an entry for sfile1
 ===================================================================
 File: sfile1           	Status: Unknown
 
@@ -788,7 +788,7 @@ File: sfile1           	Status: Unknown
    Repository revision:	No revision control file"
 	  dotest basicb-3 "${testcvs} add sfile1" \
 "${PROG} [a-z]*: scheduling file .sfile1. for addition
-${PROG} [a-z]*: use .cvs commit. to add this file permanently"
+${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
 	  dotest basicb-3a1 "${testcvs} status sfile1" \
 "===================================================================
 File: sfile1           	Status: Locally Added
@@ -803,7 +803,7 @@ File: sfile1           	Status: Locally Added
 	  echo sfile2 starts >sfile2
 	  dotest basicb-4 "${testcvs} add sfile2" \
 "${PROG} [a-z]*: scheduling file .sfile2. for addition
-${PROG} [a-z]*: use .cvs commit. to add this file permanently"
+${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
 	  dotest basicb-4a "${testcvs} -q ci CVS" \
 "${PROG} [a-z]*: warning: directory CVS specified in argument
 ${PROG} [a-z]*: but CVS uses CVS for its own purposes; skipping CVS directory"
@@ -891,7 +891,7 @@ U sub1/sub2/sdir2/sfile2"
 	  touch aa
 	  dotest basicb-16 "${testcvs} add aa" \
 "${PROG} [a-z]*: scheduling file .aa. for addition
-${PROG} [a-z]*: use .cvs commit. to add this file permanently"
+${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
 	  dotest basicb-17 "${testcvs} -q ci -m add" \
 "RCS file: ${TESTDIR}/cvsroot/second-dir/aa,v
 done
@@ -919,7 +919,7 @@ U test2/second-dir/aa"
 	  # Right?
 	  dotest basicb-19 "${testcvs} add emptyfile" \
 "${PROG} [a-z]*: scheduling file .emptyfile. for addition
-${PROG} [a-z]*: use .cvs commit. to add this file permanently"
+${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
 	  dotest basicb-20 "${testcvs} -q ci -m add" \
 "RCS file: ${TESTDIR}/cvsroot/CVSROOT/Emptydir/emptyfile,v
 done
@@ -1019,7 +1019,7 @@ ${PROG} [a-z]*: Updating second-dir"
 ${PROG} [a-z]*: scheduling file \`file3' for addition
 ${PROG} [a-z]*: scheduling file \`file4' for addition
 ${PROG} [a-z]*: scheduling file \`file5' for addition
-${PROG} [a-z]*: use 'cvs commit' to add these files permanently"
+${PROG} [a-z]*: use .${PROG} commit. to add these files permanently"
 	  dotest basic1-15-add-add \
 "${testcvs} -q update file2 file3 file4 file5" \
 "A file2
@@ -1389,7 +1389,7 @@ done"
 	    echo file1 >file1
 	    dotest deep-3-$i "${testcvs} add file1" \
 "${PROG}"' [a-z]*: scheduling file `file1'\'' for addition
-'"${PROG}"' [a-z]*: use '\''cvs commit'\'' to add this file permanently'
+'"${PROG}"' [a-z]*: use .'"${PROG}"' commit. to add this file permanently'
 	  done
 	  cd ../../../../../../../../..
 	  dotest_lit deep-4 "${testcvs} -q ci -m add-them first-dir" <<HERE
@@ -1926,7 +1926,7 @@ done"
 		dotest rdiff-4 \
 		  "${testcvs} add -m new-file-description new" \
 "${PROG} [a-z]*: scheduling file \`new' for addition
-${PROG} [a-z]*: use 'cvs commit' to add this file permanently"
+${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
 		dotest rdiff-5 \
 		  "${testcvs} commit -m added-new-file new" \
 "RCS file: ${TESTDIR}/cvsroot/trdiff/new,v
@@ -2022,7 +2022,7 @@ diff -c /dev/null trdiff/new:1\.1
 		echo file in subdir >sfile
 		dotest 65a1 "${testcvs} add sfile" \
 "${PROG}"' [a-z]*: scheduling file `sfile'\'' for addition
-'"${PROG}"' [a-z]*: use '\''cvs commit'\'' to add this file permanently'
+'"${PROG}"' [a-z]*: use .'"${PROG}"' commit. to add this file permanently'
 		dotest 65a2 "${testcvs} -q ci -m add-it" \
 "RCS file: ${TESTDIR}/cvsroot/first-dir/subdir/sfile,v
 done
@@ -2033,7 +2033,7 @@ done"
 		rm sfile
 		dotest 65a3 "${testcvs} rm sfile" \
 "${PROG}"' [a-z]*: scheduling `sfile'\'' for removal
-'"${PROG}"' [a-z]*: use '\'"${PROG}"' commit'\'' to remove this file permanently'
+'"${PROG}"' [a-z]*: use .'"${PROG}"' commit. to remove this file permanently'
 		dotest 65a4 "${testcvs} -q ci -m remove-it" \
 "Removing sfile;
 ${TESTDIR}/cvsroot/first-dir/subdir/sfile,v  <--  sfile
@@ -2108,7 +2108,7 @@ done"
 		echo file4 > file4
 		dotest death-file4-add "${testcvs} add file4" \
 "${PROG}"' [a-z]*: scheduling file `file4'\'' for addition
-'"${PROG}"' [a-z]*: use '\''cvs commit'\'' to add this file permanently'
+'"${PROG}"' [a-z]*: use .'"${PROG}"' commit. to add this file permanently'
 		dotest death-file4-ciadd "${testcvs} -q ci -m add file4" \
 "RCS file: ${TESTDIR}/cvsroot/first-dir/file4,v
 done
@@ -2119,7 +2119,7 @@ done"
 		rm file4
 		dotest death-file4-rm "${testcvs} remove file4" \
 "${PROG}"' [a-z]*: scheduling `file4'\'' for removal
-'"${PROG}"' [a-z]*: use '\'"${PROG}"' commit'\'' to remove this file permanently'
+'"${PROG}"' [a-z]*: use .'"${PROG}"' commit. to remove this file permanently'
 		dotest death-file4-cirm "${testcvs} -q ci -m remove file4" \
 "Removing file4;
 ${TESTDIR}/cvsroot/first-dir/file4,v  <--  file4
@@ -2386,7 +2386,7 @@ U first-dir/file3'
 	  echo "first revision" > file1
 	  dotest death2-2 "${testcvs} add file1" \
 "${PROG}"' [a-z]*: scheduling file `file1'\'' for addition
-'"${PROG}"' [a-z]*: use '\''cvs commit'\'' to add this file permanently'
+'"${PROG}"' [a-z]*: use .'"${PROG}"' commit. to add this file permanently'
 
 	  dotest death2-3 "${testcvs} -q commit -m add" \
 "RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
@@ -2485,7 +2485,7 @@ diff -c first-dir/file1:1\.1 first-dir/file1:removed
 	  echo "second revision" > file1
 	  dotest death2-9 "${testcvs} add file1" \
 "${PROG}"' [a-z]*: file `file1'\'' will be added on branch `branch'\'' from version 1\.1\.2\.1
-'"${PROG}"' [a-z]*: use '\''cvs commit'\'' to add this file permanently'
+'"${PROG}"' [a-z]*: use .'"${PROG}"' commit. to add this file permanently'
 
 	  # Test diff of the added file before it is committed.
 	  dotest_fail death2-diff-7 "${testcvs} -q diff file1" \
@@ -2516,7 +2516,7 @@ done"
 	  echo "first revision" > file2
 	  dotest death2-12 "${testcvs} add file2" \
 "${PROG}"' [a-z]*: scheduling file `file2'\'' for addition
-'"${PROG}"' [a-z]*: use '\''cvs commit'\'' to add this file permanently'
+'"${PROG}"' [a-z]*: use .'"${PROG}"' commit. to add this file permanently'
 	  dotest death2-13 "${testcvs} -q commit -m add" \
 "RCS file: ${TESTDIR}/cvsroot/first-dir/file2,v
 done
@@ -2539,7 +2539,7 @@ ${PROG} [a-z]*: file2 is no longer in the repository"
 	  echo "branch revision" > file2
 	  dotest death2-15 "${testcvs} add file2" \
 "${PROG}"' [a-z]*: scheduling file `file2'\'' for addition on branch `branch'\''
-'"${PROG}"' [a-z]*: use '\''cvs commit'\'' to add this file permanently'
+'"${PROG}"' [a-z]*: use .'"${PROG}"' commit. to add this file permanently'
 	  dotest death2-16 "${testcvs} -q commit -m add" \
 "Checking in file2;
 ${TESTDIR}/cvsroot/first-dir/file2,v  <--  file2
@@ -2550,7 +2550,7 @@ done"
 	  echo "first revision" > file3
 	  dotest death2-17 "${testcvs} add file3" \
 "${PROG}"' [a-z]*: scheduling file `file3'\'' for addition on branch `branch'\''
-'"${PROG}"' [a-z]*: use '\''cvs commit'\'' to add this file permanently'
+'"${PROG}"' [a-z]*: use .'"${PROG}"' commit. to add this file permanently'
 	  dotest death2-18 "${testcvs} -q commit -m add" \
 "RCS file: ${TESTDIR}/cvsroot/first-dir/Attic/file3,v
 done
@@ -2671,7 +2671,7 @@ ${PLUS} first revision"
 '"${PROG}"' [a-z]*: scheduling file `file2'\'' for addition
 '"${PROG}"' [a-z]*: scheduling file `file3'\'' for addition
 '"${PROG}"' [a-z]*: scheduling file `file4'\'' for addition
-'"${PROG}"' [a-z]*: use '\''cvs commit'\'' to add these files permanently'
+'"${PROG}"' [a-z]*: use .'"${PROG}"' commit. to add these files permanently'
 	  dotest_lit branches-3 "${testcvs} -q ci -m add-it" <<HERE
 RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
 done
@@ -2881,7 +2881,7 @@ rcsmerge: warning: conflicts during merge"
 	  echo "I am the first foo, and my name is $""Name$." > foo.c
 	  dotest rcsdiff-2 "${testcvs} add -m new-file foo.c" \
 "${PROG} [a-z]*: scheduling file .foo\.c. for addition
-${PROG} [a-z]*: use .cvs commit. to add this file permanently"
+${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
 	  dotest rcsdiff-3 "${testcvs} commit -m rev1 foo.c" \
 "RCS file: ${TESTDIR}/cvsroot/first-dir/foo\.c,v
 done
@@ -2956,7 +2956,7 @@ grumble;
 EOF
 
 	  dotest rcslib-diffrgx-1 "${testcvs} -q add -m '' rgx.c" \
-"${PROG} [a-z]*: use .cvs commit. to add this file permanently"
+"${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
 	  dotest rcslib-diffrgx-2 "${testcvs} -q ci -m '' rgx.c" \
 "RCS file: ${TESTDIR}/cvsroot/first-dir/rgx\.c,v
 done
@@ -3020,7 +3020,7 @@ diff -c -F\.\*( -r1\.1 rgx\.c
 	  echo '2' >> file1
 	  echo '3' >> file1
 	  dotest rcslib-merge-4 "${testcvs} -q add file1" \
-"${PROG} [a-z]*: use .cvs commit. to add this file permanently"
+"${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
 	  dotest rcslib-merge-5 "${testcvs} -q commit -m '' file1" \
 "RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
 done
@@ -3093,7 +3093,7 @@ two
 	  echo 1:trunk-1 >file1
 	  dotest multibranch-2 "${testcvs} add file1" \
 "${PROG}"' [a-z]*: scheduling file `file1'\'' for addition
-'"${PROG}"' [a-z]*: use '\''cvs commit'\'' to add this file permanently'
+'"${PROG}"' [a-z]*: use .'"${PROG}"' commit. to add this file permanently'
 	  dotest_lit multibranch-3 "${testcvs} -q ci -m add-it" <<HERE
 RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
 done
@@ -3423,7 +3423,7 @@ C first-dir/file2
 2 conflicts created by this import.
 Use the following command to help the merge:
 
-	cvs checkout -jfreemunger:yesterday -jfreemunger first-dir"
+	${PROG} checkout -jfreemunger:yesterday -jfreemunger first-dir"
 	  cd ..
 	  rm -r imp-dir
 
@@ -3572,7 +3572,7 @@ add
 '"${PROG}"' [a-z]*: scheduling file `file4'\'' for addition
 '"${PROG}"' [a-z]*: scheduling file `file6'\'' for addition
 '"${PROG}"' [a-z]*: scheduling file `file8'\'' for addition
-'"${PROG}"' [a-z]*: use '\''cvs commit'\'' to add these files permanently'
+'"${PROG}"' [a-z]*: use .'"${PROG}"' commit. to add these files permanently'
 
 	  dotest join-3 "${testcvs} -q commit -m add" \
 "RCS file: ${TESTDIR}/cvsroot/first-dir/file3,v
@@ -3615,11 +3615,11 @@ T file8'
 	  dotest join-5 "${testcvs} add file2 file7" \
 "${PROG}"' [a-z]*: scheduling file `file2'\'' for addition
 '"${PROG}"' [a-z]*: scheduling file `file7'\'' for addition
-'"${PROG}"' [a-z]*: use '\''cvs commit'\'' to add these files permanently'
+'"${PROG}"' [a-z]*: use .'"${PROG}"' commit. to add these files permanently'
 	  dotest join-6 "${testcvs} rm file6 file8" \
 "${PROG}"' [a-z]*: scheduling `file6'\'' for removal
 '"${PROG}"' [a-z]*: scheduling `file8'\'' for removal
-'"${PROG}"' [a-z]*: use '\'"${PROG} commit"\'' to remove these files permanently'
+'"${PROG}"' [a-z]*: use .'"${PROG}"' commit. to remove these files permanently'
 	  dotest join-7 "${testcvs} -q ci -mx ." \
 "RCS file: ${TESTDIR}/cvsroot/first-dir/file2,v
 done
@@ -3666,7 +3666,7 @@ U first-dir/file8'
 	  echo 'first branch revision of file5' > file5
 	  dotest join-9 "${testcvs} add file5" \
 "${PROG}"' [a-z]*: scheduling file `file5'\'' for addition on branch `branch'\''
-'"${PROG}"' [a-z]*: use '\''cvs commit'\'' to add this file permanently'
+'"${PROG}"' [a-z]*: use .'"${PROG}"' commit. to add this file permanently'
 	  dotest join-10 "${testcvs} -q ci -mx ." \
 "Checking in file3;
 ${TESTDIR}/cvsroot/first-dir/file3,v  <--  file3
@@ -3702,13 +3702,13 @@ T file8'
 	  dotest join-12 "${testcvs} add file1 file2" \
 "${PROG}"' [a-z]*: scheduling file `file1'\'' for addition on branch `branch'\''
 '"${PROG}"' [a-z]*: scheduling file `file2'\'' for addition on branch `branch'\''
-'"${PROG}"' [a-z]*: use '\''cvs commit'\'' to add these files permanently'
+'"${PROG}"' [a-z]*: use .'"${PROG}"' commit. to add these files permanently'
 	  dotest join-13 "${testcvs} rm file3 file4 file5 file6" \
 "${PROG}"' [a-z]*: scheduling `file3'\'' for removal
 '"${PROG}"' [a-z]*: scheduling `file4'\'' for removal
 '"${PROG}"' [a-z]*: scheduling `file5'\'' for removal
 '"${PROG}"' [a-z]*: scheduling `file6'\'' for removal
-'"${PROG}"' [a-z]*: use '\'"${PROG} commit"\'' to remove these files permanently'
+'"${PROG}"' [a-z]*: use .'"${PROG}"' commit. to remove these files permanently'
 	  dotest join-14 "${testcvs} -q ci -mx ." \
 "RCS file: ${TESTDIR}/cvsroot/first-dir/Attic/file1,v
 done
@@ -3902,7 +3902,7 @@ A file8"
 	  echo 'initial contents of file1' >file1
 	  dotest join2-3 "${testcvs} add file1" \
 "${PROG} [a-z]*: scheduling file .file1. for addition
-${PROG} [a-z]*: use .cvs commit. to add this file permanently"
+${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
 	  dotest join2-4 "${testcvs} -q ci -m add" \
 "RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
 done
@@ -3916,7 +3916,7 @@ done"
 	  touch bradd
 	  dotest join2-6a "${testcvs} add bradd" \
 "${PROG} [a-z]*: scheduling file .bradd. for addition on branch .br1.
-${PROG} [a-z]*: use .cvs commit. to add this file permanently"
+${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
 	  dotest join2-7 "${testcvs} -q ci -m modify" \
 "RCS file: ${TESTDIR}/cvsroot/first-dir/Attic/bradd,v
 done
@@ -4019,7 +4019,7 @@ done"
 	  echo 'initial contents of file1' >file1
 	  dotest join3-3 "${testcvs} add file1" \
 "${PROG} [a-z]*: scheduling file .file1. for addition
-${PROG} [a-z]*: use .cvs commit. to add this file permanently"
+${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
 	  dotest join3-4 "${testcvs} -q ci -m add" \
 "RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
 done
@@ -4043,7 +4043,7 @@ done"
 	  echo 'trunk:line1' > file2
 	  dotest join3-8a "${testcvs} add file2" \
 "${PROG} [a-z]*: scheduling file .file2. for addition
-${PROG} [a-z]*: use .cvs commit. to add this file permanently"
+${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
 	  echo 'trunk:line1' >>file1
 	  dotest join3-9 "${testcvs} -q ci -m modify" \
 "Checking in file1;
@@ -4184,7 +4184,7 @@ br2:line1
 	  touch a
 	  dotest newb-123b "${testcvs} add a" \
 "${PROG} [a-z]*: scheduling file .a. for addition
-${PROG} [a-z]*: use .cvs commit. to add this file permanently"
+${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
 	  dotest newb-123c "${testcvs} -q ci -m added" \
 "RCS file: ${TESTDIR}/cvsroot/first-dir/a,v
 done
@@ -4279,7 +4279,7 @@ File: a                	Status: Needs Checkout
 
 		dotest conflicts-125 "${testcvs} add a" \
 "${PROG} [a-z]*: scheduling file .a. for addition
-${PROG} [a-z]*: use .cvs commit. to add this file permanently"
+${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
 		dotest conflicts-126 "${testcvs} -q ci -m added" \
 "RCS file: ${TESTDIR}/cvsroot/first-dir/a,v
 done
@@ -4527,7 +4527,7 @@ File: a                	Status: Up-to-date
 	  dotest conflicts2-142a2 "${testcvs} add a abc" \
 "${PROG} [a-z]*: scheduling file .a. for addition
 ${PROG} [a-z]*: scheduling file .abc. for addition
-${PROG} [a-z]*: use .cvs commit. to add these files permanently"
+${PROG} [a-z]*: use .${PROG} commit. to add these files permanently"
 	  dotest conflicts2-142a3 "${testcvs} -q ci -m added" \
 "RCS file: ${TESTDIR}/cvsroot/first-dir/a,v
 done
@@ -4605,7 +4605,7 @@ ${PROG} [a-z]*: use .${PROG} commit. to remove this file permanently"
 	  dotest conflicts2-142d0 "${testcvs} add aa.c same.c" \
 "${PROG} [a-z]*: scheduling file .aa\.c. for addition
 ${PROG} [a-z]*: scheduling file .same\.c. for addition
-${PROG} [a-z]*: use .cvs commit. to add these files permanently"
+${PROG} [a-z]*: use .${PROG} commit. to add these files permanently"
 	  dotest conflicts2-142d1 "${testcvs} -q ci -m added" \
 "RCS file: ${TESTDIR}/cvsroot/first-dir/aa\.c,v
 done
@@ -5060,7 +5060,7 @@ U first-dir/subdir/b"
 	  dotest modules-155c2 "${testcvs} add file1 file2" \
 "${PROG}"' [a-z]*: scheduling file `file1'\'' for addition
 '"${PROG}"' [a-z]*: scheduling file `file2'\'' for addition
-'"${PROG}"' [a-z]*: use '\''cvs commit'\'' to add these files permanently'
+'"${PROG}"' [a-z]*: use .'"${PROG}"' commit. to add these files permanently'
 	  dotest modules-155c3 "${testcvs} -q ci -m add-it" \
 "RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
 done
@@ -5170,7 +5170,7 @@ ${PROG} \[[a-z]* aborted\]: cannot expand modules"
 	  echo file1 >file1
 	  dotest modules3-2 "${testcvs} add file1" \
 "${PROG}"' [a-z]*: scheduling file `file1'\'' for addition
-'"${PROG}"' [a-z]*: use '\''cvs commit'\'' to add this file permanently'
+'"${PROG}"' [a-z]*: use .'"${PROG}"' commit. to add this file permanently'
 	  dotest modules3-3 "${testcvs} -q ci -m add-it" \
 "RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
 done
@@ -5243,7 +5243,7 @@ ${PROG} [a-z]*: Updating second-dir/suba/subb" \
 	  touch fileb
 	  dotest modules3-7c "${testcvs} add fileb" \
 "${PROG} [a-z]*: scheduling file .fileb. for addition
-${PROG} [a-z]*: use .cvs commit. to add this file permanently"
+${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
 	  dotest modules3-7d "${testcvs} -q ci -m add-it" \
 "RCS file: ${TESTDIR}/cvsroot/second-dir/suba/subb/fileb,v
 done
@@ -5429,7 +5429,7 @@ EOF
 	  dotest editor-3 "${testcvs} add file1 file2" \
 "${PROG} [a-z]*: scheduling file .file1. for addition
 ${PROG} [a-z]*: scheduling file .file2. for addition
-${PROG} [a-z]*: use .cvs commit. to add these files permanently"
+${PROG} [a-z]*: use .${PROG} commit. to add these files permanently"
 	  dotest editor-4 "${testcvs} -e ${TESTDIR}/editme -q ci" \
 "RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
 done
@@ -5632,15 +5632,14 @@ xCVS: ----------------------------------------------------------------------
 	  fi
 
 	  cd ../../2/1dir
-	  # FIXME: should be using dotest and PROG.
+	  # FIXME: should be using dotest.
 	  ${testcvs} -q update 2>../tst167.err
-	  CVSBASE=`basename $testcvs`	# Get basename of CVS executable.
 	  cat <<EOF >../tst167.ans
-$CVSBASE server: warning: foo is not (any longer) pertinent
-$CVSBASE update: unable to remove ./foo: Permission denied
+${PROG} server: warning: foo is not (any longer) pertinent
+${PROG} update: unable to remove ./foo: Permission denied
 EOF
 	  if cmp ../tst167.ans ../tst167.err >/dev/null ||
-	  ( echo "$CVSBASE [update aborted]: cannot rename file foo to CVS/,,foo: Permission denied" | cmp - ../tst167.err >/dev/null )
+	  ( echo "${PROG} [update aborted]: cannot rename file foo to CVS/,,foo: Permission denied" | cmp - ../tst167.err >/dev/null )
 	  then
 	    echo 'PASS: test 168' >>${LOGFILE}
 	  else
@@ -5681,7 +5680,7 @@ EOF
 	  dotest_fail errmsg2-4 "${testcvs} add CVS file1" \
 "${PROG} [a-z]*: cannot add special file .CVS.; skipping
 ${PROG} [a-z]*: scheduling file .file1. for addition
-${PROG} [a-z]*: use .cvs commit. to add this file permanently"
+${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
 	  # I'm not sure these tests completely convey the various strange
 	  # behaviors that CVS had before it specially checked for "." and
 	  # "..".  Suffice it to say that these are unlikely to work right
@@ -5711,7 +5710,7 @@ done"
 	  dotest errmsg2-10 "${testcvs} add file10 sdir10" \
 "${PROG} [a-z]*: scheduling file .file10. for addition
 Directory ${TESTDIR}/cvsroot/first-dir/sdir10 added to the repository
-${PROG} [a-z]*: use .cvs commit. to add this file permanently"
+${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
 	  dotest errmsg2-11 "${testcvs} -q ci -m add-file10" \
 "RCS file: ${TESTDIR}/cvsroot/first-dir/file10,v
 done
@@ -5734,11 +5733,11 @@ done"
 	  dotest errmsg2-14 \
 	    "${testcvs} add first-dir/sdir10/ssdir/ssfile" \
 "${PROG} [a-z]*: scheduling file .first-dir/sdir10/ssdir/ssfile. for addition
-${PROG} [a-z]*: use .cvs commit. to add this file permanently"
+${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
 	  touch first-dir/file15
 	  dotest errmsg2-15 "${testcvs} add first-dir/file15" \
 "${PROG} [a-z]*: scheduling file .first-dir/file15. for addition
-${PROG} [a-z]*: use .cvs commit. to add this file permanently"
+${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
 
 	  # Now the case where we try to give it a directory which is not
 	  # under CVS control.
@@ -5750,7 +5749,7 @@ ${PROG} [a-z]*: use .cvs commit. to add this file permanently"
 	  # error message.
 	  dotest_fail errmsg2-16 "${testcvs} add bogus-dir/file16" \
 "${PROG} [a-z]*: in directory bogus-dir:
-${PROG} \[[a-z]* aborted\]: there is no version here; do .cvs checkout. first" \
+${PROG} \[[a-z]* aborted\]: there is no version here; do .${PROG} checkout. first" \
 "${PROG} [a-z]*: cannot open CVS/Entries for reading: No such file or directory
 ${PROG} \[add aborted\]: no repository"
 	  rm -r bogus-dir
@@ -6147,7 +6146,7 @@ G@#..!@#=&"
 	  touch file1
 	  dotest watch4-2 "${testcvs} add file1" \
 "${PROG} [a-z]*: scheduling file .file1. for addition
-${PROG} [a-z]*: use .cvs commit. to add this file permanently"
+${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
 	  dotest watch4-3 "${testcvs} -q ci -m add" \
 "RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
 done
@@ -6163,7 +6162,7 @@ done"
 	  touch sfile
 	  dotest watch4-5 "${testcvs} add sfile" \
 "${PROG} [a-z]*: scheduling file .sfile. for addition
-${PROG} [a-z]*: use .cvs commit. to add this file permanently"
+${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
 	  dotest watch4-6 "${testcvs} -q ci -m add" \
 "RCS file: ${TESTDIR}/cvsroot/first-dir/subdir/sfile,v
 done
@@ -6229,7 +6228,7 @@ C file1"
 	  cd CVSROOT
 	  echo rootig.c >cvsignore
 	  dotest 187a2 "${testcvs} add cvsignore" "${PROG}"' [a-z]*: scheduling file `cvsignore'"'"' for addition
-'"${PROG}"' [a-z]*: use '"'"'cvs commit'"'"' to add this file permanently'
+'"${PROG}"' [a-z]*: use .'"${PROG}"' commit. to add this file permanently'
 
 	  # As of Jan 96, local CVS prints "Examining ." and remote doesn't.
 	  # Accept either.
@@ -6395,7 +6394,7 @@ Are you sure you want to release (and delete) directory .second-dir': "
 	  cp ../binfile.dat binfile
 	  dotest binfiles-2 "${testcvs} add -kb binfile" \
 "${PROG}"' [a-z]*: scheduling file `binfile'\'' for addition
-'"${PROG}"' [a-z]*: use '\''cvs commit'\'' to add this file permanently'
+'"${PROG}"' [a-z]*: use .'"${PROG}"' commit. to add this file permanently'
 	  dotest binfiles-3 "${testcvs} -q ci -m add-it" \
 "RCS file: ${TESTDIR}/cvsroot/first-dir/binfile,v
 done
@@ -6558,7 +6557,7 @@ File: binfile          	Status: Up-to-date
 	  # Do sticky options work when used with 'cvs update'?
 	  echo "Not a binary file." > nibfile
 	  dotest binfiles-sticky1 "${testcvs} -q add nibfile" \
-"${PROG} [a-z]*: use "\''cvs commit'\'' to add this file permanently'
+"${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
 	  dotest binfiles-sticky2 "${testcvs} -q ci -m add-it nibfile" \
 	    "RCS file: ${TESTDIR}/cvsroot/first-dir/nibfile,v
 done
@@ -6628,7 +6627,7 @@ File: nibfile          	Status: Up-to-date
 "${PROG} [a-z]*: scheduling file .brmod. for addition
 ${PROG} [a-z]*: scheduling file .brmod-trmod. for addition
 ${PROG} [a-z]*: scheduling file .brmod-wdmod. for addition
-${PROG} [a-z]*: use .cvs commit. to add these files permanently"
+${PROG} [a-z]*: use .${PROG} commit. to add these files permanently"
 	  dotest binfiles2-1b "${testcvs} -q ci -m add" \
 "RCS file: ${TESTDIR}/cvsroot/first-dir/brmod,v
 done
@@ -6655,7 +6654,7 @@ T brmod-wdmod'
 	  cp ../binfile binfile.dat
 	  dotest binfiles2-4 "${testcvs} add -kb binfile.dat" \
 "${PROG} [a-z]*: scheduling file .binfile\.dat. for addition on branch .br.
-${PROG} [a-z]*: use .cvs commit. to add this file permanently"
+${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
 	  cp ../binfile2 brmod
 	  cp ../binfile2 brmod-trmod
 	  cp ../binfile2 brmod-wdmod
@@ -6777,7 +6776,7 @@ done"
 ${PROG} [a-z]*: scheduling file .brmod. for addition
 ${PROG} [a-z]*: scheduling file .brmod-trmod. for addition
 ${PROG} [a-z]*: scheduling file .brmod-wdmod. for addition
-${PROG} [a-z]*: use .cvs commit. to add these files permanently"
+${PROG} [a-z]*: use .${PROG} commit. to add these files permanently"
 	  dotest mcopy-1b "${testcvs} -q ci -m add" \
 "RCS file: ${TESTDIR}/cvsroot/first-dir/\.cvswrappers,v
 done
@@ -7018,7 +7017,7 @@ ${PROG} [a-z]*: Rebuilding administrative file database"
 	  touch aa
 	  dotest mwrap-3 "${testcvs} add aa" \
 "${PROG} [a-z]*: scheduling file .aa. for addition
-${PROG} [a-z]*: use .cvs commit. to add this file permanently"
+${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
 	  dotest mwrap-4 "${testcvs} -q ci -m add" \
 "RCS file: ${TESTDIR}/cvsroot/first-dir/aa,v
 done
@@ -7087,7 +7086,7 @@ ${PROG} [a-z]*: Rebuilding administrative file database"
 	  # with "cvs init".
 	  : dotest info-2 "${testcvs} add loginfo" \
 "${PROG}"' [a-z]*: scheduling file `loginfo'"'"' for addition
-'"${PROG}"' [a-z]*: use '"'"'cvs commit'"'"' to add this file permanently'
+'"${PROG}"' [a-z]*: use .'"${PROG}"' commit. to add this file permanently'
 
 	  dotest info-3 "${testcvs} -q ci -m new-loginfo" \
 "Checking in loginfo;
@@ -7103,7 +7102,7 @@ ${PROG} [a-z]*: Rebuilding administrative file database"
 	  touch file1
 	  dotest info-6 "${testcvs} add file1" \
 "${PROG}"' [a-z]*: scheduling file `file1'\'' for addition
-'"${PROG}"' [a-z]*: use '\''cvs commit'\'' to add this file permanently'
+'"${PROG}"' [a-z]*: use .'"${PROG}"' commit. to add this file permanently'
 	  echo "cvs -s OTHER=not-this -s MYENV=env-" >>$HOME/.cvsrc
 	  dotest info-6a "${testcvs} -q -s OTHER=value ci -m add-it" \
 "RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
@@ -7262,7 +7261,7 @@ ${PROG} [a-z]*: Rebuilding administrative file database"
 	  echo '1' >> file1
 	  dotest serverpatch-2 "${testcvs} add file1" \
 "${PROG}"' [a-z]*: scheduling file `file1'\'' for addition
-'"${PROG}"' [a-z]*: use '\''cvs commit'\'' to add this file permanently'
+'"${PROG}"' [a-z]*: use .'"${PROG}"' commit. to add this file permanently'
 
 	  dotest serverpatch-3 "${testcvs} -q commit -m add" \
 "RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
@@ -7325,7 +7324,7 @@ U file1'
 	  echo 'first revision' > file1
 	  dotest log-2 "${testcvs} add file1" \
 "${PROG}"' [a-z]*: scheduling file `file1'\'' for addition
-'"${PROG}"' [a-z]*: use '\''cvs commit'\'' to add this file permanently'
+'"${PROG}"' [a-z]*: use .'"${PROG}"' commit. to add this file permanently'
 
 	  dotest log-3 "${testcvs} -q commit -m 1" \
 "RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
@@ -7547,7 +7546,7 @@ ${log_trailer}"
 	  echo 'first revision' > file1
 	  dotest log2-2 "${testcvs} add -m file1-is-for-testing file1" \
 "${PROG}"' [a-z]*: scheduling file `file1'\'' for addition
-'"${PROG}"' [a-z]*: use '\''cvs commit'\'' to add this file permanently'
+'"${PROG}"' [a-z]*: use .'"${PROG}"' commit. to add this file permanently'
 	  dotest log2-3 "${testcvs} -q commit -m 1" \
 "RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
 done
@@ -8107,7 +8106,7 @@ date: 1971/01/01 08:00:05;  author: joe;  state: Exp;  lines: ${PLUS}1 -1
 	  done
 	  dotest big-2 "${testcvs} add file1" \
 "${PROG} [a-z]*: scheduling file .file1. for addition
-${PROG} [a-z]*: use .cvs commit. to add this file permanently"
+${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
 	  dotest big-3 "${testcvs} -q ci -m add" \
 "RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
 done
@@ -8164,7 +8163,7 @@ done"
 	  touch aa
 	  dotest modes-3 "${testcvs} add aa" \
 "${PROG} [a-z]*: scheduling file .aa. for addition
-${PROG} [a-z]*: use .cvs commit. to add this file permanently"
+${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
 	  dotest modes-4 "${testcvs} -q ci -m add" \
 "RCS file: ${TESTDIR}/cvsroot/first-dir/aa,v
 done
@@ -8207,7 +8206,7 @@ done"
 	  chmod +x ab
 	  dotest modes-8 "${testcvs} add ab" \
 "${PROG} [a-z]*: scheduling file .ab. for addition
-${PROG} [a-z]*: use .cvs commit. to add this file permanently"
+${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
 	  dotest modes-9 "${testcvs} -q ci -m add" \
 "RCS file: ${TESTDIR}/cvsroot/first-dir/ab,v
 done
@@ -8234,7 +8233,7 @@ T ab'
 	  touch ac
 	  dotest modes-13 "${testcvs} add ac" \
 "${PROG} [a-z]*: scheduling file .ac. for addition on branch .br.
-${PROG} [a-z]*: use .cvs commit. to add this file permanently"
+${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
 	  # Not sure it really makes sense to refer to a "previous revision"
 	  # when we are just now adding the file; as far as I know
 	  # that is longstanding CVS behavior, for what it's worth.
@@ -8284,7 +8283,7 @@ done"
 	  dotest stamps-3 "${testcvs} add aa kw" \
 "${PROG} [a-z]*: scheduling file .aa. for addition
 ${PROG} [a-z]*: scheduling file .kw. for addition
-${PROG} [a-z]*: use .cvs commit. to add these files permanently"
+${PROG} [a-z]*: use .${PROG} commit. to add these files permanently"
 	  ls -l aa >${TESTDIR}/1/stamp.aa.add
 	  ls -l kw >${TESTDIR}/1/stamp.kw.add
 	  # "cvs add" should not muck with the timestamp.
@@ -8420,7 +8419,7 @@ done"
 	  touch file1
 	  dotest sticky-3 "${testcvs} add file1" \
 "${PROG} [a-z]*: scheduling file .file1. for addition
-${PROG} [a-z]*: use .cvs commit. to add this file permanently"
+${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
 	  dotest sticky-4 "${testcvs} -q ci -m add" \
 "RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
 done
@@ -8447,7 +8446,7 @@ ${QUESTION} file2" "${QUESTION} file2
 [UP] file1"
 	  dotest sticky-13 "${testcvs} add file2" \
 "${PROG} [a-z]*: scheduling file .file2. for addition
-${PROG} [a-z]*: use .cvs commit. to add this file permanently"
+${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
 	  dotest sticky-14 "${testcvs} -q ci -m add" \
 "RCS file: ${TESTDIR}/cvsroot/first-dir/file2,v
 done
@@ -8463,7 +8462,7 @@ ${PROG} [a-z]*: file2 is no longer in the repository"
 	  rm file1
 	  dotest sticky-16 "${testcvs} rm file1" \
 "${PROG} [a-z]*: scheduling .file1. for removal
-${PROG} [a-z]*: use .cvs commit. to remove this file permanently"
+${PROG} [a-z]*: use .${PROG} commit. to remove this file permanently"
 	  # Hmm, this command seems to silently remove the tag from
 	  # the file.  This appears to be intentional.
 	  # The silently part especially strikes me as odd, though.
@@ -8538,7 +8537,7 @@ U file1" "U file1"
 
 	  dotest keyword-3 "${testcvs} add file1" \
 "${PROG} [a-z]*: scheduling file .file1. for addition
-${PROG} [a-z]*: use .cvs commit. to add this file permanently"
+${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
 	  dotest keyword-4 "${testcvs} -q ci -m add" \
 "RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
 done
@@ -8767,7 +8766,7 @@ Directory ${TESTDIR}/cvsroot/second-dir added to the repository"
 	  touch file1
 	  dotest toplevel-3 "${testcvs} add file1" \
 "${PROG} [a-z]*: scheduling file .file1. for addition
-${PROG} [a-z]*: use .cvs commit. to add this file permanently"
+${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
 	  dotest toplevel-4 "${testcvs} -q ci -m add" \
 "RCS file: ${TESTDIR}/cvsroot/top-dir/file1,v
 done
@@ -8781,7 +8780,7 @@ done"
 	  touch file2
 	  dotest toplevel-3s "${testcvs} add file2" \
 "${PROG} [a-z]*: scheduling file .file2. for addition
-${PROG} [a-z]*: use .cvs commit. to add this file permanently"
+${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
 	  dotest toplevel-4s "${testcvs} -q ci -m add" \
 "RCS file: ${TESTDIR}/cvsroot/second-dir/file2,v
 done
@@ -9037,7 +9036,7 @@ ${PROG} \[admin aborted\]: specify ${PROG} -H admin for usage information"
 	  dotest admin-5 "${testcvs} add file1 file2" \
 "${PROG} [a-z]*: scheduling file .file1. for addition
 ${PROG} [a-z]*: scheduling file .file2. for addition
-${PROG} [a-z]*: use .cvs commit. to add these files permanently"
+${PROG} [a-z]*: use .${PROG} commit. to add these files permanently"
 	  dotest admin-6 "${testcvs} -q ci -m add" \
 "RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
 done
@@ -9372,7 +9371,7 @@ add a line on the branch
 	  touch file1
 	  dotest reserved-3 "${testcvs} add file1" \
 "${PROG} [a-z]*: scheduling file .file1. for addition
-${PROG} [a-z]*: use .cvs commit. to add this file permanently"
+${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
 	  dotest reserved-4 "${testcvs} -q ci -m add" \
 "RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
 done
