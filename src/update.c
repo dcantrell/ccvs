@@ -1664,6 +1664,16 @@ join_file (finfo, vers)
 	return;
     }
 
+    /* If the target of the merge is the same as the working file
+       revision, then there is nothing to do.  */
+    if (vers->vn_user != NULL && strcmp (rev2, vers->vn_user) == 0)
+    {
+	if (rev1 != NULL)
+	    free (rev1);
+	free (rev2);
+	return;
+    }
+
     /* If rev1 is dead or does not exist, then the file was added
        between rev1 and rev2.  */
     if (rev1 == NULL || RCS_isdead (vers->srcfile, rev1))
@@ -1739,15 +1749,6 @@ join_file (finfo, vers)
 
 	/* FIXME: Should we arrange to return a non-zero exit status?  */
 
-	return;
-    }
-
-    /* If the target of the merge is the same as the working file
-       revision, then there is nothing to do.  */
-    if (strcmp (rev2, vers->vn_user) == 0)
-    {
-	free (rev1);
-	free (rev2);
 	return;
     }
 
