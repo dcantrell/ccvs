@@ -1,5 +1,8 @@
 Thu Jul 18 18:27:40 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvsclient.texi (Responses): In F response, make at least a
+	minimal attempt to define "flush".
+
 	* cvs.texinfo (Wrappers): Document -k.
 	(From files, Binary files in imports): Say that imports can deal
 	with binary files and refer to Wrappers node for details.
