@@ -133,6 +133,8 @@ static List *lock_tree_list;
 /* LockDir from CVSROOT/config.  */
 char *lock_dir;
 
+
+
 /* Return a newly malloc'd string containing the name of the lock for the
    repository REPOSITORY and the lock file name within that directory
    NAME.  Also create the directories in which to put the lock file
@@ -503,13 +505,13 @@ Reader_Lock (char *xrepository)
     TRACE (TRACE_FUNCTION, "Reader_Lock(%s)", xrepository);
 
     if (noexec || readonlyfs)
-	return (0);
+	return 0;
 
     /* we only do one directory at a time for read locks!  */
     if (global_readlock.repository != NULL)
     {
 	error (0, 0, "Reader_Lock called while read locks set - Help!");
-	return (1);
+	return 1;
     }
 
     set_readlock_name ();
@@ -529,7 +531,7 @@ Reader_Lock (char *xrepository)
 	/* We don't set global_readlock.repository to NULL.  I think this
 	   only works because recurse.c will give a fatal error if we return
 	   a nonzero value.  */
-	return (1);
+	return 1;
     }
 
     /* write a read-lock */
@@ -582,7 +584,7 @@ lock_exists (const char *repository, const char *filepat, const char *ignore)
     int ret;
 #ifdef CVS_FUDGELOCKS
     time_t now;
-    (void) time (&now);
+    (void)time (&now);
 #endif
 
     TRACE (TRACE_FLOW, "lock_exists (%s, %s, %s)",
@@ -609,8 +611,8 @@ lock_exists (const char *repository, const char *filepat, const char *ignore)
 		    continue;
 
 		line = xmalloc (strlen (lockdir) + 1 + strlen (dp->d_name) + 1);
-		(void) sprintf (line, "%s/%s", lockdir, dp->d_name);
-		if ( CVS_STAT (line, &sb) != -1)
+		(void)sprintf (line, "%s/%s", lockdir, dp->d_name);
+		if (CVS_STAT (line, &sb) != -1)
 		{
 #ifdef CVS_FUDGELOCKS
 		    /*
@@ -652,7 +654,7 @@ lock_exists (const char *repository, const char *filepat, const char *ignore)
 
     if (lockdir != NULL)
 	free (lockdir);
-    return (ret);
+    return ret;
 }
 
 
@@ -709,8 +711,8 @@ static int lock_error;
 
 
 /*
- * Create a lock file for potential writers returns L_OK if lock set ok, L_LOCKED
- * if lock held by someone else or L_ERROR if an error occurred.
+ * Create a lock file for potential writers returns L_OK if lock set ok,
+ * L_LOCKED if lock held by someone else or L_ERROR if an error occurred.
  */
 static int
 set_promotable_lock (struct lock *lock)
@@ -816,7 +818,8 @@ set_promotable_lock (struct lock *lock)
  *   closure	Not used.
  *
  * GLOBAL INPUTS
- *   lock_error		Any previous error encountered while attempting to get a lock.
+ *   lock_error		Any previous error encountered while attempting to get
+ *                      a lock.
  *
  * GLOBAL OUTPUTS
  *   lock_error		Set if we encounter an error attempting to get axi
@@ -864,7 +867,7 @@ lock_wait (const char *repos)
        soon as possible.  */
     cvs_flusherr ();
     free (msg);
-    (void) sleep (CVSLCKSLEEP);
+    (void)sleep (CVSLCKSLEEP);
 }
 
 
@@ -978,15 +981,15 @@ set_lockers_name (struct stat *statp)
 
     if (lockers_name != NULL)
 	free (lockers_name);
-    if ((pw = (struct passwd *) getpwuid (statp->st_uid)) !=
-	(struct passwd *) NULL)
+    if ((pw = (struct passwd *)getpwuid (statp->st_uid)) !=
+	(struct passwd *)NULL)
     {
 	lockers_name = xstrdup (pw->pw_name);
     }
     else
     {
 	lockers_name = xmalloc (20);
-	(void) sprintf (lockers_name, "uid%lu", (unsigned long) statp->st_uid);
+	(void)sprintf (lockers_name, "uid%lu", (unsigned long) statp->st_uid);
     }
 }
 
@@ -1163,7 +1166,7 @@ lock_filesdoneproc (void *callerdat, int err, const char *repository,
     /* FIXME-KRP: this error condition should not simply be passed by. */
     if (p->key == NULL || addnode (lock_tree_list, p) != 0)
 	freenode (p);
-    return (err);
+    return err;
 }
 
 
@@ -1180,10 +1183,10 @@ lock_tree_promotably (int argc, char **argv, int local, int which, int aflag)
      */
     lock_tree_list = getlist ();
     start_recursion
-	( (FILEPROC) NULL, lock_filesdoneproc,
-	  (DIRENTPROC) NULL, (DIRLEAVEPROC) NULL, NULL, argc,
-	  argv, local, which, aflag, CVS_LOCK_NONE,
-	  (char *) NULL, 0, (char *) NULL );
+	(NULL, lock_filesdoneproc,
+	 NULL, NULL, NULL, argc,
+	 argv, local, which, aflag, CVS_LOCK_NONE,
+	 NULL, 0, NULL );
     sortlist (lock_tree_list, fsortcmp);
     if (lock_list_promotably (lock_tree_list) != 0)
 	error (1, 0, "lock failed - giving up");
