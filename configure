@@ -39047,7 +39047,7 @@ fi
           ac_config_files="$ac_config_files src/cvsbug"
 
 
-                                                                                                                                                                                              ac_config_files="$ac_config_files Makefile contrib/Makefile contrib/pam/Makefile cvs.spec diff/Makefile doc/Makefile doc/i18n/Makefile doc/i18n/pt_BR/Makefile emx/Makefile lib/Makefile man/Makefile os2/Makefile src/Makefile src/sanity.config.sh tools/Makefile vms/Makefile windows-NT/Makefile windows-NT/SCC/Makefile zlib/Makefile"
+                                                                                                                                                                                                        ac_config_files="$ac_config_files Makefile contrib/Makefile contrib/pam/Makefile cvs.spec diff/Makefile doc/Makefile doc/i18n/Makefile doc/i18n/pt_BR/Makefile emx/Makefile lib/Makefile maint-aux/Makefile man/Makefile os2/Makefile src/Makefile src/sanity.config.sh tools/Makefile vms/Makefile windows-NT/Makefile windows-NT/SCC/Makefile zlib/Makefile"
 
 
 cat >confcache <<\_ACEOF
@@ -39651,6 +39651,7 @@ do
   "doc/i18n/pt_BR/Makefile" ) CONFIG_FILES="$CONFIG_FILES doc/i18n/pt_BR/Makefile" ;;
   "emx/Makefile" ) CONFIG_FILES="$CONFIG_FILES emx/Makefile" ;;
   "lib/Makefile" ) CONFIG_FILES="$CONFIG_FILES lib/Makefile" ;;
+  "maint-aux/Makefile" ) CONFIG_FILES="$CONFIG_FILES maint-aux/Makefile" ;;
   "man/Makefile" ) CONFIG_FILES="$CONFIG_FILES man/Makefile" ;;
   "os2/Makefile" ) CONFIG_FILES="$CONFIG_FILES os2/Makefile" ;;
   "src/Makefile" ) CONFIG_FILES="$CONFIG_FILES src/Makefile" ;;
