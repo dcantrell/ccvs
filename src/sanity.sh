@@ -6366,15 +6366,28 @@ ${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
 initial revision: 1\.1
 done"
 	  cd ..
-	  rm -r first-dir
+	  mkdir 2
+	  cd 2
 	  dotest big-4 "${testcvs} -q get first-dir" "U first-dir/file1"
+	  cd ../first-dir
+	  echo "add a line to the end" >>file1
+	  dotest big-5 "${testcvs} -q ci -m modify" \
+"Checking in file1;
+${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
+new revision: 1\.2; previous revision: 1\.1
+done"
+	  cd ../2/first-dir
+	  # The idea here is particularly to test the Rcs-diff response
+	  # and the reallocing thereof, for remote.
+	  dotest big-6 "${testcvs} -q update" "[UP] file1"
+	  cd ../..
 
 	  if test "$keep" = yes; then
 	    echo Keeping ${TESTDIR} and exiting due to --keep
 	    exit 0
 	  fi
 
-	  rm -r first-dir
+	  rm -r first-dir 2
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
 	  ;;
 
