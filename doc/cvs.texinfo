@@ -73,12 +73,12 @@ Free Software Foundation instead of in the original English.
 @sp
 @center @titlefont{CVS}
 @sp 2
-@center for @sc{cvs} 1.6+
+@center for @sc{cvs} 1.6.87+
 @comment -release-
 @sp 3
-@center Per Cederqvist
+@center Per Cederqvist et al
 @sp 3
-@center last updated 12 Oct 1995
+@center last updated 23 Jan 1996
 @comment -date-
 
 @comment  The following two commands start the copyright page
@@ -194,8 +194,7 @@ copy both this manual and the @sc{cvs} program.
 @c -- Check this reference! It has been bogus in the past.
 support contracts and binary distribution for many
 programs, such as @sc{cvs}, @sc{gnu} Emacs, the
-@sc{gnu} C compiler and others.  You can also buy
-hardcopies of this manual from us.  Write to us for
+@sc{gnu} C compiler and others.  Write to us for
 more information.
 
 @example
@@ -208,6 +207,10 @@ Email: info@@signum.se
 Phone: +46 (0)13 - 21 46 00
 Fax:   +46 (0)13 - 21 47 00
 @end example
+
+Another company selling support for @sc{cvs} is Cyclic
+Software, web: @code{http://www.cyclic.com/}, email:
+@code{info@@cyclic.com}.
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @menu

@@ -1,3 +1,10 @@
+Tue Jan 23 12:54:57 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo: Per mail from Per Cederqvist, change author to "Per
+	Cederqvist et al".  Also remove sentence about Signum shipping
+	hardcopy manuals and add information on Cyclic.  Change version
+	number to 1.6.87.
+
 Fri Jan 12 15:29:39 1996  Vince Demarco  <vdemarco@bou.shl.com>
 
 	* cvs.texinfo: Fix the documentation for the com/uncom change
