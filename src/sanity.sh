@@ -1491,11 +1491,20 @@ diff -c first-dir/file3:1\.1\.2\.1 first-dir/file3:removed
 		fi
 
 		# join
-		if ${CVS} update -j branch1  >> ${LOGFILE} 2>&1; then
-			echo "PASS: test 86" >>${LOGFILE}
-		else
-			echo "FAIL: test 86" | tee -a ${LOGFILE} ; exit 1
-		fi
+		dotest 86 "${testcvs} -q update -j branch1" \
+'RCS file: /tmp/cvs-sanity/cvsroot/first-dir/file1,v
+retrieving revision 1.3
+retrieving revision 1.3.2.1
+Merging differences between 1.3 and 1.3.2.1 into file1
+RCS file: /tmp/cvs-sanity/cvsroot/first-dir/file2,v
+retrieving revision 1.1
+retrieving revision 1.1.2.1
+Merging differences between 1.1 and 1.1.2.1 into file2
+U file3
+RCS file: /tmp/cvs-sanity/cvsroot/first-dir/Attic/file3,v
+retrieving revision 1.1
+retrieving revision 1.1.2.3
+Merging differences between 1.1 and 1.1.2.3 into file3'
 
 		dotest_fail death-file4-5 "test -f file4" ''
 
@@ -1592,13 +1601,24 @@ U first-dir/file3'
 		fi
 
 		# and join
-		if ${CVS} update -j HEAD  >> ${LOGFILE} 2>&1; then
-			echo "PASS: test 95" >>${LOGFILE}
-		else
-			echo "FAIL: test 95" | tee -a ${LOGFILE} ; exit 1
-		fi
+		dotest 95 "${testcvs} -q update -j HEAD" \
+'RCS file: /tmp/cvs-sanity/cvsroot/first-dir/Attic/file1,v
+retrieving revision 1.3
+retrieving revision 1.5
+Merging differences between 1.3 and 1.5 into file1
+RCS file: /tmp/cvs-sanity/cvsroot/first-dir/file3,v
+retrieving revision 1.1
+retrieving revision 1.2
+Merging differences between 1.1 and 1.2 into file3'
 
 		dotest_fail death-file4-7 "test -f file4" ''
+
+		# file2 should not have been recreated.  It was
+		# deleted on the branch, and has not been modified on
+		# the trunk.  That means that there have been no
+		# changes between the greatest common ancestor (the
+		# trunk version) and HEAD.
+		dotest_fail death-file2-1 "test -f file2" ''
 
 		cd .. ; rm -rf first-dir ${CVSROOT_DIRNAME}/first-dir
 		;;
