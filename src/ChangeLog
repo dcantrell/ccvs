@@ -1,3 +1,9 @@
+1999-11-03  K.J. Paradise (kj@sourcegear.com>
+	
+	* history.c: cleaned up my prior change a bit, per Larry Jones'
+	comments, and John O'Conner's additional comments about bits of
+	non MS-Visual C++ compliancy of my code.  
+
 1999-11-04  Larry Jones <larry.jones@sdrc.com>
 
 	* sanity.sh: Check that tr that correctly handles NULs; if not, try
