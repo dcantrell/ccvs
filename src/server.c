@@ -4131,78 +4131,86 @@ int
 check_repository_password (username, password, repository)
      char *username, *password, *repository;
 {
-  int retval = 0;
-  FILE *fp;
-  char *filename;
-  char *linebuf;
-  int ch;
-  int found_it = 0, namelen, linelen;
+    int retval = 0;
+    FILE *fp;
+    char *filename;
+    char *linebuf;
+    int ch;
+    int found_it = 0, namelen, linelen;
 
-  filename = xmalloc (strlen (repository)
-                      + 1
-                      + strlen ("CVSROOT")
-                      + 1
-                      + strlen ("passwd")
-                      + 1);
+    filename = xmalloc (strlen (repository)
+			+ 1
+			+ strlen ("CVSROOT")
+			+ 1
+			+ strlen ("passwd")
+			+ 1);
 
-  strcpy (filename, repository);
-  strcat (filename, "/CVSROOT");
-  strcat (filename, "/passwd");
+    strcpy (filename, repository);
+    strcat (filename, "/CVSROOT");
+    strcat (filename, "/passwd");
   
-  /* 32 is enough to cover the hashed password.  I don't know if this
-   * counts as an arbitrary limit or not; it really depends on how
-   * standardized crypt() is.
-   */
+    /* 32 is enough to cover the hashed password.  I don't know if this
+     * counts as an arbitrary limit or not; it really depends on how
+     * standardized crypt() is.
+     * Answer: FreeBSD and Debian have played with the idea of making
+     * crypt() do MD5 which has a longer value; it would better not to
+     * make assumptions.  So yes, FIXME: arbitrary limit.
+     */
 
-  /*            USERNAME        :   PASSWD   \n      \0     */
-  linelen = strlen (username) + 1  +  32  +   1   +   1;
-  linebuf = xmalloc (linelen);
-  memset (linebuf, 0, linelen);
+    /*            USERNAME        :   PASSWD   \n      \0     */
+    linelen = strlen (username) + 1  +  32  +   1   +   1;
+    linebuf = xmalloc (linelen);
+    memset (linebuf, 0, linelen);
 
-  fp = fopen (filename, "r");
-  if (fp == NULL)
+    fp = fopen (filename, "r");
+    if (fp == NULL)
     {
-      /* This is ok -- the cvs passwd file might not exist. */
-      fclose (fp);
-      return 0;
+	if (!existence_error (errno))
+	    error (0, errno, "cannot open %s", filename);
+	return 0;
     }
 
-  /* Look for a relevant line -- one with this user's name. */
-  namelen = strlen (username);
-  while (fgets (linebuf, linelen, fp))
+    /* Look for a relevant line -- one with this user's name. */
+    namelen = strlen (username);
+    while (fgets (linebuf, linelen, fp))
     {
-      if ((strncmp (linebuf, username, namelen) == 0)
-          && (linebuf[namelen] == ':'))
+	if ((strncmp (linebuf, username, namelen) == 0)
+	    && (linebuf[namelen] == ':'))
         {
-          found_it = 1;
-          break;
+	    found_it = 1;
+	    break;
         }
-      else if (! strchr (linebuf, '\n'))
-        while ((ch = getc (fp)) != '\n')
-          if (ch == EOF)
-            break;
+	else if (! strchr (linebuf, '\n'))
+	{
+	    while ((ch = getc (fp)) != '\n')
+		if (ch == EOF)
+		    break;
+	}
     }
-  fclose (fp);
+    if (ferror (fp))
+	error (0, errno, "cannot read %s", filename);
+    if (fclose (fp) < 0)
+	error (0, errno, "cannot close %s", filename);
 
-  /* If found_it != 0, then linebuf contains the information we need. */
-  if (found_it)
+    /* If found_it != 0, then linebuf contains the information we need. */
+    if (found_it)
     {
-      char *found_password;
+	char *found_password;
 
-      strtok (linebuf, ":");
-      found_password = strtok (NULL, ": \n");
+	strtok (linebuf, ":");
+	found_password = strtok (NULL, ": \n");
 
-      if (strcmp (found_password, crypt (password, found_password)) == 0)
-        retval = 1;
-      else
-        retval = 2;
+	if (strcmp (found_password, crypt (password, found_password)) == 0)
+	    retval = 1;
+	else
+	    retval = 2;
     }
-  else
-    retval = 0;
+    else
+	retval = 0;
 
-  free (filename);
+    free (filename);
 
-  return retval;
+    return retval;
 }
 
 
