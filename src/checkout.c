@@ -244,7 +244,6 @@ checkout (argc, argv)
 	  options = RCS_check_kflag ("v");/* -kv is default */
 #endif
     }
-    else
 
     if (!safe_location()) {
         error(1, 0, "Cannot check out files into the repository itself");
