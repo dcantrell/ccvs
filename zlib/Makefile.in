@@ -34,8 +34,8 @@ SHAREDLIB=libz.so
 
 # For CVS, separate AR and ARFLAGS.
 AR=ar
-RANLIB=ranlib
-TAR=tar
+RANLIB=@RANLIB@
+AMTAR=@AMTAR@
 SHELL=/bin/sh
 
 prefix=@prefix@
@@ -152,13 +152,21 @@ PACKAGE = @PACKAGE@
 VERSION = @VERSION@
 distdir = $(top_builddir)/$(PACKAGE)-$(VERSION)/$(subdir)
 distdir:
-	for i in `cd $(srcdir); echo ${DISTFILES}`; do \
-	  if test -d $(distdir)/`dirname $$i`; then \
+	@d=$(srcdir); \
+	for file in `cd $$d; echo $(DISTFILES)`; do \
+	  if test -d $(distdir)/`dirname $$file`; then \
 	    :; \
 	  else \
-	    mkdir $(distdir)/`dirname $$i`; \
+	    mkdir $(distdir)/`dirname $$file`; \
 	  fi; \
-	  ln $(srcdir)/$${i} $(distdir)/`dirname $$i`; \
+	  if test -d $$d/$$file; then \
+	    cp -pR $$d/$$file $(distdir) \
+	    || exit 1; \
+	  else \
+	    test -f $(distdir)/$$file \
+	    || cp -p $$d/$$file $(distdir)/$$file \
+	    || exit 1; \
+	  fi; \
 	done
 .PHONY: distdir
 
@@ -189,7 +197,7 @@ dist:
 	files=""; \
 	for f in $(DISTFILES); do files="$$files $$d/$$f"; done; \
 	cd ..; \
-	GZIP=-9 $(TAR) chofz $$d/$$d.tar.gz $$files; \
+	GZIP=-9 $(AMTAR) chofz $$d/$$d.tar.gz $$files; \
 	if test ! -d $$d; then rm -f $$d; fi
 	mv Makefile~ Makefile
 

@@ -25,6 +25,7 @@ dnl can be stored in one location?
 glocs="$PATH:/usr/local/bin:/usr/contrib/bin:/usr/gnu/bin:/local/bin:/local/gnu/bin:/gnu/bin"
 AC_PATH_PROGS(ROFF, groff roff, $missing_dir/missing roff, $glocs)
 AC_PATH_PROG(PS2PDF, ps2pdf, $missing_dir/missing ps2pdf)
+AC_PATH_PROG(TEXI2DVI, texi2dvi, $missing_dir/missing texi2dvi)
 
 AC_SYS_INTERPRETER
 if test X"$ac_cv_sys_interpreter" != X"yes" ; then
@@ -32,6 +33,35 @@ if test X"$ac_cv_sys_interpreter" != X"yes" ; then
   ac_msg='perl scripts using #! may not be invoked properly'
   AC_MSG_WARN($ac_msg)
 fi
+
+# BSD's logo is a devil for a reason, hey?
+AC_CACHE_CHECK(for BSD VPATH bug in make, ccvs_cv_bsd_make_vpath_bug,
+[if test ! -d ac_test_dir ; then
+	AC_TRY_COMMAND([mkdir ac_test_dir])
+fi
+cat >conftestmake <<EOF
+VPATH = ac_test_dir
+ac_test_target: ac_test_dep
+	echo BSD VPATH bug present >&2
+ac_test_dep: ac_test_dep_dep
+EOF
+touch ac_test_dir/ac_test_dep_dep
+touch ac_test_dir/ac_test_dep
+touch ac_test_target
+# Don't know why, but the following test doesn't work under FreeBSD 4.2
+# without this sleep command
+sleep 1
+if AC_TRY_COMMAND([make -f conftestmake 2>&1 >/dev/null
+		|grep ^BSD\ VPATH\ bug\ present\$ >/dev/null]) ; then
+	ccvs_cv_bsd_make_vpath_bug=yes
+else
+	ccvs_cv_bsd_make_vpath_bug=no
+fi
+AC_TRY_COMMAND([rm -rf ac_test_dir ac_test_target conftestmake])])
+# We also don't need to worry about the bug when $srcdir = $builddir
+AM_CONDITIONAL(MAKE_TARGETS_IN_VPATH, \
+		test $ccvs_cv_bsd_make_vpath_bug = no \
+		|| test $srcdir = .)
 
 AC_AIX
 AC_MINIX
@@ -343,7 +373,7 @@ AC_OUTPUT([Makefile \
 	  windows-NT/Makefile \
 	  windows-NT/SCC/Makefile \
 	  zlib/Makefile],
-	  [chmod +x \
+	  [chmod -f +x \
 	  contrib/clmerge \
 	  contrib/cln_hist \
 	  contrib/commit_prep \

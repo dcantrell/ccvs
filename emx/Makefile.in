@@ -15,6 +15,9 @@ srcdir     = @srcdir@
 # top_srcdir is usually ".."
 top_srcdir = @top_srcdir@
 
+VPATH      = @srcdir@
+subdir     = emx
+
 lib_dir     = ${top_srcdir}/lib
 cvs_srcdir = ${top_srcdir}/src
 diff_srcdir = ${top_srcdir}/diff
@@ -289,10 +292,6 @@ installdirs:
 .PHONY: tags TAGS
 tags TAGS:
 
-.PHONY: ls
-ls:
-	@echo ${DISTFILES}
-
 .PHONY: clean distclean realclean mostlyclean
 clean distclean realclean maintainer-clean mostlyclean:
 
@@ -304,14 +303,27 @@ top_builddir = ..
 PACKAGE = @PACKAGE@
 VERSION = @VERSION@
 distdir = $(top_builddir)/$(PACKAGE)-$(VERSION)/$(subdir)
-distdir:
-	for i in `cd $(srcdir); echo ${DISTFILES}`; do \
-	  if test -d $(distdir)/`dirname $$i`; then \
+# FIXME - sedding the directory off of the DISTFILES targets is really yucky.
+# The $(srcdir) prefixes should really be removed from all of the files in the
+# lists that make up DISTFILES above.  Unfortunately, I don't have an EMX box
+# to test on.
+distdir: $(DISTFILES)
+	@d=$(srcdir); \
+	for f in $(DISTFILES); do \
+	  file=`echo $$f |sed 's,.*/,,'`; \
+	  if test -d $(distdir)/`dirname $$file`; then \
 	    :; \
 	  else \
-	    mkdir $(distdir)/`dirname $$i`; \
+	    mkdir $(distdir)/`dirname $$file`; \
 	  fi; \
-	  ln $(srcdir)/$${i} $(distdir)/`dirname $$i`; \
+	  if test -d $$d/$$file; then \
+	    cp -pR $$d/$$file $(distdir) \
+	    || exit 1; \
+	  else \
+	    test -f $(distdir)/$$file \
+	    || cp -p $$d/$$file $(distdir)/$$file \
+	    || exit 1; \
+	  fi; \
 	done
 .PHONY: distdir
 
@@ -378,7 +390,6 @@ cvs-static.exe: ${OBJECTS} ${lib_dir}/libcvs.lib ${zlib_dir}/libz.lib
 
 # cvs.o: ${OBJECTS} ${SOURCES} ${HEADERS}
 
-subdir = emx
 # Hmm.  This rule wants to exist on unix, so that "make dist" works.
 # And it doesn't want to exist on OS/2, because configure doesn't
 # run on OS/2 and so ../config.status won't exist.  For now we just

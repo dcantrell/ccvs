@@ -79,6 +79,7 @@ PR = @PR@
 PS2PDF = @PS2PDF@
 RANLIB = @RANLIB@
 ROFF = @ROFF@
+TEXI2DVI = @TEXI2DVI@
 VERSION = @VERSION@
 YACC = @YACC@
 includeopt = @includeopt@

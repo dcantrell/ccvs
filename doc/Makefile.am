@@ -18,9 +18,14 @@
 
 # AUTOMAKE_OPTIONS = no-texinfo.tex
 
+# FIXME - these rebuild every 'make dist' with some BSD makes due to a bug
+# that prevents make from searching VPATH for targets.  There is some
+# machinery in place in configure.in to work around this for some targets
+# (see the CVSvn.texi target below) now, but fixing the two info_TEXINFOS
+# targets below is probably going to require work on Automake
 info_TEXINFOS = cvs.texinfo cvsclient.texi
-cvs_TEXINFOS = $(srcdir)/CVSvn.texi
-cvsclient_TEXINFOS = $(srcdir)/CVSvn.texi
+cvs_TEXINFOS = CVSvn.texi
+cvsclient_TEXINFOS = CVSvn.texi
 
 POSTSCRIPTS = \
 	cvs.ps \
@@ -117,9 +122,26 @@ SUFFIXES = .aux .txt .pdf
 # - It is guaranteed (with GNU Make) that when the version in configure.in
 #   is changed, acversion.m4 is built only after the new version number is
 #   propagated to the Makefile.  (Libtool uses the same guarantee.)
+# - Of the next three targets, only the next one or the following two should be
+#   enabled, not all three
+if MAKE_TARGETS_IN_VPATH
+# - This is the target for systems without the BSD VPATH bug in make or with
+#   $(srcdir) = $(builddir)
+CVSvn.texi: $(srcdir)/CVSvn.texi.in $(top_srcdir)/configure.in
+	sed 's,@VERSION\@,$(VERSION),g' $(srcdir)/CVSvn.texi.in >$(srcdir)/CVSvn.ttexi
+	mv $(srcdir)/CVSvn.ttexi $(srcdir)/CVSvn.texi
+else
+# - The next two targets are a workaround for the fact that some BSD makes
+#   don't look through VPATH for targets, but only for sources.
+# - They should be disabled on systems without the bug and in environments
+#   where $(srcdir) = $(builddir)
+CVSvn.texi: $(srcdir)/CVSvn.texi
+	# use cat so the time stamp gets set properly
+	cat $(srcdir)/CVSvn.texi >$@
 $(srcdir)/CVSvn.texi: $(srcdir)/CVSvn.texi.in $(top_srcdir)/configure.in
 	sed 's,@VERSION\@,$(VERSION),g' $(srcdir)/CVSvn.texi.in >$(srcdir)/CVSvn.ttexi
 	mv $(srcdir)/CVSvn.ttexi $(srcdir)/CVSvn.texi
+endif
 
 ## realclean ##
 # for backwards compatibility with the old makefiles

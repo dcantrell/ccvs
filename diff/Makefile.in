@@ -112,14 +112,22 @@ top_builddir = ..
 PACKAGE = @PACKAGE@
 VERSION = @VERSION@
 distdir = $(top_builddir)/$(PACKAGE)-$(VERSION)/$(subdir)
-distdir:
-	for i in `cd $(srcdir); echo ${DISTFILES}`; do \
-	  if test -d $(distdir)/`dirname $$i`; then \
+distdir: $(DISTFILES)
+	@d=$(srcdir); \
+	for file in $(DISTFILES); do \
+	  if test -d $(distdir)/`dirname $$file`; then \
 	    :; \
 	  else \
-	    mkdir $(distdir)/`dirname $$i`; \
+	    mkdir $(distdir)/`dirname $$file`; \
 	  fi; \
-	  ln $(srcdir)/$${i} $(distdir)/`dirname $$i`; \
+	  if test -d $$d/$$file; then \
+	    cp -pR $$d/$$file $(distdir) \
+	    || exit 1; \
+	  else \
+	    test -f $(distdir)/$$file \
+	    || cp -p $$d/$$file $(distdir)/$$file \
+	    || exit 1; \
+	  fi; \
 	done
 .PHONY: distdir
 
