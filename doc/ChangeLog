@@ -1,3 +1,12 @@
+2003-02-27  Derek Price  <derek@ximbiot.com>
+
+	* cvs.texinfo (Environment variables): Make the information on
+	CVS_CLIENT_PORT slightly clearer.
+	(Kerberos authenticated): XREF the Environment variables node.
+
+	* stamp-vti: Regenerated.
+	* version.texi: Ditto.
+
 2003-02-25  Derek Price  <derek@ximbiot.com>
 
 	* Makefile.in: Regenerated.
