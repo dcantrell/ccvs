@@ -1,5 +1,8 @@
 1998-11-14  Jim Kingdon
 
+	* sanity.sh (conflicts2-142b7 through conflicts2-142b11): New
+	tests; resurrecting doesn't work from one level up.
+
 	* sanity.sh (mwrap-7): Remote prints the messages in a different
 	order.
 

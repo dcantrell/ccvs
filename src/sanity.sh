@@ -5583,6 +5583,9 @@ done"
 U first-dir/abc'
 	  cd ..
 
+	  # BEGIN TESTS USING THE FILE A
+	  # FIXME: would be cleaner to separate them out into their own
+	  # tests; conflicts2 is getting long.
 	  # Now test that if one person modifies and commits a
 	  # file and a second person removes it, it is a
 	  # conflict
@@ -5606,7 +5609,46 @@ C a"
 	  dotest conflicts2-142b5 "${testcvs} add a" "U a
 ${PROG} [a-z]*: a, version 1\.1, resurrected"
 	  dotest conflicts2-142b6 "${testcvs} -q update" ''
+
+	  # Now one level up.
+	  cd ..
+	  dotest conflicts2-142b7 "${testcvs} rm -f first-dir/a" \
+"${PROG} [a-z]*: scheduling .first-dir/a. for removal
+${PROG} [a-z]*: use .${PROG} commit. to remove this file permanently"
+
+	  if test "$remote" = no; then
+	    # The "nothing known" is a bug.  Correct behavior is for a to get
+	    # created, as above.  Cause is pretty obvious - add.c
+	    # calls update() without dealing with the fact we are chdir'd.
+	    # Also note that resurrecting 1.2 instead of 1.1 is also a
+	    # bug, I think (the same part of add.c has a comment which says
+	    # "XXX - bugs here; this really resurrect the head" which
+	    # presumably refers to this).
+	    # The fix for both is presumably to call RCS_checkout() or
+	    # something other than update().
+	    dotest conflicts2-142b8 "${testcvs} add first-dir/a" \
+"${PROG} [a-z]*: nothing known about first-dir
+${PROG} [a-z]*: first-dir/a, version 1\.2, resurrected"
+	    cd first-dir
+	    # Now recover from the damage that the 142b8 test did.
+	    dotest conflicts2-142b9 "${testcvs} rm -f a" \
+"${PROG} [a-z]*: scheduling .a. for removal
+${PROG} [a-z]*: use .${PROG} commit. to remove this file permanently"
+	  else
+	    # Haven't investigated this one.
+	    dotest_fail conflicts2-142b8 "${testcvs} add first-dir/a" \
+"${PROG} add: in directory \.:
+${PROG} \[add aborted\]: there is no version here; do 'cvs checkout' first"
+	    cd first-dir
+	  fi
+
+	  # As before, 1.2 instead of 1.1 is a bug.
+	  dotest conflicts2-142b10 "${testcvs} add a" "U a
+${PROG} [a-z]*: a, version 1\.2, resurrected"
+	  # As with conflicts2-142b6, check that things are normal again.
+	  dotest conflicts2-142b11 "${testcvs} -q update" ''
 	  cd ../..
+	  # END TESTS USING THE FILE A
 
 	  # Now test that if one person removes a file and
 	  # commits it, and a second person removes it, is it
