@@ -15015,8 +15015,8 @@ done"
 
 	errmsg3)
 	  # Test the *PANIC* message caused by missing administration files
-	  mkdir tmp
-	  cd tmp
+	  mkdir errmsg3
+	  cd errmsg3
 	  mkdir CVS
 	  dotest_fail errmsg3-1 "${testcvs} -q up" \
 "${CPROG} update: in directory \`.':
@@ -15029,7 +15029,7 @@ ${CPROG} \[update aborted\]: \*PANIC\* administration files missing!"
 	  dokeep
 
 	  cd ..
-	  rm -r tmp
+	  rm -r errmsg3
 	  ;;
 
 	adderrmsg)
