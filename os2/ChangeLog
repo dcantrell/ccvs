@@ -1,3 +1,11 @@
+Fri Nov  8 14:28:19 1996  Ullrich von Bassewitz  <uz@wuschel.ibb.schwaben.com>
+
+	* filesubr.c (expand_wild): Check for ERROR_NO_MORE_FILES from
+	DosFindFirst instead of ERROR_FILE_NOT_FOUND; that is what the
+	function actually returns.  Cope with the fact that DosFindFirst
+	and DosFindNext return only the name of the file itself, not any
+	directory names.
+
 Fri Nov 08 11:46:50 1996  Jim Kingdon
 
 	IBM ICC (OS/2) lint:

@@ -816,18 +816,40 @@ expand_wild (argc, argv, pargc, pargv)
 	ULONG         FindCount = 1;
 	APIRET        rc;          /* Return code */
 #define ALL_FILES (FILE_ARCHIVED|FILE_DIRECTORY|FILE_SYSTEM|FILE_HIDDEN|FILE_READONLY) 
- 
-	rc = DosFindFirst(argv[i],               /* File pattern */
+
+	/* DosFindFirst, called with a string like 'dir/file' will return
+	 * *only* the file part. So what we have to do here is to save the
+	 * directory part, and add it later to the returned filename.
+	 */
+
+	/* Path + name */
+	char *PathName = argv [i];
+
+	/* Path only, including slash */
+	char *Path = NULL;
+
+	/* Name without path */
+	char *Name = last_component (PathName);
+
+	if (Name > PathName)
+	{
+	    /* We have a path component, save it */
+	    Path = xmalloc (Name - PathName + 1);
+	    memcpy (Path, PathName, Name - PathName);
+	    Path [Name - PathName] = '\0';
+	}
+
+	rc = DosFindFirst(PathName,     	 /* File pattern */
 			  &FindHandle,           /* Directory search handle */
 			  ALL_FILES,             /* Search attribute */
 			  (PVOID) &FindBuffer,   /* Result buffer */
 			  sizeof(FindBuffer),    /* Result buffer length */
 			  &FindCount,            /* Number of entries to find */
 			  FIL_STANDARD);	 /* Return level 1 file info */
- 
+
 	if (rc != 0)
 	{
-	    if (rc == ERROR_FILE_NOT_FOUND)
+	    if (rc == ERROR_NO_MORE_FILES)
 	    {
 		/* No match.  The file specified didn't contain a wildcard (in which case
 		   we clearly should return it unchanged), or it contained a wildcard which
@@ -858,18 +880,32 @@ expand_wild (argc, argv, pargc, pargv)
 		    (strcmp(FindBuffer.achName, "..") != 0) &&
 		    ((argv[i][0] == '.') || (FindBuffer.achName[0] != '.')))
 		{
-		    new_argv [new_argc++] = xstrdup (FindBuffer.achName);
+		    /* Be sure to add the path if needed */
+		    char *NewArg;
+		    if (Path)
+		    {
+			unsigned Len =
+			    strlen (Path) + strlen (FindBuffer.achName) + 1;
+			NewArg = xmalloc (Len);
+			strcpy (NewArg, Path);
+			strcat (NewArg, FindBuffer.achName);
+		    }
+		    else
+		    {
+			NewArg = xstrdup (FindBuffer.achName);
+		    }
+		    new_argv [new_argc++] = NewArg;
 		    if (new_argc == max_new_argc)
 		    {
 			max_new_argc *= 2;
 			new_argv = xrealloc (new_argv, max_new_argc * sizeof (char *));
 		    }
 		}
-		
-		rc = DosFindNext(FindHandle,
-                     (PVOID) &FindBuffer,
-                     sizeof(FindBuffer),
-                     &FindCount);
+
+		rc = DosFindNext (FindHandle,
+				  (PVOID) &FindBuffer,
+				  sizeof(FindBuffer),
+				  &FindCount);
 		if (rc == ERROR_NO_MORE_FILES)
 		    break;
 		else if (rc != NO_ERROR)
@@ -879,6 +915,8 @@ expand_wild (argc, argv, pargc, pargv)
 	    if (rc != 0)
 		error (1, rc, "cannot close %s", argv[i]);
 	}
+	if (Path != NULL)
+	    free (Path);
     }
     *pargc = new_argc;
     *pargv = new_argv;
