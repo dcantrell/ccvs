@@ -1,6 +1,89 @@
+# Makefile.in generated automatically by automake 1.4a from Makefile.am
+
+# Copyright 1994, 1995, 1996, 1997, 1998, 1999, 2000
+# Free Software Foundation, Inc.
+# This Makefile.in is free software; the Free Software Foundation
+# gives unlimited permission to copy and/or distribute it,
+# with or without modifications, as long as this notice is preserved.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY, to the extent permitted by law; without
+# even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+# PARTICULAR PURPOSE.
+
+srcdir = @srcdir@
+top_srcdir = @top_srcdir@
+VPATH = @srcdir@
+prefix = @prefix@
+exec_prefix = @exec_prefix@
+
+bindir = @bindir@
+sbindir = @sbindir@
+libexecdir = @libexecdir@
+datadir = @datadir@
+sysconfdir = @sysconfdir@
+sharedstatedir = @sharedstatedir@
+localstatedir = @localstatedir@
+libdir = @libdir@
+infodir = @infodir@
+mandir = @mandir@
+includedir = @includedir@
+oldincludedir = /usr/include
+
+pkgdatadir = $(datadir)/@PACKAGE@
+pkglibdir = $(libdir)/@PACKAGE@
+pkgincludedir = $(includedir)/@PACKAGE@
+
+top_builddir = ..
+
+ACLOCAL = @ACLOCAL@
+AUTOCONF = @AUTOCONF@
+AUTOMAKE = @AUTOMAKE@
+AUTOHEADER = @AUTOHEADER@
+
+INSTALL = @INSTALL@
+INSTALL_PROGRAM = @INSTALL_PROGRAM@
+INSTALL_DATA = @INSTALL_DATA@
+INSTALL_SCRIPT = @INSTALL_SCRIPT@
+INSTALL_STRIP_FLAG =
+transform = @program_transform_name@
+
+NORMAL_INSTALL = :
+PRE_INSTALL = :
+POST_INSTALL = :
+NORMAL_UNINSTALL = :
+PRE_UNINSTALL = :
+POST_UNINSTALL = :
+
+@SET_MAKE@
+AMDEP = @AMDEP@
+AMTAR = @AMTAR@
+AWK = @AWK@
+CC = @CC@
+CPP = @CPP@
+CXX = @CXX@
+CXXCPP = @CXXCPP@
+DEPDIR = @DEPDIR@
+ETAGS = @ETAGS@
+ETAGS_INCLUDE_OPTION = @ETAGS_INCLUDE_OPTION@
+GSSAPI = @GSSAPI@
+KRB4 = @KRB4@
+LN_S = @LN_S@
+MAKEINFO = @MAKEINFO@
+PACKAGE = @PACKAGE@
+PS2PDF = @PS2PDF@
+RANLIB = @RANLIB@
+ROFF = @ROFF@
+VERSION = @VERSION@
+YACC = @YACC@
+csh_path = @csh_path@
+includeopt = @includeopt@
+install_sh = @install_sh@
+perl_path = @perl_path@
+pr_path = @pr_path@
+
 # Makefile for GNU CVS program.
-# Do not use this makefile directly, but only from `../Makefile'.
-# Copyright (C) 1986, 1988-1990 Free Software Foundation, Inc.
+# Copyright (C) 1986, 1988-1990, 2000 Free Software Foundation, Inc.
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -12,182 +95,435 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 
+
 SHELL = /bin/sh
 
-srcdir     = @srcdir@
-top_srcdir = @top_srcdir@
-VPATH      = @srcdir@
+INCLUDES = -I$(top_srcdir)/lib -I$(top_srcdir)/diff $(includeopt)
 
-prefix = @prefix@
-exec_prefix = @exec_prefix@
+bin_PROGRAMS = cvs
+bin_SCRIPTS = cvsbug
 
-# Where to install the executables.
-bindir = @bindir@
-
-# Where to put the system-wide .cvsrc file
-libdir = @libdir@
-
-# Where to put the manual pages.
-mandir = @mandir@
-
-# Use cp if you don't have install.
-INSTALL = @INSTALL@
-INSTALL_DATA = @INSTALL_DATA@
-INSTALL_PROGRAM = @INSTALL_PROGRAM@
-
-LIBS = @LIBS@
-
-SOURCES = add.c admin.c buffer.c checkin.c checkout.c classify.c client.c \
+# The cvs executable
+cvs_SOURCES = add.c admin.c buffer.c checkin.c checkout.c classify.c client.c \
 commit.c create_adm.c cvsrc.c diff.c edit.c entries.c error.c expand_path.c \
 fileattr.c find_names.c hardlink.c hash.c history.c ignore.c import.c \
 lock.c log.c login.c logmsg.c main.c mkmodules.c modules.c myndbm.c no_diff.c \
 parseinfo.c patch.c rcs.c rcscmds.c recurse.c release.c remove.c repos.c \
 root.c rtag.c scramble.c server.c status.c subr.c filesubr.c run.c \
-tag.c update.c watch.c wrapper.c vers_ts.c version.c zlib.c
+tag.c update.c watch.c wrapper.c vers_ts.c zlib.c \
+buffer.h cvs.h rcs.h hardlink.h hash.h myndbm.h \
+update.h server.h client.h error.h fileattr.h edit.h watch.h
 
-OBJECTS = add.o admin.o buffer.o checkin.o checkout.o classify.o client.o \
-commit.o create_adm.o cvsrc.o diff.o edit.o entries.o expand_path.o \
-fileattr.o find_names.o hardlink.o hash.o history.o ignore.o import.o \
-lock.o log.o login.o logmsg.o main.o mkmodules.o modules.o myndbm.o no_diff.o \
-parseinfo.o patch.o rcs.o rcscmds.o recurse.o release.o remove.o repos.o \
-root.o rtag.o scramble.o server.o status.o tag.o update.o \
-watch.o wrapper.o vers_ts.o \
-subr.o filesubr.o run.o version.o error.o zlib.o
+cvs_LDADD = version.o ../lib/libcvs.a ../diff/libdiff.a ../zlib/libz.a
+cvs_EXTRA_DIST = version.c
 
-HEADERS = buffer.h cvs.h rcs.h hardlink.h hash.h myndbm.h \
-	update.h server.h client.h error.h fileattr.h edit.h watch.h
+cvsbug_EXTRA_DIST = cvsbug.sh
 
-TAGFILES = $(HEADERS) options.h.in $(SOURCES)
+# extra clean targets
+# wish this could be distclean-hdr-local but it's not part of automake
+DISTCLEANFILES = options.h-SAVED
 
-DISTFILES = .cvsignore Makefile.in \
-	    ChangeLog ChangeLog-97 ChangeLog-96 ChangeLog-9395 ChangeLog-9194 \
-            sanity.sh cvsbug.sh $(TAGFILES) build_src.com
+# General
+EXTRA_DIST = \
+	$(cvs_EXTRA_DIST) \
+	$(cvsbug_EXTRA_DIST) \
+	.cvsignore \
+	ChangeLog-9194 \
+	ChangeLog-9395 \
+	ChangeLog-96 \
+	ChangeLog-97 \
+	build_src.com \
+	sanity.sh
 
-PROGS = cvs cvsbug
+subdir = src
+mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
+CONFIG_HEADER = ../config.h options.h
+CONFIG_CLEAN_FILES =  version.c
+PROGRAMS =  $(bin_PROGRAMS)
 
-DEFS = @DEFS@ @includeopt@
 
-CC	 = @CC@
-CFLAGS = @CFLAGS@
-CPPFLAGS =
+DEFS = @DEFS@ -I. -I$(srcdir) -I.. -I.
+CPPFLAGS = @CPPFLAGS@
 LDFLAGS = @LDFLAGS@
+LIBS = @LIBS@
+am_cvs_OBJECTS =  add.o admin.o buffer.o checkin.o checkout.o classify.o \
+client.o commit.o create_adm.o cvsrc.o diff.o edit.o entries.o error.o \
+expand_path.o fileattr.o find_names.o hardlink.o hash.o history.o \
+ignore.o import.o lock.o log.o login.o logmsg.o main.o mkmodules.o \
+modules.o myndbm.o no_diff.o parseinfo.o patch.o rcs.o rcscmds.o \
+recurse.o release.o remove.o repos.o root.o rtag.o scramble.o server.o \
+status.o subr.o filesubr.o run.o tag.o update.o watch.o wrapper.o \
+vers_ts.o zlib.o
+cvs_OBJECTS =  $(am_cvs_OBJECTS)
+cvs_DEPENDENCIES =  version.o ../lib/libcvs.a ../diff/libdiff.a \
+../zlib/libz.a
+cvs_LDFLAGS = 
+SCRIPTS =  $(bin_SCRIPTS)
 
-INCLUDES = -I. -I.. -I$(srcdir) -I$(top_srcdir)/lib
+COMPILE = $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+CFLAGS = @CFLAGS@
+CCLD = $(CC)
+LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
+DIST_SOURCES =  $(cvs_SOURCES)
+depcomp = $(SHELL) $(top_srcdir)/depcomp
+DEP_FILES =  @AMDEP@ $(DEPDIR)/add.Po $(DEPDIR)/admin.Po \
+$(DEPDIR)/buffer.Po $(DEPDIR)/checkin.Po $(DEPDIR)/checkout.Po \
+$(DEPDIR)/classify.Po $(DEPDIR)/client.Po $(DEPDIR)/commit.Po \
+$(DEPDIR)/create_adm.Po $(DEPDIR)/cvsrc.Po $(DEPDIR)/diff.Po \
+$(DEPDIR)/edit.Po $(DEPDIR)/entries.Po $(DEPDIR)/error.Po \
+$(DEPDIR)/expand_path.Po $(DEPDIR)/fileattr.Po $(DEPDIR)/filesubr.Po \
+$(DEPDIR)/find_names.Po $(DEPDIR)/hardlink.Po $(DEPDIR)/hash.Po \
+$(DEPDIR)/history.Po $(DEPDIR)/ignore.Po $(DEPDIR)/import.Po \
+$(DEPDIR)/lock.Po $(DEPDIR)/log.Po $(DEPDIR)/login.Po \
+$(DEPDIR)/logmsg.Po $(DEPDIR)/main.Po $(DEPDIR)/mkmodules.Po \
+$(DEPDIR)/modules.Po $(DEPDIR)/myndbm.Po $(DEPDIR)/no_diff.Po \
+$(DEPDIR)/parseinfo.Po $(DEPDIR)/patch.Po $(DEPDIR)/rcs.Po \
+$(DEPDIR)/rcscmds.Po $(DEPDIR)/recurse.Po $(DEPDIR)/release.Po \
+$(DEPDIR)/remove.Po $(DEPDIR)/repos.Po $(DEPDIR)/root.Po \
+$(DEPDIR)/rtag.Po $(DEPDIR)/run.Po $(DEPDIR)/scramble.Po \
+$(DEPDIR)/server.Po $(DEPDIR)/status.Po $(DEPDIR)/subr.Po \
+$(DEPDIR)/tag.Po $(DEPDIR)/update.Po $(DEPDIR)/vers_ts.Po \
+$(DEPDIR)/watch.Po $(DEPDIR)/wrapper.Po $(DEPDIR)/zlib.Po
+DIST_COMMON =  ./stamp-h2.in ChangeLog Makefile.am Makefile.in \
+options.h.in version.c.in
+
+
+DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
+
+GZIP_ENV = --best
+SOURCES = $(cvs_SOURCES)
+OBJECTS = $(am_cvs_OBJECTS)
+
+all: all-redirect
+.SUFFIXES:
+.SUFFIXES: .c .h .o
+$(srcdir)/Makefile.in: Makefile.am $(top_srcdir)/configure.in $(ACLOCAL_M4) 
+	cd $(top_srcdir) && $(AUTOMAKE) --gnu src/Makefile
+
+Makefile: $(srcdir)/Makefile.in  $(top_builddir)/config.status
+	cd $(top_builddir) \
+	  && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= $(SHELL) ./config.status
+
+
+options.h: stamp-h2
+	@if test ! -f $@; then \
+		rm -f stamp-h2; \
+		$(MAKE) stamp-h2; \
+	else :; fi
+stamp-h2: $(srcdir)/options.h.in $(top_builddir)/config.status
+	@rm -f stamp-h2 stamp-h2T
+	@echo timestamp > stamp-h2T 2> /dev/null
+	cd $(top_builddir) \
+	  && CONFIG_FILES= CONFIG_HEADERS=src/options.h \
+	     $(SHELL) ./config.status
+	@mv stamp-h2T stamp-h2
+$(srcdir)/options.h.in: $(srcdir)/./stamp-h2.in
+	@if test ! -f $@; then \
+		rm -f $(srcdir)/./stamp-h2.in; \
+		$(MAKE) $(srcdir)/./stamp-h2.in; \
+	else :; fi
+$(srcdir)/./stamp-h2.in: $(top_srcdir)/configure.in $(ACLOCAL_M4) $(top_srcdir)/acconfig.h
+	@rm -f $(srcdir)/./stamp-h2.in $(srcdir)/./stamp-h2.inT
+	@echo timestamp > $(srcdir)/./stamp-h2.inT 2> /dev/null
+	cd $(top_srcdir) && $(AUTOHEADER)
+	@mv $(srcdir)/./stamp-h2.inT $(srcdir)/./stamp-h2.in
+
+mostlyclean-hdr:
+
+clean-hdr:
+
+distclean-hdr:
+	-rm -f options.h
+
+maintainer-clean-hdr:
+version.c: $(top_builddir)/config.status version.c.in
+	cd $(top_builddir) && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= $(SHELL) ./config.status
+
+mostlyclean-binPROGRAMS:
+
+clean-binPROGRAMS:
+	-test -z "$(bin_PROGRAMS)" || rm -f $(bin_PROGRAMS)
+
+distclean-binPROGRAMS:
+
+maintainer-clean-binPROGRAMS:
+
+install-binPROGRAMS: $(bin_PROGRAMS)
+	@$(NORMAL_INSTALL)
+	$(mkinstalldirs) $(DESTDIR)$(bindir)
+	@list='$(bin_PROGRAMS)'; for p in $$list; do \
+	  if test -f $$p; then \
+	    f="`echo $$p|sed -e 's/$(EXEEXT)$$//' -e '$(transform)' -e 's/$$/$(EXEEXT)/'`"; \
+	    echo "  $(INSTALL_PROGRAM) $(INSTALL_STRIP_FLAG) $$p $(DESTDIR)$(bindir)/$$f"; \
+	     $(INSTALL_PROGRAM) $(INSTALL_STRIP_FLAG) $$p $(DESTDIR)$(bindir)/$$f; \
+	  else :; fi; \
+	done
+
+uninstall-binPROGRAMS:
+	@$(NORMAL_UNINSTALL)
+	@list='$(bin_PROGRAMS)'; for p in $$list; do \
+	  f="`echo $$p|sed -e 's/$(EXEEXT)$$//' -e '$(transform)' -e 's/$$/$(EXEEXT)/'`"; \
+	  echo " rm -f $(DESTDIR)$(bindir)/$$f"; \
+	  rm -f $(DESTDIR)$(bindir)/$$f; \
+	done
+
+mostlyclean-compile:
+	-rm -f *.o core *.core
+
+clean-compile:
+
+distclean-compile:
+	-rm -f *.tab.c
+
+maintainer-clean-compile:
+
+cvs: $(cvs_OBJECTS) $(cvs_DEPENDENCIES)
+	@rm -f cvs
+	$(LINK) $(cvs_LDFLAGS) $(cvs_OBJECTS) $(cvs_LDADD) $(LIBS)
+
+install-binSCRIPTS: $(bin_SCRIPTS)
+	@$(NORMAL_INSTALL)
+	$(mkinstalldirs) $(DESTDIR)$(bindir)
+	@list='$(bin_SCRIPTS)'; for p in $$list; do \
+	  f="`echo $$p|sed '$(transform)'`"; \
+	  if test -f $$p; then \
+	    echo " $(INSTALL_SCRIPT) $$p $(DESTDIR)$(bindir)/$$f"; \
+	    $(INSTALL_SCRIPT) $$p $(DESTDIR)$(bindir)/$$f; \
+	  elif test -f $(srcdir)/$$p; then \
+	    echo " $(INSTALL_SCRIPT) $(srcdir)/$$p $(DESTDIR)$(bindir)/$$f"; \
+	    $(INSTALL_SCRIPT) $(srcdir)/$$p $(DESTDIR)$(bindir)/$$f; \
+	  else :; fi; \
+	done
+
+uninstall-binSCRIPTS:
+	@$(NORMAL_UNINSTALL)
+	@list='$(bin_SCRIPTS)'; for p in $$list; do \
+	  f="`echo $$p|sed '$(transform)'`"; \
+	  echo " rm -f $(DESTDIR)$(bindir)/$$f"; \
+	  rm -f $(DESTDIR)$(bindir)/$$f; \
+	done
+
+tags: TAGS
+
+ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
+	list='$(SOURCES) $(HEADERS) $(TAGS_FILES)'; \
+	unique=`for i in $$list; do \
+	    if test -f "$$i"; then echo $$i; else echo $(srcdir)/$$i; fi; \
+	  done | \
+	  $(AWK) '    { files[$$0] = 1; } \
+	       END { for (i in files) print i; }'`; \
+	mkid -fID $$unique $(LISP)
+
+TAGS:  $(HEADERS) $(SOURCES) options.h.in $(TAGS_DEPENDENCIES) \
+		$(TAGS_FILES) $(LISP)
+	tags=; \
+	here=`pwd`; \
+	list='$(SOURCES) $(HEADERS) $(TAGS_FILES)'; \
+	unique=`for i in $$list options.h.in; do \
+	    if test -f "$$i"; then echo $$i; else echo $(srcdir)/$$i; fi; \
+	  done | \
+	  $(AWK) '    { files[$$0] = 1; } \
+	       END { for (i in files) print i; }'`; \
+	test -z "$(ETAGS_ARGS)$$unique$(LISP)$$tags" \
+	  || $(ETAGS) $(ETAGS_ARGS) $$tags $$unique $(LISP)
+
+mostlyclean-tags:
+
+clean-tags:
+
+distclean-tags:
+	-rm -f TAGS ID
+
+maintainer-clean-tags:
+
+@AMDEP@include $(DEPDIR)/add.Po
+@AMDEP@include $(DEPDIR)/admin.Po
+@AMDEP@include $(DEPDIR)/buffer.Po
+@AMDEP@include $(DEPDIR)/checkin.Po
+@AMDEP@include $(DEPDIR)/checkout.Po
+@AMDEP@include $(DEPDIR)/classify.Po
+@AMDEP@include $(DEPDIR)/client.Po
+@AMDEP@include $(DEPDIR)/commit.Po
+@AMDEP@include $(DEPDIR)/create_adm.Po
+@AMDEP@include $(DEPDIR)/cvsrc.Po
+@AMDEP@include $(DEPDIR)/diff.Po
+@AMDEP@include $(DEPDIR)/edit.Po
+@AMDEP@include $(DEPDIR)/entries.Po
+@AMDEP@include $(DEPDIR)/error.Po
+@AMDEP@include $(DEPDIR)/expand_path.Po
+@AMDEP@include $(DEPDIR)/fileattr.Po
+@AMDEP@include $(DEPDIR)/filesubr.Po
+@AMDEP@include $(DEPDIR)/find_names.Po
+@AMDEP@include $(DEPDIR)/hardlink.Po
+@AMDEP@include $(DEPDIR)/hash.Po
+@AMDEP@include $(DEPDIR)/history.Po
+@AMDEP@include $(DEPDIR)/ignore.Po
+@AMDEP@include $(DEPDIR)/import.Po
+@AMDEP@include $(DEPDIR)/lock.Po
+@AMDEP@include $(DEPDIR)/log.Po
+@AMDEP@include $(DEPDIR)/login.Po
+@AMDEP@include $(DEPDIR)/logmsg.Po
+@AMDEP@include $(DEPDIR)/main.Po
+@AMDEP@include $(DEPDIR)/mkmodules.Po
+@AMDEP@include $(DEPDIR)/modules.Po
+@AMDEP@include $(DEPDIR)/myndbm.Po
+@AMDEP@include $(DEPDIR)/no_diff.Po
+@AMDEP@include $(DEPDIR)/parseinfo.Po
+@AMDEP@include $(DEPDIR)/patch.Po
+@AMDEP@include $(DEPDIR)/rcs.Po
+@AMDEP@include $(DEPDIR)/rcscmds.Po
+@AMDEP@include $(DEPDIR)/recurse.Po
+@AMDEP@include $(DEPDIR)/release.Po
+@AMDEP@include $(DEPDIR)/remove.Po
+@AMDEP@include $(DEPDIR)/repos.Po
+@AMDEP@include $(DEPDIR)/root.Po
+@AMDEP@include $(DEPDIR)/rtag.Po
+@AMDEP@include $(DEPDIR)/run.Po
+@AMDEP@include $(DEPDIR)/scramble.Po
+@AMDEP@include $(DEPDIR)/server.Po
+@AMDEP@include $(DEPDIR)/status.Po
+@AMDEP@include $(DEPDIR)/subr.Po
+@AMDEP@include $(DEPDIR)/tag.Po
+@AMDEP@include $(DEPDIR)/update.Po
+@AMDEP@include $(DEPDIR)/vers_ts.Po
+@AMDEP@include $(DEPDIR)/watch.Po
+@AMDEP@include $(DEPDIR)/wrapper.Po
+@AMDEP@include $(DEPDIR)/zlib.Po
+
+mostlyclean-depend:
+
+clean-depend:
+
+distclean-depend:
+	-rm -rf $(DEPDIR)
+
+maintainer-clean-depend:
+
+@AMDEP@CCDEPMODE = @CCDEPMODE@
+
 .c.o:
-	$(CC) $(CPPFLAGS) $(INCLUDES) $(DEFS) $(CFLAGS) -c $<
+@AMDEP@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
+@AMDEP@	depfile='$(DEPDIR)/$*.Po' tmpdepfile='$(DEPDIR)/$*.TPo' @AMDEPBACKSLASH@
+@AMDEP@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+	$(COMPILE) -c -o $@ `test -f $< || echo '$(srcdir)/'`$<
 
-all: Makefile $(PROGS)
-.PHONY: all
 
-saber_cvs:
-	@cd ..; $(MAKE) saber SUBDIRS=src
+distdir = $(top_builddir)/$(PACKAGE)-$(VERSION)/$(subdir)
 
-lint:
-	@cd ..; $(MAKE) lint SUBDIRS=src
-
-install: installdirs
-	@for prog in $(PROGS); do \
-	  echo Installing $$prog in $(bindir); \
-	  $(INSTALL) $$prog $(bindir)/$$prog ; \
+distdir: $(DISTFILES)
+	@for file in $(DISTFILES); do \
+	  d=$(srcdir); \
+	  if test -d $$d/$$file; then \
+	    cp -pR $$d/$$file $(distdir) \
+	    || exit 1; \
+	  else \
+	    test -f $(distdir)/$$file \
+	    || cp -p $$d/$$file $(distdir)/$$file \
+	    || exit 1; \
+	  fi; \
 	done
+info-am:
+info: info-am
+dvi-am:
+dvi: dvi-am
+check-am: all-am
+	$(MAKE) $(AM_MAKEFLAGS) check-local
+check: check-am
+installcheck-am:
+installcheck: installcheck-am
+all-recursive-am: options.h
+	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 
+install-exec-am: install-binPROGRAMS install-binSCRIPTS
+install-exec: install-exec-am
+
+install-data-am:
+install-data: install-data-am
+
+install-am: all-am
+	@$(MAKE) $(AM_MAKEFLAGS) install-exec-am install-data-am
+install: install-am
+uninstall-am: uninstall-binPROGRAMS uninstall-binSCRIPTS
+uninstall: uninstall-am
+all-am: Makefile $(PROGRAMS) $(SCRIPTS) options.h
+all-redirect: all-am
+install-strip:
+	$(MAKE) $(AM_MAKEFLAGS) INSTALL_STRIP_FLAG=-s install
 installdirs:
-	$(SHELL) $(top_srcdir)/mkinstalldirs $(bindir)
+	$(mkinstalldirs)  $(DESTDIR)$(bindir) $(DESTDIR)$(bindir)
 
-.PHONY: install installdirs
 
-installcheck:
-	$(SHELL) $(srcdir)/sanity.sh $(bindir)/cvs
-.PHONY: installcheck
+mostlyclean-generic:
 
-check: all
-	$(SHELL) $(srcdir)/sanity.sh `pwd`/cvs
-.PHONY: check
+clean-generic:
 
-# I'm not sure there is any remaining reason for this to be separate from
-# `make check'.
-remotecheck: all
-	$(SHELL) $(srcdir)/sanity.sh -r `pwd`/cvs
-.PHONY: remotecheck
+distclean-generic:
+	-rm -f Makefile $(CONFIG_CLEAN_FILES)
+	-rm -f config.cache config.log stamp-h stamp-h[0-9]*
+	-test -z "$(DISTCLEANFILES)" || rm -f $(DISTCLEANFILES)
 
-tags: $(TAGFILES)
-	ctags $(TAGFILES)
+maintainer-clean-generic:
+	-rm -f Makefile.in
+mostlyclean-am:  mostlyclean-hdr mostlyclean-binPROGRAMS \
+		mostlyclean-compile mostlyclean-tags mostlyclean-depend \
+		mostlyclean-generic
 
-TAGS: $(TAGFILES)
-	etags `for i in $(TAGFILES); do echo $(srcdir)/$$i; done`
+mostlyclean: mostlyclean-am
 
-ls:
-	@echo $(DISTFILES)
-.PHONY: ls
+clean-am:  clean-hdr clean-binPROGRAMS clean-compile clean-tags \
+		clean-depend clean-generic mostlyclean-am
 
-clean:
-	rm -f $(PROGS) *.o core check.log check.plog
-.PHONY: clean
+clean: clean-am
 
-distclean: clean
-	rm -f tags TAGS Makefile options.h
-.PHONY: distclean
+distclean-am:  distclean-hdr distclean-binPROGRAMS distclean-compile \
+		distclean-tags distclean-depend distclean-generic \
+		clean-am
 
-realclean: distclean
-.PHONY: realclean
+distclean: distclean-am
 
-dist-dir:
-	mkdir ${DISTDIR}
-	for i in ${DISTFILES}; do \
-	  ln $(srcdir)/$${i} ${DISTDIR}; \
-	done
-.PHONY: dist-dir
+maintainer-clean-am:  maintainer-clean-hdr maintainer-clean-binPROGRAMS \
+		maintainer-clean-compile maintainer-clean-tags \
+		maintainer-clean-depend maintainer-clean-generic \
+		distclean-am
+	@echo "This command is intended for maintainers to use;"
+	@echo "it deletes files that may require special tools to rebuild."
 
-# Linking rules.
+maintainer-clean: maintainer-clean-am
 
-$(PROGS): ../lib/libcvs.a ../zlib/libz.a ../diff/libdiff.a
+.PHONY: mostlyclean-hdr distclean-hdr clean-hdr maintainer-clean-hdr \
+mostlyclean-binPROGRAMS distclean-binPROGRAMS clean-binPROGRAMS \
+maintainer-clean-binPROGRAMS uninstall-binPROGRAMS install-binPROGRAMS \
+mostlyclean-compile distclean-compile clean-compile \
+maintainer-clean-compile uninstall-binSCRIPTS install-binSCRIPTS tags \
+mostlyclean-tags distclean-tags clean-tags maintainer-clean-tags \
+mostlyclean-depend distclean-depend clean-depend \
+maintainer-clean-depend distdir info-am info dvi-am dvi check-local \
+check check-am installcheck-am installcheck all-recursive-am \
+install-exec-am install-exec install-data-am install-data install-am \
+install uninstall-am uninstall all-redirect all-am all install-strip \
+installdirs mostlyclean-generic distclean-generic clean-generic \
+maintainer-clean-generic clean mostlyclean distclean maintainer-clean
 
-cvs: $(OBJECTS)
-	$(CC) $(OBJECTS) ../lib/libcvs.a ../zlib/libz.a ../diff/libdiff.a $(LIBS) $(LDFLAGS) -o $@ 
 
-xlint: $(SOURCES)
-	files= ; \
-	for i in $(SOURCES) ; do \
-	  files="$$files $(srcdir)/$$i" ; \
-	done ; \
-	sh -c "lint $(DEFS) $(INCLUDES) $$files | grep -v \"possible pointer alignment problem\" \
-	| grep -v \"argument closure unused\""
-
-saber: $(SOURCES)
-	# load $(CFLAGS) $(SOURCES)
-	# load ../lib/libcvs.a $(LIBS)
-
-cvsbug: cvsbug.sh $(srcdir)/version.c
-	echo > .fname \
-	  cvs-`sed < $(srcdir)/version.c \
-		    -e '/version_string/!d' \
-		    -e 's/[^0-9.]*\([0-9.]*\).*/\1/' \
-		    -e q`
+# The cvsbug executable
+# version.c is in here so we'll notice if configure was run
+cvsbug: cvsbug.sh version.c
 	sed -e 's,xLIBDIRx,$(libdir)/cvs,g' \
-	    -e "s,xVERSIONx,`cat .fname`,g" $(srcdir)/$@.sh > $@-t
-	rm -f .fname
+	    -e "s,xVERSIONx,$(VERSION),g" $< > $@-t
 	mv $@-t $@
 	chmod a+x $@
 
-# Compilation rules.
+check-local:
+	$(SHELL) $(srcdir)/sanity.sh `pwd`/cvs
 
-$(OBJECTS): $(HEADERS) options.h
+.PHONY: remotecheck
+remotecheck:
+	$(SHELL) $(srcdir)/sanity.sh -r `pwd`/cvs
 
-rcscmds.o: rcscmds.c $(top_srcdir)/diff/diffrun.h
-	$(CC) $(CPPFLAGS) $(INCLUDES) -I$(top_srcdir)/diff $(DEFS) $(CFLAGS) -c $(srcdir)/rcscmds.c
+# for backwards compatibility with the old makefiles
+.PHONY: realclean
+realclean: maintainer-clean
 
-zlib.o: zlib.c $(top_srcdir)/zlib/zlib.h
-	$(CC) $(CPPFLAGS) $(INCLUDES) -I$(top_srcdir)/zlib $(DEFS) $(CFLAGS) -c $(srcdir)/zlib.c
-
-subdir = src
-Makefile: ../config.status Makefile.in
-	cd .. && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= ./config.status
-
-options.h: ../config.status options.h.in
-	cd .. && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= ./config.status
-
-#../config.status: ../configure
-#	cd .. ; $(SHELL) config.status --recheck
-
-#../configure: ../configure.in
-#	cd $(top_srcdir) ; autoconf
+# Tell versions [3.59,3.63) of GNU make to not export all variables.
+# Otherwise a system limit (for SysV at least) may be exceeded.
+.NOEXPORT:
