@@ -1,5 +1,10 @@
 2003-05-20  Derek Price  <derek@ximbiot.com>
 
+	* mkmodules.c (config_contents): Add missing newline.
+	(Patch from Kenneth Lorber <keni@his.com>.)
+
+2003-05-20  Derek Price  <derek@ximbiot.com>
+
 	* Makefile.am: Macro subsitution for zlib include path and library
 	location
 	* zlib.c: #ifdef inclusion of <zlib.h> versus "zlib.h"
