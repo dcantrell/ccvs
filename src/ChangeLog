@@ -1,3 +1,17 @@
+1999-04-13  Derek Price
+	<http://www-personal.engin.umich.edu/~oberon/resume.html>
+
+	* sanity.sh (diff):  Tests to verify correct operation of
+	the --ifdef parameter to cvs diff.
+	[indentation fixed -kingdon].
+
+1999-04-13  Derek Price
+	<http://www-personal.engin.umich.edu/~oberon/resume.html>
+	for Noah Friedman  <friedman@splode.com>
+
+        * diff.c (diff): Put "--ifdef=" in opts string, not "-D"; the
+        latter is confused by pserver for a date spec.
+
 1999-04-14  Jim Kingdon  <http://www.cyclic.com>
 
 	* fileattr.h: Adjust comments to reflect the official version of

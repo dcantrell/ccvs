@@ -2389,6 +2389,41 @@ diff -c /dev/null trdiff/new:1\.1
 	  # diff says "I know nothing".  Shrug.
 	  dotest_fail diff-3 "${testcvs} diff xyzpdq" \
 "${PROG} [a-z]*: I know nothing about xyzpdq"
+	  touch abc
+	  dotest diff-4 "${testcvs} add abc" \
+"${PROG} [a-z]*: scheduling file .abc. for addition
+${PROG} [a-z]*: use .cvs commit. to add this file permanently"
+	  dotest diff-5 "${testcvs} -q ci -mtest" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/abc,v
+done
+Checking in abc;
+${TESTDIR}/cvsroot/first-dir/abc,v  <--  abc
+initial revision: 1\.1
+done"
+	  echo "extern int gethostname ();" >abc
+	  dotest diff-6 "${testcvs} -q ci -mtest" \
+"Checking in abc;
+${TESTDIR}/cvsroot/first-dir/abc,v  <--  abc
+new revision: 1\.2; previous revision: 1\.1
+done"
+	  echo "#include <winsock.h>" >abc
+	  # check the behavior of the --ifdef=MACRO option
+	  dotest_fail diff-7 "${testcvs} -q diff --ifdef=HAVE_WINSOCK_H" \
+"Index: abc
+===================================================================
+RCS file: ${TESTDIR}/cvsroot/first-dir/abc,v
+retrieving revision 1\.2
+diff --ifdef=HAVE_WINSOCK_H -r1\.2 abc
+#ifndef HAVE_WINSOCK_H
+extern int gethostname ();
+#else /\* HAVE_WINSOCK_H \*/
+#include <winsock\.h>
+#endif /\* HAVE_WINSOCK_H \*/"
+
+	  if test "$keep" = yes; then
+	    echo Keeping ${TESTDIR} and exiting due to --keep
+	    exit 0
+	  fi
 
 	  cd ../..
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
