@@ -42,6 +42,18 @@ static int cvs_gssapi_wrapping;
 
 #ifdef SERVER_SUPPORT
 
+/* This isn't defined anywhere else that I know of.  We made it up.  Referenced
+ * both times this file can call gethostname.
+ *
+ * FIXME: This should probably correspond to any hostname length limits defined
+ * by POSIX or some appropriate internet standard, but I'm not sure where to
+ * look and I haven't heard any complaints.  If you happen to know the correct
+ * standard, it should probably at least be referenced in this comment.
+ */
+# ifndef MAXHOSTNAMELEN
+#   define MAXHOSTNAMELEN (256)
+# endif
+
 #ifdef HAVE_WINSOCK_H
 #include <winsock.h>
 #endif
@@ -641,6 +653,70 @@ supported_response (char *name)
     /* NOTREACHED */
     return 0;
 }
+
+
+
+/*
+ * Return true if we need to relay write requests to a primary server
+ * and false otherwise.
+ *
+ * NOTES
+ *
+ *   - primarily handles :ext: method as this seems most likely to be used in
+ *     practice.
+ *
+ *   - :fork: method is handled for testing.
+ *
+ *   - Could handle pserver too, but would have to store the password
+ *     the client sent us.
+ *
+ *
+ * GLOBALS
+ *   PrimaryServer        The parsed setting from CVSROOT/config, if any, or
+ *                        NULL, otherwise.
+ *   current_parsed_root  The current repository.
+ *
+ * RETURNS
+ *   true                 If this server is configured as a secondary server.
+ *   false                Otherwise.
+ */
+static bool
+isSecondaryServer (void)
+{
+    char hostname[MAXHOSTNAMELEN];
+    assert (current_parsed_root);
+
+    /***
+     *** The following is done as a series of if/return combinations an an
+     *** optimization.
+     ***/
+
+    /* If there is no primary server defined in CVSROOT/config, then we can't
+     * be a secondary.
+     */
+    if (!PrimaryServer) return false;
+
+    /* The directory must not match for fork.  */
+    if (PrimaryServer->method == fork_method
+	&& strcmp (PrimaryServer->directory, current_parsed_root->directory))
+	return true;
+
+    /* Must be :ext: method, then.  This is enforced when CVSROOT/config is
+     * parsed.
+     */
+    assert (PrimaryServer->method == ext_method);
+
+    /* Our hostname and directory must match for this to be the primary.  */
+    gethostname (hostname, sizeof hostname);
+    hostname[sizeof hostname] = '\0';
+    if (!strcmp (PrimaryServer->hostname, hostname)
+	&& !strcmp (PrimaryServer->directory, current_parsed_root->directory))
+	return false;
+
+    return true;
+}
+
+
 
 static void
 serve_valid_responses (char *arg)
@@ -6143,12 +6219,9 @@ error 0 kerberos: %s\n", krb_get_err_text(status));
 }
 #endif /* HAVE_KERBEROS */
 
+
+
 #ifdef HAVE_GSSAPI
-
-#ifndef MAXHOSTNAMELEN
-#define MAXHOSTNAMELEN (256)
-#endif
-
 /* Authenticate a GSSAPI connection.  This is called from
    pserver_authenticate_connection, and it handles success and failure
    the same way.  */

@@ -1,5 +1,10 @@
 2004-06-09  Derek Price  <derek@ximbiot.com>
 
+	* server.c (isSecondaryServer): New function.
+	(MAXHOSTNAMELEN): Move to top of file and improve comment.
+
+2004-06-09  Derek Price  <derek@ximbiot.com>
+
 	* parseinfo.c (parse_config): Get my enum references correct.
 
 2004-06-09  Derek Price  <derek@ximbiot.com>
