@@ -1,5 +1,10 @@
 2005-01-31 Derek Price <derek@ximbiot.com>
 
+	* main.c: Rephrase --version message.
+	* sanity.sh (version-1): Update to match.
+
+2005-01-31 Derek Price <derek@ximbiot.com>
+
 	* Makefile.am, add.c, admin.c, annotate.c, checkin.c, checkout.c,
 	classify.c, commit.c, create_adm.c, cvs.h, cvsrc.c, diff.c, entries.c,
 	find_names.c, hash.c, hash.h, history.h, import.c, lock.c, log.c,
