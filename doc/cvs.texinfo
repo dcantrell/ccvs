@@ -7919,13 +7919,13 @@ Changes: working directory.
 Synonyms: co, get
 @end itemize
 
-Make a working directory containing copies of the
+Create or update a working directory containing copies of the
 source files specified by @var{modules}.  You must execute
 @code{checkout} before using most of the other @sc{cvs}
 commands, since most of them operate on your working
 directory.
 
-The @var{modules} part of the command are either
+The @var{modules} are either
 symbolic names for some
 collection of source directories and files, or paths to
 directories or files in the repository.  The symbolic
@@ -7934,6 +7934,10 @@ names are defined in the @samp{modules} file.
 @c Needs an example, particularly of the non-"modules"
 @c case but probably of both.
 
+@c FIXME: this seems like a very odd place to introduce
+@c people to how CVS works.  The bit about unreserved
+@c checkouts is also misleading as it depends on how
+@c things are set up.
 Depending on the modules you specify, @code{checkout} may
 recursively create directories and populate them with
 the appropriate source files.  You can then edit these
@@ -7961,15 +7965,20 @@ read-write, unless the @samp{-r} option to @sc{cvs}
 (@pxref{Environment variables}), or a watch is in
 effect for that file (@pxref{Watches}).
 
-@c FIXME: misleading--checkout takes a module as
-@c argument, and update does not--so -d behavior is not the only
-@c difference.
-Running @code{checkout} on a directory that was already
-built by a prior @code{checkout} is also permitted, and
-has the same effect as specifying the @samp{-d} option
-to the @code{update} command, that is, any new
+Note that running @code{checkout} on a directory that was already
+built by a prior @code{checkout} is also permitted.
+This is similar to specifying the @samp{-d} option
+to the @code{update} command in the sense that new
 directories that have been created in the repository
-will appear in your work area.  @xref{update}.
+will appear in your work area.
+However, @code{checkout} takes a module name whereas
+@code{update} takes a directory name.  Also
+to use @code{checkout} this way it must be run from the
+top level directory (where you originally ran
+@code{checkout} from), so before you run
+@code{checkout} to update an existing directory, don't
+forget to change your directory to the top level
+directory.
 
 For the output produced by the @code{checkout} command
 see @ref{update output}.
