@@ -45,13 +45,16 @@
 # define mktime my_mktime
 #endif /* DEBUG */
 
-/* Divide A by 2**B, truncating towards minus infinity.  This is a
-   substitute for A >> B that works portably even if A is negative.  A
-   and B should be free of side effects, and 0 <= B <= 30.  ISO C99
-   says that A >> B has implementation-defined behavior if A is
-   negative, and some implementations (e.g., UNICOS 9.0 on a Cray Y-MP
-   EL) don't shift right in the usual way, so SHR falls back on
-   division in cases like these.  */
+/* Shift A right by B bits portably, by dividing A by 2**B and
+   truncating towards minus infinity.  A and B should be free of side
+   effects, and B should be in the range 0 <= B <= INT_BITS - 2, where
+   INT_BITS is the number of useful bits in an int.  GNU code can
+   assume that INT_BITS is at least 32.
+
+   ISO C99 says that A >> B is implementation-defined if A < 0.  Some
+   implementations (e.g., UNICOS 9.0 on a Cray Y-MP EL) don't shift
+   right in the usual way when A < 0, so SHR falls back on division if
+   ordinary A >> B doesn't seem to be the usual signed shift.  */
 #define SHR(a, b)	\
   (-1 >> 1 == -1	\
    ? (a) >> (b)		\

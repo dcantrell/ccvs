@@ -1,5 +1,9 @@
 2004-11-11  Mark D. Baushke  <mdb@cvshome.org>
 
+	* alloca_.h, allocsa.h, mktime.c: Update from GNULIB.
+
+2004-11-11  Mark D. Baushke  <mdb@cvshome.org>
+
 	* strftime.c, getdate.y: Update from GNULIB.
 	* getdate.c: Regenerated.
 
