@@ -6,17 +6,17 @@
 
 #if defined (SERVER_SUPPORT) || defined (CLIENT_SUPPORT)
 
-#ifdef HAVE_WINSOCK_H
-# include <winsock.h>
-#else
-# include <sys/socket.h>
-#endif
+# ifdef HAVE_WINSOCK_H
+#   include <winsock.h>
+# else
+#  include <sys/socket.h>
+# endif
 
 /* OS/2 doesn't have EIO.  FIXME: this whole notion of turning
    a different error into EIO strikes me as pretty dubious.  */
-#if !defined (EIO)
-#define EIO EBADPOS
-#endif
+# if !defined( EIO )
+#   define EIO EBADPOS
+# endif
 
 /* Linked list of available buffer_data structures.  */
 static struct buffer_data *free_buffer_data;
@@ -103,7 +103,7 @@ allocate_buffer_datas ()
     int i;
 
     /* Allocate buffer_data structures in blocks of 16.  */
-#define ALLOC_COUNT (16)
+# define ALLOC_COUNT (16)
 
     alc = ((struct buffer_data *)
 	   xmalloc (ALLOC_COUNT * sizeof (struct buffer_data)));
@@ -151,7 +151,7 @@ buf_empty_p (buf)
     return 1;
 }
 
-#ifdef SERVER_FLOWCONTROL
+# ifdef SERVER_FLOWCONTROL
 /*
  * Count how much data is stored in the buffer..
  * Note that each buffer is a xmalloc'ed chunk BUFFER_DATA_SIZE.
@@ -169,7 +169,7 @@ buf_count_mem (buf)
 
     return mem;
 }
-#endif /* SERVER_FLOWCONTROL */
+# endif /* SERVER_FLOWCONTROL */
 
 /* Add data DATA of length LEN to BUF.  */
 
@@ -1401,7 +1401,7 @@ stdio_buffer_shutdown (buf)
 		 */
 		error (0, 0, "dying gasps from client unexpected");
 	    else
-#endif
+# endif
 		error (0, 0, "dying gasps from %s unexpected", current_parsed_root->hostname);
 	}
 	else if (ferror (bc->fp))
@@ -1413,7 +1413,7 @@ stdio_buffer_shutdown (buf)
 		 */
 		error (0, errno, "reading from client");
 	    else
-#endif
+# endif
 		error (0, errno, "reading from %s", current_parsed_root->hostname);
 	}
 
@@ -1500,7 +1500,7 @@ stdio_buffer_shutdown (buf)
    bytes, and the input translation routine should shrink the data
    correspondingly.  */
 
-#define PACKET_SLOP (100)
+# define PACKET_SLOP (100)
 
 /* This structure is the closure field of a packetizing buffer.  */
 
