@@ -1,5 +1,11 @@
 2003-12-09  Derek Price  <derek@ximbiot.com>
 
+	* NEWS: Note new promotable read locks.
+	* configure.in (--enable-lock-compatibility): New option.
+	* configure, config.h.in: Regenerated.
+
+2003-12-09  Derek Price  <derek@ximbiot.com>
+
 	* configure.in: Reorder enables slightly and improve commenting.
 	* configure: Regenerated.
 

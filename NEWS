@@ -1,6 +1,12 @@
 Changes since 1.12.3:
 *********************
 
+GENERAL USER ISSUES
+
+* The CVS server no longer locks more than a directory at a time for write, so
+  large commits & tags should now have a much harder time blocking other
+  operations.
+
 * Add support for large files. Use --disable-largefile to omit support
   for large files.
 
