@@ -3420,8 +3420,8 @@ connect_to_pserver (cvsroot_t *root, struct buffer **to_server_p,
 	int codenum;
 	size_t count;
 	/* 4 characters for port covered by the length of %s & %d */
-	char* write_buf = Xasprintf (CONNECT_STRING,
-                                     root->hostname, port_number);
+	char* write_buf = Xasnprintf (NULL, &count, CONNECT_STRING,
+                                      root->hostname, port_number);
 	send_to_server_via (to_server, write_buf, count);
 
 	/* Wait for HTTP status code, bail out if you don't get back a 2xx

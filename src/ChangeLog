@@ -1,5 +1,13 @@
 2004-10-19 Derek Price <derek@ximbiot.com>
 
+	* cvs.h: Prototype new function.
+	* subr.c (Xasnprintf): New function.
+	* root.c (primary_root_translate, primary_root_inverse_translate):
+	s/asnprintf/Xasnprintf/.
+	* client.c (connect_to_pserver): Store line length for efficiency.
+
+2004-10-19 Derek Price <derek@ximbiot.com>
+
 	* history.c: Remove unecessary typecasts.  Some reformatting.
 
 2004-10-18 Derek Price <derek@ximbiot.com>
