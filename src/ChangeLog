@@ -1,5 +1,11 @@
 2001-01-29  Larry Jones  <larry.jones@sdrc.com>
 
+	* subr.c (shell_escape): New function.
+	* cvs.h: Declare it.
+	* logmsg.c (logfile_write): Use it to avoid problems with filenames
+	containing "'".
+	(Reported by Gerhard Ahuis <gerhard@ats.xs4all.nl>.)
+
 	* server.c (outbuf_memory_error, pserver_authenticate_connection,
 	kserver_authenticate_connection): If available, use syslog() to
 	record some errors.

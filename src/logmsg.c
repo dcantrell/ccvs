@@ -791,16 +791,16 @@ logfile_write (repository, filter, message, logfp, changes)
 
 	srepos = Short_Repository (repository);
 
-	prog = xmalloc ((fmt_percent - filter) + strlen (srepos)
-			+ strlen (str_list) + strlen (fmt_continue)
+	prog = cp = xmalloc ((fmt_percent - filter) + 2 * strlen (srepos)
+			+ 2 * strlen (str_list) + strlen (fmt_continue)
 			+ 10);
-	(void) strncpy (prog, filter, fmt_percent - filter);
-	prog[fmt_percent - filter] = '\0';
-	(void) strcat (prog, "'");
-	(void) strcat (prog, srepos);
-	(void) strcat (prog, str_list);
-	(void) strcat (prog, "'");
-	(void) strcat (prog, fmt_continue);
+	(void) memcpy (cp, filter, fmt_percent - filter);
+	cp += fmt_percent - filter;
+	*cp++ = '"';
+	cp = shell_escape (cp, srepos);
+	cp = shell_escape (cp, str_list);
+	*cp++ = '"';
+	(void) strcpy (cp, fmt_continue);
 	    
 	/* To be nice, free up some memory. */
 
