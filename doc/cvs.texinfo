@@ -7043,15 +7043,20 @@ The login name of the user who locked the revision
 @code{cvs admin -l} is in use).
 
 @cindex Log keyword
+@cindex MaxCommentLeaderLength
+@cindex UseArchiveCommentLeader
+@cindex Log keyword, configuring substitution behavior
 @item $@splitrcskeyword{Log}$
 The log message supplied during commit, preceded by a
 header containing the @sc{rcs} filename, the revision
 number, the author, and the date (UTC).  Existing log
 messages are @emph{not} replaced.  Instead, the new log
 message is inserted after @code{$@splitrcskeyword{Log}:@dots{}$}.
-Each new line is prefixed with the same string which
-precedes the @code{$Log} keyword.  For example, if the
-file contains:
+By default, each new line is prefixed with the same string which
+precedes the @code{$@splitrcskeyword{Log}$} keyword, unless it exceeds the
+@code{MaxCommentLeaderLength} set in @file{CVSROOT/config}.
+
+For example, if the file contains:
 
 @example
   /* Here is what people have been up to:
@@ -7065,12 +7070,22 @@ file contains:
 
 @noindent
 then additional lines which are added when expanding
-the @code{$Log} keyword will be preceded by @samp{   * }.
+the @code{$@splitrcskeyword{Log}$} keyword will be preceded by @samp{   * }.
 Unlike previous versions of @sc{cvs} and @sc{rcs}, the
 @dfn{comment leader} from the @sc{rcs} file is not used.
-The @code{$Log} keyword is useful for
+The @code{$@splitrcskeyword{Log}$} keyword is useful for
 accumulating a complete change log in a source file,
 but for several reasons it can be problematic.
+
+If the prefix of the @code{$@splitrcskeyword{Log}$} keyword turns out to be
+longer than @code{MaxCommentLeaderLength}, CVS will skip expansion of this
+keyword unless @code{UseArchiveCommentLeader} is also set in
+@file{CVSROOT/config} and a @samp{comment leader} is set in the RCS archive
+file, in which case the comment leader will be used instead.  For more on
+setting the comment leader in the RCS archive file, @xref{admin}.  For more
+on configuring the default @code{$@splitrcskeyword{Log}$} substitution
+behavior, @xref{config}.
+
 @xref{Log keyword}.
 
 @cindex RCSfile keyword
@@ -14361,6 +14376,33 @@ well, but only for testing - if you find another use for accessing a primary
 via the @samp{:fork:} method, please send a note to @email{bug-cvs@@gnu.org}
 about it).  See @ref{Write proxies} for more on configuring and using write
 proxies.
+
+@cindex MaxCommentLeaderLength, in CVSROOT/config
+@cindex Log keyword, configuring substitution behavior
+@item MaxCommentLeaderLength=@var{length}
+Set to some length, in bytes, where a trailing @samp{k}, @samp{M}, @samp{G},
+or @samp{T} causes the preceding nubmer to be interpreted as kilobytes,
+megabytes, gigabytes, or terrabytes, respectively, will cause
+@code{$@splitrcskeyword{Log}$} keywords (@pxref{Keyword substitution}), with
+more than @var{length} bytes preceding it on a line to be ignored (or to fall
+back on the comment leader set in the RCS archive file - see
+@code{UseArchiveCommentLeader} below).  Defaults to 20 bytes to allow checkouts
+to proceed normally when they include binary files containing
+@code{$@splitrcskeyword{Log}$} keywords and which users have neglected to mark
+as binary.
+
+@cindex UseArchiveCommentLeader, in CVSROOT/config
+@cindex Log keyword, configuring substitution behavior
+@item UseArchiveCommentLeader=@var{value}
+Set to @code{true}, if the text preceding a @code{$@splitrcskeyword{Log}$}
+keyword is found to exceed @code{MaxCommentLeaderLength} bytes, then the
+comment leader set in the RCS archive file (@pxref{admin}), if any, will be
+used instead.  If there is no comment leader set in the archive file or
+@var{value} is set to @samp{false}, then the keyword will not be expanded
+(@pxref{Keyword list}).  To force the comment leader in the RCS archive file to
+be used exclusively (and @code{$@splitrcskeyword{Log}$} expansion skipped in
+files where the comment leader has not been set in the archive file), set
+@var{value} and set @code{MaxCommentLeaderLength} to @code{0}.
 @end table
 
 
