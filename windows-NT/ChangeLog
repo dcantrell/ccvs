@@ -1,5 +1,12 @@
 2004-04-14  Derek Price  <derek@ximbiot.com>
 
+	* cvsntfix.pl: Rename to...
+	* fix-msvc-mak.pl: ...this.
+	* fix-msvc-mak-head.pl: New file.
+	* .cvsignore: Add fix-msvc-mak.
+
+2004-04-14  Derek Price  <derek@ximbiot.com>
+
 	* cvsntfix.pl: New file.
 	(Original from Conrad Pino <conrad@pino.com>.)
 
