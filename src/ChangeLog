@@ -1,5 +1,10 @@
 2003-11-26  Derek Price  <derek@ximbiot.com>
 
+	* sanity.sh (modules3-2): Simplify syntax that may have given Cygwin
+	intermittent conniptions.
+
+2003-11-25  Mark D. Baushke  <mdb@cvshome.org>
+
 	* sanity.sh (binfiles2): Correct yet another Cygwin difficulty.
 
 2003-11-25  Derek Price  <derek@ximbiot.com>
