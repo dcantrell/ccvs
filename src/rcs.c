@@ -4304,3 +4304,63 @@ annotate (argc, argv)
 			    argc, argv, local, W_LOCAL, 0, 1, (char *)NULL,
 			    1);
 }
+
+/*
+ * For a given file with full pathname PATH and revision number REV,
+ * produce a file label suitable for passing to diff.  The default
+ * file label as used by RCS 5.7 looks like this:
+ *
+ *	FILENAME <tab> YYYY/MM/DD <sp> HH:MM:SS <tab> REVNUM
+ *
+ * The date and time used are the revision's last checkin date and time.
+ * If REV is NULL, use the working copy's mtime instead.
+ */
+char *
+make_file_label (path, rev, rcs)
+    char *path;
+    char *rev;
+    RCSNode *rcs;
+{
+    char datebuf[MAXDATELEN];
+    char *label;
+    char *file;
+
+    /* Get the file's basename. */
+    file = strrchr (path, '/');
+    if (file == NULL)
+	file = path;
+    else
+	++file;
+
+    label = (char *) xmalloc (strlen (file) +
+			      + (rev == NULL ? 0 : strlen (rev))
+			      + 50);
+
+    if (rev)
+    {
+	char *date;
+	RCS_getrevtime (rcs, rev, datebuf, 0);
+	date = printable_date (datebuf);
+	(void) sprintf (label, "-L%s\t%s\t%s", file, date, rev);
+	free (date);
+    }
+    else
+    {
+	struct stat sb;
+	struct tm *wm;
+
+	if (CVS_STAT (file, &sb) < 0)
+	    error (0, 1, "could not get info for `%s'", path);
+	else
+	{
+	    wm = gmtime (&sb.st_mtime);
+	    (void) sprintf (datebuf, "%04d/%02d/%02d %02d:%02d:%02d",
+			    wm->tm_year + 1900, wm->tm_mon + 1,
+			    wm->tm_mday, wm->tm_hour,
+			    wm->tm_min, wm->tm_sec);
+	    (void) sprintf (label, "-L%s\t%s", file, datebuf);
+	}
+    }
+    return label;
+}
+

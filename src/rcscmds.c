@@ -57,6 +57,8 @@
    On a related note, see the comments at diff_exec, later in this file,
    for more on a diff library.  */
 
+static void RCS_output_diff_options PROTO ((char *, char *, char *, char *));
+
 /* For RCS file PATH, make symbolic tag TAG point to revision REV.
    This validates that TAG is OK for a user to use.  Return value is
    -1 for error (and errno is set to indicate the error), positive for
@@ -216,40 +218,139 @@ RCS_checkin (rcsfile, workfile, message, rev, flags)
    or "" to use the default.  REV1 is the first revision to compare
    against; it must be non-NULL.  If REV2 is non-NULL, compare REV1
    and REV2; if REV2 is NULL compare REV1 with the file in the working
-   directory.  Output goes to stdout.
+   directory, whose name is WORKFILE.  LABEL1 and LABEL2 are default
+   file labels, and (if non-NULL) should be added as -L options
+   to diff.  Output goes to stdout.
 
    Return value is 0 for success, -1 for a failure which set errno,
    or positive for a failure which printed a message on stderr.
 
-   It would be relatively easy to convert this to use RCS_checkout
-   and DIFF.  The comments in options.h.in regarding the selection of
-   a diff program would need some revision, but I don't see a big
+   This used to exec rcsdiff, but now uses RCS_checkout and execs only
+   DIFF.  The comments in options.h.in regarding the selection of
+   a diff program need some revision, but I don't see a big
    issue here.  Another issue (which probably is an issue with or without
    changes to DIFF vs. rcsdiff), is what timezone is used for the dates
-   which appear in the diff output.  I suspect that rcsdiff's behavior
-   is different from DIFF's, but I'm not sure exactly how hard to worry
+   which appear in the diff output.  rcsdiff uses the -z flag, which is not
+   presently processed by CVS diff, but I'm not sure exactly how hard to worry
    about this--any such features are undocumented in the context
    of CVS, and I'm not sure how important to users.  */
 int
-RCS_exec_rcsdiff (rcsfile, opts, options, rev1, rev2)
-    char *rcsfile;
+RCS_exec_rcsdiff (rcsfile, opts, options, rev1, rev2, label1, label2, workfile)
+    RCSNode *rcsfile;
     char *opts;
     char *options;
     char *rev1;
     char *rev2;
+    char *label1;
+    char *label2;
+    char *workfile;
 {
-    if (rev2 != NULL)
+    char *tmpfile1;
+    char *tmpfile2;
+    char *use_file2;
+    int status, retval;
+
+    tmpfile1 = cvs_temp_name ();
+    tmpfile2 = NULL;
+
+    cvs_output ("\
+===================================================================\n\
+RCS file: ", 0);
+    cvs_output (rcsfile->path, 0);
+    cvs_output ("\n", 1);
+
+    /* Historically, `cvs diff' has expanded the $Name keyword to the
+       empty string when checking out revisions.  This is an accident,
+       but no one has considered the issue thoroughly enough to determine
+       what the best behavior is.  Passing NULL for the `nametag' argument
+       preserves the existing behavior. */
+
+    cvs_output ("retrieving revision ", 0);
+    cvs_output (rev1, 0);
+    cvs_output ("\n", 1);
+    status = RCS_checkout (rcsfile, NULL, rev1, NULL, options, tmpfile1,
+			   (RCSCHECKOUTPROC)0, NULL);
+    if (status > 0)
     {
-	run_setup ("%s%s -x,v/ %s %s -r%s -r%s", Rcsbin, RCS_DIFF,
-		   opts, options, rev1, rev2);
+	retval = status;
+	goto error_return;
+    }
+    else if (status < 0)
+    {
+	error (0, errno,
+	       "cannot check out revision %s of %s", rev1, rcsfile->path);
+	retval = 1;
+	goto error_return;
+    }
+
+    if (rev2 == NULL)
+    {
+	assert (workfile != NULL);
+	use_file2 = workfile;
     }
     else
     {
-	run_setup ("%s%s -x,v/ %s %s -r%s", Rcsbin, RCS_DIFF, opts,
-		   options, rev1);
+	tmpfile2 = cvs_temp_name ();
+	cvs_output ("retrieving revision ", 0);
+	cvs_output (rev2, 0);
+	cvs_output ("\n", 1);
+	status = RCS_checkout (rcsfile, NULL, rev2, NULL, options,
+			       tmpfile2, (RCSCHECKOUTPROC)0, NULL);
+	if (status > 0)
+	{
+	    retval = status;
+	    goto error_return;
+	}
+	else if (status < 0)
+	{
+	    error (0, errno,
+		   "cannot check out revision %s of %s", rev2, rcsfile->path);
+	    return 1;
+	}
+	use_file2 = tmpfile2;
     }
-    run_arg (rcsfile);
-    return run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_REALLY|RUN_COMBINED);
+
+    RCS_output_diff_options (opts, rev1, rev2, workfile);
+    status = diff_execv (tmpfile1, use_file2, label1, label2, opts, RUN_TTY);
+    if (status >= 0)
+    {
+	retval = status;
+	goto error_return;
+    }
+    else if (status < 0)
+    {
+	error (0, errno,
+	       "cannot diff %s and %s", tmpfile1, use_file2);
+	retval = 1;
+	goto error_return;
+    }
+
+ error_return:
+    {
+	int save_noexec = noexec;
+	noexec = 0;
+	if (unlink_file (tmpfile1) < 0)
+	{
+	    if (!existence_error (errno))
+		error (0, errno, "cannot remove temp file %s", tmpfile1);
+	}
+	noexec = save_noexec;
+    }
+    free (tmpfile1);
+    if (tmpfile2 != NULL)
+    {
+	int save_noexec = noexec;
+	noexec = 0;
+	if (unlink_file (tmpfile2) < 0)
+	{
+	    if (!existence_error (errno))
+		error (0, errno, "cannot remove temp file %s", tmpfile2);
+	}
+	noexec = save_noexec;
+	free (tmpfile2);
+    }
+
+    return retval;
 }
 
 
@@ -310,4 +411,65 @@ diff_exec (file1, file2, options, out)
 	return run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_REALLY | RUN_COMBINED);
     else
 	return run_exec (RUN_TTY, out, RUN_TTY, RUN_REALLY);
+}
+
+int
+diff_execv (file1, file2, label1, label2, options, out)
+    char *file1;
+    char *file2;
+    char *label1;
+    char *label2;
+    char *options;
+    char *out;
+{
+    run_setup ("%s%s", DIFF, options);
+    if (label1)
+	run_arg (label1);
+    if (label2)
+	run_arg (label2);
+    run_arg (file1);
+    run_arg (file2);
+
+    if (out == RUN_TTY)
+	/* I'm not 100% sure about the need for RUN_COMBINED here.  But
+	   the code I took this from had it, and I suspect it may
+	   avoid some out-of-order bugs.  */
+	return run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_REALLY | RUN_COMBINED);
+    else
+	return run_exec (RUN_TTY, out, RUN_TTY, RUN_REALLY);
+}
+
+/* Print the options passed to DIFF, in the format used by rcsdiff.
+   The rcsdiff code that produces this output is extremely hairy, and
+   it is not clear how rcsdiff decides which options to print and
+   which not to print.  The code below reproduces every rcsdiff run
+   that I have seen. */
+
+static void
+RCS_output_diff_options (opts, rev1, rev2, workfile)
+    char *opts;
+    char *rev1;
+    char *rev2;
+    char *workfile;
+{
+    char *tmp;
+
+    tmp = (char *) xmalloc (strlen (opts) + strlen (rev1) + 10);
+
+    sprintf (tmp, "diff%s -r%s", opts, rev1);
+    cvs_output (tmp, 0);
+    free (tmp);
+
+    if (rev2)
+    {
+	cvs_output (" -r", 3);
+	cvs_output (rev2, 0);
+    }
+    else
+    {
+	assert (workfile != NULL);
+	cvs_output (" ", 1);
+	cvs_output (workfile, 0);
+    }
+    cvs_output ("\n", 1);
 }

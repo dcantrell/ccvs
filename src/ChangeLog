@@ -1,3 +1,39 @@
+1997-09-21  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	(Note that this requires that DIFF support -L.  I'll be checking
+	in a fix to that in a moment, but I wanted separate checkins in
+	case that helps with clarity).
+	Tweaks to rcsdiff librarification:
+	* sanity.sh (rcslib): Change "cvs" to "${PROG}" and subcommand
+	names (e.g. "add") to "[a-z]*".  Former should deal with ${testcvs}
+	being "cvs.old" or something; latter fixes make remotecheck.
+	* rcs.c (make_file_label): Take into account strlen (rev) when
+	allocating space.  Removes a FIXME and probably fixes a buffer
+	overrun security hole.
+	* rcscmds.c (RCS_exec_rcsdiff): Remove #if 0'd code to call
+	rcsdiff.  Tim says he has compared the new code with rcsdiff code
+	and is confident that the behavior is preserved, so we need to
+	nuke the comment which says this has not been done.  #if 0 isn't
+	really a very good way to document the way it used to work anyway;
+	the old code is still in CVS.
+	* diff.c: Add comment about rcsdiff options that we don't support,
+	which Tim had sent in email.  Remove -T and -y, as the
+	previous meaning had been very confused.
+
+1997-09-21  Tim Pierce  <twp@xochi.tezcat.com>
+
+	Librarify rcsdiff.
+	
+	* diff.c (have_rev1_label, have_rev2_label): New variables.
+	(diff): Generate file labels with make_file_label if necessary;
+	pass labels, revisions and working file name to RCS_exec_rcsdiff.
+	* rcscmds.c, cvs.h (RCS_exec_rcsdiff): Completely revised function
+	to eliminate rcsdiff dependency, based on patch from JimK.
+	(diff_execv): New function, to exec diff with explicit -L args.
+	* rcs.c, rcs.h (make_file_label): New function.
+	(RCS_output_diff_options): New function.
+	* sanity.sh (rcslib): New test.
+
 Fri Sep 19 15:08:08 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* rcs.c (RCS_nodeisbranch): Assert that RCS is non-NULL.
