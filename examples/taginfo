@@ -1,5 +1,5 @@
 #
-# $Id$
+#ident	"@(#)cvs/examples:$Name$:$Id$"
 #
 # The "taginfo" file is used to control pre-tag checks.
 # The filter on the right is invoked with the following arguments:
@@ -22,4 +22,4 @@
 # If the name "ALL" appears as a regular expression it is always used
 # in addition to the first matching regex or "DEFAULT".
 #
-#DEFAULT			$CVSROOT/CVSROOT/tag_logging_program
+DEFAULT			$CVSROOT/CVSROOT/tag_logging_program
