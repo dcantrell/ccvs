@@ -1,5 +1,30 @@
 2000-02-13  Derek Price  <derek.price@openavenue.com>
 
+	* main.c (date_to_tm): New function to convert an RCS date string to a
+	struct tm.
+	(tm_to_internet): New function to convert a struct tm to a date string
+	as specified by RFC822 and amended by RFC 1123.
+	(date_to_internet): Use the above two functions and a struct tm
+	intermediary for conversion.
+	* patch.c (patch_fileproc): Answer somebody's comment and use the new
+	diff_exec API.
+	* rcs.c (RCS_checkin): Use new diff_exec API.
+	(RCS_delete_revs): Use new diff_exec API.
+	(make_file_label): If the file name is DEVNULL, date it the Epoch for
+	compatibility with the POSIX.2 spec and Larry Wall's patch
+	implementation.
+	* rcscmds.c (diff_exec): Accept new label arguments.
+	* sanity.sh (death2): Update some diff tests to accept the new format.
+	* update.c (patch_file): Use new diff_exec API.
+	* diff.c (diff_fileproc): Create header labels appropriate for
+	compatibility with the Larry Wall version of patch.
+	(diff): Rename calls to strcat_and_allocate.
+	(strcat_and_allocate): Rename and move...
+	* subr.c (xrealloc_and_strcat): here.
+	* cvs.h: Update prototypes to match.
+
+2000-02-13  Derek Price  <derek.price@openavenue.com>
+
 	* Makefile.am (cvs_SOURCES): Remove rtag.c.
 
 2001-02-07  Larry Jones  <larry.jones@sdrc.com>

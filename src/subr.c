@@ -111,6 +111,20 @@ expand_string (strptr, n, newsize)
     }
 }
 
+/* *STR is a pointer to a malloc'd string.  *LENP is its allocated
+   length.  Add SRC to the end of it, reallocating if necessary.  */
+void
+allocate_and_strcat (str, lenp, src)
+    char **str;
+    size_t *lenp;
+    const char *src;
+{
+    size_t new_size;
+
+    expand_string (str, lenp, strlen (*str) + strlen (src) + 1);
+    strcat (*str, src);
+}
+
 /*
  * Duplicate a string, calling xmalloc to allocate some dynamic space
  */

@@ -131,6 +131,10 @@ hostname="[-_.a-zA-Z0-9]*"
 # This appears in certain diff output.
 tempname="[-a-zA-Z0-9/.%_]*"
 
+# Regexp to match a date in RFC822 format (as amended by RFC1123).
+RFCDATE="[a-zA-Z0-9 ][a-zA-Z0-9 ]* [0-9:][0-9:]* -0000"
+RFCDATE_EPOCH="1 Jan 1970 00:00:00 -0000"
+
 # On cygwin32, we may not have /bin/sh.
 if [ -r /bin/sh ]; then
   TESTSHELL="/bin/sh"
@@ -851,8 +855,8 @@ ${PROG} \[[a-z]* aborted\]: failed to set tag BASE to revision 1\.1 in ${TESTDIR
 RCS file: ${TESTDIR}/cvsroot/first-dir/sdir/ssdir/ssfile,v
 retrieving revision 1\.1
 diff -c -r1\.1 ssfile
-\*\*\* sdir/ssdir/ssfile	[0-9/]* [0-9:]*	1\.1
---- sdir/ssdir/ssfile	[0-9/]* [0-9:]*
+\*\*\* sdir/ssdir/ssfile	${RFCDATE}	1\.1
+--- sdir/ssdir/ssfile	${RFCDATE}
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
 \*\*\* 1 \*\*\*\*
 --- 1,2 ----
@@ -864,8 +868,8 @@ ${PLUS} ssfile line 2"
 RCS file: ${TESTDIR}/cvsroot/first-dir/sdir/ssdir/ssfile,v
 retrieving revision 1\.1
 diff -c -r1\.1 ssfile
-\*\*\* sdir/ssdir/ssfile	[0-9/]* [0-9:]*	1\.1
---- sdir/ssdir/ssfile	[0-9/]* [0-9:]*
+\*\*\* sdir/ssdir/ssfile	${RFCDATE}	1\.1
+--- sdir/ssdir/ssfile	${RFCDATE}
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
 \*\*\* 1 \*\*\*\*
 --- 1,2 ----
@@ -3477,8 +3481,8 @@ ${PROG} [a-z]*: use .${PROG} commit. to remove this file permanently"
 ===================================================================
 RCS file: file1
 diff -N file1
-\*\*\* ${tempname}[ 	][	]*[a-zA-Z0-9: ]*
---- /dev/null[ 	][ 	]*[a-zA-Z0-9: ]*
+\*\*\* file1	${RFCDATE}	[0-9.]*
+--- /dev/null	${RFCDATE_EPOCH}
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
 \*\*\* 1 \*\*\*\*
 - first revision
@@ -3501,8 +3505,8 @@ done"
 ===================================================================
 RCS file: file1
 diff -N file1
-\*\*\* ${tempname}[ 	][	]*[a-zA-Z0-9: ]*
---- /dev/null[ 	][ 	]*[a-zA-Z0-9: ]*
+\*\*\* file1	${RFCDATE}	[0-9.]*
+--- /dev/null	${RFCDATE_EPOCH}
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
 \*\*\* 1 \*\*\*\*
 - first revision
@@ -3516,8 +3520,8 @@ diff -N file1
 ===================================================================
 RCS file: file1
 diff -N file1
-\*\*\* ${tempname}[ 	][	]*[a-zA-Z0-9: ]*
---- /dev/null[ 	][ 	]*[a-zA-Z0-9: ]*
+\*\*\* file1	[-a-zA-Z0-9: ]*	[0-9.]*
+--- /dev/null	${RFCDATE_EPOCH}
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
 \*\*\* 1 \*\*\*\*
 - first revision
@@ -3530,8 +3534,8 @@ diff -N file1
 	  dotest death2-rdiff-2 "${testcvs} -q rdiff -rtag -rbranch first-dir" \
 "Index: first-dir/file1
 diff -c first-dir/file1:1\.1 first-dir/file1:removed
-\*\*\* first-dir/file1:1\.1[ 	][	]*[a-zA-Z0-9: ]*
---- first-dir/file1[ 	][ 	]*[a-zA-Z0-9: ]*
+\*\*\* first-dir/file1:1\.1	[a-zA-Z0-9: ]*
+--- first-dir/file1	[a-zA-Z0-9: ]*
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
 \*\*\* 1 \*\*\*\*
 - first revision
@@ -3552,8 +3556,8 @@ diff -c first-dir/file1:1\.1 first-dir/file1:removed
 ===================================================================
 RCS file: file1
 diff -N file1
-\*\*\* /dev/null[ 	][ 	]*[a-zA-Z0-9: ]*
---- ${tempname}[ 	][ 	]*[a-zA-Z0-9: ]*
+\*\*\* /dev/null	${RFCDATE_EPOCH}
+--- file1	${RFCDATE}
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
 \*\*\* 0 \*\*\*\*
 --- 1 ----
@@ -3643,8 +3647,8 @@ done"
 ===================================================================
 RCS file: file3
 diff -N file3
-\*\*\* /dev/null[ 	][ 	]*[a-zA-Z0-9: ]*
---- ${tempname}[ 	][ 	]*[a-zA-Z0-9: ]*
+\*\*\* /dev/null	${RFCDATE_EPOCH}
+--- file3	${RFCDATE}	[0-9.]*
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
 \*\*\* 0 \*\*\*\*
 --- 1 ----
@@ -3657,8 +3661,8 @@ RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
 retrieving revision 1\.1
 retrieving revision 1\.1\.2\.2
 diff -c -r1\.1 -r1\.1\.2\.2
-\*\*\* file1[ 	][ 	]*[a-zA-Z0-9:./ 	]*
---- file1[ 	][ 	]*[a-zA-Z0-9:./ 	]*
+\*\*\* file1	${RFCDATE}	[0-9.]*
+--- file1	${RFCDATE}	[0-9.]*
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
 \*\*\* 1 \*\*\*\*
 ! first revision
@@ -3675,8 +3679,8 @@ RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
 retrieving revision 1\.1
 retrieving revision 1\.1\.2\.2
 diff -c -r1\.1 -r1\.1\.2\.2
-\*\*\* file1[ 	][ 	]*[a-zA-Z0-9:./ 	]*
---- file1[ 	][ 	]*[a-zA-Z0-9:./ 	]*
+\*\*\* file1	${RFCDATE}	[0-9.]*
+--- file1	${RFCDATE}	[0-9.]*
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
 \*\*\* 1 \*\*\*\*
 ! first revision
@@ -3686,8 +3690,8 @@ Index: file2
 ===================================================================
 RCS file: file2
 diff -N file2
-\*\*\* /dev/null[ 	][ 	]*[a-zA-Z0-9: ]*
---- ${tempname}[ 	][ 	]*[a-zA-Z0-9: ]*
+\*\*\* /dev/null	${RFCDATE_EPOCH}
+--- file2	${RFCDATE}	[0-9.]*
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
 \*\*\* 0 \*\*\*\*
 --- 1 ----
@@ -3696,8 +3700,8 @@ Index: file3
 ===================================================================
 RCS file: file3
 diff -N file3
-\*\*\* /dev/null[ 	][ 	]*[a-zA-Z0-9: ]*
---- ${tempname}[ 	][ 	]*[a-zA-Z0-9: ]*
+\*\*\* /dev/null	${RFCDATE_EPOCH}
+--- file3	${RFCDATE}	[0-9.]*
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
 \*\*\* 0 \*\*\*\*
 --- 1 ----
@@ -3706,8 +3710,8 @@ Index: file4
 ===================================================================
 RCS file: file4
 diff -N file4
-\*\*\* ${tempname}[ 	][ 	]*[a-zA-Z0-9: ]*
---- /dev/null[ 	][ 	]*[a-zA-Z0-9: ]*
+\*\*\* file4	${RFCDATE}	[0-9.]*
+--- /dev/null	${RFCDATE_EPOCH}
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
 \*\*\* 1 \*\*\*\*
 - file4 first revision
@@ -3731,8 +3735,8 @@ U file4"
 ===================================================================
 RCS file: file1
 diff -N file1
-\*\*\* /dev/null[ 	][ 	]*[a-zA-Z0-9: ]*
---- ${tempname}[ 	][ 	]*[a-zA-Z0-9: ]*
+\*\*\* /dev/null	${RFCDATE_EPOCH}
+--- file1	${RFCDATE}	[0-9.]*
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
 \*\*\* 0 \*\*\*\*
 --- 1 ----
@@ -4385,8 +4389,8 @@ RCS file: ${TESTDIR}/cvsroot/first-dir/file4,v
 retrieving revision 1\.1
 retrieving revision 1\.3
 diff -c -r1\.1 -r1\.3
-\*\*\* file4	[0-9/]* [0-9:]*	1\.1
---- file4	[0-9/]* [0-9:]*	1\.3
+\*\*\* file4	${RFCDATE}	1\.1
+--- file4	${RFCDATE}	1\.3
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
 \*\*\* 1 \*\*\*\*
 ! 4:trunk-1
@@ -4400,8 +4404,8 @@ RCS file: ${TESTDIR}/cvsroot/first-dir/file4,v
 retrieving revision 1\.1
 retrieving revision 1\.2\.2\.1
 diff -c -r1\.1 -r1\.2\.2\.1
-\*\*\* file4	[0-9/]* [0-9:]*	1\.1
---- file4	[0-9/]* [0-9:]*	1\.2\.2\.1
+\*\*\* file4	${RFCDATE}	1\.1
+--- file4	${RFCDATE}	1\.2\.2\.1
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
 \*\*\* 1 \*\*\*\*
 ! 4:trunk-1
@@ -4979,8 +4983,8 @@ EOF
 RCS file: ${TESTDIR}/cvsroot/first-dir/rgx\.c,v
 retrieving revision 1\.1
 diff -c -F\.\*( -r1\.1 rgx\.c
-\*\*\* rgx\.c	[0-9/]* [0-9:]*	1\.1
---- rgx\.c	[0-9/]* [0-9:]*
+\*\*\* rgx\.c	${RFCDATE}	1\.1
+--- rgx\.c	${RFCDATE}
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\* test_regex (whiz, bang)
 \*\*\* 3,7 \*\*\*\*
   foo;
@@ -16853,8 +16857,8 @@ RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
 retrieving revision 1\.3
 retrieving revision 1\.3\.2\.2
 diff -c -r1\.3 -r1\.3\.2\.2
-\*\*\* file1	[0-9/]* [0-9:]*	1\.3
---- file1	[0-9/]* [0-9:]*	1\.3\.2\.2
+\*\*\* file1	${RFCDATE}	1\.3
+--- file1	${RFCDATE}	1\.3\.2\.2
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
 \*\*\* 1,3 \*\*\*\*
 --- 1,5 ----
@@ -16906,8 +16910,8 @@ RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
 retrieving revision 1\.3
 retrieving revision 1\.3\.2\.2
 diff -c -r1\.3 -r1\.3\.2\.2
-\*\*\* file1	[0-9/]* [0-9:]*	1\.3
---- file1	[0-9/]* [0-9:]*	1\.3\.2\.2
+\*\*\* file1	${RFCDATE}	1\.3
+--- file1	${RFCDATE}	1\.3\.2\.2
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
 \*\*\* 1,3 \*\*\*\*
 --- 1,5 ----
@@ -20526,8 +20530,8 @@ RCS file: ${TESTDIR}/root1/dir1/file1,v
 retrieving revision 1\.1\.1\.1
 retrieving revision 1\.2
 diff -u -r1\.1\.1\.1 -r1\.2
---- dir1/file1	[0-9/]* [0-9:]*	1\.1\.1\.1
-${PLUS}${PLUS}${PLUS} dir1/file1	[0-9/]* [0-9:]*	1\.2
+--- dir1/file1	${RFCDATE}	1\.1\.1\.1
+${PLUS}${PLUS}${PLUS} dir1/file1	${RFCDATE}	1\.2
 @@ -1 ${PLUS}1,2 @@
  file1
 ${PLUS}change it
@@ -20537,8 +20541,8 @@ RCS file: ${TESTDIR}/root2/sdir/sfile,v
 retrieving revision 1\.1\.1\.1
 retrieving revision 1\.2
 diff -u -r1\.1\.1\.1 -r1\.2
---- dir1/sdir/sfile	[0-9/]* [0-9:]*	1\.1\.1\.1
-${PLUS}${PLUS}${PLUS} dir1/sdir/sfile	[0-9/]* [0-9:]*	1\.2
+--- dir1/sdir/sfile	${RFCDATE}	1\.1\.1\.1
+${PLUS}${PLUS}${PLUS} dir1/sdir/sfile	${RFCDATE}	1\.2
 @@ -1 ${PLUS}1,2 @@
  sfile
 ${PLUS}change him too"

@@ -1773,7 +1773,7 @@ patch_file (finfo, vers_ts, docheckout, file_info, checksum)
 
 	    diff_options = "-n";
 	}
-	retcode = diff_exec (file1, file2, diff_options, finfo->file);
+	retcode = diff_exec (file1, file2, NULL, NULL, diff_options, finfo->file);
 
 	/* A retcode of 0 means no differences.  1 means some differences.  */
 	if (retcode != 0
