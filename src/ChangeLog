@@ -1,3 +1,8 @@
+2005-02-08 Derek Price <derek@ximbiot.com>
+
+	* build_src.com: Build stack.c on VMS.
+	(Suggestion from Piet Schuermans <pschuermans@mac.com>.)
+
 2005-02-01  Larry Jones  <lawrence.jones@ugs.com>
 
 	* log.c (log_fileproc, log_expand_revlist): Add support for BASE tag.
