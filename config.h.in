@@ -295,6 +295,11 @@
 /* Define to 1 if you have the <ndir.h> header file, and it defines `DIR'. */
 #undef HAVE_NDIR_H
 
+/* Define to enable system authentication with PAM instead of using the simple
+   getpwnam interface. This allows authentication (in theory) with any PAM
+   module, e.g. on systems with shadow passwords or via LDAP */
+#undef HAVE_PAM
+
 /* Define to 1 if the `printf' function supports the %p format for printing
    pointers. */
 #undef HAVE_PRINTF_PTR
@@ -511,6 +516,12 @@
 
 /* Define to the version of this package. */
 #undef PACKAGE_VERSION
+
+/* Define to set a service name for PAM. This must be defined. Define to
+   `program_name', without the quotes, to use whatever name CVS was invoked
+   as. Otherwise, define to a double-quoted literal string, such as `"cvs"'.
+   */
+#undef PAM_SERVICE_NAME
 
 /* Path to the pr utility */
 #undef PR_PROGRAM
