@@ -1,3 +1,8 @@
+1999-01-12  Jim Kingdon  <http://www.cyclic.com>
+
+	* COPYING, COPYING.LIB: Remove obsolete snail address of the Free
+	Software Foundation.
+
 1998-12-01  Jim Kingdon
 
 	* TODO (195): Check in a few clarifications from Andrew Tridgell,
