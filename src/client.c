@@ -3599,7 +3599,12 @@ start_server ()
 #endif
 
 	case ext_method:
+#if defined (NO_EXT_METHOD)
+	    error (0, 0, ":ext: method not supported by this port of CVS");
+	    error (1, 0, "try :server: instead");
+#else
 	    start_rsh_server (&tofd, &fromfd);
+#endif
 	    break;
 
 	case server_method:
