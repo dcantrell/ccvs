@@ -1,3 +1,8 @@
+2004-03-14  Derek Price  <derek@ximbiot.com>
+
+	* diff.c (diff_fileproc): Allow diffing of new files against arbitrary
+	revisions instead of assuming that there is no RCS archive file.
+
 2004-03-03  Derek Price  <derek@ximbiot.com>
 
 	* import.c (import): Check that the module name specified by the user
