@@ -6817,4 +6817,3 @@ cd /tmp
 rm -rf ${TESTDIR}
 
 # end of sanity.sh
-#! /bin/zsh -f
