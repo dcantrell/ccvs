@@ -500,11 +500,11 @@ dnl
 
 
 dnl
-dnl --enables
+dnl begin --enables
 dnl
 
 dnl
-dnl Use --with-encryption to turn on encryption support
+dnl Use --enable-encryption to turn on encryption support
 dnl
 AC_ARG_ENABLE(
   [encryption],
@@ -637,6 +637,47 @@ fi # enable_server
 
 
 dnl
+dnl begin --enable-force-editor
+dnl
+
+AC_ARG_ENABLE(
+  [force-editor],
+  AC_HELP_STRING(
+    [--enable-force-editor],
+    [When committing or importing files, you must enter a log message.
+     Normally, you can do this either via the -m flag on the command
+     line, the -F flag on the command line, or an editor will be started
+     for you.  If you like to use logging templates (the rcsinfo file
+     within the $CVSROOT/CVSROOT directory), you might want to force
+     people to use the editor even if they specify a message with -m or
+     -F.  --enable-force-editor will cause the -m or -F message to be
+     appended to the temp file when the editor is started. (disabled
+     by default)]), ,
+  [enable_force_editor=no])
+
+if test yes = "$enable_force_editor"; then
+  AC_DEFINE(
+    [FORCE_USE_EDITOR], [1],
+    [When committing or importing files, you must enter a log message.
+    Normally, you can do this either via the -m flag on the command
+    line, the -F flag on the command line, or an editor will be started
+    for you.  If you like to use logging templates (the rcsinfo file
+    within the $CVSROOT/CVSROOT directory), you might want to force
+    people to use the editor even if they specify a message with -m or
+    -F.  Enabling FORCE_USE_EDITOR will cause the -m or -F message to be
+    appended to the temp file when the editor is started.])
+fi
+
+dnl
+dnl end --enable-force-editor
+dnl
+
+
+dnl
+dnl begin --enable-rootcommit
+dnl
+
+dnl
 dnl I don't like this here, but I don't really like options.h, either.
 dnl Besides, this is causing some problems currently when compiling under
 dnl Windows and moving it here should avoid the issue (the wrong options.h
@@ -665,6 +706,15 @@ if test "$enable_rootcommit" = no; then
      "--enable-rootcommit" option to configure or by commenting out the
      lines below.])
 fi
+
+dnl
+dnl end --enable-rootcommit
+dnl
+
+
+dnl
+dnl end --enables
+dnl
 
 
 dnl For the moment we will assume that all systems which have
