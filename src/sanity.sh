@@ -3873,6 +3873,28 @@ File: binfile          	Status: Up-to-date
    Sticky Tag:		(none)
    Sticky Date:		(none)
    Sticky Options:	-kb'
+
+	  # Test whether the default options from the RCS file are
+	  # also used when operating on files instead of whole
+	  # directories
+          cd ../..
+	  mkdir 3; cd 3
+	  dotest binfiles-5.5b0 "${testcvs} -q co first-dir/binfile" \
+'U first-dir/binfile'
+	  cd first-dir
+	  dotest binfiles-5.5b1 "${testcvs} status binfile" \
+'===================================================================
+File: binfile          	Status: Up-to-date
+
+   Working revision:	1\.1.*
+   Repository revision:	1\.1	/tmp/cvs-sanity/cvsroot/first-dir/binfile,v
+   Sticky Tag:		(none)
+   Sticky Date:		(none)
+   Sticky Options:	-kb'
+	  cd ../..
+	  rm -rf 3
+	  cd 2/first-dir
+
 	  cp ../../1/binfile2.dat binfile
 	  dotest binfiles-6 "${testcvs} -q ci -m modify-it" \
 'Checking in binfile;
