@@ -422,6 +422,7 @@ int RCS_merge PROTO((RCSNode *, const char *, const char *, const char *,
 #define RCS_FLAGS_QUIET 4
 #define RCS_FLAGS_MODTIME 8
 #define RCS_FLAGS_KEEPFILE 16
+#define RCS_FLAGS_USETIME 32
 
 extern int RCS_exec_rcsdiff PROTO ((RCSNode *rcsfile,
 				    const char *opts, const char *options,
