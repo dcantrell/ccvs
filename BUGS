@@ -79,11 +79,6 @@ file's description.
   (and from the repository)?
 
 
-* `cvs checkout -d nested/dir/path <module>' just doesn't work.  The
-  simpler version -- `cvs checkout -d single-dir <module>' works,
-  however.
-
-
 * The following bug was reported against CVS 1.9:
 
     Create a module named test with a file named test in it.

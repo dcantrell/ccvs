@@ -1,5 +1,7 @@
 1997-10-11  Noel Cragg  <noel@swish.red-bean.com>
 
+	* BUGS: remove note about the `-d' flag bug that was just fixed.
+
 	* TODO: new item 192.
 
 Thu Oct  9 12:59:28 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
