@@ -470,6 +470,8 @@ log_parse_list (plist, argstring)
     }
 }
 
+static int printlock_proc PROTO ((Node *, void *));
+
 static int
 printlock_proc (lock, foo)
     Node *lock;

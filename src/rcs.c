@@ -5721,6 +5721,8 @@ putsymbol_proc (symnode, fp)
     return fprintf ((FILE *) fp, "\n\t%s:%s", symnode->key, symnode->data);
 }
 
+static int putlock_proc PROTO ((Node *, void *));
+
 /* putlock_proc is like putsymbol_proc, but key and data are reversed. */
 
 static int
@@ -6047,7 +6049,11 @@ rcs_internal_lockfile (rcsfile)
     free (lockfile);
 
     /* Force the file permissions, and return a stream object. */
+    /* Because we change the modes later, we don't worry about
+       this in the non-HAVE_FCHMOD case.  */
+#ifdef HAVE_FCHMOD
     fchmod (fd, rstat.st_mode);
+#endif
     return (fdopen (fd, FOPEN_BINARY_WRITE));
 }
 

@@ -1,3 +1,9 @@
+1997-10-28  Jim Kingdon
+
+	* log.c (printlock_proc), rcs.c (putlock_proc): Prototype.
+	* rcs.c (rcs_internal_lockfile): Only try to call fchmod if
+	HAVE_FCHMOD is defined.
+
 Tue Oct 28 10:27:03 1997  Ian Lance Taylor  <ian@cygnus.com>
 
 	* rcs.c	(RCS_deltas): Don't use \? in string if __STDC__ is not
