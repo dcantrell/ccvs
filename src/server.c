@@ -4779,23 +4779,21 @@ check_password (username, password, repository)
 	/* No cvs password found, so try /etc/passwd. */
 
 	const char *found_passwd = NULL;
-#ifdef HAVE_GETSPNAM
-	struct spwd *pw;
-
-	pw = getspnam (username);
-	if (pw != NULL)
-	{
-	    found_passwd = pw->sp_pwdp;
-	}
-#else
 	struct passwd *pw;
+#ifdef HAVE_GETSPNAM
+	struct spwd *spw;
 
-	pw = getpwnam (username);
-	if (pw != NULL)
+	spw = getspnam (username);
+	if (spw != NULL)
+	{
+	    found_passwd = spw->sp_pwdp;
+	}
+#endif
+
+	if (found_passwd == NULL && (pw = getpwnam (username)) != NULL)
 	{
 	    found_passwd = pw->pw_passwd;
 	}
-#endif
 	
 	if (pw == NULL)
 	{

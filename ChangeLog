@@ -1,3 +1,10 @@
+1998-03-16  Larry Jones  <larry.jones@sdrc.com>
+
+	* configure.in: Simplify test for shadow password support since
+	the code now handles the case where shadow passwords are supported
+	but are not in use.
+	* configure: Regenerated.
+
 1998-03-07  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* TESTS: Remove note about SGI's XFS.  Someone reports that it
