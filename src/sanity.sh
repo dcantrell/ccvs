@@ -95,12 +95,11 @@ cd .. ; rm -rf tmp
 CVSROOT_FILENAME=`pwd`/cvsroot
 CVSROOT=${CVSROOT_FILENAME} ; export CVSROOT
 if test "x$remote" = xyes; then
-  # This isn't exactly what we want since we would like to tell it to
-  # use ${CVS}, rather than some random cvs from the PATH.
   CVSROOT=`hostname`:${CVSROOT_FILENAME} ; export CVSROOT
   # Use rsh so we can test it without having to muck with inetd or anything 
-  # like that.
+  # like that.  Also needed to get CVS_SERVER to work.
   CVS_CLIENT_PORT=-1; export CVS_CLIENT_PORT
+  CVS_SERVER=${CVS}; export CVS_SERVER
 fi
 
 mkdir tmp ; cd tmp
