@@ -694,8 +694,12 @@ history_write (type, update_dir, revs, name, repository)
     }
 
     if (trace)
+#ifdef SERVER_SUPPORT
 	fprintf (stderr, "%c-> fopen(%s,a)\n",
 		 (server_active) ? 'S' : ' ', fname);
+#else
+	fprintf (stderr, "-> fopen(%s,a)\n", fname);
+#endif
     if (noexec)
 	return;
     if ((fd = open (fname, O_WRONLY | O_APPEND | O_CREAT, 0666)) < 0)
@@ -815,7 +819,7 @@ history_write (type, update_dir, revs, name, repository)
 	     type, (long) time ((time_t *) NULL),
 	     username, workdir, repos, revs, name);
 
-    /* Avoid some race conditions on non-Posix-compliant hosts.  */
+    /* Lessen some race conditions on non-Posix-compliant hosts.  */
     if (lseek (fd, (off_t) 0, SEEK_END) == -1)
 	error (1, errno, "cannot seek to end of history file: %s", fname);
 

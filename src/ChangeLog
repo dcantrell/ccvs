@@ -1,3 +1,8 @@
+Sun Jul 28 15:30:16 1995  Vince DeMarco  <vdemarco@bou.shl.com>
+
+        * history.c: put ifdef SERVER_SUPPORT around tracing code incase
+        the client/server code is not compiled into the program.
+
 Sat Jul 29 16:59:49 1995  James Kingdon  <kingdon@harvey.cyclic.com>
 
 	* subr.c (deep_remove_dir): Use struct dirent, not struct direct.
