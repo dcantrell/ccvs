@@ -1,3 +1,8 @@
+2003-08-07  Derek Price  <derek@ximbiot.com>
+
+	* Makefile.in (pdf ps): New recursive targets to be ignored for
+	Automake's benefit.
+
 2002-03-21  Derek Price  <derek@ximbiot.com>
 
 	* Makefile.in: Remove unecessary dependence on $(srcdir) to
