@@ -1,3 +1,8 @@
+1999-03-26  Jim Kingdon  <http://www.cyclic.com>
+
+	* sanity.sh (modules3-11b): Adjust exact text of error message to
+	reflect 1999-03-24 change to dirswitch.
+
 1999-03-25  Jim Kingdon  <http://www.cyclic.com>
 
 	* admin.c (admin): Make argument to -e optional, to match the
