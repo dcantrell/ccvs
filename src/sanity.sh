@@ -12947,7 +12947,7 @@ head 1.1; access; symbols; locks; expand o; 1.1 date 2007.03.20.04.03.02
 EOF
 	  # Whitespace issues, likewise.
 	  dotest_fail rcs3-2 "${testcvs} -q co first-dir" \
-"${PROG} \[[a-z]* aborted\]: unexpected .l' reading revision number in RCS file ${TESTDIR}/cvsroot/first-dir/file1,v"
+"${PROG} \[[a-z]* aborted\]: unexpected '.x6c' reading revision number in RCS file ${TESTDIR}/cvsroot/first-dir/file1,v"
 	  cat <<EOF >${CVSROOT_DIRNAME}/first-dir/file1,v
 head 1.1; access; symbols; locks; expand o; 1.1 date 2007.03.20.04.03.02
 ; author jeremiah ;state ;  branches; next;desc @@1.1 log@@text@head@
@@ -13010,7 +13010,7 @@ Terminated with fatal signal 6"
 	  awk 'BEGIN { printf "%c%c", 0, 10 }' \
 	    >>${CVSROOT_DIRNAME}/first-dir/file1,v
 	  dotest_fail rcs3-7 "${testcvs} log -s nostate file1" \
-"${PROG} \[[a-z]* aborted\]: unexpected ."
+"${PROG} \[[a-z]* aborted\]: unexpected '.x0' reading revision number in RCS file ${TESTDIR}/cvsroot/first-dir/file1,v"
 
 	  cd ../..
 	  rm -r 1

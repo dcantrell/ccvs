@@ -1,5 +1,10 @@
 1998-12-21  Jim Kingdon
 
+	* rcs.c: When printing an unexpected character we found in the RCS
+	file, print it in hex rather than as a character (see comment for
+	rationale).
+	* sanity.sh (rcs3): Adjust rcs3-2 and rcs3-7 tests accordingly.
+
 	* sanity.sh (rcs3): New test, for some error handling cases
 	involving parsing RCS files.
 
