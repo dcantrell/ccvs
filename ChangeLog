@@ -1,3 +1,8 @@
+2004-05-03  Derek Price  <derek@ximbiot.com>
+
+	* srclist.txt: Note bison.m4 forked from GNULIB.
+	* aclocal.m4, configure: Regenerated.
+
 2004-05-02  Derek Price  <derek@ximbiot.com>
 
 	* configure.in: Call AC_FUNC_STRERROR_R.

@@ -81,7 +81,7 @@ $GNULIB/m4/fnmatch.m4				m4		no NI
 # $GNULIB/modules/getdate
 $GNULIB/lib/getdate.h				lib		no NI
 $GNULIB/lib/getdate.y				lib		no NI
-$GNULIB/m4/bison.m4				m4		no NI
+$GNULIB/m4/bison.m4				m4		yes NI
 $GNULIB/m4/getdate.m4				m4		no NI
 $GNULIB/m4/tm_gmtoff.m4				m4		no NI
 # $GNULIB/modules/gethostname
