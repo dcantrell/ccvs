@@ -268,7 +268,7 @@ Installation under Unix:
     following commands:
 
 	$ make distclean
-	$ cvs import -m 'CVS 1.6 distribution' cvs CVS CVS-1_6
+	$ cvs import -m 'CVS 1.6 distribution' cvs CVS_DIST CVS-1_6
 
 9)  Having done step 8, one should be able to checkout a fresh copy of the
     CVS distribution and hack away at the sources with the following command:
