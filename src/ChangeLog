@@ -1,3 +1,7 @@
+2003-11-19  Larry Jones  <lawrence.jones@eds.com>
+
+	* rcs.c (RCS_getrevtime): Add error checking; cleanup.
+
 2003-11-18  Derek Price  <derek@ximbiot.com>
 
 	* socket-client.c (socket_buffer_initialize): Rename poorly named `n'
