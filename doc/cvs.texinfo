@@ -8674,8 +8674,8 @@ does not contain the specified tag.
 @strong{Note: this is not the same as the overall @samp{cvs -r} option,
 which you can specify to the left of a @sc{cvs} command!}
 
-@samp{-r} is available with the @code{checkout}, @code{commit},
-@code{diff}, @code{history}, @code{export}, @code{rdiff},
+@samp{-r} is available with the @code{annotate}, @code{checkout},
+@code{commit}, @code{diff}, @code{history}, @code{export}, @code{rdiff}, 
 @code{rtag}, and @code{update} commands.
 
 @item -W
