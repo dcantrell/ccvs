@@ -1,3 +1,7 @@
+Tue Oct  3 09:26:00 1995  Karl Fogel  <kfogel@totoro.cyclic.com>
+
+        * version.c: upped to 1.6.
+
 Mon Oct  2 18:10:35 1995  Larry Jones  <larry.jones@sdrc.com>
 
 	* server.c: if HAVE_SYS_BSDTYPES_H, include <sys/bsdtypes.h>.
