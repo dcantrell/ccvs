@@ -227,7 +227,9 @@ HEADERS = ${COMMON_HEADERS} ${OS2_HEADERS}
 OBJECTS = ${COMMON_OBJECTS} ${LIB_OBJECTS} ${OS2_OBJECTS}
 
 DISTFILES = ${OS2_HEADERS} ${OS2_SOURCES} \
-  README ChangeLog Makefile.in .cvsignore test-makefile Makefile
+  ${srcdir}${PS}README ${srcdir}${PS}ChangeLog \
+  ${srcdir}${PS}Makefile.in ${srcdir}${PS}.cvsignore \
+  ${srcdir}${PS}test-makefile ${srcdir}${PS}Makefile
 
 all:
 
@@ -251,7 +253,7 @@ lint:
 dist-dir:
 	mkdir ${DISTDIR}
 	for i in ${DISTFILES}; do \
-	  ln ${srcdir}${PS}$${i} ${DISTDIR}; \
+	  ln $${i} ${DISTDIR}; \
 	done
 
 # We don't have a real distclean or anything like that, but at least
