@@ -4015,7 +4015,15 @@ done"
 	  # --disable-server.
 	  dotest newb-123j0 "${testcvs} status a" \
 "===================================================================
-File: a                	Status: Needs \(Patch\|Checkout\)
+File: a                	Status: Needs Patch
+
+   Working revision:	1\.1.*
+   Repository revision:	1\.1\.2\.1	${TESTDIR}/cvsroot/first-dir/a,v
+   Sticky Tag:		branch (branch: 1\.1\.2)
+   Sticky Date:		(none)
+   Sticky Options:	(none)" \
+"===================================================================
+File: a                	Status: Needs Checkout
 
    Working revision:	1\.1.*
    Repository revision:	1\.1\.2\.1	${TESTDIR}/cvsroot/first-dir/a,v
