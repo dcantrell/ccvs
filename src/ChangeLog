@@ -1,3 +1,10 @@
+1998-07-08  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* edit.c (unedit_fileproc): If the Baserev file is missing, don't
+	get the working file from CVS/Base.  The previous code could get
+	you version 1.1 of the working file and put 1.2 in CVS/Entries.
+	* sanity.sh (unedit-without-baserev): New tests test for this.
+
 1998-07-02  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* sanity.sh (unedit-without-baserev): Move the test itself to be
