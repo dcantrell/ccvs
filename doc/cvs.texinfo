@@ -343,7 +343,10 @@ noted by comments in the @file{cvs.texinfo} file.
 @cindex Errors, reporting (manual)
 This list is not complete.  If you notice any error,
 omission, or something that is unclear, please send
-mail to @t{bug-cvs@@prep.ai.mit.edu}.
+mail to @t{bug-cvs@@prep.ai.mit.edu}.  This is also the
+address for reporting bugs in @sc{cvs}.
+@c FIXME: There is a lot more to say on this, when we
+@c get around to writing it up.
 @end itemize
 
 I hope that you will find this manual useful, despite
@@ -3177,6 +3180,7 @@ ability to make branches on the revision tree.
 * Branches motivation::         What branches are good for
 * Creating a branch::           Creating a branch
 * Sticky tags::                 Sticky tags
+* Magic branch numbers::        Magic branch numbers
 @end menu
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -3187,7 +3191,6 @@ ability to make branches on the revision tree.
 @cindex Linear development
 @cindex Number, revision-
 @cindex Decimal revision number
-@cindex Main trunk (intro)
 @cindex Branch number
 @cindex Number, branch
 
@@ -3723,6 +3726,73 @@ new revision: 1.3; previous revision: 1.2
 done
 $ 
 @end example
+
+@c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+@node Magic branch numbers
+@section Magic branch numbers
+
+@c Want xref to here from "log" and "admin"?
+
+This section describes a @sc{cvs} feature called
+@dfn{magic branches}.  For most purposes, you need not
+worry about magic branches; @sc{cvs} handles them for
+you.  However, they are visible to you in certain
+circumstances, so it may be useful to have some idea of
+how it works.
+
+Externally, branch numbers consist of an odd number of
+dot-separated decimal integers.  @xref{Revision
+numbers}.  That is not the whole truth, however.  For
+efficiency reasons @sc{cvs} sometimes inserts an extra 0
+in the second rightmost position (1.2.3 becomes
+1.2.0.3, 8.9.10.11.12 becomes 8.9.10.11.0.12 and so
+on).
+
+@sc{cvs} does a pretty good job at hiding these so
+called magic branches, but in a few places the hiding
+is incomplete:
+
+@itemize @bullet
+@ignore
+@c This is in ignore as I'm taking their word for it,
+@c that this was fixed
+@c a long time ago.  But before deleting this
+@c entirely, I'd rather verify it (and add a test
+@c case to the testsuite).
+@item
+The magic branch can appear in the output from
+@code{cvs status} in vanilla @sc{cvs} 1.3.  This is
+fixed in @sc{cvs} 1.3-s2.
+
+@end ignore
+@item
+The magic branch number appears in the output from
+@code{cvs log}.
+@c What output should appear instead?
+
+@item
+You cannot specify a symbolic branch name to @code{cvs
+admin}.
+
+@end itemize
+
+@c Can CVS do this automatically the first time
+@c you check something in to that branch?  Should
+@c it?
+You can use the @code{admin} command to reassign a
+symbolic name to a branch the way @sc{rcs} expects it
+to be.  If @code{R4patches} is assigned to the branch
+1.4.2 (magic branch number 1.4.0.2) in file
+@file{numbers.c} you can do this:
+
+@example
+$ cvs admin -NR4patches:1.4.2 numbers.c
+@end example
+
+It only works if at least one revision is already
+committed on the branch.  Be very careful so that you
+do not assign the tag to the wrong number.  (There is
+no way to see how the tag was assigned yesterday).
 
 @c ---------------------------------------------------------------------
 @node Merging
@@ -10220,7 +10290,7 @@ argument lists of most @sc{rcs} commands.
 @appendix Troubleshooting
 
 @menu
-* Magic branch numbers::        Magic branch numbers
+* Error messages::              Partial list of CVS errors
 @end menu
 
 @ignore
@@ -10231,67 +10301,121 @@ argument lists of most @sc{rcs} commands.
 @c -- Give hints on how to fix them
 @end ignore
 
-@c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-@node Magic branch numbers
-@appendixsec Magic branch numbers
+@node Error messages
+@appendixsec Partial list of error messages
 
-@c Where does this go?  I think probably in with
-@c the details of where things are stored in the
-@c repository (plus an xref from "log" and "admin").
+Here is a partial list of error messages that you may
+see from @sc{cvs}.  It is not a complete list---@sc{cvs}
+is capable of printing many, many error messages, often
+with parts of them supplied by the operating system,
+but the intention is to list the common and/or
+potentially confusing error messages.
 
-Externally, branch numbers consist of an odd number of
-dot-separated decimal integers.  @xref{Revision
-numbers}.  That is not the whole truth, however.  For
-efficiency reasons @sc{cvs} sometimes inserts an extra 0
-in the second rightmost position (1.2.3 becomes
-1.2.0.3, 8.9.10.11.12 becomes 8.9.10.11.0.12 and so
-on).
+The messages are alphabetical, but introductory text
+such as @samp{cvs update: } is not considered in
+ordering them.
 
-@sc{cvs} does a pretty good job at hiding these so
-called magic branches, but in a few places the hiding
-is incomplete:
+In some cases the list includes messages printed by old
+versions of @sc{cvs} (partly because users may not be
+sure which version of @sc{cvs} they are using at any
+particular moment).
 
-@itemize @bullet
-@ignore
-@c This is in ignore as I'm taking their word for it,
-@c that this was fixed
-@c a long time ago.  But before deleting this
-@c entirely, I'd rather verify it (and add a test
-@c case to the testsuite).
-@item
-The magic branch can appear in the output from
-@code{cvs status} in vanilla @sc{cvs} 1.3.  This is
-fixed in @sc{cvs} 1.3-s2.
+@table @code
+@item broken pipe
+This message (I'm not sure about the exact wording of
+the message) seems to be caused by a hard-to-track-down
+bug in @sc{cvs} or the systems it runs on (we don't
+know---we haven't tracked it down yet!).  It seems to
+happen only after a @sc{cvs} command has completed, and
+you should be able to just ignore the message.
+However, if you have discovered information concerning its
+cause, please let us know as described in @ref{BUGS}.
 
-@end ignore
-@item
-The magic branch number appears in the output from
-@code{cvs log}.
-@c What output should appear instead?
+@c For one example see basica-1a10 in the testsuite
+@item cannot open CVS/Entries for reading: No such file or directory
+This generally indicates a @sc{cvs} internal error, and
+can be handled as with other @sc{cvs} bugs
+(@pxref{BUGS}).  Usually there is a workaround---the
+exact nature of which would depend on the situation but
+which hopefully could be figured out.
 
-@item
-You cannot specify a symbolic branch name to @code{cvs
-admin}.
+@item cvs [update aborted]: could not patch @var{file}: No such file or directory
+This means that there was a problem finding the
+@code{patch} program.  Make sure that it is in your
+@code{PATH}.  Note that despite appearances the message
+is @emph{not} referring to whether it can find @var{file}.
+@c Future versions of @sc{cvs} are
+@c expected to dispense with the need for an external
+@c patch program, but might as well not advertise
+@c vaporware.
+@c Even after that change is made, probably want to
+@c preserve this message, see above about old messages.
 
-@end itemize
+@item dying gasps from @var{server} unexpected
+This message seems to be caused by a hard-to-track-down
+bug in @sc{cvs} or the systems it runs on (we don't
+know---we haven't tracked it down yet!).  If you see it,
+you probably can just retry the operation which failed,
+or if you have discovered information concerning its
+cause, please let us know as described in @ref{BUGS}.
 
-@c Can CVS do this automatically the first time
-@c you check something in to that branch?  Should
-@c it?
-You can use the @code{admin} command to reassign a
-symbolic name to a branch the way @sc{rcs} expects it
-to be.  If @code{R4patches} is assigned to the branch
-1.4.2 (magic branch number 1.4.0.2) in file
-@file{numbers.c} you can do this:
+@item end of file from server (consult above messages if any)
+The most common cause for this message is if you are
+using an external @code{rsh} program and it exited with
+an error.  In this case the @code{rsh} program should
+have printed a message, which will appear before the
+above message.  For more information on setting up a
+@sc{cvs} client and server, see @ref{Remote repositories}.
+
+@cindex mkmodules
+@item cvs commit: Executing 'mkmodules'
+This means that your repository is set up for a version
+of @sc{cvs} prior to @sc{cvs} 1.8.  When using @sc{cvs}
+1.8 or later, the above message will be preceded by
 
 @example
-$ cvs admin -NR4patches:1.4.2 numbers.c
+cvs commit: Rebuilding administrative file database
 @end example
 
-It only works if at least one revision is already
-committed on the branch.  Be very careful so that you
-do not assign the tag to the wrong number.  (There is
-no way to see how the tag was assigned yesterday).
+If you see both messages, the database is being rebuilt
+twice, which is unnecessary but harmless.  If you wish
+to avoid the duplication, and you have no versions of
+@sc{cvs} 1.7 or earlier in use, remove @code{-i mkmodules}
+every place it appears in your @code{modules}
+file.  For more information on the @code{modules} file,
+see @ref{modules}.
+
+@item cvs commit: Up-to-date check failed for `@var{file}'
+This means that someone else has committed a change to
+that file since the last time that you did a @code{cvs
+update}.  So before proceeding with your @code{cvs
+commit} you need to @code{cvs update}.  CVS will merge
+the changes that you made and the changes that the
+other person made.  If it does not detect any conflicts
+it will report @samp{M cacErrCodes.h} and you are ready
+to @code{cvs commit}.  If it detects conflicts it will
+print a message saying so, will report @samp{C cacErrCodes.h},
+and you need to manually resolve the
+conflict.  For more details on this process see
+@ref{Conflicts example}.
+
+@item cvs commit: warning: editor session failed
+This means that the editor which @sc{cvs} is using exits with a nonzero
+exit status.  Some versions of vi will do this even when there was not
+a problem editing the file.  If so, point the
+@sc{CVSEDITOR} environment variable to a small script
+such as:
+
+@example
+#!/bin/sh
+vi $*
+exit 0
+@end example
+
+@c "warning: foo was lost" and "no longer pertinent" (both normal).
+@c Would be nice to write these up--they are
+@c potentially confusing for the new user.
+@end table
 
 @c ---------------------------------------------------------------------
 @node Copying
