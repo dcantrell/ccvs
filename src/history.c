@@ -218,6 +218,7 @@ static void save_user PROTO((char *name));
 static short report_count;
 
 static short extract;
+static short extract_all;
 static short v_checkout;
 static short modified;
 static short tag_report;
@@ -400,7 +401,7 @@ history (argc, argv)
 		break;
 	    case 'e':
 		report_count++;
-		extract++;
+		extract_all++;
 		free (rec_types);
 		rec_types = xstrdup (ALL_REC_TYPES);
 		break;
@@ -585,6 +586,8 @@ history (argc, argv)
 	    option_with_arg ("-t", since_tag);
 	for (mod = user_list; mod < &user_list[user_count]; ++mod)
 	    option_with_arg ("-u", *mod);
+	if (extract_all)
+	    send_arg("-e");
 	if (extract)
 	    option_with_arg ("-x", rec_types);
 	option_with_arg ("-z", tz_name);
@@ -608,7 +611,7 @@ history (argc, argv)
 	    (void) strcat (rec_types, "T");
 	}
     }
-    else if (extract)
+    else if (extract || extract_all)
     {
 	if (user_list)
 	    user_sort++;
