@@ -15,6 +15,7 @@
 #include "getline.h"
 #include "getnline.h"
 #include "buffer.h"
+#include "log-buffer.h"
 
 #if defined(SERVER_SUPPORT) || defined(CLIENT_SUPPORT)
 
@@ -54,53 +55,53 @@ static int cvs_gssapi_wrapping;
 #   define MAXHOSTNAMELEN (256)
 # endif
 
-#ifdef HAVE_WINSOCK_H
-#include <winsock.h>
-#endif
-
-#if defined (AUTH_SERVER_SUPPORT) || defined (HAVE_KERBEROS) || defined (HAVE_GSSAPI)
-#include <sys/socket.h>
-#endif
-
-#ifdef HAVE_SYSLOG_H
-# include <syslog.h>
-# ifndef LOG_DAEMON   /* for ancient syslogs */
-#  define LOG_DAEMON 0
+# ifdef HAVE_WINSOCK_H
+#   include <winsock.h>
 # endif
-#endif
 
-#ifdef HAVE_KERBEROS
-# include <netinet/in.h>
-# include <krb.h>
-# ifndef HAVE_KRB_GET_ERR_TEXT
-#   define krb_get_err_text(status) krb_err_txt[status]
+# if defined (AUTH_SERVER_SUPPORT) || defined (HAVE_KERBEROS) || defined (HAVE_GSSAPI)
+#   include <sys/socket.h>
 # endif
+
+# ifdef HAVE_SYSLOG_H
+#   include <syslog.h>
+#   ifndef LOG_DAEMON   /* for ancient syslogs */
+#     define LOG_DAEMON 0
+#   endif
+# endif
+
+# ifdef HAVE_KERBEROS
+#   include <netinet/in.h>
+#   include <krb.h>
+#   ifndef HAVE_KRB_GET_ERR_TEXT
+#     define krb_get_err_text(status) krb_err_txt[status]
+#   endif
 
 /* Information we need if we are going to use Kerberos encryption.  */
 static C_Block kblock;
 static Key_schedule sched;
 
-#endif
+# endif
 
 /* for select */
-#include "xselect.h"
+# include "xselect.h"
 
-#ifndef O_NONBLOCK
-#define O_NONBLOCK O_NDELAY
-#endif
+# ifndef O_NONBLOCK
+#   define O_NONBLOCK O_NDELAY
+# endif
 
 /* EWOULDBLOCK is not defined by POSIX, but some BSD systems will
    return it, rather than EAGAIN, for nonblocking writes.  */
-#ifdef EWOULDBLOCK
-#define blocking_error(err) ((err) == EWOULDBLOCK || (err) == EAGAIN)
-#else
-#define blocking_error(err) ((err) == EAGAIN)
-#endif
+# ifdef EWOULDBLOCK
+#   define blocking_error(err) ((err) == EWOULDBLOCK || (err) == EAGAIN)
+# else
+#   define blocking_error(err) ((err) == EAGAIN)
+# endif
 
 /* For initgroups().  */
-#if HAVE_INITGROUPS
-#include <grp.h>
-#endif /* HAVE_INITGROUPS */
+# if HAVE_INITGROUPS
+#   include <grp.h>
+# endif /* HAVE_INITGROUPS */
 
 # ifdef AUTH_SERVER_SUPPORT
 
@@ -124,7 +125,7 @@ int system_auth = 1;
 
 # endif /* AUTH_SERVER_SUPPORT */
 
-
+
 /* While processing requests, this buffer accumulates data to be sent to
    the client, and then once we are in do_cvs_command, we use it
    for all the data to be sent.  */
@@ -132,6 +133,20 @@ static struct buffer *buf_to_net;
 
 /* This buffer is used to read input from the client.  */
 static struct buffer *buf_from_net;
+
+
+
+/* This is the name of the writeproxy log file so we can delete it on cleanup.
+ */
+static char *secondary_log_name;
+
+/* This is the secondary log buffer so that we can disable it after creation
+ * if it is unneeded regardless of what other filters have been prepended to
+ * the buffer chain.
+ */
+static struct buffer *secondary_log;
+
+
 
 /*
  * This is where we stash stuff we are going to use.  Format string
@@ -763,6 +778,8 @@ serve_valid_responses (char *arg)
     }
 }
 
+
+
 static void
 serve_root (char *arg)
 {
@@ -816,6 +833,11 @@ E Protocol error: Root says \"%s\" but pserver says \"%s\"",
     /* For pserver, this will already have happened, and the call will do
        nothing.  But for rsh, we need to do it now.  */
     parse_config (current_parsed_root->directory);
+
+    /* At this point we have enough information to determine if we are a
+     * secondary server or not.  Disable the log if we are not.
+     */
+    if (!isSecondaryServer ()) log_buffer_disable (secondary_log);
 
     path = xmalloc (strlen (current_parsed_root->directory)
 		   + sizeof (CVSROOTADM)
@@ -5145,8 +5167,12 @@ server_cleanup (void)
 	    noexec = 0;
 	    unlink_file_dir (orig_server_temp_dir);
 	    noexec = save_noexec;
+
+	    if (secondary_log_name && CVS_UNLINK (secondary_log_name))
+                error (0, errno, "Failed to delete log file.");
+
 	    SIG_endCrSect();
-	} /* !dont_delete_temp && error_use_protocol */
+	} /* !dont_delete_temp */
 
 	SIG_beginCrSect();
 	if (buf_to_net != NULL)
@@ -5203,6 +5229,19 @@ server (int argc, char **argv)
     buf_to_net = fd_buffer_initialize (STDOUT_FILENO, 0,
 				       outbuf_memory_error);
     buf_from_net = stdio_buffer_initialize (stdin, 0, 1, outbuf_memory_error);
+
+    /* We have to set up the recording for all servers.  Until we receive the
+     * `Root' request and load CVSROOT/config, we can't tell if we are a
+     * secondary or primary.
+     */
+    {
+	FILE *fp = cvs_temp_file (&secondary_log_name);
+	if (!fp)
+	    error (1, errno, "Failed to open writeproxy log.");
+	buf_from_net = log_buffer_initialize (buf_from_net, fp,
+                                              true, true, outbuf_memory_error);
+	secondary_log = buf_from_net;
+    }
 
     saved_output = buf_nonio_initialize (outbuf_memory_error);
     saved_outerr = buf_nonio_initialize (outbuf_memory_error);

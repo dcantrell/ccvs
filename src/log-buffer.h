@@ -14,6 +14,13 @@
 #ifndef LOG_BUFFER_H__
 #define LOG_BUFFER_H__
 
-void setup_logfiles (struct buffer** to_server_p, struct buffer** from_server_p);
+void setup_logfiles (struct buffer** to_server_p,
+                     struct buffer** from_server_p);
+
+struct buffer *
+log_buffer_initialize (struct buffer *buf, FILE *fp, bool fatal_errors,
+                       bool input, void (*memory) (struct buffer *));
+
+void log_buffer_disable (struct buffer *buf);
 
 #endif /* LOG_BUFFER_H__ */
