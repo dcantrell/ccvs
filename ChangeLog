@@ -1,5 +1,8 @@
 Tue May 28 13:10:42 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* src/server.c: Add comment regarding out-of-order bug.
+	* TESTS: Explain out-of-order bug.
+
 	* INSTALL: Remove $CVSId$.  More strongly encourage people to skip
 	the tests if they don't have the time to look at the results.
 	Move most of the discussion of tests to new file TESTS, and add

@@ -27,6 +27,26 @@ expression is the output which the test expected, and the text is the
 output which the command under test actually produced.  In some cases
 you'll have to look closely to see how they differ.
 
+If output from "make remotecheck" is out of order compared to what is
+expected (for example,
+
+   a
+   b
+   cvs foo: this is a demo
+
+is expected and
+
+   a
+   cvs foo: this is a demo
+   b
+
+is output), this is probably a well-known bug in the CVS server
+(search for "out-of-order" in src/server.c for a comment explaining
+the cause).  It is a real pain in running the testsuite, but if you
+are lucky and/or your machine is fast and/or lightly loaded, you won't
+run into it.  Running the tests again might succeed if the first run
+failed in this manner.
+
 For more information on what goes in check.log, and how the tests are
 run in general, you'll have to read sanity.sh.  Depending on just what
 you are looking for, and how familiar you are with the Bourne shell

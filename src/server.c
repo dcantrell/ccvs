@@ -2572,6 +2572,14 @@ do_cvs_command (command)
 		FD_SET (protocol_pipe[0], &readfds);
 	    }
 
+	    /* This process of selecting on the three pipes means that
+	       we might not get output in the same order in which it
+	       was written, thus producing the well-known
+	       "out-of-order" bug.  If the child process uses
+	       cvs_output and cvs_outerr, it will send everything on
+	       the protocol_pipe and avoid this problem, so the
+	       solution is to use cvs_output and cvs_outerr in the
+	       child process.  */
 	    do {
 		/* This used to select on exceptions too, but as far
                    as I know there was never any reason to do that and
