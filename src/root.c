@@ -545,7 +545,7 @@ parse_cvsroot (CVSroot)
 	break;
     case kserver_method:
 #ifndef HAVE_KERBEROS
-	error (0, 0, "CVSROOT \"%s\"");
+	error (0, 0, "CVSROOT \"%s\"", CVSroot);
        	error (0, 0, "is set for a kerberos access method but your");
 	error (0, 0, "CVS executable doesn't support it");
 	return 1;
@@ -555,7 +555,7 @@ parse_cvsroot (CVSroot)
 #endif
     case gserver_method:
 #ifndef HAVE_GSSAPI
-	error (0, 0, "CVSROOT \"%s\"");
+	error (0, 0, "CVSROOT \"%s\"", CVSroot);
 	error (0, 0, "is set for a GSSAPI access method but your");
 	error (0, 0, "CVS executable doesn't support it");
 	return 1;
@@ -645,7 +645,7 @@ normalize_cvsroot (default_user, default_port)
     free (hostname);
     return cvsroot_canonical;
 }
-#endif AUTH_CLIENT_SUPPORT
+#endif /* AUTH_CLIENT_SUPPORT */
 
 /* Set up the global CVSroot* variables as if we're using the local
    repository DIR.  */
