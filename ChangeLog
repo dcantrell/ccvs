@@ -1,5 +1,10 @@
 2004-03-15  Derek Price  <derek@ximbiot.com>
 
+	* configure.in: Correct grammar in help text.
+	* configure: Regenerated.
+
+2004-03-15  Derek Price  <derek@ximbiot.com>
+
 	* macintosh/.cvsignore: Complete pruning of directory started in 1999.
 
 2004-03-14  Derek Price  <derek@ximbiot.com>
