@@ -735,6 +735,23 @@ int unedit PROTO ((int argc, char **argv));
 int editors PROTO ((int argc, char **argv));
 int watchers PROTO ((int argc, char **argv));
 extern int annotate PROTO ((int argc, char **argv));
+extern int add PROTO ((int argc, char **argv));
+extern int admin PROTO ((int argc, char **argv));
+extern int checkout PROTO ((int argc, char **argv));
+extern int commit PROTO ((int argc, char **argv));
+extern int diff PROTO ((int argc, char **argv));
+extern int history PROTO ((int argc, char **argv));
+extern int import PROTO ((int argc, char **argv));
+extern int cvslog PROTO ((int argc, char **argv));
+#ifdef AUTH_CLIENT_SUPPORT
+extern int login PROTO((int argc, char **argv));
+#endif /* AUTH_CLIENT_SUPPORT */
+extern int patch PROTO((int argc, char **argv));
+extern int release PROTO((int argc, char **argv));
+extern int cvsremove PROTO((int argc, char **argv));
+extern int rtag PROTO((int argc, char **argv));
+extern int status PROTO((int argc, char **argv));
+extern int cvstag PROTO((int argc, char **argv));
 
 #if defined(AUTH_CLIENT_SUPPORT) || defined(AUTH_SERVER_SUPPORT)
 char *scramble PROTO ((char *str));

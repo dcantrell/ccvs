@@ -382,7 +382,9 @@ sortlist (list, comp)
 
 /* Debugging functions.  Quite useful to call from within gdb. */
 
-char *
+static char *nodetypestring PROTO ((Ntype));
+
+static char *
 nodetypestring (type)
     Ntype type;
 {
@@ -423,6 +425,11 @@ printnode (node, closure)
 
     return(0);
 }
+
+/* This is global, not static, so that its name is unique and to avoid
+   compiler warnings about it not being used.  But it is not used by CVS;
+   it exists so one can call it from a debugger.  */
+void printlist PROTO ((List *));
 
 void
 printlist (list)

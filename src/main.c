@@ -51,27 +51,6 @@ char *CurDir;
 char *Rcsbin = RCSBIN_DFLT;
 char *Tmpdir = TMPDIR_DFLT;
 char *Editor = EDITOR_DFLT;
-/*
- * The path found in CVS/Root must match $CVSROOT and/or 'cvs -d root'
- */
-int add PROTO((int argc, char **argv));
-int admin PROTO((int argc, char **argv));
-int checkout PROTO((int argc, char **argv));
-int commit PROTO((int argc, char **argv));
-int diff PROTO((int argc, char **argv));
-int history PROTO((int argc, char **argv));
-int import PROTO((int argc, char **argv));
-int cvslog PROTO((int argc, char **argv));
-#ifdef AUTH_CLIENT_SUPPORT
-int login PROTO((int argc, char **argv));
-#endif /* AUTH_CLIENT_SUPPORT */
-int patch PROTO((int argc, char **argv));
-int release PROTO((int argc, char **argv));
-int cvsremove PROTO((int argc, char **argv));
-int rtag PROTO((int argc, char **argv));
-int status PROTO((int argc, char **argv));
-int tag PROTO((int argc, char **argv));
-int update PROTO((int argc, char **argv));
 
 static const struct cmd
 {
@@ -131,7 +110,7 @@ static const struct cmd
     { "remove",   "rm",       "delete",    cvsremove },
     { "status",   "st",       "stat",      status },
     { "rtag",     "rt",       "rfreeze",   rtag },
-    { "tag",      "ta",       "freeze",    tag },
+    { "tag",      "ta",       "freeze",    cvstag },
     { "unedit",   NULL,	      NULL,	   unedit },
     { "update",   "up",       "upd",       update },
     { "watch",    NULL,	      NULL,	   watch },

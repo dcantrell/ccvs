@@ -2987,7 +2987,10 @@ supported_request (name)
 
 
 #ifdef AUTH_CLIENT_SUPPORT
-void
+static void init_sockaddr PROTO ((struct sockaddr_in *, const char *,
+				  unsigned short int));
+
+static void
 init_sockaddr (name, hostname, port)
     struct sockaddr_in *name;
     const char *hostname;
@@ -3008,7 +3011,9 @@ init_sockaddr (name, hostname, port)
 }
 
 
-int
+static int auth_server_port_number PROTO ((void));
+
+static int
 auth_server_port_number ()
 {
     struct servent *s = getservbyname ("cvspserver", "tcp");

@@ -72,7 +72,7 @@ static const char *const tag_usage[] =
 };
 
 int
-tag (argc, argv)
+cvstag (argc, argv)
     int argc;
     char **argv;
 {
