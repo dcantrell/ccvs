@@ -1,3 +1,10 @@
+2000-10-30  Derek Price  <derek.price@openavenue.com>
+
+	* cvs.spec: Fixed trapping for gssapi so that the RPM can be built
+	on a machine without Kerberos.  Should now build standard RPM on a
+	machine without Kerberos and the standard RPM + the Kerberos RPM on
+	a machine with the Kerberos devel libraries.
+
 2000-10-26  Larry Jones  <larry.jones@sdrc.com>
 
 	* configure.in: Get path to pr for diff.
