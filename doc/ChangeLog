@@ -1,3 +1,11 @@
+Sat Apr 12 09:32:58 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (Committing your changes): Say that editor default
+	is notepad (not vi) for Windows NT/95.  Be more clear about what
+	"cvs commit" does.  Add paragraph about timestamps.
+	(Environment variables, Global options, editinfo):
+	Add xrefs to that node.
+
 Thu Apr 10 15:48:39 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (Error messages): Add "could not patch; will refetch".
