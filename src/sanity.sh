@@ -806,6 +806,13 @@ for what in $tests; do
 			echo '***' failed test 87 ; exit 1
 		fi
 
+		# Make sure that we joined the correct change to file1
+		if echo line2 from branch1 | cmp - file1 >/dev/null; then
+		  echo 'PASS: test 87a' >>${LOGFILE}
+		else
+		  echo 'FAIL: test 87a' | tee -a ${LOGFILE}
+		fi
+
 		# update
 		if ${CVS} update  ; then
 			true
