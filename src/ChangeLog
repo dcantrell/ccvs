@@ -1,5 +1,7 @@
 Wed Jan  3 01:19:53 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* entries.c (Entries_Open): Don't try to close fpin twice.
+
 	* client.c (update_entries): Fix typo ("strlen (filename + 10)"
 	-> "strlen (filename) + 10").
 
