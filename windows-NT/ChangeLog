@@ -1,3 +1,7 @@
+2003-05-20  Derek Price  <derek@ximbiot.com>
+
+	* Makefile.in: Regenerated.
+
 2003-05-19  Derek Price  <derek@ximbiot.com>
 
 	* config.h (PACKAGE_STRING): updated to 1.12.0.1;
