@@ -1,3 +1,9 @@
+Thu Jul 31 14:40:15 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo: Use @ref not @xref when reference is not at the
+	start of a sentence.  Avoids capitalizing "See" when we shouldn't.
+	Fixes to other similar xref problems.
+
 Wed Jul 30 19:30:31 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvsclient.texi (Connection and Authentication): Don't use @samp
