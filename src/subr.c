@@ -340,12 +340,13 @@ getcaller (void)
 #ifdef lint
 #ifndef __GNUC__
 /* ARGSUSED */
-time_t
-get_date( char *date, struct timeb *now )
+bool
+get_date (struct timespec *result, char const *p, struct timespec const *now)
 {
-    time_t foo = 0;
+    result->tv_sec = 0;
+    result->tv_nsec = 0;
 
-    return foo;
+    return false;
 }
 #endif
 #endif
