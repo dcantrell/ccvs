@@ -1,3 +1,9 @@
+Wed Nov  8 13:18:51 1995  Norbert Kiesel  <nk@col.sw-ley.de>
+
+	* valloc.c: omit malloc declaration (it's already in system.h
+	  which is included and conflicts with <stdlib.h> on some
+	  systems).
+
 Tue Nov  7 19:38:48 1995  Norbert Kiesel  <nk@col.sw-ley.de>
 
 	* system.h (STAT_MACROS_BROKEN): undo previous change, because
