@@ -1,3 +1,9 @@
+Wed Nov  8 10:20:20 1995  Jim Meyering  (meyering@comco.com)
+
+	* entries.c (ParseTag): Remove dcl of unused local.
+
+	* patch.c: Include getline.h.
+
 Wed Nov  8 11:57:31 1995  Norbert Kiesel  <nk@col.sw-ley.de>
 
 	* options.h.in: add configuration option STEXID_SUPPORT (default
