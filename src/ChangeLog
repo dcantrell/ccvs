@@ -1,3 +1,9 @@
+2004-08-11  Derek Price <derek@ximbiot.com>
+
+	* sanity.sh (basicc): Work around a problem in Linux 2.2 & Bash 2.05b
+	which prevents a `cd ..' from a deleted directory from working.
+	(Original patch from Matthew Ogilvie <mmo9317bd@mailcan.com>.)
+
 2004-06-22  Derek Price  <derek@ximbiot.com>
 
 	* wrapper.c: Add explicit "void" return type to "wrap_clean_fmt_str"
