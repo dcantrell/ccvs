@@ -1,5 +1,8 @@
 Tue Mar 26 09:48:49 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* expand_path.c: Don't declare free and xmalloc; cvs.h already
+	takes care of that.
+
 	* sanity.sh (mflag): Don't use tag name reserved to CVS.
 
 	NT local changes plus miscellaneous things noticed in the process:
