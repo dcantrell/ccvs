@@ -528,7 +528,7 @@ diff_fileproc (callerdat, finfo)
 	if (empty_file == DIFF_ADDED)
 	{
 	    if (use_rev2 == NULL)
-		run_setup ("%s %s %s %s", Diffbin, opts, DEVNULL, finfo->file);
+		run_setup ("%s %s %s %s", DIFF, opts, DEVNULL, finfo->file);
 	    else
 	    {
 		int retcode;
@@ -539,7 +539,6 @@ diff_fileproc (callerdat, finfo)
 					(*options
 					 ? options
 					 : vers->options),
-					(char *) NULL,
 					tmp);
 		if (retcode == -1)
 		{
@@ -549,7 +548,7 @@ diff_fileproc (callerdat, finfo)
 		}
 		/* FIXME: what if retcode > 0?  */
 
-		run_setup ("%s %s %s %s", Diffbin, opts, DEVNULL, tmp);
+		run_setup ("%s %s %s %s", DIFF, opts, DEVNULL, tmp);
 	    }
 	}
 	else
@@ -560,7 +559,6 @@ diff_fileproc (callerdat, finfo)
 	    retcode = RCS_checkout (vers->srcfile, (char *) NULL,
 				    use_rev1, (char *) NULL,
 				    *options ? options : vers->options,
-				    (char *) NULL,
 				    tmp);
 	    if (retcode == -1)
 	    {
@@ -570,7 +568,7 @@ diff_fileproc (callerdat, finfo)
 	    }
 	    /* FIXME: what if retcode > 0?  */
 
-	    run_setup ("%s %s %s %s", Diffbin, opts, tmp, DEVNULL);
+	    run_setup ("%s %s %s %s", DIFF, opts, tmp, DEVNULL);
 	}
     }
     else
@@ -855,7 +853,6 @@ diff_file_nodiff (finfo, vers, empty_file)
     retcode = RCS_checkout (vers->srcfile, (char *) NULL, use_rev1,
 			    (char *) NULL,
 			    *options ? options : vers->options,
-			    (char *) NULL,
 			    tmp);
     switch (retcode)
     {
