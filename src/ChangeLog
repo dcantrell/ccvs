@@ -1,6 +1,8 @@
 Wed Jun 14 11:29:42 1995  J.T. Conklin  <jtc@rtl.cygnus.com>
 
-	* subr.c (copy_file): Fix infinate loop.
+	* import.c (import_descend): Initialize dirlist to NULL.
+
+	* subr.c (copy_file): Fix infinite loop.
 
 	* server.c (serve_directory): fix a memory leak.
 

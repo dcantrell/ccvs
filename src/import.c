@@ -303,7 +303,7 @@ import_descend (message, vtag, targc, targv)
     DIR *dirp;
     struct dirent *dp;
     int err = 0;
-    List *dirlist;
+    List *dirlist = NULL;
 
     /* first, load up any per-directory ignore lists */
     ign_add_file (CVSDOTIGNORE, 1);
