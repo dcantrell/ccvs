@@ -1,3 +1,8 @@
+Thu Jul 24 23:13:24 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (config): Document SystemAuth.
+	(Password authentication server): Mention SystemAuth.
+
 Mon Jul 21 08:57:04 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* Makefile.in (DISTFILES): Add DIFFUTILS-2.7-BUG.
