@@ -87,7 +87,7 @@ MAINTAINERCLEANFILES += $(srcdir)/cvs.1
 
 cvs.dvi cvs.html cvs.info cvs.pdf cvs.ps cvs.txt: getdate-cvs.texi
 getdate-cvs.texi: stamp-gdt
-stamp-gdt: getdate.texi Makefile
+stamp-gdt: getdate.texi $(top_srcdir)/configure
 	@echo "@c This file is generated via a rule in Makefile.am from the" \
 	  >getdate-cvs.tmp
 	@echo " * getdate.texi file." >>getdate-cvs.tmp
