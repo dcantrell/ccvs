@@ -2913,6 +2913,21 @@ actual tag names.
 @c officially-OK tag names, and CVS should at least reject
 @c characters that won't work, like "/".
 
+You'll want to choose some convention for naming tags,
+based on information such as the name of the program
+and the version number of the release.  For example,
+one might take the name of the program, immediately
+followed by the version number with @samp{.} changed to
+@samp{-}, so that CVS 1.9 would be tagged with the name
+@code{cvs1-9}.  If you choose a consistent convention,
+then you won't constantly be guessing whether a tag is
+@code{cvs-1-9} or @code{cvs1_9} or what.  You might
+even want to consider enforcing your convention in the
+taginfo file (@pxref{user-defined logging}).
+@c Might be nice to say more about using taginfo this
+@c way, like giving an example, or pointing out any particular
+@c issues which arise.
+
 @cindex Adding a tag
 @cindex tag, example
 The following example shows how you can add a tag to a
