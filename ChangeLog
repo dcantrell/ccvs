@@ -1,3 +1,8 @@
+Sat Nov 29 22:10:32 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* configure.in (AC_REPLACE_FUNCS): Remove getwd (see lib/ChangeLog
+	for rationale).
+
 Mon Nov 24 10:36:39 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* INSTALL: Update QNX information per email from Michael Hunter of
