@@ -1,5 +1,10 @@
 Fri Dec  1 11:16:18 1995  Norbert Kiesel  <nk@col.sw-ley.de>
 
+	* configure, config.h.in: re-ran autoconf
+
+	* configure.in (AC_CHECK_HEADERS): add sys/resource.h to list of
+	  tested headers
+
 	* Makefile.in (DISTFILES): add config.sub and config.guess
 
 Thu Nov 23 09:01:53 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
