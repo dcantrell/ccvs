@@ -1,3 +1,56 @@
+2003-12-18  Derek Price  <derek@ximbiot.com>
+
+	* config.h, stamp-ch: Regenerated for release 1.12.5.
+
+2003-12-10  Derek Price  <derek@ximbiot.com>
+
+	* Makefile.am: Include code to put a warning at the beginning of the
+	generated config.h that it should not be edited and to edit config.h.in
+	instead.
+	* Makefile.in, config.h: Regenerated.
+
+2003-12-10  Derek Price  <derek@ximbiot.com>
+
+	* config.h.in (SYSTEM_CLEANUP): That's because you need to change it
+	here.
+	* config.h: Regenerated.
+
+2003-12-10  Mark D. Baushke  <mdb@cvshome.org>
+
+	* config.h (SYSTEM_CLEANUP): Update macro to be a name
+	replacement rather than a macro function. Note: This
+	change seems to be undone by 'autoreconf'.
+
+2003-12-10  Mark D. Baushke  <mdb@cvshome.org>
+
+	* config.h (SYSTEM_CLEANUP): Update macro to be a name replacement
+	rather than a macro function.
+	(Patch from Rob Clevenger <rob@robsite.org>.)
+	
+2003-12-09  Derek Price  <derek@ximbiot.com>
+
+	* config.h, stamp-ch: Regenerated for release 1.12.4.1.
+
+2003-12-09  Derek Price  <derek@ximbiot.com>
+
+	* config.h, stamp-ch: Regenerated for release 1.12.4.
+
+2003-12-05  Mark D. Baushke  <mdb@cvshome.org>
+
+	* filesubr.c (xresolvepath): Comment out assert() call.
+
+2003-12-05  Derek Price  <derek@ximbiot.com>
+
+	* config.h, stamp-ch: Regenerated for dev version 1.12.3.1.
+
+2003-12-04  Derek Price  <derek@ximbiot.com>
+
+	* config.h, stamp-ch: Regenerated for release 1.12.3.
+
+2003-11-25  Mark D. Baushke  <mdb@cvshome.org>
+
+	* Makefile.in: Regenerate for new configure.in.
+
 2003-10-27  Derek Price  <derek@ximbiot.com>
 
 	* config.h, stamp-ch: Regenerated for 1.12.2.1.

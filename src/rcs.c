@@ -68,10 +68,8 @@ static void rcsbuf_close (struct rcsbuffer *);
 static int rcsbuf_getkey (struct rcsbuffer *, char **keyp,
 				 char **valp);
 static int rcsbuf_getrevnum (struct rcsbuffer *, char **revp);
-#ifndef HAVE_MMAP
 static char *rcsbuf_fill (struct rcsbuffer *, char *ptr, char **keyp,
 				 char **valp);
-#endif
 static int rcsbuf_valcmp (struct rcsbuffer *);
 static char *rcsbuf_valcopy (struct rcsbuffer *, char *val, int polish,
 				    size_t *lenp);
@@ -79,12 +77,12 @@ static void rcsbuf_valpolish (struct rcsbuffer *, char *val, int polish,
 				     size_t *lenp);
 static void rcsbuf_valpolish_internal (struct rcsbuffer *, char *to,
 					      const char *from, size_t *lenp);
-static unsigned long rcsbuf_ftell (struct rcsbuffer *);
+static off_t rcsbuf_ftello (struct rcsbuffer *);
 static void rcsbuf_get_buffered (struct rcsbuffer *, char **datap,
 					size_t *lenp);
 static void rcsbuf_cache (RCSNode *, struct rcsbuffer *);
 static void rcsbuf_cache_close (void);
-static void rcsbuf_cache_open (RCSNode *, long, FILE **,
+static void rcsbuf_cache_open (RCSNode *, off_t, FILE **,
 				      struct rcsbuffer *);
 static int checkmagic_proc (Node *p, void *closure);
 static void do_branches (List * list, char *val);
@@ -212,8 +210,6 @@ static int rcs_lockfd = -1;
 static char *
 locate_rcs (const char *repository, const char *file, int *inattic)
 {
-    char *rcsfile;
-    char *dir;
     char *retval;
 
     /* First, try to find the file as cased. */
@@ -238,47 +234,7 @@ locate_rcs (const char *repository, const char *file, int *inattic)
     }
     free (retval);
 
-#if defined (SERVER_SUPPORT) && !defined (FILENAMES_CASE_INSENSITIVE)
-    /* We didn't find the file as cased, so try again case insensitively if the
-     * client has requested that mode.
-     */
-    if (ign_case)
-    {
-	/* Allocate space and add the RCS extension */
-	rcsfile = xmalloc (strlen (file)
-	                   + sizeof (RCSEXT));
-	sprintf (rcsfile, "%s%s", file, RCSEXT);
-
-
-	/* Search in the top dir given */
-	if ((retval = locate_file_in_dir (repository, rcsfile)) != NULL)
-	{
-	    if (inattic)
-		*inattic = 0;
-	    goto out;
-	}
-
-	/* Search in the Attic */
-	dir = xmalloc (strlen (repository)
-	               + sizeof (CVSATTIC)
-	               + 2);
-	sprintf (dir, "%s/%s", repository, CVSATTIC);
-
-	if ((retval = locate_file_in_dir (dir, rcsfile)) != NULL
-	    && inattic)
-	    *inattic = 1;
-
-	free (dir);
-
-    out:
-	free (rcsfile);
-	return retval;
-    }
-    else /* !ign_case */
-#endif /* SERVER_SUPPORT && !FILENAMES_CASE_INSENSITIVE */
-    {
-	return NULL;
-    }
+    return NULL;
 }
 
 
@@ -640,7 +596,7 @@ RCS_reparsercsfile (RCSNode *rdata, FILE **pfp, struct rcsbuffer *rcsbufp)
 	rdata->desc = rcsbuf_valcopy (&rcsbuf, value, 1, (size_t *) NULL);
     }
 
-    rdata->delta_pos = rcsbuf_ftell (&rcsbuf);
+    rdata->delta_pos = rcsbuf_ftello (&rcsbuf);
 
     if (pfp == NULL)
 	rcsbuf_cache (rdata, &rcsbuf);
@@ -1142,23 +1098,19 @@ rcsbuf_getkey (struct rcsbuffer *rcsbuf, char **keyp, char **valp)
 	ptrend = ptr + len;
 	rcsbuf->ptrend = ptrend;
     }
-#endif /* ndef HAVE_MMAP */
+#endif /* HAVE_MMAP */
 
     /* Skip leading whitespace.  */
 
     while (1)
     {
 	if (ptr >= ptrend)
-#ifndef HAVE_MMAP
 	{
 	    ptr = rcsbuf_fill (rcsbuf, ptr, (char **) NULL, (char **) NULL);
 	    if (ptr == NULL)
-#endif
 		return 0;
-#ifndef HAVE_MMAP
 	    ptrend = rcsbuf->ptrend;
 	}
-#endif
 
 	c = *ptr;
 	if (! my_whitespace (c))
@@ -1177,17 +1129,13 @@ rcsbuf_getkey (struct rcsbuffer *rcsbuf, char **keyp, char **valp)
 	{
 	    ++ptr;
 	    if (ptr >= ptrend)
-#ifndef HAVE_MMAP
 	    {
 		ptr = rcsbuf_fill (rcsbuf, ptr, keyp, (char **) NULL);
 		if (ptr == NULL)
-#endif
 		    error (1, 0, "EOF in key in RCS file %s",
 			   rcsbuf->filename);
-#ifndef HAVE_MMAP
 		ptrend = rcsbuf->ptrend;
 	    }
-#endif
 	    c = *ptr;
 	    if (c == ';' || my_whitespace (c))
 		break;
@@ -1216,17 +1164,13 @@ rcsbuf_getkey (struct rcsbuffer *rcsbuf, char **keyp, char **valp)
     while (1)
     {
 	if (ptr >= ptrend)
-#ifndef HAVE_MMAP
 	{
 	    ptr = rcsbuf_fill (rcsbuf, ptr, keyp, (char **) NULL);
 	    if (ptr == NULL)
-#endif
 		error (1, 0, "EOF while looking for value in RCS file %s",
 		       rcsbuf->filename);
-#ifndef HAVE_MMAP
 	    ptrend = rcsbuf->ptrend;
 	}
-#endif
 	c = *ptr;
 	if (c == ';')
 	{
@@ -1261,7 +1205,6 @@ rcsbuf_getkey (struct rcsbuffer *rcsbuf, char **keyp, char **valp)
 	while (1)
 	{
 	    while ((pat = memchr (ptr, '@', ptrend - ptr)) == NULL)
-#ifndef HAVE_MMAP
 	    {
 		/* Note that we pass PTREND as the PTR value to
                    rcsbuf_fill, so that we will wind up setting PTR to
@@ -1269,31 +1212,25 @@ rcsbuf_getkey (struct rcsbuffer *rcsbuf, char **keyp, char **valp)
                    that we don't search the same bytes again.  */
 		ptr = rcsbuf_fill (rcsbuf, ptrend, keyp, valp);
 		if (ptr == NULL)
-#endif
 		    error (1, 0,
 			   "EOF while looking for end of string in RCS file %s",
 			   rcsbuf->filename);
-#ifndef HAVE_MMAP
 		ptrend = rcsbuf->ptrend;
 	    }
-#endif
 
 	    /* Handle the special case of an '@' right at the end of
                the known bytes.  */
 	    if (pat + 1 >= ptrend)
-#ifndef HAVE_MMAP
 	    {
 		/* Note that we pass PAT, not PTR, here.  */
 		pat = rcsbuf_fill (rcsbuf, pat, keyp, valp);
 		if (pat == NULL)
 		{
-#endif
 		    /* EOF here is OK; it just means that the last
 		       character of the file was an '@' terminating a
 		       value for a key type which does not require a
 		       trailing ';'.  */
 		    pat = rcsbuf->ptrend - 1;
-#ifndef HAVE_MMAP
 
 		}
 		ptrend = rcsbuf->ptrend;
@@ -1301,7 +1238,6 @@ rcsbuf_getkey (struct rcsbuffer *rcsbuf, char **keyp, char **valp)
 		/* Note that the value of PTR is bogus here.  This is
 		   OK, because we don't use it.  */
 	    }
-#endif
 
 	    if (pat + 1 >= ptrend || pat[1] != '@')
 		break;
@@ -1351,17 +1287,13 @@ rcsbuf_getkey (struct rcsbuffer *rcsbuf, char **keyp, char **valp)
 	    char n;
 
 	    if (ptr >= ptrend)
-#ifndef HAVE_MMAP
 	    {
 		ptr = rcsbuf_fill (rcsbuf, ptr, keyp, valp);
 		if (ptr == NULL)
-#endif
 		    error (1, 0, "EOF in value in RCS file %s",
 			   rcsbuf->filename);
-#ifndef HAVE_MMAP
 		ptrend = rcsbuf->ptrend;
 	    }
-#endif
 	    n = *ptr;
 	    if (n == ';')
 	    {
@@ -1396,7 +1328,6 @@ rcsbuf_getkey (struct rcsbuffer *rcsbuf, char **keyp, char **valp)
 	/* Find the ';' which must end the value.  */
 	start = ptr;
 	while ((psemi = memchr (ptr, ';', ptrend - ptr)) == NULL)
-#ifndef HAVE_MMAP
 	{
 	    int slen;
 
@@ -1407,13 +1338,10 @@ rcsbuf_getkey (struct rcsbuffer *rcsbuf, char **keyp, char **valp)
 	    slen = start - *valp;
 	    ptr = rcsbuf_fill (rcsbuf, ptrend, keyp, valp);
 	    if (ptr == NULL)
-#endif
 		error (1, 0, "EOF in value in RCS file %s", rcsbuf->filename);
-#ifndef HAVE_MMAP
 	    start = *valp + slen;
 	    ptrend = rcsbuf->ptrend;
 	}
-#endif
 
 	/* See if there are any '@' strings in the value.  */
 	pat = memchr (start, '@', psemi - start);
@@ -1457,7 +1385,6 @@ rcsbuf_getkey (struct rcsbuffer *rcsbuf, char **keyp, char **valp)
 	while (1)
 	{
 	    while ((pat = memchr (ptr, '@', ptrend - ptr)) == NULL)
-#ifndef HAVE_MMAP
 	    {
 		/* Note that we pass PTREND as the PTR value to
                    rcsbuff_fill, so that we will wind up setting PTR
@@ -1465,29 +1392,22 @@ rcsbuf_getkey (struct rcsbuffer *rcsbuf, char **keyp, char **valp)
                    that we don't search the same bytes again.  */
 		ptr = rcsbuf_fill (rcsbuf, ptrend, keyp, valp);
 		if (ptr == NULL)
-#endif
 		    error (1, 0,
 			   "EOF while looking for end of string in RCS file %s",
 			   rcsbuf->filename);
-#ifndef HAVE_MMAP
 		ptrend = rcsbuf->ptrend;
 	    }
-#endif
 
 	    /* Handle the special case of an '@' right at the end of
                the known bytes.  */
 	    if (pat + 1 >= ptrend)
-#ifndef HAVE_MMAP
 	    {
 		ptr = rcsbuf_fill (rcsbuf, ptr, keyp, valp);
 		if (ptr == NULL)
-#endif
 		    error (1, 0, "EOF in value in RCS file %s",
 			   rcsbuf->filename);
-#ifndef HAVE_MMAP
 		ptrend = rcsbuf->ptrend;
 	    }
-#endif
 
 	    if (pat[1] != '@')
 		break;
@@ -1528,16 +1448,12 @@ rcsbuf_getrevnum (struct rcsbuffer *rcsbuf, char **revp)
     while (1)
     {
 	if (ptr >= ptrend)
-#ifndef HAVE_MMAP
 	{
 	    ptr = rcsbuf_fill (rcsbuf, ptr, (char **) NULL, (char **) NULL);
 	    if (ptr == NULL)
-#endif
 		return 0;
-#ifndef HAVE_MMAP
 	    ptrend = rcsbuf->ptrend;
 	}
-#endif
 
 	c = *ptr;
 	if (! whitespace (c))
@@ -1558,18 +1474,14 @@ unexpected '\\x%x' reading revision number in RCS file %s",
     {
 	++ptr;
 	if (ptr >= ptrend)
-#ifndef HAVE_MMAP
 	{
 	    ptr = rcsbuf_fill (rcsbuf, ptr, revp, (char **) NULL);
 	    if (ptr == NULL)
-#endif
 		error (1, 0,
 		       "unexpected EOF reading revision number in RCS file %s",
 		       rcsbuf->filename);
-#ifndef HAVE_MMAP
 	    ptrend = rcsbuf->ptrend;
 	}
-#endif
 
 	c = *ptr;
     }
@@ -1587,7 +1499,6 @@ unexpected '\\x%x' reading revision number in RCS file %s",
     return 1;
 }
 
-#ifndef HAVE_MMAP
 /* Fill RCSBUF_BUFFER with bytes from the file associated with RCSBUF,
    updating PTR and the PTREND field.  If KEYP and *KEYP are not NULL,
    then *KEYP points into the buffer, and must be adjusted if the
@@ -1601,6 +1512,9 @@ rcsbuf_fill (rcsbuf, ptr, keyp, valp)
     char **keyp;
     char **valp;
 {
+#ifdef HAVE_MMAP
+    return NULL;
+#else /* HAVE_MMAP */
     int got;
 
     if (rcsbuf->ptrend - rcsbuf_buffer + RCSBUF_BUFSIZE > rcsbuf_buffer_size)
@@ -1634,8 +1548,8 @@ rcsbuf_fill (rcsbuf, ptr, keyp, valp)
     rcsbuf->ptrend += got;
 
     return ptr;
-}
 #endif /* HAVE_MMAP */
+}
 
 /* Test whether the last value returned by rcsbuf_getkey is a composite
    value or not. */
@@ -1930,8 +1844,8 @@ rcsbuf_valword (rcsbuf, valp)
 
 /* Return the current position of an rcsbuf.  */
 
-static unsigned long
-rcsbuf_ftell (struct rcsbuffer *rcsbuf)
+static off_t
+rcsbuf_ftello (struct rcsbuffer *rcsbuf)
 {
     return rcsbuf->pos + rcsbuf->ptr - rcsbuf_buffer;
 }
@@ -1988,15 +1902,16 @@ rcsbuf_cache_close (void)
    be put at position POS.  */
 
 static void
-rcsbuf_cache_open (RCSNode *rcs, long int pos, FILE **pfp, struct rcsbuffer *prcsbuf)
+rcsbuf_cache_open (RCSNode *rcs, off_t pos, FILE **pfp,
+		   struct rcsbuffer *prcsbuf)
 {
 #ifndef HAVE_MMAP
     if (cached_rcs == rcs)
     {
-	if (rcsbuf_ftell (&cached_rcsbuf) != pos)
+	if (rcsbuf_ftello (&cached_rcsbuf) != pos)
 	{
-	    if (fseek (cached_rcsbuf.fp, pos, SEEK_SET) != 0)
-		error (1, 0, "cannot fseek RCS file %s",
+	    if (fseeko (cached_rcsbuf.fp, pos, SEEK_SET) != 0)
+		error (1, 0, "cannot fseeko RCS file %s",
 		       cached_rcsbuf.filename);
 	    cached_rcsbuf.ptr = rcsbuf_buffer;
 	    cached_rcsbuf.ptrend = rcsbuf_buffer;
@@ -2039,8 +1954,8 @@ rcsbuf_cache_open (RCSNode *rcs, long int pos, FILE **pfp, struct rcsbuffer *prc
 #ifndef HAVE_MMAP
 	if (pos != 0)
 	{
-	    if (fseek (*pfp, pos, SEEK_SET) != 0)
-		error (1, 0, "cannot fseek RCS file %s", rcs->path);
+	    if (fseeko (*pfp, pos, SEEK_SET) != 0)
+		error (1, 0, "cannot fseeko RCS file %s", rcs->path);
 	}
 #endif /* ifndef HAVE_MMAP */
 	rcsbuf_open (prcsbuf, *pfp, rcs->path, pos);
@@ -3122,23 +3037,26 @@ RCS_getrevtime (RCSNode *rcs, char *rev, char *date, int fudge)
     vers = (RCSVers *) p->data;
 
     /* split up the date */
-    ftm = &xtm;
-    (void) sscanf (vers->date, SDATEFORM, &ftm->tm_year, &ftm->tm_mon,
-		   &ftm->tm_mday, &ftm->tm_hour, &ftm->tm_min,
-		   &ftm->tm_sec);
+    if (sscanf (vers->date, SDATEFORM, &xtm.tm_year, &xtm.tm_mon,
+		&xtm.tm_mday, &xtm.tm_hour, &xtm.tm_min, &xtm.tm_sec) != 6)
+	error (1, 0, "%s: invalid date for revision %s (%s)", rcs->path,
+	       rev, vers->date);
 
     /* If the year is from 1900 to 1999, RCS files contain only two
        digits, and sscanf gives us a year from 0-99.  If the year is
        2000+, RCS files contain all four digits and we subtract 1900,
        because the tm_year field should contain years since 1900.  */
 
-    if (ftm->tm_year > 1900)
-	ftm->tm_year -= 1900;
+    if (xtm.tm_year >= 100 && xtm.tm_year < 2000)
+	error (0, 0, "%s: non-standard date format for revision %s (%s)",
+	       rcs->path, rev, vers->date);
+    if (xtm.tm_year >= 1900)
+	xtm.tm_year -= 1900;
 
     /* put the date in a form getdate can grok */
-    (void) sprintf (tdate, "%d/%d/%d GMT %d:%d:%d", ftm->tm_mon,
-		    ftm->tm_mday, ftm->tm_year + 1900, ftm->tm_hour,
-		    ftm->tm_min, ftm->tm_sec);
+    (void) sprintf (tdate, "%d/%d/%d GMT %d:%d:%d", xtm.tm_mon,
+		    xtm.tm_mday, xtm.tm_year + 1900, xtm.tm_hour,
+		    xtm.tm_min, xtm.tm_sec);
 
     /* turn it into seconds since the epoch */
     revdate = get_date (tdate, (struct timeb *) NULL);
@@ -5067,9 +4985,9 @@ workfile);
 	RCS_putadmin (rcs, fout);
 	RCS_putdtree (rcs, rcs->head, fout);
 	RCS_putdesc (rcs, fout);
-	rcs->delta_pos = ftell (fout);
+	rcs->delta_pos = ftello (fout);
 	if (rcs->delta_pos == -1)
-	    error (1, errno, "cannot ftell for %s", rcs->path);
+	    error (1, errno, "cannot ftello for %s", rcs->path);
 	putdeltatext (fout, dtext);
 	rcs_internal_unlockfile (fout, rcs->path);
 
@@ -5482,7 +5400,9 @@ RCS_cmp_file (RCSNode *rcs, char *rev1, char **rev1_cache, char *rev2, char *opt
     int binary;
 
     TRACE( TRACE_FUNCTION, "RCS_cmp_file( %s, %s, %s, %s, %s )",
-           rcs->path, rev1, rev2, options, filename );
+           rcs->path ? rcs->path : "(null)",
+	   rev1 ? rev1 : "(null)", rev2 ? rev2 : "(null)",
+	   options ? options : "(null)", filename ? filename : "(null)" );
 
     if (options != NULL && options[0] != '\0')
 	binary = STREQ (options, "-kb");
@@ -6371,7 +6291,7 @@ RCS_delete_revs (RCSNode *rcs, char *tag1, char *tag2, int inclusive)
 	char *diffbuf;
 	size_t bufsize, len;
 
-#ifdef WOE32
+#if defined (WOE32) && !defined (__CYGWIN32__)
 	/* FIXME: This is an awful kludge, but at least until I have
 	   time to work on it a little more and test it, I'd rather
 	   give a fatal error than corrupt the file.  I think that we
@@ -8333,9 +8253,9 @@ RCS_rewrite (RCSNode *rcs, Deltatext *newdtext, char *insertpt)
        been positioned at the old delta_pos, but before any delta
        texts have been written to fout.
      */
-    rcs->delta_pos = ftell (fout);
+    rcs->delta_pos = ftello (fout);
     if (rcs->delta_pos == -1)
-	error (1, errno, "cannot ftell in RCS file %s", rcs->path);
+	error (1, errno, "cannot ftello in RCS file %s", rcs->path);
 
     RCS_copydeltas (rcs, fin, &rcsbufin, fout, newdtext, insertpt);
 

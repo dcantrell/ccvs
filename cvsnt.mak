@@ -156,7 +156,11 @@ CLEAN :
 	-@erase ".\WinRel\mkdir.obj"
 	-@erase ".\WinRel\socket-client.obj"
 	-@erase ".\WinRel\log-buffer.obj"
-	-@erase '.\WInRel\rsh-client.obj"
+	-@erase ".\WinRel\rsh-client.obj"
+        -@erase ".\WinRel\ftello.obj"
+        -@erase ".\WinRel\fseeko.obj"
+        -@erase ".\WinRel\exithandle.obj"
+        -@erase ".\WinRel\getndelim2.obj"
 
 "$(OUTDIR)" :
     if not exist "$(OUTDIR)/$(NULL)" mkdir "$(OUTDIR)"
@@ -289,7 +293,11 @@ LINK32_OBJS= \
 	"$(INTDIR)/mkdir.obj" \
 	"$(INTDIR)/socket-client.obj" \
 	"$(INTDIR)/log-buffer.obj" \
-	"$(INTDIR)/rsh-client.obj"
+	"$(INTDIR)/rsh-client.obj" \
+	"$(INTDIR)/ftello.obj" \
+	"$(INTDIR)/fseeko.obj" \
+	"$(INTDIR)/exithandle.obj" \
+        "$(INTDIR)/getndelim2.obj"
 
 "$(OUTDIR)\cvs.exe" : "$(OUTDIR)" $(DEF_FILE) $(LINK32_OBJS)
     $(LINK32) @<<
@@ -384,7 +392,11 @@ CLEAN :
 	-@erase ".\WinDebug\mkdir.obj"
 	-@erase ".\WinDebug\socket-client.obj"
 	-@erase ".\WinDebug\log-buffer.obj"
-	-@erase '.\WInDebug\rsh-client.obj"
+	-@erase ".\WinDebug\rsh-client.obj"
+	-@erase ".\WinDebug\ftello.obj"
+	-@erase ".\WinDebug\fseeko.obj"
+	-@erase ".\WinDebug\exithandle.obj"
+        -@erase ".\WinDebug\getndelim2.obj"
 	-@erase ".\WinDebug\uncompr.obj"
 	-@erase ".\WinDebug\ignore.obj"
 	-@erase ".\WinDebug\root.obj"
@@ -520,6 +532,10 @@ LINK32_OBJS= \
 	"$(INTDIR)/socket-client.obj" \
 	"$(INTDIR)/log-buffer.obj" \
 	"$(INTDIR)/rsh-client.obj" \
+	"$(INTDIR)/ftello.obj" \
+	"$(INTDIR)/fseeko.obj" \
+	"$(INTDIR)/exithandle.obj" \
+        "$(INTDIR)/getndelim2.obj" \
 	"$(INTDIR)/uncompr.obj" \
 	"$(INTDIR)/ignore.obj" \
 	"$(INTDIR)/root.obj" \
@@ -2198,6 +2214,7 @@ NODEP_CPP_SOCKET_CLIENT_C=\
 
 # End Source File
 ################################################################################
+
 # Begin Source File
 
 SOURCE=.\src\rsh-client.c
@@ -2234,6 +2251,60 @@ NODEP_CPP_RSH_CLIENT_C=\
 
 # End Source File
 ################################################################################
+
+# Begin Source File
+
+SOURCE=.\lib\ftello.c
+DEP_CPP_FTELLO_C=\
+	".\windows-NT\config.h"\
+	
+"$(INTDIR)\ftello.obj" : $(SOURCE) $(DEP_CPP_FTELLO_C) "$(INTDIR)"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=.\lib\fseeko.c
+DEP_CPP_FSEEKO_C=\
+	".\windows-NT\config.h"\
+	
+"$(INTDIR)\fseeko.obj" : $(SOURCE) $(DEP_CPP_FSEEKO_C) "$(INTDIR)"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+# End Source File
+################################################################################
+
+# Begin Source File
+
+SOURCE=.\src\exithandle.c
+DEP_CPP_EXITHANDLE_C=\
+	".\src\cvs.h"\
+	
+"$(INTDIR)\exithandle.obj" : $(SOURCE) $(DEP_CPP_EXITHANDLE_C) "$(INTDIR)"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=.\lib\getndelim2.c
+DEP_CPP_GETNDELIM2_C=\
+	".\windows-NT\config.h"\
+        ".\lib\getndelim2.h"\
+        ".\lib\unlocked-io.h"
+	
+"$(INTDIR)\getndelim2.obj" : $(SOURCE) $(DEP_CPP_GETNDELIM2_C) "$(INTDIR)"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+# End Source File
+################################################################################
+
+
 # Begin Source File
 
 SOURCE=.\src\log-buffer.c

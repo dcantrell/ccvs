@@ -778,7 +778,8 @@ static int max_dotdot_limit = 0;
 void
 server_pathname_check (char *path)
 {
-    TRACE (TRACE_FUNCTION, "server_pathname_check (%s)", path);
+    TRACE (TRACE_FUNCTION, "server_pathname_check (%s)",
+	   path ? path : "(null)");
 
     /* An absolute pathname is almost surely a path on the *client* machine,
        and is unlikely to do us any good here.  It also is probably capable
@@ -910,7 +911,8 @@ dirswitch (char *dir, char *repos)
     FILE *f;
     size_t dir_len;
 
-    TRACE (TRACE_FUNCTION, "dirswitch (%s, %s)", dir, repos);
+    TRACE (TRACE_FUNCTION, "dirswitch (%s, %s)", dir ? dir : "(null)",
+	   repos ? repos : "(null)");
 
     server_write_entries ();
 
@@ -1111,7 +1113,7 @@ serve_directory (char *arg)
     int status;
     char *repos;
 
-    TRACE( TRACE_FUNCTION, "serve_directory (%s)", arg );
+    TRACE( TRACE_FUNCTION, "serve_directory (%s)", arg ? arg : "(null)" );
 
     status = buf_read_line (buf_from_net, &repos, (int *) NULL);
     if (status == 0)
@@ -2567,6 +2569,8 @@ do_cvs_command (char *cmd_name, int (*command) (int, char **))
 
     int errs;
 
+    TRACE (TRACE_FUNCTION, "do_cvs_command (%s)", cmd_name);
+
     command_pid = -1;
     stdout_pipe[0] = -1;
     stdout_pipe[1] = -1;
@@ -2719,8 +2723,11 @@ error  \n");
 	if (getenv ("CVS_SERVER_SLEEP"))
 	{
 	    int secs = atoi (getenv ("CVS_SERVER_SLEEP"));
+	    TRACE (TRACE_DATA, "Sleeping CVS_SERVER_SLEEP (%d) seconds", secs);
 	    sleep (secs);
 	}
+	else
+	    TRACE (TRACE_DATA, "CVS_SERVER_SLEEP not set.");
 
 	exitstatus = (*command) (argument_count, argument_vector);
 
@@ -4877,6 +4884,16 @@ server (int argc, char **argv)
     }
     /* Ignore argc and argv.  They might be from .cvsrc.  */
 
+    /*
+     * Set this in .bashrc if you want to give yourself time to attach
+     * to the subprocess with a debugger.
+     */
+    if (getenv ("CVS_PARENT_SERVER_SLEEP"))
+    {
+	int secs = atoi (getenv ("CVS_PARENT_SERVER_SLEEP"));
+	sleep (secs);
+    }
+
     buf_to_net = fd_buffer_initialize (STDOUT_FILENO, 0,
 				       outbuf_memory_error);
     buf_from_net = stdio_buffer_initialize (stdin, 0, 1, outbuf_memory_error);
@@ -5082,7 +5099,7 @@ error ENOMEM Virtual memory exhausted.\n");
 
 #if defined (HAVE_KERBEROS) || defined (AUTH_SERVER_SUPPORT) || defined (HAVE_GSSAPI)
 static void
-switch_to_user (const char *username)
+switch_to_user (const char *cvs_username, const char *username)
 {
     struct passwd *pw;
 
@@ -5094,6 +5111,20 @@ switch_to_user (const char *username)
 
 	printf ("E Fatal error, aborting.\n\
 error 0 %s: no such system user\n", username);
+	exit (EXIT_FAILURE);
+    }
+
+    if (pw->pw_uid == 0)
+    {
+#ifdef HAVE_SYSLOG_H
+	    /* FIXME: Can the IP address of the connecting client be retrieved
+	     * and printed here?
+	     */
+	    syslog (LOG_DAEMON | LOG_ALERT,
+		    "attempt to root from account: %s", cvs_username
+		   );
+#endif
+        printf("error 0: root not allowed\n");
 	exit (EXIT_FAILURE);
     }
 
@@ -5771,7 +5802,7 @@ pserver_authenticate_connection (void)
     strcpy (Pserver_Repos, repository);
 
     /* Switch to run as this user. */
-    switch_to_user (host_user);
+    switch_to_user (username, host_user);
     free (host_user);
     free (tmp);
     free (repository);
@@ -5965,7 +5996,7 @@ gserver_authenticate_connection (void)
 	    error (1, errno, "fwrite failed");
     }
 
-    switch_to_user (buf);
+    switch_to_user ("GSSAPI", buf);
 
     printf ("I LOVE YOU\n");
     fflush (stdout);

@@ -511,13 +511,14 @@ admin (int argc, char **argv)
     }
 #endif /* CLIENT_SUPPORT */
 
-    lock_tree_for_write (argc, argv, 0, W_LOCAL, 0);
+    lock_tree_promotably (argc, argv, 0, W_LOCAL, 0);
 
     err = start_recursion
-	    ( admin_fileproc, (FILESDONEPROC) NULL, admin_dirproc,
-	      (DIRLEAVEPROC) NULL, (void *) &admin_data,
-	      argc, argv, 0,
-	      W_LOCAL, 0, CVS_LOCK_NONE, (char *) NULL, 1, (char *) NULL );
+	    (admin_fileproc, NULL, admin_dirproc,
+	     NULL, &admin_data,
+	     argc, argv, 0,
+	     W_LOCAL, 0, CVS_LOCK_WRITE, NULL, 1, NULL);
+
     Lock_Cleanup ();
 
  return_it:

@@ -272,7 +272,12 @@ patch_proc (int argc, char **argv, char *xwhere, char *mwhere, char *mfile,
     char *where;
 
     TRACE ( TRACE_FUNCTION, "patch_proc ( %s, %s, %s, %d, %d, %s, %s )",
-	    xwhere, mwhere, mfile, shorten, local_specified, mname, msg );
+	    xwhere ? xwhere : "(null)",
+	    mwhere ? mwhere : "(null)",
+	    mfile ? mfile : "(null)",
+	    shorten, local_specified,
+	    mname ? mname : "(null)",
+	    msg ? msg : "(null)" );
 
     repository = xmalloc (strlen (current_parsed_root->directory)
                           + strlen (argv[0])
