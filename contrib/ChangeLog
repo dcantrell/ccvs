@@ -2,6 +2,7 @@
 
 	* check_cvs.in (get_ignore_files_from_cvsroot): Handle error messages
 	specified in checkoutlist.
+	(Report from Matthew Doar <matt@trpz.com>.)
 
 2003-09-08  Derek Price  <derek@ximbiot.com>
 
