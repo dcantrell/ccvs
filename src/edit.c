@@ -872,7 +872,14 @@ notify_do (type, filename, who, val, watches, repository)
 		    {
 			char *cp;
 			args.notifyee = xstrdup (line + len + 1);
-			cp = strchr (args.notifyee, ':');
+
+                        /* There may or may not be more
+                           colon-separated fields added to this in the
+                           future; in any case, we ignore them right
+                           now, and if there are none we make sure to
+                           chop off the final newline, if any. */
+			cp = strpbrk (args.notifyee, ":\n");
+
 			if (cp != NULL)
 			    *cp = '\0';
 			break;

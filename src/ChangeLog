@@ -1,3 +1,10 @@
+1999-07-18  Karl Fogel  <kfogel@floss.red-bean.com>
+
+	* edit.c (notify_do): chop newline, if any, from the value
+	obtained from CVSROOT/users.  Otherwise it just gets passed along
+	in the argument to the notification program (usually mail), which
+	will misinterpret it as signifying the end of the command.
+
 1999-07-19  Larry Jones  <larry.jones@sdrc.com>
 
 	* rcs.c (RCS_delete_revs): In the WIN32 kludge, be sure that the result
