@@ -1,3 +1,8 @@
+2004-02-12  Derek Price  <derek@ximbiot.com>
+
+	* cvs.1, cvs.5: A couple of spelling fixes.
+	(Patch from Ville Skyttä  <scop@cvshome.org>.)
+
 2004-01-30  Derek Price  <derek@ximbiot.com>
 
 	Close issue #146.
