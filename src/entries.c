@@ -41,23 +41,23 @@ write_ent_proc (node, closure)
 	error (1, errno, "cannot write %s", entfilename);
     if (p->conflict)
     {
-	if (fprintf (entfile, "+%s", p->conflict) == EOF)
+	if (fprintf (entfile, "+%s", p->conflict) < 0)
 	    error (1, errno, "cannot write %s", entfilename);
     }
-    if (fprintf (entfile, "/%s/", p->options) == EOF)
+    if (fprintf (entfile, "/%s/", p->options) < 0)
 	error (1, errno, "cannot write %s", entfilename);
 
     if (p->tag)
     {
-	if (fprintf (entfile, "T%s\n", p->tag) == EOF)
+	if (fprintf (entfile, "T%s\n", p->tag) < 0)
 	    error (1, errno, "cannot write %s", entfilename);
     }
     else if (p->date)
     {
-	if (fprintf (entfile, "D%s\n", p->date) == EOF)
+	if (fprintf (entfile, "D%s\n", p->date) < 0)
 	    error (1, errno, "cannot write %s", entfilename);
     }
-    else if (fprintf (entfile, "\n") == EOF)
+    else if (fprintf (entfile, "\n") < 0)
 	error (1, errno, "cannot write %s", entfilename);
     return (0);
 }
@@ -391,7 +391,7 @@ check_entries (dir)
 	    opt = "-V4";
 #endif
 #endif
-	    if (fprintf (fpout, "/%s/%s/%s/%s/\n", user, rev, ts, opt) == EOF)
+	    if (fprintf (fpout, "/%s/%s/%s/%s/\n", user, rev, ts, opt) < 0)
 		error (1, errno, "cannot write %s", CVSADM_ENT);
 	}
 	(void) fclose (fpin);
@@ -509,12 +509,12 @@ WriteTag (dir, tag, date)
 	fout = open_file (tmp, "w+");
 	if (tag)
 	{
-	    if (fprintf (fout, "T%s\n", tag) == EOF)
+	    if (fprintf (fout, "T%s\n", tag) < 0)
 		error (1, errno, "write to %s failed", tmp);
 	}
 	else
 	{
-	    if (fprintf (fout, "D%s\n", date) == EOF)
+	    if (fprintf (fout, "D%s\n", date) < 0)
 		error (1, errno, "write to %s failed", tmp);
 	}
 	if (fclose (fout) == EOF)

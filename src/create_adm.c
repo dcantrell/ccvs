@@ -95,7 +95,7 @@ Create_Admin (dir, update_dir, repository, tag, date)
     }
 #endif
 
-    if (fprintf (fout, "%s\n", cp) == EOF)
+    if (fprintf (fout, "%s\n", cp) < 0)
     {
 	if (update_dir[0] == '\0')
 	    error (1, errno, "write to %s failed", tmp);

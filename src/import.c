@@ -826,33 +826,33 @@ add_rcs_file (message, rcs, user, vtag, targc, targv)
     /*
      * putadmin()
      */
-    if (fprintf (fprcs, "head     %s;\n", vhead) == EOF ||
-	fprintf (fprcs, "branch   %s;\n", vbranch) == EOF ||
-	fprintf (fprcs, "access   ;\n") == EOF ||
-	fprintf (fprcs, "symbols  ") == EOF)
+    if (fprintf (fprcs, "head     %s;\n", vhead) < 0 ||
+	fprintf (fprcs, "branch   %s;\n", vbranch) < 0 ||
+	fprintf (fprcs, "access   ;\n") < 0 ||
+	fprintf (fprcs, "symbols  ") < 0)
     {
 	goto write_error;
     }
 
     for (i = targc - 1; i >= 0; i--)	/* RCS writes the symbols backwards */
-	if (fprintf (fprcs, "%s:%s.1 ", targv[i], vbranch) == EOF)
+	if (fprintf (fprcs, "%s:%s.1 ", targv[i], vbranch) < 0)
 	    goto write_error;
 
-    if (fprintf (fprcs, "%s:%s;\n", vtag, vbranch) == EOF ||
-	fprintf (fprcs, "locks    ; strict;\n") == EOF ||
+    if (fprintf (fprcs, "%s:%s;\n", vtag, vbranch) < 0 ||
+	fprintf (fprcs, "locks    ; strict;\n") < 0 ||
 	/* XXX - make sure @@ processing works in the RCS file */
-	fprintf (fprcs, "comment  @%s@;\n", get_comment (user)) == EOF)
+	fprintf (fprcs, "comment  @%s@;\n", get_comment (user)) < 0)
     {
 	goto write_error;
     }
 
     if (keyword_opt != NULL)
-      if (fprintf (fprcs, "expand   @%s@;\n", keyword_opt) == EOF)
+      if (fprintf (fprcs, "expand   @%s@;\n", keyword_opt) < 0)
 	{
 	  goto write_error;
 	}
 
-    if (fprintf (fprcs, "\n") == EOF)
+    if (fprintf (fprcs, "\n") < 0)
       goto write_error;
 
     /*
@@ -889,28 +889,28 @@ add_rcs_file (message, rcs, user, vtag, targc, targv)
 #endif
     author = getcaller ();
 
-    if (fprintf (fprcs, "\n%s\n", vhead) == EOF ||
+    if (fprintf (fprcs, "\n%s\n", vhead) < 0 ||
 	fprintf (fprcs, "date     %s;  author %s;  state Exp;\n",
-		 altdate1, author) == EOF ||
-	fprintf (fprcs, "branches %s.1;\n", vbranch) == EOF ||
-	fprintf (fprcs, "next     ;\n") == EOF ||
-	fprintf (fprcs, "\n%s.1\n", vbranch) == EOF ||
+		 altdate1, author) < 0 ||
+	fprintf (fprcs, "branches %s.1;\n", vbranch) < 0 ||
+	fprintf (fprcs, "next     ;\n") < 0 ||
+	fprintf (fprcs, "\n%s.1\n", vbranch) < 0 ||
 	fprintf (fprcs, "date     %s;  author %s;  state Exp;\n",
-		 altdate2, author) == EOF ||
-	fprintf (fprcs, "branches ;\n") == EOF ||
-	fprintf (fprcs, "next     ;\n\n") == EOF ||
+		 altdate2, author) < 0 ||
+	fprintf (fprcs, "branches ;\n") < 0 ||
+	fprintf (fprcs, "next     ;\n\n") < 0 ||
 	/*
 	 * putdesc()
 	 */
-	fprintf (fprcs, "\ndesc\n") == EOF ||
-	fprintf (fprcs, "@@\n\n\n") == EOF ||
+	fprintf (fprcs, "\ndesc\n") < 0 ||
+	fprintf (fprcs, "@@\n\n\n") < 0 ||
 	/*
 	 * putdelta()
 	 */
-	fprintf (fprcs, "\n%s\n", vhead) == EOF ||
-	fprintf (fprcs, "log\n") == EOF ||
-	fprintf (fprcs, "@Initial revision\n@\n") == EOF ||
-	fprintf (fprcs, "text\n@") == EOF)
+	fprintf (fprcs, "\n%s\n", vhead) < 0 ||
+	fprintf (fprcs, "log\n") < 0 ||
+	fprintf (fprcs, "@Initial revision\n@\n") < 0 ||
+	fprintf (fprcs, "text\n@") < 0)
     {
 	goto write_error;
     }
@@ -923,19 +923,19 @@ add_rcs_file (message, rcs, user, vtag, targc, targv)
 	buf = xmalloc ((int) size);
 	if (fread (buf, (int) size, 1, fpuser) != 1)
 	    error (1, errno, "cannot read file %s for copying", user);
-	if (expand_at_signs (buf, size, fprcs) == EOF)
+	if (expand_at_signs (buf, size, fprcs) < 0)
 	{
 	    free (buf);
 	    goto write_error;
 	}
 	free (buf);
     }
-    if (fprintf (fprcs, "@\n\n") == EOF ||
-	fprintf (fprcs, "\n%s.1\n", vbranch) == EOF ||
-	fprintf (fprcs, "log\n@") == EOF ||
-	expand_at_signs (message, (off_t) strlen (message), fprcs) == EOF ||
-	fprintf (fprcs, "@\ntext\n") == EOF ||
-	fprintf (fprcs, "@@\n") == EOF)
+    if (fprintf (fprcs, "@\n\n") < 0 ||
+	fprintf (fprcs, "\n%s.1\n", vbranch) < 0 ||
+	fprintf (fprcs, "log\n@") < 0 ||
+	expand_at_signs (message, (off_t) strlen (message), fprcs) < 0 ||
+	fprintf (fprcs, "@\ntext\n") < 0 ||
+	fprintf (fprcs, "@@\n") < 0)
     {
 	goto write_error;
     }

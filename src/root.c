@@ -170,7 +170,7 @@ Create_Root (dir, rootdir)
         else
 	    (void) strcpy (tmp, CVSADM_ROOT);
         fout = open_file (tmp, "w+");
-        if (fprintf (fout, "%s\n", rootdir) == EOF)
+        if (fprintf (fout, "%s\n", rootdir) < 0)
 	    error (1, errno, "write to %s failed", tmp);
         if (fclose (fout) == EOF)
 	    error (1, errno, "cannot close %s", tmp);
