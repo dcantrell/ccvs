@@ -1,3 +1,9 @@
+1999-05-20  Larry Jones  <larry.jones@sdrc.com>
+
+	* server.c (pserver_authenticate_connection): Previous changes
+	broke verify_and_exit (reported by Robert Fitzsimons, thanks).
+	* sanity.sh (pserver): New tests pserver-7 and pserver-8 for this.
+
 1999-05-18 Derek Price
 	<http://www-personal.engin.umich.edu/~oberon/resume.html>
 
