@@ -526,7 +526,7 @@ supported_response (char *name)
  *   true                 If this server is configured as a secondary server.
  *   false                Otherwise.
  */
-static bool
+static inline bool
 isProxyServer (void)
 {
     char hostname[MAXHOSTNAMELEN];
@@ -662,12 +662,7 @@ input_memory_error (struct buffer *buf)
 
 
 #ifdef PROXY_SUPPORT
-/* This function reprocesses the write proxy log file if it exists.  If it
- * does not exist, this function will return without errors.  This has the
- * effect of both allowing this function to be called twice in certain cases
- * (for instance, in serve_co...do_cvs_command) and of allowing an earlier
- * error opening the secondary log to be ignored when the log file is not
- * needed.
+/* This function rewinds the net connection using the write proxy log file.
  *
  * GLOBALS
  *   proxy_log	The buffer object containing the write proxy log.
@@ -676,7 +671,7 @@ input_memory_error (struct buffer *buf)
  *   Nothing.
  */
 static void
-reprocess_proxy_log (void)
+rewind_buf_from_net (void)
 {
     int fd;
     struct buffer *log;
@@ -898,12 +893,6 @@ E Protocol error: Root says \"%s\" but pserver says \"%s\"",
      */
     if (isProxyServer ())
     {
-	if (!proxy_log)
-	    /* Exit with an error since we must have failed to open the
-	     * secondary log in server().
-	     */
-	    error (1, 0, "No secondary log found for write proxy.");
-
 /* I'm going to need the following for translation once the trunk gets
  * merged and Root translation becomes necessary again.
  */
@@ -2343,7 +2332,7 @@ become_proxy (void)
     assert (to_primary_fd >= 0 && from_primary_fd >= 0 && to_net_fd >= 0);
 
     /* Close the client log and open it for read.  */
-    reprocess_proxy_log ();
+    rewind_buf_from_net ();
 
     while (from_primary_fd >= 0 || to_primary_fd >= 0)
     {
@@ -3366,12 +3355,9 @@ do_cvs_command (char *cmd_name, int (*command) (int, char **))
 	else
 	{
 	    if (lookup_command_attribute (cmd_name)
-		    & CVS_CMD_MODIFIES_REPOSITORY
-		|| !strcmp (cmd_name, "version"))
+		    & CVS_CMD_MODIFIES_REPOSITORY)
 	    {
 		become_proxy ();
-		if (!strcmp (cmd_name, "version"))
-		    version (0, NULL);
 		exit (EXIT_SUCCESS);
 	    }
 	    else if (/* serve_co may have called this already and missing logs
@@ -3380,7 +3366,7 @@ do_cvs_command (char *cmd_name, int (*command) (int, char **))
 		     proxy_log)
 	    {
 		/* Set up the log for reprocessing.  */
-		reprocess_proxy_log ();
+		rewind_buf_from_net ();
 		/* And return to the main loop in server(), where we will now
 		 * find the logged secondary data and reread it.
 		 */
@@ -4638,14 +4624,14 @@ serve_co (char *arg)
     /* If we are not a secondary server, the write proxy log will already have
      * been processed.
      */
-    if (isProxyServer () && proxy_log)
+    if (isProxyServer ())
     {
 	if (reprocessing)
 	    reprocessing = false;
 	else
 	{
 	    /* Set up the log for reprocessing.  */
-	    reprocess_proxy_log ();
+	    rewind_buf_from_net ();
 	    /* And return to the main loop in server(), where we will now find
 	     * the logged secondary data and reread it.
 	     */

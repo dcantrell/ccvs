@@ -1,5 +1,11 @@
 2004-08-11  Derek Price  <derek@ximbiot.com>
 
+	* server.c (isProxyServer): Declare inline.
+	(reprocess_proxy_log): Rename to...
+	(rewind_buf_from_net): ...this and change all callers.
+
+2004-08-11  Derek Price  <derek@ximbiot.com>
+
 	* sanity.sh (sync-secondary): Don't bother to log sync activity.
 
 2004-08-11  Derek Price  <derek@ximbiot.com>
