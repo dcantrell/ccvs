@@ -451,15 +451,6 @@ char *Name_Repository PROTO((const char *dir, const char *update_dir));
 const char *Short_Repository PROTO((const char *repository));
 void Sanitize_Repository_Name PROTO((char *repository));
 
-char *Name_Root PROTO((char *dir, char *update_dir));
-void free_cvsroot_t PROTO((cvsroot_t *root_in));
-cvsroot_t *parse_cvsroot PROTO((const char *root));
-cvsroot_t *local_cvsroot PROTO((const char *dir));
-void Create_Root PROTO((const char *dir, const char *rootdir));
-void root_allow_add PROTO ((char *));
-void root_allow_free PROTO ((void));
-int root_allow_ok PROTO ((char *));
-
 char *previous_rev PROTO ((RCSNode *rcs, const char *rev));
 char *gca PROTO ((const char *rev1, const char *rev2));
 extern void check_numeric PROTO ((const char *, int, char **));
