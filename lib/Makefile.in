@@ -56,14 +56,14 @@ host_triplet = @host@
 check_PROGRAMS =
 subdir = lib
 DIST_COMMON = README $(srcdir)/Makefile.am $(srcdir)/Makefile.in \
-	ChangeLog asnprintf.c atexit.c dup2.c fncase.c fnmatch.c \
-	fseeko.c ftello.c ftruncate.c getdate.c gethostname.c \
-	getline.c getndelim2.c getopt.c getopt1.c getpass.c \
-	gettimeofday.c lstat.c malloc.c memmove.c mkdir.c mkstemp.c \
-	mktime.c nanosleep.c printf-args.c printf-parse.c realloc.c \
-	regex.c rename.c stat.c strcasecmp.c strerror.c strncasecmp.c \
-	strstr.c strtoul.c tempname.c time_r.c valloc.c vasnprintf.c \
-	waitpid.c
+	ChangeLog asnprintf.c asprintf.c atexit.c dup2.c fncase.c \
+	fnmatch.c fseeko.c ftello.c ftruncate.c getdate.c \
+	gethostname.c getline.c getndelim2.c getopt.c getopt1.c \
+	getpass.c gettimeofday.c lstat.c malloc.c memmove.c mkdir.c \
+	mkstemp.c mktime.c nanosleep.c printf-args.c printf-parse.c \
+	realloc.c regex.c rename.c stat.c strcasecmp.c strerror.c \
+	strncasecmp.c strstr.c strtoul.c tempname.c time_r.c valloc.c \
+	vasnprintf.c vasprintf.c waitpid.c
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/acx_extract_cpp_defn.m4 \
 	$(top_srcdir)/m4/acx_with_external_zlib.m4 \
@@ -102,9 +102,10 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/acx_extract_cpp_defn.m4 \
 	$(top_srcdir)/m4/tm_gmtoff.m4 $(top_srcdir)/m4/tzset.m4 \
 	$(top_srcdir)/m4/uintmax_t.m4 $(top_srcdir)/m4/ulonglong.m4 \
 	$(top_srcdir)/m4/unlocked-io.m4 $(top_srcdir)/m4/vasnprintf.m4 \
-	$(top_srcdir)/m4/wchar_t.m4 $(top_srcdir)/m4/wint_t.m4 \
-	$(top_srcdir)/m4/xalloc.m4 $(top_srcdir)/m4/xgetcwd.m4 \
-	$(top_srcdir)/m4/xsize.m4 $(top_srcdir)/configure.in
+	$(top_srcdir)/m4/vasprintf.m4 $(top_srcdir)/m4/wchar_t.m4 \
+	$(top_srcdir)/m4/wint_t.m4 $(top_srcdir)/m4/xalloc.m4 \
+	$(top_srcdir)/m4/xgetcwd.m4 $(top_srcdir)/m4/xsize.m4 \
+	$(top_srcdir)/configure.in
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
@@ -289,6 +290,8 @@ noinst_LIBRARIES = libcvs.a
 #	$(LIB_CLOCK_GETTIME) \
 #	$(LIBINTL)
 
+# For the vasprintf module from GNULIB.
+
 # For the xsize module from GNULIB.
 libcvs_a_SOURCES = argmatch.c md5.c sighandle.c strftime.c yesno.c \
 	error.h getpagesize.h md5.h system.h wait.h xselect.h xtime.h \
@@ -297,8 +300,8 @@ libcvs_a_SOURCES = argmatch.c md5.c sighandle.c strftime.c yesno.c \
 	getpass.h gettext.h gettime.c minmax.h pathmax.h regex.h \
 	save-cwd.h save-cwd.c stat-macros.h strcase.h time_r.h \
 	timespec.h unlocked-io.h printf-args.h printf-parse.h \
-	vasnprintf.h xalloc.h xmalloc.c xalloc-die.c xgetcwd.h \
-	xgetcwd.c xsize.h
+	vasnprintf.h vasprintf.h xalloc.h xmalloc.c xalloc-die.c \
+	xgetcwd.h xgetcwd.c xsize.h
 libcvs_a_LIBADD = @LIBOBJS@
 BUILT_SOURCES = $(ALLOCA_H) $(FNMATCH_H) $(GETOPT_H) $(STDBOOL_H)
 MOSTLYCLEANFILES = alloca.h alloca.h-t fnmatch.h fnmatch.h-t getopt.h \
@@ -361,6 +364,7 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/asnprintf.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/asprintf.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/atexit.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/dup2.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/fncase.Po@am__quote@
@@ -397,6 +401,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/time_r.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/valloc.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/vasnprintf.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/vasprintf.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/waitpid.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/argmatch.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/basename.Po@am__quote@

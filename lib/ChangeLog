@@ -1,5 +1,9 @@
 2004-10-15  Derek Price  <derek@ximbiot.com>
 
+	* asprintf.c, vasprintf.c, vasprintf.h: New files from GNULIB.
+
+2004-10-15  Derek Price  <derek@ximbiot.com>
+
 	* getpass.c: Update from GNULIB.
 
 2004-10-09  Derek Price  <derek@ximbiot.com>

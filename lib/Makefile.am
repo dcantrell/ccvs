@@ -185,6 +185,9 @@ libcvs_a_SOURCES += unlocked-io.h
 ## For GNULIB's vasnprintf module.
 libcvs_a_SOURCES += printf-args.h printf-parse.h vasnprintf.h
 
+# For the vasprintf module from GNULIB.
+libcvs_a_SOURCES += vasprintf.h
+
 ## For GNULIB's xalloc module.
 libcvs_a_SOURCES += xalloc.h xmalloc.c
 
