@@ -1,3 +1,7 @@
+2003-06-27  Larry Jones  <lawrence.jones@eds.com>
+
+	* NEWS: Note LockDir fix.
+
 2003-06-23  Derek Price  <derek@ximbiot.com>
 
 	* configure.in: Debian Woody has -lkrb4, so check for that.

@@ -644,6 +644,7 @@ static int
 readers_exist (repository)
     char *repository;
 {
+    char *lockdir;
     char *line;
     DIR *dirp;
     struct dirent *dp;
@@ -654,9 +655,12 @@ readers_exist (repository)
     (void) time (&now);
 #endif
 
+    lockdir = lock_name (repository, "");
+    lockdir[strlen (lockdir) - 1] = '\0';   /* remove trailing slash */
+
     do {
-	if ((dirp = CVS_OPENDIR (repository)) == NULL)
-	    error (1, 0, "cannot open directory %s", repository);
+	if ((dirp = CVS_OPENDIR (lockdir)) == NULL)
+	    error (1, 0, "cannot open directory %s", lockdir);
 
 	ret = 0;
 	errno = 0;
@@ -664,12 +668,8 @@ readers_exist (repository)
 	{
 	    if (CVS_FNMATCH (CVSRFLPAT, dp->d_name, 0) == 0)
 	    {
-		/* ignore our own readlock, if any */
-		if (readlock && strcmp (readlock, dp->d_name) == 0)
-		    continue;
-
-		line = xmalloc (strlen (repository) + strlen (dp->d_name) + 5);
-		(void) sprintf (line, "%s/%s", repository, dp->d_name);
+		line = xmalloc (strlen (lockdir) + 1 + strlen (dp->d_name) + 1);
+		(void) sprintf (line, "%s/%s", lockdir, dp->d_name);
 		if ( CVS_STAT (line, &sb) != -1)
 		{
 #ifdef CVS_FUDGELOCKS

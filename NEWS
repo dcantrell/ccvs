@@ -5,6 +5,10 @@ FreeBSD, OpenBSD, and NetBSD users may find familiar as the "tag" and
 "tagexpand" options used for many years. The CVSHeader keyword has
 also been added to the mixture.
 
+* A bug that allowed a write lock to be created in a directory despite
+there being existing read locks when using LockDir in CVSROOT/config has
+been fixed.
+
 * A bug with short patches (`rdiff -s') which caused rdiff to sometimes report
 differences that did not exist has been fixed.
 
