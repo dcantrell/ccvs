@@ -1,3 +1,8 @@
+2001-03-07  Larry Jones  <larry.jones@sdrc.com>
+
+	* sanity.sh (basica, binfiles2, head, admin): Update to match
+	change to admin.c.
+
 2001-03-06  Larry Jones  <larry.jones@sdrc.com>
 
 	* client.c (recv_bytes): Handle EOF as in recv_line().

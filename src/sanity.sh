@@ -968,7 +968,7 @@ done"
 	  dotest_fail basica-o2b "${testcvs} admin -o 1.1::NOT_EXIST ssfile" \
 "RCS file: ${TESTDIR}/cvsroot/first-dir/sdir/ssdir/ssfile,v
 ${PROG} [a-z]*: ${TESTDIR}/cvsroot/first-dir/sdir/ssdir/ssfile,v: Revision NOT_EXIST doesn't exist.
-${PROG} [a-z]*: cannot modify RCS file for .ssfile."
+${PROG} [a-z]*: RCS file for .ssfile. not modified"
 	  dotest basica-o3 "${testcvs} admin -o 1.2::1.3 ssfile" \
 "RCS file: ${TESTDIR}/cvsroot/first-dir/sdir/ssdir/ssfile,v
 done"
@@ -12351,7 +12351,7 @@ done"
 "RCS file: ${TESTDIR}/cvsroot/first-dir/brmod-trmod,v
 deleting revision 1\.2
 ${PROG} [a-z]*: ${TESTDIR}/cvsroot/first-dir/brmod-trmod,v: can't remove branch point 1\.1
-${PROG} [a-z]*: cannot modify RCS file for .brmod-trmod."
+${PROG} [a-z]*: RCS file for .brmod-trmod. not modified"
 	  dotest binfiles2-o2 "${testcvs} -q admin -o 1.1.2.1: brmod-trmod" \
 "RCS file: ${TESTDIR}/cvsroot/first-dir/brmod-trmod,v
 deleting revision 1\.1\.2\.1
@@ -16952,7 +16952,7 @@ ${PLUS} modify on branch after brtag"
 "${PROG} [a-z]*: Administrating \.
 RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
 ${PROG} [a-z]*: cannot remove revision 1\.3\.2\.1 because it has tags
-${PROG} [a-z]*: cannot modify RCS file for .file1.
+${PROG} [a-z]*: RCS file for .file1. not modified
 RCS file: ${TESTDIR}/cvsroot/first-dir/file2,v
 done"
 	  dotest head-o0b "${testcvs} tag -d brtag" \
@@ -17381,10 +17381,10 @@ ${PROG} \[[a-z]* aborted\]: attempt to specify a numeric revision"
 	  dotest_fail admin-10c "${testcvs} -q admin -bBOGUS" \
 "RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
 ${PROG} [a-z]*: ${TESTDIR}/cvsroot/first-dir/file1,v: Symbolic name BOGUS is undefined.
-${PROG} [a-z]*: cannot modify RCS file for .file1.
+${PROG} [a-z]*: RCS file for .file1. not modified
 RCS file: ${TESTDIR}/cvsroot/first-dir/file2,v
 ${PROG} [a-z]*: ${TESTDIR}/cvsroot/first-dir/file2,v: Symbolic name BOGUS is undefined.
-${PROG} [a-z]*: cannot modify RCS file for .file2."
+${PROG} [a-z]*: RCS file for .file2. not modified"
 
 	  # Note that -s option applies to the new default branch, not
 	  # the old one.
@@ -17562,7 +17562,7 @@ modify-on-branch
 	  dotest_fail admin-18 "${testcvs} -q admin -nbr:1.1.2 file1" \
 "RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
 ${PROG} [a-z]*: ${TESTDIR}/cvsroot/first-dir/file1,v: symbolic name br already bound to 1\.1
-${PROG} [a-z]*: cannot modify RCS file for .file1."
+${PROG} [a-z]*: RCS file for .file1. not modified"
 	  dotest admin-19 "${testcvs} -q admin -ebaz -ebar,auth3 -nbr file1" \
 "RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
 done"
@@ -17724,7 +17724,7 @@ sixth
 	  dotest_fail admin-22-o10 "${testcvs} admin -o1.5: aaa" \
 "RCS file: ${TESTDIR}/cvsroot/first-dir/aaa,v
 ${PROG} [a-z]*: ${TESTDIR}/cvsroot/first-dir/aaa,v: can't remove locked revision 1\.6
-${PROG} [a-z]*: cannot modify RCS file for .aaa."
+${PROG} [a-z]*: RCS file for .aaa. not modified"
 	  dotest admin-22-o11 "${testcvs} admin -u aaa" \
 "RCS file: ${TESTDIR}/cvsroot/first-dir/aaa,v
 1\.6 unlocked
@@ -17775,7 +17775,7 @@ done"
 "RCS file: ${TESTDIR}/cvsroot/first-dir/aaa,v
 deleting revision 1\.4
 ${PROG} [a-z]*: ${TESTDIR}/cvsroot/first-dir/aaa,v: can't remove branch point 1\.3
-${PROG} [a-z]*: cannot modify RCS file for .aaa."
+${PROG} [a-z]*: RCS file for .aaa. not modified"
 	  dotest admin-22-o18 "${testcvs} update -p -r1.4 aaa" \
 "===================================================================
 Checking out aaa
@@ -18001,7 +18001,7 @@ done"
 	  dotest_fail admin-27-4 "${testcvs} admin -ntagfour:1.3 file2"  \
 "RCS file: ${TESTDIR}/cvsroot/first-dir/file2,v
 ${PROG} [a-z]*: ${TESTDIR}/cvsroot/first-dir/file2,v: symbolic name tagfour already bound to 1\.1
-${PROG} [a-z]*: cannot modify RCS file for .file2."
+${PROG} [a-z]*: RCS file for .file2. not modified"
       	  
 	  # Succeed at reattaching existing tag, using -N
 	  #
