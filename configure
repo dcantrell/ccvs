@@ -1452,6 +1452,7 @@ gl_header_list="$gl_header_list fcntl.h"
 gl_header_list="$gl_header_list sys/time.h"
 gl_header_list="$gl_header_list unistd.h"
 gl_func_list="$gl_func_list isascii"
+gl_func_list="$gl_func_list gettimeofday"
 gl_header_list="$gl_header_list sys/param.h"
 gl_header_list="$gl_header_list wchar.h"
 gl_header_list="$gl_header_list wctype.h"
@@ -16289,7 +16290,20 @@ esac
     :
 
 
-    # Need clock_gettime.
+
+
+
+
+
+
+
+
+
+  :
+
+
+
+
 
 
 
