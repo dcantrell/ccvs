@@ -1,5 +1,6 @@
 Makefile
 atconfig
+autom4te.cache
 package.m4
 suite.dir
 suite.log

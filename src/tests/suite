@@ -351,7 +351,7 @@ fi
 # List of the tested programs.
 at_tested='cvs'
 # List of the all the test groups.
-at_groups_all=' banner-1 1 2 3 4 banner-2 5 6 7 8 banner-3 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40'
+at_groups_all=' banner-1 1 2 3 4 banner-2 5 6 7 8 banner-3 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44'
 # As many dots as there are digits in the last test group number.
 # Used to normalize the test group numbers so that `ls' lists them in
 # numerical order.
@@ -371,32 +371,36 @@ at_help_all='1;init.at:16;init;no-link-root local;
 12;basic.at:189;strange revision numbers;no-link-root local commit commit-r diff diff-r admin admin-o resurrection log;
 13;basic.at:393;annotate;no-link-root local annotate;
 14;basic.at:417;top of repository;no-link-root local;
-15;basic.at:474;Emptydir not special;no-link-root local;
-16;basic.at:560;unprocessed;no-link-root local;
-17;basic.at:16;Operations on empty projects-l;link-root local;
-18;basic.at:30;Adding directories and files-l;link-root local;
-19;basic.at:130;tag, update, & diff-l;link-root local;
-20;basic.at:189;strange revision numbers-l;link-root local commit commit-r diff diff-r admin admin-o resurrection log;
-21;basic.at:393;annotate-l;link-root local annotate;
-22;basic.at:417;top of repository-l;link-root local;
-23;basic.at:474;Emptydir not special-l;link-root local;
-24;basic.at:560;unprocessed-l;link-root local;
-25;basic.at:16;Operations on empty projects-r;no-link-root remote;
-26;basic.at:30;Adding directories and files-r;no-link-root remote;
-27;basic.at:130;tag, update, & diff-r;no-link-root remote;
-28;basic.at:189;strange revision numbers-r;no-link-root remote commit commit-r diff diff-r admin admin-o resurrection log;
-29;basic.at:393;annotate-r;no-link-root remote annotate;
-30;basic.at:417;top of repository-r;no-link-root remote;
-31;basic.at:474;Emptydir not special-r;no-link-root remote;
-32;basic.at:560;unprocessed-r;no-link-root remote;
-33;basic.at:16;Operations on empty projects-r-l;link-root remote;
-34;basic.at:30;Adding directories and files-r-l;link-root remote;
-35;basic.at:130;tag, update, & diff-r-l;link-root remote;
-36;basic.at:189;strange revision numbers-r-l;link-root remote commit commit-r diff diff-r admin admin-o resurrection log;
-37;basic.at:393;annotate-r-l;link-root remote annotate;
-38;basic.at:417;top of repository-r-l;link-root remote;
-39;basic.at:474;Emptydir not special-r-l;link-root remote;
-40;basic.at:560;unprocessed-r-l;link-root remote;
+15;basic.at:472;Emptydir not special;no-link-root local;
+16;basic.at:669;delete last revision;no-link-root local admin admin-o;
+17;basic.at:715;no admin -H;no-link-root local admin;
+18;basic.at:16;Operations on empty projects-l;link-root local;
+19;basic.at:30;Adding directories and files-l;link-root local;
+20;basic.at:130;tag, update, & diff-l;link-root local;
+21;basic.at:189;strange revision numbers-l;link-root local commit commit-r diff diff-r admin admin-o resurrection log;
+22;basic.at:393;annotate-l;link-root local annotate;
+23;basic.at:417;top of repository-l;link-root local;
+24;basic.at:472;Emptydir not special-l;link-root local;
+25;basic.at:669;delete last revision-l;link-root local admin admin-o;
+26;basic.at:715;no admin -H-l;link-root local admin;
+27;basic.at:16;Operations on empty projects-r;no-link-root remote;
+28;basic.at:30;Adding directories and files-r;no-link-root remote;
+29;basic.at:130;tag, update, & diff-r;no-link-root remote;
+30;basic.at:189;strange revision numbers-r;no-link-root remote commit commit-r diff diff-r admin admin-o resurrection log;
+31;basic.at:393;annotate-r;no-link-root remote annotate;
+32;basic.at:417;top of repository-r;no-link-root remote;
+33;basic.at:472;Emptydir not special-r;no-link-root remote;
+34;basic.at:669;delete last revision-r;no-link-root remote admin admin-o;
+35;basic.at:715;no admin -H-r;no-link-root remote admin;
+36;basic.at:16;Operations on empty projects-r-l;link-root remote;
+37;basic.at:30;Adding directories and files-r-l;link-root remote;
+38;basic.at:130;tag, update, & diff-r-l;link-root remote;
+39;basic.at:189;strange revision numbers-r-l;link-root remote commit commit-r diff diff-r admin admin-o resurrection log;
+40;basic.at:393;annotate-r-l;link-root remote annotate;
+41;basic.at:417;top of repository-r-l;link-root remote;
+42;basic.at:472;Emptydir not special-r-l;link-root remote;
+43;basic.at:669;delete last revision-r-l;link-root remote admin admin-o;
+44;basic.at:715;no admin -H-r-l;link-root remote admin;
 '
 
 ##
@@ -6878,17 +6882,17 @@ fi
 $at_traceon
 
 
-mkdir first-dir
+mkdir second-dir
 $at_traceoff
-echo "basic.at:457: cvs add first-dir"
+echo "basic.at:457: cvs add second-dir"
 echo basic.at:457 >$at_check_line_file
-( $at_traceon; cvs add first-dir ) >$at_stdout 2>$at_stder1
+( $at_traceon; cvs add second-dir ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
 grep -v '^ *+' $at_stder1 >$at_stderr
 at_failed=false
 $at_diff $at_devnull $at_stderr || at_failed=:
-echo >>$at_stdout; echo "Directory $CVSROOT_DIR/first-dir added to the repository
+echo >>$at_stdout; echo "Directory $CVSROOT_DIR/second-dir added to the repository
 " | $at_diff - $at_stdout || at_failed=:
 case $at_status in
    77) echo 77 > $at_status_file
@@ -6908,9 +6912,9 @@ $at_traceon
 
 cd ..
 $at_traceoff
-echo "basic.at:460: cvs -q co first-dir"
+echo "basic.at:460: cvs -q co second-dir"
 echo basic.at:460 >$at_check_line_file
-( $at_traceon; cvs -q co first-dir ) >$at_stdout 2>$at_stder1
+( $at_traceon; cvs -q co second-dir ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
 grep -v '^ *+' $at_stder1 >$at_stderr
@@ -6933,12 +6937,10 @@ fi
 $at_traceon
 
 
-# The top-level CVS directory is not created by default.
-# I'm leaving basicb-1a and basicb-1b untouched, mostly, in
-# case we decide that the default should be reversed...
+# Verify that the top-level CVS directory is not created by default.
 $at_traceoff
-echo "basic.at:465: test -d CVS"
-echo basic.at:465 >$at_check_line_file
+echo "basic.at:463: test -d CVS"
+echo basic.at:463 >$at_check_line_file
 ( $at_traceon; test -d CVS ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
@@ -6950,7 +6952,7 @@ case $at_status in
    77) echo 77 > $at_status_file
             exit 77;;
    1) ;;
-   *) echo "basic.at:465: exit code was $at_status, expected 1"
+   *) echo "basic.at:463: exit code was $at_status, expected 1"
       at_failed=:;;
 esac
 if $at_failed; then
@@ -6963,21 +6965,21 @@ $at_traceon
 
 
 $at_traceoff
-echo "basic.at:468: cat first-dir/CVS/Repository"
-echo basic.at:468 >$at_check_line_file
-( $at_traceon; cat first-dir/CVS/Repository ) >$at_stdout 2>$at_stder1
+echo "basic.at:466: cat second-dir/CVS/Repository"
+echo basic.at:466 >$at_check_line_file
+( $at_traceon; cat second-dir/CVS/Repository ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
 grep -v '^ *+' $at_stder1 >$at_stderr
 at_failed=false
 $at_diff $at_devnull $at_stderr || at_failed=:
-echo >>$at_stdout; echo "first-dir
+echo >>$at_stdout; echo "second-dir
 " | $at_diff - $at_stdout || at_failed=:
 case $at_status in
    77) echo 77 > $at_status_file
             exit 77;;
    0) ;;
-   *) echo "basic.at:468: exit code was $at_status, expected 0"
+   *) echo "basic.at:466: exit code was $at_status, expected 0"
       at_failed=:;;
 esac
 if $at_failed; then
@@ -6995,13 +6997,13 @@ $at_traceon
     at_status=`cat $at_status_file`
     ;;
 
-  15 ) # 15. basic.at:474: Emptydir not special
-    at_setup_line='basic.at:474'
+  15 ) # 15. basic.at:472: Emptydir not special
+    at_setup_line='basic.at:472'
     at_desc='Emptydir not special'
     $at_quiet $ECHO_N " 15: Emptydir not special                         $ECHO_C"
     at_xfail=no
     (
-      echo "15. basic.at:474: testing ..."
+      echo "15. basic.at:472: testing ..."
       $at_traceon
 ###
 ### Begin AT_CVS_SETUP([Emptydir not special])
@@ -7034,8 +7036,8 @@ RCSINIT=
 # Initialize the repository
 #
 $at_traceoff
-echo "basic.at:474: cvs init"
-echo basic.at:474 >$at_check_line_file
+echo "basic.at:472: cvs init"
+echo basic.at:472 >$at_check_line_file
 ( $at_traceon; cvs init ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
@@ -7047,7 +7049,7 @@ case $at_status in
    77) echo 77 > $at_status_file
             exit 77;;
    0) ;;
-   *) echo "basic.at:474: exit code was $at_status, expected 0"
+   *) echo "basic.at:472: exit code was $at_status, expected 0"
       at_failed=:;;
 esac
 if $at_failed; then
@@ -7065,8 +7067,8 @@ $at_traceon
 mkdir top
 cd top
 $at_traceoff
-echo "basic.at:474: cvs -Q co -l ."
-echo basic.at:474 >$at_check_line_file
+echo "basic.at:472: cvs -Q co -l ."
+echo basic.at:472 >$at_check_line_file
 ( $at_traceon; cvs -Q co -l . ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
@@ -7078,7 +7080,7 @@ case $at_status in
    77) echo 77 > $at_status_file
             exit 77;;
    0) ;;
-   *) echo "basic.at:474: exit code was $at_status, expected 0"
+   *) echo "basic.at:472: exit code was $at_status, expected 0"
       at_failed=:;;
 esac
 if $at_failed; then
@@ -7091,8 +7093,8 @@ $at_traceon
 
 mkdir project
 $at_traceoff
-echo "basic.at:474: cvs -Q add project"
-echo basic.at:474 >$at_check_line_file
+echo "basic.at:472: cvs -Q add project"
+echo basic.at:472 >$at_check_line_file
 ( $at_traceon; cvs -Q add project ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
@@ -7104,7 +7106,7 @@ case $at_status in
    77) echo 77 > $at_status_file
             exit 77;;
    0) ;;
-   *) echo "basic.at:474: exit code was $at_status, expected 0"
+   *) echo "basic.at:472: exit code was $at_status, expected 0"
       at_failed=:;;
 esac
 if $at_failed; then
@@ -7127,8 +7129,8 @@ rm -r top
 # created but the `cvs co' will not return an error.
 #
 $at_traceoff
-echo "basic.at:474: cvs -Q co project"
-echo basic.at:474 >$at_check_line_file
+echo "basic.at:472: cvs -Q co project"
+echo basic.at:472 >$at_check_line_file
 ( $at_traceon; cvs -Q co project ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
@@ -7140,7 +7142,7 @@ case $at_status in
    77) echo 77 > $at_status_file
             exit 77;;
    0) ;;
-   *) echo "basic.at:474: exit code was $at_status, expected 0"
+   *) echo "basic.at:472: exit code was $at_status, expected 0"
       at_failed=:;;
 esac
 if $at_failed; then
@@ -7160,13 +7162,19 @@ echo "$as_me: error: Couldn't cd to \\`project'.  Did \$HOME get set incorrectly
 ### End AT_CVS_SETUP([Emptydir not special])
 ###
 
+# FIXME: This test should probably be broken into several, though I'm not sure
+# where.  It came out of basicb in the old sanity.sh test suite, along with the
+# previous test and the following two, but I didn't have time to find where
+# else this one should break since what look like good break points still
+# depend on previous tests for setup.
+
 # Note that the name Emptydir is chosen to test that CVS just
 # treats it like any other directory name.  It should be
 # special only when it is directly in $CVSROOT/CVSROOT.
 mkdir Emptydir sdir2
 $at_traceoff
-echo "basic.at:483: cvs add Emptydir sdir2"
-echo basic.at:483 >$at_check_line_file
+echo "basic.at:487: cvs add Emptydir sdir2"
+echo basic.at:487 >$at_check_line_file
 ( $at_traceon; cvs add Emptydir sdir2 ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
@@ -7180,7 +7188,7 @@ case $at_status in
    77) echo 77 > $at_status_file
             exit 77;;
    0) ;;
-   *) echo "basic.at:483: exit code was $at_status, expected 0"
+   *) echo "basic.at:487: exit code was $at_status, expected 0"
       at_failed=:;;
 esac
 if $at_failed; then
@@ -7195,8 +7203,8 @@ $at_traceon
 cd Emptydir
 echo sfile1 starts >sfile1
 $at_traceoff
-echo "basic.at:490: cvs -n add sfile1"
-echo basic.at:490 >$at_check_line_file
+echo "basic.at:494: cvs -n add sfile1"
+echo basic.at:494 >$at_check_line_file
 ( $at_traceon; cvs -n add sfile1 ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
@@ -7210,7 +7218,7 @@ case $at_status in
    77) echo 77 > $at_status_file
             exit 77;;
    0) ;;
-   *) echo "basic.at:490: exit code was $at_status, expected 0"
+   *) echo "basic.at:494: exit code was $at_status, expected 0"
       at_failed=:;;
 esac
 if $at_failed; then
@@ -7223,8 +7231,8 @@ $at_traceon
 
 
 $at_traceoff
-echo "basic.at:501: cvs status sfile1"
-echo basic.at:501 >$at_check_line_file
+echo "basic.at:505: cvs status sfile1"
+echo basic.at:505 >$at_check_line_file
 ( $at_traceon; cvs status sfile1 ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
@@ -7243,7 +7251,7 @@ case $at_status in
    77) echo 77 > $at_status_file
             exit 77;;
    0) ;;
-   *) echo "basic.at:501: exit code was $at_status, expected 0"
+   *) echo "basic.at:505: exit code was $at_status, expected 0"
       at_failed=:;;
 esac
 if $at_failed; then
@@ -7256,8 +7264,8 @@ $at_traceon
 
 
 $at_traceoff
-echo "basic.at:506: cvs add sfile1"
-echo basic.at:506 >$at_check_line_file
+echo "basic.at:510: cvs add sfile1"
+echo basic.at:510 >$at_check_line_file
 ( $at_traceon; cvs add sfile1 ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
@@ -7271,7 +7279,7 @@ case $at_status in
    77) echo 77 > $at_status_file
             exit 77;;
    0) ;;
-   *) echo "basic.at:506: exit code was $at_status, expected 0"
+   *) echo "basic.at:510: exit code was $at_status, expected 0"
       at_failed=:;;
 esac
 if $at_failed; then
@@ -7284,8 +7292,8 @@ $at_traceon
 
 
 $at_traceoff
-echo "basic.at:518: cvs status sfile1"
-echo basic.at:518 >$at_check_line_file
+echo "basic.at:522: cvs status sfile1"
+echo basic.at:522 >$at_check_line_file
 ( $at_traceon; cvs status sfile1 ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
@@ -7306,7 +7314,7 @@ case $at_status in
    77) echo 77 > $at_status_file
             exit 77;;
    0) ;;
-   *) echo "basic.at:518: exit code was $at_status, expected 0"
+   *) echo "basic.at:522: exit code was $at_status, expected 0"
       at_failed=:;;
 esac
 if $at_failed; then
@@ -7321,8 +7329,8 @@ $at_traceon
 cd ../sdir2
 echo sfile2 starts >sfile2
 $at_traceoff
-echo "basic.at:525: cvs add sfile2"
-echo basic.at:525 >$at_check_line_file
+echo "basic.at:529: cvs add sfile2"
+echo basic.at:529 >$at_check_line_file
 ( $at_traceon; cvs add sfile2 ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
@@ -7336,7 +7344,7 @@ case $at_status in
    77) echo 77 > $at_status_file
             exit 77;;
    0) ;;
-   *) echo "basic.at:525: exit code was $at_status, expected 0"
+   *) echo "basic.at:529: exit code was $at_status, expected 0"
       at_failed=:;;
 esac
 if $at_failed; then
@@ -7349,8 +7357,8 @@ $at_traceon
 
 
 $at_traceoff
-echo "basic.at:530: cvs -q ci CVS"
-echo basic.at:530 >$at_check_line_file
+echo "basic.at:534: cvs -q ci CVS"
+echo basic.at:534 >$at_check_line_file
 ( $at_traceon; cvs -q ci CVS ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
@@ -7364,7 +7372,7 @@ case $at_status in
    77) echo 77 > $at_status_file
             exit 77;;
    0) ;;
-   *) echo "basic.at:530: exit code was $at_status, expected 0"
+   *) echo "basic.at:534: exit code was $at_status, expected 0"
       at_failed=:;;
 esac
 if $at_failed; then
@@ -7378,8 +7386,8 @@ $at_traceon
 
 cd ..
 $at_traceoff
-echo "basic.at:546: cvs -q ci -m add"
-echo basic.at:546 >$at_check_line_file
+echo "basic.at:550: cvs -q ci -m add"
+echo basic.at:550 >$at_check_line_file
 ( $at_traceon; cvs -q ci -m add ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
@@ -7403,7 +7411,7 @@ case $at_status in
    77) echo 77 > $at_status_file
             exit 77;;
    0) ;;
-   *) echo "basic.at:546: exit code was $at_status, expected 0"
+   *) echo "basic.at:550: exit code was $at_status, expected 0"
       at_failed=:;;
 esac
 if $at_failed; then
@@ -7417,8 +7425,8 @@ $at_traceon
 
 echo sfile1 develops >Emptydir/sfile1
 $at_traceoff
-echo "basic.at:554: cvs -q ci -m modify"
-echo basic.at:554 >$at_check_line_file
+echo "basic.at:558: cvs -q ci -m modify"
+echo basic.at:558 >$at_check_line_file
 ( $at_traceon; cvs -q ci -m modify ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
@@ -7434,7 +7442,7 @@ case $at_status in
    77) echo 77 > $at_status_file
             exit 77;;
    0) ;;
-   *) echo "basic.at:554: exit code was $at_status, expected 0"
+   *) echo "basic.at:558: exit code was $at_status, expected 0"
       at_failed=:;;
 esac
 if $at_failed; then
@@ -7446,22 +7454,381 @@ fi
 $at_traceon
 
 
+$at_traceoff
+echo "basic.at:563: cvs -q tag release-1"
+echo basic.at:563 >$at_check_line_file
+( $at_traceon; cvs -q tag release-1 ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+$at_diff $at_devnull $at_stderr || at_failed=:
+echo >>$at_stdout; echo "T Emptydir/sfile1
+T sdir2/sfile2
+" | $at_diff - $at_stdout || at_failed=:
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   0) ;;
+   *) echo "basic.at:563: exit code was $at_status, expected 0"
+      at_failed=:;;
+esac
+if $at_failed; then
+
+  echo 1 > $at_status_file
+  exit 1
+fi
+
+$at_traceon
+
+
+echo not in time for release-1 >sdir2/sfile2
+$at_traceoff
+echo "basic.at:571: cvs -q ci -m modify-2"
+echo basic.at:571 >$at_check_line_file
+( $at_traceon; cvs -q ci -m modify-2 ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+$at_diff $at_devnull $at_stderr || at_failed=:
+echo >>$at_stdout; echo "Checking in sdir2/sfile2;
+$CVSROOT_DIR/project/sdir2/sfile2,v  <--  sfile2
+new revision: 1.2; previous revision: 1.1
+done
+" | $at_diff - $at_stdout || at_failed=:
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   0) ;;
+   *) echo "basic.at:571: exit code was $at_status, expected 0"
+      at_failed=:;;
+esac
+if $at_failed; then
+
+  echo 1 > $at_status_file
+  exit 1
+fi
+
+$at_traceon
+
+
+# FIXCVS:
+# See if CVS can correctly notice when an invalid numeric
+# revision is specified.
+# AT_CHECK([cvs diff -r 1.5 -r 1.7 sfile2],,,
+# [error msg
+# ])
+
+# Test that we recurse into the correct directory when checking
+# for existing files, even if co -d is in use.
+cd ..
+touch project/extra
+$at_traceoff
+echo "basic.at:587: cvs -q co -d project1 project"
+echo basic.at:587 >$at_check_line_file
+( $at_traceon; cvs -q co -d project1 project ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+$at_diff $at_devnull $at_stderr || at_failed=:
+echo >>$at_stdout; echo "U project1/Emptydir/sfile1
+U project1/sdir2/sfile2
+" | $at_diff - $at_stdout || at_failed=:
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   0) ;;
+   *) echo "basic.at:587: exit code was $at_status, expected 0"
+      at_failed=:;;
+esac
+if $at_failed; then
+
+  echo 1 > $at_status_file
+  exit 1
+fi
+
+$at_traceon
+
+
+# FIXCVS?  The next test used to check things out like this:
+#   U newdir/Emptydir/sfile1
+#   U newdir/sdir2/sfile2
+# but that's difficult to do.  The whole "shorten" thing
+# is pretty bogus, because it will break on things
+# like "cvs co foo/bar baz/quux".  Unless there's some
+# pretty detailed expansion and analysis of the command-line
+# arguments, we shouldn't do "shorten" stuff at all.
+#
+# DRP: I'm not sure how detailed it would need to be - either all the path
+# prefixes are the same, in which case the matching parts are shortened, or
+# they are not, in which case they are grouped:
+#
+#   cvs co -d short project/Emptydir project/sdir2
+#   U short/Emptydir/sfile1
+#   U short/sdir2
+#
+#   cvs co -d group foo/bar baz/quux
+#   U group/foo/bar/file1
+#   U group/baz/quux/file2
+#
+# How do you group under project if you do want to?  How about:
+#
+#   cvs co -d group/project project/Emptydir project/sdir2
+#   U group/project/Emptydir/sfile1
+#   U group/project/sdir2/sfile2
+#
+$at_traceoff
+echo "basic.at:619: cvs -q co -d newdir -r release-1 project/Emptydir project/sdir2"
+echo basic.at:619 >$at_check_line_file
+( $at_traceon; cvs -q co -d newdir -r release-1 project/Emptydir project/sdir2 ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+$at_diff $at_devnull $at_stderr || at_failed=:
+echo >>$at_stdout; echo "U newdir/project/Emptydir/sfile1
+U newdir/project/sdir2/sfile2
+" | $at_diff - $at_stdout || at_failed=:
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   0) ;;
+   *) echo "basic.at:619: exit code was $at_status, expected 0"
+      at_failed=:;;
+esac
+if $at_failed; then
+
+  echo 1 > $at_status_file
+  exit 1
+fi
+
+$at_traceon
+
+
+# Verify that the top-level CVS directory is not created by default.
+$at_traceoff
+echo "basic.at:622: test -d CVS"
+echo basic.at:622 >$at_check_line_file
+( $at_traceon; test -d CVS ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+$at_diff $at_devnull $at_stderr || at_failed=:
+$at_diff $at_devnull $at_stdout || at_failed=:
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   1) ;;
+   *) echo "basic.at:622: exit code was $at_status, expected 1"
+      at_failed=:;;
+esac
+if $at_failed; then
+
+  echo 1 > $at_status_file
+  exit 1
+fi
+
+$at_traceon
+
+
+# Verify that our CVS/Repository files hold what we expect.
+$at_traceoff
+echo "basic.at:627: cat newdir/CVS/Repository"
+echo basic.at:627 >$at_check_line_file
+( $at_traceon; cat newdir/CVS/Repository ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+$at_diff $at_devnull $at_stderr || at_failed=:
+echo >>$at_stdout; echo ".
+" | $at_diff - $at_stdout || at_failed=:
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   0) ;;
+   *) echo "basic.at:627: exit code was $at_status, expected 0"
+      at_failed=:;;
+esac
+if $at_failed; then
+
+  echo 1 > $at_status_file
+  exit 1
+fi
+
+$at_traceon
+
+$at_traceoff
+echo "basic.at:630: cat newdir/project/CVS/Repository"
+echo basic.at:630 >$at_check_line_file
+( $at_traceon; cat newdir/project/CVS/Repository ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+$at_diff $at_devnull $at_stderr || at_failed=:
+echo >>$at_stdout; echo "project
+" | $at_diff - $at_stdout || at_failed=:
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   0) ;;
+   *) echo "basic.at:630: exit code was $at_status, expected 0"
+      at_failed=:;;
+esac
+if $at_failed; then
+
+  echo 1 > $at_status_file
+  exit 1
+fi
+
+$at_traceon
+
+$at_traceoff
+echo "basic.at:633: cat newdir/project/Emptydir/CVS/Repository"
+echo basic.at:633 >$at_check_line_file
+( $at_traceon; cat newdir/project/Emptydir/CVS/Repository ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+$at_diff $at_devnull $at_stderr || at_failed=:
+echo >>$at_stdout; echo "project/Emptydir
+" | $at_diff - $at_stdout || at_failed=:
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   0) ;;
+   *) echo "basic.at:633: exit code was $at_status, expected 0"
+      at_failed=:;;
+esac
+if $at_failed; then
+
+  echo 1 > $at_status_file
+  exit 1
+fi
+
+$at_traceon
+
+$at_traceoff
+echo "basic.at:636: cat newdir/project/sdir2/CVS/Repository"
+echo basic.at:636 >$at_check_line_file
+( $at_traceon; cat newdir/project/sdir2/CVS/Repository ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+$at_diff $at_devnull $at_stderr || at_failed=:
+echo >>$at_stdout; echo "project/sdir2
+" | $at_diff - $at_stdout || at_failed=:
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   0) ;;
+   *) echo "basic.at:636: exit code was $at_status, expected 0"
+      at_failed=:;;
+esac
+if $at_failed; then
+
+  echo 1 > $at_status_file
+  exit 1
+fi
+
+$at_traceon
+
+
+# Verify that our project files contain what we expect.
+$at_traceoff
+echo "basic.at:641: cat newdir/project/Emptydir/sfile1"
+echo basic.at:641 >$at_check_line_file
+( $at_traceon; cat newdir/project/Emptydir/sfile1 ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+$at_diff $at_devnull $at_stderr || at_failed=:
+echo >>$at_stdout; echo "sfile1 develops
+" | $at_diff - $at_stdout || at_failed=:
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   0) ;;
+   *) echo "basic.at:641: exit code was $at_status, expected 0"
+      at_failed=:;;
+esac
+if $at_failed; then
+
+  echo 1 > $at_status_file
+  exit 1
+fi
+
+$at_traceon
+
+$at_traceoff
+echo "basic.at:644: cat newdir/project/sdir2/sfile2"
+echo basic.at:644 >$at_check_line_file
+( $at_traceon; cat newdir/project/sdir2/sfile2 ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+$at_diff $at_devnull $at_stderr || at_failed=:
+echo >>$at_stdout; echo "sfile2 starts
+" | $at_diff - $at_stdout || at_failed=:
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   0) ;;
+   *) echo "basic.at:644: exit code was $at_status, expected 0"
+      at_failed=:;;
+esac
+if $at_failed; then
+
+  echo 1 > $at_status_file
+  exit 1
+fi
+
+$at_traceon
+
+
+# FIXCVS:
+# Hmm, this might be a case for CVSNULLREPOS, but CVS doesn't
+# seem to deal with it...
+# AT_CHECK([cvs -q co -d sub1/sub2 project],,
+# [U sub1/sub2/Emptydir/sfile1
+# U sub1/sub2/sdir2/sfile2
+# ])
+#
+# cd sub1
+# AT_CHECK([cvs -q update ./.])
+#
+# touch xx
+# AT_CHECK_NOESCAPE([cvs add xx],,
+# [$SPROG add: scheduling file \`xx' for addition
+# $SPROG add: use \`$SPROG commit' to add this file permanently
+# ])
+#
+# to test: sub1/sub2/sub3
+
       $at_traceoff
       $at_times_p && times >$at_times_file
     ) 5>&1 2>&1 | eval $at_tee_pipe
     at_status=`cat $at_status_file`
     ;;
 
-  16 ) # 16. basic.at:560: unprocessed
-    at_setup_line='basic.at:560'
-    at_desc='unprocessed'
-    $at_quiet $ECHO_N " 16: unprocessed                                  $ECHO_C"
+  16 ) # 16. basic.at:669: delete last revision
+    at_setup_line='basic.at:669'
+    at_desc='delete last revision'
+    $at_quiet $ECHO_N " 16: delete last revision                         $ECHO_C"
     at_xfail=no
     (
-      echo "16. basic.at:560: testing ..."
+      echo "16. basic.at:669: testing ..."
       $at_traceon
 ###
-### Begin AT_CVS_SETUP([unprocessed])
+### Begin AT_CVS_SETUP([delete last revision])
 ###
 
 
@@ -7491,8 +7858,8 @@ RCSINIT=
 # Initialize the repository
 #
 $at_traceoff
-echo "basic.at:560: cvs init"
-echo basic.at:560 >$at_check_line_file
+echo "basic.at:669: cvs init"
+echo basic.at:669 >$at_check_line_file
 ( $at_traceon; cvs init ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
@@ -7504,7 +7871,7 @@ case $at_status in
    77) echo 77 > $at_status_file
             exit 77;;
    0) ;;
-   *) echo "basic.at:560: exit code was $at_status, expected 0"
+   *) echo "basic.at:669: exit code was $at_status, expected 0"
       at_failed=:;;
 esac
 if $at_failed; then
@@ -7522,8 +7889,8 @@ $at_traceon
 mkdir top
 cd top
 $at_traceoff
-echo "basic.at:560: cvs -Q co -l ."
-echo basic.at:560 >$at_check_line_file
+echo "basic.at:669: cvs -Q co -l ."
+echo basic.at:669 >$at_check_line_file
 ( $at_traceon; cvs -Q co -l . ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
@@ -7535,7 +7902,7 @@ case $at_status in
    77) echo 77 > $at_status_file
             exit 77;;
    0) ;;
-   *) echo "basic.at:560: exit code was $at_status, expected 0"
+   *) echo "basic.at:669: exit code was $at_status, expected 0"
       at_failed=:;;
 esac
 if $at_failed; then
@@ -7548,8 +7915,8 @@ $at_traceon
 
 mkdir project
 $at_traceoff
-echo "basic.at:560: cvs -Q add project"
-echo basic.at:560 >$at_check_line_file
+echo "basic.at:669: cvs -Q add project"
+echo basic.at:669 >$at_check_line_file
 ( $at_traceon; cvs -Q add project ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
@@ -7561,7 +7928,7 @@ case $at_status in
    77) echo 77 > $at_status_file
             exit 77;;
    0) ;;
-   *) echo "basic.at:560: exit code was $at_status, expected 0"
+   *) echo "basic.at:669: exit code was $at_status, expected 0"
       at_failed=:;;
 esac
 if $at_failed; then
@@ -7584,8 +7951,8 @@ rm -r top
 # created but the `cvs co' will not return an error.
 #
 $at_traceoff
-echo "basic.at:560: cvs -Q co project"
-echo basic.at:560 >$at_check_line_file
+echo "basic.at:669: cvs -Q co project"
+echo basic.at:669 >$at_check_line_file
 ( $at_traceon; cvs -Q co project ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
@@ -7597,7 +7964,7 @@ case $at_status in
    77) echo 77 > $at_status_file
             exit 77;;
    0) ;;
-   *) echo "basic.at:560: exit code was $at_status, expected 0"
+   *) echo "basic.at:669: exit code was $at_status, expected 0"
       at_failed=:;;
 esac
 if $at_failed; then
@@ -7614,24 +7981,83 @@ echo "$as_me: error: Couldn't cd to \\`project'.  Did \$HOME get set incorrectly
    { (exit 1); exit 1; }; }
 
 ###
-### End AT_CVS_SETUP([unprocessed])
+### End AT_CVS_SETUP([delete last revision])
 ###
 
+
+
+mkdir sdir
 $at_traceoff
-echo "basic.at:562: exit 77"
-echo basic.at:562 >$at_check_line_file
-( $at_traceon; exit 77 ) >$at_stdout 2>$at_stder1
+echo "basic.at:673: cvs add sdir"
+echo basic.at:673 >$at_check_line_file
+( $at_traceon; cvs add sdir ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
 grep -v '^ *+' $at_stder1 >$at_stderr
 at_failed=false
 $at_diff $at_devnull $at_stderr || at_failed=:
-$at_diff $at_devnull $at_stdout || at_failed=:
+echo >>$at_stdout; echo "Directory $CVSROOT_DIR/project/sdir added to the repository
+" | $at_diff - $at_stdout || at_failed=:
 case $at_status in
    77) echo 77 > $at_status_file
             exit 77;;
    0) ;;
-   *) echo "basic.at:562: exit code was $at_status, expected 0"
+   *) echo "basic.at:673: exit code was $at_status, expected 0"
+      at_failed=:;;
+esac
+if $at_failed; then
+
+  echo 1 > $at_status_file
+  exit 1
+fi
+
+$at_traceon
+
+cd sdir
+mkdir ssdir
+$at_traceoff
+echo "basic.at:673: cvs add ssdir"
+echo basic.at:673 >$at_check_line_file
+( $at_traceon; cvs add ssdir ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+$at_diff $at_devnull $at_stderr || at_failed=:
+echo >>$at_stdout; echo "Directory $CVSROOT_DIR/project/sdir/ssdir added to the repository
+" | $at_diff - $at_stdout || at_failed=:
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   0) ;;
+   *) echo "basic.at:673: exit code was $at_status, expected 0"
+      at_failed=:;;
+esac
+if $at_failed; then
+
+  echo 1 > $at_status_file
+  exit 1
+fi
+
+$at_traceon
+
+cd ssdir
+echo ssfile >ssfile
+$at_traceoff
+echo "basic.at:673: cvs add ssfile"
+echo basic.at:673 >$at_check_line_file
+( $at_traceon; cvs add ssfile ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+echo stderr:; tee stderr <$at_stderr
+echo stdout:; tee stdout <$at_stdout
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   0) ;;
+   *) echo "basic.at:673: exit code was $at_status, expected 0"
       at_failed=:;;
 esac
 if $at_failed; then
@@ -7643,130 +8069,199 @@ fi
 $at_traceon
 
 
-	  dotest basicb-7 "${testcvs} -q tag release-1" 'T Emptydir/sfile1
-T sdir2/sfile2'
-	  echo not in time for release-1 >sdir2/sfile2
-	  dotest basicb-8 "${testcvs} -q ci -m modify-2" \
-"Checking in sdir2/sfile2;
-${CVSROOT_DIR}/first-dir/sdir2/sfile2,v  <--  sfile2
-new revision: 1\.2; previous revision: 1\.1
-done"
-	  # See if CVS can correctly notice when an invalid numeric
-	  # revision is specified.
-	  # Commented out until we get around to fixing CVS
-:	  dotest basicb-8a0 "${testcvs} diff -r 1.5 -r 1.7 sfile2" 'error msg'
-	  cd ..
+sed \
+    -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
+    -e "s/^P /U /" \
+    <stdout >nstdout
+rm stdout
 
-	  # Test that we recurse into the correct directory when checking
-	  # for existing files, even if co -d is in use.
-	  touch first-dir/extra
-	  dotest basicb-cod-1 "${testcvs} -q co -d first-dir1 first-dir" \
-'U first-dir1/Emptydir/sfile1
-U first-dir1/sdir2/sfile2'
-	  rm -r first-dir1
+$at_traceoff
+echo "basic.at:673: (cat nstdout; cat stderr >&2)"
+echo basic.at:673 >$at_check_line_file
+( $at_traceon; (cat nstdout; cat stderr >&2) ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+echo >>$at_stderr; echo "$SPROG add: scheduling file \`ssfile' for addition
+$SPROG add: use \`$SPROG commit' to add this file permanently
+" | $at_diff - $at_stderr || at_failed=:
+$at_diff $at_devnull $at_stdout || at_failed=:
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   0) ;;
+   *) echo "basic.at:673: exit code was $at_status, expected 0"
+      at_failed=:;;
+esac
+if $at_failed; then
 
-	  rm -r first-dir
+  echo 1 > $at_status_file
+  exit 1
+fi
 
-	  # FIXME? basicb-9 used to check things out like this:
-	  #   U newdir/Emptydir/sfile1
-	  #   U newdir/sdir2/sfile2
-	  # but that's difficult to do.  The whole "shorten" thing
-	  # is pretty bogus, because it will break on things
-	  # like "cvs co foo/bar baz/quux".  Unless there's some
-	  # pretty detailed expansion and analysis of the command-line
-	  # arguments, we shouldn't do "shorten" stuff at all.
+$at_traceon
 
-	  dotest basicb-9 \
-"${testcvs} -q co -d newdir -r release-1 first-dir/Emptydir first-dir/sdir2" \
-'U newdir/first-dir/Emptydir/sfile1
-U newdir/first-dir/sdir2/sfile2'
-
-	  # basicb-9a and basicb-9b: see note about basicb-1a
-
-	  dotest_fail basicb-9a "test -d CVS" ''
-
-	  dotest basicb-9c "cat newdir/CVS/Repository" "\."
-	  dotest basicb-9d "cat newdir/first-dir/CVS/Repository" \
-"${CVSROOT_DIR}/first-dir" \
-"first-dir"
-	  dotest basicb-9e "cat newdir/first-dir/Emptydir/CVS/Repository" \
-"${CVSROOT_DIR}/first-dir/Emptydir" \
-"first-dir/Emptydir"
-	  dotest basicb-9f "cat newdir/first-dir/sdir2/CVS/Repository" \
-"${CVSROOT_DIR}/first-dir/sdir2" \
-"first-dir/sdir2"
-
-	  dotest basicb-10 "cat newdir/first-dir/Emptydir/sfile1 newdir/first-dir/sdir2/sfile2" \
-"sfile1 develops
-sfile2 starts"
-
-	  rm -r newdir
-
-	  # Hmm, this might be a case for CVSNULLREPOS, but CVS doesn't
-	  # seem to deal with it...
-	  if false; then
-	  dotest basicb-11 "${testcvs} -q co -d sub1/sub2 first-dir" \
-"U sub1/sub2/Emptydir/sfile1
-U sub1/sub2/sdir2/sfile2"
-	  cd sub1
-	  dotest basicb-12 "${testcvs} -q update ./." ''
-	  touch xx
-	  dotest basicb-13 "${testcvs} add xx" fixme
-	  cd ..
-	  rm -r sub1
-	  # to test: sub1/sub2/sub3
-	  fi # end of tests commented out.
-
-	  # Create a second directory.
-	  mkdir 1
-	  cd 1
-	  dotest basicb-14 "${testcvs} -q co -l ." 'U topfile'
-	  mkdir second-dir
-	  dotest basicb-15 "${testcvs} add second-dir" \
-"Directory ${CVSROOT_DIR}/second-dir added to the repository"
-	  cd second-dir
-	  touch aa
-	  dotest basicb-16 "${testcvs} add aa" \
-"${SPROG} add: scheduling file .aa. for addition
-${SPROG} add: use .${SPROG} commit. to add this file permanently"
-	  dotest basicb-17 "${testcvs} -q ci -m add" \
-"RCS file: ${CVSROOT_DIR}/second-dir/aa,v
+rm stderr nstdout
+$at_traceoff
+echo "basic.at:673: cvs -q ci -m add-it"
+echo basic.at:673 >$at_check_line_file
+( $at_traceon; cvs -q ci -m add-it ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+$at_diff $at_devnull $at_stderr || at_failed=:
+echo >>$at_stdout; echo "RCS file: $CVSROOT_DIR/project/sdir/ssdir/ssfile,v
 done
-Checking in aa;
-${CVSROOT_DIR}/second-dir/aa,v  <--  aa
-initial revision: 1\.1
-done"
-	  cd ..
+Checking in ssfile;
+$CVSROOT_DIR/project/sdir/ssdir/ssfile,v  <--  ssfile
+initial revision: 1.1
+done
+" | $at_diff - $at_stdout || at_failed=:
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   0) ;;
+   *) echo "basic.at:673: exit code was $at_status, expected 0"
+      at_failed=:;;
+esac
+if $at_failed; then
 
-	  # Try to remove all revisions in a file.
-	  dotest_fail basicb-o1 "${testcvs} admin -o1.1 topfile" \
-"RCS file: ${CVSROOT_DIR}/topfile,v
-deleting revision 1\.1
-${SPROG} \admin aborted\: attempt to delete all revisions"
-	  dotest basicb-o2 "${testcvs} -q update -d first-dir" \
-"U first-dir/Emptydir/sfile1
-U first-dir/sdir2/sfile2"
-	  dotest_fail basicb-o3 \
-"${testcvs} admin -o1.1:1.2 first-dir/sdir2/sfile2" \
-"RCS file: ${CVSROOT_DIR}/first-dir/sdir2/sfile2,v
-deleting revision 1\.2
-deleting revision 1\.1
-${SPROG} \admin aborted\: attempt to delete all revisions"
-	  cd ..
-	  rm -r 1
+  echo 1 > $at_status_file
+  exit 1
+fi
 
-	  mkdir 1; cd 1
-	  # Note that -H is an invalid option.
-	  # I suspect that the choice between "illegal" and "invalid"
-	  # depends on the user's environment variables, the phase
-	  # of the moon (weirdness with optind), and who knows what else.
-	  # I've been seeing "illegal"...
-	  # And I switched it to "invalid". -DRP
-	  dotest_fail basicb-21 "${testcvs} -q admin -H" \
-"admin: invalid option -- H
-${CPROG} \admin aborted\: specify ${CPROG} -H admin for usage information"
-	  cd ..
-	  rmdir 1
+$at_traceon
+
+cd ../..
+
+
+cd sdir/ssdir
+
+# Try to remove all revisions in a file.
+$at_traceoff
+echo "basic.at:683: cvs admin -o1.1 ssfile"
+echo basic.at:683 >$at_check_line_file
+( $at_traceon; cvs admin -o1.1 ssfile ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+echo >>$at_stderr; echo "$SPROG [admin aborted]: attempt to delete all revisions
+" | $at_diff - $at_stderr || at_failed=:
+echo >>$at_stdout; echo "RCS file: $CVSROOT_DIR/project/sdir/ssdir/ssfile,v
+deleting revision 1.1
+" | $at_diff - $at_stdout || at_failed=:
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   1) ;;
+   *) echo "basic.at:683: exit code was $at_status, expected 1"
+      at_failed=:;;
+esac
+if $at_failed; then
+
+  echo 1 > $at_status_file
+  exit 1
+fi
+
+$at_traceon
+
+
+echo I will be deleted second. >>ssfile
+$at_traceoff
+echo "basic.at:691: cvs -q ci -mr2"
+echo basic.at:691 >$at_check_line_file
+( $at_traceon; cvs -q ci -mr2 ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+$at_diff $at_devnull $at_stderr || at_failed=:
+echo >>$at_stdout; echo "Checking in ssfile;
+$CVSROOT_DIR/project/sdir/ssdir/ssfile,v  <--  ssfile
+new revision: 1.2; previous revision: 1.1
+done
+" | $at_diff - $at_stdout || at_failed=:
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   0) ;;
+   *) echo "basic.at:691: exit code was $at_status, expected 0"
+      at_failed=:;;
+esac
+if $at_failed; then
+
+  echo 1 > $at_status_file
+  exit 1
+fi
+
+$at_traceon
+
+
+echo I will be deleted first. >>ssfile
+echo "It's kinda like seeing the future." >>ssfile
+$at_traceoff
+echo "basic.at:700: cvs -q ci -mr3"
+echo basic.at:700 >$at_check_line_file
+( $at_traceon; cvs -q ci -mr3 ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+$at_diff $at_devnull $at_stderr || at_failed=:
+echo >>$at_stdout; echo "Checking in ssfile;
+$CVSROOT_DIR/project/sdir/ssdir/ssfile,v  <--  ssfile
+new revision: 1.3; previous revision: 1.2
+done
+" | $at_diff - $at_stdout || at_failed=:
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   0) ;;
+   *) echo "basic.at:700: exit code was $at_status, expected 0"
+      at_failed=:;;
+esac
+if $at_failed; then
+
+  echo 1 > $at_status_file
+  exit 1
+fi
+
+$at_traceon
+
+
+$at_traceoff
+echo "basic.at:709: cvs admin -o1.1:1.3 ssfile"
+echo basic.at:709 >$at_check_line_file
+( $at_traceon; cvs admin -o1.1:1.3 ssfile ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+echo >>$at_stderr; echo "$SPROG [admin aborted]: attempt to delete all revisions
+" | $at_diff - $at_stderr || at_failed=:
+echo >>$at_stdout; echo "RCS file: $CVSROOT_DIR/project/sdir/ssdir/ssfile,v
+deleting revision 1.3
+deleting revision 1.2
+deleting revision 1.1
+" | $at_diff - $at_stdout || at_failed=:
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   1) ;;
+   *) echo "basic.at:709: exit code was $at_status, expected 1"
+      at_failed=:;;
+esac
+if $at_failed; then
+
+  echo 1 > $at_status_file
+  exit 1
+fi
+
+$at_traceon
+
 
       $at_traceoff
       $at_times_p && times >$at_times_file
@@ -7774,13 +8269,216 @@ ${CPROG} \admin aborted\: specify ${CPROG} -H admin for usage information"
     at_status=`cat $at_status_file`
     ;;
 
-  17 ) # 17. basic.at:16: Operations on empty projects-l
-    at_setup_line='basic.at:16'
-    at_desc='Operations on empty projects-l'
-    $at_quiet $ECHO_N " 17: Operations on empty projects-l               $ECHO_C"
+  17 ) # 17. basic.at:715: no admin -H
+    at_setup_line='basic.at:715'
+    at_desc='no admin -H'
+    $at_quiet $ECHO_N " 17: no admin -H                                  $ECHO_C"
     at_xfail=no
     (
-      echo "17. basic.at:16: testing ..."
+      echo "17. basic.at:715: testing ..."
+      $at_traceon
+###
+### Begin AT_CVS_SETUP([no admin -H])
+###
+
+
+#
+# Set CVSROOT_DIR, method, & CVSROOT
+#
+CVSROOT_DIR=$at_group_dir/cvsroot
+method=
+CVSROOT=$method$CVSROOT_DIR
+export CVSROOT
+SPROG=`basename $server`
+
+#
+# Clear a possibly damaging inherited environment.
+#
+
+# Avoid picking up any stray .cvsrc, etc., from the user running the tests
+mkdir home
+HOME=$at_group_dir/home; export HOME
+
+# Make sure this variable is not defined to anything that would
+# change the format of RCS dates.  Otherwise people using e.g.,
+# RCSINIT=-zLT get lots of spurious failures.
+RCSINIT=
+
+#
+# Initialize the repository
+#
+$at_traceoff
+echo "basic.at:715: cvs init"
+echo basic.at:715 >$at_check_line_file
+( $at_traceon; cvs init ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+$at_diff $at_devnull $at_stderr || at_failed=:
+$at_diff $at_devnull $at_stdout || at_failed=:
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   0) ;;
+   *) echo "basic.at:715: exit code was $at_status, expected 0"
+      at_failed=:;;
+esac
+if $at_failed; then
+
+  echo 1 > $at_status_file
+  exit 1
+fi
+
+$at_traceon
+
+
+#
+# Create the default project
+#
+mkdir top
+cd top
+$at_traceoff
+echo "basic.at:715: cvs -Q co -l ."
+echo basic.at:715 >$at_check_line_file
+( $at_traceon; cvs -Q co -l . ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+$at_diff $at_devnull $at_stderr || at_failed=:
+$at_diff $at_devnull $at_stdout || at_failed=:
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   0) ;;
+   *) echo "basic.at:715: exit code was $at_status, expected 0"
+      at_failed=:;;
+esac
+if $at_failed; then
+
+  echo 1 > $at_status_file
+  exit 1
+fi
+
+$at_traceon
+
+mkdir project
+$at_traceoff
+echo "basic.at:715: cvs -Q add project"
+echo basic.at:715 >$at_check_line_file
+( $at_traceon; cvs -Q add project ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+$at_diff $at_devnull $at_stderr || at_failed=:
+$at_diff $at_devnull $at_stdout || at_failed=:
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   0) ;;
+   *) echo "basic.at:715: exit code was $at_status, expected 0"
+      at_failed=:;;
+esac
+if $at_failed; then
+
+  echo 1 > $at_status_file
+  exit 1
+fi
+
+$at_traceon
+
+cd ..
+rm -r top
+
+#
+# Check out the default project and cd into the workspace.
+#
+# I'm checking for error returns form the cd and printing error messages since,
+# for instance, if the CVS executable picks up a ~/.cvsrc which causes empty
+# directories to be pruned by checkout, the project directory will not be
+# created but the `cvs co' will not return an error.
+#
+$at_traceoff
+echo "basic.at:715: cvs -Q co project"
+echo basic.at:715 >$at_check_line_file
+( $at_traceon; cvs -Q co project ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+$at_diff $at_devnull $at_stderr || at_failed=:
+$at_diff $at_devnull $at_stdout || at_failed=:
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   0) ;;
+   *) echo "basic.at:715: exit code was $at_status, expected 0"
+      at_failed=:;;
+esac
+if $at_failed; then
+
+  echo 1 > $at_status_file
+  exit 1
+fi
+
+$at_traceon
+
+cd project ||
+  { { echo "$as_me:$LINENO: error: Couldn't cd to \\`project'.  Did \$HOME get set incorrectly?" >&5
+echo "$as_me: error: Couldn't cd to \\`project'.  Did \$HOME get set incorrectly?" >&2;}
+   { (exit 1); exit 1; }; }
+
+###
+### End AT_CVS_SETUP([no admin -H])
+###
+
+
+
+# Why in the world do we check for this?
+# Note that -H is an invalid option.
+$at_traceoff
+echo "basic.at:724: cvs -q admin -H"
+echo basic.at:724 >$at_check_line_file
+( $at_traceon; cvs -q admin -H ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+echo >>$at_stderr; echo "admin: invalid option -- H
+$CPROG [admin aborted]: specify $CPROG -H admin for usage information
+" | $at_diff - $at_stderr || at_failed=:
+$at_diff $at_devnull $at_stdout || at_failed=:
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   1) ;;
+   *) echo "basic.at:724: exit code was $at_status, expected 1"
+      at_failed=:;;
+esac
+if $at_failed; then
+
+  echo 1 > $at_status_file
+  exit 1
+fi
+
+$at_traceon
+
+
+      $at_traceoff
+      $at_times_p && times >$at_times_file
+    ) 5>&1 2>&1 | eval $at_tee_pipe
+    at_status=`cat $at_status_file`
+    ;;
+
+  18 ) # 18. basic.at:16: Operations on empty projects-l
+    at_setup_line='basic.at:16'
+    at_desc='Operations on empty projects-l'
+    $at_quiet $ECHO_N " 18: Operations on empty projects-l               $ECHO_C"
+    at_xfail=no
+    (
+      echo "18. basic.at:16: testing ..."
       $at_traceon
 ###
 ### Begin AT_CVS_SETUP([Operations on empty projects])
@@ -8105,13 +8803,13 @@ $at_traceon
     at_status=`cat $at_status_file`
     ;;
 
-  18 ) # 18. basic.at:30: Adding directories and files-l
+  19 ) # 19. basic.at:30: Adding directories and files-l
     at_setup_line='basic.at:30'
     at_desc='Adding directories and files-l'
-    $at_quiet $ECHO_N " 18: Adding directories and files-l               $ECHO_C"
+    $at_quiet $ECHO_N " 19: Adding directories and files-l               $ECHO_C"
     at_xfail=no
     (
-      echo "18. basic.at:30: testing ..."
+      echo "19. basic.at:30: testing ..."
       $at_traceon
 ###
 ### Begin AT_CVS_SETUP([Adding directories and files])
@@ -8611,13 +9309,13 @@ $at_traceon
     at_status=`cat $at_status_file`
     ;;
 
-  19 ) # 19. basic.at:130: tag, update, & diff-l
+  20 ) # 20. basic.at:130: tag, update, & diff-l
     at_setup_line='basic.at:130'
     at_desc='tag, update, & diff-l'
-    $at_quiet $ECHO_N " 19: tag, update, & diff-l                        $ECHO_C"
+    $at_quiet $ECHO_N " 20: tag, update, & diff-l                        $ECHO_C"
     at_xfail=no
     (
-      echo "19. basic.at:130: testing ..."
+      echo "20. basic.at:130: testing ..."
       $at_traceon
 ###
 ### Begin AT_CVS_SETUP([tag, update, & diff])
@@ -9287,13 +9985,13 @@ rm stderr nstdout
     at_status=`cat $at_status_file`
     ;;
 
-  20 ) # 20. basic.at:189: strange revision numbers-l
+  21 ) # 21. basic.at:189: strange revision numbers-l
     at_setup_line='basic.at:189'
     at_desc='strange revision numbers-l'
-    $at_quiet $ECHO_N " 20: strange revision numbers-l                   $ECHO_C"
+    $at_quiet $ECHO_N " 21: strange revision numbers-l                   $ECHO_C"
     at_xfail=no
     (
-      echo "20. basic.at:189: testing ..."
+      echo "21. basic.at:189: testing ..."
       $at_traceon
 ###
 ### Begin AT_CVS_SETUP([strange revision numbers])
@@ -10784,13 +11482,13 @@ $at_traceon
     at_status=`cat $at_status_file`
     ;;
 
-  21 ) # 21. basic.at:393: annotate-l
+  22 ) # 22. basic.at:393: annotate-l
     at_setup_line='basic.at:393'
     at_desc='annotate-l'
-    $at_quiet $ECHO_N " 21: annotate-l                                   $ECHO_C"
+    $at_quiet $ECHO_N " 22: annotate-l                                   $ECHO_C"
     at_xfail=no
     (
-      echo "21. basic.at:393: testing ..."
+      echo "22. basic.at:393: testing ..."
       $at_traceon
 ###
 ### Begin AT_CVS_SETUP([annotate])
@@ -11263,13 +11961,13 @@ rm stderr nstdout
     at_status=`cat $at_status_file`
     ;;
 
-  22 ) # 22. basic.at:417: top of repository-l
+  23 ) # 23. basic.at:417: top of repository-l
     at_setup_line='basic.at:417'
     at_desc='top of repository-l'
-    $at_quiet $ECHO_N " 22: top of repository-l                          $ECHO_C"
+    $at_quiet $ECHO_N " 23: top of repository-l                          $ECHO_C"
     at_xfail=no
     (
-      echo "22. basic.at:417: testing ..."
+      echo "23. basic.at:417: testing ..."
       $at_traceon
 ###
 ### Begin AT_CVS_SETUP([top of repository])
@@ -11613,17 +12311,17 @@ fi
 $at_traceon
 
 
-mkdir first-dir
+mkdir second-dir
 $at_traceoff
-echo "basic.at:457: cvs add first-dir"
+echo "basic.at:457: cvs add second-dir"
 echo basic.at:457 >$at_check_line_file
-( $at_traceon; cvs add first-dir ) >$at_stdout 2>$at_stder1
+( $at_traceon; cvs add second-dir ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
 grep -v '^ *+' $at_stder1 >$at_stderr
 at_failed=false
 $at_diff $at_devnull $at_stderr || at_failed=:
-echo >>$at_stdout; echo "Directory $CVSROOT_DIR/first-dir added to the repository
+echo >>$at_stdout; echo "Directory $CVSROOT_DIR/second-dir added to the repository
 " | $at_diff - $at_stdout || at_failed=:
 case $at_status in
    77) echo 77 > $at_status_file
@@ -11643,9 +12341,9 @@ $at_traceon
 
 cd ..
 $at_traceoff
-echo "basic.at:460: cvs -q co first-dir"
+echo "basic.at:460: cvs -q co second-dir"
 echo basic.at:460 >$at_check_line_file
-( $at_traceon; cvs -q co first-dir ) >$at_stdout 2>$at_stder1
+( $at_traceon; cvs -q co second-dir ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
 grep -v '^ *+' $at_stder1 >$at_stderr
@@ -11668,12 +12366,10 @@ fi
 $at_traceon
 
 
-# The top-level CVS directory is not created by default.
-# I'm leaving basicb-1a and basicb-1b untouched, mostly, in
-# case we decide that the default should be reversed...
+# Verify that the top-level CVS directory is not created by default.
 $at_traceoff
-echo "basic.at:465: test -d CVS"
-echo basic.at:465 >$at_check_line_file
+echo "basic.at:463: test -d CVS"
+echo basic.at:463 >$at_check_line_file
 ( $at_traceon; test -d CVS ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
@@ -11685,7 +12381,7 @@ case $at_status in
    77) echo 77 > $at_status_file
             exit 77;;
    1) ;;
-   *) echo "basic.at:465: exit code was $at_status, expected 1"
+   *) echo "basic.at:463: exit code was $at_status, expected 1"
       at_failed=:;;
 esac
 if $at_failed; then
@@ -11698,21 +12394,21 @@ $at_traceon
 
 
 $at_traceoff
-echo "basic.at:468: cat first-dir/CVS/Repository"
-echo basic.at:468 >$at_check_line_file
-( $at_traceon; cat first-dir/CVS/Repository ) >$at_stdout 2>$at_stder1
+echo "basic.at:466: cat second-dir/CVS/Repository"
+echo basic.at:466 >$at_check_line_file
+( $at_traceon; cat second-dir/CVS/Repository ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
 grep -v '^ *+' $at_stder1 >$at_stderr
 at_failed=false
 $at_diff $at_devnull $at_stderr || at_failed=:
-echo >>$at_stdout; echo "first-dir
+echo >>$at_stdout; echo "second-dir
 " | $at_diff - $at_stdout || at_failed=:
 case $at_status in
    77) echo 77 > $at_status_file
             exit 77;;
    0) ;;
-   *) echo "basic.at:468: exit code was $at_status, expected 0"
+   *) echo "basic.at:466: exit code was $at_status, expected 0"
       at_failed=:;;
 esac
 if $at_failed; then
@@ -11730,13 +12426,13 @@ $at_traceon
     at_status=`cat $at_status_file`
     ;;
 
-  23 ) # 23. basic.at:474: Emptydir not special-l
-    at_setup_line='basic.at:474'
+  24 ) # 24. basic.at:472: Emptydir not special-l
+    at_setup_line='basic.at:472'
     at_desc='Emptydir not special-l'
-    $at_quiet $ECHO_N " 23: Emptydir not special-l                       $ECHO_C"
+    $at_quiet $ECHO_N " 24: Emptydir not special-l                       $ECHO_C"
     at_xfail=no
     (
-      echo "23. basic.at:474: testing ..."
+      echo "24. basic.at:472: testing ..."
       $at_traceon
 ###
 ### Begin AT_CVS_SETUP([Emptydir not special])
@@ -11750,8 +12446,8 @@ mkdir $at_group_dir/realcvsroot ||
 echo "$as_me: error: Cannot create directory \`$at_group_dir/realcvsroot'" >&2;}
    { (exit 1); exit 1; }; }
 $at_traceoff
-echo "basic.at:474: ln -s realcvsroot \$at_group_dir/cvsroot || exit 77"
-echo basic.at:474 >$at_check_line_file
+echo "basic.at:472: ln -s realcvsroot \$at_group_dir/cvsroot || exit 77"
+echo basic.at:472 >$at_check_line_file
 ( $at_traceon; ln -s realcvsroot $at_group_dir/cvsroot || exit 77 ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
@@ -11763,7 +12459,7 @@ case $at_status in
    77) echo 77 > $at_status_file
             exit 77;;
    0) ;;
-   *) echo "basic.at:474: exit code was $at_status, expected 0"
+   *) echo "basic.at:472: exit code was $at_status, expected 0"
       at_failed=:;;
 esac
 if $at_failed; then
@@ -11801,8 +12497,8 @@ RCSINIT=
 # Initialize the repository
 #
 $at_traceoff
-echo "basic.at:474: cvs init"
-echo basic.at:474 >$at_check_line_file
+echo "basic.at:472: cvs init"
+echo basic.at:472 >$at_check_line_file
 ( $at_traceon; cvs init ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
@@ -11814,7 +12510,7 @@ case $at_status in
    77) echo 77 > $at_status_file
             exit 77;;
    0) ;;
-   *) echo "basic.at:474: exit code was $at_status, expected 0"
+   *) echo "basic.at:472: exit code was $at_status, expected 0"
       at_failed=:;;
 esac
 if $at_failed; then
@@ -11832,8 +12528,8 @@ $at_traceon
 mkdir top
 cd top
 $at_traceoff
-echo "basic.at:474: cvs -Q co -l ."
-echo basic.at:474 >$at_check_line_file
+echo "basic.at:472: cvs -Q co -l ."
+echo basic.at:472 >$at_check_line_file
 ( $at_traceon; cvs -Q co -l . ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
@@ -11845,7 +12541,7 @@ case $at_status in
    77) echo 77 > $at_status_file
             exit 77;;
    0) ;;
-   *) echo "basic.at:474: exit code was $at_status, expected 0"
+   *) echo "basic.at:472: exit code was $at_status, expected 0"
       at_failed=:;;
 esac
 if $at_failed; then
@@ -11858,8 +12554,8 @@ $at_traceon
 
 mkdir project
 $at_traceoff
-echo "basic.at:474: cvs -Q add project"
-echo basic.at:474 >$at_check_line_file
+echo "basic.at:472: cvs -Q add project"
+echo basic.at:472 >$at_check_line_file
 ( $at_traceon; cvs -Q add project ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
@@ -11871,7 +12567,7 @@ case $at_status in
    77) echo 77 > $at_status_file
             exit 77;;
    0) ;;
-   *) echo "basic.at:474: exit code was $at_status, expected 0"
+   *) echo "basic.at:472: exit code was $at_status, expected 0"
       at_failed=:;;
 esac
 if $at_failed; then
@@ -11894,8 +12590,8 @@ rm -r top
 # created but the `cvs co' will not return an error.
 #
 $at_traceoff
-echo "basic.at:474: cvs -Q co project"
-echo basic.at:474 >$at_check_line_file
+echo "basic.at:472: cvs -Q co project"
+echo basic.at:472 >$at_check_line_file
 ( $at_traceon; cvs -Q co project ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
@@ -11907,7 +12603,7 @@ case $at_status in
    77) echo 77 > $at_status_file
             exit 77;;
    0) ;;
-   *) echo "basic.at:474: exit code was $at_status, expected 0"
+   *) echo "basic.at:472: exit code was $at_status, expected 0"
       at_failed=:;;
 esac
 if $at_failed; then
@@ -11927,13 +12623,19 @@ echo "$as_me: error: Couldn't cd to \\`project'.  Did \$HOME get set incorrectly
 ### End AT_CVS_SETUP([Emptydir not special])
 ###
 
+# FIXME: This test should probably be broken into several, though I'm not sure
+# where.  It came out of basicb in the old sanity.sh test suite, along with the
+# previous test and the following two, but I didn't have time to find where
+# else this one should break since what look like good break points still
+# depend on previous tests for setup.
+
 # Note that the name Emptydir is chosen to test that CVS just
 # treats it like any other directory name.  It should be
 # special only when it is directly in $CVSROOT/CVSROOT.
 mkdir Emptydir sdir2
 $at_traceoff
-echo "basic.at:483: cvs add Emptydir sdir2"
-echo basic.at:483 >$at_check_line_file
+echo "basic.at:487: cvs add Emptydir sdir2"
+echo basic.at:487 >$at_check_line_file
 ( $at_traceon; cvs add Emptydir sdir2 ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
@@ -11947,7 +12649,7 @@ case $at_status in
    77) echo 77 > $at_status_file
             exit 77;;
    0) ;;
-   *) echo "basic.at:483: exit code was $at_status, expected 0"
+   *) echo "basic.at:487: exit code was $at_status, expected 0"
       at_failed=:;;
 esac
 if $at_failed; then
@@ -11962,8 +12664,8 @@ $at_traceon
 cd Emptydir
 echo sfile1 starts >sfile1
 $at_traceoff
-echo "basic.at:490: cvs -n add sfile1"
-echo basic.at:490 >$at_check_line_file
+echo "basic.at:494: cvs -n add sfile1"
+echo basic.at:494 >$at_check_line_file
 ( $at_traceon; cvs -n add sfile1 ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
@@ -11977,7 +12679,7 @@ case $at_status in
    77) echo 77 > $at_status_file
             exit 77;;
    0) ;;
-   *) echo "basic.at:490: exit code was $at_status, expected 0"
+   *) echo "basic.at:494: exit code was $at_status, expected 0"
       at_failed=:;;
 esac
 if $at_failed; then
@@ -11990,8 +12692,8 @@ $at_traceon
 
 
 $at_traceoff
-echo "basic.at:501: cvs status sfile1"
-echo basic.at:501 >$at_check_line_file
+echo "basic.at:505: cvs status sfile1"
+echo basic.at:505 >$at_check_line_file
 ( $at_traceon; cvs status sfile1 ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
@@ -12010,7 +12712,7 @@ case $at_status in
    77) echo 77 > $at_status_file
             exit 77;;
    0) ;;
-   *) echo "basic.at:501: exit code was $at_status, expected 0"
+   *) echo "basic.at:505: exit code was $at_status, expected 0"
       at_failed=:;;
 esac
 if $at_failed; then
@@ -12023,8 +12725,8 @@ $at_traceon
 
 
 $at_traceoff
-echo "basic.at:506: cvs add sfile1"
-echo basic.at:506 >$at_check_line_file
+echo "basic.at:510: cvs add sfile1"
+echo basic.at:510 >$at_check_line_file
 ( $at_traceon; cvs add sfile1 ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
@@ -12038,7 +12740,7 @@ case $at_status in
    77) echo 77 > $at_status_file
             exit 77;;
    0) ;;
-   *) echo "basic.at:506: exit code was $at_status, expected 0"
+   *) echo "basic.at:510: exit code was $at_status, expected 0"
       at_failed=:;;
 esac
 if $at_failed; then
@@ -12051,8 +12753,8 @@ $at_traceon
 
 
 $at_traceoff
-echo "basic.at:518: cvs status sfile1"
-echo basic.at:518 >$at_check_line_file
+echo "basic.at:522: cvs status sfile1"
+echo basic.at:522 >$at_check_line_file
 ( $at_traceon; cvs status sfile1 ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
@@ -12073,7 +12775,7 @@ case $at_status in
    77) echo 77 > $at_status_file
             exit 77;;
    0) ;;
-   *) echo "basic.at:518: exit code was $at_status, expected 0"
+   *) echo "basic.at:522: exit code was $at_status, expected 0"
       at_failed=:;;
 esac
 if $at_failed; then
@@ -12088,8 +12790,8 @@ $at_traceon
 cd ../sdir2
 echo sfile2 starts >sfile2
 $at_traceoff
-echo "basic.at:525: cvs add sfile2"
-echo basic.at:525 >$at_check_line_file
+echo "basic.at:529: cvs add sfile2"
+echo basic.at:529 >$at_check_line_file
 ( $at_traceon; cvs add sfile2 ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
@@ -12103,7 +12805,7 @@ case $at_status in
    77) echo 77 > $at_status_file
             exit 77;;
    0) ;;
-   *) echo "basic.at:525: exit code was $at_status, expected 0"
+   *) echo "basic.at:529: exit code was $at_status, expected 0"
       at_failed=:;;
 esac
 if $at_failed; then
@@ -12116,8 +12818,8 @@ $at_traceon
 
 
 $at_traceoff
-echo "basic.at:530: cvs -q ci CVS"
-echo basic.at:530 >$at_check_line_file
+echo "basic.at:534: cvs -q ci CVS"
+echo basic.at:534 >$at_check_line_file
 ( $at_traceon; cvs -q ci CVS ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
@@ -12131,7 +12833,7 @@ case $at_status in
    77) echo 77 > $at_status_file
             exit 77;;
    0) ;;
-   *) echo "basic.at:530: exit code was $at_status, expected 0"
+   *) echo "basic.at:534: exit code was $at_status, expected 0"
       at_failed=:;;
 esac
 if $at_failed; then
@@ -12145,8 +12847,8 @@ $at_traceon
 
 cd ..
 $at_traceoff
-echo "basic.at:546: cvs -q ci -m add"
-echo basic.at:546 >$at_check_line_file
+echo "basic.at:550: cvs -q ci -m add"
+echo basic.at:550 >$at_check_line_file
 ( $at_traceon; cvs -q ci -m add ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
@@ -12170,7 +12872,7 @@ case $at_status in
    77) echo 77 > $at_status_file
             exit 77;;
    0) ;;
-   *) echo "basic.at:546: exit code was $at_status, expected 0"
+   *) echo "basic.at:550: exit code was $at_status, expected 0"
       at_failed=:;;
 esac
 if $at_failed; then
@@ -12184,8 +12886,8 @@ $at_traceon
 
 echo sfile1 develops >Emptydir/sfile1
 $at_traceoff
-echo "basic.at:554: cvs -q ci -m modify"
-echo basic.at:554 >$at_check_line_file
+echo "basic.at:558: cvs -q ci -m modify"
+echo basic.at:558 >$at_check_line_file
 ( $at_traceon; cvs -q ci -m modify ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
@@ -12201,7 +12903,7 @@ case $at_status in
    77) echo 77 > $at_status_file
             exit 77;;
    0) ;;
-   *) echo "basic.at:554: exit code was $at_status, expected 0"
+   *) echo "basic.at:558: exit code was $at_status, expected 0"
       at_failed=:;;
 esac
 if $at_failed; then
@@ -12213,22 +12915,381 @@ fi
 $at_traceon
 
 
+$at_traceoff
+echo "basic.at:563: cvs -q tag release-1"
+echo basic.at:563 >$at_check_line_file
+( $at_traceon; cvs -q tag release-1 ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+$at_diff $at_devnull $at_stderr || at_failed=:
+echo >>$at_stdout; echo "T Emptydir/sfile1
+T sdir2/sfile2
+" | $at_diff - $at_stdout || at_failed=:
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   0) ;;
+   *) echo "basic.at:563: exit code was $at_status, expected 0"
+      at_failed=:;;
+esac
+if $at_failed; then
+
+  echo 1 > $at_status_file
+  exit 1
+fi
+
+$at_traceon
+
+
+echo not in time for release-1 >sdir2/sfile2
+$at_traceoff
+echo "basic.at:571: cvs -q ci -m modify-2"
+echo basic.at:571 >$at_check_line_file
+( $at_traceon; cvs -q ci -m modify-2 ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+$at_diff $at_devnull $at_stderr || at_failed=:
+echo >>$at_stdout; echo "Checking in sdir2/sfile2;
+$CVSROOT_DIR/project/sdir2/sfile2,v  <--  sfile2
+new revision: 1.2; previous revision: 1.1
+done
+" | $at_diff - $at_stdout || at_failed=:
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   0) ;;
+   *) echo "basic.at:571: exit code was $at_status, expected 0"
+      at_failed=:;;
+esac
+if $at_failed; then
+
+  echo 1 > $at_status_file
+  exit 1
+fi
+
+$at_traceon
+
+
+# FIXCVS:
+# See if CVS can correctly notice when an invalid numeric
+# revision is specified.
+# AT_CHECK([cvs diff -r 1.5 -r 1.7 sfile2],,,
+# [error msg
+# ])
+
+# Test that we recurse into the correct directory when checking
+# for existing files, even if co -d is in use.
+cd ..
+touch project/extra
+$at_traceoff
+echo "basic.at:587: cvs -q co -d project1 project"
+echo basic.at:587 >$at_check_line_file
+( $at_traceon; cvs -q co -d project1 project ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+$at_diff $at_devnull $at_stderr || at_failed=:
+echo >>$at_stdout; echo "U project1/Emptydir/sfile1
+U project1/sdir2/sfile2
+" | $at_diff - $at_stdout || at_failed=:
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   0) ;;
+   *) echo "basic.at:587: exit code was $at_status, expected 0"
+      at_failed=:;;
+esac
+if $at_failed; then
+
+  echo 1 > $at_status_file
+  exit 1
+fi
+
+$at_traceon
+
+
+# FIXCVS?  The next test used to check things out like this:
+#   U newdir/Emptydir/sfile1
+#   U newdir/sdir2/sfile2
+# but that's difficult to do.  The whole "shorten" thing
+# is pretty bogus, because it will break on things
+# like "cvs co foo/bar baz/quux".  Unless there's some
+# pretty detailed expansion and analysis of the command-line
+# arguments, we shouldn't do "shorten" stuff at all.
+#
+# DRP: I'm not sure how detailed it would need to be - either all the path
+# prefixes are the same, in which case the matching parts are shortened, or
+# they are not, in which case they are grouped:
+#
+#   cvs co -d short project/Emptydir project/sdir2
+#   U short/Emptydir/sfile1
+#   U short/sdir2
+#
+#   cvs co -d group foo/bar baz/quux
+#   U group/foo/bar/file1
+#   U group/baz/quux/file2
+#
+# How do you group under project if you do want to?  How about:
+#
+#   cvs co -d group/project project/Emptydir project/sdir2
+#   U group/project/Emptydir/sfile1
+#   U group/project/sdir2/sfile2
+#
+$at_traceoff
+echo "basic.at:619: cvs -q co -d newdir -r release-1 project/Emptydir project/sdir2"
+echo basic.at:619 >$at_check_line_file
+( $at_traceon; cvs -q co -d newdir -r release-1 project/Emptydir project/sdir2 ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+$at_diff $at_devnull $at_stderr || at_failed=:
+echo >>$at_stdout; echo "U newdir/project/Emptydir/sfile1
+U newdir/project/sdir2/sfile2
+" | $at_diff - $at_stdout || at_failed=:
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   0) ;;
+   *) echo "basic.at:619: exit code was $at_status, expected 0"
+      at_failed=:;;
+esac
+if $at_failed; then
+
+  echo 1 > $at_status_file
+  exit 1
+fi
+
+$at_traceon
+
+
+# Verify that the top-level CVS directory is not created by default.
+$at_traceoff
+echo "basic.at:622: test -d CVS"
+echo basic.at:622 >$at_check_line_file
+( $at_traceon; test -d CVS ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+$at_diff $at_devnull $at_stderr || at_failed=:
+$at_diff $at_devnull $at_stdout || at_failed=:
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   1) ;;
+   *) echo "basic.at:622: exit code was $at_status, expected 1"
+      at_failed=:;;
+esac
+if $at_failed; then
+
+  echo 1 > $at_status_file
+  exit 1
+fi
+
+$at_traceon
+
+
+# Verify that our CVS/Repository files hold what we expect.
+$at_traceoff
+echo "basic.at:627: cat newdir/CVS/Repository"
+echo basic.at:627 >$at_check_line_file
+( $at_traceon; cat newdir/CVS/Repository ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+$at_diff $at_devnull $at_stderr || at_failed=:
+echo >>$at_stdout; echo ".
+" | $at_diff - $at_stdout || at_failed=:
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   0) ;;
+   *) echo "basic.at:627: exit code was $at_status, expected 0"
+      at_failed=:;;
+esac
+if $at_failed; then
+
+  echo 1 > $at_status_file
+  exit 1
+fi
+
+$at_traceon
+
+$at_traceoff
+echo "basic.at:630: cat newdir/project/CVS/Repository"
+echo basic.at:630 >$at_check_line_file
+( $at_traceon; cat newdir/project/CVS/Repository ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+$at_diff $at_devnull $at_stderr || at_failed=:
+echo >>$at_stdout; echo "project
+" | $at_diff - $at_stdout || at_failed=:
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   0) ;;
+   *) echo "basic.at:630: exit code was $at_status, expected 0"
+      at_failed=:;;
+esac
+if $at_failed; then
+
+  echo 1 > $at_status_file
+  exit 1
+fi
+
+$at_traceon
+
+$at_traceoff
+echo "basic.at:633: cat newdir/project/Emptydir/CVS/Repository"
+echo basic.at:633 >$at_check_line_file
+( $at_traceon; cat newdir/project/Emptydir/CVS/Repository ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+$at_diff $at_devnull $at_stderr || at_failed=:
+echo >>$at_stdout; echo "project/Emptydir
+" | $at_diff - $at_stdout || at_failed=:
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   0) ;;
+   *) echo "basic.at:633: exit code was $at_status, expected 0"
+      at_failed=:;;
+esac
+if $at_failed; then
+
+  echo 1 > $at_status_file
+  exit 1
+fi
+
+$at_traceon
+
+$at_traceoff
+echo "basic.at:636: cat newdir/project/sdir2/CVS/Repository"
+echo basic.at:636 >$at_check_line_file
+( $at_traceon; cat newdir/project/sdir2/CVS/Repository ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+$at_diff $at_devnull $at_stderr || at_failed=:
+echo >>$at_stdout; echo "project/sdir2
+" | $at_diff - $at_stdout || at_failed=:
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   0) ;;
+   *) echo "basic.at:636: exit code was $at_status, expected 0"
+      at_failed=:;;
+esac
+if $at_failed; then
+
+  echo 1 > $at_status_file
+  exit 1
+fi
+
+$at_traceon
+
+
+# Verify that our project files contain what we expect.
+$at_traceoff
+echo "basic.at:641: cat newdir/project/Emptydir/sfile1"
+echo basic.at:641 >$at_check_line_file
+( $at_traceon; cat newdir/project/Emptydir/sfile1 ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+$at_diff $at_devnull $at_stderr || at_failed=:
+echo >>$at_stdout; echo "sfile1 develops
+" | $at_diff - $at_stdout || at_failed=:
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   0) ;;
+   *) echo "basic.at:641: exit code was $at_status, expected 0"
+      at_failed=:;;
+esac
+if $at_failed; then
+
+  echo 1 > $at_status_file
+  exit 1
+fi
+
+$at_traceon
+
+$at_traceoff
+echo "basic.at:644: cat newdir/project/sdir2/sfile2"
+echo basic.at:644 >$at_check_line_file
+( $at_traceon; cat newdir/project/sdir2/sfile2 ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+$at_diff $at_devnull $at_stderr || at_failed=:
+echo >>$at_stdout; echo "sfile2 starts
+" | $at_diff - $at_stdout || at_failed=:
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   0) ;;
+   *) echo "basic.at:644: exit code was $at_status, expected 0"
+      at_failed=:;;
+esac
+if $at_failed; then
+
+  echo 1 > $at_status_file
+  exit 1
+fi
+
+$at_traceon
+
+
+# FIXCVS:
+# Hmm, this might be a case for CVSNULLREPOS, but CVS doesn't
+# seem to deal with it...
+# AT_CHECK([cvs -q co -d sub1/sub2 project],,
+# [U sub1/sub2/Emptydir/sfile1
+# U sub1/sub2/sdir2/sfile2
+# ])
+#
+# cd sub1
+# AT_CHECK([cvs -q update ./.])
+#
+# touch xx
+# AT_CHECK_NOESCAPE([cvs add xx],,
+# [$SPROG add: scheduling file \`xx' for addition
+# $SPROG add: use \`$SPROG commit' to add this file permanently
+# ])
+#
+# to test: sub1/sub2/sub3
+
       $at_traceoff
       $at_times_p && times >$at_times_file
     ) 5>&1 2>&1 | eval $at_tee_pipe
     at_status=`cat $at_status_file`
     ;;
 
-  24 ) # 24. basic.at:560: unprocessed-l
-    at_setup_line='basic.at:560'
-    at_desc='unprocessed-l'
-    $at_quiet $ECHO_N " 24: unprocessed-l                                $ECHO_C"
+  25 ) # 25. basic.at:669: delete last revision-l
+    at_setup_line='basic.at:669'
+    at_desc='delete last revision-l'
+    $at_quiet $ECHO_N " 25: delete last revision-l                       $ECHO_C"
     at_xfail=no
     (
-      echo "24. basic.at:560: testing ..."
+      echo "25. basic.at:669: testing ..."
       $at_traceon
 ###
-### Begin AT_CVS_SETUP([unprocessed])
+### Begin AT_CVS_SETUP([delete last revision])
 ###
 
 #
@@ -12239,8 +13300,8 @@ mkdir $at_group_dir/realcvsroot ||
 echo "$as_me: error: Cannot create directory \`$at_group_dir/realcvsroot'" >&2;}
    { (exit 1); exit 1; }; }
 $at_traceoff
-echo "basic.at:560: ln -s realcvsroot \$at_group_dir/cvsroot || exit 77"
-echo basic.at:560 >$at_check_line_file
+echo "basic.at:669: ln -s realcvsroot \$at_group_dir/cvsroot || exit 77"
+echo basic.at:669 >$at_check_line_file
 ( $at_traceon; ln -s realcvsroot $at_group_dir/cvsroot || exit 77 ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
@@ -12252,7 +13313,7 @@ case $at_status in
    77) echo 77 > $at_status_file
             exit 77;;
    0) ;;
-   *) echo "basic.at:560: exit code was $at_status, expected 0"
+   *) echo "basic.at:669: exit code was $at_status, expected 0"
       at_failed=:;;
 esac
 if $at_failed; then
@@ -12290,8 +13351,8 @@ RCSINIT=
 # Initialize the repository
 #
 $at_traceoff
-echo "basic.at:560: cvs init"
-echo basic.at:560 >$at_check_line_file
+echo "basic.at:669: cvs init"
+echo basic.at:669 >$at_check_line_file
 ( $at_traceon; cvs init ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
@@ -12303,7 +13364,7 @@ case $at_status in
    77) echo 77 > $at_status_file
             exit 77;;
    0) ;;
-   *) echo "basic.at:560: exit code was $at_status, expected 0"
+   *) echo "basic.at:669: exit code was $at_status, expected 0"
       at_failed=:;;
 esac
 if $at_failed; then
@@ -12321,8 +13382,8 @@ $at_traceon
 mkdir top
 cd top
 $at_traceoff
-echo "basic.at:560: cvs -Q co -l ."
-echo basic.at:560 >$at_check_line_file
+echo "basic.at:669: cvs -Q co -l ."
+echo basic.at:669 >$at_check_line_file
 ( $at_traceon; cvs -Q co -l . ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
@@ -12334,7 +13395,7 @@ case $at_status in
    77) echo 77 > $at_status_file
             exit 77;;
    0) ;;
-   *) echo "basic.at:560: exit code was $at_status, expected 0"
+   *) echo "basic.at:669: exit code was $at_status, expected 0"
       at_failed=:;;
 esac
 if $at_failed; then
@@ -12347,8 +13408,8 @@ $at_traceon
 
 mkdir project
 $at_traceoff
-echo "basic.at:560: cvs -Q add project"
-echo basic.at:560 >$at_check_line_file
+echo "basic.at:669: cvs -Q add project"
+echo basic.at:669 >$at_check_line_file
 ( $at_traceon; cvs -Q add project ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
@@ -12360,7 +13421,7 @@ case $at_status in
    77) echo 77 > $at_status_file
             exit 77;;
    0) ;;
-   *) echo "basic.at:560: exit code was $at_status, expected 0"
+   *) echo "basic.at:669: exit code was $at_status, expected 0"
       at_failed=:;;
 esac
 if $at_failed; then
@@ -12383,8 +13444,8 @@ rm -r top
 # created but the `cvs co' will not return an error.
 #
 $at_traceoff
-echo "basic.at:560: cvs -Q co project"
-echo basic.at:560 >$at_check_line_file
+echo "basic.at:669: cvs -Q co project"
+echo basic.at:669 >$at_check_line_file
 ( $at_traceon; cvs -Q co project ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
@@ -12396,7 +13457,7 @@ case $at_status in
    77) echo 77 > $at_status_file
             exit 77;;
    0) ;;
-   *) echo "basic.at:560: exit code was $at_status, expected 0"
+   *) echo "basic.at:669: exit code was $at_status, expected 0"
       at_failed=:;;
 esac
 if $at_failed; then
@@ -12413,24 +13474,83 @@ echo "$as_me: error: Couldn't cd to \\`project'.  Did \$HOME get set incorrectly
    { (exit 1); exit 1; }; }
 
 ###
-### End AT_CVS_SETUP([unprocessed])
+### End AT_CVS_SETUP([delete last revision])
 ###
 
+
+
+mkdir sdir
 $at_traceoff
-echo "basic.at:562: exit 77"
-echo basic.at:562 >$at_check_line_file
-( $at_traceon; exit 77 ) >$at_stdout 2>$at_stder1
+echo "basic.at:673: cvs add sdir"
+echo basic.at:673 >$at_check_line_file
+( $at_traceon; cvs add sdir ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
 grep -v '^ *+' $at_stder1 >$at_stderr
 at_failed=false
 $at_diff $at_devnull $at_stderr || at_failed=:
-$at_diff $at_devnull $at_stdout || at_failed=:
+echo >>$at_stdout; echo "Directory $CVSROOT_DIR/project/sdir added to the repository
+" | $at_diff - $at_stdout || at_failed=:
 case $at_status in
    77) echo 77 > $at_status_file
             exit 77;;
    0) ;;
-   *) echo "basic.at:562: exit code was $at_status, expected 0"
+   *) echo "basic.at:673: exit code was $at_status, expected 0"
+      at_failed=:;;
+esac
+if $at_failed; then
+
+  echo 1 > $at_status_file
+  exit 1
+fi
+
+$at_traceon
+
+cd sdir
+mkdir ssdir
+$at_traceoff
+echo "basic.at:673: cvs add ssdir"
+echo basic.at:673 >$at_check_line_file
+( $at_traceon; cvs add ssdir ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+$at_diff $at_devnull $at_stderr || at_failed=:
+echo >>$at_stdout; echo "Directory $CVSROOT_DIR/project/sdir/ssdir added to the repository
+" | $at_diff - $at_stdout || at_failed=:
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   0) ;;
+   *) echo "basic.at:673: exit code was $at_status, expected 0"
+      at_failed=:;;
+esac
+if $at_failed; then
+
+  echo 1 > $at_status_file
+  exit 1
+fi
+
+$at_traceon
+
+cd ssdir
+echo ssfile >ssfile
+$at_traceoff
+echo "basic.at:673: cvs add ssfile"
+echo basic.at:673 >$at_check_line_file
+( $at_traceon; cvs add ssfile ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+echo stderr:; tee stderr <$at_stderr
+echo stdout:; tee stdout <$at_stdout
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   0) ;;
+   *) echo "basic.at:673: exit code was $at_status, expected 0"
       at_failed=:;;
 esac
 if $at_failed; then
@@ -12442,130 +13562,199 @@ fi
 $at_traceon
 
 
-	  dotest basicb-7 "${testcvs} -q tag release-1" 'T Emptydir/sfile1
-T sdir2/sfile2'
-	  echo not in time for release-1 >sdir2/sfile2
-	  dotest basicb-8 "${testcvs} -q ci -m modify-2" \
-"Checking in sdir2/sfile2;
-${CVSROOT_DIR}/first-dir/sdir2/sfile2,v  <--  sfile2
-new revision: 1\.2; previous revision: 1\.1
-done"
-	  # See if CVS can correctly notice when an invalid numeric
-	  # revision is specified.
-	  # Commented out until we get around to fixing CVS
-:	  dotest basicb-8a0 "${testcvs} diff -r 1.5 -r 1.7 sfile2" 'error msg'
-	  cd ..
+sed \
+    -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
+    -e "s/^P /U /" \
+    <stdout >nstdout
+rm stdout
 
-	  # Test that we recurse into the correct directory when checking
-	  # for existing files, even if co -d is in use.
-	  touch first-dir/extra
-	  dotest basicb-cod-1 "${testcvs} -q co -d first-dir1 first-dir" \
-'U first-dir1/Emptydir/sfile1
-U first-dir1/sdir2/sfile2'
-	  rm -r first-dir1
+$at_traceoff
+echo "basic.at:673: (cat nstdout; cat stderr >&2)"
+echo basic.at:673 >$at_check_line_file
+( $at_traceon; (cat nstdout; cat stderr >&2) ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+echo >>$at_stderr; echo "$SPROG add: scheduling file \`ssfile' for addition
+$SPROG add: use \`$SPROG commit' to add this file permanently
+" | $at_diff - $at_stderr || at_failed=:
+$at_diff $at_devnull $at_stdout || at_failed=:
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   0) ;;
+   *) echo "basic.at:673: exit code was $at_status, expected 0"
+      at_failed=:;;
+esac
+if $at_failed; then
 
-	  rm -r first-dir
+  echo 1 > $at_status_file
+  exit 1
+fi
 
-	  # FIXME? basicb-9 used to check things out like this:
-	  #   U newdir/Emptydir/sfile1
-	  #   U newdir/sdir2/sfile2
-	  # but that's difficult to do.  The whole "shorten" thing
-	  # is pretty bogus, because it will break on things
-	  # like "cvs co foo/bar baz/quux".  Unless there's some
-	  # pretty detailed expansion and analysis of the command-line
-	  # arguments, we shouldn't do "shorten" stuff at all.
+$at_traceon
 
-	  dotest basicb-9 \
-"${testcvs} -q co -d newdir -r release-1 first-dir/Emptydir first-dir/sdir2" \
-'U newdir/first-dir/Emptydir/sfile1
-U newdir/first-dir/sdir2/sfile2'
-
-	  # basicb-9a and basicb-9b: see note about basicb-1a
-
-	  dotest_fail basicb-9a "test -d CVS" ''
-
-	  dotest basicb-9c "cat newdir/CVS/Repository" "\."
-	  dotest basicb-9d "cat newdir/first-dir/CVS/Repository" \
-"${CVSROOT_DIR}/first-dir" \
-"first-dir"
-	  dotest basicb-9e "cat newdir/first-dir/Emptydir/CVS/Repository" \
-"${CVSROOT_DIR}/first-dir/Emptydir" \
-"first-dir/Emptydir"
-	  dotest basicb-9f "cat newdir/first-dir/sdir2/CVS/Repository" \
-"${CVSROOT_DIR}/first-dir/sdir2" \
-"first-dir/sdir2"
-
-	  dotest basicb-10 "cat newdir/first-dir/Emptydir/sfile1 newdir/first-dir/sdir2/sfile2" \
-"sfile1 develops
-sfile2 starts"
-
-	  rm -r newdir
-
-	  # Hmm, this might be a case for CVSNULLREPOS, but CVS doesn't
-	  # seem to deal with it...
-	  if false; then
-	  dotest basicb-11 "${testcvs} -q co -d sub1/sub2 first-dir" \
-"U sub1/sub2/Emptydir/sfile1
-U sub1/sub2/sdir2/sfile2"
-	  cd sub1
-	  dotest basicb-12 "${testcvs} -q update ./." ''
-	  touch xx
-	  dotest basicb-13 "${testcvs} add xx" fixme
-	  cd ..
-	  rm -r sub1
-	  # to test: sub1/sub2/sub3
-	  fi # end of tests commented out.
-
-	  # Create a second directory.
-	  mkdir 1
-	  cd 1
-	  dotest basicb-14 "${testcvs} -q co -l ." 'U topfile'
-	  mkdir second-dir
-	  dotest basicb-15 "${testcvs} add second-dir" \
-"Directory ${CVSROOT_DIR}/second-dir added to the repository"
-	  cd second-dir
-	  touch aa
-	  dotest basicb-16 "${testcvs} add aa" \
-"${SPROG} add: scheduling file .aa. for addition
-${SPROG} add: use .${SPROG} commit. to add this file permanently"
-	  dotest basicb-17 "${testcvs} -q ci -m add" \
-"RCS file: ${CVSROOT_DIR}/second-dir/aa,v
+rm stderr nstdout
+$at_traceoff
+echo "basic.at:673: cvs -q ci -m add-it"
+echo basic.at:673 >$at_check_line_file
+( $at_traceon; cvs -q ci -m add-it ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+$at_diff $at_devnull $at_stderr || at_failed=:
+echo >>$at_stdout; echo "RCS file: $CVSROOT_DIR/project/sdir/ssdir/ssfile,v
 done
-Checking in aa;
-${CVSROOT_DIR}/second-dir/aa,v  <--  aa
-initial revision: 1\.1
-done"
-	  cd ..
+Checking in ssfile;
+$CVSROOT_DIR/project/sdir/ssdir/ssfile,v  <--  ssfile
+initial revision: 1.1
+done
+" | $at_diff - $at_stdout || at_failed=:
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   0) ;;
+   *) echo "basic.at:673: exit code was $at_status, expected 0"
+      at_failed=:;;
+esac
+if $at_failed; then
 
-	  # Try to remove all revisions in a file.
-	  dotest_fail basicb-o1 "${testcvs} admin -o1.1 topfile" \
-"RCS file: ${CVSROOT_DIR}/topfile,v
-deleting revision 1\.1
-${SPROG} \admin aborted\: attempt to delete all revisions"
-	  dotest basicb-o2 "${testcvs} -q update -d first-dir" \
-"U first-dir/Emptydir/sfile1
-U first-dir/sdir2/sfile2"
-	  dotest_fail basicb-o3 \
-"${testcvs} admin -o1.1:1.2 first-dir/sdir2/sfile2" \
-"RCS file: ${CVSROOT_DIR}/first-dir/sdir2/sfile2,v
-deleting revision 1\.2
-deleting revision 1\.1
-${SPROG} \admin aborted\: attempt to delete all revisions"
-	  cd ..
-	  rm -r 1
+  echo 1 > $at_status_file
+  exit 1
+fi
 
-	  mkdir 1; cd 1
-	  # Note that -H is an invalid option.
-	  # I suspect that the choice between "illegal" and "invalid"
-	  # depends on the user's environment variables, the phase
-	  # of the moon (weirdness with optind), and who knows what else.
-	  # I've been seeing "illegal"...
-	  # And I switched it to "invalid". -DRP
-	  dotest_fail basicb-21 "${testcvs} -q admin -H" \
-"admin: invalid option -- H
-${CPROG} \admin aborted\: specify ${CPROG} -H admin for usage information"
-	  cd ..
-	  rmdir 1
+$at_traceon
+
+cd ../..
+
+
+cd sdir/ssdir
+
+# Try to remove all revisions in a file.
+$at_traceoff
+echo "basic.at:683: cvs admin -o1.1 ssfile"
+echo basic.at:683 >$at_check_line_file
+( $at_traceon; cvs admin -o1.1 ssfile ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+echo >>$at_stderr; echo "$SPROG [admin aborted]: attempt to delete all revisions
+" | $at_diff - $at_stderr || at_failed=:
+echo >>$at_stdout; echo "RCS file: $CVSROOT_DIR/project/sdir/ssdir/ssfile,v
+deleting revision 1.1
+" | $at_diff - $at_stdout || at_failed=:
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   1) ;;
+   *) echo "basic.at:683: exit code was $at_status, expected 1"
+      at_failed=:;;
+esac
+if $at_failed; then
+
+  echo 1 > $at_status_file
+  exit 1
+fi
+
+$at_traceon
+
+
+echo I will be deleted second. >>ssfile
+$at_traceoff
+echo "basic.at:691: cvs -q ci -mr2"
+echo basic.at:691 >$at_check_line_file
+( $at_traceon; cvs -q ci -mr2 ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+$at_diff $at_devnull $at_stderr || at_failed=:
+echo >>$at_stdout; echo "Checking in ssfile;
+$CVSROOT_DIR/project/sdir/ssdir/ssfile,v  <--  ssfile
+new revision: 1.2; previous revision: 1.1
+done
+" | $at_diff - $at_stdout || at_failed=:
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   0) ;;
+   *) echo "basic.at:691: exit code was $at_status, expected 0"
+      at_failed=:;;
+esac
+if $at_failed; then
+
+  echo 1 > $at_status_file
+  exit 1
+fi
+
+$at_traceon
+
+
+echo I will be deleted first. >>ssfile
+echo "It's kinda like seeing the future." >>ssfile
+$at_traceoff
+echo "basic.at:700: cvs -q ci -mr3"
+echo basic.at:700 >$at_check_line_file
+( $at_traceon; cvs -q ci -mr3 ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+$at_diff $at_devnull $at_stderr || at_failed=:
+echo >>$at_stdout; echo "Checking in ssfile;
+$CVSROOT_DIR/project/sdir/ssdir/ssfile,v  <--  ssfile
+new revision: 1.3; previous revision: 1.2
+done
+" | $at_diff - $at_stdout || at_failed=:
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   0) ;;
+   *) echo "basic.at:700: exit code was $at_status, expected 0"
+      at_failed=:;;
+esac
+if $at_failed; then
+
+  echo 1 > $at_status_file
+  exit 1
+fi
+
+$at_traceon
+
+
+$at_traceoff
+echo "basic.at:709: cvs admin -o1.1:1.3 ssfile"
+echo basic.at:709 >$at_check_line_file
+( $at_traceon; cvs admin -o1.1:1.3 ssfile ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+echo >>$at_stderr; echo "$SPROG [admin aborted]: attempt to delete all revisions
+" | $at_diff - $at_stderr || at_failed=:
+echo >>$at_stdout; echo "RCS file: $CVSROOT_DIR/project/sdir/ssdir/ssfile,v
+deleting revision 1.3
+deleting revision 1.2
+deleting revision 1.1
+" | $at_diff - $at_stdout || at_failed=:
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   1) ;;
+   *) echo "basic.at:709: exit code was $at_status, expected 1"
+      at_failed=:;;
+esac
+if $at_failed; then
+
+  echo 1 > $at_status_file
+  exit 1
+fi
+
+$at_traceon
+
 
       $at_traceoff
       $at_times_p && times >$at_times_file
@@ -12573,13 +13762,248 @@ ${CPROG} \admin aborted\: specify ${CPROG} -H admin for usage information"
     at_status=`cat $at_status_file`
     ;;
 
-  25 ) # 25. basic.at:16: Operations on empty projects-r
-    at_setup_line='basic.at:16'
-    at_desc='Operations on empty projects-r'
-    $at_quiet $ECHO_N " 25: Operations on empty projects-r               $ECHO_C"
+  26 ) # 26. basic.at:715: no admin -H-l
+    at_setup_line='basic.at:715'
+    at_desc='no admin -H-l'
+    $at_quiet $ECHO_N " 26: no admin -H-l                                $ECHO_C"
     at_xfail=no
     (
-      echo "25. basic.at:16: testing ..."
+      echo "26. basic.at:715: testing ..."
+      $at_traceon
+###
+### Begin AT_CVS_SETUP([no admin -H])
+###
+
+#
+# Create a symlinked CVSROOT_DIR
+#
+mkdir $at_group_dir/realcvsroot ||
+  { { echo "$as_me:$LINENO: error: Cannot create directory \`$at_group_dir/realcvsroot'" >&5
+echo "$as_me: error: Cannot create directory \`$at_group_dir/realcvsroot'" >&2;}
+   { (exit 1); exit 1; }; }
+$at_traceoff
+echo "basic.at:715: ln -s realcvsroot \$at_group_dir/cvsroot || exit 77"
+echo basic.at:715 >$at_check_line_file
+( $at_traceon; ln -s realcvsroot $at_group_dir/cvsroot || exit 77 ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+$at_diff $at_devnull $at_stderr || at_failed=:
+$at_diff $at_devnull $at_stdout || at_failed=:
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   0) ;;
+   *) echo "basic.at:715: exit code was $at_status, expected 0"
+      at_failed=:;;
+esac
+if $at_failed; then
+
+  echo 1 > $at_status_file
+  exit 1
+fi
+
+$at_traceon
+
+
+#
+# Set CVSROOT_DIR, method, & CVSROOT
+#
+CVSROOT_DIR=$at_group_dir/cvsroot
+method=
+CVSROOT=$method$CVSROOT_DIR
+export CVSROOT
+SPROG=`basename $server`
+
+#
+# Clear a possibly damaging inherited environment.
+#
+
+# Avoid picking up any stray .cvsrc, etc., from the user running the tests
+mkdir home
+HOME=$at_group_dir/home; export HOME
+
+# Make sure this variable is not defined to anything that would
+# change the format of RCS dates.  Otherwise people using e.g.,
+# RCSINIT=-zLT get lots of spurious failures.
+RCSINIT=
+
+#
+# Initialize the repository
+#
+$at_traceoff
+echo "basic.at:715: cvs init"
+echo basic.at:715 >$at_check_line_file
+( $at_traceon; cvs init ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+$at_diff $at_devnull $at_stderr || at_failed=:
+$at_diff $at_devnull $at_stdout || at_failed=:
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   0) ;;
+   *) echo "basic.at:715: exit code was $at_status, expected 0"
+      at_failed=:;;
+esac
+if $at_failed; then
+
+  echo 1 > $at_status_file
+  exit 1
+fi
+
+$at_traceon
+
+
+#
+# Create the default project
+#
+mkdir top
+cd top
+$at_traceoff
+echo "basic.at:715: cvs -Q co -l ."
+echo basic.at:715 >$at_check_line_file
+( $at_traceon; cvs -Q co -l . ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+$at_diff $at_devnull $at_stderr || at_failed=:
+$at_diff $at_devnull $at_stdout || at_failed=:
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   0) ;;
+   *) echo "basic.at:715: exit code was $at_status, expected 0"
+      at_failed=:;;
+esac
+if $at_failed; then
+
+  echo 1 > $at_status_file
+  exit 1
+fi
+
+$at_traceon
+
+mkdir project
+$at_traceoff
+echo "basic.at:715: cvs -Q add project"
+echo basic.at:715 >$at_check_line_file
+( $at_traceon; cvs -Q add project ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+$at_diff $at_devnull $at_stderr || at_failed=:
+$at_diff $at_devnull $at_stdout || at_failed=:
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   0) ;;
+   *) echo "basic.at:715: exit code was $at_status, expected 0"
+      at_failed=:;;
+esac
+if $at_failed; then
+
+  echo 1 > $at_status_file
+  exit 1
+fi
+
+$at_traceon
+
+cd ..
+rm -r top
+
+#
+# Check out the default project and cd into the workspace.
+#
+# I'm checking for error returns form the cd and printing error messages since,
+# for instance, if the CVS executable picks up a ~/.cvsrc which causes empty
+# directories to be pruned by checkout, the project directory will not be
+# created but the `cvs co' will not return an error.
+#
+$at_traceoff
+echo "basic.at:715: cvs -Q co project"
+echo basic.at:715 >$at_check_line_file
+( $at_traceon; cvs -Q co project ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+$at_diff $at_devnull $at_stderr || at_failed=:
+$at_diff $at_devnull $at_stdout || at_failed=:
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   0) ;;
+   *) echo "basic.at:715: exit code was $at_status, expected 0"
+      at_failed=:;;
+esac
+if $at_failed; then
+
+  echo 1 > $at_status_file
+  exit 1
+fi
+
+$at_traceon
+
+cd project ||
+  { { echo "$as_me:$LINENO: error: Couldn't cd to \\`project'.  Did \$HOME get set incorrectly?" >&5
+echo "$as_me: error: Couldn't cd to \\`project'.  Did \$HOME get set incorrectly?" >&2;}
+   { (exit 1); exit 1; }; }
+
+###
+### End AT_CVS_SETUP([no admin -H])
+###
+
+
+
+# Why in the world do we check for this?
+# Note that -H is an invalid option.
+$at_traceoff
+echo "basic.at:724: cvs -q admin -H"
+echo basic.at:724 >$at_check_line_file
+( $at_traceon; cvs -q admin -H ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+echo >>$at_stderr; echo "admin: invalid option -- H
+$CPROG [admin aborted]: specify $CPROG -H admin for usage information
+" | $at_diff - $at_stderr || at_failed=:
+$at_diff $at_devnull $at_stdout || at_failed=:
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   1) ;;
+   *) echo "basic.at:724: exit code was $at_status, expected 1"
+      at_failed=:;;
+esac
+if $at_failed; then
+
+  echo 1 > $at_status_file
+  exit 1
+fi
+
+$at_traceon
+
+
+      $at_traceoff
+      $at_times_p && times >$at_times_file
+    ) 5>&1 2>&1 | eval $at_tee_pipe
+    at_status=`cat $at_status_file`
+    ;;
+
+  27 ) # 27. basic.at:16: Operations on empty projects-r
+    at_setup_line='basic.at:16'
+    at_desc='Operations on empty projects-r'
+    $at_quiet $ECHO_N " 27: Operations on empty projects-r               $ECHO_C"
+    at_xfail=no
+    (
+      echo "27. basic.at:16: testing ..."
       $at_traceon
 ###
 ### Begin AT_CVS_SETUP([Operations on empty projects])
@@ -12923,13 +14347,13 @@ $at_traceon
     at_status=`cat $at_status_file`
     ;;
 
-  26 ) # 26. basic.at:30: Adding directories and files-r
+  28 ) # 28. basic.at:30: Adding directories and files-r
     at_setup_line='basic.at:30'
     at_desc='Adding directories and files-r'
-    $at_quiet $ECHO_N " 26: Adding directories and files-r               $ECHO_C"
+    $at_quiet $ECHO_N " 28: Adding directories and files-r               $ECHO_C"
     at_xfail=no
     (
-      echo "26. basic.at:30: testing ..."
+      echo "28. basic.at:30: testing ..."
       $at_traceon
 ###
 ### Begin AT_CVS_SETUP([Adding directories and files])
@@ -13448,13 +14872,13 @@ $at_traceon
     at_status=`cat $at_status_file`
     ;;
 
-  27 ) # 27. basic.at:130: tag, update, & diff-r
+  29 ) # 29. basic.at:130: tag, update, & diff-r
     at_setup_line='basic.at:130'
     at_desc='tag, update, & diff-r'
-    $at_quiet $ECHO_N " 27: tag, update, & diff-r                        $ECHO_C"
+    $at_quiet $ECHO_N " 29: tag, update, & diff-r                        $ECHO_C"
     at_xfail=no
     (
-      echo "27. basic.at:130: testing ..."
+      echo "29. basic.at:130: testing ..."
       $at_traceon
 ###
 ### Begin AT_CVS_SETUP([tag, update, & diff])
@@ -14143,13 +15567,13 @@ rm stderr nstdout
     at_status=`cat $at_status_file`
     ;;
 
-  28 ) # 28. basic.at:189: strange revision numbers-r
+  30 ) # 30. basic.at:189: strange revision numbers-r
     at_setup_line='basic.at:189'
     at_desc='strange revision numbers-r'
-    $at_quiet $ECHO_N " 28: strange revision numbers-r                   $ECHO_C"
+    $at_quiet $ECHO_N " 30: strange revision numbers-r                   $ECHO_C"
     at_xfail=no
     (
-      echo "28. basic.at:189: testing ..."
+      echo "30. basic.at:189: testing ..."
       $at_traceon
 ###
 ### Begin AT_CVS_SETUP([strange revision numbers])
@@ -15659,13 +17083,13 @@ $at_traceon
     at_status=`cat $at_status_file`
     ;;
 
-  29 ) # 29. basic.at:393: annotate-r
+  31 ) # 31. basic.at:393: annotate-r
     at_setup_line='basic.at:393'
     at_desc='annotate-r'
-    $at_quiet $ECHO_N " 29: annotate-r                                   $ECHO_C"
+    $at_quiet $ECHO_N " 31: annotate-r                                   $ECHO_C"
     at_xfail=no
     (
-      echo "29. basic.at:393: testing ..."
+      echo "31. basic.at:393: testing ..."
       $at_traceon
 ###
 ### Begin AT_CVS_SETUP([annotate])
@@ -16157,13 +17581,13 @@ rm stderr nstdout
     at_status=`cat $at_status_file`
     ;;
 
-  30 ) # 30. basic.at:417: top of repository-r
+  32 ) # 32. basic.at:417: top of repository-r
     at_setup_line='basic.at:417'
     at_desc='top of repository-r'
-    $at_quiet $ECHO_N " 30: top of repository-r                          $ECHO_C"
+    $at_quiet $ECHO_N " 32: top of repository-r                          $ECHO_C"
     at_xfail=no
     (
-      echo "30. basic.at:417: testing ..."
+      echo "32. basic.at:417: testing ..."
       $at_traceon
 ###
 ### Begin AT_CVS_SETUP([top of repository])
@@ -16526,17 +17950,17 @@ fi
 $at_traceon
 
 
-mkdir first-dir
+mkdir second-dir
 $at_traceoff
-echo "basic.at:457: cvs add first-dir"
+echo "basic.at:457: cvs add second-dir"
 echo basic.at:457 >$at_check_line_file
-( $at_traceon; cvs add first-dir ) >$at_stdout 2>$at_stder1
+( $at_traceon; cvs add second-dir ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
 grep -v '^ *+' $at_stder1 >$at_stderr
 at_failed=false
 $at_diff $at_devnull $at_stderr || at_failed=:
-echo >>$at_stdout; echo "Directory $CVSROOT_DIR/first-dir added to the repository
+echo >>$at_stdout; echo "Directory $CVSROOT_DIR/second-dir added to the repository
 " | $at_diff - $at_stdout || at_failed=:
 case $at_status in
    77) echo 77 > $at_status_file
@@ -16556,9 +17980,9 @@ $at_traceon
 
 cd ..
 $at_traceoff
-echo "basic.at:460: cvs -q co first-dir"
+echo "basic.at:460: cvs -q co second-dir"
 echo basic.at:460 >$at_check_line_file
-( $at_traceon; cvs -q co first-dir ) >$at_stdout 2>$at_stder1
+( $at_traceon; cvs -q co second-dir ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
 grep -v '^ *+' $at_stder1 >$at_stderr
@@ -16581,12 +18005,10 @@ fi
 $at_traceon
 
 
-# The top-level CVS directory is not created by default.
-# I'm leaving basicb-1a and basicb-1b untouched, mostly, in
-# case we decide that the default should be reversed...
+# Verify that the top-level CVS directory is not created by default.
 $at_traceoff
-echo "basic.at:465: test -d CVS"
-echo basic.at:465 >$at_check_line_file
+echo "basic.at:463: test -d CVS"
+echo basic.at:463 >$at_check_line_file
 ( $at_traceon; test -d CVS ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
@@ -16598,7 +18020,7 @@ case $at_status in
    77) echo 77 > $at_status_file
             exit 77;;
    1) ;;
-   *) echo "basic.at:465: exit code was $at_status, expected 1"
+   *) echo "basic.at:463: exit code was $at_status, expected 1"
       at_failed=:;;
 esac
 if $at_failed; then
@@ -16611,21 +18033,21 @@ $at_traceon
 
 
 $at_traceoff
-echo "basic.at:468: cat first-dir/CVS/Repository"
-echo basic.at:468 >$at_check_line_file
-( $at_traceon; cat first-dir/CVS/Repository ) >$at_stdout 2>$at_stder1
+echo "basic.at:466: cat second-dir/CVS/Repository"
+echo basic.at:466 >$at_check_line_file
+( $at_traceon; cat second-dir/CVS/Repository ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
 grep -v '^ *+' $at_stder1 >$at_stderr
 at_failed=false
 $at_diff $at_devnull $at_stderr || at_failed=:
-echo >>$at_stdout; echo "first-dir
+echo >>$at_stdout; echo "second-dir
 " | $at_diff - $at_stdout || at_failed=:
 case $at_status in
    77) echo 77 > $at_status_file
             exit 77;;
    0) ;;
-   *) echo "basic.at:468: exit code was $at_status, expected 0"
+   *) echo "basic.at:466: exit code was $at_status, expected 0"
       at_failed=:;;
 esac
 if $at_failed; then
@@ -16643,13 +18065,13 @@ $at_traceon
     at_status=`cat $at_status_file`
     ;;
 
-  31 ) # 31. basic.at:474: Emptydir not special-r
-    at_setup_line='basic.at:474'
+  33 ) # 33. basic.at:472: Emptydir not special-r
+    at_setup_line='basic.at:472'
     at_desc='Emptydir not special-r'
-    $at_quiet $ECHO_N " 31: Emptydir not special-r                       $ECHO_C"
+    $at_quiet $ECHO_N " 33: Emptydir not special-r                       $ECHO_C"
     at_xfail=no
     (
-      echo "31. basic.at:474: testing ..."
+      echo "33. basic.at:472: testing ..."
       $at_traceon
 ###
 ### Begin AT_CVS_SETUP([Emptydir not special])
@@ -16661,8 +18083,8 @@ $at_traceon
 #
 CVSROOT_DIR=$at_group_dir/cvsroot
 $at_traceoff
-echo "basic.at:474: cvs --version |grep client || exit 77"
-echo basic.at:474 >$at_check_line_file
+echo "basic.at:472: cvs --version |grep client || exit 77"
+echo basic.at:472 >$at_check_line_file
 ( $at_traceon; cvs --version |grep client || exit 77 ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
@@ -16674,7 +18096,7 @@ case $at_status in
    77) echo 77 > $at_status_file
             exit 77;;
    0) ;;
-   *) echo "basic.at:474: exit code was $at_status, expected 0"
+   *) echo "basic.at:472: exit code was $at_status, expected 0"
       at_failed=:;;
 esac
 if $at_failed; then
@@ -16686,8 +18108,8 @@ fi
 $at_traceon
 
 $at_traceoff
-echo "basic.at:474: \$server --version |grep server || exit 77"
-echo basic.at:474 >$at_check_line_file
+echo "basic.at:472: \$server --version |grep server || exit 77"
+echo basic.at:472 >$at_check_line_file
 ( $at_traceon; $server --version |grep server || exit 77 ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
@@ -16699,7 +18121,7 @@ case $at_status in
    77) echo 77 > $at_status_file
             exit 77;;
    0) ;;
-   *) echo "basic.at:474: exit code was $at_status, expected 0"
+   *) echo "basic.at:472: exit code was $at_status, expected 0"
       at_failed=:;;
 esac
 if $at_failed; then
@@ -16733,8 +18155,8 @@ RCSINIT=
 # Initialize the repository
 #
 $at_traceoff
-echo "basic.at:474: cvs init"
-echo basic.at:474 >$at_check_line_file
+echo "basic.at:472: cvs init"
+echo basic.at:472 >$at_check_line_file
 ( $at_traceon; cvs init ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
@@ -16746,7 +18168,7 @@ case $at_status in
    77) echo 77 > $at_status_file
             exit 77;;
    0) ;;
-   *) echo "basic.at:474: exit code was $at_status, expected 0"
+   *) echo "basic.at:472: exit code was $at_status, expected 0"
       at_failed=:;;
 esac
 if $at_failed; then
@@ -16764,8 +18186,8 @@ $at_traceon
 mkdir top
 cd top
 $at_traceoff
-echo "basic.at:474: cvs -Q co -l ."
-echo basic.at:474 >$at_check_line_file
+echo "basic.at:472: cvs -Q co -l ."
+echo basic.at:472 >$at_check_line_file
 ( $at_traceon; cvs -Q co -l . ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
@@ -16777,7 +18199,7 @@ case $at_status in
    77) echo 77 > $at_status_file
             exit 77;;
    0) ;;
-   *) echo "basic.at:474: exit code was $at_status, expected 0"
+   *) echo "basic.at:472: exit code was $at_status, expected 0"
       at_failed=:;;
 esac
 if $at_failed; then
@@ -16790,8 +18212,8 @@ $at_traceon
 
 mkdir project
 $at_traceoff
-echo "basic.at:474: cvs -Q add project"
-echo basic.at:474 >$at_check_line_file
+echo "basic.at:472: cvs -Q add project"
+echo basic.at:472 >$at_check_line_file
 ( $at_traceon; cvs -Q add project ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
@@ -16803,7 +18225,7 @@ case $at_status in
    77) echo 77 > $at_status_file
             exit 77;;
    0) ;;
-   *) echo "basic.at:474: exit code was $at_status, expected 0"
+   *) echo "basic.at:472: exit code was $at_status, expected 0"
       at_failed=:;;
 esac
 if $at_failed; then
@@ -16826,8 +18248,8 @@ rm -r top
 # created but the `cvs co' will not return an error.
 #
 $at_traceoff
-echo "basic.at:474: cvs -Q co project"
-echo basic.at:474 >$at_check_line_file
+echo "basic.at:472: cvs -Q co project"
+echo basic.at:472 >$at_check_line_file
 ( $at_traceon; cvs -Q co project ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
@@ -16839,7 +18261,7 @@ case $at_status in
    77) echo 77 > $at_status_file
             exit 77;;
    0) ;;
-   *) echo "basic.at:474: exit code was $at_status, expected 0"
+   *) echo "basic.at:472: exit code was $at_status, expected 0"
       at_failed=:;;
 esac
 if $at_failed; then
@@ -16859,13 +18281,19 @@ echo "$as_me: error: Couldn't cd to \\`project'.  Did \$HOME get set incorrectly
 ### End AT_CVS_SETUP([Emptydir not special])
 ###
 
+# FIXME: This test should probably be broken into several, though I'm not sure
+# where.  It came out of basicb in the old sanity.sh test suite, along with the
+# previous test and the following two, but I didn't have time to find where
+# else this one should break since what look like good break points still
+# depend on previous tests for setup.
+
 # Note that the name Emptydir is chosen to test that CVS just
 # treats it like any other directory name.  It should be
 # special only when it is directly in $CVSROOT/CVSROOT.
 mkdir Emptydir sdir2
 $at_traceoff
-echo "basic.at:483: cvs add Emptydir sdir2"
-echo basic.at:483 >$at_check_line_file
+echo "basic.at:487: cvs add Emptydir sdir2"
+echo basic.at:487 >$at_check_line_file
 ( $at_traceon; cvs add Emptydir sdir2 ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
@@ -16879,7 +18307,7 @@ case $at_status in
    77) echo 77 > $at_status_file
             exit 77;;
    0) ;;
-   *) echo "basic.at:483: exit code was $at_status, expected 0"
+   *) echo "basic.at:487: exit code was $at_status, expected 0"
       at_failed=:;;
 esac
 if $at_failed; then
@@ -16894,8 +18322,8 @@ $at_traceon
 cd Emptydir
 echo sfile1 starts >sfile1
 $at_traceoff
-echo "basic.at:490: cvs -n add sfile1"
-echo basic.at:490 >$at_check_line_file
+echo "basic.at:494: cvs -n add sfile1"
+echo basic.at:494 >$at_check_line_file
 ( $at_traceon; cvs -n add sfile1 ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
@@ -16909,7 +18337,7 @@ case $at_status in
    77) echo 77 > $at_status_file
             exit 77;;
    0) ;;
-   *) echo "basic.at:490: exit code was $at_status, expected 0"
+   *) echo "basic.at:494: exit code was $at_status, expected 0"
       at_failed=:;;
 esac
 if $at_failed; then
@@ -16922,8 +18350,8 @@ $at_traceon
 
 
 $at_traceoff
-echo "basic.at:501: cvs status sfile1"
-echo basic.at:501 >$at_check_line_file
+echo "basic.at:505: cvs status sfile1"
+echo basic.at:505 >$at_check_line_file
 ( $at_traceon; cvs status sfile1 ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
@@ -16942,7 +18370,7 @@ case $at_status in
    77) echo 77 > $at_status_file
             exit 77;;
    0) ;;
-   *) echo "basic.at:501: exit code was $at_status, expected 0"
+   *) echo "basic.at:505: exit code was $at_status, expected 0"
       at_failed=:;;
 esac
 if $at_failed; then
@@ -16955,8 +18383,8 @@ $at_traceon
 
 
 $at_traceoff
-echo "basic.at:506: cvs add sfile1"
-echo basic.at:506 >$at_check_line_file
+echo "basic.at:510: cvs add sfile1"
+echo basic.at:510 >$at_check_line_file
 ( $at_traceon; cvs add sfile1 ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
@@ -16970,7 +18398,7 @@ case $at_status in
    77) echo 77 > $at_status_file
             exit 77;;
    0) ;;
-   *) echo "basic.at:506: exit code was $at_status, expected 0"
+   *) echo "basic.at:510: exit code was $at_status, expected 0"
       at_failed=:;;
 esac
 if $at_failed; then
@@ -16983,8 +18411,8 @@ $at_traceon
 
 
 $at_traceoff
-echo "basic.at:518: cvs status sfile1"
-echo basic.at:518 >$at_check_line_file
+echo "basic.at:522: cvs status sfile1"
+echo basic.at:522 >$at_check_line_file
 ( $at_traceon; cvs status sfile1 ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
@@ -17005,7 +18433,7 @@ case $at_status in
    77) echo 77 > $at_status_file
             exit 77;;
    0) ;;
-   *) echo "basic.at:518: exit code was $at_status, expected 0"
+   *) echo "basic.at:522: exit code was $at_status, expected 0"
       at_failed=:;;
 esac
 if $at_failed; then
@@ -17020,8 +18448,8 @@ $at_traceon
 cd ../sdir2
 echo sfile2 starts >sfile2
 $at_traceoff
-echo "basic.at:525: cvs add sfile2"
-echo basic.at:525 >$at_check_line_file
+echo "basic.at:529: cvs add sfile2"
+echo basic.at:529 >$at_check_line_file
 ( $at_traceon; cvs add sfile2 ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
@@ -17035,7 +18463,7 @@ case $at_status in
    77) echo 77 > $at_status_file
             exit 77;;
    0) ;;
-   *) echo "basic.at:525: exit code was $at_status, expected 0"
+   *) echo "basic.at:529: exit code was $at_status, expected 0"
       at_failed=:;;
 esac
 if $at_failed; then
@@ -17048,8 +18476,8 @@ $at_traceon
 
 
 $at_traceoff
-echo "basic.at:530: cvs -q ci CVS"
-echo basic.at:530 >$at_check_line_file
+echo "basic.at:534: cvs -q ci CVS"
+echo basic.at:534 >$at_check_line_file
 ( $at_traceon; cvs -q ci CVS ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
@@ -17063,7 +18491,7 @@ case $at_status in
    77) echo 77 > $at_status_file
             exit 77;;
    0) ;;
-   *) echo "basic.at:530: exit code was $at_status, expected 0"
+   *) echo "basic.at:534: exit code was $at_status, expected 0"
       at_failed=:;;
 esac
 if $at_failed; then
@@ -17077,8 +18505,8 @@ $at_traceon
 
 cd ..
 $at_traceoff
-echo "basic.at:546: cvs -q ci -m add"
-echo basic.at:546 >$at_check_line_file
+echo "basic.at:550: cvs -q ci -m add"
+echo basic.at:550 >$at_check_line_file
 ( $at_traceon; cvs -q ci -m add ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
@@ -17102,7 +18530,7 @@ case $at_status in
    77) echo 77 > $at_status_file
             exit 77;;
    0) ;;
-   *) echo "basic.at:546: exit code was $at_status, expected 0"
+   *) echo "basic.at:550: exit code was $at_status, expected 0"
       at_failed=:;;
 esac
 if $at_failed; then
@@ -17116,8 +18544,8 @@ $at_traceon
 
 echo sfile1 develops >Emptydir/sfile1
 $at_traceoff
-echo "basic.at:554: cvs -q ci -m modify"
-echo basic.at:554 >$at_check_line_file
+echo "basic.at:558: cvs -q ci -m modify"
+echo basic.at:558 >$at_check_line_file
 ( $at_traceon; cvs -q ci -m modify ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
@@ -17133,7 +18561,7 @@ case $at_status in
    77) echo 77 > $at_status_file
             exit 77;;
    0) ;;
-   *) echo "basic.at:554: exit code was $at_status, expected 0"
+   *) echo "basic.at:558: exit code was $at_status, expected 0"
       at_failed=:;;
 esac
 if $at_failed; then
@@ -17145,22 +18573,381 @@ fi
 $at_traceon
 
 
+$at_traceoff
+echo "basic.at:563: cvs -q tag release-1"
+echo basic.at:563 >$at_check_line_file
+( $at_traceon; cvs -q tag release-1 ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+$at_diff $at_devnull $at_stderr || at_failed=:
+echo >>$at_stdout; echo "T Emptydir/sfile1
+T sdir2/sfile2
+" | $at_diff - $at_stdout || at_failed=:
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   0) ;;
+   *) echo "basic.at:563: exit code was $at_status, expected 0"
+      at_failed=:;;
+esac
+if $at_failed; then
+
+  echo 1 > $at_status_file
+  exit 1
+fi
+
+$at_traceon
+
+
+echo not in time for release-1 >sdir2/sfile2
+$at_traceoff
+echo "basic.at:571: cvs -q ci -m modify-2"
+echo basic.at:571 >$at_check_line_file
+( $at_traceon; cvs -q ci -m modify-2 ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+$at_diff $at_devnull $at_stderr || at_failed=:
+echo >>$at_stdout; echo "Checking in sdir2/sfile2;
+$CVSROOT_DIR/project/sdir2/sfile2,v  <--  sfile2
+new revision: 1.2; previous revision: 1.1
+done
+" | $at_diff - $at_stdout || at_failed=:
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   0) ;;
+   *) echo "basic.at:571: exit code was $at_status, expected 0"
+      at_failed=:;;
+esac
+if $at_failed; then
+
+  echo 1 > $at_status_file
+  exit 1
+fi
+
+$at_traceon
+
+
+# FIXCVS:
+# See if CVS can correctly notice when an invalid numeric
+# revision is specified.
+# AT_CHECK([cvs diff -r 1.5 -r 1.7 sfile2],,,
+# [error msg
+# ])
+
+# Test that we recurse into the correct directory when checking
+# for existing files, even if co -d is in use.
+cd ..
+touch project/extra
+$at_traceoff
+echo "basic.at:587: cvs -q co -d project1 project"
+echo basic.at:587 >$at_check_line_file
+( $at_traceon; cvs -q co -d project1 project ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+$at_diff $at_devnull $at_stderr || at_failed=:
+echo >>$at_stdout; echo "U project1/Emptydir/sfile1
+U project1/sdir2/sfile2
+" | $at_diff - $at_stdout || at_failed=:
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   0) ;;
+   *) echo "basic.at:587: exit code was $at_status, expected 0"
+      at_failed=:;;
+esac
+if $at_failed; then
+
+  echo 1 > $at_status_file
+  exit 1
+fi
+
+$at_traceon
+
+
+# FIXCVS?  The next test used to check things out like this:
+#   U newdir/Emptydir/sfile1
+#   U newdir/sdir2/sfile2
+# but that's difficult to do.  The whole "shorten" thing
+# is pretty bogus, because it will break on things
+# like "cvs co foo/bar baz/quux".  Unless there's some
+# pretty detailed expansion and analysis of the command-line
+# arguments, we shouldn't do "shorten" stuff at all.
+#
+# DRP: I'm not sure how detailed it would need to be - either all the path
+# prefixes are the same, in which case the matching parts are shortened, or
+# they are not, in which case they are grouped:
+#
+#   cvs co -d short project/Emptydir project/sdir2
+#   U short/Emptydir/sfile1
+#   U short/sdir2
+#
+#   cvs co -d group foo/bar baz/quux
+#   U group/foo/bar/file1
+#   U group/baz/quux/file2
+#
+# How do you group under project if you do want to?  How about:
+#
+#   cvs co -d group/project project/Emptydir project/sdir2
+#   U group/project/Emptydir/sfile1
+#   U group/project/sdir2/sfile2
+#
+$at_traceoff
+echo "basic.at:619: cvs -q co -d newdir -r release-1 project/Emptydir project/sdir2"
+echo basic.at:619 >$at_check_line_file
+( $at_traceon; cvs -q co -d newdir -r release-1 project/Emptydir project/sdir2 ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+$at_diff $at_devnull $at_stderr || at_failed=:
+echo >>$at_stdout; echo "U newdir/project/Emptydir/sfile1
+U newdir/project/sdir2/sfile2
+" | $at_diff - $at_stdout || at_failed=:
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   0) ;;
+   *) echo "basic.at:619: exit code was $at_status, expected 0"
+      at_failed=:;;
+esac
+if $at_failed; then
+
+  echo 1 > $at_status_file
+  exit 1
+fi
+
+$at_traceon
+
+
+# Verify that the top-level CVS directory is not created by default.
+$at_traceoff
+echo "basic.at:622: test -d CVS"
+echo basic.at:622 >$at_check_line_file
+( $at_traceon; test -d CVS ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+$at_diff $at_devnull $at_stderr || at_failed=:
+$at_diff $at_devnull $at_stdout || at_failed=:
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   1) ;;
+   *) echo "basic.at:622: exit code was $at_status, expected 1"
+      at_failed=:;;
+esac
+if $at_failed; then
+
+  echo 1 > $at_status_file
+  exit 1
+fi
+
+$at_traceon
+
+
+# Verify that our CVS/Repository files hold what we expect.
+$at_traceoff
+echo "basic.at:627: cat newdir/CVS/Repository"
+echo basic.at:627 >$at_check_line_file
+( $at_traceon; cat newdir/CVS/Repository ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+$at_diff $at_devnull $at_stderr || at_failed=:
+echo >>$at_stdout; echo ".
+" | $at_diff - $at_stdout || at_failed=:
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   0) ;;
+   *) echo "basic.at:627: exit code was $at_status, expected 0"
+      at_failed=:;;
+esac
+if $at_failed; then
+
+  echo 1 > $at_status_file
+  exit 1
+fi
+
+$at_traceon
+
+$at_traceoff
+echo "basic.at:630: cat newdir/project/CVS/Repository"
+echo basic.at:630 >$at_check_line_file
+( $at_traceon; cat newdir/project/CVS/Repository ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+$at_diff $at_devnull $at_stderr || at_failed=:
+echo >>$at_stdout; echo "project
+" | $at_diff - $at_stdout || at_failed=:
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   0) ;;
+   *) echo "basic.at:630: exit code was $at_status, expected 0"
+      at_failed=:;;
+esac
+if $at_failed; then
+
+  echo 1 > $at_status_file
+  exit 1
+fi
+
+$at_traceon
+
+$at_traceoff
+echo "basic.at:633: cat newdir/project/Emptydir/CVS/Repository"
+echo basic.at:633 >$at_check_line_file
+( $at_traceon; cat newdir/project/Emptydir/CVS/Repository ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+$at_diff $at_devnull $at_stderr || at_failed=:
+echo >>$at_stdout; echo "project/Emptydir
+" | $at_diff - $at_stdout || at_failed=:
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   0) ;;
+   *) echo "basic.at:633: exit code was $at_status, expected 0"
+      at_failed=:;;
+esac
+if $at_failed; then
+
+  echo 1 > $at_status_file
+  exit 1
+fi
+
+$at_traceon
+
+$at_traceoff
+echo "basic.at:636: cat newdir/project/sdir2/CVS/Repository"
+echo basic.at:636 >$at_check_line_file
+( $at_traceon; cat newdir/project/sdir2/CVS/Repository ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+$at_diff $at_devnull $at_stderr || at_failed=:
+echo >>$at_stdout; echo "project/sdir2
+" | $at_diff - $at_stdout || at_failed=:
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   0) ;;
+   *) echo "basic.at:636: exit code was $at_status, expected 0"
+      at_failed=:;;
+esac
+if $at_failed; then
+
+  echo 1 > $at_status_file
+  exit 1
+fi
+
+$at_traceon
+
+
+# Verify that our project files contain what we expect.
+$at_traceoff
+echo "basic.at:641: cat newdir/project/Emptydir/sfile1"
+echo basic.at:641 >$at_check_line_file
+( $at_traceon; cat newdir/project/Emptydir/sfile1 ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+$at_diff $at_devnull $at_stderr || at_failed=:
+echo >>$at_stdout; echo "sfile1 develops
+" | $at_diff - $at_stdout || at_failed=:
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   0) ;;
+   *) echo "basic.at:641: exit code was $at_status, expected 0"
+      at_failed=:;;
+esac
+if $at_failed; then
+
+  echo 1 > $at_status_file
+  exit 1
+fi
+
+$at_traceon
+
+$at_traceoff
+echo "basic.at:644: cat newdir/project/sdir2/sfile2"
+echo basic.at:644 >$at_check_line_file
+( $at_traceon; cat newdir/project/sdir2/sfile2 ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+$at_diff $at_devnull $at_stderr || at_failed=:
+echo >>$at_stdout; echo "sfile2 starts
+" | $at_diff - $at_stdout || at_failed=:
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   0) ;;
+   *) echo "basic.at:644: exit code was $at_status, expected 0"
+      at_failed=:;;
+esac
+if $at_failed; then
+
+  echo 1 > $at_status_file
+  exit 1
+fi
+
+$at_traceon
+
+
+# FIXCVS:
+# Hmm, this might be a case for CVSNULLREPOS, but CVS doesn't
+# seem to deal with it...
+# AT_CHECK([cvs -q co -d sub1/sub2 project],,
+# [U sub1/sub2/Emptydir/sfile1
+# U sub1/sub2/sdir2/sfile2
+# ])
+#
+# cd sub1
+# AT_CHECK([cvs -q update ./.])
+#
+# touch xx
+# AT_CHECK_NOESCAPE([cvs add xx],,
+# [$SPROG add: scheduling file \`xx' for addition
+# $SPROG add: use \`$SPROG commit' to add this file permanently
+# ])
+#
+# to test: sub1/sub2/sub3
+
       $at_traceoff
       $at_times_p && times >$at_times_file
     ) 5>&1 2>&1 | eval $at_tee_pipe
     at_status=`cat $at_status_file`
     ;;
 
-  32 ) # 32. basic.at:560: unprocessed-r
-    at_setup_line='basic.at:560'
-    at_desc='unprocessed-r'
-    $at_quiet $ECHO_N " 32: unprocessed-r                                $ECHO_C"
+  34 ) # 34. basic.at:669: delete last revision-r
+    at_setup_line='basic.at:669'
+    at_desc='delete last revision-r'
+    $at_quiet $ECHO_N " 34: delete last revision-r                       $ECHO_C"
     at_xfail=no
     (
-      echo "32. basic.at:560: testing ..."
+      echo "34. basic.at:669: testing ..."
       $at_traceon
 ###
-### Begin AT_CVS_SETUP([unprocessed])
+### Begin AT_CVS_SETUP([delete last revision])
 ###
 
 
@@ -17169,8 +18956,8 @@ $at_traceon
 #
 CVSROOT_DIR=$at_group_dir/cvsroot
 $at_traceoff
-echo "basic.at:560: cvs --version |grep client || exit 77"
-echo basic.at:560 >$at_check_line_file
+echo "basic.at:669: cvs --version |grep client || exit 77"
+echo basic.at:669 >$at_check_line_file
 ( $at_traceon; cvs --version |grep client || exit 77 ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
@@ -17182,7 +18969,7 @@ case $at_status in
    77) echo 77 > $at_status_file
             exit 77;;
    0) ;;
-   *) echo "basic.at:560: exit code was $at_status, expected 0"
+   *) echo "basic.at:669: exit code was $at_status, expected 0"
       at_failed=:;;
 esac
 if $at_failed; then
@@ -17194,8 +18981,8 @@ fi
 $at_traceon
 
 $at_traceoff
-echo "basic.at:560: \$server --version |grep server || exit 77"
-echo basic.at:560 >$at_check_line_file
+echo "basic.at:669: \$server --version |grep server || exit 77"
+echo basic.at:669 >$at_check_line_file
 ( $at_traceon; $server --version |grep server || exit 77 ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
@@ -17207,7 +18994,7 @@ case $at_status in
    77) echo 77 > $at_status_file
             exit 77;;
    0) ;;
-   *) echo "basic.at:560: exit code was $at_status, expected 0"
+   *) echo "basic.at:669: exit code was $at_status, expected 0"
       at_failed=:;;
 esac
 if $at_failed; then
@@ -17241,8 +19028,8 @@ RCSINIT=
 # Initialize the repository
 #
 $at_traceoff
-echo "basic.at:560: cvs init"
-echo basic.at:560 >$at_check_line_file
+echo "basic.at:669: cvs init"
+echo basic.at:669 >$at_check_line_file
 ( $at_traceon; cvs init ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
@@ -17254,7 +19041,7 @@ case $at_status in
    77) echo 77 > $at_status_file
             exit 77;;
    0) ;;
-   *) echo "basic.at:560: exit code was $at_status, expected 0"
+   *) echo "basic.at:669: exit code was $at_status, expected 0"
       at_failed=:;;
 esac
 if $at_failed; then
@@ -17272,8 +19059,8 @@ $at_traceon
 mkdir top
 cd top
 $at_traceoff
-echo "basic.at:560: cvs -Q co -l ."
-echo basic.at:560 >$at_check_line_file
+echo "basic.at:669: cvs -Q co -l ."
+echo basic.at:669 >$at_check_line_file
 ( $at_traceon; cvs -Q co -l . ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
@@ -17285,7 +19072,7 @@ case $at_status in
    77) echo 77 > $at_status_file
             exit 77;;
    0) ;;
-   *) echo "basic.at:560: exit code was $at_status, expected 0"
+   *) echo "basic.at:669: exit code was $at_status, expected 0"
       at_failed=:;;
 esac
 if $at_failed; then
@@ -17298,8 +19085,8 @@ $at_traceon
 
 mkdir project
 $at_traceoff
-echo "basic.at:560: cvs -Q add project"
-echo basic.at:560 >$at_check_line_file
+echo "basic.at:669: cvs -Q add project"
+echo basic.at:669 >$at_check_line_file
 ( $at_traceon; cvs -Q add project ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
@@ -17311,7 +19098,7 @@ case $at_status in
    77) echo 77 > $at_status_file
             exit 77;;
    0) ;;
-   *) echo "basic.at:560: exit code was $at_status, expected 0"
+   *) echo "basic.at:669: exit code was $at_status, expected 0"
       at_failed=:;;
 esac
 if $at_failed; then
@@ -17334,8 +19121,8 @@ rm -r top
 # created but the `cvs co' will not return an error.
 #
 $at_traceoff
-echo "basic.at:560: cvs -Q co project"
-echo basic.at:560 >$at_check_line_file
+echo "basic.at:669: cvs -Q co project"
+echo basic.at:669 >$at_check_line_file
 ( $at_traceon; cvs -Q co project ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
@@ -17347,7 +19134,7 @@ case $at_status in
    77) echo 77 > $at_status_file
             exit 77;;
    0) ;;
-   *) echo "basic.at:560: exit code was $at_status, expected 0"
+   *) echo "basic.at:669: exit code was $at_status, expected 0"
       at_failed=:;;
 esac
 if $at_failed; then
@@ -17364,24 +19151,83 @@ echo "$as_me: error: Couldn't cd to \\`project'.  Did \$HOME get set incorrectly
    { (exit 1); exit 1; }; }
 
 ###
-### End AT_CVS_SETUP([unprocessed])
+### End AT_CVS_SETUP([delete last revision])
 ###
 
+
+
+mkdir sdir
 $at_traceoff
-echo "basic.at:562: exit 77"
-echo basic.at:562 >$at_check_line_file
-( $at_traceon; exit 77 ) >$at_stdout 2>$at_stder1
+echo "basic.at:673: cvs add sdir"
+echo basic.at:673 >$at_check_line_file
+( $at_traceon; cvs add sdir ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
 grep -v '^ *+' $at_stder1 >$at_stderr
 at_failed=false
 $at_diff $at_devnull $at_stderr || at_failed=:
-$at_diff $at_devnull $at_stdout || at_failed=:
+echo >>$at_stdout; echo "Directory $CVSROOT_DIR/project/sdir added to the repository
+" | $at_diff - $at_stdout || at_failed=:
 case $at_status in
    77) echo 77 > $at_status_file
             exit 77;;
    0) ;;
-   *) echo "basic.at:562: exit code was $at_status, expected 0"
+   *) echo "basic.at:673: exit code was $at_status, expected 0"
+      at_failed=:;;
+esac
+if $at_failed; then
+
+  echo 1 > $at_status_file
+  exit 1
+fi
+
+$at_traceon
+
+cd sdir
+mkdir ssdir
+$at_traceoff
+echo "basic.at:673: cvs add ssdir"
+echo basic.at:673 >$at_check_line_file
+( $at_traceon; cvs add ssdir ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+$at_diff $at_devnull $at_stderr || at_failed=:
+echo >>$at_stdout; echo "Directory $CVSROOT_DIR/project/sdir/ssdir added to the repository
+" | $at_diff - $at_stdout || at_failed=:
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   0) ;;
+   *) echo "basic.at:673: exit code was $at_status, expected 0"
+      at_failed=:;;
+esac
+if $at_failed; then
+
+  echo 1 > $at_status_file
+  exit 1
+fi
+
+$at_traceon
+
+cd ssdir
+echo ssfile >ssfile
+$at_traceoff
+echo "basic.at:673: cvs add ssfile"
+echo basic.at:673 >$at_check_line_file
+( $at_traceon; cvs add ssfile ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+echo stderr:; tee stderr <$at_stderr
+echo stdout:; tee stdout <$at_stdout
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   0) ;;
+   *) echo "basic.at:673: exit code was $at_status, expected 0"
       at_failed=:;;
 esac
 if $at_failed; then
@@ -17393,130 +19239,199 @@ fi
 $at_traceon
 
 
-	  dotest basicb-7 "${testcvs} -q tag release-1" 'T Emptydir/sfile1
-T sdir2/sfile2'
-	  echo not in time for release-1 >sdir2/sfile2
-	  dotest basicb-8 "${testcvs} -q ci -m modify-2" \
-"Checking in sdir2/sfile2;
-${CVSROOT_DIR}/first-dir/sdir2/sfile2,v  <--  sfile2
-new revision: 1\.2; previous revision: 1\.1
-done"
-	  # See if CVS can correctly notice when an invalid numeric
-	  # revision is specified.
-	  # Commented out until we get around to fixing CVS
-:	  dotest basicb-8a0 "${testcvs} diff -r 1.5 -r 1.7 sfile2" 'error msg'
-	  cd ..
+sed \
+    -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
+    -e "s/^P /U /" \
+    <stdout >nstdout
+rm stdout
 
-	  # Test that we recurse into the correct directory when checking
-	  # for existing files, even if co -d is in use.
-	  touch first-dir/extra
-	  dotest basicb-cod-1 "${testcvs} -q co -d first-dir1 first-dir" \
-'U first-dir1/Emptydir/sfile1
-U first-dir1/sdir2/sfile2'
-	  rm -r first-dir1
+$at_traceoff
+echo "basic.at:673: (cat nstdout; cat stderr >&2)"
+echo basic.at:673 >$at_check_line_file
+( $at_traceon; (cat nstdout; cat stderr >&2) ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+echo >>$at_stderr; echo "$SPROG add: scheduling file \`ssfile' for addition
+$SPROG add: use \`$SPROG commit' to add this file permanently
+" | $at_diff - $at_stderr || at_failed=:
+$at_diff $at_devnull $at_stdout || at_failed=:
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   0) ;;
+   *) echo "basic.at:673: exit code was $at_status, expected 0"
+      at_failed=:;;
+esac
+if $at_failed; then
 
-	  rm -r first-dir
+  echo 1 > $at_status_file
+  exit 1
+fi
 
-	  # FIXME? basicb-9 used to check things out like this:
-	  #   U newdir/Emptydir/sfile1
-	  #   U newdir/sdir2/sfile2
-	  # but that's difficult to do.  The whole "shorten" thing
-	  # is pretty bogus, because it will break on things
-	  # like "cvs co foo/bar baz/quux".  Unless there's some
-	  # pretty detailed expansion and analysis of the command-line
-	  # arguments, we shouldn't do "shorten" stuff at all.
+$at_traceon
 
-	  dotest basicb-9 \
-"${testcvs} -q co -d newdir -r release-1 first-dir/Emptydir first-dir/sdir2" \
-'U newdir/first-dir/Emptydir/sfile1
-U newdir/first-dir/sdir2/sfile2'
-
-	  # basicb-9a and basicb-9b: see note about basicb-1a
-
-	  dotest_fail basicb-9a "test -d CVS" ''
-
-	  dotest basicb-9c "cat newdir/CVS/Repository" "\."
-	  dotest basicb-9d "cat newdir/first-dir/CVS/Repository" \
-"${CVSROOT_DIR}/first-dir" \
-"first-dir"
-	  dotest basicb-9e "cat newdir/first-dir/Emptydir/CVS/Repository" \
-"${CVSROOT_DIR}/first-dir/Emptydir" \
-"first-dir/Emptydir"
-	  dotest basicb-9f "cat newdir/first-dir/sdir2/CVS/Repository" \
-"${CVSROOT_DIR}/first-dir/sdir2" \
-"first-dir/sdir2"
-
-	  dotest basicb-10 "cat newdir/first-dir/Emptydir/sfile1 newdir/first-dir/sdir2/sfile2" \
-"sfile1 develops
-sfile2 starts"
-
-	  rm -r newdir
-
-	  # Hmm, this might be a case for CVSNULLREPOS, but CVS doesn't
-	  # seem to deal with it...
-	  if false; then
-	  dotest basicb-11 "${testcvs} -q co -d sub1/sub2 first-dir" \
-"U sub1/sub2/Emptydir/sfile1
-U sub1/sub2/sdir2/sfile2"
-	  cd sub1
-	  dotest basicb-12 "${testcvs} -q update ./." ''
-	  touch xx
-	  dotest basicb-13 "${testcvs} add xx" fixme
-	  cd ..
-	  rm -r sub1
-	  # to test: sub1/sub2/sub3
-	  fi # end of tests commented out.
-
-	  # Create a second directory.
-	  mkdir 1
-	  cd 1
-	  dotest basicb-14 "${testcvs} -q co -l ." 'U topfile'
-	  mkdir second-dir
-	  dotest basicb-15 "${testcvs} add second-dir" \
-"Directory ${CVSROOT_DIR}/second-dir added to the repository"
-	  cd second-dir
-	  touch aa
-	  dotest basicb-16 "${testcvs} add aa" \
-"${SPROG} add: scheduling file .aa. for addition
-${SPROG} add: use .${SPROG} commit. to add this file permanently"
-	  dotest basicb-17 "${testcvs} -q ci -m add" \
-"RCS file: ${CVSROOT_DIR}/second-dir/aa,v
+rm stderr nstdout
+$at_traceoff
+echo "basic.at:673: cvs -q ci -m add-it"
+echo basic.at:673 >$at_check_line_file
+( $at_traceon; cvs -q ci -m add-it ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+$at_diff $at_devnull $at_stderr || at_failed=:
+echo >>$at_stdout; echo "RCS file: $CVSROOT_DIR/project/sdir/ssdir/ssfile,v
 done
-Checking in aa;
-${CVSROOT_DIR}/second-dir/aa,v  <--  aa
-initial revision: 1\.1
-done"
-	  cd ..
+Checking in ssfile;
+$CVSROOT_DIR/project/sdir/ssdir/ssfile,v  <--  ssfile
+initial revision: 1.1
+done
+" | $at_diff - $at_stdout || at_failed=:
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   0) ;;
+   *) echo "basic.at:673: exit code was $at_status, expected 0"
+      at_failed=:;;
+esac
+if $at_failed; then
 
-	  # Try to remove all revisions in a file.
-	  dotest_fail basicb-o1 "${testcvs} admin -o1.1 topfile" \
-"RCS file: ${CVSROOT_DIR}/topfile,v
-deleting revision 1\.1
-${SPROG} \admin aborted\: attempt to delete all revisions"
-	  dotest basicb-o2 "${testcvs} -q update -d first-dir" \
-"U first-dir/Emptydir/sfile1
-U first-dir/sdir2/sfile2"
-	  dotest_fail basicb-o3 \
-"${testcvs} admin -o1.1:1.2 first-dir/sdir2/sfile2" \
-"RCS file: ${CVSROOT_DIR}/first-dir/sdir2/sfile2,v
-deleting revision 1\.2
-deleting revision 1\.1
-${SPROG} \admin aborted\: attempt to delete all revisions"
-	  cd ..
-	  rm -r 1
+  echo 1 > $at_status_file
+  exit 1
+fi
 
-	  mkdir 1; cd 1
-	  # Note that -H is an invalid option.
-	  # I suspect that the choice between "illegal" and "invalid"
-	  # depends on the user's environment variables, the phase
-	  # of the moon (weirdness with optind), and who knows what else.
-	  # I've been seeing "illegal"...
-	  # And I switched it to "invalid". -DRP
-	  dotest_fail basicb-21 "${testcvs} -q admin -H" \
-"admin: invalid option -- H
-${CPROG} \admin aborted\: specify ${CPROG} -H admin for usage information"
-	  cd ..
-	  rmdir 1
+$at_traceon
+
+cd ../..
+
+
+cd sdir/ssdir
+
+# Try to remove all revisions in a file.
+$at_traceoff
+echo "basic.at:683: cvs admin -o1.1 ssfile"
+echo basic.at:683 >$at_check_line_file
+( $at_traceon; cvs admin -o1.1 ssfile ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+echo >>$at_stderr; echo "$SPROG [admin aborted]: attempt to delete all revisions
+" | $at_diff - $at_stderr || at_failed=:
+echo >>$at_stdout; echo "RCS file: $CVSROOT_DIR/project/sdir/ssdir/ssfile,v
+deleting revision 1.1
+" | $at_diff - $at_stdout || at_failed=:
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   1) ;;
+   *) echo "basic.at:683: exit code was $at_status, expected 1"
+      at_failed=:;;
+esac
+if $at_failed; then
+
+  echo 1 > $at_status_file
+  exit 1
+fi
+
+$at_traceon
+
+
+echo I will be deleted second. >>ssfile
+$at_traceoff
+echo "basic.at:691: cvs -q ci -mr2"
+echo basic.at:691 >$at_check_line_file
+( $at_traceon; cvs -q ci -mr2 ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+$at_diff $at_devnull $at_stderr || at_failed=:
+echo >>$at_stdout; echo "Checking in ssfile;
+$CVSROOT_DIR/project/sdir/ssdir/ssfile,v  <--  ssfile
+new revision: 1.2; previous revision: 1.1
+done
+" | $at_diff - $at_stdout || at_failed=:
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   0) ;;
+   *) echo "basic.at:691: exit code was $at_status, expected 0"
+      at_failed=:;;
+esac
+if $at_failed; then
+
+  echo 1 > $at_status_file
+  exit 1
+fi
+
+$at_traceon
+
+
+echo I will be deleted first. >>ssfile
+echo "It's kinda like seeing the future." >>ssfile
+$at_traceoff
+echo "basic.at:700: cvs -q ci -mr3"
+echo basic.at:700 >$at_check_line_file
+( $at_traceon; cvs -q ci -mr3 ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+$at_diff $at_devnull $at_stderr || at_failed=:
+echo >>$at_stdout; echo "Checking in ssfile;
+$CVSROOT_DIR/project/sdir/ssdir/ssfile,v  <--  ssfile
+new revision: 1.3; previous revision: 1.2
+done
+" | $at_diff - $at_stdout || at_failed=:
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   0) ;;
+   *) echo "basic.at:700: exit code was $at_status, expected 0"
+      at_failed=:;;
+esac
+if $at_failed; then
+
+  echo 1 > $at_status_file
+  exit 1
+fi
+
+$at_traceon
+
+
+$at_traceoff
+echo "basic.at:709: cvs admin -o1.1:1.3 ssfile"
+echo basic.at:709 >$at_check_line_file
+( $at_traceon; cvs admin -o1.1:1.3 ssfile ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+echo >>$at_stderr; echo "$SPROG [admin aborted]: attempt to delete all revisions
+" | $at_diff - $at_stderr || at_failed=:
+echo >>$at_stdout; echo "RCS file: $CVSROOT_DIR/project/sdir/ssdir/ssfile,v
+deleting revision 1.3
+deleting revision 1.2
+deleting revision 1.1
+" | $at_diff - $at_stdout || at_failed=:
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   1) ;;
+   *) echo "basic.at:709: exit code was $at_status, expected 1"
+      at_failed=:;;
+esac
+if $at_failed; then
+
+  echo 1 > $at_status_file
+  exit 1
+fi
+
+$at_traceon
+
 
       $at_traceoff
       $at_times_p && times >$at_times_file
@@ -17524,13 +19439,267 @@ ${CPROG} \admin aborted\: specify ${CPROG} -H admin for usage information"
     at_status=`cat $at_status_file`
     ;;
 
-  33 ) # 33. basic.at:16: Operations on empty projects-r-l
-    at_setup_line='basic.at:16'
-    at_desc='Operations on empty projects-r-l'
-    $at_quiet $ECHO_N " 33: Operations on empty projects-r-l             $ECHO_C"
+  35 ) # 35. basic.at:715: no admin -H-r
+    at_setup_line='basic.at:715'
+    at_desc='no admin -H-r'
+    $at_quiet $ECHO_N " 35: no admin -H-r                                $ECHO_C"
     at_xfail=no
     (
-      echo "33. basic.at:16: testing ..."
+      echo "35. basic.at:715: testing ..."
+      $at_traceon
+###
+### Begin AT_CVS_SETUP([no admin -H])
+###
+
+
+#
+# Set CVSROOT_DIR, method, & CVSROOT
+#
+CVSROOT_DIR=$at_group_dir/cvsroot
+$at_traceoff
+echo "basic.at:715: cvs --version |grep client || exit 77"
+echo basic.at:715 >$at_check_line_file
+( $at_traceon; cvs --version |grep client || exit 77 ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+$at_diff $at_devnull $at_stderr || at_failed=:
+echo stdout:; cat $at_stdout
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   0) ;;
+   *) echo "basic.at:715: exit code was $at_status, expected 0"
+      at_failed=:;;
+esac
+if $at_failed; then
+
+  echo 1 > $at_status_file
+  exit 1
+fi
+
+$at_traceon
+
+$at_traceoff
+echo "basic.at:715: \$server --version |grep server || exit 77"
+echo basic.at:715 >$at_check_line_file
+( $at_traceon; $server --version |grep server || exit 77 ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+$at_diff $at_devnull $at_stderr || at_failed=:
+echo stdout:; cat $at_stdout
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   0) ;;
+   *) echo "basic.at:715: exit code was $at_status, expected 0"
+      at_failed=:;;
+esac
+if $at_failed; then
+
+  echo 1 > $at_status_file
+  exit 1
+fi
+
+$at_traceon
+
+CVS_SERVER=$server; export CVS_SERVER
+method=:fork:
+CVSROOT=$method$CVSROOT_DIR
+export CVSROOT
+SPROG=`basename $server`
+
+#
+# Clear a possibly damaging inherited environment.
+#
+
+# Avoid picking up any stray .cvsrc, etc., from the user running the tests
+mkdir home
+HOME=$at_group_dir/home; export HOME
+
+# Make sure this variable is not defined to anything that would
+# change the format of RCS dates.  Otherwise people using e.g.,
+# RCSINIT=-zLT get lots of spurious failures.
+RCSINIT=
+
+#
+# Initialize the repository
+#
+$at_traceoff
+echo "basic.at:715: cvs init"
+echo basic.at:715 >$at_check_line_file
+( $at_traceon; cvs init ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+$at_diff $at_devnull $at_stderr || at_failed=:
+$at_diff $at_devnull $at_stdout || at_failed=:
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   0) ;;
+   *) echo "basic.at:715: exit code was $at_status, expected 0"
+      at_failed=:;;
+esac
+if $at_failed; then
+
+  echo 1 > $at_status_file
+  exit 1
+fi
+
+$at_traceon
+
+
+#
+# Create the default project
+#
+mkdir top
+cd top
+$at_traceoff
+echo "basic.at:715: cvs -Q co -l ."
+echo basic.at:715 >$at_check_line_file
+( $at_traceon; cvs -Q co -l . ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+$at_diff $at_devnull $at_stderr || at_failed=:
+$at_diff $at_devnull $at_stdout || at_failed=:
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   0) ;;
+   *) echo "basic.at:715: exit code was $at_status, expected 0"
+      at_failed=:;;
+esac
+if $at_failed; then
+
+  echo 1 > $at_status_file
+  exit 1
+fi
+
+$at_traceon
+
+mkdir project
+$at_traceoff
+echo "basic.at:715: cvs -Q add project"
+echo basic.at:715 >$at_check_line_file
+( $at_traceon; cvs -Q add project ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+$at_diff $at_devnull $at_stderr || at_failed=:
+$at_diff $at_devnull $at_stdout || at_failed=:
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   0) ;;
+   *) echo "basic.at:715: exit code was $at_status, expected 0"
+      at_failed=:;;
+esac
+if $at_failed; then
+
+  echo 1 > $at_status_file
+  exit 1
+fi
+
+$at_traceon
+
+cd ..
+rm -r top
+
+#
+# Check out the default project and cd into the workspace.
+#
+# I'm checking for error returns form the cd and printing error messages since,
+# for instance, if the CVS executable picks up a ~/.cvsrc which causes empty
+# directories to be pruned by checkout, the project directory will not be
+# created but the `cvs co' will not return an error.
+#
+$at_traceoff
+echo "basic.at:715: cvs -Q co project"
+echo basic.at:715 >$at_check_line_file
+( $at_traceon; cvs -Q co project ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+$at_diff $at_devnull $at_stderr || at_failed=:
+$at_diff $at_devnull $at_stdout || at_failed=:
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   0) ;;
+   *) echo "basic.at:715: exit code was $at_status, expected 0"
+      at_failed=:;;
+esac
+if $at_failed; then
+
+  echo 1 > $at_status_file
+  exit 1
+fi
+
+$at_traceon
+
+cd project ||
+  { { echo "$as_me:$LINENO: error: Couldn't cd to \\`project'.  Did \$HOME get set incorrectly?" >&5
+echo "$as_me: error: Couldn't cd to \\`project'.  Did \$HOME get set incorrectly?" >&2;}
+   { (exit 1); exit 1; }; }
+
+###
+### End AT_CVS_SETUP([no admin -H])
+###
+
+
+
+# Why in the world do we check for this?
+# Note that -H is an invalid option.
+$at_traceoff
+echo "basic.at:724: cvs -q admin -H"
+echo basic.at:724 >$at_check_line_file
+( $at_traceon; cvs -q admin -H ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+echo >>$at_stderr; echo "admin: invalid option -- H
+$CPROG [admin aborted]: specify $CPROG -H admin for usage information
+" | $at_diff - $at_stderr || at_failed=:
+$at_diff $at_devnull $at_stdout || at_failed=:
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   1) ;;
+   *) echo "basic.at:724: exit code was $at_status, expected 1"
+      at_failed=:;;
+esac
+if $at_failed; then
+
+  echo 1 > $at_status_file
+  exit 1
+fi
+
+$at_traceon
+
+
+      $at_traceoff
+      $at_times_p && times >$at_times_file
+    ) 5>&1 2>&1 | eval $at_tee_pipe
+    at_status=`cat $at_status_file`
+    ;;
+
+  36 ) # 36. basic.at:16: Operations on empty projects-r-l
+    at_setup_line='basic.at:16'
+    at_desc='Operations on empty projects-r-l'
+    $at_quiet $ECHO_N " 36: Operations on empty projects-r-l             $ECHO_C"
+    at_xfail=no
+    (
+      echo "36. basic.at:16: testing ..."
       $at_traceon
 ###
 ### Begin AT_CVS_SETUP([Operations on empty projects])
@@ -17906,13 +20075,13 @@ $at_traceon
     at_status=`cat $at_status_file`
     ;;
 
-  34 ) # 34. basic.at:30: Adding directories and files-r-l
+  37 ) # 37. basic.at:30: Adding directories and files-r-l
     at_setup_line='basic.at:30'
     at_desc='Adding directories and files-r-l'
-    $at_quiet $ECHO_N " 34: Adding directories and files-r-l             $ECHO_C"
+    $at_quiet $ECHO_N " 37: Adding directories and files-r-l             $ECHO_C"
     at_xfail=no
     (
-      echo "34. basic.at:30: testing ..."
+      echo "37. basic.at:30: testing ..."
       $at_traceon
 ###
 ### Begin AT_CVS_SETUP([Adding directories and files])
@@ -18463,13 +20632,13 @@ $at_traceon
     at_status=`cat $at_status_file`
     ;;
 
-  35 ) # 35. basic.at:130: tag, update, & diff-r-l
+  38 ) # 38. basic.at:130: tag, update, & diff-r-l
     at_setup_line='basic.at:130'
     at_desc='tag, update, & diff-r-l'
-    $at_quiet $ECHO_N " 35: tag, update, & diff-r-l                      $ECHO_C"
+    $at_quiet $ECHO_N " 38: tag, update, & diff-r-l                      $ECHO_C"
     at_xfail=no
     (
-      echo "35. basic.at:130: testing ..."
+      echo "38. basic.at:130: testing ..."
       $at_traceon
 ###
 ### Begin AT_CVS_SETUP([tag, update, & diff])
@@ -19190,13 +21359,13 @@ rm stderr nstdout
     at_status=`cat $at_status_file`
     ;;
 
-  36 ) # 36. basic.at:189: strange revision numbers-r-l
+  39 ) # 39. basic.at:189: strange revision numbers-r-l
     at_setup_line='basic.at:189'
     at_desc='strange revision numbers-r-l'
-    $at_quiet $ECHO_N " 36: strange revision numbers-r-l                 $ECHO_C"
+    $at_quiet $ECHO_N " 39: strange revision numbers-r-l                 $ECHO_C"
     at_xfail=no
     (
-      echo "36. basic.at:189: testing ..."
+      echo "39. basic.at:189: testing ..."
       $at_traceon
 ###
 ### Begin AT_CVS_SETUP([strange revision numbers])
@@ -20738,13 +22907,13 @@ $at_traceon
     at_status=`cat $at_status_file`
     ;;
 
-  37 ) # 37. basic.at:393: annotate-r-l
+  40 ) # 40. basic.at:393: annotate-r-l
     at_setup_line='basic.at:393'
     at_desc='annotate-r-l'
-    $at_quiet $ECHO_N " 37: annotate-r-l                                 $ECHO_C"
+    $at_quiet $ECHO_N " 40: annotate-r-l                                 $ECHO_C"
     at_xfail=no
     (
-      echo "37. basic.at:393: testing ..."
+      echo "40. basic.at:393: testing ..."
       $at_traceon
 ###
 ### Begin AT_CVS_SETUP([annotate])
@@ -21268,13 +23437,13 @@ rm stderr nstdout
     at_status=`cat $at_status_file`
     ;;
 
-  38 ) # 38. basic.at:417: top of repository-r-l
+  41 ) # 41. basic.at:417: top of repository-r-l
     at_setup_line='basic.at:417'
     at_desc='top of repository-r-l'
-    $at_quiet $ECHO_N " 38: top of repository-r-l                        $ECHO_C"
+    $at_quiet $ECHO_N " 41: top of repository-r-l                        $ECHO_C"
     at_xfail=no
     (
-      echo "38. basic.at:417: testing ..."
+      echo "41. basic.at:417: testing ..."
       $at_traceon
 ###
 ### Begin AT_CVS_SETUP([top of repository])
@@ -21669,17 +23838,17 @@ fi
 $at_traceon
 
 
-mkdir first-dir
+mkdir second-dir
 $at_traceoff
-echo "basic.at:457: cvs add first-dir"
+echo "basic.at:457: cvs add second-dir"
 echo basic.at:457 >$at_check_line_file
-( $at_traceon; cvs add first-dir ) >$at_stdout 2>$at_stder1
+( $at_traceon; cvs add second-dir ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
 grep -v '^ *+' $at_stder1 >$at_stderr
 at_failed=false
 $at_diff $at_devnull $at_stderr || at_failed=:
-echo >>$at_stdout; echo "Directory $CVSROOT_DIR/first-dir added to the repository
+echo >>$at_stdout; echo "Directory $CVSROOT_DIR/second-dir added to the repository
 " | $at_diff - $at_stdout || at_failed=:
 case $at_status in
    77) echo 77 > $at_status_file
@@ -21699,9 +23868,9 @@ $at_traceon
 
 cd ..
 $at_traceoff
-echo "basic.at:460: cvs -q co first-dir"
+echo "basic.at:460: cvs -q co second-dir"
 echo basic.at:460 >$at_check_line_file
-( $at_traceon; cvs -q co first-dir ) >$at_stdout 2>$at_stder1
+( $at_traceon; cvs -q co second-dir ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
 grep -v '^ *+' $at_stder1 >$at_stderr
@@ -21724,12 +23893,10 @@ fi
 $at_traceon
 
 
-# The top-level CVS directory is not created by default.
-# I'm leaving basicb-1a and basicb-1b untouched, mostly, in
-# case we decide that the default should be reversed...
+# Verify that the top-level CVS directory is not created by default.
 $at_traceoff
-echo "basic.at:465: test -d CVS"
-echo basic.at:465 >$at_check_line_file
+echo "basic.at:463: test -d CVS"
+echo basic.at:463 >$at_check_line_file
 ( $at_traceon; test -d CVS ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
@@ -21741,7 +23908,7 @@ case $at_status in
    77) echo 77 > $at_status_file
             exit 77;;
    1) ;;
-   *) echo "basic.at:465: exit code was $at_status, expected 1"
+   *) echo "basic.at:463: exit code was $at_status, expected 1"
       at_failed=:;;
 esac
 if $at_failed; then
@@ -21754,21 +23921,21 @@ $at_traceon
 
 
 $at_traceoff
-echo "basic.at:468: cat first-dir/CVS/Repository"
-echo basic.at:468 >$at_check_line_file
-( $at_traceon; cat first-dir/CVS/Repository ) >$at_stdout 2>$at_stder1
+echo "basic.at:466: cat second-dir/CVS/Repository"
+echo basic.at:466 >$at_check_line_file
+( $at_traceon; cat second-dir/CVS/Repository ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
 grep -v '^ *+' $at_stder1 >$at_stderr
 at_failed=false
 $at_diff $at_devnull $at_stderr || at_failed=:
-echo >>$at_stdout; echo "first-dir
+echo >>$at_stdout; echo "second-dir
 " | $at_diff - $at_stdout || at_failed=:
 case $at_status in
    77) echo 77 > $at_status_file
             exit 77;;
    0) ;;
-   *) echo "basic.at:468: exit code was $at_status, expected 0"
+   *) echo "basic.at:466: exit code was $at_status, expected 0"
       at_failed=:;;
 esac
 if $at_failed; then
@@ -21786,13 +23953,13 @@ $at_traceon
     at_status=`cat $at_status_file`
     ;;
 
-  39 ) # 39. basic.at:474: Emptydir not special-r-l
-    at_setup_line='basic.at:474'
+  42 ) # 42. basic.at:472: Emptydir not special-r-l
+    at_setup_line='basic.at:472'
     at_desc='Emptydir not special-r-l'
-    $at_quiet $ECHO_N " 39: Emptydir not special-r-l                     $ECHO_C"
+    $at_quiet $ECHO_N " 42: Emptydir not special-r-l                     $ECHO_C"
     at_xfail=no
     (
-      echo "39. basic.at:474: testing ..."
+      echo "42. basic.at:472: testing ..."
       $at_traceon
 ###
 ### Begin AT_CVS_SETUP([Emptydir not special])
@@ -21806,8 +23973,8 @@ mkdir $at_group_dir/realcvsroot ||
 echo "$as_me: error: Cannot create directory \`$at_group_dir/realcvsroot'" >&2;}
    { (exit 1); exit 1; }; }
 $at_traceoff
-echo "basic.at:474: ln -s realcvsroot \$at_group_dir/cvsroot || exit 77"
-echo basic.at:474 >$at_check_line_file
+echo "basic.at:472: ln -s realcvsroot \$at_group_dir/cvsroot || exit 77"
+echo basic.at:472 >$at_check_line_file
 ( $at_traceon; ln -s realcvsroot $at_group_dir/cvsroot || exit 77 ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
@@ -21819,7 +23986,7 @@ case $at_status in
    77) echo 77 > $at_status_file
             exit 77;;
    0) ;;
-   *) echo "basic.at:474: exit code was $at_status, expected 0"
+   *) echo "basic.at:472: exit code was $at_status, expected 0"
       at_failed=:;;
 esac
 if $at_failed; then
@@ -21836,8 +24003,8 @@ $at_traceon
 #
 CVSROOT_DIR=$at_group_dir/cvsroot
 $at_traceoff
-echo "basic.at:474: cvs --version |grep client || exit 77"
-echo basic.at:474 >$at_check_line_file
+echo "basic.at:472: cvs --version |grep client || exit 77"
+echo basic.at:472 >$at_check_line_file
 ( $at_traceon; cvs --version |grep client || exit 77 ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
@@ -21849,7 +24016,7 @@ case $at_status in
    77) echo 77 > $at_status_file
             exit 77;;
    0) ;;
-   *) echo "basic.at:474: exit code was $at_status, expected 0"
+   *) echo "basic.at:472: exit code was $at_status, expected 0"
       at_failed=:;;
 esac
 if $at_failed; then
@@ -21861,8 +24028,8 @@ fi
 $at_traceon
 
 $at_traceoff
-echo "basic.at:474: \$server --version |grep server || exit 77"
-echo basic.at:474 >$at_check_line_file
+echo "basic.at:472: \$server --version |grep server || exit 77"
+echo basic.at:472 >$at_check_line_file
 ( $at_traceon; $server --version |grep server || exit 77 ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
@@ -21874,7 +24041,7 @@ case $at_status in
    77) echo 77 > $at_status_file
             exit 77;;
    0) ;;
-   *) echo "basic.at:474: exit code was $at_status, expected 0"
+   *) echo "basic.at:472: exit code was $at_status, expected 0"
       at_failed=:;;
 esac
 if $at_failed; then
@@ -21908,8 +24075,8 @@ RCSINIT=
 # Initialize the repository
 #
 $at_traceoff
-echo "basic.at:474: cvs init"
-echo basic.at:474 >$at_check_line_file
+echo "basic.at:472: cvs init"
+echo basic.at:472 >$at_check_line_file
 ( $at_traceon; cvs init ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
@@ -21921,7 +24088,7 @@ case $at_status in
    77) echo 77 > $at_status_file
             exit 77;;
    0) ;;
-   *) echo "basic.at:474: exit code was $at_status, expected 0"
+   *) echo "basic.at:472: exit code was $at_status, expected 0"
       at_failed=:;;
 esac
 if $at_failed; then
@@ -21939,8 +24106,8 @@ $at_traceon
 mkdir top
 cd top
 $at_traceoff
-echo "basic.at:474: cvs -Q co -l ."
-echo basic.at:474 >$at_check_line_file
+echo "basic.at:472: cvs -Q co -l ."
+echo basic.at:472 >$at_check_line_file
 ( $at_traceon; cvs -Q co -l . ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
@@ -21952,7 +24119,7 @@ case $at_status in
    77) echo 77 > $at_status_file
             exit 77;;
    0) ;;
-   *) echo "basic.at:474: exit code was $at_status, expected 0"
+   *) echo "basic.at:472: exit code was $at_status, expected 0"
       at_failed=:;;
 esac
 if $at_failed; then
@@ -21965,8 +24132,8 @@ $at_traceon
 
 mkdir project
 $at_traceoff
-echo "basic.at:474: cvs -Q add project"
-echo basic.at:474 >$at_check_line_file
+echo "basic.at:472: cvs -Q add project"
+echo basic.at:472 >$at_check_line_file
 ( $at_traceon; cvs -Q add project ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
@@ -21978,7 +24145,7 @@ case $at_status in
    77) echo 77 > $at_status_file
             exit 77;;
    0) ;;
-   *) echo "basic.at:474: exit code was $at_status, expected 0"
+   *) echo "basic.at:472: exit code was $at_status, expected 0"
       at_failed=:;;
 esac
 if $at_failed; then
@@ -22001,8 +24168,8 @@ rm -r top
 # created but the `cvs co' will not return an error.
 #
 $at_traceoff
-echo "basic.at:474: cvs -Q co project"
-echo basic.at:474 >$at_check_line_file
+echo "basic.at:472: cvs -Q co project"
+echo basic.at:472 >$at_check_line_file
 ( $at_traceon; cvs -Q co project ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
@@ -22014,7 +24181,7 @@ case $at_status in
    77) echo 77 > $at_status_file
             exit 77;;
    0) ;;
-   *) echo "basic.at:474: exit code was $at_status, expected 0"
+   *) echo "basic.at:472: exit code was $at_status, expected 0"
       at_failed=:;;
 esac
 if $at_failed; then
@@ -22034,13 +24201,19 @@ echo "$as_me: error: Couldn't cd to \\`project'.  Did \$HOME get set incorrectly
 ### End AT_CVS_SETUP([Emptydir not special])
 ###
 
+# FIXME: This test should probably be broken into several, though I'm not sure
+# where.  It came out of basicb in the old sanity.sh test suite, along with the
+# previous test and the following two, but I didn't have time to find where
+# else this one should break since what look like good break points still
+# depend on previous tests for setup.
+
 # Note that the name Emptydir is chosen to test that CVS just
 # treats it like any other directory name.  It should be
 # special only when it is directly in $CVSROOT/CVSROOT.
 mkdir Emptydir sdir2
 $at_traceoff
-echo "basic.at:483: cvs add Emptydir sdir2"
-echo basic.at:483 >$at_check_line_file
+echo "basic.at:487: cvs add Emptydir sdir2"
+echo basic.at:487 >$at_check_line_file
 ( $at_traceon; cvs add Emptydir sdir2 ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
@@ -22054,7 +24227,7 @@ case $at_status in
    77) echo 77 > $at_status_file
             exit 77;;
    0) ;;
-   *) echo "basic.at:483: exit code was $at_status, expected 0"
+   *) echo "basic.at:487: exit code was $at_status, expected 0"
       at_failed=:;;
 esac
 if $at_failed; then
@@ -22069,8 +24242,8 @@ $at_traceon
 cd Emptydir
 echo sfile1 starts >sfile1
 $at_traceoff
-echo "basic.at:490: cvs -n add sfile1"
-echo basic.at:490 >$at_check_line_file
+echo "basic.at:494: cvs -n add sfile1"
+echo basic.at:494 >$at_check_line_file
 ( $at_traceon; cvs -n add sfile1 ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
@@ -22084,7 +24257,7 @@ case $at_status in
    77) echo 77 > $at_status_file
             exit 77;;
    0) ;;
-   *) echo "basic.at:490: exit code was $at_status, expected 0"
+   *) echo "basic.at:494: exit code was $at_status, expected 0"
       at_failed=:;;
 esac
 if $at_failed; then
@@ -22097,8 +24270,8 @@ $at_traceon
 
 
 $at_traceoff
-echo "basic.at:501: cvs status sfile1"
-echo basic.at:501 >$at_check_line_file
+echo "basic.at:505: cvs status sfile1"
+echo basic.at:505 >$at_check_line_file
 ( $at_traceon; cvs status sfile1 ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
@@ -22117,7 +24290,7 @@ case $at_status in
    77) echo 77 > $at_status_file
             exit 77;;
    0) ;;
-   *) echo "basic.at:501: exit code was $at_status, expected 0"
+   *) echo "basic.at:505: exit code was $at_status, expected 0"
       at_failed=:;;
 esac
 if $at_failed; then
@@ -22130,8 +24303,8 @@ $at_traceon
 
 
 $at_traceoff
-echo "basic.at:506: cvs add sfile1"
-echo basic.at:506 >$at_check_line_file
+echo "basic.at:510: cvs add sfile1"
+echo basic.at:510 >$at_check_line_file
 ( $at_traceon; cvs add sfile1 ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
@@ -22145,7 +24318,7 @@ case $at_status in
    77) echo 77 > $at_status_file
             exit 77;;
    0) ;;
-   *) echo "basic.at:506: exit code was $at_status, expected 0"
+   *) echo "basic.at:510: exit code was $at_status, expected 0"
       at_failed=:;;
 esac
 if $at_failed; then
@@ -22158,8 +24331,8 @@ $at_traceon
 
 
 $at_traceoff
-echo "basic.at:518: cvs status sfile1"
-echo basic.at:518 >$at_check_line_file
+echo "basic.at:522: cvs status sfile1"
+echo basic.at:522 >$at_check_line_file
 ( $at_traceon; cvs status sfile1 ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
@@ -22180,7 +24353,7 @@ case $at_status in
    77) echo 77 > $at_status_file
             exit 77;;
    0) ;;
-   *) echo "basic.at:518: exit code was $at_status, expected 0"
+   *) echo "basic.at:522: exit code was $at_status, expected 0"
       at_failed=:;;
 esac
 if $at_failed; then
@@ -22195,8 +24368,8 @@ $at_traceon
 cd ../sdir2
 echo sfile2 starts >sfile2
 $at_traceoff
-echo "basic.at:525: cvs add sfile2"
-echo basic.at:525 >$at_check_line_file
+echo "basic.at:529: cvs add sfile2"
+echo basic.at:529 >$at_check_line_file
 ( $at_traceon; cvs add sfile2 ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
@@ -22210,7 +24383,7 @@ case $at_status in
    77) echo 77 > $at_status_file
             exit 77;;
    0) ;;
-   *) echo "basic.at:525: exit code was $at_status, expected 0"
+   *) echo "basic.at:529: exit code was $at_status, expected 0"
       at_failed=:;;
 esac
 if $at_failed; then
@@ -22223,8 +24396,8 @@ $at_traceon
 
 
 $at_traceoff
-echo "basic.at:530: cvs -q ci CVS"
-echo basic.at:530 >$at_check_line_file
+echo "basic.at:534: cvs -q ci CVS"
+echo basic.at:534 >$at_check_line_file
 ( $at_traceon; cvs -q ci CVS ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
@@ -22238,7 +24411,7 @@ case $at_status in
    77) echo 77 > $at_status_file
             exit 77;;
    0) ;;
-   *) echo "basic.at:530: exit code was $at_status, expected 0"
+   *) echo "basic.at:534: exit code was $at_status, expected 0"
       at_failed=:;;
 esac
 if $at_failed; then
@@ -22252,8 +24425,8 @@ $at_traceon
 
 cd ..
 $at_traceoff
-echo "basic.at:546: cvs -q ci -m add"
-echo basic.at:546 >$at_check_line_file
+echo "basic.at:550: cvs -q ci -m add"
+echo basic.at:550 >$at_check_line_file
 ( $at_traceon; cvs -q ci -m add ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
@@ -22277,7 +24450,7 @@ case $at_status in
    77) echo 77 > $at_status_file
             exit 77;;
    0) ;;
-   *) echo "basic.at:546: exit code was $at_status, expected 0"
+   *) echo "basic.at:550: exit code was $at_status, expected 0"
       at_failed=:;;
 esac
 if $at_failed; then
@@ -22291,8 +24464,8 @@ $at_traceon
 
 echo sfile1 develops >Emptydir/sfile1
 $at_traceoff
-echo "basic.at:554: cvs -q ci -m modify"
-echo basic.at:554 >$at_check_line_file
+echo "basic.at:558: cvs -q ci -m modify"
+echo basic.at:558 >$at_check_line_file
 ( $at_traceon; cvs -q ci -m modify ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
@@ -22308,7 +24481,7 @@ case $at_status in
    77) echo 77 > $at_status_file
             exit 77;;
    0) ;;
-   *) echo "basic.at:554: exit code was $at_status, expected 0"
+   *) echo "basic.at:558: exit code was $at_status, expected 0"
       at_failed=:;;
 esac
 if $at_failed; then
@@ -22320,22 +24493,381 @@ fi
 $at_traceon
 
 
+$at_traceoff
+echo "basic.at:563: cvs -q tag release-1"
+echo basic.at:563 >$at_check_line_file
+( $at_traceon; cvs -q tag release-1 ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+$at_diff $at_devnull $at_stderr || at_failed=:
+echo >>$at_stdout; echo "T Emptydir/sfile1
+T sdir2/sfile2
+" | $at_diff - $at_stdout || at_failed=:
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   0) ;;
+   *) echo "basic.at:563: exit code was $at_status, expected 0"
+      at_failed=:;;
+esac
+if $at_failed; then
+
+  echo 1 > $at_status_file
+  exit 1
+fi
+
+$at_traceon
+
+
+echo not in time for release-1 >sdir2/sfile2
+$at_traceoff
+echo "basic.at:571: cvs -q ci -m modify-2"
+echo basic.at:571 >$at_check_line_file
+( $at_traceon; cvs -q ci -m modify-2 ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+$at_diff $at_devnull $at_stderr || at_failed=:
+echo >>$at_stdout; echo "Checking in sdir2/sfile2;
+$CVSROOT_DIR/project/sdir2/sfile2,v  <--  sfile2
+new revision: 1.2; previous revision: 1.1
+done
+" | $at_diff - $at_stdout || at_failed=:
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   0) ;;
+   *) echo "basic.at:571: exit code was $at_status, expected 0"
+      at_failed=:;;
+esac
+if $at_failed; then
+
+  echo 1 > $at_status_file
+  exit 1
+fi
+
+$at_traceon
+
+
+# FIXCVS:
+# See if CVS can correctly notice when an invalid numeric
+# revision is specified.
+# AT_CHECK([cvs diff -r 1.5 -r 1.7 sfile2],,,
+# [error msg
+# ])
+
+# Test that we recurse into the correct directory when checking
+# for existing files, even if co -d is in use.
+cd ..
+touch project/extra
+$at_traceoff
+echo "basic.at:587: cvs -q co -d project1 project"
+echo basic.at:587 >$at_check_line_file
+( $at_traceon; cvs -q co -d project1 project ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+$at_diff $at_devnull $at_stderr || at_failed=:
+echo >>$at_stdout; echo "U project1/Emptydir/sfile1
+U project1/sdir2/sfile2
+" | $at_diff - $at_stdout || at_failed=:
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   0) ;;
+   *) echo "basic.at:587: exit code was $at_status, expected 0"
+      at_failed=:;;
+esac
+if $at_failed; then
+
+  echo 1 > $at_status_file
+  exit 1
+fi
+
+$at_traceon
+
+
+# FIXCVS?  The next test used to check things out like this:
+#   U newdir/Emptydir/sfile1
+#   U newdir/sdir2/sfile2
+# but that's difficult to do.  The whole "shorten" thing
+# is pretty bogus, because it will break on things
+# like "cvs co foo/bar baz/quux".  Unless there's some
+# pretty detailed expansion and analysis of the command-line
+# arguments, we shouldn't do "shorten" stuff at all.
+#
+# DRP: I'm not sure how detailed it would need to be - either all the path
+# prefixes are the same, in which case the matching parts are shortened, or
+# they are not, in which case they are grouped:
+#
+#   cvs co -d short project/Emptydir project/sdir2
+#   U short/Emptydir/sfile1
+#   U short/sdir2
+#
+#   cvs co -d group foo/bar baz/quux
+#   U group/foo/bar/file1
+#   U group/baz/quux/file2
+#
+# How do you group under project if you do want to?  How about:
+#
+#   cvs co -d group/project project/Emptydir project/sdir2
+#   U group/project/Emptydir/sfile1
+#   U group/project/sdir2/sfile2
+#
+$at_traceoff
+echo "basic.at:619: cvs -q co -d newdir -r release-1 project/Emptydir project/sdir2"
+echo basic.at:619 >$at_check_line_file
+( $at_traceon; cvs -q co -d newdir -r release-1 project/Emptydir project/sdir2 ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+$at_diff $at_devnull $at_stderr || at_failed=:
+echo >>$at_stdout; echo "U newdir/project/Emptydir/sfile1
+U newdir/project/sdir2/sfile2
+" | $at_diff - $at_stdout || at_failed=:
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   0) ;;
+   *) echo "basic.at:619: exit code was $at_status, expected 0"
+      at_failed=:;;
+esac
+if $at_failed; then
+
+  echo 1 > $at_status_file
+  exit 1
+fi
+
+$at_traceon
+
+
+# Verify that the top-level CVS directory is not created by default.
+$at_traceoff
+echo "basic.at:622: test -d CVS"
+echo basic.at:622 >$at_check_line_file
+( $at_traceon; test -d CVS ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+$at_diff $at_devnull $at_stderr || at_failed=:
+$at_diff $at_devnull $at_stdout || at_failed=:
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   1) ;;
+   *) echo "basic.at:622: exit code was $at_status, expected 1"
+      at_failed=:;;
+esac
+if $at_failed; then
+
+  echo 1 > $at_status_file
+  exit 1
+fi
+
+$at_traceon
+
+
+# Verify that our CVS/Repository files hold what we expect.
+$at_traceoff
+echo "basic.at:627: cat newdir/CVS/Repository"
+echo basic.at:627 >$at_check_line_file
+( $at_traceon; cat newdir/CVS/Repository ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+$at_diff $at_devnull $at_stderr || at_failed=:
+echo >>$at_stdout; echo ".
+" | $at_diff - $at_stdout || at_failed=:
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   0) ;;
+   *) echo "basic.at:627: exit code was $at_status, expected 0"
+      at_failed=:;;
+esac
+if $at_failed; then
+
+  echo 1 > $at_status_file
+  exit 1
+fi
+
+$at_traceon
+
+$at_traceoff
+echo "basic.at:630: cat newdir/project/CVS/Repository"
+echo basic.at:630 >$at_check_line_file
+( $at_traceon; cat newdir/project/CVS/Repository ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+$at_diff $at_devnull $at_stderr || at_failed=:
+echo >>$at_stdout; echo "project
+" | $at_diff - $at_stdout || at_failed=:
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   0) ;;
+   *) echo "basic.at:630: exit code was $at_status, expected 0"
+      at_failed=:;;
+esac
+if $at_failed; then
+
+  echo 1 > $at_status_file
+  exit 1
+fi
+
+$at_traceon
+
+$at_traceoff
+echo "basic.at:633: cat newdir/project/Emptydir/CVS/Repository"
+echo basic.at:633 >$at_check_line_file
+( $at_traceon; cat newdir/project/Emptydir/CVS/Repository ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+$at_diff $at_devnull $at_stderr || at_failed=:
+echo >>$at_stdout; echo "project/Emptydir
+" | $at_diff - $at_stdout || at_failed=:
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   0) ;;
+   *) echo "basic.at:633: exit code was $at_status, expected 0"
+      at_failed=:;;
+esac
+if $at_failed; then
+
+  echo 1 > $at_status_file
+  exit 1
+fi
+
+$at_traceon
+
+$at_traceoff
+echo "basic.at:636: cat newdir/project/sdir2/CVS/Repository"
+echo basic.at:636 >$at_check_line_file
+( $at_traceon; cat newdir/project/sdir2/CVS/Repository ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+$at_diff $at_devnull $at_stderr || at_failed=:
+echo >>$at_stdout; echo "project/sdir2
+" | $at_diff - $at_stdout || at_failed=:
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   0) ;;
+   *) echo "basic.at:636: exit code was $at_status, expected 0"
+      at_failed=:;;
+esac
+if $at_failed; then
+
+  echo 1 > $at_status_file
+  exit 1
+fi
+
+$at_traceon
+
+
+# Verify that our project files contain what we expect.
+$at_traceoff
+echo "basic.at:641: cat newdir/project/Emptydir/sfile1"
+echo basic.at:641 >$at_check_line_file
+( $at_traceon; cat newdir/project/Emptydir/sfile1 ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+$at_diff $at_devnull $at_stderr || at_failed=:
+echo >>$at_stdout; echo "sfile1 develops
+" | $at_diff - $at_stdout || at_failed=:
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   0) ;;
+   *) echo "basic.at:641: exit code was $at_status, expected 0"
+      at_failed=:;;
+esac
+if $at_failed; then
+
+  echo 1 > $at_status_file
+  exit 1
+fi
+
+$at_traceon
+
+$at_traceoff
+echo "basic.at:644: cat newdir/project/sdir2/sfile2"
+echo basic.at:644 >$at_check_line_file
+( $at_traceon; cat newdir/project/sdir2/sfile2 ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+$at_diff $at_devnull $at_stderr || at_failed=:
+echo >>$at_stdout; echo "sfile2 starts
+" | $at_diff - $at_stdout || at_failed=:
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   0) ;;
+   *) echo "basic.at:644: exit code was $at_status, expected 0"
+      at_failed=:;;
+esac
+if $at_failed; then
+
+  echo 1 > $at_status_file
+  exit 1
+fi
+
+$at_traceon
+
+
+# FIXCVS:
+# Hmm, this might be a case for CVSNULLREPOS, but CVS doesn't
+# seem to deal with it...
+# AT_CHECK([cvs -q co -d sub1/sub2 project],,
+# [U sub1/sub2/Emptydir/sfile1
+# U sub1/sub2/sdir2/sfile2
+# ])
+#
+# cd sub1
+# AT_CHECK([cvs -q update ./.])
+#
+# touch xx
+# AT_CHECK_NOESCAPE([cvs add xx],,
+# [$SPROG add: scheduling file \`xx' for addition
+# $SPROG add: use \`$SPROG commit' to add this file permanently
+# ])
+#
+# to test: sub1/sub2/sub3
+
       $at_traceoff
       $at_times_p && times >$at_times_file
     ) 5>&1 2>&1 | eval $at_tee_pipe
     at_status=`cat $at_status_file`
     ;;
 
-  40 ) # 40. basic.at:560: unprocessed-r-l
-    at_setup_line='basic.at:560'
-    at_desc='unprocessed-r-l'
-    $at_quiet $ECHO_N " 40: unprocessed-r-l                              $ECHO_C"
+  43 ) # 43. basic.at:669: delete last revision-r-l
+    at_setup_line='basic.at:669'
+    at_desc='delete last revision-r-l'
+    $at_quiet $ECHO_N " 43: delete last revision-r-l                     $ECHO_C"
     at_xfail=no
     (
-      echo "40. basic.at:560: testing ..."
+      echo "43. basic.at:669: testing ..."
       $at_traceon
 ###
-### Begin AT_CVS_SETUP([unprocessed])
+### Begin AT_CVS_SETUP([delete last revision])
 ###
 
 #
@@ -22346,8 +24878,8 @@ mkdir $at_group_dir/realcvsroot ||
 echo "$as_me: error: Cannot create directory \`$at_group_dir/realcvsroot'" >&2;}
    { (exit 1); exit 1; }; }
 $at_traceoff
-echo "basic.at:560: ln -s realcvsroot \$at_group_dir/cvsroot || exit 77"
-echo basic.at:560 >$at_check_line_file
+echo "basic.at:669: ln -s realcvsroot \$at_group_dir/cvsroot || exit 77"
+echo basic.at:669 >$at_check_line_file
 ( $at_traceon; ln -s realcvsroot $at_group_dir/cvsroot || exit 77 ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
@@ -22359,7 +24891,7 @@ case $at_status in
    77) echo 77 > $at_status_file
             exit 77;;
    0) ;;
-   *) echo "basic.at:560: exit code was $at_status, expected 0"
+   *) echo "basic.at:669: exit code was $at_status, expected 0"
       at_failed=:;;
 esac
 if $at_failed; then
@@ -22376,8 +24908,8 @@ $at_traceon
 #
 CVSROOT_DIR=$at_group_dir/cvsroot
 $at_traceoff
-echo "basic.at:560: cvs --version |grep client || exit 77"
-echo basic.at:560 >$at_check_line_file
+echo "basic.at:669: cvs --version |grep client || exit 77"
+echo basic.at:669 >$at_check_line_file
 ( $at_traceon; cvs --version |grep client || exit 77 ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
@@ -22389,7 +24921,7 @@ case $at_status in
    77) echo 77 > $at_status_file
             exit 77;;
    0) ;;
-   *) echo "basic.at:560: exit code was $at_status, expected 0"
+   *) echo "basic.at:669: exit code was $at_status, expected 0"
       at_failed=:;;
 esac
 if $at_failed; then
@@ -22401,8 +24933,8 @@ fi
 $at_traceon
 
 $at_traceoff
-echo "basic.at:560: \$server --version |grep server || exit 77"
-echo basic.at:560 >$at_check_line_file
+echo "basic.at:669: \$server --version |grep server || exit 77"
+echo basic.at:669 >$at_check_line_file
 ( $at_traceon; $server --version |grep server || exit 77 ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
@@ -22414,7 +24946,7 @@ case $at_status in
    77) echo 77 > $at_status_file
             exit 77;;
    0) ;;
-   *) echo "basic.at:560: exit code was $at_status, expected 0"
+   *) echo "basic.at:669: exit code was $at_status, expected 0"
       at_failed=:;;
 esac
 if $at_failed; then
@@ -22448,8 +24980,8 @@ RCSINIT=
 # Initialize the repository
 #
 $at_traceoff
-echo "basic.at:560: cvs init"
-echo basic.at:560 >$at_check_line_file
+echo "basic.at:669: cvs init"
+echo basic.at:669 >$at_check_line_file
 ( $at_traceon; cvs init ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
@@ -22461,7 +24993,7 @@ case $at_status in
    77) echo 77 > $at_status_file
             exit 77;;
    0) ;;
-   *) echo "basic.at:560: exit code was $at_status, expected 0"
+   *) echo "basic.at:669: exit code was $at_status, expected 0"
       at_failed=:;;
 esac
 if $at_failed; then
@@ -22479,8 +25011,8 @@ $at_traceon
 mkdir top
 cd top
 $at_traceoff
-echo "basic.at:560: cvs -Q co -l ."
-echo basic.at:560 >$at_check_line_file
+echo "basic.at:669: cvs -Q co -l ."
+echo basic.at:669 >$at_check_line_file
 ( $at_traceon; cvs -Q co -l . ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
@@ -22492,7 +25024,7 @@ case $at_status in
    77) echo 77 > $at_status_file
             exit 77;;
    0) ;;
-   *) echo "basic.at:560: exit code was $at_status, expected 0"
+   *) echo "basic.at:669: exit code was $at_status, expected 0"
       at_failed=:;;
 esac
 if $at_failed; then
@@ -22505,8 +25037,8 @@ $at_traceon
 
 mkdir project
 $at_traceoff
-echo "basic.at:560: cvs -Q add project"
-echo basic.at:560 >$at_check_line_file
+echo "basic.at:669: cvs -Q add project"
+echo basic.at:669 >$at_check_line_file
 ( $at_traceon; cvs -Q add project ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
@@ -22518,7 +25050,7 @@ case $at_status in
    77) echo 77 > $at_status_file
             exit 77;;
    0) ;;
-   *) echo "basic.at:560: exit code was $at_status, expected 0"
+   *) echo "basic.at:669: exit code was $at_status, expected 0"
       at_failed=:;;
 esac
 if $at_failed; then
@@ -22541,8 +25073,8 @@ rm -r top
 # created but the `cvs co' will not return an error.
 #
 $at_traceoff
-echo "basic.at:560: cvs -Q co project"
-echo basic.at:560 >$at_check_line_file
+echo "basic.at:669: cvs -Q co project"
+echo basic.at:669 >$at_check_line_file
 ( $at_traceon; cvs -Q co project ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
@@ -22554,7 +25086,7 @@ case $at_status in
    77) echo 77 > $at_status_file
             exit 77;;
    0) ;;
-   *) echo "basic.at:560: exit code was $at_status, expected 0"
+   *) echo "basic.at:669: exit code was $at_status, expected 0"
       at_failed=:;;
 esac
 if $at_failed; then
@@ -22571,24 +25103,83 @@ echo "$as_me: error: Couldn't cd to \\`project'.  Did \$HOME get set incorrectly
    { (exit 1); exit 1; }; }
 
 ###
-### End AT_CVS_SETUP([unprocessed])
+### End AT_CVS_SETUP([delete last revision])
 ###
 
+
+
+mkdir sdir
 $at_traceoff
-echo "basic.at:562: exit 77"
-echo basic.at:562 >$at_check_line_file
-( $at_traceon; exit 77 ) >$at_stdout 2>$at_stder1
+echo "basic.at:673: cvs add sdir"
+echo basic.at:673 >$at_check_line_file
+( $at_traceon; cvs add sdir ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
 grep -v '^ *+' $at_stder1 >$at_stderr
 at_failed=false
 $at_diff $at_devnull $at_stderr || at_failed=:
-$at_diff $at_devnull $at_stdout || at_failed=:
+echo >>$at_stdout; echo "Directory $CVSROOT_DIR/project/sdir added to the repository
+" | $at_diff - $at_stdout || at_failed=:
 case $at_status in
    77) echo 77 > $at_status_file
             exit 77;;
    0) ;;
-   *) echo "basic.at:562: exit code was $at_status, expected 0"
+   *) echo "basic.at:673: exit code was $at_status, expected 0"
+      at_failed=:;;
+esac
+if $at_failed; then
+
+  echo 1 > $at_status_file
+  exit 1
+fi
+
+$at_traceon
+
+cd sdir
+mkdir ssdir
+$at_traceoff
+echo "basic.at:673: cvs add ssdir"
+echo basic.at:673 >$at_check_line_file
+( $at_traceon; cvs add ssdir ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+$at_diff $at_devnull $at_stderr || at_failed=:
+echo >>$at_stdout; echo "Directory $CVSROOT_DIR/project/sdir/ssdir added to the repository
+" | $at_diff - $at_stdout || at_failed=:
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   0) ;;
+   *) echo "basic.at:673: exit code was $at_status, expected 0"
+      at_failed=:;;
+esac
+if $at_failed; then
+
+  echo 1 > $at_status_file
+  exit 1
+fi
+
+$at_traceon
+
+cd ssdir
+echo ssfile >ssfile
+$at_traceoff
+echo "basic.at:673: cvs add ssfile"
+echo basic.at:673 >$at_check_line_file
+( $at_traceon; cvs add ssfile ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+echo stderr:; tee stderr <$at_stderr
+echo stdout:; tee stdout <$at_stdout
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   0) ;;
+   *) echo "basic.at:673: exit code was $at_status, expected 0"
       at_failed=:;;
 esac
 if $at_failed; then
@@ -22600,130 +25191,485 @@ fi
 $at_traceon
 
 
-	  dotest basicb-7 "${testcvs} -q tag release-1" 'T Emptydir/sfile1
-T sdir2/sfile2'
-	  echo not in time for release-1 >sdir2/sfile2
-	  dotest basicb-8 "${testcvs} -q ci -m modify-2" \
-"Checking in sdir2/sfile2;
-${CVSROOT_DIR}/first-dir/sdir2/sfile2,v  <--  sfile2
-new revision: 1\.2; previous revision: 1\.1
-done"
-	  # See if CVS can correctly notice when an invalid numeric
-	  # revision is specified.
-	  # Commented out until we get around to fixing CVS
-:	  dotest basicb-8a0 "${testcvs} diff -r 1.5 -r 1.7 sfile2" 'error msg'
-	  cd ..
+sed \
+    -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
+    -e "s/^P /U /" \
+    <stdout >nstdout
+rm stdout
 
-	  # Test that we recurse into the correct directory when checking
-	  # for existing files, even if co -d is in use.
-	  touch first-dir/extra
-	  dotest basicb-cod-1 "${testcvs} -q co -d first-dir1 first-dir" \
-'U first-dir1/Emptydir/sfile1
-U first-dir1/sdir2/sfile2'
-	  rm -r first-dir1
+$at_traceoff
+echo "basic.at:673: (cat nstdout; cat stderr >&2)"
+echo basic.at:673 >$at_check_line_file
+( $at_traceon; (cat nstdout; cat stderr >&2) ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+echo >>$at_stderr; echo "$SPROG add: scheduling file \`ssfile' for addition
+$SPROG add: use \`$SPROG commit' to add this file permanently
+" | $at_diff - $at_stderr || at_failed=:
+$at_diff $at_devnull $at_stdout || at_failed=:
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   0) ;;
+   *) echo "basic.at:673: exit code was $at_status, expected 0"
+      at_failed=:;;
+esac
+if $at_failed; then
 
-	  rm -r first-dir
+  echo 1 > $at_status_file
+  exit 1
+fi
 
-	  # FIXME? basicb-9 used to check things out like this:
-	  #   U newdir/Emptydir/sfile1
-	  #   U newdir/sdir2/sfile2
-	  # but that's difficult to do.  The whole "shorten" thing
-	  # is pretty bogus, because it will break on things
-	  # like "cvs co foo/bar baz/quux".  Unless there's some
-	  # pretty detailed expansion and analysis of the command-line
-	  # arguments, we shouldn't do "shorten" stuff at all.
+$at_traceon
 
-	  dotest basicb-9 \
-"${testcvs} -q co -d newdir -r release-1 first-dir/Emptydir first-dir/sdir2" \
-'U newdir/first-dir/Emptydir/sfile1
-U newdir/first-dir/sdir2/sfile2'
-
-	  # basicb-9a and basicb-9b: see note about basicb-1a
-
-	  dotest_fail basicb-9a "test -d CVS" ''
-
-	  dotest basicb-9c "cat newdir/CVS/Repository" "\."
-	  dotest basicb-9d "cat newdir/first-dir/CVS/Repository" \
-"${CVSROOT_DIR}/first-dir" \
-"first-dir"
-	  dotest basicb-9e "cat newdir/first-dir/Emptydir/CVS/Repository" \
-"${CVSROOT_DIR}/first-dir/Emptydir" \
-"first-dir/Emptydir"
-	  dotest basicb-9f "cat newdir/first-dir/sdir2/CVS/Repository" \
-"${CVSROOT_DIR}/first-dir/sdir2" \
-"first-dir/sdir2"
-
-	  dotest basicb-10 "cat newdir/first-dir/Emptydir/sfile1 newdir/first-dir/sdir2/sfile2" \
-"sfile1 develops
-sfile2 starts"
-
-	  rm -r newdir
-
-	  # Hmm, this might be a case for CVSNULLREPOS, but CVS doesn't
-	  # seem to deal with it...
-	  if false; then
-	  dotest basicb-11 "${testcvs} -q co -d sub1/sub2 first-dir" \
-"U sub1/sub2/Emptydir/sfile1
-U sub1/sub2/sdir2/sfile2"
-	  cd sub1
-	  dotest basicb-12 "${testcvs} -q update ./." ''
-	  touch xx
-	  dotest basicb-13 "${testcvs} add xx" fixme
-	  cd ..
-	  rm -r sub1
-	  # to test: sub1/sub2/sub3
-	  fi # end of tests commented out.
-
-	  # Create a second directory.
-	  mkdir 1
-	  cd 1
-	  dotest basicb-14 "${testcvs} -q co -l ." 'U topfile'
-	  mkdir second-dir
-	  dotest basicb-15 "${testcvs} add second-dir" \
-"Directory ${CVSROOT_DIR}/second-dir added to the repository"
-	  cd second-dir
-	  touch aa
-	  dotest basicb-16 "${testcvs} add aa" \
-"${SPROG} add: scheduling file .aa. for addition
-${SPROG} add: use .${SPROG} commit. to add this file permanently"
-	  dotest basicb-17 "${testcvs} -q ci -m add" \
-"RCS file: ${CVSROOT_DIR}/second-dir/aa,v
+rm stderr nstdout
+$at_traceoff
+echo "basic.at:673: cvs -q ci -m add-it"
+echo basic.at:673 >$at_check_line_file
+( $at_traceon; cvs -q ci -m add-it ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+$at_diff $at_devnull $at_stderr || at_failed=:
+echo >>$at_stdout; echo "RCS file: $CVSROOT_DIR/project/sdir/ssdir/ssfile,v
 done
-Checking in aa;
-${CVSROOT_DIR}/second-dir/aa,v  <--  aa
-initial revision: 1\.1
-done"
-	  cd ..
+Checking in ssfile;
+$CVSROOT_DIR/project/sdir/ssdir/ssfile,v  <--  ssfile
+initial revision: 1.1
+done
+" | $at_diff - $at_stdout || at_failed=:
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   0) ;;
+   *) echo "basic.at:673: exit code was $at_status, expected 0"
+      at_failed=:;;
+esac
+if $at_failed; then
 
-	  # Try to remove all revisions in a file.
-	  dotest_fail basicb-o1 "${testcvs} admin -o1.1 topfile" \
-"RCS file: ${CVSROOT_DIR}/topfile,v
-deleting revision 1\.1
-${SPROG} \admin aborted\: attempt to delete all revisions"
-	  dotest basicb-o2 "${testcvs} -q update -d first-dir" \
-"U first-dir/Emptydir/sfile1
-U first-dir/sdir2/sfile2"
-	  dotest_fail basicb-o3 \
-"${testcvs} admin -o1.1:1.2 first-dir/sdir2/sfile2" \
-"RCS file: ${CVSROOT_DIR}/first-dir/sdir2/sfile2,v
-deleting revision 1\.2
-deleting revision 1\.1
-${SPROG} \admin aborted\: attempt to delete all revisions"
-	  cd ..
-	  rm -r 1
+  echo 1 > $at_status_file
+  exit 1
+fi
 
-	  mkdir 1; cd 1
-	  # Note that -H is an invalid option.
-	  # I suspect that the choice between "illegal" and "invalid"
-	  # depends on the user's environment variables, the phase
-	  # of the moon (weirdness with optind), and who knows what else.
-	  # I've been seeing "illegal"...
-	  # And I switched it to "invalid". -DRP
-	  dotest_fail basicb-21 "${testcvs} -q admin -H" \
-"admin: invalid option -- H
-${CPROG} \admin aborted\: specify ${CPROG} -H admin for usage information"
-	  cd ..
-	  rmdir 1
+$at_traceon
+
+cd ../..
+
+
+cd sdir/ssdir
+
+# Try to remove all revisions in a file.
+$at_traceoff
+echo "basic.at:683: cvs admin -o1.1 ssfile"
+echo basic.at:683 >$at_check_line_file
+( $at_traceon; cvs admin -o1.1 ssfile ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+echo >>$at_stderr; echo "$SPROG [admin aborted]: attempt to delete all revisions
+" | $at_diff - $at_stderr || at_failed=:
+echo >>$at_stdout; echo "RCS file: $CVSROOT_DIR/project/sdir/ssdir/ssfile,v
+deleting revision 1.1
+" | $at_diff - $at_stdout || at_failed=:
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   1) ;;
+   *) echo "basic.at:683: exit code was $at_status, expected 1"
+      at_failed=:;;
+esac
+if $at_failed; then
+
+  echo 1 > $at_status_file
+  exit 1
+fi
+
+$at_traceon
+
+
+echo I will be deleted second. >>ssfile
+$at_traceoff
+echo "basic.at:691: cvs -q ci -mr2"
+echo basic.at:691 >$at_check_line_file
+( $at_traceon; cvs -q ci -mr2 ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+$at_diff $at_devnull $at_stderr || at_failed=:
+echo >>$at_stdout; echo "Checking in ssfile;
+$CVSROOT_DIR/project/sdir/ssdir/ssfile,v  <--  ssfile
+new revision: 1.2; previous revision: 1.1
+done
+" | $at_diff - $at_stdout || at_failed=:
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   0) ;;
+   *) echo "basic.at:691: exit code was $at_status, expected 0"
+      at_failed=:;;
+esac
+if $at_failed; then
+
+  echo 1 > $at_status_file
+  exit 1
+fi
+
+$at_traceon
+
+
+echo I will be deleted first. >>ssfile
+echo "It's kinda like seeing the future." >>ssfile
+$at_traceoff
+echo "basic.at:700: cvs -q ci -mr3"
+echo basic.at:700 >$at_check_line_file
+( $at_traceon; cvs -q ci -mr3 ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+$at_diff $at_devnull $at_stderr || at_failed=:
+echo >>$at_stdout; echo "Checking in ssfile;
+$CVSROOT_DIR/project/sdir/ssdir/ssfile,v  <--  ssfile
+new revision: 1.3; previous revision: 1.2
+done
+" | $at_diff - $at_stdout || at_failed=:
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   0) ;;
+   *) echo "basic.at:700: exit code was $at_status, expected 0"
+      at_failed=:;;
+esac
+if $at_failed; then
+
+  echo 1 > $at_status_file
+  exit 1
+fi
+
+$at_traceon
+
+
+$at_traceoff
+echo "basic.at:709: cvs admin -o1.1:1.3 ssfile"
+echo basic.at:709 >$at_check_line_file
+( $at_traceon; cvs admin -o1.1:1.3 ssfile ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+echo >>$at_stderr; echo "$SPROG [admin aborted]: attempt to delete all revisions
+" | $at_diff - $at_stderr || at_failed=:
+echo >>$at_stdout; echo "RCS file: $CVSROOT_DIR/project/sdir/ssdir/ssfile,v
+deleting revision 1.3
+deleting revision 1.2
+deleting revision 1.1
+" | $at_diff - $at_stdout || at_failed=:
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   1) ;;
+   *) echo "basic.at:709: exit code was $at_status, expected 1"
+      at_failed=:;;
+esac
+if $at_failed; then
+
+  echo 1 > $at_status_file
+  exit 1
+fi
+
+$at_traceon
+
+
+      $at_traceoff
+      $at_times_p && times >$at_times_file
+    ) 5>&1 2>&1 | eval $at_tee_pipe
+    at_status=`cat $at_status_file`
+    ;;
+
+  44 ) # 44. basic.at:715: no admin -H-r-l
+    at_setup_line='basic.at:715'
+    at_desc='no admin -H-r-l'
+    $at_quiet $ECHO_N " 44: no admin -H-r-l                              $ECHO_C"
+    at_xfail=no
+    (
+      echo "44. basic.at:715: testing ..."
+      $at_traceon
+###
+### Begin AT_CVS_SETUP([no admin -H])
+###
+
+#
+# Create a symlinked CVSROOT_DIR
+#
+mkdir $at_group_dir/realcvsroot ||
+  { { echo "$as_me:$LINENO: error: Cannot create directory \`$at_group_dir/realcvsroot'" >&5
+echo "$as_me: error: Cannot create directory \`$at_group_dir/realcvsroot'" >&2;}
+   { (exit 1); exit 1; }; }
+$at_traceoff
+echo "basic.at:715: ln -s realcvsroot \$at_group_dir/cvsroot || exit 77"
+echo basic.at:715 >$at_check_line_file
+( $at_traceon; ln -s realcvsroot $at_group_dir/cvsroot || exit 77 ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+$at_diff $at_devnull $at_stderr || at_failed=:
+$at_diff $at_devnull $at_stdout || at_failed=:
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   0) ;;
+   *) echo "basic.at:715: exit code was $at_status, expected 0"
+      at_failed=:;;
+esac
+if $at_failed; then
+
+  echo 1 > $at_status_file
+  exit 1
+fi
+
+$at_traceon
+
+
+#
+# Set CVSROOT_DIR, method, & CVSROOT
+#
+CVSROOT_DIR=$at_group_dir/cvsroot
+$at_traceoff
+echo "basic.at:715: cvs --version |grep client || exit 77"
+echo basic.at:715 >$at_check_line_file
+( $at_traceon; cvs --version |grep client || exit 77 ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+$at_diff $at_devnull $at_stderr || at_failed=:
+echo stdout:; cat $at_stdout
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   0) ;;
+   *) echo "basic.at:715: exit code was $at_status, expected 0"
+      at_failed=:;;
+esac
+if $at_failed; then
+
+  echo 1 > $at_status_file
+  exit 1
+fi
+
+$at_traceon
+
+$at_traceoff
+echo "basic.at:715: \$server --version |grep server || exit 77"
+echo basic.at:715 >$at_check_line_file
+( $at_traceon; $server --version |grep server || exit 77 ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+$at_diff $at_devnull $at_stderr || at_failed=:
+echo stdout:; cat $at_stdout
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   0) ;;
+   *) echo "basic.at:715: exit code was $at_status, expected 0"
+      at_failed=:;;
+esac
+if $at_failed; then
+
+  echo 1 > $at_status_file
+  exit 1
+fi
+
+$at_traceon
+
+CVS_SERVER=$server; export CVS_SERVER
+method=:fork:
+CVSROOT=$method$CVSROOT_DIR
+export CVSROOT
+SPROG=`basename $server`
+
+#
+# Clear a possibly damaging inherited environment.
+#
+
+# Avoid picking up any stray .cvsrc, etc., from the user running the tests
+mkdir home
+HOME=$at_group_dir/home; export HOME
+
+# Make sure this variable is not defined to anything that would
+# change the format of RCS dates.  Otherwise people using e.g.,
+# RCSINIT=-zLT get lots of spurious failures.
+RCSINIT=
+
+#
+# Initialize the repository
+#
+$at_traceoff
+echo "basic.at:715: cvs init"
+echo basic.at:715 >$at_check_line_file
+( $at_traceon; cvs init ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+$at_diff $at_devnull $at_stderr || at_failed=:
+$at_diff $at_devnull $at_stdout || at_failed=:
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   0) ;;
+   *) echo "basic.at:715: exit code was $at_status, expected 0"
+      at_failed=:;;
+esac
+if $at_failed; then
+
+  echo 1 > $at_status_file
+  exit 1
+fi
+
+$at_traceon
+
+
+#
+# Create the default project
+#
+mkdir top
+cd top
+$at_traceoff
+echo "basic.at:715: cvs -Q co -l ."
+echo basic.at:715 >$at_check_line_file
+( $at_traceon; cvs -Q co -l . ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+$at_diff $at_devnull $at_stderr || at_failed=:
+$at_diff $at_devnull $at_stdout || at_failed=:
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   0) ;;
+   *) echo "basic.at:715: exit code was $at_status, expected 0"
+      at_failed=:;;
+esac
+if $at_failed; then
+
+  echo 1 > $at_status_file
+  exit 1
+fi
+
+$at_traceon
+
+mkdir project
+$at_traceoff
+echo "basic.at:715: cvs -Q add project"
+echo basic.at:715 >$at_check_line_file
+( $at_traceon; cvs -Q add project ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+$at_diff $at_devnull $at_stderr || at_failed=:
+$at_diff $at_devnull $at_stdout || at_failed=:
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   0) ;;
+   *) echo "basic.at:715: exit code was $at_status, expected 0"
+      at_failed=:;;
+esac
+if $at_failed; then
+
+  echo 1 > $at_status_file
+  exit 1
+fi
+
+$at_traceon
+
+cd ..
+rm -r top
+
+#
+# Check out the default project and cd into the workspace.
+#
+# I'm checking for error returns form the cd and printing error messages since,
+# for instance, if the CVS executable picks up a ~/.cvsrc which causes empty
+# directories to be pruned by checkout, the project directory will not be
+# created but the `cvs co' will not return an error.
+#
+$at_traceoff
+echo "basic.at:715: cvs -Q co project"
+echo basic.at:715 >$at_check_line_file
+( $at_traceon; cvs -Q co project ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+$at_diff $at_devnull $at_stderr || at_failed=:
+$at_diff $at_devnull $at_stdout || at_failed=:
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   0) ;;
+   *) echo "basic.at:715: exit code was $at_status, expected 0"
+      at_failed=:;;
+esac
+if $at_failed; then
+
+  echo 1 > $at_status_file
+  exit 1
+fi
+
+$at_traceon
+
+cd project ||
+  { { echo "$as_me:$LINENO: error: Couldn't cd to \\`project'.  Did \$HOME get set incorrectly?" >&5
+echo "$as_me: error: Couldn't cd to \\`project'.  Did \$HOME get set incorrectly?" >&2;}
+   { (exit 1); exit 1; }; }
+
+###
+### End AT_CVS_SETUP([no admin -H])
+###
+
+
+
+# Why in the world do we check for this?
+# Note that -H is an invalid option.
+$at_traceoff
+echo "basic.at:724: cvs -q admin -H"
+echo basic.at:724 >$at_check_line_file
+( $at_traceon; cvs -q admin -H ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+echo >>$at_stderr; echo "admin: invalid option -- H
+$CPROG [admin aborted]: specify $CPROG -H admin for usage information
+" | $at_diff - $at_stderr || at_failed=:
+$at_diff $at_devnull $at_stdout || at_failed=:
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   1) ;;
+   *) echo "basic.at:724: exit code was $at_status, expected 1"
+      at_failed=:;;
+esac
+if $at_failed; then
+
+  echo 1 > $at_status_file
+  exit 1
+fi
+
+$at_traceon
+
 
       $at_traceoff
       $at_times_p && times >$at_times_file
