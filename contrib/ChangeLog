@@ -1,5 +1,9 @@
 2004-04-14  Derek Price  <derek@ximbiot.com>
 
+	* .cvsignore: s/cvscheck/sandbox_status/.
+
+2004-04-14  Derek Price  <derek@ximbiot.com>
+
 	* .cvsignore: s/check_cvs/validate_repo/.
 
 2004-03-31  Derek Price  <derek@ximbiot.com>
