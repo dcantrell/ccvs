@@ -1,3 +1,9 @@
+1998-06-09  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* rcs.c (RCS_delete_revs): If we are trying to delete all
+	revisions, give an error rather than assertion failed.
+	* sanity.sh (basicb): New tests basicb-o* test for this.
+
 1998-06-04  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* add.c (add): Only send "Directory" requests if we need to.
