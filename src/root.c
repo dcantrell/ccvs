@@ -615,19 +615,18 @@ normalize_cvsroot (default_user, default_port)
 {
     char *cvsroot_canonical;
     char *p, *hostname;
-    char *port_s;
+    char port_s[11];
     char free_port_s = 0;
 
     /* get the appropriate host string */
     if (CVSroot_port || default_port)
     {
-	port_s = xmalloc (snprintf (NULL, 0, "%d", CVSroot_port ? CVSroot_port : default_port) + 1);
 	sprintf (port_s, "%d", CVSroot_port ? CVSroot_port : default_port);
 	free_port_s = 1;
     }
     else
     {
-        port_s = "";
+        strcpy(port_s, "");
     }
 
     /* use a lower case hostname since we know hostnames are case insensitive */
@@ -638,9 +637,9 @@ normalize_cvsroot (default_user, default_port)
 	p++;
     }
 
-    cvsroot_canonical = xmalloc (snprintf (NULL, 0, ":pserver:%s@%s:%s%s",
-				    CVSroot_username ? CVSroot_username : default_user,
-				    hostname, port_s, CVSroot_directory) + 1);
+    cvsroot_canonical = xmalloc ( strlen(CVSroot_username ? CVSroot_username : default_user)
+				+ strlen(hostname) + strlen(port_s)
+				+ strlen(CVSroot_directory) + 12);
     sprintf (cvsroot_canonical, ":pserver:%s@%s:%s%s",
 	    CVSroot_username ? CVSroot_username : default_user,
 	    hostname, port_s, CVSroot_directory);
