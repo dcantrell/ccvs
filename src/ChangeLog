@@ -1,3 +1,10 @@
+Tue Jun 17 14:30:14 1997  Jim Kingdon  (unknown@beezley)
+
+	* client.c: Add "copyright" notice.  If NO_EXT_METHOD, omit
+	start_rsh_method.
+	* client.c (update_entries): Cast argument to MD5Update from
+	char * to unsigned char *.
+
 Mon Jun 16 16:46:28 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* run.c (piped_child, filter_stream_through_program):

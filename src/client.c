@@ -1,4 +1,14 @@
-/* CVS client-related stuff.  */
+/* CVS client-related stuff.
+
+   This program is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2, or (at your option)
+   any later version.
+
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.  */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -1808,7 +1818,7 @@ update_entries (data_arg, ent_list, short_pathname, filename)
 		       the file out, so that we don't have to read it
 		       back in again.  */
 		    MD5Init (&context);
-		    MD5Update (&context, patchedbuf, patchedlen);
+		    MD5Update (&context, (unsigned char *) patchedbuf, patchedlen);
 		    MD5Final (checksum, &context);
 		    if (memcmp (checksum, stored_checksum, 16) != 0)
 		    {
@@ -3913,6 +3923,8 @@ the :server: access method is not supported by this port of CVS");
 	walklist (variable_list, send_variable_proc, NULL);
 }
 
+#ifndef NO_EXT_METHOD
+
 /* Contact the server by starting it with rsh.  */
 
 /* Right now, we have two different definitions for this function,
@@ -4078,6 +4090,8 @@ start_rsh_server (tofdp, fromfdp)
 }
 
 #endif /* START_RSH_WITH_POPEN_RW */
+
+#endif /* NO_EXT_METHOD */
 
 
 
