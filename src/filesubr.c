@@ -575,6 +575,7 @@ xcmp (const char *file1, const char *file2)
 
     /* If FILE1 and FILE2 are symlinks, they are equal if they point to
        the same thing. */
+#ifdef S_ISLNK
     if (S_ISLNK (sb1.st_mode) && S_ISLNK (sb2.st_mode))
     {
 	int result;
@@ -585,6 +586,7 @@ xcmp (const char *file1, const char *file2)
 	free (buf2);
 	return result;
     }
+#endif
 
     /* If FILE1 and FILE2 are devices, they are equal if their device
        numbers match. */
