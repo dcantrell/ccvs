@@ -1,5 +1,7 @@
 Sun Sep  7 17:34:03 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* FAQ: Re-import from FAQ-O-Matic.  The metavariables are back.
+
 	* FAQ: Re-import from FAQ-O-Matic.  Features comment from
 	julian@whistle about update -r branch:date.  It also clobbered the
 	metavariables (confusion about "<" as data vs. HTML tag I would

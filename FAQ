@@ -1049,50 +1049,50 @@ Category: /Advanced_Topics_/Branching_and_Mergin/
    --------------------------------------------------------------------
 
 
-   You can avoid digging into RCS revision numbers
-   (executing "update -r " on each file) by trying
-   one of these: 
 
- o Use non-branch tags as you normally would.
-   Non-branch tags attach to specific revisions, so
-   a "tag " command would mark the revisions you
-   have in your working directory, which are on your
-   branch. If you need to retrieve them, use "update
-   -r " 
 
-   Doing this overrides the sticky attached to your
-   working directory with a non-branch tag, which
-   means you won't be able to commit until you again
-   move forward to the end of the branch with
-   "update -r ". 
+           You can avoid digging into RCS revision numbers (executing "update
+           -r (rev)" on each file) by trying one of these:
 
- o Use the "update -r :" trick. 
+   Use non-branch tags as you normally would.  Non-branch tags
+              attach to specific revisions, so a "tag (tag)" command would
+              mark the revisions you have in your working directory, which
+              are on your branch.  If you need to retrieve them, use "update
+              -r (non-branch-tag)"
 
-   This is almost like using the '-D' option, but it
-   looks for revisions extant on only along the
-   given branch. 
+              Doing this overrides the sticky (branch-tag) attached to your
+              working directory with a non-branch tag, which means you won't
+              be able to commit until you again move forward to the end of
+              the branch with "update -r (branch-tag)".
 
-   As in #1, you can't commit to this kind of
-   working area, because it has a sticky date
-   referring to revisions in the middle of a branch.
+   Use the "update -r (branch-tag):(date)" trick.
 
-   [comment from the audience: You are dreaming..
-   this does not work.. try it, you get No such tag:
-   "MYTAG:May 1" or similar. I wish it did because I
-   need it. julian@whistle.com] 
+              This is almost like using the '-D' option, but it looks for
+              revisions extant on (date) only along the given branch.
 
- o You can branch a branch. 
+              As in #1, you can't commit to this kind of working area,
+              because it has a sticky date referring to revisions in the
+              middle of a branch.
 
-   If you add a branch tag to file in a working
-   directory that was checked out on a branch, you
-   will branch the branch. This works just fine,
-   though you'll have to play some games to merge
-   everything back together again. You'll also
-   create 6-part revision numbers. (They'll be
-   8-part revision numbers if you branch a branch
-   that started out with some unmodified files on
-   the Vendor branch. Think about it. How does
-   revision 1.2.4.2.4.2.2.1 grab you?) 
+   [comment from the audience:  You are dreaming.. 
+   this does not work.. try it, you get 
+   No such tag: "MYTAG:May 1"
+   or similar. I wish it did because I need it. julian@whistle.com]
+
+
+   You can branch a branch.
+
+              If you add a branch tag to file in a working directory that was
+              checked out on a branch, you will branch the branch.  This
+              works just fine, though you'll have to play some games to merge
+              everything back together again.  You'll also create 6-part
+              revision numbers.  (They'll be 8-part revision numbers if you
+              branch a branch that started out with some unmodified files on
+              the Vendor branch.  Think about it.  How does revision
+              1.2.4.2.4.2.2.1 grab you?)
+
+
+   (fixed formatting, kingdon@cyclic.com)
 
 
    Last modified: 9/8/1997 
