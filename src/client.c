@@ -1800,7 +1800,7 @@ update_entries (data_arg, ent_list, short_pathname, filename)
 		tobuf += got;
 
 		if (feof (e))
-		  break;
+		    break;
 
 		/* It's probably paranoid to think S.ST_SIZE might be
                    too small to hold the entire file contents, but we
