@@ -1,3 +1,8 @@
+Wed Jan 31 15:09:51 1996  J.T. Conklin  <jtc@rtl.cygnus.com>
+
+	* edit.c (ncheck_fileproc): Fix memory leak; free line before
+	returning.
+
 Tue Jan 30 18:06:12 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* recurse.c (do_recursion): Add comment about the fact that we
