@@ -1,3 +1,9 @@
+2004-08-19  Mark D. Baushke  <mdb@cvshome.org>
+
+	* sanity.sh (sync-secondary): 'dirname -b' fails during the
+	spacefiles-5 test on FreeBSD, so use 'dirname -- "\$dir"' for now
+	and look to AS_DIRNAME at some future date.	
+
 2004-08-19  Derek Price  <derek@ximbiot.com>
 
 	* sanity.sh (ssh-wrapper): Create for $proxy mode too & forward CVS_PID

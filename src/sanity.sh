@@ -2163,7 +2163,7 @@ case "\$dir" in
 	# been added underneath the root dir we were passed. 
         rsync -rglop \\
 	      $CVSROOT_DIRNAME/"\$dir" \\
-	      $SECONDARY_CVSROOT_DIRNAME/\`dirname "\$dir"\`
+	      $SECONDARY_CVSROOT_DIRNAME/\`dirname -- "\$dir"\`
         ;;
 
       tag)
