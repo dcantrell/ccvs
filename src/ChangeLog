@@ -1,3 +1,7 @@
+Sat Apr 19 17:10:36 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* server.c (dirswitch): If directory ends in '/', complain.
+
 Fri Apr 18 18:09:57 1997  Ian Lance Taylor  <ian@cygnus.com>
 
 	* rcs.c (apply_rcs_changes): New static function, broken out of
