@@ -82,12 +82,10 @@ char *CurDir;
 char *Rcsbin = RCSBIN_DFLT;
 char *Editor = EDITOR_DFLT;
 char *CVSroot = CVSROOT_DFLT;
-#ifdef CVSADM_ROOT
 /*
  * The path found in CVS/Root must match $CVSROOT and/or 'cvs -d root'
  */
 char *CVSADM_Root = CVSROOT_DFLT;
-#endif /* CVSADM_ROOT */
 
 int add PROTO((int argc, char **argv));
 int admin PROTO((int argc, char **argv));
@@ -529,7 +527,6 @@ error 0 %s: no such user\n", user);
 #endif /* AUTH_SERVER_SUPPORT && SERVER_SUPPORT */
 
 
-#ifdef CVSADM_ROOT
     /*
      * See if we are able to find a 'better' value for CVSroot in the
      * CVSADM_ROOT directory.
@@ -571,7 +568,6 @@ error 0 %s: no such user\n", user);
 	    }
         }
     }
-#endif /* CVSADM_ROOT */
 
     /* CVSroot may need fixing up, if an access-method was specified,
      * but not a user.  Later code assumes that if CVSroot contains an

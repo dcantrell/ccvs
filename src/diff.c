@@ -319,10 +319,8 @@ diff_fileproc (file, update_dir, repository, entries, srcfiles)
 	return (0);
     }
 
-#ifdef DEATH_SUPPORT
     /* FIXME: Check whether use_rev1 and use_rev2 are dead and deal
        accordingly.  */
-#endif
 
     /* Output an "Index:" line for patch to use */
     (void) fflush (stdout);

@@ -466,12 +466,8 @@ update_rcs_file (message, vfile, vtag, targc, targv, inattic)
 
     vers = Version_TS (repository, (char *) NULL, vbranch, (char *) NULL, vfile,
 		       1, 0, (List *) NULL, (List *) NULL);
-#ifdef DEATH_SUPPORT
     if (vers->vn_rcs != NULL
 	&& !RCS_isdead(vers->srcfile, vers->vn_rcs))
-#else
-    if (vers->vn_rcs != NULL)
-#endif
     {
 	char xtmpfile[PATH_MAX];
 	int different;

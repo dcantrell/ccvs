@@ -189,7 +189,6 @@ add (argc, argv)
 			added_files++;
 			if (!quiet)
 			{
-#ifdef DEATH_SUPPORT
 			    if (vers->tag)
 				error (0, 0, "\
 scheduling %s `%s' for addition on branch `%s'",
@@ -198,7 +197,6 @@ scheduling %s `%s' for addition on branch `%s'",
 					: "file"),
 				       user, vers->tag);
 			    else
-#endif /* DEATH_SUPPORT */
 			    error (0, 0, "scheduling %s `%s' for addition",
 				   (wrap_name_has (user, WRAP_TOCVS)
 				    ? "wrapper"
@@ -208,7 +206,6 @@ scheduling %s `%s' for addition on branch `%s'",
 		    }
 		}
 	    }
-#ifdef DEATH_SUPPORT
 	    else if (RCS_isdead (vers->srcfile, vers->vn_rcs))
 	    {
 		if (isdir (user) && !wrap_name_has (user, WRAP_TOCVS))
@@ -229,7 +226,6 @@ scheduling %s `%s' for addition on branch `%s'",
 		    ++added_files;
 		}
 	    }
-#endif /* DEATH_SUPPORT */
 	    else
 	    {
 		/*
@@ -491,22 +487,6 @@ build_entry (repository, user, options, message, entries, tag)
     char fname[PATH_MAX];
     char line[MAXLINELEN];
     FILE *fp;
-
-#ifndef DEATH_SUPPORT
- /* when using the rcs death support, this case is not a problem. */
-    /*
-     * There may be an old file with the same name in the Attic! This is,
-     * perhaps, an awkward place to check for this, but other places are
-     * equally awkward.
-     */
-    (void) sprintf (fname, "%s/%s/%s%s", repository, CVSATTIC, user, RCSEXT);
-    if (isreadable (fname))
-    {
-	error (0, 0, "there is an old file %s already in %s/%s", user,
-	       repository, CVSATTIC);
-	return (1);
-    }
-#endif /* no DEATH_SUPPORT */
 
     if (noexec)
 	return (0);

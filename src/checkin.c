@@ -116,16 +116,6 @@ Checkin (type, file, update_dir, repository,
 	    if (cvswrite == FALSE || fileattr_get (file, "_watched"))
 		xchmod (file, 0);
 
-#ifndef DEATH_SUPPORT
- /* With death_support, files added with tags go into branches immediately. */
-
-	    /* for added files with symbolic tags, need to add the tag too */
-	    if (type == 'A' && tag && !isdigit (*tag))
-	    {
-		(void) RCS_settag(rcs, tag, rev);
-	    }
-#endif /* No DEATH_SUPPORT */
-
 	    /* re-register with the new data */
 	    vers = Version_TS (repository, (char *) NULL, tag, (char *) NULL,
 			       file, 1, set_time, entries, (List *) NULL);

@@ -362,7 +362,6 @@ RCS_reparsercsfile (rdata)
 
 	/* throw away the state field */
 	(void) getrcskey (fp, &key, &value);
-#ifdef DEATH_SUPPORT
 	if (strcmp (key, "state") != 0)
 	    error (1, 0, "\
 unable to parse rcs file; `state' not in the expected place");
@@ -370,7 +369,6 @@ unable to parse rcs file; `state' not in the expected place");
 	{
 	    vnode->dead = 1;
 	}
-#endif
 
 	/* fill in the branch list (if any branches exist) */
 	(void) getrcskey (fp, &key, &value);
@@ -391,7 +389,6 @@ unable to parse rcs file; `state' not in the expected place");
 	 */
 	while ((n = getrcskey (fp, &key, &value)) >= 0)
 	{
-#ifdef DEATH_SUPPORT
 	    /* Enable use of repositories created by certain obsolete
 	       versions of CVS.  This code should remain indefinately;
 	       there is no procedure for converting old repositories, and
@@ -401,7 +398,6 @@ unable to parse rcs file; `state' not in the expected place");
 		vnode->dead = 1;
 		continue;
 	    }
-#endif
 	    /* if we have a revision, break and do it */
 	    for (cp = key; (isdigit (*cp) || *cp == '.') && *cp != '\0'; cp++)
 		 /* do nothing */ ;
@@ -1662,7 +1658,6 @@ RCS_check_tag (tag)
 	error (1, 0, "tag `%s' must start with a letter", tag);
 }
 
-#ifdef DEATH_SUPPORT
 /*
  * Return true if RCS revision with TAG is a dead revision.
  */
@@ -1684,4 +1679,3 @@ RCS_isdead (rcs, tag)
     version = (RCSVers *) p->data;
     return (version->dead);
 }
-#endif /* DEATH_SUPPORT */
