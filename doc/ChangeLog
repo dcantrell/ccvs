@@ -1,5 +1,39 @@
 Sun May  4 14:38:35 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	Fix overfull and underfull hboxes:
+	* cvs.texinfo (What is CVS?): Add words "the newsgroup" before
+	"comp.sources.unix".
+	(Credits): Put list of people in @display.
+	(Repository files): Put /usr/local/cvsroot in @example.
+	(Connecting via rsh): Change "anklet" to "toe" in example.
+	(Kerberos authenticated, Password authentication client, Password
+	authentication server): Change "brickyard" to "yard" in example.
+	(Read-only access): Use @example and refer to files with a shorter
+	pathname.
+	(Server temporary directory): Use @example for pathname.
+	(Watches Compatibility): Add phony line break.
+	(Revision numbers): Remove revision 1.2.2.2 and tighten up the
+	spacing for "the main trunk".
+	(Tags, Creating a branch): Change /usr/local/cvsroot to /u/cvsroot.
+	(Merging more than once): Tighten up spacing for "the main trunk".
+	(Recursive behavior): Put long command in @example.
+	(First import): Remove word "called".
+	(Common options): Put long URL in @example.
+	(loginfo example): Use fewer hyphens in example.
+	(Variables): Put long command name in @example.
+	(Copying): Add line break.
+	(Administrative files): Remove "the" from title.
+	(Copying): Change "@unnumberedsec" to two "@heading"s.
+	* cvsclient.texi (Requests): Change /home/kingdon/zwork/cvsroot to
+	/u/cvsroot.
+	(Example): Add word "file".
+	(Example): Change line breaks in example log message.
+	(Example): Change /home/kingdon/testing/cvsroot to /u/cvsroot.
+
+	* cvs.texinfo (Credits): Don't refer to appendix A and B, they
+	have been renumbered.  Reword so that it works whether the text in
+	question has since been rewritten or not.
+
 	* cvs.texinfo (BUGS): Rewrite to reflect the many different ways
 	that one might want to handle bugs.  Move information on Signum
 	and Cyclic from Preface to here.  Remove information on known
