@@ -546,7 +546,6 @@ add_rev (message, rcs, vfile, vers)
     char *vers;
 {
     int locked, status, ierrno;
-    int retcode = 0;
 
     if (noexec)
 	return (0);
@@ -554,7 +553,7 @@ add_rev (message, rcs, vfile, vers)
     locked = 0;
     if (vers != NULL)
     {
-        if ((retcode = RCS_lock (rcs, vbranch)) != 0)
+        if (RCS_lock (rcs, vbranch) != 0)
 	{
 	    error (0, errno, "fork failed");
 	    return (1);
