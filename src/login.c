@@ -360,18 +360,6 @@ get_cvs_password ()
       strtok (linebuf, " ");
       password = strtok (NULL, "\n");
       
-      /* password[1] is 'A', because we prefix all passwords with a
-         letter indicating which version of scrambling was used.  As
-         of right now, there is only one kind of scrambling, so it's
-         safe to ignore the 'A'.  We'll just scoot right past it. */
-      password++;
-      /* No, it is not necessary to transmit the 'A' to the server to
-         insure the possibility of future backward-compatibility.  If
-         we ever have another kind of scrambling, we can just extend
-         the authentication protocol, so the scrambled password itself
-         does not need to indicate what kind of unscrambling is
-         needed. */
-
       /* Give it permanent storage. */
       tmp = xmalloc (strlen (password) + 1);
       strcpy (tmp, password);
