@@ -25286,6 +25286,28 @@ Ay::'d
 END AUTH REQUEST
 EOF
 
+	    # Confirm that not sending a newline during auth cannot constitute
+	    # a denial-of-service attack.  This assumes that PATH_MAX is less
+	    # than 65536 bytes.  If PATH_MAX is larger than 65535 bytes, this
+	    # test could hang indefinitely.
+	    ${AWK} 'BEGIN { printf "0123456789abcdef" }' </dev/null >garbageseg
+	    echo "BEGIN AUTH REQUEST" >garbageinput
+	    i=0
+	    while test $i -lt 64; do
+	      cat <garbageseg >>garbageseg2
+	      i=`expr $i + 1`
+	    done
+	    i=0
+	    while test $i -lt 64; do
+	      cat <garbageseg2 >>garbageinput
+	      i=`expr $i + 1`
+	    done
+	    dotest_fail pserver-auth-no-dos \
+"${servercvs} --allow-root=${CVSROOT_DIRNAME} pserver" \
+"${SPROG} \\[pserver aborted\\]: Maximum line length exceeded during authentication\." <garbageinput
+	    unset i
+	    rm garbageseg garbageseg2 garbageinput
+
 	    # Sending the Root and noop before waiting for the
 	    # "I LOVE YOU" is bogus, but hopefully we can get
 	    # away with it.

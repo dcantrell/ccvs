@@ -454,7 +454,7 @@ void expand_string (char **, size_t *, size_t);
 void xrealloc_and_strcat (char **, size_t *, const char *);
 char *xstrdup (const char *str)
 	__attribute__ ((__malloc__));
-void strip_trailing_newlines (char *str);
+int strip_trailing_newlines (char *str);
 int pathname_levels (char *path);
 
 typedef	int (*CALLPROC)	( char *repository, char *value, void *closure );
@@ -493,8 +493,8 @@ int yesno (void);
 void *valloc (size_t bytes);
 time_t get_date (char *date, struct timeb *now);
 extern int Create_Admin (char *dir, char *update_dir,
-				char *repository, char *tag, char *date,
-				int nonbranch, int warn, int dotemplate);
+			 char *repository, char *tag, char *date,
+			 int nonbranch, int warn, int dotemplate);
 extern int expand_at_signs (char *, off_t, FILE *);
 
 /* Locking subsystem (implemented in lock.c).  */
