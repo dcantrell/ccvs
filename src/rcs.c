@@ -6895,11 +6895,23 @@ RCS_getdeltatext (rcs, fp, rcsbuf)
    not get corrupted. */
 
 static int
-putsymbol_proc (symnode, fp)
+putsymbol_proc (symnode, fparg)
     Node *symnode;
-    void *fp;
+    void *fparg;
 {
-    return fprintf ((FILE *) fp, "\n\t%s:%s", symnode->key, symnode->data);
+    FILE *fp = (FILE *) fparg;
+
+    /* A fiddly optimization: this code used to just call fprintf, but
+       in an old repository with hundreds of tags this can get called
+       hundreds of thousands of times when doing a cvs tag.  Since
+       tagging is a relatively common operation, and using putc and
+       fputs is just as comprehensible, the change is worthwhile.  */
+    putc ('\n', fp);
+    putc ('\t', fp);
+    fputs (symnode->key, fp);
+    putc (':', fp);
+    fputs (symnode->data, fp);
+    return 0;
 }
 
 static int putlock_proc PROTO ((Node *, void *));
@@ -6983,7 +6995,15 @@ RCS_putadmin (rcs, fp)
     fputs (";\n", fp);
 
     fputs (RCSSYMBOLS, fp);
-    walklist (RCS_symbols(rcs), putsymbol_proc, (void *) fp);
+    /* If we haven't hard to convert the symbols to a list yet, don't
+       force a conversion now; just write out the string.  */
+    if (rcs->symbols == NULL && rcs->symbols_data != NULL)
+    {
+	fputs ("\n\t", fp);
+	fputs (rcs->symbols_data, fp);
+    }
+    else
+	walklist (RCS_symbols (rcs), putsymbol_proc, (void *) fp);
     fputs (";\n", fp);
 
     fputs ("locks", fp);

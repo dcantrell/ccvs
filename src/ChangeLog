@@ -1,5 +1,9 @@
 Wed Feb 18 01:56:04 1998  Ian Lance Taylor  <ian@cygnus.com>
 
+	* rcs.c (putsymbol_proc): Use putc and fputs rather than fprintf.
+	(RCS_putadmin): Don't call RCS_symbols if the symbols have not yet
+	been converted to a list.
+
 	* rcs.c (rcsbuf_cache, rcsbuf_cache_open, rcsbuf_cache_close): New
 	static functions to avoid closing and reopening the RCS file.
 	(cached_rcs, cached_rcsbuf): New static variables.
