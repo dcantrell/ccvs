@@ -1,3 +1,8 @@
+2001-08-09  Derek Price  <dprice@collab.net>
+
+	* sanity.sh (rmadd, rm-update-message, join-two-branch,
+	ignore-on-branch): Change a few references to `cvs' to `$PROG'.
+
 2001-08-07  Derek Price  <dprice@collab.net>
 
 	* build_src.com: Add annotate.c/annotate.obj,verify, correct zlib name.

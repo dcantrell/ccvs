@@ -4644,7 +4644,7 @@ C file4"
 	  file=x
 	  echo >$file
 	  dotest rm-update-message-setup-2 "$testcvs -q add $file" \
-"$PROG [a-z]*: use .cvs commit. to add this file permanently"
+"$PROG [a-z]*: use .$PROG commit. to add this file permanently"
 	  dotest rm-update-message-setup-3 "$testcvs -q ci -mcreate $file" \
 "RCS file: $CVSROOT_DIRNAME/rm-update-message/$file,v
 done
@@ -4850,7 +4850,7 @@ File: file5            	Status: Up-to-date
 "Directory ${CVSROOT_DIRNAME}/first-dir/sub added to the repository"
 	  echo hello >sub/subfile
 	  dotest rmadd-27 "${testcvs} -q add sub/subfile" \
-"${PROG} [a-z]*: use .cvs commit. to add this file permanently"
+"${PROG} [a-z]*: use .$PROG commit. to add this file permanently"
 
 	  dotest rmadd-28 "${testcvs} -q ci -m. sub" \
 "RCS file: ${CVSROOT_DIRNAME}/first-dir/sub/subfile,v
@@ -7246,7 +7246,7 @@ U first-dir/file2
 U first-dir/file8'
 	  cd first-dir
 	  dotest join-twobranch-2 "${testcvs} -q update -rbr2 -jbranch" \
-"cvs [a-z]*: file1 is no longer in the repository
+"$PROG [a-z]*: file1 is no longer in the repository
 U file1
 U file2
 RCS file: ${CVSROOT_DIRNAME}/first-dir/file2,v
@@ -13380,7 +13380,7 @@ Are you sure you want to release (and delete) directory .second-dir': "
 	  cd setup
 	  echo file1 >file1 
 	  dotest ignore-on-branch-setup-2 "$testcvs -q add file1" \
-"$PROG [a-z]*: use .cvs commit. to add this file permanently"
+"$PROG [a-z]*: use .$PROG commit. to add this file permanently"
 	  dotest ignore-on-branch-setup-3 "$testcvs -q ci -mfile1 file1" \
 "RCS file: $CVSROOT_DIRNAME/ignore-on-branch/file1,v
 done
@@ -13391,7 +13391,7 @@ done"
 	  dotest ignore-on-branch-setup-4 "$testcvs -q tag -b branch" 'T file1'
 	  echo file2 >file2 
 	  dotest ignore-on-branch-setup-5 "$testcvs -q add file2" \
-"$PROG [a-z]*: use .cvs commit. to add this file permanently"
+"$PROG [a-z]*: use .$PROG commit. to add this file permanently"
 	  dotest ignore-on-branch-setup-6 "$testcvs -q ci -mtrunk file2" \
 "RCS file: $CVSROOT_DIRNAME/ignore-on-branch/file2,v
 done
@@ -13422,7 +13422,7 @@ T file1'
 	    dotest ignore-on-branch-3 "$testcvs -q tag -b branch2" 'T file1'
 	  fi
 	  dotest ignore-on-branch-4 "$testcvs -q add file2" \
-"$PROG [a-z]*: use .cvs commit. to add this file permanently"
+"$PROG [a-z]*: use .$PROG commit. to add this file permanently"
 	  dotest ignore-on-branch-5 "$testcvs -q ci -mbranch file2" \
 "Checking in file2;
 $CVSROOT_DIRNAME/ignore-on-branch/file2,v  <--  file2
