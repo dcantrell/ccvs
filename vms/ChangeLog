@@ -1,3 +1,7 @@
+2005-01-31  Derek Price  <derek@ximbiot.com>
+
+	* Makefile.am: Update copyright notices.
+
 2004-04-04  Derek Price  <derek@ximbiot.com>
 
 	* filesubr.c (isabsolute): Remove this function.
