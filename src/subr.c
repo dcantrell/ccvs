@@ -265,6 +265,12 @@ xmalloc (bytes)
 {
     char *cp;
 
+    /* Some systems can't handle mallocs of zero bytes.  This is a bit
+       of a kludge, but it's more maintainable than requiring
+       every xmalloc caller to avoid zero-byte requests.  */
+    if (bytes == 0)
+      bytes++;
+
     if ((cp = malloc (bytes)) == NULL)
 	error (1, 0, "can not allocate %lu bytes", (unsigned long) bytes);
     return (cp);
