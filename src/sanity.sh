@@ -634,7 +634,7 @@ if test x"$*" = x; then
 	tests="${tests} branches branches2 tagc tagf"
 	tests="${tests} rcslib multibranch import importb importc"
 	tests="${tests} import-after-initial"
-	tests="${tests} join join2 join3 join-readonly-conflict"
+	tests="${tests} join join2 join3 join-readonly-conflict join-admin"
 	tests="${tests} new newb conflicts conflicts2 conflicts3"
 	tests="${tests} clean"
 	# Checking out various places (modules, checkout -d, &c)
@@ -6098,6 +6098,49 @@ Merging differences between 1\.1 and 1\.1\.2\.1 into $file
 rcsmerge: warning: conflicts during merge
 ${PROG} [a-z]*: conflicts found in $file
 C m"
+
+	  cd ../..
+	  rm -rf 1
+	  rm -rf ${CVSROOT_DIRNAME}/$module
+	  ;;
+
+	join-admin)
+	  mkdir 1; cd 1
+	  dotest join-admin-1 "$testcvs -q co -l ." ''
+	  module=x
+	  mkdir $module
+	  $testcvs -q add $module >>$LOGFILE 2>&1
+	  cd $module
+
+	  # Create a file so applying the first tag works.
+	  echo foo > a
+	  $testcvs -Q add a > /dev/null 2>&1
+	  $testcvs -Q ci -m. a > /dev/null 2>&1
+
+	  $testcvs -Q tag -b B
+	  $testcvs -Q tag -b M1
+	  echo '$''Id$' > b
+	  $testcvs -Q add b > /dev/null 2>&1
+	  $testcvs -Q ci -m. b > /dev/null 2>&1
+	  $testcvs -Q tag -b M2
+
+	  $testcvs -Q update -r B
+	  $testcvs -Q update -kk -jM1 -jM2
+	  $testcvs -Q ci -m. b >/dev/null 2>&1
+
+	  $testcvs -Q update -A
+
+	  # Verify that the -kk flag from the update did not
+	  # propagate to the repository.
+	  dotest join-admin-1 "$testcvs status b" \
+"===================================================================
+File: b                	Status: Up-to-date
+
+   Working revision:	1\.1.*
+   Repository revision:	1\.1	${TESTDIR}/cvsroot/x/b,v
+   Sticky Tag:		(none)
+   Sticky Date:		(none)
+   Sticky Options:	(none)"
 
 	  cd ../..
 	  rm -rf 1

@@ -1,3 +1,16 @@
+2000-07-10  Jim Meyering  <meyering@lucent.com>
+
+	When a command like `cvs update -kk -jT1 -jT2' creates a new file
+	(because it had the T2 tag, but not T1), the subsequent commit of
+	that just-added file would effectively set the admin `-kk' option
+	for that file in the repository.
+
+	* update.c (join_file): Rename global-shadowing local `options'
+	to `t_options'.
+	Set file-scoped global `options' to NULL just before
+	check-out.
+	* sanity.sh (join-admin): New test for this.
+
 2000-07-10  Larry Jones  <larry.jones@sdrc.com>
 
 	* version.c, cvs.h (version): New function.
@@ -36,12 +49,12 @@
 
 	* server.c (pserver_authenticate_connection): use new
 	getline_safe() during authentication phase, to avoid a
-	denial-of-service attack in which client sends arbitrary 
+	denial-of-service attack in which client sends arbitrary
 	amounts of data with no newlines.
 	(Reported by <jpmg@eng.cam.ac.uk>.)
 
 	* sanity.sh: new test pserver-14 for above.
-	
+
 	* myndbm.c: #include getline.h.
 	(mydbm_load_file): pass new GETLINE_NO_LIMIT flag to getstr().
 
