@@ -1,6 +1,12 @@
 Fri Nov 29 09:06:41 1996  fnf@ninemoons.com (Fred Fish)
 			  and Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvs.texinfo, cvsclient.texi: Make sure @ref and friends are
+	followed by "," or "." as described in the texinfo manual.  This
+	is a dubious practice as texi2html and texinfo.tex don't require
+	it, and makeinfo could insert them as needed, but since makeinfo
+	doesn't do that yet, cope.
+
 	* cvs.texinfo (From files): Suggest "diff -r" rather than "ls -R"
 	as the way to see that the sources seem to have been imported
 	correctly.

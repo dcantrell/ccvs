@@ -821,7 +821,7 @@ any of the files in it.
 You start your favorite editor, hack away at @file{backend.c}, and a couple
 of hours later you have added an optimization pass to the compiler.
 A note to @sc{rcs} and @sc{sccs} users: There is no need to lock the files that
-you want to edit.  @xref{Multiple developers} for an explanation.
+you want to edit.  @xref{Multiple developers}, for an explanation.
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node Committing your changes
@@ -1636,7 +1636,7 @@ to reread its initialization files.
 @cindex passwd (admin file)
 Because the client stores and transmits passwords in
 cleartext (almost---see @ref{Password authentication
-security} for details), a separate @sc{cvs} password
+security}, for details), a separate @sc{cvs} password
 file may be used, so people don't compromise their
 regular passwords when they access the repository.
 This file is @file{$CVSROOT/CVSROOT/passwd}
@@ -3249,7 +3249,7 @@ number is created by adding a digit at the tail of the revision number
 it is based on.  (If @samp{release-1-0} corresponds to revision 1.4, the
 branch's revision number will be 1.4.2.  For obscure reasons @sc{cvs} always
 gives branches even numbers, starting at 2.
-@xref{Revision numbers}).
+@xref{Revision numbers}.).
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node Sticky tags
@@ -3926,7 +3926,7 @@ command to track third-party sources, the @dfn{vendor
 tag} and @dfn{release tags} are useful.  The
 @dfn{vendor tag} is a symbolic name for the branch
 (which is always 1.1.1, unless you use the @samp{-b
-@var{branch}} flag---@xref{import options}).  The
+@var{branch}} flag---@xref{import options}.).  The
 @dfn{release tags} are symbolic names for a particular
 release, such as @samp{FSF_0_04}.
 
@@ -4037,7 +4037,7 @@ files are binary.  @xref{Wrappers}.
 Moving files to a different directory or renaming them
 is not difficult, but some of the ways in which this
 works may be non-obvious.  (Moving or renaming a
-directory is even harder.  @xref{Moving directories}).
+directory is even harder.  @xref{Moving directories}.).
 
 The examples below assume that the file @var{old} is renamed to
 @var{new}.
@@ -6764,7 +6764,7 @@ in the future.
 Indicate the RCS keyword expansion mode desired.  This
 setting will apply to all files created during the
 import, but not to any files that previously existed in
-the repository.  See @ref{Substitution modes} for a
+the repository.  See @ref{Substitution modes}, for a
 list of valid @samp{-k} settings.
 
 @item -I @var{name}

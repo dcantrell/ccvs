@@ -9,7 +9,7 @@
 This document describes the client/server protocol used by CVS.  It does
 not describe how to use or administer client/server CVS; see the regular
 CVS manual for that.  This is version @value{CVSVN} of the protocol
-specification---@xref{Introduction} for more on what this version number
+specification---@xref{Introduction}, for more on what this version number
 means.
 
 @menu
