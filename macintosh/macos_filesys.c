@@ -7,6 +7,7 @@
  *														 --- June 1996 (Have open look absolute and relative)
  */
 
+#include "mac_config.h"
 #include <config.h>
 #include <system.h>
 

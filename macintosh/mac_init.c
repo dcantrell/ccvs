@@ -3,6 +3,7 @@
  *
  * MDLadwig <mike@twinpeaks.prc.com> --- June 1996
  */
+#include "mac_config.h"
  
 #ifdef __POWERPC__
 #include <MacHeadersPPC>
@@ -25,22 +26,14 @@ void
 macos_error_cleanup( void )
 {
 	Lock_Cleanup();
-	RemoveConsole();		// FOOFOOFOO - Ugly, but necessary until MW fixes _exit
+	RemoveConsole();		// FIXME - Ugly, but necessary until MW fixes _exit
 }
 
 void
 InitializeMacToolbox( void )
 {
-	InitGraf((Ptr) &qd.thePort);
-	InitFonts();
-	InitWindows();
-	InitMenus();
-	TEInit();
-	InitDialogs(nil);
-	InitCursor();
-	
 	#ifndef __POWERPC__
-	SetApplLimit(GetApplLimit() - 98305);
+	SetApplLimit(GetApplLimit() - STACK_SIZE_68K);
 	#endif
 	
 	MaxApplZone();
@@ -59,15 +52,13 @@ MacOS_Initialize( int *argc, char ***argv )
 	SIOUXSettings.autocloseonquit = FALSE;
 	SIOUXSettings.asktosaveonclose = TRUE;
 	
+	#ifdef AE_IO_HANDLERS
 	GetUnixCommandEnvironment( "cvs" );
-	
-	if( ArgC == 1 )
-		*argc = ccommand(argv);
-	else
-	{
-		*argc = ArgC;
-		*argv = Args;
-	}
+	*argc = ArgC;
+	*argv = Args;
+	#else
+	*argc = ccommand(argv);
+	#endif
 	
 	error_set_cleanup (macos_error_cleanup);
 }
@@ -75,6 +66,6 @@ MacOS_Initialize( int *argc, char ***argv )
 void
 MacOS_Cleanup ( void )
 {
-	RemoveConsole();		// FOOFOOFOO - Ugly, but necessary until MW fixes _exit
+	RemoveConsole();		// FIXME - Ugly, but necessary until MW fixes _exit
 }
 

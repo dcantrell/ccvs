@@ -21,6 +21,7 @@
    definitions under operating systems (like, say, Windows NT) with different
    file system semantics.  */
 
+#include "mac_config.h"
 #include "cvs.h"
 
 /*

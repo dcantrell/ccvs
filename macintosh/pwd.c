@@ -25,6 +25,7 @@
    
 /* Stripped out stuff - MDLadwig <mike@twinpeaks.prc.com> --- Nov 1995 */
 
+#include "mac_config.h"
 #include <pwd.h>
 #include <stdio.h>
 #include <stdlib.h>

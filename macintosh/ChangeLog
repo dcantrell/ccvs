@@ -1,3 +1,21 @@
+Fri Aug 9 14:53:01 1996  Mike Ladwig  <mike@twinpeaks.prc.com>
+
+	* ae_if.c: Include 'mac_config.h" to get macintosh configuration
+	values.  Reworked application I/O code (many routines) to make
+	MacCVS either a "pure" faceless application (AE or file output) _OR_
+	a SIOUX console application.  This decision is made at compilation
+	time by defining (or not) AE_IO_HANDLERS.
+	* mac_config.h: Added, moving many configuration parameters from the
+	maccvs.pch header file here.  This makes it possible to change
+	macintosh build -specific parameters without recompiling all CVS and
+	Mac port code.
+	* mac_init.c: Include 'mac_config.h" to get macintosh configuration
+	values. Removed unnecessary toolbox initialization code.  Made
+	AE/Console choice at buildtime.
+	* maccvs.pch: Moved most configuration parmeters to 'mac_config.h"
+	* filesubr.c, macos_filesys.c, pwd.c, rcmd.c, run.c server_if.c:
+	Include 'mac_config.h" to get macintosh configuration values.
+
 Wed Jul 31 11:41:55 1996  Mike Ladwig  <mike@twinpeaks.prc.com>
 			  and Jim Kingdon  <kingdon@harvey.cyclic.com>
 

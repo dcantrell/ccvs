@@ -185,7 +185,7 @@ pascal OSErr DoScript(const AppleEvent *event, AppleEvent *reply, long refCon)
 				outputMode = outToFile;
 				if (AEGetParamPtr(event, 'FILE', typeChar, &typeCode, &outputFileName, sizeof(outputFileName)-1, &size))
 				{
-					outputMode = outToConsole;
+					outputMode = outToAE;
 					fprintf(stderr, "MacCVS Error: No filename parameter\n" );
 				}
 				else
@@ -195,7 +195,7 @@ pascal OSErr DoScript(const AppleEvent *event, AppleEvent *reply, long refCon)
 					strcat( tempOutputFileName, ".TMP");
 					if( (outputFile = open(tempOutputFileName, O_WRONLY | O_CREAT | O_TRUNC)) == 1 )
 					{
-						outputMode = outToConsole;
+						outputMode = outToAE;
 						fprintf(stderr, "MacCVS Error: Unable to open '%s'\n", tempOutputFileName);
 					}
 				}
@@ -251,7 +251,7 @@ void GetUnixCommandEnvironment( char *name )
 	
 	ArgC = 1;
 	EnvC = 0;
-	outputMode = outToConsole;
+	outputMode = outToAE;
 	
 	// Wait for the command line and environment
 	
@@ -314,10 +314,8 @@ void CleanUpArgsAndEnv( void )
  * The following blocks of code are related to the redirection of output to
  * AppleEvents.
  */
- 
-#define OUTBUF_SIZE	32000
 
-static char		outBuf[OUTBUF_SIZE];
+static char		outBuf[AE_OUTBUF_SIZE];
 static int		outBufLen = -1;
 
 void InitOutBuffer( void )
@@ -356,35 +354,28 @@ void SendOutBuffer( char outputDone )
 
 /*
  * The following three routines override the "real thing" from the CW
- * SIOUX library.  In order to handle the case where I want SIOUX to 
- * perform console output, I have renamed the original routines and
- * included them in the MacCVS build (see SIOUX.c)
+ * SIOUX library in order to divert output to AppleEvents.
  */
- 
-extern short ___InstallConsole( short );
-extern long ___WriteCharsToConsole( char *, long );
-extern void ___RemoveConsole( void );
 
-short InstallConsole(short fd)
+short
+InstallConsole(short fd)
 {
-	if( outputMode == outToConsole ) return ___InstallConsole( fd );
-	if( outputMode == outToFile )  return 0;
-	
-	AECreateAppleEvent(
-		'MCVS', 'DATA',
-		&gResponseAddress,
-		kAutoGenerateReturnID,
-		kAnyTransactionID, 
-		&gResponseEvent);
-		
+    if (outputMode == outToFile)
 	return 0;
+
+    AECreateAppleEvent ('MCVS', 'DATA',
+			&gResponseAddress,
+			kAutoGenerateReturnID,
+			kAnyTransactionID, 
+			&gResponseEvent);
+
+    return 0;
 }
 
 long WriteCharsToConsole( char *buf, long length )
 {
 	char		*tCh;
 	
-	if( outputMode == outToConsole ) return ___WriteCharsToConsole( buf, length );
 	if( outputMode == outToFile )
 	{
 		write( outputFile, buf, length );
@@ -393,7 +384,7 @@ long WriteCharsToConsole( char *buf, long length )
 	
 	if( outBufLen == -1 ) InitOutBuffer();
 	
-	if( (length + outBufLen) > OUTBUF_SIZE )
+	if( (length + outBufLen) > AE_OUTBUF_SIZE )
 	{
 		SendOutBuffer( FALSE );
 		InitOutBuffer();
@@ -420,7 +411,6 @@ void RemoveConsole( void )
 {
 	CleanUpArgsAndEnv();
 	
-	if( outputMode == outToConsole ) { ___RemoveConsole(); return; }
 	if( outputMode == outToFile )
 	{
 		close(outputFile);
@@ -434,3 +424,4 @@ void RemoveConsole( void )
 	AEDisposeDesc( &gResponseEvent );
 	AEDisposeDesc( &gResponseAddress );
 }
+#endif // AE_IO_HANDLERS

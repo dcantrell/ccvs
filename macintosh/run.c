@@ -4,6 +4,7 @@
  * MDLadwig <mike@twinpeaks.prc.com> --- Nov 1995
  */
 
+#include "mac_config.h"
 #include <sys/types.h>
 #include <stdio.h>
 
