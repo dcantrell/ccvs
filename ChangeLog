@@ -1,3 +1,9 @@
+Thu May  8 12:14:40 1997  Larry Jones  <larry.jones@sdrc.com>
+	and Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* INSTALL: Update MIPS/SGI Irix 6.2
+	* TESTS: Add note about TESTDIR and SGI Irix 6's XFS.
+
 Wed May  7 12:01:21 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* TODO: Fix keywords accidentally expanded in previous checkin.
