@@ -483,7 +483,7 @@ if test x"$*" = x; then
 	tests="${tests} modules modules2 modules3 mflag errmsg1 devcom devcom2"
 	tests="${tests} devcom3 ignore binfiles binfiles2 binwrap mwrap info"
 	tests="${tests} serverpatch log log2 crerepos rcs big modes stamps"
-	tests="${tests} sticky keyword"
+	tests="${tests} sticky keyword toplevel"
 else
 	tests="$*"
 fi
@@ -6719,6 +6719,58 @@ change"
 	  rm -rf 1 ${CVSROOT_DIRNAME}/first-dir
 	  ;;
 
+	toplevel)
+	  # test the feature that cvs creates a CVS subdir also for
+	  # the toplevel directory
+	  mkdir 1; cd 1
+	  dotest toplevel-1 "${testcvs} -q co -l ." ''
+	  mkdir top-dir
+	  dotest toplevel-2 "${testcvs} add top-dir" \
+"Directory ${TESTDIR}/cvsroot/top-dir added to the repository"
+	  cd top-dir
+
+	  touch file1
+	  dotest toplevel-3 "${testcvs} add file1" \
+"${PROG} [a-z]*: scheduling file .file1. for addition
+${PROG} [a-z]*: use .cvs commit. to add this file permanently"
+	  dotest toplevel-4 "${testcvs} -q ci -m add" \
+"RCS file: ${TESTDIR}/cvsroot/top-dir/file1,v
+done
+Checking in file1;
+${TESTDIR}/cvsroot/top-dir/file1,v  <--  file1
+initial revision: 1\.1
+done"
+
+	  cd ../..
+	  rm -rf 1; mkdir 1; cd 1
+	  dotest toplevel-5 "${testcvs} co top-dir" \
+"${PROG} checkout: Updating top-dir
+U top-dir/file1"
+
+	  dotest toplevel-6 "${testcvs} update top-dir" \
+"${PROG} update: Updating top-dir"
+	  dotest toplevel-7 "${testcvs} update"  \
+"${PROG} update: Updating \.
+${PROG} update: Updating top-dir"
+
+	  dotest toplevel-8 "${testcvs} update -d top-dir" \
+"${PROG} update: Updating top-dir"
+	  # FIXME: This test fails in cvs starting from 1.9.2 because
+	  # it updates "file1" in "1".  Test modules3-7f also finds
+	  # (and tolerates) this bug.  The second expect string below
+	  # should be removed when this is fixed.
+	  dotest toplevel-9 "${testcvs} update -d" \
+"${PROG} update: Updating \.
+${PROG} update: Updating top-dir" \
+"${PROG} update: Updating \.
+U file1
+${PROG} update: Updating top-dir"
+
+	  cd ..
+	  rm -rf 1
+	  ;;
+	  
+
 	*)
 	   echo $what is not the name of a test -- ignored
 	   ;;
@@ -6765,3 +6817,4 @@ cd /tmp
 rm -rf ${TESTDIR}
 
 # end of sanity.sh
+#! /bin/zsh -f

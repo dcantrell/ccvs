@@ -1,3 +1,9 @@
+Tue Jun 10 03:08:46 1997  Norbert Kiesel  <nk@psycho.de>
+
+	* sanity.sh: new tests "toplevel" for the new toplevel CVS
+	directory creation (including one test which shows an error in
+	this area).
+
 Sun Jun  8 20:52:00 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* rcs.c (getrcsrev): Before printing error, check whether it was
