@@ -1,3 +1,8 @@
+2005-02-01  Larry Jones  <lawrence.jones@ugs.com>
+
+	* log.c (log_fileproc, log_expand_revlist): Add support for BASE tag.
+	* sanity.sh (log): New tests for above.
+
 2005-01-29 Derek Price <derek@ximbiot.com>
 
 	* log.c (log_usage): Add note about using -S with revision info
