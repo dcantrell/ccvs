@@ -3,6 +3,9 @@ Changes since 1.11.14:
 
 GENERAL USER ISSUES
 
+* A race condition between the ordering of messages from CVS and messages from
+  called scripts in client/server mode has been removed.
+
 * CVS on Cygwin no longer converts back slashes in paths into forward slashes.
 
 * Resurrected files now get their modes and timestamps set correctly and a
