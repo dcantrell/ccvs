@@ -1,3 +1,10 @@
+Wed Sep 25 08:34:01 1996  Jim Blandy  <jimb@floss.cyclic.com>
+
+	Fix from Mark A. Solinski <markso@mcs.com>:
+	* cvsnt.mak: The debug configuration adds the zlib directory to
+	the include path but it is missing from the release configuration.
+	Add it to the "ADD CPP" and "CPP_PROJ" lines.
+
 Tue Sep 24 11:32:20 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* INSTALL: Add VMS entry.  Clarify what "tested" means.
