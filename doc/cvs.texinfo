@@ -1520,11 +1520,12 @@ This file lists the files and directories in the
 working directory.  It is a text file according to the
 conventions appropriate for the operating system in
 question.
-@c That seems like a lose, it makes it impossible (it
+@c Using OS text file conventions makes it impossible (it
 @c would seem) to share a working directory via a
 @c networked file system between systems with diverse
-@c text file conventions.  But it seems to be how CVS
-@c currently works.
+@c text file conventions.  But that might be correct,
+@c because the text files under CVS control are subject
+@c to the same problem.  It is also the status quo.
 The first character of each line indicates what sort of
 line it is.  If the character is unrecognized, programs
 reading the file should silently skip that line, to
@@ -1690,6 +1691,28 @@ stores the original copy of the file in the @file{Base}
 directory.  This allows the @code{unedit} command to
 operate even if it is unable to communicate with the
 server.
+
+@cindex Baserev file, in CVS directory
+@cindex CVS/Baserev file
+@item Baserev
+The file lists the revision for each of the files in
+the @file{Base} directory.  The format is:
+
+@example
+B@var{name}/@var{rev}/@var{expansion}
+@end example
+
+where @var{expansion} should be ignored, to allow for
+future expansion.
+
+@cindex Baserev.tmp file, in CVS directory
+@cindex CVS/Baserev.tmp file
+@item Baserev.tmp
+This file is to @file{Baserev} as @file{Entries.Backup}
+is to @file{Entries}.  That is, to write @file{Baserev},
+first write the new contents to @file{Baserev.tmp} and
+then (atomically where possible), rename it to
+@file{Baserev}.
 
 @cindex Template file, in CVS directory
 @cindex CVS/Template file

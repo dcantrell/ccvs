@@ -1,3 +1,10 @@
+Sat Sep  6 11:29:15 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (Working directory storage): Document Baserev and
+	Baserev.tmp.
+	(Working directory storage): Adjust comment regarding CVS/* being
+	text files.
+
 Fri Sep  5 14:42:39 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (BUGS): Remove mention of unsupported resources page
