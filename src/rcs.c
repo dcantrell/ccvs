@@ -3069,7 +3069,7 @@ RCS_getrevtime (RCSNode *rcs, const char *rev, char *date, int fudge)
 {
     char tdate[MAXDATELEN];
     struct tm xtm, *ftm;
-    time_t revdate = 0;
+    struct timespec revdate;
     Node *p;
     RCSVers *vers;
 
@@ -3103,26 +3103,30 @@ RCS_getrevtime (RCSNode *rcs, const char *rev, char *date, int fudge)
 	xtm.tm_year -= 1900;
 
     /* put the date in a form getdate can grok */
-    (void) sprintf (tdate, "%d/%d/%d GMT %d:%d:%d", xtm.tm_mon,
-		    xtm.tm_mday, xtm.tm_year + 1900, xtm.tm_hour,
-		    xtm.tm_min, xtm.tm_sec);
+    (void) sprintf (tdate, "%d-%d-%d GMT %d:%d:%d",
+		    xtm.tm_year + 1900, xtm.tm_mon, xtm.tm_mday,
+		    xtm.tm_hour, xtm.tm_min, xtm.tm_sec);
 
-    /* turn it into seconds since the epoch */
-    revdate = get_date (tdate, NULL);
-    if (revdate != (time_t) -1)
+    /* Turn it into seconds since the epoch.
+     *
+     * We use a struct timespec since that is what getdate requires, then
+     * truncate the nanoseconds.
+     */
+    if (!get_date (&revdate, tdate, NULL))
+	return (time_t)-1;
+
+    revdate.tv_sec -= fudge;	/* remove "fudge" seconds */
+    if (date)
     {
-	revdate -= fudge;		/* remove "fudge" seconds */
-	if (date)
-	{
-	    /* put an appropriate string into ``date'' if we were given one */
-	    ftm = gmtime (&revdate);
-	    (void) sprintf (date, DATEFORM,
-			    ftm->tm_year + (ftm->tm_year < 100 ? 0 : 1900),
-			    ftm->tm_mon + 1, ftm->tm_mday, ftm->tm_hour,
-			    ftm->tm_min, ftm->tm_sec);
-	}
+	/* Put an appropriate string into `date', if we were given one. */
+	ftm = gmtime (&revdate.tv_sec);
+	(void) sprintf (date, DATEFORM,
+			ftm->tm_year + (ftm->tm_year < 100 ? 0 : 1900),
+			ftm->tm_mon + 1, ftm->tm_mday, ftm->tm_hour,
+			ftm->tm_min, ftm->tm_sec);
     }
-    return revdate;
+
+    return revdate.tv_sec;
 }
 
 

@@ -1083,10 +1083,13 @@ cause intermittent sandbox corruption.");
 char *
 Make_Date (char *rawdate)
 {
-    time_t unixtime = get_date (rawdate, NULL);
-    if (unixtime == (time_t)-1)
+    struct timespec t;
+
+    if (!get_date (&t, rawdate, NULL))
 	error (1, 0, "Can't parse date/time: `%s'", rawdate);
-    return date_from_time_t (unixtime);
+
+    /* Truncate nanoseconds.  */
+    return date_from_time_t (t.tv_sec);
 }
 
 
@@ -1255,21 +1258,22 @@ gmformat_time_t (time_t unixtime)
 char *
 format_date_alloc (char *datestr)
 {
-    time_t unixtime;
+    struct timespec t;
     char *buf;
 
     TRACE (TRACE_FUNCTION, "format_date (%s)", datestr);
 
     /* Convert the date string to seconds since the epoch. */
-    unixtime = get_date (datestr, NULL);
-    if (unixtime == (time_t)-1)
+    if (!get_date (&t, datestr, NULL))
     {
 	error (0, 0, "Can't parse date/time: `%s'.", datestr);
 	goto as_is;
     }
 
-    /* Get the time into a string.  */
-    if ((buf = format_time_t (unixtime)) == NULL)
+    /* Get the time into a string, truncating any nanoseconds returned by
+     * getdate.
+     */
+    if ((buf = format_time_t (t.tv_sec)) == NULL)
     {
 	error (0, 0, "Unable to reformat date `%s'.", datestr);
 	goto as_is;

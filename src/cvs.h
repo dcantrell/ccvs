@@ -42,6 +42,7 @@
 /* begin GNULIB headers */
 #include "dirname.h"
 #include "exit.h"
+#include "getdate.h"
 #include "minmax.h"
 #include "regex.h"
 #include "strcase.h"
@@ -550,12 +551,6 @@ int update (int argc, char *argv[]);
 void write_letter (struct file_info *finfo, int letter);
 int xcmp (const char *file1, const char *file2);
 void *valloc (size_t bytes);
-
-/* Need this until we back out the get_date () proto again and use a current
- * version of getdate.y from GNULIB.
- */
-#include "xtime.h"
-time_t get_date (char *date, struct timeb *now);
 
 int Create_Admin (const char *dir, const char *update_dir,
                   const char *repository, const char *tag, const char *date,

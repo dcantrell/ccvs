@@ -502,21 +502,21 @@ history (int argc, char **argv)
 		     */
 		    static char f[] = "1/1/1970 23:00 %s";
 		    char *buf = xmalloc (sizeof (f) - 2 + strlen (optarg));
-		    time_t t;
+		    struct timespec t;
 		    sprintf (buf, f, optarg);
-		    t = get_date (buf, NULL);
-		    free (buf);
-		    if (t == (time_t) -1)
-			error (0, 0, "%s is not a known time zone", optarg);
-		    else
+		    if (get_date (&t, buf, NULL))
 		    {
 			/*
 			 * Convert to seconds east of GMT, removing the
 			 * 23-hour offset mentioned above.
 			 */
-			tz_seconds_east_of_GMT = (time_t)23 * 60 * 60  -  t;
+			tz_seconds_east_of_GMT = (time_t)23 * 60 * 60
+						 - t.tv_sec;
 			tz_name = optarg;
 		    }
+		    else
+			error (0, 0, "%s is not a known time zone", optarg);
+		    free (buf);
 		}
 		break;
 	    case '?':
