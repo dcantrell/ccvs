@@ -1,5 +1,10 @@
 2004-04-02  Derek Price  <derek@ximbiot.com>
 
+	* import.c (import): Use ISDIRSEP rather than testing paths against `/'
+	directly.  Some gratuitos reformatting.
+
+2004-04-02  Derek Price  <derek@ximbiot.com>
+
 	* sanity.sh: Note the effectiveness of `tail -f check.log' in providing
 	running status.
 

@@ -163,8 +163,8 @@ import (argc, argv)
      * to call it from anywhere else.
      */
     if ((cp = strstr(argv[0], "CVS")) &&   /* path contains "CVS" AND ... */
-        ((cp == argv[0]) || (*(cp-1) == '/')) && /* /^CVS/ OR m#/CVS# AND ... */
-        ((*(cp+3) == '\0') || (*(cp+3) == '/')) /* /CVS$/ OR m#CVS/# */
+        ((cp == argv[0]) || ISDIRSEP(*(cp-1))) && /* /^CVS/ OR m#/CVS# AND ... */
+        ((*(cp+3) == '\0') || ISDIRSEP(*(cp+3))) /* /CVS$/ OR m#CVS/# */
        )
     {
         error (0, 0,
@@ -183,8 +183,7 @@ import (argc, argv)
     }
 
     /* XXX - this should be a module, not just a pathname */
-    if (! isabsolute (argv[0])
-	&& pathname_levels (argv[0]) == 0)
+    if (!isabsolute (argv[0]) && pathname_levels (argv[0]) == 0)
     {
 	if (current_parsed_root == NULL)
 	{
