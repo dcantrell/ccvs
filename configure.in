@@ -191,6 +191,7 @@ AC_TYPE_SIGNAL
 AC_CHECK_MEMBERS([struct stat.st_blksize])
 AC_CHECK_MEMBERS([struct stat.st_rdev])
 
+# Replace functions with versions in lib/ when they can't be found.
 AC_REPLACE_FUNCS(\
 	dup2 \
 	ftruncate \
@@ -204,7 +205,8 @@ AC_REPLACE_FUNCS(\
 	valloc \
 	waitpid \
 )
-# Look for functions from gnulib and replace with versions in lib/ when
+
+# Look for functions from GNULIB and replace with versions in lib/ when
 # necessary.
 jm_FUNC_MALLOC
 jm_FUNC_REALLOC
@@ -212,7 +214,9 @@ jm_FUNC_STAT
 jm_FUNC_LSTAT
 jm_FUNC_GLIBC_UNLOCKED_IO
 AM_GNU_GETTEXT([external])
+UTILS_FUNC_MKSTEMP
 
+# Check for function existance.
 AC_CHECK_FUNCS(\
 	fchdir \
 	fchmod \
@@ -228,8 +232,6 @@ AC_CHECK_FUNCS(\
 	login \
 	logout \
 	mknod \
-	mkstemp \
-	mktemp \
 	putenv \
 	readlink \
 	regcomp \
@@ -241,7 +243,6 @@ AC_CHECK_FUNCS(\
 	sigprocmask \
 	sigsetmask \
 	sigvec \
-	tempnam \
 	timezone \
 	tzset \
 	vprintf \

@@ -1,5 +1,13 @@
 2003-06-13  Derek Price  <derek@ximbiot.com>
 
+	* configure.in: Call UTILS_FUNC_MKSTEMP for lib/mkstemp.c.
+
+	* aclocal.m4: Regenerated.
+	* configure: Ditto.
+	* config.h.in: Ditto.
+
+2003-06-13  Derek Price  <derek@ximbiot.com>
+
 	* aclocal.m4: Regenerated.
 	* configure: Ditto.
 
