@@ -267,7 +267,10 @@ fi
 # which makes for a lot of failed `tail -f' attempts.
 touch check.log
 
-# Work around X11Forarding by ssh
+# Workaround any X11Forwarding by ssh. Otherwise this text:
+#   Warning: No xauth data; using fake authentication data for X11 forwarding.
+# has been known to end up in the test results below
+# causing the test to fail.
 [ -n "$DISPLAY" ] && unset DISPLAY
   
 # The default value of /tmp/cvs-sanity for TESTDIR is dubious,
@@ -19933,33 +19936,33 @@ done"
               *ssh*|*putty*)
                  tryssh=`Which $CVS_RSH`
                  if [ ! -n "$tryssh" ]; then
-                    skipreason="Unable to find CVS_RSH=$CVS_RSH executable"
+                   skipreason="Unable to find CVS_RSH=$CVS_RSH executable"
                  elif [ ! -x "$tryssh" ]; then
-                    skipreason="Unable to execute $tryssh program"
+                   skipreason="Unable to execute $tryssh program"
                  fi
                  ;;
               *)
                  # Look in the user's PATH for "ssh"
                  tryssh=`Which ssh`
                  if test ! -r "$tryssh"; then
-                    skipreason="Unable to find ssh program"
+                   skipreason="Unable to find ssh program"
                  fi
                  ;;
             esac
             if [ ! -n "$skipreason" ]; then
               host=${remotehost-"`hostname`"}
               result=`$tryssh $host 'echo test'`
-	      rc=$?
+              rc=$?
               if test $? != 0 || test "x$result" != "xtest"; then
-                 skipreason="\`$tryssh $host' failed rc=$rc result=$result."
+                skipreason="\`$tryssh $host' failed rc=$rc result=$result"
               else
                 CVS_RSH=$tryssh; export CVS_RSH
               fi
- 
+
               if test -n "$remotehost"; then
-                    SSHSTDIO_ROOT=:ext:$remotehost${CVSROOT_DIRNAME}
+                SSHSTDIO_ROOT=:ext:$remotehost${CVSROOT_DIRNAME}
               else
-                    SSHSTDIO_ROOT=:ext:`hostname`:${CVSROOT_DIRNAME}
+                SSHSTDIO_ROOT=:ext:`hostname`:${CVSROOT_DIRNAME}
               fi
              fi
           else
@@ -19981,9 +19984,9 @@ done"
             cnt=0
             echo $a > aaa
             while [ $cnt -lt 5 ] ; do
-                cnt=`expr $cnt + 1` ;
-                mv aaa aaa.old
-                cat aaa.old aaa.old aaa.old aaa.old > aaa
+              cnt=`expr $cnt + 1` ;
+              mv aaa aaa.old
+              cat aaa.old aaa.old aaa.old aaa.old > aaa
             done
             dotest sshstdio-3 "${testcvs} -q add aaa" \
 "${PROG} add: use .${PROG} commit. to add this file permanently"
@@ -20010,20 +20013,20 @@ EOF
             chmod +x wrapper.sh
             ./wrapper.sh \
              ${testcvs} -z5 -Q diff --side-by-side -W 500 -r 1.1 -r 1.2 \
-               aaa >wrapper.dif
+               aaa > wrapper.dif
   
             ${testcvs} -z5 -Q diff --side-by-side -W 500 -r 1.1 -r 1.2 \
-               aaa >good.dif
+               aaa > good.dif
   
             dotest sshstdio-6 "cmp wrapper.dif good.dif" ""
   
             if [ -n "$CVS_RSH_save" ]; then
-                CVS_RSH=$CVS_RSH_save; export CVS_RSH
+              CVS_RSH=$CVS_RSH_save; export CVS_RSH
             fi
 
             if $keep; then
-                echo Keeping ${TESTDIR} and exiting due to --keep
-                exit 0
+              echo Keeping ${TESTDIR} and exiting due to --keep
+              exit 0
             fi
   
             cd ../..
