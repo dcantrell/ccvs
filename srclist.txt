@@ -51,10 +51,6 @@ Imported files					CVS		Local
 # $GNULIB/modules/error
 $GNULIB/lib/error.c				lib		no NI
 $GNULIB/m4/strerror_r.m4			lib		no NI
-# $GNULIB/modules/exitfail
-$GNULIB/lib/exitfail.h				lib		no NI
-$GNULIB/lib/exitfail.c				lib		no NI
-$GNULIB/m4/exitfail.m4				m4		no NI
 # $GNULIB/modules/extensions
 $GNULIB/m4/extensions.m4			m4		no NI
 # $GNULIB/modules/fnmatch-posix

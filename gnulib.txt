@@ -74,3 +74,8 @@ m4/onceonly_2_57.m4
 lib/exit.h
 
 m4/onceonly_2_57.m4
+lib/exitfail.h
+lib/exitfail.c
+m4/exitfail.m4
+
+m4/onceonly_2_57.m4

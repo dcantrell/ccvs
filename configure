@@ -10794,6 +10794,9 @@ done
 
 
 
+    :
+
+
 
   :
 
@@ -15480,9 +15483,6 @@ done
 
 
   fi
-
-
-    :
 
 echo "$as_me:$LINENO: checking for mbstate_t" >&5
 echo $ECHO_N "checking for mbstate_t... $ECHO_C" >&6
