@@ -1,5 +1,11 @@
 1999-01-27  Jim Kingdon  <http://www.cyclic.com>
 
+	* options.h.in: Make RELATIVE_REPOS the default, as has been
+	announced as a future direction since 1997-10-11.
+	* sanity.sh (multiroot): Tweak multiroot-update-1a and
+	multiroot-update-1b tests to work with either RELATIVE_REPOS or
+	non-RELATIVE_REPOS.
+
 	* sanity.sh (client-9): Don't assume the time zone.
 
 1999-01-26  Jim Kingdon  <http://www.cyclic.com>
