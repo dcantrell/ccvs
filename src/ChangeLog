@@ -1,3 +1,10 @@
+Fri Jan  9 14:38:54 1998  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* server.c (expand_proc): Also output server_dir in
+	"Module-expansion", not just in output_dir ("Created", &c).
+	* sanity.sh (modules2): New tests modules2-9 through modules2-12
+	test for this.
+
 Thu Jan  8 12:56:55 1998  Yasutoshi Hiroe  <hiroe@rgk.ricoh.co.jp>
 
 	* import.c (import): Don't strcat on uninitialized memory.  Fixes
