@@ -2993,6 +2993,10 @@ numeric revision in each file.
 * Versions revisions releases::  Terminology used in this manual
 * Assigning revisions::         Assigning revisions
 * Tags::                        Tags--Symbolic revisions
+* Tagging the working directory::  The cvs tag command
+* Tagging by date/tag::         The cvs rtag command
+* Modifying tags::              Adding, renaming, and deleting tags
+* Tagging add/remove::          Tags with adding and removing files
 * Sticky tags::                 Certain tags are persistent
 @end menu
 
@@ -3203,6 +3207,9 @@ File: backend.c         Status: Up-to-date
 
 @end example
 
+For a complete summary of the syntax of @code{cvs tag},
+including the various options, see @ref{Invoking CVS}.
+
 There is seldom reason to tag a file in isolation.  A more common use is
 to tag all the files that constitute a module with the same tag at
 strategic points in the development life-cycle, such as when a release
@@ -3238,7 +3245,9 @@ This is useful, for instance, if someone claims that there is a bug in
 that release, but you cannot find the bug in the current working copy.
 
 You can also check out a module as it was at any given date.
-@xref{checkout options}.
+@xref{checkout options}.  When specifying @samp{-r} to
+any of these commands, you will need beware of sticky
+tags; see @ref{Sticky tags}.
 
 When you tag more than one file with the same tag you
 can think about the tag as "a curve drawn through a
@@ -3280,6 +3289,182 @@ like this:
                                 1.5
 @end group
 @end example
+
+@node Tagging the working directory
+@section Specifying what to tag from the working directory
+
+@cindex Tag (subcommand)
+The example in the previous section demonstrates one of
+the most common ways to choose which revisions to tag.
+Namely, running the @code{cvs tag} command without
+arguments causes @sc{cvs} to select the revisions which
+are checked out in the current working directory.  For
+example, if the copy of @file{backend.c} in working
+directory was checked out from revision 1.4, then
+@sc{cvs} will tag revision 1.4.  Note that the tag is
+applied immediately to revision 1.4 in the repository;
+tagging is not like modifying a file, or other
+operations in which one first modifies the working
+directory and then runs @code{cvs commit} to transfer
+that modification to the repository.
+
+One potentially surprising aspect of the fact that
+@code{cvs tag} operates on the repository is that you
+are tagging the checked-in revisions, which may differ
+from locally modified files in your working directory.
+If you want to avoid doing this by mistake, specify the
+@samp{-c} option to @code{cvs tag}.  If there are any
+locally modified files, @sc{cvs} will abort with an
+error before it tags any files:
+
+@example
+$ cvs tag -c rel-0-4
+cvs tag: backend.c is locally modified
+cvs [tag aborted]: correct the above errors first!
+@end example
+
+@node Tagging by date/tag
+@section Specifying what to tag by date or revision
+@cindex Rtag (subcommand)
+
+The @code{cvs rtag} command tags the repository as of a
+certain date or time (or can be used to tag the latest
+revision).  @code{rtag} works directly on the
+repository contents (it requires no prior checkout and
+does not look for a working directory).
+
+The following options specify which date or revision to
+tag.  See @ref{Common options}, for a complete
+description of them.
+
+@table @code
+@item -D @var{date}
+Tag the most recent revision no later than @var{date}.
+
+@item -f
+Only useful with the @samp{-D @var{date}} or @samp{-r @var{tag}}
+flags.  If no matching revision is found, use the most
+recent revision (instead of ignoring the file).
+
+@item -r @var{tag}
+Only tag those files that contain existing tag @var{tag}.
+@end table
+
+The @code{cvs tag} command also allows one to specify
+files by revision or date, using the same @samp{-r},
+@samp{-D}, and @samp{-f} options.  However, this
+feature is probably not what you want.  The reason is
+that @code{cvs tag} chooses which files to tag based on
+the files that exist in the working directory, rather
+than the files which existed as of the given tag/date.
+Therefore, you are generally better off using @code{cvs
+rtag}.  The exceptions might be cases like:
+
+@example
+cvs tag -r 1.4 backend.c
+@end example
+
+@node Modifying tags
+@section Deleting, moving, and renaming tags
+
+@c Also see:
+@c  "How do I move or rename a magic branch tag?"
+@c in the FAQ (I think the issues it talks about still
+@c apply, but this could use some sanity.sh work).
+
+Normally one does not modify tags.  They exist in order
+to record the history of the repository and so deleting
+them or changing their meaning would, generally, not be
+what you want.
+
+However, there might be cases in which one uses a tag
+temporarily or accidentally puts one in the wrong
+place.  Therefore, one might delete, move, or rename a
+tag.  Warning: the commands in this section are
+dangerous; they permanently discard historical
+information and it can difficult or impossible to
+recover from errors.  If you are a @sc{cvs}
+administrator, you may consider restricting these
+commands with taginfo (@pxref{user-defined logging}).
+
+@cindex deleting tags
+@cindex removing tags
+@cindex tags, deleting
+To delete a tag, specify the @samp{-d} option to either
+@code{cvs tag} or @code{cvs rtag}.  For example:
+
+@example
+cvs rtag -d rel-0-4 tc
+@end example
+
+deletes the tag @code{rel-0-4} from the module @code{tc}.
+
+@cindex moving tags
+@cindex tags, moving
+When we say @dfn{move} a tag, we mean to make the same
+name point to different revisions.  For example, the
+@code{stable} tag may currently point to revision 1.4
+of @file{backend.c} and perhaps we want to make it
+point to revision 1.6.  To move a tag, specify the
+@samp{-F} option to either @code{cvs tag} or @code{cvs
+rtag}.  For example, the task just mentioned might be
+accomplished as:
+
+@example
+cvs tag -r 1.6 -F stable backend.c
+@end example
+
+@cindex renaming tags
+@cindex tags, renaming
+When we say @dfn{rename} a tag, we mean to make a
+different name point to the same revisions as the old
+tag.  For example, one may have misspelled the tag name
+and want to correct it (hopefully before others are
+relying on the old spelling).  To rename a tag, first
+create a new tag using the @samp{-r} option to
+@code{cvs rtag}, and then delete the old name.  This
+leaves the new tag on exactly the same files as the old
+tag.  For example:
+
+@example
+cvs rtag -r old-name-0-4 rel-0-4 tc
+cvs rtag -d old-name-0-4 tc
+@end example
+
+@node Tagging add/remove
+@section Tagging and adding and removing files
+
+The subject of exactly how tagging interacts with
+adding and removing files is somewhat obscure; for the
+most part @sc{cvs} will keep track of whether files
+exist or not without too much fussing.  By default,
+tags are applied to only files which have a revision
+corresponding to what is being tagged.  Files which did
+not exist yet, or which were already removed, simply
+omit the tag, and @sc{cvs} knows to treat the absence
+of a tag as meaning that the file didn't exist as of
+that tag.
+
+However, this can lose a small amount of information.
+For example, suppose a file was added and then removed.
+Then, if the tag is missing for that file, there is no
+way to know whether the tag refers to the time before
+the file was added, or the time after it was removed.
+If you specify the @samp{-r} option to @code{cvs rtag},
+then @sc{cvs} tags the files which have been removed,
+and thereby avoids this problem.  For example, one
+might specify @code{-r HEAD} to tag the head.
+
+On the subject of adding and removing files, the
+@code{cvs rtag} command has a @samp{-a} option which
+means to clear the tag from removed files that would
+not otherwise be tagged.  For example, one might
+specify this option in conjunction with @samp{-F} when
+moving a tag.  If one moved a tag without @samp{-a},
+then the tag in the removed files might still refer to
+the old revision, rather than reflecting the fact that
+the file had been removed.  I don't think this is
+necessary if @samp{-r} is specified, as noted above.
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node Sticky tags
@@ -6921,8 +7106,6 @@ reference to @sc{cvs} commands, @pxref{Invoking CVS}).
 * log::                         Show log messages for files
 * rdiff::                       'patch' format diffs between releases
 * release::                     Indicate that a Module is no longer in use
-* rtag::                        Add a tag to a module
-* tag::                         Add a tag to checked out version
 * update::                      Bring work tree in sync with repository
 @end menu
 
@@ -8301,13 +8484,16 @@ invoking an editor.
 @node commit examples
 @appendixsubsec commit examples
 
+@c FIXME: this material wants to be somewhere
+@c in "Branching and merging".
+
 @appendixsubsubsec Committing to a branch
 
 You can commit to a branch revision (one that has an
 even number of dots) with the @samp{-r} option.  To
 create a branch revision, use the @samp{-b} option
-of the @code{rtag} or @code{tag} commands (@pxref{tag}
-or @pxref{rtag}).  Then, either @code{checkout} or
+of the @code{rtag} or @code{tag} commands
+(@pxref{Branching and merging}).  Then, either @code{checkout} or
 @code{update} can be used to base your sources on the
 newly created branch.  From that point on, all
 @code{commit} changes made within these working sources
@@ -9447,238 +9633,6 @@ Are you sure you want to release (and delete) module `tc': y
 $
 @end example
 
-@node rtag
-@appendixsec rtag---Add a symbolic tag to a module
-@cindex Rtag (subcommand)
-
-@itemize @bullet
-@item
-rtag [-falnR] [-b] [-d] [-r tag | -Ddate] symbolic_tag modules@dots{}
-@item
-Requires: repository.
-@item
-Changes: repository.
-@item
-Synonym: rfreeze
-@end itemize
-
-You can use this command to assign symbolic tags to
-particular, explicitly specified source revisions in
-the repository.  @code{rtag} works directly on the
-repository contents (and requires no prior checkout).
-Use @code{tag} instead (@pxref{tag}), to base the
-selection of revisions on the contents of your
-working directory.
-
-If you attempt to use a tag name that already exists,
-@sc{cvs} will complain and not overwrite that tag.  Use
-the @samp{-F} option to force the new tag value.
-
-@menu
-* rtag options::                rtag options
-@end menu
-
-@c . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
-@node rtag options
-@appendixsubsec rtag options
-
-These standard options are supported by @code{rtag}
-(@pxref{Common options}, for a complete description of
-them):
-
-@table @code
-@item -D @var{date}
-Tag the most recent revision no later than @var{date}.
-
-@item -f
-Only useful with the @samp{-D @var{date}} or @samp{-r @var{tag}}
-flags.  If no matching revision is found, use the most
-recent revision (instead of ignoring the file).
-
-@item -F
-Overwrite an existing tag of the same name on a
-different revision.
-@c FIXME: Needs an example, and/or more explanation.
-@c Also needs to contrast this with the behavior if -F
-@c is not specified, and the description needs to be
-@c moved somewhere where it is shared between "tag" and
-@c "rtag" (probably some sub-node of Revisions and
-@c branches).  Also should be clear about whether this
-@c applies to branch tags, non-branch tags, or both.
-@c Also this is *not* a common option.
-
-@item -l
-Local; run only in current working directory.
-
-@item -n
-Do not run any tag program that was specified with the
-@samp{-t} flag inside the @file{modules} file.
-(@pxref{modules}).
-
-@item -R
-Tag directories recursively.  This is on by default.
-
-@c FIXME: this discussion is confusing.  What part of
-@c the rename operation being discussed relates to
-@c "rtag -r" (that whole discussion needs an example,
-@c and probably to be moved somewhere else)?
-@item -r @var{tag}
-Only tag those files that contain @var{tag}.  This can
-be used to rename a tag: tag only the files identified
-by the old tag, then delete the old tag, leaving the
-new tag on exactly the same files as the old tag.
-@end table
-
-In addition to the above common options, these options
-are available:
-
-@table @code
-@item -a
-@c FIXME: What does this option mean in terms of user
-@c concepts, not CVS internals?
-Use the @samp{-a} option to have @code{rtag} look in the
-@file{Attic} (@pxref{Attic}) for removed files
-that contain the specified tag.  The tag is removed from
-these files, which makes it convenient to re-use a
-symbolic tag as development continues (and files get
-removed from the up-coming distribution).
-
-@item -b
-Make the tag a branch tag.  @xref{Branching and merging}.
-
-@item -d
-Delete the tag instead of creating it.
-
-In general, tags (often the symbolic names of software
-distributions) should not be removed, but the @samp{-d}
-option is available as a means to remove completely
-obsolete symbolic names if necessary (as might be the
-case for an Alpha release, or if you mistagged a
-module).
-@end table
-
-@ignore
-@c . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
-@c @node rtag examples
-@appendixsubsec rtag examples
-
-@c -- Examples here!
-@end ignore
-
-@c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-@node tag
-@appendixsec tag---Add a symbolic tag to checked out versions of files
-@c --                    //////// - unnecessary. Also
-@c --                               in a lot of other
-@c --                               places.
-@cindex Tag (subcommand)
-
-@itemize @bullet
-@item
-tag [-lR] [-b] [-c] [-d] symbolic_tag [files@dots{}]
-@item
-Requires: working directory, repository.
-@item
-Changes: repository.
-@item
-Synonym: freeze
-@end itemize
-
-Use this command to assign symbolic tags to the nearest
-repository revisions to your working sources.  The tags
-are applied immediately to the repository, as with
-@code{rtag}. 
-
-One use for tags is to record a snapshot of the
-current sources when the software freeze date of a
-project arrives.  As bugs are fixed after the freeze
-date, only those changed sources that are to be part of
-the release need be re-tagged.
-
-The symbolic tags are meant to permanently record which
-revisions of which files were used in creating a
-software distribution.  The @code{checkout} and
-@code{update} commands allow you to extract an exact
-copy of a tagged release at any time in the future,
-regardless of whether files have been changed, added,
-or removed since the release was tagged.
-
-This command can also be used to delete a symbolic tag,
-or to create a branch.  See the options section below.
-
-If you attempt to use a tag name that already exists,
-@sc{cvs} will complain and not overwrite that tag.  Use
-the @samp{-F} option to force the new tag value.
-
-
-@menu
-* tag options::                 tag options
-@end menu
-
-@c . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
-@node tag options
-@appendixsubsec tag options
-
-These standard options are supported by @code{tag}
-(@pxref{Common options}, for a complete description of
-them):
-
-@table @code
-@cindex renaming tags
-@cindex tags, renaming
-@cindex moving tags
-@c FIXME: Where does this talk about renaming tags?
-@c And what about rtag?  This needs to be moved to
-@c the body of the manual.
-@c Also see:
-@c  "How do I move or rename a magic branch tag?"
-@c in the FAQ (I think the issues it talks about still
-@c apply, but this could use some sanity.sh work).
-@item -F
-Overwrite an existing tag of the same name on a
-different revision.
-@c FIXME: See "rtag -F" for comments on this.
-
-@item -l
-Local; run only in current working directory.
-
-@item -R
-Tag directories recursively.  This is on by default.
-@end table
-
-Two special options are available:
-
-@table @code
-@item -b
-Make the tag a branch tag
-(@pxref{Branching and merging}), allowing concurrent, isolated
-development.  This is most useful for creating a patch
-to a previously released software distribution.
-
-@item -c
-Check that all files which are to be tagged are
-unmodified.  This can be used to make sure that you can reconstruct the
-current file contents.
-
-@item -d
-Delete a tag.
-
-If you use @samp{cvs tag -d symbolic_tag}, the symbolic
-tag you specify is deleted instead of being added.
-Warning: Be very certain of your ground before you
-delete a tag; doing this permanently discards some
-historical information, which may later turn out to
-be valuable.
-@end table
-
-@ignore
-@c . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
-@c @node tag examples
-@appendixsubsec tag examples
-
-@c -- FIXME
-@end ignore
-
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node update
 @appendixsec update---Bring work tree in sync with repository
@@ -10521,43 +10475,42 @@ behavior}.
 @end table
 
 @item rtag [@var{options}] @var{tag} @var{modules}@dots{}
-Add a symbolic tag to a module.  See @ref{rtag}.
+Add a symbolic tag to a module.
+See @ref{Revisions} and @ref{Branching and merging}.
 
 @table @code
-@c Is this one of those dumb options which used to
-@c work around the lack of death support?
 @item -a
 Clear tag from removed files that would not otherwise
-be tagged.  See @ref{rtag options}.
+be tagged.  See @ref{Tagging add/remove}.
 
 @item -b
-Create a branch named @var{tag}.  See @ref{rtag options}.
+Create a branch named @var{tag}.  See @ref{Branching and merging}.
 
 @item -D @var{date}
-Tag revisions as of @var{date}.  See @ref{rtag options}.
+Tag revisions as of @var{date}.  See @ref{Tagging by date/tag}.
 
 @item -d
-Delete the given tag.  See @ref{rtag options}.
+Delete @var{tag}.  See @ref{Modifying tags}.
 
 @item -F
-Move tag if it already exists.  See @ref{rtag options}.
+Move @var{tag} if it already exists.  See @ref{Modifying tags}.
 
 @item -f
 Force a head revision match if tag/date not found.
-See @ref{rtag options}.
+See @ref{Tagging by date/tag}.
 
 @item -l
 Local; run only in current working directory.  See @ref{Recursive behavior}.
 
 @item -n
-No execution of tag program.  See @ref{rtag options}.
+No execution of tag program.  See @ref{Common options}.
 
 @item -R
 Operate recursively (default).  @xref{Recursive
 behavior}.
 
 @item -r @var{tag}
-Tag existing tag @var{tag}.  See @ref{rtag options}.
+Tag existing tag @var{tag}.  See @ref{Tagging by date/tag}.
 @end table
 
 @item status [@var{options}] @var{files}@dots{}
@@ -10578,37 +10531,38 @@ Include tag information for file.  See @ref{Tags}.
 
 @item tag [@var{options}] @var{tag} [@var{files}@dots{}]
 Add a symbolic tag to checked out version of files.
-See @ref{tag}.
+See @ref{Revisions} and @ref{Branching and merging}.
 
 @table @code
 @item -b
-Create a branch named @var{tag}.  See @ref{tag options}.
+Create a branch named @var{tag}.  See @ref{Branching and merging}.
+
+@item -c
+Check that working files are unmodified.  See
+@ref{Tagging the working directory}.
 
 @item -D @var{date}
-Tag revisions as of @var{date}.  See @ref{tag options}.
+Tag revisions as of @var{date}.  See @ref{Tagging by date/tag}.
 
 @item -d
-Delete the given tag.  See @ref{tag options}.
+Delete @var{tag}.  See @ref{Modifying tags}.
 
 @item -F
-Move tag if it already exists.  See @ref{tag options}.
+Move @var{tag} if it already exists.  See @ref{Modifying tags}.
 
 @item -f
 Force a head revision match if tag/date not found.
-See @ref{tag options}.
+See @ref{Tagging by date/tag}.
 
 @item -l
 Local; run only in current working directory.  See @ref{Recursive behavior}.
-
-@item -n
-No execution of tag program.  See @ref{tag options}.
 
 @item -R
 Operate recursively (default).  @xref{Recursive
 behavior}.
 
 @item -r @var{tag}
-Tag existing tag @var{tag}.  See @ref{tag options}.
+Tag existing tag @var{tag}.  See @ref{Tagging by date/tag}.
 @end table
 
 @item unedit [@var{options}] [@var{files}@dots{}]

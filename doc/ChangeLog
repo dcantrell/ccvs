@@ -1,3 +1,16 @@
+1998-10-20  Jim Kingdon
+
+	* cvs.texinfo (Tags): Point to Invoking CVS node so people aren't
+	left wondering what the syntax is.  When introducing -r option,
+	warn people about sticky tags right off.
+	(Tagging the working directory, Tagging by date/tag, Modifying
+	tags, Tagging add/remove): New sections.
+	(Invoking CVS): Adjust tag and rtag to point to the new sections,
+	and to add tag -c which had been omitted.  Delete tag -n; there is
+	no such option.
+	(rtag, tag): Removed; no longer needed.
+	(commit examples): Update xref.
+
 1998-10-15  Jim Kingdon
 
 	* cvsclient.texi (Requests): It is OK to send Set before Root.
