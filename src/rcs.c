@@ -332,6 +332,7 @@ RCS_parsercsfile (rcsfile)
 }
 
 
+
 /*
  */ 
 static RCSNode *
@@ -345,7 +346,7 @@ RCS_parsercsfile_i (fp, rcsfile)
 
     /* make a node */
     rdata = (RCSNode *) xmalloc (sizeof (RCSNode));
-    memset ((char *) rdata, 0, sizeof (RCSNode));
+    memset ((char *)rdata, 0, sizeof (RCSNode));
     rdata->refcount = 1;
     rdata->path = xstrdup (rcsfile);
 
@@ -363,7 +364,7 @@ RCS_parsercsfile_i (fp, rcsfile)
 	goto l_error;
 
     if (STREQ (RCSHEAD, key) && value != NULL)
-	rdata->head = rcsbuf_valcopy (&rcsbuf, value, 0, (size_t *) NULL);
+	rdata->head = rcsbuf_valcopy (&rcsbuf, value, 0, (size_t *)NULL);
 
     if (! rcsbuf_getkey (&rcsbuf, &key, &value))
 	goto l_error;
@@ -374,7 +375,7 @@ RCS_parsercsfile_i (fp, rcsfile)
     {
 	char *cp;
 
-	rdata->branch = rcsbuf_valcopy (&rcsbuf, value, 0, (size_t *) NULL);
+	rdata->branch = rcsbuf_valcopy (&rcsbuf, value, 0, (size_t *)NULL);
 	if ((numdots (rdata->branch) & 1) != 0)
 	{
 	    /* turn it into a branch if it's a revision */
@@ -392,12 +393,12 @@ RCS_parsercsfile_i (fp, rcsfile)
 	if (STREQ (RCSEXPAND, key))
 	{
 	    rdata->expand = rcsbuf_valcopy (&rcsbuf, value, 0,
-					    (size_t *) NULL);
+					    (size_t *)NULL);
 	    break;
 	}
 
 	for (cp = key;
-	     (isdigit ((unsigned char) *cp) || *cp == '.') && *cp != '\0';
+	     (isdigit ((unsigned char)*cp) || *cp == '.') && *cp != '\0';
 	     cp++)
 	    /* do nothing */ ;
 	if (*cp == '\0')
@@ -422,8 +423,9 @@ l_error:
     rcsbuf_close (&rcsbuf);
     freercsnode (&rdata);
     fclose (fp);
-    return (NULL);
+    return NULL;
 }
+
 
 
 /* Do the real work of parsing an RCS file.
@@ -739,7 +741,7 @@ RCS_fully_parse (rcs)
 
 	/* Rather than try to keep track of how much information we
            have read, just read to the end of the file.  */
-	if (! rcsbuf_getrevnum (&rcsbuf, &key))
+	if (!rcsbuf_getrevnum (&rcsbuf, &key))
 	    break;
 
 	vers = findnode (rcs->versions, key);
@@ -752,7 +754,7 @@ RCS_fully_parse (rcs)
 
 	while (rcsbuf_getkey (&rcsbuf, &key, &value))
 	{
-	    if (! STREQ (key, "text"))
+	    if (!STREQ (key, "text"))
 	    {
 		Node *kv;
 
@@ -762,7 +764,7 @@ RCS_fully_parse (rcs)
 		kv->type = rcsbuf_valcmp (&rcsbuf) ? RCSCMPFLD : RCSFIELD;
 		kv->key = xstrdup (key);
 		kv->data = rcsbuf_valcopy (&rcsbuf, value, kv->type == RCSFIELD,
-					   (size_t *) NULL);
+					   (size_t *)NULL);
 		if (addnode (vnode->other, kv) != 0)
 		{
 		    error (0, 0,
@@ -775,7 +777,7 @@ warning: duplicate key `%s' in version `%s' of RCS file `%s'",
 		continue;
 	    }
 
-	    if (! STREQ (vnode->version, rcs->head))
+	    if (!STREQ (vnode->version, rcs->head))
 	    {
 		unsigned long add, del;
 		char buf[50];
@@ -873,6 +875,8 @@ warning: duplicate key `%s' in version `%s' of RCS file `%s'",
 
     rcsbuf_cache (rcs, &rcsbuf);
 }
+
+
 
 /*
  * freercsnode - free up the info for an RCSNode
@@ -5556,8 +5560,9 @@ workfile);
     return status;
 }
 
-/* This structure is passed between RCS_cmp_file and cmp_file_buffer.  */
 
+
+/* This structure is passed between RCS_cmp_file and cmp_file_buffer.  */
 struct cmp_file_data
 {
     const char *filename;
@@ -5570,9 +5575,8 @@ struct cmp_file_data
    the file FILENAME.  OPTIONS is a string for the keyword
    expansion options.  Return 0 if the contents of the revision are
    the same as the contents of the file, 1 if they are different.  */
-
 int
-RCS_cmp_file ( rcs, rev1, rev1_cache, rev2, options, filename )
+RCS_cmp_file (rcs, rev1, rev1_cache, rev2, options, filename)
      RCSNode *rcs;
      const char *rev1;
      char **rev1_cache;
@@ -5629,23 +5633,23 @@ RCS_cmp_file ( rcs, rev1, rev1_cache, rev2, options, filename )
 	const char *use_file1;
 	char *tmpfile = NULL;
 
-	if( rev2 != NULL )
+	if (rev2 != NULL)
 	{
 	    /* Open & cache rev1 */
 	    tmpfile = cvs_temp_name();
-	    if( RCS_checkout( rcs, NULL, rev1, NULL, options, tmpfile,
-	                      (RCSCHECKOUTPROC)0, NULL ) )
-		error( 1, errno,
+	    if (RCS_checkout (rcs, NULL, rev1, NULL, options, tmpfile,
+	                      (RCSCHECKOUTPROC)0, NULL))
+		error (1, errno,
 		       "cannot check out revision %s of %s",
-		       rev1, rcs->path );
+		       rev1, rcs->path);
 	    use_file1 = tmpfile;
-	    if( rev1_cache != NULL )
+	    if (rev1_cache != NULL)
 		*rev1_cache = tmpfile;
 	}
 	else
 	    use_file1 = filename;
 
-        fp = CVS_FOPEN( use_file1, binary ? FOPEN_BINARY_READ : "r" );
+        fp = CVS_FOPEN (use_file1, binary ? FOPEN_BINARY_READ : "r");
 	if (fp == NULL)
 	    /* FIXME-update-dir: should include update_dir in message.  */
 	    error (1, errno, "cannot open file %s for comparing", use_file1);
@@ -5654,37 +5658,37 @@ RCS_cmp_file ( rcs, rev1, rev1_cache, rev2, options, filename )
         data.fp = fp;
         data.different = 0;
 	
-        if( RCS_checkout( rcs, (char *) NULL, rev2 ? rev2 : rev1,
-	                        (char *) NULL,
-				options, RUN_TTY, cmp_file_buffer,
-				(void *) &data ) )
-		error( 1, errno,
+        if (RCS_checkout (rcs, (char *)NULL, rev2 ? rev2 : rev1,
+                          (char *)NULL, options, RUN_TTY, cmp_file_buffer,
+                          (void *)&data ))
+		error (1, errno,
 		       "cannot check out revision %s of %s",
-		       rev2 ? rev2 : rev1, rcs->path );
+		       rev2 ? rev2 : rev1, rcs->path);
 
         /* If we have not yet found a difference, make sure that we are at
            the end of the file.  */
-        if (! data.different)
+        if (!data.different)
         {
 	    if (getc (fp) != EOF)
 		data.different = 1;
         }
 	
         fclose (fp);
-	if( rev1_cache == NULL && tmpfile )
+	if (rev1_cache == NULL && tmpfile)
 	{
-	    if( CVS_UNLINK( tmpfile ) < 0 )
-		error( 0, errno, "cannot remove %s", tmpfile );
-	    free( tmpfile );
+	    if (CVS_UNLINK (tmpfile ) < 0)
+		error (0, errno, "cannot remove %s", tmpfile);
+	    free (tmpfile);
 	}
 
         return data.different;
     }
 }
 
+
+
 /* This is a subroutine of RCS_cmp_file.  It is passed to
    RCS_checkout.  */
-
 #define CMP_BUF_SIZE (8 * 1024)
 
 static void
@@ -5693,7 +5697,7 @@ cmp_file_buffer (callerdat, buffer, len)
      const char *buffer;
      size_t len;
 {
-    struct cmp_file_data *data = (struct cmp_file_data *) callerdat;
+    struct cmp_file_data *data = (struct cmp_file_data *)callerdat;
     char *filebuf;
 
     /* If we've already found a difference, we don't need to check
@@ -5731,6 +5735,8 @@ cmp_file_buffer (callerdat, buffer, len)
 
     free (filebuf);
 }
+
+
 
 /* For RCS file RCS, make symbolic tag TAG point to revision REV.
    This validates that TAG is OK for a user to use.  Return value is
