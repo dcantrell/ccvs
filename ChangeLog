@@ -1,5 +1,9 @@
 2005-04-06  Derek Price  <derek@ximbiot.com>
 
+	* maint-aux/.cvsignore: New file.
+
+2005-04-06  Derek Price  <derek@ximbiot.com>
+
 	* configure.in: Generate maint-aux/Makefile.
 	* Makefile.am (SUBDIRS): Add maint-aux.
 	* maint-aux/Makefile.am, maint-aux/Makefile.in: New files.
