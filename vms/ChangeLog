@@ -1,5 +1,8 @@
 Wed Feb 28 11:08:06 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* options.h: Remove comment about automatic generation from
+	options.h.in.
+
 	* options.h: Remove AUTH_SERVER_SUPPORT; no longer should be
 	defined in options.h.
 
