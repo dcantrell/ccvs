@@ -510,3 +510,8 @@ char *getpass (char *passbuf);
 #define AUTH_CLIENT_SUPPORT 1
 
 /* End of CVS options.h section */
+
+/* FIXME: This is the same definition used for WOE32 in lib/system.h.  It
+ * should be consolidated.
+ */
+#define ISABSOLUTE(s) (ISDIRSEP(s[0]) || FOLD_FN_CHAR(s[0]) >= 'a' && FOLD_FN_CHAR(s[0]) <= 'z' && s[1] == ':' && ISDIRSEP(s[2]))

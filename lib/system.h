@@ -486,20 +486,16 @@ int fseeko (FILE *, off_t, int);
 #endif /* WIN32 */
 
 
-
-/* This is the only WOE32 hack we need for Cygwin anymore, so we don't use
- * __Cygwin__ as a way to set WOE32.
- */
-#if defined (__CYGWIN32__) || defined (WOE32)
+#ifdef WOE32
   /* Under Windows NT, filenames are case-insensitive.  */
 # define FILENAMES_CASE_INSENSITIVE 1
-#endif /* __CYGWIN__ || WOE32 */
+#endif /* WOE32 */
 
 
 
 #ifdef FILENAMES_CASE_INSENSITIVE
 
-# ifdef WOE32
+# if defined (__CYGWIN32__) || defined (WOE32)
     /* Under Windows NT, filenames are case-insensitive, and both / and \
        are path component separators.  */
 #   define FOLD_FN_CHAR(c) (WNT_filename_classes[(unsigned char) (c)])
@@ -507,6 +503,7 @@ extern unsigned char WNT_filename_classes[];
     /* Is the character C a path name separator?  Under
        Windows NT, you can use either / or \.  */
 #   define ISDIRSEP(c) (FOLD_FN_CHAR(c) == '/')
+#   define ISABSOLUTE(s) (ISDIRSEP(s[0]) || FOLD_FN_CHAR(s[0]) >= 'a' && FOLD_FN_CHAR(s[0]) <= 'z' && s[1] == ':' && ISDIRSEP(s[2]))
 # else /* ! WOE32 */
   /* As far as I know, both Cygwin and Macintosh OS X can make it here,
    * but since the OS X fold just folds a-z into A-Z or visa-versa, I'm just
@@ -517,7 +514,7 @@ extern unsigned char WNT_filename_classes[];
    */
 #   define FOLD_FN_CHAR(c) (OSX_filename_classes[(unsigned char) (c)])
 extern unsigned char OSX_filename_classes[];
-# endif /* WOE32 */
+# endif /* __CYGWIN32__ || WOE32 */
 
 /* The following need to be declared for all case insensitive filesystems.
  * When not FOLD_FN_CHAR is not #defined, a default definition for these
@@ -539,15 +536,22 @@ extern void fnfold (char *FILENAME);
    to lower case.  Under Windows NT, / and \ are both path component
    separators, so FOLD_FN_CHAR would map them both to /.  */
 #ifndef FOLD_FN_CHAR
-#define FOLD_FN_CHAR(c) (c)
-#define fnfold(filename) (filename)
-#define fncmp strcmp
+# define FOLD_FN_CHAR(c) (c)
+# define fnfold(filename) (filename)
+# define fncmp strcmp
 #endif
 
 /* Different file systems have different path component separators.
    For the VMS port we might need to abstract further back than this.  */
 #ifndef ISDIRSEP
-#define ISDIRSEP(c) ((c) == '/')
+# define ISDIRSEP(c) ((c) == '/')
+#endif
+
+/* Different file systems can have different naming patterns which designate
+ * a path as absolute
+ */
+#ifndef ISABSOLUTE
+# define ISABSOLUTE(s) ISDIRSEP(s[0])
 #endif
 
 

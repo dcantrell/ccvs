@@ -1,3 +1,7 @@
+2004-04-04  Derek Price  <derek@ximbiot.com>
+
+	* NEWS: Note Cygwin handles paths like X:\.
+
 2004-04-02  Derek Price  <derek@ximbiot.com>
 
 	* NEWS: Note Windows ISDIRSEP fix.

@@ -1,3 +1,7 @@
+2004-04-04  Derek Price  <derek@ximbiot.com>
+
+	* filesubr.c (isabsolute): Remove this function.
+
 2004-03-29  Derek Price  <derek@ximbiot.com>
 
 	* README: Note makefiles geenerated with MSVC++ 5.x.

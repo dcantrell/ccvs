@@ -1,3 +1,13 @@
+2004-04-04  Derek Price  <derek@ximbiot.com>
+
+	* system.h: Correct comment.
+
+2004-04-04  Derek Price  <derek@ximbiot.com>
+
+	* system.h: Restore complete path folding for Cygwin under Windows.
+	Add ISABSOLUTE macro for determining whether a path is absolute to
+	handle X:\ style paths under Windows (& Cygwin).
+
 2004-03-29  Derek Price  <derek@ximbiot.com>
 
 	* lib.mak: Regenerated with VC++ 5.0.

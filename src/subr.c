@@ -795,6 +795,8 @@ shell_escape(char *buf, const char *str)
     return buf;
 }
 
+
+
 /*
  * We can only travel forwards in time, not backwards.  :)
  */
@@ -846,7 +848,8 @@ sleep_past (time_t desttime)
 	    struct timeval tv;
 	    tv.tv_sec = s;
 	    tv.tv_usec = us;
-	    (void)select (0, (fd_set *)NULL, (fd_set *)NULL, (fd_set *)NULL, &tv);
+	    (void)select (0, (fd_set *)NULL, (fd_set *)NULL, (fd_set *)NULL,
+                          &tv);
 	}
 #else
 	if (us > 0) s++;
@@ -873,8 +876,7 @@ struct cmdline_bindings
  * of those if necessary.
  */
 static void
-cmdline_bindings_hash_node_delete (p)
-    Node *p;
+cmdline_bindings_hash_node_delete (Node *p)
 {
     struct cmdline_bindings *b = p->data;
 
@@ -884,6 +886,8 @@ cmdline_bindings_hash_node_delete (p)
     }
     free (b);
 }
+
+
 
 /*
  * assume s is a literal argument and put it between quotes,
@@ -905,6 +909,8 @@ cmdlinequote (char quotes, char *s)
     buf[strlen(buf)] = quotes;
     return buf;
 }
+
+
 
 /* read quotes as the type of quotes we are between (if any) and then make our
  * argument so it could make it past a cmdline parser (using sh as a model)
@@ -1799,6 +1805,17 @@ format_cmdline (const char *format, ...)
 
     dellist (&pflist);
     return buf;
+}
+
+
+
+/* Return non-zero iff FILENAME is absolute.
+   Trivial under Unix, but more complicated under other systems.  */
+int
+isabsolute (filename)
+    const char *filename;
+{
+    return ISABSOLUTE (filename);
 }
 
 
