@@ -810,6 +810,24 @@ sfile2 starts"
 
 	  rm -rf newdir
 
+	  # Test the CVSNULLREPOS code.
+	  # Seems to be broken.  The case where there is more than one
+	  # argument seems to be (bogusly?) handled separately, with
+	  # different semantics.  I'm not sure how we want to straighten
+	  # this out.
+	  if false; then
+	  dotest basicb-11 "${testcvs} -q co -d sub1/sub2 first-dir" \
+"U sub1/sub2/sdir1/sfile1
+U sub1/sub2/sdir2/sfile2"
+	  cd sub1
+	  dotest basicb-12 "${testcvs} -q update" ''
+	  touch xx
+	  dotest basicb-13 "${testcvs} add xx" fixme
+	  cd ..
+	  rm -r sub1
+	  # to test: sub1/sub2/sub3
+	  fi # end of tests commented out.
+
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
 	  rm -f ${CVSROOT_DIRNAME}/topfile,v
 	  ;;
