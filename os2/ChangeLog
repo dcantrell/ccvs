@@ -1,3 +1,8 @@
+Wed Nov  8 11:14:46 1995  Karl Fogel  <kfogel@floss.cyclic.com>
+
+        * options.h: undef SETXID_SUPPORT, to correspond with Norbert
+        Kiesel's recent change to ../src/options.h.in, etc.
+
 Mon Nov  6 16:29:00 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
         * test-makefile (CFLAGS): -DHAVE_CONFIG_H -- this turns out to be
