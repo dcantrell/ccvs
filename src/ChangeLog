@@ -1,3 +1,8 @@
+2001-05-21  Derek Price  <dprice@collab.net>
+
+	* client.c: Fix a mispelling in a comment.
+	(Patch from Alexey Mahotkin <alexm@hsys.msk.ru>).
+
 2001-05-05  Larry Jones  <larry.jones@sdrc.com>
 
 	* login.c (password_entry_operation): Only warn if unable to open
