@@ -1,3 +1,8 @@
+2003-04-04  Larry Jones  <lawrence.jones@eds.com>
+
+	* error.h: Avoid __pure__ for GCC versions < 2.96 & __malloc__ for GCC
+	versions < 3.0.
+
 2003-04-03  Derek Price  <derek@ximbiot.com>
 
 	* Makefile.am (DISTCLEAN_FILES): Move the contents of this variable...
