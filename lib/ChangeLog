@@ -1,3 +1,7 @@
+Mon Nov 13 03:53:45 1995  Karl Fogel  <kfogel@floss.cyclic.com>
+
+        * fnmatch.c: conform to 80 column standard (yes, I'm a pedant).
+
 Wed Nov  8 11:10:59 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
         * system.h (STAT_MACROS): ifdef S_IFMT, then use it as before; but
