@@ -1,5 +1,8 @@
 Sun Jul  7 10:36:16 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* rcscmds.c (RCS_settag): Add comment regarding moving check for
+	reserved tag names to RCS_check_tag.
+
 	* rcscmds.c: Add comment regarding librarifying RCS and related
 	issues.  This is a lightly edited version of a message I sent to
 	the CVS developers and didn't get flamed for, so it would appear
