@@ -227,10 +227,7 @@ main (argc, argv)
     /*
      * Just save the last component of the path for error messages
      */
-    if ((program_name = strrchr (argv[0], '/')) == NULL)
-	program_name = argv[0];
-    else
-	program_name++;
+    program_name = last_component (argv[0]);
 
     CurDir = xmalloc (PATH_MAX);
 #ifndef SERVER_SUPPORT
@@ -293,7 +290,14 @@ main (argc, argv)
 		(void) fputs (config_string, stdout);
 		(void) sprintf (tmp, "Patch Level: %d\n", PATCHLEVEL);
 		(void) fputs (tmp, stdout);
-		(void) fputs ("\nCopyright (c) 1993-1994 Brian Berliner\nCopyright (c) 1993-1994 david d `zoo' zuhn\nCopyright (c) 1992, Brian Berliner and Jeff Polk\nCopyright (c) 1989-1992, Brian Berliner\n\nCVS may be copied only under the terms of the GNU General Public License,\na copy of which can be found with the CVS distribution kit.\n", stdout);
+		(void) fputs ("\n", stdout);
+		(void) fputs ("Copyright (c) 1993-1994 Brian Berliner\n", stdout);
+		(void) fputs ("Copyright (c) 1993-1994 david d `zoo' zuhn\n", stdout);
+		(void) fputs ("Copyright (c) 1992, Brian Berliner and Jeff Polk\n", stdout);
+		(void) fputs ("Copyright (c) 1989-1992, Brian Berliner\n", stdout);
+		(void) fputs ("\n", stdout);
+		(void) fputs ("CVS may be copied only under the terms of the GNU General Public License,\n", stdout);
+		(void) fputs ("a copy of which can be found with the CVS distribution kit.\n", stdout);
 		exit (0);
 		break;
 	    case 'b':
@@ -447,7 +451,7 @@ error 0 %s: no such user\n", user);
 	     * Now for the hard part, compare the two directories. If they
 	     * are not identical, then abort this command.
 	     */
-            if ((strcmp (CVSroot, CVSADM_Root) != 0) &&
+            if ((fncmp (CVSroot, CVSADM_Root) != 0) &&
 		!same_directories(CVSroot, CVSADM_Root))
 	    {
               error (0, 0, "%s value for CVS Root found in %s",
@@ -579,17 +583,26 @@ error 0 %s: no such user\n", user);
 	command_name = cm->fullname;	/* Global pointer for later use */
 
 	/* make sure we clean up on error */
+#ifdef SIGHUP
 	(void) SIG_register (SIGHUP, main_cleanup);
-	(void) SIG_register (SIGINT, main_cleanup);
-	(void) SIG_register (SIGQUIT, main_cleanup);
-	(void) SIG_register (SIGPIPE, main_cleanup);
-	(void) SIG_register (SIGTERM, main_cleanup);
-
 	(void) SIG_register (SIGHUP, Lock_Cleanup);
+#endif
+#ifdef SIGINT
+	(void) SIG_register (SIGINT, main_cleanup);
 	(void) SIG_register (SIGINT, Lock_Cleanup);
+#endif
+#ifdef SIGQUIT
+	(void) SIG_register (SIGQUIT, main_cleanup);
 	(void) SIG_register (SIGQUIT, Lock_Cleanup);
+#endif
+#ifdef SIGPIPE
+	(void) SIG_register (SIGPIPE, main_cleanup);
 	(void) SIG_register (SIGPIPE, Lock_Cleanup);
+#endif
+#ifdef SIGTERM
+	(void) SIG_register (SIGTERM, main_cleanup);
 	(void) SIG_register (SIGTERM, Lock_Cleanup);
+#endif
 
 	gethostname(hostname, sizeof (hostname));
 
