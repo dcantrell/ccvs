@@ -228,10 +228,9 @@
 /* #define SETXID_SUPPORT */
 #endif
 
-/* The client will not perform password-authentication unless you
- * explicitly ask for it.  Whether to include the authenticating
- * server is set in config.h.
- */
+/* Should we build the password-authenticating client?  Whether to
+   include the password-authenticating _server_, on the other hand, is
+   set in config.h.  */
 #define AUTH_CLIENT_SUPPORT 1
 
 /*

@@ -1,3 +1,7 @@
+Thu Mar 14 07:06:59 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* options.h.in: Adjust comment to reflect kfogel change.
+
 Thu Mar 14 01:38:30 1996  Karl Fogel  <kfogel@floss.red-bean.com>
 
         * options.h.in (AUTH_CLIENT_SUPPORT): turn on by default.
