@@ -37,14 +37,7 @@
 #include <stdio.h>
 #include <signal.h>
 
-/* Add prototype support.  */
-#ifndef PROTO
-#if defined (USE_PROTOTYPES) ? USE_PROTOTYPES : defined (__STDC__)
-#define PROTO(ARGS) ARGS
-#else
-#define PROTO(ARGS) ()
-#endif
-#endif
+#include "PROTO.h"
 
 #ifdef STDC_HEADERS
 #include <stdlib.h>

@@ -35,7 +35,7 @@ extern int errno;
 #include "savecwd.h"
 #include "error.h"
 
-char *xgetwd __PROTO((void));
+char *xgetwd PROTO((void));
 
 /* Record the location of the current working directory in CWD so that
    the program may change to other directories and later use restore_cwd

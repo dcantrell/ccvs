@@ -1,5 +1,16 @@
 2003-05-28  Derek Price  <derek@ximbiot.com>
 
+	* getline.h, md5.c, sighandle.c, savecwd.h: Use PROTO.h.
+	* savecwd.c: Use standard PROTO macro.
+	* Makefile.am: Add PROTO.h
+	* PROTO.h: PROTO macro definition is finally here, as specified in
+	Autoconf documentation.
+	(Original patch from Alexey Mahotkin <alexm@hsys.msk.ru>.)
+
+	* Makefile.in: Regenerated.
+
+2003-05-28  Derek Price  <derek@ximbiot.com>
+
 	* Makefile.am: get rid of $(includeopt); -Isrc/ is ok, so remove
 	lengthy explanation.
 	(Patch from Alexey Mahotkin <alexm@hsys.msk.ru>.)
