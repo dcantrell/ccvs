@@ -3,6 +3,16 @@ Changes since 1.11.11:
 
 GENERAL USER ISSUES
 
+* Server support for case insensitive clients has been removed in favor of the
+  server relying on the client to preserve the case of checked out files, as
+  per the CVS client/server protocol spec.  This is not as drastic as it may
+  sound, as all of the current tests still pass without modification when run
+  from a case insensitive client to a case sensitive server.  This change
+  disables little previous functionality, enables access to more of the
+  possible namespace to users on systems with case insensitive file systems,
+  fixes a few bugs, and in the end this should provide a major stability
+  improvement.
+
 * Thanks to Ville Skyttä the man page is a bit more accurate.
 
 * Thanks to Ville Skyttä some unused variables were removed from the log_accum
