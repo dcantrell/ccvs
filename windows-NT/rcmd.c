@@ -165,7 +165,7 @@ rcmd_authenticate (int fd, char *locuser, char *remuser, char *command)
 	if (recv (fd, &c, 1, 0) == SOCKET_ERROR
 	    || c != '\0')
 	{
-	    errno = EPERM;
+	    WSASetLastError(WSAEACCES);
 	    return -1;
 	}
     }

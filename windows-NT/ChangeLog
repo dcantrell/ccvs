@@ -1,3 +1,14 @@
+Wed Apr  2 14:08:10 1997  Vince Del Vecchio  <vdelvecc@spd.analog.com>
+			  and Jim Kingdon
+
+	* sockerror.c: New file.
+	* config.h (SOCK_STRERROR, SOCK_ERRNO): New macros.
+	* startserver.c: In reporting errors from socket calls, use
+ 	SOCK_STRERROR and SOCK_ERRNO since strerror(errno) doesn't work
+ 	for Win32.
+	* rcmd.c (rcmd_authenticate): Use WSASetLastError instead of
+ 	assigning to errno, since that is where the caller will look.
+
 Sun Apr  6 17:22:19 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* filesubr.c (copy_file): Add comment about CopyFile.
