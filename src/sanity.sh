@@ -627,6 +627,23 @@ if $proxy || test -n "$remotehost"; then
     else
 	time=
     fi
+    cat >$TESTDIR/ssh-wrapper-env <<EOF
+#! $TESTSHELL
+while [ \$# -gt 0 ]
+do
+  case "\$1" in
+    *=*)
+      eval "\$1"
+      var=\`echo "\$1" | sed 's/^\\(.*\\)=.*\$/\\1/'\`
+      export \$var
+      ;;
+    *) break;;
+  esac
+  shift
+done
+exec \${1+"\$@"}
+EOF
+    chmod a+x $TESTDIR/ssh-wrapper-env
     cat >$TESTDIR/ssh-wrapper <<EOF
 #! $TESTSHELL
 hostname=\$1
@@ -634,20 +651,16 @@ shift
 exec \
 $CVS_RSH \
 	 \$hostname \
-	 "CVS_SERVER='\$CVS_SERVER';" \
-	 "CVS_SERVER_SLEEP='\$CVS_SERVER_SLEEP';" \
-	 "export CVS_SERVER CVS_SERVER_SLEEP;" \
-	 "CVS_PARENT_SERVER_SLEEP='\$CVS_PARENT_SERVER_SLEEP';" \
-	 "CVS_SERVER_LOG='\$CVS_SERVER_LOG';" \
-	 "export CVS_PARENT_SERVER_SLEEP CVS_SERVER_LOG;" \
-	 "CVS_SECONDARY_LOG='\$CVS_SECONDARY_LOG';" \
-	 "TMPDIR='\$TMPDIR';" \
-	 "export CVS_SECONDARY_LOG TMPDIR;" \
-	 "CVS_RSH='$TESTDIR/ssh-wrapper';" \
-	 "CVSUMASK='\$CVSUMASK';" \
-	 "export CVS_RSH CVSUMASK;" \
-	 "CVS_PID='\$CVS_PID';" \
-	 "export CVS_PID;" \
+	 $TESTDIR/ssh-wrapper-env \
+	 "CVS_SERVER='\$CVS_SERVER'" \
+	 "CVS_SERVER_SLEEP='\$CVS_SERVER_SLEEP'" \
+	 "CVS_PARENT_SERVER_SLEEP='\$CVS_PARENT_SERVER_SLEEP'" \
+	 "CVS_SERVER_LOG='\$CVS_SERVER_LOG'" \
+	 "CVS_SECONDARY_LOG='\$CVS_SECONDARY_LOG'" \
+	 "TMPDIR='\$TMPDIR'" \
+	 "CVS_RSH='$TESTDIR/ssh-wrapper'" \
+	 "CVSUMASK='\$CVSUMASK'" \
+	 "CVS_PID='\$CVS_PID'" \
 	 $time \
 	 \${1+"\$@"}
 EOF
