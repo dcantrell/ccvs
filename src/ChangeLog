@@ -1,5 +1,14 @@
 2004-10-28 Derek Price <derek@ximbiot.com>
 
+	* cvs.h (isdir, isfile, islink, isdevice, isreadable, iswritable,
+	isaccessible, isabsolute): Return boolean rather than int.
+	* filesubr.c (isdir, isfile, islink, isdevice, isreadable, iswritable,
+	isaccessible), subr.c (isabsolute): Ditto.  Some reformatting.
+	* filesubr.c (xresolvepath): Use save_cwd in place of xgetwd.  Some
+	reformatting.
+	
+2004-10-28 Derek Price <derek@ximbiot.com>
+
 	* client.c (handle_redirect): Detect redirect loops.
 	* sanity.sh (client-20): Test that client detects redirect loops.
 

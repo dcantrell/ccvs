@@ -18,6 +18,7 @@
    file system semantics.  */
 
 #include "cvs.h"
+#include "save-cwd.h"
 
 static int deep_remove_dir (const char *path);
 
@@ -103,95 +104,109 @@ copy_file (const char *from, const char *to)
     (void) utime (to, &t);
 }
 
+
+
 /* FIXME-krp: these functions would benefit from caching the char * &
    stat buf.  */
 
 /*
- * Returns non-zero if the argument file is a directory, or is a symbolic
+ * Returns true if the argument file is a directory, or is a symbolic
  * link which points to a directory.
  */
-int
+bool
 isdir (const char *file)
 {
     struct stat sb;
 
-    if( CVS_STAT( file, &sb ) < 0 )
-	return (0);
-    return (S_ISDIR (sb.st_mode));
+    if (CVS_STAT (file, &sb) < 0)
+	return false;
+    return S_ISDIR (sb.st_mode);
 }
 
+
+
 /*
- * Returns non-zero if the argument file is a symbolic link.
+ * Returns true if the argument file is a symbolic link.
  */
-int
+bool
 islink (const char *file)
 {
 #ifdef S_ISLNK
     struct stat sb;
 
     if (CVS_LSTAT (file, &sb) < 0)
-	return (0);
-    return (S_ISLNK (sb.st_mode));
+	return false;
+    return S_ISLNK (sb.st_mode);
 #else
-    return (0);
+    return false;
 #endif
 }
 
+
+
 /*
- * Returns non-zero if the argument file is a block or
+ * Returns true if the argument file is a block or
  * character special device.
  */
-int
+bool
 isdevice (const char *file)
 {
     struct stat sb;
 
     if (CVS_LSTAT (file, &sb) < 0)
-	return (0);
+	return false;
 #ifdef S_ISBLK
     if (S_ISBLK (sb.st_mode))
-	return 1;
+	return true;
 #endif
 #ifdef S_ISCHR
     if (S_ISCHR (sb.st_mode))
-	return 1;
+	return true;
 #endif
-    return 0;
+    return false;
 }
 
+
+
 /*
- * Returns non-zero if the argument file exists.
+ * Returns true if the argument file exists.
  */
-int
+bool
 isfile (const char *file)
 {
-    return isaccessible(file, F_OK);
+    return isaccessible (file, F_OK);
 }
+
+
 
 /*
  * Returns non-zero if the argument file is readable.
  */
-int
+bool
 isreadable (const char *file)
 {
-    return isaccessible(file, R_OK);
+    return isaccessible (file, R_OK);
 }
+
+
 
 /*
  * Returns non-zero if the argument file is writable.
  */
-int
+bool
 iswritable (const char *file)
 {
-    return isaccessible(file, W_OK);
+    return isaccessible (file, W_OK);
 }
 
+
+
 /*
- * Returns non-zero if the argument file is accessable according to
+ * Returns true if the argument file is accessable according to
  * mode.  If compiled with SETXID_SUPPORT also works if cvs has setxid
  * bits set.
  */
-int
+bool
 isaccessible (const char *file, const int mode)
 {
 #ifdef SETXID_SUPPORT
@@ -201,19 +216,19 @@ isaccessible (const char *file, const int mode)
     int omask = 0;
     int uid, mask;
     
-    if( CVS_STAT( file, &sb ) == -1 )
-	return 0;
+    if (CVS_STAT (file, &sb)== -1)
+	return false;
     if (mode == F_OK)
-	return 1;
+	return true;
 
     uid = geteuid();
     if (uid == 0)		/* superuser */
     {
 	if (!(mode & X_OK) || (sb.st_mode & (S_IXUSR|S_IXGRP|S_IXOTH)))
-	    return 1;
+	    return true;
 
 	errno = EACCES;
-	return 0;
+	return false;
     }
 	
     if (mode & R_OK)
@@ -237,13 +252,15 @@ isaccessible (const char *file, const int mode)
 
     mask = sb.st_uid == uid ? umask : sb.st_gid == getegid() ? gmask : omask;
     if ((sb.st_mode & mask) == mask)
-	return 1;
+	return true;
     errno = EACCES;
-    return 0;
-#else
-    return access(file, mode) == 0;
-#endif
+    return false;
+#else /* !SETXID_SUPPORT */
+    return access (file, mode) == 0;
+#endif /* SETXID_SUPPORT */
 }
+
+
 
 /*
  * Open a file and die if it fails
@@ -802,7 +819,7 @@ xreadlink (const char *link)
 
 
 /* char *
- * xresolvepath ( const char *path )
+ * xresolvepath (const char *path)
  *
  * Like xreadlink(), but resolve all links in a path.
  *
@@ -820,22 +837,22 @@ char *
 xresolvepath (const char *path)
 {
     char *hardpath;
-    char *owd;
+    struct saved_cwd owd;
 
-    assert ( isdir ( path ) );
+    assert (isdir (path));
 
     /* FIXME - If HAVE_READLINK is defined, we should probably walk the path
      * bit by bit calling xreadlink().
      */
 
-    owd = xgetcwd ();
-    if ( CVS_CHDIR ( path ) < 0)
-	error ( 1, errno, "cannot chdir to %s", path );
+    if (save_cwd (&owd))
+	error (1, 0, "failed to save current working directory");
+    if (CVS_CHDIR (path ) < 0)
+	error (1, errno, "cannot chdir to %s", path);
     if ((hardpath = xgetcwd ()) == NULL)
 	error (1, errno, "cannot getwd in %s", path);
-    if ( CVS_CHDIR ( owd ) < 0)
-	error ( 1, errno, "cannot chdir to %s", owd );
-    free (owd);
+    if (restore_cwd (&owd) < 0)
+	error (1, 0, "failed to restore working directory");
     return hardpath;
 }
 
