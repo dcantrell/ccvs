@@ -1,5 +1,8 @@
 Mon Jan  8 11:37:57 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* client.c (connect_to_pserver): Check for error from connect;
+	reindent function.
+
 	* sanity.sh (4.75): Use dotest, so we get a PASS if test passes.
 
 	* sanity.sh (dotest): New argument OUTPUT2.
