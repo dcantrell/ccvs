@@ -332,6 +332,8 @@ lookup_command_attribute (cmd_name)
 	if (strcmp (cmd_name, cm->fullname) == 0)
 	    break;
     }
+    if (!cm->fullname)
+	error (1, 0, "unknown command: %s", cmd_name);
     return cm->attr;
 }
 
