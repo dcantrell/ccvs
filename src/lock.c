@@ -175,8 +175,8 @@ lock_name (repository, name)
 	assert (CVSroot_directory != NULL);
 	assert (strncmp (repository, CVSroot_directory,
 			 strlen (CVSroot_directory)) == 0);
-	short_repos = repository + strlen (CVSroot_directory);
-	assert (*short_repos++ == '/');
+	short_repos = repository + strlen (CVSroot_directory) + 1;
+	assert (short_repos[-1] == '/');
 
 	retval = xmalloc (strlen (lock_dir)
 			  + strlen (short_repos)
