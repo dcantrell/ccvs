@@ -42,7 +42,7 @@
 #include "exit.h"
 
 #if ! STDC_HEADERS
-extern char *getenv();
+char *getenv();
 #endif /* ! STDC_HEADERS */
 
 /* Under OS/2, <stdio.h> doesn't define popen()/pclose(). */
@@ -363,8 +363,8 @@ extern char *CVSroot_cmdline;
 extern List *root_directories;
 extern cvsroot_t *current_parsed_root;
 
-extern char *emptydir_name (void);
-extern int safe_location (char *);
+char *emptydir_name (void);
+int safe_location (char *);
 
 extern int trace;		/* Show all commands */
 extern int noexec;		/* Don't modify disk anywhere */
@@ -398,15 +398,15 @@ int RCS_merge (RCSNode *, char *, char *, char *, char *, char *);
 #define RCS_FLAGS_MODTIME 8
 #define RCS_FLAGS_KEEPFILE 16
 
-extern int RCS_exec_rcsdiff (RCSNode *rcsfile,
-				    char *opts, char *options,
-				    char *rev1, char *rev1_cache, char *rev2,
-				    char *label1, char *label2,
-				    char *workfile);
-extern int diff_exec (char *file1, char *file2,
-			     char *label1, char *label2,
-			     char *options, char *out);
-
+int RCS_exec_rcsdiff (RCSNode *rcsfile,
+                      char *opts, char *options,
+                      char *rev1, char *rev1_cache, char *rev2,
+                      char *label1, char *label2,
+                      char *workfile);
+int diff_exec (char *file1, char *file2,
+               char *label1, char *label2,
+               char *options, char *out);
+
 
 #include "error.h"
 
@@ -441,7 +441,7 @@ void root_allow_free (void);
 int root_allow_ok (char *);
 
 char *gca (const char *rev1, const char *rev2);
-extern void check_numeric (const char *, int, char **);
+void check_numeric (const char *, int, char **);
 char *getcaller (void);
 char *time_stamp (char *file);
 
@@ -457,9 +457,9 @@ int strip_trailing_newlines (char *str);
 int pathname_levels (char *path);
 
 typedef	int (*CALLPROC)	( char *repository, char *value, void *closure );
-int Parse_Info ( char *infofile, char *repository, CALLPROC callproc,
-                       int opt, void *closure );
-extern int parse_config (char *);
+int Parse_Info (char *infofile, char *repository, CALLPROC callproc,
+                int opt, void *closure);
+int parse_config (char *);
 
 typedef	RETSIGTYPE (*SIGCLEANUPPROC)	();
 int SIG_register (int sig, SIGCLEANUPPROC sigcleanup);
@@ -491,11 +491,11 @@ int xcmp (const char *file1, const char *file2);
 int yesno (void);
 void *valloc (size_t bytes);
 time_t get_date (char *date, struct timeb *now);
-extern int Create_Admin (char *dir, char *update_dir,
-			 char *repository, char *tag, char *date,
-			 int nonbranch, int warn, int dotemplate);
-extern int expand_at_signs (char *, off_t, FILE *);
-
+int Create_Admin (char *dir, char *update_dir,
+                  char *repository, char *tag, char *date,
+                  int nonbranch, int warn, int dotemplate);
+int expand_at_signs (char *, off_t, FILE *);
+
 /* Locking subsystem (implemented in lock.c).  */
 
 int Reader_Lock (char *xrepository);
@@ -507,14 +507,14 @@ void lock_tree_for_write (int argc, char **argv, int local, int which,
 				 int aflag);
 
 /* See lock.c for description.  */
-extern void lock_dir_for_write (char *);
+void lock_dir_for_write (char *);
 
 /* LockDir setting from CVSROOT/config.  */
 extern char *lock_dir;
 
 /* AllowedAdminOptions setting from CVSROOT/config.  */
 extern char *UserAdminOptions;
-
+
 void Scratch_Entry (List * list, char *fname);
 void ParseTag (char **tagp, char **datep, int *nonbranchp);
 void WriteTag (char *dir, char *tag, char *date, int nonbranch,
@@ -528,14 +528,14 @@ void copy_file (const char *from, const char *to);
 void fperrmsg (FILE * fp, int status, int errnum, char *message,...);
 void free_names (int *pargc, char *argv[]);
 
-extern int ign_name (char *name);
+int ign_name (char *name);
 void ign_add (char *ign, int hold);
 void ign_add_file (char *file, int hold);
 void ign_setup (void);
 void ign_dir_add (char *name);
 int ignore_directory (char *name);
 typedef void (*Ignore_proc) (char *, char *);
-extern void ignore_files (List *, List *, char *, Ignore_proc);
+void ignore_files (List *, List *, char *, Ignore_proc);
 extern int ign_inhibit_server;
 extern int ign_case;
 
@@ -544,7 +544,7 @@ extern int ign_case;
 void line2argv (int *pargc, char ***argv, char *line, char *sepchars);
 void make_directories (const char *name);
 void make_directory (const char *name);
-extern int mkdir_if_needed (char *name);
+int mkdir_if_needed (char *name);
 void rename_file (const char *from, const char *to);
 /* Expand wildcards in each element of (ARGC,ARGV).  This is according to the
    files which exist in the current directory, and accordingly to OS-specific
@@ -553,15 +553,15 @@ void rename_file (const char *from, const char *to);
    in the working directory).  The result is placed in *PARGC and *PARGV;
    the *PARGV array itself and all the strings it contains are newly
    malloc'd.  It is OK to call it with PARGC == &ARGC or PARGV == &ARGV.  */
-extern void expand_wild (int argc, char **argv, 
-                                int *pargc, char ***pargv);
+void expand_wild (int argc, char **argv, 
+                  int *pargc, char ***pargv);
 #if defined (SERVER_SUPPORT) && !defined (FILENAMES_CASE_INSENSITIVE)
 char *locate_file_in_dir (const char *dir, const char *file );
 #endif /* SERVER_SUPPORT && !FILENAMES_CASE_INSENSITIVE */
 
 #ifdef SERVER_SUPPORT
-extern int cvs_casecmp (const char *, const char *);
-extern int fopen_case (char *, char *, FILE **, char **);
+int cvs_casecmp (const char *, const char *);
+int fopen_case (char *, char *, FILE **, char **);
 #endif
 
 /* exithandle.c */
@@ -627,8 +627,8 @@ typedef	Dtype (*DIRENTPROC) (void *callerdat, char *dir,
 typedef	int (*DIRLEAVEPROC) (void *callerdat, char *dir, int err,
 				    char *update_dir, List *entries);
 
-extern int mkmodules (char *dir);
-extern int init (int argc, char **argv);
+int mkmodules (char *dir);
+int init (int argc, char **argv);
 
 int do_module (DBM * db, char *mname, enum mtype m_type, char *msg,
 		CALLBACKPROC callback_proc, char *where, int shorten,
@@ -648,14 +648,14 @@ int SIG_inCrSect (void);
 void read_cvsrc (int *argc, char ***argv, char *cmdname);
 
 char *make_message_rcsvalid (char *message);
-extern int file_has_conflict (const struct file_info *,
-				     const char *ts_conflict);
-extern int file_has_markers (const struct file_info *);
-extern void get_file (const char *, const char *, const char *,
-			     char **, size_t *, size_t *);
-extern char *shell_escape (char *buf, const char *str);
+int file_has_conflict (const struct file_info *,
+                       const char *ts_conflict);
+int file_has_markers (const struct file_info *);
+void get_file (const char *, const char *, const char *,
+               char **, size_t *, size_t *);
+char *shell_escape (char *buf, const char *str);
 char *backup_file (const char *file, const char *suffix);
-extern void resolve_symlink (char **filename);
+void resolve_symlink (char **filename);
 void sleep_past (time_t desttime);
 
 /* flags for run_exec(), the fast system() for CVS */
@@ -766,9 +766,9 @@ int special_file_mismatch (struct file_info *finfo,
 				  char *rev1, char *rev2);
 
 /* CVSADM_BASEREV stuff, from entries.c.  */
-extern char *base_get (struct file_info *);
-extern void base_register (struct file_info *, char *);
-extern void base_deregister (struct file_info *);
+char *base_get (struct file_info *);
+void base_register (struct file_info *, char *);
+void base_deregister (struct file_info *);
 
 /*
  * defines for Classify_File() to determine the current state of a file.
@@ -831,29 +831,29 @@ void wrap_send (void);
 #if defined(SERVER_SUPPORT) || defined(CLIENT_SUPPORT)
 void wrap_unparse_rcs_options (char **, int);
 #endif /* SERVER_SUPPORT || CLIENT_SUPPORT */
-
+
 /* Pathname expansion */
 char *expand_path (char *name, char *file, int line);
 
 /* User variables.  */
 extern List *variable_list;
 
-extern void variable_set (char *nameval);
-
+void variable_set (char *nameval);
+
 int watch (int argc, char **argv);
 int edit (int argc, char **argv);
 int unedit (int argc, char **argv);
 int editors (int argc, char **argv);
 int watchers (int argc, char **argv);
-extern int annotate (int argc, char **argv);
-extern int add (int argc, char **argv);
-extern int admin (int argc, char **argv);
-extern int checkout (int argc, char **argv);
-extern int commit (int argc, char **argv);
-extern int diff (int argc, char **argv);
-extern int history (int argc, char **argv);
-extern int import (int argc, char **argv);
-extern int cvslog (int argc, char **argv);
+int annotate (int argc, char **argv);
+int add (int argc, char **argv);
+int admin (int argc, char **argv);
+int checkout (int argc, char **argv);
+int commit (int argc, char **argv);
+int diff (int argc, char **argv);
+int history (int argc, char **argv);
+int import (int argc, char **argv);
+int cvslog (int argc, char **argv);
 #ifdef AUTH_CLIENT_SUPPORT
 /* Some systems (namely Mac OS X) have conflicting definitions for these
  * functions.  Avoid them.
@@ -864,18 +864,18 @@ extern int cvslog (int argc, char **argv);
 #ifdef HAVE_LOGOUT
 # define logout		cvs_logout
 #endif /* HAVE_LOGOUT */
-extern int login (int argc, char **argv);
-extern int logout (int argc, char **argv);
+int login (int argc, char **argv);
+int logout (int argc, char **argv);
 #endif /* AUTH_CLIENT_SUPPORT */
-extern int patch (int argc, char **argv);
-extern int release (int argc, char **argv);
-extern int cvsremove (int argc, char **argv);
-extern int rtag (int argc, char **argv);
-extern int cvsstatus (int argc, char **argv);
-extern int cvstag (int argc, char **argv);
-extern int version (int argc, char **argv);
-
-extern unsigned long int lookup_command_attribute (char *);
+int patch (int argc, char **argv);
+int release (int argc, char **argv);
+int cvsremove (int argc, char **argv);
+int rtag (int argc, char **argv);
+int cvsstatus (int argc, char **argv);
+int cvstag (int argc, char **argv);
+int version (int argc, char **argv);
+
+unsigned long int lookup_command_attribute (char *);
 
 #if defined(AUTH_CLIENT_SUPPORT) || defined(AUTH_SERVER_SUPPORT)
 char *scramble (char *str);
@@ -892,19 +892,19 @@ char *normalize_cvsroot (const cvsroot_t *root)
 	__attribute__ ((__malloc__));
 #endif /* AUTH_CLIENT_SUPPORT */
 
-extern void tag_check_valid (char *, int, char **, int, int, char *);
-extern void tag_check_valid_join (char *, int, char **, int, int,
-					 char *);
-
+void tag_check_valid (char *, int, char **, int, int, char *);
+void tag_check_valid_join (char *, int, char **, int, int,
+                           char *);
+
 #include "server.h"
 
 /* From server.c and documented there.  */
-extern void cvs_output (const char *, size_t);
-extern void cvs_output_binary (char *, size_t);
-extern void cvs_outerr (const char *, size_t);
-extern void cvs_flusherr (void);
-extern void cvs_flushout (void);
-extern void cvs_output_tagged (char *, char *);
+void cvs_output (const char *, size_t);
+void cvs_output_binary (char *, size_t);
+void cvs_outerr (const char *, size_t);
+void cvs_flusherr (void);
+void cvs_flushout (void);
+void cvs_output_tagged (char *, char *);
 
 /* The trace function from subr.c */
 void cvs_trace (int level, const char *fmt, ...)
