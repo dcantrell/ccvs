@@ -1,3 +1,7 @@
+2001-01-18  Larry Jones  <larry.jones@sdrc.com>
+
+	* cvs.texinfo (log options): Document new :: syntax for -r.
+
 2001-01-10  Derek Price  <derek.price@openavenue.com>
 
 	* Makefile.am (CVSvn.texi): specify $(srcdir) explicitly in target rule
