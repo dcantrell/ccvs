@@ -138,6 +138,10 @@ $GNULIB/m4/strerror.m4				m4		no NI
 $GNULIB/lib/unlocked-io.h			lib		no NI
 $GNULIB/m4/onceonly_2_57.m4			m4		no NI
 $GNULIB/m4/unlocked-io.m4			m4		no NI
+# $GNULIB/modules/xsize
+$GNULIB/lib/xsize.h				lib		no NI
+$GNULIB/m4/xsize.m4				m4		no NI
+$GNULIB/m4/size_max.m4				m4		no NI
 # shared
 $GNULIB/lib/getndelim2.c			lib		yes NI
 $GNULIB/lib/getndelim2.h			lib		yes NI
