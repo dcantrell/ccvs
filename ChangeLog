@@ -1,3 +1,55 @@
+Mon May  6 06:00:10 1996  Benjamin J. Lee  <benjamin@cyclic.com>
+
+	* Version 1.8.1
+
+Sun May  5 17:38:21 1996  Benjamin J. Lee  <benjamin@cyclic.com>
+
+	Integrated changes submitted by Ian Taylor <ian@cygnus.com>
+
+	* update.c (update_dirent_proc): cvs co -p doesn't print
+	anything when run from an empty directory.
+
+        * import.c (import_descend_dir): Check for a file in the
+        repository which will be checked out to the same name as the
+        directory.
+
+Sun May  5 15:49:00 1996  Benjamin J. Lee  <benjamin@cyclic.com>
+
+	* configure.in: autoconf 2.9 handles AC_CHECK_LIB in a
+	way that it can not be used to check for main().  Check
+	for printf() instead. (Reported by ian@cygnus.com)
+
+	* configure: Regenerated.
+
+Thu May  2 13:34:37 1996  Benjamin J. Lee  <benjamin@cyclic.com>
+
+	* Version 1.7.88
+
+Thu May  2 10:42:13 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* NEWS: Clarify what happened to examples directory.
+
+Thu May  2 02:06:49 1996  Benjamin J. Lee  <benjamin@cyclic.com>
+
+	* INSTALL: Updated for NeXTSTEP 3.3 (1.7)
+
+Thu May  2 01:40:55 1996  Benjamin J. Lee  <benjamin@cyclic.com>
+
+	* Compatibility fixes affecting QNX, NetBSD, and SCO
+
+	* configure.in (AC_CHECK_FUNCS): Added check for initgroups(),
+          (ac_cv_func_crypt) Added check for crypt() in -lcrypt;
+          define AUTH_SERVER_SUPPORT only if crypt() is found.
+
+	* configure: Regenerated.
+
+	* src/server.c (HAVE_INITGROUPS): Use initgroups() only if
+        located by configure.
+
+Wed May  1 15:38:56 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* NEWS: Remove item about reserving all-uppercase tag names.
+
 Fri Apr 19 11:22:35 1996  Benjamin J. Lee  <benjamin@cyclic.com>
 
 	* Version 1.7.86

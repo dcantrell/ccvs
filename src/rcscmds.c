@@ -13,11 +13,9 @@
 #include <assert.h>
 
 /* For RCS file PATH, make symbolic tag TAG point to revision REV.
-   This validates that TAG is OK for a user to use; if in the future
-   CVS wants to use tags in the namespace reserved to CVS; we'll need to
-   distinguish the two cases somehow.  Return value is -1 for error (and
-   errno is set to indicate the error), positive for error (and an error
-   message has been printed), or zero for success.  */
+   This validates that TAG is OK for a user to use.  Return value is
+   -1 for error (and errno is set to indicate the error), positive for
+   error (and an error message has been printed), or zero for success.  */
 
 int
 RCS_settag(path, tag, rev)
@@ -25,22 +23,17 @@ RCS_settag(path, tag, rev)
     const char *tag;
     const char *rev;
 {
-    const char *p;
+    if (strcmp (tag, TAG_BASE) == 0
+	|| strcmp (tag, TAG_HEAD) == 0)
+    {
+	/* Print the name of the tag might be considered redundant
+	   with the caller, which also prints it.  Perhaps this helps
+	   clarify why the tag name is considered reserved, I don't
+	   know.  */
+	error (0, 0, "Attempt to add reserved tag name %s", tag);
+	return 1;
+    }
 
-    for (p = tag; *p != '\0'; ++p)
-	if (!isupper (*p))
-	    goto okay;
-    error (0, 0,
-	   "tags containing only uppercase letters are reserved to cvs");
-#if 0
-    /* As things stand now, all the callers print an error message which
-       contains the name of the tag.  So unless that changes this seems
-       unnecessary.  */
-    error (0, 0, "tag %s not added", tag);
-#endif
-    return 1;
-
-  okay:
     run_setup ("%s%s -x,v/ -q -N%s:%s", Rcsbin, RCS, tag, rev);
     run_arg (path);
     return run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL);
