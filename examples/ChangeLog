@@ -1,3 +1,25 @@
+Tue Nov 14 18:19:22 1995  Greg A. Woods  <woods@most.weird.com>
+
+	* commitinfo, editinfo, loginfo, rcsinfo: new rcs id
+
+	* modules:
+	- new rcs id
+	- add mention of new CVSROOT admin files
+
+	* taginfo:
+	- new rcs id
+	- leave the DEFAULT uncommented -- cvsinit comments it out
+
+	* checkoutlist: add wrap & unwrap as useful examples
+
+	* cvswrappers:
+	- renamed comb/uncom to wrap/unwrap
+	- re-formatted comments, etc.
+
+	* Makefile.in: renamed comb/uncom to wrap/unwrap
+
+	* unwrap, wrap: renamed from comb and uncom
+
 Mon Oct  9 09:25:23 1995  Norbert Kiesel  <nk@col.sw-ley.de>
 
 	* taginfo: document "mov" for tag -F
