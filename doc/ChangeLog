@@ -1,3 +1,10 @@
+Thu Nov 14 10:22:58 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (What is CVS?): Add paragraph about reporting bugs.
+	Reword and expand comp.software.config-mgmt description (and add
+	comments about other newsgroup facts).  Point people at GNU list
+	of FTP sites rather than directly at prep.ai.mit.edu.
+
 Wed Nov  6 09:45:08 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (Tracking sources): Add comment regarding added and
