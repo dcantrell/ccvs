@@ -1,3 +1,28 @@
+2004-05-11  Mark D. Baushke  <mdb@cvshome.org>
+
+	* sanity.sh (RCSKEYDATE): New regular expression to match the rcs
+	keyword date format.
+	(keyword,keywordlog): Use it.
+	(RCSDELTADATE): New regular expression to match the internal rcs
+	file format delta.
+	(admin): Use it.
+	(RCSDATE): Deleted.
+	(ISO8601DATE}: A more exact regular expression for cvs log date
+	output than the previous RCSDATE variable.
+	(basica,basic2,branches,branches3,multibranch,import,importb,importc,
+	join,modules,editor,binfiles,log,log2,keyword,multibranch2,admin,
+	reserved,recase,multiroot,trace):
+	Use ${ISO8601DATE} for cvs log output date patterns.
+	(TOUCH1971,ISO8601DATE1971): New variables for test importc.
+	(TOUCH2034,ISO8601DATE2034): Ditto.
+	(importc): Use them. Isolate the touch commands in a sub-shell
+	with TZ=GMT to make the time more predictable.
+	(RAWRCSDATE2000A,RAWRCSDATE1996A,RAWRCSDATE1996B): New date variables.
+	(ISO8601DATE2000A,ISO8601DATE1996A,ISO8601DATE1996B): Regexps to match.
+	(rcs): Use them.
+	(rcs4): Put the touch commands into sub-shells for temporary
+	TZ=GMT use.
+
 2004-05-11  Derek Price  <derek@ximbiot.com>
 
 	* checkin.c (Checkin), commit.c (commit_filesdoneproc, remove_file,
