@@ -1,3 +1,8 @@
+2003-01-23  Larry Jones  <lawrence.jones@eds.com>
+
+	* server.c (do_cvs_command): Use WCOREDUMP macro rather than hard
+	coding test for core file.
+
 2003-01-21  Larry Jones  <lawrence.jones@eds.com>
 
 	* root.c (method_name): Redefine as a 2D array.
