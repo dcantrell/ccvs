@@ -1,3 +1,9 @@
+Thu Dec 21 16:00:00 1995  Jim Kingdon  <kingdon@peary.cyclic.com>
+
+	* cvsnt.mak: Revert to an old version, then add in recent changes
+	to lists of files (using Visual C++; not by hand editing--this way
+	it can be used as an internal project not just an external one).
+
 Tue Dec 19 17:13:14 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* NEWS: Mention -kb (strictly speaking a bugfix, not a new
