@@ -10261,6 +10261,29 @@ Fw1	_watched=
 Enew	line	here
 G@#..!@#=&"
 
+	  # Now test disconnected "cvs edit" and the format of the 
+	  # CVS/Notify file.
+	  if test "$remote" = yes; then
+	    CVS_SERVER_SAVED=${CVS_SERVER}
+	    CVS_SERVER=${TESTDIR}/cvs-none; export CVS_SERVER
+	    # Egads, this message is horrible: (1) should say the pathname
+	    # which it can't exec; (2) shouldn't say "end of file from
+	    # server" I don't think (although I haven't looked into that).
+	    dotest_fail devcom3-9a "${testcvs} edit w1" \
+"${PROG} \[edit aborted\]: cannot exec: No such file or directory
+${PROG} \[edit aborted\]: end of file from server (consult above messages if any)"
+	    dotest devcom3-9b "test -w w1" ""
+	    dotest devcom3-9c "cat CVS/Notify" \
+"Ew1	[SMTWF][uoehra][neduit] [JFAMSOND][aepuco][nbrylgptvc] [0-9 ][0-9] [0-9:]* [0-9][0-9][0-9][0-9] GMT	[-a-zA-Z_.0-9]*	${TESTDIR}/1/first-dir	EUC"
+	    CVS_SERVER=${CVS_SERVER_SAVED}; export CVS_SERVER
+	    dotest devcom3-9d "${testcvs} -q update" ""
+	    dotest_fail devcom3-9e "test -e CVS/Notify" ""
+	    dotest devcom3-9f "${testcvs} watchers w1" \
+"w1	${username}	tedit	tunedit	tcommit"
+	    dotest devcom3-9g "${testcvs} unedit w1" ""
+	    dotest devcom3-9h "${testcvs} watchers w1" ""
+	  fi
+
 	  cd ../..
 	  # OK, now change the tab to a space, and see that CVS gives
 	  # a reasonable error (this is database corruption but CVS should
@@ -19697,8 +19720,6 @@ echo "OK, all tests completed."
 # * Test ability to send notifications in response to watches.  (currently
 #   hard to test because CVS doesn't send notifications if username is the
 #   same).
-# * Test that remote edit and/or unedit works when disconnected from
-#   server (e.g. set CVS_SERVER to "foobar").
 # * Test the contents of adm files other than Root and Repository.
 #   Entries seems the next most important thing.
 # * Test the following compatibility issues:
