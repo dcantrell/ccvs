@@ -1,3 +1,7 @@
+1998-09-18  Jim Kingdon  <kingdon@pennington.cyclic.com>
+
+	* Version 1.10.2.
+
 1998-09-13  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* client.c: Refuse to Copy-file to another directory
