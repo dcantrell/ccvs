@@ -3282,6 +3282,11 @@ echo "$ac_t""$ccvs_cv_sys_cygwin32" 1>&6
 if test $ccvs_cv_sys_cygwin32 = yes; then
   LIBOBJS="$LIBOBJS fncase.o"
   LIBS="$LIBS -ladvapi32"
+
+        cat >> confdefs.h <<\EOF
+#define UTIME_EXPECTS_WRITABLE 1
+EOF
+
 fi
 
 test -f src/options.h && (

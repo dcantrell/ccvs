@@ -25,3 +25,7 @@
 
 /* Define if you have strchr (always for CVS).  */
 #undef HAVE_STRCHR
+
+/* Define if utime requires write access to the file (true on Windows,
+   but not Unix).  */
+#undef UTIME_EXPECTS_WRITABLE
