@@ -120,7 +120,7 @@ read_cvsrc (argc, argv)
 	    }
 	  
 	}
-	while (optstart = strtok (NULL, "\t \n"));
+	while ((optstart = strtok (NULL, "\t \n")) != NULL);
     }
 
     /* now copy the remaining arguments */
