@@ -1,5 +1,11 @@
 2004-04-26  Derek Price  <derek@ximbiot.com>
 
+	* rsh-client.c (start_rsh_server): Don't rely on GNU argument
+	processing capabilities in the RSH command.
+	(Report from Mark Andrews <Mark_Andrews@isc.org>.)
+
+2004-04-26  Derek Price  <derek@ximbiot.com>
+
 	* ls.c (dircount): s/long long/long/ for Windows.
 
 2004-04-23  Derek Price  <derek@ximbiot.com>

@@ -15,6 +15,11 @@ NEW FEATURES
 
 BUG FIXES
 
+* Thanks to a report from Mark Andrews at the Internet Systems Consortium, the
+  :ext: connection method no longer relies on a transparent transport that uses
+  an argument processor that can handle arbitrary ordering of options and other
+  arguments when using a username other than the caller's.
+
 * Thanks to Ken Raeburn at MIT, directory deletion, whether via `cvs release'
   or empty directory pruning, now works on network shares under Windows XP.
 

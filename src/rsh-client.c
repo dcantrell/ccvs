@@ -154,7 +154,6 @@ start_rsh_server (cvsroot_t *root, struct buffer **to_server_p, struct buffer **
 	char **p = argv;
 
 	*p++ = cvs_rsh;
-	*p++ = root->hostname;
 
 	/* If the login names differ between client and server
 	 * pass it on to rsh.
@@ -165,6 +164,7 @@ start_rsh_server (cvsroot_t *root, struct buffer **to_server_p, struct buffer **
 	    *p++ = root->username;
 	}
 
+	*p++ = root->hostname;
 	*p++ = command;
 	*p++ = NULL;
 
