@@ -1,3 +1,8 @@
+Sun Sep  7 19:49:36 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* system.c (os2_stat): Adjust comment to reflect removal of
+	same_directories from src/root.c.
+
 Sat Sep 06 14:45:13 1997  Jim Kingdon
 
 	* Makefile.in: Add a cvs-static.exe rule for generating
