@@ -1,3 +1,8 @@
+2003-06-11  Derek Price  <derek@ximbiot.com>
+
+	* cvs.texinfo (Top): Remove out-of-date (by at least 5 years) comment.
+	(Patch from Alexander Taler <dissent@cvshome.org>.)
+
 2003-06-11  Mark D. Baushke  <mdb@gnu.org>
 
 	* cvs.texinfo (Keyword list): Fix broken reference.
