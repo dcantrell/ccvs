@@ -241,13 +241,10 @@ release (int argc, char **argv)
 	    error (1, errno, "Failed to restore current directory, `%s'.",
 		   cwd.name);
 
-	if (1
 #ifdef CLIENT_SUPPORT
-	    && !(current_parsed_root->isremote
-		 && (!supported_request ("noop")
-		     || !supported_request ("Notify")))
+	if (!current_parsed_root->isremote
+	    || supported_request ("noop") && supported_request ("Notify"))
 #endif
-	    )
 	{
 	    int argc = 2;
 	    char *argv[3];

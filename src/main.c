@@ -72,7 +72,7 @@ List *root_directories = NULL;
 
 static const struct cmd
 {
-    char *fullname;		/* Full name of the function (e.g. "commit") */
+    const char *fullname;	/* Full name of the function (e.g. "commit") */
 
     /* Synonyms for the command, nick1 and nick2.  We supply them
        mostly for two reasons: (1) CVS has always supported them, and
@@ -94,10 +94,10 @@ static const struct cmd
        accept only an explicit list of abbreviations and plan on
        supporting them in the future as well as now.  */
 
-    char *nick1;
-    char *nick2;
+    const char *nick1;
+    const char *nick2;
     
-    int (*func) ();		/* Function takes (argc, argv) arguments. */
+    int (*func) (int, char **);	/* Function takes (argc, argv) arguments. */
     unsigned long attr;		/* Attributes. */
 } cmds[] =
 
@@ -128,7 +128,7 @@ static const struct cmd
 #endif
     { "rannotate","rann",     "ra",        annotate,  0 },
     { "rdiff",    "patch",    "pa",        patch,     0 },
-    { "release",  "re",       "rel",       release,   0 },
+    { "release",  "re",       "rel",       release,   CVS_CMD_MODIFIES_REPOSITORY },
     { "remove",   "rm",       "delete",    cvsremove, CVS_CMD_MODIFIES_REPOSITORY | CVS_CMD_USES_WORK_DIR },
     { "rlog",     "rl",       NULL,        cvslog,    0 },
     { "rls",      "rdir",     "rlist",     ls,        0 },

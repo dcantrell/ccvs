@@ -1,5 +1,15 @@
 2004-10-06  Derek Price  <derek@ximbiot.com>
 
+	* main.c (cmds): Release calls unedit, to it modifies the repository.
+	(struct cmd): Add const and full prototype where needed.
+	* sanity.sh (edit-check): Use modify_repo where needed.
+	(release): No more special case for release in proxy mode.
+	(Patch from Mark D. Baushke  <mdb@cvshome.org>.)
+
+	* release.c (release): Simplify login in if statement.
+
+2004-10-06  Derek Price  <derek@ximbiot.com>
+
 	* client.c (send_file_names): Back out broken portion of previous
 	change.
 
