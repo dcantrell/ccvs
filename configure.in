@@ -67,9 +67,9 @@ fi
 rm -f conftest*
 
 AC_HEADER_STDC
-AC_CHECK_HEADERS(errno.h unistd.h string.h memory.h utime.h fcntl.h \
-                 ndbm.h io.h direct.h sys/param.h sys/select.h \
-                 sys/time.h sys/timeb.h)
+AC_CHECK_HEADERS(errno.h unistd.h string.h memory.h utime.h fcntl.h ndbm.h \
+                 sys/param.h sys/select.h sys/time.h sys/timeb.h \
+                 io.h direct.h)
 AC_HEADER_SYS_WAIT
 AC_HEADER_STAT
 AC_HEADER_TIME
@@ -158,6 +158,10 @@ AC_CHECK_FUNCS(krb_get_err_text)
 # it.
 AC_CHECK_FUNC(connect, :, 
 [AC_CHECK_LIB(socket, connect) AC_CHECK_LIB(nsl, connect)])
+
+# On Unix systems, we want the full client & server arrangement.
+AC_DEFINE (SERVER_SUPPORT)
+AC_DEFINE (CLIENT_SUPPORT)
 
 test -f src/options.h && (
   AC_MSG_WARN(saving ./src/options.h in ./src/options.h-SAVED)

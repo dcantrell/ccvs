@@ -277,7 +277,7 @@ findnode (list, key)
 int
 walklist (list, proc, closure)
     List *list;
-    int (*proc) ();
+    int (*proc) PROTO ((Node *, void *));
     void *closure;
 {
     Node *head, *p;
@@ -298,7 +298,7 @@ walklist (list, proc, closure)
 void
 sortlist (list, comp)
     List *list;
-    int (*comp) ();
+    int (*comp) PROTO ((const Node *, const Node *));
 {
     Node *head, *remain, *p, *q;
 
@@ -363,7 +363,8 @@ nodetypestring (type)
     return("<trash>");
 }
 
-int
+static int printnode PROTO ((Node *, void *));
+static int
 printnode (node, closure)
      Node *node;
      void *closure;

@@ -162,6 +162,7 @@ diff (argc, argv)
     if (!options)
 	options = xstrdup ("");
 
+#ifdef CLIENT_SUPPORT
     if (client_active) {
 	/* We're the client side.  Fire up the remote server.  */
 	start_server ();
@@ -201,10 +202,13 @@ diff (argc, argv)
 	free (options);
 	return (err);
     }
+#endif
 
     which = W_LOCAL;
     if (diff_rev2 != NULL || diff_date2 != NULL)
 	which |= W_REPOS | W_ATTIC;
+
+    wrap_setup ();
 
     /* start the recursion processor */
     err = start_recursion (diff_fileproc, diff_filesdoneproc, diff_dirproc,
@@ -237,6 +241,8 @@ diff_fileproc (file, update_dir, repository, entries, srcfiles)
 	DIFF_NEITHER
     } empty_file = DIFF_NEITHER;
     char tmp[L_tmpnam+1];
+    char *tocvsPath;
+    char fname[PATH_MAX];
 
 #ifdef SERVER_SUPPORT
     user_file_rev = 0;
@@ -329,6 +335,17 @@ diff_fileproc (file, update_dir, repository, entries, srcfiles)
 	(void) printf ("Index: %s\n", file);
     (void) fflush (stdout);
 
+    tocvsPath = wrap_tocvs_process_file(file);
+    if (tocvsPath)
+    {
+	/* Backup the current version of the file to CVS/,,filename */
+	sprintf(fname,"%s/%s%s",CVSADM, CVSPREFIX, file);
+	unlink_file (fname);
+	rename_file (file, fname);
+	/* Copy the wrapped file to the current directory then go to work */
+	copy_file (tocvsPath, file);
+    }
+
     if (empty_file == DIFF_ADDED || empty_file == DIFF_REMOVED)
     {
 	(void) printf ("===================================================================\nRCS file: %s\n",
@@ -387,6 +404,13 @@ diff_fileproc (file, update_dir, repository, entries, srcfiles)
 	default:			/* other error */
 	    err = status;
 	    break;
+    }
+
+    if (tocvsPath)
+    {
+	unlink_file (file);
+	rename_file (fname,file);
+	unlink_file (tocvsPath);
     }
 
     if (empty_file == DIFF_REMOVED)

@@ -47,20 +47,19 @@ static int checkout_proc PROTO((int *pargc, char **argv, char *where,
 		          char *mwhere, char *mfile, int shorten,
 		          int local_specified, char *omodule,
 		          char *msg));
+static int safe_location PROTO((void));
 
 static const char *const checkout_usage[] =
 {
-    "Usage:\n  %s %s [-ANPQcflnpqs] [-r rev | -D date] [-d dir] [-k kopt] modules...\n",
+    "Usage:\n  %s %s [-ANPcflnps] [-r rev | -D date] [-d dir] [-k kopt] modules...\n",
     "\t-A\tReset any sticky tags/date/kopts.\n",
     "\t-N\tDon't shorten module paths if -d specified.\n",
     "\t-P\tPrune empty directories.\n",
-    "\t-Q\tReally quiet.\n",
     "\t-c\t\"cat\" the module database.\n",
     "\t-f\tForce a head revision match if tag/date not found.\n",
     "\t-l\tLocal directory only, not recursive\n",
     "\t-n\tDo not run module program (if any).\n",
     "\t-p\tCheck out files to standard output.\n",
-    "\t-q\tSomewhat quiet.\n",
     "\t-s\tLike -c, but include module status.\n",
     "\t-r rev\tCheck out revision or tag. (implies -P)\n",
     "\t-D date\tCheck out revisions as of date. (implies -P)\n",
@@ -72,13 +71,11 @@ static const char *const checkout_usage[] =
 
 static const char *const export_usage[] =
 {
-    "Usage: %s %s [-NPQflnq] [-r rev | -D date] [-d dir] module...\n",
+    "Usage: %s %s [-NPfln] [-r rev | -D date] [-d dir] module...\n",
     "\t-N\tDon't shorten module paths if -d specified.\n",
-    "\t-Q\tReally quiet.\n",
     "\t-f\tForce a head revision match if tag/date not found.\n",
     "\t-l\tLocal directory only, not recursive\n",
     "\t-n\tDo not run module program (if any).\n",
-    "\t-q\tSomewhat quiet.\n",
     "\t-r rev\tCheck out revision or tag.\n",
     "\t-D date\tCheck out revisions as of date.\n",
     "\t-d dir\tCheck out into dir instead of module name.\n",
@@ -133,6 +130,7 @@ checkout (argc, argv)
 	usage (valid_usage);
 
     ign_setup ();
+    wrap_setup ();
 
     optind = 1;
     while ((c = getopt (argc, argv, valid_options)) != -1)
@@ -154,10 +152,15 @@ checkout (argc, argv)
 		run_module_prog = 0;
 		break;
 	    case 'Q':
-		really_quiet = 1;
-		/* FALL THROUGH */
 	    case 'q':
-		quiet = 1;
+#ifdef SERVER_SUPPORT
+		/* The CVS 1.5 client sends these options (in addition to
+		   Global_option requests), so we must ignore them.  */
+		if (!server_active)
+#endif
+		    error (1, 0,
+			   "-q or -Q must be specified before \"%s\"",
+			   command_name);
 		break;
 	    case 'l':
 		local = 1;
@@ -234,6 +237,11 @@ checkout (argc, argv)
 	options = RCS_check_kflag ("v");/* -kv must be on */
     }
 
+    if (!safe_location()) {
+        error(1, 0, "Cannot check out files into the repository itself");
+    }
+
+#ifdef CLIENT_SUPPORT
     if (client_active)
     {
 	int expand_modules;
@@ -263,8 +271,6 @@ checkout (argc, argv)
 	  }
 
 	if (!run_module_prog) send_arg ("-n");
-	if (really_quiet) send_arg ("-Q");
-	if (quiet) send_arg ("-q");
 	if (local) send_arg ("-l");
 	if (pipeout) send_arg ("-p");
 	if (!force_tag_match) send_arg ("-f");
@@ -315,6 +321,7 @@ checkout (argc, argv)
 
 	return get_responses_and_close ();
     }
+#endif
 
     if (cat || status)
     {
@@ -332,7 +339,7 @@ checkout (argc, argv)
     {
 	char repository[PATH_MAX];
 
-	(void) mkdir (where, 0777);
+	(void) CVS_MKDIR (where, 0777);
 	if (chdir (where) < 0)
 	    error (1, errno, "cannot chdir to %s", where);
 	preload_update_dir = xstrdup (where);
@@ -342,7 +349,7 @@ checkout (argc, argv)
 	    (void) sprintf (repository, "%s/%s/%s", CVSroot, CVSROOTADM,
 			    CVSNULLREPOS);
 	    if (!isfile (repository))
-		(void) mkdir (repository, 0777);
+		(void) CVS_MKDIR (repository, 0777);
 
 	    /* I'm not sure whether this check is redundant.  */
 	    if (!isdir (repository))
@@ -357,8 +364,10 @@ checkout (argc, argv)
 		fp = open_file (CVSADM_ENTSTAT, "w+");
 		if (fclose(fp) == EOF)
 		    error(1, errno, "cannot close %s", CVSADM_ENTSTAT);
+#ifdef SERVER_SUPPORT
 		if (server_active)
 		    server_set_entstat (preload_update_dir, repository);
+#endif
 	    }
 	}
     }
@@ -393,6 +402,27 @@ checkout (argc, argv)
 			  (char *) NULL);
     close_module (db);
     return (err);
+}
+
+static int
+safe_location ()
+{
+    char current[PATH_MAX];
+    char hardpath[PATH_MAX+5];
+    int  x;
+
+    x = readlink(CVSroot, hardpath, sizeof hardpath - 1);
+    if (x == -1)
+    {
+        strcpy(hardpath, CVSroot);
+    }
+    hardpath[x] = '\0';
+    getwd (current);
+    if (strncmp(current, hardpath, strlen(hardpath)) == 0)
+    {
+        return (0);
+    }
+    return (1);
 }
 
 /*
@@ -629,8 +659,10 @@ checkout_proc (pargc, argv, where, mwhere, mfile, shorten,
 		fp = open_file (CVSADM_ENTSTAT, "w+");
 		if (fclose(fp) == EOF)
 		    error(1, errno, "cannot close %s", CVSADM_ENTSTAT);
+#ifdef SERVER_SUPPORT
 		if (server_active)
 		    server_set_entstat (where, repository);
+#endif
 	    }
 	    else
 	    {
@@ -647,7 +679,7 @@ checkout_proc (pargc, argv, where, mwhere, mfile, shorten,
 
 	    /* get the contents of the previously existing repository */
 	    repos = Name_Repository ((char *) NULL, preload_update_dir);
-	    if (strcmp (repository, repos) != 0)
+	    if (fncmp (repository, repos) != 0)
 	    {
 		error (0, 0, "existing repository %s does not match %s",
 		       repos, repository);
@@ -788,7 +820,7 @@ build_dirs_and_chdir (dir, prepath, realdir, sticky)
     {
 	*slash = '\0';
 	*slash2 = '\0';
-	(void) mkdir (cp, 0777);
+	(void) CVS_MKDIR (cp, 0777);
 	if (chdir (cp) < 0)
 	{
 	    error (0, errno, "cannot chdir to %s", cp);
@@ -807,14 +839,16 @@ build_dirs_and_chdir (dir, prepath, realdir, sticky)
 		fp = open_file (CVSADM_ENTSTAT, "w+");
 		if (fclose(fp) == EOF)
 		    error(1, errno, "cannot close %s", CVSADM_ENTSTAT);
+#ifdef SERVER_SUPPORT
 		if (server_active)
 		    server_set_entstat (path, repository);
+#endif
 	    }
 	}
 	*slash = '/';
 	*slash2 = '/';
     }
-    (void) mkdir (cp, 0777);
+    (void) CVS_MKDIR (cp, 0777);
     if (chdir (cp) < 0)
     {
 	error (0, errno, "cannot chdir to %s", cp);

@@ -93,6 +93,9 @@ cvslog (argc, argv)
     argc -= numopt;
     argv += numopt;
 
+    wrap_setup ();
+
+#ifdef CLIENT_SUPPORT
     if (client_active) {
 	/* We're the local client.  Fire up the remote server.  */
 	start_server ();
@@ -122,6 +125,7 @@ cvslog (argc, argv)
         err = get_responses_and_close ();
 	return err;
     }
+#endif
 
     err = start_recursion (log_fileproc, (int (*) ()) NULL, log_dirproc,
 			   (int (*) ()) NULL, argc, argv, local,
@@ -141,11 +145,17 @@ log_option_with_arg (name, var, opt)
   if (*var)
     error (1, 0, "only one %s can be specified", name);
   *var = opt;
+#ifdef CLIENT_SUPPORT
   if (! client_active)
     {
       (void) strcat (options, " ");
       (void) strcat (options, opt);
     }
+#else
+  (void) strcat (options, " ");
+  (void) strcat (options, opt);
+#endif
+
 }
 
 /*
@@ -188,52 +198,6 @@ log_fileproc (file, update_dir, repository, entries, srcfiles)
 	
 	return (1);
     }
-
-#ifdef CVSDEA
-    /* Print information on dead revisions.  Printing them at the
-       start rather than with each revision is cheesy, but no more so
-       than printing the symbolic tags at the start.  */
-    {
-	char *deafilename;
-	FILE *deafile;
-	int ch;
-	deafilename = xmalloc (strlen (repository) + sizeof (CVSDEA) +
-			       strlen (file) + 80);
-	sprintf (deafilename, "%s/%s/%s", repository, CVSDEA, file);
-	deafile = fopen (deafilename, "r");
-	if (deafile == NULL)
-	{
-	    if (errno != ENOENT)
-		error (0, errno, "cannot read %s", deafilename);
-	}
-	else
-	{
-	    int printed = 0;
-	    while (1)
-	    {
-		ch = getc (deafile);
-		if (ferror (deafile))
-		    error (1, errno, "cannot read %s", deafilename);
-		if (feof (deafile))
-		    break;
-		if (!printed)
-		{
-		    printed = 1;
-		    printf ("Dead revisions: ");
-		}
-		if (ch == '\012')
-		    putc (' ', stdout);
-		else
-		    putc (ch, stdout);
-	    }
-	    if (printed)
-		putc ('\n', stdout);
-	    if (fclose (deafile) == EOF)
-		error (0, errno, "cannot close %s", deafilename);
-	}
-	free (deafilename);
-    }
-#endif /* CVSDEA */
 
     run_setup ("%s%s %s", Rcsbin, RCS_RLOG, options);
     run_arg (rcsfile->path);

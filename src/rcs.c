@@ -136,6 +136,12 @@ RCS_parse (file, repos)
     FILE *fp;
     char rcsfile[PATH_MAX];
 
+#ifdef CLIENT_ONLY
+    /* Some ports of RCS to Windows NT write RCS files with newline-
+       delimited lines.  We would need to pass fopen a "binary" flag.  */
+    abort ();
+#endif
+
     (void) sprintf (rcsfile, "%s/%s%s", repos, file, RCSEXT);
     if ((fp = fopen (rcsfile, "r")) != NULL) 
     {
@@ -151,6 +157,12 @@ RCS_parse (file, repos)
 	error (0, errno, "cannot open %s", rcsfile);
 	return NULL;
     }
+
+#ifdef CLIENT_ONLY
+    /* Some ports of RCS to Windows NT write RCS files with newline-
+       delimited lines.  We would need to pass fopen a "binary" flag.  */
+    abort ();
+#endif
 
     (void) sprintf (rcsfile, "%s/%s/%s%s", repos, CVSATTIC, file, RCSEXT);
     if ((fp = fopen (rcsfile, "r")) != NULL) 
@@ -183,6 +195,12 @@ RCS_parsercsfile (rcsfile)
 {
     FILE *fp;
     RCSNode *rcs;
+
+#ifdef CLIENT_ONLY
+    /* Some ports of RCS to Windows NT write RCS files with newline-
+       delimited lines.  We would need to pass fopen a "binary" flag.  */
+    abort ();
+#endif
 
     /* open the rcsfile */
     if ((fp = fopen (rcsfile, "r")) == NULL)
@@ -282,6 +300,12 @@ RCS_reparsercsfile (rdata)
     char *key, *value;
 
     rcsfile = rdata->path;
+
+#ifdef CLIENT_ONLY
+    /* Some ports of RCS to Windows NT write RCS files with newline-
+       delimited lines.  We would need to pass fopen a "binary" flag.  */
+    abort ();
+#endif
 
     fp = fopen(rcsfile, "r");
     if (fp == NULL)
@@ -407,7 +431,7 @@ unable to parse rcs file; `state' not in the expected place");
 	{
 #ifdef DEATH_SUPPORT
 	    /* Enable use of repositories created with a CVS which defines
-	       DEATH_SUPPORT and not DEATH_STATE or CVSDEA.  */
+	       DEATH_SUPPORT and not DEATH_STATE.  */
 	    if (strcmp(key, RCSDEAD) == 0)
 	    {
 		vnode->dead = 1;
@@ -420,74 +444,7 @@ unable to parse rcs file; `state' not in the expected place");
 	    if (*cp == '\0' && strncmp (RCSDATE, value, strlen (RCSDATE)) == 0)
 		break;
 	}
-#ifdef CVSDEA
-	/* Accept this only #ifdef CVSDEA, because (a) all that extra file
-	   access presumably slows things down, (b) I don't think anyone
-	   is actually using CVSDEA.  It probably could be flushed
-	   entirely.  */
-	/* Check whether vnode->version is listed in CVSDEA file.  */
-	{
-	    char *p;
-	    FILE *deafile;
-	    int ch;
-	    char *tmp = xmalloc (sizeof (CVSDEA) + strlen (rcsfile) + 40);
-	    char *last_slash = strrchr (rcsfile, '/');
-	    int len;
 
-	    /* Convert /foo/bar/baz/bif,v to /foo/bar/baz/CVS.dea/bif.  */
-
-	    strncpy (tmp, rcsfile, last_slash - rcsfile + 1);
-	    p = tmp + (last_slash - rcsfile) + 1;
-
-	    /* CVSDEA files do *not* move into the attic.  */
-	    if (last_slash - rcsfile > 6 && strncmp (p - 6, "Attic/", 6) == 0)
-		p -= 6;
-
-	    strcpy (p, CVSDEA);
-	    strcat (p, "/");
-	    p += strlen (p);
-	    len = strlen (last_slash + 1) - (sizeof (RCSEXT) - 1);
-	    strncpy (p, last_slash + 1, len);
-	    p[len] = '\0';
-
-	    deafile = fopen (tmp, "r");
-	    if (deafile == NULL)
-	    {
-		if (errno != ENOENT)
-		    error (1, errno, "cannot open %s", tmp);
-	    }
-	    else
-	    {
-		p = vnode->version;
-		while (1)
-		{
-		    ch = getc (deafile);
-		    if (ferror (deafile))
-			error (1, errno, "cannot read %s", tmp);
-		    if (feof (deafile))
-			break;
-		    if (ch == '\012')
-		    {
-			if (p != NULL && *p == '\0')
-			{
-			    vnode->dead = 1;
-			    break;
-			}
-			p = vnode->version;
-		    }
-		    else
-		    {
-			if (p != NULL && *p++ != ch)
-			    p = NULL;
-		    }
-		}
-		if (fclose (deafile) == EOF)
-		    error (1, errno, "cannot close %s", tmp);
-	    }
-	    free (tmp);
-	}
-#endif /* CVSDEA */
-		
 	/* add the nodes to the lists */
 	(void) addnode (rdata->versions, q);
 	(void) addnode (rdata->dates, r);

@@ -11,9 +11,6 @@
 				   can't easily be automatically checked
 				   for */
 
-#define SERVER_SUPPORT 1
-#define CLIENT_SUPPORT 1
-
 /* AIX requires this to be the first thing in the file. */
 #ifdef __GNUC__
 #define alloca __builtin_alloca
@@ -29,7 +26,9 @@ char *alloca ();
 #endif /* not HAVE_ALLOCA_H */
 #endif /* not __GNUC__ */
 
-#if __STDC__
+/* Changed from if __STDC__ to ifdef __STDC__ because of Sun's acc compiler */
+
+#ifdef __STDC__
 #define	PTR	void *
 #else
 #define	PTR	char *
@@ -90,19 +89,13 @@ extern int errno;
 #endif /* !errno */
 #endif /* HAVE_ERRNO_H */
 
-#ifdef HAVE_IO_H
-#include <io.h>
-#endif
-
-#ifdef HAVE_DIRECT_H
-#include <direct.h>
-#endif
-
 #include "system.h"
 
 #include "hash.h"
+#if defined(SERVER_SUPPORT) || defined(CLIENT_SUPPORT)
 #include "server.h"
 #include "client.h"
+#endif
 
 #ifdef MY_NDBM
 #include "myndbm.h"
@@ -113,6 +106,11 @@ extern int errno;
 #include "regex.h"
 #include "getopt.h"
 #include "wait.h"
+
+/* Define to enable alternate death support (which uses the RCS state).  */
+#define DEATH_STATE 1
+
+#define DEATH_SUPPORT 1
 
 #include "rcs.h"
 
@@ -164,10 +162,12 @@ extern int errno;
 #define	CVSROOTADM_LOGINFO	"loginfo"
 #define	CVSROOTADM_RCSINFO	"rcsinfo"
 #define CVSROOTADM_COMMITINFO	"commitinfo"
+#define CVSROOTADM_TAGINFO      "taginfo"
 #define	CVSROOTADM_EDITINFO	"editinfo"
 #define	CVSROOTADM_HISTORY	"history"
 #define	CVSROOTADM_IGNORE	"cvsignore"
 #define	CVSROOTADM_CHECKOUTLIST "checkoutlist"
+#define CVSROOTADM_WRAPPER      "cvswrappers"
 #define CVSNULLREPOS		"Emptydir"	/* an empty directory */
 
 /* support for the modules file (CVSROOTADM_MODULES) */
@@ -185,15 +185,7 @@ extern int errno;
 #define	CVSEXT_LOG	",t"
 #define	CVSPREFIX	",,"
 #define CVSDOTIGNORE	".cvsignore"
-
-/* Define to enable alternate death support (which doesn't require any
-   help from RCS).  */
-/* #define CVSDEA		"CVS.dea" */
-
-/* Define to enable alternate death support (which uses the RCS state).  */
-#define DEATH_STATE 1
-
-#define DEATH_SUPPORT 1
+#define CVSDOTWRAPPER   ".cvswrappers"
 
 /* miscellaneous CVS defines */
 #define	CVSEDITPREFIX	"CVS: "
@@ -201,7 +193,9 @@ extern int errno;
 #define	CVSLCKSLEEP	30		/* wait 30 seconds before retrying */
 #define	CVSBRANCH	"1.1.1"		/* RCS branch used for vendor srcs */
 #define	BAKPREFIX	".#"		/* when rcsmerge'ing */
+#ifndef DEVNULL
 #define	DEVNULL		"/dev/null"
+#endif
 
 #define	FALSE		0
 #define	TRUE		1
@@ -230,6 +224,7 @@ extern int errno;
 #define	CVSROOT_DFLT	NULL		/* No dflt; must set for checkout */
 
 #define	IGNORE_ENV	"CVSIGNORE"	/* More files to ignore */
+#define WRAPPER_ENV     "CVSWRAPPERS"   /* name of the wrapper file */
 
 /*
  * If the beginning of the Repository matches the following string, strip it
@@ -284,7 +279,9 @@ enum classify_type
     T_REMOVED,				/* R (removed file) list	 */
     T_REMOVE_ENTRY,			/* W (removed entry) list	 */
     T_UPTODATE,				/* File is up-to-date		 */
+#ifdef SERVER_SUPPORT
     T_PATCH,				/* P Like C, but can patch	 */
+#endif
     T_TITLE				/* title for node type 		 */
 };
 typedef enum classify_type Ctype;
@@ -330,15 +327,6 @@ struct stickydirtag
     char *options;
 };
 
-/* flags for run_exec(), the fast system() for CVS */
-#define	RUN_NORMAL		0x0000	/* no special behaviour */
-#define	RUN_COMBINED		0x0001	/* stdout is duped to stderr */
-#define	RUN_REALLY		0x0002	/* do the exec, even if noexec is on */
-#define	RUN_STDOUT_APPEND	0x0004	/* append to stdout, don't truncate */
-#define	RUN_STDERR_APPEND	0x0008	/* append to stderr, don't truncate */
-#define	RUN_SIGIGNORE		0x0010	/* ignore interrupts for command */
-#define	RUN_TTY		(char *)0	/* for the benefit of lint */
-
 /* Flags for find_{names,dirs} routines */
 #define W_LOCAL			0x01	/* look for files locally */
 #define W_REPOS			0x02	/* look for files in the repository */
@@ -365,8 +353,6 @@ extern int really_quiet, quiet;
 extern int use_editor;
 extern int cvswrite;
 
-extern int gzip_level;
-
 extern int trace;		/* Show all commands */
 extern int noexec;		/* Don't modify disk anywhere */
 extern int logoff;		/* Don't write history entry */
@@ -382,7 +368,6 @@ int RCS_unlock PROTO((const char *, const char *));
 int RCS_merge PROTO((const char *, const char *, const char *, const char *));
 
 DBM *open_module PROTO((void));
-FILE *Popen PROTO((const char *, const char *));
 FILE *open_file PROTO((const char *, const char *));
 List *Find_Dirs PROTO((char *repository, int which));
 void Entries_Close PROTO((List *entries));
@@ -413,10 +398,11 @@ int isfile PROTO((const char *file));
 int islink PROTO((const char *file));
 int isreadable PROTO((const char *file));
 int iswritable PROTO((const char *file));
+int isabsolute PROTO((const char *filename));
+char *last_component PROTO((char *path));
+
 int joining PROTO((void));
-int link_file PROTO((const char *from, const char *to));
 int numdots PROTO((const char *s));
-int run_exec PROTO((char *stin, char *stout, char *sterr, int flags));
 int unlink_file PROTO((const char *f));
 int update PROTO((int argc, char *argv[]));
 int xcmp PROTO((const char *file1, const char *file2));
@@ -432,6 +418,7 @@ void cat_module PROTO((int status));
 void check_entries PROTO((char *dir));
 void close_module PROTO((DBM * db));
 void copy_file PROTO((const char *from, const char *to));
+void (*error_set_cleanup PROTO((void (*) (void)))) PROTO ((void));
 void error PROTO((int status, int errnum, char *message,...));
 void fperror PROTO((FILE * fp, int status, int errnum, char *message,...));
 void free_names PROTO((int *pargc, char *argv[]));
@@ -445,15 +432,6 @@ void line2argv PROTO((int *pargc, char *argv[], char *line));
 void make_directories PROTO((const char *name));
 void make_directory PROTO((const char *name));
 void rename_file PROTO((const char *from, const char *to));
-void run_arg PROTO((const char *s));
-void run_print PROTO((FILE * fp));
-#ifdef HAVE_VPRINTF
-void run_setup PROTO((const char *fmt,...));
-void run_args PROTO((const char *fmt,...));
-#else
-void run_setup ();
-void run_args ();
-#endif
 void strip_path PROTO((char *path));
 void strip_trailing_slashes PROTO((char *path));
 void update_delproc PROTO((Node * p));
@@ -501,3 +479,44 @@ void SIG_endCrSect PROTO((void));
 void read_cvsrc PROTO((int *argc, char ***argv));
 
 char *make_message_rcslegal PROTO((char *message));
+
+/* flags for run_exec(), the fast system() for CVS */
+#define	RUN_NORMAL		0x0000	/* no special behaviour */
+#define	RUN_COMBINED		0x0001	/* stdout is duped to stderr */
+#define	RUN_REALLY		0x0002	/* do the exec, even if noexec is on */
+#define	RUN_STDOUT_APPEND	0x0004	/* append to stdout, don't truncate */
+#define	RUN_STDERR_APPEND	0x0008	/* append to stderr, don't truncate */
+#define	RUN_SIGIGNORE		0x0010	/* ignore interrupts for command */
+#define	RUN_TTY		(char *)0	/* for the benefit of lint */
+
+void run_arg PROTO((const char *s));
+void run_print PROTO((FILE * fp));
+#ifdef HAVE_VPRINTF
+void run_setup PROTO((const char *fmt,...));
+void run_args PROTO((const char *fmt,...));
+#else
+void run_setup ();
+void run_args ();
+#endif
+int run_exec PROTO((char *stin, char *stout, char *sterr, int flags));
+
+/* other similar-minded stuff from run.c.  */
+FILE *Popen PROTO((const char *, const char *));
+int piped_child PROTO((char **, int *, int *));
+void close_on_exec PROTO((int));
+int filter_stream_through_program PROTO((int, int, char **, pid_t *));
+
+pid_t waitpid PROTO((pid_t, int *, int));
+
+/* Wrappers.  */
+
+typedef enum { WRAP_MERGE, WRAP_COPY } WrapMergeMethod;
+typedef enum { WRAP_TOCVS, WRAP_FROMCVS, WRAP_CONFLICT } WrapMergeHas;
+
+void  wrap_setup PROTO((void));
+int   wrap_name_has PROTO((const char *name,WrapMergeHas has));
+char *wrap_tocvs_process_file PROTO((const char *fileName));
+int   wrap_merge_is_copy PROTO((const char *fileName));
+char *wrap_fromcvs_process_file PROTO((const char *fileName));
+void wrap_add_file PROTO((const char *file,int temp));
+void wrap_add PROTO((char *line,int temp));

@@ -1,3 +1,9 @@
+Thu Jul 20 12:38:03 1995  James Kingdon  <kingdon@harvey.cyclic.com>
+
+	* error.c: Instead of calling cvs functions to clean up, allow cvs
+	to register a callback via error_set_cleanup.  Avoids hassles with
+	include files and SERVER_SUPPORT and so on.
+
 Tue Jul 18 21:18:00 1995  Jim Blandy <jimb@cyclic.com>
 
 	* system.h: Include <sys/param.h> only if HAVE_SYS_PARAM_H

@@ -31,6 +31,7 @@ static List *filelist;
 /*
  * add the key from entry on entries list to the files list
  */
+static int add_entries_proc PROTO((Node *, void *));
 static int
 add_entries_proc (node, closure)
      Node *node;
@@ -49,6 +50,7 @@ add_entries_proc (node, closure)
 /*
  * compare two files list node (for sort)
  */
+static int fsortcmp PROTO ((const Node *, const Node *));
 static int
 fsortcmp (p, q)
     const Node *p;
@@ -217,9 +219,6 @@ find_dirs (dir, list, checkadm)
 	if (strcmp (dp->d_name, ".") == 0 ||
 	    strcmp (dp->d_name, "..") == 0 ||
 	    strcmp (dp->d_name, CVSATTIC) == 0 ||
-#ifdef CVSDEA
-	    strcmp (dp->d_name, CVSDEA) == 0 ||
-#endif
 	    strcmp (dp->d_name, CVSLCK) == 0)
 	    continue;
 

@@ -529,6 +529,7 @@ history (argc, argv)
     else if (report_count > 1)
 	error (1, 0, "Only one report type allowed from: \"-Tcomx\".");
 
+#ifdef CLIENT_SUPPORT
     if (client_active)
     {
 	struct file_list_str *f1;
@@ -582,6 +583,7 @@ history (argc, argv)
 	    error (1, errno, "writing to server");
         return get_responses_and_close ();
     }
+#endif
 
     if (all_users)
 	save_user ("");
@@ -693,7 +695,12 @@ history_write (type, update_dir, revs, name, repository)
 
     if (trace)
 	fprintf (stderr, "%c-> fopen(%s,a)\n",
-		 (server_active) ? 'S' : ' ', fname);
+#ifdef SERVER_SUPPORT
+		 (server_active) ? 'S' : ' ',
+#else
+		 ' ',
+#endif
+		 fname);
     if (noexec)
 	return;
     if ((fd = open (fname, O_WRONLY | O_APPEND | O_CREAT, 0666)) < 0)
@@ -993,7 +1000,7 @@ read_hrecs (fname)
     struct hrec *hr;
     struct stat st_buf;
 
-    if ((fd = open (fname, O_RDONLY)) < 0)
+    if ((fd = open (fname, O_RDONLY | OPEN_BINARY)) < 0)
 	error (1, errno, "cannot open history file: %s", fname);
 
     if (fstat (fd, &st_buf) < 0)

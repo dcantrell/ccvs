@@ -32,8 +32,6 @@ static const char *const status_usage[] =
     "\t-v\tVerbose format; includes tag information for the file\n",
     "\t-l\tProcess this directory only (not recursive).\n",
     "\t-R\tProcess directories recursively.\n",
-    "\t-q\tBe somewhat quiet.\n",
-    "\t-Q\tDo not print empty sticky parts.\n",
     NULL
 };
 
@@ -49,7 +47,7 @@ status (argc, argv)
 	usage (status_usage);
 
     optind = 1;
-    while ((c = getopt (argc, argv, "vlRqQ")) != -1)
+    while ((c = getopt (argc, argv, "vlR")) != -1)
     {
 	switch (c)
 	{
@@ -62,12 +60,6 @@ status (argc, argv)
 	    case 'R':
 		local = 0;
 		break;
-	    case 'q':
-		quiet = TRUE;
-		break;
-	    case 'Q':
-		really_quiet = TRUE;
-		break;
 	    case '?':
 	    default:
 		usage (status_usage);
@@ -77,8 +69,13 @@ status (argc, argv)
     argc -= optind;
     argv += optind;
 
+    wrap_setup ();
+
+#ifdef CLIENT_SUPPORT
     if (client_active) {
       start_server ();
+
+      ign_setup ();
 
       if (long_format)
 	send_arg("-v");
@@ -95,6 +92,7 @@ status (argc, argv)
 
       return err;
     }
+#endif
 
     /* start the recursion processor */
     err = start_recursion (status_fileproc, (int (*) ()) NULL, status_dirproc,
@@ -131,9 +129,11 @@ status_fileproc (file, update_dir, repository, entries, srcfiles)
 	case T_CHECKOUT:
 	    sstat = "Needs Checkout";
 	    break;
+#ifdef SERVER_SUPPORT
 	case T_PATCH:
 	    sstat = "Needs Patch";
 	    break;
+#endif
 	case T_CONFLICT:
 	    sstat = "Unresolved Conflict";
 	    break;
@@ -173,8 +173,10 @@ status_fileproc (file, update_dir, repository, entries, srcfiles)
 	(void) printf ("   Working revision:\tNo entry for %s\n", file);
     else if (vers->vn_user[0] == '0' && vers->vn_user[1] == '\0')
 	(void) printf ("   Working revision:\tNew file!\n");
+#ifdef SERVER_SUPPORT
     else if (server_active)
 	(void) printf ("   Working revision:\t%s\n", vers->vn_user);
+#endif
     else
 	(void) printf ("   Working revision:\t%s\t%s\n", vers->vn_user,
 		       vers->ts_rcs);

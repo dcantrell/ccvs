@@ -34,6 +34,7 @@ No_Difference (file, vers, entries, repository, update_dir)
     int ret;
     char *ts, *options;
     int retcode = 0;
+    char *tocvsPath;
 
     if (!vers->srcfile || !vers->srcfile->path)
 	return (-1);			/* different since we couldn't tell */
@@ -51,8 +52,10 @@ No_Difference (file, vers, entries, repository, update_dir)
 	if (!iswritable (file))		/* fix the modes as a side effect */
 	    xchmod (file, 1);
 
+	tocvsPath = wrap_tocvs_process_file (file);
+
 	/* do the byte by byte compare */
-	if (xcmp (file, tmp) == 0)
+	if (xcmp (tocvsPath == NULL ? file : tocvsPath, tmp) == 0)
 	{
 	    if (cvswrite == FALSE)	/* fix the modes as a side effect */
 		xchmod (file, 0);
@@ -62,12 +65,14 @@ No_Difference (file, vers, entries, repository, update_dir)
 	    Register (entries, file,
 		      vers->vn_user ? vers->vn_user : vers->vn_rcs, ts,
 		      options, vers->tag, vers->date, (char *) 0);
+#ifdef SERVER_SUPPORT
 	    if (server_active)
 	    {
 		/* We need to update the entries line on the client side.  */
 		server_update_entries
 		  (file, update_dir, repository, SERVER_UPDATED);
 	    }
+#endif
 	    free (ts);
 
 	    /* update the entdata pointer in the vers_ts structure */
@@ -78,10 +83,25 @@ No_Difference (file, vers, entries, repository, update_dir)
 	}
 	else
 	    ret = 1;			/* files were really different */
+        if (tocvsPath)
+	{
+	    /* Need to call unlink myself because the noexec variable
+	     * has been set to 1.  */
+	    if (trace)
+		(void) fprintf (stderr, "%c-> unlink (%s)\n",
+#ifdef SERVER_SUPPORT
+				(server_active) ? 'S' : ' ',
+#else
+				' ',
+#endif
+				tocvsPath);
+	    if (unlink (tocvsPath) < 0)
+		error (0, errno, "could not remove %s", tocvsPath);
+	}
     }
     else
     {
-        if (update_dir[0] == '\0')
+	if (update_dir[0] == '\0')
 	    error (0, retcode == -1 ? errno : 0,
 		   "could not check out revision %s of %s",
 		   vers->vn_user, file);
@@ -93,8 +113,12 @@ No_Difference (file, vers, entries, repository, update_dir)
     }
 
     if (trace)
+#ifdef SERVER_SUPPORT
 	(void) fprintf (stderr, "%c-> unlink2 (%s)\n",
 			(server_active) ? 'S' : ' ', tmp);
+#else
+	(void) fprintf (stderr, "-> unlink (%s)\n", tmp);
+#endif
     if (unlink (tmp) < 0)
 	error (0, errno, "could not remove %s", tmp);
     free (options);

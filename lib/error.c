@@ -31,17 +31,6 @@ static char rcsid[] = "$CVSid: @(#)error.c 1.13 94/09/30 $";
 /* turn on CVS support by default, since this is the CVS distribution */
 #define	CVS_SUPPORT
 
-#ifdef CVS_SUPPORT
-#if __STDC__
-void Lock_Cleanup(void);
-void server_cleanup (int sig);
-#else
-void Lock_Cleanup();
-void server_cleanup ();
-#endif /* __STDC__ */
-extern int server_active;
-#endif /* CVS_SUPPORT */
-
 #ifdef HAVE_VPRINTF
 
 #if __STDC__
@@ -76,6 +65,20 @@ void exit ();
 #endif
 
 extern char *strerror ();
+
+typedef void (*fn_returning_void) ();
+
+/* Function to call before exiting.  */
+static fn_returning_void cleanup_fn;
+
+fn_returning_void
+error_set_cleanup (arg)
+     fn_returning_void arg;
+{
+  fn_returning_void retval = cleanup_fn;
+  cleanup_fn = arg;
+  return retval;
+}
 
 /* Print the program name and error message MESSAGE, which is a printf-style
    format string with optional args.
@@ -129,11 +132,8 @@ error (status, errnum, message, va_alist)
   fflush (stderr);
   if (status)
     {
-#ifdef CVS_SUPPORT
-      Lock_Cleanup();
-      if (server_active)
-	server_cleanup (0);
-#endif
+      if (cleanup_fn)
+	(*cleanup_fn) ();
       exit (status);
     }
 }
@@ -180,11 +180,8 @@ fperror (fp, status, errnum, message, va_alist)
   fflush (fp);
   if (status)
     {
-#ifdef CVS_SUPPORT
-      Lock_Cleanup();
-      if (server_active)
-	server_cleanup (0);
-#endif
+      if (cleanup_fn)
+	(*cleanup_fn) ();
       exit (status);
     }
 }

@@ -1,3 +1,132 @@
+Tue Aug  7 20:25:00 1995  Jim Blandy  <jimb@cyclic.com>
+
+        * subr.c: Extract file twiddling functions to a different file,
+	because we want to use different versions of many of these
+	routines under Windows NT.
+	(copy_file, isdir, islink, isfile, isreadable, iswritable,
+	open_file, make_directory, make_directories, xchmod,
+	rename_file, link_file, unlink_file, xcmp, tmpnam): Moved to...
+	* filesubr.c: ...this file, which is new.
+	* Makefile.in (SOURCES): Mention run.c.
+	(COMMON_OBJECTS): Mention run.o.
+
+Sun Aug  6 13:40:00 1995  Jim Blandy  <jimb@cyclic.com>
+
+	* subr.c: Extract process execution guts to a different file,
+	because we want to replace these routines entirely under
+	Windows NT.
+	(VA_START, va_alist, va_dcl): Move this stuff...
+	(run_add_arg, run_init_prog): and these declarations...
+	(run_prog, run_argv, run_argc, run_argc_allocated): and these
+	variables...
+	(run_setup, run_arg, run_args, run_add_arg, run_init_prog,
+	run_exec, run_print, Popen): and these functions...
+	* run.c: To this file, which is new.
+	* Makefile.in (SOURCES): Mention run.c.
+	(COMMON_OBJECTS): Mention run.o.
+
+Fri Jul 28 17:52:58 1995  Jim Blandy  <jimb@cyclic.com>
+
+	* import.c (add_rev): Instead of making a hard link to the
+	working file and checking in the revision with ci -r, use ci -u
+	and restore the permission bits.
+
+Tue Jul 25 00:52:26 1995  James Kingdon  <kingdon@harvey.cyclic.com>
+
+	* checkout.c (safe_location): Don't use PROTO in function definition.
+
+Mon Jul 24 18:32:06 1995  Vince DeMarco  <vdemarco@bou.shl.com>
+
+	* checkout.c (safe_location):  fix a compiler warning. (Declare
+	safe_location). Changed code in safe_location to call getwd
+	instead of getcwd. getwd is declared in the ../lib directory and
+	used exclusively thoughout the code. (this helps portability on
+	non POSIX systems).
+
+	* wrapper.c: updated Andrew Athan's email address.
+
+	* main.c:  fix an ifdef so the code will compile. syntax error in
+	the ifdef for CVS_NOADMIN.
+
+Mon Jul 24 13:25:00 1995  Del <del@babel.dialix.oz.au>
+
+	* checkout.c:  New procedure safe_location.
+	Ensures that you don't check out into the repository
+	itself.
+
+	* tag.c, rtag.c, cvs.h, mkmodules.c:  Added a "taginfo" file in
+	CVSROOT to perform pre-tag checks.
+
+	* main.c, options.h.in:  Added a compile time option to
+	disable the admin command.
+
+Fri Jul 21 17:07:42 1995  James Kingdon  <kingdon@harvey.cyclic.com>
+
+	* update.c, status.c, patch.c, checkout.c, import.c, release.c,
+	rtag.c, tag.c: Now -q and -Q options just print an error message
+	telling you to use global -q and -Q options.  The non-global
+	options were a mess because some commands accepted them and some
+	did not, and they were redundant with -q and -Q global options.
+
+	* rcs.c, cvs.h, commit.c, log.c, find_names.c: Remove CVS.dea
+	stuff.  It is slower than the alternatives and I don't think
+	anyone ever actually used it.
+
+Fri Jul 21 10:35:10 1995  Vince DeMarco <vdemarco@bou.shl.com>
+
+	* Makefile.in (SOURCES, OBJECTS): Add wrapper.c, wrapper.o.
+	* add.c, admin.c, checkout.c, commit.c, diff.c, import.c, log.c,
+	remove.c, status.c: Call wrap_setup at start of commands.
+	* add.c (add): Check for wrapper, as well as directory, in repository.
+	* checkin.c: Add tocvsPath variable and associated handling.
+	* cvs.h: Add wrapper declarations.
+	* diff.c: Add tocvsPath variable and associated handling.
+	* import.c: Add -W option, CVSDOTWRAPPER handling.
+	(import_descend): check wrap_name_has.
+	(update_rcs_file, add_rev, add_rcs_file): add tocvsPath
+	variable and associated handling.
+	* no_diff.c: Add tocvsPath variable and associated handling.
+	* recurse.c (start_recursion): Check wrap_name_has.
+	* update.c: Copy, don't merge, copy-by-merge files.  Attempt to
+	use -j on a copy-by-merge file generates a warning and no further
+	action.
+	* update.c: Add CVSDOTWRAPPER handling.
+	* wrapper.c: Added.
+
+Fri Jul 21 00:20:52 1995  James Kingdon  <kingdon@harvey.cyclic.com>
+
+	* client.c: Revert David Lamkin patch, except for the bits about
+	removing temp_filename and the .rej file.
+	* sanity.sh (errmsg1): Test for the underlying bug which Lamkin
+	kludged around.
+	* client.c (call_in_directory): Set short_pathname to include the
+	filename, not just the directory.  Improve comments regarding what
+	is passed to FUNC.
+
+Thu Jul 20 17:51:54 1995  David Lamkin  <drl@net-tel.co.uk>
+
+	* client.c (short_pathname): Fixes the fetching of the whole file
+	after a patch to bring it up to date has failed:
+	   - failed_patches[] now holds short path to file that failed
+	   - patch temp files are unlinked where the patch is done
+
+Thu Jul 20 12:37:10 1995  James Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.h: Declare error_set_cleanup
+	* main.c: Call it.
+	(error_cleanup): New function.
+
+Thu Jul 20 12:17:16 1995  Mark H. Wilkinson  <mhw@minster.york.ac.uk>
+
+	* add.c, admin.c, checkin.c, checkout.c, classify.c, client.c,
+	client.h, commit.c, create_adm.c, cvs.h, diff.c, entries.c,
+	history.c, import.c, log.c, main.c, modules.c, no_diff.c, patch.c,
+	release.c, remove.c, repos.c, rtag.c, server.c, server.h,
+	status.c, subr.c, tag.c, update.c, vers_ts.c, version.c: Put
+	client code inside #ifdef CLIENT_SUPPORT, server code inside
+	#ifdef SERVER_SUPPORT.  When reporting version, report whether
+	client and/or server are compiled in.
+
 Wed Jul 19 18:00:00 1995  Jim Blandy <jimb@cyclic.com>
 
 	* subr.c (copy_file): Declare local var n to be an int,

@@ -727,6 +727,7 @@ you want to edit.  @xref{Multiple developers} for an explanation.
 @section Committing your changes
 @cindex Committing changes
 @cindex Log message entry
+@cindex CVSEDITOR, environment variable
 @cindex EDITOR, environment variable
 
 When you have checked that the compiler is still compilable you decide
@@ -741,12 +742,15 @@ $ cvs commit backend.c
 message.  You type in ``Added an optimization pass.'',
 save the temporary file, and exit the editor.
 
-The environment variable @code{$EDITOR} determines
-which editor is started.  If @code{$EDITOR} is not set,
-the editor defaults to @code{vi}.  If you want to avoid the
-overhead of starting an editor you can specify the log
-message on the command line using the @samp{-m} flag
-instead, like this:
+The environment variable @code{$CVSEDITOR} determines
+which editor is started.  If @code{$CVSEDITOR} is not
+set, then if the environment variable @code{$EDITOR} is
+set, it will be used. If both @code{$CVSEDITOR} and
+@code{$EDITOR} are not set then the editor defaults to
+@code{vi}.  If you want to avoid the overhead of
+starting an editor you can specify the log message on
+the command line using the @samp{-m} flag instead, like
+this:
 
 @example
 $ cvs commit -m "Added an optimization pass" backend.c
@@ -3010,15 +3014,13 @@ Arguments to the commands.
 @end table
 
 There is unfortunately some confusion between
-@code{cvs_options} and @code{command_options}.  For
-example, @samp{-q} can often (but not always) be given
-as both a @code{cvs_option} and a
-@code{command_option}.  @samp{-l}, when given as a
-@code{cvs_option}, only affects some of the commands.
-When it is given as a @code{command_option} is has a
-different meaning, and is accepted by more commands.
-In other words, do not take the above categorization
-too seriously.  Look at the documentation instead.
+@code{cvs_options} and @code{command_options}.
+@samp{-l}, when given as a @code{cvs_option}, only
+affects some of the commands.  When it is given as a
+@code{command_option} is has a different meaning, and
+is accepted by more commands.  In other words, do not
+take the above categorization too seriously.  Look at
+the documentation instead.
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node ~/.cvsrc
@@ -3106,7 +3108,7 @@ should be specified as an absolute pathname.
 @cindex Overriding EDITOR
 @item -e @var{editor}
 Use @var{editor} to enter revision log information.  Overrides the
-setting of the @code{$EDITOR} environment variable.
+setting of the @code{$CVSEDITOR} and @code{$EDITOR} environment variables.
 
 @item -f
 Do not read the @file{~/.cvsrc} file.  This
@@ -3326,18 +3328,13 @@ Pipe the files retrieved from the repository to standard output,
 rather than writing them in the current directory.  Available
 with the @code{checkout} and @code{update} commands.
 
-@item -Q
-Cause the command to be really quiet; the command will only
-generate output for serious problems.  Available with the following
-commands: @code{checkout}, @code{import}, @code{export},
-@code{rdiff}, @code{rtag}, @code{tag}, and @code{update}.
-
-@item -q
-Cause the command to be somewhat quiet; informational messages,
-such as reports of recursion through subdirectories, are
-suppressed.  Available with the following commands:
-@code{checkout}, @code{import}, @code{export}, @code{rtag},
-@code{tag}, and @code{update}.
+@item -W
+Specify file names that should be filtered.  You can
+use this option repeatedly.  The spec can be a file
+name pattern of the same type that you can specify in
+the @file{.cvswrappers} file.
+Avaliable with the following commands: @code{import},
+and @code{update}.
 
 @item -r @var{tag}
 Use the revision specified by the @var{tag} argument instead of the
@@ -3354,9 +3351,10 @@ future update commands, until you specify otherwise.  The
 tag can be either a symbolic or numeric tag.
 @xref{Tags}.
 
-Specifying the @samp{-q} option along with the @samp{-r} option is often
-useful, to suppress the warning messages when the @sc{rcs} history file does
-not contain the specified tag.  
+Specifying the @samp{-q} global option along with the
+@samp{-r} command option is often useful, to suppress
+the warning messages when the @sc{rcs} history file
+does not contain the specified tag.
 
 @strong{Warning:} this is not the same as the overall `cvs -r' option,
 which you can specify to the left of a cvs command!
@@ -3857,7 +3855,7 @@ sub-directory may have a different name, but you can be
 sure that it will be a sub-directory, and that
 @code{checkout} will show the relative path leading to
 each file as it is extracted into your private work
-area (unless you specify the @samp{-Q} option).
+area (unless you specify the @samp{-Q} global option).
 
 Running @code{checkout} on a directory that was already
 built by a prior @code{checkout} is also permitted, and
@@ -3910,12 +3908,6 @@ Prune empty directories.
 
 @item -p
 Pipe files to the standard output.
-
-@item -Q
-Really quiet.
-
-@item -q
-Somewhat quiet.
 
 @item -r @var{tag}
 Use revision @var{tag}.  This option is sticky, and implies @samp{-P}.
@@ -4298,12 +4290,6 @@ co(1).
 @item -l
 Local; run only in current working directory.
 
-@item -Q
-Really quiet.
-
-@item -q
-Somewhat quiet.
-
 @item -R
 Examine directories recursively.  This option is on by
 default.
@@ -4427,12 +4413,6 @@ Local; run only in current working directory.
 
 @item -n
 Do not run any checkout program.
-
-@item -Q
-Really quiet.
-
-@item -q
-Somewhat quiet.
 
 @item -R
 Export directories recursively.  This is on by default.
@@ -4689,6 +4669,12 @@ If the file @file{$CVSROOT/CVSROOT/cvsignore} exists,
 any files whose names match the specifications in that
 file will also be ignored.
 
+If the file @file{$CVSROOT/CVSROOT/cvswrappers} exists,
+any file whose names match the specifications in that
+file will be treated as packages and the appropriate
+filtering will be performed on the file/directory
+before being imported, @xref{Wrappers}.
+
 The outside source is saved in a first-level @sc{rcs}
 branch, by default 1.1.1.  Updates are leaves of this
 branch; for example, files from the first imported
@@ -4712,20 +4698,13 @@ the leaves created each time you execute @code{import}.
 @node import options
 @appendixsubsec import options
 
-These standard options are supported by @code{import}
-(@pxref{Common options}, for a complete description of
-them):
+This standard option is supported by @code{import}
+(@pxref{Common options}, for a complete description):
 
 @table @code
 @item -m @var{message}
 Use @var{message} as log information, instead of
 invoking an editor.
-
-@item -Q
-Really quiet.
-
-@item -q
-Somewhat quiet.
 @end table
 
 There are three additional special options.
@@ -4762,6 +4741,14 @@ default), specify `-I !'.
 that you can specify in the @file{.cvsignore} file.
 @xref{cvsignore}.
 @c -- Is this really true?
+
+@item -W @var{spec}
+Specify file names that should be filtered during
+import.  You can use this option repeatedly.
+
+@var{spec} can be a file name pattern of the same type
+that you can specify in the @file{.cvswrappers}
+file. @xref{Wrappers}.
 @end table
 
 @c . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
@@ -5001,12 +4988,6 @@ recent revision (instead of ignoring the file).
 @item -l
 Local; don't descend subdirectories.
 
-@item -Q
-Really quiet.
-
-@item -q
-Somewhat quiet.
-
 @item -r @var{tag}
 Use revision @var{tag}.
 @end table
@@ -5117,18 +5098,7 @@ history log.
 @node release options
 @appendixsubsec release options
 
-Only these standard options are supported by @code{release}.
-
-@table @code
-@item -Q
-Really quiet.
-
-@item -q
-Somewhat quiet.
-@end table
-
-In addition to the above, it supports one additional
-flag.
+The @code{release} command supports one command option:
 
 @table @code
 @item -d
@@ -5378,12 +5348,6 @@ Do not run any tag program that was specified with the
 @samp{-t} flag inside the @file{modules} file.
 (@pxref{modules}).
 
-@item -Q
-Really quiet.
-
-@item -q
-Somewhat quiet.
-
 @item -R
 Commit directories recursively.  This is on by default.
 
@@ -5435,7 +5399,7 @@ module).
 
 @itemize @bullet
 @item
-status [-lR] [-v] [-qQ] [files@dots{}]
+status [-lR] [-v] [files@dots{}]
 @item
 Requires: working directory, repository.
 @item
@@ -5469,12 +5433,6 @@ Local; run only in current working directory.
 
 @item -R
 Commit directories recursively.  This is on by default.
-
-@item -Q
-Really quiet.  Do not print empty sticky parts.
-
-@item -q
-Somewhat quiet.
 @end table
 
 There is one additional option:
@@ -5566,12 +5524,6 @@ Local; run only in current working directory.
 
 @item -R
 Commit directories recursively.  This is on by default.
-
-@item -Q
-Really quiet.
-
-@item -q
-Somewhat quiet.
 @end table
 
 Two special options are available:
@@ -5666,12 +5618,6 @@ Prune empty directories.
 @item -p
 Pipe files to the standard output.
 
-@item -Q
-Really quiet.
-
-@item -q
-Somewhat quiet.
-
 @item -R
 Commit directories recursively.  This is on by default.
 
@@ -5731,6 +5677,14 @@ ignores files whose names match any of the following:
 Use @samp{-I !} to avoid ignoring any files at all.
 @xref{cvsignore}, for other ways to make @sc{cvs} ignore
 some files.
+
+@item -W@var{spec}
+Specify file names that should be filtered during
+update.  You can use this option repeatedly.
+
+@var{spec} can be a file name pattern of the same type
+that you can specify in the @file{.cvswrappers}
+file. @xref{Wrappers}.
 
 @item -j@var{branch}
 Merge the changes made between the resulting revision
@@ -5860,6 +5814,7 @@ file, which defines the modules inside the repository.
 
 @menu
 * modules::                     Defining modules
+* Wrappers::                    Treat directories as files
 * commit files::                The commit support files
 * commitinfo::                  Pre-commit checking
 * editinfo::                    Specifying how log messages are created
@@ -6020,6 +5975,83 @@ this module.
 @end table
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+@node Wrappers
+@appendixsec The cvswrappers file
+@cindex cvswrappers (admin file)
+@cindex CVSWRAPPERS, environment variable
+@cindex Wrappers
+
+Wrappers are essentially
+directories that are to be treated as "files."  This
+package allows such wrappers to be "processed" on the
+way in and out of CVS.  The intended use is to wrap up
+a wrapper into a single tar, such that that tar can be
+treated as a single binary file in CVS.  Apparently
+this is particularly useful on NEXTSTEP.  To solve
+the problem effectively, it was also necessary to be
+able to prevent rcsmerge application at appropriate
+times.
+
+The file @file{cvswrappers} defines the script that will be
+run on a file when its name matches a regular
+expresion. There are two scripts that can be run on a
+file or directory.
+@c FIXME: Is this talking about comb and uncom?  If so,
+@c mention them by name
+A script to filter the directory/file before it gets
+checked in and another that is run when the
+file/directory gets checked out.
+
+The @file{cvswrappers} also specifies the merge
+methodology that should be used when the file is
+updated, that is should a MERGE or a straight COPY of
+the diferences be used when checking into the
+repository.
+
+The basic format of the file @file{cvswrappers} is given as
+such:
+
+@example
+wildcard     [option value][option value]...
+
+where option is one of
+-f           from cvs filter         value: path tofilter
+-t           to cvs filter           value: path to filter
+-m           update methodology      value: MERGE or COPY
+
+and value is a single-quote delimited value.
+@end example
+
+@example
+*.nib    -f 'uncom %s' -t 'comb %s %s' -m 'COPY'
+*.rtfd   -f 'uncom %s' -t 'comb %s %s' -m 'COPY'
+@end example
+
+@noindent
+The above example of a @file{cvswrappers} file
+states that all files/directories that end with a @code{.nib}
+should be filtered with the @file{comb} program before
+checking the file into the repository. The file should
+be filtered though the @file{uncom} program when the
+file is checked out of the repository. The
+@file{cvswrappers} file also states that a @code{COPY}
+methodology should be used when updating the files in
+the repository (that is no merging should be performed).
+
+@noindent
+The @file{comb} filter is called with two arguments,
+the first is the name of the file/directory to filter
+and the second is the pathname to where the resulting
+filtered file should be placed.
+
+@noindent
+The @file{uncom} filter is called with one argument,
+which is the name of the file to filter from. The end
+result of the @file{uncom} filter will be a
+file/directory in the users current working directory,
+that represents the source before being filtered.
+
+@c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node commit files
 @appendixsec The commit support files
 @cindex Commit files
@@ -6153,7 +6185,9 @@ that the entered message contains the required fields.
 
 If no matching line is found in the @file{editinfo}
 file, the editor specified in the environment variable
-@code{$EDITOR} is used instead.  If that variable is not
+@code{$CVSEDITOR} is used instead.  If that variable is
+not set, then the environment variable @code{$EDITOR}
+is used instead.  If that variable is not
 set a precompiled default, normally @code{vi}, will be
 used.
 
@@ -6213,14 +6247,16 @@ edit the log message.
 #  Call $EDITOR on FILENAME, and verify that the
 #  resulting file contains a valid bugid on the first
 #  line.
-$EDITOR $1
+if [ "x$EDITOR" = "x" ]; then EDITOR=vi; fi
+if [ "x$CVSEDITOR" = "x" ]; then CVSEDITOR=$EDITOR; fi
+$CVSEDITOR $1
 until head -1|grep '^BugId:[ ]*[0-9][0-9]*$' < $1
 do  echo -n  "No BugId found.  Edit again? ([y]/n)"
     read ans
     case $@{ans@} in
         n*) exit 1;;
     esac
-    $EDITOR $1
+    $CVSEDITOR $1
 done
 @end example
 
@@ -6463,6 +6499,10 @@ that affect @sc{cvs}.
 A whitespace-separated list of file name patterns that
 @sc{cvs} should ignore. @xref{cvsignore}.
 
+@item $CVSWRAPPERS
+A whitespace-separated list of file name patterns that
+@sc{cvs} should treat as wrappers. @xref{Wrappers}.
+
 @cindex CVSREAD
 @item $CVSREAD
 If this is set, @code{checkout} and @code{update} will
@@ -6482,6 +6522,8 @@ cvs_command@dots{}} You may not need to set
 @code{$CVSROOT} if your @sc{cvs} binary has the right path
 compiled in.
 
+@ignore
+@c FIXME--update the rest of this manual to reflect CVS/Root.
 If your site has several repositories, you must be
 careful to set @code{$CVSROOT} to the appropriate one
 when you use @sc{cvs}, even if you just run @samp{cvs
@@ -6490,6 +6532,7 @@ releases of @sc{cvs} will probably store information about
 which repository the module came from inside the
 @file{CVS} directory, but version 1.3 relies totally on
 @code{$CVSROOT}.
+@end ignore
 
 @cindex EDITOR
 @cindex CVSEDITOR

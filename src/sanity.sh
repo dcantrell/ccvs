@@ -31,7 +31,7 @@ testcvs=$1; shift
 
 # Remaining arguments are the names of tests to run.
 if test x"$*" = x; then
-  tests="basic0 basic1 basic2 basic3 rtags death import new conflicts modules mflag"
+  tests="basic0 basic1 basic2 basic3 rtags death import new conflicts modules mflag errmsg1"
 else
   tests="$*"
 fi
@@ -1353,6 +1353,7 @@ for what in $tests; do
 	    echo 'FAIL: test 155' | tee -a ${LOGFILE}
 	  fi
 	  cd ..
+	  rm -rf 1 ; rm -rf ${CVSROOT_FILENAME}/first-dir
 	  ;;
 	mflag)
 	  for message in '' ' ' '	
@@ -1403,6 +1404,67 @@ for what in $tests; do
 	    # Clean up
 	    cd ..; rm -rf a-dir ${CVSROOT_FILENAME}/a-dir
 	  done
+	  ;;
+	errmsg1)
+	  mkdir ${CVSROOT_FILENAME}/1dir
+	  mkdir 1
+	  cd 1
+	  if ${testcvs} -q co 1dir; then
+	    echo 'PASS: test 162' >>${LOGFILE}
+	  else
+	    echo 'FAIL: test 162' | tee -a ${LOGFILE}
+	  fi
+	  cd 1dir
+	  touch foo
+	  if ${testcvs} add foo 2>>${LOGFILE}; then
+	    echo 'PASS: test 163' >>${LOGFILE}
+	  else
+	    echo 'FAIL: test 163' | tee -a ${LOGFILE}
+	  fi
+	  if ${testcvs} ci -m added >>${LOGFILE} 2>&1; then
+	    echo 'PASS: test 164' >>${LOGFILE}
+	  else
+	    echo 'FAIL: test 164' | tee -a ${LOGFILE}
+	  fi
+	  cd ../..
+	  mkdir 2
+	  cd 2
+	  if ${testcvs} -q co 1dir >>${LOGFILE}; then
+	    echo 'PASS: test 165' >>${LOGFILE}
+	  else
+	    echo 'FAIL: test 165' | tee -a ${LOGFILE}
+	  fi
+	  chmod a-w 1dir
+	  cd ../1/1dir
+	  rm foo; 
+	  if ${testcvs} rm foo >>${LOGFILE} 2>&1; then
+	    echo 'PASS: test 166' >>${LOGFILE}
+	  else
+	    echo 'FAIL: test 166' | tee -a ${LOGFILE}
+	  fi
+	  if ${testcvs} ci -m removed >>${LOGFILE} 2>&1; then
+	    echo 'PASS: test 167' >>${LOGFILE}
+	  else
+	    echo 'FAIL: test 167' | tee -a ${LOGFILE}
+	  fi
+	  cd ../../2/1dir
+	  ${testcvs} -q update 2>../tst167.err
+	  cat <<EOF >../tst167.ans
+cvs server: warning: foo is not (any longer) pertinent
+cvs update: unable to remove ./foo: Permission denied
+EOF
+	  if cmp ../tst167.ans ../tst167.err >/dev/null ||
+	  ( echo 'cvs [update aborted]: cannot rename file foo to CVS/,,foo: Permission denied' | cmp - ../tst167.err >/dev/null )
+	  then
+	    echo 'PASS: test 168' >>${LOGFILE}
+	  else
+	    echo 'FAIL: test 168' | tee -a ${LOGFILE}
+	  fi
+
+	  cd ..
+	  chmod u+w 1dir
+	  cd ..
+	  rm -rf 1 2 ${CVSROOT_FILENAME}/1dir
 	  ;;
 
 	*) echo $what is not the name of a test -- ignored ;;

@@ -51,10 +51,6 @@ static void unlockrcs PROTO((char *file, char *repository));
 static void ci_delproc PROTO((Node *p));
 static void masterlist_delproc PROTO((Node *p));
 static void locate_rcs PROTO((char *file, char *repository, char *rcs));
-#ifdef CVSDEA
-static char *ci_new_rev PROTO((char *rev, char *msg, char *rcs));
-static void mark_dead PROTO((char *file, char *repository, char *new_rev));
-#endif
 
 struct commit_info
 {
@@ -193,7 +189,7 @@ commit (argc, argv)
 	if (message)
 	    error (1, 0, "cannot specify both a message and a log file");
 
-	if ((logfd = open (logfile, O_RDONLY)) < 0)
+	if ((logfd = open (logfile, O_RDONLY | OPEN_BINARY)) < 0)
 	    error (1, errno, "cannot open log file %s", logfile);
 
 	if (fstat(logfd, &statbuf) < 0)
@@ -208,6 +204,7 @@ commit (argc, argv)
 	message[n] = '\0';
     }
 
+#ifdef CLIENT_SUPPORT
     if (client_active) 
     {
 	/*
@@ -246,10 +243,13 @@ commit (argc, argv)
 	    error (1, errno, "writing to server");
 	return get_responses_and_close ();
     }
+#endif
 
     /* XXX - this is not the perfect check for this */
     if (argc <= 0)
 	write_dirtag = tag;
+
+    wrap_setup ();
 
     /*
      * Run the recursion processor to find all the dirs to lock and lock all
@@ -440,7 +440,9 @@ check_fileproc (file, update_dir, repository, entries, srcfiles)
     switch (status)
     {
 	case T_CHECKOUT:
+#ifdef SERVER_SUPPORT
 	case T_PATCH:
+#endif
 	case T_NEEDS_MERGE:
 	case T_CONFLICT:
 	case T_REMOVE_ENTRY:
@@ -509,13 +511,19 @@ check_fileproc (file, update_dir, repository, entries, srcfiles)
 		 * If the timestamp on the file is the same as the
 		 * timestamp stored in the Entries file, we block the commit.
 		 */
+#ifdef SERVER_SUPPORT
 		if (server_active)
 		    retcode = vers->ts_conflict[0] != '=';
 		else {
+		    filestamp = time_stamp (file);
+		    retcode = strcmp (vers->ts_conflict, filestamp);
+		    free (filestamp);
+		}
+#else
 		filestamp = time_stamp (file);
 		retcode = strcmp (vers->ts_conflict, filestamp);
 		free (filestamp);
-		}
+#endif
 		if (retcode == 0)
 		{
 		    if (update_dir[0] == '\0')
@@ -732,7 +740,7 @@ precommit_proc (repository, filter)
     char *filter;
 {
     /* see if the filter is there, only if it's a full path */
-    if (filter[0] == '/')
+    if (isabsolute (filter))
     {
     	char *s, *cp;
 	
@@ -921,6 +929,7 @@ commit_fileproc (file, update_dir, repository, entries, srcfiles)
     {
 	err = remove_file (file, repository, ci->tag, message,
 			   entries, srcfiles);
+#ifdef SERVER_SUPPORT
 	if (server_active) {
 	    server_scratch_entry_only ();
 	    server_updated (file, update_dir, repository,
@@ -928,6 +937,7 @@ commit_fileproc (file, update_dir, repository, entries, srcfiles)
 			    SERVER_UPDATED, (struct stat *) NULL,
 			    (unsigned char *) NULL);
 	}
+#endif
     }
 
 out:
@@ -1056,9 +1066,11 @@ commit_dirleaveproc (dir, err, update_dir)
     if (err == 0 && write_dirtag != NULL)
     {
 	WriteTag ((char *) NULL, write_dirtag, (char *) NULL);
+#ifdef SERVER_SUPPORT
 	if (server_active)
 	    server_set_sticky (update_dir, Name_Repository (dir, update_dir),
 			       write_dirtag, (char *) NULL);
+#endif
     }
 
     return (err);
@@ -1193,6 +1205,7 @@ remove_file (file, repository, tag, message, entries, srcfiles)
 	}
     }
 
+#ifdef SERVER_SUPPORT
     if (server_active) {
 	/* If this is the server, there will be a file sitting in the
 	   temp directory which is the kludgy way in which server.c
@@ -1200,6 +1213,7 @@ remove_file (file, repository, tag, message, entries, srcfiles)
 	   it so we can create temp files with that name (ignore errors).  */
 	unlink_file (file);
     }
+#endif
 
     /* check something out.  Generally this is the head.  If we have a
        particular rev, then name it.  except when creating a branch,
@@ -1219,16 +1233,6 @@ remove_file (file, repository, tag, message, entries, srcfiles)
     if (corev != NULL)
 	free (corev);
 
-#ifdef CVSDEA
-    {
-	char *new_rev;
-	new_rev = ci_new_rev (rev, message, rcs);
-	if (new_rev == NULL)
-	    return 1;
-	mark_dead (file, repository, new_rev);
-	free (new_rev);
-    }
-#else
 #ifdef DEATH_STATE
     run_setup ("%s%s -f -sdead %s%s", Rcsbin, RCS_CI, rev ? "-r" : "",
 #else
@@ -1244,7 +1248,6 @@ remove_file (file, repository, tag, message, entries, srcfiles)
 		   "failed to commit dead revision for `%s'", rcs);
 	return (1);
     }
-#endif /* CVSDEA */
 
     if (rev != NULL)
 	free (rev);
@@ -1263,7 +1266,7 @@ remove_file (file, repository, tag, message, entries, srcfiles)
 		      sizeof(RCSEXT) + 1);
 	(void) sprintf (tmp, "%s/%s", repository, CVSATTIC);
 	omask = umask (2);
-	(void) mkdir (tmp, 0777);
+	(void) CVS_MKDIR (tmp, 0777);
 	(void) umask (omask);
 	(void) sprintf (tmp, "%s/%s/%s%s", repository, CVSATTIC, file, RCSEXT);
 	
@@ -1415,7 +1418,7 @@ checkaddfile (file, repository, tag, srcfiles)
     {
 	(void) sprintf(rcs, "%s/%s", repository, CVSATTIC);
 	omask = umask (2);
-	if (mkdir (rcs, 0777) != 0 && errno != EEXIST)
+	if (CVS_MKDIR (rcs, 0777) != 0 && errno != EEXIST)
 	    error (1, errno, "cannot make directory `%s'", rcs);;
 	(void) umask (omask);
 	(void) sprintf (rcs, "%s/%s/%s%s", repository, CVSATTIC, file, RCSEXT);
@@ -1521,16 +1524,6 @@ checkaddfile (file, repository, tag, srcfiles)
 	
 	/* commit a dead revision. */
 	(void) sprintf (tmp, "-mfile %s was initially added on branch %s.", file, tag);
-#ifdef CVSDEA
-	{
-	    char *new_rev;
-	    new_rev = ci_new_rev (NULL, tmp, rcs);
-	    if (new_rev == NULL)
-		return 1;
-	    mark_dead (file, repository, new_rev);
-	    free (new_rev);
-	}
-#else
 #ifdef DEATH_STATE
 	run_setup ("%s%s -q -f -sdead", Rcsbin, RCS_CI);
 #else
@@ -1544,7 +1537,6 @@ checkaddfile (file, repository, tag, srcfiles)
 		   "could not create initial dead revision %s", rcs);
 	    return (1);
 	}
-#endif /* CVSDEA */
 
 	/* put the new file back where it was */
 	rename_file (fname, file);
@@ -1818,72 +1810,3 @@ locate_rcs (file, repository, rcs)
 	    (void) sprintf (rcs, "%s/%s%s", repository, file, RCSEXT);
     }
 }
-
-#ifdef CVSDEA
-/* Run RCS_CI and return a malloc'd array containing the numeric
-   revision for the new revision.  */
-static char *
-ci_new_rev (rev, msg, rcs)
-    char *rev;
-    char *msg;
-    char *rcs;
-{
-    int retcode;
-    char *tmpdir;
-    RCSNode *rcsnode;
-
-    int retval_alloced;
-    int retval_used;
-    char *retval;
-
-    tmpdir = getenv ("TMPDIR");
-    if (tmpdir == NULL || tmpdir[0] == '\0') 
-      tmpdir = "/tmp";
-
-    run_setup ("%s%s -f %s%s", Rcsbin, RCS_CI, rev ? "-r" : "",
-	       rev ? rev : ""); 
-    run_args ("-m%s", make_message_rcslegal (message));
-    run_arg (rcs);
-    if ((retcode = run_exec (RUN_TTY, RUN_TTY, DEVNULL, RUN_NORMAL))
-	!= 0) {
-	if (!quiet)
-	    error (0, retcode == -1 ? errno : 0,
-		   "failed to commit dead revision for `%s'", rcs);
-	return NULL;
-    }
-
-    rcsnode = RCS_parsercsfile (rcs);
-    retval =
-      rev == NULL ? RCS_head (rcsnode) : RCS_getbranch (rcsnode, rev, 0);
-    freercsnode (&rcsnode);
-    return retval;
-}
-
-static void
-mark_dead (file, repository, new_rev)
-    char *file;
-    char *repository;
-    char *new_rev;
-{
-    mode_t omask;
-    char *deafilename = xmalloc (sizeof (CVSDEA) + strlen (repository)
-				 + strlen (file) + 80);
-    FILE *deafile;
-
-    /* Make the CVSDEA directory if we need to.  */
-    sprintf (deafilename, "%s/%s", repository, CVSDEA);
-    omask = umask (2);
-    if (mkdir (deafilename, 0777) != 0 && errno != EEXIST)
-	error (1, errno, "cannot make directory `%s'", deafilename);
-    (void) umask (omask);
-
-    /* Now add NEW_REV to the revisions in the CVSDEA file for this file.  */
-    sprintf (deafilename, "%s/%s/%s", repository, CVSDEA, file);
-    deafile = open_file (deafilename, "a");
-    if (fprintf (deafile, "%s\n", new_rev) < 0)
-	error (1, errno, "cannot write %s", deafilename);
-    if (fclose (deafile) == EOF)
-	error (1, errno, "cannot close %s", deafilename);
-    free (deafilename);
-}
-#endif

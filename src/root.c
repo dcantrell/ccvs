@@ -90,7 +90,8 @@ Name_Root(dir, update_dir)
 
 #ifdef CLIENT_SUPPORT
     /* It must specify a server via remote CVS or be an absolute pathname.  */
-    if ((strchr (root, ':') == NULL) && root[0] != '/')
+    if ((strchr (root, ':') == NULL)
+    	&& ! isabsolute (root))
 #else
     if (root[0] != '/')
 #endif

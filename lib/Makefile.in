@@ -70,10 +70,11 @@ OBJECTS = \
     getdate.o
 
 DISTFILES = \
+        getdate.c \
 	.cvsignore ChangeLog ChangeLog.fsf Makefile.in \
 	${SOURCES} ${HEADERS}
 
-DEFS = @DEFS@ -DREGEX_MALLOC
+DEFS = @DEFS@
 RANLIB = @RANLIB@
 
 CC       = @CC@

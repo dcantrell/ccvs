@@ -15,9 +15,9 @@ USE(rcsid)
 
 #define ctime(X)	do not use ctime, please
 
-extern int use_unchanged;	/* in server.c */
-
+#ifdef SERVER_SUPPORT
 static void time_stamp_server PROTO((char *, Vers_TS *));
+#endif
 
 /*
  * Fill in and return a Vers_TS structure "user" is the name of the local
@@ -176,9 +176,11 @@ Version_TS (repository, options, tag, date, user, force_tag_match,
     /* get user file time-stamp in ts_user */
     if (entries != (List *) NULL)
     {
+#ifdef SERVER_SUPPORT
 	if (server_active)
 	    time_stamp_server (user, vers_ts);
 	else
+#endif
 	    vers_ts->ts_user = time_stamp (user);
     }
 

@@ -74,6 +74,9 @@ cvsremove (argc, argv)
     argc -= optind;
     argv += optind;
 
+    wrap_setup ();
+
+#ifdef CLIENT_SUPPORT
     if (client_active) {
 	start_server ();
 	ign_setup ();
@@ -84,6 +87,7 @@ cvsremove (argc, argv)
 	    error (1, errno, "writing to server");
         return get_responses_and_close ();
     }
+#endif
 
     /* start the recursion processor */
     err = start_recursion (remove_fileproc, (int (*) ()) NULL, remove_dirproc,
@@ -155,8 +159,10 @@ remove_fileproc (file, update_dir, repository, entries, srcfiles)
 	if (!quiet)
 	    error (0, 0, "removed `%s'", file);
 
+#ifdef SERVER_SUPPORT
 	if (server_active)
 	    server_checked_in (file, update_dir, repository);
+#endif
     }
     else if (vers->vn_user[0] == '-')
     {
@@ -174,8 +180,10 @@ remove_fileproc (file, update_dir, repository, entries, srcfiles)
 	    error (0, 0, "scheduling `%s' for removal", file);
 	removed_files++;
 
+#ifdef SERVER_SUPPORT
 	if (server_active)
 	    server_checked_in (file, update_dir, repository);
+#endif
     }
 
     freevers_ts (&vers);

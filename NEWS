@@ -1,4 +1,27 @@
-Changes from 1.4A2 to the present:
+Changes from 1.5 to the present:
+
+* "cvs update", "cvs rdiff", "cvs checkout", "cvs import", "cvs
+release", "cvs rtag", and "cvs tag" used to take -q and -Q options
+after the command name (e.g. "cvs update -q").  This was confusing
+because other commands, such as "cvs ci", did not.  So the options
+after the command name have been removed and you must now specify, for
+example, "cvs -q update", which has been supported since CVS 1.3.
+
+* New "wrappers" feature.  This allows you to set a hook which
+transforms files on their way in and out of cvs (apparently on the
+NeXT there is some particular usefulness in tarring things up in the
+repository).  It also allows you to declare files as merge-by-copy
+which means that instead of trying to merge the file, CVS will merely
+copy the new version.
+
+* You can set CVSROOT to user@host:dir, not just host:dir, if your
+username on the server host is different than on the client host.
+
+* VISUAL is accepted as well as EDITOR.
+
+* $CVSROOT is expanded in *info files.
+
+Changes from 1.4A2 to 1.5:
 
 * Remote implementation.  This is very helpful when collaborating on a
 project with someone across a wide-area network.  This release can
@@ -25,7 +48,7 @@ updated to include the remote features.
 
 * CVS 1.2 compatibility code has been removed as a speedup.  If you
 have working directories checked out by CVS 1.2, CVS 1.3 or 1.4A2 will
-try to convert them, but this version of CVS will not (if the working
+try to convert them, but CVS 1.5 and later will not (if the working
 directory is up to date and contains no extraneous files, you can just
 remove it, and then check out a new working directory).  Likewise if
 your repository contains a CVSROOT.adm directory instead of a CVSROOT

@@ -21,9 +21,7 @@ static void release_delete PROTO((char *dir));
 static const char *const release_usage[] =
 {
     "Usage: %s %s [-d] modules...\n",
-    "\t-Q\tReally quiet.\n",
     "\t-d\tDelete the given directory.\n",
-    "\t-q\tSomewhat quiet.\n",
     NULL
 };
 
@@ -51,10 +49,15 @@ release (argc, argv)
 	switch (c)
 	{
 	    case 'Q':
-		really_quiet = 1;
-		/* FALL THROUGH */
 	    case 'q':
-		quiet = 1;
+#ifdef SERVER_SUPPORT
+		/* The CVS 1.5 client sends these options (in addition to
+		   Global_option requests), so we must ignore them.  */
+		if (!server_active)
+#endif
+		    error (1, 0,
+			   "-q or -Q must be specified before \"%s\"",
+			   command_name);
 		break;
 	    case 'd':
 		delete++;
@@ -68,16 +71,13 @@ release (argc, argv)
     argc -= optind;
     argv += optind;
 
+#ifdef CLIENT_SUPPORT
     if (client_active) {
 	/* We're the client side.  Fire up the remote server.  */
 	start_server ();
 	
 	ign_setup ();
 
-	if (quiet)
-	    send_arg("-q");
-	if (really_quiet)
-	    send_arg("-Q");
 	if (delete)
 	    send_arg("-d");
 
@@ -85,6 +85,7 @@ release (argc, argv)
 	    error (1, errno, "writing to server");
         return get_responses_and_close ();
     }
+#endif
 
     if (!(db = open_module ()))
 	return (1);
@@ -154,7 +155,7 @@ release (argc, argv)
 		   key.dptr, val.dptr);
 	    continue;
 	}
-	if (strcmp (*margv, srepos))
+	if (fncmp (*margv, srepos))
 	{
 	    error (0, 0, "repository mismatch: module[%s], here[%s]",
 		   *margv, srepos);

@@ -62,6 +62,8 @@ add (argc, argv)
     if (argc == 1 || argc == -1)
 	usage (add_usage);
 
+    wrap_setup ();
+
     /* parse args */
     optind = 1;
     while ((c = getopt (argc, argv, "k:m:")) != -1)
@@ -92,6 +94,7 @@ add (argc, argv)
     /* find the repository associated with our current dir */
     repository = Name_Repository ((char *) NULL, (char *) NULL);
 
+#ifdef CLIENT_SUPPORT
     if (client_active)
       {
 	int i;
@@ -129,6 +132,7 @@ add (argc, argv)
 	  error (1, errno, "writing to server");
 	return get_responses_and_close ();
       }
+#endif
 
     entries = Entries_Open (0);
 
@@ -162,7 +166,7 @@ add (argc, argv)
 		    error (0, 0, "nothing known about %s", user);
 		    err++;
 		}
-		else if (!isdir (user))
+		else if (!isdir (user) || wrap_name_has (user, WRAP_TOCVS))
 		{
 		    /*
 		     * See if a directory exists in the repository with
@@ -183,19 +187,27 @@ add (argc, argv)
 		    /* There is a user file, so build the entry for it */
 		    if (build_entry (repository, user, vers->options,
 				     message, entries, vers->tag) != 0)
-		      err++;
+			err++;
 		    else 
 		    {
-		      added_files++;
-		      if (!quiet)
+			added_files++;
+			if (!quiet)
 			{
 #ifdef DEATH_SUPPORT
-			if (vers->tag)
-			    error (0, 0, "scheduling file `%s' for addition on branch `%s'",
-				   user, vers->tag);
-			else
+			    if (vers->tag)
+				error (0, 0, "\
+scheduling %s `%s' for addition on branch `%s'",
+				       (wrap_name_has (user, WRAP_TOCVS)
+					? "wrapper"
+					: "file"),
+				       user, vers->tag);
+			    else
 #endif /* DEATH_SUPPORT */
-		        error (0, 0, "scheduling file `%s' for addition", user);
+			    error (0, 0, "scheduling %s `%s' for addition",
+				   (wrap_name_has (user, WRAP_TOCVS)
+				    ? "wrapper"
+				    : "file"),
+				   user);
 			}
 		    }
 		}
@@ -308,13 +320,17 @@ add (argc, argv)
 	freevers_ts (&vers);
 
 	/* passed all the checks.  Go ahead and add it if its a directory */
-	if (begin_err == err && isdir (user))
+	if (begin_err == err
+	    && isdir (user)
+	    && !wrap_name_has (user, WRAP_TOCVS))
 	{
 	    err += add_directory (repository, user);
 	    continue;
 	}
+#ifdef SERVER_SUPPORT
 	if (server_active && begin_added_files != added_files)
 	    server_checked_in (user, ".", repository);
+#endif
     }
     if (added_files)
 	error (0, 0, "use 'cvs commit' to add %s permanently",
@@ -370,7 +386,11 @@ add_directory (repository, dir)
 	error (0, errno, "cannot chdir to %s", dir);
 	return (1);
     }
+#ifdef SERVER_SUPPORT
     if (!server_active && isfile (CVSADM))
+#else
+    if (isfile (CVSADM))
+#endif
     {
 	error (0, 0, "%s/%s already exists", dir, CVSADM);
 	goto out;
@@ -420,7 +440,7 @@ add_directory (repository, dir)
 #endif
 
 	omask = umask ((mode_t) 2);
-	if (mkdir (rcsdir, 0777) < 0)
+	if (CVS_MKDIR (rcsdir, 0777) < 0)
 	{
 	    error (0, errno, "cannot mkdir %s", rcsdir);
 	    (void) umask (omask);
@@ -442,8 +462,12 @@ add_directory (repository, dir)
 	dellist (&ulist);
     }
 
+#ifdef SERVER_SUPPORT
     if (!server_active)
 	Create_Admin (".", dir, rcsdir, tag, date);
+#else
+    Create_Admin (".", dir, rcsdir, tag, date);
+#endif
     if (tag)
 	free (tag);
     if (date)

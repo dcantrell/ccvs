@@ -390,9 +390,7 @@ again:
 		 */
 		if (now >= (sb.st_ctime + CVSLCKAGE) && unlink (line) != -1)
 		{
-		    if (closedir (dirp) < 0)
-			error (0, errno,
-			       "error closing directory %s", repository);
+		    (void) closedir (dirp);
 		    goto again;
 		}
 #endif
@@ -407,8 +405,7 @@ again:
     if (errno != 0)
 	error (0, errno, "error reading directory %s", repository);
 
-    if (closedir (dirp) < 0)
-	error (0, errno, "error closing directory %s", repository);
+    closedir (dirp);
     return (ret);
 }
 
@@ -457,7 +454,7 @@ set_lock (repository, will_wait)
     for (;;)
     {
 	SIG_beginCrSect ();
-	if (mkdir (masterlock, 0777) == 0)
+	if (CVS_MKDIR (masterlock, 0777) == 0)
 	{
 	    cleanup_lckdir = 1;
 	    SIG_endCrSect ();

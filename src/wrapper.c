@@ -1,7 +1,7 @@
 #include "cvs.h"
 
 /*
-  Original Author:  athan@object.com <Andrew C. Athan> 2/1/94
+  Original Author:  athan@morgan.com <Andrew C. Athan> 2/1/94
   Modified By:      vdemarco@bou.shl.com
 
   This package was written to support the NEXTSTEP concept of
@@ -49,15 +49,12 @@ static int wrap_saved_tempcount=0;
 
 #define WRAPPER_GROW	8
 
-void wrap_add_file PROTO((const char *file,int temp));
-void wrap_add PROTO((char *line,int temp));
 void wrap_add_entry PROTO((WrapperEntry *e,int temp));
 void wrap_kill PROTO((void));
 void wrap_kill_temp PROTO((void));
 void wrap_free_entry PROTO((WrapperEntry *e));
 void wrap_free_entry_internal PROTO((WrapperEntry *e));
 void wrap_restore_saved PROTO((void));
-
 
 void wrap_setup()
 {
@@ -311,7 +308,6 @@ wrap_matching_entry (name)
     const char *name;
 {
     int x,count=wrap_count+wrap_saved_count;
-    char *temp;
 
     for(x=0;x<count;++x)
 	if (fnmatch (wrap_list[x]->wildCard, name, 0) == 0)
@@ -325,7 +321,6 @@ wrap_tocvs_process_file(fileName)
 {
     WrapperEntry *e=wrap_matching_entry(fileName);
     static char buf[L_tmpnam+1];
-    int err;
 
     if(e==NULL || e->tocvsFilter==NULL)
 	return NULL;
@@ -355,7 +350,6 @@ wrap_fromcvs_process_file(fileName)
 {
     WrapperEntry *e=wrap_matching_entry(fileName);
     static char buf[PATH_MAX];
-    int err;
 
     if(e==NULL || e->fromcvsFilter==NULL)
 	return NULL;

@@ -42,6 +42,8 @@ admin (argc, argv)
     if (argc <= 1)
 	usage (admin_usage);
 
+    wrap_setup ();
+
     /* skip all optional arguments to see if we have any file names */
     for (ac = 1; ac < argc; ac++)
 	if (argv[ac][0] != '-')
@@ -53,6 +55,7 @@ admin (argc, argv)
     if (ac == 0 || argc == 0)
 	usage (admin_usage);
 
+#ifdef CLIENT_SUPPORT
     if (client_active)
     {
 	int i;
@@ -77,6 +80,7 @@ admin (argc, argv)
 	    error (1, errno, "writing to server");
         return get_responses_and_close ();
     }
+#endif /* CLIENT_SUPPORT */
 
     /* start the recursion processor */
     err = start_recursion (admin_fileproc, (int (*) ()) NULL, admin_dirproc,

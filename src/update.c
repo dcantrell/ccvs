@@ -34,8 +34,12 @@
  */
 
 #include "cvs.h"
+#ifdef CLIENT_SUPPORT
 #include "update.h"
+#endif
+#ifdef SERVER_SUPPORT
 #include "md5.h"
+#endif
 
 #ifndef lint
 static const char rcsid[] = "$CVSid: @(#)update.c 1.95 94/10/22 $";
@@ -93,21 +97,21 @@ static List *ignlist = (List *) NULL;
 static time_t last_register_time;
 static const char *const update_usage[] =
 {
-    "Usage:\n %s %s [-APQdflRpq] [-k kopt] [-r rev|-D date] [-j rev] [-I ign] [files...]\n",
+    "Usage: %s %s [-APdflRp] [-k kopt] [-r rev|-D date] [-j rev]\n",
+    "    [-I ign] [-W spec] [files...]\n",
     "\t-A\tReset any sticky tags/date/kopts.\n",
     "\t-P\tPrune empty directories.\n",
-    "\t-Q\tReally quiet.\n",
     "\t-d\tBuild directories, like checkout does.\n",
     "\t-f\tForce a head revision match if tag/date not found.\n",
     "\t-l\tLocal directory only, no recursion.\n",
     "\t-R\tProcess directories recursively.\n",
     "\t-p\tSend updates to standard output.\n",
-    "\t-q\tSomewhat quiet.\n",
     "\t-k kopt\tUse RCS kopt -k option on checkout.\n",
     "\t-r rev\tUpdate using specified revision/tag.\n",
     "\t-D date\tSet date to update from.\n",
     "\t-j rev\tMerge in changes made between current revision and rev.\n",
     "\t-I ign\tMore files to ignore (! to reset).\n",
+    "\t-W spec\tWrappers specification line.\n",
     NULL
 };
 
@@ -127,10 +131,11 @@ update (argc, argv)
 	usage (update_usage);
 
     ign_setup ();
+    wrap_setup ();
 
     /* parse the args */
     optind = 1;
-    while ((c = getopt (argc, argv, "ApPflRQqduk:r:D:j:I:")) != -1)
+    while ((c = getopt (argc, argv, "ApPflRQqduk:r:D:j:I:W:")) != -1)
     {
 	switch (c)
 	{
@@ -139,6 +144,9 @@ update (argc, argv)
 		break;
 	    case 'I':
 		ign_add (optarg, 0);
+		break;
+	    case 'W':
+		wrap_add (optarg, 0);
 		break;
 	    case 'k':
 		if (options)
@@ -152,10 +160,15 @@ update (argc, argv)
 		local = 0;
 		break;
 	    case 'Q':
-		really_quiet = 1;
-		/* FALL THROUGH */
 	    case 'q':
-		quiet = 1;
+#ifdef SERVER_SUPPORT
+		/* The CVS 1.5 client sends these options (in addition to
+		   Global_option requests), so we must ignore them.  */
+		if (!server_active)
+#endif
+		    error (1, 0,
+			   "-q or -Q must be specified before \"%s\"",
+			   command_name);
 		break;
 	    case 'd':
 		update_build_dirs = 1;
@@ -185,9 +198,11 @@ update (argc, argv)
 		    join_rev1 = optarg;
 		break;
 	    case 'u':
+#ifdef SERVER_SUPPORT
 		if (server_active)
 		    patches = 1;
 		else
+#endif
 		    usage (update_usage);
 		break;
 	    case '?':
@@ -199,6 +214,7 @@ update (argc, argv)
     argc -= optind;
     argv += optind;
 
+#ifdef CLIENT_SUPPORT
     if (client_active) 
     {
 	/* The first pass does the regular update.  If we receive at least
@@ -214,10 +230,6 @@ update (argc, argv)
 
 	    if (local)
 		send_arg("-l");
-	    if (quiet)
-		send_arg("-q");
-	    if (really_quiet)
-		send_arg("-Q");
 	    if (update_build_dirs)
 		send_arg("-d");
 	    if (pipeout)
@@ -292,6 +304,7 @@ update (argc, argv)
 
 	return 0;
     }
+#endif
 
     /*
      * If we are updating the entire directory (for real) and building dirs
@@ -304,16 +317,20 @@ update (argc, argv)
 	{
 	    if (unlink_file (CVSADM_ENTSTAT) < 0 && errno != ENOENT)
 		error (1, errno, "cannot remove file %s", CVSADM_ENTSTAT);
+#ifdef SERVER_SUPPORT
 	    if (server_active)
 		server_clear_entstat (".", Name_Repository (NULL, NULL));
+#endif
 	}
 
 	/* keep the CVS/Tag file current with the specified arguments */
 	if (aflag || tag || date)
 	{
 	    WriteTag ((char *) NULL, tag, date);
+#ifdef SERVER_SUPPORT
 	    if (server_active)
 		server_set_sticky (".", Name_Repository (NULL, NULL), tag, date);
+#endif
 	}
     }
 
@@ -459,7 +476,9 @@ update_file_proc (file, update_dir, repository, entries, srcfiles)
 	    case T_MODIFIED:		/* locally modified */
 	    case T_REMOVED:		/* removed but not committed */
 	    case T_CHECKOUT:		/* needs checkout */
+#ifdef SERVER_SUPPORT
 	    case T_PATCH:		/* needs patch */
+#endif
 		retval = checkout_file (file, repository, entries, srcfiles,
 					vers, update_dir);
 		break;
@@ -492,8 +511,14 @@ update_file_proc (file, update_dir, repository, entries, srcfiles)
 		}
 		else
 		{
-		    retval = merge_file (file, repository, entries,
-					 vers, update_dir);
+		    if (wrap_merge_is_copy (file))
+			/* Should we be warning the user that we are
+			 * overwriting the user's copy of the file?  */
+			retval = checkout_file (file, repository, entries,
+						srcfiles, vers, update_dir);
+		    else
+			retval = merge_file (file, repository, entries,
+					     vers, update_dir);
 		}
 		break;
 	    case T_MODIFIED:		/* locally modified */
@@ -507,13 +532,19 @@ update_file_proc (file, update_dir, repository, entries, srcfiles)
 		     * If the timestamp has changed and no conflict indicators
 		     * are found, it isn't a 'C' any more.
 		     */
+#ifdef SERVER_SUPPORT
 		    if (server_active)
 			retcode = vers->ts_conflict[0] != '=';
 		    else {
+			filestamp = time_stamp (file);
+			retcode = strcmp (vers->ts_conflict, filestamp);
+			free (filestamp);
+		    }
+#else
 		    filestamp = time_stamp (file);
 		    retcode = strcmp (vers->ts_conflict, filestamp);
 		    free (filestamp);
-		    }
+#endif
 
 		    if (retcode)
 		    {
@@ -554,6 +585,7 @@ update_file_proc (file, update_dir, repository, entries, srcfiles)
 		if (!retval)
 		    retval = write_letter (file, 'M', update_dir);
 		break;
+#ifdef SERVER_SUPPORT
 	    case T_PATCH:		/* needs patch */
 		if (patches)
 		{
@@ -578,13 +610,16 @@ update_file_proc (file, update_dir, repository, entries, srcfiles)
 		   file out.  It's simpler and faster than starting up
 		   two new processes (diff and patch).  */
 		/* Fall through.  */
+#endif
 	    case T_CHECKOUT:		/* needs checkout */
 		retval = checkout_file (file, repository, entries, srcfiles,
 					vers, update_dir);
+#ifdef SERVER_SUPPORT
 		if (server_active && retval == 0)
 		    server_updated (file, update_dir, repository,
 				    SERVER_UPDATED, (struct stat *) NULL,
 				    (unsigned char *) NULL);
+#endif
 		break;
 	    case T_ADDED:		/* added but not committed */
 		retval = write_letter (file, 'A', update_dir);
@@ -594,10 +629,12 @@ update_file_proc (file, update_dir, repository, entries, srcfiles)
 		break;
 	    case T_REMOVE_ENTRY:	/* needs to be un-registered */
 		retval = scratch_file (file, repository, entries, update_dir);
+#ifdef SERVER_SUPPORT
 		if (server_active && retval == 0)
 		    server_updated (file, update_dir, repository,
 				    SERVER_UPDATED, (struct stat *) NULL,
 				    (unsigned char *) NULL);
+#endif
 		break;
 	    default:			/* can't ever happen :-) */
 		error (0, 0,
@@ -668,7 +705,11 @@ update_filesdone_proc (err, repository, update_dir)
 	(void) run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL);
     }
 #ifdef CVSADM_ROOT
+#ifdef SERVER_SUPPORT
     else if (!server_active)
+#else
+    else
+#endif /* SERVER_SUPPORT */
     {
         /* If there is no CVS/Root file, add one */
 #ifdef CLIENT_SUPPORT
@@ -741,16 +782,20 @@ update_dirent_proc (dir, repository, update_dir)
 	    (void) sprintf (tmp, "%s/%s", dir, CVSADM_ENTSTAT);
 	    if (unlink_file (tmp) < 0 && errno != ENOENT)
 		error (1, errno, "cannot remove file %s", tmp);
+#ifdef SERVER_SUPPORT
 	    if (server_active)
 		server_clear_entstat (update_dir, repository);
+#endif
 	}
 
 	/* keep the CVS/Tag file current with the specified arguments */
 	if (aflag || tag || date)
 	{
 	    WriteTag (dir, tag, date);
+#ifdef SERVER_SUPPORT
 	    if (server_active)
 		server_set_sticky (update_dir, repository, tag, date);
+#endif
 	}
 
 	/* initialize the ignore list for this directory */
@@ -974,6 +1019,8 @@ checkout_file (file, repository, entries, srcfiles, vers_ts, update_dir)
 	    }
 	    else
 		set_time = 0;
+
+	    wrap_fromcvs_process_file (file);
 
 	    xvers_ts = Version_TS (repository, options, tag, date, file,
 			      force_tag_match, set_time, entries, srcfiles);
@@ -1367,6 +1414,7 @@ merge_file (file, repository, entries, vers, update_dir)
 	vers->vn_user = xstrdup (vers->vn_rcs);
     }
 
+#ifdef SERVER_SUPPORT
     /* Send the new contents of the file before the message.  If we
        wanted to be totally correct, we would have the client write
        the message only after the file has safely been written.  */
@@ -1376,6 +1424,7 @@ merge_file (file, repository, entries, vers, update_dir)
 	server_updated (file, update_dir, repository, SERVER_MERGED,
 			(struct stat *) NULL, (unsigned char *) NULL);
     }
+#endif
 
     if (!noexec && !xcmp (backup, file))
     {
@@ -1442,6 +1491,14 @@ join_file (file, srcfiles, vers, update_dir, entries)
     jrev2 = join_rev2;
     jdate1 = date_rev1;
     jdate2 = date_rev2;
+
+    if (wrap_merge_is_copy (file))
+    {
+	/* FIXME: Should be including update_dir in message.  */
+	error (0, 0,
+	       "Cannot merge %s because it is a merge-by-copy file.", file);
+	return;
+    }
 
     /* determine if we need to do anything at all */
     if (vers->srcfile == NULL ||
@@ -1631,6 +1688,7 @@ join_file (file, srcfiles, vers, update_dir, entries)
 
     /* OK, so we have two revisions; continue on */
 
+#ifdef SERVER_SUPPORT
     if (server_active && !isreadable (file))
     {
 	int retcode;
@@ -1642,6 +1700,7 @@ join_file (file, srcfiles, vers, update_dir, entries)
 	    error (1, retcode == -1 ? errno : 0,
 		   "failed to check out %s file", file);
     }
+#endif
     
     /*
      * The users currently modified file is moved to a backup file name
@@ -1692,12 +1751,14 @@ join_file (file, srcfiles, vers, update_dir, entries)
 	    free(cp);
     }
 
+#ifdef SERVER_SUPPORT
     if (server_active)
     {
 	server_copy_file (file, update_dir, repository, backup);
 	server_updated (file, update_dir, repository, SERVER_MERGED,
 			(struct stat *) NULL, (unsigned char *) NULL);
     }
+#endif
 }
 
 /*
@@ -1726,6 +1787,8 @@ ignore_files (ilist, update_dir)
 	return;
 
     ign_add_file (CVSDOTIGNORE, 1);
+    wrap_add_file (CVSDOTWRAPPER, 1);
+
     while ((dp = readdir (dirp)) != NULL)
     {
 	file = dp->d_name;

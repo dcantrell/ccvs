@@ -508,23 +508,6 @@ rather than writing them in the current directory.  Available with the
 .BR checkout " and " update
 commands.
 .TP
-.B \-Q
-Causes the command to be
-.I really
-quiet; the command will generate output only for serious problems.
-Available with the following commands:
-.BR checkout ", " import ", " export ", "
-.BR rdiff ", " rtag ", "
-.BR tag ", and " update .
-.TP
-.B \-q
-Causes the command to be somewhat quiet; informational messages, such
-as reports of recursion through subdirectories, are suppressed.
-Available with the following commands:
-.BR checkout ", " import ", " export ", "
-.BR rtag ", "
-.BR tag ", and " update .
-.TP
 \fB\-r\fP \fItag\fP
 Use the revision specified by the
 .I tag
@@ -553,9 +536,9 @@ can be either a symbolic or numeric tag, in
 fashion.
 Specifying the
 .B \-q
-option along with the
+global option along with the
 .B \-r
-option is often useful, to suppress the warning messages when the
+command option is often useful, to suppress the warning messages when the
 .SM RCS
 file does not contain the specified tag.
 .B \-r
@@ -787,7 +770,7 @@ sure that it will be a sub-directory, and that
 will show the relative path leading to each file as it is extracted into
 your private work area (unless you specify the
 .B \-Q
-option).
+global option).
 .SP
 Running
 .` "cvs checkout"
@@ -805,11 +788,11 @@ The
 permitted with
 .` "cvs checkout"
 include the standard command options
-.BR \-P ", " \-Q ", " \-f ", "
+.BR \-P ", " \-f ", "
 .BI \-k " kflag"
 \&,
 .BR \-l ", " \-n ", " \-p ", "
-.BR \-q ", " \-r
+.BR \-r
 .IR tag ", and"
 .BI \-D " date"\c
 \&.
@@ -1310,9 +1293,9 @@ least one \fIreleasetag\fP to identify the files at the leaves created
 each time you execute
 .` "cvs import".
 .SP
-Three of the standard
+One of the standard
 .B cvs
-command options are available: \fB\-Q\fP, \fB\-q\fP, and \fB\-m\fP
+command options is available: \fB\-m\fP
 \fImessage\fP.  If you do not specify a logging message with
 \fB\-m\fP, your editor is invoked (as with \fBcommit\fP) to allow you
 to enter one.
@@ -1411,8 +1394,8 @@ version \fIvn\fP (the expansion format changed with
 .SM RCS
 version 5).
 .SP
-The standard option \fIflags\fP \fB\-f\fP, \fB\-l\fP, \fB\-Q\fP, and
-\fB\-q\fP are available with this command.  There are also several
+The standard option \fIflags\fP \fB\-f\fP, and \fB\-l\fP
+are available with this command.  There are also several
 special options flags:
 .SP
 If you use the
@@ -1564,9 +1547,6 @@ is specified; a typical use is to send electronic mail to a group of
 interested parties.  If you want to bypass that program, use the
 standard \fB\-n\fP option.
 .SP
-The standard options \fB\-Q\fP and \fB\-q\fP are also available with
-this command.
-.SP
 Use the
 .B \-a
 option to have
@@ -1608,9 +1588,6 @@ The
 option causes the symbolic tags for the
 .SM RCS
 file to be displayed as well.
-.SP
-The standard options \fB\-Q\fP and \fB\-q\fP are also available with
-this command.
 .TP
 \fBtag\fP [\fB\-lQqR\fP] [\fB\-b\fP] [\fB\-d\fP] \fIsymbolic_tag\fP [\fIfiles\fP\|.\|.\|.\|]
 .I Requires:
@@ -1837,7 +1814,7 @@ Use
 to avoid ignoring any files at all.
 .SP
 The standard \fBcvs\fP command options \fB\-f\fP, \fB\-k\fP,
-\fB\-l\fP, \fB\-P\fP, \fB\-p\fP, \fB\-Q\fP, \fB\-q\fP, and \fB\-r\fP
+\fB\-l\fP, \fB\-P\fP, \fB\-p\fP, and \fB\-r\fP
 are also available with \fBupdate\fP.
 .RE
 .SH "FILES"

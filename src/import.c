@@ -23,8 +23,6 @@ static const char rcsid[] = "$CVSid: @(#)import.c 1.63 94/09/30 $";
 USE(rcsid)
 #endif
 
-#define	FILE_HOLDER	".#cvsxxx"
-
 static char *get_comment PROTO((char *user));
 static int add_rcs_file PROTO((char *message, char *rcs, char *user, char *vtag,
 		         int targc, char *targv[]));
@@ -52,15 +50,14 @@ static char *keyword_opt = NULL;
 
 static const char *const import_usage[] =
 {
-    "Usage: %s %s [-Qq] [-d] [-k subst] [-I ign] [-m msg] [-b branch]\n",
-    "    repository vendor-tag release-tags...\n",
-    "\t-Q\tReally quiet.\n",
-    "\t-q\tSomewhat quiet.\n",
+    "Usage: %s %s [-d] [-k subst] [-I ign] [-m msg] [-b branch]\n",
+    "    [-W spec] repository vendor-tag release-tags...\n",
     "\t-d\tUse the file's modification time as the time of import.\n",
     "\t-k sub\tSet default RCS keyword substitution mode.\n",
     "\t-I ign\tMore files to ignore (! to reset).\n",
     "\t-b bra\tVendor branch id.\n",
     "\t-m msg\tLog message.\n",
+    "\t-W spec\tWrappers specification line.\n",
     NULL
 };
 
@@ -80,18 +77,24 @@ import (argc, argv)
 	usage (import_usage);
 
     ign_setup ();
+    wrap_setup ();
 
     (void) strcpy (vbranch, CVSBRANCH);
     optind = 1;
-    while ((c = getopt (argc, argv, "Qqdb:m:I:k:")) != -1)
+    while ((c = getopt (argc, argv, "Qqdb:m:I:k:W:")) != -1)
     {
 	switch (c)
 	{
 	    case 'Q':
-		really_quiet = 1;
-		/* FALL THROUGH */
 	    case 'q':
-		quiet = 1;
+#ifdef SERVER_SUPPORT
+		/* The CVS 1.5 client sends these options (in addition to
+		   Global_option requests), so we must ignore them.  */
+		if (!server_active)
+#endif
+		    error (1, 0,
+			   "-q or -Q must be specified before \"%s\"",
+			   command_name);
 		break;
 	    case 'd':
 		use_file_modtime = 1;
@@ -117,6 +120,9 @@ import (argc, argv)
 		free (RCS_check_kflag(optarg));	
 		keyword_opt = optarg;
 		break;
+	    case 'W':
+		wrap_add (optarg, 0);
+		break;
 	    case '?':
 	    default:
 		usage (import_usage);
@@ -132,7 +138,7 @@ import (argc, argv)
 	RCS_check_tag (argv[i]);
 
     /* XXX - this should be a module, not just a pathname */
-    if (argv[0][0] != '/')
+    if (! isabsolute (argv[0]))
     {
 	if (CVSroot == NULL)
 	{
@@ -164,6 +170,7 @@ import (argc, argv)
     cp = strrchr (vhead, '.');
     *cp = '\0';
 
+#ifdef CLIENT_SUPPORT
     if (client_active)
     {
 	/* Do this now; don't ask for a log message if we can't talk to the
@@ -171,6 +178,7 @@ import (argc, argv)
 	   an error message without connecting.  */
 	start_server ();
     }
+#endif
 
     if (use_editor)
     {
@@ -191,16 +199,13 @@ import (argc, argv)
 	message = nm;
     }
 
+#ifdef CLIENT_SUPPORT
     if (client_active)
     {
 	int err;
 
 	ign_setup ();
 
-	if (quiet)
-	    send_arg("-q");
-	if (really_quiet)
-	    send_arg("-Q");
 	if (use_file_modtime)
 	    send_arg("-d");
 
@@ -226,6 +231,7 @@ import (argc, argv)
 	err += get_responses_and_close ();
 	return err;
     }
+#endif
 
     /*
      * Make all newly created directories writable.  Should really use a more
@@ -285,6 +291,10 @@ import (argc, argv)
     dellist (&ulist);
     (void) fclose (logfp);
 
+    /* Make sure the temporary file goes away, even on systems that don't let
+       you delete a file that's in use.  */
+    unlink (tmpfile);
+
     if (message)
 	free (message);
 
@@ -308,6 +318,7 @@ import_descend (message, vtag, targc, targv)
 
     /* first, load up any per-directory ignore lists */
     ign_add_file (CVSDOTIGNORE, 1);
+    wrap_add_file (CVSDOTWRAPPER, 1);
 
     if ((dirp = opendir (".")) == NULL)
     {
@@ -335,9 +346,13 @@ import_descend (message, vtag, targc, targv)
 
 	    if (
 #ifdef DT_DIR
-		dp->d_type == DT_DIR || dp->d_type == DT_UNKNOWN &&
+		(dp->d_type == DT_DIR
+		 || (dp->d_type == DT_UNKNOWN && isdir (dp->d_name)))
+#else
+		isdir (dp->d_name)
 #endif
-		isdir (dp->d_name))
+		&& !wrap_name_has (dp->d_name, WRAP_TOCVS)
+		)
             {	
 		Node *n;
 
@@ -445,6 +460,7 @@ update_rcs_file (message, vfile, vtag, targc, targv, inattic)
     int letter;
     int ierrno;
     char *tmpdir;
+    char *tocvsPath;
 
     vers = Version_TS (repository, (char *) NULL, vbranch, (char *) NULL, vfile,
 		       1, 0, (List *) NULL, (List *) NULL);
@@ -493,7 +509,12 @@ update_rcs_file (message, vfile, vtag, targc, targv, inattic)
 	    (void) unlink_file (xtmpfile);
 	    return (1);
 	}
+
+	tocvsPath = wrap_tocvs_process_file (vfile);
 	different = xcmp (xtmpfile, vfile);
+	if (tocvsPath)
+	    unlink_file (tocvsPath);
+
 	(void) unlink_file (xtmpfile);
 	if (!different)
 	{
@@ -546,6 +567,8 @@ add_rev (message, rcs, vfile, vers)
     char *vers;
 {
     int locked, status, ierrno;
+    char *tocvsPath;
+    struct stat vfile_stat;
 
     if (noexec)
 	return (0);
@@ -560,29 +583,33 @@ add_rev (message, rcs, vfile, vers)
 	}
 	locked = 1;
     }
-    if (link_file (vfile, FILE_HOLDER) < 0)
-    {
-	if (errno == EEXIST)
-	{
-	    (void) unlink_file (FILE_HOLDER);
-	    (void) link_file (vfile, FILE_HOLDER);
-	}
-	else
-	{
-	    ierrno = errno;
-	    fperror (logfp, 0, ierrno, "ERROR: cannot create link to %s", vfile);
-	    error (0, ierrno, "ERROR: cannot create link to %s", vfile);
-	    return (1);
-	}
-    }
-    run_setup ("%s%s -q -f -r%s", Rcsbin, RCS_CI, vbranch);
+    tocvsPath = wrap_tocvs_process_file (vfile);
+
+    /* We used to deposit the revision with -r; RCS would delete the
+       working file, but we'd keep a hard link to it, and rename it
+       back after running RCS (ooh, atomicity).  However, that
+       strategy doesn't work on operating systems without hard links
+       (like Windows NT).  Instead, let's deposit it using -u, and
+       restore its permission bits afterwards.  This also means the
+       file always exists under its own name.  */
+    if (! tocvsPath)
+        stat (vfile, &vfile_stat);
+
+    run_setup ("%s%s -q -f %s%s", Rcsbin, RCS_CI, 
+	       (tocvsPath ? "-r" : "-u"),
+	       vbranch);
     run_args ("-m%s", make_message_rcslegal (message));
     if (use_file_modtime)
 	run_arg ("-d");
+    run_arg (tocvsPath == NULL ? vfile : tocvsPath);
     run_arg (rcs);
     status = run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL);
     ierrno = errno;
-    rename_file (FILE_HOLDER, vfile);
+
+    /* Restore the permissions on vfile.  */
+    if (! tocvsPath)
+        chmod (vfile, vfile_stat.st_mode);
+
     if (status)
     {
 	if (!noexec)
@@ -603,8 +630,7 @@ add_rev (message, rcs, vfile, vers)
  * Add the vendor branch tag and all the specified import release tags to the
  * RCS file.  The vendor branch tag goes on the branch root (1.1.1) while the
  * vendor release tags go on the newly added leaf of the branch (1.1.1.1,
- * 1.1.1.2, ...).
- */
+ * 1.1.1.2, ...).  */
 static int
 add_tags (rcs, vfile, vtag, targc, targv)
     char *rcs;
@@ -739,6 +765,9 @@ static const struct compair comtable[] =
     {"y", " * "},			/* yacc		 */
     {"ye", " * "},			/* yacc-efl	 */
     {"yr", " * "},			/* yacc-ratfor	 */
+#ifdef SYSTEM_COMMENT_TABLE
+    SYSTEM_COMMENT_TABLE
+#endif
     {"", "# "},				/* default for empty suffix	 */
     {NULL, "# "}			/* default for unknown suffix;	 */
 /* must always be last		 */
@@ -798,12 +827,20 @@ add_rcs_file (message, rcs, user, vtag, targc, targv)
     char *author, *buf;
     int i, ierrno, err = 0;
     mode_t mode;
+    char *tocvsPath;
 
     if (noexec)
 	return (0);
 
+#ifdef LINES_CRLF_TERMINATED
+    /* There exits a port of RCS to such a system that stores files with
+       straight newlines.  If we ever reach this point on such a system,
+       we'll need to decide what to do with the open_file call below.  */
+    abort ();
+#endif
     fprcs = open_file (rcs, "w+");
-    fpuser = open_file (user, "r");
+    tocvsPath = wrap_tocvs_process_file (user);
+    fpuser = open_file (tocvsPath == NULL ? user : tocvsPath, "r");
 
     /*
      * putadmin()
@@ -1079,7 +1116,7 @@ import_descend_dir (message, dir, vtag, targc, targv)
 	    err = 1;
 	    goto out;
 	}
-	if (noexec == 0 && mkdir (repository, 0777) < 0)
+	if (noexec == 0 && CVS_MKDIR (repository, 0777) < 0)
 	{
 	    ierrno = errno;
 	    fperror (logfp, 0, ierrno,

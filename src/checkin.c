@@ -41,6 +41,8 @@ Checkin (type, file, update_dir, repository,
     int set_time;
     char *fullname;
 
+    char *tocvsPath = NULL;
+
     fullname = xmalloc (strlen (update_dir) + strlen (file) + 10);
     if (update_dir[0] == '\0')
 	strcpy (fullname, file);
@@ -55,8 +57,23 @@ Checkin (type, file, update_dir, repository,
      * modification times, then place a copy back in the original file name
      * for the checkin and checkout.
      */
+
+    tocvsPath = wrap_tocvs_process_file (fullname);
+
     if (!noexec)
-	copy_file (file, fname);
+    {
+        if (tocvsPath)
+	{
+            copy_file (tocvsPath, fname);
+	    /* FIXME: should we be silently ignoring errors?  */
+	    unlink_file (file);
+	    copy_file (tocvsPath, file);
+	}
+	else
+	{
+	    copy_file (file, fname);
+	}
+    }
 
     run_setup ("%s%s -f %s%s", Rcsbin, RCS_CI,
 	       rev ? "-r" : "", rev ? rev : "");
@@ -75,6 +92,10 @@ Checkin (type, file, update_dir, repository,
 	     * newly checkout file as the user file and remove the old
 	     * original user file.
 	     */
+
+            if (tocvsPath) /* CVSWRAPPER */
+		/* FIXME: should we be silently ignoring errors?  */
+		unlink_file(file);
 
 	    if (strcmp (options, "-V4") == 0) /* upgrade to V5 now */
 		options[0] = '\0';
@@ -96,6 +117,8 @@ Checkin (type, file, update_dir, repository,
 		/* sync up with the time from the RCS file */
 		set_time = 1;
 	    }
+
+	    wrap_fromcvs_process_file (file);
 
 	    /*
 	     * If we want read-only files, muck the permissions here, before
@@ -123,9 +146,18 @@ Checkin (type, file, update_dir, repository,
 		      vers->options, vers->tag, vers->date, (char *) 0);
 	    history_write (type, (char *) 0, vers->vn_rcs, file, repository);
 	    freevers_ts (&vers);
+
+	    if (tocvsPath)
+		/* FIXME: should we be silently ignoring errors?  */
+		unlink_file (tocvsPath);
+
 	    break;
 
 	case -1:			/* fork failed */
+	    if (tocvsPath)
+		/* FIXME: should we be silently ignoring errors?  */
+		unlink_file (tocvsPath);
+
 	    if (!noexec)
 		error (1, errno, "could not check in %s -- fork failed",
 		       fullname);
@@ -137,6 +169,10 @@ Checkin (type, file, update_dir, repository,
 	     * The checkin failed, for some unknown reason, so we restore the
 	     * original user file, print an error, and return an error
 	     */
+	    if (tocvsPath)
+		/* FIXME: should we be silently ignoring errors?  */
+		unlink_file (tocvsPath);
+
 	    if (!noexec)
 	    {
 		rename_file (fname, file);
@@ -155,6 +191,7 @@ Checkin (type, file, update_dir, repository,
 	(void) RCS_unlock (rcs, NULL);
     }
 
+#ifdef SERVER_SUPPORT
     if (server_active)
     {
 	if (set_time)
@@ -164,6 +201,7 @@ Checkin (type, file, update_dir, repository,
 	else
 	    server_checked_in (file, update_dir, repository);
     }
+#endif
 
     return (0);
 }
