@@ -8,6 +8,7 @@ Fri Apr 28 22:38:14 1995  Jim Blandy  <jimb@totoro.bio.indiana.edu>
 	(dist-dir): Renamed from dist, updated to accept DISTDIR value
 	passed from parent.
 	(DISTFILES): New varible.
+	(pcl-cvs.elc, pcl-cvs-lucid.elc): Add targets to elcfiles target.
 
 Tue Apr 25 21:33:49 1995  Jim Blandy  <jimb@totoro.bio.indiana.edu>
 
