@@ -20,7 +20,7 @@ HPPA:
 	HPPA running HP-UX 10.01 (1.7)
         HPPA 1.1 running HP-UX A.09.03 (1.5.95) (footnote 8)
         HPPA 1.1 running HP-UX A.09.04 (1.7.1)
-	NextSTEP 3.3 (1.6.86)
+	NextSTEP 3.3 (1.7)
 i386 family:
 	Solaris 2.4 using gcc (about 1.4A2)
 	UnixWare v1.1.1 using gcc (about 1.4A2)
@@ -28,8 +28,7 @@ i386 family:
 	Linux (kernel 1.2.x) (1.7.1)
 	BSDI 2.0 (1.4.93) (footnote 5)
 	FreeBSD 2.0.5, i486, gcc (1.5.95)
-	NextSTEP 3.3 (1.6.86)
-	NeXTSTEP 3.3 (1.7), (footnote 10)
+	NextSTEP 3.3 (1.7)
 	SCO Unix 3.2.4.2 (1.4.93) (footnote 4)
 	SCO OpenServer 5.0.0, "CC='cc -b elf' configure"
 	Lynx 2.3.0 080695 (1.6.86) (footnote 9)
@@ -38,8 +37,7 @@ i386 family:
 	OS/2 Version 3 using IBM C/C++ Tools 2.01 (1.7.86 with patches)
 m68k:
 	Sun 3 running SunOS 4.1.1_U1 w/ bundled K&R /usr/5bin/cc (1.8.2)
-	NextSTEP 3.3 (1.6.86)
-	NeXTSTEP 3.3 (1.7), (footnote 10)
+	NextSTEP 3.3 (1.7)
 	Lynx 2.3.0 062695 (1.6.86) (footnote 9)
 m88k:
 	Data General AViiON running dgux 5.4R2.10 (1.5)
@@ -62,8 +60,7 @@ SPARC:
 	Sun SPARCstation 10 running Solaris 2.3 using gcc and cc (about 1.4A2)
 	Sun SPARCstation running Solaris 2.4 using gcc and cc (about 1.5.91)
 	Sun SPARC running Solaris 2.5 (2.5 beta?) (1.7)
-	NextSTEP 3.3 (1.6.86)
-	NeXTSTEP 3.3 (1.7), (footnote 10)
+	NextSTEP 3.3 (1.7)
 
 (footnote 1)
 	AIX 4.1 systems fail to run "configure" due to bugs in their
@@ -107,12 +104,6 @@ SPARC:
     You want to use <sys/dir.h> instead.
     So after running configure I had to undef HAVE_DIRENT_H and
     define HAVE_SYS_DIR_H.
-
-(footnote 10) Ralf E. Stranzenbach <ralf@reswi.ruhr.de>
-    I've made some modifications to "filesubr.c" to deal with NFS
-    mounted directories (and those funny .nfs* files). This patch
-    should be used whenever the programmers "sandbox" is located on
-    a NFS mounted device --- at least on NeXTSTEP.
 
 -------------------------------------------------------------------------------
 
