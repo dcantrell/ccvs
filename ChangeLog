@@ -1,3 +1,8 @@
+Sun Oct  1 23:22:28 1995  Bryan O'Sullivan  <bos@serpentine.com>
+
+	* (INSTALL): noted that CVS works fine on Solaris 2.4 with both
+	  gcc and SPARCworks cc.
+
 Sun Oct  1 18:48:19 1995  Karl Fogel  <kfogel@totoro.cyclic.com>
 
         * (configure): re-ran autoconf following Peter Wemm's change
