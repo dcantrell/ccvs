@@ -37,7 +37,7 @@ DISTFILES = \
   Makefile.in \
   services \
   AE_example.pl \
-  MacCVS68K.sit.hqx \
+  MacCVS68k.sit.hqx \
   MacCVSPPC.sit.hqx
 
 all:
