@@ -1,3 +1,7 @@
+1998-12-02  Jim Kingdon
+
+	* cvs.texinfo (Multiple repositories): Add an example.
+
 1998-11-18  Jim Kingdon
 
 	* cvs.texinfo (Invoking CVS): Change "-r tag" to "-r rev".  We

@@ -1718,7 +1718,20 @@ versions of @sc{cvs}, you can check out code from multiple
 servers into your working directory.  @sc{cvs} will
 recurse and handle all the details of making
 connections to as many server machines as necessary to
-perform the requested command.
+perform the requested command.  Here is an example of
+how to set up a working directory:
+
+@example
+cvs -d server1:/cvs co dir1
+cd dir1
+cvs -d server2:/root co sdir
+cvs update
+@end example
+
+The @code{cvs co} commands set up the working
+directory, and then the @code{cvs update} command will
+contact server2, to update the dir1/sdir subdirectory,
+and server1, to update everything else.
 
 @c FIXME: Does the FAQ have more about this?  I have a
 @c dim recollection, but I'm too lazy to check right now.
