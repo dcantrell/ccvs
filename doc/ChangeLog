@@ -1,3 +1,8 @@
+Wed Sep 24 12:04:42 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (Remote repositories): Add comment about pserver
+	vs. having users create their own repositories.
+
 Sat Sep 20 00:59:53 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (Keyword list): Change title from "RCS Keywords" to
