@@ -328,6 +328,7 @@ The protocol itself:
 * Response intro::                  General conventions relating to responses
 * Response pathnames::              The "pathname" in responses
 * Responses::                       List of responses
+* Text tags::                       More details about the MT response
 
 An example session, and some further observations:
 
@@ -1383,6 +1384,77 @@ Flush stderr.  That is, make it possible for the user to see what has
 been written to stderr (it is up to the implementation to decide exactly
 how far it should go to ensure this).
 
+@item MT @var{tagname} @var{data} \n
+
+This response provides for tagged text.  It is similar to
+SGML/HTML/XML in that the data is structured and a naive application
+can also make some sense of it without understanding the structure.
+The syntax is not SGML-like, however, in order to fit into the CVS
+protocol better and (more importantly) to make it easier to parse,
+especially in a language like perl or awk.
+
+The @var{tagname} can have several forms.  If it starts with @samp{a}
+to @samp{z} or @samp{A} to @samp{Z}, then it represents tagged text.
+If the implementation recognizes @var{tagname}, then it may interpret
+@var{data} in some particular fashion.  If the implementation does not
+recognize @var{tagname}, then it should simply treat @var{data} as
+text to be sent to the user (similar to an @samp{M} response).  There
+are two tags which are general purpose.  The @samp{text} tag is
+similar to an unrecognized tag in that it provides text which will
+ordinarily be sent to the user.  The @samp{newline} tag is used
+without @var{data} and indicates that a newline will ordinarily be
+sent to the user (there is no provision for embedding newlines in the
+@var{data} of other tagged text responses).
+
+If @var{tagname} starts with @samp{+} it indicates a start tag and if
+it starts with @samp{-} it indicates an end tag.  The remainder of
+@var{tagname} should be the same for matching start and end tags, and
+tags should be nested (for example one could have tags in the
+following order @code{+bold} @code{+italic} @code{text} @code{-italic}
+@code{-bold} but not @code{+bold} @code{+italic} @code{text}
+@code{-bold} @code{-italic}).  A particular start and end tag may be
+documented to constrain the tagged text responses which are valid
+between them.
+
+Note that if @var{data} is present there will always be exactly one
+space between @var{tagname} and @var{data}; if there is more than one
+space, then the spaces beyond the first are part of @var{data}.
+
+Here is an example of some tagged text responses.  Note that there is
+a trailing space after @samp{Checking in} and @samp{initial revision:}
+and there are two trailing spaces after @samp{<--}.  Such trailing
+spaces are, of course, part of @var{data}.
+
+@example
+MT +checking-in
+MT text Checking in 
+MT fname gz.tst
+MT text ;
+MT newline
+MT rcsfile /home/kingdon/zwork/cvsroot/foo/gz.tst,v
+MT text   <--  
+MT fname gz.tst
+MT newline
+MT text initial revision: 
+MT init-rev 1.1
+MT newline
+MT text done
+MT newline
+MT -checking-in
+@end example
+
+If the client does not support the @samp{MT} response, the same
+responses might be sent as:
+
+@example
+M Checking in gz.tst;
+M /home/kingdon/zwork/cvsroot/foo/gz.tst,v  <--  gz.tst
+M initial revision: 1.1
+M done
+@end example
+
+For a list of specific tags, see @ref{Text tags}.
+
 @item error @var{errno-code} @samp{ } @var{text} \n
 The command completed with an error.  @var{errno-code} is a symbolic
 error code (e.g. @code{ENOENT}); if the server doesn't support this
@@ -1394,6 +1466,35 @@ strerror(), or any other message the server wants to use.
 @item ok \n
 The command completed successfully.
 @end table
+
+@node Text tags
+@section Tags for the MT tagged text response
+
+The @code{MT} response, as described in @ref{Responses}, offers a
+way for the server to send tagged text to the client.  This section
+describes specific tags.  The intention is to update this section as
+servers add new tags.
+
+In the following descriptions, @code{text} and @code{newline} tags are
+omitted.  Such tags contain information which is intended for users (or
+to be discarded), and are subject to change at the whim of the server.
+To avoid being vulnerable to such whim, clients should look for the tags
+listed here, not @code{text}, @code{newline}, or other tags.
+
+The following tag means to indicate to the user that a file has been
+updated.  It is more or less redundant with the @code{Created} and
+@code{Update-existing} responses, but we don't try to specify here
+whether it occurs in exactly the same circumstances as @code{Created}
+and @code{Update-existing}.  The @var{name} is the pathname of the file
+being updated relative to the directory in which the command is
+occurring (that is, the last @code{Directory} request which is sent
+before the command).
+
+@example
+MT +updated
+MT fname @var{name}
+MT -updated
+@end example
 
 @node Example
 @section Example
