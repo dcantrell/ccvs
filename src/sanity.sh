@@ -4359,9 +4359,9 @@ Fw1	_watched=
 Enew	line	here
 G@#..!@#=&"
 
-	  cd ..
+	  cd ../..
 
-	  rm -rf 1 2 ${CVSROOT_DIRNAME}/first-dir
+	  rm -rf 1 ${CVSROOT_DIRNAME}/first-dir
 	  ;;
 
 	ignore)
