@@ -1,3 +1,19 @@
+2001-03-20  Derek Price  <derek.price@openavenue.com>
+	    for Karl Tomlinson  <k.tomlinson@auckland.ac.nz>
+
+	* diff3.c (main): changed the common file of the two diffs to
+	OLDFILE for merges and edscripts so that the diffs are more likely
+	to contain the intended changes.  Not changing the horizon-lines
+	arg for the second diff.  If the two diffs have the same parameters
+	equal changes in each diff are more likely to appear the same.
+
+	* analyze.c (shift_boundaries): undid Paul Eggert's patch to fix
+	the diff3 merge bug described in ccvs/doc/DIFFUTILS-2.7-BUG.  The
+	patch is no longer necessary now that diff3 does its differences
+	differently.  I think the hunk merges provide a better indication
+	of the area modified by the user now that the diffs are actually
+	done between the appropriate revisions.
+
 2001-03-15  Derek Price  <derek.price@openavenue.com>
 
 	* Makefile.am (INCLUDES): Add -I$(top_srcdir)/lib for platforms which
