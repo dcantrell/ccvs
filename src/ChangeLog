@@ -1,3 +1,7 @@
+Fri Jan 30 11:32:41 1998  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* main.c (main): Update year in copyright notice to 1998.
+
 Thu Jan 29 00:01:05 1998  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* version.c: Change version number to 1.9.25.
