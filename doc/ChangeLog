@@ -1,3 +1,14 @@
+Tue Nov 19 09:39:08 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (Removing directories): -P is also available with
+	export.
+	(Moving directories): Rewrite first paragraph; now says that you
+	must use -P for the directory to disappear from working
+	directories.  Thanks to Martin Lorentzon
+	<Martin.Lorentzson@emw.ericsson.se> for reporting this bug.
+	(various): Where we mention -P, point to Removing directories
+	node.
+
 Sat Nov 16 18:03:22 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvsclient.texi (Example): Rewrite to actually be based on a real
