@@ -1407,9 +1407,13 @@ stdio_buffer_shutdown (buf)
 # ifdef SHUTDOWN_SERVER
 	if (current_parsed_root->method != server_method)
 # endif
-	/* shutdown() sockets */
-	if (S_ISSOCK(s.st_mode))
-	    shutdown ( fileno (bc->fp), 0);
+# ifndef NO_SOCKET_TO_FD
+	{
+	    /* shutdown() sockets */
+	    if (S_ISSOCK(s.st_mode))
+		shutdown ( fileno (bc->fp), 0);
+	}
+# endif /* NO_SOCKET_TO_FD */
 # ifdef START_RSH_WITH_POPEN_RW
 	/* Can't be set with SHUTDOWN_SERVER defined */
 	else if (pclose (bc->fp) == EOF)
@@ -1432,9 +1436,17 @@ stdio_buffer_shutdown (buf)
 	    SHUTDOWN_SERVER ( fileno (bc->fp) );
 	else
 # endif
+# ifndef NO_SOCKET_TO_FD
 	/* shutdown() sockets */
 	if (S_ISSOCK(s.st_mode))
 	    shutdown ( fileno (bc->fp), 1);
+# else
+	{
+	/* I'm not sure I like this empty block, but the alternative
+	 * is a another nested NO_SOCKET_TO_FD switch above.
+	 */
+	}
+# endif /* NO_SOCKET_TO_FD */
 
 	buf->output = NULL;
     }

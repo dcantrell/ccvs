@@ -1,5 +1,19 @@
 2001-08-09  Derek Price  <dprice@collab.net>
 
+	* buffer.c (stdio_buffer_shutdown): Assume the buffer is not a socket
+	when NO_SOCKET_TO_FD is defined.
+	* client.c (make_bufs_from_fds): Add is_sock argument and remove fstat
+	call and reference to S_ISSOCK since these functions aren't available
+	under Windows.
+	(connect_to_forked_server, connect_to_pserver, start_tcp_server,
+	start_server, start_rsh_server): Use new argument.
+	(Patch from "Manfred Klug" <manklu@web.de>.)
+
+	* buffer.c (stdio_buffer_shutdown): Various reformattings, fix bug
+	where rsh pipes weren't being closed.
+
+2001-08-09  Derek Price  <dprice@collab.net>
+
 	* sanity.sh (rmadd, rm-update-message, join-two-branch,
 	ignore-on-branch): Change a few references to `cvs' to `$PROG'.
 
