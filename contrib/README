@@ -9,6 +9,13 @@ or ported them to work with this CVS distribution.  If you have questions,
 you might contact the author, but you should not necessarily expect
 a reply.  USE AT YOUR OWN RISK -- and all that stuff.
 
+"Unsupported" also means that noone has volunteered to accept and
+check in changes to this directory.  So submissions for new scripts to
+add here are unlikely to be accepted.  Suggested changes to the
+existing scripts here conceivably might, but that isn't clear either.
+The exception is pcl-cvs; that is more actively maintained (see
+pcl-cvs/README).
+
 Contents of this directory:
 
 	README		This file.
