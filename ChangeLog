@@ -1,3 +1,8 @@
+2005-03-16  Mark Baushke  <mdb@cvshome.org>
+
+	* cvs-format.el: Update to work with modern GNU Emacs versions
+	that have cc-mode instead of c-mode.
+
 2005-03-16  Derek Price  <derek@ximbiot.com>
 
 	* NEWS: Note that writeproxy primary failures are now detected.
