@@ -1,5 +1,9 @@
 2002-05-24  Larry Jones  <lawrence.jones@eds.com>
 
+	* rcscmds.c (diff_exec): Add a -- before the first file name just
+	in case it looks like an option.
+	(Reported by Zooko <zooko@zooko.com>.)
+
 	* rcscmds.c (diff_execv): Remove -- same as diff_exec.  Change
 	only caller.
 	* cvs.h: Ditto.
