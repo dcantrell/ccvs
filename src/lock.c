@@ -119,6 +119,7 @@ unlock (repository)
 /*
  * Check the owner of a lock.  Returns 1 if we own it, 0 otherwise.
  */
+static int
 Check_Owner(lockdir)
      char *lockdir;
 {
