@@ -1,3 +1,9 @@
+2003-05-01  Derek Price  <derek@ximbiot.com>
+
+	* repos.c (Sanitize_Repository_Name): Remove some old comments about
+	the defunct RELATIVE_REPOS macro.
+	* server.c (outside_root): Ditto.
+
 2003-04-30  Derek Price  <derek@ximbiot.com>
 
 	* add.c (add): Fix a possible, if unlikely, memory out of bounds error.
