@@ -168,3 +168,15 @@ m4/onceonly_2_57.m4
 m4/tzset.m4
 
 m4/onceonly_2_57.m4
+m4/restrict.m4
+
+m4/onceonly_2_57.m4
+lib/time_r.c
+lib/time_r.h
+m4/time_r.m4
+
+m4/onceonly_2_57.m4
+lib/mktime.c
+m4/mktime.m4
+
+m4/onceonly_2_57.m4
