@@ -4117,7 +4117,7 @@ RCS_checkout (rcs, workfile, rev, nametag, options, sout, pfn, callerdat)
 	{
 	    /* If RCS_deltas didn't close the file, we could use fstat
 	       here too.  Probably should change it thusly....  */
-	    if (stat (rcs->path, &sb) < 0)
+	    if( CVS_STAT( rcs->path, &sb ) < 0 )
 		error (1, errno, "cannot stat %s", rcs->path);
 	    rcsbufp = NULL;
 	}
@@ -4908,7 +4908,7 @@ RCS_checkin (rcs, workfile, message, rev, flags)
     if (flags & RCS_FLAGS_MODTIME)
     {
 	struct stat ws;
-	if (stat (workfile, &ws) < 0)
+	if( CVS_STAT( workfile, &ws ) < 0 )
 	{
 	    error (1, errno, "cannot stat %s", workfile);
 	}
@@ -8256,7 +8256,7 @@ rcs_internal_lockfile (rcsfile)
        file.  (Really, this is a lie -- if this is a new file,
        RCS_checkin uses the permissions from the working copy.  For
        actually creating the file, we use 0444 as a safe default mode.) */
-    if (stat (rcsfile, &rstat) < 0)
+    if( CVS_STAT( rcsfile, &rstat ) < 0 )
     {
 	if (existence_error (errno))
 	    rstat.st_mode = S_IRUSR | S_IRGRP | S_IROTH;
