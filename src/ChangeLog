@@ -1,3 +1,16 @@
+Thu Mar  7 17:30:01 1996  Greg A. Woods  <woods@most.weird.com>
+
+	* hash.c (findnode): also return NULL if key is not set
+	[[ reported by Chris_Eich@optilink.optilink.dsccc.com, and
+	supposedly in a PR that should be marked "fixed"..... ]]
+
+	* fileattr.c (fileattr_set): set node->data to NULL after freeing
+	it to prevent subsequent accesses
+	(fileattr_delproc): don't free node->data if it's NULL, and set it
+	to NULL after freeing
+	[[ reported by Chris_Eich@optilink.optilink.dsccc.com, and
+	supposedly in a PR that should be marked "fixed"..... ]]
+
 Fri Mar  1 14:56:08 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* sanity.sh (basica): New test basica-4a tests for bug fixed by
