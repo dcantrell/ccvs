@@ -1,3 +1,14 @@
+Sun Dec 21 17:42:22 1997  Karl Fogel  <kfogel@floss.red-bean.com>
+
+	* cvs.texinfo (Overview): New node.
+	(What is CVS?, A sample session): Put under Overview.
+	(What is CVS not?): New node under Overview.
+	  [text previously was part of "What is CVS?" -kingdon]
+	(Preface): Removed this node and its contents.
+	(Checklist): Removed this node and its contents.
+	(Credits): Now toward end of top-level menu (was under Preface).
+	(BUGS): Now toward end of top-level menu (was under Preface).
+
 Sun Dec 14 10:14:25 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvsclient.texi (Responses): Add MT response.
