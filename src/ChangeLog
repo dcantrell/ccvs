@@ -2,6 +2,8 @@
 
 	* subr.c (strip_trailiing_newlines): Use size_t rather than int to
 	count string length.
+	(Suggestion from Paul Edwards, who provides a broken return email
+	address in Australia..)
 
 2003-07-28  Derek Price  <derek@ximbiot.com>
 
