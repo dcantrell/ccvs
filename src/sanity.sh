@@ -53,7 +53,7 @@ export LC_ALL
 #     So this would be lost if everything was `pwd`-based.  I suppose
 #     if we wanted to get baroque we could start making symlinks
 #     to ensure the two are different.
-tmp=`(/bin/pwd || pwd) 2>/dev/null`
+tmp=`(cd /tmp; /bin/pwd || pwd) 2>/dev/null`
 : ${TESTDIR=$tmp/cvs-sanity}
 
 # "debugger"
