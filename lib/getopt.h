@@ -1,42 +1,40 @@
 /* Declarations for getopt.
-   Copyright (C) 1989, 1990, 1991, 1992, 1993 Free Software Foundation, Inc.
 
-   This program is free software; you can redistribute it and/or modify it
-   under the terms of the GNU General Public License as published by the
-   Free Software Foundation; either version 2, or (at your option) any
-   later version.
+   Copyright (C) 1989, 1990, 1991, 1992, 1993, 1994, 1996, 1997, 1998,
+   1999, 2001, 2003 Free Software Foundation, Inc.
+
+   This file is part of the GNU C Library.
+
+   This program is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2, or (at your option)
+   any later version.
 
    This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-   GNU General Public License for more details.  */
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License along
+   with this program; if not, write to the Free Software Foundation,
+   Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
 
 #ifndef _GETOPT_H
-#define _GETOPT_H 1
 
-/* CVS - DRP
- *
- * If the OS defines this, just redefine the names to avoid namespace
- * clashes.  In theory, we should be testing the built in functions to
- * see if they do what we want and use them if possible, but this is
- * easier...
- *
- * Namely, this was occurring under Mac OS X.  This is a Mac OS X (or
- * OS X related) bug.
- *
- * Oops.  We avoid compiling this with ifdefs because pretty much all of
- * getopt.c is switched on the same macros...  this isn't right, but I think
- * this isn't our file.  Probably best not to mess with it too much.
- */
-#if defined (_LIBC) || !defined (__GNU_LIBRARY__)
-# ifdef HAVE_GETOPT
-#   define getopt		cvs_getopt
-#   define optarg		cvs_optarg
-#   define opterr		cvs_opterr
-#   define optind		cvs_optind
-#   define optopt		cvs_optopt
-# endif /* HAVE_GETOPT */
-#endif	/* _LIBC or not __GNU_LIBRARY__.  */
+#ifndef __need_getopt
+# define _GETOPT_H 1
+#endif
+
+/* If __GNU_LIBRARY__ is not already defined, either we are being used
+   standalone, or this is the first header included in the source file.
+   If we are being used with glibc, we need to include <features.h>, but
+   that does not exist if we are standalone.  So: if __GNU_LIBRARY__ is
+   not defined, include <ctype.h>, which will pull in <features.h> for us
+   if it's from glibc.  (Why ctype.h?  It's guaranteed to exist and it
+   doesn't flood the namespace with stuff the way some other headers do.)  */
+#if !defined __GNU_LIBRARY__
+# include <ctype.h>
+#endif
 
 #ifdef	__cplusplus
 extern "C" {
@@ -56,7 +54,7 @@ extern char *optarg;
 
    On entry to `getopt', zero means this is the first call; initialize.
 
-   When `getopt' returns EOF, this is the index of the first of the
+   When `getopt' returns -1, this is the index of the first of the
    non-option elements that the caller should itself scan.
 
    Otherwise, `optind' communicates from one call to the next
@@ -73,6 +71,7 @@ extern int opterr;
 
 extern int optopt;
 
+#ifndef __need_getopt
 /* Describe the long-named options requested by the application.
    The LONG_OPTIONS argument to getopt_long or getopt_long_only is a vector
    of `struct option' terminated by an element containing a name which is
@@ -96,11 +95,7 @@ extern int optopt;
 
 struct option
 {
-#if	__STDC__
   const char *name;
-#else
-  char *name;
-#endif
   /* has_arg can't be an enum because some compilers complain about
      type mismatches in all the code that assumes it is an int.  */
   int has_arg;
@@ -110,40 +105,65 @@ struct option
 
 /* Names for the values of the `has_arg' field of `struct option'.  */
 
-#define	no_argument		0
-#define required_argument	1
-#define optional_argument	2
+# define no_argument		0
+# define required_argument	1
+# define optional_argument	2
+#endif	/* need getopt */
 
-#if __STDC__
+
+/* Get definitions and prototypes for functions to process the
+   arguments in ARGV (ARGC of them, minus the program name) for
+   options given in OPTS.
+
+   Return the option character from OPTS just read.  Return -1 when
+   there are no more options.  For unrecognized options, or options
+   missing arguments, `optopt' is set to the option letter, and '?' is
+   returned.
+
+   The OPTS string is a list of characters which are recognized option
+   letters, optionally followed by colons, specifying that that letter
+   takes an argument, to be placed in `optarg'.
+
+   If a letter in OPTS is followed by two colons, its argument is
+   optional.  This behavior is specific to the GNU `getopt'.
+
+   The argument `--' causes premature termination of argument
+   scanning, explicitly telling `getopt' that there are no more
+   options.
+
+   If OPTS begins with `--', then non-option arguments are treated as
+   arguments to the option '\0'.  This behavior is specific to the GNU
+   `getopt'.  */
+
+#ifdef __GNU_LIBRARY__
 /* Many other libraries have conflicting prototypes for getopt, with
-   differences in the consts, in stdlib.h.  We used to try to prototype
-   it if __GNU_LIBRARY__ but that wasn't problem free either (I'm not sure
-   exactly why), and there is no particular need to prototype it.
-   We really shouldn't be trampling on the system's namespace at all by
-   declaring getopt() but that is a bigger issue.  */
+   differences in the consts, in stdlib.h.  To avoid compilation
+   errors, only prototype getopt for the GNU C library.  */
+extern int getopt (int ___argc, char *const *___argv, const char *__shortopts);
+#else /* not __GNU_LIBRARY__ */
 extern int getopt ();
+#endif /* __GNU_LIBRARY__ */
 
-extern int getopt_long (int argc, char *const *argv, const char *shortopts,
-		        const struct option *longopts, int *longind);
-extern int getopt_long_only (int argc, char *const *argv,
-			     const char *shortopts,
-		             const struct option *longopts, int *longind);
+#ifndef __need_getopt
+extern int getopt_long (int ___argc, char *const *___argv,
+			const char *__shortopts,
+		        const struct option *__longopts, int *__longind);
+extern int getopt_long_only (int ___argc, char *const *___argv,
+			     const char *__shortopts,
+		             const struct option *__longopts, int *__longind);
 
 /* Internal only.  Users should not call this directly.  */
-extern int _getopt_internal (int argc, char *const *argv,
-			     const char *shortopts,
-		             const struct option *longopts, int *longind,
-			     int long_only);
-#else /* not __STDC__ */
-extern int getopt ();
-extern int getopt_long ();
-extern int getopt_long_only ();
-
-extern int _getopt_internal ();
-#endif /* not __STDC__ */
+extern int _getopt_internal (int ___argc, char *const *___argv,
+			     const char *__shortopts,
+		             const struct option *__longopts, int *__longind,
+			     int __long_only);
+#endif
 
 #ifdef	__cplusplus
 }
 #endif
 
-#endif /* _GETOPT_H */
+/* Make sure we later can get all the definitions and declarations.  */
+#undef __need_getopt
+
+#endif /* getopt.h */

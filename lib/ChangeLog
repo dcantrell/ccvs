@@ -1,5 +1,9 @@
 2003-10-01  Derek Price  <derek@ximbiot.com>
 
+	* getopt.h, getopt.c, getopt1.c: Update from GNULIB.
+
+2003-10-01  Derek Price  <derek@ximbiot.com>
+
 	* getline.c, getndelim2.c: Merge changes from GNULIB.
 
 2003-10-01  Derek Price  <derek@ximbiot.com>
