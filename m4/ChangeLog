@@ -1,3 +1,7 @@
+2003-05-28  Derek Price  <derek@ximbiot.com>
+
+	* Makefile.in: Regenerated with README included in DIST_COMMON.
+
 2003-05-27  Derek Price  <derek@ximbiot.com>
 
 	* README: New file explaining the GNULIB origin of many of the m4
