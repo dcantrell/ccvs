@@ -1,5 +1,10 @@
 2003-03-18  Derek Price  <derek@ximbiot.com>
 
+	* root.c (parse_root): Add some more comments and expand
+	#ifdef CLIENT_SUPPORT pragmas.  Rearrange sanity checks slightly.
+
+2003-03-18  Derek Price  <derek@ximbiot.com>
+
 	* main.c (main): Output -R warning in quiet mode and correct spelling
 	in this warning message.
 	* sanity.sh (commit-readonlyfs-2r4): Correct cascaded spelling mistake
