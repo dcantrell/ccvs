@@ -101,6 +101,14 @@ dependent on some sort of race condition as it disappears with tracing enabled
 and under the debugger.  Informative feedback is welcome.
 
 
+* The sanity.sh suite is currently failing at writeproxy-noredirect-5 on BSD/OS
+  4.2.
+
+
+* UNICOS 9.0 on Cray currently fails testing in both client/server and
+  writeproxy modes.
+
+
 * Status
 
   This experimental version of CVS contains new features which may not have
