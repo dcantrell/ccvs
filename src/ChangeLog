@@ -1,3 +1,10 @@
+Sun Feb 16 08:16:48 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* client.c (start_rsh_server): Nuke comment about weirdnesses with
+	pre-1.5 versions of CVS and .bashrc/.cshrc.  The remote protocol
+	is interoperable only back to 1.5, and people who need to know are
+	unlikely to see this comment anyway.
+
 Sun Dec 15 13:12:30 1996  Michael Douglass <mikedoug@texas.net>
 			  and Jim Kingdon  <kingdon@harvey.cyclic.com>
 
