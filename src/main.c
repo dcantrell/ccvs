@@ -152,7 +152,7 @@ static const char *const usg[] =
        putting metavariables in uppercase.  I don't know whether that
        is a good convention or not, but if it changes it would have to
        change in all the usage messages.  For now, they consistently
-       use lowercase, as far as I know.  Puncutation is pretty funky,
+       use lowercase, as far as I know.  Punctuation is pretty funky,
        though.  Sometimes they use none, as here.  Sometimes they use
        single quotes (not the TeX-ish `' stuff), as in --help-options.
        Sometimes they use double quotes, as in cvs -H add.
