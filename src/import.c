@@ -65,7 +65,7 @@ import (argc, argv)
     char **argv;
 {
     char *message = NULL;
-    char tmpfile[L_tmpnam+1];
+    char *tmpfile;
     char *cp;
     int i, c, msglen, err;
     List *ulist;
@@ -244,7 +244,8 @@ import (argc, argv)
     make_directories (repository);
 
     /* Create the logfile that will be logged upon completion */
-    if ((logfp = fopen (tmpnam (tmpfile), "w+")) == NULL)
+    tmpfile = cvs_temp_name ();
+    if ((logfp = fopen (tmpfile, "w+")) == NULL)
 	error (1, errno, "cannot create temporary file `%s'", tmpfile);
     (void) unlink (tmpfile);		/* to be sure it goes away */
     (void) fprintf (logfp, "\nVendor Tag:\t%s\n", argv[1]);
@@ -307,6 +308,7 @@ import (argc, argv)
     /* Make sure the temporary file goes away, even on systems that don't let
        you delete a file that's in use.  */
     unlink (tmpfile);
+    free (tmpfile);
 
     if (message)
 	free (message);

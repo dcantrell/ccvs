@@ -33,7 +33,9 @@ static char *rev2 = NULL;
 static int rev2_validated = 1;
 static char *date1 = NULL;
 static char *date2 = NULL;
-static char tmpfile1[L_tmpnam+1], tmpfile2[L_tmpnam+1], tmpfile3[L_tmpnam+1];
+static char *tmpfile1 = NULL;
+static char *tmpfile2 = NULL;
+static char *tmpfile3 = NULL;
 static int unidiff = 0;
 
 static const char *const patch_usage[] =
@@ -409,14 +411,19 @@ patch_fileproc (finfo)
 			   vers_tag, vers_head);
 	return (0);
     }
-    if ((fp1 = fopen (tmpnam (tmpfile1), "w+")) != NULL)
+    tmpfile1 = cvs_temp_name ();
+    if ((fp1 = fopen (tmpfile1, "w+")) != NULL)
 	(void) fclose (fp1);
-    if ((fp2 = fopen (tmpnam (tmpfile2), "w+")) != NULL)
+    tmpfile2 = cvs_temp_name ();
+    if ((fp2 = fopen (tmpfile2, "w+")) != NULL)
 	(void) fclose (fp2);
-    if ((fp3 = fopen (tmpnam (tmpfile3), "w+")) != NULL)
+    tmpfile3 = cvs_temp_name ();
+    if ((fp3 = fopen (tmpfile3, "w+")) != NULL)
 	(void) fclose (fp3);
     if (fp1 == NULL || fp2 == NULL || fp3 == NULL)
     {
+	/* FIXME: should be printing a proper error message, with errno-based
+	   message, and the filename which we could not create.  */
 	error (0, 0, "cannot create temporary files");
 	ret = 1;
 	goto out;
@@ -572,6 +579,10 @@ patch_fileproc (finfo)
     (void) unlink (tmpfile1);
     (void) unlink (tmpfile2);
     (void) unlink (tmpfile3);
+    free (tmpfile1);
+    free (tmpfile2);
+    free (tmpfile3);
+    tmpfile1 = tmpfile2 = tmpfile3 = NULL;
     return (ret);
 }
 
@@ -596,10 +607,20 @@ patch_dirproc (dir, repos, update_dir)
 static RETSIGTYPE
 patch_cleanup ()
 {
-    if (tmpfile1[0] != '\0')
+    if (tmpfile1 != NULL)
+    {
 	(void) unlink_file (tmpfile1);
-    if (tmpfile2[0] != '\0')
+	free (tmpfile1);
+    }
+    if (tmpfile2 != NULL)
+    {
 	(void) unlink_file (tmpfile2);
-    if (tmpfile3[0] != '\0')
+	free (tmpfile2);
+    }
+    if (tmpfile3 != NULL)
+    {
 	(void) unlink_file (tmpfile3);
+	free (tmpfile3);
+    }
+    tmpfile1 = tmpfile2 = tmpfile3 = NULL;
 }

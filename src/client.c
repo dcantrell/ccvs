@@ -3471,7 +3471,7 @@ send_modified (file, short_pathname, vers)
 	char *bufp = buf;
 	int readsize = 8192;
 #ifdef LINES_CRLF_TERMINATED
-	char tempfile[L_tmpnam];
+	char *tempfile;
 	int converting;
 #endif /* LINES_CRLF_TERMINATED */
 
@@ -3503,7 +3503,7 @@ send_modified (file, short_pathname, vers)
 	    if (close (fd) < 0)
 		error (0, errno, "warning: can't close %s", short_pathname);
 
-	    tmpnam (tempfile);
+	    tempfile = cvs_temp_name ();
 	    convert_file (file, O_RDONLY,
 			  tempfile,
 			  O_WRONLY | O_CREAT | O_TRUNC | OPEN_BINARY);
@@ -3561,6 +3561,8 @@ send_modified (file, short_pathname, vers)
 	    if (unlink (tempfile) < 0)
 		error (0, errno,
 		       "warning: can't remove temp file %s", tempfile);
+	    free (tempfile);
+	    tempfile = NULL;
 	}
 #endif /* LINES_CRLF_TERMINATED */
 

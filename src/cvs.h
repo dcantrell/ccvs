@@ -102,12 +102,6 @@ extern int errno;
 #endif
 #endif /* PATH_MAX */
 
-/* just in case this implementation does not define this */
-#ifndef L_tmpnam
-#define	L_tmpnam	50
-#endif
-
-
 /*
  * Copyright (c) 1992, Brian Berliner and Jeff Polk
  * Copyright (c) 1989-1992, Brian Berliner
@@ -475,6 +469,7 @@ int isaccessible PROTO((const char *file, const int mode));
 int isabsolute PROTO((const char *filename));
 char *last_component PROTO((char *path));
 char *get_homedir PROTO ((void));
+char *cvs_temp_name PROTO ((void));
 
 int numdots PROTO((const char *s));
 int unlink_file PROTO((const char *f));
