@@ -1,5 +1,7 @@
 Fri Feb 21 16:40:03 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* Makefile.in (DISTFILES): Remove NOTES.
+
 	* NOTES: Removed.  bcopy->memcpy is done.  "static buffers" I
 	assume refers to what is covered by reentrancy text in HACKING.
  	Obstack idea moved to comment in hash.c (at nodecache).  Checking
