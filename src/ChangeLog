@@ -1,3 +1,8 @@
+1998-03-17  Samuel Tardieu  <sam@inf.enst.fr>
+
+	* server.c (server_register): protect dereferencing timestamp in
+	the trace message when it is null, to avoid a segmentation fault.
+
 1998-03-16  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* options.h.in (MY_NDBM): Rewrite the comment explaining this
