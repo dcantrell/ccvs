@@ -180,7 +180,9 @@ char *strerror (int);
 
 #define	CVSLCK		"#cvs.lock"
 #define	CVSRFL		"#cvs.rfl"
+#define	CVSPFL		"#cvs.pfl"
 #define	CVSWFL		"#cvs.wfl"
+#define CVSPFLPAT	"#cvs.pfl.*"	/* wildcard expr to match plocks */
 #define CVSRFLPAT	"#cvs.rfl.*"	/* wildcard expr to match read locks */
 #define	CVSEXT_LOG	",t"
 #define	CVSPREFIX	",,"
@@ -499,15 +501,16 @@ int expand_at_signs (char *, off_t, FILE *);
 /* Locking subsystem (implemented in lock.c).  */
 
 int Reader_Lock (char *xrepository);
+void Simple_Lock_Cleanup (void);
 void Lock_Cleanup (void);
 
 /* Writelock an entire subtree, well the part specified by ARGC, ARGV, LOCAL,
    and AFLAG, anyway.  */
-void lock_tree_for_write (int argc, char **argv, int local, int which,
-				 int aflag);
+void lock_tree_promotably (int argc, char **argv, int local, int which,
+			   int aflag);
 
 /* See lock.c for description.  */
-void lock_dir_for_write (char *);
+void lock_dir_for_write (const char *);
 
 /* LockDir setting from CVSROOT/config.  */
 extern char *lock_dir;
@@ -555,9 +558,6 @@ void rename_file (const char *from, const char *to);
    malloc'd.  It is OK to call it with PARGC == &ARGC or PARGV == &ARGV.  */
 void expand_wild (int argc, char **argv, 
                   int *pargc, char ***pargv);
-#if defined (SERVER_SUPPORT) && !defined (FILENAMES_CASE_INSENSITIVE)
-char *locate_file_in_dir (const char *dir, const char *file );
-#endif /* SERVER_SUPPORT && !FILENAMES_CASE_INSENSITIVE */
 
 #ifdef SERVER_SUPPORT
 int cvs_casecmp (const char *, const char *);

@@ -1,3 +1,40 @@
+2003-12-09  Derek Price  <derek@ximbiot.com>
+
+	* system.h: Correct spelling in comment.
+
+2003-12-09  Mark D. Baushke  <mdb@cvshome.org>
+
+	* fseeko.c (fseeko): New file and function to help with largefile
+	support.
+	* ftello.c (ftello): Ditto.
+	* system.h (ftello): Add prototype if !defined(HAVE_FTELLO).
+	* Makefile.in: Regenerated.
+	
+2003-12-09  Larry Jones  <lawrence.jones@eds.com>
+
+	* getdate.c: Regenerated.
+
+2003-12-08  Mark D. Baushke  <mdb@cvshome.org>
+
+	* getdate.y: Remove #include <stdio.h> to avoid problems compiling
+	AIX with '#define _LARGE_FILES 1' with Redeclaration of fgetpos64
+	and ftello64. This may be an autoconf problem with
+	AC_SYS_LARGEFILE.
+	* getdate.c: Regenerated.
+
+2003-12-03  Derek Price  <derek@ximbiot.com>
+
+	* fncase.c (OSX_filename_classes): New array.
+	(fncmp): Use FOLD_FN_CASE rather relying on the fact that it will be
+	#defined to use WNT_filename_classes.
+	* system.h: Define FOLD_FN_CASE, fncmp, and fnfold for all case
+	insensitive filesystems.  Share some code between the new generic case
+	insensitive section and the old WOE32 section.
+
+2003-11-25  Mark D. Baushke  <mdb@cvshome.org>
+
+	* Makefile.in: Regenerate for new configure.in.
+
 2003-10-27  Derek Price  <derek@ximbiot.com>
 
 	* Makefile.am (libcvs_a_SOURCES): Remove obsolete PROTO.h.

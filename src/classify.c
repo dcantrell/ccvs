@@ -53,7 +53,8 @@ Classify_File (struct file_info *finfo, char *tag, char *date, char *options, in
 		   is what I would expect.  */
 		if (!force_tag_match || !(vers->tag || vers->date))
 		    if (!really_quiet)
-			error (0, 0, "nothing known about %s", finfo->fullname);
+			error (0, 0, "nothing known about `%s'",
+			       finfo->fullname);
 		ret = T_UNKNOWN;
 	    }
 	    else
@@ -66,7 +67,7 @@ Classify_File (struct file_info *finfo, char *tag, char *date, char *options, in
 		   is what I would expect.  */
 		if (!force_tag_match || !(vers->tag || vers->date))
 		    if (!really_quiet)
-			error (0, 0, "use `%s add' to create an entry for %s",
+			error (0, 0, "use `%s add' to create an entry for `%s'",
 			       program_name, finfo->fullname);
 		ret = T_UNKNOWN;
 	    }
@@ -78,7 +79,7 @@ Classify_File (struct file_info *finfo, char *tag, char *date, char *options, in
 		ret = T_UPTODATE;
 	    else
 	    {
-		error (0, 0, "use `%s add' to create an entry for %s",
+		error (0, 0, "use `%s add' to create an entry for `%s'",
 		       program_name, finfo->fullname);
 		ret = T_UNKNOWN;
 	    }
@@ -87,7 +88,7 @@ Classify_File (struct file_info *finfo, char *tag, char *date, char *options, in
 	{
 	    /* the files were different so it is a conflict */
 	    if (!really_quiet)
-		error (0, 0, "move away %s; it is in the way",
+		error (0, 0, "move away `%s'; it is in the way",
 		       finfo->fullname);
 	    ret = T_CONFLICT;
 	}
@@ -112,7 +113,7 @@ Classify_File (struct file_info *finfo, char *tag, char *date, char *options, in
 		 * entry
 		 */
 		if (!really_quiet)
-		    error (0, 0, "warning: new-born %s has disappeared",
+		    error (0, 0, "warning: new-born `%s' has disappeared",
 			   finfo->fullname);
 		ret = T_REMOVE_ENTRY;
 	    }
@@ -137,7 +138,7 @@ Classify_File (struct file_info *finfo, char *tag, char *date, char *options, in
 		       looking at, the file was already valid.  */
 		    if (!really_quiet)
 			error (0, 0,
-			   "conflict: %s has been added, but already exists",
+			   "conflict: `%s' has been added, but already exists",
 			       finfo->fullname);
 		}
 		else
@@ -148,7 +149,8 @@ Classify_File (struct file_info *finfo, char *tag, char *date, char *options, in
 		     */
 		    if (!really_quiet)
 			error (0, 0,
-			   "conflict: %s created independently by second party",
+                               "conflict: `%s' created independently by"
+			       " second party",
 			       finfo->fullname);
 		}
 		ret = T_CONFLICT;
@@ -194,7 +196,8 @@ Classify_File (struct file_info *finfo, char *tag, char *date, char *options, in
 		 */
 		if (!really_quiet)
 		    error (0, 0,
-			   "conflict: removed %s was modified by second party",
+			   "conflict: removed `%s' was modified by"
+			   " second party",
 			   finfo->fullname);
 		ret = T_CONFLICT;
 	    }
@@ -203,7 +206,7 @@ Classify_File (struct file_info *finfo, char *tag, char *date, char *options, in
 	{
 	    /* The user file shouldn't be there */
 	    if (!really_quiet)
-		error (0, 0, "%s should be removed and is still there",
+		error (0, 0, "`%s' should be removed and is still there",
 		       finfo->fullname);
 	    ret = T_REMOVED;
 	}
@@ -219,7 +222,7 @@ Classify_File (struct file_info *finfo, char *tag, char *date, char *options, in
 	    {
 		/* There is no user file, so just remove the entry */
 		if (!really_quiet)
-		    error (0, 0, "warning: %s is not (any longer) pertinent",
+		    error (0, 0, "warning: `%s' is not (any longer) pertinent",
 			   finfo->fullname);
 		ret = T_REMOVE_ENTRY;
 	    }
@@ -231,7 +234,7 @@ Classify_File (struct file_info *finfo, char *tag, char *date, char *options, in
 		 * the entry list
 		 */
 		if (!really_quiet)
-		    error (0, 0, "%s is no longer in the repository",
+		    error (0, 0, "`%s' is no longer in the repository",
 			   finfo->fullname);
 		ret = T_REMOVE_ENTRY;
 	    }
@@ -240,7 +243,8 @@ Classify_File (struct file_info *finfo, char *tag, char *date, char *options, in
 		/* they are different -> conflict */
 		if (!really_quiet)
 		    error (0, 0,
-	       "conflict: %s is modified but no longer in the repository",
+                           "conflict: `%s' is modified but no longer in the"
+			   " repository",
 			   finfo->fullname);
 		ret = T_CONFLICT;
 	    }
@@ -249,7 +253,7 @@ Classify_File (struct file_info *finfo, char *tag, char *date, char *options, in
 		/* they weren't really different */
 		if (!really_quiet)
 		    error (0, 0,
-			   "warning: %s is not (any longer) pertinent",
+			   "warning: `%s' is not (any longer) pertinent",
 			   finfo->fullname);
 		ret = T_REMOVE_ENTRY;
 	    }
@@ -275,7 +279,7 @@ Classify_File (struct file_info *finfo, char *tag, char *date, char *options, in
 		   for the server to distinguish those two cases.  */
 		if (strcmp (command_name, "update") == 0)
 		    if (!really_quiet)
-			error (0, 0, "warning: %s was lost", finfo->fullname);
+			error (0, 0, "warning: `%s' was lost", finfo->fullname);
 		ret = T_CHECKOUT;
 	    }
 	    else if (strcmp (vers->ts_user, vers->ts_rcs) == 0)
@@ -345,7 +349,7 @@ Classify_File (struct file_info *finfo, char *tag, char *date, char *options, in
 		   thoughts on this comparison.  */
 		if (strcmp (command_name, "update") == 0)
 		    if (!really_quiet)
-			error (0, 0, "warning: %s was lost", finfo->fullname);
+			error (0, 0, "warning: `%s' was lost", finfo->fullname);
 		ret = T_CHECKOUT;
 	    }
 	    else if (strcmp (vers->ts_user, vers->ts_rcs) == 0)

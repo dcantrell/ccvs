@@ -361,6 +361,8 @@ parse_cvsroot (const char *root_in)
     char *cvsroot_copy, *p, *q;		/* temporary pointers for parsing */
     int check_hostname, no_port, no_password;
 
+    assert (root_in != NULL);
+
     TRACE ( TRACE_FUNCTION, "parse_cvsroot ( %s )", root_in );
 
     /* allocate some space */
