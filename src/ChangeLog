@@ -1,3 +1,8 @@
+1997-07-06  enami tsugutomo  <enami@but-b.or.jp>
+
+	* logmsg.c (do_verify): Unlink temporary file before call error().
+	Remove unneeded `return' statement.  Fix comment.
+
 Sun Jul  6 13:36:32 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* diff.c (diff_fileproc): Change message from "during rcsdiff of"

@@ -411,10 +411,7 @@ do_verify (message, repository)
 
     fp = fopen (fname, "w");
     if (fp == NULL)
-    {
 	error (1, errno, "cannot create temporary file %s", fname);
-	return;
-    }
     else
     {
 	fprintf (fp, "%s", message);
@@ -438,11 +435,17 @@ do_verify (message, repository)
 	    run_arg (fname);
 	    if ((retcode = run_exec (RUN_TTY, RUN_TTY, RUN_TTY,
 				     RUN_NORMAL | RUN_SIGIGNORE)) != 0)
+	    {
+		/* Since following error() exits, delete the temp file
+		   now.  */
+		unlink_file (fname);
+
 		error (1, retcode == -1 ? errno : 0, 
 		       "Message verification failed");
+	    }
 	}
 
-	/* Close and delete the temp file  */
+	/* Delete the temp file  */
 
 	unlink_file (fname);
 	free (fname);
