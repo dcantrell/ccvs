@@ -75,6 +75,8 @@ status (argc, argv)
     if (client_active) {
       start_server ();
 
+      ign_setup ();
+
       if (long_format)
 	send_arg("-v");
       if (local)
