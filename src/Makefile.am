@@ -85,7 +85,6 @@ cvs_SOURCES = \
 	client.h \
 	cvs.h \
 	edit.h \
-	error.h \
 	fileattr.h \
 	hardlink.h \
 	hash.h \
