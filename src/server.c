@@ -5618,7 +5618,6 @@ server_cleanup (void)
     {
 	if (buf_to_net != NULL)
 	{
-	    struct buffer *tmp;
 	    int status;
 
 	    /* Since we're done, go ahead and put BUF_TO_NET back into blocking
