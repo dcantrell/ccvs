@@ -1,5 +1,7 @@
 1998-11-12  Jim Kingdon
 
+	* sanity.sh (mwrap-7): Update for the noexec fix.
+
 	* server.c (server_copy_file): Add comment about noexec.
 
 	* update.c (checkout_file): Handle noexec case involving revbuf
