@@ -1,3 +1,9 @@
+Tue Apr 22 14:23:32 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvsclient.texi (Protocol Notes): Expand ideas on multisite
+	features somewhat.  Add items about the network turnarounds for
+	pserver authentication and for protocol negotiation.
+
 Mon Apr 21 08:54:48 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (Working directory storage): Describe what to do
