@@ -75,6 +75,7 @@ CLEAN :
 	-@erase "$(INTDIR)\xalloc-die.obj"
 	-@erase "$(INTDIR)\xgetcwd.obj"
 	-@erase "$(INTDIR)\xmalloc.obj"
+	-@erase "$(INTDIR)\xreadlink.obj"
 	-@erase "$(INTDIR)\yesno.obj"
 	-@erase "$(OUTDIR)\libcvs.lib"
 	-@erase ".\alloca.h"
@@ -113,11 +114,13 @@ LIB32_OBJS= \
 	"$(INTDIR)\regex.obj" \
 	"$(INTDIR)\rpmatch.obj" \
 	"$(INTDIR)\save-cwd.obj" \
+	"$(INTDIR)\setenv.obj" \
 	"$(INTDIR)\sighandle.obj" \
 	"$(INTDIR)\strcasecmp.obj" \
 	"$(INTDIR)\strftime.obj" \
 	"$(INTDIR)\stripslash.obj" \
 	"$(INTDIR)\time_r.obj" \
+	"$(INTDIR)\unsetenv.obj" \
 	"$(INTDIR)\valloc.obj" \
 	"$(INTDIR)\vasnprintf.obj" \
 	"$(INTDIR)\vasprintf.obj" \
@@ -125,8 +128,7 @@ LIB32_OBJS= \
 	"$(INTDIR)\xgetcwd.obj" \
 	"$(INTDIR)\xmalloc.obj" \
 	"$(INTDIR)\yesno.obj" \
-	"$(INTDIR)\unsetenv.obj" \
-	"$(INTDIR)\setenv.obj"
+	"$(INTDIR)\xreadlink.obj"
 
 "$(OUTDIR)\libcvs.lib" : "$(OUTDIR)" $(DEF_FILE) $(LIB32_OBJS)
     $(LIB32) @<<
@@ -181,6 +183,7 @@ CLEAN :
 	-@erase "$(INTDIR)\xalloc-die.obj"
 	-@erase "$(INTDIR)\xgetcwd.obj"
 	-@erase "$(INTDIR)\xmalloc.obj"
+	-@erase "$(INTDIR)\xreadlink.obj"
 	-@erase "$(INTDIR)\yesno.obj"
 	-@erase "$(OUTDIR)\libcvs.lib"
 
@@ -216,11 +219,13 @@ LIB32_OBJS= \
 	"$(INTDIR)\regex.obj" \
 	"$(INTDIR)\rpmatch.obj" \
 	"$(INTDIR)\save-cwd.obj" \
+	"$(INTDIR)\setenv.obj" \
 	"$(INTDIR)\sighandle.obj" \
 	"$(INTDIR)\strcasecmp.obj" \
 	"$(INTDIR)\strftime.obj" \
 	"$(INTDIR)\stripslash.obj" \
 	"$(INTDIR)\time_r.obj" \
+	"$(INTDIR)\unsetenv.obj" \
 	"$(INTDIR)\valloc.obj" \
 	"$(INTDIR)\vasnprintf.obj" \
 	"$(INTDIR)\vasprintf.obj" \
@@ -228,8 +233,7 @@ LIB32_OBJS= \
 	"$(INTDIR)\xgetcwd.obj" \
 	"$(INTDIR)\xmalloc.obj" \
 	"$(INTDIR)\yesno.obj" \
-	"$(INTDIR)\unsetenv.obj" \
-	"$(INTDIR)\setenv.obj"
+	"$(INTDIR)\xreadlink.obj"
 
 "$(OUTDIR)\libcvs.lib" : "$(OUTDIR)" $(DEF_FILE) $(LIB32_OBJS)
     $(LIB32) @<<
@@ -447,6 +451,11 @@ SOURCE=.\xgetcwd.c
 SOURCE=.\xmalloc.c
 
 "$(INTDIR)\xmalloc.obj" : $(SOURCE) "$(INTDIR)"
+
+
+SOURCE=.\xreadlink.c
+
+"$(INTDIR)\xreadlink.obj" : $(SOURCE) "$(INTDIR)"
 
 
 SOURCE=.\yesno.c
