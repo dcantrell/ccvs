@@ -1,3 +1,11 @@
+2003-03-19  Derek Price  <derek@ximbiot.com>
+
+	* configure.in: AC_SUBST HAVE_PUTENV and create a dynamic config file
+	for src/sanity.sh.
+
+	* Makefile.in: Regenerated.
+	* configure: Ditto.
+
 2003-03-16  Mark D. Baushke  <mdb@cvshome.org>
 
 	* NEWS (changes since 1.11.5): Mention CVSREADONLYFS environment

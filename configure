@@ -5540,6 +5540,8 @@ _ACEOF
 fi
 done
 
+HAVE_PUTENV=$ac_cv_func_putenv
+
 # we only need one of the following
 
 
@@ -9990,7 +9992,7 @@ ac_config_files="$ac_config_files contrib/sccs2rcs"
 ac_config_files="$ac_config_files src/cvsbug"
 
 
-ac_config_files="$ac_config_files Makefile contrib/Makefile cvs.spec diff/Makefile doc/Makefile emx/Makefile lib/Makefile man/Makefile os2/Makefile src/Makefile tools/Makefile vms/Makefile windows-NT/Makefile windows-NT/SCC/Makefile zlib/Makefile"
+ac_config_files="$ac_config_files Makefile contrib/Makefile cvs.spec diff/Makefile doc/Makefile emx/Makefile lib/Makefile man/Makefile os2/Makefile src/Makefile src/sanity.config.sh tools/Makefile vms/Makefile windows-NT/Makefile windows-NT/SCC/Makefile zlib/Makefile"
 
 
 cat >confcache <<\_ACEOF
@@ -10514,6 +10516,7 @@ do
   "man/Makefile" ) CONFIG_FILES="$CONFIG_FILES man/Makefile" ;;
   "os2/Makefile" ) CONFIG_FILES="$CONFIG_FILES os2/Makefile" ;;
   "src/Makefile" ) CONFIG_FILES="$CONFIG_FILES src/Makefile" ;;
+  "src/sanity.config.sh" ) CONFIG_FILES="$CONFIG_FILES src/sanity.config.sh" ;;
   "tools/Makefile" ) CONFIG_FILES="$CONFIG_FILES tools/Makefile" ;;
   "vms/Makefile" ) CONFIG_FILES="$CONFIG_FILES vms/Makefile" ;;
   "windows-NT/Makefile" ) CONFIG_FILES="$CONFIG_FILES windows-NT/Makefile" ;;
@@ -10655,6 +10658,7 @@ s,@TEXI2DVI@,$TEXI2DVI,;t t
 s,@MAKE_TARGETS_IN_VPATH_TRUE@,$MAKE_TARGETS_IN_VPATH_TRUE,;t t
 s,@MAKE_TARGETS_IN_VPATH_FALSE@,$MAKE_TARGETS_IN_VPATH_FALSE,;t t
 s,@LIBOBJS@,$LIBOBJS,;t t
+s,@HAVE_PUTENV@,$HAVE_PUTENV,;t t
 s,@KRB4@,$KRB4,;t t
 s,@includeopt@,$includeopt,;t t
 s,@EDITOR@,$EDITOR,;t t

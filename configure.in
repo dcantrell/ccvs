@@ -220,6 +220,8 @@ AC_CHECK_FUNCS(\
 	vprintf \
 	wait3 \
 )
+HAVE_PUTENV=$ac_cv_func_putenv
+AC_SUBST(HAVE_PUTENV)
 # we only need one of the following
 AC_CHECK_FUNCS([\
 	nanosleep \
@@ -927,6 +929,7 @@ AC_CONFIG_FILES([Makefile \
 	  man/Makefile \
 	  os2/Makefile \
 	  src/Makefile \
+	  src/sanity.config.sh \
 	  tools/Makefile \
 	  vms/Makefile \
 	  windows-NT/Makefile \
