@@ -1,3 +1,10 @@
+Tue Sep 24 09:08:17 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* log.c (log_tree): When walking through branches, follow the
+	->prev field rather than following ->next which insures that the
+	loop only executes once and we only see the last branch.
+	* sanity.sh (multibranch): Test "cvs log" too; tests for above fix.
+
 Mon Sep 23 09:55:22 1996  Norbert Kiesel  <nk@col.sw-ley.de>
 
 	* options.h.in: Fixed some typos in the comments and reindented
