@@ -1,3 +1,7 @@
+Fri Mar 28 10:06:59 1997  Steven Miller  <Miller@wingra.com>
+
+	* entries.c (Subdirs_Known): Don't create Entries.Log if noexec.
+
 Thu Mar 27 18:14:12 1997  Ian Lance Taylor  <ian@cygnus.com>
 
 	* sanity.sh (death2): Remove commented out test death2-21.  It

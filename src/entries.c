@@ -734,10 +734,13 @@ Subdirs_Known (entries)
 	FILE *fp;
 
 	sdtp->subdirs = 1;
-	/* Create Entries.Log so that Entries_Close will do something.  */
-	fp = open_file (CVSADM_ENTLOG, "a");
-	if (fclose (fp) == EOF)
-	    error (1, errno, "cannot close %s", CVSADM_ENTLOG);
+	if (!noexec)
+	{
+	    /* Create Entries.Log so that Entries_Close will do something.  */
+	    fp = open_file (CVSADM_ENTLOG, "a");
+	    if (fclose (fp) == EOF)
+		error (1, errno, "cannot close %s", CVSADM_ENTLOG);
+	}
     }
 }
 
