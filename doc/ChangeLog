@@ -1,5 +1,9 @@
 Wed Jan  3 17:01:58 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvs.texinfo (import): Adjust list of ignored files to match
+	recent change to CVS (CVS* -> CVS CVS.adm).  Consolidate
+	discussion of ignored files in one place (with xrefs from others).
+
 	* cvsclient.texi: Remove How To node.  It was out of date
 	(again!), and I am getting sick of trying to update it (internals
 	documentation should be in the comments, where it at least has a

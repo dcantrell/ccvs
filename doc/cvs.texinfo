@@ -5364,29 +5364,9 @@ in the two branches of development; use @samp{checkout
 -j} to reconcile the differences, as import instructs
 you to do.
 
-By default, certain file names are ignored during
-@code{import}: names associated with @sc{cvs}
-administration, or with other common source control
-systems; common names for patch files, object files,
-archive files, and editor backup files; and other names
-that are usually artifacts of assorted utilities.
-Currently, the default list of ignored files includes
-files matching these names:
-
-@example
-        RCSLOG  RCS     SCCS
-        CVS*    cvslog.*
-        tags    TAGS
-        .make.state     .nse_depinfo
-        *~      #*      .#*     ,*
-        *.old   *.bak   *.BAK   *.orig  *.rej   .del-*
-        *.a     *.o     *.so    *.Z     *.elc   *.ln  
-        core
-@end example
-
-If the file @file{$CVSROOT/CVSROOT/cvsignore} exists,
-any files whose names match the specifications in that
-file will also be ignored.
+If @sc{cvs} decides a file should be ignored
+(@pxref{cvsignore}), it does not import it and prints
+@samp{I } followed by the filename
 
 If the file @file{$CVSROOT/CVSROOT/cvswrappers} exists,
 any file whose names match the specifications in that
@@ -6376,23 +6356,9 @@ those directories, which may not be what you want.
 Ignore files whose names match @var{name} (in your
 working directory) during the update.  You can specify
 @samp{-I} more than once on the command line to specify
-several files to ignore.  By default, @code{update}
-ignores files whose names match any of the following:
-
-@example
-        RCSLOG  RCS     SCCS
-        CVS*    cvslog.*
-        tags    TAGS
-        .make.state     .nse_depinfo
-        *~      #*      .#*     ,*
-        *.old   *.bak   *.BAK   *.orig  *.rej   .del-*
-        *.a     *.o     *.so    *.Z     *.elc   *.ln  
-        core
-@end example
-
-Use @samp{-I !} to avoid ignoring any files at all.
-@xref{cvsignore}, for other ways to make @sc{cvs} ignore
-some files.
+several files to ignore.  Use @samp{-I !} to avoid
+ignoring any files at all.  @xref{cvsignore}, for other
+ways to make @sc{cvs} ignore some files.
 
 @item -W@var{spec}
 Specify file names that should be filtered during
@@ -7135,14 +7101,20 @@ This list is constructed in the following way.
 
 @itemize @bullet
 @item
-The list is initialized to the following file name
-patterns:
+The list is initialized to include certain file name
+patterns: names associated with @sc{cvs}
+administration, or with other common source control
+systems; common names for patch files, object files,
+archive files, and editor backup files; and other names
+that are usually artifacts of assorted utilities.
+Currently, the default list of ignored file name
+patterns is:
 
 @cindex Ignored files
 @cindex Automatically ignored files
 @example
-    RCSLOG  RCS     SCCS
-    CVS*    cvslog.*
+    RCS     SCCS    CVS     CVS.adm
+    RCSLOG  cvslog.*
     tags    TAGS
     .make.state     .nse_depinfo
     *~      #*      .#*     ,*
