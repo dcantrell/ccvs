@@ -1,5 +1,26 @@
 2004-07-10  Derek Price  <derek@ximbiot.com>
 
+	* cvs.h (CVSROOTADM_POSTWATCH): New macro.
+	* fileattr.c (*): Misc cleanup.
+	(postwatch_proc): New function.
+	(fileattr_write): Call watch proc when done writing fileattr.
+	* main.c: Misc cleanup.
+	* mkmodules.c (postwatch_contents): New var.
+	(filelist): Add postwatch.
+	* rcs.c (expand_filelist): Use primary path.
+	(RCS_checkin): Misc gratuitous cleanup.
+	* recurse.c (do_recursion): Misc cleanup.
+	* server.c: Misc cleanup.
+	* watch.c (addremove_filesdoneproc): Remove function.
+	(watch_addremove): Don't call above function.
+	(*): Misc cleanup.
+	* watch.h: Remove some unnecessary "extern" decls.
+	* sanity.sh (mkproj, chproj, rmproj, touchproj): Consolidate into...
+	(modify_repo): ...this more general function.
+	(*): Correct for above.  Handle new hooks.
+
+2004-07-10  Derek Price  <derek@ximbiot.com>
+
 	* tag.c (add_val_tag): Remove function.
 	(cvstag): Call tag_check_valid instead of above function.
 	(rtag_proc, tag_check_valid_join): Pass new argument to

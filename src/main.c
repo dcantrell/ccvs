@@ -338,6 +338,7 @@ cmd_synonyms (void)
 }
 
 
+
 unsigned long int
 lookup_command_attribute (char *cmd_name)
 {

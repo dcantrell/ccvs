@@ -2483,7 +2483,7 @@ server_notify (void)
 
     while (notify_list != NULL)
     {
-	if ( CVS_CHDIR (notify_list->dir) < 0)
+	if (CVS_CHDIR (notify_list->dir) < 0)
 	{
 	    error (0, errno, "cannot change to %s", notify_list->dir);
 	    return -1;
@@ -2837,7 +2837,7 @@ protocol_memory_error (struct buffer *buf)
  * Else if command is invalid and croak_on_invalid is set, then die.
  * Else just return 0 to indicate that command is invalid.
  */
-static int
+static bool
 check_command_valid_p (char *cmd_name)
 {
     /* Right now, only pserver notices invalid commands -- namely,
@@ -2847,7 +2847,7 @@ check_command_valid_p (char *cmd_name)
      */
 #ifdef AUTH_SERVER_SUPPORT
     if (CVS_Username == NULL)
-	return 1;
+	return true;
 
     if (lookup_command_attribute (cmd_name) & CVS_CMD_MODIFIES_REPOSITORY)
     {
@@ -2896,7 +2896,7 @@ check_command_valid_p (char *cmd_name)
 		    us with some sort of denial of service attack.  */
 		 error (0, errno, "cannot open %s", fname);
 		 free (fname);
-		 return 0;
+		 return false;
 	     }
 	 }
          else  /* successfully opened readers file */
@@ -2949,7 +2949,7 @@ check_command_valid_p (char *cmd_name)
 		 /* Writers file does not exist, so everyone is a writer,
 		    by default.  */
 		 free (fname);
-		 return 1;
+		 return true;
 	     }
 	     else
 	     {
@@ -2957,7 +2957,7 @@ check_command_valid_p (char *cmd_name)
 		    us with some sort of denial of service attack.  */
 		 error (0, errno, "cannot read %s", fname);
 		 free (fname);
-		 return 0;
+		 return false;
 	     }
 	 }
 
@@ -2984,7 +2984,7 @@ check_command_valid_p (char *cmd_name)
 	     if (linebuf)
 		 free (linebuf);
 	     free (fname);
-             return 1;
+             return true;
          }
          else   /* writers file exists, but this user not listed in it */
          {
@@ -2994,13 +2994,13 @@ check_command_valid_p (char *cmd_name)
 	     if (linebuf)
 		 free (linebuf);
 	     free (fname);
-	     return 0;
+	     return false;
 	 }
     }
 #endif /* AUTH_SERVER_SUPPORT */
 
     /* If ever reach end of this function, command must be valid. */
-    return 1;
+    return true;
 }
 
 

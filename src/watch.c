@@ -225,19 +225,6 @@ addremove_fileproc (void *callerdat, struct file_info *finfo)
 
 
 static int
-addremove_filesdoneproc (void *callerdat, int err, const char *repository,
-                         const char *update_dir, List *entries)
-{
-    if (the_args.setting_default)
-	watch_modify_watchers (NULL, &the_args);
-    return err;
-}
-
-
-
-static int watch_addremove (int argc, char **argv);
-
-static int
 watch_addremove (int argc, char **argv)
 {
     int c;
@@ -332,14 +319,15 @@ watch_addremove (int argc, char **argv)
     lock_tree_promotably (argc, argv, local, W_LOCAL, 0);
 
     err = start_recursion
-	(addremove_fileproc, addremove_filesdoneproc,
-	 NULL, NULL, NULL,
+	(addremove_fileproc, NULL, NULL, NULL, NULL,
 	 argc, argv, local, W_LOCAL, 0, CVS_LOCK_WRITE,
 	 NULL, 1, NULL);
 
     Lock_Cleanup ();
     return err;
 }
+
+
 
 int
 watch_add (int argc, char **argv)
@@ -496,9 +484,7 @@ watchers (int argc, char **argv)
     }
 #endif /* CLIENT_SUPPORT */
 
-    return start_recursion
-	( watchers_fileproc, (FILESDONEPROC) NULL,
-	  (DIRENTPROC) NULL, (DIRLEAVEPROC) NULL, NULL,
-	  argc, argv, local, W_LOCAL, 0, CVS_LOCK_READ,
-	  (char *) NULL, 1, (char *) NULL );
+    return start_recursion (watchers_fileproc, NULL, NULL,
+			    NULL, NULL, argc, argv, local, W_LOCAL, 0,
+			    CVS_LOCK_READ, NULL, 1, NULL);
 }
