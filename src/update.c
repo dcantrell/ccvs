@@ -1536,7 +1536,7 @@ patch_file_write (callerdat, buffer, len)
     data->final_nl = (buffer[len - 1] == '\n');
 
     if (data->compute_checksum)
-	MD5Update (&data->context, buffer, len);
+	MD5Update (&data->context, (unsigned char *) buffer, len);
 }
 
 #endif /* SERVER_SUPPORT */

@@ -1,3 +1,7 @@
+Wed Nov 19 18:25:03 1997  Mike Glendinning  <mikeg@sequent.com>
+
+	* update.c (patch_file_write): Missing cast provided.
+
 Wed Nov 19 15:57:59 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* rcs.c (RCS_deltas): Solve trigraph problem (once and for all, I
