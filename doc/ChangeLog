@@ -1,3 +1,8 @@
+Sun Dec 31 10:53:47 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (Password authentication): Variety of cleanups and
+	minor fixes, including shorter node names.
+
 Sun Dec 24 02:37:51 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
         * cvs.texinfo (Using the client with password authentication): 
