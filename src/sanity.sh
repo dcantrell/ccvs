@@ -10764,8 +10764,7 @@ U dir/dir2d2-2/sub2d2-2/file2-2"
 	  ##################################################
 
 	  dotest_fail cvsadm-2d3-1 "${testcvs} co -d dir/dir2 1mod" \
-"${PROG} [a-z]*: cannot chdir to dir: No such file or directory
-${PROG} [a-z]*: ignoring module 1mod"
+"${PROG} \[checkout aborted\]: could not change directory to requested checkout directory .dir.: No such file or directory"
 
 	  if $remote; then :; else
 	    # Remote can't handle this, even with the "mkdir dir".
@@ -11274,12 +11273,11 @@ U ${TESTDIR}/1/file1"
 	  # this is the behavior of CVS 1.9 and earlier.
 	  if $remote; then :; else
 	    dotest_fail abspath-3.1 "${testcvs} co -d ${TESTDIR}/1/2 mod1" \
-"${PROG} [a-z]*: cannot chdir to 1: No such file or directory
-${PROG} [a-z]*: ignoring module mod1"
+"${PROG} \[checkout aborted\]: could not change directory to requested checkout directory .${TESTDIR}/1.: No such file or directory"
 	  fi
 	  dotest_fail abspath-3.2 "${testcvs} co -d 1/2 mod1" \
-"${PROG} [a-z]*: cannot chdir to 1: No such file or directory
-${PROG} [a-z]*: ignoring module mod1"
+"${PROG} \[checkout aborted\]: could not change directory to requested checkout directory .1.: No such file or directory"
+
 	  mkdir 1
 
 	  if $remote; then
@@ -11287,8 +11285,7 @@ ${PROG} [a-z]*: ignoring module mod1"
 	    # a bug, it should only need to exist on the client side.
 	    # See also cvsadm-2d3.
 	    dotest_fail abspath-3a "${testcvs} co -d 1/2 mod1" \
-"${PROG} [a-z]*: cannot chdir to 1: No such file or directory
-${PROG} [a-z]*: ignoring module mod1"
+"${PROG} \[server aborted\]: could not change directory to requested checkout directory .1.: No such file or directory"
 	    cd 1
 	    dotest abspath-3a-try2 "${testcvs} co -d 2 mod1" \
 "${PROG} [a-z]*: Updating 2

@@ -406,24 +406,65 @@ safe_location (where)
         hardpath[x] = '\0';
     }
 
+    /* set current - even if where is set we'll need to cd back... */
     current = xgetwd ();
     if (current == NULL)
 	error (1, errno, "could not get working directory");
 
+    /* if where is set, set current to where, where - last_component( where ),
+     * or fail, depending on whether the directories exist or not.
+     */
     if( where != NULL )
     {
 	if( chdir( where ) != -1 )
 	{
+	    /* where */
 	    where_location = xgetwd();
 	    if( where_location == NULL )
 		error( 1, errno, "could not get working directory" );
 
 	    if( chdir( current ) == -1 )
-		error( 1, errno, "Could not change directory" );
+		error( 1, errno, "could not change directory to `%s'" );
 
 	    free( current );
 	    current = where_location;
         }
+	else if( errno == ENOENT )
+	{
+	    if ( last_component( where ) != where )
+	    {
+		/* where - last_component( where ) */
+		char *parent;
+
+		/* strip the last_component */
+		where_location = strdup( where );
+		parent = last_component( where_location );
+		parent[-1] = '\0';
+
+		if( chdir( where_location ) != -1 )
+		{
+		    where_location = xgetwd();
+		    if( where_location == NULL )
+			error( 1, errno, "could not get working directory (nominally `%s')", where_location );
+
+		    if( chdir( current ) == -1 )
+			error( 1, errno, "could not change directory to `%s'", current );
+
+		    free( current );
+		    current = where_location;
+		}
+		else
+		    /* fail */
+		    error( 1, errno, "could not change directory to requested checkout directory `%s'", where_location );
+	    }
+	    /* else: ERRNO == ENOENT & last_component(where) == where
+	     * for example, 'cvs co -d newdir module', where newdir hasn't
+	     * been created yet, so leave current set to '.' and check that
+	     */
+	}
+	else
+	    /* fail */
+	    error( 1, errno, "could not change directory to requested checkout directory `%s'", where );
     }
 
     hardpath_len = strlen (hardpath);

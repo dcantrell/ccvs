@@ -1,3 +1,12 @@
+2001-05-30  Derek Price  <dprice@collab.net>
+
+	* *: Various bug fixes and comments for the following
+	patch from Donald Sharp <sharpd@cisco.com>:
+
+	* checkout.c (safe_location): cvs co -d <directory> still had
+	failure modes from the way the -d option works.
+	* sanity.sh: Misc error message resynching.
+
 2001-05-29  Derek Price  <dprice@collab.net>
 
 	* Makefile.am (cvs_SOURCES): Add root.h.
