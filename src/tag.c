@@ -36,17 +36,17 @@ static int rtag_delete (RCSNode *rcsfile);
 static int tag_fileproc (void *callerdat, struct file_info *finfo);
 
 static char *numtag;			/* specific revision to tag */
-static int numtag_validated = 0;
+static bool numtag_validated = false;
 static char *date = NULL;
 static char *symtag;			/* tag to add or delete */
-static int delete_flag;			/* adding a tag by default */
-static int branch_mode;			/* make an automagic "branch" tag */
-static int disturb_branch_tags = 0;	/* allow -F,-d to disturb branch tags */
-static int force_tag_match = 1;		/* force tag to match by default */
-static int force_tag_move;		/* don't force tag to move by default */
-static int check_uptodate;		/* no uptodate-check by default */
-static int attic_too;			/* remove tag from Attic files */
-static int is_rtag;
+static bool delete_flag;		/* adding a tag by default */
+static bool branch_mode;		/* make an automagic "branch" tag */
+static bool disturb_branch_tags = false;/* allow -F,-d to disturb branch tags */
+static bool force_tag_match = true;	/* force tag to match by default */
+static bool force_tag_move;		/* don't force tag to move by default */
+static bool check_uptodate;		/* no uptodate-check by default */
+static bool attic_too;			/* remove tag from Attic files */
+static bool is_rtag;
 
 struct tag_info
 {
@@ -106,10 +106,10 @@ static const char *const tag_usage[] =
 int
 cvstag (int argc, char **argv)
 {
-    int local = 0;			/* recursive by default */
+    bool local = false;			/* recursive by default */
     int c;
     int err = 0;
-    int run_module_prog = 1;
+    bool run_module_prog = true;
 
     is_rtag = (strcmp (cvs_cmd_name, "rtag") == 0);
 
@@ -122,31 +122,31 @@ cvstag (int argc, char **argv)
 	switch (c)
 	{
 	    case 'a':
-		attic_too = 1;
+		attic_too = true;
 		break;
 	    case 'b':
-		branch_mode = 1;
+		branch_mode = true;
 		break;
 	    case 'B':
-		disturb_branch_tags = 1;
+		disturb_branch_tags = true;
 		break;
 	    case 'c':
-		check_uptodate = 1;
+		check_uptodate = true;
 		break;
 	    case 'd':
-		delete_flag = 1;
+		delete_flag = true;
 		break;
             case 'F':
-		force_tag_move = 1;
+		force_tag_move = true;
 		break;
 	    case 'f':
-		force_tag_match = 0;
+		force_tag_match = false;
 		break;
 	    case 'l':
-		local = 1;
+		local = true;
 		break;
 	    case 'n':
-		run_module_prog = 0;
+		run_module_prog = false;
 		break;
 	    case 'Q':
 	    case 'q':
@@ -160,7 +160,7 @@ cvstag (int argc, char **argv)
 			   cvs_cmd_name);
 		break;
 	    case 'R':
-		local = 0;
+		local = false;
 		break;
             case 'r':
                 numtag = optarg;
@@ -200,23 +200,23 @@ cvstag (int argc, char **argv)
 	ign_setup ();
 
 	if (attic_too)
-	    send_arg("-a");
+	    send_arg ("-a");
 	if (branch_mode)
-	    send_arg("-b");
+	    send_arg ("-b");
 	if (disturb_branch_tags)
-	    send_arg("-B");
+	    send_arg ("-B");
 	if (check_uptodate)
-	    send_arg("-c");
+	    send_arg ("-c");
 	if (delete_flag)
-	    send_arg("-d");
+	    send_arg ("-d");
 	if (force_tag_move)
-	    send_arg("-F");
+	    send_arg ("-F");
 	if (!force_tag_match)
 	    send_arg ("-f");
 	if (local)
-	    send_arg("-l");
+	    send_arg ("-l");
 	if (!run_module_prog)
-	    send_arg("-n");
+	    send_arg ("-n");
 
 	if (numtag)
 	    option_with_arg ("-r", numtag);
@@ -262,7 +262,7 @@ cvstag (int argc, char **argv)
 			   (date ? date : "A"))), symtag, argv[i], "");
 	    err += do_module (db, argv[i], TAG,
 			      delete_flag ? "Untagging" : "Tagging",
-			      rtag_proc, (char *) NULL, 0, local, run_module_prog,
+			      rtag_proc, NULL, 0, local, run_module_prog,
 			      0, symtag);
 	}
 	close_module (db);
@@ -393,7 +393,7 @@ rtag_proc (int argc, char **argv, char *xwhere, char *mwhere, char *mfile,
     {
 	tag_check_valid (numtag, argc - 1, argv + 1, local_specified, 0,
 			 repository );
-	numtag_validated = 1;
+	numtag_validated = true;
     }
 
     /* check to make sure they are authorized to tag all the
@@ -542,25 +542,19 @@ check_fileproc (void *callerdat, struct file_info *finfo)
 #endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
 	}
         else if (strcmp(ti->oldrev, p->data) == 0)
-        {
             addit = 0;
-        }
         else if (!force_tag_move)
-        {
             addit = 0;
-        }
     }
     else
-    {
 	addit = 0;
-    }
     if (!addit)
     {
 	free(p->data);
 	p->data = NULL;
     }
     freevers_ts (&vers);
-    (void) addnode (tlist, p);
+    (void)addnode (tlist, p);
     return 0;
 }
 
@@ -568,8 +562,8 @@ check_fileproc (void *callerdat, struct file_info *finfo)
 
 struct pretag_proc_data {
      List *tlist;
-     int delete_flag;
-     int force_tag_move;
+     bool delete_flag;
+     bool force_tag_move;
      char *symtag;
 };
 
@@ -605,7 +599,7 @@ check_filesdoneproc (void *callerdat, int err, const char *repos,
         error (0, 0, "Pre-tag check failed");
         err += n;
     }
-    return (err);
+    return err;
 }
 
 
@@ -813,7 +807,7 @@ rtag_fileproc (void *callerdat, struct file_info *finfo)
 
     /* find the parsed RCS data */
     if ((rcsfile = finfo->rcs) == NULL)
-	return (1);
+	return 1;
 
     /*
      * For tagging an RCS file which is a symbolic link, you'd best be
@@ -822,7 +816,7 @@ rtag_fileproc (void *callerdat, struct file_info *finfo)
      */
 
     if (delete_flag)
-	return (rtag_delete (rcsfile));
+	return rtag_delete (rcsfile);
 
     /*
      * If we get here, we are adding a tag.  But, if -a was specified, we
@@ -832,27 +826,26 @@ rtag_fileproc (void *callerdat, struct file_info *finfo)
     if (attic_too && (!numtag && !date))
     {
 	if ((rcsfile->flags & VALID) && (rcsfile->flags & INATTIC))
-	    return (rtag_delete (rcsfile));
+	    return rtag_delete (rcsfile);
     }
 
-    version = RCS_getversion (rcsfile, numtag, date, force_tag_match,
-			      (int *) NULL);
+    version = RCS_getversion (rcsfile, numtag, date, force_tag_match, NULL);
     if (version == NULL)
     {
 	/* If -a specified, clean up any old tags */
 	if (attic_too)
-	    (void) rtag_delete (rcsfile);
+	    (void)rtag_delete (rcsfile);
 
 	if (!quiet && !force_tag_match)
 	{
 	    error (0, 0, "cannot find tag `%s' in `%s'",
 		   numtag ? numtag : "head", rcsfile->path);
-	    return (1);
+	    return 1;
 	}
-	return (0);
+	return 0;
     }
     if (numtag
-	&& isdigit ((unsigned char) *numtag)
+	&& isdigit ((unsigned char)*numtag)
 	&& strcmp (numtag, version) != 0)
     {
 
@@ -903,17 +896,17 @@ rtag_fileproc (void *callerdat, struct file_info *finfo)
 	    if (!force_tag_move)
 	    {
 		/* we're NOT going to move the tag */
-		(void) printf ("W %s", finfo->fullname);
+		(void)printf ("W %s", finfo->fullname);
 
-		(void) printf (" : %s already exists on %s %s",
-			       symtag, isbranch ? "branch" : "version",
-			       oversion);
-		(void) printf (" : NOT MOVING tag to %s %s\n",
-			       branch_mode ? "branch" : "version", rev);
+		(void)printf (" : %s already exists on %s %s",
+			      symtag, isbranch ? "branch" : "version",
+			      oversion);
+		(void)printf (" : NOT MOVING tag to %s %s\n",
+			      branch_mode ? "branch" : "version", rev);
 		free (oversion);
 		free (version);
-		if (branch_mode) free(rev);
-		return (0);
+		if (branch_mode) free (rev);
+		return 0;
 	    }
 	    else /* force_tag_move is set and... */
 		if ((isbranch && !disturb_branch_tags) ||
@@ -927,7 +920,7 @@ rtag_fileproc (void *callerdat, struct file_info *finfo)
 		if (branch_mode) free(rev);
 		free (oversion);
 		free (version);
-		return (0);
+		return 0;
 	    }
 	    free (oversion);
 	}
@@ -944,13 +937,15 @@ rtag_fileproc (void *callerdat, struct file_info *finfo)
         if (branch_mode)
 	    free (rev);
         free (version);
-        return (1);
+        return 1;
     }
     if (branch_mode)
 	free (rev);
     free (version);
-    return (0);
+    return 0;
 }
+
+
 
 /*
  * If -d is specified, "force_tag_match" is set, so that this call to
@@ -978,10 +973,9 @@ rtag_delete (RCSNode *rcsfile)
 	free (version);
     }
 
-    version = RCS_getversion (rcsfile, symtag, (char *) NULL, 1,
-			      (int *) NULL);
+    version = RCS_getversion (rcsfile, symtag, NULL, 1, NULL);
     if (version == NULL)
-	return (0);
+	return 0;
     free (version);
 
 
@@ -990,12 +984,12 @@ rtag_delete (RCSNode *rcsfile)
 	(!isbranch && disturb_branch_tags))
     {
 	if (!quiet)
-	    error(0, 0,
-		"Not removing %s tag `%s' from `%s'%s.",
-		isbranch ? "branch" : "non-branch",
-		symtag, rcsfile->path,
-		isbranch ? "" : " due to `-B' option");
-	return (1);
+	    error (0, 0,
+                   "Not removing %s tag `%s' from `%s'%s.",
+                   isbranch ? "branch" : "non-branch",
+                   symtag, rcsfile->path,
+                   isbranch ? "" : " due to `-B' option");
+	return 1;
     }
 
     if ((retcode = RCS_deltag(rcsfile, symtag)) != 0)
@@ -1004,11 +998,12 @@ rtag_delete (RCSNode *rcsfile)
 	    error (0, retcode == -1 ? errno : 0,
 		   "failed to remove tag `%s' from `%s'", symtag,
 		   rcsfile->path);
-	return (1);
+	return 1;
     }
     RCS_rewrite (rcsfile, NULL, NULL);
-    return (0);
+    return 0;
 }
+
 
 
 /*
@@ -1034,7 +1029,7 @@ tag_fileproc (void *callerdat, struct file_info *finfo)
                                   numtag,
                                   date,
                                   force_tag_match,
-				  (int *) NULL);
+				  NULL);
         if (nversion == NULL)
 	    goto free_vars_and_return;
     }
@@ -1243,10 +1238,13 @@ tag_dirproc (void *callerdat, const char *dir, const char *repos,
     }
 
     if (!quiet)
-	error (0, 0, "%s %s", delete_flag ? "Untagging" : "Tagging", update_dir);
-    return (R_PROCESS);
+	error (0, 0, "%s %s", delete_flag ? "Untagging" : "Tagging",
+               update_dir);
+    return R_PROCESS;
 }
-
+
+
+
 /* Code relating to the val-tags file.  Note that this file has no way
    of knowing when a tag has been deleted.  The problem is that there
    is no way of knowing whether a tag still exists somewhere, when we
