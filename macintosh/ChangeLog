@@ -1,3 +1,7 @@
+Tue Aug 13 15:02:15 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* ae_if.c: Part of the 9 Aug change didn't get checked in.  Fix it.
+
 Fri Aug 9 14:53:01 1996  Mike Ladwig  <mike@twinpeaks.prc.com>
 
 	* ae_if.c: Include 'mac_config.h" to get macintosh configuration
