@@ -274,13 +274,15 @@ admin (argc, argv)
 		break;
 
 	    case 'o':
-		/* Delete revisions.  Could also be parsing the syntax
-		   of optarg, although for now we just pass it to rcs
-		   as-is (in particular, we plan on supporting only
-		   ":", not "-", for ranges.  The latter is considered
-		   obsolete by RCS and is problematic with tags
-		   containing "-").  Note that multiple -o options are
-		   illegal, in RCS as well as here.  */
+		/* Delete revisions.  Probably should also be parsing the
+		   syntax of optarg, so that the client can give errors
+		   rather than making the server take care of that.
+		   Other than that I'm not sure whether it matters much
+		   whether we parse it here or in admin_fileproc.
+
+		   Note that multiple -o options are illegal, in RCS
+		   as well as here.  */
+
 		if (admin_data.delete_revs != NULL)
 		{
 		    error (0, 0, "duplicate '-o' option");
@@ -503,13 +505,10 @@ admin_fileproc (callerdat, finfo)
 	char *s, *t, *rev1, *rev2;
 	s = admin_data->delete_revs + 2;
 	t = strchr (s, ':');
-	if (t == NULL)
-	{
-	    t = strchr (s, '-');
-	    if (t != NULL && !admin_data->quiet)
-		rcserror ("warning",
-			  "`-' is obsolete in `-o%s'; use `:' instead", s);
-	}
+
+	/* Note that we don't support '-' for ranges.  RCS considers it
+	   obsolete and it is problematic with tags containing '-'.  "cvs log"
+	   has made the same decision.  */
 
 	if (t == NULL)
 	{
