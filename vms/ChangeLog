@@ -1,3 +1,10 @@
+Sat Oct 12 19:36:42 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* vms.h: Don't declare/define mode_t and rmdir; they conflict with
+	declarations in system include files on VAX/VMS 6.2.
+	* pwd.h: #include sys/types.h instead of trying to define uid_t,
+	gid_t and pid_t ourselves.
+
 Tue Oct  8 12:37:45 1996  Ian Lance Taylor  <ian@cygnus.com>
 
 	* options.h: Remove; no longer used.
