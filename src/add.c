@@ -101,7 +101,7 @@ add (argc, argv)
 	int i;
 	start_server ();
 	ign_setup ();
-	option_with_arg ("-k", options);
+	if (options) send_arg(options);
 	option_with_arg ("-m", message);
 	for (i = 0; i < argc; ++i)
 	  /* FIXME: Does this erroneously call Create_Admin in error
