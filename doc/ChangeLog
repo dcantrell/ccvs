@@ -1,3 +1,7 @@
+Sat Feb 22 14:16:28 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* Makefile.in (DISTFILES): Fix typo (missing backslash).
+
 Fri Feb 21 23:08:38 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* RCSFILES: New file.
