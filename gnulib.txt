@@ -200,3 +200,7 @@ lib/lstat.c
 m4/lstat.m4
 
 m4/onceonly_2_57.m4
+lib/strerror.c
+m4/strerror.m4
+
+m4/onceonly_2_57.m4
