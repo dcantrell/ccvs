@@ -152,29 +152,10 @@ fail ()
   exit 1
 }
 
-# Usage:
-#  dotest TESTNAME COMMAND OUTPUT [OUTPUT2]
-# TESTNAME is the name used in the log to identify the test.
-# COMMAND is the command to run; for the test to pass, it exits with 
-# exitstatus zero.
-# OUTPUT is a regexp which is compared against the output (stdout and
-# stderr combined) from the test.  It is anchored to the start and end
-# of the output, so should start or end with ".*" if that is what is desired.
-# Trailing newlines are stripped from the command's actual output before
-# matching against OUTPUT.
-# If OUTPUT2 is specified and the output matches it, then it is also
-# a pass (partial workaround for the fact that some versions of expr
-# lack \|).
-dotest ()
+# See dotest and dotest_fail for explanation (this is the parts
+# of the implementation common to the two).
+dotest_internal ()
 {
-  if $2 >${TESTDIR}/dotest.tmp 2>&1; then
-    : so far so good
-  else
-    status=$?
-    cat ${TESTDIR}/dotest.tmp >>${LOGFILE}
-    echo "exit status was $status" >>${LOGFILE}
-    fail "$1"
-  fi
   # expr can't distinguish between "zero characters matched" and "no match",
   # so special-case it.
   if test -z "$3"; then
@@ -219,6 +200,32 @@ dotest ()
   fi
 }
 
+# Usage:
+#  dotest TESTNAME COMMAND OUTPUT [OUTPUT2]
+# TESTNAME is the name used in the log to identify the test.
+# COMMAND is the command to run; for the test to pass, it exits with 
+# exitstatus zero.
+# OUTPUT is a regexp which is compared against the output (stdout and
+# stderr combined) from the test.  It is anchored to the start and end
+# of the output, so should start or end with ".*" if that is what is desired.
+# Trailing newlines are stripped from the command's actual output before
+# matching against OUTPUT.
+# If OUTPUT2 is specified and the output matches it, then it is also
+# a pass (partial workaround for the fact that some versions of expr
+# lack \|).
+dotest ()
+{
+  if $2 >${TESTDIR}/dotest.tmp 2>&1; then
+    : so far so good
+  else
+    status=$?
+    cat ${TESTDIR}/dotest.tmp >>${LOGFILE}
+    echo "exit status was $status" >>${LOGFILE}
+    fail "$1"
+  fi
+  dotest_internal "$@"
+}
+
 # Like dotest except exitstatus should be nonzero.  Probably their
 # implementations could be unified (if I were a good enough sh script
 # writer to get the quoting right).
@@ -232,32 +239,7 @@ dotest_fail ()
   else
     : so far so good
   fi
-  # expr can't distinguish between "zero characters matched" and "no match",
-  # so special-case it.
-  if test -z "$3"; then
-    if test -s ${TESTDIR}/dotest.tmp; then
-      echo "** expected: " >>${LOGFILE}
-      echo "$3" >>${LOGFILE}
-      echo "** got: " >>${LOGFILE}
-      cat ${TESTDIR}/dotest.tmp >>${LOGFILE}
-      fail "$1"
-    else
-      cat ${TESTDIR}/dotest.tmp >>${LOGFILE}
-      pass "$1"
-    fi
-  else
-    if expr "`cat ${TESTDIR}/dotest.tmp`" : \
-	${STARTANCHOR}"$3"${ENDANCHOR} >/dev/null; then
-      cat ${TESTDIR}/dotest.tmp >>${LOGFILE}
-      pass "$1"
-    else
-      echo "** expected: " >>${LOGFILE}
-      echo "$3" >>${LOGFILE}
-      echo "** got: " >>${LOGFILE}
-      cat ${TESTDIR}/dotest.tmp >>${LOGFILE}
-      fail "$1"
-    fi
-  fi
+  dotest_internal "$@"
 }
 
 # clean any old remnants
@@ -435,6 +417,17 @@ for what in $tests; do
 'Directory /tmp/cvs-sanity/cvsroot/first-dir/sdir/ssdir added to the repository'
 	  cd ssdir
 	  echo ssfile >ssfile
+
+	  # Trying to commit it without a "cvs add" should be an error.
+	  # The "use `cvs add' to create an entry" message is the one
+	  # that I consider to be more correct, but local cvs prints the
+	  # "nothing known" message and noone has gotten around to fixing it.
+	  dotest_fail basica-notadded "${testcvs} -q ci ssfile" \
+"${PROG} [a-z]*: use "'`cvs add'\'' to create an entry for ssfile
+'"${PROG}"' \[[a-z]* aborted\]: correct above errors first!' \
+"${PROG}"' [a-z]*: nothing known about `ssfile'\''
+'"${PROG}"' \[[a-z]* aborted\]: correct above errors first!'
+
 	  dotest basica-4 "${testcvs} add ssfile" \
 "${PROG}"' [a-z]*: scheduling file `ssfile'\'' for addition
 '"${PROG}"' [a-z]*: use '\''cvs commit'\'' to add this file permanently'

@@ -1,5 +1,12 @@
 Thu Mar 14 07:06:59 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* commit.c (find_fileproc): If vn_user is NULL and ts_user is not,
+	print an error rather than silently succeeding.
+	* sanity.sh (basica-notadded): New test, for above fix.
+	(dotest_internal): New function.
+	(dotest,dotest_fail): Call it instead of duplicating code between
+	these two functions.
+
 	* sanity.sh: Skip tests binfiles-9 through binfiles-13 for remote.
 
 	* options.h.in: Adjust comment to reflect kfogel change.
