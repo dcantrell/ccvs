@@ -1,4 +1,17 @@
-Changes from 1.5 to the present:
+Changes from 1.5 to 1.6:
+
+* Del updated the man page to include all of the new features
+of CVS 1.6.
+
+* "cvs tag" now supports a "-r | -D" option for tagging an already
+tagged revision / specific revision of a file.
+
+* cvs supports a -f global option to ignore the ~/.cvsrc file.
+
+* There is a "taginfo" file in CVSROOT that supports filtering and
+recording of tag operations.
+
+* Long options support added, including --help and --version options.
 
 * "cvs release" no longer cares whether or not the directory being
 released has an entry in the `modules' file.
@@ -23,7 +36,8 @@ transforms files on their way in and out of cvs (apparently on the
 NeXT there is some particular usefulness in tarring things up in the
 repository).  It also allows you to declare files as merge-by-copy
 which means that instead of trying to merge the file, CVS will merely
-copy the new version.
+copy the new version.  There is a CVSROOT/cvswrappers file and an
+optionsl ~/.cvswrappers file to support this feature.
 
 * You can set CVSROOT to user@host:dir, not just host:dir, if your
 username on the server host is different than on the client host.
