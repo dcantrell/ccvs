@@ -215,6 +215,15 @@ file's description.
   Send me a PGP-signed message if you want the password to use the machine
   where the problem showed up.
 
+* CVS does not always seem to be waiting to the next filesystem timestamp
+quanta after commits.  So far this has only shown up in testing under the BSDI
+OS.  The symptoms are that ocassionally CVS will not notice that modified files
+are modified, though the file must be modified within a short time after the
+commit, probably milliseconds or seconds, for this symptom to be noticed.  One
+suspected cause is that one of the calls to sleep_past() is being called with
+an incorrect value, though this does not explain why symptoms have only been
+noticed under BSDI.
+
 * Status
 
   This experimental version of CVS contains new features which may not have

@@ -1,3 +1,7 @@
+2003-05-25  Derek Price  <derek@ximbiot.com>
+
+	* BUGS: Note current intermittant BSDI failures.
+
 2003-05-22  Derek Price  <derek@ximbiot.com>
 
 	* TODO (230): Remove this completed item.
