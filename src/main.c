@@ -90,7 +90,15 @@ static const struct cmd
        cannot create a command "cvs new" with a different meaning.  So
        new synonyms are probably best used sparingly, and where used
        should be abbreviations of the fullname (preferably consisting
-       of the first 2 or 3 or so letters).  */
+       of the first 2 or 3 or so letters).
+
+       One thing that some systems do is to recognize any unique
+       abbreviation, for example "annotat" "annota", etc., for
+       "annotate".  The problem with this is that scripts and user
+       habits will expect a certain abbreviation to be unique, and in
+       a future release of CVS it may not be.  So it is better to
+       accept only an explicit list of abbreviations and plan on
+       supporting them in the future as well as now.  */
 
     char *nick1;
     char *nick2;
