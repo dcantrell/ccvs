@@ -1,4 +1,5 @@
 .deps
 .pure
 Makefile
+alloca.h
 fnmatch.h

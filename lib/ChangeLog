@@ -1,5 +1,13 @@
 2004-02-15  Derek Price  <derek@ximbiot.com>
 
+	Import alloca module from GNULIB for vasnprintf().
+	* alloca_.h, alloca.c: New files.
+	* .cvsignore: Ignore alloca.h.
+	* Makefile.am: Compile alloca() when necessary.
+	* Makefile.in: Regenerated.
+
+2004-02-15  Derek Price  <derek@ximbiot.com>
+
 	Make error() accessible to the GNULIB functions.
 
 	* error.h: Move in from ../src.
