@@ -1,5 +1,9 @@
 Wed Oct 15 15:21:43 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* rcscmds.c (diff_exec): Remove item about external diff
+	programs.  It doesn't really belong here now that diff is
+	librarified and TODO #191 now mentions this.
+
 	* checkout.c (checkout_proc): Add comment about assuming '/' is
 	the only path separator.
 	* options.h.in: Fix thinko (CVS/Repository -> CVS/Root).
