@@ -525,10 +525,9 @@ sub get_history
 		}
 	}
 
-    if( !$fh->close )
-    {
-        return( undef );
-    }
+	die "Syserr closing pipe from `cvs co': $!"
+		if !$fh->close && $!;
+	return undef if $?;
 
     return( \%finfo, %rinfo ? \%rinfo : undef );
 }
@@ -625,8 +624,7 @@ sub check_revision
     	$ret_code = 0xffff & system "$command >/dev/null 2>&1";
 	}
 
-    return( 1 ) if $ret_code == 0;
-    return( 0 );
+    return !$ret_code;
 }
 
 ######################################################################

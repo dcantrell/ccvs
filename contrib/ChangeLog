@@ -1,3 +1,9 @@
+2003-09-08  Derek Price  <derek@ximbiot.com>
+
+	* check_cvs.in (get_history): Die on failure to close a pipe due to a system
+	error.
+	(check_revision): Simplify return syntax.
+
 2003-09-02  Derek Price  <derek@ximbiot.com>
 
 	* pvcs2rcs.in: Don't rely on `which' to exit with a non-zero exit
