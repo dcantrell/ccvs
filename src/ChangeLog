@@ -1,3 +1,8 @@
+Fri Nov 15 13:06:03 1996  Tom Hageman  <tom@basil.icce.rug.nl>
+
+	* diff.c (diff_fileproc): In printing error messages, use the
+	correct filename for which the error occurred.
+
 Sun Nov 10 21:13:38 1996  Paul Sanders <p.sanders@dial.pipex.com>
 			  and Jim Kingdon  <kingdon@harvey.cyclic.com>
 
