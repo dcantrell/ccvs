@@ -1,5 +1,11 @@
 2003-05-09  Derek Price  <derek@ximbiot.com>
 
+	* configure.in: Try again, with AC_TRY_LINK this time.
+
+	* configure: Regenerated.
+
+2003-05-09  Derek Price  <derek@ximbiot.com>
+
 	* configure.in: Correct a typo in my last patch.
 
 	* configure: Regenerated.
