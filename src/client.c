@@ -4843,7 +4843,7 @@ start_rsh_server (root, to_server, from_server)
 	   example in CVS_RSH or other such mechanisms to be devised,
 	   if that is what they want (the manual already tells them
 	   that).  */
-	cvs_rsh = "rsh";
+	cvs_rsh = RSH_DFLT;
     if (!cvs_server)
 	cvs_server = "cvs";
 
@@ -4904,7 +4904,7 @@ start_rsh_server (root, to_server, from_server)
     int child_pid;
 
     if (!cvs_rsh)
-	cvs_rsh = "rsh";
+	cvs_rsh = RSH_DFLT;
     if (!cvs_server)
 	cvs_server = "cvs";
 

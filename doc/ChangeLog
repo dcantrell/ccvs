@@ -1,5 +1,10 @@
 2003-03-19  Mark D. Baushke  <mdb@cvshome.org>
 
+	* cvs.texinfo (Connecting via rsh): Document that --with-rsh may
+	be used to specify the default "rsh" program to use.
+
+	* Makefile.in: Regenerated.
+	
 	* cvs.texinfo (Environment variables): Document new CVS_PID
 	variable.
 

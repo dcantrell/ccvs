@@ -336,6 +336,10 @@ extern char *sock_strerror (int errnum);
 #define REGEX_MALLOC 1
 #define _REGEX_RE_COMP 1
 
+/* The default remote shell to use, if one does not specify the CVS_RSH
+   environment variable. */
+#define RSH_DFLT "rsh"
+
 /* ssize_t not available under Windows */
 typedef int ssize_t;
 
