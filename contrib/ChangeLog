@@ -1,3 +1,9 @@
+1999-01-19  Graham Stoney <greyham@research.canon.com.au>
+
+	* log.pl: The author commited the canonical perl "localtime" Y2K
+	offence, of printing "19$year" instead of (1900 + $year). Of
+	course, the result is non-compliance in year 2000.  Fix it.
+
 1998-10-14  Jim Kingdon
 
 	* ccvs-rsh.pl: Removed; it was not in DISTFILES so it didn't
