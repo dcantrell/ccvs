@@ -9347,7 +9347,8 @@ modify-on-branch
 
 	  dotest_fail admin-18 "${testcvs} -q admin -nbr:1.1.2 file1" \
 "RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
-rcs: ${TESTDIR}/cvsroot/first-dir/file1,v: symbolic name br already bound to 1\.1"
+rcs: ${TESTDIR}/cvsroot/first-dir/file1,v: symbolic name br already bound to 1\.1
+${PROG} [a-z]*: rcs failed for .file1."
 	  dotest admin-19 "${testcvs} -q admin -ebaz -ebar,auth3 -nbr file1" \
 "RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
 done"
