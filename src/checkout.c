@@ -725,6 +725,7 @@ checkout_proc (pargc, argv, where, mwhere, mfile, shorten,
     {
 	size_t root_len;
 	struct dir_to_build *head;
+	char *top_repository;
 
 	/* We need to tell build_dirs not only the path we want it to
 	   build, but also the repositories we want it to populate the
@@ -779,11 +780,25 @@ internal error: %s doesn't start with %s in checkout_proc",
 	    cp2 = findslash (prepath, cp2 - 1);
 	}
 
-	/* First build the top-level CVSADM directory.  The value we
-	   pass in here for repository is probably wrong; see modules3-7f
-	   in the testsuite.  */
-	build_one_dir (head->repository != NULL ? head->repository : prepath,
-		       ".", *pargc <= 1);
+	/* First build the top-level CVSADM directory.  Need to go up
+	   one more level to compute top_repository.  */
+	if (cp2 == NULL || cp2 < prepath + root_len)
+	    top_repository = emptydir_name ();
+	else
+	{
+	    top_repository = xmalloc (strlen (prepath) + 10);
+	    strncpy (top_repository, prepath, cp2 - prepath);
+	    top_repository[cp2 - prepath] = '\0';
+	}
+	/* I'm not at all sure that this trailing '.' stuff is a good idea,
+	   but it is what remote CVS does in this case and at least for
+	   the moment I'll preserve that behavior (which avoids the
+	   "existing repository does not match" message a few lines
+	   down).  */
+	if (strcmp (top_repository, CVSroot_directory) == 0)
+	    strcat (top_repository, "/.");
+	build_one_dir (top_repository, ".", *pargc <= 1);
+	free (top_repository);
 
 	/*
 	 * build dirs on the path if necessary and leave us in the bottom

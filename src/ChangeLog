@@ -1,5 +1,12 @@
 Sun Sep  7 07:45:35 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* checkout.c (checkout_proc): When building top-level CVSADM
+	directory, continue the process of walking up the repository one
+	more level, rather than putting in the same repository as for the
+	first-level directory.
+	* sanity.sh: Adjust tests basicb-1b, basicb-9b, modules3-7f,
+	toplevel-9, and toplevel-11 to test for this fix.
+
 	(For reference, this takes CVS's text segment from 344460 to
 	344140 bytes.  I know, this may seem unimportant, but it is so
 	unusual for programs to shrink and I think it is so cool when they
