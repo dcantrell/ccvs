@@ -2554,8 +2554,8 @@ RCS_whatbranch (rcs, rev)
 	    return (magic);
 	}
 	free (magic);
-	free (version);
     }
+    free (version);
     return ((char *) NULL);
 }
 
