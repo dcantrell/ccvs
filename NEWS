@@ -1,5 +1,8 @@
 Changes since 1.8:
 
+* The "tag" command has a new option "-c" which checks that all files
+  are up-to-date before tagging.
+
 * The -d command line option now overrides the cvsroot setting stored
 in the CVS/Root file in each working directory, and specifying -d will
 cause CVS/Root to be updated.

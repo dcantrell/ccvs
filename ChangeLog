@@ -1,3 +1,7 @@
+Sun May 26 17:02:49 1996  Norbert Kiesel  <nk@col.sw-ley.de>
+
+	* NEWS: document new option "-c" for tag
+
 Thu May 23 21:49:33 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* INSTALL: Remove footnote 10.  The only kind of change suitable

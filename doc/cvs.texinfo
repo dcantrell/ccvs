@@ -6436,7 +6436,7 @@ to.
 
 @itemize @bullet
 @item
-tag [-lR] [-b] [-d] symbolic_tag [files@dots{}]
+tag [-lR] [-b] [-c] [-d] symbolic_tag [files@dots{}]
 @item
 Requires: working directory, repository.
 @item
@@ -6507,6 +6507,11 @@ The -b option makes the tag a branch tag
 (@pxref{Branches}), allowing concurrent, isolated
 development.  This is most useful for creating a patch
 to a previously released software distribution.
+
+@item -c
+The -c option checks that all files which are to be tagged are
+unmodified.  This can be used to make sure that you can reconstruct the
+current file contents.
 
 @item -d
 Delete a tag.
