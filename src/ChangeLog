@@ -1,3 +1,11 @@
+Thu Jan 11 23:28:05 1996  J.T. Conklin  <jtc@rtl.cygnus.com>
+			  and Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* fileattr.h (fileattr_startdir): Add comment about REPOS == NULL.
+	* fileattr.c (fileattr_read, fileattr_write): Assert that
+	fileattr_stored_repos != NULL.
+	(fileattr_free): If fileattr_stored_repos is NULL, don't free it.
+
 Thu Jan 11 18:03:21 1996  Karl Fogel  <kfogel@floss.red-bean.com>
 
         * scramble.c (descramble): deal with DIAGNOSTIC better.

@@ -68,6 +68,10 @@ fileattr_read ()
     if (attr_read_attempted)
 	return;
 
+    /* If NULL was passed to fileattr_startdir, then it isn't kosher to look
+       at attributes.  */
+    assert (fileattr_stored_repos != NULL);
+
     fname = xmalloc (strlen (fileattr_stored_repos)
 		     + 1
 		     + sizeof (CVSREP_FILEATTR)
@@ -397,6 +401,10 @@ fileattr_write ()
     if (noexec)
 	return;
 
+    /* If NULL was passed to fileattr_startdir, then it isn't kosher to set
+       attributes.  */
+    assert (fileattr_stored_repos != NULL);
+
     fname = xmalloc (strlen (fileattr_stored_repos)
 		     + 1
 		     + sizeof (CVSREP_FILEATTR)
@@ -491,7 +499,8 @@ void
 fileattr_free ()
 {
     dellist (&attrlist);
-    free (fileattr_stored_repos);
+    if (fileattr_stored_repos != NULL)
+	free (fileattr_stored_repos);
     fileattr_stored_repos = NULL;
     if (fileattr_default_attrs != NULL)
 	free (fileattr_default_attrs);
