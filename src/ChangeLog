@@ -39,6 +39,11 @@
 
 2004-05-10  Derek Price  <derek@ximbiot.com>
 
+	* sanity.sh (top-level): Rename to...
+	(rstar-toplevel): ...this for clarity.
+
+2004-05-10  Derek Price  <derek@ximbiot.com>
+
 	* sanity.sh (dirs2-10ar): Remove unnecessary empty argument.
 
 2004-05-08  Larry Jones  <lawrence.jones@ugsplm.com>
