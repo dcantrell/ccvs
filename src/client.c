@@ -1343,6 +1343,11 @@ copy_a_file (data, ent_list, short_pathname, filename)
     for(p = newname; *p; p++)
        if(*p == '.' || *p == '#') *p = '_';
 #endif
+    /* cvsclient.texi has said for a long time that newname must be in the
+       same directory.  Wouldn't want a malicious or buggy server overwriting
+       ~/.profile, /etc/passwd, or anything like that.  */
+    if (last_component (newname) != newname)
+	error (1, 0, "protocol error: Copy-file tried to specify directory");
 
     if (unlink_file (newname) && !existence_error (errno))
 	error (0, errno, "unable to remove %s", newname);
