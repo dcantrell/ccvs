@@ -2518,22 +2518,22 @@ supported_request (name)
 #ifdef AUTH_CLIENT_SUPPORT
 void
 init_sockaddr (name, hostname, port)
-     struct sockaddr_in *name;
-     const char *hostname;
-     unsigned short int port;
+    struct sockaddr_in *name;
+    const char *hostname;
+    unsigned short int port;
 {
-  struct hostent *hostinfo;
-  
-  memset (name, 0, sizeof (*name));
-  name->sin_family = AF_INET;
-  name->sin_port = htons (port);
-  hostinfo = gethostbyname (hostname);
-  if (hostinfo == NULL)
+    struct hostent *hostinfo;
+
+    memset (name, 0, sizeof (*name));
+    name->sin_family = AF_INET;
+    name->sin_port = htons (port);
+    hostinfo = gethostbyname (hostname);
+    if (hostinfo == NULL)
     {
-      fprintf (stderr, "Unknown host %s.\n", hostname);
-      exit (EXIT_FAILURE);
+	fprintf (stderr, "Unknown host %s.\n", hostname);
+	exit (1);
     }
-  name->sin_addr = *(struct in_addr *) hostinfo->h_addr;
+    name->sin_addr = *(struct in_addr *) hostinfo->h_addr;
 }
 
 
