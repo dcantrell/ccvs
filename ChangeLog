@@ -1,3 +1,11 @@
+2000-06-19  Larry Jones  <larry.jones@sdrc.com>
+
+	* configure.in (AC_DEFINE): Define REGEX_MALLOC and _REGEX_RE_COMP
+	to configure lib/regex.c the way we want without messing with the
+	code.
+	* config.h.in: Ditto.
+	* configure: Regenerated.
+
 2000-05-16  Jim Kingdon  <kingdon@redhat.com>
 
 	* TODO (186): Remove paragraph about Eric Raymond's interest.

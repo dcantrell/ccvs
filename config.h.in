@@ -275,3 +275,9 @@
 
 /* Define if you have the socket library (-lsocket).  */
 #undef HAVE_LIBSOCKET
+
+/* Define to force lib/regex.c to use malloc instead of alloca.  */
+#undef REGEX_MALLOC
+
+/* Define to force lib/regex.c to define re_comp et al.  */
+#undef _REGEX_RE_COMP

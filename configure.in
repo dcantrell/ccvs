@@ -59,6 +59,12 @@ AC_DEFINE(HAVE_STRCHR)
 AC_DEFINE(HAVE_MEMCHR)
 
 dnl
+dnl Force lib/regex.c to use malloc instead of messing around with alloca
+dnl and define the old re_comp routines that we use.
+dnl
+AC_DEFINE(REGEX_MALLOC)
+AC_DEFINE(_REGEX_RE_COMP)
+dnl
 dnl AC_FUNC_VFORK is rather baroque.  It seems to be rather more picky
 dnl than, say, the Single Unix Specification (version 2), which simplifies
 dnl a lot of cases by saying that the child process can't set any variables
