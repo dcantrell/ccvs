@@ -1,3 +1,8 @@
+Sat Jul 29 17:29:13 1995  James Kingdon  <kingdon@harvey.cyclic.com>
+
+	* Makefile.in (install): Look for $(PROGS) and
+	$(CONTRIB_PROGS) in build dir, not srcdir.
+
 Fri Jul 28 19:48:45 1995  Paul Eggert  <eggert@twinsun.com>
 
 	* rcs2log.sh: Sync with latest Emacs snapshot.
