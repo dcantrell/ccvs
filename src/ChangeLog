@@ -1,3 +1,8 @@
+Thu Aug 15 10:26:41 1996  Norbert Kiesel  <nk@col.sw-ley.de>
+
+	* server.c (switch_to_user): Fix previous patch to compile it for
+ 	both HAVE_KERBEROS and AUTH_SERVER_SUPPORT
+
 Wed Aug 14 14:02:00 1996  Norbert Kiesel  <nk@col.sw-ley.de>
 
 	* server.c (check_password): if available use getspnam instead of

@@ -3828,6 +3828,63 @@ error ENOMEM Virtual memory exhausted.\n");
 }
 
 
+#if defined (HAVE_KERBEROS) || defined (AUTH_SERVER_SUPPORT)
+static void switch_to_user PROTO((const char *));
+
+static void
+switch_to_user (username)
+    const char *username;
+{
+    struct passwd *pw;
+
+    pw = getpwnam (username);
+    if (pw == NULL)
+    {
+	printf ("E Fatal error, aborting.\n\
+error 0 %s: no such user\n", username);
+	exit (EXIT_FAILURE);
+    }
+
+#if HAVE_INITGROUPS
+    initgroups (pw->pw_name, pw->pw_gid);
+#endif /* HAVE_INITGROUPS */
+
+#if SETXID_SUPPORT
+    /* honor the setgid bit iff set*/
+    if (getgid() != getegid())
+    {
+	setgid (getegid ());
+    }
+    else
+#else
+    {
+	setgid (pw->pw_gid);
+    }
+#endif
+    
+    setuid (pw->pw_uid);
+    /* Inhibit access by randoms.  Don't want people randomly
+       changing our temporary tree before we check things in.  */
+    umask (077);
+
+#if HAVE_PUTENV
+    /* Set LOGNAME and USER in the environment, in case they are
+       already set to something else.  */
+    {
+	char *env;
+
+	env = xmalloc (sizeof "LOGNAME=" + strlen (username));
+	(void) sprintf (env, "LOGNAME=%s", username);
+	(void) putenv (env);
+
+	env = xmalloc (sizeof "USER=" + strlen (username));
+	(void) sprintf (env, "USER=%s", username);
+	(void) putenv (env);
+    }
+#endif /* HAVE_PUTENV */
+}
+#endif
+
 #ifdef AUTH_SERVER_SUPPORT
 
 extern char *crypt PROTO((const char *, const char *));
@@ -3976,61 +4033,6 @@ error 0 %s: no such user\n", username);
 	   we certainly won't grant authorization. */
 	return NULL;
     }
-}
-
-static void switch_to_user PROTO((const char *));
-
-static void
-switch_to_user (username)
-    const char *username;
-{
-    struct passwd *pw;
-
-    pw = getpwnam (username);
-    if (pw == NULL)
-    {
-	printf ("E Fatal error, aborting.\n\
-error 0 %s: no such user\n", username);
-	exit (EXIT_FAILURE);
-    }
-
-#if HAVE_INITGROUPS
-    initgroups (pw->pw_name, pw->pw_gid);
-#endif /* HAVE_INITGROUPS */
-
-#if SETXID_SUPPORT
-    /* honor the setgid bit iff set*/
-    if (getgid() != getegid())
-    {
-	setgid (getegid ());
-    }
-    else
-#else
-    {
-	setgid (pw->pw_gid);
-    }
-#endif
-    
-    setuid (pw->pw_uid);
-    /* Inhibit access by randoms.  Don't want people randomly
-       changing our temporary tree before we check things in.  */
-    umask (077);
-
-#if HAVE_PUTENV
-    /* Set LOGNAME and USER in the environment, in case they are
-       already set to something else.  */
-    {
-	char *env;
-
-	env = xmalloc (sizeof "LOGNAME=" + strlen (username));
-	(void) sprintf (env, "LOGNAME=%s", username);
-	(void) putenv (env);
-
-	env = xmalloc (sizeof "USER=" + strlen (username));
-	(void) sprintf (env, "USER=%s", username);
-	(void) putenv (env);
-    }
-#endif /* HAVE_PUTENV */
 }
 
 /* Read username and password from client (i.e., stdin).
