@@ -1,5 +1,10 @@
 Fri Mar 28 13:59:59 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvsclient.texi (Requests): Make it clear that there is no
+	guarantee that one will get Clear-sticky instead of another
+	response.  Also clarify that clients will tend to store the
+	repository in a long-term way.
+
 	* cvsclient.texi (Requests): Further clarify Directory example.
 
 	* cvsclient.texi (Requests): Add example and further explanation
