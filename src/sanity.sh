@@ -297,10 +297,7 @@ else
 fi
 # this had better be empty
 cd ..; rmdir tmp
-if [ -d tmp ] ; then
-	echo "FAIL: test 4.75" | tee -a ${LOGFILE}
-	exit 1
-fi
+dotest_fail 4.75 "test -d tmp" ''
 
 # a simple function to compare directory contents
 #
