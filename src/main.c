@@ -142,6 +142,7 @@ static const char *const usg[] =
     "        -f           Do not use the ~/.cvsrc file\n",
 #ifdef CLIENT_SUPPORT
     "        -z #         Use 'gzip -#' for net traffic if possible.\n",
+    "        -x           Encrypt all net traffic.\n",
 #endif
     "        -s VAR=VAL   Set CVS user variable.\n",
     "\n",
@@ -337,7 +338,7 @@ main (argc, argv)
     opterr = 1;
 
     while ((c = getopt_long
-            (argc, argv, "Qqrwtnlvb:e:d:Hfz:s:", long_options, &option_index))
+            (argc, argv, "Qqrwtnlvb:e:d:Hfz:s:x", long_options, &option_index))
            != EOF)
       {
 	switch (c)
@@ -409,6 +410,13 @@ main (argc, argv)
 		break;
 	    case 's':
 		variable_set (optarg);
+		break;
+	    case 'x':
+#ifdef CLIENT_SUPPORT
+	        encrypt = 1;
+#endif
+		/* If no CLIENT_SUPPORT, ignore -x, so that users can
+                   have it in their .cvsrc and not cause any trouble.  */
 		break;
 	    case '?':
 	    default:

@@ -9,6 +9,20 @@ extern int file_gzip_level;
 extern int filter_through_gzip PROTO((int, int, int, pid_t *));
 extern int filter_through_gunzip PROTO((int, int, pid_t *));
 
+#if defined (CLIENT_SUPPORT) || defined (SERVER_SUPPORT)
+
+extern int encrypt;
+
+#ifdef HAVE_KERBEROS
+
+/* We can't declare the arguments without including krb.h, and I don't
+   want to do that in every file.  */
+extern struct buffer *krb_encrypt_buffer_initialize ();
+
+#endif /* HAVE_KERBEROS */
+
+#endif /* defined (CLIENT_SUPPORT) || defined (SERVER_SUPPORT) */
+
 #ifdef CLIENT_SUPPORT
 /*
  * Flag variable for seeing whether the server has been started yet.
