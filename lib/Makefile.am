@@ -20,7 +20,6 @@ noinst_LIBRARIES = libcvs.a
 # with the diff library (perhaps to have the caller, CVS, do the
 # matching?)
 libcvs_a_SOURCES = \
-	argmatch.c \
 	md5.c \
 	sighandle.c \
 	yesno.c \
