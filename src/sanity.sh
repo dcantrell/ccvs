@@ -5021,7 +5021,7 @@ Use the following command to help the merge:"
 
 		dotest import-113 \
 "${testcvs} -q co -jjunk-1_0 -jjunk-2_0 first-dir" \
-"${PROG} [a-z]*: file first-dir/imported-f1 is not present in revision junk-2_0
+"${PROG} [a-z]*: file first-dir/imported-f1 does not exist, but is present in revision junk-2_0
 RCS file: ${TESTDIR}/cvsroot/first-dir/imported-f2,v
 retrieving revision 1\.1\.1\.1
 retrieving revision 1\.1\.1\.2
@@ -5758,6 +5758,61 @@ U file8"
 M file2
 R file3
 A file8"
+
+	  # Checkout the mainline again to try merging from the trunk
+	  # to a branch.
+	  cd ..
+	  rm -r first-dir
+	  dotest join-30 "${testcvs} -q co first-dir" \
+'U first-dir/file2
+U first-dir/file3
+U first-dir/file4
+U first-dir/file7'
+	  cd first-dir
+
+	  # Tag the current revisions on the trunk.
+	  dotest join-31 "${testcvs} -q tag T3 ." \
+'T file2
+T file3
+T file4
+T file7'
+
+	  # Modify file7.
+	  echo 'second revision of file7' > file7
+	  dotest join-32 "${testcvs} -q ci -mx ." \
+"Checking in file7;
+${TESTDIR}/cvsroot/first-dir/file7,v  <--  file7
+new revision: 1\.2; previous revision: 1\.1
+done"
+
+	  # And Tag again.
+	  dotest join-33 "${testcvs} -q tag T4 ." \
+'T file2
+T file3
+T file4
+T file7'
+
+	  # Now update branch to T3.
+	  cd ../../2/first-dir
+	  dotest join-34 "${testcvs} -q up -jT3" \
+"${PROG} [a-z]*: file file4 does not exist, but is present in revision T3
+U file7"
+
+	  # Verify that the right changes have been scheduled.
+	  dotest join-35 "${testcvs} -q update" \
+'A file7'
+
+	  # Now to T4.
+	  dotest join-36 "${testcvs} -q up -j T3 -j T4" \
+"A file7
+RCS file: /tmp/cvs-sanity/cvsroot/first-dir/file7,v
+retrieving revision 1\.1
+retrieving revision 1\.2
+Merging differences between 1\.1 and 1\.2 into file7"
+
+	  # Verify that the right changes have been scheduled.
+	  dotest join-37 "${testcvs} -q update" \
+'A file7'
 
 	  cd ../..
 
