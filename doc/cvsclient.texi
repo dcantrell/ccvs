@@ -237,6 +237,9 @@ shall be silently ignored.
 @var{version} can be empty, or start with @samp{0} or @samp{-}, for no
 user file, new user file, or user file to be removed, respectively.
 
+@c FIXME: should distinguish sender and receiver behavior here; the
+@c "anything else" and "does not start with" are intended for future
+@c expansion, and we should specify a sender behavior.
 @var{conflict}, if it starts with @samp{+}, indicates that the file had
 conflicts in it.  The rest of @var{conflict} is @samp{=} if the
 timestamp matches the file, or anything else if it doesn't.  If
@@ -790,6 +793,10 @@ The command completed successfully.
 @node Example
 @section Example
 
+@c FIXME: Use Directory, not Repository!
+@c FIXME-less-important: Use Created and Update-existing, not Updated.
+@c FIXME: the presence of timestamps in the entries lines is not right.
+
 Lines beginning with @samp{c>} are sent by the client; lines beginning
 with @samp{s>} are sent by the server; lines beginning with @samp{#} are
 not part of the actual exchange.
@@ -815,8 +822,9 @@ s> 28
 s> foo: foo.c
 s>         $(CC) -o foo $<
 s> ok
-# In actual practice the next part would be a separate connection.
-# Here it is shown as part of the same one.
+# The current implementation would break the connection here and make a
+# new connection for the next command.  However, the protocol allows it
+# to keep the connection open and continue, which is what we show here.
 c> Repository /rel/cvsfiles/devo/foo
 # foo.c relative to devo/foo just set as Repository.
 c> Entry /foo.c/1.4/Mon Apr 19 15:36:47 1993 Mon Apr 19 15:36:47 1993//

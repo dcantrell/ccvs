@@ -1,3 +1,11 @@
+Wed Jun 12 16:04:48 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvsclient.texi (Entries Lines): Add comment regarding specifying
+	the meaning of "any other" data, in the conflict field.
+	(Example): Make it clear that using a separate connection for each
+	command is not required by the protocol.  Add some comments
+	regarding ways in which the example is out of date or wrong.
+
 Fri Jun  7 18:02:36 1996  Ian Lance Taylor  <ian@cygnus.com>
 			  and Jim Kingdon  <kingdon@cyclic.com>
 
