@@ -36,7 +36,7 @@ implementation.
 * How can I get Cyclic CVS?
 
 If you'd like to try this implementation out, it's available via
-anonymous ftp from ftp.cyclic.com, as /pub/cvs/cvs.tar.gz.  The
+anonymous ftp from ftp.cyclic.com, as /pub/cvs/ccvs.tar.gz.  The
 mailing list cyclic-cvs@cyclic.com has been set up to handle bug
 reports and questions; send mail to cyclic-cvs-request@cyclic.com to
 subscribe or unsubscribe.
