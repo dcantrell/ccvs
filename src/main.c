@@ -246,6 +246,7 @@ main (argc, argv)
     /* `getopt_long' stores the option index here, but right now we
         don't use it. */
     int option_index = 0;
+    int need_to_create_root = 0;
 
     error_set_cleanup (error_cleanup);
 
@@ -553,17 +554,10 @@ error 0 %s: no such user\n", user);
 	       a networked file system), etc.  */
 	    if (strcmp (CVSroot, CVSADM_Root) != 0)
 	    {
-		/* Update the CVS/Root file.  We might want to do this in
-		   all directories that we recurse into, but currently we
-		   don't.  */
-		Create_Root (NULL, CVSroot);
+		/* Once we have verified that this root is usable, we will
+		   want to write it into CVS/Root.  */
+		need_to_create_root = 1;
 	    }
-
-	    /* Allocation policy for the string allocated by Name_Root
-	       is that since we will be using it until the end of our
-	       cvs command, we never bother to free it.  So no need to
-	       worry about losing track of what to free.  */
-	    CVSroot = CVSADM_Root;
         }
     }
 
@@ -758,6 +752,15 @@ error 0 %s: no such user\n", user);
 
 #endif /* No CLIENT_SUPPORT */
     }
+
+    if (need_to_create_root)
+    {
+	/* Update the CVS/Root file.  We might want to do this in
+	   all directories that we recurse into, but currently we
+	   don't.  */
+	Create_Root (NULL, CVSroot);
+    }
+
     Lock_Cleanup ();
     if (err)
 	return (EXIT_FAILURE);

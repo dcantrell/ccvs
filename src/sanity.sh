@@ -560,11 +560,16 @@ done'
 "${PROG}"' [a-z]*: nothing known about `nonexist'\''
 '"${PROG}"' \[[a-z]* aborted\]: correct above errors first!'
 	  dotest basica-8 "${testcvs} -q update" ''
+
+	  # The .* here will normally be "No such file or directory",
+	  # but if memory serves some systems (AIX?) have a different message.
 :	  dotest_fail basica-9 \
 	    "${testcvs} -q -d /tmp/cvs-sanity/nonexist update" \
-"${PROG}: .*/tmp/cvs-sanity/cvsroot value for CVS Root found in CVS/Root
-${PROG}"': does not match command line -d /tmp/cvs-sanity/nonexist setting
-'"${PROG}"': you may wish to try the cvs command again without the -d option '
+"${PROG}: cannot access cvs root /tmp/cvs-sanity/nonexist: .*"
+	  dotest_fail basica-9 \
+	    "${testcvs} -q -d /tmp/cvs-sanity/nonexist update" \
+"${PROG} [a-z]*: Sorry, you don't have sufficient access to /tmp/cvs-sanity/nonexist
+${PROG} \[[a-z]* aborted\]: /tmp/cvs-sanity/nonexist/CVSROOT: .*"
 
 	  dotest basica-10 "${testcvs} annotate" \
 'Annotations for sdir/ssdir/ssfile
