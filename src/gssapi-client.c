@@ -197,36 +197,12 @@ struct cvs_gssapi_wrap_data
     gss_ctx_id_t gcontext;
 };
 
-static int cvs_gssapi_wrap_input (void *, const char *, char *, int);
-static int cvs_gssapi_wrap_output (void *, const char *, char *, int,
-					 int *);
-
-/* Create a GSSAPI wrapping buffer.  We use a packetizing buffer with
-   GSSAPI wrapping routines.  */
-
-struct buffer *
-cvs_gssapi_wrap_buffer_initialize (struct buffer *buf, int input,
-                                   gss_ctx_id_t gcontext,
-                                   void (*memory) ( struct buffer * ))
-{
-    struct cvs_gssapi_wrap_data *gd;
-
-    gd = xmalloc (sizeof *gd);
-    gd->gcontext = gcontext;
-
-    return packetizing_buffer_initialize (buf,
-                                          input ? cvs_gssapi_wrap_input : NULL,
-                                          input ? NULL : cvs_gssapi_wrap_output,
-                                          gd, memory);
-}
-
 
 
 /* Unwrap data using GSSAPI.  */
-
 static int
 cvs_gssapi_wrap_input (void *fnclosure, const char *input, char *output,
-                       int size)
+                       size_t size)
 {
     struct cvs_gssapi_wrap_data *gd = fnclosure;
     gss_buffer_desc inbuf, outbuf;
@@ -258,10 +234,9 @@ cvs_gssapi_wrap_input (void *fnclosure, const char *input, char *output,
 
 
 /* Wrap data using GSSAPI.  */
-
 static int
 cvs_gssapi_wrap_output (void *fnclosure, const char *input, char *output,
-                        int size, int *translated)
+                        size_t size, size_t *translated)
 {
     struct cvs_gssapi_wrap_data *gd = fnclosure;
     gss_buffer_desc inbuf, outbuf;
@@ -295,6 +270,28 @@ cvs_gssapi_wrap_output (void *fnclosure, const char *input, char *output,
     gss_release_buffer (&stat_min, &outbuf);
 
     return 0;
+}
+
+
+
+/* Create a GSSAPI wrapping buffer.  We use a packetizing buffer with
+   GSSAPI wrapping routines.  */
+struct buffer *
+cvs_gssapi_wrap_buffer_initialize (struct buffer *buf, int input,
+                                   gss_ctx_id_t gcontext,
+                                   void (*memory) ( struct buffer * ))
+{
+    struct cvs_gssapi_wrap_data *gd;
+
+    gd = xmalloc (sizeof *gd);
+    gd->gcontext = gcontext;
+
+    return packetizing_buffer_initialize (buf,
+                                          input ? cvs_gssapi_wrap_input
+						: NULL,
+                                          input ? NULL
+						: cvs_gssapi_wrap_output,
+                                          gd, memory);
 }
 
 
