@@ -1062,12 +1062,11 @@ log_expand_revlist (rcs, revlist, default_branch)
 		{
 		    error (0, 0, "warning: no revision `%s' in `%s'",
 			   r->first, rcs->path);
-		    free (nr);
-		    continue;
 		}
 	    }
 
-	    if (r->last == r->first)
+	    if (r->last == r->first || (r->last != NULL && r->first != NULL &&
+					strcmp (r->last, r->first) == 0))
 		nr->last = xstrdup (nr->first);
 	    else if (r->last == NULL || isdigit ((unsigned char) r->last[0]))
 		nr->last = xstrdup (r->last);
@@ -1081,10 +1080,6 @@ log_expand_revlist (rcs, revlist, default_branch)
 		{
 		    error (0, 0, "warning: no revision `%s' in `%s'",
 			   r->last, rcs->path);
-		    if (nr->first != NULL)
-			free (nr->first);
-		    free (nr);
-		    continue;
 		}
 	    }
 
@@ -1120,7 +1115,7 @@ log_expand_revlist (rcs, revlist, default_branch)
 		    *cp = '\0';
 		}
 	    }
-	    else
+	    else if (nr->first != NULL && nr->last != NULL)
 	    {
 		nr->fields = numdots (nr->first) + 1;
 		if (nr->fields != numdots (nr->last) + 1
@@ -1145,6 +1140,8 @@ log_expand_revlist (rcs, revlist, default_branch)
 		    nr->last = tmp;
 		}
 	    }
+	    else
+		nr->fields = 0;
 	}
 
 	nr->next = NULL;
