@@ -849,6 +849,19 @@ dotest_sort ()
   dotest_internal "$@"
 }
 
+# A function for fetching the timestamp of a revison of a file
+getrlogdate () {
+    ${testcvs} -n rlog -N ${1+"$@"} |
+    while read token value; do
+	case "$token" in
+	date:)
+	    echo $value | sed "s,;.*,,"
+	    break;
+            ;;
+	esac
+    done
+}
+
 # Avoid picking up any stray .cvsrc, etc., from the user running the tests
 mkdir home
 HOME=${TESTDIR}/home; export HOME
@@ -22270,6 +22283,8 @@ done"
 	  #		for checkout and update as well.
 	  #
 	  mkdir 1; cd 1
+	  save_TZ=$TZ
+	  TZ=UTC; export TZ
 	  dotest tagdate-1 "${testcvs} -q co -l ." ''
 	  mkdir first-dir
 	  dotest tagdate-2 "${testcvs} add first-dir" \
@@ -22287,6 +22302,8 @@ Checking in file1;
 ${CVSROOT_DIRNAME}/first-dir/file1,v  <--  file1
 initial revision: 1\.1
 done"
+	  date_T1=`getrlogdate -r1.1 first-dir/file1`
+
 	  dotest tagdate-5 "${testcvs} -q tag -b br1" "T file1"
 	  dotest tagdate-6 "${testcvs} -q tag -b br2" "T file1"
 	  echo trunk-2 >file1
@@ -22295,6 +22312,8 @@ done"
 ${CVSROOT_DIRNAME}/first-dir/file1,v  <--  file1
 new revision: 1\.2; previous revision: 1\.1
 done"
+	  date_T2=`getrlogdate -r1.2 first-dir/file1`
+
 	  # We are testing -r -D where br1 is a (magic) branch without
 	  # any revisions.  First the case where br2 doesn't have any
 	  # revisions either:
@@ -22306,6 +22325,7 @@ done"
 ${CVSROOT_DIRNAME}/first-dir/file1,v  <--  file1
 new revision: 1\.1\.4\.1; previous revision: 1\.1
 done"
+	  date_T3=`getrlogdate -r1.1.4.1 first-dir/file1`
 
 	  # Then the case where br2 does have revisions:
 	  dotest tagdate-11 "${testcvs} -q update -p -r br1 -D now" "trunk-1"
@@ -22315,34 +22335,23 @@ done"
 "${PROG} \[update aborted\]: argument to join may not contain a date specifier without a tag"
 	  # And check export
 
-	  # Wish some shorter sleep interval would suffice, but I need to
-	  # guarantee that the point in time specified by the argument to -D
-	  # in tagdate-14 and tagdate-16
-	  # falls in the space of time between commits to br2 and I
-	  # figure 60 seconds is probably a large enough range to
-	  # account for most network file system delays and such...
-	  # as it stands, it takes between 1 and 2 seconds between
-	  # calling CVS on my machine and the -D argument being used to
-	  # recall the file revision and this timing will certainly vary
-	  # by several seconds between machines - dependant on CPUspeeds,
-	  # I/O speeds, load, etc.
-	  sleep 60
-
 	  echo br2-2 >file1
 	  dotest tagdate-13 "${testcvs} -q ci -m modify-2-on-br2" \
 "Checking in file1;
 ${CVSROOT_DIRNAME}/first-dir/file1,v  <--  file1
 new revision: 1\.1\.4\.2; previous revision: 1\.1\.4\.1
 done"
+	  date_T4=`getrlogdate -r1.1.4.2 first-dir/file1`
+
 	  cd ../..
 	  mkdir 2; cd 2
-	  dotest tagdate-14 "${testcvs} -q export -r br2 -D'1 minute ago' first-dir" \
+	  dotest tagdate-14 "${testcvs} -q export -r br2 -D'$date_T3' first-dir" \
 "[UP] first-dir/file1"
 	  dotest tagdate-15 "cat first-dir/file1" "br2-1"
 
 	  # Now for annotate
 	  cd ../1/first-dir
-	  dotest tagdate-16 "${testcvs} annotate -rbr2 -D'1 minute ago'" \
+	  dotest tagdate-16 "${testcvs} annotate -rbr2 -D'$date_T3'" \
 "
 Annotations for file1
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
@@ -22354,13 +22363,408 @@ Annotations for file1
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
 1\.1\.4\.2      (${username} *[0-9a-zA-Z-]*): br2-2"
 
+	  # Now check to see what happens when we add files to br2 and trunk
+	  echo br2-1 > file3
+	  dotest tagdate-18 "${testcvs} add file3" \
+"${PROG} add: scheduling file \`file3' for addition on branch \`br2'
+${PROG} add: use .${PROG} commit. to add this file permanently"
+	  dotest tagdate-19 "${testcvs} -q ci -m add file3" \
+"RCS file: ${CVSROOT_DIRNAME}/first-dir/Attic/file3,v
+done
+Checking in file3;
+${CVSROOT_DIRNAME}/first-dir/Attic/file3,v  <--  file3
+new revision: 1\.1\.2\.1; previous revision: 1\.1
+done"
+	  # Version 1.1 was created dead to put 1.1.2.1 on the branch
+	  # and not the trunk.
+	  date_T5=`getrlogdate -r1.1 first-dir/file3`
+	  date_T6=`getrlogdate -r1.1.2.1 first-dir/file3`
+	  dotest tagdate-19b "test 'x$date_T5' = 'x$date_T6'" ''
+
+	  cd ../..
+	  mkdir 3; cd 3
+	  dotest tagdate-20 "${testcvs} -Q co first-dir" ''
+	  cd first-dir
+	  echo trunk-1 > file2
+	  dotest tagdate-21 "${testcvs} add file2" \
+"${PROG} add: scheduling file .file2. for addition
+${PROG} add: use .${PROG} commit. to add this file permanently"
+	  dotest tagdate-22 "${testcvs} -q ci -m add file2" \
+"RCS file: ${CVSROOT_DIRNAME}/first-dir/file2,v
+done
+Checking in file2;
+${CVSROOT_DIRNAME}/first-dir/file2,v  <--  file2
+initial revision: 1\.1
+done"
+	  date_T7=`getrlogdate -r1.1 first-dir/file2`
+	  echo "trunk-2" >file2
+	  dotest tagdate-23 "${testcvs} -q ci -m update file2" \
+"Checking in file2;
+${CVSROOT_DIRNAME}/first-dir/file2,v  <--  file2
+new revision: 1\.2; previous revision: 1\.1
+done"
+	  date_T8=`getrlogdate -r1.2 first-dir/file2`
+
+	  cd ../../1/first-dir
+	  echo br2-1 > file2
+	  dotest tagdate-24 "${testcvs} add file2" \
+"${PROG} add: scheduling file \`file2' for addition on branch \`br2'
+${PROG} add: use .${PROG} commit. to add this file permanently"
+	  # FIXCVS: This test should create a 1.2.2.1 that is dead
+	  # and a 1.2.2.2 here. Otherwise datestamp checkouts of
+	  # the branch between creation of 1.1 and 1.2.2.1 will
+	  # cause a trunk version of the file to be visible on the
+          # branch.
+	  dotest tagdate-25 "${testcvs} -q ci -m add file2" \
+"Checking in file2;
+${CVSROOT_DIRNAME}/first-dir/file2,v  <--  file2
+new revision: 1\.2\.2\.1; previous revision: 1\.2
+done"
+	  date_T9=`getrlogdate -r1.2.2.1 first-dir/file2`
+	  cd ../..
+
+	  # Time  Rev     Branch  Comments
+	  # T0            trunk   first-dir created
+	  # T1    1.1     trunk   first-dir/file1 committed "trunk-1"
+	  #               br1     branch created
+	  #               br2     branch created
+	  # T2    1.2     trunk   first-dir/file1 committed "trunk-2"
+	  # T3    1.1.4.1 br2     first-dir/file1 committed "br2-1"
+	  # +60s
+	  # T4    1.1.4.2 br2     first-dir/file1 committed "br2-2"
+	  # T5    1.1     trunk   first-dir/file3 dead
+	  # NOTE T5 and T6 will have should the same timestamp
+	  # T6    1.1.2.1 br2     first-dir/file3 committed "br2-1"
+	  # T7    1.1     trunk   first-dir/file2 committed "trunk-1"
+	  # T8    1.2     trunk   first-dir/file2 committed "trunk-2"
+	  #
+	  # FIXCVS? PROBLEM... checkouts of the br2 branch after T8
+	  # which specifies a timestamp between T8 and before T9 will
+	  # show version 1.2 of the file on the br branch even though
+	  # that was not the real branch point chosen by the user.
+	  #
+	  # T9    1.2.2.1 br2     first-dir/file2 committed "br2-1"
+	  # 
+
+	  mkdir 4; cd 4
+	  (echo Dates for tagdate-26-* are:;\
+	   echo "  date_T1="$date_T1;\
+	   echo "  date_T2="$date_T2;\
+	   echo "  date_T3="$date_T3;\
+	   echo "  date_T4="$date_T4;\
+	   echo "  date_T6="$date_T6;\
+	   echo "  date_T7="$date_T7;\
+	   echo "  date_T8="$date_T8;\
+	   echo "  date_T9="$date_T9) >>$LOGFILE
+	  dotest tagdate-26-trunk-t1 \
+"${testcvs} co -D'$date_T1' -d first-dir-trunk-t1 first-dir" \
+"${PROG} checkout: Updating first-dir-trunk-t1
+U first-dir-trunk-t1/file1"
+	  dotest tagdate-26-br2-t1 \
+"${testcvs} co -r br2 -D'$date_T1' -d first-dir-br2-t1 first-dir" \
+"${PROG} checkout: Updating first-dir-br2-t1
+U first-dir-br2-t1/file1"
+	  dotest tagdate-26-trunk-t2 \
+"${testcvs} co -D'$date_T2' -d first-dir-trunk-t2 first-dir" \
+"${PROG} checkout: Updating first-dir-trunk-t2
+U first-dir-trunk-t2/file1"
+	  dotest tagdate-26-br2-t2 \
+"${testcvs} co -r br2 -D'$date_T2' -d first-dir-br2-t2 first-dir" \
+"${PROG} checkout: Updating first-dir-br2-t2
+U first-dir-br2-t2/file1"
+	  dotest tagdate-26-br2-t3 \
+"${testcvs} co -r br2 -D'$date_T3' -d first-dir-br2-t3 first-dir" \
+"${PROG} checkout: Updating first-dir-br2-t3
+U first-dir-br2-t3/file1"
+	  dotest tagdate-26-br2-t4 \
+"${testcvs} co -r br2 -D'$date_T4' -d first-dir-br2-t4 first-dir" \
+"${PROG} checkout: Updating first-dir-br2-t4
+U first-dir-br2-t4/file1"
+	  dotest tagdate-26-br2-t6 \
+"${testcvs} co -r br2 -D'$date_T6' -d first-dir-br2-t6 first-dir" \
+"${PROG} checkout: Updating first-dir-br2-t6
+U first-dir-br2-t6/file1
+U first-dir-br2-t6/file3"
+	  dotest tagdate-26-trunk-t7 \
+"${testcvs} co -D'$date_T7' -d first-dir-trunk-t7 first-dir" \
+"${PROG} checkout: Updating first-dir-trunk-t7
+U first-dir-trunk-t7/file1
+U first-dir-trunk-t7/file2"
+	  dotest tagdate-26-br2-t7 \
+"${testcvs} co -r br2 -D'$date_T7' -d first-dir-br2-t7 first-dir" \
+"${PROG} checkout: Updating first-dir-br2-t7
+U first-dir-br2-t7/file1
+U first-dir-br2-t7/file3"
+	  dotest tagdate-26-trunk-t8 \
+"${testcvs} co -D'$date_T8' -d first-dir-trunk-t8 first-dir" \
+"${PROG} checkout: Updating first-dir-trunk-t8
+U first-dir-trunk-t8/file1
+U first-dir-trunk-t8/file2"
+	  dotest tagdate-26-br2-t8 \
+"${testcvs} co -r br2 -D'$date_T8' -d first-dir-br2-t8 first-dir" \
+"${PROG} checkout: Updating first-dir-br2-t8
+U first-dir-br2-t8/file1
+U first-dir-br2-t8/file2
+U first-dir-br2-t8/file3"
+	  dotest tagdate-26-br2-t9 \
+"${testcvs} co -r br2 -D'$date_T9' -d first-dir-br2-t9 first-dir" \
+"${PROG} checkout: Updating first-dir-br2-t9
+U first-dir-br2-t9/file1
+U first-dir-br2-t9/file2
+U first-dir-br2-t9/file3"
+	  dotest tagdate-27-trunk-t1 \
+"${testcvs} status first-dir-trunk-t1" \
+"${PROG} status: Examining first-dir-trunk-t1
+===================================================================
+File: file1            	Status: Up-to-date
+
+   Working revision:	1\.1[^.]*
+   Repository revision:	1\.1	${CVSROOT_DIRNAME}/first-dir/file1,v
+   Sticky Tag:		(none)
+   Sticky Date:		[0-9.]*
+   Sticky Options:	(none)"
+	  dotest tagdate-27-br2-t1 \
+"${testcvs} status first-dir-br2-t1" \
+"${PROG} status: Examining first-dir-br2-t1
+===================================================================
+File: file1            	Status: Needs Patch
+
+   Working revision:	1\.1[^.]*
+   Repository revision:	1\.1\.4\.2	${CVSROOT_DIRNAME}/first-dir/file1,v
+   Sticky Tag:		br2 (branch: 1\.1\.4)
+   Sticky Date:		(none)
+   Sticky Options:	(none)"
+	  dotest tagdate-27-trunk-t2 \
+"${testcvs} status first-dir-trunk-t2" \
+"${PROG} status: Examining first-dir-trunk-t2
+===================================================================
+File: file1            	Status: Up-to-date
+
+   Working revision:	1\.2[^.]*
+   Repository revision:	1\.2	${CVSROOT_DIRNAME}/first-dir/file1,v
+   Sticky Tag:		(none)
+   Sticky Date:		[0-9.]*
+   Sticky Options:	(none)"
+	  dotest tagdate-27-br2-t2 \
+"${testcvs} status first-dir-br2-t2" \
+"${PROG} status: Examining first-dir-br2-t2
+===================================================================
+File: file1            	Status: Needs Patch
+
+   Working revision:	1\.1[^.]*
+   Repository revision:	1\.1\.4\.2	${CVSROOT_DIRNAME}/first-dir/file1,v
+   Sticky Tag:		br2 (branch: 1\.1\.4)
+   Sticky Date:		(none)
+   Sticky Options:	(none)"
+	  dotest tagdate-27-br2-t3 \
+"${testcvs} status first-dir-br2-t3" \
+"${PROG} status: Examining first-dir-br2-t3
+===================================================================
+File: file1            	Status: Needs Patch
+
+   Working revision:	1\.1\.4\.1[^.]*
+   Repository revision:	1\.1\.4\.2	${CVSROOT_DIRNAME}/first-dir/file1,v
+   Sticky Tag:		br2 (branch: 1\.1\.4)
+   Sticky Date:		(none)
+   Sticky Options:	(none)"
+	  dotest tagdate-27-br2-t4 \
+"${testcvs} status first-dir-br2-t4" \
+"${PROG} status: Examining first-dir-br2-t4
+===================================================================
+File: file1            	Status: Up-to-date
+
+   Working revision:	1\.1\.4\.2[^.]*
+   Repository revision:	1\.1\.4\.2	${CVSROOT_DIRNAME}/first-dir/file1,v
+   Sticky Tag:		br2 (branch: 1\.1\.4)
+   Sticky Date:		(none)
+   Sticky Options:	(none)"
+	  dotest tagdate-27-br2-t6 \
+"${testcvs} status first-dir-br2-t6" \
+"${PROG} status: Examining first-dir-br2-t6
+===================================================================
+File: file1            	Status: Up-to-date
+
+   Working revision:	1\.1\.4\.2[^.]*
+   Repository revision:	1\.1\.4\.2	${CVSROOT_DIRNAME}/first-dir/file1,v
+   Sticky Tag:		br2 (branch: 1\.1\.4)
+   Sticky Date:		(none)
+   Sticky Options:	(none)
+
+===================================================================
+File: file3            	Status: Up-to-date
+
+   Working revision:	1\.1\.2\.1[^.]*
+   Repository revision:	1\.1\.2\.1	${CVSROOT_DIRNAME}/first-dir/Attic/file3,v
+   Sticky Tag:		br2 (branch: 1\.1\.2)
+   Sticky Date:		(none)
+   Sticky Options:	(none)"
+	  dotest tagdate-27-trunk-t7 \
+"${testcvs} status first-dir-trunk-t7" \
+"${PROG} status: Examining first-dir-trunk-t7
+===================================================================
+File: file1            	Status: Up-to-date
+
+   Working revision:	1\.2[^.]*
+   Repository revision:	1\.2	${CVSROOT_DIRNAME}/first-dir/file1,v
+   Sticky Tag:		(none)
+   Sticky Date:		[0-9.]*
+   Sticky Options:	(none)
+
+===================================================================
+File: file2            	Status: Up-to-date
+
+   Working revision:	1\.1[^.]*
+   Repository revision:	1\.1	${CVSROOT_DIRNAME}/first-dir/file2,v
+   Sticky Tag:		(none)
+   Sticky Date:		[0-9.]*
+   Sticky Options:	(none)"
+	  dotest tagdate-27-br2-t7 \
+"${testcvs} status first-dir-br2-t7" \
+"${PROG} status: Examining first-dir-br2-t7
+===================================================================
+File: file1            	Status: Up-to-date
+
+   Working revision:	1\.1\.4\.2[^.]*
+   Repository revision:	1\.1\.4\.2	${CVSROOT_DIRNAME}/first-dir/file1,v
+   Sticky Tag:		br2 (branch: 1\.1\.4)
+   Sticky Date:		(none)
+   Sticky Options:	(none)
+
+===================================================================
+File: file3            	Status: Up-to-date
+
+   Working revision:	1\.1\.2\.1[^.]*
+   Repository revision:	1\.1\.2\.1	${CVSROOT_DIRNAME}/first-dir/Attic/file3,v
+   Sticky Tag:		br2 (branch: 1\.1\.2)
+   Sticky Date:		(none)
+   Sticky Options:	(none)"
+	  dotest tagdate-27-trunk-t8 \
+"${testcvs} status first-dir-trunk-t8" \
+"${PROG} status: Examining first-dir-trunk-t8
+===================================================================
+File: file1            	Status: Up-to-date
+
+   Working revision:	1\.2[^.]*
+   Repository revision:	1\.2	${CVSROOT_DIRNAME}/first-dir/file1,v
+   Sticky Tag:		(none)
+   Sticky Date:		[0-9.]*
+   Sticky Options:	(none)
+
+===================================================================
+File: file2            	Status: Up-to-date
+
+   Working revision:	1\.2[^.]*
+   Repository revision:	1\.2	${CVSROOT_DIRNAME}/first-dir/file2,v
+   Sticky Tag:		(none)
+   Sticky Date:		[0-9.]*
+   Sticky Options:	(none)"
+
+	  #
+	  # FIXCVS? It is considered unexpected by some that creation
+	  # of a branch br2 on file2 means that the trunk version of
+	  # the file shows thru to the branch in time-based checkouts
+	  # between the time that file2 was created and the actual
+	  # version of the file was committed to the branch.
+	  #
+	  dotest tagdate-27-br2-t8 \
+"${testcvs} status first-dir-br2-t8" \
+"${PROG} status: Examining first-dir-br2-t8
+===================================================================
+File: file1            	Status: Up-to-date
+
+   Working revision:	1\.1\.4\.2[^.]*
+   Repository revision:	1\.1\.4\.2	${CVSROOT_DIRNAME}/first-dir/file1,v
+   Sticky Tag:		br2 (branch: 1\.1\.4)
+   Sticky Date:		(none)
+   Sticky Options:	(none)
+
+===================================================================
+File: file2            	Status: Needs Patch
+
+   Working revision:	1\.2[^.]*
+   Repository revision:	1\.2\.2\.1	${CVSROOT_DIRNAME}/first-dir/file2,v
+   Sticky Tag:		br2 (branch: 1\.2\.2)
+   Sticky Date:		(none)
+   Sticky Options:	(none)
+
+===================================================================
+File: file3            	Status: Up-to-date
+
+   Working revision:	1\.1\.2\.1[^.]*
+   Repository revision:	1\.1\.2\.1	${CVSROOT_DIRNAME}/first-dir/Attic/file3,v
+   Sticky Tag:		br2 (branch: 1\.1\.2)
+   Sticky Date:		(none)
+   Sticky Options:	(none)"
+	  dotest tagdate-27-br2-t9 \
+"${testcvs} status first-dir-br2-t9" \
+"${PROG} status: Examining first-dir-br2-t9
+===================================================================
+File: file1            	Status: Up-to-date
+
+   Working revision:	1\.1\.4\.2[^.]*
+   Repository revision:	1\.1\.4\.2	${CVSROOT_DIRNAME}/first-dir/file1,v
+   Sticky Tag:		br2 (branch: 1\.1\.4)
+   Sticky Date:		(none)
+   Sticky Options:	(none)
+
+===================================================================
+File: file2            	Status: Up-to-date
+
+   Working revision:	1\.2\.2\.1[^.]*
+   Repository revision:	1\.2\.2\.1	${CVSROOT_DIRNAME}/first-dir/file2,v
+   Sticky Tag:		br2 (branch: 1\.2\.2)
+   Sticky Date:		(none)
+   Sticky Options:	(none)
+
+===================================================================
+File: file3            	Status: Up-to-date
+
+   Working revision:	1\.1\.2\.1[^.]*
+   Repository revision:	1\.1\.2\.1	${CVSROOT_DIRNAME}/first-dir/Attic/file3,v
+   Sticky Tag:		br2 (branch: 1\.1\.2)
+   Sticky Date:		(none)
+   Sticky Options:	(none)"
+
+	  # Now check the contents of the files
+	  dotest tagdate-28-trunk-t1 'cat first-dir-trunk-t1/file1' 'trunk-1'
+	  dotest tagdate-28-br2-t1 'cat first-dir-br2-t1/file1' 'trunk-1'
+	  dotest tagdate-28-trunk-t2 'cat first-dir-trunk-t2/file1' 'trunk-2'
+	  dotest tagdate-28-br2-t2 'cat first-dir-br2-t2/file1' 'trunk-1'
+	  dotest tagdate-28-br2-t3 'cat first-dir-br2-t3/file1' 'br2-1'
+	  dotest tagdate-28-br2-t4 'cat first-dir-br2-t4/file1' 'br2-2'
+	  dotest tagdate-28-br2-t6a 'cat first-dir-br2-t6/file1' "br2-2"
+	  dotest tagdate-28-br2-t6b 'cat first-dir-br2-t6/file3' "br2-1"
+	  dotest tagdate-28-trunk-t7a 'cat first-dir-trunk-t7/file1' "trunk-2"
+	  dotest tagdate-28-trunk-t7b 'cat first-dir-trunk-t7/file2' "trunk-1"
+	  dotest tagdate-28-br2-t7a 'cat first-dir-br2-t7/file1' "br2-2"
+	  dotest tagdate-28-br2-t7b 'cat first-dir-br2-t7/file3' "br2-1"
+	  dotest tagdate-28-trunk-t8a 'cat first-dir-trunk-t8/file1' "trunk-2"
+	  dotest tagdate-28-trunk-t8b 'cat first-dir-trunk-t8/file2' "trunk-2"
+	  dotest tagdate-28-br2-t8a 'cat first-dir-br2-t8/file1' "br2-2"
+	  #
+	  # FIXCVS? It is considered unexpected by some that creation
+	  # of a branch br2 on file2 means that the trunk version of
+	  # the file shows thru to the branch in time-based checkouts
+	  # between the time that file2 was created and the actual
+	  # version of the file was committed to the branch.
+	  #
+	  dotest tagdate-28-br2-t8b 'cat first-dir-br2-t8/file2' "trunk-2"
+	  dotest tagdate-28-br2-t8c 'cat first-dir-br2-t8/file3' "br2-1"
+	  dotest tagdate-28-br2-t9a 'cat first-dir-br2-t9/file1' "br2-2"
+	  dotest tagdate-28-br2-t9b 'cat first-dir-br2-t9/file2' "br2-1"
+	  dotest tagdate-28-br2-t9c 'cat first-dir-br2-t9/file3' "br2-1"
+	  cd ..
+
+	  unset date_T1 date_T2 date_T3 date_T4 date_T5
+	  unset date_T6 date_T7 date_T8 date_T9
+	  TZ=$save_TZ
+
 	  if $keep; then
 	    echo Keeping ${TESTDIR} and exiting due to --keep
 	    exit 0
 	  fi
 
-	  cd ../..
-	  rm -r 1 2
+	  rm -r 1 2 3 4
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
 	  ;;
 
