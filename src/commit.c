@@ -127,10 +127,12 @@ find_fileproc (finfo)
 	&& vers->vn_user != NULL
 	&& vers->vn_user[0] == '-')
 	status = T_REMOVED;
-    else if (vers->ts_user == NULL
-	     && vers->vn_user == NULL)
+    else if (vers->vn_user == NULL)
     {
-	error (0, 0, "nothing known about `%s'", fullname);
+	if (vers->ts_user == NULL)
+	    error (0, 0, "nothing known about `%s'", fullname);
+	else
+	    error (0, 0, "use `cvs add' to create an entry for %s", fullname);
 	free (fullname);
 	return 1;
     }
