@@ -4931,7 +4931,9 @@ be able to retrieve old releases in which the directory
 existed.
 
 The way that you remove a directory is to remove all
-the files in it.  Then specify the @samp{-P} option to
+the files in it.  You don't remove the directory
+itself; there is no way to do that.
+Instead you specify the @samp{-P} option to
 @code{cvs update}, @code{cvs checkout}, or @code{cvs
 export}, which will cause @sc{cvs} to remove empty
 directories from working directories.  Probably the
