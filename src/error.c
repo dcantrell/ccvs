@@ -18,13 +18,12 @@
 /* David MacKenzie */
 /* Brian Berliner added support for CVS */
 
-#ifndef lint
-static char rcsid[] = "$CVSid: @(#)error.c 1.13 94/09/30 $";
-#endif /* not lint */
+#include "cvs.h"
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
+#ifndef lint
+static const char rcsid[] = "$CVSid: @(#)error.c 1.13 94/09/30 $";
+USE(rcsid);
+#endif /* not lint */
 
 #include <stdio.h>
 
@@ -90,12 +89,12 @@ error_set_cleanup (arg)
 /* VARARGS */
 void
 #if defined (HAVE_VPRINTF) && __STDC__
-error (int status, int errnum, char *message, ...)
+error (int status, int errnum, const char *message, ...)
 #else
 error (status, errnum, message, va_alist)
      int status;
      int errnum;
-     char *message;
+     const char *message;
      va_dcl
 #endif
 {

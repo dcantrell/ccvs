@@ -79,6 +79,7 @@ extern void server_update_entries
 
 enum progs {PROG_CHECKIN, PROG_UPDATE};
 extern void server_prog PROTO((char *, char *, enum progs));
+extern void server_cleanup PROTO((int sig));
 
 #endif /* SERVER_SUPPORT */
 

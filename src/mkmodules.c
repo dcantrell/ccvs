@@ -422,7 +422,8 @@ Lock_Cleanup ()
 int server_active = 0;
 
 void
-server_cleanup ()
+server_cleanup (sig)
+    int sig;
 {
 }
 

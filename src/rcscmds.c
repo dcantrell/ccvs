@@ -28,6 +28,7 @@ int
 RCS_deltag(path, tag, noerr)
     const char *path;
     const char *tag;
+    int noerr;
 {
     run_setup ("%s%s -q -N%s", Rcsbin, RCS, tag);
     run_arg (path);
@@ -64,6 +65,7 @@ int
 RCS_unlock(path, rev, noerr)
     const char *path;
     const char *rev;
+    int noerr;
 {
     run_setup ("%s%s -q -u%s", Rcsbin, RCS, rev ? rev : "");
     run_arg (path);
