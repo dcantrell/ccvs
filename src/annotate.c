@@ -217,6 +217,7 @@ rannotate_proc (int argc, char **argv, char *xwhere, char *mwhere,
 	{
 	    error (0, errno, "cannot chdir to %s", repository);
 	    free (repository);
+	    free (where);
 	    return 1;
 	}
 	/* End section which is identical to patch_proc.  */

@@ -620,6 +620,7 @@ fileattr_write (void)
 	    {
 		error (0, errno, "cannot make directory %s", repname);
 		(void) umask (omask);
+		free (fname);
 		free (repname);
 		return;
 	    }
@@ -631,6 +632,7 @@ fileattr_write (void)
 	{
 	    error (0, errno, "cannot write %s", fname);
 	    (void) umask (omask);
+	    free (fname);
 	    return;
 	}
     }
