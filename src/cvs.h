@@ -254,7 +254,10 @@ char *strerror (int);
 #define	EDITOR3_ENV	"EDITOR"	/* which editor to use */
 
 #define	CVSROOT_ENV	"CVSROOT"	/* source directory root */
-#define	CVSROOT_DFLT	NULL		/* No dflt; must set for checkout */
+/* Define CVSROOT_DFLT to a fallback value for CVSROOT.
+ *
+#undef	CVSROOT_DFL
+ */
 
 #define	IGNORE_ENV	"CVSIGNORE"	/* More files to ignore */
 #define WRAPPER_ENV     "CVSWRAPPERS"   /* name of the wrapper file */

@@ -414,13 +414,12 @@ main_cleanup (int sig)
 int
 main (int argc, char **argv)
 {
-    char *CVSroot = CVSROOT_DFLT;
     cvsroot_t *CVSroot_parsed = NULL;
+    bool cvsroot_update_env = true;
     char *cp, *end;
     const struct cmd *cm;
     int c, err = 0;
-    int tmpdir_update_env, cvs_update_env;
-    int free_CVSroot = 0;
+    int tmpdir_update_env;
     int free_Editor = 0;
     int free_Tmpdir = 0;
 
@@ -478,7 +477,6 @@ main (int argc, char **argv)
      * Query the environment variables up-front, so that
      * they can be overridden by command line arguments
      */
-    cvs_update_env = 0;
     tmpdir_update_env = *Tmpdir;	/* TMPDIR_DFLT must be set */
     if ((cp = getenv (TMPDIR_ENV)) != NULL)
     {
@@ -491,11 +489,6 @@ main (int argc, char **argv)
 	Editor = cp;
     else if ((cp = getenv (EDITOR3_ENV)) != NULL)
 	Editor = cp;
-    if ((cp = getenv (CVSROOT_ENV)) != NULL)
-    {
-	CVSroot = cp;
-	cvs_update_env = 0;		/* it's already there */
-    }
     if (getenv (CVSREAD_ENV) != NULL)
 	cvswrite = 0;
     if (getenv (CVSREADONLYFS_ENV) != NULL) {
@@ -614,13 +607,6 @@ main (int argc, char **argv)
 		if (CVSroot_cmdline != NULL)
 		    free (CVSroot_cmdline);
 		CVSroot_cmdline = xstrdup (optarg);
-		if (free_CVSroot)
-		{
-		    free (CVSroot);
-		    free_CVSroot = 0;
-		}
-		CVSroot = CVSroot_cmdline;
-		cvs_update_env = 1;	/* need to update environment */
 		break;
 	    case 'H':
 	        help = 1;
@@ -830,66 +816,65 @@ cause intermittent sandbox corruption.");
 
 #ifdef SERVER_SUPPORT
 	/* Fiddling with CVSROOT doesn't make sense if we're running
-	       in server mode, since the client will send the repository
-	       directory after the connection is made. */
-
+	 * in server mode, since the client will send the repository
+	 * directory after the connection is made.
+	 */
 	if (!server_active)
 #endif
 	{
-	    /* See if we are able to find a 'better' value for CVSroot
-	       in the CVSADM_ROOT directory. */
-	    cvsroot_t *CVSADM_Root = NULL;
-
-	    /* "cvs import" shouldn't check CVS/Root; in general it
-	       ignores CVS directories and CVS/Root is likely to
-	       specify a different repository than the one we are
-	       importing to.  */
-
-	    if (!(cm->attr & CVS_CMD_IGNORE_ADMROOT)
-
-		/* -d overrides CVS/Root, so don't give an error if the
-		   latter points to a nonexistent repository.  */
-		&& CVSroot_cmdline == NULL)
+	    /* First check if a root was set via the command line.  */
+	    if (CVSroot_cmdline)
 	    {
-		CVSADM_Root = Name_Root((char *) NULL, (char *) NULL);
+		 if (!(CVSroot_parsed = parse_cvsroot (CVSroot_cmdline)))
+		     error (1, 0, "Bad CVSROOT: `%s'.", CVSroot_cmdline);
 	    }
 
+	    /* See if we are able to find a 'better' value for CVSroot
+	     * in the CVSADM_ROOT directory.
+	     *
+	     * "cvs import" shouldn't check CVS/Root; in general it
+	     * ignores CVS directories and CVS/Root is likely to
+	     * specify a different repository than the one we are
+	     * importing to, but if this is not import and no root was
+	     * specified on the command line, set the root from the
+	     * CVS/Root file.
+	     */
+	    if (!CVSroot_parsed
+		&& !(cm->attr & CVS_CMD_IGNORE_ADMROOT)
+	       )
+		CVSroot_parsed = Name_Root (NULL, NULL);
+
+	    /* Now, if there is no root on the command line and we didn't find
+	     * one in a file, set it via the $CVSROOT env var.
+	     */
+	    if (!CVSroot_parsed)
+	    {
+		char *tmp = getenv (CVSROOT_ENV);
+		if (tmp)
+		{
+		    if (!(CVSroot_parsed = parse_cvsroot (tmp)))
+			error (1, 0, "Bad CVSROOT: `%s'.", tmp);
+		    cvsroot_update_env = false;
+		}
+	    }
+
+#ifdef CVSROOT_DFLT
+	    if (!CVSroot_parsed)
+	    {
+		if (!(CVSroot_parsed = parse_cvsroot (CVSROOT_DFLT)))
+		    error (1, 0, "Bad CVSROOT: `%s'.", CVSROOT_DFLT);
+	    }
+#endif /* CVSROOT_DFLT */
 
 	    /* Now we've reconciled CVSROOT from the command line, the
 	       CVS/Root file, and the environment variable.  Do the
 	       last sanity checks on the variable. */
-
-	    if (!CVSroot && !CVSADM_Root)
+	    if (!CVSroot_parsed)
 	    {
 		error (0, 0,
 		       "No CVSROOT specified!  Please use the `-d' option");
 		error (1, 0,
 		       "or set the %s environment variable.", CVSROOT_ENV);
-	    }
-
-	    if (CVSADM_Root && (!CVSroot || !cvs_update_env))
-	    {
-		CVSroot_parsed = CVSADM_Root;
-		CVSroot = CVSADM_Root->original;
-		cvs_update_env = 1;	/* need to update environment */
-	    }
-	    else if (!*CVSroot)
-	    {
-		error (0, 0,
-		       "CVSROOT is set but empty!  Make sure that the");
-		error (0, 0,
-		       "specification of CVSROOT is valid, either via the");
-		error (0, 0,
-		       "`-d' option, the %s environment variable, or the",
-		       CVSROOT_ENV);
-		error (1, 0,
-		       "CVS/Root file (if any).");
-	    }
-	    else
-	    {
-		if (!(CVSroot_parsed = parse_cvsroot (CVSroot)))
-		     error (1, 0, "Bad CVSROOT: `%s'.", CVSroot);
-		if (CVSADM_Root) free_cvsroot_t (CVSADM_Root);
 	    }
 	}
 
@@ -954,34 +939,33 @@ cause intermittent sandbox corruption.");
 #endif	/* CLIENT_SUPPORT */
 		{
 		    char *path;
+		    size_t dummy;
 		    int save_errno;
 
-		    path = xmalloc (strlen (current_parsed_root->directory)
-				    + sizeof (CVSROOTADM)
-				    + 2);
-		    (void) sprintf (path, "%s/%s", current_parsed_root->directory, CVSROOTADM);
+		    path = asnprintf (NULL, &dummy, "%s/%s",
+				      current_parsed_root->directory,
+				      CVSROOTADM);
 		    if (!isaccessible (path, R_OK | X_OK))
 		    {
 			save_errno = errno;
-			/* If this is "cvs init", the root need not exist yet.  */
-			if (strcmp (cvs_cmd_name, "init") != 0)
-			{
+			/* If this is "cvs init", the root need not exist yet.
+			 */
+			if (strcmp (cvs_cmd_name, "init"))
 			    error (1, save_errno, "%s", path);
-			}
 		    }
 		    free (path);
 		}
 
 #ifdef HAVE_PUTENV
-		/* Update the CVSROOT environment variable if necessary. */
-		/* FIXME (njc): should we always set this with the CVSROOT from the command line? */
-		if (cvs_update_env)
+		/* Update the CVSROOT environment variable.  */
+		if (cvsroot_update_env)
 		{
 		    static char *prev;
 		    char *env;
-		    env = xmalloc (strlen (CVSROOT_ENV) + strlen (CVSroot)
-				   + 1 + 1);
-		    (void) sprintf (env, "%s=%s", CVSROOT_ENV, CVSroot);
+		    size_t dummy;
+
+		    env = asnprintf (NULL, &dummy, "%s=%s", CVSROOT_ENV,
+				     current_parsed_root->original);
 		    (void) putenv (env);
 		    /* do not free env yet, as putenv has control of it */
 		    /* but do free the previous value, if any */
@@ -1079,8 +1063,6 @@ cause intermittent sandbox corruption.");
 	dellist (&root_directories);
     } /* end of stuff that gets done if the user DOESN'T ask for help */
 
-    if (free_CVSroot)
-	free (CVSroot);
     root_allow_free ();
 
     /* This is exit rather than return because apparently that keeps
