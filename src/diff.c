@@ -69,6 +69,9 @@ static const char *const diff_usage[] =
     "\t-N\tinclude diffs for added and removed files.\n",
     "\t-r rev1\tDiff revision for rev1 against working file.\n",
     "\t-r rev2\tDiff rev1/date1 against rev2.\n",
+    "\t--ifdef=arg\tOutput diffs in ifdef format.\n",
+    "(consult the documentation for your diff program for rcsdiff-options.\n",
+    "The most popular is -c for context diffs but there are many more).\n",
     NULL
 };
 

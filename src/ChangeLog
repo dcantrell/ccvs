@@ -1,5 +1,8 @@
 Sun Feb  9 12:58:59 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* diff.c (diff_usage): Document --ifdef and try to briefly say
+	what "rcsdiff-options" means.
+
 	* update.c (update): If update had a nonzero status and we haven't
 	yet tried to fetch unpatchable files, go ahead and try it again.
 	The previous behavior was to quit, which meant that updates would
