@@ -3185,6 +3185,33 @@ done'
 	  dotest binfiles-7 "${testcvs} -q update" '[UP] binfile'
 	  dotest binfiles-8 "cmp ../binfile2.dat binfile" ''
 
+	  # Now test handling of conflicts with binary files.
+	  cp ../binfile.dat binfile
+	  dotest binfiles-con0 "${testcvs} -q ci -m modify-it" \
+'Checking in binfile;
+/tmp/cvs-sanity/cvsroot/first-dir/binfile,v  <--  binfile
+new revision: 1.3; previous revision: 1.2
+done'
+	  cd ../../2/first-dir
+	  echo 'edits in dir 2' >binfile
+	  dotest binfiles-con1 "${testcvs} -q update" \
+'U binfile
+cvs [a-z]*: binary file needs merge
+cvs [a-z]*: revision 1\.3 from repository is now in binfile
+cvs [a-z]*: file from working directory is now in \.#binfile\.1\.2
+C binfile'
+	  dotest binfiles-con2 "cmp binfile ../../1/binfile.dat" ''
+	  dotest binfiles-con3 "cat .#binfile.1.2" 'edits in dir 2'
+
+	  cp ../../1/binfile2.dat binfile
+	  dotest binfiles-con4 "${testcvs} -q ci -m resolve-it" \
+'Checking in binfile;
+/tmp/cvs-sanity/cvsroot/first-dir/binfile,v  <--  binfile
+new revision: 1.4; previous revision: 1.3
+done'
+	  cd ../../1/first-dir
+	  dotest binfiles-con5 "${testcvs} -q update" '[UP] binfile'
+
 	  # The bugs which these test for are apparently not fixed for remote.
 	  if test "$remote" = no; then
 	    dotest binfiles-9 "${testcvs} -q update -A" ''
@@ -3205,9 +3232,9 @@ done'
 '===================================================================
 File: binfile          	Status: Up-to-date
 
-   Working revision:	1\.2.*
-   Repository revision:	1\.2	/tmp/cvs-sanity/cvsroot/first-dir/binfile,v
-   Sticky Tag:		HEAD (revision: 1\.2)
+   Working revision:	1\.4.*
+   Repository revision:	1\.4	/tmp/cvs-sanity/cvsroot/first-dir/binfile,v
+   Sticky Tag:		HEAD (revision: 1\.4)
    Sticky Date:		(none)
    Sticky Options:	-kb'
 	  cd ../..
@@ -3218,7 +3245,7 @@ File: binfile          	Status: Up-to-date
 	  dotest binfiles-14a "${testcvs} -q ci -m modify-it" \
 'Checking in binfile;
 /tmp/cvs-sanity/cvsroot/first-dir/binfile,v  <--  binfile
-new revision: 1.3; previous revision: 1.2
+new revision: 1\.5; previous revision: 1\.4
 done'
 	  dotest binfiles-14b "cat binfile" 'this file is $''RCSfile$'
 	  # See binfiles-5.5 for discussion of -kb.
@@ -3226,8 +3253,8 @@ done'
 '===================================================================
 File: binfile          	Status: Up-to-date
 
-   Working revision:	1\.3.*
-   Repository revision:	1\.3	/tmp/cvs-sanity/cvsroot/first-dir/binfile,v
+   Working revision:	1\.5.*
+   Repository revision:	1\.5	/tmp/cvs-sanity/cvsroot/first-dir/binfile,v
    Sticky Tag:		(none)
    Sticky Date:		(none)
    Sticky Options:	-kb'
@@ -3243,8 +3270,8 @@ done'
 '===================================================================
 File: binfile          	Status: Up-to-date
 
-   Working revision:	1\.3.*
-   Repository revision:	1\.3	/tmp/cvs-sanity/cvsroot/first-dir/binfile,v
+   Working revision:	1\.5.*
+   Repository revision:	1\.5	/tmp/cvs-sanity/cvsroot/first-dir/binfile,v
    Sticky Tag:		(none)
    Sticky Date:		(none)
    Sticky Options:	-kb'
@@ -3254,8 +3281,8 @@ File: binfile          	Status: Up-to-date
 '===================================================================
 File: binfile          	Status: Up-to-date
 
-   Working revision:	1\.3.*
-   Repository revision:	1\.3	/tmp/cvs-sanity/cvsroot/first-dir/binfile,v
+   Working revision:	1\.5.*
+   Repository revision:	1\.5	/tmp/cvs-sanity/cvsroot/first-dir/binfile,v
    Sticky Tag:		(none)
    Sticky Date:		(none)
    Sticky Options:	-kv'
