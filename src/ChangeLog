@@ -1,3 +1,8 @@
+Sat Dec 16 17:26:08 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* client.c (send_to_server): Remove arbitrary limit.  Also remove
+	!HAVE_VPRINTF code; all relevant systems have vprintf these days.
+
 Sat Dec 16 21:35:31 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
         * checkout.c (checkout): use send_to_server() now.
