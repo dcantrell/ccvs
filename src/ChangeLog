@@ -1,3 +1,8 @@
+Wed Aug 19 15:19:13 1998  Larry Jones  <larry.jones@sdrc.com>
+
+	* sanity.sh (unedit-without-baserev-5): use ${DOTSTAR} instead
+	of .* since we expect to match multiple lines.
+
 1998-08-19  Ian Lance Taylor  <ian@cygnus.com>
 
 	* cvs.h (CVSroot_cmdline): Declare.
