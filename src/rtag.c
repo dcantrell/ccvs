@@ -358,13 +358,13 @@ check_fileproc(file, update_dir, repository, entries, srcfiles)
     p->delproc = tag_delproc;
     vers = Version_TS (repository, (char *) NULL, (char *) NULL,
         (char *) NULL, file, 0, 0, entries, srcfiles);
-    p->data = RCS_getversion(vers->srcfile, numtag, date, force_tag_match);
+    p->data = RCS_getversion(vers->srcfile, numtag, date, force_tag_match, 0);
     if (p->data != NULL)
     {
         int addit = 1;
         char *oversion;
         
-        oversion = RCS_getversion (vers->srcfile, symtag, (char *) NULL, 1);
+        oversion = RCS_getversion (vers->srcfile, symtag, (char *) NULL, 1, 0);
         if (oversion == NULL) 
         {
             if (delete)
@@ -541,7 +541,7 @@ rtag_fileproc (file, update_dir, repository, entries, srcfiles)
 	    return (rtag_delete (rcsfile));
     }
 
-    version = RCS_getversion (rcsfile, numtag, date, force_tag_match);
+    version = RCS_getversion (rcsfile, numtag, date, force_tag_match, 0);
     if (version == NULL)
     {
 	/* If -a specified, clean up any old tags */
@@ -584,7 +584,7 @@ rtag_fileproc (file, update_dir, repository, entries, srcfiles)
 	* typical tagging operation.
 	*/
        rev = branch_mode ? RCS_magicrev (rcsfile, version) : version;
-       oversion = RCS_getversion (rcsfile, symtag, (char *) 0, 1);
+       oversion = RCS_getversion (rcsfile, symtag, (char *) NULL, 1, 0);
        if (oversion != NULL)
        {
 	  int isbranch = RCS_isbranch (file, symtag, srcfiles);
@@ -651,13 +651,13 @@ rtag_delete (rcsfile)
 
     if (numtag)
     {
-	version = RCS_getversion (rcsfile, numtag, (char *) 0, 1);
+	version = RCS_getversion (rcsfile, numtag, (char *) NULL, 1, 0);
 	if (version == NULL)
 	    return (0);
 	free (version);
     }
 
-    version = RCS_getversion (rcsfile, symtag, (char *) 0, 1);
+    version = RCS_getversion (rcsfile, symtag, (char *) NULL, 1, 0);
     if (version == NULL)
 	return (0);
     free (version);

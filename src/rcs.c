@@ -827,11 +827,12 @@ do_branches (list, val)
  * The result is returned; null-string if error.
  */
 char *
-RCS_getversion (rcs, tag, date, force_tag_match)
+RCS_getversion (rcs, tag, date, force_tag_match, return_both)
     RCSNode *rcs;
     char *tag;
     char *date;
     int force_tag_match;
+    int return_both;
 {
     /* make sure we have something to look at... */
     assert (rcs != NULL);
@@ -844,7 +845,7 @@ RCS_getversion (rcs, tag, date, force_tag_match)
 	 * first lookup the tag; if that works, turn the revision into
 	 * a branch and lookup the date.
 	 */
-	tagrev = RCS_gettag (rcs, tag, force_tag_match);
+	tagrev = RCS_gettag (rcs, tag, force_tag_match, 0);
 	if (tagrev == NULL)
 	    return ((char *) NULL);
 
@@ -855,7 +856,7 @@ RCS_getversion (rcs, tag, date, force_tag_match)
 	return (rev);
     }
     else if (tag)
-	return (RCS_gettag (rcs, tag, force_tag_match));
+	return (RCS_gettag (rcs, tag, force_tag_match, return_both));
     else if (date)
 	return (RCS_getdate (rcs, date, force_tag_match));
     else
@@ -872,10 +873,11 @@ RCS_getversion (rcs, tag, date, force_tag_match)
  * If the matched tag is a branch tag, find the head of the branch.
  */
 char *
-RCS_gettag (rcs, symtag, force_tag_match)
+RCS_gettag (rcs, symtag, force_tag_match, return_both)
     RCSNode *rcs;
     char *symtag;
     int force_tag_match;
+    int return_both;
 {
     Node *p;
     char *tag = symtag;
@@ -981,12 +983,25 @@ RCS_gettag (rcs, symtag, force_tag_match)
 	else
 	    p = findnode (rcs->versions, tag);
 	if (p != NULL)
+	{
 	    /*
-	     * we have found a numeric revision for the revision tag.  To
-	     * support the RCS keyword Name, return the supplied tag
-	     * (which might be symbolic).
+	     * we have found a numeric revision for the revision tag.
+	     * To support expanding the RCS keyword Name, return both
+	     * the numeric tag and the supplied tag (which might be
+	     * symbolic).  They are separated with a ':' which is not
+	     * a valid tag char.  The variable return_both is only set
+	     * if this function is called through Version_TS ->
+	     * RCS_getversion.
 	     */
-	    return (xstrdup (symtag));
+	    if (return_both)
+	    {
+		char *both = xmalloc(strlen(tag) + 2 + strlen(symtag));
+		sprintf(both, "%s:%s", tag, symtag);
+		return both;
+	    }
+	    else
+		return (xstrdup (tag));
+	}
 	else
 	{
 	    /* The revision wasn't there, so return the head or NULL */

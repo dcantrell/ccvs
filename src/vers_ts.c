@@ -146,10 +146,28 @@ Version_TS (repository, options, tag, date, user, force_tag_match,
 	{
 #endif
 	    if (vers_ts->tag && strcmp (vers_ts->tag, TAG_BASE) == 0)
+	    {
 		vers_ts->vn_rcs = xstrdup (vers_ts->vn_user);
+		vers_ts->vn_tag = xstrdup (vers_ts->vn_user);
+	    }
 	    else
+	    {
 		vers_ts->vn_rcs = RCS_getversion (rcsdata, vers_ts->tag,
-					    vers_ts->date, force_tag_match);
+					    vers_ts->date, force_tag_match, 1);
+		if (vers_ts->vn_rcs == NULL)
+		    vers_ts->vn_tag = NULL;
+		else
+		{
+		    char *colon = strchr (vers_ts->vn_rcs, ':');
+		    if (colon)
+		    {
+			vers_ts->vn_tag = xstrdup (colon+1);
+			*colon = '\0';
+		    }
+		    else
+			vers_ts->vn_tag = xstrdup (vers_ts->vn_rcs);
+		}
+	    }
 #ifndef DEATH_SUPPORT
 	} 
 #endif
@@ -289,6 +307,8 @@ freevers_ts (versp)
 	free ((*versp)->vn_user);
     if ((*versp)->vn_rcs)
 	free ((*versp)->vn_rcs);
+    if ((*versp)->vn_tag)
+	free ((*versp)->vn_tag);
     if ((*versp)->ts_user)
 	free ((*versp)->ts_user);
     if ((*versp)->ts_rcs)

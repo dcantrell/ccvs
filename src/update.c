@@ -938,7 +938,7 @@ checkout_file (file, repository, entries, srcfiles, vers_ts, update_dir)
     if (!file_is_dead) {
 #endif
     
-    run_setup ("%s%s -q -r%s %s", Rcsbin, RCS_CO, vers_ts->vn_rcs,
+    run_setup ("%s%s -q -r%s %s", Rcsbin, RCS_CO, vers_ts->vn_tag,
 	       vers_ts->options);
 
     /*
@@ -1546,7 +1546,7 @@ join_file (file, srcfiles, vers, update_dir, entries)
 
     /* convert the second rev spec, walking branches and dates. */
 
-    rev2 = RCS_getversion (vers->srcfile, jrev2, jdate2, 1);
+    rev2 = RCS_getversion (vers->srcfile, jrev2, jdate2, 1, 0);
     if (rev2 == NULL)
     {
 	if (!quiet)
@@ -1598,7 +1598,7 @@ join_file (file, srcfiles, vers, update_dir, entries)
 	    abort();
 	}
 
-	tst = RCS_gettag (vers->srcfile, rev2, 1);
+	tst = RCS_gettag (vers->srcfile, rev2, 1, 0);
 	if (tst == NULL)
 	{
 	    /* this should not be possible. */
@@ -1621,7 +1621,7 @@ join_file (file, srcfiles, vers, update_dir, entries)
 	/* otherwise, convert the first rev spec, walking branches and
 	   dates.  */
 
-	rev1 = RCS_getversion (vers->srcfile, jrev1, jdate1, 1);
+	rev1 = RCS_getversion (vers->srcfile, jrev1, jdate1, 1, 0);
 	if (rev1 == NULL)
 	{
 	  if (!quiet) {
@@ -1645,7 +1645,7 @@ join_file (file, srcfiles, vers, update_dir, entries)
 	/* special handling when two revisions are specified */
 	if (join_rev1 && join_rev2)
 	{
-	    rev = RCS_getversion (vers->srcfile, join_rev2, date_rev2, 1);
+	    rev = RCS_getversion (vers->srcfile, join_rev2, date_rev2, 1, 0);
 	    if (rev == NULL)
 	    {
 		if (!quiet && date_rev2 == NULL)
@@ -1654,7 +1654,7 @@ join_file (file, srcfiles, vers, update_dir, entries)
 		return;
 	    }
 	    
-	    baserev = RCS_getversion (vers->srcfile, join_rev1, date_rev1, 1);
+	    baserev = RCS_getversion (vers->srcfile, join_rev1, date_rev1, 1, 0);
 	    if (baserev == NULL)
 	    {
 		if (!quiet && date_rev1 == NULL)
@@ -1682,7 +1682,7 @@ join_file (file, srcfiles, vers, update_dir, entries)
 	}
 	else
 	{
-	    rev = RCS_getversion (vers->srcfile, join_rev1, date_rev1, 1);
+	    rev = RCS_getversion (vers->srcfile, join_rev1, date_rev1, 1, 0);
 	    if (rev == NULL)
 		return;
 	    if (strcmp (rev, vers->vn_user) == 0) /* no merge necessary */

@@ -1,3 +1,25 @@
+Fri Dec  1 11:53:19 1995  Norbert Kiesel  <nk@col.sw-ley.de>
+
+	* rcs.c (RCS_gettag): new parameter return_both force return both
+	  tags: the symbolic and the numeric one.
+	  (RCS_getversion): new parameter return_both is forwarded to
+	  RCS_gettag.
+
+	* rtag.c, tag.c, commit.c, patch.c, update.c: pass 0 as additional
+	  last parameter to RCS_getversion and RCS_gettag
+
+	* rcs.h (RCS_gettag): new parameter return_both.
+	  (RCS_getversion): new parameter return_both.
+
+	* cvs.h (struct vers_ts): add vn_tag slot for symbolic tag name
+
+	* vers_ts.c (Version_TS): call RCS_getversion with 1 for
+	  return_both and split output into vn_rcs and vn_tag
+	  (freevers_ts): free vn_tag
+
+	* update.c (checkout_file): use vn_tag instead of vn_rcs when
+	  calling 'rcs co' to allow rcs expansion of :$Name :
+
 Thu Nov 30 20:44:30 1995  Karl Fogel  <kfogel@floss.cyclic.com>
         
         * client.c (get_responses_and_close): undo previous change
