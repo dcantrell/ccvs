@@ -31,6 +31,14 @@
 @c indeed  seem to be the usual approach (according to
 @c an internet draft by Jacob Palme).
 
+@c This document seems to get overfull hboxes with some
+@c frequency (probably because the tendency is to
+@c sanity-check it with "make info" and run TeX less
+@c often).  The big ugly boxes just seem to add insult
+@c to injury, and I'm not aware of them helping to fix
+@c the overfull hboxes at all.
+@finalout
+
 @setfilename cvs.info
 @include CVSvn.texi
 @settitle CVS---Concurrent Versions System
