@@ -1,5 +1,8 @@
 Mon Sep  8 08:52:39 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* README.txt (TOOLS IMPLEMENTING THE SCC): Be a little more
+	specific about Powersoft and CodeWright.
+
 	* Makefile.in (DISTFILES): Add pubscc.h.  Thanks to Frederic Van
 	Haren for pointing this out.
 
