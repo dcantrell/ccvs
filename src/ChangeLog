@@ -5,22 +5,22 @@
 	* tag.c (cvstag): For rtag, don't build directories.
 	* sanity.sh (modules3): Update to match.
 
-2000-02-20  Derek Price  <derek.price@openavenue.com>
+2001-02-20  Derek Price  <derek.price@openavenue.com>
 
 	* client.c: Use xgssapi.h.
 	* server.c: Ditto.
 
-2000-02-15  Derek Price  <derek.price@openavenue.com>
+2001-02-15  Derek Price  <derek.price@openavenue.com>
 
 	* Makefile.am (cvs_SOURCES): Correct error from yesterday.
 	* Makefile.in: Regenerated.
 
-2000-02-14  Derek Price  <derek.price@openavenue.com>
+2001-02-14  Derek Price  <derek.price@openavenue.com>
 
 	* server.c: Include xselect.h.
 	* update.c (do_update): Use best available sleep function.
 
-2000-02-14  Derek Price  <derek.price@openavenue.com>
+2001-02-14  Derek Price  <derek.price@openavenue.com>
 
 	* Makefile.am (cvs_SOURCES): Alphabetize and split to one/line.
 	(cvs_LDADD): Alphabetize and split to one/line.
@@ -30,7 +30,7 @@
 
 	* build_src.com: Remove references to rtag.c & rtag.obj.
 
-2000-02-13  Derek Price  <derek.price@openavenue.com>
+2001-02-13  Derek Price  <derek.price@openavenue.com>
 
 	* main.c (date_to_tm): New function to convert an RCS date string to a
 	struct tm.
@@ -55,7 +55,7 @@
 	* subr.c (xrealloc_and_strcat): here.
 	* cvs.h: Update prototypes to match.
 
-2000-02-13  Derek Price  <derek.price@openavenue.com>
+2001-02-13  Derek Price  <derek.price@openavenue.com>
 
 	* Makefile.am (cvs_SOURCES): Remove rtag.c.
 
@@ -71,7 +71,7 @@
 	* main.c (cmds): rtag() => cvstag().
 	* server.c (serve_rtag): Ditto, and set command name.
 
-2000-02-06  Derek Price  <derek.price@openavenue.com>
+2001-02-06  Derek Price  <derek.price@openavenue.com>
 	    Rex Jolliff  <Rex_Jolliff@notes.ymp.gov>
 	    Shawn Smith  <Shawn_Smith@notes.ymp.gov>
 
