@@ -1360,13 +1360,13 @@ struct packetizing_buffer
     /* This is non-zero if the buffered data has been translated.
        Otherwise, the buffered data has not been translated, and starts
        with the two byte packet size.  */
-    int translated;
+    bool translated;
     /* The amount of buffered data.  */
     size_t holdsize;
     /* The buffer allocated to hold the data.  */
     char *holdbuf;
     /* The size of holdbuf.  */
-    int holdbufsize;
+    size_t holdbufsize;
     /* If translated is set, we need another data pointer to track
        where we are in holdbuf.  If translated is clear, then this
        pointer is not used.  */
@@ -1452,7 +1452,7 @@ packetizing_buffer_input (void *closure, char *data, size_t need, size_t size,
 
 	memcpy (data, pb->holddata, copy);
 	pb->holdsize = 0;
-	pb->translated = 0;
+	pb->translated = false;
 
 	data += copy;
 	need -= copy;
@@ -1611,7 +1611,7 @@ packetizing_buffer_input (void *closure, char *data, size_t need, size_t size,
 	    pb->holdsize = tcount - size;
 	    memcpy (pb->holdbuf, outbuf + 2 + size, tcount - size);
 	    pb->holddata = pb->holdbuf;
-	    pb->translated = 1;
+	    pb->translated = true;
 
 	    if (outbuf != stackoutbuf)
 		free (outbuf);
@@ -1648,7 +1648,8 @@ packetizing_buffer_output (void *closure, const char *data, size_t have,
     struct buffer_data *outdata = NULL; /* Initialize to silence -Wall.  Dumb.
 					 */
     char *outbuf;
-    int size, status, translated;
+    size_t size, translated;
+    int status;
 
     /* It would be easy to xmalloc a buffer, but I don't think this
        case can ever arise.  */
