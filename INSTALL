@@ -37,7 +37,7 @@ i386 family:
 	QNX 4 (1.7 + obvious patches)
 	OS/2 Version 3 using IBM C/C++ Tools 2.01 (1.7.86 with patches)
 m68k:
-	Sun 3 running SunOS 4.1.1_U1 w/ bundled K&R /usr/5bin/cc (1.6)
+	Sun 3 running SunOS 4.1.1_U1 w/ bundled K&R /usr/5bin/cc (1.8.2)
 	NextSTEP 3.3 (1.6.86)
 	NeXTSTEP 3.3 (1.7), (footnote 10)
 	Lynx 2.3.0 062695 (1.6.86) (footnote 9)
