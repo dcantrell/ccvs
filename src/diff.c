@@ -317,7 +317,7 @@ diff (argc, argv)
 	/* Send the current files unless diffing two revs from the archive */
 	if (diff_rev2 == NULL && diff_date2 == NULL)
 #endif
-	send_files (argc, argv, local, 0, 0);
+	send_files (argc, argv, local, 0, 0, 0);
 
 	send_to_server ("diff\012", 0);
         err = get_responses_and_close ();

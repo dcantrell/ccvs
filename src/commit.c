@@ -254,7 +254,9 @@ find_fileproc (callerdat, finfo)
 	status = T_ADDED;
     else if (vers->ts_user != NULL
 	     && vers->ts_rcs != NULL
-	     && strcmp (vers->ts_user, vers->ts_rcs) != 0)
+	     && (force_ci || strcmp (vers->ts_user, vers->ts_rcs) != 0))
+	/* If we are forcing commits, pretend that the file is
+           modified.  */
 	status = T_MODIFIED;
     else
     {
@@ -533,7 +535,7 @@ commit (argc, argv)
 	   previous versions of client/server CVS, but it probably is a Good
 	   Thing, or at least Not Such A Bad Thing.  */
 	send_file_names (find_args.argc, find_args.argv, 0);
-	send_files (find_args.argc, find_args.argv, local, 0, 0);
+	send_files (find_args.argc, find_args.argv, local, 0, 0, force_ci);
 
 	send_to_server ("ci\012", 0);
 	return get_responses_and_close ();

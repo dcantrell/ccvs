@@ -626,6 +626,22 @@ done'
 '"${PROG}"' \[[a-z]* aborted\]: correct above errors first!'
 	  dotest basica-8 "${testcvs} -q update" ''
 
+	  # Test the -f option to ci
+	  cd sdir/ssdir
+	  dotest basica-8a "${testcvs} -q ci -f -m force-it" \
+'Checking in ssfile;
+/tmp/cvs-sanity/cvsroot/first-dir/sdir/ssdir/ssfile,v  <--  ssfile
+new revision: 1\.3; previous revision: 1\.2
+done'
+	  cd ../..
+	  dotest basica-8b "${testcvs} -q diff -r1.2 -r1.3" \
+'Index: sdir/ssdir/ssfile
+===================================================================
+RCS file: /tmp/cvs-sanity/cvsroot/first-dir/sdir/ssdir/ssfile,v
+retrieving revision 1\.2
+retrieving revision 1\.3
+diff -r1\.2 -r1\.3'
+
 	  # The .* here will normally be "No such file or directory",
 	  # but if memory serves some systems (AIX?) have a different message.
 :	  dotest_fail basica-9 \

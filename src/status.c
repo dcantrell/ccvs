@@ -79,7 +79,7 @@ status (argc, argv)
       send_file_names (argc, argv, SEND_EXPAND_WILD);
       /* XXX This should only need to send file info; the file
 	 contents themselves will not be examined.  */
-      send_files (argc, argv, local, 0, 0);
+      send_files (argc, argv, local, 0, 0, 0);
 
       send_to_server ("status\012", 0);
       err = get_responses_and_close ();
