@@ -1,3 +1,8 @@
+Tue Jul  4 09:21:26 1995  Bernd Leibing  <bernd.leibing@rz.uni-ulm.de>
+
+	* rcs.c (RCS_parsercsfile_i): Rename error to l_error; SunOS4 /bin/cc
+	doesn't like a label and function with the same name.
+
 Sun Jul  2 12:51:33 1995  Fred Appelman <Fred.Appelman@cv.ruu.nl>
 
 	* logmsg.c: Rename strlist to str_list to avoid conflict with
