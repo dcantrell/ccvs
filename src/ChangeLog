@@ -1,3 +1,21 @@
+Sat Dec 27 13:07:38 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	Decrease RCS_deltas memory usage to what we need (approximately
+	the size of the file we are patching plus the size of the largest
+	patch).  Previously memory usage had been approximately the size
+	of the RCS file because we never freed lines until the end.
+	* rcs.c (linevector_free, linevector_copy, linevector_add,
+	linevector_delete):
+	Instead of having all the lines and struct line's in the alloc_*
+	space, have each line and its struct line in its own malloc'd
+	space.  Use a refcount to deal with curlines vs. headlines
+	vs. trunklines in RCS_deltas.
+	(struct allocblock, blocks, block_alloc, block_free): Remove; no
+	longer used.
+	(apply_rcs_changes, RCS_deltas): Don't copy lines into allocated
+	space; linevector_add now does that for us.
+	(rcs_change_text, RCS_deltas): Don't call block_free.
+
 Tue Dec 23 08:28:44 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvsbug.sh: Change bug-cvs address from prep.ai.mit.edu to gnu.org
