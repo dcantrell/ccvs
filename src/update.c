@@ -842,16 +842,19 @@ update_dirleave_proc (dir, err, update_dir)
 	free (repository);
     }
 
-    /* FIXME: chdir ("..") loses with symlinks.  */
-    /* Prune empty dirs on the way out - if necessary */
-    (void) chdir ("..");
-    if (update_prune_dirs && isemptydir (dir))
+    if (strchr (dir, '/') == NULL)
     {
-	/* I'm not sure the existence_error is actually possible (except
-	   in cases where we really should print a message), but since
-	   this code used to ignore all errors, I'll play it safe.  */
-	if (unlink_file_dir (dir) < 0 && !existence_error (errno))
-	    error (0, errno, "cannot remove %s directory", dir);
+	/* FIXME: chdir ("..") loses with symlinks.  */
+	/* Prune empty dirs on the way out - if necessary */
+	(void) chdir ("..");
+	if (update_prune_dirs && isemptydir (dir))
+	{
+	    /* I'm not sure the existence_error is actually possible (except
+	       in cases where we really should print a message), but since
+	       this code used to ignore all errors, I'll play it safe.	*/
+	    if (unlink_file_dir (dir) < 0 && !existence_error (errno))
+		error (0, errno, "cannot remove %s directory", dir);
+	}
     }
 
     return (err);
