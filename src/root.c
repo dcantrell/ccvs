@@ -524,7 +524,7 @@ parse_cvsroot (const char *root_in)
 	*p = '\0';
 	cvsroot_copy = ++p;
 
-#if defined(CLIENT_SUPPORT) || defined (SERVER_SUPPORT)
+#if defined (CLIENT_SUPPORT) || defined (SERVER_SUPPORT)
 	/* Look for method options, for instance, proxy, proxyport.
 	 * Calling strtok again is saved until after parsing the method.
 	 */
@@ -534,7 +534,7 @@ parse_cvsroot (const char *root_in)
 	    error (0, 0, "Unknown method (`') in CVSROOT.");
 	    goto error_exit;
 	}
-#endif /* defined(CLIENT_SUPPORT) || defined (SERVER_SUPPORT) */
+#endif /* defined (CLIENT_SUPPORT) || defined (SERVER_SUPPORT) */
 
 	/* Now we have an access method -- see if it's valid. */
 
@@ -558,7 +558,7 @@ parse_cvsroot (const char *root_in)
 	    goto error_exit;
 	}
 
-#if defined(CLIENT_SUPPORT) || defined (SERVER_SUPPORT)
+#if defined (CLIENT_SUPPORT) || defined (SERVER_SUPPORT)
 	/* Parse the method options, for instance, proxy, proxyport */
 	while ((p = strtok (NULL, ";")))
 	{
@@ -616,7 +616,7 @@ parse_cvsroot (const char *root_in)
 	        goto error_exit;
 	    }
 	}
-#endif /* defined(CLIENT_SUPPORT) || defined (SERVER_SUPPORT) */
+#endif /* defined (CLIENT_SUPPORT) || defined (SERVER_SUPPORT) */
     }
     else
     {
