@@ -395,7 +395,6 @@ admin (argc, argv)
 	if (admin_data.kflag != NULL)
 	    send_arg (admin_data.kflag);
 
-	/* XXX send -ko too with i = 0 */
 	for (i = 0; i < admin_data.ac; ++i)
 	    send_arg (admin_data.av[i]);
 

@@ -1,5 +1,10 @@
 Sun Jul 27 15:36:44 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* admin.c (admin): Remove comment "XXX send -ko too with i = 0".
+	It turns out to be a description of a bugfix which was applied on
+	8 Oct 1995, and never should have been in a comment in the first
+	place.
+
 	* admin.c (admin, admin_fileproc): Parse options ourself rather
 	than blindly passing them to RCS.
 	Accordingly, add struct admin_data and function arg_add, and delete
