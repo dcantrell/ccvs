@@ -38,6 +38,9 @@ case $1 in
 esac
 shift
 
+# Use full path for mkmodules, so that the right one will be invoked
+testmkmodules=`pwd`/mkmodules
+
 # Remaining arguments are the names of tests to run.
 if test x"$*" = x; then
   tests="basic0 basic1 basic2 basic3 rtags death import new conflicts modules mflag errmsg1"
@@ -88,7 +91,7 @@ ${CVS} -d `pwd`/../cvsroot co CVSROOT 2>> ${LOGFILE}
 cd .. ; rm -rf tmp
 
 # This one should succeed.  No warnings.
-echo 'CVSROOT		-i mkmodules CVSROOT' > cvsroot/CVSROOT/modules
+echo "CVSROOT		-i ${testmkmodules} CVSROOT" > cvsroot/CVSROOT/modules
 mkdir tmp ; cd tmp
 if ${CVS} -d `pwd`/../cvsroot co CVSROOT ; then
   echo "PASS: test 4" >>${LOGFILE}
