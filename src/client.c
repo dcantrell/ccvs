@@ -3001,7 +3001,7 @@ send_a_repository (dir, repository, update_dir)
 		    && (strcmp (repository + repository_len - update_dir_len,
 				update_dir) == 0)
 		    /* TOPLEVEL_REPOS shouldn't be above current_parsed_root->directory */
-		    && ((repository_len - update_dir_len)
+		    && ((size_t)(repository_len - update_dir_len)
 			> strlen (current_parsed_root->directory)))
 		{
 		    /* The repository name contains UPDATE_DIR.  Set
