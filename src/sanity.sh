@@ -478,7 +478,8 @@ RCSINIT=; export RCSINIT
 # tests.
 
 if test x"$*" = x; then
-	tests="basica basicb basic1 deep basic2 rdiff death death2 branches"
+	tests="basica basicb basicc basic1 deep basic2"
+	tests="${tests} rdiff death death2 branches"
 	tests="${tests} multibranch import importb join join2 join3"
 	tests="${tests} new newb conflicts conflicts2"
 	tests="${tests} modules modules2 modules3 mflag errmsg1 errmsg2"
@@ -948,6 +949,36 @@ ${PROG} \[admin aborted\]: specify ${PROG} -H admin for usage information"
 	  rm -rf ${CVSROOT_DIRNAME}/second-dir
 	  rm -rf ${CVSROOT_DIRNAME}/CVSROOT/Emptydir
 	  rm -f ${CVSROOT_DIRNAME}/topfile,v
+	  ;;
+
+	basicc)
+	  # More tests of basic/miscellaneous functionality.
+	  mkdir 1; cd 1
+	  dotest_fail basicc-1 "${testcvs} diff" \
+"${PROG} [a-z]*: in directory \.:
+${PROG} \[[a-z]* aborted\]: there is no version here; run .${PROG} checkout. first"
+	  dotest basicc-2 "${testcvs} -q co -l ." ''
+	  mkdir first-dir second-dir
+	  dotest basicc-3 "${testcvs} add first-dir second-dir" \
+"Directory ${TESTDIR}/cvsroot/first-dir added to the repository
+Directory ${TESTDIR}/cvsroot/second-dir added to the repository"
+	  # Old versions of CVS often didn't create this top-level CVS
+	  # directory in the first place.  I think that maybe the only
+	  # way to get avoid it currently is to let CVS create it, and
+	  # then blow it away.  But that is perfectly legal; people who
+	  # are used to the old behavior especially may be interested.
+	  rm -r CVS
+	  dotest basicc-4 "ls -1" "first-dir
+second-dir"
+	  dotest basicc-5 "${testcvs} update" \
+"${PROG} [a-z]*: Updating first-dir
+${PROG} [a-z]*: Updating second-dir" \
+"${PROG} [a-z]*: Updating \.
+${PROG} [a-z]*: Updating first-dir
+${PROG} [a-z]*: Updating second-dir"
+
+	  cd ..
+	  rm -r 1
 	  ;;
 
 	basic1)

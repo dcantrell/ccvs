@@ -1,5 +1,9 @@
 Sat Sep  6 09:48:39 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* recurse.c (start_recursion): If there is no CVSADM and no
+	subdirectories, give an error.
+	* sanity.sh (basicc): New tests, test for this fix.
+
 	* sanity.sh (join): New tests join-25 through join-29 test merging
 	from one branch to a different branch.
 

@@ -157,7 +157,25 @@ start_recursion (fileproc, filesdoneproc, direntproc, dirleaveproc, callerdat,
 	 * called with the list of sub-dirs of the current dir as args
 	 */
 	if ((which & W_LOCAL) && !isdir (CVSADM))
+	{
 	    dirlist = Find_Directories ((char *) NULL, W_LOCAL, (List *) NULL);
+	    /* If there are no sub-directories, there is a certain logic in
+	       favor of doing nothing, but in fact probably the user is just
+	       confused about what directory they are in, or whether they
+	       cvs add'd a new directory.  In the case of at least one
+	       sub-directory, at least when we recurse into them we
+	       notice (hopefully) whether they are under CVS control.  */
+	    if (list_isempty (dirlist))
+	    {
+		if (update_dir[0] == '\0')
+		    error (0, 0, "in directory .:");
+		else
+		    error (0, 0, "in directory %s:", update_dir);
+		error (1, 0,
+		       "there is no version here; run '%s checkout' first",
+		       program_name);
+	    }
+	}
 	else
 	    addlist (&dirlist, ".");
 
