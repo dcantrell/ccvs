@@ -1,5 +1,10 @@
 Changes since 1.9:
 
+* The %s format formerly accepted in loginfo has been extended to
+formats such as %{sVv}, so that loginfo scripts have access to the
+version numbers being changed.  See the Loginfo section of cvs.texinfo
+for details.
+
 * The postscript documentation (doc/cvs.ps) shipped with CVS is now
 formatted for US letter size instead of A4.  This is not because we
 consider this size "better" than A4, but because we believe that the
