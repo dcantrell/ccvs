@@ -828,6 +828,13 @@ done"
 	  rm -r 1
 	  mkdir 2; cd 2
 	  dotest basicb-0d "${testcvs} -q co -l ." "U topfile"
+	  # Now test the ability to run checkout on an existing working
+	  # directory without having it lose its mind.  I don't know
+	  # whether this is tested elsewhere in sanity.sh.  A more elaborate
+	  # test might also have modified files, make sure it works if
+	  # the modules file was modified to add new directories to the
+	  # module, and such.
+	  dotest basicb-0d0 "${testcvs} -q co -l ." ""
 	  mkdir first-dir
 	  dotest basicb-0e "${testcvs} add first-dir" \
 "Directory ${TESTDIR}/cvsroot/first-dir added to the repository"
