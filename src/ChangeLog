@@ -1,3 +1,8 @@
+Tue Oct 29 17:23:59 1996  Ian Lance Taylor  <ian@cygnus.com>
+
+	* status.c (tag_list_proc): When printing the tag name, don't
+	truncate it to 25 characters.
+
 Tue Oct 29 12:49:07 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* add.c, checkin.c, checkout.c, filesubr.c: Nuke arbitrary limit
