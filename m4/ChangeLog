@@ -1,5 +1,10 @@
 2003-07-19  Derek Price  <derek@ximbiot.com>
 
+	* lstat.m4: Call the *_ONCE functions.  This almost syncs us with
+	GNULIB.
+
+2003-07-19  Derek Price  <derek@ximbiot.com>
+
 	* getline.m4: Merge more of Bruno Habile's GNULIB changes to this file
 	so our fork is less divergent.
 	* getndelim2.m4: Ditto.
