@@ -1,3 +1,11 @@
+2001-01-18  Larry Jones  <larry.jones@sdrc.com>
+
+	* log.c (option_revlist, revlist, log_usage, cvslog,
+	log_parse_revlist, log_expand_revlist, log_version_requested): Add
+	support for :: for exclusive ranges.
+	* admin.c (admin_usage): Reorder -o to be parallel to log -r.
+	* sanity.sh (log): New tests for above.
+
 2001-01-18  Derek Price  <derek.price@openavenue.com>
 
 	* main.c: Add '2001' to the range of copyright years listed by the

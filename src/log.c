@@ -30,6 +30,8 @@ struct option_revlist
     /* Nonzero if there was a trailing `.', which means to print only
        the head revision of a branch.  */
     int branchhead;
+    /* Nonzero if first and last are inclusive.  */
+    int inclusive;
 };
 
 /* This structure holds information derived from option_revlist given
@@ -46,6 +48,8 @@ struct revlist
     /* The number of fields in these revisions (one more than
        numdots).  */
     int fields;
+    /* Whether first & last are to be included or excluded.  */
+    int inclusive;
 };
 
 /* This structure holds information parsed from the -d option.  */
@@ -142,6 +146,15 @@ static const char *const log_usage[] =
     "\t-N\tDo not list tags.\n",
     "\t-b\tOnly list revisions on the default branch.\n",
     "\t-r[revisions]\tSpecify revision(s)s to list.\n",
+    "\t   rev1:rev2   Between rev1 and rev2, including rev1 and rev2.\n",
+    "\t   rev1::rev2  Between rev1 and rev2, excluding rev1 and rev2.\n",
+    "\t   rev:        rev and following revisions on the same branch.\n",
+    "\t   rev::       After rev on the same branch.\n",
+    "\t   :rev        rev and previous revisions on the same branch.\n",
+    "\t   ::rev       Before rev on the same branch.\n",
+    "\t   rev         Just rev.\n",
+    "\t   branch      All revisions on the branch.\n",
+    "\t   branch.     The last revision on the branch.\n",
     "\t-d dates\tSpecify dates (D1<D2 for range, D for latest before).\n",
     "\t-s states\tOnly list revisions with specified states.\n",
     "\t-w[logins]\tOnly list revisions checked in by specified logins.\n",
@@ -332,6 +345,8 @@ cvslog (argc, argv)
 		if (rp->first != NULL)
 		    send_to_server (rp->first, 0);
 		send_to_server (":", 1);
+		if (!rp->inclusive)
+		    send_to_server (":", 1);
 		if (rp->last != NULL)
 		    send_to_server (rp->last, 0);
 	    }
@@ -442,10 +457,16 @@ log_parse_revlist (argstring)
 	r->branchhead = 0;
 	r->last = strchr (copy, ':');
 	if (r->last != NULL)
+	{
 	    *r->last++ = '\0';
+	    r->inclusive = (*r->last != ':');
+	    if (!r->inclusive)
+		r->last++;
+	}
 	else
 	{
 	    r->last = r->first;
+	    r->inclusive = 1;
 	    if (r->first[0] != '\0' && r->first[strlen (r->first) - 1] == '.')
 	    {
 		r->branchhead = 1;
@@ -860,6 +881,7 @@ log_expand_revlist (rcs, revlist, default_branch)
 	struct revlist *nr;
 
 	nr = (struct revlist *) xmalloc (sizeof *nr);
+	nr->inclusive = r->inclusive;
 
 	if (r->first == NULL && r->last == NULL)
 	{
@@ -1023,6 +1045,7 @@ log_expand_revlist (rcs, revlist, default_branch)
 	}
 	nr->last = xstrdup (nr->first);
 	nr->fields = numdots (nr->first) + 1;
+	nr->inclusive = 1;
 
 	nr->next = NULL;
 	*pr = nr;
@@ -1137,9 +1160,12 @@ log_version_requested (log_data, revlist, rcs, vnode)
 	vfields = numdots (v) + 1;
 	for (r = revlist; r != NULL; r = r->next)
 	{
-	    if (vfields == r->fields + (r->fields & 1)
-		&& version_compare (v, r->first, r->fields) >= 0
-		&& version_compare (v, r->last, r->fields) <= 0)
+	    if (vfields == r->fields + (r->fields & 1) &&
+		(r->inclusive ?
+		    version_compare (v, r->first, r->fields) >= 0
+		    && version_compare (v, r->last, r->fields) <= 0 :
+		    version_compare (v, r->first, r->fields) > 0
+		    && version_compare (v, r->last, r->fields) < 0))
 	    {
 		return 1;
 	    }
