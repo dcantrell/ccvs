@@ -1,3 +1,14 @@
+Fri Mar  7 22:39:08 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* subr.c (free_names): Fix comment: this function is not used to
+	free memory allocated by Find_Names (at least it hasn't for a long
+	time).
+	* subr.c, cvs.h (line2argv): Change calling convention so that we
+	allocate argv array rather than the caller.  The previous one had
+	no way of checking whether we overflowed the passed-in buffer.
+	* subr.c (free_names): Free the argv array too.
+	* modules.c (do_module, cat_module): Update callers.
+
 Thu Mar  6 12:44:42 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* import.c: Allocate vhead and vbranch dynamically; removes

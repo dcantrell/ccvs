@@ -121,7 +121,7 @@ strip_trailing_newlines (str)
 }
 
 /*
- * Recover the space allocated by Find_Names() and line2argv()
+ * Recover the space allocated by line2argv()
  */
 void
 free_names (pargc, argv)
@@ -134,26 +134,37 @@ free_names (pargc, argv)
     {					/* only do through *pargc */
 	free (argv[i]);
     }
+    free (argv);
     *pargc = 0;				/* and set it to zero when done */
 }
 
-/*
- * Convert a line into argc/argv components and return the result in the
- * arguments as passed.  Use free_names() to return the memory allocated here
- * back to the free pool.
- */
+/* Convert LINE into arguments separated by space and tab.  Set *ARGC
+   to the number of arguments found, and (*ARGV)[0] to the first argument,
+   (*ARGV)[1] to the second, etc.  *ARGV is malloc'd and so are each of
+   (*ARGV)[0], (*ARGV)[1], ...  Use free_names() to return the memory
+   allocated here back to the free pool.  */
 void
 line2argv (pargc, argv, line)
     int *pargc;
-    char **argv;
+    char ***argv;
     char *line;
 {
     char *cp;
+    size_t argv_allocated;
+
+    /* Small for testing.  */
+    argv_allocated = 1;
+    *argv = (char **) xmalloc (argv_allocated * sizeof (**argv));
 
     *pargc = 0;
     for (cp = strtok (line, " \t"); cp; cp = strtok ((char *) NULL, " \t"))
     {
-	argv[*pargc] = xstrdup (cp);
+	if (*pargc == argv_allocated)
+	{
+	    argv_allocated *= 2;
+	    *argv = xrealloc (*argv, argv_allocated * sizeof (**argv));
+	}
+	(*argv)[*pargc] = xstrdup (cp);
 	(*pargc)++;
     }
 }

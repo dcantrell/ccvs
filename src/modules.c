@@ -112,7 +112,7 @@ do_module (db, mname, m_type, msg, callback_proc, where,
     int modargc;
     int xmodargc;
     char **modargv;
-    char *xmodargv[MAXFILEPERDIR];
+    char **xmodargv;
     char *value;
     char *zvalue = NULL;
     char *mwhere = NULL;
@@ -439,7 +439,7 @@ do_module (db, mname, m_type, msg, callback_proc, where,
     (void) sprintf (line, "%s %s", "XXX", value);
 
     /* turn the line into an argv[] array */
-    line2argv (&xmodargc, xmodargv, line);
+    line2argv (&xmodargc, &xmodargv, line);
     free (line);
     modargc = xmodargc;
     modargv = xmodargv;
@@ -879,7 +879,7 @@ cat_module (status)
     int moduleargc;
     struct sortrec *s_h;
     char *cp, *cp2, **argv;
-    char *moduleargv[MAXFILEPERDIR];
+    char **moduleargv;
 
     Status = status;
 
@@ -925,7 +925,7 @@ cat_module (status)
 	line = xmalloc (strlen (s_h->modname) + strlen (s_h->rest) + 15);
 	/* Parse module file entry as command line and print options */
 	(void) sprintf (line, "%s %s", s_h->modname, s_h->rest);
-	line2argv (&moduleargc, moduleargv, line);
+	line2argv (&moduleargc, &moduleargv, line);
 	free (line);
 	argc = moduleargc;
 	argv = moduleargv;
