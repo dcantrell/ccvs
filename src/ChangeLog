@@ -1,5 +1,9 @@
 Wed Oct 22 12:16:10 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* admin.c (admin_fileproc): Don't support '-' for ranges in "cvs
+	admin -o".
+	(admin): Adjust comment.
+
 	* rcs.h (RCSVers): New field other_delta.
 	* rcs.c (free_rcsvers_contents): Also free other_delta.
 	(getdelta): Read newphrases from deltas into other_delta field.
