@@ -1,5 +1,8 @@
 Tue Dec 16 13:13:53 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* FAQ: Re-import from FAQ-O-Matic.  Features an update to the
+	Sablime question.
+
 	* NEWS: Add item about GSSAPI.
 
 Fri Dec 12 14:00:57 1997  Ian Lance Taylor  <ian@cygnus.com>

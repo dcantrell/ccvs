@@ -10121,12 +10121,30 @@ software?"
    --------------------------------------
 
 
-   Produced by AT&T. 
+   Produced by AT&T. Sablime uses SCCS as the
+   underlying source code control system. It uses
+   some other control system (called sbcs I think)
+   for managing binary files. It uses lock, edit,
+   comit, unlock mechanism. It has a motif based GUI
+   and curses based GUI (that works only with ksh,
+   not tcsh, or bash) to do more common tasks. It
+   has even a command line interface. 
 
-   [[Need more info here.]] 
+   Changing source happens as a result of MR. A
+   testing person or a developer assigns an MR
+   (modification request) to a group of people. They
+   are allowed to take out files under that MR and
+   change them and check them back in. You can set
+   up dependencies between and MR and do release
+   management to say "I want the sources to include
+   these MRs" etc. It is a reasonably good
+   maintanance system. It is bit heavy weight
+   though, and the interface is not too polished and
+   does not work on windows (though that may have
+   changed). rama@savera.com 
 
 
-   Last modified: 6/13/1997 
+   Last modified: 12/12/1997 
 
    11. How does CVS differ from PVCS? 
    -----------------------------------
