@@ -297,3 +297,27 @@ diff -c -2 -r1.1.1.1 commit.c
   This error doesn't occur when run locally.
   
   P.S.  Is anyone working on fixing these bugs?
+
+
+* From: Roland McGrath <roland@gnu.ai.mit.edu>
+  To: Cyclic CVS Hackers <cyclic-cvs@cyclic.com>
+  Subject: bizarre failure mode
+  Date: Tue, 7 Mar 95 14:17:28 -0500
+  
+  This is pretty weird:
+  
+  CVS_SERVER='TMPDIR=. /usr/local/bin/cvs' ../cvs-build/src/cvs update -q
+  cvs [server aborted]: could not get working directory: Result too large
+  [Exit 1]
+  asylum 29 % grep 'Result too large' /usr/include/sys/errno.h 
+  #define ERANGE          34              /* Result too large */
+  
+  Now, getcwd fails with ERANGE when the buffer is too small.  But I don't
+  know why that would be the case; I don't think there are exceptionally long
+  directory names involved.  It would be robust to notice ERANGE and use a
+  bigger buffer.  But I suspect something weirder is going on.
+  
+  The repository in question in duality.gnu.ai.mit.edu:/gd4/gnu/cvsroot/libc.
+  
+  Send me a PGP-signed message if you want the password to use the machine
+  where the problem showed up.
