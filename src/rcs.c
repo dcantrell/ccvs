@@ -8678,8 +8678,8 @@ annotate_fileproc (callerdat, finfo)
     cvs_outerr (finfo->fullname, 0);
     cvs_outerr ("\n***************\n", 0);
 
-    RCS_deltas (finfo->rcs, fp, rcsbufp, version, RCS_ANNOTATE, (char **) NULL,
-		(size_t) NULL, (char **) NULL, (size_t *) NULL);
+    RCS_deltas (finfo->rcs, fp, rcsbufp, version, RCS_ANNOTATE, NULL,
+		NULL, NULL, NULL);
     free (version);
     return 0;
 }
