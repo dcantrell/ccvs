@@ -1,21 +1,17 @@
 /* expand_path.c -- expand environmental variables in passed in string
- 	The main routine is expand_pathname, it is the routine
-	that handles the '~' character in four forms:
-		~name
-		~name/
-		~/
-		~
-	and handles environment variables contained within the pathname
-	which are defined by:
-		c is some character
-		${var_name}	var_name is the name of the environ variable
-		$var_name	var_name ends with a non ascii character
-	char *expand_pathname(char *name)
-	This routine will expand the pathname to account for ~
-	and $ characters as described above.If an error occurs, NULL
-	is returned.
-	Will only expand Built in CVS variables all others are ignored.
+ *
+ * The main routine is expand_path(), it is the routine that handles
+ * the '~' character in four forms: 
+ *     ~name
+ *     ~name/
+ *     ~/
+ *     ~
+ * and handles environment variables contained within the pathname
+ * which are defined by:
+ *     ${var_name}   (var_name is the name of the environ variable)
+ *     $var_name     (var_name ends w/ non-alphanumeric char other than '_')
  */
+
 #include "cvs.h"
 #include <sys/types.h>
 
@@ -23,6 +19,13 @@ static char *expand_variable PROTO((char *env));
 extern char *xmalloc ();
 extern void  free ();
 
+/* char *expand_pathname(char *name)
+ *
+ * This routine will expand the pathname to account for ~
+ * and $ characters as described above.  If an error occurs, NULL
+ * is returned.
+ * Will only expand Built in CVS variables all others are ignored.
+ */
 char *
 expand_path (name)
     char *name;
