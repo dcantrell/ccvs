@@ -1,3 +1,15 @@
+1999-05-17  Jim Kingdon  <http://www.cyclic.com>
+
+	(These changes were run by devel-cvs; feedback was "They look fine"
+	from Jim Meyering and "I concur" from Noel Cragg).
+	* HACKING (Submitting patches): Rewrite parts to try to sketch out
+	a process which is less centralized and hopefully describes the
+	status quo better (for example, I've mostly removed the word
+	"submit" because it describes a process of sending your patch to a
+	central authority rather than to whoever wants it).  Update to
+	reflect some of the current practices/thinking regarding quality
+	and other matters.  Try to be more concise where feasible.
+
 1999-05-13  Jim Kingdon  <http://www.cyclic.com>
 
 	* BUGS: Remove item about RELATIVE_REPOS not working with
