@@ -9600,6 +9600,8 @@ Are you sure you want to release (and delete) directory .second-dir': "
 	  #   * branching and joining: binfiles2
 	  #   * adding and removing files: binfiles3
 	  #   * -k wrappers: binwrap, binwrap2, binwrap3
+	  #   * "cvs import" and wrappers: binwrap, binwrap2, binwrap3
+	  #   * -k option to "cvs import": none yet, as far as I know.
 	  mkdir ${CVSROOT_DIRNAME}/first-dir
 	  mkdir 1; cd 1
 	  dotest binfiles-1 "${testcvs} -q co first-dir" ''
