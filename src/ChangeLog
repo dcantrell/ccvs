@@ -1,5 +1,10 @@
 2005-03-16  Derek Price  <derek@ximbiot.com>
 
+	* sanity.sh (writeproxy-ssh-noredirect): Don't unconditionally create
+	a primary debug log.
+
+2005-03-16  Derek Price  <derek@ximbiot.com>
+
 	* cvs.h (open_file): Move proto...
 	* subr.h (xfopen): ...here and rename.
 	* filesubr.c (open_file): Move function...
