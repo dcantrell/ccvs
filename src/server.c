@@ -5107,7 +5107,7 @@ error 0 %s: no such user\n", username);
 	if (setgid (getegid ()) < 0)
 	{
 	    /* See comments at setuid call below for more discussion.  */
-	    printf ("error 0 setuid failed: %s\n", strerror (errno));
+	    printf ("error 0 setgid failed: %s\n", strerror (errno));
 	    /* Don't worry about server_cleanup;
 	       server_active isn't set yet.  */
 	    error_exit ();
@@ -5119,7 +5119,7 @@ error 0 %s: no such user\n", username);
 	if (setgid (pw->pw_gid) < 0)
 	{
 	    /* See comments at setuid call below for more discussion.  */
-	    printf ("error 0 setuid failed: %s\n", strerror (errno));
+	    printf ("error 0 setgid failed: %s\n", strerror (errno));
 	    /* Don't worry about server_cleanup;
 	       server_active isn't set yet.  */
 	    error_exit ();
