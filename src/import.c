@@ -20,7 +20,7 @@
 #include "savecwd.h"
 #include <assert.h>
 
-static char *get_comment PROTO((char *user));
+static char *get_comment PROTO((const char *user));
 static int add_rev PROTO((char *message, RCSNode *rcs, char *vfile,
 			  char *vers));
 static int add_tags PROTO((RCSNode *rcs, char *vfile, char *vtag, int targc,
@@ -949,7 +949,7 @@ static const struct compair comtable[] =
 
 static char *
 get_comment (user)
-    char *user;
+    const char *user;
 {
     char *cp, *suffix;
     char *suffix_path;
@@ -1005,34 +1005,34 @@ add_rcs_file (message, rcs, user, add_vhead, key_opt,
 	      add_vbranch, vtag, targc, targv,
 	      desctext, desclen, add_logfp)
     /* Log message for the addition.  Not used if add_vhead == NULL.  */
-    char *message;
+    const char *message;
     /* Filename of the RCS file to create.  */
-    char *rcs;
+    const char *rcs;
     /* Filename of the file to serve as the contents of the initial
        revision.  Even if add_vhead is NULL, we use this to determine
        the modes to give the new RCS file.  */
-    char *user;
+    const char *user;
 
     /* Revision number of head that we are adding.  Normally 1.1 but
        could be another revision as long as ADD_VBRANCH is a branch
        from it.  If NULL, then just add an empty file without any
        revisions (similar to the one created by "rcs -i").  */
-    char *add_vhead;
+    const char *add_vhead;
 
     /* Keyword expansion mode, e.g., "b" for binary.  NULL means the
        default behavior.  */
-    char *key_opt;
+    const char *key_opt;
 
     /* Vendor branch to import to, or NULL if none.  If non-NULL, then
        vtag should also be non-NULL.  */
-    char *add_vbranch;
-    char *vtag;
+    const char *add_vbranch;
+    const char *vtag;
     int targc;
     char *targv[];
 
     /* If non-NULL, description for the file.  If NULL, the description
        will be empty.  */
-    char *desctext;
+    const char *desctext;
     size_t desclen;
 
     /* Write errors to here as well as via error (), or NULL if we should
@@ -1048,8 +1048,7 @@ add_rcs_file (message, rcs, user, add_vhead, key_opt,
     int i, ierrno, err = 0;
     mode_t mode;
     char *tocvsPath;
-    char *userfile;
-    char *local_opt = key_opt;
+    const char *userfile;
     char *free_opt = NULL;
     mode_t file_type;
 
@@ -1063,11 +1062,11 @@ add_rcs_file (message, rcs, user, add_vhead, key_opt,
        or the other.  Before making a change of this sort, should think
        about what is best, document it (in cvs.texinfo and NEWS), &c.  */
 
-    if (local_opt == NULL)
+    if (key_opt == NULL)
     {
 	if (wrap_name_has (user, WRAP_RCSOPTION))
 	{
-	    local_opt = free_opt = wrap_rcsoption (user, 0);
+	    key_opt = free_opt = wrap_rcsoption (user, 0);
 	}
     }
 
@@ -1104,7 +1103,7 @@ add_rcs_file (message, rcs, user, add_vhead, key_opt,
     if (!preserve_perms || file_type == S_IFREG)
     {
 	fpuser = CVS_FOPEN (userfile,
-			    ((local_opt != NULL && strcmp (local_opt, "b") == 0)
+			    ((key_opt != NULL && strcmp (key_opt, "b") == 0)
 			     ? "rb"
 			     : "r")
 	    );
@@ -1174,9 +1173,9 @@ add_rcs_file (message, rcs, user, add_vhead, key_opt,
 	goto write_error;
     }
 
-    if (local_opt != NULL && strcmp (local_opt, "kv") != 0)
+    if (key_opt != NULL && strcmp (key_opt, "kv") != 0)
     {
-	if (fprintf (fprcs, "expand   @%s@;\012", local_opt) < 0)
+	if (fprintf (fprcs, "expand   @%s@;\012", key_opt) < 0)
 	{
 	    goto write_error;
 	}
@@ -1480,11 +1479,11 @@ read_error:
  */
 int
 expand_at_signs (buf, size, fp)
-    char *buf;
+    const char *buf;
     off_t size;
     FILE *fp;
 {
-    register char *cp, *next;
+    register const char *cp, *next;
 
     cp = buf;
     while ((next = memchr (cp, '@', size)) != NULL)

@@ -10,8 +10,8 @@
 
 #include "cvs.h"
 
-static Dtype status_dirproc PROTO ((void *callerdat, char *dir,
-				    char *repos, char *update_dir,
+static Dtype status_dirproc PROTO ((void *callerdat, const char *dir,
+				    const char *repos, const char *update_dir,
 				    List *entries));
 static int status_fileproc PROTO ((void *callerdat, struct file_info *finfo));
 static int tag_list_proc PROTO((Node * p, void *closure));
@@ -323,9 +323,9 @@ status_fileproc (callerdat, finfo)
 static Dtype
 status_dirproc (callerdat, dir, repos, update_dir, entries)
     void *callerdat;
-    char *dir;
-    char *repos;
-    char *update_dir;
+    const char *dir;
+    const char *repos;
+    const char *update_dir;
     List *entries;
 {
     if (!quiet)

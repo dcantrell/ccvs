@@ -916,10 +916,13 @@ lock_obtained (repos)
     cvs_flusherr ();
     free (msg);
 }
-
+
+
+
 static int lock_filesdoneproc PROTO ((void *callerdat, int err,
-				      char *repository, char *update_dir,
-				      List *entries));
+                                      const char *repository,
+                                      const char *update_dir,
+                                      List *entries));
 
 /*
  * Create a list of repositories to lock
@@ -929,8 +932,8 @@ static int
 lock_filesdoneproc (callerdat, err, repository, update_dir, entries)
     void *callerdat;
     int err;
-    char *repository;
-    char *update_dir;
+    const char *repository;
+    const char *update_dir;
     List *entries;
 {
     Node *p;

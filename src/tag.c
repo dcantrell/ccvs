@@ -20,16 +20,17 @@ static int rtag_proc PROTO((int argc, char **argv, char *xwhere,
 		      int local_specified, char *mname, char *msg));
 static int check_fileproc PROTO ((void *callerdat, struct file_info *finfo));
 static int check_filesdoneproc PROTO ((void *callerdat, int err,
-				       char *repos, char *update_dir,
-				       List *entries));
-static int pretag_proc PROTO((char *repository, char *filter));
+                                       const char *repos,
+                                       const char *update_dir,
+                                       List *entries));
+static int pretag_proc PROTO((const char *repository, const char *filter));
 static void masterlist_delproc PROTO((Node *p));
 static void tag_delproc PROTO((Node *p));
 static int pretag_list_proc PROTO((Node *p, void *closure));
 
-static Dtype tag_dirproc PROTO ((void *callerdat, char *dir,
-				 char *repos, char *update_dir,
-				 List *entries));
+static Dtype tag_dirproc PROTO ((void *callerdat, const char *dir,
+                                 const char *repos, const char *update_dir,
+                                 List *entries));
 static int rtag_fileproc PROTO ((void *callerdat, struct file_info *finfo));
 static int rtag_delete PROTO((RCSNode *rcsfile));
 static int tag_fileproc PROTO ((void *callerdat, struct file_info *finfo));
@@ -412,7 +413,7 @@ check_fileproc (callerdat, finfo)
     void *callerdat;
     struct file_info *finfo;
 {
-    char *xdir;
+    const char *xdir;
     Node *p;
     Vers_TS *vers;
     
@@ -536,8 +537,8 @@ static int
 check_filesdoneproc (callerdat, err, repos, update_dir, entries)
     void *callerdat;
     int err;
-    char *repos;
-    char *update_dir;
+    const char *repos;
+    const char *update_dir;
     List *entries;
 {
     int n;
@@ -565,9 +566,9 @@ check_filesdoneproc (callerdat, err, repos, update_dir, entries)
 }
 
 static int
-pretag_proc(repository, filter)
-    char *repository;
-    char *filter;
+pretag_proc (repository, filter)
+    const char *repository;
+    const char *filter;
 {
     if (filter[0] == '/')
     {
@@ -1071,9 +1072,9 @@ tag_fileproc (callerdat, finfo)
 static Dtype
 tag_dirproc (callerdat, dir, repos, update_dir, entries)
     void *callerdat;
-    char *dir;
-    char *repos;
-    char *update_dir;
+    const char *dir;
+    const char *repos;
+    const char *update_dir;
     List *entries;
 {
 
@@ -1129,14 +1130,17 @@ val_fileproc (callerdat, finfo)
     return 0;
 }
 
-static Dtype val_direntproc PROTO ((void *, char *, char *, char *, List *));
+
+
+static Dtype val_direntproc PROTO ((void *, const char *, const char *,
+                                    const char *, List *));
 
 static Dtype
 val_direntproc (callerdat, dir, repository, update_dir, entries)
     void *callerdat;
-    char *dir;
-    char *repository;
-    char *update_dir;
+    const char *dir;
+    const char *repository;
+    const char *update_dir;
     List *entries;
 {
     /* This is not quite right--it doesn't get right the case of "cvs

@@ -327,7 +327,7 @@ make_directories (name)
    existed.  */
 int
 mkdir_if_needed (name)
-    char *name;
+    const char *name;
 {
     if (mkdir (name, 0777) < 0)
     {
@@ -348,7 +348,7 @@ mkdir_if_needed (name)
  */
 void
 xchmod (fname, writable)
-    char *fname;
+    const char *fname;
     int writable;
 {
     struct stat sb;
@@ -948,11 +948,11 @@ xresolvepath ( path )
 
 
 /* Return a pointer into PATH's last component.  */
-char *
+const char *
 last_component (path)
-    char *path;
+    const char *path;
 {
-    char *last = strrchr (path, '/');
+    const char *last = strrchr (path, '/');
     
     if (last && (last != path))
         return last + 1;

@@ -85,7 +85,7 @@ static int connect_to_gserver PROTO((cvsroot_t *, int, struct hostent *));
 
 # endif /* HAVE_GSSAPI */
 
-static void add_prune_candidate PROTO((char *));
+static void add_prune_candidate PROTO((const char *));
 
 /* All the commands.  */
 int add PROTO((int argc, char **argv));
@@ -2539,7 +2539,7 @@ struct save_dir *prune_candidates;
 
 static void
 add_prune_candidate (dir)
-    char *dir;
+    const char *dir;
 {
     struct save_dir *p;
 
@@ -2596,13 +2596,13 @@ process_prune_candidates ()
 static char *last_repos;
 static char *last_update_dir;
 
-static void send_repository PROTO((char *, char *, char *));
+static void send_repository PROTO((const char *, const char *, const char *));
 
 static void
 send_repository (dir, repos, update_dir)
-    char *dir;
-    char *repos;
-    char *update_dir;
+    const char *dir;
+    const char *repos;
+    const char *update_dir;
 {
     char *adm_name;
 
@@ -2665,7 +2665,7 @@ send_repository (dir, repos, update_dir)
 	   sort of duplicates code elsewhere, but each
 	   case seems slightly different...  */
 	char buf[1];
-	char *p = update_dir;
+	const char *p = update_dir;
 	while (*p != '\0')
 	{
 	    assert (*p != '\012');
@@ -2744,11 +2744,13 @@ send_repository (dir, repos, update_dir)
 /* Send a Repository line and set toplevel_repos.  */
 
 void
-send_a_repository (dir, repository, update_dir)
-    char *dir;
-    char *repository;
-    char *update_dir;
+send_a_repository (dir, repository, update_dir_in)
+    const char *dir;
+    const char *repository;
+    const char *update_dir_in;
 {
+    char *update_dir = xstrdup (update_dir_in);
+
     if (toplevel_repos == NULL && repository != NULL)
     {
 	if (update_dir[0] == '\0'
@@ -2834,8 +2836,11 @@ send_a_repository (dir, repository, update_dir)
     }
 
     send_repository (dir, repository, update_dir);
+    free (update_dir);
 }
-
+
+
+
 /* The "expanded" modules.  */
 static int modules_count;
 static int modules_allocated;
@@ -3245,7 +3250,7 @@ struct response responses[] =
  */
 void
 send_to_server (str, len)
-     char *str;
+     const char *str;
      size_t len;
 {
     static int nbytes;
@@ -3921,7 +3926,7 @@ connect_to_forked_server (to_server, from_server)
     /* This is pretty simple.  All we need to do is choose the correct
        cvs binary and call piped_child. */
 
-    char *command[3];
+     const char *command[3];
 
     command[0] = getenv ("CVS_SERVER");
     if (! command[0])
@@ -4713,8 +4718,8 @@ start_rsh_server (root, to_server, from_server)
     sprintf (command, "%s server", cvs_server);
 
     {
-        char *argv[10];
-	char **p = argv;
+        const char *argv[10];
+	const char **p = argv;
 
 	*p++ = cvs_rsh;
 	*p++ = root->hostname;
@@ -4781,8 +4786,10 @@ send_arg (string)
     }
     send_to_server ("\012", 1);
 }
-
-static void send_modified PROTO ((char *, char *, Vers_TS *));
+
+
+
+static void send_modified PROTO ((const char *, const char *, Vers_TS *));
 
 /* VERS->OPTIONS specifies whether the file is binary or not.  NOTE: BEFORE
    using any other fields of the struct vers, we would need to fix
@@ -4790,8 +4797,8 @@ static void send_modified PROTO ((char *, char *, Vers_TS *));
 
 static void
 send_modified (file, short_pathname, vers)
-    char *file;
-    char *short_pathname;
+    const char *file;
+    const char *short_pathname;
     Vers_TS *vers;
 {
     /* File was modified, send it.  */
@@ -4957,7 +4964,7 @@ send_fileproc (callerdat, finfo)
     struct file_info xfinfo;
     /* File name to actually use.  Might differ in case from
        finfo->file.  */
-    char *filename;
+    const char *filename;
 
     send_a_repository ("", finfo->repository, finfo->update_dir);
 
@@ -5098,12 +5105,14 @@ warning: ignoring -k options due to server limitations");
     return 0;
 }
 
-static void send_ignproc PROTO ((char *, char *));
+
+
+static void send_ignproc PROTO ((const char *, const char *));
 
 static void
 send_ignproc (file, dir)
-    char *file;
-    char *dir;
+    const char *file;
+    const char *dir;
 {
     if (ign_inhibit_server || !supported_request ("Questionable"))
     {
@@ -5120,14 +5129,17 @@ send_ignproc (file, dir)
     }
 }
 
-static int send_filesdoneproc PROTO ((void *, int, char *, char *, List *));
+
+
+static int send_filesdoneproc PROTO ((void *, int, const char *, const char *,
+                                      List *));
 
 static int
 send_filesdoneproc (callerdat, err, repository, update_dir, entries)
     void *callerdat;
     int err;
-    char *repository;
-    char *update_dir;
+    const char *repository;
+    const char *update_dir;
     List *entries;
 {
     /* if this directory has an ignore list, process it then free it */
@@ -5140,7 +5152,8 @@ send_filesdoneproc (callerdat, err, repository, update_dir, entries)
     return (err);
 }
 
-static Dtype send_dirent_proc PROTO ((void *, char *, char *, char *, List *));
+static Dtype send_dirent_proc PROTO ((void *, const char *, const char *,
+                                      const char *, List *));
 
 /*
  * send_dirent_proc () is called back by the recursion processor before a
@@ -5153,9 +5166,9 @@ static Dtype send_dirent_proc PROTO ((void *, char *, char *, char *, List *));
 static Dtype
 send_dirent_proc (callerdat, dir, repository, update_dir, entries)
     void *callerdat;
-    char *dir;
-    char *repository;
-    char *update_dir;
+    const char *dir;
+    const char *repository;
+    const char *update_dir;
     List *entries;
 {
     struct send_data *args = (struct send_data *) callerdat;
@@ -5225,7 +5238,10 @@ send_dirent_proc (callerdat, dir, repository, update_dir, entries)
     return (dir_exists ? R_PROCESS : R_SKIP_ALL);
 }
 
-static int send_dirleave_proc PROTO ((void *, char *, int, char *, List *));
+
+
+static int send_dirleave_proc PROTO ((void *, const char *, int, const char *,
+                                      List *));
 
 /*
  * send_dirleave_proc () is called back by the recursion code upon leaving
@@ -5236,9 +5252,9 @@ static int send_dirleave_proc PROTO ((void *, char *, int, char *, List *));
 static int
 send_dirleave_proc (callerdat, dir, err, update_dir, entries)
     void *callerdat;
-    char *dir;
+    const char *dir;
     int err;
-    char *update_dir;
+    const char *update_dir;
     List *entries;
 {
 
@@ -5633,7 +5649,9 @@ client_import_done ()
 	toplevel_repos = xstrdup (current_parsed_root->directory);
     send_repository ("", toplevel_repos, ".");
 }
-
+
+
+
 static void
 notified_a_file (data, ent_list, short_pathname, filename)
     char *data;
@@ -5752,11 +5770,11 @@ handle_notified (args, len)
 
 void
 client_notify (repository, update_dir, filename, notif_type, val)
-    char *repository;
-    char *update_dir;
-    char *filename;
+    const char *repository;
+    const char *update_dir;
+    const char *filename;
     int notif_type;
-    char *val;
+    const char *val;
 {
     char buf[2];
 

@@ -15,9 +15,9 @@
 #endif
 #include <assert.h>
 
-static Dtype admin_dirproc PROTO ((void *callerdat, char *dir,
-				   char *repos, char *update_dir,
-				   List *entries));
+static Dtype admin_dirproc PROTO ((void *callerdat, const char *dir,
+                                   const char *repos, const char *update_dir,
+                                   List *entries));
 static int admin_fileproc PROTO ((void *callerdat, struct file_info *finfo));
 
 static const char *const admin_usage[] =
@@ -931,9 +931,9 @@ admin_fileproc (callerdat, finfo)
 static Dtype
 admin_dirproc (callerdat, dir, repos, update_dir, entries)
     void *callerdat;
-    char *dir;
-    char *repos;
-    char *update_dir;
+    const char *dir;
+    const char *repos;
+    const char *update_dir;
     List *entries;
 {
     if (!quiet)

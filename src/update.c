@@ -57,16 +57,18 @@ static void patch_file_write PROTO ((void *, const char *, size_t));
 #endif /* SERVER_SUPPORT */
 static int merge_file PROTO ((struct file_info *finfo, Vers_TS *vers));
 static int scratch_file PROTO((struct file_info *finfo, Vers_TS *vers));
-static Dtype update_dirent_proc PROTO ((void *callerdat, char *dir,
-					char *repository, char *update_dir,
-					List *entries));
-static int update_dirleave_proc PROTO ((void *callerdat, char *dir,
-					int err, char *update_dir,
+static Dtype update_dirent_proc PROTO ((void *callerdat, const char *dir,
+                                        const char *repository,
+                                        const char *update_dir,
+                                        List *entries));
+static int update_dirleave_proc PROTO ((void *callerdat, const char *dir,
+					int err, const char *update_dir,
 					List *entries));
 static int update_fileproc PROTO ((void *callerdat, struct file_info *));
 static int update_filesdone_proc PROTO ((void *callerdat, int err,
-					 char *repository, char *update_dir,
-					 List *entries));
+                                         const char *repository,
+                                         const char *update_dir,
+                                         List *entries));
 #ifdef PRESERVE_PERMISSIONS_SUPPORT
 static int get_linkinfo_proc PROTO ((void *callerdat, struct file_info *));
 #endif
@@ -781,39 +783,45 @@ update_fileproc (callerdat, finfo)
     return (retval);
 }
 
-static void update_ignproc PROTO ((char *, char *));
+
+
+static void update_ignproc PROTO ((const char *, const char *));
 
 static void
 update_ignproc (file, dir)
-    char *file;
-    char *dir;
+    const char *file;
+    const char *dir;
 {
     struct file_info finfo;
+    char *tmp;
 
     memset (&finfo, 0, sizeof (finfo));
     finfo.file = file;
     finfo.update_dir = dir;
     if (dir[0] == '\0')
-	finfo.fullname = xstrdup (file);
+	tmp = xstrdup (file);
     else
     {
-	finfo.fullname = xmalloc (strlen (file) + strlen (dir) + 10);
-	strcpy (finfo.fullname, dir);
-	strcat (finfo.fullname, "/");
-	strcat (finfo.fullname, file);
+	tmp = xmalloc (strlen (file) + strlen (dir) + 10);
+	strcpy (tmp, dir);
+	strcat (tmp, "/");
+	strcat (tmp, file);
     }
 
+    finfo.fullname = tmp;
     write_letter (&finfo, '?');
-    free (finfo.fullname);
+    free (tmp);
 }
+
+
 
 /* ARGSUSED */
 static int
 update_filesdone_proc (callerdat, err, repository, update_dir, entries)
     void *callerdat;
     int err;
-    char *repository;
-    char *update_dir;
+    const char *repository;
+    const char *update_dir;
     List *entries;
 {
     if (rewrite_tag)
@@ -852,6 +860,8 @@ update_filesdone_proc (callerdat, err, repository, update_dir, entries)
     return (err);
 }
 
+
+
 /*
  * update_dirent_proc () is called back by the recursion processor before a
  * sub-directory is processed for update.  In this case, update_dirent proc
@@ -863,9 +873,9 @@ update_filesdone_proc (callerdat, err, repository, update_dir, entries)
 static Dtype
 update_dirent_proc (callerdat, dir, repository, update_dir, entries)
     void *callerdat;
-    char *dir;
-    char *repository;
-    char *update_dir;
+    const char *dir;
+    const char *repository;
+    const char *update_dir;
     List *entries;
 {
     if (ignore_directory (update_dir))
@@ -1009,6 +1019,8 @@ update_dirent_proc (callerdat, dir, repository, update_dir, entries)
     return (R_PROCESS);
 }
 
+
+
 /*
  * update_dirleave_proc () is called back by the recursion code upon leaving
  * a directory.  It will prune empty directories if needed and will execute
@@ -1018,9 +1030,9 @@ update_dirent_proc (callerdat, dir, repository, update_dir, entries)
 static int
 update_dirleave_proc (callerdat, dir, err, update_dir, entries)
     void *callerdat;
-    char *dir;
+    const char *dir;
     int err;
-    char *update_dir;
+    const char *update_dir;
     List *entries;
 {
     /* Delete the ignore list if it hasn't already been done.  */
@@ -1087,7 +1099,7 @@ isremoved (node, closure)
    and the directory doesn't exist, then just return 0.  */
 int
 isemptydir (dir, might_not_exist)
-    char *dir;
+    const char *dir;
     int might_not_exist;
 {
     DIR *dirp;

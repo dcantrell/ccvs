@@ -17,8 +17,8 @@
 #include "getline.h"
 
 static RETSIGTYPE patch_cleanup PROTO((void));
-static Dtype patch_dirproc PROTO ((void *callerdat, char *dir,
-				   char *repos, char *update_dir,
+static Dtype patch_dirproc PROTO ((void *callerdat, const char *dir,
+				   const char *repos, const char *update_dir,
 				   List *entries));
 static int patch_fileproc PROTO ((void *callerdat, struct file_info *finfo));
 static int patch_proc PROTO((int argc, char **argv, char *xwhere,
@@ -758,9 +758,9 @@ failed to read diff file header %s for %s: end of file", tmpfile3, rcs);
 static Dtype
 patch_dirproc (callerdat, dir, repos, update_dir, entries)
     void *callerdat;
-    char *dir;
-    char *repos;
-    char *update_dir;
+    const char *dir;
+    const char *repos;
+    const char *update_dir;
     List *entries;
 {
     if (!quiet)
