@@ -106,7 +106,7 @@ do_module (DBM *db, char *mname, enum mtype m_type, char *msg, CALLBACKPROC call
     char *line;
     int modargc;
     int xmodargc;
-    char **modargv;
+    char **modargv = NULL;
     char **xmodargv = NULL;
     /* Found entry from modules file, including options and such.  */
     char *value = NULL;

@@ -314,7 +314,7 @@ password_entry_operation (password_entry_operation_t operation, cvsroot_t *root,
     }
 
     /* Check each line to see if we have this entry already. */
-    line = 0;
+    line = 0L;
     while ((line_length = getline (&linebuf, &linebuf_len, fp)) >= 0)
     {
 	line++;
@@ -383,7 +383,7 @@ process:
 	if ((tmp_fp = cvs_temp_file (&tmp_name)) == NULL)
 	    error (1, errno, "unable to open temp file %s", tmp_name);
 
-	line = 0;
+	line = 0L;
 	while ((line_length = getline (&linebuf, &linebuf_len, fp)) >= 0)
 	{
 	    line++;
