@@ -1,3 +1,10 @@
+2004-06-28  Derek Price  <derek@ximbiot.com>
+
+	Import minmax module from GNULIB.
+
+	* Makefile.am (libcvs_A_SOURCES): Add minmax.h.
+	* minmax.h: New file.
+
 2004-06-09  Derek Price  <derek@ximbiot.com>
 
 	* Makefile.am (xsize): Move GNULIB xsize module into its own section.
