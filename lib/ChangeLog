@@ -1,3 +1,7 @@
+2003-12-09  Derek Price  <derek@ximbiot.com>
+
+	* system.h: Correct spelling in comment.
+
 2003-12-09  Mark D. Baushke  <mdb@cvshome.org>
 
 	* fseeko.c (fseeko): New file and function to help with largefile
