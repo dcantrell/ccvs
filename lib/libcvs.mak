@@ -59,6 +59,7 @@ CLEAN :
 	-@erase "$(INTDIR)\printf-parse.obj"
 	-@erase "$(INTDIR)\realloc.obj"
 	-@erase "$(INTDIR)\regex.obj"
+	-@erase "$(INTDIR)\rpmatch.obj"
 	-@erase "$(INTDIR)\save-cwd.obj"
 	-@erase "$(INTDIR)\sighandle.obj"
 	-@erase "$(INTDIR)\strcasecmp.obj"
@@ -108,6 +109,7 @@ LIB32_OBJS= \
 	"$(INTDIR)\printf-parse.obj" \
 	"$(INTDIR)\realloc.obj" \
 	"$(INTDIR)\regex.obj" \
+	"$(INTDIR)\rpmatch.obj" \
 	"$(INTDIR)\save-cwd.obj" \
 	"$(INTDIR)\sighandle.obj" \
 	"$(INTDIR)\strcasecmp.obj" \
@@ -158,6 +160,7 @@ CLEAN :
 	-@erase "$(INTDIR)\printf-parse.obj"
 	-@erase "$(INTDIR)\realloc.obj"
 	-@erase "$(INTDIR)\regex.obj"
+	-@erase "$(INTDIR)\rpmatch.obj"
 	-@erase "$(INTDIR)\save-cwd.obj"
 	-@erase "$(INTDIR)\sighandle.obj"
 	-@erase "$(INTDIR)\strcasecmp.obj"
@@ -205,6 +208,7 @@ LIB32_OBJS= \
 	"$(INTDIR)\printf-parse.obj" \
 	"$(INTDIR)\realloc.obj" \
 	"$(INTDIR)\regex.obj" \
+	"$(INTDIR)\rpmatch.obj" \
 	"$(INTDIR)\save-cwd.obj" \
 	"$(INTDIR)\sighandle.obj" \
 	"$(INTDIR)\strcasecmp.obj" \
@@ -360,6 +364,11 @@ SOURCE=.\realloc.c
 SOURCE=.\regex.c
 
 "$(INTDIR)\regex.obj" : $(SOURCE) "$(INTDIR)"
+
+
+SOURCE=.\rpmatch.c
+
+"$(INTDIR)\rpmatch.obj" : $(SOURCE) "$(INTDIR)"
 
 
 SOURCE=".\save-cwd.c"
