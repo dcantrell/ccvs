@@ -322,13 +322,11 @@ extern void convert_file (char *INFILE,  int INFLAGS,
 #define RSH_NEEDS_BINARY_FLAG 1
 
 /* OS/2 doesn't really have user/group permissions, at least not
-   according to the C library manual pages.  So we'll make decoys. */
+   according to the C library manual pages.  So we'll make decoys.
+   (This was partly introduced for an obsolete reason, now taken care
+   of by CHMOD_BROKEN, but I haven't carefully looked at every case
+   (in particular mode_to_string), so it might still be needed).  */
 #define NEED_DECOY_PERMISSIONS 1     /* see system.h */
-
-/* See client.c.  Setting execute bits with chmod seems to lose under
-   OS/2, although in some places the documentation grudgingly admits
-   to the existence of execute bits. */
-#define EXECUTE_PERMISSION_LOSES 1
 
 
 

@@ -1,3 +1,8 @@
+Mon Jul 15 22:32:13 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* config.h: Remove EXECUTE_PERMISSION_LOSES; it is no longer used
+	anywhere (superceded by CHMOD_BROKEN).
+
 Fri Jun  7 13:07:37 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* config.h: Change INITIALIZE_SOCKET_SUBSYSTEM to
