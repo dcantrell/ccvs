@@ -1,5 +1,9 @@
 2004-09-29  Derek Price <derek@ximbiot.com>
 
+	* history.c (history_write): Use asnprintf().  Some reformatting.
+
+2004-09-29  Derek Price <derek@ximbiot.com>
+
 	* import.c (killnew): s/int/bool/.
 	(add_rcs_file): Ditto for do_killnew.
 	* rcs.h (add_rcs_file): Change proto to match.
