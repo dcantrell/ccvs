@@ -1,7 +1,6 @@
 Mon Jan  8 20:37:17 1996  Karl Fogel  <kfogel@floss.red-bean.com>
 
-        * client.c (connect_to_pserver): pass MSG_WAITALL to recv(), and
-        check return value too.
+        * client.c (connect_to_pserver): check return value of recv().
 
 Mon Jan  8 11:37:57 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
