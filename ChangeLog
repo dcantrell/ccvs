@@ -1,5 +1,9 @@
 Wed Mar 12 14:32:50 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* configure.in (AC_CHECK_FUNCS): Don't check for setvbuf;
+	HAVE_SETVBUF is no longer used.
+	* config.h, configure: Regenerated with autoconf 2.10.
+
 	* TODO: Add item 184, concerning MD5-based password hash.
 	Remove item 14, concerning "pathname stripper".  I think that was
 	a reference to the late unlamented strip_path.
