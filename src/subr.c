@@ -936,7 +936,11 @@ void cvs_trace ( level, fmt, va_alist )
 	va_list va;
 
 	VA_START(va, fmt);
+#ifdef SERVER_SUPPORT
 	fprintf(stderr,"%c -> ",server_active?'S':' ');
+#else /* ! SERVER_SUPPORT */
+	fprintf(stderr,"  -> ");
+#endif
 	vfprintf(stderr, fmt, va);
 	fprintf(stderr,"\n");
 	va_end(va);
