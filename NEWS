@@ -44,6 +44,10 @@ NEW FEATURES
 
 BUG FIXES
 
+* Thanks to James E Wilson <wilson@specifixinc.com> for a bug fix to
+  modules processing "gcc-core -a !gcc/f gcc" will no longer exclude
+  gcc/fortran by mistake.
+
 * Thanks to Conrad Pino <conrad@pino.com>, the Windows build works once again.
 
 * Misc updates to the manual.
