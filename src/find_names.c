@@ -29,9 +29,7 @@ static int register_subdir_proc (Node *, void *);
  */
 static int add_entries_proc (Node *, void *);
 static int
-add_entries_proc (node, closure)
-     Node *node;
-     void *closure;
+add_entries_proc (Node *node, void *closure)
 {
     Entnode *entnode;
     Node *fnode;
@@ -55,11 +53,7 @@ add_entries_proc (node, closure)
    list).  */
 
 List *
-Find_Names (repository, which, aflag, optentries)
-    char *repository;
-    int which;
-    int aflag;
-    List **optentries;
+Find_Names (char *repository, int which, int aflag, List **optentries)
 {
     List *entries;
     List *files;
@@ -123,9 +117,7 @@ Find_Names (repository, which, aflag, optentries)
  */
 
 static int
-add_subdir_proc (p, closure)
-     Node *p;
-     void *closure;
+add_subdir_proc (Node *p, void *closure)
 {
     List *dirlist = (List *) closure;
     Entnode *entnode;
@@ -149,9 +141,7 @@ add_subdir_proc (p, closure)
 
 /*ARGSUSED*/
 static int
-register_subdir_proc (p, closure)
-     Node *p;
-     void *closure;
+register_subdir_proc (Node *p, void *closure)
 {
     List *entries = (List *) closure;
 
@@ -163,10 +153,7 @@ register_subdir_proc (p, closure)
  * create a list of directories to traverse from the current directory
  */
 List *
-Find_Directories (repository, which, entries)
-    char *repository;
-    int which;
-    List *entries;
+Find_Directories (char *repository, int which, List *entries)
 {
     List *dirlist;
 
@@ -254,9 +241,7 @@ Find_Directories (repository, which, entries)
  * containing the files which were found before the error occurred).
  */
 static int
-find_rcs (dir, list)
-    char *dir;
-    List *list;
+find_rcs (char *dir, List *list)
 {
     Node *p;
     struct dirent *dp;
@@ -303,11 +288,7 @@ find_rcs (dir, list)
  * error, in which case errno is set to indicate the error.
  */
 static int
-find_dirs (dir, list, checkadm, entries)
-    char *dir;
-    List *list;
-    int checkadm;
-    List *entries;
+find_dirs (char *dir, List *list, int checkadm, List *entries)
 {
     Node *p;
     char *tmp = NULL;

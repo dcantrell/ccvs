@@ -23,10 +23,7 @@
 #if defined (AUTH_CLIENT_SUPPORT) || defined (HAVE_KERBEROS) || defined (HAVE_GSSAPI)
 
 struct hostent *
-init_sockaddr (name, hostname, port)
-    struct sockaddr_in *name;
-    char *hostname;
-    unsigned int port;
+init_sockaddr( struct sockaddr_in *name, char *hostname, unsigned int port )
 {
     struct hostent *hostinfo;
     unsigned short shortport = port;
@@ -86,10 +83,8 @@ static int socket_buffer_shutdown (struct buffer *);
 /* Create a buffer based on a socket.  */
 
 struct buffer *
-socket_buffer_initialize (socket, input, memory)
-    int socket;
-    int input;
-    void (*memory) (struct buffer *);
+socket_buffer_initialize( int socket, int input,
+                          void *memory( struct buffer * ) )
 {
     struct socket_buffer *n;
 
@@ -109,12 +104,7 @@ socket_buffer_initialize (socket, input, memory)
 /* The buffer input function for a buffer built on a socket.  */
 
 static int
-socket_buffer_input (closure, data, need, size, got)
-     void *closure;
-     char *data;
-     int need;
-     int size;
-     int *got;
+socket_buffer_input( void *closure, char *data, int need, int size, int *got )
 {
     struct socket_buffer *sb = (struct socket_buffer *) closure;
     int nbytes;
@@ -170,11 +160,7 @@ socket_buffer_input (closure, data, need, size, got)
 /* The buffer output function for a buffer built on a socket.  */
 
 static int
-socket_buffer_output (closure, data, have, wrote)
-     void *closure;
-     const char *data;
-     int have;
-     int *wrote;
+socket_buffer_output( void *closure, const char *data, int have, int *wrote )
 {
     struct socket_buffer *sb = (struct socket_buffer *) closure;
 
@@ -212,8 +198,7 @@ socket_buffer_output (closure, data, have, wrote)
 
 /*ARGSUSED*/
 static int
-socket_buffer_flush (closure)
-     void *closure;
+socket_buffer_flush( void *closure )
 {
     /* Nothing to do.  Sockets are always flushed.  */
     return 0;
@@ -222,8 +207,7 @@ socket_buffer_flush (closure)
 
 
 static int
-socket_buffer_shutdown (buf)
-    struct buffer *buf;
+socket_buffer_shutdown( struct buffer *buf )
 {
     struct socket_buffer *n = (struct socket_buffer *) buf->closure;
     char tmp;

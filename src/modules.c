@@ -60,7 +60,7 @@ static void save_d (char *k, int ks, char *d, int ds);
  * a warning message is displayed and a NULL is returned.
  */
 DBM *
-open_module ()
+open_module (void)
 {
     char *mfile;
     DBM *retval;
@@ -84,8 +84,7 @@ open_module ()
  * Close the modules file, if the open succeeded, that is
  */
 void
-close_module (db)
-    DBM *db;
+close_module (DBM *db)
 {
     if (db != NULL)
 	dbm_close (db);
@@ -97,19 +96,7 @@ close_module (db)
  * It runs the post checkout or post tag proc from the modules file
  */
 int
-do_module (db, mname, m_type, msg, callback_proc, where, shorten,
-	   local_specified, run_module_prog, build_dirs, extra_arg)
-    DBM *db;
-    char *mname;
-    enum mtype m_type;
-    char *msg;
-    CALLBACKPROC callback_proc;
-    char *where;
-    int shorten;
-    int local_specified;
-    int run_module_prog;
-    int build_dirs;
-    char *extra_arg;
+do_module (DBM *db, char *mname, enum mtype m_type, char *msg, CALLBACKPROC callback_proc, char *where, int shorten, int local_specified, int run_module_prog, int build_dirs, char *extra_arg)
 {
     char *checkout_prog = NULL;
     char *export_prog = NULL;
@@ -767,9 +754,7 @@ static char def_status[] = "NONE";
      have to look further.
 */
 static int
-sort_order (l, r)
-    const void *l;
-    const void *r;
+sort_order (const void *l, const void *r)
 {
     int i;
     const struct sortrec *left = (const struct sortrec *) l;
@@ -785,11 +770,7 @@ sort_order (l, r)
 }
 
 static void
-save_d (k, ks, d, ds)
-    char *k;
-    int ks;
-    char *d;
-    int ds;
+save_d (char *k, int ks, char *d, int ds)
 {
     char *cp, *cp2;
     struct sortrec *s_rec;
@@ -872,8 +853,7 @@ save_d (k, ks, d, ds)
    non-zero, print out status information for each module. */
 
 void
-cat_module (status)
-    int status;
+cat_module (int status)
 {
     DBM *db;
     datum key, val;

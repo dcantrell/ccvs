@@ -25,8 +25,7 @@ List *variable_list = NULL;
 static void variable_delproc (Node *);
 
 static void
-variable_delproc (node)
-    Node *node;
+variable_delproc (Node *node)
 {
     free (node->data);
 }
@@ -35,8 +34,7 @@ variable_delproc (node)
    variables in a file in the $CVSROOT/CVSROOT directory too.  */
 
 void
-variable_set (nameval)
-    char *nameval;
+variable_set (char *nameval)
 {
     char *p;
     char *name;
@@ -89,10 +87,7 @@ variable_set (nameval)
    to something; LINE can be zero to indicate the line number is not
    known.  */
 char *
-expand_path (name, file, line)
-    char *name;
-    char *file;
-    int line;
+expand_path (char *name, char *file, int line)
 {
     char *s;
     char *d;
@@ -267,10 +262,7 @@ expand_path (name, file, line)
 }
 
 static char *
-expand_variable (name, file, line)
-    char *name;
-    char *file;
-    int line;
+expand_variable (char *name, char *file, int line)
 {
     if (strcmp (name, CVSROOT_ENV) == 0)
 	return current_parsed_root->original;

@@ -26,9 +26,7 @@ static int deep_remove_dir (const char *path);
  * Copies "from" to "to".
  */
 void
-copy_file (from, to)
-    const char *from;
-    const char *to;
+copy_file (const char *from, const char *to)
 {
     struct stat sb;
     struct utimbuf t;
@@ -119,8 +117,7 @@ copy_file (from, to)
  * link which points to a directory.
  */
 int
-isdir (file)
-    const char *file;
+isdir (const char *file)
 {
     struct stat sb;
 
@@ -133,8 +130,7 @@ isdir (file)
  * Returns non-zero if the argument file is a symbolic link.
  */
 int
-islink (file)
-    const char *file;
+islink (const char *file)
 {
 #ifdef S_ISLNK
     struct stat sb;
@@ -152,8 +148,7 @@ islink (file)
  * character special device.
  */
 int
-isdevice (file)
-    const char *file;
+isdevice (const char *file)
 {
     struct stat sb;
 
@@ -174,8 +169,7 @@ isdevice (file)
  * Returns non-zero if the argument file exists.
  */
 int
-isfile (file)
-    const char *file;
+isfile (const char *file)
 {
     return isaccessible(file, F_OK);
 }
@@ -184,8 +178,7 @@ isfile (file)
  * Returns non-zero if the argument file is readable.
  */
 int
-isreadable (file)
-    const char *file;
+isreadable (const char *file)
 {
     return isaccessible(file, R_OK);
 }
@@ -194,8 +187,7 @@ isreadable (file)
  * Returns non-zero if the argument file is writable.
  */
 int
-iswritable (file)
-    const char *file;
+iswritable (const char *file)
 {
     return isaccessible(file, W_OK);
 }
@@ -206,9 +198,7 @@ iswritable (file)
  * bits set.
  */
 int
-isaccessible (file, mode)
-    const char *file;
-    const int mode;
+isaccessible (const char *file, const const int mode)
 {
 #ifdef SETXID_SUPPORT
     struct stat sb;
@@ -265,9 +255,7 @@ isaccessible (file, mode)
  * Open a file and die if it fails
  */
 FILE *
-open_file (name, mode)
-    const char *name;
-    const char *mode;
+open_file (const char *name, const char *mode)
 {
     FILE *fp;
 
@@ -280,8 +268,7 @@ open_file (name, mode)
  * Make a directory and die if it fails
  */
 void
-make_directory (name)
-    const char *name;
+make_directory (const char *name)
 {
     struct stat sb;
 
@@ -296,8 +283,7 @@ make_directory (name)
  * goes wrong.
  */
 void
-make_directories (name)
-    const char *name;
+make_directories (const char *name)
 {
     char *cp;
 
@@ -325,8 +311,7 @@ make_directories (name)
    other errors.  Returns 0 if directory was created; 1 if it already
    existed.  */
 int
-mkdir_if_needed (name)
-    char *name;
+mkdir_if_needed (char *name)
 {
     if (mkdir (name, 0777) < 0)
     {
@@ -346,9 +331,7 @@ mkdir_if_needed (name)
  * have unexpected consequences for some uses of xchmod.
  */
 void
-xchmod (fname, writable)
-    char *fname;
-    int writable;
+xchmod (char *fname, int writable)
 {
     struct stat sb;
     mode_t mode, oumask;
@@ -389,9 +372,7 @@ xchmod (fname, writable)
  * Rename a file and die if it fails
  */
 void
-rename_file (from, to)
-    const char *from;
-    const char *to;
+rename_file (const char *from, const char *to)
 {
     TRACE ( 1, "rename(%s,%s)", from, to );
 
@@ -406,8 +387,7 @@ rename_file (from, to)
  * unlink a file, if possible.
  */
 int
-unlink_file (f)
-    const char *f;
+unlink_file (const char *f)
 {
     TRACE ( 1, "unlink_file(%s)", f );
 
@@ -423,8 +403,7 @@ unlink_file (f)
  * (in which case errno is set).
  */
 int
-unlink_file_dir (f)
-    const char *f;
+unlink_file_dir (const char *f)
 {
     struct stat sb;
 
@@ -466,8 +445,7 @@ unlink_file_dir (f)
  */
 
 static int
-deep_remove_dir (path)
-    const char *path;
+deep_remove_dir (const char *path)
 {
     DIR		  *dirp;
     struct dirent *dp;
@@ -546,10 +524,7 @@ deep_remove_dir (path)
    Return the number of characters successfully read.
    The number returned is always NCHARS unless end-of-file or error.  */
 static size_t
-block_read (fd, buf, nchars)
-    int fd;
-    char *buf;
-    size_t nchars;
+block_read (int fd, char *buf, size_t nchars)
 {
     char *bp = buf;
     size_t nread;
@@ -583,9 +558,7 @@ block_read (fd, buf, nchars)
  * (i.e. major/minor device numbers, links, etc.
  */
 int
-xcmp (file1, file2)
-    const char *file1;
-    const char *file2;
+xcmp (const char *file1, const char *file2)
 {
     char *buf1, *buf2;
     struct stat sb1, sb2;
@@ -688,7 +661,7 @@ xcmp (file1, file2)
  * now.
  */
 char *
-cvs_temp_name ()
+cvs_temp_name (void)
 {
     char *fn;
     FILE *fp;
@@ -721,8 +694,7 @@ cvs_temp_name ()
  *	on error, errno will be set to some value either by CVS_FOPEN or
  *	whatever system function is called to generate the temporary file name
  */
-FILE *cvs_temp_file (filename)
-    char **filename;
+FILE *cvs_temp_file (char **filename)
 {
     char *fn;
     FILE *fp;
@@ -770,8 +742,7 @@ FILE *cvs_temp_file (filename)
 /* Return non-zero iff FILENAME is absolute.
    Trivial under Unix, but more complicated under other systems.  */
 int
-isabsolute (filename)
-    const char *filename;
+isabsolute (const char *filename)
 {
     return filename[0] == '/';
 }
@@ -796,8 +767,7 @@ isabsolute (filename)
  *  any reason.
  */
 char *
-xreadlink (link)
-    const char *link;
+xreadlink (const char *link)
 {
     char *file = NULL;
     int buflen = 128;
@@ -841,8 +811,7 @@ xreadlink (link)
  *  any reason.
  */
 char *
-xresolvepath ( path )
-    const char *path;
+xresolvepath (const char *path)
 {
     char *hardpath;
     char *owd;
@@ -868,8 +837,7 @@ xresolvepath ( path )
 
 /* Return a pointer into PATH's last component.  */
 char *
-last_component (path)
-    char *path;
+last_component (char *path)
 {
     char *last = strrchr (path, '/');
     
@@ -903,7 +871,7 @@ last_component (path)
    iffy, although I suppose some people probably are relying on it for
    .cvsrc and such, in the cases where it works.  */
 char *
-get_homedir ()
+get_homedir (void)
 {
     static char *home = NULL;
     char *env;
@@ -938,9 +906,7 @@ get_homedir ()
  * the GPL and the Artistic license - we might be able to use it.
  */
 char *
-strcat_filename_onto_homedir (dir, file)
-    const char *dir;
-    const char *file;
+strcat_filename_onto_homedir (const char *dir, const char *file)
 {
     char *path = xmalloc (strlen (dir) + 1 + strlen(file) + 1);
     sprintf (path, "%s/%s", dir, file);
@@ -950,11 +916,7 @@ strcat_filename_onto_homedir (dir, file)
 /* See cvs.h for description.  On unix this does nothing, because the
    shell expands the wildcards.  */
 void
-expand_wild (argc, argv, pargc, pargv)
-    int argc;
-    char **argv;
-    int *pargc;
-    char ***pargv;
+expand_wild (int argc, char **argv, int *pargc, char ***pargv)
 {
     int i;
     *pargc = argc;
@@ -972,9 +934,7 @@ expand_wild (argc, argv, pargc, pargv)
    looked into whether this is a performance bottleneck; I would guess
    not).  */
 int
-cvs_casecmp (str1, str2)
-    const char *str1;
-    const char *str2;
+cvs_casecmp (const char *str1, const char *str2)
 {
     const char *p;
     const char *q;

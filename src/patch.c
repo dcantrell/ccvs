@@ -59,9 +59,7 @@ static const char *const patch_usage[] =
 };
 
 int
-patch (argc, argv)
-    int argc;
-    char **argv;
+patch (int argc, char **argv)
 {
     register int i;
     int local = 0;
@@ -265,17 +263,7 @@ patch (argc, argv)
  */
 /* ARGSUSED */
 static int
-patch_proc (argc, argv, xwhere, mwhere, mfile, shorten, local_specified,
-	    mname, msg)
-    int argc;
-    char **argv;
-    char *xwhere;
-    char *mwhere;
-    char *mfile;
-    int shorten;
-    int local_specified;
-    char *mname;
-    char *msg;
+patch_proc (int argc, char **argv, char *xwhere, char *mwhere, char *mfile, int shorten, int local_specified, char *mname, char *msg)
 {
     char *myargv[2];
     int err = 0;
@@ -372,9 +360,7 @@ patch_proc (argc, argv, xwhere, mwhere, mfile, shorten, local_specified,
  */
 /* ARGSUSED */
 static int
-patch_fileproc (callerdat, finfo)
-    void *callerdat;
-    struct file_info *finfo;
+patch_fileproc (void *callerdat, struct file_info *finfo)
 {
     struct utimbuf t;
     char *vers_tag, *vers_head;
@@ -758,12 +744,7 @@ failed to read diff file header %s for %s: end of file", tmpfile3, rcs);
  */
 /* ARGSUSED */
 static Dtype
-patch_dirproc (callerdat, dir, repos, update_dir, entries)
-    void *callerdat;
-    char *dir;
-    char *repos;
-    char *update_dir;
-    List *entries;
+patch_dirproc (void *callerdat, char *dir, char *repos, char *update_dir, List *entries)
 {
     if (!quiet)
 	error (0, 0, "Diffing %s", update_dir);
@@ -774,7 +755,7 @@ patch_dirproc (callerdat, dir, repos, update_dir, entries)
  * Clean up temporary files
  */
 static RETSIGTYPE
-patch_cleanup ()
+patch_cleanup (void)
 {
     /* Note that the checks for existence_error are because we are
        called from a signal handler, without SIG_begincrsect, so

@@ -20,7 +20,7 @@ extern int execvp (char *file, char **argv);
 
 static void run_add_arg (const char *s);
 
-extern char *strtok ();
+extern char *strtok (char *, const char *);
 
 /*
  * To exec a program under CVS, first call run_setup() to setup initial
@@ -66,15 +66,13 @@ run_setup( const char *prog )
 }
 
 void
-run_arg (s)
-    const char *s;
+run_arg (const char *s)
 {
     run_add_arg (s);
 }
 
 static void
-run_add_arg (s)
-    const char *s;
+run_add_arg (const char *s)
 {
     /* allocate more argv entries if we've run out */
     if (run_argc >= run_argc_allocated)
@@ -91,11 +89,7 @@ run_add_arg (s)
 }
 
 int
-run_exec (stin, stout, sterr, flags)
-    const char *stin;
-    const char *stout;
-    const char *sterr;
-    int flags;
+run_exec (const char *stin, const char *stout, const char *sterr, int flags)
 {
     int shin, shout, sherr;
     int mode_out, mode_err;
@@ -347,8 +341,7 @@ run_exec (stin, stout, sterr, flags)
 }
 
 void
-run_print (fp)
-    FILE *fp;
+run_print (FILE *fp)
 {
     int i;
     void (*outfn) (const char *, size_t);
@@ -382,9 +375,7 @@ run_print (fp)
    case complicates this even aside from popen behavior).  */
 
 FILE *
-run_popen (cmd, mode)
-    const char *cmd;
-    const char *mode;
+run_popen (const char *cmd, const char *mode)
 {
     TRACE ( 1, "run_popen(%s,%s)", cmd, mode );
     if (noexec)
@@ -394,10 +385,7 @@ run_popen (cmd, mode)
 }
 
 int
-piped_child (command, tofdp, fromfdp)
-     char **command;
-     int *tofdp;
-     int *fromfdp;
+piped_child (char **command, int *tofdp, int *fromfdp)
 {
     int pid;
     int to_child_pipe[2];
@@ -448,8 +436,7 @@ piped_child (command, tofdp, fromfdp)
 
 
 void
-close_on_exec (fd)
-     int fd;
+close_on_exec (int fd)
 {
 #ifdef F_SETFD
     if (fcntl (fd, F_SETFD, 1))

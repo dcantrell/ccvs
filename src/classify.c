@@ -16,20 +16,19 @@ static void sticky_ck (struct file_info *finfo, int aflag,
  * Classify the state of a file
  */
 Ctype
-Classify_File (finfo, tag, date, options, force_tag_match, aflag, versp,
-	       pipeout)
-    struct file_info *finfo;
-    char *tag;
-    char *date;
+Classify_File (struct file_info *finfo, char *tag, char *date, char *options, int force_tag_match, int aflag, Vers_TS **versp, int pipeout)
+                            
+              
+               
 
     /* Keyword expansion options.  Can be either NULL or "" to
        indicate none are specified here.  */
-    char *options;
+                  
 
-    int force_tag_match;
-    int aflag;
-    Vers_TS **versp;
-    int pipeout;
+                        
+              
+                    
+                
 {
     Vers_TS *vers;
     Ctype ret;
@@ -389,10 +388,7 @@ Classify_File (finfo, tag, date, options, force_tag_match, aflag, versp,
 }
 
 static void
-sticky_ck (finfo, aflag, vers)
-    struct file_info *finfo;
-    int aflag;
-    Vers_TS *vers;
+sticky_ck (struct file_info *finfo, int aflag, Vers_TS *vers)
 {
     if (aflag || vers->tag || vers->date)
     {

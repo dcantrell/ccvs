@@ -17,9 +17,7 @@
 #include "cvs.h"
 
 int
-No_Difference (finfo, vers)
-    struct file_info *finfo;
-    Vers_TS *vers;
+No_Difference (struct file_info *finfo, Vers_TS *vers)
 {
     Node *p;
     int ret;

@@ -46,9 +46,7 @@ static const char *const annotate_usage[] =
    file was modified.  */
 
 int
-annotate (argc, argv)
-    int argc;
-    char **argv;
+annotate (int argc, char **argv)
 {
     int local = 0;
     int err = 0;
@@ -152,16 +150,7 @@ annotate (argc, argv)
     
 
 static int
-rannotate_proc (argc, argv, xwhere, mwhere, mfile, shorten, local, mname, msg)
-    int argc;
-    char **argv;
-    char *xwhere;
-    char *mwhere;
-    char *mfile;
-    int shorten;
-    int local;
-    char *mname;
-    char *msg;
+rannotate_proc (int argc, char **argv, char *xwhere, char *mwhere, char *mfile, int shorten, int local, char *mname, char *msg)
 {
     /* Begin section which is identical to patch_proc--should this
        be abstracted out somehow?  */
@@ -254,9 +243,7 @@ rannotate_proc (argc, argv, xwhere, mwhere, mfile, shorten, local, mname, msg)
 
 
 static int
-annotate_fileproc (callerdat, finfo)
-    void *callerdat;
-    struct file_info *finfo;
+annotate_fileproc (void *callerdat, struct file_info *finfo)
 {
     char *expand, *version;
 

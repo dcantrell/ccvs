@@ -34,10 +34,7 @@ int cvs_gssapi_encrypt;
 /* Receive a given number of bytes.  */
 
 static void
-recv_bytes (sock, buf, need)
-     int sock;
-     char *buf;
-     int need;
+recv_bytes( int sock, char *buf, int need )
 {
     while (need > 0)
     {
@@ -71,10 +68,7 @@ recv_bytes (sock, buf, need)
  */
 #define BUFSIZE 1024
 int
-connect_to_gserver (root, sock, hostinfo)
-    cvsroot_t *root;
-    int sock;
-    struct hostent *hostinfo;
+connect_to_gserver( cvsroot_t *root, int sock, struct hostent *hostinfo )
 {
     char *str;
     char buf[BUFSIZE];
@@ -199,11 +193,9 @@ static int cvs_gssapi_wrap_output (void *, const char *, char *, int,
    GSSAPI wrapping routines.  */
 
 struct buffer *
-cvs_gssapi_wrap_buffer_initialize (buf, input, gcontext, memory)
-     struct buffer *buf;
-     int input;
-     gss_ctx_id_t gcontext;
-     void (*memory) (struct buffer *);
+cvs_gssapi_wrap_buffer_initialize( struct buffer *buf, int input,
+                                   gss_ctx_id_t gcontext,
+                                   void (*memory) ( struct buffer * ) )
 {
     struct cvs_gssapi_wrap_data *gd;
 
@@ -221,11 +213,8 @@ cvs_gssapi_wrap_buffer_initialize (buf, input, gcontext, memory)
 /* Unwrap data using GSSAPI.  */
 
 static int
-cvs_gssapi_wrap_input (fnclosure, input, output, size)
-     void *fnclosure;
-     const char *input;
-     char *output;
-     int size;
+cvs_gssapi_wrap_input( void *fnclosure, const char *input, char *output,
+                       int size )
 {
     struct cvs_gssapi_wrap_data *gd =
 	(struct cvs_gssapi_wrap_data *) fnclosure;
@@ -258,12 +247,8 @@ cvs_gssapi_wrap_input (fnclosure, input, output, size)
 /* Wrap data using GSSAPI.  */
 
 static int
-cvs_gssapi_wrap_output (fnclosure, input, output, size, translated)
-     void *fnclosure;
-     const char *input;
-     char *output;
-     int size;
-     int *translated;
+cvs_gssapi_wrap_output( void *fnclosure, const char *input, char *output,
+                        int size, int *translated )
 {
     struct cvs_gssapi_wrap_data *gd =
 	(struct cvs_gssapi_wrap_data *) fnclosure;
@@ -301,9 +286,8 @@ cvs_gssapi_wrap_output (fnclosure, input, output, size, translated)
 }
 
 void
-initialize_gssapi_buffers (to_server_p, from_server_p)
-     struct buffer **to_server_p;
-     struct buffer **from_server_p;
+initialize_gssapi_buffers( struct buffer **to_server_p,
+                           struct buffer **from_server_p )
 {
   *to_server_p = cvs_gssapi_wrap_buffer_initialize (*to_server_p, 0,
 						    gcontext,

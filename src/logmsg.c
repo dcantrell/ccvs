@@ -48,10 +48,7 @@ static char *prefix;
 static int col;
 static char *tag;
 static void
-setup_tmpfile (xfp, xprefix, changes)
-    FILE *xfp;
-    char *xprefix;
-    List *changes;
+setup_tmpfile (FILE *xfp, char *xprefix, List *changes)
 {
     /* set up statics */
     fp = xfp;
@@ -102,9 +99,7 @@ setup_tmpfile (xfp, xprefix, changes)
  * Looks for nodes of a specified type and returns 1 if found
  */
 static int
-find_type (p, closure)
-    Node *p;
-    void *closure;
+find_type (Node *p, void *closure)
 {
     struct logfile_info *li;
 
@@ -121,9 +116,7 @@ find_type (p, closure)
  * match the one we're looking for
  */
 static int
-fmt_proc (p, closure)
-    Node *p;
-    void *closure;
+fmt_proc (Node *p, void *closure)
 {
     struct logfile_info *li;
 
@@ -183,11 +176,7 @@ fmt_proc (p, closure)
  * NULL when running in client mode.
  */
 void
-do_editor (dir, messagep, repository, changes)
-    char *dir;
-    char **messagep;
-    char *repository;
-    List *changes;
+do_editor (char *dir, char **messagep, char *repository, List *changes)
 {
     static int reuse_log_message = 0;
     char *line;
@@ -420,9 +409,7 @@ do_editor (dir, messagep, repository, changes)
    independant of the running of an editor for getting a message.
  */
 void
-do_verify (messagep, repository)
-    char **messagep;
-    char *repository;
+do_verify (char **messagep, char *repository)
 {
     FILE *fp;
     char *fname;
@@ -570,10 +557,7 @@ do_verify (messagep, repository)
  */
 /* ARGSUSED */
 static int
-rcsinfo_proc( repository, template, closure )
-    char *repository;
-    char *template;
-    void *closure;
+rcsinfo_proc(char *repository, char *template, void *closure)
 {
     static char *last_template;
     FILE *tfp;
@@ -620,11 +604,7 @@ struct ulp_data {
 };
 
 void
-Update_Logfile (repository, xmessage, xlogfp, xchanges)
-    char *repository;
-    char *xmessage;
-    FILE *xlogfp;
-    List *xchanges;
+Update_Logfile (char *repository, char *xmessage, FILE *xlogfp, List *xchanges)
 {
     struct ulp_data ud;
 
@@ -646,10 +626,7 @@ Update_Logfile (repository, xmessage, xlogfp, xchanges)
  * callback proc to actually do the logfile write from Update_Logfile
  */
 static int
-update_logfile_proc( repository, filter, closure )
-    char *repository;
-    char *filter;
-    void *closure;
+update_logfile_proc(char *repository, char *filter, void *closure)
 {
     struct ulp_data *udp = (struct ulp_data *)closure;
     return (logfile_write (repository, filter, udp->message, udp->logfp,
@@ -660,9 +637,7 @@ update_logfile_proc( repository, filter, closure )
  * concatenate each filename/version onto str_list
  */
 static int
-title_proc (p, closure)
-    Node *p;
-    void *closure;
+title_proc (Node *p, void *closure)
 {
     struct logfile_info *li;
     char *c;
@@ -746,12 +721,7 @@ title_proc (p, closure)
  * filter program.
  */
 static int
-logfile_write (repository, filter, message, logfp, changes)
-    char *repository;
-    char *filter;
-    char *message;
-    FILE *logfp;
-    List *changes;
+logfile_write (char *repository, char *filter, char *message, FILE *logfp, List *changes)
 {
     FILE *pipefp;
     char *prog;
@@ -970,10 +940,7 @@ logfile_write (repository, filter, message, logfp, changes)
  */
 /* ARGSUSED */
 static int
-editinfo_proc( repository, editor, closure )
-    char *repository;
-    char *editor;
-    void *closure;
+editinfo_proc(char *repository, char *editor, void *closure)
 {
     char **editinfo_editor = (char **)closure;
 
@@ -991,10 +958,7 @@ editinfo_proc( repository, editor, closure )
  *  message verification script.
  */
 static int
-verifymsg_proc( repository, script, closure )
-    char *repository;
-    char *script;
-    void *closure;
+verifymsg_proc(char *repository, char *script, void *closure)
 {
     char **verifymsg_script = (char **)closure;
     if (*verifymsg_script && strcmp (*verifymsg_script, script) == 0)

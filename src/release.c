@@ -22,9 +22,7 @@ static int release_server (int argc, char **argv);
 
 /* This is the server side of cvs release.  */
 static int
-release_server (argc, argv)
-    int argc;
-    char **argv;
+release_server (int argc, char **argv)
 {
     int i;
 
@@ -61,9 +59,7 @@ release_server (argc, argv)
    and unnecessary.  */
 
 int
-release (argc, argv)
-    int argc;
-    char **argv;
+release (int argc, char **argv)
 {
     FILE *fp;
     int i, c;

@@ -38,10 +38,8 @@
    up and running, and that's most important. */
 
 void
-start_rsh_server (root, to_server_p, from_server_p)
-    cvsroot_t *root;
-    struct buffer **to_server_p;
-    struct buffer **from_server_p;
+start_rsh_server( cvsroot_t *root, struct buffer **to_server_p,
+                  struct buffer **from_server_p )
 {
     int pipes[2];
     int child_pid;
@@ -123,10 +121,7 @@ start_rsh_server (root, to_server_p, from_server_p)
 # else /* ! START_RSH_WITH_POPEN_RW */
 
 void
-start_rsh_server (root, to_server_p, from_server_p)
-    cvsroot_t *root;
-    struct buffer **to_server_p;
-    struct buffer **from_server_p;
+start_rsh_server (cvsroot_t *root, struct buffer **to_server_p, struct buffer **from_server_p)
 {
     /* If you're working through firewalls, you can set the
        CVS_RSH environment variable to a script which uses rsh to

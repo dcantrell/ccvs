@@ -70,7 +70,7 @@ static int update_filesdone_proc (void *callerdat, int err,
 					 char *repository, char *update_dir,
 					 List *entries);
 #ifdef PRESERVE_PERMISSIONS_SUPPORT
-static int get_linkinfo_proc (void *callerdat, struct file_info *);
+static int get_linkinfo_proc( void *_callerdat, struct _finfo * );
 #endif
 static void write_letter (struct file_info *finfo, int letter);
 static void join_file (struct file_info *finfo, Vers_TS *vers_ts);
@@ -134,9 +134,7 @@ static const char *const update_usage[] =
  * update is the argv,argc based front end for arg parsing
  */
 int
-update (argc, argv)
-    int argc;
-    char **argv;
+update (int argc, char **argv)
 {
     int c, err;
     int local = 0;			/* recursive by default */
@@ -431,31 +429,29 @@ update (argc, argv)
  * Command line interface to update (used by checkout)
  */
 int
-do_update ( argc, argv, xoptions, xtag, xdate, xforce, local, xbuild, xaflag,
-	    xprune, xpipeout, which, xjoin_rev1, xjoin_rev2,
-	    preload_update_dir, xdotemplate, repository )
-    int argc;
-    char **argv;
-    char *xoptions;
-    char *xtag;
-    char *xdate;
-    int xforce;
-    int local;
-    int xbuild;
-    int xaflag;
-    int xprune;
-    int xpipeout;
-    int which;
-    char *xjoin_rev1;
-    char *xjoin_rev2;
-    char *preload_update_dir;
-    int xdotemplate;
+do_update (int argc, char **argv, char *xoptions, char *xtag, char *xdate, int xforce, int local, int xbuild, int xaflag, int xprune, int xpipeout, int which, char *xjoin_rev1, char *xjoin_rev2, char *preload_update_dir, int xdotemplate, char *repository)
+             
+                
+                   
+               
+                
+               
+              
+               
+               
+               
+                 
+              
+                     
+                     
+                             
+                    
     /* repository = cvsroot->repository + update_dir.  This is necessary for
      * checkout so that start_recursion can determine our repository.  In the
      * update case, start_recursion can use the CVS/Root & CVS/Repository file
      * to determine this value.
      */
-    char *repository;
+                     
 {
     int err = 0;
     char *cp;
@@ -543,9 +539,7 @@ do_update ( argc, argv, xoptions, xtag, xdate, xforce, local, xbuild, xaflag,
  */
 
 static int
-get_linkinfo_proc (callerdat, finfo)
-    void *callerdat;
-    struct file_info *finfo;
+get_linkinfo_proc( void *callerdat, struct file_info *finfo )
 {
     char *fullpath;
     Node *linkp;
@@ -591,9 +585,7 @@ get_linkinfo_proc (callerdat, finfo)
  * appropriate magic for checkout
  */
 static int
-update_fileproc (callerdat, finfo)
-    void *callerdat;
-    struct file_info *finfo;
+update_fileproc (void *callerdat, struct file_info *finfo)
 {
     int retval, nb;
     Ctype status;
@@ -804,9 +796,7 @@ update_fileproc (callerdat, finfo)
 static void update_ignproc (char *, char *);
 
 static void
-update_ignproc (file, dir)
-    char *file;
-    char *dir;
+update_ignproc (char *file, char *dir)
 {
     struct file_info finfo;
 
@@ -829,12 +819,7 @@ update_ignproc (file, dir)
 
 /* ARGSUSED */
 static int
-update_filesdone_proc (callerdat, err, repository, update_dir, entries)
-    void *callerdat;
-    int err;
-    char *repository;
-    char *update_dir;
-    List *entries;
+update_filesdone_proc (void *callerdat, int err, char *repository, char *update_dir, List *entries)
 {
     if (nonbranch < 0) nonbranch = 0;
     if (rewrite_tag)
@@ -882,12 +867,7 @@ update_filesdone_proc (callerdat, err, repository, update_dir, entries)
  * recursion code should skip this directory.
  */
 static Dtype
-update_dirent_proc (callerdat, dir, repository, update_dir, entries)
-    void *callerdat;
-    char *dir;
-    char *repository;
-    char *update_dir;
-    List *entries;
+update_dirent_proc (void *callerdat, char *dir, char *repository, char *update_dir, List *entries)
 {
     if (ignore_directory (update_dir))
     {
@@ -1041,12 +1021,7 @@ update_dirent_proc (callerdat, dir, repository, update_dir, entries)
  */
 /* ARGSUSED */
 static int
-update_dirleave_proc (callerdat, dir, err, update_dir, entries)
-    void *callerdat;
-    char *dir;
-    int err;
-    char *update_dir;
-    List *entries;
+update_dirleave_proc (void *callerdat, char *dir, int err, char *update_dir, List *entries)
 {
     /* Delete the ignore list if it hasn't already been done.  */
     if (ignlist)
@@ -1097,9 +1072,7 @@ static int isremoved (Node *, void *);
 
 /* Returns 1 if the file indicated by node has been removed.  */
 static int
-isremoved (node, closure)
-    Node *node;
-    void *closure;
+isremoved (Node *node, void *closure)
 {
     Entnode *entdata = (Entnode*) node->data;
 
@@ -1112,9 +1085,7 @@ isremoved (node, closure)
    existence of the CVS directory entry.  Zero otherwise.  If MIGHT_NOT_EXIST
    and the directory doesn't exist, then just return 0.  */
 int
-isemptydir (dir, might_not_exist)
-    char *dir;
-    int might_not_exist;
+isemptydir (char *dir, int might_not_exist)
 {
     DIR *dirp;
     struct dirent *dp;
@@ -1188,9 +1159,7 @@ isemptydir (dir, might_not_exist)
  * scratch the Entries file entry associated with a file
  */
 static int
-scratch_file (finfo, vers)
-    struct file_info *finfo;
-    Vers_TS *vers;
+scratch_file (struct file_info *finfo, Vers_TS *vers)
 {
     history_write ('W', finfo->update_dir, "", finfo->file, finfo->repository);
     Scratch_Entry (finfo->entries, finfo->file);
@@ -1235,12 +1204,7 @@ scratch_file (finfo, vers)
  * Check out a file.
  */
 static int
-checkout_file (finfo, vers_ts, adding, merging, update_server)
-    struct file_info *finfo;
-    Vers_TS *vers_ts;
-    int adding;
-    int merging;
-    int update_server;
+checkout_file (struct file_info *finfo, Vers_TS *vers_ts, int adding, int merging, int update_server)
 {
     char *backup;
     int set_time, retval = 0;
@@ -1520,10 +1484,7 @@ VERS: ", 0);
    into a buffer.  */
 
 static void
-checkout_to_buffer (callerdat, data, len)
-     void *callerdat;
-     const char *data;
-     size_t len;
+checkout_to_buffer (void *callerdat, const char *data, size_t len)
 {
     struct buffer *buf = (struct buffer *) callerdat;
 
@@ -1556,12 +1517,7 @@ struct patch_file_data
  * itself.
  */
 static int
-patch_file (finfo, vers_ts, docheckout, file_info, checksum)
-    struct file_info *finfo;
-    Vers_TS *vers_ts;
-    int *docheckout;
-    struct stat *file_info;
-    unsigned char *checksum;
+patch_file (struct file_info *finfo, Vers_TS *vers_ts, int *docheckout, struct stat *file_info, unsigned char *checksum)
 {
     char *backup;
     char *file1;
@@ -1863,10 +1819,7 @@ patch_file (finfo, vers_ts, docheckout, file_info, checksum)
    patch_file via RCS_checkout.  */
 
 static void
-patch_file_write (callerdat, buffer, len)
-     void *callerdat;
-     const char *buffer;
-     size_t len;
+patch_file_write (void *callerdat, const char *buffer, size_t len)
 {
     struct patch_file_data *data = (struct patch_file_data *) callerdat;
 
@@ -1886,9 +1839,7 @@ patch_file_write (callerdat, buffer, len)
  * of a single letter and the name.
  */
 static void
-write_letter (finfo, letter)
-    struct file_info *finfo;
-    int letter;
+write_letter (struct file_info *finfo, int letter)
 {
     if (!really_quiet)
     {
@@ -1930,9 +1881,7 @@ write_letter (finfo, letter)
  * Do all the magic associated with a file which needs to be merged
  */
 static int
-merge_file (finfo, vers)
-    struct file_info *finfo;
-    Vers_TS *vers;
+merge_file (struct file_info *finfo, Vers_TS *vers)
 {
     char *backup;
     int status;
@@ -2104,9 +2053,7 @@ merge_file (finfo, vers)
  * (-j option)
  */
 static void
-join_file (finfo, vers)
-    struct file_info *finfo;
-    Vers_TS *vers;
+join_file (struct file_info *finfo, Vers_TS *vers)
 {
     char *backup;
     char *t_options;
@@ -2628,10 +2575,7 @@ join_file (finfo, vers)
  */
 
 int
-special_file_mismatch (finfo, rev1, rev2)
-    struct file_info *finfo;
-    char *rev1;
-    char *rev2;
+special_file_mismatch (struct file_info *finfo, char *rev1, char *rev2)
 {
 #ifdef PRESERVE_PERMISSIONS_SUPPORT
     struct stat sb;
@@ -2926,7 +2870,7 @@ special_file_mismatch (finfo, rev1, rev2)
 }
 
 int
-joining ()
+joining (void)
 {
     return (join_rev1 != NULL);
 }

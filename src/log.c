@@ -179,9 +179,7 @@ static const char *const log_usage[] =
 static int send_one (Node *, void *);
 
 static int
-send_one (node, closure)
-    Node *node;
-    void *closure;
+send_one (Node *node, void *closure)
 {
     char *option = (char *) closure;
 
@@ -203,9 +201,7 @@ send_one (node, closure)
 static void send_arg_list (char *, List *);
 
 static void
-send_arg_list (option, arg)
-    char *option;
-    List *arg;
+send_arg_list (char *option, List *arg)
 {
     if (arg == NULL)
 	return;
@@ -215,9 +211,7 @@ send_arg_list (option, arg)
 #endif
 
 int
-cvslog (argc, argv)
-    int argc;
-    char **argv;
+cvslog (int argc, char **argv)
 {
     int c;
     int err = 0;
@@ -465,16 +459,7 @@ cvslog (argc, argv)
 
 
 static int
-rlog_proc (argc, argv, xwhere, mwhere, mfile, shorten, local, mname, msg)
-    int argc;
-    char **argv;
-    char *xwhere;
-    char *mwhere;
-    char *mfile;
-    int shorten;
-    int local;
-    char *mname;
-    char *msg;
+rlog_proc (int argc, char **argv, char *xwhere, char *mwhere, char *mfile, int shorten, int local, char *mname, char *msg)
 {
     /* Begin section which is identical to patch_proc--should this
        be abstracted out somehow?  */
@@ -565,8 +550,7 @@ rlog_proc (argc, argv, xwhere, mwhere, mfile, shorten, local, mname, msg)
  */
 
 static struct option_revlist *
-log_parse_revlist (argstring)
-    const char *argstring;
+log_parse_revlist (const char *argstring)
 {
     char *orig_copy, *copy;
     struct option_revlist *ret, **pr;
@@ -640,9 +624,7 @@ log_parse_revlist (argstring)
  * Parse a date specification.
  */
 static void
-log_parse_date (log_data, argstring)
-    struct log_data *log_data;
-    const char *argstring;
+log_parse_date (struct log_data *log_data, const char *argstring)
 {
     char *orig_copy, *copy;
 
@@ -737,9 +719,7 @@ log_parse_date (log_data, argstring)
  * Parse a comma separated list of items, and add each one to *PLIST.
  */
 static void
-log_parse_list (plist, argstring)
-    List **plist;
-    const char *argstring;
+log_parse_list (List **plist, const char *argstring)
 {
     while (1)
     {
@@ -776,9 +756,7 @@ log_parse_list (plist, argstring)
 static int printlock_proc (Node *, void *);
 
 static int
-printlock_proc (lock, foo)
-    Node *lock;
-    void *foo;
+printlock_proc (Node *lock, void *foo)
 {
     cvs_output ("\n\t", 2);
     cvs_output (lock->data, 0);
@@ -791,9 +769,7 @@ printlock_proc (lock, foo)
  * Do an rlog on a file
  */
 static int
-log_fileproc (callerdat, finfo)
-    void *callerdat;
-    struct file_info *finfo;
+log_fileproc (void *callerdat, struct file_info *finfo)
 {
     struct log_data *log_data = (struct log_data *) callerdat;
     Node *p;
@@ -1018,10 +994,7 @@ log_fileproc (callerdat, finfo)
  * Expand any symbolic revisions.
  */
 static struct revlist *
-log_expand_revlist (rcs, revlist, default_branch)
-    RCSNode *rcs;
-    struct option_revlist *revlist;
-    int default_branch;
+log_expand_revlist (RCSNode *rcs, struct option_revlist *revlist, int default_branch)
 {
     struct option_revlist *r;
     struct revlist *ret, **pr;
@@ -1255,8 +1228,7 @@ log_expand_revlist (rcs, revlist, default_branch)
  * Free a revlist created by log_expand_revlist.
  */
 static void
-log_free_revlist (revlist)
-    struct revlist *revlist;
+log_free_revlist (struct revlist *revlist)
 {
     struct revlist *r;
 
@@ -1280,11 +1252,7 @@ log_free_revlist (revlist)
  * options provided.
  */
 static int
-log_version_requested (log_data, revlist, rcs, vnode)
-    struct log_data *log_data;
-    struct revlist *revlist;
-    RCSNode *rcs;
-    RCSVers *vnode;
+log_version_requested (struct log_data *log_data, struct revlist *revlist, RCSNode *rcs, RCSVers *vnode)
 {
     /* Handle the list of states from the -s option.  */
     if (log_data->statelist != NULL
@@ -1381,9 +1349,7 @@ log_version_requested (log_data, revlist, rcs, vnode)
  */
 /*ARGSUSED*/
 static int
-log_symbol (p, closure)
-    Node *p;
-    void *closure;
+log_symbol (Node *p, void *closure)
 {
     cvs_output ("\n\t", 2);
     cvs_output (p->key, 0);
@@ -1397,9 +1363,7 @@ log_symbol (p, closure)
  */
 /*ARGSUSED*/
 static int
-log_count (p, closure)
-    Node *p;
-    void *closure;
+log_count (Node *p, void *closure)
 {
     return 1;
 }
@@ -1409,9 +1373,7 @@ log_count (p, closure)
  * until we find the specific selected revision.
  */
 static int
-log_fix_singledate (p, closure)
-    Node *p;
-    void *closure;
+log_fix_singledate (Node *p, void *closure)
 {
     struct log_data_and_rcs *data = (struct log_data_and_rcs *) closure;
     Node *pv;
@@ -1467,9 +1429,7 @@ log_fix_singledate (p, closure)
  * Count the number of revisions we are going to print.
  */
 static int
-log_count_print (p, closure)
-    Node *p;
-    void *closure;
+log_count_print (Node *p, void *closure)
 {
     struct log_data_and_rcs *data = (struct log_data_and_rcs *) closure;
     Node *pv;
@@ -1490,11 +1450,7 @@ log_count_print (p, closure)
  * order for each branch.
  */
 static void
-log_tree (log_data, revlist, rcs, ver)
-    struct log_data *log_data;
-    struct revlist *revlist;
-    RCSNode *rcs;
-    const char *ver;
+log_tree (struct log_data *log_data, struct revlist *revlist, RCSNode *rcs, const char *ver)
 {
     Node *p;
     RCSVers *vnode;
@@ -1526,11 +1482,7 @@ log_tree (log_data, revlist, rcs, ver)
  * Log the changes for a branch, in reverse order.
  */
 static void
-log_abranch (log_data, revlist, rcs, ver)
-    struct log_data *log_data;
-    struct revlist *revlist;
-    RCSNode *rcs;
-    const char *ver;
+log_abranch (struct log_data *log_data, struct revlist *revlist, RCSNode *rcs, const char *ver)
 {
     Node *p;
     RCSVers *vnode;
@@ -1549,12 +1501,7 @@ log_abranch (log_data, revlist, rcs, ver)
  * Print the log output for a single version.
  */
 static void
-log_version (log_data, revlist, rcs, ver, trunk)
-    struct log_data *log_data;
-    struct revlist *revlist;
-    RCSNode *rcs;
-    RCSVers *ver;
-    int trunk;
+log_version (struct log_data *log_data, struct revlist *revlist, RCSNode *rcs, RCSVers *ver, int trunk)
 {
     Node *p;
     int year, mon, mday, hour, min, sec;
@@ -1656,9 +1603,7 @@ log_version (log_data, revlist, rcs, ver, trunk)
  */
 /*ARGSUSED*/
 static int
-log_branch (p, closure)
-    Node *p;
-    void *closure;
+log_branch (Node *p, void *closure)
 {
     cvs_output ("  ", 2);
     if ((numdots (p->key) & 1) == 0)
@@ -1682,12 +1627,7 @@ log_branch (p, closure)
  */
 /* ARGSUSED */
 static Dtype
-log_dirproc (callerdat, dir, repository, update_dir, entries)
-    void *callerdat;
-    char *dir;
-    char *repository;
-    char *update_dir;
-    List *entries;
+log_dirproc (void *callerdat, char *dir, char *repository, char *update_dir, List *entries)
 {
     if (!isdir (dir))
 	return (R_SKIP_ALL);
@@ -1701,10 +1641,7 @@ log_dirproc (callerdat, dir, repository, update_dir, entries)
  * Compare versions.  This is taken from RCS compartial.
  */
 static int
-version_compare (v1, v2, len)
-    const char *v1;
-    const char *v2;
-    int len;
+version_compare (const char *v1, const char *v2, int len)
 {
     while (1)
     {

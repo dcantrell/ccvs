@@ -33,15 +33,7 @@ static Entnode *Entnode_Create (enum ent_type, const char *,
 				       const char *, const char *);
 
 static Entnode *
-Entnode_Create(type, user, vn, ts, options, tag, date, ts_conflict)
-    enum ent_type type;
-    const char *user;
-    const char *vn;
-    const char *ts;
-    const char *options;
-    const char *tag;
-    const char *date;
-    const char *ts_conflict;
+Entnode_Create(enum ent_type type, const char *user, const char *vn, const char *ts, const char *options, const char *tag, const char *date, const char *ts_conflict)
 {
     Entnode *ent;
     
@@ -65,8 +57,7 @@ Entnode_Create(type, user, vn, ts, options, tag, date, ts_conflict)
 static void Entnode_Destroy (Entnode *);
 
 static void
-Entnode_Destroy (ent)
-    Entnode *ent;
+Entnode_Destroy (Entnode *ent)
 {
     free (ent->user);
     free (ent->version);
@@ -86,9 +77,7 @@ Entnode_Destroy (ent)
  */
 static int write_ent_proc (Node *, void *);
 static int
-write_ent_proc (node, closure)
-     Node *node;
-     void *closure;
+write_ent_proc (Node *node, void *closure)
 {
     Entnode *entnode;
 
@@ -108,8 +97,7 @@ write_ent_proc (node, closure)
  * first of course
  */
 static void
-write_entries (list)
-    List *list;
+write_entries (List *list)
 {
     int sawdir;
 
@@ -166,9 +154,7 @@ write_entries (list)
  * Removes the argument file from the Entries file if necessary.
  */
 void
-Scratch_Entry (list, fname)
-    List *list;
-    char *fname;
+Scratch_Entry (List *list, char *fname)
 {
     Node *node;
 
@@ -205,15 +191,7 @@ Scratch_Entry (list, fname)
  * removing the old entry first, if necessary.
  */
 void
-Register (list, fname, vn, ts, options, tag, date, ts_conflict)
-    List *list;
-    char *fname;
-    char *vn;
-    char *ts;
-    char *options;
-    char *tag;
-    char *date;
-    char *ts_conflict;
+Register (List *list, char *fname, char *vn, char *ts, char *options, char *tag, char *date, char *ts_conflict)
 {
     Entnode *entnode;
     Node *node;
@@ -261,8 +239,7 @@ Register (list, fname, vn, ts, options, tag, date, ts_conflict)
  * Node delete procedure for list-private sticky dir tag/date info
  */
 static void
-freesdt (p)
-    Node *p;
+freesdt (Node *p)
 {
     struct stickydirtag *sdtp;
 
@@ -278,10 +255,7 @@ freesdt (p)
    On error, prints an error message and returns NULL.  */
 
 static Entnode *
-fgetentent(fpin, cmd, sawdir)
-    FILE *fpin;
-    char *cmd;
-    int *sawdir;
+fgetentent(FILE *fpin, char *cmd, int *sawdir)
 {
     Entnode *ent;
     char *line;
@@ -401,9 +375,7 @@ fgetentent(fpin, cmd, sawdir)
 }
 
 static int
-fputentent(fp, p)
-    FILE *fp;
-    Entnode *p;
+fputentent(FILE *fp, Entnode *p)
 {
     switch (p->type)
     {
@@ -451,9 +423,7 @@ fputentent(fp, p)
    messages, or NULL if not known (that is, noone has gotten around
    to updating the caller to pass in the information).  */
 List *
-Entries_Open (aflag, update_dir)
-    int aflag;
-    char *update_dir;
+Entries_Open (int aflag, char *update_dir)
 {
     List *entries;
     struct stickydirtag *sdtp = NULL;
@@ -563,8 +533,7 @@ Entries_Open (aflag, update_dir)
 }
 
 void
-Entries_Close(list)
-    List *list;
+Entries_Close(List *list)
 {
     if (list)
     {
@@ -583,8 +552,7 @@ Entries_Close(list)
  * node
  */
 static void
-Entries_delproc (node)
-    Node *node;
+Entries_delproc (Node *node)
 {
     Entnode *p;
 
@@ -597,9 +565,7 @@ Entries_delproc (node)
  * list
  */
 static Node *
-AddEntryNode (list, entdata)
-    List *list;
-    Entnode *entdata;
+AddEntryNode (List *list, Entnode *entdata)
 {
     Node *p;
 
@@ -631,10 +597,7 @@ AddEntryNode (list, entdata)
  * Write out the CVS/Template file.
  */
 void
-WriteTemplate (update_dir, xdotemplate, repository)
-    char *update_dir;
-    int xdotemplate;
-    char *repository;
+WriteTemplate (char *update_dir, int xdotemplate, char *repository)
 {
     if (noexec)
 	return;
@@ -658,13 +621,7 @@ WriteTemplate (update_dir, xdotemplate, repository)
  * Write out/Clear the CVS/Tag file.
  */
 void
-WriteTag (dir, tag, date, nonbranch, update_dir, repository)
-    char *dir;
-    char *tag;
-    char *date;
-    int nonbranch;
-    char *update_dir;
-    char *repository;
+WriteTag (char *dir, char *tag, char *date, int nonbranch, char *update_dir, char *repository)
 {
     FILE *fout;
     char *tmp;
@@ -732,10 +689,7 @@ WriteTag (dir, tag, date, nonbranch, update_dir, repository)
    If there is an error, print an error message, set *DATEP and *TAGP
    to NULL, and return.  */
 void
-ParseTag (tagp, datep, nonbranchp)
-    char **tagp;
-    char **datep;
-    int *nonbranchp;
+ParseTag (char **tagp, char **datep, int *nonbranchp)
 {
     FILE *fp;
 
@@ -814,8 +768,7 @@ ParseTag (tagp, datep, nonbranchp)
  */
 
 void
-Subdirs_Known (entries)
-     List *entries;
+Subdirs_Known (List *entries)
 {
     struct stickydirtag *sdtp;
 
@@ -854,10 +807,7 @@ Subdirs_Known (entries)
 /* Record subdirectory information.  */
 
 static Entnode *
-subdir_record (cmd, parent, dir)
-     int cmd;
-     const char *parent;
-     const char *dir;
+subdir_record (int cmd, const char *parent, const char *dir)
 {
     Entnode *entnode;
 
@@ -934,10 +884,7 @@ subdir_record (cmd, parent, dir)
  */
 
 void
-Subdir_Register (entries, parent, dir)
-     List *entries;
-     const char *parent;
-     const char *dir;
+Subdir_Register (List *entries, const char *parent, const char *dir)
 {
     Entnode *entnode;
 
@@ -960,10 +907,7 @@ Subdir_Register (entries, parent, dir)
  */
 
 void
-Subdir_Deregister (entries, parent, dir)
-     List *entries;
-     const char *parent;
-     const char *dir;
+Subdir_Deregister (List *entries, const char *parent, const char *dir)
 {
     Entnode *entnode;
 
@@ -1024,10 +968,7 @@ static void base_walk (enum base_walk, struct file_info *, char **);
    for CODE.  */
 
 static void
-base_walk (code, finfo, rev)
-    enum base_walk code;
-    struct file_info *finfo;
-    char **rev;
+base_walk (enum base_walk code, struct file_info *finfo, char **rev)
 {
     FILE *fp;
     char *line;
@@ -1180,8 +1121,7 @@ base_walk (code, finfo, rev)
    or NULL if not listed.  */
 
 char *
-base_get (finfo)
-    struct file_info *finfo;
+base_get (struct file_info *finfo)
 {
     char *rev;
     base_walk (BASE_GET, finfo, &rev);
@@ -1191,9 +1131,7 @@ base_get (finfo)
 /* Set the revision for FILE to REV.  */
 
 void
-base_register (finfo, rev)
-    struct file_info *finfo;
-    char *rev;
+base_register (struct file_info *finfo, char *rev)
 {
     base_walk (BASE_REGISTER, finfo, &rev);
 }
@@ -1201,8 +1139,7 @@ base_register (finfo, rev)
 /* Remove FILE.  */
 
 void
-base_deregister (finfo)
-    struct file_info *finfo;
+base_deregister (struct file_info *finfo)
 {
     base_walk (BASE_DEREGISTER, finfo, NULL);
 }

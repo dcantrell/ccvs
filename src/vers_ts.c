@@ -16,17 +16,17 @@ static void time_stamp_server (char *, Vers_TS *, Entnode *);
    DATE are from the command line.  */
 
 Vers_TS *
-Version_TS (finfo, options, tag, date, force_tag_match, set_time)
-    struct file_info *finfo;
+Version_TS (struct file_info *finfo, char *options, char *tag, char *date, int force_tag_match, int set_time)
+                            
 
     /* Keyword expansion options, I think generally from the command
        line.  Can be either NULL or "" to indicate none are specified
        here.  */
-    char *options;
-    char *tag;
-    char *date;
-    int force_tag_match;
-    int set_time;
+                  
+              
+               
+                        
+                 
 {
     Node *p;
     RCSNode *rcsdata;
@@ -272,10 +272,7 @@ Version_TS (finfo, options, tag, date, force_tag_match, set_time)
 #define mark_unchanged(V)	((V)->ts_user = xstrdup ((V)->ts_rcs))
 
 static void
-time_stamp_server (file, vers_ts, entdata)
-    char *file;
-    Vers_TS *vers_ts;
-    Entnode *entdata;
+time_stamp_server (char *file, Vers_TS *vers_ts, Entnode *entdata)
 {
     struct stat sb;
     char *cp;
@@ -338,8 +335,7 @@ time_stamp_server (file, vers_ts, entdata)
  * allocates
  */
 char *
-time_stamp (file)
-    char *file;
+time_stamp (char *file)
 {
     struct stat sb;
     char *cp;
@@ -384,8 +380,7 @@ time_stamp (file)
  * free up a Vers_TS struct
  */
 void
-freevers_ts (versp)
-    Vers_TS **versp;
+freevers_ts (Vers_TS **versp)
 {
     if ((*versp)->srcfile)
 	freercsnode (&((*versp)->srcfile));

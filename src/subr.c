@@ -24,14 +24,13 @@
 # endif /* !defined HAVE_USLEEP && defined HAVE_SELECT */
 #endif /* !HAVE_NANOSLEEP */
 
-extern char *getlogin ();
+extern char *getlogin (void);
 
 /*
  * malloc some data and die if it fails
  */
 void *
-xmalloc (bytes)
-    size_t bytes;
+xmalloc (size_t bytes)
 {
     char *cp;
 
@@ -58,9 +57,7 @@ xmalloc (bytes)
  * can *force* it.]
  */
 void *
-xrealloc (ptr, bytes)
-    void *ptr;
-    size_t bytes;
+xrealloc (void *ptr, size_t bytes)
 {
     char *cp;
 
@@ -100,10 +97,7 @@ xrealloc (ptr, bytes)
    NEWSIZE bytes of space.  Gives a fatal error if out of memory;
    if it returns it was successful.  */
 void
-expand_string (strptr, n, newsize)
-    char **strptr;
-    size_t *n;
-    size_t newsize;
+expand_string (char **strptr, size_t *n, size_t newsize)
 {
     if (*n < newsize)
     {
@@ -127,10 +121,7 @@ expand_string (strptr, n, newsize)
 /* *STR is a pointer to a malloc'd string.  *LENP is its allocated
    length.  Add SRC to the end of it, reallocating if necessary.  */
 void
-xrealloc_and_strcat (str, lenp, src)
-    char **str;
-    size_t *lenp;
-    const char *src;
+xrealloc_and_strcat (char **str, size_t *lenp, const char *src)
 {
 
     expand_string (str, lenp, strlen (*str) + strlen (src) + 1);
@@ -141,8 +132,7 @@ xrealloc_and_strcat (str, lenp, src)
  * Duplicate a string, calling xmalloc to allocate some dynamic space
  */
 char *
-xstrdup (str)
-    const char *str;
+xstrdup (const char *str)
 {
     char *s;
 
@@ -155,8 +145,7 @@ xstrdup (str)
 
 /* Remove trailing newlines from STRING, destructively. */
 void
-strip_trailing_newlines (str)
-     char *str;
+strip_trailing_newlines (char *str)
 {
     int len;
     len = strlen (str) - 1;
@@ -175,8 +164,7 @@ strip_trailing_newlines (str)
    particularly for the client.c caller.  The server.c caller might
    want something different, so be careful.  */
 int
-pathname_levels (path)
-    char *path;
+pathname_levels (char *path)
 {
     char *p;
     char *q;
@@ -212,9 +200,7 @@ pathname_levels (path)
    are malloc'd and so is *ARGV itself.  Such a vector is allocated by
    line2argv or expand_wild, for example.  */
 void
-free_names (pargc, argv)
-    int *pargc;
-    char **argv;
+free_names (int *pargc, char **argv)
 {
     register int i;
 
@@ -232,11 +218,7 @@ free_names (pargc, argv)
    (*ARGV)[0], (*ARGV)[1], ...  Use free_names() to return the memory
    allocated here back to the free pool.  */
 void
-line2argv (pargc, argv, line, sepchars)
-    int *pargc;
-    char ***argv;
-    char *line;
-    char *sepchars;
+line2argv (int *pargc, char ***argv, char *line, char *sepchars)
 {
     char *cp;
     /* Could make a case for size_t or some other unsigned type, but
@@ -265,8 +247,7 @@ line2argv (pargc, argv, line, sepchars)
  * Returns the number of dots ('.') found in an RCS revision number
  */
 int
-numdots (s)
-    const char *s;
+numdots (const char *s)
 {
     int dots = 0;
 
@@ -283,9 +264,7 @@ numdots (s)
    two revision numbers must have the same number of fields, or else
    compare_revnums will return an inaccurate result. */
 int
-compare_revnums (rev1, rev2)
-    const char *rev1;
-    const char *rev2;
+compare_revnums (const char *rev1, const char *rev2)
 {
     const char *s, *sp;
     const char *t, *tp;
@@ -307,8 +286,7 @@ compare_revnums (rev1, rev2)
 }
 
 char *
-increment_revnum (rev)
-    const char *rev;
+increment_revnum (const char *rev)
 {
     char *newrev, *p;
     int lastfield;
@@ -332,7 +310,7 @@ increment_revnum (rev)
    CVS, in contexts such as the author field of RCS files, various
    logs, etc.  */
 char *
-getcaller ()
+getcaller (void)
 {
 #ifndef SYSTEM_GETCALLER
     static char *cache;
@@ -386,9 +364,7 @@ getcaller ()
 #ifndef __GNUC__
 /* ARGSUSED */
 time_t
-get_date (date, now)
-    char *date;
-    struct timeb *now;
+get_date( char *date, struct timeb *now )
 {
     time_t foo = 0;
 
@@ -402,9 +378,7 @@ get_date (date, now)
    exist.  */
 
 char *
-gca (rev1, rev2)
-    const char *rev1;
-    const char *rev2;
+gca (const char *rev1, const char *rev2)
 {
     int dots;
     char *gca, *g;
@@ -490,10 +464,7 @@ gca (rev1, rev2)
    should also be called from diff -r, update -r, get -r, and log -r.  */
 
 void
-check_numeric (rev, argc, argv)
-    const char *rev;
-    int argc;
-    char **argv;
+check_numeric (const char *rev, int argc, char **argv)
 {
     if (rev == NULL || !isdigit ((unsigned char) *rev))
 	return;
@@ -521,8 +492,7 @@ check_numeric (rev, argc, argv)
  *  nonsense about non-empty log fields can be dropped.
  */
 char *
-make_message_rcsvalid (message)
-     char *message;
+make_message_rcsvalid (char *message)
 {
     char *dst, *dp, *mp;
 
@@ -578,9 +548,7 @@ make_message_rcsvalid (message)
  *		timestamp.
  */
 int
-file_has_conflict (finfo, ts_conflict)
-    const struct file_info *finfo;
-    const char *ts_conflict;
+file_has_conflict (const struct file_info *finfo, const char *ts_conflict)
 {
     char *filestamp;
     int retcode;
@@ -618,8 +586,7 @@ file_has_conflict (finfo, ts_conflict)
    which contain those patterns not as conflict markers), but for now it
    is what we do.  */
 int
-file_has_markers (finfo)
-    const struct file_info *finfo;
+file_has_markers (const struct file_info *finfo)
 {
     FILE *fp;
     char *line = NULL;
@@ -659,13 +626,7 @@ out:
    is FULLNAME.  MODE is "r" for text or "rb" for binary.  */
 
 void
-get_file (name, fullname, mode, buf, bufsize, len)
-    const char *name;
-    const char *fullname;
-    const char *mode;
-    char **buf;
-    size_t *bufsize;
-    size_t *len;
+get_file (const char *name, const char *fullname, const char *mode, char **buf, size_t *bufsize, size_t *len)
 {
     struct stat s;
     size_t nread;
@@ -751,8 +712,7 @@ get_file (name, fullname, mode, buf, bufsize, len)
    FILENAME with the destination (a real file).  */
 
 void
-resolve_symlink (filename)
-     char **filename;
+resolve_symlink (char **filename)
 {
     if ((! filename) || (! *filename))
 	return;
@@ -797,9 +757,7 @@ resolve_symlink (filename)
  * Returns the new name, which caller may free() if desired.
  */
 char *
-backup_file (filename, suffix)
-     const char *filename;
-     const char *suffix;
+backup_file (const char *filename, const char *suffix)
 {
     char *backup_name;
 
@@ -831,9 +789,7 @@ backup_file (filename, suffix)
  */
 
 char *
-shell_escape(buf, str)
-    char *buf;
-    const char *str;
+shell_escape(char *buf, const char *str)
 {
     static const char meta[] = "$`\\\"";
     const char *p;
@@ -860,8 +816,7 @@ shell_escape(buf, str)
  * We can only travel forwards in time, not backwards.  :)
  */
 void
-sleep_past (desttime)
-    time_t desttime;
+sleep_past (time_t desttime)
 {
     time_t t;
     long s;
@@ -940,9 +895,7 @@ sleep_past (desttime)
  *  When this function returns NULL, errno will be set appropriately.
  */
 char *
-locate_file_in_dir (dir, file)
-    const char *dir;
-    const char *file;
+locate_file_in_dir (const char *dir, const char *file)
 {
     char *retval;
 

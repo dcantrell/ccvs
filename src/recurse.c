@@ -67,18 +67,16 @@ struct frame_and_entries {
    files on which we operate.  In the special case of no arguments, we
    default to ".".  */
 int
-start_recursion (fileproc, filesdoneproc, direntproc, dirleaveproc, callerdat,
-		 argc, argv, local, which, aflag, locktype,
-		 update_preload, dosrcs, repository_in)
-    FILEPROC fileproc;
-    FILESDONEPROC filesdoneproc;
-    DIRENTPROC 	direntproc;
-    DIRLEAVEPROC dirleaveproc;
-    void *callerdat;
+start_recursion (FILEPROC fileproc, FILESDONEPROC filesdoneproc, DIRENTPROC direntproc, DIRLEAVEPROC dirleaveproc, void *callerdat, int argc, char **argv, int local, int which, int aflag, int locktype, char *update_preload, int dosrcs, char *repository_in)
+                      
+                                
+               	           
+                              
+                    
 
-    int argc;
-    char **argv;
-    int local;
+             
+                
+              
 
     /* This specifies the kind of recursion.  There are several cases:
 
@@ -101,12 +99,12 @@ start_recursion (fileproc, filesdoneproc, direntproc, dirleaveproc, callerdat,
        does not exist in the working directory, the direntproc must
        either tell us to skip it (R_SKIP_ALL), or must create it (I
        think those are the only two cases).  */
-    int which;
+              
 
-    int aflag;
-    int locktype;
-    char *update_preload;
-    int dosrcs;
+              
+                 
+                         
+               
     /* Keep track of the repository string.  This is only for the remote mode,
      * specifically, r* commands (rtag, rdiff, co, ...) where xgetwd() was
      * used to locate the repository.  Things would break when xgetwd() was
@@ -115,7 +113,7 @@ start_recursion (fileproc, filesdoneproc, direntproc, dirleaveproc, callerdat,
      * than the user specified in error messages and in other cases some of
      * CVS's security assertions would fail.
      */
-    char *repository_in;
+                        
 {
     int i, err = 0;
 #ifdef CLIENT_SUPPORT
@@ -540,8 +538,7 @@ start_recursion (fileproc, filesdoneproc, direntproc, dirleaveproc, callerdat,
  * called directly, or may be called by start_recursion
  */
 static int
-do_recursion (frame)
-    struct recursion_frame *frame;
+do_recursion (struct recursion_frame *frame)
 {
     int err = 0;
     int dodoneproc = 1;
@@ -839,9 +836,7 @@ do_recursion (frame)
  * Process each of the files in the list with the callback proc
  */
 static int
-do_file_proc (p, closure)
-    Node *p;
-    void *closure;
+do_file_proc (Node *p, void *closure)
 {
     struct frame_and_file *frfile = (struct frame_and_file *)closure;
     struct file_info *finfo = frfile->finfo;
@@ -897,9 +892,7 @@ do_file_proc (p, closure)
  * Process each of the directories in the list (recursing as we go)
  */
 static int
-do_dir_proc (p, closure)
-    Node *p;
-    void *closure;
+do_dir_proc (Node *p, void *closure)
 {
     struct frame_and_entries *frent = (struct frame_and_entries *) closure;
     struct recursion_frame *frame = frent->frame;
@@ -1193,9 +1186,7 @@ but CVS uses %s for its own purposes; skipping %s directory",
  * Add a node to a list allocating the list if necessary.
  */
 static void
-addlist (listp, key)
-    List **listp;
-    char *key;
+addlist (List **listp, char *key)
 {
     Node *p;
 
@@ -1209,10 +1200,7 @@ addlist (listp, key)
 }
 
 static void
-addfile (listp, dir, file)
-    List **listp;
-    char *dir;
-    char *file;
+addfile (List **listp, char *dir, char *file)
 {
     Node *n;
     List *fl;
@@ -1235,9 +1223,7 @@ addfile (listp, dir, file)
 }
 
 static int
-unroll_files_proc (p, closure)
-    Node *p;
-    void *closure;
+unroll_files_proc (Node *p, void *closure)
 {
     Node *n;
     struct recursion_frame *frame = (struct recursion_frame *) closure;

@@ -21,16 +21,13 @@ char cvsrc[] = CVSRC_FILENAME;
 
 #define	GROW	10
 
-extern char *strtok ();
+extern char *strtok (char *, const char *);
 
 /* Read cvsrc, processing options matching CMDNAME ("cvs" for global
    options, and update *ARGC and *ARGV accordingly.  */
 
 void
-read_cvsrc (argc, argv, cmdname)
-    int *argc;
-    char ***argv;
-    char *cmdname;
+read_cvsrc (int *argc, char ***argv, char *cmdname)
 {
     char *homedir;
     char *homeinit;

@@ -51,7 +51,7 @@ int ign_inhibit_server;
  * variable.
  */
 void
-ign_setup ()
+ign_setup (void)
 {
     char *home_dir;
     char *tmp;
@@ -106,9 +106,7 @@ ign_setup ()
  * argument is set.
  */
 void
-ign_add_file (file, hold)
-    char *file;
-    int hold;
+ign_add_file (char *file, int hold)
 {
     FILE *fp;
     char *line = NULL;
@@ -167,9 +165,7 @@ ign_add_file (file, hold)
 
 /* Parse a line of space-separated wildcards and add them to the list. */
 void
-ign_add (ign, hold)
-    char *ign;
-    int hold;
+ign_add (char *ign, int hold)
 {
     if (!ign || !*ign)
 	return;
@@ -262,8 +258,7 @@ int ign_case;
 
 /* Return 1 if the given filename should be ignored by update or import. */
 int
-ign_name (name)
-    char *name;
+ign_name (char *name)
 {
     char **cpp = ign_list;
 
@@ -320,8 +315,7 @@ static int dir_ign_current = 0;
 
 /* Add a directory to list of dirs to ignore.  */
 void
-ign_dir_add (name)
-    char *name;
+ign_dir_add (char *name)
 {
     /* Make sure we've got the space for the entry.  */
     if (dir_ign_current <= dir_ign_max)
@@ -339,8 +333,7 @@ ign_dir_add (name)
 /* Return nonzero if NAME is part of the list of directories to ignore.  */
 
 int
-ignore_directory (name)
-    char *name;
+ignore_directory (char *name)
 {
     int i;
 
@@ -366,11 +359,7 @@ ignore_directory (name)
  * directory with a CVS administration directory is known.
  */
 void
-ignore_files (ilist, entries, update_dir, proc)
-    List *ilist;
-    List *entries;
-    char *update_dir;
-    Ignore_proc proc;
+ignore_files (List *ilist, List *entries, char *update_dir, Ignore_proc proc)
 {
     int subdirs;
     DIR *dirp;

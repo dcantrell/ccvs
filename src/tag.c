@@ -101,9 +101,7 @@ static const char *const tag_usage[] =
 };
 
 int
-cvstag (argc, argv)
-    int argc;
-    char **argv;
+cvstag (int argc, char **argv)
 {
     int local = 0;			/* recursive by default */
     int c;
@@ -280,17 +278,7 @@ cvstag (argc, argv)
  */
 /* ARGSUSED */
 static int
-rtag_proc (argc, argv, xwhere, mwhere, mfile, shorten, local_specified,
-	   mname, msg)
-    int argc;
-    char **argv;
-    char *xwhere;
-    char *mwhere;
-    char *mfile;
-    int shorten;
-    int local_specified;
-    char *mname;
-    char *msg;
+rtag_proc (int argc, char **argv, char *xwhere, char *mwhere, char *mfile, int shorten, int local_specified, char *mname, char *msg)
 {
     /* Begin section which is identical to patch_proc--should this
        be abstracted out somehow?  */
@@ -426,9 +414,7 @@ rtag_proc (argc, argv, xwhere, mwhere, mfile, shorten, local_specified,
 /* All we do here is add it to our list */
 
 static int
-check_fileproc (callerdat, finfo)
-    void *callerdat;
-    struct file_info *finfo;
+check_fileproc (void *callerdat, struct file_info *finfo)
 {
     char *xdir;
     Node *p;
@@ -562,12 +548,7 @@ struct pretag_proc_data {
 };
 
 static int
-check_filesdoneproc (callerdat, err, repos, update_dir, entries)
-    void *callerdat;
-    int err;
-    char *repos;
-    char *update_dir;
-    List *entries;
+check_filesdoneproc (void *callerdat, int err, char *repos, char *update_dir, List *entries)
 {
     int n;
     Node *p;
@@ -600,10 +581,7 @@ check_filesdoneproc (callerdat, err, repos, update_dir, entries)
 }
 
 static int
-pretag_proc( repository, filter, closure )
-    char *repository;
-    char *filter;
-    void *closure;
+pretag_proc(char *repository, char *filter, void *closure)
 {
     struct pretag_proc_data *ppd = (struct pretag_proc_data *)closure;
     if (filter[0] == '/')
@@ -636,8 +614,7 @@ pretag_proc( repository, filter, closure )
 }
 
 static void
-masterlist_delproc(p)
-    Node *p;
+masterlist_delproc(Node *p)
 {
     struct master_lists *ml;
 
@@ -648,8 +625,7 @@ masterlist_delproc(p)
 }
 
 static void
-tag_delproc(p)
-    Node *p;
+tag_delproc(Node *p)
 {
     if (p->data != NULL)
     {
@@ -660,9 +636,7 @@ tag_delproc(p)
 }
 
 static int
-pretag_list_proc(p, closure)
-    Node *p;
-    void *closure;
+pretag_list_proc(Node *p, void *closure)
 {
     if (p->data != NULL)
     {
@@ -679,9 +653,7 @@ pretag_list_proc(p, closure)
  */
 /* ARGSUSED */
 static int
-rtag_fileproc (callerdat, finfo)
-    void *callerdat;
-    struct file_info *finfo;
+rtag_fileproc (void *callerdat, struct file_info *finfo)
 {
     RCSNode *rcsfile;
     char *version, *rev;
@@ -840,8 +812,7 @@ rtag_fileproc (callerdat, finfo)
  * "rcs" to remove the tag... trust me.
  */
 static int
-rtag_delete (rcsfile)
-    RCSNode *rcsfile;
+rtag_delete (RCSNode *rcsfile)
 {
     char *version;
     int retcode, isbranch;
@@ -894,9 +865,7 @@ rtag_delete (rcsfile)
  */
 /* ARGSUSED */
 static int
-tag_fileproc (callerdat, finfo)
-    void *callerdat;
-    struct file_info *finfo;
+tag_fileproc (void *callerdat, struct file_info *finfo)
 {
     char *version, *oversion;
     char *nversion = NULL;
@@ -1119,12 +1088,7 @@ tag_fileproc (callerdat, finfo)
  */
 /* ARGSUSED */
 static Dtype
-tag_dirproc (callerdat, dir, repos, update_dir, entries)
-    void *callerdat;
-    char *dir;
-    char *repos;
-    char *update_dir;
-    List *entries;
+tag_dirproc (void *callerdat, char *dir, char *repos, char *update_dir, List *entries)
 {
 
     if (ignore_directory (update_dir))
@@ -1156,9 +1120,7 @@ struct val_args {
 static int val_fileproc (void *callerdat, struct file_info *finfo);
 
 static int
-val_fileproc (callerdat, finfo)
-    void *callerdat;
-    struct file_info *finfo;
+val_fileproc (void *callerdat, struct file_info *finfo)
 {
     RCSNode *rcsdata;
     struct val_args *args = (struct val_args *)callerdat;
@@ -1182,12 +1144,7 @@ val_fileproc (callerdat, finfo)
 static Dtype val_direntproc (void *, char *, char *, char *, List *);
 
 static Dtype
-val_direntproc (callerdat, dir, repository, update_dir, entries)
-    void *callerdat;
-    char *dir;
-    char *repository;
-    char *update_dir;
-    List *entries;
+val_direntproc (void *callerdat, char *dir, char *repository, char *update_dir, List *entries)
 {
     /* This is not quite right--it doesn't get right the case of "cvs
        update -d -r foobar" where foobar is a tag which exists only in
@@ -1211,13 +1168,7 @@ val_direntproc (callerdat, dir, repository, update_dir, entries)
    tag is found in CVSROOTADM_VALTAGS, but there is not (yet) any
    local directory.  */
 void
-tag_check_valid (name, argc, argv, local, aflag, repository)
-    char *name;
-    int argc;
-    char **argv;
-    int local;
-    int aflag;
-    char *repository;
+tag_check_valid (char *name, int argc, char **argv, int local, int aflag, char *repository)
 {
     DBM *db;
     char *valtags_filename;
@@ -1387,13 +1338,7 @@ Numeric tag %s contains characters other than digits and '.'", name);
  */
 
 void
-tag_check_valid_join (join_tag, argc, argv, local, aflag, repository)
-     char *join_tag;
-     int argc;
-     char **argv;
-     int local;
-     int aflag;
-     char *repository;
+tag_check_valid_join (char *join_tag, int argc, char **argv, int local, int aflag, char *repository)
 {
     char *c, *s;
 

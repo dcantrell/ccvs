@@ -26,7 +26,7 @@
 int error_use_protocol; 
 
 #ifndef strerror
-extern char *strerror ();
+extern char *strerror (int);
 #endif
 
 void

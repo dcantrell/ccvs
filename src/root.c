@@ -24,9 +24,7 @@ const char method_names[][16] = {
 #ifndef DEBUG
 
 char *
-Name_Root (dir, update_dir)
-    char *dir;
-    char *update_dir;
+Name_Root (char *dir, char *update_dir)
 {
     FILE *fpin;
     char *ret, *xupdate_dir;
@@ -141,9 +139,7 @@ Name_Root (dir, update_dir)
  * future work.
  */
 void
-Create_Root (dir, rootdir)
-    char *dir;
-    char *rootdir;
+Create_Root (char *dir, char *rootdir)
 {
     FILE *fout;
     char *tmp;
@@ -184,8 +180,7 @@ static char **root_allow_vector;
 static int root_allow_size;
 
 void
-root_allow_add (arg)
-    char *arg;
+root_allow_add (char *arg)
 {
     char *p;
 
@@ -224,7 +219,7 @@ error ENOMEM Virtual memory exhausted.\n");
 }
 
 void
-root_allow_free ()
+root_allow_free (void)
 {
     if (root_allow_vector != NULL)
 	free_names (&root_allow_count, root_allow_vector);
@@ -232,8 +227,7 @@ root_allow_free ()
 }
 
 int
-root_allow_ok (arg)
-    char *arg;
+root_allow_ok (char *arg)
 {
     int i;
 
@@ -282,10 +276,10 @@ cvsroot_t *current_parsed_root = NULL;
  * or the like
  */
 /* Functions which allocate memory are not pure.  */
-static cvsroot_t *new_cvsroot_t()
+static cvsroot_t *new_cvsroot_t(void)
     __attribute__( (__malloc__) );
 static cvsroot_t *
-new_cvsroot_t ()
+new_cvsroot_t (void)
 {
     cvsroot_t *newroot;
 
@@ -310,8 +304,7 @@ new_cvsroot_t ()
 
 /* Dispose of a cvsroot_t and its component parts */
 void
-free_cvsroot_t (root)
-    cvsroot_t *root;
+free_cvsroot_t (cvsroot_t *root)
 {
     if (root->original != NULL)
 	free (root->original);
@@ -356,8 +349,7 @@ free_cvsroot_t (root)
  * 	free_cvsroot_t()
  */
 cvsroot_t *
-parse_cvsroot (root_in)
-    const char *root_in;
+parse_cvsroot (const char *root_in)
 {
     cvsroot_t *newroot;			/* the new root to be returned */
     char *cvsroot_save;			/* what we allocated so we can dispose
@@ -712,8 +704,7 @@ error_exit:
  * caller to be responsible for our return value
  */
 char *
-normalize_cvsroot (root)
-    const cvsroot_t *root;
+normalize_cvsroot (const cvsroot_t *root)
 {
     char *cvsroot_canonical;
     char *p, *hostname, *username;
@@ -754,8 +745,7 @@ normalize_cvsroot (root)
 /* allocate and return a cvsroot_t structure set up as if we're using the local
  * repository DIR.  */
 cvsroot_t *
-local_cvsroot (dir)
-    const char *dir;
+local_cvsroot (const char *dir)
 {
     cvsroot_t *newroot = new_cvsroot_t();
 
@@ -789,22 +779,19 @@ char *command_name = "parse_cvsroot";		/* XXX is this used??? */
    debug when something goes wrong.  */
 
 void
-error_exit (void))
+error_exit( void )
 {
-    exit (1;
+    exit( 1 );
 }
 
 int
-isabsolute (dir)
-    const char *dir;
+isabsolute( const char *dir )
 {
     return (dir && (*dir == '/'));
 }
 
 void
-main (argc, argv)
-    int argc;
-    char *argv[];
+main( int argc, char *argv[] )
 {
     program_name = argv[0];
 
