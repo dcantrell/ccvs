@@ -1,5 +1,13 @@
 Wed Nov  8 11:14:46 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
+        * filesubr.c (unlink_file): make this work on OS/2.
+        (unlink_file_dir): don't ask if errno == EISDIR.  We ain't
+        got EISDIR in OS/2.
+        (deep_remove_dir): use EACCESS to determine if directory
+        nonempty.  We ain't got ENOTEMPTY in OS/2.
+        (that_swing): removed references.  We ain't got that_swing in
+        OS/2.
+        
         * config.h (HAVE_SYS_UTIME_H): define to 1.
 
         * options.h: undef SETXID_SUPPORT, to correspond with Norbert
