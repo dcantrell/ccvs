@@ -1,3 +1,9 @@
+2004-09-07  Mark D. Baushke  <mdb@cvshome.org>
+
+	* server.c (server_updated): Deal with cvs -n update -jt1 -jt2
+	"protocol error: uncounted data discarded" problem.
+	* sanity.sh (join7): New test for this case.
+	
 2004-09-04  Derek Price  <derek@ximbiot.com>
 
 	* socket-client.c (socket_client_initialize): Pass new args to
