@@ -27,10 +27,9 @@ repository from the cvspass file.
 password-authenticated server (other access methods are just governed
 by Unix file permissions, since they require login access to the
 repository machine anyway).  See the "Repository" section of
-cvs.texinfo for details.  Note that the security cautions in
-cvs.texinfo ("Password authentication security"), and the requirement
-that read-only users be able to create locks and write the history
-file, both apply.
+cvs.texinfo for details, including a discussion of security issues.
+Note that the requirement that read-only users be able to create locks
+and write the history file still applies.
 
 * The "checkout" command now creates a CVS directory at the top level
 of the new working directory, in addition to CVS directories created
