@@ -1376,7 +1376,8 @@ static int
 stdio_buffer_shutdown (buf)
     struct buffer *buf;
 {
-    struct stdio_buffer_closure *bc = (struct stdio_buffer_closure *) buf->closure;
+    struct stdio_buffer_closure *bc =
+	(struct stdio_buffer_closure *) buf->closure;
     struct stat s;
     int closefp = 1;
 
@@ -1405,10 +1406,13 @@ stdio_buffer_shutdown (buf)
 	 * waiting for info from the client while the client blocked waiting
 	 * for a read from the server...  in other words, deadlock occurred.
 	 *
-	 * Anyhow, if that old getc() could be replaced with a non-blocking
-	 * read of the client pipe, that would be okay too.
+	 * Anyhow, that old getc() has been replaced with the mess below.
 	 */
-	if ( !buf_empty_p (buf) )
+	char junk;
+	if (!buf_empty_p (buf)
+	    || (!feof (bc->fp)
+	        && set_nonblock_fd (fileno (bc->fp)) == 0
+	        && fread (&junk, 1, 1, bc->fp) != 0))
 	{
 # ifdef SERVER_SUPPORT
 	    if (server_active)
@@ -1418,9 +1422,10 @@ stdio_buffer_shutdown (buf)
 		error (0, 0, "dying gasps from client unexpected");
 	    else
 #endif
-		error (0, 0, "dying gasps from %s unexpected", current_parsed_root->hostname);
+		error (0, 0, "dying gasps from %s unexpected",
+		       current_parsed_root->hostname);
 	}
-	else if (ferror (bc->fp))
+	else if (ferror (bc->fp) && errno != EAGAIN)
 	{
 # ifdef SERVER_SUPPORT
 	    if (server_active)
@@ -1430,7 +1435,9 @@ stdio_buffer_shutdown (buf)
 		error (0, errno, "reading from client");
 	    else
 #endif
-		error (0, errno, "reading from %s", current_parsed_root->hostname);
+		error (0, errno, "reading from %s",
+		       current_parsed_root->method == fork_method ?
+		           "server" : current_parsed_root->hostname);
 	}
 
 # ifdef SHUTDOWN_SERVER
