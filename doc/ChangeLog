@@ -1,3 +1,8 @@
+Tue Nov  7 16:26:39 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo: Document merging more than once from a branch;
+	miscellaneous cleanups.
+
 Mon Oct 30 13:12:53 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (modules): Document -e.

@@ -1204,7 +1204,7 @@ Since @sc{cvs} 1.x is bad at renaming files and moving
 them between directories, the first thing you do when
 you start a new project should be to think through your
 file organization.  It is not impossible---just
-awkward---to rename or move files in @sc{cvs} 1.x.
+awkward---to rename or move files.
 @xref{Moving files}.
 
 What to do next depends on the situation at hand.
@@ -1994,6 +1994,7 @@ copy the changes onto another branch.
 
 @menu
 * Merging a branch::            Merging an entire branch
+* Merging more than once::      Merging from a branch several times
 * Merging two revisions::       Merging differences between two revisions
 @end menu
 
@@ -2010,10 +2011,7 @@ point where the branch forked and newest revision on that branch (into
 your working copy).
 
 @cindex Join
-The @samp{-j} stands for ``join''.  In previous
-versions of @sc{cvs} there was a special command,
-@samp{cvs join}, that was used to merge changes between
-branches.
+The @samp{-j} stands for ``join''.
 
 @cindex Branch merge example
 @cindex Example, branch merge
@@ -2021,14 +2019,14 @@ branches.
 Consider this revision tree:
 
 @example
-+-----+    +-----+    +-----+    +-----+    +-----+
-! 1.1 !----! 1.2 !----! 1.3 !----! 1.4 !----! 1.5 !      <- The main trunk
-+-----+    +-----+    +-----+    +-----+    +-----+
++-----+    +-----+    +-----+    +-----+
+! 1.1 !----! 1.2 !----! 1.3 !----! 1.4 !      <- The main trunk
++-----+    +-----+    +-----+    +-----+
                 !
                 !
-                !   +---------+    +---------+    +---------+
-Branch R1fix -> +---! 1.2.2.1 !----! 1.2.2.2 !----! 1.2.2.3 !
-                    +---------+    +---------+    +---------+
+                !   +---------+    +---------+
+Branch R1fix -> +---! 1.2.2.1 !----! 1.2.2.2 !
+                    +---------+    +---------+
 @end example
 
 @noindent
@@ -2037,14 +2035,14 @@ following example assumes that the module @samp{mod} contains only one
 file, @file{m.c}.
 
 @example
-$ cvs checkout mod               # @r{Retrieve the latest revision, 1.5}
+$ cvs checkout mod               # @r{Retrieve the latest revision, 1.4}
 
 $ cvs update -j R1fix m.c        # @r{Merge all changes made on the branch,}
                                  # @r{i.e. the changes between revision 1.2}
-                                 # @r{and 1.2.2.3, into your working copy}
+                                 # @r{and 1.2.2.2, into your working copy}
                                  # @r{of the file.}
 
-$ cvs commit -m "Included R1fix" # @r{Create revision 1.6.}
+$ cvs commit -m "Included R1fix" # @r{Create revision 1.5.}
 @end example
 
 A conflict can result from a merge operation.  If that
@@ -2057,6 +2055,74 @@ same effect as above could be achieved with this:
 @example
 $ cvs checkout -j R1fix mod
 $ cvs commit -m "Included R1fix"
+@end example
+
+@node Merging more than once
+@section Merging from a branch several times
+
+Continuing our example, the revision tree now looks
+like this:
+
+@example
++-----+    +-----+    +-----+    +-----+    +-----+
+! 1.1 !----! 1.2 !----! 1.3 !----! 1.4 !----! 1.5 !      <- The main trunk
++-----+    +-----+    +-----+    +-----+    +-----+
+                !                           *
+                !                          *
+                !   +---------+    +---------+
+Branch R1fix -> +---! 1.2.2.1 !----! 1.2.2.2 !
+                    +---------+    +---------+
+@end example
+
+where the starred line represents the merge from the
+@samp{R1fix} branch to the main trunk, as just
+discussed.
+
+Now suppose that development continues on the
+@samp{R1fix} branch:
+
+@example
++-----+    +-----+    +-----+    +-----+    +-----+
+! 1.1 !----! 1.2 !----! 1.3 !----! 1.4 !----! 1.5 !      <- The main trunk
++-----+    +-----+    +-----+    +-----+    +-----+
+                !                           *
+                !                          *
+                !   +---------+    +---------+    +---------+
+Branch R1fix -> +---! 1.2.2.1 !----! 1.2.2.2 !----! 1.2.2.3 !
+                    +---------+    +---------+    +---------+
+@end example
+
+and then you want to merge those new changes onto the
+main trunk.  If you just use the @code{cvs update -j
+R1fix m.c} command again, @sc{cvs} will attempt to
+merge again the changes which you have already merged,
+which can have undesirable side effects.
+
+So instead you need to specify that you only want to
+merge the changes on the branch which have not yet been
+merged into the trunk.  To do that you specify two
+@samp{-j} options, and @sc{cvs} merges the changes from
+the first revision to the second revision.  For
+example, in this case the simplest way would be
+
+@example
+cvs update -j 1.2.2.2 -j R1fix m.c    # @r{Merge changes from 1.2.2.2 to the}
+                                      # @r{head of the R1fix branch}
+@end example
+
+The problem with this is that you need to specify the
+1.2.2.2 revision manually.  A slightly better approach
+might be to use the date the last merge was done:
+
+@example
+cvs update -j R1fix:yesterday -j R1fix m.c
+@end example
+
+Better yet, tag the R1fix branch after every merge into
+the trunk, and then use that tag for subsequent merges:
+
+@example
+cvs update -j merged_from_R1fix_to_trunk -j R1fix m.c
 @end example
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -2080,12 +2146,12 @@ $ cvs update -j 1.5 -j 1.3 backend.c
 will @emph{remove} all changes made between revision
 1.3 and 1.5.  Note the order of the revisions!
 
-If you try to use this option with the @code{checkout}
-command, remember that the numeric revisions will
+If you try to use this option when operating on
+multiple files, remember that the numeric revisions will
 probably be very different between the various files
 that make up a module.  You almost always use symbolic
-tags rather than revision numbers with the
-@code{checkout} command.
+tags rather than revision numbers when operating on
+multiple files.
 
 @c ---------------------------------------------------------------------
 @node Recursive behavior
@@ -2351,9 +2417,10 @@ since yesterday into the working copy.  If any conflicts arise during
 the merge they should be resolved in the normal way (@pxref{Conflicts
 example}).  Then, the modified files may be committed.
 
-@sc{cvs} assumes that you do not import more than one
-release of a product per day. If you do, you can always
-use something like this instead:
+Using a date, as suggested above, assumes that you do
+not import more than one release of a product per
+day. If you do, you can always use something like this
+instead:
 
 @example
 $ cvs checkout -jWDIFF_0_04 -jWDIFF_0_05 wdiff
@@ -3982,28 +4049,26 @@ also use @samp{-N}, the paths created under @var{dir}
 will be as short as possible.
 
 @item -j @var{tag}
-Merge the changes made between the resulting revision
-and the revision that it is based on (e.g., if
-@var{tag} refers to a branch, @sc{cvs} will merge all
-changes made on that branch into your working file).
+With two @samp{-j} options, merge changes from the
+revision specified with the first @samp{-j} option to
+the revision specified with the second @samp{j} option,
+into the working directory.
 
-With two @samp{-j @var{tag}} options, @sc{cvs} will merge in the
-changes between the two respective revisions.  This can
-be used to undo changes made between two revisions
-(@pxref{Merging two revisions}) in your working copy,
-or to move changes between different branches.
+With one @samp{-j} option, merge changes from the
+ancestor revision to the revision specified with the
+@samp{-j} option, into the working directory.  The
+ancestor revision is the common ancestor of the
+revision which the working directory is based on, and
+the revision specified in the @samp{-j} option.
 
 In addition, each -j option can contain an optional
 date specification which, when used with branches, can
 limit the chosen revision to one within a specific
 date.  An optional date is specified by adding a colon
-(:) to the tag.  An example might be what @code{import}
-tells you to do when you have just imported sources
-that have conflicts with local changes:
+(:) to the tag:
+@samp{-j@var{Symbolic_Tag}:@var{Date_Specifier}}.
 
-@example
-$ cvs checkout -jTAG:yesterday -jTAG module
-@end example
+@xref{Merging}.
 
 @item -N
 Only useful together with @samp{-d @var{dir}}.  With this
@@ -5655,7 +5720,7 @@ this file in this working directory will use the same
 to see the sticky options.  @xref{status}.
 
 @item -l
-Local; run only in current working directory.
+Local; run only in current working directory.  @xref{Recursive behavior}.
 
 @item -P
 Prune empty directories.
@@ -5664,7 +5729,8 @@ Prune empty directories.
 Pipe files to the standard output.
 
 @item -R
-Commit directories recursively.  This is on by default.
+Operate recursively.  This is on by default.
+@xref{Recursive behavior}.
 
 @item -r tag
 Retrieve revision @var{tag}.  This option is sticky,
@@ -5731,22 +5797,18 @@ update.  You can use this option repeatedly.
 that you can specify in the @file{.cvswrappers}
 file. @xref{Wrappers}.
 
-@item -j@var{branch}
-Merge the changes made between the resulting revision
-and the revision that it is based on (e.g., if the tag
-refers to a branch, @sc{cvs} will merge all changes made in
-that branch into your working file).
+@item -j@var{revision}
+With two @samp{-j} options, merge changes from the
+revision specified with the first @samp{-j} option to
+the revision specified with the second @samp{j} option,
+into the working directory.
 
-With two @samp{-j} options, @sc{cvs} will merge in the
-changes between the two respective revisions.  This can
-be used to remove a certain delta from your working
-file;  if the file @file{foo.c} is based on
-revision 1.6 and you want to remove the changes made
-between 1.3 and 1.5, you might do:
-
-@example
-$ cvs update -j1.5 -j1.3 foo.c   # @r{note the order@dots{}}
-@end example
+With one @samp{-j} option, merge changes from the
+ancestor revision to the revision specified with the
+@samp{-j} option, into the working directory.  The
+ancestor revision is the common ancestor of the
+revision which the working directory is based on, and
+the revision specified in the @samp{-j} option.
 
 In addition, each -j option can contain an optional
 date specification which, when used with branches, can
@@ -5754,6 +5816,9 @@ limit the chosen revision to one within a specific
 date.  An optional date is specified by adding a colon
 (:) to the tag:
 @samp{-j@var{Symbolic_Tag}:@var{Date_Specifier}}.
+
+@xref{Merging}.
+
 @end table
 
 @c . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
