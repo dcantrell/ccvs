@@ -127,10 +127,6 @@ of "cvs edit" in this case is the most sensible course (the "cvs edit"
 could be handled by a package like VC for emacs).  This would also allow
 local operation of @code{cvs diff} without arguments.
 
-@c It isn't clear exactly how this should relate to a more general
-@c multisite feature (in which one can modify the local copy even if the
-@c network is down between the local and the master, and then they get
-@c reconciled by a potentially manual process).
 @item
 Have the client keep a copy of some part of the repository.  This allows
 all of @code{cvs diff} and large parts of @code{cvs update} and
@@ -138,6 +134,14 @@ all of @code{cvs diff} and large parts of @code{cvs update} and
 the master copy at night (but if the master copy has been updated since
 the latest nightly re-sync, then it would read what it needs to from the
 master).
+
+It isn't clear exactly how this should relate to a more general
+multisite feature (in which one can modify the local copy even if the
+network is down between the local and the master, and then they get
+reconciled by a potentially manual process).  Another variant of a
+multisite feature would be where version history is cached to speed up
+operations such as @code{cvs diff}, but in which checkins still must be
+checked in to all sites, or to a master site.
 
 @item
 The current procedure for @code{cvs update} is highly sub-optimal if
@@ -149,6 +153,38 @@ more, if changes in the repository mean it has to ask the client for
 more files), because it can't keep locks open while waiting for the
 network.  Perhaps this whole thing is irrelevant if client-side
 repositories are implemented, and the rcsmerge is done by the client.
+
+@item
+The fact that @code{pserver} requires an extra network turnaround in
+order to perform authentication would be nice to avoid.  This relates to
+the issue of reporting errors; probably the clean solution is to defer
+the error until the client has issued a request which expects a
+response.  To some extent this might relate to the next item (in terms
+of how easy it is to skip a whole bunch of requests until we get to one
+that expects a response).  I know that the kerberos code doesn't wait in
+this fashion, but that probably can cause network deadlocks and perhaps
+future problems running over a transport which is more transaction
+oriented than TCP.  On the other hand I'm not sure it is wise to make
+the client conduct a lengthy upload only to find there is an
+authentication failure.
+
+@item
+The protocol uses an extra network turnaround for protocol negotiation
+(@code{valid-requests}).  It might be nice to avoid this by having the
+client be able to send requests and tell the server to ignore them if
+they are unrecognized (different requests could produce a fatal error if
+unrecognized).  To do this there should be a standard syntax for
+requests.  For example, perhaps all future requests should be a single
+line, with mechanisms analogous to @code{Argumentx}, or several requests
+working together, to provide greater amounts of information.  Or there
+might be a standard mechanism for counted data (analogous to that used
+by @code{Modified}) or continuation lines (like a generalized
+@code{Argumentx}).  It would be useful to compare what HTTP is planning
+in this area; last I looked they were contemplating something called
+Protocol Extension Protocol but I haven't looked at the relevant IETF
+documents in any detail.  Obviously, we want something as simple as
+possible (but no simpler).
+
 @end itemize
 
 @node Connection and Authentication
