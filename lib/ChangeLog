@@ -1,5 +1,9 @@
 2004-10-05  Derek Price  <derek@ximbiot.com>
 
+	* Makefile.gnulib: New file.
+
+2004-10-05  Derek Price  <derek@ximbiot.com>
+
 	* Makefile.am (libcvs_a_SOURCES): Add xalloc-die.c.
 	* xalloc-die.c: New file from GNULIB.
 	* xalloc.h, xmalloc.c: Update from GNULIB.
