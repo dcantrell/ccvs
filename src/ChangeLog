@@ -1,5 +1,12 @@
 2001-06-07  Larry Jones  <larry.jones@sdrc.com>
 
+	* rcs.c (RCS_unlock): Reverse kj's change of 1999-10-18: a bare -u
+	should never break locks, you have to specify a specific revision
+	to do that.  Also add an informative message for a bare -u when
+	the user doesn't hold any locks.
+	* commit.c (unlockrcs): Make RCS_unlock quiet, like RCS_lock.
+	* sanity.sh (rmadd-24): Update to match.
+
 	* sanity.sh (crerepos-6a): Set CVS_RSH for ${testcvs}, not for
 	dotest_fail.  Allow for "broken pipe" rather than "end of file".
 

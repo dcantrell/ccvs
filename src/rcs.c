@@ -5797,7 +5797,9 @@ RCS_unlock (rcs, rev, unlock_quiet)
     if (rcs->flags & PARTIAL)
 	RCS_reparsercsfile (rcs, (FILE **) NULL, (struct rcsbuffer *) NULL);
 
-    /* If rev is NULL, unlock the latest revision (first in
+    /* If rev is NULL, unlock the revision held by the caller; if more
+       than one, make the user specify the revision explicitly.  This
+       differs from RCS which unlocks the latest revision (first in
        rcs->locks) held by the caller. */
     if (rev == NULL)
     {
@@ -5822,17 +5824,24 @@ RCS_unlock (rcs, rev, unlock_quiet)
 	lock = NULL;
 	for (p = locks->list->next; p != locks->list; p = p->next)
 	{
-	    if (lock != NULL)
+	    if (STREQ (p->data, user))
 	    {
-		if (!unlock_quiet)
-		    error (0, 0, "\
+		if (lock != NULL)
+		{
+		    if (!unlock_quiet)
+			error (0, 0, "\
 %s: multiple revisions locked by %s; please specify one", rcs->path, user);
-		return 1;
+		    return 1;
+		}
+		lock = p;
 	    }
-	    lock = p;
 	}
 	if (lock == NULL)
+	{
+	    if (!unlock_quiet)
+		error (0, 0, "No locks are set for %s.\n", user);
 	    return 0;	/* no lock found, ergo nothing to do */
+	}
 	xrev = xstrdup (lock->key);
     }
     else

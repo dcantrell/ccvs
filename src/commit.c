@@ -1809,7 +1809,7 @@ unlockrcs (rcs)
 {
     int retcode;
 
-    if ((retcode = RCS_unlock (rcs, NULL, 0)) != 0)
+    if ((retcode = RCS_unlock (rcs, NULL, 1)) != 0)
 	error (retcode == -1 ? 1 : 0, retcode == -1 ? errno : 0,
 	       "could not unlock %s", rcs->path);
     else
