@@ -432,7 +432,8 @@ static int use_socket_style = 0;
 static int server_sock;
 
 /* These routines implement a buffer structure which uses send and
-   recv.  We don't need the block routine, so we don't implement it.  */
+   recv.  The buffer is always in blocking mode so we don't implement
+   the block routine.  */
 
 /* We use an instance of this structure as the closure field.  */
 
@@ -491,16 +492,28 @@ socket_buffer_input (closure, data, need, size, got)
 
     *got = 0;
 
-    while (need > 0)
+    do
     {
 	nbytes = recv (sb->socket, data, size, 0);
 	if (nbytes < 0)
 	    error (1, errno, "reading from server");
+	if (nbytes == 0)
+	{
+	    /* End of file (for example, the server has closed
+	       the connection).  If we've already read something, we
+	       just tell the caller about the data, not about the end of
+	       file.  If we've read nothing, we return end of file.  */
+	    if (*got == 0)
+		return -1;
+	    else
+		return 0;
+	}
 	need -= nbytes;
 	size -= nbytes;
 	data += nbytes;
 	*got += nbytes;
     }
+    while (need > 0);
 
     return 0;
 }

@@ -1,3 +1,14 @@
+1996-12-02  Jim Kingdon
+
+	* client.c: In comment saying that socket buffers don't
+	implement the blocking routine, say they are blocking.
+	* buffer.h (struct buffer): In description of input function,
+	describe blocking, non-blocking, and NEED more fully.  Say
+	what happens if we read a nonzero amount less than NEED and
+	then get end of file.
+	* client.c (socket_buffer_input): If NEED == 0, still call
+	recv (once).  Handle the case where recv returns 0.
+
 Sat Nov 30 15:10:07 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* subr.c, cvs.h (file_has_markers): New function.
