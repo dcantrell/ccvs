@@ -6313,10 +6313,10 @@ T file2"
 	  echo v1 > $file
 	  dotest update-p-4 "$testcvs -Q add $file" ''
 	  dotest update-p-5 "$testcvs -Q ci -m. $file" \
-"RCS file: ${TESTDIR}/cvsroot/$module/$file,v
+"RCS file: ${CVSROOT_DIRNAME}/$module/$file,v
 done
 Checking in $file;
-${TESTDIR}/cvsroot/$module/$file,v  <--  $file
+${CVSROOT_DIRNAME}/$module/$file,v  <--  $file
 initial revision: 1\.1
 done"
 	  dotest update-p-6 "$testcvs -Q tag T $file" ''
@@ -6331,7 +6331,7 @@ done"
 	  dotest update-p-9 "$testcvs update -p -rT $file" \
 "===================================================================
 Checking out $file
-RCS:  ${TESTDIR}/cvsroot/$module/$file,v
+RCS:  ${CVSROOT_DIRNAME}/$module/$file,v
 VERS: 1\.1
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
 v1"
@@ -6345,7 +6345,7 @@ v1"
 	  dotest update-p-10 "$testcvs update -p -rT $file" \
 "===================================================================
 Checking out $file
-RCS:  ${TESTDIR}/cvsroot/$module/$file,v
+RCS:  ${CVSROOT_DIRNAME}/$module/$file,v
 VERS: 1\.1
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
 v1"
@@ -6372,7 +6372,7 @@ U $file"
 	  dotest update-p-undead-4 "$testcvs -Q update -p -rT $file" v1
 	  dotest update-p-undead-5 "$testcvs -Q ci -m. $file" \
 "Removing $file;
-${TESTDIR}/cvsroot/$module/$file,v  <--  $file
+${CVSROOT_DIRNAME}/$module/$file,v  <--  $file
 new revision: delete; previous revision: 1\.1
 done"
 	  dotest update-p-undead-6 "$testcvs -Q update -p -rT $file" v1
@@ -12540,7 +12540,7 @@ U dir2d1/sub/sub2d1/file1"
 	  # test.
 	  dotest emptydir-13 "cat dir2d1/CVS/Repository" "moda"
 	  dotest_fail emptydir-14 "${testcvs} co comb" \
-"${PROG} checkout: existing repository ${CVSROOT_DIRNAME}/moda/modasub does not match ${TESTDIR}/cvsroot/mod1
+"${PROG} checkout: existing repository ${CVSROOT_DIRNAME}/moda/modasub does not match ${CVSROOT_DIRNAME}/mod1
 ${PROG} checkout: ignoring module 2d1modb
 ${PROG} checkout: Updating dir2d1/suba"
 	  dotest emptydir-15 "cat dir2d1/CVS/Repository" "moda"
@@ -18640,7 +18640,7 @@ new revision: 1\.3; previous revision: 1\.2
 done"
 
 	  # Save a backup copy
-	  cp -r ${CVSROOT_DIRNAME}/first-dir ${TESTDIR}/cvsroot/backup
+	  cp -r ${CVSROOT_DIRNAME}/first-dir ${CVSROOT_DIRNAME}/backup
 
 	  # Simulate developer 3
 	  cd ../..
@@ -18711,7 +18711,7 @@ done"
 
 	  # Slag the original and restore it a few revisions back
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
-	  mv ${CVSROOT_DIRNAME}/backup ${TESTDIR}/cvsroot/first-dir
+	  mv ${CVSROOT_DIRNAME}/backup ${CVSROOT_DIRNAME}/first-dir
 
 	  # Have developer 1 try an update and lose some data
 	  #
@@ -19208,7 +19208,7 @@ ${PROG} update: Updating second-dir"
 	  cd ..
 	  rm -r 1
 	  chmod u+rwx ${CVSROOT_DIRNAME}/first-dir
-	  rm -rf ${CVSROOT_DIRNAME}/first-dir ${TESTDIR}/cvsroot/second-dir
+	  rm -rf ${CVSROOT_DIRNAME}/first-dir ${CVSROOT_DIRNAME}/second-dir
 	  ;;
 
 	stamps)
@@ -25314,7 +25314,7 @@ EOF
 	  # possible security holes are plugged.
 	  if $remote; then
 	    dotest server2-1 "${testcvs} server" \
-"E protocol error: directory '${CVSROOT_DIRNAME}/\.\./dir1' not within root '${TESTDIR}/cvsroot'
+"E protocol error: directory '${CVSROOT_DIRNAME}/\.\./dir1' not within root '${CVSROOT_DIRNAME}'
 error  " <<EOF
 Root ${CVSROOT_DIRNAME}
 Directory .
@@ -25323,7 +25323,7 @@ noop
 EOF
 
 	    dotest server2-2 "${testcvs} server" \
-"E protocol error: directory '${CVSROOT_DIRNAME}dir1' not within root '${TESTDIR}/cvsroot'
+"E protocol error: directory '${CVSROOT_DIRNAME}dir1' not within root '${CVSROOT_DIRNAME}'
 error  " <<EOF
 Root ${CVSROOT_DIRNAME}
 Directory .
@@ -25536,11 +25536,11 @@ ${PROG} \[commit aborted\]: correct above errors first!"
 	  echo nosuchhost:/cvs > CVS/Root
 	  dotest commit-d-3 "$testcvs -Q -d $CVSROOT commit -m." \
 "Checking in file1;
-${TESTDIR}/cvsroot/c-d-c/file1,v  <--  file1
+${CVSROOT_DIRNAME}/c-d-c/file1,v  <--  file1
 new revision: 1.2; previous revision: 1.1
 done
 Checking in subdir/file2;
-${TESTDIR}/cvsroot/c-d-c/subdir/file2,v  <--  file2
+${CVSROOT_DIRNAME}/c-d-c/subdir/file2,v  <--  file2
 new revision: 1.2; previous revision: 1.1
 done"
 	  cd ../..
