@@ -1,3 +1,9 @@
+Sun May 26 17:51:18 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* tag.c (check_fileproc): Use fullname not file in error message.
+	Say "locally modified" not "up-to-date"; the file need not match
+	the head revision it only need match some revision.
+
 Sun May 26 16:57:02 1996  Norbert Kiesel  <nk@col.sw-ley.de>
 
 	* tag.c: added support for new option -c to make sure all tagged
