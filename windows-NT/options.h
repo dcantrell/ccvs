@@ -26,59 +26,12 @@
 #endif
 
 /*
- * The "diff" program to execute when creating patch output.  This "diff"
- * must support the "-c" option for context diffing.  Specify a full
- * pathname if your site wants to use a particular diff.  If you are
- * using the GNU version of diff (version 1.15 or later), this should
- * be "diff -a".
- * 
- * NOTE: this program is only used for the ``patch'' sub-command (and
- * for ``update'' if you are using the server).  The other commands
- * use rcsdiff which will use whatever version of diff was specified
- * when rcsdiff was built on your system.
- */
-
-#ifndef DIFF
-#define	DIFF	"diff"
-#endif
-
-/*
  * The "patch" program to run when using the CVS server and accepting
  * patches across the network.  Specify a full pathname if your site
  * wants to use a particular patch.
  */
 #ifndef PATCH_PROGRAM
 #define PATCH_PROGRAM	"patch"
-#endif
-
-/*
- * By default, RCS programs are executed with the shell or through execlp(),
- * so the user's PATH environment variable is searched.  If you'd like to
- * bind all RCS programs to a certain directory (perhaps one not in most
- * people's PATH) then set the default in RCSBIN_DFLT.  Note that setting
- * this here will cause all RCS programs to be executed from this directory,
- * unless the user overrides the default with the RCSBIN environment variable
- * or the "-b" option to CVS.
- * 
- * If you use the password-authenticating server, then you need to
- * make sure that the server can find the RCS programs to invoke them.
- * The authenticating server starts out running as root, and then
- * switches to run as the appropriate user once authentication is
- * complete.  But no actual shell is ever started by that user, so the
- * PATH environment variable may not contain the directory with the
- * RCS binaries, even though if that user logged in normally, PATH
- * would include the directory.  
- *
- * One way to solve this problem is to set RCSBIN_DFLT here.  An
- * alternative is to make sure that root has the right directory in
- * its path already.  Another, probably better alternative is to
- * specify -b in /etc/inetd.conf. 
- *
- * This define should be either the empty string ("") or a full pathname to the
- * directory containing all the installed programs from the RCS distribution.
- */
-#ifndef RCSBIN_DFLT
-#define	RCSBIN_DFLT	""
 #endif
 
 /* Directory used for storing temporary files, if not overridden by

@@ -1,3 +1,8 @@
+Tue Jan 13 13:15:34 1998  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* config.h (DIFF): Remove; no longer used.
+	* options.h (DIFF, RCSBIN_DFLT): Remove; no longer used.
+
 Wed Dec 31 10:56:39 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* config.h, filesubr.c (convert_file): Remove; no longer used
