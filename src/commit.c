@@ -2000,6 +2000,10 @@ update_delproc (p)
     li = (struct logfile_info *) p->data;
     if (li->tag)
 	free (li->tag);
+    if (li->rev_old)
+	free (li->rev_old);
+    if (li->rev_new)
+	free (li->rev_new);
     free (li);
 }
 

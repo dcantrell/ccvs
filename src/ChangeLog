@@ -1,5 +1,8 @@
 Tue Oct 22 10:37:37 1996  Noel Cragg  <noel@gargle.rain.org>
 
+	* commit.c (update_delproc): free structure members rev_old and
+ 	rev_new if they have been allocated.
+
 	* mkmodules.c: change loginfo_contents to include a description of
  	the new format string.
 
