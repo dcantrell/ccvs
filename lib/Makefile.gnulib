@@ -26,7 +26,7 @@ CLEANFILES =
 DISTCLEANFILES =
 MAINTAINERCLEANFILES =
 
-## For module alloca:
+## <<< alloca
 BUILT_SOURCES += $(ALLOCA_H)
 EXTRA_DIST += alloca_.h
 
@@ -40,7 +40,9 @@ MOSTLYCLEANFILES += alloca.h alloca.h-t
 
 libgnu_a_LIBADD += @ALLOCA@
 
-## For module alloca-opt:
+## >>> alloca
+
+## <<< alloca-opt
 BUILT_SOURCES += $(ALLOCA_H)
 EXTRA_DIST += alloca_.h
 
@@ -52,16 +54,24 @@ alloca.h: alloca_.h
 	mv $@-t $@
 MOSTLYCLEANFILES += alloca.h alloca.h-t
 
-## For module dirname:
+## >>> alloca-opt
+
+## <<< dirname
 libgnu_a_SOURCES += dirname.h dirname.c basename.c stripslash.c
 
-## For module exit:
+## >>> dirname
+
+## <<< exit
 libgnu_a_SOURCES += exit.h
 
-## For module exitfail:
+## >>> exit
+
+## <<< exitfail
 libgnu_a_SOURCES += exitfail.h exitfail.c
 
-## For module fnmatch:
+## >>> exitfail
+
+## <<< fnmatch
 BUILT_SOURCES += $(FNMATCH_H)
 EXTRA_DIST += fnmatch_.h fnmatch_loop.c
 
@@ -73,17 +83,25 @@ fnmatch.h: fnmatch_.h
 	mv $@-t $@
 MOSTLYCLEANFILES += fnmatch.h fnmatch.h-t
 
-## For module getline:
+## >>> fnmatch
+
+## <<< getline
 libgnu_a_SOURCES += getline.h
 EXTRA_DIST += getndelim2.h getndelim2.c
 
-## For module getndelim2:
+## >>> getline
+
+## <<< getndelim2
 EXTRA_DIST += getndelim2.h getndelim2.c
 
-## For module getnline:
+## >>> getndelim2
+
+## <<< getnline
 libgnu_a_SOURCES += getnline.h getnline.c
 
-## For module getopt:
+## >>> getnline
+
+## <<< getopt
 BUILT_SOURCES += $(GETOPT_H)
 EXTRA_DIST += getopt_.h getopt_int.h
 
@@ -95,31 +113,49 @@ getopt.h: getopt_.h
 	mv $@-t $@
 MOSTLYCLEANFILES += getopt.h getopt.h-t
 
-## For module getpass-gnu:
+## >>> getopt
+
+## <<< getpass-gnu
 libgnu_a_SOURCES += getpass.h
 
-## For module gettext:
+## >>> getpass-gnu
+
+## <<< gettext
 libgnu_a_SOURCES += gettext.h
 
-## For module gettime:
+## >>> gettext
+
+## <<< gettime
 libgnu_a_SOURCES += gettime.c
 
-## For module minmax:
+## >>> gettime
+
+## <<< minmax
 libgnu_a_SOURCES += minmax.h
 
-## For module pathmax:
+## >>> minmax
+
+## <<< pathmax
 libgnu_a_SOURCES += pathmax.h
 
-## For module regex:
+## >>> pathmax
+
+## <<< regex
 libgnu_a_SOURCES += regex.h
 
-## For module save-cwd:
+## >>> regex
+
+## <<< save-cwd
 libgnu_a_SOURCES += save-cwd.h save-cwd.c
 
-## For module stat:
+## >>> save-cwd
+
+## <<< stat
 libgnu_a_SOURCES += stat-macros.h
 
-## For module stdbool:
+## >>> stat
+
+## <<< stdbool
 BUILT_SOURCES += $(STDBOOL_H)
 EXTRA_DIST += stdbool_.h
 
@@ -131,29 +167,47 @@ stdbool.h: stdbool_.h
 	mv $@-t $@
 MOSTLYCLEANFILES += stdbool.h stdbool.h-t
 
-## For module strcase:
+## >>> stdbool
+
+## <<< strcase
 libgnu_a_SOURCES += strcase.h
 
-## For module time_r:
+## >>> strcase
+
+## <<< time_r
 libgnu_a_SOURCES += time_r.h
 
-## For module timespec:
+## >>> time_r
+
+## <<< timespec
 libgnu_a_SOURCES += timespec.h
 
-## For module unlocked-io:
+## >>> timespec
+
+## <<< unlocked-io
 libgnu_a_SOURCES += unlocked-io.h
 
-## For module vasnprintf:
+## >>> unlocked-io
+
+## <<< vasnprintf
 libgnu_a_SOURCES += printf-args.h printf-parse.h vasnprintf.h
 
-## For module xalloc:
+## >>> vasnprintf
+
+## <<< xalloc
 libgnu_a_SOURCES += xalloc.h xmalloc.c
 
-## For module xgetcwd:
+## >>> xalloc
+
+## <<< xgetcwd
 libgnu_a_SOURCES += xgetcwd.h xgetcwd.c
 
-## For module xsize:
+## >>> xgetcwd
+
+## <<< xsize
 libgnu_a_SOURCES += xsize.h
+
+## >>> xsize
 
 
 # Makefile.am ends here

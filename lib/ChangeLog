@@ -1,3 +1,7 @@
+2004-10-15  Derek Price  <derek@ximbiot.com>
+
+	* getpass.c: Update from GNULIB.
+
 2004-10-09  Derek Price  <derek@ximbiot.com>
 
 	* Makefile.am (libcvs_a_SOURCES): Add stat-macros.h.
