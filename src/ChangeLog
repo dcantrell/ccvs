@@ -1,5 +1,11 @@
 2003-11-18  Derek Price  <derek@ximbiot.com>
 
+	* socket-client.c (socket_buffer_initialize): Pass in the socket
+	closure we allocate.
+	(Report from Larry Jones  <lawrence.jones@eds.com>.)
+
+2003-11-18  Derek Price  <derek@ximbiot.com>
+
 	* modules.c (do_module): Reject absolute paths.
 	(Report and suggested fix from Tony Hoyle <tmh@nodomain.org>.)
 
@@ -10,7 +16,8 @@
 
 2003-11-18  Derek Price  <derek@ximbiot.com>
 
-	* socket-client.c: Correct a typo that happened to compile.
+	* socket-client.c (socket_buffer_initialize): Correct a typo that
+	happened to compile.
 	(Report and suggested fix from Patrick Brown <BrownP@symbol.com>.)
 
 2003-11-13  Derek Price  <derek@ximbiot.com>
