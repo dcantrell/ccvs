@@ -3,6 +3,9 @@ Changes since 1.11.13:
 
 GENERAL USER ISSUES
 
+* Imports will now always ignore directories and files named `CVS' to avoid
+  violating assumptions made by other parts of CVS.
+
 * A problem with `cvs release' of subdirs that could corrupt CVS/Entries files
   has been fixed (client/server).
 

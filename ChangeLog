@@ -1,3 +1,8 @@
+2004-03-03  Derek Price  <derek@ximbiot.com>
+
+	* NEWS: Note that directories and files named `CVS' are now also
+	rejected by import.
+
 2004-02-25  Derek Price  <derek@ximbiot.com>
 
 	* NEWS: Update dying gasp note.
