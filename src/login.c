@@ -104,12 +104,26 @@ login (argc, argv)
       CVSroot = tmp;
     }
 
-  /* Check to make sure it's fully-qualified before going on. */
+  if (CVSroot[0] != ':')
+    {
+      /* Then we need to prepend ":pserver:". */
+      char *tmp;
+
+      tmp = xmalloc (strlen (":pserver:") + strlen (CVSroot) + 1);
+      strcpy (tmp, ":pserver:");
+      strcat (tmp, CVSroot);
+      CVSroot = tmp;
+    }
+
+  /* Check to make sure it's fully-qualified before going on. 
+   * Fully qualified in this context means it has both a user and a
+   * host portion.
+   */
   if (! CVSroot)
     {
       error (1, 0, "CVSroot is NULL");
     }
-  else if ((! strchr (CVSroot, '@')) && (! strchr (CVSroot, ':')))
+  else if ((! strchr (CVSroot, '@')) || (! strchr (CVSroot, ':')))
     {
       error (1, 0, "CVSroot not fully-qualified: %s", CVSroot);
     }
@@ -144,7 +158,7 @@ login (argc, argv)
   /* Check each line to see if we have this entry already. */
   while (fgets (linebuf, MAXLINELEN, fp) != NULL)
     {
-      if (! strncmp (CVSroot, linebuf, root_len))
+      if (strncmp (CVSroot, linebuf, root_len) == 0)
         {
           already_entered = 1;
           break;
@@ -230,10 +244,10 @@ login (argc, argv)
 
 
 char *
-get_cvs_password (user, host, cvsroot)
+get_cvs_password ()
 {
-  int root_len;
   int found_it = 0;
+  int root_len;
   char *password;
   char linebuf[MAXLINELEN];
   FILE *fp;
