@@ -386,7 +386,7 @@ dirswitch (dir, repos)
      * This is pretty much like calling Create_Admin, but Create_Admin doesn't
      * report errors in the right way for us.
      */
-    if (mkdir ("CVS", 0777) < 0)
+    if (mkdir (CVSADM, 0777) < 0)
     {
 	if (errno == EEXIST)
 	    /* Don't create the files again.  */
@@ -2653,7 +2653,7 @@ serve_co (arg)
     if (print_pending_error ())
 	return;
 
-    if (!isdir ("CVS"))
+    if (!isdir (CVSADM))
     {
 	/*
 	 * The client has not sent a "Repository" line.  Check out

@@ -1,3 +1,8 @@
+Fri Jun 23 13:38:28 1995  J.T. Conklin  (jtc@rtl.cygnus.com)
+
+	* server.c (dirswitch, serve_co): Use CVSADM macro instead of 
+        literal "CVS".
+
 Fri Jun 23 00:00:51 1995  James Kingdon  <kingdon@harvey.cyclic.com>
 
 	* README-rm-add: Do not talk about patching RCS, that only
