@@ -775,7 +775,7 @@ Numeric tag %s contains characters other than digits and '.'", name);
     /* Special tags are always valid.  */
     if (strcmp (name, TAG_BASE) == 0
 	|| strcmp (name, TAG_HEAD) == 0)
-      return;
+	return;
 
     mytag.dptr = name;
     mytag.dsize = strlen (name);
