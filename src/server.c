@@ -4566,7 +4566,6 @@ serve_expand_modules (arg)
     DBM *db;
     err = 0;
 
-    server_expanding = 1;
     db = open_module ();
     for (i = 1; i < argument_count; i++)
 	err += do_module (db, argument_vector[i],
@@ -4574,7 +4573,6 @@ serve_expand_modules (arg)
 			  NULL, 0, 0, 0, 0,
 			  (char *) NULL);
     close_module (db);
-    server_expanding = 0;
     {
 	/* argument_vector[0] is a dummy argument, we don't mess with it.  */
 	char **cp;
@@ -4604,23 +4602,24 @@ server_prog (dir, name, which)
 {
     if (!supported_response ("Set-checkin-prog"))
     {
-	buf_output0 (buf_to_net, "E \
+	buf_output0 (protocol, "E \
 warning: this client does not support -i or -u flags in the modules file.\n");
 	return;
     }
     switch (which)
     {
 	case PROG_CHECKIN:
-	    buf_output0 (buf_to_net, "Set-checkin-prog ");
+	    buf_output0 (protocol, "Set-checkin-prog ");
 	    break;
 	case PROG_UPDATE:
-	    buf_output0 (buf_to_net, "Set-update-prog ");
+	    buf_output0 (protocol, "Set-update-prog ");
 	    break;
     }
-    buf_output0 (buf_to_net, dir);
-    buf_append_char (buf_to_net, '\n');
-    buf_output0 (buf_to_net, name);
-    buf_append_char (buf_to_net, '\n');
+    buf_output0 (protocol, dir);
+    buf_append_char (protocol, '\n');
+    buf_output0 (protocol, name);
+    buf_append_char (protocol, '\n');
+    buf_send_counted (protocol);
 }
 
 static void
@@ -4971,7 +4970,6 @@ server_cleanup (sig)
 }
 
 int server_active = 0;
-int server_expanding = 0;
 
 int
 server (argc, argv)

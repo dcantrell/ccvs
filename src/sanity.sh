@@ -9651,51 +9651,80 @@ args: realmodule"
 "${PROG}"' [a-z]*: module `realmodule/a'\'' is a request for a file in a module which is not a directory
 '"${PROG}"' \[[a-z]* aborted\]: cannot expand modules'
 
-	  # FIXCVS: The client gets confused in these cases and tries to
-	  # store the scripts in the wrong places.
-	  if $remote; then :; else
-	    # Now test the ability to check out a single file from a directory
+	  # Now test the ability to check out a single file from a directory
+	  if $remote; then
+	    dotest modules5-18 "${testcvs} co dirmodule/a" \
+"U dirmodule/a
+${PROG} [a-z]*: Executing ..${CVSROOT_DIRNAME}/checkout\.sh. .dirmodule..
+checkout script invoked in .*
+args: dirmodule"
+	  else
 	    dotest modules5-18 "${testcvs} co dirmodule/a" \
 "U dirmodule/a
 ${PROG} [a-z]*: Executing ..${CVSROOT_DIRNAME}/checkout\.sh. .dirmodule..
 checkout script invoked in ${TESTDIR}/1
 args: dirmodule"
-	    dotest modules5-19 "test -d dirmodule && test -f dirmodule/a" ""
-	    dotest_fail modules5-20 "test -f dirmodule/b" ""
-	    dotest modules5-21 "echo yes | ${testcvs} release -d dirmodule" \
+	  fi
+	  dotest modules5-19 "test -d dirmodule && test -f dirmodule/a" ""
+	  dotest_fail modules5-20 "test -f dirmodule/b" ""
+	  dotest modules5-21 "echo yes | ${testcvs} release -d dirmodule" \
 "You have \[0\] altered files in this repository\.
 Are you sure you want to release (and delete) directory .dirmodule.: "
 
-	    # Now test the ability to correctly reject a non-existent filename.
-	    # For maximum studliness we would check that an error message is
-	    # being output.
-	    # We accept a zero exit status because it is what CVS does
-	    # (Dec 95).  Probably the exit status should be nonzero,
-	    # however.
+	  # Now test the ability to correctly reject a non-existent filename.
+	  # For maximum studliness we would check that an error message is
+	  # being output.
+	  # We accept a zero exit status because it is what CVS does
+	  # (Dec 95).  Probably the exit status should be nonzero,
+	  # however.
+	  if $remote; then
+	    dotest modules5-22 "${testcvs} co dirmodule/nonexist" \
+"${PROG} [a-z]*: warning: new-born dirmodule/nonexist has disappeared
+${PROG} [a-z]*: Executing ..${CVSROOT_DIRNAME}/checkout\.sh. .dirmodule..
+checkout script invoked in .*
+args: dirmodule"
+	  else
 	    dotest modules5-22 "${testcvs} co dirmodule/nonexist" \
 "${PROG} [a-z]*: warning: new-born dirmodule/nonexist has disappeared
 ${PROG} [a-z]*: Executing ..${CVSROOT_DIRNAME}/checkout\.sh. .dirmodule..
 checkout script invoked in ${TESTDIR}/1
 args: dirmodule"
+	  fi
+	  # We tolerate the creation of the dirmodule directory, since that
+	  # is what CVS does, not because we view that as preferable to not
+	  # creating it.
+	  dotest_fail modules5-23 "test -f dirmodule/a || test -f dirmodule/b" ""
+	  rm -r dirmodule
 
-	    # We tolerate the creation of the dirmodule directory, since that
-	    # is what CVS does, not because we view that as preferable to not
-	    # creating it.
-	    dotest_fail modules5-23 "test -f dirmodule/a || test -f dirmodule/b" ""
-	    rm -r dirmodule
-
-	    # Now test that a module using -d checks out to the specified
-	    # directory.
+	  # Now test that a module using -d checks out to the specified
+	  # directory.
+	  if $remote; then
+	    dotest modules5-24 "${testcvs} -q co namedmodule" \
+"U nameddir/a
+U nameddir/b
+checkout script invoked in .*
+args: nameddir"
+	  else
 	    dotest modules5-24 "${testcvs} -q co namedmodule" \
 "U nameddir/a
 U nameddir/b
 checkout script invoked in ${TESTDIR}/1
 args: nameddir"
-	    dotest modules5-25 "test -f nameddir/a && test -f nameddir/b" ""
-	    echo add line >>nameddir/a
-	    # This seems suspicious: when we checkout an existing directory,
-	    # the checkout script gets executed in addition to the update
-	    # script.  Is that by design or accident?
+	  fi
+	  dotest modules5-25 "test -f nameddir/a && test -f nameddir/b" ""
+	  echo add line >>nameddir/a
+	  # This seems suspicious: when we checkout an existing directory,
+	  # the checkout script gets executed in addition to the update
+	  # script.  Is that by design or accident?
+	  if $remote; then
+	    dotest modules5-26 "${testcvs} -q co namedmodule" \
+"M nameddir/a
+${PROG} [a-z]*: Executing ..${CVSROOT_DIRNAME}/update\.sh. .${CVSROOT_DIRNAME}/first-dir/subdir..
+update script invoked in .*/nameddir
+args: ${CVSROOT_DIRNAME}/first-dir/subdir
+checkout script invoked in .*
+args: nameddir"
+	  else
 	    dotest modules5-26 "${testcvs} -q co namedmodule" \
 "M nameddir/a
 ${PROG} [a-z]*: Executing ..${CVSROOT_DIRNAME}/update\.sh. .${CVSROOT_DIRNAME}/first-dir/subdir..
@@ -9703,7 +9732,18 @@ update script invoked in ${TESTDIR}/1/nameddir
 args: ${CVSROOT_DIRNAME}/first-dir/subdir
 checkout script invoked in ${TESTDIR}/1
 args: nameddir"
-	    rm nameddir/a
+	  fi
+	  rm nameddir/a
+
+	  if $remote; then
+	    dotest modules5-27 "${testcvs} -q co namedmodule" \
+"U nameddir/a
+${PROG} [a-z]*: Executing ..${CVSROOT_DIRNAME}/update\.sh. .${CVSROOT_DIRNAME}/first-dir/subdir..
+update script invoked in .*/nameddir
+args: ${CVSROOT_DIRNAME}/first-dir/subdir
+checkout script invoked in .*
+args: nameddir"
+	  else
 	    dotest modules5-27 "${testcvs} -q co namedmodule" \
 "U nameddir/a
 ${PROG} [a-z]*: Executing ..${CVSROOT_DIRNAME}/update\.sh. .${CVSROOT_DIRNAME}/first-dir/subdir..
@@ -9711,10 +9751,10 @@ update script invoked in ${TESTDIR}/1/nameddir
 args: ${CVSROOT_DIRNAME}/first-dir/subdir
 checkout script invoked in ${TESTDIR}/1
 args: nameddir"
-	    dotest modules5-28 "echo yes | ${testcvs} release -d nameddir" \
+	  fi
+	  dotest modules5-28 "echo yes | ${testcvs} release -d nameddir" \
 "You have \[0\] altered files in this repository\.
 Are you sure you want to release (and delete) directory .nameddir.: "
-	  fi
 
 	  cd ..
 	  rm -rf 1 ${CVSROOT_DIRNAME}/first-dir ${CVSROOT_DIRNAME}/*.sh
