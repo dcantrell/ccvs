@@ -1,3 +1,7 @@
+Tue Jul 22 17:35:31 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* INSTALL (PowerPC): Add item for Lynx 2.5.
+
 21 Jul 1997  Jim Kingdon
 
 	* Makefile.in (DISTFILES): Add cvsnt.dsp.
