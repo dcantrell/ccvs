@@ -1,5 +1,13 @@
 2004-05-19  Derek Price  <derek@ximbiot.com>
 
+	* cvs.texinfo (log): Updated since we display in local time now.
+	Also added some examples.
+	(Patch from Bart Robinson  <lomew@riverbed.com>.)
+
+	* cvs.1: Regenerated.
+
+2004-05-19  Derek Price  <derek@ximbiot.com>
+
 	* Makefile.am (cvs.1): Generate in $(srcdir).
 	(MAINTAINERCLEANFILES): Remove cvs.1.
 

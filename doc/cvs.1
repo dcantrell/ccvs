@@ -2958,10 +2958,12 @@ The output includes the location of the \fBrcs\fR file,
 the \fIhead\fR revision (the latest revision on the
 trunk), all symbolic names (tags) and some other
 things.  For each revision, the revision number, the
+date, the
 author, the number of lines added/deleted and the log
-message are printed.  All times are displayed in
-Coordinated Universal Time (UTC).  (Other parts of
-\fBcvs\fR print times in the local timezone).
+message are printed.  All dates are displayed in local
+time at the client.  This is typically specified in the
+\fB$TZ\fR environment variable, which can be set to
+govern how \fBlog\fR displays dates.
 .SP
 \fBNote: \fBlog\fB uses \fB-R\fB in a way that conflicts
 with the normal use inside \fBcvs\fB (see node `Common options\(aq in the CVS manual).\fR
@@ -3150,7 +3152,26 @@ selected by \fB-b\fR and \fB-r\fR.
 .SP
 .SH "log examples"
 .SP
-Contributed examples are gratefully accepted.
+.IX "Timezone, in output"
+.IX "Zone, time, in output"
+Since \fBlog\fR shows dates in local time,
+you might want to see them in Coordinated Universal Time (UTC) or
+some other timezone.
+To do this you can set your \fB$TZ\fR environment
+variable before invoking \fBcvs\fR:
+.SP
+.PD 0
+.SP
+.IP "" 2
+$ TZ=UTC cvs log foo.c
+.IP "" 2
+$ TZ=EST cvs log bar.c
+
+.PD
+.IP "" 0
+.SP
+(If you are using a \fBcsh\fR-style shell, like \fBtcsh\fR,
+you would need to prefix the examples above with \fBenv\fR.)
 .SP
 .SH "ls & rls"
 .IX "ls (subcommand)"
