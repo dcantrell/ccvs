@@ -1,8 +1,16 @@
+Thu Sep 25 23:14:47 1997  Noel Cragg  <noel@swish.red-bean.com>
+
+	* parseinfo.c (Parse_Info): fix typo in the trace message.
+
 Thu Sep 25 14:22:54 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* build_src.com: Also link with diff.olb.
 
 	* main.c (Make_Date): If gmtime returns NULL, try localtime.
+
+Wed Sep 24 19:18:40 1997  Noel Cragg  <noel@swish.red-bean.com>
+
+	* checkout.c (checkout): fix typo in comment.
 
 Wed Sep 24 08:31:46 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
