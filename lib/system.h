@@ -315,26 +315,26 @@ extern int errno;
 /* Under OS/2, this must be included _after_ stdio.h; that's why we do
    it here. */
 #ifdef USE_OWN_TCPIP_H
-#include "tcpip.h"
+# include "tcpip.h"
 #endif
 
 #ifdef HAVE_FCNTL_H
-#include <fcntl.h>
+# include <fcntl.h>
 #else
-#include <sys/file.h>
+# include <sys/file.h>
 #endif
 
 #ifndef SEEK_SET
-#define SEEK_SET 0
-#define SEEK_CUR 1
-#define SEEK_END 2
+# define SEEK_SET 0
+# define SEEK_CUR 1
+# define SEEK_END 2
 #endif
 
 #ifndef F_OK
-#define F_OK 0
-#define X_OK 1
-#define W_OK 2
-#define R_OK 4
+# define F_OK 0
+# define X_OK 1
+# define W_OK 2
+# define R_OK 4
 #endif
 
 #if HAVE_DIRENT_H
@@ -359,7 +359,7 @@ extern int errno;
 #define convert_blocks(b, k) ((k) ? ((b) + 1) / 2 : (b))
 
 #ifndef S_ISLNK
-#define lstat stat
+# define lstat stat
 #endif
 
 /*
@@ -367,13 +367,13 @@ extern int errno;
  * because "config.h" is always included last.
  */
 #ifndef S_IWRITE
-#define	S_IWRITE	0000200		/* write permission, owner */
+# define	S_IWRITE	0000200    /* write permission, owner */
 #endif
 #ifndef S_IWGRP
-#define	S_IWGRP		0000020		/* write permission, grougroup */
+# define	S_IWGRP		0000020    /* write permission, grougroup */
 #endif
 #ifndef S_IWOTH
-#define	S_IWOTH		0000002		/* write permission, other */
+# define	S_IWOTH		0000002    /* write permission, other */
 #endif
 
 /* Under non-UNIX operating systems (MS-DOS, WinNT, MacOS), many filesystem
@@ -382,51 +382,51 @@ extern int errno;
    can hang their own definitions.  */
 
 #ifndef CVS_ACCESS
-#define CVS_ACCESS access
+# define CVS_ACCESS access
 #endif
 
 #ifndef CVS_CHDIR
-#define CVS_CHDIR chdir
+# define CVS_CHDIR chdir
 #endif
 
 #ifndef CVS_CREAT
-#define CVS_CREAT creat
+# define CVS_CREAT creat
 #endif
 
 #ifndef CVS_FOPEN
-#define CVS_FOPEN fopen
+# define CVS_FOPEN fopen
 #endif
 
 #ifndef CVS_FDOPEN
-#define CVS_FDOPEN fdopen
+# define CVS_FDOPEN fdopen
 #endif
 
 #ifndef CVS_MKDIR
-#define CVS_MKDIR mkdir
+# define CVS_MKDIR mkdir
 #endif
 
 #ifndef CVS_OPEN
-#define CVS_OPEN open
+# define CVS_OPEN open
 #endif
 
 #ifndef CVS_READDIR
-#define CVS_READDIR readdir
+# define CVS_READDIR readdir
 #endif
 
 #ifndef CVS_CLOSEDIR
-#define CVS_CLOSEDIR closedir
+# define CVS_CLOSEDIR closedir
 #endif
 
 #ifndef CVS_OPENDIR
-#define CVS_OPENDIR opendir
+# define CVS_OPENDIR opendir
 #endif
 
 #ifndef CVS_RENAME
-#define CVS_RENAME rename
+# define CVS_RENAME rename
 #endif
 
 #ifndef CVS_RMDIR
-#define CVS_RMDIR rmdir
+# define CVS_RMDIR rmdir
 #endif
 
 #ifndef CVS_STAT
@@ -457,12 +457,12 @@ extern int errno;
 #endif
 
 #ifndef CVS_UNLINK
-#define CVS_UNLINK unlink
+# define CVS_UNLINK unlink
 #endif
 
 /* Wildcard matcher.  Should be case-insensitive if the system is.  */
 #ifndef CVS_FNMATCH
-#define CVS_FNMATCH fnmatch
+# define CVS_FNMATCH fnmatch
 #endif
 
 #ifndef HAVE_FSEEKO
