@@ -452,6 +452,7 @@ same name already exists in the repository.");
 		    }
 		    else
 		    {
+			char *timestamp = NULL;
 			if (vers->ts_user == NULL)
 			{
 			    /* If this file does not exist locally, assume that
@@ -474,20 +475,28 @@ same name already exists in the repository.");
 			    assert (prev != NULL);
 			    if (!quiet)
 				error (0, 0,
-"file `%s' resurrected from revision %s",
+"Resurrecting file `%s' from revision %s.",
 			               finfo.fullname, prev);
 			    status = RCS_checkout (vers->srcfile, finfo.file,
 						   prev, vers->tag,
 						   vers->options, RUN_TTY,
 			                           NULL, NULL);
+			    xchmod (finfo.file, 1);
 			    if (status != 0)
 			    {
 				error (0, 0, "Failed to resurrect revision %s",
 				       prev);
 				err++;
 			    }
-			    else if (!really_quiet)
-				write_letter (&finfo, 'U');
+			    else
+			    {
+				/* I don't actually set vers->ts_user here
+				 * because it would confuse server_update().
+				 */
+				timestamp = time_stamp (finfo.file);
+				if (!really_quiet)
+				    write_letter (&finfo, 'U');
+			    }
 			    free (prev);
 			}
 			if (!quiet)
@@ -503,16 +512,17 @@ same name already exists in the repository.");
 				   can't think of a way to word the
 				   message which is not confusing.  */
 				error (0, 0,
-"re-adding file `%s' (in place of dead revision %s)",
+"Re-adding file `%s' (in place of dead revision %s).",
 				       finfo.fullname, vers->vn_rcs);
 			}
-			Register (entries, finfo.file, "0", vers->ts_user,
-				  vers->options,
-				  vers->tag, NULL, NULL);
+			Register (entries, finfo.file, "0",
+				  timestamp ? timestamp : vers->ts_user,
+				  vers->options, vers->tag, vers->date, NULL);
+			if (timestamp) free (timestamp);
 #ifdef SERVER_SUPPORT
 			if (server_active && vers->ts_user == NULL)
 			{
-			    /* If we resurrected the file forn the archive, we
+			    /* If we resurrected the file from the archive, we
 			     * need to tell the client about it.
 			     */
 			    server_updated (&finfo, vers,
@@ -573,37 +583,56 @@ cannot resurrect %s; RCS file removed by second party", finfo.fullname);
 		}
 		else
 		{
-
+		    int status;
 		    /*
 		     * There is an RCS file, so remove the "-" from the
 		     * version number and restore the file
 		     */
-		    char *tmp = xmalloc( strlen( vers->vn_user ) );
+		    char *tmp = xmalloc (strlen (vers->vn_user));
 		    (void) strcpy (tmp, vers->vn_user + 1);
 		    (void) strcpy (vers->vn_user, tmp);
-		    free( tmp );
-		    tmp = xmalloc( strlen( finfo.file ) + 13 );
-		    (void) sprintf (tmp, "Resurrected %s", finfo.file);
-		    Register (entries, finfo.file, vers->vn_user, tmp,
-			      vers->options,
-			      vers->tag, vers->date, vers->ts_conflict);
-		    free (tmp);
-
-		    /* XXX - bugs here; this really resurrect the head */
-		    /* Note that this depends on the Register above actually
-		       having written Entries, or else it won't really
-		       check the file out.  */
-		    if (update (2, argv + i - 1) == 0)
+		    free(tmp);
+		    status = RCS_checkout (vers->srcfile, finfo.file,
+					   vers->vn_user, vers->tag,
+					   vers->options, RUN_TTY,
+					   NULL, NULL);
+		    xchmod (finfo.file, 1);
+		    if (status != 0)
 		    {
-			error (0, 0, "%s, version %s, resurrected",
-			       finfo.fullname,
+			error (0, 0, "Failed to resurrect revision %s",
 			       vers->vn_user);
+			err++;
+			tmp = NULL;
 		    }
 		    else
 		    {
-			error (0, 0, "could not resurrect %s", finfo.fullname);
-			err++;
+			/* I don't actually set vers->ts_user here because it
+			 * would confuse server_update().
+			 */
+			tmp = time_stamp (finfo.file);
+			write_letter (&finfo, 'U');
+			if (!quiet)
+			     error (0, 0, "%s, version %s, resurrected",
+			            finfo.fullname, vers->vn_user);
 		    }
+		    Register (entries, finfo.file, vers->vn_user,
+                              tmp, vers->options,
+			      vers->tag, vers->date, NULL);
+		    if (tmp) free (tmp);
+#ifdef SERVER_SUPPORT
+		    if (server_active)
+		    {
+			/* If we resurrected the file from the archive, we
+			 * need to tell the client about it.
+			 */
+			server_updated (&finfo, vers,
+					SERVER_UPDATED,
+					(mode_t) -1, NULL, NULL);
+		    }
+		   /* We don't increment added_files here because this isn't
+		    * a change that needs to be committed.
+		    */
+#endif
 		}
 	    }
 	    else
