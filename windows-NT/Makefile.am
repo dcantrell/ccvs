@@ -37,7 +37,6 @@ EXTRA_DIST = \
 	run.c \
 	sockerror.c \
 	startserver.c \
-	stripslash.c \
 	waitpid.c \
 	woe32.c \
 	.cvsignore
