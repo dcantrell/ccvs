@@ -4,6 +4,14 @@ Fri Aug 16 16:07:38 1996  Norbert Kiesel  <nk@col.sw-ley.de>
 
 		ChangeLog file for zlib
 
+Changes in 1.0.4 (24 Jul 96)
+- In very rare conditions, deflate(s, Z_FINISH) could fail to produce an EOF
+  bit, so the decompressor could decompress all the correct data but went
+  on to attempt decompressing extra garbage data. This affected minigzip too.
+- zlibVersion and gzerror return const char* (needed for DLL)
+- port to RISCOS (no fdopen, no multiple dots, no unlink, no fileno)
+- use z_error only for DEBUG (avoid problem with DLLs)
+
 Changes in 1.0.3 (2 Jul 96)
 - use z_streamp instead of z_stream *, which is now a far pointer in MSDOS
   small and medium models; this makes the library incompatible with previous
