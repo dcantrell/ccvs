@@ -1,3 +1,8 @@
+2004-02-20  Derek Price  <derek@ximbiot.com>
+
+	* ChangeLog, commit.c, filesubr.c, rcs.c, root.c, sanity.sh, subr.c,
+	update.c: Remove VIM editor commands.
+
 2004-02-20  Larry Jones  <lawrence.jones@ugsplm.com>
 
 	* hash.h (struct node): Change data from char * to void *, change

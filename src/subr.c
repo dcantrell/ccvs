@@ -943,8 +943,3 @@ set_nonblock_fd (fd)
 	return errno;
     return 0;
 }
-
-
-
-/* vim:tabstop=8:shiftwidth=4
- */

@@ -809,5 +809,3 @@ main (argc, argv)
    /* NOTREACHED */
 }
 #endif
-/* vim:tabstop=8:shiftwidth=4
- */
