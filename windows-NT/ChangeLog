@@ -1,3 +1,7 @@
+2003-02-25  Derek Price  <derek@ximbiot.com>
+
+	* Makefile.in: Regenerated.
+
 2003-01-20  Derek Price  <derek@ximbiot.com>
 
 	* config.h: Update to dev version 1.11.5.1.

@@ -1,3 +1,7 @@
+2003-02-25  Derek Price  <derek@ximbiot.com>
+
+	* Makefile.in: Regenerated.
+
 2003-02-01  Larry Jones  <lawrence.jones@eds.com>
 
 	* util.c (finish_output): Handle EINTR from waitpid.
