@@ -80,12 +80,6 @@ char *downcase (char *s)
   return (s);
 }
 
-char *strdup (char *src) {
-  char *dst = (char*) xmalloc (strlen(src) + 1);
-  strcpy (dst, src);
-  return (dst);
-}
-
 char *strndup (char *src, int len) {
   char *dst = (char *) xmalloc (len + 1);
   strncpy (dst, src, len);

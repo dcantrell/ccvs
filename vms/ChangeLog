@@ -1,3 +1,8 @@
+Sun Sep  7 17:38:58 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* config.h (HAVE_STRDUP): Remove; not used anywhere.
+	* misc.h, misc.c: Remove strdup per change to ../configure.in.
+
 Sun Jun  8 23:42:42 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* config.h (HAVE_MKFIFO): Remove; not used anywhere.

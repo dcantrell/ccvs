@@ -29,7 +29,6 @@ void x_free();
  * Some string utilities.
  */
 char *downcase ();
-char *strdup ();
 char *strndup ();
 
 int fixpath ();
