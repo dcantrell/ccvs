@@ -67,6 +67,7 @@ OS2_SOURCES = \
        ${srcdir}/filesubr.c \
        ${srcdir}/startserver.c \
        ${srcdir}/stripslash.c \
+       ${srcdir}/savecwd.c \
        ${srcdir}/system.c
 
 # sources we use from the common src dir, ../src
@@ -152,7 +153,6 @@ LIB_SOURCES = \
        ${lib_dir}/getopt1.c \
        ${lib_dir}/md5.c \
        ${lib_dir}/regex.c \
-       ${lib_dir}/savecwd.c \
        ${lib_dir}/sighandle.c \
        ${lib_dir}/valloc.c \
        ${lib_dir}/yesno.c \
@@ -165,6 +165,7 @@ OS2_OBJECTS = \
        ${srcdir}/startserver.o \
        ${srcdir}/stripslash.o \
        ${top_srcdir}/windows-NT/rcmd.o \
+       ${srcdir}/savecwd.o \
        ${srcdir}/system.o
 
 # object files from ../src
@@ -248,7 +249,6 @@ LIB_OBJECTS = \
        ${lib_dir}/getopt1.o \
        ${lib_dir}/md5.o \
        ${lib_dir}/regex.o \
-       ${lib_dir}/savecwd.o \
        ${lib_dir}/sighandle.o \
        ${lib_dir}/valloc.o \
        ${lib_dir}/yesno.o \
