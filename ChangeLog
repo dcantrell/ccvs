@@ -1,3 +1,7 @@
+Mon May 13 10:37:09 1996  Greg A. Woods  <woods@most.weird.com>
+
+	* INSTALL: updated for Sun-3 SunOS 4.1.1_U1 (1.8.2)
+
 Fri May 10 09:39:49 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* NEWS: Document that -d overrides CVS/Root.
