@@ -1,3 +1,21 @@
+2000-12-26  Derek Price  <derek.price@openavenue.com>
+
+	* Makefile.am (EXTRA_DIST): Add cvs.spec.in
+	(cvs.spec): new target
+	* Makefile.in: Regenerated
+	* aclocal.m4: update timestamp
+	* configure: Regenerated
+	* configure.in (AC_OUTPUT): Remove cvs.spec, doc/CVSvn.texi,
+	& src/version.c
+	* stamp-h1.in: update timestamp
+	* contrib/Makefile.in: ditto
+	* lib/Makefile.in: ditto
+	* man/Makefile.in: ditto
+	* tools/Makefile.in: ditto
+	* vms/Makefile.in: ditto
+	* windows-NT/Makefile.in: ditto
+	* windows-NT/SCC/Makefile.in: ditto
+
 2000-12-22  Derek Price  <derek.price@openavenue.com>
 
 	* configure.in (AC_OUTPUT): Stretched
