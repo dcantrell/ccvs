@@ -1,3 +1,7 @@
+Tue Oct  8 12:37:25 1996  Ian Lance Taylor  <ian@cygnus.com>
+
+	* options.h (HAD_RCS4): Remove; no longer used.
+
 Mon Sept 30 13:17:07 1996  Mike Ladwig  <mike@twinpeaks.prc.com>
 
 	* ae_if.c (DoScript): Fixed bug cutting off the last character of

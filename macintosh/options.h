@@ -28,20 +28,6 @@
 #endif
 
 /*
- * If, before installing this version of CVS, you were running RCS V4 AND you
- * are installing this CVS and RCS V5 and GNU diff 1.15 all at the same time,
- * you should turn on the following define.  It only exists to try to do
- * reasonable things with your existing checked out files when you upgrade to
- * RCS V5, since the keyword expansion formats have changed with RCS V5.
- * 
- * If you already have been running with RCS5, or haven't been running with CVS
- * yet at all, or are sticking with RCS V4 for now, leave the commented out.
- */
-#ifndef HAD_RCS4
-/* #define	HAD_RCS4 */
-#endif
-
-/*
  * For portability and heterogeneity reasons, CVS is shipped by default using
  * my own text-file version of the ndbm database library in the src/myndbm.c
  * file.  If you want better performance and are not concerned about
