@@ -1,3 +1,9 @@
+Tue Dec  5 16:01:42 1995  Peter Chubb <peterc@bookworm.sw.oz.au>
+                          (patch applied by Karl Fogel <kfogel@cyclic.com>)
+
+        * update.c (join_file): if vers->vn_user is "0", file has been
+        removed on the current branch, so print an error and return.
+
 Mon Dec  4 14:27:42 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* Version 1.6.3.
