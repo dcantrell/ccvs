@@ -17,7 +17,9 @@
  */
 
 #include "cvs.h"
+#include "assert.h"
 #include "getline.h"
+#include "savecwd.h"
 
 static Node *AddEntryNode PROTO((List * list, Entnode *entnode));
 
@@ -459,6 +461,51 @@ fputentent(fp, p)
 }
 
 
+
+static void
+Entries_Close (list)
+    List *list;
+{
+    if (list)
+    {
+	if (!noexec) 
+	{
+	    if (isfile (CVSADM_ENTLOG))
+		write_entries (list);
+	}
+	dellist (&list);
+    }
+}
+
+
+
+typedef struct entries_cache_s
+{
+    struct saved_cwd dir;
+    List *list;
+} entries_cache_t;
+
+static void
+entries_cache_delproc (Node *p)
+{
+    struct saved_cwd saved;
+    entries_cache_t *e = p->data;
+    save_cwd (&saved);
+    restore_cwd (&e->dir, p->key);
+    Entries_Close (e->list);
+    restore_cwd (&saved, NULL);
+}
+
+
+
+static List *entries_cache;
+
+static void
+Entries_Close_Cache (void)
+{
+    dellist (&entries_cache);
+}
+
 /* Read the entries file into a list, hashing on the file name.
 
    UPDATE_DIR is the name of the current directory, for use in error
@@ -467,7 +514,7 @@ fputentent(fp, p)
 List *
 Entries_Open (aflag, update_dir)
     int aflag;
-    char *update_dir;
+    const char *update_dir;
 {
     List *entries;
     struct stickydirtag *sdtp = NULL;
@@ -477,6 +524,18 @@ Entries_Open (aflag, update_dir)
     int do_rewrite = 0;
     FILE *fpin;
     int sawdir;
+    Node *p;
+    entries_cache_t *e;
+
+    assert (update_dir);
+
+    /* findnode_fn can handle a NULL List *.  */
+    if ((p = findnode_fn (entries_cache, strcmp (update_dir, ".")
+                                         ? update_dir : "")))
+    {
+	e = p->data;
+	return e->list;
+    }
 
     /* get a fresh list... */
     entries = getlist ();
@@ -505,8 +564,7 @@ Entries_Open (aflag, update_dir)
     fpin = CVS_FOPEN (CVSADM_ENT, "r");
     if (fpin == NULL)
     {
-	if (update_dir != NULL)
-	    error (0, 0, "in directory %s:", update_dir);
+	error (0, 0, "in directory %s:", update_dir);
 	error (0, errno, "cannot open %s for reading", CVSADM_ENT);
     }
     else
@@ -517,8 +575,10 @@ Entries_Open (aflag, update_dir)
 	}
 
 	if (fclose (fpin) < 0)
-	    /* FIXME-update-dir: should include update_dir in message.  */
+	{
+	    error (0, 0, "in directory %s:", update_dir);
 	    error (0, errno, "cannot close %s", CVSADM_ENT);
+	}
     }
 
     fpin = CVS_FOPEN (CVSADM_ENTLOG, "r");
@@ -547,8 +607,10 @@ Entries_Open (aflag, update_dir)
 	}
 	do_rewrite = 1;
 	if (fclose (fpin) < 0)
-	    /* FIXME-update-dir: should include update_dir in message.  */
+	{
+	    error (0, 0, "in directory %s:", update_dir);
 	    error (0, errno, "cannot close %s", CVSADM_ENTLOG);
+	}
     }
 
     /* Update the list private data to indicate whether subdirectory
@@ -568,28 +630,29 @@ Entries_Open (aflag, update_dir)
     if (do_rewrite && !noexec)
 	write_entries (entries);
 
+    /* Cache this entry.  */
+    if (!entries_cache)
+    {
+	entries_cache = getlist ();
+	atexit (Entries_Close_Cache);
+    }
+    e = xmalloc (sizeof (entries_cache_t));
+    e->list = entries;
+    save_cwd (&e->dir);
+    p = getnode ();
+    p->key = xstrdup (strcmp (update_dir, ".") ? update_dir : "");
+    p->delproc = entries_cache_delproc;
+    p->data = e;
+    addnode (entries_cache, p);
+
     /* clean up and return */
     if (dirtag)
 	free (dirtag);
     if (dirdate)
 	free (dirdate);
-    return (entries);
+    return entries;
 }
 
-void
-Entries_Close(list)
-    List *list;
-{
-    if (list)
-    {
-	if (!noexec) 
-        {
-            if (isfile (CVSADM_ENTLOG))
-		write_entries (list);
-	}
-	dellist(&list);
-    }
-}
 
 
 /*

@@ -1071,7 +1071,7 @@ update_dirleave_proc (callerdat, dir, err, update_dir, entries)
 	/* FIXME: chdir ("..") loses with symlinks.  */
 	/* Prune empty dirs on the way out - if necessary */
 	(void) CVS_CHDIR ("..");
-	if (update_prune_dirs && isemptydir (dir, 0))
+	if (update_prune_dirs && isemptydir (update_dir, dir, 0))
 	{
 	    /* I'm not sure the existence_error is actually possible (except
 	       in cases where we really should print a message), but since
@@ -1108,7 +1108,8 @@ isremoved (node, closure)
    existence of the CVS directory entry.  Zero otherwise.  If MIGHT_NOT_EXIST
    and the directory doesn't exist, then just return 0.  */
 int
-isemptydir (dir, might_not_exist)
+isemptydir (update_dir, dir, might_not_exist)
+    const char *update_dir;
     const char *dir;
     int might_not_exist;
 {
@@ -1151,9 +1152,8 @@ isemptydir (dir, might_not_exist)
 
 		if (CVS_CHDIR (dir) < 0)
 		    error (1, errno, "cannot change directory to %s", dir);
-		l = Entries_Open (0, NULL);
+		l = Entries_Open (0, update_dir);
 		files_removed = walklist (l, isremoved, 0);
-		Entries_Close (l);
 
 		if (restore_cwd (&cwd, NULL))
 		    error_exit ();

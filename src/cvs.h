@@ -443,9 +443,9 @@ extern int diff_exec PROTO ((const char *file1, const char *file2,
 
 DBM *open_module PROTO((void));
 FILE *open_file PROTO((const char *, const char *));
-List *Find_Directories PROTO((char *repository, int which, List *entries));
-void Entries_Close PROTO((List *entries));
-List *Entries_Open PROTO ((int aflag, char *update_dir));
+List *Find_Directories PROTO((char *repository, const char *update_dir,
+                              int which, List *entries));
+List *Entries_Open PROTO ((int aflag, const char *update_dir));
 void Subdirs_Known PROTO((List *entries));
 void Subdir_Register PROTO((List *, const char *, const char *));
 void Subdir_Deregister PROTO((List *, const char *, const char *));
@@ -619,8 +619,8 @@ void update_delproc PROTO((Node * p));
 void usage PROTO((const char *const *cpp));
 void xchmod PROTO((const char *fname, int writable));
 char *xgetwd PROTO((void));
-List *Find_Names PROTO((char *repository, int which, int aflag,
-                        List **optentries));
+List *Find_Names PROTO((char *repository, const char *update_dir,
+                        int which, int aflag, List **optentries));
 void Register PROTO((List * list, const char *fname, const char *vn,
                      const char *ts, const char *options, const char *tag,
                      const char *date, const char *ts_conflict));
