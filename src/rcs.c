@@ -81,6 +81,9 @@ static void free_rcsnode_contents PROTO((RCSNode *));
 static void free_rcsvers_contents PROTO((RCSVers *));
 static void rcsvers_delproc PROTO((Node * p));
 static char *translate_symtag PROTO((RCSNode *, const char *));
+static char *RCS_addbranch PROTO ((RCSNode *, const char *));
+static char *truncate_revnum_in_place PROTO ((char *));
+static char *truncate_revnum PROTO ((const char *));
 static char *printable_date PROTO((const char *));
 static char *escape_keyword_value PROTO ((const char *, int *));
 static void expand_keywords PROTO((RCSNode *, RCSVers *, const char *,
@@ -2895,6 +2898,41 @@ RCS_getbranch (rcs, tag, force_tag_match)
 
     /* we have the version in our hand, so go for it */
     return (xstrdup (vn->version));
+}
+
+/* Returns the head of the branch which REV is on.  REV can be a
+   branch tag or non-branch tag; symbolic or numeric.
+
+   Returns a newly malloc'd string.  Returns NULL if a symbolic name
+   isn't found.  */
+
+char *
+RCS_branch_head (rcs, rev)
+    RCSNode *rcs;
+    char *rev;
+{
+    char *num;
+    char *br;
+    char *retval;
+
+    assert (rcs != NULL);
+
+    if (RCS_nodeisbranch (rcs, rev))
+	return RCS_getbranch (rcs, rev, 1);
+
+    if (isdigit (*rev))
+	num = xstrdup (rev);
+    else
+    {
+	num = translate_symtag (rcs, rev);
+	if (num == NULL)
+	    return NULL;
+    }
+    br = truncate_revnum (num);
+    retval = RCS_getbranch (rcs, br, 1);
+    free (br);
+    free (num);
+    return retval;
 }
 
 /* Get the branch point for a particular branch, that is the first
