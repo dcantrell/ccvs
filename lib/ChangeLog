@@ -1,5 +1,11 @@
 2004-04-17  Derek Price  <derek@ximbiot.com>
 
+	* libcvs.dsp, libcvs.dep, libcvs.mak: Move...
+	* lib.dsp, lib.dep, lib.mak: ...here.
+	(Patch from Conrad T. Pino <Conrad@Pino.com>.)
+
+2004-04-17  Derek Price  <derek@ximbiot.com>
+
 	* LIB.dsp: Rename to...
 	* lib.dsp: ...this.
 

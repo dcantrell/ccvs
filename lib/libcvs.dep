@@ -1,4 +1,4 @@
-# Microsoft Developer Studio Generated Dependency File, included by LIB.mak
+# Microsoft Developer Studio Generated Dependency File, included by libcvs.mak
 
 .\exitfail.c : \
 	"..\windows-NT\config.h"\
@@ -57,15 +57,15 @@
 	".\unlocked-io.h"\
 	
 
-!IF  "$(CFG)" == "LIB - Win32 Release"
+!IF  "$(CFG)" == "libcvs - Win32 Release"
 
-!ELSEIF  "$(CFG)" == "LIB - Win32 Debug"
+!ELSEIF  "$(CFG)" == "libcvs - Win32 Debug"
 
 !ENDIF 
 
-!IF  "$(CFG)" == "LIB - Win32 Release"
+!IF  "$(CFG)" == "libcvs - Win32 Release"
 
-!ELSEIF  "$(CFG)" == "LIB - Win32 Debug"
+!ELSEIF  "$(CFG)" == "libcvs - Win32 Debug"
 
 !ENDIF 
 
