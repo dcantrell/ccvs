@@ -3599,7 +3599,9 @@ RCS_checkin (rcs, workfile, message, rev, flags)
 
 	dtext->version = xstrdup (newrev);
 	bufsize = 0;
-	get_file(workfile, workfile, "r", &dtext->text, &bufsize, &dtext->len);
+	get_file (workfile, workfile,
+		  rcs->expand != NULL && strcmp (rcs->expand, "b") == 0 ? "rb" : "r",
+		  &dtext->text, &bufsize, &dtext->len);
 
 	if (!checkin_quiet)
 	{
