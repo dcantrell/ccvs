@@ -8849,6 +8849,24 @@ tags at all.
 @item -R
 Print only the name of the @sc{rcs} history file.
 
+@c Note that using a bare revision (in addition to not
+@c being explicitly documented here) is potentially
+@c confusing; it shows the log message to get from the
+@c previous revision to that revision.  "-r1.3 -r1.6"
+@c (equivalent to "-r1.3,1.6") is even worse; it 
+@c prints the messages to get from 1.2 to 1.3 and 1.5
+@c to 1.6.  By analogy with "cvs diff", users might
+@c expect that it is more like specifying a range.
+@c It is not 100% clear to me how much of this should
+@c be documented (for example, multiple -r options
+@c perhaps could/should be deprecated given the false
+@c analogy with "cvs diff").
+@c In general, this section should be rewritten to talk
+@c about messages to get from revision rev1 to rev2,
+@c rather than messages for revision rev2 (that is, the
+@c messages are associated with a change not a static
+@c revision and failing to make this distinction causes
+@c much confusion).
 @item -r@var{revisions}
 Print information about revisions given in the
 comma-separated list @var{revisions} of revisions and
