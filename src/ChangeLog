@@ -1,3 +1,12 @@
+1999-01-21  Eric Mumpower  <nocturne@cygnus.com>
+
+	* sanity.sh (reposmv): Actually modify CVSROOT in current
+	environment when calling functions, rather than trying to achieve
+	the same effect with "CVSROOT=foo functionname". (Many common
+	bourne shells, including those in SunOS and Solaris 2.4-2.7,
+	do not properly handle "ENVVAR=foo command" when "command" is
+	a user-defined shell function rather than an actual executable.)
+
 1999-01-15  Jim Kingdon  <http://www.cyclic.com>
 
 	* sanity.sh (rcs3): Redirect awk's stdin to /dev/null like all the
