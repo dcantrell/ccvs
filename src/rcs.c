@@ -7289,6 +7289,8 @@ RCS_deltas (rcs, fp, rcsbuf, version, op, text, len, log, loglen)
 	rcsbuf = &rcsbuf_local;
     }
 
+   if (log) *log = NULL;
+
     ishead = 1;
     vers = NULL;
     prev_vers = NULL;
@@ -7359,6 +7361,12 @@ RCS_deltas (rcs, fp, rcsbuf, version, op, text, len, log, loglen)
 		&& STREQ (key, "log")
 		&& STREQ (branchversion, version))
 	    {
+		if (*log != NULL)
+		{
+		    error (0, 0, "Duplicate `log' keyword in RCS file (`%s').",
+		           rcs->path);
+		    free (*log);
+		}
 		*log = rcsbuf_valcopy (rcsbuf, value, 0, loglen);
 	    }
 

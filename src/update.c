@@ -200,6 +200,7 @@ update (argc, argv)
 		tag = optarg;
 		break;
 	    case 'D':
+		if (date) free (date);
 		date = Make_Date (optarg);
 		break;
 	    case 'P':
