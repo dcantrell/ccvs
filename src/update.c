@@ -366,7 +366,7 @@ update (int argc, char **argv)
 #endif
 
     if (tag != NULL)
-	tag_check_valid (tag, argc, argv, local, aflag, "");
+	tag_check_valid (tag, argc, argv, local, aflag, "", false);
     if (join_rev1 != NULL)
         tag_check_valid_join (join_rev1, argc, argv, local, aflag, "");
     if (join_rev2 != NULL)
@@ -1265,7 +1265,7 @@ Checking out ", 0);
 		cvs_outerr (finfo->fullname, 0);
 		cvs_outerr ("\n\
 RCS:  ", 0);
-		cvs_outerr (vers_ts->srcfile->path, 0);
+		cvs_outerr (vers_ts->srcfile->print_path, 0);
 		cvs_outerr ("\n\
 VERS: ", 0);
 		cvs_outerr (vers_ts->vn_rcs, 0);

@@ -633,7 +633,8 @@ ls_proc (int argc, char **argv, char *xwhere, char *mwhere, char *mfile,
 
     if (show_tag != NULL && !tag_validated)
     {
-	tag_check_valid (show_tag, argc - 1, argv + 1, local, 0, repository);
+	tag_check_valid (show_tag, argc - 1, argv + 1, local, 0, repository,
+			 false);
 	tag_validated = true;
     }
 

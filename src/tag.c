@@ -103,57 +103,6 @@ static const char *const tag_usage[] =
 
 
 
-/* Add TAG_IN to the val-tags file.  If DB_IN or valtags_filename are set,
- * use them as a cache.  Otherwise open val-tags.
- */
-static void
-add_val_tag (DBM *db_in, char *valtags_filename, char *tag_in)
-{
-    datum tag, value;
-    DBM *db = db_in;
-    char *filename;
-
-    if (valtags_filename)
-	filename = valtags_filename;
-    else
-    {
-	filename = xmalloc (strlen (current_parsed_root->directory)
-			    + sizeof CVSROOTADM
-			    + sizeof CVSROOTADM_VALTAGS + 3);
-	sprintf (filename, "%s/%s/%s", current_parsed_root->directory,
-		 CVSROOTADM, CVSROOTADM_VALTAGS);
-    }
-
-    if (db == NULL)
-    {
-	mode_t omask;
-
-	omask = umask (cvsumask);
-	db = dbm_open (filename, O_RDWR | O_CREAT | O_TRUNC, 0666);
-	(void)umask (omask);
-
-	if (db == NULL)
-	{
-	    error (0, errno, "warning: cannot open %s", filename);
-	    if (!valtags_filename) free (filename);
-	    return;
-	}
-    }
-
-    tag.dptr = tag_in;
-    tag.dsize = strlen (tag_in);
-    value.dptr = "y";
-    value.dsize = 1;
-    if (dbm_store (db, tag, value, DBM_REPLACE) < 0)
-	error (0, errno, "cannot store %s into %s", tag_in, filename);
-
-    if (!valtags_filename) free (filename);
-    if (!db_in) dbm_close (db);
-    return;
-}
-
-
-
 int
 cvstag (int argc, char **argv)
 {
@@ -324,7 +273,11 @@ cvstag (int argc, char **argv)
 			 NULL);
     }
 
-    if (!err && !noexec) add_val_tag (NULL, NULL, symtag);
+    if (!err && !noexec)
+	/* Most of these args don't need to be set to insert the tag in
+	 * val-tags.
+	 */
+	tag_check_valid (symtag, 0, NULL, 0, 0, NULL, true);
 
     return err;
 }
@@ -546,7 +499,7 @@ rtag_proc (int argc, char **argv, char *xwhere, char *mwhere, char *mfile,
     if (numtag != NULL && !numtag_validated)
     {
 	tag_check_valid (numtag, argc - 1, argv + 1, local_specified, 0,
-			 repository );
+			 repository, false);
 	numtag_validated = true;
     }
 
@@ -1445,26 +1398,43 @@ val_direntproc (void *callerdat, const char *dir, const char *repository,
 
 
 
-/* Check to see whether NAME is a valid tag.  If so, return.  If not
-   print an error message and exit.  ARGC, ARGV, LOCAL, and AFLAG specify
-   which files we will be operating on.
-
-   REPOSITORY is the repository if we need to cd into it, or NULL if
-   we are already there, or "" if we should do a W_LOCAL recursion.
-   Sorry for three cases, but the "" case is needed in case the
-   working directories come from diverse parts of the repository, the
-   NULL case avoids an unneccesary chdir, and the non-NULL, non-""
-   case is needed for checkout, where we don't want to chdir if the
-   tag is found in CVSROOTADM_VALTAGS, but there is not (yet) any
-   local directory.  */
+/* With VALID set, insert NAME into val-tags if it is not already present
+ * there.
+ *
+ * Without VALID set, check to see whether NAME is a valid tag.  If so, return.
+ * If not print an error message and exit.
+ *
+ * INPUTS
+ *
+ *   ARGC, ARGV, LOCAL, and AFLAG specify which files we will be operating on.
+ *
+ *   REPOSITORY is the repository if we need to cd into it, or NULL if
+ *     we are already there, or "" if we should do a W_LOCAL recursion.
+ *     Sorry for three cases, but the "" case is needed in case the
+ *     working directories come from diverse parts of the repository, the
+ *     NULL case avoids an unneccesary chdir, and the non-NULL, non-""
+ *     case is needed for checkout, where we don't want to chdir if the
+ *     tag is found in CVSROOTADM_VALTAGS, but there is not (yet) any
+ *     local directory.
+ *
+ * ERRORS
+ *   Errors may be encountered opening and accessing the DBM file.  Write
+ *   errors generate warnings and read errors are fatal.  When !VALID and NAME
+ *   is not in val-tags, errors may also be generated as per start_recursion.
+ *   When !VALID, non-existance of tags both in val-tags and in the archive
+ *   files also causes a fatal error.
+ *
+ * RETURNS
+ *   Nothing.
+ */
 void
 tag_check_valid (char *name, int argc, char **argv, int local, int aflag,
-                 char *repository)
+                 char *repository, bool valid)
 {
     DBM *db;
     char *valtags_filename;
     int nowrite = 0;
-    datum mytag;
+    datum mytag, val;
     struct val_args the_val_args;
     struct saved_cwd cwd;
     int which;
@@ -1472,21 +1442,25 @@ tag_check_valid (char *name, int argc, char **argv, int local, int aflag,
 #ifdef HAVE_PRINTF_PTR
     TRACE (TRACE_FUNCTION,
 	   "tag_check_valid (name=%s, argc=%d, argv=%p, local=%d,\n"
-      "                      aflag=%d, repository=%s)",
+      "                      aflag=%d, repository=%s, valid=%s)",
 	   name ? name : "(name)", argc, (void *)argv, local, aflag,
-	   repository ? repository : "(null)");
+	   repository ? repository : "(null)",
+	   valid ? "true" : "false");
 #else
     TRACE (TRACE_FUNCTION,
 	   "tag_check_valid (name=%s, argc=%d, argv=%lx, local=%d,\n"
-      "                      aflag=%d, repository=%s)",
+      "                      aflag=%d, repository=%s, valid=%s)",
 	   name ? name : "(name)", argc, (unsigned long)argv, local, aflag,
-	   repository ? repository : "(null)");
+	   repository ? repository : "(null)",
+	   valid ? "true" : "false");
 #endif
 
     /* Numeric tags require only a syntactic check.  */
     if (isdigit ((unsigned char) name[0]))
     {
 	char *p;
+	/* insert is not possible for numeric revisions */
+	assert (!valid);
 	for (p = name; *p != '\0'; ++p)
 	{
 	    if (!(isdigit ((unsigned char) *p) || *p == '.'))
@@ -1499,7 +1473,11 @@ Numeric tag %s contains characters other than digits and '.'", name);
     /* Special tags are always valid.  */
     if (strcmp (name, TAG_BASE) == 0
 	|| strcmp (name, TAG_HEAD) == 0)
+    {
+	/* insert is not possible for numeric revisions */
+	assert (!valid);
 	return;
+    }
 
     /* FIXME: This routine doesn't seem to do any locking whatsoever
        (and it is called from places which don't have locks in place).
@@ -1532,12 +1510,12 @@ Numeric tag %s contains characters other than digits and '.'", name);
     }
     if (db != NULL)
     {
-	datum val;
-
 	val = dbm_fetch (db, mytag);
-	if (val.dptr != NULL)
+	if (val.dptr)
 	{
-	    /* Found.  The tag is valid.  */
+	    /* The tag is already in val-tags - return valid and don't insert
+	     * it a second time.
+	     */
 	    dbm_close (db);
 	    free (valtags_filename);
 	    return;
@@ -1545,58 +1523,77 @@ Numeric tag %s contains characters other than digits and '.'", name);
 	/* FIXME: should check errors somehow (add dbm_error to myndbm.c?).  */
     }
 
-    /* We didn't find the tag in val-tags, so look through all the RCS files
-       to see whether it exists there.  Yes, this is expensive, but there
-       is no other way to cope with a tag which might have been created
-       by an old version of CVS, from before val-tags was invented.
-
-       Since we need this code anyway, we also use it to create
-       entries in val-tags in general (that is, the val-tags entry
-       will get created the first time the tag is used, not when the
-       tag is created).  */
-
-    the_val_args.name = name;
-    the_val_args.found = 0;
-
-    which = W_REPOS | W_ATTIC;
-
-    if (repository == NULL || repository[0] == '\0')
-	which |= W_LOCAL;
-    else
+    if (!valid)
     {
-	if (save_cwd (&cwd))
-	    exit (EXIT_FAILURE);
-	if (CVS_CHDIR (repository) < 0)
-	    error (1, errno, "cannot change to %s directory", repository);
-    }
+	/* We didn't find the tag in val-tags, so look through all the RCS files
+	   to see whether it exists there.  Yes, this is expensive, but there
+	   is no other way to cope with a tag which might have been created
+	   by an old version of CVS, from before val-tags was invented.
 
-    start_recursion
-	(val_fileproc, NULL, val_direntproc, NULL,
-	 &the_val_args, argc, argv, local, which, aflag,
-	 CVS_LOCK_READ, NULL, 1, repository);
-    if (repository != NULL && repository[0] != '\0')
-    {
-	if (restore_cwd (&cwd, NULL))
-	    exit (EXIT_FAILURE);
-	free_cwd (&cwd);
-    }
+	   Since we need this code anyway, we also use it to create
+	   entries in val-tags in general (that is, the val-tags entry
+	   will get created the first time the tag is used, not when the
+	   tag is created).  */
 
-    if (!the_val_args.found)
-	error (1, 0, "no such tag %s", name);
-    else
-    {
-	/* The tags is valid but not mentioned in val-tags.  Add it.  */
-	if (noexec || nowrite)
+	the_val_args.name = name;
+	the_val_args.found = 0;
+
+	which = W_REPOS | W_ATTIC;
+
+	if (repository == NULL || repository[0] == '\0')
+	    which |= W_LOCAL;
+	else
 	{
-	    if (db != NULL)
-		dbm_close (db);
+	    if (save_cwd (&cwd))
+		exit (EXIT_FAILURE);
+	    if (CVS_CHDIR (repository) < 0)
+		error (1, errno, "cannot change to %s directory", repository);
+	}
+
+	start_recursion
+	    (val_fileproc, NULL, val_direntproc, NULL,
+	     &the_val_args, argc, argv, local, which, aflag,
+	     CVS_LOCK_READ, NULL, 1, repository);
+	if (repository != NULL && repository[0] != '\0')
+	{
+	    if (restore_cwd (&cwd, NULL))
+		exit (EXIT_FAILURE);
+	    free_cwd (&cwd);
+	}
+
+	if (!the_val_args.found)
+	    error (1, 0, "no such tag %s", name);
+    }
+
+    /* The tags is valid but not mentioned in val-tags.  Add it.  */
+    if (noexec || nowrite)
+    {
+	if (db != NULL)
+	    dbm_close (db);
+	free (valtags_filename);
+	return;
+    }
+
+    if (db == NULL)
+    {
+	mode_t omask;
+	omask = umask (cvsumask);
+	db = dbm_open (valtags_filename, O_RDWR | O_CREAT | O_TRUNC, 0666);
+	(void)umask (omask);
+
+	if (db == NULL)
+	{
+	    error (0, errno, "warning: cannot create %s", valtags_filename);
 	    free (valtags_filename);
 	    return;
 	}
-
-	add_val_tag (db, valtags_filename, name);
-	if (db != NULL) dbm_close (db);
     }
+    val.dptr = "y";
+    val.dsize = 1;
+    if (dbm_store (db, mytag, val, DBM_REPLACE) < 0)
+	error (0, errno, "cannot store %s into %s", name,
+	       valtags_filename);
+    dbm_close (db);
     free (valtags_filename);
 }
 
@@ -1631,7 +1628,7 @@ tag_check_valid_join (char *join_tag, int argc, char **argv, int local,
 "argument to join may not contain a date specifier without a tag");
     }
 
-    tag_check_valid (c, argc, argv, local, aflag, repository);
+    tag_check_valid (c, argc, argv, local, aflag, repository, false);
 
     free (c);
 }
