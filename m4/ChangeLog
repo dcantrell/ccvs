@@ -1,3 +1,7 @@
+2004-11-03  Mark D. Baushke  <mdb@cvshome.org>
+
+	* uint32_t.m4: Update from GNULIB.
+
 2004-11-03  Derek Price  <derek@ximbiot.com>
 
 	* bison.m4 (gl_BISON): Update comment to specify the correct Automake
