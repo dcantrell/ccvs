@@ -690,9 +690,11 @@ update_filesdone_proc (err, repository, update_dir)
     /* Clean up CVS admin dirs if we are export */
     if (strcmp (command_name, "export") == 0)
     {
-	run_setup ("%s -fr", RM);
-	run_arg (CVSADM);
-	(void) run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL);
+	/* I'm not sure the existence_error is actually possible (except
+	   in cases where we really should print a message), but since
+	   this code used to ignore all errors, I'll play it safe.  */
+	if (unlink_file_dir (CVSADM) < 0 && !existence_error (errno))
+	    error (0, errno, "cannot remove %s directory", CVSADM);
     }
 #ifdef CVSADM_ROOT
 #ifdef SERVER_SUPPORT
@@ -834,9 +836,11 @@ update_dirleave_proc (dir, err, update_dir)
     (void) chdir ("..");
     if (update_prune_dirs && isemptydir (dir))
     {
-	run_setup ("%s -fr", RM);
-	run_arg (dir);
-	(void) run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL);
+	/* I'm not sure the existence_error is actually possible (except
+	   in cases where we really should print a message), but since
+	   this code used to ignore all errors, I'll play it safe.  */
+	if (unlink_file_dir (dir) < 0 && !existence_error (errno))
+	    error (0, errno, "cannot remove %s directory", dir);
     }
 
     return (err);
