@@ -1,3 +1,10 @@
+Sat May  3 14:57:40 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* sanity.sh (basic1): Rewrite test (use dotest, unroll the loops
+	which IMHO makes the test a zillion times more understandable, and
+	only do the variant which tests for 4 files at a time--we test one
+	file at a time lots of places).
+
 2 May 1997  Ziv Gigus <ziv@rest.home.net>
 	    and Jim Kingdon
 

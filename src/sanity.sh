@@ -904,121 +904,380 @@ done'
 	  rm -f ${CVSROOT_DIRNAME}/topfile,v
 	  ;;
 
-	basic1) # first dive - add a files, first singly, then in a group.
-		mkdir ${CVSROOT_DIRNAME}/first-dir
-		mkdir 1; cd 1
-		# check out an empty directory
-		if ${CVS} co first-dir  ; then
-		  echo "PASS: test 13a" >>${LOGFILE}
-		else
-		  echo "FAIL: test 13a" | tee -a ${LOGFILE}; exit 1
-		fi
+	basic1)
+	  # first dive - add a files, first singly, then in a group.
+	  mkdir ${CVSROOT_DIRNAME}/first-dir
+	  mkdir 1; cd 1
+	  # check out an empty directory
+	  dotest basic1-1 "${testcvs} -q co first-dir" ''
 
-		cd first-dir
-		files=first-file
-		for i in a b ; do
-			for j in ${files} ; do
-				echo $j > $j
-			done
+	  cd first-dir
+	  echo file2 >file2
+	  echo file3 >file3
+	  echo file4 >file4
+	  echo file5 >file5
 
-			for do in add rm ; do
-				for j in ${do} "commit -m test" ; do
-					# ${do}
-					if ${CVS} $j ${files}  >> ${LOGFILE} 2>&1; then
-					  echo "PASS: test 14-${do}-$j" >>${LOGFILE}
-					else
-					  echo "FAIL: test 14-${do}-$j" | tee -a ${LOGFILE}; exit 1
-					fi
+	  dotest basic1-14-add-add "${testcvs} add file2 file3 file4 file5" \
+"${PROG} [a-z]*: scheduling file \`file2' for addition
+${PROG} [a-z]*: scheduling file \`file3' for addition
+${PROG} [a-z]*: scheduling file \`file4' for addition
+${PROG} [a-z]*: scheduling file \`file5' for addition
+${PROG} [a-z]*: use 'cvs commit' to add these files permanently"
+	  dotest basic1-15-add-add \
+"${testcvs} -q update file2 file3 file4 file5" \
+"A file2
+A file3
+A file4
+A file5"
+	  dotest basic1-16-add-add "${testcvs} -q update" \
+"A file2
+A file3
+A file4
+A file5"
+	  dotest basic1-17-add-add "${testcvs} -q status" \
+"===================================================================
+File: file2            	Status: Locally Added
 
-					# update it.
-					if test "${do}" = "rm" -a "$j" != "commit -m test" || ${CVS} update ${files} ; then
-					  echo "PASS: test 15-${do}-$j" >>${LOGFILE}
-					else
-					  echo "FAIL: test 15-${do}-$j" | tee -a ${LOGFILE}; exit 1
-					fi
+   Working revision:	New file!
+   Repository revision:	No revision control file
+   Sticky Tag:		(none)
+   Sticky Date:		(none)
+   Sticky Options:	(none)
 
-					# update all.
-					if ${CVS} update  ; then
-					  echo "PASS: test 16-${do}-$j" >>${LOGFILE}
-					else
-					  echo "FAIL: test 16-${do}-$j" | tee -a ${LOGFILE}; exit 1
-					fi
+===================================================================
+File: file3            	Status: Locally Added
 
-					# status all.
-					if ${CVS} status  >> ${LOGFILE}; then
-					  echo "PASS: test 17-${do}-$j" >>${LOGFILE}
-					else
-					  echo "FAIL: test 17-${do}-$j" | tee -a ${LOGFILE}; exit 1
-					fi
+   Working revision:	New file!
+   Repository revision:	No revision control file
+   Sticky Tag:		(none)
+   Sticky Date:		(none)
+   Sticky Options:	(none)
 
-		# FIXME: this one doesn't work yet for added files.
-					# log all.
-					if ${CVS} log  >> ${LOGFILE}; then
-					  echo "PASS: test 18-${do}-$j" >>${LOGFILE}
-					else
-					  echo "FAIL: test 18-${do}-$j" | tee -a ${LOGFILE}
-					fi
+===================================================================
+File: file4            	Status: Locally Added
 
-					cd ..
-					# update all.
-					if ${CVS} update  ; then
-					  echo "PASS: test 21-${do}-$j" >>${LOGFILE}
-					else
-					  echo "FAIL: test 21-${do}-$j" | tee -a ${LOGFILE}; exit 1
-					fi
+   Working revision:	New file!
+   Repository revision:	No revision control file
+   Sticky Tag:		(none)
+   Sticky Date:		(none)
+   Sticky Options:	(none)
 
-					# log all.
-		# FIXME: doesn't work right for added files.
-					if ${CVS} log first-dir  >> ${LOGFILE}; then
-					  echo "PASS: test 22-${do}-$j" >>${LOGFILE}
-					else
-					  echo "FAIL: test 22-${do}-$j" | tee -a ${LOGFILE}
-					fi
+===================================================================
+File: file5            	Status: Locally Added
 
-					# status all.
-					if ${CVS} status first-dir  >> ${LOGFILE}; then
-					  echo "PASS: test 23-${do}-$j" >>${LOGFILE}
-					else
-					  echo "FAIL: test 23-${do}-$j" | tee -a ${LOGFILE}; exit 1
-					fi
+   Working revision:	New file!
+   Repository revision:	No revision control file
+   Sticky Tag:		(none)
+   Sticky Date:		(none)
+   Sticky Options:	(none)"
+	  dotest basic1-18-add-add "${testcvs} -q log" \
+"${PROG} [a-z]*: file2 has been added, but not committed
+${PROG} [a-z]*: file3 has been added, but not committed
+${PROG} [a-z]*: file4 has been added, but not committed
+${PROG} [a-z]*: file5 has been added, but not committed"
+	  cd ..
+	  dotest basic1-21-add-add "${testcvs} -q update" \
+"A first-dir/file2
+A first-dir/file3
+A first-dir/file4
+A first-dir/file5"
+	  # FIXCVS?  Shouldn't this read first-dir/file2 instead of file2?
+	  dotest basic1-22-add-add "${testcvs} log first-dir" \
+"${PROG} [a-z]*: Logging first-dir
+${PROG} [a-z]*: file2 has been added, but not committed
+${PROG} [a-z]*: file3 has been added, but not committed
+${PROG} [a-z]*: file4 has been added, but not committed
+${PROG} [a-z]*: file5 has been added, but not committed"
+	  dotest basic1-23-add-add "${testcvs} status first-dir" \
+"${PROG} [a-z]*: Examining first-dir
+===================================================================
+File: file2            	Status: Locally Added
 
-					# update all.
-					if ${CVS} update first-dir  ; then
-					  echo "PASS: test 24-${do}-$j" >>${LOGFILE}
-					else
-					  echo "FAIL: test 24-${do}-$j" | tee -a ${LOGFILE} ; exit 1
-					fi
+   Working revision:	New file!
+   Repository revision:	No revision control file
+   Sticky Tag:		(none)
+   Sticky Date:		(none)
+   Sticky Options:	(none)
 
-					# update all.
-					if ${CVS} co first-dir  ; then
-					  echo "PASS: test 27-${do}-$j" >>${LOGFILE}
-					else
-					  echo "FAIL: test 27-${do}-$j" | tee -a ${LOGFILE} ; exit 1
-					fi
+===================================================================
+File: file3            	Status: Locally Added
 
-					cd first-dir
-				done # j
-				rm -f ${files}
-			done # do
+   Working revision:	New file!
+   Repository revision:	No revision control file
+   Sticky Tag:		(none)
+   Sticky Date:		(none)
+   Sticky Options:	(none)
 
-			files="file2 file3 file4 file5"
-		done
-		if ${CVS} tag first-dive  ; then
-		  echo "PASS: test 28" >>${LOGFILE}
-		else
-		  echo "FAIL: test 28" | tee -a ${LOGFILE} ; exit 1
-		fi
-		cd ..
-		cd ..
+===================================================================
+File: file4            	Status: Locally Added
 
-		if test "$keep" = yes; then
-		  echo Keeping /tmp/cvs-sanity and exiting due to --keep
-		  exit 0
-		fi
+   Working revision:	New file!
+   Repository revision:	No revision control file
+   Sticky Tag:		(none)
+   Sticky Date:		(none)
+   Sticky Options:	(none)
 
-		rm -rf 1
-		rm -rf ${CVSROOT_DIRNAME}/first-dir
-		;;
+===================================================================
+File: file5            	Status: Locally Added
+
+   Working revision:	New file!
+   Repository revision:	No revision control file
+   Sticky Tag:		(none)
+   Sticky Date:		(none)
+   Sticky Options:	(none)"
+	  dotest basic1-24-add-add "${testcvs} update first-dir" \
+"${PROG} [a-z]*: Updating first-dir
+A first-dir/file2
+A first-dir/file3
+A first-dir/file4
+A first-dir/file5"
+	  dotest basic1-27-add-add "${testcvs} co first-dir" \
+"${PROG} [a-z]*: Updating first-dir
+A first-dir/file2
+A first-dir/file3
+A first-dir/file4
+A first-dir/file5"
+	  cd first-dir
+	  dotest basic1-14-add-ci \
+"${testcvs} commit -m test file2 file3 file4 file5" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/file2,v
+done
+Checking in file2;
+${TESTDIR}/cvsroot/first-dir/file2,v  <--  file2
+initial revision: 1\.1
+done
+RCS file: ${TESTDIR}/cvsroot/first-dir/file3,v
+done
+Checking in file3;
+${TESTDIR}/cvsroot/first-dir/file3,v  <--  file3
+initial revision: 1\.1
+done
+RCS file: ${TESTDIR}/cvsroot/first-dir/file4,v
+done
+Checking in file4;
+${TESTDIR}/cvsroot/first-dir/file4,v  <--  file4
+initial revision: 1\.1
+done
+RCS file: ${TESTDIR}/cvsroot/first-dir/file5,v
+done
+Checking in file5;
+${TESTDIR}/cvsroot/first-dir/file5,v  <--  file5
+initial revision: 1\.1
+done"
+	  dotest basic1-15-add-ci \
+"${testcvs} -q update file2 file3 file4 file5" ''
+	  dotest basic1-16-add-ci "${testcvs} -q update" ''
+	  dotest basic1-17-add-ci "${testcvs} -q status" \
+"===================================================================
+File: file2            	Status: Up-to-date
+
+   Working revision:	1\.1.*
+   Repository revision:	1\.1	${TESTDIR}/cvsroot/first-dir/file2,v
+   Sticky Tag:		(none)
+   Sticky Date:		(none)
+   Sticky Options:	(none)
+
+===================================================================
+File: file3            	Status: Up-to-date
+
+   Working revision:	1\.1.*
+   Repository revision:	1\.1	${TESTDIR}/cvsroot/first-dir/file3,v
+   Sticky Tag:		(none)
+   Sticky Date:		(none)
+   Sticky Options:	(none)
+
+===================================================================
+File: file4            	Status: Up-to-date
+
+   Working revision:	1\.1.*
+   Repository revision:	1\.1	${TESTDIR}/cvsroot/first-dir/file4,v
+   Sticky Tag:		(none)
+   Sticky Date:		(none)
+   Sticky Options:	(none)
+
+===================================================================
+File: file5            	Status: Up-to-date
+
+   Working revision:	1\.1.*
+   Repository revision:	1\.1	${TESTDIR}/cvsroot/first-dir/file5,v
+   Sticky Tag:		(none)
+   Sticky Date:		(none)
+   Sticky Options:	(none)"
+	  # The "log" tests and friends probably already test the output 
+	  # from log quite adequately.
+	  # Note: using dotest fails here.  It seems to be related
+	  # to the output being sufficiently large (Red Hat 4.1).
+	  # dotest basic1-18-add-ci "${testcvs} log" "${DOTSTAR}"
+	  if ${testcvs} -q log >>${LOGFILE}; then
+	    pass basic1-18-add-ci
+	  else
+	    pass basic1-18-add-ci
+	  fi
+	  cd ..
+	  dotest basic1-21-add-ci "${testcvs} -q update" ''
+	  # See test basic1-18-add-ci for explanation of non-use of dotest.
+	  if ${testcvs} -q log first-dir >>${LOGFILE}; then
+	    pass basic1-22-add-ci
+	  else
+	    pass basic1-22-add-ci
+	  fi
+	  # At least for the moment I am going to consider 17-add-ci
+	  # an adequate test of the output here.
+	  # See test basic1-18-add-ci for explanation of non-use of dotest.
+	  if ${testcvs} -q status first-dir >>${LOGFILE}; then
+	    pass basic1-23-add-ci
+	  else
+	    pass basic1-23-add-ci
+	  fi
+	  dotest basic1-24-add-ci "${testcvs} -q update first-dir" ''
+	  dotest basic1-27-add-ci "${testcvs} -q co first-dir" ''
+
+	  cd first-dir
+	  rm file2 file3 file4 file5
+	  dotest basic1-14-rm-rm "${testcvs} rm file2 file3 file4 file5" \
+"${PROG} [a-z]*: scheduling .file2. for removal
+${PROG} [a-z]*: scheduling .file3. for removal
+${PROG} [a-z]*: scheduling .file4. for removal
+${PROG} [a-z]*: scheduling .file5. for removal
+${PROG} [a-z]*: use .${PROG} commit. to remove these files permanently"
+	  # 15-rm-rm was commented out.  Why?
+	  dotest basic1-15-rm-rm \
+"${testcvs} -q update file2 file3 file4 file5" \
+"R file2
+R file3
+R file4
+R file5"
+	  dotest basic1-16-rm-rm "${testcvs} -q update" \
+"R file2
+R file3
+R file4
+R file5"
+	  dotest basic1-17-rm-rm "${testcvs} -q status" \
+"===================================================================
+File: no file file2		Status: Locally Removed
+
+   Working revision:	-1\.1.*
+   Repository revision:	1\.1	${TESTDIR}/cvsroot/first-dir/file2,v
+   Sticky Tag:		(none)
+   Sticky Date:		(none)
+   Sticky Options:	(none)
+
+===================================================================
+File: no file file3		Status: Locally Removed
+
+   Working revision:	-1\.1.*
+   Repository revision:	1\.1	${TESTDIR}/cvsroot/first-dir/file3,v
+   Sticky Tag:		(none)
+   Sticky Date:		(none)
+   Sticky Options:	(none)
+
+===================================================================
+File: no file file4		Status: Locally Removed
+
+   Working revision:	-1\.1.*
+   Repository revision:	1\.1	${TESTDIR}/cvsroot/first-dir/file4,v
+   Sticky Tag:		(none)
+   Sticky Date:		(none)
+   Sticky Options:	(none)
+
+===================================================================
+File: no file file5		Status: Locally Removed
+
+   Working revision:	-1\.1.*
+   Repository revision:	1\.1	${TESTDIR}/cvsroot/first-dir/file5,v
+   Sticky Tag:		(none)
+   Sticky Date:		(none)
+   Sticky Options:	(none)"
+	  # Would be nice to test that real logs appear (with dead state
+	  # and all), either here or someplace like log2 tests.
+	  if ${testcvs} -q log >>${LOGFILE}; then
+	    pass basic1-18-rm-rm
+	  else
+	    fail basic1-18-rm-rm
+	  fi
+	  cd ..
+	  dotest basic1-21-rm-rm "${testcvs} -q update" \
+"R first-dir/file2
+R first-dir/file3
+R first-dir/file4
+R first-dir/file5"
+	  if ${testcvs} -q log first-dir >>${LOGFILE}; then
+	    pass basic1-22-rm-rm
+	  else
+	    fail basic1-22-rm-rm
+	  fi
+	  if ${testcvs} -q status first-dir >>${LOGFILE}; then
+	    pass basic1-23-rm-rm
+	  else
+	    fail basic1-23-rm-rm
+	  fi
+	  dotest basic1-24-rm-rm "${testcvs} -q update first-dir" \
+"R first-dir/file2
+R first-dir/file3
+R first-dir/file4
+R first-dir/file5"
+	  dotest basic1-27-rm-rm "${testcvs} -q co first-dir" \
+"R first-dir/file2
+R first-dir/file3
+R first-dir/file4
+R first-dir/file5"
+	  cd first-dir
+	  dotest basic1-14-rm-ci "${testcvs} -q commit -m test" \
+"Removing file2;
+${TESTDIR}/cvsroot/first-dir/file2,v  <--  file2
+new revision: delete; previous revision: 1\.1
+done
+Removing file3;
+${TESTDIR}/cvsroot/first-dir/file3,v  <--  file3
+new revision: delete; previous revision: 1\.1
+done
+Removing file4;
+${TESTDIR}/cvsroot/first-dir/file4,v  <--  file4
+new revision: delete; previous revision: 1\.1
+done
+Removing file5;
+${TESTDIR}/cvsroot/first-dir/file5,v  <--  file5
+new revision: delete; previous revision: 1\.1
+done"
+	  dotest basic1-15-rm-ci \
+"${testcvs} -q update file2 file3 file4 file5" ''
+	  dotest basic1-16-rm-ci "${testcvs} -q update" ''
+	  dotest basic1-17-rm-ci "${testcvs} -q status" ''
+	  # Would be nice to test that real logs appear (with dead state
+	  # and all), either here or someplace like log2 tests.
+	  if ${testcvs} -q log >>${LOGFILE}; then
+	    pass basic1-18-rm-ci
+	  else
+	    fail basic1-18-rm-ci
+	  fi
+	  cd ..
+	  dotest basic1-21-rm-ci "${testcvs} -q update" ''
+	  if ${testcvs} -q log first-dir >>${LOGFILE}; then
+	    pass basic1-22-rm-ci
+	  else
+	    fail basic1-22-rm-ci
+	  fi
+	  if ${testcvs} -q status first-dir >>${LOGFILE}; then
+	    pass basic1-23-rm-ci
+	  else
+	    fail basic1-23-rm-ci
+	  fi
+	  dotest basic1-24-rm-ci "${testcvs} -q update first-dir" ''
+	  dotest basic1-27-rm-ci "${testcvs} -q co first-dir" ''
+	  cd first-dir
+	  # All the files are removed, so nothing gets tagged.
+	  dotest basic1-28 "${testcvs} -q tag first-dive" ''
+	  cd ..
+	  cd ..
+
+	  if test "$keep" = yes; then
+	    echo Keeping /tmp/cvs-sanity and exiting due to --keep
+	    exit 0
+	  fi
+
+	  rm -rf 1
+	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  ;;
 
 	deep)
 	  # Test the ability to operate on directories nested rather deeply.
