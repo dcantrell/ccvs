@@ -18,13 +18,11 @@
 contribdir = $(pkgdatadir)/contrib
 
 contrib_SCRIPTS = \
-	check_cvs \
 	clmerge \
 	cln_hist \
 	commit_prep \
 	cvs2vendor \
 	cvs_acls \
-	cvscheck \
 	debug_check_log \
 	log \
 	log_accum \
@@ -34,14 +32,16 @@ contrib_SCRIPTS = \
 	rcs-to-cvs \
 	rcs2log \
 	rcslock \
-	sccs2rcs
+	sandbox_status \
+	sccs2rcs \
+	validate_repo
 
 contrib_DATA = \
 	README \
 	intro.doc
 
 contrib_MANS = \
-	cvscheck.man
+	sandbox_status.man
 
 bin_LINKS = \
 	rcs2log
@@ -51,7 +51,7 @@ EXTRA_DIST = \
 	$(contrib_DATA) \
 	$(contrib_MANS) \
 	cvs2vendor.sh \
-	cvscheck.sh \
+	sandbox_status.sh \
 	cvshelp.man \
 	debug_check_log.sh \
 	descend.sh \

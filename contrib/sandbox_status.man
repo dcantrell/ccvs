@@ -1,10 +1,10 @@
 .\" Contributed by Lowell Skoog <fluke!lowell@uunet.uu.net>
 .TH CVSCHECK LOCAL "4 March 1991" FLUKE
 .SH NAME
-cvscheck \- identify files added, changed, or removed in a CVS working
+sandbox_status \- identify files added, changed, or removed in a CVS working
 directory
 .SH SYNOPSIS
-.B cvscheck
+.B sandbox_status
 .SH DESCRIPTION
 This command is a housekeeping aid.  It should be run in a working
 directory that has been checked out using CVS.  It identifies files
@@ -24,7 +24,7 @@ This command provides information that is available using CVS
 and CVS
 .BR diff .
 The advantage of
-.B cvscheck
+.B sandbox_status
 is that its output is very concise.  It saves you the strain (and
 potential error) of interpreting the output of CVS
 .B status

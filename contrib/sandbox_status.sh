@@ -1,7 +1,7 @@
 #! /bin/sh
 #
-# cvscheck - identify files added, changed, or removed 
-#            in CVS working directory
+# sandbox_status - identify files added, changed, or removed 
+#                  in CVS working directory
 #
 # Contributed by Lowell Skoog <fluke!lowell@uunet.uu.net>
 # 
@@ -12,7 +12,7 @@
 # added" or "cvs removed".  For directories, it is only practical to
 # determine whether they have been added.
 
-name=cvscheck
+name=sandbox_status
 changes=0
 
 # If we can't run CVS commands in this directory

@@ -1,3 +1,13 @@
+2004-03-31  Derek Price  <derek@ximbiot.com>
+
+	* check_cvs.in: Rename to...
+	* validate_repo.in: ...this.
+	* cvscheck.sh, cvscheck.man: Rename to...
+	* sandbox_status.sh, sandbox_status.man: ...this and this.
+	* Makefile.am (contrib_SCRIPTS): Use new script names.
+	(contrib_MANS, EXTRA_DIST): s/cvscheck/sandbox_status/.
+	* Makefile.in: Regenerated.
+
 2004-01-30  Derek Price  <derek@ximbiot.com>
 
 	Close issue #155.
