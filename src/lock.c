@@ -338,10 +338,9 @@ remove_lock_files (struct lock *lock, int free_repository)
 	if (lock->free_repository)
 	{
 	    free ((char *)lock->repository);
-	    lock->repository = NULL;
 	    lock->free_repository = 0;
-	} else
-	    lock->repository = NULL;
+	}
+	lock->repository = NULL;
 	SIG_endCrSect ();
     }
 }
