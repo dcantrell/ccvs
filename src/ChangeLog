@@ -1,3 +1,7 @@
+2002-12-04  Derek Price  <derek@ximbiot.com>
+
+	* options.h: Remove CVS_ADMIN_GROUP.
+
 2002-12-02  Larry Jones  <lawrence.jones@eds.com>
 
 	* commit.c (commit): Strip leading zeros from numeric revision
