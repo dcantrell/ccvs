@@ -46,7 +46,8 @@ static int findmaxrev PROTO((Node * p, void *closure));
 static int lock_RCS PROTO((char *user, RCSNode *rcs, char *rev,
 			   char *repository));
 static int precommit_list_proc PROTO((Node * p, void *closure));
-static int precommit_proc PROTO((char *repository, char *filter));
+static int precommit_proc PROTO(( char *repository, char *filter,
+                                  void *closure ));
 static int remove_file PROTO ((struct file_info *finfo, char *tag,
 			       char *message));
 static void fixaddfile PROTO((char *file, char *repository));
@@ -76,7 +77,6 @@ static char *write_dirtag;
 static int write_dirnonbranch;
 static char *logfile;
 static List *mulist;
-static List *saved_ulist;
 static char *saved_message;
 static time_t last_register_time;
 
@@ -1098,9 +1098,10 @@ precommit_list_proc (p, closure)
  * Callback proc for pre-commit checking
  */
 static int
-precommit_proc (repository, filter)
+precommit_proc( repository, filter, closure )
     char *repository;
     char *filter;
+    void *closure;
 {
     /* see if the filter is there, only if it's a full path */
     if (isabsolute (filter))
@@ -1125,7 +1126,7 @@ precommit_proc (repository, filter)
 
     run_setup (filter);
     run_arg (repository);
-    (void) walklist (saved_ulist, precommit_list_proc, NULL);
+    (void) walklist( (List *)closure, precommit_list_proc, NULL );
     return (run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL|RUN_REALLY));
 }
 
@@ -1143,6 +1144,7 @@ check_filesdoneproc (callerdat, err, repos, update_dir, entries)
 {
     int n;
     Node *p;
+    List *saved_ulist;
 
     /* find the update list for this dir */
     p = findnode (mulist, update_dir);
@@ -1156,7 +1158,9 @@ check_filesdoneproc (callerdat, err, repos, update_dir, entries)
 	return (err);
 
     /* run any pre-commit checks */
-    if ((n = Parse_Info (CVSROOTADM_COMMITINFO, repos, precommit_proc, 1)) > 0)
+    n = Parse_Info( CVSROOTADM_COMMITINFO, repos, precommit_proc, PIOPT_ALL,
+                    saved_ulist );
+    if (n > 0)
     {
 	error (0, 0, "Pre-commit check failed");
 	err += n;

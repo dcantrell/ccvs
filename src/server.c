@@ -4350,20 +4350,17 @@ struct template_proc_data
     char *repository;
 };
 
-/* Here as a static until we get around to fixing Parse_Info to pass along
-   a void * for it.  */
-static struct template_proc_data *tpd;
-
 static int
-template_proc (repository, template)
+template_proc( repository, template, closure )
     char *repository;
     char *template;
+    void *closure;
 {
     FILE *fp;
     char buf[1024];
     size_t n;
     struct stat sb;
-    struct template_proc_data *data = tpd;
+    struct template_proc_data *data = (struct template_proc_data *)closure;
 
     if (!supported_response ("Template"))
 	/* Might want to warn the user that the rcsinfo feature won't work.  */
@@ -4442,8 +4439,8 @@ server_template (update_dir, repository)
     struct template_proc_data data;
     data.update_dir = update_dir;
     data.repository = repository;
-    tpd = &data;
-    (void) Parse_Info (CVSROOTADM_RCSINFO, repository, template_proc, 1);
+    (void) Parse_Info (CVSROOTADM_RCSINFO, repository, template_proc,
+		       PIOPT_ALL, &data);
 }
 
 static void

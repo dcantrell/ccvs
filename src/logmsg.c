@@ -15,18 +15,20 @@ static int find_type PROTO((Node * p, void *closure));
 static int fmt_proc PROTO((Node * p, void *closure));
 static int logfile_write PROTO((char *repository, char *filter,
 			  char *message, FILE * logfp, List * changes));
-static int rcsinfo_proc PROTO((char *repository, char *template));
+static int rcsinfo_proc PROTO(( char *repository, char *template,
+                                void *closure ));
 static int title_proc PROTO((Node * p, void *closure));
-static int update_logfile_proc PROTO((char *repository, char *filter));
+static int update_logfile_proc PROTO(( char *repository, char *filter,
+                                       void *closure));
 static void setup_tmpfile PROTO((FILE * xfp, char *xprefix, List * changes));
-static int editinfo_proc PROTO((char *repository, char *template));
-static int verifymsg_proc PROTO((char *repository, char *script));
+static int editinfo_proc PROTO(( char *repository, char *template,
+                                 void *closure ));
+static int verifymsg_proc PROTO(( char *repository, char *script,
+                                  void *closure ));
 
 static FILE *fp;
 static char *str_list;
 static char *str_list_format;	/* The format for str_list's contents. */
-static char *editinfo_editor;
-static char *verifymsg_script;
 static Ctype type;
 
 /* 
@@ -194,6 +196,7 @@ do_editor (dir, messagep, repository, changes)
     char *fname;
     struct stat pre_stbuf, post_stbuf;
     int retcode = 0;
+    char *editinfo_editor = NULL;
 
 #ifdef CLIENT_SUPPORT
     assert (!current_parsed_root->isremote != !repository);
@@ -205,6 +208,10 @@ do_editor (dir, messagep, repository, changes)
 	return;
 
     /* Abort creation of temp file if no editor is defined */
+    /* FIXME - why test this here?  Editor is set by configure and
+     * editinfo_editor is really set later in this function.  This test
+     * should either be deleted or moved below the call to Parse_Info().
+     */
     if (strcmp (Editor, "") == 0 && !editinfo_editor)
 	error(1, 0, "no editor defined, must use -e or -m");
 
@@ -228,7 +235,8 @@ do_editor (dir, messagep, repository, changes)
 
     if (repository != NULL)
 	/* tack templates on if necessary */
-	(void) Parse_Info (CVSROOTADM_RCSINFO, repository, rcsinfo_proc, 1);
+	(void) Parse_Info (CVSROOTADM_RCSINFO, repository, rcsinfo_proc,
+		PIOPT_ALL, 0);
     else
     {
 	FILE *tfp;
@@ -295,7 +303,8 @@ do_editor (dir, messagep, repository, changes)
     else
 #endif
     if (repository != NULL)
-	(void) Parse_Info (CVSROOTADM_EDITINFO, repository, editinfo_proc, 0);
+	(void) Parse_Info (CVSROOTADM_EDITINFO, repository, editinfo_proc, 0,
+		 &editinfo_editor);
 
     /* run the editor */
     run_setup (editinfo_editor ? editinfo_editor : Editor);
@@ -418,6 +427,7 @@ do_verify (messagep, repository)
     FILE *fp;
     char *fname;
     int retcode = 0;
+    char *verifymsg_script = NULL;
 
     struct stat pre_stbuf, post_stbuf;
 
@@ -434,7 +444,7 @@ do_verify (messagep, repository)
 
     /* Get the name of the verification script to run  */
 
-    if (Parse_Info (CVSROOTADM_VERIFYMSG, repository, verifymsg_proc, 0) > 0)
+    if (Parse_Info (CVSROOTADM_VERIFYMSG, repository, verifymsg_proc, 0, &verifymsg_script) > 0)
 	error (1, 0, "Message verification failed");
 
     if (!verifymsg_script)
@@ -559,9 +569,10 @@ do_verify (messagep, repository)
  */
 /* ARGSUSED */
 static int
-rcsinfo_proc (repository, template)
+rcsinfo_proc( repository, template, closure )
     char *repository;
     char *template;
+    void *closure;
 {
     static char *last_template;
     FILE *tfp;
@@ -601,9 +612,11 @@ rcsinfo_proc (repository, template)
  * directory in the source repository.  The log information is fed into the
  * specified program as standard input.
  */
-static FILE *logfp;
-static char *message;
-static List *changes;
+struct ulp_data {
+    FILE *logfp;
+    char *message;
+    List *changes;
+};
 
 void
 Update_Logfile (repository, xmessage, xlogfp, xchanges)
@@ -612,28 +625,34 @@ Update_Logfile (repository, xmessage, xlogfp, xchanges)
     FILE *xlogfp;
     List *xchanges;
 {
+    struct ulp_data ud;
+
     /* nothing to do if the list is empty */
     if (xchanges == NULL || xchanges->list->next == xchanges->list)
 	return;
 
-    /* set up static vars for update_logfile_proc */
-    message = xmessage;
-    logfp = xlogfp;
-    changes = xchanges;
+    /* set up vars for update_logfile_proc */
+    ud.message = xmessage;
+    ud.logfp = xlogfp;
+    ud.changes = xchanges;
 
     /* call Parse_Info to do the actual logfile updates */
-    (void) Parse_Info (CVSROOTADM_LOGINFO, repository, update_logfile_proc, 1);
+    (void) Parse_Info (CVSROOTADM_LOGINFO, repository, update_logfile_proc,
+		PIOPT_ALL, &ud);
 }
 
 /*
  * callback proc to actually do the logfile write from Update_Logfile
  */
 static int
-update_logfile_proc (repository, filter)
+update_logfile_proc( repository, filter, closure )
     char *repository;
     char *filter;
+    void *closure;
 {
-    return (logfile_write (repository, filter, message, logfp, changes));
+    struct ulp_data *udp = (struct ulp_data *)closure;
+    return (logfile_write (repository, filter, udp->message, udp->logfp,
+			   udp->changes));
 }
 
 /*
@@ -950,32 +969,37 @@ logfile_write (repository, filter, message, logfp, changes)
  */
 /* ARGSUSED */
 static int
-editinfo_proc(repository, editor)
+editinfo_proc( repository, editor, closure )
     char *repository;
     char *editor;
+    void *closure;
 {
-    /* nothing to do if the last match is the same as this one */
-    if (editinfo_editor && strcmp (editinfo_editor, editor) == 0)
-	return (0);
-    if (editinfo_editor)
-	free (editinfo_editor);
+    char **editinfo_editor = (char **)closure;
 
-    editinfo_editor = xstrdup (editor);
+    /* nothing to do if the last match is the same as this one */
+    if (*editinfo_editor && strcmp (*editinfo_editor, editor) == 0)
+	return (0);
+    if (*editinfo_editor)
+	free (*editinfo_editor);
+
+    *editinfo_editor = xstrdup (editor);
     return (0);
 }
 
-/*  This routine is calld by Parse_Info.  it asigns the name of the
- *  message verification script to the global variable verify_script
+/*  This routine is calld by Parse_Info.  It picks up the name of the
+ *  message verification script.
  */
 static int
-verifymsg_proc (repository, script)
+verifymsg_proc( repository, script, closure )
     char *repository;
     char *script;
+    void *closure;
 {
-    if (verifymsg_script && strcmp (verifymsg_script, script) == 0)
+    char **verifymsg_script = (char **)closure;
+    if (*verifymsg_script && strcmp (*verifymsg_script, script) == 0)
 	return (0);
-    if (verifymsg_script)
-	free (verifymsg_script);
-    verifymsg_script = xstrdup (script);
+    if (*verifymsg_script)
+	free (*verifymsg_script);
+    *verifymsg_script = xstrdup (script);
     return (0);
 }

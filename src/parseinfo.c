@@ -20,11 +20,12 @@ extern char *logHistory;
  * Return 0 for success, -1 if there was not an INFOFILE, and >0 for failure.
  */
 int
-Parse_Info (infofile, repository, callproc, all)
+Parse_Info( infofile, repository, callproc, opt, closure )
     char *infofile;
     char *repository;
     CALLPROC callproc;
-    int all;
+    int opt;
+    void *closure;
 {
     int err = 0;
     FILE *fp_info;
@@ -66,7 +67,7 @@ Parse_Info (infofile, repository, callproc, all)
     srepos = Short_Repository (repository);
 
     TRACE ( 1, "Parse_Info (%s, %s, %s)",
-	    infopath, srepos, all ? "ALL" : "not ALL");
+	    infopath, srepos,  (opt & PIOPT_ALL) ? "ALL" : "not ALL");
 
     /* search the info file for lines that match */
     callback_done = line_number = 0;
@@ -137,12 +138,12 @@ Parse_Info (infofile, repository, callproc, all)
 	 */
 	if (strcmp (exp, "ALL") == 0)
 	{
-	    if (!all)
+	    if (! (opt & PIOPT_ALL))
 		error(0, 0, "Keyword `ALL' is ignored at line %d in %s file",
 		      line_number, infofile);
 	    else if ((expanded_value = expand_path (value, infofile, line_number)) != NULL)
 	    {
-		err += callproc (repository, expanded_value);
+		err += callproc( repository, expanded_value, closure );
 		free (expanded_value);
 	    }
 	    else
@@ -167,7 +168,7 @@ Parse_Info (infofile, repository, callproc, all)
 	/* it did, so do the callback and note that we did one */
 	if ((expanded_value = expand_path (value, infofile, line_number)) != NULL)
 	{
-	    err += callproc (repository, expanded_value);
+	    err += callproc( repository, expanded_value, closure );
 	    free (expanded_value);
 	}
 	else
@@ -184,7 +185,7 @@ Parse_Info (infofile, repository, callproc, all)
     {
 	if ((expanded_value = expand_path (default_value, infofile, default_line)) != NULL)
 	{
-	    err += callproc (repository, expanded_value);
+	    err += callproc( repository, expanded_value, closure );
 	    free (expanded_value);
 	}
 	else

@@ -377,6 +377,9 @@ typedef enum direnter_type Dtype;
 #define CVS_LOCK_READ	1
 #define CVS_LOCK_WRITE	2
 
+/* Option flags for Parse_Info() */
+#define PIOPT_ALL 1	/* accept "all" keyword */
+
 extern char *program_name, *program_path, *command_name;
 extern char *Tmpdir, *Editor;
 extern int cvsadmin_root;
@@ -491,8 +494,9 @@ char *xstrdup PROTO((const char *str)
 void strip_trailing_newlines PROTO((char *str));
 int pathname_levels PROTO ((char *path));
 
-typedef	int (*CALLPROC)	PROTO((char *repository, char *value));
-int Parse_Info PROTO((char *infofile, char *repository, CALLPROC callproc, int all));
+typedef	int (*CALLPROC)	PROTO(( char *repository, char *value, void *closure ));
+int Parse_Info PROTO(( char *infofile, char *repository, CALLPROC callproc,
+                       int opt, void *closure ));
 extern int parse_config PROTO ((char *));
 
 typedef	RETSIGTYPE (*SIGCLEANUPPROC)	PROTO(());

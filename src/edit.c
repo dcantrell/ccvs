@@ -677,16 +677,13 @@ struct notify_proc_args {
     char *file;
 };
 
-/* Pass as a static until we get around to fixing Parse_Info to pass along
-   a void * where we can stash it.  */
-static struct notify_proc_args *notify_args;
-
-static int notify_proc PROTO ((char *repository, char *filter));
+static int notify_proc PROTO(( char *repository, char *filter, void *closure ));
 
 static int
-notify_proc (repository, filter)
+notify_proc( repository, filter, closure )
     char *repository;
     char *filter;
+    void *closure;
 {
     FILE *pipefp;
     char *prog;
@@ -694,7 +691,7 @@ notify_proc (repository, filter)
     char *p;
     char *q;
     char *srepos;
-    struct notify_proc_args *args = notify_args;
+    struct notify_proc_args *args = (struct notify_proc_args *)closure;
 
     srepos = Short_Repository (repository);
     prog = xmalloc (strlen (filter) + strlen (args->notifyee) + 1);
@@ -929,12 +926,12 @@ notify_do (type, filename, who, val, watches, repository)
 		args.notifyee[endp - p] = '\0';
 	    }
 
-	    notify_args = &args;
 	    args.type = notif;
 	    args.who = who;
 	    args.file = filename;
 
-	    (void) Parse_Info (CVSROOTADM_NOTIFY, repository, notify_proc, 1);
+	    (void) Parse_Info (CVSROOTADM_NOTIFY, repository, notify_proc,
+			PIOPT_ALL, &args);
 	    free (args.notifyee);
 	}
 
