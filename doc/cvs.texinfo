@@ -3321,7 +3321,7 @@ To enable the watch features, you first specify that
 certain files are to be watched.
 
 @cindex watch on (subcommand)
-@deffn Command {cvs watch on} [@code{-l}] files @dots{}
+@deffn Command {cvs watch on} [@code{-lR}] files @dots{}
 
 @cindex read-only files, and watches
 Specify that developers should run @code{cvs edit}
@@ -3337,18 +3337,20 @@ added in the future; this allows the user to set
 notification policies on a per-directory basis.  The
 contents of the directory are processed recursively,
 unless the @code{-l} option is given.
+The @code{-R} option can be used to force recursion if the @code{-l}
+option is set in @file{~/.cvsrc} (@pxref{~/.cvsrc}).
 
 If @var{files} is omitted, it defaults to the current directory.
 
 @cindex watch off (subcommand)
 @end deffn
 
-@deffn Command {cvs watch off} [@code{-l}] files @dots{}
+@deffn Command {cvs watch off} [@code{-lR}] files @dots{}
 
 Do not provide notification about work on @var{files}.  CVS will create
 working copies of @var{files} read-write.
 
-The @var{files} and @code{-l} arguments are processed as for @code{cvs
+The @var{files} and options are processed as for @code{cvs
 watch on}.
 
 @end deffn
@@ -3364,7 +3366,7 @@ watch on}, so that developers use the @code{cvs edit}
 command.
 
 @cindex watch add (subcommand)
-@deffn Command {cvs watch add} [@code{-a} action] [@code{-l}] files @dots{}
+@deffn Command {cvs watch add} [@code{-a} action] [@code{-lR}] files @dots{}
 
 Add the current user to the list of people to receive notification of
 work done on @var{files}.
@@ -3398,14 +3400,14 @@ described below.)
 The @code{-a} option may appear more than once, or not at all.  If
 omitted, the action defaults to @code{all}.
 
-The @var{files} and @code{-l} option are processed as for the
+The @var{files} and options are processed as for the
 @code{cvs watch} commands.
 
 @end deffn
 
 
 @cindex watch remove (subcommand)
-@deffn Command {cvs watch remove} [@code{-a} action] [@code{-l}] files @dots{}
+@deffn Command {cvs watch remove} [@code{-a} action] [@code{-lR}] files @dots{}
 
 Remove a notification request established using @code{cvs watch add};
 the arguments are the same.  If the @code{-a} option is present, only
@@ -3510,7 +3512,7 @@ user on @var{files}; CVS will remove the watch when @var{files} are
 @code{unedit}ed or @code{commit}ted.  If the user does not wish to
 receive notifications, she should specify @code{-a none}.
 
-The @var{files} and @code{-l} option are processed as for the @code{cvs
+The @var{files} and options are processed as for the @code{cvs
 watch} commands.
 
 @end deffn
@@ -3525,7 +3527,7 @@ the @code{cvs unedit} command.
 @cindex unedit (subcommand)
 @cindex abandoning work
 @cindex reverting to repository version
-@deffn Command {cvs unedit} [@code{-l}] files @dots{}
+@deffn Command {cvs unedit} [@code{-lR}] files @dots{}
 
 Abandon work on the working files @var{files}, and revert them to the
 repository versions on which they are based.  CVS makes those
@@ -3533,7 +3535,7 @@ repository versions on which they are based.  CVS makes those
 @code{cvs watch on}.  CVS notifies users who have requested @code{unedit}
 notification for any of @var{files}.
 
-The @var{files} and @code{-l} option are processed as for the
+The @var{files} and options are processed as for the
 @code{cvs watch} commands.
 
 If watches are not in use, the @code{unedit} command
@@ -3557,26 +3559,26 @@ successful @sc{cvs} command.
 @subsection Information about who is watching and editing
 
 @cindex watchers (subcommand)
-@deffn Command {cvs watchers} [@code{-l}] files @dots{}
+@deffn Command {cvs watchers} [@code{-lR}] files @dots{}
 
 List the users currently watching changes to @var{files}.  The report
 includes the files being watched, and the mail address of each watcher.
 
-The @var{files} and @code{-l} arguments are processed as for the
+The @var{files} and options are processed as for the
 @code{cvs watch} commands.
 
 @end deffn
 
 
 @cindex editors (subcommand)
-@deffn Command {cvs editors} [@code{-l}] files @dots{}
+@deffn Command {cvs editors} [@code{-lR}] files @dots{}
 
 List the users currently working on @var{files}.  The report
 includes the mail address of each user, the time when the user began
 working with the file, and the host and path of the working directory
 containing the file.
 
-The @var{files} and @code{-l} arguments are processed as for the
+The @var{files} and options are processed as for the
 @code{cvs watch} commands.
 
 @end deffn
@@ -4583,6 +4585,8 @@ for most of the @sc{cvs} subcommands, not only the
 
 The recursive behavior of the @sc{cvs} subcommands can be
 turned off with the @samp{-l} option.
+Conversely, the @samp{-R} option can be used to force recursion if
+@samp{-l} is specified in @file{~/.cvsrc} (@pxref{~/.cvsrc}).
 
 @example
 $ cvs update -l         # @r{Don't update files in subdirectories}
@@ -5476,7 +5480,7 @@ aborted.
 @section Annotate command
 @cindex annotate (subcommand)
 
-@deffn Command {cvs annotate} [@code{-lf}] [@code{-r rev}|@code{-D date}] files @dots{}
+@deffn Command {cvs annotate} [@code{-flR}] [@code{-r rev}|@code{-D date}] files @dots{}
 
 For each file in @var{files}, print the head revision
 of the trunk, together with information on the last
@@ -6623,9 +6627,10 @@ as the overall @samp{cvs -l} option, which you can specify to the
 left of a cvs command!
 
 Available with the following commands: @code{annotate}, @code{checkout},
-@code{commit}, @code{diff}, @code{export}, @code{log},
-@code{remove}, @code{rdiff}, @code{rtag},
-@code{status}, @code{tag}, and @code{update}.
+@code{commit}, @code{diff}, @code{edit}, @code{editors}, @code{export},
+@code{log}, @code{rdiff}, @code{remove}, @code{rtag},
+@code{status}, @code{tag}, @code{unedit}, @code{update}, @code{watch},
+and @code{watchers}.
 
 @cindex Editor, avoiding invocation of
 @cindex Avoiding editor invocation
@@ -6659,9 +6664,10 @@ with the @code{checkout} and @code{update} commands.
 Process directories recursively.  This is on by default.
 
 Available with the following commands: @code{annotate}, @code{checkout},
-@code{commit}, @code{diff}, @code{export}, @code{log},
-@code{remove}, @code{rdiff}, @code{rtag},
-@code{status}, @code{tag}, and @code{update}.
+@code{commit}, @code{diff}, @code{edit}, @code{editors}, @code{export},
+@code{rdiff}, @code{remove}, @code{rtag},
+@code{status}, @code{tag}, @code{unedit}, @code{update}, @code{watch},
+and @code{watchers}.
 
 @item -r @var{tag}
 Use the revision specified by the @var{tag} argument instead of the
@@ -7438,7 +7444,7 @@ $ cvs checkout -r EXPR1 whatever_module
 
 @itemize @bullet
 @item
-Synopsis: diff [-l] [rcsdiff_options] [[-r rev1 | -D date1] [-r rev2 |  -D date2]] [files@dots{}]
+Synopsis: diff [-lR] [rcsdiff_options] [[-r rev1 | -D date1] [-r rev2 |  -D date2]] [files@dots{}]
 @item
 Requires: working directory, repository.
 @item
@@ -7610,7 +7616,7 @@ $ cvs diff -u | less
 
 @itemize @bullet
 @item
-Synopsis: export [-flNn] [-r rev|-D date] [-k subst] [-d dir] module@dots{}
+Synopsis: export [-flNnR] [-r rev|-D date] [-k subst] [-d dir] module@dots{}
 @item
 Requires: repository.
 @item
@@ -8084,6 +8090,9 @@ Coordinated Universal Time (UTC).  (Other parts of
 @c where LT means the client's timezone, which the
 @c client then communicates to the server, is the
 @c right solution.
+
+@strong{Warning:} @code{log} uses @samp{-R} in a way that conflicts
+with the normal use inside @sc{cvs} (@pxref{Common options}).
 
 @menu
 * log options::                 log options
@@ -9063,6 +9072,10 @@ Prune empty directories.  See @ref{Moving directories}.
 Check out files to standard output (avoids
 stickiness).  See @ref{checkout options}.
 
+@item -R
+Operate recursively (default).  @xref{Recursive
+behavior}.
+
 @item -r @var{tag}
 Checkout revision @var{tag} (is sticky).  See @ref{Common options}.
 
@@ -9125,6 +9138,10 @@ Local; run only in current working directory.  See @ref{Recursive behavior}.
 Include diffs for added and removed files.  See
 @ref{diff options}.
 
+@item -R
+Operate recursively (default).  @xref{Recursive
+behavior}.
+
 @item -r @var{rev1}
 Diff revision for @var{rev1} against working file.  See
 @ref{diff options}.
@@ -9145,6 +9162,10 @@ Specify actions for temporary watch, where
 
 @item -l
 Local; run only in current working directory.  See @ref{Recursive behavior}.
+
+@item -R
+Operate recursively (default).  @xref{Recursive
+behavior}.
 @end table
 
 @item editors [@var{options}] [@var{files}@dots{}]
@@ -9153,6 +9174,10 @@ See who is editing a watched file.  See @ref{Watch information}.
 @table @code
 @item -l
 Local; run only in current working directory.  See @ref{Recursive behavior}.
+
+@item -R
+Operate recursively (default).  @xref{Recursive
+behavior}.
 @end table
 
 @item export [@var{options}] @var{modules}@dots{}
@@ -9185,6 +9210,10 @@ Do not run module program (if any).  See @ref{export options}.
 
 @item -P
 Prune empty directories.  See @ref{Moving directories}.
+
+@item -R
+Operate recursively (default).  @xref{Recursive
+behavior}.
 
 @item -r @var{tag}
 Checkout revision @var{tag} (is sticky).  See @ref{Common options}.
@@ -9346,6 +9375,10 @@ Use head revision if tag/date not found.  See
 @item -l
 Local; run only in current working directory.  See @ref{Recursive behavior}.
 
+@item -R
+Operate recursively (default).  @xref{Recursive
+behavior}.
+
 @item -r @var{rev}
 Select revisions based on @var{rev}.  See @ref{Common options}.
 
@@ -9491,6 +9524,10 @@ Specify actions for temporary watch, where
 
 @item -l
 Local; run only in current working directory.  See @ref{Recursive behavior}.
+
+@item -R
+Operate recursively (default).  @xref{Recursive
+behavior}.
 @end table
 
 @item update [@var{options}] [@var{files}@dots{}]
@@ -9564,6 +9601,10 @@ Specify actions for temporary watch, where
 
 @item -l
 Local; run only in current working directory.  See @ref{Recursive behavior}.
+
+@item -R
+Operate recursively (default).  @xref{Recursive
+behavior}.
 @end table
 
 @item watchers [@var{options}] [@var{files}@dots{}]
@@ -9572,6 +9613,10 @@ See who is watching a file.  See @ref{Watch information}.
 @table @code
 @item -l
 Local; run only in current working directory.  See @ref{Recursive behavior}.
+
+@item -R
+Operate recursively (default).  @xref{Recursive
+behavior}.
 @end table
 
 @end table
