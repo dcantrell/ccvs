@@ -1,5 +1,10 @@
 1999-01-27  Jim Kingdon  <http://www.cyclic.com>
 
+	* sanity.sh (multiroot3): Add new variant of multiroot3-10 test
+	for RELATIVE_REPOS.  Move multiroot3-11 test out of the
+	conditionals; it works the same for remote or local,
+	RELATIVE_REPOS or no.
+
 	* options.h.in: Make RELATIVE_REPOS the default, as has been
 	announced as a future direction since 1997-10-11.
 	* sanity.sh (multiroot): Tweak multiroot-update-1a and
