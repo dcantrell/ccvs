@@ -106,8 +106,12 @@ extern void server_clear_entstat PROTO((char *update_dir, char *repository));
 /* Set or clear a per-directory sticky tag or date.  */
 extern void server_set_sticky PROTO((char *update_dir, char *repository,
 				     char *tag, char *date, int nonbranch));
+
+/* Send Clear-template response.  */
+extern void server_clear_template PROTO((char *update_dir, char *repository));
+
 /* Send Template response.  */
-extern void server_template PROTO ((char *, char *));
+extern void server_template PROTO ((char *update_dir, char *repository));
 
 extern void server_update_entries
     PROTO((char *file, char *update_dir, char *repository,
