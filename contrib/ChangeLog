@@ -1,3 +1,10 @@
+1998-09-22  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* pvcs_to_rcs: Removed; it was not in DISTFILES so it didn't
+	actually get distributed.  I'm going to move it to the web on the
+	theory that the web is a better place for such things.
+	* README: Don't mention it.
+
 1998-09-10  Jim Kingdon
 
 	Check in Paul Eggert <eggert@twinsun.com>'s submission of
