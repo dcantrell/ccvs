@@ -578,18 +578,20 @@ log_buffer_shutdown (buf)
  * Returns number of bytes read.
  */
 static int
-read_line (resultp)
+read_line_via (via_from_buffer, via_to_buffer, resultp)
+    struct buffer *via_from_buffer;
+    struct buffer *via_to_buffer;
     char **resultp;
 {
     int status;
     char *result;
     int len;
 
-    status = buf_flush (global_to_server, 1);
+    status = buf_flush (via_to_buffer, 1);
     if (status != 0)
 	error (1, status, "writing to server");
 
-    status = buf_read_line (global_from_server, &result, &len);
+    status = buf_read_line (via_from_buffer, &result, &len);
     if (status != 0)
     {
 	if (status == -1)
@@ -607,6 +609,14 @@ read_line (resultp)
 
     return len;
 }
+
+static int
+read_line (resultp)
+    char **resultp;
+{
+  return read_line_via (global_from_server, global_to_server, resultp);
+}
+
 
 #endif /* CLIENT_SUPPORT */
 
@@ -3017,13 +3027,14 @@ struct response responses[] =
 #ifdef CLIENT_SUPPORT
 
 /* 
- * If LEN is 0, then send_to_server() computes string's length itself.
+ * If LEN is 0, then send_to_server_via() computes string's length itself.
  *
  * Therefore, pass the real length when transmitting data that might
  * contain 0's.
  */
 void
-send_to_server (str, len)
+send_to_server_via (via_buffer, str, len)
+     struct buffer *via_buffer;
      char *str;
      size_t len;
 {
@@ -3032,7 +3043,7 @@ send_to_server (str, len)
     if (len == 0)
 	len = strlen (str);
 
-    buf_output (global_to_server, str, len);
+    buf_output (via_buffer, str, len);
       
     /* There is no reason not to send data to the server, so do it
        whenever we've accumulated enough information in the buffer to
@@ -3042,12 +3053,21 @@ send_to_server (str, len)
     {
 	int status;
 
-        status = buf_send_output (global_to_server);
+        status = buf_send_output (via_buffer);
 	if (status != 0)
 	    error (1, status, "error writing to server");
 	nbytes = 0;
     }
 }
+
+void
+send_to_server (str, len)
+     char *str;
+     size_t len;
+{
+  send_to_server_via (global_to_server, str, len);
+}
+
 
 /* Read up to LEN bytes from the server.  Returns actual number of
    bytes read, which will always be at least one; blocks if there is
@@ -3503,10 +3523,10 @@ connect_to_pserver (root, to_server_p, from_server_p, verify_only, do_gssapi)
 
 
 static void
-auth_server (root, lto_server, lfrom_server, verify_only, do_gssapi, hostinfo)
+auth_server (root, to_server, from_server, verify_only, do_gssapi, hostinfo)
     cvsroot_t *root;
-    struct buffer *lto_server;
-    struct buffer *lfrom_server;
+    struct buffer *to_server;
+    struct buffer *from_server;
     int verify_only;
     int do_gssapi;
     struct hostent *hostinfo;
@@ -3514,23 +3534,11 @@ auth_server (root, lto_server, lfrom_server, verify_only, do_gssapi, hostinfo)
     char *username;			/* the username we use to connect */
     char no_passwd = 0;			/* gets set if no password found */
 
-    /* FIXME!!!!!!!!!!!!!!!!!!
-     *
-     * THIS IS REALLY UGLY!
-     *
-     * I'm setting the globals here so we can make calls to send_to_server &
-     * read_line.  This happens again _after_ we return if we're not in
-     * verify_only mode.  We should be relying on the values we passed in, but
-     * sent_to_server and read_line don't require an outside buf yet.
-     */
-    global_to_server = lto_server;
-    global_from_server = lfrom_server;
-
     /* Run the authorization mini-protocol before anything else. */
     if (do_gssapi)
     {
 # ifdef HAVE_GSSAPI
-	FILE *fp = stdio_buffer_get_file(lto_server);
+	FILE *fp = stdio_buffer_get_file(to_server);
 	int fd = fp ? fileno(fp) : -1;
 	struct stat s;
 
@@ -3580,20 +3588,20 @@ auth_server (root, lto_server, lfrom_server, verify_only, do_gssapi, hostinfo)
 	}
 
 	/* Announce that we're starting the authorization protocol. */
-	send_to_server(begin, 0);
-	send_to_server("\012", 1);
+	send_to_server_via(to_server, begin, 0);
+	send_to_server_via(to_server, "\012", 1);
 
 	/* Send the data the server needs. */
-	send_to_server(root->directory, 0);
-	send_to_server("\012", 1);
-	send_to_server(username, 0);
-	send_to_server("\012", 1);
-	send_to_server(password, 0);
-	send_to_server("\012", 1);
+	send_to_server_via(to_server, root->directory, 0);
+	send_to_server_via(to_server, "\012", 1);
+	send_to_server_via(to_server, username, 0);
+	send_to_server_via(to_server, "\012", 1);
+	send_to_server_via(to_server, password, 0);
+	send_to_server_via(to_server, "\012", 1);
 
 	/* Announce that we're ending the authorization protocol. */
-	send_to_server(end, 0);
-	send_to_server("\012", 1);
+	send_to_server_via(to_server, end, 0);
+	send_to_server_via(to_server, "\012", 1);
 
         /* Paranoia. */
         memset (password, 0, strlen (password));
@@ -3608,7 +3616,7 @@ auth_server (root, lto_server, lfrom_server, verify_only, do_gssapi, hostinfo)
 	/* Loop, getting responses from the server.  */
 	while (1)
 	{
-	    read_line (&read_buf);
+	    read_line_via (from_server, to_server, &read_buf);
 
 	    if (strcmp (read_buf, "I HATE YOU") == 0)
 	    {
