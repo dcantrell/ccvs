@@ -1,3 +1,7 @@
+2005-03-01  Derek Price  <derek@ximbiot.com>
+
+	* config.h: Remove obsolete timeb cruft.
+
 2004-10-07  Derek Price  <derek@ximbiot.com>
 
 	* Makefile.in (LIB_SOURCES): Remove stripslash.c.
