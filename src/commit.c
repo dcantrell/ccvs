@@ -663,6 +663,11 @@ commit (argc, argv)
     Lock_Cleanup ();
     dellist (&mulist);
 
+#ifdef SERVER_SUPPORT
+    if (server_active)
+	return err;
+#endif
+
     /* see if we need to sleep before returning to avoid time-stamp races */
     if (last_register_time)
     {
