@@ -256,8 +256,7 @@ extern long timezone;
    have to debug the configure check across all the machines).  */
 #if defined (HAVE_UTIME_H) && !defined (NeXT)
 #include <utime.h>
-#else
-#if defined (HAVE_SYS_UTIME_H)
+#elif defined (HAVE_SYS_UTIME_H)
 #include <sys/utime.h>
 #else
 #ifndef ALTOS
