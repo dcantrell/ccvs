@@ -1,3 +1,7 @@
+Mon Dec  4 08:06:31 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* config.h.in: Regenerated.
+
 Sun Dec  3 20:05:10 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* configure.in: Remove grep stuff.
