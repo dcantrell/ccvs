@@ -1,3 +1,7 @@
+2004-08-17  Derek Price  <derek@ximbiot.com>
+
+	* cvsclient.texi (Requests): s/Command-prenotify/Command-prep/.
+
 2004-08-16  Derek Price  <derek@ximbiot.com>
 
 	* cvsclient.texi (Requests): Document the new `Command-prenotify'
