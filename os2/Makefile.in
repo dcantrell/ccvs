@@ -174,7 +174,7 @@ HEADERS = ${OS2_HEADERS} ${COMMON_HEADERS}
 OBJECTS = ${OS2_OBJECTS} ${COMMON_OBJECTS}
 
 DISTFILES = ${OS2_HEADERS} ${OS2_SOURCES} \
-  README ChangeLog Makefile.in .cvsignore
+  README ChangeLog Makefile.in .cvsignore test-makefile
 
 all:
 
