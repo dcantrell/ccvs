@@ -1,5 +1,11 @@
 2001-06-07  Derek Price  <dprice@collab.net>
 
+	* Makefile.am (EXTRA_DIST): Remove *.aux.
+	(MOSTLYCLEAN_FILES): Remove this macro since the Automake bug it was
+	working around has been fixed.
+
+2001-06-07  Derek Price  <dprice@collab.net>
+
 	* HACKING.DOCS: Add link to the main texinfo documentation.
 
 2001-06-07  Derek Price  <dprice@collab.net>
