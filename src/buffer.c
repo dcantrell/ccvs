@@ -6,6 +6,12 @@
 
 #if defined (SERVER_SUPPORT) || defined (CLIENT_SUPPORT)
 
+/* OS/2 doesn't have EIO.  FIXME: this whole notion of turning
+   a different error into EIO strikes me as pretty dubious.  */
+#if !defined (EIO)
+#define EIO EBADPOS
+#endif
+
 /* Linked list of available buffer_data structures.  */
 static struct buffer_data *free_buffer_data;
 
