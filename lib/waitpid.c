@@ -1,3 +1,7 @@
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #include "system.h"
 #include "wait.h"
 
@@ -26,6 +30,7 @@ static struct unreaped *ualloc (oldptr, n)
       fprintf (stderr, "cannot allocate %d bytes\n", n);
       exit (1);
     }
+  return oldptr;
 }
 
 pid_t waitpid (pid, status, options)
