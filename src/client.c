@@ -470,7 +470,7 @@ static int log_buffer_input PROTO((void *, char *, int, int, int *));
 static int log_buffer_output PROTO((void *, const char *, int, int *));
 static int log_buffer_flush PROTO((void *));
 static int log_buffer_block PROTO((void *, int));
-static int log_buffer_shutdown PROTO((void *));
+static int log_buffer_shutdown PROTO((struct buffer *));
 
 /* Create a log buffer.  */
 
@@ -594,10 +594,10 @@ log_buffer_block (closure, block)
 /* The shutdown function for a log buffer.  */
 
 static int
-log_buffer_shutdown (closure)
-     void *closure;
+log_buffer_shutdown (buf)
+     struct buffer *buf;
 {
-    struct log_buffer *lb = (struct log_buffer *) closure;
+    struct log_buffer *lb = (struct log_buffer *) buf->closure;
     int retval;
 
     retval = buf_shutdown (lb->buf);
@@ -605,7 +605,7 @@ log_buffer_shutdown (closure)
 	error (0, errno, "closing log file");
     return retval;
 }
-
+
 #ifdef NO_SOCKET_TO_FD
 
 /* Under certain circumstances, we must communicate with the server
@@ -644,14 +644,17 @@ static struct buffer *socket_buffer_initialize
 static int socket_buffer_input PROTO((void *, char *, int, int, int *));
 static int socket_buffer_output PROTO((void *, const char *, int, int *));
 static int socket_buffer_flush PROTO((void *));
+static int socket_buffer_shutdown PROTO((struct buffer *));
+
+
 
 /* Create a buffer based on a socket.  */
 
 static struct buffer *
 socket_buffer_initialize (socket, input, memory)
-     int socket;
-     int input;
-     void (*memory) PROTO((struct buffer *));
+    int socket;
+    int input;
+    void (*memory) PROTO((struct buffer *));
 {
     struct socket_buffer *n;
 
@@ -661,10 +664,12 @@ socket_buffer_initialize (socket, input, memory)
 			   input ? NULL : socket_buffer_output,
 			   input ? NULL : socket_buffer_flush,
 			   (int (*) PROTO((void *, int))) NULL,
-			   (int (*) PROTO((void *))) NULL,
+			   socket_buffer_shutdown,
 			   memory,
 			   n);
 }
+
+
 
 /* The buffer input function for a buffer built on a socket.  */
 
@@ -725,6 +730,8 @@ socket_buffer_input (closure, data, need, size, got)
     return 0;
 }
 
+
+
 /* The buffer output function for a buffer built on a socket.  */
 
 static int
@@ -764,6 +771,8 @@ socket_buffer_output (closure, data, have, wrote)
     return 0;
 }
 
+
+
 /* The buffer flush function for a buffer built on a socket.  */
 
 /*ARGSUSED*/
@@ -775,8 +784,59 @@ socket_buffer_flush (closure)
     return 0;
 }
 
+
+
+static int
+socket_buffer_shutdown (buf)
+    struct buffer *buf;
+{
+    struct socket_buffer *n = (struct socket_buffer *) closure;
+    char tmp;
+
+    buf_flush (buf->closure);
+    buf->flush = NULL;
+
+    if (buf->input)
+    {
+	if (! buf_empty_p (buf)
+	    || (err = read (n->socket, &tmp, 1)) > 0)
+	    error (0, 0, "dying gasps from %s unexpected", current_parsed_root->hostname);
+	else if (err == -1)
+	    error (0, errno, "reading from %s", current_parsed_root->hostname);
+
+	/* shutdown() socket */
+# ifdef SHUTDOWN_SERVER
+	if (current_parsed_root->method != server_method)
+# endif
+	if (shutdown (n->socket, 0) < 0)
+	{
+	    error (1, 0, "shutting down server socket: %s", SOCK_STRERROR (SOCK_ERRNO));
+	}
+
+	buf->input = NULL;
+    }
+    else if (buf->output)
+    {
+	/* shutdown() socket */
+# ifdef SHUTDOWN_SERVER
+	/* FIXME:  Should have a SHUTDOWN_SERVER_INPUT &
+	 * SHUTDOWN_SERVER_OUTPUT
+	 */
+	if (current_parsed_root->method == server_method)
+	    SHUTDOWN_SERVER ( fileno (fp) );
+	else
+# endif
+	if (shutdown (n->socket, 1) < 0)
+	{
+	    error (1, 0, "shutting down server socket: %s", SOCK_STRERROR (SOCK_ERRNO));
+	}
+
+	buf->output = NULL;
+    }
+}
+
 #endif /* NO_SOCKET_TO_FD */
-
+
 /*
  * Read a line from the server.  Result does not include the terminating \n.
  *
@@ -3519,7 +3579,6 @@ get_server_responses ()
 }
 
 /* Get the responses and then close the connection.  */
-int server_fd = -1;
 
 /*
  * Flag var; we'll set it in start_server() and not one of its
@@ -3548,78 +3607,17 @@ get_responses_and_close ()
     if (client_prune_dirs)
 	process_prune_candidates ();
 
-    /* The calls to buf_shutdown are currently only meaningful when we
-       are using compression.  First we shut down TO_SERVER.  That
-       tells the server that its input is finished.  It then shuts
-       down the buffer it is sending to us, at which point our shut
-       down of FROM_SERVER will complete.  */
+    /* First we shut down TO_SERVER.  That tells the server that its input is
+     * finished.  It then shuts down the buffer it is sending to us, at which
+     * point our shut down of FROM_SERVER will complete.
+     */
 
     status = buf_shutdown (to_server);
     if (status != 0)
-        error (0, status, "shutting down buffer to server");
+	error (0, status, "shutting down buffer to server");
     status = buf_shutdown (from_server);
     if (status != 0)
 	error (0, status, "shutting down buffer from server");
-
-#ifdef NO_SOCKET_TO_FD
-    if (use_socket_style)
-    {
-	if (shutdown (server_sock, 2) < 0)
-	    error (1, 0, "shutting down server socket: %s", SOCK_STRERROR (SOCK_ERRNO));
-    }
-    else
-#endif /* NO_SOCKET_TO_FD */
-    {
-#if defined(HAVE_KERBEROS) || defined(AUTH_CLIENT_SUPPORT)
-	if (server_fd != -1)
-	{
-	    if (shutdown (server_fd, 1) < 0)
-		error (1, 0, "shutting down connection to %s: %s",
-		       current_parsed_root->hostname, SOCK_STRERROR (SOCK_ERRNO));
-	    server_fd = -1;
-            /*
-             * This test will always be true because we dup the descriptor
-             */
-	    if (fileno (from_server_fp) != fileno (to_server_fp))
-	    {
-		if (fclose (to_server_fp) != 0)
-		    error (1, errno,
-			   "closing down connection to %s",
-			   current_parsed_root->hostname);
-	    }
-	}
-        else
-#endif
-          
-#ifdef SHUTDOWN_SERVER
-	    SHUTDOWN_SERVER (fileno (to_server_fp));
-#else /* ! SHUTDOWN_SERVER */
-	{
-
-#ifdef START_RSH_WITH_POPEN_RW
-	    if (pclose (to_server_fp) == EOF)
-#else /* ! START_RSH_WITH_POPEN_RW */
-		if (fclose (to_server_fp) == EOF)
-#endif /* START_RSH_WITH_POPEN_RW */
-		{
-		    error (1, errno, "closing connection to %s",
-			   current_parsed_root->hostname);
-		}
-        }
-
-	if (! buf_empty_p (from_server)
-	    || getc (from_server_fp) != EOF)
-	    error (0, 0, "dying gasps from %s unexpected", current_parsed_root->hostname);
-	else if (ferror (from_server_fp))
-	    error (0, errno, "reading from %s", current_parsed_root->hostname);
-
-	fclose (from_server_fp);
-#endif /* SHUTDOWN_SERVER */
-    }
-
-    if (rsh_pid != -1
-	&& waitpid (rsh_pid, (int *) 0, 0) == -1)
-	error (1, errno, "waiting for process %d", rsh_pid);
 
     buf_free (to_server);
     buf_free (from_server);
@@ -3635,7 +3633,7 @@ get_responses_and_close ()
 }
 	
 #ifndef NO_EXT_METHOD
-static void start_rsh_server PROTO((int *, int *));
+static int start_rsh_server PROTO((int *, int *));
 #endif
 
 int
@@ -4058,8 +4056,7 @@ connect_to_pserver (tofdp, fromfdp, verify_only, do_gssapi)
 	*tofdp = 0;
 	*fromfdp = 0;
 #else /* ! NO_SOCKET_TO_FD */
-	server_fd = sock;
-	close_on_exec (server_fd);
+	close_on_exec (sock);
 	tofd = fromfd = sock;
 	/* Hand them back to the caller. */
 	*tofdp   = tofd;
@@ -4151,8 +4148,7 @@ start_tcp_server (tofdp, fromfdp)
 	memcpy (kblock, cred.session, sizeof (C_Block));
     }
 
-    server_fd = s;
-    close_on_exec (server_fd);
+    close_on_exec (s);
 
     free (hname);
 
@@ -4317,7 +4313,7 @@ start_server ()
 {
     int tofd, fromfd, rootless;
     char *log = getenv ("CVS_CLIENT_LOG");
-
+    int child_pid = 0;
 
     /* Clear our static variables for this invocation. */
     if (toplevel_repos != NULL)
@@ -4359,7 +4355,7 @@ start_server ()
 	    error (0, 0, ":ext: method not supported by this port of CVS");
 	    error (1, 0, "try :server: instead");
 #else
-	    start_rsh_server (&tofd, &fromfd);
+	    child_pid = start_rsh_server (&tofd, &fromfd);
 #endif
 	    break;
 
@@ -4368,13 +4364,13 @@ start_server ()
 	    START_SERVER (&tofd, &fromfd, getcaller (),
 			  current_parsed_root->username, current_parsed_root->hostname,
 			  current_parsed_root->directory);
-#  if defined (START_SERVER_RETURNS_SOCKET) && defined (NO_SOCKET_TO_FD)
+# if defined (START_SERVER_RETURNS_SOCKET) && defined (NO_SOCKET_TO_FD)
 	    /* This is a system on which we can only write to a socket
 	       using send/recv.  Therefore its START_SERVER needs to
 	       return a socket.  */
 	    use_socket_style = 1;
 	    server_sock = tofd;
-#  endif
+# endif
 
 #else
 	    /* FIXME: It should be possible to implement this portably,
@@ -4427,13 +4423,19 @@ the :server: access method is not supported by this port of CVS");
         to_server_fp = fdopen (tofd, FOPEN_BINARY_WRITE);
         if (to_server_fp == NULL)
 	    error (1, errno, "cannot fdopen %d for write", tofd);
-	to_server = stdio_buffer_initialize (to_server_fp, 0,
+	to_server = stdio_buffer_initialize (to_server_fp, 0, 0,
 					     (BUFMEMERRPROC) NULL);
 
+	/* FIXME: For now we only record pid for the input buffer since we
+	 * we know it shuts down second and we can only wait for the child
+	 * once.  There should be a better solution.
+	 *
+	 * (hash pids with ref count.  wait when refcount reaches zero.)
+	 */
         from_server_fp = fdopen (fromfd, FOPEN_BINARY_READ);
         if (from_server_fp == NULL)
 	    error (1, errno, "cannot fdopen %d for read", fromfd);
-	from_server = stdio_buffer_initialize (from_server_fp, 1,
+	from_server = stdio_buffer_initialize (from_server_fp, child_pid, 1,
 					       (BUFMEMERRPROC) NULL);
     }
 
@@ -4770,11 +4772,12 @@ the :server: access method is not supported by this port of CVS");
    other stuff in os2/run.c work right.  In the meantime, this gets us
    up and running, and that's most important. */
 
-static void
+static int
 start_rsh_server (tofdp, fromfdp)
     int *tofdp, *fromfdp;
 {
     int pipes[2];
+    int child_pid;
 
     /* If you're working through firewalls, you can set the
        CVS_RSH environment variable to a script which uses rsh to
@@ -4842,18 +4845,20 @@ start_rsh_server (tofdp, fromfdp)
     }
 
     /* Do the deed. */
-    rsh_pid = popenRW (rsh_argv, pipes);
-    if (rsh_pid < 0)
+    child_pid = popenRW (rsh_argv, pipes);
+    if (child_pid < 0)
 	error (1, errno, "cannot start server via rsh");
 
     /* Give caller the file descriptors. */
     *tofdp   = pipes[0];
     *fromfdp = pipes[1];
+
+    return child_pid;
 }
 
 #else /* ! START_RSH_WITH_POPEN_RW */
 
-static void
+static int
 start_rsh_server (tofdp, fromfdp)
      int *tofdp;
      int *fromfdp;
@@ -4864,6 +4869,7 @@ start_rsh_server (tofdp, fromfdp)
     char *cvs_rsh = getenv ("CVS_RSH");
     char *cvs_server = getenv ("CVS_SERVER");
     char *command;
+    int child_pid;
 
     if (!cvs_rsh)
 	cvs_rsh = "rsh";
@@ -4912,12 +4918,14 @@ start_rsh_server (tofdp, fromfdp)
 	        fprintf (stderr, "%s ", argv[i]);
 	    putc ('\n', stderr);
 	}
-	rsh_pid = piped_child (argv, tofdp, fromfdp);
+	child_pid = piped_child (argv, tofdp, fromfdp);
 
-	if (rsh_pid < 0)
+	if (child_pid < 0)
 	    error (1, errno, "cannot start server via rsh");
     }
     free (command);
+
+    return child_pid;
 }
 
 #endif /* START_RSH_WITH_POPEN_RW */

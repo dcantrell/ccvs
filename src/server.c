@@ -159,7 +159,7 @@ static int fd_buffer_input PROTO((void *, char *, int, int, int *));
 static int fd_buffer_output PROTO((void *, const char *, int, int *));
 static int fd_buffer_flush PROTO((void *));
 static int fd_buffer_block PROTO((void *, int));
-static int fd_buffer_shutdown PROTO((void *));
+static int fd_buffer_shutdown PROTO((struct buffer *));
 
 /* Initialize a buffer built on a file descriptor.  FD is the file
    descriptor.  INPUT is nonzero if this is for input, zero if this is
@@ -321,10 +321,10 @@ fd_buffer_block (closure, block)
 /* The buffer shutdown function for a buffer built on a file descriptor.  */
 
 static int
-fd_buffer_shutdown (closure)
-     void *closure;
+fd_buffer_shutdown (buf)
+     struct buffer *buf;
 {
-    free (closure);
+    free (buf->closure);
     return 0;
 }
 
@@ -4855,25 +4855,15 @@ server_cleanup (sig)
 
     if (buf_to_net != NULL)
     {
-	/* FIXME: If this is not the final call from server, this
-	   could deadlock, because the client might be blocked writing
-	   to us.  This should not be a problem in practice, because
-	   we do not generate much output when the client is not
-	   waiting for it.  */
-	set_block (buf_to_net);
-	buf_flush (buf_to_net, 1);
-
-	/* The calls to buf_shutdown are currently only meaningful
-	   when we are using compression.  First we shut down
-	   BUF_FROM_NET.  That will pick up the checksum generated
-	   when the client shuts down its buffer.  Then, after we have
-	   generated any final output, we shut down BUF_TO_NET.  */
+	/* First we shut down BUF_FROM_NET.  That will pick up the checksum
+	 * generated when the client shuts down its buffer.  Then, after we
+	 * have generated any final output, we shut down BUF_TO_NET.
+	 */
 
 	status = buf_shutdown (buf_from_net);
 	if (status != 0)
 	{
 	    error (0, status, "shutting down buffer from client");
-	    buf_flush (buf_to_net, 1);
 	}
     }
 
@@ -5003,7 +4993,7 @@ server (argc, argv)
 
     buf_to_net = fd_buffer_initialize (STDOUT_FILENO, 0,
 				       outbuf_memory_error);
-    buf_from_net = stdio_buffer_initialize (stdin, 1, outbuf_memory_error);
+    buf_from_net = stdio_buffer_initialize (stdin, 0, 1, outbuf_memory_error);
 
     saved_output = buf_nonio_initialize (outbuf_memory_error);
     saved_outerr = buf_nonio_initialize (outbuf_memory_error);

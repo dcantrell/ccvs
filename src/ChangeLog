@@ -1,3 +1,23 @@
+2001-05-03  Derek Price  <dprice@collab.net>
+
+	* buffer.c (struct stdio_buffer_closure): New structure to hold a
+	FILE * and the child's PID when necessary.
+	(stdio_buffer_initialize): Change proto to accept PID.  Set up new
+	closure.  Pass new stdio_buffer_shutdown to buf_initialize.
+	(stdio_buffer_input): Use new closure.
+	(stdio_buffer_output): Ditto.
+	(stdio_buffer_flush): Ditto.
+	(stdio_buffer_shutdown): New function.  Teach buffer to close itself.
+	(packetizing_buffer_shutdown): Use new buffer shutdown proto.
+	* buffer.h (struct buffer): New buffer shutdown proto.
+	(stdio_buffer_initialize): New proto.
+	* client.c (log_buffer_shutdown): Use new proto.
+	(socket_buffer_initialize): Pass shutdown func.
+	(socket_buffer_shutdown): New function.
+	* server.c (get_responses_and_close): Remove most of the guts.  Rely
+	on the buffer shutdown function from now on.
+	(start_rsh_server): Return child PID.
+
 2001-05-03  Larry Jones  <larry.jones@sdrc.com>
 
 	* history.c (history_write): Handle the case where the user's home

@@ -28,7 +28,7 @@ buf_initialize (input, output, flush, block, shutdown, memory, closure)
      int (*output) PROTO((void *, const char *, int, int *));
      int (*flush) PROTO((void *));
      int (*block) PROTO((void *, int));
-     int (*shutdown) PROTO((void *));
+     int (*shutdown) PROTO((struct buffer *));
      void (*memory) PROTO((struct buffer *));
      void *closure;
 {
@@ -73,7 +73,7 @@ buf_nonio_initialize (memory)
 	     (int (*) PROTO((void *, const char *, int, int *))) NULL,
 	     (int (*) PROTO((void *))) NULL,
 	     (int (*) PROTO((void *, int))) NULL,
-	     (int (*) PROTO((void *))) NULL,
+	     (int (*) PROTO((struct buffer *))) NULL,
 	     memory,
 	     (void *) NULL));
 }
@@ -1198,7 +1198,7 @@ buf_shutdown (buf)
      struct buffer *buf;
 {
     if (buf->shutdown)
-	return (*buf->shutdown) (buf->closure);
+	return (*buf->shutdown) (buf);
     return 0;
 }
 
@@ -1210,22 +1210,35 @@ buf_shutdown (buf)
 static int stdio_buffer_input PROTO((void *, char *, int, int, int *));
 static int stdio_buffer_output PROTO((void *, const char *, int, int *));
 static int stdio_buffer_flush PROTO((void *));
+static int stdio_buffer_shutdown PROTO((struct buffer *buf));
 
 /* Initialize a buffer built on a stdio FILE.  */
 
+struct stdio_buffer_closure
+{
+    FILE *fp;
+    int child_pid;
+};
+
 struct buffer *
-stdio_buffer_initialize (fp, input, memory)
+stdio_buffer_initialize (fp, child_pid, input, memory)
      FILE *fp;
+     int child_pid;
      int input;
      void (*memory) PROTO((struct buffer *));
 {
+    struct stdio_buffer_closure *bc = malloc (sizeof (*bc));
+
+    bc->fp = fp;
+    bc->child_pid = child_pid;
+
     return buf_initialize (input ? stdio_buffer_input : NULL,
 			   input ? NULL : stdio_buffer_output,
 			   input ? NULL : stdio_buffer_flush,
 			   (int (*) PROTO((void *, int))) NULL,
-			   (int (*) PROTO((void *))) NULL,
+			   stdio_buffer_shutdown,
 			   memory,
-			   (void *) fp);
+			   (void *) bc);
 }
 
 /* The buffer input function for a buffer built on a stdio FILE.  */
@@ -1238,7 +1251,7 @@ stdio_buffer_input (closure, data, need, size, got)
      int size;
      int *got;
 {
-    FILE *fp = (FILE *) closure;
+    struct stdio_buffer_closure *bc = (struct stdio_buffer_closure *) closure;
     int nbytes;
 
     /* Since stdio does its own buffering, we don't worry about
@@ -1248,11 +1261,11 @@ stdio_buffer_input (closure, data, need, size, got)
     {
         int ch;
 
-	ch = getc (fp);
+	ch = getc (bc->fp);
 
 	if (ch == EOF)
 	{
-	    if (feof (fp))
+	    if (feof (bc->fp))
 		return -1;
 	    else if (errno == 0)
 		return EIO;
@@ -1265,12 +1278,12 @@ stdio_buffer_input (closure, data, need, size, got)
 	return 0;
     }
 
-    nbytes = fread (data, 1, need, fp);
+    nbytes = fread (data, 1, need, bc->fp);
 
     if (nbytes == 0)
     {
 	*got = 0;
-	if (feof (fp))
+	if (feof (bc->fp))
 	    return -1;
 	else if (errno == 0)
 	    return EIO;
@@ -1292,7 +1305,7 @@ stdio_buffer_output (closure, data, have, wrote)
      int have;
      int *wrote;
 {
-    FILE *fp = (FILE *) closure;
+    struct stdio_buffer_closure *bc = (struct stdio_buffer_closure *) closure;
 
     *wrote = 0;
 
@@ -1300,7 +1313,7 @@ stdio_buffer_output (closure, data, have, wrote)
     {
 	int nbytes;
 
-	nbytes = fwrite (data, 1, have, fp);
+	nbytes = fwrite (data, 1, have, bc->fp);
 
 	if (nbytes != have)
 	{
@@ -1324,9 +1337,9 @@ static int
 stdio_buffer_flush (closure)
      void *closure;
 {
-    FILE *fp = (FILE *) closure;
+    struct stdio_buffer_closure *bc = (struct stdio_buffer_closure *) closure;
 
-    if (fflush (fp) != 0)
+    if (fflush (bc->fp) != 0)
     {
 	if (errno == 0)
 	    return EIO;
@@ -1336,6 +1349,100 @@ stdio_buffer_flush (closure)
 
     return 0;
 }
+
+
+
+static int
+stdio_buffer_shutdown (buf)
+    struct buffer *buf;
+{
+    struct stdio_buffer_closure *bc = (struct stdio_buffer_closure *) buf->closure;
+    struct stat s;
+    int closefp = 1;
+
+    /* Must be a pipe or a socket.  What could go wrong? */
+    assert (fstat ( fileno (bc->fp), &s ) != -1);
+
+    /* Flush the buffer if we can */
+    if (buf->flush)
+    {
+	buf_flush (buf, 1);
+	buf->flush = NULL;
+    }
+
+    if (buf->input)
+    {
+	if (! buf_empty_p (buf)
+	    || getc (bc->fp) != EOF)
+	{
+# ifdef SERVER_SUPPORT
+	    if (server_active)
+		/* FIXME: This should probably be sysloged since it doesn't
+		 * have anywhere else to go at this point.
+		 */
+		error (0, 0, "dying gasps from client unexpected");
+	    else
+#endif
+		error (0, 0, "dying gasps from %s unexpected", current_parsed_root->hostname);
+	}
+	else if (ferror (bc->fp))
+	{
+# ifdef SERVER_SUPPORT
+	    if (server_active)
+		/* FIXME: This should probably be sysloged since it doesn't
+		 * have anywhere else to go at this point.
+		 */
+		error (0, errno, "reading from client");
+	    else
+#endif
+		error (0, errno, "reading from %s", current_parsed_root->hostname);
+	}
+
+	/* shutdown() sockets */
+	if (S_ISSOCK(s.st_mode))
+	    shutdown ( fileno (bc->fp), 0);
+# ifdef START_RSH_WITH_POPEN_RW
+	/* Can't be set with SHUTDOWN_SERVER defined */
+	else if (pclose (bc->fp) == EOF)
+	{
+	    error (1, errno, "closing connection to %s",
+		   current_parsed_root->hostname);
+	    closefp = 0;
+	}
+# endif /* START_RSH_WITH_POPEN_RW */
+
+	buf->input = NULL;
+    }
+    else if (buf->output)
+    {
+	/* shutdown() sockets */
+	if (S_ISSOCK(s.st_mode))
+	    shutdown ( fileno (bc->fp), 1);
+# ifdef SHUTDOWN_SERVER
+	/* FIXME:  Should have a SHUTDOWN_SERVER_INPUT &
+	 * SHUTDOWN_SERVER_OUTPUT
+	 */
+	else if (current_parsed_root->method == server_method)
+	    SHUTDOWN_SERVER ( fileno (bc->fp) );
+# endif
+
+	buf->output = NULL;
+    }
+
+    if (closefp && fclose (bc->fp) == EOF)
+	error (1, errno,
+	       "closing down connection to %s",
+	       current_parsed_root->hostname);
+
+    /* If we were talking to a process, make sure it exited */
+    if (bc->child_pid
+	&& waitpid (bc->child_pid, (int *) 0, 0) == -1)
+	error (1, errno, "waiting for process %d", bc->child_pid);
+
+    return 0;
+}
+
+
 
 /* Certain types of communication input and output data in packets,
    where each packet is translated in some fashion.  The packetizing
@@ -1398,7 +1505,7 @@ static int packetizing_buffer_input PROTO((void *, char *, int, int, int *));
 static int packetizing_buffer_output PROTO((void *, const char *, int, int *));
 static int packetizing_buffer_flush PROTO((void *));
 static int packetizing_buffer_block PROTO((void *, int));
-static int packetizing_buffer_shutdown PROTO((void *));
+static int packetizing_buffer_shutdown PROTO((struct buffer *));
 
 /* Create a packetizing buffer.  */
 
@@ -1763,10 +1870,10 @@ packetizing_buffer_block (closure, block)
 /* Shut down a packetizing buffer.  */
 
 static int
-packetizing_buffer_shutdown (closure)
-     void *closure;
+packetizing_buffer_shutdown (buf)
+    struct buffer *buf;
 {
-    struct packetizing_buffer *pb = (struct packetizing_buffer *) closure;
+    struct packetizing_buffer *pb = (struct packetizing_buffer *) buf->closure;
 
     return buf_shutdown (pb->buf);
 }
