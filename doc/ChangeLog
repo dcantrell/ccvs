@@ -1,3 +1,10 @@
+2003-01-23  Derek Price  <derek@ximbiot.com>
+
+	* stamp-1: Regenerated.
+	* stamp-vti: Ditto.
+	* version-client.texi: Ditto.
+	* version.texi: Ditto.
+
 2003-01-22  Larry Jones  <larry.jones@sdrc.com>
 
 	* cvs.texinfo (config): Correct LogHistory default (U was omitted).
