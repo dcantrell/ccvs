@@ -267,10 +267,6 @@ login (argc, argv)
     return 0;
 }
 
-/* todo: "cvs logout" could erase an entry from the file.
- * But to what purpose?
- */
-
 /* Returns the _scrambled_ password.  The server must descramble
    before hashing and comparing. */
 char *
@@ -369,6 +365,101 @@ get_cvs_password ()
     }
     /* NOTREACHED */
     return NULL;
+}
+
+static const char *const logout_usage[] =
+{
+    "Usage: %s %s\n",
+    NULL
+};
+
+/* Remove any entry for the CVSRoot repository found in "CVS/.cvspass". */
+int
+logout (argc, argv)
+    int argc;
+    char **argv;
+{
+    char *passfile;
+    FILE *fp;
+    char *tmp_name;
+    FILE *tmp_fp;
+    char *linebuf = (char *) NULL;
+    size_t linebuf_len;
+    int root_len, found = 0;
+
+    if (argc < 0)
+	usage (logout_usage);
+
+    if (CVSroot_method != pserver_method)
+    {
+	error (0, 0, "can only use pserver method with `logout' command");
+	error (1, 0, "CVSROOT: %s", CVSroot_original);
+    }
+    
+    if (! CVSroot_username)
+    {
+	error (0, 0, "CVSROOT \"%s\" is not fully-qualified.",
+	       CVSroot_original);
+	error (1, 0, "Please make sure to specify \"user@host\"!");
+    }
+
+    /* Hmm.  Do we want a variant of this command which deletes _all_
+       the entries from the current .cvspass?  Might be easier to
+       remember than "rm ~/.cvspass" but then again if people are
+       mucking with HOME (common in Win95 as the system doesn't set
+       it), then this variant of "cvs logout" might give a false sense
+       of security, in that it wouldn't delete entries from any
+       .cvspass files but the current one.  */
+
+    printf ("(Logging out of %s@%s)\n", CVSroot_username, CVSroot_hostname);
+    fflush (stdout);
+
+    /* IF we have a password for this "[user@]host:/path" already
+     *  THEN
+     *    drop the entry
+     *  ELSE
+     *    do nothing
+     */
+
+    passfile = construct_cvspass_filename ();
+    tmp_name = cvs_temp_name ();
+    if ((tmp_fp = CVS_FOPEN (tmp_name, "w")) == NULL)
+    {
+	error (1, errno, "unable to open temp file %s", tmp_name);
+	return 1;
+    }
+    chmod (tmp_name, 0600);
+
+    root_len = strlen (CVSroot_original);
+
+    fp = CVS_FOPEN (passfile, "r");
+    if (fp == NULL)
+        error (1, errno, "Error opening %s", passfile);
+
+    /* Check each line to see if we have this entry. */
+    /* Copy only those lines that do not match this entry */
+    while (getline (&linebuf, &linebuf_len, fp) >= 0)
+    {
+	if (strncmp (CVSroot_original, linebuf, root_len)) 
+	    fprintf (tmp_fp, "%s", linebuf);
+	else
+	    found = TRUE;
+    }
+    fclose (fp);
+    fclose (tmp_fp);
+
+    if (! found) 
+    {
+	printf ("Entry not found for %s\n", CVSroot_original);
+	unlink_file (tmp_name);
+    }
+    else
+    {
+	copy_file (tmp_name, passfile);
+	unlink_file (tmp_name);
+	chmod (passfile, 0600);
+    }
+    return 0;
 }
 
 #endif /* AUTH_CLIENT_SUPPORT from beginning of file. */
