@@ -1,3 +1,8 @@
+1999-01-12  Jim Kingdon  <http://www.cyclic.com>
+
+	* memmove.c: Remove paragraph which contained the FSF's old
+	snail mail address; it has changed.
+
 1999-01-05  Jim Kingdon  <http://www.cyclic.com>
 
 	* md5.c, md5.h: Rename all the external interfaces to start with
