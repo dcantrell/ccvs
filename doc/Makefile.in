@@ -79,6 +79,10 @@ cvs.info: cvs.texinfo
 cvsclient.info: cvsclient.texi
 	$(MAKEINFO) $(srcdir)/cvsclient.texi -o cvsclient.info
 
+# FIXME: If the user gets a distribution (which contains *.info), unpacks
+# it, and builds it in a seperate build dir, then *.info* are in srcdir.
+# If the user builds *.info (e.g. after editing *.texi), then *.info* are
+# in the build dir.  I don't know how to best handle both cases.
 install-info: info
 	for i in *.info* ; do \
 	  $(INSTALL_DATA) $$i $(infodir)/$$i ; \
