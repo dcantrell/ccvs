@@ -3085,7 +3085,7 @@ RCS_cmp_file (rcs, rev, options, filename)
     data.different = 0;
 
     retcode = RCS_checkout (rcs, (char *) NULL, rev, (char *) NULL,
-			    options, (char *) NULL, cmp_file_buffer,
+			    options, RUN_TTY, cmp_file_buffer,
 			    (void *) &data);
 
     /* If we have not yet found a difference, make sure that we are at
