@@ -36,62 +36,62 @@
 #   include "kerberos4-client.h"
 # endif
 
-static void add_prune_candidate PROTO((char *));
+static void add_prune_candidate (char *);
 
 /* All the commands.  */
-int add PROTO((int argc, char **argv));
-int admin PROTO((int argc, char **argv));
-int checkout PROTO((int argc, char **argv));
-int commit PROTO((int argc, char **argv));
-int diff PROTO((int argc, char **argv));
-int history PROTO((int argc, char **argv));
-int import PROTO((int argc, char **argv));
-int cvslog PROTO((int argc, char **argv));
-int patch PROTO((int argc, char **argv));
-int release PROTO((int argc, char **argv));
-int cvsremove PROTO((int argc, char **argv));
-int rtag PROTO((int argc, char **argv));
-int status PROTO((int argc, char **argv));
-int tag PROTO((int argc, char **argv));
-int update PROTO((int argc, char **argv));
+int add (int argc, char **argv);
+int admin (int argc, char **argv);
+int checkout (int argc, char **argv);
+int commit (int argc, char **argv);
+int diff (int argc, char **argv);
+int history (int argc, char **argv);
+int import (int argc, char **argv);
+int cvslog (int argc, char **argv);
+int patch (int argc, char **argv);
+int release (int argc, char **argv);
+int cvsremove (int argc, char **argv);
+int rtag (int argc, char **argv);
+int status (int argc, char **argv);
+int tag (int argc, char **argv);
+int update (int argc, char **argv);
 
 /* All the response handling functions.  */
-static void handle_ok PROTO((char *, int));
-static void handle_error PROTO((char *, int));
-static void handle_valid_requests PROTO((char *, int));
-static void handle_checked_in PROTO((char *, int));
-static void handle_new_entry PROTO((char *, int));
-static void handle_checksum PROTO((char *, int));
-static void handle_copy_file PROTO((char *, int));
-static void handle_updated PROTO((char *, int));
-static void handle_merged PROTO((char *, int));
-static void handle_patched PROTO((char *, int));
-static void handle_rcs_diff PROTO((char *, int));
-static void handle_removed PROTO((char *, int));
-static void handle_remove_entry PROTO((char *, int));
-static void handle_set_static_directory PROTO((char *, int));
-static void handle_clear_static_directory PROTO((char *, int));
-static void handle_set_sticky PROTO((char *, int));
-static void handle_clear_sticky PROTO((char *, int));
-static void handle_clear_template PROTO((char *, int));
-static void handle_module_expansion PROTO((char *, int));
-static void handle_wrapper_rcs_option PROTO((char *, int));
-static void handle_m PROTO((char *, int));
-static void handle_e PROTO((char *, int));
-static void handle_f PROTO((char *, int));
-static void handle_notified PROTO((char *, int));
+static void handle_ok (char *, int);
+static void handle_error (char *, int);
+static void handle_valid_requests (char *, int);
+static void handle_checked_in (char *, int);
+static void handle_new_entry (char *, int);
+static void handle_checksum (char *, int);
+static void handle_copy_file (char *, int);
+static void handle_updated (char *, int);
+static void handle_merged (char *, int);
+static void handle_patched (char *, int);
+static void handle_rcs_diff (char *, int);
+static void handle_removed (char *, int);
+static void handle_remove_entry (char *, int);
+static void handle_set_static_directory (char *, int);
+static void handle_clear_static_directory (char *, int);
+static void handle_set_sticky (char *, int);
+static void handle_clear_sticky (char *, int);
+static void handle_clear_template (char *, int);
+static void handle_module_expansion (char *, int);
+static void handle_wrapper_rcs_option (char *, int);
+static void handle_m (char *, int);
+static void handle_e (char *, int);
+static void handle_f (char *, int);
+static void handle_notified (char *, int);
 
-static size_t try_read_from_server PROTO ((char *, size_t));
+static size_t try_read_from_server (char *, size_t);
 
-static void auth_server PROTO ((cvsroot_t *, struct buffer *, struct buffer *,
-				int, int, struct hostent *));
+static void auth_server (cvsroot_t *, struct buffer *, struct buffer *,
+				int, int, struct hostent *);
 
 /* We need to keep track of the list of directories we've sent to the
    server.  This list, along with the current CVSROOT, will help us
    decide which command-line arguments to send.  */
 List *dirs_sent_to_server = NULL;
 
-static int is_arg_a_parent_or_listed_dir PROTO((Node *, void *));
+static int is_arg_a_parent_or_listed_dir (Node *, void *);
 
 static int
 is_arg_a_parent_or_listed_dir (n, d)
@@ -112,7 +112,7 @@ is_arg_a_parent_or_listed_dir (n, d)
     return 0;
 }
 
-static int arg_should_not_be_sent_to_server PROTO((char *));
+static int arg_should_not_be_sent_to_server (char *);
 
 /* Return nonzero if this argument should not be sent to the
    server. */
@@ -590,8 +590,8 @@ static char *last_dir_name;
 static void
 call_in_directory (pathname, func, data)
     char *pathname;
-    void (*func) PROTO((char *data, List *ent_list, char *short_pathname,
-			  char *filename));
+    void (*func) (char *data, List *ent_list, char *short_pathname,
+			  char *filename);
     char *data;
 {
     char *dir_name;
@@ -999,7 +999,7 @@ handle_copy_file (args, len)
 }
 
 
-static void read_counted_file PROTO ((char *, char *));
+static void read_counted_file (char *, char *);
 
 /* Read from the server the count for the length of a file, then read
    the contents of that file and write them to FILENAME.  FULLNAME is
@@ -1162,7 +1162,7 @@ handle_checksum (args, len)
 /* Mode that we got in a "Mode" response (malloc'd), or NULL if none.  */
 static char *stored_mode;
 
-static void handle_mode PROTO ((char *, int));
+static void handle_mode (char *, int);
 
 static void
 handle_mode (args, len)
@@ -1179,7 +1179,7 @@ static int stored_modtime_valid;
 /* Time specified in Mod-time.  */
 static time_t stored_modtime;
 
-static void handle_mod_time PROTO ((char *, int));
+static void handle_mod_time (char *, int);
 
 static void
 handle_mod_time (args, len)
@@ -1814,7 +1814,7 @@ handle_updated (args, len)
     call_in_directory (args, update_entries, (char *)&dat);
 }
 
-static void handle_created PROTO((char *, int));
+static void handle_created (char *, int);
 
 static void
 handle_created (args, len)
@@ -1828,7 +1828,7 @@ handle_created (args, len)
     call_in_directory (args, update_entries, (char *)&dat);
 }
 
-static void handle_update_existing PROTO((char *, int));
+static void handle_update_existing (char *, int);
 
 static void
 handle_update_existing (args, len)
@@ -2094,7 +2094,7 @@ handle_clear_sticky (pathname, len)
 }
 
 
-static void template PROTO ((char *, List *, char *, char *));
+static void template (char *, List *, char *, char *);
 
 static void
 template (data, ent_list, short_pathname, filename)
@@ -2111,7 +2111,7 @@ template (data, ent_list, short_pathname, filename)
     free ( buf );
 }
 
-static void handle_template PROTO ((char *, int));
+static void handle_template (char *, int);
 
 static void
 handle_template (pathname, len)
@@ -2165,7 +2165,7 @@ add_prune_candidate (dir)
     prune_candidates = p;
 }
 
-static void process_prune_candidates PROTO((void));
+static void process_prune_candidates (void);
 
 static void
 process_prune_candidates ()
@@ -2208,7 +2208,7 @@ process_prune_candidates ()
 static char *last_repos;
 static char *last_update_dir;
 
-static void send_repository PROTO((char *, char *, char *));
+static void send_repository (char *, char *, char *);
 
 static void
 send_repository (dir, repos, update_dir)
@@ -2598,7 +2598,7 @@ handle_m (args, len)
     putc ('\n', stdout);
 }
 
-static void handle_mbinary PROTO ((char *, int));
+static void handle_mbinary (char *, int);
 
 static void
 handle_mbinary (args, len)
@@ -2657,7 +2657,7 @@ handle_f (args, len)
     fflush (stderr);
 }
 
-static void handle_mt PROTO ((char *, int));
+static void handle_mt (char *, int);
 
 static void
 handle_mt (args, len)
@@ -3534,7 +3534,7 @@ connect_to_forked_server (to_server_p, from_server_p)
 
 
 
-static int send_variable_proc PROTO ((Node *, void *));
+static int send_variable_proc (Node *, void *);
 
 static int
 send_variable_proc (node, closure)
@@ -3913,7 +3913,7 @@ send_arg (string)
     send_to_server ("\012", 1);
 }
 
-static void send_modified PROTO ((char *, char *, Vers_TS *));
+static void send_modified (char *, char *, Vers_TS *);
 
 /* VERS->OPTIONS specifies whether the file is binary or not.  NOTE: BEFORE
    using any other fields of the struct vers, we would need to fix
@@ -4074,7 +4074,7 @@ struct send_data
     int backup_modified;
 };
 
-static int send_fileproc PROTO ((void *callerdat, struct file_info *finfo));
+static int send_fileproc (void *callerdat, struct file_info *finfo);
 
 /* Deal with one file.  */
 static int
@@ -4228,7 +4228,7 @@ warning: ignoring -k options due to server limitations");
     return 0;
 }
 
-static void send_ignproc PROTO ((char *, char *));
+static void send_ignproc (char *, char *);
 
 static void
 send_ignproc (file, dir)
@@ -4250,7 +4250,7 @@ send_ignproc (file, dir)
     }
 }
 
-static int send_filesdoneproc PROTO ((void *, int, char *, char *, List *));
+static int send_filesdoneproc (void *, int, char *, char *, List *);
 
 static int
 send_filesdoneproc (callerdat, err, repository, update_dir, entries)
@@ -4270,7 +4270,7 @@ send_filesdoneproc (callerdat, err, repository, update_dir, entries)
     return (err);
 }
 
-static Dtype send_dirent_proc PROTO ((void *, char *, char *, char *, List *));
+static Dtype send_dirent_proc (void *, char *, char *, char *, List *);
 
 /*
  * send_dirent_proc () is called back by the recursion processor before a
@@ -4355,7 +4355,7 @@ send_dirent_proc (callerdat, dir, repository, update_dir, entries)
     return (dir_exists ? R_PROCESS : R_SKIP_ALL);
 }
 
-static int send_dirleave_proc PROTO ((void *, char *, int, char *, List *));
+static int send_dirleave_proc (void *, char *, int, char *, List *);
 
 /*
  * send_dirleave_proc () is called back by the recursion code upon leaving

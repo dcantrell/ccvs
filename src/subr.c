@@ -1023,14 +1023,7 @@ locate_file_in_dir (dir, file)
  * Print tracing information to stderr on request.  I haven't decided to
  * actually use levels yet, but I did implement them as CVSNT did.
  */
-#if PROTOTYPES
 void cvs_trace ( int level, const char *fmt, ... )
-#else /* ! PROTOTYPES */
-void cvs_trace ( level, fmt, va_alist )
-    int level;
-    const char *fmt;
-    va_dcl
-#endif /* PROTOTYPES */
 {
     if(trace >= level)
     {

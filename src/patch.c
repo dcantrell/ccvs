@@ -16,14 +16,14 @@
 #include "cvs.h"
 #include "getline.h"
 
-static RETSIGTYPE patch_cleanup PROTO((void));
-static Dtype patch_dirproc PROTO ((void *callerdat, char *dir,
+static RETSIGTYPE patch_cleanup (void);
+static Dtype patch_dirproc (void *callerdat, char *dir,
 				   char *repos, char *update_dir,
-				   List *entries));
-static int patch_fileproc PROTO ((void *callerdat, struct file_info *finfo));
-static int patch_proc PROTO((int argc, char **argv, char *xwhere,
+				   List *entries);
+static int patch_fileproc (void *callerdat, struct file_info *finfo);
+static int patch_proc (int argc, char **argv, char *xwhere,
 		       char *mwhere, char *mfile, int shorten,
-		       int local_specified, char *mname, char *msg));
+		       int local_specified, char *mname, char *msg);
 
 static int force_tag_match = 1;
 static int patch_short = 0;

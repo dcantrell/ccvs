@@ -26,21 +26,21 @@ enum diff_file
     DIFF_SAME
 };
 
-static Dtype diff_dirproc PROTO ((void *callerdat, char *dir,
+static Dtype diff_dirproc (void *callerdat, char *dir,
 				  char *pos_repos, char *update_dir,
-				  List *entries));
-static int diff_filesdoneproc PROTO ((void *callerdat, int err,
+				  List *entries);
+static int diff_filesdoneproc (void *callerdat, int err,
 				      char *repos, char *update_dir,
-				      List *entries));
-static int diff_dirleaveproc PROTO ((void *callerdat, char *dir,
+				      List *entries);
+static int diff_dirleaveproc (void *callerdat, char *dir,
 				     int err, char *update_dir,
-				     List *entries));
-static enum diff_file diff_file_nodiff PROTO(( struct file_info *finfo,
+				     List *entries);
+static enum diff_file diff_file_nodiff ( struct file_info *finfo,
 					       Vers_TS *vers,
 					       enum diff_file, 
-					       char **rev1_cache ));
-static int diff_fileproc PROTO ((void *callerdat, struct file_info *finfo));
-static void diff_mark_errors PROTO((int err));
+					       char **rev1_cache );
+static int diff_fileproc (void *callerdat, struct file_info *finfo);
+static void diff_mark_errors (int err);
 
 
 /* Global variables.  Would be cleaner if we just put this stuff in a

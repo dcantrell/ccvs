@@ -28,9 +28,9 @@
 #include "savecwd.h"
 #include "fileattr.h"
 
-static int add_directory PROTO ((struct file_info *finfo));
-static int build_entry PROTO((char *repository, char *user, char *options,
-		        char *message, List * entries, char *tag));
+static int add_directory (struct file_info *finfo);
+static int build_entry (char *repository, char *user, char *options,
+		        char *message, List * entries, char *tag);
 
 static const char *const add_usage[] =
 {

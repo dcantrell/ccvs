@@ -15,10 +15,10 @@
 #endif
 #include <assert.h>
 
-static Dtype admin_dirproc PROTO ((void *callerdat, char *dir,
+static Dtype admin_dirproc (void *callerdat, char *dir,
 				   char *repos, char *update_dir,
-				   List *entries));
-static int admin_fileproc PROTO ((void *callerdat, struct file_info *finfo));
+				   List *entries);
+static int admin_fileproc (void *callerdat, struct file_info *finfo);
 
 char *UserAdminOptions = "k";
 

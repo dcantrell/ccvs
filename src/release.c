@@ -18,7 +18,7 @@ static const char *const release_usage[] =
 };
 
 #ifdef SERVER_SUPPORT
-static int release_server PROTO ((int argc, char **argv));
+static int release_server (int argc, char **argv);
 
 /* This is the server side of cvs release.  */
 static int

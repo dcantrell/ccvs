@@ -14,12 +14,12 @@
 #include "cvs.h"
 #include "getline.h"
 
-static Node *AddEntryNode PROTO((List * list, Entnode *entnode));
+static Node *AddEntryNode (List * list, Entnode *entnode);
 
-static Entnode *fgetentent PROTO((FILE *, char *, int *));
-static int   fputentent PROTO((FILE *, Entnode *));
+static Entnode *fgetentent (FILE *, char *, int *);
+static int   fputentent (FILE *, Entnode *);
 
-static Entnode *subdir_record PROTO((int, const char *, const char *));
+static Entnode *subdir_record (int, const char *, const char *);
 
 static FILE *entfile;
 static char *entfilename;		/* for error messages */
@@ -27,10 +27,10 @@ static char *entfilename;		/* for error messages */
 /*
  * Construct an Entnode
  */
-static Entnode *Entnode_Create PROTO ((enum ent_type, const char *,
+static Entnode *Entnode_Create (enum ent_type, const char *,
 				       const char *, const char *,
 				       const char *, const char *,
-				       const char *, const char *));
+				       const char *, const char *);
 
 static Entnode *
 Entnode_Create(type, user, vn, ts, options, tag, date, ts_conflict)
@@ -62,7 +62,7 @@ Entnode_Create(type, user, vn, ts, options, tag, date, ts_conflict)
 /*
  * Destruct an Entnode
  */
-static void Entnode_Destroy PROTO ((Entnode *));
+static void Entnode_Destroy (Entnode *);
 
 static void
 Entnode_Destroy (ent)
@@ -84,7 +84,7 @@ Entnode_Destroy (ent)
 /*
  * Write out the line associated with a node of an entries file
  */
-static int write_ent_proc PROTO ((Node *, void *));
+static int write_ent_proc (Node *, void *);
 static int
 write_ent_proc (node, closure)
      Node *node;
@@ -1018,7 +1018,7 @@ enum base_walk {
     BASE_DEREGISTER
 };
 
-static void base_walk PROTO ((enum base_walk, struct file_info *, char **));
+static void base_walk (enum base_walk, struct file_info *, char **);
 
 /* Read through the lines in CVS/Baserev, taking the actions as documented
    for CODE.  */

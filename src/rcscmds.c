@@ -51,7 +51,7 @@
    On a related note, see the comments at diff_exec, later in this file,
    for more on the diff library.  */
 
-static void RCS_output_diff_options PROTO ((char *, char *, char *, char *));
+static void RCS_output_diff_options (char *, char *, char *, char *);
 
 
 /* Stuff to deal with passing arguments the way libdiff.a wants to deal
@@ -72,15 +72,15 @@ static char **call_diff_argv;
 static int call_diff_argc;
 static int call_diff_argc_allocated;
 
-static void call_diff_add_arg PROTO ((const char *));
-static void call_diff_setup PROTO ((const char *prog));
-static int call_diff PROTO ((char *out));
-static int call_diff3 PROTO ((char *out));
+static void call_diff_add_arg (const char *);
+static void call_diff_setup (const char *prog);
+static int call_diff (char *out);
+static int call_diff3 (char *out);
 
-static void call_diff_write_output PROTO((const char *, size_t));
-static void call_diff_flush_output PROTO((void));
-static void call_diff_write_stdout PROTO((const char *));
-static void call_diff_error PROTO((const char *, const char *, const char *));
+static void call_diff_write_output (const char *, size_t);
+static void call_diff_flush_output (void);
+static void call_diff_write_stdout (const char *);
+static void call_diff_error (const char *, const char *, const char *);
 
 /* VARARGS */
 static void 
@@ -198,8 +198,8 @@ static struct diff_callbacks call_diff_stdout_callbacks =
 
 static struct diff_callbacks call_diff_file_callbacks =
 {
-    (void (*) PROTO((const char *, size_t))) NULL,
-    (void (*) PROTO((void))) NULL,
+    (void (*) (const char *, size_t)) NULL,
+    (void (*) (void)) NULL,
     call_diff_write_stdout,
     call_diff_error
 };
@@ -209,11 +209,11 @@ call_diff (out)
     char *out;
 {
     if (out == RUN_TTY)
-	return diff_run (call_diff_argc, call_diff_argv, NULL,
-			 &call_diff_stdout_callbacks);
+	return diff_run( call_diff_argc, call_diff_argv, NULL,
+			 &call_diff_stdout_callbacks );
     else
-	return diff_run (call_diff_argc, call_diff_argv, out,
-			 &call_diff_file_callbacks);
+	return diff_run( call_diff_argc, call_diff_argv, out,
+			 &call_diff_file_callbacks );
 }
 
 static int

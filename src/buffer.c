@@ -22,20 +22,20 @@
 static struct buffer_data *free_buffer_data;
 
 /* Local functions.  */
-static void buf_default_memory_error PROTO ((struct buffer *));
-static void allocate_buffer_datas PROTO((void));
-static struct buffer_data *get_buffer_data PROTO((void));
+static void buf_default_memory_error (struct buffer *);
+static void allocate_buffer_datas (void);
+static struct buffer_data *get_buffer_data (void);
 
 /* Initialize a buffer structure.  */
 
 struct buffer *
 buf_initialize (input, output, flush, block, shutdown, memory, closure)
-     int (*input) PROTO((void *, char *, int, int, int *));
-     int (*output) PROTO((void *, const char *, int, int *));
-     int (*flush) PROTO((void *));
-     int (*block) PROTO((void *, int));
-     int (*shutdown) PROTO((struct buffer *));
-     void (*memory) PROTO((struct buffer *));
+     int (*input) (void *, char *, int, int, int *);
+     int (*output) (void *, const char *, int, int *);
+     int (*flush) (void *);
+     int (*block) (void *, int);
+     int (*shutdown) (struct buffer *);
+     void (*memory) (struct buffer *);
      void *closure;
 {
     struct buffer *buf;
@@ -71,15 +71,14 @@ buf_free (buf)
 /* Initialize a buffer structure which is not to be used for I/O.  */
 
 struct buffer *
-buf_nonio_initialize (memory)
-     void (*memory) PROTO((struct buffer *));
+buf_nonio_initialize( void (*memory) (struct buffer *) )
 {
     return (buf_initialize
-	    ((int (*) PROTO((void *, char *, int, int, int *))) NULL,
-	     (int (*) PROTO((void *, const char *, int, int *))) NULL,
-	     (int (*) PROTO((void *))) NULL,
-	     (int (*) PROTO((void *, int))) NULL,
-	     (int (*) PROTO((struct buffer *))) NULL,
+	    ((int (*) (void *, char *, int, int, int *)) NULL,
+	     (int (*) (void *, const char *, int, int *)) NULL,
+	     (int (*) (void *)) NULL,
+	     (int (*) (void *, int)) NULL,
+	     (int (*) (struct buffer *)) NULL,
 	     memory,
 	     (void *) NULL));
 }
@@ -1213,10 +1212,10 @@ buf_shutdown (buf)
    implement setting this type of buffer into nonblocking mode.  The
    closure field is just a FILE *.  */
 
-static int stdio_buffer_input PROTO((void *, char *, int, int, int *));
-static int stdio_buffer_output PROTO((void *, const char *, int, int *));
-static int stdio_buffer_flush PROTO((void *));
-static int stdio_buffer_shutdown PROTO((struct buffer *buf));
+static int stdio_buffer_input (void *, char *, int, int, int *);
+static int stdio_buffer_output (void *, const char *, int, int *);
+static int stdio_buffer_flush (void *);
+static int stdio_buffer_shutdown (struct buffer *buf);
 
 /* Initialize a buffer built on a stdio FILE.  */
 
@@ -1231,20 +1230,20 @@ stdio_buffer_initialize (fp, child_pid, input, memory)
      FILE *fp;
      int child_pid;
      int input;
-     void (*memory) PROTO((struct buffer *));
+     void (*memory) (struct buffer *);
 {
     struct stdio_buffer_closure *bc = xmalloc (sizeof (*bc));
 
     bc->fp = fp;
     bc->child_pid = child_pid;
 
-    return buf_initialize (input ? stdio_buffer_input : NULL,
+    return buf_initialize( input ? stdio_buffer_input : NULL,
 			   input ? NULL : stdio_buffer_output,
 			   input ? NULL : stdio_buffer_flush,
-			   (int (*) PROTO((void *, int))) NULL,
+			   (int (*) (void *, int)) NULL,
 			   stdio_buffer_shutdown,
 			   memory,
-			   (void *) bc);
+			   (void *) bc );
 }
 
 /* Return the file associated with a stdio buffer. */
@@ -1513,16 +1512,16 @@ struct packetizing_buffer
        untranslate the data in INPUT, storing the result in OUTPUT.
        SIZE is the amount of data in INPUT, and is also the size of
        OUTPUT.  This should return 0 on success, or an errno code.  */
-    int (*inpfn) PROTO((void *fnclosure, const char *input, char *output,
-			int size));
+    int (*inpfn) (void *fnclosure, const char *input, char *output,
+			int size);
     /* The output translation function.  This should translate the
        data in INPUT, storing the result in OUTPUT.  The first two
        bytes in INPUT will be the size of the data, and so will SIZE.
        This should set *TRANSLATED to the amount of translated data in
        OUTPUT.  OUTPUT is large enough to hold SIZE + PACKET_SLOP
        bytes.  This should return 0 on success, or an errno code.  */
-    int (*outfn) PROTO((void *fnclosure, const char *input, char *output,
-			int size, int *translated));
+    int (*outfn) (void *fnclosure, const char *input, char *output,
+			int size, int *translated);
     /* A closure for the translation function.  */
     void *fnclosure;
     /* For an input buffer, we may have to buffer up data here.  */
@@ -1542,21 +1541,21 @@ struct packetizing_buffer
     char *holddata;
 };
 
-static int packetizing_buffer_input PROTO((void *, char *, int, int, int *));
-static int packetizing_buffer_output PROTO((void *, const char *, int, int *));
-static int packetizing_buffer_flush PROTO((void *));
-static int packetizing_buffer_block PROTO((void *, int));
-static int packetizing_buffer_shutdown PROTO((struct buffer *));
+static int packetizing_buffer_input (void *, char *, int, int, int *);
+static int packetizing_buffer_output (void *, const char *, int, int *);
+static int packetizing_buffer_flush (void *);
+static int packetizing_buffer_block (void *, int);
+static int packetizing_buffer_shutdown (struct buffer *);
 
 /* Create a packetizing buffer.  */
 
 struct buffer *
 packetizing_buffer_initialize (buf, inpfn, outfn, fnclosure, memory)
      struct buffer *buf;
-     int (*inpfn) PROTO ((void *, const char *, char *, int));
-     int (*outfn) PROTO ((void *, const char *, char *, int, int *));
+     int (*inpfn) (void *, const char *, char *, int);
+     int (*outfn) (void *, const char *, char *, int, int *);
      void *fnclosure;
-     void (*memory) PROTO((struct buffer *));
+     void (*memory) (struct buffer *);
 {
     struct packetizing_buffer *pb;
 

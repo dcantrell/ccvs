@@ -76,10 +76,10 @@ struct socket_buffer
     int socket;
 };
 
-static int socket_buffer_input PROTO((void *, char *, int, int, int *));
-static int socket_buffer_output PROTO((void *, const char *, int, int *));
-static int socket_buffer_flush PROTO((void *));
-static int socket_buffer_shutdown PROTO((struct buffer *));
+static int socket_buffer_input (void *, char *, int, int, int *);
+static int socket_buffer_output (void *, const char *, int, int *);
+static int socket_buffer_flush (void *);
+static int socket_buffer_shutdown (struct buffer *);
 
 
 
@@ -89,7 +89,7 @@ struct buffer *
 socket_buffer_initialize (socket, input, memory)
     int socket;
     int input;
-    void (*memory) PROTO((struct buffer *));
+    void (*memory) (struct buffer *);
 {
     struct socket_buffer *n;
 
@@ -98,10 +98,10 @@ socket_buffer_initialize (socket, input, memory)
     return buf_initialize (input ? socket_buffer_input : NULL,
 			   input ? NULL : socket_buffer_output,
 			   input ? NULL : socket_buffer_flush,
-			   (int (*) PROTO((void *, int))) NULL,
+			   (int (*) (void *, int))) NULL,
 			   socket_buffer_shutdown,
 			   memory,
-			   n);
+			   n;
 }
 
 

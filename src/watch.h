@@ -45,8 +45,8 @@ struct addremove_args {
 /* Modify the watchers for FILE.  *WHAT tells what to do to them.
    If FILE is NULL, modify default args (WHAT->SETTING_DEFAULT is
    not used).  */
-extern void watch_modify_watchers PROTO ((char *file,
-					  struct addremove_args *what));
+extern void watch_modify_watchers (char *file,
+					  struct addremove_args *what);
 
-extern int watch_add PROTO ((int argc, char **argv));
-extern int watch_remove PROTO ((int argc, char **argv));
+extern int watch_add (int argc, char **argv);
+extern int watch_remove (int argc, char **argv);

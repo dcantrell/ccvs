@@ -45,35 +45,35 @@
 #include "buffer.h"
 #include "hardlink.h"
 
-static int checkout_file PROTO ((struct file_info *finfo, Vers_TS *vers_ts,
-				 int adding, int merging, int update_server));
+static int checkout_file (struct file_info *finfo, Vers_TS *vers_ts,
+				 int adding, int merging, int update_server);
 #ifdef SERVER_SUPPORT
-static void checkout_to_buffer PROTO ((void *, const char *, size_t));
+static void checkout_to_buffer (void *, const char *, size_t);
 #endif
 #ifdef SERVER_SUPPORT
-static int patch_file PROTO ((struct file_info *finfo,
+static int patch_file (struct file_info *finfo,
 			      Vers_TS *vers_ts, 
 			      int *docheckout, struct stat *file_info,
-			      unsigned char *checksum));
-static void patch_file_write PROTO ((void *, const char *, size_t));
+			      unsigned char *checksum);
+static void patch_file_write (void *, const char *, size_t);
 #endif
-static int merge_file PROTO ((struct file_info *finfo, Vers_TS *vers));
-static int scratch_file PROTO((struct file_info *finfo, Vers_TS *vers));
-static Dtype update_dirent_proc PROTO ((void *callerdat, char *dir,
+static int merge_file (struct file_info *finfo, Vers_TS *vers);
+static int scratch_file (struct file_info *finfo, Vers_TS *vers);
+static Dtype update_dirent_proc (void *callerdat, char *dir,
 					char *repository, char *update_dir,
-					List *entries));
-static int update_dirleave_proc PROTO ((void *callerdat, char *dir,
+					List *entries);
+static int update_dirleave_proc (void *callerdat, char *dir,
 					int err, char *update_dir,
-					List *entries));
-static int update_fileproc PROTO ((void *callerdat, struct file_info *));
-static int update_filesdone_proc PROTO ((void *callerdat, int err,
+					List *entries);
+static int update_fileproc (void *callerdat, struct file_info *);
+static int update_filesdone_proc (void *callerdat, int err,
 					 char *repository, char *update_dir,
-					 List *entries));
+					 List *entries);
 #ifdef PRESERVE_PERMISSIONS_SUPPORT
-static int get_linkinfo_proc PROTO ((void *callerdat, struct file_info *));
+static int get_linkinfo_proc (void *callerdat, struct file_info *);
 #endif
-static void write_letter PROTO ((struct file_info *finfo, int letter));
-static void join_file PROTO ((struct file_info *finfo, Vers_TS *vers_ts));
+static void write_letter (struct file_info *finfo, int letter);
+static void join_file (struct file_info *finfo, Vers_TS *vers_ts);
 
 static char *options = NULL;
 static char *tag = NULL;
@@ -801,7 +801,7 @@ update_fileproc (callerdat, finfo)
     return (retval);
 }
 
-static void update_ignproc PROTO ((char *, char *));
+static void update_ignproc (char *, char *);
 
 static void
 update_ignproc (file, dir)
@@ -1093,7 +1093,7 @@ update_dirleave_proc (callerdat, dir, err, update_dir, entries)
     return (err);
 }
 
-static int isremoved PROTO ((Node *, void *));
+static int isremoved (Node *, void *);
 
 /* Returns 1 if the file indicated by node has been removed.  */
 static int

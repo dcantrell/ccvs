@@ -14,8 +14,6 @@
 #ifndef ERROR_H
 #define ERROR_H
 
-#include "PROTO.h"
-
 /* Add GNU attribute suppport.  */
 #ifndef __attribute__
 /* This feature is available in gcc versions 2.5 and later.  */
@@ -39,12 +37,12 @@
 # endif
 #endif
 
-void error PROTO ((int, int, const char *, ...)
-  __attribute__ ((__format__ (__printf__, 3, 4))));
+void error (int, int, const char *, ...)
+  __attribute__ ((__format__ (__printf__, 3, 4)));
 
 /* Exit due to an error.  Similar to error (1, 0, "message"), but call
    it in the case where the message has already been printed.  */
-void error_exit PROTO ((void) __attribute__ ((__noreturn__)));
+void error_exit (void) __attribute__ ((__noreturn__));
 
 /* If non-zero, error will use the CVS protocol to report error
    messages.  This will only be set in the CVS server parent process;

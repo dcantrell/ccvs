@@ -13,13 +13,13 @@
 #define	DBLKSIZ	4096			/* since GNU ndbm doesn't define it */
 #endif
 
-static int checkout_file PROTO((char *file, char *temp));
-static char *make_tempfile PROTO((void));
-static void rename_rcsfile PROTO((char *temp, char *real));
+static int checkout_file (char *file, char *temp);
+static char *make_tempfile (void);
+static void rename_rcsfile (char *temp, char *real);
 
 #ifndef MY_NDBM
-static void rename_dbmfile PROTO((char *temp));
-static void write_dbmfile PROTO((char *temp));
+static void rename_dbmfile (char *temp);
+static void write_dbmfile (char *temp);
 #endif				/* !MY_NDBM */
 
 /* Structure which describes an administrative file.  */

@@ -21,40 +21,40 @@
 #include "fileattr.h"
 #include "hardlink.h"
 
-static Dtype check_direntproc PROTO ((void *callerdat, char *dir,
+static Dtype check_direntproc (void *callerdat, char *dir,
 				      char *repos, char *update_dir,
-				      List *entries));
-static int check_fileproc PROTO ((void *callerdat, struct file_info *finfo));
-static int check_filesdoneproc PROTO ((void *callerdat, int err,
+				      List *entries);
+static int check_fileproc (void *callerdat, struct file_info *finfo);
+static int check_filesdoneproc (void *callerdat, int err,
 				       char *repos, char *update_dir,
-				       List *entries));
-static int checkaddfile PROTO((char *file, char *repository, char *tag,
-			       char *options, RCSNode **rcsnode));
-static Dtype commit_direntproc PROTO ((void *callerdat, char *dir,
+				       List *entries);
+static int checkaddfile (char *file, char *repository, char *tag,
+			       char *options, RCSNode **rcsnode);
+static Dtype commit_direntproc (void *callerdat, char *dir,
 				       char *repos, char *update_dir,
-				       List *entries));
-static int commit_dirleaveproc PROTO ((void *callerdat, char *dir,
+				       List *entries);
+static int commit_dirleaveproc (void *callerdat, char *dir,
 				       int err, char *update_dir,
-				       List *entries));
-static int commit_fileproc PROTO ((void *callerdat, struct file_info *finfo));
-static int commit_filesdoneproc PROTO ((void *callerdat, int err,
+				       List *entries);
+static int commit_fileproc (void *callerdat, struct file_info *finfo);
+static int commit_filesdoneproc (void *callerdat, int err,
 					char *repository, char *update_dir,
-					List *entries));
-static int finaladd PROTO((struct file_info *finfo, char *revision, char *tag,
-			   char *options));
-static int findmaxrev PROTO((Node * p, void *closure));
-static int lock_RCS PROTO((char *user, RCSNode *rcs, char *rev,
-			   char *repository));
-static int precommit_list_proc PROTO((Node * p, void *closure));
-static int precommit_proc PROTO(( char *repository, char *filter,
-                                  void *closure ));
-static int remove_file PROTO ((struct file_info *finfo, char *tag,
-			       char *message));
-static void fixaddfile PROTO((const char *file, const char *repository));
-static void fixbranch PROTO((RCSNode *, char *branch));
-static void unlockrcs PROTO((RCSNode *rcs));
-static void ci_delproc PROTO((Node *p));
-static void masterlist_delproc PROTO((Node *p));
+					List *entries);
+static int finaladd (struct file_info *finfo, char *revision, char *tag,
+			   char *options);
+static int findmaxrev (Node * p, void *closure);
+static int lock_RCS (char *user, RCSNode *rcs, char *rev,
+			   char *repository);
+static int precommit_list_proc (Node * p, void *closure);
+static int precommit_proc ( char *repository, char *filter,
+                                  void *closure );
+static int remove_file (struct file_info *finfo, char *tag,
+			       char *message);
+static void fixaddfile (const char *file, const char *repository);
+static void fixbranch (RCSNode *, char *branch);
+static void unlockrcs (RCSNode *rcs);
+static void ci_delproc (Node *p);
+static void masterlist_delproc (Node *p);
 
 struct commit_info
 {
@@ -128,9 +128,9 @@ struct find_data {
     int force;
 };
 
-static Dtype find_dirent_proc PROTO ((void *callerdat, char *dir,
+static Dtype find_dirent_proc (void *callerdat, char *dir,
 				      char *repository, char *update_dir,
-				      List *entries));
+				      List *entries);
 
 static Dtype
 find_dirent_proc (callerdat, dir, repository, update_dir, entries)
@@ -165,7 +165,7 @@ find_dirent_proc (callerdat, dir, repository, update_dir, entries)
    it along as an argument.  */
 static struct find_data *find_data_static;
 
-static void find_ignproc PROTO ((char *, char *));
+static void find_ignproc (char *, char *);
 
 static void
 find_ignproc (file, dir)
@@ -182,9 +182,9 @@ find_ignproc (file, dir)
     find_data_static->questionables = p;
 }
 
-static int find_filesdoneproc PROTO ((void *callerdat, int err,
+static int find_filesdoneproc (void *callerdat, int err,
 				      char *repository, char *update_dir,
-				      List *entries));
+				      List *entries);
 
 static int
 find_filesdoneproc (callerdat, err, repository, update_dir, entries)
@@ -210,7 +210,7 @@ find_filesdoneproc (callerdat, err, repository, update_dir, entries)
     return err;
 }
 
-static int find_fileproc PROTO ((void *callerdat, struct file_info *finfo));
+static int find_fileproc (void *callerdat, struct file_info *finfo);
 
 /* Machinery to find out what is modified, added, and removed.  It is
    possible this should be broken out into a new client_classify function;
@@ -310,7 +310,7 @@ find_fileproc (callerdat, finfo)
     return 0;
 }
 
-static int copy_ulist PROTO ((Node *, void *));
+static int copy_ulist (Node *, void *);
 
 static int
 copy_ulist (node, data)

@@ -15,8 +15,8 @@
 #include "fileattr.h"
 #include <assert.h>
 
-static void fileattr_read PROTO ((void));
-static int writeattr_proc PROTO ((Node *, void *));
+static void fileattr_read (void);
+static int writeattr_proc (Node *, void *);
 
 /* Where to look for CVSREP_FILEATTR.  */
 static char *fileattr_stored_repos;

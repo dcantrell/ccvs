@@ -33,7 +33,7 @@
    name.  */
 #   include <krb5.h>
 
-static void gserver_authenticate_connection PROTO((void));
+static void gserver_authenticate_connection (void);
 
 /* Whether we are already wrapping GSSAPI communication.  */
 static int cvs_gssapi_wrapping;
@@ -135,7 +135,7 @@ static char *orig_server_temp_dir;
 /* Nonzero if we should keep the temp directory around after we exit.  */
 static int dont_delete_temp;
 
-static void server_write_entries PROTO((void));
+static void server_write_entries (void);
 
 /* All server communication goes through buffer structures.  Most of
    the buffers are built on top of a file descriptor.  This structure
@@ -150,12 +150,12 @@ struct fd_buffer
 };
 
 static struct buffer *fd_buffer_initialize
-  PROTO ((int, int, void (*) (struct buffer *)));
-static int fd_buffer_input PROTO((void *, char *, int, int, int *));
-static int fd_buffer_output PROTO((void *, const char *, int, int *));
-static int fd_buffer_flush PROTO((void *));
-static int fd_buffer_block PROTO((void *, int));
-static int fd_buffer_shutdown PROTO((struct buffer *));
+  (int, int, void (*) (struct buffer *));
+static int fd_buffer_input (void *, char *, int, int, int *);
+static int fd_buffer_output (void *, const char *, int, int *);
+static int fd_buffer_flush (void *);
+static int fd_buffer_block (void *, int);
+static int fd_buffer_shutdown (struct buffer *);
 
 /* Initialize a buffer built on a file descriptor.  FD is the file
    descriptor.  INPUT is nonzero if this is for input, zero if this is
@@ -166,7 +166,7 @@ static struct buffer *
 fd_buffer_initialize (fd, input, memory)
      int fd;
      int input;
-     void (*memory) PROTO((struct buffer *));
+     void (*memory) (struct buffer *);
 {
     struct fd_buffer *n;
 
@@ -327,7 +327,7 @@ fd_buffer_shutdown (buf)
 /* Populate all of the directories between BASE_DIR and its relative
    subdirectory DIR with CVSADM directories.  Return 0 for success or
    errno value.  */
-static int create_adm_p PROTO((char *, char *));
+static int create_adm_p (char *, char *);
 
 static int
 create_adm_p (base_dir, dir)
@@ -503,7 +503,7 @@ create_adm_p (base_dir, dir)
  * Make directory DIR, including all intermediate directories if necessary.
  * Returns 0 for success or errno code.
  */
-static int mkdir_p PROTO((char *));
+static int mkdir_p (char *);
 
 static int
 mkdir_p (dir)
@@ -624,7 +624,7 @@ print_pending_error ()
 /* Is an error pending?  */
 #define error_pending() (pending_error || pending_error_text)
 
-static int alloc_pending PROTO ((size_t size));
+static int alloc_pending (size_t size);
 
 /* Allocate SIZE bytes for pending_error_text and return nonzero
    if we could do it.  */
@@ -646,9 +646,9 @@ alloc_pending (size)
     return 1;
 }
 
-static void serve_is_modified PROTO ((char *));
+static void serve_is_modified (char *);
 
-static int supported_response PROTO ((char *));
+static int supported_response (char *);
 
 static int
 supported_response (name)
@@ -832,7 +832,7 @@ server_pathname_check (path)
     }
 }
 
-static int outside_root PROTO ((char *));
+static int outside_root (char *);
 
 /* Is file or directory REPOS an absolute pathname within the
    current_parsed_root->directory?  If yes, return 0.  If no, set pending_error
@@ -877,7 +877,7 @@ E protocol error: directory '%s' not within root '%s'",
     return 0;
 }
 
-static int outside_dir PROTO ((char *));
+static int outside_dir (char *);
 
 /* Is file or directory FILE outside the current directory (that is, does
    it contain '/')?  If no, return 0.  If yes, set pending_error
@@ -1438,7 +1438,7 @@ static char *kopt;
 static int checkin_time_valid;
 static time_t checkin_time;
 
-static void serve_modified PROTO ((char *));
+static void serve_modified (char *);
 
 static void
 serve_modified (arg)
@@ -1606,7 +1606,7 @@ struct an_entry {
 
 static struct an_entry *entries;
 
-static void serve_unchanged PROTO ((char *));
+static void serve_unchanged (char *);
 
 static void
 serve_unchanged (arg)
@@ -1734,7 +1734,7 @@ serve_is_modified (arg)
     }
 }
 
-static void serve_entry PROTO ((char *));
+static void serve_entry (char *);
 
 static void
 serve_entry (arg)
@@ -1762,7 +1762,7 @@ serve_entry (arg)
     entries = p;
 }
 
-static void serve_kopt PROTO ((char *));
+static void serve_kopt (char *);
 
 static void
 serve_kopt (arg)
@@ -1801,7 +1801,7 @@ serve_kopt (arg)
     strcpy (kopt, arg);
 }
 
-static void serve_checkin_time PROTO ((char *));
+static void serve_checkin_time (char *);
 
 static void
 serve_checkin_time (arg)
@@ -1907,7 +1907,7 @@ static struct notify_note *notify_list;
 /* Used while building list, to point to the last node that already exists.  */
 static struct notify_note *last_node;
 
-static void serve_notify PROTO ((char *));
+static void serve_notify (char *);
 
 static void
 serve_notify (arg)
@@ -2286,7 +2286,7 @@ serve_gssapi_authenticate (arg)
 #  define SERVER_LO_WATER (1 * 1024 * 1024)
 # endif /* SERVER_LO_WATER */
 
-static int set_nonblock_fd PROTO((int));
+static int set_nonblock_fd (int);
 
 /*
  * Set buffer BUF to non-blocking I/O.  Returns 0 for success or errno
@@ -2309,7 +2309,7 @@ set_nonblock_fd (fd)
 
 #endif /* SERVER_FLOWCONTROL */
 
-static void serve_questionable PROTO((char *));
+static void serve_questionable (char *);
 
 static void
 serve_questionable (arg)
@@ -2350,7 +2350,7 @@ serve_questionable (arg)
     }
 }
 
-static void serve_case PROTO ((char *));
+static void serve_case (char *);
 
 static void
 serve_case (arg)
@@ -2598,7 +2598,7 @@ static int flowcontrol_pipe[2];
 static void
 do_cvs_command (cmd_name, command)
     char *cmd_name;
-    int (*command) PROTO((int argc, char **argv));
+    int (*command) (int argc, char **argv);
 {
     /*
      * The following file descriptors are set to -1 if that file is not
@@ -3326,7 +3326,7 @@ server_pause_check()
 /* This variable commented in server.h.  */
 char *server_dir = NULL;
 
-static void output_dir PROTO((char *, char *));
+static void output_dir (char *, char *);
 
 static void
 output_dir (update_dir, repository)
@@ -3687,7 +3687,7 @@ serve_release (arg)
     do_cvs_command ("release", release);
 }
 
-static void serve_watch_on PROTO ((char *));
+static void serve_watch_on (char *);
 
 static void
 serve_watch_on (arg)
@@ -3696,7 +3696,7 @@ serve_watch_on (arg)
     do_cvs_command ("watch", watch_on);
 }
 
-static void serve_watch_off PROTO ((char *));
+static void serve_watch_off (char *);
 
 static void
 serve_watch_off (arg)
@@ -3705,7 +3705,7 @@ serve_watch_off (arg)
     do_cvs_command ("watch", watch_off);
 }
 
-static void serve_watch_add PROTO ((char *));
+static void serve_watch_add (char *);
 
 static void
 serve_watch_add (arg)
@@ -3714,7 +3714,7 @@ serve_watch_add (arg)
     do_cvs_command ("watch", watch_add);
 }
 
-static void serve_watch_remove PROTO ((char *));
+static void serve_watch_remove (char *);
 
 static void
 serve_watch_remove (arg)
@@ -3723,7 +3723,7 @@ serve_watch_remove (arg)
     do_cvs_command ("watch", watch_remove);
 }
 
-static void serve_watchers PROTO ((char *));
+static void serve_watchers (char *);
 
 static void
 serve_watchers (arg)
@@ -3732,7 +3732,7 @@ serve_watchers (arg)
     do_cvs_command ("watchers", watchers);
 }
 
-static void serve_editors PROTO ((char *));
+static void serve_editors (char *);
 
 static void
 serve_editors (arg)
@@ -3741,7 +3741,7 @@ serve_editors (arg)
     do_cvs_command ("editors", editors);
 }
 
-static void serve_noop PROTO ((char *));
+static void serve_noop (char *);
 
 static void
 serve_noop (arg)
@@ -3757,7 +3757,7 @@ serve_noop (arg)
     buf_flush (buf_to_net, 1);
 }
 
-static void serve_version PROTO ((char *));
+static void serve_version (char *);
 
 static void
 serve_version (arg)
@@ -3766,7 +3766,7 @@ serve_version (arg)
     do_cvs_command ("version", version);
 }
 
-static void serve_init PROTO ((char *));
+static void serve_init (char *);
 
 static void
 serve_init (arg)
@@ -3806,7 +3806,7 @@ E Protocol error: init says \"%s\" but pserver says \"%s\"",
     current_parsed_root = saved_parsed_root;
 }
 
-static void serve_annotate PROTO ((char *));
+static void serve_annotate (char *);
 
 static void
 serve_annotate (arg)
@@ -3815,7 +3815,7 @@ serve_annotate (arg)
     do_cvs_command ("annotate", annotate);
 }
 
-static void serve_rannotate PROTO ((char *));
+static void serve_rannotate (char *);
 
 static void
 serve_rannotate (arg)
@@ -3943,7 +3943,6 @@ server_modtime (finfo, vers_ts)
 
 /* See server.h for description.  */
 
-#if defined (PROTOTYPES) ? PROTOTYPES : defined (__STDC__)
 /* Need to prototype because mode_t might be smaller than int.  */
 void
 server_updated (
@@ -3953,16 +3952,6 @@ server_updated (
     mode_t mode,
     unsigned char *checksum,
     struct buffer *filebuf)
-#else
-void
-server_updated (finfo, vers, updated, mode, checksum, filebuf)
-    struct file_info *finfo;
-    Vers_TS *vers;
-    enum server_updated_arg4 updated;
-    mode_t mode;
-    unsigned char *checksum;
-    struct buffer *filebuf;
-#endif
 {
     if (noexec)
     {
@@ -4627,7 +4616,7 @@ serve_expand_modules (arg)
 
 
 
-static void serve_valid_requests PROTO((char *arg));
+static void serve_valid_requests (char *arg);
 
 #endif /* SERVER_SUPPORT */
 #if defined(SERVER_SUPPORT) || defined(CLIENT_SUPPORT)
@@ -5139,7 +5128,7 @@ error ENOMEM Virtual memory exhausted.\n");
 
 
 #if defined (HAVE_KERBEROS) || defined (AUTH_SERVER_SUPPORT) || defined (HAVE_GSSAPI)
-static void switch_to_user PROTO((const char *));
+static void switch_to_user (const char *);
 
 static void
 switch_to_user (username)
@@ -5265,7 +5254,7 @@ error 0 %s: no such system user\n", username);
 
 #ifdef AUTH_SERVER_SUPPORT
 
-extern char *crypt PROTO((const char *, const char *));
+extern char *crypt (const char *, const char *);
 
 
 /*
@@ -5981,9 +5970,9 @@ struct krb_encrypt_data
     C_Block block;
 };
 
-static int krb_encrypt_input PROTO((void *, const char *, char *, int));
-static int krb_encrypt_output PROTO((void *, const char *, char *, int,
-				     int *));
+static int krb_encrypt_input (void *, const char *, char *, int);
+static int krb_encrypt_output (void *, const char *, char *, int,
+				     int *);
 
 /* Create a Kerberos encryption buffer.  We use a packetizing buffer
    with Kerberos encryption translation routines.  */
@@ -5994,7 +5983,7 @@ krb_encrypt_buffer_initialize (buf, input, sched, block, memory)
      int input;
      Key_schedule sched;
      C_Block block;
-     void (*memory) PROTO((struct buffer *));
+     void (*memory) (struct buffer *);
 {
     struct krb_encrypt_data *kd;
 

@@ -14,11 +14,11 @@
 #include "edit.h"
 #include <assert.h>
 
-static int do_dir_proc PROTO((Node * p, void *closure));
-static int do_file_proc PROTO((Node * p, void *closure));
-static void addlist PROTO((List ** listp, char *key));
-static int unroll_files_proc PROTO((Node *p, void *closure));
-static void addfile PROTO((List **listp, char *dir, char *file));
+static int do_dir_proc (Node * p, void *closure);
+static int do_file_proc (Node * p, void *closure);
+static void addlist (List ** listp, char *key);
+static int unroll_files_proc (Node *p, void *closure);
+static void addfile (List **listp, char *dir, char *file);
 
 static char *update_dir;
 static char *repository = NULL;
@@ -39,7 +39,7 @@ struct recursion_frame {
     char *repository;			/* Keep track of repository for rtag */
 };
 
-static int do_recursion PROTO ((struct recursion_frame *frame));
+static int do_recursion (struct recursion_frame *frame);
 
 /* I am half tempted to shove a struct file_info * into the struct
    recursion_frame (but then we would need to modify or create a

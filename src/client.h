@@ -1,8 +1,8 @@
 /* Interface between the client and the rest of CVS.  */
 
 /* Stuff shared with the server.  */
-extern char *mode_to_string PROTO((mode_t));
-extern int change_mode PROTO((char *, char *, int));
+extern char *mode_to_string (mode_t);
+extern int change_mode (char *, char *, int);
 
 extern int gzip_level;
 extern int file_gzip_level;
@@ -11,10 +11,10 @@ extern int file_gzip_level;
 struct buffer;
 #endif
 
-void make_bufs_from_fds PROTO(( int, int, int,
+void make_bufs_from_fds ( int, int, int,
 			        struct buffer **,
 			        struct buffer **,
-			        int ));
+			        int );
 
 
 #if defined (CLIENT_SUPPORT) || defined (SERVER_SUPPORT)
@@ -53,10 +53,10 @@ extern int client_prune_dirs;
 extern int use_authenticating_server;
 # endif /* AUTH_CLIENT_SUPPORT */
 # if defined (AUTH_CLIENT_SUPPORT) || defined (HAVE_GSSAPI)
-void connect_to_pserver PROTO ((cvsroot_t *,
+void connect_to_pserver (cvsroot_t *,
 				struct buffer **,
 				struct buffer **,
-				int, int ));
+				int, int );
 #   ifndef CVS_AUTH_PORT
 #     define CVS_AUTH_PORT 2401
 #   endif /* CVS_AUTH_PORT */
@@ -69,25 +69,25 @@ void connect_to_pserver PROTO ((cvsroot_t *,
 # endif /* HAVE_KERBEROS */
 
 /* Talking to the server. */
-void send_to_server PROTO((char *str, size_t len));
-void read_from_server PROTO((char *buf, size_t len));
+void send_to_server (char *str, size_t len);
+void read_from_server (char *buf, size_t len);
 
 /* Internal functions that handle client communication to server, etc.  */
-int supported_request PROTO ((char *));
-void option_with_arg PROTO((char *option, char *arg));
+int supported_request (char *);
+void option_with_arg (char *option, char *arg);
 
 /* Get the responses and then close the connection.  */
-extern int get_responses_and_close PROTO((void));
+extern int get_responses_and_close (void);
 
-extern int get_server_responses PROTO((void));
+extern int get_server_responses (void);
 
 /* Start up the connection to the server on the other end.  */
 void
-start_server PROTO((void));
+start_server (void);
 
 /* Send the names of all the argument files to the server.  */
 void
-send_file_names PROTO((int argc, char **argv, unsigned int flags));
+send_file_names (int argc, char **argv, unsigned int flags);
 
 /* Flags for send_file_names.  */
 /* Expand wild cards?  */
@@ -99,8 +99,8 @@ send_file_names PROTO((int argc, char **argv, unsigned int flags));
  * local is nonzero if we should not recurse (-l option).
  */
 void
-send_files PROTO((int argc, char **argv, int local, int aflag,
-		  unsigned int flags));
+send_files (int argc, char **argv, int local, int aflag,
+		  unsigned int flags);
 
 /* Flags for send_files.  */
 # define SEND_BUILD_DIRS 1
@@ -110,13 +110,13 @@ send_files PROTO((int argc, char **argv, int local, int aflag,
 
 /* Send an argument to the remote server.  */
 void
-send_arg PROTO((char *string));
+send_arg (char *string);
 
 /* Send a string of single-char options to the remote server, one by one.  */
 void
-send_option_string PROTO((char *string));
+send_option_string (char *string);
 
-extern void send_a_repository PROTO ((char *, char *, char *));
+extern void send_a_repository (char *, char *, char *);
 
 #endif /* CLIENT_SUPPORT */
 
@@ -138,7 +138,7 @@ struct response
      * Note that although LEN is given, ARGS is also guaranteed to be
      * '\0' terminated.
      */
-    void (*func) PROTO((char *args, int len));
+    void (*func) (char *args, int len);
 
     /*
      * ok and error are special; they indicate we are at the end of the
@@ -177,22 +177,22 @@ extern struct response responses[];
 
 #ifdef CLIENT_SUPPORT
 
-extern void client_senddate PROTO((const char *date));
-extern void client_expand_modules PROTO((int argc, char **argv, int local));
-extern void client_send_expansions PROTO((int local, char *where,
-					  int build_dirs));
-extern void client_nonexpanded_setup PROTO((void));
+extern void client_senddate (const char *date);
+extern void client_expand_modules (int argc, char **argv, int local);
+extern void client_send_expansions (int local, char *where,
+					  int build_dirs);
+extern void client_nonexpanded_setup (void);
 
-extern void send_init_command PROTO ((void));
+extern void send_init_command (void);
 
 extern char **failed_patches;
 extern int failed_patches_count;
 extern char *toplevel_wd;
-extern void client_import_setup PROTO((char *repository));
+extern void client_import_setup (char *repository);
 extern int client_process_import_file
-    PROTO((char *message, char *vfile, char *vtag,
+    (char *message, char *vfile, char *vtag,
 	   int targc, char *targv[], char *repository, int all_files_binary,
-	   int modtime));
-extern void client_import_done PROTO((void));
-extern void client_notify PROTO((char *, char *, char *, int, char *));
+	   int modtime);
+extern void client_import_done (void);
+extern void client_notify (char *, char *, char *, int, char *);
 #endif /* CLIENT_SUPPORT */

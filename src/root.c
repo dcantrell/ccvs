@@ -282,8 +282,8 @@ cvsroot_t *current_parsed_root = NULL;
  * or the like
  */
 /* Functions which allocate memory are not pure.  */
-static cvsroot_t * new_cvsroot_t PROTO(())
-    __attribute__ ((__malloc__));
+static cvsroot_t *new_cvsroot_t()
+    __attribute__( (__malloc__) );
 static cvsroot_t *
 new_cvsroot_t ()
 {
@@ -789,9 +789,9 @@ char *command_name = "parse_cvsroot";		/* XXX is this used??? */
    debug when something goes wrong.  */
 
 void
-error_exit PROTO ((void))
+error_exit (void))
 {
-    exit (1);
+    exit (1;
 }
 
 int

@@ -28,42 +28,42 @@ extern int server_active;
 /* Server functions exported to the rest of CVS.  */
 
 /* Run the server.  */
-extern int server PROTO((int argc, char **argv));
+extern int server (int argc, char **argv);
 
 /* kserver user authentication.  */
 # ifdef HAVE_KERBEROS
-extern void kserver_authenticate_connection PROTO ((void));
+extern void kserver_authenticate_connection (void);
 # endif
 
 /* pserver user authentication.  */
 # if defined (AUTH_SERVER_SUPPORT) || defined (HAVE_GSSAPI)
-extern void pserver_authenticate_connection PROTO ((void));
+extern void pserver_authenticate_connection (void);
 # endif
 
 /* See server.c for description.  */
-extern void server_pathname_check PROTO ((char *));
+extern void server_pathname_check (char *);
 
 /* We have a new Entries line for a file.  TAG or DATE can be NULL.  */
 extern void server_register
-    PROTO((char *name, char *version, char *timestamp,
-	     char *options, char *tag, char *date, char *conflict));
+    (char *name, char *version, char *timestamp,
+	     char *options, char *tag, char *date, char *conflict);
 
 /* Set the modification time of the next file sent.  This must be
    followed by a call to server_updated on the same file.  */
-extern void server_modtime PROTO ((struct file_info *finfo,
-				   Vers_TS *vers_ts));
+extern void server_modtime (struct file_info *finfo,
+				   Vers_TS *vers_ts);
 
 /*
  * We want to nuke the Entries line for a file, and (unless
  * server_scratch_entry_only is subsequently called) the file itself.
  */
-extern void server_scratch PROTO((char *name));
+extern void server_scratch (char *name);
 
 /*
  * The file which just had server_scratch called on it needs to have only
  * the Entries line removed, not the file itself.
  */
-extern void server_scratch_entry_only PROTO((void));
+extern void server_scratch_entry_only (void);
 
 /*
  * We just successfully checked in FILE (which is just the bare
@@ -71,10 +71,10 @@ extern void server_scratch_entry_only PROTO((void));
  * repository.
  */
 extern void server_checked_in
-    PROTO((char *file, char *update_dir, char *repository));
+    (char *file, char *update_dir, char *repository);
 
 extern void server_copy_file
-    PROTO((char *file, char *update_dir, char *repository, char *newfile));
+    (char *file, char *update_dir, char *repository, char *newfile);
 
 /* Send the appropriate responses for a file described by FINFO and
    VERS.  This is called after server_register or server_scratch.  In
@@ -101,42 +101,42 @@ struct buffer;
 #endif
 
 extern void server_updated
-    PROTO((struct file_info *finfo, Vers_TS *vers,
+    (struct file_info *finfo, Vers_TS *vers,
 	   enum server_updated_arg4 updated, mode_t mode,
-	   unsigned char *checksum, struct buffer *filebuf));
+	   unsigned char *checksum, struct buffer *filebuf);
 
 /* Whether we should send RCS format patches.  */
-extern int server_use_rcs_diff PROTO((void));
+extern int server_use_rcs_diff (void);
 
 /* Set the Entries.Static flag.  */
-extern void server_set_entstat PROTO((char *update_dir, char *repository));
+extern void server_set_entstat (char *update_dir, char *repository);
 /* Clear it.  */
-extern void server_clear_entstat PROTO((char *update_dir, char *repository));
+extern void server_clear_entstat (char *update_dir, char *repository);
 
 /* Set or clear a per-directory sticky tag or date.  */
-extern void server_set_sticky PROTO((char *update_dir, char *repository,
-				     char *tag, char *date, int nonbranch));
+extern void server_set_sticky (char *update_dir, char *repository,
+				     char *tag, char *date, int nonbranch);
 
 /* Send Clear-template response.  */
-extern void server_clear_template PROTO((char *update_dir, char *repository));
+extern void server_clear_template (char *update_dir, char *repository);
 
 /* Send Template response.  */
-extern void server_template PROTO ((char *update_dir, char *repository));
+extern void server_template (char *update_dir, char *repository);
 
 extern void server_update_entries
-    PROTO((char *file, char *update_dir, char *repository,
-	   enum server_updated_arg4 updated));
+    (char *file, char *update_dir, char *repository,
+	   enum server_updated_arg4 updated);
 
 /* Pointer to a malloc'd string which is the directory which
    the server should prepend to the pathnames which it sends
    to the client.  */
 extern char *server_dir;
 
-extern void server_cleanup PROTO((int sig));
+extern void server_cleanup (int sig);
 
 #ifdef SERVER_FLOWCONTROL
 /* Pause if it's convenient to avoid memory blowout */
-extern void server_pause_check PROTO((void));
+extern void server_pause_check (void);
 #endif /* SERVER_FLOWCONTROL */
 
 #ifdef AUTH_SERVER_SUPPORT
@@ -157,7 +157,7 @@ struct request
    * Function to carry out the request.  ARGS is the text of the command
    * after name and, if present, a single space, have been stripped off.
    */
-  void (*func) PROTO((char *args));
+  void (*func) (char *args);
 #endif
 
   /* One or more of the RQ_* flags described below.  */
@@ -184,6 +184,6 @@ struct request
 extern struct request requests[];
 
 /* Gzip library, see zlib.c.  */
-extern int gunzip_and_write PROTO ((int, char *, unsigned char *, size_t));
-extern int read_and_gzip PROTO ((int, char *, unsigned char **, size_t *,
-				 size_t *, int));
+extern int gunzip_and_write (int, char *, unsigned char *, size_t);
+extern int read_and_gzip (int, char *, unsigned char **, size_t *,
+				 size_t *, int);

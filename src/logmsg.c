@@ -11,20 +11,20 @@
 #include "cvs.h"
 #include "getline.h"
 
-static int find_type PROTO((Node * p, void *closure));
-static int fmt_proc PROTO((Node * p, void *closure));
-static int logfile_write PROTO((char *repository, char *filter,
-			  char *message, FILE * logfp, List * changes));
-static int rcsinfo_proc PROTO(( char *repository, char *template,
-                                void *closure ));
-static int title_proc PROTO((Node * p, void *closure));
-static int update_logfile_proc PROTO(( char *repository, char *filter,
-                                       void *closure));
-static void setup_tmpfile PROTO((FILE * xfp, char *xprefix, List * changes));
-static int editinfo_proc PROTO(( char *repository, char *template,
-                                 void *closure ));
-static int verifymsg_proc PROTO(( char *repository, char *script,
-                                  void *closure ));
+static int find_type (Node * p, void *closure);
+static int fmt_proc (Node * p, void *closure);
+static int logfile_write (char *repository, char *filter,
+			  char *message, FILE * logfp, List * changes);
+static int rcsinfo_proc ( char *repository, char *template,
+                                void *closure );
+static int title_proc (Node * p, void *closure);
+static int update_logfile_proc ( char *repository, char *filter,
+                                       void *closure);
+static void setup_tmpfile (FILE * xfp, char *xprefix, List * changes);
+static int editinfo_proc ( char *repository, char *template,
+                                 void *closure );
+static int verifymsg_proc ( char *repository, char *script,
+                                  void *closure );
 
 static FILE *fp;
 static char *str_list;

@@ -100,17 +100,17 @@ struct lock {
        to set a flag like we do for CVSLCK.  */
 };
 
-static void remove_locks PROTO((void));
-static int readers_exist PROTO((char *repository));
-static int set_lock PROTO ((struct lock *lock, int will_wait));
-static void clear_lock PROTO ((struct lock *lock));
-static void set_lockers_name PROTO((struct stat *statp));
-static int set_writelock_proc PROTO((Node * p, void *closure));
-static int unlock_proc PROTO((Node * p, void *closure));
-static int write_lock PROTO ((struct lock *lock));
-static void lock_simple_remove PROTO ((struct lock *lock));
-static void lock_wait PROTO((char *repository));
-static void lock_obtained PROTO((char *repository));
+static void remove_locks (void);
+static int readers_exist (char *repository);
+static int set_lock (struct lock *lock, int will_wait);
+static void clear_lock (struct lock *lock);
+static void set_lockers_name (struct stat *statp);
+static int set_writelock_proc (Node * p, void *closure);
+static int unlock_proc (Node * p, void *closure);
+static int write_lock (struct lock *lock);
+static void lock_simple_remove (struct lock *lock);
+static void lock_wait (char *repository);
+static void lock_obtained (char *repository);
 
 /* Malloc'd array containing the username of the whoever has the lock.
    Will always be non-NULL in the cases where it is needed.  */
@@ -148,7 +148,7 @@ static List *locked_list;
 /* LockDir from CVSROOT/config.  */
 char *lock_dir;
 
-static char *lock_name PROTO ((char *repository, char *name));
+static char *lock_name (char *repository, char *name);
 
 /* Return a newly malloc'd string containing the name of the lock for the
    repository REPOSITORY and the lock file name within that directory
@@ -474,7 +474,7 @@ Reader_Lock (xrepository)
 static char *lock_error_repos;
 static int lock_error;
 
-static int Writer_Lock PROTO ((List * list));
+static int Writer_Lock (List * list);
 
 static int
 Writer_Lock (list)
@@ -920,9 +920,9 @@ lock_obtained (repos)
     free (msg);
 }
 
-static int lock_filesdoneproc PROTO ((void *callerdat, int err,
+static int lock_filesdoneproc (void *callerdat, int err,
 				      char *repository, char *update_dir,
-				      List *entries));
+				      List *entries);
 
 /*
  * Create a list of repositories to lock

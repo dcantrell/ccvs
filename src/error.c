@@ -27,7 +27,7 @@ extern char *strerror ();
 #endif
 
 void
-error_exit PROTO ((void))
+error_exit (void)
 {
     rcs_cleanup ();
     Lock_Cleanup ();
@@ -67,15 +67,7 @@ error_exit PROTO ((void))
 
 /* VARARGS */
 void
-#if PROTOTYPES
 error (int status, int errnum, const char *message, ...)
-#else /* ! PROTOTYPES */
-error (status, errnum, message, va_alist)
-    int status;
-    int errnum;
-    const char *message;
-    va_dcl
-#endif /* PROTOTYPES */
 {
     int save_errno = errno;
 
@@ -184,16 +176,7 @@ error (status, errnum, message, va_alist)
    Exit with status EXIT_FAILURE if STATUS is nonzero.  */
 /* VARARGS */
 void
-#if PROTOTYPES
 fperrmsg (FILE *fp, int status, int errnum, char *message, ...)
-#else /* ! PROTOTYPES */
-fperrmsg (fp, status, errnum, message, va_alist)
-    FILE *fp;
-    int status;
-    int errnum;
-    char *message;
-    va_dcl
-#endif /* PROTOTYPES */
 {
     va_list args;
 

@@ -61,71 +61,71 @@ struct rcsbuffer
     int embedded_at;
 };
 
-static RCSNode *RCS_parsercsfile_i PROTO((FILE * fp, const char *rcsfile));
-static char *RCS_getdatebranch PROTO((RCSNode * rcs, char *date, char *branch));
-static void rcsbuf_open PROTO ((struct rcsbuffer *, FILE *fp,
-				const char *filename, unsigned long pos));
-static void rcsbuf_close PROTO ((struct rcsbuffer *));
-static int rcsbuf_getkey PROTO ((struct rcsbuffer *, char **keyp,
-				 char **valp));
-static int rcsbuf_getrevnum PROTO ((struct rcsbuffer *, char **revp));
+static RCSNode *RCS_parsercsfile_i (FILE * fp, const char *rcsfile);
+static char *RCS_getdatebranch (RCSNode * rcs, char *date, char *branch);
+static void rcsbuf_open (struct rcsbuffer *, FILE *fp,
+				const char *filename, unsigned long pos);
+static void rcsbuf_close (struct rcsbuffer *);
+static int rcsbuf_getkey (struct rcsbuffer *, char **keyp,
+				 char **valp);
+static int rcsbuf_getrevnum (struct rcsbuffer *, char **revp);
 #ifndef HAVE_MMAP
-static char *rcsbuf_fill PROTO ((struct rcsbuffer *, char *ptr, char **keyp,
-				 char **valp));
+static char *rcsbuf_fill (struct rcsbuffer *, char *ptr, char **keyp,
+				 char **valp);
 #endif
-static int rcsbuf_valcmp PROTO ((struct rcsbuffer *));
-static char *rcsbuf_valcopy PROTO ((struct rcsbuffer *, char *val, int polish,
-				    size_t *lenp));
-static void rcsbuf_valpolish PROTO ((struct rcsbuffer *, char *val, int polish,
-				     size_t *lenp));
-static void rcsbuf_valpolish_internal PROTO ((struct rcsbuffer *, char *to,
-					      const char *from, size_t *lenp));
-static unsigned long rcsbuf_ftell PROTO ((struct rcsbuffer *));
-static void rcsbuf_get_buffered PROTO ((struct rcsbuffer *, char **datap,
-					size_t *lenp));
-static void rcsbuf_cache PROTO ((RCSNode *, struct rcsbuffer *));
-static void rcsbuf_cache_close PROTO ((void));
-static void rcsbuf_cache_open PROTO ((RCSNode *, long, FILE **,
-				      struct rcsbuffer *));
-static int checkmagic_proc PROTO((Node *p, void *closure));
-static void do_branches PROTO((List * list, char *val));
-static void do_symbols PROTO((List * list, char *val));
-static void do_locks PROTO((List * list, char *val));
-static void free_rcsnode_contents PROTO((RCSNode *));
-static void free_rcsvers_contents PROTO((RCSVers *));
-static void rcsvers_delproc PROTO((Node * p));
-static char *translate_symtag PROTO((RCSNode *, const char *));
-static char *RCS_addbranch PROTO ((RCSNode *, const char *));
-static char *truncate_revnum_in_place PROTO ((char *));
-static char *truncate_revnum PROTO ((const char *));
-static char *printable_date PROTO((const char *));
-static char *escape_keyword_value PROTO ((const char *, int *));
-static void expand_keywords PROTO((RCSNode *, RCSVers *, const char *,
+static int rcsbuf_valcmp (struct rcsbuffer *);
+static char *rcsbuf_valcopy (struct rcsbuffer *, char *val, int polish,
+				    size_t *lenp);
+static void rcsbuf_valpolish (struct rcsbuffer *, char *val, int polish,
+				     size_t *lenp);
+static void rcsbuf_valpolish_internal (struct rcsbuffer *, char *to,
+					      const char *from, size_t *lenp);
+static unsigned long rcsbuf_ftell (struct rcsbuffer *);
+static void rcsbuf_get_buffered (struct rcsbuffer *, char **datap,
+					size_t *lenp);
+static void rcsbuf_cache (RCSNode *, struct rcsbuffer *);
+static void rcsbuf_cache_close (void);
+static void rcsbuf_cache_open (RCSNode *, long, FILE **,
+				      struct rcsbuffer *);
+static int checkmagic_proc (Node *p, void *closure);
+static void do_branches (List * list, char *val);
+static void do_symbols (List * list, char *val);
+static void do_locks (List * list, char *val);
+static void free_rcsnode_contents (RCSNode *);
+static void free_rcsvers_contents (RCSVers *);
+static void rcsvers_delproc (Node * p);
+static char *translate_symtag (RCSNode *, const char *);
+static char *RCS_addbranch (RCSNode *, const char *);
+static char *truncate_revnum_in_place (char *);
+static char *truncate_revnum (const char *);
+static char *printable_date (const char *);
+static char *escape_keyword_value (const char *, int *);
+static void expand_keywords (RCSNode *, RCSVers *, const char *,
 				   const char *, size_t, enum kflag, char *,
-				   size_t, char **, size_t *));
-static void cmp_file_buffer PROTO((void *, const char *, size_t));
+				   size_t, char **, size_t *);
+static void cmp_file_buffer (void *, const char *, size_t);
 
 /* Routines for reading, parsing and writing RCS files. */
-static RCSVers *getdelta PROTO ((struct rcsbuffer *, char *, char **,
-				 char **));
-static Deltatext *RCS_getdeltatext PROTO ((RCSNode *, FILE *,
-					   struct rcsbuffer *));
-static void freedeltatext PROTO ((Deltatext *));
+static RCSVers *getdelta (struct rcsbuffer *, char *, char **,
+				 char **);
+static Deltatext *RCS_getdeltatext (RCSNode *, FILE *,
+					   struct rcsbuffer *);
+static void freedeltatext (Deltatext *);
 
-static void RCS_putadmin PROTO ((RCSNode *, FILE *));
-static void RCS_putdtree PROTO ((RCSNode *, char *, FILE *));
-static void RCS_putdesc PROTO ((RCSNode *, FILE *));
-static void putdelta PROTO ((RCSVers *, FILE *));
-static int putrcsfield_proc PROTO ((Node *, void *));
-static int putsymbol_proc PROTO ((Node *, void *));
-static void RCS_copydeltas PROTO ((RCSNode *, FILE *, struct rcsbuffer *,
-				   FILE *, Deltatext *, char *));
-static int count_delta_actions PROTO ((Node *, void *));
-static void putdeltatext PROTO ((FILE *, Deltatext *));
+static void RCS_putadmin (RCSNode *, FILE *);
+static void RCS_putdtree (RCSNode *, char *, FILE *);
+static void RCS_putdesc (RCSNode *, FILE *);
+static void putdelta (RCSVers *, FILE *);
+static int putrcsfield_proc (Node *, void *);
+static int putsymbol_proc (Node *, void *);
+static void RCS_copydeltas (RCSNode *, FILE *, struct rcsbuffer *,
+				   FILE *, Deltatext *, char *);
+static int count_delta_actions (Node *, void *);
+static void putdeltatext (FILE *, Deltatext *);
 
-static FILE *rcs_internal_lockfile PROTO ((char *));
-static void rcs_internal_unlockfile PROTO ((FILE *, char *));
-static char *rcs_lockfilename PROTO ((char *));
+static FILE *rcs_internal_lockfile (char *);
+static void rcs_internal_unlockfile (FILE *, char *);
+static char *rcs_lockfilename (char *);
 
 /* The RCS file reading functions are called a lot, and they do some
    string comparisons.  This macro speeds things up a bit by skipping
@@ -133,7 +133,7 @@ static char *rcs_lockfilename PROTO ((char *));
    evaluates its arguments multiple times.  */
 #define STREQ(a, b) ((a)[0] == (b)[0] && strcmp ((a), (b)) == 0)
 
-static char * getfullCVSname PROTO ((char *, char **));
+static char * getfullCVSname (char *, char **);
 
 /*
  * We don't want to use isspace() from the C library because:
@@ -4558,7 +4558,7 @@ workfile);
     return 0;
 }
 
-static RCSVers *RCS_findlock_or_tip PROTO ((RCSNode *rcs));
+static RCSVers *RCS_findlock_or_tip (RCSNode *rcs);
 
 /* Find the delta currently locked by the user.  From the `ci' man page:
 
@@ -4703,7 +4703,7 @@ compare_truncated_revnums (r, s)
    FIXME: isn't the max rev always the last one?
    If so, we don't even need a loop.  */
 
-static char *max_rev PROTO ((const RCSVers *));
+static char *max_rev (const RCSVers *);
 
 static char *
 max_rev (branchnode)
@@ -6078,7 +6078,7 @@ RCS_getaccess (rcs)
     return rcs->access;
 }
 
-static int findtag PROTO ((Node *, void *));
+static int findtag (Node *, void *);
 
 /* Return a nonzero value if the revision specified by ARG is found.  */
 
@@ -6686,7 +6686,7 @@ struct linevector
     struct line **vector;
 };
 
-static void linevector_init PROTO ((struct linevector *));
+static void linevector_init (struct linevector *);
 
 /* Initialize *VEC to be a linevector with no lines.  */
 static void
@@ -6698,9 +6698,9 @@ linevector_init (vec)
     vec->vector = NULL;
 }
 
-static int linevector_add PROTO ((struct linevector *vec, const char *text,
+static int linevector_add (struct linevector *vec, const char *text,
 				  size_t len, RCSVers *vers,
-				  unsigned int pos));
+				  unsigned int pos);
 
 /* Given some text TEXT, add each of its lines to VEC before line POS
    (where line 0 is the first line).  The last line in TEXT may or may
@@ -6798,8 +6798,8 @@ linevector_add (vec, text, len, vers, pos)
     return 1;
 }
 
-static void linevector_delete PROTO ((struct linevector *, unsigned int,
-				      unsigned int));
+static void linevector_delete (struct linevector *, unsigned int,
+				      unsigned int);
 
 /* Remove NLINES lines from VEC at position POS (where line 0 is the
    first line).  */
@@ -6823,7 +6823,7 @@ linevector_delete (vec, pos, nlines)
     vec->nlines -= nlines;
 }
 
-static void linevector_copy PROTO ((struct linevector *, struct linevector *));
+static void linevector_copy (struct linevector *, struct linevector *);
 
 /* Copy FROM to TO, copying the vectors but not the lines pointed to.  */
 static void
@@ -6854,7 +6854,7 @@ linevector_copy (to, from)
 	++to->vector[ln]->refcount;
 }
 
-static void linevector_free PROTO ((struct linevector *));
+static void linevector_free (struct linevector *);
 
 /* Free storage associated with linevector.  */
 static void
@@ -6873,7 +6873,7 @@ linevector_free (vec)
     }
 }
 
-static char *month_printname PROTO ((char *));
+static char *month_printname (char *);
 
 /* Given a textual string giving the month (1-12), terminated with any
    character not recognized by atoi, return the 3 character name to
@@ -6897,8 +6897,8 @@ month_printname (month)
 }
 
 static int
-apply_rcs_changes PROTO ((struct linevector *, const char *, size_t,
-			  const char *, RCSVers *, RCSVers *));
+apply_rcs_changes (struct linevector *, const char *, size_t,
+			  const char *, RCSVers *, RCSVers *);
 
 /* Apply changes to the line vector LINES.  DIFFBUF is a buffer of
    length DIFFLEN holding the change text from an RCS file (the output
@@ -7760,7 +7760,7 @@ putsymbol_proc (symnode, fparg)
     return 0;
 }
 
-static int putlock_proc PROTO ((Node *, void *));
+static int putlock_proc (Node *, void *);
 
 /* putlock_proc is like putsymbol_proc, but key and data are reversed. */
 

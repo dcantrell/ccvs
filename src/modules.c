@@ -50,8 +50,8 @@ struct sortrec
     char *comment;
 };
 
-static int sort_order PROTO((const PTR l, const PTR r));
-static void save_d PROTO((char *k, int ks, char *d, int ds));
+static int sort_order (const PTR l, const PTR r);
+static void save_d (char *k, int ks, char *d, int ds);
 
 
 /*

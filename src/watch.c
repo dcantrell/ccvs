@@ -214,8 +214,8 @@ watch_modify_watchers (file, what)
 	free (mynewattr);
 }
 
-static int addremove_fileproc PROTO ((void *callerdat,
-				      struct file_info *finfo));
+static int addremove_fileproc (void *callerdat,
+				      struct file_info *finfo);
 
 static int
 addremove_fileproc (callerdat, finfo)
@@ -226,8 +226,8 @@ addremove_fileproc (callerdat, finfo)
     return 0;
 }
 
-static int addremove_filesdoneproc PROTO ((void *, int, char *, char *,
-					   List *));
+static int addremove_filesdoneproc (void *, int, char *, char *,
+					   List *);
 
 static int
 addremove_filesdoneproc (callerdat, err, repository, update_dir, entries)
@@ -242,7 +242,7 @@ addremove_filesdoneproc (callerdat, err, repository, update_dir, entries)
     return err;
 }
 
-static int watch_addremove PROTO ((int argc, char **argv));
+static int watch_addremove (int argc, char **argv);
 
 static int
 watch_addremove (argc, argv)
@@ -413,8 +413,8 @@ static const char *const watchers_usage[] =
     NULL
 };
 
-static int watchers_fileproc PROTO ((void *callerdat,
-				     struct file_info *finfo));
+static int watchers_fileproc (void *callerdat,
+				     struct file_info *finfo);
 
 static int
 watchers_fileproc (callerdat, finfo)

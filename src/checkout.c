@@ -36,11 +36,11 @@
 #include <assert.h>
 #include "cvs.h"
 
-static char *findslash PROTO((char *start, char *p));
-static int checkout_proc PROTO((int argc, char **argv, char *where,
+static char *findslash (char *start, char *p);
+static int checkout_proc (int argc, char **argv, char *where,
 		          char *mwhere, char *mfile, int shorten,
 		          int local_specified, char *omodule,
-		          char *msg));
+		          char *msg);
 
 static const char *const checkout_usage[] =
 {
@@ -539,10 +539,10 @@ struct dir_to_build
     struct dir_to_build *next;
 };
 
-static int build_dirs_and_chdir PROTO ((struct dir_to_build *list,
-					int sticky));
+static int build_dirs_and_chdir (struct dir_to_build *list,
+					int sticky);
 
-static void build_one_dir PROTO ((char *, char *, int));
+static void build_one_dir (char *, char *, int);
 
 static void
 build_one_dir (repository, dirpath, sticky)

@@ -196,17 +196,17 @@ static struct hrec
 static long hrec_idx;
 
 
-static void fill_hrec PROTO((char *line, struct hrec * hr));
-static int accept_hrec PROTO((struct hrec * hr, struct hrec * lr));
-static int select_hrec PROTO((struct hrec * hr));
-static int sort_order PROTO((const PTR l, const PTR r));
-static int within PROTO((char *find, char *string));
-static void expand_modules PROTO((void));
-static void read_hrecs PROTO((char *fname));
-static void report_hrecs PROTO((void));
-static void save_file PROTO((char *dir, char *name, char *module));
-static void save_module PROTO((char *module));
-static void save_user PROTO((char *name));
+static void fill_hrec (char *line, struct hrec * hr);
+static int accept_hrec (struct hrec * hr, struct hrec * lr);
+static int select_hrec (struct hrec * hr);
+static int sort_order (const PTR l, const PTR r);
+static int within (char *find, char *string);
+static void expand_modules (void);
+static void read_hrecs (char *fname);
+static void report_hrecs (void);
+static void save_file (char *dir, char *name, char *module);
+static void save_module (char *module);
+static void save_user (char *name);
 
 #define ALL_REC_TYPES "TOEFWUCGMAR"
 #define USER_INCREMENT	2
