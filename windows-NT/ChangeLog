@@ -1,3 +1,8 @@
+2003-07-30  Derek Price  <derek@ximbiot.com>
+
+	* README: Correct name and links to the Cygwin project.
+	(Original patch from Max Bowsher <maxb@ukf.net>.)
+
 2003-07-17  Derek Price  <derek@ximbiot.com>
 
 	* stamp-ch: Regenerated.
@@ -25,6 +30,11 @@
 2003-06-11  Derek Price  <derek@ximbiot.com>
 
 	* Makefile.in: Regenerate for new configure.in.
+
+2003-07-30  Derek Price  <derek@ximbiot.com>
+
+	* README: Correct name and links to the Cygwin project.
+	(Original patch from Max Bowsher <maxb@ukf.net>.)
 
 2003-06-09  Derek Price  <derek@ximbiot.com>
 

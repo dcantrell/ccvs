@@ -293,6 +293,7 @@ RCS_merge(RCSNode *rcs, char *path, char *workfile, char *options, char *rev1, c
     call_diff_arg ("-L");
     call_diff_arg (xrev2);
 
+    call_diff_arg ("--");
     call_diff_arg (workfile);
     call_diff_arg (tmp1);
     call_diff_arg (tmp2);
