@@ -235,8 +235,13 @@ dist-dir:
 # `Automatic Remaking' in GNU Autoconf documentation.
 Makefile: Makefile.in config.status
 	CONFIG_FILES=$@ CONFIG_HEADERS= ./config.status
+
+# Use @CFLAGS@ not $(CFLAGS) because it would be confusing for "make CFLAGS="
+# to sometimes (i.e., if configure is modified) change the configured CFLAGS,
+# and sometimes not.
 config.status: configure
-	./config.status --recheck
+	CFLAGS="@CFLAGS@" ./config.status --recheck
+
 # The rules to run autoconf and autoheader are commented out.  This is because
 # when the user unpacks a tarfile, configure.in might end up newer than 
 # configure, but the user might not have (and does not need to have) autoconf
