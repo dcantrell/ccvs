@@ -3,6 +3,9 @@ Changes since 1.12.11:
 
 NEW FEATURES
 
+* A problem in the compression buffer that was causing some incompatibility
+  with some 3rd party CVS clients when compression was enabled has been fixed.
+
 * Some files missing from the distribution have been added or readded.  The
   missing files were mostly development support files, with a few docs and
   .cvsignore files thrown in.
