@@ -1,3 +1,8 @@
+2000-10-20  Derek Price  <derek.price@openavenue.com>
+
+	* root.c (normalize_cvsroot): plug a memory leak.  Thanks to
+	KOIE Hidetaka <hide@koie.org>
+
 2000-10-18  Derek Price  <derek.price@openavenue.com>
 
 	* client.c (connect_to_pserver): added a close brace the lack of which
