@@ -1269,6 +1269,10 @@ done'
 new revision: delete; previous revision: 1.1
 done'
 
+		# Tag the branchpoint.
+		dotest death-72a "${testcvs} -q tag bp_branch1" 'T file1
+T file2'
+
 		# branch1
 		if ${CVS} tag -b branch1  ; then
 			echo "PASS: test 73" >>${LOGFILE}
@@ -1298,6 +1302,31 @@ done'
 			echo "PASS: test 76" >>${LOGFILE}
 		else
 			echo "FAIL: test 76" | tee -a ${LOGFILE} ; exit 1
+		fi
+
+		# Remote CVS outputs nothing for 76a0 and 76a1; until
+		# this bug is fixed just skip those tests for remote.
+		if test "x$remote" = xno; then
+		  dotest death-76a0 \
+"${testcvs} -q rdiff -r bp_branch1 -r branch1 first-dir" \
+"Index: first-dir/file3
+diff -c /dev/null first-dir/file3:1\.1\.2\.1
+\*\*\* /dev/null	.*
+--- first-dir/file3	.*
+\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
+\*\*\* 0 \*\*\*\*
+--- 1 ----
+${PLUS} line1 from branch1"
+		  dotest death-76a1 \
+"${testcvs} -q rdiff -r branch1 -r bp_branch1 first-dir" \
+'Index: first-dir/file3
+diff -c first-dir/file3:1\.1\.2\.1 first-dir/file3:removed
+\*\*\* first-dir/file3:1\.1\.2\.1	.*
+--- first-dir/file3	.*
+\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
+\*\*\* 1 \*\*\*\*
+- line1 from branch1
+--- 0 ----'
 		fi
 
 		# remove
@@ -1401,9 +1430,8 @@ done'
 		fi
 
 		# commit
-# FIXME: the dotstar here is a temporary hack 
 		dotest 89 "${testcvs} -q ci -m test" \
-"${DOTSTAR}" 'Checking in file1;
+'Checking in file1;
 /tmp/cvs-sanity/cvsroot/first-dir/file1,v  <--  file1
 new revision: 1\.4; previous revision: 1\.3
 done

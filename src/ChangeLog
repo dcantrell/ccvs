@@ -1,4 +1,14 @@
+Thu May 23 1996  Ian Lance Taylor  <ian@cygnus.com>
+
+	* patch.c (patch_fileproc): Don't ignore a file just because it is
+	in the Attic directory.
+
 Thu May 23 10:40:24 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* sanity.sh (death): New tests death-{72a,76a0,76a1} test for bug
+	fixed by Ian's patch_fileproc change above.
+
+	* sanity.sh (death): Remove "temporary hack" in test 89.
 
 	* rcs.c (RCS_fast_checkout): If error closing file, and workfile
 	is NULL, use sout in error message instead of workfile.
