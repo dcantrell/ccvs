@@ -2175,8 +2175,11 @@ send_to_server (data, va_alist)
 #endif  /* HAVE_VPRINTF */
 
   /* 
-   * TODO: for the moment, all the above code is unused, while we just
-   * try to do exactly what the old "fprintf(to_server, ...)" did.
+   * TODO: for the moment, we just do pretty much what the old
+   * "fprintf (to_server, ...)" calls did.  Later on, we'll get fancy
+   * and use send/recv, for those systems whose sockets are not
+   * file-descriptorish.  A lot of other code that still refers to
+   * to_server has to be changed too, though.
    */
   return fprintf (to_server, "%s", buf);
 }
