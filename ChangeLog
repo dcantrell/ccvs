@@ -1,5 +1,7 @@
 Sun Sep  7 17:34:03 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* configure.in: Add comment about re_exec and regexp syntax.
+
 	* configure.in (AC_REPLACE_FUNCS): Remove strdup; CVS was long
 	ago converted to use its own routine xstrdup.
 	* configure: Regenerated.
