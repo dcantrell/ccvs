@@ -1,3 +1,9 @@
+Tue Sep 17 00:09:44 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* checkout.c (safe_location): Do not reject a location merely
+	because it textually starts with hardpath; insist that it be
+	hardpath or a subdirectory thereof.
+
 Mon Sep 16 11:46:36 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* server.c (server_cleanup): Add comment about ignoring errors
