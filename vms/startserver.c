@@ -26,18 +26,12 @@ vms_start_server (int *tofd, int *fromfd,
   sprintf(command, "%s server", cvs_server);
 
   portenv = getenv("CVS_RCMD_PORT");
-  if (!portenv)
-    {
-    if ((sptr = getservbyname("shell", "tcp")) == NULL)
-        port = 514; /* shell/tcp */
-    else
-        port = sptr->s_port;
-    }
+  if (portenv)
+      port = atoi(portenv);
+  else if ((sptr = getservbyname("shell", "tcp")) != NULL)
+      port = sptr->s_port;
   else
-    {
-    portenv = getenv("CVS_RCMD_PORT");
-    port = (portenv ? atoi(portenv) : 514); /* shell/tcp */
-    }
+      port = 514; /* shell/tcp */
 
   if(trace)
     {
