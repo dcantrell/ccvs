@@ -9,7 +9,7 @@
 
 #include "cvs.h"
 
-#ifdef CVS_LOGIN   /* This covers the rest of the file. */
+#ifdef AUTH_CLIENT_SUPPORT   /* This covers the rest of the file. */
 
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -174,5 +174,5 @@ login (argc, argv)
  * But to what purpose?
  */
 
-#endif /* CVS_LOGIN from beginning of file. */
+#endif /* AUTH_CLIENT_SUPPORT from beginning of file. */
 

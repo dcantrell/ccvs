@@ -66,9 +66,9 @@ char *command_name = "cvs";
 
 char hostname[MAXHOSTNAMELEN];
 
-#ifdef CVS_LOGIN
+#ifdef AUTH_CLIENT_SUPPORT
 int use_authenticating_server = FALSE;
-#endif /* CVS_LOGIN */
+#endif /* AUTH_CLIENT_SUPPORT */
 int use_editor = TRUE;
 int use_cvsrc = TRUE;
 int cvswrite = !CVSREAD_DFLT;
@@ -102,9 +102,9 @@ int diff PROTO((int argc, char **argv));
 int history PROTO((int argc, char **argv));
 int import PROTO((int argc, char **argv));
 int cvslog PROTO((int argc, char **argv));
-#ifdef CVS_LOGIN
+#ifdef AUTH_CLIENT_SUPPORT
 int login PROTO((int argc, char **argv));
-#endif
+#endif /* AUTH_CLIENT_SUPPORT */
 int patch PROTO((int argc, char **argv));
 int release PROTO((int argc, char **argv));
 int cvsremove PROTO((int argc, char **argv));
@@ -142,9 +142,9 @@ const struct cmd
     CMD_ENTRY("history",  "hi",    "his",     history,   client_history),
     CMD_ENTRY("import",   "im",    "imp",     import,    client_import),
     CMD_ENTRY("log",      "lo",    "rlog",    cvslog,    client_log),
-#ifdef CVS_LOGIN
+#ifdef AUTH_CLIENT_SUPPORT
     CMD_ENTRY("login",    "logon", "lgn",     login,     login),
-#endif
+#endif /* AUTH_CLIENT_SUPPORT */
     CMD_ENTRY("rdiff",    "patch", "pa",      patch,     client_rdiff),
     CMD_ENTRY("release",  "re",    "rel",     release,   client_release),
     CMD_ENTRY("remove",   "rm",    "delete",  cvsremove, client_remove),
@@ -173,9 +173,9 @@ static const char *const usg[] =
     "        -H           Displays Usage information for command\n",
     "        -Q           Cause CVS to be really quiet.\n",
     "        -q           Cause CVS to be somewhat quiet.\n",
-#ifdef CVS_LOGIN
+#ifdef AUTH_CLIENT_SUPPORT
     "        -a           Use the authenticating server, not rsh.\n",
-#endif /* CVS_LOGIN */
+#endif /* AUTH_CLIENT_SUPPORT */
     "        -r           Make checked-out files read-only\n",
     "        -w           Make checked-out files read-write (default)\n",
     "        -l           Turn History logging off\n",
@@ -200,9 +200,9 @@ static const char *const usg[] =
     "        import       Import sources into CVS, using vendor branches\n",
     "        export       Export sources from CVS, similar to checkout\n",
     "        log          Prints out 'rlog' information for files\n",
-#ifdef CVS_LOGIN
+#ifdef AUTH_CLIENT_SUPPORT
     "        login        Prompt for password for authenticating server.\n",
-#endif
+#endif /* AUTH_CLIENT_SUPPORT */
     "        rdiff        'patch' format diffs between releases\n",
     "        release      Indicate that a Module is no longer in use\n",
     "        remove       Removes an entry from the repository\n",
@@ -338,11 +338,11 @@ main (argc, argv)
 	    case 'r':
 		cvswrite = FALSE;
 		break;
-#ifdef CVS_LOGIN
+#ifdef AUTH_CLIENT_SUPPORT
 	    case 'a':
 		use_authenticating_server = TRUE;
 		break;
-#endif /* CVS_LOGIN */
+#endif /* AUTH_CLIENT_SUPPORT */
 	    case 'w':
 		cvswrite = TRUE;
 		break;
@@ -496,9 +496,8 @@ error 0 %s: no such user\n", user);
     }
 #endif /* HAVE_KERBEROS */
 
-#ifdef CVS_LOGIN
-#ifdef SERVER_SUPPORT
 
+#if defined(AUTH_SERVER_SUPPORT) && defined(SERVER_SUPPORT)
     if (strcmp (argv[0], "pserver") == 0)
     {
       /* Gets username and password from client, authenticates, then
@@ -509,9 +508,8 @@ error 0 %s: no such user\n", user);
       /* Pretend we were invoked as a plain server.  */
       argv[0] = "server";
     }
+#endif /* AUTH_SERVER_SUPPORT && SERVER_SUPPORT */
 
-#endif /* SERVER_SUPPORT */
-#endif /* CVS_LOGIN */
 
 #ifdef CVSADM_ROOT
     /*

@@ -244,10 +244,12 @@
 #endif
 
 /*
- * "cvs login" is under construction.  Don't define this unless you're
- * testing it, in which case you're me and you already know that.
+ * The authenticated client/server is under construction.  Don't
+ * define either of these unless you're testing them, in which case 
+ * you're me and you already know that.
  */
-/* #define CVS_LOGIN */
+#undef AUTH_CLIENT_SUPPORT
+#undef AUTH_SERVER_SUPPORT
 
 /*
  * If you are working with a large remote repository and a 'cvs checkout' is
