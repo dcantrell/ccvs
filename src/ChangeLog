@@ -1,5 +1,8 @@
 2002-05-07  Larry Jones  <lawrence.jones@eds.com>
 
+	* logmsg (do_verify): Avoid even more work if there's no verifymsg
+	script to run.
+
 	* logmsg: Use fputs/putc rather than fprintf where appropriate.
 	(do_verify): Run the verifymsg script even if there's no log
 	message.  (Reported by Andy Baker <Andy.Baker2@t-mobile.co.uk>.)
