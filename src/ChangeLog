@@ -1,5 +1,24 @@
 2005-02-23 Derek Price <derek@ximbiot.com>
 
+	* checkout.c (checkout): Use parse_tagdate.
+	* tag.c (tag_check_valid_join): Remove this function.
+	* cvs.h (tag_check_valid_join): Ditto for the proto.
+	(parse_tagdate): New proto.
+	(Make_Date): Make arg const.
+	* main.c (Make_Date): Ditto.
+	(parse_tagdate): New function.
+	* update.c (date_rev1, date_rev2): Rename these globals...
+	(join_date1, join_date2): ...to this.
+	(update): Use parse_tagdate.
+	(do_update): Use new API.
+	* update.h (do_update): Update proto.
+	* sanity.sh: Misc reformatting.
+	(tagdate-12): This test now passes.
+	(tagdate-12b): New test.
+	(multiroot-9a): Handle new TRACE.
+
+2005-02-23 Derek Price <derek@ximbiot.com>
+
 	* rsh-client.c (start_rsh_server): Update comment.  Replace
 	malloc/sprintf combo with a call to Xasprintf.
 

@@ -1094,7 +1094,7 @@ cause intermittent sandbox corruption.");
 
 
 char *
-Make_Date (char *rawdate)
+Make_Date (const char *rawdate)
 {
     struct timespec t;
 
@@ -1103,6 +1103,68 @@ Make_Date (char *rawdate)
 
     /* Truncate nanoseconds.  */
     return date_from_time_t (t.tv_sec);
+}
+
+
+
+/* Parse a string of the form TAG[:DATE], where TAG could be the empty string.
+ *
+ * INPUTS
+ *   input	The string to be parsed.
+ *
+ * OUTPUTS
+ *   tag	The tag found, if any.  If TAG is the empty string, then leave
+ *		this value unchanged.
+ *   date	The date found, if any.  If DATE is the empty string or is
+ *		missing, leave this value unchanged.
+ *
+ * NOTES
+ *   If either TAG or DATE is replaced for output, the previous value is freed.
+ *
+ * ERRORS
+ *   If either TAG or DATE cannot be parsed, then this function will exit with
+ *   a fatal error message.
+ *
+ * RETURNS
+ *   Nothing.
+ */
+void
+parse_tagdate (char **tag, char **date, const char *input)
+{
+    char *p;
+
+    TRACE (TRACE_FUNCTION, "parse_tagdate (%s, %s, %s)",
+	   *tag ? *tag : "(null)", *date ? *date : "(null)",
+	   input);
+
+    if ((p = strchr (input, ':')))
+    {
+	/* Parse the tag.  */
+	if (p - input)
+	{
+	    /* The tag has > 0 length.  */
+	    if (*tag) free (*tag);
+	    *tag = xmalloc (p - input + 1);
+	    strncpy (*tag, input, p - input);
+	    (*tag)[p - input] = '\0';
+	}
+
+	/* Parse the date.  */
+	if (*++p)
+	{
+	    if (*date) free (*date);
+	    *date = Make_Date (p);
+	}
+    }
+    else if (strlen (input))
+    {
+	/* The tag has > 0 length.  */
+	if (*tag) free (*tag);
+	*tag = xstrdup (input);
+    }
+
+    TRACE (TRACE_DATA, "parse_tagdate: got tag = `%s', date = `%s'",
+	   *tag ? *tag : "(null)", *date ? *date : "(null)");
 }
 
 
