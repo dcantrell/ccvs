@@ -1,5 +1,9 @@
 2004-05-14  Derek Price  <derek@ximbiot.com>
 
+	* stamp-ch: Regenerated.
+
+2004-05-14  Derek Price  <derek@ximbiot.com>
+
 	* woe32.c (usleep): Remove.
 	(my_usleep, nanosleep): New functions.
 	(Reported by Conrad Pino <conrad@pino.com>.)
