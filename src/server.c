@@ -3876,7 +3876,7 @@ error  \n");
 		   as I know there was never any reason to do that and
 		   SCO doesn't let you select on exceptions on pipes.  */
 		numfds = select (num_to_check, &readfds, &writefds,
-				 (fd_set *)0, timeout_ptr);
+				 NULL, timeout_ptr);
 		if (numfds < 0
 			&& errno != EINTR)
 		{
@@ -4195,8 +4195,7 @@ server_pause_check(void)
 	numtocheck = flowcontrol_pipe[0] + 1;
 
 	do {
-	    numfds = select (numtocheck, &fds, (fd_set *)0,
-			     (fd_set *)0, (struct timeval *)NULL);
+	    numfds = select (numtocheck, &fds, NULL, NULL, NULL);
 	    if (numfds < 0
 		&& errno != EINTR)
 	    {
@@ -6038,8 +6037,7 @@ server_cleanup (void)
 		    timeout.tv_usec = 0;
 		    readfds = command_fds_to_drain;
 		    switch (select (max_command_fd + 1, &readfds.fds,
-				    (fd_set *)0, (fd_set *)0,
-				    &timeout))
+				    NULL, NULL &timeout))
 		    {
 			case -1:
 			    if (errno != EINTR)
