@@ -1,3 +1,11 @@
+2003-01-08  Larry Jones  <lawrence.jones@eds.com>
+
+	* client.c (update_entries): Only "0" is a special version number;
+	other numbers starting with 0 (like 0.1) are normal version numbers.
+	* commit.c (find_fileproc): Ditto.  Also reorganize the code to
+	simplify the conditions.
+	(Reported by Michele Zamparelli <michele.zamparelli@eso.org>.)
+
 2003-01-02  Larry Jones  <lawrence.jones@eds.com>
 
 	* rcs.c (getdelta): Use RCSDEAD rather than literal "dead".
@@ -67,6 +75,7 @@
 
 	* commit.c (commit): Strip leading zeros from numeric revision
 	in addition to trailing dots.
+	(Reported by Peter Meszaros <pme@prolan.hu>.)
 
 2002-11-22  Larry Jones  <lawrence.jones@eds.com>
 
