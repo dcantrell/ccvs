@@ -77,19 +77,7 @@ static Key_schedule sched;
 
 #ifdef HAVE_GSSAPI
 
-#ifdef HAVE_GSSAPI_H
-#include <gssapi.h>
-#endif
-#ifdef HAVE_GSSAPI_GSSAPI_H
-#include <gssapi/gssapi.h>
-#endif
-#ifdef HAVE_GSSAPI_GSSAPI_GENERIC_H
-#include <gssapi/gssapi_generic.h>
-#endif
-
-#ifndef HAVE_GSS_C_NT_HOSTBASED_SERVICE
-#define GSS_C_NT_HOSTBASED_SERVICE gss_nt_service_name
-#endif
+# include "xgssapi.h"
 
 /* This is needed for GSSAPI encryption.  */
 static gss_ctx_id_t gcontext;
@@ -97,7 +85,7 @@ static gss_ctx_id_t gcontext;
 static int connect_to_gserver PROTO((int, struct hostent *));
 
 #endif /* HAVE_GSSAPI */
-
+
 static void add_prune_candidate PROTO((char *));
 
 /* All the commands.  */
@@ -4337,7 +4325,7 @@ start_server ()
 	    break;
 #endif
 
-#if HAVE_GSSAPI
+#ifdef HAVE_GSSAPI
 	case gserver_method:
 	    /* GSSAPI authentication is handled by the pserver.  */
 	    connect_to_pserver (&tofd, &fromfd, 0, 1);

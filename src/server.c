@@ -31,11 +31,11 @@
 #endif
 
 #ifdef HAVE_KERBEROS
-#  include <netinet/in.h>
-#  include <krb.h>
-#  ifndef HAVE_KRB_GET_ERR_TEXT
-#    define krb_get_err_text(status) krb_err_txt[status]
-#  endif
+# include <netinet/in.h>
+# include <krb.h>
+# ifndef HAVE_KRB_GET_ERR_TEXT
+#   define krb_get_err_text(status) krb_err_txt[status]
+# endif
 
 /* Information we need if we are going to use Kerberos encryption.  */
 static C_Block kblock;
@@ -45,25 +45,11 @@ static Key_schedule sched;
 
 #ifdef HAVE_GSSAPI
 
-#include <netdb.h>
-
-#ifdef HAVE_GSSAPI_H
-#include <gssapi.h>
-#endif
-#ifdef HAVE_GSSAPI_GSSAPI_H
-#include <gssapi/gssapi.h>
-#endif
-#ifdef HAVE_GSSAPI_GSSAPI_GENERIC_H
-#include <gssapi/gssapi_generic.h>
-#endif
-
-#ifndef HAVE_GSS_C_NT_HOSTBASED_SERVICE
-#define GSS_C_NT_HOSTBASED_SERVICE gss_nt_service_name
-#endif
-
+# include <netdb.h>
+# include "xgssapi.h"
 /* We use Kerberos 5 routines to map the GSSAPI credential to a user
    name.  */
-#include <krb5.h>
+# include <krb5.h>
 
 /* We need this to wrap data.  */
 static gss_ctx_id_t gcontext;
@@ -73,18 +59,18 @@ static void gserver_authenticate_connection PROTO((void));
 /* Whether we are already wrapping GSSAPI communication.  */
 static int cvs_gssapi_wrapping;
 
-#  ifdef ENCRYPTION
+# ifdef ENCRYPTION
 /* Whether to encrypt GSSAPI communication.  We use a global variable
    like this because we use the same buffer type (gssapi_wrap) to
    handle both authentication and encryption, and we don't want
    multiple instances of that buffer in the communication stream.  */
 int cvs_gssapi_encrypt;
-#  endif
+# endif
 
 #endif
 
 /* for select */
-# include "xselect.h"
+#include "xselect.h"
 
 #ifndef O_NONBLOCK
 #define O_NONBLOCK O_NDELAY
