@@ -3,6 +3,11 @@ Changes since 1.12.6:
 
 GENERAL USER ISSUES
 
+* Imported the most recent version of regex from GNULIB, which actually means
+  some systems will use now their native regex functions instead of compiling
+  CVS's.  Users should notice no changes in CVS responses to regular
+  expressions.  If you do, please report them to <bug-cvs@gnu.org>.
+
 * CVS now accepts the location of HTTP tunnel web proxies as part of the
   CVSROOT string.  Actually using a proxy remains untested.  Please report
   problems and successes to <bug-cvs@gnu.org>.

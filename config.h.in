@@ -85,6 +85,9 @@
 /* Define to 1 if you have the `atexit' function. */
 #undef HAVE_ATEXIT
 
+/* Define to 1 if you have the `btowc' function. */
+#undef HAVE_BTOWC
+
 /* Define if you have the connect function. */
 #undef HAVE_CONNECT
 
@@ -250,6 +253,9 @@
 /* Define to 1 if you have the <io.h> header file. */
 #undef HAVE_IO_H
 
+/* Define to 1 if you have the `isascii' function. */
+#undef HAVE_ISASCII
+
 /* Define if you have MIT Kerberos version 4 available. */
 #undef HAVE_KERBEROS
 
@@ -299,6 +305,9 @@
 
 /* Define to 1 if you have the <memory.h> header file. */
 #undef HAVE_MEMORY_H
+
+/* Define to 1 if you have the `mempcpy' function. */
+#undef HAVE_MEMPCPY
 
 /* Define to 1 if you have the `mkdir' function. */
 #undef HAVE_MKDIR
@@ -509,11 +518,17 @@
 /* Define to 1 if you have the `waitpid' function. */
 #undef HAVE_WAITPID
 
+/* Define to 1 if you have the <wchar.h> header file. */
+#undef HAVE_WCHAR_H
+
 /* Define if you have the 'wchar_t' type. */
 #undef HAVE_WCHAR_T
 
 /* Define to 1 if you have the `wcslen' function. */
 #undef HAVE_WCSLEN
+
+/* Define to 1 if you have the <wctype.h> header file. */
+#undef HAVE_WCTYPE_H
 
 /* Define if you have the 'wint_t' type. */
 #undef HAVE_WINT_T
