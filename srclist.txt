@@ -187,6 +187,11 @@ $GNULIB/m4/stdbool.m4				m4		no NI
 # $GNULIB/modules/strerror
 $GNULIB/lib/strerror.c				lib		no NI
 $GNULIB/m4/strerror.m4				m4		no NI
+# $GNULIB/modules/strerror
+$GNULIB/lib/strftime.c				lib		no NI
+$GNULIB/m4/mbstate_t.m4				m4		no NI
+$GNULIB/m4/tm_gmtoff.m4				m4		no NI
+$GNULIB/m4/strftime.m4				m4		no NI
 # $GNULIB/modules/time_r
 $GNULIB/lib/time_r.c				lib		no NI
 $GNULIB/lib/time_r.h				lib		no NI
