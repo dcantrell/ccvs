@@ -6,16 +6,16 @@ Tue Dec 12 19:21:05 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
 Mon Dec 11 16:03:01 1995  Karl Fogel  (kfogel@beezley.cyclic.com)
 
-		* makefile.in: removed various and sundry cruft...
+	* makefile.in: removed various and sundry cruft...
 
 Mon Dec 11 15:57:03 1995  Karl Fogel  (kfogel@beezley.cyclic.com)
 
-		* Removed cvs.exe; we don't need to keep the binary in the
-		repository, now that binary file handling has been tested.
+	* Removed cvs.exe; we don't need to keep the binary in the
+	repository, now that binary file handling has been tested.
 
 Mon Dec 11 15:53:51 1995  Karl Fogel  (kfogel@beezley.cyclic.com)
 
-		* rcmd.c (init_sockets): use sock_init(), not SockInit().
+	* rcmd.c (init_sockets): use sock_init(), not SockInit().
 
 Mon Dec 11 12:43:35 1995  Adam Glass  <adamg@microsoft.com>
         
@@ -26,19 +26,19 @@ Mon Dec 11 12:43:35 1995  Adam Glass  <adamg@microsoft.com>
         
 Sat Dec 09 21:16:09 1995  Karl Fogel  (kfogel@beezley.cyclic.com)
 
-		* Added cvs.exe, mainly to test binary file handling.  Once we
-		know it works, we can remove it.
+	* Added cvs.exe, mainly to test binary file handling.  Once we
+	know it works, we can remove it.
 
 Sat Dec 09 15:29:16 1995  Karl Fogel  (kfogel@beezley.cyclic.com)
 
-		* options.h (DIFF, GREP): don't expect autoconf to help us out.
+	* options.h (DIFF, GREP): don't expect autoconf to help us out.
 
 Sat Dec 09 15:05:41 1995  Karl Fogel  (kfogel@beezley.cyclic.com)
 
-		* makefile.in (libdir): Fixed.
+	* makefile.in (libdir): Fixed.
 
-		* options.h: define CVS_AUTH_CLIENT_SUPPORT and
-		CVS_AUTH_SERVER_SUPPORT, instead of CVS_LOGIN.
+	* options.h: define CVS_AUTH_CLIENT_SUPPORT and
+	CVS_AUTH_SERVER_SUPPORT, instead of CVS_LOGIN.
 
 Thu Dec  7 14:49:16 1995  Jim Meyering  (meyering@comco.com)
 
