@@ -1,5 +1,11 @@
 Fri Aug 16 17:52:54 1996  Ian Lance Taylor  <ian@cygnus.com>
 
+	* rcs.c (linevector_add): Handle zero length correctly.
+	(RCS_deltas): In RCS_FETCH case, the data is in headlines, not
+	curlines.
+	(RCS_fast_checkout): Update comment about RCS_deltas: the
+	testsuite now passes.
+
 	* rcs.c (RCS_fully_parse): Use the length of the value, rather
 	than assuming that there are no embedded zero bytes.
 	(struct line): Add len field.

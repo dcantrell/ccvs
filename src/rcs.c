@@ -2151,9 +2151,8 @@ RCS_fast_checkout (rcs, workfile, tag, options, sout, flags)
 	{
 #if 0
 	    /* RCS_deltas for this use is not ready for the prime
-	       time; first we need to (a) check RCS_deltas for memory
-	       leaks, (b) make the thing pass the testsuite (when I
-	       tried it got partway but not all the way).  */
+	       time; first we need to check RCS_deltas for memory
+	       leaks.  */
 
 	    /* It isn't the head revision of the trunk.  We'll need to
 	       walk through the deltas.  */
@@ -2398,6 +2397,9 @@ linevector_add (vec, text, len, vers, pos)
     struct line *lines;
 
     assert (vec->lines_alloced > 0);
+
+    if (len == 0)
+	return;
 
     textend = text + len;
 
@@ -2922,17 +2924,17 @@ invalid rcs file %s (`d' operand out of range)",
 		assert (len != NULL);
 
 		n = 0;
-		for (ln = 0; ln < curlines.nlines; ++ln)
+		for (ln = 0; ln < headlines.nlines; ++ln)
 		    /* 1 for \n */
-		    n += curlines.vector[ln]->len + 1;
+		    n += headlines.vector[ln]->len + 1;
 		p = xmalloc (n);
 		*text = p;
-		for (ln = 0; ln < curlines.nlines; ++ln)
+		for (ln = 0; ln < headlines.nlines; ++ln)
 		{
-		    memcpy (p, curlines.vector[ln]->text,
-			    curlines.vector[ln]->len);
-		    p += curlines.vector[ln]->len;
-		    if (curlines.vector[ln]->has_newline)
+		    memcpy (p, headlines.vector[ln]->text,
+			    headlines.vector[ln]->len);
+		    p += headlines.vector[ln]->len;
+		    if (headlines.vector[ln]->has_newline)
 			*p++ = '\n';
 		}
 		*len = p - *text;
