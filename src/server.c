@@ -4809,7 +4809,6 @@ server_cleanup (void)
 	    }
 #endif /* SUNOS_KLUDGE */
 
-	    // CVS_CHDIR (Tmpdir);
 	    /* Temporarily clear noexec, so that we clean up our temp directory
 	       regardless of it (this could more cleanly be handled by moving
 	       the noexec check to all the unlink_file_dir callers from
