@@ -495,7 +495,7 @@ check_numeric (rev, argc, argv)
     int argc;
     char **argv;
 {
-    if (rev == NULL || !isdigit (*rev))
+    if (rev == NULL || !isdigit ((unsigned char) *rev))
 	return;
 
     /* Note that the check for whether we are processing more than one
@@ -542,7 +542,7 @@ make_message_rcslegal (message)
     }
 
     /* Backtrack to last non-space at end of string, and truncate. */
-    while (dp > dst && isspace (dp[-1]))
+    while (dp > dst && isspace ((unsigned char) dp[-1]))
 	--dp;
     *dp = '\0';
 

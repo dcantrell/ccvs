@@ -967,7 +967,7 @@ expand_modules ()
  * Return a pointer to the character following the newline.
  */
 
-#define NEXT_BAR(here) do { while (isspace(*line)) line++; hr->here = line; while ((c = *line++) && c != '|') ; if (!c) return(rtn); *(line - 1) = '\0'; } while (0)
+#define NEXT_BAR(here) do { while (isspace((unsigned char) *line)) line++; hr->here = line; while ((c = *line++) && c != '|') ; if (!c) return(rtn); *(line - 1) = '\0'; } while (0)
 
 static char *
 fill_hrec (line, hr)
@@ -981,7 +981,7 @@ fill_hrec (line, hr)
     unsigned long date;
 
     memset ((char *) hr, 0, sizeof (*hr));
-    while (isspace (*line))
+    while (isspace ((unsigned char) *line))
 	line++;
     if (!(rtn = strchr (line, '\n')))
 	return ("");
@@ -1058,7 +1058,7 @@ read_hrecs (fname)
     *(cp + i) = '\0';
     for (cp2 = cp; cp2 - cp < i; cp2++)
     {
-	if (*cp2 != '\n' && !isprint (*cp2))
+	if (*cp2 != '\n' && !isprint ((unsigned char) *cp2))
 	    *cp2 = ' ';
     }
 

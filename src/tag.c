@@ -373,7 +373,7 @@ pretag_proc(repository, filter)
         s = xstrdup(filter);
         for (cp=s; *cp; cp++)
         {
-            if (isspace(*cp))
+            if (isspace ((unsigned char) *cp))
             {
                 *cp = '\0';
                 break;
@@ -753,12 +753,12 @@ tag_check_valid (name, argc, argv, local, aflag, repository)
     int which;
 
     /* Numeric tags require only a syntactic check.  */
-    if (isdigit (name[0]))
+    if (isdigit ((unsigned char) name[0]))
     {
 	char *p;
 	for (p = name; *p != '\0'; ++p)
 	{
-	    if (!(isdigit (*p) || *p == '.'))
+	    if (!(isdigit ((unsigned char) *p) || *p == '.'))
 		error (1, 0, "\
 Numeric tag %s contains characters other than digits and '.'", name);
 	}
@@ -909,7 +909,7 @@ tag_check_valid_join (join_tag, argc, argv, local, aflag, repository)
     s = strchr (c, ':');
     if (s != NULL)
     {
-        if (isdigit (join_tag[0]))
+        if (isdigit ((unsigned char) join_tag[0]))
 	    error (1, 0,
 		   "Numeric join tag %s may not contain a date specifier",
 		   join_tag);

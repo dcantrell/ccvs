@@ -465,7 +465,7 @@ pretag_proc(repository, filter)
         s = xstrdup(filter);
         for (cp=s; *cp; cp++)
         {
-            if (isspace(*cp))
+            if (isspace ((unsigned char) *cp))
             {
                 *cp = '\0';
                 break;
@@ -590,7 +590,9 @@ rtag_fileproc (callerdat, finfo)
 	}
 	return (0);
     }
-    if (numtag && isdigit (*numtag) && strcmp (numtag, version) != 0)
+    if (numtag
+	&& isdigit ((unsigned char) *numtag)
+	&& strcmp (numtag, version) != 0)
     {
 
 	/*

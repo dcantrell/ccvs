@@ -242,7 +242,7 @@ status_fileproc (callerdat, finfo)
 	    }
 	    else
 	    {
-		if (isdigit (edata->tag[0]))
+		if (isdigit ((unsigned char) edata->tag[0]))
 		{
 		    cvs_output ("   Sticky Tag:\t\t", 0);
 		    cvs_output (edata->tag, 0);

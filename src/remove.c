@@ -218,7 +218,7 @@ remove_fileproc (callerdat, finfo)
 	    error (0, 0, "file `%s' already scheduled for removal",
 		   finfo->fullname);
     }
-    else if (vers->tag != NULL && isdigit (*vers->tag))
+    else if (vers->tag != NULL && isdigit ((unsigned char) *vers->tag))
     {
 	/* Commit will just give an error, and so there seems to be
 	   little reason to allow the remove.  I mean, conflicts that

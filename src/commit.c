@@ -410,7 +410,7 @@ commit (argc, argv)
     argv += optind;
 
     /* numeric specified revision means we ignore sticky tags... */
-    if (saved_tag && isdigit (*saved_tag))
+    if (saved_tag && isdigit ((unsigned char) *saved_tag))
     {
 	aflag = 1;
 	/* strip trailing dots */
@@ -707,7 +707,7 @@ classify_file_internal (finfo, vers)
     noexec = quiet = really_quiet = 1;
 
     /* handle specified numeric revision specially */
-    if (saved_tag && isdigit (*saved_tag))
+    if (saved_tag && isdigit ((unsigned char) *saved_tag))
     {
 	/* If the tag is for the trunk, make sure we're at the head */
 	if (numdots (saved_tag) < 2)
@@ -842,7 +842,7 @@ check_fileproc (callerdat, finfo)
 	     *    allow the commit if timestamp is identical or if we find
 	     *    an RCS_MERGE_PAT in the file.
 	     */
-	    if (!saved_tag || !isdigit (*saved_tag))
+	    if (!saved_tag || !isdigit ((unsigned char) *saved_tag))
 	    {
 		if (vers->date)
 		{
@@ -914,7 +914,9 @@ warning: file `%s' seems to still contain conflict indicators",
 		}
 	    }
 
-	    if (status == T_REMOVED && vers->tag && isdigit (*vers->tag))
+	    if (status == T_REMOVED
+		&& vers->tag
+		&& isdigit ((unsigned char) *vers->tag))
 	    {
 		/* Remove also tries to forbid this, but we should check
 		   here.  I'm only _sure_ about somewhat obscure cases
@@ -953,7 +955,7 @@ warning: file `%s' seems to still contain conflict indicators",
 		    }
 		    free (rcs);
 		}
-		if (vers->tag && isdigit (*vers->tag) &&
+		if (vers->tag && isdigit ((unsigned char) *vers->tag) &&
 		    numdots (vers->tag) > 1)
 		{
 		    error (0, 0,
@@ -1013,7 +1015,7 @@ warning: file `%s' seems to still contain conflict indicators",
 	    ci = (struct commit_info *) xmalloc (sizeof (struct commit_info));
 	    ci->status = status;
 	    if (vers->tag)
-		if (isdigit (*vers->tag))
+		if (isdigit ((unsigned char) *vers->tag))
 		    ci->rev = xstrdup (vers->tag);
 		else
 		    ci->rev = RCS_whatbranch (finfo->rcs, vers->tag);
@@ -1132,7 +1134,7 @@ precommit_proc (repository, filter)
 
 	s = xstrdup (filter);
 	for (cp = s; *cp; cp++)
-	    if (isspace (*cp))
+	    if (isspace ((unsigned char) *cp))
 	    {
 		*cp = '\0';
 		break;
@@ -1283,7 +1285,7 @@ commit_fileproc (callerdat, finfo)
 
 	    /* If numeric, it is on the trunk; check_fileproc enforced
 	       this.  */
-	    && !isdigit (ci->tag[0]))
+	    && !isdigit ((unsigned char) ci->tag[0]))
 	{
 	    if (finfo->rcs == NULL)
 		error (1, 0, "internal error: no parsed RCS file");
@@ -1891,7 +1893,7 @@ checkaddfile (file, repository, tag, options, rcsnode)
 
     /* If numeric, it is on the trunk; check_fileproc enforced
        this.  */
-    adding_on_branch = tag != NULL && !isdigit (tag[0]);
+    adding_on_branch = tag != NULL && !isdigit ((unsigned char) tag[0]);
 
     if (adding_on_branch)
     {
@@ -2199,7 +2201,8 @@ lock_RCS (user, rcs, rev, repository)
      * the head points to the trunk, not a branch... and as such, it's not
      * necessary to move the head in this case.
      */
-    if (rev == NULL || (rev && isdigit (*rev) && numdots (rev) < 2))
+    if (rev == NULL
+	|| (rev && isdigit ((unsigned char) *rev) && numdots (rev) < 2))
     {
 	branch = xstrdup (rcs->branch);
 	if (branch != NULL)

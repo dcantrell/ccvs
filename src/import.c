@@ -195,7 +195,7 @@ import (argc, argv)
      * must only have two dots in it (like "1.1.1").
      */
     for (cp = vbranch; *cp != '\0'; cp++)
-	if (!isdigit (*cp) && *cp != '.')
+	if (!isdigit ((unsigned char) *cp) && *cp != '.')
 	    error (1, 0, "%s is not a numeric branch", vbranch);
     if (numdots (vbranch) != 2)
 	error (1, 0, "Only branches with two dots are supported: %s", vbranch);
@@ -929,7 +929,7 @@ get_comment (user)
 	 */
 	(void) strcpy (suffix_path, cp);
 	for (cp = suffix_path; *cp; cp++)
-	    if (isupper (*cp))
+	    if (isupper ((unsigned char) *cp))
 		*cp = tolower (*cp);
 	suffix = suffix_path;
     }

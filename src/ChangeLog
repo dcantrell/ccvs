@@ -1,3 +1,19 @@
+1998-12-23  Jim Kingdon  <http://www.cyclic.com>
+
+	* admin.c, checkout.c, commit.c, cvsrc.c, expand_path.c,
+	history.c, ignore.c, import.c, log.c, mkmodules.c, modules.c,
+	myndbm.c, parseinfo.c, rcs.c, remove.c, rtag.c, status.c, subr.c,
+	tag.c, wrapper.c: Cast all char's to unsigned char before passing
+	them to ctype.h functions (isalpha, isgraph, isalnum, isspace,
+	isdigit, isprint, isupper).  Whether using ctype.h is the right
+	thing at all is unclear to me (having the server depend on locale
+	seems wrong, as we don't necessarily have any good way to set the
+	right locale, if there even is such a concept as 'right' locale in
+	this context), but as long as we use ctype.h we might as use it
+	according to the standards (this affects systems where plain char
+	is signed but users supply characters with the 8th bit set).
+	Thanks to Paul Eggert for suggesting this.
+
 1998-12-22  Jim Kingdon  <http://www.cyclic.com>
 
 	* sanity.sh (rcs3): Oops, the earlier fix for srcdir only fixed

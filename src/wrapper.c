@@ -353,9 +353,11 @@ wrap_add (line, isTemp)
     memset (&e, 0, sizeof(e));
 
 	/* Search for the wild card */
-    while(*line && isspace(*line))
+    while (*line && isspace ((unsigned char) *line))
 	++line;
-    for(temp=line;*line && !isspace(*line);++line)
+    for (temp = line;
+	 *line && !isspace ((unsigned char) *line);
+	 ++line)
 	;
     if(temp==line)
 	return;

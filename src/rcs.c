@@ -382,7 +382,9 @@ RCS_parsercsfile_i (fp, rcsfile)
 	    break;
 	}
 
-	for (cp = key; (isdigit (*cp) || *cp == '.') && *cp != '\0'; cp++)
+	for (cp = key;
+	     (isdigit ((unsigned char) *cp) || *cp == '.') && *cp != '\0';
+	     cp++)
 	    /* do nothing */ ;
 	if (*cp == '\0')
 	    break;
@@ -516,7 +518,9 @@ RCS_reparsercsfile (rdata, pfp, rcsbufp)
 	 * revision or `desc', we are done with the headers and are down to the
 	 * revision deltas, so we break out of the loop
 	 */
-	for (cp = key; (isdigit (*cp) || *cp == '.') && *cp != '\0'; cp++)
+	for (cp = key;
+	     (isdigit ((unsigned char) *cp) || *cp == '.') && *cp != '\0';
+	     cp++)
 	     /* do nothing */ ;
 	/* Note that when comparing with RCSDATE, we are not massaging
            VALUE from the string found in the RCS file.  This is OK
@@ -1848,7 +1852,7 @@ rcsbuf_getword (rcsbuf, wordp)
            printing character that is not a special.' This test ought
 	   to do the trick. */
 	c = *ptr;
-	if (isprint (c) &&
+	if (isprint ((unsigned char) c) &&
 	    c != ';' && c != '$' && c != ',' && c != '@' && c != ':')
 	{
 	    ++ptr;
@@ -1916,7 +1920,7 @@ rcsbuf_getrevnum (rcsbuf, revp)
 	++ptr;
     }
 
-    if (! isdigit (c) && c != '.')
+    if (! isdigit ((unsigned char) c) && c != '.')
 	error (1, 0,
 	       "\
 unexpected '\\x%x' reading revision number in RCS file %s",
@@ -1939,7 +1943,7 @@ unexpected '\\x%x' reading revision number in RCS file %s",
 
 	c = *ptr;
     }
-    while (isdigit (c) || c == '.');
+    while (isdigit ((unsigned char) c) || c == '.');
 
     if (! whitespace (c))
 	error (1, 0, "\
@@ -2451,7 +2455,7 @@ RCS_getversion (rcs, tag, date, force_tag_match, simple_tag)
 	}
 
 	/* Work out the branch.  */
-	if (! isdigit (tag[0]))
+	if (! isdigit ((unsigned char) tag[0]))
 	    branch = RCS_whatbranch (rcs, tag);
 	else
 	    branch = xstrdup (tag);
@@ -2592,7 +2596,7 @@ RCS_gettag (rcs, symtag, force_tag_match, simple_tag)
 #endif
 	    return (RCS_head (rcs));
 
-    if (!isdigit (tag[0]))
+    if (!isdigit ((unsigned char) tag[0]))
     {
 	char *version;
 
@@ -2789,7 +2793,7 @@ RCS_isbranch (rcs, rev)
     const char *rev;
 {
     /* numeric revisions are easy -- even number of dots is a branch */
-    if (isdigit (*rev))
+    if (isdigit ((unsigned char) *rev))
 	return ((numdots (rev) & 1) == 0);
 
     /* assume a revision if you can't find the RCS info */
@@ -2816,7 +2820,7 @@ RCS_nodeisbranch (rcs, rev)
     assert (rcs != NULL);
 
     /* numeric revisions are easy -- even number of dots is a branch */
-    if (isdigit (*rev))
+    if (isdigit ((unsigned char) *rev))
 	return ((numdots (rev) & 1) == 0);
 
     version = translate_symtag (rcs, rev);
@@ -3043,7 +3047,7 @@ RCS_branch_head (rcs, rev)
     if (RCS_nodeisbranch (rcs, rev))
 	return RCS_getbranch (rcs, rev, 1);
 
-    if (isdigit (*rev))
+    if (isdigit ((unsigned char) *rev))
 	num = xstrdup (rev);
     else
     {
@@ -3583,11 +3587,11 @@ RCS_check_tag (tag)
      * characters cannot be non-visible graphic characters, and must not be
      * in the set of "invalid" RCS identifier characters.
      */
-    if (isalpha (*tag))
+    if (isalpha ((unsigned char) *tag))
     {
 	for (cp = tag; *cp; cp++)
 	{
-	    if (!isgraph (*cp))
+	    if (!isgraph ((unsigned char) *cp))
 		error (1, 0, "tag `%s' has non-visible graphic characters",
 		       tag);
 	    if (strchr (invalid, *cp))
@@ -3614,7 +3618,7 @@ RCS_valid_rev (rev)
 {
    char last, c;
    last = *rev++;
-   if (!isdigit (last))
+   if (!isdigit ((unsigned char) last))
        return 0;
    while ((c = *rev++))   /* Extra parens placate -Wall gcc option */
    {
@@ -3625,10 +3629,10 @@ RCS_valid_rev (rev)
            continue;
        }
        last = c;
-       if (!isdigit (c))
+       if (!isdigit ((unsigned char) c))
            return 0;
    }
-   if (!isdigit (last))
+   if (!isdigit ((unsigned char) last))
        return 0;
    return 1;
 }
@@ -3869,7 +3873,7 @@ expand_keywords (rcs, ver, name, log, loglen, expand, buf, len, retbuf, retlen)
 	/* Look for the first non alphabetic character after the '$'.  */
 	send = srch + srch_len;
 	for (s = srch; s < send; s++)
-	    if (! isalpha (*s))
+	    if (! isalpha ((unsigned char) *s))
 		break;
 
 	/* If the first non alphabetic character is not '$' or ':',
@@ -3972,7 +3976,7 @@ expand_keywords (rcs, ver, name, log, loglen, expand, buf, len, retbuf, retlen)
 		break;
 
 	    case KEYWORD_NAME:
-		if (name != NULL && ! isdigit (*name))
+		if (name != NULL && ! isdigit ((unsigned char) *name))
 		    value = (char *) name;
 		else
 		    value = NULL;
@@ -4315,7 +4319,7 @@ RCS_checkout (rcs, workfile, rev, nametag, options, sout, pfn, callerdat)
 			    : (sout != RUN_TTY ? sout : "(stdout)"))));
     }
 
-    assert (rev == NULL || isdigit (*rev));
+    assert (rev == NULL || isdigit ((unsigned char) *rev));
 
     if (noexec && workfile != NULL)
 	return 0;
@@ -5377,7 +5381,7 @@ RCS_checkin (rcs, workfile, message, rev, flags)
 	char *branch, *tip, *newrev, *p;
 	int dots, isrevnum;
 
-	assert (isdigit(*rev));
+	assert (isdigit ((unsigned char) *rev));
 
 	newrev = xstrdup (rev);
 	dots = numdots (newrev);
@@ -7635,7 +7639,9 @@ getdelta (rcsbuf, rcsfile, keyp, valp)
 
     /* Make sure that it is a revision number and not a cabbage 
        or something. */
-    for (cp = key; (isdigit (*cp) || *cp == '.') && *cp != '\0'; cp++)
+    for (cp = key;
+	 (isdigit ((unsigned char) *cp) || *cp == '.') && *cp != '\0';
+	 cp++)
 	/* do nothing */ ;
     /* Note that when comparing with RCSDATE, we are not massaging
        VALUE from the string found in the RCS file.  This is OK since
@@ -7819,7 +7825,9 @@ unable to parse %s; `state' not in the expected place", rcsfile);
 	    continue;
 	}
 	/* if we have a new revision number, we're done with this delta */
-	for (cp = key; (isdigit (*cp) || *cp == '.') && *cp != '\0'; cp++)
+	for (cp = key;
+	     (isdigit ((unsigned char) *cp) || *cp == '.') && *cp != '\0';
+	     cp++)
 	    /* do nothing */ ;
 	/* Note that when comparing with RCSDATE, we are not massaging
 	   VALUE from the string found in the RCS file.  This is OK

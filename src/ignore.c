@@ -181,7 +181,7 @@ ign_add (ign, hold)
 	char save;
 
 	/* ignore whitespace before the token */
-	if (isspace (*ign))
+	if (isspace ((unsigned char) *ign))
 	    continue;
 
 	/*
@@ -189,7 +189,8 @@ ign_add (ign, hold)
 	 * (saving it if necessary).  We also catch * as a special case in a
 	 * global ignore file as an optimization
 	 */
-	if ((!*(ign+1) || isspace (*(ign+1))) && (*ign == '!' || *ign == '*'))
+	if ((!*(ign+1) || isspace ((unsigned char) *(ign+1)))
+	    && (*ign == '!' || *ign == '*'))
 	{
 	    if (!hold)
 	    {
@@ -238,7 +239,7 @@ ign_add (ign, hold)
 	}
 
 	/* find the end of this token */
-	for (mark = ign; *mark && !isspace (*mark); mark++)
+	for (mark = ign; *mark && !isspace ((unsigned char) *mark); mark++)
 	     /* do nothing */ ;
 
 	save = *mark;
