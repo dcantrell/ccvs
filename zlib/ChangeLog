@@ -1,3 +1,7 @@
+1999-02-24  Jim Kingdon  <http://www.cyclic.com>
+
+	* Makefile.in (DISTFILES): Add .cvsignore.
+
 Tue Mar 18 13:05:37 1997  Jim Meyering  <meyering@totoro.cyclic.com>
 
 	* Makefile.in (DISTFILES): Change glob pattern so that it doesn't
