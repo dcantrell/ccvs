@@ -3708,6 +3708,7 @@ expand_keywords (rcs, ver, name, log, loglen, expand, buf, len, retbuf, retlen)
            uses for ci -k.  */
 	if (kw == KEYWORD_LOG
 	    && (sizeof "checked in with -k by " <= loglen
+		|| log == NULL
 		|| strncmp (log, "checked in with -k by ",
 			    sizeof "checked in with -k by " - 1) != 0))
 	{
@@ -3725,6 +3726,10 @@ expand_keywords (rcs, ver, name, log, loglen, expand, buf, len, retbuf, retlen)
                haven't done so already.  */
 	    if (expand != KFLAG_V)
 		++s;
+
+	    /* CVS never has empty log messages, but old RCS files might.  */
+	    if (log == NULL)
+		log = "";
 
 	    /* Find the start of the line.  */
 	    start = srch;
