@@ -353,67 +353,45 @@ fail ()
 # of the implementation common to the two).
 dotest_internal ()
 {
+  if $EXPR "`cat ${TESTDIR}/dotest.tmp`" : "$3${ENDANCHOR}" >/dev/null; then
+    # Why, I hear you ask, do we write this to the logfile
+    # even when the test passes?  The reason is that the test
+    # may give us the regexp which we were supposed to match,
+    # but sometimes it may be useful to look at the exact
+    # text which was output.  For example, suppose one wants
+    # to grep for a particular warning, and make _sure_ that
+    # CVS never hits it (even in cases where the tests might
+    # match it with .*).  Or suppose one wants to see the exact
+    # date format output in a certain case (where the test will
+    # surely use a somewhat non-specific pattern).
+    cat ${TESTDIR}/dotest.tmp >>${LOGFILE}
+    pass "$1"
   # expr can't distinguish between "zero characters matched" and "no match",
   # so special-case it.
-  if test -z "$3"; then
-    if test -s ${TESTDIR}/dotest.tmp; then
-      if test x"$4" != x; then
-	# We want to match either the empty string or $4.
-	dotest_internal "$1" "$2" "$4"
-      else
-	echo "** expected: " >>${LOGFILE}
-	echo "$3" >>${LOGFILE}
-	echo "$3" > ${TESTDIR}/dotest.exp
-	rm -f ${TESTDIR}/dotest.ex2
-	echo "** got: " >>${LOGFILE}
-	cat ${TESTDIR}/dotest.tmp >>${LOGFILE}
-	fail "$1"
-      fi
-    else
-      pass "$1"
-    fi
-  else
-    if $EXPR "`cat ${TESTDIR}/dotest.tmp`" : \
-	"$3"${ENDANCHOR} >/dev/null; then
-      # See below about writing this to the logfile.
+  elif test -z "$3" && test ! -s ${TESTDIR}/dotest.tmp; then
+    pass "$1"
+  elif test x"$4" != x; then
+    if $EXPR "`cat ${TESTDIR}/dotest.tmp`" : "$4${ENDANCHOR}" >/dev/null; then
       cat ${TESTDIR}/dotest.tmp >>${LOGFILE}
       pass "$1"
     else
-      if test x"$4" != x; then
-	if $EXPR "`cat ${TESTDIR}/dotest.tmp`" : \
-	    "$4"${ENDANCHOR} >/dev/null; then
-	  # Why, I hear you ask, do we write this to the logfile
-	  # even when the test passes?  The reason is that the test
-	  # may give us the regexp which we were supposed to match,
-	  # but sometimes it may be useful to look at the exact
-	  # text which was output.  For example, suppose one wants
-	  # to grep for a particular warning, and make _sure_ that
-	  # CVS never hits it (even in cases where the tests might
-	  # match it with .*).  Or suppose one wants to see the exact
-	  # date format output in a certain case (where the test will
-	  # surely use a somewhat non-specific pattern).
-	  cat ${TESTDIR}/dotest.tmp >>${LOGFILE}
-	  pass "$1"
-	else
-	  echo "** expected: " >>${LOGFILE}
-	  echo "$3" >>${LOGFILE}
-	  echo "$3" > ${TESTDIR}/dotest.ex1
-	  echo "** or: " >>${LOGFILE}
-	  echo "$4" >>${LOGFILE}
-	  echo "$4" > ${TESTDIR}/dotest.ex2
-	  echo "** got: " >>${LOGFILE}
-	  cat ${TESTDIR}/dotest.tmp >>${LOGFILE}
-	  fail "$1"
-	fi
-      else
-	echo "** expected: " >>${LOGFILE}
-	echo "$3" >>${LOGFILE}
-	echo "$3" > ${TESTDIR}/dotest.exp
-	echo "** got: " >>${LOGFILE}
-	cat ${TESTDIR}/dotest.tmp >>${LOGFILE}
-	fail "$1"
-      fi
+      echo "** expected: " >>${LOGFILE}
+      echo "$3" >>${LOGFILE}
+      echo "$3" > ${TESTDIR}/dotest.ex1
+      echo "** or: " >>${LOGFILE}
+      echo "$4" >>${LOGFILE}
+      echo "$4" > ${TESTDIR}/dotest.ex2
+      echo "** got: " >>${LOGFILE}
+      cat ${TESTDIR}/dotest.tmp >>${LOGFILE}
+      fail "$1"
     fi
+  else
+    echo "** expected: " >>${LOGFILE}
+    echo "$3" >>${LOGFILE}
+    echo "$3" > ${TESTDIR}/dotest.exp
+    echo "** got: " >>${LOGFILE}
+    cat ${TESTDIR}/dotest.tmp >>${LOGFILE}
+    fail "$1"
   fi
 }
 
@@ -434,6 +412,9 @@ dotest_line_by_line ()
   while [ $line -le `wc -l <${TESTDIR}/dotest.tmp` ] ; do
     if $EXPR "`sed -n ${line}p ${TESTDIR}/dotest.tmp`" : \
        "`sed -n ${line}p ${TESTDIR}/dotest.exp`" >/dev/null; then
+      :
+    elif test -z "`sed -n ${line}p ${TESTDIR}/dotest.tmp`" &&
+       test -z "`sed -n ${line}p ${TESTDIR}/dotest.exp`"; then
       :
     else
       echo "Line $line:" >> ${LOGFILE}
@@ -6137,35 +6118,72 @@ File: b                	Status: Up-to-date
 	  dotest join-admin-2-1 "$testcvs -q co -l ." ''
 	  module=x
 	  mkdir $module
-	  $testcvs -q add $module >>$LOGFILE 2>&1
+	  dotest join-admin-2-2 "$testcvs -q add $module" \
+"Directory ${TESTDIR}/cvsroot/x added to the repository"
 	  cd $module
 
 	  # Create a file so applying the first tag works.
 	  echo '$''Id$' > e0
 	  cp e0 e
-	  $testcvs -Q add e > /dev/null 2>&1
-	  $testcvs -Q ci -m. e > /dev/null 2>&1
+	  dotest join-admin-2-3 "$testcvs -Q add e" ''
+	  dotest join-admin-2-4 "$testcvs -Q ci -m. e" \
+"RCS file: ${TESTDIR}/cvsroot/x/e,v
+done
+Checking in e;
+${TESTDIR}/cvsroot/x/e,v  <--  e
+initial revision: 1\.1
+done"
 
-	  $testcvs -Q tag -b T
-	  $testcvs -Q update -r T
+	  dotest join-admin-2-5 "$testcvs -Q tag -b T" '' "${QUESTION} e0"
+	  dotest join-admin-2-6 "$testcvs -Q update -r T" '' "${QUESTION} e0"
 	  cp e0 e
-	  $testcvs -Q ci -m. e > /dev/null 2>&1
+	  dotest join-admin-2-7 "$testcvs -Q ci -m. e" \
+"Checking in e;
+${TESTDIR}/cvsroot/x/e,v  <--  e
+new revision: 1\.1\.2\.1; previous revision: 1\.1
+done"
 
-	  $testcvs -Q update -A > /dev/null 2>&1
-	  $testcvs -Q tag -b M1 > /dev/null 2>&1
+	  dotest join-admin-2-8 "$testcvs -Q update -A" '' "${QUESTION} e0"
+	  dotest join-admin-2-9 "$testcvs -Q tag -b M1" '' "${QUESTION} e0"
 
 	  echo '$''Id$' > b
-	  $testcvs -Q add b > /dev/null 2>&1
+	  dotest join-admin-2-10 "$testcvs -Q add b" ''
 	  cp e0 e
-	  $testcvs -Q ci -m. b e > /dev/null 2>&1
+	  dotest join-admin-2-11 "$testcvs -Q ci -m. b e" \
+"RCS file: ${TESTDIR}/cvsroot/x/b,v
+done
+Checking in b;
+${TESTDIR}/cvsroot/x/b,v  <--  b
+initial revision: 1\.1
+done
+Checking in e;
+${TESTDIR}/cvsroot/x/e,v  <--  e
+new revision: 1\.2; previous revision: 1\.1
+done"
 
-	  $testcvs -Q tag -b M2
+	  dotest join-admin-2-12 "$testcvs -Q tag -b M2" '' "${QUESTION} e0"
 
-	  $testcvs -Q update -r T > /dev/null 2>&1
-	  $testcvs update -kk -jM1 -jM2 > /dev/null 2>&1
+	  dotest join-admin-2-13 "$testcvs -Q update -r T" '' "${QUESTION} e0"
+	  dotest join-admin-2-14 "$testcvs update -kk -jM1 -jM2" \
+"${PROG} [a-z]*: Updating .
+U b
+U e
+RCS file: ${TESTDIR}/cvsroot/x/e,v
+retrieving revision 1\.1
+retrieving revision 1\.2
+Merging differences between 1\.1 and 1\.2 into e
+${QUESTION} e0" \
+"${QUESTION} e0
+${PROG} [a-z]*: Updating .
+U b
+U e
+RCS file: ${TESTDIR}/cvsroot/x/e,v
+retrieving revision 1\.1
+retrieving revision 1\.2
+Merging differences between 1\.1 and 1\.2 into e"
 
 	  # Verify that the $Id.$ string is not expanded.
-	  dotest join-admin-2-2 "cat e" '$''Id$'
+	  dotest join-admin-2-15 "cat e" '$''Id$'
 
 	  cd ../..
 	  rm -rf 1

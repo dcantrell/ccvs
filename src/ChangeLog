@@ -1,3 +1,15 @@
+2000-10-26  Larry Jones  <larry.jones@sdrc.com>
+
+	* sanity.sh (join-admin-2): Check output from all commands instead
+	of (mostly) discarding.  (Some of the tests used to produce stray
+	output in remote mode.)
+
+	* sanity.sh (dotest_line_by_line): Handle empty lines in pattern
+	(expr doesn't distingish between successfully matching nothing
+	and failing to match anything).
+
+	* sanity.sh (dotest_internal): Rearrange and use elif to simplify.
+
 2000-10-24  Jim Meyering  <meyering@lucent.com>
 
 	Fix a bug, introduced with my fix of 2000-07-10, whereby -kk would
