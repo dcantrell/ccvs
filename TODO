@@ -329,13 +329,6 @@
 		- What all the tags mean in an "import" command
 		- Tags are important; revision numbers are not
 
-169. We are using CVS as the configuration control for a software reuse library.
-     What we do is do system calls passing the needed arguments. In the next
-     release, it would be nice to see an option to put cvs .o files into a
-     archive library with an API. This enhancement would go nicely with the
-     notion of being able to integrate tools into a large software engineering
-     environment.
-
 170. Is there an "info" file that can be invoked when a file is checked out, or
      updated ?  What I want to do is to advise users, particularly novices, of
      the state of their working source whenever they check something out, as
