@@ -1089,6 +1089,7 @@ format_cmdline (char *format, ...)
      */
     /* allocate space to save our data */
     b = xmalloc(sizeof(struct cmdline_bindings));
+    b->conversion = 's';
     b->convproc = NULL;
     b->closure = NULL;
     b->data = xstrdup( "" );
@@ -1314,8 +1315,8 @@ format_cmdline (char *format, ...)
 			c.firstpass = 1;
 			c.srepos = srepos;
 #endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
-			walklist((List *)((struct cmdline_bindings *)p->data)->data,
-			         (void (*))((struct cmdline_bindings *)p->data)->convproc,
+			walklist((List *)b->data,
+			         (void (*))b->convproc,
 			         (void *)&c);
 			d--;	/* back up one space.  we know that ^
 				   always adds 1 extra */

@@ -1,3 +1,10 @@
+2004-02-19  Derek Price <derek@ximbiot.com>
+
+	* logmsg.c (verifymsg_proc), run.c (format_cmdline): Plug memory leak.
+	(Report from Mark D. Baushke <mdb@cvshome.org>.)
+
+	* run.c (format_cmdline): Simplify two expressions.
+
 2004-02-19  Larry Jones  <lawrence.jones@ugsplm.com>
 
 	* login.c (password_entry_operation): Initialize line.
