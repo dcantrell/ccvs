@@ -1076,7 +1076,7 @@ read_hrecs (fname)
         stream before calling fill_hrec.  If there is not, then read in 
         another block, unless feof has been reached. */
 
-    cpstart = xmalloc ( STAT_BLOCKSIZE(st_buf) );
+    cpstart = xmalloc ( STAT_BLOCKSIZE(st_buf) + 1 );
     cp = cpstart;
 
     i = read (fd, cpstart, STAT_BLOCKSIZE(st_buf) );
@@ -1179,7 +1179,7 @@ read_hrecs (fname)
 
 	oldcp = cp;
 	i = strlen(cp);
-	cp = xmalloc(i + STAT_BLOCKSIZE(st_buf) + 1);
+	cp = xmalloc(i + STAT_BLOCKSIZE(st_buf) + 2);
 	memcpy( cp , oldcp , i );
 	free(cpstart);
 	cpstart = cp;
