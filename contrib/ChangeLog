@@ -1,3 +1,7 @@
+Mon May 12 11:59:23 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* listener.c: Removed; see ../ChangeLog for rationale.
+
 10 May 1997  Jim Kingdon
 
 	* listen2.c, listen2.mak: New files.
