@@ -1,3 +1,11 @@
+2000-12-21  Derek Price  <derek.price@openavenue.com>
+
+	* .cvsignore: Added .deps directory and a new stamp file
+	* Makefile.am: New file needed by Automake
+	* Makefile.in: Regenerated
+	* stamp-h2.in: New stamp file created by Automake
+	* version.c.in: use configure to generate version.c
+
 2000-12-16  Derek Price  <derek.price@openavenue.com>
 
 	* server.c (server_update): Keep the vers structure up to date after
