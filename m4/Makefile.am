@@ -64,9 +64,11 @@ EXTRA_DIST = \
 	restrict.m4 \
 	signed.m4 \
 	size_max.m4 \
+	st_mtim.m4 \
 	stat.m4 \
 	stdbool.m4 \
 	stdint_h.m4 \
+	timespec.m4 \
 	uintmax_t.m4 \
 	ulonglong.m4 \
 	unlocked-io.m4 \
