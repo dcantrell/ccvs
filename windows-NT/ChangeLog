@@ -1,3 +1,7 @@
+2003-12-04  Mark D. Baushke  <mdb@cvshome.org>
+
+	* filesubr.c (xresolvepath): Comment out assert() call.
+
 2003-12-04  Derek Price  <derek@ximbiot.com>
 
 	* config.h, stamp-ch: Regenerated for 1.11.10.1.
