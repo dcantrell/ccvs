@@ -1089,16 +1089,19 @@ cause intermittent sandbox corruption.");
 	return 0;
 }
 
+
+
 char *
 Make_Date (char *rawdate)
 {
-    time_t unixtime;
+    struct timespec unixtime;
 
-    unixtime = get_date (rawdate, (struct timeb *) NULL);
-    if (unixtime == (time_t) - 1)
+    if (!get_date (&unixtime, rawdate, NULL))
 	error (1, 0, "Can't parse date/time: %s", rawdate);
-    return date_from_time_t (unixtime);
+    return date_from_time_t (unixtime.tv_sec);
 }
+
+
 
 /* Convert a time_t to an RCS format date.  This is mainly for the
    use of "cvs history", because the CVSROOT/history file contains
