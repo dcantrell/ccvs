@@ -1,3 +1,12 @@
+1998-06-18  Ian Lance Taylor  <ian@cygnus.com>
+
+	* rcscmds.c: Include diffrun.h.
+	(call_diff, call_diff3): Pass NULL callback parameter.
+	(diff_run, diff3_run): Don't declare.
+	* Makefile.in (rcscmds.o): New target, to use -I for diff
+	directory.
+	(zlib.o): Depend upon zlib.h.
+
 1998-06-09  Mike Sutton@SAIC
 
 	Make it compile with Sun's bundled K&R C compiler:
