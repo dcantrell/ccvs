@@ -6149,6 +6149,29 @@ T abc'
 	  # Since first-dir/abb is readonly, use -f.
 	  rm -rf 3
 
+	  # Test checking out the directory rather than the file.
+	  mkdir 3
+	  cd 3
+	  dotest devcom-t2 "${testcvs} -q co -rtag first-dir" \
+'U first-dir/abb
+U first-dir/abc'
+	  cd ..
+	  # Since the files are readonly, use -f.
+	  rm -rf 3
+
+	  # Now do it again, after removing the val-tags file created
+	  # by devcom-t1 to force CVS to search the repository
+	  # containing CVS directories.
+	  rm ${CVSROOT_DIRNAME}/CVSROOT/val-tags
+	  mkdir 3
+	  cd 3
+	  dotest devcom-t3 "${testcvs} -q co -rtag first-dir" \
+'U first-dir/abb
+U first-dir/abc'
+	  cd ..
+	  # Since the files are readonly, use -f.
+	  rm -rf 3
+
 	  # Now remove all the file attributes
 	  cd 2/first-dir
 	  dotest devcom-b0 "${testcvs} watch off" ''
