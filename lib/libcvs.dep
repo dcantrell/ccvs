@@ -119,6 +119,10 @@
 	".\regex.h"\
 	
 
+.\rpmatch.c : \
+	"..\windows-NT\config.h"\
+	
+
 ".\save-cwd.c" : \
 	"..\windows-NT\config.h"\
 	"..\windows-NT\stdbool.h"\
@@ -216,6 +220,8 @@
 
 .\yesno.c : \
 	"..\windows-NT\config.h"\
+	"..\windows-NT\stdbool.h"\
+	".\yesno.h"\
 	
 
 !IF  "$(CFG)" == "libcvs - Win32 Release"

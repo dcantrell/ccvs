@@ -161,6 +161,10 @@ SOURCE=.\regex.c
 # End Source File
 # Begin Source File
 
+SOURCE=.\rpmatch.c
+# End Source File
+# Begin Source File
+
 SOURCE=".\save-cwd.c"
 # End Source File
 # Begin Source File
@@ -435,6 +439,10 @@ SOURCE=.\xsize.h
 # Begin Source File
 
 SOURCE=.\xtime.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\yesno.h
 # End Source File
 # End Group
 # End Target
