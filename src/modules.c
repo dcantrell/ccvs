@@ -36,8 +36,15 @@
 
 struct sortrec
 {
+    /* Name of the module, malloc'd.  */
     char *modname;
+    /* If Status variable is set, this is either def_status or the malloc'd
+       name of the status.  If Status is not set, the field is left
+       uninitialized.  */
     char *status;
+    /* Pointer to a malloc'd array which contains (1) the raw contents
+       of the options and arguments, excluding comments, (2) a '\0',
+       and (3) the storage for the "comment" field.  */
     char *rest;
     char *comment;
 };
@@ -849,15 +856,19 @@ save_d (k, ks, d, ds)
     {
 	s_rec->status = def_status;
 
-	/* Minor kluge, but general enough to maintain */
 	for (cp = s_rec->rest; (cp2 = strchr (cp, '-')) != NULL; cp = ++cp2)
 	{
 	    if (*(cp2 + 1) == 's' && *(cp2 + 2) == ' ')
 	    {
-		s_rec->status = (cp2 += 3);
-		while (*cp2 != ' ')
+		char *status_start;
+
+		cp2 += 3;
+		status_start = cp2;
+		while (*cp2 != ' ' && *cp2 != '\0')
 		    cp2++;
-		*cp2++ = '\0';
+		s_rec->status = xmalloc (cp2 - status_start + 1);
+		strncpy (s_rec->status, status_start, cp2 - status_start);
+		s_rec->status[cp2 - status_start] = '\0';
 		cp = cp2;
 		break;
 	    }
@@ -934,8 +945,6 @@ cat_module (status)
 	    line = xmalloc (strlen (s_h->status) + 15);
 	    sprintf (line, " %-11s", s_h->status);
 	    cvs_output (line, 0);
-	    if (s_h->status != def_status)
-		*(s_h->status + strlen (s_h->status)) = ' ';
 	    free (line);
 	}
 
@@ -1032,5 +1041,11 @@ cat_module (status)
 	}
 
 	free_names(&moduleargc, moduleargv);
+	/* FIXME-leak: here is where we would free s_h->modname, s_h->rest,
+	   and if applicable, s_h->status.  Not exactly a memory leak,
+	   in the sense that we are about to exit(), but may be worth
+	   noting if we ever do a multithreaded server or something of
+	   the sort.  */
     }
+    /* FIXME-leak: as above, here is where we would free s_head.  */
 }

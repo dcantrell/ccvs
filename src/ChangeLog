@@ -1,3 +1,14 @@
+Mon Aug 11 10:14:47 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* modules.c (save_d): When parsing -s option, don't assume that
+	we will hit a space before we hit the '\0'.
+	(struct sortrec): Document allocation policies (status quo except
+	status field is now malloc'd).
+	(cat_module): No longer need to set the '\0' at the end of the
+	status field back to ' ', as it no longer shares storage with the
+	rest field.
+	* sanity.sh (modules): Add "statusmod" to test for above fix.
+
 Sun Aug 10 12:18:31 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* sanity.sh: Remove TODO item about more keyword expansion tests.
