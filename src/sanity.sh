@@ -20099,10 +20099,10 @@ ${SPROG} commit: Rebuilding administrative file database"
 	  dotest lockfiles-9 "${testcvs} -q co -l ." ""
 
 	  ###
-	  ### There are race conditions in the following tests, but hopefully the
-	  ### 5 seconds the first process waits to remove the lockdir and the 30
-	  ### seconds CVS waits betweens checks will be significant enough to
-	  ### render the case moot.
+	  ### There are race conditions in the following tests, but hopefully
+	  ### the 5 seconds the first process waits to remove the lockdir and
+	  ### the 30 seconds CVS waits betweens checks will be significant
+	  ### enough to render the case moot.
 	  ###
 	  # Considers the following cases:
 	  #
@@ -20132,16 +20132,16 @@ ${SPROG} commit: Rebuilding administrative file database"
 	  # 9. Don't write when write locks are present...
 
 	  # 3. Don't read when write locks present...
-	  mkdir "$TESTDIR/locks/#cvs.lock"
-	  (sleep 5; rmdir "$TESTDIR/locks/#cvs.lock")&
-	  dotest lockfiles-10 "$testcvs -q co -l ." \
-"$SPROG checkout: \[[0-9:]*\] waiting for $username's lock in $CVSROOT_DIRNAME
-$SPROG checkout: \[[0-9:]*\] obtained lock in $CVSROOT_DIRNAME"
+	  mkdir "$TESTDIR/locks/first-dir/#cvs.lock"
+	  (sleep 5; rmdir "$TESTDIR/locks/first-dir/#cvs.lock")&
+	  dotest lockfiles-10 "$testcvs -q co -l first-dir" \
+"$SPROG checkout: \[[0-9:]*\] waiting for $username's lock in $CVSROOT_DIRNAME/first-dir
+$SPROG checkout: \[[0-9:]*\] obtained lock in $CVSROOT_DIRNAME/first-dir"
 
 	  # 1. Read when read locks are present...
-	  touch "$TESTDIR/locks/#cvs.rfl.test.lock"
-	  dotest lockfiles-11 "$testcvs -q co -l ."
-	  rm "$TESTDIR/locks/#cvs.rfl.test.lock"
+	  touch "$TESTDIR/locks/first-dir/#cvs.rfl.test.lock"
+	  dotest lockfiles-11 "$testcvs -q co -l first-dir"
+	  rm "$TESTDIR/locks/first-dir/#cvs.rfl.test.lock"
 
 	  # 2. Read when promotable locks are present...
 	  cd ..
@@ -20237,7 +20237,7 @@ ${SPROG} commit: Rebuilding administrative file database"
 	  umask 0077
 	  unset CVSUMASK
 	  rm -r ${TESTDIR}/locks
-	  rm -r 1 2
+	  rm -r 1 2 3
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
 	  ;;
 
