@@ -1,3 +1,7 @@
+Mon Jun 23 18:24:13 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* TODO: Add item 186, concerning multisite.
+
 Sun, 22 Jun 1997  Jim Kingdon
 
 	* cvsnt.dsp: New file.  This apparently is what Visual C++ 5.0
