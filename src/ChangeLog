@@ -1,3 +1,10 @@
+2001-12-10  Larry Jones  <larry.jones@sdrc.com>
+
+	* log.c (log_usage): Note that -r and -d take lists, not just a
+	single specification.
+	(log_expand_revlist): Don't dereference null pointers when one end
+	of a revision range is a non-existent tag.
+
 2001-12-03  Larry Jones  <larry.jones@sdrc.com>
 
 	* annotate.c (annotate, annotate_fileproc): Don't annotate binary
