@@ -7678,13 +7678,11 @@ done"
 		mkdir 2
 		cd 2
 
-		# The need for TMPPWD here is a (minor) CVS bug; the
-		# output should use the name of the repository as specified.
 		dotest conflicts-126.5 "${testcvs} co -p first-dir" \
 "${PROG} [a-z]*: Updating first-dir
 ===================================================================
 Checking out first-dir/a
-RCS:  ${TMPPWD}/cvsroot/first-dir/a,v
+RCS:  ${CVSROOT_DIRNAME}/first-dir/a,v
 VERS: 1\.1
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*"
 		if ${CVS} co first-dir ; then
@@ -7715,13 +7713,11 @@ done"
 		# contents.
 		mkdir 3
 		cd 3
-		# The need for TMPPWD here is a (minor) CVS bug; the
-		# output should use the name of the repository as specified.
 		dotest conflicts-128.5 "${testcvs} co -p -l first-dir" \
 "${PROG} [a-z]*: Updating first-dir
 ===================================================================
 Checking out first-dir/a
-RCS:  ${TMPPWD}/cvsroot/first-dir/a,v
+RCS:  ${CVSROOT_DIRNAME}/first-dir/a,v
 VERS: 1\.2
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
 add a line"
