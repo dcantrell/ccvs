@@ -6184,6 +6184,8 @@ revision that the file in the working directory derives
 from, and the @code{Repository revision} which is the
 latest revision in the repository for the branch in
 use.
+The @samp{Commit Identifier} reflects the unique commitid
+of the @code{commit}.
 @c FIXME: should we clarify "in use"?  The answer is
 @c sticky tags, and trying to distinguish branch sticky
 @c tags from non-branch sticky tags seems rather awkward
@@ -9445,6 +9447,12 @@ log message on the command line with the @samp{-m
 or use the @samp{-F @var{file}} option to specify
 that the argument file contains the log message.
 
+At @code{commit}, a unique commitid is placed in the @sc{rcs}
+file inside the repository. All files committed at once
+get the same commitid. The commitid can be retrieved with
+the @code{log} and @code{status} command; see @ref{log},
+@ref{File status}.
+
 @menu
 * commit options::              commit options
 * commit examples::             commit examples
@@ -10729,11 +10737,10 @@ The output includes the location of the @sc{rcs} file,
 the @dfn{head} revision (the latest revision on the
 trunk), all symbolic names (tags) and some other
 things.  For each revision, the revision number, the
-date, the
-author, the number of lines added/deleted and the log
-message are printed.  All dates are displayed in local
-time at the client.  This is typically specified in the
-@code{$TZ} environment variable, which can be set to
+date, the author, the number of lines added/deleted, the commitid
+and the log message are printed.  All dates are displayed
+in local time at the client. This is typically specified in
+the @code{$TZ} environment variable, which can be set to
 govern how @code{log} displays dates.
 
 @strong{Note: @code{log} uses @samp{-R} in a way that conflicts
