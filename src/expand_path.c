@@ -16,21 +16,13 @@
 	is returned.
 	Will only expand Built in CVS variables all others are ignored.
  */
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
 #include "cvs.h"
-#include <stdio.h>
-#include <ctype.h>
 #include <sys/types.h>
-#if HAVE_STRING_H
-#include <string.h>
-#else
-#include <strings.h>
-#endif
+
 static char *expand_variable PROTO((char *env));
 extern char *xmalloc ();
 extern void  free ();
+
 char *
 expand_path (name)
     char *name;
