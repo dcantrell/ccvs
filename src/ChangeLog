@@ -1,3 +1,9 @@
+2001-05-23  Larry Jones  <larry.jones@sdrc.com>
+
+	* checkout.c (checkout_proc): Don't build top_level_admin directory
+	when exporting.
+	(Reported by Tony Byrne <tonyb@directski.com>.)
+
 2001-05-21  Derek Price  <dprice@collab.net>
 
 	* client.c: Fix a mispelling in a comment.
