@@ -2381,6 +2381,18 @@ Note: you must run it on a machine which has both
 else in contrib it is unsupported (your mileage may
 vary).
 @end table
+@c CMZ and/or PATCHY were systems that were used in the
+@c high energy physics community (especially for
+@c CERNLIB).  CERN has replaced them with CVS, but the
+@c CAR format seems to live on as a way to submit
+@c changes.  There is a program car2cvs which converts
+@c but I'm not sure where one gets a copy.
+@c Not sure it is worth mentioning here, since it would
+@c appear to affect only one particular community.
+@c Best page for more information is:
+@c http://wwwcn1.cern.ch/asd/cvs/index.html
+@c See also:
+@c http://ecponion.cern.ch/ecpsa/cernlib.html
 
 @c . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 @node From scratch
