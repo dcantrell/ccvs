@@ -2315,10 +2315,34 @@ ${PROG} update: Updating second-dir"
 
 	  mkdir 2; cd 2
 	  dotest basicc-12 "${testcvs} -Q co ." ""
+	  # actual entries can be in either Entries or Entries.log, do
+	  # an update to get them consolidated into Entries
+	  dotest basicc-12a "${testcvs} -Q up" ""
+	  dotest basicc-12b "cat CVS/Entries" \
+"D/CVSROOT////
+D/first-dir////
+D/second-dir////"
 	  dotest basicc-13 "echo *" "CVS CVSROOT first-dir second-dir"
 	  dotest basicc-14 "${testcvs} -Q release first-dir second-dir" ""
+	  # a normal release shouldn't affect the Entries file
+	  dotest basicc-14b "cat CVS/Entries" \
+"D/CVSROOT////
+D/first-dir////
+D/second-dir////"
+	  # FIXCVS: but release -d probably should
 	  dotest basicc-15 "${testcvs} -Q release -d first-dir second-dir" ""
 	  dotest basicc-16 "echo *" "CVS CVSROOT"
+	  dotest basicc-17 "cat CVS/Entries" \
+"D/CVSROOT////
+D/first-dir////
+D/second-dir////"
+	  # FIXCVS: if not, update should notice the missing directories
+	  # and update Entries accordingly
+	  dotest basicc-18 "${testcvs} -Q up" ""
+	  dotest basicc-19 "cat CVS/Entries" \
+"D/CVSROOT////
+D/first-dir////
+D/second-dir////"
 
 	  cd ..
 	  rm -r 1 2
