@@ -22415,6 +22415,9 @@ done"
 	  # and not the trunk.
 	  date_T5=`getrlogdate -r1.1 first-dir/file3`
 	  date_T6=`getrlogdate -r1.1.2.1 first-dir/file3`
+	  (echo Dates for tagdate-19b are:;\
+	   echo "  date_T5='$date_T5'";\
+	   echo "  date_T6='$date_T6'") >>$LOGFILE
 	  dotest tagdate-19b "test 'x$date_T5' = 'x$date_T6'" ''
 
 	  cd ../..
@@ -22474,14 +22477,14 @@ done"
 
 	  mkdir 4; cd 4
 	  (echo Dates for tagdate-26-* are:;\
-	   echo "  date_T1="$date_T1;\
-	   echo "  date_T2="$date_T2;\
-	   echo "  date_T3="$date_T3;\
-	   echo "  date_T4="$date_T4;\
-	   echo "  date_T6="$date_T6;\
-	   echo "  date_T7="$date_T7;\
-	   echo "  date_T8="$date_T8;\
-	   echo "  date_T9="$date_T9) >>$LOGFILE
+	   echo "  date_T1='$date_T1'";\
+	   echo "  date_T2='$date_T2'";\
+	   echo "  date_T3='$date_T3'";\
+	   echo "  date_T4='$date_T4'";\
+	   echo "  date_T6='$date_T6'";\
+	   echo "  date_T7='$date_T7'";\
+	   echo "  date_T8='$date_T8'";\
+	   echo "  date_T9='$date_T9'") >>$LOGFILE
 	  dotest tagdate-26-trunk-t1 \
 "${testcvs} co -D'$date_T1' -d first-dir-trunk-t1 first-dir" \
 "${PROG} checkout: Updating first-dir-trunk-t1
