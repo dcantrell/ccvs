@@ -429,7 +429,7 @@ mkmodules (dir)
 #endif
 	if (unlink_file (temp) < 0
 	    && !existence_error (errno))
-	    error (0, errno, "cannot remove %s", temp);;
+	    error (0, errno, "cannot remove %s", temp);
 	free (temp);
     }
 
@@ -476,6 +476,9 @@ mkmodules (dir)
 		if (cp < last && *cp)
 		    error (0, 0, cp, fname);
 	    }
+	    if (unlink_file (temp) < 0
+		&& !existence_error (errno))
+		error (0, errno, "cannot remove %s", temp);
 	    free (temp);
 	}
 	if (line)

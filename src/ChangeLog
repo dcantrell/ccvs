@@ -1,3 +1,10 @@
+1999-01-11  Jim Meyering  <meyering@ascend.com>
+
+	* sanity.sh (mkmodules-temp-file-removal): New test, for this.
+	* mkmodules.c (mkmodules): Remove each `CVSROOT/.#[0-9]*' temporary
+	file that's used to check out files listed in CVSROOT/checkoutlist.
+	Remove extra semicolon at end of line.
+
 1999-01-11  Larry Jones  <larry.jones@sdrc.com>
 
 	* sanity.sh (rcs3-5a): Allow for multiple lines of output before the
