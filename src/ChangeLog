@@ -1,3 +1,15 @@
+Mon May 20 10:53:14 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* commit.c (find_fileproc): Call freevers_ts.
+
+	* commit.c (find_*): Keep an ignlist, like update.c and client.c do.
+	* commit.c (commit): Process the files from the ignlists, once we
+	are connected to the server.
+	* sanity.sh (ignore): New tests 189e and 189f test for new
+	commit.c behavior (and client.c behavior, which is unchanged).
+	* sanity.sh (conflicts): Remove dir1 and sdir in parts of the test
+	where we aren't prepared for "? dir1" and similar output.
+
 Tue May 21 09:49:04 1996  Greg A. Woods  <woods@most.weird.com>
 
 	* update.c (update_usage): oops -- fix my spelling typo.

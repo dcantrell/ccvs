@@ -85,15 +85,93 @@ static const char *const commit_usage[] =
 };
 
 #ifdef CLIENT_SUPPORT
+/* Identify a file which needs "? foo" or a Questionable request.  */
+struct question {
+    /* The two fields for the Directory request.  */
+    char *dir;
+    char *repos;
+
+    /* The file name.  */
+    char *file;
+
+    struct question *next;
+};
+
 struct find_data {
     List *ulist;
     int argc;
     char **argv;
+
+    /* This is used from dirent to filesdone time, for each directory,
+       to make a list of files we have already seen.  */
+    List *ignlist;
+
+    /* Linked list of files which need "? foo" or a Questionable request.  */
+    struct question *questionables;
+
+    /* Only good within functions called from the filesdoneproc.  Stores
+       the repository (pointer into storage managed by the recursion
+       processor.  */
+    char *repository;
 };
 
 /* Pass as a static until we get around to fixing start_recursion to
    pass along a void * where we can stash it.  */
 struct find_data *find_data_static;
+
+static Dtype find_dirent_proc PROTO ((char *dir, char *repository,
+				      char *update_dir));
+
+static Dtype
+find_dirent_proc (dir, repository, update_dir)
+    char *dir;
+    char *repository;
+    char *update_dir;
+{
+    /* initialize the ignore list for this directory */
+    find_data_static->ignlist = getlist ();
+    return R_PROCESS;
+}
+
+static void find_ignproc PROTO ((char *, char *));
+
+static void
+find_ignproc (file, dir)
+    char *file;
+    char *dir;
+{
+    struct question *p;
+
+    p = (struct question *) xmalloc (sizeof (struct question));
+    p->dir = xstrdup (dir);
+    p->repos = xstrdup (find_data_static->repository);
+    p->file = xstrdup (file);
+    p->next = find_data_static->questionables;
+    find_data_static->questionables = p;
+}
+
+static int find_filesdoneproc PROTO ((int err, char *repository,
+				      char *update_dir));
+
+static int
+find_filesdoneproc (err, repository, update_dir)
+    int err;
+    char *repository;
+    char *update_dir;
+{
+    find_data_static->repository = repository;
+
+    /* if this directory has an ignore list, process it then free it */
+    if (find_data_static->ignlist)
+    {
+	ignore_files (find_data_static->ignlist, update_dir, find_ignproc);
+	dellist (&find_data_static->ignlist);
+    }
+
+    find_data_static->repository = NULL;
+
+    return err;
+}
 
 static int find_fileproc PROTO ((struct file_info *finfo));
 
@@ -109,6 +187,18 @@ find_fileproc (finfo)
     enum classify_type status;
     Node *node;
     struct find_data *args = find_data_static;
+
+    /* if this directory has an ignore list, add this file to it */
+    if (args->ignlist)
+    {
+	Node *p;
+
+	p = getnode ();
+	p->type = FILES;
+	p->key = xstrdup (finfo->file);
+	if (addnode (args->ignlist, p) != 0)
+	    freenode (p);
+    }
 
     vers = Version_TS ((char *)NULL, (char *)NULL, (char *)NULL,
 		       (char *)NULL,
@@ -153,6 +243,7 @@ find_fileproc (finfo)
 
     ++args->argc;
 
+    freevers_ts (&vers);
     return 0;
 }
 
@@ -294,21 +385,25 @@ commit (argc, argv)
 
 	ign_setup ();
 
-	/* Note that we don't do ignore file processing here, and we
-	   don't call ignore_files.  This means that we won't print "?
-	   foo" for stray files.  Sounds OK, the doc only promises
-	   that update does that.  */
 	find_args.ulist = getlist ();
 	find_args.argc = 0;
+	find_args.questionables = NULL;
+	find_args.ignlist = NULL;
+	find_args.repository = NULL;
+
 	find_data_static = &find_args;
-	err = start_recursion (find_fileproc, (FILESDONEPROC) NULL,
-				(DIRENTPROC) NULL, (DIRLEAVEPROC) NULL,
-				argc, argv, local, W_LOCAL, 0, 0,
-				(char *)NULL, 0, 0);
+	err = start_recursion (find_fileproc, find_filesdoneproc,
+			       find_dirent_proc, (DIRLEAVEPROC) NULL,
+			       argc, argv, local, W_LOCAL, 0, 0,
+			       (char *)NULL, 0, 0);
 	if (err)
 	    error (1, 0, "correct above errors first!");
 
 	if (find_args.argc == 0)
+	    /* Nothing to commit.  Exit now without contacting the
+	       server (note that this means that we won't print "?
+	       foo" for files which merit it, because we don't know
+	       what is in the CVSROOT/cvsignore file).  */
 	    return 0;
 
 	/* Now we keep track of which files we actually are going to
@@ -336,6 +431,47 @@ commit (argc, argv)
 
 	/* We always send some sort of message, even if empty.  */
 	option_with_arg ("-m", message);
+
+	/* OK, now process all the questionable files we have been saving
+	   up.  */
+	{
+	    struct question *p;
+	    struct question *q;
+
+	    p = find_args.questionables;
+	    while (p != NULL)
+	    {
+		if (ign_inhibit_server || !supported_request ("Questionable"))
+		{
+		    cvs_output ("? ", 2);
+		    if (p->dir[0] != '\0')
+		    {
+			cvs_output (p->dir, 0);
+			cvs_output ("/", 1);
+		    }
+		    cvs_output (p->file, 0);
+		    cvs_output ("\n", 1);
+		}
+		else
+		{
+		    send_to_server ("Directory ", 0);
+		    send_to_server (p->dir[0] == '\0' ? "." : p->dir, 0);
+		    send_to_server ("\012", 1);
+		    send_to_server (p->repos, 0);
+		    send_to_server ("\012", 1);
+
+		    send_to_server ("Questionable ", 0);
+		    send_to_server (p->file, 0);
+		    send_to_server ("\012", 1);
+		}
+		free (p->dir);
+		free (p->repos);
+		free (p->file);
+		q = p->next;
+		free (p);
+		p = q;
+	    }
+	}
 
 	if (local)
 	    send_arg("-l");
