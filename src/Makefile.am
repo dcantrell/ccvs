@@ -16,7 +16,8 @@
 
 SHELL = /bin/sh
 
-AM_CPPFLAGS = -I$(top_srcdir)/lib -I$(top_srcdir)/diff $(ZLIB_CPPFLAGS)
+AM_CPPFLAGS = -I$(top_srcdir)/lib -I$(top_builddir) \
+              -I$(top_srcdir)/diff $(ZLIB_CPPFLAGS)
 
 bin_PROGRAMS = cvs
 bin_SCRIPTS = cvsbug
