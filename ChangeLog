@@ -1,5 +1,10 @@
 Wed Nov 12 20:24:49 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* FAQ: Re-import from FAQ-O-Matic.  Features a wording fix to
+	"What do I do first? How do I create a Repository?" and a
+	formatting fix (makes it clear which bullets are under what)
+	to "What is a module?"
+
 	* NEWS: Add item about RCS library.  Remove item about RCSBIN in
 	CVSROOT/config.
 	* INSTALL: Simplify instructions to reflect the fact that one need

@@ -2513,8 +2513,8 @@ Category: /Advanced_Topics_/Setting_up_and_Manag/
    executing it. 
 
    The cvsinit program will create a short modules
-   file containing the module named "CVSROOT". To to
-   your work directory and type: 
+   file containing the module named "CVSROOT".
+   Change to your work directory and type: 
 
                    cvs checkout CVSROOT
 
@@ -2551,7 +2551,7 @@ Category: /Advanced_Topics_/Setting_up_and_Manag/
    comfortable. 
 
 
-   Last modified: 6/13/1997 
+   Last modified: 11/7/1997 
 
    2. What are those files in $CVSROOT/CVSROOT? 
    ---------------------------------------------
@@ -10529,95 +10529,97 @@ Category: /What_is_CVS_/What_do_you_mean_by_/
    The module idea is now a somewhat slippery
    concept that can be defined in two different
    ways: 
+    o A module is an argument to "checkout". There
+      are three types: 
+      1. An entry in the modules file. A "module"
+         name as described in 'B.' below. 
 
- o A module is an argument to "checkout". There are
-   three types: 
+      2. A relative path to a directory or file in
+         the Repository. 
 
- o An entry in the modules file. A "module" name as
-   described in 'B.' below. 
+      3. A mixed-mode string of
+         "modulename/relative-path". Everything up
+         to the first slash ('/') is looked up as a
+         module. The relative path is appended to
+         the directory associated with the module
+         name and the resulting path is checked out
+         as in #2 above. 
 
- o A relative path to a directory or file in the
-   Repository. 
+    o A module is a unique (within the file)
+      character string in the first column of the
+      modules file. There are five types: 
+      1. A name for a directory within the
+         Repository that allows you to ignore the
+         parent directories above it. 
 
- o A mixed-mode string of
-   "modulename/relative-path". Everything up to the
-   first slash ('/') is looked up as a module. The
-   relative path is appended to the directory
-   associated with the module name and the resulting
-   path is checked out as in #2 above. 
+         Example: 
 
- o A module is a unique (within the file) character
-   string in the first column of the modules file.
-   There are five types: 
+                           emacs  gnu/emacs
 
- o A name for a directory within the Repository that
-   allows you to ignore the parent directories above
-   it. 
+      2. A name for a subset of the files within
+         such a directory. 
 
-   Example: 
+         Example: 
 
-                     emacs  gnu/emacs
+                           ls    unix/bin Makefile ls.c
 
- o A name for a subset of the files within such a
-   directory. 
+         The 2nd through Nth strings in the above
+         can be files, directories or module
+         substitutions. No relative paths. 
 
-   Example: 
+         A module substitution occurs when you use a
+         '&module-name' reference. The module-name
+         referred to is logically substituted for
+         the '&module-name' string. 
 
-                     ls    unix/bin Makefile ls.c
+      3. A relative pathname to a directory within
+         the Repository which, when checked out,
+         creates an image of part of the Repository
+         structure in your current directory. 
 
-   The 2nd through Nth strings in the above can be
-   files, directories or module substitutions. No
-   relative paths. 
+         Example: 
 
-   A module substitution occurs when you use a
-   '&module-name' reference. The module-name
-   referred to is logically substituted for the
-   '&module-name' string. 
+         gnu/emacs -o /bin/emacs.helper gnu/emacs 
 
- o A relative pathname to a directory within the
-   Repository which, when checked out, creates an
-   image of part of the Repository structure in your
-   current directory. 
+         The files checked out are exactly the same
+         as the files "checkout" would retrieve if
+         the path weren't even in the modules file.
+         The only reason to put this kind of
+         relative pathname into the modules file is
+         to hook one of the helper functions onto
+         it. 
 
-   Example: 
+      4. A relative pathname to a single file within
+         the Repository which, when checked out,
+         creates something you probably don't want:
+         It creates a directory by the name of the
+         file and puts the file in it. 
 
-   gnu/emacs -o /bin/emacs.helper gnu/emacs 
+         Example: 
 
-   The files checked out are exactly the same as the
-   files "checkout" would retrieve if the path
-   weren't even in the modules file. The only reason
-   to put this kind of relative pathname into the
-   modules file is to hook one of the helper
-   functions onto it. 
+         gnu/emacs/Makefile -o /bin/emacs.helper
+         gnu/emacs Makefile 
 
- o A relative pathname to a single file within the
-   Repository which, when checked out, creates
-   something you probably don't want: It creates a
-   directory by the name of the file and puts the
-   file in it. 
+         The file checked out is the same as what
+         you would get if you handed the relative
+         pathname to the "checkout" command. But it
+         puts it in a strange place. The only reason
+         to do this is to hook a helper function
+         onto a specific file name. 
 
-   Example: 
+      5. An alias consisting of a list of any of the
+         above, including other aliases, plus
+         exceptions. 
 
-   gnu/emacs/Makefile -o /bin/emacs.helper gnu/emacs
-   Makefile 
+         Example: 
 
-   The file checked out is the same as what you
-   would get if you handed the relative pathname to
-   the "checkout" command. But it puts it in a
-   strange place. The only reason to do this is to
-   hook a helper function onto a specific file name.
+         my_work -a emacs !emacs/tests gnu/bison
+         unix/bin/ls.c 
 
- o An alias consisting of a list of any of the
-   above, including other aliases, plus exceptions. 
-
-   Example: 
-
-   my_work -a emacs !emacs/tests gnu/bison
-   unix/bin/ls.c 
-
-   The exception "!emacs/test" above is functionally
-   equivalent to specifying "!emacs/tests" on the
-   "checkout" command line. 
+         The exception "!emacs/test" above is
+         functionally equivalent to specifying
+         "!emacs/tests" on the "checkout" command
+         line. 
 
    Another way to look at it is that the modules
    file is simply another way to "name" files. The
@@ -10628,8 +10630,7 @@ Category: /What_is_CVS_/What_do_you_mean_by_/
    See 4G.2 for some specific ideas about how to use
    the modules file. 
 
-
-   Last modified: 6/13/1997 
+   Last modified: 11/12/1997 
 
    12. What does "merge" mean? 
    ----------------------------
