@@ -1,5 +1,10 @@
 Tue Sep 24 11:32:20 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* README: Replace section about what CVS is with the blurb from
+	cvs.spec (which is also the paragraph we use in the release
+	announcements).
+	Change location of pcl-cvs from contrib/pcl-cvs to tools/pcl-cvs.
+
 	* BUGS: Remove item about version numbers; we now have version
 	numbers.  Remove item about server using /usr/tmp; this has been
 	changed.  Remove item about deadlocks between server and client
