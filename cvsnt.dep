@@ -29,6 +29,7 @@
 	".\src\root.h"\
 	".\src\server.h"\
 	".\src\stack.h"\
+	".\src\subr.h"\
 	".\src\update.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
@@ -65,6 +66,7 @@
 	".\src\root.h"\
 	".\src\server.h"\
 	".\src\stack.h"\
+	".\src\subr.h"\
 	".\src\update.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
@@ -101,6 +103,7 @@
 	".\src\root.h"\
 	".\src\server.h"\
 	".\src\stack.h"\
+	".\src\subr.h"\
 	".\src\update.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
@@ -137,6 +140,7 @@
 	".\src\root.h"\
 	".\src\server.h"\
 	".\src\stack.h"\
+	".\src\subr.h"\
 	".\src\update.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
@@ -175,6 +179,7 @@
 	".\src\root.h"\
 	".\src\server.h"\
 	".\src\stack.h"\
+	".\src\subr.h"\
 	".\src\update.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
@@ -211,6 +216,7 @@
 	".\src\root.h"\
 	".\src\server.h"\
 	".\src\stack.h"\
+	".\src\subr.h"\
 	".\src\update.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
@@ -247,6 +253,7 @@
 	".\src\root.h"\
 	".\src\server.h"\
 	".\src\stack.h"\
+	".\src\subr.h"\
 	".\src\update.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
@@ -290,6 +297,7 @@
 	".\src\server.h"\
 	".\src\socket-client.h"\
 	".\src\stack.h"\
+	".\src\subr.h"\
 	".\src\update.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
@@ -330,6 +338,7 @@
 	".\src\root.h"\
 	".\src\server.h"\
 	".\src\stack.h"\
+	".\src\subr.h"\
 	".\src\update.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
@@ -366,6 +375,7 @@
 	".\src\root.h"\
 	".\src\server.h"\
 	".\src\stack.h"\
+	".\src\subr.h"\
 	".\src\update.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
@@ -403,6 +413,7 @@
 	".\src\root.h"\
 	".\src\server.h"\
 	".\src\stack.h"\
+	".\src\subr.h"\
 	".\src\update.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
@@ -439,6 +450,7 @@
 	".\src\root.h"\
 	".\src\server.h"\
 	".\src\stack.h"\
+	".\src\subr.h"\
 	".\src\update.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
@@ -479,6 +491,7 @@
 	".\src\root.h"\
 	".\src\server.h"\
 	".\src\stack.h"\
+	".\src\subr.h"\
 	".\src\update.h"\
 	".\src\watch.h"\
 	".\windows-NT\config.h"\
@@ -517,6 +530,7 @@
 	".\src\root.h"\
 	".\src\server.h"\
 	".\src\stack.h"\
+	".\src\subr.h"\
 	".\src\update.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
@@ -553,6 +567,7 @@
 	".\src\root.h"\
 	".\src\server.h"\
 	".\src\stack.h"\
+	".\src\subr.h"\
 	".\src\update.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
@@ -589,6 +604,7 @@
 	".\src\root.h"\
 	".\src\server.h"\
 	".\src\stack.h"\
+	".\src\subr.h"\
 	".\src\update.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
@@ -625,6 +641,7 @@
 	".\src\root.h"\
 	".\src\server.h"\
 	".\src\stack.h"\
+	".\src\subr.h"\
 	".\src\update.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
@@ -663,6 +680,7 @@
 	".\src\root.h"\
 	".\src\server.h"\
 	".\src\stack.h"\
+	".\src\subr.h"\
 	".\src\update.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
@@ -699,6 +717,7 @@
 	".\src\root.h"\
 	".\src\server.h"\
 	".\src\stack.h"\
+	".\src\subr.h"\
 	".\src\update.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\JmgStat.h"\
@@ -736,6 +755,7 @@
 	".\src\root.h"\
 	".\src\server.h"\
 	".\src\stack.h"\
+	".\src\subr.h"\
 	".\src\update.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
@@ -772,6 +792,7 @@
 	".\src\root.h"\
 	".\src\server.h"\
 	".\src\stack.h"\
+	".\src\subr.h"\
 	".\src\update.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
@@ -810,6 +831,7 @@
 	".\src\root.h"\
 	".\src\server.h"\
 	".\src\stack.h"\
+	".\src\subr.h"\
 	".\src\update.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
@@ -847,6 +869,7 @@
 	".\src\root.h"\
 	".\src\server.h"\
 	".\src\stack.h"\
+	".\src\subr.h"\
 	".\src\update.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
@@ -884,6 +907,7 @@
 	".\src\root.h"\
 	".\src\server.h"\
 	".\src\stack.h"\
+	".\src\subr.h"\
 	".\src\update.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
@@ -925,6 +949,7 @@
 	".\src\root.h"\
 	".\src\server.h"\
 	".\src\stack.h"\
+	".\src\subr.h"\
 	".\src\update.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
@@ -961,6 +986,7 @@
 	".\src\root.h"\
 	".\src\server.h"\
 	".\src\stack.h"\
+	".\src\subr.h"\
 	".\src\update.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
@@ -997,6 +1023,7 @@
 	".\src\root.h"\
 	".\src\server.h"\
 	".\src\stack.h"\
+	".\src\subr.h"\
 	".\src\update.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
@@ -1035,6 +1062,7 @@
 	".\src\root.h"\
 	".\src\server.h"\
 	".\src\stack.h"\
+	".\src\subr.h"\
 	".\src\update.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
@@ -1072,6 +1100,7 @@
 	".\src\root.h"\
 	".\src\server.h"\
 	".\src\stack.h"\
+	".\src\subr.h"\
 	".\src\update.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
@@ -1108,6 +1137,7 @@
 	".\src\root.h"\
 	".\src\server.h"\
 	".\src\stack.h"\
+	".\src\subr.h"\
 	".\src\update.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
@@ -1146,6 +1176,7 @@
 	".\src\root.h"\
 	".\src\server.h"\
 	".\src\stack.h"\
+	".\src\subr.h"\
 	".\src\update.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
@@ -1182,6 +1213,7 @@
 	".\src\root.h"\
 	".\src\server.h"\
 	".\src\stack.h"\
+	".\src\subr.h"\
 	".\src\update.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
@@ -1221,6 +1253,7 @@
 	".\src\root.h"\
 	".\src\server.h"\
 	".\src\stack.h"\
+	".\src\subr.h"\
 	".\src\update.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
@@ -1258,6 +1291,7 @@
 	".\src\root.h"\
 	".\src\server.h"\
 	".\src\stack.h"\
+	".\src\subr.h"\
 	".\src\update.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
@@ -1295,6 +1329,7 @@
 	".\src\root.h"\
 	".\src\server.h"\
 	".\src\stack.h"\
+	".\src\subr.h"\
 	".\src\update.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
@@ -1336,6 +1371,7 @@
 	".\src\root.h"\
 	".\src\server.h"\
 	".\src\stack.h"\
+	".\src\subr.h"\
 	".\src\update.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
@@ -1374,6 +1410,7 @@
 	".\src\root.h"\
 	".\src\server.h"\
 	".\src\stack.h"\
+	".\src\subr.h"\
 	".\src\update.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
@@ -1411,6 +1448,7 @@
 	".\src\root.h"\
 	".\src\server.h"\
 	".\src\stack.h"\
+	".\src\subr.h"\
 	".\src\update.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
@@ -1452,6 +1490,7 @@
 	".\src\root.h"\
 	".\src\server.h"\
 	".\src\stack.h"\
+	".\src\subr.h"\
 	".\src\update.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
@@ -1491,6 +1530,7 @@
 	".\src\root.h"\
 	".\src\server.h"\
 	".\src\stack.h"\
+	".\src\subr.h"\
 	".\src\update.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
@@ -1528,6 +1568,7 @@
 	".\src\root.h"\
 	".\src\server.h"\
 	".\src\stack.h"\
+	".\src\subr.h"\
 	".\src\update.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
@@ -1567,6 +1608,7 @@
 	".\src\root.h"\
 	".\src\server.h"\
 	".\src\stack.h"\
+	".\src\subr.h"\
 	".\src\update.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
@@ -1606,6 +1648,7 @@
 	".\src\root.h"\
 	".\src\server.h"\
 	".\src\stack.h"\
+	".\src\subr.h"\
 	".\src\update.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
@@ -1642,6 +1685,7 @@
 	".\src\root.h"\
 	".\src\server.h"\
 	".\src\stack.h"\
+	".\src\subr.h"\
 	".\src\update.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
@@ -1679,6 +1723,7 @@
 	".\src\root.h"\
 	".\src\server.h"\
 	".\src\stack.h"\
+	".\src\subr.h"\
 	".\src\update.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
@@ -1716,6 +1761,7 @@
 	".\src\root.h"\
 	".\src\server.h"\
 	".\src\stack.h"\
+	".\src\subr.h"\
 	".\src\update.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
@@ -1753,6 +1799,7 @@
 	".\src\rsh-client.h"\
 	".\src\server.h"\
 	".\src\stack.h"\
+	".\src\subr.h"\
 	".\src\update.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
@@ -1789,6 +1836,7 @@
 	".\src\root.h"\
 	".\src\server.h"\
 	".\src\stack.h"\
+	".\src\subr.h"\
 	".\src\update.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
@@ -1825,6 +1873,7 @@
 	".\src\root.h"\
 	".\src\server.h"\
 	".\src\stack.h"\
+	".\src\subr.h"\
 	".\src\update.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
@@ -1867,6 +1916,7 @@
 	".\src\root.h"\
 	".\src\server.h"\
 	".\src\stack.h"\
+	".\src\subr.h"\
 	".\src\update.h"\
 	".\src\watch.h"\
 	".\windows-NT\config.h"\
@@ -1908,6 +1958,7 @@
 	".\src\server.h"\
 	".\src\socket-client.h"\
 	".\src\stack.h"\
+	".\src\subr.h"\
 	".\src\update.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
@@ -1944,6 +1995,7 @@
 	".\src\root.h"\
 	".\src\server.h"\
 	".\src\stack.h"\
+	".\src\subr.h"\
 	".\src\update.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
@@ -1980,6 +2032,7 @@
 	".\src\root.h"\
 	".\src\server.h"\
 	".\src\stack.h"\
+	".\src\subr.h"\
 	".\src\update.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
@@ -2017,6 +2070,7 @@
 	".\src\root.h"\
 	".\src\server.h"\
 	".\src\stack.h"\
+	".\src\subr.h"\
 	".\src\update.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
@@ -2056,6 +2110,7 @@
 	".\src\root.h"\
 	".\src\server.h"\
 	".\src\stack.h"\
+	".\src\subr.h"\
 	".\src\update.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
@@ -2093,6 +2148,7 @@
 	".\src\root.h"\
 	".\src\server.h"\
 	".\src\stack.h"\
+	".\src\subr.h"\
 	".\src\update.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
@@ -2134,6 +2190,7 @@
 	".\src\root.h"\
 	".\src\server.h"\
 	".\src\stack.h"\
+	".\src\subr.h"\
 	".\src\update.h"\
 	".\src\watch.h"\
 	".\windows-NT\config.h"\
@@ -2171,6 +2228,7 @@
 	".\src\root.h"\
 	".\src\server.h"\
 	".\src\stack.h"\
+	".\src\subr.h"\
 	".\src\update.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
@@ -2207,6 +2265,7 @@
 	".\src\root.h"\
 	".\src\server.h"\
 	".\src\stack.h"\
+	".\src\subr.h"\
 	".\src\update.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
@@ -2249,6 +2308,7 @@
 	".\src\root.h"\
 	".\src\server.h"\
 	".\src\stack.h"\
+	".\src\subr.h"\
 	".\src\update.h"\
 	".\src\watch.h"\
 	".\windows-NT\config.h"\
@@ -2286,6 +2346,7 @@
 	".\src\root.h"\
 	".\src\server.h"\
 	".\src\stack.h"\
+	".\src\subr.h"\
 	".\src\update.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
@@ -2323,6 +2384,7 @@
 	".\src\root.h"\
 	".\src\server.h"\
 	".\src\stack.h"\
+	".\src\subr.h"\
 	".\src\update.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
@@ -2359,6 +2421,7 @@
 	".\src\root.h"\
 	".\src\server.h"\
 	".\src\stack.h"\
+	".\src\subr.h"\
 	".\src\update.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\

@@ -1,3 +1,9 @@
+2004-11-30  Conrad T. Pino  <Conrad@Pino.com>
+
+	* cvsnt.dsp: Add "src/subr.h" to project.
+	* cvsnt.dep: Regenerated for "cvsnt.dsp" change.
+	* cvsnt.mak: Regenerated for "cvsnt.dsp" change.
+
 2004-11-21  Mark D. Baushke  <mdb@cvshome.org>
 
 	* cvsnt.dep: Add "xgethostname.h" to project.
