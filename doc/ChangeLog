@@ -1,3 +1,8 @@
+Thu Sep 25 23:52:57 1997  Noel Cragg  <noel@swish.red-bean.com>
+
+	* cvsclient.texi (Responses): description of Module-expansion was
+ 	missing a carriage return after the @item clause.
+
 Wed Sep 24 12:04:42 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (Remote repositories): Add comment about pserver
