@@ -33,7 +33,7 @@ $ CC no_diff.c
 $ CC parseinfo.c
 $ CC patch.c
 $ CC rcs.c
-$ CC/INCLUDE_DIR=([-],[-.VMS],[-.LIB],[-.diff]) rcscmds.c
+$ CC rcscmds.c
 $ CC recurse.c
 $ CC release.c
 $ CC remove.c

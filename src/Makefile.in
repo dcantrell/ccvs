@@ -177,10 +177,7 @@ cvsbug: cvsbug.sh $(srcdir)/version.c
 
 $(OBJECTS): $(HEADERS) options.h
 
-rcscmds.o: rcscmds.c $(top_srcdir)/diff/diffrun.h
-	$(CC) $(CPPFLAGS) $(INCLUDES) -I$(top_srcdir)/diff $(DEFS) $(CFLAGS) -c $(srcdir)/rcscmds.c
-
-zlib.o: zlib.c $(top_srcdir)/zlib/zlib.h
+zlib.o: zlib.c
 	$(CC) $(CPPFLAGS) $(INCLUDES) -I$(top_srcdir)/zlib $(DEFS) $(CFLAGS) -c $(srcdir)/zlib.c
 
 subdir = src
