@@ -1,5 +1,9 @@
 2004-10-05  Derek Price  <derek@ximbiot.com>
 
+	* fnmatch.m4: Update from GNULIB.
+
+2004-10-05  Derek Price  <derek@ximbiot.com>
+
 	* dirname.m4, dos.m4: Updated from GNULIB.
 
 2004-10-05  Derek Price  <derek@ximbiot.com>
