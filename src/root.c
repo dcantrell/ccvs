@@ -406,6 +406,25 @@ parse_cvsroot (root_in)
 	*p = '\0';
 	cvsroot_copy = ++p;
 
+#ifdef CLIENT_SUPPORT
+	/* Look for method options, for instance, proxy, proxyport.
+	 * We don't handle these, but we like to try and warn the user that
+	 * they are being ignored.
+	 */
+	if (p = strchr (method, ';'))	
+	{
+	    *p++ = '\0';
+	    if (!really_quiet)
+	    {
+		error (0, 0,
+"WARNING: Ignoring method options found in CVSROOT: `%s'.",
+		       p);
+		error (0, 0,
+"Use CVS version 1.12.7 or later to handle method options.");
+	    }
+	}
+#endif /* CLIENT_SUPPORT */
+
 	/* Now we have an access method -- see if it's valid. */
 
 	if (strcmp (method, "local") == 0)
