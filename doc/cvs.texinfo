@@ -6406,7 +6406,7 @@ You can tell @sc{cvs} that you want to receive
 notifications about various actions taken on a file.
 You can do this without using @code{cvs watch on} for
 the file, but generally you will want to use @code{cvs
-watch on}, so that developers use the @code{cvs edit}
+watch on}, to remind developers to use the @code{cvs edit}
 command.
 
 @cindex watch add (subcommand)
@@ -6422,15 +6422,28 @@ the user about.  @var{action} is one of the following:
 
 @item edit
 Another user has applied the @code{cvs edit} command (described
-below) to a file.
-
-@item unedit
-Another user has applied the @code{cvs unedit} command (described
-below) or the @code{cvs release} command to a file, or has deleted
-the file and allowed @code{cvs update} to recreate it.
+below) to a watched file.
 
 @item commit
-Another user has committed changes to a file.
+Another user has committed changes to one of the named @var{files}.
+
+@item unedit
+Another user has abandoned editing a file (other than by committing changes).
+They can do this in several ways, by:
+
+@itemize @bullet
+
+@item
+applying the @code{cvs unedit} command (described below) to the file
+
+@item
+applying the @code{cvs release} command (@pxref{release}) to the file's parent directory
+(or recursively to a directory more than one level up)
+
+@item
+deleting the file and allowing @code{cvs update} to recreate it
+
+@end itemize
 
 @item all
 All of the above.
@@ -6444,8 +6457,8 @@ described below.)
 The @code{-a} option may appear more than once, or not at all.  If
 omitted, the action defaults to @code{all}.
 
-The @var{files} and options are processed as for the
-@code{cvs watch} commands.
+The @var{files} and options are processed as for
+@code{cvs watch on}.
 
 @end deffn
 
@@ -6595,9 +6608,10 @@ The @var{files} and options are processed as for the
 
 If watches are not in use, the @code{unedit} command
 probably does not work, and the way to revert to the
-repository version is to remove the file and then use
-@code{cvs update} to get a new copy.  The meaning is
-not precisely the same; removing and updating may also
+repository version is with the command @code{cvs update -C file}
+(@pxref{update}).
+The meaning is
+not precisely the same; the latter may also
 bring in some changes which have been made in the
 repository since the last time you updated.
 @c It would be a useful enhancement to CVS to make
@@ -10168,7 +10182,7 @@ $
 
 @itemize @bullet
 @item
-update [-AdflPpR] [-d] [-r tag|-D date] files@dots{}
+update [-ACdflPpR] [-I name] [-j rev [-j rev]] [-k kflag] [-r tag|-D date] [-W spec] files@dots{}
 @item
 Requires: repository, working directory.
 @item
