@@ -351,7 +351,6 @@ outros tópicos sobre @sc{cvs}, veja:
 
 @example
 @url{http://www.cvshome.org/}
-@url{http://www.loria.fr/~molli/cvs-index.html}
 @end example
 
 @c <en>@cindex Mailing list
@@ -19447,7 +19446,6 @@ good places to start are:
 
 @example
 @url{http://www.cvshome.org}
-@url{http://www.loria.fr/~molli/cvs-index.html}
 @end example
 
 If you are so inspired, increasing the information

@@ -1,3 +1,8 @@
+2004-12-07  Mark D. Baushke  <mdb@cvshome.org>
+
+	* cvs.texinfo (BUGS, What is CVS?): Remove references to Dr.
+	Pascal Molli's cvs document which is no longer available.
+
 2004-12-03  Mark D. Baushke  <mdb@cvshome.org>
 
 	* cvs.texinfo (Remote repositories): Add options CVS_RSH and
