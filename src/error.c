@@ -118,7 +118,7 @@ error (status, errnum, message, va_alist)
 
 	if (mess == NULL)
 	{
-	    entire = "out of memory";
+	    entire = NULL;
 	    status = 1;
 	}
 	else
@@ -131,7 +131,7 @@ error (status, errnum, message, va_alist)
 	    entire = malloc (len);
 	    if (entire == NULL)
 	    {
-		entire = "out of memory";
+		free (mess);
 		status = 1;
 	    }
 	    else
@@ -154,12 +154,15 @@ error (status, errnum, message, va_alist)
 		    strcat (entire, strerror (errnum));
 		}
 		strcat (entire, "\n");
+		free (mess);
 	    }
 	}
 	if (error_use_protocol)
-	    fputs (entire, out);
+	    fputs (entire ? entire : "out of memory", out);
 	else
-	    cvs_outerr (entire, 0);
+	    cvs_outerr (entire ? entire : "out of memory", 0);
+	if (entire != NULL)
+	    free (entire);
     }
 
 #else /* No HAVE_VPRINTF */
