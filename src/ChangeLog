@@ -1,5 +1,11 @@
 Mon Apr 14 11:51:49 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* client.c (call_in_directory): If rdirp reaches the end of
+	reposdirname, then just set it to NULL.  If server does not create
+	directories one at a time, give a warning.
+	* sanity.sh (modules3): Enable tests modules3-8 through
+	modules3-11 for remote; tests for above fix.
+
 	* client.c (call_in_directory): Don't set short_pathname to
 	pathname for a while; just use pathname itself (cleans up a relic
 	of the old "Repository" (not "Directory") code).  Add comment
