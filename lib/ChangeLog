@@ -1,3 +1,11 @@
+2003-12-09  Mark D. Baushke  <mdb@cvshome.org>
+
+	* fseeko.c (fseeko): New file and function to help with largefile
+	support.
+	* ftello.c (ftello): Ditto.
+	* system.h (ftello): Add prototype if !defined(HAVE_FTELLO).
+	* Makefile.in: Regenerated.
+	
 2003-12-09  Larry Jones  <lawrence.jones@eds.com>
 
 	* getdate.c: Regenerated.

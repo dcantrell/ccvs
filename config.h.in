@@ -165,8 +165,14 @@
 /* Define to 1 if you have the `fork' function. */
 #undef HAVE_FORK
 
+/* Define to 1 if you have the `fseeko' function. */
+#undef HAVE_FSEEKO
+
 /* Define to 1 if you have the `fsync' function. */
 #undef HAVE_FSYNC
+
+/* Define to 1 if you have the `ftello' function. */
+#undef HAVE_FTELLO
 
 /* Define to 1 if you have the `ftime' function. */
 #undef HAVE_FTIME
