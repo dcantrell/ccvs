@@ -1,4 +1,4 @@
-# Microsoft Developer Studio Generated NMAKE File, Format Version 40001
+# Microsoft Developer Studio Generated NMAKE File, Format Version 4.00
 # ** DO NOT EDIT **
 
 # TARGTYPE "Win32 (x86) Console Application" 0x0103
@@ -31,8 +31,8 @@ NULL=nul
 ################################################################################
 # Begin Project
 # PROP Target_Last_Scanned "cvsnt - Win32 Debug"
-RSC=rc.exe
 CPP=cl.exe
+RSC=rc.exe
 
 !IF  "$(CFG)" == "cvsnt - Win32 Release"
 
@@ -51,97 +51,110 @@ ALL : "$(OUTDIR)\cvs.exe"
 
 CLEAN : 
 	-@erase ".\WinRel\cvs.exe"
-	-@erase ".\WinRel\commit.obj"
-	-@erase ".\WinRel\scramble.obj"
-	-@erase ".\WinRel\filesubr.obj"
-	-@erase ".\WinRel\rcs.obj"
-	-@erase ".\WinRel\uncompr.obj"
-	-@erase ".\WinRel\inftrees.obj"
-	-@erase ".\WinRel\update.obj"
-	-@erase ".\WinRel\release.obj"
-	-@erase ".\WinRel\login.obj"
-	-@erase ".\WinRel\run.obj"
-	-@erase ".\WinRel\buffer.obj"
-	-@erase ".\WinRel\hash.obj"
-	-@erase ".\WinRel\modules.obj"
-	-@erase ".\WinRel\getopt.obj"
-	-@erase ".\WinRel\subr.obj"
-	-@erase ".\WinRel\mkmodules.obj"
-	-@erase ".\WinRel\getdate.obj"
-	-@erase ".\WinRel\waitpid.obj"
-	-@erase ".\WinRel\sighandle.obj"
-	-@erase ".\WinRel\inflate.obj"
-	-@erase ".\WinRel\classify.obj"
-	-@erase ".\WinRel\tag.obj"
-	-@erase ".\WinRel\entries.obj"
-	-@erase ".\WinRel\win32.obj"
-	-@erase ".\WinRel\pwd.obj"
-	-@erase ".\WinRel\getopt1.obj"
-	-@erase ".\WinRel\logmsg.obj"
-	-@erase ".\WinRel\error.obj"
-	-@erase ".\WinRel\fileattr.obj"
-	-@erase ".\WinRel\stripslash.obj"
-	-@erase ".\WinRel\xgetwd.obj"
-	-@erase ".\WinRel\infutil.obj"
-	-@erase ".\WinRel\fnmatch.obj"
-	-@erase ".\WinRel\parseinfo.obj"
-	-@erase ".\WinRel\zlib.obj"
-	-@erase ".\WinRel\main.obj"
-	-@erase ".\WinRel\vasprintf.obj"
-	-@erase ".\WinRel\server.obj"
-	-@erase ".\WinRel\vers_ts.obj"
-	-@erase ".\WinRel\patch.obj"
-	-@erase ".\WinRel\compress.obj"
-	-@erase ".\WinRel\getwd.obj"
-	-@erase ".\WinRel\gzio.obj"
-	-@erase ".\WinRel\diff.obj"
-	-@erase ".\WinRel\mkdir.obj"
-	-@erase ".\WinRel\trees.obj"
-	-@erase ".\WinRel\sockerror.obj"
-	-@erase ".\WinRel\recurse.obj"
-	-@erase ".\WinRel\import.obj"
-	-@erase ".\WinRel\rtag.obj"
-	-@erase ".\WinRel\rcscmds.obj"
-	-@erase ".\WinRel\root.obj"
-	-@erase ".\WinRel\wrapper.obj"
-	-@erase ".\WinRel\lock.obj"
-	-@erase ".\WinRel\zutil.obj"
-	-@erase ".\WinRel\history.obj"
-	-@erase ".\WinRel\admin.obj"
-	-@erase ".\WinRel\version.obj"
-	-@erase ".\WinRel\crc32.obj"
-	-@erase ".\WinRel\create_adm.obj"
-	-@erase ".\WinRel\infblock.obj"
-	-@erase ".\WinRel\status.obj"
-	-@erase ".\WinRel\md5.obj"
+	-@erase ".\WinRel\find_names.obj"
 	-@erase ".\WinRel\checkin.obj"
-	-@erase ".\WinRel\checkout.obj"
-	-@erase ".\WinRel\getline.obj"
-	-@erase ".\WinRel\rcmd.obj"
-	-@erase ".\WinRel\yesno.obj"
+	-@erase ".\WinRel\sighandle.obj"
+	-@erase ".\WinRel\mkdir.obj"
+	-@erase ".\WinRel\normal.obj"
+	-@erase ".\WinRel\filesubr.obj"
+	-@erase ".\WinRel\modules.obj"
+	-@erase ".\WinRel\dir.obj"
+	-@erase ".\WinRel\rtag.obj"
+	-@erase ".\WinRel\infblock.obj"
+	-@erase ".\WinRel\inftrees.obj"
+	-@erase ".\WinRel\logmsg.obj"
+	-@erase ".\WinRel\trees.obj"
+	-@erase ".\WinRel\startserver.obj"
+	-@erase ".\WinRel\lock.obj"
+	-@erase ".\WinRel\expand_path.obj"
+	-@erase ".\WinRel\zutil.obj"
+	-@erase ".\WinRel\admin.obj"
 	-@erase ".\WinRel\adler32.obj"
 	-@erase ".\WinRel\savecwd.obj"
-	-@erase ".\WinRel\repos.obj"
-	-@erase ".\WinRel\argmatch.obj"
-	-@erase ".\WinRel\ndir.obj"
-	-@erase ".\WinRel\myndbm.obj"
-	-@erase ".\WinRel\cvsrc.obj"
-	-@erase ".\WinRel\startserver.obj"
-	-@erase ".\WinRel\client.obj"
-	-@erase ".\WinRel\regex.obj"
-	-@erase ".\WinRel\log.obj"
+	-@erase ".\WinRel\io.obj"
+	-@erase ".\WinRel\diff3.obj"
+	-@erase ".\WinRel\xgetwd.obj"
+	-@erase ".\WinRel\parseinfo.obj"
 	-@erase ".\WinRel\inffast.obj"
-	-@erase ".\WinRel\expand_path.obj"
-	-@erase ".\WinRel\remove.obj"
+	-@erase ".\WinRel\rcmd.obj"
+	-@erase ".\WinRel\vasprintf.obj"
+	-@erase ".\WinRel\argmatch.obj"
 	-@erase ".\WinRel\no_diff.obj"
-	-@erase ".\WinRel\edit.obj"
 	-@erase ".\WinRel\ignore.obj"
-	-@erase ".\WinRel\add.obj"
-	-@erase ".\WinRel\watch.obj"
+	-@erase ".\WinRel\yesno.obj"
 	-@erase ".\WinRel\deflate.obj"
-	-@erase ".\WinRel\find_names.obj"
-	-@erase ".\WinRel\valloc.obj"
+	-@erase ".\WinRel\vers_ts.obj"
+	-@erase ".\WinRel\main.obj"
+	-@erase ".\WinRel\import.obj"
+	-@erase ".\WinRel\cvsrc.obj"
+	-@erase ".\WinRel\sockerror.obj"
+	-@erase ".\WinRel\commit.obj"
+	-@erase ".\WinRel\regex.obj"
+	-@erase ".\WinRel\util.obj"
+	-@erase ".\WinRel\stripslash.obj"
+	-@erase ".\WinRel\gzio.obj"
+	-@erase ".\WinRel\uncompr.obj"
+	-@erase ".\WinRel\status.obj"
+	-@erase ".\WinRel\update.obj"
+	-@erase ".\WinRel\compress.obj"
+	-@erase ".\WinRel\buffer.obj"
 	-@erase ".\WinRel\infcodes.obj"
+	-@erase ".\WinRel\release.obj"
+	-@erase ".\WinRel\recurse.obj"
+	-@erase ".\WinRel\scramble.obj"
+	-@erase ".\WinRel\rcscmds.obj"
+	-@erase ".\WinRel\watch.obj"
+	-@erase ".\WinRel\root.obj"
+	-@erase ".\WinRel\md5.obj"
+	-@erase ".\WinRel\getdate.obj"
+	-@erase ".\WinRel\waitpid.obj"
+	-@erase ".\WinRel\inflate.obj"
+	-@erase ".\WinRel\cmpbuf.obj"
+	-@erase ".\WinRel\myndbm.obj"
+	-@erase ".\WinRel\tag.obj"
+	-@erase ".\WinRel\getline.obj"
+	-@erase ".\WinRel\client.obj"
+	-@erase ".\WinRel\pwd.obj"
+	-@erase ".\WinRel\login.obj"
+	-@erase ".\WinRel\hash.obj"
+	-@erase ".\WinRel\entries.obj"
+	-@erase ".\WinRel\remove.obj"
+	-@erase ".\WinRel\subr.obj"
+	-@erase ".\WinRel\getopt1.obj"
+	-@erase ".\WinRel\checkout.obj"
+	-@erase ".\WinRel\create_adm.obj"
+	-@erase ".\WinRel\classify.obj"
+	-@erase ".\WinRel\ifdef.obj"
+	-@erase ".\WinRel\ed.obj"
+	-@erase ".\WinRel\crc32.obj"
+	-@erase ".\WinRel\infutil.obj"
+	-@erase ".\WinRel\fnmatch.obj"
+	-@erase ".\WinRel\log.obj"
+	-@erase ".\WinRel\ndir.obj"
+	-@erase ".\WinRel\valloc.obj"
+	-@erase ".\WinRel\server.obj"
+	-@erase ".\WinRel\fileattr.obj"
+	-@erase ".\WinRel\win32.obj"
+	-@erase ".\WinRel\add.obj"
+	-@erase ".\WinRel\edit.obj"
+	-@erase ".\WinRel\repos.obj"
+	-@erase ".\WinRel\error.obj"
+	-@erase ".\WinRel\analyze.obj"
+	-@erase ".\WinRel\zlib.obj"
+	-@erase ".\WinRel\getopt.obj"
+	-@erase ".\WinRel\context.obj"
+	-@erase ".\WinRel\wrapper.obj"
+	-@erase ".\WinRel\rcs.obj"
+	-@erase ".\WinRel\history.obj"
+	-@erase ".\WinRel\patch.obj"
+	-@erase ".\WinRel\mkmodules.obj"
+	-@erase ".\WinRel\run.obj"
+	-@erase ".\WinRel\getwd.obj"
+	-@erase ".\WinRel\side.obj"
+	-@erase ".\WinRel\1\diff.obj"
+	-@erase ".\WinRel\1\version.obj"
+	-@erase ".\WinRel\2\diff.obj"
+	-@erase ".\WinRel\2\version.obj"
 
 "$(OUTDIR)" :
     if not exist "$(OUTDIR)/$(NULL)" mkdir "$(OUTDIR)"
@@ -169,97 +182,110 @@ LINK32_FLAGS=wsock32.lib kernel32.lib user32.lib gdi32.lib winspool.lib\
  /subsystem:console /incremental:no /pdb:"$(OUTDIR)/cvs.pdb" /machine:I386\
  /out:"$(OUTDIR)/cvs.exe" 
 LINK32_OBJS= \
-	"$(INTDIR)/commit.obj" \
-	"$(INTDIR)/scramble.obj" \
-	"$(INTDIR)/filesubr.obj" \
-	"$(INTDIR)/rcs.obj" \
-	"$(INTDIR)/uncompr.obj" \
-	"$(INTDIR)/inftrees.obj" \
-	"$(INTDIR)/update.obj" \
-	"$(INTDIR)/release.obj" \
-	"$(INTDIR)/login.obj" \
-	"$(INTDIR)/run.obj" \
-	"$(INTDIR)/buffer.obj" \
-	"$(INTDIR)/hash.obj" \
-	"$(INTDIR)/modules.obj" \
-	"$(INTDIR)/getopt.obj" \
-	"$(INTDIR)/subr.obj" \
-	"$(INTDIR)/mkmodules.obj" \
-	"$(INTDIR)/getdate.obj" \
-	"$(INTDIR)/waitpid.obj" \
-	"$(INTDIR)/sighandle.obj" \
-	"$(INTDIR)/inflate.obj" \
-	"$(INTDIR)/classify.obj" \
-	"$(INTDIR)/tag.obj" \
-	"$(INTDIR)/entries.obj" \
-	"$(INTDIR)/win32.obj" \
-	"$(INTDIR)/pwd.obj" \
-	"$(INTDIR)/getopt1.obj" \
-	"$(INTDIR)/logmsg.obj" \
-	"$(INTDIR)/error.obj" \
-	"$(INTDIR)/fileattr.obj" \
-	"$(INTDIR)/stripslash.obj" \
-	"$(INTDIR)/xgetwd.obj" \
-	"$(INTDIR)/infutil.obj" \
-	"$(INTDIR)/fnmatch.obj" \
-	"$(INTDIR)/parseinfo.obj" \
-	"$(INTDIR)/zlib.obj" \
-	"$(INTDIR)/main.obj" \
-	"$(INTDIR)/vasprintf.obj" \
-	"$(INTDIR)/server.obj" \
-	"$(INTDIR)/vers_ts.obj" \
-	"$(INTDIR)/patch.obj" \
-	"$(INTDIR)/compress.obj" \
-	"$(INTDIR)/getwd.obj" \
-	"$(INTDIR)/gzio.obj" \
-	"$(INTDIR)/diff.obj" \
-	"$(INTDIR)/mkdir.obj" \
-	"$(INTDIR)/trees.obj" \
-	"$(INTDIR)/sockerror.obj" \
-	"$(INTDIR)/recurse.obj" \
-	"$(INTDIR)/import.obj" \
-	"$(INTDIR)/rtag.obj" \
-	"$(INTDIR)/rcscmds.obj" \
-	"$(INTDIR)/root.obj" \
-	"$(INTDIR)/wrapper.obj" \
-	"$(INTDIR)/lock.obj" \
-	"$(INTDIR)/zutil.obj" \
-	"$(INTDIR)/history.obj" \
-	"$(INTDIR)/admin.obj" \
-	"$(INTDIR)/version.obj" \
-	"$(INTDIR)/crc32.obj" \
-	"$(INTDIR)/create_adm.obj" \
-	"$(INTDIR)/infblock.obj" \
-	"$(INTDIR)/status.obj" \
-	"$(INTDIR)/md5.obj" \
+	"$(INTDIR)/find_names.obj" \
 	"$(INTDIR)/checkin.obj" \
-	"$(INTDIR)/checkout.obj" \
-	"$(INTDIR)/getline.obj" \
-	"$(INTDIR)/rcmd.obj" \
-	"$(INTDIR)/yesno.obj" \
+	"$(INTDIR)/sighandle.obj" \
+	"$(INTDIR)/mkdir.obj" \
+	"$(INTDIR)/normal.obj" \
+	"$(INTDIR)/filesubr.obj" \
+	"$(INTDIR)/modules.obj" \
+	"$(INTDIR)/dir.obj" \
+	"$(INTDIR)/rtag.obj" \
+	"$(INTDIR)/infblock.obj" \
+	"$(INTDIR)/inftrees.obj" \
+	"$(INTDIR)/logmsg.obj" \
+	"$(INTDIR)/trees.obj" \
+	"$(INTDIR)/startserver.obj" \
+	"$(INTDIR)/lock.obj" \
+	"$(INTDIR)/expand_path.obj" \
+	"$(INTDIR)/zutil.obj" \
+	"$(INTDIR)/admin.obj" \
 	"$(INTDIR)/adler32.obj" \
 	"$(INTDIR)/savecwd.obj" \
-	"$(INTDIR)/repos.obj" \
-	"$(INTDIR)/argmatch.obj" \
-	"$(INTDIR)/ndir.obj" \
-	"$(INTDIR)/myndbm.obj" \
-	"$(INTDIR)/cvsrc.obj" \
-	"$(INTDIR)/startserver.obj" \
-	"$(INTDIR)/client.obj" \
-	"$(INTDIR)/regex.obj" \
-	"$(INTDIR)/log.obj" \
+	"$(INTDIR)/io.obj" \
+	"$(INTDIR)/diff3.obj" \
+	"$(INTDIR)/xgetwd.obj" \
+	"$(INTDIR)/parseinfo.obj" \
 	"$(INTDIR)/inffast.obj" \
-	"$(INTDIR)/expand_path.obj" \
-	"$(INTDIR)/remove.obj" \
+	"$(INTDIR)/rcmd.obj" \
+	"$(INTDIR)/vasprintf.obj" \
+	"$(INTDIR)/argmatch.obj" \
 	"$(INTDIR)/no_diff.obj" \
-	"$(INTDIR)/edit.obj" \
 	"$(INTDIR)/ignore.obj" \
-	"$(INTDIR)/add.obj" \
-	"$(INTDIR)/watch.obj" \
+	"$(INTDIR)/yesno.obj" \
 	"$(INTDIR)/deflate.obj" \
-	"$(INTDIR)/find_names.obj" \
+	"$(INTDIR)/vers_ts.obj" \
+	"$(INTDIR)/main.obj" \
+	"$(INTDIR)/import.obj" \
+	"$(INTDIR)/cvsrc.obj" \
+	"$(INTDIR)/sockerror.obj" \
+	"$(INTDIR)/commit.obj" \
+	"$(INTDIR)/regex.obj" \
+	"$(INTDIR)/util.obj" \
+	"$(INTDIR)/stripslash.obj" \
+	"$(INTDIR)/gzio.obj" \
+	"$(INTDIR)/uncompr.obj" \
+	"$(INTDIR)/status.obj" \
+	"$(INTDIR)/update.obj" \
+	"$(INTDIR)/compress.obj" \
+	"$(INTDIR)/buffer.obj" \
+	"$(INTDIR)/infcodes.obj" \
+	"$(INTDIR)/release.obj" \
+	"$(INTDIR)/recurse.obj" \
+	"$(INTDIR)/scramble.obj" \
+	"$(INTDIR)/rcscmds.obj" \
+	"$(INTDIR)/watch.obj" \
+	"$(INTDIR)/root.obj" \
+	"$(INTDIR)/md5.obj" \
+	"$(INTDIR)/getdate.obj" \
+	"$(INTDIR)/waitpid.obj" \
+	"$(INTDIR)/inflate.obj" \
+	"$(INTDIR)/cmpbuf.obj" \
+	"$(INTDIR)/myndbm.obj" \
+	"$(INTDIR)/tag.obj" \
+	"$(INTDIR)/getline.obj" \
+	"$(INTDIR)/client.obj" \
+	"$(INTDIR)/pwd.obj" \
+	"$(INTDIR)/login.obj" \
+	"$(INTDIR)/hash.obj" \
+	"$(INTDIR)/entries.obj" \
+	"$(INTDIR)/remove.obj" \
+	"$(INTDIR)/subr.obj" \
+	"$(INTDIR)/getopt1.obj" \
+	"$(INTDIR)/checkout.obj" \
+	"$(INTDIR)/create_adm.obj" \
+	"$(INTDIR)/classify.obj" \
+	"$(INTDIR)/ifdef.obj" \
+	"$(INTDIR)/ed.obj" \
+	"$(INTDIR)/crc32.obj" \
+	"$(INTDIR)/infutil.obj" \
+	"$(INTDIR)/fnmatch.obj" \
+	"$(INTDIR)/log.obj" \
+	"$(INTDIR)/ndir.obj" \
 	"$(INTDIR)/valloc.obj" \
-	"$(INTDIR)/infcodes.obj"
+	"$(INTDIR)/server.obj" \
+	"$(INTDIR)/fileattr.obj" \
+	"$(INTDIR)/win32.obj" \
+	"$(INTDIR)/add.obj" \
+	"$(INTDIR)/edit.obj" \
+	"$(INTDIR)/repos.obj" \
+	"$(INTDIR)/error.obj" \
+	"$(INTDIR)/analyze.obj" \
+	"$(INTDIR)/zlib.obj" \
+	"$(INTDIR)/getopt.obj" \
+	"$(INTDIR)/context.obj" \
+	"$(INTDIR)/wrapper.obj" \
+	"$(INTDIR)/rcs.obj" \
+	"$(INTDIR)/history.obj" \
+	"$(INTDIR)/patch.obj" \
+	"$(INTDIR)/mkmodules.obj" \
+	"$(INTDIR)/run.obj" \
+	"$(INTDIR)/getwd.obj" \
+	"$(INTDIR)/side.obj" \
+	".\WinRel\1\diff.obj" \
+	".\WinRel\1\version.obj" \
+	".\WinRel\2\diff.obj" \
+	".\WinRel\2\version.obj"
 
 "$(OUTDIR)\cvs.exe" : "$(OUTDIR)" $(DEF_FILE) $(LINK32_OBJS)
     $(LINK32) @<<
@@ -284,98 +310,115 @@ ALL : "$(OUTDIR)\cvs.exe"
 CLEAN : 
 	-@erase ".\WinDebug\vc40.pdb"
 	-@erase ".\WinDebug\vc40.idb"
+	-@erase ".\WinDebug\1\vc40.pdb"
+	-@erase ".\WinDebug\1\vc40.idb"
+	-@erase ".\WinDebug\2\vc40.pdb"
+	-@erase ".\WinDebug\2\vc40.idb"
 	-@erase ".\WinDebug\cvs.exe"
-	-@erase ".\WinDebug\add.obj"
-	-@erase ".\WinDebug\savecwd.obj"
-	-@erase ".\WinDebug\sockerror.obj"
-	-@erase ".\WinDebug\infcodes.obj"
-	-@erase ".\WinDebug\valloc.obj"
-	-@erase ".\WinDebug\server.obj"
-	-@erase ".\WinDebug\scramble.obj"
-	-@erase ".\WinDebug\filesubr.obj"
-	-@erase ".\WinDebug\win32.obj"
-	-@erase ".\WinDebug\inffast.obj"
-	-@erase ".\WinDebug\inftrees.obj"
-	-@erase ".\WinDebug\no_diff.obj"
-	-@erase ".\WinDebug\repos.obj"
-	-@erase ".\WinDebug\edit.obj"
-	-@erase ".\WinDebug\cvsrc.obj"
-	-@erase ".\WinDebug\startserver.obj"
-	-@erase ".\WinDebug\getopt.obj"
-	-@erase ".\WinDebug\zlib.obj"
+	-@erase ".\WinDebug\log.obj"
 	-@erase ".\WinDebug\deflate.obj"
-	-@erase ".\WinDebug\main.obj"
-	-@erase ".\WinDebug\expand_path.obj"
-	-@erase ".\WinDebug\getwd.obj"
-	-@erase ".\WinDebug\md5.obj"
+	-@erase ".\WinDebug\valloc.obj"
+	-@erase ".\WinDebug\error.obj"
 	-@erase ".\WinDebug\gzio.obj"
-	-@erase ".\WinDebug\classify.obj"
+	-@erase ".\WinDebug\commit.obj"
+	-@erase ".\WinDebug\add.obj"
 	-@erase ".\WinDebug\uncompr.obj"
-	-@erase ".\WinDebug\diff.obj"
-	-@erase ".\WinDebug\watch.obj"
-	-@erase ".\WinDebug\release.obj"
-	-@erase ".\WinDebug\tag.obj"
-	-@erase ".\WinDebug\logmsg.obj"
-	-@erase ".\WinDebug\pwd.obj"
-	-@erase ".\WinDebug\modules.obj"
+	-@erase ".\WinDebug\2\diff.obj"
+	-@erase ".\WinDebug\filesubr.obj"
+	-@erase ".\WinDebug\update.obj"
+	-@erase ".\WinDebug\expand_path.obj"
+	-@erase ".\WinDebug\infblock.obj"
+	-@erase ".\WinDebug\inftrees.obj"
+	-@erase ".\WinDebug\buffer.obj"
+	-@erase ".\WinDebug\patch.obj"
 	-@erase ".\WinDebug\rtag.obj"
 	-@erase ".\WinDebug\root.obj"
-	-@erase ".\WinDebug\admin.obj"
+	-@erase ".\WinDebug\getwd.obj"
+	-@erase ".\WinDebug\modules.obj"
+	-@erase ".\WinDebug\getopt.obj"
 	-@erase ".\WinDebug\lock.obj"
-	-@erase ".\WinDebug\getdate.obj"
-	-@erase ".\WinDebug\myndbm.obj"
-	-@erase ".\WinDebug\xgetwd.obj"
-	-@erase ".\WinDebug\waitpid.obj"
-	-@erase ".\WinDebug\login.obj"
-	-@erase ".\WinDebug\adler32.obj"
-	-@erase ".\WinDebug\inflate.obj"
-	-@erase ".\WinDebug\compress.obj"
-	-@erase ".\WinDebug\log.obj"
-	-@erase ".\WinDebug\entries.obj"
-	-@erase ".\WinDebug\stripslash.obj"
-	-@erase ".\WinDebug\rcmd.obj"
-	-@erase ".\WinDebug\getopt1.obj"
-	-@erase ".\WinDebug\ignore.obj"
-	-@erase ".\WinDebug\yesno.obj"
-	-@erase ".\WinDebug\infutil.obj"
-	-@erase ".\WinDebug\fnmatch.obj"
-	-@erase ".\WinDebug\import.obj"
-	-@erase ".\WinDebug\ndir.obj"
-	-@erase ".\WinDebug\regex.obj"
-	-@erase ".\WinDebug\commit.obj"
-	-@erase ".\WinDebug\mkmodules.obj"
-	-@erase ".\WinDebug\vers_ts.obj"
-	-@erase ".\WinDebug\infblock.obj"
-	-@erase ".\WinDebug\find_names.obj"
-	-@erase ".\WinDebug\rcs.obj"
-	-@erase ".\WinDebug\sighandle.obj"
-	-@erase ".\WinDebug\status.obj"
-	-@erase ".\WinDebug\update.obj"
-	-@erase ".\WinDebug\error.obj"
-	-@erase ".\WinDebug\checkout.obj"
-	-@erase ".\WinDebug\buffer.obj"
-	-@erase ".\WinDebug\run.obj"
-	-@erase ".\WinDebug\create_adm.obj"
-	-@erase ".\WinDebug\recurse.obj"
-	-@erase ".\WinDebug\patch.obj"
-	-@erase ".\WinDebug\rcscmds.obj"
-	-@erase ".\WinDebug\wrapper.obj"
-	-@erase ".\WinDebug\argmatch.obj"
-	-@erase ".\WinDebug\fileattr.obj"
-	-@erase ".\WinDebug\history.obj"
-	-@erase ".\WinDebug\version.obj"
-	-@erase ".\WinDebug\parseinfo.obj"
 	-@erase ".\WinDebug\mkdir.obj"
-	-@erase ".\WinDebug\vasprintf.obj"
-	-@erase ".\WinDebug\client.obj"
-	-@erase ".\WinDebug\checkin.obj"
+	-@erase ".\WinDebug\rcs.obj"
+	-@erase ".\WinDebug\run.obj"
 	-@erase ".\WinDebug\trees.obj"
-	-@erase ".\WinDebug\remove.obj"
-	-@erase ".\WinDebug\getline.obj"
+	-@erase ".\WinDebug\waitpid.obj"
+	-@erase ".\WinDebug\adler32.obj"
+	-@erase ".\WinDebug\ed.obj"
+	-@erase ".\WinDebug\inflate.obj"
 	-@erase ".\WinDebug\hash.obj"
 	-@erase ".\WinDebug\subr.obj"
+	-@erase ".\WinDebug\argmatch.obj"
+	-@erase ".\WinDebug\normal.obj"
+	-@erase ".\WinDebug\rcmd.obj"
 	-@erase ".\WinDebug\zutil.obj"
+	-@erase ".\WinDebug\admin.obj"
+	-@erase ".\WinDebug\ifdef.obj"
+	-@erase ".\WinDebug\classify.obj"
+	-@erase ".\WinDebug\entries.obj"
+	-@erase ".\WinDebug\diff3.obj"
+	-@erase ".\WinDebug\getopt1.obj"
+	-@erase ".\WinDebug\2\version.obj"
+	-@erase ".\WinDebug\logmsg.obj"
+	-@erase ".\WinDebug\dir.obj"
 	-@erase ".\WinDebug\crc32.obj"
+	-@erase ".\WinDebug\ndir.obj"
+	-@erase ".\WinDebug\xgetwd.obj"
+	-@erase ".\WinDebug\infutil.obj"
+	-@erase ".\WinDebug\fnmatch.obj"
+	-@erase ".\WinDebug\win32.obj"
+	-@erase ".\WinDebug\mkmodules.obj"
+	-@erase ".\WinDebug\server.obj"
+	-@erase ".\WinDebug\vers_ts.obj"
+	-@erase ".\WinDebug\util.obj"
+	-@erase ".\WinDebug\repos.obj"
+	-@erase ".\WinDebug\compress.obj"
+	-@erase ".\WinDebug\edit.obj"
+	-@erase ".\WinDebug\infcodes.obj"
+	-@erase ".\WinDebug\sighandle.obj"
+	-@erase ".\WinDebug\cvsrc.obj"
+	-@erase ".\WinDebug\scramble.obj"
+	-@erase ".\WinDebug\release.obj"
+	-@erase ".\WinDebug\analyze.obj"
+	-@erase ".\WinDebug\recurse.obj"
+	-@erase ".\WinDebug\stripslash.obj"
+	-@erase ".\WinDebug\import.obj"
+	-@erase ".\WinDebug\context.obj"
+	-@erase ".\WinDebug\rcscmds.obj"
+	-@erase ".\WinDebug\wrapper.obj"
+	-@erase ".\WinDebug\history.obj"
+	-@erase ".\WinDebug\side.obj"
+	-@erase ".\WinDebug\startserver.obj"
+	-@erase ".\WinDebug\watch.obj"
+	-@erase ".\WinDebug\getdate.obj"
+	-@erase ".\WinDebug\parseinfo.obj"
+	-@erase ".\WinDebug\status.obj"
+	-@erase ".\WinDebug\1\version.obj"
+	-@erase ".\WinDebug\checkin.obj"
+	-@erase ".\WinDebug\vasprintf.obj"
+	-@erase ".\WinDebug\io.obj"
+	-@erase ".\WinDebug\getline.obj"
+	-@erase ".\WinDebug\checkout.obj"
+	-@erase ".\WinDebug\find_names.obj"
+	-@erase ".\WinDebug\md5.obj"
+	-@erase ".\WinDebug\login.obj"
+	-@erase ".\WinDebug\savecwd.obj"
+	-@erase ".\WinDebug\cmpbuf.obj"
+	-@erase ".\WinDebug\sockerror.obj"
+	-@erase ".\WinDebug\myndbm.obj"
+	-@erase ".\WinDebug\fileattr.obj"
+	-@erase ".\WinDebug\client.obj"
+	-@erase ".\WinDebug\tag.obj"
+	-@erase ".\WinDebug\create_adm.obj"
+	-@erase ".\WinDebug\1\diff.obj"
+	-@erase ".\WinDebug\pwd.obj"
+	-@erase ".\WinDebug\inffast.obj"
+	-@erase ".\WinDebug\remove.obj"
+	-@erase ".\WinDebug\yesno.obj"
+	-@erase ".\WinDebug\no_diff.obj"
+	-@erase ".\WinDebug\ignore.obj"
+	-@erase ".\WinDebug\zlib.obj"
+	-@erase ".\WinDebug\main.obj"
+	-@erase ".\WinDebug\regex.obj"
 	-@erase ".\WinDebug\cvs.ilk"
 	-@erase ".\WinDebug\cvs.pdb"
 
@@ -405,97 +448,110 @@ LINK32_FLAGS=wsock32.lib kernel32.lib user32.lib gdi32.lib winspool.lib\
  /subsystem:console /incremental:yes /pdb:"$(OUTDIR)/cvs.pdb" /debug\
  /machine:I386 /out:"$(OUTDIR)/cvs.exe" 
 LINK32_OBJS= \
-	"$(INTDIR)/add.obj" \
-	"$(INTDIR)/savecwd.obj" \
-	"$(INTDIR)/sockerror.obj" \
-	"$(INTDIR)/infcodes.obj" \
-	"$(INTDIR)/valloc.obj" \
-	"$(INTDIR)/server.obj" \
-	"$(INTDIR)/scramble.obj" \
-	"$(INTDIR)/filesubr.obj" \
-	"$(INTDIR)/win32.obj" \
-	"$(INTDIR)/inffast.obj" \
-	"$(INTDIR)/inftrees.obj" \
-	"$(INTDIR)/no_diff.obj" \
-	"$(INTDIR)/repos.obj" \
-	"$(INTDIR)/edit.obj" \
-	"$(INTDIR)/cvsrc.obj" \
-	"$(INTDIR)/startserver.obj" \
-	"$(INTDIR)/getopt.obj" \
-	"$(INTDIR)/zlib.obj" \
+	"$(INTDIR)/log.obj" \
 	"$(INTDIR)/deflate.obj" \
-	"$(INTDIR)/main.obj" \
-	"$(INTDIR)/expand_path.obj" \
-	"$(INTDIR)/getwd.obj" \
-	"$(INTDIR)/md5.obj" \
+	"$(INTDIR)/valloc.obj" \
+	"$(INTDIR)/error.obj" \
 	"$(INTDIR)/gzio.obj" \
-	"$(INTDIR)/classify.obj" \
+	"$(INTDIR)/commit.obj" \
+	"$(INTDIR)/add.obj" \
 	"$(INTDIR)/uncompr.obj" \
-	"$(INTDIR)/diff.obj" \
-	"$(INTDIR)/watch.obj" \
-	"$(INTDIR)/release.obj" \
-	"$(INTDIR)/tag.obj" \
-	"$(INTDIR)/logmsg.obj" \
-	"$(INTDIR)/pwd.obj" \
-	"$(INTDIR)/modules.obj" \
+	".\WinDebug\2\diff.obj" \
+	"$(INTDIR)/filesubr.obj" \
+	"$(INTDIR)/update.obj" \
+	"$(INTDIR)/expand_path.obj" \
+	"$(INTDIR)/infblock.obj" \
+	"$(INTDIR)/inftrees.obj" \
+	"$(INTDIR)/buffer.obj" \
+	"$(INTDIR)/patch.obj" \
 	"$(INTDIR)/rtag.obj" \
 	"$(INTDIR)/root.obj" \
-	"$(INTDIR)/admin.obj" \
+	"$(INTDIR)/getwd.obj" \
+	"$(INTDIR)/modules.obj" \
+	"$(INTDIR)/getopt.obj" \
 	"$(INTDIR)/lock.obj" \
-	"$(INTDIR)/getdate.obj" \
-	"$(INTDIR)/myndbm.obj" \
-	"$(INTDIR)/xgetwd.obj" \
-	"$(INTDIR)/waitpid.obj" \
-	"$(INTDIR)/login.obj" \
-	"$(INTDIR)/adler32.obj" \
-	"$(INTDIR)/inflate.obj" \
-	"$(INTDIR)/compress.obj" \
-	"$(INTDIR)/log.obj" \
-	"$(INTDIR)/entries.obj" \
-	"$(INTDIR)/stripslash.obj" \
-	"$(INTDIR)/rcmd.obj" \
-	"$(INTDIR)/getopt1.obj" \
-	"$(INTDIR)/ignore.obj" \
-	"$(INTDIR)/yesno.obj" \
-	"$(INTDIR)/infutil.obj" \
-	"$(INTDIR)/fnmatch.obj" \
-	"$(INTDIR)/import.obj" \
-	"$(INTDIR)/ndir.obj" \
-	"$(INTDIR)/regex.obj" \
-	"$(INTDIR)/commit.obj" \
-	"$(INTDIR)/mkmodules.obj" \
-	"$(INTDIR)/vers_ts.obj" \
-	"$(INTDIR)/infblock.obj" \
-	"$(INTDIR)/find_names.obj" \
-	"$(INTDIR)/rcs.obj" \
-	"$(INTDIR)/sighandle.obj" \
-	"$(INTDIR)/status.obj" \
-	"$(INTDIR)/update.obj" \
-	"$(INTDIR)/error.obj" \
-	"$(INTDIR)/checkout.obj" \
-	"$(INTDIR)/buffer.obj" \
-	"$(INTDIR)/run.obj" \
-	"$(INTDIR)/create_adm.obj" \
-	"$(INTDIR)/recurse.obj" \
-	"$(INTDIR)/patch.obj" \
-	"$(INTDIR)/rcscmds.obj" \
-	"$(INTDIR)/wrapper.obj" \
-	"$(INTDIR)/argmatch.obj" \
-	"$(INTDIR)/fileattr.obj" \
-	"$(INTDIR)/history.obj" \
-	"$(INTDIR)/version.obj" \
-	"$(INTDIR)/parseinfo.obj" \
 	"$(INTDIR)/mkdir.obj" \
-	"$(INTDIR)/vasprintf.obj" \
-	"$(INTDIR)/client.obj" \
-	"$(INTDIR)/checkin.obj" \
+	"$(INTDIR)/rcs.obj" \
+	"$(INTDIR)/run.obj" \
 	"$(INTDIR)/trees.obj" \
-	"$(INTDIR)/remove.obj" \
-	"$(INTDIR)/getline.obj" \
+	"$(INTDIR)/waitpid.obj" \
+	"$(INTDIR)/adler32.obj" \
+	"$(INTDIR)/ed.obj" \
+	"$(INTDIR)/inflate.obj" \
 	"$(INTDIR)/hash.obj" \
 	"$(INTDIR)/subr.obj" \
+	"$(INTDIR)/argmatch.obj" \
+	"$(INTDIR)/normal.obj" \
+	"$(INTDIR)/rcmd.obj" \
 	"$(INTDIR)/zutil.obj" \
-	"$(INTDIR)/crc32.obj"
+	"$(INTDIR)/admin.obj" \
+	"$(INTDIR)/ifdef.obj" \
+	"$(INTDIR)/classify.obj" \
+	"$(INTDIR)/entries.obj" \
+	"$(INTDIR)/diff3.obj" \
+	"$(INTDIR)/getopt1.obj" \
+	".\WinDebug\2\version.obj" \
+	"$(INTDIR)/logmsg.obj" \
+	"$(INTDIR)/dir.obj" \
+	"$(INTDIR)/crc32.obj" \
+	"$(INTDIR)/ndir.obj" \
+	"$(INTDIR)/xgetwd.obj" \
+	"$(INTDIR)/infutil.obj" \
+	"$(INTDIR)/fnmatch.obj" \
+	"$(INTDIR)/win32.obj" \
+	"$(INTDIR)/mkmodules.obj" \
+	"$(INTDIR)/server.obj" \
+	"$(INTDIR)/vers_ts.obj" \
+	"$(INTDIR)/util.obj" \
+	"$(INTDIR)/repos.obj" \
+	"$(INTDIR)/compress.obj" \
+	"$(INTDIR)/edit.obj" \
+	"$(INTDIR)/infcodes.obj" \
+	"$(INTDIR)/sighandle.obj" \
+	"$(INTDIR)/cvsrc.obj" \
+	"$(INTDIR)/scramble.obj" \
+	"$(INTDIR)/release.obj" \
+	"$(INTDIR)/analyze.obj" \
+	"$(INTDIR)/recurse.obj" \
+	"$(INTDIR)/stripslash.obj" \
+	"$(INTDIR)/import.obj" \
+	"$(INTDIR)/context.obj" \
+	"$(INTDIR)/rcscmds.obj" \
+	"$(INTDIR)/wrapper.obj" \
+	"$(INTDIR)/history.obj" \
+	"$(INTDIR)/side.obj" \
+	"$(INTDIR)/startserver.obj" \
+	"$(INTDIR)/watch.obj" \
+	"$(INTDIR)/getdate.obj" \
+	"$(INTDIR)/parseinfo.obj" \
+	"$(INTDIR)/status.obj" \
+	".\WinDebug\1\version.obj" \
+	"$(INTDIR)/checkin.obj" \
+	"$(INTDIR)/vasprintf.obj" \
+	"$(INTDIR)/io.obj" \
+	"$(INTDIR)/getline.obj" \
+	"$(INTDIR)/checkout.obj" \
+	"$(INTDIR)/find_names.obj" \
+	"$(INTDIR)/md5.obj" \
+	"$(INTDIR)/login.obj" \
+	"$(INTDIR)/savecwd.obj" \
+	"$(INTDIR)/cmpbuf.obj" \
+	"$(INTDIR)/sockerror.obj" \
+	"$(INTDIR)/myndbm.obj" \
+	"$(INTDIR)/fileattr.obj" \
+	"$(INTDIR)/client.obj" \
+	"$(INTDIR)/tag.obj" \
+	"$(INTDIR)/create_adm.obj" \
+	".\WinDebug\1\diff.obj" \
+	"$(INTDIR)/pwd.obj" \
+	"$(INTDIR)/inffast.obj" \
+	"$(INTDIR)/remove.obj" \
+	"$(INTDIR)/yesno.obj" \
+	"$(INTDIR)/no_diff.obj" \
+	"$(INTDIR)/ignore.obj" \
+	"$(INTDIR)/zlib.obj" \
+	"$(INTDIR)/main.obj" \
+	"$(INTDIR)/regex.obj"
 
 "$(OUTDIR)\cvs.exe" : "$(OUTDIR)" $(DEF_FILE) $(LINK32_OBJS)
     $(LINK32) @<<
@@ -538,6 +594,21 @@ LINK32_OBJS= \
 # Begin Source File
 
 SOURCE=.\src\mkmodules.c
+
+!IF  "$(CFG)" == "cvsnt - Win32 Release"
+
+DEP_CPP_MKMOD=\
+	".\src\cvs.h"\
+	".\lib\savecwd.h"\
+	".\lib\getline.h"\
+	
+
+"$(INTDIR)\mkmodules.obj" : $(SOURCE) $(DEP_CPP_MKMOD) "$(INTDIR)"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+!ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
+
 DEP_CPP_MKMOD=\
 	".\src\cvs.h"\
 	".\lib\savecwd.h"\
@@ -571,11 +642,27 @@ NODEP_CPP_MKMOD=\
    $(CPP) $(CPP_PROJ) $(SOURCE)
 
 
+!ENDIF 
+
 # End Source File
 ################################################################################
 # Begin Source File
 
 SOURCE=.\src\subr.c
+
+!IF  "$(CFG)" == "cvsnt - Win32 Release"
+
+DEP_CPP_SUBR_=\
+	".\src\cvs.h"\
+	".\lib\getline.h"\
+	
+
+"$(INTDIR)\subr.obj" : $(SOURCE) $(DEP_CPP_SUBR_) "$(INTDIR)"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+!ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
+
 DEP_CPP_SUBR_=\
 	".\src\cvs.h"\
 	".\lib\getline.h"\
@@ -608,11 +695,26 @@ NODEP_CPP_SUBR_=\
    $(CPP) $(CPP_PROJ) $(SOURCE)
 
 
+!ENDIF 
+
 # End Source File
 ################################################################################
 # Begin Source File
 
 SOURCE=.\src\admin.c
+
+!IF  "$(CFG)" == "cvsnt - Win32 Release"
+
+DEP_CPP_ADMIN=\
+	".\src\cvs.h"\
+	
+
+"$(INTDIR)\admin.obj" : $(SOURCE) $(DEP_CPP_ADMIN) "$(INTDIR)"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+!ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
+
 DEP_CPP_ADMIN=\
 	".\src\cvs.h"\
 	".\windows-NT\config.h"\
@@ -644,11 +746,32 @@ NODEP_CPP_ADMIN=\
    $(CPP) $(CPP_PROJ) $(SOURCE)
 
 
+!ENDIF 
+
 # End Source File
 ################################################################################
 # Begin Source File
 
 SOURCE=.\src\server.c
+
+!IF  "$(CFG)" == "cvsnt - Win32 Release"
+
+DEP_CPP_SERVE=\
+	".\src\cvs.h"\
+	".\src\watch.h"\
+	".\src\edit.h"\
+	".\src\fileattr.h"\
+	".\lib\getline.h"\
+	".\src\buffer.h"\
+	{$(INCLUDE)}"\sys\Types.h"\
+	
+
+"$(INTDIR)\server.obj" : $(SOURCE) $(DEP_CPP_SERVE) "$(INTDIR)"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+!ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
+
 DEP_CPP_SERVE=\
 	".\src\cvs.h"\
 	".\src\watch.h"\
@@ -685,11 +808,34 @@ NODEP_CPP_SERVE=\
    $(CPP) $(CPP_PROJ) $(SOURCE)
 
 
+!ENDIF 
+
 # End Source File
 ################################################################################
 # Begin Source File
 
 SOURCE=.\src\diff.c
+
+!IF  "$(CFG)" == "cvsnt - Win32 Release"
+
+# PROP Intermediate_Dir "WinRel\1"
+DEP_CPP_DIFF_=\
+	".\src\cvs.h"\
+	
+INTDIR_SRC=.\WinRel\1
+"$(INTDIR_SRC)" :
+    if not exist "$(INTDIR_SRC)/$(NULL)" mkdir "$(INTDIR_SRC)"
+
+
+".\WinRel\1\diff.obj" : $(SOURCE) $(DEP_CPP_DIFF_) "$(INTDIR_SRC)"
+   $(CPP) /nologo /ML /W3 /GX /Ob1 /I "windows-NT" /I "lib" /I "src" /I "zlib"\
+ /D "NDEBUG" /D "WIN32" /D "_CONSOLE" /D "HAVE_CONFIG_H" /Fp"WinRel/cvsnt.pch"\
+ /YX /Fo"$(INTDIR_SRC)/" /c $(SOURCE)
+
+
+!ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
+
+# PROP Intermediate_Dir "WinDebug\1"
 DEP_CPP_DIFF_=\
 	".\src\cvs.h"\
 	".\windows-NT\config.h"\
@@ -716,16 +862,43 @@ NODEP_CPP_DIFF_=\
 	".\src\popen.h"\
 	".\lib\tcpip.h"\
 	
+INTDIR_SRC=.\WinDebug\1
+"$(INTDIR_SRC)" :
+    if not exist "$(INTDIR_SRC)/$(NULL)" mkdir "$(INTDIR_SRC)"
 
-"$(INTDIR)\diff.obj" : $(SOURCE) $(DEP_CPP_DIFF_) "$(INTDIR)"
-   $(CPP) $(CPP_PROJ) $(SOURCE)
 
+".\WinDebug\1\diff.obj" : $(SOURCE) $(DEP_CPP_DIFF_) "$(INTDIR_SRC)"
+   $(CPP) /nologo /MLd /W3 /Gm /GX /Zi /Ob1 /I "windows-NT" /I "lib" /I "src"\
+ /I "zlib" /D "_DEBUG" /D "WIN32" /D "_CONSOLE" /D "HAVE_CONFIG_H"\
+ /Fp"WinDebug/cvsnt.pch" /YX /Fo"$(INTDIR_SRC)/" /Fd"$(INTDIR_SRC)/" /c\
+ $(SOURCE)
+
+
+!ENDIF 
 
 # End Source File
 ################################################################################
 # Begin Source File
 
 SOURCE=.\src\client.c
+
+!IF  "$(CFG)" == "cvsnt - Win32 Release"
+
+DEP_CPP_CLIEN=\
+	".\windows-NT\config.h"\
+	".\src\cvs.h"\
+	".\lib\getline.h"\
+	".\src\edit.h"\
+	".\src\buffer.h"\
+	".\lib\md5.h"\
+	
+
+"$(INTDIR)\client.obj" : $(SOURCE) $(DEP_CPP_CLIEN) "$(INTDIR)"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+!ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
+
 DEP_CPP_CLIEN=\
 	".\windows-NT\config.h"\
 	".\src\cvs.h"\
@@ -761,11 +934,26 @@ NODEP_CPP_CLIEN=\
    $(CPP) $(CPP_PROJ) $(SOURCE)
 
 
+!ENDIF 
+
 # End Source File
 ################################################################################
 # Begin Source File
 
 SOURCE=.\src\checkout.c
+
+!IF  "$(CFG)" == "cvsnt - Win32 Release"
+
+DEP_CPP_CHECK=\
+	".\src\cvs.h"\
+	
+
+"$(INTDIR)\checkout.obj" : $(SOURCE) $(DEP_CPP_CHECK) "$(INTDIR)"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+!ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
+
 DEP_CPP_CHECK=\
 	".\src\cvs.h"\
 	".\windows-NT\config.h"\
@@ -797,11 +985,26 @@ NODEP_CPP_CHECK=\
    $(CPP) $(CPP_PROJ) $(SOURCE)
 
 
+!ENDIF 
+
 # End Source File
 ################################################################################
 # Begin Source File
 
 SOURCE=.\src\no_diff.c
+
+!IF  "$(CFG)" == "cvsnt - Win32 Release"
+
+DEP_CPP_NO_DI=\
+	".\src\cvs.h"\
+	
+
+"$(INTDIR)\no_diff.obj" : $(SOURCE) $(DEP_CPP_NO_DI) "$(INTDIR)"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+!ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
+
 DEP_CPP_NO_DI=\
 	".\src\cvs.h"\
 	".\windows-NT\config.h"\
@@ -833,11 +1036,27 @@ NODEP_CPP_NO_DI=\
    $(CPP) $(CPP_PROJ) $(SOURCE)
 
 
+!ENDIF 
+
 # End Source File
 ################################################################################
 # Begin Source File
 
 SOURCE=.\src\entries.c
+
+!IF  "$(CFG)" == "cvsnt - Win32 Release"
+
+DEP_CPP_ENTRI=\
+	".\src\cvs.h"\
+	".\lib\getline.h"\
+	
+
+"$(INTDIR)\entries.obj" : $(SOURCE) $(DEP_CPP_ENTRI) "$(INTDIR)"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+!ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
+
 DEP_CPP_ENTRI=\
 	".\src\cvs.h"\
 	".\lib\getline.h"\
@@ -870,11 +1089,27 @@ NODEP_CPP_ENTRI=\
    $(CPP) $(CPP_PROJ) $(SOURCE)
 
 
+!ENDIF 
+
 # End Source File
 ################################################################################
 # Begin Source File
 
 SOURCE=.\src\tag.c
+
+!IF  "$(CFG)" == "cvsnt - Win32 Release"
+
+DEP_CPP_TAG_C=\
+	".\src\cvs.h"\
+	".\lib\savecwd.h"\
+	
+
+"$(INTDIR)\tag.obj" : $(SOURCE) $(DEP_CPP_TAG_C) "$(INTDIR)"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+!ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
+
 DEP_CPP_TAG_C=\
 	".\src\cvs.h"\
 	".\lib\savecwd.h"\
@@ -907,11 +1142,26 @@ NODEP_CPP_TAG_C=\
    $(CPP) $(CPP_PROJ) $(SOURCE)
 
 
+!ENDIF 
+
 # End Source File
 ################################################################################
 # Begin Source File
 
 SOURCE=.\src\rtag.c
+
+!IF  "$(CFG)" == "cvsnt - Win32 Release"
+
+DEP_CPP_RTAG_=\
+	".\src\cvs.h"\
+	
+
+"$(INTDIR)\rtag.obj" : $(SOURCE) $(DEP_CPP_RTAG_) "$(INTDIR)"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+!ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
+
 DEP_CPP_RTAG_=\
 	".\src\cvs.h"\
 	".\windows-NT\config.h"\
@@ -943,11 +1193,26 @@ NODEP_CPP_RTAG_=\
    $(CPP) $(CPP_PROJ) $(SOURCE)
 
 
+!ENDIF 
+
 # End Source File
 ################################################################################
 # Begin Source File
 
 SOURCE=.\src\status.c
+
+!IF  "$(CFG)" == "cvsnt - Win32 Release"
+
+DEP_CPP_STATU=\
+	".\src\cvs.h"\
+	
+
+"$(INTDIR)\status.obj" : $(SOURCE) $(DEP_CPP_STATU) "$(INTDIR)"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+!ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
+
 DEP_CPP_STATU=\
 	".\src\cvs.h"\
 	".\windows-NT\config.h"\
@@ -979,11 +1244,27 @@ NODEP_CPP_STATU=\
    $(CPP) $(CPP_PROJ) $(SOURCE)
 
 
+!ENDIF 
+
 # End Source File
 ################################################################################
 # Begin Source File
 
 SOURCE=.\src\root.c
+
+!IF  "$(CFG)" == "cvsnt - Win32 Release"
+
+DEP_CPP_ROOT_=\
+	".\src\cvs.h"\
+	".\lib\getline.h"\
+	
+
+"$(INTDIR)\root.obj" : $(SOURCE) $(DEP_CPP_ROOT_) "$(INTDIR)"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+!ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
+
 DEP_CPP_ROOT_=\
 	".\src\cvs.h"\
 	".\lib\getline.h"\
@@ -1016,11 +1297,27 @@ NODEP_CPP_ROOT_=\
    $(CPP) $(CPP_PROJ) $(SOURCE)
 
 
+!ENDIF 
+
 # End Source File
 ################################################################################
 # Begin Source File
 
 SOURCE=.\src\myndbm.c
+
+!IF  "$(CFG)" == "cvsnt - Win32 Release"
+
+DEP_CPP_MYNDB=\
+	".\src\cvs.h"\
+	".\lib\getline.h"\
+	
+
+"$(INTDIR)\myndbm.obj" : $(SOURCE) $(DEP_CPP_MYNDB) "$(INTDIR)"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+!ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
+
 DEP_CPP_MYNDB=\
 	".\src\cvs.h"\
 	".\lib\getline.h"\
@@ -1053,11 +1350,26 @@ NODEP_CPP_MYNDB=\
    $(CPP) $(CPP_PROJ) $(SOURCE)
 
 
+!ENDIF 
+
 # End Source File
 ################################################################################
 # Begin Source File
 
 SOURCE=.\src\hash.c
+
+!IF  "$(CFG)" == "cvsnt - Win32 Release"
+
+DEP_CPP_HASH_=\
+	".\src\cvs.h"\
+	
+
+"$(INTDIR)\hash.obj" : $(SOURCE) $(DEP_CPP_HASH_) "$(INTDIR)"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+!ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
+
 DEP_CPP_HASH_=\
 	".\src\cvs.h"\
 	".\windows-NT\config.h"\
@@ -1089,11 +1401,27 @@ NODEP_CPP_HASH_=\
    $(CPP) $(CPP_PROJ) $(SOURCE)
 
 
+!ENDIF 
+
 # End Source File
 ################################################################################
 # Begin Source File
 
 SOURCE=.\src\repos.c
+
+!IF  "$(CFG)" == "cvsnt - Win32 Release"
+
+DEP_CPP_REPOS=\
+	".\src\cvs.h"\
+	".\lib\getline.h"\
+	
+
+"$(INTDIR)\repos.obj" : $(SOURCE) $(DEP_CPP_REPOS) "$(INTDIR)"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+!ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
+
 DEP_CPP_REPOS=\
 	".\src\cvs.h"\
 	".\lib\getline.h"\
@@ -1126,11 +1454,27 @@ NODEP_CPP_REPOS=\
    $(CPP) $(CPP_PROJ) $(SOURCE)
 
 
+!ENDIF 
+
 # End Source File
 ################################################################################
 # Begin Source File
 
 SOURCE=.\src\parseinfo.c
+
+!IF  "$(CFG)" == "cvsnt - Win32 Release"
+
+DEP_CPP_PARSE=\
+	".\src\cvs.h"\
+	".\lib\getline.h"\
+	
+
+"$(INTDIR)\parseinfo.obj" : $(SOURCE) $(DEP_CPP_PARSE) "$(INTDIR)"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+!ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
+
 DEP_CPP_PARSE=\
 	".\src\cvs.h"\
 	".\lib\getline.h"\
@@ -1163,11 +1507,26 @@ NODEP_CPP_PARSE=\
    $(CPP) $(CPP_PROJ) $(SOURCE)
 
 
+!ENDIF 
+
 # End Source File
 ################################################################################
 # Begin Source File
 
 SOURCE=.\src\vers_ts.c
+
+!IF  "$(CFG)" == "cvsnt - Win32 Release"
+
+DEP_CPP_VERS_=\
+	".\src\cvs.h"\
+	
+
+"$(INTDIR)\vers_ts.obj" : $(SOURCE) $(DEP_CPP_VERS_) "$(INTDIR)"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+!ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
+
 DEP_CPP_VERS_=\
 	".\src\cvs.h"\
 	".\windows-NT\config.h"\
@@ -1199,11 +1558,28 @@ NODEP_CPP_VERS_=\
    $(CPP) $(CPP_PROJ) $(SOURCE)
 
 
+!ENDIF 
+
 # End Source File
 ################################################################################
 # Begin Source File
 
 SOURCE=.\src\checkin.c
+
+!IF  "$(CFG)" == "cvsnt - Win32 Release"
+
+DEP_CPP_CHECKI=\
+	".\src\cvs.h"\
+	".\src\fileattr.h"\
+	".\src\edit.h"\
+	
+
+"$(INTDIR)\checkin.obj" : $(SOURCE) $(DEP_CPP_CHECKI) "$(INTDIR)"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+!ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
+
 DEP_CPP_CHECKI=\
 	".\src\cvs.h"\
 	".\src\fileattr.h"\
@@ -1237,11 +1613,29 @@ NODEP_CPP_CHECKI=\
    $(CPP) $(CPP_PROJ) $(SOURCE)
 
 
+!ENDIF 
+
 # End Source File
 ################################################################################
 # Begin Source File
 
 SOURCE=.\src\commit.c
+
+!IF  "$(CFG)" == "cvsnt - Win32 Release"
+
+DEP_CPP_COMMI=\
+	".\src\cvs.h"\
+	".\lib\getline.h"\
+	".\src\edit.h"\
+	".\src\fileattr.h"\
+	
+
+"$(INTDIR)\commit.obj" : $(SOURCE) $(DEP_CPP_COMMI) "$(INTDIR)"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+!ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
+
 DEP_CPP_COMMI=\
 	".\src\cvs.h"\
 	".\lib\getline.h"\
@@ -1276,11 +1670,34 @@ NODEP_CPP_COMMI=\
    $(CPP) $(CPP_PROJ) $(SOURCE)
 
 
+!ENDIF 
+
 # End Source File
 ################################################################################
 # Begin Source File
 
 SOURCE=.\src\version.c
+
+!IF  "$(CFG)" == "cvsnt - Win32 Release"
+
+# PROP Intermediate_Dir "WinRel\1"
+DEP_CPP_VERSI=\
+	".\src\cvs.h"\
+	
+INTDIR_SRC=.\WinRel\1
+"$(INTDIR_SRC)" :
+    if not exist "$(INTDIR_SRC)/$(NULL)" mkdir "$(INTDIR_SRC)"
+
+
+".\WinRel\1\version.obj" : $(SOURCE) $(DEP_CPP_VERSI) "$(INTDIR_SRC)"
+   $(CPP) /nologo /ML /W3 /GX /Ob1 /I "windows-NT" /I "lib" /I "src" /I "zlib"\
+ /D "NDEBUG" /D "WIN32" /D "_CONSOLE" /D "HAVE_CONFIG_H" /Fp"WinRel/cvsnt.pch"\
+ /YX /Fo"$(INTDIR_SRC)/" /c $(SOURCE)
+
+
+!ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
+
+# PROP Intermediate_Dir "WinDebug\1"
 DEP_CPP_VERSI=\
 	".\src\cvs.h"\
 	".\windows-NT\config.h"\
@@ -1307,16 +1724,39 @@ NODEP_CPP_VERSI=\
 	".\src\popen.h"\
 	".\lib\tcpip.h"\
 	
+INTDIR_SRC=.\WinDebug\1
+"$(INTDIR_SRC)" :
+    if not exist "$(INTDIR_SRC)/$(NULL)" mkdir "$(INTDIR_SRC)"
 
-"$(INTDIR)\version.obj" : $(SOURCE) $(DEP_CPP_VERSI) "$(INTDIR)"
-   $(CPP) $(CPP_PROJ) $(SOURCE)
 
+".\WinDebug\1\version.obj" : $(SOURCE) $(DEP_CPP_VERSI) "$(INTDIR_SRC)"
+   $(CPP) /nologo /MLd /W3 /Gm /GX /Zi /Ob1 /I "windows-NT" /I "lib" /I "src"\
+ /I "zlib" /D "_DEBUG" /D "WIN32" /D "_CONSOLE" /D "HAVE_CONFIG_H"\
+ /Fp"WinDebug/cvsnt.pch" /YX /Fo"$(INTDIR_SRC)/" /Fd"$(INTDIR_SRC)/" /c\
+ $(SOURCE)
+
+
+!ENDIF 
 
 # End Source File
 ################################################################################
 # Begin Source File
 
 SOURCE=.\src\cvsrc.c
+
+!IF  "$(CFG)" == "cvsnt - Win32 Release"
+
+DEP_CPP_CVSRC=\
+	".\src\cvs.h"\
+	".\lib\getline.h"\
+	
+
+"$(INTDIR)\cvsrc.obj" : $(SOURCE) $(DEP_CPP_CVSRC) "$(INTDIR)"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+!ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
+
 DEP_CPP_CVSRC=\
 	".\src\cvs.h"\
 	".\lib\getline.h"\
@@ -1349,11 +1789,26 @@ NODEP_CPP_CVSRC=\
    $(CPP) $(CPP_PROJ) $(SOURCE)
 
 
+!ENDIF 
+
 # End Source File
 ################################################################################
 # Begin Source File
 
 SOURCE=.\src\remove.c
+
+!IF  "$(CFG)" == "cvsnt - Win32 Release"
+
+DEP_CPP_REMOV=\
+	".\src\cvs.h"\
+	
+
+"$(INTDIR)\remove.obj" : $(SOURCE) $(DEP_CPP_REMOV) "$(INTDIR)"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+!ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
+
 DEP_CPP_REMOV=\
 	".\src\cvs.h"\
 	".\windows-NT\config.h"\
@@ -1385,11 +1840,32 @@ NODEP_CPP_REMOV=\
    $(CPP) $(CPP_PROJ) $(SOURCE)
 
 
+!ENDIF 
+
 # End Source File
 ################################################################################
 # Begin Source File
 
 SOURCE=.\src\update.c
+
+!IF  "$(CFG)" == "cvsnt - Win32 Release"
+
+DEP_CPP_UPDAT=\
+	".\src\cvs.h"\
+	".\lib\savecwd.h"\
+	".\lib\md5.h"\
+	".\src\watch.h"\
+	".\src\fileattr.h"\
+	".\src\edit.h"\
+	".\lib\getline.h"\
+	
+
+"$(INTDIR)\update.obj" : $(SOURCE) $(DEP_CPP_UPDAT) "$(INTDIR)"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+!ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
+
 DEP_CPP_UPDAT=\
 	".\src\cvs.h"\
 	".\lib\savecwd.h"\
@@ -1427,11 +1903,27 @@ NODEP_CPP_UPDAT=\
    $(CPP) $(CPP_PROJ) $(SOURCE)
 
 
+!ENDIF 
+
 # End Source File
 ################################################################################
 # Begin Source File
 
 SOURCE=.\src\logmsg.c
+
+!IF  "$(CFG)" == "cvsnt - Win32 Release"
+
+DEP_CPP_LOGMS=\
+	".\src\cvs.h"\
+	".\lib\getline.h"\
+	
+
+"$(INTDIR)\logmsg.obj" : $(SOURCE) $(DEP_CPP_LOGMS) "$(INTDIR)"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+!ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
+
 DEP_CPP_LOGMS=\
 	".\src\cvs.h"\
 	".\lib\getline.h"\
@@ -1464,11 +1956,26 @@ NODEP_CPP_LOGMS=\
    $(CPP) $(CPP_PROJ) $(SOURCE)
 
 
+!ENDIF 
+
 # End Source File
 ################################################################################
 # Begin Source File
 
 SOURCE=.\src\classify.c
+
+!IF  "$(CFG)" == "cvsnt - Win32 Release"
+
+DEP_CPP_CLASS=\
+	".\src\cvs.h"\
+	
+
+"$(INTDIR)\classify.obj" : $(SOURCE) $(DEP_CPP_CLASS) "$(INTDIR)"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+!ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
+
 DEP_CPP_CLASS=\
 	".\src\cvs.h"\
 	".\windows-NT\config.h"\
@@ -1500,11 +2007,27 @@ NODEP_CPP_CLASS=\
    $(CPP) $(CPP_PROJ) $(SOURCE)
 
 
+!ENDIF 
+
 # End Source File
 ################################################################################
 # Begin Source File
 
 SOURCE=.\src\history.c
+
+!IF  "$(CFG)" == "cvsnt - Win32 Release"
+
+DEP_CPP_HISTO=\
+	".\src\cvs.h"\
+	".\lib\savecwd.h"\
+	
+
+"$(INTDIR)\history.obj" : $(SOURCE) $(DEP_CPP_HISTO) "$(INTDIR)"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+!ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
+
 DEP_CPP_HISTO=\
 	".\src\cvs.h"\
 	".\lib\savecwd.h"\
@@ -1537,14 +2060,32 @@ NODEP_CPP_HISTO=\
    $(CPP) $(CPP_PROJ) $(SOURCE)
 
 
+!ENDIF 
+
 # End Source File
 ################################################################################
 # Begin Source File
 
 SOURCE=.\src\add.c
+
+!IF  "$(CFG)" == "cvsnt - Win32 Release"
+
 DEP_CPP_ADD_C=\
 	".\src\cvs.h"\
 	".\lib\savecwd.h"\
+	".\src\fileattr.h"\
+	
+
+"$(INTDIR)\add.obj" : $(SOURCE) $(DEP_CPP_ADD_C) "$(INTDIR)"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+!ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
+
+DEP_CPP_ADD_C=\
+	".\src\cvs.h"\
+	".\lib\savecwd.h"\
+	".\src\fileattr.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\options.h"\
 	".\lib\fnmatch.h"\
@@ -1574,11 +2115,26 @@ NODEP_CPP_ADD_C=\
    $(CPP) $(CPP_PROJ) $(SOURCE)
 
 
+!ENDIF 
+
 # End Source File
 ################################################################################
 # Begin Source File
 
 SOURCE=.\src\lock.c
+
+!IF  "$(CFG)" == "cvsnt - Win32 Release"
+
+DEP_CPP_LOCK_=\
+	".\src\cvs.h"\
+	
+
+"$(INTDIR)\lock.obj" : $(SOURCE) $(DEP_CPP_LOCK_) "$(INTDIR)"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+!ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
+
 DEP_CPP_LOCK_=\
 	".\src\cvs.h"\
 	".\windows-NT\config.h"\
@@ -1610,11 +2166,29 @@ NODEP_CPP_LOCK_=\
    $(CPP) $(CPP_PROJ) $(SOURCE)
 
 
+!ENDIF 
+
 # End Source File
 ################################################################################
 # Begin Source File
 
 SOURCE=.\src\recurse.c
+
+!IF  "$(CFG)" == "cvsnt - Win32 Release"
+
+DEP_CPP_RECUR=\
+	".\src\cvs.h"\
+	".\lib\savecwd.h"\
+	".\src\fileattr.h"\
+	".\src\edit.h"\
+	
+
+"$(INTDIR)\recurse.obj" : $(SOURCE) $(DEP_CPP_RECUR) "$(INTDIR)"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+!ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
+
 DEP_CPP_RECUR=\
 	".\src\cvs.h"\
 	".\lib\savecwd.h"\
@@ -1649,11 +2223,27 @@ NODEP_CPP_RECUR=\
    $(CPP) $(CPP_PROJ) $(SOURCE)
 
 
+!ENDIF 
+
 # End Source File
 ################################################################################
 # Begin Source File
 
 SOURCE=.\src\modules.c
+
+!IF  "$(CFG)" == "cvsnt - Win32 Release"
+
+DEP_CPP_MODUL=\
+	".\src\cvs.h"\
+	".\lib\savecwd.h"\
+	
+
+"$(INTDIR)\modules.obj" : $(SOURCE) $(DEP_CPP_MODUL) "$(INTDIR)"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+!ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
+
 DEP_CPP_MODUL=\
 	".\src\cvs.h"\
 	".\lib\savecwd.h"\
@@ -1686,11 +2276,26 @@ NODEP_CPP_MODUL=\
    $(CPP) $(CPP_PROJ) $(SOURCE)
 
 
+!ENDIF 
+
 # End Source File
 ################################################################################
 # Begin Source File
 
 SOURCE=.\src\find_names.c
+
+!IF  "$(CFG)" == "cvsnt - Win32 Release"
+
+DEP_CPP_FIND_=\
+	".\src\cvs.h"\
+	
+
+"$(INTDIR)\find_names.obj" : $(SOURCE) $(DEP_CPP_FIND_) "$(INTDIR)"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+!ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
+
 DEP_CPP_FIND_=\
 	".\src\cvs.h"\
 	".\windows-NT\config.h"\
@@ -1722,13 +2327,30 @@ NODEP_CPP_FIND_=\
    $(CPP) $(CPP_PROJ) $(SOURCE)
 
 
+!ENDIF 
+
 # End Source File
 ################################################################################
 # Begin Source File
 
 SOURCE=.\src\rcs.c
+
+!IF  "$(CFG)" == "cvsnt - Win32 Release"
+
 DEP_CPP_RCS_C=\
 	".\src\cvs.h"\
+	".\src\edit.h"\
+	
+
+"$(INTDIR)\rcs.obj" : $(SOURCE) $(DEP_CPP_RCS_C) "$(INTDIR)"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+!ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
+
+DEP_CPP_RCS_C=\
+	".\src\cvs.h"\
+	".\src\edit.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\options.h"\
 	".\lib\fnmatch.h"\
@@ -1758,11 +2380,26 @@ NODEP_CPP_RCS_C=\
    $(CPP) $(CPP_PROJ) $(SOURCE)
 
 
+!ENDIF 
+
 # End Source File
 ################################################################################
 # Begin Source File
 
 SOURCE=.\src\create_adm.c
+
+!IF  "$(CFG)" == "cvsnt - Win32 Release"
+
+DEP_CPP_CREAT=\
+	".\src\cvs.h"\
+	
+
+"$(INTDIR)\create_adm.obj" : $(SOURCE) $(DEP_CPP_CREAT) "$(INTDIR)"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+!ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
+
 DEP_CPP_CREAT=\
 	".\src\cvs.h"\
 	".\windows-NT\config.h"\
@@ -1794,11 +2431,26 @@ NODEP_CPP_CREAT=\
    $(CPP) $(CPP_PROJ) $(SOURCE)
 
 
+!ENDIF 
+
 # End Source File
 ################################################################################
 # Begin Source File
 
 SOURCE=.\src\main.c
+
+!IF  "$(CFG)" == "cvsnt - Win32 Release"
+
+DEP_CPP_MAIN_=\
+	".\src\cvs.h"\
+	
+
+"$(INTDIR)\main.obj" : $(SOURCE) $(DEP_CPP_MAIN_) "$(INTDIR)"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+!ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
+
 DEP_CPP_MAIN_=\
 	".\src\cvs.h"\
 	".\windows-NT\config.h"\
@@ -1830,11 +2482,27 @@ NODEP_CPP_MAIN_=\
    $(CPP) $(CPP_PROJ) $(SOURCE)
 
 
+!ENDIF 
+
 # End Source File
 ################################################################################
 # Begin Source File
 
 SOURCE=.\src\patch.c
+
+!IF  "$(CFG)" == "cvsnt - Win32 Release"
+
+DEP_CPP_PATCH=\
+	".\src\cvs.h"\
+	".\lib\getline.h"\
+	
+
+"$(INTDIR)\patch.obj" : $(SOURCE) $(DEP_CPP_PATCH) "$(INTDIR)"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+!ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
+
 DEP_CPP_PATCH=\
 	".\src\cvs.h"\
 	".\lib\getline.h"\
@@ -1867,11 +2535,27 @@ NODEP_CPP_PATCH=\
    $(CPP) $(CPP_PROJ) $(SOURCE)
 
 
+!ENDIF 
+
 # End Source File
 ################################################################################
 # Begin Source File
 
 SOURCE=.\src\release.c
+
+!IF  "$(CFG)" == "cvsnt - Win32 Release"
+
+DEP_CPP_RELEA=\
+	".\src\cvs.h"\
+	".\lib\getline.h"\
+	
+
+"$(INTDIR)\release.obj" : $(SOURCE) $(DEP_CPP_RELEA) "$(INTDIR)"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+!ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
+
 DEP_CPP_RELEA=\
 	".\src\cvs.h"\
 	".\lib\getline.h"\
@@ -1904,11 +2588,26 @@ NODEP_CPP_RELEA=\
    $(CPP) $(CPP_PROJ) $(SOURCE)
 
 
+!ENDIF 
+
 # End Source File
 ################################################################################
 # Begin Source File
 
 SOURCE=.\src\rcscmds.c
+
+!IF  "$(CFG)" == "cvsnt - Win32 Release"
+
+DEP_CPP_RCSCM=\
+	".\src\cvs.h"\
+	
+
+"$(INTDIR)\rcscmds.obj" : $(SOURCE) $(DEP_CPP_RCSCM) "$(INTDIR)"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+!ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
+
 DEP_CPP_RCSCM=\
 	".\src\cvs.h"\
 	".\windows-NT\config.h"\
@@ -1940,11 +2639,27 @@ NODEP_CPP_RCSCM=\
    $(CPP) $(CPP_PROJ) $(SOURCE)
 
 
+!ENDIF 
+
 # End Source File
 ################################################################################
 # Begin Source File
 
 SOURCE=.\src\import.c
+
+!IF  "$(CFG)" == "cvsnt - Win32 Release"
+
+DEP_CPP_IMPOR=\
+	".\src\cvs.h"\
+	".\lib\savecwd.h"\
+	
+
+"$(INTDIR)\import.obj" : $(SOURCE) $(DEP_CPP_IMPOR) "$(INTDIR)"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+!ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
+
 DEP_CPP_IMPOR=\
 	".\src\cvs.h"\
 	".\lib\savecwd.h"\
@@ -1977,11 +2692,27 @@ NODEP_CPP_IMPOR=\
    $(CPP) $(CPP_PROJ) $(SOURCE)
 
 
+!ENDIF 
+
 # End Source File
 ################################################################################
 # Begin Source File
 
 SOURCE=.\src\ignore.c
+
+!IF  "$(CFG)" == "cvsnt - Win32 Release"
+
+DEP_CPP_IGNOR=\
+	".\src\cvs.h"\
+	".\lib\getline.h"\
+	
+
+"$(INTDIR)\ignore.obj" : $(SOURCE) $(DEP_CPP_IGNOR) "$(INTDIR)"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+!ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
+
 DEP_CPP_IGNOR=\
 	".\src\cvs.h"\
 	".\lib\getline.h"\
@@ -2014,11 +2745,26 @@ NODEP_CPP_IGNOR=\
    $(CPP) $(CPP_PROJ) $(SOURCE)
 
 
+!ENDIF 
+
 # End Source File
 ################################################################################
 # Begin Source File
 
 SOURCE=.\src\log.c
+
+!IF  "$(CFG)" == "cvsnt - Win32 Release"
+
+DEP_CPP_LOG_C=\
+	".\src\cvs.h"\
+	
+
+"$(INTDIR)\log.obj" : $(SOURCE) $(DEP_CPP_LOG_C) "$(INTDIR)"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+!ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
+
 DEP_CPP_LOG_C=\
 	".\src\cvs.h"\
 	".\windows-NT\config.h"\
@@ -2050,11 +2796,27 @@ NODEP_CPP_LOG_C=\
    $(CPP) $(CPP_PROJ) $(SOURCE)
 
 
+!ENDIF 
+
 # End Source File
 ################################################################################
 # Begin Source File
 
 SOURCE=.\src\wrapper.c
+
+!IF  "$(CFG)" == "cvsnt - Win32 Release"
+
+DEP_CPP_WRAPP=\
+	".\src\cvs.h"\
+	".\lib\getline.h"\
+	
+
+"$(INTDIR)\wrapper.obj" : $(SOURCE) $(DEP_CPP_WRAPP) "$(INTDIR)"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+!ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
+
 DEP_CPP_WRAPP=\
 	".\src\cvs.h"\
 	".\lib\getline.h"\
@@ -2087,11 +2849,26 @@ NODEP_CPP_WRAPP=\
    $(CPP) $(CPP_PROJ) $(SOURCE)
 
 
+!ENDIF 
+
 # End Source File
 ################################################################################
 # Begin Source File
 
 SOURCE=.\src\error.c
+
+!IF  "$(CFG)" == "cvsnt - Win32 Release"
+
+DEP_CPP_ERROR=\
+	".\src\cvs.h"\
+	
+
+"$(INTDIR)\error.obj" : $(SOURCE) $(DEP_CPP_ERROR) "$(INTDIR)"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+!ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
+
 DEP_CPP_ERROR=\
 	".\src\cvs.h"\
 	".\windows-NT\config.h"\
@@ -2123,11 +2900,27 @@ NODEP_CPP_ERROR=\
    $(CPP) $(CPP_PROJ) $(SOURCE)
 
 
+!ENDIF 
+
 # End Source File
 ################################################################################
 # Begin Source File
 
 SOURCE=.\src\expand_path.c
+
+!IF  "$(CFG)" == "cvsnt - Win32 Release"
+
+DEP_CPP_EXPAN=\
+	".\src\cvs.h"\
+	{$(INCLUDE)}"\sys\Types.h"\
+	
+
+"$(INTDIR)\expand_path.obj" : $(SOURCE) $(DEP_CPP_EXPAN) "$(INTDIR)"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+!ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
+
 DEP_CPP_EXPAN=\
 	".\src\cvs.h"\
 	{$(INCLUDE)}"\sys\Types.h"\
@@ -2159,11 +2952,30 @@ NODEP_CPP_EXPAN=\
    $(CPP) $(CPP_PROJ) $(SOURCE)
 
 
+!ENDIF 
+
 # End Source File
 ################################################################################
 # Begin Source File
 
 SOURCE=.\src\edit.c
+
+!IF  "$(CFG)" == "cvsnt - Win32 Release"
+
+DEP_CPP_EDIT_=\
+	".\src\cvs.h"\
+	".\lib\getline.h"\
+	".\src\watch.h"\
+	".\src\edit.h"\
+	".\src\fileattr.h"\
+	
+
+"$(INTDIR)\edit.obj" : $(SOURCE) $(DEP_CPP_EDIT_) "$(INTDIR)"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+!ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
+
 DEP_CPP_EDIT_=\
 	".\src\cvs.h"\
 	".\lib\getline.h"\
@@ -2199,11 +3011,28 @@ NODEP_CPP_EDIT_=\
    $(CPP) $(CPP_PROJ) $(SOURCE)
 
 
+!ENDIF 
+
 # End Source File
 ################################################################################
 # Begin Source File
 
 SOURCE=.\src\fileattr.c
+
+!IF  "$(CFG)" == "cvsnt - Win32 Release"
+
+DEP_CPP_FILEA=\
+	".\src\cvs.h"\
+	".\lib\getline.h"\
+	".\src\fileattr.h"\
+	
+
+"$(INTDIR)\fileattr.obj" : $(SOURCE) $(DEP_CPP_FILEA) "$(INTDIR)"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+!ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
+
 DEP_CPP_FILEA=\
 	".\src\cvs.h"\
 	".\lib\getline.h"\
@@ -2237,11 +3066,29 @@ NODEP_CPP_FILEA=\
    $(CPP) $(CPP_PROJ) $(SOURCE)
 
 
+!ENDIF 
+
 # End Source File
 ################################################################################
 # Begin Source File
 
 SOURCE=.\src\watch.c
+
+!IF  "$(CFG)" == "cvsnt - Win32 Release"
+
+DEP_CPP_WATCH=\
+	".\src\cvs.h"\
+	".\src\edit.h"\
+	".\src\fileattr.h"\
+	".\src\watch.h"\
+	
+
+"$(INTDIR)\watch.obj" : $(SOURCE) $(DEP_CPP_WATCH) "$(INTDIR)"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+!ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
+
 DEP_CPP_WATCH=\
 	".\src\cvs.h"\
 	".\src\edit.h"\
@@ -2276,11 +3123,27 @@ NODEP_CPP_WATCH=\
    $(CPP) $(CPP_PROJ) $(SOURCE)
 
 
+!ENDIF 
+
 # End Source File
 ################################################################################
 # Begin Source File
 
 SOURCE=.\src\login.c
+
+!IF  "$(CFG)" == "cvsnt - Win32 Release"
+
+DEP_CPP_LOGIN=\
+	".\src\cvs.h"\
+	".\lib\getline.h"\
+	
+
+"$(INTDIR)\login.obj" : $(SOURCE) $(DEP_CPP_LOGIN) "$(INTDIR)"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+!ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
+
 DEP_CPP_LOGIN=\
 	".\src\cvs.h"\
 	".\lib\getline.h"\
@@ -2313,11 +3176,26 @@ NODEP_CPP_LOGIN=\
    $(CPP) $(CPP_PROJ) $(SOURCE)
 
 
+!ENDIF 
+
 # End Source File
 ################################################################################
 # Begin Source File
 
 SOURCE=.\src\scramble.c
+
+!IF  "$(CFG)" == "cvsnt - Win32 Release"
+
+DEP_CPP_SCRAM=\
+	".\src\cvs.h"\
+	
+
+"$(INTDIR)\scramble.obj" : $(SOURCE) $(DEP_CPP_SCRAM) "$(INTDIR)"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+!ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
+
 DEP_CPP_SCRAM=\
 	".\src\cvs.h"\
 	".\windows-NT\config.h"\
@@ -2349,11 +3227,27 @@ NODEP_CPP_SCRAM=\
    $(CPP) $(CPP_PROJ) $(SOURCE)
 
 
+!ENDIF 
+
 # End Source File
 ################################################################################
 # Begin Source File
 
 SOURCE=.\src\buffer.c
+
+!IF  "$(CFG)" == "cvsnt - Win32 Release"
+
+DEP_CPP_BUFFE=\
+	".\src\cvs.h"\
+	".\src\buffer.h"\
+	
+
+"$(INTDIR)\buffer.obj" : $(SOURCE) $(DEP_CPP_BUFFE) "$(INTDIR)"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+!ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
+
 DEP_CPP_BUFFE=\
 	".\src\cvs.h"\
 	".\src\buffer.h"\
@@ -2386,11 +3280,29 @@ NODEP_CPP_BUFFE=\
    $(CPP) $(CPP_PROJ) $(SOURCE)
 
 
+!ENDIF 
+
 # End Source File
 ################################################################################
 # Begin Source File
 
 SOURCE=.\src\zlib.c
+
+!IF  "$(CFG)" == "cvsnt - Win32 Release"
+
+DEP_CPP_ZLIB_=\
+	".\src\cvs.h"\
+	".\src\buffer.h"\
+	".\zlib\zlib.h"\
+	".\zlib\zconf.h"\
+	
+
+"$(INTDIR)\zlib.obj" : $(SOURCE) $(DEP_CPP_ZLIB_) "$(INTDIR)"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+!ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
+
 DEP_CPP_ZLIB_=\
 	".\src\cvs.h"\
 	".\src\buffer.h"\
@@ -2424,6 +3336,8 @@ NODEP_CPP_ZLIB_=\
 "$(INTDIR)\zlib.obj" : $(SOURCE) $(DEP_CPP_ZLIB_) "$(INTDIR)"
    $(CPP) $(CPP_PROJ) $(SOURCE)
 
+
+!ENDIF 
 
 # End Source File
 ################################################################################
@@ -2689,6 +3603,19 @@ DEP_CPP_VASPR=\
 # Begin Source File
 
 SOURCE=".\windows-NT\mkdir.c"
+
+!IF  "$(CFG)" == "cvsnt - Win32 Release"
+
+DEP_CPP_MKDIR=\
+	".\src\cvs.h"\
+	
+
+"$(INTDIR)\mkdir.obj" : $(SOURCE) $(DEP_CPP_MKDIR) "$(INTDIR)"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+!ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
+
 DEP_CPP_MKDIR=\
 	".\src\cvs.h"\
 	".\windows-NT\config.h"\
@@ -2720,11 +3647,26 @@ NODEP_CPP_MKDIR=\
    $(CPP) $(CPP_PROJ) $(SOURCE)
 
 
+!ENDIF 
+
 # End Source File
 ################################################################################
 # Begin Source File
 
 SOURCE=".\windows-NT\run.c"
+
+!IF  "$(CFG)" == "cvsnt - Win32 Release"
+
+DEP_CPP_RUN_C=\
+	".\src\cvs.h"\
+	
+
+"$(INTDIR)\run.obj" : $(SOURCE) $(DEP_CPP_RUN_C) "$(INTDIR)"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+!ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
+
 DEP_CPP_RUN_C=\
 	".\src\cvs.h"\
 	".\windows-NT\config.h"\
@@ -2756,6 +3698,8 @@ NODEP_CPP_RUN_C=\
    $(CPP) $(CPP_PROJ) $(SOURCE)
 
 
+!ENDIF 
+
 # End Source File
 ################################################################################
 # Begin Source File
@@ -2774,6 +3718,19 @@ DEP_CPP_PWD_C=\
 # Begin Source File
 
 SOURCE=".\windows-NT\filesubr.c"
+
+!IF  "$(CFG)" == "cvsnt - Win32 Release"
+
+DEP_CPP_FILES=\
+	".\src\cvs.h"\
+	
+
+"$(INTDIR)\filesubr.obj" : $(SOURCE) $(DEP_CPP_FILES) "$(INTDIR)"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+!ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
+
 DEP_CPP_FILES=\
 	".\src\cvs.h"\
 	".\windows-NT\config.h"\
@@ -2804,6 +3761,8 @@ NODEP_CPP_FILES=\
 "$(INTDIR)\filesubr.obj" : $(SOURCE) $(DEP_CPP_FILES) "$(INTDIR)"
    $(CPP) $(CPP_PROJ) $(SOURCE)
 
+
+!ENDIF 
 
 # End Source File
 ################################################################################
@@ -2861,9 +3820,25 @@ SOURCE=".\windows-NT\stripslash.c"
 # Begin Source File
 
 SOURCE=".\windows-NT\rcmd.c"
+
+!IF  "$(CFG)" == "cvsnt - Win32 Release"
+
 DEP_CPP_RCMD_=\
 	".\src\cvs.h"\
 	".\windows-NT\rcmd.h"\
+	{$(INCLUDE)}"\sys\Types.h"\
+	
+
+"$(INTDIR)\rcmd.obj" : $(SOURCE) $(DEP_CPP_RCMD_) "$(INTDIR)"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+!ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
+
+DEP_CPP_RCMD_=\
+	".\src\cvs.h"\
+	".\windows-NT\rcmd.h"\
+	{$(INCLUDE)}"\sys\Types.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\options.h"\
 	".\lib\fnmatch.h"\
@@ -2878,7 +3853,6 @@ DEP_CPP_RCMD_=\
 	".\src\rcs.h"\
 	".\src\update.h"\
 	".\src\server.h"\
-	{$(INCLUDE)}"\sys\Types.h"\
 	{$(INCLUDE)}"\sys\Stat.h"\
 	{$(INCLUDE)}"\sys\Timeb.h"\
 	{$(INCLUDE)}"\sys\Utime.h"\
@@ -2893,11 +3867,27 @@ NODEP_CPP_RCMD_=\
    $(CPP) $(CPP_PROJ) $(SOURCE)
 
 
+!ENDIF 
+
 # End Source File
 ################################################################################
 # Begin Source File
 
 SOURCE=".\windows-NT\startserver.c"
+
+!IF  "$(CFG)" == "cvsnt - Win32 Release"
+
+DEP_CPP_START=\
+	".\src\cvs.h"\
+	".\windows-NT\rcmd.h"\
+	
+
+"$(INTDIR)\startserver.obj" : $(SOURCE) $(DEP_CPP_START) "$(INTDIR)"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+!ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
+
 DEP_CPP_START=\
 	".\src\cvs.h"\
 	".\windows-NT\rcmd.h"\
@@ -2929,6 +3919,8 @@ NODEP_CPP_START=\
 "$(INTDIR)\startserver.obj" : $(SOURCE) $(DEP_CPP_START) "$(INTDIR)"
    $(CPP) $(CPP_PROJ) $(SOURCE)
 
+
+!ENDIF 
 
 # End Source File
 ################################################################################
@@ -3179,6 +4171,292 @@ SOURCE=".\windows-NT\sockerror.c"
 "$(INTDIR)\sockerror.obj" : $(SOURCE) "$(INTDIR)"
    $(CPP) $(CPP_PROJ) $(SOURCE)
 
+
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=.\diff\util.c
+DEP_CPP_UTIL_=\
+	".\diff\diff.h"\
+	".\diff\system.h"\
+	".\lib\regex.h"\
+	".\windows-NT\config.h"\
+	{$(INCLUDE)}"\sys\Types.h"\
+	{$(INCLUDE)}"\sys\Stat.h"\
+	".\windows-NT\ndir.h"\
+	
+
+"$(INTDIR)\util.obj" : $(SOURCE) $(DEP_CPP_UTIL_) "$(INTDIR)"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=.\diff\cmpbuf.c
+DEP_CPP_CMPBU=\
+	".\diff\system.h"\
+	".\diff\cmpbuf.h"\
+	".\windows-NT\config.h"\
+	{$(INCLUDE)}"\sys\Types.h"\
+	{$(INCLUDE)}"\sys\Stat.h"\
+	".\windows-NT\ndir.h"\
+	
+
+"$(INTDIR)\cmpbuf.obj" : $(SOURCE) $(DEP_CPP_CMPBU) "$(INTDIR)"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=.\diff\context.c
+DEP_CPP_CONTE=\
+	".\diff\diff.h"\
+	".\diff\system.h"\
+	".\lib\regex.h"\
+	".\windows-NT\config.h"\
+	{$(INCLUDE)}"\sys\Types.h"\
+	{$(INCLUDE)}"\sys\Stat.h"\
+	".\windows-NT\ndir.h"\
+	
+
+"$(INTDIR)\context.obj" : $(SOURCE) $(DEP_CPP_CONTE) "$(INTDIR)"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=.\diff\diff.c
+DEP_CPP_DIFF_=\
+	".\diff\diff.h"\
+	".\lib\getopt.h"\
+	".\lib\fnmatch.h"\
+	".\diff\system.h"\
+	".\lib\regex.h"\
+	".\windows-NT\config.h"\
+	{$(INCLUDE)}"\sys\Types.h"\
+	{$(INCLUDE)}"\sys\Stat.h"\
+	".\windows-NT\ndir.h"\
+	
+INTDIR_SRC=.\WinRel\2
+"$(INTDIR_SRC)" :
+    if not exist "$(INTDIR_SRC)/$(NULL)" mkdir "$(INTDIR_SRC)"
+
+!IF  "$(CFG)" == "cvsnt - Win32 Release"
+
+# PROP Intermediate_Dir "WinRel\2"
+
+".\WinRel\2\diff.obj" : $(SOURCE) $(DEP_CPP_DIFF_) "$(INTDIR_SRC)"
+   $(CPP) /nologo /ML /W3 /GX /Ob1 /I "windows-NT" /I "lib" /I "src" /I "zlib"\
+ /D "NDEBUG" /D "WIN32" /D "_CONSOLE" /D "HAVE_CONFIG_H" /Fp"WinRel/cvsnt.pch"\
+ /YX /Fo"$(INTDIR_SRC)/" /c $(SOURCE)
+
+
+!ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
+
+# PROP Intermediate_Dir "WinDebug\2"
+
+".\WinDebug\2\diff.obj" : $(SOURCE) $(DEP_CPP_DIFF_) "$(INTDIR_SRC)"
+   $(CPP) /nologo /MLd /W3 /Gm /GX /Zi /Ob1 /I "windows-NT" /I "lib" /I "src"\
+ /I "zlib" /D "_DEBUG" /D "WIN32" /D "_CONSOLE" /D "HAVE_CONFIG_H"\
+ /Fp"WinDebug/cvsnt.pch" /YX /Fo"$(INTDIR_SRC)/" /Fd"$(INTDIR_SRC)/" /c\
+ $(SOURCE)
+
+
+!ENDIF 
+
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=.\diff\diff3.c
+DEP_CPP_DIFF3=\
+	".\diff\system.h"\
+	".\lib\getopt.h"\
+	".\windows-NT\config.h"\
+	{$(INCLUDE)}"\sys\Types.h"\
+	{$(INCLUDE)}"\sys\Stat.h"\
+	".\windows-NT\ndir.h"\
+	
+
+"$(INTDIR)\diff3.obj" : $(SOURCE) $(DEP_CPP_DIFF3) "$(INTDIR)"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=.\diff\dir.c
+DEP_CPP_DIR_C=\
+	".\diff\diff.h"\
+	".\diff\system.h"\
+	".\lib\regex.h"\
+	".\windows-NT\config.h"\
+	{$(INCLUDE)}"\sys\Types.h"\
+	{$(INCLUDE)}"\sys\Stat.h"\
+	".\windows-NT\ndir.h"\
+	
+
+"$(INTDIR)\dir.obj" : $(SOURCE) $(DEP_CPP_DIR_C) "$(INTDIR)"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=.\diff\ed.c
+DEP_CPP_ED_Cbc=\
+	".\diff\diff.h"\
+	".\diff\system.h"\
+	".\lib\regex.h"\
+	".\windows-NT\config.h"\
+	{$(INCLUDE)}"\sys\Types.h"\
+	{$(INCLUDE)}"\sys\Stat.h"\
+	".\windows-NT\ndir.h"\
+	
+
+"$(INTDIR)\ed.obj" : $(SOURCE) $(DEP_CPP_ED_Cbc) "$(INTDIR)"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=.\diff\ifdef.c
+DEP_CPP_IFDEF=\
+	".\diff\diff.h"\
+	".\diff\system.h"\
+	".\lib\regex.h"\
+	".\windows-NT\config.h"\
+	{$(INCLUDE)}"\sys\Types.h"\
+	{$(INCLUDE)}"\sys\Stat.h"\
+	".\windows-NT\ndir.h"\
+	
+
+"$(INTDIR)\ifdef.obj" : $(SOURCE) $(DEP_CPP_IFDEF) "$(INTDIR)"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=.\diff\io.c
+DEP_CPP_IO_Cc0=\
+	".\diff\diff.h"\
+	".\diff\system.h"\
+	".\lib\regex.h"\
+	".\windows-NT\config.h"\
+	{$(INCLUDE)}"\sys\Types.h"\
+	{$(INCLUDE)}"\sys\Stat.h"\
+	".\windows-NT\ndir.h"\
+	
+
+"$(INTDIR)\io.obj" : $(SOURCE) $(DEP_CPP_IO_Cc0) "$(INTDIR)"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=.\diff\normal.c
+DEP_CPP_NORMA=\
+	".\diff\diff.h"\
+	".\diff\system.h"\
+	".\lib\regex.h"\
+	".\windows-NT\config.h"\
+	{$(INCLUDE)}"\sys\Types.h"\
+	{$(INCLUDE)}"\sys\Stat.h"\
+	".\windows-NT\ndir.h"\
+	
+
+"$(INTDIR)\normal.obj" : $(SOURCE) $(DEP_CPP_NORMA) "$(INTDIR)"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=.\diff\side.c
+DEP_CPP_SIDE_=\
+	".\diff\diff.h"\
+	".\diff\system.h"\
+	".\lib\regex.h"\
+	".\windows-NT\config.h"\
+	{$(INCLUDE)}"\sys\Types.h"\
+	{$(INCLUDE)}"\sys\Stat.h"\
+	".\windows-NT\ndir.h"\
+	
+
+"$(INTDIR)\side.obj" : $(SOURCE) $(DEP_CPP_SIDE_) "$(INTDIR)"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=.\diff\analyze.c
+DEP_CPP_ANALY=\
+	".\diff\diff.h"\
+	".\diff\cmpbuf.h"\
+	".\diff\system.h"\
+	".\lib\regex.h"\
+	".\windows-NT\config.h"\
+	{$(INCLUDE)}"\sys\Types.h"\
+	{$(INCLUDE)}"\sys\Stat.h"\
+	".\windows-NT\ndir.h"\
+	
+
+"$(INTDIR)\analyze.obj" : $(SOURCE) $(DEP_CPP_ANALY) "$(INTDIR)"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=.\diff\version.c
+DEP_CPP_VERSI=\
+	".\windows-NT\config.h"\
+	
+INTDIR_SRC=.\WinRel\2
+"$(INTDIR_SRC)" :
+    if not exist "$(INTDIR_SRC)/$(NULL)" mkdir "$(INTDIR_SRC)"
+
+!IF  "$(CFG)" == "cvsnt - Win32 Release"
+
+# PROP Intermediate_Dir "WinRel\2"
+
+".\WinRel\2\version.obj" : $(SOURCE) $(DEP_CPP_VERSI) "$(INTDIR_SRC)"
+   $(CPP) /nologo /ML /W3 /GX /Ob1 /I "windows-NT" /I "lib" /I "src" /I "zlib"\
+ /D "NDEBUG" /D "WIN32" /D "_CONSOLE" /D "HAVE_CONFIG_H" /Fp"WinRel/cvsnt.pch"\
+ /YX /Fo"$(INTDIR_SRC)/" /c $(SOURCE)
+
+
+!ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
+
+# PROP Intermediate_Dir "WinDebug\2"
+
+".\WinDebug\2\version.obj" : $(SOURCE) $(DEP_CPP_VERSI) "$(INTDIR_SRC)"
+   $(CPP) /nologo /MLd /W3 /Gm /GX /Zi /Ob1 /I "windows-NT" /I "lib" /I "src"\
+ /I "zlib" /D "_DEBUG" /D "WIN32" /D "_CONSOLE" /D "HAVE_CONFIG_H"\
+ /Fp"WinDebug/cvsnt.pch" /YX /Fo"$(INTDIR_SRC)/" /Fd"$(INTDIR_SRC)/" /c\
+ $(SOURCE)
+
+
+!ENDIF 
 
 # End Source File
 # End Target
