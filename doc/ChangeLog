@@ -1,3 +1,10 @@
+2004-05-10  Derek Price  <derek@ximbiot.com>
+
+	* mkman.in: Organize & tidy comments.  Check for unprocessed texinfo
+	commands.  Output better error messages on finding unprocessed texinfo
+	commands.
+	(do_keyword, keyword_mode): Accept $file argument for error messages.
+
 2004-05-06  Derek Price  <derek@ximbiot.com>
 
 	* mkman.in: Require Perl 5.005.  Add comments.  Remove duplicate s///.
