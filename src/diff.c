@@ -532,7 +532,7 @@ diff_fileproc (callerdat, finfo)
 					(*options
 					 ? options
 					 : vers->options),
-					tmp, 0);
+					tmp);
 		if (retcode == -1)
 		{
 		    (void) CVS_UNLINK (tmp);
@@ -551,7 +551,7 @@ diff_fileproc (callerdat, finfo)
 	    tmp = cvs_temp_name ();
 	    retcode = RCS_checkout (vers->srcfile, NULL, use_rev1,
 				    *options ? options : vers->options,
-				    tmp, 0);
+				    tmp);
 	    if (retcode == -1)
 	    {
 		(void) CVS_UNLINK (tmp);
@@ -844,7 +844,7 @@ diff_file_nodiff (finfo, vers, empty_file)
     tmp = cvs_temp_name ();
     retcode = RCS_checkout (vers->srcfile, NULL, use_rev1,
 			    *options ? options : vers->options,
-			    tmp, 0);
+			    tmp);
     switch (retcode)
     {
 	case 0:				/* everything ok */

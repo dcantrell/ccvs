@@ -2102,17 +2102,15 @@ RCS_getexpand (rcs)
    keyword expansion options, or NULL if there are none.  If WORKFILE
    is NULL, run regardless of noexec; if non-NULL, noexec inhibits
    execution.  SOUT is what to do with standard output (typically
-   RUN_TTY).  If FLAGS & RCS_FLAGS_FORCE, check out even on top of an
-   existing file.  */
+   RUN_TTY).  */
 
 int
-RCS_checkout (rcs, workfile, tag, options, sout, flags)
+RCS_checkout (rcs, workfile, tag, options, sout)
      RCSNode *rcs;
      char *workfile;
      char *tag;
      char *options;
      char *sout;
-     int flags;
 {
     FILE *fp;
     struct stat sb;
@@ -2322,7 +2320,7 @@ RCS_checkout (rcs, workfile, tag, options, sout, flags)
 
     /* We were not able to optimize retrieving this revision.  */
 
-    return RCS_exec_checkout (rcs->path, workfile, tag, options, sout, flags);
+    return RCS_exec_checkout (rcs->path, workfile, tag, options, sout);
 }
 
 /* For RCS file RCS, make symbolic tag TAG point to revision REV.
