@@ -1,5 +1,12 @@
 2001-01-05  Derek Price  <derek.price@openavenue.com>
 
+	* cvs.h (enum CVSmethod): add null_method
+	* root.c (method_names): correlate null_method & "undefined"
+	(parse_cvsroot): make two error cases non fatal
+	* sanity.sh (crerepos-6b): account for new error message, re above
+
+2001-01-05  Derek Price  <derek.price@openavenue.com>
+
 	* src/Makefile.am (cvsbug, cvsbug_EXTRA_DIST, EXTRA_DIST): move cvsbug
 	target to configure.in - see ../ChangeLog for more
 	* src/cvsbug.in: Rename from cvsbug.sh

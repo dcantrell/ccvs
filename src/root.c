@@ -16,7 +16,7 @@
    Watch out if the enum is changed in cvs.h! */
 
 char *method_names[] = {
-    "local", "server (rsh)", "pserver", "kserver", "gserver", "ext", "fork"
+    "undefined", "local", "server (rsh)", "pserver", "kserver", "gserver", "ext", "fork"
 };
 
 #ifndef DEBUG
@@ -335,7 +335,7 @@ parse_cvsroot (CVSroot)
 	{
 	    error (0, 0, "bad CVSroot: %s", CVSroot);
 	    free (cvsroot_save);
-	    return 1;
+	    goto error_exit;
 	}
 	*p = '\0';
 	cvsroot_copy = ++p;
@@ -360,7 +360,7 @@ parse_cvsroot (CVSroot)
 	{
 	    error (0, 0, "unknown method in CVSroot: %s", CVSroot);
 	    free (cvsroot_save);
-	    return 1;
+	    goto error_exit;
 	}
     }
     else
@@ -400,7 +400,8 @@ parse_cvsroot (CVSroot)
 	    error (0, 0, "requires a path spec");
 	    error (0, 0, ":(gserver|kserver|pserver):[[user][:password]@]host[:[port]]/path");
 	    error (0, 0, "[:(ext|server):][[user]@]host[:]/path");
-	    return 1;
+	    free (cvsroot_save);
+	    goto error_exit;
 	}
 	firstslash = p;		/* == NULL if '/' not in string */
 	*p = '\0';
@@ -452,7 +453,8 @@ parse_cvsroot (CVSroot)
 			error(0, 0, "may only specify a positive, non-zero, integer port (not \"%s\").",
 				p);
 			error(0, 0, "perhaps you entered a relative pathname?");
-			return 1;
+			free (cvsroot_save);
+			goto error_exit;
 		    }
 		}
 		if ((CVSroot_port = atoi (p)) <= 0)
@@ -461,7 +463,8 @@ parse_cvsroot (CVSroot)
 		    error(0, 0, "may only specify a positive, non-zero, integer port (not \"%s\").",
 			    p);
 		    error(0, 0, "perhaps you entered a relative pathname?");
-		    return 1;
+		    free (cvsroot_save);
+		    goto error_exit;
 		}
 	    }
 	}
@@ -484,22 +487,34 @@ parse_cvsroot (CVSroot)
     CVSroot_directory = xstrdup(cvsroot_copy);
     free (cvsroot_save);
 
+    /*
+     * Do various sanity checks.
+     */
+
 #if ! defined (CLIENT_SUPPORT) && ! defined (DEBUG)
     if (CVSroot_method != local_method)
     {
 	error (0, 0, "CVSROOT \"%s\"", CVSroot);
 	error (0, 0, "is set for a remote access method but your");
 	error (0, 0, "CVS executable doesn't support it");
-	return 1;
+	goto error_exit;
     }
 #endif
-  
-    /* Do various sanity checks. */
+
+#if ! defined (SERVER_SUPPORT) && ! defined (DEBUG)
+    if (CVSroot_method == fork_method)
+    {
+	error (0, 0, "CVSROOT \"%s\"", CVSroot);
+	error (0, 0, "is set to use the :fork: access method but your");
+	error (0, 0, "CVS executable doesn't support it");
+	goto error_exit;
+     }
+#endif
 
     if (CVSroot_username && ! CVSroot_hostname)
     {
 	error (0, 0, "missing hostname in CVSROOT: \"%s\"", CVSroot);
-	return 1;
+	goto error_exit;
     }
 
     check_hostname = 0;
@@ -513,7 +528,7 @@ parse_cvsroot (CVSroot)
 	    error (0, 0, "can't specify hostname and username in CVSROOT");
 	    error (0, 0, "(\"%s\")", CVSroot);
 	    error (0, 0, "when using local access method");
-	    return 1;
+	    goto error_exit;
 	}
 	/* cvs.texinfo has always told people that CVSROOT must be an
 	   absolute pathname.  Furthermore, attempts to use a relative
@@ -521,8 +536,11 @@ parse_cvsroot (CVSroot)
 	   so there would seem to be little risk in making this a fatal
 	   error.  */
 	if (!isabsolute (CVSroot_directory))
-	    error (1, 0, "CVSROOT \"%s\" must be an absolute pathname",
+	{
+	    error (0, 0, "CVSROOT \"%s\" must be an absolute pathname",
 		   CVSroot_directory);
+	    goto error_exit;
+	}
 	no_port = 1;
 	no_password = 1;
 	break;
@@ -535,11 +553,14 @@ parse_cvsroot (CVSroot)
 	    error (0, 0, "can't specify hostname and username in CVSROOT");
 	    error (0, 0, "(\"%s\")", CVSroot);
 	    error (0, 0, "when using fork access method");
-	    return 1;
+	    goto error_exit;
 	}
 	if (!isabsolute (CVSroot_directory))
-	    error (1, 0, "CVSROOT \"%s\" must be an absolute pathname",
+	{
+	    error (0, 0, "CVSROOT \"%s\" must be an absolute pathname",
 		   CVSroot_directory);
+	    goto error_exit;
+	}
 	no_port = 1;
 	no_password = 1;
 	break;
@@ -548,7 +569,7 @@ parse_cvsroot (CVSroot)
 	error (0, 0, "CVSROOT \"%s\"", CVSroot);
        	error (0, 0, "is set for a kerberos access method but your");
 	error (0, 0, "CVS executable doesn't support it");
-	return 1;
+	goto error_exit;
 #else
 	check_hostname = 1;
 	break;
@@ -558,7 +579,7 @@ parse_cvsroot (CVSroot)
 	error (0, 0, "CVSROOT \"%s\"", CVSroot);
 	error (0, 0, "is set for a GSSAPI access method but your");
 	error (0, 0, "CVS executable doesn't support it");
-	return 1;
+	goto error_exit;
 #else
 	check_hostname = 1;
 	break;
@@ -578,30 +599,33 @@ parse_cvsroot (CVSroot)
     {
 	error (0, 0, "CVSROOT password specification is only valid for");
 	error (0, 0, "pserver connection method.");
-	return 1;
+	goto error_exit;
     }
 
     if (check_hostname && !CVSroot_hostname)
     {
 	error (0, 0, "didn't specify hostname in CVSROOT: %s", CVSroot);
-	return 1;
+	goto error_exit;
     }
 
     if (no_port && CVSroot_port)
 	{
 	    error (0, 0, "CVSROOT port specification is only valid for gserver, kserver,");
 	    error (0, 0, "and pserver connection methods.");
-	    return 1;
+	    goto error_exit;
 	}
 
     if (*CVSroot_directory == '\0')
     {
 	error (0, 0, "missing directory in CVSROOT: %s", CVSroot);
-	return 1;
+	goto error_exit;
     }
     
     /* Hooray!  We finally parsed it! */
     return 0;
+
+error_exit:
+    return 1;
 }
 
 #ifdef AUTH_CLIENT_SUPPORT
