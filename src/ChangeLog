@@ -1,3 +1,12 @@
+Sat Feb 22 08:30:27 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* filesubr.c, root.c, rtag.c, server.c, subr.c, update.c,
+	wrapper.c: Nuke PATH_MAX.
+	* cvs.h, wrapper.c (wrap_fromcvs_process_file): Now returns void
+	(return value had been unused).
+	* cvs.h: Adjust comment to reflect the fact that PATH_MAX is
+	gone, at least from src/*.c (except safe_location, as noted).
+
 22 Feb 1997  patch by Tom Hageman  <tom@basil.icce.rug.nl> (4 Jun 1996)
 	updated and commented by Jim Kingdon  <kingdon@harvey.cyclic.com>
 

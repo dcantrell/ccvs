@@ -516,13 +516,17 @@ serve_root (arg)
     char *arg;
 {
     char *env;
-    char path[PATH_MAX];
+    char *path;
     int save_errno;
     
     if (error_pending()) return;
 
     set_local_cvsroot (arg);
-    
+
+    path = xmalloc (strlen (CVSroot_directory)
+		    + sizeof (CVSROOTADM)
+		    + sizeof (CVSROOTADM_HISTORY)
+		    + 10);
     (void) sprintf (path, "%s/%s", CVSroot_directory, CVSROOTADM);
     if (!isaccessible (path, R_OK | X_OK))
     {
@@ -4375,10 +4379,15 @@ handle_return:
 void
 pserver_authenticate_connection ()
 {
-    char tmp[PATH_MAX];
-    char repository[PATH_MAX];
-    char username[PATH_MAX];
-    char password[PATH_MAX];
+    char *tmp = NULL;
+    size_t tmp_allocated = 0;
+    char *repository = NULL;
+    size_t repository_allocated = 0;
+    char *username = NULL;
+    size_t username_allocated = 0;
+    char *password = NULL;
+    size_t password_allocated = 0;
+
     char *host_user;
     char *descrambled_password;
     int verify_and_exit = 0;
@@ -4437,16 +4446,22 @@ pserver_authenticate_connection ()
 #endif
 
     /* Make sure the protocol starts off on the right foot... */
-    fgets (tmp, PATH_MAX, stdin);
+    if (getline (&tmp, &tmp_allocated, stdin) < 0)
+	/* FIXME: what?  We could try writing error/eof, but chances
+	   are the network connection is dead bidirectionally.  log it
+	   somewhere?  */
+	;
+
     if (strcmp (tmp, "BEGIN VERIFICATION REQUEST\n") == 0)
 	verify_and_exit = 1;
     else if (strcmp (tmp, "BEGIN AUTH REQUEST\n") != 0)
 	error (1, 0, "bad auth protocol start: %s", tmp);
 
     /* Get the three important pieces of information in order. */
-    fgets (repository, PATH_MAX, stdin);
-    fgets (username, PATH_MAX, stdin);
-    fgets (password, PATH_MAX, stdin);
+    /* See above comment about error handling.  */
+    getline (&repository, &repository_allocated, stdin);
+    getline (&username, &username_allocated, stdin);
+    getline (&password, &password_allocated, stdin);
 
     /* Make them pure. */ 
     strip_trailing_newlines (repository);
@@ -4454,7 +4469,8 @@ pserver_authenticate_connection ()
     strip_trailing_newlines (password);
 
     /* ... and make sure the protocol ends on the right foot. */
-    fgets (tmp, PATH_MAX, stdin);
+    /* See above comment about error handling.  */
+    getline (&tmp, &tmp_allocated, stdin);
     if (strcmp (tmp,
 		verify_and_exit ?
 		"END VERIFICATION REQUEST\n" : "END AUTH REQUEST\n")
@@ -4509,6 +4525,10 @@ pserver_authenticate_connection ()
 
     /* Switch to run as this user. */
     switch_to_user (host_user);
+    free (tmp);
+    free (repository);
+    free (username);
+    free (password);
 }
 
 #endif /* AUTH_SERVER_SUPPORT */
