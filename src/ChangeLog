@@ -1,3 +1,9 @@
+2003-12-03  Larry Jones  <lawrence.jones@eds.com>
+
+	* expand_path.c (expand_variable): Expand ${CVSROOT} to just the
+	directory like it's supposed to be.
+	(Reported by Michael S. Tsirkin <cvs1@misha.eml.cc>.)
+
 2003-11-26  Mark D. Baushke  <mdb@cvshome.org>
 
 	* sanity.sh (recase-17sscs): Use ${CVSROOT_DIRNAME} in pattern.
