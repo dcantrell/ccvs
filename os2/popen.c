@@ -246,7 +246,7 @@ popen (const char *Command, const char *Mode)
  *                     Pipe[1] is attached to its stdout/err
  */
 int
-popenRW (const char  *Command, FILE **Pipes)
+popenRW (const char **argv, FILE **Pipes)
 {
     HFILE   Out1,
             Out2,
@@ -257,15 +257,7 @@ popenRW (const char  *Command, FILE **Pipes)
             Old2 = -1,
             Tmp;
 
-    char    Fail[256],
-            *Args,
-            CmdLine[256],
-            *CmdExe;
-
-    RESULTCODES
-            Result;
-
-    int     Rc;
+	PID pid;
 
     if (DosCreatePipe (&Out2, &Out1, 4096))
         return FALSE;
@@ -300,18 +292,8 @@ popenRW (const char  *Command, FILE **Pipes)
     DosSetFHState (In2, OPEN_FLAGS_NOINHERIT);
     DosSetFHState (Out2, OPEN_FLAGS_NOINHERIT);
 
-    /* Spawn child */
-    if ((CmdExe = getenv("COMSPEC")) == NULL)
-        CmdExe = "cmd.exe";
-
-    strcpy (CmdLine, CmdExe);
-    Args = CmdLine + strlen (CmdLine) + 1; /* skip zero */
-    strcpy (Args, "/c ");
-    strcat (Args, Command);
-    Args[ strlen (Args) + 1] = '\0'; /* two zeroes */
-    Rc = DosExecPgm (Fail, sizeof(Fail), EXEC_ASYNCRESULT, 
-                     (unsigned char *) CmdLine, 0, &Result,
-                     (unsigned char *) CmdExe);
+    /* Spawn we now our hoary brood. */
+	pid = spawnvp (P_NOWAIT, argv[0], argv);
 
     /* Restore stdin/out/err */
     Tmp = STDIN;
@@ -324,11 +306,11 @@ popenRW (const char  *Command, FILE **Pipes)
     DosDupHandle (Old2, &Tmp);
     DosClose (Old2);
 
-    if( Rc ) 
+    if(pid < 0) 
     {
         DosClose (In2);
         DosClose (Out2);
-        return FALSE;
+        return -1;
     }
   
     if ((Pipes[0] = fdopen (In2, "wb")) == NULL)
@@ -346,9 +328,9 @@ popenRW (const char  *Command, FILE **Pipes)
     }
     
     /* Save ID of write-to-child pipe for pclose() */
-    ll_insert ((LL_KEY) In2, (LL_VAL) Result.codeTerminate);
+    ll_insert ((LL_KEY) In2, (LL_VAL) pid);
 
-    return TRUE;
+    return pid;
 }
 
 
