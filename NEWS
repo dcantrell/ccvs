@@ -28,6 +28,8 @@ to go into an infinite loop.  There was also a bug that caused a
 compressed connection from an older client to hang on shutdown.  These
 bugs have been fixed.
 
+* Fixed a bug that caused the server to reject most watch commands.
+
 * When waiting for another user's lock, the message timestamps are now
 in UTC rather than the server's local time.
 
