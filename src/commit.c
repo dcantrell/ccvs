@@ -197,6 +197,7 @@ find_fileproc (callerdat, finfo)
     enum classify_type status;
     Node *node;
     struct find_data *args = (struct find_data *)callerdat;
+    struct logfile_info *data;
     struct file_info xfinfo;
 
     /* if this directory has an ignore list, add this file to it */
@@ -256,9 +257,13 @@ find_fileproc (callerdat, finfo)
     node = getnode ();
     node->key = xstrdup (finfo->fullname);
 
+    data = (struct logfile_info *) xmalloc (sizeof (struct logfile_info));
+    data->type = status;
+    data->tag = xstrdup (vers->tag);
+
     node->type = UPDATE;
     node->delproc = update_delproc;
-    node->data = (char *) status;
+    node->data = (char *) data;
     (void)addnode (args->ulist, node);
 
     ++args->argc;
@@ -587,6 +592,7 @@ check_fileproc (callerdat, finfo)
     List *ulist, *cilist;
     Vers_TS *vers;
     struct commit_info *ci;
+    struct logfile_info *li;
     int save_noexec, save_quiet, save_really_quiet;
 
     save_noexec = noexec;
@@ -843,7 +849,11 @@ check_fileproc (callerdat, finfo)
 	    p->key = xstrdup (finfo->file);
 	    p->type = UPDATE;
 	    p->delproc = update_delproc;
-	    p->data = (char *) status;
+	    li = ((struct logfile_info *)
+		  xmalloc (sizeof (struct logfile_info)));
+	    li->type = status;
+	    li->tag = xstrdup (vers->tag);
+	    p->data = (char *) li;
 	    (void) addnode (ulist, p);
 
 	    p = getnode ();
@@ -1153,7 +1163,6 @@ commit_filesdoneproc (callerdat, err, repository, update_dir)
     char *repository;
     char *update_dir;
 {
-    char *xtag = (char *) NULL;
     Node *p;
     List *ulist;
 
@@ -1165,13 +1174,8 @@ commit_filesdoneproc (callerdat, err, repository, update_dir)
 
     got_message = 0;
 
-    /* see if we need to specify a per-directory or -r option tag */
-    if (tag == NULL)
-	ParseTag (&xtag, (char **) NULL);
 
-    Update_Logfile (repository, message, tag ? tag : xtag, (FILE *) 0, ulist);
-    if (xtag)
-	free (xtag);
+    Update_Logfile (repository, message, (FILE *) 0, ulist);
 
     /* Build the administrative files if necessary.  */
     {
@@ -1924,13 +1928,18 @@ fix_rcs_modes (rcs, user)
 }
 
 /*
- * free an UPDATE node's data (really nothing to do)
+ * free an UPDATE node's data
  */
 void
 update_delproc (p)
     Node *p;
 {
-    p->data = (char *) NULL;
+    struct logfile_info *li;
+
+    li = (struct logfile_info *) p->data;
+    if (li->tag)
+	free (li->tag);
+    free (li);
 }
 
 /*

@@ -1,5 +1,25 @@
 Mon Jul 22 22:25:53 1996  Ian Lance Taylor  <ian@cygnus.com>
 
+	* logmsg.c (tag): New static variable.
+	(setup_tmpfile): Don't print the prefix before calling fmt_proc.
+	Free tag if it is set.
+	(find_type): Get type from logfile_info struct.
+	(fmt_proc): Likewise.  Print tag information.  Handle all prefix
+	printing.
+	(revision): Remove static variable.
+	(Update_Logfile): Remove xrevision parameter.  Change all
+	callers.
+	(title_proc): Get type from logfile_info struct.
+	(logfile_write): Remove revision parameter.  Change all callers.
+	* cvs.h (struct logfile_info): Define.
+	(Update_Logfile): Update prototype.
+	* commit.c (find_fileproc): Set logfile_info information.
+	(check_fileproc): Likewise.
+	(commit_filesdoneproc): Don't call ParseTag.
+	(update_delproc): Free logfile_info information.
+	* add.c (add_directory): Set logfile_info information.
+	* import.c (import): Likewise.
+
 	* tag.c (tag_check_valid): The special BASE and HEAD tags are
 	always valid.
 	* sanity.sh (basica): Add basica-6.3 test for above patch.

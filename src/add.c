@@ -443,6 +443,7 @@ add_directory (repository, dir)
 	mode_t omask;
 	Node *p;
 	List *ulist;
+	struct logfile_info *li;
 
 #if 0
 	char line[MAXLINELEN];
@@ -479,9 +480,12 @@ add_directory (repository, dir)
 	p->type = UPDATE;
 	p->delproc = update_delproc;
 	p->key = xstrdup ("- New directory");
-	p->data = (char *) T_TITLE;
+	li = (struct logfile_info *) xmalloc (sizeof (struct logfile_info));
+	li->type = T_TITLE;
+	li->tag = xstrdup (tag);
+	p->data = (char *) li;
 	(void) addnode (ulist, p);
-	Update_Logfile (rcsdir, message, (char *) NULL, (FILE *) NULL, ulist);
+	Update_Logfile (rcsdir, message, (FILE *) NULL, ulist);
 	dellist (&ulist);
     }
 
