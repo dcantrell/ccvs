@@ -1,3 +1,7 @@
+2005-03-08  Larry Jones  <lawrence.jones@ugs.com>
+
+	* release.c (release): Remove unneeded code.
+
 2005-03-07  Conrad T. Pino  <Conrad@Pino.com>
 
 	* buffer.h (buf_free_data): Compile with proxy disabled.
@@ -22,10 +26,6 @@
 	* find_names.c (Find_Names): Ditto.
 
 	* filesubr.c (expand_wild): Use xnmalloc instead of xmalloc.
-
-2005-02-26  Larry Jones  <lawrence.jones@ugs.com>
-
-	* release.c (release): Remove unneeded code.
 
 2005-03-07  Derek Price  <derek@ximbiot.com>
 

@@ -123,7 +123,6 @@ release (int argc, char **argv)
 {
     FILE *fp;
     int i, c;
-    char *repository;
     char *line = NULL;
     size_t line_allocated = 0;
     char *thisarg;
@@ -219,8 +218,6 @@ release (int argc, char **argv)
 	    continue;
 	}
 
-	repository = Name_Repository (NULL, NULL);
-
 	if (!really_quiet)
 	{
 	    int line_length;
@@ -258,7 +255,6 @@ release (int argc, char **argv)
 	    if (close_update_command (fp, child_pid) != 0)
 	    {
 		error (0, 0, "unable to release `%s'", thisarg);
-		free (repository);
 		if (restore_cwd (&cwd))
 		    error (1, errno,
 		           "Failed to restore current directory, `%s'.",
@@ -280,7 +276,6 @@ release (int argc, char **argv)
 		    (void) fprintf (stderr,
 				    "** `%s' aborted by user choice.\n",
 				    cvs_cmd_name);
-		    free (repository);
 		    if (restore_cwd (&cwd))
 			error (1, errno,
 			       "Failed to restore current directory, `%s'.",
@@ -290,7 +285,6 @@ release (int argc, char **argv)
 	    }
 	    else
 	    {
-		free (repository);
 		if (restore_cwd (&cwd))
 		    error (1, errno,
 			   "Failed to restore current directory, `%s'.",
@@ -306,7 +300,6 @@ release (int argc, char **argv)
            CVS/Entries file in the wrong directory.  See release-17
            through release-23. */
 
-        free (repository);
 	if (restore_cwd (&cwd))
 	    error (1, errno, "Failed to restore current directory, `%s'.",
 		   cwd.name);
