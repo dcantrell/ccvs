@@ -711,6 +711,7 @@ history_write (int type, const char *update_dir, const char *revs,
     char *slash = "", *cp;
     const char *cp2, *repos;
     int i;
+    size_t dummy;
     static char *tilde = "";
     static char *PrCurDir = NULL;
 
@@ -718,12 +719,12 @@ history_write (int type, const char *update_dir, const char *revs,
 				 * readonlyfs.
 				 */
 	return;
-    if ( strchr(logHistory, type) == NULL )	
+    if (!strchr (logHistory, type))	
 	return;
-    fname = xmalloc (strlen (current_parsed_root->directory) + sizeof (CVSROOTADM)
-		     + sizeof (CVSROOTADM_HISTORY) + 3);
-    (void) sprintf (fname, "%s/%s/%s", current_parsed_root->directory,
-		    CVSROOTADM, CVSROOTADM_HISTORY);
+
+    fname = asnprintf (NULL, &dummy, "%s/%s/%s",
+		       current_parsed_root->directory,
+		       CVSROOTADM, CVSROOTADM_HISTORY);
 
     /* turn off history logging if the history file does not exist */
     /* FIXME:  This should check for write permissions instead.  This way,
