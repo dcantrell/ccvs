@@ -229,6 +229,7 @@ int RCS_delete_revs PROTO ((RCSNode *, char *, char *, int));
 void RCS_addaccess PROTO ((RCSNode *, char *));
 void RCS_delaccess PROTO ((RCSNode *, char *));
 char *RCS_getaccess PROTO ((RCSNode *));
+RETSIGTYPE rcs_cleanup PROTO ((void));
 void RCS_rewrite PROTO ((RCSNode *, Deltatext *, char *));
 void RCS_abandon PROTO ((RCSNode *));
 int rcs_change_text PROTO ((const char *, char *, size_t, const char *,
