@@ -1,3 +1,9 @@
+1998-02-20  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* sanity.sh: Add summary of which modules tests are which (at
+	"modules).  Move cvsadm, abspath, and toplevel next to modules.
+	Add comments to clarify the structure (such as it is).
+
 Fri Feb 20 12:47:14 1998  Larry Jones  <larry.jones@sdrc.com>
 
 	* admin.c (admin_fileproc): Better fix for -b.
