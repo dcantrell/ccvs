@@ -144,18 +144,6 @@
 #undef CVS_BADROOT
 
 /*
- * The "cvs diff" command accepts all the single-character options that GNU
- * diff (1.15) accepts.  Except -D.  GNU diff uses -D as a way to put
- * cpp-style #define's around the output differences.  CVS, by default, uses
- * -D to specify a free-form date (like "cvs diff -D '1 week ago'").  If
- * you would prefer that the -D option of "cvs diff" work like the GNU diff
- * option, then comment out this define.
- */
-#ifndef CVS_DIFFDATE
-#define	CVS_DIFFDATE
-#endif
-
-/*
  * Yes, we can do the authenticated client.
  */
 #define AUTH_CLIENT_SUPPORT 1
