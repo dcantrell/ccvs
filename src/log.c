@@ -153,11 +153,11 @@ static const char *const log_usage[] =
     "\t-b\tOnly list revisions on the default branch.\n",
     "\t-r[revisions]\tA comma-separated list of revisions to print:\n",
     "\t   rev1:rev2   Between rev1 and rev2, including rev1 and rev2.\n",
-    "\t   rev1::rev2  Between rev1 and rev2, excluding rev1 and rev2.\n",
+    "\t   rev1::rev2  Between rev1 and rev2, excluding rev1.\n",
     "\t   rev:        rev and following revisions on the same branch.\n",
     "\t   rev::       After rev on the same branch.\n",
     "\t   :rev        rev and previous revisions on the same branch.\n",
-    "\t   ::rev       Before rev on the same branch.\n",
+    "\t   ::rev       rev and previous revisions on the same branch.\n",
     "\t   rev         Just rev.\n",
     "\t   branch      All revisions on the branch.\n",
     "\t   branch.     The last revision on the branch.\n",
@@ -1288,11 +1288,9 @@ log_version_requested (log_data, revlist, rcs, vnode)
 	for (r = revlist; r != NULL; r = r->next)
 	{
 	    if (vfields == r->fields + (r->fields & 1) &&
-		(r->inclusive ?
-		    version_compare (v, r->first, r->fields) >= 0
-		    && version_compare (v, r->last, r->fields) <= 0 :
-		    version_compare (v, r->first, r->fields) > 0
-		    && version_compare (v, r->last, r->fields) < 0))
+		(r->inclusive ? version_compare (v, r->first, r->fields) >= 0 :
+				version_compare (v, r->first, r->fields) > 0)
+		    && version_compare (v, r->last, r->fields) <= 0)
 	    {
 		return 1;
 	    }
