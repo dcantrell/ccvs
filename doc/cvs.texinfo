@@ -4550,51 +4550,22 @@ merging the changes between them into the working
 directory need not change anything.  Therefore, there
 is no conflict.
 
-There is, however, one major caveat with using
-@samp{-kk} on merges.  Namely, it overrides whatever
-keyword expansion mode @sc{cvs} would normally have
-used.  In particular, this is a problem if the mode had
-been @samp{-kb} for a binary file.  Therefore, if your
-repository contains binary files, you will need to deal
-with the conflicts rather than using @samp{-kk}.
+@strong{WARNING: In versions of @sc{cvs} prior to 1.12.2, there was a
+major problem with using @samp{-kk} on merges.  Namely, @samp{-kk}
+overrode any default keyword expansion mode set in the archive file in
+the repository.  This could, unfortunately for some users, cause data
+corruption in binary files (with a default keyword expansion mode set
+to @samp{-kb}).  Therefore, when a repository contained binary files,
+conflicts had to be dealt with manually rather than using @samp{-kk} in
+a merge command.}
 
-@ignore
-The following seems rather confusing, possibly buggy,
-and in general, in need of much more thought before it
-is a recommended technique.  For one thing, does it
-apply on Windows as well as on Unix?
-
-Unchanged binary files will undergo the same keyword substitution
-but will not be checked in on a subsequent
-@code{cvs commit}.  Be aware that binary files containing keyword
-strings which are present in or below the working directory
-will most likely remain corrupt until repaired, however.  A simple 
-@code{cvs update -A} is sufficient to fix these otherwise unaltered binary files
-if the merge is being done to the main branch but
-this must be done after the merge has been committed or the merge itself
-will be lost.
-
-For Example:
-@example
-cvs update -Akk -jbranchtag
-cvs commit
-cvs update -A
-@end example
-
-@noindent
-will update the current directory from the main trunk of the
-repository, substituting the base keyword strings for keywords,
-and merge changes made on the branch @samp{branchtag} into the new
-work files, performing the same keyword substitution on that file set before
-comparing the two sets.  The final @code{cvs update -A} will restore any
-corrupted binary files as well as resetting the sticky @samp{-kk} tags which
-were present on the files in and below the working directory.
-Unfortunately, this doesn't work as well with an arbitrary branch tag, as the
-@samp{-r @var{branchtag}} switch does not reset the sticky @samp{-kk}
-switches attached to the working files as @samp{-A} does.  The workaround
-for this is to release the working directory after the merge has been
-committed and check it out again.
-@end ignore
+In @sc{cvs} version 1.12.2 and later, the keyword expansion mode
+provided on the command line to any @sc{cvs} command no longer
+overrides the @samp{-kb} keyword expansion mode setting for binary
+files, though it will still override other default keyword expansion
+modes.  You can now safely merge using @samp{-kk} to avoid spurious conflicts
+on lines containing RCS keywords, even when your repository contains
+binary files.
 
 @c ---------------------------------------------------------------------
 @node Recursive behavior
@@ -7168,9 +7139,12 @@ endings between the canonical form in which they are
 stored in the repository (linefeed only), and the form
 appropriate to the operating system in use on the
 client.  For systems, like unix, which use linefeed
-only to terminate lines, this is the same as
+only to terminate lines, this is very similar to
 @samp{-ko}.  For more information on binary files, see
-@ref{Binary files}.
+@ref{Binary files}. From CVS version XXXX on, however,
+@samp{-kb} is not longer overridden by a @samp{-k} option
+to the @code{checkout}, @code{diff} or @code{update} command
+while @samp{-ko} still is.
 
 @item -kv
 Generate only keyword values for keyword strings.  For
@@ -8361,19 +8335,24 @@ those commands.  See @ref{commit options}, and
 @ref{Removing files}.
 
 @item -k @var{kflag}
-Alter the default processing of keywords.
-@xref{Keyword substitution}, for the meaning of
-@var{kflag}.  Your @var{kflag} specification is
-@dfn{sticky} when you use it to create a private copy
-of a source file; that is, when you use this option
-with the @code{checkout} or @code{update} commands,
-@sc{cvs} associates your selected @var{kflag} with the
-file, and continues to use it with future update
-commands on the same file until you specify otherwise.
+Override the default processing of RCS keywords other than
+@samp{-kb}.  @xref{Keyword substitution}, for the meaning of
+@var{kflag}.  Used with the @code{checkout} and @code{update}
+commands, your @var{kflag} specification is
+@dfn{sticky}; that is, when you use this option
+with a @code{checkout} or @code{update} command,
+@sc{cvs} associates your selected @var{kflag} with any files
+it operates on, and continues to use that @var{kflag} with future
+commands on the same files until you specify otherwise.
 
 The @samp{-k} option is available with the @code{add},
-@code{checkout}, @code{diff}, @code{import} and
+@code{checkout}, @code{diff}, @code{export}, @code{import} and
 @code{update} commands.
+
+@strong{WARNING: Prior to CVS version 1.12.2, the @samp{-k} flag
+overrode the @samp{-kb} indication for a binary file.  This could
+sometimes corrupt binary files.  @xref{Merging and keywords}, for
+more.}
 
 @item -l
 Local; run only in current working directory, rather than
