@@ -1,3 +1,7 @@
+2001-07-10  Larry Jones  <larry.jones@sdrc.com>
+
+	* commit.c (commit): Reword error messages for committing as root.
+
 2001-07-08  Larry Jones  <larry.jones@sdrc.com>
 
 	* rcs.c (RCS_checkout): Correct scanf format to allow for trailing
