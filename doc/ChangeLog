@@ -1,3 +1,10 @@
+Tue Sep 17 00:54:57 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (Defining the module): Don't suggest "cvs co
+	modules"; that depends on a "modules" module being defined which
+	is not the default which is created by "cvs init".  Instead
+	suggest "cvs co CVSROOT/modules" which should always work.
+
 Tue Sep 17 00:43:49 1996  VaX#n8  <vax@linkdead.paranoia.com>
 			  and Jim Kingdon  <kingdon@harvey.cyclic.com>
 
