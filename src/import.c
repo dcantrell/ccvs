@@ -1016,7 +1016,9 @@ write_error_noclose:
 }
 
 /*
- * Sigh..  need to expand @ signs into double @ signs
+ * Write SIZE bytes at BUF to FP, expanding @ signs into double @
+ * signs.  If an error occurs, return a negative value and set errno
+ * to indicate the error.  If not, return a nonnegative value.
  */
 static int
 expand_at_signs (buf, size, fp)
@@ -1029,7 +1031,10 @@ expand_at_signs (buf, size, fp)
     for (cp = buf, end = buf + size; cp < end; cp++)
     {
 	if (*cp == '@')
-	    (void) putc ('@', fp);
+	{
+	    if (putc ('@', fp) == EOF)
+		return EOF;
+	}
 	if (putc (*cp, fp) == EOF)
 	    return (EOF);
     }
