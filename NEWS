@@ -3,6 +3,8 @@ Changes since 1.11.12:
 
 GENERAL USER ISSUES
 
+* Several memory leaks have been plugged.
+
 * Thanks to Ville Skyttä the man page has a few less spelling errors and is
   slightly more accurate.
 
