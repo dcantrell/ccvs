@@ -1304,6 +1304,13 @@ non-@code{dead} state.
 @node Working directory storage
 @section How data is stored in the working directory
 
+@c FIXME: Somewhere we should discuss timestamps (test
+@c case "stamps" in sanity.sh).  But not here.  Maybe
+@c in some kind of "working directory" chapter which
+@c would encompass the "Builds" one?  But I'm not sure
+@c whether that is a good organization (is it based on
+@c what the user wants to do?).
+
 While we are discussing @sc{cvs} internals which may
 become visible from time to time, we might as well talk
 about what @sc{cvs} puts in the @file{CVS} directories

@@ -1,3 +1,9 @@
+Tue May 27 18:27:57 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (Working directory storage): Add comment about
+	timestamps.
+	* cvsclient.texi (Responses): Add Mod-time.
+
 Mon May 26 10:04:32 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (Wrappers): Add comment concerning -t/-f and
