@@ -15,12 +15,6 @@ similar file for the unix-like operating systems (not yet, at least).
 This file also might contain some platform-specific bugs.
 
 
-* Exporting binary files on non-unix clients with "cvs export" does
-not work.  The workaround is to use "cvs checkout" instead.  If you
-are thinking of fixing this, check out the comment "For cvs export,
-assume it is a text file." in client.c.
-
-
 * The only way to specify some files as binary in a "cvs import" is
 the command line -W option.  Both CVSROOT/cvswrappers and .cvswrappers
 are broken (the latter, in general, see comment in wrapper.c, the
