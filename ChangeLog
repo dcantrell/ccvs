@@ -1,3 +1,9 @@
+Sun Sep  7 17:34:03 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* configure.in (AC_REPLACE_FUNCS): Remove strdup; CVS was long
+	ago converted to use its own routine xstrdup.
+	* configure: Regenerated.
+
 Sat Sep  6 00:08:20 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* FAQ: Re-import from FAQ-O-Matic.  In particular: GIC info
