@@ -1,3 +1,7 @@
+Thu Dec 14 12:18:20 1995  Karl Fogel  <kfogel@floss.cyclic.com>
+
+        * options.h (AUTH_CLIENT_SUPPORT): leave unset by default.
+
 Wed Dec 13 21:31:10 1995  Karl Fogel  (kfogel@floss.cyclic.com)
 
         * waitpid.c (waitpid): Don't deal specially with statusp after all.
