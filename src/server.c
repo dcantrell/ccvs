@@ -4,6 +4,9 @@
 
 /* for select */
 #include <sys/types.h>
+#ifdef HAVE_SYS_BSDTYPES_H
+#include <sys/bsdtypes.h>
+#endif
 #include <sys/time.h>
 
 #if HAVE_SYS_SELECT_H

@@ -3,6 +3,25 @@ Mon Oct  2 18:12:15 1995  Jim Blandy  <jimb@totoro.cyclic.com>
 	* FAQ: Updated for CVS 1.5.  And now 1.6 is almost out.  The FAQ
         always lags the package, sigh...
 
+Mon Oct  2 18:10:35 1995  Larry Jones  <larry.jones@sdrc.com>
+
+	* configure, config.h.in: Rebuilt using autoconf and autoheader.
+
+	* configure.in: check for <sys/bsdtypes.h>; used by src/server.c.
+	(ISC keeps all the stuff that BSD has in <sys/types.h> here, so
+	we need it for the FD_SET stuff for select().)
+	Moved check for gethostname() after check for connect() since if
+	connect() is not found, we may add librariesd and gethostname()
+	may well be in one of those libraries. 
+	If connect() isn't found, look in -linet (ISC) in addition to
+	-lsocket and -lnsl.  Also, ignore the cache since we need to
+	update LIBS reguardless of whether it was found before or not and
+	the answer may well be different afterwards. 
+	Define CLIENT_SUPPORT and SERVER_SUPPORT only if connect() is
+	found.
+
+	* INSTALL: update info for ISC 4.0.1; renumber footnotes.
+
 Mon Oct  2 17:01:07 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* INSTALL: Indicate CVS version tested with Solaris 2.4.
