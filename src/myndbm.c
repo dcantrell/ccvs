@@ -218,8 +218,8 @@ mydbm_load_file (fp, list, filename)
 
     cont = 0;
     line_num=0;
-    while ((line_length = 
-            getstr (&line, &line_size, fp, '\012', 0, GETLINE_NO_LIMIT)) >= 0)
+    while( ( line_length = 
+             getdelim( &line, &line_size, '\012', fp ) ) >= 0 )
     {
 	line_num++;
 	if (line_length > 0 && line[line_length - 1] == '\012')
