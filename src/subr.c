@@ -55,9 +55,7 @@ extern char *getlogin ();
 extern char *strtok ();
 
 /*
- * Copies "from" to "to". mallocs a buffer large enough to hold the entire
- * file and does one read/one write to do the copy.  This is reasonable,
- * since source files are typically not too large.
+ * Copies "from" to "to".
  */
 void
 copy_file (from, to)
@@ -83,20 +81,34 @@ copy_file (from, to)
 	error (1, errno, "cannot create %s for copying", to);
     if (sb.st_size > 0)
     {
-	buf = xmalloc ((int) sb.st_size);
-	if (read (fdin, buf, (int) sb.st_size) != (int) sb.st_size)
-	    error (1, errno, "cannot read file %s for copying", from);
-	if (write (fdout, buf, (int) sb.st_size) != (int) sb.st_size
-#ifdef HAVE_FSYNC
-	    || fsync (fdout) == -1
-#endif
-	    )
+	char buf[BUFSIZ];
+	size_t n;
+
+	for (;;) 
 	{
-	    error (1, errno, "cannot write file %s for copying", to);
+	    n = read (fdin, buf, sizeof(buf));
+	    if (n == -1)
+	    {
+#ifdef EINTR
+		if (errno == EINTR)
+		    continue;
+#endif
+		error (1, errno, "cannot read file %s for copying", from);
+	    }
+
+	    if (write(fdout, buf, n) != n) {
+		error (1, errno, "cannot write file %s for copying", to);
+	    }
 	}
-	free (buf);
+
+#ifdef HAVE_FSYNC
+	if (fsync (fdout)) 
+	    error (1, errno, "cannot fsync file %s after copying", to);
+#endif
     }
-    (void) close (fdin);
+
+    if (close (fdin) < 0) 
+	error (0, errno, "cannot close %s", from);
     if (close (fdout) < 0)
 	error (1, errno, "cannot close %s", to);
 
@@ -406,54 +418,101 @@ unlink_file (f)
     return (unlink (f));
 }
 
+/* Read NCHARS bytes from descriptor FD into BUF.
+   Return the number of characters successfully read.
+   The number returned is always NCHARS unless end-of-file or error.  */
+static size_t
+block_read (fd, buf, nchars)
+    int fd;
+    char *buf;
+    size_t nchars;
+{
+    char *bp = buf;
+    size_t nread;
+
+    do 
+    {
+	nread = read (fd, bp, nchars);
+	if (nread == -1)
+	{
+#ifdef EINTR
+	    if (errno == EINTR)
+		continue;
+#endif
+	    return -1;
+	}
+
+	if (nread == 0)
+	    break; 
+
+	bp += nread;
+	nchars -= nread;
+    } while (nchars != 0);
+
+    return bp - buf;
+} 
+
+    
 /*
  * Compare "file1" to "file2". Return non-zero if they don't compare exactly.
- * 
- * mallocs a buffer large enough to hold the entire file and does two reads to
- * load the buffer and calls memcmp to do the cmp. This is reasonable, since
- * source files are typically not too large.
  */
-
-/* richfix: this *could* exploit mmap. */
-
 int
 xcmp (file1, file2)
-    char *file1;
-    char *file2;
+    const char *file1;
+    const char *file2;
 {
-    register char *buf1, *buf2;
-    struct stat sb;
-    off_t size;
-    int ret, fd1, fd2;
+    char *buf1, *buf2;
+    struct stat sb1, sb2;
+    int fd1, fd2;
+    int ret;
 
     if ((fd1 = open (file1, O_RDONLY)) < 0)
 	error (1, errno, "cannot open file %s for comparing", file1);
     if ((fd2 = open (file2, O_RDONLY)) < 0)
 	error (1, errno, "cannot open file %s for comparing", file2);
-    if (fstat (fd1, &sb) < 0)
+    if (fstat (fd1, &sb1) < 0)
 	error (1, errno, "cannot fstat %s", file1);
-    size = sb.st_size;
-    if (fstat (fd2, &sb) < 0)
+    if (fstat (fd2, &sb2) < 0)
 	error (1, errno, "cannot fstat %s", file2);
-    if (size == sb.st_size)
-    {
-	if (size == 0)
-	    ret = 0;
-	else
-	{
-	    buf1 = xmalloc ((size_t) size);
-	    buf2 = xmalloc ((size_t) size);
-	    if (read (fd1, buf1, (int) size) != (int) size)
-		error (1, errno, "cannot read file %s for comparing", file1);
-	    if (read (fd2, buf2, (int) size) != (int) size)
-		error (1, errno, "cannot read file %s for comparing", file2);
-	    ret = memcmp(buf1, buf2, (size_t) size);
-	    free (buf1);
-	    free (buf2);
-	}
-    }
-    else
+
+    /* A generic file compare routine might compare st_dev & st_ino here 
+       to see if the two files being compared are actually the same file.
+       But that won't happen in CVS, so we won't bother. */
+
+    if (sb1.st_size != sb2.st_size)
 	ret = 1;
+    else if (sb1.st_size == 0)
+	ret = 0;
+    else
+    {
+	/* FIXME: compute the optimal buffer size by computing the least
+	   common multiple of the files st_blocks field */
+	size_t buf_size = 8 * 1024;
+	size_t read1;
+	size_t read2;
+
+	buf1 = xmalloc (buf_size);
+	buf2 = xmalloc (buf_size);
+
+	do 
+	{
+	    read1 = block_read (fd1, buf1, buf_size);
+	    if (read1 == -1) 
+		error (1, errno, "cannot read file %s for comparing", file1);
+
+	    read2 = block_read (fd2, buf2, buf_size);
+	    if (read2 == -1)
+		error (1, errno, "cannot read file %s for comparing", file2);
+
+	    /* assert (read1 == read2); */
+
+	    ret = memcmp(buf1, buf2, read1);
+	} while (ret == 0 && read1 == buf_size);
+
+	free (buf1);
+	free (buf2);
+    }
+	
     (void) close (fd1);
     (void) close (fd2);
     return (ret);

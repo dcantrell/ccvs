@@ -399,7 +399,7 @@ int numdots PROTO((char *s));
 int run_exec PROTO((char *stin, char *stout, char *sterr, int flags));
 int unlink_file PROTO((const char *f));
 int update PROTO((int argc, char *argv[]));
-int xcmp PROTO((char *file1, char *file2));
+int xcmp PROTO((const char *file1, const char *file2));
 int yesno PROTO((void));
 time_t get_date PROTO((char *date, struct timeb *now));
 void Create_Admin PROTO((char *dir, char *update_dir,

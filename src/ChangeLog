@@ -1,13 +1,28 @@
+Thu Jun  8 11:54:24 1995  J.T. Conklin  <jtc@rtl.cygnus.com>
+
+	* subr.c (copy_file, xcmp): Changed to read the file(s) by blocks
+	  rather than by reading the whole file into a huge buffer.  The
+	  claim that this was reasonable because source files tend to be
+	  small does not hold up in real world situations.   CVS is used
+	  to manage non-source files, and mallocs of 400K+ buffers (x2
+	  for xcmp) can easily fail due to lack of available memory or
+	  even memory pool fragmentation.
+	  (block_read): New function, taken from GNU cmp and slightly
+	  modified.
+
+	* subr.c (xcmp): Added const qualifier to function arguments.
+	* cvs.h (xcmp): Added const qualifer to prototype arguments.
+
 Wed Jun  7 11:28:31 1995  J.T. Conklin  <jtc@rtl.cygnus.com>
 
-	* cvs.h (Popen): Add prototype.
+	* cvs.h (Popen): Added prototype.
 	  (Fopen, open_file, isreadable, iswritable, isdir, isfile,
 	  islink, make_directory, make_directories, rename_file,
-	  link_file, unlink_file, copy_file): Add const qualifers to
+	  link_file, unlink_file, copy_file): Added const qualifer to
 	  prototype arguments.
 	* subr.c (Fopen, Popen, open_file, isreadable, iswritable, isdir,
 	  isfile, islink, make_directory, make_directories, rename_file,
-	  link_file, unlink_file, copy_file): Add const qualifiers to
+	  link_file, unlink_file, copy_file): Added const qualifier to
 	  function arguments.
 
 	* logmsg.c (logfile_write), recurse.c (do_recursion, addfile):
