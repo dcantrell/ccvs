@@ -35,7 +35,7 @@ EXTRA_DIST = \
 	startserver.c \
 	stripslash.c \
 	waitpid.c \
-	win32.c \
+	woe32.c \
 	.cvsignore
 
 SUBDIRS = SCC
