@@ -2128,6 +2128,7 @@ described in @ref{Connecting via rsh}.
 * Server requirements::         Memory and other resources for servers
 * Connecting via rsh::          Using the @code{rsh} program to connect
 * Password authenticated::      Direct connections using passwords
+* GSSAPI authenticated::        Direct connections using GSSAPI
 * Kerberos authenticated::      Direct connections with kerberos
 @end menu
 
@@ -2617,6 +2618,54 @@ access as well.  The password is available to anyone
 who can sniff network packets or read a protected
 (i.e., user read-only) file.  If you want real
 security, get Kerberos.
+
+@node GSSAPI authenticated
+@subsection Direct connection with GSSAPI
+
+@cindex GSSAPI
+@cindex security, GSSAPI
+@cindex :gserver:
+If you have a working GSSAPI library, you can have
+@sc{cvs} connect via a direct @sc{tcp} connection,
+authenticating with GSSAPI.
+
+To do this, @sc{cvs} needs to be compiled with GSSAPI
+support; when configuring @sc{cvs} it tries to detect
+whether GSSAPI libraries using kerberos version 5 are
+present.  You can also use the @file{--with-gssapi}
+flag to configure.
+
+The connection is authenticated using GSSAPI, but the
+message stream is @emph{not} authenticated by default.
+You must use the @code{-a} global option to request
+stream authentication.
+
+The data transmitted is @emph{not} encrypted by
+default.  Encryption support must be compiled into both
+the client and the server; use the
+@file{--enable-encrypt} configure option to turn it on.
+You must then use the @code{-x} global option to
+request encryption.
+
+GSSAPI connections are handled on the server side by
+the password authentication server; see @ref{Password
+authentication server}.  If you wish to enforce GSSAPI
+authentication, and not permit passwords, you should
+create an empty @sc{cvs} password file, and set
+@code{SystemAuth=no} in the config file
+(@pxref{config}).
+
+The GSSAPI server uses a principal name of
+cvs/@var{hostname}, where @var{hostname} is the
+canonical name of the server host.  You will have to
+set this up as required by your GSSAPI mechanism.
+
+To connect using GSSAPI, use @samp{:gserver:}.  For
+example,
+
+@example
+cvs -d :gserver:chainsaw.yard.com:/usr/local/cvsroot checkout foo
+@end example
 
 @node Kerberos authenticated
 @subsection Direct connection with kerberos
@@ -7055,6 +7104,17 @@ left of @samp{cvs_command}) are:
 Specify legal @sc{cvsroot} directory.  See
 @ref{Password authentication server}.
 
+@cindex authentication, stream
+@cindex stream authentication
+@item -a
+Authenticate all communication between the client and
+the server.  Only has an effect on the @sc{cvs} client.
+As of this writing, this is only implemented when using
+a GSSAPI connection (@pxref{GSSAPI authenticated}).
+Authentication prevents certain sorts of attacks
+involving hijacking the active @sc{tcp} connection.
+Enabling authentication does not enable encryption.
+
 @cindex RCSBIN, overriding
 @cindex Overriding RCSBIN
 @item -b @var{bindir}
@@ -7168,14 +7228,18 @@ set or @samp{-r} is given.
 @c be the same as a get and a cvs edit?), but I'm not
 @c completely sure whether to document it this way.
 
+@cindex encryption
 @item -x
 Encrypt all communication between the client and the
 server.  Only has an effect on the @sc{cvs} client.  As
 of this writing, this is only implemented when using a
+GSSAPI connection (@pxref{GSSAPI authenticated}) or a
 Kerberos connection (@pxref{Kerberos authenticated}).
-Encryption support is not available by default; it must
-be enabled using a special configure option,
-@file{--enable-encryption}, when you build @sc{cvs}.
+Enabling encryption implies that message traffic is
+also authenticated.  Encryption support is not
+available by default; it must be enabled using a
+special configure option, @file{--enable-encryption},
+when you build @sc{cvs}.
 
 @item -z @var{gzip-level}
 Set the compression level.  Only has an effect on the
