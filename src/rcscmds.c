@@ -308,6 +308,7 @@ RCS_merge(rcs, path, workfile, options, rev1, rev2)
     call_diff_arg ("-L");
     call_diff_arg (xrev2);
 
+    call_diff_arg ("--");
     call_diff_arg (workfile);
     call_diff_arg (tmp1);
     call_diff_arg (tmp2);
