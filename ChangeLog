@@ -1,3 +1,8 @@
+Sun Apr 14 11:06:44 1996  Karl Fogel  <kfogel@floss.red-bean.com>
+
+        * Added `tools' subdir (pcl-cvs will live there, as will other
+        things maintained along with the CVS distribution).
+
 Wed Apr 10 17:15:25 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* README: Mention documentation and A4 paper in particular.
