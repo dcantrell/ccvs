@@ -1,5 +1,10 @@
 1999-05-11  Jim Kingdon  <http://www.cyclic.com>
 
+	* server.c (switch_to_user): Ignore EPERM from initgroups.  Fixes
+	pserver-4 in testsuite.
+	(pserver_authenticate_connection): Only print "I LOVE YOU" after
+	switch_to_user has come back successfully.
+
 	* server.c (pserver_authenticate_connection): Call error_exit
 	rather than reinventing the wheel ourselves.
 	(switch_to_user): Check for errors from setuid, setgid, and
