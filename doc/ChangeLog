@@ -1,3 +1,8 @@
+Fri Jul  4 15:27:43 1997  Ian Lance Taylor  <ian@cygnus.com>
+
+	* cvs.texinfo (Common options): Fix typo (avaliable for
+	available).
+
 Tue Jul  1 09:19:02 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (Server requirements): Discuss memory used by diff.

@@ -7172,7 +7172,7 @@ Specify file names that should be filtered.  You can
 use this option repeatedly.  The spec can be a file
 name pattern of the same type that you can specify in
 the @file{.cvswrappers} file.
-Avaliable with the following commands: @code{import},
+Available with the following commands: @code{import},
 and @code{update}.
 
 @end table
