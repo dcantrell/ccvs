@@ -1,5 +1,7 @@
 Thu Aug 22 10:44:40 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvs.texinfo (Keyword list): Document Name keyword.
+
 	* cvs.texinfo (Tags): Revise comment regarding legal tag names.
 
 Mon Aug 12 14:58:54 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
