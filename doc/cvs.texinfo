@@ -3507,14 +3507,21 @@ done
 For your protection, @sc{cvs} will refuse to check in a
 file if a conflict occurred and you have not resolved
 the conflict.  Currently to resolve a conflict, you
-must change the timestamp on the file, and must also
-insure that the file contains no conflict markers.  If
-your file legitimately contains conflict markers (that
+must change the timestamp on the file.  In previous
+versions of @sc{cvs}, you also needed to
+insure that the file contains no conflict markers.
+Because
+your file may legitimately contain conflict markers (that
 is, occurrences of @samp{>>>>>>> } at the start of a
-line that don't mark a conflict), then @sc{cvs} has
-trouble handling this and you need to start hacking on
-the @code{CVS/Entries} file or other such workarounds.
-@c FIXME: There should be a "cvs resolved" command
+line that don't mark a conflict), the current
+version of @sc{cvs} will print a warning and proceed to
+check in the file.
+@c The old behavior was really icky; the only way out
+@c was to start hacking on
+@c the @code{CVS/Entries} file or other such workarounds.
+@c 
+@c If the timestamp thing isn't considered nice enough,
+@c maybe there should be a "cvs resolved" command
 @c which clears the conflict indication.  For a nice user
 @c interface, this should be invoked by an interactive
 @c merge tool like emerge rather than by the user
