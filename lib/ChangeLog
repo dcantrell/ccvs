@@ -1,3 +1,7 @@
+Tue Dec  5 23:19:31 1995  Karl Fogel  <kfogel@floss.cyclic.com>
+
+        * stripnl.c: new file, defines strip_trailing_newlines().
+
 Mon Dec  4 10:54:04 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* getdate.c: Remove #line directives.  I know, this is a kludge,
