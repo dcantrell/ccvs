@@ -14590,10 +14590,25 @@ ${TESTDIR}/cvsroot/first-dir/a-lock,v  <--  a-lock
 new revision: 1\.2; previous revision: 1\.1
 done"
 
+	  # Now test for a bug involving branches and locks
+	  sed -e 's/locks; strict;/locks fred:1.2; strict;/' ${TESTDIR}/cvsroot/first-dir/a-lock,v > a-lock,v
+	  chmod 644 ${TESTDIR}/cvsroot/first-dir/a-lock,v
+	  dotest reserved-16 \
+"mv a-lock,v ${TESTDIR}/cvsroot/first-dir/a-lock,v" ""
+	  chmod 444 ${TESTDIR}/cvsroot/first-dir/a-lock,v
+	  dotest reserved-17 "${testcvs} -q tag -b br a-lock" "T a-lock"
+	  dotest reserved-18 "${testcvs} -q update -r br a-lock" ""
+	  echo edit it >>a-lock
+	  dotest reserved-19 "${testcvs} -q ci -m modify a-lock" \
+"Checking in a-lock;
+${TESTDIR}/cvsroot/first-dir/a-lock,v  <--  a-lock
+new revision: 1\.2\.2\.1; previous revision: 1\.2
+done"
+
 	  # undo commitinfo changes
 	  cd ../CVSROOT
 	  echo '# vanilla commitinfo' >commitinfo
-	  dotest reserved-16 "${testcvs} -q ci -m back commitinfo" \
+	  dotest reserved-cleanup-1 "${testcvs} -q ci -m back commitinfo" \
 "Checking in commitinfo;
 ${TESTDIR}/cvsroot/CVSROOT/commitinfo,v  <--  commitinfo
 new revision: 1\.3; previous revision: 1\.2
