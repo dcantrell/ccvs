@@ -9,7 +9,6 @@ AC_PROG_AWK
 AC_PROG_CC
 AC_PROG_INSTALL
 AC_PROG_MAKE_SET
-# Automake's more advanced version of AC_PROG_RANLIB
 AC_PROG_RANLIB
 AC_PROG_YACC
 AC_PROG_LN_S
@@ -26,6 +25,9 @@ dnl FIXME This is truly gross.
 missing_dir=`cd $ac_aux_dir && pwd`
 dnl FIXME I pulled this default list from sanity.sh.  Perhaps these lists
 dnl can be stored in one location?
+dnl
+dnl Yeah, put the value in a variable add it to the substitution list
+dnl then have configure create sanity.sh from sanity.sh.in...
 glocs="$PATH:/usr/local/bin:/usr/contrib/bin:/usr/gnu/bin:/local/bin:/local/gnu/bin:/gnu/bin"
 AC_PATH_PROGS(ROFF, groff roff, $missing_dir/missing roff, $glocs)
 AC_PATH_PROG(PS2PDF, ps2pdf, $missing_dir/missing ps2pdf)
@@ -66,6 +68,8 @@ AM_CONDITIONAL(MAKE_TARGETS_IN_VPATH, \
 		test $ccvs_cv_bsd_make_vpath_bug = no \
 		|| test $srcdir = .)
 
+dnl FIXME the next three calls should be avoided according to autoconf
+dnl philosophy.  for example, AC_CHECK_LIB should be used to look for crypt.
 AC_AIX
 AC_MINIX
 AC_ISC_POSIX
@@ -77,10 +81,26 @@ fi
 AC_HEADER_DIRENT
 AC_HEADER_STDC
 AC_HEADER_SYS_WAIT
-AC_CHECK_HEADERS(errno.h unistd.h string.h memory.h utime.h fcntl.h ndbm.h \
-		 limits.h sys/file.h \
-                 sys/param.h sys/select.h sys/time.h sys/timeb.h \
-                 io.h direct.h sys/bsdtypes.h sys/resource.h syslog.h)
+AC_CHECK_HEADERS(\
+	errno.h \
+	direct.h \
+	fcntl.h \
+	io.h \
+	limits.h \
+	memory.h \
+	ndbm.h \
+	string.h \
+	syslog.h \
+	sys/bsdtypes.h \
+	sys/file.h \
+	sys/param.h \
+	sys/resource.h \
+	sys/select.h \
+	sys/time.h \
+	sys/timeb.h \
+	unistd.h \
+	utime.h\
+)
 AC_HEADER_STAT
 AC_HEADER_TIME
 
@@ -93,7 +113,17 @@ AC_TYPE_SIGNAL
 
 AC_STRUCT_ST_BLKSIZE
 AC_STRUCT_ST_RDEV
-AC_REPLACE_FUNCS(mkdir rename strstr dup2 strerror valloc waitpid memmove strtoul)
+AC_REPLACE_FUNCS(\
+	dup2 \
+	memmove \
+	mkdir \
+	rename \
+	strerror \
+	strstr \
+	strtoul\
+	valloc \
+	waitpid \
+)
 AC_CHECK_FUNCS(\
 	fchdir \
 	fchmod \
