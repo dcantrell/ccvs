@@ -11,6 +11,9 @@ the annotate node of cvs.texinfo for details).
 in the CVS/Root file in each working directory, and specifying -d will
 cause CVS/Root to be updated.
 
+* Local (non-client/server) CVS now runs on Windows NT.  See
+windows-NT/README for details.
+
 * The CVSROOT variable specification has changed to support more
 access methods.  In addition to "pserver," "server" (rsh), "kserver"
 (kerberos), and "local" (local filesystem access) can now be
