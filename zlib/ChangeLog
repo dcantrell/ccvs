@@ -1,3 +1,7 @@
+2005-04-06  Derek Price  <derek@ximbiot.com>
+
+	* Makefile.in (DISTFILES): Remove obsolete contrib/*.txt.
+
 2005-02-21  Derek Price  <derek@ximbiot.com>
 
 	* Makefile.in, infback.c, inflate.c, zconf.h: Merge after zlib 1.2.2
