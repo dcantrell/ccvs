@@ -1,3 +1,14 @@
+2003-04-02  Derek Price  <derek@ximbiot.com>
+
+	* recurse.c (do_recursion): Use strstr("/./") rather than strstr('.')
+	to catch only indirections in paths and not directory names with dots
+	in them.
+	(Report from Pavel Roskin <proski@gnu.org>.)
+
+	* sanity.sh (multiroot): Put a dot in the CVSROOT_DIRNAMEs .
+	(dottedroot): New test.
+	(Based on a script from Pavel Roskin <proski@gnu.org>.)
+
 2003-04-01  Derek Price  <derek@ximbiot.com>
 
 	* sanity.sh (multiroot2-9): Add newly TRACEd parse_cvsroot() to

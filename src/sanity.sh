@@ -877,7 +877,7 @@ if test x"$*" = x; then
 	# Multiple root directories and low-level protocol tests.
 	tests="${tests} multiroot multiroot2 multiroot3 multiroot4"
 	tests="${tests} rmroot reposmv pserver server server2 client"
-	tests="${tests} fork commit-d template"
+	tests="${tests} dottedroot fork commit-d template"
 else
 	tests="$*"
 fi
@@ -22647,8 +22647,8 @@ ${PROG} [a-z]*: Updating first-dir"
 	  # set up two repositories
 	  #
 
-	  CVSROOT1_DIRNAME=${TESTDIR}/root1
-	  CVSROOT2_DIRNAME=${TESTDIR}/root2
+	  CVSROOT1_DIRNAME=${TESTDIR}/root.1
+	  CVSROOT2_DIRNAME=${TESTDIR}/root.2
 	  CVSROOT1=${CVSROOT1_DIRNAME} ; export CVSROOT1
 	  CVSROOT2=${CVSROOT2_DIRNAME} ; export CVSROOT2
 	  if $remote; then
@@ -22663,7 +22663,7 @@ ${PROG} [a-z]*: Updating first-dir"
 	  dotest multiroot-setup-3 "${testcvs2} init" ""
 
 	  #
-	  # create some directories in root1
+	  # create some directories in ${CVSROOT1_DIRNAME}
 	  #
 	  mkdir 1; cd 1
 	  dotest multiroot-setup-4 "${testcvs1} co -l ." "${PROG} [a-z]*: Updating ."
@@ -22697,7 +22697,7 @@ done"
 	  rm -rf 1
 
 	  #
-	  # create some directories in root2
+	  # create some directories in ${CVSROOT2_DIRNAME}
 	  #
 	  mkdir 1; cd 1
 	  dotest multiroot-setup-8 "${testcvs2} co -l ." "${PROG} [a-z]*: Updating ."
@@ -22802,28 +22802,28 @@ U mod1-2/file1-2"
 ${PROG} [a-z]*: Updating mod1-1
 ${PROG} [a-z]*: Updating mod1-2
 ${PROG} [a-z]*: Updating mod1-2/mod2-2
-${PROG} [a-z]*: cannot open directory ${TESTDIR}/root1/mod2-2: No such file or directory
+${PROG} [a-z]*: cannot open directory ${CVSROOT1_DIRNAME}/mod2-2: No such file or directory
 ${PROG} [a-z]*: skipping directory mod1-2/mod2-2
 ${PROG} [a-z]*: Updating mod2-1
-${PROG} [a-z]*: cannot open directory ${TESTDIR}/root1/mod2-1: No such file or directory
+${PROG} [a-z]*: cannot open directory ${CVSROOT1_DIRNAME}/mod2-1: No such file or directory
 ${PROG} [a-z]*: skipping directory mod2-1
 ${PROG} [a-z]*: Updating mod2-2
-${PROG} [a-z]*: cannot open directory ${TESTDIR}/root1/mod2-2: No such file or directory
+${PROG} [a-z]*: cannot open directory ${CVSROOT1_DIRNAME}/mod2-2: No such file or directory
 ${PROG} [a-z]*: skipping directory mod2-2"
 
 	  # Same deal but with -d ${CVSROOT2}.
 	  dotest multiroot-update-1b "${testcvs2} update" \
 "${PROG} [a-z]*: Updating \.
 ${PROG} [a-z]*: Updating mod1-1
-${PROG} [a-z]*: cannot open directory ${TESTDIR}/root2/mod1-1: No such file or directory
+${PROG} [a-z]*: cannot open directory ${CVSROOT2_DIRNAME}/mod1-1: No such file or directory
 ${PROG} [a-z]*: skipping directory mod1-1
 ${PROG} [a-z]*: Updating mod1-2
-${PROG} [a-z]*: cannot open directory ${TESTDIR}/root2/mod1-2: No such file or directory
+${PROG} [a-z]*: cannot open directory ${CVSROOT2_DIRNAME}/mod1-2: No such file or directory
 ${PROG} [a-z]*: skipping directory mod1-2
 ${PROG} [a-z]*: Updating mod2-1
 ${PROG} [a-z]*: Updating mod2-2
 ${PROG} [a-z]*: Updating mod2-2/mod1-2
-${PROG} [a-z]*: cannot open directory ${TESTDIR}/root2/mod1-2: No such file or directory
+${PROG} [a-z]*: cannot open directory ${CVSROOT2_DIRNAME}/mod1-2: No such file or directory
 ${PROG} [a-z]*: skipping directory mod2-2/mod1-2"
 
 	  # modify all files and do a diff
@@ -22838,7 +22838,7 @@ ${PROG} [a-z]*: skipping directory mod2-2/mod1-2"
 ${PROG} [a-z]*: Diffing mod1-1
 Index: mod1-1/file1-1
 ===================================================================
-RCS file: ${TESTDIR}/root1/mod1-1/file1-1,v
+RCS file: ${CVSROOT1_DIRNAME}/mod1-1/file1-1,v
 retrieving revision 1\.1
 diff -r1\.1 file1-1
 1a2
@@ -22846,7 +22846,7 @@ diff -r1\.1 file1-1
 ${PROG} [a-z]*: Diffing mod1-2
 Index: mod1-2/file1-2
 ===================================================================
-RCS file: ${TESTDIR}/root1/mod1-2/file1-2,v
+RCS file: ${CVSROOT1_DIRNAME}/mod1-2/file1-2,v
 retrieving revision 1\.1
 diff -r1\.1 file1-2
 1a2
@@ -22856,7 +22856,7 @@ ${PROG} [a-z]*: Diffing mod1-2/mod2-2
 ${PROG} [a-z]*: Diffing mod2-1
 Index: mod2-1/file2-1
 ===================================================================
-RCS file: ${TESTDIR}/root2/mod2-1/file2-1,v
+RCS file: ${CVSROOT2_DIRNAME}/mod2-1/file2-1,v
 retrieving revision 1\.1
 diff -r1\.1 file2-1
 1a2
@@ -22864,7 +22864,7 @@ diff -r1\.1 file2-1
 ${PROG} [a-z]*: Diffing mod2-2
 Index: mod2-2/file2-2
 ===================================================================
-RCS file: ${TESTDIR}/root2/mod2-2/file2-2,v
+RCS file: ${CVSROOT2_DIRNAME}/mod2-2/file2-2,v
 retrieving revision 1\.1
 diff -r1\.1 file2-2
 1a2
@@ -22873,7 +22873,7 @@ diff -r1\.1 file2-2
 ${PROG} [a-z]*: Diffing mod1-1
 Index: mod1-1/file1-1
 ===================================================================
-RCS file: ${TESTDIR}/root1/mod1-1/file1-1,v
+RCS file: ${CVSROOT1_DIRNAME}/mod1-1/file1-1,v
 retrieving revision 1\.1
 diff -r1\.1 file1-1
 1a2
@@ -22881,7 +22881,7 @@ diff -r1\.1 file1-1
 ${PROG} [a-z]*: Diffing mod1-2
 Index: mod1-2/file1-2
 ===================================================================
-RCS file: ${TESTDIR}/root1/mod1-2/file1-2,v
+RCS file: ${CVSROOT1_DIRNAME}/mod1-2/file1-2,v
 retrieving revision 1\.1
 diff -r1\.1 file1-2
 1a2
@@ -22893,7 +22893,7 @@ ${PROG} [a-z]*: Diffing mod1-2/mod2-2
 ${PROG} [a-z]*: Diffing mod2-1
 Index: mod2-1/file2-1
 ===================================================================
-RCS file: ${TESTDIR}/root2/mod2-1/file2-1,v
+RCS file: ${CVSROOT2_DIRNAME}/mod2-1/file2-1,v
 retrieving revision 1\.1
 diff -r1\.1 file2-1
 1a2
@@ -22901,7 +22901,7 @@ diff -r1\.1 file2-1
 ${PROG} [a-z]*: Diffing mod2-2
 Index: mod2-2/file2-2
 ===================================================================
-RCS file: ${TESTDIR}/root2/mod2-2/file2-2,v
+RCS file: ${CVSROOT2_DIRNAME}/mod2-2/file2-2,v
 retrieving revision 1\.1
 diff -r1\.1 file2-2
 1a2
@@ -22914,22 +22914,22 @@ ${PROG} [a-z]*: Examining mod1-1
 ${PROG} [a-z]*: Examining mod1-2
 ${PROG} [a-z]*: Examining mod2-2/mod1-2
 Checking in mod1-1/file1-1;
-${TESTDIR}/root1/mod1-1/file1-1,v  <--  file1-1
+${CVSROOT1_DIRNAME}/mod1-1/file1-1,v  <--  file1-1
 new revision: 1.2; previous revision: 1.1
 done
 Checking in mod1-2/file1-2;
-${TESTDIR}/root1/mod1-2/file1-2,v  <--  file1-2
+${CVSROOT1_DIRNAME}/mod1-2/file1-2,v  <--  file1-2
 new revision: 1.2; previous revision: 1.1
 done
 ${PROG} [a-z]*: Examining mod1-2/mod2-2
 ${PROG} [a-z]*: Examining mod2-1
 ${PROG} [a-z]*: Examining mod2-2
 Checking in mod2-1/file2-1;
-${TESTDIR}/root2/mod2-1/file2-1,v  <--  file2-1
+${CVSROOT2_DIRNAME}/mod2-1/file2-1,v  <--  file2-1
 new revision: 1.2; previous revision: 1.1
 done
 Checking in mod2-2/file2-2;
-${TESTDIR}/root2/mod2-2/file2-2,v  <--  file2-2
+${CVSROOT2_DIRNAME}/mod2-2/file2-2,v  <--  file2-2
 new revision: 1.2; previous revision: 1.1
 done"
 
@@ -23767,17 +23767,14 @@ anyone
 	  # refer to parts of our checked-out tree (e.g. "cvs update
 	  # mod1-1 mod2-2")
 
-	  if $keep; then
-	    echo Keeping ${TESTDIR} and exiting due to --keep
-	    exit 0
-	  fi
+	  dokeep
 
 	  # clean up after ourselves
 	  cd ..
 	  rm -r 1
 
 	  # clean up our repositories
-	  rm -rf root1 root2
+	  rm -rf ${CVSROOT1_DIRNAME} ${CVSROOT2_DIRNAME}
 	  ;;
 
 	multiroot2)
@@ -25035,6 +25032,44 @@ update"
 	    rm ${TESTDIR}/serveme
 	    CVS_SERVER=${testcvs}; export CVS_SERVER
 	  fi # skip the whole thing for local
+	  ;;
+
+	dottedroot)
+	  # Check that a CVSROOT with a "." in the name will work.
+	  CVSROOT_save=${CVSROOT}
+	  CVSROOT_DIRNAME_save=${CVSROOT_DIRNAME}
+	  CVSROOT_DIRNAME=${TESTDIR}/cvs.root
+	  if $remote; then
+	      CVSROOT=:fork:${CVSROOT_DIRNAME}
+	  else
+	      CVSROOT=${CVSROOT_DIRNAME}
+	  fi
+
+	  dotest dottedroot-init-1 "${testcvs} init" ""
+	  mkdir dir1
+	  mkdir dir1/dir2
+	  echo version1 >dir1/dir2/file1
+	  cd dir1
+	  dotest dottedroot-1 "${testcvs} import -m '' module1 AUTHOR INITIAL" \
+"${PROG} [a-z]*: Importing ${CVSROOT_DIRNAME}/module1/dir2
+N module1/dir2/file1
+
+No conflicts created by this import"
+	  cd ..
+
+	  # This is the test that used to cause an assertion failure
+	  # in recurse.c:do_recursion().
+	  dotest dottedroot-2 "${testcvs} co -rINITIAL module1" \
+"${PROG} [a-z]*: Updating module1
+${PROG} [a-z]*: Updating module1/dir2
+U module1/dir2/file1"
+
+	  dokeep
+
+	  rm -rf ${CVSROOT_DIRNAME}
+	  rm -r dir1 module1
+	  CVSROOT_DIRNAME=${CVSROOT_DIRNAME_save}
+	  CVSROOT=${CVSROOT_save}
 	  ;;
 
 	fork)
