@@ -1,3 +1,9 @@
+2002-12-19  Derek Price  <derek@ximbiot.com>
+
+	* Makefile.in: Remove reference to options.h.
+	* options.h: Remove file and move relevant content...
+	* config.h: ...here.
+
 2002-12-06  Derek Price  <derek@ximbiot.com>
 
 	* dirent.c: Replace call to realloc with a call to xrealloc and calls
