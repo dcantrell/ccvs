@@ -24,7 +24,7 @@ int
 Parse_Info (infofile, repository, callproc, all)
     char *infofile;
     char *repository;
-    int (*callproc) ();
+    CALLPROC callproc;
     int all;
 {
     int err = 0;

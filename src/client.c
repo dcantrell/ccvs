@@ -2892,7 +2892,7 @@ send_files (argc, argv, local, aflag)
      */
     err = start_recursion
 	(send_fileproc, update_filesdone_proc,
-	 send_dirent_proc, (int (*) ())NULL,
+	 send_dirent_proc, (DIRLEAVEPROC)NULL,
 	 argc, argv, local, W_LOCAL, aflag, 0, (char *)NULL, 0, 0);
     if (err)
 	exit (1);

@@ -180,7 +180,7 @@ tag (argc, argv)
 
     mtlist = getlist();
     err = start_recursion (check_fileproc, check_filesdoneproc,
-                           (Dtype (*) ()) NULL, (int (*) ()) NULL,
+                           (DIRENTPROC) NULL, (DIRLEAVEPROC) NULL,
                            argc, argv, local, W_LOCAL, 0, 1,
                            (char *) NULL, 1, 0);
     
@@ -190,8 +190,8 @@ tag (argc, argv)
     }
      
     /* start the recursion processor */
-    err = start_recursion (tag_fileproc, (int (*) ()) NULL, tag_dirproc,
-			   (int (*) ()) NULL, argc, argv, local,
+    err = start_recursion (tag_fileproc, (FILESDONEPROC) NULL, tag_dirproc,
+			   (DIRLEAVEPROC) NULL, argc, argv, local,
 			   W_LOCAL, 0, 1, (char *) NULL, 1, 0);
     dellist(&mtlist);
     return (err);

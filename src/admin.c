@@ -83,8 +83,8 @@ admin (argc, argv)
 #endif /* CLIENT_SUPPORT */
 
     /* start the recursion processor */
-    err = start_recursion (admin_fileproc, (int (*) ()) NULL, admin_dirproc,
-			   (int (*) ()) NULL, argc, argv, 0,
+    err = start_recursion (admin_fileproc, (FILESDONEPROC) NULL, admin_dirproc,
+			   (DIRLEAVEPROC) NULL, argc, argv, 0,
 			   W_LOCAL, 0, 1, (char *) NULL, 1, 0);
     return (err);
 }

@@ -396,9 +396,11 @@ char *xrealloc PROTO((char *ptr, size_t bytes));
 char *xstrdup PROTO((const char *str));
 int No_Difference PROTO((char *file, Vers_TS * vers, List * entries,
 			 char *repository, char *update_dir));
-int Parse_Info PROTO((char *infofile, char *repository, int PROTO((*callproc)) PROTO(()), int all));
+typedef	int (*CALLPROC)	PROTO((char *repository, char *value));
+int Parse_Info PROTO((char *infofile, char *repository, CALLPROC callproc, int all));
 int Reader_Lock PROTO((char *xrepository));
-int SIG_register PROTO((int sig, RETSIGTYPE PROTO((*fn)) PROTO(())));
+typedef	RETSIGTYPE (*SIGCLEANUPPROC)	PROTO(());
+int SIG_register PROTO((int sig, SIGCLEANUPPROC sigcleanup));
 int Writer_Lock PROTO((List * list));
 int ign_name PROTO((char *name));
 int isdir PROTO((const char *file));
@@ -464,11 +466,21 @@ Vers_TS *Version_TS PROTO((char *repository, char *options, char *tag,
 		     int set_time, List * entries, List * xfiles));
 void do_editor PROTO((char *dir, char **messagep,
 		      char *repository, List * changes));
+
+typedef	int (*CALLBACKPROC)	PROTO((int *pargc, char *argv[], char *where,
+	char *mwhere, char *mfile, int horten, int local_specified,
+	char *omodule, char *msg));
+typedef	int (*FILEPROC)		PROTO((char *file, char *update_dir, char *repository,
+	List *	entries, List *	srcfiles));
+typedef	int (*FILESDONEPROC)	PROTO((int err, char *repository, char *update_dir));
+typedef	Dtype (*DIRENTPROC)	PROTO((char *dir, char *repos, char *update_dir));
+typedef	int (*DIRLEAVEPROC)	PROTO((char *dir, int err, char *update_dir));
+
 int do_module PROTO((DBM * db, char *mname, enum mtype m_type, char *msg,
-	       int PROTO((*callback_proc)) (), char *where, int shorten,
-	       int local_specified, int run_module_prog, char *extra_arg));
-int do_recursion PROTO((int PROTO((*xfileproc)) (), int PROTO((*xfilesdoneproc)) (),
-		  Dtype PROTO((*xdirentproc)) (), int PROTO((*xdirleaveproc)) (),
+		CALLBACKPROC callback_proc, char *where, int shorten,
+		int local_specified, int run_module_prog, char *extra_arg));
+int do_recursion PROTO((FILEPROC xfileproc, FILESDONEPROC xfilesdoneproc,
+		  DIRENTPROC xdirentproc, DIRLEAVEPROC xdirleaveproc,
 		  Dtype xflags, int xwhich, int xaflag, int xreadlock,
 		  int xdosrcs));
 int do_update PROTO((int argc, char *argv[], char *xoptions, char *xtag,
@@ -477,8 +489,8 @@ int do_update PROTO((int argc, char *argv[], char *xoptions, char *xtag,
 	       char *xjoin_rev1, char *xjoin_rev2, char *preload_update_dir));
 void history_write PROTO((int type, char *update_dir, char *revs, char *name,
 		    char *repository));
-int start_recursion PROTO((int PROTO((*fileproc)) (), int PROTO((*filesdoneproc)) (),
-		     Dtype PROTO((*direntproc)) (), int PROTO((*dirleaveproc)) (),
+int start_recursion PROTO((FILEPROC fileproc, FILESDONEPROC filesdoneproc,
+		     DIRENTPROC direntproc, DIRLEAVEPROC dirleaveproc,
 		     int argc, char *argv[], int local, int which,
 		     int aflag, int readlock, char *update_preload,
 		     int dosrcs, int wd_is_repos));

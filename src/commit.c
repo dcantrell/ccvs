@@ -256,8 +256,8 @@ commit (argc, argv)
      * the dirs
      */
     locklist = getlist ();
-    err = start_recursion ((int (*) ()) NULL, lock_filesdoneproc,
-			   (Dtype (*) ()) NULL, (int (*) ()) NULL, argc,
+    err = start_recursion ((FILEPROC) NULL, lock_filesdoneproc,
+			   (DIRENTPROC) NULL, (DIRLEAVEPROC) NULL, argc,
 			   argv, local, W_LOCAL, aflag, 0, (char *) NULL, 0,
 			   0);
     sortlist (locklist, fsortcmp);
@@ -273,7 +273,7 @@ commit (argc, argv)
      * Run the recursion processor to verify the files are all up-to-date
      */
     err = start_recursion (check_fileproc, check_filesdoneproc,
-			   check_direntproc, (int (*) ()) NULL, argc,
+			   check_direntproc, (DIRLEAVEPROC) NULL, argc,
 			   argv, local, W_LOCAL, aflag, 0, (char *) NULL, 1,
 			   0);
     if (err)

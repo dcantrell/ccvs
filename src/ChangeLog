@@ -1,3 +1,9 @@
+Fri Oct  6 21:31:28 1995  Jeff Johnson  <jbj@brewster.jbj.org>
+
+	* cvs.h, admin.c, client.c, commit.c, log.c, modules.c,
+	parseinfo.c, patch.c, recurse.c, rtag.c, status.c, tag.c:
+	Prototype when dealing in pointers to functions.
+
 Fri Oct  6 21:07:22 1995  Mark H. Wilkinson  <mhw@minster.york.ac.uk>
 
 	* cvsrc.c (read_cvsrc): fix look up of command names in cvsrc file
