@@ -1,3 +1,10 @@
+2004-02-15  Derek Price <derek@ximbiot.com>
+
+	* cvs.texinfo (syntax, updating commit files, commitinfo,
+	verifymsg, loginfo, taginfo, user-defined logging):
+	Document new format strings.
+	* stamp-1, stamp-vti, version-client.texi, version.texi: Regenerated.
+
 2004-02-15  Derek Price  <derek@ximbiot.com>
 
 	* stamp-1, stamp-vti, version-client.texi, version.texi: Regenerated.

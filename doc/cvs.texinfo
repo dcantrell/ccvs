@@ -5500,8 +5500,10 @@ times.  The script might append a message to a file
 listing the information and the programmer who created
 it, or send mail to a group of developers, or, perhaps,
 post a message to a particular newsgroup.  To log
-commits, use the @file{loginfo} file (@pxref{loginfo}).
-To log tags, use the @file{taginfo} file (@pxref{taginfo}).
+commits, use the @file{loginfo} file (@pxref{loginfo}), and
+to log tagging operations, use the @file{taginfo} file
+(@pxref{taginfo}).
+
 @c FIXME: What is difference between doing it in the
 @c modules file and using loginfo/taginfo?  Why should
 @c user use one or the other?
@@ -12596,7 +12598,8 @@ cvs import -I ! -W "*.exe -k 'b'" first-dir vendortag reltag
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node commit files
 @appendixsec The commit support files
-@cindex Committing, administrative support files
+@cindex Commits, administrative support files
+@cindex commit files, see Info files
 
 The @samp{-i} flag in the @file{modules} file can be
 used to run a certain program whenever files are
@@ -12604,7 +12607,7 @@ committed (@pxref{modules}).  The files described in
 this section provide other, more flexible, ways to run
 programs whenever something is committed.
 
-There are three kind of programs that can be run on
+There are three kinds of programs that can be run on
 commit.  They are specified in files in the repository,
 as described below.  The following table summarizes the
 file names and the purpose of the corresponding
@@ -12637,6 +12640,9 @@ imagination is the limit!
 * commitinfo::                  Pre-commit checking
 * verifymsg::                   How are log messages evaluated?
 * loginfo::                     Where should log messages be sent?
+
+* Updating Commit Files::       Updating legacy repositories to stop using
+                                deprecated command line template formats
 @end menu
 
 @c . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
@@ -12694,19 +12700,200 @@ The first regular expression that matches the current
 directory name in the repository is used.  The rest of the line
 is used as a file name or command-line as appropriate.
 
-@c FIXME: need an example.  In particular, show what
-@c the regular expression is matched against (one
-@c ordinarily clueful person got confused about whether it
-@c includes the filename--"directory name" above should be
-@c unambiguous but there is nothing like an example to
-@c confirm people's understanding of this sort of thing).
+@cindex format strings
+@cindex format strings, common syntax
+@cindex Info files, common syntax, format strings
+@cindex Common syntax of info files, format strings
+@noindent
+@emph{Note:  The following information on format strings is valid
+as long as the line @code{UseNewInfoFormatStrings=yes} appears in
+your repository's config file (@pxref{config}).  Otherwise,
+default format strings may be appended to the command line and
+the @samp{loginfo} file, especially, can exhibit slightly
+different behavior.  For more information,
+@xref{Updating Commit Files}.}
+
+In the cases where the second segment of the matched line is a
+command line template (e.g. @file{commitinfo}, @file{loginfo},
+& @file{verifymsg}), the command line template may contain format
+strings which will be replaced with specific values before the
+script is run.
+@c FIXCVS then FIXME - it really would make sense to allow %r & maybe even %p
+@c to be used in rcsinfo to construct a path, but I haven't
+@c coded this yet.
+
+Format strings can represent a single variable or one or more
+attributes of a list variable.  An example of a list variable
+would be the list available to scripts hung on the loginfo hooks
+- the list of files which were just committed.  In the case of
+loginfo, three attributes are available for each list item: file
+name, precommit version, and postcommit version.
+
+Format strings consist of a @samp{%} character followed by an optional
+@samp{@{} (required in the multiple list attribute case), a
+single format character representing a variable or a single attribute of
+list elements or multiple format characters representing attributes of
+list elements, and a closing @samp{@}} when the open bracket was present.
+
+@emph{Flat} format strings (single format characters which get replaced
+with a single value) will generate a single argument
+to the called script, regardless of whether the replacement variable contains
+white space or other special characters.
+
+List attributes will generate an argument for each attribute
+requested for each list item.  For example, @samp{%@{sVv@}}
+in a @file{loginfo} command template will generate three
+arguments (file name, precommit version, postcommit version,
+...) for each file committed.  As in the flat format string
+case, each attribute will be passed in as a single argument
+regardless of whether it contains white space or other
+special characters.
+ 
+@samp{%%} will be replaced with a literal @samp{%}.
+
+The format strings available to all script hooks are:
+
+@table @t
+@item n
+the null, or empty, string
+@item p
+the name of the directory being operated on within the repository
+@item r
+the name of the repository (the path portion of @code{$CVSROOT})
+@end table
+
+Other format strings are file specific.  See the docs on the
+particular administration files for more information
+(@pxref{Administrative files}).
+
+As an example, the following line in a @file{loginfo} file would
+match only the directory @file{module} and any subdirectories of
+@file{module}:
+
+@example
+^module\(/\|$\) (echo; echo %p; echo %@{sVv@}; cat) >>$CVSROOT/CVSROOT/commitlog
+@end example
+
+Using this same line and assuming a commit of new revisions
+1.5.4.4 and 1.27.4.1 based on old revisions 1.5.4.3 and 1.27,
+respectively, of file1 and file2 in module, something like the
+following log message should be appended to commitlog:
+
+@example
+
+module
+file1 1.5.4.3 1.5.4.4 file2 1.27 1.27.4.1
+Update of /cvsroot/module
+In directory localhost.localdomain:/home/jrandom/work/module
+
+Modified Files:
+	file1 file2
+Log Message:
+A log message.
+@end example
+@c . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+@node Updating Commit Files
+@appendixsubsec  Updating legacy repositories to stop using deprecated command line template formats
+@cindex Info files (syntax), updating legacy repositories
+@cindex Syntax of info files, updating legacy repositories
+@cindex Common syntax of info files, updating legacy repositorie
+New repositories are created set to use the new format strings by default, so
+if you are creating a new repository, you shouldn't have to worry about this
+section.
+
+If you are attempting to maintain a legacy repository which was
+making use of the @file{commitinfo}, @file{editinfo}, @file{verifymsg},
+@file{loginfo}, and/or @file{taginfo} script hooks, you should have no
+immediate problems with using the current @sc{cvs} executable, but your users
+will probably start to see deprecation warnings.
+
+The reason for this is that all of the script hooks have been updated to
+use a new command line parser that extensibly supports multiple
+@file{loginfo} & @file{notify} style format strings (@pxref{syntax})
+and this support is not completely compatible with the old style format
+strings.
+
+The quick upgrade method is to stick a @samp{1} after each format string
+in your old @file{loginfo} file.  For example:
+
+@example
+DEFAULT (echo ""; id; echo %@{sVv@}; date; cat) >> $CVSROOT/CVSROOT/commitlog
+@end example
+
+would become:
+
+@example
+DEFAULT (echo ""; id; echo %1@{sVv@}; date; cat) >> $CVSROOT/CVSROOT/commitlog
+@end example
+
+If you were counting on the fact that only the first @samp{%} in the line was
+replaced as a format string, you may also have to double up any further
+percent signs on the line.
+
+If you did this all at once and checked it in, everything should still be
+running properly.
+
+Now add the following line to your config file (@pxref{config}):
+@example
+UseNewInfoFormatStrings=yes
+@end example
+
+Everything should still be running properly, but your users will probably
+start seeing new deprecation warnings.
+  
+Dealing with the deprecation warnings now generated by @file{commitinfo},
+@file{editinfo}, @file{verifymsg}, and @file{taginfo} should be easy.  Simply
+specify what are currently implicit arguments explicitly.  This means appending
+the following strings to each active command line template in each file:
+@table @code
+@item commitinfo
+@samp{ %r/%p %s}
+@item editinfo
+@samp{ %l}
+@item taginfo
+@samp{ %t %o %p %@{sv@}}
+@item verifymsg
+@samp{ %l}
+@end table
+
+If you don't desire that any of the newly available information be passed to
+the scripts hanging off of these hooks, no further modifications to these
+files should be necessary to insure current and future compatibility with
+@sc{cvs}'s format strings.
+
+Fixing @file{loginfo} could be a little tougher.  The old style
+@file{loginfo} format strings caused a single space and comma separated
+argument to be passed in in place of the format string.  This is what will
+continue to be generated due to the deprecated @samp{1} you inserted into
+the format strings.
+
+Since the new format separates each individual item and passes it into the
+script as a separate argument (for a good reason - arguments containing commas
+and/or white space are now parsable), to remove the deprecated @samp{1} from
+your @file{loginfo} command line templates, you will most likely have to
+rewrite any scripts called by the hook to handle the new argument format.
+
+Also note that the way @samp{%} followed by unrecognized characters and by
+@samp{@{@}} was treated in past versions of CVS is not strictly adhered to as
+there were bugs in the old versions.  Specifically, @samp{%@{@}} would eat the
+next character and unrecognized strings resolved only to the empty string,
+which was counter to what was stated in the documentation.  This version will
+do what the documentation said it should have (if you were using only some
+combination of @samp{%@{sVv@}}, e.g. @samp{%@{sVv@}}, @samp{%@{sV@}}, or
+@samp{%v}, you should have no troubles).
+
+On the bright side, you should have plenty of time to do this before all
+support for the old format strings is removed from @sc{cvs}, so you can just
+put up with the deprecation warnings for awhile if you like.
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node commitinfo
 @appendixsubsec Commitinfo
 @cindex @file{commitinfo}
 @cindex Commits, precommit verification of
-@cindex Precommit checking
+@cindex commitinfo (admin file)
+@cindex Info files, commitinfo
+@cindex Info files, precommit verification of commits
 
 The @file{commitinfo} file defines programs to execute
 whenever @samp{cvs commit} is about to execute.  These
@@ -12720,12 +12907,29 @@ As mentioned earlier, each line in the
 @file{commitinfo} file consists of a regular expression
 and a command-line template.  The template can include
 a program name and any number of arguments you wish to
-supply to it.  The full path to the current source
-repository is appended to the template, followed by the
-file names of any files involved in the commit (added,
-removed, and modified files).
+supply to it, as well as format strings.  For more info,
+@pxref{syntax}.
+
+@cindex format strings, commitinfo admin file
+In addition to the common format strings (@pxref{syntax}),
+@file{commitinfo} supports:
+
+@table @t
+@item @{s@}
+a list of the names of files to be committed
+@end table
+
+@cindex commitinfo (admin file), updating legacy repositories
+@cindex compatibility notes, commitinfo admin file
+Currently, if no format strings are specified, a default
+string of @samp{ %r/%p %@{s@}} will be appended to the command
+line template before replacement is performed, but this
+feature is deprecated.  It is simply in place so that legacy
+repositories will remain compatible with the new @sc{cvs} application.
+For information on updating, @pxref{Updating Commit Files}.
 
 @cindex Exit status, of commitinfo
+@cindex commitinfo (admin file), exit status
 The first line with a regular expression matching the
 directory within the repository will be used.  If the
 command returns a non-zero exit status the commit will
@@ -12783,6 +12987,7 @@ to the command.
 @appendixsubsec Verifying log messages
 @cindex @file{verifymsg} (admin file)
 @cindex Log message, verifying
+@cindex logging, commits
 
 Once you have entered a log message, you can evaluate
 that message to check for specific content, such as
@@ -12798,8 +13003,25 @@ specify a log message template.
 Each line in the @file{verifymsg} file consists of a
 regular expression and a command-line template.  The
 template must include a program name, and can include
-any number of arguments.  The full path to the current
-log message template file is appended to the template.
+any number of arguments.
+
+@cindex format strings, verifymsg admin file
+In addition to the common format strings (@pxref{syntax}),
+@file{verifymsg} supports:
+
+@table @t
+@item l
+the full path to the file containing the log message to be verified
+@end table
+
+@cindex verifymsg (admin/commit file), updating legacy repositories
+@cindex compatibility notes, verifymsg admin file
+Currently, if no format strings are specified, a default
+string of @samp{ %l} will be appended to the command
+line template before replacement is performed, but this
+feature is deprecated.  It is simply in place so that legacy
+repositories will remain compatible with the new @sc{cvs} application.
+For information on updating, @pxref{Updating Commit Files}.
 
 One thing that should be noted is that the @samp{ALL}
 keyword is not supported.  If more than one matching
@@ -12863,10 +13085,18 @@ Another example of an update might be to delete a line
 that contains 'BugID: none' from the log message after
 validation of that value as being allowed is made.
 
+@menu
+* verifymsg example::            Verifymsg example
+@end menu
+
+@c . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+@node verifymsg example
+@appendixsubsubsec Verifying log messages
+@cindex verifymsg, example
 The following is a little silly example of a
 @file{verifymsg} file, together with the corresponding
-@file{rcsinfo} file, the log message template and an
-verification  script.  We begin with the log message template.
+@file{rcsinfo} file, the log message template and a
+verification script.  We begin with the log message template.
 We want to always record a bug-id number on the first
 line of the log message.  The rest of log message is
 free text.  The following template is found in the file
@@ -12904,7 +13134,7 @@ fi
 The @file{verifymsg} file contains this line:
 
 @example
-^tc     /usr/cvssupport/bugid.verify
+^tc     /usr/cvssupport/bugid.verify %l
 @end example
 
 The @file{rcsinfo} file contains this line:
@@ -12925,6 +13155,7 @@ RereadLogAfterVerify=always
 @node loginfo
 @appendixsubsec Loginfo
 @cindex loginfo (admin file)
+@cindex logging, commits
 @cindex Storing log messages
 @cindex Mailing log messages
 @cindex Distributing log messages
@@ -12934,8 +13165,10 @@ RereadLogAfterVerify=always
 @c mean is "when the repository gets changed" which
 @c also includes "cvs import" and "cvs add" on a directory.
 The @file{loginfo} file is used to control where
-@samp{cvs commit} log information is sent.  The first
-entry on a line is a regular expression which is tested
+@samp{cvs commit} log information is sent.  @xref{taginfo}, for
+how to log tagging information.
+
+The first entry on a line is a regular expression which is tested
 against the directory that the change is being made to,
 relative to the @code{$CVSROOT}.  If a match is found, then
 the remainder of the line is a filter program that
@@ -12951,16 +13184,13 @@ matching regular expression or @samp{DEFAULT}.
 
 The first matching regular expression is used.
 
-@xref{commit files}, for a description of the syntax of
-the @file{loginfo} file.
+@cindex format strings, loginfo admin file
+In addition to the common format strings (@pxref{syntax}),
+@file{loginfo} supports:
 
-The user may specify a format string as
-part of the filter.  The string is composed of a
-@samp{%} followed by a space, or followed by a single
-format character, or followed by a set of format
-characters surrounded by @samp{@{} and @samp{@}} as
-separators.  The format characters are:
-
+@table @t
+@item @{sVv@}
+File attributes, where:
 @table @t
 @item s
 file name
@@ -12969,35 +13199,30 @@ old version number (pre-checkin)
 @item v
 new version number (post-checkin)
 @end table
+@end table
 
-All other characters that appear in a format string
-expand to an empty field (commas separating fields are
-still provided).
-
-For example, some valid format strings are @samp{%},
+For example, some valid format strings are @samp{%%},
 @samp{%s}, @samp{%@{s@}}, and @samp{%@{sVv@}}.
 
-The output will be a space separated string of tokens enclosed in
-quotation marks (@t{"}).
-Any embedded dollar signs (@t{$}), backticks (@t{`}),
-backslashes (@t{\}), or quotation marks will be preceded
-by a backslash (this allows the shell to correctly parse it
-as a single string, regardless of the characters it contains).
-For backwards compatibility, the first
-token will be the repository subdirectory.  The rest of the
-tokens will be comma-delimited lists of the information
-requested in the format string.  For example, if
-@samp{/u/src/master/yoyodyne/tc} is the repository, @samp{%@{sVv@}}
-is the format string, and three files (@t{ChangeLog},
-@t{Makefile}, @t{foo.c}) were modified, the output
-might be:
+@cindex loginfo (admin file), updating legacy repositories
+@cindex compatibility notes, loginfo admin file
+Currently, if @samp{UseNewInfoFormatStrings} is not set in the @file{config}
+administration file (@pxref{config}), the format strings will be substituted
+as they were in past versions of @sc{cvs}, but this feature is deprecated.
+It is simply in place so that legacy repositories will remain compatible with
+the new @sc{cvs} application.  For information on updating,
+please see @ref{Updating Commit Files}.
+
+@xref{commit files}, for a description of the syntax of the @file{loginfo}
+file.
+
+As an example, if @samp{/u/src/master/yoyodyne/tc} is the repository, @samp{%p}
+and @samp{%@{sVv@}} are the format strings, and three files (@t{ChangeLog},
+@t{Makefile}, @t{foo.c}) were modified, the output might be:
 
 @example
-"yoyodyne/tc ChangeLog,1.1,1.2 Makefile,1.3,1.4 foo.c,1.12,1.13"
+yoyodyne/tc ChangeLog 1.1 1.2 Makefile 1.3 1.4 foo.c 1.12 1.13
 @end example
-
-As another example, @samp{%@{@}} means that only the
-name of the repository will be generated.
 
 Note: when @sc{cvs} is accessing a remote repository,
 @file{loginfo} will be run on the @emph{remote}
@@ -13005,8 +13230,8 @@ Note: when @sc{cvs} is accessing a remote repository,
 repositories}).
 
 @menu
-* loginfo example::             Loginfo example
-* Keeping a checked out copy::  Updating a tree on every checkin
+* loginfo example::                          Loginfo example
+* Keeping a checked out copy::               Updating a tree on every checkin
 @end menu
 
 @c . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
@@ -13028,9 +13253,9 @@ Commits to the @file{prog1} directory are mailed to @t{ceder}.
 @c directory, it is kind of awkward if
 @c only the first matching line is used.
 @example
-ALL             /usr/local/bin/cvs-log $CVSROOT/CVSROOT/commitlog $USER
-^CVSROOT        /usr/local/bin/cvs-log /usr/adm/cvsroot-log
-^prog1          Mail -s %s ceder
+ALL                     /usr/local/bin/cvs-log $CVSROOT/CVSROOT/commitlog $USER
+^CVSROOT\(/\|$\)        /usr/local/bin/cvs-log /usr/adm/cvsroot-log $USER
+^prog1\(/\|$\)          Mail -s "%p %s" ceder
 @end example
 
 The shell-script @file{/usr/local/bin/cvs-log} looks
@@ -13039,7 +13264,7 @@ like this:
 @example
 #!/bin/sh
 (echo "------------------------------------------------------";
- echo -n $2"  ";
+ echo -n "$2  ";
  date;
  echo;
  cat) >> $1
@@ -13083,12 +13308,12 @@ must be run in the background.
 Here is an example for unix (this should all be on one line):
 
 @example
-^cyclic-pages		(date; cat; (sleep 2; cd /u/www/local-docs;
+^cyclic-pages\(/\|$\)	(date; cat; (sleep 2; cd /u/www/local-docs;
  cvs -q update -d) &) >> $CVSROOT/CVSROOT/updatelog 2>&1
 @end example
 
-This will cause checkins to repository directories
-starting with @code{cyclic-pages} to update the checked
+This will cause checkins to repository directory @code{cyclic-pages}
+and its subdirectories to update the checked
 out tree in @file{/u/www/local-docs}.
 @c More info on some of the details?  The "sleep 2" is
 @c so if we are lucky the lock will be gone by the time
@@ -13101,6 +13326,7 @@ out tree in @file{/u/www/local-docs}.
 @cindex Form for log message
 @cindex Log message template
 @cindex Template for log message
+@cindex logging, commits
 
 The @file{rcsinfo} file can be used to specify a form to
 edit when filling out the commit log.  The
@@ -13162,23 +13388,57 @@ be updated from the server.
 The @file{taginfo} file defines programs to execute
 when someone executes a @code{tag} or @code{rtag}
 command.  The @file{taginfo} file has the standard form
-for administrative files (@pxref{syntax}),
-where each line is a regular expression
-followed by a command to execute.  The arguments passed
-to the command are, in order, the @var{tagname},
-@var{operation} (@code{add} for @code{tag},
-@code{mov} for @code{tag -F}, and @code{del} for
-@code{tag -d}), @var{repository}, and any remaining are
-pairs of @var{filename} @var{revision}.  A non-zero
-exit of the filter program will cause the tag to be
+for administrative files (@pxref{Administrative
+files}), where each line is a regular expression
+followed by a command to execute.
+
+@cindex format strings, taginfo admin file
+In addition to the common format strings (@pxref{syntax}),
+@file{taginfo} supports:
+
+@table @t
+@item b
+tag type (@code{T} for branch, @code{N} for not-branch, or @code{?} for
+unknown, as during delete operations)
+@item o
+operation (@code{add} for @code{tag}, @code{mov} for @code{tag -F}, or
+@code{del} for @code{tag -d})
+@item t
+tag name
+@item @{sVv@}
+file attributes, where:
+@table @t
+@item s
+file name
+@item V
+old version number (for a move or delete operation)
+@item v
+new version number (for an add or move operation)
+@end table
+@end table
+
+For example, some valid format strings are @samp{%%}, @samp{%p}, @samp{%t},
+@samp{%s}, @samp{%@{s@}}, and @samp{%@{sVv@}}.
+
+@cindex taginfo (admin file), updating legacy repositories
+@cindex compatibility notes, taginfo admin file
+Currently, if no format strings are specified, a default
+string of @samp{ %t %o %p %@{sv@}} will be appended to the command
+line template before replacement is performed, but this
+feature is deprecated.  It is simply in place so that legacy
+repositories will remain compatible with the new @sc{cvs} application.
+For information on updating, @pxref{Updating Commit Files}.
+
+@cindex Exit status, of taginfo admin file
+@cindex taginfo (admin file), exit status
+A non-zero exit of the filter program will cause the tag to be
 aborted.
 
-Here is an example of using the @file{taginfo} file
-to log @code{tag} and @code{rtag}
+Here is an example of using @file{taginfo} to log @code{tag} and @code{rtag}
 commands.  In the @file{taginfo} file put:
 
 @example
-ALL /usr/local/cvsroot/CVSROOT/loggit
+ALL /usr/local/cvsroot/CVSROOT/loggit %t %b %o %p %@{sVv@}
 @end example
 
 @noindent
@@ -13189,7 +13449,6 @@ following script:
 #!/bin/sh
 echo "$@@" >>/home/kingdon/cvsroot/CVSROOT/taglog
 @end example
-
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node cvsignore
 @appendixsec Ignoring files via cvsignore
@@ -13304,7 +13563,7 @@ which you run by including the following line in the
 @file{commitinfo} administrative file:
 
 @example
-ALL   $CVSROOT/CVSROOT/logcommit.pl
+ALL   $CVSROOT/CVSROOT/logcommit.pl %r/%p %s
 @end example
 
 To maintain @file{logcommit.pl} with @sc{cvs} you would
@@ -13636,6 +13895,22 @@ As an example, to restrict users not in the @code{cvsadmin}
 group to using @code{cvs admin} to change the default keyword
 substitution mode, lock revisions, unlock revisions, and
 replace the log message, use @samp{UserAdminOptions=klum}.
+
+@cindex format strings, config admin file
+@cindex config (admin file), updating legacy repositories
+@cindex compatibility notes, config admin file
+@cindex UseNewInfoFormatStrings, in CVSROOT/config
+@item UseNewInfoFormatStrings=@var{value}
+Specify whether @sc{cvs} should support the new or old command line
+template model for the commit support files (@pxref{commit files}).
+This configuration variable began life in deprecation and is only here
+in order to give people time to update legacy repositories to use the new
+format string syntax before support for the old syntax is removed.  For
+information on updating your repository to support the new model,
+please see @ref{Updating Commit Files}.
+
+@emph{Note that new repositories (created with the @code{cvs init} command)
+will have this value set to @samp{yes}, but the default value is @samp{no}.}
 @end table
 
 @c ---------------------------------------------------------------------
