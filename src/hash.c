@@ -409,6 +409,9 @@ sortlist (list, comp)
     Node *head, *remain, *p, **array;
     int i, n;
 
+    if (list == NULL)
+	return;
+
     /* save the old first element of the list */
     head = list->list;
     remain = head->next;

@@ -473,25 +473,18 @@ patch_fileproc (callerdat, finfo)
 	cvs_output (finfo->fullname, 0);
 	if (vers_tag == NULL)
 	{
-	    cvs_output (" is new; current revision ", 0);
+	    cvs_output( " is new; ", 0 );
+	    cvs_output( rev2 ? rev2 : date2 ? date2 : "current", 0 );
+	    cvs_output( " revision ", 0 );
 	    cvs_output (vers_head, 0);
 	    cvs_output ("\n", 1);
 	}
 	else
 	{
-	    cvs_output (" is removed; not included in ", 0);
-	    if (rev2 != NULL)
-	    {
-		cvs_output ("release tag ", 0);
-		cvs_output (rev2, 0);
-	    }
-	    else if (date2 != NULL)
-	    {
-		cvs_output ("release date ", 0);
-		cvs_output (date2, 0);
-	    }
-	    else
-		cvs_output ("current release", 0);
+	    cvs_output( " is removed; ", 0 );
+	    cvs_output( rev1 ? rev1 : date1, 0 );
+	    cvs_output( " revision ", 0 );
+	    cvs_output( vers_tag, 0 );
 	    cvs_output ("\n", 1);
 	}
 	ret = 0;
