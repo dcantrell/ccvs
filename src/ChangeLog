@@ -1,5 +1,7 @@
 Sat Oct 25 00:33:57 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* rcs.c (RCS_delete_revs): Use : not - for range in error message.
+
 	* rcs.h: Add comment about '\0' in RCS fields.
 
 	* rcs.c (getdelta): Add comment about branches and next field

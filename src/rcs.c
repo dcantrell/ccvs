@@ -4483,7 +4483,7 @@ RCS_delete_revs (rcs, tag1, tag2)
 	after = xstrdup (next);
     else
     {
-	rcserror (rcs->path, "invalid revision range %s-%s", tag1, tag2);
+	rcserror (rcs->path, "invalid revision range %s:%s", tag1, tag2);
 	goto delrev_done;
     }
 
