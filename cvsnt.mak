@@ -2448,7 +2448,7 @@ DEP_CPP_FTELLO_C=\
 SOURCE=.\lib\exitfail.c
 DEP_CPP_EXITFAIL_C=\
 	".\windows-NT\config.h"\
-	".\windows-NT\exitfail.h"\
+	".\lib\exitfail.h"\
 	
 "$(INTDIR)\exitfail.obj" : $(SOURCE) $(DEP_CPP_EXITFAIL_C) "$(INTDIR)"
    $(CPP) $(CPP_PROJ) $(SOURCE)
