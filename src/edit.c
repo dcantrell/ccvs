@@ -606,14 +606,14 @@ editor_set (filename, editor, val)
 
     edlist = fileattr_get0 (filename, "_editors");
     newlist = fileattr_modify (edlist, editor, val, '>', ',');
-    if (edlist != NULL)
-	free (edlist);
     /* If the attributes is unchanged, don't rewrite the attribute file.  */
     if (!((edlist == NULL && newlist == NULL)
 	  || (edlist != NULL
 	      && newlist != NULL
 	      && strcmp (edlist, newlist) == 0)))
 	fileattr_set (filename, "_editors", newlist);
+    if (edlist != NULL)
+	free (edlist);
     if (newlist != NULL)
 	free (newlist);
 }

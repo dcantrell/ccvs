@@ -511,8 +511,7 @@ make_message_rcslegal (message)
 {
     char *dst, *dp, *mp;
 
-    if (message == NULL || (*message == '\0'))
-	return xstrdup ("*** empty log message ***");
+    if (message == NULL) message = "";
 
     /* Strip whitespace from end of lines and end of string. */
     dp = dst = (char *) xmalloc (strlen (message) + 1);
@@ -521,17 +520,16 @@ make_message_rcslegal (message)
 	if (*mp == '\n')
 	{
 	    /* At end-of-line; backtrack to last non-space. */
-	    while (dp > dst && isspace (*--dp))
-		;
-	    ++dp;
+	    while (dp > dst && (dp[-1] == ' ' || dp[-1] == '\t'))
+		--dp;
 	}
 	*dp++ = *mp;
     }
 
     /* Backtrack to last non-space at end of string, and truncate. */
-    while (isspace (*--dp))
-	;
-    *++dp = '\0';
+    while (dp > dst && isspace (dp[-1]))
+	--dp;
+    *dp = '\0';
 
     /* After all that, if there was no non-space in the string,
        substitute a non-empty message. */

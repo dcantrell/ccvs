@@ -298,6 +298,8 @@ RCS_merge(rcs, path, workfile, options, rev1, rev2)
 	    }
 	    free (diffout);
 	}
+	free (xrev1);
+	free (xrev2);
 	noexec = save_noexec;
     }
 

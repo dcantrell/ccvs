@@ -686,6 +686,9 @@ RCS file: ", 0);
 				   use_rev1, use_rev2,
 				   label1, label2,
 				   finfo->file);
+
+	if (label1) free (label1);
+	if (label2) free (label2);
     }
 
     switch (status)
