@@ -452,7 +452,7 @@ RFCDATE="[a-zA-Z0-9 ][a-zA-Z0-9 ]* [0-9:][0-9:]* -0000"
 RFCDATE_EPOCH="1 Jan 1970 00:00:00 -0000"
 
 # Special times used in touch -t commands and the regular expresions
-# to match them. Now that the tests set TZ=UTC, it
+# to match them. Now that the tests set TZ=UTC0, it
 # should be easier to be more exact in their regexp.
 TOUCH1971="197107040343"
 # This date regexp was 1971/07/0[3-5] [0-9][0-9]:43:[0-9][0-9]
@@ -466,7 +466,7 @@ ISO8601DATE2034="2034-12-25 18:01:[0-9][0-9] [+-]0000"
 # The RAWRCSDATE..... format is for internal ,v files and
 # the ISO8601DATE..... format is to allow for a regular expression in
 # 'cvs log' output patterns. The tests that use this set of specific
-# ${ISO8601DATE.....} variables also force TZ=UTC for the test.
+# ${ISO8601DATE.....} variables also force TZ=UTC0 for the test.
 RAWRCSDATE2000A="2000.11.24.15.58.37"
 RAWRCSDATE1996A="96.11.24.15.57.41"
 RAWRCSDATE1996B="96.11.24.15.56.05"
@@ -9142,7 +9142,7 @@ add
 
 	  # Set a predictable time zone for these tests.
 	  save_TZ=$TZ
-	  TZ=UTC; export TZ
+	  TZ=UTC0; export TZ
 
 	  mkdir 1; cd 1
 	  mkdir adir bdir cdir
@@ -21200,7 +21200,7 @@ ${SPROG} update: Updating crerepos-dir"
 	  # Save the timezone and set it to UTC for these tests to make the
 	  # value more predicatable.
 	  save_TZ=$TZ
-	  TZ=UTC; export TZ
+	  TZ=UTC0; export TZ
 
 	  modify_repo mkdir $CVSROOT_DIRNAME/first-dir
 
@@ -21867,7 +21867,7 @@ EOF
 
 	  # Need a predictable time zone.
 	  save_TZ=$TZ
-	  TZ=UTC; export TZ
+	  TZ=UTC0; export TZ
 
           mkdir rcs4
           cd rcs4
@@ -24324,7 +24324,7 @@ done"
 	  #
 	  mkdir 1; cd 1
 	  save_TZ=$TZ
-	  TZ=UTC; export TZ
+	  TZ=UTC0; export TZ
 	  dotest tagdate-1 "${testcvs} -q co -l ." ''
 	  mkdir first-dir
 	  dotest tagdate-2 "${testcvs} add first-dir" \
