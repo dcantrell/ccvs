@@ -1,3 +1,9 @@
+2004-04-30  Derek Price  <derek@ximbiot.com>
+
+	* tag.c (tag_check_valid): Treat a NULL repository the same as an empty
+	one.
+	* sanity.sh (branches2-ls-7): Verify absence of assertion failure.
+
 2004-04-29  Derek Price  <derek@ximbiot.com>
 
 	* sanity.sh (branches2-rls-1): Reformat comment.

@@ -1310,7 +1310,8 @@ val_direntproc (void *callerdat, const char *dir, const char *repository,
    tag is found in CVSROOTADM_VALTAGS, but there is not (yet) any
    local directory.  */
 void
-tag_check_valid (char *name, int argc, char **argv, int local, int aflag, char *repository)
+tag_check_valid (char *name, int argc, char **argv, int local, int aflag,
+                 char *repository)
 {
     DBM *db;
     char *valtags_filename;
@@ -1411,17 +1412,14 @@ Numeric tag %s contains characters other than digits and '.'", name);
 
     which = W_REPOS | W_ATTIC;
 
-    if (repository != NULL)
+    if (repository == NULL || repository[0] == '\0')
+	which |= W_LOCAL;
+    else
     {
-	if (repository[0] == '\0')
-	    which |= W_LOCAL;
-	else
-	{
-	    if (save_cwd (&cwd))
-		exit (EXIT_FAILURE);
-	    if (CVS_CHDIR (repository) < 0)
-		error (1, errno, "cannot change to %s directory", repository);
-	}
+	if (save_cwd (&cwd))
+	    exit (EXIT_FAILURE);
+	if (CVS_CHDIR (repository) < 0)
+	    error (1, errno, "cannot change to %s directory", repository);
     }
 
     start_recursion
