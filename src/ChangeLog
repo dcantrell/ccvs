@@ -1,3 +1,7 @@
+2005-03-10  Derek Price  <derek@ximbiot.com>
+
+	* diff.c (diff_fileproc): Remove unnecessary check for NULL.
+
 2005-03-10  Mark D. Baushke  <mdb@cvshome.org>
 
 	* commit.c: Gratuitous reformatting.
@@ -22,7 +26,7 @@
 
 	* history.c (read_hrecs): Make function argument a const.
 	
-2005-03-10 Derek Price <derek@ximbiot.com>
+2005-03-10  Derek Price  <derek@ximbiot.com>
 
 	* fileattr.c (fileattr_read): Only eat a newline when it really is a
 	newline.
@@ -31,7 +35,7 @@
 
 	* zlib.c: Include "pagealign_alloc.h".
 
-2005-03-09 Derek Price <derek@ximbiot.com>
+2005-03-09  Derek Price  <derek@ximbiot.com>
 
 	* add.c (add, add_directory), buffer.c (allocate_buffer_datas),
 	client.c (update_entries), commit.c (checkaddfile), entries.c
