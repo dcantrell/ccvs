@@ -3784,9 +3784,6 @@ authenticate_connection ()
    * okay.
    */
 
-  printf ("cvs pserver: authenticate_connection: start!\n");
-  fflush (stdout);
-
   /* Make sure the protocol starts off on the right foot... */
   fgets (tmp, PATH_MAX, stdin);
   if (strcmp (tmp, "BEGIN AUTH REQUEST\n"))
@@ -3796,16 +3793,15 @@ authenticate_connection ()
       exit (1);
     }
     
-  printf ("cvs pserver: authenticate_connection: got begin...\n");
-  fflush (stdout);
-
   /* Get the three important pieces of information in order. */
   fgets (repository, PATH_MAX, stdin);
   fgets (username, PATH_MAX, stdin);
   fgets (password, PATH_MAX, stdin);
 
-  printf ("cvs pserver: authenticate_connection: got three data...\n");
-  fflush (stdout);
+  /* Make them pure. */ 
+  strip_trailing_newlines (repository);
+  strip_trailing_newlines (username);
+  strip_trailing_newlines (password);
 
   /* ... and make sure the protocol ends on the right foot. */
   fgets (tmp, PATH_MAX, stdin);
@@ -3816,13 +3812,21 @@ authenticate_connection ()
       exit (1);
     }
 
-  printf ("cvs pserver: authenticate_connection: got end...\n");
-  fflush (stdout);
-
-  printf ("*** AUTH PROTOCOL:\n   %s\n   %s\n   %s\n.",
-          repository, username, password);
-  fflush (stdout);
-  exit (0);
+  /* Primitive authorization for testing. */
+  if (strcmp (password, "unguessable") == 0)
+    {
+      printf ("*** cvs server: you pass: %d %s\n", 
+              strlen (password), password);
+      fflush (stdout);
+      exit (0);
+    }
+  else 
+    {
+      printf ("*** cvs server: you fail: %d %s\n", 
+              strlen (password), password);
+      fflush (stdout);
+      exit (1);
+    }
   /* fooo */
   
   pw = getpwnam (username);

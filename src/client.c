@@ -2085,7 +2085,7 @@ get_responses_and_close ()
     if (client_prune_dirs)
 	process_prune_candidates ();
 
-#ifdef HAVE_KERBEROS
+#if defined(HAVE_KERBEROS) || defined(CVS_LOGIN)
     if (server_fd != -1)
     {
 	if (shutdown (server_fd, 1) < 0)
@@ -2101,7 +2101,7 @@ get_responses_and_close ()
 	}
     }
     else
-#endif /* HAVE_KERBEROS */
+#endif /* HAVE_KERBEROS || CVS_LOGIN */
 
 #ifdef SHUTDOWN_SERVER
     SHUTDOWN_SERVER (fileno (to_server));
@@ -2174,9 +2174,12 @@ init_sockaddr (name, hostname, port)
 }
 
 void
-connect_to_pserver ()
+connect_to_pserver (tofdp, fromfdp, log)
+     int *tofdp, *fromfdp;
+     char *log;
 {
   int sock;
+  int tofd, fromfd;
   struct hostent *host;
   struct sockaddr_in client_sai;
   char *test_str = "this is a test\n";
@@ -2190,9 +2193,10 @@ connect_to_pserver ()
       fprintf (stderr, "socket() failed\n");
       exit (1);
     }
-  init_sockaddr (&client_sai, server_host, 2401);
+  init_sockaddr (&client_sai, server_host, CVS_AUTH_PORT);
   connect (sock, (struct sockaddr *) &client_sai, sizeof (client_sai));
 
+  /* Run the auth protocol before anything else. */
   {
     char *begin      = "BEGIN AUTH REQUEST\n";
     char *repository = server_cvsroot;
@@ -2212,26 +2216,31 @@ connect_to_pserver ()
     write (sock, end, strlen (end));
   }
 
-  /* This sends EOF to the server, which on receiving EOF breaks out
-     of the print loop. */
-  /* shutdown (sock, 1); */
+  /* This was stolen straight from start_kerberos_server(). */
+  {
+    server_fd = sock;
+    close_on_exec (server_fd);
+    /*
+     * If we do any filtering, TOFD and FROMFD will be
+     * closed.  So make sure they're copies of SERVER_FD,
+     * and not the same fd number.
+     */
+    if (log)
+      {
+        tofd = dup (sock);
+        fromfd = dup (sock);
+      }
+    else
+      tofd = fromfd = sock;
+  }
 
-  while (read (sock, read_buf, 1) > 0)
-    {
-      c = read_buf[0];
-      if (c == '\n')
-        printf ("%c", c);
-      else
-        printf ("|%c", c);
-      fflush (stdout);
-    }
-  
-  printf ("*** Done.\n");
-  fflush (stdout);
-  exit (0);
+  /* Hand them back to the caller. */
+  *tofdp   = tofd;
+  *fromfdp = fromfd;
 }
 #endif /* CVS_LOGIN */
 
+
 #if HAVE_KERBEROS
 void
 start_kerberos_server (tofdp, fromfdp, log)
@@ -2384,17 +2393,11 @@ start_server ()
 #ifdef CVS_LOGIN
     if (use_authenticating_server)
       {
-        printf ("*** start_server: connecting (authenticated)...\n");
-        fflush (stdout);
-        connect_to_pserver ();
-        printf ("*** start_server: finished (authenticated).\n");
-        fflush (stdout);
-        exit (0);
+        connect_to_pserver (&tofd, &fromfd, log);
       }
     else
-      {
 #endif /* CVS_LOGIN */
-
+      {
 #if ! RSH_NOT_TRANSPARENT
         start_rsh_server (&tofd, &fromfd);
 #else /* RSH_NOT_TRANSPARENT */
@@ -2404,9 +2407,7 @@ start_server ()
                       server_user, server_host, server_cvsroot);
 #endif /* defined(START_SERVER) */
 #endif /* ! RSH_NOT_TRANSPARENT */
-#ifdef CVS_LOGIN
-      } /* closes an `else' that exists iff CVS_LOGIN */
-#endif /* CVS_LOGIN */
+      }
 #endif /* HAVE_KERBEROS */
 
     /* todo: some OS's don't need these calls... */

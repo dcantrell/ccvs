@@ -1,3 +1,22 @@
+Tue Dec  5 22:46:37 1995  Karl Fogel  <kfogel@floss.cyclic.com>
+
+        * subr.c (strip_trailing_newlines): new func.
+
+        * client.c (connect_to_pserver): took out print statements.
+
+        * server.c (authenticate_connection): removed print statments.
+        Use new func strip_trailing_newlines() to purify `repository',
+        `username', and `password'.
+        Run a primitive password check, just for testing.
+        
+        * client.c (connect_to_pserver): use CVS_AUTH_PORT.
+        Take tofdp, fromfdp, and log args.  Caller changed.
+        (get_responses_and_close): either kerberos and CVS_LOGIN might
+        have one fd for both directions, so adjust #ifdef accordingly.
+
+        * cvs.h (CVS_AUTH_PORT): new define, default to 2401.
+        Prototype strip_trailing_newlines().
+        
 Tue Dec  5 16:53:35 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
         * server.c (authenticate_connection): new func.

@@ -106,10 +106,12 @@ extern int errno;
 #include "client.h"
 #endif
 
-#ifdef CVS_LOGIN
-/* Authenticating server stuff. */
+#ifdef CVS_LOGIN /* Authenticating server stuff. */
 extern int use_authenticating_server;
 void connect_to_pserver();
+# ifndef CVS_AUTH_PORT
+# define CVS_AUTH_PORT 2401
+# endif /* CVS_AUTH_PORT */
 #endif /* CVS_LOGIN */
 
 #ifdef MY_NDBM
@@ -415,6 +417,7 @@ char *time_stamp PROTO((char *file));
 char *xmalloc PROTO((size_t bytes));
 char *xrealloc PROTO((char *ptr, size_t bytes));
 char *xstrdup PROTO((const char *str));
+void strip_trailing_newlines PROTO((char *str));
 int No_Difference PROTO((char *file, Vers_TS * vers, List * entries,
 			 char *repository, char *update_dir));
 typedef	int (*CALLPROC)	PROTO((char *repository, char *value));
