@@ -1,5 +1,8 @@
 Tue Nov 21 16:18:37 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
+        * popen.h (popenRW): prototype popenRW()... why wasn't I doing
+        this before?
+
         * client.c (start_server): set tofd and fromfd with popenRW, now
         that it handles int file descriptors.
         Log to a file if asked, now that we have

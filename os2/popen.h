@@ -2,4 +2,5 @@
    Thanks, Glenn Gribble! */
 
 FILE *popen (char *cmd, char *mode);
+int popenRW (char **cmd, int *pipes);
 int pclose (FILE *stream);
