@@ -123,7 +123,6 @@ None.
 ######################################################################
 use strict;
 
-use Cwd;
 use Fcntl qw( F_GETFD F_SETFD );
 use File::Find;
 use File::Basename;
@@ -333,7 +332,7 @@ sub process_file
     if( ! -d $File::Find::name )
 	{
 		my $path = $File::Find::name;
-		$path =~ s#^$cvsroot/##;
+		$path =~ s#^$cvsroot/(\./)*##;
 		$total_files++;
 
 		verbose( "Examining `$path'\n" );
@@ -394,9 +393,9 @@ sub look_at_cvs_file
 
     $file = $path . $name if $path =~ s#Attic/$##;
 
-    my( $finfo, $rinfo ) = get_history( $name );
+    my( $finfo, $rinfo ) = get_history( $file );
 
-    if( !defined( $rinfo ) )
+    unless( defined $rinfo )
     {
         verbose( "\t`$file' is corrupted.  It was determined to contain no\n"
 		         . "\trevisions via a cvs rlog command\n" );
@@ -453,8 +452,8 @@ sub get_history
 	my %rinfo;		# Info about revisions in the file.
 	my $revision;
 
-	my $fh = new IO::File( "rlog -N \"$file\" 2>&1 |" )
-		or die( "unable to run rlog, help" );
+	my $fh = new IO::File( "cvs rlog -N \"$file\" 2>&1 |" )
+		or die( "unable to run `cvs rlog', help" );
 
 	my $ignore = -1;
     while( my $line = $fh->getline )
@@ -523,7 +522,7 @@ sub get_history
         return( undef );
     }
 
-    return( \%finfo, \%rinfo );
+    return( \%finfo, %rinfo ? \%rinfo : undef );
 }
 
 ######################################################################
@@ -571,8 +570,6 @@ sub check_revision
 {
     my( $file, $revision, $finfo, $rinfo ) = @_;
 	$file =~ s/(["\$`\\])/\\$1/g;
-
-    my $cwd = getcwd();
 
 	# Allow binaries to be checked out as such.  Otherwise, use -ko to avoid
 	# replacing keywords in the files.
