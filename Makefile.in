@@ -30,8 +30,6 @@ VPATH = @srcdir@
 # ioctl calls will be compiled incorrectly on some systems.
 CC = @CC@
 AR = ar
-# Older makes don't set $(MAKE), so we set it for them.
-MAKE = make
 # Set RANLIB = echo if your system doesn't have or need ranlib.
 RANLIB = @RANLIB@
 # Set YACC = bison or yacc, depending on which you have on your system
