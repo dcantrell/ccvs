@@ -1,19 +1,30 @@
 dnl configure.in for cvs
 AC_INIT(src/cvs.h)
+AM_INIT_AUTOMAKE(cvs, 1.11.0.1)
 AC_PREREQ(2.13)
 AC_PREFIX_PROGRAM(cvs)
-AC_CONFIG_HEADER(config.h src/options.h)
+AM_CONFIG_HEADER(config.h src/options.h)
 
 AC_PROG_AWK
 AC_PROG_CC
 AC_PROG_INSTALL
 AC_PROG_MAKE_SET
+# Automake's more advanced version of AC_PROG_RANLIB
 AC_PROG_RANLIB
 AC_PROG_YACC
+AC_PROG_LN_S
 
 AC_PATH_PROG(perl_path, perl, no)
 AC_PATH_PROG(csh_path, csh, no)
 AC_PATH_PROG(pr_path, pr, no)
+
+dnl FIXME This is truly gross.
+missing_dir=`cd $ac_aux_dir && pwd`
+dnl FIXME I pulled this default list from sanity.sh.  Perhaps these lists
+dnl can be stored in one location?
+glocs="$PATH:/usr/local/bin:/usr/contrib/bin:/usr/gnu/bin:/local/bin:/local/gnu/bin:/gnu/bin"
+AC_PATH_PROGS(ROFF, groff roff, $missing_dir/missing roff, $glocs)
+AC_PATH_PROG(PS2PDF, ps2pdf, $missing_dir/missing ps2pdf)
 
 AC_SYS_INTERPRETER
 if test X"$ac_cv_sys_interpreter" != X"yes" ; then
@@ -308,9 +319,16 @@ test -f src/options.h && (
   cp ./src/options.h ./src/options.h-SAVED
 )
 
-AC_OUTPUT(Makefile lib/Makefile src/Makefile zlib/Makefile diff/Makefile doc/Makefile \
-	  man/Makefile tools/Makefile \
+AC_OUTPUT(Makefile cvs.spec \
 	  contrib/Makefile \
+	  diff/Makefile \
+	  doc/Makefile doc/CVSvn.texi \
+	  emx/Makefile \
+	  lib/Makefile \
+	  man/Makefile \
+	  os2/Makefile \
+	  src/Makefile src/version.c \
+	  tools/Makefile \
+	  vms/Makefile \
 	  windows-NT/Makefile windows-NT/SCC/Makefile \
-	  os2/Makefile emx/Makefile vms/Makefile \
-	  stamp-h)
+	  zlib/Makefile)

@@ -21,6 +21,9 @@ Note that passwords specified in a checkout command will be saved in the clear
 in the CVS/Root file in each created directory, so this is not recommended,
 except perhaps when accessing anonymous repositories or the like.
 
+* The distribution has been converted to use Automake.  This shouldn't affect
+most users except to ease some portability concerns.
+
 Changes since 1.10:
 
 * The new "cvs version" command gives a short version message.  If

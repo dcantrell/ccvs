@@ -308,3 +308,10 @@
 
 /* Define if you have the gen library (-lgen).  */
 #undef HAVE_LIBGEN
+
+/* Name of package */
+#undef PACKAGE
+
+/* Version number of package */
+#undef VERSION
+
