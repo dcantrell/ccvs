@@ -11,6 +11,7 @@
 #include <assert.h>
 #include "cvs.h"
 #include "edit.h"
+#include "hardlink.h"
 
 int preserve_perms = 0;
 
@@ -148,7 +149,6 @@ static const char spacetab[] = {
 };
 
 #define whitespace(c)	(spacetab[(unsigned char)c] != 0)
-
 
 /* Parse an rcsfile given a user file name and a repository.  If there is
    an error, we print an error message and return NULL.  If the file
@@ -3678,6 +3678,7 @@ RCS_checkout (rcs, workfile, rev, nametag, options, sout, pfn, callerdat)
     {
 	RCSVers *vers;
 	Node *info;
+	struct hardlink_info *hlinfo;
 
 	vp = findnode (rcs->versions, rev == NULL ? rcs->head : rev);
 	if (vp == NULL)
@@ -3714,6 +3715,87 @@ RCS_checkout (rcs, workfile, rev, nametag, options, sout, pfn, callerdat)
 	    if (free_rev)
 		free (rev);
 	    return 0;
+	}
+
+	/* Next, we look at this file's hardlinks field, and see whether
+	   it is linked to any other file that has been checked out.
+	   If so, we don't do anything else -- just link it to that file.
+
+	   If we are checking out a file to a pipe or temporary storage,
+	   none of this should matter.  Hence the `workfile != NULL'
+	   wrapper around the whole thing. -twp */
+
+	if (workfile != NULL)
+	{
+	    info = findnode (vers->other_delta, "hardlinks");
+	    if (info != NULL)
+	    {
+		char *links = xstrdup (info->data);
+		char *working_dir = xgetwd();
+		char *p, *file = NULL;
+		Node *n, *uptodate_link;
+
+		/* For each file in the hardlinks field, check to see
+		   if it exists, and if so, if it has been checked out
+		   this iteration. */
+		uptodate_link = NULL;
+		for (p = strtok (links, " ");
+		     p != NULL && uptodate_link == NULL;
+		     p = strtok (NULL, " "))
+		{
+		    file = (char *)
+			xmalloc (sizeof(char) *
+				 (strlen(working_dir) + strlen(p) + 2));
+		    sprintf (file, "%s/%s", working_dir, p);
+		    n = lookup_file_by_inode (file);
+		    if (n == NULL)
+		    {
+			if (strcmp (p, workfile) != 0)
+			{
+			    /* One of the files that WORKFILE should be
+			       linked to is not even in the working directory.
+			       The user should probably be warned. */
+			    error (0, 0,
+		"warning: %s should be hardlinked to %s, but is missing",
+				   p, workfile);
+			}
+			free (file);
+			continue;
+		    }
+
+		    /* hlinfo may be NULL if, for instance, a file is being
+		       removed. */
+		    hlinfo = (struct hardlink_info *) n->data;
+		    if (hlinfo && hlinfo->checked_out)
+			uptodate_link = n;
+		    free (file);
+		}
+		free (links);
+		free (working_dir);
+
+		/* If we've found a file that `workfile' is supposed to be
+		   linked to, and it has been checked out since CVS was
+		   invoked, then simply link workfile to that file.
+
+		   If one of these conditions is not met, then we're
+		   checking out workfile to a temp file or stdout, or
+		   workfile is the first one in its hardlink group to be
+		   checked out.  Either way we must continue with a full
+		   checkout. */
+
+		if (uptodate_link != NULL)
+		{
+		    if (link (uptodate_link->key, workfile) < 0)
+			error (1, errno, "cannot link %s to %s",
+			       workfile, uptodate_link->key);
+		    hlinfo->checked_out = 1;	/* probably unnecessary */
+		    if (free_value)
+			free (value);
+		    if (free_rev)
+			free (rev);
+		    return 0;
+		}
+	    }
 	}
 
 	info = findnode (vers->other_delta, "owner");
@@ -3920,6 +4002,11 @@ RCS_checkout (rcs, workfile, rev, nametag, options, sout, pfn, callerdat)
 	if (!special_file && fclose (ofp) < 0)
 	    error (1, errno, "cannot close %s", sout);
     }
+
+    /* If we are in the business of preserving hardlinks, then
+       mark this file as having been checked out. */
+    if (preserve_perms && workfile != NULL)
+	update_hardlink_info (workfile);
 
     if (free_value)
 	free (value);
@@ -4317,6 +4404,7 @@ RCS_checkin (rcs, workfile, message, rev, flags)
 	Node *np;
 	struct stat sb;
 	char buf[64];	/* static buffer should be safe: see usage. -twp */
+	char *fullpath;
 
 	delta->other_delta = getlist();
 
@@ -4368,6 +4456,27 @@ RCS_checkin (rcs, workfile, message, rev, flags)
 
 		default:
 		    error (0, 0, "special file %s has unknown type", workfile);
+	    }
+
+	    /* Save hardlinks. */
+	    fullpath = xgetwd();
+	    fullpath = xrealloc (fullpath,
+				 strlen(fullpath) + strlen(workfile) + 2);
+	    sprintf (fullpath + strlen(fullpath), "/%s", workfile);
+
+	    np = lookup_file_by_inode (fullpath);
+	    if (np == NULL)
+	    {
+		error (1, 0, "lost information on %s's linkage", workfile);
+	    }
+	    else
+	    {
+		struct hardlink_info *hlinfo;
+		hlinfo = (struct hardlink_info *) np->data;
+		np = getnode();
+		np->key = xstrdup ("hardlinks");
+		np->data = xstrdup (hlinfo->links);
+		(void) addnode (delta->other_delta, np);
 	    }
 	}
     }

@@ -19,6 +19,7 @@
 #include "getline.h"
 #include "edit.h"
 #include "fileattr.h"
+#include "hardlink.h"
 
 static Dtype check_direntproc PROTO ((void *callerdat, char *dir,
 				      char *repos, char *update_dir,
@@ -80,7 +81,6 @@ static char *logfile;
 static List *mulist;
 static char *message;
 static time_t last_register_time;
-
 
 static const char *const commit_usage[] =
 {
@@ -622,9 +622,19 @@ commit (argc, argv)
     lock_tree_for_write (argc, argv, local, aflag);
 
     /*
-     * Set up the master update list
+     * Set up the master update list and hard link list
      */
     mulist = getlist ();
+    hardlist = getlist ();
+
+    if (preserve_perms)
+    {
+	/*
+	 * We need to save the working directory so that
+	 * check_fileproc can construct a full pathname for each file.
+	 */
+	working_dir = xgetwd();
+    }
 
     /*
      * Run the recursion processor to verify the files are all up-to-date
@@ -636,6 +646,15 @@ commit (argc, argv)
     {
 	Lock_Cleanup ();
 	error (1, 0, "correct above errors first!");
+    }
+
+    if (preserve_perms)
+    {
+	/* hardlist now includes a complete index of the files
+	   to be committed, indexed by inode.  For each inode,
+	   compile a list of the files that are linked to it,
+	   and save this list in each file's hardlink_info node. */
+	(void) walklist (hardlist, cache_hardlinks_proc, NULL);
     }
 
     /*
@@ -992,6 +1011,41 @@ warning: file `%s' seems to still contain conflict indicators",
 	    ci->options = xstrdup(vers->options);
 	    p->data = (char *) ci;
 	    (void) addnode (cilist, p);
+
+	    if (preserve_perms)
+	    {
+		/* Add this file to hardlist, indexed on its inode.  When
+		   we are done, we can find out what files are hardlinked
+		   to a given file by looking up its inode in hardlist. */
+		char *fullpath;
+		Node *linkp;
+		struct hardlink_info *hlinfo;
+
+		/* Get the full pathname of the current file. */
+		fullpath = xmalloc (strlen(working_dir) +
+				    strlen(finfo->fullname) + 2);
+		sprintf (fullpath, "%s/%s", working_dir, finfo->fullname);
+
+		/* To permit following links in subdirectories, files
+                   are keyed on finfo->fullname, not on finfo->name. */
+		linkp = lookup_file_by_inode (fullpath);
+
+		/* If linkp is NULL, the file doesn't exist... maybe
+		   we're doing a remove operation? */
+		if (linkp != NULL)
+		{
+		    /* Create a new hardlink_info node, which will record
+		       the current file's status and the links listed in its
+		       `hardlinks' delta field.  We will append this
+		       hardlink_info node to the appropriate hardlist entry. */
+		    hlinfo = (struct hardlink_info *)
+			xmalloc (sizeof (struct hardlink_info));
+		    hlinfo->status = status;
+		    hlinfo->links = NULL;
+		    linkp->data = (char *) hlinfo;
+		}
+	    }
+
 	    break;
 	case T_UNKNOWN:
 	    error (0, 0, "nothing known about `%s'", finfo->fullname);
