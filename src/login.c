@@ -370,6 +370,8 @@ get_cvs_password ()
 
 	strtok (linebuf, " ");
 	tmp = strtok (NULL, "\n");
+	if (tmp == NULL)
+	    error (1, 0, "bad entry in %s for %s", passfile, CVSroot_original);
 
 	/* Give it permanent storage. */
 	password = xstrdup (tmp);

@@ -1,3 +1,8 @@
+2000-07-17  Larry Jones  <larry.jones@sdrc.com>
+
+	* login.c (get_cvs_password): Handle malformed ~/.cvspass more
+	gracefully.
+
 2000-07-12  Larry Jones  <larry.jones@sdrc.com>
 
 	* sanity.sh (modules5): New tests for module programs.
