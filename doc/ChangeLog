@@ -1,3 +1,10 @@
+1998-09-01  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvsclient.texi (Requests): "Directory" and "Argument" are
+	requests, not commands.  Likewise for "other-request".  A command,
+	roughly, is a request that uses "Argument"s, but we might want to
+	phase out the use of that term more so than codify it, I'm not sure.
+
 1998-09-01  Noel Cragg  <noel@swish.red-bean.com>
 
 	* cvsclient.texi (Requests): added a detailed explanation of the
