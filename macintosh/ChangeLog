@@ -1,3 +1,9 @@
+Mon Oct 28 09:22:09 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* mac_init.c (macos_error_cleanup): Removed; SYSTEM_CLEANUP (aka
+	MacOS_Cleanup) now gets called in the cases in question.
+	(MacOS_Initialize): Don't call error_set_cleanup.
+
 Tue Oct  8 12:37:25 1996  Ian Lance Taylor  <ian@cygnus.com>
 
 	* options.h (HAD_RCS4): Remove; no longer used.
