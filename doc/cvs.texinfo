@@ -2321,7 +2321,7 @@ tries to match the password using the system's
 user-lookup routine (using the system's user-lookup
 routine can be disabled by setting @code{SystemAuth=no}
 in the config file, @pxref{config}).  When using the @sc{cvs}
-@file{passwd} file, the server runs under as the
+@file{passwd} file, the server runs as the
 username specified in the third argument in the
 entry, or as the first argument if there is no third
 argument (in this way @sc{cvs} allows imaginary
