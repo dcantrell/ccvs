@@ -2051,7 +2051,7 @@ fd_buffer_input (void *closure, char *data, int need, int size, int *got)
 	/* This function used to read at least one byte even when none were
 	 * requested.  I'm not sure why, but CVS seems to depend on this
 	 */
-	if (need == 0) need = 1;
+	if (need == 0) return 0;
 
 	FD_ZERO (&readfds);
 	FD_SET (fb->fd, &readfds);
@@ -2071,7 +2071,7 @@ fd_buffer_input (void *closure, char *data, int need, int size, int *got)
 		}
 	    } while (numfds < 0);
 
-	    nbytes = read (fb->fd, data, size - *got);
+	    nbytes = read (fb->fd, data + *got, size - *got);
 
 	    if (nbytes == 0)
 	    {
