@@ -1,5 +1,10 @@
 2004-04-30  Derek Price  <derek@ximbiot.com>
 
+	* mkman.in: Handle @@.
+	* cvs.1: Regenerated.
+
+2004-04-30  Derek Price  <derek@ximbiot.com>
+
 	First pass at closing issue #3 on cvshome.org.
 	* .cvsignore: Ignore mkman.
 	* cvs.1, mkman.in, cvs.man.header, cvs.man.footer: New files.
