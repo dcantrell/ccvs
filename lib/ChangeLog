@@ -1,3 +1,8 @@
+2004-11-11  Mark D. Baushke  <mdb@cvshome.org>
+
+	* strftime.c, getdate.y: Update from GNULIB.
+	* getdate.c: Regenerated.
+
 2004-11-10  Mark D. Baushke  <mdb@cvshome.org>
 
 	* test-getdate.sh: Remove non-portable 'Feb 29, 2096 8 years'
