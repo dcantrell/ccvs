@@ -1,5 +1,9 @@
 2004-10-21  Derek Price  <derek@ximbiot.com>
 
+	* gnulib-update (MODULES): Add rpmatch & yesno.
+
+2004-10-21  Derek Price  <derek@ximbiot.com>
+
 	* gnulib-update (MODULES): Add getpagesize.
 
 2004-10-21  Derek Price  <derek@ximbiot.com>
