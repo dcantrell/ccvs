@@ -711,7 +711,7 @@ if test x"$*" = x; then
 	# Multiple root directories and low-level protocol tests.
 	tests="${tests} multiroot multiroot2 multiroot3 multiroot4"
 	tests="${tests} rmroot reposmv pserver server server2 client"
-	tests="${tests} fork"
+	tests="${tests} fork commit-d"
 else
 	tests="$*"
 fi
@@ -23967,6 +23967,31 @@ ${PROG} \[[a-z]* aborted\]: correct above errors first!"
 	  cd ../..
 	  rm -rf 1
 	  rm -rf ${CVSROOT_DIRNAME}/$module
+	  ;;
+
+	commit-d)
+	  # Check that top-level commits work when CVS/Root
+	  # is overridden by cvs -d.
+
+	  mkdir -p 1/subdir; cd 1
+	  touch file1 subdir/file2
+	  dotest commit-d-1 "$testcvs -Q import -m. c-d-c X Y" ""
+	  dotest commit-d-2 "$testcvs -Q co c-d-c" ""
+	  cd c-d-c
+	  echo change >>file1; echo another change >>subdir/file2
+	  # Changing working root, then override with -d
+	  echo nosuchhost:/cvs > CVS/Root
+	  dotest commit-d-3 "$testcvs -Q -d $CVSROOT commit -m." \
+"Checking in file1;
+${TESTDIR}/cvsroot/c-d-c/file1,v  <--  file1
+new revision: 1.2; previous revision: 1.1
+done
+Checking in subdir/file2;
+${TESTDIR}/cvsroot/c-d-c/subdir/file2,v  <--  file2
+new revision: 1.2; previous revision: 1.1
+done"
+	  cd ../..
+	  rm -rf 1 cvsroot/c-d-c
 	  ;;
 
 	*)
