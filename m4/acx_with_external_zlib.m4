@@ -135,9 +135,9 @@ if test x$with_external_zlib != xyes \
     CPPFLAGS="$CPPFLAGS -I$with_external_zlib/include"
   fi
   if test -z "$LDFLAGS"; then
-    LDFLAGS="-I$with_external_zlib/lib"
+    LDFLAGS="-L$with_external_zlib/lib"
   else
-    LDFLAGS="$LDFLAGS -I$with_external_zlib/lib"
+    LDFLAGS="$LDFLAGS -L$with_external_zlib/lib"
   fi
 fi
 

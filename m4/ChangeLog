@@ -1,3 +1,9 @@
+2003-06-16  Derek Price  <derek@ximbiot.com>
+
+	* acx_with_external_zlib.m4: Fix minor typo that was preventing
+	--with-external-zlib from linking.
+	(Patch from Rainer Orth <ro@TechFak.Uni-Bielefeld.DE>.)
+
 2003-06-13  Derek Price  <derek@ximbiot.com>
 
 	* onceonly_2_57.m4: New file.
