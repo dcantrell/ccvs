@@ -5965,8 +5965,8 @@ ${SPROG} remove: use \`${SPROG} commit' to remove this file permanently"
 
 	  # Now prove that commit knows that it shouldn't erase files.
 	  dotest_fail rmadd3-3 "${testcvs} -q ci -m." \
-"$SPROG commit: \`file1' should be removed and is still there (or is back again)
-$SPROG \[commit aborted\]: correct above errors first!"
+"$CPROG commit: \`file1' should be removed and is still there (or is back again)
+$CPROG \[commit aborted\]: correct above errors first!"
 
 	  # Then these should pass too:
 	  dotest rmadd3-4 "test -f file1"
@@ -9619,7 +9619,7 @@ retrieving revision 1\.1
 retrieving revision 1\.3
 Merging differences between 1\.1 and 1\.3 into temp.txt
 temp.txt already contains the differences between 1\.1 and 1\.3
-${SPROG} update: move away .\./temp2\.txt.; it is in the way
+$CPROG update: move away .\./temp2\.txt.; it is in the way
 C temp2\.txt"
 	  else
 	    dotest join6-32 "${testcvs} -q up -jt1 -jt2" \
@@ -14936,7 +14936,7 @@ done"
 	  if $remote; then
 	    dotest errmsg1-168r "${testcvs} -q update" \
 "${SPROG} update: \`foo' is no longer in the repository
-${SPROG} update: unable to remove \./foo: Permission denied" \
+$CPROG update: unable to remove \./foo: Permission denied" \
 "${SPROG} update: \`foo' is no longer in the repository"
 	  else
 	    dotest errmsg1-168 "${testcvs} -q update" \
@@ -15738,7 +15738,7 @@ ${CPROG} unedit: run update to complete the unedit"
 	    "/$file/1\.1\.1\.1/${DOTSTAR}"
 
 	  dotest unedit-without-baserev-6 "${testcvs} -q update" \
-"${CPROG} update: warning: \`m' was lost
+"$SPROG update: warning: \`m' was lost
 U m"
 
 	  # OK, those were the easy cases.  Now tackle the hard one
@@ -15778,7 +15778,7 @@ C m"
 "m has been modified; revert changes${QUESTION} ${CPROG} unedit: m not mentioned in CVS/Baserev
 ${CPROG} unedit: run update to complete the unedit"
 	  dotest unedit-without-baserev-15 "${testcvs} -q update" \
-"${CPROG} update: warning: \`m' was lost
+"$SPROG update: warning: \`m' was lost
 U m"
 	  # The following tests are kind of degenerate compared with
 	  # watch4-16 through watch4-18 but might as well make sure that
@@ -18321,7 +18321,7 @@ done"
 "P file1
 ${CPROG} update: checksum failure after patch to \./file1; will refetch
 ${CPROG} client: refetching unpatchable files
-${CPROG} update: warning: \`file1' was lost
+$SPROG update: warning: \`file1' was lost
 U file1"
 
 	  cd ../..
@@ -22339,7 +22339,7 @@ done"
 "P file1
 ${CPROG} update: checksum failure after patch to \./file1; will refetch
 ${CPROG} client: refetching unpatchable files
-${CPROG} update: warning: \`file1' was lost
+$SPROG update: warning: \`file1' was lost
 U file1"
 
 	  dotest keyword-22 "cat file1" '\$'"Name: tag1 "'\$'
@@ -22350,7 +22350,7 @@ U file1"
 	    dotest keyword-23r "${testcvs} update -A file1" "P file1
 ${CPROG} update: checksum failure after patch to \./file1; will refetch
 ${CPROG} client: refetching unpatchable files
-${CPROG} update: warning: \`file1' was lost
+$SPROG update: warning: \`file1' was lost
 U file1"
 	  else
 	    dotest keyword-23 "${testcvs} update -A file1" "[UP] file1"
@@ -22646,7 +22646,7 @@ done"
 "P file1
 ${CPROG} update: checksum failure after patch to \./file1; will refetch
 ${CPROG} client: refetching unpatchable files
-${CPROG} update: warning: \`file1' was lost
+$SPROG update: warning: \`file1' was lost
 U file1"
 	  dotest keywordname-update-2 "cat file1" '\$'"Name: br "'\$'
 	  dotest keywordname-update-3 "cat file2" '\$'"Name:  "'\$'
@@ -22661,7 +22661,7 @@ T file2"
 "P file1
 ${CPROG} update: checksum failure after patch to \./file1; will refetch
 ${CPROG} client: refetching unpatchable files
-${CPROG} update: warning: \`file1' was lost
+$SPROG update: warning: \`file1' was lost
 U file1"
 	  dotest keywordname-update-6 "cat file1" \
 '\$'"Name:  "'\$'"
@@ -22674,7 +22674,7 @@ new data"
 "P file1
 ${CPROG} update: checksum failure after patch to \./file1; will refetch
 ${CPROG} client: refetching unpatchable files
-${CPROG} update: warning: \`file1' was lost
+$SPROG update: warning: \`file1' was lost
 U file1"
 	  dotest keywordname-update-9 "cat file1" '\$'"Name: firsttag "'\$'
 	  dotest keywordname-update-10 "cat file2" '\$'"Name:  "'\$'
@@ -22684,7 +22684,7 @@ U file1"
 "P file1
 ${CPROG} update: checksum failure after patch to ./file1; will refetch
 ${CPROG} client: refetching unpatchable files
-${CPROG} update: warning: \`file1' was lost
+$SPROG update: warning: \`file1' was lost
 U file1"
 	  dotest keywordname-update-12 "cat file1" \
 '\$'"Name:  "'\$'"
@@ -23595,8 +23595,8 @@ add a line on the branch
 	  dotest_fail admin-14-1 "${testcvs} -q admin \
 -m1.1.1.1:changed-bogus-log-message file2" \
 "RCS file: ${CVSROOT_DIRNAME}/first-dir/file2,v
-cvs admin: ${CVSROOT_DIRNAME}/first-dir/file2,v: no such revision 1\.1\.1\.1
-cvs admin: RCS file for .file2. not modified."
+$SPROG admin: $CVSROOT_DIRNAME/first-dir/file2,v: no such revision 1\.1\.1\.1
+$SPROG admin: RCS file for .file2. not modified."
 	  dotest admin-14-2 "${testcvs} -q log file2" "
 RCS file: ${CVSROOT_DIRNAME}/first-dir/file2,v
 Working file: file2
@@ -27817,7 +27817,7 @@ EOF
 	    done
 	    dotest_fail pserver-auth-no-dos \
 "${servercvs} --allow-root=${CVSROOT_DIRNAME} pserver" \
-"${SPROG} \\[pserver aborted\\]: Maximum line length exceeded during authentication\." <garbageinput
+"$CPROG \\[pserver aborted\\]: Maximum line length exceeded during authentication\." <garbageinput
 	    unset i
 	    rm garbageseg garbageseg2 garbageinput
 
@@ -27987,7 +27987,7 @@ EOF
 
 	    dotest pserver-15 "${servercvs} --allow-root=${CVSROOT_DIRNAME} pserver" \
 "${DOTSTAR} LOVE YOU
-E ${SPROG} \\[server aborted\\]: .init. requires write access to the repository
+E $CPROG \\[server aborted\\]: .init. requires write access to the repository
 error  " <<EOF
 BEGIN AUTH REQUEST
 ${CVSROOT_DIRNAME}
@@ -28067,7 +28067,7 @@ EOF
 
 	    dotest pserver-21 "${servercvs} --allow-root=${CVSROOT_DIRNAME} pserver" \
 "${DOTSTAR} LOVE YOU
-E ${SPROG} \\[server aborted\\]: .init. requires write access to the repository
+E $CPROG \\[server aborted\\]: .init. requires write access to the repository
 error  " <<EOF
 BEGIN AUTH REQUEST
 ${CVSROOT_DIRNAME}
@@ -28116,7 +28116,7 @@ EOF
 
 	    dotest pserver-25 "${servercvs} --allow-root=${CVSROOT_DIRNAME} pserver" \
 "${DOTSTAR} LOVE YOU
-E ${SPROG} \\[server aborted\\]: .init. requires write access to the repository
+E $CSPROG \\[server aborted\\]: .init. requires write access to the repository
 error  " <<EOF
 BEGIN AUTH REQUEST
 ${CVSROOT_DIRNAME}
@@ -28145,7 +28145,7 @@ EOF
 
 	    dotest pserver-27 "${servercvs} --allow-root=${CVSROOT_DIRNAME} pserver" \
 "${DOTSTAR} LOVE YOU
-E ${SPROG} \\[server aborted\\]: .init. requires write access to the repository
+E $CPROG \\[server aborted\\]: .init. requires write access to the repository
 error  " <<EOF
 BEGIN AUTH REQUEST
 ${CVSROOT_DIRNAME}
@@ -28194,7 +28194,7 @@ EOF
 
 	    dotest pserver-31 "${servercvs} --allow-root=${CVSROOT_DIRNAME} pserver" \
 "${DOTSTAR} LOVE YOU
-E ${SPROG} \\[server aborted\\]: .init. requires write access to the repository
+E $CPROG \\[server aborted\\]: .init. requires write access to the repository
 error  " <<EOF
 BEGIN AUTH REQUEST
 ${CVSROOT_DIRNAME}
@@ -28207,7 +28207,7 @@ EOF
 	    # pserver used to try and print from the NULL pointer 
 	    # in this error message in this case
 	    dotest_fail pserver-bufinit "${servercvs} pserver" \
-"${SPROG} \[pserver aborted\]: bad auth protocol start: EOF" </dev/null
+"$CPROG \[pserver aborted\]: bad auth protocol start: EOF" </dev/null
 
 	    # Clean up.
 	    dotest pserver-cleanup-1 "${testcvs} -q up -pr1.1 config >config" ""
@@ -28316,7 +28316,7 @@ EOF
 	    # OK, now test a few error conditions.
 	    # FIXCVS: should give "error" and no "Notified", like server-9
 	    dotest server-8 "${servercvs} server" \
-"E ${SPROG} server: invalid character in editor value
+"E $CPROG server: invalid character in editor value
 Notified \./
 ${TESTDIR}/crerepos/dir1/file1
 ok" <<EOF
@@ -28399,7 +28399,7 @@ EOF
 
 	    # Test that the global `-l' option is ignored nonfatally.
 	    dotest server-16 "${testcvs} server" \
-"E cvs server: WARNING: global \`-l' option ignored\.
+"E $CPROG server: WARNING: global \`-l' option ignored\.
 ok" <<EOF
 Global_option -l
 noop

@@ -1,5 +1,9 @@
 2004-03-14  Derek Price  <derek@ximbiot.com>
 
+	* sanity.sh: Update serveral tests to use $CPROG & $SPROG correctly.
+
+2004-03-14  Derek Price  <derek@ximbiot.com>
+
 	* add.c (add): Update file resurrection messages for consistency.
 	* sanity.sh: Update to match.
 
