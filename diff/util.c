@@ -158,7 +158,7 @@ setup_output (name0, name1, depth)
   current_depth = depth;
 }
 
-#if HAVE_FORK
+#if HAVE_FORK && defined (PR_PROGRAM)
 static pid_t pr_pid;
 #endif
 
@@ -272,19 +272,23 @@ finish_output ()
 {
   if (paginate_flag && outfile != 0 && outfile != stdout)
     {
+#ifdef PR_PROGRAM
       int wstatus;
       if (ferror (outfile))
 	fatal ("write error");
-#if ! HAVE_FORK
+# if ! HAVE_FORK
       wstatus = pclose (outfile);
-#else /* HAVE_FORK */
+# else /* HAVE_FORK */
       if (fclose (outfile) != 0)
 	pfatal_with_name ("write error");
       if (waitpid (pr_pid, &wstatus, 0) < 0)
 	pfatal_with_name ("waitpid");
-#endif /* HAVE_FORK */
+# endif /* HAVE_FORK */
       if (wstatus != 0)
 	fatal ("subsidiary pr failed");
+#else
+      fatal ("internal error in finish_output");
+#endif
     }
 
   output_in_progress = 0;
