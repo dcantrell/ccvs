@@ -195,16 +195,19 @@ saber:
 .PHONY: check
 check:
 	cd lib ; $(MAKE) $(FLAGS_TO_PASS)
+	cd zlib ; $(MAKE) $(FLAGS_TO_PASS)
 	cd src ; $(MAKE) $(FLAGS_TO_PASS) check
 
 .PHONY: remotecheck
 remotecheck:
 	cd lib ; $(MAKE) $(FLAGS_TO_PASS)
+	cd zlib ; $(MAKE) $(FLAGS_TO_PASS)
 	cd src ; $(MAKE) $(FLAGS_TO_PASS) remotecheck
 
 .PHONY: installcheck
 installcheck:
 	cd lib ; $(MAKE) $(FLAGS_TO_PASS)
+	cd zlib ; $(MAKE) $(FLAGS_TO_PASS)
 	cd src ; $(MAKE) $(FLAGS_TO_PASS) installcheck
 
 .PHONY: lint
