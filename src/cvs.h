@@ -542,7 +542,6 @@ int ignore_directory PROTO((char *name));
 typedef void (*Ignore_proc) PROTO ((char *, char *));
 extern void ignore_files PROTO ((List *, List *, char *, Ignore_proc));
 extern int ign_inhibit_server;
-extern int ign_case;
 
 #include "update.h"
 

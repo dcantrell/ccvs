@@ -2357,15 +2357,8 @@ serve_questionable (arg)
     }
 }
 
-static void serve_case PROTO ((char *));
 
-static void
-serve_case (arg)
-    char *arg;
-{
-    ign_case = 1;
-}
-
+
 static struct buffer *protocol;
 
 /* This is the output which we are saving up to send to the server, in the
@@ -4652,7 +4645,6 @@ struct request requests[] =
   REQ_LINE("Unchanged", serve_unchanged, RQ_ESSENTIAL),
   REQ_LINE("Notify", serve_notify, 0),
   REQ_LINE("Questionable", serve_questionable, 0),
-  REQ_LINE("Case", serve_case, 0),
   REQ_LINE("Argument", serve_argument, RQ_ESSENTIAL),
   REQ_LINE("Argumentx", serve_argumentx, RQ_ESSENTIAL),
   REQ_LINE("Global_option", serve_global_option, RQ_ROOTLESS),
