@@ -168,7 +168,7 @@ fmt_proc (p, closure)
  * If REPOSITORY is non-NULL, process rcsinfo for that repository; if it
  * is NULL, use the CVSADM_TEMPLATE file instead.
  */
-int
+void
 do_editor (dir, messagep, repository, changes)
     char *dir;
     char **messagep;
@@ -184,7 +184,7 @@ do_editor (dir, messagep, repository, changes)
     int retcode = 0;
 
     if (noexec || reuse_log_message)
-	return reuse_log_message;
+	return;
 
     /* Abort creation of temp file if no editor is defined */
     if (strcmp (Editor, "") == 0 && !editinfo_editor)
@@ -385,8 +385,6 @@ do_editor (dir, messagep, repository, changes)
     if (unlink_file (fname) < 0)
 	error (0, errno, "warning: cannot remove temp file %s", fname);
     free (fname);
-
-    return reuse_log_message;
 }
 
 /* Runs the user-defined verification script as part of the commit or import 
@@ -395,12 +393,10 @@ do_editor (dir, messagep, repository, changes)
    independant of the running of an editor for getting a message.
  */
 void
-do_verify (message, repository, reused_message)
+do_verify (message, repository)
     char *message;
     char *repository;
-    int reused_message;
 {
-    static int verified_once = 0;
     FILE *fp;
     char *fname;
     int retcode = 0;
@@ -414,12 +410,6 @@ do_verify (message, repository, reused_message)
     /* FIXME? Do we really want to skip this on noexec?  What do we do
        for the other administrative files?  */
     if (noexec)
-	return;
-
-    /* if reused_message is set and we've run do_verify at least once, then
-     * we can safely assume we've verified this text.
-     */
-    if (reused_message && verified_once)
 	return;
 
     /* If there's no message, then we have nothing to verify.  Can this
@@ -472,8 +462,6 @@ do_verify (message, repository, reused_message)
     if (unlink_file (fname) < 0)
 	error (0, errno, "cannot remove %s", fname);
     free (fname);
-
-    verified_once = 1;
 }
 
 /*
