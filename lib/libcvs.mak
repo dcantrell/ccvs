@@ -25,6 +25,9 @@ NULL=
 NULL=nul
 !ENDIF 
 
+CPP=cl.exe
+RSC=rc.exe
+
 !IF  "$(CFG)" == "libcvs - Win32 Release"
 
 OUTDIR=.\WinRel
@@ -33,7 +36,7 @@ INTDIR=.\WinRel
 OutDir=.\WinRel
 # End Custom Macros
 
-ALL : ".\stdbool.h" ".\fnmatch.h" ".\alloca.h" "$(OUTDIR)\libcvs.lib"
+ALL : ".\fnmatch.h" ".\alloca.h" "$(OUTDIR)\libcvs.lib"
 
 
 CLEAN :
@@ -51,45 +54,11 @@ CLEAN :
 	-@erase "$(OUTDIR)\libcvs.lib"
 	-@erase ".\alloca.h"
 	-@erase ".\fnmatch.h"
-	-@erase ".\stdbool.h"
 
 "$(OUTDIR)" :
     if not exist "$(OUTDIR)/$(NULL)" mkdir "$(OUTDIR)"
 
-CPP=cl.exe
 CPP_PROJ=/nologo /ML /W3 /GX /O2 /I "..\windows-NT" /I "." /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "_LIB" /D "HAVE_CONFIG_H" /Fp"$(INTDIR)\libcvs.pch" /YX /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c 
-
-.c{$(INTDIR)}.obj::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-.cpp{$(INTDIR)}.obj::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-.cxx{$(INTDIR)}.obj::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-.c{$(INTDIR)}.sbr::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-.cpp{$(INTDIR)}.sbr::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-.cxx{$(INTDIR)}.sbr::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-RSC=rc.exe
 BSC32=bscmake.exe
 BSC32_FLAGS=/nologo /o"$(OUTDIR)\libcvs.bsc" 
 BSC32_SBRS= \
@@ -121,7 +90,7 @@ INTDIR=.\WinDebug
 OutDir=.\WinDebug
 # End Custom Macros
 
-ALL : ".\stdbool.h" ".\fnmatch.h" ".\alloca.h" "$(OUTDIR)\libcvs.lib"
+ALL : ".\fnmatch.h" ".\alloca.h" "$(OUTDIR)\libcvs.lib"
 
 
 CLEAN :
@@ -140,13 +109,35 @@ CLEAN :
 	-@erase "$(OUTDIR)\libcvs.lib"
 	-@erase ".\alloca.h"
 	-@erase ".\fnmatch.h"
-	-@erase ".\stdbool.h"
 
 "$(OUTDIR)" :
     if not exist "$(OUTDIR)/$(NULL)" mkdir "$(OUTDIR)"
 
-CPP=cl.exe
 CPP_PROJ=/nologo /MLd /W3 /Gm /GX /ZI /Od /I "..\windows-NT" /I "." /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /D "HAVE_CONFIG_H" /Fp"$(INTDIR)\libcvs.pch" /YX /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /GZ /c 
+BSC32=bscmake.exe
+BSC32_FLAGS=/nologo /o"$(OUTDIR)\libcvs.bsc" 
+BSC32_SBRS= \
+	
+LIB32=link.exe -lib
+LIB32_FLAGS=/nologo /out:"$(OUTDIR)\libcvs.lib" 
+LIB32_OBJS= \
+	"$(INTDIR)\exitfail.obj" \
+	"$(INTDIR)\getdate.obj" \
+	"$(INTDIR)\getline.obj" \
+	"$(INTDIR)\getndelim2.obj" \
+	"$(INTDIR)\getopt.obj" \
+	"$(INTDIR)\getopt1.obj" \
+	"$(INTDIR)\printf-args.obj" \
+	"$(INTDIR)\printf-parse.obj" \
+	"$(INTDIR)\realloc.obj" \
+	"$(INTDIR)\regex.obj"
+
+"$(OUTDIR)\libcvs.lib" : "$(OUTDIR)" $(DEF_FILE) $(LIB32_OBJS)
+    $(LIB32) @<<
+  $(LIB32_FLAGS) $(DEF_FLAGS) $(LIB32_OBJS)
+<<
+
+!ENDIF 
 
 .c{$(INTDIR)}.obj::
    $(CPP) @<<
@@ -177,32 +168,6 @@ CPP_PROJ=/nologo /MLd /W3 /Gm /GX /ZI /Od /I "..\windows-NT" /I "." /D "WIN32" /
    $(CPP) @<<
    $(CPP_PROJ) $< 
 <<
-
-RSC=rc.exe
-BSC32=bscmake.exe
-BSC32_FLAGS=/nologo /o"$(OUTDIR)\libcvs.bsc" 
-BSC32_SBRS= \
-	
-LIB32=link.exe -lib
-LIB32_FLAGS=/nologo /out:"$(OUTDIR)\libcvs.lib" 
-LIB32_OBJS= \
-	"$(INTDIR)\exitfail.obj" \
-	"$(INTDIR)\getdate.obj" \
-	"$(INTDIR)\getline.obj" \
-	"$(INTDIR)\getndelim2.obj" \
-	"$(INTDIR)\getopt.obj" \
-	"$(INTDIR)\getopt1.obj" \
-	"$(INTDIR)\printf-args.obj" \
-	"$(INTDIR)\printf-parse.obj" \
-	"$(INTDIR)\realloc.obj" \
-	"$(INTDIR)\regex.obj"
-
-"$(OUTDIR)\libcvs.lib" : "$(OUTDIR)" $(DEF_FILE) $(LIB32_OBJS)
-    $(LIB32) @<<
-  $(LIB32_FLAGS) $(DEF_FLAGS) $(LIB32_OBJS)
-<<
-
-!ENDIF 
 
 
 !IF "$(NO_EXTERNAL_DEPS)" != "1"
@@ -312,32 +277,6 @@ InputPath=.\fnmatch_.h
 	<<tempfile.bat 
 	@echo off 
 	copy .\fnmatch_.h .\fnmatch.h
-<< 
-	
-
-!ENDIF 
-
-SOURCE=.\stdbool_.h
-
-!IF  "$(CFG)" == "libcvs - Win32 Release"
-
-InputPath=.\stdbool_.h
-
-".\stdbool.h" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	<<tempfile.bat 
-	@echo off 
-	copy .\stdbool_.h .\stdbool.h
-<< 
-	
-
-!ELSEIF  "$(CFG)" == "libcvs - Win32 Debug"
-
-InputPath=.\stdbool_.h
-
-".\stdbool.h" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	<<tempfile.bat 
-	@echo off 
-	copy .\stdbool_.h .\stdbool.h
 << 
 	
 
