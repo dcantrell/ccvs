@@ -75,8 +75,12 @@ reference to \fBcvs\fP commands, see node `Invoking CVS' in the CVS manual).
 .IX "Format of CVS commands"
 .SP
 The overall format of all \fBcvs\fP commands is:
+.SP
+.PD 0
 .IP "" 2
 cvs [ cvs_options ] cvs_command [ command_options ] [ command_args ]
+
+.PD
 .IP "" 0
 .SP
 .IP "" 0
@@ -173,13 +177,22 @@ If a command has two names (e.g., \fBcheckout\fP and
 used on the command line, will be used to match against
 the file.  So if this is the contents of the user's
 \fB~/.cvsrc\fP file:
+.SP
+.PD 0
 .IP "" 2
 log -N
+.IP "" 2
 diff -uN
+.IP "" 2
 rdiff -u
+.IP "" 2
 update -Pd
+.IP "" 2
 checkout -P
+.IP "" 2
 release -d
+
+.PD
 .IP "" 0
 .SP
 the command \fBcvs checkout foo\fP would have the
@@ -197,8 +210,12 @@ to specify use of the "old" format, so you would need
 In place of the command name you can use \fBcvs\fP to
 specify global options (see node `Global options' in the CVS manual).  For
 example the following line in \fB.cvsrc\fP
+.SP
+.PD 0
 .IP "" 2
 cvs -z6
+
+.PD
 .IP "" 0
 .SP
 causes \fBcvs\fP to use compression level 6.
@@ -456,9 +473,14 @@ RFC1123).
 .SP
 ISO8601 dates have many variants but a few examples
 are:
+.SP
+.PD 0
 .IP "" 4
 1972-09-24
+.IP "" 4
 1972-09-24 20:05
+
+.PD
 .IP "" 2
 .SP
 There are a lot more ISO8601 date formats, and \fBcvs\fP
@@ -468,9 +490,14 @@ hear the \fIwhole\fP long story :-).
 In addition to the dates allowed in Internet e-mail
 itself, \fBcvs\fP also allows some of the fields to be
 omitted.  For example:
+.SP
+.PD 0
 .IP "" 4
 24 Sep 1972 20:05
+.IP "" 4
 24 Sep
+
+.PD
 .IP "" 2
 .SP
 The date is interpreted as being in the
@@ -493,8 +520,12 @@ Remember to quote the argument to the \fB-D\fP
 flag so that your shell doesn't interpret spaces as
 argument separators.  A command using the \fB-D\fP
 flag can look like this:
+.SP
+.PD 0
 .IP "" 4
 $ cvs diff -D "1 hour ago" cvs.texinfo
+
+.PD
 .IP "" 2
 .SP
 .IX "Forcing a tag match"
@@ -1049,7 +1080,7 @@ this option has never done anything useful.
 .IX "co (subcommand)"
 .SP
 .IP "\(bu" 2
-Synopsis: checkout [options] modules...
+Synopsis: checkout [options] modules\&...
 .IP "\(bu" 2
 Requires: repository.
 .IP "\(bu" 2
@@ -1274,14 +1305,22 @@ modules file to set the module status.
 .SS "checkout examples"
 .SP
 Get a copy of the module \fBtc\fP:
+.SP
+.PD 0
 .IP "" 2
 $ cvs checkout tc
+
+.PD
 .IP "" 0
 .SP
 Get a copy of the module \fBtc\fP as it looked one day
 ago:
+.SP
+.PD 0
 .IP "" 2
 $ cvs checkout -D yesterday tc
+
+.PD
 .IP "" 0
 .SP
 .SH "commit"
@@ -1290,7 +1329,7 @@ $ cvs checkout -D yesterday tc
 .SP
 .IP "\(bu" 2
 Synopsis: commit [-lnRf] [-m 'log_message' |
--F file] [-r revision] [files...]
+-F file] [-r revision] [files\&...]
 .IP "\(bu" 2
 Requires: working directory, repository.
 .IP "\(bu" 2
@@ -1376,9 +1415,14 @@ Force \fBcvs\fP to commit a new revision even if you haven't
 made any changes to the file.  If the current revision
 of \fIfile\fP is 1.7, then the following two commands
 are equivalent:
+.SP
+.PD 0
 .IP "" 4
 $ cvs commit -f @var{file}
+.IP "" 4
 $ cvs commit -r 1.8 @var{file}
+
+.PD
 .IP "" 2
 .SP
 The \fB-f\fP option disables recursion (i.e., it
@@ -1411,12 +1455,20 @@ thereby not disturbing main-line development in any
 way.  For example, if you had to create a patch to the
 1.2 version of the product, even though the 2.0 version
 is already under development, you might do:
+.SP
+.PD 0
 .IP "" 2
 $ cvs rtag -b -r FCS1_2 FCS1_2_Patch product_module
+.IP "" 2
 $ cvs checkout -r FCS1_2_Patch product_module
+.IP "" 2
 $ cd product_module
+.IP "" 2
 [[ hack away ]]
+.IP "" 2
 $ cvs commit
+
+.PD
 .IP "" 0
 .SP
 This works automatically since the \fB-r\fP option is
@@ -1433,11 +1485,18 @@ commit your change to a new branch.  Others can then
 checkout your experimental stuff and utilize the full
 benefit of \fBcvs\fP conflict resolution.  The scenario might
 look like:
+.SP
+.PD 0
 .IP "" 2
 [[ hacked sources are present ]]
+.IP "" 2
 $ cvs tag -b EXPR1
+.IP "" 2
 $ cvs update -r EXPR1
+.IP "" 2
 $ cvs commit
+
+.PD
 .IP "" 0
 .SP
 The \fBupdate\fP command will make the @samp{-r
@@ -1446,10 +1505,16 @@ changes to the files will never be removed by the
 \fBupdate\fP command.  The \fBcommit\fP will
 automatically commit to the correct branch, because the
 \fB-r\fP is sticky.  You could also do like this:
+.SP
+.PD 0
 .IP "" 2
 [[ hacked sources are present ]]
+.IP "" 2
 $ cvs tag -b EXPR1
+.IP "" 2
 $ cvs commit -r EXPR1
+
+.PD
 .IP "" 0
 .SP
 but then, only those files that were changed by you
@@ -1460,8 +1525,12 @@ trunk.
 .SP
 To work with you on the experimental change, others
 would simply do
+.SP
+.PD 0
 .IP "" 2
 $ cvs checkout -r EXPR1 whatever_module
+
+.PD
 .IP "" 0
 .SP
 .SH "diff"
@@ -1469,7 +1538,7 @@ $ cvs checkout -r EXPR1 whatever_module
 .IX "diff (subcommand)"
 .SP
 .IP "\(bu" 2
-Synopsis: diff [-lR] [-k kflag] [format_options] [[-r rev1 | -D date1] [-r rev2 |  -D date2]] [files...]
+Synopsis: diff [-lR] [-k kflag] [format_options] [[-r rev1 | -D date1] [-r rev2 |  -D date2]] [files\&...]
 .IP "\(bu" 2
 Requires: working directory, repository.
 .IP "\(bu" 2
@@ -1887,49 +1956,90 @@ with the original version from the repository,
 and outputs a merged file in which old regions are
 surrounded by \fB\\begin{em@\fP}-\fB\\end{em@\fP} lines, and new
 regions are surrounded by \fB\\begin{bf@\fP}-\fB\\end{bf@\fP} lines.
+.SP
+.PD 0
 .IP "" 2
 cvs diff \\
-   --old-group-format='\\begin@{em@}
-%<\\end@{em@}
-' \\
-   --new-group-format='\\begin@{bf@}
-%>\\end@{bf@}
-' \\
+.IP "" 2
+   --old-group-format='\\begin{em}
+.IP "" 2
+%<\\end{em}
+.IP "" 2
+\' \\
+.IP "" 2
+   --new-group-format='\\begin{bf}
+.IP "" 2
+%>\\end{bf}
+.IP "" 2
+\' \\
+.IP "" 2
    myfile
+
+.PD
 .IP "" 0
 .SP
 The following command is equivalent to the above example, but it is a
 little more verbose, because it spells out the default line group formats.
+.SP
+.PD 0
 .IP "" 2
 cvs diff \\
-   --old-group-format='\\begin@{em@}
-%<\\end@{em@}
-' \\
-   --new-group-format='\\begin@{bf@}
-%>\\end@{bf@}
-' \\
+.IP "" 2
+   --old-group-format='\\begin{em}
+.IP "" 2
+%<\\end{em}
+.IP "" 2
+\' \\
+.IP "" 2
+   --new-group-format='\\begin{bf}
+.IP "" 2
+%>\\end{bf}
+.IP "" 2
+\' \\
+.IP "" 2
    --unchanged-group-format='%=' \\
-   --changed-group-format='\\begin@{em@}
-%<\\end@{em@}
-\\begin@{bf@}
-%>\\end@{bf@}
-' \\
+.IP "" 2
+   --changed-group-format='\\begin{em}
+.IP "" 2
+%<\\end{em}
+.IP "" 2
+\\begin{bf}
+.IP "" 2
+%>\\end{bf}
+.IP "" 2
+\' \\
+.IP "" 2
    myfile
+
+.PD
 .IP "" 0
 .SP
 Here is a more advanced example, which outputs a diff listing with
 headers containing line numbers in a ``plain English'' style.
+.SP
+.PD 0
 .IP "" 2
 cvs diff \\
+.IP "" 2
    --unchanged-group-format='' \\
+.IP "" 2
    --old-group-format='-------- %dn line%(n=1?:s) deleted at %df:
+.IP "" 2
 %<' \\
+.IP "" 2
    --new-group-format='-------- %dN line%(N=1?:s) added after %de:
+.IP "" 2
 %>' \\
+.IP "" 2
    --changed-group-format='-------- %dn line%(n=1?:s) changed at %df:
+.IP "" 2
 %<-------- to:
+.IP "" 2
 %>' \\
+.IP "" 2
    myfile
+
+.PD
 .IP "" 0
 .SP
 To specify a line group format, use one of the options
@@ -2082,15 +2192,26 @@ change indicator to the left of the text.  The first column of output
 is \fB-\fP for deleted lines, \fB|\fP for added lines, and a space
 for unchanged lines.  The formats contain newline characters where
 newlines are desired on output.
+.SP
+.PD 0
 .IP "" 2
 cvs diff \\
+.IP "" 2
    --old-line-format='-%l
-' \\
+.IP "" 2
+\' \\
+.IP "" 2
    --new-line-format='|%l
-' \\
+.IP "" 2
+\' \\
+.IP "" 2
    --unchanged-line-format=' %l
-' \\
+.IP "" 2
+\' \\
+.IP "" 2
    myfile
+
+.PD
 .IP "" 0
 .SP
 To specify a line format, use one of the following options.  You should
@@ -2174,21 +2295,38 @@ Taken together, the line and line group formats let you specify many
 different formats.  For example, the following command uses a format
 similar to \fBdiff\fP's normal format.  You can tailor this command
 to get fine control over \fBdiff\fP's output.
+.SP
+.PD 0
 .IP "" 2
 cvs diff \\
+.IP "" 2
    --old-line-format='< %l
-' \\
+.IP "" 2
+\' \\
+.IP "" 2
    --new-line-format='> %l
-' \\
+.IP "" 2
+\' \\
+.IP "" 2
    --old-group-format='%df%(f=l?:,%dl)d%dE
+.IP "" 2
 %<' \\
+.IP "" 2
    --new-group-format='%dea%dF%(F=L?:,%dL)
+.IP "" 2
 %>' \\
+.IP "" 2
    --changed-group-format='%df%(f=l?:,%dl)c%dF%(F=L?:,%dL)
+.IP "" 2
 %<---
+.IP "" 2
 %>' \\
+.IP "" 2
    --unchanged-group-format='' \\
+.IP "" 2
    myfile
+
+.PD
 .IP "" 0
 .SP
 .SH "diff examples"
@@ -2199,29 +2337,45 @@ between revision 1.14 and 1.19 of
 \fBbackend.c\fP.  Due to the \fB-kk\fP flag no
 keywords are substituted, so differences that only depend
 on keyword substitution are ignored.
+.SP
+.PD 0
 .IP "" 2
 $ cvs diff -kk -u -r 1.14 -r 1.19 backend.c
+
+.PD
 .IP "" 0
 .SP
 Suppose the experimental branch EXPR1 was based on a
 set of files tagged RELEASE_1_0.  To see what has
 happened on that branch, the following can be used:
+.SP
+.PD 0
 .IP "" 2
 $ cvs diff -r RELEASE_1_0 -r EXPR1
+
+.PD
 .IP "" 0
 .SP
 A command like this can be used to produce a context
 diff between two releases:
+.SP
+.PD 0
 .IP "" 2
 $ cvs diff -c -r RELEASE_1_0 -r RELEASE_1_1 > diffs
+
+.PD
 .IP "" 0
 .SP
 If you are maintaining ChangeLogs, a command like the following
 just before you commit your changes may help you write
 the ChangeLog entry.  All local modifications that have
 not yet been committed will be printed.
+.SP
+.PD 0
 .IP "" 2
 $ cvs diff -u | less
+
+.PD
 .IP "" 0
 .SP
 .SH "export"
@@ -2229,7 +2383,7 @@ $ cvs diff -u | less
 .IX "export (subcommand)"
 .SP
 .IP "\(bu" 2
-Synopsis: export [-flNnR] [-r rev|-D date] [-k subst] [-d dir] module...
+Synopsis: export [-flNnR] [-r rev|-D date] [-k subst] [-d dir] module\&...
 .IP "\(bu" 2
 Requires: repository.
 .IP "\(bu" 2
@@ -2322,7 +2476,7 @@ see node `checkout options' in the CVS manual, for complete details on how
 .IX "history (subcommand)"
 .SP
 .IP "\(bu" 2
-Synopsis:     history [-report] [-flags] [-options args] [files...]
+Synopsis:     history [-report] [-flags] [-options args] [files\&...]
 .IP "\(bu" 2
 Requires: the file \fB$CVSROOT/CVSROOT/history\fP
 .IP "\(bu" 2
@@ -2535,7 +2689,7 @@ time zone instead of UTC.
 .IX "import (subcommand)"
 .SP
 .IP "\(bu" 2
-Synopsis: import [-options] repository vendortag releasetag...
+Synopsis: import [-options] repository vendortag releasetag\&...
 .IP "\(bu" 2
 Requires: Repository, source distribution directory.
 .IP "\(bu" 2
@@ -2694,7 +2848,7 @@ See see node `Tracking sources' in the CVS manual, and see node `From files' in 
 .IX "log (subcommand)"
 .SP
 .IP "\(bu" 2
-Synopsis: log [options] [files...]
+Synopsis: log [options] [files\&...]
 .IP "\(bu" 2
 Requires: repository, working directory.
 .IP "\(bu" 2
@@ -2990,7 +3144,7 @@ verifymsg
 .IX "rdiff (subcommand)"
 .SP
 .IP "\(bu" 2
-rdiff [-flags] [-V vn] [-r t|-D d [-r t2|-D d2]] modules...
+rdiff [-flags] [-V vn] [-r t|-D d [-r t2|-D d2]] modules\&...
 .IP "\(bu" 2
 Requires: repository.
 .IP "\(bu" 2
@@ -3101,9 +3255,14 @@ Suppose you receive mail from @t{foo@example.net} asking for an
 update from release 1.2 to 1.4 of the tc compiler.  You
 have no such patches on hand, but with \fBcvs\fP that can
 easily be fixed with a command such as this:
+.SP
+.PD 0
 .IP "" 2
 $ cvs rdiff -c -r FOO1_2 -r FOO1_4 tc | \\
+.IP "" 2
 $$ Mail -s 'The patches you asked for' foo@example.net
+
+.PD
 .IP "" 0
 .SP
 Suppose you have made release 1.3, and forked a branch
@@ -3111,12 +3270,20 @@ called \fBR_1_3fix\fP for bug fixes.  \fBR_1_3_1\fP
 corresponds to release 1.3.1, which was made some time
 ago.  Now, you want to see how much development has been
 done on the branch.  This command can be used:
+.SP
+.PD 0
 .IP "" 2
 $ cvs patch -s -r R_1_3_1 -r R_1_3fix module-name
+.IP "" 2
 cvs rdiff: Diffing module-name
+.IP "" 2
 File ChangeLog,v changed from revision 1.52.2.5 to 1.52.2.6
+.IP "" 2
 File foo.c,v changed from revision 1.52.2.3 to 1.52.2.4
+.IP "" 2
 File bar.h,v changed from revision 1.29.2.1 to 1.2
+
+.PD
 .IP "" 0
 .SP
 .SH "release"
@@ -3124,7 +3291,7 @@ File bar.h,v changed from revision 1.29.2.1 to 1.2
 .IX "release (subcommand)"
 .SP
 .IP "\(bu" 2
-release [-d] directories...
+release [-d] directories\&...
 .IP "\(bu" 2
 Requires: Working directory.
 .IP "\(bu" 2
@@ -3225,13 +3392,22 @@ sources, this file will be lost.
 .SP
 Release the \fBtc\fP directory, and delete your local working copy
 of the files.
+.SP
+.PD 0
 .IP "" 2
 $ cd ..         # @r{You must stand immediately above the}
+.IP "" 2
                 # @r{sources when you issue @samp{cvs release}.}
+.IP "" 2
 $ cvs release -d tc
+.IP "" 2
 You have [0] altered files in this repository.
+.IP "" 2
 Are you sure you want to release (and delete) directory `tc': y
+.IP "" 2
 $
+
+.PD
 .IP "" 0
 .SP
 .SH "update"
@@ -3239,7 +3415,7 @@ $
 .IX "update (subcommand)"
 .SP
 .IP "\(bu" 2
-update [-ACdflPpR] [-I name] [-j rev [-j rev]] [-k kflag] [-r tag|-D date] [-W spec] files...
+update [-ACdflPpR] [-I name] [-j rev [-j rev]] [-k kflag] [-r tag|-D date] [-W spec] files\&...
 .IP "\(bu" 2
 Requires: repository, working directory.
 .IP "\(bu" 2
