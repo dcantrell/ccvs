@@ -1,5 +1,10 @@
 2002-04-17  Derek Price  <oberon@umich.edu>
 
+	* cvs.1(cvs tag): Mention -c option.
+	(Correction from Michael Richardson <mcr@sandelman.ottawa.on.ca>.)
+
+2002-04-17  Derek Price  <oberon@umich.edu>
+
 	* cvs.1(cvs commit): It's '-F' now, not '-f'.
 	(Correction from Norikatsu Shigemura <nork@cityfujisawa.ne.jp>.)
 
