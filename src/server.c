@@ -1422,7 +1422,7 @@ receive_file (size, file, gzipped)
 	    goto out;
 	}
 
-	if (gunzip_and_write (fd, file, filebuf, size))
+	if (gunzip_and_write (fd, file, (unsigned char *) filebuf, size))
 	{
 	    if (alloc_pending (80))
 		sprintf (pending_error_text,
@@ -4071,7 +4071,7 @@ CVS server internal error: unhandled case in server_updated");
 
 	if (file != NULL)
 	{
-	    buf_output (protocol, file, file_used);
+	    buf_output (protocol, (char *) file, file_used);
 	    free (file);
 	    file = NULL;
 	}

@@ -1844,7 +1844,8 @@ update_entries (data_arg, ent_list, short_pathname, filename)
 
 		if (use_gzip)
 		{
-		    if (gunzip_and_write (fd, short_pathname, buf, size))
+		    if (gunzip_and_write (fd, short_pathname, 
+					  (unsigned char *) buf, size))
 			error (1, 0, "aborting due to compression error");
 		}
 		else if (write (fd, buf, size) != size)
