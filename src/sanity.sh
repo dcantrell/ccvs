@@ -1,5 +1,8 @@
-#!/bin/sh
-# a quick sanity test for cvs.
+#! /bin/sh
+:
+#	sanity.sh -- a growing sanity test for cvs.
+#
+#ident	"$CVSid$"
 #
 # Copyright (C) 1992, 1993 Cygnus Support
 #
@@ -18,112 +21,206 @@ TESTDIR=/tmp/cvs-sanity
 # "debugger"
 #set -x
 
-echo This test should produce no other output than this line, and "Ok."
-
-# clean any old remnants
-rm -rf ${TESTDIR}
+echo 'This test should produce no other output than this line, and a final "OK".'
 
 if test x"$1" = x"-r"; then
-  shift
-  remote=yes
+	shift
+	remote=yes
 else
-  remote=no
+	remote=no
 fi
 
 # Use full path for CVS executable, so that CVS_SERVER gets set properly
 # for remote.
 case $1 in
-     /* ) testcvs=$1 ;;
-      * ) testcvs=`pwd`/$1 ;;
+/*)
+	testcvs=$1
+	;;
+*)
+	testcvs=`pwd`/$1
+	;;
 esac
+
 shift
 
 # Use full path for mkmodules, so that the right one will be invoked
+#
 testmkmodules=`pwd`/mkmodules
 
-# Remaining arguments are the names of tests to run.
-if test x"$*" = x; then
-  tests="basic0 basic1 basic2 basic3 rtags death import new conflicts modules mflag errmsg1"
-else
-  tests="$*"
-fi
-
-# fixme: try things (what things? checkins?) without -m.
+# FIXME: try things (what things? checkins?) without -m.
+#
 # Some of these tests are written to expect -Q.  But testing with
 # -Q is kind of bogus, it is not the way users actually use CVS (usually).
 # So new tests probably should invoke ${testcvs} directly, rather than ${CVS}.
-CVS="${testcvs} -Q"
+# and then they've obviously got to do something with the output....
+#
+CVS="${testcvs} -Q -f"
 
 LOGFILE=`pwd`/check.log
-if test -f check.log; then mv check.log check.plog; fi
 
-mkdir ${TESTDIR}
-cd ${TESTDIR}
-
-# so far so good.  Let's try something harder.
-
-# this should die
-if ${CVS} -d `pwd`/cvsroot co cvs-sanity 2>> ${LOGFILE} ; then
-  echo "FAIL: test 1" | tee -a ${LOGFILE}; exit 1
-else
-  echo "PASS: test 1" >>${LOGFILE}
+if test -f check.log; then
+	mv check.log check.olog
 fi
 
-# this should still die
-mkdir cvsroot
-if ${CVS} -d `pwd`/cvsroot co cvs-sanity 2>> ${LOGFILE} ; then
-  echo "FAIL: test 2" | tee -a ${LOGFILE}; exit 1
+# Remaining arguments are the names of tests to run.
+#
+# WARNING: FIXME: this should probably be removed as it's basically
+# useless except for testing sanity.sh itself....
+#
+if test x"$*" = x; then
+	tests="basic0 basic1 basic2 basic3 rtags death import new conflicts modules mflag errmsg1"
+	# clean any old remnants
+	rm -rf ${TESTDIR}
+	mkdir ${TESTDIR}
+	cd ${TESTDIR}
+	# this should die
+	if ${CVS} -d `pwd`/cvsroot co cvs-sanity 2>> ${LOGFILE} ; then
+		echo "FAIL: test 1" | tee -a ${LOGFILE}
+		exit 1
+	else
+		echo "PASS: test 1" >>${LOGFILE}
+	fi
+
+	# this should still die
+	mkdir cvsroot
+	if ${CVS} -d `pwd`/cvsroot co cvs-sanity 2>> ${LOGFILE} ; then
+		echo "FAIL: test 2" | tee -a ${LOGFILE}
+		exit 1
+	else
+		echo "PASS: test 2" >>${LOGFILE}
+	fi
+
+	# this should still die
+	mkdir cvsroot/CVSROOT
+	if ${CVS} -d `pwd`/cvsroot co cvs-sanity 2>> ${LOGFILE} ; then
+		echo "FAIL: test 3" | tee -a ${LOGFILE}
+		exit 1
+	else
+		echo "PASS: test 3" >>${LOGFILE}
+	fi
+
+	# This one should work, although it should spit a warning.
+	mkdir tmp ; cd tmp
+	${CVS} -d `pwd`/../cvsroot co CVSROOT 2>> ${LOGFILE}
+	cd .. ; rm -rf tmp
+
+	# set up a minimal modules file...
+	echo "CVSROOT		-i ${testmkmodules} CVSROOT" > cvsroot/CVSROOT/modules
+
+	# This one should succeed.  No warnings.
+	mkdir tmp ; cd tmp
+	if ${CVS} -d `pwd`/../cvsroot co CVSROOT ; then
+		echo "PASS: test 4" >>${LOGFILE}
+	else
+		echo "FAIL: test 4" | tee -a ${LOGFILE}
+		exit 1
+	fi
+
+	if echo "yes" | ${CVS} -d `pwd`/../cvsroot release -d CVSROOT ; then
+		echo "PASS: test 4.5" >>${LOGFILE}
+	else
+		echo "FAIL: test 4.5" | tee -a ${LOGFILE}
+		exit 1
+	fi
+	# this had better be empty
+	cd ..; rmdir tmp
+	if [ -d tmp ] ; then
+		echo "FAIL: test 4.75" | tee -a ${LOGFILE}
+		exit 1
+	fi
+
 else
-  echo "PASS: test 2" >>${LOGFILE}
+	tests="$*"
+	# run with the left-overs to test guts of sanity.sh
+	# it is too complicated to ship around a good result of all the
+	# basic? tests
+	cd ${TESTDIR}
 fi
 
-# this should still die
-mkdir cvsroot/CVSROOT
-if ${CVS} -d `pwd`/cvsroot co cvs-sanity 2>> ${LOGFILE} ; then
-  echo "FAIL: test 3" | tee -a ${LOGFILE}; exit 1
-else
-  echo "PASS: test 3" >>${LOGFILE}
-fi
+# a simple function to compare directory contents
+#
+# BTW, I don't care any more -- if you don't have a /bin/sh that handles
+# shell functions, well get one.
+#
+# Returns: ISDIFF := true|false
+#
+directory_cmp ()
+{
+	OLDPWD=`pwd`
+	DIR_1=$1
+	DIR_2=$2
+	ISDIFF=false
 
-# This one should work, although it should spit a warning.
-mkdir tmp ; cd tmp
-${CVS} -d `pwd`/../cvsroot co CVSROOT 2>> ${LOGFILE}
-cd .. ; rm -rf tmp
+	cd $DIR_1
+	find . -print | fgrep -v /CVS | sort > /tmp/dc$$d1
 
-# This one should succeed.  No warnings.
-echo "CVSROOT		-i ${testmkmodules} CVSROOT" > cvsroot/CVSROOT/modules
-mkdir tmp ; cd tmp
-if ${CVS} -d `pwd`/../cvsroot co CVSROOT ; then
-  echo "PASS: test 4" >>${LOGFILE}
-else
-  echo "FAIL: test 4" | tee -a ${LOGFILE}; exit 1
-fi
+	# go back where we were to avoid symlink hell...
+	cd $OLDPWD
+	cd $DIR_2
+	find . -print | fgrep -v /CVS | sort > /tmp/dc$$d2
 
-cd .. ; rm -rf tmp
+	if diff /tmp/dc$$d1 /tmp/dc$$d2 >/dev/null 2>&1
+	then
+		:
+	else
+		ISDIFF=true
+		return
+	fi
+	cd $OLDPWD
+	while read a
+	do
+		if [ -f $DIR_1/"$a" ] ; then
+			cmp -s $DIR_1/"$a" $DIR_2/"$a"
+			if [ $? -ne 0 ] ; then
+				ISDIFF=true
+			fi
+		fi
+	done < /tmp/dc$$d1
+### FIXME:
+###	rm -f /tmp/dc$$*
+}
+
+# so much for the setup.  Let's try something harder.
 
 # Try setting CVSROOT so we don't have to worry about it anymore.  (now that
 # we've tested -d cvsroot.)
-CVSROOT_FILENAME=`pwd`/cvsroot
-CVSROOT=${CVSROOT_FILENAME} ; export CVSROOT
+CVSROOT_DIRNAME=${TESTDIR}/cvsroot
+CVSROOT=${CVSROOT_DIRNAME} ; export CVSROOT
 if test "x$remote" = xyes; then
-  CVSROOT=`hostname`:${CVSROOT_FILENAME} ; export CVSROOT
-  # Use rsh so we can test it without having to muck with inetd or anything 
-  # like that.  Also needed to get CVS_SERVER to work.
-  CVS_CLIENT_PORT=-1; export CVS_CLIENT_PORT
-  CVS_SERVER=${testcvs}; export CVS_SERVER
+	CVSROOT=`hostname`:${CVSROOT_DIRNAME} ; export CVSROOT
+	# Use rsh so we can test it without having to muck with inetd or anything 
+	# like that.  Also needed to get CVS_SERVER to work.
+	CVS_CLIENT_PORT=-1; export CVS_CLIENT_PORT
+	CVS_SERVER=${testcvs}; export CVS_SERVER
 fi
 
 mkdir tmp ; cd tmp
-if ${CVS} -d `pwd`/../cvsroot co CVSROOT ; then
-  echo "PASS: test 5" >>${LOGFILE}
+if ${CVS} co CVSROOT ; then
+	if [ -r CVSROOT/CVS/Entries ] ; then
+		echo "PASS: test 5" >>${LOGFILE}
+	else
+		echo "FAIL: test 5" | tee -a ${LOGFILE}
+		exit 1
+	fi
 else
-  echo "FAIL: test 5" | tee -a ${LOGFILE}; exit 1
+	echo "FAIL: test 5" | tee -a ${LOGFILE}; exit 1
 fi
 
-cd .. ; rm -rf tmp
+if echo "yes" | ${CVS} release -d CVSROOT ; then
+	echo "PASS: test 5.5" >>${LOGFILE}
+else
+	echo "FAIL: test 5.5" | tee -a ${LOGFILE}
+	exit 1
+fi
+# this had better etmpy now...
+cd ..; rmdir tmp
+if [ -d tmp ] ; then
+	echo "FAIL: test 5.75" | tee -a ${LOGFILE}
+	exit 1
+fi
 
 # start keeping history
-touch ${CVSROOT_FILENAME}/CVSROOT/history
+touch ${CVSROOT_DIRNAME}/CVSROOT/history
 
 ### The big loop
 for what in $tests; do
@@ -135,13 +232,17 @@ for what in $tests; do
 #			true
 #		else
 #			echo cvs does not yet add top level directories cleanly.
-			mkdir ${CVSROOT_FILENAME}/first-dir
+			mkdir ${CVSROOT_DIRNAME}/first-dir
 #		fi
 #		rm -rf first-dir
 
 		# check out an empty directory
 		if ${CVS} co first-dir ; then
-		  echo "PASS: test 6" >>${LOGFILE}
+		  if [ -r first-dir/CVS/Entries ] ; then
+		    echo "PASS: test 6" >>${LOGFILE}
+		  else
+		    echo "FAIL: test 6" | tee -a ${LOGFILE}; exit 1
+		  fi
 		else
 		  echo "FAIL: test 6" | tee -a ${LOGFILE}; exit 1
 		fi
@@ -197,9 +298,9 @@ for what in $tests; do
 		;;
 
 	basic1) # first dive - add a files, first singly, then in a group.
-		rm -rf ${CVSROOT_FILENAME}/first-dir
+		rm -rf ${CVSROOT_DIRNAME}/first-dir
 		rm -rf first-dir
-		mkdir ${CVSROOT_FILENAME}/first-dir
+		mkdir ${CVSROOT_DIRNAME}/first-dir
 		# check out an empty directory
 		if ${CVS} co first-dir  ; then
 		  echo "PASS: test 13a" >>${LOGFILE}
@@ -244,7 +345,7 @@ for what in $tests; do
 					  echo "FAIL: test 17-${do}-$j" | tee -a ${LOGFILE}; exit 1
 					fi
 
-		# fixme: this one doesn't work yet for added files.
+		# FIXME: this one doesn't work yet for added files.
 					# log all.
 					if ${CVS} log  >> ${LOGFILE}; then
 					  echo "PASS: test 18-${do}-$j" >>${LOGFILE}
@@ -279,7 +380,7 @@ for what in $tests; do
 					fi
 
 					# log all.
-		# fixme: doesn't work right for added files.
+		# FIXME: doesn't work right for added files.
 					if ${CVS} log first-dir  >> ${LOGFILE}; then
 					  echo "PASS: test 22-${do}-$j" >>${LOGFILE}
 					else
@@ -469,15 +570,17 @@ for what in $tests; do
 			echo '***' failed test 44. ; exit 1
 		fi
 
-		# Hmm...  fixme.
-#		if ${CVS} release first-dir  ; then
-#			true
-#		else
-#			echo '***' failed test 45. # ; exit 1
-#		fi
+		if echo "yes" | ${CVS} release -d first-dir  ; then
+			true
+		else
+			echo '***' failed test 45. ; exit 1
+		fi
 
 		# end of third dive
-		rm -rf first-dir
+		if [ -d test-dir ] ; then
+			echo '***' failed test 45.5 ; exit 1
+		fi
+
 		;;
 
 	rtags) # now try some rtags
@@ -524,42 +627,41 @@ for what in $tests; do
 			echo '***' failed test 51. ; exit 1
 		fi
 
-		if diff -c -r 1dir first-dir ; then
-			true
-		else
+		directory_cmp 1dir first-dir
+
+		if $ISDIFF ; then
 			echo '***' failed test 52. ; exit 1
+		else
+			:
 		fi
 		rm -rf 1dir first-dir
 
-		# For some reason, this command has stopped working and hence much of this sequence is currently off.
-		# export by revision vs checkout by rtagged-by-revision and compare.
-#		if ${CVS} export -r1.1 first-dir  ; then
-#			true
-#		else
-#			echo '***' failed test 53. # ; exit 1
-#		fi
-		# note sidestep below
-		#mv first-dir 1dir
+		# checkout by revision vs export by rtagged-by-revision and compare.
+		if ${CVS} export -rrtagged-by-revision -d export-dir first-dir  ; then
+			true
+		else
+			echo '***' failed test 53. ; exit 1
+		fi
 
-		if ${CVS} co -rrtagged-by-revision first-dir  ; then
+		if ${CVS} co -r1.1 first-dir  ; then
 			true
 		else
 			echo '***' failed test 54. ; exit 1
 		fi
-		# fixme: this is here temporarily to sidestep test 53.
-		ln -s first-dir 1dir
 
 		# directory copies are done in an oblique way in order to avoid a bug in sun's tmp filesystem.
 		mkdir first-dir.cpy ; (cd first-dir ; tar cf - * | (cd ../first-dir.cpy ; tar xf -))
 
-		if diff --exclude=CVS -c -r 1dir first-dir ; then
-			true
-		else
+		directory_cmp first-dir export-dir
+
+		if $ISDIFF ; then
 			echo '***' failed test 55. ; exit 1
+		else
+			:
 		fi
 
 		# interrupt, while we've got a clean 1.1 here, let's import it into another tree.
-		cd 1dir
+		cd export-dir
 		if ${CVS} import -m "first-import" second-dir first-immigration immigration1 immigration1_0  ; then
 			true
 		else
@@ -573,13 +675,15 @@ for what in $tests; do
 			echo '***' failed test 57. ; exit 1
 		fi
 
-		if diff --exclude=CVS -c -r first-dir second-dir ; then
-			true
-		else
+		directory_cmp first-dir second-dir
+
+		if $ISDIFF ; then
 			echo '***' failed test 58. ; exit 1
+		else
+			:
 		fi
 
-		rm -rf 1dir first-dir
+		rm -rf export-dir first-dir
 		mkdir first-dir
 		(cd first-dir.cpy ; tar cf - * | (cd ../first-dir ; tar xf -))
 
@@ -606,6 +710,7 @@ for what in $tests; do
 
 		cd .. ; mv first-dir 1dir
 		mv first-dir.cpy first-dir ; cd first-dir
+
 		if ${CVS} diff -u  >> ${LOGFILE} || [ $? = 1 ] ; then
 			true
 		else
@@ -620,12 +725,14 @@ for what in $tests; do
 
 		cd ..
 
-# Haven't investigated why this is failing.
-#		if diff --exclude=CVS -c -r 1dir first-dir ; then
-#			true
-#		else
-#			echo '***' failed test 63. # ; exit 1
-#		fi
+		#### XXX: is this expected to work???
+		directory_cmp 1dir first-dir
+
+		if $ISDIFF ; then
+			echo '***' failed test 63. # ; exit 1
+		else
+			:
+		fi
 		rm -rf 1dir first-dir
 
 		if ${CVS} his -e -a  >> ${LOGFILE}; then
@@ -636,8 +743,8 @@ for what in $tests; do
 		;;
 
 	death) # next dive.  test death support.
-		rm -rf ${CVSROOT_FILENAME}/first-dir
-		mkdir  ${CVSROOT_FILENAME}/first-dir
+		rm -rf ${CVSROOT_DIRNAME}/first-dir
+		mkdir  ${CVSROOT_DIRNAME}/first-dir
 		if ${CVS} co first-dir  ; then
 			true
 		else
@@ -811,9 +918,10 @@ for what in $tests; do
 
 		# Make sure that we joined the correct change to file1
 		if echo line2 from branch1 | cmp - file1 >/dev/null; then
-		  echo 'PASS: test 87a' >>${LOGFILE}
+			echo 'PASS: test 87a' >>${LOGFILE}
 		else
-		  echo 'FAIL: test 87a' | tee -a ${LOGFILE}
+			echo 'FAIL: test 87a' | tee -a ${LOGFILE}
+			exit 1
 		fi
 
 		# update
@@ -871,7 +979,7 @@ for what in $tests; do
 			echo '***' failed test 95 ; exit 1
 		fi
 
-		cd .. ; rm -rf first-dir ${CVSROOT_FILENAME}/first-dir
+		cd .. ; rm -rf first-dir ${CVSROOT_DIRNAME}/first-dir
 		;;
 
 	import) # test death after import
@@ -1048,12 +1156,12 @@ for what in $tests; do
 		else
 			echo '***' failed test 116 ; exit 1
 		fi
-		cd .. ; rm -rf first-dir ${CVSROOT_FILENAME}/first-dir
+		cd .. ; rm -rf first-dir ${CVSROOT_DIRNAME}/first-dir
 		;;
 
 	new) # look for stray "no longer pertinent" messages.
-		rm -rf first-dir ${CVSROOT_FILENAME}/first-dir
-		mkdir ${CVSROOT_FILENAME}/first-dir
+		rm -rf first-dir ${CVSROOT_DIRNAME}/first-dir
+		mkdir ${CVSROOT_DIRNAME}/first-dir
 
 		if ${CVS} co first-dir  ; then
 			true
@@ -1102,12 +1210,12 @@ for what in $tests; do
 			true
 		fi
 
-		cd .. ; rm -rf first-dir ; rm -rf ${CVSROOT_FILENAME}/first-dir
+		cd .. ; rm -rf first-dir ; rm -rf ${CVSROOT_DIRNAME}/first-dir
 		;;
 
 	conflicts)
-		rm -rf first-dir ${CVSROOT_FILENAME}/first-dir
-		mkdir ${CVSROOT_FILENAME}/first-dir
+		rm -rf first-dir ${CVSROOT_DIRNAME}/first-dir
+		mkdir ${CVSROOT_DIRNAME}/first-dir
 
 		mkdir 1
 		cd 1
@@ -1268,16 +1376,16 @@ for what in $tests; do
 		fi
 
 		cd ../.. 
-		rm -rf 1 2 3 ; rm -rf ${CVSROOT_FILENAME}/first-dir
+		rm -rf 1 2 3 ; rm -rf ${CVSROOT_DIRNAME}/first-dir
 		;;
 	modules)
 	  # The following line stolen from cvsinit.sh.  FIXME: create our
 	  # repository via cvsinit.sh; that way we test it too.
-	  (cd ${CVSROOT_FILENAME}/CVSROOT; ci -q -u -t/dev/null \
+	  (cd ${CVSROOT_DIRNAME}/CVSROOT; ci -q -u -t/dev/null \
 	    -m'initial checkin of modules' modules)
 
-	  rm -rf first-dir ${CVSROOT_FILENAME}/first-dir
-	  mkdir ${CVSROOT_FILENAME}/first-dir
+	  rm -rf first-dir ${CVSROOT_DIRNAME}/first-dir
+	  mkdir ${CVSROOT_DIRNAME}/first-dir
 
 	  mkdir 1
 	  cd 1
@@ -1286,6 +1394,7 @@ for what in $tests; do
 	    echo 'PASS: test 143' >>${LOGFILE}
 	  else
 	    echo 'FAIL: test 143' | tee -a ${LOGFILE}
+	    exit 1
 	  fi
 
 	  cd first-dir
@@ -1299,12 +1408,14 @@ for what in $tests; do
 	    echo 'PASS: test 144' >>${LOGFILE}
 	  else
 	    echo 'FAIL: test 144' | tee -a ${LOGFILE}
+	    exit 1
 	  fi
 
 	  if ${testcvs} ci -m added >>${LOGFILE} 2>&1; then
 	    echo 'PASS: test 145' >>${LOGFILE}
 	  else
 	    echo 'FAIL: test 145' | tee -a ${LOGFILE}
+	    exit 1
 	  fi
 
 	  cd ..
@@ -1312,6 +1423,7 @@ for what in $tests; do
 	    echo 'PASS: test 146' >>${LOGFILE}
 	  else
 	    echo 'FAIL: test 146' | tee -a ${LOGFILE}
+	    exit 1
 	  fi
 
 	  # Here we test that CVS can deal with CVSROOT (whose repository
@@ -1322,6 +1434,7 @@ for what in $tests; do
 	    echo 'PASS: test 147' >>${LOGFILE}
 	  else
 	    echo 'FAIL: test 147' | tee -a ${LOGFILE}
+	    exit 1
 	  fi
 
 	  echo realmodule first-dir/subdir a >>CVSROOT/modules
@@ -1331,25 +1444,30 @@ for what in $tests; do
 	    echo 'PASS: test 148' >>${LOGFILE}
 	  else
 	    echo 'FAIL: test 148' | tee -a ${LOGFILE}
+	    exit 1
 	  fi
 	  cd ..
 	  if ${testcvs} co realmodule >>${LOGFILE}; then
 	    echo 'PASS: test 149' >>${LOGFILE}
 	  else
 	    echo 'FAIL: test 149' | tee -a ${LOGFILE}
+	    exit 1
 	  fi
 	  if test -d realmodule && test -f realmodule/a; then
 	    echo 'PASS: test 150' >>${LOGFILE}
 	  else
 	    echo 'FAIL: test 150' | tee -a ${LOGFILE}
+	    exit 1
 	  fi
 	  if ${testcvs} co aliasmodule >>${LOGFILE}; then
 	    echo 'PASS: test 151' >>${LOGFILE}
 	  else
 	    echo 'FAIL: test 151' | tee -a ${LOGFILE}
+	    exit 1
 	  fi
 	  if test -d aliasmodule; then
 	    echo 'FAIL: test 152' | tee -a ${LOGFILE}
+	    exit 1
 	  else
 	    echo 'PASS: test 152' >>${LOGFILE}
 	  fi
@@ -1359,20 +1477,23 @@ for what in $tests; do
 	    echo 'PASS: test 153' >>${LOGFILE}
 	  else
 	    echo 'FAIL: test 153' | tee -a ${LOGFILE}
+	    exit 1
 	  fi
 	  echo 'M first-dir/subdir/a' >ans153.tmp
 	  if cmp test153.tmp ans153.tmp; then
 	    echo 'PASS: test 154' >>${LOGFILE}
 	  else
 	    echo 'FAIL: test 154' | tee -a ${LOGFILE}
+	    exit 1
 	  fi
 	  if ${testcvs} -q co realmodule; then
 	    echo 'PASS: test 155' >>${LOGFILE}
 	  else
 	    echo 'FAIL: test 155' | tee -a ${LOGFILE}
+	    exit 1
 	  fi
 	  cd ..
-	  rm -rf 1 ; rm -rf ${CVSROOT_FILENAME}/first-dir
+	  rm -rf 1 ; rm -rf ${CVSROOT_DIRNAME}/first-dir
 	  ;;
 	mflag)
 	  for message in '' ' ' '	
@@ -1385,6 +1506,7 @@ for what in $tests; do
 	      echo 'PASS: test 156' >>${LOGFILE}
 	    else
 	      echo 'FAIL: test 156' | tee -a ${LOGFILE}
+	      exit 1
 	    fi
 	    # Must import twice since the first time uses inline code that
 	    # avoids RCS call.
@@ -1393,6 +1515,7 @@ for what in $tests; do
 	      echo 'PASS: test 157' >>${LOGFILE}
 	    else
 	      echo 'FAIL: test 157' | tee -a ${LOGFILE}
+	      exit 1
 	    fi
 	    # Test handling of -m during ci
 	    cd ..; rm -rf a-dir;
@@ -1400,6 +1523,7 @@ for what in $tests; do
 	      echo 'PASS: test 158' >>${LOGFILE}
 	    else
 	      echo 'FAIL: test 158' | tee -a ${LOGFILE}
+	      exit 1
 	    fi
 	    cd a-dir
 	    echo testc >>test
@@ -1407,6 +1531,7 @@ for what in $tests; do
 	      echo 'PASS: test 159' >>${LOGFILE}
 	    else
 	      echo 'FAIL: test 159' | tee -a ${LOGFILE}
+	      exit 1
 	    fi
 	    # Test handling of -m during rm/ci
 	    rm test;
@@ -1414,24 +1539,27 @@ for what in $tests; do
 	      echo 'PASS: test 160' >>${LOGFILE}
 	    else
 	      echo 'FAIL: test 160' | tee -a ${LOGFILE}
+	      exit 1
 	    fi
 	    if ${testcvs} ci -m "$message" >>${LOGFILE} 2>&1; then
 	      echo 'PASS: test 161' >>${LOGFILE}
 	    else
 	      echo 'FAIL: test 161' | tee -a ${LOGFILE}
+	      exit 1
 	    fi
 	    # Clean up
-	    cd ..; rm -rf a-dir ${CVSROOT_FILENAME}/a-dir
+	    cd ..; rm -rf a-dir ${CVSROOT_DIRNAME}/a-dir
 	  done
 	  ;;
 	errmsg1)
-	  mkdir ${CVSROOT_FILENAME}/1dir
+	  mkdir ${CVSROOT_DIRNAME}/1dir
 	  mkdir 1
 	  cd 1
 	  if ${testcvs} -q co 1dir; then
 	    echo 'PASS: test 162' >>${LOGFILE}
 	  else
 	    echo 'FAIL: test 162' | tee -a ${LOGFILE}
+	    exit 1
 	  fi
 	  cd 1dir
 	  touch foo
@@ -1439,11 +1567,13 @@ for what in $tests; do
 	    echo 'PASS: test 163' >>${LOGFILE}
 	  else
 	    echo 'FAIL: test 163' | tee -a ${LOGFILE}
+	    exit 1
 	  fi
 	  if ${testcvs} ci -m added >>${LOGFILE} 2>&1; then
 	    echo 'PASS: test 164' >>${LOGFILE}
 	  else
 	    echo 'FAIL: test 164' | tee -a ${LOGFILE}
+	    exit 1
 	  fi
 	  cd ../..
 	  mkdir 2
@@ -1452,6 +1582,7 @@ for what in $tests; do
 	    echo 'PASS: test 165' >>${LOGFILE}
 	  else
 	    echo 'FAIL: test 165' | tee -a ${LOGFILE}
+	    exit 1
 	  fi
 	  chmod a-w 1dir
 	  cd ../1/1dir
@@ -1460,11 +1591,13 @@ for what in $tests; do
 	    echo 'PASS: test 166' >>${LOGFILE}
 	  else
 	    echo 'FAIL: test 166' | tee -a ${LOGFILE}
+	    exit 1
 	  fi
 	  if ${testcvs} ci -m removed >>${LOGFILE} 2>&1; then
 	    echo 'PASS: test 167' >>${LOGFILE}
 	  else
 	    echo 'FAIL: test 167' | tee -a ${LOGFILE}
+	    exit 1
 	  fi
 	  cd ../../2/1dir
 	  ${testcvs} -q update 2>../tst167.err
@@ -1479,19 +1612,22 @@ EOF
 	    echo 'PASS: test 168' >>${LOGFILE}
 	  else
 	    echo 'FAIL: test 168' | tee -a ${LOGFILE}
+	    exit 1
 	  fi
 
 	  cd ..
 	  chmod u+w 1dir
 	  cd ..
-	  rm -rf 1 2 ${CVSROOT_FILENAME}/1dir
+	  rm -rf 1 2 ${CVSROOT_DIRNAME}/1dir
 	  ;;
 
-	*) echo $what is not the name of a test -- ignored ;;
+	*)
+	   echo $what is not the name of a test -- ignored
+	   ;;
 	esac
 done
 
-echo Ok.
+echo "OK, all tests completed successfully."
 
 # TODO:
 # * Test `cvs admin'.
