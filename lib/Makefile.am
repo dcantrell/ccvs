@@ -25,7 +25,6 @@ libcvs_a_SOURCES = \
 	getopt.c \
 	getopt1.c \
 	md5.c \
-	savecwd.c \
 	sighandle.c \
 	strftime.c \
 	yesno.c \
@@ -39,7 +38,6 @@ libcvs_a_SOURCES = \
 	getpagesize.h \
 	md5.h \
 	minmax.h \
-	savecwd.h \
 	system.h \
 	wait.h \
 	xselect.h \
@@ -128,6 +126,9 @@ libcvs_a_SOURCES += pathmax.h
 
 ## For GNULIB's regex module.
 libcvs_a_SOURCES += regex.h
+
+## For GNULIB's save-cwd module.
+libcvs_a_SOURCES += save-cwd.h save-cwd.c
 
 ## For GNULIB's stdbool module.
 BUILT_SOURCES += $(STDBOOL_H)
