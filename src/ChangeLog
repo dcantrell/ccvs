@@ -1,3 +1,7 @@
+Wed Feb 12 11:19:42 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* client.c (struct send_data): Fix indentation.
+
 Wed Feb 12 08:48:04 1997  Greg A. Woods  <woods@most.weird.com>
 
 	* mkmodules.c (loginfo_contents): add missing comma in

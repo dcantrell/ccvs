@@ -4054,8 +4054,8 @@ send_modified (file, short_pathname, vers)
 
 struct send_data
 {
-  int build_dirs;
-  int force;
+    int build_dirs;
+    int force;
 };
 
 static int send_fileproc PROTO ((void *callerdat, struct file_info *finfo));
