@@ -1,5 +1,9 @@
 Tue Aug 29 16:08:01 1995  Jim Blandy  <jimb@totoro.cyclic.com>
 
+	* cvsnt.vcp: Removed.  This doesn't store any information needed
+	to compile CVS; it seems to be mostly programmer preference stuff.
+	There's no need to distribute it.
+
 	* INSTALL: Added info about Harris Nighthawk from Steve Allen ---
 	thanks!
 
