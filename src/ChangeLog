@@ -1,3 +1,10 @@
+2004-11-04  Mark D. Baushke  <mdb@juniper.net>
+
+	* sanity.sh (SEARCHPATH): Unify the PATHs that are to be searched.
+	(Which,find_tool): Use SEARCHPATH.
+	(LS): Use default $SEARCHPATH for Which.
+	(depend_on_rsync): Use default $SEARCHPATH for Which.
+
 2004-11-04  Mark D. Baushke  <mdb@cvshome.org>
 
 	* sanity.sh (depends_on_rsync): Do not echo rsync information to

@@ -492,8 +492,11 @@ ISODATE="[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9] [0-9][0-9]:[0-9][0-9] [+-][0
 # that are used in a %p format, add them here.
 PFMT="[0-9a-zA-Z()][0-9a-zA-Z()]*"
 
+# Which directories should Which and find_tool search for executables?
+SEARCHPATH=$PATH:/usr/local/bin:/usr/contrib/bin:/usr/contrib:/usr/gnu/bin:/local/bin:/local/gnu/bin:/gnu/bin:/sw/bin:/usr/pkg/bin
+
 # Do not assume that `type -p cmd` is portable
-# Usage: Which [-a] [-x|-f|-r] prog [$PATH:/with/directories:/to/search]
+# Usage: Which [-a] [-x|-f|-r] prog [$SEARCHPATH:/with/directories:/to/search]
 Which() {
   # Optional first argument for file type, defaults to -x.
   # Second argument is the file or directory to be found.
@@ -510,7 +513,7 @@ Which() {
     # FIXME: Someday this may need to be fixed
     # to deal better with C:\some\path\to\ssh values...
     /*) test $t $1 && echo $1 ;;
-    *) for d in `IFS=:; echo ${2-$PATH}`
+    *) for d in `IFS=:; echo ${2-$SEARCHPATH}`
        do
          test $t $d/$1 && { echo $d/$1; if $notevery; then break; fi; }
        done
@@ -708,7 +711,7 @@ is_bad_tool ()
 
 find_tool ()
 {
-  GLOCS="`echo $PATH | sed 's/:/ /g'` /usr/local/bin /usr/contrib/bin /usr/gnu/bin /local/bin /local/gnu/bin /gnu/bin /sw/bin /usr/pkg/bin"
+  GLOCS="`IFS=:; echo $SEARCHPATH`"
   TOOL=""
   for path in $GLOCS ; do
     if is_bad_tool $path/g$1 ; then continue; fi
@@ -925,8 +928,7 @@ fi
 LS=`Which ls`
 if ${LS} $TESTDIR/ls-test >/dev/null 2>&1; then
     echo "Notice: The default version of \`ls' in \`${LS}' is defective."
-    altPATH=/usr/local/bin:/usr/contrib:/usr/gnu/bin:/local/bin:/local/gnu/bin:/gnu/bin:/sw/bin
-    for tryls in `Which -a ls $PATH:$altPATH` ; do
+    for tryls in `Which -a ls` ; do
         if [ ${tryls} = ${LS} ]; then continue; fi
 	if ${tryls} $TESTDIR/ls-test >/dev/null 2>&1; then
 	    echo "Attempt to use \`${tryls}' also failed. It is defective."
@@ -969,17 +971,14 @@ restore_adm ()
     modify_repo cp -rp $TESTDIR/CVSROOT.save/ $CVSROOT_DIRNAME/CVSROOT
 }
 
-# Test that $RSYNC supports the options we need or try to find a replacement.
-# If $RSYNC works or we replace it, set $save_RSYNC and return 0.  Otherwise,
-# set $skipreason and return 77.
+# Test that $RSYNC supports the options we need or try to find a
+# replacement. If $RSYNC works or we replace it, and return 0.
+# Otherwise, set $skipreason and return 77.
 depends_on_rsync ()
 {
-  # Save a copy and set the absolute path to our default.
-  save_RSYNC=$RSYNC
   rsyncworks=false
-  altPATH=/usr/local/bin:/usr/contrib:/usr/gnu/bin:/local/bin:/local/gnu/bin:/gnu/bin:/sw/bin
   # rsync is NOT a GNU tool, so do NOT use find_tool for name munging.
-  for rsync in ${RSYNC} `Which -a rsync $PATH:$altPATH`;
+  for rsync in ${RSYNC} `Which -a rsync`;
   do
 
     if is_bad_tool `Which $rsync` ; then continue ; fi
