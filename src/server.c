@@ -921,10 +921,6 @@ move_file_offset (int fd, off_t src, off_t dest)
 	    error (1, errno, "Failed to truncate file");
     }
 
-    /* Make sure all data written to this file has been committed to disk.  */
-    if (fsync (fd) < 0)
-	error (1, 0, "Failed to sync file data after moving");
-
     /* Restore blocking status.  */
     if (fcntl (fd, F_SETFL, flags) < 0)
 	error (1, errno, "Failed to restore FD flags.");
@@ -952,10 +948,6 @@ replace_file_offset (int fd, off_t offset, size_t rlen, void *buf, size_t len)
 	error (1, errno, "Failed to write to file");
     if (lseek (fd, 0, SEEK_END) < 0)
 	error (1, errno, "Failed to set file position to EOF after replace");
-
-    /* Make sure all data written to this file has been committed to disk.  */
-    if (fsync (fd) < 0)
-	error (1, 0, "Failed to sync file data after moving");
 }
 
 
