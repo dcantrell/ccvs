@@ -1,3 +1,8 @@
+Tue Jan 28 18:29:03 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* config.h: Remove SIZEOF_INT and SIZEOF_LONG; no longer needed
+	with lib/md5.c changes.
+
 Wed Jan 15 23:56:12 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* watcom.mak (OS2_OBJECTS): Remove strippath.
