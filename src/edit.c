@@ -668,6 +668,9 @@ notify_proc (const char *repository, const char *filter, void *closure)
 #endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
 	filter,
 	"c", "s", cvs_cmd_name,
+#ifdef SERVER_SUPPORT
+        "R", "s", referrer ? referrer->original : "NONE",
+#endif /* SERVER_SUPPORT */
     	"p", "s", srepos,
 	"r", "s", current_parsed_root->directory,
 	"s", "s", args->notifyee,

@@ -168,6 +168,8 @@ static int dont_delete_temp;
 
 static void server_write_entries (void);
 
+cvsroot_t *referrer;
+
 
 
 /* Populate all of the directories between BASE_DIR and its relative
@@ -2292,6 +2294,9 @@ prepost_proxy_proc (const char *repository, const char *filter, void *closure)
 #endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
 	                      filter,
 	                      "c", "s", cvs_cmd_name,
+#ifdef SERVER_SUPPORT
+	                      "R", "s", referrer ? referrer->original : "NONE",
+#endif /* SERVER_SUPPORT */
 	                      "p", "s", ".",
 	                      "r", "s", current_parsed_root->directory,
 	                      "P", "s", config->PrimaryServer->original,
@@ -5581,6 +5586,39 @@ serve_command_prep (char *arg)
 
 
 
+/* Save a referrer, potentially for passing to hook scripts later.
+ *
+ * GLOBALS
+ *   referrer	Where we save the parsed referrer.
+ *
+ * ASSUMPTIONS
+ *   The `Root' request has already been processed.
+ *   If referrer is set it may be disposed.
+ *
+ * RETURNS
+ *   Nothing.
+ */
+static void
+serve_referrer (char *arg)
+{
+    if (error_pending ()) return;
+
+    if (referrer)
+	free_cvsroot_t (referrer);
+    referrer = parse_cvsroot (arg);
+
+    if (!referrer
+	&& alloc_pending (80 + strlen (arg)))
+	/* The explicitness is to aid people who are writing clients.
+	   I don't see how this information could help an
+	   attacker.  */
+	sprintf (pending_error_text, "\
+E Protocol error: Invalid Referrer: `%s'",
+		 arg);
+}
+
+
+
 static void serve_valid_requests (char *arg);
 
 #endif /* SERVER_SUPPORT */
@@ -5609,6 +5647,7 @@ struct request requests[] =
   REQ_LINE("valid-requests", serve_valid_requests,
 	   RQ_ESSENTIAL | RQ_ROOTLESS),
   REQ_LINE("Command-prep", serve_command_prep, 0),
+  REQ_LINE("Referrer", serve_referrer, 0),
   REQ_LINE("Repository", serve_repository, 0),
   REQ_LINE("Directory", serve_directory, RQ_ESSENTIAL),
   REQ_LINE("Relative-directory", serve_directory, 0),

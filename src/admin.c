@@ -149,6 +149,7 @@ postadmin_proc (const char *repository, const char *filter, void *closure)
     TRACE (TRACE_FUNCTION, "postadmin_proc (%s, %s)", repository, filter);
 
     /* %c = cvs_cmd_name
+     * %R = referrer
      * %p = shortrepos
      * %r = repository
      */
@@ -158,6 +159,9 @@ postadmin_proc (const char *repository, const char *filter, void *closure)
 #endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
 	                      filter,
 	                      "c", "s", cvs_cmd_name,
+#ifdef SERVER_SUPPORT
+	                      "R", "s", referrer ? referrer->original : "NONE",
+#endif /* SERVER_SUPPORT */
 	                      "p", "s", srepos,
 	                      "r", "s", current_parsed_root->directory,
 	                      (char *)NULL

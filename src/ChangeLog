@@ -1,5 +1,20 @@
 2004-10-04 Derek Price <derek@ximbiot.com>
 
+	* admin.c (postadmin_proc), edit.c (notify_proc), fileattr.c
+	(postwatch_proc), logmsg.c (logfile_write, verifymsg_proc), server.c
+	(prepost_proxy_proc), tag.c (pretag_proc, posttag_proc): Pass referrer
+	to called scripts when possible.
+	* client.c (handle_redirect): Save the original server.
+	(start_server): Send referrer to the new server if possible.
+	* sever.c (referrer): New global.
+	(serve_referrer): Save referrer.
+	(requests): Add "Referrer" response.
+	* server.h (referrer): Add extern decl.
+	* sanity.sh (ssh-wrapper): Use in remote mode too.
+	(writeproxy-ssh): New tests.
+	
+2004-10-04 Derek Price <derek@ximbiot.com>
+
 	* cvs.h (CVSROOT_DFLT): Undef rather than defining to NULL.
 	* main.c (main): Untangle parsing of CVSROOT, eliminating several
 	variables in the process.  Simplify xmalloc/sprintf with asnprintf.

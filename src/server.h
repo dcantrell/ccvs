@@ -195,3 +195,5 @@ extern struct request requests[];
 int gunzip_and_write (int, char *, unsigned char *, size_t);
 int read_and_gzip (int, const char *, unsigned char **, size_t *, size_t *,
                    int);
+
+extern cvsroot_t *referrer;
