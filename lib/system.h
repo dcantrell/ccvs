@@ -17,27 +17,6 @@
 
 /* $CVSid: @(#)system.h 1.18 94/09/25 $ */
 
-#ifdef __GNUC__
-#ifndef alloca
-#define alloca __builtin_alloca
-#endif
-#else
-#ifdef HAVE_ALLOCA_H
-#include <alloca.h>
-#else
-#ifdef _AIX
-/* AIX alloca decl has to be the first thing in the file, bletch! */
- #pragma alloca
-#else  /* not _AIX */
-#ifdef ALLOCA_IN_STDLIB
- /* then we need do nothing */
-#else
-char *alloca ();
-#endif /* not ALLOCA_IN_STDLIB */
-#endif /* not _AIX */
-#endif /* not HAVE_ALLOCA_H */
-#endif /* not __GNUS__ */
-
 #include <sys/types.h>
 #include <sys/stat.h>
 
