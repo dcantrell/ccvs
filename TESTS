@@ -116,7 +116,9 @@ Bourne shell.
 
 * Dejagnu.  This is overkill; most of dejagnu is either unnecessary
 (e.g. libraries for communicating with target boards) or undesirable
-(e.g. the code which stats every file in sight to find the tests).
+(e.g. the code which stats every file in sight to find the tests).  On
+the plus side, dejagnu is probably closer than any of the other
+choices to having everything which is needed already there.
 
 * Write our own small framework directly in tcl and distribute with
 CVS.  The tests would look much like dejagnu tests, but we'd avoid the
