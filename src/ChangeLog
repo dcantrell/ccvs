@@ -1,5 +1,8 @@
 Mon Jul  7 14:39:33 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* sanity.sh (death2): Add comment about Sun diff.  Thanks to
+	Warren Jones <wjones@TC.FLUKE.COM> for reporting this.
+
 	* client.c (update_entries): If DONT_USE_PATCH, then just treat a
 	Patched response as an indication to try again with complete files.
 	* update.c (update): Remove DONT_USE_PATCH ifdefs, since a CVS
