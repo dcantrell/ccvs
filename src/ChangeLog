@@ -1,3 +1,14 @@
+1999-11-19  Larry Jones <larry.jones@sdrc.com>
+
+	* sanity.sh: Reestablish check for running as root (using ``id -u''
+	instead of ``whoami'').
+
+	* sanity.sh(dotest, dotest_lit, dotest_fail, dotest_status,
+	dotest_sort): Eval the command so quoting and pipes work right.
+	(spacefiles, dirs, rcslib, modules, unedit-without-baserev,
+	ignore, rcs, rcs2, history, tagdate, pserver, server, server2)
+	Simplify various tests based on above.
+
 1999-11-19  Karl Fogel  <kfogel@red-bean.com>
 
 	* mkmodules.c (init): make history file world-writeable after
