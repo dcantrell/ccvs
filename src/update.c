@@ -427,31 +427,17 @@ update (int argc, char **argv)
 
 /*
  * Command line interface to update (used by checkout)
+ *
+ * repository = cvsroot->repository + update_dir.  This is necessary for
+ * checkout so that start_recursion can determine our repository.  In the
+ * update case, start_recursion can use the CVS/Root & CVS/Repository file
+ * to determine this value.
  */
 int
-do_update (int argc, char **argv, char *xoptions, char *xtag, char *xdate, int xforce, int local, int xbuild, int xaflag, int xprune, int xpipeout, int which, char *xjoin_rev1, char *xjoin_rev2, char *preload_update_dir, int xdotemplate, char *repository)
-             
-                
-                   
-               
-                
-               
-              
-               
-               
-               
-                 
-              
-                     
-                     
-                             
-                    
-    /* repository = cvsroot->repository + update_dir.  This is necessary for
-     * checkout so that start_recursion can determine our repository.  In the
-     * update case, start_recursion can use the CVS/Root & CVS/Repository file
-     * to determine this value.
-     */
-                     
+do_update (int argc, char **argv, char *xoptions, char *xtag, char *xdate,
+           int xforce, int local, int xbuild, int xaflag, int xprune,
+           int xpipeout, int which, char *xjoin_rev1, char *xjoin_rev2,
+           char *preload_update_dir, int xdotemplate, char *repository)
 {
     int err = 0;
     char *cp;

@@ -1,5 +1,10 @@
 2003-09-30  Derek Price  <derek@ximbiot.com>
 
+	* update.c (do_update): Reformat function decl.  Move and merge
+	comment.
+
+2003-09-30  Derek Price  <derek@ximbiot.com>
+
 	* client.h (buf_output, buf_outerr): Check that our buffers exist
 	before sending them data.
 	(buf_output_binary): Assert that the output buffer is not NULL.
