@@ -84,10 +84,14 @@ if (defined $ENV{"CVS_PROXY_HOST"}) {
 	exec ($rsh, $ENV{"CVS_PROXY_HOST"}, "-l", $ENV{"CVS_PROXY_USER"},
 	      $command);
     } else {
-	exec ($rsh, $ENV{'CVS_PROXY'}, $command);
+	exec ($rsh, $ENV{"CVS_PROXY_HOST"}, $command);
     }
 } elsif (defined $user) {
     exec ($rsh, $host, "-l", $user, $command);
 } else {
-    exec ($rsh, $host, $command);
+    if (defined $ENV{"CVS_PROXY_USER"}) {
+	exec ($rsh, $host, "-l", $ENV{"CVS_PROXY_USER"}, $command);
+    } else {
+	exec ($rsh, $host, $command);
+    }
 }
