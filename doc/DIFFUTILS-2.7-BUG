@@ -369,3 +369,22 @@ so many other changes.)  Please give this a try and see what you think.
   		{
   		  changed[start++] = 0;
   		  changed[i++] = 1;
+
+Date: Fri, 5 Sep 1997 11:37:06 -0700
+From: Paul Eggert <eggert@twinsun.com>
+To: kingdon@cyclic.com
+CC: bug-cvs@prep.ai.mit.edu
+Subject: Re: proposed patch to ccvs/doc/DIFFUTILS-2.7-BUG
+
+. . .
+
+The ``other option'' is a new option that diff3 will pass to diff;
+ordinary users probably use it.  In this respect, it's similar to the
+--horizon-lines=NUM option of diffutils 2.7.
+
+The new option will control the inhibit_hunk_merge variable that is
+mentioned in the code that I sent.  The basic idea is to have `diff'
+optionally avoid merging two hunks when shifting hunk boundaries.
+Normally merging is a win, since it makes the diff output smaller;
+but for diff3's purpose merging can be a loss.
+
