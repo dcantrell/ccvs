@@ -16,14 +16,24 @@
 
 #include "cvs.h"
 
+enum diff_file
+{
+    DIFF_ERROR,
+    DIFF_ADDED,
+    DIFF_REMOVED,
+    DIFF_DIFFERENT,
+    DIFF_SAME
+};
+
 static Dtype diff_dirproc PROTO ((void *callerdat, char *dir,
 				  char *pos_repos, char *update_dir));
 static int diff_filesdoneproc PROTO ((void *callerdat, int err,
 				      char *repos, char *update_dir));
 static int diff_dirleaveproc PROTO ((void *callerdat, char *dir,
 				     int err, char *update_dir));
-static int diff_file_nodiff PROTO ((struct file_info *finfo, Vers_TS *vers,
-				    int just_set_rev));
+static enum diff_file diff_file_nodiff PROTO ((struct file_info *finfo,
+					       Vers_TS *vers,
+					       enum diff_file));
 static int diff_fileproc PROTO ((void *callerdat, struct file_info *finfo));
 static void diff_mark_errors PROTO((int err));
 
@@ -280,7 +290,7 @@ diff (argc, argv)
 	tag_check_valid (diff_rev2, argc, argv, local, 0, "");
 
     which = W_LOCAL;
-    if (diff_rev2 != NULL || diff_date2 != NULL)
+    if (diff_rev1 != NULL || diff_date1 != NULL)
 	which |= W_REPOS | W_ATTIC;
 
     wrap_setup ();
@@ -306,12 +316,7 @@ diff_fileproc (callerdat, finfo)
 {
     int status, err = 2;		/* 2 == trouble, like rcsdiff */
     Vers_TS *vers;
-    enum {
-	DIFF_ERROR,
-	DIFF_ADDED,
-	DIFF_REMOVED,
-	DIFF_NEITHER
-    } empty_file = DIFF_NEITHER;
+    enum diff_file empty_file = DIFF_DIFFERENT;
     char *tmp;
     char *tocvsPath;
     char fname[PATH_MAX];
@@ -328,10 +333,29 @@ diff_fileproc (callerdat, finfo)
     }
     else if (vers->vn_user == NULL)
     {
-	error (0, 0, "I know nothing about %s", finfo->fullname);
-	freevers_ts (&vers);
-	diff_mark_errors (err);
-	return (err);
+	/* The file does not exist in the working directory.  */
+	if ((diff_rev1 != NULL || diff_date1 != NULL)
+	    && vers->srcfile != NULL)
+	{
+	    /* The file does exist in the repository.  */
+	    if (empty_files)
+		empty_file = DIFF_REMOVED;
+	    else
+	    {
+		error (0, 0, "%s no longer exists, no comparison available",
+		       finfo->fullname);
+		freevers_ts (&vers);
+		diff_mark_errors (err);
+		return (err);
+	    }
+	}
+	else
+	{
+	    error (0, 0, "I know nothing about %s", finfo->fullname);
+	    freevers_ts (&vers);
+	    diff_mark_errors (err);
+	    return (err);
+	}
     }
     else if (vers->vn_user[0] == '0' && vers->vn_user[1] == '\0')
     {
@@ -390,13 +414,20 @@ diff_fileproc (callerdat, finfo)
 	}
     }
 
-    if (diff_file_nodiff (finfo, vers, empty_file != DIFF_NEITHER))
+    empty_file = diff_file_nodiff (finfo, vers, empty_file);
+    if (empty_file == DIFF_SAME || empty_file == DIFF_ERROR)
     {
 	freevers_ts (&vers);
-	return (0);
+	if (empty_file == DIFF_SAME)
+	    return (0);
+	else
+	{
+	    diff_mark_errors (err);
+	    return (err);
+	}
     }
 
-    if (empty_file == DIFF_NEITHER)
+    if (empty_file == DIFF_DIFFERENT)
     {
 	int dead1, dead2;
 
@@ -630,13 +661,13 @@ diff_dirleaveproc (callerdat, dir, err, update_dir)
 }
 
 /*
- * verify that a file is different 0=same 1=different
+ * verify that a file is different
  */
-static int
-diff_file_nodiff (finfo, vers, just_set_rev)
+static enum diff_file
+diff_file_nodiff (finfo, vers, empty_file)
     struct file_info *finfo;
     Vers_TS *vers;
-    int just_set_rev;
+    enum diff_file empty_file;
 {
     Vers_TS *xvers;
     char *tmp;
@@ -657,22 +688,8 @@ diff_file_nodiff (finfo, vers, just_set_rev)
 	else
 	{
 	    xvers = Version_TS (finfo, NULL, diff_rev1, diff_date1, 1, 0);
-	    if (xvers->vn_rcs == NULL)
-	    {
-		/* Don't gripe if it doesn't exist, just ignore! */
-		if (!isfile (finfo->file))
-		    ;
-		else if (diff_rev1)
-                    error (0, 0, "tag %s is not in file %s", diff_rev1,
-			   finfo->fullname);
-		else
-		    error (0, 0, "no revision for date %s in file %s",
-			   diff_date1, finfo->fullname);
-
-		freevers_ts (&xvers);
-		return (1);
-	    }
-	    use_rev1 = xstrdup (xvers->vn_rcs);
+	    if (xvers->vn_rcs != NULL)
+		use_rev1 = xstrdup (xvers->vn_rcs);
 	    freevers_ts (&xvers);
 	}
     }
@@ -684,33 +701,81 @@ diff_file_nodiff (finfo, vers, just_set_rev)
 	else
 	{
 	    xvers = Version_TS (finfo, NULL, diff_rev2, diff_date2, 1, 0);
-	    if (xvers->vn_rcs == NULL)
-	    {
-		/* Don't gripe if it doesn't exist, just ignore! */
-		if (!isfile (finfo->file))
-		    ;
-		else if (diff_rev1)
-		    error (0, 0, "tag %s is not in file %s", diff_rev2,
-			   finfo->fullname);
-		else
-		    error (0, 0, "no revision for date %s in file %s",
-			   diff_date2, finfo->fullname);
-
-		freevers_ts (&xvers);
-		return (1);
-	    }
-	    use_rev2 = xstrdup (xvers->vn_rcs);
+	    if (xvers->vn_rcs != NULL)
+		use_rev2 = xstrdup (xvers->vn_rcs);
 	    freevers_ts (&xvers);
 	}
 
+	if (use_rev1 == NULL)
+	{
+	    /* The first revision does not exist.  If EMPTY_FILES is
+               true, treat this as an added file.  Otherwise, warn
+               about the missing tag.  */
+	    if (use_rev2 == NULL)
+		return DIFF_SAME;
+	    else if (empty_files)
+		return DIFF_ADDED;
+	    else if (diff_rev1)
+		error (0, 0, "tag %s is not in file %s", diff_rev1,
+		       finfo->fullname);
+	    else
+		error (0, 0, "no revision for date %s in file %s",
+		       diff_date1, finfo->fullname);
+	    return DIFF_ERROR;
+	}
+
+	if (use_rev2 == NULL)
+	{
+	    /* The second revision does not exist.  If EMPTY_FILES is
+               true, treat this as a removed file.  Otherwise warn
+               about the missing tag.  */
+	    if (empty_files)
+		return DIFF_REMOVED;
+	    else if (diff_rev2)
+		error (0, 0, "tag %s is not in file %s", diff_rev2,
+		       finfo->fullname);
+	    else
+		error (0, 0, "no revision for date %s in file %s",
+		       diff_date2, finfo->fullname);
+	    return DIFF_ERROR;
+	}
+
 	/* now, see if we really need to do the diff */
-	if (use_rev1 && use_rev2) {
-	    return (strcmp (use_rev1, use_rev2) == 0);
-	} else {
-	    error (0, 0, "No HEAD revision for file %s", finfo->fullname);
-	    return (1);
+	if (strcmp (use_rev1, use_rev2) == 0)
+	    return DIFF_SAME;
+	else
+	    return DIFF_DIFFERENT;
+    }
+
+    if ((diff_rev1 || diff_date1) && use_rev1 == NULL)
+    {
+	/* The first revision does not exist, and no second revision
+           was given.  */
+	if (empty_files)
+	{
+	    if (empty_file == DIFF_REMOVED)
+		return DIFF_SAME;
+	    else
+	    {
+#ifdef SERVER_SUPPORT
+		if (user_file_rev && use_rev2 == NULL)
+		    use_rev2 = xstrdup (user_file_rev);
+#endif
+		return DIFF_ADDED;
+	    }
+	}
+	else
+	{
+	    if (diff_rev1)
+		error (0, 0, "tag %s is not in file %s", diff_rev1,
+		       finfo->fullname);
+	    else
+		error (0, 0, "no revision for date %s in file %s",
+		       diff_date1, finfo->fullname);
+	    return DIFF_ERROR;
 	}
     }
+
 #ifdef SERVER_SUPPORT
     if (user_file_rev)
     {
@@ -726,22 +791,28 @@ diff_file_nodiff (finfo, vers, just_set_rev)
     /* now, see if we really need to do the diff */
     if (use_rev1 && use_rev2) 
     {
-	return (strcmp (use_rev1, use_rev2) == 0);
+	if (strcmp (use_rev1, use_rev2) == 0)
+	    return DIFF_SAME;
+	else
+	    return DIFF_DIFFERENT;
     }
 #endif /* SERVER_SUPPORT */
-    if (use_rev1 == NULL || strcmp (use_rev1, vers->vn_user) == 0)
+    if (use_rev1 == NULL
+	|| (vers->vn_user != NULL && strcmp (use_rev1, vers->vn_user) == 0))
     {
 	if (strcmp (vers->ts_rcs, vers->ts_user) == 0 &&
 	    (!(*options) || strcmp (options, vers->options) == 0))
 	{
-	    return (1);
+	    return DIFF_SAME;
 	}
 	if (use_rev1 == NULL)
 	    use_rev1 = xstrdup (vers->vn_user);
     }
 
-    if (just_set_rev)
-	return (0);
+    /* If we already know that the file is being added or removed,
+       then we don't want to do an actual file comparison here.  */
+    if (empty_file != DIFF_DIFFERENT)
+	return empty_file;
 
     /*
      * with 0 or 1 -r option specified, run a quick diff to see if we
@@ -757,7 +828,8 @@ diff_file_nodiff (finfo, vers, just_set_rev)
 	    if (xcmp (finfo->file, tmp) == 0)
 	    {
 		(void) CVS_UNLINK (tmp);
-		return (1);
+		free (tmp);
+		return DIFF_SAME;
 	    }
 	    break;
 	case -1:			/* fork failed */
@@ -769,5 +841,5 @@ diff_file_nodiff (finfo, vers, just_set_rev)
     }
     (void) CVS_UNLINK (tmp);
     free (tmp);
-    return (0);
+    return DIFF_DIFFERENT;
 }

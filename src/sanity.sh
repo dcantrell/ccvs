@@ -1692,6 +1692,21 @@ diff -N file1
 - first revision
 --- 0 ----"
 
+	  dotest_fail death-diff-3 "${testcvs} -q diff -rtag -c ." \
+"${PROG} [a-z]*: file1 no longer exists, no comparison available"
+
+	  dotest_fail death-diff-4 "${testcvs} -q diff -rtag -N -c ." \
+"Index: file1
+===================================================================
+RCS file: file1
+diff -N file1
+\*\*\* [a-zA-Z0-9/]*[ 	][	]*[a-zA-Z0-9: ]*
+--- /dev/null[ 	][ 	]*[a-zA-Z0-9: ]*
+\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
+\*\*\* 1 \*\*\*\*
+- first revision
+--- 0 ----"
+
 	  # Test rdiff of a dead file.
 	  dotest death-rdiff-1 \
 "${testcvs} -q rtag -rbranch rdiff-tag first-dir" ''
@@ -1754,18 +1769,101 @@ ${PROG} [a-z]*: file2 is no longer in the repository"
 new revision: 1\.1\.2\.1; previous revision: 1\.1
 done'
 
+	  # Add a new file on the branch.
+	  echo "first revision" > file3
+	  dotest death2-17 "${testcvs} add file3" \
+"${PROG}"' [a-z]*: scheduling file `file3'\'' for addition on branch `branch'\''
+'"${PROG}"' [a-z]*: use '\''cvs commit'\'' to add this file permanently'
+	  dotest death2-18 "${testcvs} -q commit -m add" \
+'RCS file: /tmp/cvs-sanity/cvsroot/first-dir/Attic/file3,v
+done
+Checking in file3;
+/tmp/cvs-sanity/cvsroot/first-dir/Attic/file3,v  <--  file3
+new revision: 1\.1\.2\.1; previous revision: 1\.1
+done'
+
+	  # Test diff of a nonexistent tag
+	  dotest_fail death-diff-5 "${testcvs} -q diff -rtag -c file3" \
+"${PROG} [a-z]*: tag tag is not in file file3"
+
+	  dotest_fail death-diff-6 "${testcvs} -q diff -rtag -N -c file3" \
+"Index: file3
+===================================================================
+RCS file: file3
+diff -N file3
+\*\*\* /dev/null[ 	][ 	]*[a-zA-Z0-9: ]*
+--- [a-zA-Z0-9/]*[ 	][ 	]*[a-zA-Z0-9: ]*
+\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
+\*\*\* 0 \*\*\*\*
+--- 1 ----
+${PLUS} first revision"
+
+	  dotest_fail death-diff-7 "${testcvs} -q diff -rtag -c ." \
+"Index: file1
+===================================================================
+RCS file: /tmp/cvs-sanity/cvsroot/first-dir/file1,v
+retrieving revision 1\.1
+retrieving revision 1\.1\.2\.2
+diff -c -r1\.1 -r1\.1\.2\.2
+\*\*\* file1[ 	][ 	]*[a-zA-Z0-9:./ 	]*
+--- file1[ 	][ 	]*[a-zA-Z0-9:./ 	]*
+\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
+\*\*\* 1 \*\*\*\*
+! first revision
+--- 1 ----
+! second revision
+${PROG} [a-z]*: tag tag is not in file file2
+${PROG} [a-z]*: tag tag is not in file file3"
+
+	  dotest_fail death-diff-8 "${testcvs} -q diff -rtag -c -N ." \
+"Index: file1
+===================================================================
+RCS file: /tmp/cvs-sanity/cvsroot/first-dir/file1,v
+retrieving revision 1\.1
+retrieving revision 1\.1\.2\.2
+diff -c -r1\.1 -r1\.1\.2\.2
+\*\*\* file1[ 	][ 	]*[a-zA-Z0-9:./ 	]*
+--- file1[ 	][ 	]*[a-zA-Z0-9:./ 	]*
+\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
+\*\*\* 1 \*\*\*\*
+! first revision
+--- 1 ----
+! second revision
+Index: file2
+===================================================================
+RCS file: file2
+diff -N file2
+\*\*\* /dev/null[ 	][ 	]*[a-zA-Z0-9: ]*
+--- [a-zA-Z0-9/]*[ 	][ 	]*[a-zA-Z0-9: ]*
+\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
+\*\*\* 0 \*\*\*\*
+--- 1 ----
+${PLUS} branch revision
+Index: file3
+===================================================================
+RCS file: file3
+diff -N file3
+\*\*\* /dev/null[ 	][ 	]*[a-zA-Z0-9: ]*
+--- [a-zA-Z0-9/]*[ 	][ 	]*[a-zA-Z0-9: ]*
+\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
+\*\*\* 0 \*\*\*\*
+--- 1 ----
+${PLUS} first revision"
+
 	  # Switch to the nonbranch tag.
-	  dotest death2-17 "${testcvs} -q update -r tag" \
+	  dotest death2-19 "${testcvs} -q update -r tag" \
 "U file1
-${PROG} [a-z]*: file2 is no longer in the repository" \
+${PROG} [a-z]*: file2 is no longer in the repository
+${PROG} [a-z]*: file3 is no longer in the repository" \
 "P file1
-${PROG} [a-z]*: file2 is no longer in the repository"
+${PROG} [a-z]*: file2 is no longer in the repository
+${PROG} [a-z]*: file3 is no longer in the repository"
 
 	  # Make sure we can't add a file on this nonbranch tag.
 	  # FIXME: Right now CVS will let you add a file on a
 	  # nonbranch tag, so this test is commented out.
 	  # echo "bad revision" > file2
-	  # dotest death2-18 "${testcvs} add file2" "some error message"
+	  # dotest death2-20 "${testcvs} add file2" "some error message"
 
 	  cd .. ; rm -rf first-dir ${CVSROOT_DIRNAME}/first-dir
 	  ;;

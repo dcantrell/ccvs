@@ -1,3 +1,23 @@
+Sun Jul 14 15:39:44 1996  Mark Eichin  <eichin@cygnus.com>
+			  and Ian Lance Taylor  <ian@cygnus.com>
+
+	Improve diff -N handling of nonexistent tags and removed files.
+	* diff.c (enum diff_file): New definition for whole file, moving
+	unnamed enum out of diff_fileproc, renaming DIFF_NEITHER to
+	DIFF_DIFFERENT, and adding DIFF_SAME.
+	(diff): Look through the repository even if only one revision is
+	given.
+	(diff_fileproc): Change empty_file to be enum diff_file.  If there
+	is no user revision, but there is a repository file, treat it as a
+	removed file.  Pass empty_file to diff_file_nodiff, and set it
+	from the return value.
+	(diff_file_nodiff): Change return type to enum diff_file.  Replace
+	just_set_rev parameter with enum diff_file empty_file parameter.
+	Change handling of a missing tag to return an enum diff_file value
+	if empty_files is set, rather than reporting an error.  Free tmp
+	if xcmp returns 0.
+	* sanity.sh (death2): Add tests for above patches.
+
 Sat Jul 13 19:11:32 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* rcs.c (annotate): In sending options to server, reverse sense of
