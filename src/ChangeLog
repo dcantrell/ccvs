@@ -1,5 +1,10 @@
 2003-03-26  Derek Price  <derek@ximbiot.com>
 
+	* client.c: Include the net headers for HAVE_GSSAPI.
+	(Report from Jim Salter <jsalterjim@earthlink.net>.)
+
+2003-03-26  Derek Price  <derek@ximbiot.com>
+
 	* main.c (main): Verify the argument to -z when running without
 	CLIENT_SUPPORT since Eric Siegerman complained about being bit
 	by a run of `cvs -z -n up' which parsed the -n as the argument to

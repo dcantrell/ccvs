@@ -26,7 +26,7 @@
 
 # include "md5.h"
 
-# if defined(AUTH_CLIENT_SUPPORT) || HAVE_KERBEROS || defined(SOCK_ERRNO) || defined(SOCK_STRERROR)
+# if defined(AUTH_CLIENT_SUPPORT) || defined(HAVE_KERBEROS) || defined(HAVE_GSSAPI) || defined(SOCK_ERRNO) || defined(SOCK_STRERROR)
 #   ifdef HAVE_WINSOCK_H
 #     include <winsock.h>
 #   else /* No winsock.h */
