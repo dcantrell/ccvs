@@ -1,6 +1,18 @@
 Changes since 1.12.5:
 *********************
 
+GENERAL USER ISSUES
+
+* A bug in the gzip code that could cause heap corruption and segfaults in CVS
+  servers talking to clients less than 1.8 and some modern third-party CVS
+  clients has been fixed.
+
+* mktemp.sh is now included with the source distribution so that the rcs2log
+  and cvsbug executables may be run on systems which do not contain an
+  implementation of mktemp.
+
+* Misc documentation fixes.
+
 Changes between 1.12.4 and 1.12.5:
 **********************************
 
