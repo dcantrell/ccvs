@@ -1,3 +1,8 @@
+2004-09-03  Derek Price  <derek@ximbiot.com>
+
+	* HACKING: Codify backwards compatibility conventions.  Remove outdated
+	reference to very old MSVC++ releases.
+
 2004-08-30  Derek Price  <derek@ximbiot.com>
 
 	* NEWS: Note compliance of log_accum.pl with Perl 5.8.5.
