@@ -53,6 +53,7 @@ SOURCES = \
 	strippath.c \
 	stripslash.c \
 	valloc.c \
+	vasprintf.c \
 	waitpid.c \
 	xgetwd.c \
 	yesno.c
