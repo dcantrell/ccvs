@@ -1,3 +1,9 @@
+2000-10-18  Derek Price  <derek.price@openavenue.com>
+
+	* sanity.sh (crerepos-6a, crerepos-6a-r): fix a "?" in a regex & pipe
+	the output of a test to /dev/null since we don't know what error
+	messages specific rsh implementations will output.
+
 2000-10-17  Derek Price  <derek.price@openavenue.com>
 
 	* cvs.h: added CVSroot_password variable. Provided prototypes for
