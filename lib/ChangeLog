@@ -1,3 +1,7 @@
+2005-03-01  Derek Price  <derek@ximbiot.com>
+
+	* xtime.h: Remove obsolete timeb stuff.
+
 2005-02-20  Mark D. Baushke  <mdb@cvshome.org>
 
 	* xgethostname.c (xgethostname): Check for ENOMEM, which is
