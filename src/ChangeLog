@@ -1,3 +1,26 @@
+Mon Dec 18 00:19:16 1995  Karl Fogel  <kfogel@floss.cyclic.com>
+
+        * login.c (get_cvs_password): Init `linebuf' to NULL.
+        free() `linebuf' and reset it for each new line.
+        (login): same as above.
+
+        * client.c: Removed all the varargs prototyping gunk.
+        (to_server, from_server): make these static.
+        (from_server_logfile, to_server_logfile): new vars.
+        (start_server): init above two new vars to NULL.
+        (send_to_server): return void.
+        Correct bug in which amount to be written would be too high if the
+        loop ever ran more than once.
+        Log to `to_server_logfile' if it's non-NULL.
+        (read_from_server): new func, does raw reading from server.
+        Logs to `from_server_logfile' if it's non-NULL.
+        (update_entries): just use read_from_server() instead of looping
+        to fread() directly from `from_server'.
+        (read_line): Log to `from_server_logfile' if it's non-NULL.
+
+        * client.h: send_to_server() returns void now.
+        (read_from_server): prototype.
+
 Sun Dec 17 19:38:03 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* checkout.c (checkout_proc), client.c, lock.c (readers_exist),

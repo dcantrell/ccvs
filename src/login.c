@@ -83,7 +83,7 @@ login (argc, argv)
   char *passfile;
   FILE *fp;
   char *typed_password, *found_password;
-  char *linebuf = NULL;
+  char *linebuf = (char *) NULL;
   size_t linebuf_len;
   int root_len, already_entered = 0;
 
@@ -100,9 +100,14 @@ login (argc, argv)
 
       tmp = xmalloc (strlen (linebuf) + 1);
 
+      /* Give it some permanent storage. */
       strcpy (tmp, linebuf);
       tmp[strlen (linebuf) - 1] = '\0';
       CVSroot = tmp;
+
+      /* Reset. */
+      free (linebuf);
+      linebuf = (char *) NULL;
     }
 
   if (CVSroot[0] != ':')
@@ -160,6 +165,11 @@ login (argc, argv)
               already_entered = 1;
               break;
             }
+          else
+            {
+              free (linebuf);
+              linebuf = (char *) NULL;
+            }
         }
     }
   fclose (fp);
@@ -201,12 +211,17 @@ login (argc, argv)
           /* I'm not paranoid, they really ARE out to get me: */
           chmod (passfile, 0600);
 
+          free (linebuf);
+          linebuf = (char *) NULL;
           while (getline (&linebuf, &linebuf_len, fp) >= 0)
             {
               if (strncmp (CVSroot, linebuf, root_len))
                 fprintf (tmp_fp, "%s", linebuf);
               else
                 fprintf (tmp_fp, "%s %s\n", CVSroot, typed_password);
+
+              free (linebuf);
+              linebuf = (char *) NULL;
             }
           fclose (tmp_fp);
           fclose (fp);
@@ -233,7 +248,6 @@ login (argc, argv)
   memset (typed_password, 0, strlen (typed_password));
 
   free (passfile);
-  free (linebuf);
   return 0;
 }
 
@@ -248,7 +262,7 @@ get_cvs_password ()
   int found_it = 0;
   int root_len;
   char *password;
-  char *linebuf;
+  char *linebuf = (char *) NULL;
   size_t linebuf_len;
   FILE *fp;
   char *passfile;
@@ -272,6 +286,11 @@ get_cvs_password ()
           /* This is it!  So break out and deal with linebuf. */
           found_it = 1;
           break;
+        }
+      else
+        {
+          free (linebuf);
+          linebuf = (char *) NULL;
         }
     }
 

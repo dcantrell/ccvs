@@ -59,9 +59,9 @@ void connect_to_pserver();
 # endif /* CVS_AUTH_PORT */
 #endif /* AUTH_CLIENT_SUPPORT */
 
-/* "Bottleneck" function that everyone should use for communicating
-   with the server. */
-int send_to_server PROTO((char *str, int len));
+/* Talking to the server. */
+void send_to_server PROTO((char *str, int len));
+void read_from_server PROTO((char *buf, int len));
 
 /* Internal functions that handle client communication to server, etc.  */
 int supported_request PROTO ((char *));
