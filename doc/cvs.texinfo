@@ -6204,7 +6204,7 @@ $
 @end example
 
 @node rtag
-@appendixsec rtag---Add a tag to the RCS file
+@appendixsec rtag---Add a symbolic tag to a module
 @cindex Rtag (subcommand)
 
 @itemize @bullet
@@ -6310,7 +6310,7 @@ module).
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node status
-@appendixsec status---Status info on the revisions
+@appendixsec status---Display status information on checked out files
 @cindex Status (subcommand)
 
 @itemize @bullet
@@ -6371,7 +6371,7 @@ to.
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node tag
-@appendixsec tag---Add a symbolic tag to checked out version of RCS file
+@appendixsec tag---Add a symbolic tag to checked out versions of files
 @c --                    //////// - unnecessary. Also
 @c --                               in a lot of other
 @c --                               places.
