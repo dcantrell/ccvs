@@ -549,9 +549,10 @@ error 0 %s: no such user\n", user);
      * access-method, then it also has a user.  We print a warning and
      * die if we can't guarantee that.
      */
-    if ((CVSroot[0] == ':')
-        &&
-        (strchr (CVSroot, '@') == NULL))
+    if (CVSroot
+        && *CVSroot
+        && (CVSroot[0] == ':')
+        && (strchr (CVSroot, '@') == NULL))
       {
         error (1, 0,
                "must also give a username if specifying access method");
