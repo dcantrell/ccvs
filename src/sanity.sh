@@ -3938,6 +3938,16 @@ File: tfile            	Status: Locally Modified
 	    dotest commit-readonlyfs-2r2 "${testcvs} -Q co $module" ''
           else
 	    dotest commit-readonlyfs-2 "${testcvs} -Q -R co $module" ''
+	    rm -rf $module
+	    dotest commit-readonlyfs-2r3 "${testcvs} -q -R co $module" \
+"U $module/junk"
+	    rm -rf $module
+	    dotest commit-readonlyfs-2r4 "${testcvs} -R co $module" \
+"${PROG}: WARNING: Read-only repository access mode selected via \`cvs -R'\.
+Using this option to access a repository which some users write to may
+cause intermittant sandbox corruption\.
+${PROG} [a-z]*: Updating $module
+U $module/junk"
           fi
 	  cd $module
 	  echo test > junk
@@ -3948,8 +3958,7 @@ File: tfile            	Status: Locally Modified
 	    dotest_fail commit-readonlyfs-3 "${testcvs} -Q -R ci -m. junk" \
 "${PROG} [a-z]*: write lock failed\.
 WARNING: Read-only repository access mode selected via \`cvs -R'\.
-Using this option to access a repository which some users write to may
-cause intermittant sandbox corruption\.
+Attempting to write to a read-only filesystem is not allowed\.
 ${PROG} \[commit aborted\]: lock failed - giving up"
           fi
 

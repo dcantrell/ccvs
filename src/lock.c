@@ -487,10 +487,9 @@ Writer_Lock (list)
 
     if (readonlyfs) {
 	error (0, 0,
-	       "write lock failed.
+	       "write lock failed.\n\
 WARNING: Read-only repository access mode selected via `cvs -R'.\n\
-Using this option to access a repository which some users write to may\n\
-cause intermittant sandbox corruption.");
+Attempting to write to a read-only filesystem is not allowed.");
 	return (1);
     }
 
