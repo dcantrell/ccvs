@@ -311,8 +311,8 @@ static int find_editors_and_output (struct file_info *finfo)
  * These args could be const but this needs to fit the call_in_directory API.
  */
 void
-edit_file (void *data, List *ent_list, char *short_pathname,
-	   char *filename)
+edit_file (void *data, List *ent_list, const char *short_pathname,
+	   const char *filename)
 {
     Node *node;
     struct file_info finfo;
@@ -424,8 +424,7 @@ edit_fileproc (void *callerdat, struct file_info *finfo)
 	server_edit_file (finfo);
     else
 #endif /* SERVER_SUPPORT */
-	edit_file (NULL, finfo->entries, (char *)finfo->fullname,
-		   (char *)finfo->file);
+	edit_file (NULL, finfo->entries, finfo->fullname, finfo->file);
 
     return 0;
 }
