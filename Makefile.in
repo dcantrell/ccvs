@@ -199,6 +199,7 @@ saber:
 
 .PHONY: check
 check:
+	cd lib ; $(MAKE) $(FLAGS_TO_PASS)
 	cd src ; $(MAKE) $(FLAGS_TO_PASS) check
 
 .PHONY: remotecheck
