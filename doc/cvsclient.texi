@@ -506,6 +506,16 @@ exception is @samp{gzip-file-contents}.  Unrecognized requests will
 always elicit a response from the server, even if that request begins
 with a capital letter.
 
+The term @dfn{command} means a request which expects a response (except
+@code{valid-requests}).  The general model is that the client transmits
+a great number of requests, but nothing happens until the very end when
+the client transmits a command.  Although the intention is that
+transmitting several commands in one connection should be legal,
+existing servers probably have some bugs with some combinations of more
+than one command, and so clients may find it necessary to make several
+connections in some cases.  This should be thought of as a workaround
+rather than a desired attribute of the protocol.
+
 @node Requests
 @section Requests
 
