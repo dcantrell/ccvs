@@ -5967,6 +5967,8 @@ gserver_authenticate_connection (void)
     struct hostent *hp;
     gss_buffer_desc tok_in, tok_out;
     char buf[1024];
+    char *credbuf;
+    size_t credbuflen;
     OM_uint32 stat_min, ret;
     gss_name_t server_name, client_name;
     gss_cred_id_t server_creds;
@@ -6001,14 +6003,23 @@ gserver_authenticate_connection (void)
 	error (1, errno, "read of length failed");
 
     nbytes = ((buf[0] & 0xff) << 8) | (buf[1] & 0xff);
-    assert (nbytes <= sizeof buf);
-
-    if (fread (buf, 1, nbytes, stdin) != nbytes)
+    if (nbytes <= sizeof buf)
+    {
+        credbuf = buf;
+        credbuflen = sizeof buf;
+    }
+    else
+    {
+        credbuflen = nbytes;
+        credbuf = xmalloc (credbuflen);
+    }
+    
+    if (fread (credbuf, 1, nbytes, stdin) != nbytes)
 	error (1, errno, "read of data failed");
 
     gcontext = GSS_C_NO_CONTEXT;
     tok_in.length = nbytes;
-    tok_in.value = buf;
+    tok_in.value = credbuf;
 
     if (gss_accept_sec_context (&stat_min,
 				&gcontext,	/* context_handle */
@@ -6059,6 +6070,9 @@ gserver_authenticate_connection (void)
     }
 
     switch_to_user ("GSSAPI", buf);
+
+    if (credbuf != buf)
+        free (credbuf);
 
     printf ("I LOVE YOU\n");
     fflush (stdout);
