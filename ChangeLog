@@ -1,3 +1,11 @@
+Mon Jun 19 10:08:03 1995  Jim Kingdon  (kingdon@lioth.cygnus.com)
+
+	* INSTALL: Update list of machines tested.  Remove note about
+	systems missing opendir--this is an autoconf issue, not something
+	installers should have to worry about.  Refer to NEWS instead of
+	ChangeLog.  No longer "strongly recommend" putting diff -a in
+	options.h.
+
 Fri Jun 16 22:30:03 1995  Jim Kingdon  (kingdon@cyclic.com)
 
 	* Version 1.4.90.
