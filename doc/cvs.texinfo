@@ -2550,7 +2550,7 @@ disabled by setting @code{SystemAuth=no} in the
 @sc{cvs} @file{config} file, @pxref{config}).
 
 The default fallback behavior is to look in 
-@file{/etc/passwd} for this system password unless your
+@file{/etc/passwd} for this system user unless your
 system has PAM (Pluggable Authentication Modules)
 and your @sc{cvs} server executable was configured to
 use it at compile time (using @code{./configure --enable-pam} - see the

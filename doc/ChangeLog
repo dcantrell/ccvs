@@ -1,3 +1,9 @@
+2004-06-21  Derek Price  <derek@ximbiot.com>
+
+	* cvs.texinfo (Password authentication server): Search for system user
+	rather than system password.  Closes issue #185.
+	(Reported by Fred Maranhao <fred.maranhao@click21.com.br>.)
+
 2004-06-10  Derek Price  <derek@ximbiot.com>
 
 	* cvs.texinfo (commit files): Remove reference to the obsolete -i
