@@ -7925,6 +7925,7 @@ namedmodule -d nameddir ${OPTS} first-dir/subdir
 EOF
 
 	  dotest modules5-7 "${testcvs} ci -m 'add modules' CVSROOT/modules" \
+"" \
 "Checking in CVSROOT/modules;
 ${TESTDIR}/cvsroot/CVSROOT/modules,v  <--  modules
 new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
@@ -8207,7 +8208,9 @@ Checking in CVSROOT/modules;
 ${CVSROOT_DIRNAME}/CVSROOT/modules,v  <--  modules
 new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
 done
-${PROG} [a-z]*: Rebuilding administrative file database"
+${PROG} [a-z]*: Rebuilding administrative file database" \
+"${PROG} [a-z]*: Examining .
+${PROG} [a-z]*: Examining CVSROOT"
 	  rm -rf CVS CVSROOT;
 
 	  # Create the various modules
@@ -9554,7 +9557,8 @@ Checking in CVSROOT/modules;
 ${CVSROOT_DIRNAME}/CVSROOT/modules,v  <--  modules
 new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
 done
-${PROG} [a-z]*: Rebuilding administrative file database"
+${PROG} [a-z]*: Rebuilding administrative file database" \
+"${PROG} [a-z]*: Examining CVSROOT"
 	  rm -rf CVS CVSROOT
 
 	  mkdir ${CVSROOT_DIRNAME}/mod1 ${CVSROOT_DIRNAME}/moda
