@@ -1639,6 +1639,10 @@ It is a good idea to check that the permissions
 are reasonable, and that they belong to the proper
 groups.  @xref{File permissions}.
 
+If some of the files you want to import are binary, you
+may want to use the wrappers features to specify which
+files are binary and which are not.  @xref{Wrappers}.
+
 @c The node name is too long, but I am having trouble
 @c thinking of something more concise.
 @node From other version control systems
@@ -3310,12 +3314,8 @@ In this case, the two above commands are equivalent.
 @node Binary files in imports
 @section How to handle binary files with cvs import
 
-There is no way to tell @sc{cvs} that some of the files
-which are added in a @code{cvs import} are binary.  So
-if you import files, and some of the new ones are
-binary, you need to go back and use @code{cvs admin
--kb} on the binary files, as described in @ref{Binary
-files}.
+Use the @samp{-k} wrapper option to tell import which
+files are binary.  @xref{Wrappers}.
 
 @c ---------------------------------------------------------------------
 @node Moving files
@@ -4085,6 +4085,11 @@ and a binary file with the same name in new releases,
 or binary mode depending on what version you are
 checking out.  There is no good workaround for this
 problem.
+
+You can also set a default for whether @code{cvs add}
+and @code{cvs import} treat a file as binary based on
+its name; for example you could say that files who
+names end in @samp{.exe} are binary.  @xref{Wrappers}.
 
 @c ---------------------------------------------------------------------
 @node Revision management
@@ -7045,6 +7050,12 @@ this module.
 @cindex CVSWRAPPERS, environment variable
 @cindex Wrappers
 
+@c FIXME: need some better way of separating this out
+@c by functionality.  -t/-f is one feature, -m is
+@c another, and -k is a third.  And this discussion
+@c should be better motivated (e.g. start with the
+@c problems, then explain how the feature solves it).
+
 Wrappers allow you to set a hook which transforms files on
 their way in and out of @sc{cvs}.  Most or all of the
 wrappers features do not work with client/server @sc{cvs}.
@@ -7075,13 +7086,16 @@ binary files.
 
 The basic format of the file @file{cvswrappers} is:
 
+@c FIXME: @example is all wrong for this.  Use @deffn or
+@c something more sensible.
 @example
 wildcard     [option value][option value]...
 
 where option is one of
--f           from cvs filter         value: path tofilter
+-f           from cvs filter         value: path to filter
 -t           to cvs filter           value: path to filter
 -m           update methodology      value: MERGE or COPY
+-k           keyword expansion       value: expansion mode
 
 and value is a single-quote delimited value.
 @end example
@@ -7123,6 +7137,14 @@ The @code{-f} filter is called with one argument,
 which is the name of the file to filter from. The end
 result of this filter will be a file in the users directory
 that they can work on as they normally would.
+
+For another example, the following command imports a
+directory, treating files whose name ends in
+@samp{.exe} as binary:
+
+@example
+cvs import -I ! -W "*.exe -k 'b'" first-dir vendortag reltag
+@end example
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node commit files

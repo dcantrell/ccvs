@@ -1,3 +1,10 @@
+Thu Jul 18 18:27:40 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (Wrappers): Document -k.
+	(From files, Binary files in imports): Say that imports can deal
+	with binary files and refer to Wrappers node for details.
+	(Binary files): Likewise for imports and adds.
+
 Sat Jul 13 18:29:10 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (Binary files): Add paragraph concerning the fact
