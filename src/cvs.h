@@ -435,7 +435,7 @@ int RCS_merge PROTO((RCSNode *, char *, char *, char *, char *, char *));
 
 extern int RCS_exec_rcsdiff PROTO ((RCSNode *rcsfile,
 				    char *opts, char *options,
-				    char *rev1, char *rev2,
+				    char *rev1, char *rev1_cache, char *rev2,
 				    char *label1, char *label2,
 				    char *workfile));
 extern int diff_exec PROTO ((char *file1, char *file2,

@@ -87,11 +87,12 @@ Checkin (type, finfo, rcs, rev, tag, options, message)
                call RCS_checkout here, compare the resulting files
                using xcmp, and rename if necessary.  I think this
                should be fixed in RCS_cmp_file.  */
-	    if ((! preserve_perms
-		 && options != NULL
-		 && (strcmp (options, "-ko") == 0
-		     || strcmp (options, "-kb") == 0))
-		|| RCS_cmp_file (finfo->rcs, rev, options, finfo->file) == 0)
+	    if( ( ! preserve_perms
+		  && options != NULL
+		  && ( strcmp( options, "-ko" ) == 0
+		       || strcmp( options, "-kb" ) == 0 ) )
+		|| RCS_cmp_file( finfo->rcs, rev, (char **)NULL, (char *)NULL,
+	                         options, finfo->file ) == 0 )
 	    {
 		/* The existing file is correct.  We don't have to do
                    anything.  */

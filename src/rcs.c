@@ -5473,22 +5473,26 @@ struct cmp_file_data
     int different;
 };
 
-/* Compare the contents of revision REV of RCS file RCS with the
-   contents of the file FILENAME.  OPTIONS is a string for the keyword
+/* Compare the contents of revision REV1 of RCS file RCS with the
+   contents of REV2 if given, otherwise, compare with the contents of
+   the file FILENAME.  OPTIONS is a string for the keyword
    expansion options.  Return 0 if the contents of the revision are
    the same as the contents of the file, 1 if they are different.  */
 
 int
-RCS_cmp_file (rcs, rev, options, filename)
+RCS_cmp_file ( rcs, rev1, rev1_cache, rev2, options, filename )
      RCSNode *rcs;
-     char *rev;
+     char *rev1;
+     char **rev1_cache;
+     char *rev2;
      char *options;
      const char *filename;
 {
     int binary;
-    FILE *fp;
-    struct cmp_file_data data;
     int retcode;
+
+    TRACE( TRACE_FUNCTION, "RCS_cmp_file( %s, %s, %s, %s, %s )",
+           rcs->path, rev1, rev2, options, filename );
 
     if (options != NULL && options[0] != '\0')
 	binary = STREQ (options, "-kb");
@@ -5531,18 +5535,43 @@ RCS_cmp_file (rcs, rev, options, filename)
     else
 #endif
     {
-        fp = CVS_FOPEN (filename, binary ? FOPEN_BINARY_READ : "r");
+	FILE *fp;
+	struct cmp_file_data data;
+	const char *use_file1;
+	char *tmpfile = NULL;
+
+	if( rev2 != NULL )
+	{
+	    /* Open & cache rev1 */
+	    tmpfile = cvs_temp_name();
+	    if( RCS_checkout( rcs, NULL, rev1, NULL, options, tmpfile,
+	                      (RCSCHECKOUTPROC)0, NULL ) )
+		error( 1, errno,
+		       "cannot check out revision %s of %s",
+		       rev1, rcs->path );
+	    use_file1 = tmpfile;
+	    if( rev1_cache != NULL )
+		*rev1_cache = tmpfile;
+	}
+	else
+	    use_file1 = filename;
+
+        fp = CVS_FOPEN( use_file1, binary ? FOPEN_BINARY_READ : "r" );
 	if (fp == NULL)
 	    /* FIXME-update-dir: should include update_dir in message.  */
 	    error (1, errno, "cannot open file %s for comparing", filename);
 	
-        data.filename = filename;
+        data.filename = use_file1;
         data.fp = fp;
         data.different = 0;
 	
-        retcode = RCS_checkout (rcs, (char *) NULL, rev, (char *) NULL,
+        if( RCS_checkout( rcs, (char *) NULL, rev2 ? rev2 : rev1,
+	                        (char *) NULL,
 				options, RUN_TTY, cmp_file_buffer,
-				(void *) &data);
+				(void *) &data ) )
+		error( 1, errno,
+		       "cannot check out revision %s of %s",
+		       rev2 ? rev2 : rev1, rcs->path );
 
         /* If we have not yet found a difference, make sure that we are at
            the end of the file.  */
@@ -5553,10 +5582,13 @@ RCS_cmp_file (rcs, rev, options, filename)
         }
 	
         fclose (fp);
+	if( rev1_cache == NULL && tmpfile )
+	{
+	    if( CVS_UNLINK( tmpfile ) < 0 )
+		error( 0, errno, "cannot remove %s", tmpfile );
+	    free( tmpfile );
+	}
 
-	if (retcode != 0)
-	    return 1;
-	
         return data.different;
     }
 }
