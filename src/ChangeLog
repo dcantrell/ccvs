@@ -1,3 +1,8 @@
+Thu Jul 25 12:06:45 1996  Ian Lance Taylor  <ian@cygnus.com>
+
+	* server.c (krb_encrypt_buffer_output): Fix typo in comment (reply
+	-> replay).
+
 Thu Jul 25 10:37:32 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* server.c (krb_encrypt_buffer_output): Fix typo in comment
