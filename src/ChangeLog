@@ -1,5 +1,8 @@
 Tue Jul 16 11:37:41 1996  Ian Lance Taylor  <ian@cygnus.com>
 
+	* rcs.c (getrcskey): Hoist three constant strcmp calls out of the
+	value reading loop.
+
 	* fileattr.c (fileattr_get): Change parameter types from char * to
  	const char *.
 	(fileattr_get0, fileattr_modify, fileattr_set): Likewise.

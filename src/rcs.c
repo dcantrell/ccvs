@@ -500,6 +500,7 @@ getrcskey (fp, keyp, valp, lenp)
 {
     char *cur, *max;
     int c;
+    int just_string;
 
     if (lenp != NULL)
         *lenp = 0;
@@ -571,6 +572,10 @@ getrcskey (fp, keyp, valp, lenp)
     cur = value;
     max = value + valsize;
 
+    just_string = (strcmp (key, RCSDESC) == 0
+		   || strcmp (key, "text") == 0
+		   || strcmp (key, "log") == 0);
+
     /* process the value */
     for (;;)
     {
@@ -614,9 +619,7 @@ getrcskey (fp, keyp, valp, lenp)
 
 	/* The syntax for some key-value pairs is different; they
 	   don't end with a semicolon.  */
-	if (strcmp (key, RCSDESC) == 0
-	    || strcmp (key, "text") == 0
-	    || strcmp (key, "log") == 0)
+	if (just_string)
 	    break;
 
 	/* compress whitespace down to a single space */
