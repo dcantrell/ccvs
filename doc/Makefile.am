@@ -12,12 +12,6 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 
-#DISTFILES = \
-#	.cvsignore \
-#	RCSFILES \
-
-# AUTOMAKE_OPTIONS = no-texinfo.tex
-
 # FIXME - these rebuild every 'make dist' with some BSD makes due to a bug
 # that prevents make from searching VPATH for targets.  There is some
 # machinery in place in configure.in to work around this for some targets

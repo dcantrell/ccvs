@@ -1,3 +1,10 @@
+2001-06-04  Derek Price  <dprice@collab.net>
+
+	* Makefile.am: Remove commented out DISTFILES &
+	AUTOMAKE_OPTIONS=no-texinfo.tex.
+	(Reported by Alexey Mahotkin <alexm@hsys.msk.ru>.)
+	* Makefile.in: Regenerated.
+
 2001-06-04  Larry Jones  <larry.jones@sdrc.com>
 
 	* Makefile.am: Fix rules for cvs-paper (.pdf rule actually generated
