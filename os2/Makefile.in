@@ -41,8 +41,13 @@ CFLAGS 	 += -DTCPIP_IBM -Is:\ibmtcpip\include
 	icc ${CFLAGS} /Fo$@ $*.c
 
 # headers specific to OS/2
-# tcpip.mak will probably be unnecessary, but I include it for now.
-OS2_HEADERS = tcpip.h tcpip.mak
+# tcpip.mak is almost certainly unnecessary, but I include it for now.
+OS2_HEADERS = \
+       tcpip.h \
+       tcpip.mak \
+       config.h \
+       options.h \
+       pwd.h
 
 # headers we use from the common src dir, ../src
 COMMON_HEADERS = \
@@ -57,7 +62,9 @@ COMMON_HEADERS = \
        ${cvs_srcdir}/error.h
 
 # sources specific to OS/2
-OS2_SOURCES = 
+OS2_SOURCES = \
+       mkdir.c \
+       pwd.c
 
 # sources we use from the common src dir, ../src
 COMMON_SOURCES = \
@@ -111,7 +118,6 @@ COMMON_SOURCES = \
 
 # object files from OS/2 sources
 OS2_OBJECTS = 
-
 
 # object files from ../src
 COMMON_OBJECTS = \
@@ -168,7 +174,7 @@ HEADERS = ${OS2_HEADERS} ${COMMON_HEADERS}
 OBJECTS = ${OS2_OBJECTS} ${COMMON_OBJECTS}
 
 DISTFILES = ${OS2_HEADERS} ${OS2_SOURCES} \
-  README ChangeLog Makefile.in .cvsignore config.h options.h
+  README ChangeLog Makefile.in .cvsignore
 
 all:
 
