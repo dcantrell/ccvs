@@ -1,5 +1,8 @@
 1998-08-19  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* sanity.sh (importc): Use ${username} in one place where I had
+	missed it.
+
 	Make import -d work client/server:
 	* client.c, client.h (client_process_import_file): Take new
 	argument, for whether -d is specified, and send Checkin-time

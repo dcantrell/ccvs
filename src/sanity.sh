@@ -4129,7 +4129,7 @@ branches:  1\.1\.1\.1\.2;
 import-it
 ----------------------------
 revision 1\.1\.1\.1\.2\.1
-date: [0-9/]* [0-9:]*;  author: kingdon;  state: Exp;  lines: ${PLUS}1 -0
+date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
 modify
 ============================================================================="
 
