@@ -267,6 +267,11 @@ do_editor (dir, messagep, repository, changes)
     if (editinfo_editor)
 	free (editinfo_editor);
     editinfo_editor = (char *) NULL;
+#ifdef CLIENT_SUPPORT
+    if (client_active)
+	; /* nothing, leave editinfo_editor NULL */
+    else
+#endif
     if (repository != NULL)
 	(void) Parse_Info (CVSROOTADM_EDITINFO, repository, editinfo_proc, 0);
 
