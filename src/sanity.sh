@@ -2071,8 +2071,11 @@ for what in $tests; do
 '
 Concurrent Versions System (CVS) [0-9.]*.*
 
-Copyright (c) [-0-9]* Brian Berliner, david d .zoo. zuhn, 
-                        Jeff Polk, and other authors
+Copyright (C) [-0-9]* Free Software Foundation, Inc.
+
+Senior active maintainers include Larry Jones, Derek R. Price,
+and Mark D. Baushke.  Please see the AUTHORS and README files from the CVS
+distribution kit for a complete list of contributors and copyrights.
 
 CVS may be copied only under the terms of the GNU General Public License,
 a copy of which can be found with the CVS distribution kit.
