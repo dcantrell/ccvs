@@ -426,6 +426,7 @@ commit (argc, argv)
 #ifdef CLIENT_SUPPORT
     if (client_active) 
     {
+	int err;
 	struct find_data find_args;
 
 	ign_setup ();
@@ -490,6 +491,8 @@ commit (argc, argv)
 	do_verify (message, (char *)NULL);  	
 
 	/* We always send some sort of message, even if empty.  */
+	/* FIXME: is that true?  There seems to be some code in do_editor
+	   which can leave the message NULL.  */
 	option_with_arg ("-m", message);
 
 	/* OK, now process all the questionable files we have been saving
@@ -561,7 +564,32 @@ commit (argc, argv)
 		    find_args.force ? SEND_FORCE : 0);
 
 	send_to_server ("ci\012", 0);
-	return get_responses_and_close ();
+	err = get_responses_and_close ();
+	if (err != 0 && use_editor && message != NULL)
+	{
+	    /* If there was an error, don't nuke the user's carefully
+	       constructed prose.  This is something of a kludge; a better
+	       solution is probably more along the lines of #150 in TODO
+	       (doing a second up-to-date check before accepting the
+	       log message has also been suggested, but that seems kind of
+	       iffy because the real up-to-date check could still fail,
+	       another error could occur, &c.  Also, a second check would
+	       slow things down).  */
+
+	    char *fname;
+	    FILE *fp;
+
+	    fname = cvs_temp_name ();
+	    fp = CVS_FOPEN (fname, "w+");
+	    if (fp == NULL)
+		error (1, 0, "cannot create temporary file %s", fname);
+	    if (fwrite (message, 1, strlen (message), fp) != strlen (message))
+		error (1, errno, "cannot write temporary file %s", fname);
+	    if (fclose (fp) < 0)
+		error (0, errno, "cannot close temporary file %s", fname);
+	    error (0, 0, "saving log message in %s", fname);
+	}
+	return err;
     }
 #endif
 
