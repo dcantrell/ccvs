@@ -456,7 +456,8 @@ sub get_history
 	my %rinfo;		# Info about revisions in the file.
 	my $revision;
 
-	my $fh = new IO::File( "cvs -d $cvsroot rlog -N \"$file\" 2>&1 |" )
+    my $fh = new IO::File( "cvs -d $cvsroot rlog -N \"$file\""
+                           . ($verbose ? "" : " 2>&1") . " |" )
 		or die( "unable to run `cvs rlog', help" );
 
 	my $ignore = -1;
@@ -527,7 +528,7 @@ sub get_history
 
 	die "Syserr closing pipe from `cvs co': $!"
 		if !$fh->close && $!;
-	return undef if $?;
+	return if $?;
 
     return( \%finfo, %rinfo ? \%rinfo : undef );
 }
@@ -586,7 +587,7 @@ sub check_revision
 	verbose( "Executing `$command'.\n" );
 	if( @scripts )
 	{
-    	my $fh = new IO::File "$command 2>&1 |";
+    	my $fh = new IO::File $command . ($verbose ? "" : " 2>&1") . " |";
 		fcntl( $fh, F_SETFD, 0 )
 			or die "Can't clear close-on-exec flag on filehandle: $!";
 		my $count;

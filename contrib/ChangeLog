@@ -1,5 +1,10 @@
 2003-09-08  Derek Price  <derek@ximbiot.com>
 
+	* check_cvs.in (get_history, check_revision): Pass the STDERR of child
+	processes through in verbose mode.
+
+2003-09-08  Derek Price  <derek@ximbiot.com>
+
 	* check_cvs.in (get_history): Die on failure to close a pipe due to a system
 	error.
 	(check_revision): Simplify return syntax.
