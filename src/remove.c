@@ -148,12 +148,10 @@ remove_fileproc (file, update_dir, repository, entries, srcfiles)
     {
 	/*
 	 * It's a file that has been added, but not commited yet. So,
-	 * remove the ,p and ,t file for it and scratch it from the
+	 * remove the ,t file for it and scratch it from the
 	 * entries file.
 	 */
 	Scratch_Entry (entries, file);
-	(void) sprintf (fname, "%s/%s%s", CVSADM, file, CVSEXT_OPT);
-	(void) unlink_file (fname);
 	(void) sprintf (fname, "%s/%s%s", CVSADM, file, CVSEXT_LOG);
 	(void) unlink_file (fname);
 	if (!quiet)

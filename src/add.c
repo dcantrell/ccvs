@@ -517,16 +517,7 @@ build_entry (repository, user, options, message, entries, tag)
 	return (0);
 
     /*
-     * The options for the "add" command are store in the file CVS/user,p
-     * XXX - no they are not!
-     */
-    (void) sprintf (fname, "%s/%s%s", CVSADM, user, CVSEXT_OPT);
-    fp = open_file (fname, "w+");
-    if (fclose (fp) == EOF)
-	error(1, errno, "cannot close %s", fname);
-
-    /*
-     * And the requested log is read directly from the user and stored in the
+     * The requested log is read directly from the user and stored in the
      * file user,t.  If the "message" argument is set, use it as the
      * initial creation log (which typically describes the file).
      */
@@ -539,8 +530,8 @@ build_entry (repository, user, options, message, entries, tag)
 
     /*
      * Create the entry now, since this allows the user to interrupt us above
-     * without needing to clean anything up (well, we could clean up the ,p
-     * and ,t files, but who cares).
+     * without needing to clean anything up (well, we could clean up the
+     * ,t file, but who cares).
      */
     (void) sprintf (line, "Initial %s", user);
     Register (entries, user, "0", line, options, tag, (char *) 0, (char *) 0);

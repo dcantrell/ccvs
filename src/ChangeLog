@@ -1,3 +1,9 @@
+Thu Oct  5 18:29:17 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* remove.c, add.c, commit.c, cvs.h: Remove CVSEXT_OPT stuff; it
+	has been broken for ages and the options are already stored in the
+	Entries file.
+
 Thu Oct  5 18:20:13 1995  Norbert Kiesel  <nk@col.sw-ley.de>
 
 	* commit.c (checkaddfile): New argument options; pass it to RCS.

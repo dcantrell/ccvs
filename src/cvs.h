@@ -188,7 +188,6 @@ extern int errno;
 #define	CVSRFL		"#cvs.rfl"
 #define	CVSWFL		"#cvs.wfl"
 #define CVSRFLPAT	"#cvs.rfl.*"	/* wildcard expr to match read locks */
-#define	CVSEXT_OPT	",p"
 #define	CVSEXT_LOG	",t"
 #define	CVSPREFIX	",,"
 #define CVSDOTIGNORE	".cvsignore"
