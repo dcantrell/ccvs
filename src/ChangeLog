@@ -1,5 +1,9 @@
 2004-02-19  Derek Price <derek@ximbiot.com>
 
+	* sanity.sh (crerepos): Correct comment.
+
+2004-02-19  Derek Price <derek@ximbiot.com>
+
 	* logmsg.c (verifymsg_proc), run.c (format_cmdline): Plug memory leak.
 	(Report from Mark D. Baushke <mdb@cvshome.org>.)
 
