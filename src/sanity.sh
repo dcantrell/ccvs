@@ -566,7 +566,7 @@ if test x"$*" = x; then
 	tests="${tests} binwrap3 mwrap info config"
 	tests="${tests} serverpatch log log2 ann crerepos rcs rcs2"
 	tests="${tests} history"
-	tests="${tests} big modes stamps"
+	tests="${tests} big modes modes2 stamps"
 	# PreservePermissions stuff: permissions, symlinks et al.
 	tests="${tests} perms symlinks hardlinks"
 	# More tag and branch tests, keywords.
@@ -11811,6 +11811,51 @@ done"
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
 	  # Perhaps should restore the umask and CVSUMASK.  But the other
 	  # tests "should" not care about them...
+	  ;;
+
+	modes2)
+	  # More tests of file permissions in the working directory
+	  # and that sort of thing.
+
+	  # The usual setup, file first-dir/aa with two revisions.
+	  mkdir 1; cd 1
+	  dotest modes2-1 "${testcvs} -q co -l ." ''
+	  mkdir first-dir
+	  dotest modes2-2 "${testcvs} add first-dir" \
+"Directory ${TESTDIR}/cvsroot/first-dir added to the repository"
+	  cd first-dir
+	  touch aa
+	  dotest modes2-3 "${testcvs} add aa" \
+"${PROG} [a-z]*: scheduling file .aa. for addition
+${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
+	  dotest modes2-4 "${testcvs} -q ci -m add" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/aa,v
+done
+Checking in aa;
+${TESTDIR}/cvsroot/first-dir/aa,v  <--  aa
+initial revision: 1\.1
+done"
+	  echo "more money" >> aa
+	  dotest modes2-5 "${testcvs} -q ci -m add" \
+"Checking in aa;
+${TESTDIR}/cvsroot/first-dir/aa,v  <--  aa
+new revision: 1\.2; previous revision: 1\.1
+done"
+
+	  # OK, here is the test.  The idea is to see what
+	  # No_Difference does if it can't open the file.
+	  chmod a= aa
+	  # If we don't change the st_mtime, CVS doesn't even try to read
+	  # the file.
+	  touch aa
+	  dotest_fail modes2-6 "${testcvs} -q update -r 1.1 aa" \
+"${PROG} \[update aborted\]: cannot open file aa for comparing: Permission denied" \
+"${PROG} \[update aborted\]: reading aa: Permission denied"
+
+	  chmod u+rwx aa
+	  cd ../..
+	  rm -r 1
+	  rm -rf ${CVSROOT_DIRNAME}/first-dir
 	  ;;
 
 	stamps)

@@ -1,3 +1,11 @@
+1998-05-22  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* rcs.c (RCS_cmp_file): Check for errors from CVS_FOPEN.  This
+	restores the CVS 1.9 behavior (fatal error if we can't open the
+	file), and corrects an apparent oversight in Ian's 13 Apr 1997
+	change.
+	* sanity.sh (modes2): New test, tests for this.
+
 1998-05-22  Ian Lance Taylor  <ian@cygnus.com>
 
         * server.c (server_updated): Correct test for whether to unlink
