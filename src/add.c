@@ -148,8 +148,12 @@ add (argc, argv)
 	    continue;
 	}
 
+	/* We pass force_tag_match as 1.  If the directory has a
+           sticky branch tag, and there is already an RCS file which
+           does not have that tag, then the head revision is
+           meaningless to us.  */
 	vers = Version_TS (repository, options, (char *) NULL, (char *) NULL,
-			   user, 0, 0, entries, (RCSNode *) NULL);
+			   user, 1, 0, entries, (RCSNode *) NULL);
 	if (vers->vn_user == NULL)
 	{
 	    /* No entry available, ts_rcs is invalid */
