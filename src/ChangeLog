@@ -1,3 +1,8 @@
+Sun Jul  7 10:36:16 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* rcs.c (annotate): Remove comment suggesting -r option and
+	related functionality; it is done.
+
 Fri Jul  5 17:19:57 1996  Ian Lance Taylor  <ian@cygnus.com>
 
 	* client.c (last_entries): Make file static, rather than function
