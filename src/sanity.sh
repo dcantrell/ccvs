@@ -694,11 +694,24 @@ fi
 : ${ID=id}
 : ${TR=tr}
 
+# Keep track of tools that are found, but do NOT work as we hope
+# in order to avoid them in future
+badtools=
+set_bad_tool ()
+{
+   badtools="$badtools:$1"
+}
+is_bad_tool ()
+{
+   case ":$badtools:" in *:$1:*) return 0 ;; *) return 1 ; esac
+}
+
 find_tool ()
 {
   GLOCS="`echo $PATH | sed 's/:/ /g'` /usr/local/bin /usr/contrib/bin /usr/gnu/bin /local/bin /local/gnu/bin /gnu/bin /sw/bin /usr/pkg/bin"
   TOOL=""
   for path in $GLOCS ; do
+    if is_bad_tool $path/g$1 ; then continue; fi
     if test -f $path/g$1 && test -r $path/g$1 &&
         RES=`$path/g$1 --version </dev/null 2>/dev/null`; then
       if test "X$RES" != "X--version" && test "X$RES" != "X" ; then
@@ -706,6 +719,7 @@ find_tool ()
         break
       fi
     fi
+    if is_bad_tool $path/$1 ; then continue; fi
     if test -f $path/$1 && test -r $path/$1 &&
         RES=`$path/$1 --version </dev/null 2>/dev/null`; then
       if test "X$RES" != "X--version" && test "X$RES" != "X" ; then
@@ -966,6 +980,7 @@ depends_on_rsync ()
   for rsync in ${RSYNC} `Which -a rsync`;
   do
 
+    if is_bad_tool `Which $rsync` ; then continue ; fi
     # Make some data to test rsync on.
     mkdir $TESTDIR/rsync-test
     mkdir $TESTDIR/rsync-test/Attic && touch $TESTDIR/rsync-test/Attic/6
@@ -994,6 +1009,7 @@ depends_on_rsync ()
         || test ! -f $TESTDIR/rsync-test-copy2/Attic/5 \
         || test -f $TESTDIR/rsync-test-copy2/otherdir/7
       then
+        set_bad_tool `Which $rsync`
         rsyncworks=false
       else
         # good, it works
@@ -1001,6 +1017,7 @@ depends_on_rsync ()
 	RSYNC=$rsync
       fi
     else
+      set_bad_tool `Which $rsync`
       rsyncworks=false
     fi
   
