@@ -832,7 +832,7 @@ check_fileproc (callerdat, finfo)
 	     * Also,
 	     *	- if status is T_REMOVED, can't have a numeric tag
 	     *	- if status is T_ADDED, rcs file must not exist unless on
-	     *    a branch
+	     *    a branch or head is dead
 	     *	- if status is T_ADDED, can't have a non-trunk numeric rev
 	     *	- if status is T_MODIFIED and a Conflict marker exists, don't
 	     *    allow the commit if timestamp is identical or if we find
@@ -929,29 +929,17 @@ warning: file `%s' seems to still contain conflict indicators",
 	    {
 	        if (vers->tag == NULL)
 		{
-		    char *rcs;
-
-		    rcs = xmalloc (strlen (finfo->repository)
-				   + strlen (finfo->file)
-				   + sizeof RCSEXT
-				   + 5);
-
-		    /* Don't look in the attic; if it exists there we
-		       will move it back out in checkaddfile.  */
-		    sprintf(rcs, "%s/%s%s", finfo->repository, finfo->file,
-			    RCSEXT);
-		    if (isreadable (rcs))
+		    if (finfo->rcs != NULL &&
+			!RCS_isdead (finfo->rcs, finfo->rcs->head))
 		    {
 			error (0, 0,
 		    "cannot add file `%s' when RCS file `%s' already exists",
-			       finfo->fullname, rcs);
+			       finfo->fullname, finfo->rcs->path);
 			freevers_ts (&vers);
-			free (rcs);
 			return (1);
 		    }
-		    free (rcs);
 		}
-		if (vers->tag && isdigit ((unsigned char) *vers->tag) &&
+		else if (isdigit ((unsigned char) *vers->tag) &&
 		    numdots (vers->tag) > 1)
 		{
 		    error (0, 0,
@@ -1314,6 +1302,12 @@ commit_fileproc (callerdat, finfo)
 	    /* find the max major rev number in this directory */
 	    maxrev = 0;
 	    (void) walklist (finfo->entries, findmaxrev, NULL);
+	    if (finfo->rcs->head) {
+		/* resurrecting: include dead revision */
+		int thisrev = atoi (finfo->rcs->head);
+		if (thisrev > maxrev)
+		    maxrev = thisrev;
+	    }
 	    if (maxrev == 0)
 		maxrev = 1;
 	    xrev = xmalloc (20);
@@ -1599,19 +1593,13 @@ findmaxrev (p, closure)
     Node *p;
     void *closure;
 {
-    char *cp;
     int thisrev;
     Entnode *entdata;
 
     entdata = (Entnode *) p->data;
     if (entdata->type != ENT_FILE)
 	return (0);
-    cp = strchr (entdata->version, '.');
-    if (cp != NULL)
-	*cp = '\0';
     thisrev = atoi (entdata->version);
-    if (cp != NULL)
-	*cp = '.';
     if (thisrev > maxrev)
 	maxrev = thisrev;
     return (0);
@@ -1959,10 +1947,8 @@ checkaddfile (file, repository, tag, options, rcsnode)
 	       Attic.  */
 	    if (!(rcsfile->flags & INATTIC))
 	    {
-		error (0, 0, "internal error: confused about attic for %s",
+		error (0, 0, "warning: expected %s to be in Attic",
 		       rcsfile->path);
-		retval = 1;
-		goto out;
 	    }
 
 	    sprintf (rcs, "%s/%s%s", repository, file, RCSEXT);

@@ -1,3 +1,16 @@
+2001-03-14  Larry Jones  <larry.jones@sdrc.com>
+
+	* commit.c (check_fileproc): Allow adding on the trunk when there's
+	an existing non-Attic RCS file as long as the head revision is dead.
+	This can happen due to an aborted resurrection.
+	(commit_fileproc): When resurrecting, consider the dead revision
+	along with the other files' revisions.
+	(findmaxrev): Avoid unnecessary work.
+	(checkaddfile): Only warn if file isn't in Attic as expected.
+	(Reported by Ross Burton <r.burton@180sw.com>.)
+	* sanity.sh (basica-r*): New tests for above.
+	(basica-o4): Update to match.
+
 2001-03-09  Larry Jones  <larry.jones@sdrc.com>
 
 	* edit.c (edit_fileproc, unedit_fileproc): Some implementations of
