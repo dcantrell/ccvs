@@ -734,6 +734,9 @@ File: sfile1           	Status: Locally Added
 	  dotest basicb-4 "${testcvs} add sfile2" \
 "${PROG} [a-z]*: scheduling file .sfile2. for addition
 ${PROG} [a-z]*: use .cvs commit. to add this file permanently"
+	  dotest basicb-4a "${testcvs} -q ci CVS" \
+"${PROG} [a-z]*: warning: directory CVS specified in argument
+${PROG} [a-z]*: but CVS uses CVS for its own purposes; skipping CVS directory"
 	  cd ..
 	  dotest basicb-5 "${testcvs} -q ci -m add" \
 'RCS file: /tmp/cvs-sanity/cvsroot/first-dir/sdir1/sfile1,v
