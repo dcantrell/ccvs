@@ -1,5 +1,8 @@
 Mon, 10 Nov 1997  Jim Kingdon
 
+	* rcs.c (RCS_checkin): Pass correct mode to get_file for
+	binary files.
+
 	* rcscmds.c: Declare vasprintf.
 
 Mon Nov 10 11:11:17 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
