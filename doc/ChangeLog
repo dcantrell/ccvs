@@ -1,3 +1,16 @@
+2003-08-07  Derek Price  <derek@ximbiot.com>
+
+	* Makefile.am (POSTSCRIPTS): Rename to...
+	(PSS): ...to sync with and override Automakes default targets.
+	(PDFS): Reorder to match PSS.
+	(SUFFIXES): Remove .pdf and .aux.
+	(cvs.aux, cvs.pdf, cvsclient.aux, cvsclient.pdf): Remove these targets.
+	.aux weren't being generated anyhow and .pdf no longer need to be
+	supplied explicitly.
+	(cvs-paper.pdf: cvs-paper.ps): Provide ps2pdf rule explicitly.
+	(.{texinfo,texi,txy}.pdf): Remove these suffix rules - they are now
+	provided by Automake.
+
 2003-08-06  Derek Price  <derek@ximbiot.com>
 
 	* Makefile.am (CLEANFILES): Move...

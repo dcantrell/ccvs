@@ -168,15 +168,15 @@ with_default_rsh = @with_default_rsh@
 
 info_TEXINFOS = cvs.texinfo cvsclient.texi
 
-POSTSCRIPTS = \
+PSS = \
 	cvs.ps \
 	cvs-paper.ps \
 	cvsclient.ps
 
 
 PDFS = \
-	cvs-paper.pdf \
 	cvs.pdf \
+	cvs-paper.pdf \
 	cvsclient.pdf
 
 
@@ -186,7 +186,7 @@ TXTS = \
 
 
 EXTRA_DIST = \
-	$(POSTSCRIPTS) \
+	$(PSS) \
 	.cvsignore \
 	ChangeLog.fsf \
 	RCSFILES \
@@ -201,10 +201,10 @@ MOSTLYCLEANFILES = \
 # These Automake generates MOSTLYCLEAN targets for PostScripts genersted from
 # TEXINFOS, but it shouldn't when those files are in EXTRA_DIST
 MAINTAINERCLEANFILES = \
-	$(POSTSCRIPTS)
+	$(PSS)
 
 
-SUFFIXES = .aux .txt .pdf
+SUFFIXES = .txt
 subdir = doc
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
@@ -214,14 +214,13 @@ DIST_SOURCES =
 am__TEXINFO_TEX_DIR = $(srcdir)
 INFO_DEPS = cvs.info cvsclient.info
 DVIS = cvs.dvi cvsclient.dvi
-PSS = cvs.ps cvsclient.ps
 TEXINFOS = cvs.texinfo cvsclient.texi
 DIST_COMMON = ChangeLog Makefile.am Makefile.in mdate-sh stamp-1 \
 	stamp-vti texinfo.tex version-client.texi version.texi
 all: all-am
 
 .SUFFIXES:
-.SUFFIXES: .aux .txt .pdf .dvi .info .ps .texi .texinfo .txi
+.SUFFIXES: .txt .dvi .info .pdf .ps .texi .texinfo .txi
 $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ Makefile.am  $(top_srcdir)/configure.in $(ACLOCAL_M4)
 	cd $(top_srcdir) && \
 	  $(AUTOMAKE) --gnu  doc/Makefile
@@ -237,6 +236,11 @@ Makefile: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.in  $(top_builddir)/config.s
 	TEXINPUTS="$(am__TEXINFO_TEX_DIR)$(PATH_SEPARATOR)$$TEXINPUTS" \
 	MAKEINFO='$(MAKEINFO) $(AM_MAKEINFOFLAGS) $(MAKEINFOFLAGS) -I $(srcdir)' \
 	$(TEXI2DVI) `test -f '$<' || echo '$(srcdir)/'`$<
+
+.texinfo.pdf:
+	TEXINPUTS="$(am__TEXINFO_TEX_DIR)$(PATH_SEPARATOR)$$TEXINPUTS" \
+	MAKEINFO='$(MAKEINFO) $(AM_MAKEINFOFLAGS) $(MAKEINFOFLAGS) -I $(srcdir)' \
+	$(TEXI2PDF) `test -f '$<' || echo '$(srcdir)/'`$<
 cvs.info: cvs.texinfo version.texi
 cvs.dvi: cvs.texinfo version.texi
 cvs.pdf: cvs.texinfo version.texi
@@ -269,6 +273,11 @@ maintainer-clean-vti:
 	TEXINPUTS="$(am__TEXINFO_TEX_DIR)$(PATH_SEPARATOR)$$TEXINPUTS" \
 	MAKEINFO='$(MAKEINFO) $(AM_MAKEINFOFLAGS) $(MAKEINFOFLAGS) -I $(srcdir)' \
 	$(TEXI2DVI) `test -f '$<' || echo '$(srcdir)/'`$<
+
+.texi.pdf:
+	TEXINPUTS="$(am__TEXINFO_TEX_DIR)$(PATH_SEPARATOR)$$TEXINPUTS" \
+	MAKEINFO='$(MAKEINFO) $(AM_MAKEINFOFLAGS) $(MAKEINFOFLAGS) -I $(srcdir)' \
+	$(TEXI2PDF) `test -f '$<' || echo '$(srcdir)/'`$<
 cvsclient.info: cvsclient.texi version-client.texi
 cvsclient.dvi: cvsclient.texi version-client.texi
 cvsclient.pdf: cvsclient.texi version-client.texi
@@ -515,9 +524,8 @@ dvi: cvs.dvi cvsclient.dvi
 # FIXME-AUTOMAKE:
 # For some reason if I remove version.texi, it doesn't get built automatically.
 # This needs to be fixed in automake.
-cvs.aux cvs.pdf cvs.txt: cvs.texinfo $(srcdir)/version.texi
-cvsclient.aux cvsclient.pdf cvsclient.txt: cvsclient.texi \
-					   $(srcdir)/version-client.texi
+cvs.txt: cvs.texinfo $(srcdir)/version.texi
+cvsclient.txt: cvsclient.texi $(srcdir)/version-client.texi
 
 # These targets need to be very specific so that the other PDFs get generated
 # correctly.  If they are more generic and cvs.ps is made before cvs.pdf, then
@@ -528,21 +536,9 @@ cvs-paper.ps: cvs-paper.ms
 	mv $@-t $@
 
 cvs-paper.pdf: cvs-paper.ps
+	ps2pdf $< $@
 
 # texinfo based targets automake neglects to include
-.texinfo.pdf:
-	TEXINPUTS="$(am__TEXINFO_TEX_DIR)$(PATH_SEPARATOR)$$TEXINPUTS" \
-	MAKEINFO='$(MAKEINFO) $(AM_MAKEINFOFLAGS) $(MAKEINFOFLAGS) -I $(srcdir)' \
-	$(TEXI2DVI) --pdf --batch `test -f '$<' || echo '$(srcdir)/'`$<
-.txi.pdf:
-	TEXINPUTS="$(am__TEXINFO_TEX_DIR)$(PATH_SEPARATOR)$$TEXINPUTS" \
-	MAKEINFO='$(MAKEINFO) $(AM_MAKEINFOFLAGS) $(MAKEINFOFLAGS) -I $(srcdir)' \
-	$(TEXI2DVI) --pdf --batch `test -f '$<' || echo '$(srcdir)/'`$<
-.texi.pdf:
-	TEXINPUTS="$(am__TEXINFO_TEX_DIR)$(PATH_SEPARATOR)$$TEXINPUTS" \
-	MAKEINFO='$(MAKEINFO) $(AM_MAKEINFOFLAGS) $(MAKEINFOFLAGS) -I $(srcdir)' \
-	$(TEXI2DVI) --pdf --batch `test -f '$<' || echo '$(srcdir)/'`$<
-
 .texinfo.txt:
 	$(MAKEINFO) $(AM_MAKEINFOFLAGS) $(MAKEINFOFLAGS) -I $(srcdir) \
 	 --no-headers -o $@ `test -f '$<' || echo '$(srcdir)/'`$<

@@ -281,7 +281,10 @@ all:
 
 # Automake
 .PHONY: all install installcheck uninstall check info dvi
-all install installcheck uninstall check info dvi:
+all install installcheck uninstall check:
+
+.PHONY: dvi info pdf ps
+dvi info pdf ps:
 
 installdirs:
 .PHONY: installdirs
