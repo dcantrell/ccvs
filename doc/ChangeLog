@@ -1,5 +1,10 @@
 Fri Oct 31 00:04:09 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvs.texinfo (admin options): Rewrite discussion of -o to
+	hopefully be clearer and to also document the new :: syntax.
+	(admin examples): Removed; incorporated into admin options.
+	(Invoking CVS): Wording fix for admin -o.
+
 	* cvs.texinfo (Binary why): New node, talks about diff and merge.
 	(Binary howto): Renamed from Binary files.
 	(Binary files): Now just contains an introduction.

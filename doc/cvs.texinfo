@@ -7495,7 +7495,6 @@ not exist and all users can run @code{cvs admin}.
 
 @menu
 * admin options::               admin options
-* admin examples::              admin examples
 @end menu
 
 @c . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
@@ -7630,23 +7629,89 @@ working files.
 @cindex Outdating revisions
 @cindex Saving space
 @item -o@var{range}
-Potentially useful, but dangerous, with @sc{cvs} (see below).
 Deletes (@dfn{outdates}) the revisions given by
-@var{range}.  A range consisting of a single revision
-number means that revision.  A range consisting of a
-branch number means the latest revision on that branch.
-A range of the form @samp{@var{rev1}:@var{rev2}} means
-revisions @var{rev1} to @var{rev2} on the same branch,
-@samp{:@var{rev}} means from the beginning of the
+@var{range}.
+
+Note that this command can be quite dangerous unless
+you know @emph{exactly} what you are doing (for example
+see the warnings below about how the
+@var{rev1}:@var{rev2} syntax is confusing).
+
+If you are short on disc this option might help you.
+But think twice before using it---there is no way short
+of restoring the latest backup to undo this command!
+If you delete different revisions than you planned,
+either due to carelessness or (heaven forbid) a CVS
+bug, there is no opportunity to correct the error
+before the revisions are deleted.  It probably would be
+a good idea to experiment on a copy of the repository
+first.
+
+Specify @var{range} in one of the following ways:
+
+@table @code
+@item @var{rev1}::@var{rev2}
+Collapse all revisions between rev1 and rev2, so that
+CVS only stores the differences associated with going
+from rev1 to rev2, not intermediate steps.  For
+example, after @samp{-o 1.3::1.5} one can retrieve
+revision 1.3, revision 1.5, or the differences to get
+from 1.3 to 1.5, but not the revision 1.4, or the
+differences between 1.3 and 1.4.  Other examples:
+@samp{-o 1.3::1.4} and @samp{-o 1.3::1.3} have no
+effect, because there are no intermediate revisions to
+remove.
+
+@item ::@var{rev}
+Collapse revisions between the beginning of the branch
+containing @var{rev} and @var{rev} itself.  The
+branchpoint and @var{rev} are left intact.  For
+example, @samp{-o ::1.3.2.6} deletes revision 1.3.2.1,
+revision 1.3.2.5, and everything in between, but leaves
+1.3 and 1.3.2.6 intact.
+
+@item @var{rev}::
+Collapse revisions between @var{rev} and the end of the
+branch containing @var{rev}.  Revision @var{rev} is
+left intact but the head revision is deleted.
+
+@item @var{rev}
+Delete the revision @var{rev}.  For example, @samp{-o
+1.3} is equivalent to @samp{-o 1.2::1.4}.
+
+@item @var{rev1}:@var{rev2}
+Delete the revisions from @var{rev1} to @var{rev2},
+inclusive, on the same branch.  One will not be able to
+retrieve @var{rev1} or @var{rev2} or any of the
+revisions in between.  For example, the command
+@samp{cvs admin -oR_1_01:R_1_02 .} is rarely useful.
+It means to delete revisions up to, and including, the
+tag R_1_02.  But beware!  If there are files that have not
+changed between R_1_02 and R_1_03 the file will have
+@emph{the same} numerical revision number assigned to
+the tags R_1_02 and R_1_03.  So not only will it be
+impossible to retrieve R_1_02; R_1_03 will also have to
+be restored from the tapes!  In most cases you want to
+specify @var{rev1}::@var{rev2} instead.
+
+@item :@var{rev}
+Delete revisions from the beginning of the
 branch containing @var{rev} up to and including
-@var{rev}, and @samp{@var{rev}:} means from revision
-@var{rev} to the end of the branch containing
-@var{rev}.  None of the outdated revisions may have
+@var{rev}.
+
+@item @var{rev}:
+Delete revisions from revision @var{rev}, including
+@var{rev} itself, to the end of the branch containing
+@var{rev}.
+@end table
+
+None of the revisions to be deleted may have
 branches or locks.
 
 Due to the way @sc{cvs} handles branches @var{rev}
 cannot be specified symbolically if it is a branch.
 @xref{Magic branch numbers}, for an explanation.
+@c FIXME: is this still true?  I suspect not.
 
 Make sure that no-one has checked out a copy of the
 revision you outdate.  Strange things will happen if he
@@ -7750,38 +7815,6 @@ this option has never done anything useful.
 @c never been documented as a cvs admin option.
 @end table
 
-
-@c . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
-@node admin examples
-@appendixsubsec admin examples
-
-@appendixsubsubsec Outdating is dangerous
-
-First, an example of how @emph{not} to use the
-@code{admin} command.  It is included to stress the
-fact that this command can be quite dangerous unless
-you know @emph{exactly} what you are doing.
-
-The @samp{-o} option can be used to @dfn{outdate} old revisions
-from the history file.  If you are short on disc this option
-might help you.  But think twice before using it---there is no
-way short of restoring the latest backup to undo this command!
-
-The next line is an example of a command that you would
-@emph{not} like to execute.
-
-@example
-$ cvs admin -o:R_1_02 .
-@end example
-
-The above command will delete all revisions up to, and
-including, the revision that corresponds to the tag
-R_1_02.  But beware!  If there are files that have not
-changed between R_1_02 and R_1_03 the file will have
-@emph{the same} numerical revision number assigned to
-the tags R_1_02 and R_1_03.  So not only will it be
-impossible to retrieve R_1_02; R_1_03 will also have to
-be restored from the tapes!
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node checkout
@@ -9775,7 +9808,8 @@ Replace the log message of revision @var{rev} with
 @var{msg}.
 
 @item -o@var{range}
-Delete revisions from the history files
+Delete revisions from the repository.  See
+@ref{admin options}.
 
 @item -q
 Run quietly; do not print diagnostics.
