@@ -1,3 +1,8 @@
+2003-10-07  Larry Jones  <lawrence.jones@eds.com>
+
+	* sanity.sh: Use dotest_fail instead of dotest_status for diff tests
+	since CVS only returns success/fail rather than 0/1/2 like diff does.
+
 2003-10-07  Derek Price  <derek@ximbiot.com>
 
 	Fix a client/server bug introduced via the data loss fix of 2003-03-17.

@@ -670,19 +670,6 @@ dotest_fail ()
   dotest_internal "$@"
 }
 
-# Like dotest except second argument is the required exitstatus.
-dotest_status ()
-{
-  eval "$3" >${TESTDIR}/dotest.tmp 2>&1
-  status=$?
-  if test "$status" != "$2"; then
-    cat ${TESTDIR}/dotest.tmp >>${LOGFILE}
-    echo "exit status was $status; expected $2" >>${LOGFILE}
-    fail "$1"
-  fi
-  dotest_internal "$1" "$3" "$4" "$5"
-}
-
 # Like dotest except output is sorted.
 dotest_sort ()
 {
@@ -1746,7 +1733,7 @@ ${PROG} \[tag aborted\]: failed to set tag BASE to revision 1\.1 in ${CVSROOT_DI
 
 	  dotest basica-6 "${testcvs} -q update" ''
 	  echo "ssfile line 2" >>sdir/ssdir/ssfile
-	  dotest_status basica-6.2 1 "${testcvs} -q diff -c" \
+	  dotest_fail basica-6.2 "${testcvs} -q diff -c" \
 "Index: sdir/ssdir/ssfile
 ===================================================================
 RCS file: ${CVSROOT_DIRNAME}/first-dir/sdir/ssdir/ssfile,v
@@ -1759,7 +1746,7 @@ diff -c -r1\.1 ssfile
 --- 1,2 ----
   ssfile
 ${PLUS} ssfile line 2"
-	  dotest_status basica-6.3 1 "${testcvs} -q diff -c -rBASE" \
+	  dotest_fail basica-6.3 "${testcvs} -q diff -c -rBASE" \
 "Index: sdir/ssdir/ssfile
 ===================================================================
 RCS file: ${CVSROOT_DIRNAME}/first-dir/sdir/ssdir/ssfile,v
@@ -5883,7 +5870,7 @@ revision 1\.2\.2\.1\.2\.1
 date: [0-9/: ]*;  author: ${username};  state: Exp;  lines: ${PLUS}1 -1
 modify
 ============================================================================="
-	  dotest_status branches-14.4 1 \
+	  dotest_fail branches-14.4 \
 	    "${testcvs} diff -c -r 1.1 -r 1.3 file4" \
 "Index: file4
 ===================================================================
@@ -5898,7 +5885,7 @@ diff -c -r1\.1 -r1\.3
 ! 4:trunk-1
 --- 1 ----
 ! 4:trunk-3"
-	  dotest_status branches-14.5 1 \
+	  dotest_fail branches-14.5 \
 	    "${testcvs} diff -c -r 1.1 -r 1.2.2.1 file4" \
 "Index: file4
 ===================================================================
@@ -23001,7 +22988,7 @@ ${PROG} update: skipping directory mod2-2/mod1-2"
 	  echo goes >> mod2-1/file2-1
 	  echo down >> mod2-2/file2-2
 
-	  dotest_status multiroot-diff-1 1 "${testcvs} diff" \
+	  dotest_fail multiroot-diff-1 "${testcvs} diff" \
 "${PROG} diff: Diffing \.
 ${PROG} diff: Diffing mod1-1
 Index: mod1-1/file1-1
@@ -24055,7 +24042,7 @@ done"
 "T dir1/file1
 T dir1/sdir/sfile
 T dir1/sdir/ssdir/ssfile"
-	  dotest_status multiroot2-12 1 \
+	  dotest_fail multiroot2-12 \
 "${testcvs} -q diff -u -r tag1 -r tag2" \
 "Index: dir1/file1
 ===================================================================
