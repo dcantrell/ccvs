@@ -262,6 +262,9 @@ sub main
 				if( $sym_count > 5 );
 		}
 
+		# Remove indirections.
+		$directory_to_look_at =~ s#(/+.)*$##o;
+
 		verbose( "Processing: $directory_to_look_at\n" );
 		@ignore_files = get_ignore_files_from_cvsroot( $directory_to_look_at );
 		find( \&process_file, $directory_to_look_at );
@@ -344,6 +347,7 @@ sub process_file
 		elsif( !grep { $path =~ $_ } @ignore_files )
 		{
 			push @extra_files, $path;
+			verbose( "Adding unrecognized file `$path' to corrupted list.\n" );
 		}
 		else
 		{
@@ -580,6 +584,7 @@ sub check_revision
 	my $kwmode = $finfo->{'kwmode'} eq 'b' ? '' : ' -ko';
     my $command = "cvs -d $cvsroot co$kwmode -npr $revision \"$file\"";
 	my $ret_code;
+	verbose( "Executing `$command'.\n" );
 	if( @scripts )
 	{
     	my $fh = new IO::File "$command 2>&1 |";
