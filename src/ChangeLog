@@ -1,5 +1,10 @@
 2004-10-05  Derek Price  <derek@ximbiot.com>
 
+	* cvs.h (Xstrdup): New proto mapped via define to xstrdup.
+	* subr.c (Xstrdup): New function.
+
+2004-10-05  Derek Price  <derek@ximbiot.com>
+
 	* add.c, client.c, history.c, import.c, mkmodules.c, modules.c,
 	recurse.c, release.c, tag.c, update.c: Use new save-cwd API.
 

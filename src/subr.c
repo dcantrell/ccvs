@@ -1861,3 +1861,14 @@ cvs_casecmp (const char *str1, const char *str2)
     }
     return pqdiff;
 }
+
+
+
+/* Like xstrdup (), but can handle a NULL argument.
+ */
+char *
+Xstrdup (const char *string)
+{
+  if (string == NULL) return NULL;
+  return xmemdup (string, strlen (string) + 1);
+}
