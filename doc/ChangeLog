@@ -1,3 +1,10 @@
+1998-09-24  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (Connecting via fork): :fork: may be of interest to
+	users, for example those who prefer CVS to prompt for one log
+	message per checkin, rather than one per directory.
+	(Connecting via fork): Document CVS_SERVER.
+
 1998-09-24  Noel Cragg  <noel@swish.red-bean.com>
 
 	* cvs.texinfo (Connecting via fork): new node about the fork
