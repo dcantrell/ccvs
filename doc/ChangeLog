@@ -1,3 +1,10 @@
+Thu Mar 21 08:18:42 1996  Norbert Kiesel <nk@col.sw-ley.de>
+
+	* cvs.texinfo: Remove paragrahps about a forthcoming CVS
+          newsgroup and about sending patches to think.com.
+          (Environment): Document some more (all?) used environment
+          variables.
+
 Wed Mar 20 09:44:21 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvsclient.texi (Introduction): New node.

@@ -409,23 +409,6 @@ unsubscribe, write to
 <@t{info-cvs-request@@prep.ai.mit.edu}>. Please be
 specific about your email address.
 
-Work is in progress on creating a newsgroup for
-@sc{cvs}-related topics.  It will appear somewhere
-under the @samp{gnu.} hierarchy.  Gateways to and from
-the mailing list will be set up.
-@c -- Newsgroup? gnu.cvs.info?
-
-@cindex FTP site
-@cindex Patches to CVS
-@cindex CVS FTP site
-@cindex Fixes to CVS
-@cindex FAQ
-@cindex CVS FAQ
-The @sc{ftp} site @t{think.com} has some @sc{cvs}
-material in the @file{/pub/cvs} subdirectory.
-Currently (late summer 1993) it contains an excellent
-@sc{faq} (Frequently Asked Questions, with answers),
-and an improved (but unofficial) version of @sc{cvs}.
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @unnumberedsec CVS is not@dots{}
@@ -7303,6 +7286,7 @@ that affect @sc{cvs}.
 A whitespace-separated list of file name patterns that
 @sc{cvs} should ignore. @xref{cvsignore}.
 
+@cindex CVSWRAPPERS
 @item $CVSWRAPPERS
 A whitespace-separated list of file name patterns that
 @sc{cvs} should treat as wrappers. @xref{Wrappers}.
@@ -7350,6 +7334,84 @@ programs it uses.
 Specifies the full pathname of the location of @sc{rcs} programs,
 such as co(1) and ci(1).  If not set, a compiled-in
 value is used, or your @code{$PATH} is searched.
+
+@cindex HOME
+@item $HOME
+@cindex HOMEPATH
+@item $HOMEPATH
+Used to locate the directory where the @file{.cvsrc}
+file is searched (@code{$HOMEPATH} is used for Windows-NT).
+@pxref{~/.cvsrc}
+
+@cindex CVS_RSH
+@item $CVS_RSH
+Used in client-server mode when accessing a remote
+repository using @sc{rsh}.  The default value is
+@code{rsh}.  You can set it to use another program for
+accssing the remote server (e.g. for HP-UX 9, you
+should set it to @code{remsh} because @code{rsh}
+invokes the restricted shell).  @pxref{Connecting via
+rsh}
+
+@item $CVS_SERVER
+Used in client-server mode when accessing a remote
+repository using @sc{rsh}.  It specifies the name of
+the program to start on the server side when accessing
+a remote repository using @sc{rsh}.  The default value
+is @code{cvs}.  @pxref{Connecting via rsh}
+
+@item $CVS_PASSFILE
+Used in client-server mode when accessing the @code{cvs
+login server}.  Default value is @file{$HOME/.cvspass}.
+@pxref{Password authentication client}
+
+@item $CVS_PASSWORD
+Used in client-server mode when accessing the @code{cvs
+login server}.
+@pxref{Password authentication client}
+
+@item $CVS_CLIENT_PORT
+Used in client-server mode when accessing the server
+via Kerberos.
+@pxref{Kerberos authenticated}
+
+@cindex CVS_RCMD_PORT
+@item $CVS_RCMD_PORT
+Used in client-server mode.  If set, specifies the port
+number to be used when accessing the @sc{rcmd} demon on
+the server side. (Cuuently not used for Unix clients).
+
+@cindex CVS_CLIENT_LOG
+@item $CVS_CLIENT_LOG
+Used for debugging only in client-server
+mode.  If set, everything send to the server is logged
+into @file{@code{$CVS_CLIENT_LOG}.in} and everything
+send from the server is logged into
+@file{@code{$CVS_CLIENT_LOG}.out}.
+
+@cindex CVS_SERVER_SLEEP
+@item $CVS_SERVER_SLEEP
+Used only for debugging the server side in
+client-server mode.  If set, delays the start of the
+server the the specified amount of seconds.
+
+@cindex CVS_IGNORE_REMOTE_ROOT
+@item $CVS_IGNORE_REMOTE_ROOT
+(What is the purpose of this variable?)
+
+@cindex POSIXLY_CORRECT
+@item $POSIXLY_CORRECT
+Used to control the command line option parsing.  If
+set, permuting the command line is disabled (i.e. you
+must specify all options before other command line
+parameters).
+
+@cindex COMSPEC
+@item $COMSPEC
+Used under OS/2 only.  It specifies the name of the
+command interpreter and defaults to @sc{cmd.exe}.
+
+
 @end table
 
 @sc{cvs} is a front-end to @sc{rcs}.  The following environment
