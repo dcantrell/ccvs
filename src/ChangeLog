@@ -1,5 +1,12 @@
 2003-11-24  Derek Price  <derek@ximbiot.com>
 
+	* sanity.sh (modes3): Skip modes3-5 entirely under Cygwin since
+	permisions are broken there.  This change removes most of the earlier
+	Cygwin differentiation in this test ($cygwin_hack & $cygwin_hack2) in
+	favor of skipping the test entirely.
+
+2003-11-24  Derek Price  <derek@ximbiot.com>
+
 	* sanity.sh: Add `-h <hostname>' option to enable testing across a
 	:ext: connection to another host.  Warn when `-h' is specified without
 	$TESTDIR.  Leave $TESTDIR intact when it looks absolute since it may
@@ -12,6 +19,11 @@
 
 	(newroot): New function.
 	(*): Use newroot when appropriate.
+
+2003-11-21  Larry Jones  <lawrence.jones@eds.com>
+
+	* hash.c (printnode, printlist): Cast %p arguments to void * as
+	required by the C standard.
 
 2003-11-21  Larry Jones  <lawrence.jones@eds.com>
 
