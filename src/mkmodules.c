@@ -325,14 +325,24 @@ static const struct admin_file filelist[] = {
     {CVSROOTADM_WRITERS,
 	"a %s file specifies read/write users",
 	NULL},
-    /* Some have suggested listing CVSROOTADM_PASSWD here too.  The
-       security implications of transmitting hashed passwords over the
-       net are no worse than transmitting cleartext passwords which pserver
-       does, so this isn't a problem.  But I'm worried about the implications
-       of storing old passwords--if someone used a password in the past
-       they might be using it elsewhere, using a similar password, etc,
-       and so it doesn't seem to me like we should be saving old passwords,
-       even hashed.  */
+
+    /* Some have suggested listing CVSROOTADM_PASSWD here too.  This
+       would mean that CVS commands which operate on the
+       CVSROOTADM_PASSWD file would transmit hashed passwords over the
+       net.  This might seem to be no big deal, as pserver normally
+       transmits cleartext passwords, but the difference is that
+       CVSROOTADM_PASSWD contains *all* passwords, not just the ones
+       currently being used.  For example, it could be too easy to
+       accidentally give someone readonly access to CVSROOTADM_PASSWD
+       (e.g. via anonymous CVS or cvsweb), and then if there are any
+       guessable passwords for read/write access (usually there will be)
+       they get read/write access.
+
+       Another worry is the implications of storing old passwords--if
+       someone used a password in the past they might be using it
+       elsewhere, using a similar password, etc, and so saving old
+       passwords, even hashed, is probably not a good idea.  */
+
     {CVSROOTADM_CONFIG,
 	 "a %s file configures various behaviors",
 	 config_contents},

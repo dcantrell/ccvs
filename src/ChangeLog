@@ -1,5 +1,9 @@
 Sun Aug 10 12:18:31 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* mkmodules.c: Update comment with more reasons why having
+	CVSROOT/passwd be a regular administrative file would be a Bad
+	Idea.
+
 	* server.c (switch_to_user): Add comment about checking for errors
 	from setuid and friends.
 
