@@ -76,7 +76,7 @@ DEFS = @DEFS@ @includeopt@
 CC	 = @CC@
 CFLAGS = @CFLAGS@
 CPPFLAGS =
-LDFLAGS =
+LDFLAGS = @LDFLAGS@
 
 INCLUDES = -I. -I.. -I$(srcdir) -I$(top_srcdir)/lib
 .c.o:
@@ -180,6 +180,9 @@ $(OBJECTS) $(COMMON_OBJECTS) mkmodules.o: $(HEADERS) options.h
 
 subdir = src
 Makefile: ../config.status Makefile.in
+	cd .. && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= ./config.status
+
+options.h: ../config.status options.h.in
 	cd .. && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= ./config.status
 
 #../config.status: ../configure
