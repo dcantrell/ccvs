@@ -28800,15 +28800,204 @@ u=rw,g=r,o=r
 abc
 update"
 
+	    # The following test tests what was a potential client exploit in
+	    # CVS versions 1.11.14 and CVS versions 1.12.6 and earlier.  This
+	    # exploit would allow a trojan server to create arbitrary files,
+	    # anywhere the user had write permissions, even outside of the
+	    # user's sandbox.
+	    cat >$HOME/.bashrc <<EOF
+#!$TESTSHELL
+# This is where login scripts would usually be
+# stored.
+EOF
+	    cat >$TESTDIR/serveme <<EOF
+#!$TESTSHELL
+echo "Valid-requests Root Valid-responses valid-requests Directory Entry Modified Unchanged Argument Argumentx ci co update"
+echo "ok"
+echo "Rcs-diff $HOME/"
+echo "$HOME/.bashrc"
+echo "/.bashrc/73.50///"
+echo "u=rw,g=rw,o=rw"
+echo "20"
+echo "a1 1"
+echo "echo 'gotcha!'"
+echo "ok"
+cat >/dev/null
+EOF
+	    
+	    # If I don't run the following sleep between the above cat and
+	    # the following calls to dotest, sometimes the serveme file isn't
+	    # completely written yet by the time CVS tries to execute it,
+	    # causing the shell to intermittantly report syntax errors (usually
+	    # early EOF).  There's probably a new race condition here, but this
+	    # works.
+	    #
+	    # Incidentally, I can reproduce this behavior with Linux 2.4.20 and
+	    # Bash 2.05 or Bash 2.05b.
+	    sleep 1
+	    dotest_fail client-10 "$testcvs update" \
+"$CPROG update: Server attempted to update a file via an invalid pathname:
+$CPROG \[update aborted\]: \`$HOME/.bashrc'\."
+
+	    # A second try at a client exploit.  This one never actually
+	    # failed in the past, but I thought it wouldn't hurt to add a test.
+	    cat >$TESTDIR/serveme <<EOF
+#!$TESTSHELL
+echo "Valid-requests Root Valid-responses valid-requests Directory Entry Modified Unchanged Argument Argumentx ci co update"
+echo "ok"
+echo "Rcs-diff ./"
+echo "$HOME/.bashrc"
+echo "/.bashrc/73.50///"
+echo "u=rw,g=rw,o=rw"
+echo "20"
+echo "a1 1"
+echo "echo 'gotcha!'"
+echo "ok"
+cat >/dev/null
+EOF
+	    sleep 1
+	    dotest_fail client-11 "$testcvs update" \
+"$CPROG \[update aborted\]: patch original file \./\.bashrc does not exist"
+
+	    # A third try at a client exploit.  This one did used to fail like
+	    # client-10.
+	    cat >$TESTDIR/serveme <<EOF
+#!$TESTSHELL
+echo "Valid-requests Root Valid-responses valid-requests Directory Entry Modified Unchanged Argument Argumentx ci co update"
+echo "ok"
+echo "Rcs-diff ../../home/"
+echo "../../.bashrc"
+echo "/.bashrc/73.50///"
+echo "u=rw,g=rw,o=rw"
+echo "20"
+echo "a1 1"
+echo "echo 'gotcha!'"
+echo "ok"
+cat >/dev/null
+EOF
+	    sleep 1
+	    dotest_fail client-12 "$testcvs update" \
+"$CPROG update: Server attempted to update a file via an invalid pathname:
+$CPROG \[update aborted\]: \`\.\./\.\./home/.bashrc'\."
+
+	    # Try the same exploit using the Created response.
+	    cat >$TESTDIR/serveme <<EOF
+#!$TESTSHELL
+echo "Valid-requests Root Valid-responses valid-requests Directory Entry Modified Unchanged Argument Argumentx ci co update"
+echo "ok"
+echo "Created $HOME/"
+echo "$HOME/.bashrc"
+echo "/.bashrc/73.50///"
+echo "u=rw,g=rw,o=rw"
+echo "26"
+echo "#! /bin/sh"
+echo "echo 'gotcha!'"
+echo "ok"
+cat >/dev/null
+EOF
+	    sleep 1
+	    dotest_fail client-13 "$testcvs update" \
+"$CPROG update: Server attempted to update a file via an invalid pathname:
+$CPROG \[update aborted\]: \`$HOME/.bashrc'\."
+
+	    # Now try using the Update-existing response
+	    cat >$TESTDIR/serveme <<EOF
+#!$TESTSHELL
+echo "Valid-requests Root Valid-responses valid-requests Directory Entry Modified Unchanged Argument Argumentx ci co update"
+echo "ok"
+echo "Update-existing ../../home/"
+echo "../../home/.bashrc"
+echo "/.bashrc/73.50///"
+echo "u=rw,g=rw,o=rw"
+echo "26"
+echo "#! /bin/sh"
+echo "echo 'gotcha!'"
+echo "ok"
+cat >/dev/null
+EOF
+	    sleep 1
+	    dotest_fail client-14 "$testcvs update" \
+"$CPROG update: Server attempted to update a file via an invalid pathname:
+$CPROG \[update aborted\]: \`\.\./\.\./home/.bashrc'\."
+
+	    # Try the same exploit using the Merged response.
+	    cat >$TESTDIR/serveme <<EOF
+#!$TESTSHELL
+echo "Valid-requests Root Valid-responses valid-requests Directory Entry Modified Unchanged Argument Argumentx ci co update"
+echo "ok"
+echo "Merged $HOME/"
+echo "$HOME/.bashrc"
+echo "/.bashrc/73.50///"
+echo "u=rw,g=rw,o=rw"
+echo "26"
+echo "#! /bin/sh"
+echo "echo 'gotcha!'"
+echo "ok"
+cat >/dev/null
+EOF
+	    sleep 1
+	    dotest_fail client-15 "$testcvs update" \
+"$CPROG update: Server attempted to update a file via an invalid pathname:
+$CPROG \[update aborted\]: \`$HOME/.bashrc'\."
+
+	    # Now try using the Updated response
+	    cat >$TESTDIR/serveme <<EOF
+#!$TESTSHELL
+echo "Valid-requests Root Valid-responses valid-requests Directory Entry Modified Unchanged Argument Argumentx ci co update"
+echo "ok"
+echo "Updated ../../home/"
+echo "../../home/.bashrc"
+echo "/.bashrc/73.50///"
+echo "u=rw,g=rw,o=rw"
+echo "26"
+echo "#! /bin/sh"
+echo "echo 'gotcha!'"
+echo "ok"
+cat >/dev/null
+EOF
+	    sleep 1
+	    dotest_fail client-16 "$testcvs update" \
+"$CPROG update: Server attempted to update a file via an invalid pathname:
+$CPROG \[update aborted\]: \`\.\./\.\./home/.bashrc'\."
+
+	    # Try the same exploit using the Copy-file response.
+	    # As far as I know, Copy-file was never exploitable either.
+	    cat >$TESTDIR/serveme <<EOF
+#!$TESTSHELL
+echo "Valid-requests Root Valid-responses valid-requests Directory Entry Modified Unchanged Argument Argumentx ci co update"
+echo "ok"
+echo "Created ."
+echo "./innocuous"
+echo "/innocuous/73.50///"
+echo "u=rw,g=rw,o=rw"
+echo "26"
+echo "#! /bin/sh"
+echo "echo 'gotcha!'"
+echo "Copy-file ."
+echo "./innocuous"
+echo "$HOME/innocuous"
+echo "ok"
+cat >/dev/null
+EOF
+	    sleep 1
+	    dotest_fail client-18 "$testcvs update" \
+"$CPROG \[update aborted\]: protocol error: Copy-file tried to specify directory"
+
+	    # And verify that none of the exploits was successful.
+	    dotest client-19 "cat $HOME/.bashrc" \
+"#!$TESTSHELL
+# This is where login scripts would usually be
+# stored\."
+
 	    if $keep; then
-	      echo Keeping ${TESTDIR} and exiting due to --keep
+	      echo Keeping $TESTDIR and exiting due to --keep
 	      exit 0
 	    fi
 
 	    cd ../..
 	    rm -r 1
 	    rmdir ${TESTDIR}/bogus
-	    rm ${TESTDIR}/serveme
+	    rm $TESTDIR/serveme $HOME/.bashrc
 	    CVS_SERVER=${save_CVS_SERVER}; export CVS_SERVER
 	  fi # skip the whole thing for local
 	  ;;

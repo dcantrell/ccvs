@@ -37,6 +37,19 @@
 #   include "kerberos4-client.h"
 # endif
 
+
+
+/* Keep track of any paths we are sending for Max-dotdot so that we can verify
+ * that uplevel paths coming back form the server are valid.
+ *
+ * FIXME: The correct way to do this is probably provide some sort of virtual
+ * path map on the client side.  This would be generic enough to be applied to
+ * absolute paths supplied by the user too.
+ */
+static List *uppaths = NULL;
+
+
+
 static void add_prune_candidate (const char *);
 
 /* All the commands.  */
@@ -556,6 +569,58 @@ handle_valid_requests( char *args, int len )
 
 
 /*
+ * This is a proc for walklist().  It inverts the error return premise of
+ * walklist.
+ *
+ * RETURNS
+ *   True       If this path is prefixed by one of the paths in walklist and
+ *              does not step above the prefix path.
+ *   False      Otherwise.
+ */
+static
+int path_list_prefixed (Node *p, void *closure)
+{
+    const char *questionable = closure;
+    const char *prefix = p->key;
+    if (strncmp (prefix, questionable, strlen (prefix))) return 0;
+    questionable += strlen (prefix);
+    while (ISDIRSEP (*questionable)) questionable++;
+    if (*questionable == '\0') return 1;
+    return pathname_levels (questionable);
+}
+
+
+
+/*
+ * Need to validate the client pathname.  Disallowed paths include:
+ *
+ *   1. Absolute paths.
+ *   2. Pathnames that do not reference a specifically requested update
+ *      directory.
+ *
+ * In case 2, we actually only check that the directory is under the uppermost
+ * directories mentioned on the command line.
+ *
+ * RETURNS
+ *   True       If the path is valid.
+ *   False      Otherwise.
+ */
+static
+int is_valid_client_path (const char *pathname)
+{
+    /* 1. Absolute paths. */
+    if (isabsolute (pathname)) return 0;
+    /* 2. No up-references in path.  */
+    if (pathname_levels (pathname) == 0) return 1;
+    /* 2. No Max-dotdot paths registered.  */
+    if (uppaths == NULL) return 0;
+
+    return walklist (uppaths, path_list_prefixed, (void *)pathname);
+}
+
+
+
+/*
  * Do all the processing for PATHNAME, where pathname consists of the
  * repository and the filename.  The parameters we pass to FUNC are:
  * DATA is just the DATA parameter which was passed to
@@ -624,6 +689,36 @@ call_in_directory( char *pathname,
 	    short_repos = reposname;
 	}
     }
+
+   /* Now that we have SHORT_REPOS, we can calculate the path to the file we
+    * are being requested to operate on.
+    */
+    filename = strrchr (short_repos, '/');
+    if (filename == NULL)
+	filename = short_repos;
+    else
+	++filename;
+
+    short_pathname = xmalloc (strlen (pathname) + strlen (filename) + 5);
+    strcpy (short_pathname, pathname);
+    strcat (short_pathname, filename);
+
+    /* Now that we know the path to the file we were requested to operate on,
+     * we can verify that it is valid.
+     *
+     * For security reasons, if SHORT_PATHNAME is absolute or attempts to
+     * ascend outside of the current sanbbox, we abort.  The server should not
+     * send us anything but relative paths which remain inside the sandbox
+     * here.  Anything less means a trojan CVS server could create and edit
+     * arbitrary files on the client.
+     */
+    if (!is_valid_client_path (short_pathname))
+    {
+	error (0, 0,
+               "Server attempted to update a file via an invalid pathname:");
+        error (1, 0, "`%s'.", short_pathname);
+    }
+
     reposdirname = xstrdup (short_repos);
     p = strrchr (reposdirname, '/');
     if (p == NULL)
@@ -645,16 +740,6 @@ call_in_directory( char *pathname,
 	*p = '\0';
     if (client_prune_dirs)
 	add_prune_candidate (dir_name);
-
-    filename = strrchr (short_repos, '/');
-    if (filename == NULL)
-	filename = short_repos;
-    else
-	++filename;
-
-    short_pathname = xmalloc (strlen (pathname) + strlen (filename) + 5);
-    strcpy (short_pathname, pathname);
-    strcat (short_pathname, filename);
 
     if (toplevel_wd == NULL)
     {
@@ -4480,6 +4565,11 @@ send_max_dotdot (argc, argv)
     for (i = 0; i < argc; ++i)
     {
         level = pathname_levels (argv[i]);
+	if (level > 0)
+	{
+            if (uppaths == NULL) uppaths = getlist();
+	    push_string (uppaths, xstrdup (argv[i]));
+	}
         if (level > max_level)
             max_level = level;
     }
