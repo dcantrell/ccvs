@@ -1,3 +1,7 @@
+Thu Dec 21 16:00:00 1995  Jim Kingdon  <kingdon@peary.cyclic.com>
+
+	* options.h: Don't define NO_SOCKET_TO_FD.
+
 Mon Dec 18 09:57:29 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* options.h: Explain NO_SOCKET_TO_FD some more.
