@@ -1,5 +1,8 @@
 Mon Mar 24 13:50:24 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvs.texinfo (Creating a branch): Add comment about -r in branch
+	example.
+
 	* cvsclient.texi (Responses): Discuss meaning of tagspec and
 	future expansion in Set-sticky.  The behavior described is the one
 	which CVS has always implemented.
