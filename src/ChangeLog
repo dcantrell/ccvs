@@ -1,5 +1,10 @@
 2004-04-23  Derek Price  <derek@ximbiot.com>
 
+	* Makefile.am (AM_CPPFLAGS): No, really, $(top_builddir)/lib.
+	* Makefile.in: Regenerated.
+
+2004-04-23  Derek Price  <derek@ximbiot.com>
+
 	* Makefile.am (AM_CPPFLAGS): Add the builddir/lib directory for
 	generated header files.
 	* Makefile.in: Regenerated.
