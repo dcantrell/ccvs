@@ -424,7 +424,7 @@ parse_config (char *cvsroot)
 	    error (0, 0, "syntax error in %s: line '%s' is missing '='",
 		   pinfopath, line);
 	    free (pinfopath);
-	    goto error_return;
+	    continue;
 	}
 
 	*p++ = '\0';
@@ -510,10 +510,22 @@ warning: this CVS does not support PreservePermissions");
 	    UserAdminOptions = xmalloc(strlen(p) + 1);
 	    strcpy(UserAdminOptions, p);
 	}
-#ifdef SUPPORT_OLD_INFO_FMT_STRINGS
 	else if (strcmp (line, "UseNewInfoFmtStrings") == 0)
+#ifdef SUPPORT_OLD_INFO_FMT_STRINGS
 	    readBool (infopath, "UseNewInfoFmtStrings", p,
 		      &UseNewInfoFmtStrings);
+#else /* !SUPPORT_OLD_INFO_FMT_STRINGS */
+	{
+	    bool dummy;
+	    if (readBool (infopath, "UseNewInfoFmtStrings", p, &dummy)
+		&& !dummy)
+	    {
+		char *pinfopath = primary_root_inverse_translate (infopath);
+		error (1, 0,
+"%s: Old style info format strings not supported by this executable.",
+		       pinfopath);
+	    }
+	}
 #endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
 	else if (strcmp (line, "ImportNewFilesToVendorBranchOnly") == 0)
 	    readBool (infopath, "ImportNewFilesToVendorBranchOnly", p,
@@ -524,12 +536,16 @@ warning: this CVS does not support PreservePermissions");
 	    PrimaryServer = parse_cvsroot (p);
 	    if (PrimaryServer->method != fork_method
 		&& PrimaryServer->method != ext_method)
+	    {
 		/* I intentionally neglect to mention :fork: here.  It is
 	         * really only useful for testing.
 		 */
+		char *pinfopath = primary_root_inverse_translate (infopath);
 	        error (1, 0,
-"Only PrimaryServers with :ext: methods are valid, not `%s'.",
-		       p);
+"%s: Only PrimaryServers with :ext: methods are valid, not `%s'.",
+		       pinfopath, p);
+		free (pinfopath);
+	    }
 	}
 #endif /* PROXY_SUPPORT */
 #if defined PROXY_SUPPORT && ! defined TRUST_OS_FILE_CACHE
@@ -559,7 +575,6 @@ warning: this CVS does not support PreservePermissions");
 	    error (0, 0, "%s: unrecognized keyword '%s'",
 		   pinfopath, line);
 	    free (pinfopath);
-	    goto error_return;
 	}
     }
     if (ferror (fp_info))

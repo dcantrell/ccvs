@@ -1,5 +1,11 @@
 2004-09-15  Derek Price  <derek@ximbiot.com>
 
+	* parseinfo.c (parse_config): Complete parsing of the remainder of the
+	config file when errors are encountered.  Accept and ignore
+	UseNewInfoFmtStrings=yes when !SUPPORT_OLD_INFO_FMT_STRINGS.
+
+2004-09-15  Derek Price  <derek@ximbiot.com>
+
 	* buffer.c (buf_copy_data): Pass args to buf_append_data correctly.
 
 2004-09-15  Derek Price  <derek@ximbiot.com>
