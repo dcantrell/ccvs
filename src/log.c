@@ -800,7 +800,7 @@ log_fileproc (callerdat, finfo)
     int selrev = -1;
     RCSNode *rcsfile;
     char buf[50];
-    struct revlist *revlist;
+    struct revlist *revlist = NULL;
     struct log_data_and_rcs log_data_and_rcs;
 
     if ((rcsfile = finfo->rcs) == NULL)
@@ -854,7 +854,11 @@ log_fileproc (callerdat, finfo)
 
 	    selrev = walklist (rcsfile->versions, log_count_print,
 			       (void *) &log_data_and_rcs);
-	    if (log_data->sup_header && selrev == 0) return 0;
+	    if (log_data->sup_header && selrev == 0)
+	    {
+		log_free_revlist (revlist);
+		return 0;
+	    }
 	}
 
     }
@@ -863,6 +867,7 @@ log_fileproc (callerdat, finfo)
     {
 	cvs_output (rcsfile->path, 0);
 	cvs_output ("\n", 1);
+	log_free_revlist (revlist);
 	return 0;
     }
 
