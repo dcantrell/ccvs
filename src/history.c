@@ -1086,18 +1086,27 @@ read_hrecs (fname)
     hrec_head = (struct hrec *) xmalloc (hrec_max * sizeof (struct hrec));
 
     while(!hrec_end){
+	char temp[1];
 
         /* i is the actual number of bytes read from the file
 	   cp points to where we are in the buffer. 
            cpstart points to the start of the current buffer. */
 
     	if( i < STAT_BLOCKSIZE(st_buf)){
-	    hrec_end=1;
-	    if (*(cpstart + i - 1) != '\n')
-            {
-                *(cpstart + i) = '\n';/* Make sure last line ends in '\n' */
-	        i++;
-            }
+	    /* We are probably at the end of the file, but just to make sure... */
+	    if(read(fd, temp,1)<1)
+	    {  /* We are definitely at the end */
+		hrec_end=1;
+	        if (*(cpstart + i - 1) != '\n')
+                {
+                    *(cpstart + i) = '\n';/* Make sure last line ends in '\n' */
+	            i++;
+                }
+	    }else{
+	        /* since we know we still have space in the buffer, just tack the 
+                   temp character on to the end of the buffer */
+		*(cpstart + i) = *temp;
+	    }
         }
         *(cpstart + i) = '\0'; /* make certain the block is null terminated */
 	

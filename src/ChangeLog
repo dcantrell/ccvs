@@ -1,3 +1,11 @@
+1999-11-05  K.J. Paradise (kj@sourcegear.com)
+
+	* history.c: Added a trap to verify that if a 
+	read(file, buffer,blocksize) returns less than blocksize, 
+	that we really are at the end of the file.  I can't easily
+	come up with a test case where this code gets touched, so 
+	it may cause problems.  All sanity tests still pass though.
+
 1999-11-05  Jim Kingdon  <http://developer.redhat.com/>
 
 	* sanity.sh (logopt): New test, for Larry's fix.
