@@ -1,3 +1,7 @@
+2005-03-15  Derek Price  <derek@ximbiot.com>
+
+	* server.c (cvs_outerr): Quote error test in syslog messages.
+
 2005-03-15  Mark D. Baushke  <mdb@cvshome.org>
 
 	* history.c (select_hrec): Avoid possible memory leak.
