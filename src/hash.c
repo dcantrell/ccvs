@@ -389,6 +389,7 @@ nodetypestring (type)
     case LOCK:		return("LOCK");
     case NDBMNODE:	return("NDBMNODE");
     case FILEATTR:	return("FILEATTR");
+    case VARIABLE:	return("VARIABLE");
     }
 
     return("<trash>");

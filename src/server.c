@@ -1236,6 +1236,15 @@ serve_global_option (arg)
 	    goto error_return;
     }
 }
+
+static void
+serve_set (arg)
+    char *arg;
+{
+    /* FIXME: This sends errors immediately (I think); they should be
+       put into pending_error.  */
+    variable_set (arg);
+}
 
 /*
  * We must read data from a child process and send it across the
@@ -3764,6 +3773,7 @@ struct request requests[] =
   REQ_LINE("Argument", serve_argument, rq_essential),
   REQ_LINE("Argumentx", serve_argumentx, rq_essential),
   REQ_LINE("Global_option", serve_global_option, rq_optional),
+  REQ_LINE("Set", serve_set, rq_optional),
   REQ_LINE("expand-modules", serve_expand_modules, rq_optional),
   REQ_LINE("ci", serve_ci, rq_essential),
   REQ_LINE("co", serve_co, rq_essential),

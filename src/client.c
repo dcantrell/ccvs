@@ -2779,6 +2779,21 @@ start_kerberos_server (tofdp, fromfdp)
 
 #endif /* HAVE_KERBEROS */
 
+static int send_variable_proc PROTO ((Node *, void *));
+
+static int
+send_variable_proc (node, closure)
+    Node *node;
+    void *closure;
+{
+    send_to_server ("Set ", 0);
+    send_to_server (node->key, 0);
+    send_to_server ("=", 1);
+    send_to_server (node->data, 0);
+    send_to_server ("\012", 1);
+    return 0;
+}
+
 /* Contact the server.  */
 void
 start_server ()
@@ -2986,22 +3001,29 @@ start_server ()
 	}
     }
     if (gzip_level)
-      {
+    {
 	if (supported_request ("gzip-file-contents"))
-	  {
+	{
             char gzip_level_buf[5];
 	    send_to_server ("gzip-file-contents ", 0);
             sprintf (gzip_level_buf, "%d", gzip_level);
 	    send_to_server (gzip_level_buf, 0);
 
 	    send_to_server ("\012", 1);
-	  }
+	}
 	else
-	  {
+	{
 	    fprintf (stderr, "server doesn't support gzip-file-contents\n");
 	    gzip_level = 0;
-	  }
-      }
+	}
+    }
+    /* If "Set" is not supported, just silently fail to send the variables.
+       Users with an old server should get a useful error message when it
+       fails to recognize the ${=foo} syntax.  This way if someone uses
+       several server, some of which are new and some old, they can still
+       set user variables in their .cvsrc without trouble.  */
+    if (supported_request ("Set"))
+	walklist (variable_list, send_variable_proc, NULL);
 }
 
 #ifndef RSH_NOT_TRANSPARENT
