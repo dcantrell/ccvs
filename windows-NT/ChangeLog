@@ -1,3 +1,21 @@
+2004-05-19  Derek Price  <derek@ximbiot.com>
+
+	* config.h.in.in, config.h.in.footer: New files.
+	(Original patch from Conrad Pino <conrad@pino.com>.)
+
+	* Makefile.am (config.h.in): New target.
+	(EXTRA_DIST): Add new files, fix-msvc-mak.pl, & plhead.pl.  Remove
+	stamp-ch & stamp-sh.
+	(DISTCLEANFILES): Add stamp-ch & stamp-sh.
+	(MAINTAINERCLEANFILES): Add config.h.in & stamp-chi.
+	* stamp-ch, stamp-sh: Remove these files.  There is no need to check in
+	targets that don't require maintainer tools to build.
+	* fix-msvc-mak-head.pl: Move to...
+	* plhead.pl: ...here.
+	* mkconfig.pl: New file.
+
+	* Makefile.in, config.h, config.h.in: Regenerated.
+
 2004-05-15  Derek Price  <derek@ximbiot.com>
 
 	* ndir.c, pwd.c: Include xmalloc.h.
