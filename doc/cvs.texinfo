@@ -2619,14 +2619,18 @@ you delete them with @samp{cvs update -A}.  The
 the head of the trunk, and forgets any sticky tags,
 dates, or options.
 
-@c Is the fact that CVS works this way a bug or a
-@c feature?  If a feature, describe how you would use
-@c it to do something useful.
-Sticky tags are not just for branches.  If you check
-out a certain revision (such as 1.4) it will also
-become sticky.  Subsequent @samp{cvs update} will not
-retrieve the latest revision until you reset the tag
-with @samp{cvs update -A}.  Likewise, use of the
+@cindex sticky date
+Sticky tags are not just for branches.  For example,
+suppose that you want to avoid updating your working
+directory, to isolate yourself from possibly
+destabilizing changes other people are making.  You
+can, of course, just refrain from running @code{cvs
+update}.  But if you want to avoid updating only a
+portion of a larger tree, then sticky tags can help.
+If you check out a certain revision (such as 1.4) it
+will become sticky.  Subsequent @code{cvs update} will
+not retrieve the latest revision until you reset the
+tag with @code{cvs update -A}.  Likewise, use of the
 @samp{-D} option to @code{update} or @code{checkout}
 sets a @dfn{sticky date}, which, similarly, causes that
 date to be used for future retrievals.
