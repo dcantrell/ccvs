@@ -146,6 +146,7 @@ extern void client_nonexpanded_setup PROTO((void));
 extern char **failed_patches;
 extern int failed_patches_count;
 extern char toplevel_wd[];
+extern void client_import_setup PROTO((char *repository));
 extern int client_process_import_file
     PROTO((char *message, char *vfile, char *vtag,
 	   int targc, char *targv[], char *repository));

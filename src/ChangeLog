@@ -1,3 +1,10 @@
+Fri Jul  7 18:29:37 1995  Michael Hohmuth  <hohmuth@inf.tu-dresden.de>
+
+	* client.c, client.h (client_import_setup): New function.
+	(client_import_done, client_process_import_file): Add comments
+	regarding now-redundant code.
+	* import.c (import): Call client_import_setup.
+
 Tue Jul  4 09:21:26 1995  Bernd Leibing  <bernd.leibing@rz.uni-ulm.de>
 
 	* rcs.c (RCS_parsercsfile_i): Rename error to l_error; SunOS4 /bin/cc

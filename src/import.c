@@ -218,6 +218,7 @@ import (argc, argv)
 	}
 
 	logfp = stdin;
+	client_import_setup (repository);
 	err = import_descend (message, argv[1], argc - 2, argv + 2);
 	client_import_done ();
 	if (fprintf (to_server, "import\n") < 0)

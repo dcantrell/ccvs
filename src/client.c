@@ -2770,6 +2770,14 @@ send_files (argc, argv, local, aflag)
     send_repository ("", toplevel_repos, ".");
 }
 
+void
+client_import_setup (repository)
+    char *repository;
+{
+    if (toplevel_repos == NULL)		/* should always be true */
+        send_a_repository ("", repository, "");
+}
+
 /*
  * Process the argument import file.
  */
@@ -2784,6 +2792,9 @@ client_process_import_file (message, vfile, vtag, targc, targv, repository)
 {
     char *short_pathname;
     int first_time;
+
+    /* FIXME: I think this is always false now that we call
+       client_import_setup at the start.  */
 
     first_time = toplevel_repos == NULL;
 
@@ -2815,6 +2826,8 @@ client_import_done ()
 	 * latter case; I don't think toplevel_repos matters for the
 	 * former.
 	 */
+        /* FIXME: "can't happen" now that we call client_import_setup
+	   at the beginning.  */
 	toplevel_repos = xstrdup (server_cvsroot);
     send_repository ("", toplevel_repos, ".");
 }
