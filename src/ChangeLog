@@ -1,3 +1,9 @@
+Mon Sep 15 14:27:54 1997  martin.sjoelin@ubs.com
+	and Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* rcs.c (RCS_checkout): fwrite in bite-size pieces, not the whole
+	file in one fwrite.
+
 Sun Sep 14 12:23:15 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* commit.c (check_fileproc): If the file has "conflict
