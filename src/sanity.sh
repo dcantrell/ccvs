@@ -10421,13 +10421,13 @@ G@#..!@#=&"
 	    CVS_SERVER_SAVED=${CVS_SERVER}
 	    CVS_SERVER=${TESTDIR}/cvs-none; export CVS_SERVER
 
-	    # The ${DOTSTAR} matches either "end of file from server"
+	    # The ${DOTSTAR} matches the exact exec error message
+	    # (which varies) and either "end of file from server"
 	    # (if the process doing the exec exits before the parent
 	    # gets around to sending data to it) or "broken pipe" (if it
 	    # is the other way around).
 	    dotest_fail devcom3-9a "${testcvs} edit w1" \
-"${PROG} \[edit aborted\]: cannot exec ${TESTDIR}/cvs-none: No such file or directory
-${DOTSTAR}"
+"${PROG} \[edit aborted\]: cannot exec ${TESTDIR}/cvs-none: ${DOTSTAR}"
 	    dotest devcom3-9b "test -w w1" ""
 	    dotest devcom3-9c "cat CVS/Notify" \
 "Ew1	[SMTWF][uoehra][neduit] [JFAMSOND][aepuco][nbrylgptvc] [0-9 ][0-9] [0-9:]* [0-9][0-9][0-9][0-9] GMT	[-a-zA-Z_.0-9]*	${TESTDIR}/1/first-dir	EUC"
