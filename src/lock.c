@@ -101,16 +101,18 @@ unlock (repository)
      * lead to the limitation that one user ID should not be committing
      * files into the same Repository directory at the same time. Oh well.
      */
-    (void) sprintf (tmp, "%s/%s", repository, CVSLCK);
-    if ( Check_Owner(tmp) &&
-	(writelock[0] != '\0' || (readlock[0] != '\0' && cleanup_lckdir))) 
+    if (writelock[0] != '\0' || (readlock[0] != '\0' && cleanup_lckdir)) 
     {
+	    (void) sprintf (tmp, "%s/%s", repository, CVSLCK);
+    	    if (Check_Owner(tmp))
+	    {
 #ifdef AFSCVS
-      char rmuidlock[PATH_MAX];
-      sprintf(rmuidlock, "rm -f %s/uidlock%d", tmp, geteuid() );
-      system(rmuidlock);
+		char rmuidlock[PATH_MAX];
+		sprintf(rmuidlock, "rm -f %s/uidlock%d", tmp, geteuid() );
+		system(rmuidlock);
 #endif
-      (void) rmdir (tmp);
+	    (void) rmdir (tmp);
+	    }
     }
     cleanup_lckdir = 0;
 }

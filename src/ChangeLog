@@ -1,3 +1,9 @@
+Wed Oct 18 11:19:40 1995  J.T. Conklin  <jtc@slave.cygnus.com>
+
+	* lock.c (unlock): Change order of comparison so that Check_Owner
+	is called only if other conditions are true.  This performance 
+	enhancement was broken when the AFS support was added.
+
 Wed Oct 18 12:51:33 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
         * main.c (main): check if argv[0] is "pserver" with else-if, not
