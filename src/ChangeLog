@@ -1,3 +1,11 @@
+1999-08-25  Larry Jones  <larry.jones@sdrc.com>
+
+	* sanity.sh: Use "${AWK}" instead of "awk" to make it easier for
+	people to use nawk/gawk/etc.; use an explicit "-print" with find
+	since some older version don't assume it; rename tests to avoid
+	duplicate importc-8.  (Changes along these lines suggested by
+	Chris Cameron <chris.cameron@ot.co.nz>.)
+
 1999-08-24  Larry Jones  <larry.jones@sdrc.com>
 
 	* commit.c (check_fileproc): Don't crash when a file has no
