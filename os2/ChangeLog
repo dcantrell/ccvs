@@ -1,3 +1,9 @@
+Wed Jul 30 19:15:41 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* README: Talk about srcdir, top_srcdir, and rule to generate
+	"Makefile".
+	* Makefile.in: Add comment about Makefile rule.
+
 Mon Jun 16 13:49:39 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* config.h, rcmd.h, rcmd.c: Add "copyright" notice.
