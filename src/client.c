@@ -4036,6 +4036,7 @@ start_rsh_server (tofdp, fromfdp)
 	if (rsh_pid < 0)
 	    error (1, errno, "cannot start server via rsh");
     }
+    free (command);
 }
 
 #endif /* START_RSH_WITH_POPEN_RW */

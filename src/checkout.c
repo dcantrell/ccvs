@@ -384,8 +384,8 @@ checkout (argc, argv)
 		    server_set_entstat (preload_update_dir, repository);
 #endif
 	    }
+	    free (repository);
 	}
-	free (repository);
     }
 
     /* If we will be calling history_write, work out the name to pass

@@ -183,6 +183,9 @@ add (argc, argv)
 	/* FIXME: should be able to pass SEND_NO_CONTENTS, I think.  */
 	send_files (argc, argv, 0, 0, SEND_BUILD_DIRS);
 	send_to_server ("add\012", 0);
+	if (message)
+	    free (message);
+	free (repository);
 	return get_responses_and_close ();
     }
 #endif
