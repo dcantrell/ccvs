@@ -1,3 +1,10 @@
+Mon Dec 30 15:43:48 1996  Abe Feldman  <feldman@harvey.cyclic.com>
+
+	* checkout.c (build_dirs_and_chdir): Reproduced block containing
+	Create_Admin, placing it before Subdir_Register.
+	* sanity.sh (basicb): Added tests 1a and 9a to test above changes
+	to the checkout command.
+
 Mon Dec 30 13:29:14 1996  uz@wuschel.ibb.schwaben.com (Ullrich von Bassewitz)
 			  and Jim Kingdon  <kingdon@harvey.cyclic.com>
 
