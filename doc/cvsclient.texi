@@ -1279,7 +1279,8 @@ In the case of
 not to the patch itself.  The client should compute the checksum itself,
 after receiving the file or patch, and signal an error if the checksums
 do not match.  The checksum is the 128 bit MD5 checksum represented as
-32 hex digits.  This response is optional, and is only used if the
+32 hex digits (MD5 is described in RFC1321).
+This response is optional, and is only used if the
 client supports it (as judged by the @code{Valid-responses} request).
 
 @item Copy-file @var{pathname} \n
