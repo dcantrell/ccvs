@@ -57,12 +57,22 @@ extern void server_copy_file
    case, vers must be non-NULL, and UPDATED indicates whether the file
    is now up to date (SERVER_UPDATED, yes, SERVER_MERGED, no,
    SERVER_PATCHED, yes, but file is a diff from user version to
-   repository version).  */
-enum server_updated_arg4 {SERVER_UPDATED, SERVER_MERGED, SERVER_PATCHED};
+   repository version, SERVER_RCS_DIFF, yes, like SERVER_PATCHED but
+   with an RCS style diff).  */
+enum server_updated_arg4
+{
+    SERVER_UPDATED,
+    SERVER_MERGED,
+    SERVER_PATCHED,
+    SERVER_RCS_DIFF
+};
 extern void server_updated
     PROTO((struct file_info *finfo, Vers_TS *vers,
 	   enum server_updated_arg4 updated, struct stat *,
 	   unsigned char *checksum));
+
+/* Whether we should send RCS format patches.  */
+extern int server_use_rcs_diff PROTO((void));
 
 /* Set the Entries.Static flag.  */
 extern void server_set_entstat PROTO((char *update_dir, char *repository));

@@ -3147,6 +3147,8 @@ server_updated (finfo, vers, updated, file_info, checksum)
 	    buf_output0 (protocol, "Merged ");
 	else if (updated == SERVER_PATCHED)
 	    buf_output0 (protocol, "Patched ");
+	else if (updated == SERVER_RCS_DIFF)
+	    buf_output0 (protocol, "Rcs-diff ");
 	else
 	    abort ();
 	output_dir (finfo->update_dir, finfo->repository);
@@ -3244,7 +3246,9 @@ server_updated (finfo, vers, updated, file_info, checksum)
 	 * not up-to-date, and we indicate that by leaving the file there.
 	 * I'm thinking of cases like "cvs update foo/foo.c foo".
 	 */
-	if ((updated == SERVER_UPDATED || updated == SERVER_PATCHED)
+	if ((updated == SERVER_UPDATED
+	     || updated == SERVER_PATCHED
+	     || updated == SERVER_RCS_DIFF)
 	    /* But if we are joining, we'll need the file when we call
 	       join_file.  */
 	    && !joining ())
@@ -3280,6 +3284,14 @@ server_updated (finfo, vers, updated, file_info, checksum)
 	       "CVS server internal error: Register *and* Scratch_Entry.\n");
     buf_send_counted (protocol);
   done:;
+}
+
+/* Return whether we should send patches in RCS format.  */
+
+int
+server_use_rcs_diff ()
+{
+    return supported_response ("Rcs-diff");
 }
 
 void

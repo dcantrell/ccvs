@@ -3720,6 +3720,79 @@ apply_rcs_changes (lines, diffbuf, difflen, name, addvers, delvers)
     return 1;
 }
 
+/* Apply an RCS change text to a buffer.  The function name starts
+   with rcs rather than RCS because this does not take an RCSNode
+   argument.  NAME is used in error messages.  TEXTBUF is the text
+   buffer to change, and TEXTLEN is the size.  DIFFBUF and DIFFLEN are
+   the change buffer and size.  The new buffer is returned in *RETBUF
+   and *RETLEN.  The new buffer is allocated by xmalloc.  The function
+   changes the contents of TEXTBUF.  This function returns 1 for
+   success.  On failure, it calls error and returns 0.  */
+
+int
+rcs_change_text (name, textbuf, textlen, diffbuf, difflen, retbuf, retlen)
+     const char *name;
+     char *textbuf;
+     size_t textlen;
+     const char *diffbuf;
+     size_t difflen;
+     char **retbuf;
+     size_t *retlen;
+{
+    struct linevector lines;
+    int ret;
+
+    *retbuf = NULL;
+    *retlen = 0;
+
+    linevector_init (&lines);
+
+    if (! linevector_add (&lines, textbuf, textlen, NULL, 0))
+	error (1, 0, "cannot initialize line vector");
+
+    if (! apply_rcs_changes (&lines, diffbuf, difflen, name, NULL, NULL))
+    {
+	error (0, 0, "invalid change text in %s", name);
+	ret = 0;
+    }
+    else
+    {
+	char *p;
+	size_t n;
+	unsigned int ln;
+
+	n = 0;
+	for (ln = 0; ln < lines.nlines; ++ln)
+	    /* 1 for \n */
+	    n += lines.vector[ln]->len + 1;
+
+	p = xmalloc (n);
+	*retbuf = p;
+
+	for (ln = 0; ln < lines.nlines; ++ln)
+	{
+	    memcpy (p, lines.vector[ln]->text, lines.vector[ln]->len);
+	    p += lines.vector[ln]->len;
+	    if (lines.vector[ln]->has_newline)
+		*p++ = '\n';
+	}
+
+	*retlen = p - *retbuf;
+	assert (*retlen <= n);
+
+	ret = 1;
+    }
+
+    linevector_free (&lines);
+
+    /* Note that this assumes that we have not called from anything
+       else which uses the block vectors.  FIXME: We could fix this by
+       saving and restoring the state of the block allocation code.  */
+    block_free ();
+
+    return ret;
+}
+
 /* Walk the deltas in RCS to get to revision VERSION.
 
    If OP is RCS_ANNOTATE, then write annotations using cvs_output.
