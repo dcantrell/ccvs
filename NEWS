@@ -3,9 +3,13 @@ Changes since 1.11.18:
 
 BUG FIXES
 
+* An intermittant assertion failure in checkout has been fixed.
+
 * Thanks to a report from Chris Bohn <cbohn@rrinc.com>, all the source files
   needed for the Windows "red file" fix are actually included in the
   distribution.
+
+* Misc bug and documentation fixes.
 
 Changes from 1.11.17 to 1.11.18:
 ********************************
