@@ -1,3 +1,10 @@
+2000-11-08  Larry Jones  <larry.jones@sdrc.com>
+
+	* admin.c (admin): Use getgroups() to check for membership in
+	CVS_ADMIN_GROUP if it exists.  In any event, check the user's
+	primary group in addition to any additional groups.
+	(Reported by Thomas Okken <TOkken@refco.com>.)
+
 2000-11-06  Jim Meyering  <meyering@lucent.com>
 
 	Compile with gcc's -Wformat and fix the exposed problems.

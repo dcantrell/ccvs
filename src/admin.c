@@ -372,29 +372,40 @@ admin (argc, argv)
     argv += optind;
 
 #ifdef CVS_ADMIN_GROUP
-    grp = getgrnam(CVS_ADMIN_GROUP);
-     /* skip usage right check if group CVS_ADMIN_GROUP does not exist */
-    if (grp != NULL)
+    /* The use of `cvs admin -k' is unrestricted.  However, any other
+       option is restricted if the group CVS_ADMIN_GROUP exists.  */
+    if (!only_k_option &&
+	(grp = getgrnam(CVS_ADMIN_GROUP)) != NULL)
     {
-	char *me = getcaller();
-	char **grnam = grp->gr_mem;
-	/* The use of `cvs admin -k' is unrestricted.  However, any
-	   other option is restricted.  */
-	int denied = ! only_k_option;
-	
-	while (*grnam)
-	{
-	    if (strcmp(*grnam, me) == 0) 
-	    {
-		denied = 0;
-		break;
-	    }
-	    grnam++;
-	}
+#ifdef HAVE_GETGROUPS
+	gid_t *grps;
+	int n;
 
-	if (denied)
+	/* get number of auxiliary groups */
+	n = getgroups (0, NULL);
+	if (n < 0)
+	    error (1, errno, "unable to get number of auxiliary groups");
+	grps = (gid_t *) xmalloc((n + 1) * sizeof *grps);
+	n = getgroups (n, grps);
+	if (n < 0)
+	    error (1, errno, "unable to get list of auxiliary groups");
+	grps[n] = getgid();
+	for (i = 0; i <= n; i++)
+	    if (grps[i] == grp->gr_gid) break;
+	free (grps);
+	if (i > n)
 	    error (1, 0, "usage is restricted to members of the group %s",
 		   CVS_ADMIN_GROUP);
+#else
+	char *me = getcaller();
+	char **grnam;
+	
+	for (grnam = grp->gr_mem; *grnam; grnam++)
+	    if (strcmp (*grnam, me) == 0) break;
+	if (!*grnam && getgid() != grp->gr_gid)
+	    error (1, 0, "usage is restricted to members of the group %s",
+		   CVS_ADMIN_GROUP);
+#endif
     }
 #endif
 
