@@ -16,12 +16,6 @@
    We just want to avoid a redefinition error message.  */
 #undef _ALL_SOURCE
 
-/* Define if type char is unsigned and you are not using gcc.  */
-/* We wrote a little test program whose output suggests that char is
-   signed on this system.  Go back and check the verdict when CVS
-   is configured on floss...  */
-#undef __CHAR_UNSIGNED__
-
 /* Define to empty if the keyword does not work.  */
 /* Const is working.  */
 #undef const
