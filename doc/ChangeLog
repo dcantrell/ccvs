@@ -1,5 +1,8 @@
 1998-09-13  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvsclient.texi (Requests): Re-word description of Sticky to
+	allow room for "Ntagname" (or other, future, values).
+
 	* cvs.texinfo (tag): Remove confusing wording about supplying
 	revision numbers "implicitly".
 
