@@ -1,5 +1,8 @@
 Fri Feb 23 16:36:11 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* README: Mention comp.software.config-mgmt.  Don't mention old
+	cyclic-cvs mailing list.
+
 	* acconfig.h: Add AUTH_SERVER_SUPPORT.  Remove DIFF and GREP (no
 	longer used).
 	* configure.in: Define AUTH_SERVER_SUPPORT.
