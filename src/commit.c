@@ -336,6 +336,9 @@ commit (argc, argv)
      * For log purposes, do not allow "root" to commit files.  If you look
      * like root, but are really logged in as a non-root user, it's OK.
      */
+    /* FIXME: Shouldn't this check be much more closely related to the
+       readonly user stuff (CVSROOT/readers, &c).  That is, why should
+       root be able to "cvs init", "cvs import", &c, but not "cvs ci"?  */
     if (geteuid () == (uid_t) 0)
     {
 	struct passwd *pw;

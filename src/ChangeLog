@@ -1,3 +1,8 @@
+Mon Oct 13 22:46:03 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* commit.c (commit): Add comment about CVS_BADROOT and command
+	other than "commit".
+
 1997-10-11  Noel Cragg  <noel@swish.red-bean.com>
 
 	* options.h.in: RELATIVE_REPOS has been checked for bitrot -- it
