@@ -115,7 +115,6 @@ log_buffer_output (void *closure, const char *data, int have, int *wrote)
 	if (fwrite (data, 1, n_to_write, lb->log) != n_to_write)
 	    error (lb->fatal_errors, errno, "writing to log file");
 	fflush (lb->log);
-	fsync (fileno (lb->log));
     }
 
     return 0;
@@ -165,8 +164,8 @@ log_buffer_disable (struct buffer *buf)
     SIG_beginCrSect();
     if (lb->log)
     {
-	/* fflush (lb->log);
-	fsync (fileno (lb->log)); */
+	fflush (lb->log);
+	fsync (fileno (lb->log));
 	if (fclose (lb->log) < 0)
 	    error (0, errno, "closing log file");
 	lb->log = NULL;

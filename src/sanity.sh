@@ -583,6 +583,8 @@ if test -z "${TESTDIR}" || echo "${TESTDIR}" |grep '^[^/]'; then
 fi
 cd ${TESTDIR}
 
+
+
 # Now set $TMPDIR if the user hasn't overridden it.
 #
 # We use a $TMPDIR under $TESTDIR by default so that two tests may be run at
@@ -970,6 +972,21 @@ dotest_internal_debug ()
   fi
 }
 
+run_filter ()
+{
+  if test -n "$TEST_FILTER"; then
+    # Make sure there is an EOL
+    echo >>$TESTDIR/dotest.tmp
+    sed '${/^$/d}' <$TESTDIR/dotest.tmp >$TESTDIR/dotest.tmp.step2
+    # Run the filter
+    eval "$TEST_FILTER" <$TESTDIR/dotest.tmp.step2 >$TESTDIR/dotest.tmp.filtered
+    diff -u $TESTDIR/dotest.tmp $TESTDIR/dotest.tmp.filtered \
+	    >$TESTDIR/dotest.diff
+    mv $TESTDIR/dotest.tmp.filtered $TESTDIR/dotest.tmp
+    rm $TESTDIR/dotest.tmp.step2
+  fi
+}
+
 # Usage:
 #  dotest TESTNAME COMMAND OUTPUT [OUTPUT2]
 # TESTNAME is the name used in the log to identify the test.
@@ -985,9 +1002,10 @@ dotest_internal_debug ()
 # lack \|).
 dotest ()
 {
-  rm -f ${TESTDIR}/dotest.ex? 2>&1
-  eval "$2" >${TESTDIR}/dotest.tmp 2>&1
+  rm -f $TESTDIR/dotest.ex? 2>&1
+  eval "$2" >$TESTDIR/dotest.tmp 2>&1
   status=$?
+  run_filter
   if test "$status" != 0; then
     cat ${TESTDIR}/dotest.tmp >>${LOGFILE}
     echo "exit status was $status" >>${LOGFILE}
@@ -999,9 +1017,10 @@ dotest ()
 # Like dotest except only 2 args and result must exactly match stdin
 dotest_lit ()
 {
-  rm -f ${TESTDIR}/dotest.ex? 2>&1
-  eval "$2" >${TESTDIR}/dotest.tmp 2>&1
+  rm -f $TESTDIR/dotest.ex? 2>&1
+  eval "$2" >$TESTDIR/dotest.tmp 2>&1
   status=$?
+  run_filter
   if test "$status" != 0; then
     cat ${TESTDIR}/dotest.tmp >>${LOGFILE}
     echo "exit status was $status" >>${LOGFILE}
@@ -1022,9 +1041,10 @@ dotest_lit ()
 # Like dotest except exitstatus should be nonzero.
 dotest_fail ()
 {
-  rm -f ${TESTDIR}/dotest.ex? 2>&1
-  eval "$2" >${TESTDIR}/dotest.tmp 2>&1
+  rm -f $TESTDIR/dotest.ex? 2>&1
+  eval "$2" >$TESTDIR/dotest.tmp 2>&1
   status=$?
+  run_filter
   if test "$status" = 0; then
     cat ${TESTDIR}/dotest.tmp >>${LOGFILE}
     echo "exit status was $status" >>${LOGFILE}
@@ -1039,6 +1059,7 @@ dotest_sort ()
   rm -f ${TESTDIR}/dotest.ex? 2>&1
   eval "$2" >${TESTDIR}/dotest.tmp1 2>&1
   status=$?
+  run_filter
   if test "$status" != 0; then
     cat ${TESTDIR}/dotest.tmp1 >>${LOGFILE}
     echo "exit status was $status" >>${LOGFILE}
@@ -1051,9 +1072,10 @@ dotest_sort ()
 # Like dotest_fail except output is sorted.
 dotest_fail_sort ()
 {
-  rm -f ${TESTDIR}/dotest.ex? 2>&1
-  eval "$2" >${TESTDIR}/dotest.tmp1 2>&1
+  rm -f $TESTDIR/dotest.ex? 2>&1
+  eval "$2" >$TESTDIR/dotest.tmp1 2>&1
   status=$?
+  run_filter
   if test "$status" = 0; then
     cat ${TESTDIR}/dotest.tmp1 >>${LOGFILE}
     echo "exit status was $status" >>${LOGFILE}
