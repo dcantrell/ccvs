@@ -1,3 +1,8 @@
+Fri Mar  3 11:59:49 1995  Jim Blandy  <jimb@totoro.bio.indiana.edu>
+
+	* classify.c (Classify_File): Put check for dead file inside
+	"#ifdef DEATH_SUPPORT".
+
 Thu Feb 23 23:03:43 1995  Jim Blandy  <jimb@totoro.bio.indiana.edu>
 
 	* update.c (join_file): Don't pass the -E option to rcsmerge here,
