@@ -451,10 +451,7 @@ HOME=${TESTDIR}/home; export HOME
 # tests.
 
 if test x"$*" = x; then
-	# We omit rdiff for now, because we have put off
-	# committing the changes that make it work until after the 1.9
-	# release.
-	tests="basica basicb basic1 deep basic2 death death2 branches multibranch import join new newb conflicts conflicts2 modules modules2 mflag errmsg1 devcom ignore binfiles binwrap info serverpatch log log2"
+	tests="basica basicb basic1 deep basic2 rdiff death death2 branches multibranch import join new newb conflicts conflicts2 modules modules2 mflag errmsg1 devcom ignore binfiles binwrap info serverpatch log log2"
 else
 	tests="$*"
 fi
@@ -1445,8 +1442,8 @@ diff -c trdiff/foo:1\.1\.1\.1 trdiff/foo:1\.2
 --- trdiff/foo	.*
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
 \*\*\* 1,2 \*\*\*\*
-! \$''Id\$
-! \$''Name\$
+! \$''Id: foo,v 1\.1\.1\.1 [0-9/]* [0-9:]* [a-zA-Z0-9][a-zA-Z0-9]* Exp \$
+! \$''Name: T1 \$
 --- 1,3 ----
 ! \$''Id: foo,v 1\.2 [0-9/]* [0-9:]* [a-zA-Z0-9][a-zA-Z0-9]* Exp \$
 ! \$''Name: local-v0 \$
@@ -1460,34 +1457,6 @@ diff -c /dev/null trdiff/new:1\.1
 --- 1,2 ----
 '"${PLUS}"' #ident	"@(#)trdiff:\$''Name: local-v0 \$:\$''Id: new,v 1\.1 [0-9/]* [0-9:]* [a-zA-Z0-9][a-zA-Z0-9]* Exp \$"
 '"${PLUS}"' new file'
-
-		# This appears to be broken client/server
-		if test "x$remote" = xno; then
-		dotest rdiff-9 \
-		  "${testcvs} rdiff -Ko -kv -r T1 -r local-v0 trdiff" \
-'cvs [a-z]*: Diffing trdiff
-Index: trdiff/foo
-diff -c trdiff/foo:1\.1\.1\.1 trdiff/foo:1\.2
-\*\*\* trdiff/foo:1\.1\.1\.1	.*
---- trdiff/foo	.*
-\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
-\*\*\* 1,2 \*\*\*\*
-! \$''Id\$
-! \$''Name\$
---- 1,3 ----
-! foo,v 1\.2 .* Exp
-! local-v0
-! something
-Index: trdiff/new
-diff -c /dev/null trdiff/new:1\.1
-\*\*\* /dev/null	.*
---- trdiff/new	.*
-\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
-\*\*\* 0 \*\*\*\*
---- 1,2 ----
-'"${PLUS}"' #ident	"@(#)trdiff:local-v0:new,v 1\.1 .* Exp"
-'"${PLUS}"' new file'
-		fi # end tests we are skipping for client/server
 
 # FIXME: will this work here?
 #		if test "$keep" = yes; then

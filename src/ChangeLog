@@ -1,5 +1,15 @@
 Thu Oct 17 15:21:56 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* sanity.sh: Reenable rdiff tests.  Delete rdiff-9 test to reflect
+	the fact that the change to add a -K option has not been
+	incorporated.  Adjust rdiff-8 test to reflect the fact that the
+	change to change the default keyword expansion for the first
+	revision has not been incorporated.
+	* patch.c (patch_fileproc): Pass the symbolic revision to
+	RCS_checkout so that Name can be expanded correctly.  Reinstates
+	one of the 30 Sep 96 changes and fixes a bug which the sanity.sh
+	rdiff test tests for.
+
 	Reinstate change from 30 Sep 96:
 	* patch.c (patch): CLIENT_SUPPORT: send '-f' if NOT force_tag_match
 
