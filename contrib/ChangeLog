@@ -1,3 +1,11 @@
+Wed Oct 16 10:22:44 1996  Jim Blandy  <jimb@totoro.cyclic.com>
+
+	* rcs2log.sh: Change date output format to something CVS 1.9
+ 	accepts.  I think this breaks the Sep 29 change, but I don't have
+ 	a copy of CVS 1.5 handy, so I can't find a format that works with
+ 	both, and I think it's more important that it work with the
+ 	version it's distributed with.
+
 Sat Oct 12 21:18:19 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* README: Don't mention pcl-cvs; it isn't here any more.
