@@ -2256,8 +2256,8 @@ connect_to_pserver (tofdp, fromfdp, log)
 	if (shutdown (sock, 2) < 0)
 	    error (1, errno, "shutdown() failed (server %s)", server_host);
         error (1, 0, 
-               "unrecognized response from %s in authorization protocol", 
-               server_host);
+               "unrecognized auth response from %s: %s", 
+               server_host, read_buf);
       }
     /* Else authorization granted, so we can go on... */
   }

@@ -3747,29 +3747,165 @@ error ENOMEM Virtual memory exhausted.\n");
 #endif /* 1/0 */
 
 
-/* Return 1 iff password matches, else 0. */
-int
-check_password (username, password)
-     char *username, *password;
+#ifdef CVS_PASSWORDS_CASE_INSENSITIVE
+/* Return value needs freeing. */
+char *
+downcase (string)
+     char *string;
 {
-  struct passwd *pw;
-  char *found_passwd;
+  char *ret;
+  int i;
 
-  pw = getpwnam (username);
-  if (pw == NULL)
+  ret = xmalloc (strlen (string) + 1);
+
+  for (i = 0; string[i]; i++)
     {
-      printf ("E Fatal error, aborting.\n"
-              "error 0 %s: no such user\n", username);
+      ret[i] = tolower (string[i]);
+    }
+  ret[i] = '\0';
+  
+  return ret;
+}
+#endif /* CVS_PASSWORDS_CASE_INSENSITIVE */
+
+
+/* 
+ * 0 means no entry found for this user.
+ * 1 means entry found and password matches.
+ * 2 means entry found, but password does not match.
+ */
+int
+check_repository_password (username, password, repository)
+     char *username, *password, *repository;
+{
+  int retval = 0;
+  FILE *fp;
+  char *filename;
+  char *pwd_lwr;
+  char linebuf[MAXLINELEN];
+  int found_it = 0, len;
+
+#ifdef CVS_PASSWORDS_CASE_INSENSITIVE
+  pwd_lwr = downcase (password);
+#else /* ! CVS_PASSWORDS_CASE_INSENSITIVE */
+  pwd_lwr = password;
+#endif /* CVS_PASSWORDS_CASE_INSENSITIVE */
+
+  filename = xmalloc (strlen (repository)
+                      + 1
+                      + strlen ("CVSROOT")
+                      + 1
+                      + strlen ("passwd")
+                      + 1);
+  if (! filename)
+    {
+      printf ("out of memory\n");
+      fflush (stdout);
       exit (1);
     }
-  found_passwd = pw->pw_passwd;
+  strcpy (filename, repository);
+  strcat (filename, "/CVSROOT");
+  strcat (filename, "/passwd");
+  
+  fp = fopen (filename, "r");
+  if (fp == NULL)
+    {
+      /* This is ok -- the cvs passwd file might not exist. */
+      fclose (fp);
+      return 0;
+    }
 
-  if (found_passwd && *found_passwd)
-    return (! strcmp (found_passwd, crypt (password, found_passwd)));
-  else if (password && *password)
-    return 1;
+  /* Look for a relevant line -- one with this user's name. */
+  len = strlen (username);
+  while (fgets (linebuf, MAXPATHLEN - 1, fp))
+    {
+      if (strncmp (linebuf, username, len) == 0)
+        {
+          found_it = 1;
+          break;
+        }
+    }
+  fclose (fp);
+
+  /* If found_it != 0, then linebuf contains the information we need. */
+  if (found_it)
+    {
+      char *found_password;
+
+      strtok (linebuf, ":");
+      found_password = strtok (NULL, ": \n");
+
+      /* One of the crypt() calls below is redundant if
+         CVS_PASSWORDS_CASE_INSENSITIVE is not defined, but that's no
+         big deal.  This is client/server anyway, so the speed
+         bottleneck is certainly not going to be in the number of
+         calls to crypt()! Readability is more important. */
+
+      if ((strcmp (found_password, crypt (pwd_lwr, found_password)) == 0)
+          ||
+          (strcmp (found_password, crypt (password, found_password)) == 0))
+        retval = 1;
+      else
+        retval = 2;
+    }
   else
+    retval = 0;
+
+#ifdef CVS_PASSWORDS_CASE_INSENSITIVE
+  free (pwd_lwr);
+#endif /* CVS_PASSWORDS_CASE_INSENSITIVE */
+  free (filename);
+
+  return retval;
+}
+
+
+/* Return 1 if password matches, else 0. */
+int
+check_password (username, password, repository)
+     char *username, *password, *repository;
+{
+  int rc;
+
+  /* First we see if this user has a password in the CVS-specific
+     password file.  If so, that's enough to authenticate with.  If
+     not, we'll check /etc/passwd. */
+
+  rc = check_repository_password (username, password, repository);
+
+  if (rc == 1)
+    return 1;
+  else if (rc == 2)
     return 0;
+  else if (rc == 0)
+    {
+      /* No cvs password found, so try /etc/passwd. */
+
+      struct passwd *pw;
+      char *found_passwd;
+
+      pw = getpwnam (username);
+      if (pw == NULL)
+        {
+          printf ("E Fatal error, aborting.\n"
+                  "error 0 %s: no such user\n", username);
+          exit (1);
+        }
+      found_passwd = pw->pw_passwd;
+      
+      if (found_passwd && *found_passwd)
+        return (! strcmp (found_passwd, crypt (password, found_passwd)));
+      else if (password && *password)
+        return 1;
+      else
+        return 0;
+    }
+  else
+    {
+      /* Something strange happened.  We don't know what it was, but
+         we certainly won't grant authorization. */
+      return 0;
+    }
 }
 
 
@@ -3837,7 +3973,7 @@ authenticate_connection ()
       exit (1);
     }
 
-  if (check_password (username, password))
+  if (check_password (username, password, repository))
     {
       printf ("I LOVE YOU\n");
       fflush (stdout);

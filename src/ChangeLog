@@ -1,3 +1,15 @@
+Thu Dec  7 00:08:53 1995  Karl Fogel  <kfogel@floss.cyclic.com>
+
+        * client.c (connect_to_pserver): when printing out "unrecognized
+        response", also print out the offending response.
+
+        * server.c (check_password): take `repository' arg too now.
+        Call check_repository_password() before checking /etc/passwd.
+        (check_repository_password): new func.
+
+        * options.h.in (CVS_PASSWORDS_CASE_INSENSITIVE): new define, unset
+        by default.
+        
 Wed Dec  6 18:51:16 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
         * server.c (check_password): If user has a null password, then
