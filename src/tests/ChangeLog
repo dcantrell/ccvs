@@ -1,5 +1,12 @@
 2003-11-12  Derek R. Price  <derek@ximbiot.com>
 
+	* version.at: Use a more complicated sed script for --version which
+	checks only the "current" version of CVS for an updated copyright
+	string.
+	* suite: Regenerated.
+
+2003-11-12  Derek R. Price  <derek@ximbiot.com>
+
 	* Makefile.am (suite): Disable the Autom4te cache.  It doesn't appear
 	to be regenerating files when it should.
 	* Makefile.in: Regenerated.
