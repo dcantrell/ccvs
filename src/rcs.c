@@ -3547,7 +3547,7 @@ RCS_checkin (rcs, workfile, message, rev, flags)
     }
     else
 	(void) time (&modtime);
-    ftm = localtime (&modtime);
+    ftm = gmtime (&modtime);
     delta->date = (char *) xmalloc (MAXDATELEN);
     (void) sprintf (delta->date, DATEFORM,
 		    ftm->tm_year + (ftm->tm_year < 100 ? 0 : 1900),
