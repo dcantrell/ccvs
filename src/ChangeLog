@@ -2,7 +2,8 @@ Fri Dec 15 10:37:00 1995  J.T. Conklin  <jtc@slave.cygnus.com>
 
 	* tag.c (tag_usage): Added -r and -D flags to usage string.
 	(tag): Detect when user specifies both -r and -D arguments.
-
+	Pass -r and -D arguments to server.
+	
 Thu Dec 14 11:56:13 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
         * client.c (start_rsh_server): use RSH_NEEDS_BINARY_FLAG to
