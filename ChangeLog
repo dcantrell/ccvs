@@ -1,5 +1,11 @@
 2003-05-25  Derek Price  <derek@ximbiot.com>
 
+	* configure.in: Update CVS version to 1.12.1.
+
+	* configure: Regenerated.
+
+2003-05-25  Derek Price  <derek@ximbiot.com>
+
 	* BUGS: Note current intermittant BSDI failures.
 
 2003-05-22  Derek Price  <derek@ximbiot.com>
