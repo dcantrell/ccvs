@@ -20014,7 +20014,7 @@ done"
 	    # something which doesn't make sense.
 	    dotest_fail multiroot3-10 \
 "${testcvs} -q -d ${CVSROOT1} diff dir1/file1 dir2/file2" \
-"${PROG} [a-z]*: failed to create lock directory in repository .${TESTDIR}/root1/dir2': No such file or directory
+"${PROG} [a-z]*: failed to create lock directory for .${TESTDIR}/root1/dir2' (${TESTDIR}/root1/dir2/#cvs.lock): No such file or directory
 ${PROG} [a-z]*: failed to obtain dir lock in repository .${TESTDIR}/root1/dir2'
 ${PROG} \[[a-z]* aborted\]: read lock failed - giving up"
 	  else
