@@ -101,7 +101,7 @@ PROG=`basename ${testcvs}`
 # Regexp to match an author name.  I'm not really sure what characters
 # should be here.  a-zA-Z obviously.  People complained when 0-9 were
 # not allowed in usernames.  Other than that I'm not sure.
-username="[a-zA-Z0-9][a-zA-Z0-9]*"
+username="[-a-zA-Z0-9][-a-zA-Z0-9]*"
 
 # Regexp to match the name of a temporary file (from cvs_temp_name).
 # This appears in certain diff output.
