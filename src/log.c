@@ -72,10 +72,10 @@ cvslog (argc, argv)
         err = get_responses_and_close ();
 	return err;
     }
+#endif
 
     ac = argc;
     av = argv;
-#endif
 
     err = start_recursion (log_fileproc, (FILESDONEPROC) NULL, log_dirproc,
 			   (DIRLEAVEPROC) NULL, NULL,
