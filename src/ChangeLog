@@ -1,3 +1,12 @@
+2003-12-08  Mark D. Baushke  <mdb@cvshome.org>
+
+	* rcs.c (rcsbuf_ftell): Rename to...
+	(rcsbuf_ftello): this.
+	(rcsbuf_cache_open): Use off_t rather than long as the pos
+	argument. Use fseeko rather than fseek and ftello rather than
+	ftell.
+	* rcs.h (struct rcsnode): delta_pos is now an off_t type.
+
 2003-12-03  Derek Price  <derek@ximbiot.com>
 
 	* sanity.sh (recase): Add some clarifying comments.

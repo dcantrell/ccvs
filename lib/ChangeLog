@@ -1,3 +1,11 @@
+2003-12-08  Mark D. Baushke  <mdb@cvshome.org>
+
+	* getdate.y: Remove #include <stdio.h> to avoid problems compiling
+	AIX with '#define _LARGE_FILES 1' with Redeclaration of fgetpos64
+	and ftello64. This may be an autoconf problem with
+	AC_SYS_LARGEFILE.
+	* getdate.c: Regenerated.
+
 2003-12-03  Derek Price  <derek@ximbiot.com>
 
 	* fncase.c (OSX_filename_classes): New array.

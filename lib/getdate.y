@@ -30,7 +30,7 @@
 #undef static
 #endif
 
-#include <stdio.h>
+/* AIX seems to have problems with #include <stdio.h> and _LARGE_FILES */
 #include <ctype.h>
 
 /* The code at the top of get_date which figures out the offset of the

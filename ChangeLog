@@ -1,3 +1,9 @@
+2003-12-08  Mark D. Baushke  <mdb@cvshome.org>
+
+	* configure.in (AC_SYS_LARGEFILE). Add.
+	* configure, config.h.in: Regenerated.
+	* NEWS: Document.
+
 2003-12-07  Mark D. Baushke  <mdb@cvshome.org>
 
 	* configure.in (AC_SYS_LARGEFILE): Remove. More work is needed
