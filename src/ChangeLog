@@ -1,3 +1,8 @@
+2005-02-19 Derek Price <derek@ximbiot.com>
+
+	* edit.c (unedit_fileproc, mark_up_to_date): Replace xmallc/strcat
+	sequence with single call to Xasprintf.
+
 2005-02-08 Derek Price <derek@ximbiot.com>
 
 	* rsh-client.c: Some reformatting.

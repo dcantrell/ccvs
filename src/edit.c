@@ -601,15 +601,12 @@ unedit_fileproc (void *callerdat, struct file_info *finfo)
     FILE *fp;
     time_t now;
     char *ascnow;
-    char *basefilename;
+    char *basefilename = NULL;
 
     if (noexec)
 	return 0;
 
-    basefilename = xmalloc (10 + sizeof CVSADM_BASE + strlen (finfo->file));
-    strcpy (basefilename, CVSADM_BASE);
-    strcat (basefilename, "/");
-    strcat (basefilename, finfo->file);
+    basefilename = Xasprintf ("%s/%s", CVSADM_BASE, finfo->file);
     if (!isfile (basefilename))
     {
 	/* This file apparently was never cvs edit'd (e.g. we are uneditting
@@ -767,10 +764,7 @@ mark_up_to_date (const char *file)
 
     /* The file is up to date, so we better get rid of an out of
        date file in CVSADM_BASE.  */
-    base = xmalloc (strlen (file) + 80);
-    strcpy (base, CVSADM_BASE);
-    strcat (base, "/");
-    strcat (base, file);
+    base = Xasprintf ("%s/%s", CVSADM_BASE, file);
     if (unlink_file (base) < 0 && ! existence_error (errno))
 	error (0, errno, "cannot remove %s", file);
     free (base);
