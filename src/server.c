@@ -3644,6 +3644,19 @@ serve_update_prog (arg)
     char *arg;
 {
     FILE *f;
+
+    /* Before we do anything we need to make sure we are not in readonly
+       mode.  */
+    if (!check_command_legal_p ("commit"))
+    {
+	/* I might be willing to make this a warning, except we lack the
+	   machinery to do so.  */
+	if (alloc_pending (80))
+	    sprintf (pending_error_text, "\
+E Flag -u in modules not allowed in readonly mode");
+	return;
+    }
+
     f = CVS_FOPEN (CVSADM_UPROG, "w+");
     if (f == NULL)
     {
