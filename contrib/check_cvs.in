@@ -360,9 +360,6 @@ sub get_history
 #
 #    COMMENTS :
 #      cvs command line options are as followed:
-#        -l - Do not log this command in the history file.  I am
-#             doing this because we will literaly be looking at 
-#             thousands of files with *lots* of revisions.
 #        -n - Do not run any checkout program as specified by the -o
 #             option in the modules file
 #        -p - Put all output to standard out.
@@ -379,7 +376,7 @@ sub check_revision
     my $cwd = getcwd();
     chdir( "/tmp" );
 
-    my $ret_code = 0xffff & system( "cvs -l co -n -p -r $revision \"$file\" > /dev/null 2>&1" );
+    my $ret_code = 0xffff & system( "cvs co -n -p -r $revision \"$file\" > /dev/null 2>&1" );
 
     chdir( $cwd );
     return( 1 ) if ( $ret_code == 0 );
