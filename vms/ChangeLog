@@ -1,3 +1,7 @@
+Mon Aug 26 12:51:52 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* filesubr.c (mkdir_if_needed): Added.
+
 Tue May 14 13:38:51 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* filesubr.c (cvs_temp_name): New function.

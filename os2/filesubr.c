@@ -261,6 +261,41 @@ make_directories (name)
     (void) mkdir (name);
 }
 
+/* Create directory NAME if it does not already exist; fatal error for
+   other errors.  Returns 0 if directory was created; 1 if it already
+   existed.  */
+int
+mkdir_if_needed (name)
+    char *name;
+{
+    if (mkdir (name, 0777) < 0)
+    {
+	/* Now, let me get this straight.  In IBM C/C++
+	   under OS/2, the error string for EEXIST is:
+
+	       "The file already exists",
+
+	   and the error string for EACCESS is:
+
+	       "The file or directory specified is read-only".
+
+	   Nonetheless, mkdir() will set EACCESS if the
+	   directory *exists*, according both to the
+	   documentation and its actual behavior.
+
+	   I'm sure that this made sense, to someone,
+	   somewhere, sometime.  Just not me, here, now.  */
+	if (errno != EEXIST
+#ifdef EACCESS
+	    && errno != EACCESS
+#endif
+	    )
+	    error (1, errno, "cannot make directory %s", name);
+	return 1;
+    }
+    return 0;
+}
+
 /*
  * Change the mode of a file, either adding write permissions, or removing
  * all write permissions.  Adding write permissions honors the current umask
