@@ -1,5 +1,15 @@
 2004-08-11  Derek Price  <derek@ximbiot.com>
 
+	* buffer.c (buf_copy_data), buffer.h (buf_copy_data), log-buffer.c
+	(log_buffer_initialize, log_buffer_input, log_buffer_output,
+	log_buffer_rewind, log_buffer_closelog), log-buffer.h
+	(log_buffer_initialize), main.c (MaxProxyBufferSize), mkmodules.c
+	(config_contents), parseinfo.c (parse_config), server.c (server):
+	Switch eariler support for logs in memory buffers on
+	TRUST_OS_FILE_CACHE.
+
+2004-08-11  Derek Price  <derek@ximbiot.com>
+
 	* buffer.c (buf_free_data, buf_copy_data): Only compile with proxy
 	support.
 	* buffer.h: Ditto for including the protos.

@@ -449,6 +449,7 @@ warning: this CVS does not support PreservePermissions");
 "Only PrimaryServers with :ext: methods are valid, not `%s'.",
 		       p);
 	}
+# ifndef TRUST_OS_FILE_CACHE
 	else if (strcmp (line, "MaxProxyBufferSize") == 0)
 	{
 	    size_t factor = 1;
@@ -495,6 +496,7 @@ warning: this CVS does not support PreservePermissions");
 	    MaxProxyBufferSize = strtoul (p, NULL, 10);
 	    MaxProxyBufferSize = xtimes (MaxProxyBufferSize, factor);
 	}
+# endif /* !TRUST_OS_FILE_CACHE */
 #endif /* PROXY_SUPPORT */
 	else
 	{

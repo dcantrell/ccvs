@@ -5929,15 +5929,25 @@ server (int argc, char **argv)
      */
     {
 	/* Open the secondary log.  */
-	buf_from_net = log_buffer_initialize (buf_from_net, NULL, true,
-					      true, MaxProxyBufferSize,
-					      outbuf_memory_error);
+	buf_from_net = log_buffer_initialize (buf_from_net, NULL,
+# ifdef PROXY_SUPPORT
+					      true,
+#   ifndef TRUST_OS_FILE_CACHE
+					      MaxProxyBufferSize,
+#   endif /* !TRUST_OS_FILE_CACHE */
+# endif /* PROXY_SUPPORT */
+					      true, outbuf_memory_error);
 	proxy_log = buf_from_net;
 
 	/* And again for the out log.  */
-	buf_to_net = log_buffer_initialize (buf_to_net, NULL, true, false,
+	buf_to_net = log_buffer_initialize (buf_to_net, NULL,
+# ifdef PROXY_SUPPORT
+					    true,
+#   ifndef TRUST_OS_FILE_CACHE
 					    MaxProxyBufferSize,
-					    outbuf_memory_error);
+#   endif /* !TRUST_OS_FILE_CACHE */
+# endif /* PROXY_SUPPORT */
+					    false, outbuf_memory_error);
 	proxy_log_out = buf_to_net;
     }
 #endif /* PROXY_SUPPORT */
