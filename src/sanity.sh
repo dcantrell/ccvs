@@ -90,6 +90,15 @@ case $1 in
 	;;
 esac
 
+# Find location of sanity.sh.  We only need to do this for the `rcslock'
+# tests, which need to figure out where rcslock is installed and so
+# have to examine other files in the source directory.
+wd=`pwd`
+srcdir=`dirname $0 | sed -e 's:^\./:$wd/:'`
+if test $srcdir = "." ; then
+  srcdir=$wd
+fi
+
 shift
 
 # Regexp to match what CVS will call itself in output that it prints.
@@ -7985,24 +7994,16 @@ EOF
 	  dotest rcs-6 "cat file2" "branch revision"
 
 	  # Now get rid of the default branch, it will get in the way.
-	  #
-	  # Note that the message about "warning: Unknown phrases" is
-	  # braindamage of the highest order.  Well, maybe not the
-	  # highest order, but features for future expansion don't
-	  # enable future expansion if using them will clutter the
-	  # users' screens and freak them out, now do they?  Anyway,
-	  # when we implement "cvs admin" within CVS we'll be able to
-	  # handle newphrases silently.
-
 	  dotest rcs-7 "${testcvs} admin -b file2" \
-"rcs: ${TESTDIR}/cvsroot/first-dir/file2,v: warning: Unknown phrases like .testofanewphrase ...;. are present.
-RCS file: ${TESTDIR}/cvsroot/first-dir/file2,v
+"RCS file: ${TESTDIR}/cvsroot/first-dir/file2,v
 done"
 	  # But we do want to make sure that "cvs admin" leaves the newphrases
 	  # in the file.
+	  # The extra whitespace regexps are for the RCS library, which does
+	  # not preserve whitespace in the dogmatic manner of RCS 5.7. -twp
 	  dotest rcs-8 \
 "grep testofanewphrase ${CVSROOT_DIRNAME}/first-dir/file2,v" \
-"testofanewphrase @without newphrase we'd have trouble extending @@ all@ ;"
+"testofanewphrase[	 ][ 	]*@without newphrase we'd have trouble extending @@ all@[	 ]*;"
 
 	  # For remote, the "update -p -D" usage seems not to work.
 	  # I'm not sure what is going on.
@@ -9275,12 +9276,198 @@ done"
 "RCS file: ${TESTDIR}/cvsroot/first-dir/file2,v
 deleting revision 1\.1
 done"
-	  # Lots more that we could be testing with -o:
-	  # * :REV
-	  # * REV:
-	  # * REV1:REV2
-	  # * if a rev being deleted has a lock, should be an error.
-	  # * if a rev being deleted has a branch, should be an error.
+	  # Test admin -o.  More variants that we could be testing:
+	  # * REV: [on branch]
+	  # * :REV [on trunk]
+	  # * REV1:REV2 [deleting whole branch]
+	  # * high branch numbers (e.g. 1.2.2.3.2.3)
+	  # ... and probably others.  See RCS_delete_revs for ideas.
+
+	  echo first rev > aaa
+	  dotest admin-22-o1 "${testcvs} add aaa" \
+"${PROG} [a-z]*: scheduling file .aaa. for addition
+${PROG} [a-z]*: use .cvs commit. to add this file permanently"
+	  dotest admin-22-o2 "${testcvs} -q ci -m first aaa" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/aaa,v
+done
+Checking in aaa;
+${TESTDIR}/cvsroot/first-dir/aaa,v  <--  aaa
+initial revision: 1\.1
+done"
+	  echo second rev >> aaa
+	  dotest admin-22-o3 "${testcvs} -q ci -m second aaa" \
+"Checking in aaa;
+${TESTDIR}/cvsroot/first-dir/aaa,v  <--  aaa
+new revision: 1\.2; previous revision: 1\.1
+done"
+	  echo third rev >> aaa
+	  dotest admin-22-o4 "${testcvs} -q ci -m third aaa" \
+"Checking in aaa;
+${TESTDIR}/cvsroot/first-dir/aaa,v  <--  aaa
+new revision: 1\.3; previous revision: 1\.2
+done"
+	  echo fourth rev >> aaa
+	  dotest admin-22-o5 "${testcvs} -q ci -m fourth aaa" \
+"Checking in aaa;
+${TESTDIR}/cvsroot/first-dir/aaa,v  <--  aaa
+new revision: 1\.4; previous revision: 1\.3
+done"
+	  echo fifth rev >>aaa
+	  dotest admin-22-o6 "${testcvs} -q ci -m fifth aaa" \
+"Checking in aaa;
+${TESTDIR}/cvsroot/first-dir/aaa,v  <--  aaa
+new revision: 1\.5; previous revision: 1\.4
+done"
+	  echo sixth rev >> aaa
+	  dotest admin-22-o7 "${testcvs} -q ci -m sixth aaa" \
+"Checking in aaa;
+${TESTDIR}/cvsroot/first-dir/aaa,v  <--  aaa
+new revision: 1\.6; previous revision: 1\.5
+done"
+	  dotest admin-22-o8 "${testcvs} admin -l1.6 aaa" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/aaa,v
+1\.6 locked
+done"
+	  dotest admin-22-o9 "${testcvs} log -r1.6 aaa" "
+RCS file: ${TESTDIR}/cvsroot/first-dir/aaa,v
+Working file: aaa
+head: 1\.6
+branch:
+locks: strict
+	${username}: 1\.6
+access list:
+symbolic names:
+keyword substitution: kv
+total revisions: 6;	selected revisions: 1
+description:
+----------------------------
+revision 1\.6	locked by: ${username};
+date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
+sixth
+============================================================================="
+	  dotest_fail admin-22-o10 "${testcvs} admin -o1.5: aaa" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/aaa,v
+rcs: ${TESTDIR}/cvsroot/first-dir/aaa,v: can't remove locked revision 1\.6
+${PROG} [a-z]*: rcs failed for .aaa."
+	  dotest admin-22-o11 "${testcvs} admin -u aaa" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/aaa,v
+1\.6 unlocked
+done"
+	  dotest admin-22-o12 "${testcvs} admin -o1.5: aaa" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/aaa,v
+deleting revision 1\.6
+deleting revision 1\.5
+done"
+	  dotest admin-22-o13 "${testcvs} log aaa" "
+RCS file: ${TESTDIR}/cvsroot/first-dir/aaa,v
+Working file: aaa
+head: 1\.4
+branch:
+locks: strict
+access list:
+symbolic names:
+keyword substitution: kv
+total revisions: 4;	selected revisions: 4
+description:
+----------------------------
+revision 1\.4
+date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
+fourth
+----------------------------
+revision 1\.3
+date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
+third
+----------------------------
+revision 1\.2
+date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
+second
+----------------------------
+revision 1\.1
+date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
+first
+============================================================================="
+
+	  dotest admin-22-o14 "${testcvs} tag -b -r1.3 br1 aaa" "T aaa"
+	  dotest admin-22-o15 "${testcvs} update -rbr1 aaa" "U aaa"
+	  echo new branch rev >> aaa
+	  dotest admin-22-o16 "${testcvs} ci -m new-branch aaa" \
+"Checking in aaa;
+${TESTDIR}/cvsroot/first-dir/aaa,v  <--  aaa
+new revision: 1\.3\.2\.1; previous revision: 1\.3
+done"
+	  dotest_fail admin-22-o17 "${testcvs} admin -o1.2:1.4 aaa" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/aaa,v
+deleting revision 1\.4
+rcs: ${TESTDIR}/cvsroot/first-dir/aaa,v: can't remove branch point 1\.3
+${PROG} [a-z]*: rcs failed for .aaa."
+	  dotest admin-22-o18 "${testcvs} update -p -r1.4 aaa" \
+"===================================================================
+Checking out aaa
+RCS:  ${TESTDIR}/cvsroot/first-dir/aaa,v
+VERS: 1\.4
+\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
+first rev
+second rev
+third rev
+fourth rev"
+	  echo second branch rev >> aaa
+	  dotest admin-22-o19 "${testcvs} ci -m branch-two aaa" \
+"Checking in aaa;
+${TESTDIR}/cvsroot/first-dir/aaa,v  <--  aaa
+new revision: 1\.3\.2\.2; previous revision: 1\.3\.2\.1
+done"
+	  echo third branch rev >> aaa
+	  dotest admin-22-o20 "${testcvs} ci -m branch-three aaa" \
+"Checking in aaa;
+${TESTDIR}/cvsroot/first-dir/aaa,v  <--  aaa
+new revision: 1\.3\.2\.3; previous revision: 1\.3\.2\.2
+done"
+	  echo fourth branch rev >> aaa
+	  dotest admin-22-o21 "${testcvs} ci -m branch-four aaa" \
+"Checking in aaa;
+${TESTDIR}/cvsroot/first-dir/aaa,v  <--  aaa
+new revision: 1\.3\.2\.4; previous revision: 1\.3\.2\.3
+done"
+	  dotest admin-22-o22 "${testcvs} admin -o:1.3.2.3 aaa" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/aaa,v
+deleting revision 1\.3\.2\.1
+deleting revision 1\.3\.2\.2
+deleting revision 1\.3\.2\.3
+done"
+	  dotest admin-22-o23 "${testcvs} log aaa" "
+RCS file: ${TESTDIR}/cvsroot/first-dir/aaa,v
+Working file: aaa
+head: 1\.4
+branch:
+locks: strict
+access list:
+symbolic names:
+	br1: 1\.3\.0\.2
+keyword substitution: kv
+total revisions: 5;	selected revisions: 5
+description:
+----------------------------
+revision 1\.4
+date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
+fourth
+----------------------------
+revision 1\.3
+date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
+branches:  1\.3\.2;
+third
+----------------------------
+revision 1\.2
+date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
+second
+----------------------------
+revision 1\.1
+date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
+first
+----------------------------
+revision 1\.3\.2\.4
+date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;  lines: ${PLUS}4 -0
+branch-four
+============================================================================="
 
 	  # The bit here about how there is a "tagone" tag pointing to
 	  # a nonexistent revision is documented by rcs.  I dunno, I
@@ -9308,15 +9495,6 @@ date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
 modify
 ============================================================================="
 
-	  dotest admin-24 "${testcvs} -q admin -V4 file1" \
-"RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
-done"
-	  # The astute reader will notice that -V4 didn't actually do
-	  # anything.  Based on a quick glance at the RCS sources, it
-	  # seems like -Vn affects mostly some pretty obscure stuff
-	  # (and keyword expansion which is a whole separate issue,
-	  # for which we don't try to support -Vn).  I didn't look all
-	  # that carefully, though.
 	  dotest admin-25 "cat ${CVSROOT_DIRNAME}/first-dir/file1,v" \
 "head	1\.1;
 access
@@ -9439,6 +9617,92 @@ revision 1\.1
 date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
 add
 ============================================================================="
+
+	  # rcslock.pl tests.  This is kind of grungy because, among
+	  # other things, we can't run rcslock from the source
+	  # directory: it doesn't have a real interpreter pathname
+	  # until it's installed.  So we have to tickle Makefiles to
+	  # figure out *where* rcslock is installed, if at all; if it
+	  # can't be found, this test is skipped.  Also, we have to
+	  # muck with the repository's administrative files.
+
+	  makefile=$srcdir/../contrib/Makefile
+	  if ! test -f $makefile ; then
+	    echo "could not find $makefile; skipping rcslock tests"
+	  else
+	    prefix=`grep '^prefix' $makefile | sed -e 's/.*= //'`
+	    if test "X$prefix" = "X" ; then
+	      echo "could not find 'prefix' setting in $makefile; skipping rcslock tests"
+	    else
+	      installdir=$prefix/lib/cvs/contrib
+	      rcslock=$installdir/rcslock
+	      if ! test -x $rcslock ; then
+		echo "could not find $rcslock; skipping rcslock tests"
+		echo "rcslock must be installed in $installdir before it can be tested"
+	      else
+		echo stuff > a-lock
+		dotest reserved-9 "${testcvs} add a-lock" \
+"${PROG} [a-z]*: scheduling file .a-lock. for addition
+${PROG} [a-z]*: use .cvs commit. to add this file permanently"
+		dotest reserved-10 "${testcvs} -q ci -m new a-lock" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/a-lock,v
+done
+Checking in a-lock;
+${TESTDIR}/cvsroot/first-dir/a-lock,v  <--  a-lock
+initial revision: 1\.1
+done"
+		# FIXME: the contents of CVSROOT fluctuate a lot
+		# here. Maybe the expect pattern should just
+		# confirm that commitinfo is one of the files checked out,
+		# but for now we just check that CVS exited with success.
+		cd ..
+		if ${testcvs} -q co CVSROOT >>${LOGFILE} ; then
+		  pass reserved-11
+		else
+		  fail reserved-11
+		fi
+		cd CVSROOT
+		echo "DEFAULT $rcslock" >>commitinfo
+		dotest reserved-12 "${testcvs} -q ci -m rcslock commitinfo" \
+"Checking in commitinfo;
+${TESTDIR}/cvsroot/CVSROOT/commitinfo,v  <--  commitinfo
+new revision: 1\.2; previous revision: 1\.1
+done
+${PROG} [a-z]*: Rebuilding administrative file database"
+		cd ..; cd first-dir
+
+		# Simulate (approximately) what a-lock would look like
+		# if someone else had locked revision 1.1.
+		sed -e 's/locks; strict;/locks fred:1.1; strict;/' ${TESTDIR}/cvsroot/first-dir/a-lock,v > a-lock,v
+		chmod 644 ${TESTDIR}/cvsroot/first-dir/a-lock,v
+		dotest reserved-13 "mv a-lock,v ${TESTDIR}/cvsroot/first-dir/a-lock,v"
+		chmod 444 ${TESTDIR}/cvsroot/first-dir/a-lock,v
+		echo more stuff >> a-lock
+		dotest_fail reserved-13 "${testcvs} ci -m '' a-lock" \
+"fred has file a-lock locked for version  1\.1
+${PROG} [a-z]*: Pre-commit check failed
+${PROG} \[[a-z]* aborted\]: correct above errors first!"
+
+		dotest reserved-14 "${testcvs} admin -u1.1 a-lock" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/a-lock,v
+1\.1 unlocked
+done"
+		dotest reserved-15 "${testcvs} -q ci -m success a-lock" \
+"Checking in a-lock;
+${TESTDIR}/cvsroot/first-dir/a-lock,v  <--  a-lock
+new revision: 1\.2; previous revision: 1\.1
+done"
+
+		# undo commitinfo changes
+		cd ../CVSROOT
+		dotest reserved-16 "${testcvs} admin -o1.2 commitinfo" \
+"RCS file: ${TESTDIR}/cvsroot/CVSROOT/commitinfo,v
+deleting revision 1\.2
+done"
+		cd ..; rm -r CVSROOT; cd first-dir
+	      fi
+	    fi
+	  fi
 
 	  cd ../..
 	  rm -r 1

@@ -40,8 +40,11 @@
 #ifdef __STDC__
 void error (int, int, const char *, ...) \
   __attribute__ ((__format__ (__printf__, 3, 4)));
+void rcserror (char *, const char *, ...) \
+  __attribute__ ((__format__ (__printf__, 2, 3)));
 #else
 void error ();
+void rcserror ();
 #endif
 
 /* Exit due to an error.  Similar to error (1, 0, "message"), but call

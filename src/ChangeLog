@@ -1,3 +1,145 @@
+Mon Oct 20 00:30:16 1997  Tim Pierce  <twp@twp.tezcat.com>
+
+	[I removed a ChangeLog entry for a change to sanity.sh (editor),
+	because the actual change was not made.  With this change, CVS no
+	longer runs RCS.  I'll be checking in my cleanups shortly. -kingdon]
+
+	Librarify `ci'.
+	* rcscmds.c, cvs.h (RCS_checkin): Removed.
+	* rcs.c, rcs.h (RCS_checkin, RCS_getbranchpoint, RCS_addbranch,
+	RCS_findlock_or_tip): New functions.  RCS_checkin completely
+	rewritten to eliminate RCS 5.7; change `rcs' parameter from string
+	to RCSNode, so we can update RCSNode without re-reading from
+	disk.
+	* checkin.c (Checkin): Updated RCS_checkin caller, moved RCS_parse
+	call to before RCS_checkin.
+	* import.c (add_rev): Updated caller.
+	* commit.c (remove_file): Updated caller.
+	(checkaddfile): Updated caller.  Parse `rcsfile' after
+	calling add_rcs_file.  Free `rcsfile' instead of asserting it to
+	be NULL.
+
+	Librarify `rcs'.
+	* rcscmds.c, cvs.h (RCS_exec_settag, RCS_exec_deltag,
+	RCS_exec_setbranch, RCS_exec_lock, RCS_exec_unlock): Removed.
+	
+	* rcs.c (RCS_settag): Rewritten to eliminate RCS 5.7.
+	* commit.c (checkaddfile): Call RCS_rewrite after calling RCS_settag.
+	* import.c (add_tags): Same.
+	* rtag.c (rtag_fileproc): Same.
+	* tag.c (tag_fileproc): Same.
+
+	* rcs.c (RCS_deltag): Rewritten to eliminate RCS 5.7.  Remove
+	`quiet' parameter, since this function no longer prints any output.
+	* commit.c (remove_file): Update caller.  Also call RCS_rewrite
+	after RCS_deltag.
+	* rtag.c (rtag_delete): Same.
+	* tag.c (tag_fileproc): Same.
+
+	* rcs.c (RCS_setbranch): Rewritten to eliminate RCS 5.7.
+	* commit.c (remove_file): Call RCS_rewrite after calling RCS_setbranch.
+	(fixbranch): Same.
+	(lock_RCS): Same.
+
+	* rcs.c (RCS_lock): Rewritten to eliminate RCS 5.7. Change third
+	arg to mean `quiet' and not `noerr', permitting admin_fileproc to
+	run RCS_lock verbosely.
+	* commit.c (lock_RCS): Update callers; call
+ 	RCS_rewrite after RCS_lock.
+	(remove_file): Same.  Call RCS_lock quietly.
+	* import.c (add_rev): Same.  Do not print `fork failed' error
+	message, since we're no longer forking.
+
+	* rcs.c (RCS_unlock): Rewritten to eliminate RCS 5.7.  Change
+	`noerr' arg to mean `quiet', permitting admin_fileproc to run
+	RCS_unlock verbosely.  Use notify_do when breaking another user's
+	lock.  Include "edit.h" for notify_do prototype.
+	* checkin.c (Checkin): Update caller; use RCS_rewrite after RCS_unlock.
+	* commit.c (unlockrcs): Same.
+	* import.c (add_rev): Same.
+
+	* rcs.c, rcs.h (RCS_getlocks, RCS_addaccess, RCS_delaccess,
+	RCS_getaccess, RCS_delete_revs): New functions.
+	(expand_keywords, RCS_lock, RCS_unlock): Use RCS_getlocks.
+	* log.c (log_fileproc, log_version): Call RCS_getlocks.  Don't add
+	bogus ";locker" nodes to RCSVers nodes -- walk lock list with
+	printlock_proc.
+	(printlock_proc): New function.
+
+	* admin.c (admin_fileproc): Largely rewritten: call internal RCS
+	library functions instead of forking RCS processes.
+	(admin, admin_fileproc): Obsolete -V option.
+	(struct admin_data): Remove `version' member.
+	* sanity.sh (admin-24): Remove -V test case.
+
+	New functions for reading and writing RCS files.
+	* rcs.h (struct deltatext, Deltatext): New types.
+	(struct rcsversnode): New members `text' and `outdated'.
+	(struct rcsnode): New members `access', `locks', `strict_locks',
+	`comment', and `desc'.
+	* rcs.c (RCS_reparsercsfile, expand_keywords): Use new RCSNode members.
+	(free_rcsnode_contents): Free them.
+	* log.c (log_fileproc): Use new RCSNode members instead of ->other.
+
+	* rcs.c (getdelta, RCS_getdeltatext, freedeltatext, do_locks,
+ 	RCS_putadmin, RCS_putdtree, RCS_putdesc, putdelta,
+ 	putrcsfield_proc, putsymbol_proc, RCS_copydeltas, putdeltatext,
+ 	RCS_rewrite, getrevnum, rcs_internal_lockfile,
+ 	rcs_internal_unlockfile, rcs_lockfilename): New functions.
+
+	(RCS_reparsercsfile): Use getdelta, making sure fp is positioned
+ 	correctly before calling it.  Skip `head' and `branch' nodes: we
+ 	have already parsed them, and they were being added incorrectly to
+ 	rcs->other.  Do not signal error if the RCS file has an empty
+ 	delta tree; this made it impossible for RCS_checkin to perform an
+ 	initial checkin.  Remove `all' parameter; always store all RCS
+	fields.
+	(RCS_fully_parse, RCS_gettag, RCS_getbranch, RCS_getdate,
+	RCS_getdatebranch, RCS_getrevtime, RCS_symbols, translate_symtag,
+	RCS_isdead, RCS_getexpand, RCS_checkout, annotate_fileproc):
+	Update all callers to remove `all' parameter.
+
+	(getrcskey): Do not append trailing whitespace to a value.  This
+ 	corrupted some log fields and wrecked some sanity.sh test cases.
+
+	(free_rcsvers_contents): New function.
+	(rcsvers_delproc): Call it.
+
+	* rcs.h (NODELTA): Removed symbol; now obsolete (since RCSNodes
+	do not go stale).
+	* import.c (add_rev): Removed NODELTA reference.
+	* rcs.c (RCS_reparsercsfile, RCS_checkout, RCS_settag, RCS_deltag,
+	RCS_setbranch, RCS_lock, RCS_unlock, RCS_deltas): Removed NODELTA
+	references.
+
+	Miscellaneous changes to support RCS librarification and fix some bugs.
+	* subr.c, cvs.h (line2argv): Add `sepchars' argument.
+	* modules.c (cat_module, admin_fileproc): Update all callers.
+
+	* subr.c, cvs.h (compare_revnums, increment_revnum): New functions.
+	(make_message_rcslegal): Strip whitespace from end of
+	lines and end of string, a la `cleanlogmsg' in RCS 5.7.
+	(get_file): Terminate buf with \0, extending it if
+	necessary.  Read from stdin if `name' arg is NULL.
+	* admin.c (admin_fileproc): Call get_file to read -t arg from stdin.
+
+	* error.c, error.h (rcserror): New function, used everywhere.
+
+	* hash.c, hash.h (addnode_at_front): New function.
+	* rcs.c (RCS_settag, RCS_lock): Call it.
+
+	* import.c, cvs.h (expand_at_signs): Make extern.
+	* rcs.c (putrcsfield_proc, RCS_putadmin, RCS_putdesc,
+	putdeltatext): Call it.
+
+	* rcs.c (make_file_label): Use last_component to get file's basename.
+
+	* sanity.sh (srcdir): New variable.
+	(rcs-7): Remove newphrase warning, no longer produced by CVS.
+	(rcs-8): Permit random whitespace around newphrase fields.
+	(admin-22): New test cases for -o options: admin-22-o{1..23}.
+	(reserved): New test cases for rcslock.pl: reserved-{8..16}.
+
 Tue Oct 21 16:48:32 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* tag.c (tag_check_valid): Add comment about locking or lack

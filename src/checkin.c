@@ -69,7 +69,10 @@ Checkin (type, finfo, rcs, rev, tag, options, message)
 	}
     }
 
-    switch (RCS_checkin (rcs, NULL, message, rev, 0))
+    if (finfo->rcs == NULL)
+	finfo->rcs = RCS_parse (finfo->file, finfo->repository);
+
+    switch (RCS_checkin (finfo->rcs, NULL, message, rev, 0))
     {
 	case 0:			/* everything normal */
 
@@ -84,12 +87,6 @@ Checkin (type, finfo, rcs, rev, tag, options, message)
 
 	    if (strcmp (options, "-V4") == 0) /* upgrade to V5 now */
 		options[0] = '\0';
-
-	    /* Reparse the RCS file, so that we can safely call
-               RCS_checkout.  FIXME: We could probably calculate
-               all the changes.  */
-	    freercsnode (&finfo->rcs);
-	    finfo->rcs = RCS_parse (finfo->file, finfo->repository);
 
 	    /* FIXME: should be checking for errors.  */
 	    (void) RCS_checkout (finfo->rcs, finfo->file, rev,
@@ -173,6 +170,7 @@ Checkin (type, finfo, rcs, rev, tag, options, message)
     if (rev)
     {
 	(void) RCS_unlock (finfo->rcs, NULL, 1);
+	RCS_rewrite (finfo->rcs, NULL, NULL);
     }
 
 #ifdef SERVER_SUPPORT

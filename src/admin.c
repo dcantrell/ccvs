@@ -52,11 +52,6 @@ struct admin_data
     /* Delete revisions (-o).  It is "-o" followed by the value specified.  */
     char *delete_revs;
 
-    /* Version of RCS (-V).  The semantics of this are very unclear to me and
-       poorly documented.  It is "-V" followed by a version number (e.g.
-       "-V4" for RCS 4.x).  */
-    char *version;
-
     /* Keyword substitution mode (-k), e.g. "-kb".  */
     char *kflag;
 
@@ -159,6 +154,9 @@ admin (argc, argv)
     wrap_setup ();
 
     memset (&admin_data, 0, sizeof admin_data);
+
+    /* TODO: get rid of `-' switch notation in admin_data.  For
+       example, admin_data->branch should be not `-bfoo' but simply `foo'. */
 
     optind = 0;
     while ((c = getopt (argc, argv,
@@ -330,17 +328,8 @@ admin (argc, argv)
 		goto usage_error;
 
 	    case 'V':
-		/* RCS doesn't seem to complain if this is specified
-		   several times, but I don't see any reason why that
-		   would be something we'd need to support.  */
-		if (admin_data.version != NULL)
-		{
-		    error (0, 0, "duplicate '-V' option");
-		    goto usage_error;
-		}
-		admin_data.version = xmalloc (strlen (optarg) + 5);
-		strcpy (admin_data.version, "-V");
-		strcat (admin_data.version, optarg);
+		/* No longer supported. */
+		error (0, 0, "the `-V' option is obsolete");
 		break;
 
 	    case 'k':
@@ -417,8 +406,6 @@ admin (argc, argv)
 	    send_arg (admin_data.desc);
 	if (admin_data.quiet)
 	    send_arg ("-q");
-	if (admin_data.version != NULL)
-	    send_arg (admin_data.version);
 	if (admin_data.kflag != NULL)
 	    send_arg (admin_data.kflag);
 
@@ -445,8 +432,6 @@ admin (argc, argv)
 	free (admin_data.comment);
     if (admin_data.delete_revs != NULL)
 	free (admin_data.delete_revs);
-    if (admin_data.version != NULL)
-	free (admin_data.version);
     if (admin_data.kflag != NULL)
 	free (admin_data.kflag);
     if (admin_data.desc != NULL)
@@ -472,8 +457,8 @@ admin_fileproc (callerdat, finfo)
     Vers_TS *vers;
     char *version;
     int i;
-    int retcode = 0;
     int status = 0;
+    RCSNode *rcs, *rcs2;
 
     vers = Version_TS (finfo, NULL, NULL, NULL, 0, 0);
 
@@ -486,44 +471,298 @@ admin_fileproc (callerdat, finfo)
 	goto exitfunc;
     }
 
-    /* Doing this via RCS_exec_settag, RCS_exec_lock, and friends is not
-       as easy as it may look because there can be several options
-       specified.  */
-    run_setup ("%s%s -x,v/", Rcsbin, RCS);
+    rcs = vers->srcfile;
+    if (rcs->flags & PARTIAL)
+	RCS_fully_parse (rcs);
 
-    if (admin_data->interactive)
-	run_arg ("-I");
+    status = 0;
+
+    if (!admin_data->quiet)
+    {
+	cvs_output ("RCS file: ", 0);
+	cvs_output (rcs->path, 0);
+	cvs_output ("\n", 1);
+    }
+
     if (admin_data->branch != NULL)
-	run_arg (admin_data->branch);
+	RCS_setbranch (rcs, admin_data->branch + 2);
     if (admin_data->comment != NULL)
-	run_arg (admin_data->comment);
+    {
+	if (rcs->comment != NULL)
+	    free (rcs->comment);
+	rcs->comment = xstrdup (admin_data->comment + 2);
+    }
     if (admin_data->set_strict)
-	run_arg ("-L");
+	rcs->strict_locks = 1;
     if (admin_data->set_nonstrict)
-	run_arg ("-U");
+	rcs->strict_locks = 0;
     if (admin_data->delete_revs != NULL)
-	run_arg (admin_data->delete_revs);
+    {
+	char *s, *t, *rev1, *rev2;
+	s = admin_data->delete_revs + 2;
+	t = strchr (s, ':');
+	if (t == NULL)
+	{
+	    t = strchr (s, '-');
+	    if (t != NULL && !admin_data->quiet)
+		rcserror ("warning",
+			  "`-' is obsolete in `-o%s'; use `:' instead", s);
+	}
+
+	if (t == NULL)
+	{
+	    /* -orev */
+	    rev1 = xstrdup (s);
+	    rev2 = xstrdup (s);
+	}
+	else if (t == s)
+	{
+	    /* -o:rev2 */
+	    rev1 = NULL;
+	    rev2 = xstrdup (s + 1);
+	}
+	else
+	{
+	    *t = '\0';
+	    rev1 = xstrdup (s);
+	    *t = ':';	/* probably unnecessary */
+	    s = t + 1;
+	    if (*s == '\0')
+		/* -orev1: */
+		rev2 = NULL;
+	    else
+		/* -orev1:rev2 */
+		rev2 = xstrdup (s);
+	}
+
+	if (rev1 == NULL && rev2 == NULL)
+	{
+	    /* RCS segfaults if `-o:' is given */
+	    error (0, 0, "no valid revisions specified in `%s' option",
+		   admin_data->delete_revs);
+	    status = 1;
+	}
+	else
+	{
+	    status |= RCS_delete_revs (rcs, rev1, rev2);
+	    if (rev1)
+		free (rev1);
+	    if (rev2)
+		free (rev2);
+	}
+    }
     if (admin_data->desc != NULL)
-	run_arg (admin_data->desc);
-    if (admin_data->quiet)
-	run_arg ("-q");
-    if (admin_data->version != NULL)
-	run_arg (admin_data->version);
+    {
+	free (rcs->desc);
+	rcs->desc = NULL;
+	if (admin_data->desc[2] == '-')
+	    rcs->desc = xstrdup (admin_data->desc + 3);
+	else
+	{
+	    char *descfile = admin_data->desc + 2;
+	    size_t bufsize = 0;
+	    size_t len;
+
+	    /* If -t specified with no argument, read from stdin. */
+	    if (*descfile == '\0')
+		descfile = NULL;
+	    get_file (descfile, descfile, "r", &rcs->desc, &bufsize, &len);
+	}
+    }
     if (admin_data->kflag != NULL)
-	run_arg (admin_data->kflag);
+    {
+	char *kflag = admin_data->kflag + 2;
+	if (!rcs->expand || strcmp (rcs->expand, kflag) != 0)
+	{
+	    if (rcs->expand)
+		free (rcs->expand);
+	    rcs->expand = xstrdup (kflag);
+	}
+    }
 
+    /* Handle miscellaneous options.  TODO: decide whether any or all
+       of these should have their own fields in the admin_data
+       structure. */
     for (i = 0; i < admin_data->ac; ++i)
-	run_arg (admin_data->av[i]);
+    {
+	char *arg;
+	char *p, *rev, *revnum, *tag, *msg;
+	char **users;
+	int argc, u;
+	Node *n;
+	RCSVers *delta;
+	
+	arg = admin_data->av[i];
+	switch (arg[1])
+	{
+	    case 'a': /* fall through */
+	    case 'e':
+	        line2argv (&argc, &users, arg + 2, " ,\t\n");
+		if (arg[1] == 'a')
+		    for (u = 0; u < argc; ++u)
+			RCS_addaccess (rcs, users[u]);
+		else
+		    for (u = 0; u < argc; ++u)
+			RCS_delaccess (rcs, users[u]);
+		free_names (&argc, users);
+		break;
+	    case 'A':
+		/* If arg does not begin with `/', assume that the pathname is
+		   relative to the current repository. */
+		if (arg[2] == '/')
+		    rcs2 = RCS_parsercsfile (arg + 2);
+		else
+		    rcs2 = RCS_parse (arg + 2, finfo->repository);
 
-    run_arg (vers->srcfile->path);
-    if ((retcode = run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL)) != 0)
+		p = xstrdup (RCS_getaccess (rcs2));
+	        line2argv (&argc, &users, p, " \t\n");
+		free (p);
+		freercsnode (&rcs2);
+
+		for (u = 0; u < argc; ++u)
+		    RCS_addaccess (rcs, users[u]);
+		free_names (&argc, users);
+		break;
+	    case 'n': /* fall through */
+	    case 'N':
+		if (arg[2] == '\0')
+		{
+		    cvs_outerr ("missing symbolic name after ", 0);
+		    cvs_outerr (arg, 0);
+		    cvs_outerr ("\n", 1);
+		    break;
+		}
+		p = strchr (arg, ':');
+		if (p == NULL)
+		{
+		    if (RCS_deltag (rcs, arg + 2) != 0)
+		    {
+			rcserror (rcs->path, "Symbolic name %s is undefined.",
+				  arg + 2);
+			status = 1;
+			continue;
+		    }
+		    break;
+		}
+		*p = '\0';
+		tag = xstrdup (arg + 2);
+		*p++ = ':';
+
+		/* Option `n' signals an error if this tag is already bound. */
+		if (arg[1] == 'n')
+		{
+		    n = findnode (RCS_symbols (rcs), tag);
+		    if (n != NULL)
+		    {
+			rcserror (rcs->path,
+				  "symbolic name %s already bound to %s",
+				  tag, n->data);
+			status = 1;
+			continue;
+		    }
+		}
+
+		/* Expand rev if necessary. */
+		rev = RCS_gettag (rcs, p, 0, NULL);
+		RCS_settag (rcs, tag, rev);
+		if (rev != NULL)
+		    free (rev);
+		free (tag);
+		break;
+	    case 's':
+	        p = strchr (arg, ':');
+		if (p == NULL)
+		{
+		    tag = xstrdup (arg + 2);
+		    rev = RCS_head (rcs);
+		}
+		else
+		{
+		    *p = '\0';
+		    tag = xstrdup (arg + 2);
+		    *p++ = ':';
+		    rev = xstrdup (p);
+		}
+		revnum = RCS_gettag (rcs, rev, 0, NULL);
+		free (rev);
+		if (revnum != NULL)
+		    n = findnode (rcs->versions, revnum);
+		if (revnum == NULL || n == NULL)
+		{
+		    rcserror (rcs->path,
+			      "can't set state of nonexisting revision %s",
+			      rev);
+		    if (revnum != NULL)
+			free (revnum);
+		    status = 1;
+		    continue;
+		}
+		delta = (RCSVers *) n->data;
+		free (delta->state);
+		delta->state = tag;
+		break;
+
+	    case 'm':
+	        p = strchr (arg, ':');
+		if (p == NULL)
+		{
+		    rcserror (rcs->path, "-m option lacks revision number");
+		    status = 1;
+		    continue;
+		}
+		*p = '\0';
+		rev = RCS_gettag (rcs, arg + 2, 0, NULL);
+		if (rev == NULL)
+		{
+		    error (0, 0, "%s: no such revision %s", rcs->path, rev);
+		    status = 1;
+		    continue;
+		}
+		*p++ = ':';
+		msg = p;
+
+		n = findnode (rcs->versions, rev);
+		delta = (RCSVers *) n->data;
+		if (delta->other == NULL)
+		    delta->other = getlist();
+		if (delta->text == NULL)
+		{
+		    delta->text = (Deltatext *) xmalloc (sizeof (Deltatext));
+		    memset ((void *) delta->text, 0, sizeof (Deltatext));
+		}
+		delta->text->version = xstrdup (delta->version);
+		delta->text->log = make_message_rcslegal (msg);
+		break;
+
+	    case 'l':
+	        status |= RCS_lock (rcs, arg[2] ? arg + 2 : NULL, 0);
+		break;
+	    case 'u':
+		status |= RCS_unlock (rcs, arg[2] ? arg + 2 : NULL, 0);
+		break;
+	    default: assert(0);	/* can't happen */
+	}
+    }
+
+    /* TODO: reconcile the weird discrepancies between
+       admin_data->quiet and quiet. */
+    if (status == 0)
+    {
+	RCS_rewrite (rcs, NULL, NULL);
+	if (!admin_data->quiet)
+	    cvs_output ("done\n", 5);
+    }
+    else
     {
 	if (!quiet)
-	    error (0, retcode == -1 ? errno : 0,
-		   "%s failed for `%s'", RCS, finfo->file);
-	status = 1;
-	goto exitfunc;
+	    error (0, 0, "%s failed for `%s'", RCS, finfo->file);
+	/* Upon failure, we want to abandon any changes made to the
+	   RCS data structure.  Forcing a reparse does the trick,
+	   but leaks memory and is kludgey.  Should we export
+	   free_rcsnode_contents for this purpose? */
+	RCS_fully_parse (rcs);
     }
+
   exitfunc:
     freevers_ts (&vers);
     return status;
