@@ -1199,6 +1199,11 @@ Numeric tag %s contains characters other than digits and '.'", name);
 	|| strcmp (name, TAG_HEAD) == 0)
 	return;
 
+    /* Verify that the tag is valid syntactically.  Some later code once made
+     * assumptions about this.
+     */
+    RCS_check_tag (name);
+
     /* FIXME: This routine doesn't seem to do any locking whatsoever
        (and it is called from places which don't have locks in place).
        If two processes try to write val-tags at the same time, it would
