@@ -97,6 +97,7 @@ MOSTLYCLEANFILES += getdate-expected getdate-got getdate.diff
 # Program required by test-getdate.sh for testing getdate.y.
 check_PROGRAMS += getdate
 getdate_SOURCES = \
+	allocsa.c \
 	error.c \
 	exitfail.c \
 	exitfail.h \
