@@ -1,3 +1,12 @@
+2003-10-28  Derek Price  <derek@ximbiot.com>
+
+	* sever.h: Add the standard copyright notice.
+
+2003-10-28  Derek Price  <derek@ximbiot.com>
+
+	* lock.c: Remove some suggestions which have already been implemented
+	or which have become obsolete from the header comment.
+
 2003-10-26  Derek Price  <derek@ximbiot.com>
 
 	* sanity.sh (join6): Fix a few typos in the last test and remove a
