@@ -1,3 +1,8 @@
+2004-10-06  Derek Price  <derek@ximbiot.com>
+
+	* config.h.in.in: Undef HAVE_GETOPT_H and HAVE_GETOPT_LONG_ONLY.  It
+	sounds like a fairly safe bet that Windoze doesn't have them.
+
 2004-10-06  Mark D. Baushke  <mdb@cvshome.org>
 
 	* unistd.h: Add prototype entries for chdir and close
