@@ -1,5 +1,11 @@
-* Trivial test of the checking in changes to the new CCVS module...
+* From: billr@mpd.tandem.com (Bill Robertson)
+  Subject: Problem with rtag and the -D option
+  Date: Fri, 17 Mar 1995 10:53:29 -0600 (CST)
 
+  I have been trying to use the -D option to specify a date for tagging, but
+  rtag does not recognize the -D option. It is documented to do so and I've
+  tested the use of -D with cvs update and cvs diff and it works fine there.
+  
 *         We need some version numbers really badly.  Are there some
   (and Charles Hannum is just not including them in his reports), or do
   we simply have no reliable way to distinguish between the various
