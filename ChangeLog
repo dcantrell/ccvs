@@ -1,5 +1,7 @@
 Sun Mar  2 22:01:23 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* NEWS: Add item about "cvs admin" vs. "cvs admin .".
+
 	* TODO: Remove item #169.  It doesn't really explain what an
 	"archive library" is or in general what the feature they discuss is
 	supposed to do--I mean, CVS _can_ be used to store .o's, if
