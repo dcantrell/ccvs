@@ -242,15 +242,16 @@ numdots (s)
    compare_revnums will return an inaccurate result. */
 int
 compare_revnums (rev1, rev2)
-    char *rev1;
-    char *rev2;
+    const char *rev1;
+    const char *rev2;
 {
-    char *s, *sp, *snext;
-    char *t, *tp, *tnext;
+    const char *s, *sp;
+    const char *t, *tp;
+    char *snext, *tnext;
     int result = 0;
 
-    sp = s = xstrdup (rev1);
-    tp = t = xstrdup (rev2);
+    sp = s = rev1;
+    tp = t = rev2;
     while (result == 0)
     {
 	result = strtoul (sp, &snext, 10) - strtoul (tp, &tnext, 10);
@@ -260,20 +261,19 @@ compare_revnums (rev1, rev2)
 	tp = tnext + 1;
     }
 
-    free (s);
-    free (t);
     return result;
 }
 
 char *
 increment_revnum (rev)
-    char *rev;
+    const char *rev;
 {
     char *newrev, *p;
     int lastfield;
+    size_t len = strlen (rev);
 
-    newrev = (char *) xmalloc (strlen (rev) + 2);
-    strcpy (newrev, rev);
+    newrev = (char *) xmalloc (len + 2);
+    memcpy (newrev, rev, len + 1);
     p = strrchr (newrev, '.');
     if (p == NULL)
     {
@@ -354,12 +354,12 @@ get_date (date, now)
 
 char *
 gca (rev1, rev2)
-    char *rev1;
-    char *rev2;
+    const char *rev1;
+    const char *rev2;
 {
     int dots;
     char *gca;
-    char *p[2];
+    const char *p[2];
     int j[2];
     char *retval;
 
@@ -428,7 +428,7 @@ gca (rev1, rev2)
 	/* revisions differ in trunk major number.  */
 
 	char *q;
-	char *s;
+	const char *s;
 
 	s = (j[0] < j[1]) ? p[0] : p[1];
 
@@ -476,7 +476,7 @@ gca (rev1, rev2)
 
 void
 check_numeric (rev, argc, argv)
-    char *rev;
+    const char *rev;
     int argc;
     char **argv;
 {
@@ -552,7 +552,7 @@ make_message_rcslegal (message)
    is what we do.  */
 int
 file_has_markers (finfo)
-    struct file_info *finfo;
+    const struct file_info *finfo;
 {
     FILE *fp;
     char *line = NULL;
@@ -591,9 +591,9 @@ out:
 
 void
 get_file (name, fullname, mode, buf, bufsize, len)
-    char *name;
-    char *fullname;
-    char *mode;
+    const char *name;
+    const char *fullname;
+    const char *mode;
     char **buf;
     size_t *bufsize;
     size_t *len;

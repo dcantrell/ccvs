@@ -3283,6 +3283,96 @@ RCS_findlock_or_tip (rcs)
     return (RCSVers *) p->data;
 }
 
+/* Revision number string, R, must contain a `.'.
+   Return a newly-malloc'd copy of the prefix of R up
+   to but not including the final `.'.  */
+
+static char *
+truncate_revnum (r)
+     const char *r;
+{
+  size_t len;
+  char *new_r;
+  char *dot = strrchr (r, '.');
+
+  assert (dot);
+  len = dot - r;
+  new_r = xmalloc (len + 1);
+  *(char *) mempcpy (new_r, r, len) = '\0';
+  return new_r;
+}
+
+/* Revision number string, R, must contain a `.'.
+   R must be writable.  Replace the rightmost `.' in R with
+   the NUL byte and return a pointer to that NUL byte.  */
+
+static char *
+truncate_revnum_in_place (r)
+     char *r;
+{
+  char *dot = strrchr (r, '.');
+  assert (dot);
+  *dot = '\0';
+  return dot;
+}
+
+/* Revision number strings, R and S, must each contain a `.'.
+   R and S must be writable and must have the same number of dots.
+   Truncate R and S for the comparison, then restored them to their
+   original state.
+   Return the result (see compare_revnums) of comparing R and S
+   ignoring differences in any component after the rightmost `.'.  */
+
+static int
+compare_truncated_revnums (r, s)
+     char *r;
+     char *s;
+{
+  char *r_dot = truncate_revnum_in_place (r);
+  char *s_dot = truncate_revnum_in_place (s);
+  int cmp;
+ 
+  assert (numdots (r) == numdots (s));
+
+  cmp = compare_revnums (r, s);
+
+  *r_dot = '.';
+  *s_dot = '.';
+
+  return cmp;
+}
+
+/* Return a malloc'd copy of the string representing the highest branch
+   number on BRANCHNODE.  If there are no branches on BRANCHNODE, return NULL.
+   FIXME: isn't the max rev always the last one?
+   If so, we don't even need a loop.  */
+
+static char *
+max_rev (const RCSVers *branchnode)
+{
+    Node *head;
+    Node *bp;
+    char *max;
+
+    if (branchnode->branches == NULL)
+    {
+        return NULL;
+    }
+
+    max = NULL;
+    head = branchnode->branches->list;
+    for (bp = head->next; bp != head; bp = bp->next)
+    {
+	if (max == NULL || compare_truncated_revnums (max, bp->key) < 0)
+	{
+	    max = bp->key;
+	}
+    }
+    assert (max);
+
+    return truncate_revnum (max);
+}
+
 /* Create BRANCH in RCS's delta tree.  BRANCH may be either a branch
    number or a revision number.  In the former case, create the branch
    with the specified number; in the latter case, create a new branch
@@ -3292,21 +3382,23 @@ RCS_findlock_or_tip (rcs)
 static char *
 RCS_addbranch (rcs, branch)
     RCSNode *rcs;
-    char *branch;
+    const char *branch;
 {
-    char *branchpoint, *max, *newrevnum;
-    Node *nodep, *bp, *head;
+    char *branchpoint, *newrevnum;
+    Node *nodep, *bp;
+    Node *marker;
     RCSVers *branchnode;
+
+    /* Append to end by default.  */
+    marker = NULL;
 
     branchpoint = xstrdup (branch);
     if ((numdots (branchpoint) & 1) == 0)
     {
-	char *p;
-	p = strrchr (branchpoint, '.');
-	*p = '\0';
+	truncate_revnum_in_place (branchpoint);
     }
 
-    /* Find the highest-numbered branch rooted at BRANCHPOINT. */
+    /* Find the branch rooted at BRANCHPOINT. */
     nodep = findnode (rcs->versions, branchpoint);
     if (nodep == NULL)
     {
@@ -3315,31 +3407,10 @@ RCS_addbranch (rcs, branch)
     }
     branchnode = (RCSVers *) nodep->data;
 
-    max = NULL;
-    if (branchnode->branches != NULL)
-    {
-	head = branchnode->branches->list;
-	for (bp = head->next; bp != head; bp = bp->next)
-	{
-	    char *bnum, *p;
-	    bnum = xstrdup (bp->key);
-	    p = strrchr (bnum, '.');
-	    *p = '\0';
-	    if (max == NULL)
-		max = bnum;
-	    else if (compare_revnums (max, bnum) < 0)
-	    {
-		free (max);
-		max = bnum;
-	    }
-	    else
-		free (bnum);
-	}
-    }
-
     /* If BRANCH was a full branch number, make sure it is higher than MAX. */
     if ((numdots (branch) & 1) == 1)
-	if (max == NULL)
+    {
+	if (branchnode->branches == NULL)
 	{
 	    /* We have to create the first branch on this node, which means
 	       appending ".2" to the revision number. */
@@ -3348,17 +3419,45 @@ RCS_addbranch (rcs, branch)
 	    strcat (newrevnum, ".2");
 	}
 	else
+	{
+	    char *max = max_rev (branchnode);
+	    assert (max);
 	    newrevnum = increment_revnum (max);
+	    free (max);
+	}
+    }
     else
     {
-	if (max != NULL && compare_revnums (branch, max) <= 0)
-	{
-	    error (0, 0, "%s: revision %s too low; must be higher than %s",
-		   rcs->path,
-		   branch, max);
-	    return NULL;
-	}
 	newrevnum = xstrdup (branch);
+
+	if (branchnode->branches != NULL)
+	{
+	  Node *head;
+	  Node *bp;
+
+	  /* Find the position of this new branch in the sorted list
+	     of branches.  */
+	  head = branchnode->branches->list;
+	  for (bp = head->next; bp != head; bp = bp->next)
+	    {
+	      char *dot;
+	      int found_pos;
+
+	      /* The existing list must be sorted on increasing revnum.  */
+	      assert (bp->next == head
+		      || compare_truncated_revnums (bp->key,
+						    bp->next->key) < 0);
+	      dot = truncate_revnum_in_place (bp->key);
+	      found_pos = (compare_revnums (branch, bp->key) < 0);
+	      *dot = '.';
+
+	      if (found_pos)
+		{
+		  break;
+		}
+	    }
+	  marker = bp;
+	}
     }
 
     newrevnum = (char *) xrealloc (newrevnum, strlen (newrevnum) + 3);
@@ -3369,10 +3468,18 @@ RCS_addbranch (rcs, branch)
 	branchnode->branches = getlist();
     bp = getnode();
     bp->key = xstrdup (newrevnum);
-    (void) addnode (branchnode->branches, bp);
 
-    if (max != NULL)
-	free (max);
+    /* Append to the end of the list by default, that is, just before
+       the header node, `list'.  */
+    if (marker == NULL)
+	marker = branchnode->branches->list;
+
+    {
+      int fail;
+      fail = insert_before (branchnode->branches, marker, bp);
+      assert (!fail);
+    }
+
     return newrevnum;
 }
 

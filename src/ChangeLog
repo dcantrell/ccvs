@@ -1,3 +1,30 @@
+1997-12-04  Jim Meyering  <meyering@na-net.ornl.gov>
+
+	* subr.c (xstrdup): Use memcpy rather than strcpy.
+	(compare_revnums): Declare parameters to be `const'.
+	Remove unnecessary uses of xstrdup and corresponding frees.
+	(increment_revnum): Declare parameter to be `const'.
+	Use memcpy rather than strcpy.
+	(gca): Declare parameters to be `const'.
+	(check_numeric): Declare REV parameter to be `const'.
+	(file_has_markers): Declare parameter to be `const'.
+	(get_file): Declare `char*' parameters to be `const'.
+	* run.c (run_exec): Declare `char*' parameters to be `const'.
+	* cvs.h (mempcpy) [! HAVE_MEMPCPY]: Define it.
+	Add `const' to types in several prototypes.
+
+	* rcs.c (truncate_revnum): New function.
+	(truncate_revnum_in_place): New function.
+	(compare_truncated_revnums): New function.
+	(max_rev): New function.
+	(RCS_addbranch): Make BRANCH parameter `const'.
+	Use the above functions rather than open-coding them.
+	When BRANCH is a revision number, insert it *in order*
+	in the sorted list of branch numbers, not at the end.
+	Add assertion that insertion succeeds.
+	* sanity.sh (multibranch2): Test for this.
+	(Copyright): Add 1997.
+
 Dec 1997  Karl Fogel  <kfogel@floss.red-bean.com>
 
 	* wrapper.c (wrap_name_has): loop as far as wrap_count +

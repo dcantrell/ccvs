@@ -439,8 +439,8 @@ void root_allow_add PROTO ((char *));
 void root_allow_free PROTO ((void));
 int root_allow_ok PROTO ((char *));
 
-char *gca PROTO((char *rev1, char *rev2));
-extern void check_numeric PROTO ((char *, int, char **));
+char *gca PROTO((const char *rev1, const char *rev2));
+extern void check_numeric PROTO ((const char *, int, char **));
 char *getcaller PROTO((void));
 char *time_stamp PROTO((char *file));
 
@@ -469,8 +469,8 @@ char *get_homedir PROTO ((void));
 char *cvs_temp_name PROTO ((void));
 
 int numdots PROTO((const char *s));
-char *increment_revnum PROTO ((char *));
-int compare_revnums PROTO ((char *, char *));
+char *increment_revnum PROTO ((const char *));
+int compare_revnums PROTO ((const char *, const char *));
 int unlink_file PROTO((const char *f));
 int link_file PROTO ((const char *from, const char *to));
 int unlink_file_dir PROTO((const char *f));
@@ -618,9 +618,9 @@ void SIG_endCrSect PROTO((void));
 void read_cvsrc PROTO((int *argc, char ***argv, char *cmdname));
 
 char *make_message_rcslegal PROTO((char *message));
-extern int file_has_markers PROTO ((struct file_info *));
-extern void get_file PROTO ((char *, char *, char *, char **, size_t *,
-			     size_t *));
+extern int file_has_markers PROTO ((const struct file_info *));
+extern void get_file PROTO ((const char *, const char *, const char *,
+			     char **, size_t *, size_t *));
 
 /* flags for run_exec(), the fast system() for CVS */
 #define	RUN_NORMAL		0x0000	/* no special behaviour */
@@ -634,7 +634,8 @@ extern void get_file PROTO ((char *, char *, char *, char **, size_t *,
 void run_arg PROTO((const char *s));
 void run_print PROTO((FILE * fp));
 void run_setup PROTO ((const char *prog));
-int run_exec PROTO((char *stin, char *stout, char *sterr, int flags));
+int run_exec PROTO((const char *stin, const char *stout, const char *sterr,
+		    int flags));
 
 /* other similar-minded stuff from run.c.  */
 FILE *run_popen PROTO((const char *, const char *));
@@ -846,6 +847,11 @@ extern void cvs_output_binary PROTO ((char *, size_t));
 extern void cvs_outerr PROTO ((const char *, size_t));
 extern void cvs_flusherr PROTO ((void));
 extern void cvs_flushout PROTO ((void));
+
+#if ! HAVE_MEMPCPY
+/* Be CAREFUL that there are no side effects in N.  */
+# define mempcpy(D, S, N) ((void *) ((char *) memcpy (D, S, N) + (N)))
+#endif
 
 #if defined(SERVER_SUPPORT) || defined(CLIENT_SUPPORT)
 #include "server.h"
