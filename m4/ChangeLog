@@ -1,8 +1,16 @@
+2004-04-21  Derek Price  <derek@ximbiot.com>
+
+	Add stdbool module from GNULIB.
+
+	* Makefile.am (EXTRA_DIST): Add stdbool.m4.
+	* stdbool.m4: New files.
+	* Makefile.in: Regenerated.
+
 2004-04-14  Derek Price  <derek@ximbiot.com>
 
 	Update to current fnmatch module from GNULIB.
 
-	* Makefile.in (EXTRA_DIST): Add fnmatch.m4 * mbstate_t.m4.
+	* Makefile.am (EXTRA_DIST): Add fnmatch.m4 * mbstate_t.m4.
 	* fnmatch.m4, mbstate_t.m4: New files.
 	* Makefile.in: Regenerated.
 

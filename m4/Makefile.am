@@ -62,6 +62,7 @@ EXTRA_DIST = \
 	signed.m4 \
 	size_max.m4 \
 	stat.m4 \
+	stdbool.m4 \
 	stdint_h.m4 \
 	uintmax_t.m4 \
 	ulonglong.m4 \
