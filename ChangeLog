@@ -1,5 +1,15 @@
 2003-05-21  Derek Price  <derek@ximbiot.com>
 
+	* INSTALL: Mention new Automake version.
+	* NEWS: Ditto.
+
+	* Makefile.in: Regenerated.
+	* aclocal.m4: Ditto.
+	* config.h.in: Ditto.
+	* configure: Ditto.
+
+2003-05-21  Derek Price  <derek@ximbiot.com>
+
 	* configure.in: Add call to AC_GNU_SOURCE & jm_FUNC_GLIBC_UNLOCKED_IO.
 
 	* aclocal.m4: Regenerated.
