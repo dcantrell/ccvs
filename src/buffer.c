@@ -1400,8 +1400,11 @@ packetizing_buffer_input (void *closure, char *data, size_t need, size_t size,
 	int status;
 	size_t get, nread, count, tcount;
 	char *bytes;
-	char stackoutbuf[BUFFER_DATA_SIZE + PACKET_SLOP];
+	static char *stackoutbuf = NULL;
 	char *inbuf, *outbuf;
+
+	if (!stackoutbuf)
+	    stackoutbuf = xmalloc (BUFFER_DATA_SIZE + PACKET_SLOP);
 
 	/* If we don't already have the two byte count, get it.  */
 	if (pb->holdsize < 2)
@@ -1512,7 +1515,7 @@ packetizing_buffer_input (void *closure, char *data, size_t need, size_t size,
 	    inbuf = pb->holdbuf + 2;
 	}
 
-	if (count <= sizeof stackoutbuf)
+	if (count <= BUFFER_DATA_SIZE + PACKET_SLOP)
 	    outbuf = stackoutbuf;
 	else
 	{
@@ -1578,8 +1581,11 @@ packetizing_buffer_output (void *closure, const char *data, size_t have,
                            size_t *wrote)
 {
     struct packetizing_buffer *pb = closure;
-    char inbuf[BUFFER_DATA_SIZE + 2];
-    char stack_outbuf[BUFFER_DATA_SIZE + PACKET_SLOP + 4];
+    static char *inbuf = NULL;  /* These two buffers are static so that they
+				 * depend on the size of BUFFER_DATA_SIZE yet
+				 * still only be allocated once per run.
+				 */
+    static char *stack_outbuf = NULL;
     struct buffer_data *outdata = NULL; /* Initialize to silence -Wall.  Dumb.
 					 */
     char *outbuf;
@@ -1589,6 +1595,12 @@ packetizing_buffer_output (void *closure, const char *data, size_t have,
     /* It would be easy to xmalloc a buffer, but I don't think this
        case can ever arise.  */
     assert (have <= BUFFER_DATA_SIZE);
+
+    if (!inbuf)
+    {
+	inbuf = xmalloc (BUFFER_DATA_SIZE + 2);
+        stack_outbuf = xmalloc (BUFFER_DATA_SIZE + PACKET_SLOP + 4);
+    }
 
     inbuf[0] = (have >> 8) & 0xff;
     inbuf[1] = have & 0xff;
