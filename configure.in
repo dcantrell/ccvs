@@ -185,13 +185,6 @@ fi
 
 # Replace functions with versions in lib/ when they can't be found.
 AC_REPLACE_FUNCS(\
-	dup2 \
-	ftruncate \
-	mkdir \
-	readlink \
-	rename \
-	strstr \
-	strtoul\
 	valloc \
 	waitpid \
 )

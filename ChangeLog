@@ -1,5 +1,9 @@
 2005-03-02 Derek Price <derek@ximbiot.com>
 
+	* configure.in: Remove checks for funcs covered by GNULIB.
+
+2005-03-02 Derek Price <derek@ximbiot.com>
+
 	* gnulib-update: Redirect gnulib-tool output back to /dev/null.
 
 2005-03-02 Derek Price <derek@ximbiot.com>
