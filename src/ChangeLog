@@ -1,3 +1,10 @@
+1999-12-09  K.J. Paradise (kj@sourcegear.com)
+
+	* history.c, commit.c, sanity.sh: found (I think) final 
+	cause of seg fault in history command.  Also, added the "R" 
+	history functionality.  Fixed basic2-64 so it looks correct for 
+	the change. 
+
 1999-11-30  K.J. Paradise (kj@sourcegear.com)
 
 	* history.c: fixed seg fault caused by 11-03 changes.  
