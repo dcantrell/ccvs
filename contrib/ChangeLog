@@ -1,3 +1,8 @@
+2001-05-23  Larry Jones  <larry.jones@sdrc.com>
+
+	* sccs2rcs.in: Fix y2k bug correctly.
+	(Reported by "Hayes, Ted (London)" <HayesRog@exchange.uk.ml.com>.)
+
 2001-04-25  Derek Price  <dprice@collab.net>
 
 	* Makefile.in: Regenerated using AM 1.4e as of today at 18:10 -0400.
