@@ -89,6 +89,7 @@ rm -rf $RPM_BUILD_ROOT
 ./install-sh src/cvs.krb5 $RPM_BUILD_ROOT%{_kerberosbindir}/cvs
 %endif
 
+rm -f $RPM_BUILD_ROOT${_infodir}/dir
 gzip -9nf $RPM_BUILD_ROOT%{_infodir}/cvs*
 strip $RPM_BUILD_ROOT%{_bindir}/cvs
 %if %gssapi
@@ -98,11 +99,14 @@ strip $RPM_BUILD_ROOT%{_kerberosbindir}/cvs
 %clean
 rm -rf $RPM_BUILD_ROOT
 
+%post
+    /sbin/install-info --info-dir=%{_infodir} %{_infodir}/cvs.info.gz
+    /sbin/install-info --info-dir=%{_infodir} %{_infodir}/cvsclient.info.gz
 %preun
 if [ $1 = 0 ]; then
     # uninstall the info reference in the dir file
-    /sbin/install-info --delete %{_infodir}/cvs.info.gz %{_infodir}/dir
-    /sbin/install-info --delete %{_infodir}/cvsclient.info.gz %{_infodir}/dir
+    /sbin/install-info --delete --info-dir=%{_infodir} %{_infodir}/cvs.info.gz
+    /sbin/install-info --delete --info-dir=%{_infodir} %{_infodir}/cvsclient.info.gz
 fi
 
 %files
