@@ -1,5 +1,11 @@
 2004-09-09  Derek Price  <derek@ximbiot.com>
 
+	* buffer.c (stuct packetizing_buffer): Use size_t & bool as appropriate
+	in preference to int.
+	(packetizing_buffer_output): s/int/size_t/ as appropriate.
+
+2004-09-09  Derek Price  <derek@ximbiot.com>
+
 	* buffer.c (packetizing_buffer_input): s/int/size_t/ as appropriate.
 
 2004-09-09  Mark D. Baushke  <mdb@cvshome.org>
