@@ -17,6 +17,7 @@
    definitions under operating systems (like, say, Windows NT) with different
    file system semantics.  */
 
+#include <assert.h>
 #include <io.h>
 #include <windows.h>
 
@@ -501,54 +502,58 @@ deep_remove_dir (path)
     char	   buf[PATH_MAX];
 
     /* ENOTEMPTY for NT (obvious) but EACCES for Win95 (not obvious) */
-    if (rmdir (path) != 0
-	&& (errno == ENOTEMPTY || errno == EACCES))
+    if (rmdir (path) != 0)
     {
-	if ((dirp = opendir (path)) == NULL)
-	    /* If unable to open the directory return
-	     * an error
-	     */
-	    return -1;
-
-	while ((dp = readdir (dirp)) != NULL)
+	if (errno == ENOTEMPTY || errno == EACCES)
 	{
-	    if (strcmp (dp->d_name, ".") == 0 ||
-			strcmp (dp->d_name, "..") == 0)
-		continue;
+	    if ((dirp = CVS_OPENDIR (path)) == NULL)
+		/* If unable to open the directory return
+		 * an error
+		 */
+		return -1;
 
-	    sprintf (buf, "%s/%s", path, dp->d_name);
-
-	    /* Win32 unlink is stupid - it fails if the file is read-only */
-	    chmod (buf, _S_IWRITE);
-	    if (unlink (buf) != 0 )
+	    while ((dp = CVS_READDIR (dirp)) != NULL)
 	    {
-		/* Under Windows NT, unlink returns EACCES if the path
-		   is a directory.  Under Windows 95, ENOENT.  It
-		   isn't really clear to me whether checking errno is
-		   better or worse than using _stat to check for a directory.
-		   We aren't really trying to prevent race conditions here
-		   (e.g. what if something changes between readdir and
-		   unlink?)  */
-		if (errno == EISDIR || errno == EACCES || errno == ENOENT)
+		if (strcmp (dp->d_name, ".") == 0 ||
+			    strcmp (dp->d_name, "..") == 0)
+		    continue;
+
+		sprintf (buf, "%s/%s", path, dp->d_name);
+
+		/* Win32 unlink is stupid - it fails if the file is read-only */
+		chmod (buf, _S_IWRITE);
+		if (unlink (buf) != 0 )
 		{
-		    if (deep_remove_dir (buf))
+		    /* Under Windows NT, unlink returns EACCES if the path
+		       is a directory.  Under Windows 95, ENOENT.  It
+		       isn't really clear to me whether checking errno is
+		       better or worse than using _stat to check for a directory.
+		       We aren't really trying to prevent race conditions here
+		       (e.g. what if something changes between readdir and
+		       unlink?)  */
+		    if (errno == EISDIR || errno == EACCES || errno == ENOENT)
 		    {
-			closedir (dirp);
+			if (deep_remove_dir (buf))
+			{
+			    closedir (dirp);
+			    return -1;
+			}
+		    }
+		    else
+		    {
+			/* buf isn't a directory, or there are
+			 * some sort of permision problems
+			 */
+			CVS_CLOSEDIR (dirp);
 			return -1;
 		    }
 		}
-		else
-		{
-		    /* buf isn't a directory, or there are
-		     * some sort of permision problems
-		     */
-		    closedir (dirp);
-		    return -1;
-		}
 	    }
+	    CVS_CLOSEDIR (dirp);
+	    return rmdir (path);
 	}
-	closedir (dirp);
-	return rmdir (path);
+	else
+	    return -1;
     }
     /* Was able to remove the directory return 0 */
     return 0;
@@ -739,6 +744,45 @@ isabsolute (filename)
             || (filename[0] != '\0'
                 && filename[1] == ':'
                 && ISDIRSEP (filename[2])));
+}
+
+/* char *
+ * xresolvepath ( const char *path )
+ *
+ * Like xreadlink(), but resolve all links in a path.
+ *
+ * INPUTS
+ *  path	The original path.
+ *
+ * RETURNS
+ *  The path with any symbolic links expanded.
+ *
+ * ERRORS
+ *  This function exits with a fatal error if it fails to read the link for
+ *  any reason.
+ */
+char *
+xresolvepath ( path )
+    const char *path;
+{
+    char *hardpath;
+    char *owd;
+
+    assert ( isdir ( path ) );
+
+    /* FIXME - If HAVE_READLINK is defined, we should probably walk the path
+     * bit by bit calling xreadlink().
+     */
+
+    owd = xgetwd();
+    if ( CVS_CHDIR ( path ) < 0)
+	error ( 1, errno, "cannot chdir to %s", path );
+    if ( ( hardpath = xgetwd() ) == NULL )
+	error (1, errno, "cannot readlink %s", hardpath);
+    if ( CVS_CHDIR ( owd ) < 0)
+	error ( 1, errno, "cannot chdir to %s", owd );
+
+    return hardpath;
 }
 
 /* Return a pointer into PATH's last component.  */
@@ -1009,6 +1053,7 @@ static void check_statbuf (const char *file, struct stat *sb)
     }
 }
 
+/* see CVS_STAT */
 int
 wnt_stat (const char *file, struct stat *sb)
 {
@@ -1021,6 +1066,7 @@ wnt_stat (const char *file, struct stat *sb)
     return retval;
 }
 
+/* see CVS_LSTAT */
 int
 wnt_lstat (const char *file, struct stat *sb)
 {
@@ -1030,5 +1076,210 @@ wnt_lstat (const char *file, struct stat *sb)
     if (retval < 0)
 	return retval;
     check_statbuf (file, sb);
+    return retval;
+}
+
+#ifdef SERVER_SUPPORT
+/* Case-insensitive string compare.  I know that some systems
+   have such a routine, but I'm not sure I see any reasons for
+   dealing with the hair of figuring out whether they do (I haven't
+   looked into whether this is a performance bottleneck; I would guess
+   not).  */
+int
+cvs_casecmp (str1, str2)
+    char *str1;
+    char *str2;
+{
+    char *p;
+    char *q;
+    int pqdiff;
+
+    p = str1;
+    q = str2;
+    while ((pqdiff = tolower (*p) - tolower (*q)) == 0)
+    {
+	if (*p == '\0')
+	    return 0;
+	++p;
+	++q;
+    }
+    return pqdiff;
+}
+#endif /* SERVER_SUPPORT */
+
+
+
+/* static char *
+ * locate_file_in_dir ( char *dir, char *file )
+ *
+ * Search a directory for a filename, case insensitively when appropriate.
+ *
+ * INPUTS
+ *
+ *  dir		Path to directory to be searched.
+ *  file	File name to be located, perhaps case insensitively.
+ *
+ * RETURNS
+ *
+ *  A newly malloc'd array containing the full path to the located file
+ *  or NULL of the file was not found in dir or if the file found was
+ *  not readable.
+ *
+ * ERRORS
+ *
+ *  When this function returns NULL, errno will be set appropriately.
+ */
+static char *
+locate_file_in_dir ( dir, file )
+    char *dir;
+    char *file;
+{
+    char *retval;
+
+#if defined (SERVER_SUPPORT) && !defined (FILENAMES_CASE_INSENSITIVE)
+    if ( ign_case )
+    {
+	DIR *dirp;
+	struct dirent *dp;
+	char *found_name = NULL;
+
+	if ( ( dirp = CVS_OPENDIR ( dir ) ) == NULL )
+	{
+	    if ( existence_error ( errno ) )
+	    {
+		/* This can happen if we are looking in the Attic and the Attic
+		   directory does not exist.  Pass errno through to the caller;
+		   they know what to do with it.  */
+		return NULL;
+	    }
+	    else
+	    {
+		/* Give a fatal error; that way the error message can be
+		 * more specific than if we returned the error to the caller.
+		 */
+		error ( 1, errno, "cannot read directory %s", dir );
+	    }
+	}
+	errno = 0;
+	while ( ( dp = CVS_READDIR ( dirp ) ) != NULL )
+	{
+	    if ( cvs_casecmp ( dp->d_name, file ) == 0 )
+	    {
+		if ( found_name != NULL )
+		    error ( 1, 0, "%s is ambiguous; could mean %s or %s",
+			    file, dp->d_name, found_name );
+		found_name = xstrdup ( dp->d_name );
+	    }
+	}
+	if ( errno != 0 )
+	    error ( 1, errno, "cannot read directory %s", dir );
+
+	CVS_CLOSEDIR ( dirp );
+
+	if ( found_name == NULL )
+	{
+	    errno = ENOENT;
+	    return NULL;
+	}
+
+	/* Copy the found name back into DIR.  We are assuming that
+	   found_name is the same length as fname, which is true as
+	   long as the above code is just ignoring case and not other
+	   aspects of filename syntax.  */
+	retval = xmalloc ( strlen ( dir )
+			   + strlen ( found_name )
+			   + 2 );
+	sprintf ( retval, "%s/%s", dir, found_name );
+    }
+    else
+#endif /* defined (SERVER_SUPPORT) && !defined (FILENAMES_CASE_INSENSITIVE) */
+    {
+	retval = xmalloc ( strlen ( dir )
+			   + strlen ( file )
+			   + 2 );
+	(void) sprintf ( retval, "%s/%s", dir, file );
+	if ( !isfile ( retval ) )
+	{
+	    free ( retval );
+	    return NULL;
+	}
+    }
+
+    return retval;
+}
+
+
+
+/*
+ * char *
+ * locate_rcs ( const char* file, const char *repository , int *inattic )
+ *
+ * Find an RCS file in the repository.  Most parts of CVS will want to
+ * rely instead on RCS_parse which calls this function and is
+ * called by recurse.c which then puts the result in useful places
+ * like the rcs field of struct file_info.
+ *
+ * INPUTS
+ *
+ *  repository		the repository (including the directory)
+ *  file		the filename within that directory (without RCSEXT).
+ *  inattic		NULL or a pointer to the output boolean
+ *
+ * OUTPUTS
+ *
+ *  inattic		If this input was non-null, the destination will be
+ *  			set to true if the file was found in the attic or
+ *  			false if not.  If no RCS file is found, this value
+ *  			is undefined.
+ *
+ * RETURNS
+ *
+ *  a newly-malloc'd array containing the absolute pathname of the RCS
+ *  file that was found or NULL on error.
+ *
+ * ERRORS
+ *
+ *  errno will be set by the system calls in the case of failure.
+ */
+char *
+locate_rcs ( repository, file, inattic )
+    const char *repository;
+    const char *file;
+    int *inattic;
+{
+    char *rcsfile;
+    char *dir;
+    char *retval;
+
+    /* Allocate space and add the RCS extension */
+    rcsfile = xmalloc ( strlen ( file )
+		    + sizeof ( RCSEXT ) );
+    (void) sprintf ( rcsfile, "%s%s", file, RCSEXT );
+
+    /* Search in the top dir given */
+    if (( retval = locate_file_in_dir ( repository, rcsfile )) != NULL )
+    {
+	if ( inattic )
+	    *inattic = 0;
+	goto out;
+    }
+
+    /* Search in the Attic */
+    dir = xmalloc ( strlen ( repository )
+		    + sizeof ( CVSATTIC )
+		    + 2 );
+    (void) sprintf ( dir,
+		     "%s/%s",
+		     repository,
+		     CVSATTIC );
+
+    if ( ( retval = locate_file_in_dir ( dir, rcsfile ) ) != NULL
+	 && inattic != NULL )
+	*inattic = 1;
+
+    free ( dir );
+
+out:
+    free ( rcsfile );
     return retval;
 }

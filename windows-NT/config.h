@@ -254,7 +254,7 @@ extern int readlink (char *path, char *buf, int buf_size);
 extern pid_t getpid (void);
 
 /* We definitely have prototypes.  */
-#define USE_PROTOTYPES 1
+#define PROTOTYPES 1
 
 /* This is just a call to the Win32 Sleep function.  */
 unsigned int sleep (unsigned int);
@@ -451,4 +451,4 @@ typedef int ssize_t;
  * platforms, like some of the Makefiles are.  That way, there is only one
  * place the version string needs to be updated by hand for a new release.
  */
-#define PACKAGE_STRING "Concurrent Versions System (CVS) 1.11.5.1"
+#define PACKAGE_STRING "Concurrent Versions System (CVS) 1.12.0.1"
