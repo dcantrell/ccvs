@@ -2345,6 +2345,89 @@ RCS_getversion (rcs, tag, date, force_tag_match, simple_tag)
 }
 
 /*
+ * Get existing revision number corresponding to tag or revision.
+ * Similar to RCS_gettag but less interpretation imposed.
+ * For example:
+ * -- If tag designates a magic branch, RCS_tag2rev
+ *    returns the magic branch number.
+ * -- If tag is a branch tag, returns the branch number, not
+ *    the revision of the head of the branch.
+ * If tag or revision is not valid or does not exist in file,
+ * exit with error.
+ */
+char *
+RCS_tag2rev (rcs, tag)
+    RCSNode *rcs;
+    char *tag;
+{
+    char *rev, *pa, *pb;
+    int i;
+
+    assert (rcs != NULL);
+
+    if (rcs->flags & PARTIAL)
+	RCS_reparsercsfile (rcs, (FILE **) NULL, (struct rcsbuffer *) NULL);
+
+    /* If a valid revision, try to look it up */
+    if ( RCS_valid_rev (tag) )
+    {
+	/* Make a copy so we can scribble on it */
+	rev =  xstrdup (tag);
+
+	/* If revision exists, return the copy */
+	if (RCS_exist_rev (rcs, tag))
+	    return rev;
+
+	/* Nope, none such. If tag is not a branch we're done. */ 
+	i = numdots (rev);
+	if ((i & 1) == 1 )
+	{
+	    pa = strrchr (rev, '.');
+	    if (i == 1 || *(pa-1) != RCS_MAGIC_BRANCH || *(pa-2) != '.')
+	    {
+		free (rev);
+		error (1, 0, "revision `%s' does not exist", tag);
+	    }
+	}
+
+       /* Tag is branch, but does not exist, try corresponding 
+	* magic branch tag.
+	*
+	* FIXME: assumes all magic branches are of       
+	* form "n.n.n ... .0.n".  I'll fix if somebody can
+	* send me a method to get a magic branch tag with
+	* the 0 in some other position -- <dan@gasboy.com>
+	*/ 
+	pa = strrchr (rev, '.');
+	pb = xmalloc (strlen (rev) + 3);
+	*pa++ = 0;
+	(void) sprintf (pb, "%s.%d.%s", rev, RCS_MAGIC_BRANCH, pa);
+	free (rev);
+	rev = pb;
+	if (RCS_exist_rev (rcs, rev))
+	    return rev;
+	error (1, 0, "revision `%s' does not exist", tag);
+    }
+
+
+    RCS_check_tag (tag); /* exit if not a valid tag */
+
+    /* If tag is "HEAD", special case to get head RCS revision */
+    if (tag && (strcmp (tag, TAG_HEAD) == 0))
+        return (RCS_head (rcs));
+
+    /* If valid tag let translate_symtag say yea or nay. */
+    rev = translate_symtag (rcs, tag);
+
+    if (rev)
+        return rev;
+
+    error (1, 0, "tag `%s' does not exist", tag);
+    /* NOT REACHED -- error (1 ... ) does not return here */
+    return 0;
+}
+
+/*
  * Find the revision for a specific tag.
  * If force_tag_match is set, return NULL if an exact match is not
  * possible otherwise return RCS_head ().  We are careful to look for
@@ -3338,6 +3421,40 @@ RCS_check_tag (tag)
     }
     else
 	error (1, 0, "tag `%s' must start with a letter", tag);
+}
+
+/*
+ * TRUE if argument has valid syntax for an RCS revision or 
+ * branch number.  All characters must be digits or dots, first 
+ * and last characters must be digits, and no two consecutive 
+ * characters may be dots.
+ *
+ * Intended for classifying things, so this function doesn't 
+ * call error.
+ */
+int 
+RCS_valid_rev (rev)
+    char *rev;
+{
+   char last, c;
+   last = *rev++;
+   if (!isdigit (last))
+       return 0;
+   while ((c = *rev++))   /* Extra parens placate -Wall gcc option */
+   {
+       if (c == '.')
+       {
+           if (last == '.')
+               return 0;
+           continue;
+       }
+       last = c;
+       if (!isdigit (c))
+           return 0;
+   }
+   if (!isdigit (last))
+       return 0;
+   return 1;
 }
 
 /*
@@ -6397,6 +6514,52 @@ RCS_delete_revs (rcs, tag1, tag2, inclusive)
 
     return status;
 }
+
+/*
+ * TRUE if there exists a symbolic tag "tag" in file.
+ */
+int 
+RCS_exist_tag (rcs, tag)
+    RCSNode *rcs;
+    char *tag;
+{
+
+    assert (rcs != NULL);
+
+    if (findnode (RCS_symbols (rcs), tag))
+    return 1;
+    return 0;
+
+}
+
+/*
+ * TRUE if RCS revision number "rev" exists.
+ * This includes magic branch revisions, not found in rcs->versions, 
+ * but only in rcs->symbols, requiring a list walk to find them.
+ * Take advantage of list walk callback function already used by 
+ * RCS_delete_revs, above.
+ */
+int
+RCS_exist_rev (rcs, rev)
+    RCSNode *rcs;
+    char *rev;
+{
+
+    assert (rcs != NULL);
+
+    if (rcs->flags & PARTIAL)
+	RCS_reparsercsfile (rcs, (FILE **) NULL, (struct rcsbuffer *) NULL);
+
+    if (findnode(rcs->versions, rev) != 0)
+	return 1;
+
+    if (walklist (RCS_symbols(rcs), findtag, rev) != 0)
+	return 1;
+
+    return 0;
+
+}
+
 
 /* RCS_deltas and friends.  Processing of the deltas in RCS files.  */
 

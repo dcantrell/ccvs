@@ -1,3 +1,25 @@
+1998-03-18  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* sanity.sh (admin): Rename admin-26-o* to admin-26-*; the "o"
+	stands for "cvs admin -o".  Add comment about length of tests.
+	Use ${PLUS}.
+
+1998-03-05  Dan Wilder <dan@gasboy.com>
+ 
+ 	* Fix problem with cvs admin in which -ntag:branch 
+ 	option associated tag with the branch's head revision.  
+ 	Should have used branch number.  Entailed in this fix, 
+ 	the following.
+ 
+ 	* Add new functions "RCS_exist_rev", "RCS_exist_tag",
+ 	"RCS_tag2rev", and "RCS_valid_rev" to rcs.c.  RCS_tag2rev
+ 	is similar to RCS_gettag, but does less interpretation.
+ 
+ 	* Plug a small memory leak.
+
+ 	* Add tests admin-26 through admin-29 to sanity.sh,
+ 	to test "cvs admin -n".
+        
 1998-03-17  Samuel Tardieu  <sam@inf.enst.fr>
 
 	* server.c (server_register): protect dereferencing timestamp in
