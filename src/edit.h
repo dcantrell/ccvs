@@ -41,5 +41,5 @@ extern void mark_up_to_date (const char *file);
 
 void editors_output (const char *fullname, const char *them);
 
-void edit_file (void *data, List *ent_list, char *short_pathname,
-		char *filename);
+void edit_file (void *data, List *ent_list, const char *short_pathname,
+		const char *filename);

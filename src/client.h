@@ -2,7 +2,7 @@
 
 /* Stuff shared with the server.  */
 char *mode_to_string (mode_t);
-int change_mode (char *, char *, int);
+int change_mode (const char *, const char *, int);
 
 extern int gzip_level;
 extern int file_gzip_level;

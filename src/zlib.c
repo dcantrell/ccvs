@@ -454,7 +454,8 @@ compress_buffer_shutdown_output (struct buffer *buf)
    it is an error we can't recover from.  */
 
 int
-gunzip_and_write (int fd, char *fullname, unsigned char *buf, size_t size)
+gunzip_and_write (int fd, const char *fullname, unsigned char *buf,
+		  size_t size)
 {
     size_t pos;
     z_stream zstr;

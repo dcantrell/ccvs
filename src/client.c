@@ -282,7 +282,7 @@ mode_to_string (mode_t mode)
  * If RESPECT_UMASK is set, then honor the umask.
  */
 int
-change_mode (char *filename, char *mode_string, int respect_umask)
+change_mode (const char *filename, const char *mode_string, int respect_umask)
 {
 #ifdef CHMOD_BROKEN
     char *p;
@@ -322,7 +322,7 @@ change_mode (char *filename, char *mode_string, int respect_umask)
 
 #else /* ! CHMOD_BROKEN */
 
-    char *p;
+    const char *p;
     mode_t mode = 0;
     mode_t oumask;
 
@@ -332,7 +332,7 @@ change_mode (char *filename, char *mode_string, int respect_umask)
 	if ((p[0] == 'u' || p[0] == 'g' || p[0] == 'o') && p[1] == '=')
 	{
 	    int can_read = 0, can_write = 0, can_execute = 0;
-	    char *q = p + 2;
+	    const char *q = p + 2;
 	    while (*q != ',' && *q != '\0')
 	    {
 		if (*q == 'r')
@@ -668,7 +668,7 @@ int is_valid_client_path (const char *pathname)
  * the directory portion of SHORT_PATHNAME.  */
 static void
 call_in_directory (const char *pathname,
-                   void (*func) (void *, List *, char *, char *),
+                   void (*func) (void *, List *, const char *, const char *),
                    void *data)
 {
     /* This variable holds the result of Entries_Open. */
@@ -1045,7 +1045,8 @@ warning: server is not creating directories one at a time");
 
 
 static void
-copy_a_file (void *data, List *ent_list, char *short_pathname, char *filename)
+copy_a_file (void *data, List *ent_list, const char *short_pathname,
+	     const char *filename)
 {
     char *newname;
 #ifdef USE_VMS_FILENAMES
@@ -1320,8 +1321,8 @@ struct update_entries_data
 
 /* Update the Entries line for this file.  */
 static void
-update_entries (void *data_arg, List *ent_list, char *short_pathname,
-                char *filename)
+update_entries (void *data_arg, List *ent_list, const char *short_pathname,
+                const char *filename)
 {
     char *entries_line;
     struct update_entries_data *data = data_arg;
@@ -1953,8 +1954,8 @@ handle_rcs_diff (char *args, int len)
 
 
 static void
-remove_entry (void *data, List *ent_list, char *short_pathname,
-              char *filename)
+remove_entry (void *data, List *ent_list, const char *short_pathname,
+              const char *filename)
 {
     Scratch_Entry (ent_list, filename);
 }
@@ -1970,8 +1971,8 @@ handle_remove_entry (char *args, int len)
 
 
 static void
-remove_entry_and_file (void *data, List *ent_list, char *short_pathname,
-                       char *filename)
+remove_entry_and_file (void *data, List *ent_list, const char *short_pathname,
+                       const char *filename)
 {
     Scratch_Entry (ent_list, filename);
     /* Note that we don't ignore existence_error's here.  The server
@@ -2006,7 +2007,8 @@ is_cvsroot_level (char *pathname)
 
 
 static void
-set_static (void *data, List *ent_list, char *short_pathname, char *filename)
+set_static (void *data, List *ent_list, const char *short_pathname,
+	    const char *filename)
 {
     FILE *fp;
     fp = open_file (CVSADM_ENTSTAT, "w+");
@@ -2031,8 +2033,8 @@ handle_set_static_directory (char *args, int len)
 
 
 static void
-clear_static (void *data, List *ent_list, char *short_pathname,
-              char *filename)
+clear_static (void *data, List *ent_list, const char *short_pathname,
+              const char *filename)
 {
     if (unlink_file (CVSADM_ENTSTAT) < 0 && ! existence_error (errno))
         error (1, errno, "cannot remove file %s", CVSADM_ENTSTAT);
@@ -2064,7 +2066,8 @@ handle_clear_static_directory (char *pathname, int len)
 
 
 static void
-set_sticky (void *data, List *ent_list, char *short_pathname, char *filename)
+set_sticky (void *data, List *ent_list, const char *short_pathname,
+	    const char *filename)
 {
     char *tagspec;
     FILE *f;
@@ -2124,8 +2127,8 @@ handle_set_sticky (char *pathname, int len)
 
 
 static void
-clear_sticky (void *data, List *ent_list, char *short_pathname,
-              char *filename)
+clear_sticky (void *data, List *ent_list, const char *short_pathname,
+              const char *filename)
 {
     if (unlink_file (CVSADM_TAG) < 0 && ! existence_error (errno))
 	error (1, errno, "cannot remove %s", CVSADM_TAG);
@@ -2168,7 +2171,8 @@ handle_edit_file (char *pathname, int len)
 
 
 static void
-template (void *data, List *ent_list, char *short_pathname, char *filename)
+template (void *data, List *ent_list, const char *short_pathname,
+	  const char *filename)
 {
     char *buf = xmalloc ( strlen ( short_pathname )
 	    		  + strlen ( CVSADM_TEMPLATE )
@@ -2189,8 +2193,8 @@ handle_template (char *pathname, int len)
 
 
 static void
-clear_template (void *data, List *ent_list, char *short_pathname,
-                char *filename)
+clear_template (void *data, List *ent_list, const char *short_pathname,
+                const char *filename)
 {
     if (unlink_file (CVSADM_TEMPLATE) < 0 && ! existence_error (errno))
 	error (1, errno, "cannot remove %s", CVSADM_TEMPLATE);
@@ -4951,8 +4955,8 @@ client_import_done (void)
 
 
 static void
-notified_a_file (void *data, List *ent_list, char *short_pathname,
-                 char *filename)
+notified_a_file (void *data, List *ent_list, const char *short_pathname,
+                 const char *filename)
 {
     FILE *fp;
     FILE *newf;
