@@ -176,29 +176,6 @@
   Repository file says `src/bin', the server looks in
   `/this/dir/machine:/this/dir/src/bin'.
 
-  4) This isn't specific to remote CVS, but apparently the times stored
-  in the Entries files are not GMT.  I have a checked out tree copied
-  from another machine in a different time zone, and when I try to
-  update it, CVS thinks that all the files are modified and sends them
-  to the server for comparison.  (That's why I noticed #1.)
-  [ See his followup below, though.  -K ]
-  
-
-* (Charles Hannum <mycroft@ai.mit.edu>)
-  It turns out that the old version of CVS I was using wrote the time
-  stamps in local time, but the new one writes and expects them in GMT.
-  I have *no idea* how the old version actually read and compared the
-  time stamps, and managed to deal with DST correctly, but I have time
-  stamps that were in DST and ones that weren't, and it seemed to deal
-  correctly.  I'm afraid to look any further.
-  [ So shall we assume that this is fixed in rcvs?  -K ]
-  
-  Anyway, the path of least resistance seems to be to suffer an
-  expensive update once.
-  
-  I still need to fix the relative path problem, though...
-
-
 * From: "Charles M. Hannum" <mycroft@ai.mit.edu>
   To: jimb@duality.gnu.ai.mit.edu, roland@duality.gnu.ai.mit.edu
   Subject: Serious flaw in remote CVS
