@@ -238,8 +238,21 @@ time_stamp_server (file, vers_ts)
     }
     else
     {
+        struct tm *tm_p;
+        struct tm local_tm;
+
 	vers_ts->ts_user = xmalloc (25);
-	cp = asctime (gmtime (&sb.st_mtime));	/* copy in the modify time */
+        tm_p = gmtime(&sb.st_mtime);
+        if(tm_p)
+          {
+	  /* Use GMT if possible */
+          memcpy(&local_tm, tm_p, sizeof(local_tm));
+          cp = asctime (&local_tm);	/* copy in the modify time */
+          }
+        else
+          /* Use local time if GMT not available */
+          cp = ctime(&sb.st_mtime);
+
 	cp[24] = 0;
 	(void) strcpy (vers_ts->ts_user, cp);
     }
@@ -264,8 +277,20 @@ time_stamp (file)
     }
     else
     {
+	struct tm *tm_p;
+        struct tm local_tm;
 	ts = xmalloc (25);
-	cp = asctime (gmtime (&sb.st_mtime));	/* copy in the modify time */
+	tm_p = gmtime(&sb.st_mtime);
+        if(tm_p)
+          {
+          /* Use GMT if possible */
+          memcpy(&local_tm, tm_p, sizeof(local_tm));
+	  cp = asctime (&local_tm);	/* copy in the modify time */
+          }
+        else
+          /* Use local time if GMT not available */
+          cp = ctime(&sb.st_mtime);
+
 	cp[24] = 0;
 	(void) strcpy (ts, cp);
     }
