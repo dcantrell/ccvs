@@ -1,5 +1,9 @@
 2004-04-23  Derek Price  <derek@ximbiot.com>
 
+	* cvsnt.dep, cvsnt.mak: Back out previous change.
+
+2004-04-23  Derek Price  <derek@ximbiot.com>
+
 	* cvsnt.dep, cvsnt.mak: Regenerated.
 
 2004-04-21  Derek Price  <derek@ximbiot.com>
