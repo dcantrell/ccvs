@@ -7226,6 +7226,8 @@ before you ran @code{update}) will be made.  The exact
 name of that file is printed while @code{update} runs.
 
 @item C @var{file}
+@cindex .# files
+@cindex __ files (VMS)
 A conflict was detected while trying to merge your
 changes to @var{file} with changes from the source
 repository.  @var{file} (the copy in your working
@@ -7240,11 +7242,15 @@ from.  Resolve the conflict as described in
 @c far as I know.  We need to advise sysadmins as well
 @c as users how to set up this kind of purge, if that is
 @c what they want.
+@c We also might want to think about cleaner solutions,
+@c like having CVS remove the .# file once the conflict
+@c has been resolved or something like that.
 (Note that some systems automatically purge
 files that begin with @file{.#} if they have not been
 accessed for a few days.  If you intend to keep a copy
 of your original file, it is a very good idea to rename
-it.)
+it.)  Under @sc{vms}, the file name starts with
+@file{__} rather than @file{.#}.
 
 @item ? @var{file}
 @var{file} is in your working directory, but does not

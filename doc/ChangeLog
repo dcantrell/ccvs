@@ -1,3 +1,9 @@
+Tue Sep 24 11:49:02 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (update output): Add comment about how we *should*
+	be handling .# files.  Mention fact that it is different under
+	VMS.  Add .# to index.
+
 Fri Sep 20 13:08:33 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (Multiple developers): Revise text on reserved
