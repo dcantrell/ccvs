@@ -16,17 +16,18 @@
 #include "getnline.h"
 #include "buffer.h"
 
-#if defined(SERVER_SUPPORT) || defined(CLIENT_SUPPORT)
+#if defined (SERVER_SUPPORT) || defined (CLIENT_SUPPORT)
 
-#include "log-buffer.h"
-#include "ms-buffer.h"
+# include "log-buffer.h"
+# include "ms-buffer.h"
 
-#if defined(PROXY_SUPPORT) || defined(HAVE_GSSAPI)
-#  include <netdb.h>
-#endif /* defined(PROXY_SUPPORT) || defined(HAVE_GSSAPI) */
+# if defined(PROXY_SUPPORT) || defined(HAVE_GSSAPI)
+#   include <netdb.h>
+# endif /* defined(PROXY_SUPPORT) || defined(HAVE_GSSAPI) */
+#endif	/* defined(SERVER_SUPPORT) || defined(CLIENT_SUPPORT) */
 
-# ifdef HAVE_GSSAPI
-#   include "gssapi-client.h"
+#if defined (HAVE_GSSAPI) && defined (SERVER_SUPPORT)
+# include "gssapi-client.h"
 
 /* This stuff isn't included solely with SERVER_SUPPORT since some of these
  * functions (encryption & the like) get compiled with or without server
@@ -36,15 +37,14 @@
  */
 /* We use Kerberos 5 routines to map the GSSAPI credential to a user
    name.  */
-#   include <krb5.h>
+# include <krb5.h>
 
 static void gserver_authenticate_connection (void);
 
 /* Whether we are already wrapping GSSAPI communication.  */
 static int cvs_gssapi_wrapping;
 
-# endif	/* HAVE_GSSAPI */
-#endif	/* defined(SERVER_SUPPORT) || defined(CLIENT_SUPPORT) */
+#endif	/* defined (HAVE_GSSAPI) && defined (SERVER_SUPPORT) */
 
 #ifdef SERVER_SUPPORT
 

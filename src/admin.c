@@ -598,7 +598,10 @@ admin (int argc, char **argv)
 
     Lock_Cleanup ();
 
+/* This just suppresses a warning from -Wall.  */
+#ifdef CLIENT_SUPPORT
  return_it:
+#endif /* CLIENT_SUPPORT */
     if (admin_data.branch != NULL)
 	free (admin_data.branch);
     if (admin_data.comment != NULL)

@@ -1,5 +1,11 @@
 2005-02-24 Derek Price <derek@ximbiot.com>
 
+	* admin.c (admin): Suppress warning with -Wall and --disable-client.
+	* server.c: Don't declare functions that won't be defined when
+	--disable-server.
+
+2005-02-24 Derek Price <derek@ximbiot.com>
+
 	* sanity.sh (primary-wrapper): Rename CVS_SERVER_LOG for the primary in
 	writeproxy mode to avoid overwriting.
 
