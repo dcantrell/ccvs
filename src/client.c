@@ -933,6 +933,13 @@ call_in_directory (pathname, func, data)
 		    strcpy (dir, dir_name);
 		}
 
+		if (fncmp (dir, CVSADM) == 0)
+		{
+		    error (0, 0, "cannot create a directory named %s", dir);
+		    error (0, 0, "because CVS uses \"%s\" for its own uses", CVSADM);
+		    error (1, 0, "rename the directory and try again");
+		}
+
 		if (mkdir_if_needed (dir))
 		{
 		    /* It already existed, fine.  Just keep going.  */
