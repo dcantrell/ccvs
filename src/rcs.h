@@ -36,9 +36,6 @@
 #define	INATTIC	0x2			/* RCS file is located in the Attic */
 #define PARTIAL 0x4			/* RCS file not completly parsed */
 
-struct rcsnode;
-
-#ifdef RCS_PRIVATE
 struct rcsnode
 {
     int refcount;
@@ -51,7 +48,7 @@ struct rcsnode
     List *versions;
     List *dates;
 };
-#endif
+
 typedef struct rcsnode RCSNode;
 
 struct rcsversnode
