@@ -13277,7 +13277,13 @@ logcommit.pl
 
 The format of @file{checkoutlist} is one line for each
 file that you want to maintain using @sc{cvs}, giving
-the name of the file.
+the name of the file, followed optionally by more whitespace
+and any error message that should print if the file cannot be
+checked out into CVSROOT after a commit:
+
+@example
+logcommit.pl	Could not update CVSROOT/logcommit.pl.
+@end example
 
 After setting up @file{checkoutlist} in this fashion,
 the files listed there will function just like
