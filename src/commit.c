@@ -1366,16 +1366,9 @@ remove_file (file, repository, tag, message, entries, srcfiles)
     if (corev != NULL)
 	free (corev);
 
-#ifdef DEATH_STATE
-    run_setup ("%s%s -f -sdead %s%s", Rcsbin, RCS_CI, rev ? "-r" : "",
-#else
-    run_setup ("%s%s -K %s%s", Rcsbin, RCS_CI, rev ? "-r" : "",
-#endif
-	       rev ? rev : ""); 
-    run_args ("-m%s", make_message_rcslegal (message));
-    run_arg (rcs);
-    if ((retcode = run_exec (RUN_TTY, RUN_TTY, DEVNULL, RUN_NORMAL))
-	!= 0) {
+    retcode = RCS_checkin (rcs, NULL, message, rev, RCS_FLAGS_DEAD, 1);
+    if (retcode	!= 0)
+    {
 	if (!quiet)
 	    error (0, retcode == -1 ? errno : 0,
 		   "failed to commit dead revision for `%s'", rcs);
@@ -1610,7 +1603,7 @@ checkaddfile (file, repository, tag, options, srcfiles)
     } else {
 	/* this is the first time we have ever seen this file; create
 	   an rcs file.  */
-	run_setup ("%s%s -i", Rcsbin, RCS);
+	run_setup ("%s%s -x,v/ -i", Rcsbin, RCS);
 
 	(void) sprintf (fname, "%s/%s%s", CVSADM, file, CVSEXT_LOG);
 	/* If the file does not exist, no big deal.  In particular, the
@@ -1636,7 +1629,7 @@ checkaddfile (file, repository, tag, options, srcfiles)
     if (tag && newfile)
     {
 	char *tmp;
-	
+
 	/* move the new file out of the way. */
 	(void) sprintf (fname, "%s/%s%s", CVSADM, CVSPREFIX, file);
 	rename_file (file, fname);
@@ -1644,17 +1637,12 @@ checkaddfile (file, repository, tag, options, srcfiles)
 
 	tmp = xmalloc (strlen (file) + strlen (tag) + 80);
 	/* commit a dead revision. */
-	(void) sprintf (tmp, "-mfile %s was initially added on branch %s.",
+	(void) sprintf (tmp, "file %s was initially added on branch %s.",
 			file, tag);
-#ifdef DEATH_STATE
-	run_setup ("%s%s -q -f -sdead", Rcsbin, RCS_CI);
-#else
-	run_setup ("%s%s -q -K", Rcsbin, RCS_CI);
-#endif
-	run_arg (tmp);
+	retcode = RCS_checkin (rcs, NULL, tmp, NULL,
+			       RCS_FLAGS_DEAD | RCS_FLAGS_QUIET, 0);
 	free (tmp);
-	run_arg (rcs);
-	if ((retcode = run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL)) != 0)
+	if (retcode != 0)
 	{
 	    error (retcode == -1 ? 1 : 0, retcode == -1 ? errno : 0,
 		   "could not create initial dead revision %s", rcs);
@@ -1732,7 +1720,7 @@ checkaddfile (file, repository, tag, options, srcfiles)
 	RCS_addnode (file, rcsfile, srcfiles);
     }
 #else /* No DEATH_SUPPORT */
-    run_setup ("%s%s -i", Rcsbin, RCS);
+    run_setup ("%s%s -x,v/ -i", Rcsbin, RCS);
     run_args ("-t%s/%s%s", CVSADM, file, CVSEXT_LOG);
     /* Set RCS keyword expansion options.  */
     if (options && options[0] == '-' && options[1] == 'k')

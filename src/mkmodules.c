@@ -237,7 +237,7 @@ checkout_file (file, temp)
     (void) sprintf (rcs, "%s%s", file, RCSEXT);
     if (!isfile (rcs))
 	return (1);
-    run_setup ("%s%s -q -p", Rcsbin, RCS_CO);
+    run_setup ("%s%s -x,v/ -q -p", Rcsbin, RCS_CO);
     run_arg (rcs);
     if ((retcode = run_exec (RUN_TTY, temp, RUN_TTY, RUN_NORMAL)) != 0)
     {

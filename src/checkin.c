@@ -73,12 +73,7 @@ Checkin (type, file, update_dir, repository,
 	}
     }
 
-    run_setup ("%s%s -f %s%s", Rcsbin, RCS_CI,
-	       rev ? "-r" : "", rev ? rev : "");
-    run_args ("-m%s", make_message_rcslegal (message));
-    run_arg (rcs);
-
-    switch (run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL))
+    switch (RCS_checkin (rcs, NULL, message, rev, 0, 0))
     {
 	case 0:			/* everything normal */
 

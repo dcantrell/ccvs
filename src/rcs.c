@@ -363,8 +363,6 @@ RCS_reparsercsfile (rdata)
 	/* throw away the state field */
 	(void) getrcskey (fp, &key, &value);
 #ifdef DEATH_SUPPORT
-	/* Accept this regardless of DEATH_STATE, so that we can read
-	   repositories created with different versions of CVS.  */
 	if (strcmp (key, "state") != 0)
 	    error (1, 0, "\
 unable to parse rcs file; `state' not in the expected place");
@@ -394,8 +392,10 @@ unable to parse rcs file; `state' not in the expected place");
 	while ((n = getrcskey (fp, &key, &value)) >= 0)
 	{
 #ifdef DEATH_SUPPORT
-	    /* Enable use of repositories created with a CVS which defines
-	       DEATH_SUPPORT and not DEATH_STATE.  */
+	    /* Enable use of repositories created by certain obsolete
+	       versions of CVS.  This code should remain indefinately;
+	       there is no procedure for converting old repositories, and
+	       checking for it is harmless.  */
 	    if (strcmp(key, RCSDEAD) == 0)
 	    {
 		vnode->dead = 1;
