@@ -1,4 +1,11 @@
 2001-01-10  Derek Price  <derek.price@openavenue.com>
+	    Rex Jolliff  <Rex_Jolliff@notes.ymp.gov>
+
+	* build_src.com: VMS changes
+	* filesubr.c: replace calls to unlink() with CVS_UNLINK() for VMS
+	* rcs.c: ditto
+
+2001-01-10  Derek Price  <derek.price@openavenue.com>
 
 	* main.c (current_root): explicitly list this as a static global
 

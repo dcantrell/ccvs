@@ -64,5 +64,5 @@ remove.obj,repos.obj,root.obj,rtag.obj,run.obj,scramble.obj,server.obj,-
 status.obj,-
 subr.obj,tag.obj,update.obj,version.obj,vers_ts.obj,watch.obj,wrapper.obj,-
 zlib.obj
-$ link/nodeb/exe=cvs.exe main.obj,cvslib.olb/lib,[-.lib]gnulib.olb/lib,-
-[-.vms]openvmslib.olb/lib,[-.zlib]zlib.olb/lib,[-.diff]diff.olb/lib
+$ link/nodeb/exe=cvs.exe main.obj,cvslib.olb/lib,[-.vms]openvmslib.olb/lib,-
+    [-.zlib]zlib.olb/lib,[-.diff]diff.olb/lib,[-.lib]gnulib.olb/lib

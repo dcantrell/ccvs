@@ -414,12 +414,12 @@ unlink_file (f)
     const char *f;
 {
     if (trace)
-	(void) fprintf (stderr, "%s-> unlink(%s)\n",
+	(void) fprintf (stderr, "%s-> unlink_file(%s)\n",
 			CLIENT_SERVER_STR, f);
     if (noexec)
 	return (0);
 
-    return (unlink (f));
+    return (CVS_UNLINK (f));
 }
 
 /*
@@ -465,7 +465,7 @@ unlink_file_dir (f)
     else if (S_ISDIR (sb.st_mode))
 	return deep_remove_dir (f);
 
-    return unlink (f);
+    return CVS_UNLINK (f);
 }
 
 /* Remove a directory and everything it contains.  Returns 0 for
@@ -520,7 +520,7 @@ deep_remove_dir (path)
 		}
 		else
 		{
-		    if (unlink (buf) != 0)
+		    if (CVS_UNLINK (buf) != 0)
 		    {
 			closedir(dirp);
 			free (buf);
@@ -773,7 +773,7 @@ FILE *cvs_temp_file (filename)
  	int save_errno = errno;
 	if (close (fd))
 	    error (0, errno, "Failed to close temporary file %s", fn);
-	if (unlink (fn))
+	if (CVS_UNLINK (fn))
 	    error (0, errno, "Failed to unlink temporary file %s", fn);
 	errno = save_errno;
     }
