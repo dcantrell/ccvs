@@ -10837,6 +10837,8 @@ expression in the syntax used by GNU emacs.
 @c support all the obscure emacs extensions like \<.
 @c Also need to better cite (or include) full
 @c documentation for the syntax.
+@c Also see comment in configure.in about what happens to the
+@c syntax if we pick up a system-supplied regexp matcher.
 
 @item
 A whitespace separator---one or more spaces and/or tabs.

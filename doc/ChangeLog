@@ -1,3 +1,8 @@
+Sun Sep  7 18:38:23 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (syntax): Add comment about how regexp syntax may
+	be, er, creatively altered, by configure.in.
+
 Sat Sep  6 11:29:15 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (Working directory storage): Document Baserev and
