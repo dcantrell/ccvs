@@ -2,6 +2,7 @@
 
 	* cvsnt.dsp: Set default configuration on generated make files to
 	Win32 Debug.
+	(Patch from Conrad T. Pino <conrad@pino.com>.)
 	* cvsnt.dep, cvsnt.mak: Regenerated.
 
 2004-04-15  Derek Price  <derek@ximbiot.com>
