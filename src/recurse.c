@@ -61,58 +61,97 @@ struct frame_and_entries {
 
 
 /* Start a recursive command.
-
-   Command line arguments (ARGC, ARGV) dictate the directories and
-   files on which we operate.  In the special case of no arguments, we
-   default to ".".  */
+ *
+ * INPUT
+ *
+ *   fileproc
+ *     Function called with each file as an argument.
+ *
+ *   filesdoneproc
+ *     Function called after all the files in a directory have been processed,
+ *     before subdirectories have been processed.
+ *
+ *   direntproc
+ *     Function called immediately upon entering a directory, before processing
+ *     any files or subdirectories.
+ *
+ *   dirleaveproc
+ *     Function called upon finishing a directory, immediately before leaving
+ *     it and returning control to the function processing the parent
+ *     directory.
+ *
+ *   callerdat
+ *   	This void * is passed to the functions above.
+ *
+ *   argc, argv
+ *     The files on which to operate, interpreted as command line arguments.
+ *     In the special case of no arguments, defaults to operating on the
+ *     current directory (`.').
+ *
+ *   local
+ *
+ *   which
+ *     specifies the kind of recursion.  There are several cases:
+ *
+ *       1.  W_LOCAL is not set but W_REPOS or W_ATTIC is.  The current
+ *       directory when we are called must be the repository and
+ *       recursion proceeds according to what exists in the repository.
+ *
+ *       2a.  W_LOCAL is set but W_REPOS and W_ATTIC are not.  The
+ *       current directory when we are called must be the working
+ *       directory.  Recursion proceeds according to what exists in the
+ *       working directory, never (I think) consulting any part of the
+ *       repository which does not correspond to the working directory
+ *       ("correspond" == Name_Repository).
+ *
+ *       2b.  W_LOCAL is set and so is W_REPOS or W_ATTIC.  This is the
+ *       weird one.  The current directory when we are called must be
+ *       the working directory.  We recurse through working directories,
+ *       but we recurse into a directory if it is exists in the working
+ *       directory *or* it exists in the repository.  If a directory
+ *       does not exist in the working directory, the direntproc must
+ *       either tell us to skip it (R_SKIP_ALL), or must create it (I
+ *       think those are the only two cases).
+ *
+ *   aflag
+ *   locktype
+ *   update_preload
+ *   dosrcs
+ *
+ *   repository_in
+ *     keeps track of the repository string.  This is only for the remote mode,
+ *     specifically, r* commands (rtag, rdiff, co, ...) where xgetwd() was used
+ *     to locate the repository.  Things would break when xgetwd() was used
+ *     with a symlinked repository because xgetwd() would return the true path
+ *     and in some cases this would cause the path to be printed as other than
+ *     the user specified in error messages and in other cases some of CVS's
+ *     security assertions would fail.
+ *
+ * GLOBALS
+ *   ???
+ *
+ * OUTPUT
+ *
+ *  callerdat can be modified by the FILEPROC, FILESDONEPROC, DIRENTPROC, and
+ *  DIRLEAVEPROC.
+ *
+ * RETURNS
+ *   A count of errors counted by walking the argument list with
+ *   unroll_files_proc() and do_recursion().
+ *
+ * ERRORS
+ *   Fatal errors occur:
+ *     1.  when there were no arguments and the current directory
+ *         does not contain CVS metadata.
+ *     2.  when all but the last path element from an argument from ARGV cannot
+ *         be found to be a local directory.
+ */
 int
-start_recursion (FILEPROC fileproc, FILESDONEPROC filesdoneproc, DIRENTPROC direntproc, DIRLEAVEPROC dirleaveproc, void *callerdat, int argc, char **argv, int local, int which, int aflag, int locktype, char *update_preload, int dosrcs, char *repository_in)
-                      
-                                
-               	           
-                              
-                    
-
-             
-                
-              
-
-    /* This specifies the kind of recursion.  There are several cases:
-
-       1.  W_LOCAL is not set but W_REPOS or W_ATTIC is.  The current
-       directory when we are called must be the repository and
-       recursion proceeds according to what exists in the repository.
-
-       2a.  W_LOCAL is set but W_REPOS and W_ATTIC are not.  The
-       current directory when we are called must be the working
-       directory.  Recursion proceeds according to what exists in the
-       working directory, never (I think) consulting any part of the
-       repository which does not correspond to the working directory
-       ("correspond" == Name_Repository).
-
-       2b.  W_LOCAL is set and so is W_REPOS or W_ATTIC.  This is the
-       weird one.  The current directory when we are called must be
-       the working directory.  We recurse through working directories,
-       but we recurse into a directory if it is exists in the working
-       directory *or* it exists in the repository.  If a directory
-       does not exist in the working directory, the direntproc must
-       either tell us to skip it (R_SKIP_ALL), or must create it (I
-       think those are the only two cases).  */
-              
-
-              
-                 
-                         
-               
-    /* Keep track of the repository string.  This is only for the remote mode,
-     * specifically, r* commands (rtag, rdiff, co, ...) where xgetwd() was
-     * used to locate the repository.  Things would break when xgetwd() was
-     * used with a symlinked repository because xgetwd() would return the true
-     * path and in some cases this would cause the path to be printed as other
-     * than the user specified in error messages and in other cases some of
-     * CVS's security assertions would fail.
-     */
-                        
+start_recursion (FILEPROC fileproc, FILESDONEPROC filesdoneproc,
+                 DIRENTPROC direntproc, DIRLEAVEPROC dirleaveproc,
+                 void *callerdat, int argc, char **argv, int local,
+                 int which, int aflag, int locktype,
+                 char *update_preload, int dosrcs, char *repository_in)
 {
     int i, err = 0;
 #ifdef CLIENT_SUPPORT

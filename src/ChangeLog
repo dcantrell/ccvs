@@ -1,5 +1,11 @@
 2003-10-22  Derek Price  <derek@ximbiot.com>
 
+	* recurse.c (start_recursion): Reformat function declaration and
+	expand comments.
+	(Original patch from Terrence Enger <tenger@iSeries-guru.com>.)
+
+2003-10-22  Derek Price  <derek@ximbiot.com>
+
 	* Makefile.am (cvs_LDADD): Add $(LIBINTL) for gettext.
 	* Makefile.in: Regenerated.
 
