@@ -1,3 +1,8 @@
+Wed Feb 12 08:48:04 1997  Greg A. Woods  <woods@most.weird.com>
+
+	* mkmodules.c (loginfo_contents): add missing comma in
+	initializer statement (caused syntax error on SunOS-4).
+
 Tue Feb 11 21:14:28 1997  Ian Lance Taylor  <ian@cygnus.com>
 
 	* commit.c (find_fileproc): If force_ci is set, set the status to
