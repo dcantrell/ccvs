@@ -1,3 +1,15 @@
+Thu Jun 12 10:27:51 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* sanity.sh: Change "rm -rf" to "rm -r" when deleting working
+	directories (except a few watches cases).  Helps detect cases
+	where the testsuite has cd'd to somewhere other than where we
+	think it has.
+	(basic2): Remove "rm -r first-dir" between tests 49 and 50.  The
+	directory was already deleted in test 45.5.
+	(rcs): Add "cd .." at end of tests.
+	(stamps): No longer cd to TESTDIR; shouldn't be necessary with
+	fix to "rcs" test.
+
 Wed Jun 11 22:28:38 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* sanity.sh (basicb): Also remove CVSROOT/Emptydir at end of
