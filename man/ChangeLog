@@ -1,3 +1,7 @@
+Tue Feb 13 22:30:54 1996  Samuel Tardieu  <sam@inf.enst.fr>
+
+	* Makefile.in: Remove reference to mkmodules.1
+
 Mon Feb 12 16:30:40 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.1, cvsinit.8: Remove references to mkmodules, rm, sort
