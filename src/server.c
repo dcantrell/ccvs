@@ -778,7 +778,8 @@ static int max_dotdot_limit = 0;
 void
 server_pathname_check (char *path)
 {
-    TRACE (TRACE_FUNCTION, "server_pathname_check (%s)", path);
+    TRACE (TRACE_FUNCTION, "server_pathname_check (%s)",
+	   path ? path : "(null)");
 
     /* An absolute pathname is almost surely a path on the *client* machine,
        and is unlikely to do us any good here.  It also is probably capable
@@ -910,7 +911,8 @@ dirswitch (char *dir, char *repos)
     FILE *f;
     size_t dir_len;
 
-    TRACE (TRACE_FUNCTION, "dirswitch (%s, %s)", dir, repos);
+    TRACE (TRACE_FUNCTION, "dirswitch (%s, %s)", dir ? dir : "(null)",
+	   repos ? repos : "(null)");
 
     server_write_entries ();
 
@@ -1111,7 +1113,7 @@ serve_directory (char *arg)
     int status;
     char *repos;
 
-    TRACE( TRACE_FUNCTION, "serve_directory (%s)", arg );
+    TRACE( TRACE_FUNCTION, "serve_directory (%s)", arg ? arg : "(null)" );
 
     status = buf_read_line (buf_from_net, &repos, (int *) NULL);
     if (status == 0)

@@ -555,9 +555,6 @@ void rename_file (const char *from, const char *to);
    malloc'd.  It is OK to call it with PARGC == &ARGC or PARGV == &ARGV.  */
 void expand_wild (int argc, char **argv, 
                   int *pargc, char ***pargv);
-#if defined (SERVER_SUPPORT) && !defined (FILENAMES_CASE_INSENSITIVE)
-char *locate_file_in_dir (const char *dir, const char *file );
-#endif /* SERVER_SUPPORT && !FILENAMES_CASE_INSENSITIVE */
 
 #ifdef SERVER_SUPPORT
 int cvs_casecmp (const char *, const char *);

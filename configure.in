@@ -15,10 +15,10 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.])
 
-AC_INIT([Concurrent Versions System (CVS)],[1.12.2.1],[bug-cvs@gnu.org],[cvs])
+AC_INIT([Concurrent Versions System (CVS)],[1.12.3],[bug-cvs@gnu.org],[cvs])
 AC_CONFIG_SRCDIR(src/cvs.h)
 AM_INIT_AUTOMAKE([gnu 1.7.5 dist-bzip2 no-define])
-AC_PREREQ(2.57)
+AC_PREREQ(2.58)
 
 AC_PREFIX_PROGRAM(cvs)
 AM_CONFIG_HEADER(config.h)
@@ -495,7 +495,8 @@ AC_DEFINE_UNQUOTED(
   [RSH_DFLT], ["$with_default_rsh"],
   [The default remote shell to use, if one does not specify the
    CVS_RSH environment variable.])
-
+RSH_DFLT=$with_default_rsh
+AC_SUBST(RSH_DFLT)
 dnl done with finding a default CVS_RSH value
 dnl
 dnl end --with-rsh
@@ -952,7 +953,17 @@ AC_ARG_ENABLE(
   [case-sensitivity],
   AC_HELP_STRING(
     [--enable-case-sensitivity],
-    [Force CVS to expect a case sensitive file system (default autodetects)]),
+    [Force CVS to expect a case sensitive file system.  Enabling this on a case
+     insensitive system should have little effect on the server or client
+     operation, though client users may ocassionally be suprised that the CVS
+     server appears to be case sensitive.  Disabling this for a case sensitive
+     server disables server support for case insensitive clients, which can
+     confuse all users of case insensitive clients contacting the server.
+     Disabling this for a case sensitive client will cause the client to ask
+     servers to behave case insensitively, which could cause confusion for
+     users, but also probably no real harm.  (default autoselects based on the
+     case sensitivity of the file system containing the current working
+     directory)]),
     [case "$enable_case_sensitivity" in
        yes | no | auto) ;;
        *)
@@ -987,6 +998,9 @@ if test $enable_case_sensitivity = no; then
              file systems.  In the client case, this means that it will request
              that the server pretend to be case insensitive if it isn't
              already.])
+  dnl Compile fncase.c (containing fncase() & fncmp()) to handle file name
+  dnl comparisons on case insensitive filesystems.
+  AC_LIBOBJ(fncase)
 fi
 
 dnl
@@ -1115,11 +1129,9 @@ dnl things won't be that simple, before long.
 dnl AC_DEFINE(PRESERVE_PERMISSIONS_SUPPORT, 1,
 dnl [Define if this system supports chown(), link(), and friends.])
 
-dnl On cygwin32, we configure like a Unix system, but we use the
-dnl Windows support code in lib/fncase.c to handle the case
-dnl insensitive file system.  We also need some support libraries.  We
-dnl do this at the end so that the new libraries are added at the end
-dnl of LIBS.
+dnl On cygwin32, we configure like a Unix system, but we need some support
+dnl libraries.  We do this at the end so that the new libraries are added at
+dnl the end of LIBS.
 dnl
 dnl FIXME: We should be trying to meet the autoconf ideal of checking for
 dnl the properties of the system rather than the name of the os here.  In other
@@ -1129,7 +1141,6 @@ AC_CACHE_CHECK(for cygwin32, ccvs_cv_sys_cygwin32,
 [AC_TRY_COMPILE([], [return __CYGWIN32__;],
 ccvs_cv_sys_cygwin32=yes, ccvs_cv_sys_cygwin32=no)])
 if test $ccvs_cv_sys_cygwin32 = yes; then
-  AC_LIBOBJ(fncase)
   LIBS="$LIBS -ladvapi32"
 
   dnl On Windows you can only change file times if you can write to

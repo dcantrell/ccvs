@@ -238,47 +238,7 @@ locate_rcs (const char *repository, const char *file, int *inattic)
     }
     free (retval);
 
-#if defined (SERVER_SUPPORT) && !defined (FILENAMES_CASE_INSENSITIVE)
-    /* We didn't find the file as cased, so try again case insensitively if the
-     * client has requested that mode.
-     */
-    if (ign_case)
-    {
-	/* Allocate space and add the RCS extension */
-	rcsfile = xmalloc (strlen (file)
-	                   + sizeof (RCSEXT));
-	sprintf (rcsfile, "%s%s", file, RCSEXT);
-
-
-	/* Search in the top dir given */
-	if ((retval = locate_file_in_dir (repository, rcsfile)) != NULL)
-	{
-	    if (inattic)
-		*inattic = 0;
-	    goto out;
-	}
-
-	/* Search in the Attic */
-	dir = xmalloc (strlen (repository)
-	               + sizeof (CVSATTIC)
-	               + 2);
-	sprintf (dir, "%s/%s", repository, CVSATTIC);
-
-	if ((retval = locate_file_in_dir (dir, rcsfile)) != NULL
-	    && inattic)
-	    *inattic = 1;
-
-	free (dir);
-
-    out:
-	free (rcsfile);
-	return retval;
-    }
-    else /* !ign_case */
-#endif /* SERVER_SUPPORT && !FILENAMES_CASE_INSENSITIVE */
-    {
-	return NULL;
-    }
+    return NULL;
 }
 
 
@@ -3122,23 +3082,26 @@ RCS_getrevtime (RCSNode *rcs, char *rev, char *date, int fudge)
     vers = (RCSVers *) p->data;
 
     /* split up the date */
-    ftm = &xtm;
-    (void) sscanf (vers->date, SDATEFORM, &ftm->tm_year, &ftm->tm_mon,
-		   &ftm->tm_mday, &ftm->tm_hour, &ftm->tm_min,
-		   &ftm->tm_sec);
+    if (sscanf (vers->date, SDATEFORM, &xtm.tm_year, &xtm.tm_mon,
+		&xtm.tm_mday, &xtm.tm_hour, &xtm.tm_min, &xtm.tm_sec) != 6)
+	error (1, 0, "%s: invalid date for revision %s (%s)", rcs->path,
+	       rev, vers->date);
 
     /* If the year is from 1900 to 1999, RCS files contain only two
        digits, and sscanf gives us a year from 0-99.  If the year is
        2000+, RCS files contain all four digits and we subtract 1900,
        because the tm_year field should contain years since 1900.  */
 
-    if (ftm->tm_year > 1900)
-	ftm->tm_year -= 1900;
+    if (xtm.tm_year >= 100 && xtm.tm_year < 2000)
+	error (0, 0, "%s: non-standard date format for revision %s (%s)",
+	       rcs->path, rev, vers->date);
+    if (xtm.tm_year >= 1900)
+	xtm.tm_year -= 1900;
 
     /* put the date in a form getdate can grok */
-    (void) sprintf (tdate, "%d/%d/%d GMT %d:%d:%d", ftm->tm_mon,
-		    ftm->tm_mday, ftm->tm_year + 1900, ftm->tm_hour,
-		    ftm->tm_min, ftm->tm_sec);
+    (void) sprintf (tdate, "%d/%d/%d GMT %d:%d:%d", xtm.tm_mon,
+		    xtm.tm_mday, xtm.tm_year + 1900, xtm.tm_hour,
+		    xtm.tm_min, xtm.tm_sec);
 
     /* turn it into seconds since the epoch */
     revdate = get_date (tdate, (struct timeb *) NULL);
@@ -5482,7 +5445,9 @@ RCS_cmp_file (RCSNode *rcs, char *rev1, char **rev1_cache, char *rev2, char *opt
     int binary;
 
     TRACE( TRACE_FUNCTION, "RCS_cmp_file( %s, %s, %s, %s, %s )",
-           rcs->path, rev1, rev2, options, filename );
+           rcs->path ? rcs->path : "(null)",
+	   rev1 ? rev1 : "(null)", rev2 ? rev2 : "(null)",
+	   options ? options : "(null)", filename ? filename : "(null)" );
 
     if (options != NULL && options[0] != '\0')
 	binary = STREQ (options, "-kb");
@@ -6371,7 +6336,7 @@ RCS_delete_revs (RCSNode *rcs, char *tag1, char *tag2, int inclusive)
 	char *diffbuf;
 	size_t bufsize, len;
 
-#ifdef WOE32
+#if defined (WOE32) && !defined (__CYGWIN32__)
 	/* FIXME: This is an awful kludge, but at least until I have
 	   time to work on it a little more and test it, I'd rather
 	   give a fatal error than corrupt the file.  I think that we

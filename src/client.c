@@ -1343,7 +1343,7 @@ update_entries( char *data_arg, List *ent_list, char *short_pathname,
 
 	       I hope the above paragraph makes it clear that making this
 	       clearer is not a one-line fix.  */
-	    error (0, 0, "move away %s; it is in the way", short_pathname);
+	    error (0, 0, "move away `%s'; it is in the way", short_pathname);
 	    if (updated_fname != NULL)
 	    {
 		cvs_output ("C ", 0);
@@ -3371,7 +3371,8 @@ connect_to_forked_server( struct buffer **to_server_p,
     command[1] = "server";
     command[2] = NULL;
 
-    TRACE (TRACE_FUNCTION, "Forking server: %s %s\n", command[0], command[1]);
+    TRACE (TRACE_FUNCTION, "Forking server: %s %s\n",
+	   command[0] ? command[0] : "(null)", command[1]);
 
     child_pid = piped_child (command, &tofd, &fromfd);
     if (child_pid < 0)
@@ -3718,11 +3719,6 @@ start_server( void )
 	error (1, 0, "This client does not support stream authentication");
 #endif /* ! HAVE_GSSAPI */
     }
-
-#ifdef FILENAMES_CASE_INSENSITIVE
-    if (supported_request ("Case") && !rootless)
-	send_to_server ("Case\012", 0);
-#endif
 
     /* If "Set" is not supported, just silently fail to send the variables.
        Users with an old server should get a useful error message when it
@@ -4289,45 +4285,6 @@ send_file_names( int argc, char **argv, unsigned int flags )
 
 	if (arg_should_not_be_sent_to_server (argv[i]))
 	    continue;
-
-#ifdef FILENAMES_CASE_INSENSITIVE
-	/* We want to send the file name as it appears
-	   in CVS/Entries.  We put this inside an ifdef
-	   to avoid doing all these system calls in
-	   cases where fncmp is just strcmp anyway.  */
-	/* For now just do this for files in the local
-	   directory.  Would be nice to handle the
-	   non-local case too, though.  */
-	/* The isdir check could more gracefully be replaced
-	   with a way of having Entries_Open report back the
-	   error to us and letting us ignore existence_error.
-	   Or some such.  */
-	if (p == last_component (p) && isdir (CVSADM))
-	{
-	    List *entries;
-	    Node *node;
-
-	    /* If we were doing non-local directory,
-	       we would save_cwd, CVS_CHDIR
-	       like in update.c:isemptydir.  */
-	    /* Note that if we are adding a directory,
-	       the following will read the entry
-	       that we just wrote there, that is, we
-	       will get the case specified on the
-	       command line, not the case of the
-	       directory in the filesystem.  This
-	       is correct behavior.  */
-	    entries = Entries_Open (0, NULL);
-	    node = findnode_fn (entries, p);
-	    if (node != NULL)
-	    {
-		line = xstrdup (node->key);
-		p = line;
-		delnode (node);
-	    }
-	    Entries_Close (entries);
-	}
-#endif /* FILENAMES_CASE_INSENSITIVE */
 
 	send_to_server ("Argument ", 0);
 
