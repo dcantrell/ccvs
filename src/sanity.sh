@@ -810,11 +810,8 @@ sfile2 starts"
 
 	  rm -rf newdir
 
-	  # Test the CVSNULLREPOS code.
-	  # Seems to be broken.  The case where there is more than one
-	  # argument seems to be (bogusly?) handled separately, with
-	  # different semantics.  I'm not sure how we want to straighten
-	  # this out.
+	  # Hmm, this might be a case for CVSNULLREPOS, but CVS doesn't
+	  # seem to deal with it...
 	  if false; then
 	  dotest basicb-11 "${testcvs} -q co -d sub1/sub2 first-dir" \
 "U sub1/sub2/sdir1/sfile1
@@ -828,7 +825,58 @@ U sub1/sub2/sdir2/sfile2"
 	  # to test: sub1/sub2/sub3
 	  fi # end of tests commented out.
 
+	  # Create a second directory.
+	  mkdir 1
+	  cd 1
+	  dotest basicb-14 "${testcvs} -q co -l ." 'U topfile'
+	  mkdir second-dir
+	  dotest basicb-15 "${testcvs} add second-dir" \
+"Directory ${TESTDIR}/cvsroot/second-dir added to the repository"
+	  cd second-dir
+	  touch aa
+	  dotest basicb-16 "${testcvs} add aa" \
+"${PROG} [a-z]*: scheduling file .aa. for addition
+${PROG} [a-z]*: use .cvs commit. to add this file permanently"
+	  dotest basicb-17 "${testcvs} -q ci -m add" \
+'RCS file: /tmp/cvs-sanity/cvsroot/second-dir/aa,v
+done
+Checking in aa;
+/tmp/cvs-sanity/cvsroot/second-dir/aa,v  <--  aa
+initial revision: 1\.1
+done'
+	  cd ../..
+	  rm -rf 1
+	  # Now here is the kicker: note that the semantics of -d
+	  # are fundamentally different if we specify two or more directories 
+	  # rather than one!  I consider this to be seriously bogus,
+	  # but for the moment I am just trying to figure out what
+	  # CVS's current behaviors are.
+	  dotest basicb-18 "${testcvs} -q co -d test2 first-dir second-dir" \
+"U test2/first-dir/sdir1/sfile1
+U test2/first-dir/sdir2/sfile2
+U test2/second-dir/aa"
+	  cd test2
+	  touch emptyfile
+	  # The fact that CVS lets us add a file here is a CVS bug, right?
+	  # I can just make this an error message (on the add and/or the
+	  # commit) without getting flamed, right?
+	  # Right?
+	  # Right?
+	  dotest basicb-19 "${testcvs} add emptyfile" \
+"${PROG} [a-z]*: scheduling file .emptyfile. for addition
+${PROG} [a-z]*: use .cvs commit. to add this file permanently"
+	  dotest basicb-20 "${testcvs} -q ci -m add" \
+'RCS file: /tmp/cvs-sanity/cvsroot/CVSROOT/Emptydir/emptyfile,v
+done
+Checking in emptyfile;
+/tmp/cvs-sanity/cvsroot/CVSROOT/Emptydir/emptyfile,v  <--  emptyfile
+initial revision: 1\.1
+done'
+	  cd ..
+	  rm -rf test2
+
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  rm -rf ${CVSROOT_DIRNAME}/second-dir
 	  rm -f ${CVSROOT_DIRNAME}/topfile,v
 	  ;;
 
