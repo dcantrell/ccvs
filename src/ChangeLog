@@ -1,3 +1,9 @@
+2004-12-09 Derek Price <derek@ximbiot.com>
+
+	* sanity.sh (modules7): New test group.
+	(Based on a patch from Mark D. Baushke <mdb@cvshome.org>, based on a
+	report from Richard Verhoeven <Richard_Verhoeven@WestLB.de>.)
+
 2004-12-09  Derek Price  <derek@ximbiot.com>
 
 	* client.c (start_server): Avoid advertising the Redirect response when
