@@ -1,5 +1,10 @@
 2003-10-24  Derek Price  <derek@ximbiot.com>
 
+	* vers_ts.c (Version_TS): Reformat declaration and expand header
+	comment.
+
+2003-10-24  Derek Price  <derek@ximbiot.com>
+
 	* update.c (merge_file): Remove code that hasn't been used since CVS
 	used an external RCS (1.9.something).
 
