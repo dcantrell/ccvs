@@ -1,5 +1,11 @@
 2003-12-04  Derek Price  <derek@ximbiot.com>
 
+	* configure.in: Update for dev version 1.11.10.1.
+	* NEWS: Add Changes since 1.11.10 section.
+	* configure: Regenerated.
+
+2003-12-04  Derek Price  <derek@ximbiot.com>
+
 	* configure.in: Update for release 1.11.10.
 	* configure: Regenerated.
 
