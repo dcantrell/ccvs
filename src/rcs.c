@@ -6853,8 +6853,8 @@ linevector_add (struct linevector *vec, const char *text, size_t len,
 	    vec->lines_alloced = 10;
 	while (vec->nlines + nnew >= vec->lines_alloced)
 	    vec->lines_alloced *= 2;
-	vec->vector = xrealloc (vec->vector,
-				vec->lines_alloced * sizeof (*vec->vector));
+	vec->vector = xnrealloc (vec->vector,
+				 vec->lines_alloced, sizeof (*vec->vector));
     }
 
     /* Make room for the new lines in VEC->VECTOR.  */

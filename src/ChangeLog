@@ -1,5 +1,10 @@
 2005-03-22  Mark D. Baushke  <mdb@cvshome.org>
 
+	* rcs.c (linevector_add): Use xnrealloc.
+	* server.c (serve_argument): Ditto.
+
+2005-03-22  Mark D. Baushke  <mdb@cvshome.org>
+
 	* rcs.c (linevector_copy): Use xtimes in argument.
 
 	* patch.c (patch): Remove dead code.
