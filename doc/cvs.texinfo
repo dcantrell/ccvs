@@ -1721,6 +1721,11 @@ Right now, the only way to put a password in the
 @sc{cvs} @file{passwd} file is to paste it there from
 somewhere else.  Someday, there may be a @code{cvs
 passwd} command.
+@c We might also suggest using the @code{htpasswd} command
+@c from freely available web servers as well, but that
+@c would open up a can of worms in that the users next
+@c questions are likely to be "where do I get it?" and
+@c "how do I use it?"
 
 @node Password authentication client
 @subsubsection Using the client with password authentication
@@ -1774,6 +1779,13 @@ The passwords are not stored in cleartext, but are
 trivially encoded to protect them from "innocent"
 compromise (i.e., inadvertently being seen by a system
 administrator who happens to look at that file).
+
+@c FIXME: seems to me this needs somewhat more
+@c explanation.
+@cindex Logout (subcommand)
+The password for the currently choosen remote repository
+can be removed from the CVS_PASSFILE by using the
+@code{cvs logout} command.
 
 The @code{CVS_PASSFILE} environment variable overrides
 this default.  If you use this variable, make sure you
@@ -8441,6 +8453,10 @@ Only list revisions checked in by specified logins.  See @ref{log options}.
 
 @item login
 Prompt for password for authenticating server.  See
+@ref{Password authentication client}.
+
+@item logout
+Remove stored password for authenticating server.  See
 @ref{Password authentication client}.
 
 @item rdiff [@var{options}] @var{modules}@dots{}
