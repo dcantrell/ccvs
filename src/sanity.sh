@@ -13905,25 +13905,15 @@ head 1.1; access; symbols; locks; expand o; 1.1 date 2007.03.20.04.03.02
 ; author jeremiah ;state ;  branches; next;desc @@1.1 log @@text @head@
 EOF
 	  dotest rcs3-4 "${testcvs} -q co first-dir" 'U first-dir/file1'
-	  if test "$remote" = no; then
-	    # Ouch, didn't expect this one.  FIXCVS.  Or maybe just remove
-	    # the feature, if this is a -s problem?
-	    dotest_fail rcs3-5 "${testcvs} log -s nostate first-dir/file1" \
+
+	  # Ouch, didn't expect this one.  FIXCVS.  Or maybe just remove
+	  # the feature, if this is a -s problem?
+	  dotest_fail rcs3-5 "${testcvs} log -s nostate first-dir/file1" \
 ".*[Aa]ssertion.*failed${DOTSTAR}" ".*failed assertion${DOTSTAR}"
-	  else # remote
-	    # Is this a reaction to the lack of TopLevelAdmin or something?
-	    # Seems pretty strange to me.  Seems vaguely similar to the
-	    # "no repository" message in errmsg2-16 although I'm leaving
-	    # it here in case there is a difference between "cvs add" and a
-	    # normal start_recursion command like "cvs log".
-	    dotest_fail rcs3-5 "${testcvs} log -s nostate first-dir/file1" \
-"${PROG} log: cannot open CVS/Entries for reading: No such file or directory
-${PROG} \[log aborted\]: no repository"
-	    cd first-dir
-	    dotest_fail rcs3-5a "${testcvs} log -s nostate file1" \
+	  cd first-dir
+	  dotest_fail rcs3-5a "${testcvs} log -s nostate file1" \
 "${DOTSTAR}ssertion.*failed${DOTSTAR}" "${DOTSTAR}failed assertion${DOTSTAR}"
-	    cd ..
-	  fi # remote
+	  cd ..
 
 	  # See remote code above for rationale for cd.
 	  cd first-dir
