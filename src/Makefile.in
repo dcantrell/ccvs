@@ -246,7 +246,9 @@ cvs_SOURCES = \
 	watch.h
 
 
-EXTRA_cvs_SOURCES = gssapi-client.c gssapi-client.h
+EXTRA_cvs_SOURCES = gssapi-client.c gssapi-client.h \
+                    kerberos4-client.c kerberos4-client.h
+
 
 cvs_DEPENDENCIES = $(cvs_client_objects)
 cvs_LDADD = $(cvs_client_objects) \
@@ -313,7 +315,8 @@ am__depfiles_maybe = depfiles
 @AMDEP_TRUE@	./$(DEPDIR)/gssapi-client.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/hardlink.Po ./$(DEPDIR)/hash.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/history.Po ./$(DEPDIR)/ignore.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/import.Po ./$(DEPDIR)/lock.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/import.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/kerberos4-client.Po ./$(DEPDIR)/lock.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/log-buffer.Po ./$(DEPDIR)/log.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/login.Po ./$(DEPDIR)/logmsg.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/main.Po ./$(DEPDIR)/mkmodules.Po \
@@ -431,6 +434,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/history.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ignore.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/import.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/kerberos4-client.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lock.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/log-buffer.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/log.Po@am__quote@

@@ -1,3 +1,13 @@
+2003-06-20  Derek Price  <derek@ximbiot.com>
+
+	* kerberos-client.c, kerberos-client.h, client.c: Split out
+	Kerberos 4 code to separate files.
+
+	* Makefile.am: Mention new files.
+	(Patch from Alexey Mahotkin <alexm@hsys.msk.ru>.)
+
+	* Makefile.in: Regenerated.
+
 2003-06-16  Derek Price  <derek@ximbiot.com>
 
 	* cvs.h: Comment an #endif.
