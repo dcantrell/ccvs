@@ -1,5 +1,13 @@
 1999-05-25  Jim Kingdon  <http://www.cyclic.com>
 
+	* client.c (update_entries): Make the old DONT_USE_PATCH code the
+	only code.  This means that if people are still on CVS 1.9
+	servers, then CVS will fall back to transferring entire files.
+	This is better than looking for an external "patch" program which
+	causes no end of troubles (especially on Windows, but someone just
+	posted to info-cvs about a problem with the Solaris patch).  (This
+	change was run by devel-cvs and feedback was positive).
+
 	* subr.c (xmalloc, xrealloc): The new error.c does not support
 	%lu; use sprintf instead.
 
