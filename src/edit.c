@@ -109,7 +109,7 @@ watch_onoff (argc, argv)
 			   argc, argv, local, W_LOCAL, 0, 0, (char *)NULL,
 			   0);
 
-    lock_tree_cleanup ();
+    Lock_Cleanup ();
     return err;
 }
 
@@ -268,7 +268,7 @@ send_notifications (argc, argv, local)
 				(DIRENTPROC) NULL, (DIRLEAVEPROC) NULL, NULL,
 				argc, argv, local, W_LOCAL, 0, 0, (char *)NULL,
 				0);
-	lock_tree_cleanup ();
+	Lock_Cleanup ();
     }
     return err;
 }

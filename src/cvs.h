@@ -439,10 +439,6 @@ void Lock_Cleanup PROTO((void));
 /* Writelock an entire subtree, well the part specified by ARGC, ARGV, LOCAL,
    and AFLAG, anyway.  */
 void lock_tree_for_write PROTO ((int argc, char **argv, int local, int aflag));
-
-/* Remove locks set by lock_tree_for_write.  Currently removes readlocks
-   too.  */
-void lock_tree_cleanup PROTO ((void));
 
 void ParseTag PROTO((char **tagp, char **datep));
 void Scratch_Entry PROTO((List * list, char *fname));

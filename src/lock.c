@@ -96,6 +96,10 @@ static List *locklist;
 #define L_ERROR		1		/* error condition */
 #define L_LOCKED	2		/* lock owned by someone else */
 
+/* List of locks set by lock_tree_for_write.  This is redundant
+   with locklist, sort of.  */
+static List *lock_tree_list;
+
 /*
  * Clean up all outstanding locks
  */
@@ -115,6 +119,7 @@ Lock_Cleanup ()
 	(void) walklist (locklist, unlock_proc, NULL);
 	locklist = (List *) NULL;
     }
+    dellist (&lock_tree_list);
 }
 
 /*
@@ -675,8 +680,6 @@ static int lock_filesdoneproc PROTO ((void *callerdat, int err,
 				      List *entries));
 static int fsortcmp PROTO((const Node * p, const Node * q));
 
-static List *lock_tree_list;
-
 /*
  * Create a list of repositories to lock
  */
@@ -730,11 +733,4 @@ lock_tree_for_write (argc, argv, local, aflag)
     sortlist (lock_tree_list, fsortcmp);
     if (Writer_Lock (lock_tree_list) != 0)
 	error (1, 0, "lock failed - giving up");
-}
-
-void
-lock_tree_cleanup ()
-{
-    Lock_Cleanup ();
-    dellist (&lock_tree_list);
 }
