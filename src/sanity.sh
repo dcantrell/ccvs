@@ -3446,6 +3446,7 @@ Checking in file1;
 ${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
 initial revision: 1\.1
 done"
+	  dotest rmadd2-4a "${testcvs} -Q tag tagone" ""
 	  dotest rmadd2-5 "${testcvs} rm -f file1" \
 "${PROG} [a-z]*: scheduling .file1. for removal
 ${PROG} [a-z]*: use .${PROG} commit. to remove this file permanently"
@@ -3488,6 +3489,28 @@ done"
 ${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
 new revision: delete; previous revision: 1\.5
 done"
+	  dotest rmadd2-16 "${testcvs} log -h file1" "
+RCS file: ${TESTDIR}/cvsroot/first-dir/Attic/file1,v
+Working file: file1
+head: 1\.6
+branch:
+locks: strict
+access list:
+symbolic names:
+	tagone: 1\.1
+keyword substitution: kv
+total revisions: 6
+============================================================================="
+	  dotest rmadd2-17 "${testcvs} status -v file1" \
+"===================================================================
+File: no file file1		Status: Up-to-date
+
+   Working revision:	No entry for file1
+   Repository revision:	1\.6	${TESTDIR}/cvsroot/first-dir/Attic/file1,v
+
+   Existing Tags:
+	tagone                   	(revision: 1.1)"
+
 	  cd ../..
 
 	  rm -r 1
