@@ -1,3 +1,8 @@
+Wed Aug 13 11:42:24 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* rcscmds.c: Adjust comment to reflect progress on removing RCS
+	execs outside this file.
+
 Mon Aug 11 10:14:47 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* vers_ts.c (Version_TS): If vers_ts->vn_rcs == NULL, skip setting

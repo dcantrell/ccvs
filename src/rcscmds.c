@@ -13,8 +13,8 @@
 #include <assert.h>
 
 /* This file, rcs.h, and rcs.c, are intended to define our interface
-   to RCS files.  As of July, 1996, there are still a few places that
-   still exec RCS commands directly.  The intended long-term direction
+   to RCS files.  There is only one place outside this file that execs
+   RCS commands directly--admin.c.  The intended long-term direction
    is to have CVS access RCS files via an RCS library (rcs.c can be
    considered a start at one), for performance, cleanliness (CVS has
    some awful hacks to work around RCS behaviors which don't make
