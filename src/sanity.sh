@@ -592,7 +592,8 @@ if test x"$*" = x; then
 	# Release of multiple directories
 	tests="${tests} release"
 	# Multiple root directories and low-level protocol tests.
-	tests="${tests} multiroot multiroot2 reposmv pserver server client"
+	tests="${tests} multiroot multiroot2 multiroot3"
+	tests="${tests} reposmv pserver server client"
 else
 	tests="$*"
 fi
@@ -17398,6 +17399,110 @@ ${PLUS}change him too"
 
 	  # clean up our repositories
 	  rm -rf root1 root2
+	  ;;
+
+	multiroot3)
+	  # More multiroot tests.  Directories are side-by-side, not nested.
+	  # Not drastically different from multiroot but it covers somewhat
+	  # different stuff.
+
+	  if test "x$remote" = xyes; then
+	    CVSROOT1=:fork:${TESTDIR}/root1 ; export CVSROOT1
+	    CVSROOT2=:fork:${TESTDIR}/root2 ; export CVSROOT2
+	  else
+	    CVSROOT1=${TESTDIR}/root1 ; export CVSROOT1
+	    CVSROOT2=${TESTDIR}/root2 ; export CVSROOT2
+	  fi
+
+	  mkdir 1; cd 1
+	  dotest multiroot3-1 "${testcvs} -d ${CVSROOT1} init" ""
+	  dotest multiroot3-2 "${testcvs} -d ${CVSROOT1} -q co -l ." ""
+	  mkdir dir1
+	  dotest multiroot3-3 "${testcvs} add dir1" \
+"Directory ${TESTDIR}/root1/dir1 added to the repository"
+	  dotest multiroot3-4 "${testcvs} -d ${CVSROOT2} init" ""
+	  rm -r CVS
+	  dotest multiroot3-5 "${testcvs} -d ${CVSROOT2} -q co -l ." ""
+	  mkdir dir2
+
+	  # OK, the problem is that CVS/Entries doesn't look quite right,
+	  # I suppose because of the "rm -r".
+	  # For local this fixes it up.
+	  dotest multiroot3-6 "${testcvs} -d ${CVSROOT1} -q co dir1" ""
+	  if test "$remote" = yes; then
+	    # For remote that doesn't do it.  Use the quick and dirty fix.
+	    echo "D/dir1////" >CVS/Entries
+	    echo "D/dir2////" >>CVS/Entries
+	  fi
+
+	  dotest multiroot3-7 "${testcvs} add dir2" \
+"Directory ${TESTDIR}/root2/dir2 added to the repository"
+
+	  touch dir1/file1 dir2/file2
+	  if test "$remote" = yes; then
+	    # Trying to add them both in one command doesn't work,
+	    # because add.c doesn't do multiroot (it doesn't use recurse.c).
+	    # Furthermore, it can't deal with the parent directory
+	    # having a different root from the child, hence the cd.
+	    cd dir1
+	    dotest multiroot3-8 "${testcvs} add file1" \
+"${PROG} [a-z]*: scheduling file .file1. for addition
+${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
+	    cd ..
+	    dotest multiroot3-8a "${testcvs} add dir2/file2" \
+"${PROG} [a-z]*: scheduling file .dir2/file2. for addition
+${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
+	  else
+	    dotest multiroot3-8 "${testcvs} add dir1/file1 dir2/file2" \
+"${PROG} [a-z]*: scheduling file .dir1/file1. for addition
+${PROG} [a-z]*: scheduling file .dir2/file2. for addition
+${PROG} [a-z]*: use .${PROG} commit. to add these files permanently"
+	  fi
+
+	  dotest multiroot3-9 "${testcvs} -q ci -m add-them" \
+"RCS file: ${TESTDIR}/root2/dir2/file2,v
+done
+Checking in dir2/file2;
+${TESTDIR}/root2/dir2/file2,v  <--  file2
+initial revision: 1\.1
+done
+RCS file: ${TESTDIR}/root1/dir1/file1,v
+done
+Checking in dir1/file1;
+${TESTDIR}/root1/dir1/file1,v  <--  file1
+initial revision: 1\.1
+done"
+
+	  if test "$remote" = yes; then
+	    # This is good behavior - we are asking CVS to do something
+	    # which doesn't make sense.  RELATIVE_REPOS symptom might vary
+	    # but it would still be an error (I imagine).
+	    dotest_fail multiroot3-10 \
+"${testcvs} -q -d ${CVSROOT1} diff dir1/file1 dir2/file2" \
+"protocol error: directory '${TESTDIR}/root2/dir2' not within root '${TESTDIR}/root1'"
+	    # This one is supposed to work.
+	    dotest multiroot3-11 "${testcvs} -q diff dir1/file1 dir2/file2" ""
+	  else
+	    # Local isn't as picky as we might want in terms of getting
+	    # the wrong root.  I think if RELATIVE_REPOS, it would be
+	    # an error.
+	    dotest multiroot3-10 \
+"${testcvs} -q -d ${CVSROOT1} diff dir1/file1 dir2/file2" ""
+	    # This one should work even for RELATIVE_REPOS, I would think.
+	    dotest multiroot3-11 "${testcvs} -q diff dir1/file1 dir2/file2" ""
+	  fi
+
+	  cd ..
+
+	  if test "$keep" = yes; then
+	    echo Keeping ${TESTDIR} and exiting due to --keep
+	    exit 0
+	  fi
+
+	  rm -r 1
+	  rm -rf ${TESTDIR}/root1 ${TESTDIR}/root2
+	  unset CVSROOT1
+	  unset CVSROOT2
 	  ;;
 
 	reposmv)
