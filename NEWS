@@ -3,8 +3,9 @@ Changes since 1.8:
 * New option "--help-synonyms" prints a list of all recognized command
 synonyms.
 
-* The "log" command no longer invokes the RCS "rlog" program.  The
-option handling and printing are now handled internally.
+* The "log" command is now implemented internally rather than via the
+RCS "rlog" program.  The main user-visible consequence is that
+symbolic branch names now work (for example "cvs log -rbranch1").
 
 * Encryption is now supported over a Kerberos client/server
 connection.  The new "-x" global option requests it.
