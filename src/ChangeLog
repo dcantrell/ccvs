@@ -1,3 +1,37 @@
+Tue Dec 19 17:45:11 1995  Karl Fogel  <kfogel@floss.cyclic.com>
+
+        * login.c (cvs_password): new static var, init to NULL.
+        (login): scramble() the password before using it.
+        Verify the password with the server.
+        Check CVSroot more carefully to insure that it is
+        "fully-qualified".
+        (get_cvs_password): if cvs_password is not NULL, just return it.
+        Never prompt -- just tell user why failed, then exit.
+        Try CVS_PASSWORD environment variable first.
+        (construct_cvspass_filename): try CVS_PASSFILE environment
+        variable first.
+
+        * client.h (connect_to_pserver): update prototype.
+
+        * client.c (cvsroot_parsed): new static var.
+        (parse_cvsroot): set `cvsroot_parsed' to 1 when done.
+        (connect_to_pserver): return int.
+        Take `verify_only' arg.  If it is non-zero, perform password
+        verification with the server and then shut down the connection and
+        return.
+        Call parse_cvsroot() before doing anything.
+        
+        * server.c (authenticate_connection): deal with verification
+        requests as well as authorization requests.
+        descramble() the password before hashing it.
+
+        * cvs.h: prototype scramble() and descramble().
+
+        * Makefile.in: build scramble.o.
+
+        * scramble.c: new file, provides trivial encoding but NOT real
+        encryption.
+
 Mon Dec 18 20:57:58 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
         * login.c (login): don't insert extra newlines.  They were
