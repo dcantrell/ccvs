@@ -1,3 +1,8 @@
+2004-04-14  Derek Price  <derek@ximbiot.com>
+
+	* Makefile.am (EXTRA_DIST): Remove lib.dep.
+	* Makefile: Regenerated.
+
 2004-04-07  Derek Price  <derek@ximbiot.com>
 
 	* regex.c: Revise "FREE_VAR" macro to eliminate C4090/C4022 warnings
