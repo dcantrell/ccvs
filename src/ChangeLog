@@ -1,3 +1,10 @@
+Tue Jul 29 12:11:16 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* login.c (construct_cvspass_filename): Revert this change.  The
+	main reason is procedural; Karl is not a current CVS developer.
+	The other thing is that the new text doesn't say anything about
+	HOMEDRIVE and HOMEPATH.
+
 Tue Jul 29 11:36:22 1997  Karl Fogel  <kfogel@harvey.cyclic.com>
 
 	* login.c (construct_cvspass_filename): error message informs user
