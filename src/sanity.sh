@@ -427,27 +427,29 @@ RFCDATE="[a-zA-Z0-9 ][a-zA-Z0-9 ]* [0-9:][0-9:]* -0000"
 RFCDATE_EPOCH="1 Jan 1970 00:00:00 -0000"
 
 # Special times used in touch -t commands and the regular expresions
-# to match them. Now that the tests set TZ=UTC, it
-# should be easier to be more exact in their regexp.
+# to match them. Now that they are in sub-shells that set TZ=GMT, it
+# should be easier to be more exact in their regexp. However, if the
+# cvs log output starts to include the timezone, these may need to
+# change once more.
 TOUCH1971="197107040343"
 # This date regexp was 1971/07/0[3-5] [0-9][0-9]:43:[0-9][0-9]
-ISO8601DATE1971="1971-07-04 03:43:[0-9][0-9] [+-]0000"
+ISO8601DATE1971="1971[-/]07[-/]04 03:43:[0-9][0-9][-+ 0-9]*"
 
 TOUCH2034="203412251801"
 # This date regexp was 2034/12/2[4-6] [0-9][0-9]:01:[0-9][0-9]
-ISO8601DATE2034="2034-12-25 18:01:[0-9][0-9] [+-]0000"
+ISO8601DATE2034="2034[-/]12[-/]25 18:01:[0-9][0-9][-+ 0-9]*"
 
 # Used in admin tests for exporting RCS files.
 # The RAWRCSDATE..... format is for internal ,v files and
 # the ISO8601DATE..... format is to allow for a regular expression in
 # 'cvs log' output patterns. The tests that use this set of specific
-# ${ISO8601DATE.....} variables also force TZ=UTC for the test.
+# ${ISO8601DATE.....} variables also force TZ=GMT for the test.
 RAWRCSDATE2000A="2000.11.24.15.58.37"
 RAWRCSDATE1996A="96.11.24.15.57.41"
 RAWRCSDATE1996B="96.11.24.15.56.05"
-ISO8601DATE2000A="2000-11-24 15:58:37 [+-]0000"
-ISO8601DATE1996A="1996-11-24 15:57:41 [+-]0000"
-ISO8601DATE1996B="1996-11-24 15:56:05 [+-]0000"
+ISO8601DATE2000A="2000[-/]11[-/]24 15:58:37[+ 0]*"
+ISO8601DATE1996A="1996[-/]11[-/]24 15:57:41[+ 0]*"
+ISO8601DATE1996B="1996[-/]11[-/]24 15:56:05[+ 0]*"
 
 # Regexp to match the date in cvs log command output
 # This format has been enhanced in the future to accept either
@@ -455,7 +457,7 @@ ISO8601DATE1996B="1996-11-24 15:56:05 [+-]0000"
 # information similar to the ISODATE format. The RCSKEYDATE is
 # similar, but uses '/' instead of '-' to sepearate year/month/day
 # and does not include the optional timezone offset.
-ISO8601DATE="[0-9][0-9][0-9][0-9]-[0-1][0-9]-[0-3][0-9] [0-2][0-9]:[0-6][0-9]:[0-6][0-9] [-+][0-1][0-9][0-6][0-9]"
+ISO8601DATE="[0-9][0-9][0-9][0-9][-/][0-9][0-9][-/][0-9][0-9] [0-9][0-9]:[0-9][0-9]:[0-9][0-9][-+ 0-9]*"
 
 # Regexp to match the dates found in rcs keyword strings
 RCSKEYDATE="[0-9][0-9][0-9][0-9]/[0-9][0-9]/[0-9][0-9] [0-9][0-9]:[0-9][0-9]:[0-9][0-9]"
@@ -6631,27 +6633,27 @@ first-dir/dir1:"
           dotest branches2-14-rls-3 "$testcvs rls -l -R" \
 "$SPROG rls: Listing module: \`.'
 \.:
-d--- $ISO8601DATE            CVSROOT
-d--- $ISO8601DATE            first-dir
+d---                                     CVSROOT
+d---                                     first-dir
 
 CVSROOT:
----- $ISO8601DATE 1\.[0-9][0-9]*        checkoutlist
----- $ISO8601DATE 1\.[0-9][0-9]*        commitinfo
----- $ISO8601DATE 1\.[0-9][0-9]*        config
----- $ISO8601DATE 1\.[0-9][0-9]*        cvswrappers
----- $ISO8601DATE 1\.[0-9][0-9]*        loginfo
----- $ISO8601DATE 1\.[0-9][0-9]*        modules
----- $ISO8601DATE 1\.[0-9][0-9]*        notify
----- $ISO8601DATE 1\.[0-9][0-9]*        rcsinfo
----- $ISO8601DATE 1\.[0-9][0-9]*        taginfo
----- $ISO8601DATE 1\.[0-9][0-9]*        verifymsg
-d--- $ISO8601DATE            Emptydir
+---- $DATE 1\.[0-9][0-9]*        checkoutlist
+---- $DATE 1\.[0-9][0-9]*        commitinfo
+---- $DATE 1\.[0-9][0-9]*        config
+---- $DATE 1\.[0-9][0-9]*        cvswrappers
+---- $DATE 1\.[0-9][0-9]*        loginfo
+---- $DATE 1\.[0-9][0-9]*        modules
+---- $DATE 1\.[0-9][0-9]*        notify
+---- $DATE 1\.[0-9][0-9]*        rcsinfo
+---- $DATE 1\.[0-9][0-9]*        taginfo
+---- $DATE 1\.[0-9][0-9]*        verifymsg
+d---                                     Emptydir
 
 CVSROOT/Emptydir:
 
 first-dir:
----- $ISO8601DATE 1\.1        file1
-d--- $ISO8601DATE            dir1
+---- $DATE 1\.1        file1
+d---                                     dir1
 
 first-dir/dir1:"
           dotest branches2-14-rls-4 "$testcvs rls -eR" \
@@ -6707,34 +6709,34 @@ dir1
 first-dir/dir1:"
           dotest branches2-14-rls-6 "$testcvs -q rls -lRrb1" \
 "\.:
-d--- $ISO8601DATE            CVSROOT
-d--- $ISO8601DATE            first-dir
+d---                                     CVSROOT
+d---                                     first-dir
 
 CVSROOT:
-d--- $ISO8601DATE            Emptydir
+d---                                     Emptydir
 
 CVSROOT/Emptydir:
 
 first-dir:
----- $ISO8601DATE 1\.1        file1
----- $ISO8601DATE 1\.1\.2\.1    file2
-d--- $ISO8601DATE            dir1
+---- $DATE 1\.1        file1
+---- $DATE 1\.1\.2\.1    file2
+d---                                     dir1
 
 first-dir/dir1:
----- $ISO8601DATE 1\.1\.2\.1    file3"
+---- $DATE 1\.1\.2\.1    file3"
           dotest branches2-14-rls-7 "$testcvs -q rls -lRrb2" \
 "\.:
-d--- $ISO8601DATE            CVSROOT
-d--- $ISO8601DATE            first-dir
+d---                                     CVSROOT
+d---                                     first-dir
 
 CVSROOT:
-d--- $ISO8601DATE            Emptydir
+d---                                     Emptydir
 
 CVSROOT/Emptydir:
 
 first-dir:
----- $ISO8601DATE 1\.1        file1
-d--- $ISO8601DATE            dir1
+---- $DATE 1\.1        file1
+d---                                     dir1
 
 first-dir/dir1:"
 
@@ -6938,20 +6940,21 @@ File: file5            	Status: Up-to-date
           dotest branches2-39 "$testcvs rls -rb1 -l -R first-dir" \
 "$SPROG rls: Listing module: \`first-dir'
 first-dir:
----- $ISO8601DATE 1\.1        file1
----- $ISO8601DATE 1\.1\.2\.1    file2
-d--- $ISO8601DATE            dir1
-d--- $ISO8601DATE            dir2
+---- $DATE 1\.1        file1
+---- $DATE 1\.1\.2\.1    file2
+d---                                     dir1
+d---                                     dir2
 
 first-dir/dir1:
----- $ISO8601DATE 1\.1\.2\.1    file3
+---- $DATE 1\.1\.2\.1    file3
 
 first-dir/dir2:
----- $ISO8601DATE 1\.1\.2\.1    file4"
+---- $DATE 1\.1\.2\.1    file4"
+
+	  cd ../../..
 
 	  dokeep
 
-	  cd ../../..
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
 	  rm -r trunk b1a b1b
 	  ;;
@@ -8167,24 +8170,17 @@ add
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir ${CVSROOT_DIRNAME}/second-dir
 	  ;;
 
-
-
 	importc)
 	  # Test importing a bunch o' files in a bunch o' directories.
 	  # Also the -d option.
-
-	  # Set a predictable time zone for these tests.
-	  save_TZ=$TZ
-	  TZ=UTC; export TZ
-
 	  mkdir 1; cd 1
 	  mkdir adir bdir cdir
 	  mkdir adir/sub1 adir/sub2
 	  mkdir adir/sub1/ssdir
 	  mkdir bdir/subdir
 	  touch adir/sub1/file1 adir/sub2/file2 adir/sub1/ssdir/ssfile
-	  touch -t ${TOUCH1971} bdir/subdir/file1
-	  touch -t ${TOUCH2034} cdir/cfile
+	  (TZ=GMT; export TZ; touch -t ${TOUCH1971} bdir/subdir/file1)
+	  (TZ=GMT; export TZ; touch -t ${TOUCH2034} cdir/cfile)
 	  dotest_sort importc-1 \
 "${testcvs} import -d -m import-it first-dir vendor release" \
 "
@@ -8296,15 +8292,11 @@ import-it
 "${testcvs} import -m imp ${TESTDIR}/other vendor release3" \
 "${CPROG} \[import aborted\]: directory ${TESTDIR}/other not relative within the repository"
 	  dotest_fail importc-12 "test -d ${TESTDIR}/other" ""
-
-	  dokeep
-	  TZ=$save_TZ
 	  cd ..
+
 	  rm -r 1 2
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
 	  ;;
-
-
 
 	import-CVS)
 	  mkdir import-CVS
@@ -19281,11 +19273,6 @@ ${SPROG} update: Updating crerepos-dir"
 
 	  # See tests admin-13, admin-25 and rcs-8a for exporting RCS files.
 
-	  # Save the timezone and set it to UTC for these tests to make the
-	  # value more predicatable.
-	  save_TZ=$TZ
-	  TZ=UTC; export TZ
-
 	  mkdir ${CVSROOT_DIRNAME}/first-dir
 
 	  # Currently the way to import an RCS file is to copy it
@@ -19377,6 +19364,7 @@ text
 EOF
 	  dotest rcs-1 "${testcvs} -q co first-dir" 'U first-dir/file1'
 	  cd first-dir
+	  (TZ=GMT; export TZ;
 	  dotest rcs-2 "${testcvs} -q log" "
 RCS file: ${CVSROOT_DIRNAME}/first-dir/file1,v
 Working file: file1
@@ -19401,7 +19389,7 @@ add more lines
 revision 1\.1
 date: ${ISO8601DATE1996B};  author: kingdon;  state: Exp;
 add file1
-============================================================================="
+=============================================================================")
 
 	  # Note that the dates here are chosen so that (a) we test
 	  # at least one date after 2000, (b) we will notice if the
@@ -19411,6 +19399,7 @@ add file1
 
 	  # ISO8601 format.  There are many, many, other variations
 	  # specified by ISO8601 which we should be testing too.
+	  (TZ=GMT; export TZ;
 	  dotest rcs-3 "${testcvs} -q log -d '1996-12-11<'" "
 RCS file: ${CVSROOT_DIRNAME}/first-dir/file1,v
 Working file: file1
@@ -19427,9 +19416,10 @@ file1 is for testing CVS
 revision 1\.3
 date: ${ISO8601DATE2000A};  author: kingdon;  state: Exp;  lines: ${PLUS}1 -2
 delete second line; modify twelfth line
-============================================================================="
+=============================================================================")
 
 	  # RFC822 format (as amended by RFC1123).
+	  (TZ=GMT; export TZ;
 	  dotest rcs-4 "${testcvs} -q log -d '<3 Apr 2000 00:00'" \
 "
 RCS file: ${CVSROOT_DIRNAME}/first-dir/file1,v
@@ -19451,7 +19441,7 @@ add more lines
 revision 1\.1
 date: ${ISO8601DATE1996B};  author: kingdon;  state: Exp;
 add file1
-============================================================================="
+=============================================================================")
 
 	  # Intended behavior for "cvs annotate" is that it displays the
 	  # last two digits of the year.  Make sure it does that rather
@@ -19688,24 +19678,24 @@ total revisions: 7;	selected revisions: 7
 description:
 ----------------------------
 revision 1\.5
-date: 1971-01-01 01:00:00 [+-]0000;  author: joe;  state: bogus;  lines: ${PLUS}1 -1
+date: 1971/01/01 01:00:00;  author: joe;  state: bogus;  lines: ${PLUS}1 -1
 \*\*\* empty log message \*\*\*
 ----------------------------
 revision 1\.4
-date: 1971-01-01 00:00:05 [+-]0000;  author: joe;  state: bogus;  lines: ${PLUS}1 -1
+date: 1971/01/01 00:00:05;  author: joe;  state: bogus;  lines: ${PLUS}1 -1
 \*\*\* empty log message \*\*\*
 ----------------------------
 revision 1\.3
-date: 1970-12-31 15:00:05 [+-]0000;  author: joe;  state: bogus;  lines: ${PLUS}1 -1
+date: 1970/12/31 15:00:05;  author: joe;  state: bogus;  lines: ${PLUS}1 -1
 \*\*\* empty log message \*\*\*
 ----------------------------
 revision 1\.2
-date: 1970-12-31 12:15:05 [+-]0000;  author: me;  state: bogus;  lines: ${PLUS}1 -1
+date: 1970/12/31 12:15:05;  author: me;  state: bogus;  lines: ${PLUS}1 -1
 branches:  1\.2\.6;
 \*\*\* empty log message \*\*\*
 ----------------------------
 revision 1\.1
-date: 1970-12-31 11:00:05 [+-]0000;  author: joe;  state: bogus;
+date: 1970/12/31 11:00:05;  author: joe;  state: bogus;
 \*\*\* empty log message \*\*\*
 ----------------------------
 revision 1\.2\.6\.2
@@ -19713,7 +19703,7 @@ date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -1
 mod
 ----------------------------
 revision 1\.2\.6\.1
-date: 1971-01-01 08:00:05 [+-]0000;  author: joe;  state: Exp;  lines: ${PLUS}1 -1
+date: 1971/01/01 08:00:05;  author: joe;  state: Exp;  lines: ${PLUS}1 -1
 \*\*\* empty log message \*\*\*
 ============================================================================="
 	  # Now test each date format for "cvs log -d".
@@ -19756,14 +19746,11 @@ revision 1\.1"
 revision 1\.5
 revision 1\.4"
 
-	  dokeep
-	  TZ=$save_TZ
 	  cd ..
+
 	  rm -r first-dir
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
 	  ;;
-
-
 
 	rcs2)
 	  # More date tests.  Might as well do this as a separate
@@ -19822,7 +19809,7 @@ EOF
 "2000 is also a good year for leaping"
 	  # 29 Feb 2003 is invalid
 	  dotest_fail rcs2-5 "${testcvs} -q update -p -D '2003-02-29 11:30 UT' file1" \
-"$CPROG \[update aborted\]: Can't parse date/time: \`2003-02-29 11:30 UT'"
+"${CPROG} \[update aborted\]: Can't parse date/time: 2003-02-29 11:30 UT"
 
 	  dotest rcs2-6 "${testcvs} -q update -p -D 2007-01-07 file1" \
 "head revision"
@@ -19933,10 +19920,6 @@ EOF
 	  # have many old files in the tree in which the dates of
 	  # revisions 1.1 and 1.1.1.1 differ by 1 second.
 
-	  # Need a predictable time zone.
-	  save_TZ=$TZ
-	  TZ=UTC; export TZ
-
           mkdir rcs4
           cd rcs4
 
@@ -19945,7 +19928,7 @@ EOF
 	  echo 'OpenMunger sources' >file1
 
 	  # choose a time in the past to demonstrate the problem
-	  touch -t 200012010123 file1
+	  (TZ=GMT; export TZ; touch -t 200012010123 file1)
 
 	  dotest_sort rcs4-1 \
 "${testcvs} import -d -m add rcs4-dir openmunger openmunger-1_0" \
@@ -19954,7 +19937,7 @@ EOF
 N rcs4-dir/file1
 No conflicts created by this import'
 	  echo 'OpenMunger sources release 1.1 extras' >>file1
-	  touch -t 200112011234 file1
+	  (TZ=GMT; export TZ; touch -t 200112011234 file1)
 	  dotest_sort rcs4-2 \
 "${testcvs} import -d -m add rcs4-dir openmunger openmunger-1_1" \
 '
@@ -19991,14 +19974,15 @@ File: file1            	Status: Up-to-date
    Sticky Date:		2001\.10\.01\.00\.00\.00
    Sticky Options:	(none)'
 
-	  dokeep
-	  TZ=$save_TZ
+	  if $keep; then
+	    echo Keeping ${TESTDIR} and exiting due to --keep
+	    exit 0
+	  fi
+
 	  cd ../..
           rm -r rcs4
           rm -rf ${CVSROOT_DIRNAME}/rcs4-dir
 	  ;;
-
-
 
 	lockfiles)
 	  # Tests of CVS lock files.

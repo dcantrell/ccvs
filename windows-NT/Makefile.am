@@ -20,17 +20,13 @@
 # GNU General Public License for more details.
 
 EXTRA_DIST = \
+	stamp-ch \
 	config.h \
-	stamp-chi \
 	config.h.in \
-	config.h.in.in \
-	config.h.in.footer \
-	plhead \
-	mkconfig.pl \
-	fix-msvc-mak.pl \
 	ndir.h \
 	pwd.h \
 	rcmd.h \
+	stamp-sh \
 	stdbool.h \
 	filesubr.c \
 	mkdir.c \
@@ -50,12 +46,9 @@ SUBDIRS = SCC
 ###
 ### Maintainer targets
 ###
-MAINTAINERCLEANFILES =
-DISTCLEANFILES =
-
 all-local: config.h stdbool.h
 config.h: stamp-ch
-stamp-ch: config.h.in Makefile
+stamp-ch: config.h.in $(top_srcdir)/configure
 	@echo "/* This file is generated via a rule in Makefile.am from the" \
 	  >config.tmp
 	@echo " * config.h.in file." >>config.tmp
@@ -71,14 +64,6 @@ stamp-ch: config.h.in Makefile
 	      cp config.tmp $(srcdir)/config.h)
 	-@rm -f config.tmp
 	@cp $(srcdir)/config.h $@
-DISTCLEANFILES += stamp-ch
-
-config.h.in: stamp-chi
-stamp-chi: @MAINTAINER_MODE_TRUE@ mkconfig $(top_srcdir)/config.h.in $(srcdir)/config.h.in.in $(srcdir)/config.h.in.footer
-	./mkconfig -q $(top_srcdir)/config.h.in $(srcdir)/config.h.in \
-	           $(srcdir)/config.h.in.in $(srcdir)/config.h.in.footer
-	@cp $(srcdir)/config.h.in $(srcdir)/$@
-MAINTAINERCLEANFILES += $(srcdir)/stamp-chi $(srcdir)/config.h.in
 
 stdbool.h: stamp-sh
 stamp-sh: $(top_srcdir)/lib/stdbool_.h
@@ -97,7 +82,6 @@ stamp-sh: $(top_srcdir)/lib/stdbool_.h
 	      cp stdbool.tmp $(srcdir)/stdbool.h)
 	-@rm -f stdbool.tmp
 	@cp $(srcdir)/stdbool.h $@
-DISTCLEANFILES += stamp-sh
 
 # for backwards compatibility with the old makefiles
 realclean: maintainer-clean
