@@ -12,7 +12,6 @@
 #include "savecwd.h"
 #include "fileattr.h"
 #include "edit.h"
-#include <assert.h>
 
 static int do_dir_proc (Node * p, void *closure);
 static int do_file_proc (Node * p, void *closure);

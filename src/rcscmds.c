@@ -10,7 +10,6 @@
  */
 
 #include "cvs.h"
-#include <assert.h>
 #include <stdio.h>
 #include "diffrun.h"
 

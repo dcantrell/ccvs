@@ -14,7 +14,6 @@
 # include "config.h"
 #endif /* HAVE_CONFIG_H */
 
-#include <assert.h>
 #include "cvs.h"
 #include "getline.h"
 #include "edit.h"

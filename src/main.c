@@ -12,7 +12,6 @@
  *
  */
 
-#include <assert.h>
 #include "cvs.h"
 
 #ifdef HAVE_WINSOCK_H

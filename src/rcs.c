@@ -8,7 +8,6 @@
  * manipulation
  */
 
-#include <assert.h>
 #include "cvs.h"
 #include "edit.h"
 #include "hardlink.h"

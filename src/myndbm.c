@@ -13,7 +13,6 @@
  * size, and this code works fine.
  */
 
-#include <assert.h>
 #include "cvs.h"
 #include "getline.h"
 

@@ -13,7 +13,6 @@
 #ifdef CVS_ADMIN_GROUP
 #include <grp.h>
 #endif
-#include <assert.h>
 
 static Dtype admin_dirproc (void *callerdat, char *dir,
 				   char *repos, char *update_dir,

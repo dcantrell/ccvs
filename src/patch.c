@@ -12,7 +12,6 @@
  * release as either a date or a revision number.
  */
 
-#include <assert.h>
 #include "cvs.h"
 #include "getline.h"
 

@@ -33,7 +33,6 @@
  * edited by the user, if necessary (when the repository is moved, e.g.)
  */
 
-#include <assert.h>
 #include "cvs.h"
 
 static char *findslash (char *start, char *p);

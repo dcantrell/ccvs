@@ -8,7 +8,6 @@
  */
 
 #include "cvs.h"
-#include <assert.h>
 
 /* Global caches.  The idea is that we maintain a linked list of "free"d
    nodes or lists, and get new items from there.  It has been suggested
