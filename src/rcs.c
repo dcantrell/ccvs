@@ -25,6 +25,7 @@ static int getrcskey PROTO((FILE * fp, const char *name,
 			    char **keyp, char **valp,
 			    size_t *lenp));
 static void getrcsrev PROTO ((FILE *fp, char **revp));
+static int getrevnum PROTO ((FILE *fp, char **revp));
 static int checkmagic_proc PROTO((Node *p, void *closure));
 static void do_branches PROTO((List * list, char *val));
 static void do_symbols PROTO((List * list, char *val));
@@ -812,9 +813,9 @@ rcsvers_delproc (p)
  *
  * Sets *KEYP and *VALUEP to point to storage managed by the getrcskey
  * function; the contents are only valid until the next call to
- * getrcskey or getrcsrev.  If LENP is not NULL, this sets *LENP to
- * the length of *VALUEP; this is needed if the string might contain
- * binary data.
+ * getrcskey, getrcsrev, or getrevnum.  If LENP is not NULL, this sets
+ * *LENP to the length of *VALUEP; this is needed if the string might
+ * contain binary data.
  */
 
 static char *key = NULL;
@@ -1034,70 +1035,29 @@ getrcskey (fp, name, keyp, valp, lenp)
 
 /* Read an RCS revision number from FP.  Put a pointer to it in *REVP;
    it points to space managed by getrcsrev which is only good until
-   the next call to getrcskey or getrcsrev.  */
+   the next call to getrcskey, getrcsrev, or getrevnum.  */
 static void
 getrcsrev (fp, revp)
     FILE *fp;
     char **revp;
 {
-    char *cur;
-    char *max;
     int c;
 
-    do {
-	c = getc (fp);
-	if (c == EOF)
-	{
-	    /* FIXME: should be including filename in error message.  */
-	    if (ferror (fp))
-		error (1, errno, "cannot read rcs file");
-	    else
-		error (1, 0, "unexpected end of file reading rcs file");
-	}
-    } while (whitespace (c));
-
-    if (!(isdigit (c) || c == '.'))
+    c = getrevnum (fp, revp);
+    if (c == EOF)
+    {
 	/* FIXME: should be including filename in error message.  */
-	error (1, 0, "error reading rcs file; revision number expected");
-
-    cur = key;
-    max = key + keysize;
-    while (isdigit (c) || c == '.')
-    {
-	if (cur >= max)
-	{
-	    size_t curoff = cur - key;
-	    expand_string (&key, &keysize, keysize + 1);
-	    cur = key + curoff;
-	    max = key + keysize;
-	}
-	*cur++ = c;
-
-	c = getc (fp);
-	if (c == EOF)
-	{
-	    /* FIXME: should be including filename in error message.  */
-	    if (ferror (fp))
-		error (1, errno, "cannot read rcs file");
-	    else
-		error (1, 0, "unexpected end of file reading rcs file");
-	}
+	if (ferror (fp))
+	    error (1, errno, "cannot read rcs file");
+	else
+	    error (1, 0, "unexpected end of file reading rcs file");
     }
-
-    if (cur >= max)
-    {
-	size_t curoff = cur - key;
-	expand_string (&key, &keysize, keysize + 1);
-	cur = key + curoff;
-	max = key + keysize;
-    }
-    *cur = '\0';
-    *revp = key;
 }
 
-/* Like getrcsrev, but don't die on error.  Return the last character
-   read (last call to getc, which may be EOF).  TODO: implement getrcsrev
-   in terms of this function. */
+/* Read an RCS revision number from FP.  Put a pointer to it in *REVP;
+   it points to space managed by getrevnum which is only good until
+   the next call to getrevnum, getrcskey, or getrcsrev.  Return the
+   last character read (last call to getc, which may be EOF).  */
 static int
 getrevnum (fp, revp)
     FILE *fp;
