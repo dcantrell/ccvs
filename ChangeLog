@@ -1,5 +1,7 @@
 Tue Feb  4 11:42:30 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* INSTALL: OS/2 port is client only.
+
 	* Rename devel-cvs (which had only been in the repository, not the
 	distribution) to DEVEL-CVS.  Add "Charter for the devel-cvs
 	mailing list:" heading, "CVS Development Policies" title, and
