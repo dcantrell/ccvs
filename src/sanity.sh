@@ -18382,6 +18382,28 @@ ${log_rev3}
 ${log_rev2}
 ${log_trailer}"
 
+	  # Test BASE pseudotag
+	  dotest log-23 "${testcvs} log -rBASE file1" \
+"${log_header1}
+${log_tags1}
+${log_keyword}
+total revisions: 5;	selected revisions: 1
+description:
+${log_rev2b}
+${log_trailer}"
+
+	  dotest log-24 "${testcvs} -q up -r1.2 file1" "[UP] file1"
+	  dotest log-25 "${testcvs} log -rBASE file1" \
+"${log_header1}
+${log_tags1}
+${log_keyword}
+total revisions: 5;	selected revisions: 1
+description:
+${log_rev2}
+${log_trailer}"
+
+	  dotest log-26 "${testcvs} -q up -rbranch file1" "[UP] file1"
+
 	  # Now the same tests but with rlog
 
 	  dotest log-r11 "${testcvs} rlog first-dir/file1" \
@@ -18603,6 +18625,26 @@ total revisions: 5;	selected revisions: 2
 description:
 ${log_rev3}
 ${log_rev2}
+${log_trailer}"
+
+	  # Test BASE pseudotag
+	  dotest log-r23 "${testcvs} rlog -rBASE first-dir/file1" \
+"${PROG} rlog: warning: no revision .BASE. in .${CVSROOT_DIRNAME}/first-dir/file1,v.
+${rlog_header1}
+${log_tags1}
+${log_keyword}
+total revisions: 5;	selected revisions: 0
+description:
+${log_trailer}"
+
+	  dotest log-r24 "${testcvs} -q up -r1.2 file1" "[UP] file1"
+	  dotest log-r25 "${testcvs} rlog -rBASE first-dir/file1" \
+"${PROG} rlog: warning: no revision .BASE. in .${CVSROOT_DIRNAME}/first-dir/file1,v.
+${rlog_header1}
+${log_tags1}
+${log_keyword}
+total revisions: 5;	selected revisions: 0
+description:
 ${log_trailer}"
 
 	  # Test when head is dead

@@ -128,7 +128,7 @@ static int log_fileproc PROTO ((void *callerdat, struct file_info *finfo));
 static struct option_revlist *log_parse_revlist PROTO ((const char *));
 static void log_parse_date PROTO ((struct log_data *, const char *));
 static void log_parse_list PROTO ((List **, const char *));
-static struct revlist *log_expand_revlist PROTO ((RCSNode *,
+static struct revlist *log_expand_revlist PROTO ((RCSNode *, char *,
 						  struct option_revlist *,
 						  int));
 static void log_free_revlist PROTO ((struct revlist *));
@@ -815,21 +815,30 @@ log_fileproc (callerdat, finfo)
 {
     struct log_data *log_data = (struct log_data *) callerdat;
     Node *p;
+    char *baserev;
     int selrev = -1;
     RCSNode *rcsfile;
     char buf[50];
     struct revlist *revlist = NULL;
     struct log_data_and_rcs log_data_and_rcs;
 
-    if ((rcsfile = finfo->rcs) == NULL)
+    rcsfile = finfo->rcs;
+    p = findnode (finfo->entries, finfo->file);
+    if (p != NULL)
+    {
+	Entnode *e = p->data;
+	baserev = e->version;
+	if (baserev[0] == '-') ++baserev;
+    }
+    else
+	baserev = NULL;
+
+    if (rcsfile == NULL)
     {
 	/* no rcs file.  What *do* we know about this file? */
-	p = findnode (finfo->entries, finfo->file);
-	if (p != NULL)
+	if (baserev != NULL)
 	{
-	    Entnode *e = p->data;
-
-	    if (e->version[0] == '0' && e->version[1] == '\0')
+	    if (baserev[0] == '0' && baserev[1] == '\0')
 	    {
 		if (!really_quiet)
 		    error (0, 0, "%s has been added, but not committed",
@@ -852,7 +861,7 @@ log_fileproc (callerdat, finfo)
 
 	/* Turn any symbolic revisions in the revision list into numeric
 	   revisions.  */
-	revlist = log_expand_revlist (rcsfile, log_data->revlist,
+	revlist = log_expand_revlist (rcsfile, baserev, log_data->revlist,
 				      log_data->default_branch);
 	if (log_data->sup_header
             || (!log_data->header && !log_data->long_header))
@@ -1042,8 +1051,9 @@ log_fileproc (callerdat, finfo)
  * Expand any symbolic revisions.
  */
 static struct revlist *
-log_expand_revlist (rcs, revlist, default_branch)
+log_expand_revlist (rcs, baserev, revlist, default_branch)
     RCSNode *rcs;
+    char *baserev;
     struct option_revlist *revlist;
     int default_branch;
 {
@@ -1104,7 +1114,9 @@ log_expand_revlist (rcs, revlist, default_branch)
 		nr->first = xstrdup (r->first);
 	    else
 	    {
-		if (RCS_nodeisbranch (rcs, r->first))
+		if (baserev && strcmp (r->first, TAG_BASE) == 0)
+		    nr->first = xstrdup (baserev);
+		else if (RCS_nodeisbranch (rcs, r->first))
 		    nr->first = RCS_whatbranch (rcs, r->first);
 		else
 		    nr->first = RCS_gettag (rcs, r->first, 1, (int *) NULL);
@@ -1122,7 +1134,9 @@ log_expand_revlist (rcs, revlist, default_branch)
 		nr->last = xstrdup (r->last);
 	    else
 	    {
-		if (RCS_nodeisbranch (rcs, r->last))
+		if (baserev && strcmp (r->last, TAG_BASE) == 0)
+		    nr->last = xstrdup (baserev);
+		else if (RCS_nodeisbranch (rcs, r->last))
 		    nr->last = RCS_whatbranch (rcs, r->last);
 		else
 		    nr->last = RCS_gettag (rcs, r->last, 1, (int *) NULL);
