@@ -1,5 +1,7 @@
 Wed Mar 26 13:13:41 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* README: Also mention tar and gzip.
+
 	* README: Binaries are now under 1.9, not 1.8.3, on
 	ftp.cyclic.com.  Also mention http URL.
 
