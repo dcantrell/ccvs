@@ -159,8 +159,8 @@ subdir = doc
 Makefile: ../config.status Makefile.in
 	cd .. && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= ./config.status
 
-../config.status: ../configure
-	cd .. ; $(SHELL) config.status --recheck
+#../config.status: ../configure
+#	cd .. ; $(SHELL) config.status --recheck
 
-../configure: ../configure.in
-	cd $(top_srcdir) ; autoconf
+#../configure: ../configure.in
+#	cd $(top_srcdir) ; autoconf
