@@ -113,7 +113,8 @@ do_module (db, mname, m_type, msg, callback_proc, where,
       {
 	fprintf (stderr, "%c-> do_module (%s, %s, %s, %s)\n",
 		 (server_active) ? 'S' : ' ',
-		 mname, msg, where, extra_arg);
+                mname, msg, where ? where : "",
+                extra_arg ? extra_arg : "");
       }
 
     /* remember where we start */
