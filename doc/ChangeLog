@@ -1,3 +1,8 @@
+2004-04-18  Derek Price  <derek@ximbiot.com>
+
+	* cvs.texinfo: Various spelling, typo, and capitalization fixes.
+	(Patch from Ville Skyttä <scop@cvshome.org>.)
+
 2004-04-06  Derek Price  <derek@ximbiot.com>
 
 	* cvs.texinfo (Remote repositories): Describe how to use a web proxy to
