@@ -125,6 +125,7 @@ contrib_SCRIPTS = \
 	log \
 	log_accum \
 	mfpipe \
+	pvcs2cvs \
 	rcs-to-cvs \
 	rcs2log \
 	rcslock \
@@ -169,7 +170,7 @@ subdir = contrib
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/config.h $(top_builddir)/src/options.h
 CONFIG_CLEAN_FILES = clmerge cln_hist commit_prep cvs_acls log log_accum \
-	mfpipe rcslock sccs2rcs
+	mfpipe pvcs2cvs rcslock sccs2rcs
 SCRIPTS = $(contrib_SCRIPTS)
 
 DIST_SOURCES =
@@ -177,7 +178,7 @@ DATA = $(contrib_DATA)
 
 DIST_COMMON = README ChangeLog Makefile.am Makefile.in clmerge.in \
 	cln_hist.in commit_prep.in cvs_acls.in log.in log_accum.in \
-	mfpipe.in rcslock.in sccs2rcs.in
+	mfpipe.in pvcs2cvs.in rcslock.in sccs2rcs.in
 all: all-am
 
 .SUFFIXES:
@@ -204,6 +205,8 @@ log: $(top_builddir)/config.status log.in
 log_accum: $(top_builddir)/config.status log_accum.in
 	cd $(top_builddir) && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= CONFIG_LINKS= $(SHELL) ./config.status
 mfpipe: $(top_builddir)/config.status mfpipe.in
+	cd $(top_builddir) && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= CONFIG_LINKS= $(SHELL) ./config.status
+pvcs2cvs: $(top_builddir)/config.status pvcs2cvs.in
 	cd $(top_builddir) && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= CONFIG_LINKS= $(SHELL) ./config.status
 rcslock: $(top_builddir)/config.status rcslock.in
 	cd $(top_builddir) && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= CONFIG_LINKS= $(SHELL) ./config.status
