@@ -307,6 +307,16 @@ static const char *const config_contents[] = {
     "# repositories.  Set it to `never' (the previous CVS behavior) to prevent\n",
     "# verifymsg scripts from changing the log message.\n",
     "#RereadLogAfterVerify=always\n",
+    "\n",
+    "# Set `UserAdminOptions' to the list of `cvs admin' commands (options)\n",
+    "# that users not in the `cvsadmin' group are allowed to run.  This\n",
+    "# defaults to `k', or only allowing the changing of the default\n",
+    "# keyword expansion mode for files for users not in the `cvsadmin' group.\n",
+    "# This value is ignored if the `cvsadmin' group does not exist.\n",
+    "#\n",
+    "# The following string would enable all `cvs admin' commands for all\n",
+    "# users:\n",
+    "#UserAdminOptions=aAbceIklLmnNostuU\n",
     NULL
 };
 
