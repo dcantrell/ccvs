@@ -39,10 +39,10 @@ Create_Admin (dir, update_dir, repository, tag, date, nonbranch, warn)
 #ifdef SERVER_SUPPORT
     if (trace)
     {
-	fprintf (stderr, "%c-> Create_Admin (%s, %s, %s, %s, %s)\n",
+	fprintf (stderr, "%c-> Create_Admin (%s, %s, %s, %s, %s, %d, %d)\n",
 		 (server_active) ? 'S' : ' ',
 		 dir, update_dir, repository, tag ? tag : "",
-		 date ? date : "");
+		 date ? date : "", nonbranch, warn);
     }
 #endif
 

@@ -208,7 +208,8 @@ rtag (argc, argv)
 	/* XXX last arg should be repository, but doesn't make sense here */
 	history_write ('T', (delete_flag ? "D" : (numtag ? numtag : 
 		       (date ? date : "A"))), symtag, argv[i], "");
-	err += do_module (db, argv[i], TAG, delete_flag ? "Untagging" : "Tagging",
+	err += do_module (db, argv[i], TAG,
+			  delete_flag ? "Untagging" : "Tagging",
 			  rtag_proc, (char *) NULL, 0, 0, run_module_prog,
 			  symtag);
     }
@@ -735,7 +736,8 @@ rtag_dirproc (callerdat, dir, repos, update_dir, entries)
     List *entries;
 {
     if (!quiet)
-	error (0, 0, "%s %s", delete_flag ? "Untagging" : "Tagging", update_dir);
+	error (0, 0, "%s %s", delete_flag ? "Untagging" : "Tagging",
+	       update_dir);
     return (R_PROCESS);
 }
 

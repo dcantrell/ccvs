@@ -562,7 +562,7 @@ void do_editor PROTO((char *dir, char **messagep,
 void do_verify PROTO((char *message, char *repository));
 
 typedef	int (*CALLBACKPROC)	PROTO((int *pargc, char *argv[], char *where,
-	char *mwhere, char *mfile, int horten, int local_specified,
+	char *mwhere, char *mfile, int shorten, int local_specified,
 	char *omodule, char *msg));
 
 /* This is the structure that the recursion processor passes to the
