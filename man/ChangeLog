@@ -1,5 +1,10 @@
 2002-04-17  Derek Price  <oberon@umich.edu>
 
+	* cvs.1(cvs commit): It's '-F' now, not '-f'.
+	(Correction from Norikatsu Shigemura <nork@cityfujisawa.ne.jp>.)
+
+2002-04-17  Derek Price  <oberon@umich.edu>
+
 	* cvs.1: Claim to be out of date and direct users to the Cederqvist.
 	Replace www.cyclic.com with cvshome.org.
 	* cvs.5: Ditto.
