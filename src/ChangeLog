@@ -1,5 +1,12 @@
 Thu Feb  1 12:28:33 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* remove.c (cvsremove): Don't tell user the name of the program
+	which they use to remove files; we don't have any way of knowing
+	that, and besides which they might use a GUI or emacs 'dired' anyway.
+	* update.c (update_filesdone_proc, update_dirleave_proc): Call
+	unlink_file_dir instead of rm -rf.
+	* options.h.in: Remove RM; no longer used.
+
 	* sanity.sh: New tests devcom-a* test "cvs watch add",
 	"cvs watch remove", and "cvs watchers".
 

@@ -96,9 +96,9 @@ cvsremove (argc, argv)
     if (existing_files)
 	error (0, 0,
 	       ((existing_files == 1) ?
-		"%d file exists; use `%s' to remove it first" :
-		"%d files exist; use `%s' to remove them first"),
-	       existing_files, RM);
+		"%d file exists; remove it first" :
+		"%d files exist; remove them first"),
+	       existing_files);
 
     return (err);
 }
