@@ -111,6 +111,31 @@ static const char *const editinfo_contents[] = {
     NULL
 };
 
+static const char *const verifymsg_contents[] = {
+    "# The \"verifymsg\" file is used to allow verification of logging\n",
+    "# information.  It works best when a template (as specified in the\n",
+    "# rcsinfo file) is provided for the logging procedure.  Given a\n",
+    "# template with locations for, a bug-id number, a list of people who\n",
+    "# reviewed the code before it can be checked in, and an external\n",
+    "# process to catalog the differences that were code reviewed, the\n",
+    "# following test can be applied to the code:\n",
+    "#\n",
+    "#   Making sure that the entered bug-id number is correct.\n",
+    "#   Validating that the code that was reviewed is indeed the code being\n",
+    "#       checked in (using the bug-id number or a seperate review\n",
+    "#       number to identify this particular code set.).\n",
+    "#\n",
+    "# If any of the above test failed, then the commit would be aborted.\n",
+    "#\n",
+    "# Actions such as mailing a copy of the report to each reviewer are\n",
+    "# better handled by an entry in the loginfo file.\n",
+    "#\n",
+    "# One thing that should be noted is the the ALL keyword is not\n",
+    "# supported.  There can be only one entry that matches a given\n",
+    "# repository.\n",
+    NULL
+};
+
 static const char *const commitinfo_contents[] = {
     "# The \"commitinfo\" file is used to control pre-commit checks.\n",
     "# The filter on the right is invoked with the repository and a list \n",
@@ -253,6 +278,9 @@ static const struct admin_file filelist[] = {
     {CVSROOTADM_EDITINFO,
 	"a %s file can be used to validate log messages",
 	editinfo_contents},
+    {CVSROOTADM_VERIFYMSG,
+	"a %s file can be used to validate log messages",
+	verifymsg_contents},
     {CVSROOTADM_COMMITINFO,
 	"a %s file can be used to configure 'cvs commit' checking",
 	commitinfo_contents},

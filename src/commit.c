@@ -470,6 +470,11 @@ commit (argc, argv)
 	if (use_editor)
 	    do_editor (".", &message, (char *)NULL, find_args.ulist);
 
+	/* Run the user-defined script to verify/check information in
+	 *the log message
+	 */
+	do_verify (message, (char *)NULL);  	
+
 	/* We always send some sort of message, even if empty.  */
 	option_with_arg ("-m", message);
 
@@ -1060,11 +1065,13 @@ commit_fileproc (callerdat, finfo)
      * with files as args from the command line.  In that latter case, we
      * need to get the commit message ourselves
      */
-    if (use_editor && !got_message)
-      {
+    if (!(got_message))
+    {
 	got_message = 1;
-	do_editor (finfo->update_dir, &message, finfo->repository, ulist);
-      }
+	if (use_editor)
+	    do_editor (finfo->update_dir, &message, finfo->repository, ulist);
+	do_verify (message, finfo->repository);  
+    }
 
     p = findnode (cilist, finfo->file);
     if (p == NULL)
@@ -1349,13 +1356,12 @@ commit_direntproc (callerdat, dir, repos, update_dir, entries)
 	error (0, 0, "Committing %s", update_dir);
 
     /* get commit message */
+    real_repos = Name_Repository (dir, update_dir);
+    got_message = 1;
     if (use_editor)
-    {
-	got_message = 1;
-	real_repos = Name_Repository (dir, update_dir);
 	do_editor (update_dir, &message, real_repos, ulist);
-	free (real_repos);
-    }
+    do_verify (message, real_repos);  
+    free (real_repos);
     return (R_PROCESS);
 }
 

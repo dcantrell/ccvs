@@ -170,6 +170,7 @@ extern int errno;
 #define CVSROOTADM_COMMITINFO	"commitinfo"
 #define CVSROOTADM_TAGINFO      "taginfo"
 #define	CVSROOTADM_EDITINFO	"editinfo"
+#define CVSROOTADM_VERIFYMSG    "verifymsg"
 #define	CVSROOTADM_HISTORY	"history"
 #define CVSROOTADM_VALTAGS	"val-tags"
 #define	CVSROOTADM_IGNORE	"cvsignore"
@@ -495,6 +496,8 @@ void Update_Logfile PROTO((char *repository, char *xmessage, FILE * xlogfp,
 		     List * xchanges));
 void do_editor PROTO((char *dir, char **messagep,
 		      char *repository, List * changes));
+
+void do_verify PROTO((char *message, char *repository));
 
 typedef	int (*CALLBACKPROC)	PROTO((int *pargc, char *argv[], char *where,
 	char *mwhere, char *mfile, int horten, int local_specified,

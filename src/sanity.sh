@@ -4557,11 +4557,6 @@ new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
 done
 '"${PROG}"' [a-z]*: Rebuilding administrative file database'
 	  cd ..
-	  if echo "yes" | ${testcvs} release -d CVSROOT >>${LOGFILE} ; then
-	    pass info-4
-	  else
-	    fail info-4
-	  fi
 
 	  mkdir ${CVSROOT_DIRNAME}/first-dir
 	  dotest info-5 "${testcvs} -q co first-dir" ''
@@ -4586,11 +4581,6 @@ done
 new revision: 1\.2; previous revision: 1\.1
 done'
 	  cd ..
-	  if echo "yes" | ${testcvs} release -d first-dir >>${LOGFILE} ; then
-	    pass info-8
-	  else
-	    fail info-8
-	  fi
 	  dotest info-9 "cat $TESTDIR/testlog" 'xenv-valueyz=[a-z0-9@][a-z0-9@]*=/tmp/cvs-sanity/cvsroot='
           dotest info-10 "cat $TESTDIR/testlog2" 'first-dir file1,NONE,1.1
 first-dir 1.1
@@ -4603,11 +4593,71 @@ first-dir file1
 first-dir 1.1AX
 first-dir file1ux'
 
-	  # I think this might be doable with cvs remove, or at least
-	  # checking in a version with only comments, but I'm too lazy
-	  # at the moment.  Blow it away.
-	  rm -f ${CVSROOT_DIRNAME}/CVSROOT/loginfo*
+	  cd CVSROOT
+	  echo '# do nothing' >loginfo
+	  dotest info-11 "${testcvs} -q -s ZEE=garbage ci -m nuke-loginfo" \
+"Checking in loginfo;
+/tmp/cvs-sanity/cvsroot/CVSROOT/loginfo,v  <--  loginfo
+new revision: 1\.[0-9]; previous revision: 1\.[0-9]
+done
+${PROG} [a-z]*: Rebuilding administrative file database"
 
+	  # Now test verifymsg
+	  cat >${TESTDIR}/vscript <<EOF
+#!/bin/sh
+if head -1 < \$1 | grep '^BugId:[ ]*[0-9][0-9]*$' > /dev/null; then
+    exit 0
+else
+    echo "No BugId found."
+    exit 1
+fi
+EOF
+	  chmod +x ${TESTDIR}/vscript
+	  echo "^first-dir ${TESTDIR}/vscript" >>verifymsg
+	  dotest info-v1 "${testcvs} -q ci -m add-verification" \
+"Checking in verifymsg;
+/tmp/cvs-sanity/cvsroot/CVSROOT/verifymsg,v  <--  verifymsg
+new revision: 1\.2; previous revision: 1\.1
+done
+${PROG} [a-z]*: Rebuilding administrative file database"
+
+	  cd ../first-dir
+	  echo line2 >>file1
+	  dotest_fail info-v2 "${testcvs} -q ci -m bogus" \
+"No BugId found\.
+${PROG} \[[a-z]* aborted\]: Message verification failed"
+
+	  cat >${TESTDIR}/comment.tmp <<EOF
+BugId: 42
+and many more lines after it
+EOF
+	  dotest info-v3 "${testcvs} -q ci -F ${TESTDIR}/comment.tmp" \
+"Checking in file1;
+/tmp/cvs-sanity/cvsroot/first-dir/file1,v  <--  file1
+new revision: 1\.3; previous revision: 1\.2
+done"
+	  cd ..
+	  mkdir another-dir
+	  cd another-dir
+	  touch file2
+	  dotest_fail info-v4 \
+	    "${testcvs} import -m bogus first-dir/another x y" \
+"No BugId found\.
+${PROG} \[[a-z]* aborted\]: Message verification failed"
+	  rm file2
+	  cd ..
+	  rmdir another-dir
+
+	  if echo "yes" | ${testcvs} release -d CVSROOT >>${LOGFILE} ; then
+	    pass info-cleanup
+	  else
+	    fail info-cleanup
+	  fi
+	  if echo "yes" | ${testcvs} release -d first-dir >>${LOGFILE} ; then
+	    pass info-cleanup-2
+	  else
+	    fail info-cleanup-2
+	  fi
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
 	  ;;
 
