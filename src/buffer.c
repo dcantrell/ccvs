@@ -84,7 +84,7 @@ static void
 buf_default_memory_error (buf)
      struct buffer *buf;
 {
-  error (1, 0, "out of memory");
+    error (1, 0, "out of memory");
 }
 
 /* Allocate more buffer_data structures.  */
@@ -662,7 +662,7 @@ buf_chain_length (buf)
 
 int
 buf_length (buf)
-     struct buffer *buf;
+    struct buffer *buf;
 {
     return buf_chain_length (buf->data);
 }
