@@ -874,6 +874,11 @@ done'
 	basic2)
 		# Test rtag, import, history, various miscellaneous operations
 
+		# NOTE: this section has reached the size and
+		# complexity where it is getting to be a good idea to
+		# add new tests to a new section rather than
+		# continuing to piggyback them onto the tests here.
+
 		# First empty the history file
 		rm ${CVSROOT_DIRNAME}/CVSROOT/history
 		touch ${CVSROOT_DIRNAME}/CVSROOT/history
@@ -1237,7 +1242,14 @@ O [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z0-9@][a-z0-9@]* \[1.1\] first-dir         
 		rm -rf ${CVSROOT_DIRNAME}/second-dir
 		;;
 
-	death) # next dive.  test death support.
+	death)
+		# next dive.  test death support.
+
+		# NOTE: this section has reached the size and
+		# complexity where it is getting to be a good idea to
+		# add new death support tests to a new section rather
+		# than continuing to piggyback them onto the tests here.
+
 		mkdir  ${CVSROOT_DIRNAME}/first-dir
 		if ${CVS} co first-dir  ; then
 			echo "PASS: test 65" >>${LOGFILE}

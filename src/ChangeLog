@@ -1,3 +1,14 @@
+Tue Jun 25 23:34:13 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* update.c (checkout_file): Add comments about two cases which
+	seem fishy.
+
+	* sanity.sh (basic2, death): Add comments encouraging people to
+	stop making these sections bigger and more complex.  I'm not (yet
+	at least) trying to figure out the ideal size for a section (my
+	current best estimate is 10-20 tests), but surely these
+	two sections are pushing the limit, whatever it is.
+
 Tue Jun 25 19:52:02 1996  Ian Lance Taylor  <ian@cygnus.com>
 
 	* update.c (checkout_file): Rewrite handling of dead files when
