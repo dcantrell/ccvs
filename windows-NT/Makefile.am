@@ -36,7 +36,8 @@ EXTRA_DIST = \
 	stripslash.c \
 	waitpid.c \
 	woe32.c \
-	.cvsignore
+	.cvsignore \
+	stamp-ch
 
 SUBDIRS = SCC
 
