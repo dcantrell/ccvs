@@ -2279,7 +2279,28 @@ send_repository (dir, repos, update_dir)
     adm_name = xmalloc (strlen (dir) + 80);
 
     send_to_server ("Directory ", 0);
-    send_to_server (update_dir, 0);
+    {
+	/* Send the directory name.  I know that this
+	   sort of duplicates code elsewhere, but each
+	   case seems slightly different...  */
+	char buf[1];
+	char *p = update_dir;
+	while (*p != '\0')
+	{
+	    assert (*p != '\012');
+	    if (ISDIRSEP (*p))
+	    {
+		buf[0] = '/';
+		send_to_server (buf, 1);
+	    }
+	    else
+	    {
+		buf[0] = *p;
+		send_to_server (buf, 1);
+	    }
+	    ++p;
+	}
+    }
     send_to_server ("\012", 1);
     send_to_server (repos, 0);
     send_to_server ("\012", 1);
