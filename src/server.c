@@ -14,6 +14,7 @@
 #include "edit.h"
 #include "fileattr.h"
 #include "getline.h"
+#include "getnline.h"
 #include "buffer.h"
 
 #if defined(SERVER_SUPPORT) || defined(CLIENT_SUPPORT)
@@ -5639,7 +5640,7 @@ pserver_authenticate_connection ()
 #endif
 
     /* Make sure the protocol starts off on the right foot... */
-    if (getline_safe (&tmp, &tmp_allocated, stdin, PATH_MAX) < 0)
+    if( getnline( &tmp, &tmp_allocated, PATH_MAX, stdin ) < 0 )
 	{
 #ifdef HAVE_SYSLOG_H
 	    syslog (LOG_DAEMON | LOG_NOTICE, "bad auth protocol start: EOF");
@@ -5672,9 +5673,9 @@ pserver_authenticate_connection ()
 
     /* Get the three important pieces of information in order. */
     /* See above comment about error handling.  */
-    getline_safe (&repository, &repository_allocated, stdin, PATH_MAX);
-    getline_safe (&username, &username_allocated, stdin, PATH_MAX);
-    getline_safe (&password, &password_allocated, stdin, PATH_MAX);
+    getnline( &repository, &repository_allocated, PATH_MAX, stdin );
+    getnline( &username, &username_allocated, PATH_MAX, stdin );
+    getnline( &password, &password_allocated, PATH_MAX, stdin );
 
     /* Make them pure. */
     strip_trailing_newlines (repository);
@@ -5683,7 +5684,7 @@ pserver_authenticate_connection ()
 
     /* ... and make sure the protocol ends on the right foot. */
     /* See above comment about error handling.  */
-    getline_safe (&tmp, &tmp_allocated, stdin, PATH_MAX);
+    getnline( &tmp, &tmp_allocated, PATH_MAX, stdin );
     if (strcmp (tmp,
 		verify_and_exit ?
 		"END VERIFICATION REQUEST\n" : "END AUTH REQUEST\n")
