@@ -10892,12 +10892,24 @@ done"
 	  cd ../..
 	  cd m1/first-dir
 	  echo "changed in m1" >aa
-	  dotest mwrap-7 "${testcvs} -nq update" \
+	  if test "$remote" = no; then
+	    dotest mwrap-7 "${testcvs} -nq update" \
 "U aa
 ${PROG} [a-z]*: nonmergeable file needs merge
 ${PROG} [a-z]*: revision 1\.2 from repository is now in aa
 ${PROG} [a-z]*: file from working directory is now in \.#aa\.1\.1
 C aa"
+	  else
+	    # The tagged text code swallows up "U aa" but isn't yet up to
+	    # trying to figure out how it interacts with the "C aa" and
+	    # other stuff.  The whole deal of having both is pretty iffy.
+	    dotest mwrap-7 "${testcvs} -nq update" \
+"${PROG} [a-z]*: nonmergeable file needs merge
+${PROG} [a-z]*: revision 1\.2 from repository is now in aa
+${PROG} [a-z]*: file from working directory is now in \.#aa\.1\.1
+C aa
+U aa"
+	  fi
 	  dotest mwrap-8 "${testcvs} -q update" \
 "U aa
 ${PROG} [a-z]*: nonmergeable file needs merge
