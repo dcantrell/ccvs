@@ -1,3 +1,8 @@
+2003-07-18  Derek Price  <derek@ximbiot.com>
+
+	* TODO (72): Remove mention of the -i/-o in the modules file since they
+	have been removed.
+
 2003-06-27  Larry Jones  <lawrence.jones@eds.com>
 
 	* NEWS: Note LockDir fix.
