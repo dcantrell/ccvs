@@ -1389,15 +1389,16 @@ patch_file (finfo, vers_ts, docheckout, file_info, checksum)
 	}
 	else
 	{
-	    /* FIXME: We should use -a if diff supports it.  We should
-               probably just copy over most or all of the diff
-               handling in the RCS configure script.  */
-	    /* IMHO, we shouldn't copy over anything which even
-	       vaguely resembles the RCS configure script.  That kind of
-	       thing tends to be ugly, slow, and fragile.  It also is a
-	       a support headache for CVS to behave differently in subtle
-	       ways based on whether it was installed correctly.  Instead we
-	       should come up with a diff library.  -kingdon, Apr 1997.  */
+	    /* Now that diff is librarified, we could be passing -a if
+	       we wanted to.  However, it is unclear to me whether we
+	       would want to.  Does diff -a, in any significant
+	       percentage of cases, produce patches which are smaller
+	       than the files it is patching?  I guess maybe text
+	       files with character sets which diff regards as
+	       'binary'.  Conversely, do they tend to be much larger
+	       in the bad cases?  This needs some more
+	       thought/investigation, I suspect.  */
+
 	    diff_options = "-n";
 	}
 	retcode = diff_exec (file1, file2, diff_options, finfo->file);

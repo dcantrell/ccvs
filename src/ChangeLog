@@ -1,3 +1,8 @@
+Wed Sep 24 08:31:46 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* update.c (patch_file): Revise comments about diff -a now that
+	diff is librarified.
+
 Sun Sep 21 21:28:26 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* run.c (call_diff): Sleep for a second, in hopes of helping with
