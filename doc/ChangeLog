@@ -1,3 +1,7 @@
+Sun May 26 17:12:24 1996  Norbert Kiesel  <nk@col.sw-ley.de>
+
+	* cvs.texinfo (tag options) Document option "-c".
+
 Thu May 23 21:11:56 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (Credits): Rewrite section on FAQ to reflect the
