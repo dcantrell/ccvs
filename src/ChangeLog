@@ -1,5 +1,10 @@
 2004-03-14  Derek Price  <derek@ximbiot.com>
 
+	* add.c (add): Only call server_updated() when we actual have a new
+	resurrected file for the client.
+
+2004-03-14  Derek Price  <derek@ximbiot.com>
+
 	* cvs.h (previous_rev, write_letter): New prototypes.
 	(struct file_info): Move to before the write_letter prototype.
 	* add.c (add): Allow resurrection of files which used to exist on a
