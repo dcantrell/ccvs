@@ -1,3 +1,8 @@
+2000-03-10  Larry Jones  <larry.jones@sdrc.com>
+
+	* add.c (add): Don't try to set cvsroot_len until after checking
+	for help only -- CVSroot_directory isn't set in that case.
+
 2000-03-03  Larry Jones  <larry.jones@sdrc.com>
 
 	* mkmodules.c (init): Use mkdir_if_needed to create CVSROOT/Emptydir

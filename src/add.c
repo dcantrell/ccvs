@@ -59,7 +59,7 @@ add (argc, argv)
     /* Nonzero if we found a slash, and are thus adding files in a
        subdirectory.  */
     int found_slash = 0;
-    const size_t cvsroot_len = strlen (CVSroot_directory);
+    size_t cvsroot_len;
 
     if (argc == 1 || argc == -1)
 	usage (add_usage);
@@ -92,6 +92,8 @@ add (argc, argv)
 
     if (argc <= 0)
 	usage (add_usage);
+
+    cvsroot_len = strlen (CVSroot_directory);
 
     /* First some sanity checks.  I know that the CVS case is (sort of)
        also handled by add_directory, but we need to check here so the
