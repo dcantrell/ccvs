@@ -7963,6 +7963,26 @@ EOF
 
 	  cd ..
 
+	  # There used to be a nasty-hack that made CVS skip creation of the
+	  # module dir (in this case ampermodule) when -n was specified
+	  dotest modules2-ampermod-1 "${testcvs} -q co -n ampermodule" ''
+	  dotest modules2-ampermod-2 "test -d ampermodule/first-dir" ''
+	  dotest modules2-ampermod-3 "test -d ampermodule/second-dir" ''
+
+	  # Test release of a module
+	  if echo yes |${testcvs} release -d ampermodule >>${LOGFILE}; then
+	    pass modules2-ampermod-release-1
+	  else
+	    fail modules2-ampermod-release-1
+	  fi
+	  dotest_fail modules2-ampermod-release-2 "test -d ampermodule" ''
+
+	  # and the '-n' test again, but in conjunction with '-d'
+	  dotest modules2-ampermod-4 "${testcvs} -q co -n -d newname ampermodule" ''
+	  dotest modules2-ampermod-5 "test -d newname/first-dir" ''
+	  dotest modules2-ampermod-6 "test -d newname/second-dir" ''
+	  rm -rf newname
+
 	  # Now we create another directory named first-dir and make
 	  # sure that CVS doesn't get them mixed up.
 	  mkdir first-dir
