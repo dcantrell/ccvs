@@ -1,5 +1,4 @@
 dnl configure.in for cvs
-dnl "$CVSid$"
 AC_INIT(src/cvs.h)
 AC_PREREQ(2.4)dnl Required Autoconf version.
 AC_CONFIG_HEADER(config.h src/options.h)
