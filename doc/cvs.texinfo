@@ -2494,6 +2494,9 @@ the main trunk, or leave them on the branch.
 @cindex Branch, creating a
 @cindex rtag, creating a branch using
 
+@c FIXME: should be more explicit about the value of
+@c having a tag on the branchpoint.  Also should talk
+@c about creating a branch with tag not rtag.
 The @code{rtag} command can be used to create a branch.
 The @code{rtag} command is much like @code{tag}, but it
 does not require that you have a working copy of the
@@ -5197,6 +5200,7 @@ checkout your experimental stuff and utilize the full
 benefit of @sc{cvs} conflict resolution.  The scenario might
 look like:
 
+@c FIXME: Should we be recommending tagging the branchpoint?
 @example
 [[ hacked sources are present ]]
 $ cvs tag -b EXPR1
@@ -5211,6 +5215,7 @@ changes to the files will never be removed by the
 automatically commit to the correct branch, because the
 @samp{-r} is sticky.  You could also do like this:
 
+@c FIXME: Should we be recommending tagging the branchpoint?
 @example
 [[ hacked sources are present ]]
 $ cvs tag -b EXPR1
