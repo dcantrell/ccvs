@@ -1,11 +1,18 @@
+2003-04-02  Larry Jones  <lawrence.jones@eds.com>
+
+	* update.c (update, update_fileproc, update_filesdone_proc,
+	update_dirent_proc, update_dirleave_proc): Keep track of whether
+	a tag is both a revision tag and a branch tag and warn the user.
+	* sanity.sh (branches4): New tests for above.
+
 2003-04-02  Derek Price  <derek@ximbiot.com>
 
-	* recurse.c (do_recursion): Use strstr("/./") rather than strstr('.')
+	* recurse.c (do_recursion): Use strstr("/./") rather than strchr('.')
 	to catch only indirections in paths and not directory names with dots
 	in them.
 	(Report from Pavel Roskin <proski@gnu.org>.)
 
-	* sanity.sh (multiroot): Put a dot in the CVSROOT_DIRNAMEs .
+	* sanity.sh (multiroot): Put a dot in the CVSROOT_DIRNAMEs.
 	(dottedroot): New test.
 	(Based on a script from Pavel Roskin <proski@gnu.org>.)
 

@@ -836,7 +836,7 @@ if test x"$*" = x; then
 	# Branching, tagging, removing, adding, multiple directories
 	tests="${tests} rdiff rdiff2 diff death death2 rm-update-message rmadd"
 	tests="${tests} rmadd2 dirs dirs2 branches branches2 branches3"
-	tests="${tests} tagc tagf"
+	tests="${tests} branches4 tagc tagf"
 	tests="${tests} rcslib multibranch import importb importc"
 	tests="${tests} update-p import-after-initial branch-after-import"
 	tests="${tests} join join2 join3 join-readonly-conflict"
@@ -6083,6 +6083,8 @@ File: file5            	Status: Up-to-date
 	  ;;
 
 	branches3)
+	  # test local branch number support
+
 	  mkdir ${CVSROOT_DIRNAME}/first-dir
 	  mkdir branches3; cd branches3
 
@@ -6131,6 +6133,182 @@ add
 	  cd ../..
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
 	  rm -r branches3
+	  ;;
+
+	branches4)
+	  # test where a tag is a branch tag in some files and a revision
+	  # tag in others
+
+	  mkdir ${CVSROOT_DIRNAME}/first-dir
+	  mkdir branches4; cd branches4
+
+	  dotest branches4-1 "${testcvs} -q co first-dir"
+	  cd first-dir
+	  mkdir branches mixed mixed2 versions
+	  dotest branches4-2 "${testcvs} -q add branches mixed mixed2 versions" \
+"Directory ${CVSROOT_DIRNAME}/first-dir/branches added to the repository
+Directory ${CVSROOT_DIRNAME}/first-dir/mixed added to the repository
+Directory ${CVSROOT_DIRNAME}/first-dir/mixed2 added to the repository
+Directory ${CVSROOT_DIRNAME}/first-dir/versions added to the repository"
+
+	  echo file1 >branches/file1
+	  echo file2 >branches/file2
+	  echo file3 >branches/file3
+	  echo file4 >branches/file4
+	  cp branches/file* mixed
+	  cp branches/file* mixed2
+	  cp branches/file* versions
+
+	  dotest branches4-3 "${testcvs} -q add */file*" \
+"${PROG} [a-z]*: use .${PROG} commit. to add these files permanently"
+	  dotest branches4-3a "${testcvs} -Q ci -m." \
+"RCS file: ${CVSROOT_DIRNAME}/first-dir/branches/file1,v
+done
+Checking in branches/file1;
+${CVSROOT_DIRNAME}/first-dir/branches/file1,v  <--  file1
+initial revision: 1\.1
+done
+RCS file: ${CVSROOT_DIRNAME}/first-dir/branches/file2,v
+done
+Checking in branches/file2;
+${CVSROOT_DIRNAME}/first-dir/branches/file2,v  <--  file2
+initial revision: 1\.1
+done
+RCS file: ${CVSROOT_DIRNAME}/first-dir/branches/file3,v
+done
+Checking in branches/file3;
+${CVSROOT_DIRNAME}/first-dir/branches/file3,v  <--  file3
+initial revision: 1\.1
+done
+RCS file: ${CVSROOT_DIRNAME}/first-dir/branches/file4,v
+done
+Checking in branches/file4;
+${CVSROOT_DIRNAME}/first-dir/branches/file4,v  <--  file4
+initial revision: 1\.1
+done
+RCS file: ${CVSROOT_DIRNAME}/first-dir/mixed/file1,v
+done
+Checking in mixed/file1;
+${CVSROOT_DIRNAME}/first-dir/mixed/file1,v  <--  file1
+initial revision: 1\.1
+done
+RCS file: ${CVSROOT_DIRNAME}/first-dir/mixed/file2,v
+done
+Checking in mixed/file2;
+${CVSROOT_DIRNAME}/first-dir/mixed/file2,v  <--  file2
+initial revision: 1\.1
+done
+RCS file: ${CVSROOT_DIRNAME}/first-dir/mixed/file3,v
+done
+Checking in mixed/file3;
+${CVSROOT_DIRNAME}/first-dir/mixed/file3,v  <--  file3
+initial revision: 1\.1
+done
+RCS file: ${CVSROOT_DIRNAME}/first-dir/mixed/file4,v
+done
+Checking in mixed/file4;
+${CVSROOT_DIRNAME}/first-dir/mixed/file4,v  <--  file4
+initial revision: 1\.1
+done
+RCS file: ${CVSROOT_DIRNAME}/first-dir/mixed2/file1,v
+done
+Checking in mixed2/file1;
+${CVSROOT_DIRNAME}/first-dir/mixed2/file1,v  <--  file1
+initial revision: 1\.1
+done
+RCS file: ${CVSROOT_DIRNAME}/first-dir/mixed2/file2,v
+done
+Checking in mixed2/file2;
+${CVSROOT_DIRNAME}/first-dir/mixed2/file2,v  <--  file2
+initial revision: 1\.1
+done
+RCS file: ${CVSROOT_DIRNAME}/first-dir/mixed2/file3,v
+done
+Checking in mixed2/file3;
+${CVSROOT_DIRNAME}/first-dir/mixed2/file3,v  <--  file3
+initial revision: 1\.1
+done
+RCS file: ${CVSROOT_DIRNAME}/first-dir/mixed2/file4,v
+done
+Checking in mixed2/file4;
+${CVSROOT_DIRNAME}/first-dir/mixed2/file4,v  <--  file4
+initial revision: 1\.1
+done
+RCS file: ${CVSROOT_DIRNAME}/first-dir/versions/file1,v
+done
+Checking in versions/file1;
+${CVSROOT_DIRNAME}/first-dir/versions/file1,v  <--  file1
+initial revision: 1\.1
+done
+RCS file: ${CVSROOT_DIRNAME}/first-dir/versions/file2,v
+done
+Checking in versions/file2;
+${CVSROOT_DIRNAME}/first-dir/versions/file2,v  <--  file2
+initial revision: 1\.1
+done
+RCS file: ${CVSROOT_DIRNAME}/first-dir/versions/file3,v
+done
+Checking in versions/file3;
+${CVSROOT_DIRNAME}/first-dir/versions/file3,v  <--  file3
+initial revision: 1\.1
+done
+RCS file: ${CVSROOT_DIRNAME}/first-dir/versions/file4,v
+done
+Checking in versions/file4;
+${CVSROOT_DIRNAME}/first-dir/versions/file4,v  <--  file4
+initial revision: 1\.1
+done"
+
+	  dotest branches4-4 "${testcvs} -q tag xxx versions/file* mixed*/file1 mixed*/file3" \
+"T versions/file1
+T versions/file2
+T versions/file3
+T versions/file4
+T mixed/file1
+T mixed/file3
+T mixed2/file1
+T mixed2/file3"
+
+	  dotest branches4-5 "${testcvs} -q tag -b xxx branches/file* mixed*/file2 mixed*/file4" \
+"T branches/file1
+T branches/file2
+T branches/file3
+T branches/file4
+T mixed/file2
+T mixed/file4
+T mixed2/file2
+T mixed2/file4"
+
+	  # make sure we get the appropriate warnings when updating	  
+	  dotest branches4-6 "${testcvs} update -r xxx" \
+"${PROG} [a-z]*: Updating \.
+${PROG} [a-z]*: Updating branches
+${PROG} [a-z]*: Updating mixed
+${PROG} [a-z]*: warning: xxx is a branch tag in some files and a revision tag in others\.
+${PROG} [a-z]*: Updating mixed2
+${PROG} [a-z]*: warning: xxx is a branch tag in some files and a revision tag in others\.
+${PROG} [a-z]*: Updating versions"
+
+	  # make sure we don't get warned in quiet modes
+	  dotest branches4-7 "${testcvs} -q update -A"
+	  dotest branches4-8 "${testcvs} -q update -r xxx"
+	  dotest branches4-9 "${testcvs} -q update -A"
+	  dotest branches4-10 "${testcvs} -Q update -r xxx"
+
+	  # make sure the Tag files are correct
+	  dotest branches4-11 "cat branches/CVS/Tag" "Txxx"
+	  dotest branches4-12 "cat mixed/CVS/Tag" "Nxxx"
+	  dotest branches4-13 "cat mixed2/CVS/Tag" "Nxxx"
+	  dotest branches4-14 "cat versions/CVS/Tag" "Nxxx"
+
+	  if $keep; then
+	    echo Keeping ${TESTDIR} and exiting due to --keep
+	    exit 0
+	  fi
+
+	  cd ../..
+	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  rm -r branches4
 	  ;;
 
 	tagc)
