@@ -5,6 +5,8 @@
 
 2000-07-06  Larry Jones  <larry.jones@sdrc.com>
 
+	sanity.sh (modules-148): Don't test for specific revisions.
+
 	* main.c (main): Catch SIGABRT to try to clean up after assertion
 	failures.  Don't bother SIG_register'ing Lock_Cleanup because
 	main_cleanup calls it indirectly anyway.
