@@ -49,15 +49,12 @@ static int wrap_saved_tempcount=0;
 
 #define WRAPPER_GROW	8
 
-void wrap_add_file PROTO((const char *file,int temp));
-void wrap_add PROTO((char *line,int temp));
 void wrap_add_entry PROTO((WrapperEntry *e,int temp));
 void wrap_kill PROTO((void));
 void wrap_kill_temp PROTO((void));
 void wrap_free_entry PROTO((WrapperEntry *e));
 void wrap_free_entry_internal PROTO((WrapperEntry *e));
 void wrap_restore_saved PROTO((void));
-
 
 void wrap_setup()
 {
