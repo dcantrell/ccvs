@@ -1,3 +1,17 @@
+Sun Dec 24 00:00:16 1995  Karl Fogel  <kfogel@floss.cyclic.com>
+
+        * cvs.texinfo (Remote repositories): use @code{rsh} most places,
+        because it is the name of a program, and because I am a pedant.
+        Refer to new node "Password authenticated". 
+        (Password authenticated): new node.
+        (Setting up the server for password authentication): new node.
+        (Using the client with password authentication): new node.
+        (Security considerations with password authentication): new node.
+        
+        These are all really long node names, but it seems necessary that
+        they be descriptive in case they're referenced elsewhere.  If you
+        can think of a way out of this, please change them.
+
 Thu Dec 21 12:09:34 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvsclient.texi (Requests): Add Questionable.  Revise
