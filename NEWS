@@ -3,6 +3,9 @@ Changes since 1.11.12:
 
 GENERAL USER ISSUES
 
+* A fix has been included that should avoid a very rare race condition that
+  could cause a CVS server to exit with a "broken pipe" message.
+
 * A minor problem with the nmake build file that was preventing the source from
   compiling under Windows has been fixed.
 
