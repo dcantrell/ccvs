@@ -57,7 +57,7 @@ save_cwd (cwd)
   if (have_working_fchdir)
     {
 #ifdef HAVE_FCHDIR
-      cwd->desc = CVS_OPEN (".", O_RDONLY);
+      cwd->desc = open (".", O_RDONLY);
       if (cwd->desc < 0)
 	{
 	  error (0, errno, "cannot open current directory");
@@ -121,7 +121,7 @@ restore_cwd (cwd, dest)
 	  fail = 1;
 	}
     }
-  else if ( CVS_CHDIR (cwd->name) < 0)
+  else if (chdir (cwd->name) < 0)
     {
       error (0, errno, "%s", cwd->name);
       fail = 1;
