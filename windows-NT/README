@@ -28,7 +28,7 @@ problems of this sort as with other bug reports; our impression thus
 far is that relatively few people care about which versions of Visual
 C++ work.
 
-Send bug reports to bug-cvs@prep.ai.mit.edu.
+Send bug reports to bug-cvs@gnu.org.
 
 As of May 1996, this port passed all of the tests in src/sanity.sh,
 save the one that deals with reserved all-upper-case tags (BASE and
