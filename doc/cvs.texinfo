@@ -3688,9 +3688,8 @@ The @samp{-k} option specifies the default way that
 this file will be checked out; for more information see
 @ref{Substitution modes}.
 
-@c FIXCVS: I kind of think this feature is broken (and
-@c has been at least since 1.4A2 or so), although I
-@c haven't verified.  It's not in the testsuite (Sep 96).
+@c As noted in BUGS, -m is broken client/server (Nov
+@c 96).  Also see testsuite log2-* tests.
 The @samp{-m} option specifies a description for the
 file.  This description appears in the history log (if
 it is enabled, @pxref{history file}).  It will also be
@@ -4868,7 +4867,7 @@ actively working on.
 Another approach is to set up a structure which allows
 developers to have their own copies of some files, and
 for other files to access source files from a central
-location.  Many people have come up with some such
+location.  Many people have come up with some such a
 @c two such people are paul@sander.cupertino.ca.us (for
 @c a previous employer)
 @c and gtornblo@senet.abb.se (spicm and related tools),
