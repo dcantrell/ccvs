@@ -1,3 +1,7 @@
+2001-02-13  Derek Price  <derek.price@openavenue.com>
+
+	* TODO: Add note about cvs_temp_file.
+
 2001-02-07  Derek Price  <derek.price@openavenue.com>
 
 	* cvs.spec.in (build): Remove the info 'dir' file so it doesn't get
