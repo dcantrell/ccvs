@@ -1,3 +1,7 @@
+Mon Feb 10 09:31:38 1997  Ken Raeburn  <raeburn@cygnus.com>
+
+	* md5.c (MD5STEP): Truncate to 32 bits before shifting right.
+
 Thu Jan 30 11:35:26 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* regex.h: Don't prototype re_comp and re_exec.
