@@ -1,3 +1,7 @@
+1998-09-14  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* Makefile.in (DISTFILES): Add diagmeet.note.
+
 1998-08-15  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* diffrun.h (struct diff_callbacks): Change calling convention of
