@@ -1,5 +1,8 @@
 Changes since 1.11.5:
 
+* contrib/rcs2log and src/cvsbug now use the BSD mktemp program to create
+their temp files and directories on systems which provide it.
+
 * Added a UserAdminOptions configuration option to CVSROOT/config to
 control which `cvs admin' commands are not restricted to the `cvsadmin'
 group.

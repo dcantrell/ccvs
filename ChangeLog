@@ -1,3 +1,8 @@
+2003-02-26  Derek Price  <derek@ximbiot.com>
+
+	* mktemp.sh: Add copyright notice, some comments, and attempt to return
+	success and error codes.
+
 2003-02-25  Derek Price  <derek@ximbiot.com>
 
 	* configure.in: Remove the forced nondetection of mktemp I was using
