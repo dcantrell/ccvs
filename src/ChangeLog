@@ -29,7 +29,7 @@
 	not match any files.
 	(awk_tooltest1): Verify that awk the BEGIN clause works properly.
 	(awk_tooltest2): Verify that print %c format item works properly.
-	
+
 2004-11-08 Derek Price <derek@ximbiot.com>
 
 	* sanity.sh (verify_tmp_empty): New function.
@@ -59,7 +59,7 @@
 
 	* sanity.sh (find_tool): Eliminate variable with single reference.
 
-2004-11-04  Mark D. Baushke  <mdb@juniper.net>
+2004-11-04  Mark D. Baushke  <mdb@cvshome.org>
 
 	* sanity.sh (SEARCHPATH): Unify the PATHs that are to be searched.
 	(Which,find_tool): Use SEARCHPATH.
