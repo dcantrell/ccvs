@@ -1,3 +1,9 @@
+2003-02-28  Larry Jones  <lawrence.jones@eds.com>
+
+	* TODO (206): Done in 1.11.3.
+	(226): Add comment about deadlock.
+	(228, 229): New items.
+
 2003-02-26  Derek Price  <derek@ximbiot.com>
 
 	* mktemp.sh: Add copyright notice, some comments, and attempt to return
