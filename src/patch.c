@@ -42,10 +42,11 @@ static int unidiff = 0;
 
 static const char *const patch_usage[] =
 {
-    "Usage: %s %s [-fl] [-c|-u] [-s|-t] [-V %%d]\n",
+    "Usage: %s %s [-flR] [-c|-u] [-s|-t] [-V %%d]\n",
     "    -r rev|-D date [-r rev2 | -D date2] modules...\n",
     "\t-f\tForce a head revision match if tag/date not found.\n",
     "\t-l\tLocal directory only, not recursive\n",
+    "\t-R\tProcess directories recursively.\n",
     "\t-c\tContext diffs (default)\n",
     "\t-u\tUnidiff format.\n",
     "\t-s\tShort patch - one liner per file.\n",

@@ -44,10 +44,12 @@ static int safe_location PROTO((void));
 
 static const char *const checkout_usage[] =
 {
-    "Usage:\n  %s %s [-ANPcflnps] [-r rev | -D date] [-d dir] [-k kopt] modules...\n",
+    "Usage:\n  %s %s [-ANPRcflnps] [-r rev | -D date] [-d dir]\n",
+    "    [-j rev1] [-j rev2] [-k kopt] modules...\n",
     "\t-A\tReset any sticky tags/date/kopts.\n",
     "\t-N\tDon't shorten module paths if -d specified.\n",
     "\t-P\tPrune empty directories.\n",
+    "\t-R\tProcess directories recursively.\n",
     "\t-c\t\"cat\" the module database.\n",
     "\t-f\tForce a head revision match if tag/date not found.\n",
     "\t-l\tLocal directory only, not recursive\n",
@@ -64,15 +66,15 @@ static const char *const checkout_usage[] =
 
 static const char *const export_usage[] =
 {
-    "Usage: %s %s [-NPfln] [-r rev | -D date] [-d dir] [-k kopt] module...\n",
+    "Usage: %s %s [-NRfln] [-r rev | -D date] [-d dir] [-k kopt] module...\n",
     "\t-N\tDon't shorten module paths if -d specified.\n",
-    "\t-P\tPrune empty directories.\n",
     "\t-f\tForce a head revision match if tag/date not found.\n",
     "\t-l\tLocal directory only, not recursive\n",
+    "\t-R\tProcess directories recursively (default).\n",
     "\t-n\tDo not run module program (if any).\n",
-    "\t-r rev\tCheck out revision or tag.\n",
-    "\t-D date\tCheck out revisions as of date.\n",
-    "\t-d dir\tCheck out into dir instead of module name.\n",
+    "\t-r rev\tExport revision or tag.\n",
+    "\t-D date\tExport revisions as of date.\n",
+    "\t-d dir\tExport into dir instead of module name.\n",
     "\t-k kopt\tUse RCS kopt -k option on checkout.\n",
     NULL
 };

@@ -4185,8 +4185,9 @@ annotate_fileproc (callerdat, finfo)
 
 static const char *const annotate_usage[] =
 {
-    "Usage: %s %s [-lf] [-r rev|-D date] [files...]\n",
+    "Usage: %s %s [-lRf] [-r rev|-D date] [files...]\n",
     "\t-l\tLocal directory only, no recursion.\n",
+    "\t-R\tProcess directories recursively.\n",
     "\t-f\tUse head revision if tag/date not found.\n",
     "\t-r rev\tAnnotate file as of specified revision/tag.\n",
     "\t-D date\tAnnotate file as of specified date.\n",
@@ -4208,12 +4209,15 @@ annotate (argc, argv)
 	usage (annotate_usage);
 
     optind = 0;
-    while ((c = getopt (argc, argv, "+lr:D:f")) != -1)
+    while ((c = getopt (argc, argv, "+lr:D:fR")) != -1)
     {
 	switch (c)
 	{
 	    case 'l':
 		local = 1;
+		break;
+	    case 'R':
+		local = 0;
 		break;
 	    case 'r':
 	        tag = optarg;
