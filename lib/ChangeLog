@@ -1,3 +1,13 @@
+2001-04-28  Derek Price  <oberon@umich.edu>
+
+	* getopt.h: #define new names for functions and variables when they
+	might conflict with system definitions (namely on Mac OS X 10.1 with
+	the most recent dev packages - This should be removable after the Mac
+	dev packages are fixed.).
+	* regex.h: Ditto.
+	* Makefile.am (libcvs_a_SOURCES): Remove fnmatch.h.
+	* Makefile.in: Regenerated.
+
 2002-04-20  Larry Jones  <larry.jones@sdrc.com>
 
 	* Makefile.am (libcvs_a_SOURCES): Add getpagesize.h.
