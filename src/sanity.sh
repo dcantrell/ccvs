@@ -1856,7 +1856,7 @@ new revision: delete; previous revision: 3\.1
 done"
 	  dotest basica-r3 "${testcvs} -q up -p -r 3.1 ./ssfile >ssfile" ""
 	  dotest basica-r4 "${testcvs} add ssfile" \
-"${PROG} [a-z]*: re-adding file ssfile (in place of dead revision 3\.2)
+"${PROG} [a-z]*: re-adding file .ssfile. (in place of dead revision 3\.2)
 ${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
 	  dotest basica-r5 "${testcvs} -q ci -m resurrect" \
 "Checking in ssfile;
@@ -6224,7 +6224,7 @@ done"
 	  echo v2 > $file
 	  dotest update-p-undead-7 "$testcvs -Q update -p -rT $file" v1
 	  dotest update-p-undead-8 "$testcvs add $file" \
-"${PROG} [a-z]*: re-adding file $file (in place of dead revision 1\.2)
+"${PROG} [a-z]*: re-adding file .$file. (in place of dead revision 1\.2)
 ${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
 
 	  dotest update-p-undead-9 "$testcvs -Q update -p -rT $file" v1
@@ -14618,7 +14618,7 @@ new revision: delete; previous revision: 1\.1
 done"
 	  cp ../binfile.dat file1
 	  dotest binfiles3-6 "${testcvs} add -kb file1" \
-"${PROG} [a-z]*: re-adding file file1 (in place of dead revision 1\.2)
+"${PROG} [a-z]*: re-adding file .file1. (in place of dead revision 1\.2)
 ${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
 	  # The idea behind this test is to make sure that the file
 	  # gets opened in binary mode to send to "cvs ci".
