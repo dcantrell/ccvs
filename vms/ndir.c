@@ -17,6 +17,15 @@
  * GNU General Public License for more details.
  */
 
+#ifndef __VMS_VER
+#define __VMS_VER 0
+#endif
+#ifndef __DECC_VER
+#define __DECC_VER 0
+#endif
+
+#if __VMS_VER < 70200000 || __DECC_VER < 50700000
+
 #include <varargs.h>
 #include <rms.h>
 #include <descrip.h>
@@ -303,3 +312,9 @@ readdir (dirp)
       return dp;
     }
 }
+
+#else  /*  __VMS_VER >= 70200000 && __DECC_VER >= 50700000  */
+
+#pragma message disable EMPTYFILE
+
+#endif  /*  __VMS_VER >= 70200000 && __DECC_VER >= 50700000  */

@@ -1,3 +1,23 @@
+2001-01-10  Derek Price  <derek.price@openavenue.com>
+	    Rex Jolliff  <Rex_Jolliff@notes.ymp.gov>
+	    Shawn Smith  <Shawn_Smith@notes.ymp.gov>
+ 
+	* filesubr.c (expand_wild): rewrote for VMS 7.x.  Actually
+	globs vms wildcarded filespecs now.
+	* pwd.h: put the pid_t define in a conditional since it's
+	now typedefed in VMS 7.x
+	* unlink.c: provided correct prototype for unlink based on
+	version of VMS since it changes.
+	* vms.h: put conditional compilation macros around mode_t as
+	it is defined as of VMS 7.x, and fixed prototype of unlink
+	as per above.
+	* ndir.c: undefine function for 7.x+ since it is now defined by system
+	* pipe.c: ditto
+	* pwd.c: ditto
+	* rmdir.c: ditto
+	* waitpid.c: ditto
+	* config.h: various new defines & switches
+ 
 2000-12-22  Derek Price  <derek.price@openavenue.com>
 
         * Makefile.in: Regenerated
