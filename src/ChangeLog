@@ -1,3 +1,7 @@
+2004-02-13  Derek Price  <derek@ximbiot.com>
+
+	* lock.c (remove_lock_files): Minor refactoring.
+
 2004-02-12  Mark D. Baushke  <mdb@cvshome.org>
 
 	* lock.c (lock_exists): Plug a memory leak.
