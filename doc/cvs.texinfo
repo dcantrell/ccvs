@@ -1521,8 +1521,10 @@ file should always be considered to be modified.  This
 is not a special case; to see whether a file is
 modified a program should take the timestamp of the file
 and simply do a string compare with @var{timestamp}.
-@var{conflict} indicates that there was
-a conflict; if it is the same as the actual
+If there was a conflict, @var{conflict} can be set to
+the modification time of the file after the file has been
+written with conflict markers (@pxref{Conflicts example}).
+Thus if @var{conflict} is subsequently the same as the actual
 modification time of the file it means that the user
 has obviously not resolved the conflict.  @var{options}
 contains sticky options (for example @samp{-kb} for a
