@@ -39,7 +39,6 @@ int status PROTO((int argc, char **argv));
 int tag PROTO((int argc, char **argv));
 int update PROTO((int argc, char **argv));
 
-void server_cleanup PROTO((int sig));
 
 /*
  * This is where we stash stuff we are going to use.  Format string
@@ -3290,6 +3289,7 @@ serve_valid_requests (arg)
     printf ("\nok\n");
 }
 
+#ifdef sun
 /*
  * Delete temporary files.  SIG is the signal making this happen, or
  * 0 if not called as a result of a signal.
@@ -3303,6 +3303,7 @@ static void wait_sig (sig)
   if (r == command_pid)
     command_pid_is_dead++;
 }
+#endif
 
 void
 server_cleanup (sig)
