@@ -3844,9 +3844,15 @@ notified_a_file (data, ent_list, short_pathname, filename)
 	error (0, errno, "cannot close %s", CVSADM_NOTIFY);
 	return;
     }
-    if (rename (CVSADM_NOTIFYTMP, CVSADM_NOTIFY) < 0)
-	error (0, errno, "cannot rename %s to %s", CVSADM_NOTIFYTMP,
-	       CVSADM_NOTIFY);
+
+    {
+        /* In this case, we want rename_file() to ignore noexec. */
+        int saved_noexec = noexec;
+        noexec = 0;
+        rename_file (CVSADM_NOTIFYTMP, CVSADM_NOTIFY);
+        noexec = saved_noexec;
+    }
+
     return;
   error2:
     (void) fclose (newf);
