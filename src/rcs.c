@@ -136,6 +136,12 @@ RCS_parse (file, repos)
     FILE *fp;
     char rcsfile[PATH_MAX];
 
+#ifdef LINES_CRLF_TERMINATED
+    /* Some ports of RCS to Windows NT write RCS files with newline-
+       delimited lines.  We would need to pass fopen a "binary" flag.  */
+    abort ();
+#endif
+
     (void) sprintf (rcsfile, "%s/%s%s", repos, file, RCSEXT);
     if ((fp = fopen (rcsfile, "r")) != NULL) 
     {
@@ -151,6 +157,12 @@ RCS_parse (file, repos)
 	error (0, errno, "cannot open %s", rcsfile);
 	return NULL;
     }
+
+#ifdef LINES_CRLF_TERMINATED
+    /* Some ports of RCS to Windows NT write RCS files with newline-
+       delimited lines.  We would need to pass fopen a "binary" flag.  */
+    abort ();
+#endif
 
     (void) sprintf (rcsfile, "%s/%s/%s%s", repos, CVSATTIC, file, RCSEXT);
     if ((fp = fopen (rcsfile, "r")) != NULL) 
@@ -183,6 +195,12 @@ RCS_parsercsfile (rcsfile)
 {
     FILE *fp;
     RCSNode *rcs;
+
+#ifdef LINES_CRLF_TERMINATED
+    /* Some ports of RCS to Windows NT write RCS files with newline-
+       delimited lines.  We would need to pass fopen a "binary" flag.  */
+    abort ();
+#endif
 
     /* open the rcsfile */
     if ((fp = fopen (rcsfile, "r")) == NULL)
@@ -282,6 +300,12 @@ RCS_reparsercsfile (rdata)
     char *key, *value;
 
     rcsfile = rdata->path;
+
+#ifdef LINES_CRLF_TERMINATED
+    /* Some ports of RCS to Windows NT write RCS files with newline-
+       delimited lines.  We would need to pass fopen a "binary" flag.  */
+    abort ();
+#endif
 
     fp = fopen(rcsfile, "r");
     if (fp == NULL)
