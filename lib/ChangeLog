@@ -1,3 +1,11 @@
+2004-04-07  Derek Price  <derek@ximbiot.com>
+
+	Update regex module from GNULIB.
+
+	* Makefile.am (libcvs_a_SOURCES): Remove regex.c.
+	* regex.c, regex.h: Import new versions from GNULIB.
+	* Makefile.in: Regenerated.
+
 2004-04-04  Derek Price  <derek@ximbiot.com>
 
 	* system.h: Correct comment.

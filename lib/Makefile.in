@@ -199,7 +199,6 @@ libcvs_a_SOURCES = \
 	getopt.c \
 	getopt1.c \
 	md5.c \
-	regex.c \
 	savecwd.c \
 	sighandle.c \
 	stripslash.c \
@@ -249,10 +248,9 @@ libcvs_a_AR = $(AR) cru
 libcvs_a_DEPENDENCIES = @LIBOBJS@
 am_libcvs_a_OBJECTS = argmatch.$(OBJEXT) getdate.$(OBJEXT) \
 	getnline.$(OBJEXT) getopt.$(OBJEXT) getopt1.$(OBJEXT) \
-	md5.$(OBJEXT) regex.$(OBJEXT) savecwd.$(OBJEXT) \
-	sighandle.$(OBJEXT) stripslash.$(OBJEXT) xgetwd.$(OBJEXT) \
-	yesno.$(OBJEXT) exitfail.$(OBJEXT) xmalloc.$(OBJEXT) \
-	xstrdup.$(OBJEXT)
+	md5.$(OBJEXT) savecwd.$(OBJEXT) sighandle.$(OBJEXT) \
+	stripslash.$(OBJEXT) xgetwd.$(OBJEXT) yesno.$(OBJEXT) \
+	exitfail.$(OBJEXT) xmalloc.$(OBJEXT) xstrdup.$(OBJEXT)
 libcvs_a_OBJECTS = $(am_libcvs_a_OBJECTS)
 
 DEFAULT_INCLUDES =  -I. -I$(srcdir) -I$(top_builddir)
@@ -268,15 +266,15 @@ am__depfiles_maybe = depfiles
 @AMDEP_TRUE@	$(DEPDIR)/malloc.Po $(DEPDIR)/memmove.Po \
 @AMDEP_TRUE@	$(DEPDIR)/mkdir.Po $(DEPDIR)/mkstemp.Po \
 @AMDEP_TRUE@	$(DEPDIR)/printf-args.Po $(DEPDIR)/printf-parse.Po \
-@AMDEP_TRUE@	$(DEPDIR)/realloc.Po $(DEPDIR)/rename.Po \
-@AMDEP_TRUE@	$(DEPDIR)/stat.Po $(DEPDIR)/strerror.Po \
-@AMDEP_TRUE@	$(DEPDIR)/strstr.Po $(DEPDIR)/strtoul.Po \
-@AMDEP_TRUE@	$(DEPDIR)/tempname.Po $(DEPDIR)/valloc.Po \
-@AMDEP_TRUE@	$(DEPDIR)/vasnprintf.Po $(DEPDIR)/waitpid.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/argmatch.Po ./$(DEPDIR)/exitfail.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/getdate.Po ./$(DEPDIR)/getnline.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/getopt.Po ./$(DEPDIR)/getopt1.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/md5.Po ./$(DEPDIR)/regex.Po \
+@AMDEP_TRUE@	$(DEPDIR)/realloc.Po $(DEPDIR)/regex.Po \
+@AMDEP_TRUE@	$(DEPDIR)/rename.Po $(DEPDIR)/stat.Po \
+@AMDEP_TRUE@	$(DEPDIR)/strerror.Po $(DEPDIR)/strstr.Po \
+@AMDEP_TRUE@	$(DEPDIR)/strtoul.Po $(DEPDIR)/tempname.Po \
+@AMDEP_TRUE@	$(DEPDIR)/valloc.Po $(DEPDIR)/vasnprintf.Po \
+@AMDEP_TRUE@	$(DEPDIR)/waitpid.Po ./$(DEPDIR)/argmatch.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/exitfail.Po ./$(DEPDIR)/getdate.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/getnline.Po ./$(DEPDIR)/getopt.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/getopt1.Po ./$(DEPDIR)/md5.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/savecwd.Po ./$(DEPDIR)/sighandle.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/stripslash.Po ./$(DEPDIR)/xgetwd.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/xmalloc.Po ./$(DEPDIR)/xstrdup.Po \
@@ -291,9 +289,9 @@ DIST_COMMON = README $(srcdir)/Makefile.in ChangeLog Makefile.am \
 	asnprintf.c atexit.c dup2.c fncase.c fnmatch.c fnmatch.h.in \
 	fseeko.c ftello.c ftruncate.c getdate.c gethostname.c getline.c \
 	getndelim2.c getpass.c lstat.c malloc.c memmove.c mkdir.c \
-	mkstemp.c printf-args.c printf-parse.c realloc.c rename.c \
-	stat.c strerror.c strstr.c strtoul.c tempname.c valloc.c \
-	vasnprintf.c waitpid.c
+	mkstemp.c printf-args.c printf-parse.c realloc.c regex.c \
+	rename.c stat.c strerror.c strstr.c strtoul.c tempname.c \
+	valloc.c vasnprintf.c waitpid.c
 SOURCES = $(libcvs_a_SOURCES)
 
 all: $(BUILT_SOURCES)
@@ -343,6 +341,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/printf-args.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/printf-parse.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/realloc.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/regex.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/rename.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/stat.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/strerror.Po@am__quote@
@@ -359,7 +358,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/getopt.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/getopt1.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/md5.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/regex.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/savecwd.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sighandle.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/stripslash.Po@am__quote@
