@@ -2201,8 +2201,11 @@ connect_to_pserver (tofdp, fromfdp, log)
     char *begin      = "BEGIN AUTH REQUEST\n";
     char *repository = server_cvsroot;
     char *username   = server_user;
-    char *password   = "unguessable";
+    char *password   = NULL;
     char *end        = "END AUTH REQUEST\n";
+
+    /* todo: for now, read password from prompt. */
+    password = getpass ("CVS Password: ");
 
     write (sock, begin, strlen (begin));
 

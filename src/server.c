@@ -3813,22 +3813,15 @@ authenticate_connection ()
     }
 
   /* Primitive authorization for testing. */
-  if (strcmp (password, "unguessable") == 0)
-    {
-      printf ("*** cvs server: you pass: %d %s\n", 
-              strlen (password), password);
-      fflush (stdout);
-      exit (0);
-    }
-  else 
+  if (strcmp (password, "unguessable"))
     {
       printf ("*** cvs server: you fail: %d %s\n", 
               strlen (password), password);
       fflush (stdout);
       exit (1);
     }
-  /* fooo */
   
+  /* Do everything that kerberos did. */
   pw = getpwnam (username);
   if (pw == NULL)
     {
