@@ -361,7 +361,7 @@ mkdir_p (dir)
 	{
 	    strncpy (q, dir, p - dir);
 	    q[p - dir] = '\0';
-	    if (CVS_MKDIR (q, 0777) < 0)
+	    if (q[p - dir - 1] != '/'  &&  CVS_MKDIR (q, 0777) < 0)
 	    {
 		int saved_errno = errno;
 
