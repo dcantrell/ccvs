@@ -1,3 +1,8 @@
+Sun Apr 23 22:13:18 1995  Noel Cragg  <noel@vo.com>
+
+	* Makefile: Added more files to the `clean' target.
+	* .cvsignore: Added the same files.
+
 Mon Nov 28 10:22:46 1994  Jim Kingdon  (kingdon@lioth.cygnus.com)
 
 	* cvsclient.texi (Notes): Remove item about commit options; now
