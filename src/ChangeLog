@@ -1,3 +1,8 @@
+Tue Jan 30 09:43:34 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* modules.c (do_module): Don't fall through from 'l' to 'o' case
+	of option processing switch statement.
+
 Tue Jan 30 06:50:19 1996  J.T. Conklin  <jtc@rtl.cygnus.com>
 
 	* client.c (send_repository): Fix memory leak; free adm_name

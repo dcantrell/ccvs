@@ -422,6 +422,7 @@ do_module (db, mname, m_type, msg, callback_proc, where,
 		break;
 	    case 'l':
 		local_specified = 1;
+		break;
 	    case 'o':
 		checkout_prog = optarg;
 		break;
