@@ -17,6 +17,7 @@
    GNU General Public License for more details.  */
 
 #include "cvs.h"
+#include <assert.h>
 
 static int deep_remove_dir PROTO((const char *path));
 
@@ -641,7 +642,7 @@ xcmp (file1_file, file2_file)
 	    if (read2 == (size_t)-1)
 		error (1, errno, "cannot read file %s for comparing", file2);
 
-	    /* assert (read1 == read2); */
+	    assert (read1 == read2);
 
 	    ret = memcmp(buf1, buf2, read1);
 	} while (ret == 0 && read1 == buf_size);
@@ -733,19 +734,165 @@ fnfold (char *filename)
 }
 
 /* Generate a unique temporary filename.  Returns a pointer to a newly
-   malloc'd string containing the name.  Returns successfully or not at
-   all.  */
+ * malloc'd string containing the name.  Returns successfully or not at
+ * all.
+ *
+ *     THIS FUNCTION IS DEPRECATED!!!  USE cvs_temp_file INSTEAD!!!
+ *
+ * and yes, I know about the way the rcs commands use temp files.  I think
+ * they should be converted too but I don't have time to look into it right
+ * now.
+ */
 char *
 cvs_temp_name ()
 {
-    char value[L_tmpnam + 1];
-    char *retval;
+    char *fn;
+    FILE *fp;
 
-    /* FIXME: what is the VMS equivalent to TMPDIR?  */
-    retval = tmpnam (value);
-    if (retval == NULL)
-	error (1, errno, "cannot generate temporary filename");
-    return xstrdup (retval);
+    fp = cvs_temp_file (&fn);
+    if (fp == NULL)
+	error (1, errno, "Failed to create temporary file");
+    if (fclose (fp) == EOF)
+	error (0, errno, "Failed to close temporary file %s", fn);
+    return fn;
+}
+
+/* Generate a unique temporary filename and return an open file stream
+ * to the truncated file by that name
+ *
+ *  INPUTS
+ *	filename	where to place the pointer to the newly allocated file
+ *   			name string
+ *
+ *  OUTPUTS
+ *	filename	dereferenced, will point to the newly allocated file
+ *			name string.  This value is undefined if the function
+ *			returns an error.
+ *
+ *  RETURNS
+ *	An open file pointer to a read/write mode empty temporary file with the
+ *	unique file name or NULL on failure.
+ *
+ *  ERRORS
+ *	on error, errno will be set to some value either by CVS_FOPEN or
+ *	whatever system function is called to generate the temporary file name
+ */
+/* There are at least four functions for generating temporary
+ * filenames.  We use mkstemp (BSD 4.3) if possible, else tempnam (SVID 3),
+ * else mktemp (BSD 4.3), and as last resort tmpnam (POSIX).  Reason is that
+ * mkstemp, tempnam, and mktemp both allow to specify the directory in which
+ * the temporary file will be created.
+ *
+ * And the _correct_ way to use the deprecated functions probably involves
+ * opening file descriptors using O_EXCL & O_CREAT and even doing the annoying
+ * NFS locking thing, but until I hear of more problems, I'm not going to
+ * bother.
+ */
+FILE *cvs_temp_file (filename)
+    char **filename;
+{
+    char *fn;
+    FILE *fp;
+
+    /* FIXME - I'd like to be returning NULL here in noexec mode, but I think
+     * some of the rcs & diff functions which rely on a temp file run in
+     * noexec mode too.
+     */
+
+    assert (filename != NULL);
+
+#ifdef HAVE_MKSTEMP
+
+    {
+    int fd;
+
+    fn = xmalloc (strlen (Tmpdir) + 11);
+    sprintf (fn, "%s/%s", Tmpdir, "cvsXXXXXX" );
+    fd = mkstemp (fn);
+
+    /* a NULL return will be interpreted by callers as an error and
+     * errno should still be set
+     */
+    if (fd == -1) fp = NULL;
+    else if ((fp = CVS_FDOPEN (fd, "w+")) == NULL)
+    {
+	/* attempt to close and unlink the file since mkstemp returned sucessfully and
+	 * we believe it's been created and opened
+	 */
+ 	int save_errno = errno;
+	if (close (fd))
+	    error (0, errno, "Failed to close temporary file %s", fn);
+	if (CVS_UNLINK (fn))
+	    error (0, errno, "Failed to unlink temporary file %s", fn);
+	errno = save_errno;
+    }
+
+    if (fp == NULL) free (fn);
+    /* mkstemp is defined to open mode 0600 using glibc 2.0.7+ */
+    /* FIXME - configure can probably tell us which version of glibc we are
+     * linking to and not chmod for 2.0.7+
+     */
+    else chmod (fn, 0600);
+
+    }
+
+#elif HAVE_TEMPNAM
+
+    /* tempnam has been deprecated due to under-specification */
+
+    fn = tempnam (Tmpdir, "cvs");
+    if (fn == NULL) fp = NULL;
+    else if ((fp = CVS_FOPEN (fn, "w+")) == NULL) free (fn);
+    else chmod (fn, 0600);
+
+    /* tempnam returns a pointer to a newly malloc'd string, so there's
+     * no need for a xstrdup
+     */
+
+#elif HAVE_MKTEMP
+
+    /* mktemp has been deprecated due to the BSD 4.3 specification specifying
+     * that XXXXXX will be replaced by a PID and a letter, creating only 26
+     * possibilities, a security risk, and a race condition.
+     */
+
+    {
+    char *ifn;
+
+    ifn = xmalloc (strlen (Tmpdir) + 11);
+    sprintf (ifn, "%s/%s", Tmpdir, "cvsXXXXXX" );
+    fn = mktemp (ifn);
+
+    if (fn == NULL) fp = NULL;
+    else fp = CVS_FOPEN (fn, "w+");
+
+    if (fp == NULL) free (ifn);
+    else chmod (fn, 0600);
+
+    }
+
+#else	/* use tmpnam if all else fails */
+
+    /* tmpnam is deprecated */
+
+    {
+    char ifn[L_tmpnam + 1];
+
+    fn = tmpnam (ifn);
+
+    if (fn == NULL) fp = NULL;
+    else if ((fp = CVS_FOPEN (ifn, "w+")) != NULL)
+    {
+	fn = xstrdup (ifn);
+	chmod (fn, 0600);
+    }
+
+    }
+
+#endif
+
+    *filename = fn;
+    return fp;
 }
 
 /* Return non-zero iff FILENAME is absolute.
