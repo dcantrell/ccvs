@@ -1,5 +1,8 @@
 Wed Mar 12 16:10:01 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* filesubr.c (get_homedir): Expand comment about HOME
+	vs. HOMEDRIVE/HOMEPATH.
+
 	* config.h (HAVE_SETVBUF): Removed; no longer used.
 
 Thu Mar  6 19:46:53 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
