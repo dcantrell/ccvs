@@ -1,3 +1,7 @@
+1999-12-11  Karl Fogel  <kfogel@red-bean.com>
+
+	* Revert previous change -- it doesn't work remotely yet.
+
 1999-12-10  John P Cavanaugh <cavanaug@sr.hp.com>
 
 	* cvs.1: document new -C option to update.

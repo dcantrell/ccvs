@@ -94,7 +94,6 @@ static char *tag_update_dir;
 static char *join_rev1, *date_rev1;
 static char *join_rev2, *date_rev2;
 static int aflag = 0;
-static int undo_local_changes = 0;
 static int force_tag_match = 1;
 static int update_build_dirs = 0;
 static int update_prune_dirs = 0;
@@ -111,7 +110,6 @@ static const char *const update_usage[] =
     "    [-I ign] [-W spec] [files...]\n",
     "\t-A\tReset any sticky tags/date/kopts.\n",
     "\t-P\tPrune empty directories.\n",
-    "\t-C\tOverwrite locally modified files with clean repository copies.\n",
     "\t-d\tBuild directories, like checkout does.\n",
     "\t-f\tForce a head revision match if tag/date not found.\n",
     "\t-l\tLocal directory only, no recursion.\n",
@@ -147,15 +145,12 @@ update (argc, argv)
 
     /* parse the args */
     optind = 0;
-    while ((c = getopt (argc, argv, "+ApCPflRQqduk:r:D:j:I:W:")) != -1)
+    while ((c = getopt (argc, argv, "+ApPflRQqduk:r:D:j:I:W:")) != -1)
     {
 	switch (c)
 	{
 	    case 'A':
 		aflag = 1;
-		break;
-	    case 'C':
-		undo_local_changes = 1;
 		break;
 	    case 'I':
 		ign_add (optarg, 0);
@@ -646,79 +641,54 @@ update_fileproc (callerdat, finfo)
 		break;
 	    case T_MODIFIED:		/* locally modified */
 		retval = 0;
-                if (undo_local_changes)
-                {
-                    char *backup = xmalloc (strlen (finfo->file)
-                                            + sizeof (BAKPREFIX)
-                                            + sizeof (vers->vn_user) + 10);
-                    (void) sprintf (backup, "%s%s.%s", BAKPREFIX,
-                                    finfo->file, vers->vn_user);
-                    if (isfile (finfo->file)) {
-                      rename_file (finfo->file, backup);
-                    }
-                    status = T_CHECKOUT;
-                    retval = checkout_file (finfo, vers, 0, 0, 1);
-                    /* This behavior is sufficiently unexpected to
-                       justify overinformativeness, I think (?). */
-                    if (! really_quiet)
-                        (void) printf ("(Locally modified %s moved to %s)\n",
-                                       finfo->file, backup);
-                }
-                else 
-                {
-                    if (vers->ts_conflict)
-                    {
-                        char *filestamp;
-                        int retcode;
+		if (vers->ts_conflict)
+		{
+		    char *filestamp;
+		    int retcode;
 
-                        /*
-                         * If the timestamp has changed and no
-                         * conflict indicators are found, it isn't a
-                         * 'C' any more.
-                         */
-
+		    /*
+		     * If the timestamp has changed and no conflict indicators
+		     * are found, it isn't a 'C' any more.
+		     */
 #ifdef SERVER_SUPPORT
-                        if (server_active)
-                            retcode = vers->ts_conflict[0] != '=';
-                        else 
-                        {
-                            filestamp = time_stamp (finfo->file);
-                            retcode = strcmp (vers->ts_conflict, filestamp);
-                            free (filestamp);
-                        }
+		    if (server_active)
+			retcode = vers->ts_conflict[0] != '=';
+		    else {
+			filestamp = time_stamp (finfo->file);
+			retcode = strcmp (vers->ts_conflict, filestamp);
+			free (filestamp);
+		    }
 #else
-                        filestamp = time_stamp (finfo->file);
-                        retcode = strcmp (vers->ts_conflict, filestamp);
-                        free (filestamp);
+		    filestamp = time_stamp (finfo->file);
+		    retcode = strcmp (vers->ts_conflict, filestamp);
+		    free (filestamp);
 #endif
 
-                        if (retcode)
-                        {
-                            /* The timestamps differ.  But if there
-                               are conflict markers print 'C' anyway.  */
-                            retcode = !file_has_markers (finfo);
-                        }
+		    if (retcode)
+		    {
+			/* The timestamps differ.  But if there are conflict
+			   markers print 'C' anyway.  */
+			retcode = !file_has_markers (finfo);
+		    }
 
-                        if (!retcode)
-                        {
-                            write_letter (finfo, 'C');
-                            retval = 1;
-                        }
-                        else
-                        {
-                            /* Reregister to clear conflict flag. */
-                            Register (finfo->entries, finfo->file, 
-                                      vers->vn_rcs, vers->ts_rcs,
-                                      vers->options, vers->tag,
-                                      vers->date, (char *)0);
-                        }
-                    }
-                    if (!retval)
-                    {
-                        write_letter (finfo, 'M');
-                        retval = 0;
-                    }
-                }
+		    if (!retcode)
+		    {
+			write_letter (finfo, 'C');
+			retval = 1;
+		    }
+		    else
+		    {
+			/* Reregister to clear conflict flag. */
+			Register (finfo->entries, finfo->file, vers->vn_rcs, vers->ts_rcs,
+				  vers->options, vers->tag,
+				  vers->date, (char *)0);
+		    }
+		}
+		if (!retval)
+		{
+		    write_letter (finfo, 'M');
+		    retval = 0;
+		}
 		break;
 #ifdef SERVER_SUPPORT
 	    case T_PATCH:		/* needs patch */
