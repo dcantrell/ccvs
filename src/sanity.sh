@@ -1496,7 +1496,7 @@ echo Ok.
 #   (b) prunes empty dirs already there.
 # * Test that cvs -d `hostname`:/tmp/cvs-sanity/non/existent co foo
 #   gives an appropriate error (e.g. 
-#     Cannot access /foo/bar/CVSROOT
+#     Cannot access /tmp/cvs-sanity/non-existent/CVSROOT
 #     No such file or directory).
 # End of TODO list.
 
