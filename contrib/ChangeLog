@@ -1,3 +1,19 @@
+Wed Feb 12 00:24:33 1997  Greg A. Woods  <woods@most.weird.com>
+
+	* cvs2vendor.sh: new script.
+	* README: noted new cvs2vendor script.
+	* Makefile.in (DISTFILES): added cvs2vendor.sh.
+	(CONTRIB_PROGS): added cvs2vendor.
+
+	* log_accum.pl (show_wd): new variable, initialized to 0.
+	- set $show_wd if '-w' option found while parsing @ARGV.
+	- don't add 'In directory' line to report header unless $show_wd
+	is set.
+	(domainname): prepend a leading '.' if none there so that
+	concatenation with $hostname works (those with a FQDN hostname
+	*and* a domainname still lose).
+	(mail_notification): don't set a "From:" header -- the mailer will.
+
 Wed Jan  8 14:48:58 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* Makefile.in, README, log.pl: Remove CVSid; we decided to get rid
