@@ -293,13 +293,6 @@ commit (argc, argv)
     {
 	struct find_data find_args;
 
-	/*
-	 * Do this now; don't ask for a log message if we can't talk to the
-	 * server.  But if there is a syntax error in the options, give
-	 * an error message without connecting.
-	 */
-	start_server ();
-
 	ign_setup ();
 
 	/* Note that we don't do ignore file processing here, and we
@@ -326,6 +319,14 @@ commit (argc, argv)
 	find_args.argv = (char **) xmalloc (find_args.argc * sizeof (char **));
 	find_args.argc = 0;
 	walklist (find_args.ulist, copy_ulist, &find_args);
+
+	/*
+	 * Do this before calling do_editor; don't ask for a log
+	 * message if we can't talk to the server.  But do it after we
+	 * have made the checks that we can locally (to more quickly
+	 * catch syntax errors, the case where no files are modified,
+	 * added or removed, etc.).  */
+	start_server ();
 
 	/*
 	 * We do this once, not once for each directory as in normal CVS.
