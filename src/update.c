@@ -2627,6 +2627,7 @@ special_file_mismatch (finfo, rev1, rev2)
 	    rev1_symlink = xreadlink (finfo->file);
 	else
 	{
+#ifdef HAVE_ST_RDEV
 	    if (CVS_LSTAT (finfo->file, &sb) < 0)
 		error (1, errno, "could not get file information for %s",
 		       finfo->file);
@@ -2635,6 +2636,10 @@ special_file_mismatch (finfo, rev1, rev2)
 	    rev1_mode = sb.st_mode;
 	    if (S_ISBLK (rev1_mode) || S_ISCHR (rev1_mode))
 		rev1_dev = sb.st_rdev;
+#else
+	    error (1, 0, "cannot handle device files on this system (%s)",
+		   finfo->file);
+#endif
 	}
 	rev1_hardlinks = list_linked_files_on_disk (finfo->file);
     }
@@ -2700,6 +2705,7 @@ special_file_mismatch (finfo, rev1, rev2)
 	    rev2_symlink = xreadlink (finfo->file);
 	else
 	{
+#ifdef HAVE_ST_RDEV
 	    if (CVS_LSTAT (finfo->file, &sb) < 0)
 		error (1, errno, "could not get file information for %s",
 		       finfo->file);
@@ -2708,6 +2714,10 @@ special_file_mismatch (finfo, rev1, rev2)
 	    rev2_mode = sb.st_mode;
 	    if (S_ISBLK (rev2_mode) || S_ISCHR (rev2_mode))
 		rev2_dev = sb.st_rdev;
+#else
+	    error (1, 0, "cannot handle device files on this system (%s)",
+		   finfo->file);
+#endif
 	}
 	rev2_hardlinks = list_linked_files_on_disk (finfo->file);
     }

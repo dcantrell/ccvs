@@ -1222,12 +1222,18 @@ add_rcs_file (message, rcs, user, add_vhead, key_opt,
 		    case S_IFREG: break;
 		    case S_IFCHR:
 		    case S_IFBLK:
+#ifdef HAVE_ST_RDEV
 			if (fprintf (fprcs, "special\t%s %lu;\012",
 				     (file_type == S_IFCHR
 				      ? "character"
 				      : "block"),
 				     (unsigned long) sb.st_rdev) < 0)
 			    goto write_error;
+#else
+			error (0, 0,
+"can't import %s: unable to import device files on this system",
+userfile);
+#endif
 			break;
 		    default:
 			error (0, 0,
@@ -1273,12 +1279,18 @@ add_rcs_file (message, rcs, user, add_vhead, key_opt,
 			case S_IFREG: break;
 			case S_IFCHR:
 			case S_IFBLK:
+#ifdef HAVE_ST_RDEV
 			    if (fprintf (fprcs, "special\t%s %lu;\012",
 					 (file_type == S_IFCHR
 					  ? "character"
 					  : "block"),
 					 (unsigned long) sb.st_rdev) < 0)
 				goto write_error;
+#else
+			    error (0, 0,
+"can't import %s: unable to import device files on this system",
+userfile);
+#endif
 			    break;
 			default:
 			    error (0, 0,

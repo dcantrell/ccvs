@@ -4296,6 +4296,7 @@ RCS_checkout (rcs, workfile, rev, nametag, options, sout, pfn, callerdat)
 #ifdef PRESERVE_PERMISSIONS_SUPPORT
     else if (special_file)
     {
+#ifdef HAVE_MKNOD
 	char *dest;
 
 	/* Can send either to WORKFILE or to SOUT, as long as SOUT is
@@ -4316,6 +4317,11 @@ RCS_checkout (rcs, workfile, rev, nametag, options, sout, pfn, callerdat)
 	if (mknod (dest, special_file, devnum) < 0)
 	    error (1, errno, "could not create special file %s",
 		   dest);
+#else
+	error (1, 0,
+"cannot create %s: unable to create special files on this system",
+workfile);
+#endif
     }
 #endif
     else
@@ -4918,6 +4924,7 @@ RCS_checkin (rcs, workfile, message, rev, flags)
 		case S_IFREG: break;
 		case S_IFCHR:
 		case S_IFBLK:
+#ifdef HAVE_ST_RDEV
 		    np = getnode();
 		    np->type = RCSFIELD;
 		    np->key = xstrdup ("special");
@@ -4927,6 +4934,11 @@ RCS_checkin (rcs, workfile, message, rev, flags)
 			     (unsigned long) sb.st_rdev);
 		    np->data = xstrdup (buf);
 		    addnode (delta->other_delta, np);
+#else
+		    error (0, 0,
+"can't preserve %s: unable to save device files on this system",
+workfile);
+#endif
 		    break;
 
 		default:

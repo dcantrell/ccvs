@@ -1,3 +1,11 @@
+2000-07-11  Larry Jones  <larry.jones@sdrc.com>
+
+	* filesubr.c (copy_file, xcmp): Handle systems (like Plan 9) that
+	don't support mknod() and/or st_rdev.
+	* import.c (add_rcs_file): Ditto.
+	* rcs.c (RCS_checkout, RCS_checkin): Ditto.
+	* update.c (special_file_mismatch): Ditto.
+
 2000-07-10  Larry Jones  <larry.jones@sdrc.com>
 
 	* zlib.c (gunzip_and_write): Fix type clashes.
