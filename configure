@@ -2248,7 +2248,7 @@ echo "$ac_t""$krb_h" 1>&6
 if test -n "$krb_h"; then
   krb_lib=
   echo $ac_n "checking for -lkrb""... $ac_c" 1>&6
-ac_lib_var=`echo krb_main | tr '.-/+' '___p'`
+ac_lib_var=`echo krb_printf | tr '.-/+' '___p'`
 if eval "test \"`echo '$''{'ac_cv_lib_$ac_lib_var'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -2258,11 +2258,11 @@ cat > conftest.$ac_ext <<EOF
 #line 2259 "configure"
 #include "confdefs.h"
 /* Override any gcc2 internal prototype to avoid an error.  */
-char main();
+char printf();
 
 int main() { return 0; }
 int t() {
-main()
+printf()
 ; return 0; }
 EOF
 if { (eval echo configure:2269: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; }; then
@@ -2294,7 +2294,7 @@ EOF
     test -n "${krb_libdir}" && LIBS="${LIBS} -L${krb_libdir}"
     LIBS="${LIBS} -lkrb"
     echo $ac_n "checking for -ldes""... $ac_c" 1>&6
-ac_lib_var=`echo des_main | tr '.-/+' '___p'`
+ac_lib_var=`echo des_printf | tr '.-/+' '___p'`
 if eval "test \"`echo '$''{'ac_cv_lib_$ac_lib_var'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -2304,11 +2304,11 @@ cat > conftest.$ac_ext <<EOF
 #line 2305 "configure"
 #include "confdefs.h"
 /* Override any gcc2 internal prototype to avoid an error.  */
-char main();
+char printf();
 
 int main() { return 0; }
 int t() {
-main()
+printf()
 ; return 0; }
 EOF
 if { (eval echo configure:2315: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; }; then
@@ -2437,7 +2437,7 @@ else
 case "$LIBS" in
 *-lnsl*) ;;
 *) echo $ac_n "checking for -lnsl_s""... $ac_c" 1>&6
-ac_lib_var=`echo nsl_s_main | tr '.-/+' '___p'`
+ac_lib_var=`echo nsl_s_printf | tr '.-/+' '___p'`
 if eval "test \"`echo '$''{'ac_cv_lib_$ac_lib_var'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -2447,11 +2447,11 @@ cat > conftest.$ac_ext <<EOF
 #line 2448 "configure"
 #include "confdefs.h"
 /* Override any gcc2 internal prototype to avoid an error.  */
-char main();
+char printf();
 
 int main() { return 0; }
 int t() {
-main()
+printf()
 ; return 0; }
 EOF
 if { (eval echo configure:2458: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; }; then
@@ -2482,7 +2482,7 @@ esac
 case "$LIBS" in
 *-lnsl*) ;;
 *) echo $ac_n "checking for -lnsl""... $ac_c" 1>&6
-ac_lib_var=`echo nsl_main | tr '.-/+' '___p'`
+ac_lib_var=`echo nsl_printf | tr '.-/+' '___p'`
 if eval "test \"`echo '$''{'ac_cv_lib_$ac_lib_var'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -2492,11 +2492,11 @@ cat > conftest.$ac_ext <<EOF
 #line 2493 "configure"
 #include "confdefs.h"
 /* Override any gcc2 internal prototype to avoid an error.  */
-char main();
+char printf();
 
 int main() { return 0; }
 int t() {
-main()
+printf()
 ; return 0; }
 EOF
 if { (eval echo configure:2503: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; }; then
