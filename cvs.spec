@@ -33,6 +33,7 @@ Install the cvs package if you need to use a version control system.
 Summary: A version control system with Kerberos authentication.
 Group: Development/Tools
 Requires: cvs krb5-libs krb5-configs
+BuildRequires: krb5-devel
 
 %description krb5
 CVS (Concurrent Version System) is a version control system which can
