@@ -1,8 +1,23 @@
-Tue Nov  7 16:59:25 1995  J.T. Conklin  <jtc@lestat.cygnus.com>
+Wed Nov  8 11:57:31 1995  Norbert Kiesel  <nk@col.sw-ley.de>
 
-	* rcs.c (RCS_getbranch, RCS_getdate, RCS_getrevtime, RCS_gettag,
- 	RCS_getversion, RCS_head): Use assert() instead of attempting to
-	"do the right thing" with a bogus RCSNode argument.
+	* options.h.in: add configuration option STEXID_SUPPORT (default
+	  is off i.e. old semantics)
+
+	* filesubr.c (isaccessable): new function.  Checks access-rights
+	for files like access(), but is getxid-safe.  Falls back to
+	access() if SETXID_SUPPORT is not enabled.
+	(isfile): replace stat() by isaccessable(file, F_OK)
+	(isreadable): replace access() by isaccessable()
+	(iswritable): ditto
+	(make_directory): rename local variable buf to sb
+
+	* cvs.h: add prototype for new function isaccessable.
+
+	* server.c (serve_root): replace access() by isaccessable()
+
+	* cvsrc.c (read_cvsrc): replace access() by isreadable()
+
+	* main.c (main): replace access() by isaccessable()
 
 Mon Nov  6 14:24:34 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
 

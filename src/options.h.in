@@ -237,6 +237,13 @@
 #endif
 
 /*
+ * define this to enable the SETXID support (see FAQ 4D.13)
+ */
+#ifndef SETXID_SUPPORT
+/* #define SETXID_SUPPORT */
+#endif
+
+/*
  * "cvs login" is under construction.  Don't define this unless you're
  * testing it, in which case you're me and you already know that.
  */
