@@ -1,3 +1,8 @@
+2004-10-11  Conrad T. Pino  <Conrad@Pino.com>
+
+	* config.h.in.in: Add #undef for "HAVE_STDIO_EXT_H", "HAVE_STRCASECMP",
+	"HAVE_STRNCASECMP", "HAVE_WMEMCHR" and "HAVE_WMEMCPY".
+
 2004-10-09  Derek Price  <derek@ximbiot.com>
 
 	* config.h.in.in (HAVE_DECL_FREE): Remove this define.
