@@ -1,3 +1,7 @@
+Thu Feb 29 02:22:12 1996  Benjamin J. Lee  <benjamin@cyclic.com>
+
+	* run.c (run_exec): Added VMS return status support.
+
 Thu Feb 29 01:07:43 1996  Benjamin J. Lee  <benjamin@cyclic.com>
 
 	* client.c (send_to_server): wrtn wasn't being declared under
