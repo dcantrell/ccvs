@@ -1,5 +1,13 @@
 Changes since 1.9:
 
+* All access to RCS files is now implemented internally rather than by
+calling RCS programs.  The main user-visible consequence of this is
+that there is no need to worry about making sure that CVS finds the
+correct version of RCS.  The -b global option and the RCSBIN setting
+in CVSROOT/config are still accepted but don't do anything.  The
+$RCSBIN internal variable in administrative files is no longer
+accepted.
+
 * There is a new syntax, "cvs admin -orev1::rev2", which collapses the
 revisions between rev1 and rev2 without deleting rev1 or rev2
 themselves.
@@ -8,8 +16,6 @@ themselves.
 to specify miscellaneous aspects of CVS configuration.  Currently
 supported here:
 
-  - RCSBIN, as an alternate place to specify the directory where CVS
-  should look for RCS binaries
   - SystemAuth, allows you to prevent pserver from checking for system
   usernames/passwords.
 
