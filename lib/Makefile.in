@@ -193,8 +193,7 @@ libcvs_a_LIBADD = @LIBOBJS@
 EXTRA_DIST = \
 	.cvsignore \
 	ChangeLog.fsf \
-	build_lib.com \
-	xgssapi.h
+	build_lib.com
 
 subdir = lib
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4

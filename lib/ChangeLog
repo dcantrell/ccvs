@@ -1,3 +1,11 @@
+2003-05-29  Derek Price  <derek@ximbiot.com>
+
+	* Makefile.am: xgssapi.h is no more.
+	* xgssapi.h: Move its contents to src/gssapi-client.h
+	(Patch from Alexey Mahotkin <alexm@hsys.msk.ru>.)
+
+	* Makefile.in: Regenerated.
+
 2003-05-28  Derek Price  <derek@ximbiot.com>
 
 	* getline.h, md5.c, sighandle.c, savecwd.h: Use PROTO.h.
