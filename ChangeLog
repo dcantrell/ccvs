@@ -1,3 +1,8 @@
+2004-09-13  Mark D. Baushke  <mdb@cvshome.org>
+
+	* NEWS: Note change to contrib/cvs_acls and addition of
+	contrib/cvs_acls.html
+
 2004-09-09  Conrad T. Pino  <Conrad@Pino.com>
 
 	* cvsnt.dep: Regenerated for "cvsnt.dsp" changes made 2004-09-08.
