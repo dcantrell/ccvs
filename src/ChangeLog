@@ -1,5 +1,8 @@
 2003-06-28  Larry Jones  <lawrence.jones@eds.com>
 
+	* commit.c (fixaddfile): Bail out if locate_rcs() fails.  Make
+	parameters const.
+
 	* add.c (add): Fix -Wall complaints.
 	* diff.c (diff_file_nodiff): Ditto.
 	* filesubr.c (cvs_casecmp): Ditto.
