@@ -1,3 +1,9 @@
+2004-04-21  Derek Price  <derek@ximbiot.com>
+
+	* cvs.texinfo: Use splitrcskeyword macro consistently in a failed
+	attempt to avoid a warning during PDF generation.
+	* stamp-vti, version.texi: Regenerated.
+
 2004-04-19  Derek Price  <derek@ximbiot.com>
 
 	* stamp-vti, version.texi: Regenerated.
