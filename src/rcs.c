@@ -844,20 +844,24 @@ RCS_getversion (rcs, tag, date, force_tag_match, return_both)
 
     if (tag && date)
     {
-	char *cp, *rev, *tagrev;
+	char *branch, *rev;
 
-	/*
-	 * first lookup the tag; if that works, turn the revision into
-	 * a branch and lookup the date.
-	 */
-	tagrev = RCS_gettag (rcs, tag, force_tag_match, 0);
-	if (tagrev == NULL)
-	    return ((char *) NULL);
+	if (! RCS_isbranch (rcs, tag))
+	{
+	    /* We can't get a particular date if the tag is not a
+               branch.  */
+	    return NULL;
+	}
 
-	if ((cp = strrchr (tagrev, '.')) != NULL)
-	    *cp = '\0';
-	rev = RCS_getdatebranch (rcs, date, tagrev);
-	free (tagrev);
+	/* Work out the branch.  */
+	if (! isdigit (tag[0]))
+	    branch = RCS_whatbranch (rcs, tag);
+	else
+	    branch = xstrdup (tag);
+
+	/* Fetch the revision of branch as of date.  */
+	rev = RCS_getdatebranch (rcs, date, branch);
+	free (branch);
 	return (rev);
     }
     else if (tag)
@@ -1457,9 +1461,13 @@ RCS_getdatebranch (rcs, date, branch)
 	return (NULL);
     vers = (RCSVers *) p->data;
 
-    /* if no branches list, return NULL */
+    /* Tentatively use this revision, if it is early enough.  */
+    if (RCS_datecmp (vers->date, date) <= 0)
+	cur_rev = vers->version;
+
+    /* if no branches list, return now */
     if (vers->branches == NULL)
-	return (NULL);
+	return xstrdup (cur_rev);
 
     /* walk the branches list looking for the branch number */
     xbranch = xmalloc (strlen (branch) + 1 + 1); /* +1 for the extra dot */
@@ -1470,7 +1478,11 @@ RCS_getdatebranch (rcs, date, branch)
 	    break;
     free (xbranch);
     if (p == vers->branches->list)
+    {
+	/* FIXME: This case would seem to imply that the RCS file is
+           somehow invalid.  Should we give an error message?  */
 	return (NULL);
+    }
 
     p = findnode (rcs->versions, p->key);
 
@@ -1490,11 +1502,8 @@ RCS_getdatebranch (rcs, date, branch)
 	    p = (Node *) NULL;
     }
 
-    /* if we found something acceptable, return it - otherwise NULL */
-    if (cur_rev != NULL)
-	return (xstrdup (cur_rev));
-    else
-	return (NULL);
+    /* Return whatever we found, which may be NULL.  */
+    return xstrdup (cur_rev);
 }
 
 /*
