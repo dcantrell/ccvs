@@ -1,5 +1,13 @@
 Wed Aug 30 18:45:28 1995  Jim Blandy  <jimb@totoro.cyclic.com>
 
+	* acconfig.h (CVS_SUPPORT, CLIENT_SUPPORT, SERVER_SUPPORT): New
+	symbols, which autoheader will use to build config.h.in from
+	configure.in.
+	* configure.in (SERVER_SUPPORT, CLIENT_SUPPORT): Remove spaces
+	between AC_DEFINEs and opening parens of argument lists.  Oops.
+	* configure: Rebuild using autoconf.
+	* config.h.in: Rebuild using autoheader.
+
 	* Makefile.in (SUBDIRS): Uncomment windows-NT.
 
 	* INSTALL: Added Windows NT to list of supported platforms.
