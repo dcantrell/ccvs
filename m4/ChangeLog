@@ -1,3 +1,8 @@
+2005-03-02  Jim Meyering  <jim@meyering.net>
+
+	* closeout.m4, fpending.m4, mbrtowc.m4, quotearg.m4: New from gnulib.
+	* gnulib.m4: Regenerated.
+
 2005-03-01  Derek Price  <derek@ximbiot.com>
 
 	Update installed GNULIB modules.

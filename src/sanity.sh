@@ -1622,6 +1622,7 @@ if test x"$*" = x; then
 	# Log messages, error messages.
 	tests="${tests} mflag editor env errmsg1 errmsg2 adderrmsg opterrmsg"
 	tests="${tests} errmsg3"
+	tests="${tests} close-stdout"
 	# Watches, binary files, history browsing, &c.
 	tests="${tests} devcom devcom2 devcom3 watch4 watch5"
         tests="${tests} edit-check"
@@ -16250,6 +16251,32 @@ ${CPROG} \[update aborted\]: \*PANIC\* administration files missing!"
 	  dokeep
 	  cd ..
 	  rm -r errmsg3
+	  ;;
+
+
+
+	close-stdout)
+	  # Ensure that cvs update -p FILE > /dev/full fails
+	  # Perform this test IFF /dev/full is a writable character device.
+	  if test -w /dev/full && test -c /dev/full; then
+	    mkdir close-stdout
+	    cd close-stdout
+	    echo a > file
+	    dotest close-stdout-1 "$testcvs -Q import -m. closeout X Y" ''
+	    dotest close-stdout-2 "$testcvs -Q co closeout" ''
+	    # Match either a bare `write error' or
+	    # `write error: No space left on device',
+	    # since closeout.c can produce both.
+	    dotest_fail close-stdout-3 \
+		"${testcvs} -Q update -p closeout/file > /dev/full" \
+		"${CPROG} \[update aborted\]: write error.*"
+
+	    dokeep
+	    cd ..
+	    rm -r close-stdout
+	  else
+	    skip close-stdout '/dev/full is not available'
+	  fi
 	  ;;
 
 

@@ -225,6 +225,10 @@
    don't. */
 #undef HAVE_DECL_STRERROR_R
 
+/* Define to 1 if you have the declaration of `__fpending', and to 0 if you
+   don't. */
+#undef HAVE_DECL___FPENDING
+
 /* Define to 1 if you have the <direct.h> header file. */
 #undef HAVE_DIRECT_H
 
@@ -332,6 +336,9 @@
 /* Define to 1 if you have the `isascii' function. */
 #undef HAVE_ISASCII
 
+/* Define to 1 if you have the `iswprint' function. */
+#undef HAVE_ISWPRINT
+
 /* Define if you have MIT Kerberos version 4 available. */
 #undef HAVE_KERBEROS
 
@@ -378,6 +385,12 @@
 
 /* Define to 1 if you have the `mbrlen' function. */
 #undef HAVE_MBRLEN
+
+/* Define to 1 if mbrtowc and mbstate_t are properly declared. */
+#undef HAVE_MBRTOWC
+
+/* Define to 1 if you have the `mbsinit' function. */
+#undef HAVE_MBSINIT
 
 /* Define to 1 if you have the `mbsrtowcs' function. */
 #undef HAVE_MBSRTOWCS
@@ -708,6 +721,9 @@
 /* Define to 1 if the system has the type `_Bool'. */
 #undef HAVE__BOOL
 
+/* Define to 1 if you have the `__fpending' function. */
+#undef HAVE___FPENDING
+
 /* Define to 1 if you have the `__secure_getenv' function. */
 #undef HAVE___SECURE_GETENV
 
@@ -767,6 +783,9 @@
    as. Otherwise, define to a double-quoted literal string, such as `"cvs"'.
    */
 #undef PAM_SERVICE_NAME
+
+/* the number of pending output bytes on stream `fp' */
+#undef PENDING_OUTPUT_N_BYTES
 
 /* Define if you want CVS to be able to serve as a transparent proxy for write
    operations. Disabling this may produce a slight performance gain on some

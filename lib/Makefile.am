@@ -114,7 +114,7 @@ getdate_SOURCES = \
 	xalloc-die.c \
 	xgetcwd.h xgetcwd.c \
 	xalloc.h \
-	xmalloc.c 
+	xmalloc.c
 ## This source file was added only for the getdate test program when compiled
 ## with GNULIB's error.c.
 getdate_SOURCES += \
@@ -244,6 +244,11 @@ libcvs_a_SOURCES += xsize.h
 
 ## For GNULIB's yesno module.
 libcvs_a_SOURCES += yesno.c yesno.h
+
+## For GNULIB's closeout module.
+libcvs_a_SOURCES += closeout.c closeout.h
+libcvs_a_SOURCES += quotearg.c quotearg.h
+libcvs_a_SOURCES += __fpending.h
 
 # Until Automake gets its act together
 distclean-local:

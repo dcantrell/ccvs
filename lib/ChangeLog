@@ -1,3 +1,13 @@
+2005-03-02  Jim Meyering  <jim@meyering.net>
+
+	* Makefile.am (libcvs_a_SOURCES): Add the following to support
+	the GNULIB closeout module: closeout.c, closeout.h, quotearg.c,
+	quotearg.h, __fpending.h.
+	* closeout.c, closeout.h: New files.
+	* quotearg.c, quotearg.h: New files.
+	* __fpending.c, __fpending.h: New files.
+	* Makefile.gnulib: Regenerate.
+
 2005-03-02  Derek Price  <derek@ximbiot.com>
 
 	* gettext.h, setenv.c, vasnprintf.c, vasprintf.c: Update from GNULIB.
@@ -125,7 +135,7 @@
 
 	* sunos57-select.c: Move '#undef select' before system #include
 	statements to avoid conflicting declarations on BSDI BSD/OS 4.2.
-	
+
 2004-11-03  Mark D. Baushke  <mdb@cvshome.org>
 
 	* Makefile.am: Update from GNULIB.
@@ -198,7 +208,7 @@
 2004-10-22  Mark D. Baushke  <mdb@cvshome.org>
 
 	* Makefile.am (libcvs_a_OBJECTS): Fix typo for $(ALLOCA_H) and
-	($STDBOOL_H). Also update rules for stdint GNULIB module.	
+	($STDBOOL_H). Also update rules for stdint GNULIB module.
 	* Makefile.in: Regenerated.
 
 2004-10-22  Conrad T. Pino  <Conrad@Pino.com>
@@ -263,7 +273,7 @@
 
 	* Makefile.am (all-local): Fix typo.
 	* Makefile.in: Regenerated.
-	
+
 2004-10-21  Conrad T. Pino  <Conrad@Pino.com>
 
 	* libcvs.mak: Regenerated for "../zlib/lib.dsp" change.
@@ -520,7 +530,7 @@
 
 	* Makefile.in (check-TESTS): Correct the script to deal with some
 	make (BSD) that use 'sh -e' which will terminate whenever a
-	command (such as test -n "") fails.	
+	command (such as test -n "") fails.
 
 2004-05-03  Derek Price  <derek@ximbiot.com>
 
@@ -542,7 +552,7 @@
 	and progname for getdate test program on some systems.
 	* error.c, progname.c: New file.
 	(Report from Mark D. Baushke <mdb@cvshome.org>.)
-	
+
 2004-04-29  Derek Price  <derek@ximbiot.com>
 
 	* getdate.y: Restore unforked version from GNULIB.
@@ -876,7 +886,7 @@
 	* ftello.c (ftello): Ditto.
 	* system.h (ftello): Add prototype if !defined(HAVE_FTELLO).
 	* Makefile.in: Regenerated.
-	
+
 2003-12-09  Larry Jones  <lawrence.jones@eds.com>
 
 	* getdate.c: Regenerated.
@@ -1329,7 +1339,7 @@
 
 	* regex.c: Removed unused `compile_range' declaration.
 	(Patch from John Tytgat <John.Tytgat@aaug.net>.)
-	
+
 2002-05-09  Larry Jones  <lawrence.jones@eds.com>
 
 	* getline.c (getstr): Make terminator int instead of char to avoid
@@ -1497,7 +1507,7 @@
 	(GETLINE_NO_LIMIT): new #define.
 	(getline_safe): new function, takes limit arg and passes it on.
 	(getline): pass GETLINE_NO_LIMIT to getstr().
-	
+
 	See related change of same date in ../src/ChangeLog.
 
 2000-06-19  Larry Jones  <larry.jones@sdrc.com>

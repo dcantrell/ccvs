@@ -44,6 +44,9 @@ BUG FIXES
 
 * Misc bug and documentation fixes.
 
+* CVS now detects write errors on standard output.  Before, e.g.,
+  `cvs update -p FILE > /dev/full' would fail to report the write error.
+
 Changes from 1.12.10 to 1.12.11:
 ********************************
 
