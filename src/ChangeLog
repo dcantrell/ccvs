@@ -1,3 +1,7 @@
+2001-03-22  Larry Jones  <larry.jones@sdrc.com>
+
+	* sanity.sh: Add check for ${DOTSTAR} with large matches.
+
 2001-03-23  Derek Price  <dprice@collab.net>
 
 	* sanity.sh: Do the same as below for $keep.
@@ -14,7 +18,7 @@
 2001-03-22  Larry Jones  <larry.jones@sdrc.com>
 
 	* sanity.sh (diffmerge1_yours, diffmerge1_mine): Check for exact
-	output instead of using wildards to avoid buffer overflows in some
+	output instead of using wildcards to avoid buffer overflows in some
 	versions of expr.
 
 2001-03-21  Derek Price  <dprice@collab.net>
