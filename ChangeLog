@@ -1,3 +1,7 @@
+2001-05-17  Larry Jones  <larry.jones@sdr.com>
+
+	* depcomp: Yet another newer (unofficial) version from Automake.
+
 2001-05-10  Larry Jones  <larry.jones@sdr.com>
 
 	* configure.in (AC_OUTPUT): Remove -f from chmod -- not portable.
