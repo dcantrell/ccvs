@@ -1,3 +1,10 @@
+2003-07-18  Derek Price  <derek@ximbiot.com>
+
+	* cvs.texinfo: Update WARNINGs and Notes for a more consistent
+	appearance.  Remove some obsolete comments.
+	* stamp-vti: Regenerated.
+	* version.texi: Regenerated.
+
 2003-07-12  Larry Jones  <lawrence.jones@eds.com>
 
 	* cvs.texinfo (Binary howto): Add note about how to determine whether
