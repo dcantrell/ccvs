@@ -2364,8 +2364,7 @@ get_responses_and_close ()
             if (shutdown (server_fd, 1) < 0)
               error (1, errno, "shutting down connection to %s", server_host);
             /*
-             * In this case, both sides of the net connection will use the
-             * same fd.
+             * This test will always be true because we dup the descriptor
              */
             if (fileno (from_server) != fileno (to_server))
               {
@@ -2823,7 +2822,17 @@ start_server ()
         /* todo: some OS's don't need these calls... */
         close_on_exec (tofd);
         close_on_exec (fromfd);
-        
+
+	/* SCO 3 and AIX have a nasty bug in the I/O libraries which precludes
+	   fdopening the same file descriptor twice, so dup it if it is the
+	   same.  */
+	if (tofd == fromfd)
+	{
+	    fromfd = dup (tofd);
+	    if (fromfd < 0)
+		error (1, errno, "cannot dup net connection");
+	}
+
         /* These will use binary mode on systems which have it.  */
         to_server = fdopen (tofd, FOPEN_BINARY_WRITE);
         if (to_server == NULL)
