@@ -220,3 +220,40 @@ RCS_checkin (rcsfile, workfile, message, rev, flags)
     }
     return retval;
 }
+
+/* Diff revisions and/or files.  OPTS controls the format of the diff
+   (it contains options such as "-w -c", &c), or "" for the default.
+   OPTIONS controls keyword expansion, as a string starting with "-k",
+   or "" to use the default.  REV1 is the first revision to compare
+   against; it must be non-NULL.  If REV2 is non-NULL, compare REV1
+   and REV2; if REV2 is NULL compare REV1 with the file in the working
+   directory.  Output goes to stdout.
+
+   Return value is 0 for success, -1 for a failure which set errno,
+   or positive for a failure which printed a message on stderr.
+
+   It would be relatively easy to convert this to use RCS_checkout
+   and DIFF.  The comments in options.h.in regarding the selection of
+   a diff program would need some revision, but I don't see a big
+   issue here.  */
+int
+RCS_exec_rcsdiff (rcsfile, opts, options, rev1, rev2)
+    char *rcsfile;
+    char *opts;
+    char *options;
+    char *rev1;
+    char *rev2;
+{
+    if (rev2 != NULL)
+    {
+	run_setup ("%s%s -x,v/ %s %s -r%s -r%s", Rcsbin, RCS_DIFF,
+		   opts, options, rev1, rev2);
+    }
+    else
+    {
+	run_setup ("%s%s -x,v/ %s %s -r%s", Rcsbin, RCS_DIFF, opts,
+		   options, rev1);
+    }
+    run_arg (rcsfile);
+    return run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_REALLY|RUN_COMBINED);
+}

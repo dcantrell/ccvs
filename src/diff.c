@@ -611,25 +611,18 @@ diff_fileproc (callerdat, finfo)
 
 	    run_setup ("%s %s %s %s", DIFF, opts, tmp, DEVNULL);
 	}
+	status = run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_REALLY|RUN_COMBINED);
     }
     else
     {
-	if (use_rev2)
-	{
-	    run_setup ("%s%s -x,v/ %s %s -r%s -r%s", Rcsbin, RCS_DIFF,
-		       opts, *options ? options : vers->options,
-		       use_rev1, use_rev2);
-	}
-	else
-	{
-	    run_setup ("%s%s -x,v/ %s %s -r%s", Rcsbin, RCS_DIFF, opts,
-		       *options ? options : vers->options, use_rev1);
-	}
-	run_arg (vers->srcfile->path);
+	status = RCS_exec_rcsdiff (vers->srcfile->path,
+				   opts,
+				   *options ? options : vers->options,
+				   use_rev1,
+				   use_rev2);
     }
 
-    switch ((status = run_exec (RUN_TTY, RUN_TTY, RUN_TTY,
-	RUN_REALLY|RUN_COMBINED)))
+    switch (status)
     {
 	case -1:			/* fork failed */
 	    error (1, errno, "fork failed during rcsdiff of %s",
@@ -854,9 +847,9 @@ diff_file_nodiff (finfo, vers, empty_file)
     {
         /* drop user_file_rev into first unused use_rev */
         if (!use_rev1) 
-	  use_rev1 = xstrdup (user_file_rev);
+	    use_rev1 = xstrdup (user_file_rev);
 	else if (!use_rev2)
-	  use_rev2 = xstrdup (user_file_rev);
+	    use_rev2 = xstrdup (user_file_rev);
 	/* and if not, it wasn't needed anyhow */
 	user_file_rev = 0;
     }
