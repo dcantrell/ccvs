@@ -1,3 +1,10 @@
+2004-04-17  Derek Price  <derek@ximbiot.com>
+
+	* cvsnt.dsw, cvsnt.dsp: Rename "lib/lib.*" to "lib/libcvs.*" and
+	"zlib/zlib.*" to "zlib/libz.*".
+	* cvsnt.dep, cvsnt.mak: Regenerated.
+	(Patch from Conrad T. Pino <Conrad@Pino.com>.)
+
 2004-04-16  Derek Price  <derek@ximbiot.com>
 
 	* NEWS: Correct CVS name for piped checkout issue now that we have one.

@@ -3,7 +3,7 @@ Microsoft Developer Studio Workspace File, Format Version 6.00
 
 ###############################################################################
 
-Project: "LIB"=".\LIB\LIB.dsp" - Package Owner=<4>
+Project: "libcvs"=".\lib\libcvs.dsp" - Package Owner=<4>
 
 Package=<5>
 {{{
@@ -27,10 +27,10 @@ Package=<4>
     Project_Dep_Name libdiff
     End Project Dependency
     Begin Project Dependency
-    Project_Dep_Name zlib
+    Project_Dep_Name libz
     End Project Dependency
     Begin Project Dependency
-    Project_Dep_Name LIB
+    Project_Dep_Name libcvs
     End Project Dependency
 }}}
 
@@ -45,13 +45,13 @@ Package=<5>
 Package=<4>
 {{{
     Begin Project Dependency
-    Project_Dep_Name LIB
+    Project_Dep_Name libcvs
     End Project Dependency
 }}}
 
 ###############################################################################
 
-Project: "zlib"=".\zlib\zlib.dsp" - Package Owner=<4>
+Project: "libz"=".\zlib\libz.dsp" - Package Owner=<4>
 
 Package=<5>
 {{{
