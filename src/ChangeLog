@@ -1,5 +1,11 @@
 2003-11-18  Derek Price  <derek@ximbiot.com>
 
+	* socket-client.c (socket_buffer_initialize): Rename poorly named `n'
+	to a slightly more descriptive `sbuf'.
+	(Suggestion from Larry Jones  <lawrence.jones@eds.com>.)
+
+2003-11-18  Derek Price  <derek@ximbiot.com>
+
 	* socket-client.c (socket_buffer_initialize): Pass in the socket
 	closure we allocate.
 	(Report from Larry Jones  <lawrence.jones@eds.com>.)
