@@ -30,6 +30,16 @@ extern int server_active;
 /* Run the server.  */
 extern int server PROTO((int argc, char **argv));
 
+/* kserver user authentication.  */
+# ifdef HAVE_KERBEROS
+extern void kserver_authenticate_connection PROTO ((void));
+# endif
+
+/* pserver user authentication.  */
+# if defined (AUTH_SERVER_SUPPORT) || defined (HAVE_GSSAPI)
+extern void pserver_authenticate_connection PROTO ((void));
+# endif
+
 /* See server.c for description.  */
 extern void server_pathname_check PROTO ((char *));
 
