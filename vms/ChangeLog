@@ -1,3 +1,8 @@
+Tue Sep  9 18:53:33 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* filesubr.c (fnfold): Further expand comment about how to handle
+	filenames like "y.tab.c".
+
 Sun Sep  7 17:38:58 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* config.h (HAVE_STRDUP): Remove; not used anywhere.
