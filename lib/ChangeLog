@@ -1,3 +1,7 @@
+Thu Jul 27 09:11:41 1995  Robert Lipe <robertl@rjlhome.arnet.com>
+
+	* system.h: Check for PATHSIZE before falling back to _POSIX_PATH_MAX.
+
 Thu Jul 20 12:38:03 1995  James Kingdon  <kingdon@harvey.cyclic.com>
 
 	* error.c: Instead of calling cvs functions to clean up, allow cvs
