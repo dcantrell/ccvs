@@ -48,6 +48,7 @@
 #include "exit.h"
 #include "minmax.h"
 #include "regex.h"
+#include "strcase.h"
 #include "vasnprintf.h"
 #include "xalloc.h"
 #include "xgetcwd.h"
@@ -608,8 +609,6 @@ void rename_file (const char *from, const char *to);
    malloc'd.  It is OK to call it with PARGC == &ARGC or PARGV == &ARGV.  */
 void expand_wild (int argc, char **argv, 
                   int *pargc, char ***pargv);
-
-int cvs_casecmp (const char *, const char *);
 
 /* exithandle.c */
 void signals_register (RETSIGTYPE (*handler)(int));

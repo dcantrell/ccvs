@@ -1,5 +1,12 @@
 2004-10-06  Derek Price  <derek@ximbiot.com>
 
+	* cvs.h: Include strcase.h.
+	(cvs_casecmp): remove proto.
+	* subr.c (cvs_casecmp): Remove function.
+	* parseinfo.c: s/cvs_casecmp/strcasecmp/.
+
+2004-10-06  Derek Price  <derek@ximbiot.com>
+
 	* cvs.h: Move getopt.h and regex.h into the GNULIB include section.
 
 2004-10-06  Derek Price  <derek@ximbiot.com>
