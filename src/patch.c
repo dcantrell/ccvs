@@ -642,9 +642,9 @@ patch_fileproc (callerdat, finfo)
 	    (void) sprintf (file2, "%s:%s", finfo->fullname,
 			    vers_head ? vers_head : "removed");
 
-	    /* Note that this prints "diff" not DIFF.  The format of a diff
-	       does not depend on the name of the program which happens to
-	       have produced it.  */
+	    /* Note that the string "diff" is specified by POSIX (for -c)
+	       and is part of the diff output format, not the name of a
+	       program.  */
 	    if (unidiff)
 	    {
 		cvs_output ("diff -u ", 0);

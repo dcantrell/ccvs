@@ -1,3 +1,22 @@
+Wed Nov 12 16:24:45 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	Clean up infrastructure made unnecessary by RCS library:
+	* rcscmds.c (diff_exec, diff_execv): Use literal "diff" not DIFF.
+	* options.h.in (DIFF), rcs.h (RCS, RCS_CI, RCS_DIFF,
+	RCS_RCSMERGE): Removed; no longer used.
+	* commit.c (commit), patch.c (patch_fileproc),
+	rcscmds.c (RCS_exec_rcsdiff), start of rcscmds.c: Update comments
+	to reflect librarification of RCS.
+	* options.h.in (RCSBIN_DFLT): Removed.
+	* main.c, cvs.h (Rcsbin, free_Rcsbin): Removed.
+	* main.c (main): Don't check RCSBIN environment variable.  -b
+	global option is now a noop.
+	* cvs.h (RCSBIN_ENV): Removed.
+	* expand_path.c (expand_variable): $RCSBIN is now an error.
+	* mkmodules.c (config_contents): Remove RCSBIN.
+	* parseinfo.c (parse_config): RCSBIN now a noop.
+	* server.c (server): Don't put Rcsbin in PATH.
+
 Mon, 10 Nov 1997  Jim Kingdon
 
 	* rcs.c (RCS_checkin): Actually, when we get a change text

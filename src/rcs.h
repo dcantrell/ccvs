@@ -8,11 +8,6 @@
  * RCS source control definitions needed by rcs.c and friends
  */
 
-#define	RCS		"rcs"
-#define	RCS_CI		"ci"
-#define	RCS_DIFF	"rcsdiff"
-#define	RCS_RCSMERGE	"rcsmerge"
-
 /* String which indicates a conflict if it occurs at the start of a line.  */
 #define	RCS_MERGE_PAT ">>>>>>> "
 
