@@ -123,7 +123,6 @@ do_module (db, mname, m_type, msg, callback_proc, where,
     char **xmodargv = NULL;
     /* Found entry from modules file, including options and such.  */
     char *value = NULL;
-    char *zvalue = NULL;
     char *mwhere = NULL;
     char *mfile = NULL;
     char *spec_opt = NULL;
@@ -186,20 +185,21 @@ do_module (db, mname, m_type, msg, callback_proc, where,
 	val.dptr = NULL;
     if (val.dptr != NULL)
     {
-	/* null terminate the value  XXX - is this space ours? */
-	val.dptr[val.dsize] = '\0';
+	/* copy and null terminate the value */
+	value = xmalloc (val.dsize + 1);
+	memcpy (value, val.dptr, val.dsize);
+	value[val.dsize] = '\0';
 
 	/* If the line ends in a comment, strip it off */
-	if ((cp = strchr (val.dptr, '#')) != NULL)
+	if ((cp = strchr (value, '#')) != NULL)
 	    *cp = '\0';
 	else
-	    cp = val.dptr + val.dsize;
+	    cp = value + val.dsize;
 
 	/* Always strip trailing spaces */
-	while (cp > val.dptr && isspace ((unsigned char) *--cp))
+	while (cp > value && isspace ((unsigned char) *--cp))
 	    *cp = '\0';
 
-	value = val.dptr;
 	mwhere = xstrdup (mname);
 	goto found;
     }
@@ -327,20 +327,20 @@ do_module (db, mname, m_type, msg, callback_proc, where,
 	{
 	    char *cp2;
 
-	    /* null terminate the value XXX - is this space ours? */
-	    val.dptr[val.dsize] = '\0';
+	    /* copy and null terminate the value */
+	    value = xmalloc (val.dsize + 1);
+	    memcpy (value, val.dptr, val.dsize);
+	    value[val.dsize] = '\0';
 
 	    /* If the line ends in a comment, strip it off */
-	    if ((cp2 = strchr (val.dptr, '#')) != NULL)
+	    if ((cp2 = strchr (value, '#')) != NULL)
 		*cp2 = '\0';
 	    else
-		cp2 = val.dptr + val.dsize;
+		cp2 = value + val.dsize;
 
 	    /* Always strip trailing spaces */
-	    while (cp2 > val.dptr  &&  isspace ((unsigned char) *--cp2))
+	    while (cp2 > value  &&  isspace ((unsigned char) *--cp2))
 		*cp2 = '\0';
-
-	    value = val.dptr;
 
 	    /* mwhere gets just the module name */
 	    mwhere = xstrdup (mname);
@@ -373,11 +373,7 @@ do_module (db, mname, m_type, msg, callback_proc, where,
 	error_exit ();
     cwd_saved = 1;
 
-    /* copy value to our own string since if we go recursive we'll be
-       really screwed if we do another dbm lookup */
     assert (value != NULL);
-    zvalue = xstrdup (value);
-    value = zvalue;
 
     /* search the value for the special delimiter and save for later */
     if ((cp = strchr (value, CVSMODULE_SPEC)) != NULL)
@@ -466,7 +462,7 @@ do_module (db, mname, m_type, msg, callback_proc, where,
 	    case '?':
 		error (0, 0,
 		       "modules file has invalid option for key %s value %s",
-		       key.dptr, val.dptr);
+		       key.dptr, value);
 		err++;
 		goto do_module_return;
 	}
@@ -768,8 +764,8 @@ module `%s' is a request for a file in a module which is not a directory",
 	free (update_prog);
     if (cwd_saved)
 	free_cwd (&cwd);
-    if (zvalue != NULL)
-	free (zvalue);
+    if (value != NULL)
+	free (value);
 
     if (xvalue != NULL)
 	free (xvalue);
