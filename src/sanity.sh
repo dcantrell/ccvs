@@ -12919,6 +12919,32 @@ EOF
 	    dotest rcs2-5 "cat ${TESTDIR}/rcs4.tmp" \
 "${PROG} \[[a-z]* aborted\]: Can't parse date/time: 2003-02-29 11:30 UT"
 	  fi
+
+	  dotest rcs2-6 "${testcvs} -q update -p -D 2007-01-07 file1" \
+"head revision"
+	  # This assumes that the clock of the machine running the tests
+	  # is set to at least the year 1998 or so.  There don't seem
+	  # to be a lot of ways to test the relative date code (short
+	  # of something like LD_LIBRARY_PRELOAD'ing in our own
+	  # getttimeofday, or hacking the CVS source with testing
+	  # features, which always seems to be problematic since then
+	  # someone feels like documenting them and things go downhill
+	  # from there).
+	  if ${testcvs} -q update -p -D '100 months' file1 \
+	      >${TESTDIR}/rcs4.tmp 2>&1
+	  then
+	    dotest rcs2-7 "cat ${TESTDIR}/rcs4.tmp" "head revision"
+	  else
+	    fail rcs2-7
+	  fi
+	  if ${testcvs} -q update -p -D '8 years' file1 \
+	      >${TESTDIR}/rcs4.tmp 2>&1
+	  then
+	    dotest rcs2-8 "cat ${TESTDIR}/rcs4.tmp" "head revision"
+	  else
+	    fail rcs2-8
+	  fi
+
 	  rm ${TESTDIR}/rcs4.tmp
 
 	  cd ..
