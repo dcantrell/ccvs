@@ -80,6 +80,7 @@ EXTRA_DIST = \
 	time_r.m4 \
 	timespec.m4 \
 	tm_gmtoff.m4 \
+	tzset.m4 \
 	uintmax_t.m4 \
 	ulonglong.m4 \
 	unlocked-io.m4 \
