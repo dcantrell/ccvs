@@ -1,3 +1,10 @@
+2002-05-21  Larry Jones  <lawrence.jones@eds.com>
+
+	* rcs.c (rcsbuf_getkey): Correct off-by-one error in ptr assertion
+	and add a similar assertion for ptrend.
+	(Reported by Rebecca Young <raygirl@cvshome.org>.)
+	(rcsbuf_fill): Remove redundant code.
+
 2002-05-20  Derek Price  <oberon@umich.edu>
 
 	* buffer.h: New prototype for...
