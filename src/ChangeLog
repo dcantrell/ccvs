@@ -1,3 +1,15 @@
+Sun Feb  9 12:58:59 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* sanity.sh (binwrap): Add test binwrap-0, tests for import.c fix
+	below.
+
+Sun, 9 Feb 1997 (submitted 19 Jul 1996)  John Polstra  <jdp@polstra.com>
+
+	* import.c (import): Give error if the same tag is specified more
+	than once.  The previous behavior was to write an RCS file which
+	had the same tag listed twice, once pointing to each revision,
+	which is not legal.
+
 Sun Feb  9 12:37:09 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* checkin.c (Checkin): Use cvs_output to print message (should
