@@ -3,6 +3,9 @@ Changes since 1.12.11:
 
 NEW FEATURES
 
+* `cvs -n release' now does what it should (see changes to the info-cleanup-0
+  test in sanity.sh for more).
+
 * The configure script now prefers `ssh' to `rsh' when determining a default
   executable to use when connecting via the :ext: method.
 
