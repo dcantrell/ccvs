@@ -47,7 +47,8 @@ OS2_HEADERS = \
        tcpip.mak \
        config.h \
        options.h \
-       pwd.h
+       pwd.h \
+       dirent.h
 
 # headers we use from the common src dir, ../src
 COMMON_HEADERS = \
@@ -64,7 +65,8 @@ COMMON_HEADERS = \
 # sources specific to OS/2
 OS2_SOURCES = \
        mkdir.c \
-       pwd.c
+       pwd.c \
+       dirent.c
 
 # sources we use from the common src dir, ../src
 COMMON_SOURCES = \
