@@ -1,5 +1,7 @@
 Changes since 1.10:
 
+* The buggy PreservePermissions code has been disabled.
+
 * Anonymous read-only access can now be done without requiring a
 password.  On the server side, simply give that user (presumably
 `anonymous') an empty password in the CVSROOT/passwd file, and then
