@@ -1,3 +1,9 @@
+2004-06-22  Derek Price  <derek@ximbiot.com>
+
+	* config.h.in: Add "inline" & "SIZE_MAX" macros for "xsize.h" header.
+	* config.h: Regenerated for "config.h.in" change.
+	(Original patch from Conrad T. Pino <Conrad@Pino.com>.)
+
 2004-05-13  Derek Price  <derek@ximbiot.com>
 
 	* fix-msvc-make-head.pl, fix-msvc-mak.pl: New files.
