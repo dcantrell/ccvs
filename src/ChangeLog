@@ -1,3 +1,7 @@
+1998-09-13  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* sanity.sh: Add some compatibility tests to TODO comments at end.
+
 1998-09-10  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* wrapper.c (wrap_add): Remove obsolete comment about -m.

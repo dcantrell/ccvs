@@ -17087,6 +17087,13 @@ echo "OK, all tests completed."
 #   server (e.g. set CVS_SERVER to "foobar").
 # * Test the contents of adm files other than Root and Repository.
 #   Entries seems the next most important thing.
+# * Test the following compatibility issues:
+#   - The filler fields in "D" entries in CVS/Entries get preserved
+#     (per cvs.texinfo).
+#   - Unrecognized entry types in CVS/Entries get ignored (looks like
+#     this needs to be documented in cvs.texinfo, but is not)
+#   - Test that unrecognized files in CVS directories (e.g. CVS/Foobar)
+#     are ignored (per cvs.texinfo).
 # End of TODO list.
 
 # Remove the test directory, but first change out of it.
