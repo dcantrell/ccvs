@@ -1,3 +1,9 @@
+Wed Aug 12 15:39:38 1998  Noel Cragg  <noel@swish.red-bean.com>
+
+	* main.c (lookup_command_attribute): the `annotate' command
+ 	shouldn't require access to the repository.  Add comment about
+ 	commands that do not use the working directory.
+
 Mon Aug 10 10:26:38 1998  Noel Cragg  <noel@swish.red-bean.com>
 
 	* version.c: Change version number to 1.9.30.
