@@ -3780,8 +3780,8 @@ authenticate_connection ()
    * information normally comes through the client/server protocol.
    * We need to know it, though, to look up the password, so we have
    * the client transmit it specially as part of the "authentication
-   * protocol".  It will be redundantly transmitted later, but that's
-   * okay.
+   * protocol".  Thus, it will be redundantly retransmitted later, but
+   * that's okay.
    */
 
   /* Make sure the protocol starts off on the right foot... */
