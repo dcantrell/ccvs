@@ -46,6 +46,9 @@ This does not happen every time.  (-kingdon, Nov 96, Red Hat linux 3.0.3).
 * The -m option to "cvs add" does not work with client/server CVS.
 CVS will accept the option, but it won't actually set the
 file's description.
+(Note that it doesn't create the ,t file, and so 'cvs commit' doesn't
+try to pick up the ,t file and use its content as the argument to ci's
+"-t-<DESC>" option, probably because it doesn't have an equivalent '-t'.)
 
 
 * cvs update walks into a user's work directory if there's a directory
