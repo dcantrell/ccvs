@@ -1,3 +1,7 @@
+2000-11-15  Derek Price  <derek.price@openavenue.com>
+
+	* system.h:  Added CVS_FDOPEN to conform to CVS_FOPEN precedent
+
 2000-07-10  Larry Jones  <larry.jones@sdrc.com>
 
 	* savecwd.c: #include <sys/types.h> before <fcntl.h>.
