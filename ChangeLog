@@ -1,5 +1,7 @@
 Thu Jul 18 18:16:33 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* NEWS: Mention -k wrappers option.
+
 	* TESTS: In list of what we would like in a test framework, only
 	mention portable once, and other wording cleanups.
 
