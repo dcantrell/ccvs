@@ -1,5 +1,13 @@
 Tue Mar 25 22:21:29 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvs.texinfo (Error messages): New node.
+	(Magic branch numbers): Move from Troubleshooting to Revisions and
+	branches.  The former placement never made any sense to me.
+	(Revision numbers): Remove "Main trunk (intro)" index entry now
+	that this node is right next to the other "main trunk" index
+	entry.
+	(BUGS): Very briefly mention reporting bugs in CVS.
+
 	* cvs.texinfo (Compatibility): Add comment about "Nfoo" in CVS/Tag.
 
 Mon Mar 24 13:50:24 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
