@@ -35,7 +35,8 @@ contrib_SCRIPTS = \
 	cvs_acls \
 	cvscheck \
 	debug_check_log \
-	log log_accum \
+	log \
+	log_accum \
 	mfpipe \
 	rcs-to-cvs \
 	rcs2log \
@@ -44,7 +45,6 @@ contrib_SCRIPTS = \
 
 contrib_DATA = \
 	README \
-	cvscheck.man \
 	intro.doc
 
 contrib_MANS = \
@@ -54,28 +54,19 @@ bin_LINKS = \
 	rcs2log
 
 EXTRA_DIST = \
+	.cvsignore \
 	$(contrib_DATA) \
 	$(contrib_MANS) \
-	clmerge.pl \
-	cln_hist.pl \
-	commit_prep.pl \
 	cvs2vendor.sh \
-	cvs_acls.pl \
 	cvscheck.sh \
-	debug_check_log.sh \
-	log.pl \
-	log_accum.pl \
-	mfpipe.pl \
-	rcs-to-cvs.sh \
-	rcs2log.sh \
-	rcs2sccs.sh \
-	rcslock.pl \
-	sccs2rcs.csh \
 	cvshelp.man \
+	debug_check_log.sh \
 	descend.sh \
 	descend.man \
 	dirfns.shar \
-	.cvsignore
+	rcs-to-cvs.sh \
+	rcs2log.sh \
+	rcs2sccs.sh
 
 CLEANFILES = $(bin_SCRIPTS) $(contrib_SCRIPTS)
 
@@ -105,19 +96,7 @@ uninstall-local:
 	  rm -f $(DESTDIR)$(bindir)/`echo $$p|sed '$(transform)'`; \
 	done
 
-SUFFIXES = .pl .sh .csh
-
-.pl:
-	rm -f $@
-	sed -e 's,xPERL_PATHx,$(perl_path),' $< > $@-t
-	mv $@-t $@
-	chmod +x $@
-
-.csh:
-	rm -f $@
-	sed -e 's,xCSH_PATHx,$(csh_path),' $< > $@-t
-	mv $@-t $@
-	chmod +x $@
+SUFFIXES = .sh
 
 .sh:
 	rm -f $@

@@ -61,6 +61,7 @@ AMTAR = @AMTAR@
 AWK = @AWK@
 CC = @CC@
 CPP = @CPP@
+CSH = @CSH@
 CXX = @CXX@
 CXXCPP = @CXXCPP@
 DEPDIR = @DEPDIR@
@@ -71,16 +72,15 @@ KRB4 = @KRB4@
 LN_S = @LN_S@
 MAKEINFO = @MAKEINFO@
 PACKAGE = @PACKAGE@
+PERL = @PERL@
+PR = @PR@
 PS2PDF = @PS2PDF@
 RANLIB = @RANLIB@
 ROFF = @ROFF@
 VERSION = @VERSION@
 YACC = @YACC@
-csh_path = @csh_path@
 includeopt = @includeopt@
 install_sh = @install_sh@
-perl_path = @perl_path@
-pr_path = @pr_path@
 
 # Makefile for GNU CVS program.
 # Copyright (C) 1986, 1988-1990, 2000 Free Software Foundation, Inc.
@@ -122,16 +122,13 @@ update.h server.h client.h error.h fileattr.h edit.h watch.h
 cvs_LDADD = version.o ../lib/libcvs.a ../diff/libdiff.a ../zlib/libz.a
 cvs_EXTRA_DIST = version.c
 
-cvsbug_EXTRA_DIST = cvsbug.sh
-
 # extra clean targets
 # wish this could be distclean-hdr-local but it's not part of automake
-DISTCLEANFILES = options.h-SAVED cvsbug check.log check.plog
+DISTCLEANFILES = options.h-SAVED check.log check.plog
 
 # General
 EXTRA_DIST = \
 	$(cvs_EXTRA_DIST) \
-	$(cvsbug_EXTRA_DIST) \
 	.cvsignore \
 	ChangeLog-9194 \
 	ChangeLog-9395 \
@@ -145,7 +142,7 @@ EXTRA_DIST = \
 subdir = src
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = ../config.h options.h
-CONFIG_CLEAN_FILES = 
+CONFIG_CLEAN_FILES =  cvsbug
 PROGRAMS =  $(bin_PROGRAMS)
 
 
@@ -192,7 +189,7 @@ depcomp = $(SHELL) $(top_srcdir)/depcomp
 @AMDEP@$(DEPDIR)/status.Po $(DEPDIR)/subr.Po $(DEPDIR)/tag.Po \
 @AMDEP@$(DEPDIR)/update.Po $(DEPDIR)/vers_ts.Po $(DEPDIR)/watch.Po \
 @AMDEP@$(DEPDIR)/wrapper.Po $(DEPDIR)/zlib.Po
-DIST_COMMON =  ./stamp-h2.in ChangeLog Makefile.am Makefile.in \
+DIST_COMMON =  ./stamp-h2.in ChangeLog Makefile.am Makefile.in cvsbug.in \
 options.h.in
 
 
@@ -244,6 +241,8 @@ distclean-hdr:
 	-rm -f options.h
 
 maintainer-clean-hdr:
+cvsbug: $(top_builddir)/config.status cvsbug.in
+	cd $(top_builddir) && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= $(SHELL) ./config.status
 
 mostlyclean-binPROGRAMS:
 
@@ -516,14 +515,6 @@ installdirs mostlyclean-generic distclean-generic clean-generic \
 maintainer-clean-generic clean mostlyclean distclean maintainer-clean
 
 
-# The cvsbug executable
-# version.c is in here so we'll notice if configure was run
-cvsbug: cvsbug.sh version.c
-	sed -e 's,xLIBDIRx,$(libdir)/cvs,g' \
-	    -e "s,xVERSIONx,$(VERSION),g" $(srcdir)/cvsbug.sh > $@-t
-	mv $@-t $@
-	chmod a+x $@
-
 check-local:
 	$(SHELL) $(srcdir)/sanity.sh `pwd`/cvs
 
@@ -531,6 +522,8 @@ check-local:
 remotecheck: all
 	$(SHELL) $(srcdir)/sanity.sh -r `pwd`/cvs
 
+# version.c
+# - build this here so that we can distribute it
 # - version.c needs to be updated only once, since it depends on
 #   configure.in, not on the results of a 'configure' run.
 # - It is guaranteed (with GNU Make) that when the version in configure.in

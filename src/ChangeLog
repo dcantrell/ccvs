@@ -1,3 +1,10 @@
+2001-01-05  Derek Price  <derek.price@openavenue.com>
+
+	* src/Makefile.am (cvsbug, cvsbug_EXTRA_DIST, EXTRA_DIST): move cvsbug
+	target to configure.in - see ../ChangeLog for more
+	* src/cvsbug.in: Rename from cvsbug.sh
+	* src/cvsbug.sh: Rename to cvsbug.in
+
 2001-01-04  Larry Jones  <larry.jones@sdrc.com>
 
 	* Makefile.am (cvsbug): Explicitly list input file ($< is only

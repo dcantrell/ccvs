@@ -63,6 +63,7 @@ AMTAR = @AMTAR@
 AWK = @AWK@
 CC = @CC@
 CPP = @CPP@
+CSH = @CSH@
 CXX = @CXX@
 CXXCPP = @CXXCPP@
 DEPDIR = @DEPDIR@
@@ -73,16 +74,15 @@ KRB4 = @KRB4@
 LN_S = @LN_S@
 MAKEINFO = @MAKEINFO@
 PACKAGE = @PACKAGE@
+PERL = @PERL@
+PR = @PR@
 PS2PDF = @PS2PDF@
 RANLIB = @RANLIB@
 ROFF = @ROFF@
 VERSION = @VERSION@
 YACC = @YACC@
-csh_path = @csh_path@
 includeopt = @includeopt@
 install_sh = @install_sh@
-perl_path = @perl_path@
-pr_path = @pr_path@
 
 # *** Under Windows NT and Microsoft Visual C++, we use cvsnt.mak, not
 # *** this makefile.  However, we need this file in order for 'make
