@@ -1,3 +1,31 @@
+Tue Nov 14 12:09:11 1995  Greg A. Woods  <woods@most.weird.com>
+
+	* INSTALL: oops, missed a couple of things about "configure"
+
+	* configure: re-ran autoconf
+
+Tue Nov 14 11:06:25 1995  Greg A. Woods  <woods@most.weird.com>
+
+	* config.guess, config.sub: first time in (from autoconf-2.4)
+
+	* configure.in:
+	- updated to work with autoconf-2.4
+	- call AC_CANONICAL_HOST to get host OS type right (needs
+	config.sub and config.guess)
+	- added full support for --with-diffutils and --with-gnugrep
+	- fixed the diff search to work almost like the one for RCS-5.7
+	- fixed some quoting problems
+
+	* README: mention optional 'make check' step
+
+	* INSTALL:
+	- updated notes about working SunOS versions
+	- re-wrote notes about RCS, diffutils, etc.
+	- added notes about configuring	with GNU diffutils and GNU grep
+	- added notes about using 'make	check'
+	- changed bug reporiting instructions to mention cvsbug
+	- re-wrote notes about setting CVSROOT in shell startups
+
 Fri Nov  3 11:11:16 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* README: Fix typo in URL of molli's web site.
