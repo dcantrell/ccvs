@@ -125,9 +125,11 @@
  * and use the shell to find where "vi" actually is.  This allows sites with
  * /usr/bin/vi or /usr/ucb/vi to work equally well (assuming that your PATH
  * is reasonable).
+ *
+ * The notepad program seems to be Windows NT's bare-bones text editor.
  */
 #ifndef EDITOR_DFLT
-#define	EDITOR_DFLT	"vi"
+#define	EDITOR_DFLT	"notepad"
 #endif
 
 /*
@@ -180,10 +182,13 @@
  * As such, by default, CVS disallows changes to be committed by users
  * logged in as "root".  You can disable this option by commenting
  * out the lines below.
+ *
+ * Under Windows NT, privileges are associated with groups, not users,
+ * so the case in which someone has logged in as root does not occur.
+ * Thus, there is no need for this hack.
  */
-#ifndef CVS_BADROOT
-#define	CVS_BADROOT
-#endif
+#undef	CVS_BADROOT
+
 
 /*
  * The "cvs diff" command accepts all the single-character options that GNU
