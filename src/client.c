@@ -3017,7 +3017,7 @@ get_cvs_port_number (const cvsroot_t *root)
 # endif /* AUTH_CLIENT_SUPPORT */
 # if defined (AUTH_CLIENT_SUPPORT) || defined (HAVE_GSSAPI)
 	    return get_port_number ("CVS_CLIENT_PORT", "cvspserver",
-                                    CVS_PROXY_PORT);
+                                    CVS_AUTH_PORT);
 # endif /* defined (AUTH_CLIENT_SUPPORT) || defined (HAVE_GSSAPI) */
 # ifdef HAVE_KERBEROS
 	case kserver_method:
