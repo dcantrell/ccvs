@@ -4440,10 +4440,8 @@ without depositing a revision.
 Useful with @sc{cvs}.  Set the default keyword
 substitution to @var{subst}.  @xref{Keyword
 substitution}.  Giving an explicit @samp{-k} option to
-@code{cvs update} or @code{cvs checkout} overrides this
-default.  @code{cvs export} always uses @code{-kv},
-regardless of which keyword substitution is set with
-@code{cvs admin}.
+@code{cvs update}, @code{cvs export}, or @code{cvs
+checkout} overrides this default.
 
 @cindex Reserved checkouts
 @cindex RCS-style locking
@@ -5211,7 +5209,7 @@ $ cvs diff -u | less
 
 @itemize @bullet
 @item
-Synopsis: export [-flNn] -r rev|-D date [-d dir] module@dots{}
+Synopsis: export [-flNn] [-r rev|-D date] [-k subst] [-d dir] module@dots{}
 @item
 Requires: repository.
 @item
@@ -5226,15 +5224,17 @@ off-site.  This command requires that you specify a
 date or tag (with @samp{-D} or @samp{-r}), so that you
 can count on reproducing the source you ship to others.
 
-The keyword substitution option @samp{-kv} is always set when
-export is used.  This causes any @sc{rcs} keywords to be
+One often would like to use @samp{-kv} with @code{cvs
+export}.  This causes any @sc{rcs} keywords to be
 expanded such that an import done at some other site
-will not lose the keyword revision information.  There
-is no way to override this.  Note that this breaks the
-@code{ident} command (which is part of the @sc{rcs}
-suite---see ident(1)) which looks for @sc{rcs} keyword
-strings.  If you want to be able to use @code{ident}
-you must use @code{checkout} instead.
+will not lose the keyword revision information.  But be
+aware that doesn't handle an export containing binary
+files correctly.  Also be aware that after having used
+@samp{-kv}, one can no longer use the @code{ident}
+command (which is part of the @sc{rcs} suite---see
+ident(1)) which looks for @sc{rcs} keyword strings.  If
+you want to be able to use @code{ident} you must not
+use @samp{-kv}.
 
 @menu
 * export options::              export options
@@ -5278,6 +5278,9 @@ Create a directory called @var{dir} for the working
 files, instead of using the module name.  Unless you
 also use @samp{-N}, the paths created under @var{dir}
 will be as short as possible.
+
+@item -k @var{subst}
+Set keyword expansion mode (@pxref{Substitution modes}).
 
 @item -N
 Only useful together with @samp{-d @var{dir}}.  With this
