@@ -1,5 +1,14 @@
 2003-05-19  Derek Price  <derek@ximbiot.com>
 
+	* configure.in: Add calls to support lib/lstat.c and lib/stat.c.  Add
+	m4/Makefile to AC_OUTPUT.
+
+	* aclocal: Regenerated.
+	* configure: Ditto.
+	* config.h.in: Ditto.
+
+2003-05-19  Derek Price  <derek@ximbiot.com>
+
 	* Makefile.am (SUBDIRS): Add m4 subdir.
 	(ACLOCAL_AMFLAGS): Include m4 subdir when generating aclocal.m4.
 	* acinclude.m4: Remove this file, moving contents into two files in the
