@@ -4349,6 +4349,15 @@ error 0 %s: no such user\n", username);
 	exit (EXIT_FAILURE);
     }
 
+    /* FIXME?  We don't check for errors from initgroups, setuid, &c.
+       I think this mainly would come up if someone is trying to run
+       the server as a non-root user.  I think we should be checking for
+       errors and aborting (as with the error above from getpwnam) if
+       there is an error (presumably EPERM).  That means that pserver
+       should continue to work right if all of the "system usernames"
+       in CVSROOT/passwd match the user which the server is being run
+       as (in inetd.conf), but fail otherwise.  */
+
 #if HAVE_INITGROUPS
     initgroups (pw->pw_name, pw->pw_gid);
 #endif /* HAVE_INITGROUPS */
