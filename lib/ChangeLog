@@ -1,3 +1,10 @@
+Sun Jul  7 23:25:46 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* memmove.c: Removed.  The memove function was used by a very old
+	version of the CVS server for neferious purposes and it has been
+	long gone.
+	* Makefile.in (SOURCES): Remove memmove.c.
+
 Thu Jun  6 15:12:59 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* vasprintf.c: If STDC_HEADERS, include stdlib.h rather than
