@@ -5879,7 +5879,7 @@ See
 for more details about ISO8601 dates.
 @c Perhaps we want to also cite other sources in
 @c case that page goes away.  For example:
-@c http://www.dsi.unimi.it/Users/Students/pensa/standard/ISO8601.html
+@c http://www.saqqara.demon.co.uk/datefmt.htm
 
 In addition to the dates allowed in Internet e-mail
 itself, @sc{cvs} also allows some of the fields to be

@@ -1,5 +1,8 @@
 Thu Mar 27 09:57:05 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvs.texinfo (Common options): The ISO8601 web page we had
+	mentioned in a comment is no more.  Replace it with a new one.
+
 	* cvs.texinfo (Common options): "cvs history" also outputs dates.
 
 Wed Mar 26 10:54:21 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
