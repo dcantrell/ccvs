@@ -1,4 +1,4 @@
-Wed Jul 12 16:00:27 1995  Karl Fogel  <kfogel@floss.cyclic.com>
+Wed Jul 12 16:00:27 1995 Karl Fogel <kfogel@floss.cyclic.com>
 
         * Makefile.in (install-local): added rule for install-info, made
         `install' depend on it.
