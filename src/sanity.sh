@@ -6857,23 +6857,23 @@ done"
 "(Locally modified cleanme\.txt moved to \.#cleanme\.txt\.1\.1)
 U cleanme\.txt"
 	  # And check that the backup copy really was made.
-	  # We just `ls' to make sure it's there.  It would be
-          # preferable to diff the two files, but then sanity.sh would
-          # require a standalone `diff' command, which seems losing.
-          # Oh well.
-	  dotest clean-9 "ls .#cleanme.txt.1.1" '\.#cleanme\.txt\.1\.1'
+	  dotest clean-9 "cat .#cleanme.txt.1.1" \
+"The usual boring test text\.
+fish"
 
           # Do it all again, this time naming the file explicitly.
 	  rm .#cleanme.txt.1.1
 	  dotest clean-10 "${testcvs} -q update cleanme.txt" ''
 	  dotest clean-11 "${testcvs} -q update -C cleanme.txt" ''
-	  echo "fish" >> cleanme.txt
+	  echo "bluegill" >> cleanme.txt
 	  dotest clean-12 "${testcvs} -q update cleanme.txt" 'M cleanme\.txt'
 	  dotest clean-13 "${testcvs} -q update -C cleanme.txt" \
 "(Locally modified cleanme\.txt moved to \.#cleanme\.txt\.1\.1)
 U cleanme\.txt"
 	  # And check that the backup copy really was made.
-	  dotest clean-14 "ls .#cleanme.txt.1.1" '\.#cleanme\.txt\.1\.1'
+	  dotest clean-14 "cat .#cleanme.txt.1.1" \
+"The usual boring test text\.
+bluegill"
 
           # Done.  Clean up.
 	  cd ../..
