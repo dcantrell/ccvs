@@ -473,6 +473,9 @@ close_on_exec (fd)
 /*
  * dir = 0 : main proc writes to new proc, which writes to oldfd
  * dir = 1 : main proc reads from new proc, which reads from oldfd
+ *
+ * Returns: a file descriptor.  On failure (i.e., the exec fails),
+ * then filter_stream_through_program() complains and dies.
  */
 
 int
