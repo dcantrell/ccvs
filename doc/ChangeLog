@@ -1,3 +1,8 @@
+2004-06-10  Derek Price  <derek@ximbiot.com>
+
+	* cvs.texinfo (commit files): Remove reference to the obsolete -i
+	module option.
+
 2004-05-28  Derek Price  <derek@ximbiot.com>
 
 	* cvs.texinfo (Global options): Remove reference to global -l option.
