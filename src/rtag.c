@@ -499,7 +499,6 @@ static int
 rtag_fileproc (finfo)
     struct file_info *finfo;
 {
-    Node *p;
     RCSNode *rcsfile;
     char *version, *rev;
     int retcode = 0;

@@ -896,7 +896,9 @@ copy_a_file (data, ent_list, short_pathname, filename)
     char *filename;
 {
     char *newname;
+#ifdef USE_VMS_FILENAMES
     char *p;
+#endif
 
     read_line (&newname, 0);
 
@@ -1152,7 +1154,8 @@ update_entries (data_arg, ent_list, short_pathname, filename)
 	if (gzip_pid > 0)
 	{
 	    if (waitpid (gzip_pid, &gzip_status, 0) == -1)
-		error (1, errno, "waiting for gzip process %ld", gzip_pid);
+		error (1, errno, "waiting for gzip process %ld",
+		       (long) gzip_pid);
 	    else if (gzip_status != 0)
 		error (1, 0, "gzip process exited %d", gzip_status);
 	}
@@ -3413,7 +3416,7 @@ send_modified (file, short_pathname, vers)
 	    error (0, errno, "warning: can't close %s", short_pathname);
 
 	if (waitpid (gzip_pid, &gzip_status, 0) != gzip_pid)
-	    error (1, errno, "waiting for gzip proc %ld", gzip_pid);
+	    error (1, errno, "waiting for gzip proc %ld", (long) gzip_pid);
 	else if (gzip_status != 0)
 	    error (1, errno, "gzip exited %d", gzip_status);
 

@@ -170,7 +170,7 @@ Reader_Lock (xrepository)
 #else
 		"%s.%ld", CVSRFL,
 #endif
-		getpid ());
+		(long) getpid ());
 
     /* remember what we're locking (for lock_cleanup) */
     repository = xrepository;
@@ -311,7 +311,7 @@ write_lock (repository)
 #else
 	    "%s.%ld", CVSWFL,
 #endif
-	getpid());
+	(long) getpid());
 
 #ifdef BOGUS_UNLESS_PROVEN_OTHERWISE
     /* make sure we can write the repository */

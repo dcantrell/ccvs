@@ -1264,7 +1264,6 @@ remove_file (file, repository, tag, message, entries, rcsnode)
     char *corev;
     char *rev;
     char *prev_rev;
-    Node *p;
 
     corev = NULL;
     rev = NULL;
@@ -1557,7 +1556,6 @@ checkaddfile (file, repository, tag, options, rcsnode)
 	/* file has existed in the past.  Prepare to resurrect. */
 	char oldfile[PATH_MAX];
 	char *rev;
-	Node *p;
 	RCSNode *rcsfile;
 
 	if (tag == NULL)
@@ -1656,7 +1654,6 @@ checkaddfile (file, repository, tag, options, rcsnode)
     {
 	/* when adding with a tag, we need to stub a branch, if it
 	   doesn't already exist.  */
-	Node *p;
 	RCSNode *rcsfile;
 
 	rcsfile = RCS_parse (file, repository);

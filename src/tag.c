@@ -595,7 +595,6 @@ val_fileproc (finfo)
     struct file_info *finfo;
 {
     RCSNode *rcsdata;
-    Node *node;
     struct val_args *args = val_args_static;
     char *tag;
 
