@@ -6494,7 +6494,7 @@ $at_traceon
 
 # Set $nsrname to $username normalized to account for the fact that most CVS
 # output is optimized to print $username in 8 characters.
-nsrname=`echo "$username" |sed 's/^\(.\{1,8\}\).*$/\1/'`
+nsrname=`echo "$username        " |sed 's/^\(........\).*$/\1/'`
 
 # Now for the actual test
 $at_traceoff
@@ -6524,7 +6524,7 @@ $at_traceon
 
 
 # Normalize the output of the previous command
-sed -e "s/($nsrname   [0-9][0-9]-[A-Z][a-z][a-z]-[0-9][0-9])/(USERNAME DATE)/" \
+sed -e "s/($nsrname [0-9][0-9]-[A-Z][a-z][a-z]-[0-9][0-9])/(USERNAME DATE)/" \
     <stdout >nstdout
 rm stdout
 
@@ -11893,7 +11893,7 @@ $at_traceon
 
 # Set $nsrname to $username normalized to account for the fact that most CVS
 # output is optimized to print $username in 8 characters.
-nsrname=`echo "$username" |sed 's/^\(.\{1,8\}\).*$/\1/'`
+nsrname=`echo "$username        " |sed 's/^\(........\).*$/\1/'`
 
 # Now for the actual test
 $at_traceoff
@@ -11923,7 +11923,7 @@ $at_traceon
 
 
 # Normalize the output of the previous command
-sed -e "s/($nsrname   [0-9][0-9]-[A-Z][a-z][a-z]-[0-9][0-9])/(USERNAME DATE)/" \
+sed -e "s/($nsrname [0-9][0-9]-[A-Z][a-z][a-z]-[0-9][0-9])/(USERNAME DATE)/" \
     <stdout >nstdout
 rm stdout
 
@@ -17515,7 +17515,7 @@ $at_traceon
 
 # Set $nsrname to $username normalized to account for the fact that most CVS
 # output is optimized to print $username in 8 characters.
-nsrname=`echo "$username" |sed 's/^\(.\{1,8\}\).*$/\1/'`
+nsrname=`echo "$username        " |sed 's/^\(........\).*$/\1/'`
 
 # Now for the actual test
 $at_traceoff
@@ -17545,7 +17545,7 @@ $at_traceon
 
 
 # Normalize the output of the previous command
-sed -e "s/($nsrname   [0-9][0-9]-[A-Z][a-z][a-z]-[0-9][0-9])/(USERNAME DATE)/" \
+sed -e "s/($nsrname [0-9][0-9]-[A-Z][a-z][a-z]-[0-9][0-9])/(USERNAME DATE)/" \
     <stdout >nstdout
 rm stdout
 
@@ -23373,7 +23373,7 @@ $at_traceon
 
 # Set $nsrname to $username normalized to account for the fact that most CVS
 # output is optimized to print $username in 8 characters.
-nsrname=`echo "$username" |sed 's/^\(.\{1,8\}\).*$/\1/'`
+nsrname=`echo "$username        " |sed 's/^\(........\).*$/\1/'`
 
 # Now for the actual test
 $at_traceoff
@@ -23403,7 +23403,7 @@ $at_traceon
 
 
 # Normalize the output of the previous command
-sed -e "s/($nsrname   [0-9][0-9]-[A-Z][a-z][a-z]-[0-9][0-9])/(USERNAME DATE)/" \
+sed -e "s/($nsrname [0-9][0-9]-[A-Z][a-z][a-z]-[0-9][0-9])/(USERNAME DATE)/" \
     <stdout >nstdout
 rm stdout
 

@@ -194,7 +194,7 @@ AT_CHECK([$as_cvs_have_username || exit 77])
 
 # Set $nsrname to $username normalized to account for the fact that most CVS
 # output is optimized to print $username in 8 characters.
-nsrname=`echo "$username" |sed 's/^\(.\{1,8\}\).*$/\1/'`
+nsrname=`echo "$username        " |sed 's/^\(........\).*$/\1/'`
 
 # Now for the actual test
 AT_CHECK([$1],[$2],[stdout],[stderr],[$5])
@@ -202,7 +202,7 @@ AT_CHECK([$1],[$2],[stdout],[stderr],[$5])
 # Normalize the output of the previous command
 dnl The sed commands below need to be quoted twice so that all the autotest
 dnl quotes make it through to the sed commands.
-[sed -e "s/($nsrname   [0-9][0-9]-[A-Z][a-z][a-z]-[0-9][0-9])/(USERNAME DATE)/" \
+[sed -e "s/($nsrname [0-9][0-9]-[A-Z][a-z][a-z]-[0-9][0-9])/(USERNAME DATE)/" \
     <stdout >nstdout]
 rm stdout
 
