@@ -18229,12 +18229,12 @@ Annotations for $file
 #!/bin/sh
 HOME=$HOME
 export HOME
-exec $CVS_SERVER "\$@"
+exec $CVS_SERVER_save "\$@"
 EOF
             chmod a+x $TESTDIR/cvs-setHome
 
 	    # Note that we set CVS_SERVER at the beginning.
-	    CVS_SERVER="$TESTDIR/cvs-setHome"
+	    CVS_SERVER=$TESTDIR/cvs-setHome; export CVS_SERVER
 
 	    if test -n "$remotehost"; then
 		CREREPOS_ROOT=:ext:$remotehost${TESTDIR}/crerepos
