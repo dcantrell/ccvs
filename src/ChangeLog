@@ -1,3 +1,9 @@
+1998-03-03  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* sanity.sh (conflicts3): New tests conflicts3-14a,
+	conflicts3-14b, and conflicts3-21, conflicts3-22 test that we can
+	skip over a working directory with a CVSADM directory missing.
+
 1998-02-26  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* sanity.sh (conflicts3): Tests conflicts3-16 and conflicts3-20

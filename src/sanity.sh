@@ -5240,6 +5240,18 @@ ${PROG} [a-z]*: warning: file2 is not (any longer) pertinent"
 	  mkdir sdir
 	  dotest conflicts3-14 "${testcvs} add sdir" \
 "Directory ${TESTDIR}/cvsroot/first-dir/sdir added to the repository"
+	  touch sdir/sfile
+	  dotest conflicts3-14a "${testcvs} add sdir/sfile" \
+"${PROG} [a-z]*: scheduling file .sdir/sfile. for addition
+${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
+	  dotest conflicts3-14b "${testcvs} -q ci -m add" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/sdir/sfile,v
+done
+Checking in sdir/sfile;
+${TESTDIR}/cvsroot/first-dir/sdir/sfile,v  <--  sfile
+initial revision: 1\.1
+done"
+
 	  cd ../../2/first-dir
 
 	  # Create a CVS directory without the proper administrative
@@ -5288,6 +5300,10 @@ ${PROG} [a-z]*: ignoring first-dir/sdir (CVS/Entries missing)"
 "${PROG} [a-z]*: ignoring first-dir/newdir (CVS/Entries missing)"
 	  cd first-dir
 	  rm -r newdir
+
+	  dotest conflicts3-21 "${testcvs} -q update -d sdir" "U sdir/sfile"
+	  rm -r sdir/CVS
+	  dotest conflicts3-22 "${testcvs} -q update" "? sdir"
 
 	  cd ../..
 
