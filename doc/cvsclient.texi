@@ -606,6 +606,99 @@ Each @code{Directory} request specifies a brand-new
 @var{local-directory} and @var{repository} are never relative to paths
 specified in any previous @code{Directory} request.
 
+Here's a more complex example, in which we request an update of a
+working directory which has been checked out from multiple places in the
+repository.
+
+@example
+C: Argument dir1
+C: Directory dir1
+C: /home/foo/repos/mod1
+. . .
+C: Argument dir2
+C: Directory dir2
+C: /home/foo/repos/mod2
+. . .
+C: Argument dir3
+C: Directory dir3/subdir3
+C: /home/foo/repos/mod3
+. . .
+C: update
+@end example
+
+While directories @code{dir1} and @code{dir2} will be handled in similar
+fashion to the other examples given above, @code{dir3} is slightly
+different from the server's standpoint.  Notice that module @code{mod3}
+is actually checked out into @code{dir3/subdir3}, meaning that directory
+@code{dir3} is either empty or does not contain data checked out from
+this repository.  
+
+The above example will work correctly in @sc{cvs} 1.10.1 and later.  The
+server will descend the tree starting from all directories mentioned in
+@code{Argument} commands and update those directories specifically
+mentioned in @code{Directory} commands.
+
+Previous versions of @sc{cvs} (1.10 and earlier) do not behave the same
+way.  While the descent of the tree begins at all directories mentioned
+in @code{Argument} commands, descent into subdirectories only occurs if
+a directory has been mentioned in a @code{Directory} command.
+Therefore, the above example would succeed in updating @code{dir1} and
+@code{dir2}, but would skip @code{dir3} because that directory was not
+specifically mentioned in a @code{Directory} command.  A functional
+version of the above that would run on a 1.10 or earlier server is as
+follows:
+
+@example
+C: Argument dir1
+C: Directory dir1
+C: /home/foo/repos/mod1
+. . .
+C: Argument dir2
+C: Directory dir2
+C: /home/foo/repos/mod2
+. . .
+C: Argument dir3
+C: Directory dir3
+C: /home/foo/repos/.
+. . .
+C: Directory dir3/subdir3
+C: /home/foo/repos/mod3
+. . .
+C: update
+@end example
+
+Note the extra @code{Directory dir3} command.  It might be better to use
+@code{Emptydir} as the repository for the @code{dir3} directory, but the
+above will certainly work.
+
+One more peculiarity of the 1.10 and earlier protocol is the ordering of
+@code{Directory} arguments.  In order for a subdirectory to be
+registered correctly for descent by the recursion processor, its parent
+must be sent first.  For example, the following would not work to update
+@code{dir3/subdir3}:
+
+@example
+. . .
+C: Argument dir3
+C: Directory dir3/subdir3
+C: /home/foo/repos/mod3
+. . .
+C: Directory dir3
+C: /home/foo/repos/.
+. . .
+C: update
+@end example
+
+The implementation of the server in 1.10 and earlier writes the
+administration files for a given directory at the time of the
+@code{Directory} command.  It also tries to register the directory with
+its parent to mark it for recursion.  In the above example, at the time
+@code{dir3/subdir3} is created, the physical directory for @code{dir3}
+will be created on disk, but the administration files will not have been
+created.  Therefore, when the server tries to register
+@code{dir3/subdir3} for recursion, the operation will silently fail
+because the administration files do not yet exist for @code{dir3}.
+
 @item Max-dotdot @var{level} \n
 Response expected: no.
 Tell the server that @var{level} levels of directories above the
