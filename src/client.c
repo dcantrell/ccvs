@@ -4988,6 +4988,7 @@ struct send_data
     int build_dirs;
     int force;
     int no_contents;
+    int backup_modified;
 };
 
 static int send_fileproc PROTO ((void *callerdat, struct file_info *finfo));
@@ -5109,6 +5110,18 @@ warning: ignoring -k options due to server limitations");
 	}
 	else
 	    send_modified (filename, finfo->fullname, vers);
+
+        if (args->backup_modified)
+        {
+            char *bakname;
+            bakname = backup_file (filename, vers->vn_user);
+            /* This behavior is sufficiently unexpected to
+               justify overinformativeness, I think. */
+            if (! really_quiet)
+                printf ("(Locally modified %s moved to %s)\n",
+                        filename, bakname);
+            free (bakname);
+        }
     }
     else
     {
@@ -5450,6 +5463,7 @@ send_files (argc, argv, local, aflag, flags)
     args.build_dirs = flags & SEND_BUILD_DIRS;
     args.force = flags & SEND_FORCE;
     args.no_contents = flags & SEND_NO_CONTENTS;
+    args.backup_modified = flags & BACKUP_MODIFIED_FILES;
     err = start_recursion
 	(send_fileproc, send_filesdoneproc,
 	 send_dirent_proc, (DIRLEAVEPROC)NULL, (void *) &args,

@@ -600,6 +600,7 @@ if test x"$*" = x; then
 	tests="${tests} import-after-initial"
 	tests="${tests} join join2 join3 join-readonly-conflict"
 	tests="${tests} new newb conflicts conflicts2 conflicts3"
+	tests="${tests} clean"
 	# Checking out various places (modules, checkout -d, &c)
 	tests="${tests} modules modules2 modules3 modules4"
 	tests="${tests} mkmodules-temp-file-removal"
@@ -6822,6 +6823,60 @@ ${PROG} update: cannot open CVS/Entries for reading: No such file or directory"
 
 	  rm -r 1 2
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  ;;
+
+	clean)
+	  # Test update -C (overwrite local mods w/ repository copies)
+	  mkdir 1; cd 1
+	  dotest clean-1 "${testcvs} -q co -l ." ''
+	  mkdir first-dir
+	  dotest clean-2 "${testcvs} add first-dir" \
+"Directory ${TESTDIR}/cvsroot/first-dir added to the repository"
+	  cd first-dir
+	  echo "The usual boring test text." > cleanme.txt
+          dotest clean-3 "${testcvs} add cleanme.txt" \
+"${PROG} [a-z]*: scheduling file .cleanme.txt. for addition
+${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
+	  dotest clean-4 "${testcvs} -q ci -m clean-3" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/cleanme.txt,v
+done
+Checking in cleanme.txt;
+${TESTDIR}/cvsroot/first-dir/cleanme.txt,v  <--  cleanme.txt
+initial revision: 1\.1
+done"
+          # Okay, preparation is done, now test.
+          # Check that updating an unmodified copy works.
+	  dotest clean-5 "${testcvs} -q update" ''
+          # Check that updating -C an unmodified copy works.
+	  dotest clean-6 "${testcvs} -q update -C" ''
+          # Check that updating a modified copy works.
+	  echo "fish" >> cleanme.txt
+	  dotest clean-7 "${testcvs} -q update" 'M cleanme.txt'
+          # Check that updating -C a modified copy works.
+	  dotest clean-8 "${testcvs} -q update -C" \
+'.*(Locally modified cleanme.txt moved to .#cleanme.txt.1.1).*'
+	  # And check that the backup copy really was made.
+	  # We just `ls' to make sure it's there.  It would be
+          # preferable to diff the two files, but then sanity.sh would
+          # require a standalone `diff' command, which seems losing.
+          # Oh well.
+	  dotest clean-9 "ls .#cleanme.txt.1.1" '.#cleanme.txt.1.1'
+
+          # Do it all again, this time naming the file explicitly.
+	  rm .#cleanme.txt.1.1
+	  dotest clean-10 "${testcvs} -q update cleanme.txt" ''
+	  dotest clean-11 "${testcvs} -q update -C cleanme.txt" ''
+	  echo "fish" >> cleanme.txt
+	  dotest clean-12 "${testcvs} -q update cleanme.txt" 'M cleanme.txt'
+	  dotest clean-13 "${testcvs} -q update -C cleanme.txt" \
+'.*(Locally modified cleanme.txt moved to .#cleanme.txt.1.1).*'
+	  # And check that the backup copy really was made.
+	  dotest clean-14 "ls .#cleanme.txt.1.1" '.#cleanme.txt.1.1'
+
+          # Done.  Clean up.
+	  cd ../..
+          rm -rf 1
+	  rm -rf ${TESTDIR}/cvsroot/first-dir
 	  ;;
 
 	modules)

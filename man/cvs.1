@@ -1682,7 +1682,7 @@ executes recursively through subdirectories; you can prevent this by
 using the standard \fB\-l\fP option, or specify the recursion
 explicitly by using \fB\-R\fP.
 .TP
-\fBupdate\fP [\fB\-Adf\|lPpQqR\fP] [\fB\-d\fP] [\fB\-r\fP \fItag\fP|\fB\-D\fP \fIdate\fP] \fIfiles\|.\|.\|.\fP
+\fBupdate\fP [\fB\-ACdf\|lPpQqR\fP] [\fB\-d\fP] [\fB\-r\fP \fItag\fP|\fB\-D\fP \fIdate\fP] \fIfiles\|.\|.\|.\fP
 .I Requires:
 repository, working directory.
 .br
@@ -1838,6 +1838,12 @@ described in the SEE ALSO section of this manpage).
 Use
 .` "\-I !"
 to avoid ignoring any files at all.
+.SP
+Use the
+.` "\-C"
+option to overwrite locally modified files with clean copies from
+the repository (the modified file is saved in
+`\fB.#\fP\fIfile\fP\fB.\fP\fIrevision\fP', however).
 .SP
 The standard \fBcvs\fP command options \fB\-f\fP, \fB\-k\fP,
 \fB\-l\fP, \fB\-P\fP, \fB\-p\fP, and \fB\-r\fP

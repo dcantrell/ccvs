@@ -1,3 +1,9 @@
+2000-01-02  John P Cavanaugh <cavanaug@sr.hp.com>
+
+	* cvs.texinfo: document new -C option to update, now that it works
+	both remotely and locally.
+	(Re-applied by Karl Fogel <kfogel@red-bean.com>.)
+
 1999-12-11  Karl Fogel  <kfogel@red-bean.com>
 
 	* Revert previous change -- it doesn't work remotely yet.
