@@ -1,5 +1,8 @@
 Tue Sep 10 10:36:00 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvs.texinfo (Binary files): Add comment about further issues
+	with recovering from failure to use -kb.
+
 	* cvs.texinfo (Conflicts example): Describe the "feature" by which
 	CVS won't check in files with conflicts.
 	(File status): Expand and revise to document all the possible

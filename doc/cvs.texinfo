@@ -4252,6 +4252,13 @@ cope with line endings (that is, you are using a
 @sc{cvs} client on a non-unix system), then you need to
 check in a new copy of the file, as shown by the
 @code{cvs commit} command above.
+@c FIXME: should also describe what the *other users*
+@c need to do, if they have checked out copies which
+@c have been corrupted by lack of -kb.  I think maybe
+@c "cvs update -kb" or "cvs
+@c update -A" would suffice, although the user who
+@c reported this suggested removing the file, manually
+@c removing it from CVS/Entries, and then "cvs update"
 
 However, in using @code{cvs admin -k} to change the
 keyword expansion, be aware that the keyword expansion
