@@ -1,5 +1,7 @@
 Tue Jul  9 14:37:41 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* PROJECTS: Refer to comment in rcscmds.c regarding RCS library.
+
 	* HACKING: Expand comments on portability.
 
 Sun Jul  7 23:21:02 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
