@@ -514,7 +514,8 @@ update_rcs_file (message, vfile, vtag, targc, targv, inattic)
 	 * This is to try to cut down the number of "C" conflict messages for
 	 * locally modified import source files.
 	 */
-	retcode = RCS_checkout (vers->srcfile, NULL, vers->vn_rcs,
+	retcode = RCS_checkout (vers->srcfile, (char *) NULL, vers->vn_rcs,
+				(char *) NULL,
 #ifdef HAVE_RCS5
 				"-ko",
 #else

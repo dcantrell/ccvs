@@ -2091,22 +2091,25 @@ RCS_getexpand (rcs)
 
 /* Check out a revision from RCS.  This function optimizes by reading
    the head version directly if it is easy.  Check out the revision
-   into WORKFILE, or to standard output if WORKFILE is NULL.  TAG is
-   the tag to check out, or NULL if one should check out the head of
-   the default branch.  OPTIONS is a string such as -kb or -kkv, for
-   keyword expansion options, or NULL if there are none.  If WORKFILE
-   is NULL, run regardless of noexec; if non-NULL, noexec inhibits
-   execution.  SOUT is what to do with standard output (typically
-   RUN_TTY).  */
+   into WORKFILE, or to standard output if WORKFILE is NULL.  REV is
+   the numeric revision to check out; it may be NULL, which means to
+   check out the head of the default branch.  If NAMETAG is not NULL,
+   it is the tag that should be used when expanding the RCS Name
+   keyword.  OPTIONS is a string such as -kb or -kkv, for keyword
+   expansion options, or NULL if there are none.  If WORKFILE is NULL,
+   run regardless of noexec; if non-NULL, noexec inhibits execution.
+   SOUT is what to do with standard output (typically RUN_TTY).  */
 
 int
-RCS_checkout (rcs, workfile, tag, options, sout)
+RCS_checkout (rcs, workfile, rev, nametag, options, sout)
      RCSNode *rcs;
      char *workfile;
-     char *tag;
+     char *rev;
+     char *nametag;
      char *options;
      char *sout;
 {
+    int free_rev = 0;
     FILE *fp;
     struct stat sb;
     char *key;
@@ -2114,6 +2117,7 @@ RCS_checkout (rcs, workfile, tag, options, sout)
     size_t len;
     char *ouroptions;
     int keywords;
+    int ret;
 
     if (trace)
     {
@@ -2124,19 +2128,31 @@ RCS_checkout (rcs, workfile, tag, options, sout)
 			"",
 #endif
 			rcs->path,
-			tag != NULL ? tag : "",
+			rev != NULL ? rev : "",
 			options != NULL ? options : "",
 			(workfile != NULL
 			 ? workfile
 			 : (sout != RUN_TTY ? sout : "(stdout)")));
     }
 
+    assert (rev == NULL || isdigit (*rev));
+
     if (noexec && workfile != NULL)
 	return 0;
 
     assert (sout == RUN_TTY || workfile == NULL);
 
-    if (tag == NULL || strcmp (tag, rcs->head) == 0)
+    /* Some callers, such as Checkin or remove_file, will pass us a
+       branch.  */
+    if (rev != NULL && (numdots (rev) & 1) == 0)
+    {
+	rev = RCS_getbranch (rcs, rev, 1);
+	if (rev == NULL)
+	    error (1, 0, "internal error: bad branch tag in checkout");
+	free_rev = 1;
+    }
+
+    if (rev == NULL || strcmp (rev, rcs->head) == 0)
     {
 	int gothead;
 
@@ -2173,6 +2189,8 @@ RCS_checkout (rcs, workfile, tag, options, sout)
 	if (! gothead)
 	{
 	    error (0, 0, "internal error: cannot find head text");
+	    if (free_rev)
+		free (rev);
 	    return 1;
 	}
 
@@ -2186,20 +2204,10 @@ RCS_checkout (rcs, workfile, tag, options, sout)
     {
 	/* It isn't the head revision of the trunk.  We'll need to
 	   walk through the deltas.  */
-	/* Numeric version of TAG.  (Should we be having the caller
-	   pass us this in addition to TAG which is often symbolic for
-	   the Name keyword?)  */
-	char *num;
 
 	fp = NULL;
 	if (rcs->flags & PARTIAL)
 	    RCS_reparsercsfile (rcs, 0, &fp);
-	num = RCS_getversion (rcs, tag, NULL, 1, (int *) NULL);
-	if (num == NULL)
-	{
-	    error (0, 0, "internal error: cannot find revision");
-	    return 1;
-	}
 
 	if (fp == NULL)
 	{
@@ -2214,8 +2222,7 @@ RCS_checkout (rcs, workfile, tag, options, sout)
 		error (1, errno, "cannot fstat %s", rcs->path);
 	}
 
-	RCS_deltas (rcs, fp, num, RCS_FETCH, &value, &len);
-	free (num);
+	RCS_deltas (rcs, fp, rev, RCS_FETCH, &value, &len);
     }
 
     /* I'm not completely sure that checking rcs->expand is necessary
@@ -2310,12 +2317,35 @@ RCS_checkout (rcs, workfile, tag, options, sout)
 		error (1, errno, "cannot close %s", sout);
 	}
 
+	if (free_rev)
+	    free (rev);
+
 	return 0;
     }
 
     /* We were not able to optimize retrieving this revision.  */
 
-    return RCS_exec_checkout (rcs->path, workfile, tag, options, sout);
+#if 0
+    /* A bit of debugging code to make sure that NAMETAG corresponds
+       to REV.  */
+    if (nametag != NULL && strcmp (nametag, rev) != 0)
+      {
+	char *numtag;
+
+	numtag = translate_symtag (rcs, nametag);
+	assert (rev != NULL && numtag != NULL && strcmp (numtag, rev) == 0);
+	free (numtag);
+      }
+#endif
+
+    ret = RCS_exec_checkout (rcs->path, workfile,
+			     nametag != NULL ? nametag : rev,
+			     options, sout);
+
+    if (free_rev)
+	free (rev);
+
+    return ret;
 }
 
 /* For RCS file RCS, make symbolic tag TAG point to revision REV.

@@ -84,8 +84,8 @@ Checkin (type, finfo, rcs, rev, tag, options, message)
 	    finfo->rcs = RCS_parse (finfo->file, finfo->repository);
 
 	    /* FIXME: should be checking for errors.  */
-	    (void) RCS_checkout (finfo->rcs, finfo->file, rev, options,
-				 RUN_TTY);
+	    (void) RCS_checkout (finfo->rcs, finfo->file, rev,
+				 (char *) NULL, options, RUN_TTY);
 
 	    xchmod (finfo->file, 1);
 	    if (xcmp (finfo->file, fname) == 0)
