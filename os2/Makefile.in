@@ -265,7 +265,8 @@ OBJECTS = ${COMMON_OBJECTS} ${LIB_OBJECTS} ${OS2_OBJECTS} ${ZLIB_OBJECTS}
 DISTFILES = ${OS2_HEADERS} ${OS2_SOURCES} \
   ${srcdir}${SL}README ${srcdir}${SL}ChangeLog \
   ${srcdir}${SL}Makefile.in ${srcdir}${SL}.cvsignore \
-  ${srcdir}${SL}test-makefile Makefile
+  ${srcdir}${SL}test-makefile Makefile ${srcdir}/os2inc.h \
+  ${srcdir}/watcom.mak
 
 all:
 

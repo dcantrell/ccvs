@@ -1,3 +1,9 @@
+Wed Jan 15 23:56:12 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* watcom.mak (OS2_OBJECTS): Remove strippath.
+
+	* Makefile.in (DISTFILES): Add os2inc.h and watcom.mak.
+
 Thu Jan  2 13:30:56 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* filesubr.c, pwd.c, pwd.h, run.c, stripslash.c:
