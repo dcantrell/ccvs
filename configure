@@ -15634,7 +15634,7 @@ if test "${ccvs_cv_unique_int_type_char+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
 else
   if set |grep ^ccvs_cv_unique_int_type_ \
-			|grep -w $ac_cv_sizeof_char >/dev/null ; then
+			|grep "($ac_cv_sizeof_char)" >/dev/null ; then
 			ccvs_cv_unique_int_type_char=no
 		else
 			ccvs_cv_unique_int_type_char=yes\($ac_cv_sizeof_char\)
@@ -16069,7 +16069,7 @@ if test "${ccvs_cv_unique_int_type_short+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
 else
   if set |grep ^ccvs_cv_unique_int_type_ \
-			|grep -w $ac_cv_sizeof_short >/dev/null ; then
+			|grep "($ac_cv_sizeof_short)" >/dev/null ; then
 			ccvs_cv_unique_int_type_short=no
 		else
 			ccvs_cv_unique_int_type_short=yes\($ac_cv_sizeof_short\)
@@ -16504,7 +16504,7 @@ if test "${ccvs_cv_unique_int_type_int+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
 else
   if set |grep ^ccvs_cv_unique_int_type_ \
-			|grep -w $ac_cv_sizeof_int >/dev/null ; then
+			|grep "($ac_cv_sizeof_int)" >/dev/null ; then
 			ccvs_cv_unique_int_type_int=no
 		else
 			ccvs_cv_unique_int_type_int=yes\($ac_cv_sizeof_int\)
@@ -16939,7 +16939,7 @@ if test "${ccvs_cv_unique_int_type_long+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
 else
   if set |grep ^ccvs_cv_unique_int_type_ \
-			|grep -w $ac_cv_sizeof_long >/dev/null ; then
+			|grep "($ac_cv_sizeof_long)" >/dev/null ; then
 			ccvs_cv_unique_int_type_long=no
 		else
 			ccvs_cv_unique_int_type_long=yes\($ac_cv_sizeof_long\)
@@ -17375,7 +17375,7 @@ if test "${ccvs_cv_unique_int_type_long_long+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
 else
   if set |grep ^ccvs_cv_unique_int_type_ \
-				|grep -w $ac_cv_sizeof_long_long >/dev/null ; then
+				|grep "($ac_cv_sizeof_long_long)" >/dev/null ; then
 				ccvs_cv_unique_int_type_long_long=no
 			else
 				ccvs_cv_unique_int_type_long_long=yes\($ac_cv_sizeof_long_long\)
@@ -17811,7 +17811,7 @@ if test "${ccvs_cv_unique_int_type_size_t+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
 else
   if set |grep ^ccvs_cv_unique_int_type_ \
-			|grep -w $ac_cv_sizeof_size_t >/dev/null ; then
+			|grep "($ac_cv_sizeof_size_t)" >/dev/null ; then
 			ccvs_cv_unique_int_type_size_t=no
 		else
 			ccvs_cv_unique_int_type_size_t=yes\($ac_cv_sizeof_size_t\)
@@ -18246,7 +18246,7 @@ if test "${ccvs_cv_unique_int_type_ptrdiff_t+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
 else
   if set |grep ^ccvs_cv_unique_int_type_ \
-			|grep -w $ac_cv_sizeof_ptrdiff_t >/dev/null ; then
+			|grep "($ac_cv_sizeof_ptrdiff_t)" >/dev/null ; then
 			ccvs_cv_unique_int_type_ptrdiff_t=no
 		else
 			ccvs_cv_unique_int_type_ptrdiff_t=yes\($ac_cv_sizeof_ptrdiff_t\)
@@ -18703,7 +18703,7 @@ if test "${ccvs_cv_unique_int_type_wint_t+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
 else
   if set |grep ^ccvs_cv_unique_int_type_ \
-				|grep -w $ac_cv_sizeof_wint_t >/dev/null ; then
+				|grep "($ac_cv_sizeof_wint_t)" >/dev/null ; then
 				ccvs_cv_unique_int_type_wint_t=no
 			else
 				ccvs_cv_unique_int_type_wint_t=yes\($ac_cv_sizeof_wint_t\)
@@ -19203,7 +19203,7 @@ if test "${ccvs_cv_unique_int_type_intmax_t+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
 else
   if set |grep ^ccvs_cv_unique_int_type_ \
-				|grep -w $ac_cv_sizeof_intmax_t >/dev/null ; then
+				|grep "($ac_cv_sizeof_intmax_t)" >/dev/null ; then
 				ccvs_cv_unique_int_type_intmax_t=no
 			else
 				ccvs_cv_unique_int_type_intmax_t=yes\($ac_cv_sizeof_intmax_t\)
@@ -19640,7 +19640,7 @@ if test "${ccvs_cv_unique_float_type_float+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
 else
   if set |grep ^ccvs_cv_unique_float_type_ \
-			|grep -w $ac_cv_sizeof_float >/dev/null ; then
+			|grep "($ac_cv_sizeof_float)" >/dev/null ; then
 			ccvs_cv_unique_float_type_float=no
 		else
 			ccvs_cv_unique_float_type_float=yes\($ac_cv_sizeof_float\)
@@ -20075,7 +20075,7 @@ if test "${ccvs_cv_unique_float_type_double+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
 else
   if set |grep ^ccvs_cv_unique_float_type_ \
-			|grep -w $ac_cv_sizeof_double >/dev/null ; then
+			|grep "($ac_cv_sizeof_double)" >/dev/null ; then
 			ccvs_cv_unique_float_type_double=no
 		else
 			ccvs_cv_unique_float_type_double=yes\($ac_cv_sizeof_double\)
@@ -20511,7 +20511,7 @@ if test "${ccvs_cv_unique_float_type_long_double+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
 else
   if set |grep ^ccvs_cv_unique_float_type_ \
-				|grep -w $ac_cv_sizeof_long_double >/dev/null ; then
+				|grep "($ac_cv_sizeof_long_double)" >/dev/null ; then
 				ccvs_cv_unique_float_type_long_double=no
 			else
 				ccvs_cv_unique_float_type_long_double=yes\($ac_cv_sizeof_long_double\)

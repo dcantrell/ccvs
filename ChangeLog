@@ -1,3 +1,8 @@
+2004-02-20  Larry Jones  <lawrence.jones@ugsplm.com>
+
+	* configure.in: Don't use grep -w, it's not portable.
+	* configure: Regenerated.
+
 2004-02-19  Larry Jones  <lawrence.jones@ugsplm.com>
 
 	* configure.in: Move the wint_t size check after all the base type
