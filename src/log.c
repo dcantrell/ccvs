@@ -84,6 +84,9 @@ struct log_data
     /* Nonzero if the -b option was seen, meaning that only revisions
        on the default branch should be printed.  */
     int default_branch;
+    /* Nonzero if the -S option was seen, meaning that the header/name
+       should be suppressed if no revisions are selected.  */
+    int sup_header;
     /* If not NULL, the value given for the -r option, which lists
        sets of revisions to be printed.  */
     struct option_revlist *revlist;
@@ -150,6 +153,7 @@ static const char *const log_usage[] =
     "\t-h\tOnly print header.\n",
     "\t-t\tOnly print header and descriptive text.\n",
     "\t-N\tDo not list tags.\n",
+    "\t-S\tDo not print name/header if no revisions selected.\n",
     "\t-b\tOnly list revisions on the default branch.\n",
     "\t-r[revisions]\tA comma-separated list of revisions to print:\n",
     "\t   rev1:rev2   Between rev1 and rev2, including rev1 and rev2.\n",
@@ -229,7 +233,7 @@ cvslog (argc, argv)
     prl = &log_data.revlist;
 
     optind = 0;
-    while ((c = getopt (argc, argv, "+bd:hlNRr::s:tw::")) != -1)
+    while ((c = getopt (argc, argv, "+bd:hlNSRr::s:tw::")) != -1)
     {
 	switch (c)
 	{
@@ -247,6 +251,9 @@ cvslog (argc, argv)
 		break;
 	    case 'N':
 		log_data.notags = 1;
+		break;
+	    case 'S':
+		log_data.sup_header = 1;
 		break;
 	    case 'R':
 		log_data.nameonly = 1;
@@ -337,6 +344,8 @@ cvslog (argc, argv)
 	    send_arg("-l");
 	if (log_data.notags)
 	    send_arg("-N");
+	if (log_data.sup_header)
+	    send_arg("-S");
 	if (log_data.nameonly)
 	    send_arg("-R");
 	if (log_data.long_header)
@@ -783,6 +792,7 @@ log_fileproc (callerdat, finfo)
 {
     struct log_data *log_data = (struct log_data *) callerdat;
     Node *p;
+    int selrev = -1;
     RCSNode *rcsfile;
     char buf[50];
     struct revlist *revlist;
@@ -812,20 +822,44 @@ log_fileproc (callerdat, finfo)
 	return (1);
     }
 
+    if (log_data->sup_header || !log_data->nameonly)
+    {
+
+	/* We will need all the information in the RCS file.  */
+	RCS_fully_parse (rcsfile);
+
+	/* Turn any symbolic revisions in the revision list into numeric
+	   revisions.  */
+	revlist = log_expand_revlist (rcsfile, log_data->revlist,
+				      log_data->default_branch);
+	if (log_data->sup_header || (!log_data->header && !log_data->long_header))
+	{
+	    log_data_and_rcs.log_data = log_data;
+	    log_data_and_rcs.revlist = revlist;
+	    log_data_and_rcs.rcs = rcsfile;
+
+	    /* If any single dates were specified, we need to identify the
+	       revisions they select.  Each one selects the single
+	       revision, which is otherwise selected, of that date or
+	       earlier.  The log_fix_singledate routine will fill in the
+	       start date for each specific revision.  */
+	    if (log_data->singledatelist != NULL)
+		walklist (rcsfile->versions, log_fix_singledate,
+			  (void *) &log_data_and_rcs);
+
+	    selrev = walklist (rcsfile->versions, log_count_print,
+			       (void *) &log_data_and_rcs);
+	    if (log_data->sup_header && selrev == 0) return 0;
+	}
+
+    }
+
     if (log_data->nameonly)
     {
 	cvs_output (rcsfile->path, 0);
 	cvs_output ("\n", 1);
 	return 0;
     }
-
-    /* We will need all the information in the RCS file.  */
-    RCS_fully_parse (rcsfile);
-
-    /* Turn any symbolic revisions in the revision list into numeric
-       revisions.  */
-    revlist = log_expand_revlist (rcsfile, log_data->revlist,
-				  log_data->default_branch);
 
     /* The output here is intended to be exactly compatible with the
        output of rlog.  I'm not sure whether this code should be here
@@ -908,25 +942,10 @@ log_fileproc (callerdat, finfo)
     sprintf (buf, "%d", walklist (rcsfile->versions, log_count, NULL));
     cvs_output (buf, 0);
 
-    if (! log_data->header && ! log_data->long_header)
+    if (selrev >= 0)
     {
 	cvs_output (";\tselected revisions: ", 0);
-
-	log_data_and_rcs.log_data = log_data;
-	log_data_and_rcs.revlist = revlist;
-	log_data_and_rcs.rcs = rcsfile;
-
-	/* If any single dates were specified, we need to identify the
-	   revisions they select.  Each one selects the single
-	   revision, which is otherwise selected, of that date or
-	   earlier.  The log_fix_singledate routine will fill in the
-	   start date for each specific revision.  */
-	if (log_data->singledatelist != NULL)
-	    walklist (rcsfile->versions, log_fix_singledate,
-		      (void *) &log_data_and_rcs);
-
-	sprintf (buf, "%d", walklist (rcsfile->versions, log_count_print,
-				      (void *) &log_data_and_rcs));
+	sprintf (buf, "%d", selrev);
 	cvs_output (buf, 0);
     }
 
