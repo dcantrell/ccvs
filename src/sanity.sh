@@ -8327,7 +8327,7 @@ U dir2d1/sub2d1/file1"
 	  dotest cvsadm-7b "cat CVS/Repository" \
 "${AREP}\."
 	  dotest cvsadm-7d "cat dir2d1/CVS/Repository" \
-"${AREP}CVSROOT/Emptydir"
+"${AREP}\."
 	  dotest cvsadm-7f "cat dir2d1/sub2d1/CVS/Repository" \
 "${AREP}mod1"
 	  rm -rf CVS dir2d1
@@ -8338,7 +8338,7 @@ U dir2d2/sub2d2/file2"
 	  dotest cvsadm-8b "cat CVS/Repository" \
 "${AREP}\."
 	  dotest cvsadm-8d "cat dir2d2/CVS/Repository" \
-"${AREP}CVSROOT/Emptydir"
+"${AREP}mod2"
 	  dotest cvsadm-8f "cat dir2d2/sub2d2/CVS/Repository" \
 "${AREP}mod2/sub2"
 	  rm -rf CVS dir2d2
@@ -8428,7 +8428,7 @@ U dir2d1/sub2d1/file1"
 "${AREP}mod1"
 	  # the usual for 2d1mod
 	  dotest cvsadm-13f "cat dir2d1/CVS/Repository" \
-"${AREP}CVSROOT/Emptydir"
+"${AREP}."
 	  dotest cvsadm-13h "cat dir2d1/sub2d1/CVS/Repository" \
 "${AREP}mod1"
 	  rm -rf CVS 1mod dir2d1
@@ -8446,7 +8446,7 @@ U dir2d2/sub2d2/file2"
 "${AREP}mod1"
 	  # the usual for 2d2mod
 	  dotest cvsadm-14f "cat dir2d2/CVS/Repository" \
-"${AREP}CVSROOT/Emptydir"
+"${AREP}mod2"
 	  dotest cvsadm-14h "cat dir2d2/sub2d2/CVS/Repository" \
 "${AREP}mod2/sub2"
 	  rm -rf CVS 1mod dir2d2
@@ -8516,7 +8516,7 @@ U dir2d1/sub2d1/file1"
 "${AREP}mod2/sub2"
 	  # the usual for 2d1mod
 	  dotest cvsadm-18f "cat dir2d1/CVS/Repository" \
-"${AREP}CVSROOT/Emptydir"
+"${AREP}."
 	  dotest cvsadm-18h "cat dir2d1/sub2d1/CVS/Repository" \
 "${AREP}mod1"
 	  rm -rf CVS 2mod dir2d1
@@ -8534,7 +8534,7 @@ U dir2d2/sub2d2/file2"
 "${AREP}mod2/sub2"
 	  # the usual for 2d2mod
 	  dotest cvsadm-19f "cat dir2d2/CVS/Repository" \
-"${AREP}CVSROOT/Emptydir"
+"${AREP}mod2"
 	  dotest cvsadm-19h "cat dir2d2/sub2d2/CVS/Repository" \
 "${AREP}mod2/sub2"
 	  rm -rf CVS 2mod dir2d2
@@ -8587,7 +8587,7 @@ U dir2d1/sub2d1/file1"
 "${AREP}mod1"
 	  # the usual for 2d1mod
 	  dotest cvsadm-22f "cat dir2d1/CVS/Repository" \
-"${AREP}CVSROOT/Emptydir"
+"${AREP}\."
 	  dotest cvsadm-22h "cat dir2d1/sub2d1/CVS/Repository" \
 "${AREP}mod1"
 	  rm -rf CVS dir1d1 dir2d1
@@ -8605,7 +8605,7 @@ U dir2d2/sub2d2/file2"
 "${AREP}mod1"
 	  # the usual for 2d2mod
 	  dotest cvsadm-23f "cat dir2d2/CVS/Repository" \
-"${AREP}CVSROOT/Emptydir"
+"${AREP}mod2"
 	  dotest cvsadm-23h "cat dir2d2/sub2d2/CVS/Repository" \
 "${AREP}mod2/sub2"
 	  rm -rf CVS dir1d1 dir2d2
@@ -8642,7 +8642,7 @@ U dir2d1/sub2d1/file1"
 "${AREP}mod2/sub2"
 	  # the usual for 2d1mod
 	  dotest cvsadm-25f "cat dir2d1/CVS/Repository" \
-"${AREP}CVSROOT/Emptydir"
+"${AREP}\."
 	  dotest cvsadm-25h "cat dir2d1/sub2d1/CVS/Repository" \
 "${AREP}mod1"
 	  rm -rf CVS dir1d2 dir2d1
@@ -8660,7 +8660,7 @@ U dir2d2/sub2d2/file2"
 "${AREP}mod2/sub2"
 	  # the usual for 2d2mod
 	  dotest cvsadm-26f "cat dir2d2/CVS/Repository" \
-"${AREP}CVSROOT/Emptydir"
+"${AREP}mod2"
 	  dotest cvsadm-26h "cat dir2d2/sub2d2/CVS/Repository" \
 "${AREP}mod2/sub2"
 	  rm -rf CVS dir1d2 dir2d2
@@ -8678,12 +8678,12 @@ U dir2d1-2/sub2d1-2/file1-2"
 "${AREP}\."
 	  # the usual for 2d1mod
 	  dotest cvsadm-27d "cat dir2d1/CVS/Repository" \
-"${AREP}CVSROOT/Emptydir"
+"${AREP}\."
 	  dotest cvsadm-27f "cat dir2d1/sub2d1/CVS/Repository" \
 "${AREP}mod1"
 	  # the usual for 2d1mod
 	  dotest cvsadm-27h "cat dir2d1-2/CVS/Repository" \
-"${AREP}CVSROOT/Emptydir"
+"${AREP}\."
 	  dotest cvsadm-27j "cat dir2d1-2/sub2d1-2/CVS/Repository" \
 "${AREP}mod1-2"
 	  rm -rf CVS dir2d1 dir2d1-2
@@ -8698,12 +8698,12 @@ U dir2d2/sub2d2/file2"
 "${AREP}\."
 	  # the usual for 2d1mod
 	  dotest cvsadm-28d "cat dir2d1/CVS/Repository" \
-"${AREP}CVSROOT/Emptydir"
+"${AREP}\."
 	  dotest cvsadm-28f "cat dir2d1/sub2d1/CVS/Repository" \
 "${AREP}mod1"
 	  # the usual for 2d2mod
 	  dotest cvsadm-28h "cat dir2d2/CVS/Repository" \
-"${AREP}CVSROOT/Emptydir"
+"${AREP}mod2"
 	  dotest cvsadm-28j "cat dir2d2/sub2d2/CVS/Repository" \
 "${AREP}mod2/sub2"
 	  rm -rf CVS dir2d1 dir2d2
@@ -8721,12 +8721,12 @@ U dir2d2-2/sub2d2-2/file2-2"
 "${AREP}\."
 	  # the usual for 2d2mod
 	  dotest cvsadm-29d "cat dir2d2/CVS/Repository" \
-"${AREP}CVSROOT/Emptydir"
+"${AREP}mod2"
 	  dotest cvsadm-29f "cat dir2d2/sub2d2/CVS/Repository" \
 "${AREP}mod2/sub2"
 	  # the usual for 2d2mod
 	  dotest cvsadm-29h "cat dir2d2-2/CVS/Repository" \
-"${AREP}CVSROOT/Emptydir"
+"${AREP}mod2-2"
 	  dotest cvsadm-29j "cat dir2d2-2/sub2d2-2/CVS/Repository" \
 "${AREP}mod2-2/sub2-2"
 	  rm -rf CVS dir2d2 dir2d2-2
@@ -8885,7 +8885,7 @@ U dir/dir2d1/sub2d1/file1"
 "${AREP}mod1"
 	  # the usual for 2d1mod
 	  dotest cvsadm-1d13h "cat dir/dir2d1/CVS/Repository" \
-"${AREP}CVSROOT/Emptydir"
+"${AREP}\."
 	  dotest cvsadm-1d13j "cat dir/dir2d1/sub2d1/CVS/Repository" \
 "${AREP}mod1"
 	  rm -rf CVS dir
@@ -8905,7 +8905,7 @@ U dir/dir2d2/sub2d2/file2"
 "${AREP}mod1"
 	  # the usual for 2d2mod
 	  dotest cvsadm-1d14h "cat dir/dir2d2/CVS/Repository" \
-"${AREP}CVSROOT/Emptydir"
+"${AREP}mod2"
 	  dotest cvsadm-1d14j "cat dir/dir2d2/sub2d2/CVS/Repository" \
 "${AREP}mod2/sub2"
 	  rm -rf CVS dir
@@ -8922,7 +8922,7 @@ U dir/2mod-2/file2-2"
 "${AREP}\."
 	  # the usual for the dir level
 	  dotest cvsadm-1d15d "cat dir/CVS/Repository" \
-"${AREP}\."
+"${AREP}mod2"
 	  # the usual for 2mod
 	  dotest cvsadm-1d15f "cat dir/2mod/CVS/Repository" \
 "${AREP}mod2/sub2"
@@ -8940,7 +8940,7 @@ U dir/dir1d1/file1"
 "${AREP}\."
 	  # the usual for the dir level
 	  dotest cvsadm-1d16d "cat dir/CVS/Repository" \
-"${AREP}\."
+"${AREP}mod2"
 	  # the usual for 2mod
 	  dotest cvsadm-1d16f "cat dir/2mod/CVS/Repository" \
 "${AREP}mod2/sub2"
@@ -8958,7 +8958,7 @@ U dir/dir1d2/file2"
 "${AREP}\."
 	  # the usual for the dir level
 	  dotest cvsadm-1d17d "cat dir/CVS/Repository" \
-"${AREP}\."
+"${AREP}mod2"
 	  # the usual for 2mod
 	  dotest cvsadm-1d17f "cat dir/2mod/CVS/Repository" \
 "${AREP}mod2/sub2"
@@ -8976,13 +8976,13 @@ U dir/dir2d1/sub2d1/file1"
 "${AREP}\."
 	  # the usual for the dir level
 	  dotest cvsadm-1d18d "cat dir/CVS/Repository" \
-"${AREP}\."
+"${AREP}mod2"
 	  # the usual for 2mod
 	  dotest cvsadm-1d18f "cat dir/2mod/CVS/Repository" \
 "${AREP}mod2/sub2"
 	  # the usual for 2d1mod
 	  dotest cvsadm-1d18h "cat dir/dir2d1/CVS/Repository" \
-"${AREP}CVSROOT/Emptydir"
+"${AREP}\."
 	  dotest cvsadm-1d18j "cat dir/dir2d1/sub2d1/CVS/Repository" \
 "${AREP}mod1"
 	  rm -rf CVS dir
@@ -8996,13 +8996,13 @@ U dir/dir2d2/sub2d2/file2"
 "${AREP}\."
 	  # the usual for the dir level
 	  dotest cvsadm-1d19d "cat dir/CVS/Repository" \
-"${AREP}\."
+"${AREP}mod2"
 	  # the usual for 2mod
 	  dotest cvsadm-1d19f "cat dir/2mod/CVS/Repository" \
 "${AREP}mod2/sub2"
 	  # the usual for 2d2mod
 	  dotest cvsadm-1d19h "cat dir/dir2d2/CVS/Repository" \
-"${AREP}CVSROOT/Emptydir"
+"${AREP}mod2"
 	  dotest cvsadm-1d19j "cat dir/dir2d2/sub2d2/CVS/Repository" \
 "${AREP}mod2/sub2"
 	  rm -rf CVS dir
@@ -9061,7 +9061,7 @@ U dir/dir2d1/sub2d1/file1"
 "${AREP}mod1"
 	  # the usual for 2d1mod
 	  dotest cvsadm-1d22h "cat dir/dir2d1/CVS/Repository" \
-"${AREP}CVSROOT/Emptydir"
+"${AREP}\."
 	  dotest cvsadm-1d22j "cat dir/dir2d1/sub2d1/CVS/Repository" \
 "${AREP}mod1"
 	  rm -rf CVS dir
@@ -9081,7 +9081,7 @@ U dir/dir2d2/sub2d2/file2"
 "${AREP}mod1"
 	  # the usual for 2d2mod
 	  dotest cvsadm-1d23h "cat dir/dir2d2/CVS/Repository" \
-"${AREP}CVSROOT/Emptydir"
+"${AREP}mod2"
 	  dotest cvsadm-1d23j "cat dir/dir2d2/sub2d2/CVS/Repository" \
 "${AREP}mod2/sub2"
 	  rm -rf CVS dir
@@ -9098,7 +9098,7 @@ U dir/dir1d2-2/file2-2"
 "${AREP}\."
 	  # the usual for the dir level
 	  dotest cvsadm-1d24d "cat dir/CVS/Repository" \
-"${AREP}\."
+"${AREP}mod2"
 	  # the usual for 1d2mod
 	  dotest cvsadm-1d24f "cat dir/dir1d2/CVS/Repository" \
 "${AREP}mod2/sub2"
@@ -9116,13 +9116,13 @@ U dir/dir2d1/sub2d1/file1"
 "${AREP}\."
 	  # the usual for the dir level
 	  dotest cvsadm-1d25d "cat dir/CVS/Repository" \
-"${AREP}\."
+"${AREP}mod2"
 	  # the usual for 1d2mod
 	  dotest cvsadm-1d25f "cat dir/dir1d2/CVS/Repository" \
 "${AREP}mod2/sub2"
 	  # the usual for 2d1mod
 	  dotest cvsadm-1d25h "cat dir/dir2d1/CVS/Repository" \
-"${AREP}CVSROOT/Emptydir"
+"${AREP}\."
 	  dotest cvsadm-1d25j "cat dir/dir2d1/sub2d1/CVS/Repository" \
 "${AREP}mod1"
 	  rm -rf CVS dir
@@ -9136,13 +9136,13 @@ U dir/dir2d2/sub2d2/file2"
 "${AREP}\."
 	  # the usual for the dir level
 	  dotest cvsadm-1d26d "cat dir/CVS/Repository" \
-"${AREP}\."
+"${AREP}mod2"
 	  # the usual for 1d2mod
 	  dotest cvsadm-1d26f "cat dir/dir1d2/CVS/Repository" \
 "${AREP}mod2/sub2"
 	  # the usual for 2d2mod
 	  dotest cvsadm-1d26h "cat dir/dir2d2/CVS/Repository" \
-"${AREP}CVSROOT/Emptydir"
+"${AREP}mod2"
 	  dotest cvsadm-1d26j "cat dir/dir2d2/sub2d2/CVS/Repository" \
 "${AREP}mod2/sub2"
 	  rm -rf CVS dir
@@ -9159,15 +9159,15 @@ U dir/dir2d1-2/sub2d1-2/file1-2"
 "${AREP}\."
 	  # the usual for the dir level
 	  dotest cvsadm-1d27d "cat dir/CVS/Repository" \
-"${AREP}\."
+"${AREP}CVSROOT/Emptydir"
 	  # the usual for 2d1mod
 	  dotest cvsadm-1d27f "cat dir/dir2d1/CVS/Repository" \
-"${AREP}CVSROOT/Emptydir"
+"${AREP}\."
 	  dotest cvsadm-1d27h "cat dir/dir2d1/sub2d1/CVS/Repository" \
 "${AREP}mod1"
 	  # the usual for 2d1mod
 	  dotest cvsadm-1d27j "cat dir/dir2d1-2/CVS/Repository" \
-"${AREP}CVSROOT/Emptydir"
+"${AREP}\."
 	  dotest cvsadm-1d27l "cat dir/dir2d1-2/sub2d1-2/CVS/Repository" \
 "${AREP}mod1-2"
 	  rm -rf CVS dir
@@ -9181,15 +9181,15 @@ U dir/dir2d2/sub2d2/file2"
 "${AREP}\."
 	  # the usual for the dir level
 	  dotest cvsadm-1d28d "cat dir/CVS/Repository" \
-"${AREP}\."
+"${AREP}CVSROOT/Emptydir"
 	  # the usual for 2d1mod
 	  dotest cvsadm-1d28f "cat dir/dir2d1/CVS/Repository" \
-"${AREP}CVSROOT/Emptydir"
+"${AREP}\."
 	  dotest cvsadm-1d28h "cat dir/dir2d1/sub2d1/CVS/Repository" \
 "${AREP}mod1"
 	  # the usual for 2d2mod
 	  dotest cvsadm-1d28j "cat dir/dir2d2/CVS/Repository" \
-"${AREP}CVSROOT/Emptydir"
+"${AREP}mod2"
 	  dotest cvsadm-1d28l "cat dir/dir2d2/sub2d2/CVS/Repository" \
 "${AREP}mod2/sub2"
 	  rm -rf CVS dir
@@ -9209,12 +9209,12 @@ U dir/dir2d2-2/sub2d2-2/file2-2"
 "${AREP}\."
 	  # the usual for 2d2mod
 	  dotest cvsadm-1d29f "cat dir/dir2d2/CVS/Repository" \
-"${AREP}CVSROOT/Emptydir"
+"${AREP}mod2"
 	  dotest cvsadm-1d29h "cat dir/dir2d2/sub2d2/CVS/Repository" \
 "${AREP}mod2/sub2"
 	  # the usual for 2d2mod
 	  dotest cvsadm-1d29j "cat dir/dir2d2-2/CVS/Repository" \
-"${AREP}CVSROOT/Emptydir"
+"${AREP}mod2-2"
 	  dotest cvsadm-1d29l "cat dir/dir2d2-2/sub2d2-2/CVS/Repository" \
 "${AREP}mod2-2/sub2-2"
 	  rm -rf CVS dir
@@ -9340,7 +9340,7 @@ U dir2d1/sub2d1/file1"
 	  dotest cvsadm-N7b "cat CVS/Repository" \
 "${AREP}\."
 	  dotest cvsadm-N7d "cat dir2d1/CVS/Repository" \
-"${AREP}CVSROOT/Emptydir"
+"${AREP}\."
 	  dotest cvsadm-N7f "cat dir2d1/sub2d1/CVS/Repository" \
 "${AREP}mod1"
 	  rm -rf CVS dir2d1
@@ -9351,7 +9351,7 @@ U dir2d2/sub2d2/file2"
 	  dotest cvsadm-N8b "cat CVS/Repository" \
 "${AREP}\."
 	  dotest cvsadm-N8d "cat dir2d2/CVS/Repository" \
-"${AREP}CVSROOT/Emptydir"
+"${AREP}mod2"
 	  dotest cvsadm-N8f "cat dir2d2/sub2d2/CVS/Repository" \
 "${AREP}mod2/sub2"
 	  rm -rf CVS dir2d2
@@ -9375,7 +9375,7 @@ U dir/2mod/file2"
 	  dotest cvsadm-N1d4b "cat CVS/Repository" \
 "${AREP}\."
 	  dotest cvsadm-N1d4d "cat dir/CVS/Repository" \
-"${AREP}\."
+"${AREP}mod2"
 	  dotest cvsadm-N1d4f "cat dir/2mod/CVS/Repository" \
 "${AREP}mod2/sub2"
 	  rm -rf CVS dir
@@ -9397,7 +9397,7 @@ U dir/dir1d2/file2"
 	  dotest cvsadm-N1d6b "cat CVS/Repository" \
 "${AREP}\."
 	  dotest cvsadm-N1d6d "cat dir/CVS/Repository" \
-"${AREP}\."
+"${AREP}mod2"
 	  dotest cvsadm-N1d6f "cat dir/dir1d2/CVS/Repository" \
 "${AREP}mod2/sub2"
 	  rm -rf CVS dir
@@ -9408,9 +9408,9 @@ U dir/dir2d1/sub2d1/file1"
 	  dotest cvsadm-N1d7b "cat CVS/Repository" \
 "${AREP}\."
 	  dotest cvsadm-N1d7d "cat dir/CVS/Repository" \
-"${AREP}\."
-	  dotest cvsadm-N1d7f "cat dir/dir2d1/CVS/Repository" \
 "${AREP}CVSROOT/Emptydir"
+	  dotest cvsadm-N1d7f "cat dir/dir2d1/CVS/Repository" \
+"${AREP}\."
 	  dotest cvsadm-N1d7h "cat dir/dir2d1/sub2d1/CVS/Repository" \
 "${AREP}mod1"
 	  rm -rf CVS dir
@@ -9423,7 +9423,7 @@ U dir/dir2d2/sub2d2/file2"
 	  dotest cvsadm-N1d8d "cat dir/CVS/Repository" \
 "${AREP}\."
 	  dotest cvsadm-N1d8d "cat dir/dir2d2/CVS/Repository" \
-"${AREP}CVSROOT/Emptydir"
+"${AREP}mod2"
 	  dotest cvsadm-N1d8d "cat dir/dir2d2/sub2d2/CVS/Repository" \
 "${AREP}mod2/sub2"
 	  rm -rf CVS dir
@@ -9449,7 +9449,7 @@ U dir/dir2/2mod/file2"
 	  dotest cvsadm-N2d4b "cat CVS/Repository" \
 "${AREP}\."
 	  dotest cvsadm-N2d4f "cat dir/dir2/CVS/Repository" \
-"${AREP}\."
+"${AREP}mod2"
 	  dotest cvsadm-N2d4h "cat dir/dir2/2mod/CVS/Repository" \
 "${AREP}mod2/sub2"
 	  rm -rf CVS dir
@@ -9473,7 +9473,7 @@ U dir/dir2/dir1d2/file2"
 	  dotest cvsadm-N2d6b "cat CVS/Repository" \
 "${AREP}\."
 	  dotest cvsadm-N2d6f "cat dir/dir2/CVS/Repository" \
-"${AREP}\."
+"${AREP}mod2"
 	  dotest cvsadm-N2d6h "cat dir/dir2/dir1d2/CVS/Repository" \
 "${AREP}mod2/sub2"
 	  rm -rf CVS dir
@@ -9485,9 +9485,9 @@ U dir/dir2/dir2d1/sub2d1/file1"
 	  dotest cvsadm-N2d7b "cat CVS/Repository" \
 "${AREP}\."
 	  dotest cvsadm-N2d7f "cat dir/dir2/CVS/Repository" \
-"${AREP}\."
-	  dotest cvsadm-N2d7f "cat dir/dir2/dir2d1/CVS/Repository" \
 "${AREP}CVSROOT/Emptydir"
+	  dotest cvsadm-N2d7g "cat dir/dir2/dir2d1/CVS/Repository" \
+"${AREP}\."
 	  dotest cvsadm-N2d7h "cat dir/dir2/dir2d1/sub2d1/CVS/Repository" \
 "${AREP}mod1"
 	  rm -rf CVS dir
@@ -9501,7 +9501,7 @@ U dir/dir2/dir2d2/sub2d2/file2"
 	  dotest cvsadm-N2d8f "cat dir/dir2/CVS/Repository" \
 "${AREP}\."
 	  dotest cvsadm-N2d8h "cat dir/dir2/dir2d2/CVS/Repository" \
-"${AREP}CVSROOT/Emptydir"
+"${AREP}mod2"
 	  dotest cvsadm-N2d8j "cat dir/dir2/dir2d2/sub2d2/CVS/Repository" \
 "${AREP}mod2/sub2"
 	  rm -rf CVS dir
@@ -9547,9 +9547,10 @@ ${PROG} [a-z]*: Rebuilding administrative file database"
 	  dotest emptydir-1 "${testcvs} co CVSROOT/modules" \
 "U CVSROOT/modules"
 	  echo "# Module defs for emptydir tests" > CVSROOT/modules
-	  echo "2d1mod -d dir2d1/sub2d1 mod1" >> CVSROOT/modules
+	  echo "2d1mod -d dir2d1/sub/sub2d1 mod1" >> CVSROOT/modules
 	  echo "2d1moda -d dir2d1/suba moda/modasub" >> CVSROOT/modules
-	  echo "comb -a 2d1mod 2d1moda" >> CVSROOT/modules
+	  echo "2d1modb -d dir2d1/suba mod1" >> CVSROOT/modules
+	  echo "comb -a 2d1modb 2d1moda" >> CVSROOT/modules
 
 	  dotest emptydir-2 "${testcvs} ci -m add-modules" \
 "${PROG} [a-z]*: Examining CVSROOT
@@ -9593,8 +9594,8 @@ done"
 	  # End Populate.
 
 	  dotest emptydir-6 "${testcvs} co 2d1mod" \
-"${PROG} [a-z]*: Updating dir2d1/sub2d1
-U dir2d1/sub2d1/file1"
+"${PROG} [a-z]*: Updating dir2d1/sub/sub2d1
+U dir2d1/sub/sub2d1/file1"
 	  cd dir2d1
 	  touch emptyfile
 	  # It doesn't make any sense to add a file (or do much of anything
@@ -9626,15 +9627,16 @@ U dir2d1/sub2d1/file1"
 	  mkdir 2; cd 2
 	  dotest emptydir-12 "${testcvs} -q co 2d1moda" \
 "U dir2d1/suba/filea"
-	  # OK, this is the crux of the matter.  Some people think
-	  # it would be more logical if this showed "moda".  But why
-	  # "moda" (from module 2d1moda) and not "." (from module 2d1mod)?
-	  dotest emptydir-13 "cat dir2d1/CVS/Repository" "CVSROOT/Emptydir"
-	  dotest emptydir-14 "${testcvs} co comb" \
-"${PROG} [a-z]*: Updating dir2d1/sub2d1
-U dir2d1/sub2d1/file1
+	  # OK, this is the crux of the matter.  This used to show "Emptydir",
+	  # but everyone seemed to think it should show "moda".  This
+	  # usually works better, but not always as shown by the following
+	  # test.
+	  dotest emptydir-13 "cat dir2d1/CVS/Repository" "moda"
+	  dotest_fail emptydir-14 "${testcvs} co comb" \
+"${PROG} [a-z]*: existing repository ${TESTDIR}/cvsroot/moda/modasub does not match ${TESTDIR}/cvsroot/mod1
+${PROG} [a-z]*: ignoring module 2d1modb
 ${PROG} [a-z]*: Updating dir2d1/suba"
-	  dotest emptydir-15 "cat dir2d1/CVS/Repository" "CVSROOT/Emptydir"
+	  dotest emptydir-15 "cat dir2d1/CVS/Repository" "moda"
 	  cd ..
 
 	  rm -r 1 2

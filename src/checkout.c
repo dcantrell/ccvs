@@ -806,55 +806,30 @@ internal error: %s doesn't start with %s in checkout_proc",
 	    }
 	    else
 	    {
-		if ((where_orig != NULL)
-		    && (strcmp (new->dirpath, where_orig) == 0))
-		{
-		    /* It's the case that the user specified a
-		     * destination directory with the "-d" flag.  The
-		     * repository in this directory should be "."
-		     * since the user's command is equivalent to:
-		     *
-		     *   cd <dir>; cvs co blah   */
-
-		    strcpy (reposcopy, CVSroot_directory);
-		    goto allocate_repos;
-		}
-		else if (mwhere != NULL)
-		{
-		    /* This is a generated directory, so point to
-                       CVSNULLREPOS. */
-
-		    new->repository = emptydir_name ();
-		}
-		else
-		{
-		    /* It's a directory in the repository! */
+		/* It's a directory in the repository! */
 		    
-		    char *rp;
+		char *rp;
 		    
-		    /* We'll always be below CVSROOT, but check for
-		       paranoia's sake. */
-		    rp = strrchr (reposcopy, '/');
-		    if (rp == NULL)
-			error (1, 0,
-			       "internal error: %s doesn't contain a slash",
-			       reposcopy);
+		/* We'll always be below CVSROOT, but check for
+		   paranoia's sake. */
+		rp = strrchr (reposcopy, '/');
+		if (rp == NULL)
+		    error (1, 0,
+			   "internal error: %s doesn't contain a slash",
+			   reposcopy);
 			   
-		    *rp = '\0';
-		
-		allocate_repos:
-		    new->repository = xmalloc (strlen (reposcopy) + 5);
-		    (void) strcpy (new->repository, reposcopy);
+		*rp = '\0';
+		new->repository = xmalloc (strlen (reposcopy) + 5);
+		(void) strcpy (new->repository, reposcopy);
 		    
-		    if (strcmp (reposcopy, CVSroot_directory) == 0)
-		    {
-			/* Special case -- the repository name needs
-			   to be "/path/to/repos/." (the trailing dot
-			   is important).  We might be able to get rid
-			   of this after the we check out the other
-			   code that handles repository names. */
-			(void) strcat (new->repository, "/.");
-		    }
+		if (strcmp (reposcopy, CVSroot_directory) == 0)
+		{
+		    /* Special case -- the repository name needs
+		       to be "/path/to/repos/." (the trailing dot
+		       is important).  We might be able to get rid
+		       of this after the we check out the other
+		       code that handles repository names. */
+		    (void) strcat (new->repository, "/.");
 		}
 	    }
 	}
