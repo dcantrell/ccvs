@@ -4661,11 +4661,13 @@ done"
 U $file"
 	  fi
 
-	  cd ../..
-	  if $keep; then :; else
-	    rm -rf rm-update-message
-	    rm -rf $CVSROOT_DIRNAME/rm-update-message
+	  if $keep; then
+	    echo Keeping ${TESTDIR} and exiting due to --keep
+	    exit 0
 	  fi
+	  cd ../..
+	  rm -r rm-update-message
+	  rm -rf $CVSROOT_DIRNAME/rm-update-message
 	  ;;
 
 	rmadd)
@@ -7864,11 +7866,14 @@ rcsmerge: warning: conflicts during merge
 $PROG [a-z]*: conflicts found in $file
 C m"
 
-	  cd ../..
-	  if $keep; then :; else
-	    rm -rf join-readonly-conflict
-	    rm -rf $CVSROOT_DIRNAME/$module
+	  if $keep; then
+	    echo Keeping ${TESTDIR} and exiting due to --keep
+	    exit 0
 	  fi
+
+	  cd ../..
+	  rm -r join-readonly-conflict
+	  rm -rf $CVSROOT_DIRNAME/$module
 	  ;;
 
 	join-admin)
@@ -10314,11 +10319,14 @@ ${CVSROOT_DIRNAME}/CVSROOT/modules,v  <--  modules
 new revision: [0-9.]*; previous revision: [0-9.]*
 done
 ${PROG} [a-z]*: Rebuilding administrative file database"
-	  cd ../..
 
-	  if $keep; then :; else
-	    rm -r modules6
+	  if $keep; then
+	    echo Keeping ${TESTDIR} and exiting due to --keep
+	    exit 0
 	  fi
+
+	  cd ../..
+	  rm -r modules6
 	  ;;
 
 	mkmodules-temp-file-removal)
@@ -12602,11 +12610,14 @@ done"
 	  dotest_fail adderrmsg-8 "${testcvs} -q add file1" ""
 
 	  # clean up
-	  cd ../..
-	  if $keep; then :; else
-	      rm -r 1
-	      rm -rf ${CVSROOT_DIRNAME}/adderrmsg-dir
+	  if $keep; then
+	    echo Keeping ${TESTDIR} and exiting due to --keep
+	    exit 0
 	  fi
+
+	  cd ../..
+	  rm -r 1
+	  rm -rf ${CVSROOT_DIRNAME}/adderrmsg-dir
 	  ;;
 
 	devcom)
@@ -13394,11 +13405,14 @@ Are you sure you want to release (and delete) directory .first-dir': "
 You have \[1\] altered files in this repository.
 Are you sure you want to release (and delete) directory .second-dir': "
 
-	  cd ../..
-	  if $keep; then :; else
-	    rm -r ignore
-	    rm -rf ${CVSROOT_DIRNAME}/ignore
+	  if $keep; then
+	    echo Keeping ${TESTDIR} and exiting due to --keep
+	    exit 0
 	  fi
+
+	  cd ../..
+	  rm -r ignore
+	  rm -rf ${CVSROOT_DIRNAME}/ignore
 	  ;;
 
 	ignore-on-branch)
@@ -13464,11 +13478,14 @@ done"
 "$PROG [a-z]*: file2 is no longer in the repository"
 	  dotest ignore-on-branch-7 "$testcvs -q up -jbranch" 'U file2'
 
-	  cd ../..
-	  if $keep; then :; else
-	    rm -r ignore-on-branch
-	    rm -rf $CVSROOT_DIRNAME/ignore-on-branch
+	  if $keep; then
+	    echo Keeping ${TESTDIR} and exiting due to --keep
+	    exit 0
 	  fi
+
+	  cd ../..
+	  rm -r ignore-on-branch
+	  rm -rf $CVSROOT_DIRNAME/ignore-on-branch
 	  ;;
 
 	binfiles)
@@ -20967,10 +20984,14 @@ Merging differences between 1\.1\.1\.1 and 1\.1\.1\.1\.2\.1 into testcase10"
 	  dotest diffmerge1_cmp "directory_cmp comp_me mine"
 
 	  # Clean up after ourselves:
-	  cd ..
-	  if $keep; then :; else
-	    rm -rf diffmerge1 ${CVSROOT_DIRNAME}/diffmerge1
+	  if $keep; then
+	    echo Keeping ${TESTDIR} and exiting due to --keep
+	    exit 0
 	  fi
+
+	  cd ..
+	  rm -r diffmerge1
+	  rm -rf ${CVSROOT_DIRNAME}/diffmerge1
 	  ;;
 
         diffmerge2)
@@ -24151,10 +24172,14 @@ update"
 Server: \1'
 	    CVS_SERVER=${testcvs}; export CVS_SERVER
 	    PATH=$save_PATH; unset save_PATH
-	    cd ..
-	    if $keep; then :; else
-	      rm -rf fork
+
+	    if $keep; then
+	      echo Keeping ${TESTDIR} and exiting due to --keep
+	      exit 0
 	    fi
+
+	    cd ..
+	    rm -r fork
 	  fi
 	  ;;
 
