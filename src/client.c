@@ -1531,7 +1531,7 @@ handle_checksum (args, len)
     stored_checksum_valid = 1;
 }
 
-static int stored_mode_valid;
+/* Mode that we got in a "Mode" response (malloc'd), or NULL if none.  */
 static char *stored_mode;
 
 static void handle_mode PROTO ((char *, int));
@@ -1541,12 +1541,9 @@ handle_mode (args, len)
     char *args;
     int len;
 {
-    if (stored_mode_valid)
-	error (1, 0, "protocol error: duplicate Mode");
     if (stored_mode != NULL)
-	free (stored_mode);
+	error (1, 0, "protocol error: duplicate Mode");
     stored_mode = xstrdup (args);
-    stored_mode_valid = 1;
 }
 
 /* Nonzero if time was specified in Mod-time.  */
@@ -1786,9 +1783,11 @@ update_entries (data_arg, ent_list, short_pathname, filename)
 	    /* The Mode, Mod-time, and Checksum responses should not carry
 	       over to a subsequent Created (or whatever) response, even
 	       in the error case.  */
-	    stored_mode_valid = 0;
 	    if (stored_mode != NULL)
+	    {
 		free (stored_mode);
+		stored_mode = NULL;
+	    }
 	    stored_modtime_valid = 0;
 	    stored_checksum_valid = 0;
 
@@ -2127,10 +2126,13 @@ update_entries (data_arg, ent_list, short_pathname, filename)
 	free (buf);
     }
 
-    if (stored_mode_valid)
+    if (stored_mode != NULL)
+    {
 	change_mode (filename, stored_mode, 1);
-    stored_mode_valid = 0;
-
+	free (stored_mode);
+	stored_mode = NULL;
+    }
+   
     if (stored_modtime_valid)
     {
 	struct utimbuf t;
@@ -4411,7 +4413,11 @@ the :server: access method is not supported by this port of CVS");
 	free (last_update_dir);
     last_update_dir = NULL;
     stored_checksum_valid = 0;
-    stored_mode_valid = 0;
+    if (stored_mode != NULL)
+    {
+	free (stored_mode);
+	stored_mode = NULL;
+    }
 
     if (strcmp (command_name, "init") != 0)
     {

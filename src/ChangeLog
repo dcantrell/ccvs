@@ -1,5 +1,11 @@
 1998-10-06  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* client.c: Clean up horrible confusion about whether stored_mode
+	or stored_mode_valid (or nothing :-)) indicates whether
+	stored_mode is allocated.  Should fix crashes (for example, on NT
+	when the server has renamed multiple files from uppercase to
+	lowercase).
+
 	* sanity.sh (dirs): New tests, tests for some cases involving
 	admins who do surgery on the repository.
 
