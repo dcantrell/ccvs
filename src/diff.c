@@ -543,7 +543,7 @@ diff_fileproc (callerdat, finfo)
 	sprintf(fname,"%s/%s%s",CVSADM, CVSPREFIX, finfo->file);
 	if (unlink_file_dir (fname) < 0)
 	    if (! existence_error (errno))
-		error (1, errno, "cannot remove %s", finfo->file);
+		error (1, errno, "cannot remove %s", fname);
 	rename_file (finfo->file, fname);
 	/* Copy the wrapped file to the current directory then go to work */
 	copy_file (tocvsPath, finfo->file);
@@ -641,7 +641,7 @@ diff_fileproc (callerdat, finfo)
 
 	rename_file (fname,finfo->file);
 	if (unlink_file (tocvsPath) < 0)
-	    error (1, errno, "cannot remove %s", finfo->file);
+	    error (1, errno, "cannot remove %s", tocvsPath);
 	free (fname);
     }
 
