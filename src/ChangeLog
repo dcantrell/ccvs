@@ -1,6 +1,6 @@
 Fri Apr  7 06:57:20 1995  Jim Kingdon  (kingdon@lioth.cygnus.com)
 
-	* commit.c (ci_new_rev) [DEATH_STATE]: Pass -f to `ci'.
+	* commit.c [DEATH_STATE]: Pass -f to `ci'.
 
 Thu Apr  6 13:05:15 1995  Jim Blandy  <jimb@totoro.bio.indiana.edu>
 
