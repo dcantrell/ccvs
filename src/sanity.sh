@@ -564,7 +564,8 @@ if test x"$*" = x; then
 	tests="${tests} devcom devcom2 devcom3 watch4"
 	tests="${tests} ignore binfiles binfiles2 mcopy binwrap binwrap2"
 	tests="${tests} binwrap3 mwrap info config"
-	tests="${tests} serverpatch log log2 ann crerepos rcs big modes stamps"
+	tests="${tests} serverpatch log log2 ann crerepos rcs rcs2"
+	tests="${tests} big modes stamps"
 	# PreservePermissions stuff: permissions, symlinks et al.
 	tests="${tests} perms symlinks hardlinks"
 	# More tag and branch tests, keywords.
@@ -11309,6 +11310,99 @@ date: 1971/01/01 08:00:05;  author: joe;  state: Exp;  lines: ${PLUS}1 -1
 	  cd ..
 
 	  rm -r first-dir ${TESTDIR}/rcs4.tmp
+	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  ;;
+
+	rcs2)
+	  # More date tests.  Might as well do this as a separate
+	  # test from "rcs", so that we don't need to perturb the
+	  # "written by RCS 5.7" RCS file.
+	  mkdir ${CVSROOT_DIRNAME}/first-dir
+	  # Significance of various dates:
+	  # * At least one Y2K standard refers to recognizing 9 Sep 1999
+	  #   (as an example of a pre-2000 date, I guess).
+	  # * At least one Y2K standard refers to recognizing 1 Jan 2001
+	  #   (as an example of a post-2000 date, I guess).
+	  # * Many Y2K standards refer to 2000 being a leap year.
+	  cat <<EOF >${CVSROOT_DIRNAME}/first-dir/file1,v
+head 1.7; access; symbols; locks; strict;
+1.7 date 2004.08.31.01.01.01; author sue; state; branches; next 1.6;
+1.6 date 2004.02.29.01.01.01; author sue; state; branches; next 1.5;
+1.5 date 2003.02.28.01.01.01; author sue; state; branches; next 1.4;
+1.4 date 2001.01.01.01.01.01; author sue; state; branches; next 1.3;
+1.3 date 2000.02.29.01.01.01; author sue; state; branches; next 1.2;
+1.2 date 99.09.09.01.01.01; author sue; state; branches; next 1.1;
+1.1 date 98.09.10.01.01.01; author sue; state; branches; next;
+desc @a test file@
+1.7 log @@ text @head revision@
+1.6 log @@ text @d1 1
+a1 1
+2004 was a great year for leaping@
+1.5 log @@ text @d1 1
+a1 1
+2003 wasn't@
+1.4 log @@ text @d1 1
+a1 1
+two year hiatus@
+1.3 log @@ text @d1 1
+a1 1
+2000 is also a good year for leaping@
+1.2 log @@ text @d1 1
+a1 1
+Tonight we're going to party like it's a certain year@
+1.1 log @@ text @d1 1
+a1 1
+Need to start somewhere@
+EOF
+	  dotest rcs2-1 "${testcvs} -q co first-dir" 'U first-dir/file1'
+	  cd first-dir
+
+	  # For remote, the "update -p -D" usage seems not to work.
+	  # I'm not sure what is going on.
+	  if test "x$remote" = "xno"; then
+
+	  # 9 Sep 1999
+	  if ${testcvs} -q update -p -D '1999-09-09 11:30 UT' file1 \
+	      >${TESTDIR}/rcs4.tmp
+	  then
+	    dotest rcs2-2 "cat ${TESTDIR}/rcs4.tmp" \
+"Tonight we're going to party like it's a certain year"
+	  else
+	    fail rcs2-2
+	  fi
+	  # 1 Jan 2001.
+	  if ${testcvs} -q update -p -D '2001-01-01 11:30 UT' file1 \
+	      >${TESTDIR}/rcs4.tmp
+	  then
+	    dotest rcs2-3 "cat ${TESTDIR}/rcs4.tmp" \
+"two year hiatus"
+	  else
+	    fail rcs2-3
+	  fi
+	  # 29 Feb 2000
+	  if ${testcvs} -q update -p -D '2000-02-29 11:30 UT' file1 \
+	      >${TESTDIR}/rcs4.tmp
+	  then
+	    dotest rcs2-4 "cat ${TESTDIR}/rcs4.tmp" \
+"2000 is also a good year for leaping"
+	  else
+	    fail rcs2-4
+	  fi
+	  # 29 Feb 2003 is invalid
+	  if ${testcvs} -q update -p -D '2003-02-29 11:30 UT' file1 \
+	      >${TESTDIR}/rcs4.tmp 2>&1
+	  then
+	    fail rcs2-5
+	  else
+	    dotest rcs2-5 "cat ${TESTDIR}/rcs4.tmp" \
+"${PROG} \[[a-z]* aborted\]: Can't parse date/time: 2003-02-29 11:30 UT"
+	  fi
+	  rm ${TESTDIR}/rcs4.tmp
+
+	  fi # end of tests skipped for remote
+
+	  cd ..
+	  rm -r first-dir
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
 	  ;;
 
