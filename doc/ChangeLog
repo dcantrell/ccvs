@@ -1,3 +1,7 @@
+2002-02-26  Larry Jones  <larry.jones@sdrc.com>
+
+	* cvs.texinfo (diff options): Document all the diff options.
+
 2002-01-10  Larry Jones  <larry.jones@sdrc.com>
 
 	* cvs.texinfo (log options): Update -r :: to match code changes.
