@@ -1,3 +1,8 @@
+Sun Aug 31 12:03:15 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* sanity.sh (errmsg2): New tests errmsg2-13 through errmsg2-16
+	test the status quo with respect to '/' in cvs add argument.
+
 Sat Aug 30 17:37:29 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* run.c (run_popen): Add comment on return value.
