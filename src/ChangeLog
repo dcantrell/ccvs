@@ -1,3 +1,10 @@
+2001-07-19  Larry Jones  <larry.jones@sdrc.com>
+
+	* checkout.c (checkout): Don't complain about checking out into the
+	repository when piping output.
+	(Reported by der Mouse <mouse@Rodents.Montreal.QC.CA>.)
+	* sanity.sh (checkout_repository): New tests for above.
+
 2001-07-10  Larry Jones  <larry.jones@sdrc.com>
 
 	* sanity.sh (importc-7): Now works correctly in local mode.

@@ -260,7 +260,7 @@ checkout (argc, argv)
     }
 #endif
 
-    if (!cat && !safe_location( where )) {
+    if (!cat && !pipeout && !safe_location( where )) {
         error(1, 0, "Cannot check out files into the repository itself");
     }
 
