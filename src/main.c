@@ -624,8 +624,18 @@ main (argc, argv)
 			 strcmp (CVSroot, CVSADM_Root) != 0)
 		{
 		    /* Once we have verified that this root is usable,
-		       we will want to write it into CVS/Root.  */
-		    need_to_create_root = 1;
+		       we will want to write it into CVS/Root.
+
+		       Don't do it for the "login" command, however.
+		       Consider: if the user executes "cvs login" with
+		       the working directory inside an already checked
+		       out module, we'd incorrectly change the
+		       CVS/Root file to reflect the CVSROOT of the
+		       "cvs login" command.  Ahh, the things one
+		       discovers. */
+
+		    if (strcmp (command_name, "login") != 0)
+			need_to_create_root = 1;
 		}
 	    }
 

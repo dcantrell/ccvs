@@ -225,7 +225,8 @@ login (argc, argv)
             }
 	    fclose (tmp_fp);
 	    fclose (fp);
-	    rename_file (tmp_name, passfile);
+	    copy_file (tmp_name, passfile);
+	    unlink_file (tmp_name);
 	    chmod (passfile, 0600);
 	    free (tmp_name);
         }
