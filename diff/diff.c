@@ -563,7 +563,18 @@ diff_run (argc, argv, out)
 	     On Posix hosts, this has no effect.  */
 #if HAVE_SETMODE
 	  binary_I_O = 1;
+#  if 0
+	  /* Because this code is leftover from pre-library days,
+	     there is no way to set stdout back to the default mode
+	     when we are done.  As it turns out, I think the only
+	     parts of CVS that pass out == NULL, and thus cause diff
+	     to write to stdout, are "cvs diff" and "cvs rdiff".  So
+	     I'm not going to worry about this too much yet.  */
 	  setmode (STDOUT_FILENO, O_BINARY);
+#  else
+	  if (out == NULL)
+	    error (0, 0, "warning: did not set stdout to binary mode");
+#  endif
 #endif
 	  break;
 
@@ -638,7 +649,7 @@ diff_run (argc, argv, out)
     outfile = stdout;
   else
     {
-#ifdef HAVE_SETMODE
+#if HAVE_SETMODE
       /* A diff which is full of ^Z and such isn't going to work
          very well in text mode.  */
       if (binary_I_O)
