@@ -22,7 +22,7 @@ log_buffer_initialize (struct buffer *buf, FILE *fp, bool fatal_errors,
                        bool input, void (*memory) (struct buffer *));
 
 int log_buffer_get_log_fd (struct buffer *buf);
-void log_buffer_flush_log (struct buffer *buf);
-void log_buffer_disable (struct buffer *buf);
+FILE *log_buffer_disable (struct buffer *buf);
+void log_buffer_closelog (struct buffer *buf);
 
 #endif /* LOG_BUFFER_H__ */

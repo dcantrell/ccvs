@@ -759,28 +759,19 @@ error ENOMEM Virtual memory exhausted.\n");
 static int
 read_secondary_log (struct buffer **buf_in, const char *name)
 {
+    FILE *fp;
     int fd;
     struct buffer *buf = *buf_in;
 
     assert (buf);
 
-    /* Flush the log so that it will be up to date when we reopen it.  */
-    log_buffer_flush_log (buf);
     /* Close the secondary log.  */
-    log_buffer_disable (buf);
+    fp = log_buffer_disable (buf);
     *buf_in = NULL;
 
-    /* And reopen the log.  */
-    fd = open (name, O_RDONLY);
-    if (fd < 0)
-    {
-	int err = errno;
-	buf_output0 (buf_to_net,
-"E  Failed to open write proxy log for read: ");
-	buf_output0 (buf_to_net, strerror (err));
-	buf_output0 (buf_to_net, "\n");
-	exit (EXIT_FAILURE);
-    }
+    /* And "reopen" the log.  The fp has already been fflushed.  */
+    fd = fileno (fp);
+    lseek (fd, 0, SEEK_SET);
 
     return fd;
 }
@@ -1064,8 +1055,8 @@ E Protocol error: Root says \"%s\" but pserver says \"%s\"",
 	 * reprocessing since we handle all the requests we can receive
 	 * before `Root' as we receive them.  But close the logs.
 	 */
-	log_buffer_disable (secondary_log);
-	log_buffer_disable (secondary_log_out);
+	log_buffer_closelog (secondary_log);
+	log_buffer_closelog (secondary_log_out);
 	secondary_log = NULL;
     }
 
