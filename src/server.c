@@ -3712,7 +3712,7 @@ static void
 serve_watch_on (arg)
     char *arg;
 {
-    do_cvs_command ("watch_on", watch_on);
+    do_cvs_command ("watch", watch_on);
 }
 
 static void serve_watch_off PROTO ((char *));
@@ -3721,7 +3721,7 @@ static void
 serve_watch_off (arg)
     char *arg;
 {
-    do_cvs_command ("watch_off", watch_off);
+    do_cvs_command ("watch", watch_off);
 }
 
 static void serve_watch_add PROTO ((char *));
@@ -3730,7 +3730,7 @@ static void
 serve_watch_add (arg)
     char *arg;
 {
-    do_cvs_command ("watch_add", watch_add);
+    do_cvs_command ("watch", watch_add);
 }
 
 static void serve_watch_remove PROTO ((char *));
@@ -3739,7 +3739,7 @@ static void
 serve_watch_remove (arg)
     char *arg;
 {
-    do_cvs_command ("watch_remove", watch_remove);
+    do_cvs_command ("watch", watch_remove);
 }
 
 static void serve_watchers PROTO ((char *));
