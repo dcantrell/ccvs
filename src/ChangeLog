@@ -1,5 +1,13 @@
 Thu Mar 28 10:56:36 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	Add more diff tests:
+	* sanity.sh (basic2): Use dotest for test 61.
+	(basica): Add test basica-6.2.
+	(branches): Add tests branches-14.4 and branches-14.5.
+	(basic1): Remove tests 19, 20, 25, and 26.  The only thing this
+	might miss out on is diff's interaction with added and removed
+	files, but those tests didn't test that very well anyway.
+
 	* rcs.c (RCS_getrevtime): Add comment regarding years after 1999.
 
 	* rcs.c: Add "cvs annotate" command and related code.

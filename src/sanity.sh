@@ -238,9 +238,7 @@ dotest ()
   dotest_internal "$@"
 }
 
-# Like dotest except exitstatus should be nonzero.  Probably their
-# implementations could be unified (if I were a good enough sh script
-# writer to get the quoting right).
+# Like dotest except exitstatus should be nonzero.
 dotest_fail ()
 {
   if $2 >${TESTDIR}/dotest.tmp 2>&1; then
@@ -252,6 +250,21 @@ dotest_fail ()
     : so far so good
   fi
   dotest_internal "$@"
+}
+
+# Like dotest except second argument is the required exitstatus.
+dotest_status ()
+{
+  $3 >${TESTDIR}/dotest.tmp 2>&1
+  status=$?
+  if test "$status" = "$2"; then
+    : so far so good
+  else
+    cat ${TESTDIR}/dotest.tmp >>${LOGFILE}
+    echo "exit status was $status; expected $2" >>${LOGFILE}
+    fail "$1"
+  fi
+  dotest_internal "$1" "$3" "$4" "$5"
 }
 
 # clean any old remnants
@@ -463,6 +476,19 @@ ${PROG} \[[a-z]* aborted\]: failed to set tag RESERVED to revision 1.1 in /tmp/c
 
 	  dotest basica-6 "${testcvs} -q update" ''
 	  echo "ssfile line 2" >>sdir/ssdir/ssfile
+	  dotest_status basica-6.2 1 "${testcvs} -q diff -c" \
+'Index: sdir/ssdir/ssfile
+===================================================================
+RCS file: /tmp/cvs-sanity/cvsroot/first-dir/sdir/ssdir/ssfile,v
+retrieving revision 1\.1
+diff -c -r1\.1 ssfile
+\*\*\* ssfile	[0-9/]* [0-9:]*	1\.1
+--- ssfile	[0-9/]* [0-9:]*
+\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
+\*\*\* 1 \*\*\*\*
+--- 1,2 ----
+  ssfile
+'"${PLUS} ssfile line 2"
 	  dotest basica-7 "${testcvs} -q ci -m modify-it" \
 'Checking in sdir/ssdir/ssfile;
 /tmp/cvs-sanity/cvsroot/first-dir/sdir/ssdir/ssfile,v  <--  ssfile
@@ -543,24 +569,6 @@ ${PROG}"': does not match command line -d /tmp/cvs-sanity/nonexist setting
 					  echo "FAIL: test 18-${do}-$j" | tee -a ${LOGFILE}
 					fi
 
-					if test "x${do}-$j" = "xadd-add" || test "x${do}-$j" = "xrm-rm" ; then
-					  true
-					else
-					  # diff -c all
-					  if ${CVS} diff -c  >> ${LOGFILE} || [ $? = 1 ] ; then
-					    echo "PASS: test 19-${do}-$j" >>${LOGFILE}
-					  else
-					    echo "FAIL: test 19-${do}-$j" | tee -a ${LOGFILE}
-					  fi
-
-					  # diff -u all
-					  if ${CVS} diff -u  >> ${LOGFILE} || [ $? = 1 ] ; then
-					    echo "PASS: test 20-${do}-$j" >>${LOGFILE}
-					  else
-					    echo "FAIL: test 20-${do}-$j" | tee -a ${LOGFILE}
-					  fi
-					fi
-
 					cd ..
 					# update all.
 					if ${CVS} update  ; then
@@ -589,26 +597,6 @@ ${PROG}"': does not match command line -d /tmp/cvs-sanity/nonexist setting
 					  echo "PASS: test 24-${do}-$j" >>${LOGFILE}
 					else
 					  echo "FAIL: test 24-${do}-$j" | tee -a ${LOGFILE} ; exit 1
-					fi
-
-					if test "x${do}-$j" = "xadd-add" || test "x${do}-$j" = "xrm-rm" ; then
-					  echo "PASS: test 25-${do}-$j" >>${LOGFILE}
-					else
-					  # diff all
-					  if ${CVS} diff -u  >> ${LOGFILE} || [ $? = 1 ] ; then
-					    echo "PASS: test 25-${do}-$j" >>${LOGFILE}
-					  else
-					    echo "FAIL: test 25-${do}-$j" | tee -a ${LOGFILE}
-					    # FIXME; exit 1
-					  fi
-
-					  # diff all
-					  if ${CVS} diff -u first-dir  >> ${LOGFILE} || [ $? = 1 ] ; then
-					    echo "PASS: test 26-${do}-$j" >>${LOGFILE}
-					  else
-					    echo "FAIL: test 26-${do}-$j" | tee -a ${LOGFILE}
-					    # FIXME; exit 1
-					  fi
 					fi
 
 					# update all.
@@ -999,11 +987,7 @@ No conflicts created by this import'
 		mv first-dir.cpy first-dir
 		cd first-dir
 
-		if ${CVS} diff -u  >> ${LOGFILE} || [ $? = 1 ] ; then
-			echo "PASS: test 61" >>${LOGFILE}
-		else
-			echo "FAIL: test 61" | tee -a ${LOGFILE} ; exit 1
-		fi
+		dotest 61 "${testcvs} -q diff -u" ''
 
 		if ${CVS} update  ; then
 			echo "PASS: test 62" >>${LOGFILE}
@@ -1559,6 +1543,36 @@ revision 1\.2\.2\.1\.2\.1
 date: [0-9/: ]*;  author: [a-z@][a-z@]*;  state: Exp;  lines: '"${PLUS}"'1 -1
 modify
 ============================================================================='
+	  dotest_status branches-14.4 1 \
+	    "${testcvs} diff -c -r 1.1 -r 1.3 file4" \
+'Index: file4
+===================================================================
+RCS file: /tmp/cvs-sanity/cvsroot/first-dir/file4,v
+retrieving revision 1\.1
+retrieving revision 1\.3
+diff -c -r1\.1 -r1\.3
+\*\*\* file4	[0-9/]* [0-9:]*	1\.1
+--- file4	[0-9/]* [0-9:]*	1\.3
+\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
+\*\*\* 1 \*\*\*\*
+! 4:trunk-1
+--- 1 ----
+! 4:trunk-3'
+	  dotest_status branches-14.5 1 \
+	    "${testcvs} diff -c -r 1.1 -r 1.2.2.1 file4" \
+'Index: file4
+===================================================================
+RCS file: /tmp/cvs-sanity/cvsroot/first-dir/file4,v
+retrieving revision 1\.1
+retrieving revision 1\.2\.2\.1
+diff -c -r1\.1 -r1\.2\.2\.1
+\*\*\* file4	[0-9/]* [0-9:]*	1\.1
+--- file4	[0-9/]* [0-9:]*	1\.2\.2\.1
+\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
+\*\*\* 1 \*\*\*\*
+! 4:trunk-1
+--- 1 ----
+! 4:br1'
 	  dotest branches-15 \
 	    "${testcvs} update -j 1.1.2.1 -j 1.1.2.1.2.1 file1" \
 	    'RCS file: /tmp/cvs-sanity/cvsroot/first-dir/file1,v
