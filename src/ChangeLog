@@ -1,5 +1,13 @@
 2003-07-25  Derek Price  <derek@ximbiot.com>
 
+	* checkin.c (Checkin): The rcs argument is unecessary since we know
+	that the parsed RCS data always exists as part of finfo by the time
+	this function gets called.
+	* commit.c (commit_fileproc, finaladd):  Use new Checkin() API.
+	* cvs.h (Checkin): Update prototype.
+
+2003-07-25  Derek Price  <derek@ximbiot.com>
+
 	* subr.c (strip_trailing_newlines): Check len b4 str[len] to avoid
 	exceeding the array bounds when the string length == 0.
 	(Report from John Tytgat <JoTy@esko-graphics.com>.)

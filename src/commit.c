@@ -1236,7 +1236,7 @@ commit_fileproc (void *callerdat, struct file_info *finfo)
 	    if (ci->rev)
 		free (ci->rev);
 	    ci->rev = RCS_whatbranch (finfo->rcs, ci->tag);
-	    err = Checkin ('A', finfo, finfo->rcs->path, ci->rev,
+	    err = Checkin ('A', finfo, ci->rev,
 			   ci->tag, ci->options, saved_message);
 	    if (err != 0)
 	    {
@@ -1281,8 +1281,7 @@ commit_fileproc (void *callerdat, struct file_info *finfo)
     }
     else if (ci->status == T_MODIFIED)
     {
-	err = Checkin ('M', finfo,
-		       finfo->rcs->path, ci->rev, ci->tag,
+	err = Checkin ('M', finfo, ci->rev, ci->tag,
 		       ci->options, saved_message);
 
 	(void) time (&last_register_time);
@@ -1671,8 +1670,7 @@ finaladd (struct file_info *finfo, char *rev, char *tag, char *options)
     int ret;
     char *rcs;
 
-    rcs = locate_rcs ( finfo->repository, finfo->file, NULL );
-    ret = Checkin ('A', finfo, rcs, rev, tag, options, saved_message);
+    ret = Checkin ('A', finfo, rev, tag, options, saved_message);
     if (ret == 0)
     {
 	char *tmp = xmalloc (strlen (finfo->file) + sizeof (CVSADM)

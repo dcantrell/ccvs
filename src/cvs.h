@@ -753,8 +753,8 @@ void freevers_ts (Vers_TS ** versp);
 /* Miscellaneous CVS infrastructure which layers on top of the recursion
    processor (for example, needs struct file_info).  */
 
-int Checkin (int type, struct file_info *finfo, char *rcs, char *rev,
-		    char *tag, char *options, char *message);
+int Checkin (int type, struct file_info *finfo, char *rev,
+	     char *tag, char *options, char *message);
 int No_Difference (struct file_info *finfo, Vers_TS *vers);
 /* TODO: can the finfo argument to special_file_mismatch be changed? -twp */
 int special_file_mismatch (struct file_info *finfo,
