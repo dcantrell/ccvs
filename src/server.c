@@ -3706,12 +3706,22 @@ error ENOMEM Virtual memory exhausted.\n");
 	}
     }
 
+#ifdef SIGHUP
     (void) SIG_register (SIGHUP, server_cleanup);
+#endif
+#ifdef SIGINT
     (void) SIG_register (SIGINT, server_cleanup);
+#endif
+#ifdef SIGQUIT
     (void) SIG_register (SIGQUIT, server_cleanup);
+#endif
+#ifdef SIGPIPE
     (void) SIG_register (SIGPIPE, server_cleanup);
+#endif
+#ifdef SIGTERM
     (void) SIG_register (SIGTERM, server_cleanup);
-    
+#endif
+
     /* Now initialize our argument vector (for arguments from the client).  */
 
     /* Small for testing.  */
