@@ -1,14 +1,26 @@
+Changes since 1.8.86n:
+
+* The src/options.h file is no more.  All site-specific compile-time
+options can now be set with options to the configure script.  Some of
+these things can also be set by the new command-line options and
+environment variables described below.
+
+* New global option '-P patch' to set the path/name of the patch program
+used by 'cvs update' (only if receiving patches from a remote client).
+This value can also now be defaulted at run-time by setting the
+environment variable PATCH.
+
 Changes since 1.8:
 
 * New global option '-D diff' to set the path/name of the diff program
 used by 'cvs patch' and 'cvs update' (the latter only if sending patches
-to a remote client.  This value can also now be defaulted at run-time by
-setting the environment variable DIFFBIN.
+to a remote client).  This value can also now be defaulted at run-time
+by setting the environment variable DIFF.
 
 * New global option '-g grep to set the path/name of the grep program
 used by 'cvs update' when searching for conflict markers after merging.
 This value can also now be defaulted at run-time by setting the
-environment variable GREPBIN.
+environment variable GREP.
 
 * The postscript documentation (doc/cvs.ps) shipped with CVS is now
 formatted for US letter size instead of A4.  This is not because we
