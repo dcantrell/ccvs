@@ -1,3 +1,15 @@
+Wed Oct 25 16:03:20 1995  J.T. Conklin  <jtc@slave.cygnus.com>
+
+	* cvs.h (struct entnode): Add user field.
+	* entries.c (fputentent): New function, write entries line.
+	(write_ent_proc): Call fputentent to write entries line.
+	(Entnode_Create): New function, construct new Entnode.
+	(Entnode_Destroy): New function, destruct old Entnode.
+	(AddEntryNode): Changed to take an Entnode argument instead of
+	separate user, version, timestamp, etc. arguments.
+	(fgetentent): Changed to return Entnode.
+	(struct entent, free_entent): Removed.
+
 Wed Oct 25 12:44:32 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* admin.c (admin): Don't rely on ANSI C string concatenation;
