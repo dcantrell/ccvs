@@ -2138,6 +2138,7 @@ join_file (finfo, vers)
 	error (0, 0, "revision %s from repository is now in %s",
 	       rev2, finfo->fullname);
 	error (0, 0, "file from working directory is now in %s", backup);
+	write_letter (finfo->file, 'C', finfo->update_dir);
     }
     else
 	status = RCS_merge (vers->srcfile->path, options, rev1, rev2);
