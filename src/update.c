@@ -1457,8 +1457,7 @@ merge_file (file, repository, entries, vers, update_dir)
 	if (!noexec)
 	    error (0, 0, "conflicts found in %s", user);
 
-	if (!really_quiet)
-	    (void) printf ("C %s\n", user);
+	write_letter (file, 'C', update_dir);
 
 	history_write ('C', update_dir, vers->vn_rcs, file, repository);
 
@@ -1469,8 +1468,7 @@ merge_file (file, repository, entries, vers, update_dir)
     }
     else
     {
-	if (!really_quiet)
-	    (void) printf ("M %s\n", user);
+	write_letter (file, 'M', update_dir);
 	history_write ('G', update_dir, vers->vn_rcs, file, repository);
     }
     return (0);
