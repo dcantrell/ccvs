@@ -1,5 +1,10 @@
 Thu Jun 19 07:11:33 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvs.texinfo (config): New node.
+	(Password authentication server): Talk about RCSBIN in config as
+	an alternative to -b global option.
+	* cvsclient.texi (Requests): Specify when Root can/must be used.
+
 	* cvs.texinfo (Error messages): Add
 	"*PANIC* administration files missing".
 

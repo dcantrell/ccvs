@@ -2058,6 +2058,25 @@ different @sc{cvsroot} directory will not be allowed to
 connect.  If there is more than one @sc{cvsroot}
 directory which you want to allow, repeat the option.
 
+Note that some versions of @code{inetd} may limit the
+number of arguments to four.  If your server outputs
+usage messages instead of the CVS protocol (which will
+typically cause a client to complain with protocol
+errors), then try limiting the number of arguments.
+For example, instead of
+
+@example
+-b /usr/local/bin
+@end example
+
+in @file{inetd.conf}, as described above, put the
+following in @file{CVSROOT/config} (as described in
+@pxref{config}):
+
+@example
+RCSBIN=/usr/local/bin
+@end example
+
         If your @code{inetd} wants a symbolic service
 name instead of a raw port number, then put this in
 @file{/etc/services}:
@@ -9934,6 +9953,7 @@ file, which defines the modules inside the repository.
 * cvsignore::                   Ignoring files via cvsignore
 * history file::                History information
 * Variables::                   Various variables are expanded
+* config::                      Miscellaneous CVS configuration
 @end menu
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -11038,6 +11058,40 @@ to @code{sh /work/local/tests/runtests}.
 All other strings containing @samp{$} are reserved;
 there is no way to quote a @samp{$} character so that
 @samp{$} represents itself.
+
+@node config
+@appendixsec The CVSROOT/config configuration file
+
+@cindex config, in CVSROOT
+@cindex CVSROOT/config
+
+The administrative file @file{config} contains various
+miscellaneous settings which affect the behavior of
+@sc{cvs}.  The syntax is slightly different from the
+other administrative files.  Variables are not
+expanded.  Lines which start with @samp{#} are
+considered comments.
+@c FIXME: where do we define comments for the other
+@c administrative files.
+Other lines consist of a keyword, @samp{=}, and a
+value.  Note that this syntax is very strict.
+Extraneous spaces or tabs are not permitted.
+@c See comments in parseinfo.c:parse_config for more
+@c discussion of this strictness.
+
+Currently only one keyword is defined.  It is:
+
+@table @code
+@cindex RCSBIN, in CVSROOT/config
+@item RCSBIN=@var{bindir}
+Look for @sc{rcs} programs in the directory
+@var{bindir}, like the @samp{-b} global option.  It is
+not specified whether this setting overrides the
+@samp{-b} global option or vice versa; the behavior
+with respect to overrides may change in the future.
+@c In other words, I haven't thought very much about
+@c what should override what.
+@end table
 
 @c ---------------------------------------------------------------------
 @node Environment variables
