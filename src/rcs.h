@@ -186,7 +186,7 @@ enum rcs_delta_op {RCS_ANNOTATE, RCS_FETCH};
  * exported interfaces
  */
 RCSNode *RCS_parse PROTO((const char *file, const char *repos));
-RCSNode *RCS_parsercsfile PROTO((char *rcsfile));
+RCSNode *RCS_parsercsfile PROTO((const char *rcsfile));
 void RCS_fully_parse PROTO((RCSNode *));
 void RCS_reparsercsfile PROTO((RCSNode *, FILE **, struct rcsbuffer *));
 extern int RCS_setattic PROTO ((RCSNode *, int));

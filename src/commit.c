@@ -49,7 +49,7 @@ static int precommit_list_proc PROTO((Node * p, void *closure));
 static int precommit_proc PROTO((char *repository, char *filter));
 static int remove_file PROTO ((struct file_info *finfo, char *tag,
 			       char *message));
-static void fixaddfile PROTO((const char *file, const char *repository));
+static void fixaddfile PROTO((const char *rcs));
 static void fixbranch PROTO((RCSNode *, char *branch));
 static void unlockrcs PROTO((RCSNode *rcs));
 static void ci_delproc PROTO((Node *p));
@@ -1251,7 +1251,7 @@ commit_fileproc (callerdat, finfo)
 	if (checkaddfile (finfo->file, finfo->repository, ci->tag, ci->options,
 			  &finfo->rcs) != 0)
 	{
-	    fixaddfile (finfo->file, finfo->repository);
+	    fixaddfile (finfo->rcs->path);
 	    err = 1;
 	    goto out;
 	}
@@ -1739,7 +1739,7 @@ finaladd (finfo, rev, tag, options)
 	free (tmp);
     }
     else
-	fixaddfile (finfo->file, finfo->repository);
+	fixaddfile (finfo->rcs->path);
 
     (void) time (&last_register_time);
 
@@ -1762,20 +1762,22 @@ unlockrcs (rcs)
 	RCS_rewrite (rcs, NULL, NULL);
 }
 
+
+
 /*
  * remove a partially added file.  if we can parse it, leave it alone.
+ *
+ * FIXME: Every caller that calls this function can access finfo->rcs (the
+ * parsed RCSNode data), so we should be able to detect that the file needs
+ * to be removed without reparsing the file as we do below.
  */
 static void
-fixaddfile (file, repository)
-    const char *file;
-    const char *repository;
+fixaddfile (rcs)
+    const char *rcs;
 {
     RCSNode *rcsfile;
-    char *rcs;
     int save_really_quiet;
 
-    rcs = locate_rcs (repository, file, NULL);
-    if (rcs == NULL) return;
     save_really_quiet = really_quiet;
     really_quiet = 1;
     if ((rcsfile = RCS_parsercsfile (rcs)) == NULL)
@@ -1786,8 +1788,9 @@ fixaddfile (file, repository)
     else
 	freercsnode (&rcsfile);
     really_quiet = save_really_quiet;
-    free (rcs);
 }
+
+
 
 /*
  * put the branch back on an rcs file

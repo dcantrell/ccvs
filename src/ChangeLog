@@ -1,5 +1,13 @@
 2003-07-25  Derek Price  <derek@ximbiot.com>
 
+	* rcs.c (RCS_parsercsfile): Declare rcsfile argument as const.
+	* rcs.h (RCS_parsercsfile): Update prototype to match.
+	* commit.c (fixaddfile): Accept a single path to an rcs file as an
+	argument rather than trying to look it up again when it is not
+	necessary.
+
+2003-07-25  Derek Price  <derek@ximbiot.com>
+
 	* commit.c (finaladd): But don't free variables we no longer allocate.
 
 2003-07-25  Derek Price  <derek@ximbiot.com>
