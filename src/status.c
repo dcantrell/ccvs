@@ -106,9 +106,8 @@ status_fileproc (finfo)
     char *sstat;
     Vers_TS *vers;
 
-    status = Classify_File (finfo->file, (char *) NULL, (char *) NULL, (char *) NULL,
-			    1, 0, finfo->repository, finfo->entries, finfo->rcs, &vers,
-			    finfo->update_dir, 0);
+    status = Classify_File (finfo, (char *) NULL, (char *) NULL, (char *) NULL,
+			    1, 0, &vers, 0);
     switch (status)
     {
 	case T_UNKNOWN:

@@ -216,10 +216,8 @@ check_fileproc (finfo)
     
     if (check_uptodate) 
     {
-	Ctype status = Classify_File (finfo->file, (char *) NULL, (char *) NULL,
-				      (char *) NULL, 1, 0, finfo->repository,
-				      finfo->entries, finfo->rcs, &vers,
-				      finfo->update_dir, 0);
+	Ctype status = Classify_File (finfo, (char *) NULL, (char *) NULL,
+				      (char *) NULL, 1, 0, &vers, 0);
 	if ((status != T_UPTODATE) && (status != T_CHECKOUT))
 	{
 	    error (0, 0, "%s is locally modified", finfo->fullname);
@@ -255,9 +253,7 @@ check_fileproc (finfo)
     p->key = xstrdup (finfo->file);
     p->type = UPDATE;
     p->delproc = tag_delproc;
-    vers = Version_TS (finfo->repository, (char *) NULL, (char *) NULL,
-		       (char *) NULL, finfo->file, 0, 0,
-		       finfo->entries, finfo->rcs);
+    vers = Version_TS (finfo, NULL, NULL, NULL, 0, 0);
     if (vers->srcfile == NULL)
     {
         if (!really_quiet)
@@ -424,8 +420,7 @@ tag_fileproc (finfo)
        specifies a list of files on the command line.  */
     tag_lockdir (finfo->repository);
 
-    vers = Version_TS (finfo->repository, (char *) NULL, (char *) NULL, (char *) NULL,
-		       finfo->file, 0, 0, finfo->entries, finfo->rcs);
+    vers = Version_TS (finfo, NULL, NULL, NULL, 0, 0);
 
     if ((numtag != NULL) || (date != NULL))
     {

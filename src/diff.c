@@ -19,8 +19,7 @@
 static Dtype diff_dirproc PROTO((char *dir, char *pos_repos, char *update_dir));
 static int diff_filesdoneproc PROTO((int err, char *repos, char *update_dir));
 static int diff_dirleaveproc PROTO((char *dir, int err, char *update_dir));
-static int diff_file_nodiff PROTO((char *file, char *repository, List *entries,
-			     RCSNode *rcs, Vers_TS *vers));
+static int diff_file_nodiff PROTO ((struct file_info *finfo, Vers_TS *vers));
 static int diff_fileproc PROTO((struct file_info *finfo));
 static void diff_mark_errors PROTO((int err));
 
@@ -315,8 +314,7 @@ diff_fileproc (finfo)
 #ifdef SERVER_SUPPORT
     user_file_rev = 0;
 #endif
-    vers = Version_TS (finfo->repository, (char *) NULL, (char *) NULL, (char *) NULL,
-		       finfo->file, 1, 0, finfo->entries, finfo->rcs);
+    vers = Version_TS (finfo, NULL, NULL, NULL, 1, 0);
 
     if (diff_rev2 != NULL || diff_date2 != NULL)
     {
@@ -387,7 +385,7 @@ diff_fileproc (finfo)
 	}
     }
 
-    if (empty_file == DIFF_NEITHER && diff_file_nodiff (finfo->file, finfo->repository, finfo->entries, finfo->rcs, vers))
+    if (empty_file == DIFF_NEITHER && diff_file_nodiff (finfo, vers))
     {
 	freevers_ts (&vers);
 	return (0);
@@ -567,11 +565,8 @@ diff_dirleaveproc (dir, err, update_dir)
  * verify that a file is different 0=same 1=different
  */
 static int
-diff_file_nodiff (file, repository, entries, rcs, vers)
-    char *file;
-    char *repository;
-    List *entries;
-    RCSNode *rcs;
+diff_file_nodiff (finfo, vers)
+    struct file_info *finfo;
     Vers_TS *vers;
 {
     Vers_TS *xvers;
@@ -592,18 +587,18 @@ diff_file_nodiff (file, repository, entries, rcs, vers)
 	    use_rev1 = xstrdup (vers->vn_rcs);
 	else
 	{
-	    xvers = Version_TS (repository, (char *) NULL, diff_rev1,
-				diff_date1, file, 1, 0, entries, rcs);
+	    xvers = Version_TS (finfo, NULL, diff_rev1, diff_date1, 1, 0);
 	    if (xvers->vn_rcs == NULL)
 	    {
 		/* Don't gripe if it doesn't exist, just ignore! */
-		if (! isfile (file))
-                  /* null statement */ ;
+		if (!isfile (finfo->file))
+		    ;
 		else if (diff_rev1)
-                    error (0, 0, "tag %s is not in file %s", diff_rev1, file);
+                    error (0, 0, "tag %s is not in file %s", diff_rev1,
+			   finfo->fullname);
 		else
 		    error (0, 0, "no revision for date %s in file %s",
-			   diff_date1, file);
+			   diff_date1, finfo->fullname);
 
 		freevers_ts (&xvers);
 		return (1);
@@ -619,18 +614,18 @@ diff_file_nodiff (file, repository, entries, rcs, vers)
 	    use_rev2 = xstrdup (vers->vn_rcs);
 	else
 	{
-	    xvers = Version_TS (repository, (char *) NULL, diff_rev2,
-				diff_date2, file, 1, 0, entries, rcs);
+	    xvers = Version_TS (finfo, NULL, diff_rev2, diff_date2, 1, 0);
 	    if (xvers->vn_rcs == NULL)
 	    {
 		/* Don't gripe if it doesn't exist, just ignore! */
-		if (! isfile (file))
-                  /* null statement */ ;
+		if (!isfile (finfo->file))
+		    ;
 		else if (diff_rev1)
-		    error (0, 0, "tag %s is not in file %s", diff_rev2, file);
+		    error (0, 0, "tag %s is not in file %s", diff_rev2,
+			   finfo->fullname);
 		else
 		    error (0, 0, "no revision for date %s in file %s",
-			   diff_date2, file);
+			   diff_date2, finfo->fullname);
 
 		freevers_ts (&xvers);
 		return (1);
@@ -643,12 +638,12 @@ diff_file_nodiff (file, repository, entries, rcs, vers)
 	if (use_rev1 && use_rev2) {
 	    return (strcmp (use_rev1, use_rev2) == 0);
 	} else {
-	    error(0, 0, "No HEAD revision for file %s", file);
+	    error (0, 0, "No HEAD revision for file %s", finfo->fullname);
 	    return (1);
 	}
     }
 #ifdef SERVER_SUPPORT
-    if (user_file_rev) 
+    if (user_file_rev)
     {
         /* drop user_file_rev into first unused use_rev */
         if (!use_rev1) 
@@ -687,7 +682,7 @@ diff_file_nodiff (file, repository, entries, rcs, vers)
     switch (retcode)
     {
 	case 0:				/* everything ok */
-	    if (xcmp (file, tmp) == 0)
+	    if (xcmp (finfo->file, tmp) == 0)
 	    {
 		(void) CVS_UNLINK (tmp);
 		return (1);

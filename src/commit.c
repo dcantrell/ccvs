@@ -28,16 +28,15 @@ static Dtype commit_direntproc PROTO((char *dir, char *repos, char *update_dir))
 static int commit_dirleaveproc PROTO((char *dir, int err, char *update_dir));
 static int commit_fileproc PROTO((struct file_info *finfo));
 static int commit_filesdoneproc PROTO((int err, char *repository, char *update_dir));
-static int finaladd PROTO((char *file, char *revision, char *tag,
-			   char *options, char *update_dir,
-			   char *repository, List *entries));
+static int finaladd PROTO((struct file_info *finfo, char *revision, char *tag,
+			   char *options));
 static int findmaxrev PROTO((Node * p, void *closure));
 static int lock_RCS PROTO((char *user, char *rcs, char *rev, char *repository));
 static int lockrcsfile PROTO((char *file, char *repository, char *rev));
 static int precommit_list_proc PROTO((Node * p, void *closure));
 static int precommit_proc PROTO((char *repository, char *filter));
-static int remove_file PROTO((char *file, char *repository, char *tag,
-			char *message, List *entries, RCSNode *rcsnode));
+static int remove_file PROTO ((struct file_info *finfo, char *tag,
+			       char *message));
 static void fix_rcs_modes PROTO((char *rcs, char *user));
 static void fixaddfile PROTO((char *file, char *repository));
 static void fixbranch PROTO((char *file, char *repository, char *branch));
@@ -187,6 +186,7 @@ find_fileproc (finfo)
     enum classify_type status;
     Node *node;
     struct find_data *args = find_data_static;
+    struct file_info xfinfo;
 
     /* if this directory has an ignore list, add this file to it */
     if (args->ignlist)
@@ -200,9 +200,11 @@ find_fileproc (finfo)
 	    freenode (p);
     }
 
-    vers = Version_TS ((char *)NULL, (char *)NULL, (char *)NULL,
-		       (char *)NULL,
-		       finfo->file, 0, 0, finfo->entries, (RCSNode *)NULL);
+    xfinfo = *finfo;
+    xfinfo.repository = NULL;
+    xfinfo.rcs = NULL;
+
+    vers = Version_TS (&xfinfo, NULL, NULL, NULL, 0, 0);
     if (vers->ts_user == NULL
 	&& vers->vn_user != NULL
 	&& vers->vn_user[0] == '-')
@@ -579,19 +581,16 @@ check_fileproc (finfo)
 	/* If the tag is for the trunk, make sure we're at the head */
 	if (numdots (tag) < 2)
 	{
-	    status = Classify_File (finfo->file, (char *) NULL, (char *) NULL,
-				    (char *) NULL, 1, aflag, finfo->repository,
-				    finfo->entries, finfo->rcs, &vers, finfo->update_dir, 0);
+	    status = Classify_File (finfo, (char *) NULL, (char *) NULL,
+				    (char *) NULL, 1, aflag, &vers, 0);
 	    if (status == T_UPTODATE || status == T_MODIFIED ||
 		status == T_ADDED)
 	    {
 		Ctype xstatus;
 
 		freevers_ts (&vers);
-		xstatus = Classify_File (finfo->file, tag, (char *) NULL,
-					 (char *) NULL, 1, aflag, finfo->repository,
-					 finfo->entries, finfo->rcs, &vers, finfo->update_dir,
-					 0);
+		xstatus = Classify_File (finfo, tag, (char *) NULL,
+					 (char *) NULL, 1, aflag, &vers, 0);
 		if (xstatus == T_REMOVE_ENTRY)
 		    status = T_MODIFIED;
 		else if (status == T_MODIFIED && xstatus == T_CONFLICT)
@@ -614,19 +613,16 @@ check_fileproc (finfo)
 		cp = strrchr (xtag, '.');
 		*cp = '\0';
 	    }
-	    status = Classify_File (finfo->file, xtag, (char *) NULL,
-				    (char *) NULL, 1, aflag, finfo->repository,
-				    finfo->entries, finfo->rcs, &vers, finfo->update_dir, 0);
+	    status = Classify_File (finfo, xtag, (char *) NULL,
+				    (char *) NULL, 1, aflag, &vers, 0);
 	    if ((status == T_REMOVE_ENTRY || status == T_CONFLICT)
 		&& (cp = strrchr (xtag, '.')) != NULL)
 	    {
 		/* pluck one more dot off the revision */
 		*cp = '\0';
 		freevers_ts (&vers);
-		status = Classify_File (finfo->file, xtag, (char *) NULL,
-					(char *) NULL, 1, aflag, finfo->repository,
-					finfo->entries, finfo->rcs, &vers, finfo->update_dir,
-					0);
+		status = Classify_File (finfo, xtag, (char *) NULL,
+					(char *) NULL, 1, aflag, &vers, 0);
 		if (status == T_UPTODATE || status == T_REMOVE_ENTRY)
 		    status = T_MODIFIED;
 	    }
@@ -637,9 +633,8 @@ check_fileproc (finfo)
 	}
     }
     else
-	status = Classify_File (finfo->file, tag, (char *) NULL, (char *) NULL,
-				1, 0, finfo->repository, finfo->entries, finfo->rcs, &vers,
-				finfo->update_dir, 0);
+	status = Classify_File (finfo, tag, (char *) NULL, (char *) NULL,
+				1, 0, &vers, 0);
     noexec = save_noexec;
     quiet = save_quiet;
     really_quiet = save_really_quiet;
@@ -1039,8 +1034,8 @@ commit_fileproc (finfo)
 	if (ci->tag) {
 	    locate_rcs (finfo->file, finfo->repository, rcs);
 	    ci->rev = RCS_whatbranch (finfo->rcs, ci->tag);
-	    err = Checkin ('A', finfo->file, finfo->update_dir, finfo->repository, rcs, ci->rev,
-			   ci->tag, ci->options, message, finfo->entries);
+	    err = Checkin ('A', finfo, rcs, ci->rev,
+			   ci->tag, ci->options, message);
 	    if (err != 0)
 	    {
 		unlockrcs (finfo->file, finfo->repository);
@@ -1072,17 +1067,16 @@ commit_fileproc (finfo)
 	}
 
 	/* XXX - an added file with symbolic -r should add tag as well */
-	err = finaladd (finfo->file, ci->rev ? ci->rev : xrev, ci->tag, ci->options,
-			finfo->update_dir, finfo->repository, finfo->entries);
+	err = finaladd (finfo, ci->rev ? ci->rev : xrev, ci->tag, ci->options);
 	if (xrev)
 	    free (xrev);
     }
     else if (ci->status == T_MODIFIED)
     {
 	locate_rcs (finfo->file, finfo->repository, rcs);
-	err = Checkin ('M', finfo->file, finfo->update_dir, finfo->repository,
+	err = Checkin ('M', finfo,
 		       rcs, ci->rev, ci->tag,
-		       ci->options, message, finfo->entries);
+		       ci->options, message);
 
 	(void) time (&last_register_time);
 
@@ -1094,12 +1088,11 @@ commit_fileproc (finfo)
     }
     else if (ci->status == T_REMOVED)
     {
-	err = remove_file (finfo->file, finfo->repository, ci->tag, message,
-			   finfo->entries, finfo->rcs);
+	err = remove_file (finfo, ci->tag, message);
 #ifdef SERVER_SUPPORT
 	if (server_active) {
 	    server_scratch_entry_only ();
-	    server_updated (finfo->file, finfo->update_dir, finfo->repository,
+	    server_updated (finfo,
 			    NULL,
 
 			    /* Doesn't matter, it won't get checked.  */
@@ -1327,13 +1320,10 @@ findmaxrev (p, closure)
  * link to keep it relative after we move it into the attic.
  */
 static int
-remove_file (file, repository, tag, message, entries, rcsnode)
-    char *file;
-    char *repository;
+remove_file (finfo, tag, message)
+    struct file_info *finfo;
     char *tag;
     char *message;
-    List *entries;
-    RCSNode *rcsnode;
 {
     mode_t omask;
     int retcode;
@@ -1352,10 +1342,10 @@ remove_file (file, repository, tag, message, entries, rcsnode)
 
     retcode = 0;
 
-    locate_rcs (file, repository, rcs);
+    locate_rcs (finfo->file, finfo->repository, rcs);
 
     branch = 0;
-    if (tag && !(branch = RCS_isbranch (rcsnode, tag)))
+    if (tag && !(branch = RCS_isbranch (finfo->rcs, tag)))
     {
 	/* a symbolic tag is specified; just remove the tag from the file */
 	if ((retcode = RCS_deltag (rcs, tag, 1)) != 0) 
@@ -1365,7 +1355,7 @@ remove_file (file, repository, tag, message, entries, rcsnode)
 		       "failed to remove tag `%s' from `%s'", tag, rcs);
 	    return (1);
 	}
-	Scratch_Entry (entries, file);
+	Scratch_Entry (finfo->entries, finfo->file);
 	return (0);
     }
 
@@ -1373,7 +1363,7 @@ remove_file (file, repository, tag, message, entries, rcsnode)
     /* commit a new, dead revision. */
 
     /* Print message indicating that file is going to be removed. */
-    (void) printf ("Removing %s;\n", file);
+    (void) printf ("Removing %s;\n", finfo->fullname);
 
     rev = NULL;
     lockflag = RCS_FLAGS_LOCK;
@@ -1381,24 +1371,24 @@ remove_file (file, repository, tag, message, entries, rcsnode)
     {
 	char *branchname;
 
-	rev = RCS_whatbranch (rcsnode, tag);
+	rev = RCS_whatbranch (finfo->rcs, tag);
 	if (rev == NULL)
 	{
 	    error (0, 0, "cannot find branch \"%s\".", tag);
 	    return (1);
 	}
 	
-	if (rcsnode == NULL)
+	if (finfo->rcs == NULL)
 	{
 	    error (0, 0, "boy, I'm confused.");
 	    return (1);
 	}
-	branchname = RCS_getbranch (rcsnode, rev, 1);
+	branchname = RCS_getbranch (finfo->rcs, rev, 1);
 	if (branchname == NULL)
 	{
 	    /* no revision exists on this branch.  use the previous
 	       revision but do not lock. */
-	    corev = RCS_gettag (rcsnode, tag, 1, 0);
+	    corev = RCS_gettag (finfo->rcs, tag, 1, 0);
 	    prev_rev = xstrdup(rev);
 	    lockflag = 0;
 	} else
@@ -1412,12 +1402,12 @@ remove_file (file, repository, tag, message, entries, rcsnode)
     {
 
         /* Get current head revision of file. */
-	if (rcsnode == NULL)
+	if (finfo->rcs == NULL)
 	{
-	    error (0, 0, "could not find parsed rcsfile %s", file);
+	    error (0, 0, "could not find parsed rcsfile %s", finfo->fullname);
 	    return (1);
 	}
-	prev_rev = RCS_head (rcsnode);
+	prev_rev = RCS_head (finfo->rcs);
     }
     
     /* if removing without a tag or a branch, then make sure the default
@@ -1438,7 +1428,7 @@ remove_file (file, repository, tag, message, entries, rcsnode)
 	   temp directory which is the kludgy way in which server.c
 	   tells time_stamp that the file is no longer around.  Remove
 	   it so we can create temp files with that name (ignore errors).  */
-	unlink_file (file);
+	unlink_file (finfo->file);
     }
 #endif
 
@@ -1473,17 +1463,17 @@ remove_file (file, repository, tag, message, entries, rcsnode)
     if (!branch)
     {
 	/* this was the head; really move it into the Attic */
-	tmp = xmalloc(strlen(repository) + 
+	tmp = xmalloc(strlen(finfo->repository) + 
 		      sizeof('/') +
 		      sizeof(CVSATTIC) +
 		      sizeof('/') +
-		      strlen(file) +
+		      strlen(finfo->file) +
 		      sizeof(RCSEXT) + 1);
-	(void) sprintf (tmp, "%s/%s", repository, CVSATTIC);
+	(void) sprintf (tmp, "%s/%s", finfo->repository, CVSATTIC);
 	omask = umask (cvsumask);
 	(void) CVS_MKDIR (tmp, 0777);
 	(void) umask (omask);
-	(void) sprintf (tmp, "%s/%s/%s%s", repository, CVSATTIC, file, RCSEXT);
+	(void) sprintf (tmp, "%s/%s/%s%s", finfo->repository, CVSATTIC, finfo->file, RCSEXT);
 	
 	if (strcmp (rcs, tmp) != 0
 	    && CVS_RENAME (rcs, tmp) == -1
@@ -1496,13 +1486,13 @@ remove_file (file, repository, tag, message, entries, rcsnode)
     }
 
     /* Print message that file was removed. */
-    (void) printf ("%s  <--  %s\n", rcs, file);
+    (void) printf ("%s  <--  %s\n", rcs, finfo->file);
     (void) printf ("new revision: delete; ");
     (void) printf ("previous revision: %s\n", prev_rev);
     (void) printf ("done\n");
     free(prev_rev);
 
-    Scratch_Entry (entries, file);
+    Scratch_Entry (finfo->entries, finfo->file);
     return (0);
 }
 
@@ -1510,29 +1500,25 @@ remove_file (file, repository, tag, message, entries, rcsnode)
  * Do the actual checkin for added files
  */
 static int
-finaladd (file, rev, tag, options, update_dir, repository, entries)
-    char *file;
+finaladd (finfo, rev, tag, options)
+    struct file_info *finfo;
     char *rev;
     char *tag;
     char *options;
-    char *update_dir;
-    char *repository;
-    List *entries;
 {
     int ret;
     char tmp[PATH_MAX];
     char rcs[PATH_MAX];
 
-    locate_rcs (file, repository, rcs);
-    ret = Checkin ('A', file, update_dir, repository, rcs, rev, tag, options,
-		   message, entries);
+    locate_rcs (finfo->file, finfo->repository, rcs);
+    ret = Checkin ('A', finfo, rcs, rev, tag, options, message);
     if (ret == 0)
     {
-	(void) sprintf (tmp, "%s/%s%s", CVSADM, file, CVSEXT_LOG);
+	(void) sprintf (tmp, "%s/%s%s", CVSADM, finfo->file, CVSEXT_LOG);
 	(void) unlink_file (tmp);
     }
     else
-	fixaddfile (file, repository);
+	fixaddfile (finfo->file, finfo->repository);
 
     (void) time (&last_register_time);
 

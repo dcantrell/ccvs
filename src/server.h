@@ -60,7 +60,7 @@ extern void server_copy_file
    repository version).  */
 enum server_updated_arg4 {SERVER_UPDATED, SERVER_MERGED, SERVER_PATCHED};
 extern void server_updated
-    PROTO((char *file, char *update_dir, char *repository, Vers_TS *vers,
+    PROTO((struct file_info *finfo, Vers_TS *vers,
 	   enum server_updated_arg4 updated, struct stat *,
 	   unsigned char *checksum));
 

@@ -17,12 +17,9 @@
 #include "cvs.h"
 
 int
-No_Difference (file, vers, entries, repository, update_dir)
-    char *file;
+No_Difference (finfo, vers)
+    struct file_info *finfo;
     Vers_TS *vers;
-    List *entries;
-    char *repository;
-    char *update_dir;
 {
     Node *p;
     char *tmp;
@@ -47,26 +44,26 @@ No_Difference (file, vers, entries, repository, update_dir)
 #if 0
 	/* Why would we want to munge the modes?  And only if the timestamps
 	   are different?  And even for commands like "cvs status"????  */
-	if (!iswritable (file))		/* fix the modes as a side effect */
-	    xchmod (file, 1);
+	if (!iswritable (finfo->file))		/* fix the modes as a side effect */
+	    xchmod (finfo->file, 1);
 #endif
 
-	tocvsPath = wrap_tocvs_process_file (file);
+	tocvsPath = wrap_tocvs_process_file (finfo->file);
 
 	/* do the byte by byte compare */
-	if (xcmp (tocvsPath == NULL ? file : tocvsPath, tmp) == 0)
+	if (xcmp (tocvsPath == NULL ? finfo->file : tocvsPath, tmp) == 0)
 	{
 #if 0
 	    /* Why would we want to munge the modes?  And only if the
 	       timestamps are different?  And even for commands like
 	       "cvs status"????  */
 	    if (cvswrite == FALSE)	/* fix the modes as a side effect */
-		xchmod (file, 0);
+		xchmod (finfo->file, 0);
 #endif
 
 	    /* no difference was found, so fix the entries file */
-	    ts = time_stamp (file);
-	    Register (entries, file,
+	    ts = time_stamp (finfo->file);
+	    Register (finfo->entries, finfo->file,
 		      vers->vn_user ? vers->vn_user : vers->vn_rcs, ts,
 		      options, vers->tag, vers->date, (char *) 0);
 #ifdef SERVER_SUPPORT
@@ -74,13 +71,13 @@ No_Difference (file, vers, entries, repository, update_dir)
 	    {
 		/* We need to update the entries line on the client side.  */
 		server_update_entries
-		  (file, update_dir, repository, SERVER_UPDATED);
+		  (finfo->file, finfo->update_dir, finfo->repository, SERVER_UPDATED);
 	    }
 #endif
 	    free (ts);
 
 	    /* update the entdata pointer in the vers_ts structure */
-	    p = findnode (entries, file);
+	    p = findnode (finfo->entries, finfo->file);
 	    vers->entdata = (Entnode *) p->data;
 
 	    ret = 0;
@@ -105,14 +102,9 @@ No_Difference (file, vers, entries, repository, update_dir)
     }
     else
     {
-	if (update_dir[0] == '\0')
-	    error (0, retcode == -1 ? errno : 0,
-		   "could not check out revision %s of %s",
-		   vers->vn_user, file);
-	else
-	    error (0, retcode == -1 ? errno : 0,
-		   "could not check out revision %s of %s/%s",
-		   vers->vn_user, update_dir, file);
+	error (0, retcode == -1 ? errno : 0,
+	       "could not check out revision %s of %s",
+	       vers->vn_user, finfo->fullname);
 	ret = -1;			/* different since we couldn't tell */
     }
 

@@ -125,8 +125,7 @@ remove_fileproc (finfo)
 	   in doing the following checks.  */
     }
 
-    vers = Version_TS (finfo->repository, (char *) NULL, (char *) NULL, (char *) NULL,
-		       finfo->file, 0, 0, finfo->entries, finfo->rcs);
+    vers = Version_TS (finfo, NULL, NULL, NULL, 0, 0);
 
     if (vers->ts_user != NULL)
     {

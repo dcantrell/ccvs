@@ -3357,26 +3357,15 @@ server_copy_file (file, update_dir, repository, newfile)
 /* See server.h for description.  */
 
 void
-server_updated (file, update_dir, repository, vers, updated, file_info,
-		checksum)
-    char *file;
-    char *update_dir;
-    char *repository;
+server_updated (finfo, vers, updated, file_info, checksum)
+    struct file_info *finfo;
     Vers_TS *vers;
     enum server_updated_arg4 updated;
     struct stat *file_info;
     unsigned char *checksum;
 {
-    char *short_pathname;
-
     if (noexec)
 	return;
-
-    short_pathname = xmalloc (strlen (update_dir) + strlen (file) + 10);
-    if (update_dir[0] == '\0')
-	strcpy (short_pathname, file);
-    else
-	sprintf (short_pathname, "%s/%s", update_dir, file);
 
     if (entries_line != NULL && scratched_file == NULL)
     {
@@ -3386,7 +3375,7 @@ server_updated (file, update_dir, repository, vers, updated, file_info,
 	unsigned long size;
 	char size_text[80];
 
-	if ( CVS_STAT (file, &sb) < 0)
+	if ( CVS_STAT (finfo->file, &sb) < 0)
 	{
 	    if (existence_error (errno))
 	    {
@@ -3399,7 +3388,7 @@ server_updated (file, update_dir, repository, vers, updated, file_info,
 		entries_line = NULL;
 		goto done;
 	    }
-	    error (1, errno, "reading %s", short_pathname);
+	    error (1, errno, "reading %s", finfo->fullname);
 	}
 
 	if (checksum != NULL)
@@ -3446,8 +3435,8 @@ server_updated (file, update_dir, repository, vers, updated, file_info,
 	    buf_output0 (&protocol, "Patched ");
 	else
 	    abort ();
-	output_dir (update_dir, repository);
-	buf_output0 (&protocol, file);
+	output_dir (finfo->update_dir, finfo->repository);
+	buf_output0 (&protocol, finfo->file);
 	buf_output (&protocol, "\n", 1);
 
 	new_entries_line ();
@@ -3488,9 +3477,9 @@ server_updated (file, update_dir, repository, vers, updated, file_info,
 		int status, fd, gzip_status;
 		pid_t gzip_pid;
 
-		fd = CVS_OPEN (file, O_RDONLY | OPEN_BINARY, 0);
+		fd = CVS_OPEN (finfo->file, O_RDONLY | OPEN_BINARY, 0);
 		if (fd < 0)
-		    error (1, errno, "reading %s", short_pathname);
+		    error (1, errno, "reading %s", finfo->fullname);
 		fd = filter_through_gzip (fd, 1, gzip_level, &gzip_pid);
 		f = fdopen (fd, "rb");
 		status = buf_read_file_to_eof (f, &list, &last);
@@ -3499,9 +3488,9 @@ server_updated (file, update_dir, repository, vers, updated, file_info,
 		    (*protocol.memory_error) (&protocol);
 		else if (status != 0)
 		    error (1, ferror (f) ? errno : 0, "reading %s",
-			   short_pathname);
+			   finfo->fullname);
 		if (fclose (f) == EOF)
-		    error (1, errno, "reading %s", short_pathname);
+		    error (1, errno, "reading %s", finfo->fullname);
 		if (waitpid (gzip_pid, &gzip_status, 0) == -1)
 		    error (1, errno, "waiting for gzip process %ld",
 			   (long) gzip_pid);
@@ -3515,17 +3504,17 @@ server_updated (file, update_dir, repository, vers, updated, file_info,
 		long status;
 
 		size = sb.st_size;
-		f = CVS_FOPEN (file, "rb");
+		f = CVS_FOPEN (finfo->file, "rb");
 		if (f == NULL)
-		    error (1, errno, "reading %s", short_pathname);
+		    error (1, errno, "reading %s", finfo->fullname);
 		status = buf_read_file (f, sb.st_size, &list, &last);
 		if (status == -2)
 		    (*protocol.memory_error) (&protocol);
 		else if (status != 0)
 		    error (1, ferror (f) ? errno : 0, "reading %s",
-			   short_pathname);
+			   finfo->fullname);
 		if (fclose (f) == EOF)
-		    error (1, errno, "reading %s", short_pathname);
+		    error (1, errno, "reading %s", finfo->fullname);
 	    }
 	}
 
@@ -3546,15 +3535,15 @@ server_updated (file, update_dir, repository, vers, updated, file_info,
 	    /* But if we are joining, we'll need the file when we call
 	       join_file.  */
 	    && !joining ())
-	    CVS_UNLINK (file);
+	    CVS_UNLINK (finfo->file);
     }
     else if (scratched_file != NULL && entries_line == NULL)
     {
-	if (strcmp (scratched_file, file) != 0)
+	if (strcmp (scratched_file, finfo->file) != 0)
 	    error (1, 0,
 		   "CVS server internal error: `%s' vs. `%s' scratched",
 		   scratched_file,
-		   file);
+		   finfo->file);
 	free (scratched_file);
 	scratched_file = NULL;
 
@@ -3562,8 +3551,8 @@ server_updated (file, update_dir, repository, vers, updated, file_info,
 	    buf_output0 (&protocol, "Removed ");
 	else
 	    buf_output0 (&protocol, "Remove-entry ");
-	output_dir (update_dir, repository);
-	buf_output0 (&protocol, file);
+	output_dir (finfo->update_dir, finfo->repository);
+	buf_output0 (&protocol, finfo->file);
 	buf_output (&protocol, "\n", 1);
     }
     else if (scratched_file == NULL && entries_line == NULL)
@@ -3577,8 +3566,7 @@ server_updated (file, update_dir, repository, vers, updated, file_info,
 	error (1, 0,
 	       "CVS server internal error: Register *and* Scratch_Entry.\n");
     buf_send_counted (&protocol);
-  done:
-    free (short_pathname);
+  done:;
 }
 
 void
