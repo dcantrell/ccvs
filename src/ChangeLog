@@ -1,5 +1,10 @@
 2004-09-04  Derek Price  <derek@ximbiot.com>
 
+	* socket-client.c (socket_client_initialize): Pass new args to
+	buf_initialize.
+
+2004-09-04  Derek Price  <derek@ximbiot.com>
+
 	Silence `gcc -Wall'.
 
 	* buffer.c (buf_initialize): Remove unnecessary typecasts by using
