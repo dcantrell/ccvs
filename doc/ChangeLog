@@ -1,3 +1,8 @@
+Thu Apr 17 16:34:14 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (From other version control systems): Add comment
+	about CMZ and PATCHY.
+
 Wed Apr 16 12:35:25 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvsclient.texi (Responses): Add paragraph describing how
