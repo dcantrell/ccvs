@@ -5570,6 +5570,7 @@ ${PROG} remove: use '${PROG} commit' to remove this file permanently"
 	  rm -r 1
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
 	  ;;
+
 	dirs)
 	  # Tests related to removing and adding directories.
 	  # See also:
