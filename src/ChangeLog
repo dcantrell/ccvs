@@ -1,3 +1,7 @@
+Fri Sep 29 07:54:22 1995  Mike Sutton  <mws115@llcoolj.dayton.saic.com>
+
+	* filesubr.c (last_component): Don't use ANSI style declaration.
+
 Wed Sep 27 15:24:00 1995  Del  <del@matra.com.au>
 
 	* tag.c, rtag.c:  Pass a few extra options to the script
