@@ -42,7 +42,7 @@ int ign_inhibit_server;
 void
 ign_setup ()
 {
-    struct passwd *pw;
+    char *home_dir;
     char file[PATH_MAX];
     char *tmp;
 
@@ -68,9 +68,10 @@ ign_setup ()
     }
 
     /* Then add entries found in home dir, (if user has one) and file exists */
-    if ((pw = (struct passwd *) getpwuid (getuid ())) && pw->pw_dir)
+    home_dir = get_homedir ();
+    if (home_dir)
     {
-	(void) sprintf (file, "%s/%s", pw->pw_dir, CVSDOTIGNORE);
+	(void) sprintf (file, "%s/%s", home_dir, CVSDOTIGNORE);
 	ign_add_file (file, 0);
     }
 
