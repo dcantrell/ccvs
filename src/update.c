@@ -877,6 +877,28 @@ update_dirent_proc (callerdat, dir, repository, update_dir, entries)
 	if (!update_build_dirs)
 	    return (R_SKIP_ALL);
 
+	/* Various CVS administrators are in the habit of removing
+	   the repository directory for things they don't want any
+	   more.  I've even been known to do it myself (on rare
+	   occasions).  Not the usual recommended practice, but we
+	   want to try to come up with some kind of
+	   reasonable/documented/sensible behavior.  Generally
+	   the behavior is to just skip over that directory (see
+	   dirs test in sanity.sh; the case which reaches here
+	   is when update -d is specified, and the working directory
+	   is gone but the subdirectory is still mentioned in
+	   CVS/Entries).  */
+	if (1
+#ifdef SERVER_SUPPORT
+	    /* In the remote case, the client should refrain from
+	       sending us the directory in the first place.  So we
+	       want to continue to give an error, so clients make
+	       sure to do this.  */
+	    && !server_active
+#endif
+	    && !isdir (repository))
+	    return R_SKIP_ALL;
+
 	if (noexec)
 	{
 	    /* ignore the missing dir if -n is specified */
