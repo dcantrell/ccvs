@@ -261,6 +261,12 @@
 /* #define AUTH_CLIENT_SUPPORT 1 */
 /* #define AUTH_SERVER_SUPPORT 1 */
 
+/*
+ * This tells the client that it must use send()/recv() to talk to the
+ * server if it is connected to the server via a socket.  Sigh.
+ * OS/2 also cannot convert sockets to file descriptors.
+ */
+#define NO_SOCKET_TO_FD 1
 
 /* End of CVS configuration section */
 
