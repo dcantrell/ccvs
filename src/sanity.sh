@@ -977,7 +977,9 @@ depends_on_rsync ()
   # Save a copy and set the absolute path to our default.
   save_RSYNC=$RSYNC
   rsyncworks=false
-  for rsync in ${RSYNC} `Which -a rsync`;
+  altPATH=/usr/local/bin:/usr/contrib:/usr/gnu/bin:/local/bin:/local/gnu/bin:/gnu/bin:/sw/bin
+  # rsync is NOT a GNU tool, so do NOT use find_tool for name munging.
+  for rsync in ${RSYNC} `Which -a rsync $PATH:$altPATH`;
   do
 
     if is_bad_tool `Which $rsync` ; then continue ; fi
@@ -1012,6 +1014,7 @@ depends_on_rsync ()
       rsyncworks=:
       RSYNC=$rsync
     else
+      # Only use Which because of ${RSYNC} in the for loop.
       set_bad_tool `Which $rsync`
     fi
   
@@ -1021,9 +1024,8 @@ depends_on_rsync ()
     if $rsyncworks; then
       return 0
     else
-      echo $rsync failed to work properly
-      echo "====="; echo "$rsync --version"; $rsync --version; echo "====="
-      (echo "$rsync --version"; $rsync --version) >>$LOGFILE 2>&1
+      (echo $rsync failed to work properly;\
+       echo "$rsync --version"; $rsync --version) >>$LOGFILE 2>&1
     fi
   done
 

@@ -1,3 +1,8 @@
+2004-11-04  Mark D. Baushke  <mdb@cvshome.org>
+
+	* sanity.sh (depends_on_rsync): Do not echo rsync information to
+	stdout. Look for rsync in more directories.
+
 2004-11-04 Derek Price <derek@ximbiot.com>
 
 	* sanity.sh (depends_on_rsync): Minor simplifications.  Make sure that
