@@ -6972,12 +6972,22 @@ you will have to merge the changes.
 @item I @var{file}
 The file is being ignored (@pxref{cvsignore}).
 
+@cindex symbolic link, importing
+@cindex link, symbolic, importing
+@c FIXME: also (somewhere else) probably
+@c should be documenting what happens if you "cvs add"
+@c a symbolic link.  Also maybe what happens if
+@c you manually create symbolic links within the
+@c repository (? - not sure why we'd want to suggest
+@c doing that).
 @item L @var{file}
-The file is a symbolic link; at the moment (and for the forseeable
-future), symbolic links are ignored.
+The file is a symbolic link; @code{cvs import} ignores symbolic links.
+People periodically suggest that this behavior should
+be changed, but if there is a consensus on what it
+should be changed to, it doesn't seem to be apparent.
 (Various options in the @file{modules} file can be used
 to recreate symbolic links on checkout, update, etc.;
-@pxref{modules}.)
+@pxref{modules}.)  
 @end table
 
 @c . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .

@@ -1,3 +1,9 @@
+Sun Feb  9 13:58:59 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (import output): Add index entries for symbolic
+	links.  Add brief mention of whether behavior should be
+	different.  Add comments on other symbolic link issues.
+
 Wed Feb  5 13:02:37 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (Concurrency): Add comment about commit/commit
