@@ -769,16 +769,18 @@ xresolvepath ( path )
      * bit by bit calling xreadlink().
      */
 
-    owd = xgetwd();
+    owd = xgetcwd ();
     if ( CVS_CHDIR ( path ) < 0)
 	error ( 1, errno, "cannot chdir to %s", path );
-    if ( ( hardpath = xgetwd() ) == NULL )
+    if ((hardpath = xgetcwd ()) == NULL)
 	error (1, errno, "cannot readlink %s", hardpath);
     if ( CVS_CHDIR ( owd ) < 0)
 	error ( 1, errno, "cannot chdir to %s", owd );
     free (owd);
     return hardpath;
 }
+
+
 
 /* Return a pointer into PATH's last component.  */
 const char *
