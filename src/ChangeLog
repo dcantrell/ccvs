@@ -1,3 +1,8 @@
+Mon Feb 19 01:10:01 1996  Karl Fogel  <kfogel@floss.red-bean.com>
+
+        * client.c (send_repository): die if `repos' is NULL.  This is a
+        lame solution; see comments in code.
+
 Thu Feb 15 15:04:01 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* error.c (error): Free entire and mess when done with them.
