@@ -1,5 +1,8 @@
 Wed Jan  3 18:25:25 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* sanity.sh: Remove tests 5, 5.5, and 5.75.  All that stuff is
+	tested elsewhere.
+
 	* ignore.c (ign_default): Change CVS* to CVS CVS.adm.  CVS* is too
 	broad, especially in a case-insensitive filesystem.
 
