@@ -13,6 +13,8 @@
 
 #include "cvs.h"
 
+
+
 /* update_dir includes dir as its last component.
 
    Return value is 0 for success, or 1 if we printed a warning message.
@@ -22,7 +24,9 @@
    don't print warnings; all errors are fatal then.  */
 
 int
-Create_Admin (char *dir, char *update_dir, char *repository, char *tag, char *date, int nonbranch, int warn, int dotemplate)
+Create_Admin (const char *dir, const char *update_dir, const char *repository,
+              const char *tag, const char *date, int nonbranch, int warn,
+              int dotemplate)
 {
     FILE *fout;
     char *cp;

@@ -462,7 +462,10 @@ safe_location (char *where)
 		/* where_this_pass - last_component (where_this_pass) */
 		char *parent;
 
-		if ((parent = last_component (where_this_pass))
+		/* It's okay to cast out the const below since we know we
+		 * allocated where_this_pass and have control of it.
+		 */
+		if ((parent = (char *)last_component (where_this_pass))
 		        != where_this_pass)
 		{
 		    /* strip the last_component */
@@ -1198,7 +1201,7 @@ build_dirs_and_chdir (struct dir_to_build *dirs, int sticky)
 
     while (dirs != NULL)
     {
-	char *dir = last_component (dirs->dirpath);
+	const char *dir = last_component (dirs->dirpath);
 	int made_dir = 0;
 
 	made_dir = !mkdir_if_needed (dir);

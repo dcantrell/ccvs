@@ -133,13 +133,15 @@ Name_Root (char *dir, char *update_dir)
     return (ret);
 }
 
+
+
 /*
  * Write the CVS/Root file so that the environment variable CVSROOT
  * and/or the -d option to cvs will be validated or not necessary for
  * future work.
  */
 void
-Create_Root (char *dir, char *rootdir)
+Create_Root (const char *dir, const char *rootdir)
 {
     FILE *fout;
     char *tmp;

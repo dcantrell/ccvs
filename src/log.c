@@ -113,18 +113,17 @@ struct log_data_and_rcs
 };
 
 static int rlog_proc (int argc, char **argv, char *xwhere,
-			    char *mwhere, char *mfile, int shorten,
-			    int local_specified, char *mname, char *msg);
-static Dtype log_dirproc (void *callerdat, char *dir,
-				 char *repository, char *update_dir,
-				 List *entries);
+                      char *mwhere, char *mfile, int shorten,
+                      int local_specified, char *mname, char *msg);
+static Dtype log_dirproc (void *callerdat, const char *dir,
+                          const char *repository, const char *update_dir,
+                          List *entries);
 static int log_fileproc (void *callerdat, struct file_info *finfo);
 static struct option_revlist *log_parse_revlist (const char *);
 static void log_parse_date (struct log_data *, const char *);
 static void log_parse_list (List **, const char *);
-static struct revlist *log_expand_revlist (RCSNode *,
-						  struct option_revlist *,
-						  int);
+static struct revlist *log_expand_revlist (RCSNode *, struct option_revlist *,
+                                           int);
 static void log_free_revlist (struct revlist *);
 static int log_version_requested (struct log_data *, struct revlist *,
 					 RCSNode *, RCSVers *);
@@ -1626,12 +1625,15 @@ log_branch (Node *p, void *closure)
     return 0;
 }
 
+
+
 /*
  * Print a warm fuzzy message
  */
 /* ARGSUSED */
 static Dtype
-log_dirproc (void *callerdat, char *dir, char *repository, char *update_dir, List *entries)
+log_dirproc (void *callerdat, const char *dir, const char *repository,
+             const char *update_dir, List *entries)
 {
     if (!isdir (dir))
 	return (R_SKIP_ALL);
@@ -1640,6 +1642,8 @@ log_dirproc (void *callerdat, char *dir, char *repository, char *update_dir, Lis
 	error (0, 0, "Logging %s", update_dir);
     return (R_PROCESS);
 }
+
+
 
 /*
  * Compare versions.  This is taken from RCS compartial.

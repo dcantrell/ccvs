@@ -22,9 +22,9 @@ static int remove_force_fileproc (void *callerdat,
 					 struct file_info *finfo);
 #endif
 static int remove_fileproc (void *callerdat, struct file_info *finfo);
-static Dtype remove_dirproc (void *callerdat, char *dir,
-				    char *repos, char *update_dir,
-				    List *entries);
+static Dtype remove_dirproc (void *callerdat, const char *dir,
+                             const char *repos, const char *update_dir,
+                             List *entries);
 
 static int force;
 static int local;
@@ -265,12 +265,15 @@ cannot remove file `%s' which has a sticky date of `%s'",
     return (0);
 }
 
+
+
 /*
  * Print a warm fuzzy message
  */
 /* ARGSUSED */
 static Dtype
-remove_dirproc (void *callerdat, char *dir, char *repos, char *update_dir, List *entries)
+remove_dirproc (void *callerdat, const char *dir, const char *repos,
+                const char *update_dir, List *entries)
 {
     if (!quiet)
 	error (0, 0, "Removing %s", update_dir);

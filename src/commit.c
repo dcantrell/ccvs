@@ -20,26 +20,32 @@
 #include "fileattr.h"
 #include "hardlink.h"
 
-static Dtype check_direntproc (void *callerdat, char *dir, char *repos,
-			       char *update_dir, List *entries);
+static Dtype check_direntproc (void *callerdat, const char *dir,
+                               const char *repos, const char *update_dir,
+                               List *entries);
 static int check_fileproc (void *callerdat, struct file_info *finfo);
-static int check_filesdoneproc (void *callerdat, int err, char *repos,
-				char *update_dir, List *entries);
-static int checkaddfile (char *file, char *repository, char *tag,
-			 char *options, RCSNode **rcsnode);
-static Dtype commit_direntproc (void *callerdat, char *dir, char *repos,
-				char *update_dir, List *entries);
-static int commit_dirleaveproc (void *callerdat, char *dir, int err,
-				char *update_dir, List *entries);
+static int check_filesdoneproc (void *callerdat, int err, const char *repos,
+				const char *update_dir, List *entries);
+static int checkaddfile (const char *file, const char *repository,
+                         const char *tag, const char *options,
+                         RCSNode **rcsnode);
+static Dtype commit_direntproc (void *callerdat, const char *dir,
+                                const char *repos, const char *update_dir,
+                                List *entries);
+static int commit_dirleaveproc (void *callerdat, const char *dir, int err,
+				const char *update_dir, List *entries);
 static int commit_fileproc (void *callerdat, struct file_info *finfo);
-static int commit_filesdoneproc (void *callerdat, int err, char *repository,
-				 char *update_dir, List *entries);
+static int commit_filesdoneproc (void *callerdat, int err,
+                                 const char *repository,
+				 const char *update_dir, List *entries);
 static int finaladd (struct file_info *finfo, char *revision, char *tag,
 		     char *options);
 static int findmaxrev (Node * p, void *closure);
-static int lock_RCS (char *user, RCSNode *rcs, char *rev, char *repository);
+static int lock_RCS (const char *user, RCSNode *rcs, const char *rev,
+                     const char *repository);
 static int precommit_list_to_args_proc (Node * p, void *closure);
-static int precommit_proc (char *repository, char *filter, void *closure);
+static int precommit_proc (const char *repository, const char *filter,
+                           void *closure);
 static int remove_file (struct file_info *finfo, char *tag,
 			char *message);
 static void fixaddfile (const char *rcs);
@@ -113,19 +119,18 @@ struct find_data {
     /* Only good within functions called from the filesdoneproc.  Stores
        the repository (pointer into storage managed by the recursion
        processor.  */
-    char *repository;
+    const char *repository;
 
     /* Non-zero if we should force the commit.  This is enabled by
        either -f or -r options, unlike force_ci which is just -f.  */
     int force;
 };
 
-static Dtype find_dirent_proc (void *callerdat, char *dir,
-				      char *repository, char *update_dir,
-				      List *entries);
+
 
 static Dtype
-find_dirent_proc (void *callerdat, char *dir, char *repository, char *update_dir, List *entries)
+find_dirent_proc (void *callerdat, const char *dir, const char *repository,
+                  const char *update_dir, List *entries)
 {
     struct find_data *find_data = (struct find_data *)callerdat;
 
@@ -148,14 +153,16 @@ find_dirent_proc (void *callerdat, char *dir, char *repository, char *update_dir
     return R_PROCESS;
 }
 
+
+
 /* Here as a static until we get around to fixing ignore_files to pass
    it along as an argument.  */
 static struct find_data *find_data_static;
 
-static void find_ignproc (char *, char *);
+
 
 static void
-find_ignproc (char *file, char *dir)
+find_ignproc (const char *file, const char *dir)
 {
     struct question *p;
 
@@ -167,12 +174,11 @@ find_ignproc (char *file, char *dir)
     find_data_static->questionables = p;
 }
 
-static int find_filesdoneproc (void *callerdat, int err,
-				      char *repository, char *update_dir,
-				      List *entries);
+
 
 static int
-find_filesdoneproc (void *callerdat, int err, char *repository, char *update_dir, List *entries)
+find_filesdoneproc (void *callerdat, int err, const char *repository,
+                    const char *update_dir, List *entries)
 {
     struct find_data *find_data = (struct find_data *)callerdat;
     find_data->repository = repository;
@@ -768,7 +774,7 @@ static int
 check_fileproc (void *callerdat, struct file_info *finfo)
 {
     Ctype status;
-    char *xdir;
+    const char *xdir;
     Node *p;
     List *ulist, *cilist;
     Vers_TS *vers;
@@ -1044,13 +1050,16 @@ warning: file `%s' seems to still contain conflict indicators",
     return retval;
 }
 
+
+
 /*
  * By default, return the code that tells do_recursion to examine all
  * directories
  */
 /* ARGSUSED */
 static Dtype
-check_direntproc (void *callerdat, char *dir, char *repos, char *update_dir, List *entries)
+check_direntproc (void *callerdat, const char *dir, const char *repos,
+                  const char *update_dir, List *entries)
 {
     if (!isdir (dir))
 	return (R_SKIP_ALL);
@@ -1061,18 +1070,21 @@ check_direntproc (void *callerdat, char *dir, char *repos, char *update_dir, Lis
     return (R_PROCESS);
 }
 
+
+
 /*
  * Walklist proc to generate an arg list from the line in commitinfo
  */
 static int
-precommit_list_to_args_proc( p, closure )
+precommit_list_to_args_proc (p, closure)
     Node *p;
     void *closure;
 {
     struct format_cmdline_walklist_closure *c = closure;
     struct logfile_info *li;
     char *arg = NULL;
-    char *f, *d;
+    const char *f;
+    char *d;
     size_t doff;
 
     if (p->data == NULL) return 1;
@@ -1129,31 +1141,31 @@ precommit_list_to_args_proc( p, closure )
     return 0;
 }
 
+
+
 /*
  * Callback proc for pre-commit checking
  */
 static int
-precommit_proc(char *repository, char *filter, void *closure)
+precommit_proc (const char *repository, const char *filter, void *closure)
 {
-    int disposefilter = 0;
+    char *newfilter = NULL;
     char *cmdline;
-    char *srepos = Short_Repository (repository);
+    const char *srepos = Short_Repository (repository);
     List *ulist = (List *)closure;
 
 #ifdef SUPPORT_OLD_INFO_FMT_STRINGS
     if (!strchr(filter, '%'))
     {
-	char *tmpfilter;
 	error(0,0,
               "warning: commitinfo line contains no format strings:\n"
               "    \"%s\"\n"
               "Appending defaults (\" %%r/%%p %%s\"), but please be aware that this usage is\n"
               "deprecated.", filter);
-	tmpfilter = xmalloc (strlen(filter) + 10);
-	strcpy (tmpfilter, filter);
-	strcat (tmpfilter, " %r/%p %s");
-	filter = tmpfilter;
-	disposefilter = 1;
+	newfilter = xmalloc (strlen(filter) + 10);
+	strcpy (newfilter, filter);
+	strcat (newfilter, " %r/%p %s");
+	filter = newfilter;
     }
 #endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
 
@@ -1168,7 +1180,7 @@ precommit_proc(char *repository, char *filter, void *closure)
 	(char *)NULL
 	);
 
-    if (disposefilter) free(filter);
+    if (newfilter) free (newfilter);
 
     if (!cmdline || !strlen(cmdline))
     {
@@ -1183,13 +1195,15 @@ precommit_proc(char *repository, char *filter, void *closure)
     return (run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL|RUN_REALLY));
 }
 
+
+
 /*
  * Run the pre-commit checks for the dir
  */
 /* ARGSUSED */
 static int
-check_filesdoneproc (void *callerdat, int err, char *repos, char *update_dir,
-                     List *entries)
+check_filesdoneproc (void *callerdat, int err, const char *repos,
+                     const char *update_dir, List *entries)
 {
     int n;
     Node *p;
@@ -1443,12 +1457,15 @@ out:
     return (err);
 }
 
+
+
 /*
  * Log the commit and clean up the update list
  */
 /* ARGSUSED */
 static int
-commit_filesdoneproc (void *callerdat, int err, char *repository, char *update_dir, List *entries)
+commit_filesdoneproc (void *callerdat, int err, const char *repository,
+                      const char *update_dir, List *entries)
 {
     Node *p;
     List *ulist;
@@ -1461,12 +1478,11 @@ commit_filesdoneproc (void *callerdat, int err, char *repository, char *update_d
 
     got_message = 0;
 
-
     Update_Logfile (repository, saved_message, (FILE *) 0, ulist);
 
     /* Build the administrative files if necessary.  */
     {
-	char *p;
+	const char *p;
 
 	if (strncmp (current_parsed_root->directory, repository,
 		     strlen (current_parsed_root->directory)) != 0)
@@ -1510,12 +1526,15 @@ commit_filesdoneproc (void *callerdat, int err, char *repository, char *update_d
     return (err);
 }
 
+
+
 /*
  * Get the log message for a dir
  */
 /* ARGSUSED */
 static Dtype
-commit_direntproc (void *callerdat, char *dir, char *repos, char *update_dir, List *entries)
+commit_direntproc (void *callerdat, const char *dir, const char *repos,
+                   const char *update_dir, List *entries)
 {
     Node *p;
     List *ulist;
@@ -1549,12 +1568,15 @@ commit_direntproc (void *callerdat, char *dir, char *repos, char *update_dir, Li
     return (R_PROCESS);
 }
 
+
+
 /*
  * Process the post-commit proc if necessary
  */
 /* ARGSUSED */
 static int
-commit_dirleaveproc (void *callerdat, char *dir, int err, char *update_dir, List *entries)
+commit_dirleaveproc (void *callerdat, const char *dir, int err,
+                     const char *update_dir, List *entries)
 {
     /* update the per-directory tag info */
     /* FIXME?  Why?  The "commit examples" node of cvs.texinfo briefly
@@ -1627,11 +1649,11 @@ remove_file (struct file_info *finfo, char *tag, char *message)
 		error (0, retcode == -1 ? errno : 0,
 		       "failed to remove tag `%s' from `%s'", tag,
 		       finfo->fullname);
-	    return (1);
+	    return 1;
 	}
 	RCS_rewrite (finfo->rcs, NULL, NULL);
 	Scratch_Entry (finfo->entries, finfo->file);
-	return (0);
+	return 0;
     }
 
     /* we are removing the file from either the head or a branch */
@@ -1835,6 +1857,8 @@ fixbranch (RCSNode *rcs, char *branch)
     }
 }
 
+
+
 /*
  * do the initial part of a file add for the named file.  if adding
  * with a tag, put the file in the Attic and point the symbolic tag
@@ -1864,8 +1888,8 @@ fixbranch (RCSNode *rcs, char *branch)
  */
 
 static int
-checkaddfile (char *file, char *repository, char *tag, char *options,
-	      RCSNode **rcsnode)
+checkaddfile (const char *file, const char *repository, const char *tag,
+              const char *options, RCSNode **rcsnode)
 {
     RCSNode *rcs;
     char *fname;
@@ -1892,7 +1916,7 @@ checkaddfile (char *file, char *repository, char *tag, char *options,
 	char *desc = NULL;
 	size_t descalloc = 0;
 	size_t desclen = 0;
-	char *opt;
+	const char *opt;
 
 	if ( adding_on_branch )
 	{
@@ -2175,7 +2199,8 @@ checkaddfile (char *file, char *repository, char *tag, char *options,
  * put the branch back as the head if there are any errors.
  */
 static int
-lock_RCS (char *user, RCSNode *rcs, char *rev, char *repository)
+lock_RCS (const char *user, RCSNode *rcs, const char *rev,
+          const char *repository)
 {
     char *branch = NULL;
     int err = 0;
@@ -2204,11 +2229,11 @@ lock_RCS (char *user, RCSNode *rcs, char *rev, char *repository)
 		return (1);
 	    }
 	}
-	err = RCS_lock(rcs, NULL, 1);
+	err = RCS_lock (rcs, NULL, 1);
     }
     else
     {
-	(void) RCS_lock(rcs, rev, 1);
+	RCS_lock (rcs, rev, 1);
     }
 
     /* We used to call RCS_rewrite here, and that might seem

@@ -52,11 +52,11 @@
    and HOSTNAME and PATHNAME are for the working directory.  */
 
 #define CVSREP_FILEATTR "CVS/fileattr"
-
+
 /* Prepare for a new directory with repository REPOS.  If REPOS is NULL,
    then prepare for a "non-directory"; the caller can call fileattr_write
    and fileattr_free, but must not call fileattr_get or fileattr_set.  */
-extern void fileattr_startdir (char *repos);
+extern void fileattr_startdir (const char *repos);
 
 /* Get the attribute ATTRNAME for file FILENAME.  The return value
    points into memory managed by the fileattr_* routines, should not

@@ -292,7 +292,7 @@ make_directories (name)
    existed.  */
 int
 mkdir_if_needed (name)
-    char *name;
+    const char *name;
 {
     if (mkdir (name) < 0)
     {
@@ -321,7 +321,7 @@ mkdir_if_needed (name)
  */
 void
 xchmod (fname, writable)
-    char *fname;
+    const char *fname;
     int writable;
 {
     struct stat sb;
@@ -789,11 +789,11 @@ xresolvepath ( path )
 }
 
 /* Return a pointer into PATH's last component.  */
-char *
-last_component (char *path)
+const char *
+last_component (const char *path)
 {
-    char *scan;
-    char *last = 0;
+    const char *scan;
+    const char *last = 0;
 
     for (scan = path; *scan; scan++)
         if (ISDIRSEP (*scan))

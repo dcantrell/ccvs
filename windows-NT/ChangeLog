@@ -1,3 +1,8 @@
+2004-03-20  Derek Price  <derek@ximbiot.com>
+
+	* filesubr.c (mkdir_if_needed, xchmod, last_component), run.c
+	(piped_child): Comply with new prototypes.
+
 2004-03-11  Derek Price  <derek@ximbiot.com>
 
 	* config.h.in (SIZE_MAX): Define.

@@ -30,8 +30,9 @@
 #include "fileattr.h"
 
 static int add_directory (struct file_info *finfo);
-static int build_entry (char *repository, char *user, char *options,
-		        char *message, List * entries, char *tag);
+static int build_entry (const char *repository, const char *user,
+                        const char *options, const char *message,
+                        List * entries, const char *tag);
 
 static const char *const add_usage[] =
 {
@@ -210,7 +211,10 @@ add (int argc, char **argv)
 		    exit (EXIT_FAILURE);
 
 		filedir = xstrdup (argv[j]);
-		p = last_component (filedir);
+                /* Deliberately discard the const below since we know we just
+                 * allocated filedir and can do what we like with it.
+                 */
+		p = (char *)last_component (filedir);
 		if (p == filedir)
 		{
 		    update_dir = "";
@@ -288,7 +292,7 @@ add (int argc, char **argv)
 	int begin_added_files = added_files;
 #endif
 	struct file_info finfo;
-	char *p;
+	char *filename, *p;
 
 	memset (&finfo, 0, sizeof finfo);
 
@@ -296,8 +300,12 @@ add (int argc, char **argv)
 	    exit (EXIT_FAILURE);
 
 	finfo.fullname = xstrdup (argv[i]);
-	p = last_component (argv[i]);
-	if (p == argv[i])
+	filename = xstrdup (argv[i]);
+	/* We know we can discard the const below since we just allocated
+	 * filename and can do as we like with it.
+         */
+	p = (char *)last_component (filename);
+	if (p == filename)
 	{
 	    finfo.update_dir = "";
 	    finfo.file = p;
@@ -305,7 +313,7 @@ add (int argc, char **argv)
 	else
 	{
 	    p[-1] = '\0';
-	    finfo.update_dir = argv[i];
+	    finfo.update_dir = filename;
 	    finfo.file = p;
 	    if (CVS_CHDIR (finfo.update_dir) < 0)
 		error (1, errno, "could not chdir to `%s'", finfo.update_dir);
@@ -672,7 +680,11 @@ add (int argc, char **argv)
 	    exit (EXIT_FAILURE);
 	free_cwd (&cwd);
 
-	free (finfo.fullname);
+	/* It's okay to discard the const to free this - we allocated this
+	 * above.  The const is for everybody else.
+	 */
+	free ((char *) finfo.fullname);
+	free ((char *) filename);
     }
     if (added_files && !really_quiet)
 	error (0, 0, "use `%s commit' to add %s permanently",
@@ -697,9 +709,9 @@ add (int argc, char **argv)
 static int
 add_directory (struct file_info *finfo)
 {
-    char *repository = finfo->repository;
+    const char *repository = finfo->repository;
     List *entries = finfo->entries;
-    char *dir = finfo->file;
+    const char *dir = finfo->file;
 
     char *rcsdir = NULL;
     struct saved_cwd cwd;
@@ -732,11 +744,11 @@ add_directory (struct file_info *finfo)
 
     /* now, remember where we were, so we can get back */
     if (save_cwd (&cwd))
-	return (1);
-    if ( CVS_CHDIR (dir) < 0)
+	return 1;
+    if (CVS_CHDIR (dir) < 0)
     {
 	error (0, errno, "cannot chdir to %s", finfo->fullname);
-	return (1);
+	return 1;
     }
 #ifdef SERVER_SUPPORT
     if (!server_active && isfile (CVSADM))
@@ -832,8 +844,8 @@ add_directory (struct file_info *finfo)
     }
 
 #ifdef SERVER_SUPPORT
-    if ( server_active )
-	WriteTemplate ( finfo->fullname, 1, rcsdir );
+    if (server_active)
+	WriteTemplate (finfo->fullname, 1, rcsdir);
     else
 #endif
 	Create_Admin (".", finfo->fullname, rcsdir, tag, date, nonbranch, 0, 1);
@@ -866,12 +878,15 @@ out:
     return (0);
 }
 
+
+
 /*
  * Builds an entry for a new file and sets up "CVS/file",[pt] by
  * interrogating the user.  Returns non-zero on error.
  */
 static int
-build_entry (char *repository, char *user, char *options, char *message, List *entries, char *tag)
+build_entry (const char *repository, const char *user, const char *options,
+             const char *message, List *entries, const char *tag)
 {
     char *fname;
     char *line;

@@ -1,3 +1,8 @@
+2004-03-20  Derek Price  <derek@ximbiot.com>
+
+	* diff.c (diff_run): Update string arg to const.
+	* diffrun.h: Update prototype to match.
+
 2003-11-25  Mark D. Baushke  <mdb@cvshome.org>
 
 	* Makefile.in: Regenerate for new configure.in.

@@ -27,7 +27,7 @@ extern char *strtok (char *, const char *);
    options, and update *ARGC and *ARGV accordingly.  */
 
 void
-read_cvsrc (int *argc, char ***argv, char *cmdname)
+read_cvsrc (int *argc, char ***argv, const char *cmdname)
 {
     char *homedir;
     char *homeinit;

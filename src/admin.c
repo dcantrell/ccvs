@@ -14,9 +14,9 @@
 #include <grp.h>
 #endif
 
-static Dtype admin_dirproc (void *callerdat, char *dir,
-				   char *repos, char *update_dir,
-				   List *entries);
+static Dtype admin_dirproc (void *callerdat, const char *dir,
+                            const char *repos, const char *update_dir,
+                            List *entries);
 static int admin_fileproc (void *callerdat, struct file_info *finfo);
 
 char *UserAdminOptions = "k";
@@ -919,12 +919,15 @@ admin_fileproc (void *callerdat, struct file_info *finfo)
     return status;
 }
 
+
+
 /*
  * Print a warm fuzzy message
  */
 /* ARGSUSED */
 static Dtype
-admin_dirproc (void *callerdat, char *dir, char *repos, char *update_dir, List *entries)
+admin_dirproc (void *callerdat, const char *dir, const char *repos,
+               const char *update_dir, List *entries)
 {
     if (!quiet)
 	error (0, 0, "Administrating %s", update_dir);

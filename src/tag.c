@@ -20,16 +20,17 @@ static int rtag_proc (int argc, char **argv, char *xwhere,
 		      int local_specified, char *mname, char *msg);
 static int check_fileproc (void *callerdat, struct file_info *finfo);
 static int check_filesdoneproc (void *callerdat, int err,
-				char *repos, char *update_dir,
+				const char *repos, const char *update_dir,
 				List *entries);
-static int pretag_proc (char *_repository, char *_filter, void *_closure);
+static int pretag_proc (const char *_repository, const char *_filter,
+                        void *_closure);
 static void masterlist_delproc (Node *_p);
 static void tag_delproc (Node *_p);
 static int pretag_list_to_args_proc (Node *_p, void *_closure);
 
-static Dtype tag_dirproc (void *callerdat, char *dir,
-				 char *repos, char *update_dir,
-				 List *entries);
+static Dtype tag_dirproc (void *callerdat, const char *dir,
+                          const char *repos, const char *update_dir,
+                          List *entries);
 static int rtag_fileproc (void *callerdat, struct file_info *finfo);
 static int rtag_delete (RCSNode *rcsfile);
 static int tag_fileproc (void *callerdat, struct file_info *finfo);
@@ -419,7 +420,7 @@ rtag_proc (int argc, char **argv, char *xwhere, char *mwhere, char *mfile, int s
 static int
 check_fileproc (void *callerdat, struct file_info *finfo)
 {
-    char *xdir;
+    const char *xdir;
     Node *p;
     Vers_TS *vers;
     List *tlist;
@@ -560,8 +561,8 @@ struct pretag_proc_data {
 };
 
 static int
-check_filesdoneproc (void *callerdat, int err, char *repos, char *update_dir,
-                     List *entries)
+check_filesdoneproc (void *callerdat, int err, const char *repos,
+                     const char *update_dir, List *entries)
 {
     int n;
     Node *p;
@@ -594,6 +595,8 @@ check_filesdoneproc (void *callerdat, int err, char *repos, char *update_dir,
     return (err);
 }
 
+
+
 /*
  * called from Parse_Info, this routine processes a line that came out
  * of a taginfo file and turns it into a command and executes it.
@@ -606,27 +609,25 @@ check_filesdoneproc (void *callerdat, int err, char *repos, char *update_dir,
  *    of its callbacks having returned an error.
  */
 static int
-pretag_proc(char *repository, char *filter, void *closure)
+pretag_proc (const char *repository, const char *filter, void *closure)
 {
-    int disposefilter = 0;
+    char *newfilter = NULL;
     char *cmdline;
-    char *srepos = Short_Repository (repository);
+    const char *srepos = Short_Repository (repository);
     struct pretag_proc_data *ppd = (struct pretag_proc_data *)closure;
 
 #ifdef SUPPORT_OLD_INFO_FMT_STRINGS
     if (!strchr(filter, '%'))
     {
-	char *tmpfilter;
 	error(0,0,
               "warning: taginfo line contains no format strings:\n"
               "    \"%s\"\n"
               "Filling in old defaults ('%%t %%o %%p %%{sv}'), but please be aware that this\n"
               "usage is deprecated.", filter);
-	tmpfilter = xmalloc (strlen(filter) + 16);
-	strcpy (tmpfilter, filter);
-	strcat (tmpfilter, " %t %o %p %{sv}");
-	filter = tmpfilter;
-	disposefilter = 1;
+	newfilter = xmalloc (strlen(filter) + 16);
+	strcpy (newfilter, filter);
+	strcat (newfilter, " %t %o %p %{sv}");
+	filter = newfilter;
     }
 #endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
 
@@ -654,16 +655,16 @@ pretag_proc(char *repository, char *filter, void *closure)
 	(char *)NULL
 	);
 
-    if (disposefilter) free(filter);
+    if (newfilter) free (newfilter);
 
-    if (!cmdline || !strlen(cmdline))
+    if (!cmdline || !strlen (cmdline))
     {
 	if (cmdline) free (cmdline);
 	error(0, 0, "pretag proc resolved to the empty string!");
-	return (1);
+	return 1;
     }
 
-    run_setup(cmdline);
+    run_setup (cmdline);
 
     /* FIXME - the old code used to run the following here:
      *
@@ -680,8 +681,8 @@ pretag_proc(char *repository, char *filter, void *closure)
      * first arg for fileness & executability.
      */
 
-    free(cmdline);
-    return (abs(run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL)));
+    free (cmdline);
+    return abs (run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL));
 }
 
 static void
@@ -725,7 +726,8 @@ pretag_list_to_args_proc(Node *p, void *closure)
     struct format_cmdline_walklist_closure *c =
             (struct format_cmdline_walklist_closure *)closure;
     char *arg = NULL;
-    char *f, *d;
+    const char *f;
+    char *d;
     size_t doff;
 
     if (p->data == NULL) return 1;
@@ -1208,12 +1210,15 @@ tag_fileproc (void *callerdat, struct file_info *finfo)
     return (retval);
 }
 
+
+
 /*
  * Print a warm fuzzy message
  */
 /* ARGSUSED */
 static Dtype
-tag_dirproc (void *callerdat, char *dir, char *repos, char *update_dir, List *entries)
+tag_dirproc (void *callerdat, const char *dir, const char *repos,
+             const char *update_dir, List *entries)
 {
 
     if (ignore_directory (update_dir))
@@ -1266,10 +1271,11 @@ val_fileproc (void *callerdat, struct file_info *finfo)
     return 0;
 }
 
-static Dtype val_direntproc (void *, char *, char *, char *, List *);
+
 
 static Dtype
-val_direntproc (void *callerdat, char *dir, char *repository, char *update_dir, List *entries)
+val_direntproc (void *callerdat, const char *dir, const char *repository,
+                const char *update_dir, List *entries)
 {
     /* This is not quite right--it doesn't get right the case of "cvs
        update -d -r foobar" where foobar is a tag which exists only in

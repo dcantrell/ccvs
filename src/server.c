@@ -3315,14 +3315,16 @@ server_pause_check(void)
     }
 }
 #endif /* SERVER_FLOWCONTROL */
-
+
+
+
 /* This variable commented in server.h.  */
 char *server_dir = NULL;
 
-static void output_dir (char *, char *);
+
 
 static void
-output_dir (char *update_dir, char *repository)
+output_dir (const char *update_dir, const char *repository)
 {
     if (server_dir != NULL)
     {
@@ -3337,7 +3339,9 @@ output_dir (char *update_dir, char *repository)
     buf_output0 (protocol, repository);
     buf_output0 (protocol, "/");
 }
-
+
+
+
 /*
  * Entries line that we are squirreling away to send to the client when
  * we are ready.
@@ -3356,8 +3360,12 @@ static char *scratched_file;
  */
 static int kill_scratched_file;
 
+
+
 void
-server_register (char *name, char *version, char *timestamp, char *options, char *tag, char *date, char *conflict)
+server_register (const char *name, const char *version, const char *timestamp,
+                 const char *options, const char *tag, const char *date,
+                 const char *conflict)
 {
     int len;
 
@@ -3418,8 +3426,10 @@ server_register (char *name, char *version, char *timestamp, char *options, char
     }
 }
 
+
+
 void
-server_scratch (char *fname)
+server_scratch (const char *fname)
 {
     /*
      * I have reports of Scratch_Entry and Register both happening, in
@@ -3471,7 +3481,8 @@ new_entries_line (void)
     free (entries_line);
     entries_line = NULL;
 }
-
+
+
 
 static void
 serve_ci (char *arg)
@@ -3479,8 +3490,11 @@ serve_ci (char *arg)
     do_cvs_command ("commit", commit);
 }
 
+
+
 static void
-checked_in_response (char *file, char *update_dir, char *repository)
+checked_in_response (const char *file, const char *update_dir,
+                     const char *repository)
 {
     if (supported_response ("Mode"))
     {
@@ -3512,7 +3526,8 @@ checked_in_response (char *file, char *update_dir, char *repository)
 }
 
 void
-server_checked_in (char *file, char *update_dir, char *repository)
+server_checked_in (const char *file, const char *update_dir,
+                   const char *repository)
 {
     if (noexec)
 	return;
@@ -3537,7 +3552,9 @@ server_checked_in (char *file, char *update_dir, char *repository)
 }
 
 void
-server_update_entries (char *file, char *update_dir, char *repository, enum server_updated_arg4 updated)
+server_update_entries (const char *file, const char *update_dir,
+                       const char *repository,
+                       enum server_updated_arg4 updated)
 {
     if (noexec)
 	return;
@@ -3830,9 +3847,12 @@ serve_export (char *arg)
     cvs_cmd_name = "export";
     serve_co (arg);
 }
-
+
+
+
 void
-server_copy_file (char *file, char *update_dir, char *repository, char *newfile)
+server_copy_file (const char *file, const char *update_dir,
+                  const char *repository, const char *newfile)
 {
     /* At least for now, our practice is to have the server enforce
        noexec for the repository and the client enforce it for the
@@ -4183,8 +4203,10 @@ server_use_rcs_diff (void)
     return supported_response ("Rcs-diff");
 }
 
+
+
 void
-server_set_entstat (char *update_dir, char *repository)
+server_set_entstat (const char *update_dir, const char *repository)
 {
     static int set_static_supported = -1;
     if (set_static_supported == -1)
@@ -4197,8 +4219,10 @@ server_set_entstat (char *update_dir, char *repository)
     buf_send_counted (protocol);
 }
 
+
+
 void
-server_clear_entstat (char *update_dir, char *repository)
+server_clear_entstat (const char *update_dir, const char *repository)
 {
     static int clear_static_supported = -1;
     if (clear_static_supported == -1)
@@ -4213,9 +4237,12 @@ server_clear_entstat (char *update_dir, char *repository)
     buf_output0 (protocol, "\n");
     buf_send_counted (protocol);
 }
-
+
+
+
 void
-server_set_sticky (char *update_dir, char *repository, char *tag, char *date, int nonbranch)
+server_set_sticky (const char *update_dir, const char *repository,
+                   const char *tag, const char *date, int nonbranch)
 {
     static int set_sticky_supported = -1;
 
@@ -4256,15 +4283,17 @@ server_set_sticky (char *update_dir, char *repository, char *tag, char *date, in
     }
     buf_send_counted (protocol);
 }
-
+
+
+
 struct template_proc_data
 {
-    char *update_dir;
-    char *repository;
+    const char *update_dir;
+    const char *repository;
 };
 
 static int
-template_proc(char *repository, char *template, void *closure)
+template_proc (const char *repository, const char *template, void *closure)
 {
     FILE *fp;
     char buf[1024];
@@ -4309,8 +4338,10 @@ template_proc(char *repository, char *template, void *closure)
     return 0;
 }
 
+
+
 void
-server_clear_template (char *update_dir, char *repository)
+server_clear_template (const char *update_dir, const char *repository)
 {
     assert (update_dir != NULL);
 
@@ -4342,7 +4373,7 @@ server_clear_template (char *update_dir, char *repository)
 
 
 void
-server_template (char *update_dir, char *repository)
+server_template (const char *update_dir, const char *repository)
 {
     struct template_proc_data data;
     data.update_dir = update_dir;
@@ -6471,6 +6502,8 @@ cvs_flushout (void)
 	fflush (stdout);
 }
 
+
+
 /* Output TEXT, tagging it according to TAG.  There are lots more
    details about what TAG means in cvsclient.texi but for the simple
    case (e.g. non-client/server), TAG is just "newline" to output a
@@ -6480,7 +6513,7 @@ cvs_flushout (void)
    Note that there is no way to output either \0 or \n as part of TEXT.  */
 
 void
-cvs_output_tagged (char *tag, char *text)
+cvs_output_tagged (const char *tag, const char *text)
 {
     if (text != NULL && strchr (text, '\n') != NULL)
 	/* Uh oh.  The protocol has no way to cope with this.  For now

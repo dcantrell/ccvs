@@ -25,19 +25,17 @@ enum diff_file
     DIFF_SAME
 };
 
-static Dtype diff_dirproc (void *callerdat, char *dir,
-				  char *pos_repos, char *update_dir,
-				  List *entries);
+static Dtype diff_dirproc (void *callerdat, const char *dir,
+                           const char *pos_repos, const char *update_dir,
+                           List *entries);
 static int diff_filesdoneproc (void *callerdat, int err,
-				      char *repos, char *update_dir,
-				      List *entries);
-static int diff_dirleaveproc (void *callerdat, char *dir,
-				     int err, char *update_dir,
-				     List *entries);
-static enum diff_file diff_file_nodiff ( struct file_info *finfo,
-					       Vers_TS *vers,
-					       enum diff_file, 
-					       char **rev1_cache );
+                               const char *repos, const char *update_dir,
+                               List *entries);
+static int diff_dirleaveproc (void *callerdat, const char *dir,
+                              int err, const char *update_dir,
+                              List *entries);
+static enum diff_file diff_file_nodiff (struct file_info *finfo, Vers_TS *vers,
+                                        enum diff_file, char **rev1_cache );
 static int diff_fileproc (void *callerdat, struct file_info *finfo);
 static void diff_mark_errors (int err);
 
@@ -691,7 +689,8 @@ RCS file: ", 0);
 	if (empty_file == DIFF_ADDED)
 	{
 	    if (use_rev2 == NULL)
-		status = diff_exec (DEVNULL, finfo->file, label1, label2, opts, RUN_TTY);
+                status = diff_exec (DEVNULL, finfo->file, label1, label2, opts,
+                                    RUN_TTY);
 	    else
 	    {
 		int retcode;
@@ -728,16 +727,16 @@ RCS file: ", 0);
     }
     else
     {
-	status = RCS_exec_rcsdiff( vers->srcfile, opts,
-				   *options ? options : vers->options,
-				   use_rev1, rev1_cache, use_rev2,
-				   label1, label2,
-				   finfo->file );
+	status = RCS_exec_rcsdiff(vers->srcfile, opts,
+                                  *options ? options : vers->options,
+                                  use_rev1, rev1_cache, use_rev2,
+                                  label1, label2,
+                                  finfo->file);
 
     }
 
-    if( label1 ) free( label1 );
-    if( label2 ) free( label2 );
+    if (label1) free (label1);
+    if (label2) free (label2);
 
     switch (status)
     {
@@ -796,6 +795,8 @@ diff_mark_errors (int err)
 	diff_errors = err;
 }
 
+
+
 /*
  * Print a warm fuzzy message when we enter a dir
  *
@@ -803,7 +804,8 @@ diff_mark_errors (int err)
  */
 /* ARGSUSED */
 static Dtype
-diff_dirproc (void *callerdat, char *dir, char *pos_repos, char *update_dir, List *entries)
+diff_dirproc (void *callerdat, const char *dir, const char *pos_repos,
+              const char *update_dir, List *entries)
 {
     /* XXX - check for dirs we don't want to process??? */
 
@@ -816,25 +818,33 @@ diff_dirproc (void *callerdat, char *dir, char *pos_repos, char *update_dir, Lis
     return (R_PROCESS);
 }
 
+
+
 /*
  * Concoct the proper exit status - done with files
  */
 /* ARGSUSED */
 static int
-diff_filesdoneproc (void *callerdat, int err, char *repos, char *update_dir, List *entries)
+diff_filesdoneproc (void *callerdat, int err, const char *repos,
+                    const char *update_dir, List *entries)
 {
     return (diff_errors);
 }
+
+
 
 /*
  * Concoct the proper exit status - leaving directories
  */
 /* ARGSUSED */
 static int
-diff_dirleaveproc (void *callerdat, char *dir, int err, char *update_dir, List *entries)
+diff_dirleaveproc (void *callerdat, const char *dir, int err,
+                   const char *update_dir, List *entries)
 {
     return (diff_errors);
 }
+
+
 
 /*
  * verify that a file is different

@@ -17,4 +17,4 @@ int do_update ( int argc, char *argv[], char *xoptions, char *xtag,
 		       char *preload_update_dir, int xdotemplate,
 		       char*repository );
 int joining (void);
-extern int isemptydir (char *dir, int might_not_exist);
+extern int isemptydir (const char *dir, int might_not_exist);

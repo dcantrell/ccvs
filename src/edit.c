@@ -25,7 +25,7 @@ static int setting_tedit;
 static int setting_tunedit;
 static int setting_tcommit;
 
-static int onoff_fileproc (void *callerdat, struct file_info *finfo);
+
 
 static int
 onoff_fileproc (void *callerdat, struct file_info *finfo)
@@ -34,15 +34,18 @@ onoff_fileproc (void *callerdat, struct file_info *finfo)
     return 0;
 }
 
-static int onoff_filesdoneproc (void *, int, char *, char *, List *);
+
 
 static int
-onoff_filesdoneproc (void *callerdat, int err, char *repository, char *update_dir, List *entries)
+onoff_filesdoneproc (void *callerdat, int err, const char *repository,
+                     const char *update_dir, List *entries)
 {
     if (setting_default)
 	fileattr_set (NULL, "_watched", turning_on ? "" : NULL);
     return err;
 }
+
+
 
 static int
 watch_onoff (int argc, char **argv)
@@ -598,8 +601,10 @@ unedit (int argc, char **argv)
     return err;
 }
 
+
+
 void
-mark_up_to_date (char *file)
+mark_up_to_date (const char *file)
 {
     char *base;
 
@@ -614,9 +619,10 @@ mark_up_to_date (char *file)
     free (base);
 }
 
-
+
+
 void
-editor_set (char *filename, char *editor, char *val)
+editor_set (const char *filename, const char *editor, const char *val)
 {
     char *edlist;
     char *newlist;
@@ -637,21 +643,23 @@ editor_set (char *filename, char *editor, char *val)
 
 struct notify_proc_args {
     /* What kind of notification, "edit", "tedit", etc.  */
-    char *type;
+    const char *type;
     /* User who is running the command which causes notification.  */
-    char *who;
+    const char *who;
     /* User to be notified.  */
-    char *notifyee;
+    const char *notifyee;
     /* File.  */
-    char *file;
+    const char *file;
 };
 
+
+
 static int
-notify_proc(char *repository, char *filter, void *closure)
+notify_proc (const char *repository, const char *filter, void *closure)
 {
     char *cmdline;
     FILE *pipefp;
-    char *srepos = Short_Repository (repository);
+    const char *srepos = Short_Repository (repository);
     struct notify_proc_args *args = (struct notify_proc_args *)closure;
 
     cmdline = format_cmdline (
@@ -690,11 +698,14 @@ notify_proc(char *repository, char *filter, void *closure)
     return (pclose (pipefp));
 }
 
+
+
 /* FIXME: this function should have a way to report whether there was
    an error so that server.c can know whether to report Notified back
    to the client.  */
 void
-notify_do (int type, char *filename, char *who, char *val, char *watches, char *repository)
+notify_do (int type, const char *filename, const char *who, const char *val,
+           const char *watches, const char *repository)
 {
     static struct addremove_args blank;
     struct addremove_args args;
@@ -858,9 +869,11 @@ notify_do (int type, char *filename, char *who, char *val, char *watches, char *
 
 	    if (args.notifyee == NULL)
 	    {
-		args.notifyee = xmalloc (endp - p + 1);
-		strncpy (args.notifyee, p, endp - p);
-		args.notifyee[endp - p] = '\0';
+		char *tmp;
+		tmp = xmalloc (endp - p + 1);
+		strncpy (tmp, p, endp - p);
+		tmp[endp - p] = '\0';
+		args.notifyee = tmp;
 	    }
 
 	    args.type = notif;
@@ -869,7 +882,11 @@ notify_do (int type, char *filename, char *who, char *val, char *watches, char *
 
 	    (void) Parse_Info (CVSROOTADM_NOTIFY, repository, notify_proc,
 			PIOPT_ALL, &args);
-	    free (args.notifyee);
+            /* It's okay to cast out the const for the free() below since we
+             * just allocated this a few lines above.  The const was for
+             * everybody else.
+             */
+	    free ((char *)args.notifyee);
 	}
 
 	p = nextp;
@@ -904,10 +921,12 @@ notify_do (int type, char *filename, char *who, char *val, char *watches, char *
     }
 }
 
+
+
 #ifdef CLIENT_SUPPORT
 /* Check and send notifications.  This is only for the client.  */
 void
-notify_check (char *repository, char *update_dir)
+notify_check (const char *repository, const char *update_dir)
 {
     FILE *fp;
     char *line = NULL;

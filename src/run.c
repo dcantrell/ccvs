@@ -417,6 +417,8 @@ run_print (FILE *fp)
     }
 }
 
+
+
 /* Return value is NULL for error, or if noexec was set.  If there was an
    error, return NULL and I'm not sure whether errno was set (the Red Hat
    Linux 4.1 popen manpage was kind of vague but discouraging; and the noexec
@@ -432,8 +434,10 @@ run_popen (const char *cmd, const char *mode)
     return (popen (cmd, mode));
 }
 
+
+
 int
-piped_child (char **command, int *tofdp, int *fromfdp)
+piped_child (char *const *command, int *tofdp, int *fromfdp)
 {
     int pid;
     int to_child_pipe[2];
@@ -469,7 +473,8 @@ piped_child (char **command, int *tofdp, int *fromfdp)
 	if (dup2 (from_child_pipe[1], STDOUT_FILENO) < 0)
 	    error (1, errno, "cannot dup2 pipe");
 
-	execvp (command[0], command);
+	/* Okay to cast out const below - execvp don't return anyhow.  */
+	execvp ((char *)command[0], (char **)command);
 	error (1, errno, "cannot exec %s", command[0]);
     }
     if (close (to_child_pipe[0]) < 0)

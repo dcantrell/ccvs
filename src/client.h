@@ -67,7 +67,7 @@ void connect_to_pserver (cvsroot_t *,
 # endif /* HAVE_KERBEROS */
 
 /* Talking to the server. */
-void send_to_server (char *str, size_t len);
+void send_to_server (const char *str, size_t len);
 void read_from_server (char *buf, size_t len);
 
 /* Internal functions that handle client communication to server, etc.  */
@@ -114,7 +114,7 @@ send_arg (char *string);
 void
 send_option_string (char *string);
 
-extern void send_a_repository (char *, char *, char *);
+extern void send_a_repository (const char *, const char *, const char *);
 
 #endif /* CLIENT_SUPPORT */
 
@@ -182,15 +182,15 @@ extern void client_send_expansions (int local, char *where,
 extern void client_nonexpanded_setup (void);
 
 extern void send_init_command (void);
-
+
 extern char **failed_patches;
 extern int failed_patches_count;
 extern char *toplevel_wd;
 extern void client_import_setup (char *repository);
 extern int client_process_import_file
-    (char *message, char *vfile, char *vtag,
-	   int targc, char *targv[], char *repository, int all_files_binary,
-	   int modtime);
+    (char *message, char *vfile, char *vtag, int targc, char *targv[],
+     char *repository, int all_files_binary, int modtime);
 extern void client_import_done (void);
-extern void client_notify (char *, char *, char *, int, char *);
+extern void client_notify (const char *, const char *, const char *, int,
+                           const char *);
 #endif /* CLIENT_SUPPORT */

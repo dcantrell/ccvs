@@ -13,6 +13,58 @@
 
 2004-03-20  Derek Price  <derek@ximbiot.com>
 
+	* add.c (add, add_directory, build_entry), admin.c (admin_dirproc),
+	checkin.c (Checkin), checkout.c (safe_location, build_dirs_and_chdir),
+	client.c (add_prune_candidate, send_repository, send_a_repository,
+	send_to_server, start_rsh_server, send_arg, send_modified,
+	send_ignproc, send_filesdone_proc, send_dirent_proc,
+	send_dirleave_proc, client_notify), commit.c (check_direntproc,
+	check_filesdoneproc, checkaddfile, commit_direntproc,
+	commit_dirleaveproc, lock_RCS, precommit_proc, find_data,
+	find_dirent_proc, find_ignproc, find_filesdoneproc), create_adm.c
+	(Create_Admin), cvsrc.c (read_cvsrc), diff.c (diff_dirproc,
+	diff_filesdoneproc, diff_dirleaveproc), edit.c (onoff_filesdoneproc,
+	mark_up_to_date, editor_set, notify_proc_args, notify_proc, notify_do,
+	notify_check), entries.c (Scratch_Entry, Register, WriteTag),
+	expand_path.c (expand_variable, expand_path), fileattr.c
+	(fileattr_startdir), filesubr.c (mkdir_if_needed, xchmod,
+	last_component), history.c (history_write), ignore.c (ignore_directory,
+	ignore_files), import.c (get_comment, add_rcs_file, expand_at_signs),xi
+	lock.c (lock_filesdoneproc), log.c (log_dirproc), logmsg.c
+	(logfile_write, rcsinfo_proc, update_logfile_proc, editinfo_proc,
+	verifymsg_proc, do_editor, do_verify, Update_Logfile), main.c (main
+	program_name, program_path, command_name), parseinfo.c (Parse_Info),
+	patch.c (patch_dirproc), rcs.c (RCS_getdatebranch, rcs_lockfilename,
+	RCS_parse, RCS_setattic, RCS_getversion, RCS_gettag, RCS_getbranch,
+	RCS_getdate, RCS_datecmp, RCS_getrevtime, RCS_setexpand,
+	expand_keywords, RCS_checkout, RCS_addbranch, RCS_checkin, RCS_lock,
+	RCS_cmp_file, RCS_deltas, rcs_lockfilename, make_file_label),
+	rcscmds.c (RCS_output_diff_options, call_diff, RCS_merge,
+	RCS_exec_rcsdiff, diff_exec), recurse.c (start_recursion, do_recursion,
+	do_file_proc), remove.c (remove_dirproc), repos.c (Name_Repository,
+	Short_Repository), root.c (Name_Root, Create_Root), run.c
+	(piped_child), server.c (output_dir, server_register,
+	server_checked_in, server_update_entries, server_copy_file,
+	server_set_entstat, server_clear_entstat, server_set_sticky,
+	server_template, cvs_output_tagged), status.c (status_dirproc), subr.c
+	(make_message_rcslegal), tag.c (pretag_proc, tag_dirproc,
+	check_fileproc, check_filesdoneproc, tag_fileproc, val_direntproc),
+	update.c (update_dirent_proc, update_dirleave_proc, update_ignproc,
+	update_filesdone_proc, isemptydir), vers_ts.c (time_stamp_server,
+	time_stamp), watch.c (watch_modify_watchers, addremove_filesdoneproc),
+	zlib.c (read_and_gzip): Make most string args const, mainly in the
+	interest of preserving repository & updatedir but including some
+	collateral damage.  Update a few functions to comply with new
+	requirement.  Some style fixes.
+	* client.h, cvs.h, edit.h, fileattr.h, rcs.h, server.h, update.h,
+	watch.h: Update prototypes to match.
+
+2004-03-20  Derek Price  <derek@ximbiot.com>
+
+	* sanity.sh (conflicts2): s/cvs/$testcvs/.
+
+2004-03-20  Derek Price  <derek@ximbiot.com>
+
 	* add.c (add): Correct longstanding resurrection bugs.  Remove FIXME
 	comment to this effect.  Set mode and Entries timestamps of resurrected
 	files correctly.

@@ -310,7 +310,7 @@ make_directories (const char *name)
    other errors.  Returns 0 if directory was created; 1 if it already
    existed.  */
 int
-mkdir_if_needed (char *name)
+mkdir_if_needed (const char *name)
 {
     if (mkdir (name, 0777) < 0)
     {
@@ -330,7 +330,7 @@ mkdir_if_needed (char *name)
  * have unexpected consequences for some uses of xchmod.
  */
 void
-xchmod (char *fname, int writable)
+xchmod (const char *fname, int writable)
 {
     struct stat sb;
     mode_t mode, oumask;
@@ -847,16 +847,18 @@ xresolvepath (const char *path)
 
 
 /* Return a pointer into PATH's last component.  */
-char *
-last_component (char *path)
+const char *
+last_component (const char *path)
 {
-    char *last = strrchr (path, '/');
+    const char *last = strrchr (path, '/');
     
     if (last && (last != path))
         return last + 1;
     else
         return path;
 }
+
+
 
 /* Return the home directory.  Returns a pointer to storage
    managed by this function or its callees (currently getenv).

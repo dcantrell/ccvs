@@ -16,9 +16,9 @@
 #include "getline.h"
 
 static RETSIGTYPE patch_cleanup (void);
-static Dtype patch_dirproc (void *callerdat, char *dir,
-				   char *repos, char *update_dir,
-				   List *entries);
+static Dtype patch_dirproc (void *callerdat, const char *dir,
+                            const char *repos, const char *update_dir,
+                            List *entries);
 static int patch_fileproc (void *callerdat, struct file_info *finfo);
 static int patch_proc (int argc, char **argv, char *xwhere,
 		       char *mwhere, char *mfile, int shorten,
@@ -748,17 +748,22 @@ failed to read diff file header %s for %s: end of file", tmpfile3, rcs);
     return (ret);
 }
 
+
+
 /*
  * Print a warm fuzzy message
  */
 /* ARGSUSED */
 static Dtype
-patch_dirproc (void *callerdat, char *dir, char *repos, char *update_dir, List *entries)
+patch_dirproc (void *callerdat, const char *dir, const char *repos,
+               const char *update_dir, List *entries)
 {
     if (!quiet)
 	error (0, 0, "Diffing %s", update_dir);
     return (R_PROCESS);
 }
+
+
 
 /*
  * Clean up temporary files

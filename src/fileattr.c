@@ -38,10 +38,12 @@ struct unrecog {
 };
 static struct unrecog *unrecog_head;
 
+
+
 /* Note that if noone calls fileattr_get, this is very cheap.  No stat(),
    no open(), no nothing.  */
 void
-fileattr_startdir (char *repos)
+fileattr_startdir (const char *repos)
 {
     assert (fileattr_stored_repos == NULL);
     fileattr_stored_repos = xstrdup (repos);
@@ -49,6 +51,8 @@ fileattr_startdir (char *repos)
     attr_read_attempted = 0;
     assert (unrecog_head == NULL);
 }
+
+
 
 static void
 fileattr_delproc (Node *node)

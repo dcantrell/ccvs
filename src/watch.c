@@ -32,7 +32,7 @@ const char *const watch_usage[] =
 static struct addremove_args the_args;
 
 void
-watch_modify_watchers (char *file, struct addremove_args *what)
+watch_modify_watchers (const char *file, struct addremove_args *what)
 {
     char *curattr = fileattr_get0 (file, "_watchers");
     char *p;
@@ -222,16 +222,18 @@ addremove_fileproc (void *callerdat, struct file_info *finfo)
     return 0;
 }
 
-static int addremove_filesdoneproc (void *, int, char *, char *,
-					   List *);
+
 
 static int
-addremove_filesdoneproc (void *callerdat, int err, char *repository, char *update_dir, List *entries)
+addremove_filesdoneproc (void *callerdat, int err, const char *repository,
+                         const char *update_dir, List *entries)
 {
     if (the_args.setting_default)
 	watch_modify_watchers (NULL, &the_args);
     return err;
 }
+
+
 
 static int watch_addremove (int argc, char **argv);
 

@@ -9,7 +9,7 @@
 #include "cvs.h"
 
 #ifdef SERVER_SUPPORT
-static void time_stamp_server (char *, Vers_TS *, Entnode *);
+static void time_stamp_server (const char *, Vers_TS *, Entnode *);
 #endif
 
 /* Fill in and return a Vers_TS structure for the file FINFO.
@@ -267,6 +267,8 @@ Version_TS (struct file_info *finfo, char *options, char *tag, char *date,
     return (vers_ts);
 }
 
+
+
 #ifdef SERVER_SUPPORT
 
 /* Set VERS_TS->TS_USER to time stamp for FILE.  */
@@ -276,7 +278,7 @@ Version_TS (struct file_info *finfo, char *options, char *tag, char *date,
 #define mark_unchanged(V)	((V)->ts_user = xstrdup ((V)->ts_rcs))
 
 static void
-time_stamp_server (char *file, Vers_TS *vers_ts, Entnode *entdata)
+time_stamp_server (const char *file, Vers_TS *vers_ts, Entnode *entdata)
 {
     struct stat sb;
     char *cp;
@@ -339,7 +341,7 @@ time_stamp_server (char *file, Vers_TS *vers_ts, Entnode *entdata)
  * allocates
  */
 char *
-time_stamp (char *file)
+time_stamp (const char *file)
 {
     struct stat sb;
     char *cp;
