@@ -1,3 +1,8 @@
+2002-04-17  Derek Price  <oberon@umich.edu>
+
+	* configure.in: Update version number.
+	* configure: Regenerated.
+
 2002-04-03  Derek Price  <oberon@umich.edu>
 
 	* cvs.spec.in: Use a lowercase "cvshome.org".  Add some RedHat safety
