@@ -7,6 +7,18 @@ extern int change_mode PROTO((char *, char *, int));
 extern int gzip_level;
 extern int file_gzip_level;
 
+#ifdef __STDC__
+struct buffer;
+#endif
+
+void make_bufs_from_fds PROTO((int tofd,
+			       int fromfd,
+			       int child_pid,
+			       struct buffer **to_server,
+			       struct buffer **from_server,
+			       int is_sock));
+
+
 #if defined (CLIENT_SUPPORT) || defined (SERVER_SUPPORT)
 
 /* Whether the connection should be encrypted.  */
@@ -14,10 +26,6 @@ extern int cvsencrypt;
 
 /* Whether the connection should use per-packet authentication.  */
 extern int cvsauthenticate;
-
-#ifdef __STDC__
-struct buffer;
-#endif
 
 # ifdef ENCRYPTION
 

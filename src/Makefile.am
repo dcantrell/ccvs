@@ -64,6 +64,7 @@ cvs_SOURCES = \
 	remove.c \
 	repos.c \
 	root.c \
+	rsh-client.c rsh-client.h \
 	run.c \
 	scramble.c \
 	server.c \
