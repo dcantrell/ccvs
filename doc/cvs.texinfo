@@ -3573,11 +3573,16 @@ and @code{troff} you can embed the null-character
 @cindex -k (RCS kflags)
 @cindex Kflag
 
-You can control how @sc{rcs} expands keywords
-through the use of the @samp{-k} option (@pxref{Common
-options}).  The @samp{-k} option is available with the
-@code{add}, @code{checkout}, @code{diff} and
-@code{update} commands.
+@c FIXME: This could be made more coherent, by expanding it
+@c with more examples or something.
+Each file has a stored default substitution mode, and
+each working directory copy of a file also has a
+substitution mode.  The former is set by the @samp{-k}
+option to @code{cvs add} and @code{cvs admin}; the
+latter is set by the -k or -A options to @code{cvs
+checkout} or @code{cvs update}.  @code{cvs diff} also
+has a @samp{-k} option.  For some examples,
+@xref{Binary files}.
 
 The modes available are:
 
@@ -3712,8 +3717,7 @@ $ echo '$@asis{}Id$' > kotest
 $ cvs add -m"A test file" kotest
 $ cvs ci -m"First checkin; contains a keyword" kotest
 $ cvs admin -kb kotest
-$ rm kotest
-$ cvs update kotest
+$ cvs update -A kotest
 @end example
 
 When you check in the file @file{kotest} the keywords
@@ -3723,7 +3727,7 @@ admin -kb} command sets the default keyword
 substitution method for this file, but it does not
 alter the working copy of the file that you have.  The
 easiest way to get the unexpanded version of
-@file{kotest} is to remove it and check it out again.
+@file{kotest} is @code{cvs update -A}.
 
 @c ---------------------------------------------------------------------
 @node Revision management
