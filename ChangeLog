@@ -1,3 +1,28 @@
+2002-04-30  Derek Price  <oberon@umich.edu>
+
+	* acconfig.h: Remove this file, it is deprecated.
+
+	* Makefile.am (AUTOMAKE_OPTIONS): Move these into configure.in.
+	* acinclude.m4: Some minor updates for compatibility with the new
+	Autotools, some reformatting for readability, and a minor bugfix or
+	two.
+	* configure.in: Add new AC_DEFINE arguments and replace some direct
+	assignments to LIBOBJS with calls to AC_LIBOBJ.  Call AC_INIT and
+	AM_INIT_AUTOMAKE with the new APIs.  Call AC_PACKAGE_NAME,
+	AC_PACKAGE_TARNAME, AC_PACKAGE_VERSION, and AC_PACKAGE_STRING to
+	subst/define the corresponding variables.  Call AC_CONFIG_FILES with
+	the old AC_OUTPUT args and call AC_OUTPUT without args.  Remove
+	references to version.h.
+	* cvs.spec.in: Use the new substs.
+
+	* INSTALL: Mention new versions of Automake & Autoconf.
+	* NEWS: Ditto.
+
+	* Makefile.in: Regenerated.
+	* aclocal.m4: Ditto.
+	* configure: Ditto.
+	* config.h.in: Ditto.
+
 2002-04-28  Derek Price  <oberon@umich.edu>
 
 	* TODO (208, 209, 210, 211, 212, 213): New items.

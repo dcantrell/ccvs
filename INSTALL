@@ -249,8 +249,8 @@ Building from source code under Unix:
 
 	$ ./noautomake.sh --noautoconf
 
-    The CVS Makefiles and configure script were built using Automake 1.5 and
-    Autoconf 2.13, respectively.  Other combinations of autotool versions may
+    The CVS Makefiles and configure script were built using Automake 1.6 and
+    Autoconf 2.53, respectively.  Other combinations of autotool versions may
     or may not work.
 
 2)  Run "configure":
