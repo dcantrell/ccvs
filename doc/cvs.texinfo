@@ -6507,14 +6507,6 @@ them):
 Use the most recent revision no later than @var{date}.
 See @samp{-r} for how this affects the comparison.
 
-@sc{cvs} can be configured to pass the @samp{-D} option
-through to @code{rcsdiff} (which in turn passes it on
-to @code{diff}.  @sc{Gnu} diff uses @samp{-D} as a way to
-put @code{cpp}-style @samp{#define} statements around the output
-differences.  There is no way short of testing to
-figure out how @sc{cvs} was configured.  In the default
-configuration @sc{cvs} will use the @samp{-D @var{date}} option.
-
 @item -k @var{kflag}
 Process @sc{rcs} keywords according to @var{kflag}.  See
 co(1).
@@ -6538,18 +6530,72 @@ outcome in any way).
 
 One or both @samp{-r} options can be replaced by a
 @samp{-D @var{date}} option, described above.
+
+@item --ifdef=@var{arg}
+Output in ifdef format.  Consult the documentation of
+your underlying diff program concerning the @samp{-D}
+option to diff, for more information on this format.
 @end table
 
-Any other options that are found are passed through to
+@c FIXME?  Probably should document -c here, and
+@c perhaps arrange for CVS to support it via a diff library or
+@c some such.  Or perhaps figure that "all" diff
+@c programs support -c?  Ideas is to preserve the
+@c ability to pass the buck to diff on all the hairy
+@c stuff, while still providing at least one, and
+@c perhaps several popular standard formats.  But this
+@c is all in the idea stage, and probably needs more
+@c thought and refinement.  -u might be similar, in
+@c terms of being something that it might make sense to
+@c document here.
+@c FIXME: also should be a way to pass through
+@c arbitrary options, so that the user can do
+@c "--pass=-Z --pass=foo" or something even if CVS
+@c doesn't know about the -Z option to diff.
+@c Note on -N: The current CVS implementation does require that the
+@c underlying diff supports -N so we can document it as
+@c a pass-through even if the implementation details
+@c are more complicated.
+@c
+@c FIXME? Reference to discussion of which diff CVS
+@c uses (one in path, or....).
+The following options are passed through to
 @code{rcsdiff}, which in turn passes them to
 @code{diff}.  The exact meaning of the options depends
-on which @code{diff} you are using.  The long options
-introduced in @sc{gnu} diff 2.0 are not yet supported in
-@sc{cvs}.  See the documentation for your @code{diff} to see
-which options are supported.
+on which @code{diff} you are using.  See the
+documentation for your @code{diff} for details.
 
-@c -- Document some common useful diff options, such as
-@c -u and -c.
+@code{-a} @code{-b} @code{-B} @code{-c} @w{@code{-C}
+@var{nlines}} @code{-d} @code{-e} @code{-f} @code{-h}
+@code{-H} @code{-i} @code{-n} @code{-N} @code{-p}
+@code{-s} @code{-t} @code{-u} @code{-U} @var{nlines}
+@w{@code{-F} @var{regexp}} @w{@code{-I} @var{regexp}}
+@w{@code{-L} @var{label}} @code{-T} @w{@code{-V}
+@var{arg}} @w{@code{-W} @var{columns}} @code{-w}
+@code{-y} @code{-0} @code{-1} @code{-2} @code{-3}
+@code{-4} @code{-5} @code{-6} @code{-7} @code{-8}
+@code{-9} @code{--binary} @code{--brief}
+@code{--changed-group-format=@var{arg}}
+@code{--context[=@var{lines}]} @code{--ed}
+@code{--expand-tabs} @code{--forward-ed}
+@code{--horizon-lines=@var{arg}}
+@code{--ignore-all-space} @code{--ignore-blank-lines}
+@code{--ignore-case}
+@code{--ignore-matching-lines=@var{regexp}}
+@code{--ignore-space-change} @code{--initial-tab}
+@code{--label=@var{label}} @code{--left-column}
+@code{--minimal} @code{--new-file}
+@code{--new-line-format=@var{arg}}
+@code{--old-line-format=@var{arg}} @code{--paginate}
+@code{--rcs} @code{--report-identical-files}
+@code{--code-c-function} @code{--side-by-side}
+@code{--show-function-line=@var{regexp}}
+@code{--speed-large-files}
+@code{--suppress-common-lines} @code{--text}
+@code{--unchanged-group-format=@var{arg}}
+@code{--unified[=@var{lines}]}
+@code{--width=@var{columns}}
+
 @c . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 @node diff examples
 @appendixsubsec diff examples
@@ -8932,7 +8978,7 @@ modified.  If CVS erroneously thinks a file is
 unmodified (for example, a directory is unchanged but
 one of the files within it is changed), you can force
 it to check in the file anyway by specifying the
-@samp{-f} option to @code{cvs commit} (@pxref{Commit
+@samp{-f} option to @code{cvs commit} (@pxref{commit
 options}).
 @c This is, of course, a serious design flaw in -t/-f.
 @c Probably the whole functionality needs to be
