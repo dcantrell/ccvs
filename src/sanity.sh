@@ -805,6 +805,21 @@ done"
 ${TESTDIR}/cvsroot/first-dir/sdir/ssdir/ssfile,v  <--  ssfile
 new revision: 3\.1; previous revision: 2\.0
 done"
+
+	  # Test using -r to create a branch
+	  dotest_fail basica-8a3 "${testcvs} -q ci -m bogus -r 3.0.0" \
+"Checking in ssfile;
+${TESTDIR}/cvsroot/first-dir/sdir/ssdir/ssfile,v  <--  ssfile
+${PROG} [a-z]*: ${TESTDIR}/cvsroot/first-dir/sdir/ssdir/ssfile,v: can't find branch point 3\.0
+${PROG} [a-z]*: could not check in ssfile"
+	  dotest basica-8a4 "${testcvs} -q ci -m valid -r 3.1.2" \
+"Checking in ssfile;
+${TESTDIR}/cvsroot/first-dir/sdir/ssdir/ssfile,v  <--  ssfile
+new revision: 3\.1\.2\.1; previous revision: 3\.1
+done"
+	  # now get rid of the sticky tag and go back to the trunk
+	  dotest basica-8a5 "${testcvs} -q up -A" "U ssfile"
+
 	  cd ../..
 	  dotest basica-8b "${testcvs} -q diff -r1.2 -r1.3" \
 "Index: sdir/ssdir/ssfile
@@ -863,6 +878,10 @@ done"
 "RCS file: ${TESTDIR}/cvsroot/first-dir/sdir/ssdir/ssfile,v
 deleting revision 2\.0
 deleting revision 1\.3
+done"
+	  dotest basica-o6a "${testcvs} admin -o 3.1.2: ssfile" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/sdir/ssdir/ssfile,v
+deleting revision 3\.1\.2\.1
 done"
 	  dotest basica-o7 "${testcvs} log -N ssfile" "
 RCS file: ${TESTDIR}/cvsroot/first-dir/sdir/ssdir/ssfile,v

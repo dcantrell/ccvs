@@ -5466,6 +5466,13 @@ RCS_checkin (rcs, workfile, message, rev, flags)
 		goto checkin_done;
 	    }
 	    delta->version = RCS_addbranch (rcs, branch);
+	    if (!delta->version)
+	    {
+		free (branch);
+		free (newrev);
+		status = 1;
+		goto checkin_done;
+	    }
 	    adding_branch = 1;
 	    p = strrchr (branch, '.');
 	    *p = '\0';
