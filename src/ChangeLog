@@ -1,3 +1,9 @@
+Sat Dec  9 20:28:01 1995  Karl Fogel  <kfogel@floss.cyclic.com>
+
+        * client.c (update_entries): new var, `bin, init to 0.
+        Use it in determining whether to convert the file.
+        (send_modified): same as above.
+
 Fri Dec  8 17:47:39 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
         * server.c (downcase_string): removed.

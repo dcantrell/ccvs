@@ -866,6 +866,7 @@ update_entries (data_arg, ent_list, short_pathname, filename)
     char *date;
     char *tag_or_date;
     char *scratch_entries;
+    int bin = 0;
 
     read_line (&entries_line, 0);
 
@@ -946,14 +947,19 @@ update_entries (data_arg, ent_list, short_pathname, filename)
 	sprintf (temp_filename, ".new.%s", filename);
 #endif /* _POSIX_NO_TRUNC */
 	buf = xmalloc (size);
-#if LINES_CRLF_TERMINATED
-	if (strcmp (options, "-kb") == 0)
-	    fd = open (temp_filename,
-		       O_WRONLY | O_CREAT | O_TRUNC | OPEN_BINARY,
-		       0777);
-	else
-#endif /* LINES_CRLF_TERMINATED */
-	fd = open (temp_filename, O_WRONLY | O_CREAT | O_TRUNC, 0777);
+
+        /* Some systems, like OS/2 and Windows NT, end lines with CRLF
+           instead of just LF.  Format translation is done in the C
+           library I/O funtions.  Here we tell them whether or not to
+           convert -- if this file is marked "binary" with the RCS -kb
+           flag, then we don't want to convert, else we do (because
+           CVS assumes text files by default). */
+
+        bin = !(strcmp (options, "-kb"));
+        fd = open (temp_filename,
+                   O_WRONLY | O_CREAT | O_TRUNC | (bin ? OPEN_BINARY : 0),
+                   0777);
+
 	if (fd < 0)
 	    error (1, errno, "writing %s", short_pathname);
 
@@ -1003,12 +1009,17 @@ update_entries (data_arg, ent_list, short_pathname, filename)
 	if (data->contents == UPDATE_ENTRIES_UPDATE)
 	{
 #ifdef LINES_CRLF_TERMINATED
-	    if (use_gzip && strcmp (options, "-kb") != 0)
+
+            /* `bin' is non-zero iff `options' contains "-kb", meaning
+                treat this file as binary. */
+
+	    if (use_gzip && (! bin))
 	    {
 	        convert_file (temp_filename, O_RDONLY | OPEN_BINARY,
 	    		      filename, O_WRONLY | O_CREAT | O_TRUNC);
 	        if (unlink (temp_filename) < 0)
-	            error (0, errno, "warning: couldn't delete %s", temp_filename);
+	            error (0, errno, "warning: couldn't delete %s",
+                           temp_filename);
 	    }
 	    else
 		rename_file (temp_filename, filename);
@@ -2807,6 +2818,7 @@ send_modified (file, short_pathname, vers)
     char *buf;
     char *mode_string;
     int bufsize;
+    int bin = 0;
 
     /* Don't think we can assume fstat exists.  */
     if (stat (file, &sb) < 0)
@@ -2822,12 +2834,12 @@ send_modified (file, short_pathname, vers)
     bufsize = sb.st_size;
     buf = xmalloc (bufsize);
 
-#ifdef LINES_CRLF_TERMINATED
-    if (strcmp (vers->options, "-kb") == 0)
-	fd = open (file, O_RDONLY | OPEN_BINARY);
-    else
-#endif /* LINES_CRLF_TERMINATED */
-    fd = open (file, O_RDONLY);
+    /* Is the file marked as containing binary data by the "-kb" flag?
+       If so, make sure to open it in binary mode: */
+
+    bin = !(strcmp (vers->options, "-kb"));
+    fd = open (file, O_RDONLY | (bin ? OPEN_BINARY : 0));
+
     if (fd < 0)
 	error (1, errno, "reading %s", short_pathname);
 
@@ -2847,7 +2859,8 @@ send_modified (file, short_pathname, vers)
 	if (vers == NULL)
 	    converting = 1;
 	else
-	    converting = strcmp (vers->options, "-kb") != 0;
+            /* Otherwise, we convert things unless they're binary. */
+	    converting = (! bin);
 
 	if (converting)
 	{
