@@ -1597,12 +1597,15 @@ standard @code{rsh}, it may change in the future.  If
 you set @code{CVS_RSH} to @code{SSH} or some other rsh
 replacement, the instructions in the rest of this
 section concerning @file{.rhosts} and so on are likely
-to be incorrect; consult the documentation for your rsh
+to be inapplicable; consult the documentation for your rsh
 replacement.
 @c FIXME: there should be a way to specify the
 @c program in CVSROOT, not CVS_RSH, so that one can use
 @c different ones for different roots.  e.g. ":ext;rsh=remsh:"
 @c instead of ":ext:".
+@c See also the comment in src/client.c for rationale
+@c concerning "rsh" being the default and never
+@c "remsh".
 
 Continuing our example, supposing you want to access
 the module @file{foo} in the repository

@@ -1,5 +1,8 @@
 Sun Mar  2 12:33:26 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvs.texinfo (Connecting via rsh): Add comment about rsh
+	vs. remsh.  Also wording fix ("incorrect" -> "inapplicable").
+
 	* cvs.texinfo (Outside): Add comment about renames and annotate.
 
 	* cvs.texinfo (Server requirements): New node.
