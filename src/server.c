@@ -4971,10 +4971,9 @@ error ENOMEM Virtual memory exhausted.\n");
     return 0;
 }
 
-
-#if defined (HAVE_KERBEROS) || defined (AUTH_SERVER_SUPPORT) || defined (HAVE_GSSAPI)
-static void switch_to_user (const char *);
 
+
+#if defined (HAVE_KERBEROS) || defined (AUTH_SERVER_SUPPORT) || defined (HAVE_GSSAPI)
 static void
 switch_to_user (const char *username)
 {
@@ -5902,7 +5901,6 @@ int cvsauthenticate;
 
 /* This structure is the closure field of the Kerberos translation
    routines.  */
-
 struct krb_encrypt_data
 {
     /* The Kerberos key schedule.  */
@@ -5911,34 +5909,9 @@ struct krb_encrypt_data
     C_Block block;
 };
 
-static int krb_encrypt_input( void *_fnclosure, const char *_input,
-                              char *_output, int _size );
-static int krb_encrypt_output( void *_fnclosure, const char *_input,
-                               char *_output, int _size, int *_translated );
 
-/* Create a Kerberos encryption buffer.  We use a packetizing buffer
-   with Kerberos encryption translation routines.  */
-
-struct buffer *
-krb_encrypt_buffer_initialize( struct buffer *buf, int input,
-                               Key_schedule sched, C_Block block,
-                               void *memory( struct buffer * ) )
-{
-    struct krb_encrypt_data *kd;
-
-    kd = (struct krb_encrypt_data *) xmalloc (sizeof *kd);
-    memcpy (kd->sched, sched, sizeof (Key_schedule));
-    memcpy (kd->block, block, sizeof (C_Block));
-
-    return packetizing_buffer_initialize (buf,
-					  input ? krb_encrypt_input : NULL,
-					  input ? NULL : krb_encrypt_output,
-					  kd,
-					  memory);
-}
 
 /* Decrypt Kerberos data.  */
-
 static int
 krb_encrypt_input( void *fnclosure, const char *input, char *output, int size )
 {
@@ -5962,8 +5935,9 @@ krb_encrypt_input( void *fnclosure, const char *input, char *output, int size )
     return 0;
 }
 
-/* Encrypt Kerberos data.  */
 
+
+/* Encrypt Kerberos data.  */
 static int
 krb_encrypt_output( void *fnclosure, const char *input, char *output,
                     int size, int *translated )
@@ -5996,13 +5970,36 @@ krb_encrypt_output( void *fnclosure, const char *input, char *output,
     return 0;
 }
 
+
+
+/* Create a Kerberos encryption buffer.  We use a packetizing buffer
+   with Kerberos encryption translation routines.  */
+struct buffer *
+krb_encrypt_buffer_initialize( struct buffer *buf, int input,
+                               Key_schedule sched, C_Block block,
+                               void *memory( struct buffer * ) )
+{
+    struct krb_encrypt_data *kd;
+
+    kd = (struct krb_encrypt_data *) xmalloc (sizeof *kd);
+    memcpy (kd->sched, sched, sizeof (Key_schedule));
+    memcpy (kd->block, block, sizeof (C_Block));
+
+    return packetizing_buffer_initialize (buf,
+					  input ? krb_encrypt_input : NULL,
+					  input ? NULL : krb_encrypt_output,
+					  kd,
+					  memory);
+}
+
 #endif /* HAVE_KERBEROS */
 #endif /* ENCRYPTION */
 #endif /* defined (CLIENT_SUPPORT) || defined (SERVER_SUPPORT) */
 
+
+
 /* Output LEN bytes at STR.  If LEN is zero, then output up to (not including)
    the first '\0' byte.  */
-
 void
 cvs_output (const char *str, size_t len)
 {
