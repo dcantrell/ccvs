@@ -1,3 +1,26 @@
+Mon Oct 23 11:59:41 1995  Norbert Kiesel  <nk@col.sw-ley.de>
+
+	* cvs.h: add valloc declaration
+
+	* server.h: add server_cleanup prototype
+
+	* server.c: remove server_cleanup prototype
+
+	* mkmodules.c (server_cleanup): fix parameter type
+
+	* server.c: encapsulate wait_sig in #ifdef sun (it's only used in
+	  code which is also encapsulated in #ifdef sun)
+
+	* rcscmds.c (RCS_deltag, RCS_lock): add definition of noerr
+	  parameter
+
+	* error.c: include cvs.h instead of config.h, add USE(rcsid)
+
+	* error.c (error): fix parameter type
+
+	* update.c (join_file): encapsulate recent changes from garyo
+	  within #ifdef SERVER_SUPPORT
+
 Sun Oct 22 13:47:53 1995  J.T. Conklin  <jtc@slave.cygnus.com>
 
 	* client.c (update_entries): Fix memory leak; free mode_string and 
