@@ -149,7 +149,8 @@ connect_to_gserver (cvsroot_t *root, int sock, struct hostent *hostinfo)
 
 	    if (need > sizeof buf)
 	    {
-		int got;
+		ssize_t got;
+		size_t total;
 
 		/* This usually means that the server sent us an error
 		   message.  Read it byte by byte and print it out.
@@ -158,13 +159,19 @@ connect_to_gserver (cvsroot_t *root, int sock, struct hostent *hostinfo)
 		   want to do this to work with older servers.  */
 		buf[0] = cbuf[0];
 		buf[1] = cbuf[1];
-		got = recv (sock, buf + 2, sizeof buf - 2, 0);
-		if (got < 0)
-		    error (1, 0, "recv() from server %s: %s",
-			   root->hostname, SOCK_STRERROR (SOCK_ERRNO));
-		buf[got + 2] = '\0';
-		if (buf[got + 1] == '\n')
-		    buf[got + 1] = '\0';
+		total = 2;
+		while (got = recv (sock, buf + total, sizeof buf - total, 0))
+		{
+		    if (got < 0)
+			error (1, 0, "recv() from server %s: %s",
+			       root->hostname, SOCK_STRERROR (SOCK_ERRNO));
+		    total += got;
+		    if (strrchr (buf + total - got, '\n'))
+			break;
+		}
+		buf[total] = '\0';
+		if (buf[total - 1] == '\n')
+		    buf[total - 1] = '\0';
 		error (1, 0, "error from server %s: %s", root->hostname,
 		       buf);
 	    }
