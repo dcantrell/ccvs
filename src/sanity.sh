@@ -5630,6 +5630,17 @@ done'
 	  dotest modes-7 "ls -l /tmp/cvs-sanity/cvsroot/first-dir/aa,v" \
 "-r-------- .*"
 
+	  # OK, now manually change the modes and see what happens.
+	  chmod g=r,o= /tmp/cvs-sanity/cvsroot/first-dir/aa,v
+	  echo second line >>aa
+	  dotest modes-7a "${testcvs} -q ci -m set-execute-bit" \
+"Checking in aa;
+${TESTDIR}/cvsroot/first-dir/aa,v  <--  aa
+new revision: 1\.3; previous revision: 1\.2
+done"
+	  dotest modes-7b "ls -l /tmp/cvs-sanity/cvsroot/first-dir/aa,v" \
+"-r--r----- .*"
+
 	  CVSUMASK=007
 	  export CVSUMASK
 	  touch ab

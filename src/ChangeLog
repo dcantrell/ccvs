@@ -1,5 +1,8 @@
 Sun Mar 16 10:18:28 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* sanity.sh (modes): New tests modes-7a and modes-7b test behavior
+	if one manually changes the modes in the repository.
+
 	* server.c (server): Revise code which checks for errors creating
 	temporary directory.  This won't solve the intermittent
 	  can't create temporary directory
