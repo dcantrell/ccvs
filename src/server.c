@@ -5491,8 +5491,8 @@ struct cvs_pam_userinfo {
 };
 
 static int
-cvs_pam_conv( int num_msg, const struct pam_message **msg,
-              struct pam_response **resp, void *appdata_ptr )
+cvs_pam_conv (int num_msg, const struct pam_message **msg,
+              struct pam_response **resp, void *appdata_ptr)
 {
     int i;
     struct pam_response *response;
@@ -5500,24 +5500,24 @@ cvs_pam_conv( int num_msg, const struct pam_message **msg,
 
     assert (ui && ui->username && ui->password && msg && resp);
 
-    response = xmalloc(num_msg * sizeof(struct pam_response));
-    memset(response, 0, num_msg * sizeof(struct pam_response));
+    response = xmalloc(num_msg * sizeof (struct pam_response));
+    memset(response, 0, num_msg * sizeof (struct pam_response));
 
     for (i = 0; i < num_msg; i++)
     {
-	switch(msg[i]->msg_style) 
+	switch (msg[i]->msg_style) 
 	{
 	    /* PAM wants a username */
 	    case PAM_PROMPT_ECHO_ON:
-		response[i].resp = xstrdup(ui->username);
+		response[i].resp = xstrdup (ui->username);
 		break;
 	    /* PAM wants a password */
 	    case PAM_PROMPT_ECHO_OFF:
-		response[i].resp = xstrdup(ui->password);
+		response[i].resp = xstrdup (ui->password);
 		break;
 	    case PAM_ERROR_MSG:
 	    case PAM_TEXT_INFO:
-		printf("E %s\n",msg[i]->msg);
+		printf ("E %s\n", msg[i]->msg);
 		break;
 	    /* PAM wants something we don't understand - bail out */
 	    default:
@@ -5533,16 +5533,18 @@ cleanup:
     {
 	if (response[i].resp)
 	{
-	    free(response[i].resp);
+	    free (response[i].resp);
 	    response[i].resp = 0;
 	}
     }
-    free(response);
+    free (response);
     return PAM_CONV_ERR;
 }
 
+
+
 static int
-check_system_password( char *username, char *password )
+check_system_password (char *username, char *password)
 {
     pam_handle_t *pamh = NULL;
     int retval, err;
@@ -5550,7 +5552,7 @@ check_system_password( char *username, char *password )
     struct pam_conv conv = { cvs_pam_conv, (void *)&ui };
     char *pam_stage = "start";
 
-    retval = pam_start(PAM_SERVICE_NAME, username, &conv, &pamh);
+    retval = pam_start (PAM_SERVICE_NAME, username, &conv, &pamh);
 
     if (retval == PAM_SUCCESS) {
 	pam_stage = "authenticate";
@@ -5559,21 +5561,21 @@ check_system_password( char *username, char *password )
 
     if (retval == PAM_SUCCESS) {
 	pam_stage = "account";
-	retval = pam_acct_mgmt(pamh, 0);
+	retval = pam_acct_mgmt (pamh, 0);
     }
 
     if (retval != PAM_SUCCESS)
-	printf("E PAM %s error: %s\n", pam_stage, pam_strerror(pamh, retval));
+	printf ("E PAM %s error: %s\n", pam_stage, pam_strerror(pamh, retval));
 
-    if ((err = pam_end(pamh, retval)) != PAM_SUCCESS)
+    if ((err = pam_end (pamh, retval)) != PAM_SUCCESS)
     {
-	printf("E Fatal error, aborting.\n"
+	printf ("E Fatal error, aborting.\n"
 		"pam failed to release authenticator\n"
-		"PAM error %s\n", pam_strerror(NULL, err));
+		"PAM error %s\n", pam_strerror (NULL, err));
 	exit (EXIT_FAILURE);
     }
 
-    return (retval == PAM_SUCCESS);       /* indicate success */
+    return retval == PAM_SUCCESS;       /* indicate success */
 }
 #else
 static int
@@ -5641,6 +5643,8 @@ error 0 %s: no such user\n", username);
     return 1;
 }
 #endif
+
+
 
 /* Return a hosting username if password matches, else NULL. */
 static char *
