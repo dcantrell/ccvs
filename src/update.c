@@ -1759,10 +1759,10 @@ patch_file (struct file_info *finfo, Vers_TS *vers_ts, int *docheckout, struct s
 	if (CVS_STAT (finfo->file, file_info) < 0)
 	    error (1, errno, "could not stat %s", finfo->file);
 
-	/* If this is really Update and not Checkout, recode history */
+	/* If this is really Update and not Checkout, record history.  */
 	if (strcmp (command_name, "update") == 0)
-	    history_write ('P', finfo->update_dir, xvers_ts->vn_rcs, finfo->file,
-			   finfo->repository);
+	    history_write ('P', finfo->update_dir, xvers_ts->vn_rcs,
+	                   finfo->file, finfo->repository);
 
 	freevers_ts (&xvers_ts);
 
@@ -2018,7 +2018,8 @@ merge_file (struct file_info *finfo, Vers_TS *vers)
 
 	write_letter (finfo, 'C');
 
-	history_write ('C', finfo->update_dir, vers->vn_rcs, finfo->file, finfo->repository);
+	history_write ('C', finfo->update_dir, vers->vn_rcs, finfo->file,
+	               finfo->repository);
 
     }
     else if (retcode == -1)

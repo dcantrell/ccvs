@@ -1,5 +1,27 @@
 2003-10-08  Derek Price  <derek@ximbiot.com>
 
+	* Makefile.am (cvs_SOURCES): Add history.h.
+	* history.c: Include history.h.  Add the `P' record types to more
+	comments. s/ALL_REC_TYPES/ALL_HISTORY_REC_TYPES/.
+	(usage): Reference ALL_HISTORY_REC_TYPES rather than using a separate
+	string literal.
+	(report_hrecs): Handle `P' record type.
+	(ALL_REC_TYPES): Rename and move...
+	* history.h (ALL_HISTORY_REC_TYPES): ...here.
+	* mkmodules.c: Include history.h.
+	(config_contents): Update contents of and references to LogHistory
+	records to use ALL_HISTORY_REC_TYPES.
+	* sanity.sh (basic2-64): Update to include history records of type `P'.
+
+	* Makefile.in: Regenerated.
+
+2003-10-08  Derek Price  <derek@ximbiot.com>
+
+	* update.c (patch_file): Correct spelling and punctuation in comment.
+	Update some lines to fit in 80 characters.
+
+2003-10-08  Derek Price  <derek@ximbiot.com>
+
 	* lock.c (remove_locks): Copy global struct and set status variable to
 	NULL before calling disposal functions that might try to access it
 	during calls to error(1,...).

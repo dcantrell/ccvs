@@ -6,8 +6,9 @@
  * specified in the README file that comes with the CVS kit.  */
 
 #include "cvs.h"
-#include "savecwd.h"
 #include "getline.h"
+#include "history.h"
+#include "savecwd.h"
 
 #ifndef DBLKSIZ
 #define	DBLKSIZ	4096			/* since GNU ndbm doesn't define it */
@@ -273,9 +274,9 @@ static const char *const config_contents[] = {
     "# command.\n",
     "#TopLevelAdmin=no\n",
     "\n",
-    "# Set `LogHistory' to `all' or `TOFEWGCMAR' to log all transactions to the\n",
+    "# Set `LogHistory' to `all' or `" ALL_HISTORY_REC_TYPES "' to log all transactions to the\n",
     "# history file, or a subset as needed (ie `TMAR' logs all write operations)\n",
-    "#LogHistory=TOFEWGCMAR\n",
+    "#LogHistory=" ALL_HISTORY_REC_TYPES "\n",
     "\n",
     "# Set `RereadLogAfterVerify' to `always' (the default) to allow the verifymsg\n",
     "# script to change the log message.  Set it to `stat' to force CVS to verify\n",

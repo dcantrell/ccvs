@@ -3671,7 +3671,7 @@ ${SPROG} update: Updating dir1/dir2"
 		# why are there two lines at the end of the local output
 		# which don't exist in the remote output?  would seem to be
 		# a CVS bug.
-		dotest basic2-64 "${testcvs} his -x TOFWUCGMAR -a" \
+		dotest basic2-64 "${testcvs} his -x TOFWUPCGMAR -a" \
 "O [0-9-]* [0-9:]* ${PLUS}0000 ${username} first-dir           =first-dir= ${TESTDIR}/\*
 A [0-9-]* [0-9:]* ${PLUS}0000 ${username} 1\.1 file6     first-dir           == ${TESTDIR}
 A [0-9-]* [0-9:]* ${PLUS}0000 ${username} 1\.1 file7     first-dir           == ${TESTDIR}
@@ -3716,7 +3716,8 @@ T [0-9-]* [0-9:]* ${PLUS}0000 ${username} first-dir \[rtagged-by-head:A\]
 T [0-9-]* [0-9:]* ${PLUS}0000 ${username} first-dir \[rtagged-by-tag:rtagged-by-head\]
 T [0-9-]* [0-9:]* ${PLUS}0000 ${username} first-dir \[rtagged-by-revision:1\.1\]
 O [0-9-]* [0-9:]* ${PLUS}0000 ${username} \[1\.1\] first-dir           =first-dir= <remote>/\*
-W [0-9-]* [0-9:]* ${PLUS}0000 ${username}     file7     first-dir           == <remote>" \
+P [0-9-]* [0-9:]* ${PLUS}0000 ${username} 1\.2 file6     first-dir           == <remote>
+W [0-9-]* [0-9:]* ${PLUS}0000 ${username}     file7     first-dir           == <remote>"
 
 		rm -rf ${CVSROOT_DIRNAME}/first-dir
 		rm -rf ${CVSROOT_DIRNAME}/second-dir
