@@ -1,3 +1,8 @@
+Sun Aug 10 20:42:51 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* pwd.c, pwd.h: Remove $Header; we decided to get rid of these
+	some time ago.
+
 Wed Jul 30 19:15:41 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* filesubr.c (os2_chdir): If ENODEV is not defined, return ENOENT.
