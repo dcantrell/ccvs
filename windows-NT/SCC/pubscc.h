@@ -139,6 +139,8 @@ typedef BOOL (*SCC_popul_proc) (LPVOID callerdat, BOOL add_keep,
 /* Bits to set in the caps used by SccInitialize.  Most of these are
    relatively straightforward, for example SCC_cap_QueryInfo is set to
    indicate that the SccQueryInfo function is supported.  */
+/* CodeWright 5.00b and 5.00c seem to call SccQueryInfo regardless of whether
+   this bit is set in caps.  */
 #define SCC_cap_QueryInfo 0x80L
 #define SCC_cap_GetProjPath 0x200L
 #define SCC_cap_AddFromScc 0x400L
@@ -530,3 +532,7 @@ extern SCC_return SccSetOption
    LONG option,
    /* Meaning of this will depend on the value of option.  */
    LONG val);
+
+/* New functions with CodeWright 5.00c: SccAddRef, SccRelease,
+   SccDiffToRev, SccLabel, SccLock and SccMerge.  I don't have any
+   details on them.  */
