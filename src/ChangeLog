@@ -1,5 +1,9 @@
 2003-09-30  Derek Price  <derek@ximbiot.com>
 
+	* commit.c (commit): Optimize function towards a single exit point.
+
+2003-09-30  Derek Price  <derek@ximbiot.com>
+
 	* error.c (error_exit): Remove call to SYSTEM_CLEANUP.
 	* main.c (main): Set up atexit(SYSTEM_CLEANUP) rather than calling it
 	explicitly before exit.

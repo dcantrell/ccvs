@@ -648,18 +648,17 @@ commit (int argc, char **argv)
     Lock_Cleanup ();
     dellist (&mulist);
 
-#ifdef SERVER_SUPPORT
-    if (server_active)
-	return err;
-#endif
-
     /* see if we need to sleep before returning to avoid time-stamp races */
-    if (last_register_time)
-    {
-	sleep_past (last_register_time);
-    }
+    if (
+#ifdef SERVER_SUPPORT
+	/* But only sleep on the client.  */
+        !server_active &&
+#endif
+	last_register_time
+       )
+	    sleep_past (last_register_time);
 
-    return (err);
+    return err;
 }
 
 /* This routine determines the status of a given file and retrieves
