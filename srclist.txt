@@ -114,6 +114,9 @@ $GNULIB/m4/realloc.m4				m4		no NI
 # $GNULIB/modules/stat
 $GNULIB/lib/stat.c				lib		no NI
 $GNULIB/m4/stat.m4				m4		yes NI
+# $GNULIB/modules/strerror
+$GNULIB/lib/strerror.c				lib		no NI
+$GNULIB/m4/strerror.m4				m4		no NI
 # $GNULIB/modules/unlocked-io
 $GNULIB/lib/unlocked-io.h			lib		no NI
 $GNULIB/m4/onceonly_2_57.m4			m4		no NI
