@@ -26,14 +26,6 @@ extern int errno;
 #endif
 #include <sys/types.h>
 
-#ifdef HAVE_GETWD
-char *getwd ();
-#define GETWD(buf, max) getwd (buf)
-#else
-char *getcwd ();
-#define GETWD(buf, max) getcwd (buf, max)
-#endif
-
 /* Amount by which to increase buffer size when allocating more space. */
 #define PATH_INCR 32
 
@@ -57,7 +49,7 @@ xgetwd ()
   cwd = xmalloc (path_max);
 
   errno = 0;
-  while ((ret = GETWD (cwd, path_max)) == NULL && errno == ERANGE)
+  while ((ret = getcwd (cwd, path_max)) == NULL && errno == ERANGE)
     {
       path_max += PATH_INCR;
       cwd = xrealloc (cwd, path_max);

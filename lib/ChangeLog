@@ -1,3 +1,15 @@
+Sat Nov 29 22:03:39 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	getwd and getcwd were a big big mess.  Although Jim's fix might
+	indeed be fixing a typo, the code is so tangled that I would guess
+	it probably breaks some system.  So clean this up:
+	* xgetwd.c: Always assume we have getcwd (we had been anyway,
+	before Jim's change).
+	* getwd.c: Removed.
+	* Makefile.in: Remove getwd.c
+	* system.h: Remove declarations of getwd and getcwd.  Move getcwd
+	declaration to the !HAVE_UNISTD_H section.
+
 1997-11-29  Jim Meyering  <meyering@na-net.ornl.gov>
 
 	* xgetwd.c: Fix typo s/ifndef/ifdef/ in test of HAVE_GETWD.
