@@ -1,3 +1,8 @@
+Tue Dec 10 19:22:20 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs-format.el: Revise comments to explain how to use it and
+	general minor tidying of comments.
+
 Mon Dec  2 13:05:44 1996  Ian Lance Taylor  <ian@cygnus.com>
 
 	* configure.in: Don't call AC_CHECK_FUNCS(connect) a second time,
