@@ -1,3 +1,12 @@
+1999-04-18  Derek Price
+	<http://www-personal.engin.umich.edu/~oberon/resume.html>
+
+	* sanity.sh added a test (backuprecover) to test cvs behavior
+	with a repository that is out of date relative to the
+	developer's workspaces.
+	[Fix --keep code; move test to "Repository Storage" section since
+	it doesn't really exercise the diff/diff3 library. -kingdon]
+
 1999-04-13  Derek Price
 	<http://www-personal.engin.umich.edu/~oberon/resume.html>
 

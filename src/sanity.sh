@@ -580,7 +580,7 @@ if test x"$*" = x; then
 	tests="${tests} serverpatch log log2 ann ann-id"
 	# Repository Storage (RCS file format, CVS lock files, creating
 	# a repository without "cvs init", &c).
-	tests="${tests} crerepos rcs rcs2 rcs3 lockfiles"
+	tests="${tests} crerepos rcs rcs2 rcs3 lockfiles backuprecover"
 	# More history browsing, &c.
 	tests="${tests} history"
 	tests="${tests} big modes modes2 modes3 stamps"
@@ -13706,6 +13706,296 @@ ${PROG} [a-z]*: Rebuilding administrative file database"
 	  rm -r ${TESTDIR}/locks
 	  rm -r 1 2
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  ;;
+
+	backuprecover)
+	  # Tests to make sure we get the expected behavior
+	  # when we recover a repository from an old backup
+	  #
+	  # Details:
+	  #   Backup will be older than some developer's workspaces
+	  #	This means the first attempt at an update will fail
+	  #	The workaround for this is to replace the CVS
+	  #	  directories with those from a "new" checkout from
+	  #	  the recovered repository.  Due to this, multiple
+	  #	  merges should cause conflicts (the same data
+	  #	  will be merged more than once).
+	  #	A workspace updated before the date of the recovered
+	  #	  copy will not need any extra attention
+	  #
+	  # Note that backuprecover-15 is probably a failure case
+	  #   If nobody else had a more recent update, the data would be lost
+	  #	permanently
+	  #   Granted, the developer should have been notified not to do this
+	  #	by now, but still...
+	  #
+	  mkdir backuprecover; cd backuprecover
+	  mkdir 1; cd 1
+	  dotest backuprecover-1 "${testcvs} -q co -l ." ''
+	  mkdir first-dir
+	  dotest backuprecover-2 "${testcvs} add first-dir" \
+"Directory ${TESTDIR}/cvsroot/first-dir added to the repository"
+          cd first-dir
+	  mkdir dir
+	  dotest backuprecover-3 "${testcvs} add dir" \
+"Directory ${TESTDIR}/cvsroot/first-dir/dir added to the repository"
+	  touch file1 dir/file2
+	  dotest backuprecover-4 "${testcvs} -q add file1 dir/file2" \
+"${PROG} [a-z]*: use '${PROG} commit' to add these files permanently"
+	  dotest backuprecover-5 "${testcvs} -q ci -mtest" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
+done
+Checking in file1;
+${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
+initial revision: 1\.1
+done
+RCS file: ${TESTDIR}/cvsroot/first-dir/dir/file2,v
+done
+Checking in dir/file2;
+${TESTDIR}/cvsroot/first-dir/dir/file2,v  <--  file2
+initial revision: 1\.1
+done"
+	  echo "Line one" >>file1
+	  echo "  is the place" >>file1
+	  echo "    we like to begin" >>file1
+	  echo "Anything else" >>file1
+	  echo "  looks like" >>file1
+	  echo "    a sin" >>file1
+	  echo "File 2" >>dir/file2
+	  echo "  is the place" >>dir/file2
+	  echo "    the rest of it goes"  >>dir/file2
+	  echo "Why I don't use" >>dir/file2
+	  echo "  something like 'foo'" >>dir/file2
+	  echo "    God only knows" >>dir/file2
+	  dotest backuprecover-6 "${testcvs} -q ci -mtest" \
+"Checking in file1;
+${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
+new revision: 1\.2; previous revision: 1\.1
+done
+Checking in dir/file2;
+${TESTDIR}/cvsroot/first-dir/dir/file2,v  <--  file2
+new revision: 1\.2; previous revision: 1\.1
+done"
+
+	  # Simulate the lazy developer
+	  # (he did some work but didn't check it in...)
+	  cd ../..
+	  mkdir 2; cd 2
+	  dotest backuprecover-7 "${testcvs} -Q co first-dir" ''
+	  cd first-dir
+	  sed -e"s/looks like/just looks like/" file1 >tmp; mv tmp file1
+	  sed -e"s/don't use/don't just use/" dir/file2 >tmp; mv tmp dir/file2
+
+	  # developer 1 is on a roll
+	  cd ../../1/first-dir
+	  echo "I need some more words" >>file1
+	  echo "  to fill up this space" >>file1
+	  echo "    anything else would be a disgrace" >>file1
+	  echo "My rhymes cross many boundries" >>dir/file2
+	  echo "  this time it's files" >>dir/file2
+	  echo "    a word that fits here would be something like dials" >>dir/file2
+	  dotest backuprecover-8 "${testcvs} -q ci -mtest" \
+"Checking in file1;
+${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
+new revision: 1\.3; previous revision: 1\.2
+done
+Checking in dir/file2;
+${TESTDIR}/cvsroot/first-dir/dir/file2,v  <--  file2
+new revision: 1\.3; previous revision: 1\.2
+done"
+
+	  # Save a backup copy
+	  cp -r ${TESTDIR}/cvsroot/first-dir ${TESTDIR}/cvsroot/backup
+
+	  # Simulate developer 3
+	  cd ../..
+	  mkdir 3; cd 3
+	  dotest backuprecover-9a "${testcvs} -Q co first-dir" ''
+	  cd first-dir
+	  echo >>file1
+	  echo >>dir/file2
+	  echo "Developer 1 makes very lame rhymes" >>file1
+	  echo "  I think he should quit and become a mime" >>file1
+	  echo "What the %*^# kind of rhyme crosses a boundry?" >>dir/file2
+	  echo "  I think you should quit and get a job in the foundry" >>dir/file2
+	  dotest backuprecover-9b "${testcvs} -q ci -mtest" \
+"Checking in file1;
+${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
+new revision: 1\.4; previous revision: 1\.3
+done
+Checking in dir/file2;
+${TESTDIR}/cvsroot/first-dir/dir/file2,v  <--  file2
+new revision: 1\.4; previous revision: 1\.3
+done"
+
+	  # Developer 4 so we can simulate a conflict later...
+	  cd ../..
+	  mkdir 4; cd 4
+	  dotest backuprecover-10 "${testcvs} -Q co first-dir" ''
+	  cd first-dir
+	  sed -e"s/quit and/be fired so he can/" dir/file2 >tmp; mv tmp dir/file2
+
+	  # And back to developer 1
+	  cd ../../1/first-dir
+	  dotest backuprecover-11 "${testcvs} -Q update" ''
+	  echo >>file1
+	  echo >>dir/file2
+	  echo "Oh yeah, well rhyme this" >>file1
+	  echo "  developer three" >>file1
+	  echo "    you want opposition" >>file1
+	  echo "      you found some in me!" >>file1
+	  echo "I'll give you mimes" >>dir/file2
+	  echo "  and foundries galore!"  >>dir/file2
+	  echo "    your head will spin" >>dir/file2
+	  echo "      once you find what's in store!" >>dir/file2
+	  dotest backuprecover-12 "${testcvs} -q ci -mtest" \
+"Checking in file1;
+${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
+new revision: 1\.5; previous revision: 1\.4
+done
+Checking in dir/file2;
+${TESTDIR}/cvsroot/first-dir/dir/file2,v  <--  file2
+new revision: 1\.5; previous revision: 1\.4
+done"
+
+	  # developer 3'll do a bit of work that never gets checked in
+	  cd ../../3/first-dir
+	  dotest backuprecover-13 "${testcvs} -Q update" ''
+	  sed -e"s/very/some extremely/" file1 >tmp; mv tmp file1
+	  dotest backuprecover-14 "${testcvs} -q ci -mtest" \
+"Checking in file1;
+${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
+new revision: 1\.6; previous revision: 1\.5
+done"
+	  echo >>file1
+	  echo "Tee hee hee hee" >>file1
+	  echo >>dir/file2
+	  echo "Find what's in store?" >>dir/file2
+	  echo "  Oh, I'm so sure!" >>dir/file2
+	  echo "    You've got an ill, and I have the cure!"  >>dir/file2
+
+	  # Slag the original and restore it a few revisions back
+	  rm -rf ${TESTDIR}/cvsroot/first-dir
+	  mv ${TESTDIR}/cvsroot/backup ${TESTDIR}/cvsroot/first-dir
+
+	  # Have developer 1 try an update and lose some data
+	  #
+	  # Feel free to imagine the horrific scream of despair
+	  cd ../../1/first-dir
+	  dotest backuprecover-15 "${testcvs} update" \
+"${PROG} [a-z]*: Updating .
+U file1
+${PROG} [a-z]*: Updating dir
+U dir/file2"
+
+	  # Developer 3 tries the same thing (he has an office)
+	  # but fails without losing data since all of his files have
+	  # uncommitted changes
+	  cd ../../3/first-dir
+	  dotest_fail backuprecover-16 "${testcvs} update" \
+"${PROG} [a-z]*: Updating \.
+${PROG} \[[a-z]* aborted\]: could not find desired version 1\.6 in ${TESTDIR}/cvsroot/first-dir/file1,v"
+
+	  # create our workspace fixin' script
+	  cd ../..
+	  echo \
+"#!/bin/sh
+
+# This script will copy the CVS database dirs from the checked out
+# version of a newly recovered repository and replace the CVS
+# database dirs in a workspace with later revisions than those in the
+# recovered repository
+cd repos-first-dir
+DATADIRS=\`find . -name CVS\`
+cd ../first-dir
+find . -name CVS |xargs rm -rf
+for file in \${DATADIRS}; do
+	cp -r ../repos-first-dir/\${file} \${file}
+done" >fixit
+
+	  # We only need to fix the workspaces of developers 3 and 4
+	  # (1 lost all her data and 2 has an update date from
+	  # before the date the backup was made)
+	  cd 3
+	  dotest backuprecover-17 \
+		"${testcvs} -Q co -d repos-first-dir first-dir" ''
+	  cd ../4
+	  dotest backuprecover-18 \
+		"${testcvs} -Q co -d repos-first-dir first-dir" ''
+	  sh ../fixit
+	  cd ../3; sh ../fixit
+
+	  # (re)commit developer 3's stuff
+	  cd first-dir
+	  dotest backuprecover-19 "${testcvs} -q ci -mrecover/merge" \
+"Checking in file1;
+${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
+new revision: 1\.4; previous revision: 1\.3
+done
+Checking in dir/file2;
+${TESTDIR}/cvsroot/first-dir/dir/file2,v  <--  file2
+new revision: 1\.4; previous revision: 1\.3
+done"
+
+	  # and we should get a conflict on developer 4's stuff
+	  cd ../../4/first-dir
+	  dotest backuprecover-20 "${testcvs} update" \
+"${PROG} [a-z]*: Updating \.
+RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
+retrieving revision 1\.3
+retrieving revision 1\.4
+Merging differences between 1\.3 and 1\.4 into file1
+rcsmerge: warning: conflicts during merge
+${PROG} [a-z]*: conflicts found in file1
+C file1
+${PROG} [a-z]*: Updating dir
+RCS file: ${TESTDIR}/cvsroot/first-dir/dir/file2,v
+retrieving revision 1\.3
+retrieving revision 1\.4
+Merging differences between 1\.3 and 1\.4 into file2
+rcsmerge: warning: conflicts during merge
+${PROG} [a-z]*: conflicts found in dir/file2
+C dir/file2"
+	  sed -e \
+"/^<<<<<<</,/^=======/d
+/^>>>>>>>/d" file1 >tmp; mv tmp file1
+	  sed -e \
+"/^<<<<<<</,/^=======/d
+/^>>>>>>>/d
+s/quit and/be fired so he can/" dir/file2 >tmp; mv tmp dir/file2
+	  dotest backuprecover-21 "${testcvs} -q ci -mrecover/merge" \
+"Checking in dir/file2;
+${TESTDIR}/cvsroot/first-dir/dir/file2,v  <--  file2
+new revision: 1\.5; previous revision: 1\.4
+done"
+
+	  # go back and commit developer 2's stuff to prove it can still be done
+	  cd ../../2/first-dir
+	  dotest backuprecover-22 "${testcvs} -Q update" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
+retrieving revision 1\.2
+retrieving revision 1\.4
+Merging differences between 1\.2 and 1\.4 into file1
+RCS file: ${TESTDIR}/cvsroot/first-dir/dir/file2,v
+retrieving revision 1\.2
+retrieving revision 1\.5
+Merging differences between 1\.2 and 1\.5 into file2"
+	  dotest backuprecover-23 "${testcvs} -q ci -mtest" \
+"Checking in file1;
+${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
+new revision: 1\.5; previous revision: 1\.4
+done
+Checking in dir/file2;
+${TESTDIR}/cvsroot/first-dir/dir/file2,v  <--  file2
+new revision: 1\.6; previous revision: 1\.5
+done"
+
+	  # and restore the data to developer 1
+	  cd ../../1/first-dir
+	  dotest backuprecover-24 "${testcvs} -Q update" ''
+
+	  cd ../../..
+	  rm -rf backuprecover
 	  ;;
 
 	history)
