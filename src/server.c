@@ -4416,7 +4416,7 @@ struct request requests[] =
   REQ_LINE("wrapper-sendme-rcsOptions",
            serve_wrapper_sendme_rcs_options,
            0),
-  REQ_LINE("Set", serve_set, 0),
+  REQ_LINE("Set", serve_set, RQ_ROOTLESS),
 #ifdef ENCRYPTION
 #  ifdef HAVE_KERBEROS
   REQ_LINE("Kerberos-encrypt", serve_kerberos_encrypt, 0),

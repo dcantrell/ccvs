@@ -1,3 +1,11 @@
+1998-10-15  Jim Kingdon
+
+	* server.c (requests): Set RQ_ROOTLESS for "Set".
+	* sanity.sh (info): Also clean up $HOME/.cvsrc.
+	(server): Test that we can send Set before Root (had been tested
+	by crerepos-6b, but only if you ran the info test first).  Tests
+	for this fix.
+
 1998-10-14  Jim Kingdon
 
 	* subr.c (expand_string): Tweak the algorithm so that the size
