@@ -1,3 +1,7 @@
+2000-12-21  Derek Price  <derek.price@openavenue.com>
+
+	* Makefile.in: Added support for Automake targets
+
 1999-02-26  Jim Kingdon  <http://www.cyclic.com>
 
 	* options.h: Make RELATIVE_REPOS the default, as in

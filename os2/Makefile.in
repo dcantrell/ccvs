@@ -273,6 +273,10 @@ all:
 .PHONY: all install uninstall
 all install uninstall:
 
+# Remove targets for Automake
+info:
+.PHONY: info
+
 installdirs:
 .PHONY: installdirs
 
@@ -283,22 +287,32 @@ tags TAGS:
 ls:
 	@echo ${DISTFILES}
 
-.PHONY: clean distclean realclean mostlyclean
-clean distclean realclean mostlyclean:
-
 .PHONY: lint
 lint:
 
-.PHONY: dist-dir
-dist-dir:
-	mkdir ${DISTDIR}
-	for i in ${DISTFILES}; do \
-	  ln $${i} ${DISTDIR}; \
+.PHONY: check
+check:
+
+# distdir added for CVS.
+top_builddir = ..
+PACKAGE = @PACKAGE@
+VERSION = @VERSION@
+distdir = $(top_builddir)/$(PACKAGE)-$(VERSION)/$(subdir)
+distdir:
+	for i in `cd $(srcdir); echo ${DISTFILES}`; do \
+	  if test -d $(distdir)/`dirname $$i`; then \
+	    :; \
+	  else \
+	    mkdir $(distdir)/`dirname $$i`; \
+	  fi; \
+	  ln $(srcdir)/$${i} $(distdir)/`dirname $$i`; \
 	done
+.PHONY: distdir
 
 # We don't have a real distclean or anything like that, but at least
 # we can get rid of the obj files and cvs.exe. 
-clean:
+.PHONY: clean distclean realclean mostlyclean maintainer-clean
+clean distclean realclean maintainer-clean mostlyclean:
 	rm -f cvs.exe
 	rm -f ${srcdir}${SL}*.obj 
 	rm -f ${lib_dir}${SL}*.obj 
