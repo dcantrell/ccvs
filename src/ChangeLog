@@ -1,3 +1,8 @@
+Fri Mar  8 01:31:04 1996  Greg A. Woods  <woods@most.weird.com>
+
+	* hash.c (findnode_fn): one more place to avoid calling hashp()
+	with a NULL key
+
 Thu Mar  7 17:30:01 1996  Greg A. Woods  <woods@most.weird.com>
 
 	* hash.c (findnode): also return NULL if key is not set
