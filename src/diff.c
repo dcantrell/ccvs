@@ -44,11 +44,9 @@ static char *diff_rev1, *diff_rev2;
 static char *diff_date1, *diff_date2;
 static char *use_rev1, *use_rev2;
 
-#ifdef SERVER_SUPPORT
 /* Revision of the user file, if it is unchanged from something in the
    repository and we want to use that fact.  */
 static char *user_file_rev;
-#endif
 
 static char *options;
 static char *opts;
@@ -360,9 +358,7 @@ diff_fileproc (callerdat, finfo)
     char *tocvsPath;
     char *fname;
 
-#ifdef SERVER_SUPPORT
     user_file_rev = 0;
-#endif
     vers = Version_TS (finfo, NULL, NULL, NULL, 1, 0);
 
     if (diff_rev2 != NULL || diff_date2 != NULL)
@@ -458,7 +454,6 @@ diff_fileproc (callerdat, finfo)
 		diff_mark_errors (err);
 		return (err);
 	    }
-#ifdef SERVER_SUPPORT
 	    else if (!strcmp (vers->ts_user, vers->ts_rcs)) 
 	    {
 		/* The user file matches some revision in the repository
@@ -466,7 +461,6 @@ diff_fileproc (callerdat, finfo)
 		   have a copy of the user file around).  */
 		user_file_rev = vers->vn_user;
 	    }
-#endif
 	}
     }
 
@@ -837,10 +831,8 @@ diff_file_nodiff (finfo, vers, empty_file)
 		return DIFF_SAME;
 	    else
 	    {
-#ifdef SERVER_SUPPORT
 		if (user_file_rev && use_rev2 == NULL)
 		    use_rev2 = xstrdup (user_file_rev);
-#endif
 		return DIFF_ADDED;
 	    }
 	}
@@ -856,7 +848,6 @@ diff_file_nodiff (finfo, vers, empty_file)
 	}
     }
 
-#ifdef SERVER_SUPPORT
     if (user_file_rev)
     {
         /* drop user_file_rev into first unused use_rev */
@@ -876,7 +867,6 @@ diff_file_nodiff (finfo, vers, empty_file)
 	else
 	    return DIFF_DIFFERENT;
     }
-#endif /* SERVER_SUPPORT */
 
     if (use_rev1 == NULL
 	|| (vers->vn_user != NULL && strcmp (use_rev1, vers->vn_user) == 0))

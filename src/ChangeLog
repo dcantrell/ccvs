@@ -1,5 +1,13 @@
 Mon Apr 28 22:36:39 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* diff.c (diff_file_nodiff): Remove SERVER_SUPPORT ifdefs.  They
+	were not based on server_active, which doesn't really make any
+	sense (it meant that compiling --disable-server could affect the
+	behavior of the non-client/server CVS).  This affected the output
+	in tests death2-diff-11 and death2-diff-12 in the testsuite.
+	* sanity.sh (newb-123j0): Also accept "Needs Checkout", for a
+	--disable-server CVS.
+
 	* main.c (cmd_usage): Change "run diffs" to "show differences";
 	the former is jargon.
 	* edit.c (edit_usage): Fix typo ("." -> ",").
