@@ -6661,13 +6661,14 @@ cvs_output_tagged (const char *tag, const char *text)
 	    buf_send_counted (protocol);
     }
     else
-#endif
+#endif /* SERVER_SUPPORT */
     {
 	/* No MT support or we are using a local repository. */
 	if (strcmp (tag, "newline") == 0)
 	    cvs_output ("\n", 1);
 	else if (strcmp (tag, "date") == 0)
 	{
+#ifdef SERVER_SUPPORT
 	    if (server_active)
 		/* Output UTC when running as a server without MT support in
 		 * the client since it is likely to be more meaningful than
@@ -6675,6 +6676,7 @@ cvs_output_tagged (const char *tag, const char *text)
 		 */
 		cvs_output (text, 0);
 	    else
+#endif /* SERVER_SUPPORT */
 	    {
 		char *date_in = xstrdup (text);
 		char *date = format_date_alloc (date_in);
