@@ -1,5 +1,8 @@
 Mon Mar 24 13:02:04 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* entries.c (ParseTag): Add comment about unrecognized characters
+	in CVS/Tag file.
+
 	* classify.c (Classify_File): Add comment about how specifying a
 	tag (bogusly?) suppresses certain messages.
 
