@@ -1,3 +1,9 @@
+2004-04-07  Derek Price  <derek@ximbiot.com>
+
+	* regex.c: Revise "FREE_VAR" macro to eliminate C4090/C4022 warnings
+	in Windows build with Visual C++ 6.0 compiler.
+	(Original patch from Conrad T. Pino <Conrad@Pino.com>.)
+
 2004-04-04  Derek Price  <derek@ximbiot.com>
 
 	* system.h: Correct comment.
