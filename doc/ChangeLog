@@ -1,5 +1,8 @@
 Mon Sep 16 23:33:36 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvs.texinfo (Wrappers): Add comment about using wrappers to
+	compress files in the repository.
+
 	* cvs.texinfo (modules): Add comments about how we should be
 	documenting how -i and friends operate in client/server CVS.
 
