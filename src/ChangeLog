@@ -1,3 +1,8 @@
+2003-10-08  Derek Price  <derek@ximbiot.com>
+
+	* update.c (patch_file): Correct spelling and punctuation in comment.
+	Update some lines to fit in 80 characters.
+
 2003-10-08  Larry Jones  <lawrence.jones@eds.com>
 
 	* history.c (history): Don't conflate -e with -x since the client's
