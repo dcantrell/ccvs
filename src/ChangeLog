@@ -1,5 +1,7 @@
 Tue Dec 17 13:14:22 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* options.h.in: Add comments about SETXID security holes.
+
 	* logmsg.c (do_verify): Reindent comments.  Check errno if return
 	code from run_exec is -1, not if it is 1.
 	* sanity.sh (info): Move tests info-4 and info-8 to end and rename
