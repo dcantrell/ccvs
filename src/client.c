@@ -4,6 +4,7 @@
 #include "config.h"
 #endif /* HAVE_CONFIG_H */
 
+#include <assert.h>
 #include "cvs.h"
 #include "getline.h"
 #include "edit.h"
@@ -710,9 +711,6 @@ handle_valid_requests (args, len)
 		 */
 		send_to_server (rq->name, 0);
                 send_to_server ("\012", 0);
-
-		if (!strcmp("UseUnchanged",rq->name))
-		    use_unchanged = 1;
 	    }
 	    else
 		rq->status = rq_supported;
@@ -726,27 +724,6 @@ handle_valid_requests (args, len)
 	else if (rq->status == rq_optional)
 	    rq->status = rq_not_supported;
     }
-}
-
-static int use_directory = -1;
-
-static char *get_short_pathname PROTO((const char *));
-
-static char *
-get_short_pathname (name)
-    const char *name;
-{
-    const char *retval;
-    if (use_directory)
-	return (char *) name;
-    if (strncmp (name, toplevel_repos, strlen (toplevel_repos)) != 0)
-	error (1, 0, "server bug: name `%s' doesn't specify file in `%s'",
-	       name, toplevel_repos);
-    retval = name + strlen (toplevel_repos) + 1;
-    if (retval[-1] != '/')
-	error (1, 0, "server bug: name `%s' doesn't specify file in `%s'",
-	       name, toplevel_repos);
-    return (char *) retval;
 }
 
 /* This variable holds the result of Entries_Open, so that we can
@@ -777,7 +754,7 @@ call_in_directory (pathname, func, data)
     char *dir_name;
     char *filename;
     /* Just the part of pathname relative to toplevel_repos.  */
-    char *short_pathname = get_short_pathname (pathname);
+    char *short_pathname = pathname;
     char *p;
 
     /*
@@ -800,30 +777,23 @@ call_in_directory (pathname, func, data)
     int reposdirname_absolute;
 
     reposname = NULL;
-    if (use_directory)
-	read_line (&reposname);
+    read_line (&reposname);
+    assert (reposname != NULL);
 
     reposdirname_absolute = 0;
-    if (reposname != NULL)
+    if (strncmp (reposname, toplevel_repos, strlen (toplevel_repos)) != 0)
     {
-	if (strncmp (reposname, toplevel_repos, strlen (toplevel_repos)) != 0)
+	reposdirname_absolute = 1;
+	short_repos = reposname;
+    }
+    else
+    {
+	short_repos = reposname + strlen (toplevel_repos) + 1;
+	if (short_repos[-1] != '/')
 	{
 	    reposdirname_absolute = 1;
 	    short_repos = reposname;
 	}
-	else
-	{
-	    short_repos = reposname + strlen (toplevel_repos) + 1;
-	    if (short_repos[-1] != '/')
-	    {
-		reposdirname_absolute = 1;
-		short_repos = reposname;
-	    }
-	}
-    }
-    else
-    {
-	short_repos = short_pathname;
     }
     reposdirname = xstrdup (short_repos);
     p = strrchr (reposdirname, '/');
@@ -853,14 +823,9 @@ call_in_directory (pathname, func, data)
     else
 	++filename;
 
-    if (reposname != NULL)
-    {
-	/* This is the use_directory case.  */
-
-	short_pathname = xmalloc (strlen (pathname) + strlen (filename) + 5);
-	strcpy (short_pathname, pathname);
-	strcat (short_pathname, filename);
-    }
+    short_pathname = xmalloc (strlen (pathname) + strlen (filename) + 5);
+    strcpy (short_pathname, pathname);
+    strcat (short_pathname, filename);
 
     if (last_dir_name == NULL
 	|| strcmp (last_dir_name, dir_name) != 0)
@@ -1084,11 +1049,8 @@ call_in_directory (pathname, func, data)
 	free (dir_name);
     free (reposdirname);
     (*func) (data, last_entries, short_pathname, filename);
-    if (reposname != NULL)
-    {
-	free (short_pathname);
-	free (reposname);
-    }
+    free (short_pathname);
+    free (reposname);
 }
 
 static void
@@ -1886,28 +1848,10 @@ static int
 is_cvsroot_level (pathname)
     char *pathname;
 {
-    char *short_pathname;
-
     if (strcmp (toplevel_repos, CVSroot_directory) != 0)
 	return 0;
 
-    if (!use_directory)
-    {
-	if (strncmp (pathname, CVSroot_directory, strlen (CVSroot_directory)) != 0)
-	    error (1, 0,
-		   "server bug: pathname `%s' doesn't specify file in `%s'",
-		   pathname, CVSroot_directory);
-	short_pathname = pathname + strlen (CVSroot_directory) + 1;
-	if (short_pathname[-1] != '/')
-	    error (1, 0,
-		   "server bug: pathname `%s' doesn't specify file in `%s'",
-		   pathname, CVSroot_directory);
-	return strchr (short_pathname, '/') == NULL;
-    }
-    else
-    {
-	return strchr (pathname, '/') == NULL;
-    }
+    return strchr (pathname, '/') == NULL;
 }
 
 static void
@@ -2281,23 +2225,12 @@ send_repository (dir, repos, update_dir)
     /* 80 is large enough for any of CVSADM_*.  */
     adm_name = xmalloc (strlen (dir) + 80);
 
-    if (use_directory == -1)
-	use_directory = supported_request ("Directory");
+    send_to_server ("Directory ", 0);
+    send_to_server (update_dir, 0);
+    send_to_server ("\012", 1);
+    send_to_server (repos, 0);
+    send_to_server ("\012", 1);
 
-    if (use_directory)
-    {
-	send_to_server ("Directory ", 0);
-	send_to_server (update_dir, 0);
-	send_to_server ("\012", 1);
-	send_to_server (repos, 0);
-	send_to_server ("\012", 1);
-    }
-    else
-    {
-	send_to_server ("Repository ", 0);
-	send_to_server (repos, 0);
-	send_to_server ("\012", 1);
-    }
     if (supported_request ("Static-directory"))
     {
 	adm_name[0] = '\0';
@@ -4140,18 +4073,8 @@ send_fileproc (callerdat, finfo)
 	 * Do we want to print "file was lost" like normal CVS?
 	 * Would it always be appropriate?
 	 */
-	/* File no longer exists.  */
-	if (!use_unchanged)
-	{
-	    /* if the server is old, use the old request... */
-	    send_to_server ("Lost ", 0);
-	    send_to_server (filename, 0);
-	    send_to_server ("\012", 1);
-	    /*
-	     * Otherwise, don't do anything for missing files,
-	     * they just happen.
-	     */
-	}
+	/* File no longer exists.  Don't do anything, missing files
+	   just happen.  */
     }
     else if (vers->ts_rcs == NULL
 	     || strcmp (vers->ts_user, vers->ts_rcs) != 0)
@@ -4160,13 +4083,9 @@ send_fileproc (callerdat, finfo)
     }
     else
     {
-	/* Only use this request if the server supports it... */
-	if (use_unchanged)
-          {
-	    send_to_server ("Unchanged ", 0);
-	    send_to_server (filename, 0);
-	    send_to_server ("\012", 1);
-          }
+	send_to_server ("Unchanged ", 0);
+	send_to_server (filename, 0);
+	send_to_server ("\012", 1);
     }
 
     /* if this directory has an ignore list, add this file to it */
