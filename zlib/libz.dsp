@@ -140,5 +140,53 @@ SOURCE=.\uncompr.c
 SOURCE=.\zutil.c
 # End Source File
 # End Group
+# Begin Group "Header Files"
+
+# PROP Default_Filter "h;hpp;hxx;hm;inl;fi;fd"
+# Begin Source File
+
+SOURCE=.\deflate.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\infblock.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\infcodes.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\inffast.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\inffixed.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\inftrees.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\infutil.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\trees.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\zconf.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\zlib.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\zutil.h
+# End Source File
+# End Group
 # End Target
 # End Project
