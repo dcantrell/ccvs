@@ -7092,6 +7092,15 @@ reference to @sc{cvs} commands, @pxref{Invoking CVS}).
 @c in the process reorganizing the manual to be
 @c organized around what the user wants to do, not
 @c organized around CVS commands.
+@c
+@c Note that many users do expect a manual which is
+@c organized by command.  At least some users do.
+@c One good addition to the "organized by command"
+@c section (if any) would be "see also" links.
+@c The awk manual might be a good example; it has a
+@c reference manual which is more verbose than Invoking
+@c CVS but probably somewhat less verbose than CVS
+@c Commands.
 
 @menu
 * Structure::                   Overall structure of CVS commands
