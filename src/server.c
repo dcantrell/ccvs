@@ -3931,18 +3931,29 @@ authenticate_connection ()
    *   <PASSWORD>\n
    *   END AUTH REQUEST\n
    *
+   * Server uses above information to authenticate, then sends
+   *
+   *   I LOVE YOU\n
+   *
+   * if it grants access, else
+   *
+   *   I HATE YOU\n
+   *
+   * if it denies access (and it exits if denying).
+   *
    * Note that the actual client/server protocol has not started up
    * yet, because we haven't authenticated!  Therefore, there are
    * certain things we can't take for granted.  For example, don't use
    * error() because `error_use_protocol' has not yet been set by
    * server().  
    *
-   * And we don't know where the repository is, because that
-   * information normally comes through the client/server protocol.
-   * We need to know it, though, to look up the password, so we have
-   * the client transmit it specially as part of the "authentication
-   * protocol".  Thus, it will be redundantly retransmitted later, but
-   * that's okay.
+   * We need to know where the repository is too, to look up the
+   * password in the special CVS passwd file before we try
+   * /etc/passwd.  However, the repository is normally transmitted in
+   * the regular client/server protocol, which has not yet started,
+   * blah blah blah.  This is why the client transmits the repository
+   * as part of the "authentication protocol".  Thus, the repository
+   * will be redundantly retransmitted later, but that's no big deal.
    */
 
   /* Make sure the protocol starts off on the right foot... */
