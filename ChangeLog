@@ -1,5 +1,11 @@
 2004-02-17  Derek Price  <derek@ximbiot.com>
 
+	* NEWS: Note spec file fix.
+	* cvs.spec: Update to avoid the error checking algorithm's of more
+	recent version of RPM.
+
+2004-02-17  Derek Price  <derek@ximbiot.com>
+
 	* NEWS: Note recent commenting of src/checkout.c and Mark's leak fixes.
 
 2004-02-12  Derek Price  <derek@ximbiot.com>
