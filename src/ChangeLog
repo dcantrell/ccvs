@@ -1,3 +1,8 @@
+Wed Feb 28 12:56:49 1996  Benjamin J. Lee  <benjamin@cyclic.com>
+
+	* logmsg.c (do_editor): If no editor is defined, exit and print
+	a message.
+
 Wed Feb 28 10:40:25 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* vers_ts.c (time_stamp, time_stamp_server): Reindent and revise
