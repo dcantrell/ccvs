@@ -48,7 +48,6 @@ SOURCES = \
 	strdup.c \
 	strstr.c \
 	strerror.c \
-	strippath.c \
 	stripslash.c \
 	strtoul.c \
 	valloc.c \
@@ -68,7 +67,6 @@ OBJECTS = \
     md5.o \
     savecwd.o \
     sighandle.o \
-    strippath.o \
     stripslash.o \
     xgetwd.o \
     yesno.o \

@@ -1,3 +1,11 @@
+Tue Nov 19 17:11:17 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* Makefile.in (OBJECTS): Remove strippath.o; we don't use
+	strip_path anymore.
+	(SOURCES): Remove strippath.c.
+	* strippath.c: Removed.
+	* build_lib.com: Remove strippath.c.
+
 Wed Oct  2 10:43:35 1996  Norbert Kiesel  <nk@col.sw-ley.de>
 
 	* getdate.y: removed CVSid variable
