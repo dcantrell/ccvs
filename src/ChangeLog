@@ -14,7 +14,7 @@
 	serve_directory):  Ditto.
 	* tag.c (rtag_proc, check_fileproc, tag_check_valid): Ditto.
 	* sanity.sh (trace): New testcase to test the -t option.
-	(RCSDATE, ISODATE, HEX): New variables in aid of the trace tests.
+	(RCSDATE, ISODATE, PFMT): New variables in aid of the trace tests.
 	(dotest_fail_sort): New function in aid of the trace tests.
 	(template): Fix cleanup.
 
