@@ -24,6 +24,38 @@ USE(rcsid);
 #define CVS_PASSWORD_FILE ".cvspass"
 #endif
 
+
+/* The return value will need to be freed. */
+char *
+construct_cvspass_filename ()
+{
+  char *homedir;
+  char *passfile;
+
+  /* Construct absolute pathname to user's password file. */
+  /* todo: does this work under Win-NT and OS/2 ? */
+  homedir = getenv ("HOME");
+  if (! homedir)
+    {
+      error (1, errno, "could not find out home directory");
+      return (char *) NULL;
+    }
+  
+  passfile =
+    (char *) xmalloc (strlen (homedir) + strlen (CVS_PASSWORD_FILE) + 3);
+  strcpy (passfile, homedir);
+  strcat (passfile, "/");
+  strcat (passfile, CVS_PASSWORD_FILE);
+  
+  /* Safety first and last, Scouts. */
+  if (isfile (passfile))
+    /* xchmod() is too polite. */
+    chmod (passfile, 0600);
+
+  return passfile;
+}
+
+
 /* Prompt for a password, and store it in the file "CVS/.cvspass".
  *
  * Because the user might be accessing multiple repositories, with
@@ -38,7 +70,7 @@ USE(rcsid);
  *
  * Like .netrc, the file's permissions are the only thing preventing
  * it from being read by others.  Unlike .netrc, we will not be
- * fascist about it, at most issuing a warning and never refusing to
+ * fascist about it, at most issuing a warning, and never refusing to
  * work.
  */
 int
@@ -46,36 +78,45 @@ login (argc, argv)
     int argc;
     char **argv;
 {
+  char *username;
   int i;
-  char *homedir;
   char *passfile;
   FILE *fp;
   char *typed_password, *found_password;
   char linebuf[MAXLINELEN];
   int root_len, already_entered = 0;
 
-  /* Construct absolute pathname to user's password file. */
-  /* todo: does this work under Win-NT and OS/2 ? */
-  homedir = getenv ("HOME");
-  if (! homedir)
+  /* Make this a "fully-qualified" CVSroot if necessary. */
+  if (! strchr (CVSroot, '@'))
     {
-      error (1, errno, "could not find out home directory");
-      return 1;
+      /* We need to prepend "user@host:". */
+      char *tmp;
+
+      printf ("Repository \"%s\" not fully-qualified.\n", CVSroot);
+      printf ("Please enter \"user@host:/path\": ");
+      fflush (stdout);
+      fgets  (linebuf, MAXLINELEN, stdin);
+
+      tmp = xmalloc (strlen (linebuf) + 1);
+
+      strcpy (tmp, linebuf);
+      tmp[strlen (linebuf) - 1] = '\0';
+      CVSroot = tmp;
     }
 
-  passfile =
-    (char *) xmalloc (strlen (homedir) + strlen (CVS_PASSWORD_FILE) + 3);
-  strcpy (passfile, homedir);
-  strcat (passfile, "/");
-  strcat (passfile, CVS_PASSWORD_FILE);
+  /* Check to make sure it's fully-qualified before going on. */
+  if (! CVSroot)
+    {
+      error (1, 0, "CVSroot is NULL");
+    }
+  else if ((! strchr (CVSroot, '@')) && (! strchr (CVSroot, ':')))
+    {
+      error (1, 0, "CVSroot not fully-qualified: %s", CVSroot);
+    }
 
-  /* Safety first and last, Scouts.
-   * (And don't use xchmod(), it's too polite.)
-   */
-  if (isfile (passfile))
-    chmod (passfile, 0600);
 
-  typed_password = getpass ("CVS password: ");
+  passfile = construct_cvspass_filename ();
+  typed_password = getpass ("Enter CVS password: ");
 
   /* IF we have a password for this "[user@]host:/path" already
    *  THEN
@@ -90,23 +131,33 @@ login (argc, argv)
 
   root_len = strlen (CVSroot);
 
-  /* If it doesn't exist, then we don't have much thinking to do. */
-  if ((fp = fopen (passfile, "r")) != NULL)
+  /* Yes, the method below reads the user's password file twice.  It's
+     inefficient, but we're not talking about a gig of data here. */
+
+  fp = fopen (passfile, "r");
+  if (fp == NULL)
     {
-      while (fgets (linebuf, MAXLINELEN, fp) != NULL)
-        {
-          if (! strncmp (CVSroot, linebuf, root_len))
-            {
-              already_entered = 1;
-              break;
-            }
-        }
-      fclose (fp);
+      error (1, errno, "unable to open %s", passfile);
+      return 1;
     }
+
+  /* Check each line to see if we have this entry already. */
+  while (fgets (linebuf, MAXLINELEN, fp) != NULL)
+    {
+      if (! strncmp (CVSroot, linebuf, root_len))
+        {
+          already_entered = 1;
+          break;
+        }
+    }
+  fclose (fp);
+
       
-  /* This user/host has a password in the file already. */
   if (already_entered)
     {
+      /* This user/host has a password in the file already. */
+
+      /* todo: what about these charsets??? */
       strtok (linebuf, " \n");
       found_password = strtok (NULL, " \n");
       if (strcmp (found_password, typed_password))
@@ -127,13 +178,16 @@ login (argc, argv)
               error (1, errno, "unable to open temp file %s", tmp_name);
               return 1;
             }
-          chmod (tmp_name, 0600); /* total paranoia */
-          if ((fp = fopen (passfile, "r")) == NULL)
+          chmod (tmp_name, 0600);
+
+          fp = fopen (passfile, "r");
+          if (fp == NULL)
             {
               error (1, errno, "unable to open %s", passfile);
               return 1;
             }
-          chmod (passfile, 0600); /* they're out to get me */
+          /* I'm not paranoid, they really ARE out to get me: */
+          chmod (passfile, 0600);
 
           while (fgets (linebuf, MAXLINELEN, fp) != NULL)
             {
@@ -145,7 +199,7 @@ login (argc, argv)
           fclose (tmp_fp);
           fclose (fp);
           rename_file (tmp_name, passfile);
-          chmod (passfile, 0600); /* you never know */
+          chmod (passfile, 0600);
         }
     }
   else
@@ -162,7 +216,7 @@ login (argc, argv)
       fclose (fp);
     }
 
-  /* Paranoia. */
+  /* Utter, total, raving paranoia, I know. */
   chmod (passfile, 0600);
   memset (typed_password, 0, strlen (typed_password));
 
@@ -178,10 +232,56 @@ login (argc, argv)
 char *
 get_cvs_password (user, host, cvsroot)
 {
-  /* todo: for now, just use getpass(). */
-  return getpass ("CVS password: ");
-}
+  int root_len;
+  int found_it = 0;
+  char *password;
+  char linebuf[MAXLINELEN];
+  FILE *fp;
+  char *passfile;
 
+  passfile = construct_cvspass_filename ();
+  fp = fopen (passfile, "r");
+  if (fp == NULL)
+    {
+      error (0, errno, "could not open %s", passfile);
+      free (passfile);
+      goto prompt_for_it;
+    }
+
+  root_len = strlen (CVSroot);
+
+  /* Check each line to see if we have this entry already. */
+  while (fgets (linebuf, MAXLINELEN, fp) != NULL)
+    {
+      if (! strncmp (CVSroot, linebuf, root_len))
+        {
+          /* This is it!  So break out and deal with linebuf. */
+          found_it = 1;
+          break;
+        }
+    }
+
+  if (found_it)
+    {
+      /* linebuf now contains the line with the password. */
+      char *tmp;
+      
+      strtok (linebuf, " ");
+      password = strtok (NULL, "\n");
+      
+      /* Give it permanent storage. */
+      tmp = xmalloc (strlen (password) + 1);
+      strcpy (tmp, password);
+      tmp[strlen (password)] = '\0';
+      bzero (password, strlen (password));
+      return tmp;
+    }
+  else
+    {
+    prompt_for_it:
+      return getpass ("CVS password: ");
+    }
+}
 
 #endif /* AUTH_CLIENT_SUPPORT from beginning of file. */
 
