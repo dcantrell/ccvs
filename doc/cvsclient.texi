@@ -165,17 +165,29 @@ A mode is any number of repetitions of
 separated by @samp{,}.
 
 @var{mode-type} is an identifier composed of alphanumeric characters.
-Currently specified: @samp{u} for user, @samp{g} for group, @samp{o} for
-other, as specified in POSIX.  If at all possible, give these their
-POSIX meaning and use other mode-types for other behaviors.  For
-example, on VMS it shouldn't be hard to make the groups behave like
-POSIX, but you would need to use ACLs for some cases.
+Currently specified: @samp{u} for user, @samp{g} for group, @samp{o}
+for other (see below for discussion of whether these have their POSIX
+meaning or are more loose).  Unrecognized values of @var{mode-type}
+are silently ignored.
 
 @var{data} consists of any data not containing @samp{,}, @samp{\0} or
 @samp{\n}.  For @samp{u}, @samp{g}, and @samp{o} mode types, data
 consists of alphanumeric characters, where @samp{r} means read, @samp{w}
 means write, @samp{x} means execute, and unrecognized letters are
 silently ignored.
+
+The two most obvious ways in which the mode matters are: (1) is it
+writeable?  This is used by the developer communication features, and
+is implemented even on OS/2 (and could be implemented on DOS), whose
+notion of mode is limited to a readonly bit. (2) is it executable?
+Unix CVS users need CVS to store this setting (for shell scripts and
+the like).  The current CVS implementation on unix does a little bit
+more than just maintain these two settings, but it doesn't really have
+a nice general facility to store or version control the mode, even on
+unix, much less across operating systems with diverse protection
+features.  So all the ins and outs of what the mode means across
+operating systems haven't really been worked out (e.g. should the VMS
+port use ACLs to get POSIX semantics for groups?).
 
 @node Requests
 @section Requests
