@@ -1,5 +1,10 @@
 2003-05-20  Derek Price  <derek@ximbiot.com>
 
+	* lstat.m4 (jm_FUNC_LSTAT): Add check for the lstat directory with a
+	trailing slash bug.
+
+2003-05-20  Derek Price  <derek@ximbiot.com>
+
 	* acx_with_external_zlib.m4 (--with-external-zlib): New file with new
 	ACX_WITH_SYSTEM_VLIB function to use the system's installed version of
 	zlib library.

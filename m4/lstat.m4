@@ -13,7 +13,11 @@ AC_DEFUN([jm_FUNC_LSTAT],
 [
   AC_FUNC_LSTAT
   dnl Note: AC_FUNC_LSTAT does AC_LIBOBJ(lstat).
-  if test $ac_cv_func_lstat_empty_string_bug = yes; then
+  dnl
+  dnl It might be possible (and hopefully less code) to scan LIBOBJ here
+  dnl rather than checking multiple cache variables.  I just plain don't know.
+  if test $ac_cv_func_lstat_empty_string_bug = yes ||
+     test $ac_cv_func_lstat_dereferences_slashed_symlink = no; then
     gl_PREREQ_LSTAT
   fi
 ])
