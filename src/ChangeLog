@@ -1,3 +1,9 @@
+Mon May 12 16:22:00 1997  Larry Jones  <larry.jones@sdrc.com>
+
+	* add.c (add): Free message and repository in client code.
+	* checkout.c (checkout): Don't free repository unless allocated.
+	* client.c (start_rsh_server): Free command.
+
 Sun May 11 11:43:54 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* client.c: Remove all references to USE_DIRECT_TCP; see
