@@ -104,7 +104,8 @@ cvs.ps: cvs.dvi
 	$(DVIPS) $(DVIPSFLAGS) cvs.dvi -o cvs.ps
 
 cvs-paper.ps: cvs-paper.ms
-	$(ROFF) -t -p -ms -Tps $(srcdir)/cvs-paper.ms > $@
+	$(ROFF) -t -p -ms -Tps $(srcdir)/cvs-paper.ms > $@-t
+	mv $@-t $@
 
 cvsclient.ps: cvsclient.dvi
 	$(DVIPS) $(DVIPSFLAGS) cvsclient.dvi -o cvsclient.ps
