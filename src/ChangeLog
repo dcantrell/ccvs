@@ -6,6 +6,8 @@
 
 	* ignore.c (ign_dir_add): Duplicate string so caller can free.
 
+	* modules.c (do_module): Don't write into dbm's memory!
+
 2000-06-15  Larry Jones  <larry.jones@sdrc.com>
 
 	* checkout.c (checkout_proc): Fix non-ANSI code in call to
