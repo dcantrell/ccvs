@@ -1,4 +1,5 @@
-Wed Dec 13 18:29:59 1995  Karl Fogel  <kfogel@floss.cyclic.com>
+Wed Dec 13 18:29:59 1995  Preston L. Bannister <pbannister@ca.mdis.com>
+                          and Karl Fogel       <kfogel@floss.cyclic.com>
 
         * client.c (send_modified): make sure that vers and vers->options
         are non-NULL before strcmp()'ing them with "-kb".
