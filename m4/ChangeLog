@@ -1,6 +1,10 @@
+2003-07-31  Derek Price  <derek@ximbiot.com>
+
+	* getpass.m4: Update from GNULIB.
+
 2003-07-29  Derek Price  <derek@ximbiot.com>
 
-	* getpass.m4: New file form GNULIB.
+	* getpass.m4: New file from GNULIB.
 
 2003-07-25  Derek Price  <derek@ximbiot.com>
 
