@@ -834,15 +834,16 @@ Optional Features:
   --disable-dependency-tracking Speeds up one-time builds
   --enable-dependency-tracking  Do not reject slow dependency extractors
   --enable-encryption     enable encryption support (disabled by default)
-  --enable-client         include code for running as a remote client (default)
+  --enable-client         include code for running as a remote client
+                          (default)
   --enable-server         include code for running as a server (default)
-  --enable-rootcommit     allow the root user to commit files
-                          (disabled by default)
+  --enable-rootcommit     allow the root user to commit files (disabled by
+                          default)
 
 Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
   --without-PACKAGE       do not use PACKAGE (same as --with-PACKAGE=no)
-  --with-krb4=value       set default \$(KRB4) from value
+  --with-krb4=value       Kerberos 4 directory (default /usr/kerberos)
   --with-gssapi=value     GSSAPI directory (default autoselects)
 
 Some influential environment variables:
@@ -6891,8 +6892,8 @@ KRB4=/usr/kerberos
 # Check whether --with-krb4 or --without-krb4 was given.
 if test "${with_krb4+set}" = set; then
   withval="$with_krb4"
-  KRB4=$withval
-fi; echo "default place for krb4 is $KRB4"
+  KRB4=$with_krb4
+fi; echo "will look for krb4 in $KRB4"
 
 
 krb_h=
@@ -8978,8 +8979,8 @@ if test "${enable_client+set}" = set; then
 
 else
   if test "$ac_cv_search_connect" != no; then
-  enable_client=yes
-fi
+    enable_client=yes
+  fi
 fi;
 if test "$enable_client" = yes; then
 
@@ -8995,8 +8996,8 @@ if test "${enable_server+set}" = set; then
 
 else
   if test "$ac_cv_search_connect" != no; then
-  enable_server=yes
-fi
+     enable_server=yes
+   fi
 fi;
 if test "$enable_server" = yes; then
 
