@@ -729,6 +729,8 @@ logfile_write (const char *repository, const char *filter, const char *message,
     int pipestatus;
     const char *srepos = Short_Repository (repository);
 
+    assert (repository);
+
     /* The user may specify a format string as part of the filter.
        Originally, `%s' was the only valid string.  The string that
        was substituted for it was:

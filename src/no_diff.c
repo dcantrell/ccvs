@@ -20,6 +20,7 @@
  */
 
 #include "cvs.h"
+#include <assert.h>
 
 int
 No_Difference (struct file_info *finfo, Vers_TS *vers)
@@ -74,6 +75,7 @@ No_Difference (struct file_info *finfo, Vers_TS *vers)
 
 	/* update the entdata pointer in the vers_ts structure */
 	p = findnode (finfo->entries, finfo->file);
+	assert (p);
 	vers->entdata = p->data;
 
 	ret = 0;

@@ -2023,6 +2023,8 @@ do_symbols (List *list, char *val)
     char *cp = val;
     char *tag, *rev;
 
+    assert (cp);
+
     for (;;)
     {
 	/* skip leading whitespace */
@@ -2064,6 +2066,8 @@ do_locks (List *list, char *val)
     Node *p;
     char *cp = val;
     char *user, *rev;
+
+    assert (cp);
 
     for (;;)
     {
@@ -4847,6 +4851,8 @@ RCS_addbranch (RCSNode *rcs, const char *branch)
     Node *marker;
     RCSVers *branchnode;
 
+    assert (branch);
+
     /* Append to end by default.  */
     marker = NULL;
 
@@ -5000,6 +5006,7 @@ RCS_checkin (RCSNode *rcs, const char *update_dir, const char *workfile_in,
     {
 	char *p;
 	int extlen = strlen (RCSEXT);
+	assert (rcs->path);
 	workfile = xstrdup (last_component (rcs->path));
 	p = workfile + (strlen (workfile) - extlen);
 	assert (strncmp (p, RCSEXT, extlen) == 0);
@@ -7217,6 +7224,8 @@ RCS_deltas (RCSNode *rcs, FILE *fp, struct rcsbuffer *rcsbuf,
     struct linevector curlines;
     struct linevector trunklines;
     int foundhead;
+
+    assert (version);
 
     if (fp == NULL)
     {

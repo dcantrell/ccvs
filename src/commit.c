@@ -1566,6 +1566,8 @@ commit_filesdoneproc (void *callerdat, int err, const char *repository,
     Node *p;
     List *ulist;
 
+    assert (repository);
+
     p = findnode (mulist, update_dir);
     if (p == NULL)
 	return err;

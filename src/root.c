@@ -15,6 +15,7 @@
  */
 
 #include "cvs.h"
+#include <assert.h>
 #include "getline.h"
 
 /* Printable names for things in the current_parsed_root->method enum variable.
@@ -489,6 +490,8 @@ parse_cvsroot (const char *root_in)
     if ((node = findnode (cache, root_in)))
 	return node->data;
 
+    assert (root_in);
+
     /* allocate some space */
     newroot = new_cvsroot_t();
 
@@ -915,6 +918,8 @@ normalize_cvsroot (const cvsroot_t *root)
 {
     char *cvsroot_canonical;
     char *p, *hostname;
+
+    assert (root && root->hostname && root->directory);
 
     /* use a lower case hostname since we know hostnames are case insensitive */
     /* Some logic says we should be tacking our domain name on too if it isn't

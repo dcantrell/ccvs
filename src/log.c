@@ -18,6 +18,7 @@
  */
 
 #include "cvs.h"
+#include <assert.h>
 
 /* This structure holds information parsed from the -r option.  */
 
@@ -1140,6 +1141,7 @@ log_expand_revlist (RCSNode *rcs, char *baserev,
 
 		    nr->first = xstrdup (nr->last);
 		    cp = strrchr (nr->first, '.');
+		    assert (cp);
 		    strcpy (cp + 1, "0");
 		}
 	    }
@@ -1154,6 +1156,7 @@ log_expand_revlist (RCSNode *rcs, char *baserev,
 		    char *cp;
 
 		    cp = strrchr (nr->last, '.');
+		    assert (cp);
 		    *cp = '\0';
 		}
 	    }
@@ -1253,7 +1256,9 @@ log_expand_revlist (RCSNode *rcs, char *baserev,
 	    char *cp;
 
 	    nr->first = xstrdup (rcs->head);
+	    assert (nr->first);
 	    cp = strrchr (nr->first, '.');
+	    assert (cp);
 	    *cp = '\0';
 	}
 	nr->last = xstrdup (nr->first);
@@ -1630,6 +1635,7 @@ log_version (struct log_data *log_data, struct revlist *revlist, RCSNode *rcs,
 
     if (padd != NULL)
     {
+	assert (pdel);
 	cvs_output_tagged ("text", "  lines: +");
 	cvs_output_tagged ("text", padd->data);
 	cvs_output_tagged ("text", " -");
