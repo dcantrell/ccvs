@@ -167,6 +167,21 @@ void connect_to_pserver();
 #define	CVSADM_CIPROG	"CVS/Checkin.prog"
 #define	CVSADM_UPROG	"CVS/Update.prog"
 #define	CVSADM_TAG	"CVS/Tag"
+#define CVSADM_NOTIFY	"CVS/Notify"
+#define CVSADM_NOTIFYTMP "CVS/Notify.tmp"
+/* A directory in which we store base versions of files we currently are
+   editing with "cvs edit".  */
+#define CVSADM_BASE     "CVS/Base"
+
+/* This is the special directory which we use to store various extra
+   per-directory information in the repository.  It must be the same as
+   CVSADM to avoid creating a new reserved directory name which users cannot
+   use, but is a separate #define because if anyone changes it (which I don't
+   recommend), one needs to deal with old, unconverted, repositories.
+   
+   See fileattr.h for details about file attributes, the only thing stored
+   in CVSREP currently.  */
+#define CVSREP "CVS"
 
 /*
  * Definitions for the CVSROOT Administrative directory and the files it
@@ -184,7 +199,9 @@ void connect_to_pserver();
 #define	CVSROOTADM_HISTORY	"history"
 #define	CVSROOTADM_IGNORE	"cvsignore"
 #define	CVSROOTADM_CHECKOUTLIST "checkoutlist"
-#define CVSROOTADM_WRAPPER      "cvswrappers"
+#define CVSROOTADM_WRAPPER	"cvswrappers"
+#define CVSROOTADM_NOTIFY	"notify"
+
 #define CVSNULLREPOS		"Emptydir"	/* an empty directory */
 
 /* support for the modules file (CVSROOTADM_MODULES) */
@@ -447,7 +464,17 @@ void *valloc PROTO((size_t bytes));
 time_t get_date PROTO((char *date, struct timeb *now));
 void Create_Admin PROTO((char *dir, char *update_dir,
 			 char *repository, char *tag, char *date));
+
 void Lock_Cleanup PROTO((void));
+
+/* Writelock an entire subtree, well the part specified by ARGC, ARGV, LOCAL,
+   and AFLAG, anyway.  */
+void lock_tree_for_write PROTO ((int argc, char **argv, int local, int aflag));
+
+/* Remove locks set by lock_tree_for_write.  Currently removes readlocks
+   too.  */
+void lock_tree_cleanup PROTO ((void));
+
 void ParseTag PROTO((char **tagp, char **datep));
 void Scratch_Entry PROTO((List * list, char *fname));
 void WriteTag PROTO((char *dir, char *tag, char *date));
@@ -553,7 +580,7 @@ void close_on_exec PROTO((int));
 int filter_stream_through_program PROTO((int, int, char **, pid_t *));
 
 pid_t waitpid PROTO((pid_t, int *, int));
-
+
 /* Wrappers.  */
 
 typedef enum { WRAP_MERGE, WRAP_COPY } WrapMergeMethod;
@@ -568,3 +595,9 @@ char *wrap_fromcvs_process_file PROTO((const char *fileName));
 char *expand_path PROTO((char *name));
 void wrap_add_file PROTO((const char *file,int temp));
 void wrap_add PROTO((char *line,int temp));
+
+int watch PROTO ((int argc, char **argv));
+int edit PROTO ((int argc, char **argv));
+int unedit PROTO ((int argc, char **argv));
+int editors PROTO ((int argc, char **argv));
+int watchers PROTO ((int argc, char **argv));

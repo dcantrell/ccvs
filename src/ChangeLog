@@ -1,3 +1,45 @@
+Wed Dec  6 18:08:40 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.h: Add CVSREP.
+	* find_names.c (find_dirs): Skip CVSREP too.
+	* fileattr.h, fileattr.c: New files, to manipulate file attributes.
+	* hash.c (nodetypestring), hash.h (enum ntype): Add FILEATTR.
+	* hash.c, hash.h (list_isempty): New function.
+	* recurse.c (do_recursion): Call fileattr_startdir before
+	processing files in a directory and fileattr_write and
+	fileattr_free (after files, before recursing).
+	* watch.c, watch.h: New files, to handle notification features.
+	* edit.c, edit.h: New file, to handle new read-only checkout features.
+	* client.c, server.c: Add "Mode" request, to change the mode of a file
+	when it is checked in.
+	* main.c (cmds): Add "watch", "edit", "unedit", "watchers", "editors".
+	* main.c: Split command help from usg into new variable cmd_usage,
+	which.
+	(main): Add --help-commands option to print out cmd_usage.
+	* cvs.h: Declare watch, edit, unedit, watchers, editors.
+	* client.c, client.h: Add client_watch, client_edit, client_unedit,
+	client_watchers, client_editors.
+	* client.c, server.c: Add notification stuff.
+	* update.c (checkout_file, patch_file), checkin.c (Checkin): Check
+	_watched attribute when deciding read-only or read-write.
+	* commit.c (checkaddfile): Call fileattr_newfile to set attributes
+	on newly created files.
+	* release.c (release): 
+	* cvs.h: Add CVSADM_NOTIFY and CVSADM_NOTIFYBAK.
+	* recurse.c (do_recursion): Call notify_check.
+	* commit.c (commit_fileproc): Call notify_do after committing file.
+	* client.c (get_responses_and_close): Set to_server and from_server
+	to NULL so that it is possible to tell whether we are speaking to
+	the server.
+	* cvs.h: Add CVSROOTADM_NOTIFY.
+	* mkmodules.c (main): Add CVSROOTADM_NOTIFY to filelist.
+	* Makefile.in (SOURCES,OBJECTS,HEADERS): Add new files mentioned above.
+	* lock.c, cvs.h (lock_tree_for_write, lock_tree_cleanup): New
+	functions, taken from old commit.c writelock code.  As part of
+	this, fsortcmp and lock_filesdoneproc go from commit.c to lock.c.
+	So does locklist but it gets renamed to lock_tree_list.
+	* commit.c: Use lock_tree_*.
+
 Fri Dec 15 10:37:00 1995  J.T. Conklin  <jtc@slave.cygnus.com>
 
 	* tag.c (tag_usage): Added -r and -D flags to usage string.

@@ -1,4 +1,7 @@
+#include <assert.h>
 #include "cvs.h"
+#include "watch.h"
+#include "edit.h"
 
 #ifdef SERVER_SUPPORT
 
@@ -348,18 +351,22 @@ serve_max_dotdot (arg)
     server_temp_dir = p;
 }
 
+static char *dirname;
+
 static void
 dirswitch (dir, repos)
     char *dir;
     char *repos;
 {
-    char *dirname;
     int status;
     FILE *f;
 
     server_write_entries ();
 
     if (error_pending()) return;
+
+    if (dirname != NULL)
+	free (dirname);
 
     dirname = malloc (strlen (server_temp_dir) + strlen (dir) + 40);
     if (dirname == NULL)
@@ -432,8 +439,7 @@ dirswitch (dir, repos)
 	sprintf(pending_error_text, "E cannot close %s", CVSADM_ENT);
 	return;
     }
-    free (dirname);
-}    
+}
 
 static void
 serve_repository (arg)
@@ -935,6 +941,207 @@ server_write_entries ()
 	pending_error_text = malloc (80 + strlen(CVSADM_ENT));
 	sprintf(pending_error_text, "E cannot close %s", CVSADM_ENT);
     }
+}
+
+struct notify_note {
+    /* Directory in which this notification happens.  malloc'd*/
+    char *dir;
+
+    /* malloc'd.  */
+    char *filename;
+
+    /* The following three all in one malloc'd block, pointed to by TYPE.
+       Each '\0' terminated.  */
+    /* "E" or "U".  */
+    char *type;
+    /* time+host+dir */
+    char *val;
+    char *watches;
+
+    struct notify_note *next;
+};
+
+static struct notify_note *notify_list;
+/* Used while building list, to point to the last node that already exists.  */
+static struct notify_note *last_node;
+
+static void serve_notify PROTO ((char *));
+
+static void
+serve_notify (arg)
+    char *arg;
+{
+    struct notify_note *new;
+    char *data;
+
+    if (error_pending ()) return;
+
+    new = malloc (sizeof (struct notify_note));
+    if (new == NULL)
+    {
+	pending_error = ENOMEM;
+	return;
+    }
+    if (dirname == NULL)
+	goto error;
+    new->dir = malloc (strlen (dirname) + 1);
+    if (new->dir == NULL)
+    {
+	pending_error = ENOMEM;
+	return;
+    }
+    strcpy (new->dir, dirname);
+    new->filename = malloc (strlen (arg) + 1);
+    if (new->filename == NULL)
+    {
+	pending_error = ENOMEM;
+	return;
+    }
+    strcpy (new->filename, arg);
+
+    data = read_line (stdin);
+    if (data == NULL)
+    {
+	pending_error_text = malloc (80 + strlen (arg));
+	if (pending_error_text)
+	{
+	    if (feof (stdin))
+		sprintf (pending_error_text,
+			 "E end of file reading mode for %s", arg);
+	    else
+	    {
+		sprintf (pending_error_text,
+			 "E error reading mode for %s", arg);
+		pending_error = errno;
+	    }
+	}
+	else
+	    pending_error = ENOMEM;
+    }
+    else if (data == NO_MEM_ERROR)
+    {
+	pending_error = ENOMEM;
+    }
+    else
+    {
+	char *cp;
+
+	new->type = data;
+	if (data[1] != '\t')
+	    goto error;
+	data[1] = '\0';
+	cp = data + 2;
+	new->val = cp;
+	cp = strchr (cp, '\t');
+	if (cp == NULL)
+	    goto error;
+	*cp++ = '+';
+	cp = strchr (cp, '\t');
+	if (cp == NULL)
+	    goto error;
+	*cp++ = '+';
+	cp = strchr (cp, '\t');
+	if (cp == NULL)
+	    goto error;
+	*cp++ = '\0';
+	new->watches = cp;
+	/* If there is another tab, ignore everything after it,
+	   for future expansion.  */
+	cp = strchr (cp, '\t');
+	if (cp != NULL)
+	{
+	    *cp = '\0';
+	}
+
+	new->next = NULL;
+
+	if (last_node == NULL)
+	{
+	    notify_list = new;
+	}
+	else
+	    last_node->next = new;
+	last_node = new;
+    }
+    return;
+  error:
+    pending_error_text = malloc (40);
+    if (pending_error_text)
+	strcpy (pending_error_text,
+		"E Protocol error; misformed Notify request");
+    pending_error = 0;
+    return;
+}
+
+/* Process all the Notify requests that we have stored up.  Returns 0
+   if successful, if not prints error message (via error()) and
+   returns negative value.  */
+static int
+server_notify ()
+{
+    struct notify_note *p;
+    char *val;
+    char *repos;
+    List *list;
+    Node *node;
+    int status;
+
+    while (notify_list != NULL)
+    {
+	if (chdir (notify_list->dir) < 0)
+	{
+	    error (0, errno, "cannot change to %s", notify_list->dir);
+	    return -1;
+	}
+	repos = Name_Repository (NULL, NULL);
+
+	/* Now writelock.  */
+	list = getlist ();
+	node = getnode ();
+	node->type = LOCK;
+	node->key = xstrdup (repos);
+	status = addnode (list, node);
+	assert (status == 0);
+	Writer_Lock (list);
+
+	fileattr_startdir (repos);
+
+	notify_do (*notify_list->type, notify_list->filename, getcaller(),
+		   notify_list->val, notify_list->watches, repos);
+
+	printf ("Notified ");
+	if (use_dir_and_repos)
+	{
+	    char *dir = notify_list->dir + strlen (server_temp_dir) + 1;
+	    if (dir[0] == '\0')
+		fputs (".", stdout);
+	    else
+		fputs (dir, stdout);
+	    fputs ("/\n", stdout);
+	}
+	fputs (repos, stdout);
+	fputs ("/", stdout);
+	fputs (notify_list->filename, stdout);
+	fputs ("\n", stdout);
+
+	p = notify_list->next;
+	free (notify_list->filename);
+	free (notify_list->dir);
+	free (notify_list->type);
+	free (notify_list);
+	notify_list = p;
+
+	fileattr_write ();
+	fileattr_free ();
+
+	/* Remove the writelock.  */
+	Lock_Cleanup ();
+	dellist (&list);
+    }
+    /* do_cvs_command writes to stdout via write(), not stdio, so better
+       flush out the buffer.  */
+    fflush (stdout);
+    return 0;
 }
 
 static int argument_count;
@@ -2012,6 +2219,8 @@ do_cvs_command (command)
     if (print_pending_error ())
 	goto free_args_and_return;
 
+    (void) server_notify ();
+
     /*
      * We use a child process which actually does the operation.  This
      * is so we can intercept its standard output.  Even if all of CVS
@@ -2683,6 +2892,41 @@ serve_ci (arg)
     do_cvs_command (commit);
 }
 
+static void
+checked_in_response (file, update_dir, repository)
+    char *file;
+    char *update_dir;
+    char *repository;
+{
+    if (supported_response ("Mode"))
+    {
+	struct stat sb;
+	char *mode_string;
+
+	if (stat (file, &sb) < 0)
+	{
+	    /* Not clear to me why the file would fail to exist, but it
+	       was happening somewhere in the testsuite.  */
+	    if (!existence_error (errno))
+		error (0, errno, "cannot stat %s", file);
+	}
+	else
+	{
+	    buf_output0 (&protocol, "Mode ");
+	    mode_string = mode_to_string (sb.st_mode);
+	    buf_output0 (&protocol, mode_string);
+	    buf_output0 (&protocol, "\n");
+	    free (mode_string);
+	}
+    }
+
+    buf_output0 (&protocol, "Checked-in ");
+    output_dir (update_dir, repository);
+    buf_output0 (&protocol, file);
+    buf_output (&protocol, "\n", 1);
+    new_entries_line ();
+}
+
 void
 server_checked_in (file, update_dir, repository)
     char *file;
@@ -2706,11 +2950,7 @@ server_checked_in (file, update_dir, repository)
     }
     else
     {
-	buf_output0 (&protocol, "Checked-in ");
-	output_dir (update_dir, repository);
-	buf_output0 (&protocol, file);
-	buf_output (&protocol, "\n", 1);
-	new_entries_line ();
+	checked_in_response (file, update_dir, repository);
     }
     buf_send_counted (&protocol);
 }
@@ -2725,18 +2965,18 @@ server_update_entries (file, update_dir, repository, updated)
     if (noexec)
 	return;
     if (updated == SERVER_UPDATED)
-	buf_output0 (&protocol, "Checked-in ");
+	checked_in_response (file, update_dir, repository);
     else
     {
 	if (!supported_response ("New-entry"))
 	    return;
 	buf_output0 (&protocol, "New-entry ");
+	output_dir (update_dir, repository);
+	buf_output0 (&protocol, file);
+	buf_output (&protocol, "\n", 1);
+	new_entries_line ();
     }
 
-    output_dir (update_dir, repository);
-    buf_output0 (&protocol, file);
-    buf_output (&protocol, "\n", 1);
-    new_entries_line ();
     buf_send_counted (&protocol);
 }
 
@@ -2831,6 +3071,79 @@ serve_release (arg)
     do_cvs_command (release);
 }
 
+static void serve_watch_on PROTO ((char *));
+
+static void
+serve_watch_on (arg)
+    char *arg;
+{
+    do_cvs_command (watch_on);
+}
+
+static void serve_watch_off PROTO ((char *));
+
+static void
+serve_watch_off (arg)
+    char *arg;
+{
+    do_cvs_command (watch_off);
+}
+
+static void serve_watch_add PROTO ((char *));
+
+static void
+serve_watch_add (arg)
+    char *arg;
+{
+    do_cvs_command (watch_add);
+}
+
+static void serve_watch_remove PROTO ((char *));
+
+static void
+serve_watch_remove (arg)
+    char *arg;
+{
+    do_cvs_command (watch_remove);
+}
+
+static void serve_watchers PROTO ((char *));
+
+static void
+serve_watchers (arg)
+    char *arg;
+{
+    do_cvs_command (watchers);
+}
+
+static void serve_editors PROTO ((char *));
+
+static void
+serve_editors (arg)
+    char *arg;
+{
+    do_cvs_command (editors);
+}
+
+static int noop PROTO ((int, char **));
+
+static int
+noop (argc, argv)
+    int argc;
+    char **argv;
+{
+    return 0;
+}
+
+static void serve_noop PROTO ((char *));
+
+static void
+serve_noop (arg)
+    char *arg;
+{
+    do_cvs_command (noop);
+}
+
 static void
 serve_co (arg)
     char *arg;
@@ -3407,6 +3720,7 @@ struct request requests[] =
   REQ_LINE("Lost", serve_lost, rq_optional),
   REQ_LINE("UseUnchanged", serve_enable_unchanged, rq_enableme),
   REQ_LINE("Unchanged", serve_unchanged, rq_optional),
+  REQ_LINE("Notify", serve_notify, rq_optional),
   REQ_LINE("Argument", serve_argument, rq_essential),
   REQ_LINE("Argumentx", serve_argumentx, rq_essential),
   REQ_LINE("Global_option", serve_global_option, rq_optional),
@@ -3429,6 +3743,13 @@ struct request requests[] =
   REQ_LINE("export", serve_export, rq_optional),
   REQ_LINE("history", serve_history, rq_optional),
   REQ_LINE("release", serve_release, rq_optional),
+  REQ_LINE("watch-on", serve_watch_on, rq_optional),
+  REQ_LINE("watch-off", serve_watch_off, rq_optional),
+  REQ_LINE("watch-add", serve_watch_add, rq_optional),
+  REQ_LINE("watch-remove", serve_watch_remove, rq_optional),
+  REQ_LINE("watchers", serve_watchers, rq_optional),
+  REQ_LINE("editors", serve_editors, rq_optional),
+  REQ_LINE("noop", serve_noop, rq_optional),
   REQ_LINE(NULL, NULL, rq_optional)
 
 #undef REQ_LINE

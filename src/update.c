@@ -40,6 +40,7 @@
 #ifdef SERVER_SUPPORT
 #include "md5.h"
 #endif
+#include "watch.h"
 
 #ifndef lint
 static const char rcsid[] = "$CVSid: @(#)update.c 1.95 94/10/22 $";
@@ -1004,13 +1005,30 @@ checkout_file (file, repository, entries, srcfiles, vers_ts, update_dir)
 		file_is_dead = 0;
 		resurrecting = 1;
 	    }
+#endif /* DEATH_SUPPORT */
 
-	    if (cvswrite == TRUE && !file_is_dead)
+	    if (cvswrite == TRUE
+#ifdef DEATH_SUPPORT
+		&& !file_is_dead
+#endif
+		&& !fileattr_get (file, "_watched"))
 		xchmod (file, 1);
-#else /* No DEATH_SUPPORT */
-	    if (cvswrite == TRUE)
-		xchmod (file, 1);
-#endif /* No DEATH_SUPPORT */
+
+	    {
+		/* A newly checked out file is never under the spell
+		   of "cvs edit".  If we think we were editing it
+		   from a previous life, clean up.  Would be better to
+		   check for same the working directory instead of
+		   same user, but that is hairy.  */
+
+		struct addremove_args args;
+
+		editor_set (file, getcaller (), NULL);
+
+		memset (&args, 0, sizeof args);
+		args.remove_temp = 1;
+		watch_modify_watchers (file, &args);
+	    }
 
 	    /* set the time from the RCS file iff it was unknown before */
 	    if (vers_ts->vn_user == NULL ||
@@ -1218,7 +1236,8 @@ patch_file (file, repository, entries, srcfiles, vers_ts, update_dir,
 	    else
 	    {
 	        rename_file (file, file2);
-		if (cvswrite == TRUE)
+		if (cvswrite == TRUE
+		    && !fileattr_get (file, "_watched"))
 		    xchmod (file2, 1);
 		e = fopen (file2, "r");
 		if (e == NULL)

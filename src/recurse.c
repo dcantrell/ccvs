@@ -10,6 +10,8 @@
 
 #include "cvs.h"
 #include "save-cwd.h"
+#include "fileattr.h"
+#include "edit.h"
 
 #ifndef lint
 static const char rcsid[] = "$CVSid: @(#)recurse.c 1.31 94/09/30 $";
@@ -325,6 +327,8 @@ do_recursion (xfileproc, xfilesdoneproc, xdirentproc, xdirleaveproc,
     }
     srepository = repository;		/* remember what to free */
 
+    fileattr_startdir (repository);
+
     /*
      * The filesdoneproc needs to be called for each directory where files
      * processed, or each directory that is processed by a call where no
@@ -378,6 +382,15 @@ do_recursion (xfileproc, xfilesdoneproc, xdirentproc, xdirleaveproc,
 	if (readlock && repository && Reader_Lock (repository) != 0)
 	    error (1, 0, "read lock failed - giving up");
 
+#ifdef CLIENT_SUPPORT
+	/* For the server, we handle notifications in a completely different
+	   place (server_notify).  For local, we can't do them here--we don't
+	   have writelocks in place, and there is no way to get writelocks
+	   here.  */
+	if (client_active)
+	    notify_check (repository, update_dir);
+#endif
+
 	/* pre-parse the source files */
 	if (dosrcs && repository)
 	    srcfiles = RCS_parsefiles (filelist, repository);
@@ -401,6 +414,9 @@ do_recursion (xfileproc, xfilesdoneproc, xdirentproc, xdirleaveproc,
     /* call-back files done proc (if any) */
     if (dodoneproc && filesdoneproc != NULL)
 	err = filesdoneproc (err, repository, update_dir[0] ? update_dir : ".");
+
+    fileattr_write ();
+    fileattr_free ();
 
     /* process the directories (if necessary) */
     if (dirlist != NULL)

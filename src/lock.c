@@ -606,3 +606,70 @@ lock_wait (repos)
 	   lockers_name, repos);
     (void) sleep (CVSLCKSLEEP);
 }
+
+static int lock_filesdoneproc PROTO ((int err, char *repository,
+				      char *update_dir));
+static int fsortcmp PROTO((const Node * p, const Node * q));
+
+static List *lock_tree_list;
+
+/*
+ * Create a list of repositories to lock
+ */
+/* ARGSUSED */
+static int
+lock_filesdoneproc (err, repository, update_dir)
+    int err;
+    char *repository;
+    char *update_dir;
+{
+    Node *p;
+
+    p = getnode ();
+    p->type = LOCK;
+    p->key = xstrdup (repository);
+    /* FIXME-KRP: this error condition should not simply be passed by. */
+    if (p->key == NULL || addnode (lock_tree_list, p) != 0)
+	freenode (p);
+    return (err);
+}
+
+/*
+ * compare two lock list nodes (for sort)
+ */
+static int
+fsortcmp (p, q)
+    const Node *p;
+    const Node *q;
+{
+    return (strcmp (p->key, q->key));
+}
+
+void
+lock_tree_for_write (argc, argv, local, aflag)
+    int argc;
+    char **argv;
+    int local;
+    int aflag;
+{
+    int err;
+    /*
+     * Run the recursion processor to find all the dirs to lock and lock all
+     * the dirs
+     */
+    lock_tree_list = getlist ();
+    err = start_recursion ((FILEPROC) NULL, lock_filesdoneproc,
+			   (DIRENTPROC) NULL, (DIRLEAVEPROC) NULL, argc,
+			   argv, local, W_LOCAL, aflag, 0, (char *) NULL, 0,
+			   0);
+    sortlist (lock_tree_list, fsortcmp);
+    if (Writer_Lock (lock_tree_list) != 0)
+	error (1, 0, "lock failed - giving up");
+}
+
+void
+lock_tree_cleanup ()
+{
+    Lock_Cleanup ();
+    dellist (&lock_tree_list);
+}

@@ -37,9 +37,7 @@ static int finaladd PROTO((char *file, char *revision, char *tag,
 			   char *options, char *update_dir,
 			   char *repository, List *entries));
 static int findmaxrev PROTO((Node * p, void *closure));
-static int fsortcmp PROTO((const Node * p, const Node * q));
 static int lock_RCS PROTO((char *user, char *rcs, char *rev, char *repository));
-static int lock_filesdoneproc PROTO((int err, char *repository, char *update_dir));
 static int lockrcsfile PROTO((char *file, char *repository, char *rev));
 static int precommit_list_proc PROTO((Node * p, void *closure));
 static int precommit_proc PROTO((char *repository, char *filter));
@@ -74,7 +72,6 @@ static char *tag;
 static char *write_dirtag;
 static char *logfile;
 static List *mulist;
-static List *locklist;
 static char *message;
 
 static const char *const commit_usage[] =
@@ -252,18 +249,7 @@ commit (argc, argv)
 
     wrap_setup ();
 
-    /*
-     * Run the recursion processor to find all the dirs to lock and lock all
-     * the dirs
-     */
-    locklist = getlist ();
-    err = start_recursion ((FILEPROC) NULL, lock_filesdoneproc,
-			   (DIRENTPROC) NULL, (DIRLEAVEPROC) NULL, argc,
-			   argv, local, W_LOCAL, aflag, 0, (char *) NULL, 0,
-			   0);
-    sortlist (locklist, fsortcmp);
-    if (Writer_Lock (locklist) != 0)
-	error (1, 0, "lock failed - giving up");
+    lock_tree_for_write (argc, argv, local, aflag);
 
     /*
      * Set up the master update list
@@ -279,7 +265,7 @@ commit (argc, argv)
 			   0);
     if (err)
     {
-	Lock_Cleanup ();
+	lock_tree_cleanup ();
 	error (1, 0, "correct above errors first!");
     }
 
@@ -295,41 +281,8 @@ commit (argc, argv)
     /*
      * Unlock all the dirs and clean up
      */
-    Lock_Cleanup ();
+    lock_tree_cleanup ();
     dellist (&mulist);
-    dellist (&locklist);
-    return (err);
-}
-
-/*
- * compare two lock list nodes (for sort)
- */
-static int
-fsortcmp (p, q)
-    const Node *p;
-    const Node *q;
-{
-    return (strcmp (p->key, q->key));
-}
-
-/*
- * Create a list of repositories to lock
- */
-/* ARGSUSED */
-static int
-lock_filesdoneproc (err, repository, update_dir)
-    int err;
-    char *repository;
-    char *update_dir;
-{
-    Node *p;
-
-    p = getnode ();
-    p->type = LOCK;
-    p->key = xstrdup (repository);
-    /* FIXME-KRP: this error condition should not simply be passed by. */
-    if (p->key == NULL || addnode (locklist, p) != 0)
-	freenode (p);
     return (err);
 }
 
@@ -941,6 +894,10 @@ commit_fileproc (file, update_dir, repository, entries, srcfiles)
 	}
 #endif
     }
+
+    /* Clearly this is right for T_MODIFIED.  I haven't thought so much
+       about T_ADDED or T_REMOVED.  */
+    notify_do ('C', file, getcaller (), NULL, NULL, repository);
 
 out:
     if (err != 0)
@@ -1651,6 +1608,8 @@ checkaddfile (file, repository, tag, options, srcfiles)
 	return (1);
     }
 #endif /* No DEATH_SUPPORT */
+
+    fileattr_newfile (file);
 
     fix_rcs_modes (rcs, file);
     return (0);

@@ -121,7 +121,7 @@ Checkin (type, file, update_dir, repository,
 	     * If we want read-only files, muck the permissions here, before
 	     * getting the file time-stamp.
 	     */
-	    if (cvswrite == FALSE)
+	    if (cvswrite == FALSE || fileattr_get (file, "_watched"))
 		xchmod (file, 0);
 
 #ifndef DEATH_SUPPORT

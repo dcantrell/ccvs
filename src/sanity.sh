@@ -81,7 +81,7 @@ cd ${TESTDIR}
 # and to facilitate understanding the tests.
 
 if test x"$*" = x; then
-	tests="basic0 basic1 basic2 basic3 rtags death import new conflicts modules mflag errmsg1"
+	tests="basic0 basic1 basic2 basic3 rtags death import new conflicts modules mflag errmsg1 devcom"
 else
 	tests="$*"
 fi
@@ -1698,6 +1698,170 @@ EOF
 	  rm -rf 1 2 ${CVSROOT_DIRNAME}/1dir
 	  ;;
 
+	devcom)
+	  mkdir ${CVSROOT_DIRNAME}/first-dir
+	  mkdir 1
+	  cd 1
+	  if ${testcvs} -q co first-dir >>${LOGFILE} ; then
+	    echo 'PASS: test 169' >>${LOGFILE}
+	  else
+	    echo 'FAIL: test 169' | tee -a ${LOGFILE}
+	    exit 1
+	  fi
+
+	  cd first-dir
+	  echo abb >abb
+	  if ${testcvs} add abb 2>>${LOGFILE}; then
+	    echo 'PASS: test 170' >>${LOGFILE}
+	  else
+	    echo 'FAIL: test 170' | tee -a ${LOGFILE}
+	    exit 1
+	  fi
+	  if ${testcvs} ci -m added >>${LOGFILE} 2>&1; then
+	    echo 'PASS: test 171' >>${LOGFILE}
+	  else
+	    echo 'FAIL: test 171' | tee -a ${LOGFILE}
+	    exit 1
+	  fi
+	  if ${testcvs} watch on; then
+	    echo 'PASS: test 172' >>${LOGFILE}
+	  else
+	    echo 'FAIL: test 172' | tee -a ${LOGFILE}
+	  fi
+	  echo abc >abc
+	  if ${testcvs} add abc 2>>${LOGFILE}; then
+	    echo 'PASS: test 173' >>${LOGFILE}
+	  else
+	    echo 'FAIL: test 173' | tee -a ${LOGFILE}
+	  fi
+	  if ${testcvs} ci -m added >>${LOGFILE} 2>&1; then
+	    echo 'PASS: test 174' >>${LOGFILE}
+	  else
+	    echo 'FAIL: test 174' | tee -a ${LOGFILE}
+	  fi
+
+	  cd ../..
+	  mkdir 2
+	  cd 2
+
+	  if ${testcvs} -q co first-dir >>${LOGFILE}; then
+	    echo 'PASS: test 175' >>${LOGFILE}
+	  else
+	    echo 'FAIL: test 175' | tee -a ${LOGFILE}
+	  fi
+	  cd first-dir
+	  if test -w abb; then
+	    echo 'FAIL: test 176' | tee -a ${LOGFILE}
+	  else
+	    echo 'PASS: test 176' >>${LOGFILE}
+	  fi
+	  if test -w abc; then
+	    echo 'FAIL: test 177' | tee -a ${LOGFILE}
+	  else
+	    echo 'PASS: test 177' >>${LOGFILE}
+	  fi
+
+	  if ${testcvs} editors >../ans178.tmp; then
+	    echo 'PASS: test 178' >>${LOGFILE}
+	  else
+	    echo 'FAIL: test 178' | tee -a ${LOGFILE}
+	  fi
+	  cat ../ans178.tmp >>${LOGFILE}
+	  if test -s ../ans178.tmp; then
+	    echo 'FAIL: test 178a' | tee -a ${LOGFILE}
+	  else
+	    echo 'PASS: test 178a' >>${LOGFILE}
+	  fi
+
+	  if ${testcvs} edit abb; then
+	    echo 'PASS: test 179' >>${LOGFILE}
+	  else
+	    echo 'FAIL: test 179' | tee -a ${LOGFILE}
+	    exit 1
+	  fi
+
+	  if ${testcvs} editors >../ans180.tmp; then
+	    echo 'PASS: test 180' >>${LOGFILE}
+	  else
+	    echo 'FAIL: test 180' | tee -a ${LOGFILE}
+	    exit 1
+	  fi
+	  cat ../ans180.tmp >>${LOGFILE}
+	  if test -s ../ans180.tmp; then
+	    echo 'PASS: test 181' >>${LOGFILE}
+	  else
+	    echo 'FAIL: test 181' | tee -a ${LOGFILE}
+	  fi
+
+	  echo aaaa >>abb
+	  if ${testcvs} ci -m modify abb >>${LOGFILE} 2>&1; then
+	    echo 'PASS: test 182' >>${LOGFILE}
+	  else
+	    echo 'FAIL: test 182' | tee -a ${LOGFILE}
+	  fi
+
+	  if ${testcvs} editors >../ans183.tmp; then
+	    echo 'PASS: test 183' >>${LOGFILE}
+	  else
+	    echo 'FAIL: test 183' | tee -a ${LOGFILE}
+	  fi
+	  cat ../ans183.tmp >>${LOGFILE}
+	  if test -s ../ans183.tmp; then
+	    echo 'FAIL: test 184' | tee -a ${LOGFILE}
+	  else
+	    echo 'PASS: test 184' >>${LOGFILE}
+	  fi
+
+	  if test -w abb; then
+	    echo 'FAIL: test 185' | tee -a ${LOGFILE}
+	  else
+	    echo 'PASS: test 185' >>${LOGFILE}
+	  fi
+
+	  if ${testcvs} edit abc; then
+	    echo 'PASS: test 186a1' >>${LOGFILE}
+	  else
+	    echo 'FAIL: test 186a1' | tee -a ${LOGFILE}
+	  fi
+	  # Unedit of an unmodified file.
+	  if ${testcvs} unedit abc; then
+	    echo 'PASS: test 186a2' >>${LOGFILE}
+	  else
+	    echo 'FAIL: test 186a2' | tee -a ${LOGFILE}
+	  fi
+	  if ${testcvs} edit abc; then
+	    echo 'PASS: test 186a3' >>${LOGFILE}
+	  else
+	    echo 'FAIL: test 186a3' | tee -a ${LOGFILE}
+	  fi
+	  echo changedabc >abc
+	  # Try to unedit a modified file; cvs should ask for confirmation
+	  if (echo no | ${testcvs} unedit abc) >>${LOGFILE}; then
+	    echo 'PASS: test 186a4' >>${LOGFILE}
+	  else
+	    echo 'FAIL: test 186a4' | tee -a ${LOGFILE}
+	  fi
+	  if echo changedabc | cmp - abc; then
+	    echo 'PASS: test 186a5' >>${LOGFILE}
+	  else
+	    echo 'FAIL: test 186a5' | tee -a ${LOGFILE}
+	  fi
+	  # OK, now confirm the unedit
+	  if (echo yes | ${testcvs} unedit abc) >>${LOGFILE}; then
+	    echo 'PASS: test 186a6' >>${LOGFILE}
+	  else
+	    echo 'FAIL: test 186a6' | tee -a ${LOGFILE}
+	  fi
+	  if echo abc | cmp - abc; then
+	    echo 'PASS: test 186a7' >>${LOGFILE}
+	  else
+	    echo 'FAIL: test 186a7' | tee -a ${LOGFILE}
+	  fi
+
+	  cd ../..
+	  rm -rf 1 2 ${CVSROOT_DIRNAME}/first-dir
+	  ;;
+
 	*)
 	   echo $what is not the name of a test -- ignored
 	   ;;
@@ -1730,6 +1894,11 @@ echo "OK, all tests completed."
 #   gives an appropriate error (e.g. 
 #     Cannot access /tmp/cvs-sanity/non-existent/CVSROOT
 #     No such file or directory).
+# * Test "cvs watch add", "cvs watch remove", "cvs watchers", that
+#   notify script gets called where appropriate.
+# * Test "cvs unedit" and that it really reverts a change.
+# * Test that remote edit and/or unedit works when disconnected from
+#   server (e.g. set CVS_SERVER to "foobar").
 # End of TODO list.
 
 # Remove the test directory, but first change out of it.

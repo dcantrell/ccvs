@@ -292,6 +292,13 @@ walklist (list, proc, closure)
     return (err);
 }
 
+int
+list_isempty (list)
+    List *list;
+{
+    return list == NULL || list->list->next == list->list;
+}
+
 /*
  * sort the elements of a list (in place)
  */
@@ -358,6 +365,7 @@ nodetypestring (type)
     case UPDATE:	return("UPDATE");
     case LOCK:		return("LOCK");
     case NDBMNODE:	return("NDBMNODE");
+    case FILEATTR:	return("FILEATTR");
     }
 
     return("<trash>");
