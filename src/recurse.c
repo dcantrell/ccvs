@@ -129,9 +129,9 @@ start_recursion (FILEPROC fileproc, FILESDONEPROC filesdoneproc, DIRENTPROC dire
        "                       local=%d, which=%d, aflag=%d,\n"
        "                       locktype=%d, update_preload=%s\n"
        "                       dosrcs=%d, repository_in=%s )",
-	       (void *) fileproc, (void *) filesdoneproc,
-	       (void *) direntproc, (void *) dirleaveproc,
-	       callerdat, argc, (void *) argv,
+	       fileproc, filesdoneproc,
+	       direntproc, dirleaveproc,
+	       callerdat, argc, argv,
 	       local, which, aflag, locktype, update_preload, dosrcs,
 	       repository_in ? repository_in : "(null)");
 #else
@@ -172,7 +172,7 @@ start_recursion (FILEPROC fileproc, FILESDONEPROC filesdoneproc, DIRENTPROC dire
     if (repository)
     {
 	free (repository);
-	repository = (char *) NULL;
+	repository = NULL;
     }
     if (filelist)
 	dellist (&filelist); /* FIXME-krp: no longer correct. */
@@ -223,7 +223,7 @@ start_recursion (FILEPROC fileproc, FILESDONEPROC filesdoneproc, DIRENTPROC dire
 	 */
 	if (just_subdirs)
 	{
-	    dirlist = Find_Directories ((char *) NULL, W_LOCAL, (List *) NULL);
+	    dirlist = Find_Directories (NULL, W_LOCAL, NULL);
 	    /* If there are no sub-directories, there is a certain logic in
 	       favor of doing nothing, but in fact probably the user is just
 	       confused about what directory they are in, or whether they
@@ -253,9 +253,9 @@ start_recursion (FILEPROC fileproc, FILESDONEPROC filesdoneproc, DIRENTPROC dire
 		/* This is the same call to Find_Directories as above.
                    FIXME: perhaps it would be better to write a
                    function that duplicates a list. */
-		args_to_send_when_finished = Find_Directories ((char *) NULL,
+		args_to_send_when_finished = Find_Directories (NULL,
 							       W_LOCAL,
-							       (List *) NULL);
+							       NULL);
 	    }
 #endif
 	}
@@ -348,16 +348,16 @@ start_recursion (FILEPROC fileproc, FILESDONEPROC filesdoneproc, DIRENTPROC dire
 		    strcpy (tmp_update_dir, update_dir);
 
 		    if (*tmp_update_dir != '\0')
-			(void) strcat (tmp_update_dir, "/");
+			strcat (tmp_update_dir, "/");
 
-		    (void) strcat (tmp_update_dir, dir);
+		    strcat (tmp_update_dir, dir);
 
 		    /* look for it in the repository. */
 		    repos = Name_Repository (dir, tmp_update_dir);
 		    reposfile = xmalloc (strlen (repos)
 					 + strlen (comp)
 					 + 5);
-		    (void) sprintf (reposfile, "%s/%s", repos, comp);
+		    sprintf (reposfile, "%s/%s", repos, comp);
 		    free (repos);
 
 		    if (!wrap_name_has (comp, WRAP_TOCVS) && isdir (reposfile))
@@ -532,9 +532,11 @@ start_recursion (FILEPROC fileproc, FILESDONEPROC filesdoneproc, DIRENTPROC dire
     return (err);
 }
 
+
+
 /*
  * Implement the recursive policies on the local directory.  This may be
- * called directly, or may be called by start_recursion
+ * called directly, or may be called by start_recursion.
  */
 static int
 do_recursion (struct recursion_frame *frame)
@@ -547,14 +549,14 @@ do_recursion (struct recursion_frame *frame)
     int process_this_directory = 1;
 
 #ifdef HAVE_PRINT_PTR
-    TRACE ( TRACE_FLOW, "do_recursion ( frame=%p )", (void *) frame );
+    TRACE (TRACE_FLOW, "do_recursion ( frame=%p )", frame);
 #else
-    TRACE ( TRACE_FLOW, "do_recursion ( frame=%lx )", (unsigned long) frame );
+    TRACE (TRACE_FLOW, "do_recursion ( frame=%lx )", (unsigned long) frame);
 #endif
 
     /* do nothing if told */
     if (frame->flags == R_SKIP_ALL)
-	return (0);
+	return 0;
 
     locktype = noexec ? CVS_LOCK_NONE : frame->locktype;
 
@@ -629,7 +631,7 @@ do_recursion (struct recursion_frame *frame)
 #endif
 	)
     {
-	char *this_root = Name_Root ((char *) NULL, update_dir);
+	char *this_root = Name_Root (NULL, update_dir);
 	if (this_root != NULL)
 	{
 	    if (findnode (root_directories, this_root) == NULL)
@@ -659,7 +661,7 @@ do_recursion (struct recursion_frame *frame)
     {
 	if (isdir (CVSADM))
 	{
-	    repository = Name_Repository ((char *) NULL, update_dir);
+	    repository = Name_Repository (NULL, update_dir);
 	    srepository = repository;		/* remember what to free */
 	}
 	else
@@ -709,7 +711,7 @@ do_recursion (struct recursion_frame *frame)
 	       repository at this point.  Name_Repository will give a
 	       reasonable error message.  */
 	    if (repository == NULL)
-		repository = Name_Repository ((char *) NULL, update_dir);
+		repository = Name_Repository (NULL, update_dir);
 
 	    /* find the files and fill in entries if appropriate */
 	    if (process_this_directory)
@@ -750,7 +752,7 @@ do_recursion (struct recursion_frame *frame)
 	struct file_info finfo_struct;
 	struct frame_and_file frfile;
 
-	/* read lock it if necessary */
+	/* Lock the repository, if necessary. */
 	if (repository)
 	{
 	    if (locktype == CVS_LOCK_READ)
@@ -783,7 +785,10 @@ do_recursion (struct recursion_frame *frame)
 	err += walklist (filelist, do_file_proc, &frfile);
 
 	/* unlock it */
-	if (locktype != CVS_LOCK_NONE)
+	if (/* We only lock the repository above when repository is set */
+	    repository
+	    /* and when asked for a read or write lock. */
+	    && locktype != CVS_LOCK_NONE)
 	    Lock_Cleanup ();
 
 	/* clean up */
@@ -807,7 +812,7 @@ do_recursion (struct recursion_frame *frame)
 
 	frent.frame = frame;
 	frent.entries = entries;
-	err += walklist (dirlist, do_dir_proc, (void *) &frent);
+	err += walklist (dirlist, do_dir_proc, &frent);
     }
 #if 0
     else if (frame->dirleaveproc != NULL)
@@ -826,9 +831,15 @@ do_recursion (struct recursion_frame *frame)
     {
 	free (srepository);
     }
-    repository = (char *) NULL;
+    repository = NULL;
 
-    return (err);
+#ifdef HAVE_PRINT_PTR
+    TRACE (TRACE_FLOW, "Leaving do_recursion ( frame=%p )", frame);
+#else
+    TRACE (TRACE_FLOW, "Leaving do_recursion ( frame=%lx )", (unsigned long) frame);
+#endif
+
+    return err;
 }
 
 /*

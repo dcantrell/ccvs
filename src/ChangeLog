@@ -1,5 +1,11 @@
 2003-10-03  Derek Price  <derek@ximbiot.com>
 
+	* recurse.c (start_recursion): Remove unnecessary typecasts.
+	(do_recursion): Ditto.  Add TRACE.  Expand comments.  Remove unneeded
+	parens.
+
+2003-10-03  Derek Price  <derek@ximbiot.com>
+
 	* main.c (main): Dispose of old Tmpdir and Editor when specified
 	multiple times between the command line & the ~/.cvsrc file.
 
