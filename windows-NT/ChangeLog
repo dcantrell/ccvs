@@ -1,3 +1,8 @@
+Fri Aug 29 19:13:56 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* filesubr.c (isabsolute): Add comment about interaction with
+	strip_trailing_slashes (reported by Jin S Choi <jsc@w3health.com>).
+
 Thu Aug 28 12:06:37 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* filesubr.c (link_file): Remove #if 0'd version; the real version

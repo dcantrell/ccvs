@@ -751,6 +751,12 @@ int
 isabsolute (filename)
     const char *filename;
 {
+    /* FIXME: This routine seems to interact poorly with
+       strip_trailing_slashes.  For example, specify ":local:r:\" as
+       CVSROOT.  The CVS/Root file will contain ":local:r:" and then
+       isabsolute will complain about the root not being an absolute
+       pathname.  My guess is that strip_trailing_slashes is the right
+       place to fix this.  */
     return (ISDIRSEP (filename[0])
             || (filename[0] != '\0'
                 && filename[1] == ':'
