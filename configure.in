@@ -25,6 +25,11 @@ CFLAGS="$CFLAGS -D_SYSV3"
 # with crypt tries?  Anyhow, the autoconf manual says we can delete this ISC
 # stuff on or after 2006-07-23 when Sun discontinues support and ISC becomes
 # obsolescent, but I suppose that is probably a matter of opinion.
+#
+# N.B.  The reason for doing this is that some moron decided to put a stub
+# for crypt in libc that always returns NULL.  Without this here, the later
+# check will find the stub instead of the real thing, resulting in a server
+# that can't process crypted passwords correctly.
 LIBS="-lcrypt $LIBS"
 fi
 
@@ -273,62 +278,6 @@ AC_SEARCH_LIBS(connect, xnet socket inet,
 dnl no need to search nsl for gethostbyname here since we should have
 dnl just added libnsl above if we found it.
 AC_SEARCH_LIBS(gethostbyname, netinet)
-
-
-dnl
-dnl Set the patch executable to use
-dnl
-dnl Note that in the following code, I define the shell variable
-dnl "PATCH" and then the C macro "PATCH_PROGRAM".  The reason for
-dnl this discrepancy is that we might want to AC_SUBST PATCH in
-dnl the future and capitalizing the name of the executable fits
-dnl with the convention for substituting other executable names
-dnl into Makefiles.  In addition, "PATCH" is used in an enum
-dnl in src/cvs.h and defining "PATCH" as a macro can break that
-dnl enum.
-dnl
-
-# Let the user request a patch
-AC_ARG_WITH(
-  [patch],
-  AC_HELP_STRING(
-    [--with-patch],
-    [The patch executable (default "patch")]), ,
-  [with_patch=patch])
-
-AC_MSG_CHECKING([for patch])
-
-# Test the argument to $with_patch
-unset PATCH
-if echo $with_patch |grep ^/ >/dev/null; then
-  # If $with_patch is an absolute path, just trust the user and use it
-  PATCH=$with_patch
-  AC_MSG_RESULT([$PATCH])
-  if ! test -f $with_patch \
-      || ! test -x $with_patch; then
-    # warn the user that they may encounter problems
-    AC_MSG_WARN([$with_patch is not a path to an executable file])
-  fi
-elif test no != "${with_patch}"; then
-  AC_MSG_RESULT([])
-  # Search for the patch executable
-  AC_CHECK_PROG(
-    [PATCH], [$with_patch], [$with_patch])
-else
-  AC_MSG_RESULT([no])
-fi
-
-if test -n "${PATCH}"; then
-  AC_DEFINE_UNQUOTED(
-    [PATCH_PROGRAM], ["$PATCH"],
-    [The "patch" program to run when using the CVS server and accepting
-     patches across the network.  Specify a full pathname if your site
-     wants to use a particular patch.])
-fi
-
-dnl
-dnl done finding patch
-dnl
 
 
 dnl

@@ -355,11 +355,6 @@
 /* Define to the version of this package. */
 #undef PACKAGE_VERSION
 
-/* The "patch" program to run when using the CVS server and accepting patches
-   across the network. Specify a full pathname if your site wants to use a
-   particular patch. */
-#undef PATCH_PROGRAM
-
 /* Path to the pr utility */
 #undef PR_PROGRAM
 
