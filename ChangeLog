@@ -1,3 +1,7 @@
+Thu Oct 31 07:20:45 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* BUGS: Add note about cvs import of binary files on non-unix.
+
 Tue Oct 29 13:59:14 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* BUGS: Add note about "dying gasps" message.
