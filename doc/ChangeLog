@@ -1,3 +1,20 @@
+2001-06-28  Derek Price  <dprice@collab.net>
+
+	* Makefile.am: Reference to CVSvn.texi removed.
+	* cvs.texinfo: @include version.texi and change CVSVN to VERSION.
+	* cvsclient.texi: Ditto.
+
+	* version.texi: New file.
+	* stamp-vti: Ditto.
+	* mdate-sh: New File.  Work-around bug in Automake 1.4f by copying
+	top-level mdate-sh here.
+
+	* CVSvn.texi.in: Removed.
+	* CVSvn.texi: Ditto.
+
+	* Makefile.in: Regenerated.
+	(Patch from Alexey Mahotkin <alexm@hsys.msk.ru>.)
+
 2001-06-27  Larry Jones  <larry.jones@sdrc.com>
 
 	* cvs.texinfo (loginfo): Note that format string expansion is

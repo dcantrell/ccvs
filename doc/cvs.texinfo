@@ -38,8 +38,8 @@
 @finalout
 
 @setfilename cvs.info
-@include CVSvn.texi
-@settitle CVS---Concurrent Versions System v@value{CVSVN}
+@include version.texi
+@settitle CVS---Concurrent Versions System v@value{VERSION}
 @setchapternewpage odd
 
 @c -- TODO list:
@@ -91,7 +91,7 @@ approved by the Free Software Foundation.
 @sp
 @center @titlefont{CVS}
 @sp 2
-@center for @sc{cvs} @value{CVSVN}
+@center for @sc{cvs} @value{VERSION}
 @comment -release-
 @sp 3
 @center Per Cederqvist et al
@@ -132,7 +132,7 @@ approved by the Free Software Foundation.
 @c something they can both cope with.
 
 This info manual describes how to use and administer
-@sc{cvs} version @value{CVSVN}.
+@sc{cvs} version @value{VERSION}.
 @end ifnottex
 
 @c This menu is pretty long.  Not sure how easily that
