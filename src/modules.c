@@ -23,6 +23,17 @@
 #include "cvs.h"
 #include "savecwd.h"
 
+
+/* Defines related to the syntax of the modules file.  */
+
+/* Options in modules file.  Note that it is OK to use GNU getopt features;
+   we already are arranging to make sure we are using the getopt distributed
+   with CVS.  */
+#define	CVSMODULE_OPTS	"+ad:i:lo:e:s:t:u:"
+
+/* Special delimiter.  */
+#define CVSMODULE_SPEC	'&'
+
 struct sortrec
 {
     char *modname;

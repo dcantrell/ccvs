@@ -184,10 +184,6 @@ extern int errno;
 
 #define CVSNULLREPOS		"Emptydir"	/* an empty directory */
 
-/* support for the modules file (CVSROOTADM_MODULES) */
-#define	CVSMODULE_OPTS	"ad:i:lo:e:s:t:u:"/* options in modules file */
-#define CVSMODULE_SPEC	'&'		/* special delimiter */
-
 /* Other CVS file names */
 
 /* Files go in the attic if the head main branch revision is dead,
