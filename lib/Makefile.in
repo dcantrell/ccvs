@@ -54,7 +54,7 @@ SOURCES = \
 	xgetwd.c \
 	yesno.c 
 
-HEADERS = getopt.h fnmatch.h regex.h system.h wait.h md5.h
+HEADERS = getopt.h fnmatch.h regex.h system.h wait.h md5.h error.h
 
 OBJECTS = \
     @ALLOCA@ @LIBOBJS@ \
