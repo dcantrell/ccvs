@@ -218,7 +218,11 @@ import (argc, argv)
 
     if (use_editor)
     {
-	do_editor ((char *) NULL, &message, repository,
+	do_editor ((char *) NULL, &message,
+#ifdef CLIENT_SUPPORT
+		   current_parsed_root->isremote ? (char *) NULL :
+#endif
+			repository,
 		   (List *) NULL);
     }
     do_verify (&message, repository);
