@@ -1,3 +1,8 @@
+Mon Dec 15 16:01:49 1997  Ian Lance Taylor  <ian@cygnus.com>
+
+	* client.c (start_tcp_server): Remove calls to htons and add one
+ 	call to ntohs (init_sockaddr calls htons on the port argument).
+
 Mon Dec 15 00:07:02 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* client.c (failure_exit): New variable.

@@ -3768,7 +3768,7 @@ start_tcp_server (tofdp, fromfdp)
 	}
 	if (trace)
 	    fprintf(stderr, "Using TCP port %d to contact server.\n", port);
-	port = htons (port);
+	port = port;
     }
     else
     {
@@ -3776,9 +3776,9 @@ start_tcp_server (tofdp, fromfdp)
 
 	sp = getservbyname ("cvs", "tcp");
 	if (sp == NULL)
-	    port = htons (CVS_PORT);
+	    port = CVS_PORT;
 	else
-	    port = sp->s_port;
+	    port = ntohs (sp->s_port);
     }
 
     hp = init_sockaddr (&sin, CVSroot_hostname, port);
