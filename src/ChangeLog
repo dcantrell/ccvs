@@ -1,3 +1,9 @@
+2004-04-11  Derek Price  <derek@ximbiot.com>
+
+	* modules.c (do_module): Don't allow up-level references in paths to
+	step out of the repository.
+	* sanity.sh (multiroot3): Update tests and add a few more.
+
 2004-04-07  Derek Price  <derek@ximbiot.com>
 
 	* sanity.sh (parseroot): Replace hard path with $HOME.
