@@ -1,3 +1,12 @@
+Fri Jan 16 12:41:03 1998  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* rcs.c (RCS_deltas): Don't call cvs_output if length is zero;
+	passing zero length to cvs_output does not mean output zero
+	bytes.  The 27 Dec 1997 change to no longer '\0'-terminate the
+	->text field turned this from a time bomb to a user-visible bug.
+	* sanity.sh (ann): New tests, test for this fix and other annotate
+	behaviors.
+
 Thu Jan 15 23:52:00 1998  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* root.c (root_allow_ok): If inetd.conf didn't specify an

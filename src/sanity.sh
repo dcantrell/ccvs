@@ -556,7 +556,7 @@ if test x"$*" = x; then
 	tests="${tests} devcom devcom2 devcom3 watch4"
 	tests="${tests} ignore binfiles binfiles2 mcopy binwrap binwrap2"
 	tests="${tests} binwrap3 mwrap info config"
-	tests="${tests} serverpatch log log2 crerepos rcs big modes stamps"
+	tests="${tests} serverpatch log log2 ann crerepos rcs big modes stamps"
 	tests="${tests} sticky keyword toplevel head tagdate multibranch2"
 	tests="${tests} admin reserved"
 	tests="${tests} cvsadm diffmerge1 diffmerge2"
@@ -8296,6 +8296,120 @@ date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
 
 	  ;;
+
+	ann)
+	  # Tests of "cvs annotate".  See also basica-10.
+	  mkdir 1; cd 1
+	  dotest ann-1 "${testcvs} -q co -l ." ''
+	  mkdir first-dir
+	  dotest ann-2 "${testcvs} add first-dir" \
+"Directory ${TESTDIR}/cvsroot/first-dir added to the repository"
+	  cd first-dir
+	  cat >file1 <<EOF
+this
+is
+the
+ancestral
+file
+EOF
+	  dotest ann-3 "${testcvs} add file1" \
+"${PROG} [a-z]*: scheduling file .file1. for addition
+${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
+	  dotest ann-4 "${testcvs} -q ci -m add file1" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
+done
+Checking in file1;
+${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
+initial revision: 1\.1
+done"
+	  cat >file1 <<EOF
+this
+is
+a
+file
+
+with
+a
+blank
+line
+EOF
+	  dotest ann-5 "${testcvs} -q ci -m modify file1" \
+"Checking in file1;
+${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
+new revision: 1\.2; previous revision: 1\.1
+done"
+	  dotest ann-6 "${testcvs} -q tag -b br" "T file1"
+	  cat >file1 <<EOF
+this
+is
+a
+trunk file
+
+with
+a
+blank
+line
+EOF
+	  dotest ann-7 "${testcvs} -q ci -m modify file1" \
+"Checking in file1;
+${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
+new revision: 1\.3; previous revision: 1\.2
+done"
+	  dotest ann-8 "${testcvs} -q update -r br" "[UP] file1"
+	  cat >file1 <<EOF
+this
+is
+a
+file
+
+with
+a
+blank
+line
+and some
+branched content
+EOF
+	  dotest ann-9 "${testcvs} -q ci -m modify" \
+"Checking in file1;
+${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
+new revision: 1\.2\.2\.1; previous revision: 1\.2
+done"
+	  # Note that this annotates the trunk despite the presence
+	  # of a sticky tag in the current directory.  This is
+	  # fairly bogus, but it is the longstanding behavior for
+	  # whatever that is worth.
+	  dotest ann-10 "${testcvs} ann" \
+"Annotations for file1
+\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
+1\.1          (${username}  [0-9a-zA-Z-]*): this
+1\.1          (${username}  [0-9a-zA-Z-]*): is
+1\.2          (${username}  [0-9a-zA-Z-]*): a
+1\.3          (${username}  [0-9a-zA-Z-]*): trunk file
+1\.2          (${username}  [0-9a-zA-Z-]*): 
+1\.2          (${username}  [0-9a-zA-Z-]*): with
+1\.2          (${username}  [0-9a-zA-Z-]*): a
+1\.2          (${username}  [0-9a-zA-Z-]*): blank
+1\.2          (${username}  [0-9a-zA-Z-]*): line"
+	  dotest ann-11 "${testcvs} ann -r br" \
+"Annotations for file1
+\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
+1\.1          (${username}  [0-9a-zA-Z-]*): this
+1\.1          (${username}  [0-9a-zA-Z-]*): is
+1\.2          (${username}  [0-9a-zA-Z-]*): a
+1\.1          (${username}  [0-9a-zA-Z-]*): file
+1\.2          (${username}  [0-9a-zA-Z-]*): 
+1\.2          (${username}  [0-9a-zA-Z-]*): with
+1\.2          (${username}  [0-9a-zA-Z-]*): a
+1\.2          (${username}  [0-9a-zA-Z-]*): blank
+1\.2          (${username}  [0-9a-zA-Z-]*): line
+1\.2\.2\.1      (${username}  [0-9a-zA-Z-]*): and some
+1\.2\.2\.1      (${username}  [0-9a-zA-Z-]*): branched content"
+
+	  cd ../..
+	  rm -r 1
+	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  ;;
+
 	crerepos)
 	  # Various tests relating to creating repositories, operating
 	  # on repositories created with old versions of CVS, etc.
