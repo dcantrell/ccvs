@@ -7438,7 +7438,8 @@ unable to parse %s; `author' not in the expected place", rcsfile);
 	error (1, 0, "\
 unable to parse %s; `state' not in the expected place", rcsfile);
     vnode->state = rcsbuf_valcopy (rcsbuf, value, 0, (size_t *) NULL);
-    if (STREQ (value, "dead"))
+    /* The value is optional, according to rcsfile(5).  */
+    if (value != NULL && STREQ (value, "dead"))
     {
 	vnode->dead = 1;
     }
