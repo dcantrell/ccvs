@@ -174,6 +174,9 @@
    this function in the code anyway, hmm.  */
 #undef HAVE_TIMEZONE
 
+/* Define if you have the tzset function.  */
+#define HAVE_TZSET 1
+
 /* Define if you have the vfork function.  */
 #undef HAVE_VFORK
 
@@ -344,7 +347,7 @@ extern void init_sockets();
 /*
  * This tells the client that it must use send()/recv() to talk to the
  * server if it is connected to the server via a socket.  Sigh.
- * Windows 95 also cannot convert sockets to file descriptors,
+ * Windows 95 and VMS cannot convert sockets to file descriptors either,
  * apparently.
  */
 #define NO_SOCKET_TO_FD 1
