@@ -4286,7 +4286,10 @@ send_file_names (int argc, char **argv, unsigned int flags)
 	    /* Split the argument onto the stack.  */
 	    stack = getlist();
 	    r = xstrdup (argv[i]);
-	    while ((q = last_component (r)) != r)
+            /* It's okay to discard the const from the last_component return
+             * below since we know we passed in an arg that was not const.
+             */
+	    while ((q = (char *)last_component (r)) != r)
 	    {
 		push (stack, xstrdup (q));
 		*--q = '\0';

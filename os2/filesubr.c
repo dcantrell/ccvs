@@ -703,18 +703,8 @@ cvs_temp_name ()
 	error (1, errno, "cannot generate temporary filename");
     return xstrdup (retval);
 }
-
-/* Return non-zero iff FILENAME is absolute.
-   Trivial under Unix, but more complicated under other systems.  */
-int
-isabsolute (filename)
-    const char *filename;
-{
-    return (ISDIRSEP (filename[0])
-            || (filename[0] != '\0'
-                && filename[1] == ':'
-                && ISDIRSEP (filename[2])));
-}
+
+
 
 /* char *
  * xresolvepath ( const char *path )

@@ -750,14 +750,6 @@ FILE *cvs_temp_file (char **filename)
     return fp;
 }
 
-/* Return non-zero iff FILENAME is absolute.
-   Trivial under Unix, but more complicated under other systems.  */
-int
-isabsolute (const char *filename)
-{
-    return filename[0] == '/';
-}
-
 
 
 #ifdef HAVE_READLINK

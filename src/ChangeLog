@@ -1,3 +1,13 @@
+2004-04-04  Derek Price  <derek@ximbiot.com>
+
+	* filesubr.c (isabsolute): Move...
+	* subr.c: ...here and use new ISABSOLUTE macro.
+
+2004-04-04  Derek Price  <derek@ximbiot.com>
+
+	* client.c (send_file_names): Cast out an unneeded const to avoid a
+	warning.
+
 2004-04-03  Larry Jones  <lawrence.jones@ugsplm.com>
 
 	* cvsrc.c: Remove unused declarations.

@@ -1,3 +1,8 @@
+2004-04-04  Derek Price  <derek@ximbiot.com>
+
+	* filesubr.c (isabsolute): Remove this function.
+	* config.h (ISABSOLUTE): Define.
+
 2003-11-25  Mark D. Baushke  <mdb@cvshome.org>
 
 	* Makefile.in: Regenerate for new configure.in.
