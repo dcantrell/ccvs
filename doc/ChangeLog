@@ -1,3 +1,8 @@
+2003-10-27  Derek Price  <derek@ximbiot.com>
+
+	* stamp-1, stamp-vti, version-client.texi, version.texi: Regenerated
+	for 1.12.2.
+
 2003-10-21  Derek Price  <derek@ximbiot.com>
 
 	* cvs.texinfo: Note gnu.cvs.* usenet mirrors of the email lists.
