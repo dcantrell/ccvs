@@ -1,5 +1,9 @@
 2004-10-09  Derek Price  <derek@ximbiot.com>
 
+	* nanosleep.c: Update from GNULIB.
+
+2004-10-09  Derek Price  <derek@ximbiot.com>
+
 	* memmove.c: Update from GNULIB.
 
 2004-10-09  Derek Price  <derek@ximbiot.com>
