@@ -3561,6 +3561,7 @@ start_server ()
 						      gzip_level,
 						      buf_memory_error);
 	}
+#ifndef NO_CLIENT_GZIP_PROCESS
 	else if (supported_request ("gzip-file-contents"))
 	{
             char gzip_level_buf[5];
@@ -3572,6 +3573,7 @@ start_server ()
 
 	    file_gzip_level = gzip_level;
 	}
+#endif
 	else
 	{
 	    fprintf (stderr, "server doesn't support gzip-file-contents\n");

@@ -1,5 +1,11 @@
 Fri Jul 19 16:02:11 1996  Mike Ladwig  <mike@twinpeaks.prc.com>
 
+	* client.c: Added NO_CLIENT_GZIP_PROCESS to deal with the MacOS
+	client where Gzip-stream is supported, but "gzip-file-contents" is
+	not.
+
+Fri Jul 19 16:02:11 1996  Mike Ladwig  <mike@twinpeaks.prc.com>
+
 	* repos.c: Fixed recent patch which added plain fopen rather than
 	CVS_FOPEN
 
