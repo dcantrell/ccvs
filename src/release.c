@@ -47,7 +47,10 @@ release_server (argc, argv)
    2.  The fact that "cvs update" contacts the server slows things down;
    it undermines the case for using "cvs release" rather than "rm -rf".
    However, for correctly printing "? foo" and correctly handling
-   CVSROOTADM_IGNORE, we currently need to contact the server.
+   CVSROOTADM_IGNORE, we currently need to contact the server.  (One
+   idea for how to fix this is to stash a copy of CVSROOTADM_IGNORE in
+   the working directories; see comment at base_* in entries.c for a
+   few thoughts on that).
 
    3.  Would be nice to take processing things on the client side one step
    further, and making it like edit/unedit in terms of working well if

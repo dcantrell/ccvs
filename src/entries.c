@@ -919,11 +919,21 @@ Subdir_Deregister (entries, parent, dir)
    is now the Entries.Log machinery.  So maybe from that point of
    view it is a mistake to do this separately from Entries, I dunno.
 
-   We also need something analogous for CVS/Template (so we can update
-   the Template file automagically without the user needing to check out
-   a new working directory), and cvsignore (need to keep a copy in the
-   working directory to do "cvs release" on the client side; see
-   comment at src/release.c (release).  */
+   We also need something analogous for:
+
+   1. CVS/Template (so we can update the Template file automagically
+   without the user needing to check out a new working directory).
+   Updating would probably print a message (that part might be
+   optional, although probably it should be visible because not all
+   cvs commands would make the update happen and so it is a
+   user-visible behavior).  Constructing version number for template
+   is a bit hairy (base it on the timestamp on the server?  Or see if
+   the template is in checkoutlist and if yes use its versioning and
+   if no don't version it?)....
+
+   2.  cvsignore (need to keep a copy in the working directory to do
+   "cvs release" on the client side; see comment at src/release.c
+   (release).  Would also allow us to stop needing Questionable.  */
 
 enum base_walk {
     /* Set the revision for FILE to *REV.  */
