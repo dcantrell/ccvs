@@ -13194,6 +13194,192 @@ text
 add a line on the branch
 @"
 
+	  # Tests of cvs admin -n.  Make use of the results of
+	  # admin-1 through admin-25.
+	  # FIXME: We probably shouldn't make use of those results;
+	  # this test is way too long as it is.
+
+	  # tagtwo should be a revision
+	  #
+	  dotest admin-26-1 "${testcvs} admin -ntagtwo:tagone file2" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/file2,v
+done"
+      	  
+	  # br1 should be a branch
+	  #
+	  dotest admin-26-2 "${testcvs} admin -nbr1:br file2" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/file2,v
+done"
+      	  
+	  # Attach some tags using RCS versions
+	  #
+	  dotest admin-26-3 "${testcvs} admin -ntagthree:1.1 file2" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/file2,v
+done"
+
+	  dotest admin-26-4 "${testcvs} admin -nbr2:1.1.2 file2"  \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/file2,v
+done"
+
+	  dotest admin-26-5 "${testcvs} admin -nbr4:1.1.0.2 file2"  \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/file2,v
+done"
+      	  
+	  # Check results so far
+	  #
+	  dotest admin-26-6 "${testcvs} status -v file2" \
+"===================================================================
+File: file2            	Status: Up-to-date
+
+   Working revision:	1\.2.*
+   Repository revision:	1\.2	${TESTDIR}/cvsroot/first-dir/file2,v
+   Sticky Tag:		(none)
+   Sticky Date:		(none)
+   Sticky Options:	(none)
+
+   Existing Tags:
+	br4                      	(branch: 1\.1\.2)
+	br2                      	(branch: 1\.1\.2)
+	tagthree                 	(revision: 1\.1)
+	br1                      	(branch: 1\.1\.2)
+	tagtwo                   	(revision: 1\.1)
+	tagone                   	(revision: 1\.1)
+	br                       	(branch: 1\.1\.2)"
+
+      	  
+	  # Add a couple more revisions
+	  #
+	  echo "nuthr_line" >> file2
+	  dotest admin-27-1 "${testcvs} commit -m nuthr_line file2"  \
+"Checking in file2;
+${TESTDIR}/cvsroot/first-dir/file2,v  <--  file2
+new revision: 1\.3; previous revision: 1\.2
+done"
+
+	  echo "yet_another" >> file2
+	  dotest admin-27-2 "${testcvs} commit -m yet_another file2"  \
+"Checking in file2;
+${TESTDIR}/cvsroot/first-dir/file2,v  <--  file2
+new revision: 1\.4; previous revision: 1\.3
+done"
+      	  
+	  # Fail trying to reattach existing tag with -n
+	  #
+	  dotest admin-27-3 "${testcvs} admin -ntagfour:1.1 file2"  \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/file2,v
+done"
+
+	  dotest_fail admin-27-4 "${testcvs} admin -ntagfour:1.3 file2"  \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/file2,v
+${PROG} [a-z]*: ${TESTDIR}/cvsroot/first-dir/file2,v: symbolic name tagfour already bound to 1\.1
+${PROG} [a-z]*: cannot modify RCS file for .file2."
+      	  
+	  # Succeed at reattaching existing tag, using -N
+	  #
+	  dotest admin-27-5 "${testcvs} admin -Ntagfour:1.3 file2"  \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/file2,v
+done"
+      	  
+	  # Fail on some bogus operations
+	  # Try to attach to nonexistant tag
+	  #
+	  dotest_fail admin-28-1 "${testcvs} admin -ntagsix:tagfive file2"  \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/file2,v
+${PROG} \[[a-z]* aborted\]: tag .tagfive. does not exist"
+      	  
+	  # Try a some nonexisting numeric target tags
+	  #
+	  dotest_fail admin-28-2 "${testcvs} admin -ntagseven:2.1 file2"  \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/file2,v
+${PROG} \[[a-z]* aborted\]: revision .2\.1. does not exist"
+
+	  dotest_fail admin-28-3 "${testcvs} admin -ntageight:2.1.2 file2"  \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/file2,v
+${PROG} \[[a-z]* aborted\]: revision .2\.1\.2. does not exist"
+      	  
+	  # Try some invalid targets
+	  #
+	  dotest_fail admin-28-4 "${testcvs} admin -ntagnine:1.a.2 file2"  \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/file2,v
+${PROG} \[[a-z]* aborted\]: tag .1\.a\.2. must start with a letter"
+
+	  dotest_fail admin-28-5 "${testcvs} admin -ntagten:BO+GUS file2"  \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/file2,v
+${PROG} \[[a-z]* aborted\]: tag .BO${PLUS}GUS. does not exist"
+      	  
+	  dotest_fail admin-28-6 "${testcvs} admin -nq.werty:tagfour file2"  \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/file2,v
+${PROG} \[[a-z]* aborted\]: tag .q\.werty. must not contain the characters ..*"
+
+	  # Verify the archive
+	  #
+	  dotest admin-29 "cat ${TESTDIR}/cvsroot/first-dir/file2,v" \
+"head	1\.4;
+access
+	auth3
+	auth2
+	foo;
+symbols
+	tagfour:1\.3
+	br4:1\.1\.0\.2
+	br2:1\.1\.0\.2
+	tagthree:1\.1
+	br1:1\.1\.0\.2
+	tagtwo:1\.1
+	tagone:1\.1
+	br:1\.1\.0\.2;
+locks; strict;
+comment	@# @;
+
+
+1\.4
+date	[0-9][0-9]\.[0-9][0-9]\.[0-9][0-9]\.[0-9][0-9]\.[0-9][0-9]\.[0-9][0-9];	author ${username};	state Exp;
+branches;
+next	1\.3;
+
+1\.3
+date	[0-9][0-9]\.[0-9][0-9]\.[0-9][0-9]\.[0-9][0-9]\.[0-9][0-9]\.[0-9][0-9];	author ${username};	state Exp;
+branches;
+next	1\.2;
+
+1\.2
+date	[0-9][0-9]\.[0-9][0-9]\.[0-9][0-9]\.[0-9][0-9]\.[0-9][0-9]\.[0-9][0-9];	author ${username};	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1\.4
+log
+@yet_another
+@
+text
+@add a line
+nuthr_line
+yet_another
+@
+
+
+1\.3
+log
+@nuthr_line
+@
+text
+@d3 1
+@
+
+
+1\.2
+log
+@modify
+@
+text
+@d2 1
+@"
+
 	  cd ../..
 	  rm -r 1
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
