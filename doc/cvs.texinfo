@@ -2237,7 +2237,7 @@ the module @file{foo} in the repository
 @file{faun.example.org}, you are ready to go:
 
 @example
-cvs -d :ext:bach@@faun.example.org/usr/local/cvsroot checkout foo
+cvs -d :ext:bach@@faun.example.org:/usr/local/cvsroot checkout foo
 @end example
 
 @noindent
