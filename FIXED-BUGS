@@ -44,5 +44,11 @@ defining a module is the same as typing:
 
 	cvs checkout -d <module> <mapping>
 
+--> To fix this fix, I later re-enabled module name expansion but for
+aliases only -- this is because 1) the expansion has the side effect
+of transmitting Checkin.prog and Update.prog info and 2) the client
+needs to know about the expansions of an alias so it can send the
+right information for the update or commit command.
+
 ======================================================================
 ======================================================================
