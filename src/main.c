@@ -230,6 +230,9 @@ main (argc, argv)
     const struct cmd *cm;
     int c, err = 0;
     int rcsbin_update_env, cvs_update_env;
+    int help = 0;		/* Has the user asked for help?  This
+				   lets us support the `cvs -H cmd'
+				   convention to give help for cmd. */
     static struct option long_options[] =
       {
         {"help", 0, NULL, 'H'},
@@ -365,7 +368,7 @@ main (argc, argv)
 		cvs_update_env = 1;	/* need to update environment */
 		break;
 	    case 'H':
-  	        usage (usg);
+	        help = 1;
 		break;
             case 'f':
 		use_cvsrc = FALSE; /* unnecessary, since we've done it above */
@@ -410,7 +413,7 @@ main (argc, argv)
     }
 
     if (!cm->fullname)
-	usage (usg);			/* no match */
+	usage (cmd_usage);	        /* no match */
     else
 	command_name = cm->fullname;	/* Global pointer for later use */
 
@@ -429,7 +432,7 @@ main (argc, argv)
 	if (c == 'H')
 	    break;
 
-    if (c == 'H')
+    if (help || (c == 'H'))
 	argc = -1;		/* some functions only check for this */
     else
     {
