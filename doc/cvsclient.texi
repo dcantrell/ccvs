@@ -612,6 +612,8 @@ data at other times (the current implementation may violate this
 principle in a few minor places, where the server is printing an error
 message and exiting---this should be investigated further).
 
+@c FIXME: should better document when the specified repository needs to
+@c end in "/.".
 Pathnames are of the actual files operated on (i.e. they do not contain
 @samp{,v} endings), and are suitable for use in a subsequent
 @code{Repository} request.  However, if the client has used the
