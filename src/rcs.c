@@ -1859,11 +1859,11 @@ RCS_getrevtime (rcs, rev, date, fudge)
     /* put the date in a form getdate can grok */
 #ifdef HAVE_RCS5
     (void) sprintf (tdate, "%d/%d/%d GMT %d:%d:%d", ftm->tm_mon,
-		    ftm->tm_mday, ftm->tm_year, ftm->tm_hour,
+		    ftm->tm_mday, ftm->tm_year + 1900, ftm->tm_hour,
 		    ftm->tm_min, ftm->tm_sec);
 #else
     (void) sprintf (tdate, "%d/%d/%d %d:%d:%d", ftm->tm_mon,
-		    ftm->tm_mday, ftm->tm_year, ftm->tm_hour,
+		    ftm->tm_mday, ftm->tm_year + 1900, ftm->tm_hour,
 		    ftm->tm_min, ftm->tm_sec);
 #endif
 
