@@ -1,5 +1,10 @@
 2002-05-03  Larry Jones  <lawrence.jones@eds.com>
 
+	* server.c (serve_watch_on, serve_watch_off, serve_watch_add,
+	 serve_watch_remove): Just pass "watch" as the command name
+	 to do_cvs_command to avoid unknown command errors.
+	 (Reported by Gary Hennigan <gary@ieee.org>.)
+
 	* rcs.c (RCS_checkin): Fix bad call to error () in buggy
 	PRESERVE_PERMISSIONS code.
 	(rcs_internal_unlockfile): Include current value of errno in error
