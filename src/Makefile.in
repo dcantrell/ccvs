@@ -63,7 +63,12 @@ COMMON_OBJECTS = subr.o version.o
 HEADERS = cvs.h rcs.h hash.h myndbm.h patchlevel.h \
 	update.h server.h client.h
 
-DISTFILES = Makefile.in $(HEADERS) $(SOURCES) $(MSOURCES)
+DISTFILES = Makefile.in cvsbug.sh \
+            ChangeLog NOTES RCS-patches README-rm-add \
+            ChangeLog.fsf \
+            sanity.sh sanity.el \
+            .cvsignore \
+            $(HEADERS) $(SOURCES) $(MSOURCES) 
 
 PROGS = cvs mkmodules cvsbug
 
