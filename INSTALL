@@ -110,12 +110,7 @@ Installation under Unix:
     control of files with binary data (a real nice feature).  You will
     need at least version 1.15 of GNU diff for this to work.  Be sure
     that you configure RCS to work correctly with GNU diff to avoid
-    other configuration problems.  If you are running RCS 5.7, you
-    should be aware that you must supply a log message containing at
-    least one non-whitespace character (CVS catches some, but not all,
-    cases).  This has always been a problem but the symptoms are
-    apparently more severe with RCS 5.7.  This is expected to be fixed
-    in a future CVS release.
+    other configuration problems.
 
     If you are using the remote client, you will need a version of
     patch which understands unidiffs (such as any recent version of
