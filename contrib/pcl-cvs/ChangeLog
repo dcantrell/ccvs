@@ -1,3 +1,10 @@
+Sun Jan 21 12:51:12 1996  Greg A. Woods  <woods@most.weird.com>
+
+	* pcl-cvs.el (cvs-parse-stderr): fix typo (missing '\') that was
+	causing occasional un-reported, un-traced, failures that simply
+	said something like "RE missing '\(' or '\\('" -- hopefully this
+	is the last such bug!
+
 Tue Jan 16 13:57:16 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* Makefile.in: Rename "dist" target back to "dist-dir".  The
