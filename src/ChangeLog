@@ -1,5 +1,14 @@
 2001-02-02  Larry Jones  <larry.jones@sdrc.com>
 
+	* error.h: Changed include guard macro from _error_h_ to ERROR_H;
+	names beginning with underscore are reserved.
+	* login.c (password_entry_parseline, password_entry_operation,
+	password_entry_operation_e, password_entry_operation_t): Removed
+	leading underscore(s).
+	(password_entry_parseline): Corrected error messages.
+	(password_entry_operation): Fixed uninitialized variable (password).
+	(login): Removed unused variable (found_password).
+
 	* rtag.c (rtag_proc): Call lock_tree_for_write() before calling
 	start_recursion.  This fixes a serious problem where do_recursion
 	was reading and caching RCS files without any locks in place and

@@ -89,14 +89,14 @@ construct_cvspass_filename ()
 
 /*
  * static char *
- * __password_entry_parseline (
+ * password_entry_parseline (
  *			      const char *cvsroot_canonical,
  *			      const unsigned char warn,
  *			      const int linenumber,
  *			      char *linebuf
  *			     );
  *
- * Internal function used by _password_entry_operation.  Parse a single line
+ * Internal function used by password_entry_operation.  Parse a single line
  * from a ~/.cvsroot password file and return a pointer to the password if the
  * line refers to the same cvsroot as cvsroot_canonical
  *
@@ -115,7 +115,7 @@ construct_cvspass_filename ()
  *	called on the same linebuf
  */
 static char *
-__password_entry_parseline (cvsroot_canonical, warn, linenumber, linebuf)
+password_entry_parseline (cvsroot_canonical, warn, linenumber, linebuf)
     const char *cvsroot_canonical;
     const unsigned char warn;
     const int linenumber;
@@ -177,11 +177,11 @@ __password_entry_parseline (cvsroot_canonical, warn, linenumber, linebuf)
 	    case 0:
 		if (warn && !really_quiet)
 		    error (0, 0, "warning: skipping entry with invalid version string in password file at line %d",
-			    entry_version);
+			    linenumber);
 		break;
 	    default:
 		if (warn && !really_quiet)
-		    error (0, 0, "warning: skipping entry with unknown version (%d) in password file at line %d",
+		    error (0, 0, "warning: skipping entry with unknown version (%lu) in password file at line %d",
 			    entry_version, linenumber);
 		break;
 	}
@@ -229,7 +229,7 @@ __password_entry_parseline (cvsroot_canonical, warn, linenumber, linebuf)
 
 /*
  * static char *
- * _password_entry_operation (
+ * password_entry_operation (
  * 			     password_entry_operation_t operation,
  * 			     cvsroot_t *root,
  * 			     char *newpassword
@@ -284,22 +284,22 @@ __password_entry_parseline (cvsroot_canonical, warn, linenumber, linebuf)
  * 		responsible for disposing of
  */
 
-typedef enum _password_entry_operation_e {
+typedef enum password_entry_operation_e {
     password_entry_lookup,
     password_entry_delete,
     password_entry_add
-} _password_entry_operation_t;
+} password_entry_operation_t;
 
 static char *
-_password_entry_operation (operation, root, newpassword)
-    _password_entry_operation_t operation;
+password_entry_operation (operation, root, newpassword)
+    password_entry_operation_t operation;
     cvsroot_t *root;
     char *newpassword;
 {
     char *passfile;
     FILE *fp;
     char *cvsroot_canonical = NULL;
-    char *password;
+    char *password = NULL;
     int line_length;
     long line;
     char *linebuf = NULL;
@@ -309,7 +309,7 @@ _password_entry_operation (operation, root, newpassword)
 
     if (root->method != pserver_method)
     {
-	error (0, 0, "internal error: can only call _password_entry_operation with pserver method");
+	error (0, 0, "internal error: can only call password_entry_operation with pserver method");
 	error (1, 0, "CVSROOT: %s", root->original);
     }
 
@@ -333,7 +333,7 @@ _password_entry_operation (operation, root, newpassword)
     while ((line_length = getline (&linebuf, &linebuf_len, fp)) >= 0)
     {
 	line++;
-	password = __password_entry_parseline(cvsroot_canonical, 1, line, linebuf);
+	password = password_entry_parseline(cvsroot_canonical, 1, line, linebuf);
 	if (password != NULL)
 	    /* this is it!  break out and deal with linebuf */
 	    break;
@@ -401,8 +401,8 @@ _password_entry_operation (operation, root, newpassword)
 	{
 	    line++;
 	    if (line < found_at
-		|| line != found_at
-		    && !__password_entry_parseline(cvsroot_canonical, 0, line, linebuf))
+		|| (line != found_at
+		    && !password_entry_parseline(cvsroot_canonical, 0, line, linebuf)))
 	    {
 		if (fprintf (tmp_fp, "%s", linebuf) == EOF)
 		{
@@ -526,7 +526,7 @@ login (argc, argv)
     int argc;
     char **argv;
 {
-    char *typed_password, *found_password;
+    char *typed_password;
     char *cvsroot_canonical;
 
     if (argc < 0)
@@ -562,7 +562,7 @@ login (argc, argv)
 
     connect_to_pserver (NULL, NULL, 1, 0);
 
-    _password_entry_operation (password_entry_add, current_parsed_root, typed_password);
+    password_entry_operation (password_entry_add, current_parsed_root, typed_password);
 
     memset (typed_password, 0, strlen (typed_password));
     free (typed_password);
@@ -609,7 +609,7 @@ get_cvs_password ()
 	error (1, 0, "CVSROOT: %s", current_parsed_root->original);
     }
 
-    return _password_entry_operation (password_entry_lookup, current_parsed_root, NULL);
+    return password_entry_operation (password_entry_lookup, current_parsed_root, NULL);
 }
 
 static const char *const logout_usage[] =
@@ -652,7 +652,7 @@ logout (argc, argv)
 	free (cvsroot_canonical);
     }
 
-    _password_entry_operation (password_entry_delete, current_parsed_root, NULL);
+    password_entry_operation (password_entry_delete, current_parsed_root, NULL);
 
     return 0;
 }
