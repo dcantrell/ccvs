@@ -3,10 +3,10 @@ Changes since 1.12.6:
 
 GENERAL USER ISSUES
 
-* Relative paths should now work in client/server mode.
+* Relative paths should now work in client/server mode (client fix).
 
 * A race condition between the ordering of messages from CVS and messages from
-  called scripts in client/server mode has been removed.
+  called scripts in client/server mode has been removed (server fix).
 
 * The check_cvs and cvscheck scripts in the contrib directory have been renamed
   validate_repo and sandbox_status, respectively, in the interests of clarity.
@@ -17,24 +17,25 @@ GENERAL USER ISSUES
 * CVS on Cygwin no longer converts back slashes in paths into forward slashes.
 
 * A memory allocation bug on Windows that could cause at least executions of
-  `cvs status' to fail has been fixed.
+  `cvs status' to fail has been fixed (client fix).
 
 * Resurrected files now get their modes and timestamps set correctly and a
   longstanding bug involving resurrection of an uncommitted removal has been
-  fixed.
+  fixed (server fix).
 
 * Some resurrection (cvs add) status messages have changed slightly.
 
-* `cvs release' now works with Kerberos or GSSAPI encryption enabled.
+* `cvs release' now works with Kerberos or GSSAPI encryption enabled (server
+  fix).
 
 * File resurrection from a previously existing revision no longer just reports
-  that it works.
+  that it works (server fix).
 
 * Misc error & status message corrections.
 
 * Diffing of locally added files against arbitrary revisions in an RCS archive
   is now allowed when a file of the same name exists or used to exist on some
-  branch.
+  branch (server fix).
 
 * Some user messages have been updated for consistency and spelling.
 
