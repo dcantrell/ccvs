@@ -1,3 +1,10 @@
+Thu Aug 15 11:30:55 1996  Ian Lance Taylor  <ian@cygnus.com>
+
+	* server.c: Include <sys/socket.h> if AUTH_SERVER_SUPPORT.
+	(pserver_authenticate_connection): Set SO_KEEPALIVE on
+	STDIN_FILENO.
+	(kserver_authenticate_connection): Likewise.
+
 Thu Aug 15 10:26:41 1996  Norbert Kiesel  <nk@col.sw-ley.de>
 
 	* server.c (switch_to_user): Fix previous patch to compile it for

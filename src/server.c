@@ -8,8 +8,11 @@
 
 #ifdef SERVER_SUPPORT
 
-#if HAVE_KERBEROS
+#if defined (AUTH_SERVER_SUPPORT) || defined (HAVE_KERBEROS)
 #include <sys/socket.h>
+#endif
+
+#ifdef HAVE_KERBEROS
 #include <netinet/in.h>
 #include <krb.h>
 #ifndef HAVE_KRB_GET_ERR_TEXT
@@ -4091,6 +4094,17 @@ pserver_authenticate_connection ()
      * big deal.
      */
 
+#ifdef SO_KEEPALIVE
+    /* Set SO_KEEPALIVE on the socket, so that we don't hang forever
+       if the client dies while we are waiting for input.  */
+    {
+	int on = 1;
+
+	(void) setsockopt (STDIN_FILENO, SOL_SOCKET, SO_KEEPALIVE,
+			   (char *) &on, sizeof on);
+    }
+#endif
+
     /* Make sure the protocol starts off on the right foot... */
     fgets (tmp, PATH_MAX, stdin);
     if (strcmp (tmp, "BEGIN VERIFICATION REQUEST\n") == 0)
@@ -4170,6 +4184,17 @@ kserver_authenticate_connection ()
 error %s getpeername or getsockname failed\n", strerror (errno));
 	exit (EXIT_FAILURE);
     }
+
+#ifdef SO_KEEPALIVE
+    /* Set SO_KEEPALIVE on the socket, so that we don't hang forever
+       if the client dies while we are waiting for input.  */
+    {
+	int on = 1;
+
+	(void) setsockopt (STDIN_FILENO, SOL_SOCKET, SO_KEEPALIVE,
+			   (char *) &on, sizeof on);
+    }
+#endif
 
     status = krb_recvauth (KOPT_DO_MUTUAL, STDIN_FILENO, &ticket, "rcmd",
 			   instance, &peer, &laddr, &auth, "", sched,
