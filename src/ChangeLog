@@ -1,3 +1,7 @@
+2001-03-30  Larry Jones  <larry.jones@sdrc.com>
+
+	* sanity.sh (rm-update-message): Remove duplicate code.
+
 2001-03-30  Derek Price  <dprice@collab.net>
 
 	* sanity.sh (rm-update-message): New test for local/client-server
