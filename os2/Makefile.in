@@ -27,8 +27,11 @@ CFLAGS += -DIBM_CPP
 
 # TCP/IP stuff
 TCPIPLIB = s:\ibmtcpip\lib\tcp32dll.lib	s:\ibmtcpip\lib\so32dll.lib porttcp.obj
-RPCLIB   = s:\ibmtcpip\lib\rpc32dll.lib
-FTPLIB   = s:\ibmtcpip\lib\ftpapi.lib
+
+# We probably don't need these.
+# RPCLIB   = s:\ibmtcpip\lib\rpc32dll.lib
+# FTPLIB   = s:\ibmtcpip\lib\ftpapi.lib
+
 CFLAGS 	 += -DTCPIP_IBM -Is:\ibmtcpip\include
 
 # standard source rule
