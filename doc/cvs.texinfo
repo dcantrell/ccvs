@@ -6525,6 +6525,12 @@ to use the optional developer communication features.
 @c uses 1.5+, and a repository on which one wants to
 @c use both versions side by side (e.g. during a
 @c transition period).
+@c Wait, can't CVS just detect the case in which a file
+@c is in the Attic but the head revision is not dead?
+@c Not sure whether this should produce a warning or
+@c something, and probably needs further thought, but
+@c it would appear that the situation can be detected.
+@c 
 @c We might want to separate out the 1.3 compatibility
 @c section (for repository & working directory) from the
 @c rest--that might help avoid confusing people who
