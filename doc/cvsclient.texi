@@ -409,10 +409,9 @@ modified in the checked out directory.  The name is relative to the most
 recent repository sent with @code{Directory}.
 
 @item UseUnchanged \n
-Response expected: no.  If the server supports it, this request must be
-sent in order to specify the version of the protocol described in this
-document.  This is only for interoperability with CVS 1.5 through 1.9;
-new servers are not encouraged to support this request.
+Response expected: no.  To specify the version of the protocol described
+in this document, servers must support this request (although it need
+not do anything) and clients must issue it.
 
 @item Notify @var{filename} \n
 Response expected: no.
