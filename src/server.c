@@ -3874,9 +3874,9 @@ server_modtime (struct file_info *finfo, Vers_TS *vers_ts)
     buf_output0 (protocol, "\n");
 }
 
-/* See server.h for description.  */
 
-/* Need to prototype because mode_t might be smaller than int.  */
+
+/* See server.h for description.  */
 void
 server_updated (
     struct file_info *finfo,
