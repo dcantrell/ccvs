@@ -50,7 +50,7 @@ Name_Root(dir, update_dir)
      * Do not bother looking for a readable file if there is no cvsadm
      * directory present.
      *
-     * It is possiible that not all repositories will have a CVS/Root
+     * It is possible that not all repositories will have a CVS/Root
      * file. This is ok, but the user will need to specify -d
      * /path/name or have the environment variable CVSROOT set in
      * order to continue.
