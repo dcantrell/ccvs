@@ -1100,8 +1100,6 @@ call_in_directory (pathname, func, data)
     char *short_pathname;
     char *p;
 
-    assert (pathname);
-
     /*
      * Do the whole descent in parallel for the repositories, so we
      * know what to put in CVS/Repository files.  I'm not sure the
@@ -1121,6 +1119,8 @@ call_in_directory (pathname, func, data)
     char *rdirp;
     int reposdirname_absolute;
     int newdir = 0;
+
+    assert (pathname);
 
     reposname = NULL;
     read_line (&reposname);
