@@ -6,8 +6,10 @@
 #
 # Original Author: K. Richard Pixley
 
-# usage: sanity.sh [-r] @var{cvs-to-test} @var{tests-to-run}
+# usage: sanity.sh [-r [--keep [-G @var{global-opts}]]] @var{cvs-to-test} [@var{tests-to-run}]
 # -r means to test remote instead of local cvs.
+# --keep means leave the /tmp test directory after running tests
+# -G @var{global-opts}
 # @var{tests-to-run} are the names of the tests to run; if omitted run all
 # tests.
 
@@ -52,9 +54,20 @@ else
   keep=no
 fi
 
+# You may need to add '-b /path/to/rcsbin_dflt' if you didn't want to
+# set RCSBIN_DFLT in options.h, etc....
+# for example: "-b /local/bin -D /local/gnu/bin/diff -p /local/bin/patch"
+# FIXME: need some real option parsing so this doesn't depend on the order
+# in which they are specified.
+if test x"$1" = "x"-G"; then
+	shift
+	testcvs="${testcvs} $1"
+	shift
+fi
+
 # Use full path for CVS executable, so that CVS_SERVER gets set properly
 # for remote.
-case $1 in
+case "$1" in
 /*)
 	testcvs=$1
 	;;
@@ -70,10 +83,6 @@ shift
 # just spuriously match a few things; if the name contains other regexp
 # special characters we are probably in big trouble.
 PROG=`basename ${testcvs}`
-
-# You may need to add '-b /path/to/rcsbin_dflt' if you didn't want to
-# set RCSBIN_DFLT in options.h...
-#testcvs="${testcvs} -b /local/bin -D /local/gnu/bin/diff"
 
 # FIXME: try things (what things? checkins?) without -m.
 #
@@ -563,7 +572,7 @@ if test "x$remote" = xyes; then
 	# or anything like that.  Also needed to get CVS_SERVER to
 	# work.
 	CVSROOT=:ext:`hostname`:${CVSROOT_DIRNAME} ; export CVSROOT
-	CVS_SERVER=${testcvs}; export CVS_SERVER
+	CVS_SERVER="${testcvs} ${testcvsoptions}"; export CVS_SERVER
 fi
 
 # start keeping history
