@@ -1949,6 +1949,9 @@ annotate_fileproc (finfo)
     struct linevector headlines;
     struct linevector curlines;
 
+    if (finfo->rcs == NULL)
+        return (1);
+
     /* Distinguish output for various files if we are processing
        several files.  */
     cvs_outerr ("Annotations for ", 0);
@@ -2013,7 +2016,7 @@ annotate_fileproc (finfo)
 		    struct deltafrag *df;
 
 		    dfhead = NULL;
-		    for (p = value; *p != '\0'; )
+		    for (p = value; p != NULL && *p != '\0'; )
 		    {
 			op = *p++;
 			if (op != 'a' && op != 'd')

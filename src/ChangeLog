@@ -1,3 +1,9 @@
+Mon Apr  8 13:53:27 1996  Samuel Tardieu  <sam@inf.enst.fr>
+
+	* rcs.c (annotate_fileproc): If the file is not under CVS control,
+	return instead of dumping a core. Don't bug on files with an empty
+	first revision.
+
 Fri Mar 29 16:08:28 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* rcs.c (annotate_fileproc): If last line of add-chunk is not
