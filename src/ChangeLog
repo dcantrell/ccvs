@@ -1,5 +1,8 @@
 Thu Jul 13 11:03:17 1995  Jim Meyering  (meyering@comco.com)
 
+	* import.c (comtable): Now static.
+	(comtable): Put braces around each element of initializer.
+
 	* cvs.h: Add prototype for xgetwd.
 	* recurse.c (save_cwd, restore_cwd): New functions to encapsulate
 	run-time solution to secure-SunOS vs. fchown problem.
