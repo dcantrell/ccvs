@@ -23,6 +23,12 @@ Tue May 14 10:56:56 1996  Ian Lance Taylor  <ian@cygnus.com>
 
 	* rcs.c (RCS_fast_checkout): If workfile is NULL, don't call chmod.
 
+Mon May 13 10:52:10 1996  Greg A. Woods  <woods@most.weird.com>
+
+	* checkout.c (export_usage): note which options cause a sticky
+	version to be set, and which option avoids this.
+	* update.c (update_usage): likewise
+
 Sat May 11 18:57:07 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* sanity.sh: Comment out test basica-9 until I get around to
