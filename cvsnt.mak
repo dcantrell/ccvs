@@ -196,7 +196,7 @@ LINK32_OBJS= \
 	"$(INTDIR)/myndbm.obj" \
 	"$(INTDIR)/savecwd.obj" \
 	"$(INTDIR)/client.obj" \
-	".\WinRel\1\diff.obj" \
+	"$(INTDIR)/2/diff.obj" \
 	"$(INTDIR)/scramble.obj" \
 	"$(INTDIR)/filesubr.obj" \
 	"$(INTDIR)/infutil.obj" \
@@ -220,11 +220,11 @@ LINK32_OBJS= \
 	"$(INTDIR)/commit.obj" \
 	"$(INTDIR)/patch.obj" \
 	"$(INTDIR)/classify.obj" \
-	".\WinRel\2\diff.obj" \
+	"$(INTDIR)/1/diff.obj" \
 	"$(INTDIR)/history.obj" \
 	"$(INTDIR)/add.obj" \
 	"$(INTDIR)/update.obj" \
-	".\WinRel\2\version.obj" \
+	"$(INTDIR)/2/version.obj" \
 	"$(INTDIR)/uncompr.obj" \
 	"$(INTDIR)/buffer.obj" \
 	"$(INTDIR)/rcmd.obj" \
@@ -264,7 +264,7 @@ LINK32_OBJS= \
 	"$(INTDIR)/inftrees.obj" \
 	"$(INTDIR)/regex.obj" \
 	"$(INTDIR)/io.obj" \
-	".\WinRel\1\version.obj" \
+	"$(INTDIR)/1/version.obj" \
 	"$(INTDIR)/vers_ts.obj" \
 	"$(INTDIR)/checkout.obj" \
 	"$(INTDIR)/stripslash.obj" \
@@ -306,12 +306,12 @@ INTDIR=.\WinDebug
 ALL : "$(OUTDIR)\cvs.exe"
 
 CLEAN : 
-	-@erase ".\WinDebug\vc40.pdb"
-	-@erase ".\WinDebug\vc40.idb"
-	-@erase ".\WinDebug\1\vc40.pdb"
-	-@erase ".\WinDebug\1\vc40.idb"
-	-@erase ".\WinDebug\2\vc40.pdb"
-	-@erase ".\WinDebug\2\vc40.idb"
+	-@erase ".\WinDebug\vc60.pdb"
+	-@erase ".\WinDebug\vc60.idb"
+	-@erase ".\WinDebug\1\vc60.pdb"
+	-@erase ".\WinDebug\1\vc60.idb"
+	-@erase ".\WinDebug\2\vc60.pdb"
+	-@erase ".\WinDebug\2\vc60.idb"
 	-@erase ".\WinDebug\cvs.exe"
 	-@erase ".\WinDebug\regex.obj"
 	-@erase ".\WinDebug\normal.obj"
@@ -468,7 +468,7 @@ LINK32_OBJS= \
 	"$(INTDIR)/parseinfo.obj" \
 	"$(INTDIR)/login.obj" \
 	"$(INTDIR)/hash.obj" \
-	".\WinDebug\1\version.obj" \
+	"$(INTDIR)/1/version.obj" \
 	"$(INTDIR)/subr.obj" \
 	"$(INTDIR)/fncase.obj" \
 	"$(INTDIR)/fileattr.obj" \
@@ -499,7 +499,7 @@ LINK32_OBJS= \
 	"$(INTDIR)/infblock.obj" \
 	"$(INTDIR)/inftrees.obj" \
 	"$(INTDIR)/deflate.obj" \
-	".\WinDebug\1\diff.obj" \
+	"$(INTDIR)/2/diff.obj" \
 	"$(INTDIR)/analyze.obj" \
 	"$(INTDIR)/gzio.obj" \
 	"$(INTDIR)/patch.obj" \
@@ -527,7 +527,7 @@ LINK32_OBJS= \
 	"$(INTDIR)/commit.obj" \
 	"$(INTDIR)/diff3.obj" \
 	"$(INTDIR)/expand_path.obj" \
-	".\WinDebug\2\diff.obj" \
+	"$(INTDIR)/1/diff.obj" \
 	"$(INTDIR)/update.obj" \
 	"$(INTDIR)/waitpid.obj" \
 	"$(INTDIR)/adler32.obj" \
@@ -539,7 +539,7 @@ LINK32_OBJS= \
 	"$(INTDIR)/getopt.obj" \
 	"$(INTDIR)/entries.obj" \
 	"$(INTDIR)/getopt1.obj" \
-	".\WinDebug\2\version.obj" \
+	"$(INTDIR)/2/version.obj" \
 	"$(INTDIR)/yesno.obj" \
 	"$(INTDIR)/compress.obj" \
 	"$(INTDIR)/io.obj" \
@@ -768,7 +768,7 @@ NODEP_CPP_DIFF_=\
 	".\src\popen.h"\
 	".\lib\tcpip.h"\
 	
-INTDIR_SRC=.\WinRel\1
+INTDIR_SRC=$(INTDIR)/1
 "$(INTDIR_SRC)" :
     if not exist "$(INTDIR_SRC)/$(NULL)" mkdir "$(INTDIR_SRC)"
 
@@ -1382,7 +1382,7 @@ NODEP_CPP_VERSI=\
 	".\src\popen.h"\
 	".\lib\tcpip.h"\
 	
-INTDIR_SRC=.\WinRel\1
+INTDIR_SRC=$(INTDIR)/1
 "$(INTDIR_SRC)" :
     if not exist "$(INTDIR_SRC)/$(NULL)" mkdir "$(INTDIR_SRC)"
 
@@ -2035,7 +2035,7 @@ DEP_CPP_RCSCM=\
 	".\windows-NT\ndir.h"\
 	
 NODEP_CPP_RCSCM=\
-	".\src\diffrun.h"\
+	".\diff\diffrun.h"\
 	".\src\popen.h"\
 	".\lib\tcpip.h"\
 	
@@ -2045,7 +2045,7 @@ NODEP_CPP_RCSCM=\
 
 "$(INTDIR)\rcscmds.obj" : $(SOURCE) $(DEP_CPP_RCSCM) "$(INTDIR)"
    $(CPP) /nologo /ML /W3 /GX /Ob1 /I "windows-NT" /I "lib" /I "src" /I "zlib"\
- /D "NDEBUG" /D "WIN32" /D "_CONSOLE" /D "HAVE_CONFIG_H"\
+ /I "diff" /D "NDEBUG" /D "WIN32" /D "_CONSOLE" /D "HAVE_CONFIG_H"\
  /Fp"$(INTDIR)/cvsnt.pch" /YX /Fo"$(INTDIR)/" /c $(SOURCE)
 
 
@@ -3375,28 +3375,28 @@ DEP_CPP_DIFF_=\
 	{$(INCLUDE)}"\sys\Stat.h"\
 	".\windows-NT\ndir.h"\
 	
-INTDIR_SRC=.\WinRel\2
-"$(INTDIR_SRC)" :
-    if not exist "$(INTDIR_SRC)/$(NULL)" mkdir "$(INTDIR_SRC)"
+INTDIR_DIFF=$(INTDIR)/2
+"$(INTDIR_DIFF)" :
+    if not exist "$(INTDIR_DIFF)/$(NULL)" mkdir "$(INTDIR_DIFF)"
 
 !IF  "$(CFG)" == "cvsnt - Win32 Release"
 
 # PROP Intermediate_Dir "WinRel\2"
 
-".\WinRel\2\diff.obj" : $(SOURCE) $(DEP_CPP_DIFF_) "$(INTDIR_SRC)"
+".\WinRel\2\diff.obj" : $(SOURCE) $(DEP_CPP_DIFF_) "$(INTDIR_DIFF)"
    $(CPP) /nologo /ML /W3 /GX /Ob1 /I "windows-NT" /I "lib" /I "src" /I "zlib"\
  /D "NDEBUG" /D "WIN32" /D "_CONSOLE" /D "HAVE_CONFIG_H" /Fp"WinRel/cvsnt.pch"\
- /YX /Fo"$(INTDIR_SRC)/" /c $(SOURCE)
+ /YX /Fo"$(INTDIR_DIFF)/" /c $(SOURCE)
 
 
 !ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
 
 # PROP Intermediate_Dir "WinDebug\2"
 
-".\WinDebug\2\diff.obj" : $(SOURCE) $(DEP_CPP_DIFF_) "$(INTDIR_SRC)"
+".\WinDebug\2\diff.obj" : $(SOURCE) $(DEP_CPP_DIFF_) "$(INTDIR_DIFF)"
    $(CPP) /nologo /MLd /W3 /Gm /GX /Zi /Ob1 /I "windows-NT" /I "lib" /I "src"\
  /I "zlib" /D "_DEBUG" /D "WIN32" /D "_CONSOLE" /D "HAVE_CONFIG_H"\
- /Fp"WinDebug/cvsnt.pch" /YX /Fo"$(INTDIR_SRC)/" /Fd"$(INTDIR_SRC)/" /c\
+ /Fp"WinDebug/cvsnt.pch" /YX /Fo"$(INTDIR_DIFF)/" /Fd"$(INTDIR_DIFF)/" /c\
  $(SOURCE)
 
 
@@ -3570,28 +3570,28 @@ SOURCE=.\diff\version.c
 DEP_CPP_VERSI=\
 	".\windows-NT\config.h"\
 	
-INTDIR_SRC=.\WinRel\2
-"$(INTDIR_SRC)" :
-    if not exist "$(INTDIR_SRC)/$(NULL)" mkdir "$(INTDIR_SRC)"
+INTDIR_DIFF=$(INTDIR)/2
+"$(INTDIR_DIFF)" :
+    if not exist "$(INTDIR_DIFF)/$(NULL)" mkdir "$(INTDIR_DIFF)"
 
 !IF  "$(CFG)" == "cvsnt - Win32 Release"
 
 # PROP Intermediate_Dir "WinRel\2"
 
-".\WinRel\2\version.obj" : $(SOURCE) $(DEP_CPP_VERSI) "$(INTDIR_SRC)"
+".\WinRel\2\version.obj" : $(SOURCE) $(DEP_CPP_VERSI) "$(INTDIR_DIFF)"
    $(CPP) /nologo /ML /W3 /GX /Ob1 /I "windows-NT" /I "lib" /I "src" /I "zlib"\
  /D "NDEBUG" /D "WIN32" /D "_CONSOLE" /D "HAVE_CONFIG_H" /Fp"WinRel/cvsnt.pch"\
- /YX /Fo"$(INTDIR_SRC)/" /c $(SOURCE)
+ /YX /Fo"$(INTDIR_DIFF)/" /c $(SOURCE)
 
 
 !ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
 
 # PROP Intermediate_Dir "WinDebug\2"
 
-".\WinDebug\2\version.obj" : $(SOURCE) $(DEP_CPP_VERSI) "$(INTDIR_SRC)"
+".\WinDebug\2\version.obj" : $(SOURCE) $(DEP_CPP_VERSI) "$(INTDIR_DIFF)"
    $(CPP) /nologo /MLd /W3 /Gm /GX /Zi /Ob1 /I "windows-NT" /I "lib" /I "src"\
  /I "zlib" /D "_DEBUG" /D "WIN32" /D "_CONSOLE" /D "HAVE_CONFIG_H"\
- /Fp"WinDebug/cvsnt.pch" /YX /Fo"$(INTDIR_SRC)/" /Fd"$(INTDIR_SRC)/" /c\
+ /Fp"WinDebug/cvsnt.pch" /YX /Fo"$(INTDIR_DIFF)/" /Fd"$(INTDIR_DIFF)/" /c\
  $(SOURCE)
 
 
