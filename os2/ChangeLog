@@ -1,3 +1,7 @@
+Wed Jan 29 18:27:11 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* options.h, config.h (GREP): Remove; no longer used.
+
 Tue Jan 28 18:29:03 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* config.h: Remove SIZEOF_INT and SIZEOF_LONG; no longer needed
