@@ -1,5 +1,7 @@
 Sat Dec 16 00:14:19 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
+        * client.c (send_to_server): corrected comment.
+
         * client.h: prototype new func send_to_server().
 
         * add.c, admin.c, client.c, commit.c, diff.c, edit.c, history.c,
