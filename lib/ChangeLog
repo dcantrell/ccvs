@@ -1,3 +1,8 @@
+2004-11-04  Mark D. Baushke  <mdb@cvshome.org>
+
+	* sunos57-select.c: Move '#undef select' before system #include
+	statements to avoid conflicting declarations on BSDI BSD/OS 4.2.
+	
 2004-11-03  Mark D. Baushke  <mdb@cvshome.org>
 
 	* Makefile.am: Update from GNULIB.
