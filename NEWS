@@ -3,6 +3,8 @@ Changes since 1.11.14:
 
 GENERAL USER ISSUES
 
+* CVS on Cygwin no longer converts back slashes in paths into forward slashes.
+
 * Resurrected files now get their modes and timestamps set correctly and a
   longstanding bug involving resurrection of an uncommitted removal has been
   fixed.
