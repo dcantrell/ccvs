@@ -1,5 +1,7 @@
 Sun Apr 27 16:17:06 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* DIFFUTILS-2.7-BUG: New file.
+
 	* cvs.texinfo (File status): Refer to "Invoking CVS", not
 	"status", for status options.  Add paragraph about how "cvs -n -q
 	update" is another way to display file status.
