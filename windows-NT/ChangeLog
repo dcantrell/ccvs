@@ -1,5 +1,9 @@
 2005-03-07  Conrad T. Pino  <Conrad@Pino.com>
 
+	* config.h, config.h.in: Regenerate for config.h.in.in change.
+
+2005-03-07  Conrad T. Pino  <Conrad@Pino.com>
+
 	* config.h.in.in: Synchronize with ../config.h.in file.
 	Removed:
 		#define HAVE_GETCWD 1
