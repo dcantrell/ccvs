@@ -1,3 +1,8 @@
+Mon Jan 19 08:48:59 1998  Larry Jones  <larry.jones@sdrc.com>
+
+	* sanity.sh (errmsg1): Append test 168 output to log file.
+
+
 Sat Jan 17 08:01:51 1998  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* sanity.sh (ann-10, ann-11): Don't make assumptions about the
