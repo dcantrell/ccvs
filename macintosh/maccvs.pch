@@ -1,7 +1,13 @@
-#ifdef __POWERPC__
-#include <MacHeadersPPC>
+#ifdef powerc
+  #pragma precompile_target "cvspch.PPC"
 #else
-#include <MacHeaders68K>
+  #pragma precompile_target "cvspch.68K"
 #endif
 
+#define __dest_os	__mac_os
+
 #define HAVE_CONFIG_H
+
+#define MACOS			// GZIP Library
+
+//#define MSL_LIBRARY
