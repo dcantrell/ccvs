@@ -45,7 +45,8 @@ exit_help ()
     echo "		CVS-TO-TEST is found in)"
     echo "-e|--skipfail Treat tests that would otherwise be nonfatally skipped"
     echo "              for reasons like missing tools as failures, exiting"
-    echo "              with an error message."
+    echo "              with an error message.  Also treat warnings as"
+    echo "		failures."
     echo "-f FROM-TEST"
     echo "--from-test=FROM-TEST"
     echo "		run TESTS-TO-RUN, skipping all tests in the list before"
@@ -101,6 +102,14 @@ LANG=C
 export LANG
 LC_ALL=C
 export LC_ALL
+
+
+#
+# Initialize the test counts.
+#
+passed=0
+skipped=0
+warnings=0
 
 
 
@@ -1201,11 +1210,13 @@ require_ssh ()
 pass ()
 {
   echo "PASS: $1" >>${LOGFILE}
+  passed=`expr $passed + 1`
 }
 
 remoteonly ()
 {
   echo "SKIP: $1 (only tested in remote mode)" >>$LOGFILE
+  skipped=`expr $skipped + 1`
 }
 
 skip ()
@@ -1215,6 +1226,17 @@ skip ()
   else
     echo "SKIP: $1${2+ ($2)}" >>$LOGFILE
   fi
+  skipped=`expr $skipped + 1`
+}
+
+warn ()
+{
+  if $skipfail; then
+    fail "$1${2+ ($2)}"
+  else
+    echo "WARNING: $1${2+ ($2)}" >>$LOGFILE
+  fi
+  warnings=`expr $warnings + 1`
 }
 
 fail ()
@@ -1234,12 +1256,16 @@ verify_tmp_empty ()
     # Give the server some time to finish, then retry.
     sleep 1
     if $LS $TMPDIR/cvs-serv* >/dev/null 2>&1; then
-      fail "$1: Found cvs-serv* directories in $TMPDIR."
+      warn "$1" "Found cvs-serv* directories in $TMPDIR."
+      # The above will exit if $skipfail
+      rm -rf $TMPDIR/cvs-serv*
     fi
   fi
   if $LS $TMPDIR/cvs?????? >/dev/null 2>&1; then
     # A true value means ls found files/directories with these names.
-    fail "$1: Found cvsXXXXXX temp files in $TMPDIR."
+    warn "$1" "Found cvsXXXXXX temp files in $TMPDIR."
+    # The above will exit if $skipfail
+    rm -f ls $TMPDIR/cvs??????
   fi
 }
 
@@ -34238,7 +34264,39 @@ You have \[0\] altered files in this repository\."
 
 done # The big loop
 
-echo "OK, all tests completed."
+# Set up summary data for output.
+skippedoutput=
+warningsoutput=
+extendedinfo=
+if test $skipped -ne 0; then
+  skippedoutput="$skipped test group"
+  if test $skipped -ne 1; then
+    skippedoutput="${skippedoutput}s"
+  fi
+  skippedoutput="$skippedoutput skipped"
+fi
+if test $warnings -ne 0; then
+  warningsoutput="$warnings test"
+  if test $warnings -ne 1; then
+    warningsoutput="${warningsoutput}s"
+  fi
+  warningsoutput="$warningsoutput passed with warnings"
+fi
+if test -n "$skippedoutput" || test -n "$warningsoutput"; then
+  extendedinfo=" ("
+  if test -n "$skippedoutput"; then
+    extendedinfo="$extendedinfo$skippedoutput"
+  fi
+  if test -n "$skippedoutput" && test -n "$warningsoutput"; then
+    extendedinfo="$extendedinfo and "
+  fi
+  if test -n "$warningsoutput"; then
+    extendedinfo="$extendedinfo$warningsoutput"
+  fi
+  extendedinfo="$extendedinfo)"
+fi
+
+echo "OK, all $passed tests passed$extendedinfo."
 
 # TODO:
 # * Test `cvs update -d foo' (where foo does not exist).
