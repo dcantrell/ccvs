@@ -119,6 +119,9 @@ release (argc, argv)
     /* Construct the update command.  Be sure to add authentication and
        encryption if we are using them currently, else our child process may
        not be able to communicate with the server.  */
+    update_cmd = xmalloc (strlen (program_path)
+                        + strlen (current_parsed_root->original)
+                        + 1 + 3 + 3 + 16 + 1);
     sprintf (update_cmd, "%s %s%s-n -q -d %s update",
              program_path,
              cvsauthenticate ? "-a " : "",
