@@ -1,3 +1,9 @@
+Sat Mar 15 16:47:12 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* sanity.sh (modes): New tests.  Note that (for now) these are
+	just testing how CVS already behaves; I want to record that before
+	I move on to changing CVS's behavior with modes of RCS files.
+
 13 Mar 1997  Jim Kingdon
 
 	* subr.c (line2argv): Change argv_allocated from size_t to int.
