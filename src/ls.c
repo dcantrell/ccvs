@@ -22,6 +22,7 @@ static RCSNode *xrcsnode;
 static const char *const ls_usage[] =
 {
     "Usage: %s %s [-e | -l] [-RP] [-r rev] [-D date] [path...]\n",
+    "\t-d\tShow dead revisions (with tag when specified).\n",
     "\t-e\tDisplay in CVS/Entries format.\n",
     "\t-l\tDisplay all details.\n",
     "\t-P\tPrune empty directories.\n",
@@ -43,6 +44,7 @@ static bool recurse;
 static bool ls_prune_dirs;
 static char *regexp_match;
 static bool is_rls;
+static bool show_dead_revs;
 
 
 
@@ -64,14 +66,15 @@ ls (int argc, char **argv)
     tag_validated = false;
     recurse = false;
     ls_prune_dirs = false;
+    show_dead_revs = false;
 
     optind = 0;
 
     while ((c = getopt (argc, argv,
 #ifdef SERVER_SUPPORT
-           server_active ? "qelr:D:PR" :
+           server_active ? "qdelr:D:PR" :
 #endif /* SERVER_SUPPORT */
-           "elr:D:RP"
+           "delr:D:RP"
            )) != -1)
     {
 	switch (c)
@@ -89,6 +92,9 @@ ls (int argc, char **argv)
 		    usage (ls_usage);
 		break;
 #endif /* SERVER_SUPPORT */
+	    case 'd':
+		show_dead_revs = true;
+		break;
 	    case 'e':
 		entries_format = true;
 		break;
@@ -146,6 +152,8 @@ ls (int argc, char **argv)
 	    send_arg ("-P");
 	if (recurse)
 	    send_arg ("-R");
+	if (show_dead_revs)
+	    send_arg ("-d");
 	if (show_tag)
 	    option_with_arg ("-r", show_tag);
 	if (show_date)
@@ -294,6 +302,7 @@ ls_fileproc (void *callerdat, struct file_info *finfo)
     char *buf;
     size_t length;
     Node *p;
+    bool isdead;
 
     if (regexp_match)
     {
@@ -312,7 +321,12 @@ ls_fileproc (void *callerdat, struct file_info *finfo)
     }
 
     vers = Version_TS (finfo, NULL, show_tag, show_date, 1, 0);
-    if (!vers->vn_rcs)
+    /* Skip dead revisions unless specifically requested to do otherwise.
+     * We also bother to check for long_format so we can print the state.
+     */
+    if (vers->vn_rcs && (!show_dead_revs || long_format))
+	isdead = RCS_isdead (finfo->rcs, vers->vn_rcs);
+    if (!vers->vn_rcs || !show_dead_revs && isdead)
     {
         freevers_ts (&vers);
 	return 0;
@@ -331,10 +345,11 @@ ls_fileproc (void *callerdat, struct file_info *finfo)
                          outdate, vers->options,
                          show_tag ? "T" : "", show_tag ? show_tag : "");
     else if (long_format)
-	buf = asnprintf (NULL, &length, "%-5.5s%s %-9.9s%s %s\n",
+	buf = asnprintf (NULL, &length, "%-5.5s%s %-9.9s%s %s%s\n",
                          vers->options[0] != '\0' ? vers->options : "----",
                          outdate, vers->vn_rcs,
                          strlen (vers->vn_rcs) > 9 ? "+" : " ",
+                         show_dead_revs ? (isdead ? "dead " : "     ") : "",
                          finfo->file);
     else
 	buf = asnprintf (NULL, &length, "%s\n", finfo->file);
@@ -397,7 +412,8 @@ ls_direntproc (void *callerdat, const char *dir, const char *repos,
 	if (entries_format)
 	    buf = asnprintf (NULL, &length, "D/%s////\n", dir);
 	else if (long_format)
-	    buf = asnprintf (NULL, &length, "d--- %36s%s\n", "", dir);
+	    buf = asnprintf (NULL, &length, "d--- %36s%s%s\n", "",
+                             show_dead_revs ? "     " : "", dir);
 	else
 	    buf = asnprintf (NULL, &length, "%s\n", dir);
 
@@ -562,7 +578,7 @@ ls_proc (int argc, char **argv, char *xwhere, char *mwhere, char *mfile,
         which = W_LOCAL | W_REPOS;
     }
 
-    if (show_tag || show_date)
+    if (show_tag || show_date || show_dead_revs)
 	which |= W_ATTIC;
 
     if (show_tag != NULL && !tag_validated)

@@ -1,5 +1,16 @@
 2004-05-02  Derek Price  <derek@ximbiot.com>
 
+	* sanity.sh (ls): Add some new tests of ls -d flag.
+	(Original patch from Alexander Taler <dissent@cvshome.org>.)
+
+	* ls.c (ls): Accept -d to show dead files.
+	(ls_proc): Add W_ATTIC to start_recursion flags when user requests dead
+	files.
+	(ls_fileproc): Don't show dead files with -d.  Print "dead" in long
+	listings for dead files.
+
+2004-05-02  Derek Price  <derek@ximbiot.com>
+
 	* ls.c (ls_dirleaveproc): Return err.
 	(Original patch from Mark D. Baushke <mdb@cvshome.org>.)
 
