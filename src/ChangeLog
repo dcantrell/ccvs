@@ -1,3 +1,7 @@
+Wed Jun 05 10:07:29 1996  Mike Ladwig  <mike@twinpeaks.prc.com>
+
+	* src/client.c (read_line): Changed an occurence of '\n' to '\012'.
+
 Wed Jun  5 17:18:46 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* add.c (add_directory): Don't create the directory if noexec.

@@ -322,7 +322,7 @@ read_line (resultp, eof_ok)
 		error (1, 0, "end of file from server (consult above messages if any)");
 	}
 
-	if (c == '\n')
+	if (c == '\012')
 	    break;
 
 	result[input_index++] = c;
