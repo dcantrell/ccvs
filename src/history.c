@@ -649,7 +649,7 @@ history (argc, argv)
     if (histfile)
 	(void) strcpy (fname, histfile);
     else
-	(void) sprintf (fname, "%s/%s/%s", CVSroot,
+	(void) sprintf (fname, "%s/%s/%s", CVSroot_directory,
 			CVSROOTADM, CVSROOTADM_HISTORY);
 
     read_hrecs (fname);
@@ -678,7 +678,8 @@ history_write (type, update_dir, revs, name, repository)
 
     if (logoff)			/* History is turned off by cmd line switch */
 	return;
-    (void) sprintf (fname, "%s/%s/%s", CVSroot, CVSROOTADM, CVSROOTADM_HISTORY);
+    (void) sprintf (fname, "%s/%s/%s", CVSroot_directory,
+		    CVSROOTADM, CVSROOTADM_HISTORY);
 
     /* turn off history logging if the history file does not exist */
     if (!isfile (fname))

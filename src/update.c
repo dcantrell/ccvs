@@ -706,7 +706,7 @@ update_filesdone_proc (err, repository, update_dir)
     {
         /* If there is no CVS/Root file, add one */
         if (!isfile (CVSADM_ROOT))
-	    Create_Root( (char *) NULL, CVSroot );
+	    Create_Root ((char *) NULL, CVSroot_original);
     }
 
     return (err);

@@ -394,14 +394,27 @@ enum direnter_type
 typedef enum direnter_type Dtype;
 
 extern char *program_name, *program_path, *command_name;
-extern char *Rcsbin, *Editor, *CVSroot;
-extern char *CVSADM_Root;
+extern char *Rcsbin, *Editor;
 extern int cvsadmin_root;
 extern char *CurDir;
 extern int really_quiet, quiet;
 extern int use_editor;
 extern int cvswrite;
 extern mode_t cvsumask;
+
+/* Access method specified in CVSroot. */
+typedef enum {
+  local_method, server_method, pserver_method, kserver_method
+} CVSmethod;
+extern char *method_names[];	/* change this in root.c if you change
+				   the enum above */
+
+extern char *CVSroot_original;	/* the active, complete CVSroot string */
+extern int client_active;	/* nonzero if we are doing remote access */
+extern CVSmethod CVSroot_method; /* one of the enum values above */
+extern char *CVSroot_username;	/* the username or NULL if method == local */
+extern char *CVSroot_hostname;	/* the hostname or NULL if method == local */
+extern char *CVSroot_directory;	/* the directory name */
 
 extern int trace;		/* Show all commands */
 extern int noexec;		/* Don't modify disk anywhere */
@@ -442,6 +455,8 @@ List *Entries_Open PROTO((int aflag));
 char *Make_Date PROTO((char *rawdate));
 char *Name_Repository PROTO((char *dir, char *update_dir));
 char *Name_Root PROTO((char *dir, char *update_dir));
+int parse_cvsroot PROTO((char *CVSroot));
+void set_local_cvsroot PROTO((char *dir));
 void Create_Root PROTO((char *dir, char *rootdir));
 int same_directories PROTO((char *dir1, char *dir2));
 char *Short_Repository PROTO((char *repository));
@@ -678,6 +693,10 @@ extern int annotate PROTO ((int argc, char **argv));
 char *scramble PROTO ((char *str));
 char *descramble PROTO ((char *str));
 #endif /* AUTH_CLIENT_SUPPORT || AUTH_SERVER_SUPPORT */
+
+#ifdef AUTH_CLIENT_SUPPORT
+char *get_cvs_password PROTO((void));
+#endif /* AUTH_CLIENT_SUPPORT */
 
 extern void tag_check_valid PROTO ((char *, int, char **, int, int, char *));
 

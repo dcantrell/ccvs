@@ -351,8 +351,8 @@ checkout (argc, argv)
 	where = (char *) NULL;
 	if (!isfile (CVSADM))
 	{
-	    (void) sprintf (repository, "%s/%s/%s", CVSroot, CVSROOTADM,
-			    CVSNULLREPOS);
+	    (void) sprintf (repository, "%s/%s/%s", CVSroot_directory,
+			    CVSROOTADM, CVSNULLREPOS);
 	    if (!isfile (repository))
 	    {
 		mode_t omask;
@@ -421,10 +421,10 @@ safe_location ()
     char hardpath[PATH_MAX+5];
     int  x;
 
-    x = readlink(CVSroot, hardpath, sizeof hardpath - 1);
+    x = readlink(CVSroot_directory, hardpath, sizeof hardpath - 1);
     if (x == -1)
     {
-        strcpy(hardpath, CVSroot);
+        strcpy(hardpath, CVSroot_directory);
     }
     else
     {
@@ -476,7 +476,7 @@ checkout_proc (pargc, argv, where, mwhere, mfile, shorten,
      */
 
     /* set up the repository (maybe) for the bottom directory */
-    (void) sprintf (repository, "%s/%s", CVSroot, argv[0]);
+    (void) sprintf (repository, "%s/%s", CVSroot_directory, argv[0]);
 
     /* save the original value of preload_update_dir */
     if (preload_update_dir != NULL)

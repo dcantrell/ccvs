@@ -91,91 +91,31 @@ login (argc, argv)
     size_t linebuf_len;
     int root_len, already_entered = 0;
 
-    /* Make this a "fully-qualified" CVSroot if necessary. */
-    if (! strchr (CVSroot, '@'))
+    if (CVSroot_method != pserver_method)
     {
-	/* We need to prepend "user@host:". */
-	char *tmp;
-
-	printf ("Repository \"%s\" not fully-qualified.\n", CVSroot);
-	printf ("Please enter \"user@host:/path\": ");
-	fflush (stdout);
-	getline (&linebuf, &linebuf_len, stdin);
-
-	tmp = xmalloc (strlen (linebuf) + 1);
-
-	/* Give it some permanent storage. */
-	strcpy (tmp, linebuf);
-	tmp[strlen (linebuf) - 1] = '\0';
-	CVSroot = tmp;
-
-	/* Reset. */
-	free (linebuf);
-	linebuf = (char *) NULL;
-    }
-
-    if (CVSroot[0] != ':')
-    {
-	/* Then we need to prepend ":pserver:". */
-	char *tmp;
-
-	tmp = xmalloc (strlen (":pserver:") + strlen (CVSroot) + 1);
-	strcpy (tmp, ":pserver:");
-	strcat (tmp, CVSroot);
-	CVSroot = tmp;
-    }
-
-    /* Check to make sure it's fully-qualified before going on. 
-     * Fully qualified in this context means it has both a user and a
-     * host:repos portion.
-     */
-    {
-	char *r;
-
-	/* After confirming that CVSroot is non-NULL, we skip past the
-	   initial ":pserver:" to test the rest of it. */
-
-	if (! CVSroot)
-	    error (1, 0, "CVSroot is NULL");
-	else if (! strchr ((r = (CVSroot + strlen (":pserver:"))), '@'))
-	    goto not_fqrn;
-	else if (! strchr (r, ':'))
-	    goto not_fqrn;
-
-	if (0)        /* Lovely. */
-	{
-	not_fqrn:
-	    error (0, 0, "CVSroot not fully-qualified: %s", CVSroot);
-	    error (1, 0, "should be format user@host:/path/to/repository");
-	}
+	error (0, 0, "can only use pserver method with `login' command");
+	error (1, 0, "CVSROOT: %s", CVSroot_original);
     }
     
-    /* CVSroot is now fully qualified and has ":pserver:" prepended.
-       We'll print out most of it so user knows exactly what is being
-       dealt with here.  */
+    if (! CVSroot_username)
     {
-	char *s;
-	s = strchr (CVSroot, ':');
-	s++;
-	s = strchr (s, ':');
-	s++;
-
-	if (s == NULL)
-	    error (1, 0, "NULL CVSroot");
-
-	printf ("(Logging in to %s)\n", s);
-	fflush (stdout);
+	error (0, 0, "CVSROOT \"%s\" is not fully-qualified.",
+	       CVSroot_original);
+	error (1, 0, "Please make sure to specify \"user@host\"!");
     }
+
+    printf ("(Logging in to %s@%s)\n", CVSroot_username, CVSroot_hostname);
+    fflush (stdout);
 
     passfile = construct_cvspass_filename ();
     typed_password = getpass ("CVS password: ");
     typed_password = scramble (typed_password);
 
     /* Force get_cvs_password() to use this one (when the client
-     * confirms the new password with the server), instead of consulting
-     * the file.  We make a new copy because cvs_password will get
-     * zeroed by connect_to_server().
-     */
+     * confirms the new password with the server), instead of
+     * consulting the file.  We make a new copy because cvs_password
+     * will get zeroed by connect_to_server().  */
+
     cvs_password = xstrdup (typed_password);
 
     if (connect_to_pserver (NULL, NULL, 1) == 0)
@@ -195,7 +135,7 @@ login (argc, argv)
      *    append new entry to the end of the file.
      */
 
-    root_len = strlen (CVSroot);
+    root_len = strlen (CVSroot_original);
 
     /* Yes, the method below reads the user's password file twice.  It's
        inefficient, but we're not talking about a gig of data here. */
@@ -208,7 +148,7 @@ login (argc, argv)
 	/* Check each line to see if we have this entry already. */
 	while (getline (&linebuf, &linebuf_len, fp) >= 0)
         {
-	    if (strncmp (CVSroot, linebuf, root_len) == 0)
+          if (strncmp (CVSroot_original, linebuf, root_len) == 0)
             {
 		already_entered = 1;
 		break;
@@ -261,10 +201,10 @@ login (argc, argv)
 	    linebuf = (char *) NULL;
 	    while (getline (&linebuf, &linebuf_len, fp) >= 0)
             {
-		if (strncmp (CVSroot, linebuf, root_len))
-		    fprintf (tmp_fp, "%s", linebuf);
-		else
-		    fprintf (tmp_fp, "%s %s\n", CVSroot, typed_password);
+              if (strncmp (CVSroot_original, linebuf, root_len))
+                fprintf (tmp_fp, "%s", linebuf);
+              else
+                fprintf (tmp_fp, "%s %s\n", CVSroot_original, typed_password);
 
 		free (linebuf);
 		linebuf = (char *) NULL;
@@ -285,8 +225,8 @@ login (argc, argv)
 	    return 1;
         }
 
-	fprintf (fp, "%s %s\n", CVSroot, typed_password);
-	fclose (fp);
+      fprintf (fp, "%s %s\n", CVSroot_original, typed_password);
+      fclose (fp);
     }
 
     /* Utter, total, raving paranoia, I know. */
@@ -335,7 +275,21 @@ get_cvs_password ()
       return p;
     }
 
-  /* Else get it from the file. */
+  /* Else get it from the file.  First make sure that the CVSROOT
+   * variable has the appropriate fields filled in. */
+
+  if (CVSroot_method != pserver_method)
+    {
+      error (0, 0, "can only call GET_CVS_PASSWORD  with pserver method");
+      error (1, 0, "CVSROOT: %s", CVSroot_original);
+    }
+    
+  if (! CVSroot_username)
+    {
+      error (0, 0, "CVSROOT \"%s\" is not fully-qualified.", CVSroot_original);
+      error (1, 0, "Please make sure to specify \"user@host\"!");
+    }
+
   passfile = construct_cvspass_filename ();
   fp = fopen (passfile, "r");
   if (fp == NULL)
@@ -345,12 +299,12 @@ get_cvs_password ()
       error (1, 0, "use \"cvs login\" to log in first");
     }
 
-  root_len = strlen (CVSroot);
+  root_len = strlen (CVSroot_original);
 
   /* Check each line to see if we have this entry already. */
   while (getline (&linebuf, &linebuf_len, fp) >= 0)
     {
-      if (strncmp (CVSroot, linebuf, root_len) == 0)
+      if (strncmp (CVSroot_original, linebuf, root_len) == 0)
         {
           /* This is it!  So break out and deal with linebuf. */
           found_it = 1;

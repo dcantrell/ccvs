@@ -768,11 +768,11 @@ notify_do (type, filename, who, val, watches, repository)
 	    size_t line_len = 0;
 
 	    args.notifyee = NULL;
-	    usersname = xmalloc (strlen (CVSroot)
+	    usersname = xmalloc (strlen (CVSroot_directory)
 				 + sizeof CVSROOTADM
 				 + sizeof CVSROOTADM_USERS
 				 + 20);
-	    strcpy (usersname, CVSroot);
+	    strcpy (usersname, CVSroot_directory);
 	    strcat (usersname, "/");
 	    strcat (usersname, CVSROOTADM);
 	    strcat (usersname, "/");

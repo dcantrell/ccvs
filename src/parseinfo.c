@@ -32,7 +32,7 @@ Parse_Info (infofile, repository, callproc, all)
     char *cp, *exp, *value, *srepos;
     const char *regex_err;
 
-    if (CVSroot == NULL)
+    if (CVSroot_original == NULL)
     {
 	/* XXX - should be error maybe? */
 	error (0, 0, "CVSROOT variable not set");
@@ -40,7 +40,7 @@ Parse_Info (infofile, repository, callproc, all)
     }
 
     /* find the info file and open it */
-    (void) sprintf (infopath, "%s/%s/%s", CVSroot,
+    (void) sprintf (infopath, "%s/%s/%s", CVSroot_directory,
 		    CVSROOTADM, infofile);
     if ((fp_info = fopen (infopath, "r")) == NULL)
 	return (0);			/* no file -> nothing special done */

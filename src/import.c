@@ -138,14 +138,14 @@ import (argc, argv)
     /* XXX - this should be a module, not just a pathname */
     if (! isabsolute (argv[0]))
     {
-	if (CVSroot == NULL)
+	if (CVSroot_directory == NULL)
 	{
 	    error (0, 0, "missing CVSROOT environment variable\n");
 	    error (1, 0, "Set it or specify the '-d' option to %s.",
 		   program_name);
 	}
-	(void) sprintf (repository, "%s/%s", CVSroot, argv[0]);
-	repos_len = strlen (CVSroot);
+	(void) sprintf (repository, "%s/%s", CVSroot_directory, argv[0]);
+	repos_len = strlen (CVSroot_directory);
     }
     else
     {
