@@ -1017,6 +1017,7 @@ if test x"$*" = x; then
 	tests="${tests} update-p import-after-initial branch-after-import"
 	tests="${tests} join join2 join3 join4 join5 join6"
 	tests="${tests} join-readonly-conflict join-admin join-admin-2"
+	tests="${tests} join-rm"
 	tests="${tests} new newb conflicts conflicts2 conflicts3"
 	tests="${tests} clean"
 	tests="${tests} keywordexpand"
@@ -9738,6 +9739,183 @@ e already contains the differences between 1\.1 and 1\.2"
 	  cd ../..
 	  rm -rf 1
 	  rm -rf ${CVSROOT_DIRNAME}/$module
+	  ;;
+
+	join-rm)
+	  # This first half of this test checks that a single-argument merge
+	  # from a branch is capable of removing files.
+	  #
+	  # The second half verifies that an update to another location with an
+	  # uncommitted removal will transfer the destination branch of the
+	  # removal.
+
+	  module=join-rm
+	  mkdir $module; cd $module
+
+	  dotest join-rm-init-1 "$testcvs -q co -l ." ''
+	  mkdir $module
+	  dotest join-rm-init-2 "$testcvs -q add $module" \
+"Directory $CVSROOT_DIRNAME/$module added to the repository"
+	  cd $module
+
+	  # add some files.
+	  touch a b c d e f g
+	  dotest join-rm-init-3 "$testcvs -Q add a b c d e f g"
+	  dotest join-rm-init-4 "$testcvs -Q ci -m add-em" \
+"RCS file: $CVSROOT_DIRNAME/join-rm/a,v
+done
+Checking in a;
+$CVSROOT_DIRNAME/join-rm/a,v  <--  a
+initial revision: 1\.1
+done
+RCS file: $CVSROOT_DIRNAME/join-rm/b,v
+done
+Checking in b;
+$CVSROOT_DIRNAME/join-rm/b,v  <--  b
+initial revision: 1\.1
+done
+RCS file: $CVSROOT_DIRNAME/join-rm/c,v
+done
+Checking in c;
+$CVSROOT_DIRNAME/join-rm/c,v  <--  c
+initial revision: 1\.1
+done
+RCS file: $CVSROOT_DIRNAME/join-rm/d,v
+done
+Checking in d;
+$CVSROOT_DIRNAME/join-rm/d,v  <--  d
+initial revision: 1\.1
+done
+RCS file: $CVSROOT_DIRNAME/join-rm/e,v
+done
+Checking in e;
+$CVSROOT_DIRNAME/join-rm/e,v  <--  e
+initial revision: 1\.1
+done
+RCS file: $CVSROOT_DIRNAME/join-rm/f,v
+done
+Checking in f;
+$CVSROOT_DIRNAME/join-rm/f,v  <--  f
+initial revision: 1\.1
+done
+RCS file: $CVSROOT_DIRNAME/join-rm/g,v
+done
+Checking in g;
+$CVSROOT_DIRNAME/join-rm/g,v  <--  g
+initial revision: 1\.1
+done"
+	  
+	  # create the branch and update to it
+	  dotest join-rm-init-5 "$testcvs -Q tag -b br"
+	  dotest join-rm-init-6 "$testcvs -Q up -rbr"
+
+	  # remove a few files from the branch
+	  dotest join-rm-init-7 "$testcvs -Q rm -f b d g"
+	  dotest join-rm-init-8 "$testcvs -Q ci -mrm" \
+"Removing b;
+$CVSROOT_DIRNAME/join-rm/b,v  <--  b
+new revision: delete; previous revision: 1\.1\.2
+done
+Removing d;
+$CVSROOT_DIRNAME/join-rm/d,v  <--  d
+new revision: delete; previous revision: 1\.1\.2
+done
+Removing g;
+$CVSROOT_DIRNAME/join-rm/g,v  <--  g
+new revision: delete; previous revision: 1\.1\.2
+done"
+
+	  # update to the trunk
+	  dotest join-rm-init-9 "$testcvs -Q up -A"
+
+	  # now for the test - try and merge the removals.
+	  dotest join-rm-1 "$testcvs -q up -jbr" \
+"$SPROG update: scheduling \`b' for removal
+$SPROG update: scheduling \`d' for removal
+$SPROG update: scheduling \`g' for removal"
+
+	  # And make sure the merge took
+	  dotest join-rm-2 "$testcvs -qn up" \
+"R b
+R d
+R g"
+
+	  dotest join-rm-3 "$testcvs -q ci -m 'save the merge'" \
+"Removing b;
+$CVSROOT_DIRNAME/join-rm/b,v  <--  b
+new revision: delete; previous revision: 1\.1
+done
+Removing d;
+$CVSROOT_DIRNAME/join-rm/d,v  <--  d
+new revision: delete; previous revision: 1\.1
+done
+Removing g;
+$CVSROOT_DIRNAME/join-rm/g,v  <--  g
+new revision: delete; previous revision: 1\.1
+done"
+
+	  # and verify that it was the head revision which was removed.
+	  dotest join-rm-4 "$testcvs -q log b"  "
+RCS file: $CVSROOT_DIRNAME/join-rm/Attic/b,v
+Working file: b
+head: 1\.2
+branch:
+locks: strict
+access list:
+symbolic names:
+	br: 1\.1\.0\.2
+keyword substitution: kv
+total revisions: 3;	selected revisions: 3
+description:
+----------------------------
+revision 1\.2
+date: [0-9/]* [0-9:]*;  author: $username;  state: dead;  lines: ${PLUS}0 -0
+save the merge
+----------------------------
+revision 1\.1
+date: [0-9/]* [0-9:]*;  author: $username;  state: Exp;
+branches:  1.1.2;
+add-em
+----------------------------
+revision 1\.1\.2\.1
+date: [0-9/]* [0-9:]*;  author: $username;  state: dead;  lines: ${PLUS}0 -0
+rm
+============================================================================="
+
+	  # go back to the branch to set up for the second set of tests
+	  dotest join-rm-init-10 "$testcvs -Q up -rbr"
+	  dotest join-rm-init-11 "$testcvs -Q rm -f a"
+	  dotest join-rm-init-12 "$testcvs -Q ci -m rma" \
+"Removing a;
+$CVSROOT_DIRNAME/join-rm/a,v  <--  a
+new revision: delete; previous revision: 1\.1\.2
+done"
+
+	  # now the test: update to the trunk
+	  #
+	  # FIXCVS: This update should merge the removal to the trunk.  It does
+	  # not.
+	  dotest join-rm-5 "$testcvs -q up -A" "U a"
+
+	  # and verify that there is no sticky tag
+	  dotest join-rm-6 "$testcvs status a" \
+"===================================================================
+File: a                	Status: Up-to-date
+
+   Working revision:	1\.1.*
+   Repository revision:	1\.1	$CVSROOT_DIRNAME/join-rm/a,v
+   Sticky Tag:		(none)
+   Sticky Date:		(none)
+   Sticky Options:	(none)"
+
+	  if $keep; then
+	    echo Keeping $TESTDIR and exiting due to --keep
+            exit 0
+	  fi
+
+	  cd ../..
+	  rm -rf $CVSROOT_DIRNAME/$module
+	  rm -r $module
 	  ;;
 
 	new) # look for stray "no longer pertinent" messages.

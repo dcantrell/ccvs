@@ -3,6 +3,8 @@ Changes since 1.12.5:
 
 GENERAL USER ISSUES
 
+* Some previously untested behavior is now being tested.
+
 * Misc error message fixes for consistency.
 
 * Some previously untested behavior is now being tested.

@@ -1,5 +1,9 @@
 2004-02-02  Derek Price  <derek@ximbiot.com>
 
+	* sanity.sh (join-rm): New test for issue #104 & #159.
+
+2004-02-02  Derek Price  <derek@ximbiot.com>
+
 	* update.c (join_file): Correct status message for consistency.
 
 2004-02-02  Derek Price  <derek@ximbiot.com>
