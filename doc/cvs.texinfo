@@ -7141,10 +7141,10 @@ appropriate to the operating system in use on the
 client.  For systems, like unix, which use linefeed
 only to terminate lines, this is very similar to
 @samp{-ko}.  For more information on binary files, see
-@ref{Binary files}. From CVS version XXXX on, however,
-@samp{-kb} is not longer overridden by a @samp{-k} option
-to the @code{checkout}, @code{diff} or @code{update} command
-while @samp{-ko} still is.
+@ref{Binary files}.  In @sc{cvs} version 1.12.2 and later
+@samp{-kb}, as set by @code{cvs add}, @code{cvs admin}, or
+@code{cvs import} may not be overridden by a @samp{-k} option
+specified on the command line.
 
 @item -kv
 Generate only keyword values for keyword strings.  For
