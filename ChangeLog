@@ -1,3 +1,7 @@
+2004-05-20  Derek Price  <derek@ximbiot.com>
+
+	* NEWS: Add `cvs ls' to localtime item.  1.12.9, not 1.12.8.
+
 2004-05-19  Derek Price  <derek@ximbiot.com>
 
 	* TODO (224): Remove completed item.
