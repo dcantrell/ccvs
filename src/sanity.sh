@@ -237,7 +237,7 @@ cd ${TESTDIR}
 # facilitate understanding the tests.
 
 if test x"$*" = x; then
-	tests="basica basic0 basic1 basic2 rtags death branches import new conflicts modules mflag errmsg1 devcom ignore binfiles"
+	tests="basica basic1 basic2 rtags death branches import new conflicts modules mflag errmsg1 devcom ignore binfiles"
 else
 	tests="$*"
 fi
@@ -363,12 +363,19 @@ touch ${CVSROOT_DIRNAME}/CVSROOT/history
 for what in $tests; do
 	case $what in
 	basica)
-	  # Similar in spirit to some of the basic0, basic1, and basic2
+	  # Similar in spirit to some of the basic1, and basic2
 	  # tests, but hopefully a lot faster.  Also tests operating on
 	  # files two directories down *without* operating on the parent dirs.
 	  mkdir ${CVSROOT_DIRNAME}/first-dir
 	  dotest basica-1 "${testcvs} -q co first-dir" ''
 	  cd first-dir
+
+	  # Test a few operations, to ensure they gracefully do
+	  # nothing in an empty directory.
+	  dotest basica-1a0 "${testcvs} -q update" ''
+	  dotest basica-1a1 "${testcvs} -q diff -c" ''
+	  dotest basica-1a2 "${testcvs} -q status" ''
+
 	  mkdir sdir
 	  dotest basica-2 "${testcvs} add sdir" \
 'Directory /tmp/cvs-sanity/cvsroot/first-dir/sdir added to the repository'
@@ -405,78 +412,6 @@ cvs \[[a-z]* aborted\]: correct above errors first!'
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
 	  rm -r first-dir
 	  ;;
-
-	basic0) # Now, let's build something.
-#		mkdir first-dir
-		# this doesn't yet work, though I think maybe it should.  xoxorich.
-#		if ${CVS} add first-dir ; then
-#			true
-#		else
-#			echo cvs does not yet add top level directories cleanly.
-			mkdir ${CVSROOT_DIRNAME}/first-dir
-#		fi
-#		rm -rf first-dir
-
-		# check out an empty directory
-		if ${CVS} co first-dir ; then
-		  if [ -r first-dir/CVS/Entries ] ; then
-		    echo "PASS: test 6" >>${LOGFILE}
-		  else
-		    echo "FAIL: test 6" | tee -a ${LOGFILE}; exit 1
-		  fi
-		else
-		  echo "FAIL: test 6" | tee -a ${LOGFILE}; exit 1
-		fi
-
-		# update the empty directory
-		if ${CVS} update first-dir ; then
-		  echo "PASS: test 7" >>${LOGFILE}
-		else
-		  echo "FAIL: test 7" | tee -a ${LOGFILE}; exit 1
-		fi
-
-		# diff -u the empty directory
-		if ${CVS} diff -u first-dir ; then
-		  echo "PASS: test 8" >>${LOGFILE}
-		else
-		  echo "FAIL: test 8" | tee -a ${LOGFILE}; exit 1
-		fi
-
-		# diff -c the empty directory
-		if ${CVS} diff -c first-dir ; then
-		  echo "PASS: test 9" >>${LOGFILE}
-		else
-		  echo "FAIL: test 9" | tee -a ${LOGFILE}; exit 1
-		fi
-
-		# log the empty directory
-		if ${CVS} log first-dir ; then
-		  echo "PASS: test 10" >>${LOGFILE}
-		else
-		  echo "FAIL: test 10" | tee -a ${LOGFILE}; exit 1
-		fi
-
-		# status the empty directory
-		if ${CVS} status first-dir ; then
-		  echo "PASS: test 11" >>${LOGFILE}
-		else
-		  echo "FAIL: test 11" | tee -a ${LOGFILE}; exit 1
-		fi
-
-		# tag the empty directory
-		if ${CVS} tag first first-dir  ; then
-		  echo "PASS: test 12" >>${LOGFILE}
-		else
-		  echo "FAIL: test 12" | tee -a ${LOGFILE}; exit 1
-		fi
-
-		# rtag the empty directory
-		if ${CVS} rtag empty first-dir  ; then
-		  echo "PASS: test 13" >>${LOGFILE}
-		else
-		  echo "FAIL: test 13" | tee -a ${LOGFILE}; exit 1
-		fi
-		;;
 
 	basic1) # first dive - add a files, first singly, then in a group.
 		rm -rf ${CVSROOT_DIRNAME}/first-dir
