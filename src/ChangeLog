@@ -1,3 +1,11 @@
+Mon Jul  7 14:39:33 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* client.c (start_server): Add comment about logfiles if there are
+	several connections to the server.
+	(log_buffer_shutdown): Close the logfile after shutting down the
+	underlying buffer.  This way at least we get the last set of
+	logfiles rather than a bizarre mishmash.
+
 1997-07-06  enami tsugutomo  <enami@but-b.or.jp>
 
 	* logmsg.c (do_verify): Unlink temporary file before call error().
