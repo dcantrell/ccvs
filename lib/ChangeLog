@@ -1,5 +1,8 @@
 Fri Aug  4 00:01:24 1995  Jim Meyering  (meyering@comco.com)
 
+	* xgetwd.c: Don't declare free.  A K&R style declaration gets
+	a conflict on some Sun systems when compiling with acc.
+
 	* save-cwd.c: New file.
 	* save-cwd.h: New file.
 	* Makefile.in (SOURCES): Add save-cwd.c
