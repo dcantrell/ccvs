@@ -1,3 +1,10 @@
+2001-06-05  Larry Jones  <larry.jones@sdrc.com>
+
+	* rcs.c (RCS_unlock): Note when breaking someone else's lock.
+	(Reported by MURVAI-BUZOGANY Laszlo
+	<Laszlo.MURVAI-BUZOGANY@gt-systems.hu>.)
+	* sanity.sh (reserved-14): Update to match.
+
 2001-06-05  Derek Price  <dprice@collab.net>
 
 	* sanity.sh (crerepos-6a): Set CVS_RSH=/bin/false...  this is a local
