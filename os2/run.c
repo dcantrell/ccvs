@@ -18,28 +18,15 @@
 
 #include "cvs.h"
 
-/* todo: I wonder what the heck this was: */
-/* #define WIN32_LEAN_AND_MEAN /*
-
-#include <os2.h>
+/* kff: todo: */
+/* #include <os2.h> */
+#include <stdarg.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <process.h>
 #include <errno.h>
 #include <io.h>
 #include <fcntl.h>
-
-#ifdef HAVE_VPRINTF
-#if defined (USE_PROTOTYPES) ? USE_PROTOTYPES : defined (__STDC__)
-#include <stdarg.h>
-#define VA_START(args, lastarg) va_start(args, lastarg)
-#else
-#include <varargs.h>
-#define VA_START(args, lastarg) va_start(args)
-#endif
-#else
-#define va_alist a1, a2, a3, a4, a5, a6, a7, a8
-#define va_dcl char *a1, *a2, *a3, *a4, *a5, *a6, *a7, *a8;
-#endif
 
 static void run_add_arg PROTO((const char *s));
 static void run_init_prog PROTO((void));
@@ -55,7 +42,8 @@ extern char *strtok ();
  * Then, optionally call run_arg() for each additional argument that you'd like
  * to pass to the executed program.
  * 
- * Finally, call run_exec() to execute the program with the specified arguments.
+ * Finally, call run_exec() to execute the program with the specified
+ * arguments. 
  * The execvp() syscall will be used, so that the PATH is searched correctly.
  * File redirections can be performed in the call to run_exec().
  */
@@ -64,20 +52,10 @@ static char **run_argv;
 static int run_argc;
 static int run_argc_allocated;
 
-/* VARARGS */
-#if defined (HAVE_VPRINTF) && (defined (USE_PROTOTYPES) ? USE_PROTOTYPES : defined (__STDC__))
 void 
 run_setup (const char *fmt,...)
-#else
-void 
-run_setup (fmt, va_alist)
-    char *fmt;
-    va_dcl
-#endif
 {
-#ifdef HAVE_VPRINTF
     va_list args;
-#endif
     char *cp;
     int i;
 
@@ -95,13 +73,9 @@ run_setup (fmt, va_alist)
     run_argc = 0;
 
     /* process the varargs into run_prog */
-#ifdef HAVE_VPRINTF
-    VA_START (args, fmt);
+    va_start (args, fmt);
     (void) vsprintf (run_prog, fmt, args);
     va_end (args);
-#else
-    (void) sprintf (run_prog, fmt, a1, a2, a3, a4, a5, a6, a7, a8);
-#endif
 
     /* put each word into run_argv, allocating it as we go */
     for (cp = strtok (run_prog, " \t"); cp; cp = strtok ((char *) NULL, " \t"))
@@ -115,31 +89,16 @@ run_arg (s)
     run_add_arg (s);
 }
 
-/* VARARGS */
-#if defined (HAVE_VPRINTF) && (defined (USE_PROTOTYPES) ? USE_PROTOTYPES : defined (__STDC__))
-void 
 run_args (const char *fmt,...)
-#else
-void 
-run_args (fmt, va_alist)
-    char *fmt;
-    va_dcl
-#endif
 {
-#ifdef HAVE_VPRINTF
     va_list args;
-#endif
 
     run_init_prog ();
 
     /* process the varargs into run_prog */
-#ifdef HAVE_VPRINTF
-    VA_START (args, fmt);
+    va_start (args, fmt);
     (void) vsprintf (run_prog, fmt, args);
     va_end (args);
-#else
-    (void) sprintf (run_prog, fmt, a1, a2, a3, a4, a5, a6, a7, a8);
-#endif
 
     /* and add the (single) argument to the run_argv list */
     run_add_arg (run_prog);
@@ -180,7 +139,8 @@ run_add_arg (s)
 	run_argc++;
     }
     else
-	run_argv[run_argc] = (char *) 0;	/* not post-incremented on purpose! */
+        /* not post-incremented on purpose! */
+	run_argv[run_argc] = (char *) 0;
 }
 
 static void
@@ -310,6 +270,7 @@ run_exec (stin, stout, sterr, flags)
     }
 
     /* Recognize the return code for an interrupted subprocess.  */
+	/* kff: todo: hmmm... */
     if (rval == CONTROL_C_EXIT)
         return 2;
     else
@@ -387,6 +348,8 @@ Popen (cmd, mode)
 
 
 /* Running children with pipes connected to them.  */
+
+/* kff: todo: here we are. */
 
 /* It's kind of ridiculous the hoops we're jumping through to get
    this working.  _pipe and dup2 and _spawnmumble work just fine, except
@@ -733,3 +696,4 @@ void
 close_on_exec (int fd)
 {
 }
+

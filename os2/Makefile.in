@@ -67,7 +67,8 @@ OS2_SOURCES = \
        mkdir.c \
        pwd.c \
        filesubr.c \
-       dirent.c
+       dirent.c \
+       run.c
 
 # sources we use from the common src dir, ../src
 COMMON_SOURCES = \

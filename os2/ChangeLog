@@ -1,5 +1,13 @@
 Wed Nov  8 11:14:46 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
+        * run.c: include <stdarg.h> and <stdio.h>.
+        Change all VA_START to va_start.
+        Don't ask HAVE_VPRINTF -- this is an OS/2-specific file and we can
+        take things for granted.
+        Started simplifying old NT `HANDLE' code.
+        
+        * Makefile.in (OS2_SOURCES): added run.c.
+
         * run.c: new file, copied from ../windows-NT/run.c.  Started
         making changes for OS/2.
 
