@@ -1,3 +1,7 @@
+1998-08-26  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* TESTS: Update comments concerning Solaris sort and LC_COLLATE.
+
 1998-08-17  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* INSTALL: Update Irix, Ultrix, and NetBSD/Alpha with test results
