@@ -465,7 +465,7 @@ main (argc, argv)
 	   running as Kerberos server as root.  Do the authentication as
 	   the very first thing, to minimize the amount of time we are
 	   running as root.  */
-	if (strcmp (argv[0], "kserver") == 0)
+	if (strcmp (command_name, "kserver") == 0)
 	{
 	    kserver_authenticate_connection ();
 
@@ -476,7 +476,7 @@ main (argc, argv)
 
 
 #if defined(AUTH_SERVER_SUPPORT) && defined(SERVER_SUPPORT)
-	if (strcmp (argv[0], "pserver") == 0)
+	if (strcmp (command_name, "pserver") == 0)
 	{
 	    /* Gets username and password from client, authenticates, then
 	       switches to run as that user and sends an ACK back to the
@@ -494,7 +494,7 @@ main (argc, argv)
            directory after the connection is made. */
 
 #ifdef SERVER_SUPPORT
-	if (strcmp (argv[0], "server") != 0)
+	if (strcmp (command_name, "server") != 0)
 #endif
 	{
 	    char *CVSADM_Root;
