@@ -1,3 +1,18 @@
+Sat Oct 19 16:09:55 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	For reference, this takes CVS's text segment from 348348 bytes to
+	347420 bytes.
+	* server.c (requests): Change Directory to rq_essential
+	per change in doc/cvsclient.texi.
+	* client.c: Remove use_directory and all code which executed if
+	it wasn't set.  This includes the get_short_pathname function.
+	* server.c: Likewise, for use_dir_and_repos.
+	(serve_repository): Give a fatal error.
+	* server.c (requests): Remove Lost.  Change Unchanged to rq_essential.
+	(serve_lost): Removed.
+	* server.c, server.h, client.c, vers_ts.c: Remove use_unchanged,
+	code to set it, and all code which executed if it wasn't set.
+
 Sat Oct 19 12:44:08 1996  J. Richard Sladkey  <jrs@world.std.com>
 			  and Jim Kingdon  <kingdon@harvey.cyclic.com>
 

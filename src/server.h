@@ -140,5 +140,3 @@ struct request
 
 /* Table of requests ending with an entry with a NULL name.  */
 extern struct request requests[];
-
-extern int use_unchanged;

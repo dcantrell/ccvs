@@ -440,8 +440,6 @@ serve_valid_responses (arg)
     }
 }
 
-static int use_dir_and_repos = 0;
-
 static void
 serve_root (arg)
     char *arg;
@@ -640,7 +638,13 @@ static void
 serve_repository (arg)
     char *arg;
 {
-    dirswitch (arg + 1, arg);
+    pending_error_text = malloc (80);
+    if (pending_error_text == NULL)
+	pending_error = ENOMEM;
+    else
+	strcpy (pending_error_text,
+		"E Repository request is obsolete; aborted");
+    return;
 }
 
 static void
@@ -650,7 +654,6 @@ serve_directory (arg)
     int status;
     char *repos;
 
-    use_dir_and_repos = 1;
     status = buf_read_line (buf_from_net, &repos, (int *) NULL);
     if (status == 0)
     {
@@ -1000,56 +1003,11 @@ serve_modified (arg)
     }
 }
 
-#endif /* SERVER_SUPPORT */
 
-#if defined(SERVER_SUPPORT) || defined(CLIENT_SUPPORT)
-
-int use_unchanged = 0;
-
-#endif
-#ifdef SERVER_SUPPORT
-
 static void
 serve_enable_unchanged (arg)
      char *arg;
 {
-    use_unchanged = 1;
-}
-
-static void
-serve_lost (arg)
-    char *arg;
-{
-    if (use_unchanged)
-    {
-	/* A missing file already indicates it is nonexistent.  */
-	return;
-    }
-    else
-    {
-	struct utimbuf ut;
-	int fd = CVS_OPEN (arg, O_WRONLY | O_CREAT | O_TRUNC, 0666);
-	if (fd < 0 || close (fd) < 0)
-	{
-	    pending_error = errno;
-	    pending_error_text = malloc (80 + strlen(arg));
-	    sprintf(pending_error_text, "E cannot open %s", arg);
-	    return;
-	}
-	/*
-	 * Set the times to the beginning of the epoch to tell time_stamp()
-	 * that the file was lost.
-	 */
-	ut.actime = 0;
-	ut.modtime = 0;
-	if (utime (arg, &ut) < 0)
-	{
-	    pending_error = errno;
-	    pending_error_text = malloc (80 + strlen(arg));
-	    sprintf(pending_error_text, "E cannot utime %s", arg);
-	    return;
-	}
-    }
 }
 
 struct an_entry {
@@ -1063,43 +1021,36 @@ static void
 serve_unchanged (arg)
     char *arg;
 {
+    struct an_entry *p;
+    char *name;
+    char *cp;
+    char *timefield;
+
     if (error_pending ())
 	return;
-    if (!use_unchanged) 
-    {
-	/* A missing file already indicates it is unchanged.  */
-	return;
-    }
-    else
-    {
-	struct an_entry *p;
-	char *name;
-	char *cp;
-	char *timefield;
 
-	/* Rewrite entries file to have `=' in timestamp field.  */
-	for (p = entries; p != NULL; p = p->next)
+    /* Rewrite entries file to have `=' in timestamp field.  */
+    for (p = entries; p != NULL; p = p->next)
+    {
+	name = p->entry + 1;
+	cp = strchr (name, '/');
+	if (cp != NULL
+	    && strlen (arg) == cp - name
+	    && strncmp (arg, name, cp - name) == 0)
 	{
-	    name = p->entry + 1;
-	    cp = strchr (name, '/');
-	    if (cp != NULL
-		&& strlen (arg) == cp - name
-		&& strncmp (arg, name, cp - name) == 0)
+	    timefield = strchr (cp + 1, '/') + 1;
+	    if (*timefield != '=')
 	    {
-		timefield = strchr (cp + 1, '/') + 1;
-		if (*timefield != '=')
+		cp = timefield + strlen (timefield);
+		cp[1] = '\0';
+		while (cp > timefield)
 		{
-		    cp = timefield + strlen (timefield);
-		    cp[1] = '\0';
-		    while (cp > timefield)
-		    {
-			*cp = cp[-1];
-			--cp;
-		    }
-		    *timefield = '=';
+		    *cp = cp[-1];
+		    --cp;
 		}
-		break;
+		*timefield = '=';
 	    }
+	    break;
 	}
     }
 }
@@ -1340,7 +1291,6 @@ server_notify ()
 		   notify_list->val, notify_list->watches, repos);
 
 	buf_output0 (buf_to_net, "Notified ");
-	if (use_dir_and_repos)
 	{
 	    char *dir = notify_list->dir + strlen (server_temp_dir) + 1;
 	    if (dir[0] == '\0')
@@ -2252,14 +2202,11 @@ output_dir (update_dir, repository)
 	buf_output0 (protocol, server_dir);
 	buf_output0 (protocol, "/");
     }
-    if (use_dir_and_repos)
-    {
-	if (update_dir[0] == '\0')
-	    buf_output0 (protocol, ".");
-	else
-	    buf_output0 (protocol, update_dir);
-	buf_output0 (protocol, "/\n");
-    }
+    if (update_dir[0] == '\0')
+	buf_output0 (protocol, ".");
+    else
+	buf_output0 (protocol, update_dir);
+    buf_output0 (protocol, "/\n");
     buf_output0 (protocol, repository);
     buf_output0 (protocol, "/");
 }
@@ -3371,7 +3318,7 @@ struct request requests[] =
   REQ_LINE("Valid-responses", serve_valid_responses, rq_essential),
   REQ_LINE("valid-requests", serve_valid_requests, rq_essential),
   REQ_LINE("Repository", serve_repository, rq_essential),
-  REQ_LINE("Directory", serve_directory, rq_optional),
+  REQ_LINE("Directory", serve_directory, rq_essential),
   REQ_LINE("Max-dotdot", serve_max_dotdot, rq_optional),
   REQ_LINE("Static-directory", serve_static_directory, rq_optional),
   REQ_LINE("Sticky", serve_sticky, rq_optional),
@@ -3379,9 +3326,13 @@ struct request requests[] =
   REQ_LINE("Update-prog", serve_update_prog, rq_optional),
   REQ_LINE("Entry", serve_entry, rq_essential),
   REQ_LINE("Modified", serve_modified, rq_essential),
-  REQ_LINE("Lost", serve_lost, rq_optional),
+
+  /* The client must send this request to interoperate with CVS 1.5
+     through 1.9 servers.  The server must support it (although it can
+     be and is a noop) to interoperate with CVS 1.5 to 1.9 clients.  */
   REQ_LINE("UseUnchanged", serve_enable_unchanged, rq_enableme),
-  REQ_LINE("Unchanged", serve_unchanged, rq_optional),
+
+  REQ_LINE("Unchanged", serve_unchanged, rq_essential),
   REQ_LINE("Notify", serve_notify, rq_optional),
   REQ_LINE("Questionable", serve_questionable, rq_optional),
   REQ_LINE("Case", serve_case, rq_optional),
