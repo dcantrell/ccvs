@@ -1,3 +1,8 @@
+Fri Jun  7 18:02:36 1996  Ian Lance Taylor  <ian@cygnus.com>
+			  and Jim Kingdon  <kingdon@cyclic.com>
+
+	* NEWS: Mention new annotate options.
+
 Thu Jun  6 14:08:31 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* lib/savecwd.c: Revert CVS_* patch.  The include files where

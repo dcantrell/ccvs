@@ -1,5 +1,9 @@
 Changes since 1.8:
 
+* The "annotate" command can now be used to annotate a revision other
+than the head revision on the trunk (see the -r, -D, and -f options in
+the annotate node of cvs.texinfo for details).
+
 * The "tag" command has a new option "-c" which checks that all files
   are not locally modified before tagging.
 
