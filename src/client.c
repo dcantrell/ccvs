@@ -2262,14 +2262,14 @@ send_to_server (str, len)
 #ifdef NO_SOCKET_TO_FD
   if (use_socket_style)
     {
+      int just_wrtn = 0;
+      size_t wrtn = 0;
+
 #ifdef VMS
       /* send() blocks under VMS */
       if (send (server_sock, str + wrtn, len - wrtn, 0) < 0)
         error (1, errno, "writing to server socket");
 #else /* VMS */
-      int just_wrtn = 0;
-      size_t wrtn = 0;
-
       while (wrtn < len)
         {
           just_wrtn = send (server_sock, str + wrtn, len - wrtn, 0);
