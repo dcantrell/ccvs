@@ -3240,6 +3240,8 @@ RCS_check_kflag (const char *arg)
     return (xstrdup (karg));
 }
 
+
+
 /*
  * Do some consistency checks on the symbolic tag... These should equate
  * pretty close to what RCS checks, though I don't know for certain.
@@ -3271,6 +3273,8 @@ RCS_check_tag (const char *tag)
 	error (1, 0, "tag `%s' must start with a letter", tag);
 }
 
+
+
 /*
  * TRUE if argument has valid syntax for an RCS revision or 
  * branch number.  All characters must be digits or dots, first 
@@ -3281,7 +3285,7 @@ RCS_check_tag (const char *tag)
  * call error.
  */
 int 
-RCS_valid_rev (char *rev)
+RCS_valid_rev (const char *rev)
 {
    char last, c;
    last = *rev++;
@@ -3303,6 +3307,8 @@ RCS_valid_rev (char *rev)
        return 0;
    return 1;
 }
+
+
 
 /*
  * Return true if RCS revision with TAG is a dead revision.

@@ -207,7 +207,7 @@ int RCS_datecmp (const char *date1, const char *date2);
 time_t RCS_getrevtime (RCSNode * rcs, const char *rev, char *date, int fudge);
 List *RCS_symbols (RCSNode *rcs);
 void RCS_check_tag (const char *tag);
-int RCS_valid_rev (char *rev);
+int RCS_valid_rev (const char *rev);
 List *RCS_getlocks (RCSNode *rcs);
 void freercsnode (RCSNode ** rnodep);
 char *RCS_getbranch (RCSNode *rcs, const char *tag, int force_tag_match);
