@@ -1,5 +1,9 @@
 2001-03-23  Derek Price  <dprice@collab.net>
 
+	* sanity.sh: Do the same as below for $keep.
+
+2001-03-23  Derek Price  <dprice@collab.net>
+
 	* sanity.sh: Replace 'remote=(yes|no)' with 'remote=(:|false)' since
 	often 'false' and more often ':' are shell builtins.  This makes the
 	succinct, 'if $remote; then' faster than 'if test $remote = yes; then'.
