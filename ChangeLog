@@ -1,3 +1,8 @@
+Mon Aug 12 14:15:31 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* Makefile.in (config.status): When running config.status
+	--recheck, preserve the value of CFLAGS.
+
 Fri Aug  9 14:11:31 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* TESTS: Also mention dejagnu advantages.
