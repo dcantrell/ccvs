@@ -101,6 +101,8 @@ static const char *const tag_usage[] =
     NULL
 };
 
+
+
 int
 cvstag (int argc, char **argv)
 {
@@ -271,15 +273,18 @@ cvstag (int argc, char **argv)
 			 NULL);
     }
 
-    return (err);
+    return err;
 }
+
+
 
 /*
  * callback proc for doing the real work of tagging
  */
 /* ARGSUSED */
 static int
-rtag_proc (int argc, char **argv, char *xwhere, char *mwhere, char *mfile, int shorten, int local_specified, char *mname, char *msg)
+rtag_proc (int argc, char **argv, char *xwhere, char *mwhere, char *mfile,
+           int shorten, int local_specified, char *mname, char *msg)
 {
     /* Begin section which is identical to patch_proc--should this
        be abstracted out somehow?  */
@@ -290,19 +295,19 @@ rtag_proc (int argc, char **argv, char *xwhere, char *mwhere, char *mfile, int s
     char *where;
 
 #ifdef HAVE_PRINTF_PTR
-    TRACE ( TRACE_FUNCTION,
-	    "rtag_proc ( argc=%d, argv=%p, xwhere=%s,\n"
-       "                 mwhere=%s, mfile=%s, shorten=%d,\n"
-       "                 local_specified=%d, mname=%s, msg=%s )",
+    TRACE (TRACE_FUNCTION,
+	   "rtag_proc (argc=%d, argv=%p, xwhere=%s,\n"
+      "                mwhere=%s, mfile=%s, shorten=%d,\n"
+      "                local_specified=%d, mname=%s, msg=%s)",
 	    argc, (void *)argv, xwhere ? xwhere : "(null)",
 	    mwhere ? mwhere : "(null)", mfile ? mfile : "(null)",
 	    shorten, local_specified,
 	    mname ? mname : "(null)", msg ? msg : "(null)" );
 #else
-    TRACE ( TRACE_FUNCTION,
-	    "rtag_proc ( argc=%d, argv=%lx, xwhere=%s,\n"
-       "                 mwhere=%s, mfile=%s, shorten=%d,\n"
-       "                 local_specified=%d, mname=%s, msg=%s )",
+    TRACE (TRACE_FUNCTION,
+	   "rtag_proc (argc=%d, argv=%lx, xwhere=%s,\n"
+      "                mwhere=%s, mfile=%s, shorten=%d,\n"
+      "                local_specified=%d, mname=%s, msg=%s )",
 	    argc, (unsigned long)argv, xwhere ? xwhere : "(null)",
 	    mwhere ? mwhere : "(null)", mfile ? mfile : "(null)",
 	    shorten, local_specified,
@@ -311,20 +316,28 @@ rtag_proc (int argc, char **argv, char *xwhere, char *mwhere, char *mfile, int s
 
     if (is_rtag)
     {
-	repository = xmalloc (strlen (current_parsed_root->directory) + strlen (argv[0])
-			      + (mfile == NULL ? 0 : strlen (mfile) + 1) + 2);
-	(void) sprintf (repository, "%s/%s", current_parsed_root->directory, argv[0]);
-	where = xmalloc (strlen (argv[0]) + (mfile == NULL ? 0 : strlen (mfile) + 1)
+	repository = xmalloc (strlen (current_parsed_root->directory)
+                              + strlen (argv[0])
+			      + (mfile == NULL ? 0 : strlen (mfile) + 1)
+                              + 2);
+	(void) sprintf (repository, "%s/%s", current_parsed_root->directory,
+                        argv[0]);
+	where = xmalloc (strlen (argv[0])
+                         + (mfile == NULL ? 0 : strlen (mfile) + 1)
 			 + 1);
 	(void) strcpy (where, argv[0]);
 
-	/* if mfile isn't null, we need to set up to do only part of the module */
+	/* If MFILE isn't null, we need to set up to do only part of the
+         * module.
+         */
 	if (mfile != NULL)
 	{
 	    char *cp;
 	    char *path;
 
-	    /* if the portion of the module is a path, put the dir part on repos */
+	    /* If the portion of the module is a path, put the dir part on
+             * REPOS.
+             */
 	    if ((cp = strrchr (mfile, '/')) != NULL)
 	    {
 		*cp = '\0';
@@ -356,11 +369,11 @@ rtag_proc (int argc, char **argv, char *xwhere, char *mwhere, char *mfile, int s
 	}
 
 	/* cd to the starting repository */
-	if ( CVS_CHDIR (repository) < 0)
+	if (CVS_CHDIR (repository) < 0)
 	{
 	    error (0, errno, "cannot chdir to %s", repository);
 	    free (repository);
-	    return (1);
+	    return 1;
 	}
 	/* End section which is identical to patch_proc.  */
 
@@ -378,8 +391,8 @@ rtag_proc (int argc, char **argv, char *xwhere, char *mwhere, char *mfile, int s
 
     if (numtag != NULL && !numtag_validated)
     {
-	tag_check_valid ( numtag, argc - 1, argv + 1, local_specified, 0,
-			  repository );
+	tag_check_valid (numtag, argc - 1, argv + 1, local_specified, 0,
+			 repository );
 	numtag_validated = 1;
     }
 
@@ -387,10 +400,10 @@ rtag_proc (int argc, char **argv, char *xwhere, char *mwhere, char *mfile, int s
        specified files in the repository */
 
     mtlist = getlist();
-    err = start_recursion ( check_fileproc, check_filesdoneproc,
-                            (DIRENTPROC) NULL, (DIRLEAVEPROC) NULL, NULL,
-			    argc - 1, argv + 1, local_specified, which, 0,
-			    CVS_LOCK_READ, where, 1, repository );
+    err = start_recursion (check_fileproc, check_filesdoneproc,
+                           NULL, NULL, NULL,
+			   argc - 1, argv + 1, local_specified, which, 0,
+			   CVS_LOCK_READ, where, 1, repository);
 
     if (err)
     {
@@ -403,17 +416,18 @@ rtag_proc (int argc, char **argv, char *xwhere, char *mwhere, char *mfile, int s
 
     /* start the recursion processor */
     err = start_recursion
-	( is_rtag ? rtag_fileproc : tag_fileproc,
-	  (FILESDONEPROC) NULL, tag_dirproc,
-	  (DIRLEAVEPROC) NULL, NULL, argc - 1, argv + 1,
-	  local_specified, which, 0, CVS_LOCK_WRITE, where, 1,
-	  repository );
+	(is_rtag ? rtag_fileproc : tag_fileproc,
+	 NULL, tag_dirproc, NULL, NULL, argc - 1, argv + 1,
+	 local_specified, which, 0, CVS_LOCK_WRITE, where, 1,
+	 repository);
     dellist (&mtlist);
-    if ( which & W_REPOS ) free ( repository );
+    if (which & W_REPOS) free (repository);
     if (where != NULL)
 	free (where);
-    return (err);
+    return err;
 }
+
+
 
 /* check file that is to be tagged */
 /* All we do here is add it to our list */
@@ -427,16 +441,15 @@ check_fileproc (void *callerdat, struct file_info *finfo)
     struct tag_info *ti;
     int addit = 1;
 
-    TRACE ( TRACE_FUNCTION, "check_fileproc ( %s, %s, %s )",
-	    finfo->repository ? finfo->repository : "(null)",
-	    finfo->fullname ? finfo->fullname : "(null)",
-	    finfo->rcs ? (finfo->rcs->path ? finfo->rcs->path : "(null)")
-	    : "NULL" );
+    TRACE (TRACE_FUNCTION, "check_fileproc (%s, %s, %s)",
+	   finfo->repository ? finfo->repository : "(null)",
+	   finfo->fullname ? finfo->fullname : "(null)",
+	   finfo->rcs ? (finfo->rcs->path ? finfo->rcs->path : "(null)")
+	   : "NULL");
 
     if (check_uptodate)
     {
-	switch (Classify_File (finfo, (char *) NULL, (char *) NULL,
-				      (char *) NULL, 1, 0, &vers, 0))
+	switch (Classify_File (finfo, NULL, NULL, NULL, 1, 0, &vers, 0))
 	{
 	case T_UPTODATE:
 	case T_CHECKOUT:
@@ -452,7 +465,7 @@ check_fileproc (void *callerdat, struct file_info *finfo)
 	default:
 	    error (0, 0, "%s is locally modified", finfo->fullname);
 	    freevers_ts (&vers);
-	    return (1);
+	    return 1;
 	}
     }
     else
@@ -474,8 +487,7 @@ check_fileproc (void *callerdat, struct file_info *finfo)
 	p = getnode ();
 	p->key = xstrdup (xdir);
 	p->type = UPDATE;
-	ml = (struct master_lists *)
-	    xmalloc (sizeof (struct master_lists));
+	ml = xmalloc (sizeof (struct master_lists));
 	ml->tlist = tlist;
 	p->data = ml;
 	p->delproc = masterlist_delproc;
@@ -492,7 +504,7 @@ check_fileproc (void *callerdat, struct file_info *finfo)
 	    error (0, 0, "nothing known about %s", finfo->file);
 	freevers_ts (&vers);
 	freenode (p);
-	return (1);
+	return 1;
     }
 
     /* Here we duplicate the calculation in tag_fileproc about which
@@ -508,8 +520,7 @@ check_fileproc (void *callerdat, struct file_info *finfo)
 
     if (ti->rev != NULL)
     {
-        ti->oldrev = RCS_getversion (vers->srcfile, symtag, (char *) NULL, 1,
-	                             (int *) NULL);
+        ti->oldrev = RCS_getversion (vers->srcfile, symtag, NULL, 1, NULL);
 
 	if (ti->oldrev == NULL)
         {
@@ -550,8 +561,10 @@ check_fileproc (void *callerdat, struct file_info *finfo)
     }
     freevers_ts (&vers);
     (void) addnode (tlist, p);
-    return (0);
+    return 0;
 }
+
+
 
 struct pretag_proc_data {
      List *tlist;
