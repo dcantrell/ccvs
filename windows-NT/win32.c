@@ -4,6 +4,8 @@
  *
  */
 
+#include "config.h"
+
 #include <ctype.h>
 #include <stdio.h>
 #include <conio.h>
@@ -11,7 +13,6 @@
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 
-#include <config.h>
 #include <winsock.h>
 #include <stdlib.h>
 
