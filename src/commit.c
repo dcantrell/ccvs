@@ -2232,11 +2232,22 @@ checkaddfile (const char *file, const char *repository, const char *tag,
 	    char *head;
 	    char *magicrev;
 	    int retcode;
+	    struct utimbuf headt;
+	    char *revnum, *tmp;
+	    FILE *fp;
+	    time_t t = -1;
+	    struct tm *ct;
 
 	    fixbranch (rcs, sbranch);
 
 	    head = RCS_getversion (rcs, NULL, NULL, 0, NULL);
 	    magicrev = RCS_magicrev (rcs, head);
+
+	    /* If this is not a new branch, then we will want a dead
+	       version created before this one. */
+	    if (!newfile)
+		headt.actime = headt.modtime =
+		    RCS_getrevtime (rcs, head, 0, 0);
 
 	    retcode = RCS_settag (rcs, tag, magicrev);
 	    RCS_rewrite (rcs, NULL, NULL);
@@ -2249,6 +2260,68 @@ checkaddfile (const char *file, const char *repository, const char *tag,
 		error (retcode == -1 ? 1 : 0, retcode == -1 ? errno : 0,
 		       "could not stub branch %s for %s", tag, rcs->path);
 		goto out;
+	    }
+	    /* We need to add a dead version here to avoid -rtag -Dtime
+	       checkout problems between when the head version was
+	       created and now. */
+	    if (!newfile && headt.modtime != -1)
+	    {
+		/* move the new file out of the way. */
+		fname = Xasprintf ("%s/%s%s", CVSADM, CVSPREFIX, file);
+		rename_file (file, fname);
+
+		/* Create empty FILE.  Can't use copy_file with a DEVNULL
+		   argument -- copy_file now ignores device files. */
+		fp = fopen (file, "w");
+		if (fp == NULL)
+		    error (1, errno, "cannot open %s for writing", file);
+		if (fclose (fp) < 0)
+		    error (0, errno, "cannot close %s", file);
+
+		/* The temporary file should have the same time as the
+		   head version */
+		(void) utime (file, &headt);
+
+		/* As we will be hacking the delta date, put the time
+		   this was added into the log message. */
+		t = time(NULL);
+		ct = gmtime(&t);
+		tmp = Xasprintf ("file %s was added on branch %s on %d-%02d-%02d %02d:%02d:%02d +0000",
+				 file, tag,
+				 ct->tm_year + (ct->tm_year < 100 ? 0 : 1900),
+				 ct->tm_mon + 1, ct->tm_mday,
+				 ct->tm_hour, ct->tm_min, ct->tm_sec);
+			 
+		/* commit a dead revision. */
+		revnum = RCS_whatbranch (rcs, tag);
+		retcode = RCS_checkin (rcs, NULL, NULL, tmp, revnum,
+				       RCS_FLAGS_DEAD |
+				       RCS_FLAGS_MODTIME |
+				       RCS_FLAGS_QUIET);
+		free (revnum);
+		free (tmp);
+
+		if (retcode != 0)
+		{
+		    error (retcode == -1 ? 1 : 0, retcode == -1 ? errno : 0,
+			   "could not created dead stub %s for %s", tag,
+			   rcs->path);
+		    goto out;
+		}
+
+		/* put the new file back where it was */
+		rename_file (fname, file);
+		free (fname);
+
+		/* double-check that the file was written correctly */
+		freercsnode (&rcs);
+		rcs = RCS_parse (file, repository);
+		if (rcs == NULL)
+		{
+		    error (0, 0, "could not read %s", rcs->path);
+		    goto out;
+		}
+		*rcsnode = rcs;
 	    }
 	}
 	else
