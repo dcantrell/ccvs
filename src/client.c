@@ -2243,7 +2243,7 @@ send_to_server (str, len)
   if (use_socket_style)
     {
       int just_wrtn = 0;
-      int wrtn = 0;
+      size_t wrtn = 0;
 
       while (wrtn < len)
         {
@@ -2293,7 +2293,7 @@ read_from_server (buf, len)
   if (use_socket_style)
     {
       int just_red = 0;
-      int red = 0;
+      size_t red = 0;
 
       while (red < len)
         {
@@ -2525,7 +2525,9 @@ connect_to_pserver (tofdp, fromfdp, verify_only)
      int verify_only;
 {
     int sock;
+#ifndef NO_SOCKET_TO_FD
     int tofd, fromfd;
+#endif
     int port_number;
     struct sockaddr_in client_sai;
 
