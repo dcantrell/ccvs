@@ -2035,12 +2035,10 @@ CVSROOT/cvswrappers,v
 Records
 .B cvs
 wrapper commands to be used when checking files into and out of the
-repository.  Wrappers are essentially directories that are to be
-treated as files.  This file allows wrappers to be processed
-on the way in and out of CVS.  The intended use is to wrap up a wrapper
-into a single tar, such that that tar can be treated as a single
-binary file in
-.BR cvs .
+repository.  Wrappers allow the file or directory to be processed
+on the way in and out of CVS.  The intended uses are many, one
+possible use would be to reformat a C file before the file is checked
+in, so all of the code in the repository looks the same.
 .TP
 CVSROOT/taginfo,v
 Records programs for validating/logging
