@@ -300,8 +300,8 @@ noinst_LIBRARIES = libcvs.a
 # For the vasprintf module from GNULIB.
 
 # For the xsize module from GNULIB.
-libcvs_a_SOURCES = sighandle.c error.h system.h wait.h xselect.h \
-	xtime.h basename.c dirname.c dirname.h stripslash.c exit.h \
+libcvs_a_SOURCES = sighandle.c system.h wait.h xselect.h xtime.h \
+	basename.c dirname.c dirname.h stripslash.c error.h exit.h \
 	exitfail.h exitfail.c getdate.h getdate.y getline.h getnline.h \
 	getnline.c getpagesize.h getpass.h gettext.h gettime.c md5.c \
 	md5.h minmax.h pathmax.h regex.h save-cwd.h save-cwd.c \

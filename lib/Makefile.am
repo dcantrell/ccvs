@@ -21,7 +21,6 @@ noinst_LIBRARIES = libcvs.a
 # matching?)
 libcvs_a_SOURCES = \
 	sighandle.c \
-	error.h \
 	system.h \
 	wait.h \
 	xselect.h \
@@ -59,6 +58,14 @@ MOSTLYCLEANFILES += alloca.h alloca.h-t
 
 ## For GNULIB's dirname module.
 libcvs_a_SOURCES += basename.c dirname.c dirname.h stripslash.c
+
+## For GNULIB's error module.
+##
+## This module isn't fully imported since GNULIB's error.c would conflict with
+## src/error.c (which knows how to send error messages over the network).  We
+## don't compile error.c into libcvs on purpose.  It can get compiled later as
+## part of the getdate test program,
+libcvs_a_SOURCES += error.h
 
 ## For GNULIB's exit module.
 libcvs_a_SOURCES += exit.h

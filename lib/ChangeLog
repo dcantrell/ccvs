@@ -1,3 +1,7 @@
+2004-10-26  Derek Price  <derek@ximbiot.com>
+
+	* Makefile.am (libcvs_a_SOURCES): Move error.h to its own section.
+
 2004-10-21  Derek Price  <derek@ximbiot.com>
 
 	* Makefile.am (libcvs_a_SOURCES): Add yesno.h.
