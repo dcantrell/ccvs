@@ -27,7 +27,7 @@
 
 #ifndef lint
 static const char rcsid[] = "$CVSid:$";
-USE(rcsid)
+USE(rcsid);
 #endif
 
 /*
