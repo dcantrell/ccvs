@@ -15,6 +15,7 @@
 #ifdef CVS_ADMIN_GROUP
 #include <grp.h>
 #endif
+#include <assert.h>
 
 static Dtype admin_dirproc PROTO ((void *callerdat, char *dir,
 				   char *repos, char *update_dir,
@@ -362,6 +363,32 @@ admin (argc, argv)
     }
     argc -= optind;
     argv += optind;
+
+    for (i = 0; i < admin_data.ac; ++i)
+    {
+	assert (admin_data.av[i][0] == '-');
+	switch (admin_data.av[i][1])
+	{
+	    case 'm':
+	    case 'l':
+	    case 'u':
+		check_numeric (&admin_data.av[i][2], argc, argv);
+		break;
+	    default:
+		break;
+	}
+    }
+    if (admin_data.branch != NULL)
+	check_numeric (admin_data.branch + 2, argc, argv);
+    if (admin_data.delete_revs != NULL)
+    {
+	char *p;
+
+	check_numeric (admin_data.delete_revs + 2, argc, argv);
+	p = strchr (admin_data.delete_revs + 2, ':');
+	if (p != NULL)
+	    check_numeric (p + 1, argc, argv);
+    }
 
 #ifdef CLIENT_SUPPORT
     if (client_active)

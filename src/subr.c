@@ -409,6 +409,37 @@ gca (rev1, rev2)
     return retval;
 }
 
+/* Give fatal error if REV is numeric and ARGC,ARGV imply we are
+   planning to operate on more than one file.  The current directory
+   should be the working directory.  Note that callers assume that we
+   will only be checking the first character of REV; it need not have
+   '\0' at the end of the tag name and other niceties.  Right now this
+   is only called from admin.c, but if people like the concept it probably
+   should also be called from diff -r, update -r, get -r, and log -r.  */
+
+void
+check_numeric (rev, argc, argv)
+    char *rev;
+    int argc;
+    char **argv;
+{
+    if (rev == NULL || !isdigit (*rev))
+	return;
+
+    /* Note that the check for whether we are processing more than one
+       file is (basically) syntactic; that is, we don't behave differently
+       depending on whether a directory happens to contain only a single
+       file or whether it contains more than one.  I strongly suspect this
+       is the least confusing behavior.  */
+    if (argc == 0
+	|| argc > 1
+	|| (!wrap_name_has (argv[1], WRAP_TOCVS) && isdir (argv[1])))
+    {
+	error (0, 0, "while processing more than one file:");
+	error (1, 0, "attempt to specify a numeric revision");
+    }
+}
+
 /*
  *  Sanity checks and any required fix-up on message passed to RCS via '-m'.
  *  RCS 5.7 requires that a non-total-whitespace, non-null message be provided
