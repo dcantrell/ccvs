@@ -17,7 +17,8 @@ Alpha:
 	DEC Alpha running OSF/1 version 3.2 (1.9)
 	DEC Alpha running VMS 6.2 (1.8.85 client-only)
 Cray:
-	J90 running unicos 9 (CVS version unknown; Oct 1996) (footnote 10)
+	J90 (CVS 970215 snapshot)
+	T3E (CVS 970215 snapshot)
 HPPA:
 	HP 9000/710 running HP-UX 8.07A using gcc (about 1.4A2)
 	HPPA running HP-UX 9 (1.8)
@@ -115,11 +116,6 @@ VAX:
     You want to use <sys/dir.h> instead.
     So after running configure I had to undef HAVE_DIRENT_H and
     define HAVE_SYS_DIR_H.
-
-(footnote 10)
-    remove CLIENT_SUPPORT and SERVER_SUPPORT from config.h
-    remove md5.o from lib/Makefile
-    remove "#include "regex.h" from cvs.h
 
 -------------------------------------------------------------------------------
 

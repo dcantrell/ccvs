@@ -1,5 +1,8 @@
 Thu Feb 20 13:53:19 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* INSTALL: Update Cray entry per mail from John Bowman
+	<bowman@ipp-garching.mpg.de>
+
 	* configure.in: Add comments about autoconf version.
 
 Mon Feb 17 09:55:35 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
