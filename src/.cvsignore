@@ -4,3 +4,4 @@ cvs
 mkmodules
 cvsbug
 .pure
+options.h
