@@ -43,3 +43,4 @@ typedef struct cvsroot_s {
 
 void primary_root_add (const char *arg);
 char *primary_root_translate (const char *root_in);
+char *primary_root_inverse_translate (const char *root_in);

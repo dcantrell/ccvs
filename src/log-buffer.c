@@ -113,7 +113,7 @@ log_buffer_output (void *closure, const char *data, int have, int *wrote)
     {
 	n_to_write = *wrote;
 	if (fwrite (data, 1, n_to_write, lb->log) != n_to_write)
-	    error (0, errno, "writing to log file");
+	    error (lb->fatal_errors, errno, "writing to log file");
 	fflush (lb->log);
 	fsync (fileno (lb->log));
     }
@@ -134,7 +134,7 @@ log_buffer_flush (void *closure)
      * will let tail -f on the log file show what is sent to the
      * network as it is sent.
      */
-    if (lb->log && fflush (lb->log) || fsync (fileno (lb->log)))
+    if (lb->log && (fflush (lb->log) || fsync (fileno (lb->log))))
         error (0, errno, "flushing log file");
 
     return (*lb->buf->flush) (lb->buf->closure);
@@ -163,9 +163,14 @@ log_buffer_disable (struct buffer *buf)
     struct log_buffer *lb = buf->closure;
 
     SIG_beginCrSect();
-    if (lb->log && fclose (lb->log) < 0)
-	error (0, errno, "closing log file");
-    lb->log = NULL;
+    if (lb->log)
+    {
+	/* fflush (lb->log);
+	fsync (fileno (lb->log)); */
+	if (fclose (lb->log) < 0)
+	    error (0, errno, "closing log file");
+	lb->log = NULL;
+    }
     SIG_endCrSect();
 }
 
