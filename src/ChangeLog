@@ -1,3 +1,14 @@
+Sat Feb  7 16:27:30 1998  Ian Lance Taylor  <ian@cygnus.com>
+
+	* rcs.c (RCS_parsercsfile_i): Read the expand keyword from the RCS
+	file.  We do this because Version_TS calls RCS_getexpand in many
+	common cases, and we don't want to reopen the file just for that.
+	(RCS_reparsercsfile): Skip the expand keyword.
+	(RCS_getexpand): Don't call RCS_reparsercsfile.
+
+	* rcs.c (STREQ): New macro.  In all string equality tests in the
+	file, replace strcmp with STREQ.
+
 Fri Feb  6 16:14:49 1998  Ian Lance Taylor  <ian@cygnus.com>
 
 	* update.c (checkout_file): If we've already removed the backup
