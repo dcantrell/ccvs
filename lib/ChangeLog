@@ -1,3 +1,8 @@
+Sun Sep  7 17:35:27 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* strdup.c: Removed, per change to ../configure.in
+	* Makefile.in (SOURCES): Remove strdup.c.
+
 Mon Jun 16 18:59:50 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* system.h: Add CVS_FNMATCH.

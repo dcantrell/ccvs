@@ -40,7 +40,6 @@ SOURCES = \
 	rename.c \
 	savecwd.c \
 	sighandle.c \
-	strdup.c \
 	strstr.c \
 	strerror.c \
 	stripslash.c \
