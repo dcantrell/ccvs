@@ -1,3 +1,10 @@
+1998-09-28  Johannes Stezenbach <johannes.stezenbach@propack-data.de>
+	    and Jim Kingdon
+
+	* config.h (CVS_RENAME): Define.
+	* filesubr.c, config.h (wnt_rename): New function.
+	* filesubr.c (rename_file): Call CVS_RENAME not rename.
+
 1998-09-04  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* win32.c (gethostname): Expand comment about gethostname

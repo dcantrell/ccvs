@@ -240,6 +240,9 @@ extern int wnt_stat ();
 #define CVS_LSTAT wnt_lstat
 extern int wnt_lstat ();
 
+#define CVS_RENAME wnt_rename
+extern int wnt_rename (const char *, const char *);
+
 /* This function doesn't exist under Windows NT; we
    provide a stub.  */
 extern int readlink (char *path, char *buf, int buf_size);
