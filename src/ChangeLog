@@ -1,3 +1,15 @@
+2002-06-17  Larry Jones  <lawrence.jones@eds.com>
+	    and Jonathan Kamens  <jik@kamens.brookline.ma.us>
+
+	* commit.c (commit_fileproc, commit_direntproc): Don't try to call
+	an editor to get the log message if running as a server.  Instead,
+	just use an empty log message.
+	* import.c (import): Ditto.
+
+	* import.c (import): In client mode, always send a message to the
+	server, even if it's empty (this parallels a change made by Larry
+	Jones to commit.c on May 7).
+
 2002-05-31  Larry Jones  <lawrence.jones@eds.com>
 
 	* rcs.c: Conditionally define MAP_FAILED for old systems that don't
