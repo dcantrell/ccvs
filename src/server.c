@@ -4866,45 +4866,26 @@ int cvsencrypt;
 
 #ifdef HAVE_KERBEROS
 
-/* An encryption interface using Kerberos.  This is built on top of
-   the buffer structure.  We encrypt using a big endian two byte count
-   field followed by a block of encrypted data.  */
+/* An encryption interface using Kerberos.  This is built on top of a
+   packetizing buffer.  */
 
-/* This structure is the closure field of a Kerberos encryption
-   buffer.  */
+/* This structure is the closure field of the Kerberos translation
+   routines.  */
 
-struct krb_encrypt_buffer
+struct krb_encrypt_data
 {
-    /* The underlying buffer.  */
-    struct buffer *buf;
     /* The Kerberos key schedule.  */
     Key_schedule sched;
     /* The Kerberos DES block.  */
     C_Block block;
-    /* For an input buffer, we may have to buffer up data here.  */
-    /* This is non-zero if the buffered data is decrypted.  Otherwise,
-       the buffered data is encrypted, and starts with the two byte
-       count.  */
-    int clear;
-    /* The amount of buffered data.  */
-    int holdsize;
-    /* The buffer allocated to hold the data.  */
-    char *holdbuf;
-    /* The size of holdbuf.  */
-    int holdbufsize;
-    /* If clear is set, we need another data pointer to track where we
-       are in holdbuf.  If clear is zero, then this pointer is not
-       used.  */
-    char *holddata;
 };
 
-static int krb_encrypt_buffer_input PROTO((void *, char *, int, int, int *));
-static int krb_encrypt_buffer_output PROTO((void *, const char *, int, int *));
-static int krb_encrypt_buffer_flush PROTO((void *));
-static int krb_encrypt_buffer_block PROTO((void *, int));
-static int krb_encrypt_buffer_shutdown PROTO((void *));
+static int krb_encrypt_input PROTO((void *, const char *, char *, int));
+static int krb_encrypt_output PROTO((void *, const char *, char *, int,
+				     int *));
 
-/* Create an encryption buffer.  */
+/* Create an encryption buffer.  We use a packetizing buffer with
+   Kerberos encryption translation routines.  */
 
 struct buffer *
 krb_encrypt_buffer_initialize (buf, input, sched, block, memory)
@@ -4914,268 +4895,70 @@ krb_encrypt_buffer_initialize (buf, input, sched, block, memory)
      C_Block block;
      void (*memory) PROTO((struct buffer *));
 {
-    struct krb_encrypt_buffer *kb;
+    struct krb_encrypt_data *kd;
 
-    kb = (struct krb_encrypt_buffer *) xmalloc (sizeof *kb);
-    memset (kb, 0, sizeof *kb);
+    kd = (struct krb_encrypt_data *) xmalloc (sizeof *kd);
+    memcpy (kd->sched, sched, sizeof (Key_schedule));
+    memcpy (kd->block, block, sizeof (C_Block));
 
-    kb->buf = buf;
-    memcpy (kb->sched, sched, sizeof (Key_schedule));
-    memcpy (kb->block, block, sizeof (C_Block));
-    if (input)
-    {
-	/* We add some space to the buffer to hold the length.  */
-	kb->holdbufsize = BUFFER_DATA_SIZE + 16;
-	kb->holdbuf = xmalloc (kb->holdbufsize);
-    }
-
-    return buf_initialize (input ? krb_encrypt_buffer_input : NULL,
-			   input ? NULL : krb_encrypt_buffer_output,
-			   input ? NULL : krb_encrypt_buffer_flush,
-			   krb_encrypt_buffer_block,
-			   krb_encrypt_buffer_shutdown,
-			   memory,
-			   kb);
+    return packetizing_buffer_initialize (buf,
+					  input ? krb_encrypt_input : NULL,
+					  input ? NULL : krb_encrypt_output,
+					  kd,
+					  memory);
 }
 
-/* Input data from a Kerberos encryption buffer.  */
+/* Decrypt Kerberos data.  */
 
 static int
-krb_encrypt_buffer_input (closure, data, need, size, got)
-     void *closure;
-     char *data;
-     int need;
+krb_encrypt_input (fnclosure, input, output, size)
+     void *fnclosure;
+     const char *input;
+     char *output;
      int size;
-     int *got;
 {
-    struct krb_encrypt_buffer *kb = (struct krb_encrypt_buffer *) closure;
+    struct krb_encrypt_data *kd = (struct krb_encrypt_data *) fnclosure;
+    int tcount;
 
-    *got = 0;
+    des_cbc_encrypt ((C_Block *) input, (C_Block *) output,
+		     size, kd->sched, &kd->block, 0);
 
-    if (kb->holdsize > 0 && kb->clear)
-    {
-	int copy;
-
-	copy = kb->holdsize;
-
-	if (copy > size)
-	{
-	    memcpy (data, kb->holddata, size);
-	    kb->holdsize -= size;
-	    kb->holddata += size;
-	    *got = size;
-	    return 0;
-	}
-
-	memcpy (data, kb->holddata, copy);
-	kb->holdsize = 0;
-	kb->clear = 0;
-
-	data += copy;
-	need -= copy;
-	size -= copy;
-	*got = copy;
-    }
-
-    while (need > 0 || *got == 0)
-    {
-	int get, status, nread, count, dcount;
-	char *bytes;
-	char stackoutbuf[BUFFER_DATA_SIZE + 16];
-	char *outbuf;
-
-	/* If we don't already have the two byte count, get it.  */
-	if (kb->holdsize < 2)
-	{
-	    get = 2 - kb->holdsize;
-	    status = buf_read_data (kb->buf, get, &bytes, &nread);
-	    if (status != 0)
-	    {
-		/* buf_read_data can return -2, but a buffer input
-                   function is only supposed to return -1, 0, or an
-                   error code.  */
-		if (status == -2)
-		    status = ENOMEM;
-		return status;
-	    }
-
-	    if (nread == 0)
-	    {
-		/* The buffer is in nonblocking mode, and we didn't
-                   manage to read anything.  */
-		return 0;
-	    }
-
-	    if (get == 1)
-		kb->holdbuf[1] = bytes[0];
-	    else
-	    {
-		kb->holdbuf[0] = bytes[0];
-		if (nread < 2)
-		{
-		    /* We only got one byte, but we needed two.  Stash
-                       the byte we got, and try again.  */
-		    kb->holdsize = 1;
-		    continue;
-		}
-		kb->holdbuf[1] = bytes[1];
-	    }
-	    kb->holdsize = 2;
-	}
-
-	/* Read the encrypted block of data.  */
-
-	count = (((kb->holdbuf[0] & 0xff) << 8)
-		 + (kb->holdbuf[1] & 0xff));
-
-	if (count + 2 > kb->holdbufsize)
-	{
-	    char *n;
-
-	    /* This should be impossible, since we should have
-	       allocated space for the largest possible block in the
-	       initialize function.  However, we handle it just in
-	       case something changes in the future, so that a current
-	       server can handle a later client.  */
-
-	    n = realloc (kb->holdbuf, count + 2);
-	    if (n == NULL)
-	    {
-		(*kb->buf->memory_error) (kb->buf);
-		return ENOMEM;
-	    }
-	    kb->holdbuf = n;
-	    kb->holdbufsize = count + 2;
-	}
-
-	get = count - (kb->holdsize - 2);
-
-	status = buf_read_data (kb->buf, get, &bytes, &nread);
-	if (status != 0)
-	{
-	    /* buf_read_data can return -2, but a buffer input
-               function is only supposed to return -1, 0, or an error
-               code.  */
-	    if (status == -2)
-		status = ENOMEM;
-	    return status;
-	}
-
-	if (nread == 0)
-	{
-	    /* We did not get any data.  Presumably the buffer is in
-               nonblocking mode.  */
-	    return 0;
-	}
-
-	/* FIXME: We could complicate the code here to avoid this
-           memcpy in the common case of kb->holdsize == 2 && nread ==
-           get.  */
-	memcpy (kb->holdbuf + kb->holdsize, bytes, nread);
-	kb->holdsize += nread;
-
-	if (nread < get)
-	{
-	    /* We did not get all the data we need.  buf_read_data
-               does not promise to return all the bytes requested, so
-               we must try again.  */
-	    continue;
-	}
-
-	/* We have a complete encrypted block of COUNT bytes at
-           KB->HOLDBUF + 2.  Decrypt it.  */
-
-	if (count <= sizeof stackoutbuf)
-	    outbuf = stackoutbuf;
-	else
-	{
-	    /* I believe this is currently impossible, but we handle
-               it for the benefit of future client changes.  */
-	    outbuf = malloc (count);
-	    if (outbuf == NULL)
-	    {
-		(*kb->buf->memory_error) (kb->buf);
-		return ENOMEM;
-	    }
-	}
-
-	des_cbc_encrypt ((C_Block *) (kb->holdbuf + 2), (C_Block *) outbuf,
-			 count, kb->sched, &kb->block, 0);
-
-	/* The first two bytes in the decrypted buffer are the real
-           (unaligned) length.  */
-	dcount = ((outbuf[0] & 0xff) << 8) + (outbuf[1] & 0xff);
-
-	if (((dcount + 2 + 7) & ~7) != count)
-	    error (1, 0, "Decryption failure");
-
-	if (dcount > size)
-	{
-	    /* We have too much data for the buffer.  We need to save
-               some of it for the next call.  */
-
-	    memcpy (data, outbuf + 2, size);
-	    *got += size;
-
-	    kb->holdsize = dcount - size;
-	    memcpy (kb->holdbuf, outbuf + 2 + size, dcount - size);
-	    kb->holddata = kb->holdbuf;
-	    kb->clear = 1;
-
-	    if (outbuf != stackoutbuf)
-		free (outbuf);
-
-	    return 0;
-	}
-
-	memcpy (data, outbuf + 2, dcount);
-
-	if (outbuf != stackoutbuf)
-	    free (outbuf);
-
-	kb->holdsize = 0;
-
-	data += dcount;
-	need -= dcount;
-	size -= dcount;
-	*got += dcount;
-    }
+    /* SIZE is the size of the buffer, which is set by the encryption
+       routine.  The packetizing buffer will arrange for the first two
+       bytes in the decrypted buffer to be the real (unaligned)
+       length.  As a safety check, make sure that the length in the
+       buffer corresponds to SIZE.  Note that the length in the buffer
+       is just the length of the data.  We must add 2 to account for
+       the buffer count itself.  */
+    tcount = ((output[0] & 0xff) << 8) + (output[1] & 0xff);
+    if (((tcount + 2 + 7) & ~7) != size)
+      error (1, 0, "Decryption failure");
 
     return 0;
 }
 
-/* Output data to a Kerberos encryption buffer.  */
+/* Encrypt Kerberos data.  */
 
 static int
-krb_encrypt_buffer_output (closure, data, have, wrote)
-     void *closure;
-     const char *data;
-     int have;
-     int *wrote;
+krb_encrypt_output (fnclosure, input, output, size, translated)
+     void *fnclosure;
+     const char *input;
+     char *output;
+     int size;
+     int *translated;
 {
-    struct krb_encrypt_buffer *kb = (struct krb_encrypt_buffer *) closure;
-    char inbuf[BUFFER_DATA_SIZE + 16];
-    char outbuf[BUFFER_DATA_SIZE + 16];
+    struct krb_encrypt_data *kd = (struct krb_encrypt_data *) fnclosure;
     int aligned;
-
-    if (have > BUFFER_DATA_SIZE)
-    {
-	/* It would be easy to malloc a buffer, but I don't think this
-           case can ever arise.  */
-	abort ();
-    }
-
-    inbuf[0] = (have >> 8) & 0xff;
-    inbuf[1] = have & 0xff;
-    memcpy (inbuf + 2, data, have);
 
     /* For security against a known plaintext attack, we should
        initialize any padding bytes to random values.  Instead, we
        just pick up whatever is on the stack, which is at least better
        than using zero.  */
 
-    /* Align (have + 2) (plus 2 for the count) to an 8 byte boundary.  */
-    aligned = (have + 2 + 7) & ~7;
+    /* Align SIZE to an 8 byte boundary.  Note that SIZE includes the
+       two byte buffer count at the start of INPUT which was added by
+       the packetizing buffer.  */
+    aligned = (size + 7) & ~7;
 
     /* We use des_cbc_encrypt rather than krb_mk_priv because the
        latter sticks a timestamp in the block, and krb_rd_priv expects
@@ -5184,65 +4967,12 @@ krb_encrypt_buffer_output (closure, data, have, wrote)
        fail over a long network connection.  We trust krb_recvauth to
        guard against a replay attack.  */
 
-    des_cbc_encrypt ((C_Block *) inbuf, (C_Block *) (outbuf + 2), aligned,
-		     kb->sched, &kb->block, 1);
+    des_cbc_encrypt ((C_Block *) input, (C_Block *) output, aligned,
+		     kd->sched, &kd->block, 1);
 
-    outbuf[0] = (aligned >> 8) & 0xff;
-    outbuf[1] = aligned & 0xff;
+    *translated = aligned;
 
-    /* FIXME: It would be more efficient to get des_cbc_encrypt to put
-       its output directly into a buffer_data structure, which we
-       could then append to kb->buf.  That would save a memcpy.  */
-
-    buf_output (kb->buf, outbuf, aligned + 2);
-
-    *wrote = have;
-
-    /* We will only be here because buf_send_output was called on the
-       encryption buffer.  That means that we should now call
-       buf_send_output on the underlying buffer.  */
-    return buf_send_output (kb->buf);
-}
-
-/* Flush data to a Kerberos encryption buffer.  */
-
-static int
-krb_encrypt_buffer_flush (closure)
-     void *closure;
-{
-    struct krb_encrypt_buffer *kb = (struct krb_encrypt_buffer *) closure;
-
-    /* Flush the underlying buffer.  Note that if the original call to
-       buf_flush passed 1 for the BLOCK argument, then the buffer will
-       already have been set into blocking mode, so we should always
-       pass 0 here.  */
-    return buf_flush (kb->buf, 0);
-}
-
-/* The block routine for a Kerberos encryption buffer.  */
-
-static int
-krb_encrypt_buffer_block (closure, block)
-     void *closure;
-     int block;
-{
-    struct krb_encrypt_buffer *kb = (struct krb_encrypt_buffer *) closure;
-
-    if (block)
-	return set_block (kb->buf);
-    else
-	return set_nonblock (kb->buf);
-}
-
-/* Shut down a Kerberos encryption buffer.  */
-
-static int
-krb_encrypt_buffer_shutdown (closure)
-     void *closure;
-{
-    struct krb_encrypt_buffer *kb = (struct krb_encrypt_buffer *) closure;
-
-    return buf_shutdown (kb->buf);
+    return 0;
 }
 
 #endif /* HAVE_KERBEROS */
