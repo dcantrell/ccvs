@@ -1,3 +1,8 @@
+2004-11-01 Derek Price <derek@ximbiot.com>
+
+	* sanity.sh (rcslib): Test a link to a path longer than 128
+	characters.
+
 2004-10-30  Mark D. Baushke  <mdb@cvshome.org>
 
 	* patch.c (patch_cleanup): Add signal argument and use it.
@@ -50,6 +55,7 @@
 	(xreadlink): Deal with symlinks longer than 127 bytes.
 	(Problem reported as issue 190 by Gottfried Ganssauge
 	<gotti@cvshome.org>.)
+<<<<<<< ChangeLog
 
 2004-10-29 Derek Price <derek@ximbiot.com>
 
@@ -84,6 +90,9 @@
 	* client.c (handle_redirect): Detect redirect loops.
 	* sanity.sh (client-20): Test that client detects redirect loops.
 
+=======
+
+>>>>>>> 1.2336.2.326
 2004-10-28  Mark D. Baushke  <mdb@cvshome.org>
 
 	* release.c (release): Allow builds of cvs with --disable-server

@@ -8444,8 +8444,49 @@ new revision: delete; previous revision: 1\.2"
 "$SPROG rtag: could not read RCS file for first-dir/file2
 $SPROG rtag: could not read RCS file for first-dir/file2"
 
+	  # Restore file1 for the next test.
+	  dotest rcslib-long-symlink-init-1 "$testcvs -Q up -A"
+	  dotest rcslib-long-symlink-init-2 "$testcvs -Q add file1"
+	  dotest rcslib-long-symlink-init-3 "$testcvs -Q ci -mback"
+
+	  cd ../..  # $TESTDIR
+
+	  # CVS has a hard-coded default link path size of 127 characters.
+	  # Make sure it knows how to exceed that.
+	  longpath=$CVSROOT_DIRNAME
+	  count=0
+	  while test $count -lt 10; do
+	    # 10 * 30 characters + len $CVSROOT_DIRNAME
+	    count=`expr $count + 1`
+	    longpath=$longpath/1234567889012345678901234567890
+	    modify_repo mkdir $longpath
+	  done
+	  modify_repo cp $CVSROOT_DIRNAME/first-dir/file1,v $longpath
+	  modify_repo mkdir $CVSROOT_DIRNAME/second-dir
+
+	  # Switch as for rcslib-symlink-1
+	  if test -n "$remotehost"; then
+	    modify_repo $CVS_RSH $remotehost \
+	    'ln -s $longpath/file1,v $CVSROOT_DIRNAME/second-dir/fileX,v'
+	  else
+	    modify_repo ln -s $longpath/file1,v \
+			      $CVSROOT_DIRNAME/second-dir/fileX,v
+	  fi
+
+	  dotest rcslib-long-symlink-2 "$testcvs co second-dir" \
+"$SPROG checkout: Updating second-dir
+U second-dir/fileX"
+
+	  cd second-dir
+	  echo change-it >>fileX
+
+	  # Writes actually cause symlinks to be resolved.
+	  dotest rcslib-long-symlink-3 "$testcvs -q ci -mwrite-it" \
+"$CVSROOT_DIRNAME/1234567889012345678901234567890/1234567889012345678901234567890/1234567889012345678901234567890/1234567889012345678901234567890/1234567889012345678901234567890/1234567889012345678901234567890/1234567889012345678901234567890/1234567889012345678901234567890/1234567889012345678901234567890/1234567889012345678901234567890/file1,v  <--  fileX
+new revision: 1\.5; previous revision: 1\.4"
+
 	  dokeep
-	  cd ../..
+	  cd ..
 
 	  # Must remove the symlink first.  Samba doesn't appear to show
 	  # broken symlink across the SMB share, and rm -rf by itself
@@ -8457,10 +8498,13 @@ $SPROG rtag: could not read RCS file for first-dir/file2"
 	  # rcslib-symlink-3j works fine, but the next one doesn't unless run
 	  # remotely under Cygwin and using a TESTDIR on a Samba share.
 	  if test -n "$remotehost"; then
-	    $CVS_RSH $remotehost "rm -f $CVSROOT_DIRNAME/first-dir/file2,v"
+	    $CVS_RSH $remotehost \
+"rm -f $CVSROOT_DIRNAME/first-dir/file2,v $CVSROOT_DIRNAME/second-dir/fileX,v"
 	  fi
-	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
-	  rm -r first-dir 2
+	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir \
+			     $CVSROOT_DIRNAME/second-dir \
+			     $CVSROOT_DIRNAME/123456789012345678901234567890
+	  rm -r first-dir second-dir 2
 	  ;;
 
 
