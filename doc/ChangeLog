@@ -1,3 +1,8 @@
+2004-11-29  Mark D. Baushke  <mdb@cvshome.org>
+
+	* cvs.texinfo (Keyword list): LocalKeyword may only use the Id,
+	Header, and CVSHeader keywords at present, so document it.
+
 2004-11-29  Larry Jones  <lawrence.jones@ugs.com>
 
 	* cvs.texinfo: s/KeywordExpansion/KeywordExpand/.
