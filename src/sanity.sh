@@ -1599,8 +1599,8 @@ Specify the --help option for further information about CVS'
 
 	  if $remote; then
 		dotest version-2r "${testcvs} version" \
-'Client: Concurrent Versions System (CVS) [0-9.]* (client/server)
-Server: Concurrent Versions System (CVS) [0-9.]* (client/server)'
+'Client: Concurrent Versions System (CVS) [0-9p.]* (client/server)
+Server: Concurrent Versions System (CVS) [0-9p.]* (client/server)'
 	  else
 		dotest version-2 "${testcvs} version" \
 'Concurrent Versions System (CVS) [0-9.]*.*'
