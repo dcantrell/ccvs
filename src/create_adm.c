@@ -59,11 +59,11 @@ Create_Admin (dir, update_dir, repository, tag, date, nonbranch, warn)
 
     if (CVS_MKDIR (tmp, 0777) < 0)
     {
-	/* It's useful to print out the entire pathname in the error
-           message, since a lot of our code calls this function with
-           dir == "." or dir == NULL. */
-
-	char *wd = xgetwd ();
+	/* We want to print out the entire update_dir, since a lot of
+	   our code calls this function with dir == "." or dir ==
+	   NULL.  I hope that gives enough information in cases like
+	   absolute pathnames; printing out xgetwd or something would
+	   be way too verbose in the common cases.  */
 
 	if (warn)
 	{
@@ -73,13 +73,13 @@ Create_Admin (dir, update_dir, repository, tag, date, nonbranch, warn)
 	       permissions) which are not made clear to the user.  With
 	       the warning at least we let them know what is going on.  */
 	    error (0, errno, "warning: cannot make directory %s in %s",
-		   tmp, wd);
-	    free (wd);
+		   CVSADM, update_dir);
 	    free (tmp);
 	    return 1;
 	}
 	else
-	    error (1, errno, "cannot make directory %s in %s", tmp, wd);
+	    error (1, errno, "cannot make directory %s in %s",
+		   CVSADM, update_dir);
     }
 
     /* record the current cvs root for later use */
