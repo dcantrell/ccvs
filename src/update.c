@@ -2297,18 +2297,17 @@ join_file (struct file_info *finfo, Vers_TS *vers)
     /* If we know that the user file is up-to-date, then it becomes an
      * optimization to skip the merge when rev2 is the same as the base
      * revision.  i.e. we know that diff3(file2,file1,file2) will produce
-     * file2. Note: If rev1 did not exist in the file (rev1 == NULL),
-     * be silent.
+     * file2.
      */
     if (vers->vn_user != NULL && vers->ts_user != NULL
         && strcmp (vers->ts_user, vers->ts_rcs) == 0
         && strcmp (rev2, vers->vn_user) == 0)
     {
-	if (!really_quiet && rev1 != NULL)
+	if (!really_quiet)
 	{
 	    cvs_output (finfo->fullname, 0);
 	    cvs_output (" already contains the differences between ", 0);
-	    cvs_output (rev1, 0);
+	    cvs_output (rev1 ? rev1 : "creation", 0);
 	    cvs_output (" and ", 0);
 	    cvs_output (rev2, 0);
 	    cvs_output ("\n", 1);
