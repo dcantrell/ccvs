@@ -1,7 +1,7 @@
 #include "cvs.h"
 
 /*
-  Original Author:  athan@object.com <Andrew C. Athan> 2/1/94
+  Original Author:  athan@morgan.com <Andrew C. Athan> 2/1/94
   Modified By:      vdemarco@bou.shl.com
 
   This package was written to support the NEXTSTEP concept of
