@@ -1,3 +1,10 @@
+Fri Oct 31 16:38:39 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+			  and Abe Feldman
+
+	* client.c (update_entries): If UTIME_EXPECTS_WRITABLE, if
+	necessary change the file to be writable temporarily to set its
+	modification time.
+
 Thu Oct 30 17:42:59 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* admin.c (admin): Deal with new :: syntax for ranges.

@@ -1423,6 +1423,10 @@ update_entries (data_arg, ent_list, short_pathname, filename)
     char *scratch_entries = NULL;
     int bin;
 
+#ifdef UTIME_EXPECTS_WRITABLE
+    int change_it_back = 0;
+#endif
+
     read_line (&entries_line);
 
     /*
@@ -1948,8 +1952,26 @@ update_entries (data_arg, ent_list, short_pathname, filename)
 	/* There is probably little point in trying to preserved the
 	   actime (or is there? What about Checked-in?).  */
 	t.modtime = t.actime = stored_modtime;
+
+#ifdef UTIME_EXPECTS_WRITABLE
+	if (!iswritable (filename))
+	{
+	    xchmod (filename, 1);
+	    change_it_back = 1;
+	}
+#endif  /* UTIME_EXPECTS_WRITABLE  */
+
 	if (utime (filename, &t) < 0)
 	    error (0, errno, "cannot set time on %s", filename);
+
+#ifdef UTIME_EXPECTS_WRITABLE
+	if (change_it_back == 1)
+	{
+	    xchmod (filename, 0);
+	    change_it_back = 0;
+	}
+#endif  /*  UTIME_EXPECTS_WRITABLE  */
+
 	stored_modtime_valid = 0;
     }
 
