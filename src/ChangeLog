@@ -1,5 +1,7 @@
 Tue Jan  9 09:41:29 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* ignore.c (ign_default): Add *.obj.
+
 	* server.c: Put /* */ around #endif comment.
 
 Mon Jan  8 20:37:17 1996  Karl Fogel  <kfogel@floss.red-bean.com>
