@@ -17,12 +17,14 @@
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
 
 #ifndef GETNLINE_H
-# define GETNLINE_H 1
+#define GETNLINE_H 1
 
-# include <stddef.h>
-# include <stdio.h>
-# include <sys/types.h> /* Included for ssize_t. */
- 
+#include <stddef.h>
+#include <stdio.h>
+
+/* Get ssize_t.  */
+#include <sys/types.h>
+
 /* Read a line, up to the next newline, from STREAM, and store it in *LINEPTR.
    *LINEPTR is a pointer returned from malloc (or NULL), pointing to *LINESIZE
    bytes of space.  It is realloc'd as necessary.  Read a maximum of LIMIT
