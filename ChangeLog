@@ -1,3 +1,7 @@
+Fri Feb 23 1996  Jim Kingdon  <kingdon@cyclic.com>
+
+	* cvsnt.mak: Add login.c and scramble.c.
+
 Fri Feb 23 16:36:11 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* README: Mention comp.software.config-mgmt.  Don't mention old
