@@ -1,3 +1,7 @@
+Wed Dec  6 00:04:58 1995  Karl Fogel  <kfogel@floss.cyclic.com>
+
+        * server.c (authenticate_connection): expanded comment.
+
 Tue Dec  5 23:37:39 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
         * client.c (connect_to_pserver): read password from prompt for
