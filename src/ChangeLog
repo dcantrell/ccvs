@@ -1,5 +1,11 @@
 2004-02-17  Derek Price  <derek@ximbiot.com>
 
+	* sanity.sh: Check for $PWD != $TESTDIR after each set of tests rather
+	than once at the end.  Check that there are no cvs-serv* directories in
+	$tmp after each set of remote tests.
+
+2004-02-17  Derek Price  <derek@ximbiot.com>
+
 	* sanity.sh: Don't check for an empty $TESTDIR - if $TESTDIR was empty
 	then the preceding call to mkdir would have failed anyhow.
 
