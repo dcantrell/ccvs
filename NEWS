@@ -1,6 +1,11 @@
 Changes since 1.11.15:
 **********************
 
+BUG FIXES
+
+* Thanks to Ken Raeburn at MIT, directory deletion, whether via `cvs release'
+  or empty directory pruning, now works on network shares under Windows XP.
+
 Changes from 1.11.14 to 1.11.15:
 ********************************
 
