@@ -1,3 +1,9 @@
+Thu Oct 10 09:20:25 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* README.VMS: Rewrite sections about wildcard expansion and
+	calling editors to suggest technical approaches and to make it
+	clear that fixes will only happen if someone gets around to them.
+
 Sat Oct  5 15:01:22 1996  Jim Blandy  <jimb@totoro.cyclic.com>
 
 	* Version 1.9 released.
