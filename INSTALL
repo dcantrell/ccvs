@@ -58,12 +58,12 @@ includes a list of platforms which have been tested.
    In this and subsequent examples we use "$" to indicate the command
    prompt; do not type the "$".
 
-4) It might be a good idea to jump right in and put the CVS distribution
-   directly under CVS control.  From within the top-level directory of
-   the CVS distribution (the one that contains this INSTALL file) run
-   the following commands:
+4) It might be a good idea to jump right in and put some sources or
+   documents directly under CVS control.  The names in the following
+   example are ones you might use for the source code to CVS 1.6.
+   From within the top-level directory of your source tree, run the
+   following commands:
 
-       $ make distclean
        $ cvs import -m "CVS 1.6 distribution" ccvs CVS_DIST CVS-1_6
 
 5) Having done step 4, one should be able to checkout a fresh copy of the
