@@ -1,3 +1,11 @@
+Fri Aug  4 00:01:24 1995  Jim Meyering  (meyering@comco.com)
+
+	* save-cwd.c: New file.
+	* save-cwd.h: New file.
+	* Makefile.in (SOURCES): Add save-cwd.c
+	(OBJECTS): Add save-cwd.o.
+	(HEADERS): Add save-cwd.h.
+
 Thu Aug  3 00:55:54 1995  Jim Meyering  (meyering@comco.com)
 
 	* error.h: New file.
