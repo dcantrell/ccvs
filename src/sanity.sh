@@ -967,7 +967,7 @@ modify_repo ()
 restore_adm ()
 {
     modify_repo rm -rf $CVSROOT_DIRNAME/CVSROOT
-    modify_repo cp -rp $TESTDIR/CVSROOT.save/ $CVSROOT_DIRNAME/CVSROOT
+    modify_repo cp -rp $TESTDIR/CVSROOT.save $CVSROOT_DIRNAME/CVSROOT
 }
 
 # Test that $RSYNC supports the options we need or try to find a
@@ -2497,7 +2497,7 @@ fi # $proxy
 
 # Save a copy of the initial repository so that it may be restored after the
 # tests that alter it.
-cp -rp $CVSROOT_DIRNAME/CVSROOT/ $TESTDIR/CVSROOT.save/
+cp -rp $CVSROOT_DIRNAME/CVSROOT $TESTDIR/CVSROOT.save
 
 
 ###

@@ -1,3 +1,7 @@
+2004-11-07  Larry Jones  <lawrence.jones@ugs.com>
+
+	* sanity.sh: Remove trailing / from cp -r commands.
+
 2004-11-04 Derek Price <derek@ximbiot.com>
 
 	* gssapi-client.c (connect_to_gserver): Silence gcc -Wall.
