@@ -1,3 +1,11 @@
+Fri Feb 21 16:40:03 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* rcs.c (RCS_getrevtime): Fix documentation (in particular, the
+	size of the array that DATE must point to, but many other things
+	too).
+	* patch.c, recurse.c, release.c, remove.c, repos.c: Nuke PATH_MAX.
+	(patch_fileproc): Use MAXDATELEN not hardcoded 50.
+
 Sun Feb 16 12:00:44 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* client.c (client_process_import_file): New variable fullname;

@@ -273,9 +273,11 @@ patch_proc (pargc, argv, xwhere, mwhere, mfile, shorten, local_specified,
 {
     int err = 0;
     int which;
-    char repository[PATH_MAX];
+    char *repository;
     char *where;
 
+    repository = xmalloc (strlen (CVSroot_directory) + strlen (argv[0])
+			  + (mfile == NULL ? 0 : strlen (mfile)) + 30);
     (void) sprintf (repository, "%s/%s", CVSroot_directory, argv[0]);
     where = xmalloc (strlen (argv[0]) + (mfile == NULL ? 0 : strlen (mfile))
 		     + 10);
@@ -285,7 +287,7 @@ patch_proc (pargc, argv, xwhere, mwhere, mfile, shorten, local_specified,
     if (mfile != NULL)
     {
 	char *cp;
-	char path[PATH_MAX];
+	char *path;
 
 	/* if the portion of the module is a path, put the dir part on repos */
 	if ((cp = strrchr (mfile, '/')) != NULL)
@@ -299,6 +301,7 @@ patch_proc (pargc, argv, xwhere, mwhere, mfile, shorten, local_specified,
 	}
 
 	/* take care of the rest */
+	path = xmalloc (strlen (repository) + strlen (mfile) + 5);
 	(void) sprintf (path, "%s/%s", repository, mfile);
 	if (isdir (path))
 	{
@@ -317,14 +320,17 @@ patch_proc (pargc, argv, xwhere, mwhere, mfile, shorten, local_specified,
 	    argv[1] = xstrdup (mfile);
 	    (*pargc) = 2;
 	}
+	free (path);
     }
 
     /* cd to the starting repository */
     if ( CVS_CHDIR (repository) < 0)
     {
 	error (0, errno, "cannot chdir to %s", repository);
+	free (repository);
 	return (1);
     }
+    free (repository);
 
     if (force_tag_match)
 	which = W_REPOS | W_ATTIC;
@@ -364,14 +370,15 @@ patch_fileproc (callerdat, finfo)
 {
     struct utimbuf t;
     char *vers_tag, *vers_head;
-    char rcsspace[1][PATH_MAX];
-    char *rcs = rcsspace[0];
+    char *rcs = NULL;
     RCSNode *rcsfile;
     FILE *fp1, *fp2, *fp3;
     int ret = 0;
     int isattic = 0;
     int retcode = 0;
-    char file1[PATH_MAX], file2[PATH_MAX], strippath[PATH_MAX];
+    char *file1;
+    char *file2;
+    char *strippath;
     char *line1, *line2;
     size_t line1_chars_allocated;
     size_t line2_chars_allocated;
@@ -385,10 +392,14 @@ patch_fileproc (callerdat, finfo)
 
     /* find the parsed rcs file */
     if ((rcsfile = finfo->rcs) == NULL)
-	return (1);
+    {
+	ret = 1;
+	goto out2;
+    }
     if ((rcsfile->flags & VALID) && (rcsfile->flags & INATTIC))
 	isattic = 1;
 
+    rcs = xmalloc (strlen (finfo->file) + sizeof (RCSEXT) + 5);
     (void) sprintf (rcs, "%s%s", finfo->file, RCSEXT);
 
     /* if vers_head is NULL, may have been removed from the release */
@@ -408,17 +419,21 @@ patch_fileproc (callerdat, finfo)
     if (toptwo_diffs)
     {
 	if (vers_head == NULL)
-	    return (1);
+	{
+	    ret = 1;
+	    goto out2;
+	}
 
 	if (!date1)
-	    date1 = xmalloc (50);	/* plenty big :-) */
+	    date1 = xmalloc (MAXDATELEN);
 	*date1 = '\0';
 	if (RCS_getrevtime (rcsfile, vers_head, date1, 1) == -1)
 	{
 	    if (!really_quiet)
 		error (0, 0, "cannot find date in rcs file %s revision %s",
 		       rcs, vers_head);
-	    return (1);
+	    ret = 1;
+	    goto out2;
 	}
     }
     vers_tag = RCS_getversion (rcsfile, rev1, date1, force_tag_match,
@@ -430,10 +445,18 @@ patch_fileproc (callerdat, finfo)
     }
 
     if (vers_tag == NULL && vers_head == NULL)
-	return (0);			/* nothing known about specified revs */
+    {
+	/* Nothing known about specified revs.  */
+	ret = 0;
+	goto out2;
+    }
 
     if (vers_tag && vers_head && strcmp (vers_head, vers_tag) == 0)
-	return (0);			/* not changed between releases */
+    {
+	/* Not changed between releases.  */
+	ret = 0;
+	goto out2;
+    }
 
     if (patch_short)
     {
@@ -454,7 +477,8 @@ patch_fileproc (callerdat, finfo)
 	else
 	    (void) printf ("changed from revision %s to %s\n",
 			   vers_tag, vers_head);
-	return (0);
+	ret = 0;
+	goto out2;
     }
     tmpfile1 = cvs_temp_name ();
     if ((fp1 = CVS_FOPEN (tmpfile1, "w+")) != NULL)
@@ -571,19 +595,29 @@ patch_fileproc (callerdat, finfo)
 		}
 	    }
 	    if (CVSroot_directory != NULL)
+	    {
+		strippath = xmalloc (strlen (CVSroot_directory) + 10);
 		(void) sprintf (strippath, "%s/", CVSroot_directory);
+	    }
 	    else
-		(void) strcpy (strippath, REPOS_STRIP);
+		strippath = xstrdup (REPOS_STRIP);
 	    if (strncmp (rcs, strippath, strlen (strippath)) == 0)
 		rcs += strlen (strippath);
+	    free (strippath);
 	    if (vers_tag != NULL)
 	    {
+		file1 = xmalloc (strlen (finfo->fullname)
+				 + strlen (vers_tag)
+				 + 10);
 		(void) sprintf (file1, "%s:%s", finfo->fullname, vers_tag);
 	    }
 	    else
 	    {
-		(void) strcpy (file1, DEVNULL);
+		file1 = xstrdup (DEVNULL);
 	    }
+	    file2 = xmalloc (strlen (finfo->fullname)
+			     + (vers_head != NULL ? strlen (vers_head) : 10)
+			     + 10);
 	    (void) sprintf (file2, "%s:%s", finfo->fullname,
 			    vers_head ? vers_head : "removed");
 
@@ -606,6 +640,8 @@ patch_fileproc (callerdat, finfo)
 	    while (getline (&line1, &line1_chars_allocated, fp) >= 0)
 		(void) fputs (line1, stdout);
 	    (void) fclose (fp);
+	    free (file1);
+	    free (file2);
 	    break;
 	default:
 	    error (0, 0, "diff failed for %s", finfo->fullname);
@@ -623,6 +659,10 @@ patch_fileproc (callerdat, finfo)
     free (tmpfile2);
     free (tmpfile3);
     tmpfile1 = tmpfile2 = tmpfile3 = NULL;
+
+ out2:
+    if (rcs != NULL)
+	free (rcs);
     return (ret);
 }
 

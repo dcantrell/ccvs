@@ -136,7 +136,6 @@ remove_fileproc (callerdat, finfo)
     void *callerdat;
     struct file_info *finfo;
 {
-    char fname[PATH_MAX];
     Vers_TS *vers;
 
     if (force)
@@ -168,11 +167,17 @@ remove_fileproc (callerdat, finfo)
     }
     else if (vers->vn_user[0] == '0' && vers->vn_user[1] == '\0')
     {
+	char *fname;
+
 	/*
 	 * It's a file that has been added, but not commited yet. So,
 	 * remove the ,t file for it and scratch it from the
 	 * entries file.  */
 	Scratch_Entry (finfo->entries, finfo->file);
+	fname = xmalloc (strlen (finfo->file)
+			 + sizeof (CVSADM)
+			 + sizeof (CVSEXT_LOG)
+			 + 10);
 	(void) sprintf (fname, "%s/%s%s", CVSADM, finfo->file, CVSEXT_LOG);
 	(void) unlink_file (fname);
 	if (!quiet)
@@ -182,6 +187,7 @@ remove_fileproc (callerdat, finfo)
 	if (server_active)
 	    server_checked_in (finfo->file, finfo->update_dir, finfo->repository);
 #endif
+	free (fname);
     }
     else if (vers->vn_user[0] == '-')
     {
@@ -191,7 +197,10 @@ remove_fileproc (callerdat, finfo)
     }
     else
     {
+	char *fname;
+
 	/* Re-register it with a negative version number.  */
+	fname = xmalloc (strlen (vers->vn_user) + 5);
 	(void) strcpy (fname, "-");
 	(void) strcat (fname, vers->vn_user);
 	Register (finfo->entries, finfo->file, fname, vers->ts_rcs, vers->options,
@@ -204,6 +213,7 @@ remove_fileproc (callerdat, finfo)
 	if (server_active)
 	    server_checked_in (finfo->file, finfo->update_dir, finfo->repository);
 #endif
+	free (fname);
     }
 
     freevers_ts (&vers);
