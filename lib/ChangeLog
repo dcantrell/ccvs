@@ -1,3 +1,7 @@
+2001-05-02  Derek Price  <oberon@umich.edu>
+
+	* fnmatch.h: More #defines to avoid Mac OS X namespace conflicts.
+
 2001-04-30  Derek Price  <oberon@umich.edu>
 
 	* hostname.c: Rename to...
