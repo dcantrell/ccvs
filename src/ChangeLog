@@ -1,3 +1,25 @@
+Mon Sep 16 10:31:48 1996  Norbert Kiesel  <nk@col.sw-ley.de>
+
+	* main.c: Add support for -T <tmpdir> command line option.  This
+ 	is needed for servers started via inetd.
+	(usg): Added line for -T.  Improved -z documentation.
+	(main): Read default for tmpdir from the environment. Test for 'T'
+	in getopt loop.  Use '/tmp' as ultimative fallback.  Update
+	environment if possible.
+
+	* cvs.h (TMPDIR_ENV): Added for -T <tmpdir> command line option.
+
+	* options.h.in: Add TMPDIR_DFLT
+
+	* import.c (update_rcs_file): Use global variable Tmpdir instead
+ 	of reading the environment.
+
+	* server.c (server_cleanup): Use global variable Tmpdir instead of
+ 	reading the environment.  Also, replace system("rm -rf") with
+ 	unlink_file_dir.
+	(server): Use global variable Tmpdir instead of reading the
+ 	environment.
+
 Thu Sep 12 1996  Jim Kingdon  <kingdon@cyclic.com>
 
 	* main.c (main): If ARGV0_NOT_PROGRAM_NAME, then just set

@@ -3490,9 +3490,6 @@ server_cleanup (sig)
 {
     /* Do "rm -rf" on the temp directory.  */
     int status;
-    int len;
-    char *cmd;
-    char *temp_dir;
 
     if (buf_to_net != NULL)
     {
@@ -3603,28 +3600,8 @@ server_cleanup (sig)
     }
 #endif
 
-    /* This might be set by the user in ~/.bashrc, ~/.cshrc, etc.  */
-    temp_dir = getenv ("TMPDIR");
-    if (temp_dir == NULL || temp_dir[0] == '\0')
-        temp_dir = "/tmp";
-    CVS_CHDIR (temp_dir);
-
-    len = strlen (server_temp_dir) + 80;
-    cmd = malloc (len);
-    if (cmd == NULL)
-    {
-        error (0, 0, "Cannot delete %s on server; out of memory\n",
-	       server_temp_dir);
-	if (buf_to_net != NULL)
-	{
-	    buf_flush (buf_to_net, 1);
-	    (void) buf_shutdown (buf_to_net);
-	}
-	return;
-    }
-    sprintf (cmd, "rm -rf %s", server_temp_dir);
-    system (cmd);
-    free (cmd);
+    CVS_CHDIR (Tmpdir);
+    unlink_file_dir (server_temp_dir);
 
     if (buf_to_net != NULL)
 	(void) buf_shutdown (buf_to_net);
@@ -3698,17 +3675,12 @@ error ENOMEM Virtual memory exhausted.\n");
     {
 	char *p;
 
-	/* This might be set by the user in ~/.bashrc, ~/.cshrc, etc.  */
-	char *temp_dir = getenv ("TMPDIR");
-	if (temp_dir == NULL || temp_dir[0] == '\0')
-	    temp_dir = "/tmp";
-
 	/* The code which wants to chdir into server_temp_dir is not set
 	   up to deal with it being a relative path.  So give an error
 	   for that case.  */
-	if (!isabsolute (temp_dir))
+	if (!isabsolute (Tmpdir))
 	{
-	    pending_error_text = malloc (80 + strlen (temp_dir));
+	    pending_error_text = malloc (80 + strlen (Tmpdir));
 	    if (pending_error_text == NULL)
 	    {
 		pending_error = ENOMEM;
@@ -3716,7 +3688,7 @@ error ENOMEM Virtual memory exhausted.\n");
 	    else
 	    {
 		sprintf (pending_error_text,
-			 "E Value of %s for TMPDIR is not absolute", temp_dir);
+			 "E Value of %s for TMPDIR is not absolute", Tmpdir);
 	    }
 	    /* FIXME: we would like this error to be persistent, that
 	       is, not cleared by print_pending_error.  The current client
@@ -3725,7 +3697,7 @@ error ENOMEM Virtual memory exhausted.\n");
 	}
 	else
 	{
-	    server_temp_dir = malloc (strlen (temp_dir) + 80);
+	    server_temp_dir = malloc (strlen (Tmpdir) + 80);
 	    if (server_temp_dir == NULL)
 	    {
 		/*
@@ -3736,7 +3708,7 @@ error ENOMEM Virtual memory exhausted.\n");
     error ENOMEM Virtual memory exhausted.\n");
 		exit (EXIT_FAILURE);
 	    }
-	    strcpy (server_temp_dir, temp_dir);
+	    strcpy (server_temp_dir, Tmpdir);
 
 	    /* Remove a trailing slash from TMPDIR if present.  */
 	    p = server_temp_dir + strlen (server_temp_dir) - 1;
