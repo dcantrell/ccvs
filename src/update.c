@@ -34,9 +34,6 @@
  */
 
 #include "cvs.h"
-#ifdef CLIENT_SUPPORT
-#include "update.h"
-#endif
 #ifdef SERVER_SUPPORT
 #include "md5.h"
 #endif
@@ -64,11 +61,9 @@ static Dtype update_dirent_proc PROTO((char *dir, char *repository, char *update
 static int update_dirleave_proc PROTO((char *dir, int err, char *update_dir));
 static int update_file_proc PROTO((char *file, char *update_dir, char *repository,
 			     List * entries, List * srcfiles));
-#ifndef CLIENT_SUPPORT
-static int update_filesdone_proc PROTO((int err, char *repository, char *update_dir));
-#endif
+static int update_filesdone_proc PROTO((int err, char *repository,
+					char *update_dir));
 static int write_letter PROTO((char *file, int letter, char *update_dir));
-static void ignore_files PROTO((List * ilist, char *update_dir));
 #ifdef SERVER_SUPPORT
 static void join_file PROTO((char *file, List *srcfiles, Vers_TS *vers_ts,
 		       char *update_dir, List *entries, char *repository));
@@ -90,11 +85,7 @@ static int pipeout = 0;
 #ifdef SERVER_SUPPORT
 static int patches = 0;
 #endif
-#ifdef CLIENT_SUPPORT
-List *ignlist = (List *) NULL;
-#else
 static List *ignlist = (List *) NULL;
-#endif
 static time_t last_register_time;
 static const char *const update_usage[] =
 {
@@ -226,8 +217,6 @@ update (argc, argv)
 	    int status;
 
 	    start_server ();
-
-	    ign_setup ();
 
 	    if (local)
 		send_arg("-l");
@@ -668,16 +657,18 @@ update_file_proc (file, update_dir, repository, entries, srcfiles)
     return (retval);
 }
 
-/*
- * update_filesdone_proc () is used
- */
+static void update_ignproc PROTO ((char *, char *));
+
+static void
+update_ignproc (file, dir)
+    char *file;
+    char *dir;
+{
+    (void) write_letter (file, '?', dir);
+}
+
 /* ARGSUSED */
-#ifdef CLIENT_SUPPORT
-/* Also used by client.c  */
-int
-#else
 static int
-#endif
 update_filesdone_proc (err, repository, update_dir)
     int err;
     char *repository;
@@ -686,19 +677,12 @@ update_filesdone_proc (err, repository, update_dir)
     /* if this directory has an ignore list, process it then free it */
     if (ignlist)
     {
-	ignore_files (ignlist, update_dir);
+	ignore_files (ignlist, update_dir, update_ignproc);
 	dellist (&ignlist);
     }
 
     /* Clean up CVS admin dirs if we are export */
-#ifdef CLIENT_SUPPORT
-    /* In the client, we need to clean these up after we create them.  Doing
-       it here might would clean up the user's previous contents even on
-       SIGINT which probably is bad.  */
-    if (!client_active && strcmp (command_name, "export") == 0)
-#else
     if (strcmp (command_name, "export") == 0)
-#endif
     {
 	run_setup ("%s -fr", RM);
 	run_arg (CVSADM);
@@ -712,14 +696,7 @@ update_filesdone_proc (err, repository, update_dir)
 #endif /* SERVER_SUPPORT */
     {
         /* If there is no CVS/Root file, add one */
-#ifdef CLIENT_SUPPORT
-        if (!isfile (CVSADM_ROOT)
-	    /* but only if we want it */
-	    && ! (getenv ("CVS_IGNORE_REMOTE_ROOT") && strchr (CVSroot, ':'))
-	    )
-#else /* No CLIENT_SUPPORT */
         if (!isfile (CVSADM_ROOT))
-#endif /* No CLIENT_SUPPORT */
 	    Create_Root( (char *) NULL, CVSroot );
     }
 #endif /* CVSADM_ROOT */
@@ -1843,82 +1820,6 @@ join_file (file, srcfiles, vers, update_dir, entries)
 			(struct stat *) NULL, (unsigned char *) NULL);
     }
 #endif
-}
-
-/*
- * Process the current directory, looking for files not in ILIST and not on
- * the global ignore list for this directory.
- */
-static void
-ignore_files (ilist, update_dir)
-    List *ilist;
-    char *update_dir;
-{
-    DIR *dirp;
-    struct dirent *dp;
-    struct stat sb;
-    char *file;
-    char *xdir;
-
-    /* we get called with update_dir set to "." sometimes... strip it */
-    if (strcmp (update_dir, ".") == 0)
-	xdir = "";
-    else
-	xdir = update_dir;
-
-    dirp = opendir (".");
-    if (dirp == NULL)
-	return;
-
-    ign_add_file (CVSDOTIGNORE, 1);
-    wrap_add_file (CVSDOTWRAPPER, 1);
-
-    while ((dp = readdir (dirp)) != NULL)
-    {
-	file = dp->d_name;
-	if (strcmp (file, ".") == 0 || strcmp (file, "..") == 0)
-	    continue;
-	if (findnode_fn (ilist, file) != NULL)
-	    continue;
-
-	if (
-#ifdef DT_DIR
-		dp->d_type != DT_UNKNOWN ||
-#endif
-		lstat(file, &sb) != -1) 
-	{
-
-	    if (
-#ifdef DT_DIR
-		dp->d_type == DT_DIR || dp->d_type == DT_UNKNOWN &&
-#endif
-		S_ISDIR(sb.st_mode))
-	    {
-		char temp[PATH_MAX];
-
-		(void) sprintf (temp, "%s/%s", file, CVSADM);
-		if (isdir (temp))
-		    continue;
-	    }
-#ifdef S_ISLNK
-	    else if (
-#ifdef DT_DIR
-		dp->d_type == DT_LNK || dp->d_type == DT_UNKNOWN && 
-#endif
-		S_ISLNK(sb.st_mode))
-	    {
-		continue;
-	    }
-#endif
-    	}
-
-	/* We could be ignoring FIFOs and other files which are neither
-	   regular files nor directories here.  */
-	if (ign_name (file))
-	    continue;
-	(void) write_letter (file, '?', xdir);
-    }
-    (void) closedir (dirp);
 }
 
 int

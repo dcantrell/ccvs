@@ -32,6 +32,10 @@ const char *ign_default = ". .. core RCSLOG tags TAGS RCS SCCS .make.state .nse_
 #define IGN_GROW 16			/* grow the list by 16 elements at a
 					 * time */
 
+/* Nonzero if we have encountered an -I ! directive, which means one should
+   no longer ask the server about what is in CVSROOTADM_IGNORE.  */
+int ign_inhibit_server;
+
 /*
  * To the "ignore list", add the hard-coded default ignored wildcards above,
  * the wildcards found in $CVSROOT/CVSROOT/cvsignore, the wildcards found in
@@ -45,17 +49,18 @@ ign_setup ()
     char file[PATH_MAX];
     char *tmp;
 
+    ign_inhibit_server = 0;
+
     /* Start with default list and special case */
     tmp = xstrdup (ign_default);
     ign_add (tmp, 0);
     free (tmp);
 
 #ifdef CLIENT_SUPPORT
-    /* Chances are we should have some way to provide this feature
-       client/server, but I'm not sure how (surely not by introducing
-       another network turnaround to each operation--perhaps by
-       putting a file in the CVS directory on checkout, or with some
-       sort of "slave cvsroot" on the client).  */
+    /* The client handles another way, by (after it does its own ignore file
+       processing, and only if !ign_inhibit_server), letting the server
+       know about the files and letting it decide whether to ignore
+       them based on CVSROOOTADM_IGNORE.  */
     if (!client_active)
 #endif
     {
@@ -176,7 +181,10 @@ ign_add (ign, hold)
 
 		/* if we are doing a '!', continue; otherwise add the '*' */
 		if (*ign == '!')
+		{
+		    ign_inhibit_server = 1;
 		    continue;
+		}
 	    }
 	    else if (*ign == '!')
 	    {
@@ -283,4 +291,82 @@ int ignore_directory (name)
     }
 
   return 0;
+}
+
+/*
+ * Process the current directory, looking for files not in ILIST and not on
+ * the global ignore list for this directory.  If we find one, call PROC
+ * passing it the name of the file and the update dir.
+ */
+void
+ignore_files (ilist, update_dir, proc)
+    List *ilist;
+    char *update_dir;
+    Ignore_proc proc;
+{
+    DIR *dirp;
+    struct dirent *dp;
+    struct stat sb;
+    char *file;
+    char *xdir;
+
+    /* we get called with update_dir set to "." sometimes... strip it */
+    if (strcmp (update_dir, ".") == 0)
+	xdir = "";
+    else
+	xdir = update_dir;
+
+    dirp = opendir (".");
+    if (dirp == NULL)
+	return;
+
+    ign_add_file (CVSDOTIGNORE, 1);
+    wrap_add_file (CVSDOTWRAPPER, 1);
+
+    while ((dp = readdir (dirp)) != NULL)
+    {
+	file = dp->d_name;
+	if (strcmp (file, ".") == 0 || strcmp (file, "..") == 0)
+	    continue;
+	if (findnode_fn (ilist, file) != NULL)
+	    continue;
+
+	if (
+#ifdef DT_DIR
+		dp->d_type != DT_UNKNOWN ||
+#endif
+		lstat(file, &sb) != -1) 
+	{
+
+	    if (
+#ifdef DT_DIR
+		dp->d_type == DT_DIR || dp->d_type == DT_UNKNOWN &&
+#endif
+		S_ISDIR(sb.st_mode))
+	    {
+		char temp[PATH_MAX];
+
+		(void) sprintf (temp, "%s/%s", file, CVSADM);
+		if (isdir (temp))
+		    continue;
+	    }
+#ifdef S_ISLNK
+	    else if (
+#ifdef DT_DIR
+		dp->d_type == DT_LNK || dp->d_type == DT_UNKNOWN && 
+#endif
+		S_ISLNK(sb.st_mode))
+	    {
+		continue;
+	    }
+#endif
+    	}
+
+	/* We could be ignoring FIFOs and other files which are neither
+	   regular files nor directories here.  */
+	if (ign_name (file))
+	    continue;
+	(*proc) (file, xdir);
+    }
+    (void) closedir (dirp);
 }

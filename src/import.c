@@ -207,8 +207,6 @@ import (argc, argv)
     {
 	int err;
 
-	ign_setup ();
-
 	if (use_file_modtime)
 	    send_arg("-d");
 
@@ -218,6 +216,14 @@ import (argc, argv)
 	    option_with_arg ("-m", message);
 	if (keyword_opt != NULL)
 	    option_with_arg ("-k", keyword_opt);
+	/* The only ignore processing which takes place on the server side
+	   is the CVSROOT/cvsignore file.  But if the user specified -I !,
+	   the documented behavior is to not process said file.  */
+	if (ign_inhibit_server)
+	{
+	    send_arg ("-I");
+	    send_arg ("!");
+	}
 
 	{
 	    int i;
@@ -332,16 +338,15 @@ import_descend (message, vtag, targc, targv)
 	{
 	    if (strcmp (dp->d_name, ".") == 0 || strcmp (dp->d_name, "..") == 0)
 		continue;
+#ifdef SERVER_SUPPORT
+	    /* CVS directories are created in the temp directory by
+	       server.c because it doesn't special-case import.  So
+	       don't print a message about them, regardless of -I!.  */
+	    if (server_active && strcmp (dp->d_name, CVSADM) == 0)
+		continue;
+#endif
 	    if (ign_name (dp->d_name))
 	    {
-#ifdef SERVER_SUPPORT
-		/* CVS directories are created by server.c because it doesn't
-		   special-case import.  So don't print a message about them.
-		   Do print a message about other ignored files (although
-		   most of these will get ignored on the client side).  */
-		if (server_active && strcmp (dp->d_name, CVSADM) == 0)
-		    continue;
-#endif
 		add_log ('I', dp->d_name);
 		continue;
 	    }
