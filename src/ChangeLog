@@ -1,3 +1,8 @@
+Tue Mar 18 13:03:33 1997  Jim Meyering  <meyering@totoro.cyclic.com>
+
+	* Makefile.in: (install): Depend on installdirs.
+	Remove `CYGNUS LOCAL' comment saying not to.
+
 Tue Mar 18 09:36:26 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* recurse.c (struct recursion_frame): Reindent.
