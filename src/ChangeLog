@@ -1,5 +1,9 @@
 Wed Apr  9 09:49:17 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* filesubr.c (fopen_case): If CVS_OPENDIR gives an
+	existence_error, return it to the caller instead of giving a fatal
+	error.
+
 	* client.c (update_entries): Fix typo in call to error (1 -> errno).
 
 Tue Apr  8 23:02:22 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
