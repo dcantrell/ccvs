@@ -1,3 +1,8 @@
+2004-06-09  Derek Price  <derek@ximbiot.com>
+
+	* Makefile.am (EXTRA_DIST): Remove some files that are included by
+	virtue of appearing in configure.in rules.
+
 2004-05-20  Derek Price  <derek@ximbiot.com>
 
 	* config.h.in.footer (ssize_t): Move...

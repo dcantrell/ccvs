@@ -43,6 +43,7 @@
 #include "exit.h"
 #include "vasnprintf.h"
 #include "xalloc.h"
+#include "xsize.h"
 /* end GNULIB headers */
 
 #if ! STDC_HEADERS
