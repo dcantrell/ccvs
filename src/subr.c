@@ -41,7 +41,7 @@ expand_string (char **strptr, size_t *n, size_t newsize)
 
 
 /* char *
- * Xreadlink ( const char *link, size_t size)
+ * Xreadlink (const char *link, size_t size)
  *
  * INPUTS
  *  link	The original path.
@@ -54,8 +54,6 @@ expand_string (char **strptr, size_t *n, size_t newsize)
  *  This function exits with a fatal error if it fails to read the
  *  link for any reason.
  */
-#define MAXSIZE (SIZE_MAX < SSIZE_MAX ? SIZE_MAX : SSIZE_MAX)
-
 char *
 Xreadlink (const char *link, size_t size)
 {
@@ -66,6 +64,7 @@ Xreadlink (const char *link, size_t size)
 
     return file;
 }
+
 
 
 /* *STR is a pointer to a malloc'd string or NULL.  *LENP is its allocated
