@@ -1517,7 +1517,7 @@ preserve_initial_permissions (fprcs, userfile, file_type, sbp)
 {
     if (file_type == S_IFLNK)
     {
-	char *link = xreadlink (userfile);
+	char *link = Xreadlink (userfile, sbp->st_size);
 	if (fprintf (fprcs, "symlink\t@") < 0 ||
 	    expand_at_signs (link, strlen (link), fprcs) < 0 ||
 	    fprintf (fprcs, "@;\012") < 0)

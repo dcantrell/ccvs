@@ -48,6 +48,7 @@
 #include "strcase.h"
 #include "xalloc.h"
 #include "xgetcwd.h"
+#include "xreadlink.h"
 #include "xsize.h"
 /* end GNULIB headers */
 
@@ -490,15 +491,13 @@ typedef	RETSIGTYPE (*SIGCLEANUPPROC)	(int);
 int SIG_register (int sig, SIGCLEANUPPROC sigcleanup);
 bool isdir (const char *file);
 bool isfile (const char *file);
-bool islink (const char *file);
+ssize_t islink (const char *file);
 bool isdevice (const char *file);
 bool isreadable (const char *file);
 bool iswritable (const char *file);
 bool isaccessible (const char *file, const int mode);
 bool isabsolute (const char *filename);
-#ifdef HAVE_READLINK
-char *xreadlink (const char *link);
-#endif /* HAVE_READLINK */
+char *Xreadlink (const char *link, size_t size);
 char *xresolvepath (const char *path);
 const char *last_component (const char *path);
 char *get_homedir (void);

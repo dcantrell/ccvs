@@ -5035,7 +5035,7 @@ RCS_checkin (RCSNode *rcs, const char *update_dir, const char *workfile_in,
 	    np = getnode();
 	    np->type = RCSFIELD;
 	    np->key = xstrdup ("symlink");
-	    np->data = xreadlink (workfile);
+	    np->data = Xreadlink (workfile, sb.st_size);
 	    addnode (delta->other_delta, np);
 	}
 	else

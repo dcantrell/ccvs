@@ -1,3 +1,8 @@
+2004-11-03  Mark D. Baushke  <mdb@cvshome.org>
+
+	* config.h.in.in (_UINT32_T): Add from top-level config.h.in file.
+	* Makefile.in, config.h.in, config.h, stamp-chi: Regenerated.
+		
 2004-11-02  Mark D. Baushke  <mdb@cvshome.org>
 
 	* config.h.in.in (HAVE_DECL_FLOCKFILE, HAVE_DECL_FUNLOCKFILE,

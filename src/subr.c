@@ -40,6 +40,34 @@ expand_string (char **strptr, size_t *n, size_t newsize)
 
 
 
+/* char *
+ * Xreadlink ( const char *link, size_t size)
+ *
+ * INPUTS
+ *  link	The original path.
+ *  size	A guess as to the size needed for the path. It need
+ *              not be right.
+ * RETURNS
+ *  The resolution of the final symbolic link in the path.
+ *
+ * ERRORS
+ *  This function exits with a fatal error if it fails to read the
+ *  link for any reason.
+ */
+#define MAXSIZE (SIZE_MAX < SSIZE_MAX ? SIZE_MAX : SSIZE_MAX)
+
+char *
+Xreadlink (const char *link, size_t size)
+{
+    char *file = xreadlink (link, size);
+
+    if (file == NULL)
+	error (1, errno, "cannot readlink %s", link);
+
+    return file;
+}
+
+
 /* *STR is a pointer to a malloc'd string or NULL.  *LENP is its allocated
  * length.  If *STR is NULL then *LENP must be 0 and visa-versa.
  * Add SRC to the end of *STR, reallocating *STR if necessary.  */
@@ -713,10 +741,12 @@ get_file (const char *name, const char *fullname, const char *mode, char **buf, 
 void
 resolve_symlink (char **filename)
 {
+    ssize_t rsize;
+
     if (filename == NULL || *filename == NULL)
 	return;
 
-    while (islink (*filename))
+    while ((rsize = islink (*filename)) > 0)
     {
 #ifdef HAVE_READLINK
 	/* The clean thing to do is probably to have each filesubr.c
@@ -724,7 +754,7 @@ resolve_symlink (char **filename)
 	   platform, in which case islink would presumably return 0).
 	   But that would require editing each filesubr.c and so the
 	   expedient hack seems to be looking at HAVE_READLINK.  */
-	char *newname = xreadlink (*filename);
+	char *newname = Xreadlink (*filename, rsize);
 	
 	if (isabsolute (newname))
 	{

@@ -270,3 +270,13 @@ m4/tm_gmtoff.m4
 m4/getdate.m4
 
 m4/onceonly_2_57.m4
+lib/readlink.c
+m4/readlink.m4
+
+m4/onceonly_2_57.m4
+lib/xreadlink.h
+lib/xreadlink.c
+m4/xreadlink.m4
+m4/ssize_t.m4
+
+m4/onceonly_2_57.m4

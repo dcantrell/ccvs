@@ -1,3 +1,17 @@
+2004-11-03  Mark D. Baushke  <mdb@cvshome.org>
+
+	* filesubr.c (xreadlink): Remove and use GNULIB version.
+	(islink): Return ssize_t instead of bool.
+	(copy_file): Use Xreadlink().
+	* cvs.h: Add include "xreadlink.h"
+	(islink): Return ssize_t instead of bool.
+	* import.c (preserve_initial_permissions): Use Xreadlink.
+	* rcs.c (RCS_checkin): Ditto.
+	* update.c (special_file_mismatch): Ditto.
+	* subr.c (get_file): Ditto.
+	(resolve_symlink): Ditto.
+	(Xreadlink): New interface to xreadlink(), never return NULL.
+
 2004-11-02  Mark D. Baushke  <mdb@cvshome.org>
 
 	* filesubr.c (MAXSIZE): New macro.

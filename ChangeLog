@@ -1,3 +1,12 @@
+2004-11-03  Mark D. Baushke  <mdb@cvshome.org>
+
+	* cvsnt.dsp: Add readlink.c, xreadlink.c and xreadlink.h.
+	* cvsnt.dep: Add readlink.c and xreadlink.c dependencies.
+	
+	* gnulib-update (MODULES): Add readlink xreadlink.
+	* Makefile.in, aclocal.m4, configure, configure.in, gnulib.txt:
+	Regenerated.
+
 2004-11-02  Mark D. Baushke  <mdb@cvshome.org>
 
 	* config.h.in, configure: Regenerated.

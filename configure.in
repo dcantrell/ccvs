@@ -188,6 +188,7 @@ AC_REPLACE_FUNCS(\
 	dup2 \
 	ftruncate \
 	mkdir \
+	readlink \
 	rename \
 	strstr \
 	strtoul\
@@ -248,7 +249,6 @@ AC_CHECK_FUNCS(\
 	logout \
 	mknod \
 	putenv \
-	readlink \
 	regcomp \
 	regerror \
 	regexec \
