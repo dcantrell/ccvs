@@ -1,3 +1,7 @@
+2004-05-14  Derek Price  <derek@ximbiot.com>
+
+	* gettime.m4: Updated from GNULIB.
+
 2004-05-03  Derek Price  <derek@ximbiot.com>
 
 	* bison.m4: Declare YACC & YFLAGS as precious vars.
