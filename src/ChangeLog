@@ -1,3 +1,15 @@
+Wed Oct 29 07:07:36 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* rcs.c (RCS_delete_revs): If we are deleting an entire branch,
+	delete the node in ->branches rather than setting the ->key to the
+	bogus value NULL.
+	* rcs.c (RCS_delete_revs): If "rev1" equals "branchpoint", then set
+	"before" to the revision on the trunk that we branch from.
+	* rcs.c (RCS_delete_revs): Don't set rev2 to revp->version (the
+	code is missing an xstrdup, but it doesn't matter because rev2
+	isn't used after this point).
+	* sanity.sh (binfiles2-o2 to binfiles2-o4): New tests, for this.
+
 Tue Oct 28 19:30:05 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* rcs.c (RCS_delete_revs): Restore code which passes rev2 to
