@@ -165,15 +165,6 @@ release (argc, argv)
           fp = popen (update_cmd, "r");
           c = 0;
 
-          /* FIXME: If the update exited with an error, then we just
-           * want to complain and go on to the next arg.  Especially,
-           * we do not want to delete the local copy, since it's
-           * obviously not what the user thinks it is.  However, right
-           * now we go ahead and prompt the user anyway, though at
-           * least they'll see the error messages from "cvs update"
-           * and get suspicious.
-           */
-
           while (fgets (line, sizeof (line), fp))
           {
             if (strchr ("MARCZ", *line))
@@ -181,7 +172,23 @@ release (argc, argv)
             (void) printf (line);
           }
 
-          (void) pclose (fp);
+          /* If the update exited with an error, then we just want to
+           * complain and go on to the next arg.  Especially, we do
+           * not want to delete the local copy, since it's obviously
+           * not what the user thinks it is.  However, right now we go
+           * ahead and prompt the user anyway, though at least they'll
+           * see the error messages from "cvs update" and get
+           * suspicious.
+           */
+          if ((pclose (fp)) != 0)
+          {
+            error (0, 0,
+                   "Unable to run update on `%s'.\n"
+                   "Maybe no `%s' in repository?",
+                   thisarg, thisarg);
+            continue;
+          }
+
           (void) printf ("You have [%d] altered files in this repository.\n",
                          c);
           (void) printf ("Are you sure you want to release %smodule `%s': ",
