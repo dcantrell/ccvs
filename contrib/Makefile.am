@@ -73,8 +73,8 @@ CLEANFILES = $(bin_SCRIPTS) $(contrib_SCRIPTS)
 
 # we'd rather have a link here rather than two copies of a script
 install-data-local:
-	# FIXME - this path should be determined dynamically from bindir
-	# & contribdir
+	## FIXME - this path should be determined dynamically from bindir
+	## & contribdir
 	@$(NORMAL_INSTALL)
 	$(mkinstalldirs) $(DESTDIR)$(bindir)
 	@list='$(bin_LINKS)'; for p in $$list; do \

@@ -1,4 +1,12 @@
 2001-05-29  Derek Price  <dprice@collab.net>
+	patch from Pavel Roskin  <proski@gnu.org>
+
+	* Makefile.am (install-data-local): Double hash comment in rule since
+	single hash comments are not portable.
+
+	* Makefile.in: Regenerated.
+
+2001-05-29  Derek Price  <dprice@collab.net>
 
 	* pvcs2cvs.in: New file.
 	* Makefile.am (contrib_SCRIPTS): Add pcvs2cvs.
