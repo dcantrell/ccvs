@@ -1,5 +1,8 @@
 1998-02-17  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* sanity.sh (toplevel): Also clean up second-dir (not a new
+	bug, but triggered by running tests as "toplevel abspath").
+
 	* create_adm.c (Create_Admin): Just print update_dir to tell the
 	user where we are; not the whole xgetwd.  Cleaner than
 	Noel's change (which also had problems in errno handling).
