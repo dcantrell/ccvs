@@ -21,6 +21,7 @@ static int checkmagic_proc PROTO((Node *p, void *closure));
 static void do_branches PROTO((List * list, char *val));
 static void do_symbols PROTO((List * list, char *val));
 static void rcsvers_delproc PROTO((Node * p));
+static char *translate_symtag PROTO((RCSNode *, const char *));
 
 enum rcs_delta_op {RCS_ANNOTATE, RCS_FETCH};
 static void RCS_deltas PROTO ((RCSNode *, FILE *, char *, enum rcs_delta_op,
@@ -1149,8 +1150,8 @@ RCS_gettag (rcs, symtag, force_tag_match, return_both)
     int force_tag_match;
     int return_both;
 {
-    Node *p;
     char *tag = symtag;
+    int tag_allocated = 0;
 
     /* make sure we have something to look at... */
     assert (rcs != NULL);
@@ -1170,14 +1171,17 @@ RCS_gettag (rcs, symtag, force_tag_match, return_both)
 
     if (!isdigit (tag[0]))
     {
+	char *version;
+
 	/* If we got a symbolic tag, resolve it to a numeric */
-	p = findnode (RCS_symbols(rcs), tag);
-	if (p != NULL)
+	version = translate_symtag (rcs, tag);
+	if (version != NULL)
 	{
 	    int dots;
 	    char *magic, *branch, *cp;
 
-	    tag = p->data;
+	    tag = version;
+	    tag_allocated = 1;
 
 	    /*
 	     * If this is a magic revision, we turn it into either its
@@ -1197,21 +1201,17 @@ RCS_gettag (rcs, symtag, force_tag_match, return_both)
 		(void) sprintf (magic, ".%d.", RCS_MAGIC_BRANCH);
 		if (strncmp (magic, cp, strlen (magic)) == 0)
 		{
-		    char *xtag;
-
 		    /* it's magic.  See if the branch exists */
 		    *cp = '\0';		/* turn it into a revision */
-		    xtag = xstrdup (tag);
-		    *cp = '.';		/* and back again */
-		    (void) sprintf (magic, "%s.%s", xtag, branch);
+		    (void) sprintf (magic, "%s.%s", tag, branch);
 		    branch = RCS_getbranch (rcs, magic, 1);
 		    free (magic);
 		    if (branch != NULL)
 		    {
-			free (xtag);
+			free (tag);
 			return (branch);
 		    }
-		    return (xtag);
+		    return (tag);
 		}
 		free (magic);
 	    }
@@ -1238,11 +1238,18 @@ RCS_gettag (rcs, symtag, force_tag_match, return_both)
 
     if ((numdots (tag) & 1) == 0)
     {
+	char *branch;
+
 	/* we have a branch tag, so we need to walk the branch */
-	return (RCS_getbranch (rcs, tag, force_tag_match));
+	branch = RCS_getbranch (rcs, tag, force_tag_match);
+	if (tag_allocated)
+	    free (tag);
+	return branch;
     }
     else
     {
+	Node *p;
+
 	/* we have a revision tag, so make sure it exists */
 	p = findnode (rcs->versions, tag);
 	if (p != NULL)
@@ -1260,14 +1267,22 @@ RCS_gettag (rcs, symtag, force_tag_match, return_both)
 	    {
 		char *both = xmalloc(strlen(tag) + 2 + strlen(symtag));
 		sprintf(both, "%s:%s", tag, symtag);
+		if (tag_allocated)
+		    free (tag);
 		return both;
 	    }
 	    else
-		return (xstrdup (tag));
+	    {
+		if (! tag_allocated)
+		    tag = xstrdup (tag);
+		return (tag);
+	    }
 	}
 	else
 	{
 	    /* The revision wasn't there, so return the head or NULL */
+	    if (tag_allocated)
+		free (tag);
 	    if (force_tag_match)
 		return (NULL);
 	    else
@@ -1384,37 +1399,42 @@ RCS_nodeisbranch (rcs, rev)
     const char *rev;
 {
     int dots;
-    Node *p;
+    char *version;
 
     /* numeric revisions are easy -- even number of dots is a branch */
     if (isdigit (*rev))
 	return ((numdots (rev) & 1) == 0);
 
-    p = findnode (RCS_symbols(rcs), rev);
-    if (p == NULL)
+    version = translate_symtag (rcs, rev);
+    if (version == NULL)
 	return (0);
-    dots = numdots (p->data);
+    dots = numdots (version);
     if ((dots & 1) == 0)
+    {
+	free (version);
 	return (1);
+    }
 
     /* got a symbolic tag match, but it's not a branch; see if it's magic */
     if (dots > 2)
     {
 	char *magic;
-	char *branch = strrchr (p->data, '.');
+	char *branch = strrchr (version, '.');
 	char *cp = branch - 1;
 	while (*cp != '.')
 	    cp--;
 
 	/* see if we have .magic-branch. (".0.") */
-	magic = xmalloc (strlen (p->data) + 1);
+	magic = xmalloc (strlen (version) + 1);
 	(void) sprintf (magic, ".%d.", RCS_MAGIC_BRANCH);
 	if (strncmp (magic, cp, strlen (magic)) == 0)
 	{
 	    free (magic);
+	    free (version);
 	    return (1);
 	}
 	free (magic);
+	free (version);
     }
     return (0);
 }
@@ -1428,7 +1448,7 @@ RCS_whatbranch (rcs, rev)
     RCSNode *rcs;
     const char *rev;
 {
-    Node *p;
+    char *version;
     int dots;
 
     /* assume no branch if you can't find the RCS info */
@@ -1436,34 +1456,35 @@ RCS_whatbranch (rcs, rev)
 	return ((char *) NULL);
 
     /* now, look for a match in the symbols list */
-    p = findnode (RCS_symbols(rcs), rev);
-    if (p == NULL)
+    version = translate_symtag (rcs, rev);
+    if (version == NULL)
 	return ((char *) NULL);
-    dots = numdots (p->data);
+    dots = numdots (version);
     if ((dots & 1) == 0)
-	return (xstrdup (p->data));
+	return (version);
 
     /* got a symbolic tag match, but it's not a branch; see if it's magic */
     if (dots > 2)
     {
 	char *magic;
-	char *branch = strrchr (p->data, '.');
+	char *branch = strrchr (version, '.');
 	char *cp = branch++ - 1;
 	while (*cp != '.')
 	    cp--;
 
 	/* see if we have .magic-branch. (".0.") */
-	magic = xmalloc (strlen (p->data) + 1);
+	magic = xmalloc (strlen (version) + 1);
 	(void) sprintf (magic, ".%d.", RCS_MAGIC_BRANCH);
 	if (strncmp (magic, cp, strlen (magic)) == 0)
 	{
 	    /* yep.  it's magic.  now, construct the real branch */
 	    *cp = '\0';			/* turn it into a revision */
-	    (void) sprintf (magic, "%s.%s", p->data, branch);
-	    *cp = '.';			/* and turn it back */
+	    (void) sprintf (magic, "%s.%s", version, branch);
+	    free (version);
 	    return (magic);
 	}
 	free (magic);
+	free (version);
     }
     return ((char *) NULL);
 }
@@ -1876,6 +1897,69 @@ RCS_symbols(rcs)
     }
 
     return rcs->symbols;
+}
+
+/*
+ * Return the version associated with a particular symbolic tag.
+ */
+static char *
+translate_symtag (rcs, tag)
+    RCSNode *rcs;
+    const char *tag;
+{
+    if (rcs->flags & PARTIAL)
+	RCS_reparsercsfile (rcs, 0, NULL);
+
+    if (rcs->symbols != NULL)
+    {
+	Node *p;
+
+	/* The symbols have already been converted into a list.  */
+	p = findnode (rcs->symbols, tag);
+	if (p == NULL)
+	    return NULL;
+
+	return xstrdup (p->data);
+    }
+
+    if (rcs->symbols_data != NULL)
+    {
+	size_t len;
+	char *cp;
+
+	/* Look through the RCS symbols information.  This is like
+           do_symbols, but we don't add the information to a l ist.
+           In most cases, we will only be called once for this file,
+           so generating the list is unnecessary overhead.  */
+
+	len = strlen (tag);
+	cp = rcs->symbols_data;
+	while ((cp = strchr (cp, tag[0])) != NULL)
+	{
+	    if ((cp == rcs->symbols_data || whitespace (cp[-1]))
+		&& strncmp (cp, tag, len) == 0
+		&& cp[len] == ':')
+	    {
+		char *v, *r;
+
+		/* We found the tag.  Return the version number.  */
+
+		cp += len + 1;
+		v = cp;
+		while (! whitespace (*cp) && *cp != '\0')
+		    ++cp;
+		r = xmalloc (cp - v + 1);
+		strncpy (r, v, cp - v);
+		r[cp - v] = '\0';
+		return r;
+	    }
+
+	    while (! whitespace (*cp) && *cp != '\0')
+		++cp;
+	}
+    }
+
+    return NULL;
 }
 
 /*
