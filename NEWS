@@ -3,6 +3,9 @@ Changes since 1.11.15:
 
 BUG FIXES
 
+* The Microsoft Visual C++ workspace and project files have been repaired and
+  regenerated with MSVC++ 6.0.
+
 * The cvs.1 man page is now generated automatically from a section of the CVS
   Manual.
 

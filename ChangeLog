@@ -1,5 +1,9 @@
 2004-05-13  Derek Price  <derek@ximbiot.com>
 
+	* NEWS: Note MSVC++ project file regeneration.
+
+2004-05-13  Derek Price  <derek@ximbiot.com>
+
 	* cvsnt.dsw: Rename "zlib/zlib.*" to "zlib/libz.*".
 	Add project "lib/libcvs".
 	* cvsnt.dsp: Revised for "cvsnt.dsw" changes.  Move "lib/*.c" to
