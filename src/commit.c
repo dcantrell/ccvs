@@ -1125,11 +1125,13 @@ remove_file (file, repository, tag, message, entries, srcfiles)
     char *lockflag;
     char *corev;
     char *rev;
+    char *prev_rev;
     Node *p;
     RCSNode *rcsfile;
 
     corev = NULL;
     rev = NULL;
+    prev_rev = NULL;
     lockflag = 0;
 #endif /* DEATH_SUPPORT */
 
@@ -1159,6 +1161,10 @@ remove_file (file, repository, tag, message, entries, srcfiles)
 #ifdef DEATH_SUPPORT
     /* we are removing the file from either the head or a branch */
     /* commit a new, dead revision. */
+
+    /* Print message indicating that file is going to be removed. */
+    (void) printf ("Removing %s;\n", file);
+
     rev = NULL;
     lockflag = "-l";
     if (branch)
@@ -1185,12 +1191,27 @@ remove_file (file, repository, tag, message, entries, srcfiles)
 	    /* no revision exists on this branch.  use the previous
 	       revision but do not lock. */
 	    corev = RCS_gettag (rcsfile, tag, 1);
+	    prev_rev = xstrdup(rev);
 	    lockflag = "";
 	} else
 	{
 	    corev = xstrdup (rev);
+	    prev_rev = xstrdup(branchname);
 	    free (branchname);
 	}
+
+    } else  /* Not a branch */
+    {
+
+        /* Get current head revision of file. */
+	p = findnode (srcfiles, file);
+	if (p == NULL)
+	{
+	    error (0, 0, "could not find parsed rcsfile %s", file);
+	    return (1);
+	}
+	rcsfile = (RCSNode *) p->data;
+	prev_rev = RCS_head (rcsfile);
     }
     
     /* if removing without a tag or a branch, then make sure the default
@@ -1275,11 +1296,18 @@ remove_file (file, repository, tag, message, entries, srcfiles)
 	    && rename (rcs, tmp) == -1
 	    && (isreadable (rcs) || !isreadable (tmp)))
 	{
-	    /* FIXME: should free tmp.  */
+	    free(tmp);
 	    return (1);
 	}
 	free(tmp);
     }
+
+    /* Print message that file was removed. */
+    (void) printf ("%s  <--  %s\n", rcs, file);
+    (void) printf ("new revision: delete; ");
+    (void) printf ("previous revision: %s\n", prev_rev);
+    (void) printf ("done\n");
+    free(prev_rev);
 
     Scratch_Entry (entries, file);
     return (0);
