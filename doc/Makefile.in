@@ -149,8 +149,9 @@ dist-dir: $(DISTFILES)
 	fi
 .PHONY: dist-dir
 
-Makefile: Makefile.in
-	cd .. ; $(SHELL) config.status
+subdir = doc
+Makefile: ../config.status Makefile.in
+	cd .. && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= ./config.status
 
 ../config.status: ../configure
 	cd .. ; $(SHELL) config.status --recheck
