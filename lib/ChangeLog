@@ -1,3 +1,9 @@
+1999-01-26  Jim Kingdon  <http://www.cyclic.com>
+	and Joerg Bullmann  <http://www.glink.net.hk/~jb/MacCVSClient/>
+
+	* fnmatch.c: Use FOLD_FN_CHAR in two cases where it had been
+	omitted.
+
 1999-01-22  Jim Kingdon  <http://www.cyclic.com>
 
 	* fnmatch.c: Include system.h; FOLD_FN_CHAR has moved there from
