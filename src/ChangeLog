@@ -1,3 +1,16 @@
+2000-12-16  Derek Price  <derek.price@openavenue.com>
+
+	* server.c (server_update): Keep the vers structure up to date after
+	sending a Remove or Remove-entry command to the client
+	* update.c (update): remove call to server_updated() after
+	scratch_file()
+	(scratch_file): in server mode, call server_updated(), otherwise keep
+	the vers structure up to date
+	(join_file): add a trace, save the revision to Register() on a remove
+	before calling server_scratch & server_updated
+	* sanity.sh (join): Add test for a remove/add caused by an update
+	to a new branch and a join in the same step.
+
 2000-12-15  Larry Jones  <larry.jones@sdrc.com>
 
 	* error.c (error): Add %ld and %lu.

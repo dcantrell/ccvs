@@ -3432,6 +3432,11 @@ server_scratch (fname)
      * two different cases.  Using the last one which happens is almost
      * surely correct; I haven't tracked down why they both happen (or
      * even verified that they are for the same file).
+     *
+     * Don't know if this is what whoever wrote the above comment was
+     * talking about, but this can happen in the case where a join
+     * removes a file - the call to Register puts the '-vers' into the
+     * Entries file after the file is removed
      */
     if (entries_line != NULL)
     {
@@ -4163,6 +4168,23 @@ CVS server internal error: unhandled case in server_updated");
 	output_dir (finfo->update_dir, finfo->repository);
 	buf_output0 (protocol, finfo->file);
 	buf_output (protocol, "\n", 1);
+	/* keep the vers structure up to date in case we do a join
+	 * - if there isn't a file, it can't very well have a version number, can it?
+	 *
+	 * we do it here on the assumption that since we just told the client
+	 * to remove the file/entry, it will, and we want to remember that.
+	 * If it fails, that's the client's problem, not ours
+	 */
+	if (vers && vers->vn_user != NULL)
+	{
+	    free (vers->vn_user);
+	    vers->vn_user = NULL;
+	}
+	if (vers && vers->ts_user != NULL)
+	{
+	    free (vers->ts_user);
+	    vers->ts_user = NULL;
+	}
     }
     else if (scratched_file == NULL && entries_line == NULL)
     {
