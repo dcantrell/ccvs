@@ -4766,6 +4766,7 @@ namednest -d src/sub/dir first-dir
 nestdeeper -d src/sub1/sub2/sub3/dir first-dir
 nestshallow -d src/dir second-dir/suba/subb
 path/in/modules &mod1
+another/path/test -d another/path/test first-dir
 EOF
 	  dotest modules3-5 "${testcvs} -q ci -m add-modules" \
 "Checking in modules;
@@ -4885,10 +4886,11 @@ done"
 	  # need to keep doing it, but it is what CVS currently does...
 	  # Skip it for remote; the remote code has the good sense to
 	  # not deal with it (on the minus side it gives
-	  # "internal error: repository string too short." instead of a
-	  # real error).
-	  # I kind of suspect that it would be OK to just make it a fatal
-	  # error to have '/' in a module name.
+	  # "internal error: repository string too short." (CVS 1.9) or
+	  # "warning: server is not creating directories one at a time" (now)
+	  # instead of a real error).
+	  # I'm tempted to just make it a fatal error to have '/' in a
+	  # module name.  But see comments at modules3-16.
 	  if test "x$remote" = xno; then
 	  mkdir 1; cd 1
 	  dotest modules3-12 "${testcvs} -q co path/in/modules" \
@@ -4907,6 +4909,16 @@ done"
 	  # because it passes 0 for run_module_prog to do_module.
 	  cd ..; rm -r 1
 	  fi # end of tests skipped for remote
+
+	  # Some people seem to want this to work.  I still suspect there
+	  # are dark corners in slashes in module names.  This probably wants
+	  # more thought before we start hacking on CVS (one way or the other)
+	  # or documenting this.
+	  mkdir 2; cd 2
+	  dotest modules3-16 "${testcvs} -q co another/path/test" \
+"U another/path/test/file1"
+	  dotest modules3-17 "cat another/path/test/file1" 'file1'
+	  cd ..; rm -r 2
 
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
 	  rm -rf ${CVSROOT_DIRNAME}/second-dir
