@@ -1,3 +1,10 @@
+1999-01-09  Jim Kingdon  <http://www.cyclic.com>
+
+	* sanity.sh (rcs3): Write NUL character with tr not awk, in
+	accordance with Single Unix Specification.  Hopefully will fix
+	rcs3-7 for HPUX.  Will not work on SunOS4, but then again neither
+	did the old syntax.
+
 1999-01-05  Jim Kingdon  <http://www.cyclic.com>
 
 	* client.c, update.c: Rename MD5* functions to cvs_MD5* per
