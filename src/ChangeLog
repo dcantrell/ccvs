@@ -1,3 +1,7 @@
+Thu Aug 24 18:57:49 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.h: Add comment regarding attic.
+
 Tue Aug 22 10:09:29 1995  Alexander Dupuy  <dupuy@smarts.com>
 
 	* rcs.c (whitespace): Cast to unsigned char in case char is signed
