@@ -1,5 +1,10 @@
 2004-10-22  Mark D. Baushke  <mdb@cvshome.org>
 
+	* sanity.sh (find_tool): Search /usr/pkg/bin for NetBSD tools
+	like rsync.
+
+2004-10-22  Mark D. Baushke  <mdb@cvshome.org>
+
 	* sanity.sh (tagdate): Fix typo.
 
 2004-10-21 Derek Price <derek@ximbiot.com>

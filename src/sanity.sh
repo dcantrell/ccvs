@@ -697,7 +697,7 @@ fi
 
 find_tool ()
 {
-  GLOCS="`echo $PATH | sed 's/:/ /g'` /usr/local/bin /usr/contrib/bin /usr/gnu/bin /local/bin /local/gnu/bin /gnu/bin /sw/bin"
+  GLOCS="`echo $PATH | sed 's/:/ /g'` /usr/local/bin /usr/contrib/bin /usr/gnu/bin /local/bin /local/gnu/bin /gnu/bin /sw/bin /usr/pkg/bin"
   TOOL=""
   for path in $GLOCS ; do
     if test -f $path/g$1 && test -r $path/g$1 &&
