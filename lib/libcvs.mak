@@ -40,7 +40,6 @@ ALL : ".\getopt.h" ".\fnmatch.h" ".\alloca.h" "$(OUTDIR)\libcvs.lib"
 
 
 CLEAN :
-	-@erase "$(INTDIR)\argmatch.obj"
 	-@erase "$(INTDIR)\asnprintf.obj"
 	-@erase "$(INTDIR)\basename.obj"
 	-@erase "$(INTDIR)\dirname.obj"
@@ -90,7 +89,6 @@ BSC32_SBRS= \
 LIB32=link.exe -lib
 LIB32_FLAGS=/nologo /out:"$(OUTDIR)\libcvs.lib" 
 LIB32_OBJS= \
-	"$(INTDIR)\argmatch.obj" \
 	"$(INTDIR)\asnprintf.obj" \
 	"$(INTDIR)\basename.obj" \
 	"$(INTDIR)\dirname.obj" \
@@ -141,7 +139,6 @@ ALL : "$(OUTDIR)\libcvs.lib"
 
 
 CLEAN :
-	-@erase "$(INTDIR)\argmatch.obj"
 	-@erase "$(INTDIR)\asnprintf.obj"
 	-@erase "$(INTDIR)\basename.obj"
 	-@erase "$(INTDIR)\dirname.obj"
@@ -189,7 +186,6 @@ BSC32_SBRS= \
 LIB32=link.exe -lib
 LIB32_FLAGS=/nologo /out:"$(OUTDIR)\libcvs.lib" 
 LIB32_OBJS= \
-	"$(INTDIR)\argmatch.obj" \
 	"$(INTDIR)\asnprintf.obj" \
 	"$(INTDIR)\basename.obj" \
 	"$(INTDIR)\dirname.obj" \
@@ -271,11 +267,6 @@ LIB32_OBJS= \
 
 
 !IF "$(CFG)" == "libcvs - Win32 Release" || "$(CFG)" == "libcvs - Win32 Debug"
-SOURCE=.\argmatch.c
-
-"$(INTDIR)\argmatch.obj" : $(SOURCE) "$(INTDIR)"
-
-
 SOURCE=.\asnprintf.c
 
 "$(INTDIR)\asnprintf.obj" : $(SOURCE) "$(INTDIR)"
