@@ -1,5 +1,13 @@
 2000-07-26  Larry Jones  <larry.jones@sdrc.com>
 
+	* commit.c (commit_filesdoneproc): Flush stdout before running script.
+	* modules.c (do_module): Ditto.
+	* update.c (update_dirleave_proc): Ditto.
+	* server.c (do_cvs_command): Give input from the protocol pipe
+	precedence over input from stdout/stderr.  There's no particularly
+	good justification for this other than helping to avoid out-of-order
+	messages in sanity.sh.
+
 	* admin.c (admin_usage): Add the supported options.
 
 	* sanity.sh (info): Try to avoid out-of-order messages.

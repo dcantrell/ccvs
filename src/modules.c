@@ -738,6 +738,7 @@ module `%s' is a request for a file in a module which is not a directory",
 		    cvs_output (": Executing '", 0);
 		    run_print (stdout);
 		    cvs_output ("'\n", 0);
+		    cvs_flushout ();
 		}
 		err += run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL);
 		free (expanded_path);

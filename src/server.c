@@ -2989,56 +2989,6 @@ error  \n");
 		buf_send_output (buf_to_net);
 	    }
 
-	    if (stdout_pipe[0] >= 0
-		&& (FD_ISSET (stdout_pipe[0], &readfds)))
-	    {
-	        int status;
-
-	        status = buf_input_data (stdoutbuf, (int *) NULL);
-
-		buf_copy_lines (buf_to_net, stdoutbuf, 'M');
-
-		if (status == -1)
-		{
-		    close (stdout_pipe[0]);
-		    stdout_pipe[0] = -1;
-		}
-		else if (status > 0)
-		{
-		    buf_output0 (buf_to_net, "E buf_input_data failed\n");
-		    print_error (status);
-		    goto error_exit;
-		}
-
-		/* What should we do with errors?  syslog() them?  */
-		buf_send_output (buf_to_net);
-	    }
-
-	    if (stderr_pipe[0] >= 0
-		&& (FD_ISSET (stderr_pipe[0], &readfds)))
-	    {
-	        int status;
-
-	        status = buf_input_data (stderrbuf, (int *) NULL);
-
-		buf_copy_lines (buf_to_net, stderrbuf, 'E');
-
-		if (status == -1)
-		{
-		    close (stderr_pipe[0]);
-		    stderr_pipe[0] = -1;
-		}
-		else if (status > 0)
-		{
-		    buf_output0 (buf_to_net, "E buf_input_data failed\n");
-		    print_error (status);
-		    goto error_exit;
-		}
-
-		/* What should we do with errors?  syslog() them?  */
-		buf_send_output (buf_to_net);
-	    }
-
 	    if (protocol_pipe[0] >= 0
 		&& (FD_ISSET (protocol_pipe[0], &readfds)))
 	    {
@@ -3091,6 +3041,56 @@ error  \n");
 			cvs_flusherr ();
 		    }
 		}
+	    }
+
+	    if (stdout_pipe[0] >= 0
+		&& (FD_ISSET (stdout_pipe[0], &readfds)))
+	    {
+	        int status;
+
+	        status = buf_input_data (stdoutbuf, (int *) NULL);
+
+		buf_copy_lines (buf_to_net, stdoutbuf, 'M');
+
+		if (status == -1)
+		{
+		    close (stdout_pipe[0]);
+		    stdout_pipe[0] = -1;
+		}
+		else if (status > 0)
+		{
+		    buf_output0 (buf_to_net, "E buf_input_data failed\n");
+		    print_error (status);
+		    goto error_exit;
+		}
+
+		/* What should we do with errors?  syslog() them?  */
+		buf_send_output (buf_to_net);
+	    }
+
+	    if (stderr_pipe[0] >= 0
+		&& (FD_ISSET (stderr_pipe[0], &readfds)))
+	    {
+	        int status;
+
+	        status = buf_input_data (stderrbuf, (int *) NULL);
+
+		buf_copy_lines (buf_to_net, stderrbuf, 'E');
+
+		if (status == -1)
+		{
+		    close (stderr_pipe[0]);
+		    stderr_pipe[0] = -1;
+		}
+		else if (status > 0)
+		{
+		    buf_output0 (buf_to_net, "E buf_input_data failed\n");
+		    print_error (status);
+		    goto error_exit;
+		}
+
+		/* What should we do with errors?  syslog() them?  */
+		buf_send_output (buf_to_net);
 	    }
 	}
 
