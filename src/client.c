@@ -1727,8 +1727,8 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
 		{
 		    FILE *e;
 
-		    e = open_file (temp_filename,
-				   bin ? FOPEN_BINARY_WRITE : "w");
+		    e = xfopen (temp_filename,
+				bin ? FOPEN_BINARY_WRITE : "w");
 		    if (fwrite (patchedbuf, 1, patchedlen, e) != patchedlen)
 			error (1, errno, "cannot write %s", temp_filename);
 		    if (fclose (e) == EOF)
@@ -2067,7 +2067,7 @@ set_static (void *data, List *ent_list, const char *short_pathname,
 	    const char *filename)
 {
     FILE *fp;
-    fp = open_file (CVSADM_ENTSTAT, "w+");
+    fp = xfopen (CVSADM_ENTSTAT, "w+");
     if (fclose (fp) == EOF)
         error (1, errno, "cannot close %s", CVSADM_ENTSTAT);
 }
@@ -5040,7 +5040,7 @@ notified_a_file (void *data, List *ent_list, const char *short_pathname,
     int nwritten;
     char *p;
 
-    fp = open_file (CVSADM_NOTIFY, "r");
+    fp = xfopen (CVSADM_NOTIFY, "r");
     if (getline (&line, &line_len, fp) < 0)
     {
 	if (feof (fp))
@@ -5079,7 +5079,7 @@ notified_a_file (void *data, List *ent_list, const char *short_pathname,
 	    goto error_exit;
 	}
     }
-    newf = open_file (CVSADM_NOTIFYTMP, "w");
+    newf = xfopen (CVSADM_NOTIFYTMP, "w");
     if (fputs (line, newf) < 0)
     {
 	error (0, errno, "cannot write %s", CVSADM_NOTIFYTMP);

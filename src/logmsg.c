@@ -296,7 +296,7 @@ do_editor (const char *dir, char **messagep, const char *repository,
 
     /* put the entire message back into the *messagep variable */
 
-    fp = open_file (fname, "r");
+    fp = xfopen (fname, "r");
 
     if (*messagep)
 	free (*messagep);
@@ -472,7 +472,7 @@ do_verify (char **messagep, const char *repository)
 	    char *p;
 	    FILE *fp;
 
-	    if ((fp = open_file (data.fname, "r")) == NULL)
+	    if ((fp = xfopen (data.fname, "r")) == NULL)
 		error (1, errno, "cannot open temporary file %s", data.fname);
 
 	    /* On NT, we might read less than st_size bytes,

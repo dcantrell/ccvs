@@ -699,7 +699,7 @@ get_file (const char *name, const char *fullname, const char *mode, char **buf,
 	/* Convert from signed to unsigned.  */
 	filesize = s.st_size;
 
-	e = open_file (name, mode);
+	e = xfopen (name, mode);
     }
 
     if (*buf == NULL || *bufsize <= filesize)
@@ -1938,4 +1938,29 @@ readBool (const char *infopath, const char *option, const char *p, bool *val)
     error (0, 0, "%s: unrecognized value `%s' for `%s'",
 	   infopath, p, option);
     return false;
+}
+
+
+
+/*
+ * Open a file, exiting with a message on error.
+ *
+ * INPUTS
+ *   name	The name of the file to open.
+ *   mode	Mode to open file in, as POSIX fopen().
+ *
+ * NOTES
+ *   If you want to handle errors, just call fopen (NAME, MODE).
+ *
+ * RETURNS
+ *   The new FILE pointer.
+ */
+FILE *
+xfopen (const char *name, const char *mode)
+{
+    FILE *fp;
+
+    if (!(fp = fopen (name, mode)))
+	error (1, errno, "cannot open %s", name);
+    return fp;
 }

@@ -170,7 +170,7 @@ Scratch_Entry (List *list, const char *fname)
 	if (!noexec)
 	{
 	    entfilename = CVSADM_ENTLOG;
-	    entfile = open_file (entfilename, "a");
+	    entfile = xfopen (entfilename, "a");
 
 	    if (fprintf (entfile, "R ") < 0)
 		error (1, errno, "cannot write %s", entfilename);
@@ -647,7 +647,7 @@ WriteTag (const char *dir, const char *tag, const char *date, int nonbranch,
 
     if (tag || date)
     {
-	fout = open_file (tmp, "w+");
+	fout = xfopen (tmp, "w+");
 	if (tag)
 	{
 	    if (nonbranch)

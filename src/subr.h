@@ -88,4 +88,5 @@ char *Xasnprintf (char *resultbuf, size_t *lengthp, const char *format, ...)
 bool readBool (const char *infopath, const char *option,
 	       const char *p, bool *val);
 
+FILE *xfopen (const char *, const char *);
 #endif /* !SUBR_H */
