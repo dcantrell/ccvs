@@ -5590,10 +5590,12 @@ U brmod
 ${PROG} [a-z]*: binary file needs merge
 ${PROG} [a-z]*: revision 1.1.2.1 from repository is now in brmod-trmod
 ${PROG} [a-z]*: file from working directory is now in .#brmod-trmod.1.2
+C brmod-trmod
 M brmod-wdmod
 ${PROG} [a-z]*: binary file needs merge
 ${PROG} [a-z]*: revision 1.1.2.1 from repository is now in brmod-wdmod
-${PROG} [a-z]*: file from working directory is now in .#brmod-wdmod.1.1"
+${PROG} [a-z]*: file from working directory is now in .#brmod-wdmod.1.1
+C brmod-wdmod"
 
 	  dotest binfiles2-9 "cmp ../binfile binfile.dat"
 	  dotest binfiles2-9-brmod "cmp ../binfile2 brmod"
