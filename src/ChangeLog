@@ -1,3 +1,7 @@
+2001-05-29  Derek Price  <dprice@collab.net>
+
+	* root.c (parse_cvsroot): Fix a comment.
+
 2001-05-26  Larry Jones  <larry.jones@sdrc.com>
 
 	* checkout.c (safe_location): Use old-style definition to keep
@@ -18,11 +22,11 @@
 2001-05-25  Derek Price  <dprice@collab.net>
 	for Donald Sharp  <sharpd@cisco.com>
 
-    * checkout.c:  Modified safe_location() to refuse checkout if
-    the -d option to co specifies inside of the repository.
-    * import.c:  New parameter to safe_location needed to be added.
-    * cvs.h:  New parameter to safe_location needed to be added.
-    * sanity.sh:  Test case to test for failure mode.
+	* checkout.c:  Modified safe_location() to refuse checkout if
+	the -d option to co specifies inside of the repository.
+	* import.c:  New parameter to safe_location needed to be added.
+	* cvs.h:  New parameter to safe_location needed to be added.
+	* sanity.sh:  Test case to test for failure mode.
 
 2001-05-23  Larry Jones  <larry.jones@sdrc.com>
 
