@@ -1,5 +1,8 @@
 Thu Oct 17 12:10:55 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvs.texinfo (Adding files): Revise comment to more accurately
+	reflect the functioning/nonfunctioning status of cvs add -m.
+
 	* cvs.texinfo (Reverting local changes): New node, somewhat based
 	on the version of this node from 30 Sep 96 change.
 	(admin options): Refer to it.

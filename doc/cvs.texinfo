@@ -3594,8 +3594,10 @@ For example, the following commands add the file
 
 @c This example used to specify
 @c     -m "Optimizer and code generation passes." 
-@c to the cvs add command, but unless -m is known to
-@c work, seems better to not discuss that subject.
+@c to the cvs add command, but that doesn't work
+@c client/server (see log2 in sanity.sh).  Should fix CVS,
+@c but also seems strange to document things which
+@c don't work...
 @example
 $ cvs add backend.c
 $ cvs commit -m "Early version. Not yet compilable." backend.c
