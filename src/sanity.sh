@@ -264,14 +264,6 @@ for pass in false :; do
       ;;
   esac
 done
-username=`$ID -un`
-if $EXPR "${username}" : "${username}" >/dev/null; then
-  : good, it works
-else
-  echo "Test suite does not work correctly when run by a username" >&2
-  echo "containing regular expression meta-characters." >&2
-  exit 1
-fi
 
 # Cause NextStep 3.3 users to lose in a more graceful fashion.
 if $EXPR 'abc
@@ -395,6 +387,16 @@ if $EXPR 'a?b' : "a${QUESTION}b" >/dev/null; then
   : good, it works
 else
   QUESTION='\?'
+fi
+
+# Now test the username to make sure it contains only valid characters
+username=`$ID -un`
+if $EXPR "${username}" : "${username}" >/dev/null; then
+  : good, it works
+else
+  echo "Test suite does not work correctly when run by a username" >&2
+  echo "containing regular expression meta-characters." >&2
+  exit 1
 fi
 
 # now make sure that tr works on NULs
