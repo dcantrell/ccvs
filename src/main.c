@@ -156,7 +156,9 @@ static const char *const usg[] =
     "        -f           Do not use the ~/.cvsrc file\n",
 #ifdef CLIENT_SUPPORT
     "        -z #         Use 'gzip -#' for net traffic if possible.\n",
+#ifdef ENCRYPTION
     "        -x           Encrypt all net traffic.\n",
+#endif
 #endif
     "        -s VAR=VAL   Set CVS user variable.\n",
     "\n",
@@ -467,9 +469,11 @@ main (argc, argv)
 	    case 'x':
 #ifdef CLIENT_SUPPORT
 	        cvsencrypt = 1;
-#endif
+#endif /* CLIENT_SUPPORT */
 		/* If no CLIENT_SUPPORT, ignore -x, so that users can
-                   have it in their .cvsrc and not cause any trouble.  */
+                   have it in their .cvsrc and not cause any trouble.
+                   If no ENCRYPTION, we still accept -x, but issue an
+                   error if we are being run as a client.  */
 		break;
 	    case '?':
 	    default:
