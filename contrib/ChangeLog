@@ -1,3 +1,14 @@
+1998-08-15  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* README: Don't mention listener, since it was removed a while
+	ago.
+	* listen2.c, listen2.mak: Removed; because there is no easy way to
+	pass a socket (as opposed to file descriptor) from one process to
+	another on Windows, this isn't a promising approach (at least not
+	in this form).
+	* Makefile.in (DISTFILES): Remove them.
+	* .cvsignore: Remove listen2.ncb listen2.mdp Debug.
+
 1998-05-11  W. Bradley Rubenstein
 
 	* log.pl: Check for errors from open and exec.
