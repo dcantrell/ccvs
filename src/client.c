@@ -1533,6 +1533,11 @@ remove_entry_and_file (data, ent_list, short_pathname, filename)
     char *filename;
 {
     Scratch_Entry (ent_list, filename);
+    /* Note that we don't ignore existence_error's here.  The server
+       should be sending Remove-entry rather than Removed in cases
+       where the file does not exist.  And if the user removes the
+       file halfway through a cvs command, we should be printing an
+       error.  */
     if (unlink_file (filename) < 0)
 	error (0, errno, "unable to remove %s", short_pathname);
 }
