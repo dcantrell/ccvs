@@ -1,3 +1,10 @@
+2003-12-10  Derek Price  <derek@ximbiot.com>
+
+	* Makefile.am: Include code to put a warning at the beginning of the
+	generated config.h that it should not be edited and to edit config.h.in
+	instead.
+	* Makefile.in, config.h, stamp-ch: Regenerated.
+
 2003-12-04  Mark D. Baushke  <mdb@cvshome.org>
 
 	* filesubr.c (xresolvepath): Comment out assert() call.
