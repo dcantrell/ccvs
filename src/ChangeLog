@@ -1,3 +1,65 @@
+1997-10-11  Noel Cragg  <noel@swish.red-bean.com>
+
+	* options.h.in: RELATIVE_REPOS has been checked for bitrot -- it
+	now works again.  Change the comment before the #define to say
+	that we'll be switching to it soon.
+
+	* sanity.sh (basicb-1, basicb-1a): update dotest strings to match
+	no matter if we're running with RELATIVE_REPOS defined or not.
+	(basicb-9b, basicb-9c): same.
+
+	* sanity.sh (basicb-9b, basicb-9c): modified tests, since the
+	checkout.c fix changes the way this test module is checked out.
+	(basicb-9d, basicb-9e, basicb-9f): new tests, same.
+	(basicb-18): modify test, same.
+	(cvsadm): new set of exhaustive tests to check the contents of
+	CVS/Root and CVS/Repository files under various conditions.  As a
+	side effect, it tests the behavior of the "-d" flags (command line
+	and modules file).
+	(modules3-7e through modules3-7h): removed, since these tests were
+	a small subset of what is tested in the new cvsadm section.
+	(modules-1b, modules-1c): same.
+	(modules-2b, modules-2c): same.
+	(modules-3b, modules-3c, modules-3e, modules-3f): same.
+
+	* create_adm.c (Create_Admin): be a bit more verbose when using
+	trace mode.
+
+	* checkout.c (checkout_proc): rewrote the code that sets the where
+	variable and the code that matches directory names with repository
+	directories.  This fixes a long-standing bug in CVS.  (It used to
+	be the case that "cvs co -d foo <mod1> <mod2>" would not properly,
+	where <mod1> and <mod2> where defined in the modules file.  While
+	the first module would be checked out correctly, the second would
+	be checked out under the name of the directory to which the module
+	referred rather than the module name!).  This fix also allows us
+	to check out things into directories that are more than one deep
+	(e.g. "cvs -d foo/bar/baz co blah" will now work).
+	(checkout): remove code that performed a CHDIR if the
+	number of arguments specified was greater than one, since it's no
+	longer necessary.  Also remove the code that prevented us from
+	doing "cvs co -d <dir1>/<dir2>" without <dir1> existing, since
+	checkout_proc handles things correctly now.
+	
+	* cvs.h: fix typo.
+
+	* rtag.c (rtag): reformat so that we don't run over 80 characters
+	per line.
+	(rtag_dirproc): same.
+
+	* sanity.sh: change all old test cases to use pass and fail
+	functions rather than doing some combination of echo and exit
+	themselves.
+
+	* commit.c (commit_direntproc): remove the "warm fuzzy" -- this
+	code never gets called when running in client/server mode, and we
+	should have CVS' output match as much as possible between the two
+	modes.  Moreover, there is no analogous place to put this same
+	message when we're running in c/s mode.
+	(find_direntproc): print the same "fuzzy" as in check_direntproc
+	so that local and c/s mode have the same messages.
+	* sanity.sh (187a3): update test case to reflect the above.
+
 Thu Oct  9 10:57:02 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* parseinfo.c (parse_config): Add comment about compatibility

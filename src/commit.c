@@ -154,6 +154,13 @@ find_dirent_proc (callerdat, dir, repository, update_dir, entries)
 
     /* initialize the ignore list for this directory */
     find_data->ignlist = getlist ();
+
+    /* Print the same warm fuzzy as in check_direntproc, since that
+       code will never be run during client/server operation and we
+       want the messages to match. */
+    if (!quiet)
+	error (0, 0, "Examining %s", update_dir);
+
     return R_PROCESS;
 }
 
@@ -999,7 +1006,8 @@ warning: file `%s' seems to still contain conflict indicators",
 }
 
 /*
- * Print warm fuzzies while examining the dirs
+ * By default, return the code that tells do_recursion to examine all
+ * directories
  */
 /* ARGSUSED */
 static Dtype
@@ -1421,7 +1429,7 @@ commit_filesdoneproc (callerdat, err, repository, update_dir, entries)
 }
 
 /*
- * Get the log message for a dir and print a warm fuzzy
+ * Get the log message for a dir
  */
 /* ARGSUSED */
 static Dtype
@@ -1449,10 +1457,6 @@ commit_direntproc (callerdat, dir, repos, update_dir, entries)
     /* skip the files as an optimization */
     if (ulist == NULL || ulist->list->next == ulist->list)
 	return (R_SKIP_FILES);
-
-    /* print the warm fuzzy */
-    if (!quiet)
-	error (0, 0, "Committing %s", update_dir);
 
     /* get commit message */
     real_repos = Name_Repository (dir, update_dir);

@@ -149,10 +149,14 @@
  * working directory.  This path is either a full-path or a path
  * relative to CVSROOT.
  * 
- * The only advantage that I can see to having a relative path is that
+ * The big advantage that I can see to having a relative path is that
  * one can change the physical location of the master source
- * repository, change one's CVSROOT environment variable, and CVS will
- * work without problems.  I recommend using full-paths.
+ * repository, change the contents of CVS/Repository files in your
+ * checked-out code, and CVS will work without problems.
+ *
+ * This is likely to be the default in the future, but we want to give
+ * people who may be relying on absolute pathnames time to update
+ * their scripts/software.
  */
 #ifndef RELATIVE_REPOS
 /* #define	RELATIVE_REPOS	 */
