@@ -1,5 +1,11 @@
 2001-04-02  Derek Price  <dprice@collab.net>
 
+	* sanity.sh: Change last two '[.*]'s to 'test's for
+	consistency and remove...
+	(TODO): the note from the TODO list.
+
+2001-04-02  Derek Price  <dprice@collab.net>
+
 	* sanity.sh: Add test for PWD before successful exit.
 
 2001-03-30  Larry Jones  <larry.jones@sdrc.com>
