@@ -356,6 +356,11 @@ patch_fileproc (callerdat, finfo)
     char *cp1, *cp2;
     FILE *fp;
 
+    line1 = NULL;
+    line1_chars_allocated = 0;
+    line2 = NULL;
+    line2_chars_allocated = 0;
+
     /* find the parsed rcs file */
     if ((rcsfile = finfo->rcs) == NULL)
 	return (1);
@@ -487,11 +492,6 @@ patch_fileproc (callerdat, finfo)
     run_setup ("%s -%c", DIFF, unidiff ? 'u' : 'c');
     run_arg (tmpfile1);
     run_arg (tmpfile2);
-
-    line1 = NULL;
-    line1_chars_allocated = 0;
-    line2 = NULL;
-    line2_chars_allocated = 0;
 
     switch (run_exec (RUN_TTY, tmpfile3, RUN_TTY, RUN_REALLY))
     {
