@@ -7312,10 +7312,13 @@ U ${TESTDIR}/1/2/file1"
 	  rm -rf ${TESTDIR}/1
 
 
-	  # Now try someplace where we don't have permission (we're
-	  # not supposed to run this as root, right?
-	  dotest_fail abspath-4 "${testcvs} co -d /barf mod1" \
-"${PROG} \[[a-z]* aborted\]: cannot make directory /barf: No such file or directory"
+	  # Now try someplace where we don't have permission.
+	  mkdir ${TESTDIR}/barf
+	  chmod -w ${TESTDIR}/barf
+	  dotest_fail abspath-4 "${testcvs} co -d ${TESTDIR}/barf/sub mod1" \
+"${PROG} \[[a-z]* aborted\]: cannot make directory sub: No such file or directory"
+	  chmod +w ${TESTDIR}/barf
+	  rmdir ${TESTDIR}/barf
 	  # Done.  Nothing to clean up.
 
 
