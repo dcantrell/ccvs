@@ -30,6 +30,7 @@ DISTFILES = \
   ${SOURCES} \
   README.MacCVS \
   Makefile.in \
+  Makefile \
   services \
   maccvs.rsrc.sit.hqx \
   maccvs165.patch \
