@@ -32,7 +32,7 @@ Parse_Info (infofile, repository, callproc, all)
     char *default_value = NULL;
     char *expanded_value= NULL;
     int callback_done, line_number;
-    char *cp, *exp, *value, *srepos;
+    char *cp, *exp, *value, *srepos, bad;
     const char *regex_err;
 
     if (CVSroot_original == NULL)
@@ -110,10 +110,6 @@ Parse_Info (infofile, repository, callproc, all)
 	if (expanded_value != NULL)
 	    free (expanded_value);
 	expanded_value = expand_path (value, infofile, line_number);
-	if (!expanded_value)
-	{
-	    continue;
-	}
 
 	/*
 	 * At this point, exp points to the regular expression, and value
@@ -127,9 +123,10 @@ Parse_Info (infofile, repository, callproc, all)
 	{
 	    /* Is it OK to silently ignore all but the last DEFAULT
                expression?  */
-	    if (default_value != NULL)
+	    if (default_value != NULL && default_value != &bad)
 		free (default_value);
-	    default_value = xstrdup (expanded_value);
+	    default_value = (expanded_value != NULL ?
+			     xstrdup (expanded_value) : &bad);
 	    continue;
 	}
 
@@ -140,11 +137,13 @@ Parse_Info (infofile, repository, callproc, all)
 	 */
 	if (strcmp (exp, "ALL") == 0)
 	{
-	    if (all)
-		err += callproc (repository, expanded_value);
-	    else
+	    if (!all)
 		error(0, 0, "Keyword `ALL' is ignored at line %d in %s file",
 		      line_number, infofile);
+	    else if (expanded_value != NULL)
+		err += callproc (repository, expanded_value);
+	    else
+		err++;
 	    continue;
 	}
 
@@ -163,7 +162,10 @@ Parse_Info (infofile, repository, callproc, all)
 	    continue;				/* no match */
 
 	/* it did, so do the callback and note that we did one */
-	err += callproc (repository, expanded_value);
+	if (expanded_value != NULL)
+	    err += callproc (repository, expanded_value);
+	else
+	    err++;
 	callback_done = 1;
     }
     if (ferror (fp_info))
@@ -173,10 +175,15 @@ Parse_Info (infofile, repository, callproc, all)
 
     /* if we fell through and didn't callback at all, do the default */
     if (callback_done == 0 && default_value != NULL)
-	err += callproc (repository, default_value);
+    {
+	if (default_value != &bad)
+	    err += callproc (repository, default_value);
+	else
+	    err++;
+    }
 
     /* free up space if necessary */
-    if (default_value != NULL)
+    if (default_value != NULL && default_value != &bad)
 	free (default_value);
     if (expanded_value != NULL)
 	free (expanded_value);
