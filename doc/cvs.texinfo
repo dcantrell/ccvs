@@ -4645,8 +4645,8 @@ Externally, branch numbers consist of an odd number of
 dot-separated decimal integers.  @xref{Revision
 numbers}.  That is not the whole truth, however.  For
 efficiency reasons @sc{cvs} sometimes inserts an extra 0
-in the second rightmost position (1.2.3 becomes
-1.2.0.3, 8.9.10.11.12 becomes 8.9.10.11.0.12 and so
+in the second rightmost position (1.2.4 becomes
+1.2.0.4, 8.9.10.11.12 becomes 8.9.10.11.0.12 and so
 on).
 
 @sc{cvs} does a pretty good job at hiding these so
