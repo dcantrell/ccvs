@@ -31,14 +31,17 @@ Cambridge, MA 02139, USA.  */
 #include <varargs.h>
 #endif
 
-extern int abs ();
-
 #ifdef TEST
 int global_total_width;
 #endif
 
-unsigned long strtoul ();
-char *malloc ();
+#ifdef STDC_HEADERS
+#include <stdlib.h>
+#else
+extern int abs ();
+extern unsigned long strtoul ();
+extern char *malloc ();
+#endif
 
 static int
 int_vasprintf (result, format, args)
