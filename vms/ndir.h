@@ -4,6 +4,8 @@
 	last edit:	28-dec-1994	Richard Levitte
 */
 
+#ifndef NDIR_H
+
 #if 0
 #ifndef FAB$C_BID
 #include <fab.h>
@@ -55,3 +57,6 @@ extern void		seekdir();
 extern void		closedir();
 
 #define rewinddir( dirp )	seekdir( dirp, 0L )
+
+#define NDIR_H 1
+#endif /* ndir.h */
