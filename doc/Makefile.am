@@ -144,7 +144,7 @@ else
 # - They should be disabled on systems without the bug and in environments
 #   where $(srcdir) = $(builddir)
 CVSvn.texi: $(srcdir)/CVSvn.texi
-	# use cat so the time stamp gets set properly
+	## use cat so the time stamp gets set properly
 	cat $(srcdir)/CVSvn.texi >$@
 $(srcdir)/CVSvn.texi: $(srcdir)/CVSvn.texi.in $(top_srcdir)/configure.in
 	sed 's,@VERSION\@,$(VERSION),g' $(srcdir)/CVSvn.texi.in >$(srcdir)/CVSvn.ttexi

@@ -1,3 +1,11 @@
+2001-05-29  Derek Price  <dprice@collab.net>
+	patch from Pavel Roskin  <proski@gnu.org>
+
+	* Makefile.am (CVSvn.texi): Double hash comment in rule since single
+	hash comments are not portable.
+
+	* Makefile.in: Regenerated.
+
 2001-05-21  Larry Jones  <larry.jones@sdrc.com>
 
 	* cvs.texinfo (Error messages): Fix ordering; add "cannot commit
@@ -13,7 +21,6 @@
 	* cvs.texinfo (Connection): Replace information about unsetting
 	$HOME for people with old releases.
 
-2001-05-21  Derek Price  <dprice@collab.net>
 
 	* cvs.texinfo (Connecting via rsh): Use @samp{} instead of @file{}
 	where it seemed appropriate.
