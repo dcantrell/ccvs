@@ -1,24 +1,24 @@
-# Microsoft Developer Studio Project File - Name="LIB" - Package Owner=<4>
+# Microsoft Developer Studio Project File - Name="libcvs" - Package Owner=<4>
 # Microsoft Developer Studio Generated Build File, Format Version 6.00
 # ** DO NOT EDIT **
 
 # TARGTYPE "Win32 (x86) Static Library" 0x0104
 
-CFG=LIB - Win32 Debug
+CFG=libcvs - Win32 Debug
 !MESSAGE This is not a valid makefile. To build this project using NMAKE,
 !MESSAGE use the Export Makefile command and run
 !MESSAGE 
-!MESSAGE NMAKE /f "LIB.mak".
+!MESSAGE NMAKE /f "libcvs.mak".
 !MESSAGE 
 !MESSAGE You can specify a configuration when running NMAKE
 !MESSAGE by defining the macro CFG on the command line. For example:
 !MESSAGE 
-!MESSAGE NMAKE /f "LIB.mak" CFG="LIB - Win32 Debug"
+!MESSAGE NMAKE /f "libcvs.mak" CFG="libcvs - Win32 Debug"
 !MESSAGE 
 !MESSAGE Possible choices for configuration are:
 !MESSAGE 
-!MESSAGE "LIB - Win32 Release" (based on "Win32 (x86) Static Library")
-!MESSAGE "LIB - Win32 Debug" (based on "Win32 (x86) Static Library")
+!MESSAGE "libcvs - Win32 Release" (based on "Win32 (x86) Static Library")
+!MESSAGE "libcvs - Win32 Debug" (based on "Win32 (x86) Static Library")
 !MESSAGE 
 
 # Begin Project
@@ -28,7 +28,7 @@ CFG=LIB - Win32 Debug
 CPP=cl.exe
 RSC=rc.exe
 
-!IF  "$(CFG)" == "LIB - Win32 Release"
+!IF  "$(CFG)" == "libcvs - Win32 Release"
 
 # PROP BASE Use_MFC 0
 # PROP BASE Use_Debug_Libraries 0
@@ -49,9 +49,9 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LIB32=link.exe -lib
 # ADD BASE LIB32 /nologo
-# ADD LIB32 /nologo /out:"WinRel\libcvs.lib"
+# ADD LIB32 /nologo
 
-!ELSEIF  "$(CFG)" == "LIB - Win32 Debug"
+!ELSEIF  "$(CFG)" == "libcvs - Win32 Debug"
 
 # PROP BASE Use_MFC 0
 # PROP BASE Use_Debug_Libraries 1
@@ -72,14 +72,14 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LIB32=link.exe -lib
 # ADD BASE LIB32 /nologo
-# ADD LIB32 /nologo /out:"WinDebug\libcvs.lib"
+# ADD LIB32 /nologo
 
 !ENDIF 
 
 # Begin Target
 
-# Name "LIB - Win32 Release"
-# Name "LIB - Win32 Debug"
+# Name "libcvs - Win32 Release"
+# Name "libcvs - Win32 Debug"
 # Begin Group "Source Files"
 
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
@@ -131,7 +131,7 @@ SOURCE=.\regex.c
 
 SOURCE=.\alloca_.h
 
-!IF  "$(CFG)" == "LIB - Win32 Release"
+!IF  "$(CFG)" == "libcvs - Win32 Release"
 
 # Begin Custom Build
 InputPath=.\alloca_.h
@@ -141,7 +141,7 @@ InputPath=.\alloca_.h
 
 # End Custom Build
 
-!ELSEIF  "$(CFG)" == "LIB - Win32 Debug"
+!ELSEIF  "$(CFG)" == "libcvs - Win32 Debug"
 
 # Begin Custom Build
 InputPath=.\alloca_.h
@@ -162,7 +162,7 @@ SOURCE="..\windows-NT\config.h"
 
 SOURCE=.\fnmatch_.h
 
-!IF  "$(CFG)" == "LIB - Win32 Release"
+!IF  "$(CFG)" == "libcvs - Win32 Release"
 
 # Begin Custom Build
 InputPath=.\fnmatch_.h
@@ -172,7 +172,7 @@ InputPath=.\fnmatch_.h
 
 # End Custom Build
 
-!ELSEIF  "$(CFG)" == "LIB - Win32 Debug"
+!ELSEIF  "$(CFG)" == "libcvs - Win32 Debug"
 
 # Begin Custom Build
 InputPath=.\fnmatch_.h

@@ -1,20 +1,20 @@
-# Microsoft Developer Studio Generated NMAKE File, Based on LIB.dsp
+# Microsoft Developer Studio Generated NMAKE File, Based on libcvs.dsp
 !IF "$(CFG)" == ""
-CFG=LIB - Win32 Debug
-!MESSAGE No configuration specified. Defaulting to LIB - Win32 Debug.
+CFG=libcvs - Win32 Debug
+!MESSAGE No configuration specified. Defaulting to libcvs - Win32 Debug.
 !ENDIF 
 
-!IF "$(CFG)" != "LIB - Win32 Release" && "$(CFG)" != "LIB - Win32 Debug"
+!IF "$(CFG)" != "libcvs - Win32 Release" && "$(CFG)" != "libcvs - Win32 Debug"
 !MESSAGE Invalid configuration "$(CFG)" specified.
 !MESSAGE You can specify a configuration when running NMAKE
 !MESSAGE by defining the macro CFG on the command line. For example:
 !MESSAGE 
-!MESSAGE NMAKE /f "LIB.mak" CFG="LIB - Win32 Debug"
+!MESSAGE NMAKE /f "libcvs.mak" CFG="libcvs - Win32 Debug"
 !MESSAGE 
 !MESSAGE Possible choices for configuration are:
 !MESSAGE 
-!MESSAGE "LIB - Win32 Release" (based on "Win32 (x86) Static Library")
-!MESSAGE "LIB - Win32 Debug" (based on "Win32 (x86) Static Library")
+!MESSAGE "libcvs - Win32 Release" (based on "Win32 (x86) Static Library")
+!MESSAGE "libcvs - Win32 Debug" (based on "Win32 (x86) Static Library")
 !MESSAGE 
 !ERROR An invalid configuration is specified.
 !ENDIF 
@@ -25,7 +25,7 @@ NULL=
 NULL=nul
 !ENDIF 
 
-!IF  "$(CFG)" == "LIB - Win32 Release"
+!IF  "$(CFG)" == "libcvs - Win32 Release"
 
 OUTDIR=.\WinRel
 INTDIR=.\WinRel
@@ -56,7 +56,7 @@ CLEAN :
     if not exist "$(OUTDIR)/$(NULL)" mkdir "$(OUTDIR)"
 
 CPP=cl.exe
-CPP_PROJ=/nologo /ML /W3 /GX /O2 /I "..\windows-NT" /I "." /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "_LIB" /D "HAVE_CONFIG_H" /Fp"$(INTDIR)\LIB.pch" /YX /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c 
+CPP_PROJ=/nologo /ML /W3 /GX /O2 /I "..\windows-NT" /I "." /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "_LIB" /D "HAVE_CONFIG_H" /Fp"$(INTDIR)\libcvs.pch" /YX /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c 
 
 .c{$(INTDIR)}.obj::
    $(CPP) @<<
@@ -90,7 +90,7 @@ CPP_PROJ=/nologo /ML /W3 /GX /O2 /I "..\windows-NT" /I "." /D "WIN32" /D "NDEBUG
 
 RSC=rc.exe
 BSC32=bscmake.exe
-BSC32_FLAGS=/nologo /o"$(OUTDIR)\LIB.bsc" 
+BSC32_FLAGS=/nologo /o"$(OUTDIR)\libcvs.bsc" 
 BSC32_SBRS= \
 	
 LIB32=link.exe -lib
@@ -112,7 +112,7 @@ LIB32_OBJS= \
   $(LIB32_FLAGS) $(DEF_FLAGS) $(LIB32_OBJS)
 <<
 
-!ELSEIF  "$(CFG)" == "LIB - Win32 Debug"
+!ELSEIF  "$(CFG)" == "libcvs - Win32 Debug"
 
 OUTDIR=.\WinDebug
 INTDIR=.\WinDebug
@@ -144,7 +144,7 @@ CLEAN :
     if not exist "$(OUTDIR)/$(NULL)" mkdir "$(OUTDIR)"
 
 CPP=cl.exe
-CPP_PROJ=/nologo /MLd /W3 /Gm /GX /ZI /Od /I "..\windows-NT" /I "." /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /D "HAVE_CONFIG_H" /Fp"$(INTDIR)\LIB.pch" /YX /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /GZ /c 
+CPP_PROJ=/nologo /MLd /W3 /Gm /GX /ZI /Od /I "..\windows-NT" /I "." /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /D "HAVE_CONFIG_H" /Fp"$(INTDIR)\libcvs.pch" /YX /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /GZ /c 
 
 .c{$(INTDIR)}.obj::
    $(CPP) @<<
@@ -178,7 +178,7 @@ CPP_PROJ=/nologo /MLd /W3 /Gm /GX /ZI /Od /I "..\windows-NT" /I "." /D "WIN32" /
 
 RSC=rc.exe
 BSC32=bscmake.exe
-BSC32_FLAGS=/nologo /o"$(OUTDIR)\LIB.bsc" 
+BSC32_FLAGS=/nologo /o"$(OUTDIR)\libcvs.bsc" 
 BSC32_SBRS= \
 	
 LIB32=link.exe -lib
@@ -204,15 +204,15 @@ LIB32_OBJS= \
 
 
 !IF "$(NO_EXTERNAL_DEPS)" != "1"
-!IF EXISTS("LIB.dep")
-!INCLUDE "LIB.dep"
+!IF EXISTS("libcvs.dep")
+!INCLUDE "libcvs.dep"
 !ELSE 
-!MESSAGE Warning: cannot find "LIB.dep"
+!MESSAGE Warning: cannot find "libcvs.dep"
 !ENDIF 
 !ENDIF 
 
 
-!IF "$(CFG)" == "LIB - Win32 Release" || "$(CFG)" == "LIB - Win32 Debug"
+!IF "$(CFG)" == "libcvs - Win32 Release" || "$(CFG)" == "libcvs - Win32 Debug"
 SOURCE=.\exitfail.c
 
 "$(INTDIR)\exitfail.obj" : $(SOURCE) "$(INTDIR)"
@@ -265,7 +265,7 @@ SOURCE=.\regex.c
 
 SOURCE=.\alloca_.h
 
-!IF  "$(CFG)" == "LIB - Win32 Release"
+!IF  "$(CFG)" == "libcvs - Win32 Release"
 
 InputPath=.\alloca_.h
 
@@ -276,7 +276,7 @@ InputPath=.\alloca_.h
 << 
 	
 
-!ELSEIF  "$(CFG)" == "LIB - Win32 Debug"
+!ELSEIF  "$(CFG)" == "libcvs - Win32 Debug"
 
 InputPath=.\alloca_.h
 
@@ -291,7 +291,7 @@ InputPath=.\alloca_.h
 
 SOURCE=.\fnmatch_.h
 
-!IF  "$(CFG)" == "LIB - Win32 Release"
+!IF  "$(CFG)" == "libcvs - Win32 Release"
 
 InputPath=.\fnmatch_.h
 
@@ -302,7 +302,7 @@ InputPath=.\fnmatch_.h
 << 
 	
 
-!ELSEIF  "$(CFG)" == "LIB - Win32 Debug"
+!ELSEIF  "$(CFG)" == "libcvs - Win32 Debug"
 
 InputPath=.\fnmatch_.h
 
