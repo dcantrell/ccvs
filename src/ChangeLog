@@ -1,3 +1,9 @@
+2000-02-16  Larry Jones  <larry.jones@sdrc.com>
+
+	* add.c (add): Don't allow adding files or directories to Emptydir.
+	(Patch submitted by Chris Cameron <chris.cameron@ot.co.nz>.)
+	* sanity.sh (emptydir): Revise (emptydir-7 and emptydir-8) for this.
+
 2000-02-16  Jim Meyering  <meyering@lucent.com>
 
 	* update.c (join_file): Correct typo in diagnostic:
