@@ -127,6 +127,12 @@ This info manual describes how to use and administer
 @sc{cvs} version @value{CVSVN}.
 @end ifinfo
 
+@c This menu is pretty long.  Not sure how easily that
+@c can be fixed; seems like "Adding files", "Removing
+@c files", "Removing directories", "Moving files",
+@c and "Moving directories" all go together (into
+@c "Adding, removing, and renaming"?).  Other than that
+@c no brilliant ideas for a fix...
 @menu
 * Preface::                     About this manual
 * What is CVS?::                What is CVS?
@@ -148,6 +154,7 @@ This info manual describes how to use and administer
 * Keyword substitution::        CVS can include the revision inside the file
 * Binary files::                CVS can handle binary files
 * Builds::                      Issues related to CVS and builds
+* Compatibility::               Upgrading CVS versions
 * Revision management::         Policy questions for revision management
 * Invoking CVS::                Reference manual for CVS commands
 * Administrative files::        Reference manual for the Administrative files
@@ -4817,6 +4824,35 @@ is Odin (see
 @c (ftp://ftp.interlog.com/pub/unix/mk).  But I'm not sure
 @c there is any point in mentioning them here unless they
 @c can work with CVS.
+
+@node Compatibility
+@chapter Compatibility between CVS Versions
+
+@cindex CVS, versions of
+@cindex versions, of CVS
+@cindex compatibility, between CVS versions
+@c We don't mention versions older than CVS 1.3
+@c on the theory that it would clutter it up for the vast
+@c majority of people, who don't have anything that old.
+@c
+The repository format is compatible going back to
+@sc{cvs} 1.3.  But see @ref{Watches Compatibility}, if
+you have copies of @sc{cvs} 1.6 or older and you want
+to use the optional developer communication features.
+
+The working directory format is compatible going back
+to @sc{cvs} 1.5.  It did change between @sc{cvs} 1.3
+and @sc{cvs} 1.5.  If you run @sc{cvs} 1.5 or newer on
+a working directory checked out with @sc{cvs} 1.3,
+@sc{cvs} will convert it, but to go back to @sc{cvs}
+1.3 you need to check out a new working directory with
+@sc{cvs} 1.3.
+
+The remote protocol is interoperable going back to @sc{cvs} 1.5, but no
+further (1.5 was the first official release with the remote protocol,
+but some older versions might still be floating around).  In many
+cases you need to upgrade both the client and the server to take
+advantage of new features and bugfixes, however.
 
 @c ---------------------------------------------------------------------
 @node Revision management

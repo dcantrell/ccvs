@@ -1,5 +1,7 @@
 Sun Nov  3 21:22:42 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvs.texinfo (Compatibility): New node, moved from ../README.
+
 	* cvs.texinfo (Common options): Add comment about how tar manual
 	contains documentation for getdate date formats.
 
