@@ -19517,6 +19517,26 @@ EOF
 	    dotest pserver-6 "cat ${TESTDIR}/pserver.tmp" \
 "I HATE YOU"
 
+	    ${testcvs} --allow-root=${CVSROOT_DIRNAME} pserver >${TESTDIR}/pserver.tmp 2>&1 <<EOF
+BEGIN VERIFICATION REQUEST
+${CVSROOT_DIRNAME}
+testme
+Ay::'d^b?hd
+END VERIFICATION REQUEST
+EOF
+	    dotest pserver-7 "cat ${TESTDIR}/pserver.tmp" \
+"I HATE YOU"
+
+	    ${testcvs} --allow-root=${CVSROOT_DIRNAME} pserver >${TESTDIR}/pserver.tmp 2>&1 <<EOF
+BEGIN VERIFICATION REQUEST
+${CVSROOT_DIRNAME}
+testme
+Ay::'d
+END VERIFICATION REQUEST
+EOF
+	    dotest pserver-8 "cat ${TESTDIR}/pserver.tmp" \
+"${DOTSTAR} LOVE YOU"
+
 	    # Clean up.
 	    echo "# comments only" >config
 	    dotest pserver-cleanup-1 "${testcvs} -q ci -m config-it" \

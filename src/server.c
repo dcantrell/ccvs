@@ -5491,6 +5491,9 @@ pserver_authenticate_connection ()
     /* Don't go any farther if we're just responding to "cvs login". */
     if (verify_and_exit)
     {
+	printf ("I LOVE YOU\n");
+	fflush (stdout);
+
 #ifdef SYSTEM_CLEANUP
 	/* Hook for OS-specific behavior, for example socket subsystems on
 	   NT and OS2 or dealing with windows and arguments on Mac.  */
