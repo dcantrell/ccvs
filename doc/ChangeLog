@@ -1,3 +1,8 @@
+Tue Nov 11 15:15:49 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (Locks, CVS in repository): New nodes, document the
+	locking scheme and briefly outline CVS and CVS/fileattr.
+
 Sun Nov  9 17:39:41 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* DIFFUTILS-2.7-BUG: Removed; the bug is fixed and the testcases
