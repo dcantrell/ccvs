@@ -1,3 +1,9 @@
+2004-08-31  Derek Price <derek@ximbiot.com>
+
+	* buffer.c: Gratuitous reformatting of header comments.
+	s/abort/assert/.  Remove unnecessary typecasts.
+	* buffer.h: Remove unnecessary "extern" decls.  Some reformatting.
+
 2004-08-24  Derek Price <derek@ximbiot.com>
 
 	* recurse.c (start_recursion): Don't shorten //. to / (use //).
