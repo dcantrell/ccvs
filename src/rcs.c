@@ -12,9 +12,11 @@
 #include "cvs.h"
 
 static RCSNode *RCS_parsercsfile_i PROTO((FILE * fp, const char *rcsfile));
+static void RCS_reparsercsfile PROTO((RCSNode *, int, FILE **));
 static char *RCS_getdatebranch PROTO((RCSNode * rcs, char *date, char *branch));
 static int getrcskey PROTO((FILE * fp, char **keyp, char **valp,
 			    size_t *lenp));
+static void getrcsrev PROTO ((FILE *fp, char **revp));
 static int checkmagic_proc PROTO((Node *p, void *closure));
 static void do_branches PROTO((List * list, char *val));
 static void do_symbols PROTO((List * list, char *val));
@@ -201,11 +203,15 @@ l_error:
 
    On error, die with a fatal error; if it returns at all it was successful.
 
+   If ALL is nonzero, remember all keywords and values.  Otherwise
+   only keep the ones we will need.
+
    If PFP is NULL, close the file when done.  Otherwise, leave it open
    and store the FILE * in *PFP.  */
 static void
-RCS_reparsercsfile (rdata, pfp)
+RCS_reparsercsfile (rdata, all, pfp)
     RCSNode *rdata;
+    int all;
     FILE **pfp;
 {
     FILE *fp;
@@ -276,6 +282,24 @@ RCS_reparsercsfile (rdata, pfp)
 	if (*cp == '\0' && strncmp (RCSDATE, value, strlen (RCSDATE)) == 0)
 	    break;
 
+	if (all)
+	{
+	    Node *kv;
+
+	    if (rdata->other == NULL)
+		rdata->other = getlist ();
+	    kv = getnode ();
+	    kv->type = RCSFIELD;
+	    kv->key = xstrdup (key);
+	    kv->data = xstrdup (value);
+	    if (addnode (rdata->other, kv) != 0)
+	    {
+		error (0, 0, "warning: duplicate key `%s' in RCS file `%s'",
+		       key, rcsfile);
+		freenode (kv);
+	    }
+	}
+
 	/* if we haven't grabbed it yet, we didn't want it */
     }
 
@@ -287,6 +311,7 @@ RCS_reparsercsfile (rdata, pfp)
     for (;;)
     {
 	char *valp;
+	Node *kvstate;
 
         vnode = (RCSVers *) xmalloc (sizeof (RCSVers));
 	memset (vnode, 0, sizeof (RCSVers));
@@ -318,6 +343,26 @@ unable to parse rcs file; `state' not in the expected place");
 	if (strcmp (value, "dead") == 0)
 	{
 	    vnode->dead = 1;
+	}
+	if (! all)
+	    kvstate = NULL;
+	else
+	{
+	    if (vnode->other == NULL)
+		vnode->other = getlist ();
+	    kvstate = getnode ();
+	    kvstate->type = RCSFIELD;
+	    kvstate->key = xstrdup (key);
+	    kvstate->data = xstrdup (value);
+	    if (addnode (vnode->other, kvstate) != 0)
+	    {
+		error (0, 0,
+		       "\
+warning: duplicate key `%s' in version `%s' of RCS file `%s'",
+		       key, vnode->version, rcsfile);
+		freenode (kvstate);
+		kvstate = NULL;
+	    }
 	}
 
 	/* fill in the branch list (if any branches exist) */
@@ -361,6 +406,11 @@ unable to parse rcs file; `state' not in the expected place");
 	    if (strcmp(key, RCSDEAD) == 0)
 	    {
 		vnode->dead = 1;
+		if (kvstate != NULL)
+		{
+		    free (kvstate->data);
+		    kvstate->data = xstrdup ("dead");
+		}
 		continue;
 	    }
 	    /* if we have a revision, break and do it */
@@ -368,6 +418,26 @@ unable to parse rcs file; `state' not in the expected place");
 		 /* do nothing */ ;
 	    if (*cp == '\0' && strncmp (RCSDATE, value, strlen (RCSDATE)) == 0)
 		break;
+
+	    if (all)
+	    {
+		Node *kv;
+
+		if (vnode->other == NULL)
+		    vnode->other = getlist ();
+		kv = getnode ();
+		kv->type = RCSFIELD;
+		kv->key = xstrdup (key);
+		kv->data = xstrdup (value);
+		if (addnode (vnode->other, kv) != 0)
+		{
+		    error (0, 0,
+			   "\
+warning: duplicate key `%s' in version `%s' of RCS file `%s'",
+			   key, vnode->version, rcsfile);
+		    freenode (kv);
+		}
+	    }
 	}
 
 	/* get the node */
@@ -395,6 +465,25 @@ unable to parse rcs file; `state' not in the expected place");
 	    break;
     }
 
+    if (all && key != NULL && strcmp (key, RCSDESC) == 0)
+    {
+	Node *kv;
+
+	if (vnode->other == NULL)
+	    vnode->other = getlist ();
+	kv = getnode ();
+	kv->type = RCSFIELD;
+	kv->key = xstrdup (key);
+	kv->data = xstrdup (value);
+	if (addnode (vnode->other, kv) != 0)
+	{
+	    error (0, 0,
+		   "warning: duplicate key `%s' in RCS file `%s'",
+		   key, rcsfile);
+	    freenode (kv);
+	}
+    }
+
     rdata->delta_pos = ftell (fp);
 
     if (pfp == NULL)
@@ -407,6 +496,176 @@ unable to parse rcs file; `state' not in the expected place");
 	*pfp = fp;
     }
     rdata->flags &= ~PARTIAL;
+}
+
+/*
+ * Fully parse the RCS file.  Store all keyword/value pairs, fetch the
+ * log messages for each revision, and fetch add and delete counts for
+ * each revision (we could fetch the entire text for each revision,
+ * but the only caller, log_fileproc, doesn't need that information,
+ * so we don't waste the memory required to store it).  The add and
+ * delete counts are stored on the OTHER field of the RCSVERSNODE
+ * structure, under the names ";add" and ";delete", so that we don't
+ * waste the memory space of extra fields in RCSVERSNODE for code
+ * which doesn't need this information.
+ */
+
+void
+RCS_fully_parse (rcs)
+    RCSNode *rcs;
+{
+    FILE *fp;
+
+    RCS_reparsercsfile (rcs, 1, &fp);
+
+    while (1)
+    {
+	int c;
+	char *key, *value;
+	Node *vers;
+	RCSVers *vnode;
+
+	/* Rather than try to keep track of how much information we
+           have read, just read to the end of the file.  */
+	do
+	{
+	    c = getc (fp);
+	    if (c == EOF)
+		break;
+	} while (whitespace (c));
+	if (c == EOF)
+	    break;
+	if (ungetc (c, fp) == EOF)
+	    error (1, errno, "ungetc failed");
+
+	getrcsrev (fp, &key);
+	vers = findnode (rcs->versions, key);
+	if (vers == NULL)
+	    error (1, 0,
+		   "mismatch in rcs file %s between deltas and deltatexts",
+		   rcs->path);
+
+	vnode = (RCSVers *) vers->data;
+
+	while (getrcskey (fp, &key, &value, NULL) >= 0)
+	{
+	    if (strcmp (key, "text") != 0)
+	    {
+		Node *kv;
+
+		if (vnode->other == NULL)
+		    vnode->other = getlist ();
+		kv = getnode ();
+		kv->type = RCSFIELD;
+		kv->key = xstrdup (key);
+		kv->data = xstrdup (value);
+		if (addnode (vnode->other, kv) != 0)
+		{
+		    error (0, 0,
+			   "\
+warning: duplicate key `%s' in version `%s' of RCS file `%s'",
+			   key, vnode->version, rcs->path);
+		    freenode (kv);
+		}
+
+		continue;
+	    }
+
+	    if (strcmp (vnode->version, rcs->head) != 0)
+	    {
+		unsigned long add, del;
+		char buf[50];
+		Node *kv;
+
+		/* This is a change text.  Store the add and delete
+                   counts.  */
+		add = 0;
+		del = 0;
+		if (value != NULL)
+		{
+		    const char *cp;
+
+		    cp = value;
+		    while (*cp != '\0')
+		    {
+			char op;
+			unsigned long count;
+
+			op = *cp++;
+			if (op != 'a' && op  != 'd')
+			    error (1, 0, "unrecognized operation '%c' in %s",
+				   op, rcs->path);
+			(void) strtoul (cp, (char **) &cp, 10);
+			if (*cp++ != ' ')
+			    error (1, 0, "space expected in %s",
+				   rcs->path);
+			count = strtoul (cp, (char **) &cp, 10);
+			if (*cp++ != '\012')
+			    error (1, 0, "linefeed expected in %s",
+				   rcs->path);
+
+			if (op == 'd')
+			    del += count;
+			else
+			{
+			    add += count;
+			    while (count != 0)
+			    {
+				if (*cp == '\012')
+				    --count;
+				else if (*cp == '\0')
+				{
+				    if (count != 1)
+					error (1, 0, "\
+invalid rcs file %s: premature end of value",
+					       rcs->path);
+				    else
+					break;
+				}
+				++cp;
+			    }
+			}
+		    }
+		}
+
+		sprintf (buf, "%lu", add);
+		kv = getnode ();
+		kv->type = RCSFIELD;
+		kv->key = xstrdup (";add");
+		kv->data = xstrdup (buf);
+		if (addnode (vnode->other, kv) != 0)
+		{
+		    error (0, 0,
+			   "\
+warning: duplicate key `%s' in version `%s' of RCS file `%s'",
+			   key, vnode->version, rcs->path);
+		    freenode (kv);
+		}
+
+		sprintf (buf, "%lu", del);
+		kv = getnode ();
+		kv->type = RCSFIELD;
+		kv->key = xstrdup (";delete");
+		kv->data = xstrdup (buf);
+		if (addnode (vnode->other, kv) != 0)
+		{
+		    error (0, 0,
+			   "\
+warning: duplicate key `%s' in version `%s' of RCS file `%s'",
+			   key, vnode->version, rcs->path);
+		    freenode (kv);
+		}
+	    }
+
+	    /* We have found the "text" key which ends the data for
+               this revision.  Break out of the loop and go on to the
+               next revision.  */
+	    break;
+	}
+    }
+
+    if (fclose (fp) < 0)
+	error (0, errno, "cannot close %s", rcs->path);
 }
 
 /*
@@ -437,6 +696,8 @@ freercsnode (rnodep)
 	free ((*rnodep)->head);
     if ((*rnodep)->branch != (char *) NULL)
 	free ((*rnodep)->branch);
+    if ((*rnodep)->other != (List *) NULL)
+	dellist (&(*rnodep)->other);
     free ((char *) *rnodep);
     *rnodep = (RCSNode *) NULL;
 }
@@ -460,6 +721,8 @@ rcsvers_delproc (p)
 	free (rnode->next);
     if (rnode->author != (char *) NULL)
 	free (rnode->author);
+    if (rnode->other != (List *) NULL)
+	dellist (&rnode->other);
     free ((char *) rnode);
 }
 
@@ -690,8 +953,6 @@ getrcskey (fp, keyp, valp, lenp)
     return (0);
 }
 
-static void getrcsrev PROTO ((FILE *fp, char **revp));
-
 /* Read an RCS revision number from FP.  Put a pointer to it in *REVP;
    it points to space managed by getrcsrev which is only good until
    the next call to getrcskey or getrcsrev.  */
@@ -896,7 +1157,7 @@ RCS_gettag (rcs, symtag, force_tag_match, return_both)
 
     /* XXX this is probably not necessary, --jtc */
     if (rcs->flags & PARTIAL) 
-	RCS_reparsercsfile (rcs, NULL);
+	RCS_reparsercsfile (rcs, 0, NULL);
 
     /* If tag is "HEAD", special case to get head RCS revision */
     if (tag && (strcmp (tag, TAG_HEAD) == 0 || *tag == '\0'))
@@ -1227,7 +1488,7 @@ RCS_getbranch (rcs, tag, force_tag_match)
     assert (rcs != NULL);
 
     if (rcs->flags & PARTIAL)
-	RCS_reparsercsfile (rcs, NULL);
+	RCS_reparsercsfile (rcs, 0, NULL);
 
     /* find out if the tag contains a dot, or is on the trunk */
     cp = strrchr (tag, '.');
@@ -1366,7 +1627,7 @@ RCS_getdate (rcs, date, force_tag_match)
     assert (rcs != NULL);
 
     if (rcs->flags & PARTIAL)
-	RCS_reparsercsfile (rcs, NULL);
+	RCS_reparsercsfile (rcs, 0, NULL);
 
     /* if the head is on a branch, try the branch first */
     if (rcs->branch != NULL)
@@ -1453,7 +1714,7 @@ RCS_getdatebranch (rcs, date, branch)
     assert (rcs != NULL);
 
     if (rcs->flags & PARTIAL)
-	RCS_reparsercsfile (rcs, NULL);
+	RCS_reparsercsfile (rcs, 0, NULL);
 
     p = findnode (rcs->versions, xrev);
     free (xrev);
@@ -1543,7 +1804,7 @@ RCS_getrevtime (rcs, rev, date, fudge)
     assert (rcs != NULL);
 
     if (rcs->flags & PARTIAL)
-	RCS_reparsercsfile (rcs, NULL);
+	RCS_reparsercsfile (rcs, 0, NULL);
 
     /* look up the revision */
     p = findnode (rcs->versions, rev);
@@ -1605,7 +1866,7 @@ RCS_symbols(rcs)
     assert(rcs != NULL);
 
     if (rcs->flags & PARTIAL)
-	RCS_reparsercsfile (rcs, NULL);
+	RCS_reparsercsfile (rcs, 0, NULL);
 
     if (rcs->symbols_data) {
 	rcs->symbols = getlist ();
@@ -1710,7 +1971,7 @@ RCS_isdead (rcs, tag)
     RCSVers *version;
 
     if (rcs->flags & PARTIAL)
-	RCS_reparsercsfile (rcs, NULL);
+	RCS_reparsercsfile (rcs, 0, NULL);
 
     p = findnode (rcs->versions, tag);
     if (p == NULL)
@@ -1731,7 +1992,7 @@ RCS_getexpand (rcs)
 {
     assert (rcs != NULL);
     if (rcs->flags & PARTIAL)
-	RCS_reparsercsfile (rcs, NULL);
+	RCS_reparsercsfile (rcs, 0, NULL);
     return rcs->expand;
 }
 
@@ -1774,7 +2035,7 @@ RCS_fast_checkout (rcs, workfile, tag, options, sout, flags)
 	    /* We want the head revision.  Try to read it directly.  */
 
 	    if (rcs->flags & PARTIAL)
-		RCS_reparsercsfile (rcs, &fp);
+		RCS_reparsercsfile (rcs, 0, &fp);
 	    else
 	    {
 		fp = CVS_FOPEN (rcs->path, FOPEN_BINARY_READ);
@@ -1819,7 +2080,7 @@ RCS_fast_checkout (rcs, workfile, tag, options, sout, flags)
 
 	    fp = NULL;
 	    if (rcs->flags & PARTIAL)
-		RCS_reparsercsfile (rcs, &fp);
+		RCS_reparsercsfile (rcs, 0, &fp);
 	    num = RCS_getversion (rcs, tag, NULL, 1, 0);
 	    if (num == NULL)
 	    {
@@ -2631,7 +2892,7 @@ annotate_fileproc (callerdat, finfo)
         return (1);
 
     if (finfo->rcs->flags & PARTIAL)
-        RCS_reparsercsfile (finfo->rcs, &fp);
+        RCS_reparsercsfile (finfo->rcs, 0, &fp);
 
     version = RCS_getversion (finfo->rcs, tag, date, force_tag_match, 0);
     if (version == NULL)
