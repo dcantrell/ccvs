@@ -1,3 +1,10 @@
+2002-05-01  Derek Price  <oberon@umich.edu>
+
+	* TODO (214): Add note about moving options.h options into the configure
+	script.
+	* configure.in: Remove last few references to options.h.
+	* configure: Regenerated.
+
 2002-04-30  Derek Price  <oberon@umich.edu>
 
 	* acconfig.h: Remove this file, it is deprecated.
