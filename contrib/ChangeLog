@@ -1,3 +1,9 @@
+2002-05-20  Derek Price  <oberon@umich.edu>
+
+	* cvs_acls.in: Add note about using checkoutlist with avail
+	in the commentary's INSTALLATION section.
+	(Original patch from Ville Skyttä <ville.skytta@xemacs.org>.)
+
 2002-04-30  Derek Price  <oberon@umich.edu>
 
 	* Makefile.in: Regenerated with automake 1.6.
