@@ -1,4 +1,6 @@
-Changes since 1.11.6:
+Changes since 1.11.7:
+
+Changes from 1.11.6 to 1.11.7:
 
 * A segfault that could occur in very rare cases where the stat of a file
   failed during a diff has been fixed.
