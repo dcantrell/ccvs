@@ -1,5 +1,9 @@
 2002-09-24  Derek Price  <derek@ximbiot.com>
 
+	* options.h: Move definition of TMPDIR_DFLT into configure.in.
+
+2002-09-24  Derek Price  <derek@ximbiot.com>
+
 	* options.h: Move defininition of EDITOR_DFLT into configure.in.
 
 	* Makefile.in: Regenerated.
