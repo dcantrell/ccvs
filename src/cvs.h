@@ -47,7 +47,7 @@
 #  define __noreturn__	noreturn
 #  define __printf__	printf
 # endif
-#endif
+#endif /* __attribute__ */
 
 /* Begin includes for functions with variable numbers of arguments */
 #if STDC_HEADERS
