@@ -1,3 +1,8 @@
+2003-11-18  Derek Price  <derek@ximbiot.com>
+
+	* socket-client.c: Correct a typo that happened to compile.
+	(Report and suggested fix from Patrick Brown <BrownP@symbol.com>.)
+
 2003-11-13  Derek Price  <derek@ximbiot.com>
 
 	* rcs.c (RCS_delete_revs): It's `&&', not `and'.
