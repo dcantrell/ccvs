@@ -10,7 +10,7 @@ Mon Jul 24 18:32:06 1995  Vince DeMarco  <vdemarco@bou.shl.com>
 	used exclusively thoughout the code. (this helps portability on
 	non POSIX systems).
 
-	* wrapper.c:  updateed Andrew Athan's email address.
+	* wrapper.c: updated Andrew Athan's email address.
 
 	* main.c:  fix an ifdef so the code will compile. syntax error in
 	the ifdef for CVS_NOADMIN.
@@ -93,6 +93,15 @@ Thu Jul 20 12:17:16 1995  Mark H. Wilkinson  <mhw@minster.york.ac.uk>
 	client code inside #ifdef CLIENT_SUPPORT, server code inside
 	#ifdef SERVER_SUPPORT.  When reporting version, report whether
 	client and/or server are compiled in.
+
+Wed Jul 19 18:00:00 1995  Jim Blandy <jimb@cyclic.com>
+
+	* subr.c (copy_file): Declare local var n to be an int,
+	not a size_t.  size_t is unsigned, and the return values
+	of read and write are definitely not unsigned.
+
+	* cvs.h [HAVE_IO_H]: #include <io.h>.
+	[HAVE_DIRECT_H]: #include <direct.h>.
 
 Fri Jul 14 22:28:46 1995  Jim Blandy  <jimb@totoro.cyclic.com>
 
