@@ -1,5 +1,8 @@
 Sun May 18 10:24:57 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvs.texinfo (Administrative files): Add comment concerning
+	writing triggers and particularly performance issues.
+
 	* cvs.texinfo (rtag options, tag options): Don't discuss what old
 	versions did with respect to the behavior now controlled by -F; we
 	don't try to document old versions here.  Add comments concerning
