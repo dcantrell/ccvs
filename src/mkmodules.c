@@ -610,26 +610,6 @@ const char *const init_usage[] = {
     NULL
 };
 
-/* Create directory NAME if it does not already exist; fatal error for
-   other errors.  FIXME: This should be in filesubr.c or thereabouts,
-   probably.  Perhaps it should be further abstracted, though (for example
-   to handle CVSUMASK where appropriate?).  */
-static void
-mkdir_if_needed (name)
-    char *name;
-{
-    if (CVS_MKDIR (name, 0777) < 0)
-    {
-	if (errno != EEXIST
-#ifdef EACCESS
-	    /* OS/2; see longer comment in client.c.  */
-	    && errno != EACCESS
-#endif
-	    )
-	    error (1, errno, "cannot mkdir %s", name);
-    }
-}
-
 int
 init (argc, argv)
     int argc;

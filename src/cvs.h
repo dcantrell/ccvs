@@ -469,6 +469,7 @@ extern int ign_case;
 void line2argv PROTO((int *pargc, char *argv[], char *line));
 void make_directories PROTO((const char *name));
 void make_directory PROTO((const char *name));
+extern int mkdir_if_needed PROTO ((char *name));
 void rename_file PROTO((const char *from, const char *to));
 /* Expand wildcards in each element of (ARGC,ARGV).  This is according to the
    files which exist in the current directory, and accordingly to OS-specific
