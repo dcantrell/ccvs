@@ -30,6 +30,18 @@ if test -r $GNULIB && test -d $GNULIB \
   exit 1
 fi
 
+trap \
+'status=$?
+# Restore lib/Makefile.am.
+if test -f lib/Makefile.am.save; then
+  mv lib/Makefile.am.save lib/Makefile.am
+fi
+# Restore m4/error.m4.
+if test -f m4/error.m4.save; then
+  mv m4/error.m4.save m4/error.m4
+fi
+exit $status' EXIT
+	
 # Prevent lib/Makefile.am from being overwritten.
 mv lib/Makefile.am lib/Makefile.am.save
 # Prevent m4/error.m4 from being overwritten unless necessary.
@@ -80,7 +92,3 @@ else
   # Save the generated lib/Makefile.am for next time.
   mv lib/Makefile.am lib/Makefile.gnulib
 fi
-
-
-# Restore lib/Makefile.am.
-mv lib/Makefile.am.save lib/Makefile.am
