@@ -59,6 +59,7 @@ LINK32=link.exe
 # PROP Use_Debug_Libraries 1
 # PROP Output_Dir ".\WinDebug"
 # PROP Intermediate_Dir ".\WinDebug"
+# PROP Ignore_Export_Lib 0
 # ADD BASE CPP /nologo /W3 /GX /Zi /Od /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /FR /YX /c
 # ADD CPP /nologo /W3 /Gm /GX /Zi /Ob1 /I ".\windows-NT" /I ".\lib" /I ".\src" /I ".\zlib" /D "_DEBUG" /D "WIN32" /D "_CONSOLE" /D "HAVE_CONFIG_H" /YX /FD /c
 # SUBTRACT CPP /Fr
@@ -174,9 +175,9 @@ SOURCE=.\diff\diff.c
 InputPath=.\diff\diff.c
 
 "diff\diff.obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	cl /MLd /W3 /Gm /GX /Zi /Ob1 /I ".\lib" /I ".\src" /I ".\windows-NT" /D\
- "HAVE_CONFIG_H" /Fp".\diff" /YX /Fo".\diff\diff.obj" /Fd".\diff" /FD /c\
- diff\diff.c
+	cl /MLd /W3 /Gm /GX /Zi /Ob1 /I ".\diff" /I ".\lib" /I ".\src" /I\
+ ".\windows-NT" /D  "HAVE_CONFIG_H" /Fp".\diff" /YX /Fo".\diff\diff.obj"\
+ /Fd".\diff" /FD /c  diff\diff.c
 
 # End Custom Build
 
@@ -507,7 +508,7 @@ InputPath=.\diff\version.c
 
 "diff\version.obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
 	cl /MLd /W3 /Gm /GX /Zi /Ob1 /Fp".\diff\" /YX /Fo".\diff\" /Fd".\diff\" /FD /c\
- diff/version.c
+  diff/version.c
 
 # End Custom Build
 

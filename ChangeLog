@@ -1,3 +1,8 @@
+Mon, 10 Nov 1997  Jim Kingdon
+
+	* cvsnt.dsp: For diff/diff.c, also look for include files in
+	diff directory.  This means we get diff/system.h not lib/system.h.
+
 Sun Nov  9 16:16:56 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* TODO (#195): New item, about rsync and such issues.
