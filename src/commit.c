@@ -1096,8 +1096,12 @@ commit_fileproc (finfo)
 	if (server_active) {
 	    server_scratch_entry_only ();
 	    server_updated (finfo->file, finfo->update_dir, finfo->repository,
+			    NULL,
+
 			    /* Doesn't matter, it won't get checked.  */
-			    SERVER_UPDATED, (struct stat *) NULL,
+			    SERVER_UPDATED,
+
+			    (struct stat *) NULL,
 			    (unsigned char *) NULL);
 	}
 #endif

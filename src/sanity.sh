@@ -2312,6 +2312,37 @@ ${PROG} [a-z]*: use .cvs commit. to remove this file permanently"
 ${PROG} update: unable to remove ./abc: No such file or directory"
 	  cd ../..
 
+	  # conflicts2-142d*: test that if one party adds a file, and another
+	  # party has a file of the same name, cvs notices
+	  cd 1/first-dir
+	  touch aa.c
+	  dotest conflicts2-142d0 "${testcvs} add aa.c" \
+"${PROG} [a-z]*: scheduling file .aa\.c. for addition
+${PROG} [a-z]*: use .cvs commit. to add this file permanently"
+	  dotest conflicts2-142d1 "${testcvs} -q ci -m added" \
+'RCS file: /tmp/cvs-sanity/cvsroot/first-dir/aa.c,v
+done
+Checking in aa.c;
+/tmp/cvs-sanity/cvsroot/first-dir/aa.c,v  <--  aa.c
+initial revision: 1\.1
+done'
+	  cd ../../2/first-dir
+	  echo "don't you dare obliterate this text" >aa.c
+	  # Doing this test separately for remote and local is a fair
+	  # bit of a kludge, but the exit status differs.  I'm not sure
+	  # which exit status is the more appropriate one.
+	  if test "$remote" = yes; then
+	    dotest conflicts2-142d2 "${testcvs} -q update" \
+"${QUESTION} aa\.c
+U aa\.c
+${PROG} update: move away \./aa\.c; it is in the way"
+	  else
+	    dotest_fail conflicts2-142d2 "${testcvs} -q update" \
+"${PROG} [a-z]*: move away aa\.c; it is in the way
+C aa\.c"
+	  fi
+	  cd ../..
+
 	  rm -rf 1 2 ; rm -rf ${CVSROOT_DIRNAME}/first-dir
 	  ;;
 
@@ -2956,7 +2987,7 @@ ${QUESTION} notig.c"
 	    # contact the server for the sole purpose of checking
 	    # the CVSROOT/cvsignore file does not seem like such a
 	    # good idea, so I imagine this will continue to be
-	    # necessary.  Oh well, as least we test CVS's ablity to
+	    # necessary.  Oh well, at least we test CVS's ablity to
 	    # handle a file with a modified timestamp but unmodified
 	    # contents.
 	    touch bar.c

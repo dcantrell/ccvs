@@ -1002,6 +1002,15 @@ struct update_entries_data
       UPDATE_ENTRIES_PATCH
     } contents;
 
+    enum {
+	/* We are replacing an existing file.  */
+	UPDATE_ENTRIES_EXISTING,
+	/* We are creating a new file.  */
+	UPDATE_ENTRIES_NEW,
+	/* We don't know whether it is existing or new.  */
+	UPDATE_ENTRIES_EXISTING_OR_NEW
+    } existp;
+
     /*
      * String to put in the timestamp field or NULL to use the timestamp
      * of the file.
@@ -1109,6 +1118,49 @@ update_entries (data_arg, ent_list, short_pathname, filename)
 	    size = atoi (size_string);
 	}
 	free (size_string);
+
+	/* Note that checking this separately from writing the file is
+	   a race condition: if the existing or lack thereof of the
+	   file changes between now and the actually calls which
+	   operate on it, we lose.  However (a) there are so many
+	   cases, I'm reluctant to try to fix them all, (b) in some
+	   cases the system might not even have a system call which
+	   does the right thing, and (c) it isn't clear this needs to
+	   work.  */
+	if (data->existp == UPDATE_ENTRIES_EXISTING
+	    && !isfile (filename))
+	    /* Emit a warning and update the file anyway.  */
+	    error (0, 0, "warning: %s unexpectedly disappeared",
+		   short_pathname);
+
+	if (data->existp == UPDATE_ENTRIES_NEW
+	    && isfile (filename))
+	{
+	    /* Emit a warning and refuse to update the file; we don't want
+	       to clobber a user's file.  */
+	    size_t nread;
+	    size_t toread;
+	    char buf[8192];
+
+	    error (0, 0, "move away %s; it is in the way", short_pathname);
+
+	    /* Now read and discard the file contents.  */
+	    nread = 0;
+	    while (nread < size)
+	    {
+		toread = size - nread;
+		if (toread > sizeof buf)
+		    toread = sizeof buf;
+
+		nread += try_read_from_server (buf, toread);
+		if (nread == size)
+		    break;
+	    }
+
+	    free (mode_string);
+	    free (entries_line);
+	    return;
+	}
 
 	temp_filename = xmalloc (strlen (filename) + 80);
 #ifdef USE_VMS_FILENAMES
@@ -1376,6 +1428,7 @@ handle_checked_in (args, len)
 {
     struct update_entries_data dat;
     dat.contents = UPDATE_ENTRIES_CHECKIN;
+    dat.existp = UPDATE_ENTRIES_EXISTING_OR_NEW;
     dat.timestamp = NULL;
     call_in_directory (args, update_entries, (char *)&dat);
 }
@@ -1387,6 +1440,7 @@ handle_new_entry (args, len)
 {
     struct update_entries_data dat;
     dat.contents = UPDATE_ENTRIES_CHECKIN;
+    dat.existp = UPDATE_ENTRIES_EXISTING_OR_NEW;
     dat.timestamp = "dummy timestamp from new-entry";
     call_in_directory (args, update_entries, (char *)&dat);
 }
@@ -1398,6 +1452,31 @@ handle_updated (args, len)
 {
     struct update_entries_data dat;
     dat.contents = UPDATE_ENTRIES_UPDATE;
+    dat.existp = UPDATE_ENTRIES_EXISTING_OR_NEW;
+    dat.timestamp = NULL;
+    call_in_directory (args, update_entries, (char *)&dat);
+}
+
+static void
+handle_created (args, len)
+    char *args;
+    int len;
+{
+    struct update_entries_data dat;
+    dat.contents = UPDATE_ENTRIES_UPDATE;
+    dat.existp = UPDATE_ENTRIES_NEW;
+    dat.timestamp = NULL;
+    call_in_directory (args, update_entries, (char *)&dat);
+}
+
+static void
+handle_update_existing (args, len)
+    char *args;
+    int len;
+{
+    struct update_entries_data dat;
+    dat.contents = UPDATE_ENTRIES_UPDATE;
+    dat.existp = UPDATE_ENTRIES_EXISTING;
     dat.timestamp = NULL;
     call_in_directory (args, update_entries, (char *)&dat);
 }
@@ -1409,6 +1488,8 @@ handle_merged (args, len)
 {
     struct update_entries_data dat;
     dat.contents = UPDATE_ENTRIES_UPDATE;
+    /* Think this could be UPDATE_ENTRIES_EXISTING, but just in case...  */
+    dat.existp = UPDATE_ENTRIES_EXISTING_OR_NEW;
     dat.timestamp = "Result of merge";
     call_in_directory (args, update_entries, (char *)&dat);
 }
@@ -1420,6 +1501,8 @@ handle_patched (args, len)
 {
     struct update_entries_data dat;
     dat.contents = UPDATE_ENTRIES_PATCH;
+    /* Think this could be UPDATE_ENTRIES_EXISTING, but just in case...  */
+    dat.existp = UPDATE_ENTRIES_EXISTING_OR_NEW;
     dat.timestamp = NULL;
     call_in_directory (args, update_entries, (char *)&dat);
 }
@@ -2251,6 +2334,9 @@ struct response responses[] =
     RSP_LINE("Checksum", handle_checksum, response_type_normal, rs_optional),
     RSP_LINE("Copy-file", handle_copy_file, response_type_normal, rs_optional),
     RSP_LINE("Updated", handle_updated, response_type_normal, rs_essential),
+    RSP_LINE("Created", handle_created, response_type_normal, rs_optional),
+    RSP_LINE("Update-existing", handle_update_existing, response_type_normal,
+       rs_optional),
     RSP_LINE("Merged", handle_merged, response_type_normal, rs_essential),
     RSP_LINE("Patched", handle_patched, response_type_normal, rs_optional),
     RSP_LINE("Mode", handle_mode, response_type_normal, rs_optional),
@@ -2349,8 +2435,9 @@ send_to_server (str, len)
       error (0, errno, "writing to to-server logfile");
 }
 
-/* Read up to LEN bytes from the server.  Returns actual number of bytes
-   read.  Gives a fatal error on EOF or error.  */
+/* Read up to LEN bytes from the server.  Returns actual number of
+   bytes read, which will always be at least one; blocks if there is
+   no data available at all.  Gives a fatal error on EOF or error.  */
 static size_t
 try_read_from_server (buf, len)
     char *buf;

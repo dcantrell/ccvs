@@ -3354,11 +3354,15 @@ server_copy_file (file, update_dir, repository, newfile)
     buf_output0 (&protocol, "\n");
 }
 
+/* See server.h for description.  */
+
 void
-server_updated (file, update_dir, repository, updated, file_info, checksum)
+server_updated (file, update_dir, repository, vers, updated, file_info,
+		checksum)
     char *file;
     char *update_dir;
     char *repository;
+    Vers_TS *vers;
     enum server_updated_arg4 updated;
     struct stat *file_info;
     unsigned char *checksum;
@@ -3390,8 +3394,7 @@ server_updated (file, update_dir, repository, updated, file_info, checksum)
 		 * If we have a sticky tag for a branch on which the
 		 * file is dead, and cvs update the directory, it gets
 		 * a T_CHECKOUT but no file.  So in this case just
-		 * forget the whole thing.
-		 */
+		 * forget the whole thing.  */
 		free (entries_line);
 		entries_line = NULL;
 		goto done;
@@ -3424,7 +3427,19 @@ server_updated (file, update_dir, repository, updated, file_info, checksum)
 	}
 
 	if (updated == SERVER_UPDATED)
-	    buf_output0 (&protocol, "Updated ");
+	{
+	    if (!(supported_response ("Created")
+		  && supported_response ("Update-existing")))
+		buf_output0 (&protocol, "Updated ");
+	    else
+	    {
+		assert (vers != NULL);
+		if (vers->ts_user == NULL)
+		    buf_output0 (&protocol, "Created ");
+		else
+		    buf_output0 (&protocol, "Update-existing ");
+	    }
+	}
 	else if (updated == SERVER_MERGED)
 	    buf_output0 (&protocol, "Merged ");
 	else if (updated == SERVER_PATCHED)

@@ -124,7 +124,6 @@ Checkin (type, file, update_dir, repository,
 	    Register (entries, file, vers->vn_rcs, vers->ts_user,
 		      vers->options, vers->tag, vers->date, (char *) 0);
 	    history_write (type, (char *) 0, vers->vn_rcs, file, repository);
-	    freevers_ts (&vers);
 
 	    if (tocvsPath)
 		if (unlink_file_dir (tocvsPath) < 0)
@@ -175,7 +174,7 @@ Checkin (type, file, update_dir, repository,
     {
 	if (set_time)
 	    /* Need to update the checked out file on the client side.  */
-	    server_updated (file, update_dir, repository, SERVER_UPDATED,
+	    server_updated (file, update_dir, repository, vers, SERVER_UPDATED,
 			    NULL, NULL);
 	else
 	    server_checked_in (file, update_dir, repository);
@@ -184,5 +183,6 @@ Checkin (type, file, update_dir, repository,
 #endif
 	mark_up_to_date (file);
 
+    freevers_ts (&vers);
     return (0);
 }

@@ -1,5 +1,25 @@
 Tue Jun  4 10:02:44 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* client.c (responses): Add Created and Update-existing responses.
+	* server.c (server_updated): If they are supported, use them
+	instead of Updated.
+	* client.c (struct update_entries_data): Add existp field.
+	(handle_checked_in, handle_updated, handle_new_entry,
+	handle_merged, handle_patched): Set it.
+	(handle_update_existing, handle_created): New functions,
+	for new responses.
+	(update_entries): Based on existp, check for
+	existence/nonexistence of file.
+	(try_read_from_server): Expand comment.
+	* server.c, server.h (server_updated): New argument vers.
+	* checkin.c (Checkin), commit.c (commit_fileproc), update.c
+	(update_fileproc, merge_file, join_file): Pass it.
+	* cvs.h: Move include of server.h after Vers_TS declaration.
+	* sanity.sh (conflicts2): New tests conflicts2-142d* test for
+	above fix.
+
+	* sanity.sh (ignore): Fix typo in comment.
+
 	* tag.c (tag_check_valid): Add comment clarifying when val-tags
 	entries are created.
 
