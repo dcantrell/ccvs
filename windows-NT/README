@@ -24,6 +24,11 @@ digging through old versions of CVS for a cvsnt.mak and then updating
 it.  Feel free to let us know about problems of this sort as with
 other bug reports.
 
+If you end up regenerating the MSVC makefiles and submitting a patch back to
+us, please be careful.  MSVC appears to be trying to write absolute paths into
+the diff/libdiff.mak file and a relative path to a file in the local MSVC
+install in cvsnt.dep.
+
 Send bug reports to bug-cvs@gnu.org.
 
 As of May 1996, this port passed all of the tests in src/sanity.sh,
