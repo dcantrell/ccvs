@@ -474,7 +474,7 @@ directory_cmp ()
                         # I removed the "-s" flag from the following cmp
                         # command because the CYGWIN32 package has a bug
                         # that makes it return the wrong value.
-			cmp $DIR_1/"$a" $DIR_2/"$a"
+			cmp $DIR_1/"$a" $DIR_2/"$a" >${NULLFILE} 2>&1
 			if test $? -ne 0 ; then
 				ISDIFF=true
 			fi
@@ -1238,7 +1238,7 @@ O [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z@][a-z@]* \[1.1\] first-dir           =fir
 
 		killdir ${CVSROOT_DIRNAME}/first-dir
 		killdir ${CVSROOT_DIRNAME}/second-dir
-		;;
+	        ;;
 
 	death) # next dive.  test death support.
 		mkdir  ${CVSROOT_DIRNAME}/first-dir
@@ -2073,7 +2073,6 @@ rcsmerge: warning: conflicts during merge'
 		;;
 
 	conflicts)
-		killdir first-dir ${CVSROOT_DIRNAME}/first-dir
 		mkdir ${CVSROOT_DIRNAME}/first-dir
 
 		mkdir 1
@@ -2691,7 +2690,7 @@ U nameddir/b'
 	  fi
 
 	  cd ../../2/1dir
-	  # FIXME: should be using dotest and PROG.
+	  # FIXME: should be using dotest.
 	  ${testcvs} -q update 2>../tst167.err
 # Windows NT doesn't return an error when you try to unlink a file
 # that doesn't exist, so we won't get the following line:
@@ -2745,7 +2744,7 @@ EOF
 	  else
 	    echo 'FAIL: test 172' | tee -a ${LOGFILE}
 	  fi
-	  echo -e "abc" >abc
+	  echo abc >abc
 	  if ${testcvs} add abc 2>>${LOGFILE}; then
 	    echo 'PASS: test 173' >>${LOGFILE}
 	  else
@@ -2897,8 +2896,11 @@ abc	[a-z0-9]*	edit	unedit	commit'
 	  ;;
 
 	ignore)
-          mkdir imp
-          cd imp
+          # Since Windows NT is case-insensitive, we can't do a checkout
+          # of "CVSROOT" in the current directory, because it contains
+          # the directory "cvsroot" -- make another one instead
+          mkdir wnt
+          cd wnt
 
 	  dotest 187a1 "${testcvs} -q co CVSROOT" 'U CVSROOT/modules'
 	  cd CVSROOT
@@ -3008,7 +3010,7 @@ ${QUESTION} notig.c"
 	  killdir ${CVSROOT_DIRNAME}/first-dir ${CVSROOT_DIRNAME}/second-dir
 
           cd ..
-          killdir imp
+          killdir wnt
 	  ;;
 
 	binfiles)
@@ -3138,8 +3140,11 @@ File: binfile          	Status: Up-to-date
 	  rm -r 2
 	  ;;
 	info)
-          mkdir imp
-          cd imp
+          # Since Windows NT is case-insensitive, we can't do a checkout
+          # of "CVSROOT" in the current directory, because it contains
+          # the directory "cvsroot" -- make another one instead
+          mkdir wnt
+          cd wnt
            
 	  # Test CVS's ability to handle *info files.
 	  dotest info-1 "${testcvs} -q co CVSROOT" "[UP] CVSROOT${DOTSTAR}"
@@ -3208,7 +3213,7 @@ COPY FOR DUP FAILED, handle in 12D5A8 6!!'
 	esac
 
         cd ..
-        killdir imp
+        killdir wnt
 done
 
 echo "OK, all tests completed."
