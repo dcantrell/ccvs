@@ -1,5 +1,9 @@
 2005-03-16  Derek Price  <derek@ximbiot.com>
 
+	* logmsg.c (do_verify): Don't check for NULL return from xfopen().
+
+2005-03-16  Derek Price  <derek@ximbiot.com>
+
 	* sanity.sh (debug-log-nonfatal): New test.
 
 2005-03-16  Derek Price  <derek@ximbiot.com>
