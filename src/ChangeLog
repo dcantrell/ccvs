@@ -1,3 +1,9 @@
+2004-09-12  Mark D. Baushke  <mdb@cvshome.org>
+
+	* rcs.c (RCS_checkout): Allow noexec to do checkouts when
+	server_active is true.
+	* sanity.sh (join7): Test above change (fixes a FIXCVS).
+	
 2004-09-09  Derek Price  <derek@ximbiot.com>
 
 	* buffer.c (stuct packetizing_buffer): Use size_t & bool as appropriate
