@@ -1,3 +1,10 @@
+2001-09-17  Derek Price  <dprice@collab.net>
+
+	* myndbm.c (mydbm_load_file): Fix buffer overflow error and make error
+	messages more informative.
+	* sanity.sh (modules6): New test.
+	(Original report from Taska <taska@collab.net> and others.)
+
 2001-09-14  Derek Price  <dprice@collab.net>
 
 	* logmsg.c (do_verify): Dispose memory when finished with it.
