@@ -769,6 +769,7 @@ extern void tag_check_valid_join PROTO ((char *, int, char **, int, int,
 extern void cvs_output PROTO ((const char *, size_t));
 extern void cvs_outerr PROTO ((const char *, size_t));
 extern void cvs_flusherr PROTO ((void));
+extern void cvs_flushout PROTO ((void));
 
 #if defined(SERVER_SUPPORT) || defined(CLIENT_SUPPORT)
 #include "server.h"

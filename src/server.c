@@ -4670,6 +4670,12 @@ cvs_outerr (str, len)
 	size_t to_write = len;
 	const char *p = str;
 
+	/* Make sure that output appears in order if stdout and stderr
+	   point to the same place.  For the server case this is taken
+	   care of by the fact that saved_outerr always holds less
+	   than a line.  */
+	fflush (stdout);
+
 	while (to_write > 0)
 	{
 	    written = fwrite (p, 1, to_write, stderr);
@@ -4702,4 +4708,30 @@ cvs_flusherr ()
     else
 #endif
 	fflush (stderr);
+}
+
+/* Make it possible for the user to see what has been written to
+   stdout (it is up to the implementation to decide exactly how far it
+   should go to ensure this).  */
+
+void
+cvs_flushout ()
+{
+#ifdef SERVER_SUPPORT
+    if (error_use_protocol)
+    {
+	/* Flush what we can to the network, but don't block.  */
+	buf_flush (buf_to_net, 0);
+    }
+    else if (server_active)
+    {
+	/* Just do nothing.  This is because the code which
+	   cvs_flushout replaces, setting stdout to line buffering in
+	   main.c, didn't get called in the server child process.  But
+	   in the future it is quite plausible that we'll want to make
+	   this case work analogously to cvs_flusherr.  */
+    }
+    else
+#endif
+	fflush (stdout);
 }

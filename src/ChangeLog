@@ -1,3 +1,14 @@
+Wed Oct 16 10:16:57 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* server.c, cvs.h (cvs_flushout): New function.
+	* recurse.c (do_file_proc): Call it.
+	* server.c (cvs_outerr): Call fflush (stdout) in non-server case.
+	* main.c (main): Don't call setvbuf.  The code was incorrectly
+	checking for "patch" (it really is "rdiff"); the concern about
+	slowing down large amounts of output is not specific to rdiff
+	(it applies to "log" for example); and the above changes should
+	meet the need.
+
 Tue Oct 15 10:22:10 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	This is intended to facilitate some future cleanups to the

@@ -792,28 +792,13 @@ main (argc, argv)
 
 	gethostname(hostname, sizeof (hostname));
 
-#ifdef HAVE_SETVBUF
-	/*
-	 * Make stdout line buffered, so 'tail -f' can monitor progress.
-	 * Patch creates too much output to monitor and it runs slowly.
-	 */
-#  ifndef KLUDGE_FOR_WNT_TESTSUITE
-
-	if (strcmp (cm->fullname, "patch"))
-#    ifdef BUFSIZ  /* traditional SysV chokes when size == 0 */
-	    (void) setvbuf (stdout, (char *) NULL, _IOLBF, BUFSIZ);
-#    else
-	    (void) setvbuf (stdout, (char *) NULL, _IOLBF, 0);
-#    endif
-
-#  else /* KLUDGE_FOR_WNT_TESTSUITE */
-
-	    (void) setvbuf (stdout, (char *) NULL, _IONBF, 0);
-	    (void) setvbuf (stderr, (char *) NULL, _IONBF, 0);
-
-#  endif /* KLUDGE_FOR_WNT_TESTSUITE */
-
-#endif /* HAVE_SETVBUF */
+#ifdef KLUDGE_FOR_WNT_TESTSUITE
+	/* Probably the need for this will go away at some point once
+	   we call fflush enough places (e.g. fflush (stdout) in
+	   cvs_outerr).  */
+	(void) setvbuf (stdout, (char *) NULL, _IONBF, 0);
+	(void) setvbuf (stderr, (char *) NULL, _IONBF, 0);
+#endif /* KLUDGE_FOR_WNT_TESTSUITE */
 
 	if (use_cvsrc)
 	    read_cvsrc (&argc, &argv, command_name);

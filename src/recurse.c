@@ -525,6 +525,11 @@ do_file_proc (p, closure)
     freercsnode(&finfo->rcs);
     free (finfo->fullname);
 
+    /* Allow the user to monitor progress with tail -f.  Doing this once
+       per file should be no big deal, but we don't want the performance
+       hit of flushing on every line like previous versions of CVS.  */
+    cvs_flushout ();
+
     return (ret);
 }
 
