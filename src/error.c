@@ -38,33 +38,33 @@ int error_use_protocol;
 #if __STDC__
 #include <stdarg.h>
 #define VA_START(args, lastarg) va_start(args, lastarg)
-#else
+#else /* ! __STDC__ */
 #include <varargs.h>
 #define VA_START(args, lastarg) va_start(args)
-#endif
+#endif /* __STDC__ */
 
-#else
+#else /* ! HAVE_VPRINTF */ 
 
 #ifdef HAVE_DOPRNT
 #define va_alist args
 #define va_dcl int args;
-#else
+#else /* ! HAVE_DOPRNT */
 #define va_alist a1, a2, a3, a4, a5, a6, a7, a8
 #define va_dcl char *a1, *a2, *a3, *a4, *a5, *a6, *a7, *a8;
-#endif
+#endif /* HAVE_DOPRNT */
 
-#endif
+#endif /* HAVE_VPRINTF */ 
 
 #if STDC_HEADERS
 #include <stdlib.h>
 #include <string.h>
-#else
+#else /* ! STDC_HEADERS */
 #if __STDC__
 void exit(int status);
-#else
+#else /* ! __STDC__ */
 void exit ();
 #endif /* __STDC__ */
-#endif
+#endif /* STDC_HEADERS */
 
 extern char *strerror ();
 
