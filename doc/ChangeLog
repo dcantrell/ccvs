@@ -1,3 +1,12 @@
+Fri Sep 20 13:08:33 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (Multiple developers): Revise text on reserved
+	versus unreserved checkouts extensively.  Move index entries for
+	"reserved checkouts" and "RCS-style locking" to here.  Add
+	cross-reference to cvs admin -l.  Add new section "Choosing a
+	model".
+	(Editing files): Add note about use of the word "checkout".
+
 Tue Sep 17 00:54:57 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (Defining the module): Don't suggest "cvs co
