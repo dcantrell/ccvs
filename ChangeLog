@@ -1,3 +1,9 @@
+2001-04-18  Derek Price  <dprice@collab.net>
+
+	* noautoconf.sh: New shell script to touch Makefile.in files and
+	prevent unecessary AUtomake rebuilds after updates.
+	* NEWS: Note this new scipt.
+
 2001-04-16  Larry Jones  <larry.jones@sdr.com>
 
 	* depcomp (aix): Remove stray HP-UX code.
