@@ -1,5 +1,10 @@
 2004-11-15  Derek Price  <derek@ximbiot.com>
 
+	* mkconfig.pl (save_copy): Try to deal with not having write
+	permissions.
+
+2004-11-15  Derek Price  <derek@ximbiot.com>
+
 	* mkconfig.pl: Improve diagnostic messages.
 	(make_config_h): Don't use dir when creating temp file.
 	(save_copy): Use File::Copy::move to portably rename the file, possibly
