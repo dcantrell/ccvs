@@ -1,5 +1,10 @@
 Changes since 1.12.1:
 
+* CVS now will always compile and its own getpass() function (originally from
+GNULIB) in favor of any system one that may exist.  This avoids some problems
+with long passwords on some systems and updates us to POSIX.2 compliance, since
+getpass() was removed from the POSIX.2 specification.
+
 * Support for pre-ANSI compilers has been removed.  Our minimum support level
 now assumes at least a freestanding C89 compilers.  See the HACKING file for
 more information.  If you *really* need K&R support, our Makefile.am files

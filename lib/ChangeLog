@@ -1,3 +1,9 @@
+2003-07-29  Derek Price  <derek@ximbiot.com>
+
+	* getpass.c: New file, almost identical to GNULIB's currect version.
+	* Makefile.am (libcvs_a_SOURCES): Add getpass.c.
+	* Makefile.in: Regenerated.
+
 2003-07-25  Derek Price  <derek@ximbiot.com>
 
 	* lstat.c: Sync with GNULIB.

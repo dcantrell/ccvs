@@ -68,6 +68,9 @@ $GNULIB/lib/getnline.c				lib		yes NI
 $GNULIB/lib/getnline.h				lib		yes NI
 $GNULIB/m4/getnline.m4				m4		no NI
 $GNULIB/m4/ssize_t.m4				m4		no NI
+# $GNULIB/modules/getpass
+$GNULIB/lib/getpass.c				lib		no NI
+$GNULIB/m4/getpass.m4				m4		no NI
 # $GNULIB/modules/gettext
 $GNULIB/lib/gettext.h				lib		no NI
 $GNULIB/m4/codeset.m4				m4		no NI
