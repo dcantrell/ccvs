@@ -1,3 +1,8 @@
+2002-03-26  Derek Price  <oberon@umich.edu>
+
+	* stamp-vti: Regenerated.
+	* version.texi: Ditto.
+
 2002-03-17  Larry Jones  <larry.jones@sdrc.com>
 
 	* cvs.texinfo (log options): Add new -S option.
