@@ -1,3 +1,9 @@
+Wed Sep 17 16:27:41 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* sanity.sh (rcs): New tests rcs-5 through rcs-13 test for
+	getdate.y fix (rcs-12 and rcs-13 both failed with the buggy
+	getdate.y).
+
 Tue Sep 16 00:07:17 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* sanity.sh (editor): Clean up first-dir at end of test.
