@@ -244,7 +244,8 @@ Building from source code under Unix:
 1)  Some combinations of Automake and Autoconf versions may break the CVS build
     if file timestamps aren't set correctly, so you may wish to run
     noautomake.sh to set the timestamps and avoid attempting to run the
-    autotools on your system:
+    autotools on your system, especially if you are building from source
+    checked out from CVS:
 
 	$ ./noautomake.sh --noautoconf
 
