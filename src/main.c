@@ -47,7 +47,7 @@
 
 #ifndef lint
 char rcsid[] = "$CVSid: @(#)main.c 1.78 94/10/07 $\n";
-USE(rcsid)
+USE(rcsid);
 #endif
 
 extern char *getenv ();

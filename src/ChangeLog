@@ -1,3 +1,70 @@
+Fri Mar  3 11:59:49 1995  Jim Blandy  <jimb@totoro.bio.indiana.edu>
+
+	* cvsbug.sh: Call it "Cyclic CVS" now, not "Remote CVS".  Call it
+	version C1.4A, not 1.4A2-remote.  Send bugs to cyclic-cvs, not
+	remote-cvs.
+
+	* classify.c (Classify_File): Put check for dead file inside
+	"#ifdef DEATH_SUPPORT".
+
+Thu Feb 23 23:03:43 1995  Jim Blandy  <jimb@totoro.bio.indiana.edu>
+
+	* update.c (join_file): Don't pass the -E option to rcsmerge here,
+	either (see Jan 22 change).
+
+Mon Feb 13 13:28:46 1995  Jim Blandy  <jimb@totoro.bio.indiana.edu>
+
+	* cvsbug.sh: Send bug reports to remote-cvs@cyclic.com, rather
+	than to the ordinary CVS bug address.  This does mean we'll have
+	to wade through GNATS-style bug reports, sigh.
+
+Wed Feb  8 06:42:27 1995  Roland McGrath  <roland@churchy.gnu.ai.mit.edu>
+
+	* server.c: Don't include <sys/stat.h>; system.h already does, and
+ 	4.3BSD can't take it twice.
+
+	* subr.c [! HAVE_VPRINTF] (run_setup, run_args): Don't use va_dcl
+ 	in declaration.  Declare the a1..a8 args which are used in the
+ 	sprintf call.
+	* cvs.h [! HAVE_VPRINTF] (run_setup, run_args): Don't prototype
+ 	args, to avoid conflicting with the function definitions
+ 	themselves.
+
+Tue Feb  7 20:10:00 1995  Jim Blandy  <jimb@totoro.bio.indiana.edu>
+
+	* client.c (update_entries): Pass the patch subprocess the switch
+	"-b ~", not "-b~"; the latter form seems not to work with patch
+	version 2.0 and earlier --- it takes the next argv element as the
+	backup suffix, and thus doesn't notice that the patch file's name
+	has been specified, thus doesn't find the patch, thus...  *aargh*
+
+Fri Feb  3 20:28:21 1995  Jim Blandy  <jimb@totoro.bio.indiana.edu>
+
+	* log.c (log_option_with_arg): New function.
+	(cvslog): Use it and send_arg to handle the rlog options that take
+	arguments.  The code used to use send_option_string for
+	everything, which assumes that "-d1995/01/02" is equivalent to
+	"-d -1 -9 -9 -5 ...".
+
+Tue Jan 31 15:02:01 1995  Jim Blandy  <jimb@floss.life.uiuc.edu>
+
+	* server.c: #include <sys/stat.h> for the new stat call in mkdir_p.
+	(mkdir_p): Don't try to create the intermediate directory if it
+	exists already.  Some systems return EEXIST, but others return
+	EACCES, which we can't otherwise distinguish from a real access
+	problem.
+
+Sun Jan 22 15:25:45 1995  Jim Blandy  <jimb@totoro.bio.indiana.edu>
+
+	* update.c (merge_file): My rcsmerge doesn't accept a -E option,
+	and it doesn't look too important, so don't pass it.
+
+Fri Jan 20 14:24:58 1995  Ian Lance Taylor  <ian@sanguine.cygnus.com>
+
+	* client.c (do_deferred_progs): Don't try to chdir to toplevel_wd
+	if it has not been set.
+	(process_prune_candidates): Likewise.
+
 Mon Nov 28 09:59:14 1994  Jim Kingdon  (kingdon@lioth.cygnus.com)
 
 	* client.c (client_commit): Move guts of function from here...

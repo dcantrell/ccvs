@@ -19,7 +19,7 @@
 
 #ifndef lint
 static char rcsid[] = "$CVSid: @(#)remove.c 1.39 94/10/07 $";
-USE(rcsid)
+USE(rcsid);
 #endif
 
 static int remove_fileproc PROTO((char *file, char *update_dir,
