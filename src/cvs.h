@@ -223,13 +223,9 @@ char *strerror (int);
 #define	CVSBRANCH	"1.1.1"		/* RCS branch used for vendor srcs */
 
 #ifdef USE_VMS_FILENAMES
-#define BAKPREFIX       "_$"
-#define DEVNULL         "NLA0:"
+# define BAKPREFIX	"_$"
 #else /* USE_VMS_FILENAMES */
-#define	BAKPREFIX	".#"		/* when rcsmerge'ing */
-#ifndef DEVNULL
-#define	DEVNULL		"/dev/null"
-#endif
+# define BAKPREFIX	".#"		/* when rcsmerge'ing */
 #endif /* USE_VMS_FILENAMES */
 
 /*

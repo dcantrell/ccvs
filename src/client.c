@@ -1051,16 +1051,16 @@ copy_a_file (void *data, List *ent_list, const char *short_pathname,
 	     const char *filename)
 {
     char *newname;
-#ifdef USE_VMS_FILENAMES
-    char *p;
-#endif
 
     read_line (&newname);
 
 #ifdef USE_VMS_FILENAMES
-    /* Mogrify the filename so VMS is happy with it. */
-    for(p = newname; *p; p++)
-       if(*p == '.' || *p == '#') *p = '_';
+    {
+	/* Mogrify the filename so VMS is happy with it. */
+	char *p;
+	for(p = newname; *p; p++)
+	   if(*p == '.' || *p == '#') *p = '_';
+    }
 #endif
     /* cvsclient.texi has said for a long time that newname must be in the
        same directory.  Wouldn't want a malicious or buggy server overwriting
