@@ -1,3 +1,9 @@
+2004-10-01  Mark D. Baushke  <mdb@cvshome.org>
+
+	* main.c (main): Initialize CVSroot before it is used.
+	(Report and patch by Martin Neitzel <neitzel@sco.gaertner.de>.)
+	* sanity.sh (status): Test it.
+	
 2004-10-01  Derek Price <derek@ximbiot.com>
 
 	* checkout.c (checkout_proc), fileattr.c (fileattr_read), find_names.c

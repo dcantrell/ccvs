@@ -4884,6 +4884,21 @@ File: tfile            	Status: Locally Modified
    Sticky Date:		(none)
    Sticky Options:	(none)"
 
+		# Check that there are no problems just using CVS/Root too.
+		save_CVSROOT=$CVSROOT
+		unset CVSROOT
+		dotest status-3a "${testcvs} status tfile" \
+"===================================================================
+File: tfile            	Status: Locally Modified
+
+   Working revision:	1\.2.*
+   Repository revision:	1\.2	${CVSROOT_DIRNAME}/first-dir/tfile,v
+   Sticky Tag:		(none)
+   Sticky Date:		(none)
+   Sticky Options:	(none)"
+		CVSROOT=$save_CVSROOT
+		export CVSROOT
+
 		# FIXCVS:
 		# Update is supposed to re-Register() the file when it
 		# finds resolved conflicts:

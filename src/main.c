@@ -870,6 +870,7 @@ cause intermittent sandbox corruption.");
 	    if (CVSADM_Root && (!CVSroot || !cvs_update_env))
 	    {
 		CVSroot_parsed = CVSADM_Root;
+		CVSroot = CVSADM_Root->original;
 		cvs_update_env = 1;	/* need to update environment */
 	    }
 	    else if (!*CVSroot)
