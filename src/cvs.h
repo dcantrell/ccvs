@@ -290,7 +290,6 @@ extern int errno;
  */
 #define	MAXFILEPERDIR	3000
 #define	MAXLINELEN	5000		/* max input line from a file */
-#define	MAXPROGLEN	30000		/* max program length to system() */
 #define	MAXLISTLEN	40000		/* For [A-Z]list holders */
 
 /* Large enough to hold DATEFORM.  Not an arbitrary limit as long as

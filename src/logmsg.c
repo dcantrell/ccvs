@@ -618,8 +618,6 @@ logfile_write (repository, filter, message, logfp, changes)
     char *fmt_percent;		/* the location of the percent sign
 				   that starts the format string. */
 
-    prog = xmalloc (MAXPROGLEN);
-      
     /* The user may specify a format string as part of the filter.
        Originally, `%s' was the only valid string.  The string that
        was substituted for it was:
@@ -762,6 +760,9 @@ logfile_write (repository, filter, message, logfp, changes)
 
 	srepos = Short_Repository (repository);
 
+	prog = xmalloc ((fmt_percent - filter) + strlen (srepos)
+			+ strlen (str_list) + strlen (fmt_continue)
+			+ 10);
 	(void) strncpy (prog, filter, fmt_percent - filter);
 	prog[fmt_percent - filter] = '\0';
 	(void) strcat (prog, "'");
@@ -778,7 +779,7 @@ logfile_write (repository, filter, message, logfp, changes)
     else
     {
 	/* There's no format string. */
-	strcpy (prog, filter);
+	prog = xstrdup (filter);
     }
 
     if ((pipefp = run_popen (prog, "w")) == NULL)

@@ -1,5 +1,10 @@
 Fri Mar  7 22:39:08 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* logmsg.c (logfile_write): Allocate prog to needed length rather
+	than assuming MAXPROGLEN is enough.
+	* cvs.h (MAXPROGLEN): Removed; no longer used.
+	* subr.c (MIN_INCR): Update comment to reflect MAXPROGLEN's demise.
+
 	* subr.c (free_names): Fix comment: this function is not used to
 	free memory allocated by Find_Names (at least it hasn't for a long
 	time).
