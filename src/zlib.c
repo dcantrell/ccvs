@@ -28,6 +28,12 @@
 
 #include "zlib.h"
 
+/* OS/2 doesn't have EIO.  FIXME: this whole notion of turning
+   a different error into EIO strikes me as pretty dubious.  */
+#if !defined (EIO)
+#define EIO EBADPOS
+#endif
+
 /* The compression interface is built upon the buffer data structure.
    We provide a buffer type which compresses or decompresses the data
    which passes through it.  An input buffer decompresses the data
