@@ -1,3 +1,8 @@
+Mon Sep 16 23:33:36 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (commitinfo): Add comment about using commitinfo to
+	enforce who has access.
+
 Wed Jul 24 17:01:41 1996  Larry Jones  <larry.jones@sdrc.com>
 			  and Jim Kingdon  <kingdon@harvey.cyclic.com>
 

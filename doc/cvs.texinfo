@@ -7561,6 +7561,22 @@ Note: when @sc{CVS} is accessing a remote repository,
 (i.e., server) side, not the client side (@pxref{Remote
 repositories}).
 
+@c FIXME: should discuss using commitinfo to control
+@c who has checkin access to what (e.g. Joe can check into
+@c directories a, b, and c, and Mary can check into
+@c directories b, c, and d--note this case cannot be
+@c conveniently handled with unix groups).  Of course,
+@c adding a new set of features to CVS might be a more
+@c natural way to fix this problem than telling people to
+@c use commitinfo.
+@c FIXME: Should make some reference, especially in
+@c the context of controlling who has access, to the fact
+@c that commitinfo can be circumvented.  Perhaps
+@c mention SETXID (but has it been carefully examined
+@c for holes?).  This fits in with the discussion of
+@c general CVS security in "Password authentication
+@c security" (the bit which is not pserver-specific).
+
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node editinfo
 @appendixsec Editinfo
