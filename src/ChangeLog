@@ -1,3 +1,8 @@
+2004-09-15  Derek Price  <derek@ximbiot.com>
+
+	* rcs.c: s/abort/assert/.  Reformat function headers.  Remove
+	unnecessary typecasts & prototypes.
+
 2004-09-14  Mark D. Baushke  <mdb@cvshome.org>
 
 	* parseinfo.c (readBool): Remove dead code.
