@@ -98,7 +98,7 @@ expand_path (char *name, char *file, int line, int formatsafe)
     size_t buf_size = 0;
 
     size_t doff;
-    char inquotes;
+    char inquotes = '\0';
 
     char *result;
 
@@ -115,7 +115,7 @@ expand_path (char *name, char *file, int line, int formatsafe)
     doff = d - mybuf;
     expand_string (&mybuf, &mybuf_size, doff + 1);
     d = mybuf + doff;
-    while (*d++ = *s)
+    while ((*d++ = *s) != '\0')
     {
 	if (*s == '\\')
 	{

@@ -1,3 +1,19 @@
+2004-02-19  Larry Jones  <lawrence.jones@ugsplm.com>
+
+	* commit.c (precommit_list_to_args_proc): Initialize arg to keep
+	gcc -Wall happy, remove unused variable, clean up coding style.
+	(precommit_proc): Cast NULL to the correct type in varargs call.
+	* edit.c (notify_proc): Remove unused variables.
+	* expand_path.c (expand_path): Initialize inquotes, add explicit
+	comparison to keep gcc -Wall happy.
+	* logmsg.c: Remove unused global variables and function decl.
+	(do_verify): Add explicit comparison to keep gcc -Wall happy,
+	clean up coding style.
+	(logmsg_list_to_args_proc): Initialize arg to keep gcc -Wall happy,
+	remove unused variable.
+	(logfile_write): Cast NULL to the correct type in varargs call.
+	(verifymsg_proc): Cast NULL to the correct type in varargs call.
+
 2004-02-19  Derek Price  <derek@ximbiot.com>
 
 	* run.c (format_cmdline): Correct some typos and cut/paste errors.

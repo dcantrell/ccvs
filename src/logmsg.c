@@ -16,15 +16,12 @@ static int logfile_write (char *repository, char *filter,
 			  char *message, FILE * logfp, List * changes);
 static int logmsg_list_to_args_proc ( Node *p, void *closure );
 static int rcsinfo_proc ( char *repository, char *template, void *closure );
-static int title_proc (Node * p, void *closure);
 static int update_logfile_proc ( char *repository, char *filter,
                                  void *closure);
 static void setup_tmpfile (FILE * xfp, char *xprefix, List * changes);
 static int verifymsg_proc ( char *repository, char *script, void *closure );
 
 static FILE *fp;
-static char *str_list;
-static char *str_list_format;	/* The format for str_list's contents. */
 static Ctype type;
 
 struct verifymsg_proc_data
@@ -426,49 +423,48 @@ do_verify (char **messagep, char *repository)
 
     data.message = *messagep;
     data.fname = NULL;
-    if( err = Parse_Info( CVSROOTADM_VERIFYMSG, repository, 
-	                  verifymsg_proc, 0, &data ) )
+    if ((err = Parse_Info (CVSROOTADM_VERIFYMSG, repository,
+	                  verifymsg_proc, 0, &data)) != 0)
     {
 	int saved_errno = errno;
 	/* Since following error() exits, delete the temp file now.  */
-	if( data.fname != NULL && unlink_file( data.fname ) < 0 )
-	    error( 0, errno, "cannot remove %s", data.fname );
-	free( data.fname );
+	if (data.fname != NULL && unlink_file( data.fname ) < 0)
+	    error (0, errno, "cannot remove %s", data.fname);
+	free (data.fname);
 
 	errno = saved_errno;
-	error( 1, err == -1 ? errno : 0, 
-	       "Message verification failed" );
+	error (1, err == -1 ? errno : 0, "Message verification failed");
     }
 
     /* Return if no temp file was created.  That means that we didn't call any
      * verifymsg scripts.
      */
-    if( data.fname == NULL )
+    if (data.fname == NULL)
 	return;
 
     /* Get the mod time and size of the possibly new log message
      * in always and stat modes.
      */
-    if( RereadLogAfterVerify == LOGMSG_REREAD_ALWAYS ||
-	RereadLogAfterVerify == LOGMSG_REREAD_STAT )
+    if (RereadLogAfterVerify == LOGMSG_REREAD_ALWAYS ||
+	RereadLogAfterVerify == LOGMSG_REREAD_STAT)
     {
-	if( CVS_STAT( data.fname, &post_stbuf ) != 0 )
-	    error( 1, errno, "cannot find size of temp file %s", data.fname );
+	if(CVS_STAT (data.fname, &post_stbuf) != 0)
+	    error (1, errno, "cannot find size of temp file %s", data.fname);
     }
 
     /* And reread the log message in `always' mode or in `stat' mode when it's
      * changed.
      */
-    if( RereadLogAfterVerify == LOGMSG_REREAD_ALWAYS ||
-	( RereadLogAfterVerify == LOGMSG_REREAD_STAT &&
-	  ( data.pre_stbuf.st_mtime != post_stbuf.st_mtime ||
-	    data.pre_stbuf.st_size != post_stbuf.st_size ) ) )
+    if (RereadLogAfterVerify == LOGMSG_REREAD_ALWAYS ||
+	(RereadLogAfterVerify == LOGMSG_REREAD_STAT &&
+	  (data.pre_stbuf.st_mtime != post_stbuf.st_mtime ||
+	    data.pre_stbuf.st_size != post_stbuf.st_size)))
     {
 	/* put the entire message back into the *messagep variable */
 
-	if( *messagep ) free( *messagep );
+	if (*messagep) free (*messagep);
 
-	if( post_stbuf.st_size == 0 )
+	if (post_stbuf.st_size == 0)
 	    *messagep = NULL;
 	else
 	{
@@ -478,42 +474,42 @@ do_verify (char **messagep, char *repository)
 	    char *p;
 	    FILE *fp;
 
-	    if( ( fp = open_file( data.fname, "r" ) ) == NULL )
-		error( 1, errno, "cannot open temporary file %s", data.fname );
+	    if ((fp = open_file (data.fname, "r")) == NULL)
+		error (1, errno, "cannot open temporary file %s", data.fname);
 
 	    /* On NT, we might read less than st_size bytes,
 	       but we won't read more.  So this works.  */
-	    p = *messagep = (char *) xmalloc( post_stbuf.st_size + 1 );
+	    p = *messagep = (char *) xmalloc (post_stbuf.st_size + 1);
 	    *messagep[0] = '\0';
 
-	    while( 1 )
+	    for (;;)
 	    {
 		line_length = getline( &line,
 				       &line_chars_allocated,
-				       fp );
-		if( line_length == -1 )
+				       fp);
+		if (line_length == -1)
 		{
-		    if( ferror( fp ) )
+		    if (ferror (fp))
 			/* Fail in this case because otherwise we will have no
 			 * log message
 			 */
-			error( 1, errno, "cannot read %s", data.fname );
+			error (1, errno, "cannot read %s", data.fname);
 		    break;
 		}
-		if( strncmp( line, CVSEDITPREFIX, CVSEDITPREFIXLEN ) == 0 )
+		if (strncmp (line, CVSEDITPREFIX, CVSEDITPREFIXLEN) == 0)
 		    continue;
-		(void) strcpy( p, line );
+		(void) strcpy (p, line);
 		p += line_length;
 	    }
-	    if( line ) free( line );
-	    if( fclose( fp ) < 0 )
-	        error( 0, errno, "warning: cannot close %s", data.fname );
+	    if (line) free (line);
+	    if (fclose (fp) < 0)
+	        error (0, errno, "warning: cannot close %s", data.fname);
 	}
     }
     /* Delete the temp file  */
-    if(unlink_file(data.fname) < 0)
-	error(0, errno, "cannot remove `%s'", data.fname);
-    free(data.fname);
+    if (unlink_file (data.fname) < 0)
+	error (0, errno, "cannot remove `%s'", data.fname);
+    free (data.fname);
 }
 
 /*
@@ -618,10 +614,9 @@ logmsg_list_to_args_proc(Node *p, void *closure)
 {
     struct format_cmdline_walklist_closure *c;
     struct logfile_info *li;
-    char *arg;
+    char *arg = NULL;
     char *f, *d;
     size_t doff;
-    int firstarg = 1;
 
     if( p->data == NULL ) return 1;
 
@@ -657,6 +652,7 @@ logmsg_list_to_args_proc(Node *p, void *closure)
 #endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
 		    error( 1, 0,
 		           "Unknown format character or not a list atribute: %c", f[-1]) ;
+		/* NOTREACHED */
 		break;
 	}
 	/* copy the attribute into an argument */
@@ -792,7 +788,7 @@ logfile_write (char *repository, char *filter, char *message, FILE *logfp, List 
 	                      "r", "s", current_parsed_root->directory,
 	                      "sVv", ",", changes,
 			             logmsg_list_to_args_proc, (void *) NULL,
-	                      NULL
+	                      (char *)NULL
 	                    );
     if( !cmdline || !strlen( cmdline ) )
     {
@@ -911,7 +907,7 @@ verifymsg_proc(char *repository, char *script, void *closure)
                                        "r", "s",
                                        current_parsed_root->directory,
                                        "l", "s", vpd->fname,
-                                       NULL
+                                       (char *)NULL
                                      );
 
 #ifdef SUPPORT_OLD_INFO_FMT_STRINGS
