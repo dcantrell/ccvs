@@ -287,9 +287,9 @@ lock_name (const char *repository, const char *name)
  *		lock->repository if necessary).
  */
 static void
-_lock_simple_remove (struct lock *lock, int free_repository)
+remove_lock_files (struct lock *lock, int free_repository)
 {
-    TRACE (TRACE_FLOW, "_lock_simple_remove(%s)", lock->repository);
+    TRACE (TRACE_FLOW, "remove_lock_files(%s)", lock->repository);
 
     /* If lock->file is set, the lock *might* have been created, but since
      * Reader_Lock & lock_dir_for_write don't use SIG_beginCrSect the way that
@@ -333,7 +333,7 @@ _lock_simple_remove (struct lock *lock, int free_repository)
      * Use SIG_beginCrSect since otherwise we might be interrupted between
      * checking whether free_repository is set and freeing stuff.
      */
-    if (free)
+    if (free_repository)
     {
 	SIG_beginCrSect ();
 	if (lock->free_repository)
@@ -345,21 +345,6 @@ _lock_simple_remove (struct lock *lock, int free_repository)
 	    lock->repository = NULL;
 	SIG_endCrSect ();
     }
-}
-
-
-
-/* Wrappers for _lock_simple_remove.  */
-lock_simple_remove (struct lock *lock)
-{
-    _lock_simple_remove (lock, 0);
-}
-
-
-
-lock_simple_remove_and_free (struct lock *lock)
-{
-    _lock_simple_remove (lock, 1);
 }
 
 
@@ -379,7 +364,7 @@ Simple_Lock_Cleanup (void)
 
     /* clean up simple read locks (if any) */
     if (global_readlock.repository != NULL)
-	lock_simple_remove_and_free (&global_readlock);
+	remove_lock_files (&global_readlock, 1);
     /* See note in Lock_Cleanup() below.  */
     SIG_endCrSect();
 
@@ -387,7 +372,7 @@ Simple_Lock_Cleanup (void)
 
     /* clean up simple write locks (if any) */
     if (global_writelock.repository != NULL)
-	lock_simple_remove_and_free (&global_writelock);
+	remove_lock_files (&global_writelock, 1);
     /* See note in Lock_Cleanup() below.  */
     SIG_endCrSect();
 }
@@ -481,7 +466,7 @@ remove_locks (void)
 static int
 unlock_proc (Node *p, void *closure)
 {
-    lock_simple_remove_and_free ((struct lock *)p->data);
+    remove_lock_files ((struct lock *)p->data, 1);
     return (0);
 }
 
@@ -567,7 +552,7 @@ Reader_Lock (char *xrepository)
 
 
 /*
- * _lock_exists() returns 0 if there is no lock file matching FILEPAT in
+ * lock_exists() returns 0 if there is no lock file matching FILEPAT in
  * the repository but not IGNORE; else 1 is returned, to indicate that the
  * caller should sleep a while and try again.
  *
@@ -588,7 +573,7 @@ Reader_Lock (char *xrepository)
  *  message is printed, 1 is is returned and ERRNO is left set.
  */
 static int
-_lock_exists (const char *repository, const char *filepat, const char *ignore)
+lock_exists (const char *repository, const char *filepat, const char *ignore)
 {
     char *lockdir;
     char *line;
@@ -601,7 +586,7 @@ _lock_exists (const char *repository, const char *filepat, const char *ignore)
     (void) time (&now);
 #endif
 
-    TRACE (TRACE_FLOW, "_lock_exists (%s, %s, %s)",
+    TRACE (TRACE_FLOW, "lock_exists (%s, %s, %s)",
 	   repository, filepat, ignore ? ignore : "(null)");
 
     lockdir = lock_name (repository, "");
@@ -675,7 +660,7 @@ _lock_exists (const char *repository, const char *filepat, const char *ignore)
  * the repository; else 1 is returned, to indicate that the caller should
  * sleep a while and try again.
  *
- * See _lock_exists() for argument detail.
+ * See lock_exists() for argument detail.
  */
 static int
 readers_exist (const char *repository)
@@ -688,7 +673,7 @@ readers_exist (const char *repository)
      * once it is deemed unlikely that anyone will be using CVS servers earlier
      * than version 1.12.4.
      */
-    return _lock_exists (repository, CVSRFLPAT,
+    return lock_exists (repository, CVSRFLPAT,
 #ifdef LOCK_COMPATIBILITY
                          findnode (locklist, repository) ? readlock : 
 #endif /* LOCK_COMPATIBILITY */
@@ -702,13 +687,13 @@ readers_exist (const char *repository)
  * the repository; else 1 is returned, to indicate that the caller should
  * sleep a while and try again.
  *
- * See _lock_exists() for argument detail.
+ * See lock_exists() for argument detail.
  */
 static int
 promotable_exists (const char *repository)
 {
     TRACE (TRACE_FLOW, "promotable_exists (%s)", repository);
-    return _lock_exists (repository, CVSPFLPAT, promotablelock);
+    return lock_exists (repository, CVSPFLPAT, promotablelock);
 }
 
 
@@ -799,7 +784,7 @@ set_promotable_lock (struct lock *lock)
 
 	    /* Remove the promotable lock.  */
 	    lock->file2 = NULL;
-	    lock_simple_remove (lock);
+	    remove_lock_files (lock, 0);
 
 	    /* return the error */
 	    error (0, xerrno,
@@ -1233,7 +1218,7 @@ lock_dir_for_write (const char *repository)
 	}
 
 	if (global_writelock.repository != NULL)
-	    lock_simple_remove_and_free (&global_writelock);
+	    remove_lock_files (&global_writelock, 1);
 	else
 	    global_writelock.free_repository = 1;
 
@@ -1290,7 +1275,7 @@ lock_dir_for_write (const char *repository)
 		Node *p = findnode (locklist, repository);
 		if (p)
 		{
-		    lock_simple_remove_and_free ((struct lock *)p->data);
+		    remove_lock_files ((struct lock *)p->data, 1);
 		    delnode (p);
 		}
 	    }
