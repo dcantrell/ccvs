@@ -2814,11 +2814,11 @@ error  \n");
 	exitstatus = (*command) (argument_count, argument_vector);
 
 	/* Output any partial lines.  If the client doesn't support
-	   "MT", we just throw out the partial line, like old versions
-	   of CVS did, since the protocol can't support this.  */
-	if (supported_response ("MT") && ! buf_empty_p (saved_output))
+	   "MT", we go ahead and just tack on a newline since the
+	   protocol doesn't support anything better.  */
+	if (! buf_empty_p (saved_output))
 	{
-	    buf_output0 (protocol, "MT text ");
+	    buf_output0 (protocol, supported_response ("MT") ? "MT text " : "M ");
 	    buf_append_buffer (protocol, saved_output);
 	    buf_output (protocol, "\n", 1);
 	    buf_send_counted (protocol);

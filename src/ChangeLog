@@ -1,5 +1,10 @@
 2001-01-25  Larry Jones  <larry.jones@sdrc.com>
 
+	* server.c (do_cvs_command): If there's a partial output line left
+	over and the client doesn't support MT, go ahead and send it in an
+	M response instead of just dropping it.
+	(Reported by Milos Kleint <Milos.Kleint@netbeans.com>.)
+
 	* update.c (update_fileproc): Handle toss_local_changes in the
 	T_NEEDS_MERGE case.
 	(Inspired by Noel L Yap <yap_noel@jpmorgan.com>.)
