@@ -1,5 +1,10 @@
 Sun Jan 26 21:58:16 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* expand_path.c (expand_path): Revise to call expand_string as
+	needed.  Nuke PATH_MAX.
+	* find_names.c (find_dirs): Likewise.
+	* import.c, lock.c: Nuke more PATH_MAX.
+
 	* server.c (mkdir_p): Set retval to 0 at start of function.
 	Previously it had been uninitialized for some cases.  Thanks are
 	due to nightly testing for catching this one.
