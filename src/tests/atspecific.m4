@@ -22,6 +22,32 @@ m4_define([AT_CVS_BANNER],
 
 
 
+# cvs_project_init()
+# ------------------
+# 
+# Initialize the repository, check out a default project, and cd into the
+# default project, monitoring all CVS actions via AT_CHECK.
+#
+# This function should only be called from within an AT_CVS_SETUP test group.
+m4_divert_text([DEFAULTS],
+[cvs_project_init() {
+AT_CHECK([cvs init])dnl
+
+#
+# Create the default project
+#
+AT_CHECK([cvs -Q co -l -d top .])dnl
+cd top
+mkdir project
+AT_CHECK([cvs -Q add project])dnl
+cd ..
+AT_CHECK([cvs -Q release -d top])dnl
+# Checkout the default project
+AT_CHECK([cvs -Q co project])dnl
+}])dnl
+
+
+
 # AT_CVS_SETUP(DESCRIPTION)
 # -------------------------
 # Set up a CVS test with description DESCRIPTION.
@@ -71,8 +97,8 @@ AT_CHECK([ln -s realcvsroot $at_group_dir/cvsroot || exit 77])
 CVSROOT_DIR=$at_group_dir/cvsroot
 m4_ifvaln(m4_quote(AT_CVS_clientserver),
 [AT_KEYWORDS([remote])dnl
-AT_CHECK([cvs --version |grep client || exit 77], 0, ignore)
-AT_CHECK([$server --version |grep server || exit 77], 0, ignore)
+AT_CHECK([cvs --version |grep client || exit 77], 0, ignore)dnl
+AT_CHECK([$server --version |grep server || exit 77], 0, ignore)dnl
 CVS_SERVER=$server; export CVS_SERVER
 method=:fork:],
 [AT_KEYWORDS([local])dnl
@@ -94,31 +120,16 @@ HOME=$at_group_dir/home; export HOME
 # RCSINIT=-zLT get lots of spurious failures.
 RCSINIT=
 
-#
-# Initialize the repository
-#
-AT_CHECK([cvs init])
+cvs_project_init || exit 1
 
 #
-# Create the default project
+# cd into the default project for the workspace.
 #
-mkdir top
-cd top
-AT_CHECK([cvs -Q co -l .])
-mkdir project
-AT_CHECK([cvs -Q add project])
-cd ..
-rm -r top
-
-#
-# Check out the default project and cd into the workspace.
-#
-# I'm checking for error returns form the cd and printing error messages since,
+# I'm checking for error returns from the cd and printing error messages since,
 # for instance, if the CVS executable picks up a ~/.cvsrc which causes empty
 # directories to be pruned by checkout, the project directory will not be
 # created but the `cvs co' will not return an error.
 #
-AT_CHECK([cvs -Q co project])
 cd project ||
   AS_ERROR([Couldn't cd to \`project'.  Did \$HOME get set incorrectly?])
 
