@@ -41,7 +41,6 @@ static int checkout_proc PROTO((int *pargc, char **argv, char *where,
 		          char *mwhere, char *mfile, int shorten,
 		          int local_specified, char *omodule,
 		          char *msg));
-static int safe_location PROTO((void));
 
 static const char *const checkout_usage[] =
 {
@@ -379,7 +378,10 @@ checkout (argc, argv)
     return (err);
 }
 
-static int
+/* FIXME: This is and emptydir_name are in checkout.c for historical
+   reasons, probably want to move them.  */
+
+int
 safe_location ()
 {
     char *current;

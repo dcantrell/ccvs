@@ -390,6 +390,7 @@ extern List *root_directories;
 extern char *current_root;
 
 extern char *emptydir_name PROTO ((void));
+extern int safe_location PROTO ((void));
 
 extern int trace;		/* Show all commands */
 extern int noexec;		/* Don't modify disk anywhere */

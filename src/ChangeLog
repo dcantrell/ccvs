@@ -1,3 +1,9 @@
+2000-05-16  Jim Kingdon  <kingdon@redhat.com>
+
+	* cvs.h, checkout.c (safe_location): Make extern.
+	* import.c (import): Call it rather than reimplementing
+	(incompletely) the same check.
+
 2000-05-16  Larry Jones  <larry.jones@sdrc.com>
 
 	* rcs.h, subr.c (file_has_markers): Check for any of the three
