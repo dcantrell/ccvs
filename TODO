@@ -477,3 +477,18 @@ message directing people to the appropriate help option ("cvs -H
 situation).  I'm not sure whether this change would be controversial
 (as defined in HACKING), so there might be a need for further
 discussion or other actions other than just coding.
+
+188.  Option parsing and .cvsrc has at least one notable limitation.
+If you want to set a global option only for some CVS commands, there
+is no way to do it (for example, if one wants to set -q only for
+"rdiff").  I am told that the "popt" package from RPM
+(http://www.rpm.org) could solve this and other problems (for example,
+if the syntax of option stuff in .cvsrc is similar to RPM, that would
+be great from a user point of view).  It would at least be worth a
+look (it also provides a cleaner API than getopt_long).
+
+Another issue which may or may not be related is the issue of
+overriding .cvsrc from the command line.  The cleanest solution might
+be to have options in mutually exclusive sets (-l/-R being a current
+example, but --foo/--no-foo is a better way to name such options).  Or
+perhaps there is some better solution.
