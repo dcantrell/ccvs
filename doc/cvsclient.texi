@@ -564,6 +564,12 @@ Notify the server of the command that we are leading up to.  Intended to allow
 the server to send a redirect for write operations.  Requires either an
 @code{ok} or @code{Redirect} respnose.
 
+@item Referrer @var{CVSROOT} \n
+Response expected: no.
+Notify a primary server of a server which referred us.  Intended to allow
+a primary (write) server to update the read-only mirror a client is using
+for reads to minimize races on any subsequent updates from the client.
+
 @item Directory @var{local-directory} \n
 @itemx Relative-directory @var{local-directory} \n
 Additional data: @var{repository} \n.  Response expected: no.
@@ -1490,7 +1496,11 @@ patches, it will include @samp{update-patches} in this list.  The
 @item Redirect @var{CVSROOT}
 Request that the client redirect its connection to @var{CVSROOT} and begin
 again.  This response is only valid in response to a @code{Command-prep}
-request.
+request.  If a client receives this response, it is expected to notify the
+write server it subsequently contacts of the CVSROOT of the server which
+redirected it using the @samp{Referrer} request.  This information makes it
+possible for primary servers to update the client's mirror first, hopefully
+minimizing race conditions on subsequent updates from the same client.
 
 @item Checked-in @var{pathname} \n
 Additional data: New Entries line, \n.  This means a file @var{pathname}

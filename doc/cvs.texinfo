@@ -13035,6 +13035,10 @@ The null, or empty, string.
 The name of the directory being operated on within the repository.
 @item r
 The name of the repository (the path portion of @code{$CVSROOT}).
+@item R
+On a server, the name of the referrer, if any.  The referrer is the CVSROOT the
+client reports it used to contact a server which then referred it to this
+server.  Should usually be set on a primary server with a writeproxy setup.
 @end table
 
 Other format strings are file specific.  See the docs on the

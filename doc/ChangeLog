@@ -1,3 +1,10 @@
+2004-10-04  Derek Price  <derek@ximbiot.com>
+
+	* cvs.texinfo (syntax): Note referrer format string.
+	* cvsclient.texi (Requests): Describe Referrer request.
+	(Responses): Note that a client should sent Referrer to the new server
+	after a Redirect.
+
 2004-10-01  Derek Price  <derek@ximbiot.com>
 
 	* cvs.texinfo (Write proxies, Global options): Detail operation of
