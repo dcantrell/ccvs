@@ -1,3 +1,7 @@
+2001-03-30  Larry Jones  <larry.jones@sdr.com>
+
+	* NEWS: Note new rlog and rannotate commands.
+
 2001-03-14  Derek Price  <derek.price@openavenue.com>
 
 	* configure.in (AC_CHECK_FUNCS): Look for gettimeofday.
