@@ -71,8 +71,18 @@ AC_EXEEXT
 
 AC_PATH_PROG(PERL, perl, no)
 AC_PATH_PROG(CSH, csh, no)
-AC_PATH_PROG(PR, pr, no)
+# for contrib/rcs2log.sh & src/cvsbug.in.
+AC_PATH_PROG(MKTEMP, mktemp, mktemp)
+if test x"$MKTEMP" = xmktemp; then
+	MKTEMP_SH_FUNCTION=mktemp.sh
+else
+	MKTEMP_SH_FUNCTION=/dev/null
+fi
+AC_SUBST_FILE(MKTEMP_SH_FUNCTION)
+# for src/cvsbug.in
+AC_PATH_PROG(SENDMAIL, sendmail, no, [$PATH:/usr/sbin:/usr/lib])
 # For diff/util.c
+AC_PATH_PROG(PR, pr, no)
 if test x"$PR" != xno; then
 	AC_DEFINE_UNQUOTED([PR_PROGRAM], ["$PR"], [Path to the pr utility])
 fi
@@ -898,6 +908,7 @@ AC_CONFIG_FILES(contrib/log, [chmod +x contrib/log])
 AC_CONFIG_FILES(contrib/log_accum, [chmod +x contrib/log_accum])
 AC_CONFIG_FILES(contrib/mfpipe, [chmod +x contrib/mfpipe])
 AC_CONFIG_FILES(contrib/pvcs2rcs, [chmod +x contrib/pvcs2rcs])
+AC_CONFIG_FILES(contrib/rcs2log:contrib/rcs2log.sh, [chmod +x contrib/rcs2log])
 AC_CONFIG_FILES(contrib/rcslock, [chmod +x contrib/rcslock])
 AC_CONFIG_FILES(contrib/sccs2rcs, [chmod +x contrib/sccs2rcs])
 AC_CONFIG_FILES(src/cvsbug, [chmod +x src/cvsbug])

@@ -3592,6 +3592,95 @@ else
 echo "${ECHO_T}no" >&6
 fi
 
+# for contrib/rcs2log.sh & src/cvsbug.in.
+# Extract the first word of "mktemp", so it can be a program name with args.
+set dummy mktemp; ac_word=$2
+echo "$as_me:$LINENO: checking for $ac_word" >&5
+echo $ECHO_N "checking for $ac_word... $ECHO_C" >&6
+if test "${ac_cv_path_MKTEMP+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  case $MKTEMP in
+  [\\/]* | ?:[\\/]*)
+  ac_cv_path_MKTEMP="$MKTEMP" # Let the user override the test with a path.
+  ;;
+  *)
+  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  test -z "$as_dir" && as_dir=.
+  for ac_exec_ext in '' $ac_executable_extensions; do
+  if $as_executable_p "$as_dir/$ac_word$ac_exec_ext"; then
+    ac_cv_path_MKTEMP="$as_dir/$ac_word$ac_exec_ext"
+    echo "$as_me:$LINENO: found $as_dir/$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+done
+
+  test -z "$ac_cv_path_MKTEMP" && ac_cv_path_MKTEMP="mktemp"
+  ;;
+esac
+fi
+MKTEMP=$ac_cv_path_MKTEMP
+
+if test -n "$MKTEMP"; then
+  echo "$as_me:$LINENO: result: $MKTEMP" >&5
+echo "${ECHO_T}$MKTEMP" >&6
+else
+  echo "$as_me:$LINENO: result: no" >&5
+echo "${ECHO_T}no" >&6
+fi
+
+if test x"$MKTEMP" = xmktemp; then
+	MKTEMP_SH_FUNCTION=mktemp.sh
+else
+	MKTEMP_SH_FUNCTION=/dev/null
+fi
+
+# for src/cvsbug.in
+# Extract the first word of "sendmail", so it can be a program name with args.
+set dummy sendmail; ac_word=$2
+echo "$as_me:$LINENO: checking for $ac_word" >&5
+echo $ECHO_N "checking for $ac_word... $ECHO_C" >&6
+if test "${ac_cv_path_SENDMAIL+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  case $SENDMAIL in
+  [\\/]* | ?:[\\/]*)
+  ac_cv_path_SENDMAIL="$SENDMAIL" # Let the user override the test with a path.
+  ;;
+  *)
+  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH:/usr/sbin:/usr/lib
+do
+  IFS=$as_save_IFS
+  test -z "$as_dir" && as_dir=.
+  for ac_exec_ext in '' $ac_executable_extensions; do
+  if $as_executable_p "$as_dir/$ac_word$ac_exec_ext"; then
+    ac_cv_path_SENDMAIL="$as_dir/$ac_word$ac_exec_ext"
+    echo "$as_me:$LINENO: found $as_dir/$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+done
+
+  test -z "$ac_cv_path_SENDMAIL" && ac_cv_path_SENDMAIL="no"
+  ;;
+esac
+fi
+SENDMAIL=$ac_cv_path_SENDMAIL
+
+if test -n "$SENDMAIL"; then
+  echo "$as_me:$LINENO: result: $SENDMAIL" >&5
+echo "${ECHO_T}$SENDMAIL" >&6
+else
+  echo "$as_me:$LINENO: result: no" >&5
+echo "${ECHO_T}no" >&6
+fi
+
+# For diff/util.c
 # Extract the first word of "pr", so it can be a program name with args.
 set dummy pr; ac_word=$2
 echo "$as_me:$LINENO: checking for $ac_word" >&5
@@ -3632,7 +3721,6 @@ else
 echo "${ECHO_T}no" >&6
 fi
 
-# For diff/util.c
 if test x"$PR" != xno; then
 
 cat >>confdefs.h <<_ACEOF
@@ -8455,120 +8543,7 @@ fi
 
 
   #
-  # crypt		Needed by roken under FreeBSD 4.6.
-  #
-  echo "$as_me:$LINENO: checking for library containing crypt" >&5
-echo $ECHO_N "checking for library containing crypt... $ECHO_C" >&6
-if test "${ac_cv_search_crypt+set}" = set; then
-  echo $ECHO_N "(cached) $ECHO_C" >&6
-else
-  ac_func_search_save_LIBS=$LIBS
-ac_cv_search_crypt=no
-cat >conftest.$ac_ext <<_ACEOF
-#line $LINENO "configure"
-#include "confdefs.h"
-
-/* Override any gcc2 internal prototype to avoid an error.  */
-#ifdef __cplusplus
-extern "C"
-#endif
-/* We use char because int might match the return type of a gcc2
-   builtin and then its argument prototype would still apply.  */
-char crypt ();
-#ifdef F77_DUMMY_MAIN
-#  ifdef __cplusplus
-     extern "C"
-#  endif
-   int F77_DUMMY_MAIN() { return 1; }
-#endif
-int
-main ()
-{
-crypt ();
-  ;
-  return 0;
-}
-_ACEOF
-rm -f conftest.$ac_objext conftest$ac_exeext
-if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
-  (eval $ac_link) 2>&5
-  ac_status=$?
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); } &&
-         { ac_try='test -s conftest$ac_exeext'
-  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
-  (eval $ac_try) 2>&5
-  ac_status=$?
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); }; }; then
-  ac_cv_search_crypt="none required"
-else
-  echo "$as_me: failed program was:" >&5
-cat conftest.$ac_ext >&5
-fi
-rm -f conftest.$ac_objext conftest$ac_exeext conftest.$ac_ext
-if test "$ac_cv_search_crypt" = no; then
-  for ac_lib in crypt; do
-    LIBS="-l$ac_lib  $ac_func_search_save_LIBS"
-    cat >conftest.$ac_ext <<_ACEOF
-#line $LINENO "configure"
-#include "confdefs.h"
-
-/* Override any gcc2 internal prototype to avoid an error.  */
-#ifdef __cplusplus
-extern "C"
-#endif
-/* We use char because int might match the return type of a gcc2
-   builtin and then its argument prototype would still apply.  */
-char crypt ();
-#ifdef F77_DUMMY_MAIN
-#  ifdef __cplusplus
-     extern "C"
-#  endif
-   int F77_DUMMY_MAIN() { return 1; }
-#endif
-int
-main ()
-{
-crypt ();
-  ;
-  return 0;
-}
-_ACEOF
-rm -f conftest.$ac_objext conftest$ac_exeext
-if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
-  (eval $ac_link) 2>&5
-  ac_status=$?
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); } &&
-         { ac_try='test -s conftest$ac_exeext'
-  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
-  (eval $ac_try) 2>&5
-  ac_status=$?
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); }; }; then
-  ac_cv_search_crypt="-l$ac_lib"
-break
-else
-  echo "$as_me: failed program was:" >&5
-cat conftest.$ac_ext >&5
-fi
-rm -f conftest.$ac_objext conftest$ac_exeext conftest.$ac_ext
-  done
-fi
-LIBS=$ac_func_search_save_LIBS
-fi
-echo "$as_me:$LINENO: result: $ac_cv_search_crypt" >&5
-echo "${ECHO_T}$ac_cv_search_crypt" >&6
-if test "$ac_cv_search_crypt" != no; then
-  test "$ac_cv_search_crypt" = "none required" || LIBS="$ac_cv_search_crypt $LIBS"
-
-fi
-
-
-  #
   # roken		Heimdal K 0.3d		-lresolv
-  # roken		FreeBSD 4.6		-lcrypt
   #
   echo "$as_me:$LINENO: checking for library containing roken_gethostbyaddr" >&5
 echo $ECHO_N "checking for library containing roken_gethostbyaddr... $ECHO_C" >&6
@@ -9739,6 +9714,8 @@ ac_config_files="$ac_config_files contrib/mfpipe"
 
 ac_config_files="$ac_config_files contrib/pvcs2rcs"
 
+ac_config_files="$ac_config_files contrib/rcs2log:contrib/rcs2log.sh"
+
 ac_config_files="$ac_config_files contrib/rcslock"
 
 ac_config_files="$ac_config_files contrib/sccs2rcs"
@@ -10256,6 +10233,7 @@ do
   "contrib/log_accum" ) CONFIG_FILES="$CONFIG_FILES contrib/log_accum" ;;
   "contrib/mfpipe" ) CONFIG_FILES="$CONFIG_FILES contrib/mfpipe" ;;
   "contrib/pvcs2rcs" ) CONFIG_FILES="$CONFIG_FILES contrib/pvcs2rcs" ;;
+  "contrib/rcs2log" ) CONFIG_FILES="$CONFIG_FILES contrib/rcs2log:contrib/rcs2log.sh" ;;
   "contrib/rcslock" ) CONFIG_FILES="$CONFIG_FILES contrib/rcslock" ;;
   "contrib/sccs2rcs" ) CONFIG_FILES="$CONFIG_FILES contrib/sccs2rcs" ;;
   "src/cvsbug" ) CONFIG_FILES="$CONFIG_FILES src/cvsbug" ;;
@@ -10399,6 +10377,10 @@ s,@YACC@,$YACC,;t t
 s,@LN_S@,$LN_S,;t t
 s,@PERL@,$PERL,;t t
 s,@CSH@,$CSH,;t t
+s,@MKTEMP@,$MKTEMP,;t t
+/@MKTEMP_SH_FUNCTION@/r $MKTEMP_SH_FUNCTION
+s,@MKTEMP_SH_FUNCTION@,,;t t
+s,@SENDMAIL@,$SENDMAIL,;t t
 s,@PR@,$PR,;t t
 s,@ROFF@,$ROFF,;t t
 s,@PS2PDF@,$PS2PDF,;t t
@@ -10618,6 +10600,7 @@ s,@INSTALL@,$ac_INSTALL,;t t
     contrib/log_accum ) chmod +x contrib/log_accum ;;
     contrib/mfpipe ) chmod +x contrib/mfpipe ;;
     contrib/pvcs2rcs ) chmod +x contrib/pvcs2rcs ;;
+    contrib/rcs2log ) chmod +x contrib/rcs2log ;;
     contrib/rcslock ) chmod +x contrib/rcslock ;;
     contrib/sccs2rcs ) chmod +x contrib/sccs2rcs ;;
     src/cvsbug ) chmod +x src/cvsbug ;;
