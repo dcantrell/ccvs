@@ -3,6 +3,13 @@ Tue Oct 24 06:22:08 1995  Jim Meyering  (meyering@comco.com)
 	* cvsrc.c (read_cvsrc): Use getline instead of fgets.
 	* patch.c (patch_fileproc): Use getline instead of fgets.
 
+	* entries.c (fgetentent): Use getline instead of fgets.
+	Use xmalloc to allocate space for each returned entry.
+	Since LINE is no longer static, save it in struct entent.
+	(struct entent): New member, line.
+	(free_entent): New function.
+	(Entries_Open): Call it after each call to fgetentent.
+
 Tue Oct 24 11:13:15 1995  Norbert Kiesel  <nk@col.sw-ley.de>
 
 	* cvs.h: Declare valloc again, but this time with the right
