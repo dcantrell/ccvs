@@ -1,5 +1,8 @@
 Tue Oct 28 10:27:03 1997  Ian Lance Taylor  <ian@cygnus.com>
 
+	* rcs.c	(RCS_deltas): Don't use \? in string if __STDC__ is not
+	defined.
+
 	* rcs.c (make_file_label): Remove extraneous `+'.
 
 Mon Oct 27 14:40:15 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>

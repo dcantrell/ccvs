@@ -5382,7 +5382,19 @@ RCS_deltas (rcs, fp, version, op, text, len, log, loglen)
 		    /* Now output the date.  */
 		    ym = strchr (prvers->date, '.');
 		    if (ym == NULL)
-			cvs_output ("?\?-??\?-??", 0);
+		    {
+			/* ??- is an ANSI trigraph; we use \? to avoid
+                           it.  Only do this if __STDC__ is defined,
+                           since some pre ANSI compilers complain
+                           about the unrecognized escape sequence.  */
+			cvs_output (
+#ifdef __STDC__
+				    "?\?-??\?-??",
+#else
+				    "??-???-??",
+#endif
+				    0);
+		    }
 		    else
 		    {
 			md = strchr (ym + 1, '.');
