@@ -887,10 +887,6 @@ Optional Features:
   --enable-password-authenticated-client
                           Enable pserver as a remote access method in the CVS
                           client (default)
-  --enable-pam            Use to enable system authentication with PAM instead
-                          of using the simple getpwnam interface. This allows
-                          authentication (in theory) with any PAM module, e.g.
-                          on systems with shadow passwords or via LDAP
   --enable-server         Include code for running as a server (default)
   --enable-server-flow-control
                           If you are working with a large remote repository
@@ -899,6 +895,10 @@ Optional Features:
                           optionally pass a low water mark in bytes and a high
                           water mark in bytes, separated by commas. (default
                           is enabled 1M,2M)
+  --enable-pam            Use to enable system authentication with PAM instead
+                          of using the simple getpwnam interface. This allows
+                          authentication (in theory) with any PAM module, e.g.
+                          on systems with shadow passwords or via LDAP
   --enable-case-sensitivity
                           Force CVS to expect a case sensitive file system.
                           Enabling this on a case insensitive system should
@@ -17610,6 +17610,7 @@ fi
 
 
 
+
 # Check for options requesting client and server feature. If none are
 # given and we have connect(), we want the full client & server arrangement.
 # Check whether --enable-client or --disable-client was given.
@@ -17628,6 +17629,8 @@ cat >>confdefs.h <<\_ACEOF
 _ACEOF
 
 fi
+
+
 
 # Check whether --enable-password-authenticated-client or --disable-password-authenticated-client was given.
 if test "${enable_password_authenticated_client+set}" = set; then
@@ -17649,6 +17652,221 @@ echo "$as_me: WARNING: --enable-password-authenticated-server is meaningless wit
        the CVS client disabled (--disable-client)" >&2;}
   fi
 fi
+
+
+
+
+# Check whether --enable-server or --disable-server was given.
+if test "${enable_server+set}" = set; then
+  enableval="$enable_server"
+
+else
+  if test "$ac_cv_search_connect" != no; then
+     enable_server=yes
+   fi
+fi;
+
+if test no != "$enable_server"; then
+
+cat >>confdefs.h <<\_ACEOF
+#define SERVER_SUPPORT 1
+_ACEOF
+
+
+            echo "$as_me:$LINENO: checking for library containing crypt" >&5
+echo $ECHO_N "checking for library containing crypt... $ECHO_C" >&6
+if test "${ac_cv_search_crypt+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  ac_func_search_save_LIBS=$LIBS
+ac_cv_search_crypt=no
+cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+
+/* Override any gcc2 internal prototype to avoid an error.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+/* We use char because int might match the return type of a gcc2
+   builtin and then its argument prototype would still apply.  */
+char crypt ();
+int
+main ()
+{
+crypt ();
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext conftest$ac_exeext
+if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
+  (eval $ac_link) 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } &&
+	 { ac_try='test -z "$ac_c_werror_flag"
+			 || test ! -s conftest.err'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; } &&
+	 { ac_try='test -s conftest$ac_exeext'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then
+  ac_cv_search_crypt="none required"
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+fi
+rm -f conftest.err conftest.$ac_objext \
+      conftest$ac_exeext conftest.$ac_ext
+if test "$ac_cv_search_crypt" = no; then
+  for ac_lib in crypt; do
+    LIBS="-l$ac_lib  $ac_func_search_save_LIBS"
+    cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+
+/* Override any gcc2 internal prototype to avoid an error.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+/* We use char because int might match the return type of a gcc2
+   builtin and then its argument prototype would still apply.  */
+char crypt ();
+int
+main ()
+{
+crypt ();
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext conftest$ac_exeext
+if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
+  (eval $ac_link) 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } &&
+	 { ac_try='test -z "$ac_c_werror_flag"
+			 || test ! -s conftest.err'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; } &&
+	 { ac_try='test -s conftest$ac_exeext'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then
+  ac_cv_search_crypt="-l$ac_lib"
+break
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+fi
+rm -f conftest.err conftest.$ac_objext \
+      conftest$ac_exeext conftest.$ac_ext
+  done
+fi
+LIBS=$ac_func_search_save_LIBS
+fi
+echo "$as_me:$LINENO: result: $ac_cv_search_crypt" >&5
+echo "${ECHO_T}$ac_cv_search_crypt" >&6
+if test "$ac_cv_search_crypt" != no; then
+  test "$ac_cv_search_crypt" = "none required" || LIBS="$ac_cv_search_crypt $LIBS"
+
+cat >>confdefs.h <<\_ACEOF
+#define HAVE_CRYPT 1
+_ACEOF
+
+
+cat >>confdefs.h <<\_ACEOF
+#define AUTH_SERVER_SUPPORT 1
+_ACEOF
+
+fi
+
+          # Check whether --enable-server-flow-control or --disable-server-flow-control was given.
+if test "${enable_server_flow_control+set}" = set; then
+  enableval="$enable_server_flow_control"
+  if test yes = $enable_server_flow_control; then
+       enable_server_flow_control=1M,2M
+     fi
+else
+  enable_server_flow_control=1M,2M
+fi;
+  if test no != $enable_server_flow_control; then
+    ccvs_lwm=`expr "$enable_server_flow_control" : '\(.*\),'`
+    ccvs_hwm=`expr "$enable_server_flow_control" : '.*,\(.*\)'`
+    ccvs_lwm_E=`expr "$ccvs_lwm" : '[0-9][0-9]*\(.*\)'`
+    ccvs_lwm=`expr "$ccvs_lwm" : '\([0-9][0-9]*\)'`
+    test "" != "$ccvs_lwm" || ccvs_lwm_E="?"
+    case $ccvs_lwm_E in
+        G) ccvs_lwm="$ccvs_lwm * 1024 * 1024 * 1024";;
+        M) ccvs_lwm="$ccvs_lwm * 1024 * 1024";;
+        k) ccvs_lwm="$ccvs_lwm * 1024";;
+        b | '') ;;
+        *) { { echo "$as_me:$LINENO: error: Can't parse argument to --enable-server-flow-control
+                        ('$enable_server_flow_control') as <lwm>,<hwm>" >&5
+echo "$as_me: error: Can't parse argument to --enable-server-flow-control
+                        ('$enable_server_flow_control') as <lwm>,<hwm>" >&2;}
+   { (exit 1); exit 1; }; }
+      esac
+    ccvs_hwm_E=`expr "$ccvs_hwm" : '[0-9][0-9]*\(.*\)'`
+    ccvs_hwm=`expr "$ccvs_hwm" : '\([0-9][0-9]*\).*'`
+    test "" != "$ccvs_hwm" || ccvs_hwm_E="?"
+    case $ccvs_hwm_E in
+        G) ccvs_hwm="$ccvs_hwm * 1024 * 1024 * 1024";;
+        M) ccvs_hwm="$ccvs_hwm * 1024 * 1024";;
+        k) ccvs_hwm="$ccvs_hwm * 1024";;
+        b | '') ccvs_hwm="$ccvs_hwm";;
+        *) { { echo "$as_me:$LINENO: error: Can't parse argument to --enable-server-flow-control
+                        ('$enable_server_flow_control') as <lwm>,<hwm>" >&5
+echo "$as_me: error: Can't parse argument to --enable-server-flow-control
+                        ('$enable_server_flow_control') as <lwm>,<hwm>" >&2;}
+   { (exit 1); exit 1; }; }
+      esac
+
+
+cat >>confdefs.h <<\_ACEOF
+#define SERVER_FLOWCONTROL 1
+_ACEOF
+
+
+cat >>confdefs.h <<_ACEOF
+#define SERVER_LO_WATER ($ccvs_lwm)
+_ACEOF
+
+
+cat >>confdefs.h <<_ACEOF
+#define SERVER_HI_WATER ($ccvs_hwm)
+_ACEOF
+
+  fi # enable_server_flow_control
+fi # enable_server
+
 
 
 
@@ -17892,218 +18110,6 @@ fi
 
 fi
 
-
-
-# Check whether --enable-server or --disable-server was given.
-if test "${enable_server+set}" = set; then
-  enableval="$enable_server"
-
-else
-  if test "$ac_cv_search_connect" != no; then
-     enable_server=yes
-   fi
-fi;
-
-if test no != "$enable_server"; then
-
-cat >>confdefs.h <<\_ACEOF
-#define SERVER_SUPPORT 1
-_ACEOF
-
-
-            echo "$as_me:$LINENO: checking for library containing crypt" >&5
-echo $ECHO_N "checking for library containing crypt... $ECHO_C" >&6
-if test "${ac_cv_search_crypt+set}" = set; then
-  echo $ECHO_N "(cached) $ECHO_C" >&6
-else
-  ac_func_search_save_LIBS=$LIBS
-ac_cv_search_crypt=no
-cat >conftest.$ac_ext <<_ACEOF
-/* confdefs.h.  */
-_ACEOF
-cat confdefs.h >>conftest.$ac_ext
-cat >>conftest.$ac_ext <<_ACEOF
-/* end confdefs.h.  */
-
-/* Override any gcc2 internal prototype to avoid an error.  */
-#ifdef __cplusplus
-extern "C"
-#endif
-/* We use char because int might match the return type of a gcc2
-   builtin and then its argument prototype would still apply.  */
-char crypt ();
-int
-main ()
-{
-crypt ();
-  ;
-  return 0;
-}
-_ACEOF
-rm -f conftest.$ac_objext conftest$ac_exeext
-if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
-  (eval $ac_link) 2>conftest.er1
-  ac_status=$?
-  grep -v '^ *+' conftest.er1 >conftest.err
-  rm -f conftest.er1
-  cat conftest.err >&5
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); } &&
-	 { ac_try='test -z "$ac_c_werror_flag"
-			 || test ! -s conftest.err'
-  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
-  (eval $ac_try) 2>&5
-  ac_status=$?
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); }; } &&
-	 { ac_try='test -s conftest$ac_exeext'
-  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
-  (eval $ac_try) 2>&5
-  ac_status=$?
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); }; }; then
-  ac_cv_search_crypt="none required"
-else
-  echo "$as_me: failed program was:" >&5
-sed 's/^/| /' conftest.$ac_ext >&5
-
-fi
-rm -f conftest.err conftest.$ac_objext \
-      conftest$ac_exeext conftest.$ac_ext
-if test "$ac_cv_search_crypt" = no; then
-  for ac_lib in crypt; do
-    LIBS="-l$ac_lib  $ac_func_search_save_LIBS"
-    cat >conftest.$ac_ext <<_ACEOF
-/* confdefs.h.  */
-_ACEOF
-cat confdefs.h >>conftest.$ac_ext
-cat >>conftest.$ac_ext <<_ACEOF
-/* end confdefs.h.  */
-
-/* Override any gcc2 internal prototype to avoid an error.  */
-#ifdef __cplusplus
-extern "C"
-#endif
-/* We use char because int might match the return type of a gcc2
-   builtin and then its argument prototype would still apply.  */
-char crypt ();
-int
-main ()
-{
-crypt ();
-  ;
-  return 0;
-}
-_ACEOF
-rm -f conftest.$ac_objext conftest$ac_exeext
-if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
-  (eval $ac_link) 2>conftest.er1
-  ac_status=$?
-  grep -v '^ *+' conftest.er1 >conftest.err
-  rm -f conftest.er1
-  cat conftest.err >&5
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); } &&
-	 { ac_try='test -z "$ac_c_werror_flag"
-			 || test ! -s conftest.err'
-  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
-  (eval $ac_try) 2>&5
-  ac_status=$?
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); }; } &&
-	 { ac_try='test -s conftest$ac_exeext'
-  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
-  (eval $ac_try) 2>&5
-  ac_status=$?
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); }; }; then
-  ac_cv_search_crypt="-l$ac_lib"
-break
-else
-  echo "$as_me: failed program was:" >&5
-sed 's/^/| /' conftest.$ac_ext >&5
-
-fi
-rm -f conftest.err conftest.$ac_objext \
-      conftest$ac_exeext conftest.$ac_ext
-  done
-fi
-LIBS=$ac_func_search_save_LIBS
-fi
-echo "$as_me:$LINENO: result: $ac_cv_search_crypt" >&5
-echo "${ECHO_T}$ac_cv_search_crypt" >&6
-if test "$ac_cv_search_crypt" != no; then
-  test "$ac_cv_search_crypt" = "none required" || LIBS="$ac_cv_search_crypt $LIBS"
-
-cat >>confdefs.h <<\_ACEOF
-#define HAVE_CRYPT 1
-_ACEOF
-
-
-cat >>confdefs.h <<\_ACEOF
-#define AUTH_SERVER_SUPPORT 1
-_ACEOF
-
-fi
-
-          # Check whether --enable-server-flow-control or --disable-server-flow-control was given.
-if test "${enable_server_flow_control+set}" = set; then
-  enableval="$enable_server_flow_control"
-  if test yes = $enable_server_flow_control; then
-       enable_server_flow_control=1M,2M
-     fi
-else
-  enable_server_flow_control=1M,2M
-fi;
-  if test no != $enable_server_flow_control; then
-    ccvs_lwm=`expr "$enable_server_flow_control" : '\(.*\),'`
-    ccvs_hwm=`expr "$enable_server_flow_control" : '.*,\(.*\)'`
-    ccvs_lwm_E=`expr "$ccvs_lwm" : '[0-9][0-9]*\(.*\)'`
-    ccvs_lwm=`expr "$ccvs_lwm" : '\([0-9][0-9]*\)'`
-    test "" != "$ccvs_lwm" || ccvs_lwm_E="?"
-    case $ccvs_lwm_E in
-        G) ccvs_lwm="$ccvs_lwm * 1024 * 1024 * 1024";;
-        M) ccvs_lwm="$ccvs_lwm * 1024 * 1024";;
-        k) ccvs_lwm="$ccvs_lwm * 1024";;
-        b | '') ;;
-        *) { { echo "$as_me:$LINENO: error: Can't parse argument to --enable-server-flow-control
-                        ('$enable_server_flow_control') as <lwm>,<hwm>" >&5
-echo "$as_me: error: Can't parse argument to --enable-server-flow-control
-                        ('$enable_server_flow_control') as <lwm>,<hwm>" >&2;}
-   { (exit 1); exit 1; }; }
-      esac
-    ccvs_hwm_E=`expr "$ccvs_hwm" : '[0-9][0-9]*\(.*\)'`
-    ccvs_hwm=`expr "$ccvs_hwm" : '\([0-9][0-9]*\).*'`
-    test "" != "$ccvs_hwm" || ccvs_hwm_E="?"
-    case $ccvs_hwm_E in
-        G) ccvs_hwm="$ccvs_hwm * 1024 * 1024 * 1024";;
-        M) ccvs_hwm="$ccvs_hwm * 1024 * 1024";;
-        k) ccvs_hwm="$ccvs_hwm * 1024";;
-        b | '') ccvs_hwm="$ccvs_hwm";;
-        *) { { echo "$as_me:$LINENO: error: Can't parse argument to --enable-server-flow-control
-                        ('$enable_server_flow_control') as <lwm>,<hwm>" >&5
-echo "$as_me: error: Can't parse argument to --enable-server-flow-control
-                        ('$enable_server_flow_control') as <lwm>,<hwm>" >&2;}
-   { (exit 1); exit 1; }; }
-      esac
-
-
-cat >>confdefs.h <<\_ACEOF
-#define SERVER_FLOWCONTROL 1
-_ACEOF
-
-
-cat >>confdefs.h <<_ACEOF
-#define SERVER_LO_WATER ($ccvs_lwm)
-_ACEOF
-
-
-cat >>confdefs.h <<_ACEOF
-#define SERVER_HI_WATER ($ccvs_hwm)
-_ACEOF
-
-  fi # enable_server_flow_control
-fi # enable_server
 
 
 
