@@ -1,3 +1,8 @@
+Wed Feb 24 1996  Marcus Daniels  <marcus@sayre.sysc.pdx.edu>
+
+	* cvs.texinfo (Password authentication server): Mention
+	support for imaginary usernames.
+
 Thu Feb 15 16:34:56 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (Variables): Add new internal variable $USER.
@@ -63,11 +68,6 @@ Sun Jan 28 09:00:34 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvsclient.texi (Modes): Add discussion what what the mode really
 	means (across diverse operating systems).
-
-Wed Jan 31 19:51:05 1996  Marcus Daniels  <marcus@sayre.sysc.pdx.edu>
-
-	* cvs.texinfo (Password authentication server): Mention
-	support for imaginary usernames.
 
 Tue Jan 23 12:54:57 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
