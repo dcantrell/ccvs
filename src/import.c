@@ -736,6 +736,10 @@ static const struct compair comtable[] =
  * table is used to guess the proper comment leader from the working file's
  * suffix during initial ci (see InitAdmin()). Comment leaders are needed for
  * languages without multiline comments; for others they are optional.
+ *
+ * I believe that the comment leader is unused if you are using RCS 5.7, which
+ * decides what leader to use based on the text surrounding the $Log keyword
+ * rather than a specified comment leader.
  */
     {"a", "-- "},			/* Ada		 */
     {"ada", "-- "},

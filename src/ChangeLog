@@ -1,5 +1,8 @@
 Mon Aug 12 10:33:27 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* import.c (comtable): Add comment concerning applicability with
+	RCS 5.7.
+
 	* server.c (server): If TMPDIR is not an absolute pathname, give
 	an error.
 
