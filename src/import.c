@@ -115,7 +115,7 @@ import (argc, argv)
 		/* RCS_check_kflag returns strings of the form -kxx.  We
 		   only use it for validation, so we can free the value
 		   as soon as it is returned. */
-		free (RCS_check_kflag(optarg));	
+		free (RCS_check_kflag (optarg));
 		keyword_opt = optarg;
 		break;
 	    case 'W':
@@ -181,7 +181,7 @@ import (argc, argv)
     if (use_editor)
     {
 	do_editor ((char *) NULL, &message, repository,
-		   (List *) NULL); 
+		   (List *) NULL);
     }
 
     msglen = message == NULL ? 0 : strlen (message);
@@ -367,7 +367,7 @@ import_descend (message, vtag, targc, targv)
 #endif
 		&& !wrap_name_has (dp->d_name, WRAP_TOCVS)
 		)
-            {	
+	    {
 		Node *n;
 
 		if (dirlist == NULL)
@@ -379,7 +379,7 @@ import_descend (message, vtag, targc, targv)
 	    }
 	    else if (
 #ifdef DT_DIR
-		dp->d_type == DT_LNK || dp->d_type == DT_UNKNOWN && 
+		dp->d_type == DT_LNK || dp->d_type == DT_UNKNOWN &&
 #endif
 		islink (dp->d_name))
 	    {
@@ -402,7 +402,7 @@ import_descend (message, vtag, targc, targv)
 	(void) closedir (dirp);
     }
 
-    if (dirlist != NULL) 
+    if (dirlist != NULL)
     {
 	Node *head, *p;
 
@@ -495,7 +495,7 @@ update_rcs_file (message, vfile, vtag, targc, targv, inattic)
 	int retcode = 0;
 
 	tmpdir = getenv ("TMPDIR");
-	if (tmpdir == NULL || tmpdir[0] == '\0') 
+	if (tmpdir == NULL || tmpdir[0] == '\0')
 	  tmpdir = "/tmp";
 
 	(void) sprintf (xtmpfile, "%s/cvs-imp%ld", tmpdir, (long) getpid());
@@ -683,7 +683,7 @@ add_tags (rcs, vfile, vtag, targc, targv)
     if ((retcode = RCS_settag(rcs, vtag, vbranch)) != 0)
     {
 	ierrno = errno;
-	fperror (logfp, 0, retcode == -1 ? ierrno : 0, 
+	fperror (logfp, 0, retcode == -1 ? ierrno : 0,
 		 "ERROR: Failed to set tag %s in %s", vtag, rcs);
 	error (0, retcode == -1 ? ierrno : 0,
 	       "ERROR: Failed to set tag %s in %s", vtag, rcs);
@@ -704,7 +704,7 @@ add_tags (rcs, vfile, vtag, targc, targv)
 	if ((retcode = RCS_settag (rcs, targv[i], vers->vn_rcs)) != 0)
 	{
 	    ierrno = errno;
-	    fperror (logfp, 0, retcode == -1 ? ierrno : 0, 
+	    fperror (logfp, 0, retcode == -1 ? ierrno : 0,
 		     "WARNING: Couldn't add tag %s to %s", targv[i], rcs);
 	    error (0, retcode == -1 ? ierrno : 0,
 		   "WARNING: Couldn't add tag %s to %s", targv[i], rcs);
@@ -876,14 +876,20 @@ add_rcs_file (message, rcs, user, vtag, targc, targv)
     mode_t mode;
     char *tocvsPath;
     char *userfile;
+    char *local_opt = keyword_opt;
+    char *free_opt = NULL;
 
     if (noexec)
 	return (0);
 
-    /* FIXME?  We always import files as text files (note that means
-       that files get stored with straight linefeeds).  There isn't an
-       obvious, clean, way to let people specify which files are binary.
-       Maybe based on the file name....  */
+    if (local_opt == NULL)
+    {
+	if (wrap_name_has (user, WRAP_RCSOPTION))
+	{
+	    local_opt = free_opt = wrap_rcsoption (user, 0);
+	}
+    }
+
     tocvsPath = wrap_tocvs_process_file (user);
     userfile = (tocvsPath == NULL ? user : tocvsPath);
     fpuser = CVS_FOPEN (userfile, "r");
@@ -924,11 +930,13 @@ add_rcs_file (message, rcs, user, vtag, targc, targv)
 	goto write_error;
     }
 
-    if (keyword_opt != NULL)
-      if (fprintf (fprcs, "expand   @%s@;\012", keyword_opt) < 0)
+    if (local_opt != NULL)
+    {
+	if (fprintf (fprcs, "expand   @%s@;\012", local_opt) < 0)
 	{
-	  goto write_error;
+	    goto write_error;
 	}
+    }
 
     if (fprintf (fprcs, "\012") < 0)
       goto write_error;
@@ -1049,6 +1057,8 @@ add_rcs_file (message, rcs, user, vtag, targc, targv)
     if (tocvsPath)
 	if (unlink_file_dir (tocvsPath) < 0)
 		error (0, errno, "cannot remove %s", tocvsPath);
+    if (free_opt != NULL)
+	free (free_opt);
     return (err);
 
 write_error:
@@ -1068,6 +1078,9 @@ read_error:
     if (tocvsPath)
 	if (unlink_file_dir (tocvsPath) < 0)
 	    error (0, errno, "cannot remove %s", tocvsPath);
+
+    if (free_opt != NULL)
+	free (free_opt);
 
     return (err + 1);
 }
