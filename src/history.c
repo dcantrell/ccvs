@@ -722,6 +722,15 @@ history_write (type, update_dir, revs, name, repository)
 		    CVSROOTADM, CVSROOTADM_HISTORY);
 
     /* turn off history logging if the history file does not exist */
+    /* FIXME:  This should check for write permissions instead.  This way,
+     * O_CREATE could be added back into the call to open() below and
+     * there would be no race condition involved in log rotation.
+     *
+     * Note that the new method of turning off logging would be either via
+     * the CVSROOT/config file (probably the quicker method, but would need
+     * to be added, or at least checked for, too) or by creating a dummy
+     * history file with 0444 permissions.
+     */
     if (!isfile (fname))
     {
 	logoff = 1;
@@ -732,7 +741,7 @@ history_write (type, update_dir, revs, name, repository)
 
     if (noexec)
 	goto out;
-    fd = CVS_OPEN (fname, O_WRONLY | O_APPEND | O_CREAT | OPEN_BINARY, 0666);
+    fd = CVS_OPEN (fname, O_WRONLY | O_APPEND | OPEN_BINARY, 0666);
     if (fd < 0)
     {
 	if (! really_quiet)
