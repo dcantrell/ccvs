@@ -130,6 +130,8 @@ typedef void (*RCSCHECKOUTPROC) PROTO ((void *, const char *, size_t));
 RCSNode *RCS_parse PROTO((const char *file, const char *repos));
 RCSNode *RCS_parsercsfile PROTO((char *rcsfile));
 void RCS_fully_parse PROTO((RCSNode *));
+void RCS_reparsercsfile PROTO((RCSNode *, FILE **));
+
 char *RCS_check_kflag PROTO((const char *arg));
 char *RCS_getdate PROTO((RCSNode * rcs, char *date, int force_tag_match));
 char *RCS_gettag PROTO((RCSNode * rcs, char *symtag, int force_tag_match,
