@@ -360,6 +360,8 @@ extern void convert_file (char *INFILE,  int INFLAGS,
 
 /* We actually do have a transparent rsh, whew. */
 #undef RSH_NOT_TRANSPARENT
+/* But it won't be transparent unless we ask it nicely! */
+#define RSH_NEEDS_BINARY_FLAG 1
 
 /* OS/2 doesn't really have user/group permissions, at least not
    according to the C library manual pages.  So we'll make decoys. */

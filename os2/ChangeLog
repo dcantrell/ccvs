@@ -1,5 +1,7 @@
 Thu Dec 14 12:18:20 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
+        * config.h (RSH_NEEDS_BINARY_FLAG): define to 1.
+
         * run.c (filter_stream_through_program): die, rather than return
         -1, if spawn failed.
 
