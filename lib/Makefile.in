@@ -201,6 +201,8 @@ noinst_LIBRARIES = libcvs.a
 #	@LIBOBJS@ \
 #	$(LIB_CLOCK_GETTIME) \
 #	$(LIBINTL)
+
+# For the xsize module from GNULIB.
 libcvs_a_SOURCES = \
 	argmatch.c \
 	getnline.c \
@@ -228,9 +230,8 @@ libcvs_a_SOURCES = \
 	unlocked-io.h \
 	wait.h \
 	xselect.h \
-	xsize.h \
 	xtime.h\
-basename.c dirname.c dirname.h stripslash.c exitfail.h exitfail.c getdate.h getdate.y gettime.c time_r.h timespec.h printf-args.h printf-parse.h vasnprintf.h xalloc.h xmalloc.c xstrdup.c
+basename.c dirname.c dirname.h stripslash.c exitfail.h exitfail.c getdate.h getdate.y gettime.c time_r.h timespec.h printf-args.h printf-parse.h vasnprintf.h xalloc.h xmalloc.c xstrdup.c xsize.h
 libcvs_a_LIBADD = @LIBOBJS@
 
 BUILT_SOURCES = $(ALLOCA_H) $(FNMATCH_H) $(STDBOOL_H)
@@ -640,7 +641,7 @@ distclean: distclean-am
 	-rm -rf $(DEPDIR) ./$(DEPDIR)
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
-	distclean-tags
+	distclean-local distclean-tags
 
 dvi: dvi-am
 
@@ -681,14 +682,14 @@ uninstall-am: uninstall-info-am
 
 .PHONY: CTAGS GTAGS all all-am check check-TESTS check-am clean \
 	clean-checkPROGRAMS clean-generic clean-noinstLIBRARIES ctags \
-	distclean distclean-compile distclean-generic distclean-tags \
-	distdir dvi dvi-am info info-am install install-am install-data \
-	install-data-am install-exec install-exec-am install-info \
-	install-info-am install-man install-strip installcheck \
-	installcheck-am installdirs maintainer-clean \
-	maintainer-clean-generic mostlyclean mostlyclean-compile \
-	mostlyclean-generic pdf pdf-am ps ps-am tags uninstall \
-	uninstall-am uninstall-info-am
+	distclean distclean-compile distclean-generic distclean-local \
+	distclean-tags distdir dvi dvi-am info info-am install \
+	install-am install-data install-data-am install-exec \
+	install-exec-am install-info install-info-am install-man \
+	install-strip installcheck installcheck-am installdirs \
+	maintainer-clean maintainer-clean-generic mostlyclean \
+	mostlyclean-compile mostlyclean-generic pdf pdf-am ps ps-am \
+	tags uninstall uninstall-am uninstall-info-am
 
 all-local $(lib_OBJECTS): $(ALLOCA_H)
 alloca.h: alloca_.h
@@ -707,6 +708,10 @@ stdbool.h: stdbool_.h
 	sed -e 's/@''HAVE__BOOL''@/$(HAVE__BOOL)/g' \
 		< $(srcdir)/stdbool_.h > $@-t
 	mv $@-t $@
+
+# Until Automake gets its act together
+distclean-local:
+	rm -f fnmatch.h
 
 # for backwards compatibility with the old makefiles
 realclean: maintainer-clean

@@ -25,9 +25,6 @@ EXTRA_DIST = \
 	config.h.in \
 	config.h.in.in \
 	config.h.in.footer \
-	plhead \
-	mkconfig.pl \
-	fix-msvc-mak.pl \
 	ndir.h \
 	pwd.h \
 	rcmd.h \
