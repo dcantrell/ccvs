@@ -1,5 +1,9 @@
 2004-09-24  Derek Price <derek@ximbiot.com>
 
+	* sanity.sh (parseroot2): Use remoteonly.
+
+2004-09-24  Derek Price <derek@ximbiot.com>
+
 	* sanity.sh (tests): Add parseroot2.
 
 2004-09-24  Derek Price <derek@ximbiot.com>
