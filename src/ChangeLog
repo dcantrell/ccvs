@@ -1,3 +1,14 @@
+2005-03-20  Derek Price  <derek@ximbiot.com>
+
+	* rcs.c (RCS_nodeisbranch): Improve comments.  Return bool.  Gratuitous
+	reformatting.
+	(RCS_getprevious): NULL return from RCS_branch_head means a tag does
+	not exist.  Factor common code from then/else.  Add FIXME note.
+	Gratuitous reformatting.  Simplify.
+	(RCS_getorigin): Simplify.
+	(translate_tag): Fratuitous reformatting.
+	* rcs.h (RCS_nodeisbranch): Update prototype.
+
 2005-03-19  Derek Price  <derek@ximbiot.com>
 
 	Begin cleanup.  tag-ext test still broken.

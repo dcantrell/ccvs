@@ -211,7 +211,7 @@ char *RCS_getversion (RCSNode *rcs, const char *tag, const char *date,
 		      int force_tag_match, int *simple_tag);
 char *RCS_magicrev (RCSNode *rcs, char *rev);
 int RCS_isbranch (RCSNode *rcs, const char *rev);
-int RCS_nodeisbranch (RCSNode *rcs, const char *tag);
+bool RCS_nodeisbranch (RCSNode *rcs, const char *tag);
 char *RCS_whatbranch (RCSNode *rcs, const char *tag);
 char *RCS_head (RCSNode * rcs);
 int RCS_datecmp (const char *date1, const char *date2);
