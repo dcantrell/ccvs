@@ -8205,30 +8205,7 @@ count_delta_actions (Node *np, void *ignore)
 static void
 rcs_cleanup (void)
 {
-    static short int never_run_again = 0;
-
     TRACE (TRACE_FUNCTION, "rcs_cleanup()");
-
-    /* Since main_cleanup() always calls exit() (via error (1, ...)), we avoid
-     * allowing this function to be called twice as an optimization.
-     *
-     * If we are already in a signal critical section, assume we were called
-     * via the signal handler and set a flag which will prevent future calls.
-     * The only time that we should get into one of these functions otherwise
-     * while still in a critical section is if error(1,...) is called from a
-     * critical section, in which case we are exiting and interrupts are
-     * already being ignored.
-     *
-     * For Lock_Cleanup(), this is not a run_once variable since Lock_Cleanup()
-     * can be called to clean up the current lock set multiple times by the
-     * same run of a CVS command.
-     *
-     * For server_cleanup() and rcs_cleanup(), this is not a run_once variable
-     * since a call to the cleanup function from atexit() could be interrupted
-     * by the interrupt handler.
-     */
-    if (never_run_again) return;
-    if (SIG_inCrSect()) never_run_again = 1;
 
     /* FIXME: Do not perform buffered I/O from an interrupt handler like
      * this (via error).  However, I'm leaving the error-calling code there
@@ -8237,11 +8214,10 @@ rcs_cleanup (void)
      * of a just-created file) reentrancy won't be an issue.
      */
 
-    /* Avoid being interrupted during calls which set globals to NULL.  This
-     * avoids having interrupt handlers attempt to use these global variables
-     * in inconsistent states.
+    /* We don't want to be interrupted during calls which set globals to NULL,
+     * but we know that by the time we reach this function, interrupts have
+     * already been blocked.
      */
-    SIG_beginCrSect();
     if (rcs_lockfile != NULL)
     {
 	/* Use a tmp var since any of these functions could call exit, causing
@@ -8264,7 +8240,6 @@ rcs_cleanup (void)
 	    && !existence_error (errno))
 	    error (0, errno, "cannot remove %s", tmp);
     }
-    SIG_endCrSect();
 }
 
 

@@ -5917,32 +5917,21 @@ static void wait_sig (int sig)
 void
 server_cleanup (void)
 {
-    static short int never_run_again = 0;
-
     TRACE (TRACE_FUNCTION, "server_cleanup()");
 
-    /* Since main_cleanup() always calls exit() (via error (1, ...)), we avoid
-     * allowing this function to be called twice as an optimization.
-     *
-     * If we are already in a signal critical section, assume we were called
-     * via the signal handler and set a flag which will prevent future calls.
-     * The only time that we should get into one of these functions otherwise
-     * while still in a critical section is if error(1,...) is called from a
-     * critical section, in which case we are exiting and interrupts are
-     * already being ignored.
-     *
-     * For Lock_Cleanup(), this is not a run_once variable since Lock_Cleanup()
-     * can be called to clean up the current lock set multiple times by the
-     * same run of a CVS command.
-     *
-     * For server_cleanup() and rcs_cleanup(), this is not a run_once variable
-     * since a call to the cleanup function from atexit() could be interrupted
-     * by the interrupt handler.
-     */
-    if (never_run_again) return;
-    if (SIG_inCrSect()) never_run_again = 1;
-
     assert (server_active);
+
+    /* FIXME: Do not perform buffered I/O from an interrupt handler like
+     * this (via error).  However, I'm leaving the error-calling code there
+     * in the hope that on the rare occasion the error call is actually made
+     * (e.g., a fluky I/O error or permissions problem prevents the deletion
+     * of a just-created file) reentrancy won't be an issue.
+     */
+
+    /* We don't want to be interrupted during calls which set globals to NULL,
+     * but we know that by the time we reach this function, interrupts have
+     * already been blocked.
+     */
 
     /* Since we install this function in an atexit() handler before forking,
      * reuse the ERROR_USE_PROTOCOL flag, which we know is only set in the
@@ -5969,11 +5958,7 @@ server_cleanup (void)
 	     * have generated any final output, we shut down BUF_TO_NET.
 	     */
 
-	    /* Avoid being interrupted during calls which set globals to NULL.
-	     * This avoids having interrupt handlers attempt to use these
-	     * global variables in inconsistent states.
-	     */
-	    SIG_beginCrSect();
+	    /* SIG_beginCrSect(); */
 	    if (buf_from_net)
 	    {
 		status = buf_shutdown (buf_from_net);
@@ -5982,7 +5967,7 @@ server_cleanup (void)
 		buf_free (buf_from_net);
 		buf_from_net = NULL;
 	    }
-	    SIG_endCrSect();
+	    /* SIG_endCrSect(); */
 	}
 
 	if (!dont_delete_temp)
@@ -6078,14 +6063,14 @@ server_cleanup (void)
 	       unlink_file_dir itself).  */
 	    save_noexec = noexec;
 
-	    SIG_beginCrSect();
+	    /* SIG_beginCrSect(); */
 	    noexec = 0;
 	    unlink_file_dir (orig_server_temp_dir);
 	    noexec = save_noexec;
-	    SIG_endCrSect();
+	    /* SIG_endCrSect(); */
 	} /* !dont_delete_temp */
 
-	SIG_beginCrSect();
+	/* SIG_beginCrSect(); */
 	if (buf_to_net != NULL)
 	{
 	    /* Save BUF_TO_NET and set the global pointer to NULL so that any
@@ -6100,7 +6085,7 @@ server_cleanup (void)
 	    buf_free (buf_to_net_save);
 	    error_use_protocol = 0;
 	}
-	SIG_endCrSect();
+	/* SIG_endCrSect(); */
     }
 
     server_active = 0;

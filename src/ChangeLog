@@ -1,5 +1,17 @@
 2004-10-26 Derek Price <derek@ximbiot.com>
 
+	Call all exit handlers via atexit() & exit().  Signal handlers exit().
+	Eliminates a compiler warning.
+
+	* exithandle.c (cleanup_register): Don't register a signal handler.
+	Register a function to block signals before the exit handler is called.
+	* lock.c (Lock_Cleanup): Remove never_run_again cruft and assoc. cmts.
+	* rcs.c (rcs_cleanup), server.c (server_cleanup): Ditto, plus assume
+	signals are blocked.
+	* main.c (main_cleanup): Declare noreturn attribute.
+
+2004-10-26 Derek Price <derek@ximbiot.com>
+
 	* gssapi-client.c (connect_to_gserver): Avoid truncating error messages
 	from the GSSAPI server.
 	(Report from Dan Peterson <dbpete@aol.com>.)
