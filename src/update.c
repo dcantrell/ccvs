@@ -51,8 +51,7 @@ static int patch_file PROTO((char *file, char *repository, List *entries,
 		       unsigned char *checksum));
 #endif
 static int isemptydir PROTO((char *dir));
-static int merge_file PROTO((char *file, char *repository, List *entries,
-		       Vers_TS *vers, char *update_dir));
+static int merge_file PROTO ((struct file_info *finfo, Vers_TS *vers));
 static int scratch_file PROTO((char *file, char *repository, List * entries,
 			 char *update_dir));
 static Dtype update_dirent_proc PROTO((char *dir, char *repository, char *update_dir));
@@ -512,8 +511,7 @@ update_fileproc (finfo)
 					 finfo->rcs, vers, finfo->update_dir,
 					 NULL);
 		    else
-			retval = merge_file (finfo->file, finfo->repository, finfo->entries,
-					     vers, finfo->update_dir);
+			retval = merge_file (finfo, vers);
 		}
 		break;
 	    case T_MODIFIED:		/* locally modified */
@@ -1405,14 +1403,10 @@ write_letter (file, letter, update_dir)
  * Do all the magic associated with a file which needs to be merged
  */
 static int
-merge_file (file, repository, entries, vers, update_dir)
-    char *file;
-    char *repository;
-    List *entries;
+merge_file (finfo, vers)
+    struct file_info *finfo;
     Vers_TS *vers;
-    char *update_dir;
 {
-    char user[PATH_MAX];
     char backup[PATH_MAX];
     int status;
     int retcode = 0;
@@ -1424,25 +1418,53 @@ merge_file (file, repository, entries, vers, update_dir)
      * is the version of the file that the user was most up-to-date with
      * before the merge.
      */
-    (void) sprintf (backup, "%s%s.%s", BAKPREFIX, file, vers->vn_user);
-    if (update_dir[0])
-	(void) sprintf (user, "%s/%s", update_dir, file);
-    else
-	(void) strcpy (user, file);
+    (void) sprintf (backup, "%s%s.%s", BAKPREFIX, finfo->file, vers->vn_user);
 
     (void) unlink_file (backup);
-    copy_file (file, backup);
-    xchmod (file, 1);
+    copy_file (finfo->file, backup);
+    xchmod (finfo->file, 1);
+
+    if (strcmp (vers->options, "-kb") == 0)
+    {
+	/* For binary files, a merge is always a conflict.  We give the
+	   user the two files, and let them resolve it.  It is possible
+	   that we should require a "touch foo" or similar step before
+	   we allow a checkin.  */
+	status = checkout_file (finfo->file, finfo->repository,
+				finfo->entries, finfo->rcs, vers,
+				finfo->update_dir, NULL);
+#ifdef SERVER_SUPPORT
+	/* Send the new contents of the file before the message.  If we
+	   wanted to be totally correct, we would have the client write
+	   the message only after the file has safely been written.  */
+	if (server_active)
+	{
+	    server_copy_file (finfo->file, finfo->update_dir,
+			      finfo->repository, backup);
+	    server_updated (finfo->file, finfo->update_dir,
+			    finfo->repository, vers, SERVER_MERGED,
+			    (struct stat *) NULL, (unsigned char *) NULL);
+	}
+#endif
+	error (0, 0, "binary file needs merge");
+	error (0, 0, "revision %s from repository is now in %s",
+	       vers->vn_rcs, finfo->fullname);
+	error (0, 0, "file from working directory is now in %s", backup);
+	write_letter (finfo->file, 'C', finfo->update_dir);
+
+	history_write ('C', finfo->update_dir, vers->vn_rcs, finfo->file, finfo->repository);
+	return 0;
+    }
 
     status = RCS_merge(vers->srcfile->path, 
 		       vers->options, vers->vn_user, vers->vn_rcs);
     if (status != 0 && status != 1)
     {
 	error (0, status == -1 ? errno : 0,
-	       "could not merge revision %s of %s", vers->vn_user, user);
+	       "could not merge revision %s of %s", vers->vn_user, finfo->fullname);
 	error (status == -1 ? 1 : 0, 0, "restoring %s from backup file %s",
-	       user, backup);
-	rename_file (backup, file);
+	       finfo->fullname, backup);
+	rename_file (backup, finfo->file);
 	return (1);
     }
 
@@ -1453,8 +1475,8 @@ merge_file (file, repository, entries, vers, update_dir)
 	char *cp = 0;
 
 	if (status)
-	    cp = time_stamp (file);
-	Register (entries, file, vers->vn_rcs, vers->ts_rcs, vers->options,
+	    cp = time_stamp (finfo->file);
+	Register (finfo->entries, finfo->file, vers->vn_rcs, vers->ts_rcs, vers->options,
 		  vers->tag, vers->date, cp);
 	if (cp)
 	    free (cp);
@@ -1474,38 +1496,38 @@ merge_file (file, repository, entries, vers, update_dir)
        the message only after the file has safely been written.  */
     if (server_active)
     {
-        server_copy_file (file, update_dir, repository, backup);
-	server_updated (file, update_dir, repository, vers, SERVER_MERGED,
+        server_copy_file (finfo->file, finfo->update_dir, finfo->repository, backup);
+	server_updated (finfo->file, finfo->update_dir, finfo->repository, vers, SERVER_MERGED,
 			(struct stat *) NULL, (unsigned char *) NULL);
     }
 #endif
 
-    if (!noexec && !xcmp (backup, file))
+    if (!noexec && !xcmp (backup, finfo->file))
     {
 	printf ("%s already contains the differences between %s and %s\n",
-		user, vers->vn_user, vers->vn_rcs);
-	history_write ('G', update_dir, vers->vn_rcs, file, repository);
+		finfo->fullname, vers->vn_user, vers->vn_rcs);
+	history_write ('G', finfo->update_dir, vers->vn_rcs, finfo->file, finfo->repository);
 	return (0);
     }
 
     if (status == 1)
     {
 	if (!noexec)
-	    error (0, 0, "conflicts found in %s", user);
+	    error (0, 0, "conflicts found in %s", finfo->fullname);
 
-	write_letter (file, 'C', update_dir);
+	write_letter (finfo->file, 'C', finfo->update_dir);
 
-	history_write ('C', update_dir, vers->vn_rcs, file, repository);
+	history_write ('C', finfo->update_dir, vers->vn_rcs, finfo->file, finfo->repository);
 
     }
     else if (retcode == -1)
     {
-	error (1, errno, "fork failed while examining update of %s", user);
+	error (1, errno, "fork failed while examining update of %s", finfo->fullname);
     }
     else
     {
-	write_letter (file, 'M', update_dir);
-	history_write ('G', update_dir, vers->vn_rcs, file, repository);
+	write_letter (finfo->file, 'M', finfo->update_dir);
+	history_write ('G', finfo->update_dir, vers->vn_rcs, finfo->file, finfo->repository);
     }
     return (0);
 }

@@ -1,3 +1,19 @@
+Mon Jun 24 11:27:37 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* update.c (merge_file): Replace file, repository, entries, and
+	update_dir arguments with finfo argument.  Use fullname field
+	instead of locally emulating it.
+	(update_fileproc): Update caller.
+	(merge_file): If -kb is in effect, call it a conflict, leave
+	the two versions in the file and the backup file, and tell the
+	user to deal with it.  The previous behavior was that the merge
+	would fail and then there was no way to do a checkin even once you
+	resolved the conflict (short of kludges like moving the file
+	aside, updating, and then moving it back).
+	* sanity.sh (binfiles): New tests binfiles-con* test for above
+	behavior.  Adjust remaining tests to reflect changes in revision
+	numbers.
+
 Mon Jun 17 15:11:09 1996  Ian Lance Taylor  <ian@cygnus.com>
 
 	* sanity.sh (import): Remove sleep.  Requiring it was a bug, and
