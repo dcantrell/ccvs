@@ -278,6 +278,9 @@
 /* Define to 1 if you have the <gssapi.h> header file. */
 #undef HAVE_GSSAPI_H
 
+/* Define if you have the hstrerror function. */
+#undef HAVE_HSTRERROR
+
 /* Define if you have the iconv() function. */
 #undef HAVE_ICONV
 

@@ -1,3 +1,9 @@
+2004-10-30  Mark D. Baushke  <mdb@juniper.net>
+
+	* configure.in: Add AC_SEARCH_LIBS for hstrerror in resolv to also
+	define HAVE_HSTRERROR if it is found.
+	* configure: Regenerated.
+
 2004-10-29  Mark D. Baushke  <mdb@cvshome.org>
 
 	* configure.in: Add AC_SEARCH_LIBS for hstrerror in resolv.

@@ -561,8 +561,13 @@ isThisHost (const char *otherhost)
     }
 
     if (!(hinfo = gethostbyname (otherhost)))
+#ifdef HAVE_HSTRERROR
 	error (1, 0, "Name lookup failed for `%s': %s",
 	       otherhost, hstrerror (h_errno));
+#else
+	error (1, 0, "Name lookup failed for `%s': h_error=%d",
+	       otherhost, h_errno);
+#endif
 
     return !strcasecmp (thishost, hinfo->h_name);
 }

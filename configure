@@ -30609,6 +30609,10 @@ echo "${ECHO_T}$ac_cv_search_hstrerror" >&6
 if test "$ac_cv_search_hstrerror" != no; then
   test "$ac_cv_search_hstrerror" = "none required" || LIBS="$ac_cv_search_hstrerror $LIBS"
 
+cat >>confdefs.h <<\_ACEOF
+#define HAVE_HSTRERROR 1
+_ACEOF
+
 fi
 
 
