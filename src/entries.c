@@ -217,7 +217,6 @@ freesdt (p)
     free ((char *) sdtp);
 }
 
-
 Entnode *
 fgetentent(fpin)
     FILE *fpin;
@@ -526,7 +525,6 @@ ParseTag (tagp, datep)
     char **datep;
 {
     FILE *fp;
-    char line[MAXLINELEN];
     char *cp;
 
     if (tagp)
@@ -536,15 +534,24 @@ ParseTag (tagp, datep)
     fp = fopen (CVSADM_TAG, "r");
     if (fp)
     {
-	if (fgets (line, sizeof (line), fp) != NULL)
+	char *line;
+	int line_length;
+	size_t line_chars_allocated;
+
+	line = NULL;
+	line_chars_allocated = 0;
+	  
+	if ((line_length = getline (&line, &line_chars_allocated, fp)) > 0)
 	{
-	    if ((cp = strrchr (line, '\n')) != NULL)
-		*cp = '\0';
+	    /* Remove any trailing newline.  */
+	    if (line[line_length - 1] == '\n')
+	        line[--line_length] = '\0';
 	    if (*line == 'T' && tagp)
 		*tagp = xstrdup (line + 1);
 	    else if (*line == 'D' && datep)
 		*datep = xstrdup (line + 1);
 	}
 	(void) fclose (fp);
+	free (line);
     }
 }
