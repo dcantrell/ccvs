@@ -156,3 +156,8 @@ m4/st_mtim.m4
 m4/timespec.m4
 
 m4/onceonly_2_57.m4
+lib/gettime.c
+m4/clock_time.m4
+m4/gettime.m4
+
+m4/onceonly_2_57.m4
