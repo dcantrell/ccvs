@@ -60,24 +60,6 @@ $GNULIB/m4/tm_gmtoff.m4				m4		no NI
 # $GNULIB/modules/gethostname
 $GNULIB/lib/gethostname.c			lib		no NI
 $GNULIB/m4/gethostname.m4			m4		no NI
-# $GNULIB/modules/getline
-$GNULIB/lib/getline.c				lib		yes NI
-$GNULIB/lib/getline.h				lib		no NI
-$GNULIB/lib/getndelim2.c			lib		yes NI
-$GNULIB/lib/getndelim2.h			lib		yes NI
-$GNULIB/m4/getline.m4				m4		no NI
-$GNULIB/m4/getndelim2.m4			m4		no NI
-$GNULIB/m4/ssize_t.m4				m4		no NI
-# $GNULIB/modules/getndelim2
-$GNULIB/lib/getndelim2.c			lib		yes NI
-$GNULIB/lib/getndelim2.h			lib		yes NI
-$GNULIB/m4/getndelim2.m4			m4		no NI
-$GNULIB/m4/ssize_t.m4				m4		no NI
-# $GNULIB/modules/getnline
-$GNULIB/lib/getnline.c				lib		yes NI
-$GNULIB/lib/getnline.h				lib		yes NI
-$GNULIB/m4/getnline.m4				m4		no NI
-$GNULIB/m4/ssize_t.m4				m4		no NI
 # $GNULIB/modules/getpass-gnu
 $GNULIB/lib/getpass.c				lib		no NI
 $GNULIB/m4/getpass.m4				m4		no NI

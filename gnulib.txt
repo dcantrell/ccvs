@@ -111,3 +111,24 @@ lib/stdbool_.h
 m4/stdbool.m4
 
 m4/onceonly_2_57.m4
+lib/getline.h
+lib/getline.c
+lib/getndelim2.h
+lib/getndelim2.c
+m4/getline.m4
+m4/getndelim2.m4
+m4/ssize_t.m4
+
+m4/onceonly_2_57.m4
+lib/getnline.h
+lib/getnline.c
+m4/getnline.m4
+m4/ssize_t.m4
+
+m4/onceonly_2_57.m4
+lib/getndelim2.h
+lib/getndelim2.c
+m4/getndelim2.m4
+m4/ssize_t.m4
+
+m4/onceonly_2_57.m4
