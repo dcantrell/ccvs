@@ -99,7 +99,7 @@ _am_quote = @_am_quote@
 includeopt = @includeopt@
 install_sh = @install_sh@
 
-AUTOMAKE_OPTIONS = 1.4a dist-bzip2
+AUTOMAKE_OPTIONS = 1.4e dist-bzip2
 
 # Unix source subdirs, where we'll want to run lint and etags:
 # This is a legacy variable from b4 Automake
@@ -126,7 +126,8 @@ EXTRA_DIST = \
 	cvs.spec.in \
 	cvsnt.dsp \
 	cvsnt.dsw \
-	cvsnt.mak
+	cvsnt.mak \
+	noautomake.sh
 
 EXEEXT =
 OBJEXT = o
