@@ -1,3 +1,9 @@
+Thu Mar 14 1996  Jim Kingdon  <kingdon@cyclic.com>
+
+	* main.c: Depending on HAVE_WINSOCK_H, include winsock.h or
+	declare gethostname.
+	* cvs.h: Don't declare it here.
+
 Thu Mar 14 07:06:59 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* commit.c (find_fileproc): If vn_user is NULL and ts_user is not,

@@ -35,6 +35,12 @@
 
 #include "cvs.h"
 
+#ifdef HAVE_WINSOCK_H
+#include <winsock.h>
+#else
+extern int gethostname ();
+#endif
+
 #if HAVE_KERBEROS
 #include <sys/socket.h>
 #include <netinet/in.h>
