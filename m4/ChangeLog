@@ -1,3 +1,8 @@
+2003-05-27  Derek Price  <derek@ximbiot.com>
+
+	* README: New file explaining the GNULIB origin of many of the m4
+	files.
+
 2003-05-22  Derek Price  <derek@ximbiot.com>
 
 	* acx_with_external_zlib.m4: Check version of unused ZLIBs and warn
