@@ -1,3 +1,14 @@
+2003-07-09  Larry Jones  <lawrence.jones@eds.com>
+
+	* add.c (add): Update "re-adding" message to have quotes around
+	the file name like all the other similar messages.
+	* sanity.sh: Update to match.
+
+	* update.c (join_file): Handle locally removed but not yet committed
+	files.
+	(Reported by Larry Lords <LordsLL@ldschurch.org>.)
+	* sanity.sh (join, join4): New tests for above.
+
 2003-06-28  Larry Jones  <lawrence.jones@eds.com>
 
 	* commit.c (fixaddfile): Bail out if locate_rcs() fails.  Make

@@ -2402,7 +2402,7 @@ join_file (finfo, vers)
     }
 
     /* If there is no working file, then we can't do the merge.  */
-    if (vers->vn_user == NULL)
+    if (vers->vn_user == NULL || vers->vn_user[0] == '-')
     {
 	free (rev1);
 	free (rev2);

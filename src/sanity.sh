@@ -910,7 +910,7 @@ if test x"$*" = x; then
 	tests="${tests} branches4 tagc tagf"
 	tests="${tests} rcslib multibranch import importb importc"
 	tests="${tests} update-p import-after-initial branch-after-import"
-	tests="${tests} join join2 join3 join-readonly-conflict"
+	tests="${tests} join join2 join3 join4 join-readonly-conflict"
 	tests="${tests} join-admin join-admin-2"
 	tests="${tests} new newb conflicts conflicts2 conflicts3"
 	tests="${tests} clean"
@@ -2045,7 +2045,7 @@ new revision: delete; previous revision: 3\.1
 done"
 	  dotest basica-r3 "${testcvs} -q up -p -r 3.1 ./ssfile >ssfile" ""
 	  dotest basica-r4 "${testcvs} add ssfile" \
-"${SPROG} [a-z]*: re-adding file ssfile (in place of dead revision 3\.2)
+"${SPROG} [a-z]*: re-adding file .ssfile. (in place of dead revision 3\.2)
 ${SPROG} [a-z]*: use .${SPROG} commit. to add this file permanently"
 	  dotest basica-r5 "${testcvs} -q ci -m resurrect" \
 "Checking in ssfile;
@@ -6693,7 +6693,7 @@ done"
 	  echo v2 > $file
 	  dotest update-p-undead-7 "$testcvs -Q update -p -rT $file" v1
 	  dotest update-p-undead-8 "$testcvs add $file" \
-"${SPROG} [a-z]*: re-adding file $file (in place of dead revision 1\.2)
+"${SPROG} [a-z]*: re-adding file .$file. (in place of dead revision 1\.2)
 ${SPROG} [a-z]*: use .${SPROG} commit. to add this file permanently"
 
 	  dotest update-p-undead-9 "$testcvs -Q update -p -rT $file" v1
@@ -7931,9 +7931,13 @@ done"
 	  #      Nothing should happen.
 	  #   6) File removed between T1 and T2, also removed on main line.
 	  #      Nothing should happen.
-	  #   7) File added on main line, not added between T1 and T2.
+	  #   7) File not added between T1 and T2, added on main line.
 	  #      Nothing should happen.
-	  #   8) File removed on main line, not modified between T1 and T2.
+	  #   8) File not modified between T1 and T2, removed on main line.
+	  #      Nothing should happen.
+	  #   9) File modified between T1 and T2, removed on main line.
+	  #      Conflict.
+	  #  10) File was never on branch, removed on main line.
 	  #      Nothing should happen.
 
 	  # We also check merging changes from a branch into the main
@@ -7954,6 +7958,10 @@ done"
 	  #      Nothing should happen.
 	  #   8) File removed on main line, not modified on branch.
 	  #      Nothing should happen.
+	  #   9) File modified on branch, removed on main line.
+	  #      Conflict.
+	  #  10) File was never on branch, removed on main line.
+	  #      Nothing should happen.
 
 	  # In the tests below, fileN represents case N in the above
 	  # lists.
@@ -7970,11 +7978,13 @@ done"
 	  echo 'first revision of file4' > file4
 	  echo 'first revision of file6' > file6
 	  echo 'first revision of file8' > file8
-	  dotest join-2 "${testcvs} add file3 file4 file6 file8" \
+	  echo 'first revision of file9' > file9
+	  dotest join-2 "${testcvs} add file3 file4 file6 file8 file9" \
 "${SPROG}"' [a-z]*: scheduling file `file3'\'' for addition
 '"${SPROG}"' [a-z]*: scheduling file `file4'\'' for addition
 '"${SPROG}"' [a-z]*: scheduling file `file6'\'' for addition
 '"${SPROG}"' [a-z]*: scheduling file `file8'\'' for addition
+'"${SPROG}"' [a-z]*: scheduling file `file9'\'' for addition
 '"${SPROG}"' [a-z]*: use .'"${SPROG}"' commit. to add these files permanently'
 
 	  dotest join-3 "${testcvs} -q commit -m add" \
@@ -8001,6 +8011,12 @@ done
 Checking in file8;
 ${CVSROOT_DIRNAME}/first-dir/file8,v  <--  file8
 initial revision: 1\.1
+done
+RCS file: ${CVSROOT_DIRNAME}/first-dir/file9,v
+done
+Checking in file9;
+${CVSROOT_DIRNAME}/first-dir/file9,v  <--  file9
+initial revision: 1\.1
 done"
 
 	  # Make a branch.
@@ -8008,23 +8024,34 @@ done"
 'T file3
 T file4
 T file6
-T file8'
+T file8
+T file9'
 
-	  # Add file2 and file7, modify file4, and remove file6 and file8.
+	  # Add file2, file7, and file10, modify file4, and remove
+	  # file6, file8, and file9.
 	  echo 'first revision of file2' > file2
 	  echo 'second revision of file4' > file4
 	  echo 'first revision of file7' > file7
-	  rm file6 file8
-	  dotest join-5 "${testcvs} add file2 file7" \
+	  rm file6 file8 file9
+	  echo 'first revision of file10' > file10
+	  dotest join-5 "${testcvs} add file2 file7 file10" \
 "${SPROG}"' [a-z]*: scheduling file `file2'\'' for addition
 '"${SPROG}"' [a-z]*: scheduling file `file7'\'' for addition
+'"${SPROG}"' [a-z]*: scheduling file `file10'\'' for addition
 '"${SPROG}"' [a-z]*: use .'"${SPROG}"' commit. to add these files permanently'
-	  dotest join-6 "${testcvs} rm file6 file8" \
+	  dotest join-6 "${testcvs} rm file6 file8 file9" \
 "${SPROG}"' [a-z]*: scheduling `file6'\'' for removal
 '"${SPROG}"' [a-z]*: scheduling `file8'\'' for removal
+'"${SPROG}"' [a-z]*: scheduling `file9'\'' for removal
 '"${SPROG}"' [a-z]*: use .'"${SPROG}"' commit. to remove these files permanently'
 	  dotest join-7 "${testcvs} -q ci -mx ." \
-"RCS file: ${CVSROOT_DIRNAME}/first-dir/file2,v
+"RCS file: ${CVSROOT_DIRNAME}/first-dir/file10,v
+done
+Checking in file10;
+${CVSROOT_DIRNAME}/first-dir/file10,v  <--  file10
+initial revision: 1\.1
+done
+RCS file: ${CVSROOT_DIRNAME}/first-dir/file2,v
 done
 Checking in file2;
 ${CVSROOT_DIRNAME}/first-dir/file2,v  <--  file2
@@ -8047,6 +8074,20 @@ done
 Removing file8;
 ${CVSROOT_DIRNAME}/first-dir/file8,v  <--  file8
 new revision: delete; previous revision: 1\.1
+done
+Removing file9;
+${CVSROOT_DIRNAME}/first-dir/file9,v  <--  file9
+new revision: delete; previous revision: 1\.1
+done"
+
+	  # Remove file10
+	  dotest join-7a "${testcvs} rm -f file10" \
+"${SPROG}"' [a-z]*: scheduling `file10'\'' for removal
+'"${SPROG}"' [a-z]*: use .'"${SPROG}"' commit. to remove this file permanently'
+	  dotest join-7b "${testcvs} -q ci -mx ." \
+"Removing file10;
+${CVSROOT_DIRNAME}/first-dir/file10,v  <--  file10
+new revision: delete; previous revision: 1\.1
 done"
 
 	  # Check out the branch.
@@ -8057,7 +8098,8 @@ done"
 'U first-dir/file3
 U first-dir/file4
 U first-dir/file6
-U first-dir/file8'
+U first-dir/file8
+U first-dir/file9'
 
 	  cd first-dir
 
@@ -8065,8 +8107,9 @@ U first-dir/file8'
 	  # ancestor of the main line, and add file5
 	  echo 'first branch revision of file3' > file3
 	  echo 'first branch revision of file4' > file4
-	  echo 'first branch revision of file6' > file6
 	  echo 'first branch revision of file5' > file5
+	  echo 'first branch revision of file6' > file6
+	  echo 'first branch revision of file9' > file9
 	  dotest join-9 "${testcvs} add file5" \
 "${SPROG}"' [a-z]*: scheduling file `file5'\'' for addition on branch `branch'\''
 '"${SPROG}"' [a-z]*: use .'"${SPROG}"' commit. to add this file permanently'
@@ -8088,6 +8131,10 @@ done
 Checking in file6;
 ${CVSROOT_DIRNAME}/first-dir/Attic/file6,v  <--  file6
 new revision: 1\.1\.2\.1; previous revision: 1\.1
+done
+Checking in file9;
+${CVSROOT_DIRNAME}/first-dir/Attic/file9,v  <--  file9
+new revision: 1\.1\.2\.1; previous revision: 1\.1
 done"
 
 	  # Tag the current revisions on the branch.
@@ -8096,11 +8143,13 @@ done"
 T file4
 T file5
 T file6
-T file8'
+T file8
+T file9'
 
-	  # Add file1 and file2, and remove the other files.
+	  # Add file1 and file2, modify file9, and remove the other files.
 	  echo 'first branch revision of file1' > file1
 	  echo 'first branch revision of file2' > file2
+	  echo 'second branch revision of file9' > file9
 	  rm file3 file4 file5 file6
 	  dotest join-12 "${testcvs} add file1 file2" \
 "${SPROG}"' [a-z]*: scheduling file `file1'\'' for addition on branch `branch'\''
@@ -8138,13 +8187,18 @@ done
 Removing file6;
 ${CVSROOT_DIRNAME}/first-dir/Attic/file6,v  <--  file6
 new revision: delete; previous revision: 1\.1\.2\.1
+done
+Checking in file9;
+${CVSROOT_DIRNAME}/first-dir/Attic/file9,v  <--  file9
+new revision: 1\.1\.2\.2; previous revision: 1\.1\.2\.1
 done"
 
 	  # Tag the current revisions on the branch.
 	  dotest join-15 "${testcvs} -q tag T2 ." \
 'T file1
 T file2
-T file8'
+T file8
+T file9'
 
 	  # Do a checkout with a merge.
 	  cd ../..
@@ -8158,7 +8212,8 @@ U first-dir/file3
 '"${SPROG}"' [a-z]*: scheduling first-dir/file3 for removal
 U first-dir/file4
 '"${SPROG}"' [a-z]*: scheduling first-dir/file4 for removal
-U first-dir/file7'
+U first-dir/file7
+'"${SPROG}"' [a-z]*: file first-dir/file9 does not exist, but is present in revision T2'
 
 	  # Verify that the right changes have been scheduled.
 	  cd first-dir
@@ -8175,7 +8230,8 @@ R file4'
 '"${SPROG}"' [a-z]*: file file2 exists, but has been added in revision T2
 '"${SPROG}"' [a-z]*: scheduling file3 for removal
 M file4
-'"${SPROG}"' [a-z]*: file file4 is locally modified, but has been removed in revision T2'
+'"${SPROG}"' [a-z]*: file file4 is locally modified, but has been removed in revision T2
+'"${SPROG}"' [a-z]*: file file9 does not exist, but is present in revision T2'
 
 	  # Verify that the right changes have been scheduled.
 	  dotest join-19 "${testcvs} -q update" \
@@ -8207,7 +8263,8 @@ U first-dir/file3
 ${SPROG} [a-z]*: scheduling first-dir/file3 for removal
 U first-dir/file4
 ${SPROG} [a-z]*: file first-dir/file4 has been modified, but has been removed in revision branch
-U first-dir/file7"
+U first-dir/file7
+${SPROG} [a-z]*: file first-dir/file9 does not exist, but is present in revision branch"
 
 	  # Verify that the right changes have been scheduled.
 	  # The M file2 line is a bug; see above join-20.
@@ -8239,7 +8296,8 @@ retrieving revision 1\.1\.2\.1
 Merging differences between 1\.1 and 1\.1\.2\.1 into file2
 ${SPROG} [a-z]*: scheduling file3 for removal
 M file4
-${SPROG} [a-z]*: file file4 is locally modified, but has been removed in revision branch"
+${SPROG} [a-z]*: file file4 is locally modified, but has been removed in revision branch
+${SPROG} [a-z]*: file file9 does not exist, but is present in revision branch"
 
 	  # Verify that the right changes have been scheduled.
 	  # The M file2 line is a bug; see above join-20
@@ -8266,8 +8324,8 @@ T file3
 T file4
 T file7"
 	  dotest join-27 "${testcvs} -q update -r br2" ""
-	  # The handling of file8 here looks fishy to me.  I don't see
-	  # why it should be different from the case where we merge to
+	  # The handling of file8 and file9 here look fishy to me.  I don't
+	  # see why it should be different from the case where we merge to
 	  # the trunk (e.g. join-23).
 	  dotest join-28 "${testcvs} -q update -j branch" \
 "U file1
@@ -8277,13 +8335,15 @@ retrieving revision 1.1.2.1
 Merging differences between 1.1 and 1.1.2.1 into file2
 ${SPROG} [a-z]*: scheduling file3 for removal
 ${SPROG} [a-z]*: file file4 has been modified, but has been removed in revision branch
-U file8"
+U file8
+U file9"
 	  # Verify that the right changes have been scheduled.
 	  dotest join-29 "${testcvs} -q update" \
 "A file1
 M file2
 R file3
-A file8"
+A file8
+A file9"
 
 	  # Checkout the mainline again to try updating and merging between two
 	  # branches in the same step
@@ -8296,7 +8356,8 @@ A file8"
 	  dotest join-twobranch-1 "${testcvs} -q co -rbranch first-dir" \
 'U first-dir/file1
 U first-dir/file2
-U first-dir/file8'
+U first-dir/file8
+U first-dir/file9'
 	  cd first-dir
 	  dotest join-twobranch-2 "${testcvs} -q update -rbr2 -jbranch" \
 "$SPROG [a-z]*: file1 is no longer in the repository
@@ -8312,13 +8373,16 @@ U file4
 ${SPROG} [a-z]*: file file4 has been modified, but has been removed in revision branch
 U file7
 ${SPROG} [a-z]*: file8 is no longer in the repository
-U file8"
+U file8
+${SPROG} [a-z]*: file9 is no longer in the repository
+U file9"
 	  # Verify that the right changes have been scheduled.
 	  dotest join-twobranch-3 "${testcvs} -q update" \
 "A file1
 M file2
 R file3
-A file8"
+A file8
+A file9"
 
 	  # Checkout the mainline again to try merging from the trunk
 	  # to a branch.
@@ -8607,6 +8671,247 @@ br2:line1
 
 	  cd ../..
 	  rm -r 1
+	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  ;;
+
+	join4)
+	  # Like join, but with local (uncommitted) modifications.
+
+	  mkdir ${CVSROOT_DIRNAME}/first-dir
+	  mkdir 1
+	  cd 1
+	  dotest join4-1 "${testcvs} -q co first-dir" ''
+
+	  cd first-dir
+
+	  # Add two files.
+	  echo 'first revision of file3' > file3
+	  echo 'first revision of file4' > file4
+	  echo 'first revision of file6' > file6
+	  echo 'first revision of file8' > file8
+	  echo 'first revision of file9' > file9
+	  dotest join4-2 "${testcvs} add file3 file4 file6 file8 file9" \
+"${SPROG}"' [a-z]*: scheduling file `file3'\'' for addition
+'"${SPROG}"' [a-z]*: scheduling file `file4'\'' for addition
+'"${SPROG}"' [a-z]*: scheduling file `file6'\'' for addition
+'"${SPROG}"' [a-z]*: scheduling file `file8'\'' for addition
+'"${SPROG}"' [a-z]*: scheduling file `file9'\'' for addition
+'"${SPROG}"' [a-z]*: use .'"${SPROG}"' commit. to add these files permanently'
+
+	  dotest join4-3 "${testcvs} -q commit -m add" \
+"RCS file: ${CVSROOT_DIRNAME}/first-dir/file3,v
+done
+Checking in file3;
+${CVSROOT_DIRNAME}/first-dir/file3,v  <--  file3
+initial revision: 1\.1
+done
+RCS file: ${CVSROOT_DIRNAME}/first-dir/file4,v
+done
+Checking in file4;
+${CVSROOT_DIRNAME}/first-dir/file4,v  <--  file4
+initial revision: 1\.1
+done
+RCS file: ${CVSROOT_DIRNAME}/first-dir/file6,v
+done
+Checking in file6;
+${CVSROOT_DIRNAME}/first-dir/file6,v  <--  file6
+initial revision: 1\.1
+done
+RCS file: ${CVSROOT_DIRNAME}/first-dir/file8,v
+done
+Checking in file8;
+${CVSROOT_DIRNAME}/first-dir/file8,v  <--  file8
+initial revision: 1\.1
+done
+RCS file: ${CVSROOT_DIRNAME}/first-dir/file9,v
+done
+Checking in file9;
+${CVSROOT_DIRNAME}/first-dir/file9,v  <--  file9
+initial revision: 1\.1
+done"
+
+	  # Make a branch.
+	  dotest join4-4 "${testcvs} -q tag -b branch ." \
+'T file3
+T file4
+T file6
+T file8
+T file9'
+
+	  # Add file10
+	  echo 'first revision of file10' > file10
+	  dotest join4-7a "${testcvs} add file10" \
+"${SPROG}"' [a-z]*: scheduling file `file10'\'' for addition
+'"${SPROG}"' [a-z]*: use .'"${SPROG}"' commit. to add this file permanently'
+	  dotest join4-7b "${testcvs} -q ci -mx ." \
+"RCS file: ${CVSROOT_DIRNAME}/first-dir/file10,v
+done
+Checking in file10;
+${CVSROOT_DIRNAME}/first-dir/file10,v  <--  file10
+initial revision: 1\.1
+done"
+
+	  # Add file2 and file7, modify file4, and remove
+	  # file6, file8, file9, and file10.
+	  echo 'first revision of file2' > file2
+	  echo 'second revision of file4' > file4
+	  echo 'first revision of file7' > file7
+	  rm file6 file8 file9 file10
+	  dotest join4-5 "${testcvs} add file2 file7" \
+"${SPROG}"' [a-z]*: scheduling file `file2'\'' for addition
+'"${SPROG}"' [a-z]*: scheduling file `file7'\'' for addition
+'"${SPROG}"' [a-z]*: use .'"${SPROG}"' commit. to add these files permanently'
+	  dotest join4-6 "${testcvs} rm file6 file8 file9 file10" \
+"${SPROG}"' [a-z]*: scheduling `file6'\'' for removal
+'"${SPROG}"' [a-z]*: scheduling `file8'\'' for removal
+'"${SPROG}"' [a-z]*: scheduling `file9'\'' for removal
+'"${SPROG}"' [a-z]*: scheduling `file10'\'' for removal
+'"${SPROG}"' [a-z]*: use .'"${SPROG}"' commit. to remove these files permanently'
+
+	  # Check out the branch.
+	  cd ../..
+	  mkdir 2
+	  cd 2
+	  dotest join4-8 "${testcvs} -q co -r branch first-dir" \
+'U first-dir/file3
+U first-dir/file4
+U first-dir/file6
+U first-dir/file8
+U first-dir/file9'
+
+	  cd first-dir
+
+	  # Modify the files on the branch, so that T1 is not an
+	  # ancestor of the main line, and add file5
+	  echo 'first branch revision of file3' > file3
+	  echo 'first branch revision of file4' > file4
+	  echo 'first branch revision of file5' > file5
+	  echo 'first branch revision of file6' > file6
+	  echo 'first branch revision of file9' > file9
+	  dotest join4-9 "${testcvs} add file5" \
+"${SPROG}"' [a-z]*: scheduling file `file5'\'' for addition on branch `branch'\''
+'"${SPROG}"' [a-z]*: use .'"${SPROG}"' commit. to add this file permanently'
+	  dotest join4-10 "${testcvs} -q ci -mx ." \
+"Checking in file3;
+${CVSROOT_DIRNAME}/first-dir/file3,v  <--  file3
+new revision: 1\.1\.2\.1; previous revision: 1\.1
+done
+Checking in file4;
+${CVSROOT_DIRNAME}/first-dir/file4,v  <--  file4
+new revision: 1\.1\.2\.1; previous revision: 1\.1
+done
+RCS file: ${CVSROOT_DIRNAME}/first-dir/Attic/file5,v
+done
+Checking in file5;
+${CVSROOT_DIRNAME}/first-dir/Attic/file5,v  <--  file5
+new revision: 1\.1\.2\.1; previous revision: 1\.1
+done
+Checking in file6;
+${CVSROOT_DIRNAME}/first-dir/file6,v  <--  file6
+new revision: 1\.1\.2\.1; previous revision: 1\.1
+done
+Checking in file9;
+${CVSROOT_DIRNAME}/first-dir/file9,v  <--  file9
+new revision: 1\.1\.2\.1; previous revision: 1\.1
+done"
+
+	  # Tag the current revisions on the branch.
+	  dotest join4-11 "${testcvs} -q tag T1 ." \
+'T file3
+T file4
+T file5
+T file6
+T file8
+T file9'
+
+	  # Add file1 and file2, modify file9, and remove the other files.
+	  echo 'first branch revision of file1' > file1
+	  echo 'first branch revision of file2' > file2
+	  echo 'second branch revision of file9' > file9
+	  rm file3 file4 file5 file6
+	  dotest join4-12 "${testcvs} add file1 file2" \
+"${SPROG}"' [a-z]*: scheduling file `file1'\'' for addition on branch `branch'\''
+'"${SPROG}"' [a-z]*: scheduling file `file2'\'' for addition on branch `branch'\''
+'"${SPROG}"' [a-z]*: use .'"${SPROG}"' commit. to add these files permanently'
+	  dotest join4-13 "${testcvs} rm file3 file4 file5 file6" \
+"${SPROG}"' [a-z]*: scheduling `file3'\'' for removal
+'"${SPROG}"' [a-z]*: scheduling `file4'\'' for removal
+'"${SPROG}"' [a-z]*: scheduling `file5'\'' for removal
+'"${SPROG}"' [a-z]*: scheduling `file6'\'' for removal
+'"${SPROG}"' [a-z]*: use .'"${SPROG}"' commit. to remove these files permanently'
+	  dotest join4-14 "${testcvs} -q ci -mx ." \
+"RCS file: ${CVSROOT_DIRNAME}/first-dir/Attic/file1,v
+done
+Checking in file1;
+${CVSROOT_DIRNAME}/first-dir/Attic/file1,v  <--  file1
+new revision: 1\.1\.2\.1; previous revision: 1\.1
+done
+RCS file: ${CVSROOT_DIRNAME}/first-dir/Attic/file2,v
+done
+Checking in file2;
+${CVSROOT_DIRNAME}/first-dir/Attic/file2,v  <--  file2
+new revision: 1\.1\.2\.1; previous revision: 1\.1
+done
+Removing file3;
+${CVSROOT_DIRNAME}/first-dir/file3,v  <--  file3
+new revision: delete; previous revision: 1\.1\.2\.1
+done
+Removing file4;
+${CVSROOT_DIRNAME}/first-dir/file4,v  <--  file4
+new revision: delete; previous revision: 1\.1\.2\.1
+done
+Removing file5;
+${CVSROOT_DIRNAME}/first-dir/Attic/file5,v  <--  file5
+new revision: delete; previous revision: 1\.1\.2\.1
+done
+Removing file6;
+${CVSROOT_DIRNAME}/first-dir/file6,v  <--  file6
+new revision: delete; previous revision: 1\.1\.2\.1
+done
+Checking in file9;
+${CVSROOT_DIRNAME}/first-dir/file9,v  <--  file9
+new revision: 1\.1\.2\.2; previous revision: 1\.1\.2\.1
+done"
+
+	  # Tag the current revisions on the branch.
+	  dotest join4-15 "${testcvs} -q tag T2 ." \
+'T file1
+T file2
+T file8
+T file9'
+
+	  # Modify file4 locally, and do an update with a merge.
+	  cd ../../1/first-dir
+	  echo 'third revision of file4' > file4
+	  dotest join4-18 "${testcvs} -q update -jT1 -jT2 ." \
+'U file1
+R file10
+A file2
+'"${SPROG}"' [a-z]*: file file2 exists, but has been added in revision T2
+'"${SPROG}"' [a-z]*: scheduling file3 for removal
+M file4
+'"${SPROG}"' [a-z]*: file file4 is locally modified, but has been removed in revision T2
+R file6
+A file7
+R file8
+R file9
+'"${SPROG}"' [a-z]*: file file9 does not exist, but is present in revision T2'
+
+	  # Verify that the right changes have been scheduled.
+	  dotest join4-19 "${testcvs} -q update" \
+'A file1
+R file10
+A file2
+R file3
+M file4
+R file6
+A file7
+R file8
+R file9'
+
+	  cd ../..
+
+	  rm -r 1 2
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
 	  ;;
 
@@ -15082,7 +15387,7 @@ new revision: delete; previous revision: 1\.1
 done"
 	  cp ../binfile.dat file1
 	  dotest binfiles3-6 "${testcvs} add -kb file1" \
-"${SPROG} [a-z]*: re-adding file file1 (in place of dead revision 1\.2)
+"${SPROG} [a-z]*: re-adding file .file1. (in place of dead revision 1\.2)
 ${SPROG} [a-z]*: use .${SPROG} commit. to add this file permanently"
 	  # The idea behind this test is to make sure that the file
 	  # gets opened in binary mode to send to "cvs ci".
