@@ -19602,7 +19602,7 @@ Notify file1
 E	Fri May  7 13:21:09 1999 GMT	myhost	some-work-dir	EUC
 noop
 Notify file1
-E	Fri May  7 13:21:09 1999 GMT	myhost	some-work-dir	EUC
+E	The 57th day of Discord in the YOLD 3165	myhost	some-work-dir	EUC
 noop
 EOF
 	      dotest server-7 "cat ${TESTDIR}/server.tmp" \
@@ -19615,6 +19615,134 @@ ok"
 	    else
 	      echo "exit status was $?" >>${LOGFILE}
 	      fail server-7
+	    fi
+
+	    # OK, now test a few error conditions.
+	    if ${testcvs} server >${TESTDIR}/server.tmp <<EOF; then
+Root ${TESTDIR}/crerepos
+Directory .
+${TESTDIR}/crerepos/dir1
+Notify file1
+E	Setting Orange, the 52th day of Discord in the YOLD 3165	myhost	some-work-dir	EUC
+noop
+EOF
+	      # FIXCVS: should give "error" and no "Notified", like server-9
+	      dotest server-8 "cat ${TESTDIR}/server.tmp" \
+"E ${PROG} server: invalid character in editor value
+Notified \./
+${TESTDIR}/crerepos/dir1/file1
+ok"
+	    else
+	      echo "exit status was $?" >>${LOGFILE}
+	      fail server-8
+	    fi
+
+	    if ${testcvs} server >${TESTDIR}/server.tmp <<EOF; then
+Root ${TESTDIR}/crerepos
+Directory .
+${TESTDIR}/crerepos/dir1
+Notify file1
+E	Setting Orange+57th day of Discord	myhost	some-work-dir	EUC
+noop
+EOF
+	      dotest server-9 "cat ${TESTDIR}/server.tmp" \
+"E Protocol error; misformed Notify request
+error  "
+	    else
+	      echo "exit status was $?" >>${LOGFILE}
+	      fail server-9
+	    fi
+
+	    # First demonstrate an interesting quirk in the protocol.
+	    # The "watchers" request selects the files to operate based
+	    # on files which exist in the working directory.  So if we
+	    # don't send "Entry" or the like, it won't do anything.
+	    # Wants to be documented in cvsclient.texi...
+	    if ${testcvs} server >${TESTDIR}/server.tmp <<EOF; then
+Root ${TESTDIR}/crerepos
+Directory .
+${TESTDIR}/crerepos/dir1
+watchers
+EOF
+	      dotest server-10 "cat ${TESTDIR}/server.tmp" \
+"ok"
+	    else
+	      echo "exit status was $?" >>${LOGFILE}
+	      fail server-10
+	    fi
+
+	    # See if "watchers" and "editors" display the right thing.
+	    if ${testcvs} server >${TESTDIR}/server.tmp <<EOF; then
+Root ${TESTDIR}/crerepos
+Directory .
+${TESTDIR}/crerepos/dir1
+Entry /file1/1.1////
+watchers
+EOF
+	      dotest server-11 "cat ${TESTDIR}/server.tmp" \
+"M file1	${username}	tedit	tunedit	tcommit
+ok"
+	    else
+	      echo "exit status was $?" >>${LOGFILE}
+	      fail server-11
+	    fi
+	    if ${testcvs} server >${TESTDIR}/server.tmp <<EOF; then
+Root ${TESTDIR}/crerepos
+Directory .
+${TESTDIR}/crerepos/dir1
+Entry /file1/1.1////
+editors
+EOF
+	      dotest server-12 "cat ${TESTDIR}/server.tmp" \
+"M file1	${username}	The 57th day of Discord in the YOLD 3165	myhost	some-work-dir
+ok"
+	    else
+	      echo "exit status was $?" >>${LOGFILE}
+	      fail server-12
+	    fi
+
+	    # Now do an unedit.
+	    if ${testcvs} server >${TESTDIR}/server.tmp <<EOF; then
+Root ${TESTDIR}/crerepos
+Directory .
+${TESTDIR}/crerepos/dir1
+Notify file1
+U	7 May 1999 15:00 GMT	myhost	some-work-dir	EUC
+noop
+EOF
+	      dotest server-13 "cat ${TESTDIR}/server.tmp" \
+"Notified \./
+${TESTDIR}/crerepos/dir1/file1
+ok"
+	    else
+	      echo "exit status was $?" >>${LOGFILE}
+	      fail server-13
+	    fi
+
+	    # Now try "watchers" and "editors" again.
+	    if ${testcvs} server >${TESTDIR}/server.tmp <<EOF; then
+Root ${TESTDIR}/crerepos
+Directory .
+${TESTDIR}/crerepos/dir1
+watchers
+EOF
+	      dotest server-14 "cat ${TESTDIR}/server.tmp" \
+"ok"
+	    else
+	      echo "exit status was $?" >>${LOGFILE}
+	      fail server-14
+	    fi
+	    if ${testcvs} server >${TESTDIR}/server.tmp <<EOF; then
+Root ${TESTDIR}/crerepos
+Directory .
+${TESTDIR}/crerepos/dir1
+editors
+EOF
+	      dotest server-15 "cat ${TESTDIR}/server.tmp" \
+"ok"
+	    else
+	      echo "exit status was $?" >>${LOGFILE}
+	      fail server-15
 	    fi
 
 	    if test "$keep" = yes; then
