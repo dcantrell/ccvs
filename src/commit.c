@@ -625,11 +625,12 @@ commit (argc, argv)
      * Set up the master update list and hard link list
      */
     mulist = getlist ();
-    hardlist = getlist ();
 
 #ifdef PRESERVE_PERMISSIONS_SUPPORT
     if (preserve_perms)
     {
+	hardlist = getlist ();
+
 	/*
 	 * We need to save the working directory so that
 	 * check_fileproc can construct a full pathname for each file.
