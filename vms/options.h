@@ -123,12 +123,9 @@
  * command-line option "-T" in the line for CVS in /etc/inetd.conf)
  * can be used to specify the used directory.  This directory will
  * also be used for other temporary files.
- *
- * Is there a better default for VMS than SYS$LOGIN?  I'm not aware of a
- * standard convention on VMS.
  */
 #ifndef TMPDIR_DFLT
-#define	TMPDIR_DFLT	"sys$login"
+#define	TMPDIR_DFLT	"sys$scratch"
 #endif
 
 /*
