@@ -1,3 +1,10 @@
+1998-09-09  Jim Kingdon
+
+	* find_names.c (find_dirs): Make sure to zero errno before
+	going around the loop again.
+	* find_names.c (find_rcs): Make sure to set save_errno.
+	(thanks to Alexandre Parenteau for reporting both problems).
+
 1998-09-09  Jim Kingdon  <kingdon@harvey.cyclic.com> and Michael Pakovic
 
 	* edit.c (notify_do): Only free line if it is not NULL.
