@@ -1,3 +1,41 @@
+2005-03-07  Conrad T. Pino  <Conrad@Pino.com>
+
+	* config.h.in.in: Synchronize with ../config.h.in file.
+	Removed:
+		#define HAVE_GETCWD 1
+		#define HAVE_GETCWD_NULL 1
+		#undef HAVE_MKDIR
+		#undef HAVE_RENAME
+		#undef HAVE_VALLOC
+	Added:
+		#undef D_INO_IN_DIRENT
+		#undef HAVE_CFLOCALECOPYCURRENT
+		#undef HAVE_CFPREFERENCESCOPYAPPVALUE
+		#define HAVE_CHSIZE 1
+		#define HAVE_DECL___FPENDING 0
+		#define HAVE_DECL_GETCWD 1
+		#define HAVE_ISWPRINT 1
+		#undef HAVE_MAP_ANONYMOUS
+		#define HAVE_MBRTOWC 1
+		#undef HAVE_MBSINIT
+		#undef HAVE_MEMRCHR
+		#undef HAVE_NANOTIME
+		#undef HAVE_OPENAT
+		#undef HAVE_PARTLY_WORKING_GETCWD
+		#undef HAVE_POSIX_MEMALIGN
+		#define HAVE_STRTOL 1
+		#undef HAVE___FPENDING
+		#undef MAP_ANONYMOUS
+		#define PENDING_OUTPUT_N_BYTES ( fp ? fp->_ptr - fp->_base : 0 )
+		#undef RENAME_TRAILING_SLASH_BUG
+		#undef __GETCWD_PREFIX
+		#undef __OPENAT_PREFIX
+		#undef mkdir
+		#undef rename
+	Changed:
+		#undef HAVE_WCHAR_H replaced with #define HAVE_WCHAR_H 1
+		#undef HAVE_WCHAR_T replaced with #define HAVE_WCHAR_T 1
+
 2005-03-01  Derek Price  <derek@ximbiot.com>
 
 	* config.h.in.footer: Remove obsolete timeb stuff.
