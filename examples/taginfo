@@ -5,7 +5,7 @@
 # The filter on the right is invoked with the following arguments:
 #
 # $1 -- tagname
-# $2 -- operation "add" for tag and "del" for tag -d
+# $2 -- operation "add" for tag, "mov" for tag -F, and "del" for tag -d
 # $3 -- repository
 # $4->  file revision [file revision ...]
 #

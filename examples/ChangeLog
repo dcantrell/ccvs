@@ -1,3 +1,7 @@
+Mon Oct  9 09:25:23 1995  Norbert Kiesel  <nk@col.sw-ley.de>
+
+	* taginfo: document "mov" for tag -F
+
 Thu Aug  3 01:42:28 1995  Vince DeMarco  <vdemarco@bou.shl.com>
 
 	* cvswrappers: Cleaned up old file to use $CVSROOT stuff and
