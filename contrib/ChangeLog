@@ -1,0 +1,16 @@
+Mon Jul 26 13:18:23 1993  David J. Mackenzie  (djm@thepub.cygnus.com)
+
+	* rcs-to-cvs: Rewrite in sh.
+
+Wed Jul 14 21:16:40 1993  David J. Mackenzie  (djm@thepub.cygnus.com)
+
+	* rcs-to-cvs: Don't source .cshrc or hardcode paths.
+	Make respository dir if needed.  Don't suppress errors
+	(such as prompts) from co.
+
+Wed Feb 26 18:04:40 1992  K. Richard Pixley  (rich@cygnus.com)
+
+	* Makefile.in, configure.in: removed traces of namesubdir,
+	  -subdirs, $(subdir), $(unsubdir), some rcs triggers.  Forced
+	  copyrights to '92, changed some from Cygnus to FSF.
+

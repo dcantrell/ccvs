@@ -1,0 +1,110 @@
+Mon Nov 28 10:22:46 1994  Jim Kingdon  (kingdon@lioth.cygnus.com)
+
+	* cvsclient.texi (Notes): Remove item about commit options; now
+	fixed.  Rewrite paragraph about server memory usage.
+
+	* cvsclient.texi (Responses): Add Set-checkin-prog and
+	Set-update-prog.
+	(Requests): Add Checkin-prog and Update-prog.
+	* cvsclient.texi (TODO): Remove last item (it is fixed) and node.
+
+Fri Nov 18 16:51:36 1994  Jim Kingdon  (kingdon@lioth.cygnus.com)
+
+	* cvsclient.texi (Requests): Add Max-dotdot.
+
+Thu Nov  3 07:04:24 1994  Jim Kingdon  (kingdon@lioth.cygnus.com)
+
+	* cvsclient.texi (Protocol): Add Directory request.
+	(TODO): Remove item about renaming directories.
+	(Protocol): Change @subheading to @node/@section.
+
+Fri Oct 28 07:51:13 1994  Jim Kingdon  (kingdon@lioth.cygnus.com)
+
+	* cvsclient.texi (Protocol): Add expand-module request and
+	Module-expansion response.
+	(Protocol Notes, TODO): Remove items about cvs co funkiness.
+
+Wed Oct 12 19:49:36 1994  Jim Kingdon  (kingdon@lioth.cygnus.com)
+
+	* cvsclient.texi (Protocol): Add Copy-file response.
+
+	* cvsclient.texi (How To): Correct item about where declaration
+	of cvs commands go.
+
+	* cvsclient.texi (Protocol): Add new commands.  Merge description
+	of how commands work which was duplicated among the various
+	commands.  Formatting cleanups.
+	(TODO): Remove item about bad error message on checking in a
+	nonexistent file; this works now (presumably fixed by the
+	Unchanged stuff).
+	(Notes): Remove thing about trying unsupported commands via NFS,
+	rdist, etc.  Also remove item about some commands not being
+	supported.  There are no unsupported commands anymore.
+
+Tue Sep 13 13:28:52 1994  Jim Kingdon  (kingdon@lioth.cygnus.com)
+
+	* cvsclient.texi (Protocol): Document New-entry response.
+
+Mon Sep 12 06:35:15 1994  Jim Kingdon  (kingdon@lioth.cygnus.com)
+
+	* cvsclient.texi (Protocol): Clarify that checksum is of patched
+	file, not patch itself.  Fix typo (valid-requests -> Valid-requests).
+
+	* cvsclient.texi (Protocol): Document Sticky request and
+	Set-sticky and Clear-sticky responses.
+	(Notes): Remove sticky tags from todo list.
+
+Thu Sep  8 14:23:58 1994  Jim Kingdon  (kingdon@lioth.cygnus.com)
+
+	* cvsclient.texi (Protocol): Document Static-directory requests
+	and Set-static-directory and Clear-static-directory responses.
+	(Notes): Remove Entries.Static support from todo list.
+
+	* cvsclient.texi (Protocol): Document Unchanged and UseUnchanged
+	requests.  Update documentation of Entry and Lost accordingly.
+
+Mon Aug 22 14:08:21 1994  Jim Kingdon  (kingdon@lioth.cygnus.com)
+
+	* cvsclient.texi (Goals): Remove mention of rsh.
+	(Protocol Notes, TODO): Remove compression item.
+	(Protocol): Document "status" request.
+	(TODO): Remove suggestion to add "cvs status".
+
+Tue Jul 19 10:02:53 1994  Ian Lance Taylor  (ian@sanguine.cygnus.com)
+
+	* Makefile.in (install-info): Do not depend upon installdirs.
+
+Fri Jul 15 12:56:53 1994  Ian Lance Taylor  (ian@sanguine.cygnus.com)
+
+	* Makefile.in (all): Do not depend upon info.
+	(install): Do not depend upon install-info.
+
+Thu Jul  7 20:43:12 1994  Ian Lance Taylor  (ian@sanguine.cygnus.com)
+
+	* cvsclient.texi (Protocol): Add Checksum response.
+
+Thu Jun 30 15:16:50 1994  Jim Kingdon  (kingdon@lioth.cygnus.com)
+
+	* cvsclient.texi (Protocol): Add Global_option request.
+
+Wed Jun 29 14:09:42 1994  Ian Lance Taylor  (ian@sanguine.cygnus.com)
+
+	* cvsclient.texi: Describe sending patches, including the dummy
+	update-patches request and the Patched response.  Mention Kerberos
+	authentication using ``cvs kserver''.  Some other minor changes.
+
+Tue Jun 28 15:21:06 1994  Jim Kingdon  (kingdon@lioth.cygnus.com)
+
+	* cvsclient.texi (Protocol Notes): Remove note about sending diffs
+	in Updated; Ian did it.  Remove note about adding encryption to rsh.
+
+Sat May  7 10:44:30 1994  Jim Kingdon  (kingdon@lioth.cygnus.com)
+
+	* cvsclient.texi (Protocol): Document Modified without Entry.  Add
+	`add' and `remove' and `Remove-entry'.  Formatting cleanups.
+
+Tue Apr 19 01:29:04 1994  John Gilmore  (gnu@cygnus.com)
+
+	* cvsclient.texi:  New node How To; cleanups throughout.
+	* Makefile.in:  Add dependencies on cvsclient.texi.
+
