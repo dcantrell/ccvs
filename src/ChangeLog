@@ -1,3 +1,10 @@
+2003-11-25  Mark D. Baushke  <mdb@cvshome.org>
+
+	* update.c (join_file): Deal with rev1 == NULL due to rev1 merge tag
+	being missing from the current file.
+	* sanity.sh (join6): New tests for this case.
+	(trace): Renumber test cases.
+	
 2003-11-24  Larry Jones  <lawrence.jones@eds.com>
 
 	* diff.c (diff_file_nodiff): use_rev1 does *not* imply that diff_rev1

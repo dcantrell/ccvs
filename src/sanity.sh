@@ -9394,7 +9394,7 @@ C -file"
 "RCS file: ${CVSROOT_DIRNAME}/join6/temp\.txt,v
 done
 Checking in temp\.txt;
-${CVSROOT_DIRNAME}/join6/temp.txt,v  <--  temp\.txt
+${CVSROOT_DIRNAME}/join6/temp\.txt,v  <--  temp\.txt
 initial revision: 1\.1
 done"
 	  cp temp.txt temp2.txt
@@ -9494,6 +9494,27 @@ retrieving revision 1\.2
 retrieving revision 1\.3
 Merging differences between 1\.2 and 1\.3 into temp\.txt"
 	  dotest join6-13 "${testcvs} diff temp.txt" ""
+
+	  cd ../..
+
+	  mkdir 2; cd 2
+	  echo hello > subfile1
+	  dotest join6-14 "${testcvs} -Q import -madd join6/sub vendor oldver" ""
+	  echo hello > subfile2
+	  dotest join6-15 "${testcvs} -Q import -madd join6/sub vendor newver" ""
+	  cd ../1/join6
+	  dotest_sort join6-16 "${testcvs} update -dP" \
+"? temp2\.txt
+? temp3\.txt
+U sub/subfile1
+U sub/subfile2
+${SPROG} update: Updating \.
+${SPROG} update: Updating sub"
+	  dotest_sort join6-17 "${testcvs} update -dP -j oldver -j newver" \
+"? temp2\.txt
+? temp3\.txt
+${SPROG} update: Updating \.
+${SPROG} update: Updating sub"
 
 	  cd ../../..
 
@@ -27153,7 +27174,7 @@ ${SPROG} update: Updating first/subdir"
 	  mkdir imp && cd imp
 	  touch file1
 
-	  dotest_sort trace-0 "${testcvs} -t -t -t init" \
+	  dotest_sort trace-1 "${testcvs} -t -t -t init" \
 "  *-> Lock_Cleanup()
   *-> RCS_checkout (checkoutlist,v, , , , \.#[0-9][0-9]*)
   *-> RCS_checkout (commitinfo,v, , , , \.#[0-9][0-9]*)
@@ -27241,7 +27262,7 @@ S -> unlink_file(\.#rcsinfo)
 S -> unlink_file(\.#taginfo)
 S -> unlink_file(\.#verifymsg)" \
 
-	  dotest_sort trace-1 \
+	  dotest_sort trace-2 \
 "${testcvs} -t -t -t import -mimport trace MYVENDOR version-1" \
 "
 
@@ -27284,7 +27305,7 @@ S -> server_notify()"
 	  cd ..
 	  rm -fr imp
 
-	  dotest_sort trace-2 "${testcvs} -t -t -t co trace" \
+	  dotest_sort trace-3 "${testcvs} -t -t -t co trace" \
 "  *callerdat=${PFMT}, argc=0, argv=${PFMT},
   *direntproc=${PFMT}, dirleavproc=${PFMT},
   *dosrcs=1, repository_in=${CVSROOT_DIRNAME}/trace )
@@ -27401,7 +27422,7 @@ ${SPROG} checkout: Updating trace"
 
 	  cd trace
 	  mkdir subdir
-	  dotest_sort trace-3 "${testcvs} -t -t -t add subdir" \
+	  dotest_sort trace-4 "${testcvs} -t -t -t add subdir" \
 "  *-> Create_Admin
   *-> Create_Admin (\., subdir, ${CVSROOT_DIRNAME}/trace/subdir, , , 0, 0, 1)
   *-> Lock_Cleanup()
@@ -27471,7 +27492,7 @@ S -> unlink_file(CVS/Entries\.Log)
 S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
 S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )"
 	  touch file2
-	  dotest_sort trace-4 "${testcvs} -t -t -t add file2" \
+	  dotest_sort trace-5 "${testcvs} -t -t -t add file2" \
 "  *-> Lock_Cleanup()
   *-> Register(file2, 0, Initial file2, ,  )
   *-> main loop with CVSROOT=${CVSROOT_DIRNAME}
@@ -27522,7 +27543,7 @@ S -> unlink_file(CVS/Entries\.Log)
 S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
 ${SPROG} add: scheduling file \`file2' for addition
 ${SPROG} add: use \`${SPROG} commit' to add this file permanently"
-	  dotest_sort trace-5 "${testcvs} -t -t -t ci -mnew-file file2" \
+	  dotest_sort trace-6 "${testcvs} -t -t -t ci -mnew-file file2" \
 "  *callerdat=${PFMT}, argc=1, argv=${PFMT},
   *callerdat=${PFMT}, argc=1, argv=${PFMT},
   *callerdat=${PFMT}, argc=1, argv=${PFMT},
@@ -27716,7 +27737,7 @@ S -> write_lock(${CVSROOT_DIRNAME}/trace)
 done
 done
 initial revision: 1\.1"
-	  dotest_sort trace-6 "${testcvs} -t -t -t tag bp" \
+	  dotest_sort trace-7 "${testcvs} -t -t -t tag bp" \
 "  *callerdat=${PFMT}, argc=0, argv=${PFMT},
   *callerdat=${PFMT}, argc=0, argv=${PFMT},
   *direntproc=${PFMT}, dirleavproc=${PFMT},
@@ -27976,7 +27997,7 @@ T file2
 ${SPROG} tag: Tagging \.
 ${SPROG} tag: Tagging subdir"
 
-	  dotest_sort trace-7 "${testcvs} -t -t -t tag -b branch1" \
+	  dotest_sort trace-8 "${testcvs} -t -t -t tag -b branch1" \
 "  *callerdat=${PFMT}, argc=0, argv=${PFMT},
   *callerdat=${PFMT}, argc=0, argv=${PFMT},
   *direntproc=${PFMT}, dirleavproc=${PFMT},
@@ -28237,7 +28258,7 @@ T file1
 T file2
 ${SPROG} tag: Tagging \.
 ${SPROG} tag: Tagging subdir"
-	  dotest_sort trace-8 "${testcvs} -t -t -t log" \
+	  dotest_sort trace-9 "${testcvs} -t -t -t log" \
 "
 
   *callerdat=${PFMT}, argc=0, argv=${PFMT},
@@ -28469,7 +28490,7 @@ symbolic names:
 total revisions: 1; selected revisions: 1
 total revisions: 2; selected revisions: 2"
 
-	  dotest_sort trace-9 "${testcvs} -t -t -t annotate file1" \
+	  dotest_sort trace-10 "${testcvs} -t -t -t annotate file1" \
 "
   *callerdat=${PFMT}, argc=1, argv=${PFMT},
   *direntproc=${PFMT}, dirleavproc=${PFMT},
@@ -28545,7 +28566,7 @@ S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
 S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )"
 
 	  dotest_sort \
-trace-10 "${testcvs} -t -t -t rtag -r bp -b branch2 trace" \
+trace-11 "${testcvs} -t -t -t rtag -r bp -b branch2 trace" \
 "  *aflag=0, repository=${CVSROOT_DIRNAME}/trace )
   *callerdat=${PFMT}, argc=0, argv=${PFMT},
   *callerdat=${PFMT}, argc=0, argv=${PFMT},
@@ -28831,7 +28852,7 @@ S -> write_lock(${CVSROOT_DIRNAME}/trace/subdir)
 ${SPROG} rtag: Tagging trace
 ${SPROG} rtag: Tagging trace/subdir"
 
-	  dotest_sort trace-11 "${testcvs} -t -t -t status file1" \
+	  dotest_sort trace-12 "${testcvs} -t -t -t status file1" \
 "
 
   *callerdat=${PFMT}, argc=1, argv=${PFMT},
@@ -28919,7 +28940,7 @@ S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
 S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )"
 
 	  echo foo >> file1
-	  dotest_sort trace-12 "${testcvs} -t -t -t up -C file1" \
+	  dotest_sort trace-13 "${testcvs} -t -t -t up -C file1" \
 "  *callerdat=${PFMT}, argc=1, argv=${PFMT},
   *direntproc=${PFMT}, dirleavproc=${PFMT},
   *dosrcs=1, repository_in=(null) )
@@ -29018,7 +29039,7 @@ S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
 S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
 U file1"
 	  echo foo >> file1
-	  dotest_sort trace-13 "${testcvs} -t -t -t ci -madd-data file1" \
+	  dotest_sort trace-14 "${testcvs} -t -t -t ci -madd-data file1" \
 "  *callerdat=${PFMT}, argc=1, argv=${PFMT},
   *callerdat=${PFMT}, argc=1, argv=${PFMT},
   *callerdat=${PFMT}, argc=1, argv=${PFMT},
@@ -29213,7 +29234,7 @@ S -> write_lock(${CVSROOT_DIRNAME}/trace)
 done
 new revision: 1\.2; previous revision: 1\.1"
 
-	  dotest_fail_sort trace-14 "${testcvs} -t -t -t diff -r1.1 file1" \
+	  dotest_fail_sort trace-15 "${testcvs} -t -t -t diff -r1.1 file1" \
 "  *aflag=0, repository= )
   *callerdat=${PFMT}, argc=1, argv=${PFMT},
   *direntproc=${PFMT}, dirleavproc=${PFMT},
@@ -29312,7 +29333,7 @@ diff -r1\.1 -r1\.2
 retrieving revision 1\.1
 retrieving revision 1\.2"
 
-	  dotest_sort trace-15 "${testcvs} -t -t -t rdiff -rbp trace/file1" \
+	  dotest_sort trace-16 "${testcvs} -t -t -t rdiff -rbp trace/file1" \
 "  *aflag=0, repository=${CVSROOT_DIRNAME}/trace )
   *callerdat=${PFMT}, argc=1, argv=${PFMT},
   *direntproc=${PFMT}, dirleavproc=${PFMT},
@@ -29397,7 +29418,7 @@ S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
 S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
 diff -c trace/file1:1\.1\.1\.1 trace/file1:1\.2"
 
-	  dotest_sort trace-16 "${testcvs} -t -t -t rm -f file1" \
+	  dotest_sort trace-17 "${testcvs} -t -t -t rm -f file1" \
 "  *callerdat=${PFMT}, argc=1, argv=${PFMT},
   *direntproc=${PFMT}, dirleavproc=${PFMT},
   *dosrcs=1, repository_in=(null) )
@@ -29494,7 +29515,7 @@ S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
 ${SPROG} remove: scheduling \`file1' for removal
 ${SPROG} remove: use \`${SPROG} commit' to remove this file permanently"
 
-	  dotest_sort trace-17 "${testcvs} -t -t -t ci -mremove file1" \
+	  dotest_sort trace-18 "${testcvs} -t -t -t ci -mremove file1" \
 "  *callerdat=${PFMT}, argc=1, argv=${PFMT},
   *callerdat=${PFMT}, argc=1, argv=${PFMT},
   *callerdat=${PFMT}, argc=1, argv=${PFMT},
@@ -29709,7 +29730,7 @@ S -> write_lock(${CVSROOT_DIRNAME}/trace)
 done
 new revision: delete; previous revision: 1\.2"
 
-	  dotest_sort trace-18 "${testcvs} -t -t -t history file1" \
+	  dotest_sort trace-19 "${testcvs} -t -t -t history file1" \
 "  *-> Lock_Cleanup()
   *-> main loop with CVSROOT=${CVSROOT_DIRNAME}
   *-> parse_cvsroot ( ${CVSROOT_DIRNAME} )
