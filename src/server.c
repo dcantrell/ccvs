@@ -94,6 +94,10 @@ static struct buffer *buf_from_net;
  */
 static char *server_temp_dir;
 
+/* This is the original value of server_temp_dir, before any possible
+   changes inserted by serve_max_dotdot.  */
+static char *orig_server_temp_dir;
+
 /* Nonzero if we should keep the temp directory around after we exit.  */
 static int dont_delete_temp;
 
@@ -523,7 +527,8 @@ serve_max_dotdot (arg)
     strcpy (p, server_temp_dir);
     for (i = 0; i < lim; ++i)
 	strcat (p, "/d");
-    free (server_temp_dir);
+    if (server_temp_dir != orig_server_temp_dir)
+	free (server_temp_dir);
     server_temp_dir = p;
 }
 
@@ -2124,7 +2129,7 @@ error  \n");
 		if (status & 0x80)
 		{
 		    buf_output0 (buf_to_net, "E Core dumped; preserving ");
-		    buf_output0 (buf_to_net, server_temp_dir);
+		    buf_output0 (buf_to_net, orig_server_temp_dir);
 		    buf_output0 (buf_to_net, " on server.\n\
 E CVS locks may need cleaning up.\n");
 		    dont_delete_temp = 1;
@@ -3606,7 +3611,7 @@ server_cleanup (sig)
        and try to notify the client (but the client might not be waiting
        for responses).  We could try something like syslog() or our own
        log file.  */
-    unlink_file_dir (server_temp_dir);
+    unlink_file_dir (orig_server_temp_dir);
 
     if (buf_to_net != NULL)
 	(void) buf_shutdown (buf_to_net);
@@ -3710,7 +3715,7 @@ error ENOMEM Virtual memory exhausted.\n");
 		 * now.  But we're about to exit(), give it a try.
 		 */
 		printf ("E Fatal server error, aborting.\n\
-    error ENOMEM Virtual memory exhausted.\n");
+error ENOMEM Virtual memory exhausted.\n");
 		exit (EXIT_FAILURE);
 	    }
 	    strcpy (server_temp_dir, Tmpdir);
@@ -3729,6 +3734,8 @@ error ENOMEM Virtual memory exhausted.\n");
 
 	    p = server_temp_dir + strlen (server_temp_dir);
 	    sprintf (p, "%ld", (long) getpid ());
+
+	    orig_server_temp_dir = server_temp_dir;
 	}
     }
 
