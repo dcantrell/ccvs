@@ -4112,11 +4112,10 @@ RCS_checkout (rcs, workfile, rev, nametag, options, sout, pfn, callerdat)
     size_t loglen;
     Node *vp = NULL;
 #ifdef PRESERVE_PERMISSIONS_SUPPORT
-    uid_t rcs_owner;
-    gid_t rcs_group;
+    uid_t rcs_owner = (uid_t) -1;
+    gid_t rcs_group = (gid_t) -1;
     mode_t rcs_mode;
-    int change_rcs_owner = 0;
-    int change_rcs_group = 0;
+    int change_rcs_owner_or_group = 0;
     int change_rcs_mode = 0;
     int special_file = 0;
     unsigned long devnum_long;
@@ -4362,13 +4361,13 @@ RCS_checkout (rcs, workfile, rev, nametag, options, sout, pfn, callerdat)
 	info = findnode (vers->other_delta, "owner");
 	if (info != NULL)
 	{
-	    change_rcs_owner = 1;
+	    change_rcs_owner_or_group = 1;
 	    rcs_owner = (uid_t) strtoul (info->data, NULL, 10);
 	}
 	info = findnode (vers->other_delta, "group");
 	if (info != NULL)
 	{
-	    change_rcs_group = 1;
+	    change_rcs_owner_or_group = 1;
 	    rcs_group = (gid_t) strtoul (info->data, NULL, 10);
 	}
 	info = findnode (vers->other_delta, "permissions");
@@ -4547,10 +4546,10 @@ RCS_checkout (rcs, workfile, rev, nametag, options, sout, pfn, callerdat)
 	if (!special_file && fclose (ofp) < 0)
 	    error (1, errno, "cannot close %s", workfile);
 
-	if (change_rcs_owner || change_rcs_group)
+	if (change_rcs_owner_or_group)
 	{
 	    if (chown (workfile, rcs_owner, rcs_group) < 0)
-		error (0, errno, "could not change file ownership on %s",
+		error (0, errno, "could not change owner or group of %s",
 		       workfile);
 	}
 
