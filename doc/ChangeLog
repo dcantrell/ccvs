@@ -1,3 +1,9 @@
+1998-06-03  Ian Lance Taylor  <ian@cygnus.com>
+
+	* cvs.texinfo (Tracking sources): Clarify that the vendor branch
+	is only made the head revision when you import a new file, not any
+	time you import a file.
+
 1998-05-23  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (What is CVS?): info-cvs-request is now at gnu.org
