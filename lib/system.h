@@ -441,6 +441,14 @@ extern int errno;
 #define CVS_OPEN open
 #endif
 
+#ifndef CVS_READDIR
+#define CVS_READDIR readdir
+#endif
+
+#ifndef CVS_CLOSEDIR
+#define CVS_CLOSEDIR closedir
+#endif
+
 #ifndef CVS_OPENDIR
 #define CVS_OPENDIR opendir
 #endif
