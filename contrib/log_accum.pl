@@ -172,9 +172,10 @@ sub read_logfile {
 sub build_header {
     local($header);
     local($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime(time);
-    $header = sprintf("CVSROOT:\t%s\nModule name:\t%s\nChanges by:\t%s@%s\t%02d/%02d/%02d %02d:%02d:%02d",
+    $header = sprintf("CVSROOT:\t%s\nModule name:\t%s\nRepository:\t%s\nChanges by:\t%s@%s\t%02d/%02d/%02d %02d:%02d:%02d",
 		      $cvsroot,
 		      $modulename,
+		      $dir,
 		      $login, $hostdomain,
 		      $year%100, $mon+1, $mday,
 		      $hour, $min, $sec);
@@ -253,12 +254,12 @@ $state = $STATE_NONE;
 $login = getlogin || (getpwuid($<))[0] || "nobody";
 chop($hostname = `hostname`);
 chop($domainname = `domainname`);
-$hostdomain = $hostname . $domainname;
 if ($domainname !~ '^\..*') {
     $domainname = '.' . $domainname;
 }
+$hostdomain = $hostname . $domainname;
 $cvsroot = $ENV{'CVSROOT'};
-$do_status = 1;
+$do_status = 1;			# moderately useful
 $show_wd = 0;			# useless in client/server
 $modulename = "";
 
@@ -307,10 +308,14 @@ if ($replyto eq '') {
 #
 @path = split('/', $files[0]);
 
-# XXX there are some ugly assumptions in here about module names and
+# XXX There are some ugly assumptions in here about module names and
 # XXX directories relative to the $CVSROOT location -- really should
 # XXX read $CVSROOT/CVSROOT/modules, but that's not so easy to do, since
 # XXX we have to parse it backwards.
+# XXX 
+# XXX Fortunately it's relatively easy for the user to specify the
+# XXX module name as appropriate with a '-M' via the directory
+# XXX matching in loginfo.
 #
 if ($modulename eq "") {
     $modulename = $path[0];	# I.e. the module name == top-level dir
