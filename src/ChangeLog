@@ -1,3 +1,8 @@
+2003-06-13  Derek Price  <derek@ximbiot.com>
+
+	* diff.c (diff_fileproc): Fix memory leak.
+	(Patch from Kenneth Lorber <keni@his.com>.)
+
 2003-06-12  Derek Price  <derek@ximbiot.com>
 
 	* root.c (parse_cvsroot, local_cvsroot): Parse trailing '/'s off the
