@@ -1,5 +1,10 @@
 2003-02-07  Derek Price  <derek@ximbiot.com>
 
+	* sanity.sh (*): Don't keep running after a test when --keep has been
+	supplied.  That was kind of silly, wasn't it?
+
+2003-02-07  Derek Price  <derek@ximbiot.com>
+
 	* rcscmds (RCS_merge): Add a FIXME.
 
 2003-02-07  Derek Price  <derek@ximbiot.com>
