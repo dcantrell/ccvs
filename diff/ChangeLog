@@ -1,3 +1,10 @@
+2004-05-15  Derek Price  <derek@ximbiot.com>
+
+	* libdiff.dsp: Header file list updated for GNULIB updates.
+	* libdiff.dep: Regenerated for "libdiff.dsp" changes.
+	* libdiff.mak: Regenerated for "libdiff.dsp" changes.
+	(Patch from Conrad T. Pino <Conrad@Pino.com>.)
+
 2004-04-23  Derek Price  <derek@ximbiot.com>
 
 	* libdiff.mak: Regenerated.
