@@ -70,9 +70,6 @@ export LC_ALL
 #     to ensure the two are different.
 : ${TESTDIR=/tmp/cvs-sanity}
 
-# Some people may need to use nawk or gawk instead
-: ${AWK=awk}
-
 # "debugger"
 #set -x
 
@@ -157,9 +154,11 @@ if test -f check.log; then
 	mv check.log check.plog
 fi
 
-GEXPRLOCS="`echo $PATH | sed 's/:/ /g'` /usr/local/bin /usr/contrib/bin /usr/gnu/bin /local/bin /local/gnu/bin /gun/bin"
+GLOCS="`echo $PATH | sed 's/:/ /g'` /usr/local/bin /usr/contrib/bin /usr/gnu/bin /local/bin /local/gnu/bin /gun/bin"
 
-EXPR=expr
+: ${AWK=awk}
+: ${EXPR=expr}
+: ${TR=tr}
 
 # Cause NextStep 3.3 users to lose in a more graceful fashion.
 if $EXPR 'abc
@@ -167,7 +166,8 @@ def' : 'abc
 def' >/dev/null; then
   : good, it works
 else
-  for path in $GEXPRLOCS ; do
+  EXPR=""
+  for path in $GLOCS ; do
     if test -x $path/gexpr ; then
       if test "X`$path/gexpr --version`" != "X--version" ; then
         EXPR=$path/gexpr
@@ -194,7 +194,8 @@ fi
 if $EXPR 'a
 b' : 'a
 c' >/dev/null; then
-  for path in $GEXPRLOCS ; do
+  EXPR=""
+  for path in $GLOCS ; do
     if test -x $path/gexpr ; then
       if test "X`$path/gexpr --version`" != "X--version" ; then
         EXPR=$path/gexpr
@@ -266,6 +267,33 @@ if $EXPR 'a?b' : "a${QUESTION}b" >/dev/null; then
   : good, it works
 else
   QUESTION='\?'
+fi
+
+# now make sure that tr works on NULs
+if $EXPR `echo "123" | ${TR} '2' '\0'` : "123" >/dev/null; then
+  TR=""
+  for path in $GLOCS ; do
+    if test -x $path/gtr ; then
+      if test "X`$path/gtr --version`" != "X--version" ; then
+        TR=$path/gtr
+        break
+      fi
+    fi
+    if test -x $path/tr ; then
+      if test "X`$path/tr --version`" != "X--version" ; then
+        EXPR=$path/tr
+        break
+      fi
+    fi
+  done
+  if test -z "$TR" ; then
+    echo 'Warning: you are using a version of tr which does not correctly'
+    echo 'handle NUL bytes.  Some tests may spuriously pass or fail.'
+    echo 'You may wish to make sure GNU tr is in your path.'
+    TR=tr
+  fi
+else
+  : good, it works
 fi
 
 pass ()
@@ -524,7 +552,7 @@ dotest_sort ()
     echo "exit status was $status" >>${LOGFILE}
     fail "$1"
   fi
-  tr '	' ' ' < ${TESTDIR}/dotest.tmp1 | sort > ${TESTDIR}/dotest.tmp
+  ${TR} '	' ' ' < ${TESTDIR}/dotest.tmp1 | sort > ${TESTDIR}/dotest.tmp
   dotest_internal "$@"
 }
 
@@ -10945,7 +10973,7 @@ Are you sure you want to release (and delete) directory .second-dir': "
 	  mkdir 1; cd 1
 	  dotest binfiles-1 "${testcvs} -q co first-dir" ''
 	  ${AWK} 'BEGIN { printf "%c%c%c@%c%c", 2, 10, 137, 13, 10 }' \
-	    </dev/null | tr '@' '\000' >binfile.dat
+	    </dev/null | ${TR} '@' '\000' >binfile.dat
 	  cat binfile.dat binfile.dat >binfile2.dat
 	  cd first-dir
 	  cp ../binfile.dat binfile
@@ -11217,7 +11245,7 @@ total revisions: 1
 	  # a few likely end-of-line patterns to make sure nothing is
 	  # being munged as if in text mode.
 	  ${AWK} 'BEGIN { printf "%c%c%c@%c%c", 2, 10, 137, 13, 10 }' \
-	    </dev/null | tr '@' '\000' >../binfile
+	    </dev/null | ${TR} '@' '\000' >../binfile
 	  cat ../binfile ../binfile >../binfile2
 	  cat ../binfile2 ../binfile >../binfile3
 
@@ -11379,7 +11407,7 @@ checkin
 	  mkdir 1; cd 1
 	  dotest binfiles3-1 "${testcvs} -q co first-dir" ''
 	  ${AWK} 'BEGIN { printf "%c%c%c@%c%c", 2, 10, 137, 13, 10 }' \
-	    </dev/null | tr '@' '\000' >binfile.dat
+	    </dev/null | ${TR} '@' '\000' >binfile.dat
 	  cd first-dir
 	  echo hello >file1
 	  dotest binfiles3-2 "${testcvs} add file1" \
@@ -11434,9 +11462,9 @@ total revisions: 3
 	  # OK, now test admin -o on a binary file.  See "admin"
 	  # test for a more complete list of admin -o tests.
 	  cp ${TESTDIR}/1/binfile.dat ${TESTDIR}/1/binfile4.dat
-	  echo '%%$$##@@!!jjiiuull' | tr j '\000' >>${TESTDIR}/1/binfile4.dat
+	  echo '%%$$##@@!!jjiiuull' | ${TR} j '\000' >>${TESTDIR}/1/binfile4.dat
 	  cp ${TESTDIR}/1/binfile4.dat ${TESTDIR}/1/binfile5.dat
-	  echo 'aawwee%$$##@@!!jjil' | tr w '\000' >>${TESTDIR}/1/binfile5.dat
+	  echo 'aawwee%$$##@@!!jjil' | ${TR} w '\000' >>${TESTDIR}/1/binfile5.dat
 
 	  cp ../binfile4.dat file1
 	  dotest binfiles3-9 "${testcvs} -q ci -m change" \
@@ -13903,7 +13931,7 @@ ${PROG} \[log aborted\]: no repository"
 "${TESTDIR}/cvsroot/first-dir/file1,v"
 
 	  # OK, now put an extraneous '\0' at the end.
-	  ${AWK} </dev/null 'BEGIN { printf "@%c", 10 }' | tr '@' '\000' \
+	  ${AWK} </dev/null 'BEGIN { printf "@%c", 10 }' | ${TR} '@' '\000' \
 	    >>${CVSROOT_DIRNAME}/first-dir/file1,v
 	  dotest_fail rcs3-7 "${testcvs} log -s nostate file1" \
 "${PROG} \[[a-z]* aborted\]: unexpected '.x0' reading revision number in RCS file ${TESTDIR}/cvsroot/first-dir/file1,v"
@@ -15556,7 +15584,7 @@ ${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
 
 	  ${AWK} 'BEGIN { printf "%c%c%c%sRevision: 1.1 $@%c%c", \
 	    2, 10, 137, "$", 13, 10 }' \
-	    </dev/null | tr '@' '\000' >../binfile.dat
+	    </dev/null | ${TR} '@' '\000' >../binfile.dat
 	  cp ../binfile.dat .
 	  dotest keyword2-5 "${testcvs} add -kb binfile.dat" \
 "${PROG} [a-z]*: scheduling file .binfile\.dat. for addition
@@ -15662,7 +15690,7 @@ T file1"
 	  dotest keyword2-18 "${testcvs} -q update -r branch2" ''
 
 	  ${AWK} 'BEGIN { printf "%c%c%c@%c%c", 2, 10, 137, 13, 10 }' \
-	    </dev/null | tr '@' '\000' >>binfile.dat
+	    </dev/null | ${TR} '@' '\000' >>binfile.dat
 	  dotest keyword2-19 "${testcvs} -q ci -m badbadbad" \
 "Checking in binfile\.dat;
 ${TESTDIR}/cvsroot/first-dir/binfile\.dat,v  <--  binfile\.dat
@@ -20025,7 +20053,7 @@ EOF
 	    ${AWK} 'BEGIN { \
 printf "%c%c%c%c%c%c.6%c%c+I-.%c%c%c%c5%c;%c%c%c%c", \
 31, 139, 8, 64, 5, 7, 64, 3, 225, 2, 64, 198, 185, 5, 64, 64, 64}' \
-	      </dev/null | tr '\100' '\000' >gzipped.dat
+	      </dev/null | ${TR} '\100' '\000' >gzipped.dat
 	    # Note that the CVS client sends "-b 1.1.1", and this
 	    # test doesn't.  But the server also defaults to that.
 	    cat <<EOF >session.dat
