@@ -1,5 +1,10 @@
 Sun Apr 27 16:17:06 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvsclient.texi (Requests): Clarify how long-lived Sticky and
+	Static-directory are.
+
+	* cvs.texinfo: Add @finalout.
+
 	* cvs.texinfo (Error messages): Add "cannot change permissions on
 	temporary directory" message.
 
