@@ -1,3 +1,7 @@
+Thu Jul 11 21:51:45 1996  Ian Lance Taylor  <ian@cygnus.com>
+
+	* cvsclient.texi (Responses): Document new "F" response.
+
 Wed Jul 10 18:46:39 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (log): Don't document "rlog"; it is deprecated.
