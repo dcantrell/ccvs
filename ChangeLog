@@ -1,3 +1,15 @@
+2005-04-05  Derek Price  <derek@ximbiot.com>
+
+	* configure.in: Specify new build-aux directory for auxiliary build
+	files.
+	* compile, config.guess, config.rpath, config.sub, depcomp, install-sh,
+	mdate-sh, missing, texinfo.tex, ylwrap: Move to...
+	* build-aux: ...this new directory.
+	* INSTALL: Replace with generic version from Automake, moving...
+	* INSTALL-CVS: ...original to here.  Reference INSTALL for more
+	configure information.
+	* FAQ, README: Reference INSTALL-CVS rather than INSTALL.
+
 2005-03-29  Mark D. Baushke  <mdb@cvshome.org>
 
 	* config.guess, config.rpath, config.sub, depcomp, gnulib.txt,
