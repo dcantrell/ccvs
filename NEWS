@@ -3,6 +3,9 @@ Changes since 1.11.2:
 * When waiting for another user's lock, the message timestamps are now
 in UTC rather than the server's local time.
 
+* The options.h file is no longer used.  This fixes a bug that occurred when
+1.11.2 was compiled on Windows platforms.
+
 * We've standardized on Automake version 1.6.3 and Autoconf version 2.53.
 They are cleaner, less bug prone, and will hopfully allow me to start updating
 sanity.sh to use Autotest and Autoshell.  Again, this should only really affect

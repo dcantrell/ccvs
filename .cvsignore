@@ -10,6 +10,7 @@ autom4te*.cache
 config.h
 config.log
 config.status
+cvs-*.tar.bz2
 cvs-*.tar.gz
 cvs.spec
 cvsinit
