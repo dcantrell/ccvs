@@ -1,3 +1,7 @@
+2003-12-04  Derek Price  <derek@ximbiot.com>
+
+	* config.h, stamp-ch: Regenerated for release 1.12.3.
+
 2003-11-25  Mark D. Baushke  <mdb@cvshome.org>
 
 	* Makefile.in: Regenerate for new configure.in.
