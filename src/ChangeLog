@@ -1,3 +1,8 @@
+Thu Feb 29 16:54:14 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* lock.c: Rename unlock to lock_simple_remove to avoid conflict
+	with builtin function on QNX.
+
 Thu Feb 29 17:02:22 1996  Samuel Tardieu  <sam@inf.enst.fr>
 
 	* fileattr.c (fileattr_get): Removed NULL pointer dereference
