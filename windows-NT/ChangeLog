@@ -1,5 +1,10 @@
 2004-06-24  Derek Price  <derek@ximbiot.com>
 
+	* config.h.in.in (restrict): Define empty for Windows.
+	(Patch submitted by Conrad T. Pino <Conrad@Pino.com>.)
+
+2004-06-24  Derek Price  <derek@ximbiot.com>
+
 	* config.h.in.in (HAVE_RUN_TZSET_TEST, my_strftime): Define to values
 	more appropriate for Windows.
 	(Original patch submitted by Conrad T. Pino <Conrad@Pino.com>.)
