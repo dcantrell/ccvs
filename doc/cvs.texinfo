@@ -3637,14 +3637,14 @@ provide a better way to distinguish between things like
 release 1 versus release 2 of your product
 (@pxref{Tags}).  However, if you want to set the
 numeric revisions, the @samp{-r} option to @code{cvs
-commit} can do that.
+commit} can do that.  The @samp{-r} option implies the
+@samp{-f} option, in the sense that it causes the
+files to be committed even if they are not modified.
 
-For example, to bring all your files up to the @sc{rcs}
+For example, to bring all your files up to
 revision 3.0 (including those that haven't changed),
 you might invoke:
 
-@c Why does this not require -f to get the "those that
-@c haven't changed" part?  That isn't clear to me.
 @example
 $ cvs commit -r 3.0
 @end example
