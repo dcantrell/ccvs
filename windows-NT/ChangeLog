@@ -1,3 +1,9 @@
+2004-10-26  Derek Price  <derek@ximbiot.com>
+
+	* Makefile.am (config.h.in): Allow this file to be built even when not
+	in maintainer mode when it is actually missing.  Add comment.
+	(stamp-chi): Remove maintainer mode restriction.  Add comments.
+
 2004-10-25  Derek Price  <derek@ximbiot.com>
 
 	* config.h.in.in (HAVE_RPMATCH): Undef this irrelevant macro on WOE32.
