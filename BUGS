@@ -39,6 +39,15 @@ discussed for CVS/Template, &c.
 bugs and annoyances with wrappers.
 
 
+* If your login name contains a space or various other characters
+(particularly an issue on Windows), CVS will have trouble (it will
+write invalid RCS files, probably).  The fix would be to have CVS
+change such characters to underscores before writing them to the RCS
+file.  Furthermore, the LOGNAME or USER environment variables usually
+won't override the system login name, so this can be hard to work
+around.
+
+
 * If you specify the -w global option to client/server CVS, it only
 overrides a CVSREAD environment variable set on the client, not a
 CVSREAD variable which was set on the server (for example, in .bashrc
