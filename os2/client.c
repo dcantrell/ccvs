@@ -7,19 +7,6 @@
 #include "update.h"		/* Things shared with update.c */
 #include "md5.h"
 
-#if HAVE_KERBEROS
-#define CVS_PORT 1999
-
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <netdb.h>
-#include <krb.h>
-
-extern char *krb_realmofhost ();
-#ifndef HAVE_KRB_GET_ERR_TEXT
-#define krb_get_err_text(status) krb_err_txt[status]
-#endif
-#endif
 
 static void add_prune_candidate PROTO((char *));
 
@@ -233,10 +220,6 @@ FILE *to_server;
 /* Stream to read from the server.  */
 FILE *from_server;
 
-#if ! RSH_NOT_TRANSPARENT
-/* Process ID of rsh subprocess.  */
-static int rsh_pid = -1;
-#endif
 
 /*
  * Read a line from the server.
@@ -2061,28 +2044,8 @@ get_responses_and_close ()
     if (client_prune_dirs)
 	process_prune_candidates ();
 
-#ifdef HAVE_KERBEROS
-    if (server_fd != -1)
     {
-	if (shutdown (server_fd, 1) < 0)
-	    error (1, errno, "shutting down connection to %s", server_host);
-	/*
-	 * In this case, both sides of the net connection will use the
-         * same fd.
-	 */
-	if (fileno (from_server) != fileno (to_server))
-	{
-	    if (fclose (to_server) != 0)
-		error (1, errno, "closing down connection to %s", server_host);
-	}
-    }
-    else
-#endif
-#ifdef SHUTDOWN_SERVER
-    SHUTDOWN_SERVER (fileno (to_server));
-#else
-    {
-	if (fclose (to_server) == EOF)
+	if (pclose (to_server) < 0)
 	    error (1, errno, "closing connection to %s", server_host);
     }
 
@@ -2092,21 +2055,10 @@ get_responses_and_close ()
 	error (0, errno, "reading from %s", server_host);
 
     fclose (from_server);
-#endif
-
-#if !RSH_NOT_TRANSPARENT
-    if (rsh_pid != -1
-	&& waitpid (rsh_pid, (int *) 0, 0) == -1)
-      error (1, errno, "waiting for process %d", rsh_pid);
-#endif
 
     return errs;
 }
 	
-#ifndef RSH_NOT_TRANSPARENT
-static void start_rsh_server PROTO((int *, int *));
-#endif
-
 int
 supported_request (name)
      char *name;
@@ -2129,6 +2081,7 @@ start_server ()
 {
   /* From old start_server(): */
   int tofd, fromfd;
+  int rc;
   char *log = getenv ("CVS_CLIENT_LOG");
   
   FILE *pipes[2];
@@ -2184,7 +2137,7 @@ start_server ()
   
   printf ("*** Starting server:\n");
   fflush (stdout);
-  rsh_pid = popenRW (command, pipes);
+  rc = popenRW (command, pipes);
   printf ("*** Started server!\n");
   
   to_server   = pipes[0];
@@ -2192,7 +2145,7 @@ start_server ()
   
   fflush (stdout);
   
-  if (rsh_pid != TRUE)
+  if (rc != TRUE)
     error (1, errno, "cannot start server via rsh");
   
   /* Do we need to do this now?  Probably not. */
@@ -2371,75 +2324,6 @@ start_server ()
     }
 }
 
-#ifndef RSH_NOT_TRANSPARENT
-/* Contact the server by starting it with rsh.  */
-
-static void
-start_rsh_server (tofdp, fromfdp)
-     int *tofdp;
-     int *fromfdp;
-{
-    /* If you're working through firewalls, you can set the
-       CVS_RSH environment variable to a script which uses rsh to
-       invoke another rsh on a proxy machine.  */
-    char *cvs_rsh = getenv ("CVS_RSH");
-    char *cvs_server = getenv ("CVS_SERVER");
-    char *command;
-
-    if (!cvs_rsh)
-	cvs_rsh = "rsh";
-    if (!cvs_server)
-	cvs_server = "cvs";
-
-    /* Pass the command to rsh as a single string.  This shouldn't
-       affect most rsh servers at all, and will pacify some buggy
-       versions of rsh that grab switches out of the middle of the
-       command (they're calling the GNU getopt routines incorrectly).  */
-    command = xmalloc (strlen (cvs_server)
-		       + strlen (server_cvsroot)
-		       + 50);
-
-    /* If you are running a very old (Nov 3, 1994, before 1.5)
-     * version of the server, you need to make sure that your .bashrc
-     * on the server machine does not set CVSROOT to something
-     * containing a colon (or better yet, upgrade the server).  */
-    sprintf (command, "%s server", cvs_server);
-
-    {
-        char *argv[10];
-	char **p = argv;
-
-	*p++ = cvs_rsh;
-	*p++ = server_host;
-
-	/* If the login names differ between client and server
-	 * pass it on to rsh.
-	 */
-	if (server_user != NULL)
-	{
-	    *p++ = "-l";
-	    *p++ = server_user;
-	}
-
-	*p++ = command;
-	*p++ = NULL;
-
-	if (trace)
-        {
-	    int i;
-
-            fprintf (stderr, " -> Starting server: ");
-	    for (i = 0; argv[i]; i++)
-	        fprintf (stderr, "%s ", argv[i]);
-	    putc ('\n', stderr);
-	}
-	rsh_pid = piped_child (argv, tofdp, fromfdp);
-
-	if (rsh_pid < 0)
-	    error (1, errno, "cannot start server via rsh");
-    }
-}
-#endif
 
 
 /* Send an argument STRING.  */

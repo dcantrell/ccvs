@@ -1,3 +1,18 @@
+Sat Nov 18 13:39:06 1995  Karl Fogel  <kfogel@floss.cyclic.com>
+
+        * popen.c (popenRW): fixed misleading comment.
+
+        * client.c:
+        (rsh_pid): no more need for this var; the handle-to-PID library in
+        popen.c manages PID's for us now. 
+        (start_rsh_server): removed this func, since we don't use it -- we
+        do use `rsh', but we call it directly from popenRW().
+        (get_responses_and_close): removed cruft that doesn't apply to
+        this port -- i.e., blocks conditional on HAVE_KERBEROS or
+        RSH_NOT_TRANSPARENT.
+        (start_server): Just check return code, instead of recording
+        rsh_pid.
+
 Fri Nov 17 21:13:22 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
         * client.c (call_in_directory): Ask EACCESS even though we're

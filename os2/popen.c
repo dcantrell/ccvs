@@ -345,7 +345,7 @@ popenRW (const char  *Command, FILE **Pipes)
         return FALSE;
     }
     
-    /* Save ID of read pipe for pclose() */
+    /* Save ID of write-to-child pipe for pclose() */
     ll_insert ((LL_KEY) In2, (LL_VAL) Result.codeTerminate);
 
     return TRUE;
