@@ -1,5 +1,14 @@
 Tue Jul 16 11:37:41 1996  Ian Lance Taylor  <ian@cygnus.com>
 
+	* client.h (file_gzip_level): Declare.
+	* client.c (file_gzip_level): Define.
+	(start_server): Don't set gzip_level to zero after sending
+	Gzip-stream command.  Set file_gzip_level after sending
+	gzip-file-contents command.
+	(send_modified): Use file_gzip_level rather than gzip_level.
+	* server.c (server_updated): Likewise.
+	(serve_gzip_contents): Likewise.
+
 	* sanity.sh (patch): New tests.  Test remote CVS handling of
 	unpatchable files.
 

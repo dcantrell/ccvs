@@ -2826,7 +2826,7 @@ server_updated (finfo, vers, updated, file_info, checksum)
 	       file we are sending.  The client handles any line ending
 	       translation if necessary.  */
 
-	    if (gzip_level
+	    if (file_gzip_level
 		/*
 		 * For really tiny files, the gzip process startup
 		 * time will outweigh the compression savings.  This
@@ -2841,7 +2841,7 @@ server_updated (finfo, vers, updated, file_info, checksum)
 		fd = CVS_OPEN (finfo->file, O_RDONLY | OPEN_BINARY, 0);
 		if (fd < 0)
 		    error (1, errno, "reading %s", finfo->fullname);
-		fd = filter_through_gzip (fd, 1, gzip_level, &gzip_pid);
+		fd = filter_through_gzip (fd, 1, file_gzip_level, &gzip_pid);
 		f = fdopen (fd, "rb");
 		status = buf_read_file_to_eof (f, &list, &last);
 		size = buf_chain_length (list);
@@ -3086,7 +3086,7 @@ serve_gzip_contents (arg)
     level = atoi (arg);
     if (level == 0)
 	level = 6;
-    gzip_level = level;
+    file_gzip_level = level;
 }
 
 static void
