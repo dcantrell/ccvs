@@ -1,5 +1,7 @@
 2004-02-20  Larry Jones  <lawrence.jones@ugsplm.com>
 
+	* subr.c (previous_rev): Fix == vs = typo.
+
 	* buffer.h: Add prototype for buf_empty.
 
 	* add.c (add): Remove unused variable.
