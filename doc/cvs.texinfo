@@ -1383,6 +1383,9 @@ some adjustments on both the server and client sides.
 @cindex Pserver (subcommand)
 @cindex password server, setting up
 @cindex authenticating server, setting up
+@c FIXME: this isn't quite right regarding port
+@c numbers; CVS looks up "cvspserver" in
+@c /etc/services (on unix, but what about non-unix?).
 On the server side, the file @file{/etc/inetd.conf}
 needs to be edited so @code{inetd} knows to run the
 command @code{cvs pserver} when it receives a
@@ -1417,6 +1420,15 @@ cvspserver      2401/tcp
         Once the above is taken care of, restart your
 @code{inetd}, or do whatever is necessary to force it
 to reread its initialization files.
+
+@c FIXME: should be documenting how to troubleshoot
+@c this.  One strange situation I ran into recently
+@c was that if inetd.conf specifies a non-existent
+@c cvs (e.g. /usr/local/bin/cvs doesn't exist in
+@c the above example), the client says 
+@c   cvs-1.8 [login aborted]: unrecognized auth response from harvey: 
+@c which is a very unhelpful response (can it be
+@c improved?  does inetd log somewhere?)
 
 @cindex CVS passwd file
 @cindex passwd (admin file)
