@@ -872,6 +872,73 @@ server_pathname_check (path)
     }
 }
 
+static int outside_root PROTO ((char *));
+
+/* Is file or directory REPOS an absolute pathname within the
+   CVSroot_directory?  If yes, return 0.  If no, set pending_error
+   and return 1.  */
+static int
+outside_root (repos)
+    char *repos;
+{
+    size_t repos_len = strlen (repos);
+    size_t root_len = strlen (CVSroot_directory);
+
+    /* I think isabsolute (repos) should always be true, and that
+       any RELATIVE_REPOS stuff should only be in CVS/Repository
+       files, not the protocol (for compatibility), but I'm putting
+       in the isabsolute check just in case.  */
+    if (!isabsolute (repos))
+    {
+	if (alloc_pending (repos_len + 80))
+	    sprintf (pending_error_text, "\
+E protocol error: %s is not absolute", repos);
+	return 1;
+    }
+
+    if (repos_len < root_len
+	|| strncmp (CVSroot_directory, repos, root_len) != 0)
+    {
+    not_within:
+	if (alloc_pending (strlen (CVSroot_directory)
+			   + strlen (repos)
+			   + 80))
+	    sprintf (pending_error_text, "\
+E protocol error: directory '%s' not within root '%s'",
+		     repos, CVSroot_directory);
+	return 1;
+    }
+    if (repos_len > root_len)
+    {
+	if (repos[root_len] != '/')
+	    goto not_within;
+	if (pathname_levels (repos + root_len + 1) > 0)
+	    goto not_within;
+    }
+    return 0;
+}
+
+static int outside_dir PROTO ((char *));
+
+/* Is file or directory FILE outside the current directory (that is, does
+   it contain '/')?  If no, return 0.  If yes, set pending_error
+   and return 1.  */
+static int
+outside_dir (file)
+    char *file;
+{
+    if (strchr (file, '/') != NULL)
+    {
+	if (alloc_pending (strlen (file)
+			   + 80))
+	    sprintf (pending_error_text, "\
+E protocol error: directory '%s' not within current directory",
+		     file);
+	return 1;
+    }
+    return 0;
+}
+	
 /*
  * Add as many directories to the temp directory as the client tells us it
  * will use "..", so we never try to access something outside the temp
@@ -1091,24 +1158,8 @@ serve_directory (arg)
     status = buf_read_line (buf_from_net, &repos, (int *) NULL);
     if (status == 0)
     {
-	/* I think isabsolute (repos) should always be true, and that
-	   any RELATIVE_REPOS stuff should only be in CVS/Repository
-	   files, not the protocol (for compatibility), but I'm putting
-	   in the in isabsolute check just in case.  */
-	if (isabsolute (repos)
-	    && strncmp (CVSroot_directory,
-			repos,
-			strlen (CVSroot_directory)) != 0)
-	{
-	    if (alloc_pending (strlen (CVSroot_directory)
-			       + strlen (repos)
-			       + 80))
-		sprintf (pending_error_text, "\
-E protocol error: directory '%s' not within root '%s'",
-			 repos, CVSroot_directory);
+	if (outside_root (repos))
 	    return;
-	}
-
 	dirswitch (arg, repos);
 	free (repos);
     }
@@ -1495,6 +1546,9 @@ serve_modified (arg)
 	return;
     }
 
+    if (outside_dir (arg))
+	return;
+
     if (size >= 0)
     {
 	receive_file (size, arg, gzipped);
@@ -1567,6 +1621,9 @@ serve_unchanged (arg)
     if (error_pending ())
 	return;
 
+    if (outside_dir (arg))
+	return;
+
     /* Rewrite entries file to have `=' in timestamp field.  */
     for (p = entries; p != NULL; p = p->next)
     {
@@ -1605,6 +1662,9 @@ serve_is_modified (arg)
     int found;
 
     if (error_pending ())
+	return;
+
+    if (outside_dir (arg))
 	return;
 
     /* Rewrite entries file to have `M' in timestamp field.  */
@@ -1856,6 +1916,9 @@ serve_notify (arg)
     int status;
 
     if (error_pending ()) return;
+
+    if (outside_dir (arg))
+	return;
 
     new = (struct notify_note *) malloc (sizeof (struct notify_note));
     if (new == NULL)
@@ -2257,6 +2320,9 @@ serve_questionable (arg)
 	buf_output0 (buf_to_net, "E Protocol error: 'Directory' missing");
 	return;
     }
+
+    if (outside_dir (arg))
+	return;
 
     if (!ign_name (arg))
     {
