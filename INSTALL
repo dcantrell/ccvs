@@ -108,6 +108,7 @@ Alpha:
 	DEC Alpha running OSF/1 version 2.1 (about 1.4A2)
 	DEC Alpha running OSF/1 version 3.0 (1.5.95) (footnote 7)
 	DEC Alpha running OSF/1 version 3.2 (1.9)
+	DEC Alpha running Digital UNIX v4.0C using gcc 2.7.2.2 (1.9.14)
 	DEC Alpha running VMS 6.2 (1.8.85 client-only)
 Cray:
 	J90 (CVS 970215 snapshot)
@@ -115,10 +116,11 @@ Cray:
 HPPA:
 	HP 9000/710 running HP-UX 8.07A using gcc (about 1.4A2)
 	HPPA running HP-UX 9 (1.8)
-	HPPA running HP-UX 10.01 (1.7)
         HPPA 1.1 running HP-UX A.09.03 (1.5.95) (footnote 8)
         HPPA 1.1 running HP-UX A.09.04 (1.7.1)
 	HPPA 9000/735 running HP-UX A.09.05 (1.8.87)
+	HPPA running HP-UX 10.01 (1.7)
+	HPPA running HP-UX 10.20 using gcc 2.7.2.2 (1.9.14)
 	NextSTEP 3.3 (1.7)
 i386 family:
 	Solaris 2.4 using gcc (about 1.4A2)
@@ -162,11 +164,11 @@ PowerPC or RS/6000:
 	Lynx 2.3.1 120495 (1.6.86) (footnote 9)
 	Lynx 2.5 (1.9) (footnote 10)
 SPARC:
-	Sun SPARC running SunOS 4.1.x using gcc 2.7.2.2 (1.9.14)
+	Sun SPARC running SunOS 4.1.x using gcc 2.7.2.1 (1.9.14)
 	Sun SPARCstation 10 running Solaris 2.3 using gcc and cc (about 1.4A2)
 	Sun SPARCstation running Solaris 2.4 using gcc and cc (about 1.5.91)
 	Sun SPARC running Solaris 2.5 (1.8.87)
-	Sun SPARC running Solaris 2.5.1 using gcc 2.7.2.2 (about 1.9.14)
+	Sun SPARC running Solaris 2.5.1 using gcc 2.7.2.2 (1.9.14)
 	NextSTEP 3.3 (1.7)
 	Sun SparcClassing running Linux 2.0.17, gcc 2.7.2 (1.8.87)
 VAX:
