@@ -1,5 +1,9 @@
 2001-03-20  Derek Price  <dprice@collab.net>
 
+	* sanity.sh: Don't use unescaped parens in sh outside of quotes.
+
+2001-03-20  Derek Price  <dprice@collab.net>
+
 	* sanity.sh: Don't remove ${TESTDIR} when -k (keep) set.
 
 2001-03-20  Derek Price  <dprice@collab.net>
