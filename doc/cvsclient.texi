@@ -354,6 +354,9 @@ graceful handling of @code{valid-requests}, it is probably better to
 make new global options separate requests, rather than trying to add
 them to this request.
 
+@item Set @var{variable}=@var{value} \n
+Set a user variable @var{variable} to @var{value}.
+
 @item expand-modules \n
 Response expected: yes.  Expand the modules which are specified in the
 arguments.  Returns the data in @code{Module-expansion} responses.  Note
