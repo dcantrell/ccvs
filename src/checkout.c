@@ -373,7 +373,7 @@ checkout (int argc, char **argv)
     for (i = 0; i < argc; i++)
 	err += do_module (db, argv[i], m_type, "Updating", checkout_proc,
 			  where, shorten, local, run_module_prog, !pipeout,
-			  (char *) NULL);
+			  NULL);
     close_module (db);
     if (options)
     {
@@ -384,6 +384,8 @@ checkout (int argc, char **argv)
 	free (history_name);
     return (err);
 }
+
+
 
 /* FIXME: This is and emptydir_name are in checkout.c for historical
    reasons, probably want to move them.  */
@@ -418,12 +420,12 @@ safe_location (char *where)
     size_t hardpath_len;
     int retval;
 
-    TRACE( TRACE_FUNCTION, "safe_location( where=%s )",
-           where ? where : "(null)" );
+    TRACE (TRACE_FUNCTION, "safe_location( where=%s )",
+           where ? where : "(null)");
 
 #ifdef CLIENT_SUPPORT
     /* Don't compare remote CVSROOTs to our destination directory. */
-    if ( current_parsed_root->isremote ) return 1;
+    if (current_parsed_root->isremote) return 1;
 #endif /* CLIENT_SUPPORT */
 
     /* set current - even if where is set we'll need to cd back... */
@@ -431,7 +433,7 @@ safe_location (char *where)
     if (current == NULL)
 	error (1, errno, "could not get working directory");
 
-    hardpath = xresolvepath ( current_parsed_root->directory );
+    hardpath = xresolvepath (current_parsed_root->directory);
 
     /* if where is set, set current to as much of where as exists,
      * or fail.
@@ -510,9 +512,11 @@ could not change directory to requested checkout directory `%s'",
     else
 	retval = 1;
     free (current);
-    free( hardpath );
+    free (hardpath);
     return retval;
 }
+
+
 
 struct dir_to_build
 {
@@ -524,10 +528,10 @@ struct dir_to_build
     struct dir_to_build *next;
 };
 
+
+
 static int build_dirs_and_chdir (struct dir_to_build *list,
 					int sticky);
-
-static void build_one_dir (char *, char *, int);
 
 static void
 build_one_dir (char *repository, char *dirpath, int sticky)
@@ -546,8 +550,8 @@ build_one_dir (char *repository, char *dirpath, int sticky)
 	    error (1, 0, "there is no repository %s", repository);
 
 	if (Create_Admin (".", dirpath, repository,
-			  sticky ? tag : (char *) NULL,
-			  sticky ? date : (char *) NULL,
+			  sticky ? tag : NULL,
+			  sticky ? date : NULL,
 
 			  /* FIXME?  This is a guess.  If it is important
 			     for nonbranch to be set correctly here I
@@ -571,12 +575,16 @@ build_one_dir (char *repository, char *dirpath, int sticky)
     }
 }
 
+
+
 /*
  * process_module calls us back here so we do the actual checkout stuff
  */
 /* ARGSUSED */
 static int
-checkout_proc (int argc, char **argv, char *where_orig, char *mwhere, char *mfile, int shorten, int local_specified, char *omodule, char *msg)
+checkout_proc (int argc, char **argv, char *where_orig, char *mwhere,
+	       char *mfile, int shorten, int local_specified, char *omodule,
+	       char *msg)
 {
     char *myargv[2];
     int err = 0;
@@ -586,17 +594,14 @@ checkout_proc (int argc, char **argv, char *where_orig, char *mwhere, char *mfil
     char *oldupdate = NULL;
     char *where;
 
-    if (trace)
-	(void) fprintf (stderr,
-	                "%s-> checkout_proc (%s, %s, %s, %d, %d, %s, %s)\n",
-			CLIENT_SERVER_STR,
-			where_orig ? where_orig : "(null)",
-			mwhere ? mwhere : "(null)",
-			mfile ? mfile : "(null)",
-	                shorten, local_specified,
-			omodule ? omodule : "(null)",
-			msg ? msg : "(null)"
-	               );
+    TRACE (TRACE_FUNCTION, "checkout_proc (%s, %s, %s, %d, %d, %s, %s)\n",
+	   where_orig ? where_orig : "(null)",
+	   mwhere ? mwhere : "(null)",
+	   mfile ? mfile : "(null)",
+	   shorten, local_specified,
+	   omodule ? omodule : "(null)",
+	   msg ? msg : "(null)"
+	  );
 
     /*
      * OK, so we're doing the checkout! Our args are as follows: 
@@ -800,7 +805,7 @@ internal error: %s doesn't start with %s in checkout_proc",
 
 	/* We always create at least one directory, which corresponds to
 	   the entire strings for WHERE and REPOSITORY.  */
-	head = (struct dir_to_build *) xmalloc (sizeof (struct dir_to_build));
+	head = xmalloc (sizeof (struct dir_to_build));
 	/* Special marker to indicate that we don't want build_dirs_and_chdir
 	   to create the CVSADM directory for us.  */
 	head->repository = NULL;
@@ -823,8 +828,7 @@ internal error: %s doesn't start with %s in checkout_proc",
 	    if (cp == NULL)
 		break;		/* we're done */
 
-	    new = (struct dir_to_build *)
-		xmalloc (sizeof (struct dir_to_build));
+	    new = xmalloc (sizeof (struct dir_to_build));
 	    new->dirpath = xmalloc (strlen (where));
 
 	    /* If the user specified an absolute path for where, the
@@ -957,11 +961,10 @@ internal error: %s doesn't start with %s in checkout_proc",
 		    error (1, 0, "there is no repository %s", repository);
 
 		Create_Admin (".", preload_update_dir, repository,
-			      (char *) NULL, (char *) NULL, 0, 0,
-			      m_type == CHECKOUT);
+			      NULL, NULL, 0, 0, m_type == CHECKOUT);
 		fp = open_file (CVSADM_ENTSTAT, "w+");
-		if (fclose(fp) == EOF)
-		    error(1, errno, "cannot close %s", CVSADM_ENTSTAT);
+		if (fclose (fp) == EOF)
+		    error (1, errno, "cannot close %s", CVSADM_ENTSTAT);
 #ifdef SERVER_SUPPORT
 		if (server_active)
 		    server_set_entstat (where, repository);
@@ -992,7 +995,7 @@ internal error: %s doesn't start with %s in checkout_proc",
 		error (1, 0, "cannot export into working directory");
 
 	    /* get the contents of the previously existing repository */
-	    repos = Name_Repository ((char *) NULL, preload_update_dir);
+	    repos = Name_Repository (NULL, preload_update_dir);
 	    if (fncmp (repository, repos) != 0)
 	    {
 		error (0, 0, "existing repository %s does not match %s",
@@ -1013,7 +1016,7 @@ internal error: %s doesn't start with %s in checkout_proc",
      */
     if (pipeout)
     {
-	if ( CVS_CHDIR (repository) < 0)
+	if (CVS_CHDIR (repository) < 0)
 	{
 	    error (0, errno, "cannot chdir to %s", repository);
 	    err = 1;
@@ -1061,12 +1064,12 @@ internal error: %s doesn't start with %s in checkout_proc",
 	if (!pipeout)
 	    history_write (m_type == CHECKOUT ? 'O' : 'E', preload_update_dir,
 			   history_name, where, repository);
-	err += do_update ( 0, (char **) NULL, options, tag, date,
-			   force_tag_match, 0 /* !local */ ,
-			   1 /* update -d */ , aflag, checkout_prune_dirs,
-			   pipeout, which, join_rev1, join_rev2,
-			   preload_update_dir, m_type == CHECKOUT,
-			   repository );
+	err += do_update (0, NULL, options, tag, date,
+			  force_tag_match, false /* !local */ ,
+			  true /* update -d */ , aflag, checkout_prune_dirs,
+			  pipeout, which, join_rev1, join_rev2,
+			  preload_update_dir, m_type == CHECKOUT,
+			  repository);
 	goto out;
     }
 
@@ -1103,7 +1106,7 @@ internal error: %s doesn't start with %s in checkout_proc",
 		Register (entries, finfo.file,
 			  vers->vn_rcs ? vers->vn_rcs : "0",
 			  line, vers->options, vers->tag,
-			  vers->date, (char *) 0);
+			  vers->date, NULL);
 		free (line);
 	    }
 	    freevers_ts (&vers);
@@ -1119,18 +1122,20 @@ internal error: %s doesn't start with %s in checkout_proc",
 		       repository);
 
     /* go ahead and call update now that everything is set */
-    err += do_update ( argc - 1, argv + 1, options, tag, date,
-		       force_tag_match, local_specified, 1 /* update -d */,
-		       aflag, checkout_prune_dirs, pipeout, which, join_rev1,
-		       join_rev2, preload_update_dir, m_type == CHECKOUT,
-		       repository );
+    err += do_update (argc - 1, argv + 1, options, tag, date,
+		      force_tag_match, local_specified, true /* update -d */,
+		      aflag, checkout_prune_dirs, pipeout, which, join_rev1,
+		      join_rev2, preload_update_dir, m_type == CHECKOUT,
+		      repository);
 out:
     free (preload_update_dir);
     preload_update_dir = oldupdate;
     free (where);
     free (repository);
-    return (err);
+    return err;
 }
+
+
 
 static char *
 findslash (char *start, char *p)
@@ -1143,6 +1148,8 @@ findslash (char *start, char *p)
     }
     return NULL;
 }
+
+
 
 /* Return a newly malloc'd string containing a pathname for CVSNULLREPOS,
    and make sure that it exists.  If there is an error creating the
@@ -1169,6 +1176,8 @@ emptydir_name (void)
     }
     return repository;
 }
+
+
 
 /* Build all the dirs along the path to DIRS with CVS subdirs with appropriate
  * repositories.  If DIRS->repository is NULL or the directory already exists,
