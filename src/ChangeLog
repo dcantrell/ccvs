@@ -1,3 +1,8 @@
+Tue Oct 10 12:02:37 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* remove.c (remove_fileproc): If noexec, don't remove file.  Check
+	for error when removing file.
+
 Sun Oct  8 12:32:15 1995  Peter Wemm  <peter@haywire.DIALix.COM>
 
 	* run.c: detect/use POSIX/BSD style reliable signals for critical
