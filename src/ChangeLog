@@ -1,5 +1,7 @@
 Sun Mar 16 10:18:28 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* version.c: Version 1.9.4.
+
 	* rcscmds.c (RCS_checkin): Preserve the mode of the rcsfile.
 	RCS_CI usually, but not always, does this for us.
 	* commit.c (fix_rcs_modes): Replace algorithm with a more
