@@ -121,6 +121,7 @@ error (status, errnum, message, va_alist)
 	char *q;
 	char *str;
 	int num;
+	long lnum;
 	unsigned int unum;
 	int ch;
 	char buf[100];
@@ -157,6 +158,13 @@ error (status, errnum, message, va_alist)
 		sprintf (buf, "%d", num);
 		cvs_outerr (buf, strlen (buf));
 		break;
+	    case 'l':
+		if (q[2] != 'd') goto bad;
+		q++;
+		lnum = va_arg (args, long);
+		sprintf (buf, "%ld", lnum);
+		cvs_outerr (buf, strlen (buf));
+		break;
 	    case 'x':
 		unum = va_arg (args, unsigned int);
 		sprintf (buf, "%x", unum);
@@ -171,6 +179,7 @@ error (status, errnum, message, va_alist)
 		cvs_outerr ("%", 1);
 		break;
 	    default:
+	    bad:
 		cvs_outerr (msg, sizeof (msg) - 1);
 		/* Don't just keep going, because q + 1 might point to the
 		   terminating '\0'.  */

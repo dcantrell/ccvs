@@ -1,3 +1,15 @@
+2000-12-15  Larry Jones  <larry.jones@sdrc.com>
+
+	* error.c (error): Add %ld.
+
+	* history.c: Change hrec.idx from int to long, reformat NEXT_BAR
+	for readability, add hrec_idx.
+	(fill_hrec): Change initialization to be portable and always set
+	idx so it can be used as a line number in error messages; improve
+	parsing and error checking.
+	(read_hrecs): Initialize hrec_idx.
+	(select_hrec): Add basic validity checking.
+
 2000-12-07  Larry Jones  <larry.jones@sdrc.com>
 
 	* history.c (history): Allow multiple -m options as documented.
