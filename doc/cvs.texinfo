@@ -11115,6 +11115,7 @@ produced it should work fine.
 @c For one example see basica-1a10 in the testsuite
 @c For another example, "cvs co ." on NT; see comment
 @c at windows-NT/filesubr.c (expand_wild).
+@c For another example, "cvs co foo/bar" where foo exists.
 @item cannot open CVS/Entries for reading: No such file or directory
 This generally indicates a @sc{cvs} internal error, and
 can be handled as with other @sc{cvs} bugs
