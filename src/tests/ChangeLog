@@ -1,3 +1,13 @@
+2003-11-07  Derek R. Price  <derek@ximbiot.com>
+
+	No need to normalize the "server" string.  That has been fixed to
+	output normally.
+
+	* atspecific.at (AT_CVS_CHECK_NORMALIZED): Don't normalize the "server"
+	string.
+	* basic.at (*): s/command/printf $command/e.
+	* suite: Regenerated.
+
 2003-11-06  Derek R. Price  <derek@ximbiot.com>
 
 	Move more tests into the autotest suite.

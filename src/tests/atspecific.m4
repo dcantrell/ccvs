@@ -169,13 +169,11 @@ m4_define([AT_CVS_CHECK_NORMALIZED],
 
 dnl The sed commands below need to be quoted twice so that all the autotest
 dnl quotes make it through to the sed commands.
-[sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+[sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stdout >nstdout
-sed -e "s/^\($CPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
-    -e "s/^\($SPROG \[\?\)[a-z]*\( aborted\]\)\?:/\1command\2:/" \
+sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
     <stderr >nstderr]
