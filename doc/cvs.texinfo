@@ -7708,6 +7708,20 @@ Delete revisions from revision @var{rev}, including
 None of the revisions to be deleted may have
 branches or locks.
 
+If any of the revisions to be deleted have symbolic
+names, and one specifies one of the @samp{::} syntaxes,
+then @sc{cvs} will give an error and not delete any
+revisions.  If you really want to delete both the
+symbolic names and the revisions, first delete the
+symbolic names with @code{cvs tag -d}, then run
+@code{cvs admin -o}.  If one specifies the
+non-@samp{::} syntaxes, then @sc{cvs} will delete the
+revisions but leave the symbolic names pointing to
+nonexistent revisions.  This behavior is preserved for
+compatibility with previous versions of @sc{cvs}, but
+because it isn't very useful, in the future it may
+change to be like the @samp{::} case.
+
 Due to the way @sc{cvs} handles branches @var{rev}
 cannot be specified symbolically if it is a branch.
 @xref{Magic branch numbers}, for an explanation.
