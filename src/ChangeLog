@@ -1,3 +1,60 @@
+1998-03-16  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* hardlink.c (list_linked_files_on_disk): Remove unused variables
+	err and p.
+	(list_linked_files_on_disk): Add comment about memory allocation
+	of return value.
+	* rcs.c (rcsbuf_getword): Shut up gcc -Wall with a "return 0".
+	(RCS_checkin): Remove unused variable fullpath.
+	* sanity.sh (hardlinks): Remove comment about spurious warnings;
+	the warnings are gone.
+
+1998-03-12  Tim Pierce  <twp@skepsis.com>
+
+	New functions for parsing and writing hardlink fields.
+	* rcs.c [PRESERVE_PERMISSIONS_SUPPORT] (puthardlink_proc): New
+	function.
+	(putdelta) [PRESERVE_PERMISSIONS_SUPPORT]: Use it.
+	(rcsbuf_getid, rcsbuf_getstring, rcsbuf_getword): New functions.
+	(getdelta): Call them, storing `hardlinks' field in vnode->hardlinks.
+	(RCS_reparsercsfile): When setting rdata->desc, xstrdup value
+	rather than rcsbuf_valcopying it (due to changes in how getdelta
+	handles keys and values in newphrases).
+
+	* sanity.sh (hardlinks): Use uglier filenames.  Checking out
+	hardlinked files no longer produces the same spurious diagnostics,
+	so fix that test.
+	(hardlinks-2.3): Renamed from hardlinks-2.2 (duplicate test name).
+
+	New infrastructure for managing hardlink lists internally...
+	* hardlink.c, hardlink.h (list_linked_files_on_disk,
+	compare_linkage_lists, find_checkedout_proc): New functions.
+	* rcs.h (struct rcsversnode) [PRESERVE_PERMISSIONS_SUPPORT]: New
+	member `hardlinks'.
+	* update.c (special_file_mismatch): Get hardlinks from
+	vp->hardlinks instead of from vp->other_delta.
+	* rcs.c (free_rcsvers_contents): Comment about freeing hardlinks
+	member.
+	(RCS_checkout) [PRESERVE_PERMISSIONS_SUPPORT]: Get hardlinks from
+	vers->hardlinks list instead of vers->other_delta.
+
+	... and removed obsolete code from earlier revs.
+	* hardlink.c, hardlink.h (list_files_linked_to,
+	cache_hardlinks_proc, list_files_proc, set_hardlink_field_proc):
+	Removed.
+	* hardlink.h: Removed `links' member from hardlink_info struct.
+	* commit.c (commit): Remove the call to cache_hardlinks_proc.
+	(check_fileproc) [PRESERVE_PERMISSIONS_SUPPORT]: Removed reference
+	to hlinfo->links.
+	* hardlink.c (update_hardlink_info): Same.
+	* update.c (get_linkinfo_proc): Same.
+
+	* rcs.c (RCS_checkout) [PRESERVE_PERMISSIONS_SUPPORT]: Use
+	vp->hardlinks and find_checkedout_proc to find recently-updated
+	files that may be hardlinked.
+	* update.c (special_file_mismatch): Use List * structures and
+	compare_linkage_lists for rev1_hardlinks and rev2_hardlinks.
+
 1998-03-16  Larry Jones  <larry.jones@sdrc.com>
 
 	* server.c (check_password): If shadow passwords are supported but no

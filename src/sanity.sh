@@ -11690,56 +11690,73 @@ done"
 "Directory ${TESTDIR}/cvsroot/first-dir added to the repository"
 	  cd first-dir
 
-	  dotest hardlinks-2.1 "touch alpha" ""
-	  dotest hardlinks-2.2 "ln alpha beta" ""
-	  dotest hardlinks-2.2 "ln alpha gamma" ""
-	  dotest hardlinks-3 "${testcvs} add alpha beta gamma" \
-"${PROG} [a-z]*: scheduling file .alpha. for addition
-${PROG} [a-z]*: scheduling file .beta. for addition
-${PROG} [a-z]*: scheduling file .gamma. for addition
+	  # Make up some ugly filenames, to test that they get
+	  # encoded properly in the delta nodes.  Note that `dotest' screws
+	  # up if some arguments have embedded spaces.
+	  if touch aaaa
+	  then
+	    pass hardlinks-2.1
+	  else
+	    fail hardlinks-2.1
+	  fi
+
+	  if ln aaaa b.b.b.b
+	  then
+	    pass hardlinks-2.2
+	  else
+	    fail hardlinks-2.2
+	  fi
+
+	  if ln aaaa 'dd dd dd'
+	  then
+	    pass hardlinks-2.3
+	  else
+	    fail hardlinks-2.3
+	  fi
+
+	  dotest hardlinks-3 "${testcvs} add [abd]*" \
+"${PROG} [a-z]*: scheduling file .aaaa. for addition
+${PROG} [a-z]*: scheduling file .b\.b\.b\.b. for addition
+${PROG} [a-z]*: scheduling file .dd dd dd. for addition
 ${PROG} [a-z]*: use .${PROG} commit. to add these files permanently"
 	  dotest hardlinks-4 "${testcvs} -q ci -m ''" \
-"RCS file: ${CVSROOT_DIRNAME}/first-dir/alpha,v
+"RCS file: ${CVSROOT_DIRNAME}/first-dir/aaaa,v
 done
-Checking in alpha;
-${TESTDIR}/cvsroot/first-dir/alpha,v  <--  alpha
+Checking in aaaa;
+${TESTDIR}/cvsroot/first-dir/aaaa,v  <--  aaaa
 initial revision: 1\.1
 done
-RCS file: ${CVSROOT_DIRNAME}/first-dir/beta,v
+RCS file: ${CVSROOT_DIRNAME}/first-dir/b\.b\.b\.b,v
 done
-Checking in beta;
-${TESTDIR}/cvsroot/first-dir/beta,v  <--  beta
+Checking in b\.b\.b\.b;
+${TESTDIR}/cvsroot/first-dir/b\.b\.b\.b,v  <--  b\.b\.b\.b
 initial revision: 1\.1
 done
-RCS file: ${CVSROOT_DIRNAME}/first-dir/gamma,v
+RCS file: ${CVSROOT_DIRNAME}/first-dir/dd dd dd,v
 done
-Checking in gamma;
-${TESTDIR}/cvsroot/first-dir/gamma,v  <--  gamma
+Checking in dd dd dd;
+${TESTDIR}/cvsroot/first-dir/dd dd dd,v  <--  dd dd dd
 initial revision: 1\.1
 done"
-	  # Test checking out hardlinked files.  Note spurious warnings:
-	  # these should be removed if/when the hard link code is
-	  # improved to track hard links better.
+	  # Test checking out hardlinked files.
 	  cd ../..
 	  mkdir 2; cd 2
 	  if test "$remote" = yes; then
 	    # Remote does not implement PreservePermissions.
 	    dotest hardlinks-5 "${testcvs} -q co first-dir" \
-"U first-dir/alpha
-U first-dir/beta
-U first-dir/gamma"
+"U first-dir/aaaa
+U first-dir/b\.b\.b\.b
+U first-dir/dd dd dd"
 	    cd first-dir
-	    dotest hardlinks-6 "ls -l alpha beta gamma" \
-"-[rwx\-]* *1 .* alpha
--[rwx\-]* *1 .* beta
--[rwx\-]* *1 .* gamma"
+	    dotest hardlinks-6 "ls -l [abd]*" \
+"-[rwx\-]* *1 .* aaaa
+-[rwx\-]* *1 .* b\.b\.b\.b
+-[rwx\-]* *1 .* dd dd dd"
 	  else
 	    dotest hardlinks-5 "${testcvs} -q co first-dir" \
-"${PROG} [a-z]*: warning: beta should be hardlinked to alpha, but is missing
-${PROG} [a-z]*: warning: gamma should be hardlinked to alpha, but is missing
-U first-dir/alpha
-U first-dir/beta
-U first-dir/gamma"
+"U first-dir/aaaa
+U first-dir/b\.b\.b\.b
+U first-dir/dd dd dd"
 	    cd first-dir
 	    # To make sure that the files are properly hardlinked, it
 	    # would be nice to do `ls -i' and make sure all the inodes
@@ -11747,10 +11764,10 @@ U first-dir/gamma"
 	    # tagged regexps, and I don't think we can rely on that.
 	    # So instead we just see that each file has the right
 	    # number of links. -twp
-	    dotest hardlinks-6 "ls -l alpha beta gamma" \
-"-[rwx\-]* *3 .* alpha
--[rwx\-]* *3 .* beta
--[rwx\-]* *3 .* gamma"
+	    dotest hardlinks-6 "ls -l [abd]*" \
+"-[rwx\-]* *3 .* aaaa
+-[rwx\-]* *3 .* b\.b\.b\.b
+-[rwx\-]* *3 .* dd dd dd"
 	  fi
 
 	  cd ../..
