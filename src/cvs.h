@@ -281,7 +281,11 @@ extern int errno;
 #define	MAXLINELEN	5000		/* max input line from a file */
 #define	MAXPROGLEN	30000		/* max program length to system() */
 #define	MAXLISTLEN	40000		/* For [A-Z]list holders */
-#define MAXDATELEN	50		/* max length for a date */
+
+/* Large enough to hold DATEFORM.  Not an arbitrary limit as long as
+   it is used for that purpose, and not to hold a string from the
+   command line, the client, etc.  */
+#define MAXDATELEN	50
 
 /* The type of an entnode.  */
 enum ent_type
