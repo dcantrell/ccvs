@@ -71,7 +71,7 @@ static const char *const checkout_usage[] =
 
 static const char *const export_usage[] =
 {
-    "Usage: %s %s [-NPfln] [-r rev | -D date] [-d dir] module...\n",
+    "Usage: %s %s [-NPfln] [-r rev | -D date] [-d dir] [-k kopt] module...\n",
     "\t-N\tDon't shorten module paths if -d specified.\n",
     "\t-f\tForce a head revision match if tag/date not found.\n",
     "\t-l\tLocal directory only, not recursive\n",
@@ -79,6 +79,7 @@ static const char *const export_usage[] =
     "\t-r rev\tCheck out revision or tag.\n",
     "\t-D date\tCheck out revisions as of date.\n",
     "\t-d dir\tCheck out into dir instead of module name.\n",
+    "\t-k kopt\tUse RCS kopt -k option on checkout.\n",
     NULL
 };
 
@@ -108,20 +109,23 @@ checkout (argc, argv)
     char *where = NULL;
     char *valid_options;
     const char *const *valid_usage;
+    enum mtype m_type;
 
     /*
      * A smaller subset of options are allowed for the export command, which
      * is essentially like checkout, except that it hard-codes certain
-     * options to be on (like -kv) and takes care to remove the CVS directory
-     * when it has done its duty
+     * options to be default (like -kv) and takes care to remove the CVS
+     * directory when it has done its duty
      */
     if (strcmp (command_name, "export") == 0)
     {
-	valid_options = "Nnd:flRQqr:D:";
+        m_type = EXPORT;
+	valid_options = "Nnk:d:flRQqr:D:";
 	valid_usage = export_usage;
     }
     else
     {
+        m_type = CHECKOUT;
 	valid_options = "ANnk:d:flRpQqcsr:D:j:P";
 	valid_usage = checkout_usage;
     }
@@ -234,7 +238,14 @@ checkout (argc, argv)
 	}
 	if (tag && isdigit (tag[0]))
 	    error (1, 0, "tag `%s' must be a symbolic tag", tag);
-	options = RCS_check_kflag ("v");/* -kv must be on */
+/*
+ * mhy 950615: -kv doesn't work for binaries with RCS keywords.
+ * Instead use the default provided in the RCS file (-ko for binaries).
+ */
+#if 0
+	if (!options)
+	  options = RCS_check_kflag ("v");/* -kv is default */
+#endif
     }
 
     if (!safe_location()) {
@@ -397,7 +408,7 @@ checkout (argc, argv)
     }
 
     for (i = 0; i < argc; i++)
-	err += do_module (db, argv[i], CHECKOUT, "Updating", checkout_proc,
+	err += do_module (db, argv[i], m_type, "Updating", checkout_proc,
 			  where, shorten, local, run_module_prog,
 			  (char *) NULL);
     close_module (db);

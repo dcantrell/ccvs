@@ -93,6 +93,7 @@ do_module (db, mname, m_type, msg, callback_proc, where,
 {
     char *checkin_prog = NULL;
     char *checkout_prog = NULL;
+    char *export_prog = NULL;
     char *tag_prog = NULL;
     char *update_prog = NULL;
     struct saved_cwd cwd;
@@ -413,6 +414,9 @@ do_module (db, mname, m_type, msg, callback_proc, where,
 	    case 'o':
 		checkout_prog = optarg;
 		break;
+	    case 'e':
+		export_prog = optarg;
+		break;
 	    case 't':
 		tag_prog = optarg;
 		break;
@@ -550,16 +554,18 @@ do_module (db, mname, m_type, msg, callback_proc, where,
     if (err == 0 && run_module_prog)
     {
 	if ((m_type == TAG && tag_prog != NULL) ||
-	    (m_type == CHECKOUT && checkout_prog != NULL))
+	    (m_type == CHECKOUT && checkout_prog != NULL) ||
+	    (m_type == EXPORT && export_prog != NULL))
 	{
 	    /*
-	     * If a relative pathname is specified as the checkout or
-	     * tag proc, try to tack on the current "where" value.
+	     * If a relative pathname is specified as the checkout, tag
+	     * or export proc, try to tack on the current "where" value.
 	     * if we can't find a matching program, just punt and use
 	     * whatever is specified in the modules file.
 	     */
 	    char real_prog[PATH_MAX];
-	    char *prog = (m_type == TAG ? tag_prog : checkout_prog);
+	    char *prog = (m_type == TAG ? tag_prog :
+			  (m_type == CHECKOUT ? checkout_prog : export_prog));
 	    char *real_where = (where != NULL ? where : mwhere);
 
 	    if ((*prog != '/') && (*prog != '.'))

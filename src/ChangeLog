@@ -1,4 +1,11 @@
-Mon Sep  4 23:30:41 1995  Kirby Koster <koster@sctc.com>
+Mon Sep  4 23:30:41 1995  Magnus Hyllander  <mhy@os.se>
+
+	* checkout.c: cvs export now takes -k option and does not default
+	to -kv.
+	* checkout.c, cvs.h, modules.c: Modules file now takes -e option
+	for cvs export.
+
+Mon Sep  4 23:30:41 1995  Kirby Koster  <koster@sctc.com>
 
 	* commit.c: When committing a removal, print a message saying what
 	we are doing.

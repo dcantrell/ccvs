@@ -171,7 +171,7 @@ extern int errno;
 #define CVSNULLREPOS		"Emptydir"	/* an empty directory */
 
 /* support for the modules file (CVSROOTADM_MODULES) */
-#define	CVSMODULE_OPTS	"ad:i:lo:s:t:u:"/* options in modules file */
+#define	CVSMODULE_OPTS	"ad:i:lo:e:s:t:u:"/* options in modules file */
 #define CVSMODULE_SPEC	'&'		/* special delimiter */
 
 /* Other CVS file names */
@@ -267,7 +267,7 @@ typedef struct entnode Entnode;
 /* The type of request that is being done in do_module() */
 enum mtype
 {
-    CHECKOUT, TAG, PATCH
+    CHECKOUT, TAG, PATCH, EXPORT
 };
 
 /*
