@@ -1065,6 +1065,7 @@
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
 	".\lib\strcase.h"\
+	".\lib\strftime.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
@@ -1927,6 +1928,7 @@
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
+	".\lib\vasnprintf.h"\
 	".\lib\vasprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
