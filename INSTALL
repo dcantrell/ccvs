@@ -455,6 +455,10 @@ Building from source code under Windows NT/95/98/2000:
 
 You may find interesting information in windows-NT/README.
 
+* Using Microsoft Visual C++ 5.x (this is currently broken - someone with
+  MVC++ 5.x needs to regenerate the project files, but the builds using `nmake'
+  below will work).
+
 1) Using Microsoft Visual C++ 5.x, open the project `cvsnt.dsp',
    in the top directory of the CVS distribution.  If you have an older
    version of Visual C++, take a look at windows-NT/README.
@@ -470,7 +474,7 @@ following also works:
 
 * Using the Cygwin development environment <http://cygwin.com>, Windows clients
   and servers can be built using the instructions for building on UNIX.  For
-  deploying the CVS server on Windows NT, see the `cygrunserv' executable that
+  deploying the CVS server on Windows NT, see the `cygrunsrv' executable that
   comes with Cygwin.
 
 * You might also try <http://wincvs.org> & <http://www.cvsnt.org>.
