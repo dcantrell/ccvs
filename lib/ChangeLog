@@ -1,5 +1,9 @@
 2003-07-22  Derek Price  <derek@ximbiot.com>
 
+	* system.h: Assume <stddef.h> per C89.
+
+2003-07-22  Derek Price  <derek@ximbiot.com>
+
 	* strerror.c: Import current version from GNULIB.
 	* Makefile.in: Regenerated.
 
