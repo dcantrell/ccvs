@@ -30,6 +30,18 @@ else
 	remote=no
 fi
 
+# The --keep option will eventually cause all the tests to leave around the
+# contents of the /tmp directory; right now only some implement it.  Not
+# useful if you are running more than one test.
+# FIXME: need some real option parsing so this doesn't depend on the order
+# in which they are specified.
+if test x"$1" = x"--keep"; then
+  shift
+  keep=yes
+else
+  keep=no
+fi
+
 # Use full path for CVS executable, so that CVS_SERVER gets set properly
 # for remote.
 case $1 in
@@ -1392,10 +1404,12 @@ done'
 	  echo 1:ancest >file1
 	  echo 2:ancest >file2
 	  echo 3:ancest >file3
-	  dotest branches-2 "${testcvs} add file1 file2 file3" \
+	  echo 4:trunk-1 >file4
+	  dotest branches-2 "${testcvs} add file1 file2 file3 file4" \
 "${PROG}"' [a-z]*: scheduling file `file1'\'' for addition
 '"${PROG}"' [a-z]*: scheduling file `file2'\'' for addition
 '"${PROG}"' [a-z]*: scheduling file `file3'\'' for addition
+'"${PROG}"' [a-z]*: scheduling file `file4'\'' for addition
 '"${PROG}"' [a-z]*: use '\''cvs commit'\'' to add these files permanently'
 	  dotest branches-3 "${testcvs} -q ci -m add-it" \
 'RCS file: /tmp/cvs-sanity/cvsroot/first-dir/file1,v
@@ -1415,15 +1429,29 @@ done
 Checking in file3;
 /tmp/cvs-sanity/cvsroot/first-dir/file3,v  <--  file3
 initial revision: 1.1
+done
+RCS file: /tmp/cvs-sanity/cvsroot/first-dir/file4,v
+done
+Checking in file4;
+/tmp/cvs-sanity/cvsroot/first-dir/file4,v  <--  file4
+initial revision: 1.1
+done'
+	  echo 4:trunk-2 >file4
+	  dotest branches-3.2 "${testcvs} -q ci -m trunk-before-branch" \
+'Checking in file4;
+/tmp/cvs-sanity/cvsroot/first-dir/file4,v  <--  file4
+new revision: 1.2; previous revision: 1.1
 done'
 	  dotest branches-4 "${testcvs} tag -b br1" "${PROG}"' [a-z]*: Tagging \.
 T file1
 T file2
-T file3'
+T file3
+T file4'
 	  dotest branches-5 "${testcvs} update -r br1" \
 "${PROG}"' [a-z]*: Updating \.'
 	  echo 1:br1 >file1
 	  echo 2:br1 >file2
+	  echo 4:br1 >file4
 	  dotest branches-6 "${testcvs} -q ci -m modify" \
 'Checking in file1;
 /tmp/cvs-sanity/cvsroot/first-dir/file1,v  <--  file1
@@ -1432,29 +1460,99 @@ done
 Checking in file2;
 /tmp/cvs-sanity/cvsroot/first-dir/file2,v  <--  file2
 new revision: 1.1.2.1; previous revision: 1.1
+done
+Checking in file4;
+/tmp/cvs-sanity/cvsroot/first-dir/file4,v  <--  file4
+new revision: 1.2.2.1; previous revision: 1.2
 done'
 	  dotest branches-7 "${testcvs} -q tag -b brbr" 'T file1
 T file2
-T file3'
+T file3
+T file4'
 	  dotest branches-8 "${testcvs} -q update -r brbr" ''
 	  echo 1:brbr >file1
+	  echo 4:brbr >file4
 	  dotest branches-9 "${testcvs} -q ci -m modify" \
 'Checking in file1;
 /tmp/cvs-sanity/cvsroot/first-dir/file1,v  <--  file1
 new revision: 1.1.2.1.2.1; previous revision: 1.1.2.1
+done
+Checking in file4;
+/tmp/cvs-sanity/cvsroot/first-dir/file4,v  <--  file4
+new revision: 1.2.2.1.2.1; previous revision: 1.2.2.1
 done'
-	  dotest branches-10 "cat file1 file2 file3" '1:brbr
+	  dotest branches-10 "cat file1 file2 file3 file4" '1:brbr
 2:br1
-3:ancest'
-	  dotest branches-11 "${testcvs} -q update -r br1" 'U file1' 'P file1'
-	  dotest branches-12 "cat file1 file2 file3" '1:br1
+3:ancest
+4:brbr'
+	  dotest branches-11 "${testcvs} -q update -r br1" \
+'[UP] file1
+[UP] file4'
+	  dotest branches-12 "cat file1 file2 file3 file4" '1:br1
 2:br1
-3:ancest'
-	  dotest branches-13 "${testcvs} -q update -A" '. file1
-. file2'
-	  dotest branches-14 "cat file1 file2 file3" '1:ancest
+3:ancest
+4:br1'
+	  echo 4:br1-2 >file4
+	  dotest branches-12.2 "${testcvs} -q ci -m change-on-br1" \
+'Checking in file4;
+/tmp/cvs-sanity/cvsroot/first-dir/file4,v  <--  file4
+new revision: 1.2.2.2; previous revision: 1.2.2.1
+done'
+	  dotest branches-13 "${testcvs} -q update -A" '[UP] file1
+[UP] file2
+[UP] file4'
+	  dotest branches-14 "cat file1 file2 file3 file4" '1:ancest
 2:ancest
-3:ancest'
+3:ancest
+4:trunk-2'
+	  echo 4:trunk-3 >file4
+	  dotest branches-14.2 \
+	    "${testcvs} -q ci -m trunk-change-after-branch" \
+'Checking in file4;
+/tmp/cvs-sanity/cvsroot/first-dir/file4,v  <--  file4
+new revision: 1.3; previous revision: 1.2
+done'
+	  dotest branches-14.3 "${testcvs} log file4" \
+'
+RCS file: /tmp/cvs-sanity/cvsroot/first-dir/file4,v
+Working file: file4
+head: 1\.3
+branch:
+locks: strict
+access list:
+symbolic names:
+	brbr: 1\.2\.2\.1\.0\.2
+	br1: 1\.2\.0\.2
+keyword substitution: kv
+total revisions: 6;	selected revisions: 6
+description:
+----------------------------
+revision 1\.3
+date: [0-9/: ]*;  author: [a-z@][a-z@]*;  state: Exp;  lines: '"${PLUS}"'1 -1
+trunk-change-after-branch
+----------------------------
+revision 1\.2
+date: [0-9/: ]*;  author: [a-z@][a-z@]*;  state: Exp;  lines: '"${PLUS}"'1 -1
+branches:  1\.2\.2;
+trunk-before-branch
+----------------------------
+revision 1\.1
+date: [0-9/: ]*;  author: [a-z@][a-z@]*;  state: Exp;
+add-it
+----------------------------
+revision 1\.2\.2\.2
+date: [0-9/: ]*;  author: [a-z@][a-z@]*;  state: Exp;  lines: '"${PLUS}"'1 -1
+change-on-br1
+----------------------------
+revision 1\.2\.2\.1
+date: [0-9/: ]*;  author: [a-z@][a-z@]*;  state: Exp;  lines: '"${PLUS}"'1 -1
+branches:  1\.2\.2\.1\.2;
+modify
+----------------------------
+revision 1\.2\.2\.1\.2\.1
+date: [0-9/: ]*;  author: [a-z@][a-z@]*;  state: Exp;  lines: '"${PLUS}"'1 -1
+modify
+============================================================================='
 	  dotest branches-15 \
 	    "${testcvs} update -j 1.1.2.1 -j 1.1.2.1.2.1 file1" \
 	    'RCS file: /tmp/cvs-sanity/cvsroot/first-dir/file1,v
@@ -1468,6 +1566,11 @@ rcsmerge: warning: conflicts during merge'
 1:brbr
 >>>>>>> 1.1.2.1.2.1'
 	  cd ..
+
+	  if test "$keep" = yes; then
+	    echo Keeping /tmp/cvs-sanity and exiting due to --keep
+	    exit 0
+	  fi
 
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
 	  rm -r first-dir
