@@ -1,3 +1,7 @@
+2004-09-28  Derek Price <derek@ximbiot.com>
+
+	* sanity.sh (writeproxy): Remove some setup obsoleted by redirects.
+
 2004-09-27  Derek Price <derek@ximbiot.com>
 
 	Use original_root for client comparisons with CVS/Root since
