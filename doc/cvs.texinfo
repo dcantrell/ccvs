@@ -6253,11 +6253,14 @@ If @var{files} is omitted, it defaults to the current directory.
 
 Do not create @var{files} read-only on checkout; thus,
 developers will not be reminded to use @code{cvs edit}
-and @code{cvs unedit}.  CVS will check out @var{files}
+and @code{cvs unedit}.
+@ignore
+CVS will check out @var{files}
 read-write as usual, unless other permissions override
 due to the @code{PreservePermissions} option being
 enabled in the @file{config} administrative file
 (@pxref{Special Files}, @pxref{config})
+@end ignore
 
 The @var{files} and options are processed as for @code{cvs
 watch on}.
@@ -6424,6 +6427,7 @@ receive notifications, she should specify @code{-a none}.
 The @var{files} and options are processed as for the @code{cvs
 watch} commands.
 
+@ignore
 @strong{Caution:} If the @code{PreservePermissions}
 option is enabled in the repository (@pxref{config}),
 CVS will not change the permissions on any of the
@@ -6431,6 +6435,7 @@ CVS will not change the permissions on any of the
 that using @samp{cvs edit} does not interfere with the
 ability to store file permissions in the CVS
 repository.
+@end ignore
 
 @end deffn
 
@@ -7338,6 +7343,7 @@ if the device file cannot be opened, CVS will refuse to
 handle it.  Files also lose their ownerships and
 permissions during repository transactions.
 
+@ignore
 If the configuration variable @code{PreservePermissions}
 (@pxref{config}) is set in the repository, CVS will
 save the following file characteristics in the
@@ -7416,6 +7422,7 @@ with client/server @sc{cvs}.  Another limitation is
 that hard links must be to other files within the same
 directory; hard links across directories are not
 supported.
+@end ignore
 
 @c ---------------------------------------------------------------------
 @node CVS commands
@@ -9260,7 +9267,7 @@ Report on a particular module.  (You can meaningfully
 use @samp{-m} more than once on the command line.)
 
 @item -o
-Report on checked-out modules.
+Report on checked-out modules.  This is the default report type.
 
 @item -T
 Report on all tags.
@@ -12568,6 +12575,7 @@ pserver users must exist in @file{CVSROOT/passwd}.
 The default is @samp{yes}.  For more on pserver, see
 @ref{Password authenticated}.
 
+@ignore
 @cindex PreservePermissions, in CVSROOT/config
 @item PreservePermissions=@var{value}
 Enable support for saving special device files,
@@ -12575,6 +12583,7 @@ symbolic links, file permissions and ownerships in the
 repository.  The default value is @samp{no}.
 @xref{Special Files}, for the full implications of using
 this keyword.
+@end ignore
 
 @cindex TopLevelAdmin, in CVSROOT/config
 @item TopLevelAdmin=@var{value}
