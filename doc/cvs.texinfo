@@ -12018,14 +12018,14 @@ client at all, you probably forgot to specify
 @code{:local:}, as described in @ref{Repository}.
 
 @item ci: @var{file},v: bad diff output line: Binary files - and /tmp/T2a22651 differ
-This happens when trying to check in a binary file if
+CVS 1.9 and older will print this message
+when trying to check in a binary file if
 @sc{rcs} is not correctly installed.  Re-read the
 instructions that came with your @sc{rcs} distribution
 and the @sc{install} file in the @sc{cvs}
-distribution.
-@c I'm sort of tempted to try to point people towards
-@c RCS binaries which are correctly set up, but that
-@c answer is kind of complex and subject to change.
+distribution.  Alternately, upgrade to a current
+version of @sc{cvs}, which checks in files itself
+rather than via @sc{rcs}.
 
 @item cvs checkout: could not check out @var{file}
 With CVS 1.9, this can mean that the @code{co} program
@@ -12047,6 +12047,13 @@ This means that you need to set the environment
 variables that CVS uses to locate your home directory.
 See the discussion of HOME, HOMEDRIVE, and HOMEPATH in
 @ref{Environment variables}.
+
+@item cvs update: could not merge revision @var{rev} of @var{file}: No such file or directory
+CVS 1.9 and older will print this message if there was
+a problem finding the @code{rcsmerge} program.  Make
+sure that it is in your @code{PATH}, or upgrade to a
+current version of CVS, which does not require
+an external @code{rcsmerge} program.
 
 @item cvs [update aborted]: could not patch @var{file}: No such file or directory
 This means that there was a problem finding the

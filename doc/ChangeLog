@@ -1,3 +1,9 @@
+Fri Oct 31 00:04:09 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (Error messages): Add "could not merge" message.  In
+	discussion of "Binary files . . . differ" message, mention that
+	this is only an issue with old verisons of CVS.
+
 Thu Oct 30 15:55:21 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (Error messages): Add "authorization failed" message.
