@@ -1,3 +1,18 @@
+1998-08-15  Jim Meyering  <meyering@ascend.com>
+
+	* update.c (merge_file): Warn about failed unlink when not due
+	to ENOENT.
+
+	* server.h (CLIENT_SERVER_STR): New macro
+	* create_adm.c (Create_Admin): Use it.
+	* entries.c (Scratch_Entry, Register): Use it.
+	* filesubr.c (copy_file, xchmod, rename_file, unlink_file): Use it.
+	* history.c (history_write): Use it.
+	* modules.c (do_module): Use it.
+	* no_diff.c (No_Difference): Use it.
+	* run.c (run_popen): Use it.
+	* server.c (server_register): Use it.
+
 1998-08-14  Jim Meyering  <meyering@ascend.com>
 
 	* hardlink.c (lookup_file_by_inode): Use existence_error rather than

@@ -7,6 +7,16 @@
 #define STDERR_FILENO 2
 #endif
 
+
+/*
+ * Expand to `S', ` ', or the empty string.  Used in `%s-> ...' trace printfs.
+ */
+#ifdef SERVER_SUPPORT
+# define CLIENT_SERVER_STR ((server_active) ? "S" : " ")
+#else
+# define CLIENT_SERVER_STR ""
+#endif
+
 #ifdef SERVER_SUPPORT
 
 /*

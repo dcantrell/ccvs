@@ -147,8 +147,8 @@ do_module (db, mname, m_type, msg, callback_proc, where,
 		       + strlen (msg)
 		       + (where ? strlen (where) : 0)
 		       + (extra_arg ? strlen (extra_arg) : 0));
-	sprintf (buf, "%c-> do_module (%s, %s, %s, %s)\n",
-		 (server_active) ? 'S' : ' ',
+	sprintf (buf, "%s-> do_module (%s, %s, %s, %s)\n",
+		 CLIENT_SERVER_STR,
 		 mname, msg, where ? where : "",
 		 extra_arg ? extra_arg : "");
 	cvs_outerr (buf, 0);

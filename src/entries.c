@@ -171,12 +171,8 @@ Scratch_Entry (list, fname)
     Node *node;
 
     if (trace)
-#ifdef SERVER_SUPPORT
-	(void) fprintf (stderr, "%c-> Scratch_Entry(%s)\n",
-			(server_active) ? 'S' : ' ', fname);
-#else
-	(void) fprintf (stderr, "-> Scratch_Entry(%s)\n", fname);
-#endif
+	(void) fprintf (stderr, "%s-> Scratch_Entry(%s)\n",
+			CLIENT_SERVER_STR, fname);
 
     /* hashlookup to see if it is there */
     if ((node = findnode_fn (list, fname)) != NULL)
@@ -231,18 +227,11 @@ Register (list, fname, vn, ts, options, tag, date, ts_conflict)
 
     if (trace)
     {
-#ifdef SERVER_SUPPORT
-	(void) fprintf (stderr, "%c-> Register(%s, %s, %s%s%s, %s, %s %s)\n",
-			(server_active) ? 'S' : ' ',
+	(void) fprintf (stderr, "%s-> Register(%s, %s, %s%s%s, %s, %s %s)\n",
+			CLIENT_SERVER_STR,
 			fname, vn, ts ? ts : "",
 			ts_conflict ? "+" : "", ts_conflict ? ts_conflict : "",
 			options, tag ? tag : "", date ? date : "");
-#else
-	(void) fprintf (stderr, "-> Register(%s, %s, %s%s%s, %s, %s %s)\n",
-			fname, vn, ts ? ts : "",
-			ts_conflict ? "+" : "", ts_conflict ? ts_conflict : "",
-			options, tag ? tag : "", date ? date : "");
-#endif
     }
 
     entnode = Entnode_Create (ENT_FILE, fname, vn, ts, options, tag, date,
