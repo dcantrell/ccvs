@@ -1,3 +1,11 @@
+2003-04-15  Derek Price  <derek@ximbiot.com>
+
+	* sanity.sh (*): Shrink the yucky case statement using sed's transform
+	functionality.
+	(getlongoptarg): Convert this function to only confirm the arg and move
+	it...
+	(checklongoptarg): ...here.
+
 2003-04-10  Larry Jones  <lawrence.jones@eds.com>
 
 	* Makefile.in: Regenerated.
