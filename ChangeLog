@@ -1,3 +1,7 @@
+1998-08-01  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* INSTALL: Add Unixware 7 (reported by Phillip Porch).
+
 1998-07-29  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvsnt.mak: For rcscmds.c, also include files from the diff
