@@ -236,6 +236,12 @@
 #define	CVS_DIFFDATE
 #endif
 
+/*
+ * "cvs login" is under construction.  Don't define this unless you're
+ * testing it, in which case you're me and you already know that.
+ */
+/* #define CVS_LOGIN */
+
 /* End of CVS configuration section */
 
 /*
