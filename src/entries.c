@@ -207,8 +207,6 @@ freesdt (p)
 	free (sdtp->tag);
     if (sdtp->date)
 	free (sdtp->date);
-    if (sdtp->options)
-	free (sdtp->options);
     free ((char *) sdtp);
 }
 

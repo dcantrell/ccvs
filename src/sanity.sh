@@ -3025,8 +3025,27 @@ done'
 	    dotest binfiles-12 "${testcvs} -q update -A" '[UP] binfile'
 	    dotest binfiles-13 "${testcvs} -q update -A" ''
 	  fi
+	  cd ../..
+	  rm -rf 1
 
-	  cd ../../2/first-dir
+	  mkdir 3
+	  cd 3
+	  dotest binfiles-13a0 "${testcvs} -q co -r HEAD first-dir" \
+'U first-dir/binfile'
+	  cd first-dir
+	  dotest binfiles-13a1 "${testcvs} status binfile" \
+'===================================================================
+File: binfile          	Status: Up-to-date
+
+   Working revision:	1\.2.*
+   Repository revision:	1\.2	/tmp/cvs-sanity/cvsroot/first-dir/binfile,v
+   Sticky Tag:		HEAD (revision: 1\.2)
+   Sticky Date:		(none)
+   Sticky Options:	-kb'
+	  cd ../..
+	  rm -rf 3
+
+	  cd 2/first-dir
 	  echo 'this file is $''RCSfile$' >binfile
 	  dotest binfiles-14a "${testcvs} -q ci -m modify-it" \
 'Checking in binfile;
@@ -3075,7 +3094,7 @@ File: binfile          	Status: Up-to-date
 
 	  cd ../..
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
-	  rm -r 1 2
+	  rm -r 2
 	  ;;
 	info)
 	  # Test CVS's ability to handle *info files.
