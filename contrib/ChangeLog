@@ -1,4 +1,11 @@
-2001-12-06  Derek Price  <dprice@collab.net>
+2002-03-21  Derek Price  <oberon@umich.edu>
+
+	* Makefile.am (install-data-local): Import a patch from RedHat which
+	was no longer necessary but causes a FIXME to print - maybe someone
+	will see it and fix it.
+	* Makefile.in: Regenerated.
+
+2001-12-06  Derek Price  <oberon@umich.edu>
 
 	* cvs_acls.in: Allow ACL specification based on branch matching.
 	(Patch from Aaron Voisine <voisine@bytemobile.com>.)
