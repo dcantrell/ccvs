@@ -1,5 +1,8 @@
 Tue Feb 17 18:34:01 1998  Ian Lance Taylor  <ian@cygnus.com>
 
+	* import.c (expand_at_signs): Rewrite to use memchr and fwrite
+	rather than putc.
+
 	Rewrite RCS file reading routines for speed:
 	* rcs.c (struct rcsbuffer): Define.
 	(rcsbuf_open, rcsbuf_close, rcsbuf_getkey, rcsbuf_getrevnum,
