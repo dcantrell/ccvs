@@ -823,7 +823,7 @@ cat_module (status)
 	argc = moduleargc;
 	argv = moduleargv;
 
-	optind = 1;
+	optind = 0;
 	wid = 0;
 	while ((c = getopt (argc, argv, CVSMODULE_OPTS)) != -1)
 	{
