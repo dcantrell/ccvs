@@ -460,7 +460,7 @@ sub get_history
     {
 		if( $ignore == 1 ) 
 		{
-			if( ( $revision ) = $line =~ /^revision (\d+\.\d[\d.]*)$/ )
+			if( ( $revision ) = $line =~ /^revision (\d+\.\d[\d.]*)(	locked by: \S+;)?$/ )
 			{
 				$ignore++;
 				next;
