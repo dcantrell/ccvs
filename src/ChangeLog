@@ -1,5 +1,10 @@
 Fri Apr  7 15:49:25 1995  J.T. Conklin  <jtc@rtl.cygnus.com>
 
+	* root.c (Name_Root): merge identical adjacent conditionals.
+
+	* create_admin.c (Create_Admin): Rearranged check for CVSADM and
+	  OCVSADM directories so that CVSADM pathname is only built once.
+
 	* update.c (update_dirleave_proc): Removed code to remove CVS
 	  administration directory if command_name == "export" and to
 	  create CVS/Root file if it is not present.  Identical code
