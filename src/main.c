@@ -44,6 +44,13 @@ int noexec = 0;
 int readonlyfs = 0;
 int logoff = 0;
 
+
+
+/***
+ ***
+ ***   CVSROOT/config options
+ ***
+ ***/
 /* Set if we should be writing CVSADM directories at top level.  At
    least for now we'll make the default be off (the CVS 1.9, not CVS
    1.9.2, behavior). */
@@ -51,6 +58,9 @@ int top_level_admin = 0;
 #ifdef SUPPORT_OLD_INFO_FMT_STRINGS
 int UseNewInfoFmtStrings = 0;
 #endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
+cvsroot_t *PrimaryServer;
+
+
 
 mode_t cvsumask = UMASK_DFLT;
 

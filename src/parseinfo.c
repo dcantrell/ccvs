@@ -432,6 +432,8 @@ warning: this CVS does not support PreservePermissions");
 	    }
 	}
 #endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
+	else if (strcmp (line, "PrimaryServer") == 0)
+	    PrimaryServer = parse_cvsroot (p);
 	else
 	{
 	    /* We may be dealing with a keyword which was added in a
