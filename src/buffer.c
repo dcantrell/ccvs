@@ -17,7 +17,7 @@ static struct buffer_data *free_buffer_data;
 
 /* Local functions.  */
 static void allocate_buffer_datas PROTO((void));
-static inline struct buffer_data *get_buffer_data PROTO((void));
+static struct buffer_data *get_buffer_data PROTO((void));
 
 /* Initialize a buffer structure.  */
 
@@ -90,7 +90,7 @@ allocate_buffer_datas ()
 
 /* Get a new buffer_data structure.  */
 
-static inline struct buffer_data *
+static struct buffer_data *
 get_buffer_data ()
 {
     struct buffer_data *ret;
@@ -208,7 +208,7 @@ buf_output0 (buf, string)
 
 /* Add a single character to BUF.  */
 
-inline void
+void
 buf_append_char (buf, ch)
     struct buffer *buf;
     int ch;
@@ -454,7 +454,7 @@ buf_send_special_count (buf, count)
 
 /* Append a list of buffer_data structures to an buffer.  */
 
-inline void
+void
 buf_append_data (buf, data, last)
      struct buffer *buf;
      struct buffer_data *data;

@@ -1,5 +1,9 @@
 Tue Aug 20 10:13:59 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* buffer.c, rcs.c: Don't use inline.  It wasn't being used in a
+	loop or any such place where it would matter for performance, and
+	it was a (minor) portability hassle.
+
 	* server.c (server): Change "Dummy argument 0" to "cvs server" and
 	add comment explaining why.
 

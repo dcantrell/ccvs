@@ -42,10 +42,6 @@
 /* Documentation says yup; haven't verified experimentally. */
 #define HAVE_UTIME_NULL 1
 
-/* We don't appear to have inline functions, so just expand "inline"
-   to "". */
-#define inline 
-
 /* Define if on MINIX.  */
 /* Hah.  */
 #undef _MINIX
