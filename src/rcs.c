@@ -5021,7 +5021,17 @@ RCS_checkin (rcs, workfile, message, rev, flags)
 
     while (islink (rcs->path))
     {
-	char *newname = xreadlink (rcs->path);
+	char *newname;
+#ifdef HAVE_READLINK
+	/* The clean thing to do is probably to have each filesubr.c
+	   implement this (with an error if not supported by the
+	   platform, in which case islink would presumably return 0).
+	   But that would require editing each filesubr.c and so the
+	   expedient hack seems to be looking at HAVE_READLINK.  */
+	newname = xreadlink (rcs->path);
+#else
+	error (1, 0, "internal error: islink doesn't like readlink");
+#endif
 	
 	if (isabsolute (newname))
 	{
