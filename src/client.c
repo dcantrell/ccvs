@@ -283,7 +283,7 @@ parse_cvsroot ()
 #ifdef NO_SOCKET_TO_FD
 /* Under certain circumstances, we must communicate with the server
    via a socket using send() and recv().  This is because under some
-   operating systems (OS/2 and Windows NT come to mind), a socket
+   operating systems (OS/2 and Windows 95 come to mind), a socket
    cannot be converted to a file descriptor -- it must be treated as a
    socket and nothing else. */
 static int use_socket_style = 0;
@@ -2557,7 +2557,7 @@ connect_to_pserver (tofdp, fromfdp)
  * FIXME: this function has not been changed to deal with
  * NO_SOCKET_TO_FD (i.e., systems on which sockets cannot be converted
  * to file descriptors.  The first person to try building a kerberos
- * client on such a system (OS/2, Windows NT, and maybe others) will
+ * client on such a system (OS/2, Windows 95, and maybe others) will
  * have to make take care of this.
  */
 void
