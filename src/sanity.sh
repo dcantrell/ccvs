@@ -18324,6 +18324,7 @@ echo "M OK, whatever"
 echo "ok"
 cat >${TESTDIR}/client.tmp
 EOF
+	    chmod u=rw,g=,o= file1
 	    dotest client-8 "${testcvs} update -D 99-10-04" "OK, whatever"
 	    dotest client-9 "cat ${TESTDIR}/client.tmp" \
 "Root ${TESTDIR}/cvsroot
@@ -18335,7 +18336,7 @@ Directory \.
 ${TESTDIR}/cvsroot/first-dir
 Entry /file1/1\.2///
 Modified file1
-u=rw,g=r,o=r
+u=rw,g=,o=
 4
 abc
 update"
