@@ -1,5 +1,8 @@
 Changes since 1.11.1p1:
 
+* A serious error that allowed read-only users to tag files has been
+corrected.
+
 * The "annotate" command will no longer annotate binary files unless
 you specify the new -F option.
 
