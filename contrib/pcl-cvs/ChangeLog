@@ -1,8 +1,42 @@
+Fri Jan 12 10:32:14 1996  Greg A. Woods  <woods@most.weird.com>
+
+	* pcl-cvs.elc, pcl-cvs-lucid.elc: removed
+
+	* pcl-cvs.el: run through the spell checker...
+	- noted some free variables in comments
+	(cvs-inhibit-copyright-message): move this above
+	cvs-startup-message to keep the compiler quiet
+
+	* compile-all.el: removed (use make for dependency checking!)
+
+	* Makefile.in: tweak various comments and echo messages...
+	(elcfiles): removed this target.
+	(.SUFFIXES, .el.elc): added support for elisp files.
+	(CORE): new macro -- list of files all .elc depend on [still empty]
+	(BATCHFLAGS): new macro -- flags to pass to emacs
+	(OBJDIR_DISTFILES): added ELCFILES to be shipped in distribution
+
+	* README: fix the RCS Id.
+
+	* INSTALL: re-copy formatted makeinfo output from pcl-cvs.info,
+	just to keep everything in proper synchronisation.
+
+	* pcl-cvs.texinfo (Pcl-cvs installation): update to match Karl's
+	new wording from INSTALL.
+
 Wed Jan 10 22:04:35 1996  Karl Fogel  <kfogel@floss.red-bean.com>
 
         * INSTALL: make first item read a little more smoothly.
 
         * README: note that pcl-cvs has been tested under 19.30.
+
+Wed Jan 10 17:59:00 1996  Greg A. Woods  <woods@most.weird.com>
+
+	* ChangeLog.woods: these are changes integrated in from my
+	own pcl-cvs repository module, and based on the original PCL-CVS
+	Version 1.05 release.  They include most, if not all, of the
+	changes from the Cygnus and Cyclic CVS contrib versions of
+	PCL-CVS (i.e. the changes noted below).
 
 Sat Dec 30 15:01:45 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
