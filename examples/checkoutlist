@@ -1,5 +1,5 @@
 #
-#ident	"@(#)cvs/examples:$Name$:$Id$
+#ident	"@(#)cvs/examples:$Name$:$Id$"
 #
 # The "checkoutlist" file is used to support additional version controlled
 # administrative files in $CVSROOT/CVSROOT, such as template files.
@@ -16,3 +16,5 @@
 # comment lines begin with '#'
 #
 rcstemplate
+wrap
+unwrap
