@@ -1,3 +1,8 @@
+Fri Nov 24 11:12:47 1995  Boleslaw Ciesielski  <bolek@viewlogic.com>
+
+	* run.c (build_command): Move len++ inside loop, to make room for
+	spaces between arguments.
+
 Thu Oct 26 10:12:51 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* README: Say that patch is required, not optional.

@@ -578,8 +578,8 @@ build_command (char **argv)
 		else
 		    len++;
 	    }
+	    len++;  /* for the space or the '\0'  */
 	}
-        len++;  /* for the space or the '\0'  */
     }
 
     {
