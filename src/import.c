@@ -216,7 +216,11 @@ import (argc, argv)
     }
 #endif
 
-    if (!server_active && use_editor)
+    if (
+#ifdef SERVER_SUPPORT
+        !server_active &&
+#endif
+        use_editor)
     {
 	do_editor ((char *) NULL, &message,
 #ifdef CLIENT_SUPPORT
