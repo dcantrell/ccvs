@@ -1,5 +1,10 @@
 Changes since 1.12.1:
 
+* New LocalKeyword and KeywordExpand options to CVSROOT/config which
+FreeBSD, OpenBSD, and NetBSD users may find familiar as the "tag" and
+"tagexpand" options used for many years. The CVSHeader keyword has
+also been added to the mixture.
+
 * A bug with short patches (`rdiff -s') which caused rdiff to sometimes report
 differences that did not exist has been fixed.
 

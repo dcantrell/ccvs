@@ -1,3 +1,7 @@
+2003-06-10  Mark D. Baushke  <mdb@cvshome.org>
+
+	* NEWS: New LocalKeyword and KeywordExpand options.
+
 2003-06-09  Derek Price  <derek@ximbiot.com>
 
 	* cvsnt.mak: Rename win32.c to woe32.c in accordance with the GNU

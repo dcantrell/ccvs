@@ -1,3 +1,16 @@
+2003-06-10  Mark D. Baushke  <mdb@gnu.org>
+
+	* rcs.c (RCS_setlocalid,RCS_setincexc): New functions to support
+	LocalKeyword and KeywordExpand config keywords.
+
+	* rcs.h (RCS_setlocalid,RCS_setincexc): New prototypes.
+
+	* parseinfo.c (parse_config): Added LocalKeyword
+	and KeywordExpand keywords.
+
+	* sanity.sh (keywordexpand): New CVSROOT/config tests for
+	LocalKeyword and KeywordExpand options.
+
 2003-06-09  Derek Price  <derek@ximbiot.com>
 
 	* rcs.c (RCS_delete_revs): Reference WOE32 rather than WIN32 in

@@ -340,6 +340,16 @@ parse_config (cvsroot)
 		goto error_return;
 	    }
 	}
+	else if (strcmp (line, "LocalKeyword") == 0)
+	{
+	    RCS_setlocalid(p);
+		
+	}
+	else if (strcmp (line, "KeywordExpand") == 0)
+	{
+	    RCS_setincexc(p);
+		
+	}
 	else if (strcmp (line, "PreservePermissions") == 0)
 	{
 	    if (strcmp (p, "no") == 0)
