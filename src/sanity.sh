@@ -863,7 +863,7 @@ else
   echo 'You may wish to make sure GNU expr is in your path.'
   return 1
 fi
-if $EXPR "`cat ${TESTDIR}/bar`x" : "`cat ${TESTDIR}/bar`y" >/dev/null; then
+if $expr "`cat ${TESTDIR}/bar`x" : "`cat ${TESTDIR}/bar`y" >/dev/null; then
   echo 'Warning: you are using a version of expr that does not correctly'
   echo 'match large patterns.  Some tests may spuriously pass or fail.'
   echo 'You may wish to make sure GNU expr is in your path.'

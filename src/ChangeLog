@@ -1,3 +1,7 @@
+2004-11-09  Mark D. Baushke  <mdb@cvshome.org>
+
+	* sanity.sh (expr_tooltest3): Bugfix. Use $expr rather than $EXPR.
+
 2004-11-08 Derek Price <derek@ximbiot.com>
 
 	* sanity.sh (version_test): Echo good version data to the log, even
