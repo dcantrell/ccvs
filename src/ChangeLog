@@ -1,3 +1,7 @@
+Thu Apr 27 12:41:52 1995  Jim Kingdon  (kingdon@lioth.cygnus.com)
+
+	* Makefile.in: Revise comment regarding check vs. remotecheck.
+
 Thu Apr 27 12:52:28 1995  Bryan O'Sullivan <bos@cyclic.com>
 
 	* client.c (start_rsh_server): If the CVS_RSH environment variable
