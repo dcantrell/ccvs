@@ -1593,7 +1593,7 @@ if test x"$*" = x; then
 	tests="${tests} keywordexpand"
 	# Checking out various places (modules, checkout -d, &c)
 	tests="${tests} modules modules2 modules3 modules4 modules5 modules6"
-	tests="${tests} mkmodules co-d"
+	tests="${tests} modules7 mkmodules co-d"
 	tests="${tests} cvsadm emptydir abspath abspath2 toplevel toplevel2"
         tests="${tests} rstar-toplevel trailingslashes checkout_repository"
 	# Log messages, error messages.
@@ -13509,6 +13509,49 @@ ${CPROG} \[checkout aborted\]: cannot expand modules"
 	  restore_adm
 	  cd ..
 	  rm -r modules6
+	  ;;
+
+
+
+	modules7)
+	  #
+	  # Test tag problems vs an empty CVSROOT/val-tags file
+	  #
+	  # See the header comment for the `modules' test for an index of
+	  # the complete suite of modules tests.
+	  #
+	  mkdir modules7
+	  cd modules7
+	  dotest modules7-1 "$testcvs -Q co -d top ."
+	  cd top
+	  mkdir zero one
+	  dotest modules7-2 "$testcvs -Q add zero one"
+	  cd one
+	  echo 'file1 contents' > file1
+	  dotest modules7-2 "$testcvs -Q add file1"
+	  dotest modules7-3 "$testcvs -Q ci -mnew file1"
+	  dotest modules7-4 "$testcvs -Q tag mytag file1"
+	  cd ../CVSROOT
+	  echo 'all -a zero one' > modules
+	  dotest modules7-5 "$testcvs -Q ci -mall-module"
+	  cd ../..
+	  mkdir myexport
+	  cd myexport
+
+	  # This failed prior to CVS version 1.12.10.
+	  dotest modules7-7 "$testcvs export -rmytag all" \
+"$SPROG export: Updating zero
+$SPROG export: Updating one
+U one/file1"
+	  dotest modules7-8 'cat one/file1' 'file1 contents'
+
+	  dokeep
+
+	  # cleanup
+	  restore_adm
+	  cd ../..
+	  rm -fr modules7
+	  rm -rf $CVSROOT_DIRNAME/zero $CVSROOT_DIRNAME/one
 	  ;;
 
 
