@@ -543,7 +543,7 @@ buf_copy_data (struct buffer *buf, struct buffer_data *data,
 	cur = cur->next;
     }
 
-    buf_append_data (buf, first, cur);
+    buf_append_data (buf, first, new);
 }
 # endif /* !TRUST_OS_FILE_CACHE */
 
