@@ -1,3 +1,9 @@
+Sat Jan 10 10:51:26 1998  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* getline.c (getstr): Make sure to set errno when appropriate.  I
+	didn't test the error case for the new code but inspection shows
+	the old code was rather broken.
+
 Sat Nov 29 22:03:39 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	getwd and getcwd were a big big mess.  Although Jim's fix might
