@@ -5679,10 +5679,9 @@ neste documento.
 @c <en>leaving the first number the same and incrementing the
 @c <en>second number.  For example, @code{1.1}, @code{1.2},
 @c <en>@code{1.3}, etc.
-By default, @sc{cvs} will assign numeric revisions by
-leaving the first number the same and incrementing the
-second number.  For example, @code{1.1}, @code{1.2},
-@code{1.3}, etc.
+Por padrão, @sc{cvs} vai atribuir revisões numéricas
+mantendo o primeiro número e aumentando o segundo.  Por
+exemplo, @code{1.1}, @code{1.2}, @code{1.3}, etc.
 
 @c <en>When adding a new file, the second number will always
 @c <en>be one and the first number will equal the highest
@@ -5691,13 +5690,13 @@ second number.  For example, @code{1.1}, @code{1.2},
 @c <en>highest numbered revisions are @code{1.7}, @code{3.1},
 @c <en>and @code{4.12}, then an added file will be given the
 @c <en>numeric revision @code{4.1}.
-When adding a new file, the second number will always
-be one and the first number will equal the highest
-first number of any file in that directory.  For
-example, the current directory contains files whose
-highest numbered revisions are @code{1.7}, @code{3.1},
-and @code{4.12}, then an added file will be given the
-numeric revision @code{4.1}.
+Quando um novo arquivo é adicionado, o segundo número
+vai ser sempre o um e o primeiro número vai ser igual
+ao maior primeiro número de qualquer arquivo no
+diretório.  Por exemplo, se o diretório atual contiver
+arquivos os quais o maior número de revisão seram
+@code{1.7}, @code{3.1} e @code{4.12}, então um arquivo
+adicionado vai receber a revisão numérica @code{4.1}.
 
 @c This is sort of redundant with something we said a
 @c while ago.  Somewhere we need a better way of
@@ -5716,23 +5715,24 @@ numeric revision @code{4.1}.
 @c <en>commit} can do that.  The @samp{-r} option implies the
 @c <en>@samp{-f} option, in the sense that it causes the
 @c <en>files to be committed even if they are not modified.
-Normally there is no reason to care
-about the revision numbers---it is easier to treat them
-as internal numbers that @sc{cvs} maintains, and tags
-provide a better way to distinguish between things like
-release 1 versus release 2 of your product
-(@pxref{Etiquetas}).  However, if you want to set the
-numeric revisions, the @samp{-r} option to @code{cvs
-commit} can do that.  The @samp{-r} option implies the
-@samp{-f} option, in the sense that it causes the
-files to be committed even if they are not modified.
+Normalmente não há razão para se preocupar com números
+de revisão---é melhor tratá-los como numeração interna
+que o @sc{cvs} mantém, e etiquetas (tags) fornecem uma
+forma melhor de distinguir entre coisas tais como
+release 1 e release 2 de seu produto
+(@pxref{Etiquetas}).  Entretando, se você quiser
+ajustar as revisões numéricas, a opção @samp{-r} do
+@code{cvs commit} pode fazer isto.  A opção @samp{-r}
+implica na opção @samp{-f}, no sentido de que ela faz
+com que os arquivos sejam submetidos mesmo caso eles
+não estejam modificados.
 
 @c <en>For example, to bring all your files up to
 @c <en>revision 3.0 (including those that haven't changed),
 @c <en>you might invoke:
-For example, to bring all your files up to
-revision 3.0 (including those that haven't changed),
-you might invoke:
+Por exemplo, para subir todos os arquivos para a
+revisão 3.0 (inclusive os que não sofreram mudanças),
+você deve invocar:
 
 @example
 $ cvs commit -r 3.0
@@ -5743,18 +5743,18 @@ $ cvs commit -r 3.0
 @c <en>revision 3.0 exists, you cannot @samp{cvs commit
 @c <en>-r 1.3}.  If you want to maintain several releases in
 @c <en>parallel, you need to use a branch (@pxref{Branching and merging}).
-Note that the number you specify with @samp{-r} must be
-larger than any existing revision number.  That is, if
-revision 3.0 exists, you cannot @samp{cvs commit
--r 1.3}.  If you want to maintain several releases in
-parallel, you need to use a branch
+Observe que o número que você especificar com a opção
+@samp{-r} deve ser maior que qualquer número de revisão
+existente.  Ou seja, se a revisão 3.0 existe, você não
+pode fazer @samp{cvs commit -r 1.3}.  Se você quiser
+manter várias releases em paralelo, você deve usar um ramo
 (@pxref{Ramificando e mesclando}).
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @c <en>@node Tags
 @node Etiquetas
 @c <en>@section Tags--Symbolic revisions
-@section Tags--Symbolic revisions
+@section Etiquetas--Revisões simbólicas
 @c <en>@cindex Tags
 @cindex Etiquetas
 
@@ -5765,15 +5765,9 @@ parallel, you need to use a branch
 @c <en>between two releases.  As an example, some of the
 @c <en>source files that make up @sc{rcs} 5.6 have the following
 @c <en>revision numbers:
-The revision numbers live a life of their own.  They
-need not have anything at all to do with the release
-numbers of your software product.  Depending
-on how you use @sc{cvs} the revision numbers might change several times
-between two releases.  As an example, some of the
-source files that make up @sc{rcs} 5.6 have the following
-revision numbers:
+Os números de revisão tem uma vida a parte.  Eles não precisam ter nada a ver com os números de release de seu produto de software.  Dependendo de como você usa o @sc{cvs}, os números de revisão podem mudar várias vezes entre duas releases.  Como um exemplo, alguns dos arquivos fonte do @sc{rcs} 5.6 tinham os seguintes números de revisão:
 @c <en>@cindex RCS revision numbers
-@cindex RCS revision numbers
+@cindex números de revisão do RCS
 
 @example
 ci.c            5.21
@@ -5791,17 +5785,17 @@ rcsutil.c       5.10
 @end example
 
 @c <en>@cindex tag (subcommand), introduction
-@cindex tag (subcommand), introduction
+@cindex tag (subcomando), introdução
 @c <en>@cindex Tags, symbolic name
-@cindex Tags, symbolic name
+@cindex Etiquetas, nome simbólico
 @c <en>@cindex Symbolic name (tag)
-@cindex Symbolic name (tag)
+@cindex Nome simbólico (etiqueta)
 @c <en>@cindex Name, symbolic (tag)
-@cindex Name, symbolic (tag)
+@cindex Simbólico, nome (etiqueta)
 @c <en>@cindex HEAD, as reserved tag name
-@cindex HEAD, as reserved tag name
+@cindex HEAD, nome de etiqueta reservado
 @c <en>@cindex BASE, as reserved tag name
-@cindex BASE, as reserved tag name
+@cindex BASE, nome de etiqueta reservado
 @c <en>You can use the @code{tag} command to give a symbolic name to a
 @c <en>certain revision of a file.  You can use the @samp{-v} flag to the
 @c <en>@code{status} command to see all tags that a file has, and
@@ -8879,6 +8873,14 @@ in more detail there and in @ref{Common options}.
 @c <en>@cindex Binary files
 @cindex Arquivos binários
 
+@c <en>The most common use for @sc{cvs} is to store text
+@c <en>files.  With text files, @sc{cvs} can merge revisions,
+@c <en>display the differences between revisions in a
+@c <en>human-visible fashion, and other such operations.
+@c <en>However, if you are willing to give up a few of these
+@c <en>abilities, @sc{cvs} can store binary files.  For
+@c <en>example, one might store a web site in @sc{cvs}
+@c <en>including both text files and binary images.
 The most common use for @sc{cvs} is to store text
 files.  With text files, @sc{cvs} can merge revisions,
 display the differences between revisions in a
@@ -8889,18 +8891,40 @@ example, one might store a web site in @sc{cvs}
 including both text files and binary images.
 
 @menu
+@c <en>* Binary why::     More details on issues with binary files
 * Binary why::     More details on issues with binary files
+@c <en>* Binary howto::   How to store them
 * Binary howto::   How to store them
 @end menu
 
+@c <en>@node Binary why
 @node Binary why
+@c <en>@section The issues with binary files
 @section The issues with binary files
 
+@c <en>While the need to manage binary files may seem obvious
+@c <en>if the files that you customarily work with are binary,
+@c <en>putting them into version control does present some
+@c <en>additional issues.
 While the need to manage binary files may seem obvious
 if the files that you customarily work with are binary,
 putting them into version control does present some
 additional issues.
 
+@c <en>One basic function of version control is to show the
+@c <en>differences between two revisions.  For example, if
+@c <en>someone else checked in a new version of a file, you
+@c <en>may wish to look at what they changed and determine
+@c <en>whether their changes are good.  For text files,
+@c <en>@sc{cvs} provides this functionality via the @code{cvs
+@c <en>diff} command.  For binary files, it may be possible to
+@c <en>extract the two revisions and then compare them with a
+@c <en>tool external to @sc{cvs} (for example, word processing
+@c <en>software often has such a feature).  If there is no
+@c <en>such tool, one must track changes via other mechanisms,
+@c <en>such as urging people to write good log messages, and
+@c <en>hoping that the changes they actually made were the
+@c <en>changes that they intended to make.
 One basic function of version control is to show the
 differences between two revisions.  For example, if
 someone else checked in a new version of a file, you
@@ -8931,6 +8955,18 @@ changes in separate working directories
 merges explicitly with the @samp{update -j} command
 (@pxref{Ramificando e mesclando}).
 
+@c <en>In the case of text
+@c <en>files, @sc{cvs} can merge changes made independently,
+@c <en>and signal a conflict if the changes conflict.  With
+@c <en>binary files, the best that @sc{cvs} can do is present
+@c <en>the two different copies of the file, and leave it to
+@c <en>the user to resolve the conflict.  The user may choose
+@c <en>one copy or the other, or may run an external merge
+@c <en>tool which knows about that particular file format, if
+@c <en>one exists.
+@c <en>Note that having the user merge relies primarily on the
+@c <en>user to not accidentally omit some changes, and thus is
+@c <en>potentially error prone.
 In the case of text
 files, @sc{cvs} can merge changes made independently,
 and signal a conflict if the changes conflict.  With
@@ -8957,9 +8993,18 @@ discussion of reserved checkouts (file locking) in
 @ref{Múltiplos desenvolvedores}.  To avoid the merges
 resulting from branches, restrict use of branches.
 
+@c <en>@node Binary howto
 @node Binary howto
+@c <en>@section How to store binary files
 @section How to store binary files
 
+@c <en>There are two issues with using @sc{cvs} to store
+@c <en>binary files.  The first is that @sc{cvs} by default
+@c <en>converts line endings between the canonical form in
+@c <en>which they are stored in the repository (linefeed
+@c <en>only), and the form appropriate to the operating system
+@c <en>in use on the client (for example, carriage return
+@c <en>followed by line feed for Windows NT).
 There are two issues with using @sc{cvs} to store
 binary files.  The first is that @sc{cvs} by default
 converts line endings between the canonical form in
@@ -8968,6 +9013,10 @@ only), and the form appropriate to the operating system
 in use on the client (for example, carriage return
 followed by line feed for Windows NT).
 
+@c <en>The second is that a binary file might happen to
+@c <en>contain data which looks like a keyword (@pxref{Keyword
+@c <en>substitution}), so keyword expansion must be turned
+@c <en>off.
 The second is that a binary file might happen to
 contain data which looks like a keyword
 (@pxref{Substituição de palavra-chave}), so keyword expansion must be turned
@@ -8977,10 +9026,15 @@ off.
 @c binary files.  xref to Multiple Developers and the
 @c reserved checkout issues.
 
+@c <en>The @samp{-kb} option available with some @sc{cvs}
+@c <en>commands insures that neither line ending conversion
+@c <en>nor keyword expansion will be done.
 The @samp{-kb} option available with some @sc{cvs}
 commands insures that neither line ending conversion
 nor keyword expansion will be done.
 
+@c <en>Here is an example of how you can create a new file
+@c <en>using the @samp{-kb} flag:
 Here is an example of how you can create a new file
 using the @samp{-kb} flag:
 
@@ -8990,6 +9044,9 @@ $ cvs add -kb -m"A test file" kotest
 $ cvs ci -m"First checkin; contains a keyword" kotest
 @end example
 
+@c <en>If a file accidentally gets added without @samp{-kb},
+@c <en>one can use the @code{cvs admin} command to recover.
+@c <en>For example:
 If a file accidentally gets added without @samp{-kb},
 one can use the @code{cvs admin} command to recover.
 For example:
@@ -9012,6 +9069,17 @@ $ cvs commit -m "make it binary" kotest
 @c This used to say "(Try the above example, and do a
 @c @code{cat kotest} after every command)".  But that
 @c only really makes sense for the unix case.
+@c <en>When you check in the file @file{kotest} the file is
+@c <en>not preserved as a binary file, because you did not
+@c <en>check it in as a binary file.  The @code{cvs
+@c <en>admin -kb} command sets the default keyword
+@c <en>substitution method for this file, but it does not
+@c <en>alter the working copy of the file that you have.  If you need to
+@c <en>cope with line endings (that is, you are using
+@c <en>@sc{cvs} on a non-unix system), then you need to
+@c <en>check in a new copy of the file, as shown by the
+@c <en>@code{cvs commit} command above.
+@c <en>On unix, the @code{cvs update -A} command suffices.
 When you check in the file @file{kotest} the file is
 not preserved as a binary file, because you did not
 check it in as a binary file.  The @code{cvs
@@ -9030,10 +9098,22 @@ On unix, the @code{cvs update -A} command suffices.
 @c update -A" would suffice, although the user who
 @c reported this suggested removing the file, manually
 @c removing it from CVS/Entries, and then "cvs update"
+@c <en>(Note that you can use @code{cvs log} to determine the default keyword
+@c <en>substitution method for a file and @code{cvs status} to determine
+@c <en>the keyword substitution method for a working copy.)
 (Note that you can use @code{cvs log} to determine the default keyword
 substitution method for a file and @code{cvs status} to determine
 the keyword substitution method for a working copy.)
 
+@c <en>However, in using @code{cvs admin -k} to change the
+@c <en>keyword expansion, be aware that the keyword expansion
+@c <en>mode is not version controlled.  This means that, for
+@c <en>example, that if you have a text file in old releases,
+@c <en>and a binary file with the same name in new releases,
+@c <en>@sc{cvs} provides no way to check out the file in text
+@c <en>or binary mode depending on what version you are
+@c <en>checking out.  There is no good workaround for this
+@c <en>problem.
 However, in using @code{cvs admin -k} to change the
 keyword expansion, be aware that the keyword expansion
 mode is not version controlled.  This means that, for
@@ -9044,6 +9124,16 @@ or binary mode depending on what version you are
 checking out.  There is no good workaround for this
 problem.
 
+@c <en>You can also set a default for whether @code{cvs add}
+@c <en>and @code{cvs import} treat a file as binary based on
+@c <en>its name; for example you could say that files who
+@c <en>names end in @samp{.exe} are binary.  @xref{Wrappers}.
+@c <en>There is currently no way to have @sc{cvs} detect
+@c <en>whether a file is binary based on its contents.  The
+@c <en>main difficulty with designing such a feature is that
+@c <en>it is not clear how to distinguish between binary and
+@c <en>non-binary files, and the rules to apply would vary
+@c <en>considerably with the operating system.
 You can also set a default for whether @code{cvs add}
 and @code{cvs import} treat a file as binary based on
 its name; for example you could say that files who
@@ -9103,6 +9193,19 @@ considerably with the operating system.
 @c <en>@cindex RCS-style locking
 @cindex RCS-style locking
 
+@c <en>When more than one person works on a software project
+@c <en>things often get complicated.  Often, two people try to
+@c <en>edit the same file simultaneously.  One solution, known
+@c <en>as @dfn{file locking} or @dfn{reserved checkouts}, is
+@c <en>to allow only one person to edit each file at a time.
+@c <en>This is the only solution with some version control
+@c <en>systems, including @sc{rcs} and @sc{sccs}.  Currently
+@c <en>the usual way to get reserved checkouts with @sc{cvs}
+@c <en>is the @code{cvs admin -l} command (@pxref{admin
+@c <en>options}).  This is not as nicely integrated into
+@c <en>@sc{cvs} as the watch features, described below, but it
+@c <en>seems that most people with a need for reserved
+@c <en>checkouts find it adequate.
 When more than one person works on a software project
 things often get complicated.  Often, two people try to
 edit the same file simultaneously.  One solution, known
@@ -9118,6 +9221,10 @@ seems that most people with a need for reserved
 checkouts find it adequate.
 @c Or "find it better than worrying about implementing
 @c nicely integrated reserved checkouts" or ...?
+@c <en>It also may be possible to use the watches
+@c <en>features described below, together with suitable
+@c <en>procedures (not enforced by software), to avoid having
+@c <en>two people edit at the same time.
 It also may be possible to use the watches
 features described below, together with suitable
 procedures (not enforced by software), to avoid having
@@ -9130,6 +9237,16 @@ two people edit at the same time.
 @c It isn't clear to me whether we should try to
 @c explore these subtleties; it could easily just
 @c confuse people.
+@c <en>The default model with @sc{cvs} is known as
+@c <en>@dfn{unreserved checkouts}.  In this model, developers
+@c <en>can edit their own @dfn{working copy} of a file
+@c <en>simultaneously.  The first person that commits his
+@c <en>changes has no automatic way of knowing that another
+@c <en>has started to edit it.  Others will get an error
+@c <en>message when they try to commit the file.  They must
+@c <en>then use @sc{cvs} commands to bring their working copy
+@c <en>up to date with the repository revision.  This process
+@c <en>is almost automatic.
 The default model with @sc{cvs} is known as
 @dfn{unreserved checkouts}.  In this model, developers
 can edit their own @dfn{working copy} of a file
@@ -9143,19 +9260,35 @@ is almost automatic.
 
 @c FIXME? should probably use the word "watch" here, to
 @c tie this into the text below and above.
+@c <en>@sc{cvs} also supports mechanisms which facilitate
+@c <en>various kinds of communication, without actually
+@c <en>enforcing rules like reserved checkouts do.
 @sc{cvs} also supports mechanisms which facilitate
 various kinds of communication, without actually
 enforcing rules like reserved checkouts do.
 
+@c <en>The rest of this chapter describes how these various
+@c <en>models work, and some of the issues involved in
+@c <en>choosing between them.
 The rest of this chapter describes how these various
 models work, and some of the issues involved in
 choosing between them.
 
 @ignore
+@c <en>Here is a draft reserved checkout design or discussion
+@c <en>of the issues.  This seems like as good a place as any
+@c <en>for this.
 Here is a draft reserved checkout design or discussion
 of the issues.  This seems like as good a place as any
 for this.
 
+@c <en>Might want a cvs lock/cvs unlock--in which the names
+@c <en>differ from edit/unedit because the network must be up
+@c <en>for these to work.  unedit gives an error if there is a
+@c <en>reserved checkout in place (so that people don't
+@c <en>accidentally leave locks around); unlock gives an error
+@c <en>if one is not in place (this is more arguable; perhaps
+@c <en>it should act like unedit in that case).
 Might want a cvs lock/cvs unlock--in which the names
 differ from edit/unedit because the network must be up
 for these to work.  unedit gives an error if there is a
@@ -9164,6 +9297,23 @@ accidentally leave locks around); unlock gives an error
 if one is not in place (this is more arguable; perhaps
 it should act like unedit in that case).
 
+@c <en>On the other hand, might want it so that emacs,
+@c <en>scripts, etc., can get ready to edit a file without
+@c <en>having to know which model is in use.  In that case we
+@c <en>would have a "cvs watch lock" (or .cvsrc?) (that is,
+@c <en>three settings, "on", "off", and "lock").  Having cvs
+@c <en>watch lock set would cause a get to record in the CVS
+@c <en>directory which model is in use, and cause "cvs edit"
+@c <en>to change behaviors.  We'd want a way to query which
+@c <en>setting is in effect (this would be handy even if it is
+@c <en>only "on" or "off" as presently).  If lock is in
+@c <en>effect, then commit would require a lock before
+@c <en>allowing a checkin; chmod wouldn't suffice (might be
+@c <en>debatable--see chmod comment below, in watches--but it
+@c <en>is the way people expect RCS to work and I can't think
+@c <en>of any significant downside.  On the other hand, maybe
+@c <en>it isn't worth bothering, because people who are used
+@c <en>to RCS wouldn't think to use chmod anyway).
 On the other hand, might want it so that emacs,
 scripts, etc., can get ready to edit a file without
 having to know which model is in use.  In that case we
@@ -9182,6 +9332,14 @@ of any significant downside.  On the other hand, maybe
 it isn't worth bothering, because people who are used
 to RCS wouldn't think to use chmod anyway).
 
+@c <en>Implementation: use file attributes or use RCS
+@c <en>locking.  The former avoids more dependence on RCS
+@c <en>behaviors we will need to reimplement as we librarify
+@c <en>RCS, and makes it easier to import/export RCS files (in
+@c <en>that context, want to ignore the locker field).  But
+@c <en>note that RCS locks are per-branch, which is the
+@c <en>correct behavior (this is also an issue for the "watch
+@c <en>on" features; they should be per-branch too).
 Implementation: use file attributes or use RCS
 locking.  The former avoids more dependence on RCS
 behaviors we will need to reimplement as we librarify
@@ -9191,39 +9349,65 @@ note that RCS locks are per-branch, which is the
 correct behavior (this is also an issue for the "watch
 on" features; they should be per-branch too).
 
+@c <en>Here are a few more random notes about implementation
+@c <en>details, assuming "cvs watch lock" and
 Here are a few more random notes about implementation
 details, assuming "cvs watch lock" and
 
+@c <en>CVS/Watched file?  Or try to fit this into CVS/Entries somehow?
+@c <en>Cases: (1) file is checked out (unreserved or with watch on) by old
+@c <en>version of @sc{cvs}, now we do something with new one, (2) file is checked
+@c <en>out by new version, now we do something with old one.
 CVS/Watched file?  Or try to fit this into CVS/Entries somehow?
 Cases: (1) file is checked out (unreserved or with watch on) by old
 version of @sc{cvs}, now we do something with new one, (2) file is checked
 out by new version, now we do something with old one.
 
+@c <en>Remote protocol would have a "Watched" analogous to "Mode".  Of course
+@c <en>it would apply to all Updated-like requests.  How do we keep this
+@c <en>setting up to date?  I guess that there wants to be a Watched request,
+@c <en>and the server would send a new one if it isn't up to date? (Ugh--hard
+@c <en>to implement and slows down "cvs -q update"--is there an easier way?)
 Remote protocol would have a "Watched" analogous to "Mode".  Of course
 it would apply to all Updated-like requests.  How do we keep this
 setting up to date?  I guess that there wants to be a Watched request,
 and the server would send a new one if it isn't up to date? (Ugh--hard
 to implement and slows down "cvs -q update"--is there an easier way?)
 
+@c <en>"cvs edit"--checks CVS/Watched, and if watch lock, then sends
+@c <en>"edit-lock" request.  Which comes back with a Checked-in with
+@c <en>appropriate Watched (off, on, lock, locked, or some such?), or error
+@c <en>message if already locked.
 "cvs edit"--checks CVS/Watched, and if watch lock, then sends
 "edit-lock" request.  Which comes back with a Checked-in with
 appropriate Watched (off, on, lock, locked, or some such?), or error
 message if already locked.
 
+@c <en>"cvs commit"--only will commit if off/on/locked.  lock is not OK.
 "cvs commit"--only will commit if off/on/locked.  lock is not OK.
 
+@c <en>Doc:
+@c <en>note that "cvs edit" must be connected to network if watch lock is in
+@c <en>effect.
 Doc:
 note that "cvs edit" must be connected to network if watch lock is in
 effect.
 
+@c <en>Talk about what to do if someone has locked a file and you want to
+@c <en>edit that file.  (breaking locks, or lack thereof).
 Talk about what to do if someone has locked a file and you want to
 edit that file.  (breaking locks, or lack thereof).
 
 
+@c <en>One other idea (which could work along with the
+@c <en>existing "cvs admin -l" reserved checkouts, as well as
+@c <en>the above):
 One other idea (which could work along with the
 existing "cvs admin -l" reserved checkouts, as well as
 the above):
 
+@c <en>"cvs editors" could show who has the file locked, if
+@c <en>someone does.
 "cvs editors" could show who has the file locked, if
 someone does.
 
