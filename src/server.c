@@ -3495,6 +3495,7 @@ server_cleanup (sig)
 {
     /* Do "rm -rf" on the temp directory.  */
     int status;
+    int save_noexec;
 
     if (buf_to_net != NULL)
     {
@@ -3606,12 +3607,19 @@ server_cleanup (sig)
 #endif
 
     CVS_CHDIR (Tmpdir);
+    /* Temporarily clear noexec, so that we clean up our temp directory
+       regardless of it (this could more cleanly be handled by moving
+       the noexec check to all the unlink_file_dir callers from
+       unlink_file_dir itself).  */
+    save_noexec = noexec;
+    noexec = 0;
     /* FIXME?  Would be nice to not ignore errors.  But what should we do?
        We could try to do this before we shut down the network connection,
        and try to notify the client (but the client might not be waiting
        for responses).  We could try something like syslog() or our own
        log file.  */
     unlink_file_dir (orig_server_temp_dir);
+    noexec = save_noexec;
 
     if (buf_to_net != NULL)
 	(void) buf_shutdown (buf_to_net);
