@@ -3,11 +3,7 @@
 			   Cyclic Software
 
 Check the ../INSTALL file for information on the most recent version
-of CVS which has been known to be tested with NT.  Most of the
-following is from Sunday, August 20, 1995 and pertains to the
-so-called "1.5nt" release (which is later than 1.5; it is not an
-unmodified CVS 1.5), but all the changes done for it had been merged
-into 1.6.
+of CVS which has been known to be tested with NT.
 
 The port implements the full set of CVS commands, but is client only,
 not server or local ("local" meaning accessing repositories on a
@@ -22,7 +18,10 @@ To compile, use Microsoft Visual C++ on the file cvsnt.mak in the
 distribution's top directory.  At least with the tar port I'm using,
 the sources get extracted without carriage returns and you must add
 carriage returns to the end of every line in cvsnt.mak.  It doesn't
-seem to be necessary to add them to any other file.
+seem to be necessary to add them to any other file.  This has been
+tested with Visual C++ 2.1.  Visual C++ 4.0 apparently requires one to
+remove some quotation marks from cvsnt.mak (around save-cwd.c,
+save-cwd.sbr, and save-cwd.obj).
 
 Send bug reports to bug-cvs@prep.ai.mit.edu.
 
@@ -49,3 +48,6 @@ The following harmless warnings are known:
 - regex.c: These are signed/unsigned comparison conflicts.  I am not
   going to *touch* this code. :-) I got my fill of it when I was
   hacking GNU Emacs.
+.\lib\getdate.c(760) : warning C4013: 'getdate_yyparse' undefined; assuming extern returning int
+.\lib\getdate.c(1612) : warning C4102: 'yyerrlab' : unreferenced label
+.\lib\getdate.c(1612) : warning C4102: 'yynewstate' : unreferenced label
