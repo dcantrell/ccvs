@@ -27,3 +27,16 @@ to use either or both, so you should set both of them.
 Note also that we are using "CVS" as the supplier of CVS.
 CVS is not owned by any one company, so CVS seems like the
 most appropriate string to put there.
+
+TOOLS IMPLEMENTING THE SCC
+
+I'm not sure whether we'll want to try to make this a comprehensive
+list, but at least for the moment it seems worthwhile to list a few of
+the programs which implement the Integrated Development Environment
+(IDE) side of the SCC.  Some of this information is based on rumor or,
+worse yet, usenet posting, so it probably should be verified before
+relying on it.
+
+* Microsoft Developer Studio 4.x Professional (not Standard, not 2.x)
+* Powersoft's Optima++
+* CodeWright editor
