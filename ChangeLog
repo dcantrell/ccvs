@@ -1,3 +1,7 @@
+Wed Sep  4 1996  Jim Kingdon  <kingdon@cyclic.com>
+
+	* cvsnt.mak: Add windows-NT/ChangeLog.
+
 Wed Sep  4 13:55:11 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* Makefile.in (DISTFILES): Add cvs.spec.
