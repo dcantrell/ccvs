@@ -4002,7 +4002,7 @@ taginfo
 verifymsg
 
 notcheckedout:"
-	  dotest ls-6 "test -d notcheckedout"
+	  dotest_fail ls-6 "test -d notcheckedout"
 
 	  dokeep
 	  cd ../..

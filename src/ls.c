@@ -166,11 +166,17 @@ ls (int argc, char **argv)
 	}
 	else
 	{
+	    /* Setting this means, I think, that any empty directories created
+	     * by the server will be deleted by the client.  Since any dirs
+	     * created at all by ls should remain empty, this should cause any
+	     * dirs created by the server for the ls command to be deleted.
+	     */
+	    client_prune_dirs = 1;
+
 	    /* I explicitly decide not to send contents here.  We *could* let
 	     * the user pull status information with this command, but why
 	     * don't they just use update or status?
 	     */
-	    client_prune_dirs = ls_prune_dirs;
 	    send_files (argc, argv, !recurse, 0, SEND_NO_CONTENTS);
 	    send_file_names (argc, argv, SEND_EXPAND_WILD);
 	    send_to_server ("list\012", 0);
@@ -454,14 +460,11 @@ ls_dirleaveproc (void *callerdat, const char *dir, int err,
 		    set_tag = false;
 		}
 
-		if (ls_prune_dirs)
-		{
-		    (void)CVS_CHDIR ("..");
-		    if (unlink_file_dir (dir))
-			error (0, errno, "Failed to remove directory `%s'",
-			       created_dir);
-		    Subdir_Deregister (entries, NULL, dir);
-		}
+		(void)CVS_CHDIR ("..");
+		if (unlink_file_dir (dir))
+		    error (0, errno, "Failed to remove directory `%s'",
+			   created_dir);
+		Subdir_Deregister (entries, NULL, dir);
 
 		free (created_dir);
 		created_dir = NULL;
