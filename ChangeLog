@@ -1,5 +1,10 @@
 2003-04-01  Derek Price  <derek@ximbiot.com>
 
+	* BUGS: Remove a pcl-cvs bug.  pcl-cvs is no longer part of the CVS
+	source distribution.
+	
+2003-04-01  Derek Price  <derek@ximbiot.com>
+
 	* BUGS: Remove reference to cvs admin SEGV bug Larry Jones fixed
 	on 2003-02-19.
 
