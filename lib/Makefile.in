@@ -196,6 +196,8 @@ noinst_LIBRARIES = libcvs.a
 
 # For GNULIB's exitfail module.
 
+# For GNULIB's getdate module.
+
 # For GNULIB's gettime module.
 
 # For GNULIB's time_r module.
@@ -207,7 +209,6 @@ noinst_LIBRARIES = libcvs.a
 # For GNULIB's xalloc module.
 libcvs_a_SOURCES = \
 	argmatch.c \
-	getdate.y \
 	getnline.c \
 	getopt.c \
 	getopt1.c \
@@ -234,7 +235,7 @@ libcvs_a_SOURCES = \
 	xselect.h \
 	xsize.h \
 	xtime.h\
-basename.c dirname.c dirname.h stripslash.c exitfail.h exitfail.c gettime.c time_r.h timespec.h printf-args.h printf-parse.h vasnprintf.h xalloc.h xmalloc.c xstrdup.c
+basename.c dirname.c dirname.h stripslash.c exitfail.h exitfail.c getdate.h getdate.y gettime.c time_r.h timespec.h printf-args.h printf-parse.h vasnprintf.h xalloc.h xmalloc.c xstrdup.c
 libcvs_a_LIBADD = @LIBOBJS@
 
 
@@ -243,8 +244,9 @@ libcvs_a_LIBADD = @LIBOBJS@
 # For GNULIB's fnmatch module.
 
 # For GNULIB's stdbool module.
-BUILT_SOURCES = $(ALLOCA_H) $(FNMATCH_H) $(STDBOOL_H)
+BUILT_SOURCES = $(ALLOCA_H) $(FNMATCH_H) getdate.c $(STDBOOL_H)
 MOSTLYCLEANFILES = alloca.h alloca.h-t fnmatch.h fnmatch.h-t stdbool.h stdbool.h-t
+MAINTAINERCLEANFILES = getdate.c
 
 EXTRA_DIST = \
 	.cvsignore \
@@ -263,11 +265,11 @@ LIBRARIES = $(noinst_LIBRARIES)
 
 libcvs_a_AR = $(AR) cru
 libcvs_a_DEPENDENCIES = @LIBOBJS@
-am_libcvs_a_OBJECTS = argmatch.$(OBJEXT) getdate.$(OBJEXT) \
-	getnline.$(OBJEXT) getopt.$(OBJEXT) getopt1.$(OBJEXT) \
-	md5.$(OBJEXT) savecwd.$(OBJEXT) sighandle.$(OBJEXT) \
-	xgetwd.$(OBJEXT) yesno.$(OBJEXT) basename.$(OBJEXT) \
-	dirname.$(OBJEXT) stripslash.$(OBJEXT) exitfail.$(OBJEXT) \
+am_libcvs_a_OBJECTS = argmatch.$(OBJEXT) getnline.$(OBJEXT) \
+	getopt.$(OBJEXT) getopt1.$(OBJEXT) md5.$(OBJEXT) \
+	savecwd.$(OBJEXT) sighandle.$(OBJEXT) xgetwd.$(OBJEXT) \
+	yesno.$(OBJEXT) basename.$(OBJEXT) dirname.$(OBJEXT) \
+	stripslash.$(OBJEXT) exitfail.$(OBJEXT) getdate.$(OBJEXT) \
 	gettime.$(OBJEXT) xmalloc.$(OBJEXT) xstrdup.$(OBJEXT)
 libcvs_a_OBJECTS = $(am_libcvs_a_OBJECTS)
 
@@ -555,6 +557,7 @@ maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
 	@echo "it deletes files that may require special tools to rebuild."
 	-rm -f getdate.c
+	-test -z "$(MAINTAINERCLEANFILES)" || rm -f $(MAINTAINERCLEANFILES)
 	-test -z "$(BUILT_SOURCES)" || rm -f $(BUILT_SOURCES)
 clean: clean-am
 
