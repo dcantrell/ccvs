@@ -1,3 +1,9 @@
+2003-02-25  Derek Price  <derek@ximbiot.com>
+
+	* rcs2log.sh: Import RedHat 8.0's use of mktemp from the CVS 1.11.2
+	RPM.  Use new MKTEMP variable from configure.
+	* Makefile.in: Regenerated.
+
 2003-02-24  Larry Jones  <lawrence.jones@eds.com>
 	and Donald Sharp <sharpd@cisco.com>
 
