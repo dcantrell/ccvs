@@ -7329,14 +7329,18 @@ are:
 @c bizarre and it has lots of gratuitous multiple ways
 @c to specify the same thing.
 
-For more details about ISO8601 dates, see:
+There are a lot more ISO8601 date formats, and CVS
+accepts many of them, but you probably don't want to
+hear the @emph{whole} long story :-).
 
-@example
-http://www.ft.uni-erlangen.de/~mskuhn/iso-time.html
-@end example
-@c Perhaps we want to also cite other sources in
-@c case that page goes away.  For example:
+@c Citing a URL here is kind of problematic given how
+@c much they change and people who have old versions of
+@c this manual, but in case we want to reinstate an
+@c ISO8601 URL, a few are:
 @c http://www.saqqara.demon.co.uk/datefmt.htm
+@c http://www.cl.cam.ac.uk/~mgk25/iso-time.html
+@c Citing some other ISO8601 source is probably even
+@c worse :-).
 
 In addition to the dates allowed in Internet e-mail
 itself, @sc{cvs} also allows some of the fields to be
