@@ -1178,7 +1178,6 @@ tag_check_valid (char *name, int argc, char **argv, int local, int aflag, char *
 {
     DBM *db;
     char *valtags_filename;
-    int err;
     int nowrite = 0;
     datum mytag;
     struct val_args the_val_args;
@@ -1289,7 +1288,7 @@ Numeric tag %s contains characters other than digits and '.'", name);
 	}
     }
 
-    err = start_recursion
+    start_recursion
 	( val_fileproc, (FILESDONEPROC) NULL,
 	  val_direntproc, (DIRLEAVEPROC) NULL,
 	  (void *) &the_val_args, argc, argv, local, which, aflag,

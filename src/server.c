@@ -2540,7 +2540,9 @@ check_command_valid_p (char *cmd_name)
 /* Execute COMMAND in a subprocess with the approriate funky things done.  */
 
 static struct fd_set_wrapper { fd_set fds; } command_fds_to_drain;
+#ifdef SUNOS_KLUDGE
 static int max_command_fd;
+#endif
 
 #ifdef SERVER_FLOWCONTROL
 static int flowcontrol_pipe[2];
@@ -2775,7 +2777,9 @@ error  \n");
 	FD_SET (protocol_pipe[0], &command_fds_to_drain.fds);
 	if (STDOUT_FILENO > num_to_check)
 	  num_to_check = STDOUT_FILENO;
+#ifdef SUNOS_KLUDGE
 	max_command_fd = num_to_check;
+#endif
 	/*
 	 * File descriptors are numbered from 0, so num_to_check needs to
 	 * be one larger than the largest descriptor.
