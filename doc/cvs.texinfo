@@ -1237,11 +1237,24 @@ using a remote repository is just like using a local
 one, except that the format of the repository name is:
 
 @example
-        :method:user@@hostname:/path/to/repository
+:@var{method}:@var{user}@@@var{hostname}:/path/to/repository
 @end example
 
 The details of exactly what needs to be set up depend
 on how you are connecting to the server.
+
+If @var{method} is not specified, and the repository
+name contains @samp{:}, then the default is @code{ext}
+or @code{server}, depending on your platform; both are
+described in @ref{Connecting via rsh}.
+@c Should we try to explain which platforms are which?
+@c Platforms like unix and VMS, which only allow
+@c privileged programs to bind to sockets <1024 lose on
+@c :server:
+@c Platforms like Mac and VMS, whose rsh program is
+@c unusable or nonexistent, lose on :ext:
+@c Platforms like OS/2 and NT probably could plausibly
+@c default either way (modulo -b troubles).
 
 @menu
 * Connecting via rsh::          Using the @code{rsh} program to connect
@@ -1275,7 +1288,6 @@ rsh -l bach chainsaw.brickyard.com echo $PATH
 @end example
 
 @cindex CVS_SERVER
-@cindex :server:
 Next you have to make sure that @code{rsh} will be able
 to find the server.  Make sure that the path which
 @code{rsh} printed in the above example includes the
@@ -1286,9 +1298,41 @@ or @file{.profile}.  Alternately, you can set the
 environment variable @code{CVS_SERVER} on the client
 machine to the filename of the server you want to use,
 for example @file{/usr/local/bin/cvs-1.6}.
+@c FIXME: there should be a way to specify the
+@c program in CVSROOT, not CVS_SERVER, so that one can use
+@c different ones for different roots.  e.g. ":server;cvs=cvs-1.6:"
+@c instead of ":server:".
 
 There is no need to edit @code{inetd.conf} or start a
 @sc{cvs} server daemon.
+
+@cindex :server:
+@cindex :ext:
+There are two access methods that you use in CVSROOT
+for rsh.  @code{:server:} specifies an internal rsh
+client, which is supported only by some CVS ports.
+@code{:ext:} specifies an external rsh program.  By
+default this is @code{rsh} but you may set the
+@code{CVS_RSH} environment variable to invoke another
+program which can access the remote server (for
+example, @code{remsh} on HP-UX 9 because @code{rsh} is
+something different).  It must be a program which can
+transmit data to and from the server without modifying
+it; for example the Windows NT @code{rsh} is not
+suitable since it by default translates between CRLF
+and LF.  The OS/2 CVS port has a hack to pass @samp{-b}
+to @code{rsh} to get around this, but since this could
+potentially cause programs for programs other than the
+standard @code{rsh}, it may change in the future.  If
+you set @code{CVS_RSH} to @code{SSH} or some other rsh
+replacement, the instructions in the rest of this
+section concerning @file{.rhosts} and so on are likely
+to be incorrect; consult the documentation for your rsh
+replacement.
+@c FIXME: there should be a way to specify the
+@c program in CVSROOT, not CVS_RSH, so that one can use
+@c different ones for different roots.  e.g. ":ext;rsh=remsh:"
+@c instead of ":ext:".
 
 Continuing our example, supposing you want to access
 the module @file{foo} in the repository
@@ -1296,7 +1340,7 @@ the module @file{foo} in the repository
 @file{chainsaw.brickyard.com}, you are ready to go:
 
 @example
-cvs -d :server:bach@@chainsaw.brickyard.com:/usr/local/cvsroot checkout foo
+cvs -d :ext:bach@@chainsaw.brickyard.com:/usr/local/cvsroot checkout foo
 @end example
 
 (The @file{bach@@} can be omitted if the username is
@@ -7784,13 +7828,9 @@ file is searched (@code{$HOMEPATH} is used for Windows-NT).
 
 @cindex CVS_RSH
 @item $CVS_RSH
-Used in client-server mode when accessing a remote
-repository using @sc{rsh}.  The default value is
-@code{rsh}.  You can set it to use another program for
-accssing the remote server (e.g. for HP-UX 9, you
-should set it to @code{remsh} because @code{rsh}
-invokes the restricted shell).  @pxref{Connecting via
-rsh}
+Specifies the external program which CVS connects with,
+when @code{:ext:} access method is specified.
+@pxref{Connecting via rsh}.
 
 @item $CVS_SERVER
 Used in client-server mode when accessing a remote
