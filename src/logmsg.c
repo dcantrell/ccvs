@@ -421,7 +421,7 @@ logfile_write (repository, filter, title, message, revision, logfp, changes)
     List *changes;
 {
     char cwd[PATH_MAX];
-    FILE *pipefp, *Popen ();
+    FILE *pipefp, *run_popen ();
     char *prog = xmalloc (MAXPROGLEN);
     char *cp;
     int c;
@@ -431,7 +431,7 @@ logfile_write (repository, filter, title, message, revision, logfp, changes)
      * A maximum of 6 %s arguments are supported in the filter
      */
     (void) sprintf (prog, filter, title, title, title, title, title, title);
-    if ((pipefp = Popen (prog, "w")) == NULL)
+    if ((pipefp = run_popen (prog, "w")) == NULL)
     {
 	if (!noexec)
 	    error (0, 0, "cannot write entry to log filter: %s", prog);

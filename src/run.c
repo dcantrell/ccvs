@@ -398,7 +398,7 @@ run_print (fp)
 }
 
 FILE *
-Popen (cmd, mode)
+run_popen (cmd, mode)
     const char *cmd;
     const char *mode;
 {
