@@ -41,7 +41,6 @@ libcvs_a_SOURCES = \
 	md5.h \
 	minmax.h \
 	pathmax.h \
-	regex.h \
 	savecwd.h \
 	system.h \
 	unlocked-io.h \
@@ -126,6 +125,9 @@ libcvs_a_SOURCES += getdate.h getdate.y
 
 ## For GNULIB's gettime module.
 libcvs_a_SOURCES += gettime.c
+
+## For GNULIB's regex module.
+libcvs_a_SOURCES += regex.h
 
 ## For GNULIB's stdbool module.
 BUILT_SOURCES += $(STDBOOL_H)
