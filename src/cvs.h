@@ -194,6 +194,7 @@ extern int errno;
 #define	CVSROOTADM_CHECKOUTLIST "checkoutlist"
 #define CVSROOTADM_WRAPPER	"cvswrappers"
 #define CVSROOTADM_NOTIFY	"notify"
+#define CVSROOTADM_USERS	"users"
 
 #define CVSNULLREPOS		"Emptydir"	/* an empty directory */
 

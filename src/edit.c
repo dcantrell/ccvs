@@ -554,7 +554,7 @@ editor_set (filename, editor, val)
     if (!((edlist == NULL && newlist == NULL)
 	  || (edlist != NULL
 	      && newlist != NULL
-	      && strcmp (edlist, newlist) != 0)))
+	      && strcmp (edlist, newlist) == 0)))
 	fileattr_set (filename, "_editors", newlist);
     if (newlist != NULL)
 	free (newlist);
@@ -603,7 +603,7 @@ notify_proc (repository, filter)
 		strcpy (q, args->notifyee);
 		q += strlen (q);
 		strcpy (q, p + 2);
-		*q = '\0';
+		q += strlen (q);
 		break;
 	    }
 	    else
@@ -745,13 +745,58 @@ notify_do (type, filename, who, val, watches, repository)
 	if (notif != NULL)
 	{
 	    struct notify_proc_args args;
+	    size_t len = endp - p;
+	    FILE *fp;
+	    char *usersname;
+	    char *line = NULL;
+	    size_t line_len = 0;
+
+	    args.notifyee = NULL;
+	    usersname = xmalloc (strlen (CVSroot)
+				 + sizeof CVSROOTADM
+				 + sizeof CVSROOTADM_USERS
+				 + 20);
+	    strcpy (usersname, CVSroot);
+	    strcat (usersname, "/");
+	    strcat (usersname, CVSROOTADM);
+	    strcat (usersname, "/");
+	    strcat (usersname, CVSROOTADM_USERS);
+	    fp = fopen (usersname, "r");
+	    if (fp == NULL && !existence_error (errno))
+		error (0, errno, "cannot read %s", usersname);
+	    if (fp != NULL)
+	    {
+		while (getline (&line, &line_len, fp) >= 0)
+		{
+		    if (strncmp (line, p, len) == 0
+			&& line[len] == ':')
+		    {
+			char *cp;
+			args.notifyee = xstrdup (line + len + 1);
+			cp = strchr (args.notifyee, ':');
+			if (cp != NULL)
+			    *cp = '\0';
+			break;
+		    }
+		}
+		if (ferror (fp))
+		    error (0, errno, "cannot read %s", usersname);
+		if (fclose (fp) < 0)
+		    error (0, errno, "cannot close %s", usersname);
+	    }
+	    free (usersname);
+	    free (line);
+
+	    if (args.notifyee == NULL)
+	    {
+		args.notifyee = xmalloc (endp - p + 1);
+		strncpy (args.notifyee, p, endp - p);
+		args.notifyee[endp - p] = '\0';
+	    }
 
 	    notify_args = &args;
 	    args.type = notif;
 	    args.who = who;
-	    args.notifyee = xmalloc (endp - p + 1);
-	    strncpy (args.notifyee, p, endp - p);
-	    args.notifyee[endp - p] = '\0';
 	    args.file = filename;
 
 	    (void) Parse_Info (CVSROOTADM_NOTIFY, repository, notify_proc, 1);
