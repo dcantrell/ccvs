@@ -1,3 +1,11 @@
+2003-04-30  Derek Price  <derek@ximbiot.com>
+
+	* Makefile.am: Get rid of $includeopt, using $CPPFLAGS as intended by
+	the Autoconf folk.
+	(Patch from Alexey Mahotkin <alexm@hsys.msk.ru>.)
+
+	* Makefile.in: Regenerated.
+
 2003-04-28  Derek Price  <derek@ximbiot.com>
 
 	* client.c (save_prog): Remove unneeded struct.
