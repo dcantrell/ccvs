@@ -3398,7 +3398,8 @@ RCS_checkin (rcs, workfile, message, rev, flags)
     Node *nodep;
     char *tmpfile, *changefile, *chtext;
     char *diffopts;
-    int bufsize, buflen, chtextlen;
+    size_t bufsize;
+    int buflen, chtextlen;
     int status, checkin_quiet, allocated_workfile;
     struct tm *ftm;
     time_t modtime;
@@ -4652,7 +4653,7 @@ RCS_delete_revs (rcs, tag1, tag2, inclusive)
     if (after != NULL)
     {
 	char *diffbuf;
-	int bufsize, len;
+	size_t bufsize, len;
 
 	afterfile = cvs_temp_name();
 	status = RCS_checkout (rcs, NULL, after, NULL, NULL, afterfile,
@@ -5795,7 +5796,7 @@ RCS_getdeltatext (rcs, fp)
     int n;
     Node *p;
     Deltatext *d;
-    int textlen;
+    size_t textlen;
 
     /* Get the revision number. */
     n = getrevnum (fp, &num);
