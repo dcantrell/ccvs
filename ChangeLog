@@ -1,3 +1,11 @@
+1998-06-01  Assar Westerlund  <assar@sics.se>
+	and Ian Lance Taylor  <ian@cygnus.com>
+
+	* configure.in: Check for GSSAPI headers individually.  Use a
+	different set of GSSPI libraries if gssapi.h rather than
+	gssapi/gssapi.h is found.  Adds Heimdal support.
+	* configure, config.h.in: Rebuild.
+
 1998-05-25  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.spec (%description): Rewrite to be slightly more verbose

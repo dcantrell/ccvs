@@ -191,6 +191,15 @@
 /* Define if you have the <fcntl.h> header file.  */
 #undef HAVE_FCNTL_H
 
+/* Define if you have the <gssapi.h> header file.  */
+#undef HAVE_GSSAPI_H
+
+/* Define if you have the <gssapi/gssapi.h> header file.  */
+#undef HAVE_GSSAPI_GSSAPI_H
+
+/* Define if you have the <gssapi/gssapi_generic.h> header file.  */
+#undef HAVE_GSSAPI_GSSAPI_GENERIC_H
+
 /* Define if you have the <io.h> header file.  */
 #undef HAVE_IO_H
 
