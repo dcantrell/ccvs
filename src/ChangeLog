@@ -1,5 +1,24 @@
 Thu Jul  4 15:57:34 1996  Ian Lance Taylor  <ian@cygnus.com>
 
+	* server.c (buf_to_net): Move definition near top of file.
+	(read_line): Call buf_send_output rather than fflush.
+	(print_error): Output information to buf_to_net buffer rather than
+	stdout.
+	(print_pending_error, serve_valid_responses): Likewise.
+	(server_notify, do_cvs_command, server_co): Likewise.
+	(expand_proc, serve_expand_modules, server_prog): Likewise.
+	(serve_valid_requests, server_cleanup, server): Likewise.
+	(server_notify): Don't call fflush on stdout.
+	(do_cvs_command): Flush saved_output and saved_outerr to
+	buf_to_net before fork.  Flush buf_to_net before fork.  In child,
+	just initialize memory_error field of saved_output and
+	saved_outerr.
+	(server_cleanup): Flush buf_to_net.
+	(server): Initialize saved_output and saved_outerr.
+	(cvs_output): Add support for error_use_protocol case.
+	(cvs_outerr): Likewise.
+	* error.c (error): In HAVE_VPRINTF case, just call cvs_outerr.
+
 	* buffer.c: New file; buffer support functions taken from
 	server.c.
 	* buffer.h: New file; declarations for buffer.c.
