@@ -74,7 +74,6 @@ import (int argc, char **argv)
     List *ulist;
     Node *p;
     struct logfile_info *li;
-    size_t dummy;
 
     if (argc == -1)
 	usage (import_usage);
@@ -209,8 +208,7 @@ import (int argc, char **argv)
 	error (1, 0, "Set it or specify the '-d' option to %s.",
 	       program_name);
     }
-    repository = asnprintf (repository, &dummy, "%s/%s",
-			    current_parsed_root->directory, argv[0]);
+    repository = Xasprintf ("%s/%s", current_parsed_root->directory, argv[0]);
     repos_len = strlen (current_parsed_root->directory);
 
     /*

@@ -10,6 +10,7 @@
 
 #include "cvs.h"
 #include "getline.h"
+#include "vasprintf.h"
 
 /* Get wint_t.  */
 #ifdef HAVE_WINT_T
@@ -1192,7 +1193,6 @@ format_cmdline (const char *format, ...)
 	strcpy (buf+1, conversion);
 	switch (*s)
 	{
-	    size_t dummy;
 	    case 'c':
 		/* chars (an integer conversion) */
 		if (!char_conversion)
@@ -1233,14 +1233,14 @@ format_cmdline (const char *format, ...)
 		    case sizeof(char):
 		    {
 		    	char arg_char = (char) va_arg (args, int);
-			b->data = asnprintf(NULL, &dummy, buf, arg_char);
+			b->data = Xasprintf (buf, arg_char);
 			break;
 		    }
 #ifdef UNIQUE_INT_TYPE_WINT_T		/* implies HAVE_WINT_T */
 		    case sizeof(wint_t):
 		    {
 		    	wint_t arg_wint_t = va_arg (args, wint_t);
-			b->data = asnprintf(NULL, &dummy, buf, arg_wint_t);
+			b->data = Xasprintf (buf, arg_wint_t);
 			break;
 		    }
 #endif /* UNIQUE_INT_TYPE_WINT_T */
@@ -1248,7 +1248,7 @@ format_cmdline (const char *format, ...)
 		    case sizeof(short):
 		    {
 		    	short arg_short = (short) va_arg (args, int);
-			b->data = asnprintf(NULL, &dummy, buf, arg_short);
+			b->data = Xasprintf (buf, arg_short);
 			break;
 		    }
 #endif /* UNIQUE_INT_TYPE_SHORT */
@@ -1256,7 +1256,7 @@ format_cmdline (const char *format, ...)
 		    case sizeof(int):
 		    {
 		    	int arg_int = va_arg (args, int);
-			b->data = asnprintf(NULL, &dummy, buf, arg_int);
+			b->data = Xasprintf(buf, arg_int);
 			break;
 		    }
 #endif /* UNIQUE_INT_TYPE_INT */
@@ -1264,7 +1264,7 @@ format_cmdline (const char *format, ...)
 		    case sizeof(long):
 		    {
 		    	long arg_long = va_arg (args, long);
-			b->data = asnprintf(NULL, &dummy, buf, arg_long);
+			b->data = Xasprintf (buf, arg_long);
 			break;
 		    }
 #endif /* UNIQUE_INT_TYPE_LONG */
@@ -1272,7 +1272,7 @@ format_cmdline (const char *format, ...)
 		    case sizeof(long long):
 		    {
 		    	long long arg_long_long = va_arg (args, long long);
-			b->data = asnprintf(NULL, &dummy, buf, arg_long_long);
+			b->data = Xasprintf (buf, arg_long_long);
 			break;
 		    }
 #endif /* UNIQUE_INT_TYPE_LONG_LONG */
@@ -1280,7 +1280,7 @@ format_cmdline (const char *format, ...)
 		    case sizeof(intmax_t):
 		    {
 		    	intmax_t arg_intmax_t = va_arg (args, intmax_t);
-			b->data = asnprintf(NULL, &dummy, buf, arg_intmax_t);
+			b->data = Xasprintf (buf, arg_intmax_t);
 			break;
 		    }
 #endif /* UNIQUE_INT_TYPE_INTMAX_T */
@@ -1288,7 +1288,7 @@ format_cmdline (const char *format, ...)
 		    case sizeof(size_t):
 		    {
 		    	size_t arg_size_t = va_arg (args, size_t);
-			b->data = asnprintf(NULL, &dummy, buf, arg_size_t);
+			b->data = Xasprintf (buf, arg_size_t);
 			break;
 		    }
 #endif /* UNIQUE_INT_TYPE_SIZE_T */
@@ -1296,7 +1296,7 @@ format_cmdline (const char *format, ...)
 		    case sizeof(ptrdiff_t):
 		    {
 		    	ptrdiff_t arg_ptrdiff_t = va_arg (args, ptrdiff_t);
-			b->data = asnprintf(NULL, &dummy, buf, arg_ptrdiff_t);
+			b->data = Xasprintf (buf, arg_ptrdiff_t);
 			break;
 		    }
 #endif /* UNIQUE_INT_TYPE_PTRDIFF_T */
@@ -1332,14 +1332,14 @@ format_cmdline (const char *format, ...)
 		    case sizeof(double):
 		    {
 		    	double arg_double = va_arg (args, double);
-			b->data = asnprintf(NULL, &dummy, buf, arg_double);
+			b->data = Xasprintf (buf, arg_double);
 			break;
 		    }
 #ifdef UNIQUE_FLOAT_TYPE_LONG_DOUBLE	/* implies HAVE_LONG_DOUBLE */
 		    case sizeof(long double):
 		    {
 		    	long double arg_long_double = va_arg (args, long double);
-			b->data = asnprintf(NULL, &dummy, buf, arg_long_double);
+			b->data = Xasprintf (buf, arg_long_double);
 			break;
 		    }
 #endif /* UNIQUE_FLOAT_TYPE_LONG_DOUBLE */
@@ -1362,8 +1362,7 @@ format_cmdline (const char *format, ...)
 		    case 2:
 		    {
 		    	wchar_t *arg_wchar_t_string = va_arg (args, wchar_t *);
-			b->data = asnprintf (NULL, &dummy, buf,
-			                     arg_wchar_t_string);
+			b->data = Xasprintf (buf, arg_wchar_t_string);
 			break;
 		    }
 #endif /* HAVE_WCHAR_T */
@@ -1845,4 +1844,22 @@ Xstrdup (const char *string)
 {
   if (string == NULL) return NULL;
   return xmemdup (string, strlen (string) + 1);
+}
+
+
+
+/* Like xasprintf(), but consider all errors fatal (may never return NULL).
+ */
+char *
+Xasprintf (const char *format, ...)
+{
+    va_list args;
+    char *result;
+
+    va_start (args, format);
+    if (vasprintf (&result, format, args) < 0)
+	error (1, errno, "Failed to write to string.");
+    va_end (args);
+
+    return result;
 }

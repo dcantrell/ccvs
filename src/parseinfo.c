@@ -375,14 +375,12 @@ parse_config (const char *cvsroot)
     size_t len;
     char *p;
     struct config *retval;
-    size_t dummy;
 
     TRACE (TRACE_FUNCTION, "parse_config (%s)", cvsroot);
 
     retval = new_config ();
 
-    infopath = asnprintf (NULL, &dummy, "%s/%s/%s",
-			  cvsroot, CVSROOTADM, CVSROOTADM_CONFIG);
+    infopath = Xasprintf ("%s/%s/%s", cvsroot, CVSROOTADM, CVSROOTADM_CONFIG);
 
     fp_info = CVS_FOPEN (infopath, "r");
     if (fp_info == NULL)

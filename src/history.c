@@ -709,7 +709,6 @@ history_write (int type, const char *update_dir, const char *revs,
     char *slash = "", *cp;
     const char *cp2, *repos;
     int i;
-    size_t dummy;
     static char *tilde = "";
     static char *PrCurDir = NULL;
 
@@ -720,9 +719,8 @@ history_write (int type, const char *update_dir, const char *revs,
     if (!strchr (config->logHistory, type))	
 	return;
 
-    fname = asnprintf (NULL, &dummy, "%s/%s/%s",
-		       current_parsed_root->directory,
-		       CVSROOTADM, CVSROOTADM_HISTORY);
+    fname = Xasprintf ("%s/%s/%s", current_parsed_root->directory,
+		      CVSROOTADM, CVSROOTADM_HISTORY);
 
     /* turn off history logging if the history file does not exist */
     /* FIXME:  This should check for write permissions instead.  This way,

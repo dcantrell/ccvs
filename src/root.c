@@ -12,6 +12,7 @@
 
 #include "cvs.h"
 #include "getline.h"
+#include "vasnprintf.h"
 
 /* Printable names for things in the current_parsed_root->method enum variable.
    Watch out if the enum is changed in cvs.h! */
@@ -175,13 +176,14 @@ Create_Root (const char *dir, const char *rootdir)
  *   A translated string this function owns, or a pointer to the original
  *   string passed in if no translation was necessary.
  *
- *   If the returned string is the translated one, it will be overwritten
+ *   If the returned string is the translated one, it may be overwritten
  *   by the next call to this function.
  */
 const char *
 primary_root_translate (const char *root_in)
 {
-    static char *translated = NULL;
+    char *translated;
+    static char *previous = NULL;
     static size_t len;
 
 #ifdef PROXY_SUPPORT
@@ -194,10 +196,17 @@ primary_root_translate (const char *root_in)
         && (ISSLASH (root_in[strlen (config->PrimaryServer->directory)])
             || root_in[strlen (config->PrimaryServer->directory)] == '\0')
        )
-	return translated =
-	    asnprintf (translated, &len, "%s%s",
-	               current_parsed_root->directory,
+    {
+	translated =
+	    asnprintf (previous, &len,
+		       "%s%s", current_parsed_root->directory,
 	               root_in + strlen (config->PrimaryServer->directory));
+	if (!translated)
+	    error (1, errno, "Failed to allocate string.");
+	if (previous && previous != translated)
+	    free (previous);
+	return previous = translated;
+    }
 #endif
 
     /* There is no primary root configured or it didn't match.  */
@@ -215,13 +224,14 @@ primary_root_translate (const char *root_in)
  *   A translated string this function owns, or a pointer to the original
  *   string passed in if no translation was necessary.
  *
- *   If the returned string is the translated one, it will be overwritten
+ *   If the returned string is the translated one, it may be overwritten
  *   by the next call to this function.
  */
 const char *
 primary_root_inverse_translate (const char *root_in)
 {
-    static char *translated = NULL;
+    char *translated;
+    static char *previous = NULL;
     static size_t len;
 
 #ifdef PROXY_SUPPORT
@@ -234,10 +244,17 @@ primary_root_inverse_translate (const char *root_in)
         && (ISSLASH (root_in[strlen (current_parsed_root->directory)])
             || root_in[strlen (current_parsed_root->directory)] == '\0')
        )
-	return translated =
-	    asnprintf (translated, &len, "%s%s",
-	               config->PrimaryServer->directory,
+    {
+	translated =
+	    asnprintf (previous, &len,
+		       "%s%s", config->PrimaryServer->directory,
 	               root_in + strlen (current_parsed_root->directory));
+	if (!translated)
+	    error (1, errno, "Failed to allocate string.");
+	if (previous && previous != translated)
+	    free (previous);
+	return previous = translated;
+    }
 #endif
 
     /* There is no primary root configured or it didn't match.  */
@@ -874,7 +891,6 @@ normalize_cvsroot (const cvsroot_t *root)
 {
     char *cvsroot_canonical;
     char *p, *hostname;
-    size_t length;
 
     /* use a lower case hostname since we know hostnames are case insensitive */
     /* Some logic says we should be tacking our domain name on too if it isn't
@@ -890,7 +906,7 @@ normalize_cvsroot (const cvsroot_t *root)
 	p++;
     }
 
-    cvsroot_canonical = asnprintf (NULL, &length, ":pserver:%s@%s:%d%s",
+    cvsroot_canonical = Xasprintf (":pserver:%s@%s:%d%s",
                                    root->username ? root->username
                                                   : getcaller(),
                                    hostname, get_cvs_port_number (root),

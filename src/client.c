@@ -3420,7 +3420,7 @@ connect_to_pserver (cvsroot_t *root, struct buffer **to_server_p,
 	int codenum;
 	size_t count;
 	/* 4 characters for port covered by the length of %s & %d */
-	char* write_buf = asnprintf (NULL, &count, CONNECT_STRING,
+	char* write_buf = Xasprintf (CONNECT_STRING,
                                      root->hostname, port_number);
 	send_to_server_via (to_server, write_buf, count);
 

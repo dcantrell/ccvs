@@ -45,7 +45,6 @@
 #include "minmax.h"
 #include "regex.h"
 #include "strcase.h"
-#include "vasnprintf.h"
 #include "xalloc.h"
 #include "xgetcwd.h"
 #include "xsize.h"
@@ -466,6 +465,8 @@ void xrealloc_and_strcat (char **, size_t *, const char *);
 #define xstrdup Xstrdup
 char *Xstrdup (const char *str)
 	__attribute__ ((__malloc__));
+char *Xasprintf (const char *format, ...)
+	__attribute__ ((__malloc__, __format__ (__printf__, 1, 2)));
 int strip_trailing_newlines (char *str);
 int pathname_levels (const char *path);
 

@@ -939,10 +939,7 @@ do_file_proc (Node *p, void *closure)
 
     finfo->file = p->key;
     if (finfo->update_dir[0] != '\0')
-    {
-	size_t dummy;
-	tmp = asnprintf (NULL, &dummy, "%s/%s", finfo->update_dir, finfo->file);
-    }
+	tmp = Xasprintf ("%s/%s", finfo->update_dir, finfo->file);
     else
 	tmp = xstrdup (finfo->file);
 

@@ -67,7 +67,6 @@ release (int argc, char **argv)
     char *line = NULL;
     size_t line_allocated = 0;
     char *update_cmd;
-    size_t dummy;
     char *thisarg;
     int arg_start_idx;
     int err = 0;
@@ -116,7 +115,7 @@ release (int argc, char **argv)
     /* Construct the update command.  Be sure to add authentication and
        encryption if we are using them currently, else our child process may
        not be able to communicate with the server.  */
-    update_cmd = asnprintf (NULL, &dummy, "%s %s%s-n -q -d %s update",
+    update_cmd = Xasprintf ("%s %s%s-n -q -d %s update",
 			    program_path,
 			    cvsauthenticate ? "-a " : "",
 			    cvsencrypt ? "-x " : "",

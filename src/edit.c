@@ -117,8 +117,8 @@ watch_off (int argc, char **argv)
     turning_on = 0;
     return watch_onoff (argc, argv);
 }
-
-static int dummy_fileproc (void *callerdat, struct file_info *finfo);
+
+
 
 static int
 dummy_fileproc (void *callerdat, struct file_info *finfo)
@@ -129,14 +129,13 @@ dummy_fileproc (void *callerdat, struct file_info *finfo)
     return 0;
 }
 
-static int ncheck_fileproc (void *callerdat, struct file_info *finfo);
+
 
 /* Check for and process notifications.  Local only.  I think that doing
    this as a fileproc is the only way to catch all the
    cases (e.g. foo/bar.c), even though that means checking over and over
    for the same CVSADM_NOTIFY file which we removed the first time we
    processed the directory.  */
-
 static int
 ncheck_fileproc (void *callerdat, struct file_info *finfo)
 {
@@ -317,13 +316,11 @@ edit_file (void *data, List *ent_list, const char *short_pathname,
     Node *node;
     struct file_info finfo;
     char *basefilename;
-    size_t dummy;
 
     xchmod (filename, 1);
 
     mkdir_if_needed (CVSADM_BASE);
-    basefilename = asnprintf (NULL, &dummy, "%s/%s",
-			      CVSADM_BASE, filename);
+    basefilename = Xasprintf ("%s/%s", CVSADM_BASE, filename);
     copy_file (filename, basefilename);
     free (basefilename);
 
@@ -885,10 +882,9 @@ notify_do (int type, const char *filename, const char *update_dir,
 	     * which are found to be edited when CHECK_EDIT are not
 	     * added to the notify list.
 	     */
-	    size_t dummy;
 	    const char *tmp;
 	    if (update_dir && *update_dir)
-		tmp  = asnprintf (NULL, &dummy, "%s/%s", update_dir, filename);
+		tmp  = Xasprintf ("%s/%s", update_dir, filename);
 	    else
 		tmp = filename;
 

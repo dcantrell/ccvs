@@ -355,7 +355,6 @@ entries_time (time_t unixtime)
 {
     struct tm *tm_p;
     char *cp;
-    size_t length;
 
     /* We want to use the same timestamp format as is stored in the
        st_mtime.  For unix (and NT I think) this *must* be universal
@@ -371,7 +370,7 @@ entries_time (time_t unixtime)
     /* Fix non-standard format.  */
     if (cp[8] == '0') cp[8] = ' ';
 
-    return asnprintf (NULL, &length, "%s", cp);
+    return Xasprintf ("%s", cp);
 }
 
 

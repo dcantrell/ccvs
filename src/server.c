@@ -1367,11 +1367,10 @@ serve_directory (char *arg)
 	     * a major overhaul.
 	     */
 	    char *short_repos;
-	    size_t dummy;
 
 	    short_repos = repos;
-	    repos = asnprintf (NULL, &dummy, "%s/%s",
-	                       current_parsed_root->directory, short_repos);
+	    repos = Xasprintf ("%s/%s",
+	                      current_parsed_root->directory, short_repos);
 	    free (short_repos);
 	}
 	else

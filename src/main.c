@@ -939,11 +939,9 @@ cause intermittent sandbox corruption.");
 #endif	/* CLIENT_SUPPORT */
 		{
 		    char *path;
-		    size_t dummy;
 		    int save_errno;
 
-		    path = asnprintf (NULL, &dummy, "%s/%s",
-				      current_parsed_root->directory,
+		    path = Xasprintf ("%s/%s", current_parsed_root->directory,
 				      CVSROOTADM);
 		    if (!isaccessible (path, R_OK | X_OK))
 		    {
@@ -962,9 +960,8 @@ cause intermittent sandbox corruption.");
 		{
 		    static char *prev;
 		    char *env;
-		    size_t dummy;
 
-		    env = asnprintf (NULL, &dummy, "%s=%s", CVSROOT_ENV,
+		    env = Xasprintf ("%s=%s", CVSROOT_ENV,
 				     current_parsed_root->original);
 		    (void) putenv (env);
 		    /* do not free env yet, as putenv has control of it */
