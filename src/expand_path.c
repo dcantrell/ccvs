@@ -23,7 +23,6 @@
 #include <stdio.h>
 #include <ctype.h>
 #include <sys/types.h>
-#include <pwd.h>
 #if HAVE_STRING_H
 #include <string.h>
 #else
