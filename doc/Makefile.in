@@ -431,10 +431,10 @@ dvi: cvs.dvi cvsclient.dvi
 cvs.aux cvs.pdf cvs.txt: cvs.texinfo
 cvsclient.aux cvsclient.pdf cvsclient.txt: cvsclient.texi
 
-# These targets need to be very specific so that the other PDFs get generated correctly.
-# If they are more generic and cvs.ps is made before cvs.pdf, then cvs.pdf will be
-# generated from the generic target and the PS source, which contains less information
-# than the usual texinfo source.
+# These targets need to be very specific so that the other PDFs get generated
+# correctly.  If they are more generic and cvs.ps is made before cvs.pdf, then
+# cvs.pdf will be generated from the generic target and the PS source, which
+# contains less information (hyperlinks and such) than the usual texinfo source.
 cvs-paper.ps: cvs-paper.ms
 	$(ROFF) -t -p -ms -Tps $< > $@-t
 	mv $@-t $@
