@@ -7044,7 +7044,7 @@ This is a list of the keywords:
 The login name of the user who checked in the revision.
 
 @cindex CVSHeader keyword
-@item $@splitrcskeyword{CVSHeader}
+@item $@splitrcskeyword{CVSHeader}$
 A standard header (similar to $@splitrcskeyword{Header}$, but with
 the CVS root stripped off). It contains the relative
 pathname of the @sc{rcs} file to the CVS root, the
@@ -14212,6 +14212,20 @@ for users in the system's user database if not found in
 pserver users must exist in @file{CVSROOT/passwd}.
 The default is @samp{yes}.  For more on pserver, see
 @ref{Password authenticated}.
+
+@cindex LocalKeyword, in CVSROOT/config
+@item LocalKeyword=@var{value}
+Specify a local alias for a standard keyword.
+For example, @samp{LocalKeyword=MYCVS=CVSHeader}.
+For more on local keywords, see @ref{Keyword substitution}.
+
+@cindex KeywordExpand, in CVSROOT/config
+@item KeywordExpand=@var{value}
+Specify @samp{i} followed by a list of keywords to be expanded
+(for example, @samp{KeywordExpand=iMYCVS,Name,Date}),
+or @samp{e} followed by a list of keywords not to be expanded
+(for example, @samp{KeywordExpand=eCVSHeader}).
+For more on keyword expansion, see @ref{Configuring keyword expansion}.
 
 @ignore
 @cindex PreservePermissions, in CVSROOT/config
