@@ -1,3 +1,16 @@
+2001-07-16  Derek Price  <dprice@collab.net>
+
+	* compile: New Automake file.
+	* configure.in: Add AM_PROG_CC_C_O to work around problems with some
+	compilers.
+
+	* aclocal.m4: Regenerated.
+	* Makefile.in: Ditto.
+	* config.h.in: Ditto.
+	* configure: Ditto.
+	(Thanks to Stephen Cameron <smcameron@yahoo.com> and
+	Tom Tromey <tromey@redhat.com>.)
+
 2001-07-04  Derek Price  <dprice@collab.net>
 
 	* Makefile.in: Regenerated with new Automake release candidate 1.4h.
