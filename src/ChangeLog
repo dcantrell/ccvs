@@ -1,5 +1,12 @@
 2001-05-29  Derek Price  <dprice@collab.net>
 
+	* Makefile.am (cvs_SOURCES): Add root.h.
+
+	* Makefile.in: Regenerated.
+	* stamp-h2.in: Regenerated.
+
+2001-05-29  Derek Price  <dprice@collab.net>
+
 	* checkout.c (safe_location): Correct formatting.
 
 2001-05-29  Derek Price  <dprice@collab.net>
