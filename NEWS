@@ -38,7 +38,7 @@ except perhaps when accessing anonymous repositories or the like.
 * The distribution has been converted to use Automake.  This shouldn't affect
 most users except to ease some portability concerns, but if you are building
 from the repository and encounter problems with the makefiles, you might try
-running ./noautoconf.sh after a fresh update -AC.
+running ./noautomake.sh after a fresh update -AC.
 
 Changes since 1.10:
 

@@ -1,3 +1,14 @@
+2001-05-21  Derek Price  <dprice@collab.net>
+
+	* NEWS (Changes since 1.11): It's "noautomake.sh", not "noautoconf.sh".
+	* Makefile.am (EXTRA_DIST): Include noautomake.sh.
+	(AUTOMAKE_OPTIONS): Update required Automake version to 1.4e.
+	(Reported by Alexey Mahotkin <alexm@hsys.msk.ru>).
+
+2001-05-21  Derek Price  <dprice@collab.net>
+
+	* Makefile.am (EXTRA_DIST): Add noautoconf.sh.
+
 2001-05-17  Larry Jones  <larry.jones@sdr.com>
 
 	* depcomp: Yet another newer (unofficial) version from Automake.
