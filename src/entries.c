@@ -906,3 +906,220 @@ Subdir_Deregister (entries, parent, dir)
 	    delnode (p);
     }
 }
+
+
+
+/* OK, the following base_* code tracks the revisions of the files in
+   CVS/Base.  We do this in a file CVS/Baserev.  Separate from
+   CVS/Entries because it needs to go in separate data structures
+   anyway (the name in Entries must be unique), so this seemed
+   cleaner.  The business of rewriting the whole file in
+   base_deregister and base_register is the kind of thing we used to
+   do for Entries and which turned out to be slow, which is why there
+   is now the Entries.Log machinery.  So maybe from that point of
+   view it is a mistake to do this separately from Entries, I dunno.
+
+   We also need something analogous for CVS/Template (so we can update
+   the Template file automagically without the user needing to check out
+   a new working directory), and cvsignore (need to keep a copy in the
+   working directory to do "cvs release" on the client side; see
+   comment at src/release.c (release).  */
+
+enum base_walk {
+    /* Set the revision for FILE to *REV.  */
+    BASE_REGISTER,
+    /* Get the revision for FILE and put it in a newly malloc'd string
+       in *REV, or put NULL if not mentioned.  */
+    BASE_GET,
+    /* Remove FILE.  */
+    BASE_DEREGISTER
+};
+
+static void base_walk PROTO ((enum base_walk, struct file_info *, char **));
+
+/* Read through the lines in CVS/Baserev, taking the actions as documented
+   for CODE.  */
+
+static void
+base_walk (code, finfo, rev)
+    enum base_walk code;
+    struct file_info *finfo;
+    char **rev;
+{
+    FILE *fp;
+    char *line;
+    size_t line_allocated;
+    FILE *newf;
+    char *baserev_fullname;
+    char *baserevtmp_fullname;
+
+    line = NULL;
+    line_allocated = 0;
+    newf = NULL;
+
+    /* First compute the fullnames for the error messages.  This
+       computation probably should be broken out into a separate function,
+       as recurse.c does it too and places like Entries_Open should be
+       doing it.  */
+    baserev_fullname = xmalloc (sizeof (CVSADM_BASEREV)
+				+ strlen (finfo->update_dir)
+				+ 2);
+    baserev_fullname[0] = '\0';
+    baserevtmp_fullname = xmalloc (sizeof (CVSADM_BASEREVTMP)
+				   + strlen (finfo->update_dir)
+				   + 2);
+    baserevtmp_fullname[0] = '\0';
+    if (finfo->update_dir[0] != '\0')
+    {
+	strcat (baserev_fullname, finfo->update_dir);
+	strcat (baserev_fullname, "/");
+	strcat (baserevtmp_fullname, finfo->update_dir);
+	strcat (baserevtmp_fullname, "/");
+    }
+    strcat (baserev_fullname, CVSADM_BASEREV);
+    strcat (baserevtmp_fullname, CVSADM_BASEREVTMP);
+
+    fp = CVS_FOPEN (CVSADM_BASEREV, "r");
+    if (fp == NULL)
+    {
+	if (!existence_error (errno))
+	{
+	    error (0, errno, "cannot open %s for reading", baserev_fullname);
+	    goto out;
+	}
+    }
+
+    switch (code)
+    {
+	case BASE_REGISTER:
+	case BASE_DEREGISTER:
+	    newf = CVS_FOPEN (CVSADM_BASEREVTMP, "w");
+	    if (newf == NULL)
+	    {
+		error (0, errno, "cannot open %s for writing",
+		       baserevtmp_fullname);
+		goto out;
+	    }
+	    break;
+	case BASE_GET:
+	    *rev = NULL;
+	    break;
+    }
+
+    if (fp != NULL)
+    {
+	while (getline (&line, &line_allocated, fp) >= 0)
+	{
+	    char *linefile;
+	    char *p;
+	    char *linerev;
+
+	    if (line[0] != 'B')
+		/* Ignore, for future expansion.  */
+		continue;
+
+	    linefile = line + 1;
+	    p = strchr (linefile, '/');
+	    if (p == NULL)
+		/* Syntax error, ignore.  */
+		continue;
+	    linerev = p + 1;
+	    p = strchr (linerev, '/');
+	    if (p == NULL)
+		continue;
+
+	    linerev[-1] = '\0';
+	    if (fncmp (linefile, finfo->file) == 0)
+	    {
+		switch (code)
+		{
+		case BASE_REGISTER:
+		case BASE_DEREGISTER:
+		    /* Don't copy over the old entry, we don't want it.  */
+		    break;
+		case BASE_GET:
+		    *p = '\0';
+		    *rev = xstrdup (linerev);
+		    *p = '/';
+		    goto got_it;
+		}
+	    }
+	    else
+	    {
+		linerev[-1] = '/';
+		switch (code)
+		{
+		case BASE_REGISTER:
+		case BASE_DEREGISTER:
+		    if (fprintf (newf, "%s\n", line) < 0)
+			error (0, errno, "error writing %s",
+			       baserevtmp_fullname);
+		    break;
+		case BASE_GET:
+		    break;
+		}
+	    }
+	}
+	if (ferror (fp))
+	    error (0, errno, "cannot read %s", baserev_fullname);
+    }
+ got_it:
+
+    if (code == BASE_REGISTER)
+    {
+	if (fprintf (newf, "B%s/%s/\n", finfo->file, *rev) < 0)
+	    error (0, errno, "error writing %s",
+		   baserevtmp_fullname);
+    }
+
+ out:
+
+    if (line != NULL)
+	free (line);
+
+    if (fp != NULL)
+    {
+	if (fclose (fp) < 0)
+	    error (0, errno, "cannot close %s", baserev_fullname);
+    }
+    if (newf != NULL)
+    {
+	if (fclose (newf) < 0)
+	    error (0, errno, "cannot close %s", baserevtmp_fullname);
+	rename_file (CVSADM_BASEREVTMP, CVSADM_BASEREV);
+    }
+
+    free (baserev_fullname);
+    free (baserevtmp_fullname);
+}
+
+/* Return, in a newly malloc'd string, the revision for FILE in CVS/Baserev,
+   or NULL if not listed.  */
+
+char *
+base_get (finfo)
+    struct file_info *finfo;
+{
+    char *rev;
+    base_walk (BASE_GET, finfo, &rev);
+    return rev;
+}
+
+/* Set the revision for FILE to REV.  */
+
+void
+base_register (finfo, rev)
+    struct file_info *finfo;
+    char *rev;
+{
+    base_walk (BASE_REGISTER, finfo, &rev);
+}
+
+/* Remove FILE.  */
+
+void
+base_deregister (finfo)
+    struct file_info *finfo;
+{
+    base_walk (BASE_DEREGISTER, finfo, NULL);
+}

@@ -1,3 +1,15 @@
+Sat Sep  6 09:48:39 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	Keep track of what revisions CVS/Base correspond to:
+	* cvs.h (CVSADM_BASEREV, CVSADM_BASEREVTMP): Added.
+	* entries.c, cvs.h (base_register, base_deregister, base_get,
+	base_walk): New functions.
+	* edit.c (edit_fileproc): Call base_register when setting up CVS/Base.
+	(unedit_fileproc): When taking a file out of CVS/Base, put its
+	revision back into entries, and base_deregister it.
+	* sanity.sh (watch4): New tests watch4-10 through watch4-18 test
+	for above fix.
+
 Fri Sep  5 09:14:10 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* client.c: Only declare start_rsh_server if we are going to
