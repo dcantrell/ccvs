@@ -1,6 +1,11 @@
+2004-10-29 Derek Price <derek@ximbiot.com>
+
+	* filesubr.c (xreadlink): Make sure allocation is tried once at the
+	maximum buffer size.  Protect against overflow.
+	
 2004-10-29  Mark D. Baushke  <mdb@cvshome.org>
 
-	* filesubr.c(SIZE_MAX, SSIZE_MAX): Use #include "xsize.h" instead.
+	* filesubr.c (SIZE_MAX, SSIZE_MAX): Use #include "xsize.h" instead.
 	(xreadlink): Use xrealloc instead of xmalloc/free.
 	
 2004-10-29  Mark D. Baushke  <mdb@cvshome.org>
