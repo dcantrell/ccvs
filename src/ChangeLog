@@ -1,3 +1,19 @@
+1999-04-20 Derek Price
+	<http://www-personal.engin.umich.edu/~oberon/resume.html>
+
+	* rcs.c (RCS_delete_revs):  RCS_delete_revs uses an
+	RCS_checkout call to get a new copy of a revision to be
+	used internally after old revisions were deleted and it was
+	performing keyword substitutions.  This munged all the
+	the revisions of the file on the branch containing the
+	deleted revisions and its sub-branches, as the original they
+	were being patched from was incorrect.  Corrected this by
+	passing in "-ko" as an option to RCS_checkout.
+	* sanity.sh (keywordlog):  modified this test to verify the
+	correct behavior of 'cvs admin -o'.
+	[Fixed use of \$ in keywordlog test; added code in RCS_delete_revs
+	to abort on binary file on Windows -kingdon]
+
 1999-04-21  Derek Price
 	<http://www-personal.engin.umich.edu/~oberon/resume.html>
 	and Jim Kingdon

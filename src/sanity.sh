@@ -15166,6 +15166,31 @@ xx"
 1\.5          (${username} *[0-9a-zA-Z-]*): change"
 	  cd ../..
 
+	  #
+	  # test the operation of 'admin -o' in conjunction with keywords
+	  # (especially Log - this used to munge the RCS file for all time)
+	  #
+
+	  dotest keywordlog-24 \
+"${testcvs} admin -oHEAD 1/first-dir/file1" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
+deleting revision 1\.5
+done"
+
+	  dotest keywordlog-25 \
+"${testcvs} -q co -p first-dir/file1" \
+"initial
+xx "'\$'"Log: file1,v "'\$'"
+xx Revision 1\.4  [0-9/]* [0-9:]*  ${username}
+xx First log line
+xx Second log line
+xx"
+
+	  if test $keep = yes; then
+	    echo Keeping ${TESTDIR} and exiting due to --keep
+	    exit 0
+	  fi
+
 	  rm -r 1 2
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
 	  ;;
