@@ -1,5 +1,13 @@
 2003-10-01  Derek Price  <derek@ximbiot.com>
 
+	Add the GNULIB restrict module.
+
+	* configure.in: Add call to gl_C_RESTRICT.
+	* srclist.txt: Add m4/restrict.m4.
+	* aclocal.m4, configure, config.h.in: Regenerated.
+
+2003-10-01  Derek Price  <derek@ximbiot.com>
+
 	* configure.in: Remove check for getopt function.  Add call to
 	gl_GETOPT.
 	* srclist.txt: Add entries for GNULIB getopt module.
