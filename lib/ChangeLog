@@ -1,3 +1,9 @@
+Thu Sep 25 10:57:39 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* getdate.y: Remove comment about sending email concerning this file
+	to Rich Salz.
+	* getdate.c: Regenerated using byacc.
+
 Wed Sep 24 10:35:38 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* Makefile.in (OBJECTS): Add regex.o.
