@@ -952,7 +952,16 @@ expand_wild (argc, argv, pargc, pargv)
 
 		/* Copy the file name. */
 		
-		strcat (new_argv[new_argc], fdata.cFileName);
+		if (fncmp (argv[i] + dirname_length, fdata.cFileName) == 0)
+		    /* We didn't expand a wildcard; we just matched a filename.
+		       Use the file name as specified rather than the filename
+		       which exists in the directory (they may differ in case).
+		       This is needed to make cvs add on a directory consistently
+		       use the name specified on the command line, but it is
+		       probably a good idea in other contexts too.  */
+		    strcpy (new_argv[new_argc], argv[i]);
+		else
+		    strcat (new_argv[new_argc], fdata.cFileName);
 
 		new_argc++;
 
