@@ -1,3 +1,34 @@
+Fri Apr  7 15:49:25 1995  J.T. Conklin  <jtc@rtl.cygnus.com>
+
+	* update.c (update_dirleave_proc): Removed code to remove CVS
+	  administration directory if command_name == "export" and to
+	  create CVS/Root file if it is not present.  Identical code
+	  in update_filesdone_proc() will perform these same actions.
+	  Also removed code that read and verfied CVS/Root.  This is
+	  expensive, and if it is necessary should happen in the 
+	  general recursion processor rather than in the update
+	  callbacks.
+
+	* lock.c (masterlock): New variable, pathname of master lockdir.
+	  (set_lock): removed lockdir argument, now constructs it itself
+	  and stores it in masterlock.
+	  (clear_lock): new function, removes master lockdir.
+	  (Reader_Lock, write_lock): call clear_lock instead of removing
+	  master lockdir.
+	  (Reader_Lock, write_lock): #ifdef'd out CVSTFL code.
+
+	* main.c (main): register Lock_Cleanup signal handler.
+	* lock.c (Reader_Lock, write_lock): no longer register
+	  Lock_Cleanup.
+
+	* main.c (main): initialize new array hostname.
+	* lock.c (Reader_Lock, write_lock): Use global hostname array.
+	* logmsg.c (logfile_write): Likewise.
+
+	* recurse.c (do_dir_proc, unroll_files_proc): Use open()/fchdir()
+	  instead of getwd()/chdir() on systems that support the fchdir()
+	  system call.
+
 Fri Apr  7 06:57:20 1995  Jim Kingdon  (kingdon@lioth.cygnus.com)
 
 	* server.c: Include the word "server" in error message for memory
