@@ -381,8 +381,8 @@ rtag_proc (argc, argv, xwhere, mwhere, mfile, shorten, local_specified,
     mtlist = getlist();
     err = start_recursion (check_fileproc, check_filesdoneproc,
                            (DIRENTPROC) NULL, (DIRLEAVEPROC) NULL, NULL,
-                           argc - 1, argv + 1, local_specified, which, 0, 1,
-                           where, 1);
+			   argc - 1, argv + 1, local_specified, which, 0,
+			   LOCK_READ, where, 1);
     
     if (err)
     {
@@ -397,7 +397,7 @@ rtag_proc (argc, argv, xwhere, mwhere, mfile, shorten, local_specified,
     err = start_recursion (is_rtag ? rtag_fileproc : tag_fileproc,
 			   (FILESDONEPROC) NULL, tag_dirproc,
 			   (DIRLEAVEPROC) NULL, NULL, argc - 1, argv + 1,
-			   local_specified, which, 0, 1, where, 1);
+			   local_specified, which, 0, LOCK_WRITE, where, 1);
     dellist (&mtlist);
     if (where != NULL)
 	free (where);
@@ -650,9 +650,6 @@ rtag_fileproc (callerdat, finfo)
     char *version, *rev;
     int retcode = 0;
 
-    /* upgrade our read lock to a write lock */
-    lock_dir_for_write (finfo->repository);
-
     /* find the parsed RCS data */
     if ((rcsfile = finfo->rcs) == NULL)
 	return (1);
@@ -869,9 +866,6 @@ tag_fileproc (callerdat, finfo)
     char *rev;
     Vers_TS *vers;
     int retcode = 0;
-
-    /* upgrade our read lock to a write lock */
-    lock_dir_for_write (finfo->repository);
 
     vers = Version_TS (finfo, NULL, NULL, NULL, 0, 0);
 
@@ -1291,7 +1285,7 @@ Numeric tag %s contains characters other than digits and '.'", name);
 			   val_direntproc, (DIRLEAVEPROC) NULL,
 			   (void *)&the_val_args,
 			   argc, argv, local, which, aflag,
-			   1, NULL, 1);
+			   LOCK_READ, NULL, 1);
     if (repository != NULL && repository[0] != '\0')
     {
 	if (restore_cwd (&cwd, NULL))

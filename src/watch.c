@@ -341,8 +341,8 @@ watch_addremove (argc, argv)
 
     err = start_recursion (addremove_fileproc, addremove_filesdoneproc,
 			   (DIRENTPROC) NULL, (DIRLEAVEPROC) NULL, NULL,
-			   argc, argv, local, W_LOCAL, 0, 0, (char *)NULL,
-			   1);
+			   argc, argv, local, W_LOCAL, 0, LOCK_NONE,
+			   (char *)NULL, 1);
 
     Lock_Cleanup ();
     return err;
@@ -515,6 +515,6 @@ watchers (argc, argv)
 
     return start_recursion (watchers_fileproc, (FILESDONEPROC) NULL,
 			    (DIRENTPROC) NULL, (DIRLEAVEPROC) NULL, NULL,
-			    argc, argv, local, W_LOCAL, 0, 1, (char *)NULL,
-			    1);
+			    argc, argv, local, W_LOCAL, 0, LOCK_READ,
+			    (char *)NULL, 1);
 }
