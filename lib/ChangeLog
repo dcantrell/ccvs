@@ -1,5 +1,11 @@
 2004-04-27  Derek Price  <derek@ximbiot.com>
 
+	* Makefile.am (libcvs_a_SOURCES): Add time_r.h.
+	* time_r.h: New file.
+	* Makefile.in: Regenerated.
+
+2004-04-27  Derek Price  <derek@ximbiot.com>
+
 	* nanosleep.c: New file.
 	* Makefile.in: Regenerated.
 

@@ -117,6 +117,9 @@ stdbool.h: stdbool_.h
 	mv $@-t $@
 MOSTLYCLEANFILES += stdbool.h stdbool.h-t
 
+# For GNULIB's time_r module.
+libcvs_a_SOURCES += time_r.h
+
 # For GNULIB's timespec module.
 libcvs_a_SOURCES += timespec.h
 
