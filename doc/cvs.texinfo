@@ -7174,6 +7174,13 @@ These two date formats are preferred.  However,
 formats.  They are intentionally not documented here in
 any detail, and future versions of @sc{cvs} might not
 accept all of them.
+@c We should document and testsuite "now" and
+@c "yesterday".  "now" is mentioned in the FAQ and
+@c "yesterday" is mentioned in this document (and the
+@c message from "cvs import" suggesting a merge
+@c command).  What else?  Probably some/all of the "3
+@c weeks ago" family.
+@c 
 @c Maybe at
 @c some point have CVS start give warnings on "unofficial"
 @c formats (many of which might be typos or user
