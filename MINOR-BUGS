@@ -8,3 +8,7 @@ high-priority at the moment. :-)
   cvs [update aborted]: premature end of file from server
 
   The client's response should be cleaned up.
+
+* In the gb-grep module, update-ChangeLog (and therefore, I assume,
+  rcs2log) truncates file names --- I get entries for things called
+  ring/lenstring.h instead of lenstring/lenstring.h.
