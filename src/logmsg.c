@@ -429,14 +429,14 @@ do_verify (messagep, repository)
 
     /* FIXME? Do we really want to skip this on noexec?  What do we do
        for the other administrative files?  */
-    if (noexec)
+    if (noexec || repository == NULL)
 	return;
 
     /* Get the name of the verification script to run  */
 
-    if (repository != NULL)
-	(void) Parse_Info (CVSROOTADM_VERIFYMSG, repository, 
-			   verifymsg_proc, 0);
+    if (Parse_Info (CVSROOTADM_VERIFYMSG, repository, verifymsg_proc, 0) > 0)
+	error (1, 0, "Message verification failed");
+
     if (!verifymsg_script)
 	return;
 
