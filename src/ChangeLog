@@ -1,3 +1,8 @@
+2004-01-17  Mark D. Baushke  <mdb@cvshome.org>
+
+	* logmsg.c (do_verify): Eliminate double-free bug.
+	(Original patch from Gerald Combs.)
+
 2004-01-07  Larry Jones  <lawrence.jones@ugsplm.com>
 
 	* checkout.c (safe_location): Remove unused variable(s).
