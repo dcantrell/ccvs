@@ -1,5 +1,13 @@
 2004-11-17  Mark D. Baushke  <mdb@cvshome.org>
 
+	* sanity.sh (basic2-21a): The val-tags file should have
+	at least 'rtagged-by-head y' in it.
+	(basic2-21b): New test showing a cvs bug when val-tags
+	is not properly updated.
+	(Report from "John Elgin" <John@JCElgin.com>.)
+
+2004-11-17  Mark D. Baushke  <mdb@cvshome.org>
+
 	* client.c (handle_m, handle_e): Winsock is returning
 	SOCK_ERRNO == WSAENOTSOCK for select() problems and not
 	setting errno. Do not bother with printing an error from a
