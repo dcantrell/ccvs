@@ -1118,3 +1118,5 @@ fopen_case (name, mode, fp, pathp)
     return retval;
 }
 #endif /* SERVER_SUPPORT */
+/* vim:tabstop=8:shiftwidth=4
+ */
