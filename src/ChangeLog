@@ -18,7 +18,9 @@
 	* filesubr.c (open_file): Move function...
 	* subr.c (xfopen): ...here, with additional commenting and minor
 	cosmetic changes.
-	* add.c, checkout.c, client.c
+	* add.c, checkout.c, client.c, cvsrc.c, edit.c, entries.c, filesubr.c,
+	logmsg.c, mkmodules.c, modules,c, patch.c, root.c, subr.c:
+	s/open_file/xfopen/.
 
 2005-03-16  Derek Price  <derek@ximbiot.com>
 
