@@ -176,7 +176,7 @@ CVS e o mundo Real.
 @c <en>* Keyword substitution::        CVS can include the revision inside the file
 * Substituição de palavra-chave:: CVS inclui a revisão dentro do arquivo
 @c <en>* Tracking sources::            Tracking third-party sources
-* Tracking sources::              Tracking third-party sources
+* Acompanhando fontes::           Acompanhando fontes de terceiros
 @c <en>* Builds::                      Issues related to CVS and builds
 * Builds::                        Issues related to CVS and builds
 @c <en>* Special Files::		Devices, links and other non-regular files
@@ -878,7 +878,7 @@ NT/95.
 Adicionalmente, @sc{cvs} busca pela variável de
 ambiente @code{$VISUAL}. Isto gera duas opiniões
 divergentes, se este é um comportamento desejável ou se
-versões futuras do @sc{cvs} devem verificar
+releases futuras do @sc{cvs} devem verificar
 @code{$VISUAL} ou ignorá-la. Você vai estar OK se não
 tiver a variável @code{$VISUAL} ou se ela for igual à
 @code{$EDITOR}.
@@ -5189,18 +5189,20 @@ $ cvs import -m "Imported sources" yoyodyne/@var{rdir} yoyo start
 @c <en>no purpose in this context, but since @sc{cvs} requires
 @c <en>them they must be present.  @xref{Tracking sources}, for
 @c <en>more information about them.
-Unless you supply a log message with the @samp{-m}
-flag, @sc{cvs} starts an editor and prompts for a
-message.  The string @samp{yoyo} is a @dfn{vendor tag},
-and @samp{start} is a @dfn{release tag}.  They may fill
-no purpose in this context, but since @sc{cvs} requires
-them they must be present.  @xref{Tracking sources}, for
-more information about them.
+A menos que você forneca uma mensagem de log (registro)
+com a opção @samp{-m}, o @sc{cvs} vai iniciar um editor
+e esperar uma mensagem.  A string @samp{yoyo} é uma
+@dfn{etiqueta de fornecedor} (vendor tag), e
+@samp{start} é uma @dfn{etiqueta de release} (release
+tag).  Eles podem não fazer sentido neste contexto, mas
+já que o @sc{cvs} exige, elas devem estar presentes.
+@xref{Acompanhando fontes}, para mais informações sobre
+isto.
 
 @c <en>You can now verify that it worked, and remove your
 @c <en>original source directory.
-You can now verify that it worked, and remove your
-original source directory.
+Você agora pode verificar se está funcionando, e então
+apagar seu diretório do código fonte original.
 @c FIXME: Need to say more about "verify that it
 @c worked".  What should the user look for in the output
 @c from "diff -r"?
@@ -5542,11 +5544,11 @@ de revisão.
 @c <en>went into a particular release, one uses a @dfn{tag},
 @c <en>which is a symbolic revision which can be assigned to a
 @c <en>numeric revision in each file.
-If one wants to keep track of a set of revisions
-involving more than one file, such as which revisions
-went into a particular release, one uses a @dfn{tag},
-which is a symbolic revision which can be assigned to a
-numeric revision in each file.
+Se você quiser marcar um conjunto de revisões
+envolvendo mais de um arquivo, tais como as revisões
+que integram uma release, pode usar uma @dfn{etiqueta} (tag),
+que é uma revisão simbólica que ser associada a uma
+revisão numérica em cada arquivo.
 
 @menu
 @c <en>* Revision numbers::            The meaning of a revision number
@@ -5598,15 +5600,16 @@ numeric revision in each file.
 @c <en>revision is given a new number by increasing the
 @c <en>rightmost number by one.  The following figure displays
 @c <en>a few revisions, with newer revisions to the right.
-Each version of a file has a unique @dfn{revision
-number}.  Revision numbers look like @samp{1.1},
-@samp{1.2}, @samp{1.3.2.2} or even @samp{1.3.2.2.4.5}.
-A revision number always has an even number of
-period-separated decimal integers.  By default revision
-1.1 is the first revision of a file.  Each successive
-revision is given a new number by increasing the
-rightmost number by one.  The following figure displays
-a few revisions, with newer revisions to the right.
+Cada versão de um arquivo tem um @dfn{número de
+revisão} único.  Números de revisão são coisas do tipo
+@samp{1.1}, @samp{1.2}, @samp{1.3.2.2} ou até mesmo
+@samp{1.3.2.2.4.5}. Um número de revisão sempre tem uma
+quantidade par de números inteiros na base dez
+separados por ponto.  Por padrão, a revisão 1.1 é a
+primeira revisão de um arquivo.  Cada revisão sucessiva
+ganha um novo número somando um ao número mais a
+direita.  A figura a seguir mostra mostra algumas
+revisões, com a revisão mais nova mais à direita.
 
 @example
        +-----+    +-----+    +-----+    +-----+    +-----+
@@ -5620,11 +5623,10 @@ a few revisions, with newer revisions to the right.
 @c <en>(@pxref{Branching and merging}); such revision numbers
 @c <en>are explained in detail in @ref{Branches and
 @c <en>revisions}.
-It is also possible to end up with numbers containing
-more than one period, for example @samp{1.3.2.2}.  Such
-revisions represent revisions on branches
-(@pxref{Ramificando e mesclando}); such revision numbers
-are explained in detail in
+Também é possível ter números com mais de um ponto, por
+exemplo @samp{1.3.2.2}.  Tais revisões representam
+revisões em ramos (@pxref{Ramificando e mesclando});
+estes números de revisão são explicados em detalhes em
 @ref{Branches and revisions}.
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -5643,19 +5645,20 @@ are explained in detail in
 @c <en>Likewise, a software product can have several versions.
 @c <en>A software product is often given a version number such
 @c <en>as @samp{4.1.1}.
-A file can have several versions, as described above.
-Likewise, a software product can have several versions.
-A software product is often given a version number such
-as @samp{4.1.1}.
+Um arquivo pode ter várias versões, como descrito
+acima. Da mesma forma, um produto de software também
+pode ter várias versões. Frequentemente um produto de
+software recebe um número de versão, tal como @samp{4.1.1}.
 
 @c <en>Versions in the first sense are called @dfn{revisions}
 @c <en>in this document, and versions in the second sense are
 @c <en>called @dfn{releases}.  To avoid confusion, the word
 @c <en>@dfn{version} is almost never used in this document.
-Versions in the first sense are called @dfn{revisions}
-in this document, and versions in the second sense are
-called @dfn{releases}.  To avoid confusion, the word
-@dfn{version} is almost never used in this document.
+Versões, neste documento são chamadas, ???in the first
+sense??? @dfn{revisions} , e versões, ???in the second
+sense??? são chamadas @dfn{releases}.  Para evitar
+confusão, o termo @dfn{versão} praticamente não é usado
+neste documento.
 
 @c <en>@node Assigning revisions
 @node Assigning revisions
