@@ -4076,6 +4076,16 @@ cope with line endings (that is, you are using a
 check in a new copy of the file, as shown by the
 @code{cvs commit} command above.
 
+However, in using @code{cvs admin -k} to change the
+keyword expansion, be aware that the keyword expansion
+mode is not version controlled.  This means that, for
+example, that if you have a text file in old releases,
+and a binary file with the same name in new releases,
+@sc{cvs} provides no way to check out the file in text
+or binary mode depending on what version you are
+checking out.  There is no good workaround for this
+problem.
+
 @c ---------------------------------------------------------------------
 @node Revision management
 @chapter Revision management
