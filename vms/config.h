@@ -180,4 +180,5 @@
 #define RSH_NOT_TRANSPARENT 1
 #define START_SERVER vms_start_server
 #define NO_SOCKET_TO_FD 1
-/* must set use_socket_style to 1 */
+#define START_SERVER_RETURNS_SOCKET 1
+#define SEND_NEVER_PARTIAL 1
