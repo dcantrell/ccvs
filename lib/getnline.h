@@ -1,4 +1,6 @@
-/* Replacement for GNU C library function getline
+/* Implementation of getnline function, a version of the GNU C library
+   function getline which allows a maximum number of characters retrieved
+   to be set.
 
    Copyright (C) 1995, 1997, 1999, 2000, 2001, 2002, 2003 Free
    Software Foundation, Inc.
@@ -17,23 +19,17 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
 
-#ifndef GETLINE_H_
-# define GETLINE_H_ 1
+#ifndef GETNLINE_H_
+# define GETNLINE_H_ 1
 
 # include <stddef.h>
 # include <stdio.h>
 
-/* glibc2 has these functions declared in <stdio.h>.  Avoid redeclarations.  */
-# if !HAVE_WORKING_GETLINE
+# define GETNLINE_NO_LIMIT -1
 
-int getline (char **_lineptr, size_t *_n, FILE *_stream);
+int getnline( char **_lineptr, size_t *_n, int limit, FILE *_stream );
 
-# endif /* ! have getline */
+int getndelim( char **_lineptr, size_t *_n, int limit, int _delimiter,
+               FILE *_stream );
 
-# if !HAVE_GETDELIM
-
-int getdelim (char **_lineptr, size_t *_n, int _delimiter, FILE *_stream);
-
-# endif /* ! have getdelim */
-
-#endif /* not GETLINE_H_ */
+#endif /* not GETNLINE_H_ */
