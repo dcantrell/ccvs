@@ -1,3 +1,7 @@
+2004-07-26  Derek Price  <derek@ximbiot.com>
+
+	* server.c (read_secondary_log): Minor comment corrections.
+
 2004-07-23  Derek Price  <derek@ximbiot.com>
 
 	* buffer.c (fd_buffer_output): Don't fsync.  It is unneeded and slow.
