@@ -903,6 +903,30 @@ dnl end --enable-*
 dnl
 
 
+
+dnl
+dnl Check for a case insensitive filesystem, like Mac OS X and Windows have.
+dnl
+AC_CACHE_CHECK([for a case insensitive file system],[acx_cv_case_insensitive],
+[ rm -f ac_TEST_filenames_CASE_insensitive
+  echo foo >ac_test_filenames_case_insensitive
+  if test -f ac_TEST_filenames_CASE_insensitive; then
+    acx_cv_case_insensitive=yes
+  else
+    acx_cv_case_insensitive=no
+  fi
+  rm ac_test_filenames_case_insensitive
+])
+if test $acx_cv_case_insensitive = yes; then
+  AC_DEFINE([FILENAMES_CASE_INSENSITIVE], [1],
+        [Define if this executable will be running on case insensitive
+         file systems.  In the client case, this means that it will request
+         that the server pretend to be case insensitive if it isn't
+         already.])
+fi
+
+
+
 dnl For the moment we will assume that all systems which have
 dnl the unixyness to run configure are unixy enough to do the
 dnl PreservePermissions stuff.  I have this sinking feeling that

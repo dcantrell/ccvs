@@ -10507,6 +10507,34 @@ fi
 
 
 
+echo "$as_me:$LINENO: checking for a case insensitive file system" >&5
+echo $ECHO_N "checking for a case insensitive file system... $ECHO_C" >&6
+if test "${acx_cv_case_insensitive+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+   rm -f ac_TEST_filenames_CASE_insensitive
+  echo foo >ac_test_filenames_case_insensitive
+  if test -f ac_TEST_filenames_CASE_insensitive; then
+    acx_cv_case_insensitive=yes
+  else
+    acx_cv_case_insensitive=no
+  fi
+  rm ac_test_filenames_case_insensitive
+
+fi
+echo "$as_me:$LINENO: result: $acx_cv_case_insensitive" >&5
+echo "${ECHO_T}$acx_cv_case_insensitive" >&6
+if test $acx_cv_case_insensitive = yes; then
+
+cat >>confdefs.h <<\_ACEOF
+#define FILENAMES_CASE_INSENSITIVE 1
+_ACEOF
+
+fi
+
+
+
+
 echo "$as_me:$LINENO: checking for cygwin32" >&5
 echo $ECHO_N "checking for cygwin32... $ECHO_C" >&6
 if test "${ccvs_cv_sys_cygwin32+set}" = set; then

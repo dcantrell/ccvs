@@ -1,3 +1,9 @@
+2003-10-27  Derek Price  <derek@ximbiot.com>
+
+	* configure.in: Add new test for a case insensitive file system.
+	* configure, config.h.in: Regenerated.
+	* NEWS: Note the above change.
+
 2003-10-24  Derek Price  <derek@ximbiot.com>
 
 	* NEWS: Update recent text about joins to reflect new behavior.
