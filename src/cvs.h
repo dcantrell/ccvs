@@ -451,6 +451,7 @@ void strip_trailing_slashes PROTO((char *path));
 void update_delproc PROTO((Node * p));
 void usage PROTO((const char *const *cpp));
 void xchmod PROTO((char *fname, int writable));
+char *xgetwd PROTO((void));
 int Checkin PROTO((int type, char *file, char *update_dir,
 		   char *repository, char *rcs, char *rev,
 		   char *tag, char *options, char *message, List *entries));
