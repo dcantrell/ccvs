@@ -1622,7 +1622,7 @@ update_entries (data_arg, ent_list, short_pathname, filename)
 	        error (1, 0, "patch original file %s does not exist",
 		       short_pathname);
 	    if ( CVS_STAT (temp_filename, &s) < 0)
-	        error (1, 1, "can't stat patch file %s", temp_filename);
+	        error (1, errno, "can't stat patch file %s", temp_filename);
 	    if (s.st_size == 0)
 	        retcode = 0;
 	    else
