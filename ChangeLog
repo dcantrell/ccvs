@@ -1,5 +1,14 @@
 2003-07-22  Derek Price  <derek@ximbiot.com>
 
+	* configure.in: Add call to gl_FUNC_MEMMOVE and remove memmove from the
+	call to AC_REPLACE_FUNCS.
+	* srclist.txt: Note import of GNULIB memmove module.
+
+	* aclocal.m4: Regenerated.
+	* configure: Ditto.
+
+2003-07-22  Derek Price  <derek@ximbiot.com>
+
 	* srclist.txt: Note GNULIB exit() function support.
 
 2003-07-20  Derek Price  <derek@ximbiot.com>

@@ -5714,12 +5714,10 @@ fi
 
 
 
-
 for ac_func in \
 	dup2 \
 	ftruncate \
 	gethostname \
-	memmove \
 	mkdir \
 	rename \
 	strerror \
@@ -6273,6 +6271,7 @@ fi
 
   fi
 
+jm_FUNC_MEMMOVE
 
 for ac_header in stdlib.h
 do
