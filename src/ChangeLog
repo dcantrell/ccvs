@@ -1,5 +1,8 @@
 Sun Nov 10 21:13:38 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* server.c: Use all the right cruft which goes along with
+	including sys/time.h.
+
 	* server.c: Include a "copyright" notice.
 
 	* server.c: If HAVE_WINSOCK_H, include winsock.h.
