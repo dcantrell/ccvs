@@ -1,5 +1,9 @@
 Changes since 1.12.2:
 
+* Attempts to use the global `-l' option, removed from both client and server
+  as of version 1.12.1, will now elicit a warning rather than a fatal error
+  from the server.
+
 * The configure script now tests whether it is building CVS on a case
   insensitive file system.  If it is, CVS assumes that all file systems on this
   platform will be case insensitive.  This is useful for getting the case
