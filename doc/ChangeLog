@@ -1,3 +1,7 @@
+Tue May 20 17:54:55 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (Error messages): Add item about EINVAL in rename.
+
 Mon May 19 00:21:49 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (Keywords in imports): New node.

@@ -11122,6 +11122,12 @@ can be handled as with other @sc{cvs} bugs
 exact nature of which would depend on the situation but
 which hopefully could be figured out.
 
+@item cvs [checkout aborted]: cannot rename file @var{file} to CVS/,,@var{file}: Invalid argument
+This message has been reported as intermittently
+happening with CVS 1.9 on Solaris 2.5.  The cause is
+unknown; if you know more about what causes it, let us
+know as described in @ref{BUGS}.
+
 @item cvs [update aborted]: could not patch @var{file}: No such file or directory
 This means that there was a problem finding the
 @code{patch} program.  Make sure that it is in your
