@@ -1,5 +1,19 @@
 2004-02-10  Derek Price  <derek@ximbiot.com>
 
+	* NEWS: Note dying gasp check.
+
+2004-02-10  Derek Price  <derek@ximbiot.com>
+
+	* NEWS: Note flow control pipe race fix.
+
+2004-02-10  Derek Price  <derek@ximbiot.com>
+
+	* BUGS: Note problems building with MSVC++ under Windows and
+	workaround.
+	* INSTALL: Ditto.
+
+2004-02-10  Derek Price  <derek@ximbiot.com>
+
 	* cvsnt.mak: Add stack.c and stack.h in order to compile under Windows.
 	* README: Update copyright notice.
 
