@@ -2037,15 +2037,91 @@ fd_buffer_input (void *closure, char *data, int need, int size, int *got)
     struct fd_buffer *fb = closure;
     int nbytes;
 
-    if (!fb->blocking)
-	nbytes = read (fb->fd, data, size);
-    else
+    if (fb->blocking)
     {
-	/* This case is not efficient.  Fortunately, I don't think it
-	   ever actually happens.  */
-	nbytes = read (fb->fd, data, need == 0 ? 1 : need);
+	int status;
+	fd_set readfds;
+
+	/* Set non-block.  */
+        status = fd_buffer_block (fb, false);
+	if (status != 0) return status;
+
+	*got = 0;
+
+	/* This function used to read at least one byte even when none were
+	 * requested.  I'm not sure why, but CVS seems to depend on this
+	 */
+	if (need == 0) need = 1;
+
+	FD_ZERO (&readfds);
+	FD_SET (fb->fd, &readfds);
+	while (*got < need)
+	{
+	    int numfds;
+
+	    do {
+		/* This used to select on exceptions too, but as far
+		   as I know there was never any reason to do that and
+		   SCO doesn't let you select on exceptions on pipes.  */
+		numfds = select (fb->fd + 1, &readfds, NULL, NULL, NULL);
+		if (numfds < 0 && errno != EINTR)
+		{
+		    status = errno;
+		    goto nonblock_done;
+		}
+	    } while (numfds < 0);
+
+	    nbytes = read (fb->fd, data, size - *got);
+
+	    if (nbytes == 0)
+	    {
+		/* End of file.  This assumes that we are using POSIX or BSD
+		   style nonblocking I/O.  On System V we will get a zero
+		   return if there is no data, even when not at EOF.  */
+		if (*got)
+		{
+		    /* We already read some data, so return no error, counting
+		     * on the fact that we will read EOF again next time.
+		     */
+		    status = 0;
+		    break;
+		}
+		else
+		{
+		    /* Return EOF.  */
+		    status = -1;
+		    break;
+		}
+	    }
+
+	    if (nbytes < 0)
+	    {
+		/* Some error occurred.  */
+		if (!blocking_error (errno))
+		{
+		    status = errno;
+		    break;
+		}
+		/* else Everything's fine, we just didn't get any data.  */
+	    }
+
+	    *got += nbytes;
+	}
+
+nonblock_done:
+	if (status == 0 || status == -1)
+	{
+	    int newstatus;
+
+	    /* OK or EOF - Reset block.  */
+	    newstatus = fd_buffer_block (fb, true);
+	    if (newstatus) status = newstatus;
+	}
+	return status;
     }
 
+    /* The above will always return.  Handle non-blocking read.  */
+    nbytes = read (fb->fd, data, size);
     if (nbytes > 0)
     {
 	*got = nbytes;
@@ -2055,20 +2131,15 @@ fd_buffer_input (void *closure, char *data, int need, int size, int *got)
     *got = 0;
 
     if (nbytes == 0)
-    {
 	/* End of file.  This assumes that we are using POSIX or BSD
 	   style nonblocking I/O.  On System V we will get a zero
 	   return if there is no data, even when not at EOF.  */
 	return -1;
-    }
 
     /* Some error occurred.  */
-
     if (blocking_error (errno))
-    {
 	/* Everything's fine, we just didn't get any data.  */
 	return 0;
-    }
 
     return errno;
 }

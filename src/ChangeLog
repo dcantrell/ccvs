@@ -1,5 +1,12 @@
 2004-07-15  Derek Price  <derek@ximbiot.com>
 
+	* buffer.c (fd_buffer_input): Improve efficiency.
+	* sanity.sh (modify_repo): Move timestamp race avoidance to...
+	(sync-secondary): This script.
+	(big): Misc cleanup.
+
+2004-07-15  Derek Price  <derek@ximbiot.com>
+
 	* sanity.sh: Misc gratuitous cleanup.
 	(modify_repo): Sleep 1 before rsync to avoid timestamp comparison
 	issues.
