@@ -1,3 +1,7 @@
+2003-12-18  Derek Price  <derek@ximbiot.com>
+
+	* config.h, stamp-ch: Regenerated for 1.11.18.
+
 2003-12-10  Derek Price  <derek@ximbiot.com>
 
 	* Makefile.am: Include code to put a warning at the beginning of the
