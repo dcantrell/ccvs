@@ -1,3 +1,8 @@
+Wed May  7 13:52:47 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (checkout): Add comment about need for example
+	regarding what the "module" argument means.
+
 Tue May  6 18:02:27 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (History browsing): Add comment about looking at old
