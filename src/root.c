@@ -14,7 +14,7 @@
 #include "cvs.h"
 
 #ifndef lint
-static char rcsid[] = "@(#)root.c,v 1.2 1994/09/15 05:32:17 zoo Exp";
+static const char rcsid[] = "@(#)root.c,v 1.2 1994/09/15 05:32:17 zoo Exp";
 USE(rcsid)
 #endif
 
@@ -38,16 +38,13 @@ Name_Root(dir, update_dir)
     if (dir != NULL)
     {
 	(void) sprintf (cvsadm, "%s/%s", dir, CVSADM);
+	(void) sprintf (tmp, "%s/%s", dir, CVSADM_ROOT);
     }
     else
     {
 	(void) strcpy (cvsadm, CVSADM);
-    }
-
-    if (dir != NULL)
-	(void) sprintf (tmp, "%s/%s", dir, CVSADM_ROOT);
-    else
 	(void) strcpy (tmp, CVSADM_ROOT);
+    }
 
     /*
      * Do not bother looking for a readable file if there is no cvsadm
@@ -173,7 +170,7 @@ Create_Root (dir, rootdir)
         else
 	    (void) strcpy (tmp, CVSADM_ROOT);
         fout = open_file (tmp, "w+");
-        if (fprintf (fout, "%s\n", rootdir) == EOF)
+        if (fprintf (fout, "%s\n", rootdir) < 0)
 	    error (1, errno, "write to %s failed", tmp);
         if (fclose (fout) == EOF)
 	    error (1, errno, "cannot close %s", tmp);

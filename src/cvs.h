@@ -30,10 +30,8 @@ char *alloca ();
 #endif /* not __GNUC__ */
 
 #if __STDC__
-#define	CONST	const
 #define	PTR	void *
 #else
-#define	CONST
 #define	PTR	char *
 #endif
 
@@ -47,7 +45,7 @@ char *alloca ();
 #endif
 
 #if __GNUC__ == 2
-#define USE(var) static char sizeof##var = sizeof(sizeof##var) + sizeof(var);
+#define USE(var) static const char sizeof##var = sizeof(sizeof##var) + sizeof(var);
 #else
 #define USE(var) 
 #endif
@@ -55,6 +53,13 @@ char *alloca ();
 
 #include <stdio.h>
 
+#ifdef STDC_HEADERS
+#include <stdlib.h>
+#else
+extern void exit ();
+extern char *getenv();
+#endif
+ 
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif 
@@ -84,6 +89,14 @@ char *strerror ();
 extern int errno;
 #endif /* !errno */
 #endif /* HAVE_ERRNO_H */
+
+#ifdef HAVE_IO_H
+#include <io.h>
+#endif
+
+#ifdef HAVE_DIRECT_H
+#include <direct.h>
+#endif
 
 #include "system.h"
 
@@ -132,20 +145,13 @@ extern int errno;
 #define	CVSADM		"CVS"
 #define	CVSADM_ENT	"CVS/Entries"
 #define	CVSADM_ENTBAK	"CVS/Entries.Backup"
+#define CVSADM_ENTLOG	"CVS/Entries.Log"
 #define	CVSADM_ENTSTAT	"CVS/Entries.Static"
 #define	CVSADM_REP	"CVS/Repository"
 #define	CVSADM_ROOT	"CVS/Root"
 #define	CVSADM_CIPROG	"CVS/Checkin.prog"
 #define	CVSADM_UPROG	"CVS/Update.prog"
 #define	CVSADM_TAG	"CVS/Tag"
-
-/*
- * The following are obsolete and are maintained here only so that they can be
- * cleaned up during the transition
- */
-#define	OCVSADM		"CVS.adm"	/* for CVS 1.2 and earlier */
-#define	CVSADM_FILE	"CVS/Files"
-#define	CVSADM_MOD	"CVS/Mod"
 
 /*
  * Definitions for the CVSROOT Administrative directory and the files it
@@ -168,12 +174,6 @@ extern int errno;
 #define	CVSMODULE_OPTS	"ad:i:lo:s:t:u:"/* options in modules file */
 #define CVSMODULE_SPEC	'&'		/* special delimiter */
 
-/*
- * The following are obsolete and are maintained here only so that they can be
- * cleaned up during the transition
- */
-#define	OCVSROOTADM		"CVSROOT.adm"	/* for CVS 1.2 and earlier */
-
 /* Other CVS file names */
 #define	CVSATTIC	"Attic"
 #define	CVSLCK		"#cvs.lock"
@@ -191,7 +191,7 @@ extern int errno;
 /* #define CVSDEA		"CVS.dea" */
 
 /* Define to enable alternate death support (which uses the RCS state).  */
-/* #define DEATH_STATE 1 */
+#define DEATH_STATE 1
 
 #define DEATH_SUPPORT 1
 
@@ -222,7 +222,8 @@ extern int errno;
 /* #define	RCSBIN_DFLT		   Set by config.h */
 
 #define	EDITOR1_ENV	"CVSEDITOR"	/* which editor to use */
-#define	EDITOR2_ENV	"EDITOR"	/* which editor to use */
+#define	EDITOR2_ENV	"VISUAL"	/* which editor to use */
+#define	EDITOR3_ENV	"EDITOR"	/* which editor to use */
 /* #define	EDITOR_DFLT		   Set by config.h */
 
 #define	CVSROOT_ENV	"CVSROOT"	/* source directory root */
@@ -248,6 +249,18 @@ extern int errno;
 #define	MAXPROGLEN	30000		/* max program length to system() */
 #define	MAXLISTLEN	40000		/* For [A-Z]list holders */
 #define MAXDATELEN	50		/* max length for a date */
+
+/* structure of a entry record */
+struct entnode
+{
+    char *version;
+    char *timestamp;
+    char *options;
+    char *tag;
+    char *date;
+    char *conflict;
+};
+typedef struct entnode Entnode;
 
 /* The type of request that is being done in do_module() */
 enum mtype
@@ -306,7 +319,7 @@ struct vers_ts
 typedef struct vers_ts Vers_TS;
 
 /*
- * structure used for list-private storage by ParseEntries() and
+ * structure used for list-private storage by Entries_Open() and
  * Version_TS().
  */
 struct stickydirtag
@@ -358,12 +371,22 @@ extern int trace;		/* Show all commands */
 extern int noexec;		/* Don't modify disk anywhere */
 extern int logoff;		/* Don't write history entry */
 
+extern char hostname[];	
+
 /* Externs that are included directly in the CVS sources */
+int RCS_settag PROTO((const char *, const char *, const char *));
+int RCS_deltag PROTO((const char *, const char *));
+int RCS_setbranch PROTO((const char *, const char *));
+int RCS_lock PROTO((const char *, const char *));
+int RCS_unlock PROTO((const char *, const char *));
+int RCS_merge PROTO((const char *, const char *, const char *, const char *));
+
 DBM *open_module PROTO((void));
-FILE *Fopen PROTO((char *name, char *mode));
-FILE *open_file PROTO((char *name, char *mode));
+FILE *Popen PROTO((const char *, const char *));
+FILE *open_file PROTO((const char *, const char *));
 List *Find_Dirs PROTO((char *repository, int which));
-List *ParseEntries PROTO((int aflag));
+void Entries_Close PROTO((List *entries));
+List *Entries_Open PROTO((int aflag));
 char *Make_Date PROTO((char *rawdate));
 char *Name_Repository PROTO((char *dir, char *update_dir));
 #ifdef CVSADM_ROOT
@@ -377,7 +400,7 @@ char *getcaller PROTO((void));
 char *time_stamp PROTO((char *file));
 char *xmalloc PROTO((size_t bytes));
 char *xrealloc PROTO((char *ptr, size_t bytes));
-char *xstrdup PROTO((char *str));
+char *xstrdup PROTO((const char *str));
 int No_Difference PROTO((char *file, Vers_TS * vers, List * entries,
 			 char *repository, char *update_dir));
 int Parse_Info PROTO((char *infofile, char *repository, int PROTO((*callproc)) PROTO(()), int all));
@@ -385,18 +408,18 @@ int Reader_Lock PROTO((char *xrepository));
 int SIG_register PROTO((int sig, RETSIGTYPE PROTO((*fn)) PROTO(())));
 int Writer_Lock PROTO((List * list));
 int ign_name PROTO((char *name));
-int isdir PROTO((char *file));
-int isfile PROTO((char *file));
-int islink PROTO((char *file));
-int isreadable PROTO((char *file));
-int iswritable PROTO((char *file));
+int isdir PROTO((const char *file));
+int isfile PROTO((const char *file));
+int islink PROTO((const char *file));
+int isreadable PROTO((const char *file));
+int iswritable PROTO((const char *file));
 int joining PROTO((void));
-int link_file PROTO((char *from, char *to));
-int numdots PROTO((char *s));
+int link_file PROTO((const char *from, const char *to));
+int numdots PROTO((const char *s));
 int run_exec PROTO((char *stin, char *stout, char *sterr, int flags));
-int unlink_file PROTO((char *f));
+int unlink_file PROTO((const char *f));
 int update PROTO((int argc, char *argv[]));
-int xcmp PROTO((char *file1, char *file2));
+int xcmp PROTO((const char *file1, const char *file2));
 int yesno PROTO((void));
 time_t get_date PROTO((char *date, struct timeb *now));
 void Create_Admin PROTO((char *dir, char *update_dir,
@@ -408,7 +431,7 @@ void WriteTag PROTO((char *dir, char *tag, char *date));
 void cat_module PROTO((int status));
 void check_entries PROTO((char *dir));
 void close_module PROTO((DBM * db));
-void copy_file PROTO((char *from, char *to));
+void copy_file PROTO((const char *from, const char *to));
 void error PROTO((int status, int errnum, char *message,...));
 void fperror PROTO((FILE * fp, int status, int errnum, char *message,...));
 void free_names PROTO((int *pargc, char *argv[]));
@@ -419,18 +442,24 @@ void ign_setup PROTO((void));
 void ign_dir_add PROTO((char *name));
 int ignore_directory PROTO((char *name));
 void line2argv PROTO((int *pargc, char *argv[], char *line));
-void make_directories PROTO((char *name));
-void make_directory PROTO((char *name));
-void rename_file PROTO((char *from, char *to));
-void run_arg PROTO((char *s));
-void run_args PROTO((char *fmt,...));
+void make_directories PROTO((const char *name));
+void make_directory PROTO((const char *name));
+void rename_file PROTO((const char *from, const char *to));
+void run_arg PROTO((const char *s));
 void run_print PROTO((FILE * fp));
-void run_setup PROTO((char *fmt,...));
+#ifdef HAVE_VPRINTF
+void run_setup PROTO((const char *fmt,...));
+void run_args PROTO((const char *fmt,...));
+#else
+void run_setup ();
+void run_args ();
+#endif
 void strip_path PROTO((char *path));
 void strip_trailing_slashes PROTO((char *path));
 void update_delproc PROTO((Node * p));
-void usage PROTO((char **cpp));
+void usage PROTO((const char *const *cpp));
 void xchmod PROTO((char *fname, int writable));
+char *xgetwd PROTO((void));
 int Checkin PROTO((int type, char *file, char *update_dir,
 		   char *repository, char *rcs, char *rev,
 		   char *tag, char *options, char *message, List *entries));
@@ -470,3 +499,5 @@ int start_recursion PROTO((int PROTO((*fileproc)) (), int PROTO((*filesdoneproc)
 void SIG_beginCrSect PROTO((void));
 void SIG_endCrSect PROTO((void));
 void read_cvsrc PROTO((int *argc, char ***argv));
+
+char *make_message_rcslegal PROTO((char *message));

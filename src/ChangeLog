@@ -1,3 +1,762 @@
+Wed Jul 19 18:00:00 1995  Jim Blandy <jimb@cyclic.com>
+
+	* subr.c (copy_file): Declare local var n to be an int,
+	not a size_t.  size_t is unsigned, and the return values
+	of read and write are definitely not unsigned.
+
+	* cvs.h [HAVE_IO_H]: #include <io.h>.
+	[HAVE_DIRECT_H]: #include <direct.h>.
+
+Fri Jul 14 22:28:46 1995  Jim Blandy  <jimb@totoro.cyclic.com>
+
+	* server.c (dirswitch, serve_static_directory, serve_sticky,
+	serve_lost, server_write_entries, serve_checkin_prog,
+	serve_update_prog): Include more information in error messages.
+	(Thanks, DJM.)
+
+	* cvsbug.sh: Use /usr/sbin/sendmail, unless it doesn't
+	exist, in which case use /usr/lib/sendmail.  (Thanks, DJM.)
+
+	* server.c (server, server_cleanup): Use "/tmp" instead of
+	"/usr/tmp" when the TMPDIR environment variable isn't set.  This
+	is what the rest of the code uses.
+
+Thu Jul 13 11:03:17 1995  Jim Meyering  (meyering@comco.com)
+
+	* recurse.c (free_cwd): New function.
+	(save_cwd, restore_cwd): Use it instead of simply freeing any
+	string.  The function also closes any open file descriptor.
+
+	* import.c (comtable): Now static.
+	(comtable): Put braces around each element of initializer.
+
+	* cvs.h: Add prototype for xgetwd.
+	* recurse.c (save_cwd, restore_cwd): New functions to encapsulate
+	run-time solution to secure-SunOS vs. fchown problem.
+	(do_dir_proc, unroll_files_proc): Use new functions instead of
+	open-coded fchdir/chdir calls with cpp directives.
+
+        * sanity.sh: Change out of TESTDIR before removing it.
+	Some versions of rm fail when asked to delete the current directory.
+
+Wed Jul 12 22:35:04 1995  Jim Meyering  (meyering@comco.com)
+
+	* client.c (get_short_pathname): Add const qualifier to parameter dcl.
+	(copy_a_file): Remove set-but-not-used variable, LEN.
+	(handle_clear_static_directory): Likewise: SHORT_PATHNAME.
+	(set_sticky): Likewise: LEN.
+	(handle_set_sticky): Likewise: SHORT_PATHNAME.
+	(handle_clear_sticky): Likewise: SHORT_PATHNAME.
+	(start_rsh_server): Convert perl-style `cond || stmt' to more
+	conventional C-style `if (cond) stmt.'  Sheesh.
+	Remove dcl of unused file-static, SEND_CONTENTS.
+
+	* history.c: Remove dcls of set-but-not-used file-statics,
+	HISTSIZE, HISTDATA.
+	(read_hrecs): Don't set them.
+
+	* import.c (add_rev): Remove dcl of set-but-not-used local, RETCODE.
+
+	* repos.c (Name_Repository): Remove dcl of set-but-not-used local,
+	HAS_CVSADM.
+
+	* cvsrc.c (read_cvsrc): Parenthesize assignment used as truth value.
+
+Tue Jul 11 16:49:41 1995  J.T. Conklin  <jtc@rtl.cygnus.com>
+
+	* hash.h (struct entnode, Entnode): moved from here...
+	* cvs.h: to here.
+
+Wed Jul 12 19:45:24 1995  Dominik Westner (dominik@gowest.ppp.informatik.uni-muenchen.de)
+
+        * client.c (server_user): new var.
+        (parse_cvsroot): set above if repo is "user@host:/dir".
+        (start_rsh_server): if server_user set, then use it.
+
+Wed Jul 12 10:53:36 1995  Karl Fogel  <kfogel@floss.cyclic.com>
+
+        * sanity.sh: remove the TESTDIR after done.
+
+        * cvsbug.sh (GNATS_ADDR): now bug-cvs@prep.ai.mit.edu again.
+
+Tue Jul 11 15:53:08 1995  Greg A. Woods  <woods@most.weird.com>
+
+        * options.h.in: depend on configure for grep and diff, now that
+        changes to configure.in are applied.
+
+Tue Jul 11 14:32:14 1995 Michael Shields  <shields@tembel.org>
+
+	* Makefile.in (LDFLAGS): Pick up from configure.
+
+Tue Jul 11 14:20:00 1995  Loren James Rittle  <rittle@supra.comm.mot.com>
+
+	* import.c (add_rev), commit.c (remove_file, ci_new_rev),
+	checkin.c (Checkin), subr.c (make_message_rcslegal), cvs.h:
+	Always perform sanity check and fix-up on messages to be passed
+ 	directly to RCS via the '-m' switch.  RCS 5.7 requires that a
+ 	non-total-whitespace, non-null message be provided or it will
+ 	abort with an error.  CVS is not setup to handle any returned
+ 	error from 'ci' gracefully and, thus, the repository entered a
+ 	trashed state.
+
+	* sanity.sh: Add regression tests for new code and interactions
+	with RCS 5.7.
+
+Sun Jul  9 19:03:00 1995  Greg A. Woods  <woods@most.weird.com>
+
+	* .cvsignore: added new backup file
+
+	* options.h.in: our new configure.in finds the right diff and
+        grep paths now....
+
+	* subr.c: quote the string in run_print() for visibility
+	- indent a comment
+	- Jun Hamano's xchmod() patch to prevent writable files
+	(from previous local changes)
+
+	* logmsg.c: fix a NULL pointer de-reference
+	- clean up some string handling code...
+	(from previous local changes)
+
+	* parseinfo.c: add hack to expand $CVSROOT in an *info file.
+	- document "ALL" and "DEFAULT" in opening comment for Parse_Info()
+	- fix the code to match the comments w.r.t. callbacks for "ALL"
+	- add a line of trace output...
+	(from previous local changes)
+
+	* mkmodules.c: add support for comments in CVSROOT/checkoutlist
+	- add CVSroot used by something other .o, ala main.c
+	(from previous local changes)
+
+	* main.c, cvs.h: add support for $VISUAL as log msg editor
+	(from previous local changes)
+
+	* status.c: add support for -q and -Q (from previous local changes)
+
+
+Sun Jul  9 18:44:32 1995  Karl Fogel  <kfogel@floss.cyclic.com>
+
+        * log.c: trivial change to test ChangeLog stuff.
+
+Sat Jul  8 20:33:57 1995  Paul Eggert  <eggert@twinsun.com>
+
+	* history.c: (history_write): Don't assume that fopen(..., "a")
+	lets one interleave writes to the history file from different processes
+	without interlocking.  Use open's O_APPEND option instead.
+	Throw in an lseek to lessen the race bugs on non-Posix hosts.
+	* cvs.h, subr.c (Fopen): Remove.
+
+	* log.c (log_fileproc): Pass working file name to rlog, so that
+	the name is reported correctly.
+
+Fri Jul  7 18:29:37 1995  Michael Hohmuth  <hohmuth@inf.tu-dresden.de>
+
+	* client.c, client.h (client_import_setup): New function.
+	(client_import_done, client_process_import_file): Add comments
+	regarding now-redundant code.
+	* import.c (import): Call client_import_setup.
+
+Tue Jul  4 09:21:26 1995  Bernd Leibing  <bernd.leibing@rz.uni-ulm.de>
+
+	* rcs.c (RCS_parsercsfile_i): Rename error to l_error; SunOS4 /bin/cc
+	doesn't like a label and function with the same name.
+
+Sun Jul  2 12:51:33 1995  Fred Appelman <Fred.Appelman@cv.ruu.nl>
+
+	* logmsg.c: Rename strlist to str_list to avoid conflict with
+	Unixware 2.01.
+
+Thu Jun 29 17:37:22 1995  Paul Eggert  <eggert@twinsun.com>
+
+	* rcs.c (RCS_check_kflag): Allow RCS 5.7's new -kb option.
+
+Wed Jun 28 09:53:14 1995  James Kingdon  <kingdon@harvey.cyclic.com>
+
+	* Makefile.in (HEADERS): Remove options.h.in.
+	(DISTFILES): Add options.h.in.
+	Depend on options.h in addition to HEADERS.
+
+Tue Jun 27 22:37:28 1995  Vince Demarco  <vdemarco@bou.shl.com>
+
+	* subr.c: Don't try to do fancy waitstatus stuff for NeXT,
+	lib/wait.h is sufficient.
+
+Mon Jun 26 15:17:45 1995  James Kingdon  <kingdon@harvey.cyclic.com>
+
+	* Makefile.in (DISTFILES): Remove RCS-patches and convert.sh.
+
+Fri Jun 23 13:38:28 1995  J.T. Conklin  (jtc@rtl.cygnus.com)
+
+	* server.c (dirswitch, serve_co): Use CVSADM macro instead of
+        literal "CVS".
+
+Fri Jun 23 00:00:51 1995  James Kingdon  <kingdon@harvey.cyclic.com>
+
+	* README-rm-add: Do not talk about patching RCS, that only
+	confuses people.
+	* RCS-patches, convert.sh: Removed (likewise).
+
+Thu Jun 22 10:41:41 1995  James Kingdon  <kingdon@harvey.cyclic.com>
+
+	* subr.c: Change -1 to (size_t)-1 when comparing against a size_t.
+
+Wed Jun 21 16:51:54 1995  nk@ipgate.col.sw-ley.de (Norbert Kiesel)
+
+	* create_adm.c, entries.c, modules.c: Avoid coredumps if
+	timestamps, tags, etc., are NULL.
+
+Tue Jun 20 15:52:53 1995  Jim Meyering  (meyering@comco.com)
+
+	* checkout.c (checkout): Remove dcl of unused variable.
+	* client.c (call_in_directory, handle_clear_static_directory,
+	handle_set_sticky, handle_clear_sticky, send_a_repository,
+	send_modified, send_dirent_proc): Remove dcls of unused variables.
+	* server.c (receive_file, serve_modified, server_cleanup):
+	Remove dcls of unused variables.
+	* subr.c (copy_file): Remove dcl of unused variable.
+	* vers_ts.c (time_stamp_server): Remove dcl of unused variable.
+
+Mon Jun 19 13:49:35 1995  Jim Blandy  <jimb@totoro.cyclic.com>
+
+	* sanity.sh: Fix commencement message --- the test suite says
+	"Ok." when it's done.
+
+Fri Jun 16 11:23:44 1995  Jim Meyering  (meyering@comco.com)
+
+	* entries.c (fgetentent): Parenthesize assignment in if-conditional.
+
+Thu Jun 15 17:33:28 1995  J.T. Conklin  <jtc@rtl.cygnus.com>
+
+	* server.c (get_buffer_data, buf_append_char, buf_append_data):
+	  Don't conditionalize use of "inline".  Autoconf takes care of
+	  defining it away on systems that don't grok it.
+
+Thu Jun 15 13:43:38 1995  Jim Kingdon  (kingdon@cyclic.com)
+
+	* options.h.in (DIFF): Default to "diff" not "diff -a" since diff
+	might not support the -a option.
+
+Wed Jun 14 11:29:42 1995  J.T. Conklin  <jtc@rtl.cygnus.com>
+
+	* import.c (import_descend): Initialize dirlist to NULL.
+
+	* subr.c (copy_file): Fix infinite loop.
+
+	* server.c (serve_directory): fix a memory leak.
+
+	* checkout.c, commit.c, diff.c, history.c, import.c, log.c,
+	  patch.c, release.c, remove.c, rtag.c, status.c, tag.c, update.c:
+	  Use send_arg() to send command line arguments to server.
+
+	* commit.c (fsortcmp), find_names (fsortcmp), hash.c (hashp,
+	  findnode), hash.h (findnode), rcs.c (RCS_addnode,
+	  RCS_check_kflag, RCS_check_tag, RCS_isdead, RCS_parse,
+	  RCS_parsercsfile_i), rcs.h (RCS_addnode, RCS_check_kflag,
+	  RCS_check_tag, RCS_parse): Added const qualifiers as
+	  appropriate.
+	* rcs.h (RCS_isdead): Added prototype.
+
+	* hash.h (walklist, sortlist): correct function prototypes.
+
+	* ignore.c (ign_setup): don't bother checking to see if file
+	  exists before calling ign_add_file.
+
+Fri Jun  9 11:24:06 1995  J.T. Conklin  <jtc@rtl.cygnus.com>
+
+	* all source files (rcsid): Added const qualifer.
+	* ignore.c (ign_default): Added const qualifier.
+	* subr.c (numdots): Added const qualifier to function argument.
+	* cvs.h (numdots): Added const qualifier to prototype argument.
+
+	* client.c (change_mode): Tied consecutive if statements testing
+	  the same variable together with else if.
+
+	* import.c (import_descend): Build list of subdirectories when
+	  reading directory, and then process the subdirectories in that
+	  list.  This change avoids I/O overhead of rereading directory
+	  and reloading ignore list (.cvsignore) for each subdirectory.
+
+Thu Jun  8 11:54:24 1995  J.T. Conklin  <jtc@rtl.cygnus.com>
+
+	* import.c (import_descend): Use 4.4BSD d_type field if it is
+	  present.
+
+	* lock.c (set_lockers_name): Use %lu in format and cast st_uid
+	  field to unsigned long.
+
+	* import.c (import): Use RCS_check_kflag() to check -k options.
+	  (keyword_usage, str2expmode, strn2expmode, expand_names):
+	  Removed.
+	* rcs.c (RCS_check_kflag): Added keyword_usage array from import.c
+	  for more descriptive error messages.
+
+	* subr.c (run_setup, run_args): Changed variable argument
+	  processing to work on machines that use <varargs.h>.
+
+	* subr.c (copy_file, xcmp): Changed to read the file(s) by blocks
+	  rather than by reading the whole file into a huge buffer.  The
+	  claim that this was reasonable because source files tend to be
+	  small does not hold up in real world situations.   CVS is used
+	  to manage non-source files, and mallocs of 400K+ buffers (x2
+	  for xcmp) can easily fail due to lack of available memory or
+	  even memory pool fragmentation.
+	  (block_read): New function, taken from GNU cmp and slightly
+	  modified.
+
+	* subr.c (xcmp): Added const qualifier to function arguments.
+	* cvs.h (xcmp): Added const qualifer to prototype arguments.
+
+Wed Jun  7 11:28:31 1995  J.T. Conklin  <jtc@rtl.cygnus.com>
+
+	* cvs.h (Popen): Added prototype.
+	  (Fopen, open_file, isreadable, iswritable, isdir, isfile,
+	  islink, make_directory, make_directories, rename_file,
+	  link_file, unlink_file, copy_file): Added const qualifer to
+	  prototype arguments.
+	* subr.c (Fopen, Popen, open_file, isreadable, iswritable, isdir,
+	  isfile, islink, make_directory, make_directories, rename_file,
+	  link_file, unlink_file, copy_file): Added const qualifier to
+	  function arguments.
+
+	* logmsg.c (logfile_write), recurse.c (do_recursion, addfile):
+	  Don't cast void functions to a void expression.  There is at
+	  least one compiler (MPW) that balks at this.
+
+	* rcs.c (keysize, valsize): Change type to size_t.
+
+	* add.c (add_directory): Don't cast umask() argument to int.
+
+	* import.c (add_rcs_file): Changed type of mode to mode_t.
+
+	* rcscmds.c (RCS_merge): New function.
+	* cvs.h (RCS_merge): Declare.
+	* update.c (merge_file, join_file): Call RCS_merge instead of
+	  invoking rcsmerge directly.
+
+	* cvs.h: Include <stdlib.h> if HAVE_STDC_HEADERS, otherwise
+	  declared getenv().
+	* cvsrc.c, ignore.c, main.c: Removed getenv() declaration.
+
+	* client.c (mode_to_string): Changed to take mode_t instead of
+	  struct statb argument.  Simplified implementation, no longer
+	  overallocates storage for returned mode string.
+	* client.h (mode_to_string): Updated declaration.
+	* server.c (server_updated): Updated for new calling conventions,
+	  pass st_mode instead of pointer to struct statb.
+
+	* cvs.h (CONST): Removed definition, use of const qualifier is
+	  determined by autoconf.
+	* history.c, modules.c, parseinfo.c: Use const instead of CONST.
+
+	* add.c, admin.c, checkout.c, commit.c, diff.c, import.c, log.c,
+	  main.c, mkmodules.c, patch.c, recurse.c, remove.c, rtag.c,
+	  server.c, status.c, subr.c, tag.c, update.c: Changed function
+	  arguments "char *argv[]" to "char **argv" to silence lint
+	  warnings about performing arithmetic on arrays.
+
+Tue Jun  6 18:57:21 1995  Jim Blandy  <jimb@totoro.cyclic.com>
+
+	* version.c: Fix up version string, to say that this is Cyclic
+        CVS.
+
+Tue Jun  6 15:26:16 1995  J.T. Conklin  <jtc@rtl.cygnus.com>
+
+	* subr.c (run_setup, run_args, run_add_arg, xstrdup): Add const
+	  qualifier to format argument.
+	* cvs.h (run_setup, run_args, xstrdup): Likewise.
+
+	* Makefile.in (SOURCES): Added rcscmds.c.
+	  (OBJECTS): Added rcscmds.o.
+
+	* rcscmds.c: New file, with new functions RCS_settag, RCS_deltag,
+	  RCS_setbranch, RCS_lock, RCS_unlock.
+	* checkin.c, commit.c, import.c, rtag.c, tag.c: Call above
+	  functions instead of exec'ing rcs commands.
+	* cvs.h: Declare new functions.
+
+Mon May 29 21:40:54 1995  J.T. Conklin  (jtc@rtl.cygnus.com)
+
+	* recurse.c (start_recursion, do_recursion): Set entries to NULL
+	  after calling Entries_Close().
+
+Sat May 27 08:08:18 1995  Jim Meyering  (meyering@comco.com)
+
+	* Makefile.in (check): Export RCSBIN only if there exists an
+	`rcs' executable in ../../rcs/src.  Before, tests would fail when
+	the directory existed but contained no executables.
+	(distclean): Remove options.h, now that it's generated.
+	(Makefile): Regenerate only *this* file when Makefile.in is
+	out of date.  Depend on ../config.status.
+
+Fri May 26 14:34:28 1995  J.T. Conklin  <jtc@rtl.cygnus.com>
+
+	* entries.c (Entries_Open): Added missing fclose().
+	  (Entries_Close): Don't write Entries unless Entries.Log exists.
+
+	* entries.c (Entries_Open): Renamed from ParseEntries; changed to
+	  process Entries Log files left over from previous crashes or
+	  aborted runs.
+	  (Entries_Close): New function, write out Entries file if
+	  neccessary and erase Log file.
+	  (Register): Append changed records to Log file instead of
+	  re-writing file.
+	  (fgetentent): New function, parse one Entry record from a file.
+	  (AddEntryNode): It's no longer an error for two records with the
+	  same name to be added to the list.  New records replace older
+	  ones.
+	* cvs.h (Entries_Open, Entries_Close): Add prototypes.
+	  (CVSADM_ENTLOG): New constant, name of Entries Log file.
+	* add.c, checkout.c, client.c, find_names.c, recurse.c: Use
+	  Entries_Open()/Entries_Close() instead of ParseEntries()/dellist().
+
+	* add.c, admin.c, checkout.c, client.c, commit.c, diff.c,
+	  history.c, import.c, log.c, patch.c, release.c, remove.c,
+	  rtag.c, server.c, status.c, tag.c, update.c: Changed
+	  conditionals so that return value of *printf is tested less than
+	  0 instead of equal to EOF.
+
+Thu May 25 08:30:12 1995  Jim Kingdon  (kingdon@lioth.cygnus.com)
+
+	* subr.c (xmalloc): Never try to malloc zero bytes; if the user
+	asks for zero bytes, malloc one instead.
+
+Wed May 24 12:44:25 1995  Ken Raeburn  <raeburn@cujo.cygnus.com>
+
+	* subr.c (xmalloc): Don't complain about NULL if zero bytes were
+	requested.
+
+Tue May 16 21:49:05 1995  Jim Blandy  <jimb@totoro.bio.indiana.edu>
+
+	* subr.c (xmalloc): Never try to malloc zero bytes; if the user
+	asks for zero bytes, malloc one instead.
+
+Mon May 15 14:35:11 1995  J.T. Conklin  <jtc@rtl.cygnus.com>
+
+	* lock.c (L_LOCK_OWNED): Removed.
+
+	* add.c, checkout.c, client.c, create_adm.c, cvs.h, entries.c,
+	  find_names.c modules.c, recurse.c, release.c, repos.c, update.c:
+	  removed CVS 1.2 compatibility/upgrade code.
+
+Mon May  8 11:25:07 1995  J.T. Conklin  <jtc@rtl.cygnus.com>
+
+	* lock.c (write_lock): Missed one instance where rmdir(tmp) should
+	  have been changed to clear_lock().
+
+Wed May  3 11:08:32 1995  J.T. Conklin  <jtc@rtl.cygnus.com>
+
+	* create_adm.c, entries.c, import.c, root.c: Changed conditionals
+	  so that return value of *printf is tested less than 0 instead of
+	  equal to EOF --- That's all Standard C requires.
+
+Wed May  3 18:03:37 1995  Samuel Tardieu  <tardieu@emma.enst.fr>
+
+	* rcs.h: removed #ifdef CVS_PRIVATE and #endif because cvs didn't
+	  compile anymore.
+
+Mon May  1 13:58:53 1995  J.T. Conklin  <jtc@rtl.cygnus.com>
+
+	* rcs.c, rcs.h: Implemented lazy parsing of rcs files.
+	  RCS_parsercsfile_i modified to read only the first two records
+	  of rcs files, a new function RCS_reparsercsfile is called only
+	  when additional information (tags, revision numbers, dates,
+	  etc.) is required.
+
+Mon May  1 12:20:02 1995  Jim Kingdon  (kingdon@lioth.cygnus.com)
+
+	* Makefile.in (INCLUDES): Include -I. for options.h.
+
+Fri Apr 28 16:16:33 1995  Jim Blandy  <jimb@totoro.bio.indiana.edu>
+
+	* Makefile.in (SOURCES, HEADERS, DISTFILES): Updated.
+	(dist-dir): Renamed from dist; changed to work with DISTDIR
+	variable passed from parent.
+
+	We don't want to include a file the user has to edit in the
+	distribution.
+	* options.h: No longer distributed.
+	* options.h.in: Distribute this instead.
+	* ../INSTALL, ../README: Installation instructions updated.
+
+	* client.c (start_rsh_server): Send the remote command to rsh as a
+	single string.
+
+Fri Apr 28 00:29:49 1995  Noel Cragg  <noel@vo.com>
+
+	* commit.c: Added initializer for FORCE_CI
+
+        * sanity.sh: Fix tests added 25 Apr -- they were expecting the
+        server to make noise, but the CVS_SERVER variable had been
+        accidentally set with the `-Q' flag.  Ran all tests -- both
+        locally and remotely -- to verify that the change didn't break
+        anything.
+
+Thu Apr 27 12:41:52 1995  Jim Kingdon  (kingdon@lioth.cygnus.com)
+
+	* Makefile.in: Revise comment regarding check vs. remotecheck.
+
+Thu Apr 27 12:52:28 1995  Bryan O'Sullivan <bos@cyclic.com>
+
+	* client.c (start_rsh_server): If the CVS_RSH environment variable
+	is set, use its contents as the name of the program to invoke
+	instead of `rsh'.
+
+Thu Apr 27 12:18:38 1995  Noel Cragg  <noel@vo.com>
+
+	* checkout.c (checkout): To fix new bug created by Apr 23 change,
+        re-enabled "expand-module" functionality, because it has the side
+        effect of setting the checkin/update programs for a directory.  To
+        solve the local/remote checkout problem that prompted this change
+        in the first place, I performed the next change.
+	* server.c (expand_proc): Now returns expansions for aliases only.
+
+Wed Apr 26 12:07:42 1995  J.T. Conklin  <jtc@rtl.cygnus.com>
+
+	* rcs.c (getrcskey): Rewritten to process runs of whitespace chars
+	  and rcs @ strings instead of using state variables "white" and
+	  "funky".
+
+Fri Apr  7 15:49:25 1995  J.T. Conklin  <jtc@rtl.cygnus.com>
+
+	* lock.c (unlock): Only call stat if we need to.
+
+Wed Apr 26 10:48:44 1995  Jim Kingdon  (kingdon@lioth.cygnus.com)
+
+	* server.c (new_entries_line): Don't prototype.
+
+Tue Apr 25 22:19:16 1995  Jim Blandy  <jimb@totoro.bio.indiana.edu>
+
+	* sanity.sh: Add new tests to catch bugs in Apr 23 change.
+
+Tue Apr 25 17:10:55 1995  Roland McGrath  <roland@baalperazim.frob.com>
+
+	* create_adm.c (Create_Admin): Use getwd instead of getcwd.
+
+Sun Apr 23 20:58:32 1995  Noel Cragg  <noel@vo.com>
+
+       	* checkout.c (checkout): Disabled "expand-module" functionality on
+        remote checkout, since it makes modules behave like aliases (see
+        longer note there).  This change necessitated the change below.
+        Also merged the like parts of a conditional.
+
+	* client.c (call_in_directory): Changed the algorithm that created
+        nested and directories and the "CVS" administration directories
+        therein.  The algoithm wrongly assumed that the name of the
+        directory that that was to be created and the repository name were
+        the same, which breaks modules.
+
+	* create_adm.c (Create_Admin), module.c (do_module), server.c
+        (server_register), subr.c, entries.c: Added fprintfs for trace-mode
+	debugging.
+
+	* client.c (client_send_expansions): Argument to function didn't
+        have a type -- added one.
+
+	* server.c (new_entries_line): Arguments to this function are
+        never used -- reoved them and fixed callers.
+
+Sat Apr 22 11:17:20 1995  Jim Kingdon  (kingdon@lioth.cygnus.com)
+
+	* rcs.c (RCS_parse): If we can't open the file, give an error
+	message (except for ENOENT in case callers rely on that).
+
+Wed Apr 19 08:52:37 1995  Jim Kingdon  (kingdon@lioth.cygnus.com)
+
+	* client.c (send_repository): Check for CVSADM_ENTSTAT in `dir', not
+	in `.'.
+
+	* sanity.sh: Add TODO list.  Revise some comments.  Add tests of
+	one working directory adding a file and other updating it.
+
+Sat Apr  8 14:52:55 1995  Jim Blandy  <jimb@totoro.bio.indiana.edu>
+
+	* Makefile.in (CFLAGS): Let configure set the default for CFLAGS.
+	Under GCC, we want -g -O.
+
+Fri Apr  7 15:49:25 1995  J.T. Conklin  <jtc@rtl.cygnus.com>
+
+	* root.c (Name_Root): merge identical adjacent conditionals.
+
+	* create_admin.c (Create_Admin): Rearranged check for CVSADM and
+	  OCVSADM directories so that CVSADM pathname is only built once.
+
+	* update.c (update_dirleave_proc): Removed code to remove CVS
+	  administration directory if command_name == "export" and to
+	  create CVS/Root file if it is not present.  Identical code
+	  in update_filesdone_proc() will perform these same actions.
+	  Also removed code that read and verfied CVS/Root.  This is
+	  expensive, and if it is necessary should happen in the
+	  general recursion processor rather than in the update
+	  callbacks.
+
+	* lock.c (masterlock): New variable, pathname of master lockdir.
+	  (set_lock): removed lockdir argument, now constructs it itself
+	  and stores it in masterlock.
+	  (clear_lock): new function, removes master lockdir.
+	  (Reader_Lock, write_lock): call clear_lock instead of removing
+	  master lockdir.
+	  (Reader_Lock, write_lock): #ifdef'd out CVSTFL code.
+
+	* main.c (main): register Lock_Cleanup signal handler.
+	* lock.c (Reader_Lock, write_lock): no longer register
+	  Lock_Cleanup.
+
+	* main.c (main): initialize new array hostname.
+	* lock.c (Reader_Lock, write_lock): Use global hostname array.
+	* logmsg.c (logfile_write): Likewise.
+
+	* recurse.c (do_dir_proc, unroll_files_proc): Use open()/fchdir()
+	  instead of getwd()/chdir() on systems that support the fchdir()
+	  system call.
+
+Fri Apr  7 06:57:20 1995  Jim Kingdon  (kingdon@lioth.cygnus.com)
+
+	* server.c: Include the word "server" in error message for memory
+	exhausted, so the user knows which machine ran out of memory.
+
+	* sanity.sh: For remote, set CVS_SERVER to test the right server,
+	rather than a random one from the PATH.
+
+	* commit.c [DEATH_STATE]: Pass -f to `ci'.
+
+Thu Apr  6 13:05:15 1995  Jim Blandy  <jimb@totoro.bio.indiana.edu>
+
+	* commit.c (checkaddfile): If we didn't manage to fopen the file,
+	don't try to fclose it.
+
+	* client.c (handle_m, handle_e): Use fwrite, rather than a loop of
+	putc's.  Sometimes these streams are unbuffered.
+
+Tue Apr  4 11:33:56 1995  Jim Blandy  <jimb@totoro.bio.indiana.edu>
+
+	* (DISTFILES): Include cvsbug.sh, ChangeLog, NOTES, RCS-patches,
+	README-rm-add, ChangeLog.fsf, sanity.sh, sanity.el, and
+	.cvsignore.
+
+Mon Mar 27 08:58:42 1995  Jim Kingdon  (kingdon@lioth.cygnus.com)
+
+	* rcs.c (RCS_parsercsfile_i): Accept `dead' state regardless of
+	DEATH_STATE define.  Revise comments regarding DEATH_STATE versus
+	CVSDEA versus the scheme which uses a patched RCS.
+	* README-rm-add, RCS-patches: Explain what versions of CVS need
+	RCS patches.
+
+Sat Mar 25 18:51:39 1995  Roland McGrath  <roland@churchy.gnu.ai.mit.edu>
+
+	* server.c (server_cleanup): Only do the abysmal kludge of waiting
+ 	for command and draining the pipe #ifdef sun.  The code makes
+ 	assumptions not valid on all systems, and is only there to
+ 	workaround a SunOS bug.
+
+Wed Mar 22 21:55:56 1995  Jim Kingdon  (kingdon@lioth.cygnus.com)
+
+	* server.c (mkdir_p): Call stat only if we get the EACCES.  Faster
+	and more elegant.
+
+Tue Jan 31 20:59:19 1995  Ken Raeburn  <raeburn@cujo.cygnus.com>
+
+	* server.c: Try to avoid starting the "rm -rf" at cleanup time
+	until after subprocesses have finished.
+	(command_fds_to_drain, max_command_fd): New variables.
+	(do_cvs_command): Set them.
+	(command_pid_is_dead): New variable.
+	(wait_sig): New function.
+	(server_cleanup): If command_pid is nonzero, wait for it to die,
+	draining output from it in the meantime.  If nonzero SIG was
+	passed, send a signal to the subprocess, to encourage it to die
+	soon.
+
+	* main.c (usage): Argument is now `const char *const *'.
+	* cvs.h (usage): Changed prototype.
+	(USE): Make new variable `const'.
+	* add.c (add_usage), admin.c (admin_usage), checkout.c
+	(checkout_usage, export_usage, checkout), commit.c (commit_usage),
+	diff.c (diff_usage), history.c (history_usg), import.c
+	(import_usage, keyword_usage), log.c (log_usage), main.c (usg),
+	patch.c (patch_usage), release.c (release_usage), remove.c
+	(remove_usage), rtag.c (rtag_usage), server.c (server), status.c
+	(status_usage), tag.c (tag_usage), update.c (update_usage): Usage
+	messages are now const arrays of pointers to const char.
+
+	* import.c (comtable): Now const.
+	* main.c (rcsid): Now static.
+	(cmd): Now const.
+	(main): Local variable CM now points to const.
+	* server.c (outbuf_memory_error): Local var MSG now const.
+
+	* client.c (client_commit_usage): Deleted.
+
+Sat Dec 31 15:51:55 1994  Jim Kingdon  (kingdon@lioth.cygnus.com)
+
+	* logmsg.c (do_editor): Allocate enough space for trailing '\0'.
+
+Fri Mar  3 11:59:49 1995  Jim Blandy  <jimb@totoro.bio.indiana.edu>
+
+	* cvsbug.sh: Call it "Cyclic CVS" now, not "Remote CVS".  Call it
+	version C1.4A, not 1.4A2-remote.  Send bugs to cyclic-cvs, not
+	remote-cvs.
+
+	* classify.c (Classify_File): Put check for dead file inside
+	"#ifdef DEATH_SUPPORT".
+
+Thu Feb 23 23:03:43 1995  Jim Blandy  <jimb@totoro.bio.indiana.edu>
+
+	* update.c (join_file): Don't pass the -E option to rcsmerge here,
+	either (see Jan 22 change).
+
+Mon Feb 13 13:28:46 1995  Jim Blandy  <jimb@totoro.bio.indiana.edu>
+
+	* cvsbug.sh: Send bug reports to remote-cvs@cyclic.com, rather
+	than to the ordinary CVS bug address.  This does mean we'll have
+	to wade through GNATS-style bug reports, sigh.
+
+Wed Feb  8 06:42:27 1995  Roland McGrath  <roland@churchy.gnu.ai.mit.edu>
+
+	* server.c: Don't include <sys/stat.h>; system.h already does, and
+ 	4.3BSD can't take it twice.
+
+	* subr.c [! HAVE_VPRINTF] (run_setup, run_args): Don't use va_dcl
+ 	in declaration.  Declare the a1..a8 args which are used in the
+ 	sprintf call.
+	* cvs.h [! HAVE_VPRINTF] (run_setup, run_args): Don't prototype
+ 	args, to avoid conflicting with the function definitions
+ 	themselves.
+
+Tue Feb  7 20:10:00 1995  Jim Blandy  <jimb@totoro.bio.indiana.edu>
+
+	* client.c (update_entries): Pass the patch subprocess the switch
+	"-b ~", not "-b~"; the latter form seems not to work with patch
+	version 2.0 and earlier --- it takes the next argv element as the
+	backup suffix, and thus doesn't notice that the patch file's name
+	has been specified, thus doesn't find the patch, thus...  *aargh*
+
+Fri Feb  3 20:28:21 1995  Jim Blandy  <jimb@totoro.bio.indiana.edu>
+
+	* log.c (log_option_with_arg): New function.
+	(cvslog): Use it and send_arg to handle the rlog options that take
+	arguments.  The code used to use send_option_string for
+	everything, which assumes that "-d1995/01/02" is equivalent to
+	"-d -1 -9 -9 -5 ...".
+
+Tue Jan 31 15:02:01 1995  Jim Blandy  <jimb@floss.life.uiuc.edu>
+
+	* server.c: #include <sys/stat.h> for the new stat call in mkdir_p.
+	(mkdir_p): Don't try to create the intermediate directory if it
+	exists already.  Some systems return EEXIST, but others return
+	EACCES, which we can't otherwise distinguish from a real access
+	problem.
+
+Sun Jan 22 15:25:45 1995  Jim Blandy  <jimb@totoro.bio.indiana.edu>
+
+	* update.c (merge_file): My rcsmerge doesn't accept a -E option,
+	and it doesn't look too important, so don't pass it.
+
+Fri Jan 20 14:24:58 1995  Ian Lance Taylor  <ian@sanguine.cygnus.com>
+
+	* client.c (do_deferred_progs): Don't try to chdir to toplevel_wd
+	if it has not been set.
+	(process_prune_candidates): Likewise.
+
 Mon Nov 28 09:59:14 1994  Jim Kingdon  (kingdon@lioth.cygnus.com)
 
 	* client.c (client_commit): Move guts of function from here...
@@ -182,7 +941,7 @@ Thu Oct 13 07:36:11 1994  Jim Kingdon  (kingdon@lioth.cygnus.com)
 	client_import_done): New functions.
 	* import.c (import, import_descend): Use them.
 	* import.c (import_descend): If server, don't mention ignored CVS
-	directories. 
+	directories.
 	* import.c (import_descend_dir): If client, don't print warm
 	fuzzies, or make directories in repository.  If server, print warm
 	fuzzies to stdout not stderr.
@@ -196,7 +955,7 @@ Thu Oct 13 07:36:11 1994  Jim Kingdon  (kingdon@lioth.cygnus.com)
 	(call_in_directory, update_entries): If command is export, don't
 	create CVS directories, CVS/Entries files, etc.
 	* update.c (update_filesdone_proc): Don't remove CVS directories if
-	client_active. 
+	client_active.
 
 	* client.c (send_a_repository): Instead of insisting that
 	repository end with update_dir, just strip as many pathname
@@ -270,7 +1029,7 @@ Mon Sep 26 12:02:15 1994  Jim Kingdon  (kingdon@lioth.cygnus.com)
 Mon Sep 26 08:51:10 1994  Anthony J. Lill  (ajlill@ajlc.waterloo.on.ca)
 
 	* rcs.c (getrcskey): Allocate space for terminating '\0' if
-	necessary. 
+	necessary.
 
 Sat Sep 24 09:07:37 1994  Jim Kingdon  (kingdon@lioth.cygnus.com)
 
@@ -311,7 +1070,7 @@ Fri Sep 16 08:38:02 1994  Jim Kingdon  (kingdon@lioth.cygnus.com)
 
 	* diff.c (diff_fileproc): Set top_rev from vn_user, not vn_rcs.
 	Rename it to user_file_rev because it need not be the head of any
-	branch. 
+	branch.
 	(diff_file_nodiff): After checking user_file_rev, if we have both
 	use_rev1 and use_rev2, compare them instead of going on to code
 	which assumes use_rev2 == NULL.
@@ -387,7 +1146,7 @@ Fri Sep  9 07:05:35 1994  Jim Kingdon  (kingdon@lioth.cygnus.com)
 Thu Sep  8 14:23:05 1994  Jim Kingdon  (kingdon@lioth.cygnus.com)
 
 	* server.c (serve_repository): Check for error from fopen on
-	CVSADM_ENT. 
+	CVSADM_ENT.
 
 	* update.c (update, update_dirent_proc): Check for errors when
 	removing Entries.Static.
@@ -400,7 +1159,7 @@ Thu Sep  8 14:23:05 1994  Jim Kingdon  (kingdon@lioth.cygnus.com)
 	* server.c: Add code to deal with Static-directory request.
 
 	* server.c, client.c: Use strchr and strrchr instead of index and
-	rindex. 
+	rindex.
 
 	* server.c (serve_unchanged, serve_lost): Change comments which
 	referred to changing timestamp; we don't always change the
@@ -506,7 +1265,7 @@ Thu Aug 18 14:38:21 1994  Ken Raeburn  (raeburn@cujo.cygnus.com)
 	(main): Recognize it and set gzip_level.
 	* client.c (filter_through_gzip, filter_through_gunzip): New
 	functions to handle compression.
-	(update_entries): If size starts with "z", uncompress 
+	(update_entries): If size starts with "z", uncompress
 	(start_server): If gzip_level is non-zero and server supports it,
 	issue gzip-file-contents request.
 	(send_fileproc): Optionally compress file contents.  Use a
@@ -542,7 +1301,7 @@ Wed Aug 10 20:50:47 1994  Mark Eichin  (eichin@cygnus.com)
 
 	* diff.c (diff_fileproc): if ts_user and ts_rcs match, then the
 	file is at the top of the tree -- so we might not even have a
-	copy. Put the revision into diff_rev1 or diff_rev2.	
+	copy. Put the revision into diff_rev1 or diff_rev2.
 
 Wed Aug 10 14:55:38 1994  Ken Raeburn  (raeburn@cujo.cygnus.com)
 
@@ -942,7 +1701,7 @@ Mon Apr 18 22:07:53 1994  John Gilmore  (gnu@cygnus.com)
 	Add support for remote `cvs diff'.
 
 	* diff.c (diff):  Break guts out into new fn do_diff.
-	Add code to handle starting server, writing args, 
+	Add code to handle starting server, writing args,
 	sending files, and retrieving responses.
 	(includes): Use PARAMS for static function declarations.
 	* client.c (to_server, from_server, rsh_pid,
@@ -1018,7 +1777,7 @@ Wed May 19 10:11:51 1993  Mark Eichin (eichin@cygnus.com)
 
 	* client.c (update_entries): handle short reads over the net
 	(SVR4 fread is known to be broken, specifically for short
-	reads off of streams.)	
+	reads off of streams.)
 
 Tue May 18 15:53:44 1993  Jim Kingdon  (kingdon@lioth.cygnus.com)
 

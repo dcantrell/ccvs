@@ -1,3 +1,57 @@
+Thu Jul 13 23:04:12 CDT 1995  Jim Meyering  (meyering@comco.com)
+
+	* Makefile.in (cvs-paper.ps): *Never* redirect output directly to
+	the target (usu $@) of a rule.  Instead, redirect to a temporary
+	file, and then move that temporary to the target.  I chose to
+	name temporary files $@-t.  Remember to be careful that the length
+	of the temporary file name not exceed the 14-character limit.
+
+Sun Jul  9 19:03:00 1995  Greg A. Woods  <woods@most.weird.com>
+
+	* doc/cvs.texinfo:
+	- document '-q' for 'cvs status'
+	- correction to regexp use in *info files
+	- correction to use of 'cvsinit' script
+	(from previous local changes)
+
+Tue Jun 20 18:57:55 1995  James Kingdon  <kingdon@harvey.cyclic.com>
+
+	* Makefile.in (dist-dir): Depend on $(OBJDIR_DISTFILES).
+
+Fri Jun 16 21:56:16 1995  Karl Fogel <kfogel@cyclic.com>
+			  and Jim Meyering <meyering@comco.com>
+
+	* update.c (update_file_proc): If noexec, just write 'C', don't merge.
+
+Fri Jun 16 07:56:04 1995  Jim Kingdon  (kingdon@cyclic.com)
+
+	* cvs-paper.ps: Added.
+
+Sat May 27 08:46:00 1995  Jim Meyering  (meyering@comco.com)
+
+	* Makefile.in (Makefile): Regenerate only Makefile in current
+	directory when Makefile.in is out of date.  Depend on ../config.status.
+
+Sat May 27 08:08:18 1995  Jim Meyering  (meyering@comco.com)
+
+	* doc/Makefile.in (realclean): Remove more postscript and info files.
+
+Fri Apr 28 22:44:06 1995  Jim Blandy  <jimb@totoro.bio.indiana.edu>
+
+	* Makefile.in (DISTFILES): Updated.
+	(doc): Depend on cvsclient.ps too.
+	(cvs.aux, cvsclient.aux): Add target.
+	(cvsclient.dvi): Don't nuke the aux file.  They're small and
+	helpful.
+	(cvsclient.ps): New target.
+	(dist-dir): Renamed from dist; changed to work with DISTDIR
+	variable from parent.
+
+Sun Apr 23 22:13:18 1995  Noel Cragg  <noel@vo.com>
+
+	* Makefile: Added more files to the `clean' target.
+	* .cvsignore: Added the same files.
+
 Mon Nov 28 10:22:46 1994  Jim Kingdon  (kingdon@lioth.cygnus.com)
 
 	* cvsclient.texi (Notes): Remove item about commit options; now

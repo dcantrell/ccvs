@@ -24,7 +24,7 @@
 
 % This automatically updates the version number based on RCS.
 \def\deftexinfoversion$#1: #2 ${\def\texinfoversion{#2}}
-\deftexinfoversion$Revision$
+\deftexinfoversion$fixed-revision: 2.137 $
 \message{Loading texinfo package [Version \texinfoversion]:}
 
 % Print the version number if in a .fmt file.
@@ -168,9 +168,14 @@
 % Do @cropmarks to get crop marks
 \def\cropmarks{\let\onepageout=\croppageout }
 
+\newinsert\margin \dimen\margin=\maxdimen
+
 \def\pagebody#1{\vbox to\pageheight{\boxmaxdepth=\maxdepth #1}}
 {\catcode`\@ =11
 \gdef\pagecontents#1{\ifvoid\topins\else\unvbox\topins\fi
+% marginal hacks, juha@viisa.uucp (Juha Takala)
+\ifvoid\margin\else % marginal info is present
+  \rlap{\kern\hsize\vbox to\z@{\kern1pt\box\margin \vss}}\fi
 \dimen@=\dp#1 \unvbox#1
 \ifvoid\footins\else\vskip\skip\footins\footnoterule \unvbox\footins\fi
 \ifr@ggedbottom \kern-\dimen@ \vfil \fi}
@@ -358,6 +363,15 @@
 
 % @. is an end-of-sentence period.
 \def\.{.\spacefactor=3000 }
+
+% @enddots{} is an end-of-sentence ellipsis.
+\gdef\enddots{$\mathinner{\ldotp\ldotp\ldotp\ldotp}$\spacefactor=3000}
+
+% @! is an end-of-sentence bang.
+\gdef\!{!\spacefactor=3000 }
+
+% @? is an end-of-sentence query.
+\gdef\?{?\spacefactor=3000 }
 
 % @w prevents a word break.  Without the \leavevmode, @w at the
 % beginning of a paragraph, when TeX is still in vertical mode, would
@@ -616,9 +630,11 @@ where each line of input produces a line of output.}
 %
 \def\ignore{\doignore{ignore}}
 
-% Also ignore @ifinfo, @menu, and @direntry text.
+% Also ignore @ifinfo, @ifhtml, @html, @menu, and @direntry text.
 %
 \def\ifinfo{\doignore{ifinfo}}
+\def\ifhtml{\doignore{ifhtml}}
+\def\html{\doignore{html}}
 \def\menu{\doignore{menu}}
 \def\direntry{\doignore{direntry}}
 
@@ -888,28 +904,39 @@ where each line of input produces a line of output.}
 %% Try out Computer Modern fonts at \magstephalf
 \let\mainmagstep=\magstephalf
 
+% Set the font macro #1 to the font named #2, adding on the
+% specified font prefix (normally `cm').
+\def\setfont#1#2{\font#1=\fontprefix#2}
+
+% Use cm as the default font prefix.
+% To specify the font prefix, you must define \fontprefix
+% before you read in texinfo.tex.
+\ifx\fontprefix\undefined
+\def\fontprefix{cm}
+\fi
+
 \ifx\bigger\relax
 \let\mainmagstep=\magstep1
-\font\textrm=cmr12
-\font\texttt=cmtt12
+\setfont\textrm{r12}
+\setfont\texttt{tt12}
 \else
-\font\textrm=cmr10 scaled \mainmagstep
-\font\texttt=cmtt10 scaled \mainmagstep
+\setfont\textrm{r10 scaled \mainmagstep}
+\setfont\texttt{tt10 scaled \mainmagstep}
 \fi
 % Instead of cmb10, you many want to use cmbx10.
 % cmbx10 is a prettier font on its own, but cmb10
 % looks better when embedded in a line with cmr10.
-\font\textbf=cmb10 scaled \mainmagstep
-\font\textit=cmti10 scaled \mainmagstep
-\font\textsl=cmsl10 scaled \mainmagstep
-\font\textsf=cmss10 scaled \mainmagstep
-\font\textsc=cmcsc10 scaled \mainmagstep
+\setfont\textbf{b10 scaled \mainmagstep}
+\setfont\textit{ti10 scaled \mainmagstep}
+\setfont\textsl{sl10 scaled \mainmagstep}
+\setfont\textsf{ss10 scaled \mainmagstep}
+\setfont\textsc{csc10 scaled \mainmagstep}
 \font\texti=cmmi10 scaled \mainmagstep
 \font\textsy=cmsy10 scaled \mainmagstep
 
 % A few fonts for @defun, etc.
-\font\defbf=cmbx10 scaled \magstep1 %was 1314
-\font\deftt=cmtt10 scaled \magstep1
+\setfont\defbf{bx10 scaled \magstep1} %was 1314
+\setfont\deftt{tt10 scaled \magstep1}
 \def\df{\let\tentt=\deftt \let\tenbf = \defbf \bf}
 
 % Fonts for indices and small examples.
@@ -917,9 +944,9 @@ where each line of input produces a line of output.}
 % because texinfo normally uses the slanted fonts for that.
 % Do not make many font distinctions in general in the index, since they
 % aren't very useful.
-\font\ninett=cmtt9
-\font\indrm=cmr9
-\font\indit=cmsl9
+\setfont\ninett{tt9}
+\setfont\indrm{r9}
+\setfont\indit{sl9}
 \let\indsl=\indit
 \let\indtt=\ninett
 \let\indsf=\indrm
@@ -929,54 +956,54 @@ where each line of input produces a line of output.}
 \font\indsy=cmsy9
 
 % Fonts for headings
-\font\chaprm=cmbx12 scaled \magstep2
-\font\chapit=cmti12 scaled \magstep2
-\font\chapsl=cmsl12 scaled \magstep2
-\font\chaptt=cmtt12 scaled \magstep2
-\font\chapsf=cmss12 scaled \magstep2
+\setfont\chaprm{bx12 scaled \magstep2}
+\setfont\chapit{ti12 scaled \magstep2}
+\setfont\chapsl{sl12 scaled \magstep2}
+\setfont\chaptt{tt12 scaled \magstep2}
+\setfont\chapsf{ss12 scaled \magstep2}
 \let\chapbf=\chaprm
-\font\chapsc=cmcsc10 scaled\magstep3
+\setfont\chapsc{csc10 scaled\magstep3}
 \font\chapi=cmmi12 scaled \magstep2
 \font\chapsy=cmsy10 scaled \magstep3
 
-\font\secrm=cmbx12 scaled \magstep1
-\font\secit=cmti12 scaled \magstep1
-\font\secsl=cmsl12 scaled \magstep1
-\font\sectt=cmtt12 scaled \magstep1
-\font\secsf=cmss12 scaled \magstep1
-\font\secbf=cmbx12 scaled \magstep1
-\font\secsc=cmcsc10 scaled\magstep2
+\setfont\secrm{bx12 scaled \magstep1}
+\setfont\secit{ti12 scaled \magstep1}
+\setfont\secsl{sl12 scaled \magstep1}
+\setfont\sectt{tt12 scaled \magstep1}
+\setfont\secsf{ss12 scaled \magstep1}
+\setfont\secbf{bx12 scaled \magstep1}
+\setfont\secsc{csc10 scaled\magstep2}
 \font\seci=cmmi12 scaled \magstep1
 \font\secsy=cmsy10 scaled \magstep2
 
-% \font\ssecrm=cmbx10 scaled \magstep1    % This size an font looked bad.
-% \font\ssecit=cmti10 scaled \magstep1    % The letters were too crowded.
-% \font\ssecsl=cmsl10 scaled \magstep1
-% \font\ssectt=cmtt10 scaled \magstep1
-% \font\ssecsf=cmss10 scaled \magstep1
+% \setfont\ssecrm{bx10 scaled \magstep1}    % This size an font looked bad.
+% \setfont\ssecit{cmti10 scaled \magstep1}    % The letters were too crowded.
+% \setfont\ssecsl{sl10 scaled \magstep1}
+% \setfont\ssectt{tt10 scaled \magstep1}
+% \setfont\ssecsf{ss10 scaled \magstep1}
 
-%\font\ssecrm=cmb10 scaled 1315	% Note the use of cmb rather than cmbx.
-%\font\ssecit=cmti10 scaled 1315	% Also, the size is a little larger than
-%\font\ssecsl=cmsl10 scaled 1315	% being scaled magstep1.
-%\font\ssectt=cmtt10 scaled 1315
-%\font\ssecsf=cmss10 scaled 1315
+%\setfont\ssecrm{b10 scaled 1315}	% Note the use of cmb rather than cmbx.
+%\setfont\ssecit{ti10 scaled 1315}	% Also, the size is a little larger than
+%\setfont\ssecsl{sl10 scaled 1315}	% being scaled magstep1.
+%\setfont\ssectt{tt10 scaled 1315}
+%\setfont\ssecsf{ss10 scaled 1315}
 
 %\let\ssecbf=\ssecrm
 
-\font\ssecrm=cmbx12 scaled \magstephalf
-\font\ssecit=cmti12 scaled \magstephalf
-\font\ssecsl=cmsl12 scaled \magstephalf
-\font\ssectt=cmtt12 scaled \magstephalf
-\font\ssecsf=cmss12 scaled \magstephalf
-\font\ssecbf=cmbx12 scaled \magstephalf
-\font\ssecsc=cmcsc10 scaled \magstep1
+\setfont\ssecrm{bx12 scaled \magstephalf}
+\setfont\ssecit{ti12 scaled \magstephalf}
+\setfont\ssecsl{sl12 scaled \magstephalf}
+\setfont\ssectt{tt12 scaled \magstephalf}
+\setfont\ssecsf{ss12 scaled \magstephalf}
+\setfont\ssecbf{bx12 scaled \magstephalf}
+\setfont\ssecsc{csc10 scaled \magstep1}
 \font\sseci=cmmi12 scaled \magstephalf
 \font\ssecsy=cmsy10 scaled \magstep1
 % The smallcaps and symbol fonts should actually be scaled \magstep1.5,
 % but that is not a standard magnification.
 
 % Fonts for title page:
-\font\titlerm = cmbx12 scaled \magstep3
+\setfont\titlerm{bx12 scaled \magstep3}
 \let\authorrm = \secrm
 
 % In order for the font changes to affect most math symbols and letters,
@@ -1032,9 +1059,9 @@ where each line of input produces a line of output.}
 \newcount\fontdepth \fontdepth=0
 
 % Fonts for short table of contents.
-\font\shortcontrm=cmr12
-\font\shortcontbf=cmbx12
-\font\shortcontsl=cmsl12
+\setfont\shortcontrm{r12}
+\setfont\shortcontbf{bx12}
+\setfont\shortcontsl{sl12}
 
 %% Add scribe-like font environments, plus @l for inline lisp (usually sans
 %% serif) and @ii for TeX italic
@@ -2011,7 +2038,14 @@ July\or August\or September\or October\or November\or December\fi
 
 \let\indexbackslash=0  %overridden during \printindex.
 
+\let\SETmarginindex=\relax %initialize!
+% workhorse for all \fooindexes
+% #1 is name of index, #2 is stuff to put there
 \def\doind #1#2{%
+% Put the index entry in the margin if desired.
+\ifx\SETmarginindex\relax\else%
+\insert\margin{\hbox{\vrule height8pt depth3pt width0pt #2}}%
+\fi%
 {\count10=\lastpenalty %
 {\indexdummies % Must do this here, since \bf, etc expand at this stage
 \escapechar=`\\%
@@ -2447,7 +2481,7 @@ July\or August\or September\or October\or November\or December\fi
 \def\chapteryyy #1{\numhead0{#1}} % normally numhead0 calls chapterzzz
 \def\chapterzzz #1{\seccheck{chapter}%
 \secno=0 \subsecno=0 \subsubsecno=0
-\global\advance \chapno by 1 \message{Chapter \the\chapno}%
+\global\advance \chapno by 1 \message{\putwordChapter \the\chapno}%
 \chapmacro {#1}{\the\chapno}%
 \gdef\thissection{#1}%
 \gdef\thischaptername{#1}%
@@ -2834,6 +2868,7 @@ July\or August\or September\or October\or November\or December\fi
    \unnumbchapmacro{#1}\def\thischapter{}%
    \begingroup   		% Set up to handle contents files properly.
       \catcode`\\=0  \catcode`\{=1  \catcode`\}=2  \catcode`\@=11
+      \catcode`\^=7 % to see ^^e4 as \"a etc. juha@piuha.ydi.vtt.fi
       \raggedbottom             % Worry more about breakpoints than the bottom.
       \advance\hsize by -\contentsrightmargin % Don't use the full line length.
 }
@@ -3827,7 +3862,7 @@ July\or August\or September\or October\or November\or December\fi
 
 % Use \turnoffactive so that punctuation chars such as underscore
 % work in node names.
-\def\dosetq #1#2{{\let\folio=0 \turnoffactive%
+\def\dosetq #1#2{{\let\folio=0 \turnoffactive \auxhat%
 \edef\next{\write\auxfile{\internalsetq {#1}{#2}}}%
 \next}}
 
@@ -3966,6 +4001,7 @@ July\or August\or September\or October\or November\or December\fi
 \catcode `\{=1 \catcode `\}=2
 \catcode `\%=\other
 \catcode `\'=0
+\catcode`\^=7 % to make ^^e4 etc usable in xref tags 
 \catcode `\\=\other
 \openin 1 \jobname.aux
 \ifeof 1 \else \closein 1 \input \jobname.aux \global\havexrefstrue
@@ -4187,8 +4223,8 @@ July\or August\or September\or October\or November\or December\fi
 % textwidth; \voffset; \hoffset (!); binding offset.  All require a dimension;
 % header is additional; added length extends the bottom of the page.
 
-\def\changepagesizes#1#2#3#4#5
-{\global\vsize= #1
+\def\changepagesizes#1#2#3#4#5{
+ \global\vsize= #1
  \advance\vsize by \topskip
  \global\voffset= #3
  \global\hsize= #2
@@ -4246,6 +4282,7 @@ July\or August\or September\or October\or November\or December\fi
 \def~{{\tt \char '176}}
 \chardef\hat=`\^
 \catcode`\^=\active
+\def\auxhat{\def^{'hat}}
 \def^{{\tt \hat}}
 
 \catcode`\_=\active

@@ -23,7 +23,7 @@
 #include "cvs.h"
 
 #ifndef lint
-static char rcsid[] = "$CVSid: @(#)modules.c 1.62 94/09/29 $";
+static const char rcsid[] = "$CVSid: @(#)modules.c 1.62 94/09/29 $";
 USE(rcsid)
 #endif
 
@@ -35,7 +35,7 @@ struct sortrec
     char *comment;
 };
 
-static int sort_order PROTO((CONST PTR l, CONST PTR r));
+static int sort_order PROTO((const PTR l, const PTR r));
 static void save_d PROTO((char *k, int ks, char *d, int ds));
 
 
@@ -108,6 +108,14 @@ do_module (db, mname, m_type, msg, callback_proc, where,
     datum key, val;
     char *cp;
     int c, err = 0;
+
+    if (trace)
+      {
+	fprintf (stderr, "%c-> do_module (%s, %s, %s, %s)\n",
+		 (server_active) ? 'S' : ' ',
+                mname, msg, where ? where : "",
+                extra_arg ? extra_arg : "");
+      }
 
     /* remember where we start */
     if (getwd (cwd) == NULL)
@@ -329,7 +337,7 @@ do_module (db, mname, m_type, msg, callback_proc, where,
 		err++;
 		goto out;
 	    }
-	    if (!isfile (CVSADM) && !isfile (OCVSADM))
+	    if (!isfile (CVSADM))
 	    {
 		char nullrepos[PATH_MAX];
 
@@ -607,7 +615,10 @@ static struct sortrec *s_head;
 static int s_max = 0;			/* Number of elements allocated */
 static int s_count = 0;			/* Number of elements used */
 
-static int Status;
+static int Status;		        /* Nonzero if the user is
+					   interested in status
+					   information as well as
+					   module name */
 static char def_status[] = "NONE";
 
 /* Sort routine for qsort:
@@ -617,12 +628,12 @@ static char def_status[] = "NONE";
 */
 static int
 sort_order (l, r)
-    CONST PTR l;
-    CONST PTR r;
+    const PTR l;
+    const PTR r;
 {
     int i;
-    CONST struct sortrec *left = (CONST struct sortrec *) l;
-    CONST struct sortrec *right = (CONST struct sortrec *) r;
+    const struct sortrec *left = (const struct sortrec *) l;
+    const struct sortrec *right = (const struct sortrec *) r;
 
     if (Status)
     {
@@ -712,6 +723,9 @@ save_d (k, ks, d, ds)
 
     s_count++;
 }
+
+/* Print out the module database as we know it.  If STATUS is
+   non-zero, print out status information for each module. */
 
 void
 cat_module (status)

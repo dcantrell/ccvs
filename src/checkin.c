@@ -18,7 +18,7 @@
 #include "cvs.h"
 
 #ifndef lint
-static char rcsid[] = "$CVSid: @(#)checkin.c 1.48 94/10/07 $";
+static const char rcsid[] = "$CVSid: @(#)checkin.c 1.48 94/10/07 $";
 USE(rcsid)
 #endif
 
@@ -60,8 +60,7 @@ Checkin (type, file, update_dir, repository,
 
     run_setup ("%s%s -f %s%s", Rcsbin, RCS_CI,
 	       rev ? "-r" : "", rev ? rev : "");
-    run_args ("-m%s", (*message == '\0' || strcmp(message, "\n") == 0) ?
-	"*** empty log message ***\n" : message);
+    run_args ("-m%s", make_message_rcslegal (message));
     run_arg (rcs);
 
     switch (run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL))
@@ -111,9 +110,7 @@ Checkin (type, file, update_dir, repository,
 	    /* for added files with symbolic tags, need to add the tag too */
 	    if (type == 'A' && tag && !isdigit (*tag))
 	    {
-		run_setup ("%s%s -q -N%s:%s", Rcsbin, RCS, tag, rev);
-		run_arg (rcs);
-		(void) run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL);
+		(void) RCS_settag(rcs, tag, rev);
 	    }
 #endif /* No DEATH_SUPPORT */
 
@@ -155,9 +152,7 @@ Checkin (type, file, update_dir, repository,
      */
     if (rev)
     {
-	run_setup ("%s%s -q -u", Rcsbin, RCS);
-	run_arg (rcs);
-	(void) run_exec (RUN_TTY, RUN_TTY, DEVNULL, RUN_NORMAL);
+	(void) RCS_unlock (rcs, NULL);
     }
 
     if (server_active)

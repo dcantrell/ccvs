@@ -5435,7 +5435,7 @@ module).
 
 @itemize @bullet
 @item
-status [-lR] [-v] [-Q] [files@dots{}]
+status [-lR] [-v] [-qQ] [files@dots{}]
 @item
 Requires: working directory, repository.
 @item
@@ -5471,8 +5471,10 @@ Local; run only in current working directory.
 Commit directories recursively.  This is on by default.
 
 @item -Q
-Really quiet.  Do not print empty sticky parts.  This
-option is not available in @sc{cvs} 1.3.
+Really quiet.  Do not print empty sticky parts.
+
+@item -q
+Somewhat quiet.
 @end table
 
 There is one additional option:
@@ -6090,9 +6092,9 @@ character @samp{#} are treated as comments.  Long lines
 unfortunately can @emph{not} be broken in two parts in
 any way.
 
-Whenever one of the regular expressions matches a
-directory name in the repository, the rest of the line
-is used.
+The first regular expression that matches the current
+directory name in the repository is used.  The rest of the line
+is used as a file name or command-line as appropriate.
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node commitinfo
@@ -6118,10 +6120,10 @@ repository is appended to the template, followed by the
 file names of any files involved in the commit (added,
 removed, and modified files).
 
-All lines with a regular expression matching the
-relative path to the module will be used.  If any of
-the commands return a non-zero exit status the commit
-will be aborted.
+The first line with a regular expression matching the
+relative path to the module will be used.  If the
+command returns a non-zero exit status the commit will
+be aborted.
 
 @cindex DEFAULT in commitinfo
 If the repository name does not match any of the
@@ -6129,9 +6131,9 @@ regular expressions in this file, the @samp{DEFAULT}
 line is used, if it is specified.
 
 @cindex ALL in commitinfo
-If the name @samp{ALL} appears as a regular expression
-it is always used in addition to any matching regular
-expression or @samp{DEFAULT}.
+All occurances of the name @samp{ALL} appearing as a
+regular expression are used in addition to the first
+matching regular expression or the name @samp{DEFAULT}.
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node editinfo
@@ -6160,16 +6162,21 @@ with the @file{rcsinfo} file, which can be used to
 specify a log message template.
 
 Each line in the @file{editinfo} file consists of a
-regular expression and a command-line template.  The template must
-include a program name, and can include any number of
-arguments.  The full path to the current log message
-template file is appended to the template.
+regular expression and a command-line template.  The
+template must include a program name, and can include
+any number of arguments.  The full path to the current
+log message template file is appended to the template.
 
-One thing that should be noted is that the ALL keyword
-is not supported.  If more than one matching line is
-found, the last one is used.  This can be useful for
-specifying a default edit script in a module, and then
-overriding it in a subdirectory.
+One thing that should be noted is that the @samp{ALL}
+keyword is not supported.  If more than one matching
+line is found, the first one is used.  This can be
+useful for specifying a default edit script in a
+module, and then overriding it in a subdirectory.
+
+@cindex DEFAULT in editinfo
+If the repository name does not match any of the
+regular expressions in this file, the @samp{DEFAULT}
+line is used, if it is specified.
 
 If the edit script exits with a non-zero exit status,
 the commit is aborted.
@@ -6255,11 +6262,11 @@ If the repository name does not match any of the
 regular expressions in this file, the @samp{DEFAULT}
 line is used, if it is specified.
 
-If the name @samp{ALL} appears as a regular expression
-it is always used in addition to any matching regular expression or
-@samp{DEFAULT}.
+All occurances of the name @samp{ALL} appearing as a
+regular expression are used in addition to the first
+matching regular expression or @samp{DEFAULT}.
 
-All matching regular expressions are used.
+The first matching regular expression is used.
 
 @xref{commit files}, for a description of the syntax of
 the @file{loginfo} file.  
@@ -6318,9 +6325,9 @@ If the repository name does not match any of the
 regular expressions in this file, the @samp{DEFAULT}
 line is used, if it is specified.
 
-If the name @samp{ALL} appears as a regular expression
-it is always used in addition to the first matching
-regular expression or @samp{DEFAULT}.
+All occurances of the name @samp{ALL} appearing as a
+regular expression are used in addition to the first
+matching regular expression or @samp{DEFAULT}.
 
 The log message template will be used as a default log
 message.  If you specify a log message with @samp{cvs
@@ -6431,13 +6438,15 @@ set up the repository.
 
 If you want to set up another repository, the easiest
 way to get a reasonable set of working administrative
-files is to get the source to @sc{cvs}, and run the
-@code{cvsinit} shell script.  It will set up an empty
-repository in the directory defined by the environment
-variable @code{$CVSROOT}.  (@code{cvsinit} is careful to
-never overwrite any existing files in the repository,
-so no harm is done if you run @code{cvsinit} on
-an already set-up repository.)
+files is to run the @code{cvsinit} shell script.  It
+will set up an empty repository in the directory
+defined by the environment variable @code{$CVSROOT}.
+(@code{cvsinit} is careful to never overwrite any
+existing files in the repository, so no harm is done if
+you run @code{cvsinit} on an already set-up
+repository.  In fact, running it on an already set-up
+repository is the best way to update the various
+scripts from the @samp{contrib} directory.)
 
 @c ---------------------------------------------------------------------
 @node Environment variables

@@ -1,4 +1,5 @@
-#!/usr/bin/perl --  # -*-Perl-*-
+#! xPERL_PATHx
+# -*-Perl-*-
 #
 # $Id$
 #

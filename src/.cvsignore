@@ -1,5 +1,8 @@
-Makefile
-cvs
-mkmodules
-cvsbug
 .pure
+Makefile
+TAGS
+cvs
+cvsbug
+mkmodules
+options.h
+options.h-SAVED

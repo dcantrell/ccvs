@@ -14,7 +14,7 @@
 #include "cvs.h"
 
 #ifndef lint
-static char rcsid[] = "$CVSid: @(#)tag.c 1.60 94/09/30 $";
+static const char rcsid[] = "$CVSid: @(#)tag.c 1.60 94/09/30 $";
 USE(rcsid)
 #endif
 
@@ -29,7 +29,7 @@ static int branch_mode;			/* make an automagic "branch" tag */
 static int local;			/* recursive by default */
 static int force_tag_move;		/* don't force tag to move by default */
 
-static char *tag_usage[] =
+static const char *const tag_usage[] =
 {
     "Usage: %s %s [-QlRqF] [-b] [-d] tag [files...]\n",
     "\t-Q\tReally quiet.\n",
@@ -45,7 +45,7 @@ static char *tag_usage[] =
 int
 tag (argc, argv)
     int argc;
-    char *argv[];
+    char **argv;
 {
     int c;
     int err = 0;
@@ -106,23 +106,17 @@ tag (argc, argv)
 	ign_setup ();
 
 	if (local)
-	    if (fprintf (to_server, "Argument -l\n") == EOF)
-		error (1, errno, "writing to server");
+	    send_arg("-l");
 	if (quiet)
-	    if (fprintf (to_server, "Argument -q\n") == EOF)
-		error (1, errno, "writing to server");
+	    send_arg("-q");
 	if (really_quiet)
-	    if (fprintf (to_server, "Argument -Q\n") == EOF)
-		error (1, errno, "writing to server");
+	    send_arg("-Q");
 	if (delete)
-	    if (fprintf (to_server, "Argument -d\n") == EOF)
-		error (1, errno, "writing to server");
+	    send_arg("-d");
 	if (branch_mode)
-	    if (fprintf (to_server, "Argument -b\n") == EOF)
-		error (1, errno, "writing to server");
+	    send_arg("-b");
 	if (force_tag_move)
-	    if (fprintf (to_server, "Argument -F\n") == EOF)
-		error (1, errno, "writing to server");
+	    send_arg("-F");
 
 	send_arg (symtag);
 
@@ -134,7 +128,7 @@ tag (argc, argv)
 #else
 	send_files (argc, argv, local, 0);
 #endif
-	if (fprintf (to_server, "tag\n") == EOF)
+	if (fprintf (to_server, "tag\n") < 0)
 	    error (1, errno, "writing to server");
         return get_responses_and_close ();
     }
@@ -187,9 +181,7 @@ tag_fileproc (file, update_dir, repository, entries, srcfiles)
 	}
 	free (version);
 
-	run_setup ("%s%s -q -N%s", Rcsbin, RCS, symtag);
-	run_arg (vers->srcfile->path);
-	if ((retcode = run_exec (RUN_TTY, RUN_TTY, DEVNULL, RUN_NORMAL)) != 0)
+	if ((retcode = RCS_deltag(vers->srcfile->path, symtag)) != 0) 
 	{
 	    if (!quiet)
 		error (0, retcode == -1 ? errno : 0,
@@ -286,9 +278,7 @@ tag_fileproc (file, update_dir, repository, entries, srcfiles)
        free (oversion);
     }
 
-    run_setup ("%s%s -q -N%s:%s", Rcsbin, RCS, symtag, rev);
-    run_arg (vers->srcfile->path);
-    if ((retcode = run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL)) != 0)
+    if ((retcode = RCS_settag(vers->srcfile->path, symtag, rev)) != 0)
     {
 	error (1, retcode == -1 ? errno : 0,
 	       "failed to set tag %s to revision %s in %s",

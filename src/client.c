@@ -28,23 +28,36 @@ static void add_prune_candidate PROTO((char *));
  * corresponding to the mode in SB.
  */
 char *
-mode_to_string (sb)
-    struct stat *sb;
+#ifdef __STDC__
+mode_to_string (mode_t mode)
+#else
+mode_to_string (mode)
+	mode_t mode;
+#endif
 {
-    char *mode_string = xmalloc (80);
-    strcpy (mode_string, "u=");
-    if (sb->st_mode & S_IRUSR) strcat (mode_string, "r");
-    if (sb->st_mode & S_IWUSR) strcat (mode_string, "w");
-    if (sb->st_mode & S_IXUSR) strcat (mode_string, "x");
-    strcat (mode_string, ",g=");
-    if (sb->st_mode & S_IRGRP) strcat (mode_string, "r");
-    if (sb->st_mode & S_IWGRP) strcat (mode_string, "w");
-    if (sb->st_mode & S_IXGRP) strcat (mode_string, "x");
-    strcat (mode_string, ",o=");
-    if (sb->st_mode & S_IROTH) strcat (mode_string, "r");
-    if (sb->st_mode & S_IWOTH) strcat (mode_string, "w");
-    if (sb->st_mode & S_IXOTH) strcat (mode_string, "x");
-    return mode_string;
+	char buf[18], u[4], g[4], o[4];
+	int i;
+
+	i = 0;
+	if (mode & S_IRUSR) u[i++] = 'r';
+	if (mode & S_IWUSR) u[i++] = 'w';
+	if (mode & S_IXUSR) u[i++] = 'x';
+	u[i] = '\0';
+	
+	i = 0;
+	if (mode & S_IRGRP) g[i++] = 'r';
+	if (mode & S_IWGRP) g[i++] = 'w';
+	if (mode & S_IXGRP) g[i++] = 'x';
+	g[i] = '\0';
+	
+	i = 0;
+	if (mode & S_IROTH) o[i++] = 'r';
+	if (mode & S_IWOTH) o[i++] = 'w';
+	if (mode & S_IXOTH) o[i++] = 'x';
+	o[i] = '\0';
+
+	sprintf(buf, "u=%s,g=%s,o=%s", u, g, o);
+	return xstrdup(buf);
 }
 
 /*
@@ -70,9 +83,9 @@ change_mode (filename, mode_string)
 	    {
 		if (*q == 'r')
 		    can_read = 1;
-		if (*q == 'w')
+		else if (*q == 'w')
 		    can_write = 1;
-		if (*q == 'x')
+		else if (*q == 'x')
 		    can_execute = 1;
 		++q;
 	    }
@@ -117,6 +130,8 @@ change_mode (filename, mode_string)
 
 /* The host part of CVSROOT.  */
 static char *server_host;
+/* The user part of CVSROOT */
+static char *server_user;
 /* The repository part of CVSROOT.  */
 static char *server_cvsroot;
 
@@ -128,11 +143,22 @@ int client_prune_dirs;
 static void
 parse_cvsroot ()
 {
+    char *p;
+
     server_host = xstrdup (CVSroot);
     server_cvsroot = strchr (server_host, ':');
     *server_cvsroot = '\0';
     ++server_cvsroot;
 
+    if ( (p = strchr (server_host, '@')) == NULL) {
+      server_user = NULL;
+    } else {
+      server_user = server_host;
+      server_host = p;
+      ++server_host;
+      *p = '\0';
+    }
+ 			
     client_active = 1;
 }
 
@@ -373,7 +399,7 @@ handle_valid_requests (args, len)
 		 * Server wants to know if we have this, to enable the
 		 * feature.
 		 */
-		if (fprintf(to_server, "%s\n", rq->name) == EOF)
+		if (fprintf(to_server, "%s\n", rq->name) < 0)
 		    error (1, errno, "writing to server");
 		if (!strcmp("UseUnchanged",rq->name))
 		    use_unchanged = 1;
@@ -394,15 +420,15 @@ handle_valid_requests (args, len)
 
 static int use_directory = -1;
 
-static char *get_short_pathname PROTO((char *));
+static char *get_short_pathname PROTO((const char *));
 
 static char *
 get_short_pathname (name)
-    char *name;
+    const char *name;
 {
-    char *retval;
+    const char *retval;
     if (use_directory)
-	return name;
+	return (char *) name;
     if (strncmp (name, toplevel_repos, strlen (toplevel_repos)) != 0)
 	error (1, 0, "server bug: name `%s' doesn't specify file in `%s'",
 	       name, toplevel_repos);
@@ -410,7 +436,7 @@ get_short_pathname (name)
     if (retval[-1] != '/')
 	error (1, 0, "server bug: name `%s' doesn't specify file in `%s'",
 	       name, toplevel_repos);
-    return retval;
+    return (char *) retval;
 }
 
 /*
@@ -537,23 +563,62 @@ call_in_directory (pathname, func, data)
 	    dirp = dirname;
 	    rdirp = reposdirname;
 
+	    /* This algorithm makes nested directories one at a time
+               and create CVS administration files in them.  For
+               example, we're checking out foo/bar/baz from the
+               repository:
+
+	       1) create foo, point CVS/Repository to <root>/foo
+	       2)     .. foo/bar                   .. <root>/foo/bar
+	       3)     .. foo/bar/baz               .. <root>/foo/bar/baz
+	       
+	       As you can see, we're just stepping along DIRNAME (with
+	       DIRP) and REPOSDIRNAME (with RDIRP) respectively.
+
+	       We need to be careful when we are checking out a
+	       module, however, since DIRNAME and REPOSDIRNAME are not
+	       going to be the same.  Since modules will not have any
+	       slashes in their names, we should watch the output of
+	       STRCHR to decide whether or not we should use STRCHR on
+	       the RDIRP.  That is, if we're down to a module name,
+	       don't keep picking apart the repository directory name.  */
+
 	    do
 	    {
 		dirp = strchr (dirp, '/');
-		if (rdirp == NULL)
-		    error (0, 0,
-			   "internal error: repository string too short.");
-		else
-		    rdirp = strchr (rdirp, '/');
 		if (dirp)
-		{
+		  {
 		    strncpy (dir, dirname, dirp - dirname);
 		    dir[dirp - dirname] = '\0';
 		    /* Skip the slash.  */
 		    ++dirp;
-		}
+		    if (rdirp == NULL)
+		      error (0, 0,
+			     "internal error: repository string too short.");
+		    else
+		      rdirp = strchr (rdirp, '/');
+		  }
 		else
+		  {
+		    /* If there are no more slashes in the dir name,
+                       we're down to the most nested directory -OR- to
+                       the name of a module.  In the first case, we
+                       should be down to a DIRP that has no slashes,
+                       so it won't help/hurt to do another STRCHR call
+                       on DIRP.  It will definitely hurt, however, if
+                       we're down to a module name, since a module
+                       name can point to a nested directory (that is,
+                       DIRP will still have slashes in it.  Therefore,
+                       we should set it to NULL so the routine below
+                       copies the contents of REMOTEDIRNAME onto the
+                       root repository directory (does this if rdirp
+                       is set to NULL, because we used to do an extra
+                       STRCHR call here). */
+
+		    rdirp = NULL;
 		    strcpy (dir, dirname);
+		  }
+
 		if (mkdir (dir, 0777) < 0)
 		{
 		    if (errno != EEXIST)
@@ -574,7 +639,6 @@ call_in_directory (pathname, func, data)
 		     */
 		    char *repo;
 		    char *r;
-		    char *p;
 
 		    repo = xmalloc (strlen (reposdirname)
 				    + strlen (toplevel_repos)
@@ -617,8 +681,8 @@ call_in_directory (pathname, func, data)
 	if (strcmp (command_name, "export") != 0)
 	{
 	    if (last_entries)
-		dellist (&last_entries);
-	    last_entries = ParseEntries (0);
+		Entries_Close (last_entries);
+	    last_entries = Entries_Open (0);
 	}
     }
     else
@@ -635,10 +699,9 @@ copy_a_file (data, ent_list, short_pathname, filename)
     char *short_pathname;
     char *filename;
 {
-    int len;
     char *newname;
 
-    len = read_line (&newname, 0);
+    read_line (&newname, 0);
     copy_file (filename, newname);
     free (newname);
 }
@@ -832,7 +895,7 @@ update_entries (data_arg, ent_list, short_pathname, filename)
 	        retcode = 0;
 	    else
 	    {
-	        run_setup ("%s -f -s -b~ %s %s", PATCH_PROGRAM,
+	        run_setup ("%s -f -s -b ~ %s %s", PATCH_PROGRAM,
 			   filename, temp_filename);
 		retcode = run_exec (DEVNULL, RUN_TTY, RUN_TTY, RUN_NORMAL);
 	    }
@@ -1164,19 +1227,12 @@ handle_clear_static_directory (pathname, len)
     char *pathname;
     int len;
 {
-    char *dirname;
-    /* Just the part of pathname relative to toplevel_repos.  */
-    char *short_pathname;
-    char *p;
-    char tmp[PATH_MAX];
-
     if (strcmp (command_name, "export") == 0)
     {
 	/* Swallow the repository.  */
 	read_line (NULL, 0);
 	return;
     }
-    short_pathname = get_short_pathname (pathname);
 
     if (is_cvsroot_level (pathname))
     {
@@ -1197,12 +1253,11 @@ set_sticky (data, ent_list, short_pathname, filename)
     char *filename;
 {
     char *tagspec;
-    int len;
     FILE *f;
 
-    len = read_line (&tagspec, 0);
+    read_line (&tagspec, 0);
     f = open_file (CVSADM_TAG, "w+");
-    if (fprintf (f, "%s\n", tagspec) == EOF)
+    if (fprintf (f, "%s\n", tagspec) < 0)
 	error (1, errno, "writing %s", CVSADM_TAG);
     if (fclose (f) == EOF)
 	error (1, errno, "closing %s", CVSADM_TAG);
@@ -1214,12 +1269,6 @@ handle_set_sticky (pathname, len)
     char *pathname;
     int len;
 {
-    char *dirname;
-    /* Just the part of pathname relative to toplevel_repos.  */
-    char *short_pathname;
-    char *p;
-    char tmp[PATH_MAX];
-
     if (strcmp (command_name, "export") == 0)
     {
 	/* Swallow the repository.  */
@@ -1228,7 +1277,6 @@ handle_set_sticky (pathname, len)
 	(void) read_line (NULL, 0);
 	return;
     }
-    short_pathname = get_short_pathname (pathname);
     if (is_cvsroot_level (pathname))
     {
         /*
@@ -1262,19 +1310,12 @@ handle_clear_sticky (pathname, len)
     char *pathname;
     int len;
 {
-    char *dirname;
-    /* Just the part of pathname relative to toplevel_repos.  */
-    char *short_pathname;
-    char *p;
-    char tmp[PATH_MAX];
-
     if (strcmp (command_name, "export") == 0)
     {
 	/* Swallow the repository.  */
 	read_line (NULL, 0);
 	return;
     }
-    short_pathname = get_short_pathname (pathname);
 
     if (is_cvsroot_level (pathname))
     {
@@ -1342,13 +1383,16 @@ do_deferred_progs ()
 
     char fname[PATH_MAX];
     FILE *f;
-    if (chdir (toplevel_wd) < 0)
-	error (1, errno, "could not chdir to %s", toplevel_wd);
+    if (toplevel_wd[0] != '\0')
+      {
+	if (chdir (toplevel_wd) < 0)
+	  error (1, errno, "could not chdir to %s", toplevel_wd);
+      }
     for (p = checkin_progs; p != NULL; )
     {
 	sprintf (fname, "%s/%s", p->dir, CVSADM_CIPROG);
 	f = open_file (fname, "w");
-	if (fprintf (f, "%s\n", p->name) == EOF)
+	if (fprintf (f, "%s\n", p->name) < 0)
 	    error (1, errno, "writing %s", fname);
 	if (fclose (f) == EOF)
 	    error (1, errno, "closing %s", fname);
@@ -1363,7 +1407,7 @@ do_deferred_progs ()
     {
 	sprintf (fname, "%s/%s", p->dir, CVSADM_UPROG);
 	f = open_file (fname, "w");
-	if (fprintf (f, "%s\n", p->name) == EOF)
+	if (fprintf (f, "%s\n", p->name) < 0)
 	    error (1, errno, "writing %s", fname);
 	if (fclose (f) == EOF)
 	    error (1, errno, "closing %s", fname);
@@ -1397,8 +1441,7 @@ client_isemptydir (dir)
     while ((dp = readdir (dirp)) != NULL)
     {
 	if (strcmp (dp->d_name, ".") != 0 && strcmp (dp->d_name, "..") != 0 &&
-	    strcmp (dp->d_name, CVSADM) != 0 &&
-	    strcmp (dp->d_name, OCVSADM) != 0)
+	    strcmp (dp->d_name, CVSADM) != 0)
 	{
 	    (void) closedir (dirp);
 	    return (0);
@@ -1443,8 +1486,11 @@ process_prune_candidates ()
     struct save_dir *p;
     struct save_dir *q;
 
-    if (chdir (toplevel_wd) < 0)
-	error (1, errno, "could not chdir to %s", toplevel_wd);
+    if (toplevel_wd[0] != '\0')
+      {
+	if (chdir (toplevel_wd) < 0)
+	  error (1, errno, "could not chdir to %s", toplevel_wd);
+      }
     for (p = prune_candidates; p != NULL; )
     {
 	if (client_isemptydir (p->dir))
@@ -1496,23 +1542,35 @@ send_repository (dir, repos, update_dir)
 
     if (use_directory)
     {
-	if (fprintf (to_server, "Directory ") == EOF)
+	if (fprintf (to_server, "Directory ") < 0)
 	    error (1, errno, "writing to server");
-	if (fprintf (to_server, "%s", update_dir) == EOF)
+	if (fprintf (to_server, "%s", update_dir) < 0)
 	    error (1, errno, "writing to server");
 
 	if (fprintf (to_server, "\n%s\n", repos)
-	    == EOF)
+	    < 0)
 	    error (1, errno, "writing to server");
     }
     else
     {
-	if (fprintf (to_server, "Repository %s\n", repos) == EOF)
+	if (fprintf (to_server, "Repository %s\n", repos) < 0)
 	    error (1, errno, "writing to server");
     }
-    if (supported_request ("Static-directory") && isreadable (CVSADM_ENTSTAT))
-	if (fprintf (to_server, "Static-directory\n") == EOF)
-	    error (1, errno, "writing to server");
+    if (supported_request ("Static-directory"))
+    {
+	adm_name[0] = '\0';
+	if (dir[0] != '\0')
+	{
+	    strcat (adm_name, dir);
+	    strcat (adm_name, "/");
+	}
+	strcat (adm_name, CVSADM_ENTSTAT);
+	if (isreadable (adm_name))
+	{
+	    if (fprintf (to_server, "Static-directory\n") < 0)
+		error (1, errno, "writing to server");
+	}
+    }
     if (supported_request ("Sticky"))
     {
 	FILE *f;
@@ -1532,18 +1590,18 @@ send_repository (dir, repos, update_dir)
 	    /* Small for testing.  */
 	    char line[2];
 	    char *nl;
-	    if (fprintf (to_server, "Sticky ") == EOF)
+	    if (fprintf (to_server, "Sticky ") < 0)
 		error (1, errno, "writing to server");
 	    while (fgets (line, sizeof (line), f) != NULL)
 	    {
-		if (fprintf (to_server, "%s", line) == EOF)
+		if (fprintf (to_server, "%s", line) < 0)
 		    error (1, errno, "writing to server");
 		nl = strchr (line, '\n');
 		if (nl != NULL)
 		    break;
 	    }
 	    if (nl == NULL)
-		if (fprintf (to_server, "\n") == EOF)
+		if (fprintf (to_server, "\n") < 0)
 		    error (1, errno, "writing to server");
 	    if (fclose (f) == EOF)
 		error (0, errno, "closing %s", adm_name);
@@ -1568,18 +1626,18 @@ send_repository (dir, repos, update_dir)
 	    /* Small for testing.  */
 	    char line[2];
 	    char *nl;
-	    if (fprintf (to_server, "Checkin-prog ") == EOF)
+	    if (fprintf (to_server, "Checkin-prog ") < 0)
 		error (1, errno, "writing to server");
 	    while (fgets (line, sizeof (line), f) != NULL)
 	    {
-		if (fprintf (to_server, "%s", line) == EOF)
+		if (fprintf (to_server, "%s", line) < 0)
 		    error (1, errno, "writing to server");
 		nl = strchr (line, '\n');
 		if (nl != NULL)
 		    break;
 	    }
 	    if (nl == NULL)
-		if (fprintf (to_server, "\n") == EOF)
+		if (fprintf (to_server, "\n") < 0)
 		    error (1, errno, "writing to server");
 	    if (fclose (f) == EOF)
 		error (0, errno, "closing %s", adm_name);
@@ -1604,18 +1662,18 @@ send_repository (dir, repos, update_dir)
 	    /* Small for testing.  */
 	    char line[2];
 	    char *nl;
-	    if (fprintf (to_server, "Update-prog ") == EOF)
+	    if (fprintf (to_server, "Update-prog ") < 0)
 		error (1, errno, "writing to server");
 	    while (fgets (line, sizeof (line), f) != NULL)
 	    {
-		if (fprintf (to_server, "%s", line) == EOF)
+		if (fprintf (to_server, "%s", line) < 0)
 		    error (1, errno, "writing to server");
 		nl = strchr (line, '\n');
 		if (nl != NULL)
 		    break;
 	    }
 	    if (nl == NULL)
-		if (fprintf (to_server, "\n") == EOF)
+		if (fprintf (to_server, "\n") < 0)
 		    error (1, errno, "writing to server");
 	    if (fclose (f) == EOF)
 		error (0, errno, "closing %s", adm_name);
@@ -1638,7 +1696,6 @@ send_a_repository (dir, repository, update_dir)
     char *repository;
     char *update_dir;
 {
-    int update_dir_len = strlen (update_dir);
     if (toplevel_repos == NULL && repository != NULL)
     {
 	if (update_dir[0] == '\0'
@@ -1646,8 +1703,6 @@ send_a_repository (dir, repository, update_dir)
 	    toplevel_repos = xstrdup (repository);
 	else
 	{
-	    char *cvsadm;
-
 	    /*
 	     * Get the repository from a CVS/Repository file if update_dir
 	     * is absolute.  This is not correct in general, because
@@ -1751,7 +1806,7 @@ client_expand_modules (argc, argv, local)
     for (i = 0; i < argc; ++i)
 	send_arg (argv[i]);
     send_a_repository ("", server_cvsroot, "");
-    if (fprintf (to_server, "expand-modules\n") == EOF)
+    if (fprintf (to_server, "expand-modules\n") < 0)
 	error (1, errno, "writing to server");
     errs = get_server_responses ();
     if (last_repos != NULL)
@@ -1766,6 +1821,7 @@ client_expand_modules (argc, argv, local)
 
 void
 client_send_expansions (local)
+     int local;
 {
     int i;
     char *argv[1];
@@ -1791,9 +1847,8 @@ handle_m (args, len)
     char *args;
     int len;
 {
-    for (; len > 0; --len)
-	putc (*args++, stdout);
-    putc ('\n', stdout);
+  fwrite (args, len, sizeof (*args), stdout);
+  putc ('\n', stdout);
 }
 
 static void
@@ -1801,11 +1856,11 @@ handle_e (args, len)
     char *args;
     int len;
 {
-    for (; len > 0; --len)
-	putc (*args++, stderr);
-    putc ('\n', stderr);
+  fwrite (args, len, sizeof (*args), stderr);
+  putc ('\n', stderr);
 }
 
+/* This table must be writeable if the server code is included.  */
 struct response responses[] =
 {
     {"ok", handle_ok, response_type_ok, rs_essential},
@@ -2124,21 +2179,21 @@ start_server ()
     last_update_dir = NULL;
     stored_checksum_valid = 0;
 
-    if (fprintf (to_server, "Root %s\n", server_cvsroot) == EOF)
+    if (fprintf (to_server, "Root %s\n", server_cvsroot) < 0)
 	error (1, errno, "writing to server");
     {
 	struct response *rs;
-	if (fprintf (to_server, "Valid-responses") == EOF)
+	if (fprintf (to_server, "Valid-responses") < 0)
 	    error (1, errno, "writing to server");
 	for (rs = responses; rs->name != NULL; ++rs)
 	{
-	    if (fprintf (to_server, " %s", rs->name) == EOF)
+	    if (fprintf (to_server, " %s", rs->name) < 0)
 		error (1, errno, "writing to server");
 	}
-	if (fprintf (to_server, "\n") == EOF)
+	if (fprintf (to_server, "\n") < 0)
 	    error (1, errno, "writing to server");
     }
-    if (fprintf (to_server, "valid-requests\n") == EOF)
+    if (fprintf (to_server, "valid-requests\n") < 0)
 	error (1, errno, "writing to server");
     if (get_server_responses ())
 	exit (1);
@@ -2164,7 +2219,7 @@ start_server ()
 	{
 	    if (have_global)
 	    {
-		if (fprintf (to_server, "Global_option -n\n") == EOF)
+		if (fprintf (to_server, "Global_option -n\n") < 0)
 		    error (1, errno, "writing to server");
 	    }
 	    else
@@ -2175,7 +2230,7 @@ start_server ()
 	{
 	    if (have_global)
 	    {
-		if (fprintf (to_server, "Global_option -q\n") == EOF)
+		if (fprintf (to_server, "Global_option -q\n") < 0)
 		    error (1, errno, "writing to server");
 	    }
 	    else
@@ -2186,7 +2241,7 @@ start_server ()
 	{
 	    if (have_global)
 	    {
-		if (fprintf (to_server, "Global_option -Q\n") == EOF)
+		if (fprintf (to_server, "Global_option -Q\n") < 0)
 		    error (1, errno, "writing to server");
 	    }
 	    else
@@ -2197,7 +2252,7 @@ start_server ()
 	{
 	    if (have_global)
 	    {
-		if (fprintf (to_server, "Global_option -r\n") == EOF)
+		if (fprintf (to_server, "Global_option -r\n") < 0)
 		    error (1, errno, "writing to server");
 	    }
 	    else
@@ -2208,7 +2263,7 @@ start_server ()
 	{
 	    if (have_global)
 	    {
-		if (fprintf (to_server, "Global_option -t\n") == EOF)
+		if (fprintf (to_server, "Global_option -t\n") < 0)
 		    error (1, errno, "writing to server");
 	    }
 	    else
@@ -2219,7 +2274,7 @@ start_server ()
 	{
 	    if (have_global)
 	    {
-		if (fprintf (to_server, "Global_option -l\n") == EOF)
+		if (fprintf (to_server, "Global_option -l\n") < 0)
 		    error (1, errno, "writing to server");
 	    }
 	    else
@@ -2231,7 +2286,7 @@ start_server ()
       {
 	if (supported_request ("gzip-file-contents"))
 	  {
-	    if (fprintf (to_server, "gzip-file-contents %d\n", gzip_level) == EOF)
+	    if (fprintf (to_server, "gzip-file-contents %d\n", gzip_level) < 0)
 	      error (1, 0, "writing to server");
 	  }
 	else
@@ -2271,36 +2326,62 @@ start_rsh_server (tofdp, fromfdp)
 	if (dup2 (from_server_pipe[1], STDOUT_FILENO) < 0)
 	    error (1, errno, "cannot dup2");
 
-	execlp ("rsh", "rsh", server_host,
-		getenv ("CVS_SERVER") ? getenv ("CVS_SERVER") : "cvs",
-#if 1
-		/*
-		 * This is really cheesy, because it is redundant with the
-		 * Root request, inconsistent with how we do things when we
-		 * aren't using rsh, and the code in main.c which prints
-		 * an error on a bad root just writes to stderr rather than
-		 * using the protocol.
-		 * 
-		 * But I'm leaving it in for now because old (Nov 3, 1994)
-		 * versions of the server say
-		 * "`cvs server' is for internal use--don't use it directly"
-		 * if you try to start them up without -d and your .bashrc
-		 * sets CVSROOT to something containing a colon.
-		 */
-		"-d", server_cvsroot,
-#endif
-		"server", (char *)NULL);
+	{
+	  /* If you're working through firewalls, you can set the
+	     CVS_RSH environment variable to rsh and rsh invocation on
+	     a proxy machine.  */
+	  char *cvs_rsh = getenv ("CVS_RSH");
+	  char *cvs_server = getenv ("CVS_SERVER");
+	  char *command;
+
+	  if (!cvs_rsh)
+	    cvs_rsh = "rsh";
+	  if (!cvs_server)
+	    cvs_server = "cvs";
+
+	  /* Pass the command to rsh as a single string.  This
+	     shouldn't affect most rsh servers at all, and will pacify
+	     some buggy versions of rsh that grab switches out of the
+	     middle of the command (they're calling the GNU getopt
+	     routines incorrectly).  */
+	  command = xmalloc (strlen (cvs_server)
+			     + strlen (server_cvsroot)
+			     + 50);
+
+	  /*
+	   * The -d here is really cheesy, because it is redundant
+	   * with the Root request, inconsistent with how we do things
+	   * when we aren't using rsh, and the code in main.c which
+	   * prints an error on a bad root just writes to stderr
+	   * rather than using the protocol.
+	   * 
+	   * But I'm leaving it in for now because old (Nov 3, 1994)
+	   * versions of the server say "`cvs server' is for internal
+	   * use--don't use it directly" if you try to start them up
+	   * without -d and your .bashrc sets CVSROOT to something
+	   * containing a colon.  */
+	  sprintf (command, "%s -d %s server", cvs_server, server_cvsroot);
+
+          /* If the login names differ between client and server
+           *  pass it on to rsh
+           */
+          if(server_user != NULL) {
+            execlp (cvs_rsh, cvs_rsh, server_host, 
+                    "-l", server_user, command, (char *) NULL);
+          } else {
+            execlp (cvs_rsh, cvs_rsh, server_host, command, (char *)NULL);
+          }			
+	}
 	error (1, errno, "cannot exec");
-    }
+      }
     if (close (to_server_pipe[0]) < 0)
-	error (1, errno, "cannot close");
+      error (1, errno, "cannot close");
     if (close (from_server_pipe[1]) < 0)
-	error (1, errno, "cannot close");
+      error (1, errno, "cannot close");
     *tofdp = to_server_pipe[1];
     *fromfdp = from_server_pipe[0];
 }
 
-static int send_contents;
 
 /* Send an argument STRING.  */
 void
@@ -2308,13 +2389,13 @@ send_arg (string)
     char *string;
 {
     char *p = string;
-    if (fprintf (to_server, "Argument ") == EOF)
+    if (fprintf (to_server, "Argument ") < 0)
 	error (1, errno, "writing to server");
     while (*p)
     {
 	if (*p == '\n')
 	{
-	    if (fprintf (to_server, "\nArgumentx ") == EOF)
+	    if (fprintf (to_server, "\nArgumentx ") < 0)
 		error (1, errno, "writing to server");
 	}
 	else if (putc (*p, to_server) == EOF)
@@ -2341,7 +2422,7 @@ send_modified (file, short_pathname)
     if (stat (file, &sb) < 0)
 	error (1, errno, "reading %s", short_pathname);
 
-    mode_string = mode_to_string (&sb);
+    mode_string = mode_to_string (sb.st_mode);
 
     bufsize = sb.st_size;
     buf = xmalloc (bufsize);
@@ -2353,7 +2434,6 @@ send_modified (file, short_pathname)
     if (gzip_level && sb.st_size > 100)
     {
 	int nread, newsize = 0, gzip_status;
-	int size_left = bufsize;
 	pid_t gzip_pid;
 	char *bufp = buf;
 	int readsize = 8192;
@@ -2404,7 +2484,7 @@ send_modified (file, short_pathname)
 	    error (0, errno, "warning: can't close %s", short_pathname);
 
 	if (fprintf (to_server, "Modified %s\n%s\n%lu\n", file,
-		     mode_string, (unsigned long) sb.st_size) == EOF)
+		     mode_string, (unsigned long) sb.st_size) < 0)
 	    error (1, errno, "writing to server");
 
 	/*
@@ -2453,17 +2533,17 @@ send_fileproc (file, update_dir, repository, entries, srcfiles)
 			 strcmp (vers->ts_conflict, vers->ts_user) == 0
 			 ? "="
 			 : "modified")),
-		     vers->options) == EOF)
+		     vers->options) < 0)
 	    error (1, errno, "writing to server");
 	if (vers->entdata != NULL && vers->entdata->tag)
 	{
-	    if (fprintf (to_server, "T%s", vers->entdata->tag) == EOF)
+	    if (fprintf (to_server, "T%s", vers->entdata->tag) < 0)
 		error (1, errno, "writing to server");
 	}
 	else if (vers->entdata != NULL && vers->entdata->date)
-	    if (fprintf (to_server, "D%s", vers->entdata->date) == EOF)
+	    if (fprintf (to_server, "D%s", vers->entdata->date) < 0)
 		error (1, errno, "writing to server");
-	if (fprintf (to_server, "\n") == EOF)
+	if (fprintf (to_server, "\n") < 0)
 	    error (1, errno, "writing to server");
     }
 
@@ -2477,7 +2557,7 @@ send_fileproc (file, update_dir, repository, entries, srcfiles)
 	if (!use_unchanged)
 	{
 	    /* if the server is old, use the old request... */
-	    if (fprintf (to_server, "Lost %s\n", file) == EOF)
+	    if (fprintf (to_server, "Lost %s\n", file) < 0)
 		error (1, errno, "writing to server");
 	    /*
 	     * Otherwise, don't do anything for missing files,
@@ -2494,7 +2574,7 @@ send_fileproc (file, update_dir, repository, entries, srcfiles)
     {
 	/* Only use this request if the server supports it... */
 	if (use_unchanged)
-	    if (fprintf (to_server, "Unchanged %s\n", file) == EOF)
+	    if (fprintf (to_server, "Unchanged %s\n", file) < 0)
 		error (1, errno, "writing to server");
     }
 
@@ -2527,8 +2607,6 @@ send_dirent_proc (dir, repository, update_dir)
     char *repository;
     char *update_dir;
 {
-    char *our_repos = NULL;
-    Dtype retval;
     int dir_exists;
     char *cvsadm_repos_name;
 
@@ -2641,7 +2719,7 @@ send_file_names (argc, argv)
     {
 	if (supported_request ("Max-dotdot"))
 	{
-	    if (fprintf (to_server, "Max-dotdot %d\n", max_level) == EOF)
+	    if (fprintf (to_server, "Max-dotdot %d\n", max_level) < 0)
 		error (1, errno, "writing to server");
 	}
 	else
@@ -2700,6 +2778,14 @@ send_files (argc, argv, local, aflag)
     send_repository ("", toplevel_repos, ".");
 }
 
+void
+client_import_setup (repository)
+    char *repository;
+{
+    if (toplevel_repos == NULL)		/* should always be true */
+        send_a_repository ("", repository, "");
+}
+
 /*
  * Process the argument import file.
  */
@@ -2714,6 +2800,9 @@ client_process_import_file (message, vfile, vtag, targc, targv, repository)
 {
     char *short_pathname;
     int first_time;
+
+    /* FIXME: I think this is always false now that we call
+       client_import_setup at the start.  */
 
     first_time = toplevel_repos == NULL;
 
@@ -2745,6 +2834,8 @@ client_import_done ()
 	 * latter case; I don't think toplevel_repos matters for the
 	 * former.
 	 */
+        /* FIXME: "can't happen" now that we call client_import_setup
+	   at the beginning.  */
 	toplevel_repos = xstrdup (server_cvsroot);
     send_repository ("", toplevel_repos, ".");
 }
@@ -2760,7 +2851,7 @@ option_with_arg (option, arg)
 {
     if (arg == NULL)
 	return;
-    if (fprintf (to_server, "Argument %s\n", option) == EOF)
+    if (fprintf (to_server, "Argument %s\n", option) < 0)
 	error (1, errno, "writing to server");
     send_arg (arg);
 }
@@ -2796,16 +2887,6 @@ client_senddate (date)
     option_with_arg ("-D", buf);
 }
 
-static char *client_commit_usage[] =
-{
-    "Usage: %s %s [-nl] [-m msg] [-r rev] files...\n",
-    "\t-n\tDo not run the module program (if any).\n",
-    "\t-l\tLocal directory only (not recursive).\n",
-    "\t-m msg\tLog message.\n",
-    "\t-r rev\tCommit to this branch or trunk revision.\n",
-    NULL
-};
-
 int
 client_commit (argc, argv)
     int argc;

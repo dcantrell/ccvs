@@ -12,7 +12,7 @@
 #include "cvs.h"
 
 #ifndef lint
-static char rcsid[] = "$CVSid: @(#)cvsrc.c 1.9 94/09/30 $";
+static const char rcsid[] = "$CVSid: @(#)cvsrc.c 1.9 94/09/30 $";
 USE(rcsid)
 #endif /* lint */
 
@@ -25,7 +25,6 @@ char cvsrc[] = CVSRC_FILENAME;
 
 #define	GROW	10
 
-extern char *getenv ();
 extern char *strtok ();
 
 void
@@ -121,7 +120,7 @@ read_cvsrc (argc, argv)
 	    }
 	  
 	}
-	while (optstart = strtok (NULL, "\t \n"));
+	while ((optstart = strtok (NULL, "\t \n")) != NULL);
     }
 
     /* now copy the remaining arguments */

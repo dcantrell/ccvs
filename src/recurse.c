@@ -11,7 +11,7 @@
 #include "cvs.h"
 
 #ifndef lint
-static char rcsid[] = "$CVSid: @(#)recurse.c 1.31 94/09/30 $";
+static const char rcsid[] = "$CVSid: @(#)recurse.c 1.31 94/09/30 $";
 USE(rcsid)
 #endif
 
@@ -54,6 +54,88 @@ struct recursion_frame {
   int dosrcs;
 };
 
+struct saved_cwd
+  {
+    int desc;
+    char *name;
+  };
+
+static void
+save_cwd (cwd)
+     struct saved_cwd *cwd;
+{
+  static int have_working_fchdir = 1;
+
+  if (have_working_fchdir)
+    {
+#ifdef HAVE_FCHDIR
+      cwd->desc = open (".", O_RDONLY);
+      if (cwd->desc < 0)
+	error (1, errno, "cannot open current directory");
+
+      /* On SunOS 4, fchdir returns EINVAL if accounting is enabled,
+	 so we have to fall back to chdir.  */
+      if (fchdir (cwd->desc))
+	{
+	  if (errno == EINVAL)
+	    {
+	      close (cwd->desc);
+	      cwd->desc = -1;
+	      have_working_fchdir = 0;
+	    }
+	  else
+	    {
+	      error (1, errno, "current directory");
+	    }
+	}
+#else
+#define fchdir(x) (abort (), 0)
+      have_working_fchdir = 0;
+#endif
+    }
+
+  if (!have_working_fchdir)
+    {
+      cwd->desc = -1;
+      cwd->name = xgetwd ();
+      if (cwd->name == NULL)
+	error (1, errno, "cannot get current directory");
+    }
+  else
+    {
+      cwd->name = NULL;
+    }
+}
+
+static void
+restore_cwd (cwd, dest, current)
+     const struct saved_cwd *cwd;
+     const char *dest;
+     const char *current;
+{
+  if (cwd->desc >= 0)
+    {
+      if (fchdir (cwd->desc))
+	error (1, errno, "cannot return to %s%s%s", dest,
+	       (current ? " from " : ""),
+	       (current ? current : ""));
+    }
+  else if (chdir (cwd->name) < 0)
+    {
+      error (1, errno, "%s", cwd->name);
+    }
+}
+
+static void
+free_cwd (cwd)
+     struct saved_cwd *cwd;
+{
+  if (cwd->desc >= 0)
+    close (cwd->desc);
+  if (cwd->name)
+    free (cwd->name);
+}
+
 /*
  * Called to start a recursive command.
  *
@@ -72,7 +154,7 @@ start_recursion (fileproc, filesdoneproc, direntproc, dirleaveproc,
     Dtype (*direntproc) ();
     int (*dirleaveproc) ();
     int argc;
-    char *argv[];
+    char **argv;
     int local;
     int which;
     int aflag;
@@ -103,7 +185,10 @@ start_recursion (fileproc, filesdoneproc, direntproc, dirleaveproc,
 	repository = (char *) NULL;
     }
     if (entries)
-	dellist (&entries);
+    {
+	Entries_Close (entries);
+	entries = NULL;
+    }
     if (srcfiles)
 	dellist (&srcfiles);
     if (filelist)
@@ -122,7 +207,7 @@ start_recursion (fileproc, filesdoneproc, direntproc, dirleaveproc,
 	 * process each of the sub-directories, so we pretend like we were
 	 * called with the list of sub-dirs of the current dir as args
 	 */
-	if ((which & W_LOCAL) && !isdir (CVSADM) && !isdir (OCVSADM))
+	if ((which & W_LOCAL) && !isdir (CVSADM))
 	    dirlist = Find_Dirs ((char *) NULL, W_LOCAL);
 	else
 	    addlist (&dirlist, ".");
@@ -192,7 +277,7 @@ start_recursion (fileproc, filesdoneproc, direntproc, dirleaveproc,
 		addfile (&files_by_dir, dir, comp);
 	    else if (isdir (dir))
 	    {
-		if (isdir (CVSADM) || isdir (OCVSADM))
+		if (isdir (CVSADM))
 		{
 		    /* otherwise, look for it in the repository. */
 		    char *save_update_dir;
@@ -296,7 +381,7 @@ do_recursion (xfileproc, xfilesdoneproc, xdirentproc, xdirleaveproc,
      */
     if (which & W_LOCAL)
     {
-	if (isdir (CVSADM) || isdir (OCVSADM))
+	if (isdir (CVSADM))
 	    repository = Name_Repository ((char *) NULL, update_dir);
 	else
 	    repository = NULL;
@@ -350,7 +435,7 @@ do_recursion (xfileproc, xfilesdoneproc, xdirentproc, xdirleaveproc,
 	{
 	    /* we will process files, so pre-parse entries */
 	    if (which & W_LOCAL)
-		entries = ParseEntries (aflag);
+		entries = Entries_Open (aflag);
 	}
     }
 
@@ -377,7 +462,8 @@ do_recursion (xfileproc, xfilesdoneproc, xdirentproc, xdirleaveproc,
 	/* clean up */
 	dellist (&filelist);
 	dellist (&srcfiles);
-	dellist (&entries);
+	Entries_Close (entries);
+	entries = NULL;
     }
 
     /* call-back files done proc (if any) */
@@ -396,7 +482,7 @@ do_recursion (xfileproc, xfilesdoneproc, xdirentproc, xdirleaveproc,
     /* free the saved copy of the pointer if necessary */
     if (srepository)
     {
-	(void) free (srepository);
+	free (srepository);
 	repository = (char *) NULL;
     }
 
@@ -426,7 +512,6 @@ do_dir_proc (p, closure)
     void *closure;
 {
     char *dir = p->key;
-    char savewd[PATH_MAX];
     char newrepos[PATH_MAX];
     List *sdirlist;
     char *srepository;
@@ -434,6 +519,7 @@ do_dir_proc (p, closure)
     Dtype dir_return = R_PROCESS;
     int stripped_dot = 0;
     int err = 0;
+    struct saved_cwd cwd;
 
     /* set up update_dir - skip dots if not at start */
     if (strcmp (dir, ".") != 0)
@@ -477,8 +563,7 @@ do_dir_proc (p, closure)
     if (dir_return != R_SKIP_ALL)
     {
 	/* save our current directory and static vars */
-	if (getwd (savewd) == NULL)
-	    error (1, 0, "could not get working directory: %s", savewd);
+        save_cwd (&cwd);
 	sdirlist = dirlist;
 	srepository = repository;
 	dirlist = NULL;
@@ -511,8 +596,8 @@ do_dir_proc (p, closure)
 	    err = dirleaveproc (dir, err, update_dir);
 
 	/* get back to where we started and restore state vars */
-	if (chdir (savewd) < 0)
-	    error (1, errno, "could not chdir to %s", savewd);
+	restore_cwd (&cwd, "saved working directory", NULL);
+	free_cwd (&cwd);
 	dirlist = sdirlist;
 	repository = srepository;
     }
@@ -554,7 +639,7 @@ addfile (listp, dir, file)
     Node *n;
 
     /* add this dir. */
-    (void) addlist (listp, dir);
+    addlist (listp, dir);
 
     n = findnode (*listp, dir);
     if (n == NULL)
@@ -577,8 +662,8 @@ unroll_files_proc (p, closure)
     struct recursion_frame *frame = (struct recursion_frame *) closure;
     int err = 0;
     List *save_dirlist;
-    char savewd[PATH_MAX];
     char *save_update_dir = NULL;
+    struct saved_cwd cwd;
 
     /* if this dir was also an explicitly named argument, then skip
        it.  We'll catch it later when we do dirs. */
@@ -593,9 +678,7 @@ unroll_files_proc (p, closure)
 
     if (strcmp(p->key, ".") != 0)
     {
-	if (getwd (savewd) == NULL)
-	    error (1, 0, "could not get working directory: %s", savewd);
-
+        save_cwd (&cwd);
 	if (chdir (p->key) < 0)
 	    error (1, errno, "could not chdir to %s", p->key);
 
@@ -617,8 +700,8 @@ unroll_files_proc (p, closure)
 	(void) strcpy (update_dir, save_update_dir);
 	free (save_update_dir);
 
-	if (chdir (savewd) < 0)
-	    error (1, errno, "could not chdir to %s", savewd);
+	restore_cwd (&cwd, "saved working directory", NULL);
+	free_cwd (&cwd);
     }
 
     dirlist = save_dirlist;

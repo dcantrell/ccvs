@@ -23,51 +23,57 @@ VPATH      = @srcdir@
 
 SHELL = /bin/sh
 
-prefix = /usr/local
-exec_prefix = $(prefix)
+prefix = @prefix@
+exec_prefix = @exec_prefix@
 
 SOURCES = \
-    alloca.c \
-    argmatch.c \
-    error.c \
-    fnmatch.c \
-    ftruncate.c \
-    getdate.y \
-    getopt.c \
-    getopt1.c \
-    getwd.c \
-    hostname.c \
-    md5.c \
-    memmove.c \
-    mkdir.c \
-    regex.c \
-    rename.c \
-    sighandle.c \
-    strdup.c \
-    strerror.c \
-    strippath.c \
-    stripslash.c \
-    waitpid.c \
-    yesno.c 
+	alloca.c \
+	argmatch.c \
+	dup2.c \
+	error.c \
+	fnmatch.c \
+	ftruncate.c \
+	getdate.y \
+	getopt.c \
+	getopt1.c \
+	getwd.c \
+	hostname.c \
+	md5.c \
+	memmove.c \
+	mkdir.c \
+	regex.c \
+	rename.c \
+	sighandle.c \
+	strdup.c \
+	strerror.c \
+	strippath.c \
+	stripslash.c \
+	valloc.c \
+	waitpid.c \
+	xgetwd.c \
+	yesno.c 
+
+HEADERS = getopt.h fnmatch.h regex.h system.h wait.h md5.h
 
 OBJECTS = \
     @ALLOCA@ @LIBOBJS@ \
     argmatch.o \
     error.o \
-    fnmatch.o \
     getopt.o \
     getopt1.o \
     md5.o \
     sighandle.o \
     strippath.o \
     stripslash.o \
+    xgetwd.o \
     yesno.o \
     getdate.o
 
-DISTFILES = Makefile.in getopt.h fnmatch.h regex.h system.h wait.h $(SOURCES) \
-    md5.h
+DISTFILES = \
+	.cvsignore ChangeLog ChangeLog.fsf Makefile.in \
+	${SOURCES} ${HEADERS}
 
-DEFS = @DEFS@
+DEFS = @DEFS@ -DREGEX_MALLOC
 RANLIB = @RANLIB@
 
 CC       = @CC@
@@ -107,9 +113,12 @@ realclean: distclean
 	rm -f *.tab.c getdate.c
 .PHONY: realclean
 
-dist:
-	ln $(DISTFILES) ../`cat ../.fname`/lib
-.PHONY: dist
+dist-dir:
+	mkdir ${DISTDIR}
+	for i in ${DISTFILES}; do \
+	  ln $(srcdir)/$${i} ${DISTDIR}; \
+	done
+.PHONY: dist-dir
 
 libcvs.a: $(OBJECTS)
 	$(AR) cr $@ $(OBJECTS)
@@ -134,11 +143,12 @@ regex.o: regex.h
 getwd.o: system.h
 md5.o: md5.h
 
-Makefile: Makefile.in
-	cd .. ; $(SHELL) config.status
+subdir = lib
+Makefile: ../config.status Makefile.in
+	cd .. && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= ./config.status
 
-../config.status: ../configure
-	cd .. ; $(SHELL) config.status --recheck
+#../config.status: ../configure
+#	cd .. ; $(SHELL) config.status --recheck
 
-../configure: ../configure.in
-	cd $(top_srcdir) ; autoconf
+#../configure: ../configure.in
+#	cd $(top_srcdir) ; autoconf

@@ -14,7 +14,7 @@
 #include "cvs.h"
 
 #ifndef lint
-static char rcsid[] = "$CVSid: @(#)admin.c 1.20 94/09/30 $";
+static const char rcsid[] = "$CVSid: @(#)admin.c 1.20 94/09/30 $";
 USE(rcsid)
 #endif
 
@@ -23,7 +23,7 @@ static int admin_fileproc PROTO((char *file, char *update_dir,
 			   char *repository, List *entries,
 			   List *srcfiles));
 
-static char *admin_usage[] =
+static const char *const admin_usage[] =
 {
     "Usage: %s %s rcs-options files...\n",
     NULL
@@ -35,7 +35,7 @@ static char **av;
 int
 admin (argc, argv)
     int argc;
-    char *argv[];
+    char **argv;
 {
     int err;
 
@@ -73,7 +73,7 @@ admin (argc, argv)
 #else
 	send_files (argc, argv, 0, 0);
 #endif
-	if (fprintf (to_server, "admin\n") == EOF)
+	if (fprintf (to_server, "admin\n") < 0)
 	    error (1, errno, "writing to server");
         return get_responses_and_close ();
     }

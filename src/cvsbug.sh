@@ -6,6 +6,7 @@
 #
 # This file is part of GNU GNATS.
 # Modified by Berliner for CVS.
+# Modified by Jim Blandy for CVS 1.5.
 # $CVSid: @(#)cvsbug.sh 1.2 94/10/22 $
 #
 # GNU GNATS is free software; you can redistribute it and/or modify
@@ -42,7 +43,7 @@ GNATS_ADDR=bug-cvs@prep.ai.mit.edu
 ## [ ! -d $DATADIR/gnats -a -d "$GCC_EXEC_PREFIX" ] && DATADIR=${GCC_EXEC_PREFIX}..
 
 # The default release for this host.
-DEFAULT_RELEASE="cvs-1.4A2"
+DEFAULT_RELEASE="post-cvs-1.5"
 
 # The default organization.
 DEFAULT_ORGANIZATION="net"
@@ -55,7 +56,11 @@ DEFAULT_ORGANIZATION="net"
 
 # What mailer to use.  This must come after the config file, since it is
 # host-dependent.
-MAIL_AGENT="/usr/lib/sendmail -oi -t"
+if [ -f /usr/sbin/sendmail ]; then
+  MAIL_AGENT="/usr/sbin/sendmail -oi -t"
+else
+  MAIL_AGENT="/usr/lib/sendmail -oi -t"
+fi
 MAILER=`echo $MAIL_AGENT | sed -e 's, .*,,'`
 if [ ! -f "$MAILER" ] ; then
 	echo "$COMMAND: Cannot file mail program \"$MAILER\"."

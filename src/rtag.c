@@ -14,7 +14,7 @@
 #include "cvs.h"
 
 #ifndef lint
-static char rcsid[] = "$CVSid: @(#)rtag.c 1.61 94/09/30 $";
+static const char rcsid[] = "$CVSid: @(#)rtag.c 1.61 94/09/30 $";
 USE(rcsid)
 #endif
 
@@ -22,7 +22,7 @@ static Dtype rtag_dirproc PROTO((char *dir, char *repos, char *update_dir));
 static int rtag_fileproc PROTO((char *file, char *update_dir,
 			  char *repository, List * entries,
 			  List * srcfiles));
-static int rtag_proc PROTO((int *pargc, char *argv[], char *xwhere,
+static int rtag_proc PROTO((int *pargc, char **argv, char *xwhere,
 		      char *mwhere, char *mfile, int shorten,
 		      int local_specified, char *mname, char *msg));
 static int rtag_delete PROTO((RCSNode *rcsfile));
@@ -37,7 +37,7 @@ static int local;			/* recursive by default */
 static int force_tag_match = 1;		/* force by default */
 static int force_tag_move;              /* don't move existing tags by default */
 
-static char *rtag_usage[] =
+static const char *const rtag_usage[] =
 {
     "Usage: %s %s [-QaflRnqF] [-b] [-d] [-r tag|-D date] tag modules...\n",
     "\t-Q\tReally quiet.\n",
@@ -57,7 +57,7 @@ static char *rtag_usage[] =
 int
 rtag (argc, argv)
     int argc;
-    char *argv[];
+    char **argv;
 {
     register int i;
     int c;
@@ -139,29 +139,21 @@ rtag (argc, argv)
 	ign_setup ();
 
 	if (local)
-	    if (fprintf (to_server, "Argument -l\n") == EOF)
-		error (1, errno, "writing to server");
+	    send_arg("-l");
 	if (quiet)
-	    if (fprintf (to_server, "Argument -q\n") == EOF)
-		error (1, errno, "writing to server");
+	    send_arg("-q");
 	if (really_quiet)
-	    if (fprintf (to_server, "Argument -Q\n") == EOF)
-		error (1, errno, "writing to server");
+	    send_arg("-Q");
 	if (delete)
-	    if (fprintf (to_server, "Argument -d\n") == EOF)
-		error (1, errno, "writing to server");
+	    send_arg("-d");
 	if (branch_mode)
-	    if (fprintf (to_server, "Argument -b\n") == EOF)
-		error (1, errno, "writing to server");
+	    send_arg("-b");
 	if (force_tag_move)
-	    if (fprintf (to_server, "Argument -F\n") == EOF)
-		error (1, errno, "writing to server");
+	    send_arg("-T");
 	if (run_module_prog)
-	    if (fprintf (to_server, "Argument -n\n") == EOF)
-		error (1, errno, "writing to server");
+	    send_arg("-n");
 	if (attic_too)
-	    if (fprintf (to_server, "Argument -a\n") == EOF)
-		error (1, errno, "writing to server");
+	    send_arg("-a");
 
 	if (numtag)
 	    option_with_arg ("-r", numtag);
@@ -176,7 +168,7 @@ rtag (argc, argv)
 		send_arg (argv[i]);
 	}
 
-	if (fprintf (to_server, "rtag\n") == EOF)
+	if (fprintf (to_server, "rtag\n") < 0)
 	    error (1, errno, "writing to server");
         return get_responses_and_close ();
     }
@@ -203,7 +195,7 @@ static int
 rtag_proc (pargc, argv, xwhere, mwhere, mfile, shorten, local_specified,
 	   mname, msg)
     int *pargc;
-    char *argv[];
+    char **argv;
     char *xwhere;
     char *mwhere;
     char *mfile;
@@ -349,7 +341,7 @@ rtag_fileproc (file, update_dir, repository, entries, srcfiles)
 	 * the branch.  Use a symbolic tag for that.
 	 */
 	rev = branch_mode ? RCS_magicrev (rcsfile, version) : numtag;
-	run_setup ("%s%s -q -N%s:%s", Rcsbin, RCS, symtag, numtag);
+	retcode = RCS_settag(rcsfile->path, symtag, numtag);
     }
     else
     {
@@ -397,10 +389,10 @@ rtag_fileproc (file, update_dir, repository, entries, srcfiles)
 	  }
 	  free (oversion);
        }
-       run_setup ("%s%s -q -N%s:%s", Rcsbin, RCS, symtag, rev);
+       retcode = RCS_settag(rcsfile->path, symtag, rev);
     }
-    run_arg (rcsfile->path);
-    if ((retcode = run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL)) != 0)
+
+    if (retcode != 0)
     {
 	error (1, retcode == -1 ? errno : 0,
 	       "failed to set tag `%s' to revision `%s' in `%s'",
@@ -443,9 +435,7 @@ rtag_delete (rcsfile)
 	return (0);
     free (version);
 
-    run_setup ("%s%s -q -N%s", Rcsbin, RCS, symtag);
-    run_arg (rcsfile->path);
-    if ((retcode = run_exec (RUN_TTY, RUN_TTY, DEVNULL, RUN_NORMAL)) != 0)
+    if ((retcode = RCS_deltag(rcsfile->path, symtag)) != 0)
     {
 	if (!quiet)
 	    error (0, retcode == -1 ? errno : 0,

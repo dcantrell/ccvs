@@ -14,7 +14,7 @@
 #include "cvs.h"
 
 #ifndef lint
-static char rcsid[] = "$CVSid: @(#)mkmodules.c 1.45 94/09/30 $";
+static const char rcsid[] = "$CVSid: @(#)mkmodules.c 1.45 94/09/30 $";
 USE(rcsid)
 #endif
 
@@ -25,6 +25,7 @@ USE(rcsid)
 char *program_name, *command_name;
 
 char *Rcsbin = RCSBIN_DFLT;
+char *CVSroot = CVSROOT_DFLT;
 int noexec = 0;				/* Here only to satisfy use in subr.c */
 int trace = 0;				/* Here only to satisfy use in subr.c */
 
@@ -42,9 +43,8 @@ static void write_dbmfile PROTO((char *temp));
 int
 main (argc, argv)
     int argc;
-    char *argv[];
+    char **argv;
 {
-    extern char *getenv ();
     char temp[PATH_MAX];
     char *cp, *last, *fname;
 #ifdef MY_NDBM
@@ -164,9 +164,15 @@ main (argc, argv)
 	/*
 	 * File format:
 	 *  [<whitespace>]<filename><whitespace><error message><end-of-line>
+	 *
+	 * comment lines begin with '#'
 	 */
-	for (; fgets (line, sizeof (line), fp) != NULL;)
+	while (fgets (line, sizeof (line), fp) != NULL)
 	{
+	    /* skip lines starting with # */
+	    if (line[0] == '#')
+		continue;
+
 	    if ((last = strrchr (line, '\n')) != NULL)
 		*last = '\0';			/* strip the newline */
 

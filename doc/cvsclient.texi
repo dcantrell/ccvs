@@ -33,7 +33,7 @@ below about @samp{cvs kserver}).
 This might be a first step towards adding transactions to CVS (i.e. a
 set of operations is either executed atomically or none of them is
 executed), improving the locking, or other features.  The current server
-implementation is a long way from doing being able to do any of these
+implementation is a long way from being able to do any of these
 things.  The protocol, however, is not known to contain any defects
 which would preclude them.
 
@@ -151,7 +151,7 @@ remote system, in your path so that @code{rsh host cvs} finds it.
 Now you can test it.
 @item
 You may want to set the environment variable @code{CVS_CLIENT_PORT}
-(e.g., 1998) to some bad port to value to prevent the client from
+(e.g., 1998) to some bad port value to prevent the client from
 contacting the server via a direct TCP link.  That will force the client
 to fall back to using @code{rsh}, which will run your new binary.
 @item

@@ -36,19 +36,19 @@
 #include "cvs.h"
 
 #ifndef lint
-static char rcsid[] = "$CVSid: @(#)checkout.c 1.78 94/10/07 $";
+static const char rcsid[] = "$CVSid: @(#)checkout.c 1.78 94/10/07 $";
 USE(rcsid)
 #endif
 
 static char *findslash PROTO((char *start, char *p));
 static int build_dirs_and_chdir PROTO((char *dir, char *prepath, char *realdir,
 				 int sticky));
-static int checkout_proc PROTO((int *pargc, char *argv[], char *where,
+static int checkout_proc PROTO((int *pargc, char **argv, char *where,
 		          char *mwhere, char *mfile, int shorten,
 		          int local_specified, char *omodule,
 		          char *msg));
 
-static char *checkout_usage[] =
+static const char *const checkout_usage[] =
 {
     "Usage:\n  %s %s [-ANPQcflnpqs] [-r rev | -D date] [-d dir] [-k kopt] modules...\n",
     "\t-A\tReset any sticky tags/date/kopts.\n",
@@ -70,7 +70,7 @@ static char *checkout_usage[] =
     NULL
 };
 
-static char *export_usage[] =
+static const char *const export_usage[] =
 {
     "Usage: %s %s [-NPQflnq] [-r rev | -D date] [-d dir] module...\n",
     "\t-N\tDon't shorten module paths if -d specified.\n",
@@ -99,7 +99,7 @@ static char *preload_update_dir = NULL;
 int
 checkout (argc, argv)
     int argc;
-    char *argv[];
+    char **argv;
 {
     int i;
     int c;
@@ -109,7 +109,8 @@ checkout (argc, argv)
     int local = 0;
     int shorten = -1;
     char *where = NULL;
-    char *valid_options, **valid_usage;
+    char *valid_options;
+    const char *const *valid_usage;
 
     /*
      * A smaller subset of options are allowed for the export command, which
@@ -235,19 +236,31 @@ checkout (argc, argv)
 
     if (client_active)
     {
-	int errs;
 	int expand_modules;
 
 	start_server ();
 
 	ign_setup ();
-
-	expand_modules =
-	  !cat && !status && !pipeout && supported_request ("expand-modules");
+	
+	/* We have to expand names here because the "expand-modules"
+           directive to the server has the side-effect of having the
+           server send the check-in and update programs for the
+           various modules/dirs requested.  If we turn this off and
+           simply request the names of the modules and directories (as
+           below in !expand_modules), those files (CVS/Checking.prog
+           or CVS/Update.prog) don't get created.  Grrr.  */
+	
+	expand_modules = (!cat && !status && !pipeout
+			  && supported_request ("expand-modules"));
+	
 	if (expand_modules)
-	{
+	  {
+	    /* This is done here because we need to read responses
+               from the server before we send the command checkout or
+               export files. */
+
 	    client_expand_modules (argc, argv, local);
-	}
+	  }
 
 	if (!run_module_prog) send_arg ("-n");
 	if (really_quiet) send_arg ("-Q");
@@ -256,25 +269,20 @@ checkout (argc, argv)
 	if (pipeout) send_arg ("-p");
 	if (!force_tag_match) send_arg ("-f");
 	if (aflag)
-	    if (fprintf (to_server, "Argument -A\n") == EOF)
-		error (1, errno, "writing to server");
+	    send_arg("-A");
 	if (!shorten)
-	    if (fprintf (to_server, "Argument -N\n") == EOF)
-		error (1, errno, "writing to server");
+	    send_arg("-N");
 	if (checkout_prune_dirs && strcmp (command_name, "export") != 0)
-	    if (fprintf (to_server, "Argument -P\n") == EOF)
-		error (1, errno, "writing to server");
+	    send_arg("-P");
 	client_prune_dirs = checkout_prune_dirs;
 	if (cat)
-	    if (fprintf (to_server, "Argument -c\n") == EOF)
-		error (1, errno, "writing to server");
+	    send_arg("-c");
 	if (where != NULL)
 	{
 	    option_with_arg ("-d", where);
 	}
 	if (status)
-	    if (fprintf (to_server, "Argument -s\n") == EOF)
-		error (1, errno, "writing to server");
+	    send_arg("-s");
 	if (strcmp (command_name, "export") != 0
 	    && options != NULL
 	    && options[0] != '\0')
@@ -287,28 +295,24 @@ checkout (argc, argv)
 	if (join_rev2 != NULL)
 	    option_with_arg ("-j", join_rev2);
 
-	if (!expand_modules)
-	{
+	if (expand_modules)
+	  {
+	    client_send_expansions (local);
+	  }
+	else
+	  {
 	    int i;
 	    for (i = 0; i < argc; ++i)
-		send_arg (argv[i]);
+	      send_arg (argv[i]);
 	    client_nonexpanded_setup ();
+	  }
 
-	    if (fprintf
-		(to_server,
-		 strcmp (command_name, "export") == 0 ? "export\n" : "co\n")
-		== EOF)
-		error (1, errno, "writing to server");
-	}
-	else
-	{
-	    client_send_expansions (local);
-	    if (fprintf
-		(to_server,
-		 strcmp (command_name, "export") == 0 ? "export\n" : "co\n")
-		== EOF)
-		error (1, errno, "writing to server");
-	}
+	if (fprintf
+	    (to_server,
+	     strcmp (command_name, "export") == 0 ? "export\n" : "co\n")
+	    < 0)
+	  error (1, errno, "writing to server");
+
 	return get_responses_and_close ();
     }
 
@@ -333,7 +337,7 @@ checkout (argc, argv)
 	    error (1, errno, "cannot chdir to %s", where);
 	preload_update_dir = xstrdup (where);
 	where = (char *) NULL;
-	if (!isfile (CVSADM) && !isfile (OCVSADM))
+	if (!isfile (CVSADM))
 	{
 	    (void) sprintf (repository, "%s/%s/%s", CVSroot, CVSROOTADM,
 			    CVSNULLREPOS);
@@ -399,7 +403,7 @@ static int
 checkout_proc (pargc, argv, where, mwhere, mfile, shorten,
 	       local_specified, omodule, msg)
     int *pargc;
-    char *argv[];
+    char **argv;
     char *where;
     char *mwhere;
     char *mfile;
@@ -610,7 +614,7 @@ checkout_proc (pargc, argv, where, mwhere, mfile, shorten,
 	free (prepath);
 
 	/* set up the repository (or make sure the old one matches) */
-	if (!isfile (CVSADM) && !isfile (OCVSADM))
+	if (!isfile (CVSADM))
 	{
 	    FILE *fp;
 
@@ -705,7 +709,7 @@ checkout_proc (pargc, argv, where, mwhere, mfile, shorten,
 	List *entries;
 
 	/* we are only doing files, so register them */
-	entries = ParseEntries (0);
+	entries = Entries_Open (0);
 	for (i = 1; i < *pargc; i++)
 	{
 	    char line[MAXLINELEN];
@@ -724,7 +728,8 @@ checkout_proc (pargc, argv, where, mwhere, mfile, shorten,
 	    }
 	    freevers_ts (&vers);
 	}
-	dellist (&entries);
+
+	Entries_Close (entries);
     }
 
     /* Don't log "export", just regular "checkouts" */
@@ -789,8 +794,7 @@ build_dirs_and_chdir (dir, prepath, realdir, sticky)
 	    error (0, errno, "cannot chdir to %s", cp);
 	    return (1);
 	}
-	if (!isfile (CVSADM) && !isfile (OCVSADM) &&
-	    strcmp (command_name, "export") != 0)
+	if (!isfile (CVSADM) && strcmp (command_name, "export") != 0)
 	{
 	    (void) sprintf (repository, "%s/%s", prepath, path2);
 	    /* I'm not sure whether this check is redundant.  */

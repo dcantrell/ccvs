@@ -17,7 +17,7 @@
 #include "cvs.h"
 
 #ifndef lint
-static char rcsid[] = "$CVSid: @(#)commit.c 1.101 94/10/07 $";
+static const char rcsid[] = "$CVSid: @(#)commit.c 1.101 94/10/07 $";
 USE(rcsid)
 #endif
 
@@ -36,7 +36,7 @@ static int finaladd PROTO((char *file, char *revision, char *tag,
 			   char *options, char *update_dir,
 			   char *repository, List *entries));
 static int findmaxrev PROTO((Node * p, void *closure));
-static int fsortcmp PROTO((Node * p, Node * q));
+static int fsortcmp PROTO((const Node * p, const Node * q));
 static int lock_RCS PROTO((char *user, char *rcs, char *rev, char *repository));
 static int lock_filesdoneproc PROTO((int err, char *repository, char *update_dir));
 static int lockrcsfile PROTO((char *file, char *repository, char *rev));
@@ -69,7 +69,7 @@ struct master_lists
     List *cilist;			/* list with commit_info structs */
 };
 
-static int force_ci;
+static int force_ci = 0;
 static int got_message;
 static int run_module_prog = 1;
 static int aflag;
@@ -80,7 +80,7 @@ static List *mulist;
 static List *locklist;
 static char *message;
 
-static char *commit_usage[] =
+static const char *const commit_usage[] =
 {
     "Usage: %s %s [-nRlf] [-m msg | -F logfile] [-r rev] files...\n",
     "\t-n\tDo not run the module program (if any).\n",
@@ -96,7 +96,7 @@ static char *commit_usage[] =
 int
 commit (argc, argv)
     int argc;
-    char *argv[];
+    char **argv;
 {
     int c;
     int err = 0;
@@ -233,19 +233,16 @@ commit (argc, argv)
 	option_with_arg ("-m", message);
 
 	if (local)
-	    if (fprintf (to_server, "Argument -l\n") == EOF)
-		error (1, errno, "writing to server");
+	    send_arg("-l");
 	if (force_ci)
-	    if (fprintf (to_server, "Argument -f\n") == EOF)
-		error (1, errno, "writing to server");
+	    send_arg("-f");
 	if (!run_module_prog)
-	    if (fprintf (to_server, "Argument -n\n") == EOF)
-		error (1, errno, "writing to server");
+	    send_arg("-n");
 	option_with_arg ("-r", tag);
 
 	send_files (argc, argv, local, 0);
 
-	if (fprintf (to_server, "ci\n") == EOF)
+	if (fprintf (to_server, "ci\n") < 0)
 	    error (1, errno, "writing to server");
 	return get_responses_and_close ();
     }
@@ -308,7 +305,8 @@ commit (argc, argv)
  */
 static int
 fsortcmp (p, q)
-    Node *p, *q;
+    const Node *p;
+    const Node *q;
 {
     return (strcmp (p->key, q->key));
 }
@@ -1135,9 +1133,7 @@ remove_file (file, repository, tag, message, entries, srcfiles)
 #endif
     {
 	/* a symbolic tag is specified; just remove the tag from the file */
-	run_setup ("%s%s -q -N%s", Rcsbin, RCS, tag);
-	run_arg (rcs);
-	if ((retcode = run_exec (RUN_TTY, RUN_TTY, DEVNULL, RUN_NORMAL)) != 0)
+	if ((retcode = RCS_deltag (rcs, tag)) != 0) 
 	{
 	    if (!quiet)
 		error (0, retcode == -1 ? errno : 0,
@@ -1189,9 +1185,7 @@ remove_file (file, repository, tag, message, entries, srcfiles)
        branch is the trunk. */
     if (!tag && !branch)
     {
-	run_setup ("%s%s -q -b", Rcsbin, RCS);
-	run_arg (rcs);
-	if (run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL) != 0)
+        if (RCS_setbranch (rcs, NULL) != 0) 
 	{
 	    error (0, 0, "cannot change branch to default for %s",
 		   rcs);
@@ -1236,12 +1230,12 @@ remove_file (file, repository, tag, message, entries, srcfiles)
     }
 #else
 #ifdef DEATH_STATE
-    run_setup ("%s%s -sdead %s%s", Rcsbin, RCS_CI, rev ? "-r" : "",
+    run_setup ("%s%s -f -sdead %s%s", Rcsbin, RCS_CI, rev ? "-r" : "",
 #else
     run_setup ("%s%s -K %s%s", Rcsbin, RCS_CI, rev ? "-r" : "",
 #endif
 	       rev ? rev : ""); 
-    run_args ("-m%s", message);
+    run_args ("-m%s", make_message_rcslegal (message));
     run_arg (rcs);
     if ((retcode = run_exec (RUN_TTY, RUN_TTY, DEVNULL, RUN_NORMAL))
 	!= 0) {
@@ -1345,10 +1339,8 @@ unlockrcs (file, repository)
     int retcode = 0;
 
     locate_rcs (file, repository, rcs);
-    run_setup ("%s%s -q -u", Rcsbin, RCS);
-    run_arg (rcs);
 
-    if ((retcode = run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL)) != 0)
+    if ((retcode = RCS_unlock (rcs, NULL)) != 0)
 	error (retcode == -1 ? 1 : 0, retcode == -1 ? errno : 0,
 	       "could not unlock %s", rcs);
 }
@@ -1390,9 +1382,7 @@ fixbranch (file, repository, branch)
     if (branch != NULL && branch[0] != '\0')
     {
 	locate_rcs (file, repository, rcs);
-	run_setup ("%s%s -q -b%s", Rcsbin, RCS, branch);
-	run_arg (rcs);
-	if ((retcode = run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL)) != 0)
+	if ((retcode = RCS_setbranch (rcs, branch)) != 0)
 	    error (retcode == -1 ? 1 : 0, retcode == -1 ? errno : 0,
 		   "cannot restore branch to %s for %s", branch, rcs);
     }
@@ -1492,16 +1482,22 @@ checkaddfile (file, repository, tag, srcfiles)
 	fp = fopen (fname, "r");
 	/* If the file does not exist, no big deal.  In particular, the
 	   server does not (yet at least) create CVSEXT_OPT files.  */
-	if (fp == NULL && errno != ENOENT)
-	    error (1, errno, "cannot open %s", fname);
-	while (fp != NULL && fgets (fname, sizeof (fname), fp) != NULL)
+	if (fp == NULL)
 	{
-	    if ((cp = strrchr (fname, '\n')) != NULL)
-		*cp = '\0';
-	    if (*fname)
-		run_arg (fname);
+	    if (errno != ENOENT)
+		error (1, errno, "cannot open %s", fname);
 	}
-	(void) fclose (fp);
+	else
+	{
+	    while (fgets (fname, sizeof (fname), fp) != NULL)
+	    {
+		if ((cp = strrchr (fname, '\n')) != NULL)
+		    *cp = '\0';
+		if (*fname)
+		    run_arg (fname);
+	    }
+	    (void) fclose (fp);
+	}
 	run_arg (rcs);
 	if ((retcode = run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL)) != 0)
 	{
@@ -1536,7 +1532,7 @@ checkaddfile (file, repository, tag, srcfiles)
 	}
 #else
 #ifdef DEATH_STATE
-	run_setup ("%s%s -q -sdead", Rcsbin, RCS_CI);
+	run_setup ("%s%s -q -f -sdead", Rcsbin, RCS_CI);
 #else
 	run_setup ("%s%s -q -K", Rcsbin, RCS_CI);
 #endif
@@ -1581,8 +1577,7 @@ checkaddfile (file, repository, tag, srcfiles)
 	    
 	    head = RCS_getversion (rcsfile, NULL, NULL, 0);
 	    magicrev = RCS_magicrev (rcsfile, head);
-	    run_setup ("%s%s -q -N%s:%s %s", Rcsbin, RCS, tag, magicrev, rcs);
-	    if ((retcode = run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL)) != 0)
+	    if ((retcode = RCS_settag(rcs, tag, magicrev)) != 0)
 	    {
 		error (retcode == -1 ? 1 : 0, retcode == -1 ? errno : 0,
 		       "could not stub branch %s for %s", tag, rcs);
@@ -1705,9 +1700,7 @@ lock_RCS (user, rcs, rev, repository)
 	    freercsnode (&rcsfile);
 	    if (branch != NULL)
 	    {
-		run_setup ("%s%s -q -b", Rcsbin, RCS);
-		run_arg (rcs);
-		if (run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL) != 0)
+		if (RCS_setbranch (rcs, NULL) != 0)
 		{
 		    error (0, 0, "cannot change branch to default for %s",
 			   rcs);
@@ -1716,16 +1709,12 @@ lock_RCS (user, rcs, rev, repository)
 		    return (1);
 		}
 	    }
-	    run_setup ("%s%s -q -l", Rcsbin, RCS);
-	    run_arg (rcs);
-	    err = run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL);
+	    err = RCS_lock(rcs, NULL);
 	}
     }
     else
     {
-	run_setup ("%s%s -q -l%s", Rcsbin, RCS, rev ? rev : "");
-	run_arg (rcs);
-	(void) run_exec (RUN_TTY, RUN_TTY, DEVNULL, RUN_NORMAL);
+	(void) RCS_lock(rcs, rev);
     }
 
     if (err == 0)
@@ -1853,11 +1842,7 @@ ci_new_rev (rev, msg, rcs)
 
     run_setup ("%s%s -f %s%s", Rcsbin, RCS_CI, rev ? "-r" : "",
 	       rev ? rev : ""); 
-    run_args ("-m%s",
-	      (message == NULL
-	       || *message == '\0'
-	       || strcmp(message, "\n") == 0) ?
-	      "*** empty log message ***\n" : message);
+    run_args ("-m%s", make_message_rcslegal (message));
     run_arg (rcs);
     if ((retcode = run_exec (RUN_TTY, RUN_TTY, DEVNULL, RUN_NORMAL))
 	!= 0) {
@@ -1895,7 +1880,7 @@ mark_dead (file, repository, new_rev)
     /* Now add NEW_REV to the revisions in the CVSDEA file for this file.  */
     sprintf (deafilename, "%s/%s/%s", repository, CVSDEA, file);
     deafile = open_file (deafilename, "a");
-    if (fprintf (deafile, "%s\n", new_rev) == EOF)
+    if (fprintf (deafile, "%s\n", new_rev) < 0)
 	error (1, errno, "cannot write %s", deafilename);
     if (fclose (deafile) == EOF)
 	error (1, errno, "cannot close %s", deafilename);

@@ -38,7 +38,7 @@
 #include "md5.h"
 
 #ifndef lint
-static char rcsid[] = "$CVSid: @(#)update.c 1.95 94/10/22 $";
+static const char rcsid[] = "$CVSid: @(#)update.c 1.95 94/10/22 $";
 USE(rcsid)
 #endif
 
@@ -91,7 +91,7 @@ List *ignlist = (List *) NULL;
 static List *ignlist = (List *) NULL;
 #endif
 static time_t last_register_time;
-static char *update_usage[] =
+static const char *const update_usage[] =
 {
     "Usage:\n %s %s [-APQdflRpq] [-k kopt] [-r rev|-D date] [-j rev] [-I ign] [files...]\n",
     "\t-A\tReset any sticky tags/date/kopts.\n",
@@ -117,7 +117,7 @@ static char *update_usage[] =
 int
 update (argc, argv)
     int argc;
-    char *argv[];
+    char **argv;
 {
     int c, err;
     int local = 0;			/* recursive by default */
@@ -213,29 +213,21 @@ update (argc, argv)
 	    ign_setup ();
 
 	    if (local)
-		if (fprintf (to_server, "Argument -l\n") == EOF)
-		    error (1, errno, "writing to server");
+		send_arg("-l");
 	    if (quiet)
-		if (fprintf (to_server, "Argument -q\n") == EOF)
-		    error (1, errno, "writing to server");
+		send_arg("-q");
 	    if (really_quiet)
-		if (fprintf (to_server, "Argument -Q\n") == EOF)
-		    error (1, errno, "writing to server");
+		send_arg("-Q");
 	    if (update_build_dirs)
-		if (fprintf (to_server, "Argument -d\n") == EOF)
-		    error (1, errno, "writing to server");
+		send_arg("-d");
 	    if (pipeout)
-		if (fprintf (to_server, "Argument -p\n") == EOF)
-		    error (1, errno, "writing to server");
+		send_arg("-p");
 	    if (!force_tag_match)
-		if (fprintf (to_server, "Argument -f\n") == EOF)
-		    error (1, errno, "writing to server");
+		send_arg("-f");
 	    if (aflag)
-		if (fprintf (to_server, "Argument -A\n") == EOF)
-		    error (1, errno, "writing to server");
+		send_arg("-A");
 	    if (update_prune_dirs)
-		if (fprintf (to_server, "Argument -P\n") == EOF)
-		    error (1, errno, "writing to server");
+		send_arg("-P");
 	    client_prune_dirs = update_prune_dirs;
 	    option_with_arg ("-r", tag);
 	    if (date)
@@ -258,8 +250,7 @@ update (argc, argv)
 		    {
 			if (rq->status == rq_supported)
 			{
-			    if (fprintf (to_server, "Argument -u\n") == EOF)
-				error (1, errno, "writing to server");
+			    send_arg("-u");
 			}
 			break;
 		    }
@@ -290,7 +281,7 @@ update (argc, argv)
 	    failed_patches = NULL;
 	    failed_patches_count = 0;
 
-	    if (fprintf (to_server, "update\n") == EOF)
+	    if (fprintf (to_server, "update\n") < 0)
 		error (1, errno, "writing to server");
 
 	    status = get_responses_and_close ();
@@ -352,7 +343,7 @@ int
 do_update (argc, argv, xoptions, xtag, xdate, xforce, local, xbuild, xaflag,
 	   xprune, xpipeout, which, xjoin_rev1, xjoin_rev2, preload_update_dir)
     int argc;
-    char *argv[];
+    char **argv;
     char *xoptions;
     char *xtag;
     char *xdate;
@@ -494,8 +485,16 @@ update_file_proc (file, update_dir, repository, entries, srcfiles)
 		(void) write_letter (file, 'C', update_dir);
 		break;
 	    case T_NEEDS_MERGE:		/* needs merging */
-		retval = merge_file (file, repository, entries,
-				     vers, update_dir);
+		if (noexec)
+		{
+		    retval = 1;
+		    (void) write_letter (file, 'C', update_dir);
+		}
+		else
+		{
+		    retval = merge_file (file, repository, entries,
+					 vers, update_dir);
+		}
 		break;
 	    case T_MODIFIED:		/* locally modified */
 		retval = 0;
@@ -802,43 +801,6 @@ update_dirleave_proc (dir, err, update_dir)
 	free (repository);
     }
 
-    /* Clean up CVS admin dirs if we are export */
-    if (strcmp (command_name, "export") == 0)
-    {
-	run_setup ("%s -fr", RM);
-	run_arg (CVSADM);
-	(void) run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL);
-    }
-#ifdef CVSADM_ROOT
-    else if (!server_active)
-    {
-        /* If there is no CVS/Root file, add one */
-        if (!isreadable (CVSADM_ROOT))
-	{
-	    if (isfile (CVSADM_ROOT))
-	    {
-	        error (0, 0, "bad permissions %s/%s deleteing it", update_dir,
-		       CVSADM_ROOT);
-		if (unlink_file (CVSADM_ROOT) == -1)
-		{
-		    error (0, errno, "delete failed for %s/%s",
-			   update_dir, CVSADM_ROOT);
-		}
-	    }
-	    Create_Root( (char *) NULL, CVSroot );
-	}
-	else
-	{
-	    char *root = Name_Root( (char *) NULL, update_dir);
-
-	    if (root == NULL)
-	        Create_Root( (char *) NULL, CVSroot );
-	    else
-	        free (root);		/* all is well, release the storage */
-	}
-    }
-#endif /* CVSADM_ROOT */
-
     /* Prune empty dirs on the way out - if necessary */
     (void) chdir ("..");
     if (update_prune_dirs && isemptydir (dir))
@@ -870,8 +832,7 @@ isemptydir (dir)
     while ((dp = readdir (dirp)) != NULL)
     {
 	if (strcmp (dp->d_name, ".") != 0 && strcmp (dp->d_name, "..") != 0 &&
-	    strcmp (dp->d_name, CVSADM) != 0 &&
-	    strcmp (dp->d_name, OCVSADM) != 0)
+	    strcmp (dp->d_name, CVSADM) != 0)
 	{
 	    (void) closedir (dirp);
 	    return (0);
@@ -1372,18 +1333,9 @@ merge_file (file, repository, entries, vers, update_dir)
     copy_file (file, backup);
     xchmod (file, 1);
 
-    /* We pass -E to rcsmerge so that it will not indicate a conflict if
-       both things we are merging are modified the same way.  */
-    /* XXX - Do merge by hand instead of using rcsmerge, due to -k handling */
-    run_setup ("%s%s -E %s -r%s -r%s", Rcsbin, RCS_RCSMERGE, vers->options,
-	       vers->vn_user, vers->vn_rcs);
-    run_arg (vers->srcfile->path);
-    status = run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL);
-    if (status != 0
-#ifdef HAVE_RCS5
-	&& status != 1
-#endif
-	)
+    status = RCS_merge(vers->srcfile->path, 
+		       vers->options, vers->vn_user, vers->vn_rcs);
+    if (status != 0 && status != 1)
     {
 	error (0, status == -1 ? errno : 0,
 	       "could not merge revision %s of %s", vers->vn_user, user);
@@ -1433,12 +1385,7 @@ merge_file (file, repository, entries, vers, update_dir)
 	return (0);
     }
 
-    /* possibly run GREP to see if there appear to be conflicts in the file */
-    run_setup ("%s -s", GREP);
-    run_arg (RCS_MERGE_PAT);
-    run_arg (file);
-    if (status == 1 ||
-	(retcode = run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL)) == 0)
+    if (status == 1)
     {
 	if (!noexec)
 	    error (0, 0, "conflicts found in %s", user);
@@ -1721,18 +1668,8 @@ join_file (file, srcfiles, vers, update_dir, entries)
 #endif
 #endif
 
-    /* We pass -E to rcsmerge so that it will not indicate a conflict if
-       both things we are merging are modified the same way.  */
-    /* XXX - Do merge by hand instead of using rcsmerge, due to -k handling */
-    run_setup ("%s%s -E %s -r%s -r%s", Rcsbin, RCS_RCSMERGE, options,
-	       rev1, rev2);
-    run_arg (vers->srcfile->path);
-    status = run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL);
-    if (status != 0
-#ifdef HAVE_RCS5
-	&& status != 1
-#endif
-	)
+    status = RCS_merge (vers->srcfile->path, options, rev1, rev2);
+    if (status != 0 && status != 1)
     {
 	error (0, status == -1 ? errno : 0,
 	       "could not merge revision %s of %s", rev2, user);
@@ -1743,7 +1680,6 @@ join_file (file, srcfiles, vers, update_dir, entries)
     free (rev1);
     free (rev2);
 
-#ifdef HAVE_RCS5
     if (status == 1)
     {
 	char *cp = 0;
@@ -1755,7 +1691,6 @@ join_file (file, srcfiles, vers, update_dir, entries)
 	if (cp)
 	    free(cp);
     }
-#endif
 
     if (server_active)
     {
@@ -1763,8 +1698,6 @@ join_file (file, srcfiles, vers, update_dir, entries)
 	server_updated (file, update_dir, repository, SERVER_MERGED,
 			(struct stat *) NULL, (unsigned char *) NULL);
     }
-
-    return;
 }
 
 /*

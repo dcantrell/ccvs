@@ -18,7 +18,7 @@
 #include "cvs.h"
 
 #ifndef lint
-static char rcsid[] = "$CVSid: @(#)remove.c 1.39 94/10/07 $";
+static const char rcsid[] = "$CVSid: @(#)remove.c 1.39 94/10/07 $";
 USE(rcsid)
 #endif
 
@@ -32,7 +32,7 @@ static int local;
 static int removed_files;
 static int existing_files;
 
-static char *remove_usage[] =
+static const char *const remove_usage[] =
 {
     "Usage: %s %s [-flR] [files...]\n",
     "\t-f\tDelete the file before removing it.\n",
@@ -44,7 +44,7 @@ static char *remove_usage[] =
 int
 cvsremove (argc, argv)
     int argc;
-    char *argv[];
+    char **argv;
 {
     int c, err;
 
@@ -78,10 +78,9 @@ cvsremove (argc, argv)
 	start_server ();
 	ign_setup ();
 	if (local)
-	    if (fprintf (to_server, "Argument -l\n") == EOF)
-		error (1, errno, "writing to server");
+	    send_arg("-l");
 	send_files (argc, argv, local, 0);
-	if (fprintf (to_server, "remove\n") == EOF)
+	if (fprintf (to_server, "remove\n") < 0)
 	    error (1, errno, "writing to server");
         return get_responses_and_close ();
     }

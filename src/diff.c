@@ -17,7 +17,7 @@
 #include "cvs.h"
 
 #ifndef lint
-static char rcsid[] = "$CVSid: @(#)diff.c 1.61 94/10/22 $";
+static const char rcsid[] = "$CVSid: @(#)diff.c 1.61 94/10/22 $";
 USE(rcsid)
 #endif
 
@@ -45,7 +45,7 @@ static char opts[PATH_MAX];
 static int diff_errors;
 static int empty_files = 0;
 
-static char *diff_usage[] =
+static const char *const diff_usage[] =
 {
     "Usage: %s %s [-lN] [rcsdiff-options]\n",
 #ifdef CVS_DIFFDATE
@@ -65,7 +65,7 @@ static char *diff_usage[] =
 int
 diff (argc, argv)
     int argc;
-    char *argv[];
+    char **argv;
 {
     char tmp[50];
     int c, err = 0;
@@ -169,11 +169,9 @@ diff (argc, argv)
 	ign_setup ();
 
 	if (local)
-	    if (fprintf (to_server, "Argument -l\n") == EOF)
-		error (1, errno, "writing to server");
+	    send_arg("-l");
 	if (empty_files)
-	    if (fprintf (to_server, "Argument -N\n") == EOF)
-		error (1, errno, "writing to server");
+	    send_arg("-N");
 	send_option_string (opts);
 	if (diff_rev1)
 	    option_with_arg ("-r", diff_rev1);
@@ -197,7 +195,7 @@ diff (argc, argv)
 	send_files (argc, argv, local, 0);
 #endif
 
-	if (fprintf (to_server, "diff\n") == EOF)
+	if (fprintf (to_server, "diff\n") < 0)
 	    error (1, errno, "writing to server");
         err = get_responses_and_close ();
 	free (options);

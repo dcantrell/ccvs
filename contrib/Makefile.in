@@ -24,8 +24,8 @@ srcdir     = @srcdir@
 top_srcdir = @top_srcdir@
 VPATH      = @srcdir@
 
-prefix = /usr/local
-exec_prefix = $(prefix)
+prefix = @prefix@
+exec_prefix = @exec_prefix@
 
 # Where to install the executables.
 bindir = $(exec_prefix)/bin
@@ -36,25 +36,60 @@ libdir = $(prefix)/lib
 # Where to put the manual pages.
 mandir = $(prefix)/man
 
+# where to find command interpreters
+perl_path = @perl_path@
+csh_path = @csh_path@
+
 # Use cp if you don't have install.
 INSTALL = @INSTALL@
 INSTALL_DATA = @INSTALL_DATA@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
 
-DISTFILES = Makefile.in README clmerge cln_hist.pl commit_prep.pl cvs_acls.pl \
-	cvscheck cvscheck.man cvshelp.man descend descend.man dirfns \
-	intro.doc log.pl log_accum.pl mfpipe.pl rcs-to-cvs rcslock.pl sccs2rcs
+DISTFILES = \
+	ChangeLog README .cvsignore intro.doc \
+	Makefile.in clmerge.pl cln_hist.pl commit_prep.pl cvs_acls.pl \
+	cvscheck.sh cvscheck.man cvshelp.man descend.sh descend.man \
+	dirfns.shar log.pl log_accum.pl mfpipe.pl rcs-to-cvs.sh rcs2log.sh \
+	rcslock.pl sccs2rcs.csh
 
-CONTRIB_FILES = README cln_hist.pl commit_prep.pl cvs_acls.pl cvscheck cvscheck.man \
-	cvshelp.man intro.doc log.pl log_accum.pl mfpipe.pl rcs-to-cvs rcslock.pl sccs2rcs
+# files installed in $(libdir)/cvs/contrib
+#
+CONTRIB_FILES = README intro.doc cvscheck.man
 
-all: Makefile
+# things we actually build and install....
+#
+PROGS = rcs2log
+CONTRIB_PROGS = clmerge cln_hist commit_prep cvs_acls cvscheck log log_accum \
+	mfpipe rcs-to-cvs rcs2log rcslock sccs2rcs
+
+.SUFFIXES: .pl .csh
+
+.pl:
+	rm -f $@
+	sed -e 's,xPERL_PATHx,$(perl_path),' $< > $@-t
+	mv $@-t $@
+	chmod +x $@
+
+.csh:
+	rm -f $@
+	sed -e 's,xCSH_PATHx,$(csh_path),' $< > $@-t
+	mv $@-t $@
+	chmod +x $@
+
+all: Makefile $(PROGS) $(CONTRIB_PROGS)
 .PHONY: all
 
 install: all $(libdir)/cvs/contrib
 	for f in $(CONTRIB_FILES) ; do\
 		$(INSTALL_DATA) $(srcdir)/$$f $(libdir)/cvs/contrib/$$f; \
 	done
+	for f in $(CONTRIB_PROGS) ; do\
+		$(INSTALL_PROGRAM) $(srcdir)/$$f $(libdir)/cvs/contrib/$$f; \
+	done
+	for f in $(PROGS) ; do\
+		$(INSTALL_PROGRAM) $(srcdir)/$$f $(bindir)/$$f; \
+	done
+	@echo "Remember to re-run 'cvsinit' for your repository(ies)..."
 .PHONY: install
 
 $(libdir)/cvs/contrib:
@@ -75,15 +110,20 @@ clean:
 .PHONY: clean
 
 distclean: clean
-	rm -f Makefile
+	rm -f Makefile pcl-cvs/Makefile $(PROGS) $(CONTRIB_PROGS)
 .PHONY: distclean
 
 realclean: distclean
 .PHONY: realclean
 
-dist:
-	ln $(DISTFILES) ../`cat ../.fname`/contrib
-.PHONY: dist
+dist-dir:
+	mkdir ${DISTDIR}
+	for i in ${DISTFILES}; do \
+	  ln $(srcdir)/$${i} ${DISTDIR}; \
+	done
+	cd pcl-cvs; ${MAKE} dist-dir DISTDIR="../${DISTDIR}/pcl-cvs"
+.PHONY: dist-dir
 
-Makefile: Makefile.in
-	cd ..; $(SHELL) config.status
+subdir = contrib
+Makefile: ../config.status Makefile.in
+	cd .. && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= ./config.status

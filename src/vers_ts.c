@@ -9,7 +9,7 @@
 #include "cvs.h"
 
 #ifndef lint
-static char rcsid[] = "$CVSid: @(#)vers_ts.c 1.45 94/10/07 $";
+static const char rcsid[] = "$CVSid: @(#)vers_ts.c 1.45 94/10/07 $";
 USE(rcsid)
 #endif
 
@@ -200,7 +200,6 @@ time_stamp_server (file, vers_ts)
 {
     struct stat sb;
     char *cp;
-    char *ts;
 
     if (stat (file, &sb) < 0)
     {

@@ -1,4 +1,5 @@
-#!/usr/bin/perl --  # -*-Perl-*-
+#! xPERL_PATHx
+# -*-Perl-*-
 #
 # $Id$
 # Contributed by David G. Grubbs <dgg@ksr.com>

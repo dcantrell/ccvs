@@ -24,15 +24,22 @@ srcdir = @srcdir@
 top_srcdir = @top_srcdir@
 VPATH = @srcdir@
 
-prefix = /usr/local
-exec_prefix = $(prefix)
+prefix = @prefix@
+exec_prefix = @exec_prefix@
 
 infodir = $(prefix)/info
 
 INSTALL	= @INSTALL@
 INSTALL_DATA = @INSTALL_DATA@
 
-DISTFILES = Makefile.in cvs-paper.ms cvs-paper.ps cvs.texinfo cvs.ps
+DISTFILES = \
+	.cvsignore ChangeLog ChangeLog.fsf Makefile.in \
+	cvs-paper.ms cvs-paper.ps \
+	cvs.texinfo \
+	cvsclient.texi
+
+OBJDIR_DISTFILES = cvs.ps cvs.info cvs.aux \
+	cvsclient.ps cvsclient.info cvsclient.aux
 
 # these are part of the texinfo distribution
 MAKEINFO=makeinfo
@@ -62,7 +69,7 @@ all:
 install: all
 .PHONY: install
 
-doc: cvs.ps cvs-paper.ps
+doc: cvs.ps cvs-paper.ps cvsclient.ps
 
 info: cvs.info cvsclient.info
 
@@ -83,21 +90,25 @@ installdirs:
 
 dvi: cvs.dvi cvsclient.dvi
 
-cvs.dvi:
+cvs.dvi cvs.aux: cvs.texinfo
 	$(TEXI2DVI) $(srcdir)/cvs.texinfo
 
-cvsclient.dvi: cvsclient.texi
+cvsclient.dvi cvsclient.aux: cvsclient.texi
 	$(SET_TEXINPUTS) $(TEX) cvsclient.texi
 	$(SET_TEXINPUTS) $(TEX) cvsclient.texi
 	$(TEXINDEX) cvsclient.??
 	$(SET_TEXINPUTS) $(TEX) cvsclient.texi
-	rm -f cvsclient.?? cvsclient.log cvsclient.aux cvsclient.toc cvsclient.??s
+	rm -f cvsclient.?? cvsclient.log cvsclient.toc cvsclient.??s
 
 cvs.ps: cvs.dvi
 	$(DVIPS) $(DVIPSFLAGS) cvs.dvi -o cvs.ps
 
 cvs-paper.ps: cvs-paper.ms
-	$(ROFF) -t -p -ms -Tps $(srcdir)/cvs-paper.ms > $@
+	$(ROFF) -t -p -ms -Tps $(srcdir)/cvs-paper.ms > $@-t
+	mv $@-t $@
+
+cvsclient.ps: cvsclient.dvi
+	$(DVIPS) $(DVIPSFLAGS) cvsclient.dvi -o cvsclient.ps
 	
 tags:
 .PHONY: tags
@@ -114,6 +125,10 @@ clean:
 	rm -f cvs.cp cvs.fn cvs.ky cvs.pg cvs.tp cvs.vr
 	rm -f cvs.cps cvs.fns cvs.kys cvs.pgs cvs.tps cvs.vrs
 	rm -f cvs.aux cvs.dvi cvs.log cvs.toc
+	rm -f cvsclient.cp cvsclient.fn cvsclient.ky cvsclient.pg
+	rm -f cvsclient.tp cvsclient.vr cvsclient.cps cvsclient.fns
+	rm -f cvsclient.kys cvsclient.pgs cvsclient.tps cvsclient.vrs
+	rm -f cvsclient.aux cvsclient.dvi cvsclient.log cvsclient.toc
 
 .PHONY: clean
 
@@ -122,18 +137,31 @@ distclean: clean
 .PHONY: distclean
 
 realclean: distclean
-	rm -f cvs.info* cvs-paper.ps
+	rm -f cvs.info* cvs.ps cvs-paper.ps cvsclient.info* cvsclient.ps
 .PHONY: realclean
 
-dist:
-	ln $(DISTFILES) ../`cat ../.fname`/doc
-.PHONY: dist
+dist-dir: $(DISTFILES) $(OBJDIR_DISTFILES)
+	mkdir ${DISTDIR}
+	for i in ${DISTFILES}; do \
+	  ln $(srcdir)/$${i} ${DISTDIR}; \
+	done
+	ln ${OBJDIR_DISTFILES} ${DISTDIR}
+	if [ -f cvs.info-1 ]; \
+	  then ln -f cvs.info-* ${DISTDIR}; \
+	  else : Pacify Ultrix sh; \
+	fi
+	if [ -f cvsclient.info-1 ]; \
+	  then ln -f cvsclient.info-* ${DISTDIR}; \
+	  else : Pacify Ultrix sh; \
+	fi
+.PHONY: dist-dir
 
-Makefile: Makefile.in
-	cd .. ; $(SHELL) config.status
+subdir = doc
+Makefile: ../config.status Makefile.in
+	cd .. && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= ./config.status
 
-../config.status: ../configure
-	cd .. ; $(SHELL) config.status --recheck
+#../config.status: ../configure
+#	cd .. ; $(SHELL) config.status --recheck
 
-../configure: ../configure.in
-	cd $(top_srcdir) ; autoconf
+#../configure: ../configure.in
+#	cd $(top_srcdir) ; autoconf

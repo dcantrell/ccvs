@@ -12,13 +12,13 @@
 #include "cvs.h"
 
 #ifndef lint
-static char rcsid[] = "$CVSid: @(#)release.c 1.23 94/09/21 $";
+static const char rcsid[] = "$CVSid: @(#)release.c 1.23 94/09/21 $";
 USE(rcsid)
 #endif
 
 static void release_delete PROTO((char *dir));
 
-static char *release_usage[] =
+static const char *const release_usage[] =
 {
     "Usage: %s %s [-d] modules...\n",
     "\t-Q\tReally quiet.\n",
@@ -75,16 +75,13 @@ release (argc, argv)
 	ign_setup ();
 
 	if (quiet)
-	    if (fprintf (to_server, "Argument -q\n") == EOF)
-		error (1, errno, "writing to server");
+	    send_arg("-q");
 	if (really_quiet)
-	    if (fprintf (to_server, "Argument -Q\n") == EOF)
-		error (1, errno, "writing to server");
+	    send_arg("-Q");
 	if (delete)
-	    if (fprintf (to_server, "Argument -d\n") == EOF)
-		error (1, errno, "writing to server");
+	    send_arg("-d");
 
-	if (fprintf (to_server, "release\n") == EOF)
+	if (fprintf (to_server, "release\n") < 0)
 	    error (1, errno, "writing to server");
         return get_responses_and_close ();
     }
@@ -107,7 +104,7 @@ release (argc, argv)
 		    error (0, 0, "can't chdir to: %s", argv[i]);
 		continue;
 	    }
-	    if (!isdir (CVSADM) && !isdir (OCVSADM))
+	    if (!isdir (CVSADM))
 	    {
 		if (!really_quiet)
 		    error (0, 0, "no repository module: %s", argv[i]);

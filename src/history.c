@@ -179,7 +179,7 @@
 #include "cvs.h"
 
 #ifndef lint
-static char rcsid[] = "$CVSid: @(#)history.c 1.33 94/09/21 $";
+static const char rcsid[] = "$CVSid: @(#)history.c 1.33 94/09/21 $";
 USE(rcsid)
 #endif
 
@@ -201,7 +201,7 @@ static struct hrec
 static char *fill_hrec PROTO((char *line, struct hrec * hr));
 static int accept_hrec PROTO((struct hrec * hr, struct hrec * lr));
 static int select_hrec PROTO((struct hrec * hr));
-static int sort_order PROTO((CONST PTR l, CONST PTR r));
+static int sort_order PROTO((const PTR l, const PTR r));
 static int within PROTO((char *find, char *string));
 static time_t date_and_time PROTO((char *date_str));
 static void expand_modules PROTO((void));
@@ -268,11 +268,9 @@ static char **mod_list;		/* Ptr to array of ptrs to module names */
 static int mod_max;		/* Number of elements allocated */
 static int mod_count;		/* Number of elements used */
 
-static int histsize;
-static char *histdata;
 static char *histfile;		/* Ptr to the history file name */
 
-static char *history_usg[] =
+static const char *const history_usg[] =
 {
     "Usage: %s %s [-report] [-flags] [-options args] [files...]\n\n",
     "   Reports:\n",
@@ -307,12 +305,12 @@ static char *history_usg[] =
 */
 static int
 sort_order (l, r)
-    CONST PTR l;
-    CONST PTR r;
+    const PTR l;
+    const PTR r;
 {
     int i;
-    CONST struct hrec *left = (CONST struct hrec *) l;
-    CONST struct hrec *right = (CONST struct hrec *) r;
+    const struct hrec *left = (const struct hrec *) l;
+    const struct hrec *right = (const struct hrec *) r;
 
     if (user_sort)	/* If Sort by username, compare users */
     {
@@ -542,26 +540,19 @@ history (argc, argv)
 	ign_setup ();
 
 	if (tag_report)
-	    if (fprintf (to_server, "Argument -T\n") == EOF)
-		error (1, errno, "writing to server");
+	    send_arg("-T");
 	if (all_users)
-	    if (fprintf (to_server, "Argument -a\n") == EOF)
-		error (1, errno, "writing to server");
+	    send_arg("-a");
 	if (modified)
-	    if (fprintf (to_server, "Argument -c\n") == EOF)
-		error (1, errno, "writing to server");
+	    send_arg("-c");
 	if (last_entry)
-	    if (fprintf (to_server, "Argument -l\n") == EOF)
-		error (1, errno, "writing to server");
+	    send_arg("-l");
 	if (v_checkout)
-	    if (fprintf (to_server, "Argument -o\n") == EOF)
-		error (1, errno, "writing to server");
+	    send_arg("-o");
 	if (working)
-	    if (fprintf (to_server, "Argument -w\n") == EOF)
-		error (1, errno, "writing to server");
+	    send_arg("-w");
 	if (histfile)
-	    if (fprintf (to_server, "Argument -X\n") == EOF)
-		error (1, errno, "writing to server");
+	    send_arg("-X");
 	if (since_date)
 	    option_with_arg ("-D", asctime (gmtime (&since_date)));
 	if (backto[0] != '\0')
@@ -574,8 +565,7 @@ history (argc, argv)
 		option_with_arg ("-f", f1->l_file);
 	}
 	if (module_report)
-	    if (fprintf (to_server, "Argument -m\n") == EOF)
-		error (1, errno, "writing to server");
+	    send_arg("-m");
 	for (mod = mod_list; mod < &mod_list[mod_count]; ++mod)
 	    option_with_arg ("-n", *mod);
 	if (since_rev != NULL)
@@ -588,7 +578,7 @@ history (argc, argv)
 	    option_with_arg ("-x", rec_types);
 	option_with_arg ("-z", tz_name);
 
-	if (fprintf (to_server, "history\n") == EOF)
+	if (fprintf (to_server, "history\n") < 0)
 	    error (1, errno, "writing to server");
         return get_responses_and_close ();
     }
@@ -683,7 +673,8 @@ history_write (type, update_dir, revs, name, repository)
 {
     char fname[PATH_MAX], workdir[PATH_MAX], homedir[PATH_MAX];
     static char username[20];		/* !!! Should be global */
-    FILE *fp;
+    int fd;
+    char *line;
     char *slash = "", *cp, *cp2, *repos;
     int i;
     static char *tilde = "";
@@ -700,8 +691,13 @@ history_write (type, update_dir, revs, name, repository)
 	return;
     }
 
-    if (!(fp = Fopen (fname, "a")))	/* Some directory not there! */
+    if (trace)
+	fprintf (stderr, "%c-> fopen(%s,a)\n",
+		 (server_active) ? 'S' : ' ', fname);
+    if (noexec)
 	return;
+    if ((fd = open (fname, O_WRONLY | O_APPEND | O_CREAT, 0666)) < 0)
+	error (1, errno, "cannot open history file: %s", fname);
 
     repos = Short_Repository (repository);
 
@@ -809,10 +805,23 @@ history_write (type, update_dir, revs, name, repository)
 	(void) sprintf ((cp + 1), "*%x", i);
     }
 
-    if (fprintf (fp, "%c%08x|%s|%s|%s|%s|%s\n", type, time ((time_t *) NULL),
-		 username, workdir, repos, revs ? revs : "", name) == EOF)
+    if (!revs)
+	revs = "";
+    line = xmalloc (strlen (username) + strlen (workdir) + strlen (repos)
+		    + strlen (revs) + strlen (name) + 100);
+    sprintf (line, "%c%08lx|%s|%s|%s|%s|%s\n",
+	     type, (long) time ((time_t *) NULL),
+	     username, workdir, repos, revs, name);
+
+    /* Avoid some race conditions on non-Posix-compliant hosts.  */
+    if (lseek (fd, (off_t) 0, SEEK_END) == -1)
+	error (1, errno, "cannot seek to end of history file: %s", fname);
+
+    if (write (fd, line, strlen (line)) < 0)
 	error (1, errno, "cannot write to history file: %s", fname);
-    (void) fclose (fp);
+    free (line);
+    if (close (fd) != 0)
+	error (1, errno, "cannot close history file: %s", fname);
 }
 
 /*
@@ -993,8 +1002,7 @@ read_hrecs (fname)
     /* Exactly enough space for lines data */
     if (!(i = st_buf.st_size))
 	error (1, 0, "history file is empty");
-    histdata = cp = xmalloc (i + 2);
-    histsize = i;
+    cp = xmalloc (i + 2);
 
     if (read (fd, cp, i) != i)
 	error (1, errno, "cannot read log file");

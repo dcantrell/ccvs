@@ -27,7 +27,7 @@
 #include "cvs.h"
 
 #ifndef lint
-static char rcsid[] = "$CVSid: @(#)add.c 1.55 94/10/22 $";
+static const char rcsid[] = "$CVSid: @(#)add.c 1.55 94/10/22 $";
 USE(rcsid)
 #endif
 
@@ -35,7 +35,7 @@ static int add_directory PROTO((char *repository, char *dir));
 static int build_entry PROTO((char *repository, char *user, char *options,
 		        char *message, List * entries, char *tag));
 
-static char *add_usage[] =
+static const char *const add_usage[] =
 {
     "Usage: %s %s [-k rcs-kflag] [-m message] files...\n",
     "\t-k\tUse \"rcs-kflag\" to add the file with the specified kflag.\n",
@@ -46,7 +46,7 @@ static char *add_usage[] =
 int
 add (argc, argv)
     int argc;
-    char *argv[];
+    char **argv;
 {
     char *message = NULL;
     char *user;
@@ -125,12 +125,12 @@ add (argc, argv)
 	      free (rcsdir);
 	    }
 	send_files (argc, argv, 0, 0);
-	if (fprintf (to_server, "add\n") == EOF)
+	if (fprintf (to_server, "add\n") < 0)
 	  error (1, errno, "writing to server");
 	return get_responses_and_close ();
       }
 
-    entries = ParseEntries (0);
+    entries = Entries_Open (0);
 
     /* walk the arg list adding files/dirs */
     for (i = 0; i < argc; i++)
@@ -319,7 +319,8 @@ add (argc, argv)
     if (added_files)
 	error (0, 0, "use 'cvs commit' to add %s permanently",
 	       (added_files == 1) ? "this file" : "these files");
-    dellist (&entries);
+
+    Entries_Close (entries);
 
     if (message)
 	free (message);
@@ -349,9 +350,9 @@ add_directory (repository, dir)
 	       "directory %s not added; must be a direct sub-directory", dir);
 	return (1);
     }
-    if (strcmp (dir, CVSADM) == 0 || strcmp (dir, OCVSADM) == 0)
+    if (strcmp (dir, CVSADM) == 0)
     {
-	error (0, 0, "cannot add a `%s' or a `%s' directory", CVSADM, OCVSADM);
+	error (0, 0, "cannot add a `%s' directory", CVSADM);
 	return (1);
     }
 
@@ -369,10 +370,9 @@ add_directory (repository, dir)
 	error (0, errno, "cannot chdir to %s", dir);
 	return (1);
     }
-    if (!server_active && (isfile (CVSADM) || isfile (OCVSADM)))
+    if (!server_active && isfile (CVSADM))
     {
-	error (0, 0,
-	       "%s/%s (or %s/%s) already exists", dir, CVSADM, dir, OCVSADM);
+	error (0, 0, "%s/%s already exists", dir, CVSADM);
 	goto out;
     }
 
@@ -419,14 +419,14 @@ add_directory (repository, dir)
 	}
 #endif
 
-	omask = umask (2);
+	omask = umask ((mode_t) 2);
 	if (mkdir (rcsdir, 0777) < 0)
 	{
 	    error (0, errno, "cannot mkdir %s", rcsdir);
-	    (void) umask ((int) omask);
+	    (void) umask (omask);
 	    goto out;
 	}
-	(void) umask ((int) omask);
+	(void) umask (omask);
 
 	/*
 	 * Set up an update list with a single title node for Update_Logfile

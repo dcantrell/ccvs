@@ -1,3 +1,33 @@
+Fri Jul 14 23:30:33 1995  Jim Blandy  <jimb@totoro.cyclic.com>
+
+	* Makefile.in (prefix): Don't forget to give this a value.
+
+Sun Jul  9 21:22:56 1995  Karl Fogel  <kfogel@floss.cyclic.com>
+
+        Greg Woods' change:
+        
+        * cvsbug.8, cvsinit.8: new files.
+
+Sun Jul  9 19:03:00 1995  Greg A. Woods  <woods@most.weird.com>
+        
+	* cvs.1: document 'cvs status [-qQ]'
+	- note reference to cvsinit(8) and cvsbug(8)
+	(from previous local changes)
+
+	* Makefile.in: add support for installing in man8, and new cvsbug
+        and cvsinit pages (from previous local changes)
+        
+Sat May 27 08:46:00 1995  Jim Meyering  (meyering@comco.com)
+
+	* Makefile.in (Makefile): Regenerate only Makefile in current
+	directory when Makefile.in is out of date.  Depend on ../config.status.
+
+Fri Apr 28 22:51:31 1995  Jim Blandy  <jimb@totoro.bio.indiana.edu>
+
+	* Makefile.in (DISTFILES): Updated.
+	(dist-dir): Renamed from dist; changed to work with DISTDIR
+	variable passed from parent.
+
 Fri Jul 15 12:58:14 1994  Ian Lance Taylor  (ian@sanguine.cygnus.com)
 
 	* Makefile.in (install): Do not depend upon installdirs.

@@ -1,3 +1,62 @@
+Tue Jul 18 21:18:00 1995  Jim Blandy <jimb@cyclic.com>
+
+	* system.h: Include <sys/param.h> only if HAVE_SYS_PARAM_H
+	is #defined.  We've added a test to configure.in to #define this
+	on most systems.
+
+Thu Jul 13 11:22:21 1995  Jim Meyering  (meyering@comco.com)
+
+	* xgetwd.c: New file.
+	* Makefile.in (SOURCES): Add xgetwd.c
+	(OBJECTS): Add xgetwd.o.
+
+Wed Jul 12 09:18:49 1995  Jim Meyering  (meyering@comco.com)
+
+	* Makefile.in (OBJECTS): Remove fnmatch.o.  Now configure adds it
+	to LIBOBJS when necessary.
+
+Fri Jun 30 16:27:18 1995  James Kingdon  <kingdon@harvey.cyclic.com>
+
+	* rename.c (rename): If MVDIR is not defined, just give an error
+	on attempt to rename a directory.
+
+Thu Jun 29 00:46:31 1995  James Kingdon  <kingdon@harvey.cyclic.com>
+
+	* system.h: Check HAVE_SYS_TIMEB_H not non-existent HAVE_TIMEB_H.
+
+	* system.h: Don't define alloca if it is already defined.
+
+Wed Jun 28 15:24:51 1995  James Kingdon  <kingdon@harvey.cyclic.com>
+
+	* system.h: If NeXT, define utimbuf ourself.
+
+Mon May 29 22:32:40 1995  J.T. Conklin  <jtc@rtl.cygnus.com>
+
+	* system.h: Handle time and directory headers as recommended in
+	the autoconf manual.
+	Undefine the S_FOO() macros if STAT_MACROS_BROKEN is set.
+	Don't define mode_t, as it is handled by config.h.
+
+Sat May 27 08:46:00 1995  Jim Meyering  (meyering@comco.com)
+
+	* Makefile.in (Makefile): Regenerate only Makefile in current
+	directory when Makefile.in is out of date.  Depend on ../config.status.
+
+Fri Apr 28 22:49:25 1995  Jim Blandy  <jimb@totoro.bio.indiana.edu>
+
+	* Makefile.in (SOURCES, OBJECTS): Updated.
+	(HEADERS): New variable.
+	(DISTFILES): Updated.
+	(dist-dir): Renamed from dist; changed to work with DISTDIR
+	variable passed from parent.
+
+Wed Feb  8 06:37:53 1995  Roland McGrath  <roland@churchy.gnu.ai.mit.edu>
+
+	* system.h (S_IRUSR et al): Define if not already defined.
+
+	* waitpid.c [HAVE_CONFIG_H]: Include "config.h".
+	(ualloc): Return OLDPTR rather than running off the end.
+
 Mon Aug 22 22:48:19 1994  Ken Raeburn  (raeburn@kr-pc.cygnus.com)
 
 	* error.c (strerror): Replaced conditional static definition

@@ -46,14 +46,21 @@
 #endif
 
 #ifndef lint
-char rcsid[] = "$CVSid: @(#)main.c 1.78 94/10/07 $\n";
+static const char rcsid[] = "$CVSid: @(#)main.c 1.78 94/10/07 $\n";
 USE(rcsid)
 #endif
 
-extern char *getenv ();
-
 char *program_name;
 char *command_name = "";
+
+/*
+ * Since some systems don't define this...
+ */
+#ifndef MAXHOSTNAMELEN
+#define MAXHOSTNAMELEN  256
+#endif
+
+char hostname[MAXHOSTNAMELEN];
 
 int use_editor = TRUE;
 int use_cvsrc = TRUE;
@@ -95,7 +102,7 @@ int status PROTO((int argc, char **argv));
 int tag PROTO((int argc, char **argv));
 int update PROTO((int argc, char **argv));
 
-struct cmd
+const struct cmd
 {
     char *fullname;		/* Full name of the function (e.g. "commit") */
     char *nick1;		/* alternate name (e.g. "ci") */
@@ -131,7 +138,7 @@ struct cmd
     { NULL, NULL, NULL, NULL, NULL },
 };
 
-static char *usg[] =
+static const char *const usg[] =
 {
     "Usage: %s [cvs-options] command [command-options] [files...]\n",
     "    Where 'cvs-options' are:\n",
@@ -179,11 +186,11 @@ main_cleanup ()
 int
 main (argc, argv)
     int argc;
-    char *argv[];
+    char **argv;
 {
     extern char *version_string;
     char *cp;
-    struct cmd *cm;
+    const struct cmd *cm;
     int c, help = FALSE, err = 0;
     int rcsbin_update_env, cvs_update_env = 0;
     char tmp[PATH_MAX];
@@ -216,6 +223,8 @@ main (argc, argv)
     if ((cp = getenv (EDITOR1_ENV)) != NULL)
  	Editor = cp;
     else if ((cp = getenv (EDITOR2_ENV)) != NULL)
+	Editor = cp;
+    else if ((cp = getenv (EDITOR3_ENV)) != NULL)
 	Editor = cp;
     if ((cp = getenv (CVSROOT_ENV)) != NULL)
     {
@@ -547,11 +556,21 @@ error 0 %s: no such user\n", user);
     else
     {
 	command_name = cm->fullname;	/* Global pointer for later use */
+
+	/* make sure we clean up on error */
 	(void) SIG_register (SIGHUP, main_cleanup);
 	(void) SIG_register (SIGINT, main_cleanup);
 	(void) SIG_register (SIGQUIT, main_cleanup);
 	(void) SIG_register (SIGPIPE, main_cleanup);
 	(void) SIG_register (SIGTERM, main_cleanup);
+
+	(void) SIG_register (SIGHUP, Lock_Cleanup);
+	(void) SIG_register (SIGINT, Lock_Cleanup);
+	(void) SIG_register (SIGQUIT, Lock_Cleanup);
+	(void) SIG_register (SIGPIPE, Lock_Cleanup);
+	(void) SIG_register (SIGTERM, Lock_Cleanup);
+
+	gethostname(hostname, sizeof (hostname));
 
 #ifdef HAVE_SETVBUF
 	/*
@@ -616,7 +635,7 @@ Make_Date (rawdate)
 
 void
 usage (cpp)
-    register char **cpp;
+    register const char *const *cpp;
 {
     (void) fprintf (stderr, *cpp++, program_name, command_name);
     for (; *cpp; cpp++)

@@ -13,8 +13,8 @@
 #include "cvs.h"
 
 #ifndef lint
-static char rcsid[] = "$CVSid: @(#)version.c 1.15 94/10/03 $";
+static const char rcsid[] = "$CVSid: @(#)version.c 1.15 94/10/03 $";
 USE(rcsid)
 #endif
 
-char *version_string = "\nConcurrent Versions System (CVS) 1.4 Alpha-2(+1)\n";
+char *version_string = "\nConcurrent Versions System (CVS) 1.5.1\n";

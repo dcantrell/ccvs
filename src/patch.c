@@ -15,7 +15,7 @@
 #include "cvs.h"
 
 #ifndef lint
-static char rcsid[] = "$CVSid: @(#)patch.c 1.57 94/09/30 $";
+static const char rcsid[] = "$CVSid: @(#)patch.c 1.57 94/09/30 $";
 USE(rcsid)
 #endif
 
@@ -23,7 +23,7 @@ static RETSIGTYPE patch_cleanup PROTO((void));
 static Dtype patch_dirproc PROTO((char *dir, char *repos, char *update_dir));
 static int patch_fileproc PROTO((char *file, char *update_dir, char *repository,
 			   List * entries, List * srcfiles));
-static int patch_proc PROTO((int *pargc, char *argv[], char *xwhere,
+static int patch_proc PROTO((int *pargc, char **argv, char *xwhere,
 		       char *mwhere, char *mfile, int shorten,
 		       int local_specified, char *mname, char *msg));
 
@@ -39,7 +39,7 @@ static char *date2 = NULL;
 static char tmpfile1[L_tmpnam+1], tmpfile2[L_tmpnam+1], tmpfile3[L_tmpnam+1];
 static int unidiff = 0;
 
-static char *patch_usage[] =
+static const char *const patch_usage[] =
 {
     "Usage: %s %s [-Qflq] [-c|-u] [-s|-t] [-V %%d]\n",
     "    -r rev|-D date [-r rev2 | -D date2] modules...\n",
@@ -59,7 +59,7 @@ static char *patch_usage[] =
 int
 patch (argc, argv)
     int argc;
-    char *argv[];
+    char **argv;
 {
     register int i;
     int c;
@@ -170,26 +170,19 @@ patch (argc, argv)
 	ign_setup ();
 
 	if (local)
-	    if (fprintf (to_server, "Argument -l\n") == EOF)
-		error (1, errno, "writing to server");
-	if (really_quiet)
-	    if (fprintf (to_server, "Argument -Q\n") == EOF)
-		error (1, errno, "writing to server");
+	    send_arg("-l");
 	if (quiet)
-	    if (fprintf (to_server, "Argument -q\n") == EOF)
-		error (1, errno, "writing to server");
+	    send_arg("-q");
+	if (really_quiet)
+	    send_arg("-Q");
 	if (force_tag_match)
-	    if (fprintf (to_server, "Argument -f\n") == EOF)
-		error (1, errno, "writing to server");
+	    send_arg("-f");
 	if (toptwo_diffs)
-	    if (fprintf (to_server, "Argument -t\n") == EOF)
-		error (1, errno, "writing to server");
+	    send_arg("-t");
 	if (patch_short)
-	    if (fprintf (to_server, "Argument -s\n") == EOF)
-		error (1, errno, "writing to server");
+	    send_arg("-s");
 	if (unidiff)
-	    if (fprintf (to_server, "Argument -u\n") == EOF)
-		error (1, errno, "writing to server");
+	    send_arg("-u");
 
 	if (rev1)
 	    option_with_arg ("-r", rev1);
@@ -208,7 +201,7 @@ patch (argc, argv)
 		send_arg (argv[i]);
 	}
 
-	if (fprintf (to_server, "rdiff\n") == EOF)
+	if (fprintf (to_server, "rdiff\n") < 0)
 	    error (1, errno, "writing to server");
         return get_responses_and_close ();
     }
@@ -239,7 +232,7 @@ static int
 patch_proc (pargc, argv, xwhere, mwhere, mfile, shorten, local_specified,
 	    mname, msg)
     int *pargc;
-    char *argv[];
+    char **argv;
     char *xwhere;
     char *mwhere;
     char *mfile;

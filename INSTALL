@@ -1,54 +1,70 @@
 First, read the README file.  If you're still happy...
 
-The CVS 1.4 Alpha release has been tested on the following platforms.  Your
-mileage may vary.  Please send updates to this list using the "cvsbug"
-program, specifying the "portability" category.  If your installation
-failed, you may need to run "cvsbug" directly from the "src" directory as
-"src/cvsbug.sh".
+CVS has been tested on the following platforms.  The most recent
+version of CVS reported to have been tested is indicated, but more
+recent versions of CVS probably will work too.  Please send updates to
+this list to info-cvs@cyclic.com.
 
-	DEC Alpha running OSF/1 version 1.3 using cc
-	DEC Alpha running OSF/1 version 2.1
-	HP 9000/710 running HP-UX 8.07A using gcc
-	HP 9000/715 running HP-UX 9.01 using gcc
-	Gateway P5-66 (pentium) running Solaris 2.4 using gcc
-	IBM RS/6000 running AIX 3.2.5 using gcc and cc
-	IBM RS/6000 running AIX 4.1 using gcc and cc (*)
-	PC Clone running UnixWare v1.1.1 using gcc
-	PC Clone running Linux 1.1.48 using gcc
-	SGI Indigo 2 running Irix 4.0.5H using gcc and cc (**)
-	Sun SPARCstation 1+ running SunOS 4.1.3 using gcc and cc
-	Sun SPARCstation 10 running Solaris 2.3 using gcc and cc
-	Sun SPARCstation 10 running Solaris 2.4 using gcc
-	Sun SPARCstation 10 running SunOS 4.1.3_U1 using gcc and cc
+Alpha:
+	DEC Alpha running OSF/1 version 1.3 using cc (about 1.4A2)
+	DEC Alpha running OSF/1 version 2.0 (1.4.90)
+	DEC Alpha running OSF/1 version 2.1 (about 1.4A2)
+HPPA:
+	HP 9000/710 running HP-UX 8.07A using gcc (about 1.4A2)
+	HP 9000/715 running HP-UX 9.01 using gcc (about 1.4A2)
+	NextSTEP 3.3 (1.4.92, a few tweaks needed)
+i386 family:
+	Gateway P5-66 (pentium) running Solaris 2.4 using gcc (about 1.4A2)
+	PC Clone running UnixWare v1.1.1 using gcc (about 1.4A2)
+	PC Clone running ISC 4.0.1 (1.4.93) (footnote 5)
+        PC Clone running Fintronic Linux 1.2.5 (1.5)
+        PC Clone running BSDI 2.0 (1.4.93) (footnote 6)
+	NextSTEP 3.3 (1.4.92, a few tweaks needed)
+	SCO Unix 3.2.4.2 (1.4.93) (footnote 4)
+m68k:
+	NextSTEP 3.3 (1.4.92, a few tweaks needed)
+MIPS:
+	DECstation running Ultrix 4.2a (1.4.90)
+	DECstation running Ultrix 4.3 (1.5)
+	SGI running Irix 4.0.5H using gcc and cc (about 1.4A2) (footnote 2)
+	SGI running Irix 5.3 (1.4.93)
+	SGI running Irix-6 (about 1.4.90) (footnote 3)
+PowerPC or RS/6000:
+	IBM RS/6000 running AIX 3.2.5 using gcc and cc (about 1.4A2)
+	IBM RS/6000 running AIX 4.1 using gcc and cc (about 1.4A2) (footnote 1)
+SPARC:
+	Sun SPARC running SunOS 4.1.3 (1.4.92)
+	Sun SPARCstation 10 running Solaris 2.3 using gcc and cc (about 1.4A2)
+	Sun SPARCstation 10 running Solaris 2.4 using gcc (about 1.4A2)
+	NextSTEP 3.3 (1.4.92, a few tweaks needed)
 
-NOTE:	CVS relies on having some form of the opendir/readdir/closedir
-	functions being available.  Some older systems do not support these
-	calls.  CVS will not work with these systems unless a suitable
-	readdir implementation is installed on the system.  Take a look at
-	the file "contrib/dirfns", which contains some code that might add
-	this support to your system.
-
-(*)	AIX 4.1 systems fail to run "configure" due to bugs in their
+(footnote 1)
+	AIX 4.1 systems fail to run "configure" due to bugs in their
 	"/bin/sh" implementation.  You might want to try feeding the
-	configure script to "bash" ported to AIX 4.1.
+	configure script to "bash" ported to AIX 4.1.  (about 1.4A2).
 
-(**)	Some Irix 4.0 systems may core dump in malloc while running
+(footnote 2)
+	Some Irix 4.0 systems may core dump in malloc while running
 	CVS.  We believe this is a bug in the Irix malloc.  You can
 	workaround this bug by linking with "-lmalloc" if necessary.
+	(about 1.4A2).
+
+(footnote 3)
+        There are some warnings about pointer casts which can safely be
+        ignored.  (about 1.4.90).
+
+(footnote 4) Comment out the include of sys/time.h in src/server.c. (1.4.93)
+	You also may have to make sure TIME_WITH_SYS_TIME is undef'ed.
+
+(footnote 5) Add "#include <sys/bsdtypes.h>" to src/server.c. (1.4.93)
+
+(footnote 6) Change /usr/tmp to /var/tmp in src/server.c (2 places) (1.4.93).
 
 -------------------------------------------------------------------------------
 
 Installation:
 
-1)  Edit the src/options.h header file.  Appropriate things to look at may be
-    the invocation locations of programs like DIFF, GREP, RM, and SORT.
-    Also glance at the default values for the environment variables that
-    CVS uses, in particular, the RCSBIN variable, which holds the path to
-    where the RCS programs live on your system.  The likelihood is that you
-    don't have to change anything here, except perhaps adding the -a
-    option to DIFF if you are using GNU diff (which is strongly recommended).
-
-2)  Run "configure":
+1)  Run "configure":
 
 	$ ./configure
 
@@ -61,15 +77,29 @@ Installation:
     value is "/usr/local", with binaries in sub-directory "bin", manual
     pages in sub-directory "man", and libraries in sub-directory "lib".
 
-    This release of CVS also requires RCS commands to be installed in the
-    user's PATH (or a path you have configured in src/options.h).  If you
-    don't have RCS, you will need to get it from GNU as well.  It is best
-    to get the version 5.6 (or later) version of RCS, available from
-    prep.ai.mit.edu in the file pub/gnu/rcs-5.6.tar.Z.  Along with RCS, you
-    will want to run GNU diff.  This will allow revision control of files
-    with binary data (a real nice feature).  You will need at least version
-    1.15 of GNU diff for this to work.  Be sure that you configure RCS to
-    work correctly with GNU diff to avoid other configuration problems.
+    This release of CVS also requires RCS commands to be installed in
+    the user's PATH (or a path you have configured in src/options.h).
+    If you don't have RCS, you will need to get it from GNU as well.
+    It is best to get the version 5.6.0.1 (or later) version of RCS,
+    available from prep.ai.mit.edu in the file
+    pub/gnu/rcs-5.6.0.1.tar.Z.  It is best (although not essential) to
+    avoid RCS versions 5.6.[5-7] beta because the rcsmerge therein
+    defaults to -A instead of -E which affects the way CVS handles
+    conflicts (this is fixed in RCS 5.6.8 and RCS 5.7).  Along with
+    RCS, you will want to run GNU diff.  This will allow revision
+    control of files with binary data (a real nice feature).  You will
+    need at least version 1.15 of GNU diff for this to work.  Be sure
+    that you configure RCS to work correctly with GNU diff to avoid
+    other configuration problems.  If you are running RCS 5.7, you
+    should be aware that you must supply a log message containing at
+    least one non-whitespace character (CVS catches some, but not all,
+    cases).  This has always been a problem but the symptoms are
+    apparently more severe with RCS 5.7.  This is expected to be fixed
+    in a future CVS release.
+
+    If you are using the remote client, you will need a version of
+    patch which understands unidiffs (such as any recent version of
+    GNU patch).
 
     NOTE: The configure program will cache the results of the previous
     configure execution.  If you need to re-run configure from scratch, you
@@ -100,17 +130,24 @@ Installation:
 	*know* you have to if "cvs checkout" core dumps in some ndbm
 	function).  You can do this as follows:
 
-	    $ CC=gcc DEFS=-fpcc-struct-return ./configure
+	    $ CC='gcc -fpcc-struct-return' ./configure
 
 	for sh, bash, and ksh users and:
 
-	    % setenv CC gcc
-	    % setenv DEFS -fpcc-struct-return
+	    % setenv CC 'gcc -fpcc-struct-return'
 	    % ./configure
 
 	for csh and tcsh users.
 
     END OF NOTE FOR NDBM GUNK.
+
+2)  Edit src/options.h.  Appropriate things to look at may be the
+    invocation locations of programs like DIFF, GREP, RM, and SORT.
+    Also glance at the default values for the environment variables
+    that CVS uses, in particular, the RCSBIN variable, which holds the
+    path to where the RCS programs live on your system.  The
+    likelihood is that you don't have to change anything here, except
+    perhaps adding the -a option to DIFF if you are using GNU diff.
 
 3)  Try to build it:
 
@@ -197,8 +234,7 @@ Installation:
     can usually be retrieved with the "cvs checkout modules" command, and
     definitely with the "cvs checkout CVSROOT" command.  See cvs(5).
 
-11) Read the ChangeLog file to see what's new.  REALLY!  I use the
-    ChangeLog file as the Release Notes.
+11) Read the NEWS file to see what's new.
 
 12) Hack away.
 

@@ -140,11 +140,8 @@ mkdir_p (dir)
 	    q[p - dir] = '\0';
 	    if (mkdir (q, 0777) < 0)
 	    {
-		/*
-		 * Is there ever another error code (EACCES?) in any case
-		 * where the directory already exists?
-		 */
-		if (errno != EEXIST)
+		if (errno != EEXIST
+		    && (errno != EACCES || !isdir(q)))
 		{
 		    retval = errno;
 		    goto done;
@@ -378,18 +375,22 @@ dirswitch (dir, repos)
 	&& status != EEXIST)
     {
 	pending_error = status;
+	pending_error_text = malloc (80 + strlen(dirname));
+	sprintf(pending_error_text, "E cannot mkdir %s", dirname);
 	return;
     }
     if (chdir (dirname) < 0)
     {
 	pending_error = errno;
+	pending_error_text = malloc (80 + strlen(dirname));
+	sprintf(pending_error_text, "E cannot change to %s", dirname);
 	return;
     }
     /*
      * This is pretty much like calling Create_Admin, but Create_Admin doesn't
      * report errors in the right way for us.
      */
-    if (mkdir ("CVS", 0777) < 0)
+    if (mkdir (CVSADM, 0777) < 0)
     {
 	if (errno == EEXIST)
 	    /* Don't create the files again.  */
@@ -403,7 +404,7 @@ dirswitch (dir, repos)
 	pending_error = errno;
 	return;
     }
-    if (fprintf (f, "%s\n", repos) == EOF)
+    if (fprintf (f, "%s\n", repos) < 0)
     {
 	pending_error = errno;
 	fclose (f);
@@ -418,11 +419,15 @@ dirswitch (dir, repos)
     if (f == NULL)
     {
 	pending_error = errno;
+	pending_error_text = malloc (80 + strlen(CVSADM_ENT));
+	sprintf(pending_error_text, "E cannot open %s", CVSADM_ENT);
 	return;
     }
     if (fclose (f) == EOF)
     {
 	pending_error = errno;
+	pending_error_text = malloc (80 + strlen(CVSADM_ENT));
+	sprintf(pending_error_text, "E cannot close %s", CVSADM_ENT);
 	return;
     }
     free (dirname);
@@ -459,14 +464,16 @@ serve_directory (arg)
 	}
 	else
 	    pending_error = ENOMEM;
-	return;
     }
-    if (repos == NO_MEM_ERROR)
+    else if (repos == NO_MEM_ERROR)
     {
 	pending_error = ENOMEM;
-	return;
     }
-    dirswitch (arg, repos);
+    else
+    {
+	dirswitch (arg, repos);
+	free (repos);
+    }
 }
 
 static void
@@ -478,11 +485,15 @@ serve_static_directory (arg)
     if (f == NULL)
     {
 	pending_error = errno;
+	pending_error_text = malloc (80 + strlen(CVSADM_ENTSTAT));
+	sprintf(pending_error_text, "E cannot open %s", CVSADM_ENTSTAT);
 	return;
     }
     if (fclose (f) == EOF)
     {
 	pending_error = errno;
+	pending_error_text = malloc (80 + strlen(CVSADM_ENTSTAT));
+	sprintf(pending_error_text, "E cannot close %s", CVSADM_ENTSTAT);
 	return;
     }
 }
@@ -496,16 +507,22 @@ serve_sticky (arg)
     if (f == NULL)
     {
 	pending_error = errno;
+	pending_error_text = malloc (80 + strlen(CVSADM_TAG));
+	sprintf(pending_error_text, "E cannot open %s", CVSADM_TAG);
 	return;
     }
-    if (fprintf (f, "%s\n", arg) == EOF)
+    if (fprintf (f, "%s\n", arg) < 0)
     {
 	pending_error = errno;
+	pending_error_text = malloc (80 + strlen(CVSADM_TAG));
+	sprintf(pending_error_text, "E cannot write to %s", CVSADM_TAG);
 	return;
     }
     if (fclose (f) == EOF)
     {
 	pending_error = errno;
+	pending_error_text = malloc (80 + strlen(CVSADM_TAG));
+	sprintf(pending_error_text, "E cannot close %s", CVSADM_TAG);
 	return;
     }
 }
@@ -591,8 +608,7 @@ receive_file (size, file, gzipped)
      char *file;
      int gzipped;
 {
-    char *buf, *p;
-    int fd, bytes_left, nbytes;
+    int fd;
     char *arg = file;
     pid_t gzip_pid = 0;
     int gzip_status;
@@ -654,15 +670,11 @@ static void
 serve_modified (arg)
      char *arg;
 {
-    int fd;
-    char *buf = NULL;
-    char *p;
-
     int size;
     char *size_text;
     char *mode_text;
 
-    int nbytes, bytes_left, gzipped = 0;
+    int gzipped = 0;
 
     if (error_pending ()) return;
 
@@ -685,8 +697,8 @@ serve_modified (arg)
 	else
 	    pending_error = ENOMEM;
 	return;
-    }
-    if (mode_text == NO_MEM_ERROR)
+    } 
+    else if (mode_text == NO_MEM_ERROR)
     {
 	pending_error = ENOMEM;
 	return;
@@ -710,8 +722,8 @@ serve_modified (arg)
 	else
 	    pending_error = ENOMEM;
 	return;
-    }
-    if (size_text == NO_MEM_ERROR)
+    } 
+    else if (size_text == NO_MEM_ERROR)
     {
 	pending_error = ENOMEM;
 	return;
@@ -772,6 +784,8 @@ serve_lost (arg)
 	if (fd < 0 || close (fd) < 0)
 	{
 	    pending_error = errno;
+	    pending_error_text = malloc (80 + strlen(arg));
+	    sprintf(pending_error_text, "E cannot open %s", arg);
 	    return;
 	}
 	/*
@@ -783,6 +797,8 @@ serve_lost (arg)
 	if (utime (arg, &ut) < 0)
 	{
 	    pending_error = errno;
+	    pending_error_text = malloc (80 + strlen(arg));
+	    sprintf(pending_error_text, "E cannot utime %s", arg);
 	    return;
 	}
     }
@@ -884,15 +900,19 @@ server_write_entries ()
 	if (f == NULL)
 	{
 	    pending_error = errno;
+	    pending_error_text = malloc (80 + strlen(CVSADM_ENT));
+	    sprintf(pending_error_text, "E cannot open %s", CVSADM_ENT);
 	}
     }
     for (p = entries; p != NULL;)
     {
 	if (!error_pending ())
 	{
-	    if (fprintf (f, "%s\n", p->entry) == EOF)
+	    if (fprintf (f, "%s\n", p->entry) < 0)
 	    {
 		pending_error = errno;
+		pending_error_text = malloc (80 + strlen(CVSADM_ENT));
+		sprintf(pending_error_text, "E cannot write to %s", CVSADM_ENT);
 	    }
 	}
 	free (p->entry);
@@ -904,6 +924,8 @@ server_write_entries ()
     if (f != NULL && fclose (f) == EOF && !error_pending ())
     {
 	pending_error = errno;
+	pending_error_text = malloc (80 + strlen(CVSADM_ENT));
+	sprintf(pending_error_text, "E cannot close %s", CVSADM_ENT);
     }
 }
 
@@ -1102,11 +1124,7 @@ allocate_buffer_datas ()
 
 /* Get a new buffer_data structure.  */
 
-static
-#ifdef __GNUC__
-__inline__
-#endif
-struct buffer_data *
+static inline struct buffer_data *
 get_buffer_data ()
 {
     struct buffer_data *ret;
@@ -1207,11 +1225,7 @@ buf_output0 (buf, string)
 
 /* Add a single character to BUF.  */
 
-static 
-#ifdef __GNUC__
-__inline__
-#endif
-void
+static inline void
 buf_append_char (buf, ch)
     struct buffer *buf;
     int ch;
@@ -1392,11 +1406,7 @@ buf_send_counted (buf)
 
 /* Append a list of buffer_data structures to an buffer.  */
 
-static
-#ifdef __GNUC__
-__inline__
-#endif
-void
+static inline void
 buf_append_data (buf, data, last)
      struct buffer *buf;
      struct buffer_data *data;
@@ -1872,7 +1882,7 @@ static void
 outbuf_memory_error (buf)
     struct buffer *buf;
 {
-    static char msg[] = "E Fatal error\n\
+    static const char msg[] = "E Fatal server error\n\
 error ENOMEM Virtual memory exhausted.\n";
     if (command_pid > 0)
 	kill (command_pid, SIGTERM);
@@ -1897,6 +1907,9 @@ input_memory_error (buf)
 }
 
 /* Execute COMMAND in a subprocess with the approriate funky things done.  */
+
+static struct fd_set_wrapper { fd_set fds; } command_fds_to_drain;
+static int max_command_fd;
 
 static void
 do_cvs_command (command)
@@ -2022,13 +2035,18 @@ do_cvs_command (command)
 	int num_to_check;
 	int count_needed = 0;
 
+	FD_ZERO (&command_fds_to_drain.fds);
 	num_to_check = stdout_pipe[0];
+	FD_SET (stdout_pipe[0], &command_fds_to_drain.fds);
 	if (stderr_pipe[0] > num_to_check)
 	  num_to_check = stderr_pipe[0];
+	FD_SET (stderr_pipe[0], &command_fds_to_drain.fds);
 	if (protocol_pipe[0] > num_to_check)
 	  num_to_check = protocol_pipe[0];
+	FD_SET (protocol_pipe[0], &command_fds_to_drain.fds);
 	if (STDOUT_FILENO > num_to_check)
 	  num_to_check = STDOUT_FILENO;
+	max_command_fd = num_to_check;
 	/*
 	 * File descriptors are numbered from 0, so num_to_check needs to
 	 * be one larger than the largest descriptor.
@@ -2387,6 +2405,15 @@ server_register (name, version, timestamp, options, tag, date, conflict)
 {
     int len;
 
+    if (trace)
+    {
+	(void) fprintf (stderr,
+			"%c-> server_register(%s, %s, %s, %s, %s, %s, %s)\n",
+			(server_active) ? 'S' : ' ', /* silly */
+			name, version, timestamp, options, tag,
+			date, conflict);
+    }
+
     if (options == NULL)
 	options = "";
 
@@ -2474,9 +2501,7 @@ server_scratch_entry_only ()
 
 /* Print a new entries line, from a previous server_register.  */
 static void
-new_entries_line (file, repository)
-    char *file;
-    char *repository;
+new_entries_line ()
 {
     if (entries_line)
     {
@@ -2525,7 +2550,7 @@ server_checked_in (file, update_dir, repository)
 	output_dir (update_dir, repository);
 	buf_output0 (&protocol, file);
 	buf_output (&protocol, "\n", 1);
-	new_entries_line (file, repository);
+	new_entries_line ();
     }
     buf_send_counted (&protocol);
 }
@@ -2551,7 +2576,7 @@ server_update_entries (file, update_dir, repository, updated)
     output_dir (update_dir, repository);
     buf_output0 (&protocol, file);
     buf_output (&protocol, "\n", 1);
-    new_entries_line (file, repository);
+    new_entries_line ();
     buf_send_counted (&protocol);
 }
 
@@ -2656,7 +2681,7 @@ serve_co (arg)
     if (print_pending_error ())
 	return;
 
-    if (!isdir ("CVS"))
+    if (!isdir (CVSADM))
     {
 	/*
 	 * The client has not sent a "Repository" line.  Check out
@@ -2798,15 +2823,15 @@ server_updated (file, update_dir, repository, updated, file_info, checksum)
 	buf_output0 (&protocol, file);
 	buf_output (&protocol, "\n", 1);
 
-	new_entries_line (file, repository);
+	new_entries_line ();
 
         {
 	    char *mode_string;
 
 	    if (file_info != NULL)
-	        mode_string = mode_to_string (file_info);
+	        mode_string = mode_to_string (file_info->st_mode);
 	    else
-	        mode_string = mode_to_string (&sb);
+	        mode_string = mode_to_string (sb.st_mode);
 	    buf_output0 (&protocol, mode_string);
 	    buf_output0 (&protocol, "\n");
 	    free (mode_string);
@@ -3022,7 +3047,7 @@ static int
 expand_proc (pargc, argv, where, mwhere, mfile, shorten,
 	     local_specified, omodule, msg)
     int *pargc;
-    char *argv[];
+    char **argv;
     char *where;
     char *mwhere;
     char *mfile;
@@ -3033,11 +3058,25 @@ expand_proc (pargc, argv, where, mwhere, mfile, shorten,
 {
     int i;
     char *dir = argv[0];
-    if (*pargc == 1)
-	printf ("Module-expansion %s\n", dir);
+
+    /* If mwhere has been specified, the thing we're expanding is a
+       module -- just return its name so the client will ask for the
+       right thing later.  If it is an alias or a real directory,
+       mwhere will not be set, so send out the appropriate
+       expansion. */
+
+    if (mwhere != NULL)
+      printf ("Module-expansion %s\n", mwhere);
     else
-	for (i = 1; i < *pargc; ++i)
+      {
+	/* We may not need to do this anymore -- check the definition
+           of aliases before removing */
+	if (*pargc == 1)
+	  printf ("Module-expansion %s\n", dir);
+	else
+	  for (i = 1; i < *pargc; ++i)
 	    printf ("Module-expansion %s/%s\n", dir, argv[i]);
+      }
     return 0;
 }
 
@@ -3114,16 +3153,22 @@ serve_checkin_prog (arg)
     if (f == NULL)
     {
 	pending_error = errno;
+	pending_error_text = malloc (80 + strlen(CVSADM_CIPROG));
+	sprintf(pending_error_text, "E cannot open %s", CVSADM_CIPROG);
 	return;
     }
-    if (fprintf (f, "%s\n", arg) == EOF)
+    if (fprintf (f, "%s\n", arg) < 0)
     {
 	pending_error = errno;
+	pending_error_text = malloc (80 + strlen(CVSADM_CIPROG));
+	sprintf(pending_error_text, "E cannot write to %s", CVSADM_CIPROG);
 	return;
     }
     if (fclose (f) == EOF)
     {
 	pending_error = errno;
+	pending_error_text = malloc (80 + strlen(CVSADM_CIPROG));
+	sprintf(pending_error_text, "E cannot close %s", CVSADM_CIPROG);
 	return;
     }
 }
@@ -3137,16 +3182,22 @@ serve_update_prog (arg)
     if (f == NULL)
     {
 	pending_error = errno;
+	pending_error_text = malloc (80 + strlen(CVSADM_UPROG));
+	sprintf(pending_error_text, "E cannot open %s", CVSADM_UPROG);
 	return;
     }
-    if (fprintf (f, "%s\n", arg) == EOF)
+    if (fprintf (f, "%s\n", arg) < 0)
     {
 	pending_error = errno;
+	pending_error_text = malloc (80 + strlen(CVSADM_UPROG));
+	sprintf(pending_error_text, "E cannot write to %s", CVSADM_UPROG);
 	return;
     }
     if (fclose (f) == EOF)
     {
 	pending_error = errno;
+	pending_error_text = malloc (80 + strlen(CVSADM_UPROG));
+	sprintf(pending_error_text, "E cannot close %s", CVSADM_UPROG);
 	return;
     }
 }
@@ -3211,23 +3262,106 @@ serve_valid_requests (arg)
  * Delete temporary files.  SIG is the signal making this happen, or
  * 0 if not called as a result of a signal.
  */
+static int command_pid_is_dead;
+static void wait_sig (sig)
+     int sig;
+{
+  int status;
+  pid_t r = wait (&status);
+  if (r == command_pid)
+    command_pid_is_dead++;
+}
+
 void
 server_cleanup (sig)
     int sig;
 {
     /* Do "rm -rf" on the temp directory.  */
     int len;
-    char *tempbuf;
     char *cmd;
     char *temp_dir;
 
     if (dont_delete_temp)
 	return;
 
+    /* What a bogus kludge.  This disgusting code makes all kinds of
+       assumptions about SunOS, and is only for a bug in that system.
+       So only enable it on Suns.  */
+#ifdef sun
+    if (command_pid > 0) {
+      /* To avoid crashes on SunOS due to bugs in SunOS tmpfs
+	 triggered by the use of rename() in RCS, wait for the
+	 subprocess to die.  Unfortunately, this means draining output
+	 while waiting for it to unblock the signal we sent it.  Yuck!  */
+      int status;
+      pid_t r;
+
+      signal (SIGCHLD, wait_sig);
+      if (sig)
+	/* Perhaps SIGTERM would be more correct.  But the child
+	   process will delay the SIGINT delivery until its own
+	   children have exited.  */
+	kill (command_pid, SIGINT);
+      /* The caller may also have sent a signal to command_pid, so
+	 always try waiting.  First, though, check and see if it's still
+	 there....  */
+    do_waitpid:
+      r = waitpid (command_pid, &status, WNOHANG);
+      if (r == 0)
+	;
+      else if (r == command_pid)
+	command_pid_is_dead++;
+      else if (r == -1)
+	switch (errno) {
+	case ECHILD:
+	  command_pid_is_dead++;
+	  break;
+	case EINTR:
+	  goto do_waitpid;
+	}
+      else
+	/* waitpid should always return one of the above values */
+	abort ();
+      while (!command_pid_is_dead) {
+	struct timeval timeout;
+	struct fd_set_wrapper readfds;
+	char buf[100];
+	int i;
+
+	/* Use a non-zero timeout to avoid eating up CPU cycles.  */
+	timeout.tv_sec = 2;
+	timeout.tv_usec = 0;
+	readfds = command_fds_to_drain;
+	switch (select (max_command_fd + 1, &readfds.fds,
+			(fd_set *)0, (fd_set *)0,
+			&timeout)) {
+	case -1:
+	  if (errno != EINTR)
+	    abort ();
+	case 0:
+	  /* timeout */
+	  break;
+	case 1:
+	  for (i = 0; i <= max_command_fd; i++)
+	    {
+	      if (!FD_ISSET (i, &readfds.fds))
+		continue;
+	      /* this fd is non-blocking */
+	      while (read (i, buf, sizeof (buf)) >= 1)
+		;
+	    }
+	  break;
+	default:
+	  abort ();
+	}
+      }
+    }
+#endif
+
     /* This might be set by the user in ~/.bashrc, ~/.cshrc, etc.  */
     temp_dir = getenv ("TMPDIR");
     if (temp_dir == NULL || temp_dir[0] == '\0')
-        temp_dir = "/usr/tmp";
+        temp_dir = "/tmp";
     chdir(temp_dir);
 
     len = strlen (server_temp_dir) + 80;
@@ -3253,7 +3387,7 @@ server (argc, argv)
 {
     if (argc == -1)
     {
-	static char *msg[] =
+	static const char *const msg[] =
 	{
 	    "Usage: %s %s\n",
 	    "  Normally invoked by a cvs client on a remote machine.\n",
@@ -3288,7 +3422,7 @@ server (argc, argv)
 	}
 	if (env == NULL)
 	{
-	    printf ("E Fatal error, aborting.\n\
+	    printf ("E Fatal server error, aborting.\n\
 error ENOMEM Virtual memory exhausted.\n");
 	    exit (1);
 	}
@@ -3303,7 +3437,7 @@ error ENOMEM Virtual memory exhausted.\n");
 	/* This might be set by the user in ~/.bashrc, ~/.cshrc, etc.  */
 	char *temp_dir = getenv ("TMPDIR");
 	if (temp_dir == NULL || temp_dir[0] == '\0')
-	    temp_dir = "/usr/tmp";
+	    temp_dir = "/tmp";
 
 	server_temp_dir = malloc (strlen (temp_dir) + 80);
 	if (server_temp_dir == NULL)
@@ -3312,7 +3446,7 @@ error ENOMEM Virtual memory exhausted.\n");
 	     * Strictly speaking, we're not supposed to output anything
 	     * now.  But we're about to exit(), give it a try.
 	     */
-	    printf ("E Fatal error, aborting.\n\
+	    printf ("E Fatal server error, aborting.\n\
 error ENOMEM Virtual memory exhausted.\n");
 	    exit (1);
 	}
@@ -3352,7 +3486,7 @@ error ENOMEM Virtual memory exhausted.\n");
 	 * Strictly speaking, we're not supposed to output anything
 	 * now.  But we're about to exit(), give it a try.
 	 */
-	printf ("E Fatal error, aborting.\n\
+	printf ("E Fatal server error, aborting.\n\
 error ENOMEM Virtual memory exhausted.\n");
 	exit (1);
     }
@@ -3371,7 +3505,7 @@ error ENOMEM Virtual memory exhausted.\n");
 	    break;
 	if (cmd == NO_MEM_ERROR)
 	{
-	    printf ("E Fatal error, aborting.\n\
+	    printf ("E Fatal server error, aborting.\n\
 error ENOMEM Virtual memory exhausted.\n");
 	    break;
 	}

@@ -9,13 +9,15 @@
 #include "cvs.h"
 
 #ifndef lint
-static char rcsid[] = "$CVSid: @(#)parseinfo.c 1.18 94/09/23 $";
+static const char rcsid[] = "$CVSid: @(#)parseinfo.c 1.18 94/09/23 $";
 USE(rcsid)
 #endif
 
 /*
  * Parse the INFOFILE file for the specified REPOSITORY.  Invoke CALLPROC for
- * each line in the file that matches the REPOSITORY.  
+ * the first line in the file that matches the REPOSITORY, or if ALL != 0, any lines
+ * matching "ALL", or if no lines match, the last line matching "DEFAULT".
+ *
  * Return 0 for success, -1 if there was not an INFOFILE, and >0 for failure.
  */
 int
@@ -32,7 +34,7 @@ Parse_Info (infofile, repository, callproc, all)
     char *default_value = NULL;
     int callback_done, line_number;
     char *cp, *exp, *value, *srepos;
-    CONST char *regex_err;
+    const char *regex_err;
 
     if (CVSroot == NULL)
     {
@@ -49,6 +51,10 @@ Parse_Info (infofile, repository, callproc, all)
 
     /* strip off the CVSROOT if repository was absolute */
     srepos = Short_Repository (repository);
+
+    if (trace)
+	(void) fprintf (stderr, "-> ParseInfo(%s, %s, %s)\n",
+			infopath, srepos, all ? "ALL" : "not ALL");
 
     /* search the info file for lines that match */
     callback_done = line_number = 0;
@@ -91,6 +97,32 @@ Parse_Info (infofile, repository, callproc, all)
 	if ((cp = strrchr (value, '\n')) != NULL)
 	    *cp = '\0';
 
+	/* XXX this is a hack to allow $CVSROOT to be used once in value! */
+	/* FIXME: make this work generically for expanding multiple environment variables */
+	{
+	    char *p, envname[128];
+
+	    strcpy(envname, "$");
+	    strcat(envname, CVSROOT_ENV);
+
+	    cp = xstrdup(value);
+	    if ((p = strstr(cp, envname))) {
+		if (strlen(line) + strlen(CVSroot) + 1 > MAXLINELEN) {
+		    error(0, 0, "line %d in %s too long to expand $CVSROOT, ignored",
+			  line_number, infofile);
+		    continue;
+		}
+		if (p > cp) {
+		    strncpy(value, cp, p - cp);	/* copy from cp to p into value */
+		    value[p - cp] = '\0';	/* terminate value again */
+		    strcat(value, CVSroot);	/* replace variable */
+		} else
+		    strcpy(value, CVSroot);
+		strcat(value, p + strlen(envname)); /* finish off cp into value */
+	    }
+	    free(cp);
+	}
+
 	/*
 	 * At this point, exp points to the regular expression, and value
 	 * points to the value to call the callback routine with.  Evaluate
@@ -107,7 +139,7 @@ Parse_Info (infofile, repository, callproc, all)
 
 	/*
 	 * For a regular expression of "ALL", do the callback always We may
-	 * execute lots of ALL callbacks in addition to one regular matching
+	 * execute lots of ALL callbacks in addition to *one* regular matching
 	 * callback or default
 	 */
 	if (strcmp (exp, "ALL") == 0)
@@ -120,6 +152,9 @@ Parse_Info (infofile, repository, callproc, all)
 	    continue;
 	}
 
+	if (callback_done)
+		continue;			/* only first matching, plus "ALL"'s */
+
 	/* see if the repository matched this regular expression */
 	if ((regex_err = re_comp (exp)) != NULL)
 	{
@@ -128,7 +163,7 @@ Parse_Info (infofile, repository, callproc, all)
 	    continue;
 	}
 	if (re_exec (srepos) == 0)
-	    continue;			/* no match */
+	    continue;				/* no match */
 
 	/* it did, so do the callback and note that we did one */
 	err += callproc (repository, value);

@@ -45,14 +45,14 @@ DEFS = @DEFS@
 LIBS = @LIBS@
 
 INCLUDES = -I. -I../lib @includeopt@
-CFLAGS = -g
-LDFLAGS = $(CDEBUG)
+CFLAGS = @CFLAGS@
+LDFLAGS = @LDFLAGS@
 
 MAKEINFO = makeinfo
 TEXI2DVI = texi2dvi
 
-prefix = /usr/local
-exec_prefix = $(prefix)
+prefix = @prefix@
+exec_prefix = @exec_prefix@
 
 # Where to install the executables.
 bindir = $(exec_prefix)/bin
@@ -68,22 +68,10 @@ mandir = $(prefix)/man
 
 #### End of system configuration section. ####
 
-# CYGNUS LOCAL--pass INSTALL to sub-makes.  This works for Cygnus
-# builds (in which the top-level makefile sets install to something
-# containing `pwd') but loses if autoconf has set install to something
-# like "../../install.sh".  Relying on autoconf 1.11 to edit the
-# sub-makefiles loses, it has a bug and doesn't add a leading "../" in
-# the case where it is needed.  Autoconf 1.122 fixes this, but in its
-# infinite wisdom has chosen not to support AC_RSH, so we can't just
-# use 1.122.  Sigh.
-
 FLAGS_TO_PASS = \
 	AR='$(AR)' \
 	CC='$(CC)' \
 	CFLAGS='$(CFLAGS)' \
-	INSTALL='$(INSTALL)' \
-	INSTALL_DATA='$(INSTALL_DATA)' \
-	INSTALL_PROGRAM='$(INSTALL_PROGRAM)' \
 	LDFLAGS='$(LDFLAGS)' \
 	LIBPROGS='$(LIBPROGS)' \
 	LIBS='$(LIBS)' \
@@ -99,9 +87,13 @@ FLAGS_TO_PASS = \
 	prefix='$(prefix)' \
 	exec_prefix='$(exec_prefix)'
 
-DISTFILES = COPYING COPYING.LIB ChangeLog INSTALL README TODO \
-	cvs-format.el mkinstalldirs install-sh \
-	configure configure.in stamp-h.in config.h.in Makefile.in
+DISTFILES = \
+	COPYING COPYING.LIB INSTALL README TODO PROJECTS \
+	BUGS MINOR-BUGS FAQ \
+	ChangeLog NEWS ChangeLog.zoo \
+	configure configure.in stamp-h.in config.h.in Makefile.in acconfig.h \
+	cvs-format.el mkinstalldirs install-sh cvsinit.sh \
+	.cvsignore
 
 PROGS = cvsinit
 
@@ -110,6 +102,9 @@ SUBDIRS = lib src man doc contrib examples
 # Only make TAGS/tags files in these directories, in this order
 TSUBDIRS= src lib
 
+# Set default target.
+all:
+
 .PHONY: all install uninstall
 all install uninstall: config.h Makefile all-local
 	@for subdir in $(SUBDIRS); do \
@@ -117,14 +112,20 @@ all install uninstall: config.h Makefile all-local
 	  ( cd $$subdir; $(MAKE) $(FLAGS_TO_PASS) $@ ) || exit 1; \
 	done
 
-install: all install-local
+install: all install-local install-info
 
 .PHONY: all-local
 all-local: $(PROGS)
 
 cvsinit: cvsinit.sh
+	echo > .fname \
+	  cvs-`sed < $(srcdir)/src/version.c \
+		    -e '/version_string/!d' \
+		    -e 's/[^0-9.]*\([0-9.]*\).*/\1/' \
+		    -e q`
 	sed -e 's,xLIBDIRx,$(libdir)/cvs,g' \
-	    -e 's,xVERSIONx,$(VERSION),g' $(srcdir)/cvsinit.sh > $@-t
+	    -e "s,xVERSIONx,`cat .fname`,g" $(srcdir)/cvsinit.sh > $@-t
+	rm -f .fname
 	mv $@-t $@
 	chmod a+x $@
 
@@ -138,6 +139,7 @@ install-local: all-local
 	  echo Installing $$prog in $(bindir); \
 	  $(INSTALL) $$prog $(bindir)/$$prog ; \
 	done
+	@echo "Remember to run 'cvsinit' for your repository(ies)"
 
 .PHONY: tags
 tags:
@@ -167,21 +169,23 @@ clean: clean-local
 .PHONY: distclean
 distclean: distclean-local
 	@for dir in $(SUBDIRS); do echo making $@ in $$dir; cd $$dir; $(MAKE) $(FLAGS_TO_PASS) $@ || exit 1; cd ..; done
+	rm -f config.status
 
 .PHONY: realclean
 realclean: realclean-local
 	@for dir in $(SUBDIRS); do echo making $@ in $$dir; cd $$dir; $(MAKE) $(FLAGS_TO_PASS) $@ || exit 1; cd ..; done
+	rm -f config.status
 
 .PHONY: mostlyclean-local
 mostlyclean-local:
-	rm -f *~
+	rm -f *~ $(PROGS)
 
 .PHONY: clean-local
 clean-local: mostlyclean-local
 
 .PHONY: distclean-local
 distclean-local: clean-local
-	rm -f Makefile config.cache config.h config.log config.status stamp-h
+	rm -f Makefile config.cache config.h config.log stamp-h
 	rm -f tags TAGS
 
 .PHONY: realclean-local
@@ -195,6 +199,10 @@ saber:
 check:
 	cd src ; $(MAKE) $(FLAGS_TO_PASS) check
 
+.PHONY: remotecheck
+remotecheck:
+	cd src ; $(MAKE) $(FLAGS_TO_PASS) remotecheck
+
 .PHONY: installcheck
 installcheck:
 	cd src ; $(MAKE) $(FLAGS_TO_PASS) installcheck
@@ -204,14 +212,31 @@ lint:
 	@for dir in $(SUBDIRS); do cd $$dir; $(MAKE) $(FLAGS_TO_PASS) xlint || exit 1; cd ..; done
 
 .PHONY: dist
+GZIP=gzip --best
+GZIP_EXT=.gz
 dist:
-	echo cvs-`sed -e '/version_string/!d' -e 's/[^0-9.]*\([0-9.]*\).*/\1/' -e q src/version.c` > .fname
+	echo > .fname \
+	  cvs-`sed < $(srcdir)/src/version.c \
+		    -e '/version_string/!d' \
+		    -e 's/[^0-9.]*\([0-9.]*\).*/\1/' \
+		    -e q`
 	rm -rf `cat .fname`
-	mkdir `cat .fname`
-	ln $(DISTFILES) `cat .fname`
-	for dir in $(SUBDIRS); do mkdir `cat .fname`/$$dir; cd $$dir; $(MAKE) $@; cd ..; done
-	tar chZf `cat .fname`.tar.Z `cat .fname`
+	${MAKE} dist-dir DISTDIR="`cat .fname`"
+	for dir in ${SUBDIRS}; do \
+	  ( DISTDIR="../`cat .fname`/$${dir}"; \
+            cd $${dir}; \
+	    ${MAKE} dist-dir DISTDIR="$${DISTDIR}" \
+	  ); \
+	done
+	tar chvf - `cat .fname` | ${GZIP} > "`cat .fname`.tar${GZIP_EXT}"
 	rm -rf `cat .fname` .fname
+
+.PHONY: dist-dir
+dist-dir:
+	mkdir ${DISTDIR}
+	for i in ${DISTFILES}; do \
+	  ln $(srcdir)/$${i} ${DISTDIR}; \
+	done
 
 # For the justification of the following Makefile rules, see node
 # `Automatic Remaking' in GNU Autoconf documentation.
@@ -228,7 +253,7 @@ config.status: configure
 
 config.h: stamp-h
 stamp-h: config.h.in config.status
-	CONFIG_FILES= CONFIG_HEADERS=config.h ./config.status
+	CONFIG_FILES=$@ CONFIG_HEADERS=config.h ./config.status
 #config.h.in: stamp-h.in
 #stamp-h.in: configure.in #aclocal.m4 acconfig.h
 #	cd $(srcdir); autoheader

@@ -24,8 +24,8 @@ srcdir     = @srcdir@
 top_srcdir = @top_srcdir@
 VPATH      = @srcdir@
 
-prefix = /usr/local
-exec_prefix = $(prefix)
+prefix = @prefix@
+exec_prefix = @exec_prefix@
 
 # Where to install the executables.
 bindir = $(exec_prefix)/bin
@@ -43,18 +43,18 @@ INSTALL_PROGRAM = @INSTALL_PROGRAM@
 
 LIBS = @LIBS@
 
-SOURCES = add.c admin.c checkin.c checkout.c classify.c commit.c \
+SOURCES = add.c admin.c checkin.c checkout.c classify.c client.c commit.c \
 create_adm.c cvsrc.c diff.c entries.c find_names.c hash.c history.c ignore.c \
-import.c lock.c log.c logmsg.c main.c myndbm.c rcs.c modules.c \
-no_diff.c parseinfo.c patch.c recurse.c release.c remove.c repos.c rtag.c \
-status.c tag.c update.c vers_ts.c version.c root.c subr.c server.c client.c
+import.c lock.c log.c logmsg.c main.c modules.c myndbm.c no_diff.c \
+parseinfo.c patch.c rcs.c rcscmds.c recurse.c release.c remove.c repos.c \
+root.c rtag.c server.c status.c subr.c tag.c update.c vers_ts.c version.c
 MSOURCES = mkmodules.c
 
 OBJECTS = add.o admin.o checkin.o checkout.o classify.o commit.o \
 create_adm.o cvsrc.o diff.o entries.o find_names.o hash.o history.o \
 ignore.o import.o lock.o log.o logmsg.o main.o modules.o myndbm.o no_diff.o \
-parseinfo.o patch.o rcs.o recurse.o release.o remove.o repos.o root.o \
-rtag.o status.o tag.o update.o vers_ts.o server.o client.o
+parseinfo.o patch.o rcs.o rcscmds.o recurse.o release.o remove.o repos.o \
+root.o rtag.o status.o tag.o update.o vers_ts.o server.o client.o
 
 MOBJECTS = hash.o mkmodules.o myndbm.o
 
@@ -63,18 +63,21 @@ COMMON_OBJECTS = subr.o version.o
 HEADERS = cvs.h rcs.h hash.h myndbm.h patchlevel.h \
 	update.h server.h client.h
 
-DISTFILES = Makefile.in $(HEADERS) $(SOURCES) $(MSOURCES)
+DISTFILES = .cvsignore Makefile.in ChangeLog ChangeLog.fsf \
+	    NOTES README-rm-add \
+            sanity.sh sanity.el cvsbug.sh \
+            $(HEADERS) options.h.in $(SOURCES) $(MSOURCES) 
 
 PROGS = cvs mkmodules cvsbug
 
 DEFS = @DEFS@ @includeopt@
 
 CC	 = @CC@
-CFLAGS = -g
-CPPFLAGS=
-LDFLAGS=
+CFLAGS = @CFLAGS@
+CPPFLAGS =
+LDFLAGS =
 
-INCLUDES = -I.. -I$(srcdir) -I$(top_srcdir)/lib
+INCLUDES = -I. -I.. -I$(srcdir) -I$(top_srcdir)/lib
 .c.o:
 	$(CC) $(CPPFLAGS) $(INCLUDES) $(DEFS) $(CFLAGS) -c $<
 
@@ -104,16 +107,15 @@ installcheck:
 .PHONY: installcheck
 
 check: all
-	if [ -d ../../rcs/src ] ; then \
+	if [ -x ../../rcs/src/rcs ] ; then \
 		RCSBIN=`pwd`/../../rcs/src ; \
 		export RCSBIN ; \
 	fi ; \
 	$(SHELL) $(srcdir)/sanity.sh `pwd`/cvs
 .PHONY: check
 
-# This is not yet ready to be part of the standard `make check'.
-# We need to fix the problem with making sure we get the server we just built,
-# for one thing.
+# I'm not sure there is any remaining reason for this to be separate from
+# `make check'.
 remotecheck: all
 	$(SHELL) $(srcdir)/sanity.sh -r `pwd`/cvs
 .PHONY: remotecheck
@@ -133,15 +135,18 @@ clean:
 .PHONY: clean
 
 distclean: clean
-	rm -f tags TAGS Makefile
+	rm -f tags TAGS Makefile options.h
 .PHONY: distclean
 
 realclean: distclean
 .PHONY: realclean
 
-dist:
-	ln $(DISTFILES) ../`cat ../.fname`/src
-.PHONY: dist
+dist-dir:
+	mkdir ${DISTDIR}
+	for i in ${DISTFILES}; do \
+	  ln $(srcdir)/$${i} ${DISTDIR}; \
+	done
+.PHONY: dist-dir
 
 # Linking rules.
 
@@ -170,10 +175,11 @@ cvsbug: cvsbug.sh
 
 # Compilation rules.
 
-$(OBJECTS) $(COMMON_OBJECTS) mkmodules.o: $(HEADERS)
+$(OBJECTS) $(COMMON_OBJECTS) mkmodules.o: $(HEADERS) options.h
 
-Makefile: Makefile.in
-	cd .. ; $(SHELL) config.status
+subdir = src
+Makefile: ../config.status Makefile.in
+	cd .. && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= ./config.status
 
 #../config.status: ../configure
 #	cd .. ; $(SHELL) config.status --recheck

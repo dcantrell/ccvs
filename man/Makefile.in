@@ -24,14 +24,17 @@ VPATH      = @srcdir@
 
 MAN1FILES = cvs.1 mkmodules.1
 MAN5FILES = cvs.5
+MAN8FILES = cvsbug.8 cvsinit.8
 MANFILES = $(MAN1FILES) $(MAN5FILES)
 
-DISTFILES = Makefile.in $(MANFILES)
+DISTFILES = .cvsignore ChangeLog Makefile.in $(MANFILES)
 INSTALL = @INSTALL@
 INSTALL_DATA = $(INSTALL)
+prefix = @prefix@
 mandir = $(prefix)/man
 man1dir = $(mandir)/man1
 man5dir = $(mandir)/man5
+man8dir = $(mandir)/man8
 
 all:
 .PHONY: all
@@ -44,9 +47,12 @@ install: all
 	for f in $(MAN5FILES); do \
 		$(INSTALL_DATA) $(srcdir)/$$f $(man5dir)/$$f; \
 	done
+	for f in $(MAN8FILES); do \
+		$(INSTALL_DATA) $(srcdir)/$$f $(man8dir)/$$f; \
+	done
 
 installdirs:
-	$(SHELL) $(top_srcdir)/mkinstalldirs $(man1dir) $(man5dir)
+	$(SHELL) $(top_srcdir)/mkinstalldirs $(man1dir) $(man5dir) $(man8dir)
 
 .PHONY: install installdirs
 
@@ -70,15 +76,19 @@ distclean: clean
 realclean: distclean
 .PHONY: realclean
 
-dist:
-	ln $(DISTFILES) ../`cat ../.fname`/man
-.PHONY: dist
+dist-dir:
+	mkdir ${DISTDIR}
+	for i in ${DISTFILES}; do \
+	  ln $(srcdir)/$${i} ${DISTDIR}; \
+	done
+.PHONY: dist-dir
 
-Makefile: Makefile.in
-	cd .. ; $(SHELL) config.status
+subdir = man
+Makefile: ../config.status Makefile.in
+	cd .. && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= ./config.status
 
-../config.status: ../configure
-	cd .. ; $(SHELL) config.status --recheck
+#../config.status: ../configure
+#	cd .. ; $(SHELL) config.status --recheck
 
-../configure: ../configure.in
-	cd $(top_srcdir) ; autoconf
+#../configure: ../configure.in
+#	cd $(top_srcdir) ; autoconf

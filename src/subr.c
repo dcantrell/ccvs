@@ -11,7 +11,7 @@
 #include "cvs.h"
 
 #ifndef lint
-static char rcsid[] = "$CVSid: @(#)subr.c 1.64 94/10/07 $";
+static const char rcsid[] = "$CVSid: @(#)subr.c 1.64 94/10/07 $";
 USE(rcsid)
 #endif
 
@@ -38,39 +38,29 @@ USE(rcsid)
  */
 #if defined(NeXT)
 #define LOSING_TMPNAM_FUNCTION
-#ifndef	_POSIX_SOURCE
-/*
- * NeXT doesn't define these without _POSIX_SOURCE,
- * but that changes a lot of things.
- */
-#define	WEXITSTATUS(x)	((x).w_retcode)
-#define	WTERMSIG(x)	((x).w_termsig)
-#endif
 #endif
 
-static void run_add_arg PROTO((char *s));
+static void run_add_arg PROTO((const char *s));
 static void run_init_prog PROTO((void));
 
 extern char *getlogin ();
 extern char *strtok ();
 
 /*
- * Copies "from" to "to". mallocs a buffer large enough to hold the entire
- * file and does one read/one write to do the copy.  This is reasonable,
- * since source files are typically not too large.
+ * Copies "from" to "to".
  */
 void
 copy_file (from, to)
-    char *from;
-    char *to;
+    const char *from;
+    const char *to;
 {
     struct stat sb;
     struct utimbuf t;
     int fdin, fdout;
-    char *buf;
 
     if (trace)
-	(void) fprintf (stderr, "-> copy(%s,%s)\n", from, to);
+	(void) fprintf (stderr, "%c-> copy(%s,%s)\n",
+			(server_active) ? 'S' : ' ', from, to);
     if (noexec)
 	return;
 
@@ -82,20 +72,36 @@ copy_file (from, to)
 	error (1, errno, "cannot create %s for copying", to);
     if (sb.st_size > 0)
     {
-	buf = xmalloc ((int) sb.st_size);
-	if (read (fdin, buf, (int) sb.st_size) != (int) sb.st_size)
-	    error (1, errno, "cannot read file %s for copying", from);
-	if (write (fdout, buf, (int) sb.st_size) != (int) sb.st_size
-#ifdef HAVE_FSYNC
-	    || fsync (fdout) == -1
-#endif
-	    )
+	char buf[BUFSIZ];
+	int n;
+
+	for (;;) 
 	{
-	    error (1, errno, "cannot write file %s for copying", to);
+	    n = read (fdin, buf, sizeof(buf));
+	    if (n == -1)
+	    {
+#ifdef EINTR
+		if (errno == EINTR)
+		    continue;
+#endif
+		error (1, errno, "cannot read file %s for copying", from);
+	    }
+            else if (n == 0) 
+		break;
+  
+	    if (write(fdout, buf, n) != n) {
+		error (1, errno, "cannot write file %s for copying", to);
+	    }
 	}
-	free (buf);
+
+#ifdef HAVE_FSYNC
+	if (fsync (fdout)) 
+	    error (1, errno, "cannot fsync file %s after copying", to);
+#endif
     }
-    (void) close (fdin);
+
+    if (close (fdin) < 0) 
+	error (0, errno, "cannot close %s", from);
     if (close (fdout) < 0)
 	error (1, errno, "cannot close %s", to);
 
@@ -115,7 +121,7 @@ copy_file (from, to)
  */
 int
 isdir (file)
-    char *file;
+    const char *file;
 {
     struct stat sb;
 
@@ -129,7 +135,7 @@ isdir (file)
  */
 int
 islink (file)
-    char *file;
+    const char *file;
 {
 #ifdef S_ISLNK
     struct stat sb;
@@ -147,7 +153,7 @@ islink (file)
  */
 int
 isfile (file)
-    char *file;
+    const char *file;
 {
     struct stat sb;
 
@@ -162,7 +168,7 @@ isfile (file)
  */
 int
 isreadable (file)
-    char *file;
+    const char *file;
 {
     return (access (file, R_OK) != -1);
 }
@@ -173,7 +179,7 @@ isreadable (file)
  */
 int
 iswritable (file)
-    char *file;
+    const char *file;
 {
     return (access (file, W_OK) != -1);
 }
@@ -183,8 +189,8 @@ iswritable (file)
  */
 FILE *
 open_file (name, mode)
-    char *name;
-    char *mode;
+    const char *name;
+    const char *mode;
 {
     FILE *fp;
 
@@ -194,27 +200,11 @@ open_file (name, mode)
 }
 
 /*
- * Open a file if allowed and return.
- */
-FILE *
-Fopen (name, mode)
-    char *name;
-    char *mode;
-{
-    if (trace)
-	(void) fprintf (stderr, "-> fopen(%s,%s)\n", name, mode);
-    if (noexec)
-	return (NULL);
-
-    return (fopen (name, mode));
-}
-
-/*
  * Make a directory and die if it fails
  */
 void
 make_directory (name)
-    char *name;
+    const char *name;
 {
     struct stat buf;
 
@@ -230,7 +220,7 @@ make_directory (name)
  */
 void
 make_directories (name)
-    char *name;
+    const char *name;
 {
     char *cp;
 
@@ -263,7 +253,14 @@ xmalloc (bytes)
 {
     char *cp;
 
-    if ((cp = malloc (bytes)) == NULL)
+    /* Parts of CVS try to xmalloc zero bytes and then free it.  Some
+       systems have a malloc which returns NULL for zero byte
+       allocations but a free which can't handle NULL, so compensate. */
+    if (bytes == 0)
+	bytes = 1;
+
+    cp = malloc (bytes);
+    if (cp == NULL)
 	error (1, 0, "can not allocate %lu bytes", (unsigned long) bytes);
     return (cp);
 }
@@ -295,7 +292,7 @@ xrealloc (ptr, bytes)
  */
 char *
 xstrdup (str)
-    char *str;
+    const char *str;
 {
     char *s;
 
@@ -329,7 +326,9 @@ xchmod (fname, writable)
     {
 	oumask = umask (0);
 	(void) umask (oumask);
-	mode = sb.st_mode | ((S_IWRITE | S_IWGRP | S_IWOTH) & ~oumask);
+	mode = sb.st_mode | ~oumask & (((sb.st_mode & S_IRUSR) ? S_IWUSR : 0) |
+				       ((sb.st_mode & S_IRGRP) ? S_IWGRP : 0) |
+				       ((sb.st_mode & S_IROTH) ? S_IWOTH : 0));
     }
     else
     {
@@ -337,7 +336,8 @@ xchmod (fname, writable)
     }
 
     if (trace)
-	(void) fprintf (stderr, "-> chmod(%s,%o)\n", fname, mode);
+	(void) fprintf (stderr, "%c-> chmod(%s,%o)\n",
+			(server_active) ? 'S' : ' ', fname, mode);
     if (noexec)
 	return;
 
@@ -350,11 +350,12 @@ xchmod (fname, writable)
  */
 void
 rename_file (from, to)
-    char *from;
-    char *to;
+    const char *from;
+    const char *to;
 {
     if (trace)
-	(void) fprintf (stderr, "-> rename(%s,%s)\n", from, to);
+	(void) fprintf (stderr, "%c-> rename(%s,%s)\n",
+			(server_active) ? 'S' : ' ', from, to);
     if (noexec)
 	return;
 
@@ -367,10 +368,12 @@ rename_file (from, to)
  */
 int
 link_file (from, to)
-    char *from, *to;
+    const char *from;
+    const char *to;
 {
     if (trace)
-	(void) fprintf (stderr, "-> link(%s,%s)\n", from, to);
+	(void) fprintf (stderr, "%c-> link(%s,%s)\n",
+			(server_active) ? 'S' : ' ', from, to);
     if (noexec)
 	return (0);
 
@@ -382,64 +385,112 @@ link_file (from, to)
  */
 int
 unlink_file (f)
-    char *f;
+    const char *f;
 {
     if (trace)
-	(void) fprintf (stderr, "-> unlink(%s)\n", f);
+	(void) fprintf (stderr, "%c-> unlink(%s)\n",
+			(server_active) ? 'S' : ' ', f);
     if (noexec)
 	return (0);
 
     return (unlink (f));
 }
 
+/* Read NCHARS bytes from descriptor FD into BUF.
+   Return the number of characters successfully read.
+   The number returned is always NCHARS unless end-of-file or error.  */
+static size_t
+block_read (fd, buf, nchars)
+    int fd;
+    char *buf;
+    size_t nchars;
+{
+    char *bp = buf;
+    size_t nread;
+
+    do 
+    {
+	nread = read (fd, bp, nchars);
+	if (nread == (size_t)-1)
+	{
+#ifdef EINTR
+	    if (errno == EINTR)
+		continue;
+#endif
+	    return (size_t)-1;
+	}
+
+	if (nread == 0)
+	    break; 
+
+	bp += nread;
+	nchars -= nread;
+    } while (nchars != 0);
+
+    return bp - buf;
+} 
+
+    
 /*
  * Compare "file1" to "file2". Return non-zero if they don't compare exactly.
- * 
- * mallocs a buffer large enough to hold the entire file and does two reads to
- * load the buffer and calls memcmp to do the cmp. This is reasonable, since
- * source files are typically not too large.
  */
-
-/* richfix: this *could* exploit mmap. */
-
 int
 xcmp (file1, file2)
-    char *file1;
-    char *file2;
+    const char *file1;
+    const char *file2;
 {
-    register char *buf1, *buf2;
-    struct stat sb;
-    off_t size;
-    int ret, fd1, fd2;
+    char *buf1, *buf2;
+    struct stat sb1, sb2;
+    int fd1, fd2;
+    int ret;
 
     if ((fd1 = open (file1, O_RDONLY)) < 0)
 	error (1, errno, "cannot open file %s for comparing", file1);
     if ((fd2 = open (file2, O_RDONLY)) < 0)
 	error (1, errno, "cannot open file %s for comparing", file2);
-    if (fstat (fd1, &sb) < 0)
+    if (fstat (fd1, &sb1) < 0)
 	error (1, errno, "cannot fstat %s", file1);
-    size = sb.st_size;
-    if (fstat (fd2, &sb) < 0)
+    if (fstat (fd2, &sb2) < 0)
 	error (1, errno, "cannot fstat %s", file2);
-    if (size == sb.st_size)
-    {
-	if (size == 0)
-	    ret = 0;
-	else
-	{
-	    buf1 = xmalloc ((int) size);
-	    buf2 = xmalloc ((int) size);
-	    if (read (fd1, buf1, (int) size) != (int) size)
-		error (1, errno, "cannot read file %s for comparing", file1);
-	    if (read (fd2, buf2, (int) size) != (int) size)
-		error (1, errno, "cannot read file %s for comparing", file2);
-	    ret = memcmp(buf1, buf2, (int) size);
-	    free (buf1);
-	    free (buf2);
-	}
-    }
-    else
+
+    /* A generic file compare routine might compare st_dev & st_ino here 
+       to see if the two files being compared are actually the same file.
+       But that won't happen in CVS, so we won't bother. */
+
+    if (sb1.st_size != sb2.st_size)
 	ret = 1;
+    else if (sb1.st_size == 0)
+	ret = 0;
+    else
+    {
+	/* FIXME: compute the optimal buffer size by computing the least
+	   common multiple of the files st_blocks field */
+	size_t buf_size = 8 * 1024;
+	size_t read1;
+	size_t read2;
+
+	buf1 = xmalloc (buf_size);
+	buf2 = xmalloc (buf_size);
+
+	do 
+	{
+	    read1 = block_read (fd1, buf1, buf_size);
+	    if (read1 == (size_t)-1)
+		error (1, errno, "cannot read file %s for comparing", file1);
+
+	    read2 = block_read (fd2, buf2, buf_size);
+	    if (read2 == (size_t)-1)
+		error (1, errno, "cannot read file %s for comparing", file2);
+
+	    /* assert (read1 == read2); */
+
+	    ret = memcmp(buf1, buf2, read1);
+	} while (ret == 0 && read1 == buf_size);
+
+	free (buf1);
+	free (buf2);
+    }
+	
     (void) close (fd1);
     (void) close (fd2);
     return (ret);
@@ -451,7 +502,7 @@ xcmp (file1, file2)
 void
 free_names (pargc, argv)
     int *pargc;
-    char *argv[];
+    char **argv;
 {
     register int i;
 
@@ -470,7 +521,7 @@ free_names (pargc, argv)
 void
 line2argv (pargc, argv, line)
     int *pargc;
-    char *argv[];
+    char **argv;
     char *line;
 {
     char *cp;
@@ -488,14 +539,13 @@ line2argv (pargc, argv, line)
  */
 int
 numdots (s)
-    char *s;
+    const char *s;
 {
-    char *cp;
     int dots = 0;
 
-    for (cp = s; *cp; cp++)
+    for (; *s; s++)
     {
-	if (*cp == '.')
+	if (*s == '.')
 	    dots++;
     }
     return (dots);
@@ -551,18 +601,16 @@ static int run_argc_allocated;
 /* VARARGS */
 #if defined (HAVE_VPRINTF) && (defined (USE_PROTOTYPES) ? USE_PROTOTYPES : defined (__STDC__))
 void 
-run_setup (char *fmt,...)
+run_setup (const char *fmt,...)
 #else
 void 
 run_setup (fmt, va_alist)
     char *fmt;
     va_dcl
-
 #endif
 {
 #ifdef HAVE_VPRINTF
     va_list args;
-
 #endif
     char *cp;
     int i;
@@ -596,7 +644,7 @@ run_setup (fmt, va_alist)
 
 void
 run_arg (s)
-    char *s;
+    const char *s;
 {
     run_add_arg (s);
 }
@@ -604,18 +652,16 @@ run_arg (s)
 /* VARARGS */
 #if defined (HAVE_VPRINTF) && (defined (USE_PROTOTYPES) ? USE_PROTOTYPES : defined (__STDC__))
 void 
-run_args (char *fmt,...)
+run_args (const char *fmt,...)
 #else
 void 
 run_args (fmt, va_alist)
     char *fmt;
     va_dcl
-
 #endif
 {
 #ifdef HAVE_VPRINTF
     va_list args;
-
 #endif
 
     run_init_prog ();
@@ -635,7 +681,7 @@ run_args (fmt, va_alist)
 
 static void
 run_add_arg (s)
-    char *s;
+    const char *s;
 {
     /* allocate more argv entries if we've run out */
     if (run_argc >= run_argc_allocated)
@@ -648,7 +694,7 @@ run_add_arg (s)
     if (s)
 	run_argv[run_argc++] = xstrdup (s);
     else
-	run_argv[run_argc] = (char *) 0;/* not post-incremented on purpose! */
+	run_argv[run_argc] = (char *) 0;	/* not post-incremented on purpose! */
 }
 
 static void
@@ -668,11 +714,7 @@ run_exec (stin, stout, sterr, flags)
 {
     int shin, shout, sherr;
     int mode_out, mode_err;
-#if	defined(NeXT) && !defined(_POSIX_SOURCE)
-    union wait status;
-#else
     int status;
-#endif
     int rc = -1;
     int rerrno = 0;
     int pid, w;
@@ -693,7 +735,7 @@ run_exec (stin, stout, sterr, flags)
 
     if (trace)
     {
-	(void) fprintf (stderr, "-> system(");
+	(void) fprintf (stderr, "%c-> system(", (server_active) ? 'S' : ' ');
 	run_print (stderr);
 	(void) fprintf (stderr, ")\n");
     }
@@ -889,7 +931,7 @@ run_print (fp)
 
     for (i = 0; i < run_argc; i++)
     {
-	(void) fprintf (fp, "%s", run_argv[i]);
+	(void) fprintf (fp, "'%s'", run_argv[i]);
 	if (i != run_argc - 1)
 	    (void) fprintf (fp, " ");
     }
@@ -897,12 +939,15 @@ run_print (fp)
 
 FILE *
 Popen (cmd, mode)
-    char *cmd, *mode;
+    const char *cmd;
+    const char *mode;
 {
     if (trace)
-	(void) fprintf (stderr, "-> Popen(%s,%s)\n", cmd, mode);
+	(void) fprintf (stderr, "%c-> Popen(%s,%s)\n",
+			(server_active) ? 'S' : ' ', cmd, mode);
     if (noexec)
 	return (NULL);
+
     return (popen (cmd, mode));
 }
 
@@ -1047,3 +1092,27 @@ char *tmpnam(char *s)
     }
 }
 #endif
+
+/*
+ *  Sanity checks and any required fix-up on message passed to RCS via '-m'.
+ *  RCS 5.7 requires that a non-total-whitespace, non-null message be provided
+ *  with '-m'.
+ */
+char *
+make_message_rcslegal (message)
+     char *message;
+{
+    if ((message == NULL) || (*message == '\0') || isspace (*message))
+    {
+        char *t;
+
+	if (message)
+	    for (t = message; *t; t++)
+	        if (!isspace (*t))
+		    return message;
+
+	return "*** empty log message ***\n";
+    }
+
+    return message;
+}

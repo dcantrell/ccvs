@@ -17,7 +17,7 @@
 #include "cvs.h"
 
 #ifndef lint
-static char rcsid[] = "$CVSid: @(#)no_diff.c 1.39 94/10/07 $";
+static const char rcsid[] = "$CVSid: @(#)no_diff.c 1.39 94/10/07 $";
 USE(rcsid)
 #endif
 
@@ -93,7 +93,8 @@ No_Difference (file, vers, entries, repository, update_dir)
     }
 
     if (trace)
-	(void) fprintf (stderr, "-> unlink(%s)\n", tmp);
+	(void) fprintf (stderr, "%c-> unlink2 (%s)\n",
+			(server_active) ? 'S' : ' ', tmp);
     if (unlink (tmp) < 0)
 	error (0, errno, "could not remove %s", tmp);
     free (options);

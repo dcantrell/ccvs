@@ -1578,7 +1578,7 @@ The tag is removed from these files, which makes it convenient to re-use a
 symbolic tag as development continues (and files get removed from the
 up-coming distribution).
 .TP
-\fBstatus\fP [\fB\-lR\fP] [\fB\-v\fP] [\fIfiles\fP\|.\|.\|.]
+\fBstatus\fP [\fB\-lRqQ\fP] [\fB\-v\fP] [\fIfiles\fP\|.\|.\|.]
 .I Requires:
 working directory, repository.
 .br
@@ -1608,6 +1608,9 @@ The
 option causes the symbolic tags for the
 .SM RCS
 file to be displayed as well.
+.SP
+The standard options \fB\-Q\fP and \fB\-q\fP are also available with
+this command.
 .TP
 \fBtag\fP [\fB\-lQqR\fP] [\fB\-b\fP] [\fB\-d\fP] \fIsymbolic_tag\fP [\fIfiles\fP\|.\|.\|.\|]
 .I Requires:
@@ -2011,6 +2014,8 @@ shell script (the ancestor of
 .BR ci ( 1 ),
 .BR co ( 1 ),
 .BR cvs ( 5 ),
+.BR cvsbug ( 8 ),
+.BR cvsinit ( 8 ),
 .BR diff ( 1 ),
 .BR grep ( 1 ),
 .BR mkmodules ( 1 ),

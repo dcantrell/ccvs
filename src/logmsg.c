@@ -9,16 +9,8 @@
 #include "cvs.h"
 
 #ifndef lint
-static char rcsid[] = "$CVSid: @(#)logmsg.c 1.48 94/09/29 $";
+static const char rcsid[] = "$CVSid: @(#)logmsg.c 1.48 94/09/29 $";
 USE(rcsid)
-#endif
-
-/* this is slightly dangerous, since it could conflict with other systems'
- *  own prototype.  
- */
-#if 0
-/* Which is why I'll nuke this */
-extern int gethostname PROTO((char *name, int len));
 #endif
 
 static int find_type PROTO((Node * p, void *closure));
@@ -33,7 +25,7 @@ static void setup_tmpfile PROTO((FILE * xfp, char *xprefix, List * changes));
 static int editinfo_proc PROTO((char *repository, char *template));
 
 static FILE *fp;
-static char *strlist;
+static char *str_list;
 static char *editinfo_editor;
 static Ctype type;
 
@@ -140,7 +132,6 @@ do_editor (dir, messagep, repository, changes)
     char line[MAXLINELEN], fname[L_tmpnam+1];
     struct stat pre_stbuf, post_stbuf;
     int retcode = 0;
-    char *p;
 
     if (noexec || reuse_log_message)
 	return;
@@ -171,7 +162,7 @@ do_editor (dir, messagep, repository, changes)
     (void) fprintf (fp,
   "%sEnter Log.  Lines beginning with `%s' are removed automatically\n%s\n",
 		    CVSEDITPREFIX, CVSEDITPREFIX, CVSEDITPREFIX);
-    if (dir != NULL)
+    if (dir != NULL && *dir)
 	(void) fprintf (fp, "%sCommitting in %s\n%s\n", CVSEDITPREFIX,
 			dir, CVSEDITPREFIX);
     if (changes != NULL)
@@ -214,7 +205,7 @@ do_editor (dir, messagep, repository, changes)
 	*messagep = NULL;
     else
     {
-	*messagep = (char *) xmalloc (post_stbuf.st_size);
+	*messagep = (char *) xmalloc (post_stbuf.st_size + 1);
  	*messagep[0] = '\0';
     }
 
@@ -223,13 +214,11 @@ do_editor (dir, messagep, repository, changes)
 
     if (*messagep)
     {
-	p = *messagep;
 	while (fgets (line, sizeof (line), fp) != NULL)
 	{
 	    if (strncmp (line, CVSEDITPREFIX, sizeof (CVSEDITPREFIX) - 1) == 0)
 		continue;
-	    (void) strcpy (p, line);
-	    p += strlen (line);
+	    (void) strcat (*messagep, line);
 	}
     }
     (void) fclose (fp);
@@ -334,9 +323,9 @@ Update_Logfile (repository, xmessage, xrevision, xlogfp, xchanges)
     srepos = Short_Repository (repository);
 
     /* allocate a chunk of memory to hold the title string */
-    if (!strlist)
-	strlist = xmalloc (MAXLISTLEN);
-    strlist[0] = '\0';
+    if (!str_list)
+	str_list = xmalloc (MAXLISTLEN);
+    str_list[0] = '\0';
 
     type = T_TITLE;
     (void) walklist (changes, title_proc, NULL);
@@ -346,12 +335,12 @@ Update_Logfile (repository, xmessage, xrevision, xlogfp, xchanges)
     (void) walklist (changes, title_proc, NULL);
     type = T_REMOVED;
     (void) walklist (changes, title_proc, NULL);
-    title = xmalloc (strlen (srepos) + strlen (strlist) + 1 + 2); /* for 's */
-    (void) sprintf (title, "'%s%s'", srepos, strlist);
+    title = xmalloc (strlen (srepos) + strlen (str_list) + 1 + 2); /* for 's */
+    (void) sprintf (title, "'%s%s'", srepos, str_list);
 
     /* to be nice, free up this chunk of memory */
-    free (strlist);
-    strlist = (char *) NULL;
+    free (str_list);
+    str_list = (char *) NULL;
 
     /* call Parse_Info to do the actual logfile updates */
     (void) Parse_Info (CVSROOTADM_LOGINFO, repository, update_logfile_proc, 1);
@@ -373,7 +362,7 @@ update_logfile_proc (repository, filter)
 }
 
 /*
- * concatenate each name onto strlist
+ * concatenate each name onto str_list
  */
 static int
 title_proc (p, closure)
@@ -382,8 +371,8 @@ title_proc (p, closure)
 {
     if (p->data == (char *) type)
     {
-	(void) strcat (strlist, " ");
-	(void) strcat (strlist, p->key);
+	(void) strcat (str_list, " ");
+	(void) strcat (str_list, p->key);
     }
     return (0);
 }
@@ -409,12 +398,13 @@ logfile_write (repository, filter, title, message, revision, logfp, changes)
     FILE *logfp;
     List *changes;
 {
-    char cwd[PATH_MAX], host[MAXHOSTNAMELEN];
+    char cwd[PATH_MAX];
     FILE *pipefp, *Popen ();
     char *prog = xmalloc (MAXPROGLEN);
     char *cp;
     int c;
 
+    /* XXX <woods@web.net> -- this is gross, ugly, and a hack!  FIXME! */
     /*
      * A maximum of 6 %s arguments are supported in the filter
      */
@@ -426,10 +416,8 @@ logfile_write (repository, filter, title, message, revision, logfp, changes)
 	free (prog);
 	return (1);
     }
-    if (gethostname (host, sizeof (host)) < 0)
-	(void) strcpy (host, "(unknown)");
     (void) fprintf (pipefp, "Update of %s\n", repository);
-    (void) fprintf (pipefp, "In directory %s:%s\n\n", host,
+    (void) fprintf (pipefp, "In directory %s:%s\n\n", hostname,
 		    ((cp = getwd (cwd)) != NULL) ? cp : cwd);
     if (revision && *revision)
 	(void) fprintf (pipefp, "Revision/Branch: %s\n\n", revision);
@@ -438,7 +426,7 @@ logfile_write (repository, filter, title, message, revision, logfp, changes)
     if (logfp != (FILE *) 0)
     {
 	(void) fprintf (pipefp, "Status:\n");
-	(void) rewind (logfp);
+	rewind (logfp);
 	while ((c = getc (logfp)) != EOF)
 	    (void) putc ((char) c, pipefp);
     }

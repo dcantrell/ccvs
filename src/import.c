@@ -19,7 +19,7 @@
 #include "cvs.h"
 
 #ifndef lint
-static char rcsid[] = "$CVSid: @(#)import.c 1.63 94/09/30 $";
+static const char rcsid[] = "$CVSid: @(#)import.c 1.63 94/09/30 $";
 USE(rcsid)
 #endif
 
@@ -40,8 +40,6 @@ static int process_import_file PROTO((char *message, char *vfile, char *vtag,
 static int update_rcs_file PROTO((char *message, char *vfile, char *vtag, int targc,
 			    char *targv[], int inattic));
 static void add_log PROTO((int ch, char *fname));
-static int str2expmode PROTO((char const* expstring));
-static int strn2expmode PROTO((char const* expstring, size_t n));
 
 static int repos_len;
 static char vhead[50];
@@ -52,7 +50,7 @@ static int conflicts;
 static int use_file_modtime;
 static char *keyword_opt = NULL;
 
-static char *import_usage[] =
+static const char *const import_usage[] =
 {
     "Usage: %s %s [-Qq] [-d] [-k subst] [-I ign] [-m msg] [-b branch]\n",
     "    repository vendor-tag release-tags...\n",
@@ -66,23 +64,10 @@ static char *import_usage[] =
     NULL
 };
 
-static char *keyword_usage[] =
-{
-  "%s %s: invalid RCS keyword expansion mode\n",
-  "Valid expansion modes include:\n",
-  "   -kkv\tGenerate keywords using the default form.\n",
-  "   -kkvl\tLike -kkv, except locker's name inserted.\n",
-  "   -kk\tGenerate only keyword names in keyword strings.\n",
-  "   -kv\tGenerate only keyword values in keyword strings.\n",
-  "   -ko\tGenerate the old keyword string (no changes from checked in file).\n",
-  NULL,
-};
-
-
 int
 import (argc, argv)
     int argc;
-    char *argv[];
+    char **argv;
 {
     char *message = NULL;
     char tmpfile[L_tmpnam+1];
@@ -126,10 +111,11 @@ import (argc, argv)
 		ign_add (optarg, 0);
 		break;
             case 'k':
-		if (str2expmode(optarg) != -1)
-		  keyword_opt = optarg;
-		else
-		  usage (keyword_usage);
+		/* RCS_check_kflag returns strings of the form -kxx.  We
+		   only use it for validation, so we can free the value
+		   as soon as it is returned. */
+		free (RCS_check_kflag(optarg));	
+		keyword_opt = optarg;
 		break;
 	    case '?':
 	    default:
@@ -212,14 +198,11 @@ import (argc, argv)
 	ign_setup ();
 
 	if (quiet)
-	    if (fprintf (to_server, "Argument -q\n") == EOF)
-		error (1, errno, "writing to server");
+	    send_arg("-q");
 	if (really_quiet)
-	    if (fprintf (to_server, "Argument -Q\n") == EOF)
-		error (1, errno, "writing to server");
+	    send_arg("-Q");
 	if (use_file_modtime)
-	    if (fprintf (to_server, "Argument -d\n") == EOF)
-		error (1, errno, "writing to server");
+	    send_arg("-d");
 
 	if (vbranch[0] != '\0')
 	    option_with_arg ("-b", vbranch);
@@ -235,9 +218,10 @@ import (argc, argv)
 	}
 
 	logfp = stdin;
+	client_import_setup (repository);
 	err = import_descend (message, argv[1], argc - 2, argv + 2);
 	client_import_done ();
-	if (fprintf (to_server, "import\n") == EOF)
+	if (fprintf (to_server, "import\n") < 0)
 	    error (1, errno, "writing to server");
 	err += get_responses_and_close ();
 	return err;
@@ -320,7 +304,7 @@ import_descend (message, vtag, targc, targv)
     DIR *dirp;
     struct dirent *dp;
     int err = 0;
-    int has_dirs = 0;
+    List *dirlist = NULL;
 
     /* first, load up any per-directory ignore lists */
     ign_add_file (CVSDOTIGNORE, 1);
@@ -348,53 +332,60 @@ import_descend (message, vtag, targc, targv)
 		add_log ('I', dp->d_name);
 		continue;
 	    }
-	    if (isdir (dp->d_name))
+
+	    if (
+#ifdef DT_DIR
+		dp->d_type == DT_DIR || dp->d_type == DT_UNKNOWN &&
+#endif
+		isdir (dp->d_name))
+            {	
+		Node *n;
+
+		if (dirlist == NULL)
+		    dirlist = getlist();
+
+		n = getnode();
+		n->key = xstrdup (dp->d_name);
+		addnode(dirlist, n);
+	    }
+	    else if (
+#ifdef DT_DIR
+		dp->d_type == DT_LNK || dp->d_type == DT_UNKNOWN && 
+#endif
+		islink (dp->d_name))
 	    {
-		has_dirs = 1;
+		add_log ('L', dp->d_name);
+		err++;
 	    }
 	    else
 	    {
-		if (islink (dp->d_name))
-		{
-		    add_log ('L', dp->d_name);
-		    err++;
-		}
-		else
-		{
 #ifdef CLIENT_SUPPORT
-		    if (client_active)
-			err += client_process_import_file (message, dp->d_name,
+		if (client_active)
+		    err += client_process_import_file (message, dp->d_name,
 							   vtag, targc, targv,
 							   repository);
-		    else
+		else
 #endif
 		    err += process_import_file (message, dp->d_name,
 						vtag, targc, targv);
-		}
 	    }
 	}
 	(void) closedir (dirp);
     }
-    if (has_dirs)
+
+    if (dirlist != NULL) 
     {
-	if ((dirp = opendir (".")) == NULL)
-	    err++;
-	else
+	Node *head, *p;
+
+	head = dirlist->list;
+	for (p = head->next; p != head; p = p->next)
 	{
-	    while ((dp = readdir (dirp)) != NULL)
-	    {
-		if (!strcmp(".", dp->d_name) || !strcmp("..", dp->d_name))
-		    continue;
-		if (!isdir (dp->d_name) || ign_name (dp->d_name))
-		    continue;
-		err += import_descend_dir (message, dp->d_name,
-					   vtag, targc, targv);
-		/* need to re-load .cvsignore after each dir traversal */
-		ign_add_file (CVSDOTIGNORE, 1);
-	    }
-	    (void) closedir (dirp);
+	    err += import_descend_dir (message, p->key, vtag, targc, targv);
 	}
+
+	dellist(&dirlist);
     }
+
     return (err);
 }
 
@@ -555,7 +546,6 @@ add_rev (message, rcs, vfile, vers)
     char *vers;
 {
     int locked, status, ierrno;
-    int retcode = 0;
 
     if (noexec)
 	return (0);
@@ -563,15 +553,12 @@ add_rev (message, rcs, vfile, vers)
     locked = 0;
     if (vers != NULL)
     {
-	run_setup ("%s%s -q -l%s", Rcsbin, RCS, vbranch);
-	run_arg (rcs);
-	if ((retcode = run_exec (RUN_TTY, DEVNULL, DEVNULL, RUN_NORMAL)) == 0)
-	    locked = 1;
-	else if (retcode == -1)
+        if (RCS_lock (rcs, vbranch) != 0)
 	{
 	    error (0, errno, "fork failed");
 	    return (1);
 	}
+	locked = 1;
     }
     if (link_file (vfile, FILE_HOLDER) < 0)
     {
@@ -589,7 +576,7 @@ add_rev (message, rcs, vfile, vers)
 	}
     }
     run_setup ("%s%s -q -f -r%s", Rcsbin, RCS_CI, vbranch);
-    run_args ("-m%s", message);
+    run_args ("-m%s", make_message_rcslegal (message));
     if (use_file_modtime)
 	run_arg ("-d");
     run_arg (rcs);
@@ -605,9 +592,7 @@ add_rev (message, rcs, vfile, vers)
 	}
 	if (locked)
 	{
-	    run_setup ("%s%s -q -u%s", Rcsbin, RCS, vbranch);
-	    run_arg (rcs);
-	    (void) run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL);
+	    (void) RCS_unlock(rcs, vbranch);
 	}
 	return (1);
     }
@@ -635,9 +620,7 @@ add_tags (rcs, vfile, vtag, targc, targv)
     if (noexec)
 	return (0);
 
-    run_setup ("%s%s -q -N%s:%s", Rcsbin, RCS, vtag, vbranch);
-    run_arg (rcs);
-    if ((retcode = run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL)) != 0)
+    if ((retcode = RCS_settag(rcs, vtag, vbranch)) != 0)
     {
 	ierrno = errno;
 	fperror (logfp, 0, retcode == -1 ? ierrno : 0, 
@@ -650,9 +633,7 @@ add_tags (rcs, vfile, vtag, targc, targv)
 		       1, 0, (List *) NULL, (List *) NULL);
     for (i = 0; i < targc; i++)
     {
-	run_setup ("%s%s -q -N%s:%s", Rcsbin, RCS, targv[i], vers->vn_rcs);
-	run_arg (rcs);
-	if ((retcode = run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL)) != 0)
+	if ((retcode = RCS_settag (rcs, targv[i], vers->vn_rcs)) != 0)
 	{
 	    ierrno = errno;
 	    fperror (logfp, 0, retcode == -1 ? ierrno : 0, 
@@ -673,7 +654,7 @@ struct compair
     char *suffix, *comlead;
 };
 
-struct compair comtable[] =
+static const struct compair comtable[] =
 {
 
 /*
@@ -683,83 +664,83 @@ struct compair comtable[] =
  * suffix during initial ci (see InitAdmin()). Comment leaders are needed for
  * languages without multiline comments; for others they are optional.
  */
-    "a", "-- ",				/* Ada		 */
-    "ada", "-- ",
-    "adb", "-- ",
-    "asm", ";; ",			/* assembler (MS-DOS) */
-    "ads", "-- ",			/* Ada		 */
-    "bat", ":: ",			/* batch (MS-DOS) */
-    "body", "-- ",			/* Ada		 */
-    "c", " * ",				/* C		 */
-    "c++", "// ",			/* C++ in all its infinite guises */
-    "cc", "// ",
-    "cpp", "// ",
-    "cxx", "// ",
-    "cl", ";;; ",			/* Common Lisp	 */
-    "cmd", ":: ",			/* command (OS/2) */
-    "cmf", "c ",			/* CM Fortran	 */
-    "cs", " * ",			/* C*		 */
-    "csh", "# ",			/* shell	 */
-    "e", "# ",				/* efl		 */
-    "epsf", "% ",			/* encapsulated postscript */
-    "epsi", "% ",			/* encapsulated postscript */
-    "el", "; ",				/* Emacs Lisp	 */
-    "f", "c ",				/* Fortran	 */
-    "for", "c ",
-    "h", " * ",				/* C-header	 */
-    "hh", "// ",			/* C++ header	 */
-    "hpp", "// ",
-    "hxx", "// ",
-    "in", "# ",				/* for Makefile.in */
-    "l", " * ",				/* lex (conflict between lex and
+    {"a", "-- "},			/* Ada		 */
+    {"ada", "-- "},
+    {"adb", "-- "},
+    {"asm", ";; "},			/* assembler (MS-DOS) */
+    {"ads", "-- "},			/* Ada		 */
+    {"bat", ":: "},			/* batch (MS-DOS) */
+    {"body", "-- "},			/* Ada		 */
+    {"c", " * "},			/* C		 */
+    {"c++", "// "},			/* C++ in all its infinite guises */
+    {"cc", "// "},
+    {"cpp", "// "},
+    {"cxx", "// "},
+    {"cl", ";;; "},			/* Common Lisp	 */
+    {"cmd", ":: "},			/* command (OS/2) */
+    {"cmf", "c "},			/* CM Fortran	 */
+    {"cs", " * "},			/* C*		 */
+    {"csh", "# "},			/* shell	 */
+    {"e", "# "},			/* efl		 */
+    {"epsf", "% "},			/* encapsulated postscript */
+    {"epsi", "% "},			/* encapsulated postscript */
+    {"el", "; "},			/* Emacs Lisp	 */
+    {"f", "c "},			/* Fortran	 */
+    {"for", "c "},
+    {"h", " * "},			/* C-header	 */
+    {"hh", "// "},			/* C++ header	 */
+    {"hpp", "// "},
+    {"hxx", "// "},
+    {"in", "# "},			/* for Makefile.in */
+    {"l", " * "},			/* lex (conflict between lex and
 					 * franzlisp) */
-    "mac", ";; ",			/* macro (DEC-10, MS-DOS, PDP-11,
+    {"mac", ";; "},			/* macro (DEC-10, MS-DOS, PDP-11,
 					 * VMS, etc) */
-    "me", ".\\\" ",			/* me-macros	t/nroff	 */
-    "ml", "; ",				/* mocklisp	 */
-    "mm", ".\\\" ",			/* mm-macros	t/nroff	 */
-    "ms", ".\\\" ",			/* ms-macros	t/nroff	 */
-    "man", ".\\\" ",			/* man-macros	t/nroff	 */
-    "1", ".\\\" ",			/* feeble attempt at man pages... */
-    "2", ".\\\" ",
-    "3", ".\\\" ",
-    "4", ".\\\" ",
-    "5", ".\\\" ",
-    "6", ".\\\" ",
-    "7", ".\\\" ",
-    "8", ".\\\" ",
-    "9", ".\\\" ",
-    "p", " * ",				/* pascal	 */
-    "pas", " * ",
-    "pl", "# ",				/* perl	(conflict with Prolog) */
-    "ps", "% ",				/* postscript	 */
-    "r", "# ",				/* ratfor	 */
-    "red", "% ",			/* psl/rlisp	 */
+    {"me", ".\\\" "},			/* me-macros	t/nroff	 */
+    {"ml", "; "},			/* mocklisp	 */
+    {"mm", ".\\\" "},			/* mm-macros	t/nroff	 */
+    {"ms", ".\\\" "},			/* ms-macros	t/nroff	 */
+    {"man", ".\\\" "},			/* man-macros	t/nroff	 */
+    {"1", ".\\\" "},			/* feeble attempt at man pages... */
+    {"2", ".\\\" "},
+    {"3", ".\\\" "},
+    {"4", ".\\\" "},
+    {"5", ".\\\" "},
+    {"6", ".\\\" "},
+    {"7", ".\\\" "},
+    {"8", ".\\\" "},
+    {"9", ".\\\" "},
+    {"p", " * "},			/* pascal	 */
+    {"pas", " * "},
+    {"pl", "# "},			/* perl	(conflict with Prolog) */
+    {"ps", "% "},			/* postscript	 */
+    {"r", "# "},			/* ratfor	 */
+    {"red", "% "},			/* psl/rlisp	 */
 #ifdef sparc
-    "s", "! ",				/* assembler	 */
+    {"s", "! "},			/* assembler	 */
 #endif
 #ifdef mc68000
-    "s", "| ",				/* assembler	 */
+    {"s", "| "},			/* assembler	 */
 #endif
 #ifdef pdp11
-    "s", "/ ",				/* assembler	 */
+    {"s", "/ "},			/* assembler	 */
 #endif
 #ifdef vax
-    "s", "# ",				/* assembler	 */
+    {"s", "# "},			/* assembler	 */
 #endif
 #ifdef __ksr__
-    "s", "# ",				/* assembler	 */
-    "S", "# ",				/* Macro assembler */
+    {"s", "# "},			/* assembler	 */
+    {"S", "# "},			/* Macro assembler */
 #endif
-    "sh", "# ",				/* shell	 */
-    "sl", "% ",				/* psl		 */
-    "spec", "-- ",			/* Ada		 */
-    "tex", "% ",			/* tex		 */
-    "y", " * ",				/* yacc		 */
-    "ye", " * ",			/* yacc-efl	 */
-    "yr", " * ",			/* yacc-ratfor	 */
-    "", "# ",				/* default for empty suffix	 */
-    NULL, "# "				/* default for unknown suffix;	 */
+    {"sh", "# "},			/* shell	 */
+    {"sl", "% "},			/* psl		 */
+    {"spec", "-- "},			/* Ada		 */
+    {"tex", "% "},			/* tex		 */
+    {"y", " * "},			/* yacc		 */
+    {"ye", " * "},			/* yacc-efl	 */
+    {"yr", " * "},			/* yacc-ratfor	 */
+    {"", "# "},				/* default for empty suffix	 */
+    {NULL, "# "}			/* default for unknown suffix;	 */
 /* must always be last		 */
 };
 
@@ -815,7 +796,8 @@ add_rcs_file (message, rcs, user, vtag, targc, targv)
     char altdate2[50];
 #endif
     char *author, *buf;
-    int i, mode, ierrno, err = 0;
+    int i, ierrno, err = 0;
+    mode_t mode;
 
     if (noexec)
 	return (0);
@@ -826,33 +808,33 @@ add_rcs_file (message, rcs, user, vtag, targc, targv)
     /*
      * putadmin()
      */
-    if (fprintf (fprcs, "head     %s;\n", vhead) == EOF ||
-	fprintf (fprcs, "branch   %s;\n", vbranch) == EOF ||
-	fprintf (fprcs, "access   ;\n") == EOF ||
-	fprintf (fprcs, "symbols  ") == EOF)
+    if (fprintf (fprcs, "head     %s;\n", vhead) < 0 ||
+	fprintf (fprcs, "branch   %s;\n", vbranch) < 0 ||
+	fprintf (fprcs, "access   ;\n") < 0 ||
+	fprintf (fprcs, "symbols  ") < 0)
     {
 	goto write_error;
     }
 
     for (i = targc - 1; i >= 0; i--)	/* RCS writes the symbols backwards */
-	if (fprintf (fprcs, "%s:%s.1 ", targv[i], vbranch) == EOF)
+	if (fprintf (fprcs, "%s:%s.1 ", targv[i], vbranch) < 0)
 	    goto write_error;
 
-    if (fprintf (fprcs, "%s:%s;\n", vtag, vbranch) == EOF ||
-	fprintf (fprcs, "locks    ; strict;\n") == EOF ||
+    if (fprintf (fprcs, "%s:%s;\n", vtag, vbranch) < 0 ||
+	fprintf (fprcs, "locks    ; strict;\n") < 0 ||
 	/* XXX - make sure @@ processing works in the RCS file */
-	fprintf (fprcs, "comment  @%s@;\n", get_comment (user)) == EOF)
+	fprintf (fprcs, "comment  @%s@;\n", get_comment (user)) < 0)
     {
 	goto write_error;
     }
 
     if (keyword_opt != NULL)
-      if (fprintf (fprcs, "expand   @%s@;\n", keyword_opt) == EOF)
+      if (fprintf (fprcs, "expand   @%s@;\n", keyword_opt) < 0)
 	{
 	  goto write_error;
 	}
 
-    if (fprintf (fprcs, "\n") == EOF)
+    if (fprintf (fprcs, "\n") < 0)
       goto write_error;
 
     /*
@@ -889,28 +871,28 @@ add_rcs_file (message, rcs, user, vtag, targc, targv)
 #endif
     author = getcaller ();
 
-    if (fprintf (fprcs, "\n%s\n", vhead) == EOF ||
+    if (fprintf (fprcs, "\n%s\n", vhead) < 0 ||
 	fprintf (fprcs, "date     %s;  author %s;  state Exp;\n",
-		 altdate1, author) == EOF ||
-	fprintf (fprcs, "branches %s.1;\n", vbranch) == EOF ||
-	fprintf (fprcs, "next     ;\n") == EOF ||
-	fprintf (fprcs, "\n%s.1\n", vbranch) == EOF ||
+		 altdate1, author) < 0 ||
+	fprintf (fprcs, "branches %s.1;\n", vbranch) < 0 ||
+	fprintf (fprcs, "next     ;\n") < 0 ||
+	fprintf (fprcs, "\n%s.1\n", vbranch) < 0 ||
 	fprintf (fprcs, "date     %s;  author %s;  state Exp;\n",
-		 altdate2, author) == EOF ||
-	fprintf (fprcs, "branches ;\n") == EOF ||
-	fprintf (fprcs, "next     ;\n\n") == EOF ||
+		 altdate2, author) < 0 ||
+	fprintf (fprcs, "branches ;\n") < 0 ||
+	fprintf (fprcs, "next     ;\n\n") < 0 ||
 	/*
 	 * putdesc()
 	 */
-	fprintf (fprcs, "\ndesc\n") == EOF ||
-	fprintf (fprcs, "@@\n\n\n") == EOF ||
+	fprintf (fprcs, "\ndesc\n") < 0 ||
+	fprintf (fprcs, "@@\n\n\n") < 0 ||
 	/*
 	 * putdelta()
 	 */
-	fprintf (fprcs, "\n%s\n", vhead) == EOF ||
-	fprintf (fprcs, "log\n") == EOF ||
-	fprintf (fprcs, "@Initial revision\n@\n") == EOF ||
-	fprintf (fprcs, "text\n@") == EOF)
+	fprintf (fprcs, "\n%s\n", vhead) < 0 ||
+	fprintf (fprcs, "log\n") < 0 ||
+	fprintf (fprcs, "@Initial revision\n@\n") < 0 ||
+	fprintf (fprcs, "text\n@") < 0)
     {
 	goto write_error;
     }
@@ -923,19 +905,19 @@ add_rcs_file (message, rcs, user, vtag, targc, targv)
 	buf = xmalloc ((int) size);
 	if (fread (buf, (int) size, 1, fpuser) != 1)
 	    error (1, errno, "cannot read file %s for copying", user);
-	if (expand_at_signs (buf, size, fprcs) == EOF)
+	if (expand_at_signs (buf, size, fprcs) < 0)
 	{
 	    free (buf);
 	    goto write_error;
 	}
 	free (buf);
     }
-    if (fprintf (fprcs, "@\n\n") == EOF ||
-	fprintf (fprcs, "\n%s.1\n", vbranch) == EOF ||
-	fprintf (fprcs, "log\n@") == EOF ||
-	expand_at_signs (message, (off_t) strlen (message), fprcs) == EOF ||
-	fprintf (fprcs, "@\ntext\n") == EOF ||
-	fprintf (fprcs, "@@\n") == EOF)
+    if (fprintf (fprcs, "@\n\n") < 0 ||
+	fprintf (fprcs, "\n%s.1\n", vbranch) < 0 ||
+	fprintf (fprcs, "log\n@") < 0 ||
+	expand_at_signs (message, (off_t) strlen (message), fprcs) < 0 ||
+	fprintf (fprcs, "@\ntext\n") < 0 ||
+	fprintf (fprcs, "@@\n") < 0)
     {
 	goto write_error;
     }
@@ -1118,36 +1100,3 @@ import_descend_dir (message, dir, vtag, targc, targv)
 	error (1, errno, "cannot chdir to %s", cwd);
     return (err);
 }
-
-/* the following code is taken from code in rcs/src/rcssyn.c, and returns a
- * positive value if 'expstring' contains a valid RCS expansion token for
- * the -k option.  If an invalid expansion is named, then return -1.
- */
-
-char const *const expand_names[] = {
-	/* These must agree with *_EXPAND in rcs/src/rcsbase.h.  */
-	"kv","kvl","k","v","o",
-	0
-};
-
-static int
-str2expmode(s)
-     char const *s;
-/* Yield expand mode corresponding to S, or -1 if bad.  */
-{
-	return strn2expmode(s, strlen(s));
-}
-
-static int
-strn2expmode(s, n)
-     char const *s;
-     size_t n;
-{
-  char const *const *p;
-  
-  for (p = expand_names;  *p;  ++p)
-    if (memcmp(*p,s,n) == 0  &&  !(*p)[n])
-      return p - expand_names;
-  return -1;
-}
-

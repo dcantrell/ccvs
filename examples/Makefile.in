@@ -41,9 +41,13 @@ INSTALL = @INSTALL@
 INSTALL_DATA = @INSTALL_DATA@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
 
-EXAMPLE_FILES = commitinfo editinfo loginfo modules rcsinfo
+EXAMPLE_FILES = commitinfo editinfo loginfo modules rcsinfo \
+	rcstemplate checkoutlist
 
-DISTFILES = Makefile.in commitinfo loginfo modules rcsinfo
+DISTFILES = \
+	.cvsignore Makefile.in ChangeLog \
+	commitinfo editinfo loginfo modules rcsinfo \
+	rcstemplate checkoutlist
 
 all: Makefile
 .PHONY: all
@@ -55,7 +59,7 @@ install: all $(libdir)/cvs/examples
 .PHONY: install
 
 $(libdir)/cvs/examples:
-	../mkinstalldirs $(libdir)/cvs/examples
+	$(srcdir)/../mkinstalldirs $(libdir)/cvs/examples
 
 tags:
 .PHONY: tags
@@ -78,9 +82,13 @@ distclean: clean
 realclean: distclean
 .PHONY: realclean
 
-dist:
-	ln $(DISTFILES) ../`cat ../.fname`/examples
-.PHONY: dist
+dist-dir:
+	mkdir ${DISTDIR}
+	for i in ${DISTFILES}; do \
+	  ln $(srcdir)/$${i} ${DISTDIR}; \
+	done
+.PHONY: dist-dir
 
-Makefile: Makefile.in
-	cd ..; $(SHELL) config.status
+subdir = examples
+Makefile: ../config.status Makefile.in
+	cd .. && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= ./config.status

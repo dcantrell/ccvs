@@ -17,28 +17,37 @@
 
 /* $CVSid: @(#)system.h 1.18 94/09/25 $ */
 
+/* AIX requires this to be the first thing in the file. */
 #ifdef __GNUC__
 #define alloca __builtin_alloca
-#else
-#ifdef HAVE_ALLOCA_H
+#else /* not __GNUC__ */
+#if HAVE_ALLOCA_H
 #include <alloca.h>
-#else
+#else /* not HAVE_ALLOCA_H */
 #ifdef _AIX
-/* AIX alloca decl has to be the first thing in the file, bletch! */
  #pragma alloca
-#else  /* not _AIX */
+#else /* not _AIX */
 char *alloca ();
 #endif /* not _AIX */
 #endif /* not HAVE_ALLOCA_H */
-#endif /* not __GNUS__ */
+#endif /* not __GNUC__ */
 
 #include <sys/types.h>
 #include <sys/stat.h>
-#ifndef S_ISREG			/* Doesn't have POSIX.1 stat stuff. */
-#ifndef mode_t
-#define mode_t unsigned short
+
+#ifdef STAT_MACROS_BROKEN
+#undef S_ISBLK
+#undef S_ISCHR
+#undef S_ISDIR
+#undef S_ISREG
+#undef S_ISFIFO
+#undef S_ISLNK
+#undef S_ISSOCK
+#undef S_ISMPB
+#undef S_ISMPC
+#undef S_ISNWK
 #endif
-#endif
+
 #if !defined(S_ISBLK) && defined(S_IFBLK)
 #define	S_ISBLK(m) (((m) & S_IFMT) == S_IFBLK)
 #endif
@@ -71,6 +80,26 @@ char *alloca ();
 #define mkfifo(path, mode) (mknod ((path), (mode) | S_IFIFO, 0))
 #endif
 
+#ifndef S_IRUSR
+#define	S_IRUSR 0400
+#define	S_IWUSR 0200
+#define	S_IXUSR 0100
+/* Read, write, and execute by owner.  */
+#define	S_IRWXU	(S_IRUSR|S_IWUSR|S_IXUSR)
+
+#define	S_IRGRP	(S_IRUSR >> 3)	/* Read by group.  */
+#define	S_IWGRP	(S_IWUSR >> 3)	/* Write by group.  */
+#define	S_IXGRP	(S_IXUSR >> 3)	/* Execute by group.  */
+/* Read, write, and execute by group.  */
+#define	S_IRWXG	(S_IRWXU >> 3)
+
+#define	S_IROTH	(S_IRGRP >> 3)	/* Read by others.  */
+#define	S_IWOTH	(S_IWGRP >> 3)	/* Write by others.  */
+#define	S_IXOTH	(S_IXGRP >> 3)	/* Execute by others.  */
+/* Read, write, and execute by others.  */
+#define	S_IRWXO	(S_IRWXG >> 3)
+#endif
+
 #if defined(POSIX) || defined(HAVE_UNISTD_H)
 #include <unistd.h>
 #include <limits.h>
@@ -78,25 +107,30 @@ char *alloca ();
 off_t lseek ();
 #endif
 
-#ifdef TM_IN_SYS_TIME
-#include <sys/time.h>
+#if TIME_WITH_SYS_TIME
+# include <sys/time.h>
+# include <time.h>
 #else
-#include <time.h>
+# if HAVE_SYS_TIME_H
+#  include <sys/time.h>
+# else
+#  include <time.h>
+# endif
 #endif
 
-#ifndef HAVE_TIMEB_H
+#ifdef timezone
+#undef timezone /* needed for sgi */
+#endif
+
+#ifdef HAVE_SYS_TIMEB_H
+#include <sys/timeb.h>
+#else
 struct timeb {
     time_t		time;		/* Seconds since the epoch	*/
     unsigned short	millitm;	/* Field not used		*/
-#ifdef timezone
-    short		tzone;
-#else
     short		timezone;
-#endif
     short		dstflag;	/* Field not used		*/
 };
-#else
-#include <sys/timeb.h>
 #endif
 
 #if !defined(HAVE_FTIME) && !defined(HAVE_TIMEZONE)
@@ -137,8 +171,11 @@ extern long timezone;
 **         NEC                 SVR4
 */
 
-/* On MOST systems this will get you MAXPATHLEN */
+/* On MOST systems this will get you MAXPATHLEN.
+   Windows NT doesn't have this file, tho.  */
+#ifdef HAVE_SYS_PARAM_H
 #include <sys/param.h>
+#endif
 
 #ifndef PATH_MAX  
 #  ifdef MAXPATHLEN
@@ -156,9 +193,11 @@ extern long timezone;
 #endif  /* PATH_MAX   */
 
 
-
-
-#ifdef HAVE_UTIME_H
+/* The NeXT (without _POSIX_SOURCE, which we don't want) has a utime.h
+   which doesn't define anything.  It would be cleaner to have configure
+   check for struct utimbuf, but for now I'm checking NeXT here (so I don't
+   have to debug the configure check across all the machines).  */
+#if defined (HAVE_UTIME_H) && !defined (NeXT)
 #include <utime.h>
 #else
 #ifndef ALTOS
@@ -235,23 +274,22 @@ char *getwd ();
 #define R_OK 4
 #endif
 
-/* unistd.h defines _POSIX_VERSION on POSIX.1 systems.  */
-#if defined(DIRENT) || defined(_POSIX_VERSION)
-#include <dirent.h>
-#define NLENGTH(dirent) (strlen((dirent)->d_name))
-#else /* not (DIRENT or _POSIX_VERSION) */
-#define dirent direct
-#define NLENGTH(dirent) ((dirent)->d_namlen)
-#ifdef SYSNDIR
-#include <sys/ndir.h>
-#endif /* SYSNDIR */
-#ifdef SYSDIR
-#include <sys/dir.h>
-#endif /* SYSDIR */
-#ifdef NDIR
-#include <ndir.h>
-#endif /* NDIR */
-#endif /* not (DIRENT or _POSIX_VERSION) */
+#if HAVE_DIRENT_H
+# include <dirent.h>
+# define NAMLEN(dirent) strlen((dirent)->d_name)
+#else
+# define dirent direct
+# define NAMLEN(dirent) (dirent)->d_namlen
+# if HAVE_SYS_NDIR_H
+#  include <sys/ndir.h>
+# endif
+# if HAVE_SYS_DIR_H
+#  include <sys/dir.h>
+# endif
+# if HAVE_NDIR_H
+#  include <ndir.h>
+# endif
+#endif
 
 /* Convert B 512-byte blocks to kilobytes if K is nonzero,
    otherwise return it unchanged. */

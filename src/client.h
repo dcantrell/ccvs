@@ -1,7 +1,7 @@
 /* Interface between the client and the rest of CVS.  */
 
 /* Stuff shared with the server.  */
-extern char *mode_to_string PROTO((struct stat *));
+extern char *mode_to_string PROTO((mode_t));
 extern int change_mode PROTO((char *, char *));
 
 /*
@@ -146,6 +146,7 @@ extern void client_nonexpanded_setup PROTO((void));
 extern char **failed_patches;
 extern int failed_patches_count;
 extern char toplevel_wd[];
+extern void client_import_setup PROTO((char *repository));
 extern int client_process_import_file
     PROTO((char *message, char *vfile, char *vtag,
 	   int targc, char *targv[], char *repository));

@@ -11,7 +11,7 @@
 #include "cvs.h"
 
 #ifndef lint
-static char rcsid[] = "$CVSid: @(#)status.c 1.56 94/10/07 $";
+static const char rcsid[] = "$CVSid: @(#)status.c 1.56 94/10/07 $";
 USE(rcsid)
 #endif
 
@@ -26,19 +26,21 @@ static int long_format = 0;
 static char *xfile;
 static List *xsrcfiles;
 
-static char *status_usage[] =
+static const char *const status_usage[] =
 {
     "Usage: %s %s [-vlR] [files...]\n",
     "\t-v\tVerbose format; includes tag information for the file\n",
     "\t-l\tProcess this directory only (not recursive).\n",
     "\t-R\tProcess directories recursively.\n",
+    "\t-q\tBe somewhat quiet.\n",
+    "\t-Q\tDo not print empty sticky parts.\n",
     NULL
 };
 
 int
 status (argc, argv)
     int argc;
-    char *argv[];
+    char **argv;
 {
     int c;
     int err = 0;
@@ -47,7 +49,7 @@ status (argc, argv)
 	usage (status_usage);
 
     optind = 1;
-    while ((c = getopt (argc, argv, "vlR")) != -1)
+    while ((c = getopt (argc, argv, "vlRqQ")) != -1)
     {
 	switch (c)
 	{
@@ -59,6 +61,12 @@ status (argc, argv)
 		break;
 	    case 'R':
 		local = 0;
+		break;
+	    case 'q':
+		quiet = TRUE;
+		break;
+	    case 'Q':
+		really_quiet = TRUE;
 		break;
 	    case '?':
 	    default:
@@ -73,19 +81,15 @@ status (argc, argv)
       start_server ();
 
       if (long_format)
-	fprintf (to_server, "Argument -v\n");
+	send_arg("-v");
       if (local)
-	fprintf (to_server, "Argument -l\n");
-      else
-	fprintf (to_server, "Argument -R\n");
-      if (feof (to_server) || ferror (to_server))
-	error (1, errno, "writing to server");
+	send_arg("-l");
 
       /* XXX This should only need to send file info; the file
 	 contents themselves will not be examined.  */
       send_files (argc, argv, local, 0);
 
-      if (fprintf (to_server, "status\n") == EOF)
+      if (fprintf (to_server, "status\n") < 0)
 	error (1, errno, "writing to server");
       err = get_responses_and_close ();
 
@@ -209,17 +213,17 @@ status_fileproc (file, update_dir, repository, entries, srcfiles)
 		}
 	    }
 	}
-	else
+	else if (!really_quiet)
 	    (void) printf ("   Sticky Tag:\t\t(none)\n");
 
 	if (edata->date)
 	    (void) printf ("   Sticky Date:\t\t%s\n", edata->date);
-	else
+	else if (!really_quiet)
 	    (void) printf ("   Sticky Date:\t\t(none)\n");
 
 	if (edata->options && edata->options[0])
 	    (void) printf ("   Sticky Options:\t%s\n", edata->options);
-	else
+	else if (!really_quiet)
 	    (void) printf ("   Sticky Options:\t(none)\n");
 
 	if (long_format && vers->srcfile)

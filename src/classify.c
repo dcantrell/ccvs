@@ -10,7 +10,7 @@
 #include "cvs.h"
 
 #ifndef lint
-static char rcsid[] = "$CVSid: @(#)classify.c 1.17 94/10/07 $";
+static const char rcsid[] = "$CVSid: @(#)classify.c 1.17 94/10/07 $";
 USE(rcsid)
 #endif
 
@@ -79,6 +79,7 @@ Classify_File (file, tag, date, options, force_tag_match, aflag, repository,
 		ret = T_UNKNOWN;
 	    }
 	}
+#ifdef DEATH_SUPPORT
 	else if (RCS_isdead (vers->srcfile, vers->vn_rcs))
 	{
 	    if (vers->ts_user == NULL)
@@ -96,6 +97,7 @@ Classify_File (file, tag, date, options, force_tag_match, aflag, repository,
 		ret = T_UNKNOWN;
 	    }
 	}
+#endif
 	else
 	{
 	    /* there is an rcs file */
