@@ -1,3 +1,7 @@
+2004-09-24  Mark D. Baushke  <mdb@cvshome.org>
+
+	* buffer.c (buf_append_buffer): Fix typo in comment.
+
 2004-09-23  Mark D. Baushke  <mdb@cvshome.org>
 
 	* buffer.c (buf_read_file): Fix typo in comment.

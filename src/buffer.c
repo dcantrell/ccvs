@@ -560,7 +560,7 @@ buf_free_data (struct buffer *buffer)
 
 
 
-/* Append the data on one buffer to another.  This removes the data
+/* Append the data in one buffer to another.  This removes the data
  * from the source buffer, maintaining LAST_INDEX and LAST_COUNT.
  */
 void
