@@ -1,5 +1,9 @@
 2004-02-02  Derek Price  <derek@ximbiot.com>
 
+	* sanity.sh (*): Update tests for the new status message from update.c.
+
+2004-02-02  Derek Price  <derek@ximbiot.com>
+
 	* sanity.sh (join-rm): New test for issue #104 & #159.
 
 2004-02-02  Derek Price  <derek@ximbiot.com>
