@@ -1,3 +1,10 @@
+2003-07-19  Derek Price  <derek@ximbiot.com>
+
+	* getline.m4: Merge more of Bruno Habile's GNULIB changes to this file
+	so our fork is less divergent.
+	* getndelim2.m4: Ditto.
+	* getnline.m4: Ditto.
+
 2003-07-17  Derek Price  <derek@ximbiot.com>
 
 	* getline.m4 (gl_PREREQ_GETLINE): s/gl_FUNC_GETNDELIM2/gl_GETNDELIM2/.
