@@ -114,13 +114,55 @@ void
 strip_trailing_newlines (str)
      char *str;
 {
-  int len;
-  len = strlen (str) - 1;
+    int len;
+    len = strlen (str) - 1;
 
-  while (str[len] == '\n')
-    str[len--] = '\0';
+    while (str[len] == '\n')
+	str[len--] = '\0';
 }
 
+/* Return the number of levels that path ascends above where it starts.
+   For example:
+   "../../foo" -> 2
+   "foo/../../bar" -> 1
+   */
+/* FIXME: Should be using ISDIRSEP, last_component, or some other
+   mechanism which is more general than just looking at slashes,
+   particularly for the client.c caller.  The server.c caller might
+   want something different, so be careful.  */
+int
+pathname_levels (path)
+    char *path;
+{
+    char *p;
+    char *q;
+    int level;
+    int max_level;
+
+    max_level = 0;
+    p = path;
+    level = 0;
+    do
+    {
+	q = strchr (p, '/');
+	if (q != NULL)
+	    ++q;
+	if (p[0] == '.' && p[1] == '.' && (p[2] == '\0' || p[2] == '/'))
+	{
+	    --level;
+	    if (-level > max_level)
+		max_level = -level;
+	}
+	else if (p[0] == '.' && (p[1] == '\0' || p[1] == '/'))
+	    ;
+	else
+	    ++level;
+	p = q;
+    } while (p != NULL);
+    return max_level;
+}
+
+
 /*
  * Recover the space allocated by line2argv()
  */

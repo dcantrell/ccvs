@@ -1,5 +1,13 @@
 Thu Apr 24 11:35:40 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* subr.c, cvs.h (pathname_levels): New function, from a piece of
+	send_file_names.
+	* client.c (send_file_names): Call pathname_levels in place of the
+	code which was moved there.
+	* server.c, server.h (server_pathname_check): New function.
+	* recurse.c (start_recursion): Call it.
+	* sanity.sh (modules3): New test modules3-11b tests for above fix.
+
 	* filesubr.c: Do not define L_tmpnam.  It is in ANSI and SunOS4,
 	so I don't think there will be a problem with it being missing.
 	Defining it too small can cause memory corruption.

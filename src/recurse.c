@@ -139,6 +139,14 @@ start_recursion (fileproc, filesdoneproc, direntproc, dirleaveproc, callerdat,
     if (dirlist)
 	dellist (&dirlist);
 
+#ifdef SERVER_SUPPORT
+    if (server_active)
+    {
+	for (i = 0; i < argc; ++i)
+	    server_pathname_check (argv[i]);
+    }
+#endif
+
     if (argc == 0)
     {
 

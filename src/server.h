@@ -21,6 +21,9 @@ extern int server_expanding;
 /* Run the server.  */
 extern int server PROTO((int argc, char **argv));
 
+/* See server.c for description.  */
+extern void server_pathname_check PROTO ((char *));
+
 /* We have a new Entries line for a file.  TAG or DATE can be NULL.  */
 extern void server_register
     PROTO((char *name, char *version, char *timestamp,

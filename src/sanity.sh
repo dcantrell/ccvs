@@ -4132,6 +4132,15 @@ done'
 	  dotest modules3-10 "${testcvs} -q co nestdeeper" \
 'U src/sub1/sub2/sub3/dir/file1'
 	  dotest modules3-11 "test -f src/sub1/sub2/sub3/dir/file1" ''
+
+	  # While we are doing things like twisted uses of '/' (e.g.
+	  # modules3-12), try this one.
+	  if test "x$remote" = xyes; then
+	    dotest_fail modules3-11b \
+"${testcvs} -q update ${TESTDIR}/1/src/sub1/sub2/sub3/dir/file1" \
+"${PROG} .server aborted.: absolute pathname .${TESTDIR}/1/src/sub1/sub2/sub3/dir/file1. illegal for server"
+	  fi # end of remote-only tests
+
 	  cd ..
 	  rm -r 1
 
