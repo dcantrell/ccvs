@@ -1,3 +1,7 @@
+2003-10-07  Derek Price  <derek@ximbiot.com>
+
+	* NEWS: Note case insensitive file lookup fix.
+
 2003-10-03  Derek Price  <derek@ximbiot.com>
 
 	* NEWS: Note server ignoring `-l' with a warning.
