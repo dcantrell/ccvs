@@ -408,6 +408,10 @@ already exist; if creating a new root, use the @code{init} request, not
 server, how to access the server, etc.; by the time the CVS protocol is
 in use, connection, authentication, etc., are already taken care of.
 
+The @code{Root} request must be sent only once, and it must be sent
+before any requests other than @code{Valid-responses},
+@code{valid-requests}, @code{UseUnchanged}, or @code{init}.
+
 @item Valid-responses @var{request-list} \n
 Response expected: no.
 Tell the server what responses the client will accept.
