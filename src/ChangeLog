@@ -1,3 +1,8 @@
+Thu Sep 14 14:17:52 1995  Peter Wemm  <peter@haywire.dialix.com>
+
+	* mkmodules.c: Deal with .db as well as .pag/.dir (for use with
+	BSD 4.4 and real dbm support).
+
 Mon Sep 11 15:44:13 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* release.c (release): Revise comment regarding why and how we
