@@ -20,8 +20,7 @@ Helped Brian with the design of the
 .B cvs
 module and vendor branch support and author of the
 .BR checkin ( 1 )
-shell script (the ancestor of
-.` "cvs import").
+shell script (the ancestor of \fBcvs import\fP).
 .TP
 Larry Jones, Derek R. Price, and Mark D. Baushke
 Have helped maintain
@@ -40,7 +39,11 @@ cvs.ps (PostScript), cvs.texinfo (Texinfo source), or cvs.html.
 For CVS updates, more information on documentation, software related
 to CVS, development of CVS, and more, see:
 .in +1i
+.SP
+.PD 0
+.IP "" 4
 .B http://cvshome.org
+.IP "" 4
 .B http://www.loria.fr/~molli/cvs-index.html
 .in -1i
 .SP
