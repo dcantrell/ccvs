@@ -1,3 +1,24 @@
+2003-02-07  Derek Price  <derek@ximbiot.com>
+
+	* add.c: Exercise the pet peeve Karl Fogel, I think, infected me with
+	about using the word invalid rather than illegal and reserving illegal
+	for use when actually discussing laws and governmentally enforced
+	restrictions:
+	s/illegal/invalid/g;s/legality/validity/g;s/legal/valid/g;
+	* admin.c: Ditto.
+	* cvs.h: Ditto.
+	* expand_path.c: Ditto.
+	* log.c: Ditto.
+	* modules.c: Ditto.
+	* rcs.c: Ditto.
+	* rcs.h: Ditto.
+	* repos.c: Ditto.
+	* root.c: Ditto.
+	* sanity.sh: Ditto.
+	* scramble.c: Ditto.
+	* server.c: Ditto.
+	* subr.c: Ditto.
+
 2003-02-06  Derek Price  <derek@ximbiot.com>
 
 	* rcs.c (RCS_getdatebranch): Update header comment to reflect the state

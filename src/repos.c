@@ -115,13 +115,13 @@ Name_Repository (dir, update_dir)
 	    error (0, 0, "in directory %s:", xupdate_dir);
 	    error (0, 0, "must set the CVSROOT environment variable\n");
 	    error (0, 0, "or specify the '-d' option to %s.", program_name);
-	    error (1, 0, "illegal repository setting");
+	    error (1, 0, "invalid repository setting");
 	}
 	if (pathname_levels (repos) > 0)
 	{
 	    error (0, 0, "in directory %s:", xupdate_dir);
 	    error (0, 0, "`..'-relative repositories are not supported.");
-	    error (1, 0, "illegal source repository");
+	    error (1, 0, "invalid source repository");
 	}
 	newrepos = xmalloc (strlen (current_parsed_root->directory) + strlen (repos) + 2);
 	(void) sprintf (newrepos, "%s/%s", current_parsed_root->directory, repos);

@@ -4884,7 +4884,7 @@ RCS_addbranch (rcs, branch)
 
 /* Check in to RCSFILE with revision REV (which must be greater than
    the largest revision) and message MESSAGE (which is checked for
-   legality).  If FLAGS & RCS_FLAGS_DEAD, check in a dead revision.
+   validity).  If FLAGS & RCS_FLAGS_DEAD, check in a dead revision.
    If FLAGS & RCS_FLAGS_QUIET, tell ci to be quiet.  If FLAGS &
    RCS_FLAGS_MODTIME, use the working file's modification time for the
    checkin time.  WORKFILE is the working file to check in from, or
@@ -5070,7 +5070,7 @@ workfile);
     dtext = (Deltatext *) xmalloc (sizeof (Deltatext));
     memset (dtext, 0, sizeof (Deltatext));
 
-    dtext->log = make_message_rcslegal (message);
+    dtext->log = make_message_rcsvalid (message);
 
     /* If the delta tree is empty, then there's nothing to link the
        new delta into.  So make a new delta tree, snarf the working
@@ -7794,7 +7794,7 @@ putrcsfield_proc (node, vfp)
     {
 	/* If the field's value contains evil characters,
 	   it must be stringified. */
-	/* FIXME: This does not quite get it right.  "7jk8f" is not a legal
+	/* FIXME: This does not quite get it right.  "7jk8f" is not a valid
 	   value for a value in a newpharse, according to doc/RCSFILES,
 	   because digits are not valid in an "id".  We might do OK by
 	   always writing strings (enclosed in @@).  Would be nice to

@@ -175,7 +175,7 @@ Create_Root (dir, rootdir)
 #endif /* ! DEBUG */
 
 
-/* The root_allow_* stuff maintains a list of legal CVSROOT
+/* The root_allow_* stuff maintains a list of valid CVSROOT
    directories.  Then we can check against them when a remote user
    hands us a CVSROOT directory.  */
 

@@ -517,7 +517,7 @@ check_numeric (rev, argc, argv)
  *  nonsense about non-empty log fields can be dropped.
  */
 char *
-make_message_rcslegal (message)
+make_message_rcsvalid (message)
      char *message;
 {
     char *dst, *dp, *mp;

@@ -482,7 +482,7 @@ do_module (db, mname, m_type, msg, callback_proc, where, shorten,
 
     if (alias && nonalias_opt)
     {
-	/* The documentation has never said it is legal to specify
+	/* The documentation has never said it is valid to specify
 	   -a along with another option.  And I believe that in the past
 	   CVS has ignored the options other than -a, more or less, in this
 	   situation.  */

@@ -1638,7 +1638,7 @@ log_version (log_data, revlist, rcs, ver, trunk)
        p->data is "" can happen (getrcskey in rcs.c checks for an
        empty string and set the value to NULL in that case).  My guess
        would be the p == NULL case would mean an RCS file which was
-       missing the "log" keyword (which is illegal according to
+       missing the "log" keyword (which is invalid according to
        rcsfile.5).  */
     if (p == NULL || p->data == NULL || p->data[0] == '\0')
 	cvs_output ("*** empty log message ***\n", 0);
