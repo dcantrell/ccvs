@@ -2,6 +2,7 @@
 
 #include "cvs.h"
 #include "buffer.h"
+#include "pagealign_alloc.h"
 
 #if defined (SERVER_SUPPORT) || defined (CLIENT_SUPPORT)
 
@@ -17,12 +18,8 @@
 #   define EIO EBADPOS
 # endif
 
-/* Linked list of available buffer_data structures.  */
-static struct buffer_data *free_buffer_data;
-
 /* Local functions.  */
 static void buf_default_memory_error (struct buffer *);
-static void allocate_buffer_datas (void);
 static struct buffer_data *get_buffer_data (void);
 
 
@@ -66,11 +63,7 @@ buf_free (struct buffer *buf)
 	free (buf->closure);
 	buf->closure = NULL;
     }
-    if (buf->data != NULL)
-    {
-	buf->last->next = free_buffer_data;
-	free_buffer_data = buf->data;
-    }
+    buf_free_data (buf);
     free (buf);
 }
 
@@ -95,45 +88,15 @@ buf_default_memory_error (struct buffer *buf)
 
 
 /* Allocate more buffer_data structures.  */
-static void
-allocate_buffer_datas (void)
-{
-    struct buffer_data *alc;
-    char *space;
-    int i;
-
-    /* Allocate buffer_data structures in blocks of 16.  */
-# define ALLOC_COUNT (16)
-
-    alc = xmalloc (ALLOC_COUNT * sizeof (struct buffer_data));
-    space = valloc (ALLOC_COUNT * BUFFER_DATA_SIZE);
-    if (alc == NULL || space == NULL)
-	return;
-    for (i = 0; i < ALLOC_COUNT; i++, alc++, space += BUFFER_DATA_SIZE)
-    {
-	alc->next = free_buffer_data;
-	free_buffer_data = alc;
-	alc->text = space;
-    }	  
-}
-
-
-
 /* Get a new buffer_data structure.  */
 static struct buffer_data *
 get_buffer_data (void)
 {
     struct buffer_data *ret;
 
-    if (free_buffer_data == NULL)
-    {
-	allocate_buffer_datas ();
-	if (free_buffer_data == NULL)
-	    return NULL;
-    }
+    ret = xmalloc (sizeof (struct buffer_data));
+    ret->text = pagealign_xalloc (BUFFER_DATA_SIZE);
 
-    ret = free_buffer_data;
-    free_buffer_data = ret->next;
     return ret;
 }
 
@@ -271,6 +234,26 @@ buf_append_char (struct buffer *buf, int ch)
 
 
 
+/* Free struct buffer_data's from the list starting with FIRST and ending at
+ * LAST, inclusive.
+ */
+static inline void
+buf_free_datas (struct buffer_data *first, struct buffer_data *last)
+{
+    struct buffer_data *b, *n, *p;
+    b = first;
+    do
+    {
+	p = b;
+	n = b->next;
+	pagealign_free (b->text);
+	free (b);
+	b = n;
+    } while (p != last);
+}
+
+
+
 /*
  * Send all the output we've been saving up.  Returns 0 for success or
  * errno code.  If the buffer has been set to be nonblocking, this
@@ -297,12 +280,7 @@ buf_send_output (struct buffer *buf)
 	    if (status != 0)
 	    {
 		/* Some sort of error.  Discard the data, and return.  */
-
-		buf->last->next = free_buffer_data;
-		free_buffer_data = buf->data;
-		buf->data = NULL;
-		buf->last = NULL;
-
+		buf_free_data (buf);
 	        return status;
 	    }
 
@@ -322,8 +300,7 @@ buf_send_output (struct buffer *buf)
 	}
 
 	buf->data = data->next;
-	data->next = free_buffer_data;
-	free_buffer_data = data;
+	buf_free_datas (data, data);
     }
 
     buf->last = NULL;
@@ -549,8 +526,7 @@ void
 buf_free_data (struct buffer *buffer)
 {
     if (buf_empty_p (buffer)) return;
-    buffer->last->next = free_buffer_data;
-    free_buffer_data = buffer->data;
+    buf_free_datas (buffer->data, buffer->last);
     buffer->data = buffer->last = NULL;
 }
 # endif /* PROXY_SUPPORT */
@@ -642,10 +618,7 @@ buf_read_file (FILE *f, long int size, struct buffer_data **retp,
 
   error_return:
     if (*retp != NULL)
-    {
-	(*lastp)->next = free_buffer_data;
-	free_buffer_data = *retp;
-    }
+	buf_free_datas (*retp, (*lastp)->next);
     return status;
 }
 
@@ -706,10 +679,7 @@ buf_read_file_to_eof (FILE *f, struct buffer_data **retp,
 
   error_return:
     if (*retp != NULL)
-    {
-	(*lastp)->next = free_buffer_data;
-	free_buffer_data = *retp;
-    }
+	buf_free_datas (*retp, (*lastp)->next);
     return status;
 }
 
@@ -880,8 +850,7 @@ buf_read_short_line (struct buffer *buf, char **line, size_t *lenp,
 		memcpy (p, data->bufp, data->size);
 		p += data->size;
 		next = data->next;
-		data->next = free_buffer_data;
-		free_buffer_data = data;
+		buf_free_datas (data, data);
 		data = next;
 	    }
 
@@ -979,8 +948,7 @@ buf_read_data (struct buffer *buf, size_t want, char **retdata, size_t *got)
 	struct buffer_data *next;
 
 	next = buf->data->next;
-	buf->data->next = free_buffer_data;
-	free_buffer_data = buf->data;
+	buf_free_datas (buf->data, buf->data);
 	buf->data = next;
 	if (next == NULL)
 	    buf->last = NULL;
@@ -1227,8 +1195,7 @@ buf_copy_counted (struct buffer *outbuf, struct buffer *inbuf, int *special)
 	{
 	    data = inbuf->data;
 	    inbuf->data = data->next;
-	    data->next = free_buffer_data;
-	    free_buffer_data = data;
+	    buf_free_datas (data, data);
 	}
 
 	/* If COUNT is negative, set *SPECIAL and get out now.  */

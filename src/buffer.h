@@ -2,6 +2,8 @@
 
 #if defined (SERVER_SUPPORT) || defined (CLIENT_SUPPORT)
 
+# include "getpagesize.h"
+
 /*
  * We must read data from a child process and send it across the
  * network.  We do not want to block on writing to the network, so we
@@ -99,7 +101,7 @@ struct buffer_data
 };
 
 /* The size we allocate for each buffer_data structure.  */
-#define BUFFER_DATA_SIZE (4096)
+#define BUFFER_DATA_SIZE getpagesize ()
 
 /* The type of a function passed as a memory error handler.  */
 typedef void (*BUFMEMERRPROC) (struct buffer *);
