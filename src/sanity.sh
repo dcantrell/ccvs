@@ -1414,9 +1414,9 @@ for what in $tests; do
 	  ${testcvs} add subdir >>${LOGFILE}
 	  cd subdir
 
-	  touch a
+	  touch a b
 
-	  if ${testcvs} add a 2>>${LOGFILE} ; then
+	  if ${testcvs} add a b 2>>${LOGFILE} ; then
 	    echo 'PASS: test 144' >>${LOGFILE}
 	  else
 	    echo 'FAIL: test 144' | tee -a ${LOGFILE}
@@ -1450,6 +1450,7 @@ for what in $tests; do
 	  fi
 
 	  echo realmodule first-dir/subdir a >>CVSROOT/modules
+	  echo dirmodule first-dir/subdir >>CVSROOT/modules
 	  echo aliasmodule -a first-dir/subdir/a >>CVSROOT/modules
 	  if ${testcvs} ci -m 'add modules' CVSROOT/modules \
 	      >>${LOGFILE} 2>&1; then
@@ -1459,18 +1460,88 @@ for what in $tests; do
 	    exit 1
 	  fi
 	  cd ..
+
+	  # Test that real modules check out to realmodule/a, not subdir/a.
 	  if ${testcvs} co realmodule >>${LOGFILE}; then
-	    echo 'PASS: test 149' >>${LOGFILE}
+	    echo 'PASS: test 149a1' >>${LOGFILE}
 	  else
-	    echo 'FAIL: test 149' | tee -a ${LOGFILE}
+	    echo 'FAIL: test 149a1' | tee -a ${LOGFILE}
 	    exit 1
 	  fi
 	  if test -d realmodule && test -f realmodule/a; then
-	    echo 'PASS: test 150' >>${LOGFILE}
+	    echo 'PASS: test 149a2' >>${LOGFILE}
 	  else
-	    echo 'FAIL: test 150' | tee -a ${LOGFILE}
+	    echo 'FAIL: test 149a2' | tee -a ${LOGFILE}
 	    exit 1
 	  fi
+	  if test -f realmodule/b; then
+	    echo 'FAIL: test 149a3' | tee -a ${LOGFILE}
+	    exit 1
+	  else
+	    echo 'PASS: test 149a3' >>${LOGFILE}
+	  fi
+	  if ${testcvs} -q co realmodule; then
+	    echo 'PASS: test 149a4' >>${LOGFILE}
+	  else
+	    echo 'FAIL: test 149a4' | tee -a ${LOGFILE}
+	    exit 1
+	  fi
+	  if echo "yes" | ${testcvs} release -d realmodule >>${LOGFILE} ; then
+	    echo 'PASS: test 149a5' >>${LOGFILE}
+	  else
+	    echo 'FAIL: test 149a5' | tee -a ${LOGFILE}
+	    exit 1
+	  fi
+
+	  # Now test the ability to check out a single file from a directory
+	  if ${testcvs} co dirmodule/a >>${LOGFILE}; then
+	    echo 'PASS: test 150c' >>${LOGFILE}
+	  else
+	    echo 'FAIL: test 150c' | tee -a ${LOGFILE}
+	    exit 1
+	  fi
+	  if test -d dirmodule && test -f dirmodule/a; then
+	    echo 'PASS: test 150d' >>${LOGFILE}
+	  else
+	    echo 'FAIL: test 150d' | tee -a ${LOGFILE}
+	    exit 1
+	  fi
+	  if test -f dirmodule/b; then
+	    echo 'FAIL: test 150e' | tee -a ${LOGFILE}
+	    exit 1
+	  else
+	    echo 'PASS: test 150e' >>${LOGFILE}
+	  fi
+	  if echo "yes" | ${testcvs} release -d dirmodule >>${LOGFILE} ; then
+	    echo 'PASS: test 150f' >>${LOGFILE}
+	  else
+	    echo 'FAIL: test 150f' | tee -a ${LOGFILE}
+	    exit 1
+	  fi
+	  # Now test the ability to correctly reject a non-existent filename.
+	  # For maximum studliness we would check that an error message is
+	  # being output.
+	  if ${testcvs} co dirmodule/nonexist >>${LOGFILE} 2>&1; then
+	    # We accept a zero exit status because it is what CVS does
+	    # (Dec 95).  Probably the exit status should be nonzero,
+	    # however.
+	    echo 'PASS: test 150g1' >>${LOGFILE}
+	  else
+	    echo 'PASS: test 150g1' >>${LOGFILE}
+	  fi
+	  # We tolerate the creation of the dirmodule directory, since that
+	  # is what CVS does, not because we view that as preferable to not
+	  # creating it.
+	  if test -f dirmodule/a || test -f dirmodule/b; then
+	    echo 'FAIL: test 150g2' | tee -a ${LOGFILE}
+	    exit 1
+	  else
+	    echo 'PASS: test 150g2' >>${LOGFILE}
+	  fi
+	  rm -rf dirmodule
+
+	  # Now test that alias modules check out to subdir/a, not
+	  # aliasmodule/a.
 	  if ${testcvs} co aliasmodule >>${LOGFILE}; then
 	    echo 'PASS: test 151' >>${LOGFILE}
 	  else
@@ -1496,12 +1567,6 @@ for what in $tests; do
 	    echo 'PASS: test 154' >>${LOGFILE}
 	  else
 	    echo 'FAIL: test 154' | tee -a ${LOGFILE}
-	    exit 1
-	  fi
-	  if ${testcvs} -q co realmodule; then
-	    echo 'PASS: test 155' >>${LOGFILE}
-	  else
-	    echo 'FAIL: test 155' | tee -a ${LOGFILE}
 	    exit 1
 	  fi
 	  cd ..

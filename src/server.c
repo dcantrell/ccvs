@@ -3230,7 +3230,14 @@ expand_proc (pargc, argv, where, mwhere, mfile, shorten,
        expansion. */
 
     if (mwhere != NULL)
-      printf ("Module-expansion %s\n", mwhere);
+    {
+	printf ("Module-expansion %s", mwhere);
+	if (mfile != NULL)
+	{
+	    printf ("/%s", mfile);
+	}
+	printf ("\n");
+    }
     else
       {
 	/* We may not need to do this anymore -- check the definition
