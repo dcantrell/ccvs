@@ -1,3 +1,8 @@
+2001-09-18  Derek Price  <dprice@collab.net>
+
+	* rcs.c (rcsbuf_getkey, rcsbuf_valpolish_internal): Replace some code
+	of the form "if ( ... ) abort();" with equivalent calls to assert().
+
 2001-09-17  Derek Price  <dprice@collab.net>
 
 	* myndbm.c (mydbm_load_file): Fix buffer overflow error and make error
