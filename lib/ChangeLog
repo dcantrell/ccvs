@@ -1,3 +1,9 @@
+Sun May 12 09:40:08 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* getdate.y: Replace alloca.h include with a comment explaining
+	why we avoid alloca and the consequences of that.
+	* getdate.c: Regenerated.
+
 Wed May  8 09:31:03 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* getdate.c: Regenerate with the version of byacc in Red Hat 3.0.3
