@@ -1,3 +1,9 @@
+2004-04-17  Derek Price  <derek@ximbiot.com>
+
+	* zlib.dep, zlib.dsp, zlib.mak: Move...
+	* libz.dep, libz.dsp, libz.mak: ...here.
+	(Patch from Conrad T. Pino <Conrad@Pino.com>.)
+
 2004-04-15  Derek Price  <derek@ximbiot.com>
 
 	* zlib.dsp: Set PROP BASE directories to projet standard,
