@@ -4,7 +4,6 @@
 
 #ifdef CLIENT_SUPPORT
 
-#include "update.h"		/* Things shared with update.c */
 #include "md5.h"
 
 #ifdef AUTH_CLIENT_SUPPORT
@@ -217,6 +216,8 @@ int client_active;
 int client_prune_dirs;
 
 static int cvsroot_parsed = 0;
+
+static List *ignlist = (List *) NULL;
 
 /* Set server_host and server_cvsroot.  */
 static void
@@ -3325,6 +3326,8 @@ send_modified (file, short_pathname, vers)
     free (mode_string);
 }
 
+static int send_fileproc PROTO ((char *, char *, char *, List *, List *));
+
 /* Deal with one file.  */
 static int
 send_fileproc (file, update_dir, repository, entries, srcfiles)
@@ -3432,6 +3435,48 @@ send_fileproc (file, update_dir, repository, entries, srcfiles)
     free (short_pathname);
     return 0;
 }
+
+static void send_ignproc PROTO ((char *, char *));
+
+static void
+send_ignproc (file, dir)
+    char *file;
+    char *dir;
+{
+    if (ign_inhibit_server || !supported_request ("Questionable"))
+    {
+	if (dir[0] != '\0')
+	    (void) printf ("? %s/%s\n", dir, file);
+	else
+	    (void) printf ("? %s\n", file);
+    }
+    else
+    {
+	send_to_server ("Questionable ", 0);
+	send_to_server (file, 0);
+	send_to_server ("\n", 1);
+    }
+}
+
+static int send_filesdoneproc PROTO ((int, char *, char *));
+
+static int
+send_filesdoneproc (err, repository, update_dir)
+    int err;
+    char *repository;
+    char *update_dir;
+{
+    /* if this directory has an ignore list, process it then free it */
+    if (ignlist)
+    {
+	ignore_files (ignlist, update_dir, send_ignproc);
+	dellist (&ignlist);
+    }
+
+    return (err);
+}
+
+static Dtype send_dirent_proc PROTO ((char *, char *, char *));
 
 /*
  * send_dirent_proc () is called back by the recursion processor before a
@@ -3606,8 +3651,8 @@ send_files (argc, argv, local, aflag)
      * for aflag here.
      */
     err = start_recursion
-	((FILEPROC) send_fileproc, update_filesdone_proc,
-	 (DIRENTPROC) send_dirent_proc, (DIRLEAVEPROC)NULL,
+	(send_fileproc, send_filesdoneproc,
+	 send_dirent_proc, (DIRLEAVEPROC)NULL,
 	 argc, argv, local, W_LOCAL, aflag, 0, (char *)NULL, 0, 0);
     if (err)
 	exit (1);

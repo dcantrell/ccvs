@@ -67,6 +67,72 @@ if test -f check.log; then
 	mv check.log check.plog
 fi
 
+# That we should have to do this is total bogosity, but GNU expr
+# version 1.9.4 uses the emacs definition of "^" and "$" instead of
+# the unix (e.g. SunOS 4.1.3 expr) one.  IMHO, this is a GNU expr bug, but
+# I don't have a copy of POSIX.2 handy to check.
+ENDANCHOR="$"
+STARTANCHOR="^"
+if expr 'abc
+def' : 'abc$' >/dev/null; then
+  ENDANCHOR='\'\'
+  STARTANCHOR='\`'
+fi
+
+# Usage:
+#  dotest TESTNAME COMMAND OUTPUT
+# TESTNAME is the name used in the log to identify the test.
+# COMMAND is the command to run; for the test to pass, it exits with 
+# exitstatus zero.
+# OUTPUT is a regexp which is compared against the output (stdout and
+# stderr combined) from the test.  It is anchored to the start and end
+# of the output, so should start or end with ".*" if that is what is desired.
+# Trailing newlines are stripped from the command's actual output before
+# matching against OUTPUT.
+dotest ()
+{
+  if $2 >${TESTDIR}/dotest.tmp 2>&1; then
+    : so far so good
+  else
+    status=$?
+    cat ${TESTDIR}/dotest.tmp >>${LOGFILE}
+    echo "FAIL: " $1 | tee -a ${LOGFILE}
+    echo "exit status was $status" >>${LOGFILE}
+    # This way the tester can go and see what remnants were left
+    exit 1
+  fi
+  # expr can't distinguish between "zero characters matched" and "no match",
+  # so special-case it.
+  if test -z "$3"; then
+    if test -s ${TESTDIR}/dotest.tmp; then
+      echo "FAIL: " $1 | tee -a ${LOGFILE}
+      echo "** expected: " >>${LOGFILE}
+      echo "$3" >>${LOGFILE}
+      echo "** got: " >>${LOGFILE}
+      cat ${TESTDIR}/dotest.tmp >>${LOGFILE}
+      # This way the tester can go and see what remnants were left
+      exit 1
+    else
+      cat ${TESTDIR}/dotest.tmp >>${LOGFILE}
+      echo "PASS: " $1 >>${LOGFILE}
+    fi
+  else
+    if expr "`cat ${TESTDIR}/dotest.tmp`" : \
+	${STARTANCHOR}"$3"${ENDANCHOR} >/dev/null; then
+      cat ${TESTDIR}/dotest.tmp >>${LOGFILE}
+      echo "PASS: " $1 >>${LOGFILE}
+    else
+      echo "FAIL: " $1 | tee -a ${LOGFILE}
+      echo "** expected: " >>${LOGFILE}
+      echo "$3" >>${LOGFILE}
+      echo "** got: " >>${LOGFILE}
+      cat ${TESTDIR}/dotest.tmp >>${LOGFILE}
+      # This way the tester can go and see what remnants were left
+      exit 1
+    fi
+  fi
+}
+
 # clean any old remnants
 rm -rf ${TESTDIR}
 mkdir ${TESTDIR}
@@ -81,7 +147,7 @@ cd ${TESTDIR}
 # and to facilitate understanding the tests.
 
 if test x"$*" = x; then
-	tests="basic0 basic1 basic2 basic3 rtags death import new conflicts modules mflag errmsg1 devcom"
+	tests="basic0 basic1 basic2 basic3 rtags death import new conflicts modules mflag errmsg1 devcom ignore"
 else
 	tests="$*"
 fi
@@ -119,6 +185,10 @@ cd .. ; rm -rf tmp
 
 # set up a minimal modules file...
 echo "CVSROOT		-i ${testmkmodules} CVSROOT" > cvsroot/CVSROOT/modules
+# The following line stolen from cvsinit.sh.  FIXME: create our
+# repository via cvsinit.sh; that way we test it too.
+(cd cvsroot/CVSROOT; ci -q -u -t/dev/null \
+  -m'initial checkin of modules' modules)
 
 # This one should succeed.  No warnings.
 mkdir tmp ; cd tmp
@@ -692,6 +762,7 @@ for what in $tests; do
 			echo "PASS: test 58" >>${LOGFILE}
 		fi
 
+		rm -rf second-dir
 		rm -rf export-dir first-dir
 		mkdir first-dir
 		(cd first-dir.cpy ; tar cf - * | (cd ../first-dir ; tar xf -))
@@ -752,10 +823,11 @@ for what in $tests; do
 		else
 			echo "FAIL: test 64" | tee -a ${LOGFILE} ; exit 1
 		fi
+		rm -rf ${CVSROOT_DIRNAME}/first-dir
+		rm -rf ${CVSROOT_DIRNAME}/second-dir
 		;;
 
 	death) # next dive.  test death support.
-		rm -rf ${CVSROOT_DIRNAME}/first-dir
 		mkdir  ${CVSROOT_DIRNAME}/first-dir
 		if ${CVS} co first-dir  ; then
 			echo "PASS: test 65" >>${LOGFILE}
@@ -1178,10 +1250,10 @@ for what in $tests; do
 			echo "FAIL: test 116" | tee -a ${LOGFILE} ; exit 1
 		fi
 		cd .. ; rm -rf first-dir ${CVSROOT_DIRNAME}/first-dir
+		rm -rf import-dir
 		;;
 
 	new) # look for stray "no longer pertinent" messages.
-		rm -rf first-dir ${CVSROOT_DIRNAME}/first-dir
 		mkdir ${CVSROOT_DIRNAME}/first-dir
 
 		if ${CVS} co first-dir  ; then
@@ -1400,11 +1472,6 @@ for what in $tests; do
 		rm -rf 1 2 3 ; rm -rf ${CVSROOT_DIRNAME}/first-dir
 		;;
 	modules)
-	  # The following line stolen from cvsinit.sh.  FIXME: create our
-	  # repository via cvsinit.sh; that way we test it too.
-	  (cd ${CVSROOT_DIRNAME}/CVSROOT; ci -q -u -t/dev/null \
-	    -m'initial checkin of modules' modules)
-
 	  rm -rf first-dir ${CVSROOT_DIRNAME}/first-dir
 	  mkdir ${CVSROOT_DIRNAME}/first-dir
 
@@ -1869,6 +1936,93 @@ EOF
 
 	  cd ../..
 	  rm -rf 1 2 ${CVSROOT_DIRNAME}/first-dir
+	  ;;
+
+	ignore)
+	  mkdir home
+	  HOME=${TESTDIR}/home; export HOME
+	  dotest 187a1 "${testcvs} -q co CVSROOT" 'U CVSROOT/modules'
+	  cd CVSROOT
+	  echo rootig.c >cvsignore
+	  dotest 187a2 "${testcvs} add cvsignore" 'cvs [a-z]*: scheduling file `cvsignore'"'"' for addition
+cvs [a-z]*: use '"'"'cvs commit'"'"' to add this file permanently'
+	  dotest 187a3 " ${testcvs} ci -m added" 'cvs [a-z]*: Examining .
+cvs [a-z]*: Committing .
+RCS file: /tmp/cvs-sanity/cvsroot/CVSROOT/cvsignore,v
+done
+Checking in cvsignore;
+/tmp/cvs-sanity/cvsroot/CVSROOT/cvsignore,v  <--  cvsignore
+initial revision: 1.1
+done
+cvs [a-z]*: Executing '"'"''"'"'.*mkmodules'"'"' '"'"'/tmp/cvs-sanity/cvsroot/CVSROOT'"'"''"'"''
+
+	  cd ..
+	  if echo "yes" | ${testcvs} release -d CVSROOT >>${LOGFILE} ; then
+	    echo 'PASS: test 187a4' >>${LOGFILE}
+	  else
+	    echo 'FAIL: test 187a4' | tee -a ${LOGFILE}
+	    exit 1
+	  fi
+
+	  # CVS looks at the home dir from getpwuid, not HOME (is that correct
+	  # behavior?), so this is hard to test and we won't try.
+	  # echo foobar.c >${HOME}/.cvsignore
+	  CVSIGNORE=envig.c; export CVSIGNORE
+	  mkdir dir-to-import
+	  cd dir-to-import
+	  touch foobar.c bar.c rootig.c defig.o envig.c optig.c
+	  # We really should allow the files to be listed in any order.
+	  # But we (kludgily) just list the orders which have been observed.
+	  dotest 188a "${testcvs} import -m m -I optig.c first-dir tag1 tag2" \
+	    '\(N first-dir/foobar.c
+N first-dir/bar.c
+I first-dir/rootig.c
+I first-dir/defig.o
+I first-dir/envig.c
+I first-dir/optig.c\|I first-dir/defig.o
+I first-dir/envig.c
+I first-dir/optig.c
+N first-dir/foobar.c
+N first-dir/bar.c
+I first-dir/rootig.c\)
+
+No conflicts created by this import'
+	  dotest 188b "${testcvs} import -m m -I ! second-dir tag3 tag4" \
+	    'N second-dir/foobar.c
+N second-dir/bar.c
+N second-dir/rootig.c
+N second-dir/defig.o
+N second-dir/envig.c
+N second-dir/optig.c
+
+No conflicts created by this import'
+	  cd ..
+	  rm -rf dir-to-import
+
+	  dotest 189a "${testcvs} -q co second-dir" \
+'U second-dir/bar.c
+U second-dir/defig.o
+U second-dir/envig.c
+U second-dir/foobar.c
+U second-dir/optig.c
+U second-dir/rootig.c'
+	  rm -rf second-dir
+	  dotest 189b "${testcvs} -q co first-dir" 'U first-dir/bar.c
+U first-dir/foobar.c'
+	  cd first-dir
+	  touch rootig.c defig.o envig.c optig.c notig.c
+	  dotest 189c "${testcvs} -q update -I optig.c" '\? notig.c'
+	  # The fact that CVS requires us to specify -I CVS here strikes me
+	  # as a bug.
+	  dotest 189d "${testcvs} -q update -I ! -I CVS" '\? rootig.c
+\? defig.o
+\? envig.c
+\? optig.c
+\? notig.c'
+	  cd ..
+	  rm -rf first-dir
+
+	  rm -rf ${CVSROOT_DIRNAME}/first-dir ${CVSROOT_DIRNAME}/second-dir
 	  ;;
 
 	*)

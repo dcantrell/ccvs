@@ -1,3 +1,29 @@
+Wed Dec 20 14:00:28 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* update.c (ignore_files): Move from here...
+	* ignore.c (ignore_files): ...to here.  No longer static.  Take
+	new argument PROC.
+	* cvs.h (ignore_files): Declare.
+	* client.c (send_filesdoneproc): Split off from
+	update_filesdone_proc.  Pass new function send_ignproc to
+	ignore_files (to ask server about ignored file before printing
+	"?").
+	* update.c (update_filesdone_proc): Remove client stuff.  Pass new
+	function update_ignproc to ignore_files.
+	* cvs.h (joining, do_update): Move declarations from here...
+	* update.h: ...to here.
+	* cvs.h: Include update.h.
+	* update.c, client.c: Don't include update.h
+	* ignore.c, cvs.h: New variable ign_inhibit_server, set on -I !.
+	* import.c (import): Pass -I ! to server if specified.
+	(import_descend): If server, ignore CVS directories even if -I !.
+	* update.c (update), import.c (import): Only call ign_setup before
+	argument processing; don't call it again afterwards in client case.
+	* sanity.sh (ignore): Test above-fixed bugs and other ignore behaviors.
+	(dotest): New function.
+	Move modules checkin from modules test to start, so that other
+	tests can use mkmodules without a warning message.
+
 Wed Dec 20 13:06:17 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
         * client.c (send_to_server): don't check string's length twice.

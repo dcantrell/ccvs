@@ -445,7 +445,6 @@ int isaccessible PROTO((const char *file, const int mode));
 int isabsolute PROTO((const char *filename));
 char *last_component PROTO((char *path));
 
-int joining PROTO((void));
 int numdots PROTO((const char *s));
 int unlink_file PROTO((const char *f));
 int unlink_file_dir PROTO((const char *f));
@@ -478,11 +477,18 @@ void (*error_set_cleanup PROTO((void (*) (void)))) PROTO ((void));
 void fperror PROTO((FILE * fp, int status, int errnum, char *message,...));
 void free_names PROTO((int *pargc, char *argv[]));
 void freevers_ts PROTO((Vers_TS ** versp));
+
 void ign_add PROTO((char *ign, int hold));
 void ign_add_file PROTO((char *file, int hold));
 void ign_setup PROTO((void));
 void ign_dir_add PROTO((char *name));
 int ignore_directory PROTO((char *name));
+typedef void (*Ignore_proc) PROTO ((char *, char *));
+extern void ignore_files PROTO ((List *, char *, Ignore_proc));
+extern int ign_inhibit_server;
+
+#include "update.h"
+
 void line2argv PROTO((int *pargc, char *argv[], char *line));
 void make_directories PROTO((const char *name));
 void make_directory PROTO((const char *name));
@@ -528,10 +534,6 @@ int do_recursion PROTO((FILEPROC xfileproc, FILESDONEPROC xfilesdoneproc,
 		  DIRENTPROC xdirentproc, DIRLEAVEPROC xdirleaveproc,
 		  Dtype xflags, int xwhich, int xaflag, int xreadlock,
 		  int xdosrcs));
-int do_update PROTO((int argc, char *argv[], char *xoptions, char *xtag,
-	       char *xdate, int xforce, int local, int xbuild,
-	       int xaflag, int xprune, int xpipeout, int which,
-	       char *xjoin_rev1, char *xjoin_rev2, char *preload_update_dir));
 void history_write PROTO((int type, char *update_dir, char *revs, char *name,
 		    char *repository));
 int start_recursion PROTO((FILEPROC fileproc, FILESDONEPROC filesdoneproc,
