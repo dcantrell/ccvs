@@ -12184,6 +12184,7 @@ date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
 	  # Tests of "cvs annotate".  See also:
 	  #   basica-10  A simple annotate test
 	  #   rcs        Annotate and the year 2000
+	  #   keywordlog Annotate and $Log.
 	  mkdir 1; cd 1
 	  dotest ann-1 "${testcvs} -q co -l ." ''
 	  mkdir first-dir
@@ -14046,6 +14047,8 @@ U file1" "U file1"
 	  # "binfiles" (and this test) test "cvs update -k".
 	  # "binwrap" tests setting the mode from wrappers.
 	  # I don't think any test is testing "cvs import -k".
+	  # Other keyword expansion tests:
+	  #   keywordlog - $Log.
 	  mkdir 1; cd 1
 	  dotest keyword-1 "${testcvs} -q co -l ." ''
 	  mkdir first-dir
@@ -14244,7 +14247,7 @@ done"
 	  dotest keywordlog-2 "${testcvs} add first-dir" \
 "Directory ${TESTDIR}/cvsroot/first-dir added to the repository"
 	  cd first-dir
-	  echo change >file1
+	  echo initial >file1
 	  dotest keywordlog-3 "${testcvs} add file1" \
 "${PROG} [a-z]*: scheduling file .file1. for addition
 ${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
@@ -14263,7 +14266,7 @@ done"
 	  dotest keywordlog-4a "${testcvs} -q co first-dir" "U first-dir/file1"
 	  cd ../1/first-dir
 
-	  echo 'xx $''Log$' > file1
+	  echo 'xx $''Log$' >> file1
 	  cat >${TESTDIR}/comment.tmp <<EOF
 First log line
 Second log line
@@ -14283,7 +14286,8 @@ done"
 	  rm -f ${TESTDIR}/comment.tmp
 	  dotest keywordlog-6 "${testcvs} -q tag -b br" "T file1"
 	  dotest keywordlog-7 "cat file1" \
-"xx "'\$'"Log: file1,v "'\$'"
+"initial
+xx "'\$'"Log: file1,v "'\$'"
 xx Revision 1\.4  [0-9/]* [0-9:]*  ${username}
 xx First log line
 xx Second log line
@@ -14292,7 +14296,8 @@ xx"
 	  cd ../../2/first-dir
 	  dotest keywordlog-8 "${testcvs} -q update" "[UP] file1"
 	  dotest keywordlog-9 "cat file1" \
-"xx "'\$'"Log: file1,v "'\$'"
+"initial
+xx "'\$'"Log: file1,v "'\$'"
 xx Revision 1\.4  [0-9/]* [0-9:]*  ${username}
 xx First log line
 xx Second log line
@@ -14306,7 +14311,8 @@ ${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
 new revision: 1\.5; previous revision: 1\.4
 done"
 	  dotest keywordlog-11 "cat file1" \
-"xx "'\$'"Log: file1,v "'\$'"
+"initial
+xx "'\$'"Log: file1,v "'\$'"
 xx Revision 1\.5  [0-9/]* [0-9:]*  ${username}
 xx modify
 xx
@@ -14319,7 +14325,8 @@ change"
 	  cd ../../2/first-dir
 	  dotest keywordlog-12 "${testcvs} -q update" "[UP] file1"
 	  dotest keywordlog-13 "cat file1" \
-"xx "'\$'"Log: file1,v "'\$'"
+"initial
+xx "'\$'"Log: file1,v "'\$'"
 xx Revision 1\.5  [0-9/]* [0-9:]*  ${username}
 xx modify
 xx
@@ -14338,7 +14345,8 @@ ${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
 new revision: 1\.4\.2\.1; previous revision: 1\.4
 done"
 	  dotest keywordlog-16 "cat file1" \
-"xx "'\$'"Log: file1,v "'\$'"
+"initial
+xx "'\$'"Log: file1,v "'\$'"
 xx Revision 1\.4\.2\.1  [0-9/]* [0-9:]*  ${username}
 xx br-modify
 xx
@@ -14350,7 +14358,8 @@ br-change"
 	  cd ../../2/first-dir
 	  dotest keywordlog-17 "${testcvs} -q update -r br" "[UP] file1"
 	  dotest keywordlog-18 "cat file1" \
-"xx "'\$'"Log: file1,v "'\$'"
+"initial
+xx "'\$'"Log: file1,v "'\$'"
 xx Revision 1\.4\.2\.1  [0-9/]* [0-9:]*  ${username}
 xx br-modify
 xx
@@ -14361,7 +14370,8 @@ xx
 br-change"
 	  cd ../..
 	  dotest keywordlog-19 "${testcvs} -q co -p -r br first-dir/file1" \
-"xx "'\$'"Log: file1,v "'\$'"
+"initial
+xx "'\$'"Log: file1,v "'\$'"
 xx Revision 1\.4\.2\.1  [0-9/]* [0-9:]*  ${username}
 xx br-modify
 xx
@@ -14371,7 +14381,8 @@ xx Second log line
 xx
 br-change"
 	  dotest keywordlog-20 "${testcvs} -q co -p first-dir/file1" \
-"xx "'\$'"Log: file1,v "'\$'"
+"initial
+xx "'\$'"Log: file1,v "'\$'"
 xx Revision 1\.5  [0-9/]* [0-9:]*  ${username}
 xx modify
 xx
@@ -14381,11 +14392,44 @@ xx Second log line
 xx
 change"
 	  dotest keywordlog-21 "${testcvs} -q co -p -r 1.4 first-dir/file1" \
-"xx "'\$'"Log: file1,v "'\$'"
+"initial
+xx "'\$'"Log: file1,v "'\$'"
 xx Revision 1\.4  [0-9/]* [0-9:]*  ${username}
 xx First log line
 xx Second log line
 xx"
+
+	  cd 2/first-dir
+	  # OK, the basic rule for keyword expansion is that it
+	  # happens on checkout.  And the rule for annotate is that
+	  # it annotates a checked-in revision, rather than a checked-out
+	  # file.  So, although it is kind of confusing that the latest
+	  # revision does not appear in the annotated output, and the
+	  # annotated output does not quite match what you'd get with
+	  # update or checkout, the behavior is more or less logical.
+	  # The same issue occurs with annotate and other keywords,
+	  # I think, although it is particularly noticeable for $Log.
+	  dotest keywordlog-22 "${testcvs} ann -r br file1" \
+"Annotations for file1
+\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
+1\.3          (${username} *[0-9a-zA-Z-]*): initial
+1\.4\.2\.1      (${username} *[0-9a-zA-Z-]*): xx "'\$'"Log: file1,v "'\$'"
+1\.4\.2\.1      (${username} *[0-9a-zA-Z-]*): xx Revision 1\.4  [0-9/]* [0-9:]*  ${username}
+1\.4\.2\.1      (${username} *[0-9a-zA-Z-]*): xx First log line
+1\.4\.2\.1      (${username} *[0-9a-zA-Z-]*): xx Second log line
+1\.4\.2\.1      (${username} *[0-9a-zA-Z-]*): xx
+1\.4\.2\.1      (${username} *[0-9a-zA-Z-]*): br-change"
+	  dotest keywordlog-23 "${testcvs} ann -r HEAD file1" \
+"Annotations for file1
+\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
+1\.3          (${username} *[0-9a-zA-Z-]*): initial
+1\.5          (${username} *[0-9a-zA-Z-]*): xx "'\$'"Log: file1,v "'\$'"
+1\.5          (${username} *[0-9a-zA-Z-]*): xx Revision 1\.4  [0-9/]* [0-9:]*  ${username}
+1\.5          (${username} *[0-9a-zA-Z-]*): xx First log line
+1\.5          (${username} *[0-9a-zA-Z-]*): xx Second log line
+1\.5          (${username} *[0-9a-zA-Z-]*): xx
+1\.5          (${username} *[0-9a-zA-Z-]*): change"
+	  cd ../..
 
 	  rm -r 1 2
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
