@@ -1019,7 +1019,7 @@ commit_filesdoneproc (err, repository, update_dir)
 
 	if (strncmp (CVSroot_directory, repository,
 		     strlen (CVSroot_directory)) != 0)
-	    error (0, 0, "internal error: repository doesn't begin with root");
+	    error (0, 0, "internal error: repository (%s) doesn't begin with root (%s)", repository, CVSroot_directory);
 	p = repository + strlen (CVSroot_directory);
 	if (*p == '/')
 	    ++p;
