@@ -4829,7 +4829,7 @@ serve_valid_requests (arg)
     buf_flush (buf_to_net, 1);
 }
 
-#ifdef sun
+#ifdef SUNOS_KLUDGE
 /*
  * Delete temporary files.  SIG is the signal making this happen, or
  * 0 if not called as a result of a signal.
@@ -4843,7 +4843,7 @@ static void wait_sig (sig)
     if (r == command_pid)
 	command_pid_is_dead++;
 }
-#endif
+#endif /* SUNOS_KLUDGE */
 
 void
 server_cleanup (sig)
@@ -4887,7 +4887,7 @@ server_cleanup (sig)
     /* What a bogus kludge.  This disgusting code makes all kinds of
        assumptions about SunOS, and is only for a bug in that system.
        So only enable it on Suns.  */
-#ifdef sun
+#ifdef SUNOS_KLUDGE
     if (command_pid > 0)
     {
 	/* To avoid crashes on SunOS due to bugs in SunOS tmpfs
@@ -4960,7 +4960,7 @@ server_cleanup (sig)
 	    }
 	}
     }
-#endif
+#endif /* SUNOS_KLUDGE */
 
     CVS_CHDIR (Tmpdir);
     /* Temporarily clear noexec, so that we clean up our temp directory
