@@ -1035,6 +1035,8 @@ if you want to allow read-only access to some directories
 @c val-tags, but maybe we should say more about this.
 @c Like val-tags gets created by someone who doesn't
 @c have CVSUMASK set right?
+@cindex CVSROOT/val-tags file, and read-only access to projects
+@cindex val-tags file, and read-only access to projects
 Also note that users must have write access to the
 @file{CVSROOT/val-tags} file.  @sc{cvs} uses it to keep
 track of what tags are valid tag names (it is sometimes
@@ -14174,6 +14176,8 @@ obscure) cases in which @sc{cvs} will require you to
 @c the relatively obscure cases.
 try a few other @sc{cvs} commands involving that tag,
 before you find one which will cause @sc{cvs} to update
+@cindex CVSROOT/val-tags file, forcing tags into
+@cindex val-tags file, forcing tags into
 the @file{val-tags} file; see discussion of val-tags in
 @ref{File permissions}.  You only need to worry about
 this once for a given tag; when a tag is listed in
