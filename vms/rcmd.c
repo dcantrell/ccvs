@@ -54,14 +54,9 @@ int rcmd(char **remote_hostname, int remote_port,
     exit(-1);
     }
 
-#ifdef USE_PRIVILEGED_RCMD
-
   /* Bind local socket with a port from IPPORT_RESERVED/2 to IPPORT_RESERVED - 1
      this requires the OPER privilege under VMS -- to allow communication with
      a stock rshd under UNIX */
-
-  /* Do NOT use this code under UNIX, as it will require installation as suid to
-     work, which is a really bad idea. */
 
   for(local_port = IPPORT_RESERVED - 1; local_port >= IPPORT_RESERVED/2; local_port--)
     {
@@ -71,23 +66,20 @@ int rcmd(char **remote_hostname, int remote_port,
       break;
     }                  
 
-#else
-
   /* Bind local socket to an unprivileged port.  A normal rshd will drop the
      connection; you must be running a patched rshd invoked through inetd for
      this connection method to work */
 
-  for(local_port = IPPORT_USERRESERVED - 1;
-      local_port > IPPORT_RESERVED;
-      local_port--)
-    {
-    local_isa.sin_port = htons(local_port);
-    rs = bind(s, (struct sockaddr *)&local_isa, sizeof(local_isa));
-    if(rs == 0)
-      break;
-    }
-
-#endif
+  if (rs != 0)
+    for(local_port = IPPORT_USERRESERVED - 1;
+        local_port > IPPORT_RESERVED;
+        local_port--)
+      {
+      local_isa.sin_port = htons(local_port);
+      rs = bind(s, (struct sockaddr *)&local_isa, sizeof(local_isa));
+      if(rs == 0)
+        break;
+      }
   
   rs = connect(s, (struct sockaddr *) &remote_isa, sizeof(remote_isa));
   if(rs == -1)
