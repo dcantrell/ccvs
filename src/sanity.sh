@@ -4164,6 +4164,7 @@ done'
 	  fi # end of tests skipped for remote
 
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  rm -rf ${CVSROOT_DIRNAME}/second-dir
 	  ;;
 
 	mflag)
