@@ -1,3 +1,10 @@
+2004-08-24  Mark D. Baushke  <mdb@cvshome.org>
+
+	* recurse.c (do_recursion): Correct test for calling
+	server_pause_check to occur when locktype != CVS_LOCK_WRITE.
+	(Patch suggested by Ian Lance Taylor <ian@wasabisystems.com>
+	in bug#198).
+
 2004-08-24  Derek Price <derek@ximbiot.com>
 
 	* sanity.sh: Update a few tests to account for the recent error message
