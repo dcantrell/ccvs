@@ -72,6 +72,7 @@ EXTRA_DIST = \
 	stat.m4 \
 	stdbool.m4 \
 	stdint_h.m4 \
+	time_r.m4 \
 	timespec.m4 \
 	uintmax_t.m4 \
 	ulonglong.m4 \
