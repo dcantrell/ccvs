@@ -1,5 +1,11 @@
 2002-09-24  Derek Price  <derek@ximbiot.com>
 
+	* options.h: Remove prototype of STDC exit() function.  If this breaks
+	a build, this should be detected in configure.in somehow rather than
+	restoring the line to this file.
+
+2002-09-24  Derek Price  <derek@ximbiot.com>
+
 	* options.h: Move definition of AUTH_CLIENT_SUPPORT into configure.in.
 
 2002-09-24  Derek Price  <derek@ximbiot.com>
