@@ -350,7 +350,7 @@ HOME=${TESTDIR}/home; export HOME
 # tests.
 
 if test x"$*" = x; then
-	tests="basica basicb basic1 deep basic2 death death2 branches import new newb conflicts conflicts2 modules mflag errmsg1 devcom ignore binfiles info"
+	tests="basica basicb basic1 deep basic2 death death2 branches import new newb conflicts conflicts2 modules mflag errmsg1 devcom ignore binfiles info patch"
 else
 	tests="$*"
 fi
@@ -3639,6 +3639,69 @@ done'
 
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
 	  ;;
+
+	patch)
+	  # Test remote CVS handling of unpatchable files.  This isn't
+	  # much of a test for local CVS.
+	  mkdir ${CVSROOT_DIRNAME}/first-dir
+	  mkdir 1
+	  cd 1
+	  dotest patch-1 "${testcvs} -q co first-dir" ''
+
+	  cd first-dir
+
+	  # Add a file with an RCS keyword.
+	  echo '$''Name$' > file1
+	  echo '1' >> file1
+	  dotest death2-2 "${testcvs} add file1" \
+"${PROG}"' [a-z]*: scheduling file `file1'\'' for addition
+'"${PROG}"' [a-z]*: use '\''cvs commit'\'' to add this file permanently'
+
+	  dotest death2-3 "${testcvs} -q commit -m add" \
+'RCS file: /tmp/cvs-sanity/cvsroot/first-dir/file1,v
+done
+Checking in file1;
+/tmp/cvs-sanity/cvsroot/first-dir/file1,v  <--  file1
+initial revision: 1.1
+done'
+
+	  # Tag the file.
+	  dotest patch-4 "${testcvs} -q tag tag file1" 'T file1'
+
+	  # Check out a tagged copy of the file.
+	  cd ../..
+	  mkdir 2
+	  cd 2
+	  dotest patch-5 "${testcvs} -q co -r tag first-dir" \
+'U first-dir/file1'
+
+	  # Remove the tag.  This will leave the tag string in the
+	  # expansion of the Name keyword.
+	  dotest patch-6 "${testcvs} -q update -A" ''
+
+	  # Modify and check in the first copy.
+	  cd ../1/first-dir
+	  echo '2' >> file1
+	  dotest patch-7 "${testcvs} -q ci -mx file1" \
+'Checking in file1;
+/tmp/cvs-sanity/cvsroot/first-dir/file1,v  <--  file1
+new revision: 1.2; previous revision: 1.1
+done'
+
+	  # Now update the second copy.  When using remote CVS, the
+	  # patch will fail, forcing the file to be refetched.
+	  cd ../../2/first-dir
+	  dotest patch-8 "${testcvs} -q update" \
+'U file1' \
+'P file1
+'"${PROG}"' [a-z]*: checksum failure after patch to ./file1; will refetch
+'"${PROG}"' [a-z]*: refetching unpatchable files
+U file1'
+
+	  cd ../..
+	  rm -rf 1 2 ${CVSROOT_DIRNAME}/first-dir
+	  ;;
+
 	*)
 	   echo $what is not the name of a test -- ignored
 	   ;;
