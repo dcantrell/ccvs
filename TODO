@@ -833,3 +833,26 @@ Right now the code assumes RCS branching where all revisions on the
 branch have the same number of components in their revision numbers and
 that isn't true for CVS (revisions 1.2 and 2.4.6.8 can be on the same
 branch in CVS).
+
+208.  Merge enhancements to the diff package back into the original GNU source.
+
+209.  Go through this file and try to:
+
+  a.  Verify that items are still valid.
+
+  b.  Create test cases for valid items when they don't exist.
+
+  c.  Remove fixed and no longer applicable items.
+
+210.  Explain to sanity.sh how to deal with paths with spaces and other odd
+characters in them.
+
+211.  Make sanity.sh run under the Win32 bash (cygwin) and maybe other Windex
+environments (e.g. DGSS or whatever the MSVC portability environemnt is called).
+
+212.  Autotestify (see autoconf source) sanity.sh.
+
+213.  Examine desirability of updating the regex library (regex.{c,h}) to the
+more recent versions that come with glibc and emacs.  It might be worth waiting
+for the emacs folks to get their act together and merge their changes into the
+glibc version.
