@@ -1,3 +1,9 @@
+2000-03-17  Larry Jones  <larry.jones@sdrc.com>
+
+	* server.c (switch_to_user): Set CVS_Username if it hasn't already
+	been set elsewhere.  (Patch submitted by Gordon Matzigkeit
+	<gord@fig.org>).
+
 2000-03-13  Larry Jones  <larry.jones@sdrc.com>
 
 	* parseinfo.c: Add extern to logHistory declaration.  (Reported by
