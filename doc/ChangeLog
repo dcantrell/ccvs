@@ -1,3 +1,8 @@
+1997-09-05  Paul Eggert  <eggert@twinsun.com>
+
+	* DIFFUTILS-2.7-BUG: Explain how this bug will probably be
+	fixed in the next diffutils release.
+
 Thu Sep  4 17:09:57 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (Binary files): Reword the section on what you need
