@@ -1,5 +1,8 @@
 1998-05-02  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* rcs.c: Add comments about getting rid of rcsbuf_getid,
+	rcsbuf_getword, and rcsbuf_getstring.
+
 	* sanity.sh (abspath): Revise the workarounds to deal with exit
 	status.
 
