@@ -817,8 +817,6 @@ modify_repo ()
 {
     eval "$*"
     if $proxy; then
-	# Avoid timestamp comparison issues with rsync.
-	sleep 1
 	$TESTDIR/sync-secondary "repo modification" "modify_repo" "$*"
     fi
 }
@@ -2088,12 +2086,24 @@ if $proxy; then
     cat >$TESTDIR/sync-secondary <<EOF
 #! $TESTSHELL
 date >>$TESTDIR/update-log
+
+# Get our args.
 ps=\$1
 cmd=\$2
 shift
 shift
-echo "updating after \$ps for command \$cmd" \${1+"\$@"} >>$TESTDIR/update-log
-rsync -glopr --delete --exclude '#cvs.*' $CVSROOT_DIRNAME/ $SECONDARY_CVSROOT_DIRNAME
+
+echo "updating after \$ps for command \\\`\$cmd'" \${1+"\$@"} \\
+     >>$TESTDIR/update-log
+
+# If multiple CVS executables could attempt to access the repository, we would
+# Need to lock for this sync and sleep.
+rsync -glopr --delete --exclude '#cvs.*' \\
+      $CVSROOT_DIRNAME/ \\
+      $SECONDARY_CVSROOT_DIRNAME
+
+# Avoid timestamp comparison issues with rsync.
+sleep 1
 EOF
     chmod a+x $TESTDIR/sync-secondary
 
@@ -20949,7 +20959,7 @@ O 1997-06-06 08:12 ${PLUS}0000 kingdon   ccvs =ccvs= <remote>/\*"
 	  # benefit.
 
 	  modify_repo mkdir $CVSROOT_DIRNAME/first-dir
-	  dotest big-1 "${testcvs} -q co first-dir" ''
+	  dotest big-1 "$testcvs -q co first-dir"
 	  cd first-dir
 	  for i in 0 1 2 3 4 5 6 7 8 9; do
 	    for j in 0 1 2 3 4 5 6 7 8 9; do
@@ -20959,25 +20969,40 @@ O 1997-06-06 08:12 ${PLUS}0000 kingdon   ccvs =ccvs= <remote>/\*"
 	      done
 	    done
 	  done
-	  dotest big-2 "${testcvs} add file1" \
-"${SPROG} add: scheduling file .file1. for addition
-${SPROG} add: use .${SPROG} commit. to add this file permanently"
-	  dotest big-3 "${testcvs} -q ci -m add" \
+	  dotest big-2 "$testcvs add file1" \
+"$SPROG add: scheduling file .file1. for addition
+$SPROG add: use .$SPROG commit. to add this file permanently"
+	  dotest big-3 "$testcvs -q ci -m add" \
 "$CVSROOT_DIRNAME/first-dir/file1,v  <--  file1
 initial revision: 1\.1"
 	  cd ..
 	  mkdir 2
 	  cd 2
-	  dotest big-4 "${testcvs} -q get first-dir" "U first-dir/file1"
+	  dotest big-4 "$testcvs -q get first-dir" "U first-dir/file1"
 	  cd ../first-dir
 	  echo "add a line to the end" >>file1
-	  dotest big-5 "${testcvs} -q ci -m modify" \
+
+	  dotest_fail big-4b "$testcvs -q diff -u" \
+"Index: file1
+===================================================================
+RCS file: $CVSROOT_DIRNAME/first-dir/file1,v
+retrieving revision 1\.1
+diff -u -r1\.1 file1
+--- file1	$RFCDATE	1\.1
+$PLUS$PLUS$PLUS file1	$RFCDATE
+@@ -998,3 ${PLUS}998,4 @@
+ This is line (9,9,7) which goes into the file file1 for testing
+ This is line (9,9,8) which goes into the file file1 for testing
+ This is line (9,9,9) which goes into the file file1 for testing
+${PLUS}add a line to the end"
+
+	  dotest big-5 "$testcvs -q ci -m modify" \
 "$CVSROOT_DIRNAME/first-dir/file1,v  <--  file1
 new revision: 1\.2; previous revision: 1\.1"
 	  cd ../2/first-dir
 	  # The idea here is particularly to test the Rcs-diff response
 	  # and the reallocing thereof, for remote.
-	  dotest big-6 "${testcvs} -q update" "[UP] file1"
+	  dotest big-6 "$testcvs -q update" "[UP] file1"
 
 	  dokeep
 	  cd ../..
