@@ -1,3 +1,7 @@
+Thu Jun  6 11:11:53 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* NEWS: Say "changes from 1.7 to 1.8" not "changes since 1.7".
+
 Wed Jun  5 1996  Jim Kingdon  <kingdon@cyclic.com>
 
 	* cvsnt.mak: Visual C++ 2.1 seems to want to reformat the line
