@@ -9557,6 +9557,8 @@ _ACEOF
 
 fi
 
+ac_config_files="$ac_config_files contrib/check_cvs"
+
 ac_config_files="$ac_config_files contrib/clmerge"
 
 ac_config_files="$ac_config_files contrib/cln_hist"
@@ -10081,6 +10083,7 @@ for ac_config_target in $ac_config_targets
 do
   case "$ac_config_target" in
   # Handling of arguments.
+  "contrib/check_cvs" ) CONFIG_FILES="$CONFIG_FILES contrib/check_cvs" ;;
   "contrib/clmerge" ) CONFIG_FILES="$CONFIG_FILES contrib/clmerge" ;;
   "contrib/cln_hist" ) CONFIG_FILES="$CONFIG_FILES contrib/cln_hist" ;;
   "contrib/commit_prep" ) CONFIG_FILES="$CONFIG_FILES contrib/commit_prep" ;;
@@ -10442,6 +10445,7 @@ s,@INSTALL@,$ac_INSTALL,;t t
 
   # Run the commands associated with the file.
   case $ac_file in
+    contrib/check_cvs ) chmod +x contrib/check_cvs ;;
     contrib/clmerge ) chmod +x contrib/clmerge ;;
     contrib/cln_hist ) chmod +x contrib/cln_hist ;;
     contrib/commit_prep ) chmod +x contrib/commit_prep ;;

@@ -815,6 +815,7 @@ but not Unix).])
 fi
 
 dnl associate the setting of the execute bit with the individual scripts
+AC_CONFIG_FILES(contrib/check_cvs, [chmod +x contrib/check_cvs])
 AC_CONFIG_FILES(contrib/clmerge, [chmod +x contrib/clmerge])
 AC_CONFIG_FILES(contrib/cln_hist, [chmod +x contrib/cln_hist])
 AC_CONFIG_FILES(contrib/commit_prep, [chmod +x contrib/commit_prep])
