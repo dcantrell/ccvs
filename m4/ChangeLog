@@ -1,5 +1,12 @@
 2003-06-13  Derek Price  <derek@ximbiot.com>
 
+	* onceonly_2_57.m4: New file.
+	* Makefile.am (EXTRA_DIST): Add new file.
+
+	* Makefile.in: Regenerated.
+
+2003-06-13  Derek Price  <derek@ximbiot.com>
+
 	* mkstemp.m4: New file.
 	* Makefile.am (EXTRA_DIST): Add new file.
 
