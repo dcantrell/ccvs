@@ -1,4 +1,4 @@
-2003-07-28  Derek Price  <derek@ximbiot.com>
+2003-07-29  Derek Price  <derek@ximbiot.com>
 
 	* configure.in: Do not check for getpassphrase.  Define `getpass' to
 	`cvs_getpass' in config.h to avoid conflicts with system decls.
