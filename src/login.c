@@ -121,7 +121,7 @@ login (argc, argv)
 	error (0, 0, "can only use pserver method with `login' command");
 	error (1, 0, "CVSROOT: %s", CVSroot_original);
     }
-    
+
     if (! CVSroot_username)
     {
 	error (0, 0, "CVSROOT \"%s\" is not fully-qualified.",
