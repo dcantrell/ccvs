@@ -37,7 +37,7 @@ does not conform to this indentation style; the plan is to reindent it
 as those sections of the code are changed (one function at a time,
 perhaps).
 
-In a submitted patch it is acceptable to refrain from changing to
+In a submitted patch it is acceptable to refrain from changing the
 indentation of large blocks of code to minimize the size of the patch;
 the person checking in such a patch should reindent it.
 
