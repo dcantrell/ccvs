@@ -45,7 +45,7 @@ SOURCES = diff.c analyze.c cmpbuf.c cmpbuf.h io.c context.c ed.c normal.c \
 	ifdef.c util.c dir.c version.c diff.h side.c system.h
 OBJECTS = diff.o analyze.o cmpbuf.o dir.o io.o util.o \
 	context.o ed.o ifdef.o normal.o side.o version.o
-DISTFILES = $(SOURCES)
+DISTFILES = $(SOURCES) ChangeLog build_diff.com Makefile.in
 
 all: libdiff.a
 
