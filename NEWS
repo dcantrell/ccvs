@@ -46,6 +46,9 @@ NEW FEATURES
 
 BUG FIXES
 
+* Thanks to a patch from Jeroen Ruigrok/asmodai <asmodai@wxs.nl>, the
+  log_accum.pl script should no longer elicit warnings from Perl 5.8.5.
+
 * The r* commands (rlog, rls, etc.) can once again handle requests to run
   against the entire repository (e.g. `cvs rlog .').  Thanks go to Dan Peterson
   <dbpete@aol.com> for the report.

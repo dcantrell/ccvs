@@ -1,3 +1,8 @@
+2004-08-30  Derek Price  <derek@ximbiot.com>
+
+	* log_accum.in: Changes to supress warnings under Perl 5.8.5.
+	(Patch from Jeroen Ruigrok/asmodai <asmodai@wxs.nl>.)
+
 2004-07-16  Derek Price  <derek@ximbiot.com>
 
 	* Makefile.am (SUBDIRS): Add pam subdir.
@@ -39,7 +44,7 @@
 
 	Close issue #155.
 	* log_accum.in: Remove unused variables.
-	(Patch from (Ville Skyttä <scop@cvshome.org>.)
+	(Patch from Ville Skyttä <scop@cvshome.org>.)
 
 2003-11-25  Mark D. Baushke  <mdb@cvshome.org>
 
