@@ -6,7 +6,9 @@ Check the ../INSTALL file for information on the most recent version
 of CVS which has been known to be tested with NT and/or Win95.
 
 This port implements the full set of CVS commands, both local and
-client.  It does not provide a CVS server for NT.
+client.  It does not provide a CVS server for NT.  Multiple users can
+access a common CVS repository, if you can mount the repository,
+either directly or via a networked file system.
 
 We don't distribute a .ZIP source distribution partly because, as far
 as I can tell, PKZIP insists on munging long file names, which would

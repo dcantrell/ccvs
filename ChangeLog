@@ -1,3 +1,11 @@
+Wed Oct 16 16:59:57 1996  Jim Blandy  <jimb@totoro.cyclic.com>
+
+	* configure.in: Simplify code to check for crypt.  Check for
+	-lcrypt first, and then check for the crypt function.  The old
+	code did slightly funky things with cache variables, which JimK's
+	last change disturbed.  Let's just keep it simple.
+	* configure: Rebuilt.
+
 Wed Oct 16 15:01:59 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* configure.in: Don't call unset.  It isn't portable to Ultrix,
