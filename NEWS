@@ -1,5 +1,11 @@
 Changes since 1.9:
 
+* The postscript documentation (doc/cvs.ps) shipped with CVS is now
+formatted for US letter size instead of A4.  This is not because we
+consider this size "better" than A4, but because we believe that the
+US letter version will print better on A4 paper than the other way
+around.
+
 * The "cvs export" command is now logged in the history file and there
 is a "cvs history -x E" command to select history file entries
 produced by export.
