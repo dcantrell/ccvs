@@ -1,3 +1,11 @@
+Fri Jul 11 12:14:54 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* add.c (add): Exit status is now nonzero if any of the arguments
+	failed (already was mostly true, make it true for the new sanity
+	check).  Move check for '/' (now ISDIRSEP) up to sanity check, so
+	the client does it too.
+	* sanity.sh (errmsg2): Test for this fix.
+
 Thu Jul 10 00:02:54 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* add.c (add): Check for CVSADM, ".", and "..", and skip any

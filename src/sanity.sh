@@ -4736,15 +4736,15 @@ EOF
 	  dotest errmsg2-2 "${testcvs} add first-dir" \
 "Directory ${TESTDIR}/cvsroot/first-dir added to the repository"
           cd first-dir
-	  dotest errmsg2-3 "${testcvs} add CVS" \
+	  dotest_fail errmsg2-3 "${testcvs} add CVS" \
 "${PROG} [a-z]*: cannot add special file .CVS.; skipping"
 	  touch file1
 	  # For the most part add returns a failure exitstatus if
 	  # there are any errors, even if the remaining files are
-	  # processed without incident.  However, the "cannot add
-	  # special file" message does not affect the exitstatus, at
-	  # least not currently.
-	  dotest errmsg2-4 "${testcvs} add CVS file1" \
+	  # processed without incident.  The "cannot add
+	  # special file" message fits this pattern, at
+	  # least currently.
+	  dotest_fail errmsg2-4 "${testcvs} add CVS file1" \
 "${PROG} [a-z]*: cannot add special file .CVS.; skipping
 ${PROG} [a-z]*: scheduling file .file1. for addition
 ${PROG} [a-z]*: use .cvs commit. to add this file permanently"
@@ -4752,10 +4752,12 @@ ${PROG} [a-z]*: use .cvs commit. to add this file permanently"
 	  # behaviors that CVS had before it specially checked for "." and
 	  # "..".  Suffice it to say that these are unlikely to work right
 	  # without a special case.
-	  dotest errmsg2-5 "${testcvs} add ." \
+	  dotest_fail errmsg2-5 "${testcvs} add ." \
 "${PROG} [a-z]*: cannot add special file .\..; skipping"
-	  dotest errmsg2-6 "${testcvs} add .." \
+	  dotest_fail errmsg2-6 "${testcvs} add .." \
 "${PROG} [a-z]*: cannot add special file .\.\..; skipping"
+	  # Make sure that none of the error messages left droppings
+	  # which interfere with normal operation.
 	  dotest errmsg2-7 "${testcvs} -q ci -m add-file1" \
 "RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
 done
@@ -4763,6 +4765,15 @@ Checking in file1;
 ${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
 initial revision: 1\.1
 done"
+	  mkdir sdir
+	  cd ..
+	  dotest_fail errmsg2-8 "${testcvs} add first-dir/sdir" \
+"${PROG} [a-z]*: cannot add files with '/' in their name; first-dir/sdir not added"
+	  cd first-dir
+	  # Make sure that errmsg2-8 didn't leave any droppings which
+	  # prevent us from proceeding normally.
+	  dotest errmsg2-9 "${testcvs} add sdir" \
+"Directory ${TESTDIR}/cvsroot/first-dir/sdir added to the repository"
 	  cd ../..
 	  rm -r 1
 	  rm -rf ${TESTDIR}/cvsroot/first-dir
