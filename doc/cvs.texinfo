@@ -6061,6 +6061,19 @@ latter is set by the @samp{-k} or @samp{-A} options to @code{cvs
 checkout} or @code{cvs update}.  @code{cvs diff} also
 has a @samp{-k} option.  For some examples,
 @xref{Binary files}.
+@c The fact that -A is overloaded to mean both reset
+@c sticky options and reset sticky tags/dates is
+@c somewhat questionable.  Perhaps there should be
+@c separate options to reset sticky options (e.g. -k
+@c A") and tags/dates (someone suggested -r HEAD could
+@c do this instead of setting a sticky tag of "HEAD"
+@c as in the status quo but I haven't thought much
+@c about that idea.  Of course -r .reset or something
+@c could be coined if this needs to be a new option).
+@c On the other hand, having -A mean "get things back
+@c into the state after a fresh checkout" has a certain
+@c appeal, and maybe there is no sufficient reason for
+@c creeping featurism in this area.
 
 The modes available are:
 
