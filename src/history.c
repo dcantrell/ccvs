@@ -986,7 +986,7 @@ fill_hrec (line, hr)
     unsigned long date;
 
     memset ((char *) hr, 0, sizeof (*hr));
-/* comment */
+
     while (isspace (*line))
 	line++;
 
@@ -1028,6 +1028,15 @@ fill_hrec (line, hr)
 }
 
 
+#ifndef STAT_BLOCKSIZE
+#if HAVE_ST_BLKSIZE
+#define STAT_BLOCKSIZE(s) (s).st_blksize
+#else
+#define STAT_BLOCKSIZE(s) (4 * 1024)
+#endif
+#endif
+
+
 /* read_hrecs's job is to read the history file and fill in all the "hrec"
  * (history record) array elements with the ones we need to print.
  *
@@ -1045,13 +1054,13 @@ read_hrecs (fname)
 {
     char *cp=NULL, *cp2=NULL;
     char *cpstart=NULL, *oldcp=NULL, *hrline=NULL;
-    ssize_t i=0;
+    int i=0;
     int fd, hrec_end=0;
    
     struct hrec *hr=NULL;
     struct stat st_buf;
 
-    if ((fd = CVS_OPEN (fname, O_RDONLY | OPEN_BINARY)) == 0)
+    if ((fd = CVS_OPEN (fname, O_RDONLY | OPEN_BINARY)) < 0)
 	error (1, errno, "cannot open history file: %s", fname);
 
     if (fstat (fd, &st_buf) < 0)
@@ -1067,11 +1076,11 @@ read_hrecs (fname)
         char.  Use strchr to verify that there is a newline left in the 
         stream before calling fill_hrec.  If there is not, then read in 
         another block, unless feof has been reached. */
-/* comment */
-    cpstart = xmalloc ( st_buf.st_blksize );
+
+    cpstart = xmalloc ( STAT_BLOCKSIZE(st_buf) );
     cp = cpstart;
 
-    i = read (fd, cpstart, st_buf.st_blksize);
+    i = read (fd, cpstart, STAT_BLOCKSIZE(st_buf) );
     
     hrec_max = HREC_INCREMENT;
     hrec_head = (struct hrec *) xmalloc (hrec_max * sizeof (struct hrec));
@@ -1082,7 +1091,7 @@ read_hrecs (fname)
 	   cp points to where we are in the buffer. 
            cpstart points to the start of the current buffer. */
 
-    	if( i < st_buf.st_blksize){
+    	if( i < STAT_BLOCKSIZE(st_buf)){
 	    hrec_end=1;
 	    if (*(cpstart + i - 1) != '\n')
             {
@@ -1120,7 +1129,9 @@ read_hrecs (fname)
 	    }
 
 	    hr = hrec_head + hrec_count;
-	    if(!strchr(cp, '\n')){
+            nextnewline = strchr(cp, '\n');
+
+	    if(nextnewline  == NULL){
 		/* There isn't a full line left to read.  Get a new block*/
 		break;
 	    }
@@ -1130,10 +1141,8 @@ read_hrecs (fname)
 	       why there are ugly hacks here:  I don't want to completely
 	       re-write the whole history stuff right now.  */
 
-	    nextnewline = strchr(cp, '\n');
 	    hrline = xmalloc( 2 + nextnewline - cp);
-	    memset(hrline, 0, 2 + nextnewline - cp);
-	    strncpy(hrline, cp, (1+ nextnewline - cp));
+	    memcpy(hrline, cp, (1+ nextnewline - cp));
 	    hrline[ 1 + nextnewline - cp] = 0; /*we need the trailing newline */
 	    fill_hrec (hrline, hr);
 
@@ -1161,13 +1170,12 @@ read_hrecs (fname)
 	i=0;
 
 	oldcp = cp;
-	cp = xmalloc(strlen(oldcp) + st_buf.st_blksize + 1);
-	memset(cp,0,strlen(oldcp) + st_buf.st_blksize + 1);
-	strncpy(cp, oldcp, strlen(oldcp));
 	i = strlen(cp);
+	cp = xmalloc(i + STAT_BLOCKSIZE(st_buf) + 1);
+	memcpy( cp , oldcp , i );
 	free(cpstart);
 	cpstart = cp;
-	i += read (fd, cp + strlen(cp), st_buf.st_blksize);
+	i += read (fd, cp + strlen(cp), STAT_BLOCKSIZE(st_buf));
 
     }
 
