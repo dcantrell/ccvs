@@ -1,3 +1,8 @@
+Mon Oct 27 11:21:15 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* FAQ: Re-import from FAQ-O-Matic.  Features an edit from Larry
+	Jones regarding CVS on Windows.
+
 Mon Oct 20 15:23:17 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* BUGS: Add item about spaces in login names.
