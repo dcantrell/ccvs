@@ -7991,6 +7991,7 @@ reference to @sc{cvs} commands, @pxref{Invoking CVS}).
 * ~/.cvsrc::                    Default options with the ~/.cvsrc file
 * Global options::              Options you give to the left of cvs_command
 * Common options::              Options you give to the right of cvs_command
+* Date input formats::		Acceptable formats for date specifications
 * admin::                       Administration
 * annotate::                    What revision modified each line of a file?
 * checkout::                    Checkout sources for editing
@@ -8368,6 +8369,8 @@ further updates in the same directory will use the same date
 (The @code{history} command uses this option in a
 slightly different way; @pxref{history options}).
 
+For a complete description of the date formats accepted by @sc{cvs},
+@ref{Date input formats}.
 @c What other formats should we accept?  I don't want
 @c to start accepting a whole mess of non-standard
 @c new formats (there are a lot which are in wide use in
@@ -8384,11 +8387,6 @@ slightly different way; @pxref{history options}).
 @c VMS to support this format (and if we're going to do
 @c that, better to make CVS support it on all
 @c platforms.  Maybe).
-@c
-@c NOTE: The tar manual has some documentation for
-@c getdate.y (just for our info; we don't want to
-@c attempt to document all the formats accepted by
-@c getdate.y).
 @c
 @c One more note: In output, CVS should consistently
 @c use one date format, and that format should be one that
@@ -8430,95 +8428,6 @@ slightly different way; @pxref{history options}).
 @c X/Open CAE Specification, System Interfaces and
 @c Headers Issue 4, Version 2 (September 1994), in the
 @c entry for getdate() on page 231
-
-@cindex Timezone, in input
-@cindex Zone, time, in input
-A wide variety of date formats are supported by
-@sc{cvs}.  The most standard ones are ISO8601 (from the
-International Standards Organization) and the Internet
-e-mail standard (specified in RFC822 as amended by
-RFC1123).
-
-@c Probably should be doing more to spell out just what
-@c the rules are, rather than just giving examples.
-@c But I want to keep this simple too.
-@c So I don't know....
-@c A few specific issues: (1) Maybe should reassure
-@c people that years after 2000
-@c work (they are in the testsuite, so they do indeed
-@c work).  (2) What do two digit years
-@c mean?  Where do we accept them?  (3) Local times can
-@c be ambiguous or nonexistent if they fall during the
-@c hour when daylight savings time goes into or out of
-@c effect.  Pretty obscure, so I'm not at all sure we
-@c should be documenting the behavior in that case.
-ISO8601 dates have many variants but a few examples
-are:
-
-@example
-1972-09-24
-1972-09-24 20:05
-@end example
-@c I doubt we really accept all ISO8601 format dates
-@c (for example, decimal hours like 1972-09-24 20,2)
-@c I'm not sure we should, many of them are pretty
-@c bizarre and it has lots of gratuitous multiple ways
-@c to specify the same thing.
-
-There are a lot more ISO8601 date formats, and @sc{cvs}
-accepts many of them, but you probably don't want to
-hear the @emph{whole} long story :-).
-
-@c Citing a URL here is kind of problematic given how
-@c much they change and people who have old versions of
-@c this manual, but in case we want to reinstate an
-@c ISO8601 URL, a few are:
-@c http://www.saqqara.demon.co.uk/datefmt.htm
-@c http://www.cl.cam.ac.uk/~mgk25/iso-time.html
-@c Citing some other ISO8601 source is probably even
-@c worse :-).
-
-In addition to the dates allowed in Internet e-mail
-itself, @sc{cvs} also allows some of the fields to be
-omitted.  For example:
-@c FIXME: Need to figure out better, and document,
-@c what we want to allow the user to omit.
-@c NOTE: "omit" does not imply "reorder".
-@c FIXME: Need to cite a web page describing how to get
-@c RFC's.
-
-@example
-24 Sep 1972 20:05
-24 Sep
-@end example
-
-The date is interpreted as being in the
-local timezone, unless a specific timezone is
-specified.
-
-These two date formats are preferred.  However,
-@sc{cvs} currently accepts a wide variety of other date
-formats.  They are intentionally not documented here in
-any detail, and future versions of @sc{cvs} might not
-accept all of them.
-@c We should document and testsuite "now" and
-@c "yesterday".  "now" is mentioned in the FAQ and
-@c "yesterday" is mentioned in this document (and the
-@c message from "cvs import" suggesting a merge
-@c command).  What else?  Probably some/all of the "3
-@c weeks ago" family.
-@c
-@c Maybe at
-@c some point have CVS start give warnings on "unofficial"
-@c formats (many of which might be typos or user
-@c misunderstandings, and/or formats people never/rarely
-@c use to specify dates)?
-
-One such format is
-@code{@var{month}/@var{day}/@var{year}}.  This may
-confuse people who are accustomed to having the month
-and day in the other order; @samp{1/4/96} is January 4,
-not April 1.
 
 Remember to quote the argument to the @samp{-D}
 flag so that your shell doesn't interpret spaces as
@@ -8687,6 +8596,9 @@ Available with the following commands: @code{import},
 and @code{update}.
 
 @end table
+
+@c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+@include getdate-cvs.texi
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node admin

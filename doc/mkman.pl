@@ -187,6 +187,9 @@ for my $file (@ARGV)
 		# Remove comments
 		next if /^\@c(omment)?\b/;
 
+		# Ignore includes.
+		next if /^\@include\b/;
+
 		# It's okay to ignore this keyword - we're not using any
 		# first-line indent commands at all.
 		next if s/^\@noindent\s*$//;
