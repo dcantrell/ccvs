@@ -1,5 +1,9 @@
 2004-04-22  Derek Price  <derek@ximbiot.com>
 
+	* system.h: #include <fnmatch.h>.
+
+2004-04-22  Derek Price  <derek@ximbiot.com>
+
 	* system.h: #include <stdbool.h>.
 
 2004-04-21  Derek Price  <derek@ximbiot.com>
