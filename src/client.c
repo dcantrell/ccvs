@@ -3919,11 +3919,15 @@ start_server (void)
 
 	{
 	    struct response *rs;
+	    bool suppress_redirect = !current_parsed_root->redirect;
 
 	    send_to_server ("Valid-responses", 0);
 
 	    for (rs = responses; rs->name != NULL; ++rs)
 	    {
+		if (suppress_redirect && !strcmp (rs->name, "Redirect"))
+		    continue;
+
 		send_to_server (" ", 0);
 		send_to_server (rs->name, 0);
 	    }

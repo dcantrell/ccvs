@@ -396,6 +396,7 @@ new_cvsroot_t (void)
     newroot->proxy_hostname = NULL;
     newroot->proxy_port = 0;
     newroot->isremote = 0;
+    newroot->redirect = true;	/* Advertise Redirect support */
 #endif /* CLIENT_SUPPORT */
 
     return newroot;
@@ -597,6 +598,8 @@ parse_cvsroot (const char *root_in)
 		    || newroot->method == fork_method)
 		    newroot->cvs_server = xstrdup (q);
 	    }
+	    else if (!strcasecmp (p, "Redirect"))
+		readBool ("CVSROOT", "Redirect", q, &newroot->redirect);
 	    else
 	    {
 	        error (0, 0, "Unknown option (`%s') in CVSROOT.", p);

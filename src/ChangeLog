@@ -1,3 +1,16 @@
+2004-12-09  Derek Price  <derek@ximbiot.com>
+
+	* client.c (start_server): Avoid advertising the Redirect response when
+	the user asked us not to.
+	* root.h (cvsroot_t): Add redirect field.
+	* root.c (new_cvsroot_t): Init redirect field.
+	(parse_cvsroot_t): Parse Redirect method option.
+	* server.c (serve_command_prep): Don't throw proxy_log away when
+	Redirect isn't supported and it might be needed later.
+	* sanity.sh (parseroot): Improve comment, add a few new tests.
+	(writeproxy-ssh): Specify Redirect=yes explicitly.
+	(writeproxy-ssh-noredirect): New test group.
+
 2004-12-09  Mark D. Baushke  <mdb@cvshome.org>
 
 	* main.c (usg): Remove Dr. Pascal Molli's CVS URL from the

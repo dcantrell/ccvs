@@ -5537,12 +5537,15 @@ serve_expand_modules (char *arg)
 static void
 serve_command_prep (char *arg)
 {
-    bool supported;
+    bool redirect_supported;
+#ifdef PROXY_SUPPORT
+    bool ditch_log;
+#endif /* PROXY_SUPPORT */
 
     if (error_pending ()) return;
 
-    supported = supported_response ("Redirect");
-    if (config->PrimaryServer && supported
+    redirect_supported = supported_response ("Redirect");
+    if (redirect_supported
 	&& lookup_command_attribute (arg) & CVS_CMD_MODIFIES_REPOSITORY
 	/* I call isProxyServer() last because it can probably be the slowest
 	 * call due to the call to gethostbyname().
@@ -5574,15 +5577,28 @@ serve_command_prep (char *arg)
 	buf_output0 (buf_to_net, config->PrimaryServer->original);
 	buf_output0 (buf_to_net, "\n");
 	buf_flush (buf_to_net, 1);
+#ifdef PROXY_SUPPORT
+	ditch_log = true;
+#endif /* PROXY_SUPPORT */
     }
     else
     {
 	/* Send `ok' so the client can proceed.  */
 	buf_output0 (buf_to_net, "ok\n");
 	buf_flush (buf_to_net, 1);
+#ifdef PROXY_SUPPORT
+	if (lookup_command_attribute (arg) & CVS_CMD_MODIFIES_REPOSITORY
+            && isProxyServer ())
+	    /* Don't ditch the log for write commands on a proxy server.  We
+	     * we got here because the `Redirect' response was not supported.
+	     */
+	    ditch_log = false;
+	else
+	    ditch_log = true;
+#endif /* PROXY_SUPPORT */
     }
 #ifdef PROXY_SUPPORT
-    if (proxy_log && supported)
+    if (proxy_log && ditch_log)
     {
 	/* If the client supported the redirect response, then they will always
 	 * be redirected if they are preparing for a write request.  It is
