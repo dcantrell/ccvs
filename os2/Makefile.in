@@ -42,8 +42,12 @@ TCPIPLIB = s:${PS}ibmtcpip${PS}lib${PS}tcp32dll.lib	s:${PS}ibmtcpip${PS}lib${PS}
 
 CFLAGS 	 += -DTCPIP_IBM -Is:${PS}ibmtcpip${PS}include
 
+
 # headers specific to OS/2
 # tcpip.mak is almost certainly unnecessary, but I include it for now.
+
+# We list OS2_HEADERS so we know what to include when we make dist-dir
+# here.
 OS2_HEADERS = \
        tcpip.h \
        tcpip.mak \
@@ -51,7 +55,8 @@ OS2_HEADERS = \
        options.h \
        pwd.h \
        dirent.h \
-       rcmd.h
+       rcmd.h \
+       popen.h
 
 # headers we use from the common src dir, ..${PS}src
 COMMON_HEADERS = \
@@ -76,7 +81,8 @@ OS2_SOURCES = \
        startserver.c \
        rcmd.c \
        waitpid.c \
-       popen.c
+       popen.c \
+       strippath.c
 
 # sources we use from the common src dir, ..${PS}src
 COMMON_SOURCES = \
@@ -137,7 +143,9 @@ LIB_SOURCES = \
        ${libdir}${PS}yesno.c \
        ${libdir}${PS}xgetwd.c \
        ${libdir}${PS}md5.c \
-       ${libdir}${PS}fnmatch.c
+       ${libdir}${PS}fnmatch.c \
+       ${libdir}${PS}regex.c \
+       ${libdir}${PS}getdate.c
 
 # object files from OS/2 sources
 OS2_OBJECTS = \
@@ -150,7 +158,8 @@ OS2_OBJECTS = \
        startserver.obj \
        rcmd.obj \
        waitpid.obj \
-       popen.obj
+       popen.obj \
+       strippath.obj
 
 # object files from ..${PS}src
 COMMON_OBJECTS = \
@@ -211,7 +220,9 @@ LIB_OBJECTS = \
        ${libdir}${PS}yesno.obj \
        ${libdir}${PS}xgetwd.obj \
        ${libdir}${PS}md5.obj \
-       ${libdir}${PS}fnmatch.obj
+       ${libdir}${PS}fnmatch.obj \
+       ${libdir}${PS}regex.obj \
+       ${libdir}${PS}getdate.obj
 
 SOURCES = ${COMMON_SOURCES} ${LIB_SOURCES} ${OS2_SOURCES}
 HEADERS = ${COMMON_HEADERS} ${OS2_HEADERS}
