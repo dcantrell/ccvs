@@ -803,11 +803,16 @@ xreadlink (const char *link)
 	file = xrealloc (file, buflen);
 	link_name_len = readlink (link, file, buflen);
 
-	if (link_name_len < 0)
+	if (link_name_len < 0
+#ifdef ERANGE
+	    /* AIX 4 and HP-UX report ERANGE if the buffer is too small. */
+	    && errno != ERANGE
+#endif
+	    )
 	    error (1, errno, "cannot readlink %s", link);
 
 	/* If there is space for the NUL byte, set it and return. */
-	if ((size_t) link_name_len < buflen)
+	if (link_name_len >= 0 && (size_t) link_name_len < buflen)
 	{
 	    file[link_name_len] = '\0';
 	    return file;
