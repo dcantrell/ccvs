@@ -1,3 +1,24 @@
+Mon Aug  5 23:48:16 1996  Ian Lance Taylor  <ian@cygnus.com>
+
+	* log.c (struct option_revlist): Define.
+	(struct revlist): Define.
+	(struct log_data): Add default_branch and revlist fields.
+	(struct log_data_and_rcs): Define.
+	(log_usage): Add -N and -r.
+	(cvslog): Handle -N and -r.
+	(log_parse_revlist): New static function.
+	(log_fileproc): Call log_expand_revlist and log_free_revlist.
+	Pass log_data_and_rcs structure to log_count_print via walklist.
+	(log_expand_revlist, log_free_revlist): New static functions.
+	(log_version_requested): New static function.
+	(log_count_print): New static function.
+	(log_tree): Add log_data and revlist parameter.  Change all
+	callers.
+	(log_abranch): Likewise.
+	(log_version): Likewise.  Call log_version_requested.
+	(version_compare): New static function.
+	* sanity.sh (log): New tests for -r, -b, and -N options to log.
+
 Sun Aug  4 11:19:30 1996  Ian Lance Taylor  <ian@cygnus.com>
 
 	Handle simple cases of cvs log without invoking rlog.

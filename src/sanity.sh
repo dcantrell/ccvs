@@ -350,7 +350,7 @@ HOME=${TESTDIR}/home; export HOME
 # tests.
 
 if test x"$*" = x; then
-	tests="basica basicb basic1 deep basic2 death death2 branches import join new newb conflicts conflicts2 modules mflag errmsg1 devcom ignore binfiles binwrap info patch"
+	tests="basica basicb basic1 deep basic2 death death2 branches import join new newb conflicts conflicts2 modules mflag errmsg1 devcom ignore binfiles binwrap info patch log"
 else
 	tests="$*"
 fi
@@ -4109,6 +4109,227 @@ U file1'
 
 	  cd ../..
 	  rm -rf 1 2 ${CVSROOT_DIRNAME}/first-dir
+	  ;;
+
+	log)
+	  # Test selecting revisions with cvs log.
+
+	  # Check in a file with a few revisions and branches.
+	  mkdir ${CVSROOT_DIRNAME}/first-dir
+	  dotest log-1 "${testcvs} -q co first-dir" ''
+	  cd first-dir
+	  echo 'first revision' > file1
+	  dotest log-2 "${testcvs} add file1" \
+"${PROG}"' [a-z]*: scheduling file `file1'\'' for addition
+'"${PROG}"' [a-z]*: use '\''cvs commit'\'' to add this file permanently'
+
+	  dotest log-3 "${testcvs} -q commit -m 1" \
+'RCS file: /tmp/cvs-sanity/cvsroot/first-dir/file1,v
+done
+Checking in file1;
+/tmp/cvs-sanity/cvsroot/first-dir/file1,v  <--  file1
+initial revision: 1.1
+done'
+
+	  echo 'second revision' > file1
+	  dotest log-4 "${testcvs} -q ci -m2 file1" \
+'Checking in file1;
+/tmp/cvs-sanity/cvsroot/first-dir/file1,v  <--  file1
+new revision: 1.2; previous revision: 1.1
+done'
+
+	  dotest log-5 "${testcvs} -q tag -b branch file1" 'T file1'
+
+	  echo 'third revision' > file1
+	  dotest log-6 "${testcvs} -q ci -m3 file1" \
+'Checking in file1;
+/tmp/cvs-sanity/cvsroot/first-dir/file1,v  <--  file1
+new revision: 1.3; previous revision: 1.2
+done'
+
+	  dotest log-7 "${testcvs} -q update -r branch" '[UP] file1'
+
+	  echo 'first branch revision' > file1
+	  dotest log-8 "${testcvs} -q ci -m1b file1" \
+'Checking in file1;
+/tmp/cvs-sanity/cvsroot/first-dir/file1,v  <--  file1
+new revision: 1.2.2.1; previous revision: 1.2
+done'
+ 
+	  dotest log-9 "${testcvs} -q tag tag file1" 'T file1'
+
+	  echo 'second branch revision' > file1
+	  dotest log-10 "${testcvs} -q ci -m2b file1" \
+'Checking in file1;
+/tmp/cvs-sanity/cvsroot/first-dir/file1,v  <--  file1
+new revision: 1.2.2.2; previous revision: 1.2.2.1
+done'
+
+	  # Set up a bunch of shell variables to make the later tests
+	  # easier to describe.=
+	  log_header='
+RCS file: /tmp/cvs-sanity/cvsroot/first-dir/file1,v
+Working file: file1
+head: 1.3
+branch:
+locks: strict
+access list:'
+	  log_tags='symbolic names:
+	tag: 1.2.2.1
+	branch: 1.2.0.2'
+	  log_header2='keyword substitution: kv'
+	  log_dash='----------------------------
+revision'
+	  log_date='date: [0-9/]* [0-9:]*;  author: [a-zA-Z0-9@]*;  state: Exp;'
+	  log_lines="  lines: ${PLUS}1 -1"
+	  log_rev1="${log_dash} 1.1
+${log_date}
+1"
+	  log_rev2="${log_dash} 1.2
+${log_date}${log_lines}
+branches:  1.2.2;
+2"
+	  log_rev3="${log_dash} 1.3
+${log_date}${log_lines}
+3"
+	  log_rev1b="${log_dash} 1.2.2.1
+${log_date}${log_lines}
+1b"
+	  log_rev2b="${log_dash} 1.2.2.2
+${log_date}${log_lines}
+2b"
+	  log_trailer='============================================================================='
+
+	  # Now, finally, test the log output.
+
+	  dotest log-11 "${testcvs} log file1" \
+"${log_header}
+${log_tags}
+${log_header2}
+total revisions: 5;	selected revisions: 5
+description:
+${log_rev3}
+${log_rev2}
+${log_rev1}
+${log_rev2b}
+${log_rev1b}
+${log_trailer}"
+
+	  dotest log-12 "${testcvs} log -N file1" \
+"${log_header}
+${log_header2}
+total revisions: 5;	selected revisions: 5
+description:
+${log_rev3}
+${log_rev2}
+${log_rev1}
+${log_rev2b}
+${log_rev1b}
+${log_trailer}"
+
+	  dotest log-13 "${testcvs} log -b file1" \
+"${log_header}
+${log_tags}
+${log_header2}
+total revisions: 5;	selected revisions: 3
+description:
+${log_rev3}
+${log_rev2}
+${log_rev1}
+${log_trailer}"
+
+	  dotest log-14 "${testcvs} log -r file1" \
+"${log_header}
+${log_tags}
+${log_header2}
+total revisions: 5;	selected revisions: 1
+description:
+${log_rev3}
+${log_trailer}"
+
+	  dotest log-15 "${testcvs} log -r1.2 file1" \
+"${log_header}
+${log_tags}
+${log_header2}
+total revisions: 5;	selected revisions: 1
+description:
+${log_rev2}
+${log_trailer}"
+
+	  dotest log-16 "${testcvs} log -r1.2.2 file1" \
+"${log_header}
+${log_tags}
+${log_header2}
+total revisions: 5;	selected revisions: 2
+description:
+${log_rev2b}
+${log_rev1b}
+${log_trailer}"
+
+	  # This test would fail with the old invocation of rlog, but it
+	  # works with the builtin log support.
+	  dotest log-17 "${testcvs} log -rbranch file1" \
+"${log_header}
+${log_tags}
+${log_header2}
+total revisions: 5;	selected revisions: 2
+description:
+${log_rev2b}
+${log_rev1b}
+${log_trailer}"
+
+	  dotest log-18 "${testcvs} log -r1.2.2. file1" \
+"${log_header}
+${log_tags}
+${log_header2}
+total revisions: 5;	selected revisions: 1
+description:
+${log_rev2b}
+${log_trailer}"
+
+	  # This test would fail with the old invocation of rlog, but it
+	  # works with the builtin log support.
+	  dotest log-19 "${testcvs} log -rbranch. file1" \
+"${log_header}
+${log_tags}
+${log_header2}
+total revisions: 5;	selected revisions: 1
+description:
+${log_rev2b}
+${log_trailer}"
+
+	  dotest log-20 "${testcvs} log -r1.2: file1" \
+"${log_header}
+${log_tags}
+${log_header2}
+total revisions: 5;	selected revisions: 2
+description:
+${log_rev3}
+${log_rev2}
+${log_trailer}"
+
+	  dotest log-21 "${testcvs} log -r:1.2 file1" \
+"${log_header}
+${log_tags}
+${log_header2}
+total revisions: 5;	selected revisions: 2
+description:
+${log_rev2}
+${log_rev1}
+${log_trailer}"
+
+	  dotest log-22 "${testcvs} log -r1.1:1.2 file1" \
+"${log_header}
+${log_tags}
+${log_header2}
+total revisions: 5;	selected revisions: 2
+description:
+${log_rev2}
+${log_rev1}
+${log_trailer}"
+
+	  cd ..
+	  rm -rf first-dir ${CVSROOT_DIRNAME}/first-dir
 	  ;;
 
 	*)
