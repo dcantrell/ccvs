@@ -1,5 +1,9 @@
 2004-10-21 Derek Price <derek@ximbiot.com>
 
+	* subr.c: #include vasnprintf.h to avoid compiler warning.
+
+2004-10-21 Derek Price <derek@ximbiot.com>
+
 	* cvs.h (error_use_protocol): Move decl here from lib/error.h so that
 	we may use an unforked error.h from GNULIB.
 
