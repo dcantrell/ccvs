@@ -1,3 +1,8 @@
+Wed Jul 10 15:51:29 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* commit.c (find_fileproc): Add comments describing a few cases
+	that we aren't handling.
+
 Tue Jul  9 04:33:03 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* rcs.c (RCS_deltas): New function, created from guts of old

@@ -219,6 +219,10 @@ find_fileproc (callerdat, finfo)
     if (vers->ts_user == NULL
 	&& vers->vn_user != NULL
 	&& vers->vn_user[0] == '-')
+	/* FIXME: If vn_user is starts with "-" but ts_user is
+	   non-NULL, what classify_file does is print "%s should be
+	   removed and is still there".  I'm not sure what it does
+	   then.  We probably should do the same.  */
 	status = T_REMOVED;
     else if (vers->vn_user == NULL)
     {
@@ -232,6 +236,9 @@ find_fileproc (callerdat, finfo)
     else if (vers->ts_user != NULL
 	     && vers->vn_user != NULL
 	     && vers->vn_user[0] == '0')
+	/* FIXME: If vn_user is "0" but ts_user is NULL, what classify_file
+	   does is print "new-born %s has disappeared" and removes the entry.
+	   We probably should do the same.  */
 	status = T_ADDED;
     else if (vers->ts_user != NULL
 	     && vers->ts_rcs != NULL
