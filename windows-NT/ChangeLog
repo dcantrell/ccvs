@@ -1,5 +1,12 @@
 2004-04-23  Derek Price  <derek@ximbiot.com>
 
+	* Makefile.am (EXTRA_DIST): Add stdbool.h & stamp-sh.
+	(stdbool.h, stamp-sh): New targets.
+	* stdbool.h, stamp-sh: New files.
+	* Makefile.in: Regenerated.
+
+2004-04-23  Derek Price  <derek@ximbiot.com>
+
 	* config.h.in: Don't define HAVE_ALLOCA.  Let alloca_.h do it instead.
 	* config.h: Regenerated.
 
