@@ -94,6 +94,7 @@ static char *join_rev2 = NULL;
 static int join_tags_validated = 0;
 static char *preload_update_dir = NULL;
 static char *history_name = NULL;
+static enum mtype m_type;
 
 int
 checkout (argc, argv)
@@ -110,7 +111,6 @@ checkout (argc, argv)
     char *where = NULL;
     char *valid_options;
     const char *const *valid_usage;
-    enum mtype m_type;
 
     /*
      * A smaller subset of options are allowed for the export command, which
@@ -232,7 +232,7 @@ checkout (argc, argv)
     if (where && pipeout)
 	error (1, 0, "-d and -p are mutually exclusive");
 
-    if (strcmp (command_name, "export") == 0)
+    if (m_type == EXPORT)
     {
 	if (!tag && !date)
 	    error (1, 0, "must specify a tag or date");
@@ -293,7 +293,7 @@ checkout (argc, argv)
 	    send_arg("-A");
 	if (!shorten)
 	    send_arg("-N");
-	if (checkout_prune_dirs && strcmp (command_name, "export") != 0)
+	if (checkout_prune_dirs && m_type == CHECKOUT)
 	    send_arg("-P");
 	client_prune_dirs = checkout_prune_dirs;
 	if (cat)
@@ -324,10 +324,7 @@ checkout (argc, argv)
 	    client_nonexpanded_setup ();
 	}
 
-	send_to_server (strcmp (command_name, "export") == 0 ?
-                        "export\012" : "co\012",
-                        0);
-
+	send_to_server (m_type == EXPORT ? "export\012" : "co\012", 0);
 	return get_responses_and_close ();
     }
 #endif /* CLIENT_SUPPORT */
@@ -354,7 +351,7 @@ checkout (argc, argv)
 
     /* If we will be calling history_write, work out the name to pass
        it.  */
-    if (strcmp (command_name, "export") != 0 && !pipeout)
+    if (m_type == CHECKOUT && !pipeout)
     {
 	if (tag && date)
 	{
@@ -457,7 +454,12 @@ build_one_dir (repository, dirpath, sticky)
 {
     FILE *fp;
 
-    if (!isfile (CVSADM) && strcmp (command_name, "export") != 0)
+    if (isfile (CVSADM))
+    {
+	if (m_type == EXPORT)
+	    error (1, 0, "cannot export into a working directory");
+    }
+    else if (m_type == CHECKOUT)
     {
 	/* I suspect that this check could be omitted.  */
 	if (!isdir (repository))
@@ -965,6 +967,9 @@ internal error: %s doesn't start with %s in checkout_proc",
 	{
 	    char *repos;
 
+	    if (m_type == EXPORT)
+		error (1, 0, "cannot export into working directory");
+
 	    /* get the contents of the previously existing repository */
 	    repos = Name_Repository ((char *) NULL, preload_update_dir);
 	    if (fncmp (repository, repos) != 0)
@@ -1032,10 +1037,10 @@ internal error: %s doesn't start with %s in checkout_proc",
      */
     if (!(local_specified || *pargc > 1))
     {
-	if (strcmp (command_name, "export") != 0 && !pipeout)
+	if (m_type == CHECKOUT && !pipeout)
 	    history_write ('O', preload_update_dir, history_name, where,
 			   repository);
-	else if (strcmp (command_name, "export") == 0 && !pipeout)
+	else if (m_type == EXPORT && !pipeout)
 	    history_write ('E', preload_update_dir, tag ? tag : date, where,
 			   repository);
 	err += do_update (0, (char **) NULL, options, tag, date,
@@ -1090,7 +1095,7 @@ internal error: %s doesn't start with %s in checkout_proc",
     }
 
     /* Don't log "export", just regular "checkouts" */
-    if (strcmp (command_name, "export") != 0 && !pipeout)
+    if (m_type == CHECKOUT && !pipeout)
 	history_write ('O', preload_update_dir, history_name, where,
 		       repository);
 

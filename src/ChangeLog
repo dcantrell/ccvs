@@ -1,3 +1,11 @@
+2000-05-25  Larry Jones  <larry.jones@sdrc.com>
+
+	* checkout.c (checkout, build_one_dir, checkout_proc): Move m_type
+	to file scope and use it instead of continually doing strcmp on
+	command_name.
+	(build_one_dir, checkout_proc): Don't allow export if CVSADM
+	directory already exists.
+
 2000-05-23  Larry Jones  <larry.jones@sdrc.com>
 
 	* rcs.c (RCS_checkin, RCS_cmp_file): Plug memory leaks.  (Patch
