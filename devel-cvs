@@ -24,6 +24,13 @@ created for them.
 The topic restrictions in this charter do not reflect the development
 group's future plans for CVS; rather, they reflect a topic
 classification which the group finds helpful.
+
+----------------------------------------------------------------------
+Policies regarding the CVS source repository:
+
+By checking items into the repository, developers agree to permit
+distribution of such items under the terms of the GNU Public License.
+
 ----------------------------------------------------------------------
 Procedure for dealing with people who want to be developers:
 
@@ -32,5 +39,7 @@ via snapshots, for technical reasons) are first requested to send
 patches and have them reviewed by a developer.  If they submit some
 good ones (preferably over a period of time, to demonstrate sustained
 interest), then one of the developers can ask the devel-cvs mailing
-list whether it is OK to make this person a developer.  If there are
-no objections, an account will be created.
+list whether it is OK to make this person a developer (after first
+sending the prospective developer a copy of this file and then having
+the prospective developer say they want to be a developer).  If there
+are no objections, an account will be created.
