@@ -1,3 +1,9 @@
+1998-08-18  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* sanity.sh: Don't assume that the shell leaves $^ unexpanded in
+	an unquoted here-document (suggested by Bart Schaefer to help when
+	zsh is the shell).
+
 1998-08-17  Ian Lance Taylor  <ian@cygnus.com>
 
 	* commit.c (checkaddfile): Don't call fix_rcs_modes.
