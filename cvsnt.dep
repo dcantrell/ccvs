@@ -3,11 +3,11 @@
 .\src\add.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
-	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
 	".\lib\save-cwd.h"\
+	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
@@ -38,10 +38,10 @@
 .\src\admin.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
-	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
+	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
@@ -71,10 +71,10 @@
 .\src\annotate.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
-	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
+	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
@@ -104,10 +104,10 @@
 .\src\buffer.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
-	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
+	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
@@ -137,10 +137,10 @@
 .\src\checkin.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
-	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
+	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
@@ -172,10 +172,10 @@
 .\src\checkout.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
-	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
+	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
@@ -205,10 +205,10 @@
 .\src\classify.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
-	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
+	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
@@ -239,12 +239,12 @@
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
 	".\lib\getline.h"\
-	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\md5.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
 	".\lib\save-cwd.h"\
+	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
@@ -279,10 +279,10 @@
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
 	".\lib\getline.h"\
-	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
+	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
@@ -315,10 +315,10 @@
 .\src\create_adm.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
-	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
+	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
@@ -349,10 +349,10 @@
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
 	".\lib\getline.h"\
-	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
+	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
@@ -382,10 +382,10 @@
 .\src\diff.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
-	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
+	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
@@ -416,10 +416,10 @@
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
 	".\lib\getline.h"\
-	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
+	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
@@ -453,10 +453,10 @@
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
 	".\lib\getline.h"\
-	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
+	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
@@ -486,10 +486,10 @@
 .\src\error.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
-	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
+	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
@@ -519,10 +519,10 @@
 .\src\exithandle.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
-	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
+	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
@@ -552,10 +552,10 @@
 .\src\expand_path.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
-	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
+	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
@@ -586,10 +586,10 @@
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
 	".\lib\getline.h"\
-	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
+	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
@@ -620,10 +620,10 @@
 ".\windows-NT\filesubr.c" : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
-	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
+	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
@@ -654,10 +654,10 @@
 .\src\find_names.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
-	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
+	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
@@ -687,10 +687,10 @@
 .\src\hash.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
-	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
+	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
@@ -720,11 +720,11 @@
 .\src\history.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
-	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
 	".\lib\save-cwd.h"\
+	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
@@ -756,10 +756,10 @@
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
 	".\lib\getline.h"\
-	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
+	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
@@ -789,11 +789,11 @@
 .\src\import.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
-	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
 	".\lib\save-cwd.h"\
+	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
@@ -828,10 +828,10 @@
 .\src\lock.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
-	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
+	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
@@ -861,10 +861,10 @@
 ".\src\log-buffer.c" : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
-	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
+	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
@@ -894,10 +894,10 @@
 .\src\log.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
-	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
+	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
@@ -928,10 +928,11 @@
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
 	".\lib\getline.h"\
-	".\lib\getopt.h"\
+	".\lib\getpass.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
+	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
@@ -962,10 +963,10 @@
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
 	".\lib\getline.h"\
-	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
+	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
@@ -995,10 +996,10 @@
 .\src\ls.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
-	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
+	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
@@ -1028,10 +1029,10 @@
 .\src\main.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
-	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
+	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
@@ -1061,10 +1062,10 @@
 ".\windows-NT\mkdir.c" : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
-	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
+	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
@@ -1095,11 +1096,11 @@
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
 	".\lib\getline.h"\
-	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
 	".\lib\save-cwd.h"\
+	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
@@ -1130,11 +1131,11 @@
 .\src\modules.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
-	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
 	".\lib\save-cwd.h"\
+	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
@@ -1165,10 +1166,10 @@
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
 	".\lib\getline.h"\
-	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
+	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
@@ -1203,10 +1204,10 @@
 .\src\no_diff.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
-	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
+	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
@@ -1237,10 +1238,10 @@
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
 	".\lib\getline.h"\
-	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
+	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
@@ -1272,10 +1273,10 @@
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
 	".\lib\getline.h"\
-	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
+	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
@@ -1310,10 +1311,10 @@
 ".\windows-NT\rcmd.c" : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
-	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
+	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
@@ -1344,10 +1345,10 @@
 .\src\rcs.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
-	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
+	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
@@ -1380,10 +1381,10 @@
 	".\diff\diffrun.h"\
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
-	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
+	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
@@ -1413,11 +1414,11 @@
 .\src\recurse.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
-	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
 	".\lib\save-cwd.h"\
+	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
@@ -1450,11 +1451,11 @@
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
 	".\lib\getline.h"\
-	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
 	".\lib\save-cwd.h"\
+	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
@@ -1484,10 +1485,10 @@
 .\src\remove.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
-	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
+	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
@@ -1518,10 +1519,10 @@
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
 	".\lib\getline.h"\
-	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
+	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
@@ -1552,10 +1553,10 @@
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
 	".\lib\getline.h"\
-	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
+	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
@@ -1585,10 +1586,10 @@
 ".\src\rsh-client.c" : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
-	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
+	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
@@ -1619,10 +1620,10 @@
 ".\windows-NT\run.c" : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
-	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
+	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
@@ -1652,10 +1653,10 @@
 .\src\scramble.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
-	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
+	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
@@ -1687,10 +1688,10 @@
 	".\lib\exit.h"\
 	".\lib\getline.h"\
 	".\lib\getnline.h"\
-	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
+	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
@@ -1728,10 +1729,10 @@
 ".\src\socket-client.c" : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
-	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
+	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
@@ -1762,10 +1763,10 @@
 .\src\stack.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
-	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
+	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
@@ -1795,10 +1796,10 @@
 ".\windows-NT\startserver.c" : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
-	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
+	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
@@ -1829,10 +1830,10 @@
 .\src\status.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
-	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
+	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
@@ -1863,10 +1864,10 @@
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
 	".\lib\getline.h"\
-	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
+	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
@@ -1896,11 +1897,11 @@
 .\src\tag.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
-	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
 	".\lib\save-cwd.h"\
+	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
@@ -1931,11 +1932,11 @@
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
 	".\lib\getline.h"\
-	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
 	".\lib\save-cwd.h"\
+	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
@@ -1969,10 +1970,10 @@
 .\src\vers_ts.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
-	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
+	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
@@ -2002,10 +2003,10 @@
 .\src\version.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
-	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
+	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
@@ -2039,10 +2040,10 @@
 .\src\watch.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
-	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
+	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
@@ -2075,10 +2076,10 @@
 ".\windows-NT\woe32.c" : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
-	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
+	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
@@ -2109,10 +2110,10 @@
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
 	".\lib\getline.h"\
-	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
+	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
@@ -2142,10 +2143,10 @@
 .\src\zlib.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
-	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
+	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
