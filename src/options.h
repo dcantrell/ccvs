@@ -37,20 +37,6 @@
 #endif
 
 /*
- * When committing or importing files, you must enter a log message.
- * Normally, you can do this either via the -m flag on the command
- * line or an editor will be started for you.  If you like to use
- * logging templates (the rcsinfo file within the $CVSROOT/CVSROOT
- * directory), you might want to force people to use the editor even
- * if they specify a message with -m.  Enabling FORCE_USE_EDITOR will
- * cause the -m message to be appended to the temp file when the
- * editor is started.
- */
-#ifndef FORCE_USE_EDITOR
-/* #define 	FORCE_USE_EDITOR */
-#endif
-
-/*
  * When locking the repository, some sites like to remove locks and
  * assume the program that created them went away if the lock has
  * existed for a long time.  This used to be the default for previous
