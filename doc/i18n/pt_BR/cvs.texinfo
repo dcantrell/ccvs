@@ -5113,7 +5113,7 @@ quando você começa um novo projeto deve ser ponderar a
 respeito da organização dos arquivos.  Não é impossível
 renomear ou mover arquivos, mas isto aumenta as chances
 de erro e o @sc{cvs} tem algumas idiossincrasias em
-especial quanto a renomear diretórios.  @xref{Moving files}.
+especial quanto a renomear diretórios.  @xref{Movendo arquivos}.
 
 @c <en>What to do next depends on the situation at hand.
 O que fazer depende da situação em que você está.
@@ -5547,28 +5547,28 @@ de revisão.
 Se você quiser marcar um conjunto de revisões
 envolvendo mais de um arquivo, tais como as revisões
 que integram uma release, pode usar uma @dfn{etiqueta} (tag),
-que é uma revisão simbólica que ser associada a uma
+que é uma revisão simbólica que pode ser associada a uma
 revisão numérica em cada arquivo.
 
 @menu
 @c <en>* Revision numbers::            The meaning of a revision number
-* Números de revisão::            The meaning of a revision number
+* Números de revisão::            O significado dos números de revisão
 @c <en>* Versions revisions releases::  Terminology used in this manual
-* Versions revisions releases::  Terminology used in this manual
+* Versões revisões releases::  Terminologia usada neste manual
 @c <en>* Assigning revisions::         Assigning revisions
-* Assigning revisions::         Assigning revisions
+* Atribuindo revisões::         Atribuindo revisões
 @c <en>* Tags::                        Tags--Symbolic revisions
-* Etiquetas::                        Tags--Symbolic revisions
+* Etiquetas::                        Etiquetas (Tags)--Revisões Simbólicas
 @c <en>* Tagging the working directory::  The cvs tag command
-* Tagging the working directory::  The cvs tag command
+* Etiquetando o diretório de trabalho::  O comando cvs tag
 @c <en>* Tagging by date/tag::         The cvs rtag command
-* Tagging by date/tag::         The cvs rtag command
+* Etiquetando por data/etiqueta::         O comando cvs rtag
 @c <en>* Modifying tags::              Adding, renaming, and deleting tags
-* Modifying tags::              Adding, renaming, and deleting tags
+* Modificando etiquetas::              Adicionando, renomeando e apagando etiquetas
 @c <en>* Tagging add/remove::          Tags with adding and removing files
-* Tagging add/remove::          Tags with adding and removing files
+* Etiquetando adicionados/removidos::  Etiquetas com arquivos adicionados e removidos
 @c <en>* Sticky tags::                 Certain tags are persistent
-* Etiquetas adesivas::          Certain tags are persistent
+* Etiquetas adesivas::          Certas etiquetas são persistentes
 @end menu
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -5631,15 +5631,15 @@ estes números de revisão são explicados em detalhes em
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @c <en>@node Versions revisions releases
-@node Versions revisions releases
+@node Versões revisões releases
 @c <en>@section Versions, revisions and releases
-@section Versions, revisions and releases
+@section Versões, revisões e releases
 @c <en>@cindex Revisions, versions and releases
-@cindex Revisions, versions and releases
+@cindex Revisões, versões e releases
 @c <en>@cindex Versions, revisions and releases
-@cindex Versions, revisions and releases
+@cindex Versões, revisões e releases
 @c <en>@cindex Releases, revisions and versions
-@cindex Releases, revisions and versions
+@cindex Releases, revisões e versões
 
 @c <en>A file can have several versions, as described above.
 @c <en>Likewise, a software product can have several versions.
@@ -5661,9 +5661,9 @@ confusão, o termo @dfn{versão} praticamente não é usado
 neste documento.
 
 @c <en>@node Assigning revisions
-@node Assigning revisions
+@node Atribuindo revisões
 @c <en>@section Assigning revisions
-@section Assigning revisions
+@section Atribuindo revisões
 
 @c We avoid the "major revision" terminology.  It seems
 @c like jargon.  Hopefully "first number" is clear enough.
@@ -6015,7 +6015,7 @@ like this:
 @end example
 
 @c <en>@node Tagging the working directory
-@node Tagging the working directory
+@node Etiquetando o diretório de trabalho
 @c <en>@section Specifying what to tag from the working directory
 @section Specifying what to tag from the working directory
 
@@ -6072,7 +6072,7 @@ cvs [tag aborted]: correct the above errors first!
 @end example
 
 @c <en>@node Tagging by date/tag
-@node Tagging by date/tag
+@node Etiquetando por data/etiqueta
 @c <en>@section Specifying what to tag by date or revision
 @section Specifying what to tag by date or revision
 @c <en>@cindex rtag (subcommand)
@@ -6141,7 +6141,7 @@ cvs tag -r 1.4 stable backend.c
 @end example
 
 @c <en>@node Modifying tags
-@node Modifying tags
+@node Modificando etiquetas
 @c <en>@section Deleting, moving, and renaming tags
 @section Deleting, moving, and renaming tags
 
@@ -6313,7 +6313,7 @@ cvs rtag -d old-name-0-4 tc
 @end example
 
 @c <en>@node Tagging add/remove
-@node Tagging add/remove
+@node Etiquetando adicionados/removidos
 @c <en>@section Tagging and adding and removing files
 @section Tagging and adding and removing files
 
@@ -7009,7 +7009,7 @@ to create a branch from revision 6.4 it will be
 numbered 6.4.2.  All branch numbers ending in a zero
 (such as 6.4.0) are used internally by @sc{cvs}
 (@pxref{Números de ramos mágicos}).  The branch 1.1.1 has a
-special meaning.  @xref{Tracking sources}.
+special meaning.  @xref{Acompanhando fontes}.
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @c <en>@node Magic branch numbers
@@ -7733,7 +7733,7 @@ this in @sc{cvs} vary depending on the situation.
 @c <en>* Removing directories::        Removing directories
 * Removing directories::        Removing directories
 @c <en>* Moving files::                Moving and renaming files
-* Moving files::                Moving and renaming files
+* Movendo arquivos::                Moving and renaming files
 @c <en>* Moving directories::          Moving and renaming directories
 * Moving directories::          Moving and renaming directories
 @end menu
@@ -8175,11 +8175,11 @@ are checking out contains any files in that directory.
 
 @c ---------------------------------------------------------------------
 @c <en>@node Moving files
-@node Moving files
+@node Movendo arquivos
 @c <en>@section Moving and renaming files
 @section Moving and renaming files
 @c <en>@cindex Moving files
-@cindex Moving files
+@cindex Movendo arquivos
 @c <en>@cindex Renaming files
 @cindex Renaming files
 @c <en>@cindex Files, moving
@@ -8269,7 +8269,7 @@ time of the rename.
 When @var{new} is committed its revision numbers will
 start again, usually at 1.1, so if that bothers you,
 use the @samp{-r rev} option to commit.  For more
-information see @ref{Assigning revisions}.
+information see @ref{Atribuindo revisões}.
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @c <en>@node Inside
@@ -11003,9 +11003,13 @@ That way the long list of change messages will not
 interfere with everyday source file browsing.
 
 @c ---------------------------------------------------------------------
-@node Tracking sources
+@c <en>@node Tracking sources
+@node Acompanhando fontes
+@c <en>@chapter Tracking third-party sources
 @chapter Tracking third-party sources
+@c <en>@cindex Third-party sources
 @cindex Third-party sources
+@c <en>@cindex Tracking sources
 @cindex Tracking sources
 
 @c FIXME: Need discussion of added and removed files.
@@ -13060,11 +13064,17 @@ Local; run only in current working directory.
 @item -R
 Commit directories recursively.  This is on by default.
 
+@c <en>@item -r @var{revision}
 @item -r @var{revision}
+@c <en>Commit to @var{revision}.  @var{revision} must be
+@c <en>either a branch, or a revision on the main trunk that
+@c <en>is higher than any existing revision number
+@c <en>(@pxref{Assigning revisions}).  You
+@c <en>cannot commit to a specific revision on a branch.
 Commit to @var{revision}.  @var{revision} must be
 either a branch, or a revision on the main trunk that
 is higher than any existing revision number
-(@pxref{Assigning revisions}).  You
+(@pxref{Atribuindo revisões}).  You
 cannot commit to a specific revision on a branch.
 @c FIXME: Need xref for branch case.
 @end table
@@ -14134,7 +14144,7 @@ distribution from an outside source (e.g., a source
 vendor) into your source repository directory.  You can
 use this command both for initial creation of a
 repository, and for wholesale updates to the module
-from the outside source.  @xref{Tracking sources}, for
+from the outside source.  @xref{Acompanhando fontes}, for
 a discussion on this subject.
 
 The @var{repository} argument gives a directory name
@@ -14287,7 +14297,7 @@ to recreate symbolic links on checkout, update, etc.;
 @appendixsubsec import examples
 
 @c <en>See @ref{Tracking sources}, and @ref{From files}.
-See @ref{Tracking sources}, and @ref{De arquivos}.
+See @ref{Acompanhando fontes}, and @ref{De arquivos}.
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node log
@@ -16172,7 +16182,7 @@ See @ref{Revisões} and @ref{Ramificando e mesclando}.
 @c <en>Clear tag from removed files that would not otherwise
 @c <en>be tagged.  See @ref{Tagging add/remove}.
 Clear tag from removed files that would not otherwise
-be tagged.  See @ref{Tagging add/remove}.
+be tagged.  See @ref{Etiquetando adicionados/removidos}.
 
 @c <en>@item -b
 @item -b
@@ -16189,24 +16199,24 @@ branch tags.  Use with extreme caution.
 @c <en>@item -D @var{date}
 @item -D @var{date}
 @c <en>Tag revisions as of @var{date}.  See @ref{Tagging by date/tag}.
-Tag revisions as of @var{date}.  See @ref{Tagging by date/tag}.
+Tag revisions as of @var{date}.  See @ref{Etiquetando por data/etiqueta}.
 
 @c <en>@item -d
 @item -d
 @c <en>Delete @var{tag}.  See @ref{Modifying tags}.
-Delete @var{tag}.  See @ref{Modifying tags}.
+Delete @var{tag}.  See @ref{Modificando etiquetas}.
 
 @c <en>@item -F
 @item -F
 @c <en>Move @var{tag} if it already exists.  See @ref{Modifying tags}.
-Move @var{tag} if it already exists.  See @ref{Modifying tags}.
+Move @var{tag} if it already exists.  See @ref{Modificando etiquetas}.
 
 @c <en>@item -f
 @item -f
 @c <en>Force a head revision match if tag/date not found.
 @c <en>See @ref{Tagging by date/tag}.
 Force a head revision match if tag/date not found.
-See @ref{Tagging by date/tag}.
+See @ref{Etiquetando por data/etiqueta}.
 
 @c <en>@item -l
 @item -l
@@ -16227,7 +16237,7 @@ Operate recursively (default).  @xref{Comportamento recursivo}.
 @c <en>@item -r @var{rev}
 @item -r @var{rev}
 @c <en>Tag existing tag @var{rev}.  See @ref{Tagging by date/tag}.
-Tag existing tag @var{rev}.  See @ref{Tagging by date/tag}.
+Tag existing tag @var{rev}.  See @ref{Etiquetando por data/etiqueta}.
 @end table
 
 @c ------------------------------------------------------------
@@ -16281,29 +16291,29 @@ Create a branch named @var{tag}.  See @ref{Ramificando e mesclando}.
 @c <en>Check that working files are unmodified.  See
 @c <en>@ref{Tagging the working directory}.
 Check that working files are unmodified.  See
-@ref{Tagging the working directory}.
+@ref{Etiquetando o diretório de trabalho}.
 
 @c <en>@item -D @var{date}
 @item -D @var{date}
 @c <en>Tag revisions as of @var{date}.  See @ref{Tagging by date/tag}.
-Tag revisions as of @var{date}.  See @ref{Tagging by date/tag}.
+Tag revisions as of @var{date}.  See @ref{Etiquetando por data/etiqueta}.
 
 @c <en>@item -d
 @item -d
 @c <en>Delete @var{tag}.  See @ref{Modifying tags}.
-Delete @var{tag}.  See @ref{Modifying tags}.
+Delete @var{tag}.  See @ref{Modificando etiquetas}.
 
 @c <en>@item -F
 @item -F
 @c <en>Move @var{tag} if it already exists.  See @ref{Modifying tags}.
-Move @var{tag} if it already exists.  See @ref{Modifying tags}.
+Move @var{tag} if it already exists.  See @ref{Modificando etiquetas}.
 
 @c <en>@item -f
 @item -f
 @c <en>Force a head revision match if tag/date not found.
 @c <en>See @ref{Tagging by date/tag}.
 Force a head revision match if tag/date not found.
-See @ref{Tagging by date/tag}.
+See @ref{Etiquetando por data/etiqueta}.
 
 @c <en>@item -l
 @item -l
@@ -16319,7 +16329,7 @@ Operate recursively (default).  @xref{Comportamento recursivo}.
 @c <en>@item -r @var{rev}
 @item -r @var{rev}
 @c <en>Tag existing tag @var{rev}.  See @ref{Tagging by date/tag}.
-Tag existing tag @var{rev}.  See @ref{Tagging by date/tag}.
+Tag existing tag @var{rev}.  See @ref{Etiquetando por data/etiqueta}.
 @end table
 
 @c ------------------------------------------------------------
