@@ -102,6 +102,9 @@ fnmatch.h: fnmatch_.h
 	mv $@-t $@
 MOSTLYCLEANFILES += fnmatch.h fnmatch.h-t
 
+# For GNULIB's gettime module.
+libcvs_a_SOURCES += gettime.c
+
 # For GNULIB's stdbool module.
 BUILT_SOURCES += $(STDBOOL_H)
 EXTRA_DIST += stdbool_.h
