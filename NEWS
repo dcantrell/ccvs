@@ -1,5 +1,12 @@
 Changes since 1.8:
 
+* The "cvs rlog" command is deprecated and running it will print a
+warning; use the synonymous "cvs log" command instead.  It is
+confusing for rlog to mean the same as log because some other CVS
+commands are in pairs consisting of a plain command which operates on
+a working directory and an "r" command which does not (diff/rdiff;
+tag/rtag).
+
 * "cvs diff" has a bunch of new options, mostly long options.  Most of
 these work only if rcsdiff and diff support them, and are named the
 same as the corresponding options to diff.
