@@ -2985,7 +2985,8 @@ all read operations between the secondary servers and restricting the load on
 the primary server to write operations and pushing changes to the secondaries.
 
 Primary servers will not automatically push changes to secondaries.  This must
-be configured via a @file{loginfo} script like the following:
+be configured via @file{loginfo}, @file{postadmin}, @file{posttag}, &
+@file{postwatch} scripts (@pxref{script hooks}) like the following:
 
 @example
 ALL	rsync -gopr -essh ./ secondary:/cvsroot/%p &
@@ -12310,13 +12311,6 @@ behavior}.
 @cindex Reference manual (files)
 @cindex CVSROOT (file)
 
-@c FIXME?  Somewhere there needs to be a more "how-to"
-@c guide to writing these.  I think the triggers
-@c (commitinfo, loginfo, taginfo, &c) are perhaps a
-@c different case than files like modules.  One
-@c particular issue that people sometimes are
-@c (unnecessarily?) worried about is performance, and
-@c the impact of writing in perl or sh or ____.
 Inside the repository, in the directory
 @file{$CVSROOT/CVSROOT}, there are a number of
 supportive files for @sc{cvs}.  You can use @sc{cvs} in a limited
@@ -12331,9 +12325,7 @@ file, which defines the modules inside the repository.
 @menu
 * modules::                     Defining modules
 * Wrappers::                    Specify binary-ness based on file name
-* commit files::                The commit support files (commitinfo,
-                                verifymsg, loginfo)
-* taginfo::                     Verifying/Logging tags
+* script hooks::		Launch scripts in response to server events
 * rcsinfo::                     Templates for the log messages
 * cvsignore::                   Ignoring files via cvsignore
 * checkoutlist::                Adding your own administrative files
@@ -12828,56 +12820,41 @@ cvs import -I ! -W "*.exe -k 'b'" first-dir vendortag reltag
 @c (probably a CVS bug, although I haven't thought it out).
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-@node commit files
-@appendixsec The commit support files
-@cindex Commits, administrative support files
-@cindex commit files, see Info files
+@node script hooks
+@appendixsec The scripting hooks
 
-The @samp{-i} flag in the @file{modules} file can be
-used to run a certain program whenever files are
-committed (@pxref{modules}).  The files described in
-this section provide other, more flexible, ways to run
-programs whenever something is committed.
+@c FIXME
+@c Somewhere there needs to be a more "how-to" guide to writing these.
+@c One particular issue that people sometimes are worried about is performance,
+@c and the impact of writing in perl or sh or ____.  Performance comparisons
+@c should probably remain outside the scope of this document, but at least
+@c _that_ much could be referenced, perhaps with links to other sources.
 
-There are three kinds of programs that can be run on
-commit.  They are specified in files in the repository,
-as described below.  The following table summarizes the
-file names and the purpose of the corresponding
-programs.
-
-@table @file
-@item commitinfo
-The program is responsible for checking that the commit
-is allowed.  If it exits with a non-zero exit status
-the commit will be aborted.
-
-@item verifymsg
-The specified program is used to evaluate the log message,
-and possibly verify that it contains all required
-fields.  This is most useful in combination with the
-@file{rcsinfo} file, which can hold a log message
-template (@pxref{rcsinfo}).
-
-@item loginfo
-The specified program is called when the commit is
-complete.  It receives the log message and some
-additional information and can store the log message in
-a file, or mail it to appropriate persons, or maybe
-post it to a local newsgroup, or@dots{}  Your
-imagination is the limit!
-@end table
+Script hooks are used to launch external programs at various points during
+the execution of @sc{cvs} commands.  These hooks can be used to prevent certain
+actions, log them, and/or maintain anything else you deem practical.
 
 @menu
 * syntax::                      The common syntax
-* commitinfo::                  Pre-commit checking
-* verifymsg::                   How are log messages evaluated?
-* loginfo::                     Where should log messages be sent?
 
-* Updating Commit Files::       Updating legacy repositories to stop using
-                                deprecated command line template formats
+* commit files::                The commit support files (commitinfo,
+                                verifymsg, loginfo)
+*   commitinfo::                Pre-commit checking
+*   verifymsg::                 How are log messages evaluated?
+*   loginfo::                   Where should log messages be sent?
+
+* postadmin::			Logging admin commands
+* taginfo::                     Verifying/Logging tags
+* posttag::                     Logging tags
+* postwatch::			Logging watch commands
+
+* preproxy::			Launch a script on a secondary server prior
+				to becoming a write proxy
+* postproxy::			Launch a script on a secondary server after
+				completing proxy operations
 @end menu
 
-@c . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+@c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node syntax
 @appendixsubsec The common syntax
 @cindex Info files (syntax)
@@ -12995,8 +12972,8 @@ the name of the repository (the path portion of @code{$CVSROOT})
 @end table
 
 Other format strings are file specific.  See the docs on the
-particular administration files for more information
-(@pxref{Administrative files}).
+particular script hooks for more information
+(@pxref{script hooks}).
 
 As an example, the following line in a @file{loginfo} file would
 match only the directory @file{module} and any subdirectories of
@@ -13024,8 +13001,53 @@ Log Message:
 A log message.
 @end example
 @c . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+@node commit files
+@appendixsubsec The commit support files
+@cindex Commits, administrative support files
+@cindex commit files, see Info files
+
+The @samp{-i} flag in the @file{modules} file can be
+used to run a certain program whenever files are
+committed (@pxref{modules}).  The files described in
+this section provide other, more flexible, ways to run
+programs whenever something is committed.
+
+There are three kinds of programs that can be run on
+commit.  They are specified in files in the repository,
+as described below.  The following table summarizes the
+file names and the purpose of the corresponding
+programs.
+
+@table @file
+@item commitinfo
+The program is responsible for checking that the commit
+is allowed.  If it exits with a non-zero exit status
+the commit will be aborted.
+
+@item verifymsg
+The specified program is used to evaluate the log message,
+and possibly verify that it contains all required
+fields.  This is most useful in combination with the
+@file{rcsinfo} file, which can hold a log message
+template (@pxref{rcsinfo}).
+
+@item loginfo
+The specified program is called when the commit is
+complete.  It receives the log message and some
+additional information and can store the log message in
+a file, or mail it to appropriate persons, or maybe
+post it to a local newsgroup, or@dots{}  Your
+imagination is the limit!
+@end table
+
+@menu
+* Updating Commit Files::       Updating legacy repositories to stop using
+                                deprecated command line template formats
+@end menu
+
+@c . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 @node Updating Commit Files
-@appendixsubsec  Updating legacy repositories to stop using deprecated command line template formats
+@appendixsubsubsec  Updating legacy repositories to stop using deprecated command line template formats
 @cindex Info files (syntax), updating legacy repositories
 @cindex Syntax of info files, updating legacy repositories
 @cindex Common syntax of info files, updating legacy repositories
@@ -13504,6 +13526,9 @@ like this:
  cat) >> $1
 @end example
 
+
+
+@c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node Keeping a checked out copy
 @appendixsubsubsec Keeping a checked out copy
 
@@ -13552,6 +13577,211 @@ out tree in @file{/u/www/local-docs}.
 @c More info on some of the details?  The "sleep 2" is
 @c so if we are lucky the lock will be gone by the time
 @c we start and we can wait 2 seconds instead of 30.
+
+
+
+@c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+@node postadmin
+@appendixsubsec Logging admin commands
+@cindex postadmin (admin file)
+@cindex script hook, postadmin
+@cindex Admin commands, logging
+
+The @file{postadmin} file defines programs to execute after an @code{admin}
+command modifies files.  The @file{postadmin} file has the standard form
+for script hooks (@pxref{script hooks}), where each line is a regular
+expression followed by a command to execute.  It supports the ALL and DEFAULT
+keywords.
+
+@cindex format strings, postadmin admin file
+The @file{postadmin} file supports no format strings other than the common
+ones (@pxref{syntax}),
+
+
+
+@c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+@node taginfo
+@appendixsubsec Taginfo
+@cindex taginfo (admin file)
+@cindex script hook, taginfo
+@cindex Tags, logging
+@cindex Tags, verifying
+The @file{taginfo} file defines programs to execute
+when someone executes a @code{tag} or @code{rtag}
+command.  The @file{taginfo} file has the standard form
+for script hooks (@pxref{script hooks}), where each line
+is a regular expression followed by a command to execute.
+
+@cindex format strings, taginfo admin file
+In addition to the common format strings (@pxref{syntax}),
+@file{taginfo} supports:
+
+@table @t
+@item b
+tag type (@code{T} for branch, @code{N} for not-branch, or @code{?} for
+unknown, as during delete operations)
+@item o
+operation (@code{add} for @code{tag}, @code{mov} for @code{tag -F}, or
+@code{del} for @code{tag -d})
+@item t
+tag name
+@item @{sVv@}
+file attributes, where:
+@table @t
+@item s
+file name
+@item V
+old version number (for a move or delete operation)
+@item v
+new version number (for an add or move operation)
+@end table
+@end table
+
+For example, some valid format strings are @samp{%%}, @samp{%p}, @samp{%t},
+@samp{%s}, @samp{%@{s@}}, and @samp{%@{sVv@}}.
+
+@cindex taginfo (admin file), updating legacy repositories
+@cindex compatibility notes, taginfo admin file
+Currently, if no format strings are specified, a default
+string of @samp{ %t %o %p %@{sv@}} will be appended to the command
+line template before replacement is performed, but this
+feature is deprecated.  It is simply in place so that legacy
+repositories will remain compatible with the new @sc{cvs} application.
+For information on updating, @pxref{Updating Commit Files}.
+
+@cindex Exit status, of taginfo admin file
+@cindex taginfo (admin file), exit status
+A non-zero exit of the filter program will cause the tag to be
+aborted.
+
+Here is an example of using @file{taginfo} to log @code{tag} and @code{rtag}
+commands.  In the @file{taginfo} file put:
+
+@example
+ALL /usr/local/cvsroot/CVSROOT/loggit %t %b %o %p %@{sVv@}
+@end example
+
+@noindent
+Where @file{/usr/local/cvsroot/CVSROOT/loggit} contains the
+following script:
+
+@example
+#!/bin/sh
+echo "$@@" >>/home/kingdon/cvsroot/CVSROOT/taglog
+@end example
+
+
+
+@c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+@node posttag
+@appendixsubsec Logging tags
+@cindex posttag (admin file)
+@cindex script hook, posttag
+@cindex Tags, logging
+
+The @file{posttag} file defines programs to execute after a @code{tag} or
+@code{rtag} command modifies files.  The @file{posttag} file has the standard
+form for script hooks (@pxref{script hooks}), where each line is a regular
+expression followed by a command to execute.  It supports the ALL and DEFAULT
+keywords.
+
+@cindex format strings, posttag admin file
+The @file{posttag} admin file supports the same format strings as the
+@file{taginfo} file (@pxref{taginfo}),
+
+
+
+@c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+@node postwatch
+@appendixsubsec Logging watch commands
+@cindex postwatch (admin file)
+@cindex script hook, postwatch
+@cindex Watch family of commands, logging
+
+The @file{postwatch} file defines programs to execute after a @code{watch},
+@code{edit}, or @code{commit} command modifies @file{CVS/fileattr} files in the
+repository (@pxref{Watches}).  The @file{postwatch} file has the standard form
+for script hooks (@pxref{script hooks}), where each line is a regular
+expression followed by a command to execute.  It supports the ALL and DEFAULT
+keywords.
+
+@cindex format strings, postwatch admin file
+The @file{postwatch} file supports no format strings other than the common
+ones (@pxref{syntax}),
+
+
+
+@c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+@node preproxy
+@appendixsubsec Launch a Script before Proxying
+@cindex preproxy (admin file)
+@cindex script hook, preproxy
+@cindex Write proxy, verifying
+@cindex Write proxy, logging
+
+The @file{preproxy} file defines programs to execute after a secondary
+server receives a write request from a client, just before it starts up the
+primary server and becomes a write proxy.  This hook could be used to
+dial a modem, launch an SSH tunnel, establish a VPN, or anything else that
+might be necessary to do before contacting the primary server.
+
+@file{preproxy} scripts are called once, at the time of the write request, with
+the repository argument (if requested) set from the topmost directory sent by
+the client.
+
+The @file{preproxy} file has the standard form
+for script hooks (@pxref{script hooks}), where each line is a regular
+expression followed by a command to execute.  It supports the ALL and DEFAULT
+keywords.
+
+@cindex format strings, preproxy admin file
+In addition to the common format strings, the @file{preproxy} file supports the
+following format string:
+
+@table @t
+@item P
+the CVSROOT string which specifies the primary server
+@end table
+
+
+
+@c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+@node postproxy
+@appendixsubsec Launch a Script after Proxying
+@cindex postproxy (admin file)
+@cindex script hook, postproxy
+@cindex Write proxy, logging
+@cindex Write proxy, pull updates
+@cindex secondary server, pull updates
+
+The @file{postproxy} file defines programs to execute after a secondary
+server notes that the connection to the primary server has shut down and before
+it releases the client by shutting down the connection to the client.
+This could hook could be used to
+disconnect a modem, an SSH tunnel, a VPN, or anything else that
+might be necessary to do after contacting the primary server.  This hook should
+also be used to pull updates from the primary server before allowing the client
+which did the write to disconnect since otherwise the client's next read
+request may generate error messages and fail upon encountering an out of date
+repository on the secondary server.
+
+@file{postproxy} scripts are called once per directory.
+
+The @file{postproxy} file has the standard form
+for script hooks (@pxref{script hooks}), where each line is a regular
+expression followed by a command to execute.  It supports the ALL and DEFAULT
+keywords.
+
+@cindex format strings, postproxy admin file
+In addition to the common format strings, the @file{postproxy} file supports
+the following format string:
+
+@table @t
+@item P
+the CVSROOT string which specifies the primary server
+@end table
+
+
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node rcsinfo
@@ -13613,76 +13843,8 @@ In versions of @sc{cvs} prior to version 1.12, the
 client may be used and the @file{CVS/Template} will
 be updated from the server.
 
-@c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-@node taginfo
-@appendixsec Taginfo
-@cindex taginfo (admin file)
-@cindex Tags, logging
-@cindex Tags, verifying
-The @file{taginfo} file defines programs to execute
-when someone executes a @code{tag} or @code{rtag}
-command.  The @file{taginfo} file has the standard form
-for administrative files (@pxref{Administrative
-files}), where each line is a regular expression
-followed by a command to execute.
 
-@cindex format strings, taginfo admin file
-In addition to the common format strings (@pxref{syntax}),
-@file{taginfo} supports:
 
-@table @t
-@item b
-tag type (@code{T} for branch, @code{N} for not-branch, or @code{?} for
-unknown, as during delete operations)
-@item o
-operation (@code{add} for @code{tag}, @code{mov} for @code{tag -F}, or
-@code{del} for @code{tag -d})
-@item t
-tag name
-@item @{sVv@}
-file attributes, where:
-@table @t
-@item s
-file name
-@item V
-old version number (for a move or delete operation)
-@item v
-new version number (for an add or move operation)
-@end table
-@end table
-
-For example, some valid format strings are @samp{%%}, @samp{%p}, @samp{%t},
-@samp{%s}, @samp{%@{s@}}, and @samp{%@{sVv@}}.
-
-@cindex taginfo (admin file), updating legacy repositories
-@cindex compatibility notes, taginfo admin file
-Currently, if no format strings are specified, a default
-string of @samp{ %t %o %p %@{sv@}} will be appended to the command
-line template before replacement is performed, but this
-feature is deprecated.  It is simply in place so that legacy
-repositories will remain compatible with the new @sc{cvs} application.
-For information on updating, @pxref{Updating Commit Files}.
-
-@cindex Exit status, of taginfo admin file
-@cindex taginfo (admin file), exit status
-A non-zero exit of the filter program will cause the tag to be
-aborted.
-
-Here is an example of using @file{taginfo} to log @code{tag} and @code{rtag}
-commands.  In the @file{taginfo} file put:
-
-@example
-ALL /usr/local/cvsroot/CVSROOT/loggit %t %b %o %p %@{sVv@}
-@end example
-
-@noindent
-Where @file{/usr/local/cvsroot/CVSROOT/loggit} contains the
-following script:
-
-@example
-#!/bin/sh
-echo "$@@" >>/home/kingdon/cvsroot/CVSROOT/taglog
-@end example
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node cvsignore
 @appendixsec Ignoring files via cvsignore
@@ -14158,7 +14320,7 @@ proxy to @var{CVSROOT} for write requests.  Only the @samp{:ext:} method is
 currently supported for primaries (actually, @samp{:fork:} is supported as
 well, but only for testing - if you find another use for accessing a primary
 via the @samp{:fork:} method, please send a note to @email{bug-cvs@@gnu.org}
-about it).  See @xref{Write proxies} for more on configuring and using write
+about it).  See @ref{Write proxies} for more on configuring and using write
 proxies.
 @end table
 
