@@ -309,15 +309,12 @@ diff (argc, argv)
 	    client_senddate (diff_date2);
 
 	send_file_names (argc, argv, SEND_EXPAND_WILD);
-#if 0
-	/* FIXME: We shouldn't have to send current files to diff two
-	   revs, but it doesn't work yet and I haven't debugged it.
-	   So send the files -- it's slower but it works.
-	   gnu@cygnus.com Apr94 */
+
 	/* Send the current files unless diffing two revs from the archive */
 	if (diff_rev2 == NULL && diff_date2 == NULL)
-#endif
-	send_files (argc, argv, local, 0, 0, 0);
+	    send_files (argc, argv, local, 0, 0);
+	else
+	    send_files (argc, argv, local, 0, SEND_NO_CONTENTS);
 
 	send_to_server ("diff\012", 0);
         err = get_responses_and_close ();

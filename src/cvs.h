@@ -654,7 +654,9 @@ struct vers_ts
     char *vn_tag;
 
     /* This is the timestamp from stating the file in the working directory.
-       It is NULL if there is no file in the working directory.  */
+       It is NULL if there is no file in the working directory.  It is
+       "Is-modified" if we know the file is modified but don't have its
+       contents.  */
     char *ts_user;
     /* Timestamp from CVS/Entries.  For the server, ts_user and ts_rcs
        are computed in a slightly different way, but the fact remains that

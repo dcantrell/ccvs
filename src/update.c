@@ -269,7 +269,8 @@ update (argc, argv)
 	    if (failed_patches == NULL)
 	    {
 		send_file_names (argc, argv, SEND_EXPAND_WILD);
-		send_files (argc, argv, local, aflag, update_build_dirs, 0);
+		send_files (argc, argv, local, aflag,
+			    update_build_dirs ? SEND_BUILD_DIRS : 0);
 	    }
 	    else
 	    {
@@ -288,7 +289,7 @@ update (argc, argv)
 		    (void) unlink_file (failed_patches[i]);
 		send_file_names (failed_patches_count, failed_patches, 0);
 		send_files (failed_patches_count, failed_patches, local,
-			    aflag, update_build_dirs, 0);
+			    aflag, update_build_dirs ? SEND_BUILD_DIRS : 0);
 	    }
 
 	    failed_patches = NULL;

@@ -2595,7 +2595,7 @@ client_send_expansions (local, where, build_dirs)
     {
 	argv[0] = where ? where : modules_vector[i];
 	if (isfile (argv[0]))
-	    send_files (1, argv, local, 0, build_dirs, 0);
+	    send_files (1, argv, local, 0, build_dirs ? SEND_BUILD_DIRS : 0);
     }
     send_a_repository ("", CVSroot_directory, "");
 }
@@ -4098,7 +4098,7 @@ send_modified (file, short_pathname, vers)
 	 * one.
 	 */
 	if (newsize > 0)
-          send_to_server (buf, newsize);
+	    send_to_server (buf, newsize);
     }
     free (buf);
     free (mode_string);
@@ -4110,8 +4110,10 @@ send_modified (file, short_pathname, vers)
 
 struct send_data
 {
+    /* Each of the following flags are zero for clear or nonzero for set.  */
     int build_dirs;
     int force;
+    int no_contents;
 };
 
 static int send_fileproc PROTO ((void *callerdat, struct file_info *finfo));
@@ -4143,19 +4145,19 @@ send_fileproc (callerdat, finfo)
 
     if (vers->vn_user != NULL)
     {
-      char *tmp;
+	char *tmp;
 
-      tmp = xmalloc (strlen (filename) + strlen (vers->vn_user)
-		     + strlen (vers->options) + 200);
-      sprintf (tmp, "Entry /%s/%s/%s%s/%s/", 
-               filename, vers->vn_user,
-               vers->ts_conflict == NULL ? "" : "+",
-               (vers->ts_conflict == NULL ? ""
-                : (vers->ts_user != NULL &&
-                   strcmp (vers->ts_conflict, vers->ts_user) == 0
-                   ? "="
-                   : "modified")),
-               vers->options);
+	tmp = xmalloc (strlen (filename) + strlen (vers->vn_user)
+		       + strlen (vers->options) + 200);
+	sprintf (tmp, "Entry /%s/%s/%s%s/%s/", 
+		 filename, vers->vn_user,
+		 vers->ts_conflict == NULL ? "" : "+",
+		 (vers->ts_conflict == NULL ? ""
+		  : (vers->ts_user != NULL &&
+		     strcmp (vers->ts_conflict, vers->ts_user) == 0
+		     ? "="
+		     : "modified")),
+		 vers->options);
 
 	/* The Entries request.  */
 	/* Not sure about whether this deals with -k and stuff right.  */
@@ -4187,7 +4189,15 @@ send_fileproc (callerdat, finfo)
 	     || args->force
 	     || strcmp (vers->ts_user, vers->ts_rcs) != 0)
     {
-	send_modified (filename, finfo->fullname, vers);
+	if (args->no_contents
+	    && supported_request ("Is-modified"))
+	{
+	    send_to_server ("Is-modified ", 0);
+	    send_to_server (filename, 0);
+	    send_to_server ("\012", 1);
+	}
+	else
+	    send_modified (filename, finfo->fullname, vers);
     }
     else
     {
@@ -4510,23 +4520,22 @@ send_file_names (argc, argv, flags)
 }
 
 
-/*
- * Send Repository, Modified and Entry.  argc and argv contain only
- * the files to operate on (or empty for everything), not options.
- * local is nonzero if we should not recurse (-l option).  build_dirs
- * is nonzero if nonexistent directories should be sent.  force is
- * nonzero if we should send unmodified files to the server as though
- * they were modified.  Also sends Argument lines for argc and argv,
- * so should be called after options are sent.
- */
+/* Send Repository, Modified and Entry.  argc and argv contain only
+  the files to operate on (or empty for everything), not options.
+  local is nonzero if we should not recurse (-l option).  flags &
+  SEND_BUILD_DIRS is nonzero if nonexistent directories should be
+  sent.  flags & SEND_FORCE is nonzero if we should send unmodified
+  files to the server as though they were modified.  flags &
+  SEND_NO_CONTENTS means that this command only needs to know
+  _whether_ a file is modified, not the contents.  Also sends Argument
+  lines for argc and argv, so should be called after options are sent.  */
 void
-send_files (argc, argv, local, aflag, build_dirs, force)
+send_files (argc, argv, local, aflag, flags)
     int argc;
     char **argv;
     int local;
     int aflag;
-    int build_dirs;
-    int force;
+    unsigned int flags;
 {
     struct send_data args;
     int err;
@@ -4536,8 +4545,9 @@ send_files (argc, argv, local, aflag, build_dirs, force)
      * But we don't actually use it, so I don't think it matters what we pass
      * for aflag here.
      */
-    args.build_dirs = build_dirs;
-    args.force = force;
+    args.build_dirs = flags & SEND_BUILD_DIRS;
+    args.force = flags & SEND_FORCE;
+    args.no_contents = flags & SEND_NO_CONTENTS;
     err = start_recursion
 	(send_fileproc, send_filesdoneproc,
 	 send_dirent_proc, (DIRLEAVEPROC)NULL, (void *) &args,

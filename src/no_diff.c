@@ -28,6 +28,12 @@ No_Difference (finfo, vers)
     int retcode = 0;
     char *tocvsPath;
 
+    /* If ts_user is "Is-modified", we can only conclude the files are
+       different (since we don't have the file's contents).  */
+    if (vers->ts_user != NULL
+	&& strcmp (vers->ts_user, "Is-modified") == 0)
+	return -1;
+
     if (!vers->srcfile || !vers->srcfile->path)
 	return (-1);			/* different since we couldn't tell */
 
