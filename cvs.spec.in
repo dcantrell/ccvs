@@ -71,7 +71,6 @@ control system with Kerberos authentication and encryption.
 make LDFLAGS=-s
 
 mv src/cvs src/cvs.krb5
-rm config.cache
 %endif
 
 # The standard package
