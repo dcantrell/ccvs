@@ -7,9 +7,7 @@ extern int change_mode (char *, char *, int);
 extern int gzip_level;
 extern int file_gzip_level;
 
-#ifdef __STDC__
 struct buffer;
-#endif
 
 void make_bufs_from_fds ( int, int, int,
 			        struct buffer **,

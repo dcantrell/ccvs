@@ -96,9 +96,8 @@ enum server_updated_arg4
     SERVER_PATCHED,
     SERVER_RCS_DIFF
 };
-#ifdef __STDC__
+
 struct buffer;
-#endif
 
 extern void server_updated
     (struct file_info *finfo, Vers_TS *vers,

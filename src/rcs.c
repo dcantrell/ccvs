@@ -7154,13 +7154,6 @@ RCS_deltas (RCSNode *rcs, FILE *fp, struct rcsbuffer *rcsbuf, char *version, enu
 		    ym = strchr (prvers->date, '.');
 		    if (ym == NULL)
 		    {
-			/* ??- is an ANSI trigraph.  The ANSI way to
-			   avoid it is \? but some pre ANSI compilers
-			   complain about the unrecognized escape
-			   sequence.  Of course string concatenation
-			   ("??" "-???") is also an ANSI-ism.  Testing
-			   __STDC__ seems to be a can of worms, since
-			   compilers do all kinds of things with it.  */
 			cvs_output ("??", 0);
 			cvs_output ("-???", 0);
 			cvs_output ("-??", 0);
