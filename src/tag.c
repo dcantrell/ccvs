@@ -878,6 +878,7 @@ tag_fileproc (void *callerdat, struct file_info *finfo)
     char *rev;
     Vers_TS *vers;
     int retcode = 0;
+    int retval = 0;
 
     vers = Version_TS (finfo, NULL, NULL, NULL, 0, 0);
 
@@ -889,10 +890,7 @@ tag_fileproc (void *callerdat, struct file_info *finfo)
                                   force_tag_match,
 				  (int *) NULL);
         if (nversion == NULL)
-        {
-	    freevers_ts (&vers);
-            return (0);
-        }
+	    goto free_vars_and_return;
     }
     if (delete_flag)
     {
@@ -910,10 +908,8 @@ tag_fileproc (void *callerdat, struct file_info *finfo)
 	version = RCS_getversion (vers->srcfile, symtag, (char *) NULL, 1,
 				  (int *) NULL);
 	if (version == NULL || vers->srcfile == NULL)
-	{
-	    freevers_ts (&vers);
-	    return (0);
-	}
+	    goto free_vars_and_return;
+
 	free (version);
 
 	isbranch = RCS_nodeisbranch (finfo->rcs, symtag);
@@ -926,8 +922,8 @@ tag_fileproc (void *callerdat, struct file_info *finfo)
 			isbranch ? "branch" : "non-branch",
 			symtag, vers->srcfile->path,
 			isbranch ? "" : " due to `-B' option");
-	    freevers_ts (&vers);
-	    return (1);
+	    retval = 1;
+	    goto free_vars_and_return;
 	}
 
 	if ((retcode = RCS_deltag(vers->srcfile, symtag)) != 0)
@@ -936,8 +932,8 @@ tag_fileproc (void *callerdat, struct file_info *finfo)
 		error (0, retcode == -1 ? errno : 0,
 		       "failed to remove tag %s from %s", symtag,
 		       vers->srcfile->path);
-	    freevers_ts (&vers);
-	    return (1);
+	    retval = 1;
+	    goto free_vars_and_return;
 	}
 	RCS_rewrite (vers->srcfile, NULL, NULL);
 
@@ -949,8 +945,7 @@ tag_fileproc (void *callerdat, struct file_info *finfo)
 	    cvs_output ("\n", 1);
 	}
 
-	freevers_ts (&vers);
-	return (0);
+	goto free_vars_and_return;
     }
 
     /*
@@ -967,29 +962,25 @@ tag_fileproc (void *callerdat, struct file_info *finfo)
     }
     if (version == NULL)
     {
-	freevers_ts (&vers);
-	return (0);
+	goto free_vars_and_return;
     }
     else if (strcmp (version, "0") == 0)
     {
 	if (!quiet)
 	    error (0, 0, "couldn't tag added but un-commited file `%s'", finfo->file);
-	freevers_ts (&vers);
-	return (0);
+	goto free_vars_and_return;
     }
     else if (version[0] == '-')
     {
 	if (!quiet)
 	    error (0, 0, "skipping removed but un-commited file `%s'", finfo->file);
-	freevers_ts (&vers);
-	return (0);
+	goto free_vars_and_return;
     }
     else if (vers->srcfile == NULL)
     {
 	if (!quiet)
 	    error (0, 0, "cannot find revision control file for `%s'", finfo->file);
-	freevers_ts (&vers);
-	return (0);
+	goto free_vars_and_return;
     }
 
     /*
@@ -1016,8 +1007,7 @@ tag_fileproc (void *callerdat, struct file_info *finfo)
 	    free (oversion);
 	    if (branch_mode)
 		free (rev);
-	    freevers_ts (&vers);
-	    return (0);
+	    goto free_vars_and_return;
 	}
 
 	if (!force_tag_move)
@@ -1039,8 +1029,7 @@ tag_fileproc (void *callerdat, struct file_info *finfo)
 	    free (oversion);
 	    if (branch_mode)
 		free (rev);
-	    freevers_ts (&vers);
-	    return (0);
+	    goto free_vars_and_return;
 	}
 	else 	/* force_tag_move == 1 and... */
 		if ((isbranch && !disturb_branch_tags) ||
@@ -1052,9 +1041,9 @@ tag_fileproc (void *callerdat, struct file_info *finfo)
 		    symtag, oversion, rev,
 		    isbranch ? "" : " due to `-B' option");
 	    free (oversion);
-	    if (branch_mode) free(rev);
-	    freevers_ts (&vers);
-	    return (0);
+	    if (branch_mode)
+		free (rev);
+	    goto free_vars_and_return;
 	}
 	free (oversion);
     }
@@ -1066,8 +1055,8 @@ tag_fileproc (void *callerdat, struct file_info *finfo)
 	       symtag, rev, vers->srcfile->path);
 	if (branch_mode)
 	    free (rev);
-	freevers_ts (&vers);
-	return (1);
+	retval = 1;
+	goto free_vars_and_return;
     }
     if (branch_mode)
 	free (rev);
@@ -1081,12 +1070,11 @@ tag_fileproc (void *callerdat, struct file_info *finfo)
 	cvs_output ("\n", 1);
     }
 
+ free_vars_and_return:
     if (nversion != NULL)
-    {
         free (nversion);
-    }
     freevers_ts (&vers);
-    return (0);
+    return (retval);
 }
 
 /*

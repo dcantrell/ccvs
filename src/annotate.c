@@ -237,7 +237,10 @@ rannotate_proc (int argc, char **argv, char *xwhere, char *mwhere, char *mfile, 
 			    (DIRENTPROC) NULL, (DIRLEAVEPROC) NULL, NULL,
 			    argc - 1, argv + 1, local, which, 0, CVS_LOCK_READ,
 			    where, 1, repository );
-    if ( which & W_REPOS ) free ( repository );
+    if ( which & W_REPOS )
+	free ( repository );
+    if ( where != NULL )
+	free (where);
     return err;
 }
 

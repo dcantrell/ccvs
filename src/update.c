@@ -1298,8 +1298,11 @@ VERS: ", 0);
 		   is here only because noexec doesn't write srcfile->path
 		   for us to stat.  */
 		if( CVS_STAT( vers_ts->srcfile->path, &sb ) < 0 )
+		{
+		    buf_free (revbuf);
 		    error (1, errno, "cannot stat %s",
 			   vers_ts->srcfile->path);
+		}
 		mode = sb.st_mode &~ (S_IWRITE | S_IWGRP | S_IWOTH);
 	    }
 
@@ -1463,6 +1466,8 @@ VERS: ", 0);
 	free (backup);
     }
 
+    if (revbuf != NULL)
+	buf_free (revbuf);
     return (retval);
 }
 

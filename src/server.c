@@ -4081,7 +4081,6 @@ CVS server internal error: unhandled case in server_updated");
 	else
 	{
 	    buf_append_buffer (protocol, filebuf);
-	    buf_free (filebuf);
 	}
 	/* Note we only send a newline here if the file ended with one.  */
 
