@@ -242,6 +242,9 @@ void RCS_deltas PROTO ((RCSNode *, FILE *, struct rcsbuffer *, char *,
 			enum rcs_delta_op, char **, size_t *,
 			char **, size_t *));
 char *make_file_label PROTO ((char *, char *, RCSNode *));
+char *locate_rcs PROTO (( const char *repository,
+                          const char *file,
+                          int *inattic ));
 
 extern int preserve_perms;
 

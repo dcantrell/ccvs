@@ -1,3 +1,13 @@
+2003-06-04  Derek Price  <derek@ximbiot.com>
+
+	* cvs.h (locate_file_in_dir): New proto.
+	(locate_rcs): Move proto...
+	* rcs.h: ...here.
+	* filesubr.c (locate_rcs): Move function...
+	* rcs.c: ...here for Windows.
+	* filesubr.c (locate_file_in_dir): Move function...
+	* subr.c: ...here for Windows.
+
 2003-06-02  Derek Price  <derek@ximbiot.com>
 
 	* sanity.sh: Add comments re portability of test -x & test -e.  Don't

@@ -8531,5 +8531,81 @@ make_file_label (path, rev, rcs)
 
 
 
+/*
+ * char *
+ * locate_rcs ( const char* file, const char *repository , int *inattic )
+ *
+ * Find an RCS file in the repository.  Most parts of CVS will want to
+ * rely instead on RCS_parse which calls this function and is
+ * called by recurse.c which then puts the result in useful places
+ * like the rcs field of struct file_info.
+ *
+ * INPUTS
+ *
+ *  repository		the repository (including the directory)
+ *  file		the filename within that directory (without RCSEXT).
+ *  inattic		NULL or a pointer to the output boolean
+ *
+ * OUTPUTS
+ *
+ *  inattic		If this input was non-null, the destination will be
+ *  			set to true if the file was found in the attic or
+ *  			false if not.  If no RCS file is found, this value
+ *  			is undefined.
+ *
+ * RETURNS
+ *
+ *  a newly-malloc'd array containing the absolute pathname of the RCS
+ *  file that was found or NULL on error.
+ *
+ * ERRORS
+ *
+ *  errno will be set by the system calls in the case of failure.
+ */
+char *
+locate_rcs ( repository, file, inattic )
+    const char *repository;
+    const char *file;
+    int *inattic;
+{
+    char *rcsfile;
+    char *dir;
+    char *retval;
+
+    /* Allocate space and add the RCS extension */
+    rcsfile = xmalloc ( strlen ( file )
+		    + sizeof ( RCSEXT ) );
+    (void) sprintf ( rcsfile, "%s%s", file, RCSEXT );
+
+    /* Search in the top dir given */
+    if (( retval = locate_file_in_dir ( repository, rcsfile )) != NULL )
+    {
+	if ( inattic )
+	    *inattic = 0;
+	goto out;
+    }
+
+    /* Search in the Attic */
+    dir = xmalloc ( strlen ( repository )
+		    + sizeof ( CVSATTIC )
+		    + 2 );
+    (void) sprintf ( dir,
+		     "%s/%s",
+		     repository,
+		     CVSATTIC );
+
+    if ( ( retval = locate_file_in_dir ( dir, rcsfile ) ) != NULL
+	 && inattic != NULL )
+	*inattic = 1;
+
+    free ( dir );
+
+out:
+    free ( rcsfile );
+    return retval;
+}
+
+
+
 /* vim:tabstop=8:shiftwidth=4
  */

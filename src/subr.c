@@ -916,6 +916,107 @@ sleep_past (desttime)
 
 
 
+/* char *
+ * locate_file_in_dir ( char *dir, char *file )
+ *
+ * Search a directory for a filename, case insensitively when appropriate.
+ *
+ * INPUTS
+ *
+ *  dir		Path to directory to be searched.
+ *  file	File name to be located, perhaps case insensitively.
+ *
+ * RETURNS
+ *
+ *  A newly malloc'd array containing the full path to the located file
+ *  or NULL of the file was not found in dir or if the file found was
+ *  not readable.
+ *
+ * ERRORS
+ *
+ *  When this function returns NULL, errno will be set appropriately.
+ */
+char *
+locate_file_in_dir ( dir, file )
+    char *dir;
+    char *file;
+{
+    char *retval;
+
+#if defined (SERVER_SUPPORT) && !defined (FILENAMES_CASE_INSENSITIVE)
+    if ( ign_case )
+    {
+	DIR *dirp;
+	struct dirent *dp;
+	char *found_name = NULL;
+
+	if ( ( dirp = CVS_OPENDIR ( dir ) ) == NULL )
+	{
+	    if ( existence_error ( errno ) )
+	    {
+		/* This can happen if we are looking in the Attic and the Attic
+		   directory does not exist.  Pass errno through to the caller;
+		   they know what to do with it.  */
+		return NULL;
+	    }
+	    else
+	    {
+		/* Give a fatal error; that way the error message can be
+		 * more specific than if we returned the error to the caller.
+		 */
+		error ( 1, errno, "cannot read directory %s", dir );
+	    }
+	}
+	errno = 0;
+	while ( ( dp = CVS_READDIR ( dirp ) ) != NULL )
+	{
+	    if ( cvs_casecmp ( dp->d_name, file ) == 0 )
+	    {
+		if ( found_name != NULL )
+		    error ( 1, 0, "%s is ambiguous; could mean %s or %s",
+			    file, dp->d_name, found_name );
+		found_name = xstrdup ( dp->d_name );
+	    }
+	}
+	if ( errno != 0 )
+	    error ( 1, errno, "cannot read directory %s", dir );
+
+	CVS_CLOSEDIR ( dirp );
+
+	if ( found_name == NULL )
+	{
+	    errno = ENOENT;
+	    return NULL;
+	}
+
+	/* Copy the found name back into DIR.  We are assuming that
+	   found_name is the same length as fname, which is true as
+	   long as the above code is just ignoring case and not other
+	   aspects of filename syntax.  */
+	retval = xmalloc ( strlen ( dir )
+			   + strlen ( found_name )
+			   + 2 );
+	sprintf ( retval, "%s/%s", dir, found_name );
+    }
+    else
+#endif /* defined (SERVER_SUPPORT) && !defined (FILENAMES_CASE_INSENSITIVE) */
+    {
+	retval = xmalloc ( strlen ( dir )
+			   + strlen ( file )
+			   + 2 );
+	(void) sprintf ( retval, "%s/%s", dir, file );
+	if ( !isfile ( retval ) )
+	{
+	    free ( retval );
+	    return NULL;
+	}
+    }
+
+    return retval;
+}
+
+
+
 /*
  * void cvs_trace(int level, const char *fmt, ...)
  *
@@ -946,5 +1047,8 @@ void cvs_trace ( level, fmt, va_alist )
 	va_end(va);
     }
 }
+
+
+
 /* vim:tabstop=8:shiftwidth=4
  */

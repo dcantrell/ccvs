@@ -151,6 +151,7 @@ with_default_rsh = @with_default_rsh@
 
 EXTRA_DIST = \
 	config.h \
+	config.h.in \
 	ndir.h \
 	pwd.h \
 	rcmd.h \
@@ -363,7 +364,7 @@ distdir: $(DISTFILES)
 	done
 check-am: all-am
 check: check-recursive
-all-am: Makefile
+all-am: Makefile all-local
 installdirs: installdirs-recursive
 installdirs-am:
 
@@ -437,21 +438,36 @@ uninstall-am: uninstall-info-am
 
 uninstall-info: uninstall-info-recursive
 
-.PHONY: $(RECURSIVE_TARGETS) CTAGS GTAGS all all-am check check-am clean \
-	clean-generic clean-recursive ctags ctags-recursive distclean \
-	distclean-generic distclean-recursive distclean-tags distdir \
-	dvi dvi-am dvi-recursive info info-am info-recursive install \
-	install-am install-data install-data-am install-data-recursive \
-	install-exec install-exec-am install-exec-recursive \
-	install-info install-info-am install-info-recursive install-man \
-	install-recursive install-strip installcheck installcheck-am \
-	installdirs installdirs-am installdirs-recursive \
-	maintainer-clean maintainer-clean-generic \
-	maintainer-clean-recursive mostlyclean mostlyclean-generic \
-	mostlyclean-recursive pdf pdf-am pdf-recursive ps ps-am \
-	ps-recursive tags tags-recursive uninstall uninstall-am \
-	uninstall-info-am uninstall-info-recursive uninstall-recursive
+.PHONY: $(RECURSIVE_TARGETS) CTAGS GTAGS all all-am all-local check \
+	check-am clean clean-generic clean-recursive ctags \
+	ctags-recursive distclean distclean-generic distclean-recursive \
+	distclean-tags distdir dvi dvi-am dvi-recursive info info-am \
+	info-recursive install install-am install-data install-data-am \
+	install-data-recursive install-exec install-exec-am \
+	install-exec-recursive install-info install-info-am \
+	install-info-recursive install-man install-recursive \
+	install-strip installcheck installcheck-am installdirs \
+	installdirs-am installdirs-recursive maintainer-clean \
+	maintainer-clean-generic maintainer-clean-recursive mostlyclean \
+	mostlyclean-generic mostlyclean-recursive pdf pdf-am \
+	pdf-recursive ps ps-am ps-recursive tags tags-recursive \
+	uninstall uninstall-am uninstall-info-am \
+	uninstall-info-recursive uninstall-recursive
 
+
+###
+### Maintainer targets
+###
+all-local: config.h
+config.h: stamp-ch
+stamp-ch: config.h.in $(top_srcdir)/configure
+	sed "s/%PACKAGE_VERSION%/$(VERSION)/" <$(srcdir)/config.h.in \
+	  >config.tmp
+	@cmp -s config.tmp $(srcdir)/config.h \
+	  || (echo "Updating config.h"; \
+	      cp config.tmp $(srcdir)/config.h)
+	-@rm -f config.tmp
+	@cp $(srcdir)/config.h $@
 
 # for backwards compatibility with the old makefiles
 realclean: maintainer-clean
