@@ -1,5 +1,13 @@
 2003-07-23  Derek Price  <derek@ximbiot.com>
 
+	* filesubr.c (isaccessible): Correct some double const warnings from
+	protoize.
+	* login.c (password_entry_parseline): Ditto.
+	* server.c (kserver_authenticate_connection): Remove a multi-line
+	string along with the warning from GCC.
+
+2003-07-23  Derek Price  <derek@ximbiot.com>
+
 	* *.{c,h}: Back out the indent run.
 
 2003-07-23  Derek Price  <derek@ximbiot.com>
