@@ -2294,6 +2294,8 @@ authentication security}, for more details.
 @cindex port, specifying for remote repositories
 @cindex Password server, setting up
 @cindex Authenticating server, setting up
+@cindex inetd, configuring for pserver
+@cindex xinetd, configuring for pserver
 @c FIXME: this isn't quite right regarding port
 @c numbers; CVS looks up "cvspserver" in
 @c /etc/services (on unix, but what about non-unix?).
