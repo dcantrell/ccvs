@@ -1,3 +1,7 @@
+Thu Sep 7  19:18:00 1995  Jim Blandy  <jimb@cyclic.com>
+
+	* cvs.h (unlink_file_dir): Add prototype for this.
+
 Thu Sep  7 14:38:06 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
         * ALL FILES: add semicolon, as indicated below.

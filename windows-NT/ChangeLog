@@ -1,3 +1,11 @@
+Thu Sep 7  19:18:00 1995  Jim Blandy  <jimb@cyclic.com>
+
+	* config.h (CVS_SUPPORT): #define this.
+
+	* ndir.c (opendir): Make the directory name argument a const
+	char *, instead of just a char *.
+	* ndir.h (opendir): Extern declaration changed to match.
+
 Thu Aug 31 12:00:08 1995  Jim Blandy  <jimb@totoro.cyclic.com>
 
 	* Makefile.in (HEADERS, SOURCES): New variables.

@@ -1,3 +1,12 @@
+Thu Sep 7  19:18:00 1995  Jim Blandy  <jimb@cyclic.com>
+
+	* save-cwd.c: #include <direct.h> and <io.h>, on systems that
+	have them.
+
+	* getopt.c (_getopt_internal): Cast the return value of strlen,
+	which is unsigned, before comparing it with the difference between
+	two pointers, which is unsigned.
+
 Thu Aug 31 11:31:42 1995  Jim Blandy  <jimb@totoro.cyclic.com>
 
 	* getdate.y [STDC_HEADERS]: #include <stdlib.h>, for abort.
