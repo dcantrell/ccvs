@@ -90,8 +90,8 @@ $GNULIB/m4/stdint_h.m4				m4		no NI
 $GNULIB/m4/uintmax_t.m4				m4		no NI
 $GNULIB/m4/ulonglong.m4				m4		no NI
 # $GNULIB/modules/lstat
-$GNULIB/lib/lstat.c				lib		yes NI
-$GNULIB/m4/lstat.m4				m4		no NI
+$GNULIB/lib/lstat.c				lib		no NI
+$GNULIB/m4/lstat.m4				m4		yes NI
 # $GNULIB/modules/malloc
 $GNULIB/lib/malloc.c				lib		no NI
 $GNULIB/m4/malloc.m4				m4		no NI
@@ -115,8 +115,8 @@ $GNULIB/m4/pathmax.m4				m4		no NI
 $GNULIB/lib/realloc.c				lib		no NI
 $GNULIB/m4/realloc.m4				m4		no NI
 # $GNULIB/modules/stat
-$GNULIB/lib/stat.c				lib		no NI
-$GNULIB/m4/stat.m4				m4		yes NI
+$GNULIB/lib/stat.c				lib		yes NI
+$GNULIB/m4/stat.m4				m4		no NI
 # $GNULIB/modules/strerror
 $GNULIB/lib/strerror.c				lib		no NI
 $GNULIB/m4/strerror.m4				m4		no NI

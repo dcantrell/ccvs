@@ -1,6 +1,10 @@
 2003-07-25  Derek Price  <derek@ximbiot.com>
 
-	* srclist.txt (getlinem getnline, getndelim2): Mark some files sync'd.
+	* srclist.txt (lstat, stat): Correct typo.
+
+2003-07-25  Derek Price  <derek@ximbiot.com>
+
+	* srclist.txt (getline, getnline, getndelim2): Mark some files sync'd.
 	* aclocal.m4, config.h.in, configure: Regenerated.
 
 2003-07-24  Derek Price  <derek@ximbiot.com>
