@@ -97,7 +97,8 @@ static List *ignlist = (List *) NULL;
 static time_t last_register_time;
 static const char *const update_usage[] =
 {
-    "Usage:\n %s %s [-APQdflRpq] [-k kopt] [-r rev|-D date] [-j rev] [-I ign] [files...]\n",
+    "Usage: %s %s [-APQdflRpq] [-k kopt] [-r rev|-D date] [-j rev]\n",
+    "    [-I ign] [-W spec] [files...]\n",
     "\t-A\tReset any sticky tags/date/kopts.\n",
     "\t-P\tPrune empty directories.\n",
     "\t-Q\tReally quiet.\n",
@@ -112,6 +113,7 @@ static const char *const update_usage[] =
     "\t-D date\tSet date to update from.\n",
     "\t-j rev\tMerge in changes made between current revision and rev.\n",
     "\t-I ign\tMore files to ignore (! to reset).\n",
+    "\t-W spec\tWrappers specification line.\n",
     NULL
 };
 
@@ -131,10 +133,11 @@ update (argc, argv)
 	usage (update_usage);
 
     ign_setup ();
+    wrap_setup ();
 
     /* parse the args */
     optind = 1;
-    while ((c = getopt (argc, argv, "ApPflRQqduk:r:D:j:I:")) != -1)
+    while ((c = getopt (argc, argv, "ApPflRQqduk:r:D:j:I:W:")) != -1)
     {
 	switch (c)
 	{
@@ -143,6 +146,9 @@ update (argc, argv)
 		break;
 	    case 'I':
 		ign_add (optarg, 0);
+		break;
+	    case 'W':
+		wrap_add (optarg, 0);
 		break;
 	    case 'k':
 		if (options)
@@ -506,8 +512,14 @@ update_file_proc (file, update_dir, repository, entries, srcfiles)
 		}
 		else
 		{
-		    retval = merge_file (file, repository, entries,
-					 vers, update_dir);
+		    if (wrap_merge_is_copy (file))
+			/* Should we be warning the user that we are
+			 * overwriting the user's copy of the file?  */
+			retval = checkout_file (file, repository, entries,
+						srcfiles, vers, update_dir);
+		    else
+			retval = merge_file (file, repository, entries,
+					     vers, update_dir);
 		}
 		break;
 	    case T_MODIFIED:		/* locally modified */
@@ -1009,6 +1021,8 @@ checkout_file (file, repository, entries, srcfiles, vers_ts, update_dir)
 	    else
 		set_time = 0;
 
+	    wrap_fromcvs_process_file (file);
+
 	    xvers_ts = Version_TS (repository, options, tag, date, file,
 			      force_tag_match, set_time, entries, srcfiles);
 	    if (strcmp (xvers_ts->options, "-V4") == 0)
@@ -1479,6 +1493,14 @@ join_file (file, srcfiles, vers, update_dir, entries)
     jdate1 = date_rev1;
     jdate2 = date_rev2;
 
+    if (wrap_merge_is_copy (file))
+    {
+	/* FIXME: Should be including update_dir in message.  */
+	error (0, 0,
+	       "Cannot merge %s because it is a merge-by-copy file.", file);
+	return;
+    }
+
     /* determine if we need to do anything at all */
     if (vers->srcfile == NULL ||
 	vers->srcfile->path == NULL)
@@ -1766,6 +1788,8 @@ ignore_files (ilist, update_dir)
 	return;
 
     ign_add_file (CVSDOTIGNORE, 1);
+    wrap_add_file (CVSDOTWRAPPER, 1);
+
     while ((dp = readdir (dirp)) != NULL)
     {
 	file = dp->d_name;

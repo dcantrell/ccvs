@@ -42,6 +42,8 @@ admin (argc, argv)
     if (argc <= 1)
 	usage (admin_usage);
 
+    wrap_setup ();
+
     /* skip all optional arguments to see if we have any file names */
     for (ac = 1; ac < argc; ac++)
 	if (argv[ac][0] != '-')

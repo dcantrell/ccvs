@@ -253,6 +253,8 @@ commit (argc, argv)
     if (argc <= 0)
 	write_dirtag = tag;
 
+    wrap_setup ();
+
     /*
      * Run the recursion processor to find all the dirs to lock and lock all
      * the dirs

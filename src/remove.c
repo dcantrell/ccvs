@@ -74,6 +74,8 @@ cvsremove (argc, argv)
     argc -= optind;
     argv += optind;
 
+    wrap_setup ();
+
 #ifdef CLIENT_SUPPORT
     if (client_active) {
 	start_server ();
