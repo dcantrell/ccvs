@@ -80,10 +80,6 @@ RCS_merge(path, options, rev1, rev2)
 {
     int status;
 
-    /* We pass -E to rcsmerge so that it will not indicate a conflict if
-       both things we are merging are modified the same way.
-
-       Well, okay, but my rcsmerge doesn't take a -E option.  --JimB */
     /* XXX - Do merge by hand instead of using rcsmerge, due to -k handling */
 
     run_setup ("%s%s %s -r%s -r%s %s", Rcsbin, RCS_RCSMERGE,
