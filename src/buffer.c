@@ -29,14 +29,7 @@ static struct buffer_data *get_buffer_data (void);
 /* Initialize a buffer structure.  */
 
 struct buffer *
-buf_initialize (input, output, flush, block, shutdown, memory, closure)
-     int (*input) (void *, char *, int, int, int *);
-     int (*output) (void *, const char *, int, int *);
-     int (*flush) (void *);
-     int (*block) (void *, int);
-     int (*shutdown) (struct buffer *);
-     void (*memory) (struct buffer *);
-     void *closure;
+buf_initialize (int (*input) (void *, char *, int, int, int *), int (*output) (void *, const char *, int, int *), int (*flush) (void *), int (*block) (void *, int), int (*shutdown) (struct buffer *), void (*memory) (struct buffer *), void *closure)
 {
     struct buffer *buf;
 
@@ -57,8 +50,7 @@ buf_initialize (input, output, flush, block, shutdown, memory, closure)
 /* Free a buffer structure.  */
 
 void
-buf_free (buf)
-     struct buffer *buf;
+buf_free (struct buffer *buf)
 {
     if (buf->data != NULL)
     {
@@ -86,8 +78,7 @@ buf_nonio_initialize( void (*memory) (struct buffer *) )
 /* Default memory error handler.  */
 
 static void
-buf_default_memory_error (buf)
-     struct buffer *buf;
+buf_default_memory_error (struct buffer *buf)
 {
     error (1, 0, "out of memory");
 }
@@ -95,7 +86,7 @@ buf_default_memory_error (buf)
 /* Allocate more buffer_data structures.  */
 
 static void
-allocate_buffer_datas ()
+allocate_buffer_datas (void)
 {
     struct buffer_data *alc;
     char *space;
@@ -120,7 +111,7 @@ allocate_buffer_datas ()
 /* Get a new buffer_data structure.  */
 
 static struct buffer_data *
-get_buffer_data ()
+get_buffer_data (void)
 {
     struct buffer_data *ret;
 
@@ -139,8 +130,7 @@ get_buffer_data ()
 /* See whether a buffer is empty.  */
 
 int
-buf_empty_p (buf)
-    struct buffer *buf;
+buf_empty_p (struct buffer *buf)
 {
     struct buffer_data *data;
 
@@ -157,8 +147,7 @@ buf_empty_p (buf)
  */
 
 int
-buf_count_mem (buf)
-    struct buffer *buf;
+buf_count_mem (struct buffer *buf)
 {
     struct buffer_data *data;
     int mem = 0;
@@ -173,10 +162,7 @@ buf_count_mem (buf)
 /* Add data DATA of length LEN to BUF.  */
 
 void
-buf_output (buf, data, len)
-    struct buffer *buf;
-    const char *data;
-    int len;
+buf_output (struct buffer *buf, const char *data, int len)
 {
     if (buf->data != NULL
 	&& (((buf->last->text + BUFFER_DATA_SIZE)
@@ -228,9 +214,7 @@ buf_output (buf, data, len)
 /* Add a '\0' terminated string to BUF.  */
 
 void
-buf_output0 (buf, string)
-    struct buffer *buf;
-    const char *string;
+buf_output0 (struct buffer *buf, const char *string)
 {
     buf_output (buf, string, strlen (string));
 }
@@ -238,9 +222,7 @@ buf_output0 (buf, string)
 /* Add a single character to BUF.  */
 
 void
-buf_append_char (buf, ch)
-    struct buffer *buf;
-    int ch;
+buf_append_char (struct buffer *buf, int ch)
 {
     if (buf->data != NULL
 	&& (buf->last->text + BUFFER_DATA_SIZE
@@ -265,8 +247,7 @@ buf_append_char (buf, ch)
  */
 
 int
-buf_send_output (buf)
-     struct buffer *buf;
+buf_send_output (struct buffer *buf)
 {
     if (buf->output == NULL)
 	abort ();
@@ -328,9 +309,7 @@ buf_send_output (buf)
  */
 
 int
-buf_flush (buf, block)
-     struct buffer *buf;
-     int block;
+buf_flush (struct buffer *buf, int block)
 {
     int nonblocking;
     int status;
@@ -368,8 +347,7 @@ buf_flush (buf, block)
  */
 
 int
-set_nonblock (buf)
-     struct buffer *buf;
+set_nonblock (struct buffer *buf)
 {
     int status;
 
@@ -390,8 +368,7 @@ set_nonblock (buf)
  */
 
 int
-set_block (buf)
-     struct buffer *buf;
+set_block (struct buffer *buf)
 {
     int status;
 
@@ -415,8 +392,7 @@ set_block (buf)
  */
 
 int
-buf_send_counted (buf)
-     struct buffer *buf;
+buf_send_counted (struct buffer *buf)
 {
     int size;
     struct buffer_data *data;
@@ -455,9 +431,7 @@ buf_send_counted (buf)
  */
 
 int
-buf_send_special_count (buf, count)
-     struct buffer *buf;
-     int count;
+buf_send_special_count (struct buffer *buf, int count)
 {
     struct buffer_data *data;
 
@@ -484,10 +458,7 @@ buf_send_special_count (buf, count)
 /* Append a list of buffer_data structures to an buffer.  */
 
 void
-buf_append_data (buf, data, last)
-     struct buffer *buf;
-     struct buffer_data *data;
-     struct buffer_data *last;
+buf_append_data (struct buffer *buf, struct buffer_data *data, struct buffer_data *last)
 {
     if (data != NULL)
     {
@@ -503,9 +474,7 @@ buf_append_data (buf, data, last)
    from the source buffer.  */
 
 void
-buf_append_buffer (to, from)
-     struct buffer *to;
-     struct buffer *from;
+buf_append_buffer (struct buffer *to, struct buffer *from)
 {
     buf_append_data (to, from->data, from->last);
     from->data = NULL;
@@ -523,11 +492,7 @@ buf_append_buffer (to, from)
  */
 
 int
-buf_read_file (f, size, retp, lastp)
-    FILE *f;
-    long size;
-    struct buffer_data **retp;
-    struct buffer_data **lastp;
+buf_read_file (FILE *f, long int size, struct buffer_data **retp, struct buffer_data **lastp)
 {
     int status;
 
@@ -592,10 +557,7 @@ buf_read_file (f, size, retp, lastp)
  */
 
 int
-buf_read_file_to_eof (f, retp, lastp)
-     FILE *f;
-     struct buffer_data **retp;
-     struct buffer_data **lastp;
+buf_read_file_to_eof (FILE *f, struct buffer_data **retp, struct buffer_data **lastp)
 {
     int status;
 
@@ -651,8 +613,7 @@ buf_read_file_to_eof (f, retp, lastp)
 /* Return the number of bytes in a chain of buffer_data structures.  */
 
 int
-buf_chain_length (buf)
-     struct buffer_data *buf;
+buf_chain_length (struct buffer_data *buf)
 {
     int size = 0;
     while (buf)
@@ -666,8 +627,7 @@ buf_chain_length (buf)
 /* Return the number of bytes in a buffer.  */
 
 int
-buf_length (buf)
-    struct buffer *buf;
+buf_length (struct buffer *buf)
 {
     return buf_chain_length (buf->data);
 }
@@ -681,9 +641,7 @@ buf_length (buf)
  */
 
 int
-buf_input_data (buf, countp)
-     struct buffer *buf;
-     int *countp;
+buf_input_data (struct buffer *buf, int *countp)
 {
     if (buf->input == NULL)
 	abort ();
@@ -756,10 +714,7 @@ buf_input_data (buf, countp)
  */
 
 int
-buf_read_line (buf, line, lenp)
-     struct buffer *buf;
-     char **line;
-     int *lenp;
+buf_read_line (struct buffer *buf, char **line, int *lenp)
 {
     if (buf->input == NULL)
         abort ();
@@ -893,11 +848,7 @@ buf_read_line (buf, line, lenp)
  */
 
 int
-buf_read_data (buf, want, retdata, got)
-     struct buffer *buf;
-     int want;
-     char **retdata;
-     int *got;
+buf_read_data (struct buffer *buf, int want, char **retdata, int *got)
 {
     if (buf->input == NULL)
 	abort ();
@@ -968,10 +919,7 @@ buf_read_data (buf, want, retdata, got)
  */
 
 void
-buf_copy_lines (outbuf, inbuf, command)
-     struct buffer *outbuf;
-     struct buffer *inbuf;
-     int command;
+buf_copy_lines (struct buffer *outbuf, struct buffer *inbuf, int command)
 {
     while (1)
     {
@@ -1052,10 +1000,7 @@ buf_copy_lines (outbuf, inbuf, command)
  */
 
 int
-buf_copy_counted (outbuf, inbuf, special)
-     struct buffer *outbuf;
-     struct buffer *inbuf;
-     int *special;
+buf_copy_counted (struct buffer *outbuf, struct buffer *inbuf, int *special)
 {
     *special = 0;
 
@@ -1199,8 +1144,7 @@ buf_copy_counted (outbuf, inbuf, special)
 /* Shut down a buffer.  This returns 0 on success, or an errno code.  */
 
 int
-buf_shutdown (buf)
-     struct buffer *buf;
+buf_shutdown (struct buffer *buf)
 {
     if (buf->shutdown)
 	return (*buf->shutdown) (buf);
@@ -1226,11 +1170,7 @@ struct stdio_buffer_closure
 };
 
 struct buffer *
-stdio_buffer_initialize (fp, child_pid, input, memory)
-     FILE *fp;
-     int child_pid;
-     int input;
-     void (*memory) (struct buffer *);
+stdio_buffer_initialize (FILE *fp, int child_pid, int input, void (*memory) (struct buffer *))
 {
     struct stdio_buffer_closure *bc = xmalloc (sizeof (*bc));
 
@@ -1248,8 +1188,7 @@ stdio_buffer_initialize (fp, child_pid, input, memory)
 
 /* Return the file associated with a stdio buffer. */
 FILE *
-stdio_buffer_get_file (buf)
-    struct buffer *buf;
+stdio_buffer_get_file (struct buffer *buf)
 {
     struct stdio_buffer_closure *bc;
 
@@ -1263,12 +1202,7 @@ stdio_buffer_get_file (buf)
 /* The buffer input function for a buffer built on a stdio FILE.  */
 
 static int
-stdio_buffer_input (closure, data, need, size, got)
-     void *closure;
-     char *data;
-     int need;
-     int size;
-     int *got;
+stdio_buffer_input (void *closure, char *data, int need, int size, int *got)
 {
     struct stdio_buffer_closure *bc = (struct stdio_buffer_closure *) closure;
     int nbytes;
@@ -1318,11 +1252,7 @@ stdio_buffer_input (closure, data, need, size, got)
 /* The buffer output function for a buffer built on a stdio FILE.  */
 
 static int
-stdio_buffer_output (closure, data, have, wrote)
-     void *closure;
-     const char *data;
-     int have;
-     int *wrote;
+stdio_buffer_output (void *closure, const char *data, int have, int *wrote)
 {
     struct stdio_buffer_closure *bc = (struct stdio_buffer_closure *) closure;
 
@@ -1353,8 +1283,7 @@ stdio_buffer_output (closure, data, have, wrote)
 /* The buffer flush function for a buffer built on a stdio FILE.  */
 
 static int
-stdio_buffer_flush (closure)
-     void *closure;
+stdio_buffer_flush (void *closure)
 {
     struct stdio_buffer_closure *bc = (struct stdio_buffer_closure *) closure;
 
@@ -1372,8 +1301,7 @@ stdio_buffer_flush (closure)
 
 
 static int
-stdio_buffer_shutdown (buf)
-    struct buffer *buf;
+stdio_buffer_shutdown (struct buffer *buf)
 {
     struct stdio_buffer_closure *bc = (struct stdio_buffer_closure *) buf->closure;
     struct stat s;
@@ -1550,12 +1478,7 @@ static int packetizing_buffer_shutdown (struct buffer *);
 /* Create a packetizing buffer.  */
 
 struct buffer *
-packetizing_buffer_initialize (buf, inpfn, outfn, fnclosure, memory)
-     struct buffer *buf;
-     int (*inpfn) (void *, const char *, char *, int);
-     int (*outfn) (void *, const char *, char *, int, int *);
-     void *fnclosure;
-     void (*memory) (struct buffer *);
+packetizing_buffer_initialize (struct buffer *buf, int (*inpfn) (void *, const char *, char *, int), int (*outfn) (void *, const char *, char *, int, int *), void *fnclosure, void (*memory) (struct buffer *))
 {
     struct packetizing_buffer *pb;
 
@@ -1588,12 +1511,7 @@ packetizing_buffer_initialize (buf, inpfn, outfn, fnclosure, memory)
 /* Input data from a packetizing buffer.  */
 
 static int
-packetizing_buffer_input (closure, data, need, size, got)
-     void *closure;
-     char *data;
-     int need;
-     int size;
-     int *got;
+packetizing_buffer_input (void *closure, char *data, int need, int size, int *got)
 {
     struct packetizing_buffer *pb = (struct packetizing_buffer *) closure;
 
@@ -1801,11 +1719,7 @@ packetizing_buffer_input (closure, data, need, size, got)
 /* Output data to a packetizing buffer.  */
 
 static int
-packetizing_buffer_output (closure, data, have, wrote)
-     void *closure;
-     const char *data;
-     int have;
-     int *wrote;
+packetizing_buffer_output (void *closure, const char *data, int have, int *wrote)
 {
     struct packetizing_buffer *pb = (struct packetizing_buffer *) closure;
     char inbuf[BUFFER_DATA_SIZE + 2];
@@ -1880,8 +1794,7 @@ packetizing_buffer_output (closure, data, have, wrote)
 /* Flush data to a packetizing buffer.  */
 
 static int
-packetizing_buffer_flush (closure)
-     void *closure;
+packetizing_buffer_flush (void *closure)
 {
     struct packetizing_buffer *pb = (struct packetizing_buffer *) closure;
 
@@ -1895,9 +1808,7 @@ packetizing_buffer_flush (closure)
 /* The block routine for a packetizing buffer.  */
 
 static int
-packetizing_buffer_block (closure, block)
-     void *closure;
-     int block;
+packetizing_buffer_block (void *closure, int block)
 {
     struct packetizing_buffer *pb = (struct packetizing_buffer *) closure;
 
@@ -1910,8 +1821,7 @@ packetizing_buffer_block (closure, block)
 /* Shut down a packetizing buffer.  */
 
 static int
-packetizing_buffer_shutdown (buf)
-    struct buffer *buf;
+packetizing_buffer_shutdown (struct buffer *buf)
 {
     struct packetizing_buffer *pb = (struct packetizing_buffer *) buf->closure;
 

@@ -94,9 +94,7 @@ List *dirs_sent_to_server = NULL;
 static int is_arg_a_parent_or_listed_dir (Node *, void *);
 
 static int
-is_arg_a_parent_or_listed_dir (n, d)
-    Node *n;
-    void *d;
+is_arg_a_parent_or_listed_dir( Node *n, void *d )
 {
     char *directory = n->key;	/* name of the dir sent to server */
     char *this_argv_elem = (char *) d;	/* this argv element */
@@ -118,8 +116,7 @@ static int arg_should_not_be_sent_to_server (char *);
    server. */
 
 static int
-arg_should_not_be_sent_to_server (arg)
-    char *arg;
+arg_should_not_be_sent_to_server( char *arg )
 {
     /* Decide if we should send this directory name to the server.  We
        should always send argv[i] if:
@@ -230,12 +227,7 @@ arg_should_not_be_sent_to_server (arg)
  * corresponding to the mode in SB.
  */
 char *
-#ifdef __STDC__
 mode_to_string (mode_t mode)
-#else /* ! __STDC__ */
-mode_to_string (mode)
-	mode_t mode;
-#endif /* __STDC__ */
 {
     char buf[18], u[4], g[4], o[4];
     int i;
@@ -268,10 +260,7 @@ mode_to_string (mode)
  * If RESPECT_UMASK is set, then honor the umask.
  */
 int
-change_mode (filename, mode_string, respect_umask)
-    char *filename;
-    char *mode_string;
-    int respect_umask;
+change_mode( char *filename, char *mode_string, int respect_umask )
 {
 #ifdef CHMOD_BROKEN
     char *p;
@@ -404,10 +393,8 @@ static struct buffer *global_from_server;
  * Returns number of bytes read.
  */
 static int
-read_line_via (via_from_buffer, via_to_buffer, resultp)
-    struct buffer *via_from_buffer;
-    struct buffer *via_to_buffer;
-    char **resultp;
+read_line_via( struct buffer *via_from_buffer, struct buffer *via_to_buffer,
+               char **resultp )
 {
     int status;
     char *result;
@@ -437,8 +424,7 @@ read_line_via (via_from_buffer, via_to_buffer, resultp)
 }
 
 static int
-read_line (resultp)
-    char **resultp;
+read_line( char **resultp )
 {
   return read_line_via (global_from_server, global_to_server, resultp);
 }
@@ -476,17 +462,13 @@ static char *toplevel_repos = NULL;
 char *toplevel_wd;
 
 static void
-handle_ok (args, len)
-    char *args;
-    int len;
+handle_ok( char *args, int len )
 {
     return;
 }
 
 static void
-handle_error (args, len)
-    char *args;
-    int len;
+handle_error( char *args, int len )
 {
     int something_printed;
     
@@ -520,9 +502,7 @@ handle_error (args, len)
 }
 
 static void
-handle_valid_requests (args, len)
-    char *args;
-    int len;
+handle_valid_requests( char *args, int len )
 {
     char *p = args;
     char *q;
@@ -588,11 +568,10 @@ static List *last_entries;
 static char *last_dir_name;
 
 static void
-call_in_directory (pathname, func, data)
-    char *pathname;
-    void (*func) (char *data, List *ent_list, char *short_pathname,
-			  char *filename);
-    char *data;
+call_in_directory( char *pathname,
+                   void (*func) ( char *_data, List *_ent_list,
+                                  char *_short_pathname, char *_filename ),
+                   char *data )
 {
     char *dir_name;
     char *filename;
@@ -960,11 +939,7 @@ warning: server is not creating directories one at a time");
 }
 
 static void
-copy_a_file (data, ent_list, short_pathname, filename)
-    char *data;
-    List *ent_list;
-    char *short_pathname;
-    char *filename;
+copy_a_file( char *data, List *ent_list, char *short_pathname, char *filename )
 {
     char *newname;
 #ifdef USE_VMS_FILENAMES
@@ -991,9 +966,7 @@ copy_a_file (data, ent_list, short_pathname, filename)
 }
 
 static void
-handle_copy_file (args, len)
-    char *args;
-    int len;
+handle_copy_file( char *args, int len )
 {
     call_in_directory (args, copy_a_file, (char *)NULL);
 }
@@ -1007,9 +980,7 @@ static void read_counted_file (char *, char *);
    extend this to deal with compressed files and make update_entries
    use it.  On error, gives a fatal error.  */
 static void
-read_counted_file (filename, fullname)
-    char *filename;
-    char *fullname;
+read_counted_file( char *filename, char *fullname )
 {
     char *size_string;
     size_t size;
@@ -1129,9 +1100,7 @@ static int stored_checksum_valid;
 static unsigned char stored_checksum[16];
 
 static void
-handle_checksum (args, len)
-    char *args;
-    int len;
+handle_checksum( char *args, int len )
 {
     char *s;
     char buf[3];
@@ -1165,9 +1134,7 @@ static char *stored_mode;
 static void handle_mode (char *, int);
 
 static void
-handle_mode (args, len)
-    char *args;
-    int len;
+handle_mode( char *args, int len )
 {
     if (stored_mode != NULL)
 	error (1, 0, "protocol error: duplicate Mode");
@@ -1182,9 +1149,7 @@ static time_t stored_modtime;
 static void handle_mod_time (char *, int);
 
 static void
-handle_mod_time (args, len)
-    char *args;
-    int len;
+handle_mod_time( char *args, int len )
 {
     if (stored_modtime_valid)
 	error (0, 0, "protocol error: duplicate Mod-time");
@@ -1244,11 +1209,8 @@ struct update_entries_data
 
 /* Update the Entries line for this file.  */
 static void
-update_entries (data_arg, ent_list, short_pathname, filename)
-    char *data_arg;
-    List *ent_list;
-    char *short_pathname;
-    char *filename;
+update_entries( char *data_arg, List *ent_list, char *short_pathname,
+                char *filename )
 {
     char *entries_line;
     struct update_entries_data *data = (struct update_entries_data *)data_arg;
@@ -1779,9 +1741,7 @@ update_entries (data_arg, ent_list, short_pathname, filename)
 }
 
 static void
-handle_checked_in (args, len)
-    char *args;
-    int len;
+handle_checked_in( char *args, int len )
 {
     struct update_entries_data dat;
     dat.contents = UPDATE_ENTRIES_CHECKIN;
@@ -1791,9 +1751,7 @@ handle_checked_in (args, len)
 }
 
 static void
-handle_new_entry (args, len)
-    char *args;
-    int len;
+handle_new_entry( char *args, int len )
 {
     struct update_entries_data dat;
     dat.contents = UPDATE_ENTRIES_CHECKIN;
@@ -1803,9 +1761,7 @@ handle_new_entry (args, len)
 }
 
 static void
-handle_updated (args, len)
-    char *args;
-    int len;
+handle_updated( char *args, int len )
 {
     struct update_entries_data dat;
     dat.contents = UPDATE_ENTRIES_UPDATE;
@@ -1817,9 +1773,7 @@ handle_updated (args, len)
 static void handle_created (char *, int);
 
 static void
-handle_created (args, len)
-    char *args;
-    int len;
+handle_created( char *args, int len )
 {
     struct update_entries_data dat;
     dat.contents = UPDATE_ENTRIES_UPDATE;
@@ -1831,9 +1785,7 @@ handle_created (args, len)
 static void handle_update_existing (char *, int);
 
 static void
-handle_update_existing (args, len)
-    char *args;
-    int len;
+handle_update_existing( char *args, int len )
 {
     struct update_entries_data dat;
     dat.contents = UPDATE_ENTRIES_UPDATE;
@@ -1843,9 +1795,7 @@ handle_update_existing (args, len)
 }
 
 static void
-handle_merged (args, len)
-    char *args;
-    int len;
+handle_merged( char *args, int len )
 {
     struct update_entries_data dat;
     dat.contents = UPDATE_ENTRIES_UPDATE;
@@ -1856,9 +1806,7 @@ handle_merged (args, len)
 }
 
 static void
-handle_patched (args, len)
-     char *args;
-     int len;
+handle_patched( char *args, int len )
 {
     struct update_entries_data dat;
     dat.contents = UPDATE_ENTRIES_PATCH;
@@ -1869,9 +1817,7 @@ handle_patched (args, len)
 }
 
 static void
-handle_rcs_diff (args, len)
-     char *args;
-     int len;
+handle_rcs_diff( char *args, int len )
 {
     struct update_entries_data dat;
     dat.contents = UPDATE_ENTRIES_RCS_DIFF;
@@ -1882,29 +1828,21 @@ handle_rcs_diff (args, len)
 }
 
 static void
-remove_entry (data, ent_list, short_pathname, filename)
-    char *data;
-    List *ent_list;
-    char *short_pathname;
-    char *filename;
+remove_entry( char *data, List *ent_list, char *short_pathname,
+              char *filename )
 {
     Scratch_Entry (ent_list, filename);
 }
 
 static void
-handle_remove_entry (args, len)
-    char *args;
-    int len;
+handle_remove_entry( char *args, int len )
 {
     call_in_directory (args, remove_entry, (char *)NULL);
 }
 
 static void
-remove_entry_and_file (data, ent_list, short_pathname, filename)
-    char *data;
-    List *ent_list;
-    char *short_pathname;
-    char *filename;
+remove_entry_and_file( char *data, List *ent_list, char *short_pathname,
+                       char *filename )
 {
     Scratch_Entry (ent_list, filename);
     /* Note that we don't ignore existence_error's here.  The server
@@ -1917,17 +1855,14 @@ remove_entry_and_file (data, ent_list, short_pathname, filename)
 }
 
 static void
-handle_removed (args, len)
-    char *args;
-    int len;
+handle_removed( char *args, int len )
 {
     call_in_directory (args, remove_entry_and_file, (char *)NULL);
 }
 
 /* Is this the top level (directory containing CVSROOT)?  */
 static int
-is_cvsroot_level (pathname)
-    char *pathname;
+is_cvsroot_level( char *pathname )
 {
     if (strcmp (toplevel_repos, current_parsed_root->directory) != 0)
 	return 0;
@@ -1936,11 +1871,7 @@ is_cvsroot_level (pathname)
 }
 
 static void
-set_static (data, ent_list, short_pathname, filename)
-    char *data;
-    List *ent_list;
-    char *short_pathname;
-    char *filename;
+set_static( char *data, List *ent_list, char *short_pathname, char *filename )
 {
     FILE *fp;
     fp = open_file (CVSADM_ENTSTAT, "w+");
@@ -1949,9 +1880,7 @@ set_static (data, ent_list, short_pathname, filename)
 }
 
 static void
-handle_set_static_directory (args, len)
-    char *args;
-    int len;
+handle_set_static_directory( char *args, int len )
 {
     if (strcmp (command_name, "export") == 0)
     {
@@ -1963,20 +1892,15 @@ handle_set_static_directory (args, len)
 }
 
 static void
-clear_static (data, ent_list, short_pathname, filename)
-    char *data;
-    List *ent_list;
-    char *short_pathname;
-    char *filename;
+clear_static( char *data, List *ent_list, char *short_pathname,
+              char *filename )
 {
     if (unlink_file (CVSADM_ENTSTAT) < 0 && ! existence_error (errno))
         error (1, errno, "cannot remove file %s", CVSADM_ENTSTAT);
 }
 
 static void
-handle_clear_static_directory (pathname, len)
-    char *pathname;
-    int len;
+handle_clear_static_directory( char *pathname, int len )
 {
     if (strcmp (command_name, "export") == 0)
     {
@@ -1997,11 +1921,7 @@ handle_clear_static_directory (pathname, len)
 }
 
 static void
-set_sticky (data, ent_list, short_pathname, filename)
-    char *data;
-    List *ent_list;
-    char *short_pathname;
-    char *filename;
+set_sticky( char *data, List *ent_list, char *short_pathname, char *filename )
 {
     char *tagspec;
     FILE *f;
@@ -2029,9 +1949,7 @@ set_sticky (data, ent_list, short_pathname, filename)
 }
 
 static void
-handle_set_sticky (pathname, len)
-    char *pathname;
-    int len;
+handle_set_sticky( char *pathname, int len )
 {
     if (strcmp (command_name, "export") == 0)
     {
@@ -2059,20 +1977,15 @@ handle_set_sticky (pathname, len)
 }
 
 static void
-clear_sticky (data, ent_list, short_pathname, filename)
-    char *data;
-    List *ent_list;
-    char *short_pathname;
-    char *filename;
+clear_sticky( char *data, List *ent_list, char *short_pathname,
+              char *filename )
 {
     if (unlink_file (CVSADM_TAG) < 0 && ! existence_error (errno))
 	error (1, errno, "cannot remove %s", CVSADM_TAG);
 }
 
 static void
-handle_clear_sticky (pathname, len)
-    char *pathname;
-    int len;
+handle_clear_sticky( char *pathname, int len )
 {
     if (strcmp (command_name, "export") == 0)
     {
@@ -2097,11 +2010,7 @@ handle_clear_sticky (pathname, len)
 static void template (char *, List *, char *, char *);
 
 static void
-template (data, ent_list, short_pathname, filename)
-    char *data;
-    List *ent_list;
-    char *short_pathname;
-    char *filename;
+template( char *data, List *ent_list, char *short_pathname, char *filename )
 {
     char *buf = xmalloc ( strlen ( short_pathname )
 	    		  + strlen ( CVSADM_TEMPLATE )
@@ -2114,28 +2023,21 @@ template (data, ent_list, short_pathname, filename)
 static void handle_template (char *, int);
 
 static void
-handle_template (pathname, len)
-    char *pathname;
-    int len;
+handle_template( char *pathname, int len )
 {
     call_in_directory (pathname, template, NULL);
 }
 
 static void
-clear_template (data, ent_list, short_pathname, filename)
-    char *data;
-    List *ent_list;
-    char *short_pathname;
-    char *filename;
+clear_template( char *data, List *ent_list, char *short_pathname,
+                char *filename )
 {
     if (unlink_file (CVSADM_TEMPLATE) < 0 && ! existence_error (errno))
 	error (1, errno, "cannot remove %s", CVSADM_TEMPLATE);
 }
 
 static void
-handle_clear_template (pathname, len)
-    char *pathname;
-    int len;
+handle_clear_template( char *pathname, int len )
 {
     call_in_directory (pathname, clear_template, NULL);
 }
@@ -2150,8 +2052,7 @@ struct save_dir {
 struct save_dir *prune_candidates;
 
 static void
-add_prune_candidate (dir)
-    char *dir;
+add_prune_candidate( char *dir )
 {
     struct save_dir *p;
 
@@ -2168,7 +2069,7 @@ add_prune_candidate (dir)
 static void process_prune_candidates (void);
 
 static void
-process_prune_candidates ()
+process_prune_candidates( void )
 {
     struct save_dir *p;
     struct save_dir *q;
@@ -2211,10 +2112,7 @@ static char *last_update_dir;
 static void send_repository (char *, char *, char *);
 
 static void
-send_repository (dir, repos, update_dir)
-    char *dir;
-    char *repos;
-    char *update_dir;
+send_repository( char *dir, char *repos, char *update_dir )
 {
     char *adm_name;
 
@@ -2356,10 +2254,7 @@ send_repository (dir, repos, update_dir)
 /* Send a Repository line and set toplevel_repos.  */
 
 void
-send_a_repository (dir, repository, update_dir)
-    char *dir;
-    char *repository;
-    char *update_dir;
+send_a_repository( char *dir, char *repository, char *update_dir )
 {
     if (toplevel_repos == NULL && repository != NULL)
     {
@@ -2454,9 +2349,7 @@ static int modules_allocated;
 static char **modules_vector;
 
 static void
-handle_module_expansion (args, len)
-    char *args;
-    int len;
+handle_module_expansion( char *args, int len )
 {
     if (modules_vector == NULL)
     {
@@ -2481,10 +2374,7 @@ static int module_argc;
 static char **module_argv;
 
 void
-client_expand_modules (argc, argv, local)
-    int argc;
-    char **argv;
-    int local;
+client_expand_modules( int argc, char **argv, int local )
 {
     int errs;
     int i;
@@ -2513,10 +2403,7 @@ client_expand_modules (argc, argv, local)
 }
 
 void
-client_send_expansions (local, where, build_dirs)
-    int local;
-    char *where;
-    int build_dirs;
+client_send_expansions( int local, char *where, int build_dirs )
 {
     int i;
     char *argv[1];
@@ -2539,7 +2426,7 @@ client_send_expansions (local, where, build_dirs)
 }
 
 void
-client_nonexpanded_setup ()
+client_nonexpanded_setup( void )
 {
     send_a_repository ("", current_parsed_root->directory, "");
 }
@@ -2555,9 +2442,7 @@ client_nonexpanded_setup ()
    read the file in text or binary mode.  */
 
 static void
-handle_wrapper_rcs_option (args, len)
-    char *args;
-    int len;
+handle_wrapper_rcs_option( char *args, int len )
 {
     char *p;
 
@@ -2583,9 +2468,7 @@ handle_wrapper_rcs_option (args, len)
 
 
 static void
-handle_m (args, len)
-    char *args;
-    int len;
+handle_m( char *args, int len )
 {
     /* In the case where stdout and stderr point to the same place,
        fflushing stderr will make output happen in the correct order.
@@ -2601,9 +2484,7 @@ handle_m (args, len)
 static void handle_mbinary (char *, int);
 
 static void
-handle_mbinary (args, len)
-    char *args;
-    int len;
+handle_mbinary( char *args, int len )
 {
     char *size_string;
     size_t size;
@@ -2637,9 +2518,7 @@ handle_mbinary (args, len)
 }
 
 static void
-handle_e (args, len)
-    char *args;
-    int len;
+handle_e( char *args, int len )
 {
     /* In the case where stdout and stderr point to the same place,
        fflushing stdout will make output happen in the correct order.  */
@@ -2650,9 +2529,7 @@ handle_e (args, len)
 
 /*ARGSUSED*/
 static void
-handle_f (args, len)
-    char *args;
-    int len;
+handle_f( char *args, int len )
 {
     fflush (stderr);
 }
@@ -2660,9 +2537,7 @@ handle_f (args, len)
 static void handle_mt (char *, int);
 
 static void
-handle_mt (args, len)
-    char *args;
-    int len;
+handle_mt( char *args, int len )
 {
     char *p;
     char *tag = args;
@@ -2858,10 +2733,7 @@ struct response responses[] =
  * contain 0's.
  */
 void
-send_to_server_via (via_buffer, str, len)
-     struct buffer *via_buffer;
-     char *str;
-     size_t len;
+send_to_server_via( struct buffer *via_buffer, char *str, size_t len )
 {
     static int nbytes;
 
@@ -2886,9 +2758,7 @@ send_to_server_via (via_buffer, str, len)
 }
 
 void
-send_to_server (str, len)
-     char *str;
-     size_t len;
+send_to_server( char *str, size_t len )
 {
   send_to_server_via (global_to_server, str, len);
 }
@@ -2898,9 +2768,7 @@ send_to_server (str, len)
    bytes read, which will always be at least one; blocks if there is
    no data available at all.  Gives a fatal error on EOF or error.  */
 static size_t
-try_read_from_server (buf, len)
-    char *buf;
-    size_t len;
+try_read_from_server( char *buf, size_t len )
 {
     int status, nread;
     char *data;
@@ -2926,9 +2794,7 @@ try_read_from_server (buf, len)
  * Read LEN bytes from the server or die trying.
  */
 void
-read_from_server (buf, len)
-    char *buf;
-    size_t len;
+read_from_server( char *buf, size_t len )
 {
     size_t red = 0;
     while (red < len)
@@ -2943,7 +2809,7 @@ read_from_server (buf, len)
  * Get some server responses and process them.  Returns nonzero for
  * error, 0 for success.  */
 int
-get_server_responses ()
+get_server_responses( void )
 {
     struct response *rs;
     do
@@ -3020,7 +2886,7 @@ get_server_responses ()
 int server_started = 0;
 
 int
-get_responses_and_close ()
+get_responses_and_close( void )
 {
     int errs = get_server_responses ();
     int status;
@@ -3076,8 +2942,7 @@ get_responses_and_close ()
 }
 	
 int
-supported_request (name)
-    char *name;
+supported_request( char *name )
 {
     struct request *rq;
 
@@ -3102,10 +2967,7 @@ supported_request (name)
  * 	defaultport
  */
 static int
-get_port_number (envname, portname, defaultport)
-    const char *envname;
-    const char *portname;
-    int defaultport;
+get_port_number( const char *envname, const char *portname, int defaultport )
 {
     struct servent *s;
     char *port_s;
@@ -3150,8 +3012,7 @@ get_port_number (envname, portname, defaultport)
  * will need to do it to save the canonical CVSROOT. -DRP
  */
 int
-get_cvs_port_number (root)
-    const cvsroot_t *root;
+get_cvs_port_number( const cvsroot_t *root )
 {
 
     if (root->port) return root->port;
@@ -3183,13 +3044,9 @@ get_cvs_port_number (root)
 
 
 void
-make_bufs_from_fds (tofd, fromfd, child_pid, to_server_p, from_server_p, is_sock)
-    int tofd;
-    int fromfd;
-    int child_pid;
-    struct buffer **to_server_p;
-    struct buffer **from_server_p;
-    int is_sock;
+make_bufs_from_fds( int tofd, int fromfd, int child_pid,
+                    struct buffer **to_server_p,
+                    struct buffer **from_server_p, int is_sock )
 {
     FILE *to_server_fp;
     FILE *from_server_fp;
@@ -3257,12 +3114,9 @@ make_bufs_from_fds (tofd, fromfd, child_pid, to_server_p, from_server_p, is_sock
    If we fail to connect or if access is denied, then die with fatal
    error.  */
 void
-connect_to_pserver (root, to_server_p, from_server_p, verify_only, do_gssapi)
-    cvsroot_t *root;
-    struct buffer **to_server_p;
-    struct buffer **from_server_p;
-    int verify_only;
-    int do_gssapi;
+connect_to_pserver( cvsroot_t *root, struct buffer **to_server_p,
+                    struct buffer **from_server_p, int verify_only,
+                    int do_gssapi )
 {
     int sock;
     int port_number;
@@ -3323,13 +3177,9 @@ connect_to_pserver (root, to_server_p, from_server_p, verify_only, do_gssapi)
 
 
 static void
-auth_server (root, to_server, from_server, verify_only, do_gssapi, hostinfo)
-    cvsroot_t *root;
-    struct buffer *to_server;
-    struct buffer *from_server;
-    int verify_only;
-    int do_gssapi;
-    struct hostent *hostinfo;
+auth_server( cvsroot_t *root, struct buffer *to_server,
+             struct buffer *from_server, int verify_only, int do_gssapi,
+             struct hostent *hostinfo )
 {
     char *username;			/* the username we use to connect */
     char no_passwd = 0;			/* gets set if no password found */
@@ -3492,9 +3342,8 @@ auth_server (root, to_server, from_server, verify_only, do_gssapi, hostinfo)
  * Connect to a forked server process.
  */
 static void
-connect_to_forked_server (to_server_p, from_server_p)
-    struct buffer **to_server_p;
-    struct buffer **from_server_p;
+connect_to_forked_server( struct buffer **to_server_p,
+                          struct buffer **from_server_p )
 {
     int tofd, fromfd;
     int child_pid;
@@ -3537,9 +3386,7 @@ connect_to_forked_server (to_server_p, from_server_p)
 static int send_variable_proc (Node *, void *);
 
 static int
-send_variable_proc (node, closure)
-    Node *node;
-    void *closure;
+send_variable_proc( Node *node, void *closure )
 {
     send_to_server ("Set ", 0);
     send_to_server (node->key, 0);
@@ -3551,7 +3398,7 @@ send_variable_proc (node, closure)
 
 /* Contact the server.  */
 void
-start_server ()
+start_server( void )
 {
     int rootless;
 
@@ -3889,8 +3736,7 @@ start_server ()
 
 /* Send an argument STRING.  */
 void
-send_arg (string)
-    char *string;
+send_arg( char *string )
 {
     char buf[1];
     char *p = string;
@@ -3920,10 +3766,7 @@ static void send_modified (char *, char *, Vers_TS *);
    client_process_import_file to set them up.  */
 
 static void
-send_modified (file, short_pathname, vers)
-    char *file;
-    char *short_pathname;
-    Vers_TS *vers;
+send_modified( char *file, char *short_pathname, Vers_TS *vers)
 {
     /* File was modified, send it.  */
     struct stat sb;
@@ -4078,9 +3921,7 @@ static int send_fileproc (void *callerdat, struct file_info *finfo);
 
 /* Deal with one file.  */
 static int
-send_fileproc (callerdat, finfo)
-    void *callerdat;
-    struct file_info *finfo;
+send_fileproc( void *callerdat, struct file_info *finfo )
 {
     struct send_data *args = (struct send_data *) callerdat;
     Vers_TS *vers;
@@ -4231,9 +4072,7 @@ warning: ignoring -k options due to server limitations");
 static void send_ignproc (char *, char *);
 
 static void
-send_ignproc (file, dir)
-    char *file;
-    char *dir;
+send_ignproc( char *file, char *dir )
 {
     if (ign_inhibit_server || !supported_request ("Questionable"))
     {
@@ -4253,12 +4092,8 @@ send_ignproc (file, dir)
 static int send_filesdoneproc (void *, int, char *, char *, List *);
 
 static int
-send_filesdoneproc (callerdat, err, repository, update_dir, entries)
-    void *callerdat;
-    int err;
-    char *repository;
-    char *update_dir;
-    List *entries;
+send_filesdoneproc( void *callerdat, int err, char *repository,
+                    char *update_dir, List *entries )
 {
     /* if this directory has an ignore list, process it then free it */
     if (ignlist)
@@ -4281,12 +4116,8 @@ static Dtype send_dirent_proc (void *, char *, char *, char *, List *);
  *
  */
 static Dtype
-send_dirent_proc (callerdat, dir, repository, update_dir, entries)
-    void *callerdat;
-    char *dir;
-    char *repository;
-    char *update_dir;
-    List *entries;
+send_dirent_proc( void *callerdat, char *dir, char *repository,
+                  char *update_dir, List *entries )
 {
     struct send_data *args = (struct send_data *) callerdat;
     int dir_exists;
@@ -4364,12 +4195,8 @@ static int send_dirleave_proc (void *, char *, int, char *, List *);
  */
 /* ARGSUSED */
 static int
-send_dirleave_proc (callerdat, dir, err, update_dir, entries)
-    void *callerdat;
-    char *dir;
-    int err;
-    char *update_dir;
-    List *entries;
+send_dirleave_proc( void *callerdat, char *dir, int err, char *update_dir,
+                    List *entries )
 {
 
     /* Delete the ignore list if it hasn't already been done.  */
@@ -4385,8 +4212,7 @@ send_dirleave_proc (callerdat, dir, err, update_dir, entries)
  */
 
 void
-send_option_string (string)
-    char *string;
+send_option_string( char *string )
 {
     char *copy;
     char *p;
@@ -4415,10 +4241,7 @@ send_option_string (string)
 /* Send the names of all the argument files to the server.  */
 
 void
-send_file_names (argc, argv, flags)
-    int argc;
-    char **argv;
-    unsigned int flags;
+send_file_names( int argc, char **argv, unsigned int flags )
 {
     int i;
     int level;
@@ -4551,12 +4374,7 @@ send_file_names (argc, argv, flags)
   _whether_ a file is modified, not the contents.  Also sends Argument
   lines for argc and argv, so should be called after options are sent.  */
 void
-send_files (argc, argv, local, aflag, flags)
-    int argc;
-    char **argv;
-    int local;
-    int aflag;
-    unsigned int flags;
+send_files( int argc, char **argv, int local, int aflag, unsigned int flags )
 {
     struct send_data args;
     int err;
@@ -4590,8 +4408,7 @@ send_files (argc, argv, local, aflag, flags)
 }
 
 void
-client_import_setup (repository)
-    char *repository;
+client_import_setup( char *repository )
 {
     if (toplevel_repos == NULL)		/* should always be true */
         send_a_repository ("", repository, "");
@@ -4601,18 +4418,10 @@ client_import_setup (repository)
  * Process the argument import file.
  */
 int
-client_process_import_file (message, vfile, vtag, targc, targv, repository,
-                            all_files_binary, modtime)
-    char *message;
-    char *vfile;
-    char *vtag;
-    int targc;
-    char *targv[];
-    char *repository;
-    int all_files_binary;
-
-    /* Nonzero for "import -d".  */
-    int modtime;
+client_process_import_file( char *message, char *vfile, char *vtag, int targc,
+                            char *targv[], char *repository,
+                            int all_files_binary,
+                            int modtime /* Nonzero for "import -d".  */ )
 {
     char *update_dir;
     char *fullname;
@@ -4692,7 +4501,7 @@ client_process_import_file (message, vfile, vtag, targc, targv, repository,
 }
 
 void
-client_import_done ()
+client_import_done( void )
 {
     if (toplevel_repos == NULL)
 	/*
@@ -4709,11 +4518,8 @@ client_import_done ()
 }
 
 static void
-notified_a_file (data, ent_list, short_pathname, filename)
-    char *data;
-    List *ent_list;
-    char *short_pathname;
-    char *filename;
+notified_a_file( char *data, List *ent_list, char *short_pathname,
+                 char *filename )
 {
     FILE *fp;
     FILE *newf;
@@ -4817,20 +4623,14 @@ notified_a_file (data, ent_list, short_pathname, filename)
 }
 
 static void
-handle_notified (args, len)
-    char *args;
-    int len;
+handle_notified( char *args, int len )
 {
     call_in_directory (args, notified_a_file, NULL);
 }
 
 void
-client_notify (repository, update_dir, filename, notif_type, val)
-    char *repository;
-    char *update_dir;
-    char *filename;
-    int notif_type;
-    char *val;
+client_notify( char *repository, char *update_dir, char *filename,
+               int notif_type, char *val )
 {
     char buf[2];
 
@@ -4850,9 +4650,7 @@ client_notify (repository, update_dir, filename, notif_type, val)
  * the argument.  If ARG is NULL, forget the whole thing.
  */
 void
-option_with_arg (option, arg)
-    char *option;
-    char *arg;
+option_with_arg( char *option, char *arg )
 {
     if (arg == NULL)
 	return;
@@ -4872,8 +4670,7 @@ option_with_arg (option, arg)
    cvsclient.texi, RFC 822/1123 format is preferred.  */
 
 void
-client_senddate (date)
-    const char *date;
+client_senddate( const char *date )
 {
     char buf[MAXDATELEN];
 
@@ -4882,7 +4679,7 @@ client_senddate (date)
 }
 
 void
-send_init_command ()
+send_init_command( void )
 {
     /* This is here because we need the current_parsed_root->directory variable.  */
     send_to_server ("init ", 0);

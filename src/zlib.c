@@ -61,11 +61,7 @@ static int compress_buffer_shutdown_output (struct buffer *);
 /* Report an error from one of the zlib functions.  */
 
 static void
-compress_error (status, zstatus, zstr, msg)
-     int status;
-     int zstatus;
-     z_stream *zstr;
-     const char *msg;
+compress_error (int status, int zstatus, z_stream *zstr, const char *msg)
 {
     int hold_errno;
     const char *zmsg;
@@ -88,11 +84,7 @@ compress_error (status, zstatus, zstr, msg)
 /* Create a compression buffer.  */
 
 struct buffer *
-compress_buffer_initialize (buf, input, level, memory)
-     struct buffer *buf;
-     int input;
-     int level;
-     void (*memory) (struct buffer *);
+compress_buffer_initialize (struct buffer *buf, int input, int level, void (*memory) (struct buffer *))
 {
     struct compress_buffer *n;
     int zstatus;
@@ -133,12 +125,7 @@ compress_buffer_initialize (buf, input, level, memory)
 /* Input data from a compression buffer.  */
 
 static int
-compress_buffer_input (closure, data, need, size, got)
-     void *closure;
-     char *data;
-     int need;
-     int size;
-     int *got;
+compress_buffer_input (void *closure, char *data, int need, int size, int *got)
 {
     struct compress_buffer *cb = (struct compress_buffer *) closure;
     struct buffer_data *bd;
@@ -252,11 +239,7 @@ compress_buffer_input (closure, data, need, size, got)
 /* Output data to a compression buffer.  */
 
 static int
-compress_buffer_output (closure, data, have, wrote)
-     void *closure;
-     const char *data;
-     int have;
-     int *wrote;
+compress_buffer_output (void *closure, const char *data, int have, int *wrote)
 {
     struct compress_buffer *cb = (struct compress_buffer *) closure;
 
@@ -294,8 +277,7 @@ compress_buffer_output (closure, data, have, wrote)
 /* Flush a compression buffer.  */
 
 static int
-compress_buffer_flush (closure)
-     void *closure;
+compress_buffer_flush (void *closure)
 {
     struct compress_buffer *cb = (struct compress_buffer *) closure;
 
@@ -344,9 +326,7 @@ compress_buffer_flush (closure)
 /* The block routine for a compression buffer.  */
 
 static int
-compress_buffer_block (closure, block)
-     void *closure;
-     int block;
+compress_buffer_block (void *closure, int block)
 {
     struct compress_buffer *cb = (struct compress_buffer *) closure;
 
@@ -359,8 +339,7 @@ compress_buffer_block (closure, block)
 /* Shut down an input buffer.  */
 
 static int
-compress_buffer_shutdown_input (buf)
-     struct buffer *buf;
+compress_buffer_shutdown_input (struct buffer *buf)
 {
     struct compress_buffer *cb = (struct compress_buffer *) buf->closure;
     int zstatus;
@@ -391,8 +370,7 @@ compress_buffer_shutdown_input (buf)
 /* Shut down an output buffer.  */
 
 static int
-compress_buffer_shutdown_output (buf)
-     struct buffer *buf;
+compress_buffer_shutdown_output (struct buffer *buf)
 {
     struct compress_buffer *cb = (struct compress_buffer *) buf->closure;
     int zstatus, status;
@@ -442,11 +420,7 @@ compress_buffer_shutdown_output (buf)
    it is an error we can't recover from.  */
 
 int
-gunzip_and_write (fd, fullname, buf, size)
-    int fd;
-    char *fullname;
-    unsigned char *buf;
-    size_t size;
+gunzip_and_write (int fd, char *fullname, unsigned char *buf, size_t size)
 {
     size_t pos;
     z_stream zstr;
@@ -546,13 +520,7 @@ gunzip_and_write (fd, fullname, buf, size)
    recover from it).  LEVEL is the compression level (1-9).  */
 
 int
-read_and_gzip (fd, fullname, buf, size, len, level)
-    int fd;
-    char *fullname;
-    unsigned char **buf;
-    size_t *size;
-    size_t *len;
-    int level;
+read_and_gzip (int fd, char *fullname, unsigned char **buf, size_t *size, size_t *len, int level)
 {
     z_stream zstr;
     int zstatus;

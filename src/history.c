@@ -316,9 +316,7 @@ static const char *const history_usg[] =
    - Always sort timestamp last.
 */
 static int
-sort_order (l, r)
-    const void *l;
-    const void *r;
+sort_order (const void *l, const void *r)
 {
     int i;
     const struct hrec *left = (const struct hrec *) l;
@@ -367,9 +365,7 @@ sort_order (l, r)
 }
 
 int
-history (argc, argv)
-    int argc;
-    char **argv;
+history (int argc, char **argv)
 {
     int i, c;
     char *fname;
@@ -695,12 +691,7 @@ history (argc, argv)
 }
 
 void
-history_write (type, update_dir, revs, name, repository)
-    int type;
-    char *update_dir;
-    char *revs;
-    char *name;
-    char *repository;
+history_write (int type, char *update_dir, char *revs, char *name, char *repository)
 {
     char *fname;
     char *workdir;
@@ -895,8 +886,7 @@ history_write (type, update_dir, revs, name, repository)
  *		username ("") matches any user.
  */
 static void
-save_user (name)
-    char *name;
+save_user (char *name)
 {
     if (user_count == user_max)
     {
@@ -920,10 +910,7 @@ save_user (name)
  *	- else it is matched against the file name.
  */
 static void
-save_file (dir, name, module)
-    char *dir;
-    char *name;
-    char *module;
+save_file (char *dir, char *name, char *module)
 {
     char *cp;
     struct file_list_str *fl;
@@ -966,8 +953,7 @@ save_file (dir, name, module)
 }
 
 static void
-save_module (module)
-    char *module;
+save_module (char *module)
 {
     if (mod_count == mod_max)
     {
@@ -979,7 +965,7 @@ save_module (module)
 }
 
 static void
-expand_modules ()
+expand_modules (void)
 {
 }
 
@@ -1002,9 +988,7 @@ expand_modules ()
 	} while (0)
 
 static void
-fill_hrec (line, hr)
-    char *line;
-    struct hrec *hr;
+fill_hrec (char *line, struct hrec *hr)
 {
     char *cp;
     int c;
@@ -1061,8 +1045,7 @@ fill_hrec (line, hr)
  * than the whole block, we're done. 
  */
 static void
-read_hrecs (fname)
-    char *fname;
+read_hrecs (char *fname)
 {
     unsigned char *cpstart, *cpend, *cp, *nl;
     char *hrline;
@@ -1169,8 +1152,7 @@ read_hrecs (fname)
 
 /* Utility program for determining whether "find" is inside "string" */
 static int
-within (find, string)
-    char *find, *string;
+within (char *find, char *string)
 {
     int c, len;
 
@@ -1196,8 +1178,7 @@ within (find, string)
  * this record should be remembered for printing.
  */
 static int
-select_hrec (hr)
-    struct hrec *hr;
+select_hrec (struct hrec *hr)
 {
     char **cpp, *cp, *cp2;
     struct file_list_str *fl;
@@ -1403,7 +1384,7 @@ select_hrec (hr)
  * selections are more easily done after the qsort by "accept_hrec".
  */
 static void
-report_hrecs ()
+report_hrecs (void)
 {
     struct hrec *hr, *lr;
     struct tm *tm;
@@ -1554,8 +1535,7 @@ report_hrecs ()
 }
 
 static int
-accept_hrec (lr, hr)
-    struct hrec *hr, *lr;
+accept_hrec (struct hrec *lr, struct hrec *hr)
 {
     int ty;
 

@@ -21,8 +21,7 @@ static void freenode_mem (Node * p);
 
 /* hash function */
 static int
-hashp (key)
-    const char *key;
+hashp (const char *key)
 {
     unsigned int h = 0;
     unsigned int g;
@@ -45,7 +44,7 @@ hashp (key)
  * create a new list (or get an old one from the cache)
  */
 List *
-getlist ()
+getlist (void)
 {
     int i;
     List *list;
@@ -77,8 +76,7 @@ getlist ()
  * free up a list
  */
 void
-dellist (listp)
-    List **listp;
+dellist (List **listp)
 {
     int i;
     Node *p;
@@ -129,7 +127,7 @@ dellist (listp)
  * get a new list node
  */
 Node *
-getnode ()
+getnode (void)
 {
     Node *p;
 
@@ -156,8 +154,7 @@ getnode ()
  * remove a node from it's list (maybe hash list too) and free it
  */
 void
-delnode (p)
-    Node *p;
+delnode (Node *p)
 {
     if (p == (Node *) NULL)
 	return;
@@ -181,8 +178,7 @@ delnode (p)
  * free up the storage associated with a node
  */
 static void
-freenode_mem (p)
-    Node *p;
+freenode_mem (Node *p)
 {
     if (p->delproc != (void (*) ()) NULL)
 	p->delproc (p);			/* call the specified delproc */
@@ -203,8 +199,7 @@ freenode_mem (p)
  * free up the storage associated with a node and recycle it
  */
 void
-freenode (p)
-    Node *p;
+freenode (Node *p)
 {
     /* first free the memory */
     freenode_mem (p);
@@ -227,10 +222,7 @@ freenode (p)
  * return 0 on success
  */
 int
-insert_before (list, marker, p)
-    List *list;
-    Node *marker;
-    Node *p;
+insert_before (List *list, Node *marker, Node *p)
 {
     if (p->key != NULL)			/* hash it too? */
     {
@@ -274,9 +266,7 @@ insert_before (list, marker, p)
  * return 0 on success
  */
 int
-addnode (list, p)
-    List *list;
-    Node *p;
+addnode (List *list, Node *p)
 {
   return insert_before (list, list->list, p);
 }
@@ -286,9 +276,7 @@ addnode (list, p)
  * necessary to preserve last-to-first output order for some RCS functions.
  */
 int
-addnode_at_front (list, p)
-    List *list;
-    Node *p;
+addnode_at_front (List *list, Node *p)
 {
   return insert_before (list, list->list->next, p);
 }
@@ -298,9 +286,7 @@ addnode_at_front (list, p)
  * error for errors.
  */
 Node *
-findnode (list, key)
-    List *list;
-    const char *key;
+findnode (List *list, const char *key)
 {
     Node *head, *p;
 
@@ -324,9 +310,7 @@ findnode (list, key)
  * Like findnode, but for a filename.
  */
 Node *
-findnode_fn (list, key)
-    List *list;
-    const char *key;
+findnode_fn (List *list, const char *key)
 {
     Node *head, *p;
 
@@ -352,10 +336,7 @@ findnode_fn (list, key)
  * walk a list with a specific proc
  */
 int
-walklist (list, proc, closure)
-    List *list;
-    int (*proc) (Node *, void *);
-    void *closure;
+walklist (List *list, int (*proc) (Node *, void *), void *closure)
 {
     Node *head, *p;
     int err = 0;
@@ -379,8 +360,7 @@ walklist (list, proc, closure)
 }
 
 int
-list_isempty (list)
-    List *list;
+list_isempty (List *list)
 {
     return list == NULL || list->list->next == list->list;
 }
@@ -389,9 +369,7 @@ static int (*client_comp) (const Node *, const Node *);
 static int qsort_comp (const void *, const void *);
 
 static int
-qsort_comp (elem1, elem2)
-    const void *elem1;
-    const void *elem2;
+qsort_comp (const void *elem1, const void *elem2)
 {
     Node **node1 = (Node **) elem1;
     Node **node2 = (Node **) elem2;
@@ -402,9 +380,7 @@ qsort_comp (elem1, elem2)
  * sort the elements of a list (in place)
  */
 void
-sortlist (list, comp)
-    List *list;
-    int (*comp) (const Node *, const Node *);
+sortlist (List *list, int (*comp) (const Node *, const Node *))
 {
     Node *head, *remain, *p, **array;
     int i, n;
@@ -450,9 +426,7 @@ sortlist (list, comp)
  * compare two files list node (for sort)
  */
 int
-fsortcmp (p, q)
-    const Node *p;
-    const Node *q;
+fsortcmp (const Node *p, const Node *q)
 {
     return (strcmp (p->key, q->key));
 }
@@ -462,8 +436,7 @@ fsortcmp (p, q)
 static char *nodetypestring (Ntype);
 
 static char *
-nodetypestring (type)
-    Ntype type;
+nodetypestring (Ntype type)
 {
     switch (type) {
     case NT_UNKNOWN:	return("UNKNOWN");
@@ -488,9 +461,7 @@ nodetypestring (type)
 
 static int printnode (Node *, void *);
 static int
-printnode (node, closure)
-     Node *node;
-     void *closure;
+printnode (Node *node, void *closure)
 {
     if (node == NULL)
     {
@@ -519,8 +490,7 @@ printnode (node, closure)
 void printlist (List *);
 
 void
-printlist (list)
-    List *list;
+printlist (List *list)
 {
     if (list == NULL)
     {

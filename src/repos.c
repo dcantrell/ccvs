@@ -20,9 +20,7 @@
    invoked.  */
 
 char *
-Name_Repository (dir, update_dir)
-    char *dir;
-    char *update_dir;
+Name_Repository (char *dir, char *update_dir)
 {
     FILE *fpin;
     char *xupdate_dir;
@@ -139,8 +137,7 @@ Name_Repository (dir, update_dir)
  * possibly fully qualified repository
  */
 char *
-Short_Repository (repository)
-    char *repository;
+Short_Repository (char *repository)
 {
     if (repository == NULL)
 	return (NULL);
@@ -182,8 +179,7 @@ Short_Repository (repository)
  */
 
 void
-Sanitize_Repository_Name (repository)
-    char *repository;
+Sanitize_Repository_Name (char *repository)
 {
     size_t len;
 

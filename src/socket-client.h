@@ -48,7 +48,7 @@ struct buffer *socket_buffer_initialize
 #   endif
 
 #   ifndef strerror
-extern char *strerror ();
+extern char *strerror (int);
 #   endif
 # endif /* ! SOCK_STRERROR */
 

@@ -42,8 +42,7 @@ static struct unrecog *unrecog_head;
 /* Note that if noone calls fileattr_get, this is very cheap.  No stat(),
    no open(), no nothing.  */
 void
-fileattr_startdir (repos)
-    char *repos;
+fileattr_startdir (char *repos)
 {
     assert (fileattr_stored_repos == NULL);
     fileattr_stored_repos = xstrdup (repos);
@@ -53,8 +52,7 @@ fileattr_startdir (repos)
 }
 
 static void
-fileattr_delproc (node)
-    Node *node;
+fileattr_delproc (Node *node)
 {
     assert (node->data != NULL);
     free (node->data);
@@ -63,7 +61,7 @@ fileattr_delproc (node)
 
 /* Read all the attributes for the current directory into memory.  */
 static void
-fileattr_read ()
+fileattr_read (void)
 {
     char *fname;
     FILE *fp;
@@ -164,9 +162,7 @@ fileattr_read ()
 }
 
 char *
-fileattr_get (filename, attrname)
-    const char *filename;
-    const char *attrname;
+fileattr_get (const char *filename, const char *attrname)
 {
     Node *node;
     size_t attrname_len = strlen (attrname);
@@ -207,9 +203,7 @@ fileattr_get (filename, attrname)
 }
 
 char *
-fileattr_get0 (filename, attrname)
-    const char *filename;
-    const char *attrname;
+fileattr_get0 (const char *filename, const char *attrname)
 {
     char *cp;
     char *cpend;
@@ -228,12 +222,7 @@ fileattr_get0 (filename, attrname)
 }
 
 char *
-fileattr_modify (list, attrname, attrval, namevalsep, entsep)
-    char *list;
-    const char *attrname;
-    const char *attrval;
-    int namevalsep;
-    int entsep;
+fileattr_modify (char *list, const char *attrname, const char *attrval, int namevalsep, int entsep)
 {
     char *retval;
     char *rp;
@@ -325,10 +314,7 @@ fileattr_modify (list, attrname, attrval, namevalsep, entsep)
 }
 
 void
-fileattr_set (filename, attrname, attrval)
-    const char *filename;
-    const char *attrname;
-    const char *attrval;
+fileattr_set (const char *filename, const char *attrname, const char *attrval)
 {
     Node *node;
     char *p;
@@ -385,8 +371,7 @@ fileattr_set (filename, attrname, attrval)
 }
 
 char *
-fileattr_getall (filename)
-    const char *filename;
+fileattr_getall (const char *filename)
 {
     Node *node;
     char *p;
@@ -412,9 +397,7 @@ fileattr_getall (filename)
 }
 
 void
-fileattr_setall (filename, attrs)
-    const char *filename;
-    const char *attrs;
+fileattr_setall (const char *filename, const char *attrs)
 {
     Node *node;
 
@@ -465,8 +448,7 @@ fileattr_setall (filename, attrs)
 }
 
 void
-fileattr_newfile (filename)
-    const char *filename;
+fileattr_newfile (const char *filename)
 {
     Node *node;
 
@@ -494,9 +476,7 @@ fileattr_newfile (filename)
 }
 
 static int
-writeattr_proc (node, data)
-    Node *node;
-    void *data;
+writeattr_proc (Node *node, void *data)
 {
     FILE *fp = (FILE *)data;
     fputs ("F", fp);
@@ -508,7 +488,7 @@ writeattr_proc (node, data)
 }
 
 void
-fileattr_write ()
+fileattr_write (void)
 {
     FILE *fp;
     char *fname;
@@ -630,7 +610,7 @@ fileattr_write ()
 }
 
 void
-fileattr_free ()
+fileattr_free (void)
 {
     /* Note that attrs_modified will ordinarily be zero, but there are
        a few cases in which fileattr_write will fail to zero it (if

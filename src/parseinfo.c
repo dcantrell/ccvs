@@ -20,12 +20,7 @@ extern char *logHistory;
  * Return 0 for success, -1 if there was not an INFOFILE, and >0 for failure.
  */
 int
-Parse_Info( infofile, repository, callproc, opt, closure )
-    char *infofile;
-    char *repository;
-    CALLPROC callproc;
-    int opt;
-    void *closure;
+Parse_Info(char *infofile, char *repository, CALLPROC callproc, int opt, void *closure)
 {
     int err = 0;
     FILE *fp_info;
@@ -216,8 +211,7 @@ Parse_Info( infofile, repository, callproc, opt, closure )
    Returns 0 for success, negative value for failure.  Call
    error(0, ...) on errors in addition to the return value.  */
 int
-parse_config (cvsroot)
-    char *cvsroot;
+parse_config (char *cvsroot)
 {
     char *infopath;
     FILE *fp_info;

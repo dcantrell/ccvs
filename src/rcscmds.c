@@ -84,8 +84,7 @@ static void call_diff_error (const char *, const char *, const char *);
 
 /* VARARGS */
 static void 
-call_diff_setup (prog)
-    const char *prog;
+call_diff_setup (const char *prog)
 {
     char *cp;
     int i;
@@ -113,15 +112,13 @@ call_diff_setup (prog)
 }
 
 static void
-call_diff_arg (s)
-    const char *s;
+call_diff_arg (const char *s)
 {
     call_diff_add_arg (s);
 }
 
 static void
-call_diff_add_arg (s)
-    const char *s;
+call_diff_add_arg (const char *s)
 {
     /* allocate more argv entries if we've run out */
     if (call_diff_argc >= call_diff_argc_allocated)
@@ -143,9 +140,7 @@ call_diff_add_arg (s)
    file.  This is used when we are producing output to stdout.  */
 
 static void
-call_diff_write_output (text, len)
-    const char *text;
-    size_t len;
+call_diff_write_output (const char *text, size_t len)
 {
     if (len > 0)
 	cvs_output (text, len);
@@ -155,7 +150,7 @@ call_diff_write_output (text, len)
    This is used when we are producing output to stdout.  */
 
 static void
-call_diff_flush_output ()
+call_diff_flush_output (void)
 {
     cvs_flushout ();
 }
@@ -163,8 +158,7 @@ call_diff_flush_output ()
 /* Call back function for the diff library to write to stdout.  */
 
 static void
-call_diff_write_stdout (text)
-    const char *text;
+call_diff_write_stdout (const char *text)
 {
     cvs_output (text, 0);
 }
@@ -172,10 +166,7 @@ call_diff_write_stdout (text)
 /* Call back function for the diff library to write to stderr.  */
 
 static void
-call_diff_error (format, a1, a2)
-    const char *format;
-    const char *a1;
-    const char *a2;
+call_diff_error (const char *format, const char *a1, const char *a2)
 {
     /* FIXME: Should we somehow indicate that this error is coming from
        the diff library?  */
@@ -205,8 +196,7 @@ static struct diff_callbacks call_diff_file_callbacks =
 };
 
 static int
-call_diff (out)
-    char *out;
+call_diff (char *out)
 {
     if (out == RUN_TTY)
 	return diff_run( call_diff_argc, call_diff_argv, NULL,
@@ -217,8 +207,7 @@ call_diff (out)
 }
 
 static int
-call_diff3 (out)
-    char *out;
+call_diff3 (char *out)
 {
     if (out == RUN_TTY)
 	return diff3_run (call_diff_argc, call_diff_argv, NULL,
@@ -233,13 +222,7 @@ call_diff3 (out)
 /* Merge revisions REV1 and REV2. */
 
 int
-RCS_merge(rcs, path, workfile, options, rev1, rev2)
-    RCSNode *rcs;
-    char *path;
-    char *workfile;
-    char *options;
-    char *rev1;
-    char *rev2;
+RCS_merge(RCSNode *rcs, char *path, char *workfile, char *options, char *rev1, char *rev2)
 {
     char *xrev1, *xrev2;
     char *tmp1, *tmp2;
@@ -378,17 +361,7 @@ RCS_merge(rcs, path, workfile, options, rev1, rev2)
    about this--any such features are undocumented in the context of
    CVS, and I'm not sure how important to users.  */
 int
-RCS_exec_rcsdiff( rcsfile, opts, options, rev1, rev1_cache, rev2,
-                  label1, label2, workfile )
-    RCSNode *rcsfile;
-    char *opts;
-    char *options;
-    char *rev1;
-    char *rev1_cache;
-    char *rev2;
-    char *label1;
-    char *label2;
-    char *workfile;
+RCS_exec_rcsdiff(RCSNode *rcsfile, char *opts, char *options, char *rev1, char *rev1_cache, char *rev2, char *label1, char *label2, char *workfile)
 {
     char *tmpfile1 = NULL;
     char *tmpfile2 = NULL;
@@ -540,13 +513,7 @@ RCS file: ", 0);
    message on stderr.  */
 
 int
-diff_exec (file1, file2, label1, label2, options, out)
-    char *file1;
-    char *file2;
-    char *label1;
-    char *label2;
-    char *options;
-    char *out;
+diff_exec (char *file1, char *file2, char *label1, char *label2, char *options, char *out)
 {
     char *args;
 
@@ -606,11 +573,7 @@ diff_exec (file1, file2, label1, label2, options, out)
    that I have seen. */
 
 static void
-RCS_output_diff_options (opts, rev1, rev2, workfile)
-    char *opts;
-    char *rev1;
-    char *rev2;
-    char *workfile;
+RCS_output_diff_options (char *opts, char *rev1, char *rev2, char *workfile)
 {
     char *tmp;
 

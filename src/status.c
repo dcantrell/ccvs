@@ -31,9 +31,7 @@ static const char *const status_usage[] =
 };
 
 int
-cvsstatus (argc, argv)
-    int argc;
-    char **argv;
+cvsstatus (int argc, char **argv)
 {
     int c;
     int err = 0;
@@ -117,9 +115,7 @@ cvsstatus (argc, argv)
  */
 /* ARGSUSED */
 static int
-status_fileproc (callerdat, finfo)
-    void *callerdat;
-    struct file_info *finfo;
+status_fileproc (void *callerdat, struct file_info *finfo)
 {
     Ctype status;
     char *sstat;
@@ -324,12 +320,7 @@ status_fileproc (callerdat, finfo)
  */
 /* ARGSUSED */
 static Dtype
-status_dirproc (callerdat, dir, repos, update_dir, entries)
-    void *callerdat;
-    char *dir;
-    char *repos;
-    char *update_dir;
-    List *entries;
+status_dirproc (void *callerdat, char *dir, char *repos, char *update_dir, List *entries)
 {
     if (!quiet)
 	error (0, 0, "Examining %s", update_dir);
@@ -340,9 +331,7 @@ status_dirproc (callerdat, dir, repos, update_dir, entries)
  * Print out a tag and its type
  */
 static int
-tag_list_proc (p, closure)
-    Node *p;
-    void *closure;
+tag_list_proc (Node *p, void *closure)
 {
     char *branch = NULL;
     char *buf;

@@ -53,7 +53,7 @@ extern char *getenv();
 #ifdef SERVER_SUPPORT
 /* If the system doesn't provide strerror, it won't be declared in
    string.h.  */
-char *strerror ();
+char *strerror (int);
 #endif
 
 #ifdef HAVE_FNMATCH

@@ -40,7 +40,7 @@ static char *construct_cvspass_filename (void);
 
 /* The return value will need to be freed. */
 static char *
-construct_cvspass_filename ()
+construct_cvspass_filename (void)
 {
     char *homedir;
     char *passfile;
@@ -105,11 +105,7 @@ construct_cvspass_filename ()
  *	called on the same linebuf
  */
 static char *
-password_entry_parseline (cvsroot_canonical, warn, linenumber, linebuf)
-    const char *cvsroot_canonical;
-    const unsigned char warn;
-    const int linenumber;
-    char *linebuf;
+password_entry_parseline (const char *cvsroot_canonical, const const unsigned char warn, const const int linenumber, char *linebuf)
 {
     char *password = NULL;
     char *p;
@@ -281,10 +277,7 @@ typedef enum password_entry_operation_e {
 } password_entry_operation_t;
 
 static char *
-password_entry_operation (operation, root, newpassword)
-    password_entry_operation_t operation;
-    cvsroot_t *root;
-    char *newpassword;
+password_entry_operation (password_entry_operation_t operation, cvsroot_t *root, char *newpassword)
 {
     char *passfile;
     FILE *fp;
@@ -514,9 +507,7 @@ static const char *const login_usage[] =
 };
 
 int
-login (argc, argv)
-    int argc;
-    char **argv;
+login (int argc, char **argv)
 {
     char *typed_password;
     char *cvsroot_canonical;
@@ -576,7 +567,7 @@ login (argc, argv)
    before hashing and comparing.  If password file not found, or
    password not found in the file, just return NULL. */
 char *
-get_cvs_password ()
+get_cvs_password (void)
 {
     if (current_parsed_root->password)
 	return (scramble(current_parsed_root->password));
@@ -619,9 +610,7 @@ static const char *const logout_usage[] =
 
 /* Remove any entry for the CVSRoot repository found in .cvspass. */
 int
-logout (argc, argv)
-    int argc;
-    char **argv;
+logout (int argc, char **argv)
 {
     char *cvsroot_canonical;
 

@@ -84,8 +84,7 @@ shifts[] = {
 
 /* Return a xmalloc'd, scrambled version of STR. */
 char *
-scramble (str)
-    char *str;
+scramble (char *str)
 {
     int i;
     char *s;
@@ -107,8 +106,7 @@ scramble (str)
 
 /* Decode the string in place. */
 char *
-descramble (str)
-    char *str;
+descramble (char *str)
 {
     char *s;
     int i;
@@ -141,7 +139,7 @@ descramble (str)
 
 #ifdef DIAGNOSTIC
 int
-main ()
+main( int argc, char **argv )
 {
     int i;
     char *e, *m, biggie[256];

@@ -80,7 +80,7 @@ void wrap_free_entry (WrapperEntry *e);
 void wrap_free_entry_internal (WrapperEntry *e);
 void wrap_restore_saved (void);
 
-void wrap_setup()
+void wrap_setup(void)
 {
     /* FIXME-reentrancy: if we do a multithreaded server, will need to
        move this to a per-connection data structure, or better yet
@@ -156,7 +156,7 @@ void wrap_setup()
 /* Send -W arguments for the wrappers to the server.  The command must
    be one that accepts them (e.g. update, import).  */
 void
-wrap_send ()
+wrap_send (void)
 {
     int i;
 
@@ -198,9 +198,7 @@ wrap_send ()
  *
  * If first_call_p is nonzero, then start afresh.  */
 void
-wrap_unparse_rcs_options (line, first_call_p)
-    char **line;
-    int first_call_p;
+wrap_unparse_rcs_options (char **line, int first_call_p)
 {
     /* FIXME-reentrancy: we should design a reentrant interface, like
        a callback which gets handed each wrapper (a multithreaded
@@ -242,9 +240,7 @@ wrap_unparse_rcs_options (line, first_call_p)
  * argument is set.
  */
 void
-wrap_add_file (file, temp)
-    const char *file;
-    int temp;
+wrap_add_file (const char *file, int temp)
 {
     FILE *fp;
     char *line = NULL;
@@ -272,7 +268,7 @@ wrap_add_file (file, temp)
 }
 
 void
-wrap_kill()
+wrap_kill(void)
 {
     wrap_kill_temp();
     while(wrap_count)
@@ -280,7 +276,7 @@ wrap_kill()
 }
 
 void
-wrap_kill_temp()
+wrap_kill_temp(void)
 {
     WrapperEntry **temps=wrap_list+wrap_count;
 
@@ -289,16 +285,14 @@ wrap_kill_temp()
 }
 
 void
-wrap_free_entry(e)
-     WrapperEntry *e;
+wrap_free_entry(WrapperEntry *e)
 {
     wrap_free_entry_internal(e);
     free(e);
 }
 
 void
-wrap_free_entry_internal(e)
-    WrapperEntry *e;
+wrap_free_entry_internal(WrapperEntry *e)
 {
     free (e->wildCard);
     if (e->tocvsFilter)
@@ -310,7 +304,7 @@ wrap_free_entry_internal(e)
 }
 
 void
-wrap_restore_saved()
+wrap_restore_saved(void)
 {
     if(!wrap_saved_list)
 	return;
@@ -329,9 +323,7 @@ wrap_restore_saved()
 }
 
 void
-wrap_add (line, isTemp)
-   char *line;
-   int         isTemp;
+wrap_add (char *line, int isTemp)
 {
     char *temp;
     char ctemp;
@@ -443,9 +435,7 @@ wrap_add (line, isTemp)
 }
 
 void
-wrap_add_entry(e, temp)
-    WrapperEntry *e;
-    int temp;
+wrap_add_entry(WrapperEntry *e, int temp)
 {
     int x;
     if(wrap_count+wrap_tempcount>=wrap_size){
@@ -467,9 +457,7 @@ wrap_add_entry(e, temp)
 
 /* Return 1 if the given filename is a wrapper filename */
 int
-wrap_name_has (name,has)
-    const char   *name;
-    WrapMergeHas  has;
+wrap_name_has (const char *name, WrapMergeHas has)
 {
     int x,count=wrap_count+wrap_tempcount;
     char *temp;
@@ -500,8 +488,7 @@ wrap_name_has (name,has)
 static WrapperEntry *wrap_matching_entry (const char *);
 
 static WrapperEntry *
-wrap_matching_entry (name)
-    const char *name;
+wrap_matching_entry (const char *name)
 {
     int x,count=wrap_count+wrap_tempcount;
 
@@ -515,9 +502,7 @@ wrap_matching_entry (name)
    ASFLAG, then include "-k" at the beginning (e.g. "-kb"), otherwise
    just give the option itself (e.g. "b").  */
 char *
-wrap_rcsoption (filename, asflag)
-    const char *filename;
-    int asflag;
+wrap_rcsoption (const char *filename, int asflag)
 {
     WrapperEntry *e = wrap_matching_entry (filename);
     char *buf;
@@ -539,8 +524,7 @@ wrap_rcsoption (filename, asflag)
 }
 
 char *
-wrap_tocvs_process_file(fileName)
-    const char *fileName;
+wrap_tocvs_process_file(const char *fileName)
 {
     WrapperEntry *e=wrap_matching_entry(fileName);
     static char *buf = NULL;
@@ -568,8 +552,7 @@ wrap_tocvs_process_file(fileName)
 }
 
 int
-wrap_merge_is_copy (fileName)
-    const char *fileName;
+wrap_merge_is_copy (const char *fileName)
 {
     WrapperEntry *e=wrap_matching_entry(fileName);
     if(e==NULL || e->mergeMethod==WRAP_MERGE)
@@ -579,8 +562,7 @@ wrap_merge_is_copy (fileName)
 }
 
 void
-wrap_fromcvs_process_file(fileName)
-    const char *fileName;
+wrap_fromcvs_process_file(const char *fileName)
 {
     char *args;
     WrapperEntry *e=wrap_matching_entry(fileName);

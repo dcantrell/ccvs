@@ -114,10 +114,7 @@ struct admin_data
    happen depends on whether the option was specified as optional to
    getopt).  */
 static void
-arg_add (dat, opt, arg)
-    struct admin_data *dat;
-    int opt;
-    char *arg;
+arg_add (struct admin_data *dat, int opt, char *arg)
 {
     char *newelt = xmalloc ((arg == NULL ? 0 : strlen (arg)) + 3);
     strcpy (newelt, "-");
@@ -142,14 +139,12 @@ arg_add (dat, opt, arg)
 }
 
 int
-admin (argc, argv)
-    int argc;
-    char **argv;
+admin (int argc, char **argv)
 {
     int err;
 #ifdef CVS_ADMIN_GROUP
     struct group *grp;
-    struct group *getgrnam();
+    struct group *getgrnam(const char *);
 #endif
     struct admin_data admin_data;
     int c;
@@ -550,9 +545,7 @@ admin (argc, argv)
  */
 /* ARGSUSED */
 static int
-admin_fileproc (callerdat, finfo)
-    void *callerdat;
-    struct file_info *finfo;
+admin_fileproc (void *callerdat, struct file_info *finfo)
 {
     struct admin_data *admin_data = (struct admin_data *) callerdat;
     Vers_TS *vers;
@@ -919,12 +912,7 @@ admin_fileproc (callerdat, finfo)
  */
 /* ARGSUSED */
 static Dtype
-admin_dirproc (callerdat, dir, repos, update_dir, entries)
-    void *callerdat;
-    char *dir;
-    char *repos;
-    char *update_dir;
-    List *entries;
+admin_dirproc (void *callerdat, char *dir, char *repos, char *update_dir, List *entries)
 {
     if (!quiet)
 	error (0, 0, "Administrating %s", update_dir);

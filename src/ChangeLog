@@ -1,5 +1,10 @@
 2003-07-22  Derek Price  <derek@ximbiot.com>
 
+	(*.c): Runn these through GCC's protoize to convert the pre-ANSI C
+	function decls to C89 compliance.
+
+2003-07-22  Derek Price  <derek@ximbiot.com>
+
 	* cvs.h: Remove support for the PTR macro, since we can assume void *
 	under C89.  It also was not being made use of in very many places so
 	even most K&R compilers must have supported it, or nobody was using

@@ -236,9 +236,7 @@ static struct option const longopts[] =
    a larger issue than the changes included here.  */
 
 int
-diff (argc, argv)
-    int argc;
-    char **argv;
+diff (int argc, char **argv)
 {
     char tmp[50];
     int c, err = 0;
@@ -444,9 +442,7 @@ diff (argc, argv)
  */
 /* ARGSUSED */
 static int
-diff_fileproc (callerdat, finfo)
-    void *callerdat;
-    struct file_info *finfo;
+diff_fileproc (void *callerdat, struct file_info *finfo)
 {
     int status, err = 2;		/* 2 == trouble, like rcsdiff */
     Vers_TS *vers;
@@ -743,8 +739,7 @@ out:
  * Remember the exit status for each file.
  */
 static void
-diff_mark_errors (err)
-    int err;
+diff_mark_errors (int err)
 {
     if (err > diff_errors)
 	diff_errors = err;
@@ -757,12 +752,7 @@ diff_mark_errors (err)
  */
 /* ARGSUSED */
 static Dtype
-diff_dirproc (callerdat, dir, pos_repos, update_dir, entries)
-    void *callerdat;
-    char *dir;
-    char *pos_repos;
-    char *update_dir;
-    List *entries;
+diff_dirproc (void *callerdat, char *dir, char *pos_repos, char *update_dir, List *entries)
 {
     /* XXX - check for dirs we don't want to process??? */
 
@@ -780,12 +770,7 @@ diff_dirproc (callerdat, dir, pos_repos, update_dir, entries)
  */
 /* ARGSUSED */
 static int
-diff_filesdoneproc (callerdat, err, repos, update_dir, entries)
-    void *callerdat;
-    int err;
-    char *repos;
-    char *update_dir;
-    List *entries;
+diff_filesdoneproc (void *callerdat, int err, char *repos, char *update_dir, List *entries)
 {
     return (diff_errors);
 }
@@ -795,12 +780,7 @@ diff_filesdoneproc (callerdat, err, repos, update_dir, entries)
  */
 /* ARGSUSED */
 static int
-diff_dirleaveproc (callerdat, dir, err, update_dir, entries)
-    void *callerdat;
-    char *dir;
-    int err;
-    char *update_dir;
-    List *entries;
+diff_dirleaveproc (void *callerdat, char *dir, int err, char *update_dir, List *entries)
 {
     return (diff_errors);
 }
@@ -809,11 +789,11 @@ diff_dirleaveproc (callerdat, dir, err, update_dir, entries)
  * verify that a file is different
  */
 static enum diff_file
-diff_file_nodiff( finfo, vers, empty_file, rev1_cache )
-    struct file_info *finfo;
-    Vers_TS *vers;
-    enum diff_file empty_file;
-    char **rev1_cache;		/* Cache the content of rev1 if we have to look
+diff_file_nodiff(struct file_info *finfo, Vers_TS *vers, enum diff_file empty_file, char **rev1_cache)
+                            
+                  
+                              
+                      		/* Cache the content of rev1 if we have to look
 				 * it up.
 				 */
 {

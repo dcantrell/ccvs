@@ -42,9 +42,7 @@ static const char *const remove_usage[] =
 };
 
 int
-cvsremove (argc, argv)
-    int argc;
-    char **argv;
+cvsremove (int argc, char **argv)
 {
     int c, err;
 
@@ -141,9 +139,7 @@ cvsremove (argc, argv)
 
 /*ARGSUSED*/
 static int
-remove_force_fileproc (callerdat, finfo)
-     void *callerdat;
-     struct file_info *finfo;
+remove_force_fileproc (void *callerdat, struct file_info *finfo)
 {
     if (CVS_UNLINK (finfo->file) < 0 && ! existence_error (errno))
 	error (0, errno, "unable to remove %s", finfo->fullname);
@@ -157,9 +153,7 @@ remove_force_fileproc (callerdat, finfo)
  */
 /* ARGSUSED */
 static int
-remove_fileproc (callerdat, finfo)
-    void *callerdat;
-    struct file_info *finfo;
+remove_fileproc (void *callerdat, struct file_info *finfo)
 {
     Vers_TS *vers;
 
@@ -276,12 +270,7 @@ cannot remove file `%s' which has a sticky date of `%s'",
  */
 /* ARGSUSED */
 static Dtype
-remove_dirproc (callerdat, dir, repos, update_dir, entries)
-    void *callerdat;
-    char *dir;
-    char *repos;
-    char *update_dir;
-    List *entries;
+remove_dirproc (void *callerdat, char *dir, char *repos, char *update_dir, List *entries)
 {
     if (!quiet)
 	error (0, 0, "Removing %s", update_dir);

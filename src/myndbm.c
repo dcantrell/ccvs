@@ -28,10 +28,7 @@ static void mydbm_load_file (FILE *, List *, char *);
    the error.  Can also call error() itself.  */
 /* ARGSUSED */
 DBM *
-mydbm_open (file, flags, mode)
-    char *file;
-    int flags;
-    int mode;
+mydbm_open (char *file, int flags, int mode)
 {
     FILE *fp;
     DBM *db;
@@ -58,9 +55,7 @@ mydbm_open (file, flags, mode)
 static int write_item (Node *, void *);
 
 static int
-write_item (node, data)
-    Node *node;
-    void *data;
+write_item (Node *node, void *data)
 {
     FILE *fp = (FILE *)data;
     fputs (node->key, fp);
@@ -71,8 +66,7 @@ write_item (node, data)
 }
 
 void
-mydbm_close (db)
-    DBM *db;
+mydbm_close (DBM *db)
 {
     if (db->modified)
     {
@@ -90,9 +84,7 @@ mydbm_close (db)
 }
 
 datum
-mydbm_fetch (db, key)
-    DBM *db;
-    datum key;
+mydbm_fetch (DBM *db, datum key)
 {
     Node *p;
     char *s;
@@ -119,8 +111,7 @@ mydbm_fetch (db, key)
 }
 
 datum
-mydbm_firstkey (db)
-    DBM *db;
+mydbm_firstkey (DBM *db)
 {
     Node *head, *p;
     datum key;
@@ -142,8 +133,7 @@ mydbm_firstkey (db)
 }
 
 datum
-mydbm_nextkey (db)
-    DBM *db;
+mydbm_nextkey (DBM *db)
 {
     Node *head, *p;
     datum key;
@@ -169,11 +159,7 @@ mydbm_nextkey (db)
    it gives a warning, rather than either DBM_INSERT or DBM_REPLACE
    behavior.  */
 int
-mydbm_store (db, key, value, flags)
-    DBM *db;
-    datum key;
-    datum value;
-    int flags;
+mydbm_store (DBM *db, datum key, datum value, int flags)
 {
     Node *node;
 
@@ -199,10 +185,10 @@ mydbm_store (db, key, value, flags)
 }
 
 static void
-mydbm_load_file (fp, list, filename)
-    FILE *fp;
-    List *list;
-    char *filename;	/* Used in error messages. */
+mydbm_load_file (FILE *fp, List *list, char *filename)
+             
+               
+                   	/* Used in error messages. */
 {
     char *line = NULL;
     size_t line_size;

@@ -18,7 +18,7 @@
 #ifdef HAVE_WINSOCK_H
 #include <winsock.h>
 #else
-extern int gethostname ();
+extern int gethostname (char *, size_t);
 #endif
 
 char *program_name;
@@ -271,9 +271,7 @@ static const char *const opt_usage[] =
 
 
 static int
-set_root_directory (p, ignored)
-    Node *p;
-    void *ignored;
+set_root_directory (Node *p, void *ignored)
 {
     if (current_root == NULL && p->data == NULL)
     {
@@ -285,7 +283,7 @@ set_root_directory (p, ignored)
 
 
 static const char * const*
-cmd_synonyms ()
+cmd_synonyms (void)
 {
     char ** synonyms;
     char ** line;
@@ -324,8 +322,7 @@ cmd_synonyms ()
 
 
 unsigned long int
-lookup_command_attribute (cmd_name)
-     char *cmd_name;
+lookup_command_attribute (char *cmd_name)
 {
     const struct cmd *cm;
 
@@ -341,8 +338,7 @@ lookup_command_attribute (cmd_name)
 
 
 static RETSIGTYPE
-main_cleanup (sig)
-    int sig;
+main_cleanup (int sig)
 {
 #ifndef DONT_USE_SIGNALS
     const char *name;
@@ -393,9 +389,7 @@ main_cleanup (sig)
 }
 
 int
-main (argc, argv)
-    int argc;
-    char **argv;
+main (int argc, char **argv)
 {
     char *CVSroot = CVSROOT_DFLT;
     char *cp, *end;
@@ -1073,8 +1067,7 @@ cause intermittent sandbox corruption.");
 }
 
 char *
-Make_Date (rawdate)
-    char *rawdate;
+Make_Date (char *rawdate)
 {
     time_t unixtime;
 
@@ -1094,8 +1087,7 @@ Make_Date (rawdate)
    Returns a newly malloc'd string.  */
 
 char *
-date_from_time_t (unixtime)
-    time_t unixtime;
+date_from_time_t (time_t unixtime)
 {
     struct tm *ftm;
     char date[MAXDATELEN];
@@ -1125,9 +1117,7 @@ date_from_time_t (unixtime)
    The SOURCE date is in our internal RCS format.  DEST should point to
    storage managed by the caller, at least MAXDATELEN characters.  */
 void
-date_to_internet (dest, source)
-    char *dest;
-    const char *source;
+date_to_internet (char *dest, const char *source)
 {
     struct tm date;
 
@@ -1136,9 +1126,7 @@ date_to_internet (dest, source)
 }
 
 void
-date_to_tm (dest, source)
-    struct tm *dest;
-    const char *source;
+date_to_tm (struct tm *dest, const char *source)
 {
     if (sscanf (source, SDATEFORM,
 		&dest->tm_year, &dest->tm_mon, &dest->tm_mday,
@@ -1163,9 +1151,7 @@ date_to_tm (dest, source)
    The SOURCE date is a pointer to a struct tm.  DEST should point to
    storage managed by the caller, at least MAXDATELEN characters.  */
 void
-tm_to_internet (dest, source)
-    char *dest;
-    const struct tm *source;
+tm_to_internet (char *dest, const struct tm *source)
 {
     /* Just to reiterate, these strings are from RFC822 and do not vary
        according to locale.  */
@@ -1179,8 +1165,7 @@ tm_to_internet (dest, source)
 }
 
 void
-usage (cpp)
-    register const char *const *cpp;
+usage (register const char *const *cpp)
 {
     (void) fprintf (stderr, *cpp++, program_name, command_name);
     for (; *cpp; cpp++)

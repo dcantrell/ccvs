@@ -163,10 +163,7 @@ static int fd_buffer_shutdown (struct buffer *);
    occurs.  */
 
 static struct buffer *
-fd_buffer_initialize (fd, input, memory)
-     int fd;
-     int input;
-     void (*memory) (struct buffer *);
+fd_buffer_initialize (int fd, int input, void (*memory) (struct buffer *))
 {
     struct fd_buffer *n;
 
@@ -185,12 +182,7 @@ fd_buffer_initialize (fd, input, memory)
 /* The buffer input function for a buffer built on a file descriptor.  */
 
 static int
-fd_buffer_input (closure, data, need, size, got)
-     void *closure;
-     char *data;
-     int need;
-     int size;
-     int *got;
+fd_buffer_input (void *closure, char *data, int need, int size, int *got)
 {
     struct fd_buffer *fd = (struct fd_buffer *) closure;
     int nbytes;
@@ -234,11 +226,7 @@ fd_buffer_input (closure, data, need, size, got)
 /* The buffer output function for a buffer built on a file descriptor.  */
 
 static int
-fd_buffer_output (closure, data, have, wrote)
-     void *closure;
-     const char *data;
-     int have;
-     int *wrote;
+fd_buffer_output (void *closure, const char *data, int have, int *wrote)
 {
     struct fd_buffer *fd = (struct fd_buffer *) closure;
 
@@ -280,8 +268,7 @@ fd_buffer_output (closure, data, have, wrote)
 
 /*ARGSUSED*/
 static int
-fd_buffer_flush (closure)
-     void *closure;
+fd_buffer_flush (void *closure)
 {
     /* Nothing to do.  File descriptors are always flushed.  */
     return 0;
@@ -290,9 +277,7 @@ fd_buffer_flush (closure)
 /* The buffer block function for a buffer built on a file descriptor.  */
 
 static int
-fd_buffer_block (closure, block)
-     void *closure;
-     int block;
+fd_buffer_block (void *closure, int block)
 {
     struct fd_buffer *fd = (struct fd_buffer *) closure;
     int flags;
@@ -317,8 +302,7 @@ fd_buffer_block (closure, block)
 /* The buffer shutdown function for a buffer built on a file descriptor.  */
 
 static int
-fd_buffer_shutdown (buf)
-     struct buffer *buf;
+fd_buffer_shutdown (struct buffer *buf)
 {
     free (buf->closure);
     return 0;
@@ -330,9 +314,7 @@ fd_buffer_shutdown (buf)
 static int create_adm_p (char *, char *);
 
 static int
-create_adm_p (base_dir, dir)
-    char *base_dir;
-    char *dir;
+create_adm_p (char *base_dir, char *dir)
 {
     char *dir_where_cvsadm_lives, *dir_to_register, *p, *tmp;
     int retval, done;
@@ -506,8 +488,7 @@ create_adm_p (base_dir, dir)
 static int mkdir_p (char *);
 
 static int
-mkdir_p (dir)
-     char *dir;
+mkdir_p (char *dir)
 {
     char *p;
     char *q = xmalloc (strlen (dir) + 1);
@@ -564,8 +545,7 @@ mkdir_p (dir)
  * Must be called only in contexts where it is OK to send output.
  */
 static void
-print_error (status)
-    int status;
+print_error (int status)
 {
     char *msg;
     char tmpstr[80];
@@ -593,7 +573,7 @@ static char *pending_error_text;
 /* If an error is pending, print it and return 1.  If not, return 0.
    Must be called only in contexts where it is OK to send output.  */
 static int
-print_pending_error ()
+print_pending_error (void)
 {
     if (pending_error_text)
     {
@@ -629,8 +609,7 @@ static int alloc_pending (size_t size);
 /* Allocate SIZE bytes for pending_error_text and return nonzero
    if we could do it.  */
 static int
-alloc_pending (size)
-    size_t size;
+alloc_pending (size_t size)
 {
     if (error_pending ())
 	/* Probably alloc_pending callers will have already checked for
@@ -651,8 +630,7 @@ static void serve_is_modified (char *);
 static int supported_response (char *);
 
 static int
-supported_response (name)
-     char *name;
+supported_response (char *name)
 {
     struct response *rs;
 
@@ -665,8 +643,7 @@ supported_response (name)
 }
 
 static void
-serve_valid_responses (arg)
-     char *arg;
+serve_valid_responses (char *arg)
 {
     char *p = arg;
     char *q;
@@ -711,8 +688,7 @@ serve_valid_responses (arg)
 }
 
 static void
-serve_root (arg)
-    char *arg;
+serve_root (char *arg)
 {
     char *env;
     char *path;
@@ -801,8 +777,7 @@ static int max_dotdot_limit = 0;
 /* Is this pathname OK to recurse into when we are running as the server?
    If not, call error() with a fatal error.  */
 void
-server_pathname_check (path)
-    char *path;
+server_pathname_check (char *path)
 {
     /* An absolute pathname is almost surely a path on the *client* machine,
        and is unlikely to do us any good here.  It also is probably capable
@@ -838,8 +813,7 @@ static int outside_root (char *);
    current_parsed_root->directory?  If yes, return 0.  If no, set pending_error
    and return 1.  */
 static int
-outside_root (repos)
-    char *repos;
+outside_root (char *repos)
 {
     size_t repos_len = strlen (repos);
     size_t root_len = strlen (current_parsed_root->directory);
@@ -883,8 +857,7 @@ static int outside_dir (char *);
    it contain '/')?  If no, return 0.  If yes, set pending_error
    and return 1.  */
 static int
-outside_dir (file)
-    char *file;
+outside_dir (char *file)
 {
     if (strchr (file, '/') != NULL)
     {
@@ -904,8 +877,7 @@ E protocol error: directory '%s' not within current directory",
  * directory via "..".
  */
 static void
-serve_max_dotdot (arg)
-    char *arg;
+serve_max_dotdot (char *arg)
 {
     int lim = atoi (arg);
     int i;
@@ -931,9 +903,7 @@ serve_max_dotdot (arg)
 static char *dir_name;
 
 static void
-dirswitch (dir, repos)
-    char *dir;
-    char *repos;
+dirswitch (char *dir, char *repos)
 {
     int status;
     FILE *f;
@@ -1124,8 +1094,7 @@ dirswitch (dir, repos)
 }
 
 static void
-serve_repository (arg)
-    char *arg;
+serve_repository (char *arg)
 {
     if (alloc_pending (80))
 	strcpy (pending_error_text,
@@ -1134,8 +1103,7 @@ serve_repository (arg)
 }
 
 static void
-serve_directory (arg)
-    char *arg;
+serve_directory (char *arg)
 {
     int status;
     char *repos;
@@ -1173,8 +1141,7 @@ serve_directory (arg)
 }
 
 static void
-serve_static_directory (arg)
-    char *arg;
+serve_static_directory (char *arg)
 {
     FILE *f;
 
@@ -1200,8 +1167,7 @@ serve_static_directory (arg)
 }
 
 static void
-serve_sticky (arg)
-    char *arg;
+serve_sticky (char *arg)
 {
     FILE *f;
 
@@ -1244,9 +1210,7 @@ serve_sticky (arg)
  * enough.  Or something.
  */
 static void
-receive_partial_file (size, file)
-     int size;
-     int file;
+receive_partial_file (int size, int file)
 {
     while (size > 0)
     {
@@ -1315,10 +1279,7 @@ receive_partial_file (size, file)
 
 /* Receive SIZE bytes, write to filename FILE.  */
 static void
-receive_file (size, file, gzipped)
-     int size;
-     char *file;
-     int gzipped;
+receive_file (int size, char *file, int gzipped)
 {
     int fd;
     char *arg = file;
@@ -1441,8 +1402,7 @@ static time_t checkin_time;
 static void serve_modified (char *);
 
 static void
-serve_modified (arg)
-     char *arg;
+serve_modified (char *arg)
 {
     int size, status;
     char *size_text;
@@ -1594,8 +1554,7 @@ serve_modified (arg)
 
 
 static void
-serve_enable_unchanged (arg)
-     char *arg;
+serve_enable_unchanged (char *arg)
 {
 }
 
@@ -1609,8 +1568,7 @@ static struct an_entry *entries;
 static void serve_unchanged (char *);
 
 static void
-serve_unchanged (arg)
-    char *arg;
+serve_unchanged (char *arg)
 {
     struct an_entry *p;
     char *name;
@@ -1650,8 +1608,7 @@ serve_unchanged (arg)
 }
 
 static void
-serve_is_modified (arg)
-    char *arg;
+serve_is_modified (char *arg)
 {
     struct an_entry *p;
     char *name;
@@ -1737,8 +1694,7 @@ serve_is_modified (arg)
 static void serve_entry (char *);
 
 static void
-serve_entry (arg)
-     char *arg;
+serve_entry (char *arg)
 {
     struct an_entry *p;
     char *cp;
@@ -1765,8 +1721,7 @@ serve_entry (arg)
 static void serve_kopt (char *);
 
 static void
-serve_kopt (arg)
-     char *arg;
+serve_kopt (char *arg)
 {
     if (error_pending ())
 	return;
@@ -1804,8 +1759,7 @@ serve_kopt (arg)
 static void serve_checkin_time (char *);
 
 static void
-serve_checkin_time (arg)
-     char *arg;
+serve_checkin_time (char *arg)
 {
     if (error_pending ())
 	return;
@@ -1830,7 +1784,7 @@ serve_checkin_time (arg)
 }
 
 static void
-server_write_entries ()
+server_write_entries (void)
 {
     FILE *f;
     struct an_entry *p;
@@ -1910,8 +1864,7 @@ static struct notify_note *last_node;
 static void serve_notify (char *);
 
 static void
-serve_notify (arg)
-    char *arg;
+serve_notify (char *arg)
 {
     struct notify_note *new = NULL;
     char *data = NULL;
@@ -2036,7 +1989,7 @@ serve_notify (arg)
    if successful, if not prints error message (via error()) and
    returns negative value.  */
 static int
-server_notify ()
+server_notify (void)
 {
     struct notify_note *p;
     char *repos;
@@ -2100,8 +2053,7 @@ static char **argument_vector;
 static int argument_vector_size;
 
 static void
-serve_argument (arg)
-     char *arg;
+serve_argument (char *arg)
 {
     char *p;
 
@@ -2130,8 +2082,7 @@ serve_argument (arg)
 }
 
 static void
-serve_argumentx (arg)
-     char *arg;
+serve_argumentx (char *arg)
 {
     char *p;
 
@@ -2150,8 +2101,7 @@ serve_argumentx (arg)
 }
 
 static void
-serve_global_option (arg)
-    char *arg;
+serve_global_option (char *arg)
 {
     if (arg[0] != '-' || arg[1] == '\0' || arg[2] != '\0')
     {
@@ -2186,8 +2136,7 @@ serve_global_option (arg)
 }
 
 static void
-serve_set (arg)
-    char *arg;
+serve_set (char *arg)
 {
     /* FIXME: This sends errors immediately (I think); they should be
        put into pending_error.  */
@@ -2199,8 +2148,7 @@ serve_set (arg)
 #ifdef HAVE_KERBEROS
 
 static void
-serve_kerberos_encrypt (arg)
-     char *arg;
+serve_kerberos_encrypt( char *arg )
 {
     /* All future communication with the client will be encrypted.  */
 
@@ -2217,8 +2165,7 @@ serve_kerberos_encrypt (arg)
 #ifdef HAVE_GSSAPI
 
 static void
-serve_gssapi_encrypt (arg)
-     char *arg;
+serve_gssapi_encrypt( char *arg )
 {
     if (cvs_gssapi_wrapping)
     {
@@ -2253,8 +2200,7 @@ serve_gssapi_encrypt (arg)
 #ifdef HAVE_GSSAPI
 
 static void
-serve_gssapi_authenticate (arg)
-     char *arg;
+serve_gssapi_authenticate (char *arg)
 {
     if (cvs_gssapi_wrapping)
     {
@@ -2294,8 +2240,7 @@ static int set_nonblock_fd (int);
  */
 
 static int
-set_nonblock_fd (fd)
-     int fd;
+set_nonblock_fd (int fd)
 {
     int flags;
 
@@ -2312,8 +2257,7 @@ set_nonblock_fd (fd)
 static void serve_questionable (char *);
 
 static void
-serve_questionable (arg)
-    char *arg;
+serve_questionable (char *arg)
 {
     static int initted;
 
@@ -2353,8 +2297,7 @@ serve_questionable (arg)
 static void serve_case (char *);
 
 static void
-serve_case (arg)
-    char *arg;
+serve_case (char *arg)
 {
     ign_case = 1;
 }
@@ -2369,8 +2312,7 @@ static struct buffer *saved_output;
 static struct buffer *saved_outerr;
 
 static void
-protocol_memory_error (buf)
-    struct buffer *buf;
+protocol_memory_error (struct buffer *buf)
 {
     error (1, ENOMEM, "Virtual memory exhausted");
 }
@@ -2382,8 +2324,7 @@ protocol_memory_error (buf)
 static pid_t command_pid;
 
 static void
-outbuf_memory_error (buf)
-    struct buffer *buf;
+outbuf_memory_error (struct buffer *buf)
 {
     static const char msg[] = "E Fatal server error\n\
 error ENOMEM Virtual memory exhausted.\n";
@@ -2405,8 +2346,7 @@ error ENOMEM Virtual memory exhausted.\n";
 }
 
 static void
-input_memory_error (buf)
-     struct buffer *buf;
+input_memory_error (struct buffer *buf)
 {
     outbuf_memory_error (buf);
 }
@@ -2418,8 +2358,7 @@ input_memory_error (buf)
  * Else just return 0 to indicate that command is invalid.
  */
 static int
-check_command_valid_p (cmd_name)
-    char *cmd_name;
+check_command_valid_p (char *cmd_name)
 {
     /* Right now, only pserver notices invalid commands -- namely,
      * write attempts by a read-only user.  Therefore, if CVS_Username
@@ -2596,9 +2535,7 @@ static int flowcontrol_pipe[2];
 #endif /* SERVER_FLOWCONTROL */
 
 static void
-do_cvs_command (cmd_name, command)
-    char *cmd_name;
-    int (*command) (int argc, char **argv);
+do_cvs_command (char *cmd_name, int (*command) (int, char **))
 {
     /*
      * The following file descriptors are set to -1 if that file is not
@@ -3261,7 +3198,7 @@ E CVS locks may need cleaning up.\n");
  * the server child to block.. ie: when it has no locks active.
  */
 void
-server_pause_check()
+server_pause_check(void)
 {
     int paused = 0;
     char buf[1];
@@ -3329,9 +3266,7 @@ char *server_dir = NULL;
 static void output_dir (char *, char *);
 
 static void
-output_dir (update_dir, repository)
-    char *update_dir;
-    char *repository;
+output_dir (char *update_dir, char *repository)
 {
     if (server_dir != NULL)
     {
@@ -3366,14 +3301,7 @@ static char *scratched_file;
 static int kill_scratched_file;
 
 void
-server_register (name, version, timestamp, options, tag, date, conflict)
-    char *name;
-    char *version;
-    char *timestamp;
-    char *options;
-    char *tag;
-    char *date;
-    char *conflict;
+server_register (char *name, char *version, char *timestamp, char *options, char *tag, char *date, char *conflict)
 {
     int len;
 
@@ -3435,8 +3363,7 @@ server_register (name, version, timestamp, options, tag, date, conflict)
 }
 
 void
-server_scratch (fname)
-    char *fname;
+server_scratch (char *fname)
 {
     /*
      * I have reports of Scratch_Entry and Register both happening, in
@@ -3467,14 +3394,14 @@ server_scratch (fname)
 }
 
 void
-server_scratch_entry_only ()
+server_scratch_entry_only (void)
 {
     kill_scratched_file = 0;
 }
 
 /* Print a new entries line, from a previous server_register.  */
 static void
-new_entries_line ()
+new_entries_line (void)
 {
     if (entries_line)
     {
@@ -3491,17 +3418,13 @@ new_entries_line ()
 
 
 static void
-serve_ci (arg)
-    char *arg;
+serve_ci (char *arg)
 {
     do_cvs_command ("commit", commit);
 }
 
 static void
-checked_in_response (file, update_dir, repository)
-    char *file;
-    char *update_dir;
-    char *repository;
+checked_in_response (char *file, char *update_dir, char *repository)
 {
     if (supported_response ("Mode"))
     {
@@ -3533,10 +3456,7 @@ checked_in_response (file, update_dir, repository)
 }
 
 void
-server_checked_in (file, update_dir, repository)
-    char *file;
-    char *update_dir;
-    char *repository;
+server_checked_in (char *file, char *update_dir, char *repository)
 {
     if (noexec)
 	return;
@@ -3561,11 +3481,7 @@ server_checked_in (file, update_dir, repository)
 }
 
 void
-server_update_entries (file, update_dir, repository, updated)
-    char *file;
-    char *update_dir;
-    char *repository;
-    enum server_updated_arg4 updated;
+server_update_entries (char *file, char *update_dir, char *repository, enum server_updated_arg4 updated)
 {
     if (noexec)
 	return;
@@ -3586,29 +3502,25 @@ server_update_entries (file, update_dir, repository, updated)
 }
 
 static void
-serve_update (arg)
-    char *arg;
+serve_update (char *arg)
 {
     do_cvs_command ("update", update);
 }
 
 static void
-serve_diff (arg)
-    char *arg;
+serve_diff (char *arg)
 {
     do_cvs_command ("diff", diff);
 }
 
 static void
-serve_log (arg)
-    char *arg;
+serve_log (char *arg)
 {
     do_cvs_command ("log", cvslog);
 }
 
 static void
-serve_rlog (arg)
-    char *arg;
+serve_rlog (char *arg)
 {
     /* Tell cvslog() to behave like rlog not log.  */
     command_name = "rlog";
@@ -3616,43 +3528,37 @@ serve_rlog (arg)
 }
 
 static void
-serve_add (arg)
-    char *arg;
+serve_add (char *arg)
 {
     do_cvs_command ("add", add);
 }
 
 static void
-serve_remove (arg)
-    char *arg;
+serve_remove (char *arg)
 {
     do_cvs_command ("remove", cvsremove);
 }
 
 static void
-serve_status (arg)
-    char *arg;
+serve_status (char *arg)
 {
     do_cvs_command ("status", cvsstatus);
 }
 
 static void
-serve_rdiff (arg)
-    char *arg;
+serve_rdiff (char *arg)
 {
     do_cvs_command ("rdiff", patch);
 }
 
 static void
-serve_tag (arg)
-    char *arg;
+serve_tag (char *arg)
 {
     do_cvs_command ("tag", cvstag);
 }
 
 static void
-serve_rtag (arg)
-    char *arg;
+serve_rtag (char *arg)
 {
     /* Tell cvstag() to behave like rtag not tag.  */
     command_name = "rtag";
@@ -3660,29 +3566,25 @@ serve_rtag (arg)
 }
 
 static void
-serve_import (arg)
-    char *arg;
+serve_import (char *arg)
 {
     do_cvs_command ("import", import);
 }
 
 static void
-serve_admin (arg)
-    char *arg;
+serve_admin (char *arg)
 {
     do_cvs_command ("admin", admin);
 }
 
 static void
-serve_history (arg)
-    char *arg;
+serve_history (char *arg)
 {
     do_cvs_command ("history", history);
 }
 
 static void
-serve_release (arg)
-    char *arg;
+serve_release (char *arg)
 {
     do_cvs_command ("release", release);
 }
@@ -3690,8 +3592,7 @@ serve_release (arg)
 static void serve_watch_on (char *);
 
 static void
-serve_watch_on (arg)
-    char *arg;
+serve_watch_on (char *arg)
 {
     do_cvs_command ("watch", watch_on);
 }
@@ -3699,8 +3600,7 @@ serve_watch_on (arg)
 static void serve_watch_off (char *);
 
 static void
-serve_watch_off (arg)
-    char *arg;
+serve_watch_off (char *arg)
 {
     do_cvs_command ("watch", watch_off);
 }
@@ -3708,8 +3608,7 @@ serve_watch_off (arg)
 static void serve_watch_add (char *);
 
 static void
-serve_watch_add (arg)
-    char *arg;
+serve_watch_add (char *arg)
 {
     do_cvs_command ("watch", watch_add);
 }
@@ -3717,8 +3616,7 @@ serve_watch_add (arg)
 static void serve_watch_remove (char *);
 
 static void
-serve_watch_remove (arg)
-    char *arg;
+serve_watch_remove (char *arg)
 {
     do_cvs_command ("watch", watch_remove);
 }
@@ -3726,8 +3624,7 @@ serve_watch_remove (arg)
 static void serve_watchers (char *);
 
 static void
-serve_watchers (arg)
-    char *arg;
+serve_watchers (char *arg)
 {
     do_cvs_command ("watchers", watchers);
 }
@@ -3735,8 +3632,7 @@ serve_watchers (arg)
 static void serve_editors (char *);
 
 static void
-serve_editors (arg)
-    char *arg;
+serve_editors (char *arg)
 {
     do_cvs_command ("editors", editors);
 }
@@ -3744,8 +3640,7 @@ serve_editors (arg)
 static void serve_noop (char *);
 
 static void
-serve_noop (arg)
-    char *arg;
+serve_noop (char *arg)
 {
 
     server_write_entries ();
@@ -3760,8 +3655,7 @@ serve_noop (arg)
 static void serve_version (char *);
 
 static void
-serve_version (arg)
-    char *arg;
+serve_version (char *arg)
 {
     do_cvs_command ("version", version);
 }
@@ -3769,8 +3663,7 @@ serve_version (arg)
 static void serve_init (char *);
 
 static void
-serve_init (arg)
-    char *arg;
+serve_init (char *arg)
 {
     cvsroot_t *saved_parsed_root;
 
@@ -3809,8 +3702,7 @@ E Protocol error: init says \"%s\" but pserver says \"%s\"",
 static void serve_annotate (char *);
 
 static void
-serve_annotate (arg)
-    char *arg;
+serve_annotate (char *arg)
 {
     do_cvs_command ("annotate", annotate);
 }
@@ -3818,8 +3710,7 @@ serve_annotate (arg)
 static void serve_rannotate (char *);
 
 static void
-serve_rannotate (arg)
-    char *arg;
+serve_rannotate (char *arg)
 {
     /* Tell annotate() to behave like rannotate not annotate.  */
     command_name = "rannotate";
@@ -3827,8 +3718,7 @@ serve_rannotate (arg)
 }
 
 static void
-serve_co (arg)
-    char *arg;
+serve_co (char *arg)
 {
     char *tempdir;
     int status;
@@ -3884,8 +3774,7 @@ serve_co (arg)
 }
 
 static void
-serve_export (arg)
-    char *arg;
+serve_export (char *arg)
 {
     /* Tell checkout() to behave like export not checkout.  */
     command_name = "export";
@@ -3893,11 +3782,7 @@ serve_export (arg)
 }
 
 void
-server_copy_file (file, update_dir, repository, newfile)
-    char *file;
-    char *update_dir;
-    char *repository;
-    char *newfile;
+server_copy_file (char *file, char *update_dir, char *repository, char *newfile)
 {
     /* At least for now, our practice is to have the server enforce
        noexec for the repository and the client enforce it for the
@@ -3918,9 +3803,7 @@ server_copy_file (file, update_dir, repository, newfile)
 /* See server.h for description.  */
 
 void
-server_modtime (finfo, vers_ts)
-    struct file_info *finfo;
-    Vers_TS *vers_ts;
+server_modtime (struct file_info *finfo, Vers_TS *vers_ts)
 {
     char date[MAXDATELEN];
     char outdate[MAXDATELEN];
@@ -4246,15 +4129,13 @@ CVS server internal error: unhandled case in server_updated");
 /* Return whether we should send patches in RCS format.  */
 
 int
-server_use_rcs_diff ()
+server_use_rcs_diff (void)
 {
     return supported_response ("Rcs-diff");
 }
 
 void
-server_set_entstat (update_dir, repository)
-    char *update_dir;
-    char *repository;
+server_set_entstat (char *update_dir, char *repository)
 {
     static int set_static_supported = -1;
     if (set_static_supported == -1)
@@ -4268,9 +4149,7 @@ server_set_entstat (update_dir, repository)
 }
 
 void
-server_clear_entstat (update_dir, repository)
-     char *update_dir;
-     char *repository;
+server_clear_entstat (char *update_dir, char *repository)
 {
     static int clear_static_supported = -1;
     if (clear_static_supported == -1)
@@ -4287,12 +4166,7 @@ server_clear_entstat (update_dir, repository)
 }
 
 void
-server_set_sticky (update_dir, repository, tag, date, nonbranch)
-    char *update_dir;
-    char *repository;
-    char *tag;
-    char *date;
-    int nonbranch;
+server_set_sticky (char *update_dir, char *repository, char *tag, char *date, int nonbranch)
 {
     static int set_sticky_supported = -1;
 
@@ -4341,10 +4215,7 @@ struct template_proc_data
 };
 
 static int
-template_proc( repository, template, closure )
-    char *repository;
-    char *template;
-    void *closure;
+template_proc(char *repository, char *template, void *closure)
 {
     FILE *fp;
     char buf[1024];
@@ -4390,9 +4261,7 @@ template_proc( repository, template, closure )
 }
 
 void
-server_clear_template (update_dir, repository)
-    char *update_dir;
-    char *repository;
+server_clear_template (char *update_dir, char *repository)
 {
     assert (update_dir != NULL);
 
@@ -4422,9 +4291,7 @@ server_clear_template (update_dir, repository)
 }
 
 void
-server_template (update_dir, repository)
-    char *update_dir;
-    char *repository;
+server_template (char *update_dir, char *repository)
 {
     struct template_proc_data data;
     data.update_dir = update_dir;
@@ -4434,8 +4301,7 @@ server_template (update_dir, repository)
 }
 
 static void
-serve_gzip_contents (arg)
-     char *arg;
+serve_gzip_contents (char *arg)
 {
     int level;
     level = atoi (arg);
@@ -4445,8 +4311,7 @@ serve_gzip_contents (arg)
 }
 
 static void
-serve_gzip_stream (arg)
-     char *arg;
+serve_gzip_stream (char *arg)
 {
     int level;
     level = atoi (arg);
@@ -4463,8 +4328,7 @@ serve_gzip_stream (arg)
 
 /* Tell the client about RCS options set in CVSROOT/cvswrappers. */
 static void
-serve_wrapper_sendme_rcs_options (arg)
-     char *arg;
+serve_wrapper_sendme_rcs_options (char *arg)
 {
     /* Actually, this is kind of sdrawkcab-ssa: the client wants
      * verbatim lines from a cvswrappers file, but the server has
@@ -4494,8 +4358,7 @@ serve_wrapper_sendme_rcs_options (arg)
 
 
 static void
-serve_ignore (arg)
-    char *arg;
+serve_ignore (char *arg)
 {
     /*
      * Just ignore this command.  This is used to support the
@@ -4505,17 +4368,7 @@ serve_ignore (arg)
 }
 
 static int
-expand_proc (argc, argv, where, mwhere, mfile, shorten,
-	     local_specified, omodule, msg)
-    int argc;
-    char **argv;
-    char *where;
-    char *mwhere;
-    char *mfile;
-    int shorten;
-    int local_specified;
-    char *omodule;
-    char *msg;
+expand_proc (int argc, char **argv, char *where, char *mwhere, char *mfile, int shorten, int local_specified, char *omodule, char *msg)
 {
     int i;
     char *dir = argv[0];
@@ -4578,8 +4431,7 @@ expand_proc (argc, argv, where, mwhere, mfile, shorten,
 }
 
 static void
-serve_expand_modules (arg)
-    char *arg;
+serve_expand_modules (char *arg)
 {
     int i;
     int err;
@@ -4719,8 +4571,7 @@ struct request requests[] =
 #ifdef SERVER_SUPPORT
 
 static void
-serve_valid_requests (arg)
-     char *arg;
+serve_valid_requests (char *arg)
 {
     struct request *rq;
     if (print_pending_error ())
@@ -4747,8 +4598,7 @@ serve_valid_requests (arg)
  * 0 if not called as a result of a signal.
  */
 static int command_pid_is_dead;
-static void wait_sig (sig)
-     int sig;
+static void wait_sig( int sig )
 {
     int status;
     pid_t r = wait (&status);
@@ -4758,8 +4608,7 @@ static void wait_sig (sig)
 #endif /* SUNOS_KLUDGE */
 
 void
-server_cleanup (sig)
-    int sig;
+server_cleanup (int sig)
 {
     /* Do "rm -rf" on the temp directory.  */
     int status;
@@ -4906,9 +4755,7 @@ server_cleanup (sig)
 int server_active = 0;
 
 int
-server (argc, argv)
-     int argc;
-     char **argv;
+server (int argc, char **argv)
 {
     char *error_prog_name;		/* Used in error messages */
 
@@ -5131,8 +4978,7 @@ error ENOMEM Virtual memory exhausted.\n");
 static void switch_to_user (const char *);
 
 static void
-switch_to_user (username)
-    const char *username;
+switch_to_user (const char *username)
 {
     struct passwd *pw;
 
@@ -5270,8 +5116,7 @@ extern char *crypt (const char *, const char *);
  * kff todo: FIXME: last sentence is not true, it applies to caller.
  */
 static int
-check_repository_password (username, password, repository, host_user_ptr)
-     char *username, *password, *repository, **host_user_ptr;
+check_repository_password (char *username, char *password, char *repository, char **host_user_ptr)
 {
     int retval = 0;
     FILE *fp;
@@ -5425,11 +5270,8 @@ struct cvs_pam_userinfo {
 };
 
 static int
-cvs_pam_conv(num_msg, msg, resp, appdata_ptr)
-    int num_msg; 
-    const struct pam_message **msg;
-    struct pam_response **resp; 
-    void *appdata_ptr;
+cvs_pam_conv( int num_msg, const struct pam_message **msg,
+              struct pam_response **resp, void *appdata_ptr )
 {
     int i;
     struct pam_response *response;
@@ -5479,8 +5321,7 @@ cleanup:
 }
 
 static int
-check_system_password (username, password)
-    char *username, *password;
+check_system_password( char *username, char *password )
 {
     pam_handle_t *pamh = NULL;
     int retval;
@@ -5506,8 +5347,7 @@ check_system_password (username, password)
 }
 #else
 static int
-check_system_password (username, password)
-    char *username, *password;
+check_system_password (char *username, char *password)
 {
     char *found_passwd = NULL;
     struct passwd *pw;
@@ -5574,8 +5414,7 @@ error 0 %s: no such user\n", username);
 
 /* Return a hosting username if password matches, else NULL. */
 static char *
-check_password (username, password, repository)
-    char *username, *password, *repository;
+check_password (char *username, char *password, char *repository)
 {
     int rc;
     char *host_user = NULL;
@@ -5641,7 +5480,7 @@ handle_return:
    If correct, then switch to run as that user and send an ACK to the
    client via stdout, else send NACK and die. */
 void
-pserver_authenticate_connection ()
+pserver_authenticate_connection (void)
 {
     char *tmp = NULL;
     size_t tmp_allocated = 0;
@@ -5844,7 +5683,7 @@ pserver_authenticate_connection ()
 
 #ifdef HAVE_KERBEROS
 void
-kserver_authenticate_connection ()
+kserver_authenticate_connection( void )
 {
     int status;
     char instance[INST_SZ];
@@ -5923,7 +5762,7 @@ error 0 kerberos: can't get local name: %s\n", krb_get_err_text(status));
    the same way.  */
 
 static void
-gserver_authenticate_connection ()
+gserver_authenticate_connection (void)
 {
     char hostname[MAXHOSTNAMELEN];
     struct hostent *hp;
@@ -6058,20 +5897,18 @@ struct krb_encrypt_data
     C_Block block;
 };
 
-static int krb_encrypt_input (void *, const char *, char *, int);
-static int krb_encrypt_output (void *, const char *, char *, int,
-				     int *);
+static int krb_encrypt_input( void *_fnclosure, const char *_input,
+                              char *_output, int _size );
+static int krb_encrypt_output( void *_fnclosure, const char *_input,
+                               char *_output, int _size, int *_translated );
 
 /* Create a Kerberos encryption buffer.  We use a packetizing buffer
    with Kerberos encryption translation routines.  */
 
 struct buffer *
-krb_encrypt_buffer_initialize (buf, input, sched, block, memory)
-     struct buffer *buf;
-     int input;
-     Key_schedule sched;
-     C_Block block;
-     void (*memory) (struct buffer *);
+krb_encrypt_buffer_initialize( struct buffer *buf, int input,
+                               Key_schedule sched, C_Block block,
+                               void *memory( struct buffer * ) )
 {
     struct krb_encrypt_data *kd;
 
@@ -6089,11 +5926,7 @@ krb_encrypt_buffer_initialize (buf, input, sched, block, memory)
 /* Decrypt Kerberos data.  */
 
 static int
-krb_encrypt_input (fnclosure, input, output, size)
-     void *fnclosure;
-     const char *input;
-     char *output;
-     int size;
+krb_encrypt_input( void *fnclosure, const char *input, char *output, int size )
 {
     struct krb_encrypt_data *kd = (struct krb_encrypt_data *) fnclosure;
     int tcount;
@@ -6118,12 +5951,8 @@ krb_encrypt_input (fnclosure, input, output, size)
 /* Encrypt Kerberos data.  */
 
 static int
-krb_encrypt_output (fnclosure, input, output, size, translated)
-     void *fnclosure;
-     const char *input;
-     char *output;
-     int size;
-     int *translated;
+krb_encrypt_output( void *fnclosure, const char *input, char *output,
+                    int size, int *translated )
 {
     struct krb_encrypt_data *kd = (struct krb_encrypt_data *) fnclosure;
     int aligned;
@@ -6161,9 +5990,7 @@ krb_encrypt_output (fnclosure, input, output, size, translated)
    the first '\0' byte.  */
 
 void
-cvs_output (str, len)
-    const char *str;
-    size_t len;
+cvs_output (const char *str, size_t len)
 {
     if (len == 0)
 	len = strlen (str);
@@ -6208,9 +6035,7 @@ cvs_output (str, len)
    output zero bytes.  */
 
 void
-cvs_output_binary (str, len)
-    char *str;
-    size_t len;
+cvs_output_binary (char *str, size_t len)
 {
 #ifdef SERVER_SUPPORT
     if (error_use_protocol || server_active)
@@ -6291,9 +6116,7 @@ this client does not support writing binary files to stdout");
 /* Like CVS_OUTPUT but output is for stderr not stdout.  */
 
 void
-cvs_outerr (str, len)
-    const char *str;
-    size_t len;
+cvs_outerr (const char *str, size_t len)
 {
     if (len == 0)
 	len = strlen (str);
@@ -6338,7 +6161,7 @@ cvs_outerr (str, len)
    to the client.  */
 
 void
-cvs_flusherr ()
+cvs_flusherr (void)
 {
 #ifdef SERVER_SUPPORT
     if (error_use_protocol)
@@ -6368,7 +6191,7 @@ cvs_flusherr ()
    should go to ensure this).  */
 
 void
-cvs_flushout ()
+cvs_flushout (void)
 {
 #ifdef SERVER_SUPPORT
     if (error_use_protocol)
@@ -6404,9 +6227,7 @@ cvs_flushout ()
    Note that there is no way to output either \0 or \n as part of TEXT.  */
 
 void
-cvs_output_tagged (tag, text)
-    char *tag;
-    char *text;
+cvs_output_tagged (char *tag, char *text)
 {
     if (text != NULL && strchr (text, '\n') != NULL)
 	/* Uh oh.  The protocol has no way to cope with this.  For now

@@ -42,11 +42,7 @@ static int log_buffer_shutdown (struct buffer *);
 /* Create a log buffer.  */
 
 static struct buffer *
-log_buffer_initialize (buf, fp, input, memory)
-     struct buffer *buf;
-     FILE *fp;
-     int input;
-     void (*memory) (struct buffer *);
+log_buffer_initialize (struct buffer *buf, FILE *fp, int input, void (*memory) (struct buffer *))
 {
     struct log_buffer *n;
 
@@ -65,12 +61,7 @@ log_buffer_initialize (buf, fp, input, memory)
 /* The input function for a log buffer.  */
 
 static int
-log_buffer_input (closure, data, need, size, got)
-     void *closure;
-     char *data;
-     int need;
-     int size;
-     int *got;
+log_buffer_input (void *closure, char *data, int need, int size, int *got)
 {
     struct log_buffer *lb = (struct log_buffer *) closure;
     int status;
@@ -96,11 +87,7 @@ log_buffer_input (closure, data, need, size, got)
 /* The output function for a log buffer.  */
 
 static int
-log_buffer_output (closure, data, have, wrote)
-     void *closure;
-     const char *data;
-     int have;
-     int *wrote;
+log_buffer_output (void *closure, const char *data, int have, int *wrote)
 {
     struct log_buffer *lb = (struct log_buffer *) closure;
     int status;
@@ -126,8 +113,7 @@ log_buffer_output (closure, data, have, wrote)
 /* The flush function for a log buffer.  */
 
 static int
-log_buffer_flush (closure)
-     void *closure;
+log_buffer_flush (void *closure)
 {
     struct log_buffer *lb = (struct log_buffer *) closure;
 
@@ -146,9 +132,7 @@ log_buffer_flush (closure)
 /* The block function for a log buffer.  */
 
 static int
-log_buffer_block (closure, block)
-     void *closure;
-     int block;
+log_buffer_block (void *closure, int block)
 {
     struct log_buffer *lb = (struct log_buffer *) closure;
 
@@ -161,8 +145,7 @@ log_buffer_block (closure, block)
 /* The shutdown function for a log buffer.  */
 
 static int
-log_buffer_shutdown (buf)
-     struct buffer *buf;
+log_buffer_shutdown (struct buffer *buf)
 {
     struct log_buffer *lb = (struct log_buffer *) buf->closure;
     int retval;
@@ -175,9 +158,7 @@ log_buffer_shutdown (buf)
 
 
 void
-setup_logfiles (to_server_p, from_server_p)
-     struct buffer** to_server_p;
-     struct buffer** from_server_p;
+setup_logfiles (struct buffer **to_server_p, struct buffer **from_server_p)
 {
   char *log = getenv ("CVS_CLIENT_LOG");
 

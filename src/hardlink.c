@@ -46,8 +46,7 @@ char *working_dir;	/* The top-level working directory, used for
    inode, and then looking up FILE in that list.  If the file doesn't
    seem to exist, return NULL. */
 Node *
-lookup_file_by_inode (filepath)
-    const char *filepath;
+lookup_file_by_inode (const char *filepath)
 {
     char *inodestr, *file;
     struct stat sb;
@@ -112,8 +111,7 @@ lookup_file_by_inode (filepath)
 /* After a file has been checked out, add a node for it to the hardlist
    (if necessary) and mark it as checked out. */
 void
-update_hardlink_info (file)
-    const char *file;
+update_hardlink_info (const char *file)
 {
     char *path;
     Node *n;
@@ -157,8 +155,7 @@ update_hardlink_info (file)
    to sometimes allocate a new list (getlist() call below) and sometimes
    return an existing list (where we return n->data).  */
 List *
-list_linked_files_on_disk (file)
-    char *file;
+list_linked_files_on_disk (char *file)
 {
     char *inodestr, *path;
     struct stat sb;
@@ -215,9 +212,7 @@ list_linked_files_on_disk (file)
    function (along with most functions in this file) must be fixed. */
 						      
 int
-compare_linkage_lists (links1, links2)
-    List *links1;
-    List *links2;
+compare_linkage_lists (List *links1, List *links2)
 {
     Node *n1, *n2;
     char *p1, *p2;
@@ -262,9 +257,7 @@ compare_linkage_lists (links1, links2)
    is not currently used. */
 
 int
-find_checkedout_proc (node, data)
-    Node *node;
-    void *data;
+find_checkedout_proc (Node *node, void *data)
 {
     Node **uptodate = (Node **) data;
     Node *link;

@@ -58,9 +58,7 @@ static const char *const import_usage[] =
 };
 
 int
-import (argc, argv)
-    int argc;
-    char **argv;
+import (int argc, char **argv)
 {
     char *message = NULL;
     char *tmpfile;
@@ -405,11 +403,7 @@ import (argc, argv)
    Returns 0 for success, or >0 on error (in which case a message
    will have been printed).  */
 static int
-import_descend (message, vtag, targc, targv)
-    char *message;
-    char *vtag;
-    int targc;
-    char *targv[];
+import_descend (char *message, char *vtag, int targc, char **targv)
 {
     DIR *dirp;
     struct dirent *dp;
@@ -522,12 +516,7 @@ import_descend (message, vtag, targc, targv)
  * Process the argument import file.
  */
 static int
-process_import_file (message, vfile, vtag, targc, targv)
-    char *message;
-    char *vfile;
-    char *vtag;
-    int targc;
-    char *targv[];
+process_import_file (char *message, char *vfile, char *vtag, int targc, char **targv)
 {
     char *rcs;
     int inattic = 0;
@@ -610,13 +599,7 @@ process_import_file (message, vfile, vtag, targc, targv)
  * (possibly already existing) vendor branch.
  */
 static int
-update_rcs_file (message, vfile, vtag, targc, targv, inattic)
-    char *message;
-    char *vfile;
-    char *vtag;
-    int targc;
-    char *targv[];
-    int inattic;
+update_rcs_file (char *message, char *vfile, char *vtag, int targc, char **targv, int inattic)
 {
     Vers_TS *vers;
     int letter;
@@ -703,11 +686,7 @@ update_rcs_file (message, vfile, vtag, targc, targv, inattic)
  * Add the revision to the vendor branch
  */
 static int
-add_rev (message, rcs, vfile, vers)
-    char *message;
-    RCSNode *rcs;
-    char *vfile;
-    char *vers;
+add_rev (char *message, RCSNode *rcs, char *vfile, char *vers)
 {
     int locked, status, ierrno;
     char *tocvsPath;
@@ -767,12 +746,7 @@ add_rev (message, rcs, vfile, vers)
  * 1.1.1.2, ...).
  */
 static int
-add_tags (rcs, vfile, vtag, targc, targv)
-    RCSNode *rcs;
-    char *vfile;
-    char *vtag;
-    int targc;
-    char *targv[];
+add_tags (RCSNode *rcs, char *vfile, char *vtag, int targc, char **targv)
 {
     int i, ierrno;
     Vers_TS *vers;
@@ -932,8 +906,7 @@ static const struct compair comtable[] =
 };
 
 static char *
-get_comment (user)
-    char *user;
+get_comment (char *user)
 {
     char *cp, *suffix;
     char *suffix_path;
@@ -985,43 +958,41 @@ get_comment (user)
    Return value is 0 for success, or nonzero for failure (in which
    case an error message will have already been printed).  */
 int
-add_rcs_file (message, rcs, user, add_vhead, key_opt,
-	      add_vbranch, vtag, targc, targv,
-	      desctext, desclen, add_logfp)
+add_rcs_file (char *message, char *rcs, char *user, char *add_vhead, char *key_opt, char *add_vbranch, char *vtag, int targc, char **targv, char *desctext, size_t desclen, FILE *add_logfp)
     /* Log message for the addition.  Not used if add_vhead == NULL.  */
-    char *message;
+                  
     /* Filename of the RCS file to create.  */
-    char *rcs;
+              
     /* Filename of the file to serve as the contents of the initial
        revision.  Even if add_vhead is NULL, we use this to determine
        the modes to give the new RCS file.  */
-    char *user;
+               
 
     /* Revision number of head that we are adding.  Normally 1.1 but
        could be another revision as long as ADD_VBRANCH is a branch
        from it.  If NULL, then just add an empty file without any
        revisions (similar to the one created by "rcs -i").  */
-    char *add_vhead;
+                    
 
     /* Keyword expansion mode, e.g., "b" for binary.  NULL means the
        default behavior.  */
-    char *key_opt;
+                  
 
     /* Vendor branch to import to, or NULL if none.  If non-NULL, then
        vtag should also be non-NULL.  */
-    char *add_vbranch;
-    char *vtag;
-    int targc;
-    char *targv[];
+                      
+               
+              
+                  
 
     /* If non-NULL, description for the file.  If NULL, the description
        will be empty.  */
-    char *desctext;
-    size_t desclen;
+                   
+                   
 
     /* Write errors to here as well as via error (), or NULL if we should
        use only error ().  */
-    FILE *add_logfp;
+                    
 {
     FILE *fprcs, *fpuser;
     struct stat sb;
@@ -1463,10 +1434,7 @@ read_error:
  * to indicate the error.  If not, return a nonnegative value.
  */
 int
-expand_at_signs (buf, size, fp)
-    char *buf;
-    off_t size;
-    FILE *fp;
+expand_at_signs (char *buf, off_t size, FILE *fp)
 {
     register char *cp, *next;
 
@@ -1495,9 +1463,7 @@ expand_at_signs (buf, size, fp)
  * Write an update message to (potentially) the screen and the log file.
  */
 static void
-add_log (ch, fname)
-    int ch;
-    char *fname;
+add_log (int ch, char *fname)
 {
     if (!really_quiet)			/* write to terminal */
     {
@@ -1536,12 +1502,7 @@ add_log (ch, fname)
  * Note that we do not follow symbolic links here, which is a feature!
  */
 static int
-import_descend_dir (message, dir, vtag, targc, targv)
-    char *message;
-    char *dir;
-    char *vtag;
-    int targc;
-    char *targv[];
+import_descend_dir (char *message, char *dir, char *vtag, int targc, char **targv)
 {
     struct saved_cwd cwd;
     char *cp;

@@ -157,9 +157,7 @@ static char *lock_name (char *repository, char *name);
    that only if the actual operation fails.  But for now we'll keep
    things simple).  */
 static char *
-lock_name (repository, name)
-    char *repository;
-    char *name;
+lock_name (char *repository, char *name)
 {
     char *retval;
     char *p;
@@ -293,7 +291,7 @@ lock_name (repository, name)
  * Clean up all outstanding locks
  */
 void
-Lock_Cleanup ()
+Lock_Cleanup (void)
 {
     /* FIXME: error handling here is kind of bogus; we sometimes will call
        error, which in turn can call us again.  For the moment work around
@@ -325,7 +323,7 @@ Lock_Cleanup ()
  * Remove locks without discarding the lock information
  */
 static void
-remove_locks ()
+remove_locks (void)
 {
     /* clean up simple locks (if any) */
     if (global_readlock.repository != NULL)
@@ -346,9 +344,7 @@ remove_locks ()
  * walklist proc for removing a list of locks
  */
 static int
-unlock_proc (p, closure)
-    Node *p;
-    void *closure;
+unlock_proc (Node *p, void *closure)
 {
     lock_simple_remove ((struct lock *)p->data);
     return (0);
@@ -356,8 +352,7 @@ unlock_proc (p, closure)
 
 /* Remove the lock files.  */
 static void
-lock_simple_remove (lock)
-    struct lock *lock;
+lock_simple_remove (struct lock *lock)
 {
     char *tmp;
 
@@ -401,8 +396,7 @@ lock_simple_remove (lock)
  * Create a lock file for readers
  */
 int
-Reader_Lock (xrepository)
-    char *xrepository;
+Reader_Lock (char *xrepository)
 {
     int err = 0;
     FILE *fp;
@@ -477,8 +471,7 @@ static int lock_error;
 static int Writer_Lock (List * list);
 
 static int
-Writer_Lock (list)
-    List *list;
+Writer_Lock (List *list)
 {
     char *wait_repos;
 
@@ -550,9 +543,7 @@ Attempting to write to a read-only filesystem is not allowed.");
  * walklist proc for setting write locks
  */
 static int
-set_writelock_proc (p, closure)
-    Node *p;
-    void *closure;
+set_writelock_proc (Node *p, void *closure)
 {
     /* if some lock was not OK, just skip this one */
     if (lock_error != L_OK)
@@ -569,8 +560,7 @@ set_writelock_proc (p, closure)
  * lock held by someone else or L_ERROR if an error occurred
  */
 static int
-write_lock (lock)
-    struct lock *lock;
+write_lock (struct lock *lock)
 {
     int status;
     FILE *fp;
@@ -641,8 +631,7 @@ write_lock (lock)
  * sleep a while and try again.
  */
 static int
-readers_exist (repository)
-    char *repository;
+readers_exist (char *repository)
 {
     char *lockdir;
     char *line;
@@ -716,8 +705,7 @@ readers_exist (repository)
  * structure passed in.
  */
 static void
-set_lockers_name (statp)
-    struct stat *statp;
+set_lockers_name (struct stat *statp)
 {
     struct passwd *pw;
 
@@ -741,9 +729,7 @@ set_lockers_name (statp)
  * seconds old, just try to remove the directory.
  */
 static int
-set_lock (lock, will_wait)
-    struct lock *lock;
-    int will_wait;
+set_lock (struct lock *lock, int will_wait)
 {
     int waited;
     long us;
@@ -862,8 +848,7 @@ set_lock (lock, will_wait)
  * clear_lock is never called except after a successful set_lock().
  */
 static void
-clear_lock (lock)
-    struct lock *lock;
+clear_lock (struct lock *lock)
 {
     SIG_beginCrSect ();
     if (CVS_RMDIR (masterlock) < 0)
@@ -876,8 +861,7 @@ clear_lock (lock)
  * Print out a message that the lock is still held, then sleep a while.
  */
 static void
-lock_wait (repos)
-    char *repos;
+lock_wait (char *repos)
 {
     time_t now;
     char *msg;
@@ -901,8 +885,7 @@ lock_wait (repos)
  * Print out a message when we obtain a lock.
  */
 static void
-lock_obtained (repos)
-     char *repos;
+lock_obtained (char *repos)
 {
     time_t now;
     char *msg;
@@ -929,12 +912,7 @@ static int lock_filesdoneproc (void *callerdat, int err,
  */
 /* ARGSUSED */
 static int
-lock_filesdoneproc (callerdat, err, repository, update_dir, entries)
-    void *callerdat;
-    int err;
-    char *repository;
-    char *update_dir;
-    List *entries;
+lock_filesdoneproc (void *callerdat, int err, char *repository, char *update_dir, List *entries)
 {
     Node *p;
 
@@ -952,12 +930,7 @@ lock_filesdoneproc (callerdat, err, repository, update_dir, entries)
 }
 
 void
-lock_tree_for_write (argc, argv, local, which, aflag)
-    int argc;
-    char **argv;
-    int local;
-    int which;
-    int aflag;
+lock_tree_for_write (int argc, char **argv, int local, int which, int aflag)
 {
     int err;
     /*
@@ -979,8 +952,7 @@ lock_tree_for_write (argc, argv, local, which, aflag)
    a lock has been set with lock_dir_for_write; the new lock will replace
    the old one.  If REPOSITORY is NULL, don't do anything.  */
 void
-lock_dir_for_write (repository)
-     char *repository;
+lock_dir_for_write (char *repository)
 {
     if (repository != NULL
 	&& (locked_dir == NULL

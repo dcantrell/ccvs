@@ -32,9 +32,7 @@ const char *const watch_usage[] =
 static struct addremove_args the_args;
 
 void
-watch_modify_watchers (file, what)
-    char *file;
-    struct addremove_args *what;
+watch_modify_watchers (char *file, struct addremove_args *what)
 {
     char *curattr = fileattr_get0 (file, "_watchers");
     char *p;
@@ -218,9 +216,7 @@ static int addremove_fileproc (void *callerdat,
 				      struct file_info *finfo);
 
 static int
-addremove_fileproc (callerdat, finfo)
-    void *callerdat;
-    struct file_info *finfo;
+addremove_fileproc (void *callerdat, struct file_info *finfo)
 {
     watch_modify_watchers (finfo->file, &the_args);
     return 0;
@@ -230,12 +226,7 @@ static int addremove_filesdoneproc (void *, int, char *, char *,
 					   List *);
 
 static int
-addremove_filesdoneproc (callerdat, err, repository, update_dir, entries)
-    void *callerdat;
-    int err;
-    char *repository;
-    char *update_dir;
-    List *entries;
+addremove_filesdoneproc (void *callerdat, int err, char *repository, char *update_dir, List *entries)
 {
     if (the_args.setting_default)
 	watch_modify_watchers (NULL, &the_args);
@@ -245,9 +236,7 @@ addremove_filesdoneproc (callerdat, err, repository, update_dir, entries)
 static int watch_addremove (int argc, char **argv);
 
 static int
-watch_addremove (argc, argv)
-    int argc;
-    char **argv;
+watch_addremove (int argc, char **argv)
 {
     int c;
     int local = 0;
@@ -351,27 +340,21 @@ watch_addremove (argc, argv)
 }
 
 int
-watch_add (argc, argv)
-    int argc;
-    char **argv;
+watch_add (int argc, char **argv)
 {
     the_args.adding = 1;
     return watch_addremove (argc, argv);
 }
 
 int
-watch_remove (argc, argv)
-    int argc;
-    char **argv;
+watch_remove (int argc, char **argv)
 {
     the_args.adding = 0;
     return watch_addremove (argc, argv);
 }
 
 int
-watch (argc, argv)
-    int argc;
-    char **argv;
+watch (int argc, char **argv)
 {
     if (argc <= 1)
 	usage (watch_usage);
@@ -417,9 +400,7 @@ static int watchers_fileproc (void *callerdat,
 				     struct file_info *finfo);
 
 static int
-watchers_fileproc (callerdat, finfo)
-    void *callerdat;
-    struct file_info *finfo;
+watchers_fileproc (void *callerdat, struct file_info *finfo)
 {
     char *them;
     char *p;
@@ -469,9 +450,7 @@ watchers_fileproc (callerdat, finfo)
 }
 
 int
-watchers (argc, argv)
-    int argc;
-    char **argv;
+watchers (int argc, char **argv)
 {
     int local = 0;
     int c;

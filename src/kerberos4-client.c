@@ -35,10 +35,8 @@ static Key_schedule sched;
    on such a system (OS/2, Windows 95, and maybe others) will have to
    take care of this.  */
 void
-start_kerberos4_server (root, to_server_p, from_server_p)
-    cvsroot_t *root;
-    struct buffer **to_server_p;
-    struct buffer **from_server_p;
+start_kerberos4_server( cvsroot_t *root, struct buffer **to_server_p,
+                        struct buffer **from_server_p )
 {
     int s;
     int port;
@@ -102,9 +100,8 @@ start_kerberos4_server (root, to_server_p, from_server_p)
 }
 
 void
-initialize_kerberos4_encryption_buffers (to_server_p, from_server_p)
-     struct buffer **to_server_p;
-     struct buffer **from_server_p;
+initialize_kerberos4_encryption_buffers( struct buffer **to_server_p,
+                                         struct buffer **from_server_p )
 {
   *to_server_p = krb_encrypt_buffer_initialize (*to_server_p, 0, sched,
 						kblock,

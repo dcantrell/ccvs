@@ -387,8 +387,7 @@ static const struct admin_file filelist[] = {
 
 /* Rebuild the checked out administrative files in directory DIR.  */
 int
-mkmodules (dir)
-    char *dir;
+mkmodules (char *dir)
 {
     struct saved_cwd cwd;
     char *temp;
@@ -538,7 +537,7 @@ mkmodules (dir)
  * Yeah, I know, there are NFS race conditions here.
  */
 static char *
-make_tempfile ()
+make_tempfile (void)
 {
     static int seed = 0;
     int fd;
@@ -565,9 +564,7 @@ make_tempfile ()
    not a very clean convention).  On success, return 0.  */
 
 static int
-checkout_file (file, temp)
-    char *file;
-    char *temp;
+checkout_file (char *file, char *temp)
 {
     char *rcs;
     RCSNode *rcsnode;
@@ -602,8 +599,7 @@ checkout_file (file, temp)
 #ifndef MY_NDBM
 
 static void
-write_dbmfile (temp)
-    char *temp;
+write_dbmfile( char *temp )
 {
     char line[DBLKSIZ], value[DBLKSIZ];
     FILE *fp;
@@ -710,8 +706,7 @@ write_dbmfile (temp)
 }
 
 static void
-rename_dbmfile (temp)
-    char *temp;
+rename_dbmfile( char *temp )
 {
     /* I think that the size of the buffer needed here is
        just determined by sizeof (CVSROOTADM_MODULES), the
@@ -800,9 +795,7 @@ rename_dbmfile (temp)
 #endif				/* !MY_NDBM */
 
 static void
-rename_rcsfile (temp, real)
-    char *temp;
-    char *real;
+rename_rcsfile (char *temp, char *real)
 {
     char *bak;
     struct stat statbuf;
@@ -847,9 +840,7 @@ const char *const init_usage[] = {
 };
 
 int
-init (argc, argv)
-    int argc;
-    char **argv;
+init (int argc, char **argv)
 {
     /* Name of CVSROOT directory.  */
     char *adm;

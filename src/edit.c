@@ -28,9 +28,7 @@ static int setting_tcommit;
 static int onoff_fileproc (void *callerdat, struct file_info *finfo);
 
 static int
-onoff_fileproc (callerdat, finfo)
-    void *callerdat;
-    struct file_info *finfo;
+onoff_fileproc (void *callerdat, struct file_info *finfo)
 {
     fileattr_set (finfo->file, "_watched", turning_on ? "" : NULL);
     return 0;
@@ -39,12 +37,7 @@ onoff_fileproc (callerdat, finfo)
 static int onoff_filesdoneproc (void *, int, char *, char *, List *);
 
 static int
-onoff_filesdoneproc (callerdat, err, repository, update_dir, entries)
-    void *callerdat;
-    int err;
-    char *repository;
-    char *update_dir;
-    List *entries;
+onoff_filesdoneproc (void *callerdat, int err, char *repository, char *update_dir, List *entries)
 {
     if (setting_default)
 	fileattr_set (NULL, "_watched", turning_on ? "" : NULL);
@@ -52,9 +45,7 @@ onoff_filesdoneproc (callerdat, err, repository, update_dir, entries)
 }
 
 static int
-watch_onoff (argc, argv)
-    int argc;
-    char **argv;
+watch_onoff (int argc, char **argv)
 {
     int c;
     int local = 0;
@@ -112,18 +103,14 @@ watch_onoff (argc, argv)
 }
 
 int
-watch_on (argc, argv)
-    int argc;
-    char **argv;
+watch_on (int argc, char **argv)
 {
     turning_on = 1;
     return watch_onoff (argc, argv);
 }
 
 int
-watch_off (argc, argv)
-    int argc;
-    char **argv;
+watch_off (int argc, char **argv)
 {
     turning_on = 0;
     return watch_onoff (argc, argv);
@@ -132,9 +119,7 @@ watch_off (argc, argv)
 static int dummy_fileproc (void *callerdat, struct file_info *finfo);
 
 static int
-dummy_fileproc (callerdat, finfo)
-    void *callerdat;
-    struct file_info *finfo;
+dummy_fileproc (void *callerdat, struct file_info *finfo)
 {
     /* This is a pretty hideous hack, but the gist of it is that recurse.c
        won't call notify_check unless there is a fileproc, so we can't just
@@ -151,9 +136,7 @@ static int ncheck_fileproc (void *callerdat, struct file_info *finfo);
    processed the directory.  */
 
 static int
-ncheck_fileproc (callerdat, finfo)
-    void *callerdat;
-    struct file_info *finfo;
+ncheck_fileproc (void *callerdat, struct file_info *finfo)
 {
     int notif_type;
     char *filename;
@@ -226,10 +209,7 @@ static int send_notifications (int, char **, int);
 /* Look through the CVSADM_NOTIFY file and process each item there
    accordingly.  */
 static int
-send_notifications (argc, argv, local)
-    int argc;
-    char **argv;
-    int local;
+send_notifications (int argc, char **argv, int local)
 {
     int err = 0;
 
@@ -276,9 +256,7 @@ send_notifications (argc, argv, local)
 static int edit_fileproc (void *callerdat, struct file_info *finfo);
 
 static int
-edit_fileproc (callerdat, finfo)
-    void *callerdat;
-    struct file_info *finfo;
+edit_fileproc (void *callerdat, struct file_info *finfo)
 {
     FILE *fp;
     time_t now;
@@ -367,9 +345,7 @@ static const char *const edit_usage[] =
 };
 
 int
-edit (argc, argv)
-    int argc;
-    char **argv;
+edit (int argc, char **argv)
 {
     int local = 0;
     int c;
@@ -458,9 +434,7 @@ edit (argc, argv)
 static int unedit_fileproc (void *callerdat, struct file_info *finfo);
 
 static int
-unedit_fileproc (callerdat, finfo)
-    void *callerdat;
-    struct file_info *finfo;
+unedit_fileproc (void *callerdat, struct file_info *finfo)
 {
     FILE *fp;
     time_t now;
@@ -581,9 +555,7 @@ static const char *const unedit_usage[] =
 };
 
 int
-unedit (argc, argv)
-    int argc;
-    char **argv;
+unedit (int argc, char **argv)
 {
     int local = 0;
     int c;
@@ -626,8 +598,7 @@ unedit (argc, argv)
 }
 
 void
-mark_up_to_date (file)
-    char *file;
+mark_up_to_date (char *file)
 {
     char *base;
 
@@ -644,10 +615,7 @@ mark_up_to_date (file)
 
 
 void
-editor_set (filename, editor, val)
-    char *filename;
-    char *editor;
-    char *val;
+editor_set (char *filename, char *editor, char *val)
 {
     char *edlist;
     char *newlist;
@@ -680,10 +648,7 @@ struct notify_proc_args {
 static int notify_proc ( char *repository, char *filter, void *closure );
 
 static int
-notify_proc( repository, filter, closure )
-    char *repository;
-    char *filter;
-    void *closure;
+notify_proc(char *repository, char *filter, void *closure)
 {
     FILE *pipefp;
     char *prog;
@@ -751,13 +716,7 @@ notify_proc( repository, filter, closure )
    an error so that server.c can know whether to report Notified back
    to the client.  */
 void
-notify_do (type, filename, who, val, watches, repository)
-    int type;
-    char *filename;
-    char *who;
-    char *val;
-    char *watches;
-    char *repository;
+notify_do (int type, char *filename, char *who, char *val, char *watches, char *repository)
 {
     static struct addremove_args blank;
     struct addremove_args args;
@@ -970,9 +929,7 @@ notify_do (type, filename, who, val, watches, repository)
 #ifdef CLIENT_SUPPORT
 /* Check and send notifications.  This is only for the client.  */
 void
-notify_check (repository, update_dir)
-    char *repository;
-    char *update_dir;
+notify_check (char *repository, char *update_dir)
 {
     FILE *fp;
     char *line = NULL;
@@ -1038,9 +995,7 @@ static const char *const editors_usage[] =
 static int editors_fileproc (void *callerdat, struct file_info *finfo);
 
 static int
-editors_fileproc (callerdat, finfo)
-    void *callerdat;
-    struct file_info *finfo;
+editors_fileproc (void *callerdat, struct file_info *finfo)
 {
     char *them;
     char *p;
@@ -1090,9 +1045,7 @@ editors_fileproc (callerdat, finfo)
 }
 
 int
-editors (argc, argv)
-    int argc;
-    char **argv;
+editors (int argc, char **argv)
 {
     int local = 0;
     int c;

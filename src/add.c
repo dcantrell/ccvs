@@ -42,9 +42,7 @@ static const char *const add_usage[] =
 };
 
 int
-add (argc, argv)
-    int argc;
-    char **argv;
+add (int argc, char **argv)
 {
     char *message = NULL;
     int i;
@@ -669,8 +667,7 @@ cannot resurrect %s; RCS file removed by second party", finfo.fullname);
  * Returns 1 on failure, 0 on success.
  */
 static int
-add_directory (finfo)
-    struct file_info *finfo;
+add_directory (struct file_info *finfo)
 {
     char *repository = finfo->repository;
     List *entries = finfo->entries;
@@ -844,13 +841,7 @@ out:
  * interrogating the user.  Returns non-zero on error.
  */
 static int
-build_entry (repository, user, options, message, entries, tag)
-    char *repository;
-    char *user;
-    char *options;
-    char *message;
-    List *entries;
-    char *tag;
+build_entry (char *repository, char *user, char *options, char *message, List *entries, char *tag)
 {
     char *fname;
     char *line;

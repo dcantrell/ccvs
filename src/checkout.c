@@ -97,9 +97,7 @@ static char *history_name;
 static enum mtype m_type;
 
 int
-checkout (argc, argv)
-    int argc;
-    char **argv;
+checkout (int argc, char **argv)
 {
     int i;
     int c;
@@ -422,8 +420,7 @@ checkout (argc, argv)
  *  being able to resolve a path or failing ot chdir to a path.
  */
 int
-safe_location (where)
-    char *where;
+safe_location (char *where)
 {
     char *current;
     char *where_location;
@@ -545,10 +542,7 @@ static int build_dirs_and_chdir (struct dir_to_build *list,
 static void build_one_dir (char *, char *, int);
 
 static void
-build_one_dir (repository, dirpath, sticky)
-    char *repository;
-    char *dirpath;
-    int sticky;
+build_one_dir (char *repository, char *dirpath, int sticky)
 {
     FILE *fp;
 
@@ -594,17 +588,7 @@ build_one_dir (repository, dirpath, sticky)
  */
 /* ARGSUSED */
 static int
-checkout_proc (argc, argv, where_orig, mwhere, mfile, shorten,
-	       local_specified, omodule, msg)
-    int argc;
-    char **argv;
-    char *where_orig;
-    char *mwhere;
-    char *mfile;
-    int shorten;
-    int local_specified;
-    char *omodule;
-    char *msg;
+checkout_proc (int argc, char **argv, char *where_orig, char *mwhere, char *mfile, int shorten, int local_specified, char *omodule, char *msg)
 {
     char *myargv[2];
     int err = 0;
@@ -1171,9 +1155,7 @@ out:
 }
 
 static char *
-findslash (start, p)
-    char *start;
-    char *p;
+findslash (char *start, char *p)
 {
     for (;;)
     {
@@ -1189,7 +1171,7 @@ findslash (start, p)
    directory, give a fatal error.  Otherwise, the directory is guaranteed
    to exist when we return.  */
 char *
-emptydir_name ()
+emptydir_name (void)
 {
     char *repository;
 
@@ -1214,9 +1196,7 @@ emptydir_name ()
    repositories.  If ->repository is NULL, do not create a CVSADM directory
    for that subdirectory; just CVS_CHDIR into it.  */
 static int
-build_dirs_and_chdir (dirs, sticky)
-    struct dir_to_build *dirs;
-    int sticky;
+build_dirs_and_chdir (struct dir_to_build *dirs, int sticky)
 {
     int retval = 0;
     struct dir_to_build *nextdir;
