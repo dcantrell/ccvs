@@ -1,3 +1,10 @@
+Sat Oct 19 13:06:53 1996  Mark H. Wilkinson  <mhw@minster.york.ac.uk>
+			  and Jim Kingdon  <kingdon@cyclic.com>
+
+	* configure.in, INSTALL: New options for configure to enable or
+	disable client and server code, overriding configure's defaults.
+	* confiugre: Regenerated.
+
 Sat Oct 19 13:06:53 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* INSTALL: Add note about what to do if you got a binary
