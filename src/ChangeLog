@@ -4,7 +4,7 @@ Sat Feb 24 10:50:42 1996  Karl Fogel  <kfogel@floss.red-bean.com>
         `else'-clause, so we don't do it when x == -1.
 
 Sat Feb 24 01:40:28 1996  Marcus Daniels  <marcus@sayre.sysc.pdx.edu>
-                          and Karl Fogel  <kfogel@floss.red-bean.com>
+                          via Karl Fogel  <kfogel@floss.red-bean.com>
  
  	* server.c (check_repository_password): Return by reference an
   	  optional username, the `host_user', from the passwd file.  The
@@ -26,7 +26,7 @@ Sat Feb 24 01:05:21 1996  Karl Fogel  <kfogel@floss.red-bean.com>
         * options.h.in (RCSBIN_DFLT): don't refer to AUTH_SERVER_SUPPORT
         in comment anymore, now that it's not defined in this file.
 
-Fri Feb 23 1996  Jim Kingdon  <kingdon@cyclic.com
+Fri Feb 23 1996  Jim Kingdon  <kingdon@cyclic.com>
 
 	* client.c: Ifdef HAVE_WINSOCK_H, include winsock.h
 	instead of sys/socket.h and friends.
