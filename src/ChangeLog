@@ -1,3 +1,10 @@
+1999-07-27  Eric Sink   <eric@sourcegear.com>
+
+	removed basicc-11 from sanity.sh
+	related to patch from Steve Dodd (dirk@loth.demon.co.uk)
+	bug-cvs, claiming that the test is invalid and the code
+	is correct.
+
 1999-07-18  Karl Fogel  <kfogel@floss.red-bean.com>
 
 	* edit.c (notify_do): chop newline, if any, from the value
