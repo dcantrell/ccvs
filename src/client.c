@@ -792,6 +792,39 @@ call_in_directory (pathname, func, data)
 		error (1, errno, "could not chdir to %s", dir_name);
 	}
 
+	/* If the modules file has an entry for the entire tree (e.g.,
+           ``world -a .''), we may need to create the CVS directory
+           specially in this working directory.  */
+	if (strcmp (dir_name, ".") == 0
+	    && ! isdir (CVSADM))
+	{
+	    char *repo;
+	    char *r;
+
+	    repo = xmalloc (strlen (reposdirname)
+			    + strlen (toplevel_repos)
+			    + 10);
+	    if (reposdirname_absolute)
+	        r = repo;
+	    else
+	    {
+	        strcpy (repo, toplevel_repos);
+		r = repo + strlen (repo);
+		*r++ = '/';
+	    }
+
+	    strcpy (r, reposdirname);
+
+	    r += strlen (r);
+	    if (r[-1] != '.' || r[-2] != '/')
+	        strcpy (r, "/.");
+
+	    Create_Admin (dir_name, dir_name, repo, (char *) NULL,
+			  (char *) NULL);
+
+	    free (repo);
+	}
+
 	if (strcmp (command_name, "export") != 0)
 	    last_entries = Entries_Open (0);
     }
@@ -3870,13 +3903,8 @@ send_dirent_proc (dir, repository, update_dir)
     char *update_dir;
 {
     int dir_exists;
+    char *cvsadm_name;
     char *cvsadm_repos_name;
-
-    /*
-     * If the directory does not exist yet (e.g. "cvs update -d
-     * foo"), no need to send any files from it.
-     */
-    dir_exists = isdir (dir);
 
     if (ignore_directory (update_dir))
     {
@@ -3885,6 +3913,19 @@ send_dirent_proc (dir, repository, update_dir)
 	    error (0, 0, "Ignoring %s", update_dir);
         return (R_SKIP_ALL);
     }
+
+    /*
+     * If the directory does not exist yet (e.g. "cvs update -d foo"),
+     * no need to send any files from it.  If the directory does not
+     * have a CVS directory, then we pretend that it does not exist.
+     * Otherwise, we will fail when trying to open the Entries file.
+     * This case will happen when checking out a module defined as
+     * ``-a .''.
+     */
+    cvsadm_name = xmalloc (strlen (dir) + sizeof (CVSADM) + 10);
+    sprintf (cvsadm_name, "%s/%s", dir, CVSADM);
+    dir_exists = isdir (cvsadm_name);
+    free (cvsadm_name);
 
     /* initialize the ignore list for this directory */
     ignlist = getlist ();

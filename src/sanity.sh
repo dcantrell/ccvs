@@ -2674,6 +2674,7 @@ C aa\.c"
 	  echo namedmodule -d nameddir first-dir/subdir >>CVSROOT/modules
 	  echo aliasmodule -a first-dir/subdir/a >>CVSROOT/modules
 	  echo aliasnested -a first-dir/subdir/ssdir >>CVSROOT/modules
+	  echo world -a . >>CVSROOT/modules
 
 	  # Options must come before arguments.  It is possible this should
 	  # be relaxed at some point (though the result would be bizarre for
@@ -2693,7 +2694,8 @@ aliasnested  -a first-dir/subdir/ssdir
 bogusalias   first-dir/subdir/a -a
 dirmodule    first-dir/subdir
 namedmodule  -d nameddir first-dir/subdir
-realmodule   first-dir/subdir a'
+realmodule   first-dir/subdir a
+world        -a .'
 	  # I don't know why aliasmodule isn't printed (I would have thought
 	  # that it gets printed without the -a; although I'm not sure that
 	  # printing expansions without options is useful).
@@ -2845,6 +2847,16 @@ U nameddir/b'
 	  dotest modules-155a4 "ls" "first-dir"
 	  cd ..
 	  rm -rf 2
+
+	  # Test checking out everything.
+	  mkdir 1
+	  cd 1
+	  dotest modules-155b "${testcvs} -q co world" \
+"U CVSROOT/modules
+U first-dir/subdir/a
+U first-dir/subdir/b"
+	  cd ..
+	  rm -rf 1
 
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
 	  ;;

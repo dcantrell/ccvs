@@ -445,7 +445,27 @@ dirswitch (dir, repos)
 	pending_error = errno;
 	return;
     }
-    if (fprintf (f, "%s\n", repos) < 0)
+    if (fprintf (f, "%s", repos) < 0)
+    {
+	pending_error = errno;
+	fclose (f);
+	return;
+    }
+    /* Non-remote CVS handles a module representing the entire tree
+       (e.g., an entry like ``world -a .'') by putting /. at the end
+       of the Repository file, so we do the same.  */
+    if (strcmp (dir, ".") == 0
+	&& CVSroot_directory != NULL
+	&& strcmp (CVSroot_directory, repos) == 0)
+    {
+        if (fprintf (f, "/.") < 0)
+	{
+	    pending_error = errno;
+	    fclose (f);
+	    return;
+	}
+    }
+    if (fprintf (f, "\n") < 0)
     {
 	pending_error = errno;
 	fclose (f);
