@@ -136,7 +136,6 @@ libcvs_a_SOURCES = \
 	getline.h \
 	getopt.h \
 	getpagesize.h \
-	fnmatch.h \
 	md5.h \
 	regex.h \
 	savecwd.h \
@@ -195,8 +194,8 @@ CFLAGS = @CFLAGS@
 YACCCOMPILE = $(YACC) $(YFLAGS) $(AM_YFLAGS)
 DIST_SOURCES = $(libcvs_a_SOURCES)
 DIST_COMMON = ChangeLog Makefile.am Makefile.in dup2.c fncase.c \
-	fnmatch.c getdate.c hostname.c memmove.c mkdir.c rename.c \
-	strerror.c strstr.c strtoul.c valloc.c waitpid.c
+	fnmatch.c fnmatch.h getdate.c hostname.c memmove.c mkdir.c \
+	rename.c strerror.c strstr.c strtoul.c valloc.c waitpid.c
 SOURCES = $(libcvs_a_SOURCES)
 
 all: all-am
