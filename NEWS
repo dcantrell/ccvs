@@ -1,5 +1,9 @@
 Changes since 1.12.1:
 
+* The CVSROOT/editinfo file is no longer referenced by CVS.  This funcitonality
+has been deprecated for over six years and removing it will presumably not
+cause anyone any problems.
+
 * In client/server mode, most messages from CVS now contain the actual
 command name rather than the generic "server".
 
