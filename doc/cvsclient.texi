@@ -488,7 +488,8 @@ local machine.  The name in @var{entry-line} is a name relative to the
 directory most recently specified with @code{Directory}.  If the user
 is operating on only some files in a directory, @code{Entry} requests
 for only those files need be included.  If an @code{Entry} request is
-sent without @code{Modified} or @code{Unchanged}, it means the file is
+sent without @code{Modified}, @code{Is-modified}, or @code{Unchanged},
+it means the file is
 lost (does not exist in the working directory).  If both @code{Entry}
 and one of @code{Modified}, @code{Is-modified}, or @code{Unchanged} are
 sent for the same file, @code{Entry} must be sent first.  For a
