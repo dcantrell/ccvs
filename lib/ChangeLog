@@ -1,3 +1,8 @@
+2003-07-22  Derek Price  <derek@ximbiot.com>
+
+	* exit.h: New file from GNULIB.
+	* Makefile.am (lib_SOURCES): Add exit.h.
+
 2003-07-19  Derek Price  <derek@ximbiot.com>
 
 	* stat.c: Sync us with GNULIB, except for the xalloc.h requirement.
