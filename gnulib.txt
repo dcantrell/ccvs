@@ -250,6 +250,7 @@ m4/yesno.m4
 m4/onceonly_2_57.m4
 lib/allocsa.h
 lib/allocsa.c
+lib/allocsa.valgrind
 m4/allocsa.m4
 m4/eealloc.m4
 m4/longlong.m4

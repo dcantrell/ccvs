@@ -311,9 +311,9 @@ MOSTLYCLEANFILES = alloca.h alloca.h-t fnmatch.h fnmatch.h-t \
 MAINTAINERCLEANFILES = 
 TESTS = test-getdate.sh
 EXTRA_DIST = .cvsignore ChangeLog.fsf build_lib.com libcvs.dep \
-	libcvs.dsp libcvs.mak alloca_.h fnmatch_.h fnmatch_loop.c \
-	getndelim2.h getndelim2.c getndelim2.h getndelim2.c getopt_.h \
-	getopt_int.h stdbool_.h stdint_.h
+	libcvs.dsp libcvs.mak alloca_.h allocsa.valgrind fnmatch_.h \
+	fnmatch_loop.c getndelim2.h getndelim2.c getndelim2.h \
+	getndelim2.c getopt_.h getopt_int.h stdbool_.h stdint_.h
 getdate_SOURCES = allocsa.c error.c exitfail.c exitfail.h getdate.y \
 	gettime.c xalloc-die.c xalloc.h xmalloc.c progname.c
 getdate_CPPFLAGS = -DTEST

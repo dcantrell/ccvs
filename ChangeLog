@@ -1,3 +1,10 @@
+2004-11-04  Mark D. Baushke  <mdb@juniper.net>
+
+	* cvsnt.dsp: Add entries for allocsa.c and allocsa.h.
+	* cvsnt.dep: Re-order sources in front of includes.
+	* Makefile.am: Update allocsa from GNULIB.
+	* gnulib.txt, Makefile.gnulib: Regenerated.
+	
 2004-11-03  Derek Price  <derek@ximbiot.com>
 
 	* HACKING, NEWS: Note new Autoconf & Automake versions.

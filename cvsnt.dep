@@ -74,6 +74,16 @@
 	".\windows-NT\unistd.h"\
 	
 
+.\lib\allocsa.c : \
+	".\lib\allocsa.h"\
+	".\windows-NT\config.h"\
+	".\windows-NT\ndir.h"\
+	".\windows-NT\pwd.h"\
+	".\windows-NT\stdbool.h"\
+	".\windows-NT\stdint.h"\
+	".\windows-NT\unistd.h"\
+
+
 .\src\annotate.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
