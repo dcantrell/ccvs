@@ -1,3 +1,13 @@
+Tue Oct 28 19:30:05 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* rcs.c (RCS_delete_revs): If rev1 == NULL and rev2 is on the
+	trunk, handle it the same way we do everything else--by swapping
+	the two.  This replaces the code which tried to kludge what we
+	passed to RCS_getbranchpoint (which didn't work).
+	* sanity.sh (binfiles2-o1 to binfiles2-o4): New tests, for this fix.
+	* admin.c (admin_fileproc): Don't have -q global option suppress
+	"rcs failed" message.
+
 1997-10-28  Jim Kingdon
 
 	* log.c (printlock_proc), rcs.c (putlock_proc): Prototype.

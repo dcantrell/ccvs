@@ -4399,6 +4399,19 @@ RCS_delete_revs (rcs, tag1, tag2)
 	}
     }
 
+    /* Basically the same thing; make sure that the ordering is what we
+       need.  */
+    if (rev1 == NULL)
+    {
+	assert (rev2 != NULL);
+	if (numdots (rev2) == 1)
+	{
+	    /* Swap rev1 and rev2.  */
+	    rev1 = rev2;
+	    rev2 = NULL;
+	}
+    }
+
     /* Put the revision number preceding REV1 into BEFORE.
        If REV1 is the head of its branch, BEFORE should be the node
        on the trunk at which REV1 is rooted.  If REV1 is the head
@@ -4408,7 +4421,7 @@ RCS_delete_revs (rcs, tag1, tag2)
        it is not very handy for navigating the revision tree.  It's
        most useful just for checking out the revision preceding REV1. */
     before = NULL;
-    branchpoint = RCS_getbranchpoint (rcs, rev1 ? rev1 : rev2);
+    branchpoint = RCS_getbranchpoint (rcs, rev1);
     if (rev1 == NULL)
     {
 	rev1 = xstrdup (branchpoint);
