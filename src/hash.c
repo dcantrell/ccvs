@@ -247,10 +247,9 @@ addnode (list, p)
     return (0);
 }
 
-/*
- * look up an entry in hash list table and return a pointer to the
- * node.  Return NULL on error or not found.
- */
+/* Look up an entry in hash list table and return a pointer to the
+   node.  Return NULL if not found.  Abort with a fatal error for
+   errors.  */
 Node *
 findnode (list, key)
     List *list;
