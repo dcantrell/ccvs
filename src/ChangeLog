@@ -1,3 +1,7 @@
+Mon May  6 06:00:10 1996  Benjamin J. Lee  <benjamin@cyclic.com>
+
+        * Version 1.8.1
+
 Sun May  5 21:39:02 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* vers_ts.c (Version_TS): If sdtp is NULL, go ahead and check
