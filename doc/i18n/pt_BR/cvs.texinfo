@@ -4683,12 +4683,19 @@ $ cvs release -d CVSROOT
 @node Revisions
 @chapter Revisions
 
-For many uses of @sc{cvs}, one doesn't need to worry
-too much about revision numbers; @sc{cvs} assigns
-numbers such as @code{1.1}, @code{1.2}, and so on, and
-that is all one needs to know.  However, some people
-prefer to have more knowledge and control concerning
-how @sc{cvs} assigns revision numbers.
+@comment <en>For many uses of @sc{cvs}, one doesn't need to worry
+@comment <en>too much about revision numbers; @sc{cvs} assigns
+@comment <en>numbers such as @code{1.1}, @code{1.2}, and so on, and
+@comment <en>that is all one needs to know.  However, some people
+@comment <en>prefer to have more knowledge and control concerning
+@comment <en>how @sc{cvs} assigns revision numbers.
+Para muitos usos do @sc{cvs}, não é necessário se
+preocupar com o número de revisões; @sc{cvs} atribui
+números tais como @code{1.1}, @code{1.2} e por aí vai,
+e isto é tudo que se precisa saber.  Entretanto,
+Algumas pessoas preferem ter mais conhecimento e
+controle a respeito de como o @sc{cvs} atribui números
+de revisão.
 
 If one wants to keep track of a set of revisions
 involving more than one file, such as which revisions
