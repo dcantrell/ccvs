@@ -40,12 +40,11 @@ struct admin_file {
 };
 
 static const char *const loginfo_contents[] = {
-    "# The \"loginfo\" file is used to control where \"cvs commit\" log information\n",
-    "# is sent.  The first entry on a line is a regular expression which is tested\n",
+    "# The \"loginfo\" file is used to control where \"cvs commit\" log information is\n",
+    "# sent.  The first entry on a line is a regular expression which is tested\n",
     "# against the directory that the change is being made to, relative to the\n",
-    "# $CVSROOT.  For the first match that is found, then the remainder of the\n",
-    "# line is a filter program that should expect log information on its standard\n",
-    "# input.\n",
+    "# $CVSROOT.  For the first match that is found, the remainder of the line is a\n",
+    "# filter program that should expect log information on its standard input\n",
     "#\n",
     "# If the repository name does not match any of the regular expressions in the\n",
     "# first field of this file, the \"DEFAULT\" line is used, if it is specified.\n",
@@ -59,7 +58,7 @@ static const char *const loginfo_contents[] = {
     "# name and listing the modified file names.\n",
     "#\n",
     "# For example:\n",
-    "#DEFAULT		(echo \"\"; who am i; date; cat) >> $CVSROOT/CVSROOT/commitlog\n",
+    "#DEFAULT		(echo \"\"; who am i; echo %s; date; cat) >> $CVSROOT/CVSROOT/commitlog\n",
     NULL
 };
 
@@ -99,8 +98,8 @@ static const char *const editinfo_contents[] = {
     "# Actions such as mailing a copy of the report to each reviewer are\n",
     "# better handled by an entry in the loginfo file.\n",
     "#\n",
-    "# One thing that should be noted  is the the ALL keyword is not\n",
-    "# supported. There can be only one entry that matches a given\n",
+    "# One thing that should be noted is the the ALL keyword is not\n",
+    "# supported.  There can be only one entry that matches a given\n",
     "# repository.\n",
     NULL
 };
@@ -221,6 +220,9 @@ static const char *const modules_contents[] = {
     "#	-u prog		Run \"prog\" on \"cvs update\" of module.\n",
     "#	-d dir		Place module in directory \"dir\" instead of module name.\n",
     "#	-l		Top-level directory only -- do not recurse.\n",
+    "#\n",
+    "# NOTE:  If you change any of the \"Run\" options above, you'll have to\n",
+    "# release and re-checkout any working directories of these modules.\n",
     "#\n",
     "# And \"directory\" is a path to a directory relative to $CVSROOT.\n",
     "#\n",
