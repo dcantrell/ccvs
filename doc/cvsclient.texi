@@ -582,7 +582,7 @@ when a laptop is on the net again) to send the @code{Notify} requests.
 Even if a client is capable of deferring notifications, it should
 attempt to send them immediately (one can send @code{Notify} requests
 together with a @code{noop} request, for example), unless perhaps if
-they can know that a connection would be impossible.
+it can know that a connection would be impossible.
 
 @item Questionable @var{filename} \n
 Response expected: no.  Additional data: no.  Tell the server to check
