@@ -21816,6 +21816,7 @@ EOF
 
 	  # A standard case, hostname:dirname.
 	  mkdir parseroot2; cd parseroot2
+	  save_CVSROOT=$CVSROOT
 	  CVSROOT=$host:$CVSROOT_DIRNAME
 	  dotest parseroot2-1 "$testcvs -Q co CVSROOT"
 	  cd CVSROOT
@@ -21827,12 +21828,13 @@ EOF
 	  # relative directory name.
 	  rm -r CVSROOT
 	  CVSROOT=$host$CVSROOT_DIRNAME
-	  dotest parseroot-4-3 "$testcvs -Q co CVSROOT"
+	  dotest parseroot2-3 "$testcvs -Q co CVSROOT"
 	  cd CVSROOT
-	  dotest parseroot-4-4 "$testcvs -Q up"
+	  dotest parseroot2-4 "$testcvs -Q up"
 
 	  dokeep
 	  cd ../..
+	  CVSROOT=$save_CVSROOT
 	  rm -r parseroot2
 	  ;;
 

@@ -1,5 +1,9 @@
 2004-09-24  Derek Price <derek@ximbiot.com>
 
+	* sanity.sh (parseroot2): Correct two test names.  Restore CVSROOT.
+
+2004-09-24  Derek Price <derek@ximbiot.com>
+
 	* root.c (parse_cvsroot): Use TRACE_FLOW, not TRACE_FUNCTION since this
 	routine is called repeatedly by the recursion routines.
 	* sanity.sh (multiroot2): Adjust to compensate.
