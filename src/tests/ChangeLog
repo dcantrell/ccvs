@@ -1,3 +1,10 @@
+2003-11-20  Derek R. Price  <derek@ximbiot.com>
+
+	* src/tests/basic.at (AT_CVS_SIMPLE_PROJECT): Move...
+	(cvs_project_init_simple): ...here.
+	(*): s/AT_CVS_SIMPLE_PROJECT()/cvs_project_init_simple/.
+	* suite: Regenerated.
+
 2003-11-19  Derek R. Price  <derek@ximbiot.com>
 
 	* atspecific.m4 (cvs_project_init): New function containing...

@@ -91,7 +91,7 @@ AT_CLEANUP # Adding files
 
 
 
-# AT_CVS_SIMPLE_PROJECT()
+# cvs_project_init_simple()
 #
 # This project creates the following starter project.
 #
@@ -100,8 +100,10 @@ AT_CLEANUP # Adding files
 #         \-ssdir
 #             \-ssfile
 #
-m4_defun([AT_CVS_SIMPLE_PROJECT],
-[mkdir sdir
+m4_divert_text([DEFAULTS],
+[cvs_project_init_simple()
+{
+mkdir sdir
 AT_CHECK_NOESCAPE([cvs add sdir],,
 [Directory $CVSROOT_DIR/project/sdir added to the repository
 ])
@@ -125,13 +127,13 @@ initial revision: 1.1
 done
 ])
 cd ../..
-])dnl
+}])dnl
 
 
 
 AT_CVS_SETUP([tag, update, & diff])
 
-AT_CVS_SIMPLE_PROJECT()
+cvs_project_init_simple
 
 AT_CVS_CHECK_NORMALIZED([cvs -q tag BASE sdir/ssdir/ssfile],[1],,
 [[$SPROG tag: Attempt to add reserved tag name BASE
@@ -192,7 +194,7 @@ AT_CVS_SETUP([strange revision numbers])
 
 AT_KEYWORDS([commit commit-r diff diff-r admin admin-o resurrection])
 
-AT_CVS_SIMPLE_PROJECT()
+cvs_project_init_simple
 
 AT_CHECK([cvs -q tag NOT_RESERVED],,[T sdir/ssdir/ssfile
 ])
@@ -394,7 +396,8 @@ AT_CLEANUP # strange revision numbers
 
 AT_CVS_SETUP([annotate])
 
-AT_CVS_SIMPLE_PROJECT()
+cvs_project_init_simple
+
 echo "ssfile line 2" >>sdir/ssdir/ssfile
 AT_CHECK_NOESCAPE([cvs -q ci -m modify-it],,
 [Checking in sdir/ssdir/ssfile;
@@ -672,7 +675,7 @@ AT_CVS_SETUP([delete last revision])
 
 AT_KEYWORDS([admin admin-o])
 
-AT_CVS_SIMPLE_PROJECT()
+cvs_project_init_simple
 
 cd sdir/ssdir
 
