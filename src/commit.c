@@ -189,7 +189,7 @@ commit (argc, argv)
 	if (message)
 	    error (1, 0, "cannot specify both a message and a log file");
 
-	if ((logfd = open (logfile, O_RDONLY)) < 0)
+	if ((logfd = open (logfile, O_RDONLY | OPEN_BINARY)) < 0)
 	    error (1, errno, "cannot open log file %s", logfile);
 
 	if (fstat(logfd, &statbuf) < 0)
@@ -740,7 +740,7 @@ precommit_proc (repository, filter)
     char *filter;
 {
     /* see if the filter is there, only if it's a full path */
-    if (filter[0] == '/')
+    if (isabsolute (filter))
     {
     	char *s, *cp;
 	
@@ -1266,7 +1266,7 @@ remove_file (file, repository, tag, message, entries, srcfiles)
 		      sizeof(RCSEXT) + 1);
 	(void) sprintf (tmp, "%s/%s", repository, CVSATTIC);
 	omask = umask (2);
-	(void) mkdir (tmp, 0777);
+	(void) CVS_MKDIR (tmp, 0777);
 	(void) umask (omask);
 	(void) sprintf (tmp, "%s/%s/%s%s", repository, CVSATTIC, file, RCSEXT);
 	
@@ -1418,7 +1418,7 @@ checkaddfile (file, repository, tag, srcfiles)
     {
 	(void) sprintf(rcs, "%s/%s", repository, CVSATTIC);
 	omask = umask (2);
-	if (mkdir (rcs, 0777) != 0 && errno != EEXIST)
+	if (CVS_MKDIR (rcs, 0777) != 0 && errno != EEXIST)
 	    error (1, errno, "cannot make directory `%s'", rcs);;
 	(void) umask (omask);
 	(void) sprintf (rcs, "%s/%s/%s%s", repository, CVSATTIC, file, RCSEXT);
