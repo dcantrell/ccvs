@@ -724,7 +724,10 @@ you want to edit.  @xref{Multiple developers}, for an explanation.
 @cindex EDITOR, environment variable
 
 When you have checked that the compiler is still compilable you decide
-to make a new version of @file{backend.c}.
+to make a new version of @file{backend.c}.  This will
+store your new @file{backend.c} in the repository and
+make it available to anyone else who is using that same
+repository.
 
 @example
 $ cvs commit backend.c
@@ -739,8 +742,34 @@ The environment variable @code{$CVSEDITOR} determines
 which editor is started.  If @code{$CVSEDITOR} is not
 set, then if the environment variable @code{$EDITOR} is
 set, it will be used. If both @code{$CVSEDITOR} and
-@code{$EDITOR} are not set then the editor defaults to
-@code{vi}.  If you want to avoid the overhead of
+@code{$EDITOR} are not set then there is a default
+which will vary with your operating system, for example
+@code{vi} for unix or @code{notepad} for Windows
+NT/95.
+
+@c This probably should go into some new node
+@c containing detailed info on the editor, rather than
+@c the intro.  In fact, perhaps some of the stuff with
+@c CVSEDITOR and -m and so on should too.
+When @sc{cvs} starts the editor, it includes a list of
+files which are modified.  For the @sc{cvs} client,
+this list is based on comparing the modification time
+of the file against the modification time that the file
+had when it was last gotten or updated.  Therefore, if
+a file's modification time has changed but its contents
+have not, it will show up as modified.  The simplest
+way to handle this is simply not to worry about it---if
+you proceed with the commit @sc{cvs} will detect that
+the contents are not modified and treat it as an
+unmodified file.  The next @code{update} will clue
+@sc{cvs} in to the fact that the file is unmodified,
+and it will reset its stored timestamp so that the file
+will not show up in future editor sessions.
+@c FIXCVS: Might be nice if "commit" and other commands
+@c would reset that timestamp too, but currently commit
+@c doesn't.
+
+If you want to avoid
 starting an editor you can specify the log message on
 the command line using the @samp{-m} flag instead, like
 this:
@@ -5985,7 +6014,9 @@ the @code{$CVSROOT} environment variable.  @xref{Repository}.
 @cindex Overriding EDITOR
 @item -e @var{editor}
 Use @var{editor} to enter revision log information.  Overrides the
-setting of the @code{$CVSEDITOR} and @code{$EDITOR} environment variables.
+setting of the @code{$CVSEDITOR} and @code{$EDITOR}
+environment variables.  For more information, see
+@ref{Committing your changes}.
 
 @item -f
 Do not read the @file{~/.cvsrc} file.  This
@@ -9959,8 +9990,7 @@ file, the editor specified in the environment variable
 @code{$CVSEDITOR} is used instead.  If that variable is
 not set, then the environment variable @code{$EDITOR}
 is used instead.  If that variable is not
-set a precompiled default, normally @code{vi}, will be
-used.
+set a default will be used.  See @ref{Committing your changes}.
 
 The @file{editinfo} file is often most useful together
 with the @file{rcsinfo} file, which can be used to
@@ -10491,9 +10521,8 @@ directory.
 @item $EDITOR
 @itemx $CVSEDITOR
 Specifies the program to use for recording log messages
-during commit.  If not set, the default is
-@samp{/usr/ucb/vi}.  @code{$CVSEDITOR} overrides
-@code{$EDITOR}.
+during commit.  @code{$CVSEDITOR} overrides
+@code{$EDITOR}.  See @ref{Committing your changes}.
 
 @cindex PATH
 @item $PATH
