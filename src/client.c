@@ -14,7 +14,7 @@
 
 #include "md5.h"
 
-#if defined(AUTH_CLIENT_SUPPORT) || HAVE_KERBEROS || USE_DIRECT_TCP || defined(SOCK_ERRNO) || defined(SOCK_STRERROR)
+#if defined(AUTH_CLIENT_SUPPORT) || HAVE_KERBEROS || defined(SOCK_ERRNO) || defined(SOCK_STRERROR)
 #  ifdef HAVE_WINSOCK_H
 #    include <winsock.h>
 #  else /* No winsock.h */
@@ -22,8 +22,7 @@
 #    include <netinet/in.h>
 #    include <netdb.h>
 #  endif /* No winsock.h */
-#endif /* defined(AUTH_CLIENT_SUPPORT) || HAVE_KERBEROS || USE_DIRECT_TCP
-	  || defined(SOCK_ERRNO) || defined(SOCK_STRERROR) */
+#endif
 
 /* If SOCK_ERRNO is defined, then send()/recv() and other socket calls
    do not set errno, but that this macro should be used to obtain an
@@ -48,7 +47,7 @@ extern char *strerror ();
 #  endif
 #endif /* ! SOCK_STRERROR */
 
-#if HAVE_KERBEROS || USE_DIRECT_TCP
+#if HAVE_KERBEROS
 #define CVS_PORT 1999
 
 #if HAVE_KERBEROS
@@ -65,7 +64,7 @@ static Key_schedule sched;
 
 #endif /* HAVE_KERBEROS */
 
-#endif /* HAVE_KERBEROS || USE_DIRECT_TCP */
+#endif /* HAVE_KERBEROS */
 
 static void add_prune_candidate PROTO((char *));
 
@@ -3077,7 +3076,7 @@ get_responses_and_close ()
     else
 #endif /* NO_SOCKET_TO_FD */
     {
-#if defined(HAVE_KERBEROS) || defined(USE_DIRECT_TCP) || defined(AUTH_CLIENT_SUPPORT)
+#if defined(HAVE_KERBEROS) || defined(AUTH_CLIENT_SUPPORT)
 	if (server_fd != -1)
 	{
 	    if (shutdown (server_fd, 1) < 0)
@@ -3095,7 +3094,7 @@ get_responses_and_close ()
 	    }
 	}
         else
-#endif /* HAVE_KERBEROS || USE_DIRECT_TCP || AUTH_CLIENT_SUPPORT */
+#endif
           
 #ifdef SHUTDOWN_SERVER
 	    SHUTDOWN_SERVER (fileno (to_server_fp));
@@ -3373,7 +3372,7 @@ connect_to_pserver (tofdp, fromfdp, verify_only)
 #endif /* AUTH_CLIENT_SUPPORT */
 
 
-#if HAVE_KERBEROS || USE_DIRECT_TCP
+#if HAVE_KERBEROS
 
 /*
  * FIXME: this function has not been changed to deal with
@@ -3401,14 +3400,6 @@ start_tcp_server (tofdp, fromfdp)
 #endif /* HAVE_KERBEROS */
 
     int status;
-
-#ifndef HAVE_KERBEROS
-    /* It is a crock to have :kserver: sometimes mean kerberos,
-       and sometimes mean "direct tcp", based on USE_DIRECT_TCP.
-       If we need the "direct tcp" stuff, we need a new access method,
-       like :direct: or something.  */
-    error (1, 0, "this CVS executable does not support kerberos");
-#endif
 
     /*
      * We look up the host to give a better error message if it
@@ -3528,7 +3519,7 @@ start_tcp_server (tofdp, fromfdp)
     *fromfdp = fromfd;
 }
 
-#endif /* HAVE_KERBEROS || USE_DIRECT_TCP */
+#endif /* HAVE_KERBEROS */
 
 static int send_variable_proc PROTO ((Node *, void *));
 
@@ -3568,7 +3559,7 @@ start_server ()
 	    break;
 #endif
 
-#if HAVE_KERBEROS || USE_DIRECT_TCP
+#if HAVE_KERBEROS
 	case kserver_method:
 	    start_tcp_server (&tofd, &fromfd);
 	    break;
