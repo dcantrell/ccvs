@@ -1053,7 +1053,6 @@ cause intermittent sandbox corruption.");
 				    original_parsed_root->original);
 		assert (n != NULL);
 		assert (n->data != NULL);
-		free_cvsroot_t (n->data);
 		n->data = NULL;
 		current_parsed_root = NULL;
 	    }

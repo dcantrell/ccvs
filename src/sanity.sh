@@ -29312,10 +29312,12 @@ No conflicts created by this import"
 "Cannot access ${TESTDIR}/root1/CVSROOT
 No such file or directory"
 	  else
-	    dotest reposmv-2 "${testcvs} update" "${DOTSTAR}
-${CPROG} update: ignoring CVS/Root because it specifies a non-existent repository ${TESTDIR}/root1
-${CPROG} update: cannot open directory ${CVSROOT_DIRNAME}/dir1: No such file or directory
-${CPROG} update: skipping directory "
+	    dotest reposmv-2 "$testcvs update" \
+"$CPROG update: in directory \.:
+$CPROG update: ignoring CVS/Root because it specifies a non-existent repository $TESTDIR/root1
+$CPROG update: Updating \.
+$CPROG update: cannot open directory $CVSROOT_DIRNAME/dir1: No such file or directory
+$CPROG update: skipping directory "
 	  fi
 
 	  # CVS/Root overrides $CVSROOT
@@ -29327,14 +29329,13 @@ ${CPROG} update: skipping directory "
 No such file or directory"
 	    CVSROOT=${CVSROOT_save}; export CVSROOT
 	  else
-	    CVSROOT_save=${CVSROOT}
-	    CVSROOT=${TESTDIR}/root-moved; export CVSROOT
-	    dotest reposmv-3 "${testcvs} update" \
-"${DOTSTAR}
-${CPROG} update: ignoring CVS/Root because it specifies a non-existent repository ${TESTDIR}/root1
-${CPROG} update: Updating \.
-${DOTSTAR}"
-	    CVSROOT=${CVSROOT_save}; export CVSROOT
+	    CVSROOT_save=$CVSROOT
+	    CVSROOT=$TESTDIR/root-moved; export CVSROOT
+	    dotest reposmv-3 "$testcvs update" \
+"$CPROG update: in directory \.:
+$CPROG update: ignoring CVS/Root because it specifies a non-existent repository $TESTDIR/root1
+$CPROG update: Updating \."
+	    CVSROOT=$CVSROOT_save; export CVSROOT
 	  fi
 
 	  if $remote; then

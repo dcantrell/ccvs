@@ -445,11 +445,15 @@ free_cvsroot_t (cvsroot_t *root)
  *
  * RETURNS
  *	A pointer to a newly allocated cvsroot_t structure upon success and
- *	NULL upon failure.  The caller is responsible for disposing of
- *	new structures with a call to free_cvsroot_t().
+ *	NULL upon failure.  The caller should never dispose of this structure,
+ *	as it is stored in a cache, but the caller may rely on it not to
+ *	change.
  *
  * NOTES
  * 	This would have been a lot easier to write in Perl.
+ *
+ *	Would it make sense to reimplement the root and config file parsing
+ *	gunk in Lex/Yacc?
  *
  * SEE ALSO
  * 	free_cvsroot_t()
@@ -468,6 +472,8 @@ parse_cvsroot (const char *root_in)
 #ifdef CLIENT_SUPPORT
     int check_hostname, no_port, no_password, no_proxy;
 #endif /* CLIENT_SUPPORT */
+    static List *cache = NULL;
+    Node *node;
 
     assert (root_in != NULL);
 
@@ -475,6 +481,9 @@ parse_cvsroot (const char *root_in)
      * the recursion routines.
      */
     TRACE (TRACE_FLOW, "parse_cvsroot (%s)", root_in);
+
+    if (cache && (node = findnode (cache, root_in)))
+	return node->data;
 
     /* allocate some space */
     newroot = new_cvsroot_t();
@@ -884,6 +893,12 @@ parse_cvsroot (const char *root_in)
     
     /* Hooray!  We finally parsed it! */
     free (cvsroot_save);
+
+    if (!cache) cache = getlist();
+    node = getnode();
+    node->key = xstrdup (newroot->original);
+    node->data = newroot;
+    addnode (cache, node);
     return newroot;
 
 error_exit:

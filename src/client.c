@@ -225,10 +225,8 @@ arg_should_not_be_sent_to_server (char *arg)
 	    && (strcmp (root_string, original_parsed_root->original) != 0))
 	{
 	    /* Don't send this, since the CVSROOTs don't match. */
-	    if (this_root) free_cvsroot_t (this_root);
 	    return 1;
 	}
-	if (this_root) free_cvsroot_t (this_root);
     }
     
     /* OK, let's send it. */

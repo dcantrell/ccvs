@@ -1,3 +1,11 @@
+2004-12-07  Derek Price  <derek@ximbiot.com>
+
+	* root.c (parse_cvsroot): Cache parsed values for efficiency and to
+	avoid printing warnings about non-fatal parsing errors multiple times.
+	* client.c,, login.c, main.c, recurse.c: Don't dispose of parsed roots,
+	parse_cvsroot() has control.
+	* sanity.sh (reposmv): Stop accounting for multiple warnings.
+
 2004-12-03  Mark D. Baushke  <mdb@cvshome.org>
 
 	* root.h (cvsroot_t): Add cvs_rsh and cvs_server for bookkeeping
