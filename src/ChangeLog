@@ -1,3 +1,24 @@
+Wed Jun 14 11:29:42 1995  J.T. Conklin  <jtc@rtl.cygnus.com>
+
+	* server.c (serve_directory): fix a memory leak.
+
+	* checkout.c, commit.c, diff.c, history.c, import.c, log.c,
+	  patch.c, release.c, remove.c, rtag.c, status.c, tag.c, update.c:
+	  Use send_arg() to send command line arguments to server.
+
+	* commit.c (fsortcmp), find_names (fsortcmp), hash.c (hashp,
+	  findnode), hash.h (findnode), rcs.c (RCS_addnode,
+	  RCS_check_kflag, RCS_check_tag, RCS_isdead, RCS_parse,
+	  RCS_parsercsfile_i), rcs.h (RCS_addnode, RCS_check_kflag,
+	  RCS_check_tag, RCS_parse): Added const qualifiers as
+	  appropriate.
+	* rcs.h (RCS_isdead): Added prototype.
+	  
+	* hash.h (walklist, sortlist): correct function prototypes.
+
+	* ignore.c (ign_setup): don't bother checking to see if file
+	  exists before calling ign_add_file.
+
 Fri Jun  9 11:24:06 1995  J.T. Conklin  <jtc@rtl.cygnus.com>
 
 	* all source files (rcsid): Added const qualifer.

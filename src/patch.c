@@ -170,26 +170,19 @@ patch (argc, argv)
 	ign_setup ();
 
 	if (local)
-	    if (fprintf (to_server, "Argument -l\n") < 0)
-		error (1, errno, "writing to server");
-	if (really_quiet)
-	    if (fprintf (to_server, "Argument -Q\n") < 0)
-		error (1, errno, "writing to server");
+	    send_arg("-l");
 	if (quiet)
-	    if (fprintf (to_server, "Argument -q\n") < 0)
-		error (1, errno, "writing to server");
+	    send_arg("-q");
+	if (really_quiet)
+	    send_arg("-Q");
 	if (force_tag_match)
-	    if (fprintf (to_server, "Argument -f\n") < 0)
-		error (1, errno, "writing to server");
+	    send_arg("-f");
 	if (toptwo_diffs)
-	    if (fprintf (to_server, "Argument -t\n") < 0)
-		error (1, errno, "writing to server");
+	    send_arg("-t");
 	if (patch_short)
-	    if (fprintf (to_server, "Argument -s\n") < 0)
-		error (1, errno, "writing to server");
+	    send_arg("-s");
 	if (unidiff)
-	    if (fprintf (to_server, "Argument -u\n") < 0)
-		error (1, errno, "writing to server");
+	    send_arg("-u");
 
 	if (rev1)
 	    option_with_arg ("-r", rev1);

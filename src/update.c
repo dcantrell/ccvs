@@ -213,29 +213,21 @@ update (argc, argv)
 	    ign_setup ();
 
 	    if (local)
-		if (fprintf (to_server, "Argument -l\n") < 0)
-		    error (1, errno, "writing to server");
+		send_arg("-l");
 	    if (quiet)
-		if (fprintf (to_server, "Argument -q\n") < 0)
-		    error (1, errno, "writing to server");
+		send_arg("-q");
 	    if (really_quiet)
-		if (fprintf (to_server, "Argument -Q\n") < 0)
-		    error (1, errno, "writing to server");
+		send_arg("-Q");
 	    if (update_build_dirs)
-		if (fprintf (to_server, "Argument -d\n") < 0)
-		    error (1, errno, "writing to server");
+		send_arg("-d");
 	    if (pipeout)
-		if (fprintf (to_server, "Argument -p\n") < 0)
-		    error (1, errno, "writing to server");
+		send_arg("-p");
 	    if (!force_tag_match)
-		if (fprintf (to_server, "Argument -f\n") < 0)
-		    error (1, errno, "writing to server");
+		send_arg("-f");
 	    if (aflag)
-		if (fprintf (to_server, "Argument -A\n") < 0)
-		    error (1, errno, "writing to server");
+		send_arg("-A");
 	    if (update_prune_dirs)
-		if (fprintf (to_server, "Argument -P\n") < 0)
-		    error (1, errno, "writing to server");
+		send_arg("-P");
 	    client_prune_dirs = update_prune_dirs;
 	    option_with_arg ("-r", tag);
 	    if (date)
@@ -258,8 +250,7 @@ update (argc, argv)
 		    {
 			if (rq->status == rq_supported)
 			{
-			    if (fprintf (to_server, "Argument -u\n") < 0)
-				error (1, errno, "writing to server");
+			    send_arg("-u");
 			}
 			break;
 		    }

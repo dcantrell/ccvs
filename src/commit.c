@@ -36,7 +36,7 @@ static int finaladd PROTO((char *file, char *revision, char *tag,
 			   char *options, char *update_dir,
 			   char *repository, List *entries));
 static int findmaxrev PROTO((Node * p, void *closure));
-static int fsortcmp PROTO((Node * p, Node * q));
+static int fsortcmp PROTO((const Node * p, const Node * q));
 static int lock_RCS PROTO((char *user, char *rcs, char *rev, char *repository));
 static int lock_filesdoneproc PROTO((int err, char *repository, char *update_dir));
 static int lockrcsfile PROTO((char *file, char *repository, char *rev));
@@ -233,14 +233,11 @@ commit (argc, argv)
 	option_with_arg ("-m", message);
 
 	if (local)
-	    if (fprintf (to_server, "Argument -l\n") < 0)
-		error (1, errno, "writing to server");
+	    send_arg("-l");
 	if (force_ci)
-	    if (fprintf (to_server, "Argument -f\n") < 0)
-		error (1, errno, "writing to server");
+	    send_arg("-f");
 	if (!run_module_prog)
-	    if (fprintf (to_server, "Argument -n\n") < 0)
-		error (1, errno, "writing to server");
+	    send_arg("-n");
 	option_with_arg ("-r", tag);
 
 	send_files (argc, argv, local, 0);
@@ -308,7 +305,8 @@ commit (argc, argv)
  */
 static int
 fsortcmp (p, q)
-    Node *p, *q;
+    const Node *p;
+    const Node *q;
 {
     return (strcmp (p->key, q->key));
 }

@@ -270,25 +270,20 @@ checkout (argc, argv)
 	if (pipeout) send_arg ("-p");
 	if (!force_tag_match) send_arg ("-f");
 	if (aflag)
-	    if (fprintf (to_server, "Argument -A\n") < 0)
-		error (1, errno, "writing to server");
+	    send_arg("-A");
 	if (!shorten)
-	    if (fprintf (to_server, "Argument -N\n") < 0)
-		error (1, errno, "writing to server");
+	    send_arg("-N");
 	if (checkout_prune_dirs && strcmp (command_name, "export") != 0)
-	    if (fprintf (to_server, "Argument -P\n") < 0)
-		error (1, errno, "writing to server");
+	    send_arg("-P");
 	client_prune_dirs = checkout_prune_dirs;
 	if (cat)
-	    if (fprintf (to_server, "Argument -c\n") < 0)
-		error (1, errno, "writing to server");
+	    send_arg("-c");
 	if (where != NULL)
 	{
 	    option_with_arg ("-d", where);
 	}
 	if (status)
-	    if (fprintf (to_server, "Argument -s\n") < 0)
-		error (1, errno, "writing to server");
+	    send_arg("-s");
 	if (strcmp (command_name, "export") != 0
 	    && options != NULL
 	    && options[0] != '\0')

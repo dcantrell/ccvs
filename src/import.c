@@ -198,14 +198,11 @@ import (argc, argv)
 	ign_setup ();
 
 	if (quiet)
-	    if (fprintf (to_server, "Argument -q\n") < 0)
-		error (1, errno, "writing to server");
+	    send_arg("-q");
 	if (really_quiet)
-	    if (fprintf (to_server, "Argument -Q\n") < 0)
-		error (1, errno, "writing to server");
+	    send_arg("-Q");
 	if (use_file_modtime)
-	    if (fprintf (to_server, "Argument -d\n") < 0)
-		error (1, errno, "writing to server");
+	    send_arg("-d");
 
 	if (vbranch[0] != '\0')
 	    option_with_arg ("-b", vbranch);

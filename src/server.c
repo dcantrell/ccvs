@@ -456,14 +456,16 @@ serve_directory (arg)
 	}
 	else
 	    pending_error = ENOMEM;
-	return;
     }
-    if (repos == NO_MEM_ERROR)
+    else if (repos == NO_MEM_ERROR)
     {
 	pending_error = ENOMEM;
-	return;
     }
-    dirswitch (arg, repos);
+    else
+    {
+	dirswitch (arg, repos);
+	free (repos);
+    }
 }
 
 static void
@@ -682,8 +684,8 @@ serve_modified (arg)
 	else
 	    pending_error = ENOMEM;
 	return;
-    }
-    if (mode_text == NO_MEM_ERROR)
+    } 
+    else if (mode_text == NO_MEM_ERROR)
     {
 	pending_error = ENOMEM;
 	return;
@@ -707,8 +709,8 @@ serve_modified (arg)
 	else
 	    pending_error = ENOMEM;
 	return;
-    }
-    if (size_text == NO_MEM_ERROR)
+    } 
+    else if (size_text == NO_MEM_ERROR)
     {
 	pending_error = ENOMEM;
 	return;

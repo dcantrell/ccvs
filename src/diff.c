@@ -169,11 +169,9 @@ diff (argc, argv)
 	ign_setup ();
 
 	if (local)
-	    if (fprintf (to_server, "Argument -l\n") < 0)
-		error (1, errno, "writing to server");
+	    send_arg("-l");
 	if (empty_files)
-	    if (fprintf (to_server, "Argument -N\n") < 0)
-		error (1, errno, "writing to server");
+	    send_arg("-N");
 	send_option_string (opts);
 	if (diff_rev1)
 	    option_with_arg ("-r", diff_rev1);

@@ -51,7 +51,8 @@ add_entries_proc (node, closure)
  */
 static int
 fsortcmp (p, q)
-    Node *p, *q;
+    const Node *p;
+    const Node *q;
 {
     return (strcmp (p->key, q->key));
 }

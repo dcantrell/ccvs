@@ -52,15 +52,13 @@ ign_setup ()
 
     /* Then add entries found in repository, if it exists */
     (void) sprintf (file, "%s/%s/%s", CVSroot, CVSROOTADM, CVSROOTADM_IGNORE);
-    if (isfile (file))
-	ign_add_file (file, 0);
+    ign_add_file (file, 0);
 
     /* Then add entries found in home dir, (if user has one) and file exists */
     if ((pw = (struct passwd *) getpwuid (getuid ())) && pw->pw_dir)
     {
 	(void) sprintf (file, "%s/%s", pw->pw_dir, CVSDOTIGNORE);
-	if (isfile (file))
-	    ign_add_file (file, 0);
+	ign_add_file (file, 0);
     }
 
     /* Then add entries found in CVSIGNORE environment variable. */
