@@ -1,3 +1,8 @@
+Mon Jul 21 00:19:30 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* sanity.sh (toplevel, head): Delete our files from the repository
+	when done with them.
+
 Sun Jul 20 15:53:08 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* sanity.sh (admin, reserved): New tests, test most cvs admin
