@@ -2772,6 +2772,17 @@ done'
 
 	  # Update the other copy, and make sure that a is removed.
 	  cd ../1/first-dir
+	  # "Needs Patch" is a rather strange output here.  Something like
+	  # "Removed in Repository" would make more sense.
+	  dotest newb-123j0 "${testcvs} status a" \
+"===================================================================
+File: a                	Status: Needs Patch
+
+   Working revision:	1\.1.*
+   Repository revision:	1\.1\.2\.1	/tmp/cvs-sanity/cvsroot/first-dir/a,v
+   Sticky Tag:		branch (branch: 1\.1\.2)
+   Sticky Date:		(none)
+   Sticky Options:	(none)"
 	  dotest newb-123j "${testcvs} -q update" \
 "${PROG} [a-z]*: warning: a is not (any longer) pertinent"
 
