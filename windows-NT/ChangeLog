@@ -1,5 +1,9 @@
 2004-04-23  Derek Price  <derek@ximbiot.com>
 
+	* stamp-ch: Regenerated.
+
+2004-04-23  Derek Price  <derek@ximbiot.com>
+
 	* Makefile.am (EXTRA_DIST): Add stdbool.h & stamp-sh.
 	(stdbool.h, stamp-sh): New targets.
 	* stdbool.h, stamp-sh: New files.
