@@ -820,8 +820,8 @@ diff_file_nodiff( finfo, vers, empty_file, rev1_cache )
     Vers_TS *xvers;
     int retcode;
 
-    TRACE( TRACE_FUNCTION, "diff_file_nodiff( %s, %s )",
-           finfo->fullname, empty_file );
+    TRACE (TRACE_FUNCTION, "diff_file_nodiff (%s, %d)",
+           finfo->fullname, empty_file);
 
     /* free up any old use_rev* variables and reset 'em */
     if (use_rev1)

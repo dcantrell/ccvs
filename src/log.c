@@ -481,7 +481,7 @@ rlog_proc (argc, argv, xwhere, mwhere, mfile, shorten, local, mname, msg)
     char *myargv[2];
     int err = 0;
     int which;
-    char *repository;
+    char *repository = NULL;
     char *where;
 
     if (is_rlog)

@@ -1,3 +1,10 @@
+2003-07-11  Larry Jones  <lawrence.jones@eds.com>
+
+	* diff.c (diff_file_nodiff): Fix -Wall complaints.
+	* log.c (rlog_proc): Ditto.
+	* rcs.c (RCS_setlocalid): Ditto.
+	* recurse.c (start_recursion): Handle null repository_in in TRACE.
+
 2003-07-09  Larry Jones  <lawrence.jones@eds.com>
 
 	* sanity.sh: Use ${CPROG} instead of ${PROG} so that changes merged
