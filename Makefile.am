@@ -12,7 +12,7 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 
-AUTOMAKE_OPTIONS = 1.4e dist-bzip2
+AUTOMAKE_OPTIONS = 1.5 dist-bzip2
 
 ## Subdirectories to run make in for the primary targets.
 # Unix source subdirs, where we'll want to run lint and etags:
