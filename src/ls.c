@@ -319,6 +319,15 @@ long_format_data_delproc (Node *n)
 
 
 
+/* A delproc for a List Node containing a List *.  */
+static void
+ls_delproc (Node *p)
+{
+    dellist ((List **)&p->data);
+}
+
+
+
 /*
  * Add a file to our list of data to print for a directory.
  */
@@ -330,6 +339,7 @@ ls_fileproc (void *callerdat, struct file_info *finfo)
     char *regex_err;
     Node *p, *n;
     bool isdead;
+    const char *filename;
 
     if (regexp_match)
     {
@@ -361,13 +371,35 @@ ls_fileproc (void *callerdat, struct file_info *finfo)
 	return 0;
     }
 
+    p = findnode (callerdat, finfo->update_dir);
+    if (!p)
+    {
+	/* This only occurs when a complete path to a file is specified on the
+	 * command line.  Put the file in the root list.
+	 */
+	filename = finfo->fullname;
+
+	/* Add update_dir node.  */
+	p = findnode (callerdat, ".");
+	if (!p)
+	{
+	    p = getnode ();
+	    p->key = xstrdup (".");
+	    p->data = getlist ();
+	    p->delproc = ls_delproc;
+	    addnode (callerdat, p);
+	}
+    }
+    else
+	filename = finfo->file;
+
     n = getnode();
     if (entries_format)
     {
 	char *outdate = entries_time (RCS_getrevtime (finfo->rcs, vers->vn_rcs,
                                                       0, 0));
 	n->data = Xasprintf ("/%s/%s/%s/%s/%s%s\n",
-                             finfo->file, vers->vn_rcs,
+                             filename, vers->vn_rcs,
                              outdate, vers->options,
                              show_tag ? "T" : "", show_tag ? show_tag : "");
 	free (outdate);
@@ -386,28 +418,17 @@ ls_fileproc (void *callerdat, struct file_info *finfo)
                                  strlen (vers->vn_rcs) > 9 ? "+" : " ",
                                  show_dead_revs ? (isdead ? "dead " : "     ")
                                                 : "",
-                                 finfo->file);
+                                 filename);
 	n->data = out;
 	n->delproc = long_format_data_delproc;
     }
     else
-	n->data = Xasprintf ("%s\n", finfo->file);
+	n->data = Xasprintf ("%s\n", filename);
 
-    p = findnode (callerdat, finfo->update_dir);
-    assert (p);
     addnode (p->data, n);
 
     freevers_ts (&vers);
     return 0;
-}
-
-
-
-/* A delproc for a List Node containing a List *.  */
-static void
-ls_delproc (Node *p)
-{
-    dellist ((List **)&p->data);
 }
 
 

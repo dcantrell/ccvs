@@ -1,3 +1,8 @@
+2004-10-21 Derek Price <derek@ximbiot.com>
+
+	* ls.c (ls_fileproc): Deal with files specified on the command line.
+	(ls_delproc): Move to a more accessible location.
+
 2004-10-20 Derek Price <derek@ximbiot.com>
 
 	* add.c (add): Avoid unnecessary typecast.
