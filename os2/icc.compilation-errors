@@ -114,6 +114,34 @@ make: *** [../src/client.obj] Error 12
 Compilation exited abnormally with code 2 at Mon Nov 06 14:04:06
 
 ------------------------------------------------------------------------
+::: client [after installing dirent]
+
+cd c:/src/cvs-1.6.1/os2/
+make -f test-makefile THIS_BASENAME=../src/client
+ECHO is on.
+-C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I../os2 -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include
+ECHO is on.
+icc -C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I../os2 -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include /Fo../src/client.obj ../src/client.c
+C:\src\cvs-1.6.1\src\client.c(484:2) : warning EDC0185: Function read_line has not been prototyped prior to use.
+C:\src\cvs-1.6.1\src\client.c(553:10) : warning EDC0185: Function getwd has not been prototyped prior to use.
+C:\src\cvs-1.6.1\src\client.c(724:5) : warning EDC0185: Function call_in_directory has not been prototyped prior to use.
+C:\src\cvs-1.6.1\src\client.c(724:30) : warning EDC0185: Function copy_a_file has not been prototyped prior to use.
+C:\src\cvs-1.6.1\src\client.c(1131:30) : warning EDC0185: Function update_entries has not been prototyped prior to use.
+C:\src\cvs-1.6.1\src\client.c(1193:30) : warning EDC0185: Function remove_entry has not been prototyped prior to use.
+C:\src\cvs-1.6.1\src\client.c(1213:30) : warning EDC0185: Function remove_entry_and_file has not been prototyped prior to use.
+C:\src\cvs-1.6.1\src\client.c(1269:30) : warning EDC0185: Function set_static has not been prototyped prior to use.
+C:\src\cvs-1.6.1\src\client.c(1295:9) : warning EDC0185: Function is_cvsroot_level has not been prototyped prior to use.
+C:\src\cvs-1.6.1\src\client.c(1303:34) : warning EDC0185: Function clear_static has not been prototyped prior to use.
+C:\src\cvs-1.6.1\src\client.c(1352:34) : warning EDC0185: Function set_sticky has not been prototyped prior to use.
+C:\src\cvs-1.6.1\src\client.c(1387:34) : warning EDC0185: Function clear_sticky has not been prototyped prior to use.
+C:\src\cvs-1.6.1\src\client.c(2708:2) : warning EDC0185: Function send_modified has not been prototyped prior to use.
+C:\src\cvs-1.6.1\src\client.c(2902:3) : warning EDC0185: Function send_fileproc has not been prototyped prior to use.
+C:\src\cvs-1.6.1\src\client.c(2903:3) : warning EDC0185: Function send_dirent_proc has not been prototyped prior to use.
+C:\src\cvs-1.6.1\src\client.c(3033:5) : warning EDC0185: Function parse_cvsroot has not been prototyped prior to use.
+
+Compilation finished at Mon Nov 06 19:10:36
+
+------------------------------------------------------------------------
 ::: commit
 
 cd c:/src/cvs-1.6.1/os2/
