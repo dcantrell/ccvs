@@ -68,15 +68,13 @@ if test -f check.log; then
 fi
 
 # That we should have to do this is total bogosity, but GNU expr
-# version 1.9.4 uses the emacs definition of "^" and "$" instead of
-# the unix (e.g. SunOS 4.1.3 expr) one.  IMHO, this is a GNU expr bug, but
-# I don't have a copy of POSIX.2 handy to check.
+# version 1.9.4 uses the emacs definition of "$" instead of the unix
+# (e.g. SunOS 4.1.3 expr) one.  IMHO, this is a GNU expr bug, but I
+# don't have a copy of POSIX.2 handy to check.
 ENDANCHOR="$"
-STARTANCHOR="^"
 if expr 'abc
 def' : 'abc$' >/dev/null; then
   ENDANCHOR='\'\'
-  STARTANCHOR='\`'
 fi
 
 # Work around another GNU expr (version 1.10) bug/incompatibility.
@@ -140,7 +138,7 @@ dotest ()
     fi
   else
     if expr "`cat ${TESTDIR}/dotest.tmp`" : \
-	${STARTANCHOR}"$3"${ENDANCHOR} >/dev/null; then
+	"$3"${ENDANCHOR} >/dev/null; then
       cat ${TESTDIR}/dotest.tmp >>${LOGFILE}
       pass "$1"
     else
