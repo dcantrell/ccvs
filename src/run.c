@@ -56,7 +56,7 @@ run_setup( const char *prog )
 	if (run_argv[i])
 	{
 	    free (run_argv[i]);
-	    run_argv[i] = (char *) 0;
+	    run_argv[i] = NULL;
 	}
     }
     run_argc = 0;
@@ -110,11 +110,15 @@ run_setup( const char *prog )
     free (run_prog);
 }
 
+
+
 void
 run_arg (const char *s)
 {
     run_add_arg (s);
 }
+
+
 
 static void
 run_add_arg (const char *s)
@@ -123,14 +127,13 @@ run_add_arg (const char *s)
     if (run_argc >= run_argc_allocated)
     {
 	run_argc_allocated += 50;
-	run_argv = (char **) xrealloc ((char *) run_argv,
-				     run_argc_allocated * sizeof (char **));
+	run_argv = xrealloc (run_argv, run_argc_allocated * sizeof (char **));
     }
 
     if (s)
 	run_argv[run_argc++] = xstrdup (s);
     else
-	run_argv[run_argc] = (char *) 0;	/* not post-incremented on purpose! */
+	run_argv[run_argc] = NULL;	/* not post-incremented on purpose! */
 }
 
 
@@ -161,10 +164,12 @@ run_exec (const char *stin, const char *stout, const char *sterr, int flags)
 
     if (trace)
     {
+	cvs_outerr (
 #ifdef SERVER_SUPPORT
-	cvs_outerr (server_active ? "S" : " ", 1);
+		    server_active ? "S" :
 #endif
-	cvs_outerr ("-> system(", 0);
+		    " ", 1);
+	cvs_outerr (" -> system (", 0);
 	run_print (stderr);
 	cvs_outerr (")\n", 0);
     }
@@ -172,7 +177,7 @@ run_exec (const char *stin, const char *stout, const char *sterr, int flags)
 	return 0;
 
     /* make sure that we are null terminated, since we didn't calloc */
-    run_add_arg ((char *)0);
+    run_add_arg (NULL);
 
     /* setup default file descriptor numbers */
     shin = 0;
@@ -291,7 +296,7 @@ run_exec (const char *stin, const char *stout, const char *sterr, int flags)
 #ifdef BSD_SIGNALS
     if (flags & RUN_SIGIGNORE)
     {
-	memset ((char *)&vec, 0, sizeof (vec));
+	memset (&vec, 0, sizeof vec);
 	vec.sv_handler = SIG_IGN;
 	(void) sigvec (SIGINT, &vec, &ivec);
 	(void) sigvec (SIGQUIT, &vec, &qvec);
@@ -340,17 +345,17 @@ run_exec (const char *stin, const char *stout, const char *sterr, int flags)
 #ifdef POSIX_SIGNALS
     if (flags & RUN_SIGIGNORE)
     {
-	(void) sigaction (SIGINT, &iact, (struct sigaction *)NULL);
-	(void) sigaction (SIGQUIT, &qact, (struct sigaction *)NULL);
+	(void) sigaction (SIGINT, &iact, NULL);
+	(void) sigaction (SIGQUIT, &qact, NULL);
     }
     else
-	(void) sigprocmask (SIG_SETMASK, &sigset_omask, (sigset_t *)NULL);
+	(void) sigprocmask (SIG_SETMASK, &sigset_omask, NULL);
 #else
 #ifdef BSD_SIGNALS
     if (flags & RUN_SIGIGNORE)
     {
-	(void) sigvec (SIGINT, &ivec, (struct sigvec *)NULL);
-	(void) sigvec (SIGQUIT, &qvec, (struct sigvec *)NULL);
+	(void) sigvec (SIGINT, &ivec, NULL);
+	(void) sigvec (SIGQUIT, &qvec, NULL);
     }
     else
 	(void) sigsetmask (mask);
@@ -424,7 +429,6 @@ run_print (FILE *fp)
    error, return NULL and I'm not sure whether errno was set (the Red Hat
    Linux 4.1 popen manpage was kind of vague but discouraging; and the noexec
    case complicates this even aside from popen behavior).  */
-
 FILE *
 run_popen (const char *cmd, const char *mode)
 {
@@ -487,6 +491,7 @@ piped_child (char *const *command, int *tofdp, int *fromfdp)
     *fromfdp = from_child_pipe[0];
     return pid;
 }
+
 
 
 void

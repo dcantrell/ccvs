@@ -1,3 +1,8 @@
+2004-09-01  Derek Price <derek@ximbiot.com>
+
+	* run.c: Remove unneeded typecasts.  Reformat function headers.  Fix
+	trace.
+
 2004-08-31  Derek Price <derek@ximbiot.com>
 
 	* subr.c (format_cmdline), cvs.h (format_cmdline): Accept bool rather
