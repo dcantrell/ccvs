@@ -1,3 +1,8 @@
+Thu Oct 19 16:26:32 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* INSTALL: Remove note about RCS 5.7 and log messages
+	consisting only of whitespace; fixed in CVS on 11 Jul 95.
+
 Tue Oct 17 17:57:23 1995  Warren Jones  <wjones@tc.fluke.com>
 
 	* man/cvs.5, examples/modules: Document -e.
