@@ -1,3 +1,7 @@
+1998-01-11  enami tsugutomo  <enami@but-b.or.jp>
+
+	* rcs.c (linevector_copy): Delete lines before overwriting them.
+
 Sat Jan 10 11:05:40 1998  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvsrc.c, entries.c, login.c, logmsg.c, myndbm.c, patch.c,
