@@ -1,3 +1,7 @@
+2003-03-19  Derek Price  <derek@ximbiot.com>
+
+	* Makefile.in: Regenerated.
+
 2003-02-25  Derek Price  <derek@ximbiot.com>
 
 	* rcs2log.sh: Import RedHat 8.0's use of mktemp from the CVS 1.11.2
