@@ -292,7 +292,8 @@ The authentication fails.  After sending this response, the server may
 close the connection.  The @var{code} is a code describing why it
 failed, intended for computer consumption.  The only code currently
 defined is @samp{0} which is nonspecific, but clients must silently
-ignore any unrecognized codes.  The @var{text} should be supplied to the
+treat any unrecognized codes as nonspecific.
+The @var{text} should be supplied to the
 user.  Compatibility note: @sc{cvs} 1.9.10 and older clients will print
 @code{unrecognized auth response} and @var{text}, and then exit, upon
 receiving this response.

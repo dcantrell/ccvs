@@ -1,5 +1,9 @@
 Sat Jul  5 03:16:38 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvsclient.texi (Connection and Authentication): When we said to
+	"ignore" an unrecogized code we mean to treat it as nonspecific,
+	not to ignore the response.
+
 	* cvsclient.texi (Example): Refer to RFC2119 when referring to
 	terminology of MUST, SHALL, &c.
 
