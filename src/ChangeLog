@@ -1,3 +1,7 @@
+Mon, 10 Nov 1997  Jim Kingdon
+
+	* rcscmds.c: Declare vasprintf.
+
 Mon Nov 10 11:11:17 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	This fixes problems with windows-NT/run.c improperly quoting, and
