@@ -1,3 +1,11 @@
+2001-08-07  Derek Price  <dprice@collab.net>
+
+	* build_diff.com: Turn on verify to get a better trace of the DCL.
+	* diff3.c: Eliminate compiler warning.  The VMS read rval is ssize_t
+	(signed).  The VMS size_t appears to be unsigned.
+	* io.c: Eliminate compiler warning (ssize_t).
+	(Patch from Mike Marciniszyn <Mike.Marciniszyn@sanchez.com>.)
+
 2001-08-06  Derek Price  <dprice@collab.net>
 
 	* Makefile.in: Regenerated.

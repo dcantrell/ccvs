@@ -1847,10 +1847,10 @@ myread (fd, ptr, size)
      char *ptr;
      size_t size;
 {
-  size_t result = read (fd, ptr, size);
+  ssize_t result = read (fd, ptr, size);
   if (result == -1)
     diff3_perror_with_exit ("read failed");
-  return result;
+  return (size_t)result;
 }
 
 static void
