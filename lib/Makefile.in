@@ -58,6 +58,7 @@ OBJECTS = \
     @ALLOCA@ @LIBOBJS@ \
     argmatch.o \
     error.o \
+    fnmatch.o \
     getopt.o \
     getopt1.o \
     md5.o \
