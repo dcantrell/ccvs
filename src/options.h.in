@@ -62,7 +62,7 @@
  * when rcsdiff was built on your system.
  */
 #ifndef DIFF
-#define	DIFF	"diff -a"
+#define	DIFF	"diff"
 #endif
 
 /*

@@ -1,3 +1,8 @@
+Thu Jun 15 13:43:38 1995  Jim Kingdon  (kingdon@cyclic.com)
+
+	* options.h.in (DIFF): Default to "diff" not "diff -a" since diff
+	might not support the -a option.
+
 Wed Jun 14 11:29:42 1995  J.T. Conklin  <jtc@rtl.cygnus.com>
 
 	* import.c (import_descend): Initialize dirlist to NULL.
