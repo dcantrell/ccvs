@@ -275,47 +275,34 @@ make_directories (name)
  * Change the mode of a file, either adding write permissions, or removing
  * all write permissions.  Adding write permissions honors the current umask
  * setting.
- * todo: I'm not sure what this might mean under OS/2
  */
 void
 xchmod (fname, writable)
     char *fname;
     int writable;
 {
-    struct stat sb;
-    mode_t mode, oumask;
+    char *attrib_cmd;
+    char *attrib_option;
+    char *whole_cmd;
 
-    if (stat (fname, &sb) < 0)
-    {
-	if (!noexec)
-	    error (0, errno, "cannot stat %s", fname);
-	return;
-    }
+    attrib_cmd = "attrib "; /* No, really? */
+
     if (writable)
-    {
-	oumask = umask (0);
-	(void) umask (oumask);
-	mode = sb.st_mode | ~oumask & (((sb.st_mode & S_IRUSR) ? S_IWUSR : 0) |
-				       ((sb.st_mode & S_IRGRP) ? S_IWGRP : 0) |
-				       ((sb.st_mode & S_IROTH) ? S_IWOTH : 0));
-    }
+        attrib_option = "-r ";  /* make writeable */
     else
-    {
-	mode = sb.st_mode & ~(S_IWRITE | S_IWGRP | S_IWOTH);
-    }
+        attrib_option = "+r ";  /* make read-only */
+        
+    whole_cmd = xmalloc (strlen (attrib_cmd)
+                         + strlen (attrib_option)
+                         + strlen (fname)
+                         + 1);
 
-    if (trace)
-#ifdef SERVER_SUPPORT
-	(void) fprintf (stderr, "%c-> chmod(%s,%o)\n",
-			(server_active) ? 'S' : ' ', fname, mode);
-#else
-	(void) fprintf (stderr, "-> chmod(%s,%o)\n", fname, mode);
-#endif
-    if (noexec)
-	return;
+    strcpy (whole_cmd, attrib_cmd);
+    strcat (whole_cmd, attrib_option);
+    strcat (whole_cmd, fname);
 
-    if (chmod (fname, mode) < 0)
-	error (0, errno, "cannot change mode of file %s", fname);
+    system (whole_cmd);
+    free (whole_cmd);
 }
 
 

@@ -400,6 +400,13 @@ extern void init_sockets();
  */
 #define NO_SOCKET_TO_FD 1
 
+/* chmod() doesn't seem to work -- IBM's own example program does not
+ * behave as its documentation claims, in fact!  I suspect that
+ * DosSetPathInfo is the way to go, but can't seem to make that work
+ * either.  For now, we can deal with some cases by invoking the DOS
+ * "attrib" command via system().
+#define CHMOD_BROKEN 1
+
 /* Rule Number 1 of OS/2 Programming: If the function you're looking
    for doesn't exist, try putting "Dos" in front of it. */
 #ifndef sleep
