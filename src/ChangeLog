@@ -1,5 +1,8 @@
 Tue Sep  9 19:22:44 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* expand_path.c (expand_path): If GETPWNAM_MISSING is defined,
+	just give an error instead of calling getpwnam.
+
 	* subr.c (getcaller): If SYSTEM_GETCALLER is defined, call it
 	instead of all the getlogin/getpwuid/etc.
 	* wrapper.c (wrap_setup): Call get_homedir not getpwuid.
