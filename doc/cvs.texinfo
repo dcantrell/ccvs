@@ -263,7 +263,7 @@ flag (release 1.15 and later are OK).  You must also
 configure both @sc{rcs} and @sc{cvs} to handle binary
 files when you install them.
 
-Keword substitution can be a source of trouble with
+Keyword substitution can be a source of trouble with
 binary files. @xref{Keyword substitution}, for
 solutions.
 
