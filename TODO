@@ -898,3 +898,7 @@ the time in UTC and a new client would know that it could convert the time to a
 local time string according to the localization settings before printing it.
 
 225.  Add support for --allow-root to server command.
+
+226.  Add support for upgrading read locks to write locks and use it to
+avoid holding potentially long-term write locks (for example, in tag and
+commit).
