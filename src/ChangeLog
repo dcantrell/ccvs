@@ -1,3 +1,9 @@
+1998-03-27  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* rcs.c (RCS_lock): If the revision is already locked, give an
+	error rather than dumping core.
+	* sanity.sh (reserved): New test reserved-13c tests for this.
+
 1998-03-25  Loren J. Rittle
 
 	* import.c (add_rev): Rewrite to use RCS_FLAGS_KEEPFILE option

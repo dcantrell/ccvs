@@ -13525,6 +13525,11 @@ ${PROG} [a-z]*: Rebuilding administrative file database"
 "fred has file a-lock locked for version  1\.1
 ${PROG} [a-z]*: Pre-commit check failed
 ${PROG} \[[a-z]* aborted\]: correct above errors first!"
+	  # OK, now test "cvs admin -l" in the case where someone
+	  # else has the file locked.
+	  dotest_fail reserved-13c "${testcvs} admin -l a-lock" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/a-lock,v
+${PROG} \[[a-z]* aborted\]: Revision 1\.1 is already locked by fred"
 
 	  dotest reserved-14 "${testcvs} admin -u1.1 a-lock" \
 "RCS file: ${TESTDIR}/cvsroot/first-dir/a-lock,v

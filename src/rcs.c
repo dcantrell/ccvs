@@ -5722,8 +5722,11 @@ RCS_setbranch (rcs, rev)
 }
 
 /* Lock revision REV.  LOCK_QUIET is 1 to suppress output.  FIXME:
-   This is only required because the RCS ci program requires a lock.
-   If we eventually do the checkin ourselves, this can become a no-op.  */
+   Most of the callers only call us because RCS_checkin still tends to
+   like a lock (a relic of old behavior inherited from the RCS ci
+   program).  If we clean this up, only "cvs admin -l" will still need
+   to call RCS_lock.  */
+
 /* FIXME-twp: if a lock owned by someone else is broken, should this
    send mail to the lock owner?  Prompt user?  It seems like such an
    obscure situation for CVS as almost not worth worrying much
@@ -5792,6 +5795,18 @@ RCS_lock (rcs, rev, lock_quiet)
 	    return 0;
 	}
 
+#if 0
+	/* Well, first of all, "rev" below should be "xrev" to avoid
+	   core dumps.  But more importantly, should we really be
+	   breaking the lock unconditionally?  What CVS 1.9 does (via
+	   RCS) is to prompt "Revision 1.1 is already locked by fred.
+	   Do you want to break the lock? [ny](n): ".  Well, we don't
+	   want to interact with the user (certainly not at the
+	   server/protocol level, and probably not in the command-line
+	   client), but isn't it more sensible to give an error and
+	   let the user run "cvs admin -u" if they want to break the
+	   lock?  */
+
 	/* Break the lock. */	    
 	if (!lock_quiet)
 	{
@@ -5799,6 +5814,9 @@ RCS_lock (rcs, rev, lock_quiet)
 	    cvs_output (" unlocked\n", 0);
 	}
 	delnode (p);
+#else
+	error (1, 0, "Revision %s is already locked by %s", xrev, p->data);
+#endif
     }
 
     /* Create a new lock. */
