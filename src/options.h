@@ -26,19 +26,6 @@
 #endif
 
 /*
- * The default umask to use when creating or otherwise setting file or
- * directory permissions in the repository.  Must be a value in the
- * range of 0 through 0777.  For example, a value of 002 allows group
- * rwx access and world rx access; a value of 007 allows group rwx
- * access but no world access.  This value is overridden by the value
- * of the CVSUMASK environment variable, which is interpreted as an
- * octal number.
- */
-#ifndef UMASK_DFLT
-#define	UMASK_DFLT	002
-#endif
-
-/*
  * The cvs admin command is restricted to the members of the group
  * CVS_ADMIN_GROUP.  If this group does not exist, all users are
  * allowed to run cvs admin.  To disable the cvs admin for all users,
