@@ -10,7 +10,7 @@
 #include "getline.h"
 #include <assert.h>
 
-char *logHistory;
+extern char *logHistory;
 
 /*
  * Parse the INFOFILE file for the specified REPOSITORY.  Invoke CALLPROC for
@@ -378,10 +378,10 @@ warning: this CVS does not support PreservePermissions");
 	}
 	else if (strcmp (line, "LogHistory") == 0)
 	{
-	    if (!strcmp (p, "all") == 0)
-        {
-         logHistory=malloc(strlen (p) + 1);
-         strcpy (logHistory, p);
+	    if (strcmp (p, "all") != 0)
+	    {
+		logHistory=malloc(strlen (p) + 1);
+		strcpy (logHistory, p);
 	    }
 	}
 	else
