@@ -1,3 +1,7 @@
+2004-10-29  Derek Price  <derek@ximbiot.com>
+
+	* NEWS: Note xreadlink fix.
+
 2004-10-26  Conrad T. Pino  <Conrad@Pino.com>
 
 	* cvsnt.dsp: Add "lib/yesno.h" to project.

@@ -77,6 +77,10 @@ NEW FEATURES
 
 BUG FIXES
 
+* Thanks to a report from Gottfried Ganssauge <gotti@cvshome.org>, CVS no
+  longer exits when it encounters links pointing to paths containing more
+  than 128 characters.
+
 * Thanks to a report from Dan Peterson <dbpete@aol.com>, error messages from
   GSSAPI servers are no longer truncated.
 
