@@ -593,7 +593,8 @@ update_fileproc (finfo)
 		    if (! docheckout)
 		    {
 		        if (server_active && retval == 0)
-			    server_updated (finfo->file, finfo->update_dir, finfo->repository,
+			    server_updated (finfo->file, finfo->update_dir,
+					    finfo->repository, vers,
 					    SERVER_PATCHED, &file_info,
 					    checksum);
 			break;
@@ -612,7 +613,8 @@ update_fileproc (finfo)
 					&resurrecting);
 #ifdef SERVER_SUPPORT
 		if (server_active && retval == 0)
-		    server_updated (finfo->file, finfo->update_dir, finfo->repository,
+		    server_updated (finfo->file, finfo->update_dir,
+				    finfo->repository, vers,
 				    SERVER_UPDATED, (struct stat *) NULL,
 				    (unsigned char *) NULL);
 #endif
@@ -627,7 +629,8 @@ update_fileproc (finfo)
 		retval = scratch_file (finfo->file, finfo->repository, finfo->entries, finfo->update_dir);
 #ifdef SERVER_SUPPORT
 		if (server_active && retval == 0)
-		    server_updated (finfo->file, finfo->update_dir, finfo->repository,
+		    server_updated (finfo->file, finfo->update_dir,
+				    finfo->repository, vers,
 				    SERVER_UPDATED, (struct stat *) NULL,
 				    (unsigned char *) NULL);
 #endif
@@ -1464,7 +1467,7 @@ merge_file (file, repository, entries, vers, update_dir)
     if (server_active)
     {
         server_copy_file (file, update_dir, repository, backup);
-	server_updated (file, update_dir, repository, SERVER_MERGED,
+	server_updated (file, update_dir, repository, vers, SERVER_MERGED,
 			(struct stat *) NULL, (unsigned char *) NULL);
     }
 #endif
@@ -1846,7 +1849,7 @@ join_file (file, rcsnode, vers, update_dir, entries)
     if (server_active)
     {
 	server_copy_file (file, update_dir, repository, backup);
-	server_updated (file, update_dir, repository, SERVER_MERGED,
+	server_updated (file, update_dir, repository, vers, SERVER_MERGED,
 			(struct stat *) NULL, (unsigned char *) NULL);
     }
 #endif

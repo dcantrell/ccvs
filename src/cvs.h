@@ -76,7 +76,6 @@ extern int errno;
 
 #include "hash.h"
 #if defined(SERVER_SUPPORT) || defined(CLIENT_SUPPORT)
-#include "server.h"
 #include "client.h"
 #endif
 
@@ -701,3 +700,7 @@ extern void tag_check_valid PROTO ((char *, int, char **, int, int, char *));
 
 extern void cvs_output PROTO ((char *, size_t));
 extern void cvs_outerr PROTO ((char *, size_t));
+
+#if defined(SERVER_SUPPORT) || defined(CLIENT_SUPPORT)
+#include "server.h"
+#endif
