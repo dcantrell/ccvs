@@ -562,6 +562,7 @@ if test x"$*" = x; then
 	tests="${tests} mflag editor errmsg1 errmsg2"
 	# Watches, binary files, history browsing, &c.
 	tests="${tests} devcom devcom2 devcom3 watch4"
+	tests="${tests} unedit-without-baserev"
 	tests="${tests} ignore binfiles binfiles2 mcopy binwrap binwrap2"
 	tests="${tests} binwrap3 mwrap info config"
 	tests="${tests} serverpatch log log2 ann crerepos rcs rcs2"
@@ -2033,6 +2034,40 @@ O [0-9/]* [0-9:]* ${PLUS}0000 ${username} \[1\.1\] first-dir           =first-di
 		rm -rf ${CVSROOT_DIRNAME}/first-dir
 		rm -rf ${CVSROOT_DIRNAME}/second-dir
 		;;
+
+	unedit-without-baserev)
+	  mkdir 1; cd 1
+	  module=x
+
+	  file=m
+	  echo foo > $file
+	  dotest unedit-without-baserev-1 \
+	    "$testcvs -Q import -m . $module X Y" ''
+	  dotest unedit-without-baserev-2 "$testcvs -Q co $module" ''
+	  cd $module
+
+	  dotest unedit-without-baserev-3 "$testcvs -Q edit $file" ''
+
+	  echo add a line >> $file
+	  rm -f CVS/Baserev
+
+	  # This will fail on most systems.
+	  if echo "yes" | ${testcvs} -Q unedit $file >>${LOGFILE} ; then
+	    pass unedit-without-baserev-4
+	  else
+	    fail unedit-without-baserev-4
+	  fi
+
+	  # SunOS4.1.4 systems make it this far, but with a corrupted
+	  # CVS/Entries file.  Demonstrate the corruption!
+	  dotest unedit-without-baserev-5 "cat CVS/Entries" \
+	    "/$file/1\.1\.1\.1/.*"
+
+	  cd ../..
+	  rm -rf 1
+	  rm -rf ${CVSROOT_DIRNAME}/$module
+	  ;;
+
 
 	commit-readonly)
 	  mkdir 1; cd 1
