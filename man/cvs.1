@@ -178,6 +178,28 @@ Overrides the setting of the
 environment variable.
 This value should be specified as an absolute pathname.
 .TP
+.B \-D
+.I diff
+Use
+.I diff
+as the location of the
+.SM DIFF
+program.
+Overrides the setting of the
+.SM DIFFBIN
+environment variable.
+.TP
+.B \-g
+.I grep
+Use
+.I grep
+as the location of the
+.SM GREP
+program.
+Overrides the setting of the
+.SM GREPBIN
+environment variable.
+.TP
 \fB\-d\fP \fICVS_root_directory\fP
 Use
 .I CVS_root_directory
@@ -2126,6 +2148,18 @@ and
 .BR ci ( 1 ).
 If not set, a compiled-in value is used; see the display from
 .` "cvs \-v".
+.TP
+.SM DIFFBIN
+Specifies the name or full pathname of the
+.SM DIFF
+program.
+If not set, a compiled-in value is used.
+.TP
+.SM GREPBIN
+Specifies the name or full pathname of the
+.SM GREP
+program.
+If not set, a compiled-in value is used.
 .TP
 .SM CVSEDITOR
 Specifies the program to use for recording log messages during
