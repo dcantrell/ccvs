@@ -1,3 +1,10 @@
+1996-12-18  Jim Kingdon
+
+	* client.c (call_in_directory): If the directory we are about
+	to create is the same as CVSADM as seen by fncmp (for example,
+	it is "cvs" and filenames are case-insensitive), then give a
+	fatal error.
+
 Tue Dec 17 13:14:22 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* options.h.in: Add comments about SETXID security holes.
