@@ -3203,6 +3203,8 @@ RCS_checkout (rcs, workfile, rev, nametag, options, sout, pfn, callerdat)
     return 0;
 }
 
+static RCSVers *RCS_findlock_or_tip PROTO ((RCSNode *rcs));
+
 /* Find the delta currently locked by the user.  From the `ci' man page:
 
 	"If rev is omitted, ci tries to  derive  the  new  revision
@@ -3559,7 +3561,7 @@ RCS_checkin (rcs, workfile, message, rev, flags)
 	   head of the delta tree), then increment its revision number
 	   to obtain the new revnum.  Otherwise, start a new
 	   branch. */
-	commitpt = RCS_findlock_or_tip (rcs, checkin_quiet);
+	commitpt = RCS_findlock_or_tip (rcs);
 	if (commitpt == NULL)
 	{
 	    status = 1;
