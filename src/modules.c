@@ -122,26 +122,10 @@ do_module (DBM *db, char *mname, enum mtype m_type, char *msg, CALLBACKPROC call
 #ifdef SERVER_SUPPORT
     int restore_server_dir = 0;
     char *server_dir_to_restore = NULL;
-    if (trace)
-    {
-	char *buf;
-
-	/* We use cvs_outerr, rather than fprintf to stderr, because
-	   this may be called by server code with error_use_protocol
-	   set.  */
-	buf = xmalloc (100
-		       + strlen (mname)
-		       + strlen (msg)
-		       + (where ? strlen (where) : 0)
-		       + (extra_arg ? strlen (extra_arg) : 0));
-	sprintf (buf, "%s-> do_module (%s, %s, %s, %s)\n",
-		 CLIENT_SERVER_STR,
-		 mname, msg, where ? where : "",
-		 extra_arg ? extra_arg : "");
-	cvs_outerr (buf, 0);
-	free (buf);
-    }
 #endif
+
+    TRACE (TRACE_FUNCTION, "do_module (%s, %s, %s, %s)",
+           mname, msg, where ? where : "NULL", extra_arg ? extra_arg : "NULL");
 
     /* if this is a directory to ignore, add it to that list */
     if (mname[0] == '!' && mname[1] != '\0')
