@@ -980,6 +980,7 @@ user-defined modules.
 * Multiple repositories::       Multiple repositories
 * Creating a repository::       Creating a repository
 * Backing up::                  Backing up a repository
+* Moving a repository::         Moving a repository
 * Remote repositories::         Accessing repositories on remote machines
 * Read-only access::            Granting read-only access to the repository
 * Server temporary directory::  The server creates temporary directories
@@ -1774,6 +1775,41 @@ as @code{cvs update} and @code{cvs diff} to figure out
 what has changed, and then when you are ready, commit
 the changes into the repository.
 @end itemize
+
+@node Moving a repository
+@section Moving a repository
+@cindex repository, moving
+@cindex moving a repository
+@cindex copying a repository
+
+Just as backing up the files in the repository is
+pretty much like backing up any other files, if you
+need to move a repository from one place to another it
+is also pretty much like just moving any other
+collection of files.
+
+The main thing to consider is that working directories
+point to the repository.  The simplest way to deal with
+a moved repository is to just get a fresh working
+directory after the move.  Of course, you'll want to
+make sure that the old working directory had been
+checked in before the move, or you figured out some
+other way to make sure that you don't lose any
+changes.  If you really do want to reuse the existing
+working directory, it should be possible with manual
+surgery on the @file{CVS/Repository} files.  You can
+see @ref{Working directory storage}, for information on
+the @file{CVS/Repository} and @file{CVS/Root} files, but
+unless you are sure you want to bother, it probably
+isn't worth it.
+@c FIXME: This should be made unnecessary by:
+@c 1) a new -d should affect CVS/Root files throughout
+@c the tree, not just at the top level.
+@c 2) the RELATIVE_REPOS code should be fixed and made the
+@c default.  I think that CVS already reads
+@c CVS/Repository files which are absolute or
+@c relative.  FIXME: needs more investigation and
+@c documentation in "Working directory storage".
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node Remote repositories
