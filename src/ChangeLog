@@ -1,3 +1,10 @@
+Sat Sep 21 02:33:26 1996  Jim Blandy  <jimb@totoro.cyclic.com>
+
+	* sanity.sh: If we're testing remote CVS, make sure rsh itself is
+	working before running any tests.  It's confusing when basica-1
+	fails just because you don't have the local host in your .rhosts
+	file.
+
 Thu Sep 19 09:15:41 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* options.h.in: Define SERVER_FLOWCONTROL, SERVER_HI_WATER,
