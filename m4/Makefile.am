@@ -34,6 +34,7 @@ EXTRA_DIST = \
 	exitfail.m4 \
 	extensions.m4 \
 	fnmatch.m4 \
+	getcwd.m4 \
 	getdate.m4 \
 	getline.m4 \
 	getnline.m4 \
@@ -89,4 +90,5 @@ EXTRA_DIST = \
 	wchar_t.m4 \
 	wint_t.m4 \
 	xalloc.m4 \
+	xgetcwd.m4 \
 	xsize.m4
