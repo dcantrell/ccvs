@@ -520,7 +520,7 @@ stamp-sh: $(top_srcdir)/lib/stdbool_.h
 	@echo " *" >>stdbool.tmp
 	@echo " * Edit ../lib/stdbool_.h instead." >>stdbool.tmp
 	@echo " */" >>stdbool.tmp
-	sed "s/@""HAVE__BOOL""@/$(HAVE__BOOL)/" <$(top_srcdir)/lib/stdbool_.h \
+	sed 's/@''HAVE__BOOL''@/0/' <$(top_srcdir)/lib/stdbool_.h \
 	  >>stdbool.tmp
 	@cmp -s stdbool.tmp $(srcdir)/stdbool.h \
 	  || (echo "Updating stdbool.h"; \
