@@ -89,6 +89,7 @@ make LDFLAGS=-s
 # forcefully compress the info pages so that install-info will work properly
 # in the %%post
 gzip $RPM_BUILD_ROOT/%{_infodir}/cvs* || true
+rm $RPM_BUILD_ROOT/%{_infodir}/dir
 
 %clean
 [ "$RPM_BUILD_ROOT" != "/" ] && rm -rf $RPM_BUILD_ROOT
@@ -125,6 +126,10 @@ fi
 %endif
 
 %changelog
+* Tue Feb 17 2004 Derek Price <derek@ximbiot.com>
+- Remove info DIR file to avoid RPM warning us about installing files we don't
+- package.
+
 * Tue May 27 2003 Derek Price <derek@ximbiot.com>
 - Install a few more files as part of doc.
 

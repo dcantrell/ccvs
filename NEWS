@@ -3,6 +3,8 @@ Changes since 1.12.5:
 
 GENERAL USER ISSUES
 
+* The spec file has been updated to work with more recent versions of RPM.
+
 * Some more GNULIB functions have been imported and/or updated for portability
   reasons.
 
@@ -13,8 +15,6 @@ GENERAL USER ISSUES
 
 * An unlikely potential segfault when using the :fork: connection method has
   been fixed.
-
-* Misc cosmetic, readability, and commenting fixes.
 
 * The CVS server has had the protocol check for unused data from the client
   partially restored.
@@ -62,6 +62,10 @@ GENERAL USER ISSUES
   implementation of mktemp.
 
 * Misc documentation fixes.
+
+DEVELOPER ISSUES
+
+* Misc cosmetic, readability, and commenting fixes.
 
 Changes between 1.12.4 and 1.12.5:
 **********************************

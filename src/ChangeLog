@@ -1,3 +1,19 @@
+2004-02-17  Derek Price  <derek@ximbiot.com>
+
+	* sanity.sh: Don't check for an empty $TESTDIR - if $TESTDIR was empty
+	then the preceding call to mkdir would have failed anyhow.
+
+2004-02-17  Larry Jones  <lawrence.jones@ugsplm.com>
+
+	* log.c (rlog_proc): Fix (harmless) uninitialized variable.
+
+	* sanity.sh (basicc): Add tests pointing out defective handling
+	of the Entries file.
+
+2004-02-17  Derek Price  <derek@ximbiot.com>
+
+	* checkout.c (build_dir_and_chdir): Expand header comment.
+
 2004-02-15  Mark D. Baushke  <mdb@cvshome.org>
 
 	* annotate.c (rannotate_proc): Plug a memory leak.
