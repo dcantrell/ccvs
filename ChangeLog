@@ -1,3 +1,9 @@
+2004-10-07  Conrad T. Pino  <Conrad@Pino.com>
+
+	* cvsnt.dsp: Add "lib/getpass.h" and "lib/strcase.h" to project.
+	* cvsnt.dep: Regenerate for "cvsnt.dsp" change.
+	* cvsnt.mak: Regenerate for "cvsnt.dsp" change.
+
 2004-10-06  Derek Price  <derek@ximbiot.com>
 
 	* configure.in: Remove call to gl_TIMESPEC.

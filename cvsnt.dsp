@@ -432,6 +432,10 @@ SOURCE=.\lib\getopt.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\lib\getpass.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\lib\gettext.h
 # End Source File
 # Begin Source File
@@ -553,6 +557,10 @@ SOURCE=.\src\stack.h
 # Begin Source File
 
 SOURCE=".\windows-NT\stdbool.h"
+# End Source File
+# Begin Source File
+
+SOURCE=.\lib\strcase.h
 # End Source File
 # Begin Source File
 
