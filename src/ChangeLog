@@ -1,3 +1,9 @@
+Mon Feb 12 02:50:19 1996  Benjamin J. Lee  <benjamin@cyclic.com>
+
+	* edit.c, logmsg.c, release.c, run.c: Changed Popen() to
+	run_popen().  VMS' linker is not case sensitive and considered
+	popen() and Popen() to be identical symbols.
+
 Sun Feb 11 10:51:14 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* main.c (main) [!CLIENT_SUPPORT]: Silently ignore gzip level
