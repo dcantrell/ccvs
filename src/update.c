@@ -1082,6 +1082,15 @@ checkout_file (file, repository, entries, rcsnode, vers_ts, update_dir,
 			       update_dir, file);
 		}
 		Scratch_Entry (entries, file);
+#ifdef SERVER_SUPPORT
+		if (server_active && xvers_ts->ts_user == NULL)
+		    server_scratch_entry_only ();
+#endif
+		/* FIXME: Rather than always unlink'ing, and ignoring the
+		   existence_error, we should do the unlink only if
+		   vers_ts->ts_user is non-NULL.  Then there would be no
+		   need to ignore an existence_error (for example, if the
+		   user removes the file while we are running).  */
 		if (unlink_file (file) < 0 && ! existence_error (errno))
 		{
 		    if (update_dir[0] == '\0')
