@@ -6,7 +6,8 @@
 	* hash.h (insert_before): Add prototype.
 
 	* server.c (dirswitch): Compute `strlen(dir)' once and save it,
-	rather than computing it four times.
+	rather than computing it four times.  Also do s/illegal/invalid/ to
+	this diagnostic: "E protocol error: illegal directory syntax in %s".
 
 Sun Nov 30 18:03:02 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
