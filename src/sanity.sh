@@ -495,6 +495,14 @@ for what in $tests; do
 	  dotest basica-1a2 "${testcvs} -q status" ''
 
 	  mkdir sdir
+	  # Remote CVS gives the "cannot open CVS/Entries" error, which is
+	  # clearly a bug, but not a simple one to fix.
+	  dotest basica-1a10 "${testcvs} -n add sdir" \
+'Directory /tmp/cvs-sanity/cvsroot/first-dir/sdir added to the repository' \
+"${PROG} add: cannot open CVS/Entries for reading: No such file or directory
+Directory /tmp/cvs-sanity/cvsroot/first-dir/sdir added to the repository"
+	  dotest_fail basica-1a11 \
+	    "test -d ${CVSROOT_DIRNAME}/first-dir/sdir" ''
 	  dotest basica-2 "${testcvs} add sdir" \
 'Directory /tmp/cvs-sanity/cvsroot/first-dir/sdir added to the repository'
 	  cd sdir
@@ -592,9 +600,29 @@ ${PROG} \[[a-z]* aborted\]: /tmp/cvs-sanity/nonexist/CVSROOT: .*"
 Directory /tmp/cvs-sanity/cvsroot/first-dir/sdir2 added to the repository'
 	  cd sdir1
 	  echo sfile1 starts >sfile1
+	  dotest basicb-2a10 "${testcvs} -n add sfile1" \
+"${PROG} [a-z]*: scheduling file .sfile1. for addition
+${PROG} [a-z]*: use .cvs commit. to add this file permanently"
+	  dotest basicb-2a11 "${testcvs} status sfile1" \
+"${PROG} [a-z]*: use .cvs add' to create an entry for sfile1
+===================================================================
+File: sfile1           	Status: Unknown
+
+   Working revision:	No entry for sfile1
+   Repository revision:	No revision control file"
 	  dotest basicb-3 "${testcvs} add sfile1" \
 "${PROG} [a-z]*: scheduling file .sfile1. for addition
 ${PROG} [a-z]*: use .cvs commit. to add this file permanently"
+	  dotest basicb-3a1 "${testcvs} status sfile1" \
+"===================================================================
+File: sfile1           	Status: Locally Added
+
+   Working revision:	New file!
+   Repository revision:	No revision control file
+   Sticky Tag:		(none)
+   Sticky Date:		(none)
+   Sticky Options:	(none)"
+
 	  cd ../sdir2
 	  echo sfile2 starts >sfile2
 	  dotest basicb-4 "${testcvs} add sfile2" \
