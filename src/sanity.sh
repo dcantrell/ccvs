@@ -26009,6 +26009,8 @@ ${CPROG} \[update aborted\]: ${TESTDIR}/root-none/CVSROOT: No such file or direc
 	pserver)
 	  # Test basic pserver functionality.
 	  if $remote; then
+	    save_servercvs=$servercvs
+	    servercvs=$testcvs
    	    # First set SystemAuth=no.  Not really necessary, I don't
 	    # think, but somehow it seems like the clean thing for
 	    # the testsuite.
@@ -26448,12 +26450,15 @@ ${SPROG} commit: Rebuilding administrative file database"
 	    cd ../..
 	    rm -r 1
 	    rm ${CVSROOT_DIRNAME}/CVSROOT/passwd ${CVSROOT_DIRNAME}/CVSROOT/writers
+	    servercvs=$save_severcvs
 	  fi # skip the whole thing for local
 	  ;;
 
 	server)
 	  # Some tests of the server (independent of the client).
 	  if $remote; then
+	    save_servercvs=$servercvs
+	    servercvs=$testcvs
 	    dotest server-1 "${servercvs} server" \
 "E Protocol error: Root request missing
 error  " <<EOF
@@ -26637,6 +26642,7 @@ EOF
 
 	    rm -rf ${TESTDIR}/crerepos
 	    rm gzipped.dat session.dat
+	    servercvs=$save_severcvs
 	  fi # skip the whole thing for local
 	  ;;
 
@@ -26644,6 +26650,8 @@ EOF
 	  # More server tests, in particular testing that various
 	  # possible security holes are plugged.
 	  if $remote; then
+	    save_servercvs=$servercvs
+	    servercvs=$testcvs
 	    dotest server2-1 "${servercvs} server" \
 "E protocol error: directory '${CVSROOT_DIRNAME}/\.\./dir1' not within root '${CVSROOT_DIRNAME}'
 error  " <<EOF
@@ -26684,6 +26692,7 @@ ${CVSROOT_DIRNAME}
 Unchanged foo/bar
 noop
 EOF
+	    servercvs=$save_severcvs
 	  fi
 	  ;;
 
