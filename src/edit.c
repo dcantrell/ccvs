@@ -284,6 +284,18 @@ edit_fileproc (callerdat, finfo)
     if (noexec)
 	return 0;
 
+    /* This is a somewhat screwy way to check for this, because it
+       doesn't help errors other than the nonexistence of the file
+       (e.g. permissions problems).  It might be better to rearrange
+       the code so that CVSADM_NOTIFY gets written only after the
+       various actions succeed (but what if only some of them
+       succeed).  */
+    if (!isfile (finfo->file))
+    {
+	error (0, 0, "no such file %s; ignored", finfo->fullname);
+	return 0;
+    }
+
     fp = open_file (CVSADM_NOTIFY, "a");
 
     (void) time (&now);
