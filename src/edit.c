@@ -651,10 +651,6 @@ notify_proc(char *repository, char *filter, void *closure)
 {
     char *cmdline;
     FILE *pipefp;
-    char *prog;
-    char *expanded_prog;
-    char *p;
-    char *q;
     char *srepos = Short_Repository (repository);
     struct notify_proc_args *args = (struct notify_proc_args *)closure;
 

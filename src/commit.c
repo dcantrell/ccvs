@@ -1072,62 +1072,62 @@ precommit_list_to_args_proc( p, closure )
 {
     struct format_cmdline_walklist_closure *c;
     struct logfile_info *li;
-    char *arg;
+    char *arg = NULL;
     char *f, *d;
     size_t doff;
-    int firstarg = 1;
 
     if( p->data == NULL ) return 1;
 
     c = (struct format_cmdline_walklist_closure *) closure;
     f = c->format;
-    d = *( c->d );
+    d = *c->d;
     /* foreach requested atribute */
-    while( *f )
+    while (*f)
     {
-   	switch( *f++ )
+   	switch (*f++)
 	{
 	    case 's':
 		li = (struct logfile_info *) p->data;
-		if( li->type == T_ADDED
+		if (li->type == T_ADDED
 			|| li->type == T_MODIFIED
-			|| li->type == T_REMOVED )
+			|| li->type == T_REMOVED)
 		{
 		    arg = p->key;
 		}
 		break;
 	    default:
-		error( 1, 0,
+		error (1, 0,
 		       "Unknown format character or not a list atribute: %c",
-		       f[-1] );
+		       f[-1]);
+		/* NOTREACHED */
 		break;
 	}
 	/* copy the attribute into an argument */
-	if( c->quotes )
+	if (c->quotes)
 	{
-	    arg = cmdlineescape( c->quotes, arg );
+	    arg = cmdlineescape (c->quotes, arg);
 	}
 	else
 	{
-	    arg = cmdlinequote( '"', arg );
+	    arg = cmdlinequote ('"', arg);
 	}
-	doff = d - *( c->buf );
-	expand_string( c->buf, c->length, doff + strlen( arg ) );
-	d = *( c->buf ) + doff;
-	strncpy( d, arg, strlen( arg ) );
-	d += strlen( arg );
-	free( arg );
+	doff = d - *c->buf;
+	expand_string (c->buf, c->length, doff + strlen (arg));
+	d = *c->buf + doff;
+	strncpy (d, arg, strlen (arg));
+	d += strlen (arg);
+	free (arg);
 
 	/* and always put the extra space on.  we'll have to back up a char
 	 * when we're done, but that seems most efficient
 	 */
-	doff = d - *(c->buf);
-	expand_string( c->buf, c->length, doff + 1 );
-	d = *( c->buf ) + doff;
+	doff = d - *c->buf;
+	expand_string (c->buf, c->length, doff + 1);
+	d = *c->buf + doff;
 	*d++ = ' ';
     }
     /* correct our original pointer into the buff */
-    *( c->d ) = d;
+    *c->d = d;
     return 0;
 }
 
@@ -1167,7 +1167,7 @@ precommit_proc(char *repository, char *filter, void *closure)
     	"p", "s", srepos,
 	"r", "s", current_parsed_root->directory,
 	"s", ",", ulist, precommit_list_to_args_proc, (void *) NULL,
-	NULL
+	(char *)NULL
 	);
 
     if (disposefilter) free(filter);
