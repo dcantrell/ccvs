@@ -1,5 +1,9 @@
 2004-08-04  Derek Price  <derek@ximbiot.com>
 
+	* buffer.c (buf_read_data): s/abort/assert/.
+
+2004-08-04  Derek Price  <derek@ximbiot.com>
+
 	* server.c (loop_over_inputs): Remove function, moving contents back...
 	(server): ...to here.
 
