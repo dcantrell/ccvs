@@ -23886,7 +23886,7 @@ recase
 File: FILE             	Status: Up-to-date
 
    Working revision:	1.1.*
-   Repository revision:	1.1	/tmp/cvs-sanity/cvsroot/first-dir/FILE,v
+   Repository revision:	1.1	${CVSROOT_DIRNAME}/first-dir/FILE,v
    Sticky Tag:		(none)
    Sticky Date:		(none)
    Sticky Options:	(none)"
