@@ -592,7 +592,7 @@ buf_append_buffer (struct buffer *to, struct buffer *from)
 /*
  * Copy the contents of file F into buffer_data structures.  We can't
  * copy directly into an buffer, because we want to handle failure and
- * succeess differently.  Returns 0 on success, or -2 if out of
+ * success differently.  Returns 0 on success, or -2 if out of
  * memory, or a status code on error.  Since the caller happens to
  * know the size of the file, it is passed in as SIZE.  On success,
  * this function sets *RETP and *LASTP, which may be passed to
@@ -661,7 +661,7 @@ buf_read_file (FILE *f, long int size, struct buffer_data **retp,
 /*
  * Copy the contents of file F into buffer_data structures.  We can't
  * copy directly into an buffer, because we want to handle failure and
- * succeess differently.  Returns 0 on success, or -2 if out of
+ * success differently.  Returns 0 on success, or -2 if out of
  * memory, or a status code on error.  On success, this function sets
  * *RETP and *LASTP, which may be passed to buf_append_data.
  */

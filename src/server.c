@@ -5561,7 +5561,7 @@ serve_command_prep (char *arg)
 	 * If the client is broken and ignores the redirect, this will be
 	 * detected later, in rewind_buf_from_net().
 	 *
-	 * Since a `Command-prep' respnose is only acceptable immediately
+	 * Since a `Command-prep' response is only acceptable immediately
 	 * following the `Root' request according to the specification, there
 	 * is no need to rewind the log and reprocess.
 	 */
