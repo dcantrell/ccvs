@@ -2901,7 +2901,7 @@ init_sockaddr (name, hostname, port)
     if (hostinfo == NULL)
     {
 	fprintf (stderr, "Unknown host %s.\n", hostname);
-	exit (EXIT_FAILURE);
+	error_exit ();
     }
     name->sin_addr = *(struct in_addr *) hostinfo->h_addr;
 }
@@ -2948,7 +2948,7 @@ connect_to_pserver (tofdp, fromfdp, verify_only)
     if (sock == -1)
     {
 	fprintf (stderr, "socket() failed\n");
-	exit (EXIT_FAILURE);
+	error_exit ();
     }
     port_number = auth_server_port_number ();
     init_sockaddr (&client_sai, CVSroot_hostname, port_number);
@@ -3429,7 +3429,7 @@ the :server: access method is not supported by this port of CVS");
     send_to_server ("valid-requests\012", 0);
 
     if (get_server_responses ())
-	exit (EXIT_FAILURE);
+	error_exit ();
 
     /*
      * Now handle global options.
@@ -4442,7 +4442,7 @@ send_files (argc, argv, local, aflag, build_dirs)
 	 send_dirent_proc, (DIRLEAVEPROC)NULL, (void *) &build_dirs,
 	 argc, argv, local, W_LOCAL, aflag, 0, (char *)NULL, 0);
     if (err)
-	exit (EXIT_FAILURE);
+	error_exit ();
     if (toplevel_repos == NULL)
 	/*
 	 * This happens if we are not processing any files,

@@ -296,7 +296,7 @@ mkmodules (dir)
     const struct admin_file *fileptr;
 
     if (save_cwd (&cwd))
-	exit (EXIT_FAILURE);
+	error_exit ();
 
     if ( CVS_CHDIR (dir) < 0)
 	error (1, errno, "cannot chdir to %s", dir);
@@ -322,7 +322,7 @@ mkmodules (dir)
 
 	case -1:			/* fork failed */
 	    (void) unlink_file (temp);
-	    exit (EXIT_FAILURE);
+	    error (1, errno, "cannot check out %s", CVSROOTADM_MODULES);
 	    /* NOTREACHED */
 
 	default:
@@ -400,7 +400,7 @@ mkmodules (dir)
     }
 
     if (restore_cwd (&cwd, NULL))
-	exit (EXIT_FAILURE);
+	error_exit ();
     free_cwd (&cwd);
 
     return (0);

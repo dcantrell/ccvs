@@ -518,7 +518,7 @@ add_directory (repository, entries, dir)
 	free (date);
 
     if (restore_cwd (&cwd, NULL))
-	exit (EXIT_FAILURE);
+	error_exit ();
     free_cwd (&cwd);
 
     Subdir_Register (entries, (char *) NULL, dir);
@@ -529,7 +529,7 @@ add_directory (repository, entries, dir)
 
 out:
     if (restore_cwd (&cwd, NULL))
-      exit (EXIT_FAILURE);
+	error_exit ();
     free_cwd (&cwd);
     return (0);
 }

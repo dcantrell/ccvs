@@ -924,7 +924,7 @@ isemptydir (dir, might_not_exist)
 		struct saved_cwd cwd;
 
 		if (save_cwd (&cwd))
-		    exit (EXIT_FAILURE);
+		    error_exit ();
 
 		if (CVS_CHDIR (dir) < 0)
 		    error (1, errno, "cannot change directory to %s", dir);
@@ -933,7 +933,7 @@ isemptydir (dir, might_not_exist)
 		Entries_Close (l);
 
 		if (restore_cwd (&cwd, NULL))
-		    exit (EXIT_FAILURE);
+		    error_exit ();
 		free_cwd (&cwd);
 
 		if (files_removed != 0)

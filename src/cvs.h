@@ -451,7 +451,6 @@ void cat_module PROTO((int status));
 void check_entries PROTO((char *dir));
 void close_module PROTO((DBM * db));
 void copy_file PROTO((const char *from, const char *to));
-void (*error_set_cleanup PROTO((void (*) (void)))) PROTO ((void));
 void fperror PROTO((FILE * fp, int status, int errnum, char *message,...));
 void free_names PROTO((int *pargc, char *argv[]));
 
