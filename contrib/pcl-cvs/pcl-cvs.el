@@ -29,9 +29,6 @@
 ;;; Mail questions and bug reports regarding this version (as included in
 ;;; CVS-1.7 or newer) to the pcl-cvs support team at <pcl-cvs@cyclic.com>.
 
-;;; Send bug reports and improvements to ceder@lysator.liu.se or
-;;; ceder@signum.se.  Talk some about Signum Support here.  +++FIXME
-
 ;;; Don't try to use this with CVS 1.2 or earlier.  It won't work.  Get CVS 1.7
 ;;; or newer.  Use the version of RCS best suited for the version of CVS you're
 ;;; using.
@@ -152,11 +149,10 @@ a modern version of CVS that stores the current repository in CVS/Root.")
 Copyright (C) 1992, 1993 Per Cederqvist
 Pcl-cvs comes with absolutely no warranty; for details consult the manual.
 This is free software, and you are welcome to redistribute it under certain
-conditions; again, consult the TeXinfo manual for details.
-Local modifications to PCL-CVS 1.05 made by Greg A. Woods.")
+conditions; again, consult the TeXinfo manual for details.")
   "*Startup message for CVS.")
 
-(defconst pcl-cvs-bugs-address "pcl-cvs@cyclic.com"
+(defconst pcl-cvs-bugs-address "pcl-cvs-auto-bugs@cyclic.com"
   "The destination address used for the default bug report form.")
 
 (defvar cvs-stdout-file nil
