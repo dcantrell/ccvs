@@ -2321,6 +2321,28 @@ cvspserver      2401/tcp
         and put @code{cvspserver} instead of
 @code{2401} in @file{inetd.conf}.
 
+If your system uses @code{xinetd} instead of @code{inetd},
+the procedure is slightly different.
+Create a file called @file{/etc/xinetd.d/cvspserver} containing the following:
+
+@example
+service cvspserver
+@{
+   port        = 2401
+   socket_type = stream
+   protocol    = tcp
+   wait        = no
+   user        = root
+   passenv     = PATH
+   server      = /usr/local/bin/cvs
+   server_args = -f --allow-root=/usr/cvsroot pserver
+@}
+@end example
+
+@noindent
+(If @code{cvspserver} is defined in @file{/etc/services}, you can omit
+the @code{port} line.)
+
         Once the above is taken care of, restart your
 @code{inetd}, or do whatever is necessary to force it
 to reread its initialization files.
@@ -13408,8 +13430,9 @@ directions given for :ext:.
 @item :pserver:
 Errors along the lines of "connection refused" typically indicate
 that inetd isn't even listening for connections on port 2401
-whereas errors like "connection reset by peer" or "recv() from
-server: EOF" typically indicate that inetd is listening for
+whereas errors like "connection reset by peer",
+"received broken pipe signal", or "recv() from server: EOF"
+typically indicate that inetd is listening for
 connections but is unable to start @sc{cvs} (this is frequently
 caused by having an incorrect path in @file{inetd.conf}).
 "unrecognized auth response" errors are caused by a bad command
