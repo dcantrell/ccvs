@@ -3656,7 +3656,7 @@ supported_request (name)
 
 
 
-#if defined (AUTH_CLIENT_SUPPORT) || defined (HAVE_KERBEROS)
+#if defined (AUTH_CLIENT_SUPPORT) || defined (HAVE_KERBEROS) || defined (HAVE_GSSAPI)
 static struct hostent *init_sockaddr PROTO ((struct sockaddr_in *, char *,
 					     unsigned int));
 
@@ -3682,11 +3682,7 @@ init_sockaddr (name, hostname, port)
     return hostinfo;
 }
 
-#endif /* defined (AUTH_CLIENT_SUPPORT) || defined (HAVE_KERBEROS) */
 
-
-
-#ifdef AUTH_CLIENT_SUPPORT
 
 /* Generic function to do port number lookup tasks.
  *
@@ -3752,13 +3748,19 @@ get_cvs_port_number (root)
 
     switch (root->method)
     {
+# ifdef HAVE_GSSAPI
 	case gserver_method:
+# endif /* HAVE_GSSAPI */
+# ifdef AUTH_CLIENT_SUPPORT
 	case pserver_method:
+# endif /* AUTH_CLIENT_SUPPORT */
+# if defined (AUTH_CLIENT_SUPPORT) || defined (HAVE_GSSAPI)
 	    return get_port_number ("CVS_CLIENT_PORT", "cvspserver", CVS_AUTH_PORT);
-#ifdef HAVE_KERBEROS
+# endif /* defined (AUTH_CLIENT_SUPPORT) || defined (HAVE_GSSAPI) */
+# ifdef HAVE_KERBEROS
 	case kserver_method:
 	    return get_port_number ("CVS_CLIENT_PORT", "cvs", CVS_PORT);
-#endif
+# endif /* HAVE_KERBEROS */
 	default:
 	    error(1, EINVAL, "internal error: get_cvs_port_number called for invalid connection method (%s)",
 		    method_names[root->method]);
@@ -3782,7 +3784,7 @@ make_bufs_from_fds (tofd, fromfd, child_pid, to_server, from_server, is_sock)
     FILE *to_server_fp;
     FILE *from_server_fp;
 
-#ifdef NO_SOCKET_TO_FD
+# ifdef NO_SOCKET_TO_FD
     if (is_sock)
     {
 	assert (tofd == fromfd);
@@ -3792,7 +3794,7 @@ make_bufs_from_fds (tofd, fromfd, child_pid, to_server, from_server, is_sock)
 						(BUFMEMERRPROC) NULL);
     }
     else
-#endif /* NO_SOCKET_TO_FD */
+# endif /* NO_SOCKET_TO_FD */
     {
 	/* todo: some OS's don't need these calls... */
 	close_on_exec (tofd);
@@ -3827,43 +3829,11 @@ make_bufs_from_fds (tofd, fromfd, child_pid, to_server, from_server, is_sock)
 					       (BUFMEMERRPROC) NULL);
     }
 }
+#endif /* defined (AUTH_CLIENT_SUPPORT) || defined (HAVE_KERBEROS) || defined(HAVE_GSSAPI) */
 
 
 
-/* Connect to a forked server process. */
-
-void
-connect_to_forked_server (to_server, from_server)
-    struct buffer **to_server;
-    struct buffer **from_server;
-{
-    int tofd, fromfd;
-    int child_pid;
-
-    /* This is pretty simple.  All we need to do is choose the correct
-       cvs binary and call piped_child. */
-
-    char *command[3];
-
-    command[0] = getenv ("CVS_SERVER");
-    if (! command[0])
-	command[0] = program_path;
-    
-    command[1] = "server";
-    command[2] = NULL;
-
-    if (trace)
-    {
-	fprintf (stderr, " -> Forking server: %s %s\n", command[0], command[1]);
-    }
-
-    child_pid = piped_child (command, &tofd, &fromfd);
-    if (child_pid < 0)
-	error (1, 0, "could not fork server process");
-
-    make_bufs_from_fds (tofd, fromfd, child_pid, to_server, from_server, 0);
-}
-
+#if defined (AUTH_CLIENT_SUPPORT) || defined(HAVE_GSSAPI)
 /* Connect to the authenticating server.
 
    If VERIFY_ONLY is non-zero, then just verify that the password is
@@ -3972,7 +3942,7 @@ auth_server (root, lto_server, lfrom_server, verify_only, do_gssapi, hostinfo)
     /* Run the authorization mini-protocol before anything else. */
     if (do_gssapi)
     {
-#ifdef HAVE_GSSAPI
+# ifdef HAVE_GSSAPI
 	FILE *fp = stdio_buffer_get_file(lto_server);
 	int fd = fp ? fileno(fp) : -1;
 	struct stat s;
@@ -3988,12 +3958,13 @@ auth_server (root, lto_server, lfrom_server, verify_only, do_gssapi, hostinfo)
 		    "authorization failed: server %s rejected access to %s",
 		    root->hostname, root->directory);
 	}
-#else
-	error (1, 0, "This client does not support GSSAPI authentication");
-#endif
+# else /* ! HAVE_GSSAPI */
+	error (1, 0, "INTERNAL ERROR: This client does not support GSSAPI authentication");
+# endif /* HAVE_GSSAPI */
     }
-    else
+    else /* ! do_gssapi */
     {
+# ifdef AUTH_CLIENT_SUPPORT
 	char *begin      = NULL;
 	char *password   = NULL;
 	char *end        = NULL;
@@ -4039,7 +4010,10 @@ auth_server (root, lto_server, lfrom_server, verify_only, do_gssapi, hostinfo)
 
         /* Paranoia. */
         memset (password, 0, strlen (password));
-    }
+# else /* ! AUTH_CLIENT_SUPPORT */
+	error (1, 0, "INTERNAL ERROR: This client does not support pserver authentication");
+# endif /* AUTH_CLIENT_SUPPORT */
+    } /* if (do_gssapi) */
 
     {
 	char *read_buf;
@@ -4114,12 +4088,53 @@ auth_server (root, lto_server, lfrom_server, verify_only, do_gssapi, hostinfo)
 	}
     }
 }
-#endif /* AUTH_CLIENT_SUPPORT */
+#endif /* defined (AUTH_CLIENT_SUPPORT) || defined(HAVE_GSSAPI) */
+
+
+
+#ifdef CLIENT_SUPPORT
+/* void
+ * connect_to_forked_server ( struct buffer **to_server,
+ *                            struct buffer **from_server )
+ *
+ * Connect to a forked server process.
+ */
+void
+connect_to_forked_server (to_server, from_server)
+    struct buffer **to_server;
+    struct buffer **from_server;
+{
+    int tofd, fromfd;
+    int child_pid;
+
+    /* This is pretty simple.  All we need to do is choose the correct
+       cvs binary and call piped_child. */
+
+    char *command[3];
+
+    command[0] = getenv ("CVS_SERVER");
+    if (! command[0])
+	command[0] = program_path;
+    
+    command[1] = "server";
+    command[2] = NULL;
+
+    if (trace)
+    {
+	fprintf (stderr, " -> Forking server: %s %s\n", command[0], command[1]);
+    }
+
+    child_pid = piped_child (command, &tofd, &fromfd);
+    if (child_pid < 0)
+	error (1, 0, "could not fork server process");
+
+    make_bufs_from_fds (tofd, fromfd, child_pid, to_server, from_server, 0);
+}
+#endif /* CLIENT_SUPPORT */
 
 
 
 #ifdef HAVE_KERBEROS
-
 /* This function has not been changed to deal with NO_SOCKET_TO_FD
    (i.e., systems on which sockets cannot be converted to file
    descriptors).  The first person to try building a kerberos client
@@ -4391,32 +4406,32 @@ start_server ()
 	     */
 	    connect_to_pserver (current_parsed_root, &to_server, &from_server, 0, 0);
 	    break;
-#endif
+#endif /* AUTH_CLIENT_SUPPORT */
 
 #if HAVE_KERBEROS
 	case kserver_method:
 	    start_tcp_server (current_parsed_root, &to_server, &from_server);
 	    break;
-#endif
+#endif /* HAVE_KERBEROS */
 
 #ifdef HAVE_GSSAPI
 	case gserver_method:
 	    /* GSSAPI authentication is handled by the pserver.  */
 	    connect_to_pserver (current_parsed_root, &to_server, &from_server, 0, 1);
 	    break;
-#endif
+#endif /* HAVE_GSSAPI */
 
 	case ext_method:
-#if defined (NO_EXT_METHOD)
+#ifdef NO_EXT_METHOD
 	    error (0, 0, ":ext: method not supported by this port of CVS");
 	    error (1, 0, "try :server: instead");
-#else
+#else /* ! NO_EXT_METHOD */
 	    start_rsh_server (current_parsed_root, &to_server, &from_server);
-#endif
+#endif /* NO_EXT_METHOD */
 	    break;
 
 	case server_method:
-#if defined(START_SERVER)
+#ifdef START_SERVER
 	    {
 	    int tofd, fromfd;
 	    START_SERVER (&tofd, &fromfd, getcaller (),
@@ -4424,17 +4439,17 @@ start_server ()
 			  current_parsed_root->directory);
 # ifdef START_SERVER_RETURNS_SOCKET
 	    make_bufs_from_fds (tofd, fromfd, 0, &to_server, &from_server, 1);
-# else
+# else /* ! START_SERVER_RETURNS_SOCKET */
 	    make_bufs_from_fds (tofd, fromfd, 0, &to_server, &from_server, 0);
 # endif /* START_SERVER_RETURNS_SOCKET */
 	    }
-#else
+#else /* ! START_SERVER */
 	    /* FIXME: It should be possible to implement this portably,
 	       like pserver, which would get rid of the duplicated code
 	       in {vms,windows-NT,...}/startserver.c.  */
 	    error (1, 0,
 "the :server: access method is not supported by this port of CVS");
-#endif
+#endif /* START_SERVER */
 	    break;
 
         case fork_method:

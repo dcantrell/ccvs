@@ -1,5 +1,11 @@
 2003-03-26  Derek Price  <derek@ximbiot.com>
 
+	* client.c: Fix, reorganize, and comment ifdefs for AUTH_CLIENT_SUPPORT
+	and HAVE_GSSAPI.
+	* client.h: Ditto.  Remove some unecessary server function prototypes.
+
+2003-03-26  Derek Price  <derek@ximbiot.com>
+
 	* client.c: Include the net headers for HAVE_GSSAPI.
 	(Report from Jim Salter <jsalterjim@earthlink.net>.)
 
