@@ -827,6 +827,28 @@ else
 	tests="$*"
 fi
 
+# Now check the -f argument for validity.
+# Don't allow spaces - they are our delimiters in tests
+count=0
+for sub in $fromtest; do
+  count=`expr $count + 1`
+done
+if test $count != 1; then
+	echo "No such test \`$fromtest'" >&2
+	exit 2
+fi
+# make sure it is in $tests
+case " $tests " in
+	*" $fromtest "*)
+		;;
+	*)
+		echo "No such test \`$fromtest'" >&2
+		exit 2
+		;;
+esac
+
+
+
 # a simple function to compare directory contents
 #
 # Returns: 0 for same, 1 for different
