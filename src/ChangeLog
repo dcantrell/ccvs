@@ -1,5 +1,11 @@
 Mon Sep 30 13:01:45 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* sanity.sh (rdiff, basic2): Allow "cvs server" as well as "cvs
+	checkout" and friends in messages.  In testing output of cvs
+	status, don't require a tab which isn't there for remote.  Skip
+	test rdiff-9 for remote.  In test basic2-64, add missing slash in
+	the pattern which gets used for remote.
+
 	* sanity.sh (rdiff): Fix strings we were matching against which
 	got keyword-expanded in checking in sanity.sh.
 
