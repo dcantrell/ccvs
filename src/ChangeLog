@@ -1,3 +1,10 @@
+2003-07-18  Derek Price  <derek@ximbiot.com>
+
+	* vers_ts (Version_TS): Don't allow command line keyword expansion
+	modes to override binary mode.
+	* sanity.sh (): Tests for the above.
+	(Original patch from Dieter Maurer <dieter@handshake.de>.)
+
 2003-07-16  Derek Price  <derek@ximbiot.com>
 
 	* add.c: s/PROTO//.
