@@ -1,5 +1,7 @@
 1997-10-28  Jim Kingdon
 
+	* .cvsignore: Add files du jour for Visual C++, vc50.pdb and vc50.idb.
+
 	* system.h: Define HAVE_TIME_H.
 	* dir.c [_WIN32]: Define CLOSEDIR_VOID.
 
