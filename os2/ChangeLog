@@ -1,3 +1,10 @@
+2004-02-17  Derek Price <derek@ximbiot.com>
+
+	* run.c (quote, run_setup):  Probably broke this, but not by much. 
+	Initially changed the wrong file but left it there in case somebody
+	wanted to finish.  Most likely only the run_add_arg function needs
+	to be fiddled with - the quoting has changed.
+
 2003-11-10  Mark D. Baushke  <mdb@cvshome.org>
 
 	* filesubr.c (xresolvepath): New function.
