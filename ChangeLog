@@ -1,5 +1,11 @@
 2001-07-03  Derek Price  <dprice@collab.net>
 
+	* HACKING (Source): Add a note about where to obtain the development
+	sources.
+	(Thanks to Bear Giles <bear@coyotesong.com>.)
+
+2001-07-03  Derek Price  <dprice@collab.net>
+
 	* configure.in: Test for mmap.
 
 	* configure: Regenerated.
