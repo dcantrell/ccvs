@@ -207,6 +207,7 @@ AC_REPLACE_FUNCS(\
 # necessary.
 AM_FUNC_GETLINE
 AM_GNU_GETTEXT([external])
+AM_GNU_GETTEXT_VERSION dnl work around for autoconf-2.57 bug.
 UTILS_FUNC_MKSTEMP
 gl_C_RESTRICT
 gl_FUNC_ATEXIT

@@ -1,3 +1,15 @@
+2003-11-03  Mark D. Baushke  <mdb@cvshome.org>
+
+	* Makefile.am (ACLOCAL_AMFLAGS): autoreconf does not understand
+	what to do with $(srcdir) so remove it -- autoreconf needs to be
+	done in the srcdir in order to regenerate all the files properly
+	in any case.
+
+	* configure.in (AM_GNU_GETTEXT_VERSION): Add to allow autoreconf
+	to regenerate files instead of using the incantation:
+	'aclocal -I m4 && autoconf && automake && autoheader' to do the
+	same thing as 'autoreconf' should do.
+
 2003-11-03  Derek Price  <derek@ximbiot.com>
 
 	* NEWS: Note that we're better at detecting ZLIB versions now.
