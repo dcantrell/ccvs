@@ -1,3 +1,8 @@
+2005-03-15  Derek Price  <derek@ximbiot.com>
+
+	* patch.c (patch_proc): Avoid memory leak.
+	(Thanks to report from Alen Zukich <alen.zukich@klocwork.com>.)
+
 2005-03-11  Mark D. Baushke  <mdb@cvshome.org>
 
 	* modules.c (my_module): Protect against free (NULL) code path.
