@@ -2960,6 +2960,8 @@ handle_f (args, len)
     fflush (stderr);
 }
 
+static void handle_mt PROTO ((char *, int));
+
 static void
 handle_mt (args, len)
     char *args;
