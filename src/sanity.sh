@@ -4022,31 +4022,86 @@ ${PROG} [a-z]*: use .${PROG} commit. to remove this file permanently"
 	  # party has a file of the same name, cvs notices
 	  cd 1/first-dir
 	  touch aa.c
-	  dotest conflicts2-142d0 "${testcvs} add aa.c" \
+	  echo 'contents unchanged' >same.c
+	  dotest conflicts2-142d0 "${testcvs} add aa.c same.c" \
 "${PROG} [a-z]*: scheduling file .aa\.c. for addition
-${PROG} [a-z]*: use .cvs commit. to add this file permanently"
+${PROG} [a-z]*: scheduling file .same\.c. for addition
+${PROG} [a-z]*: use .cvs commit. to add these files permanently"
 	  dotest conflicts2-142d1 "${testcvs} -q ci -m added" \
-"RCS file: ${TESTDIR}/cvsroot/first-dir/aa.c,v
+"RCS file: ${TESTDIR}/cvsroot/first-dir/aa\.c,v
 done
-Checking in aa.c;
-${TESTDIR}/cvsroot/first-dir/aa.c,v  <--  aa.c
+Checking in aa\.c;
+${TESTDIR}/cvsroot/first-dir/aa\.c,v  <--  aa\.c
+initial revision: 1\.1
+done
+RCS file: ${TESTDIR}/cvsroot/first-dir/same\.c,v
+done
+Checking in same\.c;
+${TESTDIR}/cvsroot/first-dir/same\.c,v  <--  same\.c
 initial revision: 1\.1
 done"
 	  cd ../../2/first-dir
 	  echo "don't you dare obliterate this text" >aa.c
+	  echo 'contents unchanged' >same.c
 	  # Doing this test separately for remote and local is a fair
 	  # bit of a kludge, but the exit status differs.  I'm not sure
 	  # which exit status is the more appropriate one.
+	  # Note also the discrepancy in the handling of same.c.  I kind
+	  # of suspect that the local CVS behavior is the more useful one
+	  # although I do sort of wonder whether we should make people run
+	  # cvs add just to get them in that habit (also, trying to implement
+	  # the local CVS behavior for remote without the cvs add seems 
+	  # pretty difficult).
 	  if test "$remote" = yes; then
 	    dotest conflicts2-142d2 "${testcvs} -q update" \
 "${QUESTION} aa\.c
+${QUESTION} same\.c
 U aa\.c
-${PROG} update: move away \./aa\.c; it is in the way"
+${PROG} update: move away \./aa\.c; it is in the way
+U same\.c
+${PROG} update: move away \./same\.c; it is in the way"
 	  else
 	    dotest_fail conflicts2-142d2 "${testcvs} -q update" \
 "${PROG} [a-z]*: move away aa\.c; it is in the way
-C aa\.c"
+C aa\.c
+U same\.c"
 	  fi
+	  dotest conflicts2-142d3 "${testcvs} -q status aa.c" \
+"${PROG} [a-z]*: move away aa\.c; it is in the way
+===================================================================
+File: aa\.c             	Status: Unresolved Conflict
+
+   Working revision:	No entry for aa\.c
+   Repository revision:	1\.1	${TESTDIR}/cvsroot/first-dir/aa\.c,v"
+
+	  # Could also be testing the case in which the cvs add happened
+	  # before the commit by the other user.
+	  # This message seems somewhat bogus.  I mean, parallel development
+	  # means that we get to work in parallel if we choose, right?  And
+	  # then at commit time it would be a conflict.
+	  dotest_fail conflicts2-142d4 "${testcvs} -q add aa.c" \
+"${PROG} [a-z]*: aa.c added independently by second party"
+
+	  # The user might want to see just what the conflict is.
+	  # Don't bother, diff seems to kind of lose its mind, with or
+	  # without -N.  This is a CVS bug(s).
+	  #dotest conflicts2-142d5 "${testcvs} -q diff -r HEAD -N aa.c" fixme
+
+	  # Now: "how can the user resolve this conflict", I hear you cry.
+	  # Well, one way is to forget about the file in the working
+	  # directory.
+	  # Since it didn't let us do the add in conflicts2-142d4, there
+	  # is no need to run cvs rm here.
+	  #dotest conflicts2-142d6 "${testcvs} -q rm -f aa.c" fixme
+	  dotest conflicts2-142d6 "rm aa.c" ''
+	  dotest conflicts2-142d7 "${testcvs} -q update aa.c" "U aa\.c"
+	  dotest conflicts2-142d8 "cat aa.c" ''
+
+	  # The other way is to use the version from the working directory
+	  # instead of the version from the repository.  Unfortunately,
+	  # there doesn't seem to be any particularly clear way to do
+	  # this (?).
+
 	  cd ../..
 
 	  rm -r 1 2 ; rm -rf ${CVSROOT_DIRNAME}/first-dir
