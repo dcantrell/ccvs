@@ -39,7 +39,6 @@ static int finaladd (struct file_info *finfo, char *revision, char *tag,
 static int findmaxrev (Node * p, void *closure);
 static int lock_RCS (char *user, RCSNode *rcs, char *rev, char *repository);
 static int precommit_list_to_args_proc (Node * p, void *closure);
-static int precommit_list_proc (Node * p, void *closure);
 static int precommit_proc (char *repository, char *filter, void *closure);
 static int remove_file (struct file_info *finfo, char *tag,
 			char *message);

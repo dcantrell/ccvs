@@ -1,3 +1,7 @@
+2004-02-20  Larry Jones  <lawrence.jones@ugsplm.com>
+
+	* commit.c (precommit_list_proc): Remove vestigial prototype.
+
 2004-02-19  Derek Price  <derek@ximbiot.com>
 
 	* run.c (format_cmdline): Don't accept printf `L' modifier at all when
