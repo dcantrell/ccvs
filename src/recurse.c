@@ -378,6 +378,14 @@ do_recursion (frame)
 		if (isreadable (CVSADM_TAG))
 		    lwhich |= W_ATTIC;
 
+	    /* The Find_Names function is going to look through the
+	       Entries file.  If we do not have a repository, that
+	       does not make sense, so we insist upon having a
+	       repository at this point.  Name_Repository will give a
+	       reasonable error message.  */
+	    if (repository == NULL)
+		repository = Name_Repository ((char *) NULL, update_dir);
+
 	    /* find the files and fill in entries if appropriate */
 	    filelist = Find_Names (repository, lwhich, frame->aflag, &entries);
 	}
