@@ -55,7 +55,10 @@ txt: $(TXTS)
 dvi: cvs.dvi cvsclient.dvi
 .PHONY: dvi
 
-cvs.aux cvs.pdf cvs.txt: cvs.texinfo
+# FIXME-AUTOMAKE:
+# For some reason if I remove version.texi, it doesn't get built automatically.
+# This needs to be fixed in automake.
+cvs.aux cvs.pdf cvs.txt: cvs.texinfo $(srcdir)/version.texi
 cvsclient.aux cvsclient.pdf cvsclient.txt: cvsclient.texi
 
 # These targets need to be very specific so that the other PDFs get generated
