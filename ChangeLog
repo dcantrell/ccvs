@@ -1,4 +1,7 @@
-2003-12-23  Larry Jones  <lawrence.jones@eds.com>
+2003-12-23  Larry Jones  <lawrence.jones@ugsplm.com>
+
+	* Makefile.am: Add mktemp.sh to EXTRA_DIST.
+	* Makefile.in: Regenerated.
 
 	* configure.in: Get mktemp.sh from $srcdir.
 	* configure: Regenerated.
