@@ -387,7 +387,8 @@ unlink_file (f)
     * name is closer to our interface, what the heck.  Also, we know
     * unlink()'s error code when trying to remove a directory.
     */
-    xchmod ((char *)f, 1);
+    if (isfile (f))
+	xchmod ((char *)f, 1);
     return (unlink (f));
 }
 
