@@ -1095,7 +1095,7 @@ modify_repo ()
 restore_adm ()
 {
     modify_repo rm -rf $CVSROOT_DIRNAME/CVSROOT
-    modify_repo cp -rp $TESTDIR/CVSROOT.save $CVSROOT_DIRNAME/CVSROOT
+    modify_repo cp -Rp $TESTDIR/CVSROOT.save $CVSROOT_DIRNAME/CVSROOT
 }
 
 # Test that $RSYNC supports the options we need or try to find a
@@ -2675,7 +2675,7 @@ fi # $proxy
 
 # Save a copy of the initial repository so that it may be restored after the
 # tests that alter it.
-cp -rp $CVSROOT_DIRNAME/CVSROOT $TESTDIR/CVSROOT.save
+cp -Rp $CVSROOT_DIRNAME/CVSROOT $TESTDIR/CVSROOT.save
 
 
 ###
@@ -22220,7 +22220,7 @@ $CVSROOT_DIRNAME/first-dir/dir/file2,v  <--  dir/file2
 new revision: 1\.3; previous revision: 1\.2"
 
 	  # Save a backup copy
-	  cp -r $CVSROOT_DIRNAME/first-dir $TESTDIR/backup
+	  cp -R $CVSROOT_DIRNAME/first-dir $TESTDIR/backup
 
 	  # Simulate developer 3
 	  cd ../..
@@ -22315,7 +22315,7 @@ DATADIRS=\`find . -name CVS -print\`
 cd ../first-dir
 find . -name CVS -print | xargs rm -rf
 for file in \${DATADIRS}; do
-	cp -r ../repos-first-dir/\${file} \${file}
+	cp -R ../repos-first-dir/\${file} \${file}
 done" >fixit
 
 	  # We only need to fix the workspaces of developers 3 and 4
@@ -31024,7 +31024,7 @@ add
 EOF
 
 	  # Gotta update the workspace ourselves since we bypassed the client.
-	  cp -r CVS firstdir/CVS
+	  cp -R CVS firstdir/CVS
 	  echo "firstdir" >firstdir/CVS/Repository
 
 	  cd firstdir
