@@ -17537,6 +17537,95 @@ EOF
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
 	  ;;
 
+	rcs4)
+	  # Fix a bug that shows up when checking out files by date with the
+	  # "-D date" command line option.  There is code in the original to
+	  # handle a special case.  If the date search finds revision 1.1 it
+	  # is supposed to check whether revision 1.1.1.1 has the same date
+	  # stamp, which would indicate that the file was originally brought
+	  # in with "cvs import".  In that case it is supposed to return the
+	  # vendor branch version 1.1.1.1.
+	  # 
+	  # However, there is a bug in the code. It actually compares
+	  # the date of revision 1.1 for equality with the date given
+	  # on the command line -- clearly wrong. This commit fixes
+	  # the coding bug.
+	  # 
+	  # There is an additional bug which is _not_ fixed yet. 
+	  # The date comparison should not be a strict
+	  # equality test. It should allow a fudge factor of, say, 2-3
+	  # seconds. Old versions of CVS created the two revisions
+	  # with two separate invocations of the RCS "ci" command. We
+	  # have many old files in the tree in which the dates of
+	  # revisions 1.1 and 1.1.1.1 differ by 1 second.
+
+          mkdir rcs4
+          cd rcs4
+
+	  mkdir imp-dir
+	  cd imp-dir
+	  echo 'OpenMunger sources' >file1
+
+	  # choose a time in the past to demonstrate the problem
+	  TZ=GMT touch -t 200012010123 file1
+
+	  dotest_sort rcs4-1 \
+"${testcvs} import -d -m add rcs4-dir openmunger openmunger-1_0" \
+'
+
+N rcs4-dir/file1
+No conflicts created by this import'
+	  echo 'OpenMunger sources release 1.1 extras' >>file1
+	  TZ=GMT touch -t 200112011234 file1
+	  dotest_sort rcs4-2 \
+"${testcvs} import -d -m add rcs4-dir openmunger openmunger-1_1" \
+'
+
+No conflicts created by this import
+U rcs4-dir/file1'
+	  cd ..
+	  # Next checkout the new module
+	  dotest rcs4-3 \
+"${testcvs} -q co rcs4-dir" \
+'U rcs4-dir/file1'
+	  cd rcs4-dir
+	  echo 'local change' >> file1
+
+	  # commit a local change
+	  dotest rcs4-4 \
+"${testcvs} -q commit -m hack file1" \
+"Checking in file1;
+${CVSROOT_DIRNAME}/rcs4-dir/file1,v  <--  file1
+new revision: 1\.2; previous revision: 1\.1
+done"
+	  # now see if we get version 1.1 or 1.1.1.1 when we ask for
+	  # a checkout by time... it really should be 1.1.1.1 as
+          # that was indeed the version that was visible at the target
+	  # time.
+	  dotest rcs4-5 \
+"${testcvs} -q update -D 'October 1, 2001' file1" \
+'[UP] file1'
+	  dotest rcs4-6 \
+"${testcvs} -q status file1" \
+'===================================================================
+File: file1            	Status: Up-to-date
+
+   Working revision:	1\.1\.1\.1.*
+   Repository revision:	1\.1\.1\.1	'${CVSROOT_DIRNAME}'/rcs4-dir/file1,v
+   Sticky Tag:		(none)
+   Sticky Date:		2001\.10\.01\.[0-1][0-9]\.00\.00
+   Sticky Options:	(none)'
+
+	  if $keep; then
+	    echo Keeping ${TESTDIR} and exiting due to --keep
+	    exit 0
+	  fi
+
+	  cd ../..
+          rm -r rcs4
+          rm -rf ${CVSROOT_DIRNAME}/rcs4-dir
+	  ;;
+
 	lockfiles)
 	  # Tests of CVS lock files.
 	  # TODO-maybe: Add a test where we arrange for a loginfo
