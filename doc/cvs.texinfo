@@ -2863,6 +2863,16 @@ Note: you must run it on a machine which has both
 @sc{sccs} and @sc{rcs} installed, and like everything
 else in contrib it is unsupported (your mileage may
 vary).
+
+@cindex PVCS, importing files from
+@item From PVCS
+There is a script in the @file{contrib} directory of
+the @sc{cvs} source distribution called @file{pvcs_to_rcs}
+which converts @sc{pvcs} archives to @sc{rcs} files.
+You must run it on a machine which has both
+@sc{pvcs} and @sc{rcs} installed, and like everything
+else in contrib it is unsupported (your mileage may
+vary).  See the comments in the script for details.
 @end table
 @c CMZ and/or PATCHY were systems that were used in the
 @c high energy physics community (especially for
