@@ -50,8 +50,12 @@ dnl # N.B.  The reason for doing this is that some moron decided to put a stub
 dnl # for crypt in libc that always returns NULL.  Without this here, the later
 dnl # check will find the stub instead of the real thing, resulting in a server
 dnl # that can't process crypted passwords correctly.
+dnl
+dnl # again, if we have to try and reenable this for ISC, someone should come
+dnl # up with a generic test that figures out whether crypt is good or not -
+dnl # Is it always returning NULL?
 dnl LIBS="-lcrypt $LIBS"
-dnl f
+dnl fi
 dnl
 dnl FIXME - This has been broken for at least a few months anyhow, so I'm
 dnl removing the crypt lib define above, but the correct fix would be to

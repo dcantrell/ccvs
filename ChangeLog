@@ -1,3 +1,8 @@
+2002-10-28  Derek Price  <derek@ximbiot.com>
+
+	* configure.in: Flesh out some comments in regards to Sun Interactive
+	UNIX (ISC).
+
 2002-09-24  Derek Price  <derek@ximbiot.com>
 
 	* configure.in (WITH_KRB4): Update WITH_KRB4 output to use
