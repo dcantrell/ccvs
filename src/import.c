@@ -74,6 +74,7 @@ import (int argc, char **argv)
     List *ulist;
     Node *p;
     struct logfile_info *li;
+    size_t dummy;
 
     if (argc == -1)
 	usage (import_usage);
@@ -195,29 +196,22 @@ import (int argc, char **argv)
 		error (1, 0, "tag `%s' was specified more than once", argv[i]);
     }
 
-    /* XXX - this should be a module, not just a pathname */
-    if (!isabsolute (argv[0]) && pathname_levels (argv[0]) == 0)
-    {
-	if (current_parsed_root == NULL)
-	{
-	    error (0, 0, "missing CVSROOT environment variable\n");
-	    error (1, 0, "Set it or specify the '-d' option to %s.",
-		   program_name);
-	}
-	repository = xmalloc (strlen (current_parsed_root->directory)
-			      + strlen (argv[0])
-			      + 2);
-	(void) sprintf (repository, "%s/%s", current_parsed_root->directory, argv[0]);
-	repos_len = strlen (current_parsed_root->directory);
-    }
-    else
-    {
+    if (isabsolute (argv[0]) || pathname_levels (argv[0]) > 0)
 	/* It is somewhere between a security hole and "unexpected" to
 	   let the client start mucking around outside the cvsroot
 	   (wouldn't get the right CVSROOT configuration, &c).  */
 	error (1, 0, "directory %s not relative within the repository",
 	       argv[0]);
+
+    if (current_parsed_root == NULL)
+    {
+	error (0, 0, "missing CVSROOT environment variable\n");
+	error (1, 0, "Set it or specify the '-d' option to %s.",
+	       program_name);
     }
+    repository = asnprintf (repository, &dummy, "%s/%s",
+			    current_parsed_root->directory, argv[0]);
+    repos_len = strlen (current_parsed_root->directory);
 
     /*
      * Consistency checks on the specified vendor branch.  It must be
