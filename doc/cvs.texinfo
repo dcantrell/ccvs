@@ -8516,11 +8516,12 @@ rather than writing them in the current directory.  Available
 with the @code{checkout} and @code{update} commands.
 
 @item -R
-Process directories recursively.  This is on by default.
+Process directories recursively.  This is the default for all @sc{cvs}
+commands, with the exception of @code{ls} & @code{rls}.
 
 Available with the following commands: @code{annotate}, @code{checkout},
 @code{commit}, @code{diff}, @code{edit}, @code{editors}, @code{export},
-@code{rdiff}, @code{remove}, @code{rtag},
+@code{ls}, @code{rdiff}, @code{remove}, @code{rls}, @code{rtag},
 @code{status}, @code{tag}, @code{unedit}, @code{update}, @code{watch},
 and @code{watchers}.
 
@@ -10698,6 +10699,22 @@ Synonym: @code{dir} & @code{list} are synonyms for @code{ls} and @code{rdir}
 & @code{rlist} are synonyms for @code{rls}.
 @end itemize
 
+The @code{ls} and @code{rls} commands are used to list
+files and directories in the repository.
+
+By default @code{ls} lists the files and directories
+that belong in your working directory, what would be
+there after an @code{update}.
+
+By default @code{rls} lists the files and directories
+on the tip of the trunk in the topmost directory of the
+repository.
+
+Both commands accept an optional list of file and
+directory names, relative to the working directory for
+@code{ls} and the topmost directory of the repository
+for @code{rls}.  Neither is recursive by default.
+
 @menu
 * ls & rls options::         ls & rls options
 * rls examples:              rls examples
@@ -10709,6 +10726,9 @@ Synonym: @code{dir} & @code{list} are synonyms for @code{ls} and @code{rdir}
 These standard options are supported by @code{ls} & @code{rls}:
 
 @table @code
+@item -d
+Show dead revisions (with tag when specified).
+
 @item -e
 Display in CVS/Entries format.  This format is meant to remain easily parsable
 by automation.
