@@ -1,3 +1,9 @@
+Wed May  8 09:31:03 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* getdate.c: Regenerate with the version of byacc in Red Hat 3.0.3
+	(which I believe is byacc 1.9).  byacc, unlike bison, does not
+	require alloca in the generated parser.
+
 Thu Apr 25 18:26:34 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* getdate.y (get_date): Set Start from nowtime, not now->time,
