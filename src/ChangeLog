@@ -1,5 +1,8 @@
 Tue Mar 18 13:03:33 1997  Jim Meyering  <meyering@totoro.cyclic.com>
 
+	* sanity.sh (RCSINIT): Define to be empty and export, to hide any
+	existing value that might cause spurious failures.
+
 	* Makefile.in: (install): Depend on installdirs.
 	Remove `CYGNUS LOCAL' comment saying not to.
 
