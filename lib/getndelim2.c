@@ -18,19 +18,14 @@
    along with this program; if not, write to the Free Software Foundation,
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
 
-/* Adapted by Derek Price <derek@ximbiot.com>
- * from getline.c written by Jan Brittenson <bson@gnu.ai.mit.edu>.
- */
+/* Originally written by Jan Brittenson, bson@gnu.ai.mit.edu.  */
 
 #if HAVE_CONFIG_H
 # include <config.h>
 #endif
 
+/* Specification.  */
 #include "getndelim2.h"
-
-#include <stddef.h>
-#include <stdio.h>
-#include <sys/types.h> /* Included for ssize_t. */
 
 #if STDC_HEADERS
 # include <stdlib.h>
@@ -42,14 +37,6 @@ char *malloc (), *realloc ();
 
 /* Always add at least this many bytes when extending the buffer.  */
 #define MIN_CHUNK 64
-
-/* Read up to (and including) a delimiter DELIM1 from STREAM into *LINEPTR
-   + OFFSET (and NUL-terminate it).  If DELIM2 is non-zero, then read up
-   and including the first occurrence of DELIM1 or DELIM2.  *LINEPTR is
-   a pointer returned from malloc (or NULL), pointing to *LINESIZE bytes of
-   space.  It is realloc'd as necessary.  Read no more than LIMIT bytes.
-   Return the number of bytes read and stored at *LINEPTR + OFFSET (not
-   including the NUL terminator), or -1 on error or EOF.  */
 
 ssize_t
 getndelim2 (char **lineptr, size_t *linesize, size_t offset, ssize_t limit,
@@ -123,7 +110,8 @@ getndelim2 (char **lineptr, size_t *linesize, size_t offset, ssize_t limit,
 	break;
     }
 
-  /* Done - NUL terminate and return the number of chars read.  */
+  /* Done - NUL terminate and return the number of chars read.
+     At this point we know that nbytes_avail >= 1.  */
   *read_pos = '\0';
 
   return read_pos - (*lineptr + offset);

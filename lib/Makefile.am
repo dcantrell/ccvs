@@ -34,6 +34,8 @@ noinst_LIBRARIES = libcvs.a
 libcvs_a_SOURCES = \
 	argmatch.c \
 	getdate.y \
+	getndelim2.c \
+	getnline.c \
 	getopt.c \
 	getopt1.c \
 	md5.c \

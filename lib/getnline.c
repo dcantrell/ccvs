@@ -16,20 +16,12 @@
    along with this program; if not, write to the Free Software Foundation,
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
 
-/* Adapted by Derek Price <derek@ximbiot.com>
- * from getline.c written by Jan Brittenson <bson@gnu.ai.mit.edu>.
- */
-
 #if HAVE_CONFIG_H
 # include <config.h>
 #endif
 
 /* Specification.  */
 #include "getnline.h"
-
-#include <stddef.h>
-#include <stdio.h>
-#include <sys/types.h> /* Included for ssize_t. */
 
 #include "getndelim2.h"
 

@@ -17,9 +17,7 @@
    along with this program; if not, write to the Free Software Foundation,
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
 
-/* Adapted by Derek Price <derek@ximbiot.com>
- * from getline.c written by Jan Brittenson <bson@gnu.ai.mit.edu>.
- */
+/* Written by Jan Brittenson, bson@gnu.ai.mit.edu.  */
 
 #if HAVE_CONFIG_H
 # include <config.h>
@@ -34,12 +32,7 @@
 # define _GNU_SOURCE 1
 #endif
 
-#include <stddef.h>
-#include <stdio.h>
-#include <sys/types.h> /* Included for ssize_t. */
-
 #if defined __GNU_LIBRARY__ && HAVE_GETDELIM
-
 
 ssize_t
 getline (char **lineptr, size_t *linesize, FILE *stream)
@@ -49,7 +42,7 @@ getline (char **lineptr, size_t *linesize, FILE *stream)
 
 #else /* ! have getdelim */
 
-# include "getndelim2.h"
+#include "getndelim2.h"
 
 ssize_t
 getline (char **lineptr, size_t *linesize, FILE *stream)
