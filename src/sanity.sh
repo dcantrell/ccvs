@@ -21689,7 +21689,7 @@ done"
 	  dotest admin-31 "${testcvs} log" \
 "${PROG} log: Logging \.
 
-RCS file: /tmp/cvs-sanity/cvsroot/first-dir/aaa,v
+RCS file: ${CVSROOT_DIRNAME}/first-dir/aaa,v
 Working file: aaa
 head: 1\.4
 branch:
@@ -21723,7 +21723,7 @@ date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;  lines: ${PLUS}4 -0
 branch-four
 =============================================================================
 
-RCS file: /tmp/cvs-sanity/cvsroot/first-dir/file1,v
+RCS file: ${CVSROOT_DIRNAME}/first-dir/file1,v
 Working file: file1
 head: 1\.1
 branch:
@@ -21748,7 +21748,7 @@ date: [0-9/]* [0-9:]*;  author: ${username};  state: foo;  lines: ${PLUS}1 -0
 modify-on-branch
 =============================================================================
 
-RCS file: /tmp/cvs-sanity/cvsroot/first-dir/file2,v
+RCS file: ${CVSROOT_DIRNAME}/first-dir/file2,v
 Working file: file2
 head: 1\.4
 branch:
@@ -21783,7 +21783,7 @@ date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
 modify
 =============================================================================
 
-RCS file: /tmp/cvs-sanity/cvsroot/first-dir/Attic/file3,v
+RCS file: ${CVSROOT_DIRNAME}/first-dir/Attic/file3,v
 Working file: file3
 head: 1\.1
 branch:
