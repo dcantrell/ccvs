@@ -1,3 +1,11 @@
+Wed Jun 26 22:36:29 1996  Ian Lance Taylor  <ian@cygnus.com>
+
+	* commit.c (check_fileproc): If there is a tag, permit adding a
+ 	file even if the RCS file already exists.
+	(checkaddfile): If there is a tag, use the file in the regular
+ 	repository, rather than the Attic, if it exists.
+	* sanity.sh (death2): New set of tests for above patch.
+
 Tue Jun 25 23:34:13 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* update.c (checkout_file): Add comments about two cases which

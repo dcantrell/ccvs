@@ -350,7 +350,7 @@ HOME=${TESTDIR}/home; export HOME
 # tests.
 
 if test x"$*" = x; then
-	tests="basica basicb basic1 deep basic2 death branches import new newb conflicts conflicts2 modules mflag errmsg1 devcom ignore binfiles info"
+	tests="basica basicb basic1 deep basic2 death death2 branches import new newb conflicts conflicts2 modules mflag errmsg1 devcom ignore binfiles info"
 else
 	tests="$*"
 fi
@@ -1634,6 +1634,59 @@ Merging differences between 1.1 and 1.2 into file3'
 
 		cd .. ; rm -rf first-dir ${CVSROOT_DIRNAME}/first-dir
 		;;
+
+	death2)
+	  # More tests of death support.
+	  mkdir ${CVSROOT_DIRNAME}/first-dir
+	  dotest death2-1 "${testcvs} -q co first-dir" ''
+
+	  cd first-dir
+
+	  # Add a file on the trunk.
+	  echo "first revision" > file1
+	  dotest death2-2 "${testcvs} add file1" \
+"${PROG}"' [a-z]*: scheduling file `file1'\'' for addition
+'"${PROG}"' [a-z]*: use '\''cvs commit'\'' to add this file permanently'
+
+	  dotest death2-3 "${testcvs} -q commit -m add" \
+'RCS file: /tmp/cvs-sanity/cvsroot/first-dir/file1,v
+done
+Checking in file1;
+/tmp/cvs-sanity/cvsroot/first-dir/file1,v  <--  file1
+initial revision: 1.1
+done'
+
+	  # Make a branch.
+	  dotest death2-4 "${testcvs} -q tag -b branch" 'T file1'
+
+	  # Switch over to the branch.
+	  dotest death2-5 "${testcvs} -q update -r branch" ''
+
+	  # Delete the file on the branch.
+	  rm file1
+	  dotest death2-6 "${testcvs} rm file1" \
+"${PROG} [a-z]*: scheduling .file1. for removal
+${PROG} [a-z]*: use .cvs commit. to remove this file permanently"
+	  dotest death2-7 "${testcvs} -q ci -m removed" \
+'Removing file1;
+/tmp/cvs-sanity/cvsroot/first-dir/file1,v  <--  file1
+new revision: delete; previous revision: 1\.1\.2
+done'
+
+	  # Readd the file to the branch.
+	  echo "second revision" > file1
+	  dotest death2-8 "${testcvs} add file1" \
+"${PROG}"' [a-z]*: file `file1'\'' will be added on branch `branch'\'' from version 1\.1\.2\.1
+'"${PROG}"' [a-z]*: use '\''cvs commit'\'' to add this file permanently'
+	  dotest death2-9 "${testcvs} -q commit -m add" \
+'Checking in file1;
+/tmp/cvs-sanity/cvsroot/first-dir/file1,v  <--  file1
+new revision: 1\.1\.2\.2; previous revision: 1\.1\.2\.1
+done'
+
+	  cd .. ; rm -rf first-dir ${CVSROOT_DIRNAME}/first-dir
+	  ;;
+
 	branches)
 	  # More branch tests, including branches off of branches
 	  mkdir ${CVSROOT_DIRNAME}/first-dir

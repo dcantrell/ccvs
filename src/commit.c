@@ -673,7 +673,8 @@ check_fileproc (finfo)
 	     *	- can't have a sticky tag that is not a branch
 	     * Also,
 	     *	- if status is T_REMOVED, can't have a numeric tag
-	     *	- if status is T_ADDED, rcs file must not exist
+	     *	- if status is T_ADDED, rcs file must not exist unless on
+	     *    a branch
 	     *	- if status is T_ADDED, can't have a non-trunk numeric rev
 	     *	- if status is T_MODIFIED and a Conflict marker exists, don't
 	     *    allow the commit if timestamp is identical or if we find
@@ -767,18 +768,22 @@ check_fileproc (finfo)
 	    }
 	    if (status == T_ADDED)
 	    {
-		char rcs[PATH_MAX];
-
-		/* Don't look in the attic; if it exists there we will
-		   move it back out in checkaddfile.  */
-		sprintf(rcs, "%s/%s%s", finfo->repository, finfo->file, RCSEXT);
-		if (isreadable (rcs))
+	        if (vers->tag == NULL)
 		{
-		    error (0, 0,
-		"cannot add file `%s' when RCS file `%s' already exists",
-			   finfo->fullname, rcs);
-		    freevers_ts (&vers);
-		    return (1);
+		    char rcs[PATH_MAX];
+
+		    /* Don't look in the attic; if it exists there we
+		       will move it back out in checkaddfile.  */
+		    sprintf(rcs, "%s/%s%s", finfo->repository, finfo->file,
+			    RCSEXT);
+		    if (isreadable (rcs))
+		    {
+			error (0, 0,
+		    "cannot add file `%s' when RCS file `%s' already exists",
+			       finfo->fullname, rcs);
+			freevers_ts (&vers);
+			return (1);
+		    }
 		}
 		if (vers->tag && isdigit (*vers->tag) &&
 		    numdots (vers->tag) > 1)
@@ -1617,12 +1622,17 @@ checkaddfile (file, repository, tag, options, rcsnode)
 
     if (tag)
     {
-	(void) sprintf(rcs, "%s/%s", repository, CVSATTIC);
-	omask = umask (cvsumask);
-	if (CVS_MKDIR (rcs, 0777) != 0 && errno != EEXIST)
-	    error (1, errno, "cannot make directory `%s'", rcs);;
-	(void) umask (omask);
-	(void) sprintf (rcs, "%s/%s/%s%s", repository, CVSATTIC, file, RCSEXT);
+        (void) sprintf (rcs, "%s/%s%s", repository, file, RCSEXT);
+	if (! isreadable (rcs))
+	{
+	    (void) sprintf(rcs, "%s/%s", repository, CVSATTIC);
+	    omask = umask (cvsumask);
+	    if (CVS_MKDIR (rcs, 0777) != 0 && errno != EEXIST)
+		error (1, errno, "cannot make directory `%s'", rcs);;
+	    (void) umask (omask);
+	    (void) sprintf (rcs, "%s/%s/%s%s", repository, CVSATTIC, file,
+			    RCSEXT);
+	}
     }
     else
 	locate_rcs (file, repository, rcs);
