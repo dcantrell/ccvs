@@ -1,3 +1,8 @@
+2004-09-08  Conrad T. Pino  <Conrad@Pino.com>
+
+	* server.c: Remove extra token in conditional compile line 5580
+	causing error in Windows Visual C++ 6.0 compile.
+
 2004-09-08  Mark D. Baushke  <mdb@cvshome.org>
 
 	* buffer.c (fd_buffer_block): Protect fcntl calls when F_GETFL,

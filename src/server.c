@@ -5578,7 +5578,6 @@ static void serve_valid_requests (char *arg);
 
 #endif /* SERVER_SUPPORT */
 #if defined(SERVER_SUPPORT) || defined(CLIENT_SUPPORT)
-
 /*
  * Parts of this table are shared with the client code,
  * but the client doesn't need to know about the handler
