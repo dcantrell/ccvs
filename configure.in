@@ -53,7 +53,6 @@ AC_REPLACE_FUNCS(getwd mkdir rename strdup strstr dup2 strerror valloc waitpid m
 AC_CHECK_FUNCS(fchmod fsync ftime mkfifo putenv setvbuf vfork vprintf ftruncate timezone getpagesize fchdir sigaction sigprocmask sigvec sigsetmask sigblock)
 AC_CHECK_FUNC(re_exec, :, LIBOBJS="$LIBOBJS regex.o")
 AC_FUNC_UTIME_NULL
-AC_FUNC_ALLOCA
 AC_SYS_LONG_FILE_NAMES
 
 AC_MSG_CHECKING([for working fnmatch function])
