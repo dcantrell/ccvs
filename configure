@@ -31624,7 +31624,7 @@ fi
           ac_config_files="$ac_config_files windows-NT/mkconfig:windows-NT/plhead.pl:windows-NT/mkconfig.pl"
 
 
-                                                                                                                                                                          ac_config_files="$ac_config_files Makefile contrib/Makefile cvs.spec diff/Makefile doc/Makefile emx/Makefile lib/Makefile m4/Makefile man/Makefile os2/Makefile src/Makefile src/sanity.config.sh tools/Makefile vms/Makefile windows-NT/Makefile windows-NT/SCC/Makefile zlib/Makefile"
+                                                                                                                                                                                    ac_config_files="$ac_config_files Makefile contrib/Makefile contrib/pam/Makefile cvs.spec diff/Makefile doc/Makefile emx/Makefile lib/Makefile m4/Makefile man/Makefile os2/Makefile src/Makefile src/sanity.config.sh tools/Makefile vms/Makefile windows-NT/Makefile windows-NT/SCC/Makefile zlib/Makefile"
 
 
 cat >confcache <<\_ACEOF
@@ -32222,6 +32222,7 @@ do
   "windows-NT/mkconfig" ) CONFIG_FILES="$CONFIG_FILES windows-NT/mkconfig:windows-NT/plhead.pl:windows-NT/mkconfig.pl" ;;
   "Makefile" ) CONFIG_FILES="$CONFIG_FILES Makefile" ;;
   "contrib/Makefile" ) CONFIG_FILES="$CONFIG_FILES contrib/Makefile" ;;
+  "contrib/pam/Makefile" ) CONFIG_FILES="$CONFIG_FILES contrib/pam/Makefile" ;;
   "cvs.spec" ) CONFIG_FILES="$CONFIG_FILES cvs.spec" ;;
   "diff/Makefile" ) CONFIG_FILES="$CONFIG_FILES diff/Makefile" ;;
   "doc/Makefile" ) CONFIG_FILES="$CONFIG_FILES doc/Makefile" ;;
