@@ -10,6 +10,10 @@ NEW FEATURES
 * The incomplete Brazillian Portugese translation of the CVS manual is now
   included in the distribution.
 
+BUG FIXES
+
+* Misc bug and documentation fixes.
+
 Changes from 1.12.10 to 1.12.11:
 ********************************
 
@@ -30,6 +34,8 @@ NEW FEATURES
 * Miscellaneous documentation fixes.
 
 BUG FIXES
+
+* An intermittant assertion failure in checkout has been fixed.
 
 * Thanks to a report from Chris Bohn <cbohn@rrinc.com>, all the source files
   needed to build on Windows are now included in the source distribution.
