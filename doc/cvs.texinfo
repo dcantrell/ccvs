@@ -1855,14 +1855,12 @@ see @ref{Working directory storage}, for information on
 the @file{CVS/Repository} and @file{CVS/Root} files, but
 unless you are sure you want to bother, it probably
 isn't worth it.
-@c FIXME: This should be made unnecessary by:
-@c 1) a new -d should affect CVS/Root files throughout
-@c the tree, not just at the top level.
-@c 2) the RELATIVE_REPOS code should be fixed and made the
-@c default.  I think that CVS already reads
-@c CVS/Repository files which are absolute or
-@c relative.  FIXME: needs more investigation and
-@c documentation in "Working directory storage".
+@c FIXME: Surgery on CVS/Repository should be avoided
+@c by making RELATIVE_REPOS the default.
+@c FIXME-maybe: might want some documented way to
+@c change the CVS/Root files in some particular tree.
+@c But then again, I don't know, maybe just having
+@c people do this in perl/shell/&c isn't so bad...
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node Remote repositories
@@ -12221,6 +12219,15 @@ Used only for debugging the server side in
 client-server mode.  If set, delays the start of the
 server child process the specified amount of
 seconds so that you can attach to it with a debugger.
+
+@cindex CVS_IGNORE_REMOTE_ROOT, environment variable
+@item $CVS_IGNORE_REMOTE_ROOT
+For @sc{cvs} 1.10 and older, setting this variable
+prevents @sc{cvs} from overwriting the @file{CVS/Root}
+file when the @samp{-d} global option is specified.
+Later versions of @sc{cvs} do not rewrite
+@file{CVS/Root}, so CVS_IGNORE_REMOTE_ROOT has no
+effect.
 
 @cindex COMSPEC, environment variable
 @item $COMSPEC
