@@ -1,3 +1,8 @@
+2004-04-28  Derek Price  <derek@ximbiot.com>
+
+	* system.h: Include timespec.h instead of xtime.h.
+	* xtime.h: Removed.
+
 2004-04-27  Derek Price  <derek@ximbiot.com>
 
 	* Makefile.am (libcvs_a_SOURCES): Add getdate.h, getdate.y in their own
