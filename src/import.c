@@ -453,9 +453,12 @@ import_descend (message, vtag, targc, targv)
 	    }
 	    else if (
 #ifdef DT_DIR
-		dp->d_type == DT_LNK || dp->d_type == DT_UNKNOWN &&
+		     dp->d_type == DT_LNK
+		     || (dp->d_type == DT_UNKNOWN && islink (dp->d_name))
+#else
+		     islink (dp->d_name)
 #endif
-		islink (dp->d_name))
+		     )
 	    {
 		add_log ('L', dp->d_name);
 		err++;
