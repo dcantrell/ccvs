@@ -189,7 +189,7 @@ please send a report to <bug-cvs@gnu.org>.
 * Regenerating Build Files (Windows)
 
 If for some reason you end up regenerating the *.mak files to submit a patch,
-please run windows-NT/cvsntfix.pl to remove the absolute paths from the
+please run windows-NT/fix-msvc-mak.pl to remove the absolute paths from the
 generated *.mak files before generating any patches.
 
 * Writing patches (strategy)
