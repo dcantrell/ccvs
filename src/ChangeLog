@@ -1,5 +1,10 @@
 2003-02-14  Derek Price  <derek@ximbiot.com>
 
+	* watch.c (watch_usage): Make the repeatability of -a part of the
+	usage spec.
+
+2003-02-14  Derek Price  <derek@ximbiot.com>
+
 	* watch.c (watch_usage): Mention default for -a.  Mention multiple
 	invocations of -a.  Mention -R as default.  Use required () rather than
 	optional [] around watch subcommand list in invocation spec.  Use

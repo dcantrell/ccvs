@@ -17,7 +17,7 @@
 
 const char *const watch_usage[] =
 {
-    "Usage: %s %s (on|off|add|remove) [-lR] [-a <action>] [<path>...]\n",
+    "Usage: %s %s (on|off|add|remove) [-lR] [-a <action>]... [<path>]...\n",
     "on/off: turn on/off read-only checkouts of files\n",
     "add/remove: add or remove notification on actions\n",
     "-l (on/off/add/remove): Local directory only, not recursive\n",
