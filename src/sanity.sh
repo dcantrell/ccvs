@@ -1614,7 +1614,7 @@ if test x"$*" = x; then
 	tests="${tests} new newb conflicts conflicts2 conflicts3"
 	tests="${tests} clean"
 	tests="${tests} keywordexpand"
-	tests="${tests} tagextension"
+	tests="${tests} tag-ext"
 	# Checking out various places (modules, checkout -d, &c)
 	tests="${tests} modules modules2 modules3 modules4 modules5 modules6"
 	tests="${tests} modules7 mkmodules co-d"
@@ -12290,15 +12290,23 @@ $SPROG [a-z]*: $CVSROOT_DIRNAME/CVSROOT/config \[[1-9][0-9]*\]: LocalKeyword ign
 
 
 
-	tagextension)
-	  #
-	  #
-	  #
-	  #
-	  #
+	tag-ext)
+	  # Test the new tag extensions:
+	  #   .trunk
+	  #   .base
+	  #   .next
+	  #   .prev
+	  #   .root
+	  #   .origin
 	  module=tag-ext
 	  mkdir $module; cd $module
+	  mkdir top; cd top
 	  dotest tag-ext-init-1 "$testcvs -Q co -l ."
+	  mkdir tag-ext
+	  dotest tag-ext-init-1b "$testcvs -Q add tag-ext"
+	  cd ..
+	  dotest tag-ext-init-1c "$testcvs -Q co $module"
+	  cd $module
 	  echo content >file1
 	  echo different content >file2
 	  dotest tag-ext-init-2 "$testcvs -Q add file1 file2"
@@ -12327,18 +12335,16 @@ $SPROG [a-z]*: $CVSROOT_DIRNAME/CVSROOT/config \[[1-9][0-9]*\]: LocalKeyword ign
 	  mkdir import
 	  cd import
 	  echo content vicontent >file3
-	  dotest tag-ext-init-17 "$testcvs -Q import -mimportvendor . VENDOR RELEASE"
+	  dotest tag-ext-init-17 \
+"$testcvs -Q import -mimportvendor tag-ext VENDOR RELEASE"
 	  cd ..
 	  rm -r import
 	  cd $module
 
-#	  dotest tag-ext-init-9 "$testcvs "
-#	  dotest tag-ext-init-10 "$testcvs "
-#	  dotest tag-ext-init-11 "$testcvs "
 
 
 	  dotest tag-ext-1 "$testcvs -q log" "
-RCS file: ${CVSROOT_DIRNAME}/file1,v
+RCS file: $CVSROOT_DIRNAME/$module/file1,v
 Working file: file1
 head: 1\.3
 branch:
@@ -12364,7 +12370,7 @@ date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
 add-em
 =============================================================================
 
-RCS file: ${CVSROOT_DIRNAME}/file2,v
+RCS file: $CVSROOT_DIRNAME/$module/file2,v
 Working file: file2
 head: 1\.3
 branch:
@@ -12390,7 +12396,7 @@ date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
 add-em
 =============================================================================
 
-RCS file: ${CVSROOT_DIRNAME}/file3,v
+RCS file: $CVSROOT_DIRNAME/$module/file3,v
 Working file: file3
 head: 1\.2
 branch:
@@ -12500,7 +12506,7 @@ TBRANCH1-1"
 	  dotest_fail tag-ext-19 "$testcvs diff -r \.prev file2 file3" \
 "Index: file2
 ===================================================================
-RCS file: ${CVSROOT_DIRNAME}/file2,v
+RCS file: $CVSROOT_DIRNAME/$module/file2,v
 retrieving revision 1\.2\.2\.1\.2\.1
 retrieving revision 1\.2\.2\.1\.2\.2
 diff -r1\.2\.2\.1\.2\.1 -r1\.2\.2\.1\.2\.2
@@ -12510,7 +12516,7 @@ diff -r1\.2\.2\.1\.2\.1 -r1\.2\.2\.1\.2\.2
 > b1-1content2
 Index: file3
 ===================================================================
-RCS file: ${CVSROOT_DIRNAME}/file3,v
+RCS file: $CVSROOT_DIRNAME/$module/file3,v
 retrieving revision 1\.1\.2\.1\.2\.1
 retrieving revision 1\.1\.2\.1\.2\.2
 diff -r1\.1\.2\.1\.2\.1 -r1\.1\.2\.1\.2\.2
@@ -12522,7 +12528,7 @@ diff -r1\.1\.2\.1\.2\.1 -r1\.1\.2\.1\.2\.2
 	  dotest_fail tag-ext-20 "$testcvs diff -r \.root file2 file3" \
 "Index: file2
 ===================================================================
-RCS file: ${CVSROOT_DIRNAME}/file2,v
+RCS file: $CVSROOT_DIRNAME/$module/file2,v
 retrieving revision 1\.2\.2\.1
 retrieving revision 1\.2\.2\.1\.2\.2
 diff -r1\.2\.2\.1 -r1\.2\.2\.1\.2\.2
@@ -12532,7 +12538,7 @@ diff -r1\.2\.2\.1 -r1\.2\.2\.1\.2\.2
 > b1-1content2
 Index: file3
 ===================================================================
-RCS file: ${CVSROOT_DIRNAME}/file3,v
+RCS file: $CVSROOT_DIRNAME/$module/file3,v
 retrieving revision 1\.1\.2\.1
 retrieving revision 1\.1\.2\.1\.2\.2
 diff -r1\.1\.2\.1 -r1\.1\.2\.1\.2\.2
@@ -12544,7 +12550,7 @@ diff -r1\.1\.2\.1 -r1\.1\.2\.1\.2\.2
 	  dotest_fail tag-ext-21 "$testcvs diff -r \.root.root file2 file3" \
 "Index: file2
 ===================================================================
-RCS file: ${CVSROOT_DIRNAME}/file2,v
+RCS file: $CVSROOT_DIRNAME/$module/file2,v
 retrieving revision 1\.2
 retrieving revision 1\.2\.2\.1\.2\.2
 diff -r1\.2 -r1\.2\.2\.1\.2\.2
@@ -12558,7 +12564,7 @@ cvs diff: No comparison available\.  Pass .-N. to .${SPROG} diff.${QUESTION}"
 	  dotest_fail tag-ext-22 "$testcvs diff -r \.origin file2 file3" \
 "Index: file2
 ===================================================================
-RCS file: ${CVSROOT_DIRNAME}/file2,v
+RCS file: $CVSROOT_DIRNAME/$module/file2,v
 retrieving revision 1\.1
 retrieving revision 1\.2\.2\.1\.2\.2
 diff -r1\.1 -r1\.2\.2\.1\.2\.2
@@ -12568,7 +12574,7 @@ diff -r1\.1 -r1\.2\.2\.1\.2\.2
 > b1-1content2
 Index: file3
 ===================================================================
-RCS file: ${CVSROOT_DIRNAME}/file3,v
+RCS file: $CVSROOT_DIRNAME/$module/file3,v
 retrieving revision 1\.1\.2\.1
 retrieving revision 1\.1\.2\.1\.2\.2
 diff -r1\.1\.2\.1 -r1\.1\.2\.1\.2\.2
@@ -12580,7 +12586,7 @@ diff -r1\.1\.2\.1 -r1\.1\.2\.1\.2\.2
 	  dotest_fail tag-ext-23 "$testcvs diff -r \.origin.head file2 file3" \
 "Index: file2
 ===================================================================
-RCS file: ${CVSROOT_DIRNAME}/file2,v
+RCS file: $CVSROOT_DIRNAME/$module/file2,v
 retrieving revision 1\.3
 retrieving revision 1\.2\.2\.1\.2\.2
 diff -r1\.3 -r1\.2\.2\.1\.2\.2
@@ -12590,7 +12596,7 @@ diff -r1\.3 -r1\.2\.2\.1\.2\.2
 > b1-1content2
 Index: file3
 ===================================================================
-RCS file: ${CVSROOT_DIRNAME}/file3,v
+RCS file: $CVSROOT_DIRNAME/$module/file3,v
 retrieving revision 1\.1\.2\.2
 retrieving revision 1\.1\.2\.1\.2\.2
 diff -r1\.1\.2\.2 -r1\.1\.2\.1\.2\.2
@@ -12613,7 +12619,7 @@ U file3"
 	  dotest_fail tag-ext-27 "$testcvs diff -r \.prev file2 file3" \
 "Index: file2
 ===================================================================
-RCS file: ${CVSROOT_DIRNAME}/file2,v
+RCS file: $CVSROOT_DIRNAME/$module/file2,v
 retrieving revision 1\.2
 retrieving revision 1\.3
 diff -r1\.2 -r1\.3
@@ -12623,7 +12629,7 @@ diff -r1\.2 -r1\.3
 > different content3
 Index: file3
 ===================================================================
-RCS file: ${CVSROOT_DIRNAME}/file3,v
+RCS file: $CVSROOT_DIRNAME/$module/file3,v
 retrieving revision 1\.2
 retrieving revision 1\.3
 diff -r1\.2 -r1\.3
@@ -12636,12 +12642,12 @@ diff -r1\.2 -r1\.3
 "cvs diff: tag \.root is not in file file2
 cvs diff: tag \.root is not in file file3"
 
-	  dotest tag-ext-30 "$testcvs diff -r \.origin.head file2 file3" ""
+	  dotest tag-ext-30 "$testcvs diff -r \.origin.head file2 file3"
 
 	  dotest_fail tag-ext-31 "$testcvs diff -r BRANCH1-1\.root file2 file3" \
 "Index: file2
 ===================================================================
-RCS file: ${CVSROOT_DIRNAME}/file2,v
+RCS file: $CVSROOT_DIRNAME/$module/file2,v
 retrieving revision 1\.2\.2\.1
 retrieving revision 1\.3
 diff -r1\.2\.2\.1 -r1\.3
@@ -12651,7 +12657,7 @@ diff -r1\.2\.2\.1 -r1\.3
 > different content3
 Index: file3
 ===================================================================
-RCS file: ${CVSROOT_DIRNAME}/file3,v
+RCS file: $CVSROOT_DIRNAME/$module/file3,v
 retrieving revision 1\.1\.2\.1
 retrieving revision 1\.3
 diff -r1\.1\.2\.1 -r1\.3
@@ -12666,11 +12672,9 @@ diff -r1\.1\.2\.1 -r1\.3
 	  # clean up
 	  dokeep
 	  restore_adm
-	  cd ..
+	  cd ../..
 	  rm -r $module
-	  modify_repo rm -rf $CVSROOT_DIRNAME/file1,v
-	  modify_repo rm -rf $CVSROOT_DIRNAME/file2,v
-	  modify_repo rm -rf $CVSROOT_DIRNAME/file3,v
+	  modify_repo rm -rf $CVSROOT_DIRNAME/tag-ext
 	  ;;
 
 

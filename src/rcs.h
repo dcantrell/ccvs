@@ -223,7 +223,7 @@ int RCS_valid_rev (const char *rev);
 List *RCS_getlocks (RCSNode *rcs);
 void freercsnode (RCSNode ** rnodep);
 char *RCS_getbranch (RCSNode *rcs, const char *tag, int force_tag_match);
-char *RCS_branch_head (RCSNode *rcs, char *rev);
+char *RCS_branch_head (RCSNode *rcs, const char *tag);
 
 int RCS_isdead (RCSNode *, const char *);
 char *RCS_getexpand (RCSNode *);

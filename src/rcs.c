@@ -106,10 +106,9 @@ static char *RCS_getnext (RCSNode *, const char *);
 static char *RCS_getorigin (RCSNode *, const char *);
 static char *RCS_getcommitid (RCSNode *, const char *, bool);
 static char *RCS_gethead (RCSNode *, const char *);
-static char *translate_tag (RCSNode *, const char *);
+static char *translate_tag (RCSNode *rcs, const char *tag);
 static char *translate_symtag (RCSNode *, const char *);
 static char *RCS_addbranch (RCSNode *, const char *);
-static char *truncate_revnum_in_place (char *);
 static char *truncate_revnum (const char *);
 static char *printable_date (const char *);
 static char *escape_keyword_value (const char *, int *);
@@ -2296,15 +2295,29 @@ RCS_tag2rev (RCSNode *rcs, char *tag)
 
     /* If valid tag let translate_tag say yea or nay. */
     char *tmp = RCS_extract_tag (tag, true);
-    if (tmp)
-        free (tmp);
+    if (tmp) free (tmp);
     rev = translate_tag (rcs, tag);
 
-    if (rev)
-        return rev;
-
     /* Trust the caller to print warnings. */
-    return NULL;
+    return rev;
+}
+
+
+
+/* Return true if TAG is does not start with a number and consist entirely of
+ * numbers and dots.
+ *
+ * (N.N.N.N.prev is now a valid tag).
+ */
+static inline bool
+is_symbolic (const char *tag)
+{
+    assert (tag && *tag);
+    if (!isdigit (*tag)) return true;
+    for (tag++; *tag; tag++)
+    	if (!(isdigit (*tag) || *tag == '.')) return true;
+    if (*--tag == '.') return true;
+    return false;
 }
 
 
@@ -2344,7 +2357,7 @@ RCS_gettag (RCSNode *rcs, const char *symtag, int force_tag_match,
 #endif
 	    return RCS_head (rcs);
 
-    if (!isrevnumonly (symtag))
+    if (is_symbolic (symtag))
     {
 	char *version;
 
@@ -2579,7 +2592,7 @@ RCS_nodeisbranch (RCSNode *rcs, const char *rev)
     assert (rcs != NULL);
 
     /* numeric revisions are easy -- even number of dots is a branch */
-    if (isrevnumonly (rev))
+    if (!is_symbolic (rev))
         return (numdots (rev) & 1) == 0;
 
     version = translate_tag (rcs, rev);
@@ -2618,26 +2631,32 @@ RCS_nodeisbranch (RCSNode *rcs, const char *rev)
 
 
 
-/*
- * Returns a pointer to malloc'ed memory which contains the branch
- * for the specified *symbolic* tag.  Magic branches are handled correctly.
+/* Returns a pointer to malloc'ed memory which contains the branch
+ * for the specified, and possibly symbolic, TAG.  Magic branches are handled
+ * correctly.
  */
 char *
-RCS_whatbranch (RCSNode *rcs, const char *rev)
+RCS_whatbranch (RCSNode *rcs, const char *tag)
 {
     char *version;
     int dots;
 
-    /* assume no branch if you can't find the RCS info */
-    if (rcs == NULL)
-	return NULL;
+    assert (tag);
 
-    /* now, look for a match in the symbols list */
-    version = translate_tag (rcs, rev);
-    if (version == NULL)
-	return NULL;
+    /* assume no branch if you can't find the RCS info */
+    if (!rcs) return NULL;
+
+    if (is_symbolic (tag))
+    {
+	/* now, look for a match in the symbols list */
+	version = translate_tag (rcs, tag);
+	if (!version) return NULL;
+    }
+    else
+	version = xstrdup (tag);
+
     dots = numdots (version);
-    if ((dots & 1) == 0)
+    if (!(dots & 1))
 	return version;
 
     /* got a symbolic tag match, but it's not a branch; see if it's magic */
@@ -2787,34 +2806,49 @@ RCS_getbranch (RCSNode *rcs, const char *tag, int force_tag_match)
 
 
 
-/* Returns the head of the branch which REV is on.  REV can be a
-   branch tag or non-branch tag; symbolic or numeric.
+/* Revision number string, R, must contain a `.'.
+ * R must be writable.  Replace the rightmost `.' in R with
+ * the NUL byte and return a pointer to that NUL byte.
+ */
+static inline char *
+truncate_revnum_in_place (char *r)
+{
+    char *dot = strrchr (r, '.');
+    assert (dot);
+    *dot = '\0';
+    return dot;
+}
 
-   Returns a newly malloc'd string.  Returns NULL if a symbolic name
-   isn't found.  */
+
+
+/* Returns the head of the branch which the possibly symbolic TAG is on.
+ * TAG can be a branch tag or non-branch tag; symbolic or numeric.
+ *
+ * Returns a newly malloc'd string.  Returns NULL if a symbolic name
+ * isn't found.
+ */
 char *
-RCS_branch_head (RCSNode *rcs, char *rev)
+RCS_branch_head (RCSNode *rcs, const char *tag)
 {
     char *num;
-    char *br;
     char *retval;
 
-    assert (rcs != NULL);
+    assert (rcs && tag);
 
-    if (RCS_nodeisbranch (rcs, rev))
-	return RCS_getbranch (rcs, rev, 1);
-
-    if (isrevnumonly (rev))
-	num = xstrdup (rev);
-    else
+    if (is_symbolic (tag))
     {
-	num = translate_tag (rcs, rev);
-	if (num == NULL)
-	    return NULL;
+	num = translate_tag (rcs, tag);
+	if (!num) return NULL;
     }
-    br = truncate_revnum (num);
-    retval = RCS_getbranch (rcs, br, 1);
-    free (br);
+    else
+	/* FIXME: Validate revnum?  */
+	num = xstrdup (tag);
+
+    if (!RCS_nodeisbranch (rcs, num))
+	/* Make NUM = NUM's branch.  */
+	truncate_revnum_in_place (num);
+
+    retval = RCS_getbranch (rcs, num, 1);
     free (num);
     return retval;
 }
@@ -2907,12 +2941,16 @@ RCS_getbranchpoint (RCSNode *rcs, char *target)
  *   rcs	The parsed rcs node information.
  *
  * RETURNS
- *   NULL when rcs->branch exists and cannot be found.
+ *   NULL when rcs->branch exists and cannot be found or when there are no
+ *   revisions in the RCS file.
+ *
  *   A newly malloc'd string, otherwise.
  */
 char *
 RCS_head (RCSNode *rcs)
 {
+    char *retval;
+
     /* make sure we have something to look at... */
     assert (rcs);
 
@@ -2922,8 +2960,18 @@ RCS_head (RCSNode *rcs)
      */
     if (rcs->branch)
 	return RCS_getbranch (rcs, rcs->branch, 1);
-    else
-	return xstrdup (rcs->head);
+
+    retval = xstrdup (rcs->head);
+    if (!retval) return NULL;
+
+    if (!(numdots (retval) & 1))
+    {
+	error (0, 0, "Head revision is a branch in `%s'.", rcs->path);
+	free (retval);
+	return NULL;
+    }
+
+    return retval;
 }
 
 
@@ -3279,42 +3327,23 @@ RCS_getprevious (RCSNode *rcs, const char *rev)
 {
     char *retval = NULL;
     int dots = numdots (rev);
-
-    if (!dots)
-        return NULL;
-
-    char *tmp = xstrdup (rev);
     char *trev = NULL;
-
-    /* remove ev. magic branch num */
-    if (dots > 2 && (dots & 1))
-    {
-        int i;
-        const char *p = rev;
-        for (i = 1; i < dots; ++i)
-            p = strchr (p+1, '.');
-        if (!strncmp (p, ".0.", 3))
-        {
-            strcpy (tmp + (p - rev), p + 2);
-	    --dots;
-        }
-    }
 
     if (!(dots & 1)) /* branch handling => turn into a head revision */
     {
-        char *p = RCS_branch_head (rcs, tmp);
+        char *p = RCS_branch_head (rcs, rev);
 	if (p)
 	    trev = p;
 	else
 	{
 	    /* branch tag without any revisions ... */
-	    trev = xstrdup (tmp);
+	    trev = xstrdup (rev);
 	    *strrchr (trev, '.') = '\0';
 	}
 	dots = numdots (trev);
     }
     else
-        trev = xstrdup (tmp);
+        trev = xstrdup (rev);
 
     if (dots > 1) /* revision on a branch */
     {
@@ -3337,7 +3366,7 @@ RCS_getprevious (RCSNode *rcs, const char *rev)
 	    {
 	        if (node = findnode (rcs->versions, br->key))
 		{
-		    if (strncmp (((RCSVers *)node->data)->version, tmp, len))
+		    if (strncmp (((RCSVers *)node->data)->version, rev, len))
 		        continue;
 		       
 		    ++len;
@@ -3345,7 +3374,7 @@ RCS_getprevious (RCSNode *rcs, const char *rev)
 		    while (node != NULL)
 		    {
 		        vers = node->data;
-			if (STREQ (vers->version + len, tmp + len))
+			if (STREQ (vers->version + len, rev + len))
 			{
 			    if (p)
 			        retval = xstrdup (p);
@@ -3449,7 +3478,6 @@ RCS_getprevious (RCSNode *rcs, const char *rev)
 	if (!retval && prev)
 	    retval = xstrdup (prev);
     }
-    free (tmp);
     free (trev);
 
     return retval;
@@ -3838,20 +3866,27 @@ RCS_gethead (RCSNode *rcs, const char *rev)
 
 
 
-/* Translate special/symbolic tags into their revision
- * If tag is numeric, rely on its formating.
- * If tag is symbolic, resolv it. Then check for
- * tag extensions. If an extension is found, resolv it.
- * Returns NULL or a newly malloc'd string.
+/* Translate special/symbolic tags into their revision thus:
+ *
+ *   - If TAG starts numeric, rely on its formating up to the first
+ *     non-numberic-tag character ([^0-9.]) to resolve a base revision.
+ *   - Else, resolve everything before the first `.' as a symbolic tag to
+ *     determine the base tag.
+ *   - Resolve any remaining tag extensions (.trunk, .head, ...).
+ *
+ * RETURNS
+ *   NULL on error.
+ *   A newly malloc'd string containing the resolved revision, otherwise.
  */
 static char *
 translate_tag (RCSNode *rcs, const char *tag)
 {
     char c;
-    char *tmp = NULL;
     char *retval = NULL;
-    char *tmpval = NULL;
+    char *tmp, *tmpval;
     bool dotstart = false;
+
+    assert (rcs && tag);
 
     if (rcs->flags & PARTIAL)
 	RCS_reparsercsfile (rcs, NULL, NULL);
@@ -3859,27 +3894,28 @@ translate_tag (RCSNode *rcs, const char *tag)
     if (tag[0] == '@')
     {
         /* handle cvsnt compatibility stuff */
-        if ( tag[1] == '<')
-	    return RCS_getcommitid (rcs, tag+2, true);
+        if (tag[1] == '<')
+	    return RCS_getcommitid (rcs, tag + 2, true);
 	else
-	    return RCS_getcommitid (rcs, tag+1, false);
+	    return RCS_getcommitid (rcs, tag + 1, false);
     }
 
     tmpval = xstrdup (tag);
-    if (isdigit ((unsigned char) *tmpval)) {
+    if (isdigit ((unsigned char) *tmpval))
+    {
         /* extract initial revision num */
-        char * p = tmpval;
+        char *p = tmpval;
         do
 	    ++p;
 	while (isdigit ((unsigned char) *p) || *p == '.');
 	tmp = p;
-	*(--p) = '\0';
+	if (*p--) *p = '\0';
 	retval = xstrdup (tmpval);
     }
     else
         tmp = tmpval;
 
-    char *token = strtok(tmp,".");
+    char *token = strtok (tmp,".");
     if (token)
     {
         bool force;
@@ -3889,9 +3925,39 @@ translate_tag (RCSNode *rcs, const char *tag)
 	    if (!retval)
 	    {
 	        if (token == tmp)
-		    retval = translate_symtag (rcs, token);
+		{
+		    if (*token)
+		    {
+			retval = translate_symtag (rcs, token);
+			if (!retval)
+			    /* Return NULL.  Callers will generate the TAG
+			     * not found message.
+			     */
+			    break;
+		    }
+		    else
+			/* tags starting with `.' modify BASE.  */
+			continue;
+		    if (RCS_nodeisbranch (rcs, retval))
+		    {
+			char *p = RCS_whatbranch (rcs, retval);
+			free (retval);
+			retval = p;
+		    }
+		}
 		else if (STREQ (token, TAG_TRUNK))
+		{
+		    /* .trunk is a branch tag, but rcs->head is a revision.  */
+		    char *p;
 		    retval = RCS_head (rcs);
+		    if (!retval) return NULL;
+
+		    /* A non-null return from RCS_head is guaranteed to not
+		     * specify a branch and to have at least one dot.
+		     */
+		    p = strrchr (retval, '.');
+		    *p = '\0';
+		}
 		else if (STREQ (token, TAG_COMMITID))
 		{
 		    char *commitid = strtok (NULL,".");
@@ -3922,7 +3988,8 @@ translate_tag (RCSNode *rcs, const char *tag)
 		else if (STREQ (token, TAG_NEXT))
 		    retval = RCS_getnext (rcs, p);
 		else
-		    error (1, 0, "Tag '%s': invalid extension: '%s'", token, tag);
+		    error (1, 0,
+		           "Tag '%s': invalid extension: '%s'", token, tag);
 		free (p);
 	    }
 	}
@@ -5653,22 +5720,8 @@ truncate_revnum (const char *r)
     len = dot - r;
     new_r = xmalloc (len + 1);
     memcpy (new_r, r, len);
-    *(new_r + len) = '\0';
+    new_r[len] = '\0';
     return new_r;
-}
-
-
-
-/* Revision number string, R, must contain a `.'.
-   R must be writable.  Replace the rightmost `.' in R with
-   the NUL byte and return a pointer to that NUL byte.  */
-static char *
-truncate_revnum_in_place (char *r)
-{
-    char *dot = strrchr (r, '.');
-    assert (dot);
-    *dot = '\0';
-    return dot;
 }
 
 
