@@ -1,5 +1,12 @@
 2004-05-19  Derek Price  <derek@ximbiot.com>
 
+	* Makefile.am (stamp-chi): This should be a copy of config.h.in, not
+	config.h.
+	* mkconfig.pl: Accept a -q argument to limit verbosity.
+	* Makefile.in, stamp-chi: Regenerated.
+
+2004-05-19  Derek Price  <derek@ximbiot.com>
+
 	* .cvsignore: Ignore recently removed stamp files & mkconfig.
 
 2004-05-19  Derek Price  <derek@ximbiot.com>

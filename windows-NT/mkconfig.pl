@@ -87,6 +87,13 @@ sub show_orphan
 
 sub make_config_h
 {
+    my $quiet;
+    if ($_[0] eq "-q")
+    {
+	$quiet = 1;
+        shift;
+    }
+
     my ($ph_name, $out_name, $inp_name, $end_name) = @_;
 
     $ph_name = get_default $ph_name, "../config.h.in";
@@ -94,7 +101,9 @@ sub make_config_h
     $inp_name = get_default $inp_name, $out_name . ".in";
     $end_name = get_default $end_name, $out_name . ".footer";
 
-    print STDERR "($inp_name + $ph_name) . $end_name --> $out_name\n";
+    print STDERR "($inp_name + $ph_name) . $end_name --> $out_name\n"
+	if !$quiet;
+
     #==========================================================================
     # scan build level configuration to collect define/undef values
     #==========================================================================
