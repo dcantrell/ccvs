@@ -1,5 +1,7 @@
 Thu Feb  1 12:28:33 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* sanity.sh: New test 171a0 tests for watch.c bug just fixed by kfogel.
+
 	* Most .c files: Remove rcsids.
 	* cvs.h: Remove USE macro.
 

@@ -2057,6 +2057,7 @@ EOF
 	    echo 'FAIL: test 171' | tee -a ${LOGFILE}
 	    exit 1
 	  fi
+	  dotest_fail 171a0 "${testcvs} watch" "Usage${DOTSTAR}"
 	  if ${testcvs} watch on; then
 	    echo 'PASS: test 172' >>${LOGFILE}
 	  else
