@@ -143,7 +143,7 @@ extern struct response responses[];
 
 extern void client_senddate PROTO((const char *date));
 extern void client_expand_modules PROTO((int argc, char **argv, int local));
-extern void client_send_expansions PROTO((int local));
+extern void client_send_expansions PROTO((int local, char *where));
 extern void client_nonexpanded_setup PROTO((void));
 
 extern void send_init_command PROTO ((void));

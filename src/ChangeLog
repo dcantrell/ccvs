@@ -1,3 +1,11 @@
+Thu May 16 11:12:18 1996  Mark P. Immel <immel@radix.net>
+			  and Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* client.h, client.c, checkout.c (client_send_expansions):
+	Pass an additional parameter indicating where the checkout is
+	to occur, to avoid passing the wrong information to send_files().
+	* sanity.sh (basicb): New test basicb-cod-1 tests for above fix.
+
 Mon Jul 15 18:26:56 1996  Ian Lance Taylor  <ian@cygnus.com>
 
 	* recurse.c (do_recursion): Require a repository before calling
