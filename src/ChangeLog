@@ -1,5 +1,9 @@
 2002-04-19  Larry Jones  <larry.jones@sdrc.com>
 
+	* log.c (log_expand_revlist): First cut at code to allow logging
+	between a revision and *any* ancestor, not just one explicitly on
+	the same branch (e.g., from 1.1 to 4.1.2.3.6.1).
+
 	* subr.c (gca): Simplify and optimize.
 
 2002-04-19  Jim Meyering  <meyering@lucent.com>
