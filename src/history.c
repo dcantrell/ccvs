@@ -436,7 +436,7 @@ history (int argc, char **argv)
 		backto = xstrdup (optarg);
 		break;
 	    case 'f':			/* For specified file */
-		save_file ("", optarg, NULL);
+		save_file (NULL, optarg, NULL);
 		break;
 	    case 'm':			/* Full module report */
 		if (!module_report++) report_count++;
@@ -445,7 +445,7 @@ history (int argc, char **argv)
 		save_module (optarg);
 		break;
 	    case 'p':			/* For specified directory */
-		save_file (optarg, "", NULL);
+		save_file (optarg, NULL, NULL);
 		break;
 	    case 'r':			/* Since specified Tag/Rev */
 		if (since_date || *since_tag || *backto)
@@ -528,7 +528,7 @@ history (int argc, char **argv)
     argc -= optind;
     argv += optind;
     for (i = 0; i < argc; i++)
-	save_file ("", argv[i], NULL);
+	save_file (NULL, argv[i], NULL);
 
 
     /* ================ Now analyze the arguments a bit */
@@ -939,7 +939,9 @@ save_file (char *dir, char *name, char *module)
 	file_list = xrealloc (file_list, xtimes (file_max, sizeof (*fl)));
     }
     fl = &file_list[file_count++];
-    fl->l_file = cp = xmalloc (strlen (dir) + strlen (name) + 2);
+    fl->l_file = cp = xmalloc (dir ? strlen (dir) : 0
+			       + name ? strlen (name) : 0
+			       + 2);
     fl->l_module = module;
 
     if (dir && *dir)
