@@ -1,3 +1,27 @@
+2005-03-10  Mark D. Baushke  <mdb@cvshome.org>
+
+	* commit.c: Gratuitous reformatting.
+	* entries.c: Ditto.
+	* import.c (import, import_descend): Ditto.
+
+	* commit.c (commit): Use xnmalloc. Gratuitous reformatting.
+	* history.c (save_user, save_file, save_module, read_hrecs): Ditto.
+	* ignore.c (ign_add): Ditto.
+
+	* hardlink.c (lookup_file_by_inode): Use Xasprintf instead of
+	xmalloc/sprintf.  Gratuitous reformatting.
+	(update_hardlink_info, list_linked_files_on_disk): Ditto.
+	(find_checkedout_proc): Ditto.
+	* history.c (history, history_write, save_file): Ditto.
+	(select_hrec): Ditto. 
+	* ignore.c (ign_setup, ignore_files): Ditto.
+	* import.c (process_import_file, import_descend_dir): Ditto.
+
+	* import.c (import_descend_dir): Use Xasprintf instead of
+	xmalloc/strcpy+strcat+strcat.
+
+	* history.c (read_hrecs): Make function argument a const.
+	
 2005-03-10 Derek Price <derek@ximbiot.com>
 
 	* fileattr.c (fileattr_read): Only eat a newline when it really is a
