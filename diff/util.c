@@ -372,7 +372,8 @@ printf_output (format, va_alist)
 
       while ((q = strchr (p, '%')) != NULL)
 	{
-	  const char msg[] = "\ninternal error: bad % in printf_output\n";
+	  static const char msg[] =
+	    "\ninternal error: bad % in printf_output\n";
 	  (*callbacks->write_output) (p, q - p);
 
 	  switch (q[1])

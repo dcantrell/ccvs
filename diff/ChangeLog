@@ -1,3 +1,9 @@
+1998-09-21  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* util.c (printf_output): Make msg static; avoids auto
+	initializer, which is not portable to SunOS4 /bin/cc.
+	Reported by Mike Sutton@SAIC.
+
 1998-09-14  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* Makefile.in (DISTFILES): Add diagmeet.note.
