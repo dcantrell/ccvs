@@ -481,7 +481,8 @@ if test x"$*" = x; then
 	tests="basica basicb basic1 deep basic2 rdiff death death2 branches"
 	tests="${tests} multibranch import join join2"
 	tests="${tests} new newb conflicts conflicts2"
-	tests="${tests} modules modules2 modules3 mflag errmsg1 devcom devcom2"
+	tests="${tests} modules modules2 modules3 mflag errmsg1 errmsg2"
+	tests="${tests} devcom devcom2"
 	tests="${tests} devcom3 ignore binfiles binfiles2 binwrap mwrap info"
 	tests="${tests} serverpatch log log2 crerepos rcs big modes stamps"
 	tests="${tests} sticky keyword toplevel head"
@@ -4722,6 +4723,49 @@ EOF
 	  cd ..
 	  rm -r 1 2
 	  rm -rf ${CVSROOT_DIRNAME}/1dir
+	  ;;
+
+	errmsg2)
+	  # More tests of various miscellaneous error handling.
+	  # See also test basicb-4a, concerning "cvs ci CVS".
+
+	  # First the usual setup; create a directory first-dir.
+	  mkdir 1; cd 1
+	  dotest errmsg2-1 "${testcvs} -q co -l ." ''
+	  mkdir first-dir
+	  dotest errmsg2-2 "${testcvs} add first-dir" \
+"Directory ${TESTDIR}/cvsroot/first-dir added to the repository"
+          cd first-dir
+	  dotest errmsg2-3 "${testcvs} add CVS" \
+"${PROG} [a-z]*: cannot add special file .CVS.; skipping"
+	  touch file1
+	  # For the most part add returns a failure exitstatus if
+	  # there are any errors, even if the remaining files are
+	  # processed without incident.  However, the "cannot add
+	  # special file" message does not affect the exitstatus, at
+	  # least not currently.
+	  dotest errmsg2-4 "${testcvs} add CVS file1" \
+"${PROG} [a-z]*: cannot add special file .CVS.; skipping
+${PROG} [a-z]*: scheduling file .file1. for addition
+${PROG} [a-z]*: use .cvs commit. to add this file permanently"
+	  # I'm not sure these tests completely convey the various strange
+	  # behaviors that CVS had before it specially checked for "." and
+	  # "..".  Suffice it to say that these are unlikely to work right
+	  # without a special case.
+	  dotest errmsg2-5 "${testcvs} add ." \
+"${PROG} [a-z]*: cannot add special file .\..; skipping"
+	  dotest errmsg2-6 "${testcvs} add .." \
+"${PROG} [a-z]*: cannot add special file .\.\..; skipping"
+	  dotest errmsg2-7 "${testcvs} -q ci -m add-file1" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
+done
+Checking in file1;
+${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
+initial revision: 1\.1
+done"
+	  cd ../..
+	  rm -r 1
+	  rm -rf ${TESTDIR}/cvsroot/first-dir
 	  ;;
 
 	devcom)

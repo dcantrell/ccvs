@@ -1,5 +1,9 @@
 Thu Jul 10 00:02:54 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* add.c (add): Check for CVSADM, ".", and "..", and skip any
+	attempt to add them.
+	* sanity.sh (errmsg2): New tests, tests for above fix.
+
 	* main.c (main): In text printed upon --version, also refer
 	people to --help.
 
