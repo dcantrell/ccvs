@@ -892,7 +892,7 @@ call_in_directory (pathname, func, data)
 	        strcpy (r, "/.");
 
 	    Create_Admin (".", ".", repo, (char *) NULL,
-			  (char *) NULL);
+			  (char *) NULL, 0);
 
 	    free (repo);
 	}
@@ -1014,7 +1014,7 @@ call_in_directory (pathname, func, data)
 			strcpy (r, reposdirname);
 
 		    Create_Admin (dir, dir, repo,
-				  (char *)NULL, (char *)NULL);
+				  (char *)NULL, (char *)NULL, 0);
 		    free (repo);
 
 		    b = strrchr (dir, '/');

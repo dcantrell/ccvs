@@ -368,7 +368,7 @@ checkout (argc, argv)
 		error (1, 0, "there is no repository %s", repository);
 
 	    Create_Admin (".", preload_update_dir, repository,
-			  (char *) NULL, (char *) NULL);
+			  (char *) NULL, (char *) NULL, 0);
 	    if (!noexec)
 	    {
 		FILE *fp;
@@ -726,7 +726,7 @@ checkout_proc (pargc, argv, where, mwhere, mfile, shorten,
 		    error (1, 0, "there is no repository %s", repository);
 
 		Create_Admin (".", preload_update_dir, repository,
-			      (char *) NULL, (char *) NULL);
+			      (char *) NULL, (char *) NULL, 0);
 		fp = open_file (CVSADM_ENTSTAT, "w+");
 		if (fclose(fp) == EOF)
 		    error(1, errno, "cannot close %s", CVSADM_ENTSTAT);
@@ -741,7 +741,15 @@ checkout_proc (pargc, argv, where, mwhere, mfile, shorten,
 		if (!isdir (repository))
 		    error (1, 0, "there is no repository %s", repository);
 
-		Create_Admin (".", preload_update_dir, repository, tag, date);
+		Create_Admin (".", preload_update_dir, repository, tag, date,
+
+			      /* FIXME?  This is a guess.  If it is important
+				 for nonbranch to be set correctly here I
+				 think we need to write it one way now and
+				 then rewrite it later via WriteTag, once
+				 we've had a chance to call RCS_nodeisbranch
+				 on each file.  */
+			      0);
 	    }
 	}
 	else
@@ -941,7 +949,16 @@ build_dirs_and_chdir (dir, prepath, realdir, sticky)
 	    if (!isdir (repository))
 		error (1, 0, "there is no repository %s", repository);
 	    Create_Admin (".", path, repository, sticky ? (char *) NULL : tag,
-			  sticky ? (char *) NULL : date);
+			  sticky ? (char *) NULL : date,
+
+			  /* FIXME?  This is a guess.  If it is important
+			     for nonbranch to be set correctly here I
+			     think we need to write it one way now and
+			     then rewrite it later via WriteTag, once
+			     we've had a chance to call RCS_nodeisbranch
+			     on each file.  */
+			  0);
+
 	    if (!noexec)
 	    {
 		fp = open_file (CVSADM_ENTSTAT, "w+");
@@ -972,7 +989,15 @@ build_dirs_and_chdir (dir, prepath, realdir, sticky)
 	    if (!isdir (repository))
 		error (1, 0, "there is no repository %s", repository);
 	    Create_Admin (".", path, repository, sticky ? (char *) NULL : tag,
-			  sticky ? (char *) NULL : date);
+			  sticky ? (char *) NULL : date,
+
+			  /* FIXME?  This is a guess.  If it is important
+			     for nonbranch to be set correctly here I
+			     think we need to write it one way now and
+			     then rewrite it later via WriteTag, once
+			     we've had a chance to call RCS_nodeisbranch
+			     on each file.  */
+			  0);
 	    if (!noexec)
 	    {
 		fp = open_file (CVSADM_ENTSTAT, "w+");
@@ -998,7 +1023,16 @@ build_dirs_and_chdir (dir, prepath, realdir, sticky)
 	if (!isdir (repository))
 	    error (1, 0, "there is no repository %s", repository);
 	Create_Admin (".", path, repository, sticky ? (char *) NULL : tag,
-		      sticky ? (char *) NULL : date);
+		      sticky ? (char *) NULL : date,
+
+		      /* FIXME?  This is a guess.  If it is important
+			 for nonbranch to be set correctly here I
+			 think we need to write it one way now and
+			 then rewrite it later via WriteTag, once
+			 we've had a chance to call RCS_nodeisbranch
+			 on each file.  */
+		      0);
+
 	if (!noexec)
 	{
 	    fp = open_file (CVSADM_ENTSTAT, "w+");

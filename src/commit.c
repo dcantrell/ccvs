@@ -75,6 +75,7 @@ static int run_module_prog = 1;
 static int aflag;
 static char *tag;
 static char *write_dirtag;
+static int write_dirnonbranch;
 static char *logfile;
 static List *mulist;
 static char *message;
@@ -573,6 +574,7 @@ commit (argc, argv)
     /*
      * Run the recursion processor to commit the files
      */
+    write_dirnonbranch = 0;
     if (noexec == 0)
 	err = start_recursion (commit_fileproc, commit_filesdoneproc,
 			       commit_direntproc, commit_dirleaveproc, NULL,
@@ -1048,6 +1050,21 @@ commit_fileproc (callerdat, finfo)
     List *ulist, *cilist;
     struct commit_info *ci;
 
+    /* Keep track of whether write_dirtag is a branch tag.
+       Note that if it is a branch tag in some files and a nonbranch tag
+       in others, treat it as a nonbranch tag.  It is possible that case
+       should elicit a warning or an error.  */
+    if (write_dirtag != NULL
+	&& finfo->rcs != NULL)
+    {
+	char *rev = RCS_getversion (finfo->rcs, write_dirtag, NULL, 1, NULL);
+	if (rev != NULL
+	    && !RCS_nodeisbranch (finfo->rcs, write_dirtag))
+	    write_dirnonbranch = 1;
+	if (rev != NULL)
+	    free (rev);
+    }
+
     if (finfo->update_dir[0] == '\0')
 	p = findnode (mulist, ".");
     else
@@ -1380,14 +1397,13 @@ commit_dirleaveproc (callerdat, dir, err, update_dir, entries)
     List *entries;
 {
     /* update the per-directory tag info */
+    /* FIXME?  Why?  The "commit examples" node of cvs.texinfo briefly
+       mentions commit -r being sticky, but apparently in the context of
+       this being a confusing feature!  */
     if (err == 0 && write_dirtag != NULL)
     {
-	WriteTag ((char *) NULL, write_dirtag, (char *) NULL);
-#ifdef SERVER_SUPPORT
-	if (server_active)
-	    server_set_sticky (update_dir, Name_Repository (dir, update_dir),
-			       write_dirtag, (char *) NULL);
-#endif
+	WriteTag (NULL, write_dirtag, NULL, write_dirnonbranch,
+		  update_dir, Name_Repository (dir, update_dir));
     }
 
     return (err);
