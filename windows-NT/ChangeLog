@@ -1,3 +1,7 @@
+2004-10-25  Derek Price  <derek@ximbiot.com>
+
+	* config.h.in.in (HAVE_RPMATCH): Undef this irrelevant macro on WOE32.
+
 2004-10-23  Conrad T. Pino  <Conrad@Pino.com>
 
 	* config.h.in.in: Change #undef HAVE_STDINT_H to #define ... 1.
