@@ -1,5 +1,9 @@
 Mon Apr 22 00:38:08 1996  Noel Cragg  <noel@gargle>
 
+	* create_adm.c (Create_Admin): pass CVSroot_original instead of
+ 	CVSroot_directory (oops!).
+	* update.c (update_filesdone_proc): same.
+
 	* server.c (serve_root): modify to use PARSE_CVSROOT rather than
  	goofing around with other variables.  Will need to fix
  	PARSE_CVSROOT to have a return value so we can return an error and
