@@ -1,3 +1,7 @@
+Wed Sep 11 15:43:50 1996  Jim Blandy  <jimb@totoro.cyclic.com>
+
+	* pcl-cvs.el (cvs-parse-stderr): Ignore messages about obtained locks.
+
 Fri Aug  9 09:44:53 1996  Jim Blandy  <jimb@totoro.cyclic.com>
 
 	* pcl-cvs.el (cvs-parse-stderr): Remove extra paren from regexp
