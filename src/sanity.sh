@@ -15981,7 +15981,7 @@ ${PROG} [a-z]*: Updating mod2-2/mod1-2"
 "${PROG} [a-z]*: Diffing mod1-1
 Index: mod1-1/file1-1
 ===================================================================
-RCS file: /tmp/cvs-sanity/root1/mod1-1/file1-1,v
+RCS file: ${TESTDIR}/root1/mod1-1/file1-1,v
 retrieving revision 1\.1
 diff -r1\.1 file1-1
 1a2
@@ -15989,7 +15989,7 @@ diff -r1\.1 file1-1
 ${PROG} [a-z]*: Diffing mod1-2
 Index: mod1-2/file1-2
 ===================================================================
-RCS file: /tmp/cvs-sanity/root1/mod1-2/file1-2,v
+RCS file: ${TESTDIR}/root1/mod1-2/file1-2,v
 retrieving revision 1\.1
 diff -r1\.1 file1-2
 1a2
@@ -15999,7 +15999,7 @@ ${PROG} [a-z]*: Diffing mod1-2/mod2-2
 ${PROG} [a-z]*: Diffing mod2-1
 Index: mod2-1/file2-1
 ===================================================================
-RCS file: /tmp/cvs-sanity/root2/mod2-1/file2-1,v
+RCS file: ${TESTDIR}/root2/mod2-1/file2-1,v
 retrieving revision 1\.1
 diff -r1\.1 file2-1
 1a2
@@ -16007,7 +16007,7 @@ diff -r1\.1 file2-1
 ${PROG} [a-z]*: Diffing mod2-2
 Index: mod2-2/file2-2
 ===================================================================
-RCS file: /tmp/cvs-sanity/root2/mod2-2/file2-2,v
+RCS file: ${TESTDIR}/root2/mod2-2/file2-2,v
 retrieving revision 1\.1
 diff -r1\.1 file2-2
 1a2
@@ -16015,7 +16015,7 @@ diff -r1\.1 file2-2
 "${PROG} [a-z]*: Diffing mod1-1
 Index: mod1-1/file1-1
 ===================================================================
-RCS file: /tmp/cvs-sanity/root1/mod1-1/file1-1,v
+RCS file: ${TESTDIR}/root1/mod1-1/file1-1,v
 retrieving revision 1\.1
 diff -r1\.1 file1-1
 1a2
@@ -16023,7 +16023,7 @@ diff -r1\.1 file1-1
 ${PROG} [a-z]*: Diffing mod1-2
 Index: mod1-2/file1-2
 ===================================================================
-RCS file: /tmp/cvs-sanity/root1/mod1-2/file1-2,v
+RCS file: ${TESTDIR}/root1/mod1-2/file1-2,v
 retrieving revision 1\.1
 diff -r1\.1 file1-2
 1a2
@@ -16035,7 +16035,7 @@ ${PROG} [a-z]*: Diffing mod1-2/mod2-2
 ${PROG} [a-z]*: Diffing mod2-1
 Index: mod2-1/file2-1
 ===================================================================
-RCS file: /tmp/cvs-sanity/root2/mod2-1/file2-1,v
+RCS file: ${TESTDIR}/root2/mod2-1/file2-1,v
 retrieving revision 1\.1
 diff -r1\.1 file2-1
 1a2
@@ -16043,7 +16043,7 @@ diff -r1\.1 file2-1
 ${PROG} [a-z]*: Diffing mod2-2
 Index: mod2-2/file2-2
 ===================================================================
-RCS file: /tmp/cvs-sanity/root2/mod2-2/file2-2,v
+RCS file: ${TESTDIR}/root2/mod2-2/file2-2,v
 retrieving revision 1\.1
 diff -r1\.1 file2-2
 1a2
@@ -16055,22 +16055,22 @@ diff -r1\.1 file2-2
 ${PROG} [a-z]*: Examining mod1-2
 ${PROG} [a-z]*: Examining mod2-2/mod1-2
 Checking in mod1-1/file1-1;
-/tmp/cvs-sanity/root1/mod1-1/file1-1,v  <--  file1-1
+${TESTDIR}/root1/mod1-1/file1-1,v  <--  file1-1
 new revision: 1.2; previous revision: 1.1
 done
 Checking in mod1-2/file1-2;
-/tmp/cvs-sanity/root1/mod1-2/file1-2,v  <--  file1-2
+${TESTDIR}/root1/mod1-2/file1-2,v  <--  file1-2
 new revision: 1.2; previous revision: 1.1
 done
 ${PROG} [a-z]*: Examining mod1-2/mod2-2
 ${PROG} [a-z]*: Examining mod2-1
 ${PROG} [a-z]*: Examining mod2-2
 Checking in mod2-1/file2-1;
-/tmp/cvs-sanity/root2/mod2-1/file2-1,v  <--  file2-1
+${TESTDIR}/root2/mod2-1/file2-1,v  <--  file2-1
 new revision: 1.2; previous revision: 1.1
 done
 Checking in mod2-2/file2-2;
-/tmp/cvs-sanity/root2/mod2-2/file2-2,v  <--  file2-2
+${TESTDIR}/root2/mod2-2/file2-2,v  <--  file2-2
 new revision: 1.2; previous revision: 1.1
 done"
 
@@ -16904,8 +16904,8 @@ anyone
 
 	  # clean up after ourselves
 	  cd ..
-	  rm -rf 
-	  
+	  rm -r 1
+
 	  # clean up our repositories
 	  rm -rf root1 root2
 	  ;;

@@ -1,5 +1,9 @@
 1998-09-03  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* sanity.sh (multiroot): Expect ${TESTDIR} in output instead of
+	assuming it is /tmp/cvs-sanity.  Clean up working directory when
+	done (fixes apparent thinko).
+
 	* server.c (create_adm_p): Fix one "return" which didn't return a
 	value.
 	(dirswitch): Check for errors from create_adm_p.
