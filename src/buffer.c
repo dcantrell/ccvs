@@ -28,7 +28,13 @@ static struct buffer_data *get_buffer_data (void);
 /* Initialize a buffer structure.  */
 
 struct buffer *
-buf_initialize (int (*input) (void *, char *, int, int, int *), int (*output) (void *, const char *, int, int *), int (*flush) (void *), int (*block) (void *, int), int (*shutdown) (struct buffer *), void (*memory) (struct buffer *), void *closure)
+buf_initialize (int (*input) (void *, char *, int, int, int *),
+	        int (*output) (void *, const char *, int, int *),
+                int (*flush) (void *),
+                int (*block) (void *, int),
+                int (*shutdown) (struct buffer *),
+                void (*memory) (struct buffer *),
+                void *closure)
 {
     struct buffer *buf;
 
@@ -457,7 +463,8 @@ buf_send_special_count (struct buffer *buf, int count)
 /* Append a list of buffer_data structures to an buffer.  */
 
 void
-buf_append_data (struct buffer *buf, struct buffer_data *data, struct buffer_data *last)
+buf_append_data (struct buffer *buf, struct buffer_data *data,
+                 struct buffer_data *last)
 {
     if (data != NULL)
     {
@@ -491,7 +498,8 @@ buf_append_buffer (struct buffer *to, struct buffer *from)
  */
 
 int
-buf_read_file (FILE *f, long int size, struct buffer_data **retp, struct buffer_data **lastp)
+buf_read_file (FILE *f, long int size, struct buffer_data **retp,
+               struct buffer_data **lastp)
 {
     int status;
 
@@ -556,7 +564,8 @@ buf_read_file (FILE *f, long int size, struct buffer_data **retp, struct buffer_
  */
 
 int
-buf_read_file_to_eof (FILE *f, struct buffer_data **retp, struct buffer_data **lastp)
+buf_read_file_to_eof (FILE *f, struct buffer_data **retp,
+                      struct buffer_data **lastp)
 {
     int status;
 
@@ -1169,7 +1178,8 @@ struct stdio_buffer_closure
 };
 
 struct buffer *
-stdio_buffer_initialize (FILE *fp, int child_pid, int input, void (*memory) (struct buffer *))
+stdio_buffer_initialize (FILE *fp, int child_pid, int input,
+                         void (*memory) (struct buffer *))
 {
     struct stdio_buffer_closure *bc = xmalloc (sizeof (*bc));
 
@@ -1302,7 +1312,8 @@ stdio_buffer_flush (void *closure)
 static int
 stdio_buffer_shutdown (struct buffer *buf)
 {
-    struct stdio_buffer_closure *bc = (struct stdio_buffer_closure *) buf->closure;
+    struct stdio_buffer_closure *bc =
+	(struct stdio_buffer_closure *) buf->closure;
     struct stat s;
     int closefp = 1;
 
@@ -1326,7 +1337,8 @@ stdio_buffer_shutdown (struct buffer *buf)
 		error (0, 0, "dying gasps from client unexpected");
 	    else
 # endif
-		error (0, 0, "dying gasps from %s unexpected", current_parsed_root->hostname);
+		error (0, 0, "dying gasps from %s unexpected",
+		       current_parsed_root->hostname);
 	}
 	else if (ferror (bc->fp))
 	{
@@ -1472,7 +1484,13 @@ static int packetizing_buffer_shutdown (struct buffer *);
 /* Create a packetizing buffer.  */
 
 struct buffer *
-packetizing_buffer_initialize (struct buffer *buf, int (*inpfn) (void *, const char *, char *, int), int (*outfn) (void *, const char *, char *, int, int *), void *fnclosure, void (*memory) (struct buffer *))
+packetizing_buffer_initialize (struct buffer *buf,
+                               int (*inpfn) (void *, const char *, char *,
+                                             int),
+                               int (*outfn) (void *, const char *, char *,
+                                             int, int *),
+                               void *fnclosure,
+                               void (*memory) (struct buffer *))
 {
     struct packetizing_buffer *pb;
 
@@ -1505,7 +1523,8 @@ packetizing_buffer_initialize (struct buffer *buf, int (*inpfn) (void *, const c
 /* Input data from a packetizing buffer.  */
 
 static int
-packetizing_buffer_input (void *closure, char *data, int need, int size, int *got)
+packetizing_buffer_input (void *closure, char *data, int need, int size,
+                          int *got)
 {
     struct packetizing_buffer *pb = (struct packetizing_buffer *) closure;
 
@@ -1713,7 +1732,8 @@ packetizing_buffer_input (void *closure, char *data, int need, int size, int *go
 /* Output data to a packetizing buffer.  */
 
 static int
-packetizing_buffer_output (void *closure, const char *data, int have, int *wrote)
+packetizing_buffer_output (void *closure, const char *data, int have,
+                           int *wrote)
 {
     struct packetizing_buffer *pb = (struct packetizing_buffer *) closure;
     char inbuf[BUFFER_DATA_SIZE + 2];
