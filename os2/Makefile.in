@@ -24,6 +24,7 @@ SHELL = /bin/sh
 LIB = s:\ibmcpp\lib;s:\toolkt21\os2lib;
 CINC = -Is:/ibmcpp/include -Is:/toolkt21/c/os2h
 CFLAGS = -C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm ${CINC}
+CFLAGS += -I. -I../lib
 CFLAGS += -DIBM_CPP
 
 # TCP/IP stuff

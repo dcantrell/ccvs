@@ -1,5 +1,10 @@
 Fri Oct 27 13:03:28 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
+        * pwd.h, pwd.c: new files (for now, copied from ../windows-NT
+        directory.  We'll modify/merge them as necessary.)
+
+        * config.h: don't use __stdcall in declaration of gethostname().
+
         * Makefile.in (DISTFILES): include config.h and options.h.
 
 Wed Oct 25 12:52:54 1995  Karl Fogel  <kfogel@floss.cyclic.com>
