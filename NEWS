@@ -3,6 +3,8 @@ Changes since 1.12.5:
 
 GENERAL USER ISSUES
 
+* Several memory leaks have been plugged.
+
 * A seg fault which always occurred after waiting on another process's lock
   in order to establish a promotable lock is now avoided.
 
