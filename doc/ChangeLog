@@ -1,3 +1,9 @@
+Wed Jan  8 09:08:36 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvsclient.texi (Connection and Authentication): Document
+	restriction that cvs root sent in the cvs protocol and in the
+	pserver authentication protocol must be identical.
+
 Thu Jan  2 13:30:56 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* Makefile.in, cvs.texinfo: Remove "675" paragraph;
