@@ -1,3 +1,8 @@
+Tue Feb 11 20:42:45 1997  Ian Lance Taylor  <ian@cygnus.com>
+
+	* cvs.texinfo (commit options): Document that the -f option to
+	commit disables recursion.
+
 Sun Feb  9 13:58:59 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (diff options): Document all the options we pass

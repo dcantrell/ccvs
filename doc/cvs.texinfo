@@ -6346,6 +6346,13 @@ $ cvs commit -f @var{file}
 $ cvs commit -r 1.8 @var{file}
 @end example
 
+@c This is odd, but it's how CVS has worked for some
+@c time.
+The @samp{-f} option disables recursion (i.e., it
+implies @samp{-l}).  To force @sc{cvs} to commit a new
+revision for all files in all subdirectories, you must
+use @samp{-f -R}.
+
 @item -m @var{message}
 Use @var{message} as the log message, instead of
 invoking an editor.
