@@ -159,8 +159,7 @@ case $rlog_options in
 						}
 					}
 				}
-				# Output comma instead of space to avoid CVS 1.5 bug.
-				printf "%d/%02d/%02d,%02d:%02d:%02d\n", year,i+1,dd,hh,mm,ss
+				printf "%02d/%02d/%d %02d:%02d:%02d\n", i+1,dd,year,hh,mm,ss
 				exit
 			}
 		'
