@@ -389,6 +389,12 @@ if test -f check.log; then
 	mv check.log check.plog
 fi
 
+# Create the log file so check.log can be tailed almost immediately after
+# this script is started.  Otherwise it can take up to a minute or two before
+# the log file gets created when $remotehost is specified on some systems,
+# which makes for a lot of failed `tail -f' attempts.
+touch check.log
+
 # The default value of /tmp/cvs-sanity for TESTDIR is dubious,
 # because it loses if two people/scripts try to run the tests
 # at the same time.  Some possible solutions:
