@@ -27,7 +27,7 @@ MODULES="gettext vasnprintf regex atexit save-cwd dirname exit exitfail
 	 timespec gettime unlocked-io tzset restrict time_r mktime minmax
 	 memmove nanosleep stat lstat strerror vasprintf malloc realloc
 	 strftime xsize getpagesize md5 stdint yesno allocsa setenv getdate
-	 readlink xreadlink"
+	 readlink xreadlink xgethostname"
 
 # Are the GNULIB sources really where we expect them?
 if test -r $GNULIB && test -d $GNULIB \

@@ -281,3 +281,7 @@ m4/xreadlink.m4
 m4/ssize_t.m4
 
 m4/onceonly_2_57.m4
+lib/xgethostname.h
+lib/xgethostname.c
+
+m4/onceonly_2_57.m4
