@@ -304,6 +304,7 @@ static int
 fd_buffer_shutdown (struct buffer *buf)
 {
     free (buf->closure);
+    buf->closure = NULL;
     return 0;
 }
 
