@@ -19,6 +19,9 @@
 # ifndef HAVE_GETPAGESIZE
 #  include "getpagesize.h"
 # endif
+# ifndef MAP_FAILED
+#  define MAP_FAILED NULL
+# endif
 #endif
 
 int preserve_perms = 0;
