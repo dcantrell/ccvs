@@ -1,3 +1,7 @@
+2001-11-30  Larry Jones  <larry.jones@sdrc.com>
+
+	* admin.c (admin): Allow unrestricted usage of -q in addition to -k.
+
 2001-10-25  Larry Jones  <larry.jones@sdrc.com>
 
 	* log.c (log_expand_revlist): Make erroneous or inconsistent revision
