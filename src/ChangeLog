@@ -1,3 +1,7 @@
+Mon Feb 12 16:07:45 1996  Norbert Kiesel  <nk@col.sw-ley.de>
+
+	* run.c, cvs.h: Changed more Popen() to run_popen()
+
 Mon Feb 12 03:06:50 1996  Benjamin J. Lee  <benjamin@cyclic.com>
 
 	* release.c, rtag.c, tag.c: changed 'delete' to 'delete_flag'

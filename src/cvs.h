@@ -623,7 +623,7 @@ void run_args ();
 int run_exec PROTO((char *stin, char *stout, char *sterr, int flags));
 
 /* other similar-minded stuff from run.c.  */
-FILE *Popen PROTO((const char *, const char *));
+FILE *run_popen PROTO((const char *, const char *));
 int piped_child PROTO((char **, int *, int *));
 void close_on_exec PROTO((int));
 int filter_stream_through_program PROTO((int, int, char **, pid_t *));
