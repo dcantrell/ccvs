@@ -135,8 +135,10 @@ i386 family:
 	SCO OpenServer 5 (1.8.86)
 	Lynx 2.3.0 080695 (1.6.86) (footnote 9)
 	Windows NT 3.51 (1.8.86 client; 1.8.3 local)
+	Windows NT 3.51 service pack 4 (1.9)
+	Windows NT 3.51 service pack 5 (1.9) -- DOES NOT WORK (footnote 11)
 	Windows NT 4.0 (1.9 client and local)
-	Windows 95 (1.8.86 client and local)
+	Windows 95 (1.9 client and local)
 	QNX 4 (1.7 + obvious patches)
 	OS/2 Version 3 using IBM C/C++ Tools 2.01 (1.8.86 + patches, client)
 	OS/2 Version 3 using EMX 0.9c (1.9.10 + patches, client)
@@ -220,6 +222,12 @@ VAX:
 (footnote 10)
     Had to compile with "make LIBS=-lbsd" (to get gethostbyname
     and getservbyname).
+
+(footnote 11)
+    when I do a `cvs init' I get this message:
+      ci: 'RCS/loginfo,v' is not a regular file
+      ci:  RCS/loginfo,v: Invalid argument
+      cvs [init aborted]: failed to checkin n:/safe/CVSROOT/loginfo
 
 -------------------------------------------------------------------------------
 
