@@ -1,3 +1,7 @@
+2004-04-28  Derek Price  <derek@ximbiot.com>
+
+	* NEWS: Note half-hour timezone strings handled.
+
 2004-04-27  Derek Price  <derek@ximbiot.com>
 
 	* configure.in: Call gl_GETDATE and remove obsoleted cruft.
