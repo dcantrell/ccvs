@@ -1160,12 +1160,12 @@ ${PROG} [a-z]*: Updating second-dir"
 	  dotest basicc-6 "${testcvs} release -d" ""
 	  dotest basicc-7 "test -d ../first-dir" ""
 	  dotest basicc-8 "${testcvs} -Q release -d ." \
-"${PROG} release: deletion of directory \. failed: Operation not permitted"
+"${PROG} release: deletion of directory \. failed: .*"
 	  dotest basicc-9 "test -d ../second-dir" ""
 	  dotest basicc-10 "test -d ../first-dir" ""
 	  # For CVS to make a syntactic check for "." wouldn't suffice.
 	  dotest basicc-11 "${testcvs} -Q release -d ./." \
-"${PROG} release: deletion of directory \./\. failed: Operation not permitted"
+"${PROG} release: deletion of directory \./\. failed: .*"
 	  cd ..
 	  cd ..
 
