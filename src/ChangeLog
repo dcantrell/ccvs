@@ -1,3 +1,12 @@
+Wed Nov 29 12:55:10 1995  Karl Fogel  <kfogel@floss.cyclic.com>
+
+        * main.c: Prototype connect_to_pserver(), and enter it in cmds[].
+        (main): test some extremely primitive authentication.
+
+        * login.c: Include <sys/socket.h>
+        (connect_to_pserver): new func.
+        (init_sockaddr): new func.
+        
 Mon Nov 20 14:07:41 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* Makefile.in (TAGFILES): Separate out from DISTFILES, for C code.
