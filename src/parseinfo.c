@@ -152,7 +152,7 @@ Parse_Info (infofile, repository, callproc, all)
 	    continue;				/* no match */
 
 	/* it did, so do the callback and note that we did one */
-	err += callproc (repository, value);
+	err += callproc (repository, expanded_value);
 	callback_done = 1;
     }
     (void) fclose (fp_info);

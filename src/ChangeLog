@@ -1,3 +1,8 @@
+Mon Oct 16 15:58:31 1995  Vince Demarco <vdemarco@bou.shl.com>
+
+	* parseinfo.c (Parse_Info): if the Keyword isn't ALL the current
+	version doesn't use the expanded variable, It should.
+
 Mon Oct 16 15:58:31 1995  Gary Oberbrunner <garyo@avs.com>
 			  and Jim Kingdon  <kingdon@harvey.cyclic.com>
 
