@@ -586,9 +586,10 @@ cd $TESTDIR
 
 
 : ${TIMING=false}
-if test -n "$remotehost"; then
+if $proxy || test -n "$remotehost"; then
     # Now override our CVS_RSH in order to forward variables which affect the
-    # test suite through.
+    # test suite through.  This needs to be done in $proxy mode for the
+    # crerepos tests.
     if $TIMING; then
 	time="/usr/bin/time -ao'$TESTDIR/time.out'"
     else
@@ -613,6 +614,8 @@ $CVS_RSH \
 	 "CVS_RSH='$TESTDIR/ssh-wrapper';" \
 	 "CVSUMASK='\$CVSUMASK';" \
 	 "export CVS_RSH CVSUMASK;" \
+	 "CVS_PID='\$CVS_PID';" \
+	 "export CVS_PID;" \
 	 $time \
 	 \${1+"\$@"}
 EOF
