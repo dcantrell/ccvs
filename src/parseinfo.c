@@ -99,8 +99,10 @@ Parse_Info (const char *infofile, const char *repository, CALLPROC callproc,
 	/* no value to match with the regular expression is an error */
 	if (*cp == '\0')
 	{
+	    char *pinfopath = primary_root_inverse_translate (infopath);
 	    error (0, 0, "syntax error at line %d file %s; ignored",
-		   line_number, infofile);
+		   line_number, pinfopath);
+	    free (pinfopath);
 	    continue;
 	}
 	value = cp;
@@ -307,8 +309,10 @@ parse_config (char *cvsroot)
 	if (p == NULL)
 	{
 	    /* Probably should be printing line number.  */
+	    char *pinfopath = primary_root_inverse_translate (infopath);
 	    error (0, 0, "syntax error in %s: line '%s' is missing '='",
-		   infopath, line);
+		   pinfopath, line);
+	    free (pinfopath);
 	    goto error_return;
 	}
 
@@ -457,8 +461,10 @@ warning: this CVS does not support PreservePermissions");
 	       adding new keywords to your CVSROOT/config file is not
 	       particularly recommended unless you are planning on using
 	       the new features.  */
+	    char *pinfopath = primary_root_inverse_translate (infopath);
 	    error (0, 0, "%s: unrecognized keyword '%s'",
-		   infopath, line);
+		   pinfopath, line);
+	    free (pinfopath);
 	    goto error_return;
 	}
     }
