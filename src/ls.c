@@ -43,9 +43,9 @@ static bool tag_validated;
 static bool recurse;
 static char *regexp_match;
 static bool is_rls;
-static unsigned long long dircount; /* Dircount is used to avoid printing a
-                                     * blank line after the last directory.
-                                     */
+static unsigned long dircount; /* Dircount is used to avoid printing a
+                                * blank line after the last directory.
+                                */
 
 
 
