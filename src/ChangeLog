@@ -1,3 +1,8 @@
+2002-07-25  Larry Jones  <lawrence.jones@eds.com>
+
+	* sanity.sh: Set $TMPDIR if it's not already set and use it rather
+	than /tmp for the expected server temp directory path.
+
 2002-07-09  Larry Jones  <lawrence.jones@eds.com>
 
 	* vers_ts.c (time_stamp_server, time_stamp): Eliminate unneeded
