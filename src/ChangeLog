@@ -1,3 +1,9 @@
+2003-10-07  Derek Price  <derek@ximbiot.com>
+
+	* rcs.c (locate_rcs): Declare static.  Move to an earlier location in
+	file to avoid prototyping.
+	* rcs.h (locate_rcs): Remove proto.
+
 2003-10-03  Derek Price  <derek@ximbiot.com>
 
 	* server.c (serve_global_option): Warn that -l is being ignored rather
