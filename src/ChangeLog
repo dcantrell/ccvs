@@ -1,3 +1,10 @@
+2002-09-16  Jim Meyering  <meyering@lucent.com>
+
+	* server.c (do_cvs_command): Move declarations of locals, timeout and
+	timeout_ptr, `up', out of enclosing `#ifdef SERVER_FLOWCONTROL' block.
+	Otherwise, this file would not compile with SERVER_FLOWCONTROL
+	turned off.  Patch by Ed Santiago <esm@ascend.com>.
+
 2002-09-15  Larry Jones  <lawrence.jones@eds.com>
 
 	* myndbm.c (mydbm_open): Open the file read/write rather than read-
