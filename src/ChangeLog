@@ -1,3 +1,10 @@
+Tue Nov 14 12:22:00 1995  Greg A. Woods  <woods@most.weird.com>
+
+	* sanity.sh: many minor tweaks:
+	- make the optional arguments almost work
+	- use a function 'directory_cmp' instead of 'diff -r'
+	- fix up a few more tests that weren't working....
+
 Mon Nov 13 07:33:55 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
         * cvs.h: ifdef USE_OWN_POPEN, #include "popen.h".  Only OS/2 has
