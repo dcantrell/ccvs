@@ -1,3 +1,9 @@
+2004-03-22  Derek Price  <derek@ximbiot.com>
+
+	* INSTALL: Note compilation & --without-gssapi requirement for HPPA
+	with HP-UX 11.11.
+	(Report from Nicolas Vervelle <nicolas.vervelle@steria.com>.)
+
 2004-03-20  Derek Price  <derek@ximbiot.com>
 
 	* NEWS: Note resurrection fixes.
