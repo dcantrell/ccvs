@@ -1,3 +1,25 @@
+Tue Jan  7 12:56:10 1997  Karl Fogel  <kfogel@ynu38.ynu.edu.cn>
+
+        * root.c (check_root_consistent): new func, compares below new
+        global var with CVSroot_directory, assuming both set.
+        (set_local_cvsroot): use above new func for security check.
+        (parse_cvsroot): same.
+        But do all of above only #ifdef AUTH_SERVER_SUPPORT.
+
+        * server.c: (Pserver_Repos): new global var, init to NULL.
+        (pserver_authenticate_connection): set above new global.
+        (check_repository_password): be a good scout and use
+        CVSROOTADM and CVSROOTADM_PASSWD, now that they are the standard.
+        Make sure all of above is in #ifdef AUTH_SERVER_SUPPORT.
+        (check_command_legal_p): wrap most of body in #ifdef
+        AUTH_SERVER_SUPPORT.
+        Everywhere: wrap all references to CVS_Username in #ifdef
+        AUTH_SERVER_SUPPORT.
+
+        * cvs.h (Pserver_Repos): new var, used in consistency [security]
+        check.  Defined only #ifdef AUTH_SERVER_SUPPORT.
+        (CVSROOTADM_PASSWD): new #define, trying to get with the program.
+
 Fri Jan  3 18:10:39 1997  Ian Lance Taylor  <ian@cygnus.com>
 
 	* checkout.c (build_dirs_and_chdir): Move call to Subdir_Register
