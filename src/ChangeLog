@@ -1,3 +1,8 @@
+2004-08-24  Derek Price <derek@ximbiot.com>
+
+	* tag.c (tag_check_valid): Use RCS_valid_rev() rather than duplicating
+	code.  Misc error message improvements.  
+
 2004-08-24  Mark D. Baushke  <mdb@cvshome.org>
 
 	* ignore.c (ignore_directory): Include the terminating NUL
