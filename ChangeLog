@@ -1,5 +1,9 @@
 2005-03-16  Derek Price  <derek@ximbiot.com>
 
+	* NEWS: Note that writeproxy primary failures are now detected.
+
+2005-03-16  Derek Price  <derek@ximbiot.com>
+
 	* NEWS: Note that failure to open debug logs is no longer fatal.
 
 2005-03-15  Derek Price  <derek@ximbiot.com>
