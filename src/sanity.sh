@@ -29657,6 +29657,7 @@ ${SPROG} update: Updating first/subdir"
 	  PRIMARY_CVSROOT=`newroot $PRIMARY_CVSROOT_DIRNAME`
 	  SECONDARY_CVSROOT_DIRNAME_save=$SECONDARY_CVSROOT_DIRNAME
 	  SECONDARY_CVSROOT_DIRNAME=$TESTDIR/writeproxy_cvsroot
+	  SECONDARY_CVSROOT=`newroot $SECONDARY_CVSROOT_DIRNAME`
 
 	  # Initialize the primary repository
 	  dotest writeproxy-init-1 "$testcvs -d$PRIMARY_CVSROOT init"
@@ -29676,59 +29677,14 @@ EOF
 	  # And now the secondary.
 	  $RSYNC -gopr $PRIMARY_CVSROOT_DIRNAME/ $SECONDARY_CVSROOT_DIRNAME
 
-	  CVS_SERVER_save=$CVS_SERVER
-	  CVS_SERVER_secondary=$TESTDIR/writeproxy-secondary-wrapper
-	  CVS_SERVER=$CVS_SERVER_secondary
-
-	  # Wrap the CVS server to allow --primary-root to be set by the
-	  # secondary.
-	  cat <<EOF >$TESTDIR/writeproxy-secondary-wrapper
-#! $TESTSHELL
-CVS_SERVER=$TESTDIR/writeproxy-primary-wrapper
-export CVS_SERVER
-
-# Decide if we should be talking to the secondary or the primary.
-#
-# This is a hack which is only necessary when testing a redirect in :fork: mode
-# since the servers need to be able to tell the two roots apart given the same
-# \`Root' request from the client.
-#
-# The second time a server is launched by the same client, we must be the
-# primary server.
-if test -f $TESTDIR/last-client-pid \\
-   && expr \$CVS_PID : \`cat $TESTDIR/last-client-pid\` >/dev/null; then
-    proot_arg=
-else
-    proot_arg="--primary-root $PRIMARY_CVSROOT_DIRNAME=$SECONDARY_CVSROOT_DIRNAME"
-fi
-echo \$CVS_PID >$TESTDIR/last-client-pid
-
-exec $servercvs \$proot_arg "\$@"
-EOF
-	  cat <<EOF >$TESTDIR/writeproxy-primary-wrapper
-#! $TESTSHELL
-#CVS_SERVER_LOG=/tmp/cvsprimarylog
-exec $servercvs "\$@"
-EOF
-
-	  chmod a+x $TESTDIR/writeproxy-secondary-wrapper \
-	            $TESTDIR/writeproxy-primary-wrapper
-
 	  # Checkout from secondary
-	  #
-	  # It may look like we are checking out from the primary here, but
-	  # in fork mode, the deciding factor is the --primary-root translation
-	  # above.
-	  #
-	  # When the primary and secondary hostname were different, the server
-	  # the client is talking directly to is more obvious.
 	  #
 	  # For now, move the primary root out of the way to satisfy
 	  # ourselves that the data is coming from the secondary.
 	  mv $PRIMARY_CVSROOT_DIRNAME $TESTDIR/save-root
 	  cd ../..
 	  mkdir secondary; cd secondary
-	  dotest writeproxy-1 "$testcvs -qd$PRIMARY_CVSROOT co CVSROOT" \
+	  dotest writeproxy-1 "$testcvs -qd$SECONDARY_CVSROOT co CVSROOT" \
 "U CVSROOT/checkoutlist
 U CVSROOT/commitinfo
 U CVSROOT/config
@@ -29755,7 +29711,7 @@ PrimaryServer=$PRIMARY_CVSROOT"
 
 	  # Checkin to secondary
 	  cd ..
-	  dotest writeproxy-4 "$testcvs -Qd$PRIMARY_CVSROOT co -ldtop ."
+	  dotest writeproxy-4 "$testcvs -Qd$SECONDARY_CVSROOT co -ldtop ."
 	  cd top
 	  mkdir firstdir
 
@@ -29773,7 +29729,6 @@ PrimaryServer=$PRIMARY_CVSROOT"
 	  # Make sure the sync took place
 	  dotest writeproxy-7a "$testcvs -Q up"
 
-	  CVS_SERVER=$servercvs
 	  # Checkout from primary
 	  cd ../../../primary
 	  dotest writeproxy-8 "$testcvs -qd$PRIMARY_CVSROOT co firstdir" \
@@ -29789,7 +29744,6 @@ PrimaryServer=$PRIMARY_CVSROOT"
 	  echo now you see me again >file1
 	  dotest writeproxy-10 "$testcvs -Q ci -medit file1"
 
-	  CVS_SERVER=$CVS_SERVER_secondary
 	  # Update from secondary
 	  cd ../../secondary/top/firstdir
 	  dotest writeproxy-11 "$testcvs -q up" \
@@ -29812,15 +29766,12 @@ PrimaryServer=$PRIMARY_CVSROOT"
 	  touch loginfo
 	  dotest_fail writeproxy-14 "$testcvs up" \
 "$SPROG update: Updating \.
-$SPROG \[update aborted\]: could not find desired version 1\.4 in $PRIMARY_CVSROOT_DIRNAME/CVSROOT/loginfo,v"
+$SPROG \[update aborted\]: could not find desired version 1\.4 in $SECONDARY_CVSROOT_DIRNAME/CVSROOT/loginfo,v"
 
 	  dokeep
 	  cd ../../..
 	  rm -r writeproxy
 	  rm -rf $PRIMARY_CVSROOT_DIRNAME $SECONDARY_CVSROOT_DIRNAME
-	  rm $TESTDIR/writeproxy-secondary-wrapper \
-	     $TESTDIR/writeproxy-primary-wrapper
-	  CVS_SERVER=$CVS_SERVER_save
 	  SECONDARY_CVSROOT_DIRNAME=$SECONDARY_CVSROOT_DIRNAME_save
 	  ;;
 
