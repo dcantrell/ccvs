@@ -168,7 +168,7 @@ saber: $(SOURCES)
 	# load $(CFLAGS) $(SOURCES)
 	# load ../lib/libcvs.a $(LIBS)
 
-cvsbug: cvsbug.sh
+cvsbug: cvsbug.sh $(srcdir)/version.c
 	echo > .fname \
 	  cvs-`sed < $(srcdir)/version.c \
 		    -e '/version_string/!d' \
