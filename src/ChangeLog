@@ -1,7 +1,23 @@
+Mon Jan 19 11:17:51 1998  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* server.c (serve_kopt): New function.
+	(requests): Add "Kopt" request.
+	(kopt): New variable.
+	(serve_is_modified): Write kopts from there into entries.
+	(serve_modified): Call serve_is_modified so we do the same.
+	Declare serve_modified and serve_is_modified.
+	* vers_ts.c (Version_TS): Set ->options even for a dummy ("D"
+	timestamp) entry.
+	* import.c (process_import_file): Check for -k options.
+	* client.c (client_process_import_file): Send Kopt request.
+	(send_fileproc): Likewise, for "cvs add".
+	* sanity.sh: Enable test binwrap3-sub2-add1 for remote.
+	Add -I .cvswrappers to binwrap3-2a; adjust binwrap3-2d
+	accordingly.  Tests for this fix.
+
 Mon Jan 19 08:48:59 1998  Larry Jones  <larry.jones@sdrc.com>
 
 	* sanity.sh (errmsg1): Append test 168 output to log file.
-
 
 Sat Jan 17 08:01:51 1998  Jim Kingdon  <kingdon@harvey.cyclic.com>
 

@@ -468,6 +468,8 @@ process_import_file (message, vfile, vtag, targc, targv)
 	if (!isfile (attic_name))
 	{
 	    int retval;
+	    char *free_opt = NULL;
+	    char *our_opt = keyword_opt;
 
 	    free (attic_name);
 	    /*
@@ -475,9 +477,42 @@ process_import_file (message, vfile, vtag, targc, targv)
 	     * repository nor in the Attic -- create it anew.
 	     */
 	    add_log ('N', vfile);
-	    retval = add_rcs_file (message, rcs, vfile, vhead, keyword_opt,
+
+#ifdef SERVER_SUPPORT
+	    /* The most reliable information on whether the file is binary
+	       is what the client told us.  That is because if the client had
+	       the wrong idea about binaryness, it corrupted the file, so
+	       we might as well believe the client.  */
+	    if (server_active)
+	    {
+		Node *node;
+		List *entries;
+
+		/* Reading all the entries for each file is fairly silly, and
+		   probably slow.  But I am too lazy at the moment to do
+		   anything else.  */
+		entries = Entries_Open (0);
+		node = findnode_fn (entries, vfile);
+		if (node != NULL)
+		{
+		    Entnode *entdata = (Entnode *) node->data;
+		    if (entdata->type == ENT_FILE)
+		    {
+			assert (entdata->options[0] == '-'
+				&& entdata->options[1] == 'k');
+			our_opt = xstrdup (entdata->options + 2);
+			free_opt = our_opt;
+		    }
+		}
+		Entries_Close (entries);
+	    }
+#endif
+
+	    retval = add_rcs_file (message, rcs, vfile, vhead, our_opt,
 				   vbranch, vtag, targc, targv,
 				   NULL, 0, logfp);
+	    if (free_opt != NULL)
+		free (free_opt);
 	    free (rcs);
 	    return retval;
 	}

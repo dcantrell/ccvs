@@ -7447,9 +7447,8 @@ ${PROG} [a-z]*: Rebuilding administrative file database"
 	  # Not importing .cvswrappers tests whether the client is really
 	  # letting the server know "honestly" whether the file is binary,
 	  # rather than just letting the server see the .cvswrappers file.
-	  # We will add "-I .cvswrappers" when we are ready to test that.
           dotest binwrap3-2a \
-"${testcvs} import -m . binwrap3 tag1 tag2" \
+"${testcvs} import -m . -I .cvswrappers binwrap3 tag1 tag2" \
 "[NI] ${DOTSTAR}"
 
 	  # OK, now test "cvs add".
@@ -7467,11 +7466,7 @@ ${PROG} [a-z]*: Rebuilding administrative file database"
 ${PROG} [a-z]*: scheduling file .file1\.txt. for addition
 ${PROG} [a-z]*: use .${PROG} commit. to add these files permanently"
 	  dotest binwrap3-2d "${testcvs} -q ci -m add" \
-"Checking in \.cvswrappers;
-${TESTDIR}/cvsroot/binwrap3/sub2/\.cvswrappers,v  <--  \.cvswrappers
-new revision: 1\.2; previous revision: 1\.1
-done
-RCS file: ${TESTDIR}/cvsroot/binwrap3/sub2/file1\.newbin,v
+"RCS file: ${TESTDIR}/cvsroot/binwrap3/sub2/file1\.newbin,v
 done
 Checking in file1\.newbin;
 ${TESTDIR}/cvsroot/binwrap3/sub2/file1\.newbin,v  <--  file1\.newbin
@@ -7555,10 +7550,8 @@ done"
           dotest binwrap3-subsub6 "grep foo-t.st sub2/subsub/CVS/Entries" \
                  "/foo-t.st/1.1.1.1/[A-Za-z0-9 	:]*//"
 
-	  if test "$remote" = no; then
-	    dotest binwrap3-sub2-add1 "grep file1.newbin sub2/CVS/Entries" \
+	  dotest binwrap3-sub2-add1 "grep file1.newbin sub2/CVS/Entries" \
 	    "/file1.newbin/1.1/[A-Za-z0-9 	:]*/-kb/"
-	  fi
 	  dotest binwrap3-sub2-add2 "grep file1.txt sub2/CVS/Entries" \
 	    "/file1.txt/1.1/[A-Za-z0-9 	:]*//"
 

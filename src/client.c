@@ -4709,6 +4709,41 @@ send_fileproc (callerdat, finfo)
           }
 	send_to_server ("\012", 1);
     }
+    else
+    {
+	/* It seems a little silly to re-read this on each file, but
+	   send_dirent_proc doesn't get called if filenames are specified
+	   explicitly on the command line.  */
+	wrap_add_file (CVSDOTWRAPPER, 1);
+
+	if (wrap_name_has (filename, WRAP_RCSOPTION))
+	{
+	    /* No "Entry", but the wrappers did give us a kopt so we better
+	       send it with "Kopt".  As far as I know this only happens
+	       for "cvs add".  Question: is there any reason why checking
+	       for options from wrappers isn't done in Version_TS?
+
+	       Note: it might have been better to just remember all the
+	       kopts on the client side, rather than send them to the server,
+	       and have it send us back the same kopts.  But that seemed like
+	       a bigger change than I had in mind making now.  */
+
+	    if (supported_request ("Kopt"))
+	    {
+		char *opt;
+
+		send_to_server ("Kopt ", 0);
+		opt = wrap_rcsoption (filename, 1);
+		send_to_server (opt, 0);
+		send_to_server ("\012", 1);
+		free (opt);
+	    }
+	    else
+		error (0, 0,
+		       "\
+warning: ignoring -k options due to server limitations");
+	}
+    }
 
     if (vers->ts_user == NULL)
     {
@@ -5135,6 +5170,18 @@ client_process_import_file (message, vfile, vtag, targc, targv, repository,
     else
     {
 	vers.options = wrap_rcsoption (vfile, 1);
+    }
+    if (vers.options != NULL)
+    {
+	if (supported_request ("Kopt"))
+	{
+	    send_to_server ("Kopt ", 0);
+	    send_to_server (vers.options, 0);
+	    send_to_server ("\012", 1);
+	}
+	else
+	    error (0, 0,
+		   "warning: ignoring -k options due to server limitations");
     }
     send_modified (vfile, fullname, &vers);
     if (vers.options != NULL)
