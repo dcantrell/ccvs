@@ -1,3 +1,7 @@
+1999-04-19  Jim Kingdon  <http://www.cyclic.com>
+
+	* sanity.sh (backuprecover): Clean up the repository at the end.
+
 1999-04-18  Derek Price
 	<http://www-personal.engin.umich.edu/~oberon/resume.html>
 

@@ -13995,7 +13995,8 @@ done"
 	  dotest backuprecover-24 "${testcvs} -Q update" ''
 
 	  cd ../../..
-	  rm -rf backuprecover
+	  rm -r backuprecover
+	  rm -rf ${CVSROOT_DIRNAME}/first-dir
 	  ;;
 
 	history)
