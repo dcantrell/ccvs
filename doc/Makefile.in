@@ -114,6 +114,10 @@ clean:
 	rm -f cvs.cp cvs.fn cvs.ky cvs.pg cvs.tp cvs.vr
 	rm -f cvs.cps cvs.fns cvs.kys cvs.pgs cvs.tps cvs.vrs
 	rm -f cvs.aux cvs.dvi cvs.log cvs.toc
+	rm -f cvsclient.cp cvsclient.fn cvsclient.ky cvsclient.pg
+	rm -f cvsclient.tp cvsclient.vr cvsclient.cps cvsclient.fns
+	rm -f cvsclient.kys cvsclient.pgs cvsclient.tps cvsclient.vrs
+	rm -f cvsclient.aux cvsclient.dvi cvsclient.log cvsclient.toc
 
 .PHONY: clean
 
