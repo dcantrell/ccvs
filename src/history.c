@@ -712,7 +712,9 @@ history_write (type, update_dir, revs, name, repository)
     static char *tilde = "";
     static char *PrCurDir = NULL;
 
-    if (logoff)			/* History is turned off by cmd line switch */
+    if (logoff)			/* History is turned off by noexec or
+				 * readonlyfs.
+				 */
 	return;
     if ( strchr(logHistory, type) == NULL )	
 	return;

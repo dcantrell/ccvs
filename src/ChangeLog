@@ -1,5 +1,13 @@
 2003-05-29  Derek Price  <derek@ximbiot.com>
 
+	* client.c (start_server): Don't send -l to server.
+	* history.c (history_write): Fix comment.
+	* main.c (main): Don't process -l.
+	* server.c (serve_global_option): Ditto.
+	(Suggestion from Rob Lanphier <robla@real.com>.)
+
+2003-05-29  Derek Price  <derek@ximbiot.com>
+
 	* log-buffer.c, rsh-client.c, socket-client.c: Allow compilation
 	with --disable-client.
 	(Patch from Alexey Mahotkin <alexm@hsys.msk.ru>.)
