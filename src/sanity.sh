@@ -2315,7 +2315,8 @@ if $proxy; then
     depends_on_rsync
     if test $? -eq 77; then
 	echo "Unable to test in proxy mode: $skipreason" >&2
-	exit 1
+	echo "SKIP: all - missing or broken rsync command." >>$LOGFILE
+	exit 0
     fi
 
     # Script to sync the secondary root.

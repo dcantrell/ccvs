@@ -1,5 +1,10 @@
 2004-10-22  Mark D. Baushke  <mdb@cvshome.org>
 
+	* sanity.sh (proxy): proxycheck depends on rsync, but skip all if
+	no rsync is found rather than generate an error return.
+
+2004-10-22  Mark D. Baushke  <mdb@cvshome.org>
+
 	* Makefile.am (proxycheck): New test target.
 	* sanity.sh: Keep one more level of check.log backup.
 	* Makefile.in: Regenerated.
