@@ -192,6 +192,12 @@ fi
 mkdir ${TESTDIR} || exit 1
 cd ${TESTDIR} || exit 1
 TESTDIR=`(/bin/pwd || pwd) 2>/dev/null`
+# Ensure $TESTDIR is absolute
+if test -z "${TESTDIR}" || echo "${TESTDIR}" |grep '^[^/]'; then
+    echo "Unable to resolve TESTDIR to an absolute directory." >&2
+    exit 1
+fi
+cd ${TESTDIR}
 
 # Make sure various tools work the way we expect, or try to find
 # versions that do.
@@ -22382,7 +22388,7 @@ echo "OK, all tests completed."
 #     this needs to be documented in cvs.texinfo, but is not)
 #   - Test that unrecognized files in CVS directories (e.g. CVS/Foobar)
 #     are ignored (per cvs.texinfo).
-#   - Test repositories with symlinks in the path.
+#   - Test 'cvs history' with symlinks in the path to the working directory.
 # End of TODO list.
 
 # Exit if keep set
