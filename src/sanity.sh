@@ -451,50 +451,10 @@ HOME=${TESTDIR}/home; export HOME
 # tests.
 
 if test x"$*" = x; then
-	tests="basica basicb basic1 deep basic2 rdiff death death2 branches multibranch import join new newb conflicts conflicts2 modules modules2 mflag errmsg1 devcom ignore binfiles binwrap info serverpatch log log2"
+	tests="basica basicb basic1 deep basic2 rdiff death death2 branches multibranch import join new newb conflicts conflicts2 modules modules2 mflag errmsg1 devcom ignore binfiles binwrap info serverpatch log log2 crerepos"
 else
 	tests="$*"
 fi
-
-# this should die
-if ${CVS} -d `pwd`/cvsroot co cvs-sanity 2>> ${LOGFILE} ; then
-	echo "FAIL: test 1" | tee -a ${LOGFILE}
-	exit 1
-else
-	echo "PASS: test 1" >>${LOGFILE}
-fi
-
-# this should still die
-mkdir cvsroot
-if ${CVS} -d `pwd`/cvsroot co cvs-sanity 2>> ${LOGFILE} ; then
-	echo "FAIL: test 2" | tee -a ${LOGFILE}
-	exit 1
-else
-	echo "PASS: test 2" >>${LOGFILE}
-fi
-
-# this should still die
-mkdir cvsroot/CVSROOT
-if ${CVS} -d `pwd`/cvsroot co cvs-sanity 2>> ${LOGFILE} ; then
-	echo "FAIL: test 3" | tee -a ${LOGFILE}
-	exit 1
-else
-	echo "PASS: test 3" >>${LOGFILE}
-fi
-
-# This one should work, although it should spit a warning.
-mkdir tmp ; cd tmp
-${CVS} -d `pwd`/../cvsroot co CVSROOT 2>> ${LOGFILE}
-cd .. ; rm -rf tmp
-
-# set up a minimal modules file...
-# (now that mkmodules is gone, this doesn't test -i the way it
-# used to.  In fact, it looks like a noop to me).
-echo "CVSROOT		CVSROOT" > cvsroot/CVSROOT/modules
-# The following line stolen from the old cvsinit.sh.  FIXME:
-# create our repository via cvs init; that way we test it too.
-(cd cvsroot/CVSROOT; ci -q -u -t/dev/null \
-  -m'initial checkin of modules' modules)
 
 # a simple function to compare directory contents
 #
@@ -536,10 +496,7 @@ directory_cmp ()
 	rm -f /tmp/dc$$*
 }
 
-# so much for the setup.  Let's try something harder.
-
-# Try setting CVSROOT so we don't have to worry about it anymore.  (now that
-# we've tested -d cvsroot.)
+# Set up CVSROOT (the crerepos tests will test operating without CVSROOT set).
 CVSROOT_DIRNAME=${TESTDIR}/cvsroot
 CVSROOT=${CVSROOT_DIRNAME} ; export CVSROOT
 if test "x$remote" = xyes; then
@@ -550,8 +507,7 @@ if test "x$remote" = xyes; then
 	CVS_SERVER=${testcvs}; export CVS_SERVER
 fi
 
-# start keeping history
-touch ${CVSROOT_DIRNAME}/CVSROOT/history
+dotest 1 "${testcvs} init" ''
 
 ### The big loop
 for what in $tests; do
@@ -4901,6 +4857,58 @@ date: [0-9/]* [0-9:]*;  author: [a-zA-Z0-9@]*;  state: Exp;
 
 	  fi # end of tests skipped for remote
 
+	  ;;
+	crerepos)
+	  # Various tests relating to creating repositories, operating
+	  # on repositories created with old versions of CVS, etc.
+
+	  # At the moment local only but that should be changed.
+	  if test "x$remote" = "xno"; then
+
+	    # First, if the repository doesn't exist at all...
+	    dotest_fail crerepos-1 \
+"${testcvs} -d ${TESTDIR}/crerepos co cvs-sanity" \
+"${PROG} \[[a-z]* aborted\]: /tmp/cvs-sanity/crerepos/CVSROOT: .*"
+	    mkdir crerepos
+
+	    # The repository exists but CVSROOT doesn't.
+	    dotest_fail crerepos-2 \
+"${testcvs} -d ${TESTDIR}/crerepos co cvs-sanity" \
+"${PROG} \[[a-z]* aborted\]: /tmp/cvs-sanity/crerepos/CVSROOT: .*"
+	    mkdir crerepos/CVSROOT
+
+	    # Checkout of nonexistent module
+	    dotest_fail crerepos-3 \
+"${testcvs} -d ${TESTDIR}/crerepos co cvs-sanity" \
+"${PROG} [a-z]*: cannot find module .cvs-sanity. - ignored"
+
+	    # Now test that CVS works correctly without a modules file
+	    # or any of that other stuff.  In particular, it *must*
+	    # function if administrative files added to CVS recently (since
+	    # CVS 1.3) do not exist, because the repository might have
+	    # been created with an old version of CVS.
+	    mkdir tmp; cd tmp
+	    dotest crerepos-4 \
+"${testcvs} -q -d ${TESTDIR}/crerepos co CVSROOT" \
+''
+	    if echo yes | \
+${testcvs} -d ${TESTDIR}/crerepos release -d CVSROOT >>${LOGFILE}; then
+	      pass crerepos-5
+	    else
+	      fail crerepos-5
+	    fi
+	    cd ..
+
+	    # The directory tmp should be empty
+	    dotest crerepos-6 "rmdir tmp" ''
+
+	    # CVS better not create a history file--if the administrator 
+	    # doesn't need it and wants to save on disk space, they just
+	    # delete it.
+	    dotest_fail crerepos-7 \
+"test -f ${TESTDIR}/crerepos/CVSROOT/history" ''
+
+	  fi # end of tests to be skipped for remote
 	  ;;
 
 	*)
