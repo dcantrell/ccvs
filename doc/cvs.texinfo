@@ -3613,6 +3613,7 @@ copy the changes onto another branch.
 * Merging more than once::      Merging from a branch several times
 * Merging two revisions::       Merging differences between two revisions
 * Merging adds and removals::   What if files are added or removed?
+* Merging and keywords::        Avoiding conflicts due to keyword substitution
 @end menu
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -4010,6 +4011,10 @@ A conflict can result from a merge operation.  If that
 happens, you should resolve it before committing the
 new revision.  @xref{Conflicts example}.
 
+If your source files contain @sc{rcs} keywords (@pxref{Keyword substitution}),
+you might be getting more conflicts than strictly necessary.  See
+@xref{Merging and keywords}) for information on how to avoid this.
+
 The @code{checkout} command also supports the @samp{-j @var{branch}} flag.  The
 same effect as above could be achieved with this:
 
@@ -4163,6 +4168,65 @@ cvs update -jbranchtag
 After these commands are executed and a @samp{cvs commit} is done,
 file @file{a} will be removed and file @file{d} added in the main branch.
 @c (which was determined by trying it)
+
+@c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+@node Merging and keywords
+@section Merging and keywords
+@cindex Merging, and keyword substitution
+@cindex Keyword substitution, and merging
+@cindex Keyword conflicts during merge, avoiding
+@cindex -j (merging branches), and keyword substitution
+@cindex -kk, to avoid conflicts during a merge
+
+Files containing @sc{rcs} keywords (@pxref{Keyword substitution})
+can cause numerous conflicts during a merge if any of the same original files
+(files derived from the same archive file in the repository)
+have been altered and committed on both the destination branch and the
+source branch due to differing keyword strings (e.g. @samp{$@asis{}Revision: 1.2 $}
+and @samp{$@asis{}Revision: 1.1.2.1 $}) in the two copies of the file.
+
+This can be avoided by adding the @code{-kk}
+(@pxref{Substitution modes}) switch to the merge command line but
+this overrides any sticky options attached to the working copy of the file
+or present in the @sc{rcs} archive file (such as @samp{-kb} for binary
+files).  This can cause severe problems if any binary files with @sc{rcs}
+keyword strings are included in the merge.
+
+In other words, forcing identical strings to be substituted for keywords
+by keyword type will avoid keyword conflicts during a merge.
+Unchanged binary files will undergo the same keyword substitution
+but will not be checked in on a subsequent
+@code{cvs commit}.  Be aware that binary files containing @sc{rcs} keyword
+strings which are present in or below the working directory
+will most likely remain corrupt until repaired, however.  A simple 
+@code{cvs update -A} is sufficient to fix these otherwise unaltered binary files
+if the merge is being done to the main branch but
+this must be done after the merge has been committed or the merge itself
+will be lost.
+
+@cindex Branch merge example, avoiding keyword conflicts
+@cindex Example, branch merge, avoiding keyword conflicts
+@cindex Merge avoiding keyword conflicts, branch example
+For Example:
+@example
+cvs update -Akk -jbranchtag
+cvs commit
+cvs update -A
+@end example
+
+@noindent
+will update the current directory from the main trunk of the
+repository, substituting the base keyword strings for keywords,
+and merge changes made on the branch @samp{branchtag} into the new
+work files, performing the same keyword substitution on that file set before
+comparing the two sets.  The final @code{cvs update -A} will restore any
+corrupted binary files as well as resetting the sticky @samp{-kk} tags which
+were present on the files in and below the working directory.
+Unfortunately, this doesn't work as well with an arbitrary branch tag, as the
+@samp{-r @var{branchtag}} switch does not reset the sticky @samp{-kk}
+switches attached to the working files as @samp{-A} does.  The workaround
+for this is to release the working directory after the merge has been
+committed and check it out again.
 
 @c ---------------------------------------------------------------------
 @node Recursive behavior
@@ -6547,6 +6611,7 @@ and @code{troff} you can embed the null-character
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node Substitution modes
 @section Substitution modes
+@cindex Keyword substitution, changing modes
 @cindex -k (keyword substitution)
 @cindex Kflag
 
@@ -6559,7 +6624,7 @@ option to @code{cvs add} and @code{cvs admin}; the
 latter is set by the @samp{-k} or @samp{-A} options to @code{cvs
 checkout} or @code{cvs update}.  @code{cvs diff} also
 has a @samp{-k} option.  For some examples,
-see @ref{Binary files}.
+see @ref{Binary files} and @ref{Merging and keywords}.
 @c The fact that -A is overloaded to mean both reset
 @c sticky options and reset sticky tags/dates is
 @c somewhat questionable.  Perhaps there should be
@@ -6595,7 +6660,7 @@ keyword, generate the string @code{$@asis{}Revision$}
 instead of @code{$@asis{}Revision: 5.7 $}.  This option
 is useful to ignore differences due to keyword
 substitution when comparing different revisions of a
-file.
+file (@pxref{Merging and keywords}).
 
 @item -ko
 Generate the old keyword string, present in the working
