@@ -3321,7 +3321,7 @@ server_cleanup (sig)
     /* This might be set by the user in ~/.bashrc, ~/.cshrc, etc.  */
     temp_dir = getenv ("TMPDIR");
     if (temp_dir == NULL || temp_dir[0] == '\0')
-        temp_dir = "/usr/tmp";
+        temp_dir = "/tmp";
     chdir(temp_dir);
 
     len = strlen (server_temp_dir) + 80;
@@ -3397,7 +3397,7 @@ error ENOMEM Virtual memory exhausted.\n");
 	/* This might be set by the user in ~/.bashrc, ~/.cshrc, etc.  */
 	char *temp_dir = getenv ("TMPDIR");
 	if (temp_dir == NULL || temp_dir[0] == '\0')
-	    temp_dir = "/usr/tmp";
+	    temp_dir = "/tmp";
 
 	server_temp_dir = malloc (strlen (temp_dir) + 80);
 	if (server_temp_dir == NULL)
