@@ -1,5 +1,12 @@
 2004-10-06  Derek Price  <derek@ximbiot.com>
 
+	* Makefile.am (libcvs_a_SOURCES): Move getline, getnline, & getndelim2
+	sources to their own sections.
+	* getline.c, getndelim2.c, getndelim2.h, getnline.c, getnline.h: Update
+	from GNULIB.
+
+2004-10-06  Derek Price  <derek@ximbiot.com>
+
 	* .cvsignore: Add getopt.h.
 
 2004-10-06  Derek Price  <derek@ximbiot.com>
