@@ -19,10 +19,6 @@ the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 
 #include "diff.h"
 
-#ifndef PR_PROGRAM
-#define PR_PROGRAM "/bin/pr"
-#endif
-
 /* Queue up one-line messages to be printed at the end,
    when -l is specified.  Each message is recorded with a `struct msg'.  */
 
@@ -188,7 +184,9 @@ begin_output ()
     {
       /* Make OUTFILE a pipe to a subsidiary `pr'.  */
 
-#if HAVE_FORK
+#ifdef PR_PROGRAM
+
+# if HAVE_FORK
       int pipes[2];
 
       if (pipe (pipes) != 0)
@@ -220,7 +218,7 @@ begin_output ()
 	  if (!outfile)
 	    pfatal_with_name ("fdopen");
 	}
-#else /* ! HAVE_FORK */
+# else /* ! HAVE_FORK */
       char *command = xmalloc (4 * strlen (name) + strlen (PR_PROGRAM) + 10);
       char *p;
       char const *a = name;
@@ -232,7 +230,10 @@ begin_output ()
       if (!outfile)
 	pfatal_with_name (command);
       free (command);
-#endif /* ! HAVE_FORK */
+# endif /* ! HAVE_FORK */
+#else
+      fatal ("This port does not support the --paginate option to diff.");
+#endif
     }
   else
     {
