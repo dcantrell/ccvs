@@ -1,3 +1,9 @@
+Thu Apr 27 12:52:28 1995  Jim Blandy  <jimb@totoro.bio.indiana.edu>
+
+	* client.c (start_rsh_server): If the CVS_RSH environment variable
+	is set, use its contents as the name of the program to invoke
+	instead of `rsh'.
+
 Thu Apr 27 12:18:38 1995  Noel Cragg  <noel@vo.com>
 
 	* checkout.c (checkout): To fix new bug created by Apr 23 change,
