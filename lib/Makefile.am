@@ -162,6 +162,9 @@ stdbool.h: stdbool_.h
 	mv $@-t $@
 MOSTLYCLEANFILES += stdbool.h stdbool.h-t
 
+## For GNULIB's strcase module.
+libcvs_a_SOURCES += strcase.h
+
 ## For GNULIB's time_r module.
 libcvs_a_SOURCES += time_r.h
 

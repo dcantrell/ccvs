@@ -1,5 +1,10 @@
 2004-10-06  Derek Price  <derek@ximbiot.com>
 
+	* Makefile.am (libcvs_a_SOURCES): Add strcase.h.
+	* strcase.h, strcasecmp.c, strncasecmp.c: New files from GNULIB.
+
+2004-10-06  Derek Price  <derek@ximbiot.com>
+
 	* gethostname.c: Update from gnulib.
 
 2004-10-06  Derek Price  <derek@ximbiot.com>
