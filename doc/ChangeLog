@@ -1,3 +1,8 @@
+2004-06-07  Derek Price  <derek@ximbiot.com>
+
+	* cvs.texinfo (Write proxies): New node.
+	(config): Note new PrimaryServer option.
+
 2004-06-04  Derek Price  <derek@ximbiot.com>
 
 	* writeproxy.rtf: Documentation for new writeproxy design.
