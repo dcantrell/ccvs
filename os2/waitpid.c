@@ -15,13 +15,13 @@ pid_t waitpid (pid, statusp, options)
      int *statusp;
      int options;
 {
-  int *local_statusp;
+  int local_statusp;
   pid_t rc;
 
   /* We don't know how to deal with any options yet.  */
   assert (options == 0);
   
-  rc = _cwait (local_statusp, pid, WAIT_CHILD);
+  rc = _cwait (&local_statusp, pid, WAIT_CHILD);
   
   /* 
    * We only want the least-significant byte of the status, since the
@@ -30,7 +30,8 @@ pid_t waitpid (pid, statusp, options)
    * Since gzip appears to exit with status 1 even after everything
    * goes right, this is how we deal.  Ick.
    */
-  *statusp = (char) *local_statusp;
+  if (statusp)
+	  *statusp = (char) local_statusp;
 
   if (rc == -1)
     {
