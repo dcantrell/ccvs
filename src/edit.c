@@ -61,12 +61,15 @@ watch_onoff (argc, argv)
     int err;
 
     optind = 1;
-    while ((c = getopt (argc, argv, "+l")) != -1)
+    while ((c = getopt (argc, argv, "+lR")) != -1)
     {
 	switch (c)
 	{
 	    case 'l':
 		local = 1;
+		break;
+	    case 'R':
+		local = 0;
 		break;
 	    case '?':
 	    default:
@@ -328,8 +331,9 @@ edit_fileproc (callerdat, finfo)
 
 static const char *const edit_usage[] =
 {
-    "Usage: %s %s [-l] [files...]\n",
+    "Usage: %s %s [-lR] [files...]\n",
     "-l: Local directory only, not recursive\n",
+    "-R: Process directories recursively\n",
     "-a: Specify what actions for temporary watch, one of\n",
     "    edit,unedit,commit,all,none\n",
     NULL
@@ -353,12 +357,15 @@ edit (argc, argv)
     setting_tunedit = 0;
     setting_tcommit = 0;
     optind = 1;
-    while ((c = getopt (argc, argv, "+la:")) != -1)
+    while ((c = getopt (argc, argv, "+lRa:")) != -1)
     {
 	switch (c)
 	{
 	    case 'l':
 		local = 1;
+		break;
+	    case 'R':
+		local = 0;
 		break;
 	    case 'a':
 		a_omitted = 0;
@@ -485,12 +492,15 @@ unedit (argc, argv)
 	usage (edit_usage);
 
     optind = 1;
-    while ((c = getopt (argc, argv, "+l")) != -1)
+    while ((c = getopt (argc, argv, "+lR")) != -1)
     {
 	switch (c)
 	{
 	    case 'l':
 		local = 1;
+		break;
+	    case 'R':
+		local = 0;
 		break;
 	    case '?':
 	    default:
@@ -902,8 +912,9 @@ notify_check (repository, update_dir)
 
 static const char *const editors_usage[] =
 {
-    "Usage: %s %s [-l] [files...]\n",
+    "Usage: %s %s [-lR] [files...]\n",
     "\t-l\tProcess this directory only (not recursive).\n",
+    "\t-R\tProcess directories recursively.\n",
     NULL
 };
 
@@ -972,12 +983,15 @@ editors (argc, argv)
 	usage (editors_usage);
 
     optind = 1;
-    while ((c = getopt (argc, argv, "+l")) != -1)
+    while ((c = getopt (argc, argv, "+lR")) != -1)
     {
 	switch (c)
 	{
 	    case 'l':
 		local = 1;
+		break;
+	    case 'R':
+		local = 0;
 		break;
 	    case '?':
 	    default:
