@@ -607,17 +607,21 @@ When the client is done, it drops the connection.
 @section Responses
 
 After a command which expects a response, the server sends however many
-of the following responses are appropriate.  Pathnames are of the actual
-files operated on (i.e. they do not contain @samp{,v} endings), and are
-suitable for use in a subsequent @code{Repository} request.  However, if
-the client has used the @code{Directory} request, then it is instead a
-local directory name relative to the directory in which the command was
-given (i.e. the last @code{Directory} before the command).  Then a
-newline and a repository name (the pathname which is sent if
-@code{Directory} is not used).  Then the slash and the filename.  For
-example, for a file @file{i386.mh} which is in the local directory
-@file{gas.clean/config} and for which the repository is
-@file{/rel/cvsfiles/devo/gas/config}:
+of the following responses are appropriate.  The server should not send
+data at other times (the current implementation may violate this
+principle in a few minor places, where the server is printing an error
+message and exiting---this should be investigated further).
+
+Pathnames are of the actual files operated on (i.e. they do not contain
+@samp{,v} endings), and are suitable for use in a subsequent
+@code{Repository} request.  However, if the client has used the
+@code{Directory} request, then it is instead a local directory name
+relative to the directory in which the command was given (i.e. the last
+@code{Directory} before the command).  Then a newline and a repository
+name (the pathname which is sent if @code{Directory} is not used).  Then
+the slash and the filename.  For example, for a file @file{i386.mh}
+which is in the local directory @file{gas.clean/config} and for which
+the repository is @file{/rel/cvsfiles/devo/gas/config}:
 
 @example
 gas.clean/config/
