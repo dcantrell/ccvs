@@ -5577,6 +5577,10 @@ serve_command_prep (char *arg)
 static void serve_valid_requests (char *arg);
 
 #endif /* SERVER_SUPPORT */
+/*
+ * Comment to move position of the following #if line which works
+ * around an apparent bug in Microsoft Visual C++ 6.0 compiler.
+ */
 #if defined(SERVER_SUPPORT) || defined(CLIENT_SUPPORT)
 /*
  * Parts of this table are shared with the client code,
