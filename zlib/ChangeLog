@@ -1,5 +1,9 @@
 2004-04-15  Derek Price  <derek@ximbiot.com>
 
+	* Makefile.in (DISTFILES): Add zlib.dep.
+
+2004-04-15  Derek Price  <derek@ximbiot.com>
+
 	* zlib.dep: New generated file.
 	* zlib.mak: Regenerated.
 	(Patch from Conrad T. Pino <conrad@pino.com>.)
