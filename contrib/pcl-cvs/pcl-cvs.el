@@ -913,7 +913,7 @@ This function returns the last cons-cell in the list that is built."
 	 ;; End of RCVS stuff.
 
 	 ;; CVS is descending a subdirectory.
-	 ;; (The "server" case is there to support Cygnus's Remote CVS.)
+	 ;; (The "server" case is there to support Cyclic CVS.)
 	 ((looking-at "cvs \\(update\\|server\\): Updating \\(.*\\)$")
 	  (setq current-dir
 		(cvs-get-current-dir
@@ -1025,7 +1025,7 @@ second party")
 			   (buffer-substring start (point)))))
 	    (setq head (cdr head))))
 
-	 ;; Ignore other messages from Cygnus's Remote CVS.
+	 ;; Ignore other messages from Cyclic CVS.
 	 ((looking-at "cvs server:")
 	  (forward-line 1))
 
@@ -1156,9 +1156,8 @@ This function doesn't return anything particular."
 			      ((eq c ?R) 'REMOVED)
 			      ((eq c ?C) 'CONFLICT)
 			      ((eq c ?U) 'UPDATED)
-			      ;; generated when Cygnus remote CVS
-			      ;; sends a patch instead of the full
-			      ;; file:
+			      ;; generated when Cyclic CVS sends a
+			      ;; patch instead of the full file:
 			      ((eq c ?P) 'UPDATED)
 			      ((eq c ??) 'UNKNOWN))
 			(substring (file-name-directory full-path) 0 -1)
