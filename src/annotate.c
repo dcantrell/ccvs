@@ -74,9 +74,10 @@ annotate (int argc, char **argv)
 		local = 0;
 		break;
 	    case 'r':
-	        tag = optarg;
+		parse_tagdate (&tag, &date, optarg);
 		break;
 	    case 'D':
+		if (date) free (date);
 	        date = Make_Date (optarg);
 		break;
 	    case 'f':
@@ -256,14 +257,13 @@ annotate_fileproc (void *callerdat, struct file_info *finfo)
     char *expand, *version;
 
     if (finfo->rcs == NULL)
-        return (1);
+        return 1;
 
     if (finfo->rcs->flags & PARTIAL)
-        RCS_reparsercsfile (finfo->rcs, (FILE **) NULL, (struct rcsbuffer *) NULL);
+        RCS_reparsercsfile (finfo->rcs, NULL, NULL);
 
     expand = RCS_getexpand (finfo->rcs);
-    version = RCS_getversion (finfo->rcs, tag, date, force_tag_match,
-			      (int *) NULL);
+    version = RCS_getversion (finfo->rcs, tag, date, force_tag_match, NULL);
 
     if (version == NULL)
         return 0;
@@ -280,7 +280,7 @@ annotate_fileproc (void *callerdat, struct file_info *finfo)
     }
     else
     {
-	RCS_deltas (finfo->rcs, (FILE *) NULL, (struct rcsbuffer *) NULL,
+	RCS_deltas (finfo->rcs, NULL, NULL,
 		    version, RCS_ANNOTATE, NULL, NULL, NULL, NULL);
     }
     free (version);
