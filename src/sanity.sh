@@ -3221,6 +3221,10 @@ add
 
 	join)
 	  # Test doing joins which involve adding and removing files.
+	  #   Variety of scenarios (see list below), in the context of:
+	  #     * merge changes from T1 to T2 into the main line
+	  #     * merge changes from branch 'branch' into the main line
+	  #     * merge changes from branch 'branch' into branch 'br2'.
 	  # See also binfile2, which does similar things with binary files.
 	  # See also join2, which tests joining (and update -A) on only
 	  # a single file, rather than a directory.
@@ -3575,7 +3579,44 @@ M file2
 R file3
 M file4'
 
+	  cd ..
+
+	  # Checkout the main line again and make a new branch which we
+	  # merge to.
+	  rm -r first-dir
+	  dotest join-25 "${testcvs} -q co first-dir" \
+'U first-dir/file2
+U first-dir/file3
+U first-dir/file4
+U first-dir/file7'
+	  cd first-dir
+	  dotest join-26 "${testcvs} -q tag -b br2" \
+"T file2
+T file3
+T file4
+T file7"
+	  dotest join-27 "${testcvs} -q update -r br2" ""
+	  # The handling of file8 here looks fishy to me.  I don't see
+	  # why it should be different from the case where we merge to
+	  # the trunk (e.g. join-23).
+	  dotest join-28 "${testcvs} -q update -j branch" \
+"U file1
+RCS file: /home/kingdon/tmp/cvs-sanity/cvsroot/first-dir/file2,v
+retrieving revision 1.1
+retrieving revision 1.1.2.1
+Merging differences between 1.1 and 1.1.2.1 into file2
+${PROG} [a-z]*: scheduling file3 for removal
+${PROG} [a-z]*: file file4 has been modified, but has been removed in revision branch
+U file8"
+	  # Verify that the right changes have been scheduled.
+	  dotest join-29 "${testcvs} -q update" \
+"A file1
+M file2
+R file3
+A file8"
+
 	  cd ../..
+
 	  rm -r 1 2 3
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
 	  ;;
