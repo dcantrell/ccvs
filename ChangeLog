@@ -1,3 +1,7 @@
+Tue Jul  9 14:37:41 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* HACKING: Expand comments on portability.
+
 Sun Jul  7 23:21:02 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* configure.in (AC_REPLACE_FUNCS): Remove memmove; it was used by
