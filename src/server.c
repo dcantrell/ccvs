@@ -3135,6 +3135,8 @@ server_modtime (finfo, vers_ts)
       {"Jan", "Feb", "Mar", "Apr", "May", "Jun",
 	 "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
 
+    assert (vers_ts->vn_rcs != NULL);
+
     if (!supported_response ("Mod-time"))
 	return;
 
