@@ -1527,8 +1527,9 @@ rcsbuf_getid (rcsbuf, idp)
 /* Read an RCS @-delimited string.  Store the result in STRP. */
 
 static int
-rcsbuf_getstring (rcsbuf, strp)
+rcsbuf_getstring (rcsbuf, keyp, strp)
     struct rcsbuffer *rcsbuf;
+    char **keyp;
     char **strp;
 {
     register const char * const my_spacetab = spacetab;
@@ -1550,37 +1551,13 @@ rcsbuf_getstring (rcsbuf, strp)
     if (ptr < rcsbuf_buffer || ptr > rcsbuf_buffer + rcsbuf_buffer_size)
 	abort ();
 
-    /* If the pointer is more than RCSBUF_BUFSIZE bytes into the
-       buffer, move back to the start of the buffer.  This keeps the
-       buffer from growing indefinitely.  */
-    if (ptr - rcsbuf_buffer >= RCSBUF_BUFSIZE)
-    {
-	int len;
-
-	len = ptrend - ptr;
-
-	/* Sanity check: we don't read more than RCSBUF_BUFSIZE bytes
-           at a time, so we can't have more bytes than that past PTR.  */
-	if (len > RCSBUF_BUFSIZE)
-	    abort ();
-
-	/* Update the POS field, which holds the file offset of the
-           first byte in the RCSBUF_BUFFER buffer.  */
-	rcsbuf->pos += ptr - rcsbuf_buffer;
-
-	memcpy (rcsbuf_buffer, ptr, len);
-	ptr = rcsbuf_buffer;
-	ptrend = ptr + len;
-	rcsbuf->ptrend = ptrend;
-    }
-
     /* Skip leading whitespace.  */
 
     while (1)
     {
 	if (ptr >= ptrend)
 	{
-	    ptr = rcsbuf_fill (rcsbuf, ptr, (char **) NULL, (char **) NULL);
+	    ptr = rcsbuf_fill (rcsbuf, ptr, keyp, (char **) NULL);
 	    if (ptr == NULL)
 		error (1, 0, "unexpected end of file reading %s",
 		       rcsbuf->filename);
@@ -1616,7 +1593,7 @@ rcsbuf_getstring (rcsbuf, strp)
 	       rcsbuf_fill, so that we will wind up setting PTR to
 	       the location corresponding to the old PTREND, so
 	       that we don't search the same bytes again.  */
-	    ptr = rcsbuf_fill (rcsbuf, ptrend, NULL, strp);
+	    ptr = rcsbuf_fill (rcsbuf, ptrend, keyp, strp);
 	    if (ptr == NULL)
 		error (1, 0,
 		       "EOF while looking for end of string in RCS file %s",
@@ -1629,7 +1606,7 @@ rcsbuf_getstring (rcsbuf, strp)
 	if (pat + 1 >= ptrend)
 	{
 	    /* Note that we pass PAT, not PTR, here.  */
-	    pat = rcsbuf_fill (rcsbuf, pat, NULL, strp);
+	    pat = rcsbuf_fill (rcsbuf, pat, keyp, strp);
 	    if (pat == NULL)
 	    {
 		/* EOF here is OK; it just means that the last
@@ -1673,8 +1650,9 @@ rcsbuf_getstring (rcsbuf, strp)
    `;' is reached without reading any text, the result is NULL. */
 
 static int
-rcsbuf_getword (rcsbuf, wordp)
+rcsbuf_getword (rcsbuf, keyp, wordp)
     struct rcsbuffer *rcsbuf;
+    char **keyp;
     char **wordp;
 {
     register const char * const my_spacetab = spacetab;
@@ -1694,37 +1672,13 @@ rcsbuf_getword (rcsbuf, wordp)
     if (ptr < rcsbuf_buffer || ptr > rcsbuf_buffer + rcsbuf_buffer_size)
 	abort ();
 
-    /* If the pointer is more than RCSBUF_BUFSIZE bytes into the
-       buffer, move back to the start of the buffer.  This keeps the
-       buffer from growing indefinitely.  */
-    if (ptr - rcsbuf_buffer >= RCSBUF_BUFSIZE)
-    {
-	int len;
-
-	len = ptrend - ptr;
-
-	/* Sanity check: we don't read more than RCSBUF_BUFSIZE bytes
-           at a time, so we can't have more bytes than that past PTR.  */
-	if (len > RCSBUF_BUFSIZE)
-	    abort ();
-
-	/* Update the POS field, which holds the file offset of the
-           first byte in the RCSBUF_BUFFER buffer.  */
-	rcsbuf->pos += ptr - rcsbuf_buffer;
-
-	memcpy (rcsbuf_buffer, ptr, len);
-	ptr = rcsbuf_buffer;
-	ptrend = ptr + len;
-	rcsbuf->ptrend = ptrend;
-    }
-
     /* Skip leading whitespace.  */
 
     while (1)
     {
 	if (ptr >= ptrend)
 	{
-	    ptr = rcsbuf_fill (rcsbuf, ptr, (char **) NULL, (char **) NULL);
+	    ptr = rcsbuf_fill (rcsbuf, ptr, keyp, (char **) NULL);
 	    if (ptr == NULL)
 		error (1, 0, "unexpected end of file reading %s",
 		       rcsbuf->filename);
@@ -1780,7 +1734,7 @@ rcsbuf_getword (rcsbuf, wordp)
                    rcsbuf_fill, so that we will wind up setting PTR to
                    the location corresponding to the old PTREND, so
                    that we don't search the same bytes again.  */
-		ptr = rcsbuf_fill (rcsbuf, ptrend, NULL, wordp);
+		ptr = rcsbuf_fill (rcsbuf, ptrend, keyp, wordp);
 		if (ptr == NULL)
 		    error (1, 0,
 			   "EOF while looking for end of string in RCS file %s",
@@ -1793,7 +1747,7 @@ rcsbuf_getword (rcsbuf, wordp)
 	    if (pat + 1 >= ptrend)
 	    {
 		/* Note that we pass PAT, not PTR, here.  */
-		pat = rcsbuf_fill (rcsbuf, pat, NULL, wordp);
+		pat = rcsbuf_fill (rcsbuf, pat, keyp, wordp);
 		if (pat == NULL)
 		{
 		    /* EOF here is OK; it just means that the last
@@ -1843,7 +1797,7 @@ rcsbuf_getword (rcsbuf, wordp)
     {
 	if (ptr >= ptrend)
 	{
-	    ptr = rcsbuf_fill (rcsbuf, ptr, (char **) NULL, wordp);
+	    ptr = rcsbuf_fill (rcsbuf, ptr, keyp, wordp);
 	    if (ptr == NULL)
 		error (1, 0, "unexpected end of file reading %s",
 		       rcsbuf->filename);
@@ -7689,7 +7643,7 @@ getdelta (rcsbuf, rcsfile, keyp, valp)
     char **valp;
 {
     RCSVers *vnode;
-    char *key, *value, *keybuf, *valbuf, *cp;
+    char *key, *value, *valbuf, *cp;
     Node *kv;
 
     /* Get revision number if it wasn't passed in. This uses
@@ -7807,40 +7761,38 @@ unable to parse %s; `state' not in the expected place", rcsfile);
      */
     while (1)
     {
-	int len;
+	int keylen;
 	size_t valbuflen;
 
 	key = NULL;
 
-	if (! rcsbuf_getid (rcsbuf, &keybuf))
+	if (! rcsbuf_getid (rcsbuf, &key))
 	    error (1, 0, "unexpected end of file reading %s", rcsfile);
 
-	/* rcsbuf_getid did not terminate the key, so copy it to new space. */
-	len = rcsbuf->ptr - keybuf;
-	key = (char *) xmalloc (len + 1);
-	strncpy (key, keybuf, len);
-	key[len] = '\0';
+	/* rcsbuf_getid did not terminate the key, so remember its length. */
+	keylen = rcsbuf->ptr - key;
 
 	/* The `desc' keyword has only a single string value, with no
 	   trailing semicolon, so it must be handled specially. */
-	if (STREQ (key, RCSDESC))
+	if (strncmp (key, RCSDESC, keylen) == 0)
 	{
-	    (void) rcsbuf_getstring (rcsbuf, &valbuf);
+	    (void) rcsbuf_getstring (rcsbuf, &key, &valbuf);
 	    value = rcsbuf_valcopy (rcsbuf, valbuf, 1, &valbuflen);
+	    key[keylen] = '\0';
 	    break;
 	}
 
 #ifdef PRESERVE_PERMISSIONS_SUPPORT
 	/* The `hardlinks' value is a group of words, which must
 	   be parsed separately and added as a list to vnode->hardlinks. */
-	if (STREQ (key, "hardlinks"))
+	if (strncmp (key, "hardlinks", keylen) == 0)
 	{
 	    Node *n;
 
 	    vnode->hardlinks = getlist();
 	    while (1)
 	    {
-		if (! rcsbuf_getword (rcsbuf, &valbuf))
+		if (! rcsbuf_getword (rcsbuf, &key, &valbuf))
 		    error (1, 0, "unexpected end of file reading %s", rcsfile);
 		if (valbuf == NULL)
 		    break;
@@ -7856,7 +7808,7 @@ unable to parse %s; `state' not in the expected place", rcsfile);
 	value = NULL;
 	while (1)
 	{
-	    if (! rcsbuf_getword (rcsbuf, &valbuf))
+	    if (! rcsbuf_getword (rcsbuf, &key, &valbuf))
 		error (1, 0, "unexpected end of file reading %s", rcsfile);
 	    if (valbuf == NULL)
 		break;
@@ -7871,6 +7823,7 @@ unable to parse %s; `state' not in the expected place", rcsfile);
 	    else
 	    {
 		char *temp_value;
+		int len;
 
 		temp_value = rcsbuf_valcopy (rcsbuf, valbuf, 1, &valbuflen);
 		len = strlen (value);
@@ -7880,6 +7833,9 @@ unable to parse %s; `state' not in the expected place", rcsfile);
 		free (temp_value);
 	    }
 	}
+
+	/* Now terminate key */
+	key[keylen] = '\0';
 
 	/* Enable use of repositories created by certain obsolete
 	   versions of CVS.  This code should remain indefinately;
@@ -7910,7 +7866,7 @@ unable to parse %s; `state' not in the expected place", rcsfile);
 	    vnode->other_delta = getlist ();
 	kv = getnode ();
 	kv->type = RCSFIELD;
-	kv->key = key;
+	kv->key = xstrdup (key);
 	kv->data = value;
 	if (addnode (vnode->other_delta, kv) != 0)
 	{
