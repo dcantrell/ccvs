@@ -1,3 +1,8 @@
+Wed Oct 18 12:51:33 1995  Karl Fogel  <kfogel@floss.cyclic.com>
+
+        * main.c (main): check if argv[0] is "pserver" with else-if, not
+        if, since we've already asked if it's "kserver".
+
 Tue Oct 17 18:09:23 1995  Warren Jones <wjones@tc.fluke.com>
 			  and Jim Kingdon  <kingdon@harvey.cyclic.com>
 
