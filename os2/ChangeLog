@@ -1,3 +1,7 @@
+Sun Dec 17 21:16:17 1995  Karl Fogel  <kfogel@floss.cyclic.com>
+
+        * options.h (NO_SOCKET_TO_FD): define to 1.
+
 Sat Dec 16 21:31:02 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
         * run.c: mark unimplemented routines more clearly.  Hopefully I'll
