@@ -4896,11 +4896,21 @@ send_dirent_proc (callerdat, dir, repository, update_dir, entries)
     }
     else
     {
+	/* It doesn't make sense to send a non-existent directory,
+	   because there is no way to get the correct value for
+	   the repository (I suppose maybe via the expand-modules
+	   request).  In the case where the "obvious" choice for
+	   repository is correct, the server can figure out whether
+	   to recreate the directory; in the case where it is wrong
+	   (that is, does not match what modules give us), we might as
+	   well just fail to recreate it.
+
+	   Checking for noexec is a kludge for "cvs -n add dir".  */
 	/* Don't send a non-existent directory unless we are building
            new directories (build_dirs is true).  Otherwise, CVS may
            see a D line in an Entries file, and recreate a directory
            which the user removed by hand.  */
-	if (args->build_dirs)
+	if (args->build_dirs && noexec)
 	    send_a_repository (dir, repository, update_dir);
     }
 
