@@ -3,6 +3,8 @@ Changes since 1.12.6:
 
 GENERAL USER ISSUES
 
+* The Windows build files have been regenerated with MS Visual C++ 6.0.
+
 * CVS on Cygwin no longer converts back slashes in paths into forward slashes.
 
 * A memory allocation bug on Windows that could cause at least executions of
