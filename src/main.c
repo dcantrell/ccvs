@@ -421,21 +421,7 @@ main (argc, argv)
 	command_name = cm->fullname;	/* Global pointer for later use */
 
 
-    /* Now we have a valid command name; this saves us the trouble of
-       going through any of the following work only to find out that
-       we had a bad command name to begin with.
-
-       If the `-H' option is specified to any command, we want to make
-       sure that it ALWAYS works, regardless of CVSROOT screw-ups.
-       Check for it. */
-
-    optind = 1;			/* initialize current option */
-    opterr = 0;			/* inhibit error messages */
-    while ((c = getopt_long (argc, argv, "H", NULL, NULL)) != EOF)
-	if (c == 'H')
-	    break;
-
-    if (help || (c == 'H'))
+    if (help)
 	argc = -1;		/* some functions only check for this */
     else
     {
