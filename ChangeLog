@@ -1,5 +1,12 @@
 2003-05-20  Derek Price  <derek@ximbiot.com>
 
+	* INSTALL: Using Autoconf version 2.57.
+	* NEWS: Ditto.  Reorder NEWS items to put the stuff which it is likely
+	that only developers care about last.
+	* configure: Regenerated with Autoconf 2.57.
+
+2003-05-20  Derek Price  <derek@ximbiot.com>
+
 	* BUGS: Remove note about build being broken on windows.  That was
 	fixed a few commits back.
 
