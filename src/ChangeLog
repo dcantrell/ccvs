@@ -1,3 +1,8 @@
+2005-02-28  Derek Price  <derek@ximbiot.com>
+
+	* root.c (parse_root): Trigger a later error message rather than
+	maintaining two copies.
+
 2005-02-27  Mark D. Baushke  <mdb@cvshome.org>
 
 	* client.c (connect_to_pserver): Use TRACE_FUNCTION, not 1 in
