@@ -281,7 +281,9 @@ serve_root (arg)
     if (access (path, R_OK | X_OK))
     {
 	save_errno = errno;
-	printf ("E Cannot access %s\n", path);
+	pending_error_text = malloc (80 + strlen (path));
+	if (pending_error_text != NULL)
+	    sprintf (pending_error_text, "E Cannot access %s", path);
 	pending_error = save_errno;
     }
     (void) strcat (path, "/");
@@ -289,7 +291,9 @@ serve_root (arg)
     if (isfile (path) && access (path, R_OK | W_OK))
     {
 	save_errno = errno;
-	printf ("E \
+	pending_error_text = malloc (80 + strlen (path));
+	if (pending_error_text != NULL)
+	    sprintf (pending_error_text, "E \
 Sorry, you don't have read/write access to the history file %s", path);
 	pending_error = save_errno;
     }
@@ -3271,6 +3275,8 @@ serve_valid_requests (arg)
      char *arg;
 {
     struct request *rq;
+    if (print_pending_error ())
+	return;
     printf ("Valid-requests");
     for (rq = requests; rq->name != NULL; rq++)
 	if (rq->func != NULL)

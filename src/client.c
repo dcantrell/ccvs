@@ -2417,19 +2417,11 @@ start_rsh_server (tofdp, fromfdp)
 			     + strlen (server_cvsroot)
 			     + 50);
 
-	  /*
-	   * The -d here is really cheesy, because it is redundant
-	   * with the Root request, inconsistent with how we do things
-	   * when we aren't using rsh, and the code in main.c which
-	   * prints an error on a bad root just writes to stderr
-	   * rather than using the protocol.
-	   * 
-	   * But I'm leaving it in for now because old (Nov 3, 1994)
-	   * versions of the server say "`cvs server' is for internal
-	   * use--don't use it directly" if you try to start them up
-	   * without -d and your .bashrc sets CVSROOT to something
-	   * containing a colon.  */
-	  sprintf (command, "%s -d %s server", cvs_server, server_cvsroot);
+	  /* If you are running a very old (Nov 3, 1994)
+	   * version of the server, you need to make sure that your .bashrc
+	   * on the server machine does not set CVSROOT to something
+	   * containing a colon (or better yet, upgrade the server).  */
+	  sprintf (command, "%s server", cvs_server, server_cvsroot);
 
           /* If the login names differ between client and server
            *  pass it on to rsh
