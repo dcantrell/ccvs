@@ -1149,9 +1149,6 @@ See the instructions in the @file{INSTALL} file in the
 @cindex Remote repositories
 @cindex Client/Server Operation
 
-@c I'm only documenting the rsh method, as I've never
-@c used kerberos access...
-
 The repository and your working copy of the sources can
 be on different machines.  To access a remote
 repository, use the following format for its name:
@@ -1163,35 +1160,99 @@ repository, use the following format for its name:
 (The @file{user@@} can be omitted if it's the same on
 both the local and remote hosts.)
 
+The details of exactly what needs to be set up depends
+on how you are connecting to the server.
+
+@menu
+* Connecting via rsh::          Using the rsh program to connect
+* Kerberos authenticated::      Direct connections with kerberos
+@end menu
+
+@node Connecting via rsh
+@subsection Connecting with rsh
+
+@cindex rsh
 CVS uses the @file{rsh} protocol to perform these
 operations, so the remote user host needs to have a
 @file{.rhosts} file which grants access to the local
 user.
 
 For example, suppose you are the user @file{mozart} on
-the local machine @file{anklet.grunge.com}.  You want
-to access the module @file{foo} in the repository
-@file{/usr/local/sources/}, on machine
-@file{chainsaw.brickyard.com}.
-
-        If your username is also @file{bach} on
-@file{chainsaw.brickyard.com}, then you need only type
-
-@example
-cvs -d bach@@chainsaw.brickyard.com:/user/local/sources checkout foo
-@end example
-
-        Remember, for this to work, @file{bach}'s
-@file{.rhosts} file must contain the line:
+the local machine @file{anklet.grunge.com}, and the
+server machine is @file{chainsaw.brickyard.com}.  On
+chainsaw, put the following line into the file
+@file{.rhosts} in @file{bach}'s home directory:
 
 @example
 anklet.grunge.com  mozart
 @end example
 
-        Once the working copy is checked out, it is not
-necessary to specify the repository explicitly for
-every subsequent operation --- the working copy records
-it in the @file{CVS/Root} file.
+Then test that rsh is working with
+
+@example
+rsh -l bach chainsaw.brickyard.com echo $PATH
+@end example
+
+@cindex CVS_SERVER
+Next you have to make sure that rsh will be able to
+find the server.  Make sure that the path which rsh
+printed in the above example includes the directory
+containing a program named @code{cvs} which is the
+server.  You need to set the path in @file{.bashrc},
+@file{.cshrc}, etc., not @file{.login} or
+@file{.profile}.  Alternately, you can set the
+environment variable @code{CVS_SERVER} on the client
+machine to the filename of the server you want to use,
+for example @file{/usr/local/bin/cvs-1.6}.
+
+There is no need to edit @code{inetd.conf} or start a
+@sc{cvs} server daemon.
+
+Continuing our example, supposing you want to access
+the module @file{foo} in the repository
+@file{/usr/local/sources/}, on machine
+@file{chainsaw.brickyard.com}, you are ready to go:
+
+@example
+cvs -d bach@@chainsaw.brickyard.com:/user/local/sources checkout foo
+@end example
+
+@node Kerberos authenticated
+@subsection Direct connection with kerberos
+
+@cindex kerberos
+The main disadvantage of using rsh is that all the data
+needs to pass through additional programs, so it may be
+slower.  So if you have kerberos installed you can
+connect via a direct @sc{tcp} connection,
+authenticating with kerberos (note that the data
+transmitted is @emph{not} encrypted).
+
+To do this, @sc{cvs} needs to be compiled with kerberos
+support; when configuring @sc{cvs} it tries to detect
+whether kerberos is present or you can use the
+@file{--with-krb4} flag to configure.
+
+@cindex CVS_CLIENT_PORT
+You need to edit @code{inetd.conf} on the server
+machine to run @code{cvs kserver}.  The client uses
+port 1999 by default; if you want to use another port
+specify it in the @code{CVS_CLIENT_PORT} environment
+variable on the client.  Set @code{CVS_CLIENT_PORT} to
+@samp{-1} to force an rsh connection.
+
+@cindex kinit
+When you want to use @sc{cvs}, get a ticket in the
+usual way (generally @code{kinit}); it must be a ticket
+which allows you to log into the server machine.  Then
+you are ready to go:
+
+@example
+cvs -d chainsaw.brickyard.com:/user/local/sources checkout foo
+@end example
+
+If @sc{cvs} fails to connect, it will fall back to
+trying rsh.
 
 @c ---------------------------------------------------------------------
 @node Starting a new project
