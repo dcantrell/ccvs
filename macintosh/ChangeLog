@@ -1,3 +1,8 @@
+Thu Jan  2 13:42:14 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* filesubr.c, pwd.c: Remove "675" paragraph;
+	see ../ChangeLog for rationale.
+
 Wed Jan  1 22:49:49 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* options.h: Reword comment for TMPDIR_DFLT to make it clear that
