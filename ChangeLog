@@ -1,3 +1,8 @@
+2003-03-04  Mark D Baushke <mdb@cvshome.org>
+
+	* NEWS (Changes since 1.11.5): Mention CVS_LOCAL_BRANCH_NUM 
+	environment varaible.
+
 2003-02-28  Larry Jones  <lawrence.jones@eds.com>
 
 	* TODO (206): Done in 1.11.3.
