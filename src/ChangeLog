@@ -1,4 +1,4 @@
-2000-10-11  Derek Price  <derek.price@openavenue.com>
+2000-10-12  Derek Price  <derek.price@openavenue.com>
 
 	* client.c (auth_server_port_number -> get_port_number, start_pserver,
 	start_tcp_server): use a port specified in CVSROOT instead of the
