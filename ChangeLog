@@ -1,3 +1,8 @@
+13 Jan 1998  Jim Kingdon
+
+	* cvsnt.mak: Add lib/fncase.c.  Plus of course the usual
+	"because Visual C++ feels like it" changes.
+
 Tue Jan 13 16:49:38 1998  Ian Lance Taylor  <ian@cygnus.com>
 
 	* acconfig.h (USE_SETMODE_STDOUT): Add undef line.
