@@ -1,5 +1,8 @@
 Changes since 1.12.2:
 
+* A minor problem that preveneted the correct version of a system ZLIB from
+  being detected on some platforms has been fixed.
+
 * Attempts to use the global `-l' option, removed from both client and server
   as of version 1.12.1, will now elicit a warning rather than a fatal error
   from the server.
