@@ -669,7 +669,30 @@ diff -r1\.2 -r1\.3'
 
 	basicb)
 	  # More basic tests, including non-branch tags and co -d.
-	  mkdir ${CVSROOT_DIRNAME}/first-dir
+	  mkdir 1; cd 1
+	  dotest basicb-0a "${testcvs} -q co -l ." ''
+	  touch topfile
+	  dotest basicb-0b "${testcvs} add topfile" \
+"${PROG} [a-z]*: scheduling file .topfile. for addition
+${PROG} [a-z]*: use .cvs commit. to add this file permanently"
+	  dotest basicb-0c "${testcvs} -q ci -m add-it topfile" \
+'RCS file: /tmp/cvs-sanity/cvsroot/./topfile,v
+done
+Checking in topfile;
+/tmp/cvs-sanity/cvsroot/./topfile,v  <--  topfile
+initial revision: 1\.1
+done'
+	  cd ..
+	  rm -rf 1
+	  mkdir 2; cd 2
+	  dotest basicb-0d "${testcvs} -q co -l ." "U topfile"
+	  mkdir first-dir
+	  dotest basicb-0e "${testcvs} add first-dir" \
+"Directory /tmp/cvs-sanity/cvsroot/\./first-dir added to the repository"
+	  cd ..
+	  rm -rf 2
+
+:	  mkdir ${CVSROOT_DIRNAME}/first-dir
 	  dotest basicb-1 "${testcvs} -q co first-dir" ''
 	  dotest basicb-1a "test -d CVS" ''
 	  cd first-dir

@@ -1,5 +1,8 @@
 Sun Mar  2 18:11:09 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* sanity.sh (basicb): New tests basicb-0* test for files at top
+	level.
+
 	* error.c (error): Add newline to "out of memory" message.  I think
 	that its omission probably could cause the message to be lost in
 	the bowels of server.c and never passed to the user.
