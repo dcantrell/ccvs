@@ -1,5 +1,7 @@
 Sun Mar  2 18:11:09 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* client.c (start_rsh_server): Add comment about "remsh" vs. "rsh".
+
 	* cvs.h: Move copyright notice to top of file.
 
 Sun Mar  2 13:44:36 1997  Ian Lance Taylor  <ian@cygnus.com>

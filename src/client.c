@@ -3670,6 +3670,26 @@ start_rsh_server (tofdp, fromfdp)
     char *rsh_argv[10];
 
     if (!cvs_rsh)
+	/* People sometimes suggest or assume that this should default
+	   to "remsh" on systems like HPUX in which that is the
+	   system-supplied name for the rsh program.  However, that
+	   causes various problems (keep in mind that systems such as
+	   HPUX might have non-system-supplied versions of "rsh", like
+	   a Kerberized one, which one might want to use).  If we
+	   based the name on what is found in the PATH of the person
+	   who runs configure, that would make it harder to
+	   consistently produce the same result in the face of
+	   different people producing binary distributions.  If we
+	   based it on "remsh" always being the default for HPUX
+	   (e.g. based on uname), that might be slightly better but
+	   would require us to keep track of what the defaults are for
+	   each system type, and probably would cope poorly if the
+	   existence of remsh or rsh varies from OS version to OS
+	   version.  Therefore, it seems best to have the default
+	   remain "rsh", and tell HPUX users to specify remsh, for
+	   example in CVS_RSH or other such mechanisms to be devised,
+	   if that is what they want (the manual already tells them
+	   that).  */
 	cvs_rsh = "rsh";
     if (!cvs_server)
 	cvs_server = "cvs";
