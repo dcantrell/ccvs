@@ -19,9 +19,9 @@
 #if HAVE_SYS_STAT_H
 # include <sys/stat.h>
 #endif /* HAVE_SYS_STAT_H */
+#include <stddef.h>
 #if STDC_HEADERS
 # include <stdlib.h>
-# include <stddef.h>
 #else /* ! STDC_HEADERS */
 # if HAVE_STDLIB_H
 #   include <stdlib.h>
