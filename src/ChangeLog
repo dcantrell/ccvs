@@ -1,3 +1,8 @@
+2004-07-17  Mark D. Baushke  <mdb@cvshome.org>
+
+	* status.c (status_fileproc): Print datetimes using output_cvs_tagged.
+	* sanity.sh (basic2-14): Allow for an extra blank line at the end.
+	
 2004-07-16  Derek Price  <derek@ximbiot.com>
 
 	* server.c (pamh): New global static to hold the PAM handle.

@@ -217,8 +217,21 @@ status_fileproc (void *callerdat, struct file_info *finfo)
     {
 	cvs_output ("   Working revision:\t", 0);
 	cvs_output (vers->vn_user, 0);
-	cvs_output ("\t", 0);
-	cvs_output (vers->ts_rcs, 0);
+
+	/* Only add the UTC timezone if there is a time to use. */
+	if (strlen (vers->ts_rcs) > 0)
+	{
+	    /* Convert from the asctime() format to ISO 8601 */
+	    char *buf;
+	    size_t dummy;
+
+	    cvs_output ("\t", 0);
+
+	    /* Allow conversion from CVS/Entries asctime() to ISO 8601 */
+	    buf = asnprintf (NULL, &dummy, "%s UTC", vers->ts_rcs);
+	    cvs_output_tagged ("date", buf);
+	    free (buf);
+	}
 	cvs_output ("\n", 0);
     }
 
