@@ -14,6 +14,7 @@
  */
 
 #include "cvs.h"
+#include "strftime.h"
 
 #ifdef HAVE_WINSOCK_H
 # include <winsock.h>
@@ -1201,7 +1202,7 @@ format_time_t (time_t unixtime)
     /* Convert to a time in the local time zone.  */
     struct tm ltm = *(localtime (&unixtime));
 
-    if (my_strftime (buf, sizeof (buf), "%Y-%m-%d %H:%M:%S %z", &ltm) == 0)
+    if (!my_strftime (buf, sizeof (buf), "%Y-%m-%d %H:%M:%S %z", &ltm, 0, 0))
 	return NULL;
 
     return xstrdup (buf);
@@ -1218,7 +1219,7 @@ gmformat_time_t (time_t unixtime)
     /* Convert to a time in the local time zone.  */
     struct tm ltm = *(gmtime (&unixtime));
 
-    if (my_strftime (buf, sizeof (buf), "%Y-%m-%d %H:%M:%S %z", &ltm) == 0)
+    if (!my_strftime (buf, sizeof (buf), "%Y-%m-%d %H:%M:%S %z", &ltm, 0, 0))
 	return NULL;
 
     return xstrdup (buf);

@@ -1,5 +1,10 @@
 2004-10-21 Derek Price <derek@ximbiot.com>
 
+	* main.c: #include strftime.h.
+	(format_time_t, gmformat_time_t): Supply missing args to my_strftime.
+
+2004-10-21 Derek Price <derek@ximbiot.com>
+
 	* buffer.c: Don't maintain last_index & last_count for buffers.
 	* buffer.h (struct buffer): Update struct.
 	(buf_initialize): Update proto.
