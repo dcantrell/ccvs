@@ -47,7 +47,7 @@ static char *repository;
 static int conflicts;
 static int use_file_modtime;
 static char *keyword_opt = NULL;
-static int killnew;
+static bool killnew;
 
 static const char *const import_usage[] =
 {
@@ -142,7 +142,7 @@ import (int argc, char **argv)
 		wrap_add (optarg, 0);
 		break;
 	    case 'X':
-		killnew = 1;
+		killnew = true;
 		break;
 	    case '?':
 	    default:
@@ -576,7 +576,7 @@ process_import_file (char *message, char *vfile, char *vtag, int targc, char **t
 
 	    /* If marking newly-imported files as dead, they must be
 	       created in the attic!  */
-	    if (! killnew)
+	    if (!killnew)
 	        free (attic_name);
 	    else 
 	    {
@@ -1051,7 +1051,7 @@ add_rcs_file (const char *message, const char *rcs, const char *user,
               const char *add_vhead, const char *key_opt,
               const char *add_vbranch, const char *vtag, int targc,
               char **targv, const char *desctext, size_t desclen,
-              FILE *add_logfp, int do_killnew)
+              FILE *add_logfp, bool do_killnew)
 {
     FILE *fprcs, *fpuser;
     struct stat sb;
@@ -1068,7 +1068,7 @@ add_rcs_file (const char *message, const char *rcs, const char *user,
     char *dead_revision = NULL;
 
     if (noexec)
-	return (0);
+	return 0;
 
     if (do_killnew)
     {
@@ -1388,7 +1388,7 @@ add_rcs_file (const char *message, const char *rcs, const char *user,
 
 	/* Now copy over the contents of the file, expanding at signs.
 	   If preserve_perms is set, do this only for regular files. */
-	if (! do_killnew)
+	if (!do_killnew)
 	{
             /* Now copy over the contents of the file, expanding at signs,
 	       if not done as part of do_killnew handling above.  */
