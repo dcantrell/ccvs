@@ -972,7 +972,8 @@ depends_on_rsync ()
   done
 
   if test -f "$RSYNC" && test -r "$RSYNC" \
-     && $RSYNC -gopr --delete $TESTDIR/rsync-test/ $TESTDIR/rsync-test-copy
+     && $RSYNC -gopr --delete $TESTDIR/rsync-test/ $TESTDIR/rsync-test-copy \
+	       >/dev/null 2>&1
   then
     # good, it works
     rm -r $TESTDIR/rsync-test $TESTDIR/rsync-test-copy
