@@ -57,7 +57,7 @@ static const char spacetab[] = {
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0  /* 0xf0 - 0xff */
 };
 
-#define whitespace(c)	(spacetab[c] != 0)
+#define whitespace(c)	(spacetab[(unsigned char)c] != 0)
 
 /*
  * Parse all the rcs files specified and return a list
