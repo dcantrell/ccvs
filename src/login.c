@@ -159,7 +159,7 @@ login (argc, argv)
   }
     
   passfile = construct_cvspass_filename ();
-  typed_password = getpass ("Enter CVS password: ");
+  typed_password = getpass ("CVS password: ");
   typed_password = scramble (typed_password);
 
   /* Force get_cvs_password() to use this one (when the client
