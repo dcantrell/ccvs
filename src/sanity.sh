@@ -5136,6 +5136,11 @@ realmodule   NONE        first-dir/subdir a'
 	      fail 149a5
 	  fi
 
+	  dotest_fail 149b1 "${testcvs} co realmodule/a" \
+"${PROG}"' [a-z]*: module `realmodule/a'\'' is a request for a file in a module which is not a directory' \
+"${PROG}"' [a-z]*: module `realmodule/a'\'' is a request for a file in a module which is not a directory
+'"${PROG}"' \[[a-z]* aborted\]: cannot expand modules'
+
 	  # Now test the ability to check out a single file from a directory
 	  if ${testcvs} co dirmodule/a >>${LOGFILE}; then
 	      pass 150c

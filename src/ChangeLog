@@ -1,5 +1,9 @@
 Mon Dec 29 12:53:00 1997  Ian Lance Taylor  <ian@cygnus.com>
 
+	* modules.c (do_module): Check for a request for a file within a
+	module which is not a directory.
+	* sanity.sh (modules): Add test 149b1 for above patch.
+
 	* client.c (start_tcp_server): Remove useless assignment, left
 	behind by Dec 15 patch.
 
