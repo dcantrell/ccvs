@@ -212,6 +212,22 @@ Parse_Info (const char *infofile, const char *repository, CALLPROC callproc,
  *
  * Sets *VAL to the parsed value when it is found to be valid.  *VAL will not
  * be altered when false is returned.
+ *
+ * INPUTS
+ *   infopath	Where the error is reported to be from on error.  This could
+ *		be, for example, the name of the file the boolean is being read
+ *		from.
+ *   option	An option name being parsed, reported in traces and any error
+ *		message.
+ *   p		The string to actually read the option from.
+ *   val	Pointer to where to store the boolean read.
+ *
+ * OUTPUTS
+ *   val	TRUE/FALSE stored, as read, when there are no errors.
+ *
+ * RETURNS
+ *   true	If VAL was read.
+ *   false	On error.
  */
 static bool
 readBool (const char *infopath, const char *option, const char *p, bool *val)
@@ -233,7 +249,7 @@ readBool (const char *infopath, const char *option, const char *p, bool *val)
     }
 
     error (0, 0, "%s: unrecognized value '%s' for `%s'",
-	   infopath, option, p);
+	   infopath, p, option);
     return false;
 }
 

@@ -1,5 +1,10 @@
 2004-11-30  Derek Price  <derek@ximbiot.com>
 
+	* parseinfo.c (readBool): Reorder arguments to error() and improve
+	header comment.
+
+2004-11-30  Derek Price  <derek@ximbiot.com>
+
 	* client.c (handle_referrer): New function.
 	(handle_redirect): Handle possibility that CLIENT_REFERRER was set via
 	a response.
