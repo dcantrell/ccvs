@@ -195,5 +195,3 @@ bug-cvs know (as described in the Cederqvist manual).
 Many contributors have added code to the "contrib" directory.  See the
 README file there for a list of what is available.  There is also a
 contributed GNU Emacs CVS-mode in tools/pcl-cvs.
- 
-test.
