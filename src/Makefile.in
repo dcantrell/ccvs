@@ -67,10 +67,11 @@ COMMON_OBJECTS = subr.o filesubr.o run.o version.o error.o
 HEADERS = cvs.h rcs.h hash.h myndbm.h patchlevel.h \
 	update.h server.h client.h error.h
 
+TAGFILES = $(HEADERS) options.h.in $(SOURCES) $(MSOURCES)
+
 DISTFILES = .cvsignore Makefile.in ChangeLog ChangeLog.fsf \
 	    NOTES README-rm-add \
-            sanity.sh cvsbug.sh \
-            $(HEADERS) options.h.in $(SOURCES) $(MSOURCES) 
+            sanity.sh cvsbug.sh $(TAGFILES)
 
 PROGS = cvs mkmodules cvsbug
 
@@ -124,11 +125,11 @@ remotecheck: all
 	$(SHELL) $(srcdir)/sanity.sh -r `pwd`/cvs
 .PHONY: remotecheck
 
-tags: $(DISTFILES)
-	ctags $(DISTFILES)
+tags: $(TAGFILES)
+	ctags $(TAGFILES)
 
-TAGS: $(DISTFILES)
-	etags `for i in $(DISTFILES); do echo $(srcdir)/$$i; done`
+TAGS: $(TAGFILES)
+	etags `for i in $(TAGFILES); do echo $(srcdir)/$$i; done`
 
 ls:
 	@echo $(DISTFILES)
