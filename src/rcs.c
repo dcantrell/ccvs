@@ -1092,8 +1092,7 @@ rcsbuf_getkey (rcsbuf, keyp, valp)
     ptrend = rcsbuf->ptrend;
 
     /* Sanity check.  */
-    if (ptr < rcsbuf_buffer || ptr >= rcsbuf_buffer + rcsbuf_buffer_size)
-	abort ();
+    assert (ptr >= rcsbuf_buffer && ptr < rcsbuf_buffer + rcsbuf_buffer_size);
 
 #ifndef HAVE_MMAP
     /* If the pointer is more than RCSBUF_BUFSIZE bytes into the
@@ -1107,8 +1106,7 @@ rcsbuf_getkey (rcsbuf, keyp, valp)
 
 	/* Sanity check: we don't read more than RCSBUF_BUFSIZE bytes
            at a time, so we can't have more bytes than that past PTR.  */
-	if (len > RCSBUF_BUFSIZE)
-	    abort ();
+	assert (len <= RCSBUF_BUFSIZE);
 
 	/* Update the POS field, which holds the file offset of the
            first byte in the RCSBUF_BUFFER buffer.  */
@@ -1776,8 +1774,7 @@ rcsbuf_valpolish_internal (rcsbuf, to, from, lenp)
 		++from;
 
 		/* Sanity check.  */
-		if (*from != '@' || clen == 0)
-		    abort ();
+		assert (*from == '@' && clen > 0);
 
 		--clen;
 
@@ -1799,11 +1796,8 @@ rcsbuf_valpolish_internal (rcsbuf, to, from, lenp)
 	}
 
 	/* Sanity check.  */
-	if (from != orig_from + len
-	    || to != orig_to + (len - rcsbuf->embedded_at))
-	{
-	    abort ();
-	}
+	assert (from == orig_from + len
+	    && to == orig_to + (len - rcsbuf->embedded_at));
 
 	*to = '\0';
     }
