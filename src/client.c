@@ -785,14 +785,14 @@ static int
 socket_buffer_shutdown (buf)
     struct buffer *buf;
 {
-    struct socket_buffer *n = (struct socket_buffer *) closure;
+    struct socket_buffer *n = (struct socket_buffer *) buf->closure;
     char tmp;
 
-    buf_flush (buf->closure);
-    buf->flush = NULL;
+    /* no need to flush children of an endpoint buffer here */
 
     if (buf->input)
     {
+	int err = 0;
 	if (! buf_empty_p (buf)
 	    || (err = read (n->socket, &tmp, 1)) > 0)
 	    error (0, 0, "dying gasps from %s unexpected", current_parsed_root->hostname);
@@ -818,7 +818,7 @@ socket_buffer_shutdown (buf)
 	 * SHUTDOWN_SERVER_OUTPUT
 	 */
 	if (current_parsed_root->method == server_method)
-	    SHUTDOWN_SERVER ( fileno (fp) );
+	    SHUTDOWN_SERVER (n->socket);
 	else
 # endif
 	if (shutdown (n->socket, 1) < 0)

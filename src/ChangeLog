@@ -1,5 +1,13 @@
 2001-06-20  Derek Price  <dprice@collab.net>
 
+	* client.c (socket_buffer_shutdown): Fix untested typos.
+	(Reported by "Jerzy Kaczorowski" <jerzyk@wndtabs.com>.)
+
+	* buffer.c (stdio_buffer_shutdown): Put the call to SHUTDOWN_SERVER in
+	the correct place.
+
+2001-06-20  Derek Price  <dprice@collab.net>
+
 	* logmsg.c (do_editor): Abort in the case that the file has only
 	comment lines.
 	(Original patch from Mark Valentine <mark@thuvia.demon.co.uk>.)
