@@ -1,5 +1,8 @@
 Changes since 1.11.1p1:
 
+* The "log" and "rlog" commands now have a -S option to suppress the
+header information when no revisions are selected.
+
 * A serious error that allowed read-only users to tag files has been
 corrected.
 
