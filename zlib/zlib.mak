@@ -94,13 +94,18 @@ LIB32_OBJS= \
 
 !ELSEIF  "$(CFG)" == "zlib - Win32 Debug"
 
-OUTDIR=.\Debug
-INTDIR=.\Debug
+OUTDIR=.\WinDebug
+INTDIR=.\WinDebug
+# Begin Custom Macros
+OutDir=.\WinDebug
+# End Custom Macros
 
-ALL : ".\WinDebug\zlib.lib"
+ALL : "$(OUTDIR)\zlib.lib"
 
 
 CLEAN :
+	-@erase "$(INTDIR)\vc60.idb"
+	-@erase "$(OUTDIR)\zlib.lib"
 	-@erase ".\WinDebug\adler32.obj"
 	-@erase ".\WinDebug\compress.obj"
 	-@erase ".\WinDebug\crc32.obj"
@@ -116,20 +121,18 @@ CLEAN :
 	-@erase ".\WinDebug\minigzip.obj"
 	-@erase ".\WinDebug\trees.obj"
 	-@erase ".\WinDebug\uncompr.obj"
-	-@erase ".\WinDebug\vc60.idb"
-	-@erase ".\WinDebug\zlib.lib"
 	-@erase ".\WinDebug\zutil.obj"
 
 "$(OUTDIR)" :
     if not exist "$(OUTDIR)/$(NULL)" mkdir "$(OUTDIR)"
 
-CPP_PROJ=/nologo /MLd /W3 /GX /Z7 /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /Fp"WinDebug/zlib.pch" /YX /Fo"WinDebug/" /Fd"WinDebug/" /FD /c 
+CPP_PROJ=/nologo /MLd /W3 /GX /Z7 /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /Fp"$(INTDIR)\zlib.pch" /YX /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c 
 BSC32=bscmake.exe
-BSC32_FLAGS=/nologo /o"WinDebug/zlib.bsc" 
+BSC32_FLAGS=/nologo /o"$(OUTDIR)\zlib.bsc" 
 BSC32_SBRS= \
 	
 LIB32=link.exe -lib
-LIB32_FLAGS=/nologo /out:"WinDebug\zlib.lib" 
+LIB32_FLAGS=/nologo /out:"$(OUTDIR)\zlib.lib" 
 LIB32_OBJS= \
 	".\WinDebug\adler32.obj" \
 	".\WinDebug\compress.obj" \
@@ -148,7 +151,7 @@ LIB32_OBJS= \
 	".\WinDebug\uncompr.obj" \
 	".\WinDebug\zutil.obj"
 
-".\WinDebug\zlib.lib" : "$(OUTDIR)" $(DEF_FILE) $(LIB32_OBJS)
+"$(OUTDIR)\zlib.lib" : "$(OUTDIR)" $(DEF_FILE) $(LIB32_OBJS)
     $(LIB32) @<<
   $(LIB32_FLAGS) $(DEF_FLAGS) $(LIB32_OBJS)
 <<

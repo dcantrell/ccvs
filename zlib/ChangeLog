@@ -1,3 +1,7 @@
+2004-03-26  Derek Price  <derek@ximbiot.com>
+
+	* zlib.dep, zlib.mak: Repaired & egenerated.
+
 2004-03-25  Derek Price  <derek@ximbiot.com>
 
 	* zlib.dep, zlib.mak: New files created by Visual C++ 6.0.
