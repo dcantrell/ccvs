@@ -2370,7 +2370,7 @@ cvs [a-z]*: Executing '"'"''"'"'.*mkmodules'"'"' '"'"'/tmp/cvs-sanity/cvsroot/CV
 	  dotest info-6 "${testcvs} add file1" \
 'cvs [a-z]*: scheduling file `file1'\'' for addition
 cvs [a-z]*: use '\''cvs commit'\'' to add this file permanently'
-	  export MYENV=env-value
+	  MYENV=env-value; export MYENV
 	  dotest info-7 "${testcvs} -q ci -m add-it" \
 'RCS file: /tmp/cvs-sanity/cvsroot/first-dir/file1,v
 done
