@@ -1,3 +1,8 @@
+2004-12-09  Derek Price  <derek@ximbiot.com>
+
+	* cvs.texinfo (Remote repositories): Move method option data to...
+	(The connection method): ...this new node and rework.
+
 2004-12-09  Mark D. Baushke  <mdb@cvshome.org>
 
 	* cvs.texinfo (BUGS, What is CVS?): Remove Dr. Pascal Molli's CVS

@@ -2071,85 +2071,6 @@ password in each created directory.  @code{cvs login} first instead
 The details of exactly what needs to be set up depend
 on how you are connecting to the server.
 
-If @var{method} is not specified, and the repository
-name does not start with a @samp{/}, then the default is @code{ext}
-or @code{server}, depending on your platform; both are
-described in @ref{Connecting via rsh}.
-
-@cindex connection method options
-@cindex options, connection method
-@cindex proxies, web, using
-@cindex web proxies, using
-The @code{gserver} and @code{pserver} connection
-methods all accept optional method options, specified as part of the
-@var{method} string, like so:
-
-@example
-:@var{method}[;@var{option}=@var{arg}...]:
-@end example
-
-Currently, the only two valid connection options for
-all remote @var{method}s are @code{proxy}, which
-takes a hostname as an argument, and @code{proxyport}, which takes a port
-number as an argument.  These options can be used to connect via an HTTP
-tunnel style web proxy.  For example, to connect pserver via a web proxy
-at www.myproxy.net and port 8000, you would use a method of:
-
-@example
-:pserver;proxy=www.myproxy.net;proxyport=8000:
-@end example
-
-@strong{NOTE: The rest of the connection string is required to connect to
-the server as noted in the upcoming sections on password authentication,
-gserver and kserver.  The example above would only modify the @var{method}
-portion of the repository name.}
-
-@cindex CVS_RSH option for :ext: method
-@cindex CVS_SERVER option for :ext: method
-There are also two options available for the
-@var{method} @code{ext}, the @var{CVS_RSH} and
-@var{CVS_SERVER} options. The @var{CVS_SERVER} option
-may also be used with the @code{fork} method.
-
-For example, to connect to via the
-@code{/path/to/ssh/command} command, you could choose
-to add the @var{CVS_RSH} option with a method of:
-
-@example
-:ext;CVS_RSH=/path/to/ssh/command:
-@end example
-
-or to specify the name of the remote @code{cvs} command
-as being @code{/path/to/cvs/command} or
-@code{cvs-1.12.11}, you could add the @var{CVS_SERVER}
-option with a method of:
-
-@example
-:ext;CVS_SERVER=/path/to/cvs/command:
-@end example
-
-or
-
-@example
-:ext;CVS_SERVER=cvs-1.12.11:
-@end example
-
-and to combine both of those options, a method of:
-
-@example
-:ext;CVS_RSH=/path/to/ssh/command;CVS_SERVER=/path/to/cvs/command:
-@end example
-
-would work. This means that you would not need to have
-the @code{CVS_SERVER} or @code{CVS_RSH} environment
-variables set. See @ref{Connecting via rsh}, for more details on the
-environment variables.
-
-@cindex CVS_PROXY_PORT
-@var{proxy} must be supplied to connect to a CVS server via a
-proxy server, but @var{proxyport} will default to port 8080 if not supplied.
-@var{PROXYPORT} may also be set via the @var{CVS_PROXY_PORT} environment
-variable.
 @c Should we try to explain which platforms are which?
 @c Platforms like unix and VMS, which only allow
 @c privileged programs to bind to sockets <1024 lose on
@@ -2159,17 +2080,9 @@ variable.
 @c Platforms like OS/2 and NT probably could plausibly
 @c default either way (modulo -b troubles).
 
-@c FIXME: We need to have a better way of explaining
-@c what method to use.  This presentation totally
-@c obscures the fact that :ext: and CVS_RSH is the way to
-@c use SSH, for example.  Plus it incorrectly implies
-@c that you need an @code{rsh} binary on the client to use
-@c :server:.
-@c Also note that rsh not pserver is the right choice if you want
-@c users to be able to create their own repositories
-@c (because of the --allow-root related issues).
 @menu
 * Server requirements::         Memory and other resources for servers
+* The connection method::       Connection methods and method options
 * Connecting via rsh::          Using the @code{rsh} program to connect
 * Password authenticated::      Direct connections using passwords
 * GSSAPI authenticated::        Direct connections using GSSAPI
@@ -2266,6 +2179,143 @@ trouble.
 
 For information on disk space requirements, see
 @ref{Creating a repository}.
+
+@node The connection method
+@subsection The connection method
+
+In its simplest form, the @var{method} portion of the repository string
+(@pxref{Remote repositories}) may be one of @samp{ext}, @samp{fork},
+@samp{gserver}, @samp{kserver}, @samp{local}, @samp{pserver}, and, on some
+platforms, @samp{server}.
+
+If @var{method} is not specified, and the repository
+name starts with a @samp{/}, then the default is @code{local}.
+If @var{method} is not specified, and the repository
+name does not start with a @samp{/}, then the default is @code{ext}
+or @code{server}, depending on your platform; both the @samp{ext}
+and @samp{server} methods are described in @ref{Connecting via rsh}.
+
+@cindex connection method options
+@cindex options, connection method
+The @code{ext}, @code{fork}, @code{gserver}, and @code{pserver} connection
+methods all accept optional method options, specified as part of the
+@var{method} string, like so:
+
+@example
+:@var{method}[;@var{option}=@var{arg}...]:@var{other_connection_data}
+@end example
+
+@sc{cvs} is not sensitive to the case of @var{method} or @var{option}, though
+it may sometimes be sensitive to the case of @var{arg}.  The possible method
+options are as follows:
+
+@table @code
+@cindex CVS_PROXY_PORT
+@cindex proxy, method option
+@cindex proxyport, method option
+@cindex proxies, web, connecting via
+@cindex web proxies, connecting via
+@cindex proxies, HTTP, connecting via
+@cindex HTTP proxies, connecting via
+@item proxy=@var{hostname}
+@itemx proxyport=@var{port}
+These two method options can be used to connect via an HTTP tunnel style web
+proxy.  @var{hostname} should be the name of the HTTP proxy server to connect
+through and @var{port} is the port number on the HTTP proxy server to connect
+via.  @var{port} defaults to 8080.
+
+@strong{NOTE: An HTTP proxy server is not the same as a @sc{cvs} write proxy
+server - please see @ref{Write proxies} for more on @sc{cvs} write proxies.}
+
+For example, to connect pserver via a web proxy listening on port 8000 of
+www.myproxy.net, you would use a method of:
+
+@example
+:pserver;proxy=www.myproxy.net;proxyport=8000:@var{pserver_connection_string}
+@end example
+
+@strong{NOTE: In the above example, @var{pserver_connection_string} is still
+required to connect and authenticate to the CVS server, as noted in the
+upcoming sections on password authentication, @code{gserver}, and
+@code{kserver}.  The example above only demonstrates a modification to the
+@var{method} portion of the repository name.}
+
+These options first appeared in @sc{cvs} version 1.12.7 and are valid as
+modifcations to the @code{gserver} and @code{pserver} connection methods.
+
+@cindex CVS_RSH method option
+@item CVS_RSH=@var{path}
+This method option can be used with the @code{ext} method to specify the path
+the @sc{cvs} client will use to find the remote shell used to contact the
+@sc{cvs} server and takes precedence over any path specified in the
+@code{$CVS_RSH} environment variable (@pxref{Connecting via rsh}).  For
+example, to connect to a @sc{cvs} server via the local
+@file{/path/to/ssh/command} command, you could choose to specify the following
+@var{path} via the @code{CVS_RSH} method option:
+
+@example
+:ext;CVS_RSH=/path/to/ssh/command:@var{ext_connection_string}
+@end example
+
+This method option first appeared in @sc{cvs} version 1.12.11 and is valid only
+as a modifcation to the @code{ext} connection method.
+
+@cindex CVS_SERVER method option
+@item CVS_SERVER=@var{path}
+This method option can be used with the @code{ext} and @code{fork} methods to
+specify the path @sc{cvs} will use to find the @sc{cvs} executable on the
+@sc{cvs} server and takes precedence over any path specified in the
+@code{$CVS_SERVER} environment variable (@pxref{Connecting via rsh}).  For
+example, to select the remote @file{/path/to/cvs/command} executable as your
+@sc{cvs} server application on the @sc{cvs} server machine, you could choose to
+specify the following @var{path} via the @code{CVS_SERVER} method option:
+
+@example
+:ext;CVS_SERVER=/path/to/cvs/command:@var{ext_connection_string}
+@end example
+
+@noindent
+or, to select an executable named @samp{cvs-1.12.11}, assuming it is in your
+@code{$PATH} on the @sc{cvs} server:
+
+@example
+:ext;CVS_SERVER=cvs-1.12.11:@var{ext_connection_string}
+@end example
+
+This method option first appeared in @sc{cvs} version 1.12.11 and is valid
+as a modifcation to both the @code{ext} and @code{fork} connection methods.
+
+@cindex Redirect, method option
+@item Redirect=@var{boolean-state}
+The @code{Redirect} method option determines whether the @sc{cvs} client will
+allow a @sc{cvs} server to redirect it to a different @sc{cvs} server, usually
+for write requests, as in a write proxy setup.
+
+A @var{boolean-state} of any value acceptable for boolean @file{CVSROOT/config}
+file options is acceptable here (@pxref{config}).  For example, @samp{on},
+@samp{off}, @samp{true}, and @samp{false} are all valid values for
+@var{boolean-state}.  @var{boolean-state} for the @code{Redirect} method option
+defaults to @samp{on}.
+
+This option will have no effect when talking to any non-secondary @sc{cvs}
+server.  For more on write proxies and secondary servers, please see
+@ref{Write proxies}.
+
+This method option first appeared in @sc{cvs} version 1.12.11 and is valid only
+as a modifcation to the @code{ext} connection method.
+@end table
+
+As a further example, to combine both the @code{CVS_RSH} and @code{CVS_SERVER}
+options, a method specification like the following would work:
+
+@example
+:ext;CVS_RSH=/path/to/ssh/command;CVS_SERVER=/path/to/cvs/command:
+@end example
+
+This means that you would not need to have
+the @code{CVS_SERVER} or @code{CVS_RSH} environment
+variables set correctly.  See @ref{Connecting via rsh}, for more details on
+these environment variables.
 
 @node Connecting via rsh
 @subsection Connecting with rsh
