@@ -390,6 +390,7 @@ diff (argc, argv)
 	    option_with_arg ("-r", diff_rev2);
 	if (diff_date2)
 	    client_senddate (diff_date2);
+	send_arg ("--");
 
 	/* Send the current files unless diffing two revs from the archive */
 	if (diff_rev2 == NULL && diff_date2 == NULL)

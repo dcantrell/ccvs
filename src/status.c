@@ -77,6 +77,7 @@ cvsstatus (argc, argv)
 	    send_arg("-v");
 	if (local)
 	    send_arg("-l");
+	send_arg ("--");
 
 	/* For a while, we tried setting SEND_NO_CONTENTS here so this
 	   could be a fast operation.  That prevents the

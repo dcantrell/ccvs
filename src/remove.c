@@ -100,6 +100,7 @@ cvsremove (argc, argv)
 	ign_setup ();
 	if (local)
 	    send_arg("-l");
+	send_arg ("--");
 	/* FIXME: Can't we set SEND_NO_CONTENTS here?  Needs investigation.  */
 	send_files (argc, argv, local, 0, 0);
 	send_file_names (argc, argv, 0);

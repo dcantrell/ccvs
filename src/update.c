@@ -291,6 +291,8 @@ update (argc, argv)
 		if (supported_request ("update-patches"))
 		    send_arg ("-u");
 
+		send_arg ("--");
+
                 if (update_build_dirs)
                     flags |= SEND_BUILD_DIRS;
 
@@ -317,6 +319,8 @@ update (argc, argv)
 		{
 		    error (1, errno, "could not chdir to %s", toplevel_wd);
 		}
+
+		send_arg ("--");
 
 		for (i = 0; i < failed_patches_count; i++)
 		    if (unlink_file (failed_patches[i]) < 0

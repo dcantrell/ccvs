@@ -1,3 +1,18 @@
+2002-09-27  Larry Jones  <lawrence.jones@eds.com>
+
+	* add.c (add): Send "--" before file names.
+	* admin.c (admin): Ditto.
+	* annotate.c (annotate): Ditto.
+	* commit.c (commit): Ditto.
+	* diff.c (diff): Ditto.
+	* edit.c (watch_onoff, editors): Ditto.
+	* log.c (cvslog): Ditto.
+	* remove.c (cvsremove): Ditto.
+	* status.c (cvsstatus): Ditto.
+	* tag.c (cvstag): Ditto.
+	* update.c (update): Ditto.
+	* watch.c (watch_addremove, watchers): Ditto.
+
 2002-09-24  Derek Price  <derek@ximbiot.com>
 
 	* options.h: Remove prototype of STDC exit() function.  If this breaks
