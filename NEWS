@@ -1,5 +1,9 @@
 Changes since 1.11.5:
 
+* Autoconf and Automake are no longer run automatically unless you run
+configure with --enable-maintainer-mode.  Accordingly, noautomake.sh is
+no longer needed and has been removed.
+
 * Corrected the path in a failed write error message.
 
 Changes from 1.11.4 to 1.11.5:

@@ -37,9 +37,7 @@ EXTRA_DIST = \
 	cvs-format.el \
 	cvsnt.dsp \
 	cvsnt.dsw \
-	cvsnt.mak \
-	noautomake.sh
-
+	cvsnt.mak
 
 
 ## MAINTAINER Targets
