@@ -533,7 +533,7 @@ serve_root (arg)
 
        The other way to handle a duplicate Root requests would be as a
        request to clear out all state and start over as if it was a
-       new connection.  Doign this would cause interoperability
+       new connection.  Doing this would cause interoperability
        headaches, so it should be a different request, if there is
        any reason why such a feature is needed.  */
     if (CVSroot_directory != NULL)
