@@ -16726,37 +16726,7 @@ esac
 
 
 cat >>confdefs.h <<\_ACEOF
-#define optarg rpl_optarg
-_ACEOF
-
-
-cat >>confdefs.h <<\_ACEOF
-#define optind rpl_optind
-_ACEOF
-
-
-cat >>confdefs.h <<\_ACEOF
-#define opterr rpl_opterr
-_ACEOF
-
-
-cat >>confdefs.h <<\_ACEOF
-#define optopt rpl_optopt
-_ACEOF
-
-
-cat >>confdefs.h <<\_ACEOF
-#define getopt rpl_getopt
-_ACEOF
-
-
-cat >>confdefs.h <<\_ACEOF
-#define getopt_long rpl_getopt_long
-_ACEOF
-
-
-cat >>confdefs.h <<\_ACEOF
-#define getopt_long_only rpl_getopt_long_only
+#define __GETOPT_PREFIX rpl_
 _ACEOF
 
 
