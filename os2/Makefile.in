@@ -73,7 +73,8 @@ OS2_SOURCES = \
        ${srcdir}${SL}waitpid.c \
        ${srcdir}${SL}popen.c \
        ${srcdir}${SL}strippath.c \
-       ${srcdir}${SL}getdate.c
+       ${srcdir}${SL}getdate.c \
+       ${srcdir}${SL}getpass.c
 
 # sources we use from the common src dir, ..${SL}src
 COMMON_SOURCES = \
@@ -149,7 +150,8 @@ OS2_OBJECTS = \
        ${srcdir}${SL}waitpid.obj \
        ${srcdir}${SL}popen.obj \
        ${srcdir}${SL}strippath.obj \
-       ${srcdir}${SL}getdate.obj
+       ${srcdir}${SL}getdate.obj \
+       ${srcdir}${SL}getpass.obj
 
 # object files from ..${SL}src
 COMMON_OBJECTS = \

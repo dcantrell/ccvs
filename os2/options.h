@@ -266,7 +266,7 @@
  * This is under construction.  Don't define this unless you're
  * testing it, in which case you're me and you already know that.
  */
-/* #define AUTH_CLIENT_SUPPORT 1 */
+#define AUTH_CLIENT_SUPPORT 1
 /* #define AUTH_SERVER_SUPPORT 1 */
 
 /* End of CVS configuration section */
@@ -283,3 +283,6 @@ extern void exit ();
 extern char *getwd ();
 #endif
 
+#ifdef AUTH_CLIENT_SUPPORT
+char *getpass (char *passbuf);
+#endif /* AUTH_CLIENT_SUPPORT */
