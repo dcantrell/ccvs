@@ -157,11 +157,8 @@ release (argc, argv)
            * the user, telling her how many files have been
            * modified, and asking if she still wants to do the
            * release.
-           *
-           * This is "popen()" instead of "Popen()" since we
-           * wouldn't want the `noexec' flag to stop it.
            */
-          fp = popen (update_cmd, "r");
+          fp = Popen (update_cmd, "r");
           c = 0;
 
           while (fgets (line, sizeof (line), fp))
