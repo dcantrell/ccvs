@@ -5577,6 +5577,9 @@ RCS_cmp_file (rcs, rev, options, filename)
 #endif
     {
         fp = CVS_FOPEN (filename, binary ? FOPEN_BINARY_READ : "r");
+	if (fp == NULL)
+	    /* FIXME-update-dir: should include update_dir in message.  */
+	    error (1, errno, "cannot open file %s for comparing", filename);
 	
         data.filename = filename;
         data.fp = fp;
