@@ -2084,6 +2084,9 @@ There is no need to edit @code{inetd.conf} or start a
 
 @cindex :server:, setting up
 @cindex :ext:, setting up
+@cindex Kerberos, using kerberized rsh
+@cindex SSH (rsh replacement)
+@cindex rsh replacements (Kerberized, SSH, &c)
 There are two access methods that you use in CVSROOT
 for rsh.  @code{:server:} specifies an internal rsh
 client, which is supported only by some CVS ports.
@@ -2439,6 +2442,7 @@ security, get Kerberos.
 @cindex GSSAPI
 @cindex security, GSSAPI
 @cindex :gserver:, setting up
+@cindex Kerberos, using :gserver:
 GSSAPI is a generic interface to network security
 systems such as Kerberos 5.
 If you have a working GSSAPI library, you can have
@@ -2489,7 +2493,7 @@ cvs -d :gserver:chainsaw.yard.com:/usr/local/cvsroot checkout foo
 @node Kerberos authenticated
 @subsection Direct connection with kerberos
 
-@cindex kerberos
+@cindex Kerberos, using :kserver:
 @cindex security, kerberos
 @cindex :kserver:, setting up
 The easiest way to use kerberos is to use the kerberos

@@ -1,3 +1,8 @@
+1999-01-14  Jim Kingdon  <http://www.cyclic.com>
+
+	* cvs.texinfo (Connecting via rsh): Add some more index entries so
+	that people who want to use SSH and such are slightly less lost.
+
 1999-01-12  Jim Kingdon  <http://www.cyclic.com>
 
 	* cvs-paper.ms: Remove comments which contained the FSF's old
