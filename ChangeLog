@@ -1,5 +1,10 @@
 2001-09-22  Derek Price  <dprice@collab.net>
 
+	* INSTALL (Building from source code under Unix): Continue
+	noautoconf.sh note, stressing source checked out from CVS.
+
+2001-09-22  Derek Price  <dprice@collab.net>
+
 	* noautomake.sh: Correct usage.
 
 2001-09-13  Derek Price  <dprice@collab.net>
