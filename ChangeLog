@@ -1,5 +1,9 @@
 2004-03-17  Derek Price  <derek@ximbiot.com>
 
+	* NEWS: Note spelling fix.
+
+2004-03-17  Derek Price  <derek@ximbiot.com>
+
 	* configure.in (--enable-password-authentication-client): Correct
 	error message text.
 	* NEWS: Note this change.
