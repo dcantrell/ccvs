@@ -1,3 +1,8 @@
+2004-10-01  Derek Price <derek@ximbiot.com>
+
+	* recurse.c (do_file_proc): Improve header comment.  Replace
+	xmalloc()/strcat() combination with asnprintf().
+
 2004-09-29  Derek Price <derek@ximbiot.com>
 
 	* sanity.sh (config): Handle $SECONDRY_ROOT_DIRNAME output in $proxy
