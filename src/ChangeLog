@@ -1,3 +1,8 @@
+Thu Feb 29 01:07:43 1996  Benjamin J. Lee  <benjamin@cyclic.com>
+
+	* client.c (send_to_server): wrtn wasn't being declared under
+	VMS for some reason.
+
 Wed Feb 28 23:27:04 1996  Benjamin J. Lee  <benjamin@cyclic.com>
 
 	* client.c: Changed #ifdef VMS && NO_SOCKET_TO_FD to
@@ -17,7 +22,7 @@ Wed Feb 28 22:07:20 1996  Benjamin J. Lee  <benjamin@cyclic.com>
 	start_kerberos_server() to start_tcp_server().
 
 	In copy_a_file(): transform a backup file to have a
-        VMS-friendly name.  Changed 
+        VMS-friendly name. 
 
 	Added HAVE_CONFIG_H to include "config.h".  
 
