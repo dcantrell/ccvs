@@ -21,6 +21,7 @@ DISTFILES = \
     filesubr.c \
     filutils.c \
     filutils.h \
+    getpass.c \
     getwd.c \
     misc.c \
     misc.h \
