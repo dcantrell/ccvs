@@ -1,3 +1,9 @@
+2003-11-03  Derek Price  <derek@ximbiot.com>
+
+	* server.c (serve_global_option): Warn that -l is being ignored rather
+	than exiting fatally due to backwards compatibility complaints from
+	administrators.
+
 2003-11-01  Larry Jones  <lawrence.jones@eds.com>
 
 	* filesubr.c (xcmp): Make sure S_ISLNK exists before calling it.
