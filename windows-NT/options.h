@@ -126,7 +126,7 @@
  * also be used for other temporary files.
  */
 #ifndef TMPDIR_DFLT
-#define	TMPDIR_DFLT	"c:\temp"
+#define	TMPDIR_DFLT	"c:\\temp"
 #endif
 
 /*
