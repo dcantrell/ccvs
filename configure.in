@@ -5,14 +5,29 @@ AC_PREREQ(2.13)
 AC_PREFIX_PROGRAM(cvs)
 AM_CONFIG_HEADER(config.h src/options.h)
 
-AC_PROG_AWK
 AC_PROG_CC
 AM_PROG_CC_C_O
+
+dnl FIXME the next three calls should be avoided according to autoconf
+dnl philosophy.  for example, AC_CHECK_LIB should be used to look for crypt.
+dnl
+dnl These are here instead of later because they want to be called before
+dnl anything that calls a C compiler.
+AC_AIX
+AC_MINIX
+AC_ISC_POSIX
+if test "$ISC" = yes; then
+CFLAGS="$CFLAGS -D_SYSV3"
+LIBS="-lcrypt $LIBS"
+fi
+
+AC_PROG_AWK
 AC_PROG_INSTALL
 AC_PROG_MAKE_SET
 AC_PROG_RANLIB
 AC_PROG_YACC
 AC_PROG_LN_S
+AC_EXEEXT
 
 AC_PATH_PROG(PERL, perl, no)
 AC_PATH_PROG(CSH, csh, no)
@@ -68,16 +83,6 @@ AC_TRY_COMMAND([rm -rf ac_test_dir ac_test_target conftestmake])])
 AM_CONDITIONAL(MAKE_TARGETS_IN_VPATH, \
 		test $ccvs_cv_bsd_make_vpath_bug = no \
 		|| test $srcdir = .)
-
-dnl FIXME the next three calls should be avoided according to autoconf
-dnl philosophy.  for example, AC_CHECK_LIB should be used to look for crypt.
-AC_AIX
-AC_MINIX
-AC_ISC_POSIX
-if test "$ISC" = yes; then
-CFLAGS="$CFLAGS -D_SYSV3"
-LIBS="-lcrypt $LIBS"
-fi
 
 AC_HEADER_DIRENT
 AC_HEADER_STDC

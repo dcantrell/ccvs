@@ -1,3 +1,13 @@
+2001-08-06  Derek Price  <dprice@collab.net>
+
+	* configure.in: Add AC_EXEEXT to get things right when under Windows.
+	(Report and patch from manklu@web.de).
+
+	* configure.in: Reorder some macros to prevent Autoconf warnings.
+
+	* configure: Regenerated.
+	* Makefile.in: Ditto.
+
 2001-07-26  Larry Jones  <larry.jones@sdr.com>
 
 	* NEWS: Fix format, add note about tag -B.
