@@ -1,3 +1,7 @@
+Mon Aug  4 00:02:24 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* BUGS: Be specific about wrappers not working client/server.
+
 Sat Aug  2 09:23:50 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* INSTALL: In step 4, be more generic (the CVS sources are just an

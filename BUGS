@@ -21,7 +21,7 @@ are thinking of fixing this, check out the comment "For cvs export,
 assume it is a text file." in client.c.
 
 
-* Wrappers do not work client/server, and there are a variety of other
+* Wrappers (-t/-f) do not work client/server, and there are a variety of other
 bugs and annoyances with wrappers.
 
 
