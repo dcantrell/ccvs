@@ -3999,28 +3999,28 @@ RCS_settag (rcs, tag, rev)
     if (rev == NULL)
 	rev = rcs->branch ? rcs->branch : rcs->head;
 
-	/* At this point rcs->symbol_data may not have been parsed.
-	   Calling RCS_symbols will force it to be parsed into a list
-	   which we can easily manipulate.  */
-	symbols = RCS_symbols (rcs);
-	if (symbols == NULL)
-	{
-	    symbols = getlist ();
-	    rcs->symbols = symbols;
-	}
-	node = findnode (symbols, tag);
-	if (node != NULL)
-	{
-	    free (node->data);
-	    node->data = xstrdup (rev);
-	}
-	else
-	{
-	    node = getnode ();
-	    node->key = xstrdup (tag);
-	    node->data = xstrdup (rev);
-	    (void) addnode_at_front (symbols, node);
-	}
+    /* At this point rcs->symbol_data may not have been parsed.
+       Calling RCS_symbols will force it to be parsed into a list
+       which we can easily manipulate.  */
+    symbols = RCS_symbols (rcs);
+    if (symbols == NULL)
+    {
+	symbols = getlist ();
+	rcs->symbols = symbols;
+    }
+    node = findnode (symbols, tag);
+    if (node != NULL)
+    {
+	free (node->data);
+	node->data = xstrdup (rev);
+    }
+    else
+    {
+	node = getnode ();
+	node->key = xstrdup (tag);
+	node->data = xstrdup (rev);
+	(void) addnode_at_front (symbols, node);
+    }
 
     return 0;
 }
