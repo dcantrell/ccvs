@@ -66,7 +66,9 @@ log_buffer_initialize (struct buffer *buf, FILE *fp, bool fatal_errors,
 	/* If our buffer already had data, log it & copy it.  This can happen,
 	 * for instance, with a pserver, where we deliberately do not
          * instantiate the log buffer until after authentication so that auth
-         * data does not get logged.
+         * data does not get logged (the pserver data will not be logged in
+	 * this case, but any data which was left unused in the buffer by the
+	 * auth code will be logged and put in our new buffer).
 	 */
 	struct buffer_data *data;
 	for (data = buf->data; data = data->next; data != NULL)
@@ -195,7 +197,7 @@ log_buffer_disable (struct buffer *buf)
 
 
 
-/* Disable logging and clsoe the log without shutting down the next buffer in
+/* Disable logging and close the log without shutting down the next buffer in
  * the chain.
  */
 void
