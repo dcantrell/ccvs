@@ -1,3 +1,7 @@
+Mon Oct 23 12:02:51 1995  Norbert Kiesel  <nk@col.sw-ley.de>
+
+	* cvsnt.mak:  added lib/getline.c
+
 Fri Oct 20 17:04:55 1995  Norbert Kiesel  <nk@col.sw-ley.de>
 
 	* cvsnt.mak: added src/expand_path.c, error.[ch] now in src
