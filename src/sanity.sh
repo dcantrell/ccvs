@@ -10892,7 +10892,12 @@ done"
 	  cd ../..
 	  cd m1/first-dir
 	  echo "changed in m1" >aa
-	  dotest_fail mwrap-7 "${testcvs} -nq update" "C aa"
+	  dotest mwrap-7 "${testcvs} -nq update" \
+"U aa
+${PROG} [a-z]*: nonmergeable file needs merge
+${PROG} [a-z]*: revision 1\.2 from repository is now in aa
+${PROG} [a-z]*: file from working directory is now in \.#aa\.1\.1
+C aa"
 	  dotest mwrap-8 "${testcvs} -q update" \
 "U aa
 ${PROG} [a-z]*: nonmergeable file needs merge
