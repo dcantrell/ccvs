@@ -5125,8 +5125,10 @@ fi
 
 
 
+
 for ac_func in \
 	dup2 \
+	ftruncate \
 	gethostname \
 	memmove \
 	mkdir \
@@ -5245,13 +5247,11 @@ done
 
 
 
-
 for ac_func in \
 	fchdir \
 	fchmod \
 	fsync \
 	ftime \
-	ftruncate \
 	getgroups \
 	getopt \
 	getpagesize \
