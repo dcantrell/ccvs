@@ -83,11 +83,16 @@ rm -rf $RPM_BUILD_ROOT
 
 %makeinstall install-info
 #mkdir -p $RPM_BUILD_ROOT%{prefix}/kerberos/bin
+# The Kerberized binary
+%if %gssapi
 ./install-sh src/cvs.krb5 $RPM_BUILD_ROOT%{prefix}/kerberos/bin/cvs
+%endif
 
 gzip -9nf $RPM_BUILD_ROOT%{prefix}/share/info/cvs*
 strip $RPM_BUILD_ROOT%{prefix}/bin/cvs
+%if %gssapi
 strip $RPM_BUILD_ROOT%{prefix}/kerberos/bin/cvs
+%endif
 
 %clean
 rm -rf $RPM_BUILD_ROOT
