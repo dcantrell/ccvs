@@ -5541,7 +5541,7 @@ But as soon as you export the files from your
 development environment it becomes harder to identify
 which revisions they are.
 
-@sc{Rcs} uses a mechanism known as @dfn{keyword
+CVS can use a mechanism known as @dfn{keyword
 substitution} (or @dfn{keyword expansion}) to help
 identifying the files.  Embedded strings of the form
 @code{$@var{keyword}$} and
@@ -5551,7 +5551,7 @@ with strings of the form
 a new revision of the file.
 
 @menu
-* Keyword list::                RCS Keywords
+* Keyword list::                Keywords
 * Using keywords::              Using keywords
 * Avoiding substitution::       Avoiding substitution
 * Substitution modes::          Substitution modes
@@ -5563,8 +5563,13 @@ a new revision of the file.
 @section RCS Keywords
 @cindex RCS keywords
 
-This is a list of the keywords that @sc{rcs} currently
-(in release 5.6.0.1) supports:
+@c FIXME: need some kind of example here I think, 
+@c perhaps in a
+@c "Keyword intro" node.  The intro in the "Keyword
+@c substitution" node itself seems OK, but to launch
+@c into a list of the keywords somehow seems too abrupt.
+
+This is a list of the keywords:
 
 @table @code
 @cindex Author keyword
@@ -5712,7 +5717,7 @@ keyword substitution.  You can use @samp{-ko}
 (@pxref{Substitution modes}) to turn off keyword
 substitution entirely.
 
-In many cases you can avoid using @sc{rcs} keywords in
+In many cases you can avoid using keywords in
 the source, even though they appear in the final
 product.  For example, the source for this manual
 contains @samp{$@@asis@{@}Author$} whenever the text
@@ -5723,7 +5728,7 @@ and @code{troff} you can embed the null-character
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node Substitution modes
 @section Substitution modes
-@cindex -k (RCS kflags)
+@cindex -k (keyword substitution)
 @cindex Kflag
 
 @c FIXME: This could be made more coherent, by expanding it
@@ -5806,10 +5811,14 @@ keyword---just do a @code{cvs log}.  Once you export
 the file the history information might be useless
 anyhow.
 
-A more serious concern is that @sc{rcs} is not good at
+A more serious concern is that @sc{cvs} is not good at
 handling @code{$@asis{}Log$} entries when a branch is
 merged onto the main trunk.  Conflicts often result
 from the merging operation.
+@c We say "cvs" even though it is done via rcsmerge;
+@c this is an implementation detail.  If the merging is
+@c done in CVS instead, should check if this problem
+@c still persists.
 
 People also tend to "fix" the log entries in the file
 (correcting spelling mistakes and maybe even factual

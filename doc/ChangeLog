@@ -1,3 +1,10 @@
+Mon May 19 00:21:49 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (Keyword substitution): Where it refers to RCS
+	having a certain behavior, rewrite to not pass the buck like
+	that.  Saying "RCS file" is still OK; that is a legit CVS
+	concept.  A few other minor edits.
+
 Sun May 18 10:24:57 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* RCSFILES: Add list of known newphrase extensions.
