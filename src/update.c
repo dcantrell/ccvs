@@ -1382,6 +1382,12 @@ patch_file (finfo, vers_ts, docheckout, file_info, checksum)
 	    /* FIXME: We should use -a if diff supports it.  We should
                probably just copy over most or all of the diff
                handling in the RCS configure script.  */
+	    /* IMHO, we shouldn't copy over anything which even
+	       vaguely resembles the RCS configure script.  That kind of
+	       thing tends to be ugly, slow, and fragile.  It also is a
+	       a support headache for CVS to behave differently in subtle
+	       ways based on whether it was installed correctly.  Instead we
+	       should come up with a diff library.  -kingdon, Apr 1997.  */
 	    diff_options = "-n";
 	}
 	run_setup ("%s %s %s %s", DIFF, diff_options, file1, file2);

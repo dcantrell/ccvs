@@ -1,3 +1,8 @@
+Mon Apr 21 09:02:22 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* update.c (patch_file): Add comment about whether auto-detecting
+	features of the DIFF program is a good idea.
+
 Mon Apr 21 00:03:34 1997  Ian Lance Taylor  <ian@cygnus.com>
 
 	Don't require the patch program:
