@@ -109,6 +109,14 @@ else
   PLUS='\+'
 fi
 
+# Likewise, for ?
+QUESTION='?'
+if expr 'a?b' : "a${QUESTION}b" >/dev/null; then
+  : good, it works
+else
+  QUESTION='\?'
+fi
+
 # Cause NextStep 3.3 users to lose in a more graceful fashion.
 if expr 'abc
 def' : 'abc
@@ -1779,10 +1787,10 @@ Merging differences between 1.1 and 1.2 into a
 rcsmerge: warning: conflicts during merge
 '"${PROG}"' [a-z]*: conflicts found in a
 C a
-\? dir1
-\? sdir' \
-'\? dir1
-\? sdir
+'"${QUESTION}"' dir1
+'"${QUESTION}"' sdir' \
+''"${QUESTION}"' dir1
+'"${QUESTION}"' sdir
 RCS file: /tmp/cvs-sanity/cvsroot/first-dir/a,v
 retrieving revision 1.1
 retrieving revision 1.2
@@ -1832,10 +1840,10 @@ C a'
 		cd ../../2
 		dotest conflicts-136 "${testcvs} -q update" \
 '[UP] first-dir/abc
-\? first-dir/dir1
-\? first-dir/sdir' \
-'\? first-dir/dir1
-\? first-dir/sdir
+'"${QUESTION}"' first-dir/dir1
+'"${QUESTION}"' first-dir/sdir' \
+''"${QUESTION}"' first-dir/dir1
+'"${QUESTION}"' first-dir/sdir
 [UP] first-dir/abc'
 		dotest conflicts-137 'test -f first-dir/abc' ''
 		rmdir first-dir/dir1 first-dir/sdir
@@ -2480,14 +2488,14 @@ U second-dir/rootig.c'
 U first-dir/foobar.c'
 	  cd first-dir
 	  touch rootig.c defig.o envig.c optig.c notig.c
-	  dotest 189c "${testcvs} -q update -I optig.c" '\? notig.c'
+	  dotest 189c "${testcvs} -q update -I optig.c" "${QUESTION} notig.c"
 	  # The fact that CVS requires us to specify -I CVS here strikes me
 	  # as a bug.
-	  dotest 189d "${testcvs} -q update -I ! -I CVS" '\? rootig.c
-\? defig.o
-\? envig.c
-\? optig.c
-\? notig.c'
+	  dotest 189d "${testcvs} -q update -I ! -I CVS" "${QUESTION} rootig.c
+${QUESTION} defig.o
+${QUESTION} envig.c
+${QUESTION} optig.c
+${QUESTION} notig.c"
 	  cd ..
 	  rm -rf first-dir
 
