@@ -1,5 +1,15 @@
 2001-03-14  Derek Price  <derek.price@openavenue.com>
 
+	* subr.c (sleep_past): New function.
+	* client.c (get_responses_and_close): Use new function.
+	* commit.c (commit): Ditto.
+	* update.c (do_update): Ditto.
+	* cvs.h: Prototype new function.
+
+	* stamp-h2.in: Regenerated.
+
+2001-03-14  Derek Price  <derek.price@openavenue.com>
+
 	* Makefile.in: Regenerated.
 	* stamp-h2.in: Ditto.
 

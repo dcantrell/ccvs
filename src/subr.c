@@ -11,6 +11,15 @@
 #include "cvs.h"
 #include "getline.h"
 
+#ifdef HAVE_NANOSLEEP
+# include "xtime.h"
+#else /* HAVE_NANOSLEEP */
+# if !defined HAVE_USLEEP && defined HAVE_SELECT
+    /* use select as a workaround */
+#   include "xselect.h"
+# endif /* !defined HAVE_USLEEP && defined HAVE_SELECT */
+#endif /* !HAVE_NANOSLEEP */
+
 extern char *getlogin ();
 
 /*
@@ -821,4 +830,65 @@ shell_escape(buf, str)
     }
     *buf = '\0';
     return buf;
+}
+
+/*
+ * We can only travel forwards in time, not backwards.  :)
+ */
+void
+sleep_past (desttime)
+    time_t desttime;
+{
+    time_t t;
+    long s;
+    long us;
+
+    while (time (&t) <= desttime)
+    {
+#ifdef HAVE_GETTIMEOFDAY
+	struct timeval tv;
+	gettimeofday (&tv, NULL);
+	if (tv.tv_sec <= desttime)
+	{
+	    s = (desttime - tv.tv_sec) - 1;
+	    us = 1000000 - tv.tv_usec;
+	}
+	else
+	{
+	    s = 0;
+	    us = 0;
+	}
+#else
+	/* default to 20 ms increments */
+	s = (desttime - t) - 1;
+	us = 20000;
+#endif
+
+#ifdef HAVE_NANOSLEEP
+	{
+	    struct timespec ts;
+	    ts.tv_sec = s;
+	    ts.tv_nsec = us * 1000;
+	    (void)nanosleep (&ts, NULL);
+	}
+#else	/* HAVE_NANOSLEEP */
+# ifdef HAVE_USLEEP
+	(void)usleep (s * 1000000 + us);
+# else	/* HAVE_USLEEP */
+#   ifdef HAVE_SELECT
+	{
+	    /* use select instead of sleep since it is a fairly portable way of
+	     * sleeping for ms.
+	     */
+	    struct timeval tv;
+	    tv.tv_sec = s;
+	    tv.tv_usec = us;
+	    (void)select (0, NULL, NULL, NULL, &tv);
+	}
+#   else /* HAVE_SELECT */
+	(void)sleep(s + 1);
+#   endif /* !HAVE_SELECT */
+# endif	/* !HAVE_USLEEP */
+#endif	/* !HAVE_NANOSLEEP */
+    }
 }
