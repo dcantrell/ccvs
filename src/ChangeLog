@@ -1,3 +1,10 @@
+Thu Sep  5 00:09:49 1996  Ian Lance Taylor  <ian@cygnus.com>
+
+	* rcscmds.c (RCS_exec_checkout): Rename from RCS_checkout.  Change
+	all callers.
+	* rcs.c (RCS_checkout): Rename from RCS_fast_checkout.  Change all
+	callers.
+
 Wed Sep  4 14:42:28 1996  Ian Lance Taylor  <ian@cygnus.com>
 
 	* rcs.c (RCS_fast_checkout): If tracing, output a message.  If

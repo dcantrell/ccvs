@@ -140,7 +140,7 @@ RCS_merge(path, options, rev1, rev2)
    (typically RUN_TTY).  If FLAGS & RCS_FLAGS_FORCE, check out even on
    top of an existing file.  */
 int
-RCS_checkout (rcsfile, workfile, tag, options, sout, flags)
+RCS_exec_checkout (rcsfile, workfile, tag, options, sout, flags)
     char *rcsfile;
     char *workfile;
     char *tag;

@@ -446,8 +446,8 @@ patch_fileproc (callerdat, finfo)
     }
     if (vers_tag != NULL)
     {
-	retcode = RCS_fast_checkout (rcsfile, NULL, vers_tag, options,
-				     tmpfile1, 0);
+	retcode = RCS_checkout (rcsfile, NULL, vers_tag, options,
+				tmpfile1, 0);
 	if (retcode != 0)
 	{
 	    if (!really_quiet)
@@ -468,8 +468,8 @@ patch_fileproc (callerdat, finfo)
     }
     if (vers_head != NULL)
     {
-	retcode = RCS_fast_checkout (rcsfile, NULL, vers_head, options,
-				     tmpfile2, 0);
+	retcode = RCS_checkout (rcsfile, NULL, vers_head, options,
+				tmpfile2, 0);
 	if (retcode != 0)
 	{
 	    if (!really_quiet)
