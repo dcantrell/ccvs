@@ -1,3 +1,10 @@
+Thu Jun  6 15:32:41 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* modules.c (cat_module): Always format for 80 columns rather than
+	trying to determine how wide the screen is.  The code we had for
+	the latter didn't cover all cases, was a portability headache, and
+	didn't work client/server.
+
 Wed Jun 05 10:07:29 1996  Mike Ladwig  <mike@twinpeaks.prc.com>
 
 	* error.c: Don't declare strerror if it is #defined.
