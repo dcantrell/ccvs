@@ -1,5 +1,9 @@
 Tue Jan 13 16:49:38 1998  Ian Lance Taylor  <ian@cygnus.com>
 
+	* acconfig.h (UTIME_EXPECTS_WRITABLE): Add undef line.
+	* configure.in: If cygwin32, define UTIME_EXPECTS_WRITABLE.
+	* configure, config.h.in: Regenerate.
+
 	* configure.in: Add test for cygwin32, and set LIBOBJS and LIBS
 	accordingly.
 	* configure: Regenerate.
