@@ -1,3 +1,8 @@
+Tue May 21 17:22:18 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvsclient.texi (Requests): Clarify Directory with "." as local
+	directory, and that filename for Questionable cannot contain "/".
+
 Mon May 20 13:15:25 1996  Greg A. Woods  <woods@most.weird.com>
 
 	* cvs.texinfo (rdiff): description from main.c:cmd_usage
