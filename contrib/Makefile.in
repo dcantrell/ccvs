@@ -109,7 +109,7 @@ clean:
 .PHONY: clean
 
 distclean: clean
-	rm -f Makefile elib/Makefile $(PROGS) $(CONTRIB_PROGS)
+	rm -f Makefile $(PROGS) $(CONTRIB_PROGS)
 .PHONY: distclean
 
 realclean: distclean
@@ -120,7 +120,6 @@ dist-dir:
 	for i in ${DISTFILES}; do \
 	  ln $(srcdir)/$${i} ${DISTDIR}; \
 	done
-	cd elib; ${MAKE} dist-dir DISTDIR="../${DISTDIR}/elib"
 .PHONY: dist-dir
 
 subdir = contrib
