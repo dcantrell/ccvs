@@ -121,6 +121,7 @@ EXTRA_DIST = \
 	TESTS \
 	build.com \
 	cvs-format.el \
+	cvs.spec \
 	cvsnt.dsp \
 	cvsnt.dsw \
 	cvsnt.mak
@@ -273,6 +274,11 @@ TAGS: tags-recursive $(HEADERS) $(SOURCES) config.h.in $(TAGS_DEPENDENCIES) \
 	       END { for (i in files) print i; }'`; \
 	test -z "$(ETAGS_ARGS)$$unique$(LISP)$$tags" \
 	  || $(ETAGS) $(ETAGS_ARGS) $$tags $$unique $(LISP)
+
+GTAGS:
+	here=`CDPATH=: && cd $(top_builddir) && pwd` \
+	  && cd $(top_srcdir) \
+	  && gtags -i $$here
 
 mostlyclean-tags:
 

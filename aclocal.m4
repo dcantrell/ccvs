@@ -67,7 +67,7 @@ AM_MISSING_INSTALL_SH
 # some platforms.
 AC_REQUIRE([AC_PROG_AWK])dnl
 AC_REQUIRE([AC_PROG_MAKE_SET])dnl
-AC_REQUIRE([AM_PROG_ETAGS])
+AC_REQUIRE([AM_PROG_ETAGS])dnl
 AC_REQUIRE([AM_DEP_TRACK])dnl
 AC_REQUIRE([AM_SET_DEPDIR])dnl
 AC_PROVIDE_IFELSE([AC_PROG_CC],
@@ -168,28 +168,29 @@ fi
 #
 
 AC_DEFUN([AM_PROG_ETAGS],
-[AC_BEFORE([$0], AM_PROG_ETAGS_WORKS)
+[AC_BEFORE([$0], [AM_PROG_ETAGS_WORKS])dnl
 AC_CHECK_PROG(ETAGS, etags, etags)
 if test -z "$ETAGS"; then
   AC_CHECK_PROG(ETAGS, ctags, ctags -e)
 fi
 if test -n "$ETAGS"; then
 	AM_PROG_ETAGS_WORKS
-	if test "$am_cv_prog_etags_works" = no ; then
-		ac_cv_prog_ETAGS=
-		ETAGS=
-	else
+	if test "$am_cv_prog_etags_works" = yes ; then
 		AM_PROG_ETAGS_INCLUDE_OPTION
+	else
+		AM_MISSING_PROG(ETAGS, etags)
 	fi
+else
+	AM_MISSING_PROG(ETAGS, etags)
 fi])
 
 
 AC_DEFUN([AM_PROG_ETAGS_WORKS],
-[AC_CACHE_CHECK([whether etags works], [am_cv_prog_etags_works],
+[AC_CACHE_CHECK([whether ${ETAGS-etags} works], [am_cv_prog_etags_works],
 [cat >conftest.c <<EOF
 int globalvar;
 EOF
-if AC_TRY_COMMAND(${ETAGS-etags} -f - conftest.c) |egrep "^int globalvar;" >/dev/null 2>&1; then
+if AC_TRY_COMMAND([${ETAGS-etags} -f - conftest.c |egrep "^int globalvar;" >&2]); then
 	am_cv_prog_etags_works=yes
 else
 	am_cv_prog_etags_works=no
@@ -197,21 +198,21 @@ fi
 rm -f conftest.c])])
 
 AC_DEFUN([AM_PROG_ETAGS_INCLUDE_OPTION],
-[AC_REQUIRE([AM_PROG_ETAGS_WORKS])
+[AC_REQUIRE([AM_PROG_ETAGS_WORKS])dnl
 if test "$am_cv_prog_etags_works" = yes ; then
 	AC_CACHE_CHECK([for etags include option],
 	[am_cv_prog_etags_include_option],
 	[cat >conftest.c <<EOF
 int globalvar;
 EOF
-	if AC_TRY_COMMAND(${ETAGS-etags} --etags-include=TAGS.inc -f - conftest.c) \
-			|egrep '^TAGS.inc,include$' >/dev/null 2>&1; then
+	if AC_TRY_COMMAND([${ETAGS-etags} --etags-include=TAGS.inc -f - conftest.c \
+			|egrep '^TAGS.inc,include$' >&2]); then
 		am_cv_prog_etags_include_option=--etags-include=
-	elif AC_TRY_COMMAND(${ETAGS-etags} -i TAGS.inc -f - conftest.c) \
-			|egrep '^TAGS.inc,include$' >/dev/null 2>&1; then
+	elif AC_TRY_COMMAND([${ETAGS-etags} -i TAGS.inc -f - conftest.c \
+			|egrep '^TAGS.inc,include$' >&2]); then
 		am_cv_prog_etags_include_option='"-i "'
-	else
-		AC_MSG_ERROR(unfamiliar etags implementation)
+	else :
+		# AC_MSG_ERROR(unfamiliar etags implementation)
 	fi
 	rm -f conftest.c])
 else
