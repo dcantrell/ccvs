@@ -1,5 +1,7 @@
 2004-02-28  Larry Jones  <lawrence.jones@ugsplm.com>
 
+	* sanity.sh (join6): New tests for previous fix.
+
 	* update.c (join_file): One more fix to avoid dereferencing NULL.
 	(Reported by Steve McIntyre <steve@einval.com>.)
 	* sanity.sh (join6): New tests for above.

@@ -9562,6 +9562,40 @@ Merging differences between 1\.1 and 1\.3 into temp.txt
 temp.txt already contains the differences between 1\.1 and 1\.3
 temp2.txt already contains the differences between creation and 1\.1"
 
+	  # Now for my next trick: delete the file, recreate it, and
+	  # try to merge
+	  dotest join6-30 "${testcvs} -q rm -f temp2.txt" \
+"${SPROG} remove: use .${SPROG} commit. to remove this file permanently"
+	  dotest join6-31 "${testcvs} -q ci -m. temp2.txt" \
+"Removing temp2\.txt;
+${CVSROOT_DIRNAME}/join6/temp2\.txt,v  <--  temp2\.txt
+new revision: delete; previous revision: 1\.1
+done"
+	  echo new >temp2.txt
+	  # FIXCVS: Local and remote really shouldn't be different and there
+	  # really shouldn't be two different status lines for temp2.txt
+	  if $remote; then
+	    dotest_fail join6-32 "${testcvs} -q up -jt1 -jt2" \
+"? temp2\.txt
+RCS file: ${CVSROOT_DIRNAME}/join6/temp.txt,v
+retrieving revision 1\.1
+retrieving revision 1\.3
+Merging differences between 1\.1 and 1\.3 into temp.txt
+temp.txt already contains the differences between 1\.1 and 1\.3
+${SPROG} update: move away .\./temp2\.txt.; it is in the way
+C temp2\.txt"
+	  else
+	    dotest join6-32 "${testcvs} -q up -jt1 -jt2" \
+"RCS file: ${CVSROOT_DIRNAME}/join6/temp.txt,v
+retrieving revision 1\.1
+retrieving revision 1\.3
+Merging differences between 1\.1 and 1\.3 into temp.txt
+temp.txt already contains the differences between 1\.1 and 1\.3
+${SPROG} update: use .${SPROG} add. to create an entry for .temp2\.txt.
+U temp2\.txt
+? temp2\.txt"
+	  fi
+
 	  cd ../../..
 
 	  if $keep; then
