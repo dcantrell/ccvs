@@ -21,7 +21,8 @@
 #include "edit.h"
 
 int
-Checkin (int type, struct file_info *finfo, char *rcs, char *rev, char *tag, char *options, char *message)
+Checkin (int type, struct file_info *finfo, char *rev, char *tag,
+	 char *options, char *message)
 {
     Vers_TS *vers;
     int set_time;
