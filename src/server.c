@@ -5699,7 +5699,6 @@ pserver_authenticate_connection ()
     free (descrambled_password);
     if (host_user == NULL)
     {
-	free (host_user);
     i_hate_you:
 	printf ("I HATE YOU\n");
 	fflush (stdout);
