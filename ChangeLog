@@ -1,3 +1,10 @@
+Sun Sep 29 14:09:49 1996  Noel Cragg  <noel@gargle.rain.org>
+
+	* configure.in: check for shadow password files as well as for
+ 	getspnam.  Some systems (like Linux) have getspnam in the C
+ 	library, but aren't necessarily using shadow passwords.
+	* configure, config.h.in: Regenerate.
+
 Fri Sep 27 16:49:53 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* Makefile.in (TSUBDIRS): Remove comment about order of
