@@ -1,3 +1,20 @@
+2001-08-24  Derek Price  <dprice@collab.net>
+
+	* cvs.texinfo (config): Add a new RereadLogAfterVerify
+	CVSROOT/config option to control how verifymsg scripts deal with
+	read-write log messages.
+	(Patch from Mark D. Baushke  <mdb@cvshome.org>.)
+
+	* cvs.texinfo (verifymsg): The verification script may now modify
+	the log message.
+	(Patch from Mark D. Baushke  <mdb@cvshome.org>.)
+
+	* cvs.texinfo (config, verifymsg): Correct default, changes for clarity,
+	and add a warning about `stat' and large repositories.
+
+	* version.texi: Regenerated.
+	* stamp-vti: Ditto.
+
 2001-08-20  Derek Price  <dprice@collab.net>
 
 	* Makefile.am: Reformat comment for 80 chars.
