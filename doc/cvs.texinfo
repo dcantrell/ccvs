@@ -4483,6 +4483,19 @@ gives branches even numbers, starting at 2.
 @cindex Tags, sticky
 @cindex Branches, sticky
 
+@c FIXME: Describing this feature in terms of "sticky
+@c tags" is a very confusing formulation; it seems to
+@c describe CVS's implementation.  A better
+@c concept is "switch to branch A (universe A)" or
+@c "switch to branch B".  Non-branch sticky tags, and
+@c sticky dates, are considerably more obscure and
+@c advanced, and should be described separately.
+@c A somewhat related issue is per-directory sticky
+@c tags (see comment at CVS/Tag in node Working
+@c directory storage); we probably want to say
+@c something like "you can set a sticky tag for only
+@c some files, but you don't want to" or some such.
+
 @c FIXME: make this stand alone better; many places
 @c @xref to this node.
 The @samp{-r release-1-0-patches} flag that was given
