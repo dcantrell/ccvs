@@ -107,3 +107,22 @@ The following harmless warnings are known:
 .\lib\getdate.c(1612) : warning C4102: 'yynewstate' : unreferenced label
 
 
+CODING STANDARDS for Windows
+
+For general coding standards, see ../HACKING.
+
+In my opinion win32 is the right API to write to.  Microsoft seems to
+be better about compatibility across versions than unix vendors (on a
+good day, anyway)--the Visual C++ package I bought has not only win32
+but also win16 too (that is, they also include Visual C++ 1.x).  As
+far as I know there is only one win32 (not counting win32s or win32c
+or whatever), not multiple versions.
+
+ANSI C is also good.  As far as I know these calls work fairly well on
+NT.
+
+What one should avoid like the plague on NT (IMHO) is POSIX calls such
+as stat().  These tend to be very poorly supported, and tend to break
+from version to version or vendor to vendor (the latter being
+particularly an issue on OS/2, with IBM, Watcom, and EMX all having
+_very_ different C libraries).
