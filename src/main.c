@@ -415,13 +415,13 @@ main (argc, argv)
     opterr = 0;
 
     while ((c = getopt_long
-            (argc, argv, "f", NULL, NULL))
+            (argc, argv, "+f", NULL, NULL))
            != EOF)
-      {
+    {
 	if (c == 'f')
 	    use_cvsrc = FALSE;
-      }
-    
+    }
+
     /*
      * Scan cvsrc file for global options.
      */
