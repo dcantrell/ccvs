@@ -3727,6 +3727,15 @@ serve_noop (arg)
     do_cvs_command ("noop", noop);
 }
 
+static void serve_version PROTO ((char *));
+
+static void
+serve_version (arg)
+    char *arg;
+{
+    do_cvs_command ("version", version);
+}
+
 static void serve_init PROTO ((char *));
 
 static void
@@ -4707,6 +4716,7 @@ struct request requests[] =
   REQ_LINE("init", serve_init, RQ_ROOTLESS),
   REQ_LINE("annotate", serve_annotate, 0),
   REQ_LINE("noop", serve_noop, 0),
+  REQ_LINE("version", serve_version, RQ_ROOTLESS),
   REQ_LINE(NULL, NULL, 0)
 
 #undef REQ_LINE

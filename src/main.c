@@ -133,6 +133,7 @@ static const struct cmd
     { "tag",      "ta",       "freeze",    cvstag },
     { "unedit",   NULL,	      NULL,	   unedit },
     { "update",   "up",       "upd",       update },
+    { "version",  "ve",       "ver",       version },
     { "watch",    NULL,	      NULL,	   watch },
     { "watchers", NULL,	      NULL,	   watchers },
     { NULL, NULL, NULL, NULL },
@@ -566,11 +567,8 @@ main (argc, argv)
 		logoff = 1;
 		break;
 	    case 'v':
-		/* Having the year here is a good idea, so people have
-		   some idea of how long ago their version of CVS was
-		   released.  */
-		(void) fputs (version_string, stdout);
-		(void) fputs (config_string, stdout);
+		(void) fputs ("\n", stdout);
+		version (0, (char **) NULL);    
 		(void) fputs ("\n", stdout);
 		(void) fputs ("\
 Copyright (c) 1989-2000 Brian Berliner, david d `zoo' zuhn, \n\

@@ -1,3 +1,11 @@
+2000-07-10  Larry Jones  <larry.jones@sdrc.com>
+
+	* version.c, cvs.h (version): New function.
+	* main.c (cmds[]): Add version command to invoke it.
+	(main): Also use it in -v.
+	* server.c (serve_version): New function.
+	(requests[]): Add version command to invoke it.
+
 2000-07-06  Karl Fogel  <kfogel@red-bean.com>
 
 	* sanity.sh (pserver-14): remove this test for portability
