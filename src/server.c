@@ -5634,7 +5634,7 @@ this client does not support writing binary files to stdout");
 	   I assume that what they are talking about can also be helped
 	   by flushing the stream before changing the mode.  */
 	fflush (stdout);
-	oldmode = _setmode (_fileno (stdout), _O_BINARY);
+	oldmode = _setmode (_fileno (stdout), OPEN_BINARY);
 	if (oldmode < 0)
 	    error (0, errno, "failed to setmode on stdout");
 #endif
@@ -5649,7 +5649,7 @@ this client does not support writing binary files to stdout");
 	}
 #ifdef USE_SETMODE_STDOUT
 	fflush (stdout);
-	if (_setmode (_fileno (stdout), oldmode) != _O_BINARY)
+	if (_setmode (_fileno (stdout), oldmode) != OPEN_BINARY)
 	    error (0, errno, "failed to setmode on stdout");
 #endif
     }

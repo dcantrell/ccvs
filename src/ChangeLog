@@ -1,3 +1,7 @@
+11 Feb 1998  Andy Piper
+
+	* server.c (cvs_output_binary): Use OPEN_BINARY not _O_BINARY.
+
 Mon Feb  9 18:34:39 1998  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	Tweaks to Ian's checkin:
