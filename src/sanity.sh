@@ -464,8 +464,15 @@ directory_cmp ()
 CVSROOT_DIRNAME=${TESTDIR}/cvsroot
 CVSROOT=${CVSROOT_DIRNAME} ; export CVSROOT
 if test "x$remote" = xyes; then
-	# Use rsh so we can test it without having to muck with inetd or anything 
-	# like that.  Also needed to get CVS_SERVER to work.
+	# Use rsh so we can test it without having to muck with inetd
+	# or anything like that.  Also needed to get CVS_SERVER to
+	# work.  Make sure 'rsh' works altogether.
+        host="`hostname`"
+	if test "x`rsh $host 'echo hi'`" != "xhi"; then
+	    echo "ERROR: cannot test remote CVS, because \`rsh $host' fails." >&2
+	    exit 1
+	fi
+
 	CVSROOT=:ext:`hostname`:${CVSROOT_DIRNAME} ; export CVSROOT
 	CVS_SERVER=${testcvs}; export CVS_SERVER
 fi
