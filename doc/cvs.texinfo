@@ -11730,7 +11730,9 @@ without another error message, it is definitely a CVS
 bug (@pxref{BUGS}).
 @c My current suspicion is that the RCS in the rcs (not
 @c cvs/winnt/rcs57nt.zip) directory on the _Practical_
-@c CD is bad.  But that remains to be confirmed.
+@c CD is bad (remains to be confirmed).
+@c There is also a report of something which looks
+@c very similar on SGI, Irix 5.2, so I dunno.
 
 @item cvs [update aborted]: could not patch @var{file}: No such file or directory
 This means that there was a problem finding the
