@@ -52,7 +52,7 @@ copy_file (from, to)
     if (isdevice (from))
     {
 #if defined(HAVE_MKNOD) && defined(HAVE_STRUCT_STAT_ST_RDEV)
-	if (stat (from, &sb) < 0)
+	if( CVS_STAT( from, &sb ) < 0 )
 	    error (1, errno, "cannot stat %s", from);
 	mknod (to, sb.st_mode, sb.st_rdev);
 #else
@@ -124,7 +124,7 @@ isdir (file)
 {
     struct stat sb;
 
-    if (stat (file, &sb) < 0)
+    if( CVS_STAT( file, &sb ) < 0 )
 	return (0);
     return (S_ISDIR (sb.st_mode));
 }
@@ -217,7 +217,7 @@ isaccessible (file, mode)
     int omask = 0;
     int uid, mask;
     
-    if (stat(file, &sb) == -1)
+    if( CVS_STAT( file, &sb ) == -1 )
 	return 0;
     if (mode == F_OK)
 	return 1;
@@ -285,7 +285,7 @@ make_directory (name)
 {
     struct stat sb;
 
-    if (stat (name, &sb) == 0 && (!S_ISDIR (sb.st_mode)))
+    if( CVS_STAT( name, &sb ) == 0 && ( !S_ISDIR( sb.st_mode ) ) )
 	    error (0, 0, "%s already exists but is not a directory", name);
     if (!noexec && mkdir (name, 0777) < 0)
 	error (1, errno, "cannot make directory %s", name);
@@ -356,7 +356,7 @@ xchmod (fname, writable)
     if (preserve_perms)
 	return;
 
-    if (stat (fname, &sb) < 0)
+    if( CVS_STAT( fname, &sb ) < 0 )
     {
 	if (!noexec)
 	    error (0, errno, "cannot stat %s", fname);
@@ -447,7 +447,7 @@ unlink_file_dir (f)
        call to stat() and the call to unlink(), we'll still corrupt
        the filesystem.  Where is the Unix Haters Handbook when you need
        it?  */
-    if (stat (f, &sb) < 0)
+    if( CVS_STAT( f, &sb ) < 0 )
     {
 	if (existence_error (errno))
 	{

@@ -1,3 +1,11 @@
+2003-05-19  Derek Price  <derek@ximbiot.com>
+
+	* filesubr.c: s/\bstat\b/CVS_STAT/g;s/\blstat\b/CVS_LSTAT/g
+	* hardlink.c: Ditto.
+	* ignore.c: Ditto.
+	* rcs.c: Ditto.
+	* update.c: Ditto.
+
 2003-05-18  Larry Jones  <lawrence.jones@eds.com>
 
 	* checkout.c (safe_location): Remove unused variable.
