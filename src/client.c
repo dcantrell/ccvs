@@ -1705,6 +1705,19 @@ update_entries (data_arg, ent_list, short_pathname, filename)
 	        retcode = 0;
 	    else
 	    {
+		/* This behavior (in which -b takes an argument) is
+		   supported by GNU patch 2.1.  Apparently POSIX.2
+		   specifies a -b option without an argument.  GNU
+		   patch 2.1.5 implements this and therefore won't
+		   work here.  GNU patch versions after 2.1.5 are said
+		   to have a kludge which checks if the last 4 args
+		   are `-b SUFFIX ORIGFILE PATCHFILE' and if so emit a
+		   warning (I think -s suppresses it), and then behave
+		   as CVS expects.
+
+		   Of course this is yet one more reason why in the long
+		   run we want Rcs-diff to replace Patched.  */
+
 	        run_setup ("%s -f -s -b ~ %s %s", PATCH_PROGRAM,
 			   filename, temp_filename);
 		retcode = run_exec (DEVNULL, RUN_TTY, RUN_TTY, RUN_NORMAL);
