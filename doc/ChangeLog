@@ -1,5 +1,11 @@
 Sat Dec 13 08:41:13 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvsclient.texi (Connection and Authentication): State that
+	GSSAPI is preferred to kserver.  Try to be clearer about what
+	the term "pserver" means.  Introduce GSSAPI and cite the relevant
+	RFCs.  Discuss the limitations of the existing features in
+	preventing hijacking.
+
 	* cvs.texinfo (GSSAPI authenticated, Kerberos authenticated):
 	Briefly introduce what GSSAPI and Kerberos are.  Be slightly more
 	emphatic about protecting against downgrade attacks.
