@@ -1,3 +1,12 @@
+2002-02-13  Larry Jones  <larry.jones@sdrc.com>
+
+	* rcs.c (RCS_gettag): Do not interpret an empty tag as HEAD (nothing
+	else does and I don't see any documentation that says it should).
+	(translate_symtag): Break out of loop at end of symbols to prevent
+	looping forever when tag is "".
+	(Reported by Alain ENOUT <aln00@udcast.com>
+	via Eric Gillespie <epg@pretzelnet.org>.)
+
 2002-02-11  Larry Jones  <larry.jones@sdrc.com>
 
 	* server.c (server_cleanup): Set buf_to_net back to blocking mode
