@@ -19,7 +19,11 @@
 #include "system.h"
 #include <stdio.h>
 #include <setjmp.h>
+#ifdef HAVE_GETOPT_H
 #include "getopt.h"
+#else
+#include "getopt_.h"
+#endif
 #include "diffrun.h"
 
 /* diff3.c has a real initialize_main function. */
