@@ -253,7 +253,7 @@ patch (argc, argv)
     db = open_module ();
     for (i = 0; i < argc; i++)
 	err += do_module (db, argv[i], PATCH, "Patching", patch_proc,
-			  (char *) NULL, 0, 0, 0, 0, (char *) NULL);
+			  (char *) NULL, 0, local, 0, 0, (char *) NULL);
     close_module (db);
     free (options);
     patch_cleanup ();
@@ -394,6 +394,7 @@ patch_fileproc (callerdat, finfo)
     line1_chars_allocated = 0;
     line2 = NULL;
     line2_chars_allocated = 0;
+    vers_tag = vers_head = NULL;
 
     /* find the parsed rcs file */
     if ((rcsfile = finfo->rcs) == NULL)
