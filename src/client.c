@@ -802,8 +802,13 @@ call_in_directory (pathname, func, data)
 {
     char *dir_name;
     char *filename;
-    /* Just the part of pathname relative to toplevel_repos.  */
-    char *short_pathname = pathname;
+    /* This is what we get when we hook up the directory (working directory
+       name) from PATHNAME with the filename from REPOSNAME.  For example:
+       pathname: ccvs/src/
+       reposname: /u/src/master/ccvs/foo/ChangeLog
+       short_pathname: ccvs/src/ChangeLog
+       */
+    char *short_pathname;
     char *p;
 
     /*
@@ -854,7 +859,7 @@ call_in_directory (pathname, func, data)
     else
 	*p = '\0';
 
-    dir_name = xstrdup (short_pathname);
+    dir_name = xstrdup (pathname);
     p = strrchr (dir_name, '/');
     if (p == NULL)
     {
