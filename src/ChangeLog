@@ -1,3 +1,25 @@
+Sun Aug  4 11:19:30 1996  Ian Lance Taylor  <ian@cygnus.com>
+
+	Handle simple cases of cvs log without invoking rlog.
+	* log.c (struct log_data): Define.
+	(cvslog): Use getopt to parse options.  Set up a log_data
+	structure, and pass it to start_recursion.
+	(log_fileproc): Get arguments form callerdat rather than static
+	variables.  In simple cases, print the log information directly,
+	rather than invoking rlog.
+	(log_symbol, log_count, log_tree): New static functions.
+	(log_abranch, log_version, log_branch): New static functions.
+	* rcs.h (struct rcsnode): Add other field.
+	(struct rcsversnode): Add other field.
+	(RCS_fully_parse): Declare.
+	* rcs.c (getrcsrev): Move declaration to start of file.
+ 	(RCS_reparsercsfile): Add all parameter.  Change all callers.
+	(RCS_fully_parse): New function.
+	(freercsnode): Free other list.
+	(rcsvers_delproc): Free other list.
+	* hash.h (enum ntype): Add RCSFIELD.
+	* hash.c (nodetypestring): Handle RCSFIELD.
+
 Sat Aug  3 19:39:54 1996  Ian Lance Taylor  <ian@cygnus.com>
 
 	* log.c (cvslog): Correct position of CLIENT_SUPPORT #endif.
