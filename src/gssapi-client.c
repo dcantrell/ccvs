@@ -160,7 +160,7 @@ connect_to_gserver (cvsroot_t *root, int sock, struct hostent *hostinfo)
 		buf[0] = cbuf[0];
 		buf[1] = cbuf[1];
 		total = 2;
-		while (got = recv (sock, buf + total, sizeof buf - total, 0))
+		while ((got = recv (sock, buf + total, sizeof buf - total, 0)))
 		{
 		    if (got < 0)
 			error (1, 0, "recv() from server %s: %s",
