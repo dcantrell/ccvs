@@ -17780,7 +17780,7 @@ if test -z "\$line"; then
 else
   user=\`echo \$line | sed -e 's/locks \\(${author}\\):[0-9.]*;.*/\\1/'\`
   version=\`echo \$line | sed -e 's/locks ${author}:\\([0-9.]*\\);.*/\\1/'\`
-  echo "\$user has file a-lock locked for version  \$version"
+  echo "\$user has file a-lock locked for version  \$version" >&2
   exit 1
 fi
 EOF

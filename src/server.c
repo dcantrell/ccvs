@@ -2841,7 +2841,7 @@ error  \n");
 	struct buffer *protocol_inbuf;
 	/* Number of file descriptors to check in select ().  */
 	int num_to_check;
-	int count_needed = 0;
+	int count_needed = 1;
 #ifdef SERVER_FLOWCONTROL
 	int have_flowcontrolled = 0;
 #endif /* SERVER_FLOWCONTROL */
@@ -2929,13 +2929,16 @@ error  \n");
 
 	while (stdout_pipe[0] >= 0
 	       || stderr_pipe[0] >= 0
-	       || protocol_pipe[0] >= 0)
+	       || protocol_pipe[0] >= 0
+	       || count_needed <= 0)
 	{
 	    fd_set readfds;
 	    fd_set writefds;
 	    int numfds;
 #ifdef SERVER_FLOWCONTROL
 	    int bufmemsize;
+	    struct timeval *timeout_ptr;
+	    struct timeval timeout;
 
 	    /*
 	     * See if we are swamping the remote client and filling our VM.
@@ -2956,8 +2959,24 @@ error  \n");
 
 	    FD_ZERO (&readfds);
 	    FD_ZERO (&writefds);
+
+	    if (count_needed <= 0)
+	    {
+		/* there is data pending which was read from the protocol pipe
+		 * so don't block if we don't find any data
+		 */
+		timeout.tv_sec = 0;
+		timeout.tv_usec = 0;
+		timeout_ptr = &timeout;
+	    }
+	    else
+	    {
+		/* block indefinately */
+		timeout_ptr = NULL;
+	    }
+
 	    if (! buf_empty_p (buf_to_net))
-	        FD_SET (STDOUT_FILENO, &writefds);
+		FD_SET (STDOUT_FILENO, &writefds);
 
 	    if (stdout_pipe[0] >= 0)
 	    {
@@ -2973,28 +2992,34 @@ error  \n");
 	    }
 
 	    /* This process of selecting on the three pipes means that
-	       we might not get output in the same order in which it
-	       was written, thus producing the well-known
-	       "out-of-order" bug.  If the child process uses
-	       cvs_output and cvs_outerr, it will send everything on
-	       the protocol_pipe and avoid this problem, so the
-	       solution is to use cvs_output and cvs_outerr in the
-	       child process.  */
+	     we might not get output in the same order in which it
+	     was written, thus producing the well-known
+	     "out-of-order" bug.  If the child process uses
+	     cvs_output and cvs_outerr, it will send everything on
+	     the protocol_pipe and avoid this problem, so the
+	     solution is to use cvs_output and cvs_outerr in the
+	     child process.  */
 	    do {
 		/* This used to select on exceptions too, but as far
                    as I know there was never any reason to do that and
                    SCO doesn't let you select on exceptions on pipes.  */
 		numfds = select (num_to_check, &readfds, &writefds,
-				 (fd_set *)0, (struct timeval *)NULL);
+				 (fd_set *)0, timeout_ptr);
 		if (numfds < 0
-		    && errno != EINTR)
+			&& errno != EINTR)
 		{
 		    buf_output0 (buf_to_net, "E select failed\n");
 		    print_error (errno);
 		    goto error_exit;
 		}
 	    } while (numfds < 0);
-	    
+
+	    if (numfds == 0)
+	    {
+		FD_ZERO (&readfds);
+		FD_ZERO (&writefds);
+	    }
+
 	    if (FD_ISSET (STDOUT_FILENO, &writefds))
 	    {
 		/* What should we do with errors?  syslog() them?  */
@@ -3006,7 +3031,6 @@ error  \n");
 	    {
 		int status;
 		int count_read;
-		int special;
 		
 		status = buf_input_data (protocol_inbuf, &count_read);
 
@@ -3029,29 +3053,49 @@ error  \n");
 		 * have.
 		 */
 		count_needed -= count_read;
-		while (count_needed <= 0)
-		{
-		    count_needed = buf_copy_counted (buf_to_net,
+	    }
+	    /* this is still part of the protocol pipe procedure, but it is
+	     * outside the above conditional so that unprocessed data can be
+	     * left in the buffer and stderr/stdout can be read when a flush
+	     * signal is received and control can return here without passing
+	     * through the select code and maybe blocking
+	     */
+	    while (count_needed <= 0)
+	    {
+		int special = 0;
+
+		count_needed = buf_copy_counted (buf_to_net,
 						     protocol_inbuf,
 						     &special);
 
-		    /* What should we do with errors?  syslog() them?  */
-		    buf_send_output (buf_to_net);
+		/* What should we do with errors?  syslog() them?  */
+		buf_send_output (buf_to_net);
 
-		    /* If SPECIAL got set to -1, it means that the child
-		       wants us to flush the pipe.  We don't want to block
-		       on the network, but we flush what we can.  If the
-		       client supports the 'F' command, we send it.  */
-		    if (special == -1)
+		/* If SPECIAL got set to <0, it means that the child
+		 * wants us to flush the pipe & maybe stderr or stdout.
+		 *
+		 * After that we break to read stderr & stdout again before
+		 * going back to the protocol pipe
+		 *
+		 * Upon breaking, count_needed = 0, so the next pass will only
+		 * perform a non-blocking select before returning here to finish
+		 * processing data we already read from the protocol buffer
+		 */
+		 if (special == -1)
+		 {
+		     cvs_flushout();
+		     break;
+		 }
+		if (special == -2)
+		{
+		    /* If the client supports the 'F' command, we send it. */
+		    if (supported_response ("F"))
 		    {
-			if (supported_response ("F"))
-			{
-			    buf_append_char (buf_to_net, 'F');
-			    buf_append_char (buf_to_net, '\n');
-			}
-
-			cvs_flusherr ();
+			buf_append_char (buf_to_net, 'F');
+			buf_append_char (buf_to_net, '\n');
 		    }
+		    cvs_flusherr ();
+		    break;
 		}
 	    }
 
@@ -6434,13 +6478,20 @@ cvs_flusherr ()
 #ifdef SERVER_SUPPORT
     if (error_use_protocol)
     {
+	/* skip the actual stderr flush in this case since the parent process
+	 * on the server should only be writing to stdout anyhow
+	 */
 	/* Flush what we can to the network, but don't block.  */
 	buf_flush (buf_to_net, 0);
     }
     else if (server_active)
     {
+	/* make sure stderr is flushed before we send the flush count on the
+	 * protocol pipe
+	 */ 
+	fflush (stderr);
 	/* Send a special count to tell the parent to flush.  */
-	buf_send_special_count (protocol, -1);
+	buf_send_special_count (protocol, -2);
     }
     else
 #endif
@@ -6466,7 +6517,13 @@ cvs_flushout ()
 	   cvs_flushout replaces, setting stdout to line buffering in
 	   main.c, didn't get called in the server child process.  But
 	   in the future it is quite plausible that we'll want to make
-	   this case work analogously to cvs_flusherr.  */
+	   this case work analogously to cvs_flusherr.
+	 
+	   FIXME - DRP - I tried to implement this and triggered the following
+	   error: "Protocol error: uncounted data discarded".  I don't need
+	   this feature right now, so I'm not going to bother with it yet.
+	 */
+	buf_send_special_count (protocol, -1);
     }
     else
 #endif

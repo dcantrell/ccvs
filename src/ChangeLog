@@ -1,3 +1,13 @@
+2001-01-23  Derek Price  <derek.price@openavenue.com>
+
+	* run.c (run_exec): flush, if used, stderr and stdout before exit
+	* server.c (cvs_flusherr): flush stderr & send a stderr flush command
+	on the protocol pipe
+	(cvs_flushout): like above, for stdout
+	(do_cvs_command): handle flushes properly
+	* sanity.sh (reserved): make the commitinfo script echo errors to
+	stderr rather than stdin
+
 2001-01-18  Larry Jones  <larry.jones@sdrc.com>
 
 	* log.c (option_revlist, revlist, log_usage, cvslog,
