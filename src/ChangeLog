@@ -1,5 +1,13 @@
 2004-11-10 Derek Price <derek@ximbiot.com>
 
+	* sanity.sh: Maintain pass/skip/warn status and output at end.
+	(usage): Note new functionality of -e.
+	(warn): New function.
+	(verify_tmp_empty): Warn instead of failing.  Delete turds if warn()
+	doesn't exit.
+
+2004-11-10 Derek Price <derek@ximbiot.com>
+
 	* sanity.sh (verify_tmp_empty): New function.
 	(dotest_internal_*): Call verify_tmp_empty as needed.
 
