@@ -32,10 +32,13 @@ static int tag_fileproc PROTO((char *file, char *update_dir,
 			 char *repository, List * entries,
 			 List * srcfiles));
 
+static char *numtag;
+static char *date = NULL;
 static char *symtag;
 static int delete;			/* adding a tag by default */
 static int branch_mode;			/* make an automagic "branch" tag */
 static int local;			/* recursive by default */
+static int force_tag_match = 1;         /* force tag to match by default */
 static int force_tag_move;		/* don't force tag to move by default */
 
 struct tag_info
@@ -60,6 +63,8 @@ static const char *const tag_usage[] =
     "\t-l\tLocal directory only, not recursive.\n",
     "\t-R\tProcess directories recursively.\n",
     "\t-d\tDelete the given Tag.\n",
+    "\t-[rD]\tExisting tag or date.\n",
+    "\t-f\tForce a head revision if tag etc not found.\n",
     "\t-b\tMake the tag a \"branch\" tag, allowing concurrent development.\n",
     "\t-F\tMove tag if it already exists\n",
     NULL
@@ -77,7 +82,7 @@ tag (argc, argv)
 	usage (tag_usage);
 
     optind = 1;
-    while ((c = getopt (argc, argv, "FQqlRdb")) != -1)
+    while ((c = getopt (argc, argv, "FQqlRdr:D:bf")) != -1)
     {
 	switch (c)
 	{
@@ -100,6 +105,17 @@ tag (argc, argv)
 		break;
 	    case 'd':
 		delete = 1;
+		break;
+            case 'r':
+                numtag = optarg;
+                break;
+            case 'D':
+                if (date)
+                    free (date);
+                date = Make_Date (optarg);
+                break;
+	    case 'f':
+		force_tag_match = 0;
 		break;
 	    case 'b':
 		branch_mode = 1;
@@ -194,6 +210,7 @@ check_fileproc(file, update_dir, repository, entries, srcfiles)
 {
     char *xdir;
     Node *p;
+    Vers_TS *vers;
     
     if (update_dir[0] == '\0')
 	xdir = ".";
@@ -223,7 +240,41 @@ check_fileproc(file, update_dir, repository, entries, srcfiles)
     p->key = xstrdup (file);
     p->type = UPDATE;
     p->delproc = tag_delproc;
-    p->data = NULL;
+    vers = Version_TS (repository, (char *) NULL, (char *) NULL, (char *) NULL,
+		       file, 0, 0, entries, srcfiles);
+    p->data = RCS_getversion(vers->srcfile, numtag, date, force_tag_match);
+    if (p->data != NULL)
+    {
+        int addit = 1;
+        char *oversion;
+        
+        oversion = RCS_getversion (vers->srcfile, symtag, (char *) NULL, 1);
+        if (oversion == NULL) 
+        {
+            if (delete)
+            {
+                addit = 0;
+            }
+        }
+        else if (strcmp(oversion, p->data) == 0)
+        {
+            addit = 0;
+        }
+        else if (!force_tag_move)
+        {
+            addit = 0;
+        }
+        if (oversion != NULL)
+        {
+            free(oversion);
+        }
+        if (!addit)
+        {
+            free(p->data);
+            p->data = NULL;
+        }
+    }
+    freevers_ts(&vers);
     (void) addnode (tlist, p);
     return (0);
 }
@@ -284,7 +335,11 @@ pretag_proc(repository, filter)
         }
         free(s);
     }
-    run_setup("%s %s %s", filter, symtag, repository);
+    run_setup("%s %s %s %s",
+              filter,
+              symtag,
+              delete ? "del" : "add",
+              repository);
     walklist(tlist, pretag_list_proc, NULL);
     return (run_exec(RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL|RUN_REALLY));
 }
@@ -305,7 +360,11 @@ static void
 tag_delproc(p)
     Node *p;
 {
-    p->data = NULL;
+    if (p->data != NULL)
+    {
+        free(p->data);
+        p->data = NULL;
+    }
     return;
 }
 
@@ -314,7 +373,11 @@ pretag_list_proc(p, closure)
     Node *p;
     void *closure;
 {
-    run_arg(p->key);
+    if (p->data != NULL)
+    {
+        run_arg(p->key);
+        run_arg(p->data);
+    }
     return (0);
 }
 
@@ -333,6 +396,7 @@ tag_fileproc (file, update_dir, repository, entries, srcfiles)
     List *srcfiles;
 {
     char *version, *oversion;
+    char *nversion = NULL;
     char *rev;
     Vers_TS *vers;
     int retcode = 0;
@@ -340,6 +404,18 @@ tag_fileproc (file, update_dir, repository, entries, srcfiles)
     vers = Version_TS (repository, (char *) NULL, (char *) NULL, (char *) NULL,
 		       file, 0, 0, entries, srcfiles);
 
+    if ((numtag != NULL) || (date != NULL))
+    {
+        nversion = RCS_getversion(vers->srcfile,
+                                  numtag,
+                                  date,
+                                  force_tag_match);
+        if (nversion == NULL)
+        {
+	    freevers_ts (&vers);
+            return (0);
+        }
+    }
     if (delete)
     {
 
@@ -387,7 +463,14 @@ tag_fileproc (file, update_dir, repository, entries, srcfiles)
      * If we are adding a tag, we need to know which version we have checked
      * out and we'll tag that version.
      */
-    version = vers->vn_user;
+    if (nversion == NULL)
+    {
+        version = vers->vn_user;
+    }
+    else
+    {
+        version = nversion;
+    }
     if (version == NULL)
     {
 	freevers_ts (&vers);
@@ -476,6 +559,10 @@ tag_fileproc (file, update_dir, repository, entries, srcfiles)
     }
 
     freevers_ts (&vers);
+    if (nversion != NULL)
+    {
+        free(nversion);
+    }
     return (0);
 }
 

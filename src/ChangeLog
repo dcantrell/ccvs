@@ -1,3 +1,11 @@
+Wed Sep 27 15:24:00 1995  Del  <del@matra.com.au>
+
+	* tag.c, rtag.c:  Pass a few extra options to the script
+	named in taginfo (del/add, and revision number).
+
+	* tag.c:  Support a -r option (at long last).  Also needs
+	a -f option to tag the head if there is no matching -r tag.
+
 Tue Sep 26 11:41:08 1995  Karl Fogel  <kfogel@totoro.cyclic.com>
 
         * version.c: Upped version to 1.5.89 for test release preceding
