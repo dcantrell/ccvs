@@ -810,7 +810,14 @@ cause intermittent sandbox corruption.");
 	/* make sure we clean up on error */
 	signals_register (main_cleanup);
 
-	hostname = xgethostname();
+	hostname = xgethostname ();
+	if (hostname == NULL)
+	{
+            error (0, errno,
+                   "xgethostname () returned NULL, using \"localhost\"");
+            hostname = xstrdup ("localhost");
+            
+	}
 #ifdef SERVER_SUPPORT
 	/* Keep track of this separately since the client can change the
 	 * hostname.

@@ -1,3 +1,8 @@
+2005-02-20  Mark D. Baushke  <mdb@cvshome.org>
+
+	* main.c (main): Check the results from xgethostname(). Print a
+	message with the errno and use "localhost" if NULL is returned.
+
 2005-02-20 Derek Price <derek@ximbiot.com>
 
 	* cvs.h (run_arg): Rename to...
