@@ -1,3 +1,12 @@
+Fri Dec  6 15:59:40 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* sanity.sh: When matching "use .cvs commit. to remove this file
+	permanently" messages, change "cvs" to "${PROG}".
+	(rdiff, binfiles): Likewise.
+	This fixes testing a program named something other than "cvs", e.g.
+	$ cp cvs cvs-test
+	$ /bin/sh <srcdir>/sanity.sh `pwd`/cvs-test
+
 1996-12-02  Jim Kingdon
 
 	* client.c: In comment saying that socket buffers don't

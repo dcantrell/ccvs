@@ -911,7 +911,7 @@ HERE
 	  rm file1
 	  dotest deep-4a0 "${testcvs} rm file1" \
 "${PROG} [a-z]*: scheduling .file1. for removal
-${PROG} [a-z]*: use .cvs commit. to remove this file permanently"
+${PROG} [a-z]*: use .${PROG} commit. to remove this file permanently"
 	  dotest deep-4a1 "${testcvs} -q ci -m rm-it" 'Removing file1;
 /tmp/cvs-sanity/cvsroot/first-dir/dir1/dir2/dir3/dir4/dir5/dir6/dir7/dir8/file1,v  <--  file1
 new revision: delete; previous revision: 1\.1
@@ -939,7 +939,7 @@ U dir6/dir7/file1'
 	  cd dir6/dir7
 	  dotest deep-rm1 "${testcvs} rm -f file1" \
 "${PROG} [a-z]*: scheduling .file1. for removal
-${PROG} [a-z]*: use .cvs commit. to remove this file permanently"
+${PROG} [a-z]*: use .${PROG} commit. to remove this file permanently"
 	  cd ..
 	  dotest deep-rm2 "${testcvs} -q update -d -P" 'R dir7/file1'
 	  dotest deep-rm3 "test -d dir7" ''
@@ -1355,9 +1355,9 @@ N trdiff/bar
 No conflicts created by this import'
 		dotest rdiff-2 \
 		  "${testcvs} co -ko trdiff" \
-'cvs [a-z]*: Updating trdiff
+"${PROG} [a-z]*: Updating trdiff
 U trdiff/bar
-U trdiff/foo'
+U trdiff/foo"
 		cd trdiff
 		echo something >> foo
 		dotest rdiff-3 \
@@ -1370,8 +1370,8 @@ done'
 		echo "new file" >> new
 		dotest rdiff-4 \
 		  "${testcvs} add -m new-file-description new" \
-"cvs [a-z]*: scheduling file \`new' for addition
-cvs [a-z]*: use 'cvs commit' to add this file permanently"
+"${PROG} [a-z]*: scheduling file \`new' for addition
+${PROG} [a-z]*: use 'cvs commit' to add this file permanently"
 		dotest rdiff-5 \
 		  "${testcvs} commit -m added-new-file new" \
 'RCS file: /tmp/cvs-sanity/cvsroot/trdiff/new,v
@@ -1382,10 +1382,10 @@ initial revision: 1\.1
 done'
 		dotest rdiff-6 \
 		  "${testcvs} tag local-v0" \
-'cvs [a-z]*: Tagging .
+"${PROG} [a-z]*: Tagging .
 T bar
 T foo
-T new'
+T new"
 		dotest rdiff-7 \
 		  "${testcvs} status -v foo" \
 '===================================================================
@@ -1407,7 +1407,7 @@ File: foo              	Status: Up-to-date
 
 		dotest rdiff-8 \
 		  "${testcvs} rdiff -r T1 -r local-v0 trdiff" \
-'cvs [a-z]*: Diffing trdiff
+"${PROG}"' [a-z]*: Diffing trdiff
 Index: trdiff/foo
 diff -c trdiff/foo:1\.1\.1\.1 trdiff/foo:1\.2
 \*\*\* trdiff/foo:1\.1\.1\.1	.*
@@ -1856,7 +1856,7 @@ done'
 	  rm file1
 	  dotest death2-7 "${testcvs} rm file1" \
 "${PROG} [a-z]*: scheduling .file1. for removal
-${PROG} [a-z]*: use .cvs commit. to remove this file permanently"
+${PROG} [a-z]*: use .${PROG} commit. to remove this file permanently"
 
 	  # Test diff of the removed file before it is committed.
 	  dotest_fail death2-diff-1 "${testcvs} -q diff file1" \
@@ -2720,7 +2720,7 @@ T file8'
 	  dotest join-6 "${testcvs} rm file6 file8" \
 "${PROG}"' [a-z]*: scheduling `file6'\'' for removal
 '"${PROG}"' [a-z]*: scheduling `file8'\'' for removal
-'"${PROG}"' [a-z]*: use '\''cvs commit'\'' to remove these files permanently'
+'"${PROG}"' [a-z]*: use '\'"${PROG} commit"\'' to remove these files permanently'
 	  dotest join-7 "${testcvs} -q ci -mx ." \
 'RCS file: /tmp/cvs-sanity/cvsroot/first-dir/file2,v
 done
@@ -2809,7 +2809,7 @@ T file8'
 '"${PROG}"' [a-z]*: scheduling `file4'\'' for removal
 '"${PROG}"' [a-z]*: scheduling `file5'\'' for removal
 '"${PROG}"' [a-z]*: scheduling `file6'\'' for removal
-'"${PROG}"' [a-z]*: use '\''cvs commit'\'' to remove these files permanently'
+'"${PROG}"' [a-z]*: use '\'"${PROG} commit"\'' to remove these files permanently'
 	  dotest join-14 "${testcvs} -q ci -mx ." \
 'RCS file: /tmp/cvs-sanity/cvsroot/first-dir/Attic/file1,v
 done
@@ -3048,7 +3048,7 @@ done'
 	  rm a
 	  dotest newb-123g "${testcvs} rm a" \
 "${PROG} [a-z]*: scheduling .a. for removal
-${PROG} [a-z]*: use .cvs commit. to remove this file permanently"
+${PROG} [a-z]*: use .${PROG} commit. to remove this file permanently"
 	  dotest newb-123h "${testcvs} -q ci -m removed" \
 'Removing a;
 /tmp/cvs-sanity/cvsroot/first-dir/a,v  <--  a
@@ -3337,7 +3337,7 @@ done'
 	  rm a
 	  dotest conflicts2-142b3 "${testcvs} rm a" \
 "${PROG} [a-z]*: scheduling .a. for removal
-${PROG} [a-z]*: use .cvs commit. to remove this file permanently"
+${PROG} [a-z]*: use .${PROG} commit. to remove this file permanently"
 	  dotest_fail conflicts2-142b4 "${testcvs} -q update" \
 "${PROG} [a-z]*: conflict: removed a was modified by second party
 C a"
@@ -3355,7 +3355,7 @@ ${PROG} [a-z]*: a, version 1\.1, resurrected"
 	  rm abc
 	  dotest conflicts2-142c0 "${testcvs} rm abc" \
 "${PROG} [a-z]*: scheduling .abc. for removal
-${PROG} [a-z]*: use .cvs commit. to remove this file permanently"
+${PROG} [a-z]*: use .${PROG} commit. to remove this file permanently"
 	  dotest conflicts2-142c1 "${testcvs} -q ci -m remove-abc" \
 'Removing abc;
 /tmp/cvs-sanity/cvsroot/first-dir/abc,v  <--  abc
@@ -3365,7 +3365,7 @@ done'
 	  rm abc
 	  dotest conflicts2-142c2 "${testcvs} rm abc" \
 "${PROG} [a-z]*: scheduling .abc. for removal
-${PROG} [a-z]*: use .cvs commit. to remove this file permanently"
+${PROG} [a-z]*: use .${PROG} commit. to remove this file permanently"
 	  dotest conflicts2-142c3 "${testcvs} update" \
 "${PROG} [a-z]*: Updating \."
 	  cd ../..
@@ -4370,11 +4370,11 @@ done'
 	  cd ../../2/first-dir
 	  echo 'edits in dir 2' >binfile
 	  dotest binfiles-con1 "${testcvs} -q update" \
-'U binfile
-cvs [a-z]*: binary file needs merge
-cvs [a-z]*: revision 1\.3 from repository is now in binfile
-cvs [a-z]*: file from working directory is now in \.#binfile\.1\.2
-C binfile'
+"U binfile
+${PROG} [a-z]*: binary file needs merge
+${PROG} [a-z]*: revision 1\.3 from repository is now in binfile
+${PROG} [a-z]*: file from working directory is now in \.#binfile\.1\.2
+C binfile"
 	  dotest binfiles-con2 "cmp binfile ../../1/binfile.dat" ''
 	  dotest binfiles-con3 "cat .#binfile.1.2" 'edits in dir 2'
 
@@ -4466,7 +4466,7 @@ File: binfile          	Status: Up-to-date
 	  # Do sticky options work when used with 'cvs update'?
 	  echo "Not a binary file." > nibfile
 	  dotest binfiles-sticky1 "${testcvs} -q add nibfile" \
-	    'cvs [a-z]*: use '\''cvs commit'\'' to add this file permanently'
+"${PROG} [a-z]*: use "\''cvs commit'\'' to add this file permanently'
 	  dotest binfiles-sticky2 "${testcvs} -q ci -m add-it nibfile" \
 	    'RCS file: /tmp/cvs-sanity/cvsroot/first-dir/nibfile,v
 done
