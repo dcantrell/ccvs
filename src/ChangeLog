@@ -1,3 +1,10 @@
+1998-04-12  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* server.c (do_cvs_command): If there are partial lines left when
+	the child process is done, send them along.
+	* sanity.sh (rcs, rcs2): Enable all tests for remote; tests for
+	this fix.
+
 1998-04-11  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* client.c (client_senddate): Pass SDATEFORM not DATEFORM to

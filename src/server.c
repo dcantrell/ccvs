@@ -2256,6 +2256,9 @@ error  \n");
 
     /* We shouldn't have any partial lines from cvs_output and
        cvs_outerr, but we handle them here in case there is a bug.  */
+    /* FIXME: appending a newline, rather than using "MT" as we
+       do in the child process, is probably not really a very good
+       way to "handle" them.  */
     if (! buf_empty_p (saved_output))
     {
 	buf_append_char (saved_output, '\n');
@@ -2325,6 +2328,19 @@ error  \n");
 	}
 
 	exitstatus = (*command) (argument_count, argument_vector);
+
+	/* Output any partial lines.  If the client doesn't support
+	   "MT", we just throw out the partial line, like old versions
+	   of CVS did, since the protocol can't support this.  */
+	if (supported_response ("MT") && ! buf_empty_p (saved_output))
+	{
+	    buf_output0 (protocol, "MT text ");
+	    buf_append_buffer (protocol, saved_output);
+	    buf_output (protocol, "\n", 1);
+	    buf_send_counted (protocol);
+	}
+	/* For now we just discard partial lines on stderr.  I suspect
+	   that CVS can't write such lines unless there is a bug.  */
 
 	/*
 	 * When we exit, that will close the pipes, giving an EOF to
