@@ -341,8 +341,8 @@ watch_addremove (argc, argv)
 #else
 	send_files (argc, argv, local, 0);
 #endif
-	if (fprintf (to_server,
-		     the_args.adding ? "watch-add\n" : "watch-remove\n") < 0)
+	if (send_to_server (the_args.adding ?
+                            "watch-add\n" : "watch-remove\n") < 0)
 	    error (1, errno, "writing to server");
 	return get_responses_and_close ();
     }
@@ -524,7 +524,7 @@ watchers (argc, argv)
 #else
 	send_files (argc, argv, local, 0);
 #endif
-	if (fprintf (to_server, "watchers\n") < 0)
+	if (send_to_server ("watchers\n") < 0)
 	    error (1, errno, "writing to server");
 	return get_responses_and_close ();
     }

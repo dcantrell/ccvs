@@ -229,7 +229,7 @@ import (argc, argv)
 	client_import_setup (repository);
 	err = import_descend (message, argv[1], argc - 2, argv + 2);
 	client_import_done ();
-	if (fprintf (to_server, "import\n") < 0)
+	if (send_to_server ("import\n") < 0)
 	    error (1, errno, "writing to server");
 	err += get_responses_and_close ();
 	return err;

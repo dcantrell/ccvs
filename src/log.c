@@ -76,7 +76,7 @@ cvslog (argc, argv)
 	send_files (argc - i, argv + i, local, 0);
 #endif
 
-	if (fprintf (to_server, "log\n") < 0)
+	if (send_to_server ("log\n") < 0)
 	    error (1, errno, "writing to server");
         err = get_responses_and_close ();
 	return err;

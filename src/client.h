@@ -50,6 +50,18 @@ extern FILE *to_server;
 /* Stream to read from the server.  */
 extern FILE *from_server;
 
+
+/* "Bottleneck" function that everyone should use for communicating
+   with the server. */
+#if __STDC__
+int send_to_server (char *data, ...);
+     /* FIXME: should we be using that __attribute__ stuff, like
+        error.h does?  I don't know... */
+#else /* ! __STDC__ */
+int send_to_server PROTO((void));
+#endif /* __STDC__ */
+
+
 /* Internal functions that handle client communication to server, etc.  */
 int supported_request PROTO ((char *));
 void option_with_arg PROTO((char *option, char *arg));
