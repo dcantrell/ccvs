@@ -1,5 +1,10 @@
 2004-11-08 Derek Price <derek@ximbiot.com>
 
+	* sanity.sh (verify_tmp_empty): New function.
+	(dotest_internal_*): Call verify_tmp_empty as needed.
+
+2004-11-08 Derek Price <derek@ximbiot.com>
+
 	* sanity.sh (run_filter): Add function header comment block.
 
 2004-11-07  Larry Jones  <lawrence.jones@ugs.com>
