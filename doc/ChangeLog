@@ -1,3 +1,14 @@
+Tue Jan  2 23:39:32 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (Wrappers): Change comb/uncom to wrap/unwrap.
+
+Mon Jan  2 23:00:00 1996  Vince Demarco  <vdemarco@bou.shl.com>
+
+	* cvs.texinfo: update the Wrappers documentation so it isn't
+	so NEXTSTEP centric. The wrappers code has alot of other
+	general uses. The new version of the documentation tryes
+	to show that to the reader.
+
 Mon Jan  1 13:09:39 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvsclient.texi (Responses): Clarify that Module-expansion is not
