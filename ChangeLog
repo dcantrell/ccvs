@@ -1,5 +1,15 @@
 2002-09-24  Derek Price  <derek@ximbiot.com>
 
+	* INSTALL: Document --with-umask.
+	* configure.in (--with-umask): New option.
+	(--with-tmpdir): Move to something more closely resembling alphabetical
+	order of the --with- arguments.
+
+	* configure: Regenerated.
+	* config.h.in: Ditto.
+
+2002-09-24  Derek Price  <derek@ximbiot.com>
+
 	* INSTALL: Note new Automake version.
 	* NEWS: Ditto.
 	* configure.in (AC_ISC_POSIX): Remove this obsolete call and comment
