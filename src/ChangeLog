@@ -1,3 +1,29 @@
+Thu Nov 30 16:37:10 1995  Karl Fogel  <kfogel@floss.cyclic.com>
+
+        * client.c: All these changes are for OS/2, which will no longer have
+        a separate client.c:
+        (start_kerberos_server): new func, contains code that
+        used to be in start_server().
+        (start_server): moved kerberos code to above function, reorganized
+        the rest.  Added authentication clause.
+        (call_in_directory): test errno against EACCESS, if EACCESS is
+        defined (this is for OS/2's oddball mkdir).
+        (change_mode): don't set execute permission on anything if
+        EXECUTE_PERMISSION_LOSES is defined.
+        (get_responses_and_close): if START_RSH_WITH_POPEN_RW, then use
+        pclose() instead of fclose().
+        If waitpid errors with ECHILD, don't die.  This is okay.
+        (start_rsh_server): alternate definition if
+        START_RSH_WITH_POPEN_RW.
+
+        * main.c: [all these changes conditional on CVS_LOGIN: ]
+        Don't prototype connect_to_pserver, don't enter it in cmds[]
+        (actually, it was never in there, I don't know why my previous
+        change said it was).
+        (use_authenticating_server): new global var.
+        (main): if "-a", then set above new var to TRUE.
+        (usg): document "-a" option.
+
 Wed Nov 29 12:55:10 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
         * main.c: Prototype connect_to_pserver(), and enter it in cmds[].
