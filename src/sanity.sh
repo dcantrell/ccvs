@@ -25361,8 +25361,7 @@ $PROG [a-z]*: Rebuilding administrative file database"
 	  fi
 	  echo "^first/subdir ${TESTDIR}/template/temp.subdir" >>rcsinfo
 	  echo "^first ${TESTDIR}/template/temp.first" >>rcsinfo
-	  echo DEFAULT ${TESTDIR}/template/temp.def >>rcsinfo
-	  dotest template-rcsinfo-2 "${testcvs} -Q ci -m. rcsinfo" \
+	  dotest template-rcsinfo-4.1 "${testcvs} -Q ci -m. rcsinfo" \
 "Checking in rcsinfo;
 ${CVSROOT_DIRNAME}/CVSROOT/rcsinfo,v  <--  rcsinfo
 new revision: 1\.3; previous revision: 1\.2
