@@ -219,7 +219,7 @@ import (int argc, char **argv)
      */
     {
 	regex_t pat;
-	assert (!regcomp (&pat, "[1-9][0-9]*\\.[1-9][0-9]*\\.[1-9][0-9]*",
+	assert (!regcomp (&pat, "^[1-9]+\\.[1-9]+\\.[1-9]+$",
 			  REG_EXTENDED));
 	if (regexec (&pat, vbranch, 0, NULL, 0))
 	{
