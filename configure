@@ -1071,7 +1071,7 @@ done
 test -n "$YACC" || YACC="yacc"
 
 echo $ac_n "checking whether ${MAKE-make} sets \${MAKE}""... $ac_c" 1>&6
-set dummy ${MAKE-make}; ac_make=`echo "$2" | tr './\055' '___'`
+set dummy ${MAKE-make}; ac_make=$2
 if eval "test \"`echo '$''{'ac_cv_prog_make_${ac_make}_set'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -2941,7 +2941,8 @@ ac_given_INSTALL="$INSTALL"
 trap 'rm -fr `echo "Makefile lib/Makefile src/Makefile zlib/Makefile doc/Makefile \
 	  man/Makefile tools/Makefile tools/pcl-cvs/Makefile \
 	  contrib/Makefile contrib/elib/Makefile \
-	  windows-NT/Makefile os2/Makefile macintosh/Makefile stamp-h config.h src/options.h" | sed "s/:[^ ]*//g"` conftest*; exit 1' 1 2 15
+	  windows-NT/Makefile os2/Makefile macintosh/Makefile vms/Makefile \
+	  stamp-h config.h src/options.h" | sed "s/:[^ ]*//g"` conftest*; exit 1' 1 2 15
 EOF
 cat >> $CONFIG_STATUS <<EOF
 
@@ -2992,7 +2993,8 @@ cat >> $CONFIG_STATUS <<EOF
 CONFIG_FILES=\${CONFIG_FILES-"Makefile lib/Makefile src/Makefile zlib/Makefile doc/Makefile \
 	  man/Makefile tools/Makefile tools/pcl-cvs/Makefile \
 	  contrib/Makefile contrib/elib/Makefile \
-	  windows-NT/Makefile os2/Makefile macintosh/Makefile stamp-h"}
+	  windows-NT/Makefile os2/Makefile macintosh/Makefile vms/Makefile \
+	  stamp-h"}
 EOF
 cat >> $CONFIG_STATUS <<\EOF
 for ac_file in .. $CONFIG_FILES; do if test "x$ac_file" != x..; then
