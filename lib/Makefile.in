@@ -314,8 +314,8 @@ MOSTLYCLEANFILES = alloca.h alloca.h-t fnmatch.h fnmatch.h-t \
 	stdbool.h stdbool.h-t stdint.h stdint.h-t
 MAINTAINERCLEANFILES = 
 TESTS = test-getdate.sh
-EXTRA_DIST = .cvsignore ChangeLog.fsf build_lib.com libcvs.dep \
-	libcvs.dsp libcvs.mak test-getdate.sh alloca_.h \
+EXTRA_DIST = .cvsignore ChangeLog.fsf Makefile.gnulib build_lib.com \
+	libcvs.dep libcvs.dsp libcvs.mak test-getdate.sh alloca_.h \
 	allocsa.valgrind fnmatch_.h fnmatch_loop.c getndelim2.h \
 	getndelim2.c getndelim2.h getndelim2.c getopt_.h getopt_int.h \
 	stdbool_.h stdint_.h
