@@ -1,5 +1,11 @@
 2003-06-02  Derek Price  <derek@ximbiot.com>
 
+	* sanity.sh: Add comments re portability of test -x & test -e.  Don't
+	bother with quotes in arguments to test when we have laready checked
+	the variables for empty content.
+
+2003-06-02  Derek Price  <derek@ximbiot.com>
+
 	* sanity.sh: Don't use `test -x' since BSD 4.3 doesn't like it.  Minor
 	reorganization for clarity.  Don't check for $server = false after we
 	set its default.  Use </dev/null with calls to $prog --version when we
