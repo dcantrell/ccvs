@@ -5085,7 +5085,7 @@ import-it
 	  dotest_fail importc-11 \
 "${testcvs} import -m imp ${TESTDIR}/other vendor release3" \
 "${PROG} \[[a-z]* aborted\]: directory ${TESTDIR}/other not relative within the repository"
-	  dotest_fail importc-12 "test -e ${TESTDIR}/other" ""
+	  dotest_fail importc-12 "test -d ${TESTDIR}/other" ""
 	  cd ..
 
 	  rm -r 1 2
@@ -10295,7 +10295,7 @@ ${DOTSTAR}"
 "Ew1	[SMTWF][uoehra][neduit] [JFAMSOND][aepuco][nbrylgptvc] [0-9 ][0-9] [0-9:]* [0-9][0-9][0-9][0-9] GMT	[-a-zA-Z_.0-9]*	${TESTDIR}/1/first-dir	EUC"
 	    CVS_SERVER=${CVS_SERVER_SAVED}; export CVS_SERVER
 	    dotest devcom3-9d "${testcvs} -q update" ""
-	    dotest_fail devcom3-9e "test -e CVS/Notify" ""
+	    dotest_fail devcom3-9e "test -f CVS/Notify" ""
 	    dotest devcom3-9f "${testcvs} watchers w1" \
 "w1	${username}	tedit	tunedit	tcommit"
 	    dotest devcom3-9g "${testcvs} unedit w1" ""
