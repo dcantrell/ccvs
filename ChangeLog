@@ -1,5 +1,12 @@
-2001-01-29  Larry Jones  <larry.jones@sdrc.com>
+2001-01-29  Derek Price  <derek.price@openavenue.com>
+
+	* configure.in: Rewrite args to AC_TRY_COMMAND in a form that is
+	acceptable to both Autoconf 1.13 and the new 1.49 beta.
+
+	* configure: regenerated
  
+2001-01-29  Larry Jones  <larry.jones@sdrc.com>
+
 	* configure.in: Check for syslog.h.
 	* configure, config.h.in: Regenerated.
 

@@ -51,8 +51,7 @@ touch ac_test_target
 # Don't know why, but the following test doesn't work under FreeBSD 4.2
 # without this sleep command
 sleep 1
-if AC_TRY_COMMAND([make -f conftestmake 2>&1 >/dev/null
-		|grep ^BSD\ VPATH\ bug\ present\$ >/dev/null]) ; then
+if AC_TRY_COMMAND([make -f conftestmake 2>&1 >/dev/null |grep ^BSD\ VPATH\ bug\ present\$ >/dev/null]) ; then
 	ccvs_cv_bsd_make_vpath_bug=yes
 else
 	ccvs_cv_bsd_make_vpath_bug=no
