@@ -1,3 +1,9 @@
+Thu Jan 15 23:52:00 1998  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* root.c (root_allow_ok): If inetd.conf didn't specify an
+	--allow-root options at all, we know we are in trouble.  Give a
+	specific error message.
+
 Thu Jan 15 21:24:59 1998  Ian Lance Taylor  <ian@cygnus.com>
 
 	* sanity.sh (dotest_sort): New variant of dotest which sorts the

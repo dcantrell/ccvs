@@ -245,6 +245,23 @@ root_allow_ok (arg)
     char *arg;
 {
     unsigned int i;
+
+    if (root_allow_count == 0)
+    {
+	/* Probably someone upgraded from CVS before 1.9.10 to 1.9.10
+	   or later without reading the documentation about
+	   --allow-root.  Printing an error here doesn't disclose any
+	   particularly useful information to an attacker because a
+	   CVS server configured in this way won't let *anyone* in.  */
+
+	/* Note that we are called from a context where we can spit
+	   back "error" rather than waiting for the next request which
+	   expects responses.  */
+	printf ("\
+error 0 Server configuration missing --allow-root in inetd.conf\n");
+	error_exit ();
+    }
+
     for (i = 0; i < root_allow_count; ++i)
 	if (strcmp (root_allow_vector[i], arg) == 0)
 	    return 1;
