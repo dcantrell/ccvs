@@ -626,9 +626,7 @@ void rename_file (const char *from, const char *to);
 void expand_wild (int argc, char **argv, 
                   int *pargc, char ***pargv);
 
-#ifdef SERVER_SUPPORT
 int cvs_casecmp (const char *, const char *);
-#endif
 
 /* exithandle.c */
 void signals_register (RETSIGTYPE (*handler)(int));

@@ -1,5 +1,9 @@
 2004-09-14  Mark D. Baushke  <mdb@cvshome.org>
 
+	* filesubr.c (cvs_casecmp): Move to...
+	* subr.c (cvs_casecmp): ...here.
+	* cvs.h (cvs_casecmp): No longer ifdef under SERVER_SUPPORT
+
 	* parseinfo.c (readBool): Return false when there was no boolean
 	found.
 
