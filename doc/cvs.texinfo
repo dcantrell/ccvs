@@ -1305,7 +1305,7 @@ For an introduction to @sc{cvs} locks focusing on
 user-visible behavior, see @ref{Concurrency}.  The
 following section is aimed at people who are writing
 tools which want to access a @sc{cvs} repository without
-interfering with other tools acessing the same
+interfering with other tools accessing the same
 repository.  If you find yourself confused by concepts
 described here, like @dfn{read lock}, @dfn{write lock},
 and @dfn{deadlock}, you might consult the literature on
@@ -1336,8 +1336,8 @@ Then proceed with reading the repository.  When you are
 done, remove the @file{#cvs.rfl} file to release the
 read lock.
 
-To obtain a writelock, first create the
-@file{#cvs.lock} directory, as with a readlock.  Then
+To obtain a write lock, first create the
+@file{#cvs.lock} directory, as with read locks.  Then
 check that there are no files whose names start with
 @file{#cvs.rfl.}.  If there are, remove
 @file{#cvs.lock}, wait for a while, and try again.  If
@@ -2722,7 +2722,7 @@ cvs/@var{hostname}, where @var{hostname} is the
 canonical name of the server host.  You will have to
 set this up as required by your GSSAPI mechanism.
 
-To connect using GSSAPI, use @samp{:gserver:}.  For
+To connect using GSSAPI, use the @samp{:gserver:} method.  For
 example,
 
 @example
@@ -3174,6 +3174,9 @@ the repository:
 $ cd tc
 $ cvs import -m "Created directory structure" yoyodyne/@var{dir} yoyo start
 @end example
+
+This will add yoyodyne/@var{dir} as a directory under
+@code{$CVSROOT}.
 
 Then, use @code{add} to add files (and new directories)
 as they appear.
@@ -3812,8 +3815,8 @@ File: driver.c          Status: Up-to-date
 @cindex Deleting sticky tags
 The sticky tags will remain on your working files until
 you delete them with @samp{cvs update -A}.  The
-@samp{-A} option retrieves the version of the file from
-the head of the trunk, removing any sticky tags,
+@samp{-A} option merges local changes into the version of the
+file from the head of the trunk, removing any sticky tags,
 dates, or options.  See @ref{update} for more on the operation
 of @code{cvs update}.
 
@@ -4463,7 +4466,7 @@ branch since @sc{cvs} does not automatically add static tags to dead revisions.
 The exception to this rule occurs when
 a static tag has been attached to a dead revision manually.  Use the branch tag
 to merge all changes from the branch or use two static tags as merge endpoints
-to be sure that all intended changes are propogated in the merge.
+to be sure that all intended changes are propagated in the merge.
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node Merging and keywords
@@ -4733,15 +4736,17 @@ directory.
 @c changing right away.
 
 Unlike most other commands, the @code{add} command is
-not recursive.  You cannot even type @samp{cvs add
-foo/bar}!  Instead, you have to
-@c FIXCVS: This is, of course, not a feature.  It is
-@c just that no one has gotten around to fixing "cvs add
-@c foo/bar".
+not recursive.  You have to expcicitly name files and
+directories that you wish to add to the repository.
+However, each directory will need to be added
+separately before you will be able to add new files
+to those directories.
 
 @example
-$ cd foo
-$ cvs add bar
+$ mkdir -p foo/bar
+$ cp ~/myfile foo/bar/myfile
+$ cvs add foo foo/bar
+$ cvs add foo/bar/myfile
 @end example
 
 @cindex add (subcommand)
@@ -5418,45 +5423,6 @@ the way of keeping centralized scripts up to date, use
 the @code{cvs watch add} command (@pxref{Getting
 Notified}); this command is useful even if you are not
 using @code{cvs watch on}.
-
-@node annotate
-@section Annotate command
-@cindex annotate (subcommand)
-
-@deffn Command {cvs annotate} [@code{-FflR}] [@code{-r rev}|@code{-D date}] files @dots{}
-
-For each file in @var{files}, print the head revision
-of the trunk, together with information on the last
-modification for each line.  For example:
-
-@example
-$ cvs annotate ssfile
-Annotations for ssfile
-***************
-1.1          (mary     27-Mar-96): ssfile line 1
-1.2          (joe      28-Mar-96): ssfile line 2
-@end example
-
-The file @file{ssfile} currently contains two lines.
-The @code{ssfile line 1} line was checked in by
-@code{mary} on March 27.  Then, on March 28, @code{joe}
-added a line @code{ssfile line 2}, without modifying
-the @code{ssfile line 1} line.  This report doesn't
-tell you anything about lines which have been deleted
-or replaced; you need to use @code{cvs diff} for that
-(@pxref{diff}).
-
-@end deffn
-
-The options to @code{cvs annotate} are listed in
-@ref{Invoking CVS}, and can be used to select the files
-and revisions to annotate.  The options are described
-in more detail there and in @ref{Common options}.
-
-@c FIXME: maybe an example using the options?  Just
-@c what it means to select a revision might be worth a
-@c few words of explanation ("you want to see who
-@c changed this line *before* 1.4"...).
 
 @c ---------------------------------------------------------------------
 @node Binary files
@@ -6924,7 +6890,9 @@ assigned with @code{cvs admin -s}---see @ref{admin options}.
 
 To include a keyword string you simply include the
 relevant text string, such as @code{$@splitrcskeyword{Id}$}, inside the
-file, and commit the file.  @sc{cvs} will automatically
+file, and commit the file.  @sc{cvs} will automatically (Or,
+more accurately, as part of the update run that
+automatically happens after a commit.)
 expand the string as part of the commit operation.
 
 It is common to embed the @code{$@splitrcskeyword{Id}$} string in
@@ -7433,7 +7401,7 @@ to break a project down into smaller
 @c may not use the modules file.
 separately-compiled subsystems, and arrange a way of
 releasing them internally so that each developer need
-check out only those subsystems which are they are
+check out only those subsystems which they are
 actively working on.
 
 Another approach is to set up a structure which allows
@@ -7603,6 +7571,7 @@ reference to @sc{cvs} commands, @pxref{Invoking CVS}).
 * Global options::              Options you give to the left of cvs_command
 * Common options::              Options you give to the right of cvs_command
 * admin::                       Administration
+* annotate::                    Show last revision where each line was changed.
 * checkout::                    Checkout sources for editing
 * commit::                      Check files into the repository
 * diff::                        Show differences between revisions
@@ -8644,6 +8613,91 @@ this option has never done anything useful.
 
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+@node annotate
+@appendixsec annotate---Show last revision where each line was changed.
+@cindex annotate (subcommand)
+
+@itemize @bullet
+@item
+Synopsis: annotate [options] files@dots{}
+@item
+Requires: repository.
+@item
+Changes: nothing.
+@end itemize
+
+For each file in @var{files}, print the head revision
+of the trunk, together with information on the last
+modification for each line.  
+
+@menu
+* annotate options::            annotate options
+* annotate examples::           annotate examples
+@end menu
+
+@c . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+@node annotate options
+@appendixsubsec annotate options
+
+These standard options are supported by @code{annotate}
+(@pxref{Common options}, for a complete description of
+them):
+
+@table @code
+@item -l
+Local directory only, no recursion.
+
+@item -R
+Process directories recursively.
+
+@item -f
+Use head revision if tag/date not found.
+
+@item -F
+Annotate binary files.
+
+@item -r @var{revision}
+Annotate file as of specified revision/tag.
+
+@item -D @var{date}
+Annotate file as of specified date.
+@end table
+
+@c . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+@node annotate example
+@appendixsubsec annotate example
+
+For example:
+
+@example
+$ cvs annotate ssfile
+Annotations for ssfile
+***************
+1.1          (mary     27-Mar-96): ssfile line 1
+1.2          (joe      28-Mar-96): ssfile line 2
+@end example
+
+The file @file{ssfile} currently contains two lines.
+The @code{ssfile line 1} line was checked in by
+@code{mary} on March 27.  Then, on March 28, @code{joe}
+added a line @code{ssfile line 2}, without modifying
+the @code{ssfile line 1} line.  This report doesn't
+tell you anything about lines which have been deleted
+or replaced; you need to use @code{cvs diff} for that
+(@pxref{diff}).
+
+The options to @code{cvs annotate} are listed in
+@ref{Invoking CVS}, and can be used to select the files
+and revisions to annotate.  The options are described
+in more detail there and in @ref{Common options}.
+
+@c FIXME: maybe an example using the options?  Just
+@c what it means to select a revision might be worth a
+@c few words of explanation ("you want to see who
+@c changed this line *before* 1.4"...).
+
+
+@c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node checkout
 @appendixsec checkout---Check out sources for editing
 @cindex checkout (subcommand)
@@ -9463,7 +9517,7 @@ it is specified; otherwise it is a format that outputs the line group as-is.
 
 @item --new-group-format=@var{format}
 These line groups are hunks containing only lines from the second
-file.  The default new group format is same as the the changed group
+file.  The default new group format is same as the changed group
 format if it is specified; otherwise it is a format that outputs the
 line group as-is.
 
@@ -9554,7 +9608,7 @@ This format spec is equivalent to @var{T} if
 @var{A}'s value equals @var{B}'s; otherwise it is equivalent to @var{E}.
 
 For example, @samp{%(N=0?no:%dN) line%(N=1?:s)} is equivalent to
-@samp{no lines} if @var{N} (the number of lines in the group in the the
+@samp{no lines} if @var{N} (the number of lines in the group in the
 new file) is 0, to @samp{1 line} if @var{N} is 1, and to @samp{%dN lines}
 otherwise.
 @end table
@@ -9606,11 +9660,11 @@ following forms.
 
 @table @samp
 @item %l
-stands for the the contents of the line, not counting its trailing
+stands for the contents of the line, not counting its trailing
 newline (if any).  This format ignores whether the line is incomplete.
 
 @item %L
-stands for the the contents of the line, including its trailing newline
+stands for the contents of the line, including its trailing newline
 (if any).  If a line is incomplete, this format preserves its
 incompleteness.
 
@@ -11569,7 +11623,7 @@ be tagged.  See @ref{Tagging add/remove}.
 Create a branch named @var{tag}.  See @ref{Branching and merging}.
 
 @item -B
-Used in conjuntion with -F or -d, enables movement and deletion of
+Used in conjunction with -F or -d, enables movement and deletion of
 branch tags.  Use with extreme caution. 
 
 @item -D @var{date}
@@ -12311,7 +12365,7 @@ committed (@pxref{modules}).  The files described in
 this section provide other, more flexible, ways to run
 programs whenever something is committed.
 
-There are three kind of programs that can be run on
+There are three kinds of programs that can be run on
 commit.  They are specified in files in the repository,
 as described below.  The following table summarizes the
 file names and the purpose of the corresponding
