@@ -96,9 +96,18 @@ struct timeb {
 #include <stdlib.h>
 #endif
 
-#if defined (HAVE_ALLOCA_H)
-#include <alloca.h>
-#endif
+/* NOTES on rebuilding getdate.c (particularly for inclusion in CVS
+   releases):
+
+   We don't want to mess with all the portability hassles of alloca.
+   In particular, most (all?) versions of bison will use alloca in
+   their parser.  If bison works on your system (e.g. it should work
+   with gcc), then go ahead and use it, but the more general solution
+   is to use byacc instead of bison, which should generate a portable
+   parser.  I played with adding "#define alloca dont_use_alloca", to
+   give an error if the parser generator uses alloca (and thus detect
+   unportable getdate.c's), but that seems to cause as many problems
+   as it solves.  */
 
 extern struct tm	*gmtime();
 extern struct tm	*localtime();
