@@ -1,3 +1,9 @@
+Tue Jan  2 13:00:00 1996  Jim Kingdon  <kingdon@peary.cyclic.com>
+
+	Visual C++ lint:
+	* sighandle.c: Prototype SIG_handle and SIG_defaults.
+	Use SIG_ERR where appropriate.
+
 Mon Dec 18 10:15:05 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* rename.c: Check ENOENT rather than existence_error.  The latter

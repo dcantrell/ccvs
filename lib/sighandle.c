@@ -43,6 +43,15 @@
 #include <stdio.h>
 #include <signal.h>
 
+/* Add prototype support.  */
+#ifndef PROTO
+#if defined (USE_PROTOTYPES) ? USE_PROTOTYPES : defined (__STDC__)
+#define PROTO(ARGS) ARGS
+#else
+#define PROTO(ARGS) ()
+#endif
+#endif
+
 #ifdef STDC_HEADERS
 #include <stdlib.h>
 #else
@@ -81,7 +90,7 @@ static	struct sigaction	*SIG_defaults;
 #ifdef BSD_SIGNALS
 static	struct sigvec		*SIG_defaults;
 #else
-static	RETSIGTYPE		(**SIG_defaults)();
+static	RETSIGTYPE		(**SIG_defaults) PROTO ((int));
 #endif
 #endif
 
@@ -126,8 +135,8 @@ static int SIG_init()
 			calloc(i, sizeof(struct sigvec));
 #else
 	if (!SIG_defaults)
-		SIG_defaults = (RETSIGTYPE (**)())
-			calloc(i, sizeof(RETSIGTYPE (**)()));
+		SIG_defaults = (RETSIGTYPE (**) PROTO ((int)) )
+			calloc(i, sizeof(RETSIGTYPE (**) PROTO ((int)) ));
 #endif
 	SIG_crSectMask = 0;
 #endif
@@ -141,6 +150,7 @@ static int SIG_init()
  * The following invokes each signal handler in the reverse order in which
  * they were registered.
  */
+static RETSIGTYPE SIG_handle PROTO ((int));
 
 static RETSIGTYPE SIG_handle(sig)
 int			sig;
@@ -228,8 +238,7 @@ RETSIGTYPE	(*fn)();
 			vec.sv_handler = SIG_handle;
 			val = sigvec(sig, &vec, &SIG_defaults[sig]);
 #else
-			if ((SIG_defaults[sig] = signal(sig, SIG_handle)) ==
-			    (RETSIGTYPE (*)()) -1)
+			if ((SIG_defaults[sig] = signal(sig, SIG_handle)) == SIG_ERR)
 				val = -1;
 #endif
 #endif
@@ -334,7 +343,7 @@ RETSIGTYPE	(*fn)();
 #ifdef BSD_SIGNALS
 		val = sigvec(sig, &SIG_defaults[sig], (struct sigvec *) NULL);
 #else
-		if (signal(sig, SIG_defaults[sig]) == (RETSIGTYPE (*)()) -1)
+		if (signal(sig, SIG_defaults[sig]) == SIG_ERR)
 			val = -1;
 #endif
 #endif
