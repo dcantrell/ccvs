@@ -7300,6 +7300,7 @@ module name.
 Specify a program @var{prog} to run whenever files in a
 module are exported.  @var{prog} runs with a single
 argument, the module name.
+@c FIXME: Is it run on server? client?
 
 @cindex Checkin program
 @item -i @var{prog}
@@ -7309,12 +7310,14 @@ argument, the full pathname of the affected directory
 in a source repository.  The @file{commitinfo},
 @file{loginfo}, and @file{editinfo} files provide other
 ways to call a program on commit.
+@c FIXME: Is it run on server? client?
 
 @cindex Checkout program
 @item -o @var{prog}
 Specify a program @var{prog} to run whenever files in a
 module are checked out.  @var{prog} runs with a single
 argument, the module name.
+@c FIXME: Is it run on server? client?
 
 @cindex Status of a module
 @cindex Module status
@@ -7334,6 +7337,7 @@ module are tagged with @code{rtag}.  @var{prog} runs
 with two arguments: the module name and the symbolic
 tag specified to @code{rtag}.  There is no way to
 specify a program to run when @code{tag} is executed.
+@c FIXME: Is it run on server? client?
 
 @cindex Update program
 @item -u @var{prog}
@@ -7342,6 +7346,7 @@ update} is executed from the top-level directory of the
 checked-out module.  @var{prog} runs with a single
 argument, the full path to the source repository for
 this module.
+@c FIXME: Is it run on server? client?
 @end table
 @end table
 
