@@ -175,8 +175,9 @@ cvsbug: cvsbug.sh
 
 $(OBJECTS) $(COMMON_OBJECTS) mkmodules.o: $(HEADERS)
 
-Makefile: Makefile.in
-	cd .. ; $(SHELL) config.status
+subdir = src
+Makefile: ../config.status Makefile.in
+	cd .. && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= ./config.status
 
 #../config.status: ../configure
 #	cd .. ; $(SHELL) config.status --recheck
