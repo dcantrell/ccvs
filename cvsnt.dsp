@@ -180,6 +180,10 @@ SOURCE=.\src\import.c
 # End Source File
 # Begin Source File
 
+SOURCE=".\windows-NT\JmgStat.c"
+# End Source File
+# Begin Source File
+
 SOURCE=.\src\lock.c
 # End Source File
 # Begin Source File
@@ -416,6 +420,10 @@ SOURCE=.\zlib\infutil.h
 # End Source File
 # Begin Source File
 
+SOURCE=".\windows-NT\JmgStat.h"
+# End Source File
+# Begin Source File
+
 SOURCE=.\lib\md5.h
 # End Source File
 # Begin Source File
@@ -473,6 +481,10 @@ SOURCE=.\lib\wait.h
 # Begin Source File
 
 SOURCE=.\src\watch.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\lib\xsize.h
 # End Source File
 # Begin Source File
 

@@ -1,3 +1,11 @@
+﻿2004-09-08  Conrad T. Pino <Conrad@Pino.com>
+
+	* cvsnt.dsp: Add "windows-NT/JmgStat.c" to project.
+		Add "windows-NT/JmgStat.h" to project.
+		Add "lib/xsize.h" to project.
+	* cvsnt.dep: Regenerated for "cvsnt.dsp" change.
+	* cvsnt.mak: Regenerated for "cvsnt.dsp" change.
+
 2004-09-07  Derek Price  <derek@ximbiot.com>
 
 	* NEWS: Note Windows DST fix.

@@ -77,6 +77,7 @@ CLEAN :
 	-@erase "$(INTDIR)\history.obj"
 	-@erase "$(INTDIR)\ignore.obj"
 	-@erase "$(INTDIR)\import.obj"
+	-@erase "$(INTDIR)\JmgStat.obj"
 	-@erase "$(INTDIR)\lock.obj"
 	-@erase "$(INTDIR)\log.obj"
 	-@erase "$(INTDIR)\login.obj"
@@ -192,6 +193,7 @@ LINK32_OBJS= \
 	"$(INTDIR)\woe32.obj" \
 	"$(INTDIR)\wrapper.obj" \
 	"$(INTDIR)\zlib.obj" \
+	"$(INTDIR)\JmgStat.obj" \
 	".\diff\WinRel\libdiff.lib" \
 	".\zlib\WinRel\libz.lib" \
 	".\lib\WinRel\libcvs.lib"
@@ -247,6 +249,7 @@ CLEAN :
 	-@erase "$(INTDIR)\history.obj"
 	-@erase "$(INTDIR)\ignore.obj"
 	-@erase "$(INTDIR)\import.obj"
+	-@erase "$(INTDIR)\JmgStat.obj"
 	-@erase "$(INTDIR)\lock.obj"
 	-@erase "$(INTDIR)\log.obj"
 	-@erase "$(INTDIR)\login.obj"
@@ -365,6 +368,7 @@ LINK32_OBJS= \
 	"$(INTDIR)\woe32.obj" \
 	"$(INTDIR)\wrapper.obj" \
 	"$(INTDIR)\zlib.obj" \
+	"$(INTDIR)\JmgStat.obj" \
 	".\diff\WinDebug\libdiff.lib" \
 	".\zlib\WinDebug\libz.lib" \
 	".\lib\WinDebug\libcvs.lib"
@@ -552,6 +556,12 @@ SOURCE=.\src\ignore.c
 SOURCE=.\src\import.c
 
 "$(INTDIR)\import.obj" : $(SOURCE) "$(INTDIR)"
+	$(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+SOURCE=".\windows-NT\JmgStat.c"
+
+"$(INTDIR)\JmgStat.obj" : $(SOURCE) "$(INTDIR)"
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
 
