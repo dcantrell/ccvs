@@ -1,3 +1,7 @@
+Thu Jul 11 1996  Jim Kingdon  <kingdon@cyclic.com>
+
+	* client.c (start_server): Open logfiles in binary, not text, mode.
+
 Wed Jul 10 19:24:22 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* server.c (print_pending_error, print_error): Remove comments
