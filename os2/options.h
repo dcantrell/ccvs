@@ -246,6 +246,12 @@
 #endif
 
 /*
+ * define this to enable the SETXID support (see FAQ 4D.13)
+ * [ We have no such thing under OS/2, so far as I know. ]
+ */
+#undef SETXID_SUPPORT
+
+/*
  * "cvs login" is under construction.  Don't define this unless you're
  * testing it, in which case you're me and you already know that.
  */
