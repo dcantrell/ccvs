@@ -1,3 +1,10 @@
+2004-03-25  Derek Price  <derek@ximbiot.com>
+
+	* diff.dep, diff.mak: New files created by Visual C++ 6.0.
+	* diff.dsp: Updated by Visual C++ 6.0.
+	* Makefile.am (EXTRA_DIST): Add diff.dep & diff.mak.
+	* .cvsignore: Add and remove files for new MSVC++ setup.
+
 2004-03-20  Derek Price  <derek@ximbiot.com>
 
 	* diff.c (diff_run): Update string arg to const.

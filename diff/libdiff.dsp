@@ -1,5 +1,5 @@
 # Microsoft Developer Studio Project File - Name="libdiff" - Package Owner=<4>
-# Microsoft Developer Studio Generated Build File, Format Version 5.00
+# Microsoft Developer Studio Generated Build File, Format Version 6.00
 # ** DO NOT EDIT **
 
 # TARGTYPE "Win32 (x86) Static Library" 0x0104
@@ -22,9 +22,11 @@ CFG=libdiff - Win32 Release
 !MESSAGE 
 
 # Begin Project
+# PROP AllowPerConfigDependencies 0
 # PROP Scc_ProjName ""
 # PROP Scc_LocalPath ""
 CPP=cl.exe
+RSC=rc.exe
 
 !IF  "$(CFG)" == "libdiff - Win32 Release"
 
@@ -35,11 +37,13 @@ CPP=cl.exe
 # PROP BASE Target_Dir ".\libdiff"
 # PROP Use_MFC 0
 # PROP Use_Debug_Libraries 0
-# PROP Output_Dir "Release"
-# PROP Intermediate_Dir "Release"
+# PROP Output_Dir "WinRel"
+# PROP Intermediate_Dir "WinRel"
 # PROP Target_Dir ".\libdiff"
 # ADD BASE CPP /nologo /W3 /GX /O2 /I "..\windows-NT" /I "..\lib" /D "_WINDOWS" /D "HAVE_TIME_H" /D "CLOSEDIR_VOID" /D "NDEBUG" /D "WIN32" /D "WANT_WIN_COMPILER_VERSION" /YX /FD /c
 # ADD CPP /nologo /W3 /GX /O2 /I "..\windows-NT" /I "..\lib" /D "_WINDOWS" /D "HAVE_TIME_H" /D "CLOSEDIR_VOID" /D "NDEBUG" /D "WIN32" /D "WANT_WIN_COMPILER_VERSION" /YX /FD /c
+# ADD BASE RSC /l 0x409
+# ADD RSC /l 0x409
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo
@@ -56,11 +60,13 @@ LIB32=link.exe -lib
 # PROP BASE Target_Dir ".\libdiff"
 # PROP Use_MFC 0
 # PROP Use_Debug_Libraries 1
-# PROP Output_Dir "Debug"
-# PROP Intermediate_Dir "Debug"
+# PROP Output_Dir "WinDebug"
+# PROP Intermediate_Dir "WinDebug"
 # PROP Target_Dir ".\libdiff"
 # ADD BASE CPP /nologo /W3 /GX /Z7 /Od /I "..\windows-NT" /I "..\lib" /D "_DEBUG" /D "_WINDOWS" /D "WIN32" /D "HAVE_TIME_H" /D "CLOSEDIR_VOID" /YX /FD /c
-# ADD CPP /nologo /W3 /GX /Z7 /Od /I "..\windows-NT" /I "..\lib" /D "_DEBUG" /D "_WINDOWS" /D "WIN32" /D "HAVE_TIME_H" /D "CLOSEDIR_VOID" /YX /FD /c
+# ADD CPP /nologo /W3 /GX /Z7 /Od /I "..\windows-NT" /I "..\lib" /I ".\WinDebug" /D "_DEBUG" /D "_WINDOWS" /D "WIN32" /D "HAVE_TIME_H" /D "CLOSEDIR_VOID" /YX /FD /c
+# ADD BASE RSC /l 0x409
+# ADD RSC /l 0x409
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo
@@ -104,6 +110,26 @@ SOURCE=.\dir.c
 # Begin Source File
 
 SOURCE=.\ed.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\WinDebug\fnmatch.h
+
+!IF  "$(CFG)" == "libdiff - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "libdiff - Win32 Debug"
+
+USERDEP__FNMAT="..\lib\fnmatch.h.in"	
+# Begin Custom Build
+InputPath=..\WinDebug\fnmatch.h
+
+".\WinDebug\fnmatch.h" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	copy "..\lib\fnmatch.h.in" ".\WinDebug\fnmatch.h"
+
+# End Custom Build
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
