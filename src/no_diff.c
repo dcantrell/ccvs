@@ -38,7 +38,7 @@ No_Difference (finfo, vers)
 
     tmp = cvs_temp_name ();
     retcode = RCS_checkout (vers->srcfile, (char *) NULL, vers->vn_user,
-			    (char *) NULL, options, (char *) NULL, tmp);
+			    (char *) NULL, options, tmp);
     if (retcode == 0)
     {
 #if 0

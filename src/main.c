@@ -603,9 +603,13 @@ main (argc, argv)
 	       ignores CVS directories and CVS/Root is likely to
 	       specify a different repository than the one we are
 	       importing to.  */
+#if 0
+	    if (lookup_command_attribute (command_name) & CVS_CMD_IGNORE_ADMROOT)
+		CVSADM_Root = Name_Root((char *) NULL, (char *) NULL);
+#else
 	    if (strcmp (command_name, "import") != 0)
 		CVSADM_Root = Name_Root((char *) NULL, (char *) NULL);
-
+#endif
 	    if (CVSADM_Root != NULL)
 	    {
 		if (CVSroot == NULL || !cvs_update_env)
@@ -634,7 +638,15 @@ main (argc, argv)
 		       "cvs login" command.  Ahh, the things one
 		       discovers. */
 
-		    if (strcmp (command_name, "login") != 0)
+#if 0
+		    if (lookup_command_attribute (command_name) & CVS_CMD_USES_WORK_DIR)
+#else
+		    if ((strcmp (command_name, "checkout") != 0) &&
+			(strcmp (command_name, "login") != 0) &&
+			(strcmp (command_name, "rdiff") != 0) &&
+			(strcmp (command_name, "release") != 0) &&
+			(strcmp (command_name, "rtag") != 0))
+#endif
 			need_to_create_root = 1;
 		}
 	    }

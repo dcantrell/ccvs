@@ -2367,7 +2367,7 @@ send_repository (dir, repos, update_dir)
 	else
 	{
 	    char line[80];
-	    char *nl;
+	    char *nl = NULL;
 	    send_to_server ("Sticky ", 0);
 	    while (fgets (line, sizeof (line), f) != NULL)
 	    {
@@ -2399,7 +2399,7 @@ send_repository (dir, repos, update_dir)
 	else
 	{
 	    char line[80];
-	    char *nl;
+	    char *nl = NULL;
 
 	    send_to_server ("Checkin-prog ", 0);
 
@@ -2434,7 +2434,7 @@ send_repository (dir, repos, update_dir)
 	else
 	{
 	    char line[80];
-	    char *nl;
+	    char *nl = NULL;
 
 	    send_to_server ("Update-prog ", 0);
 

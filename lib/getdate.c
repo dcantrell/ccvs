@@ -8,7 +8,7 @@ static char yysccsid[] = "@(#)yaccpar	1.9 (Berkeley) 02/21/93";
 #define yyerrok (yyerrflag=0)
 #define YYRECOVERING (yyerrflag!=0)
 #define YYPREFIX "yy"
-#line 2 "../../work/ccvs/lib/getdate.y"
+#line 2 "../../lib/getdate.y"
 /*
 **  Originally written by Steven M. Bellovin <smb@research.att.com> while
 **  at the University of North Carolina at Chapel Hill.  Later tweaked by
@@ -126,10 +126,6 @@ extern struct tm	*localtime();
 #define yylex getdate_yylex
 #define yyerror getdate_yyerror
 
-#if	!defined(lint) && !defined(SABER)
-static char RCS[] = "$CVSid: @(#)getdate.y 1.11 94/09/21 $";
-#endif	/* !defined(lint) && !defined(SABER) */
-
 static int yylex ();
 static int yyerror ();
 
@@ -189,12 +185,12 @@ static MERIDIAN	yyMeridian;
 static time_t	yyRelMonth;
 static time_t	yyRelSeconds;
 
-#line 184 "../../work/ccvs/lib/getdate.y"
+#line 180 "../../lib/getdate.y"
 typedef union {
     time_t		Number;
     enum _MERIDIAN	Meridian;
 } YYSTYPE;
-#line 198 "y.tab.c"
+#line 194 "y.tab.c"
 #define tAGO 257
 #define tDAY 258
 #define tDAYZONE 259
@@ -407,7 +403,7 @@ YYSTYPE yylval;
 short yyss[YYSTACKSIZE];
 YYSTYPE yyvs[YYSTACKSIZE];
 #define yystacksize YYSTACKSIZE
-#line 397 "../../work/ccvs/lib/getdate.y"
+#line 393 "../../lib/getdate.y"
 
 /* Month and day table. */
 static TABLE const MonthDayTable[] = {
@@ -1022,7 +1018,7 @@ main(ac, av)
     /* NOTREACHED */
 }
 #endif	/* defined(TEST) */
-#line 1026 "y.tab.c"
+#line 1022 "y.tab.c"
 #define YYABORT goto yyabort
 #define YYREJECT goto yyabort
 #define YYACCEPT goto yyaccept
@@ -1164,37 +1160,37 @@ yyreduce:
     switch (yyn)
     {
 case 3:
-#line 202 "../../work/ccvs/lib/getdate.y"
+#line 198 "../../lib/getdate.y"
 {
 	    yyHaveTime++;
 	}
 break;
 case 4:
-#line 205 "../../work/ccvs/lib/getdate.y"
+#line 201 "../../lib/getdate.y"
 {
 	    yyHaveZone++;
 	}
 break;
 case 5:
-#line 208 "../../work/ccvs/lib/getdate.y"
+#line 204 "../../lib/getdate.y"
 {
 	    yyHaveDate++;
 	}
 break;
 case 6:
-#line 211 "../../work/ccvs/lib/getdate.y"
+#line 207 "../../lib/getdate.y"
 {
 	    yyHaveDay++;
 	}
 break;
 case 7:
-#line 214 "../../work/ccvs/lib/getdate.y"
+#line 210 "../../lib/getdate.y"
 {
 	    yyHaveRel++;
 	}
 break;
 case 9:
-#line 220 "../../work/ccvs/lib/getdate.y"
+#line 216 "../../lib/getdate.y"
 {
 	    yyHour = yyvsp[-1].Number;
 	    yyMinutes = 0;
@@ -1203,7 +1199,7 @@ case 9:
 	}
 break;
 case 10:
-#line 226 "../../work/ccvs/lib/getdate.y"
+#line 222 "../../lib/getdate.y"
 {
 	    yyHour = yyvsp[-3].Number;
 	    yyMinutes = yyvsp[-1].Number;
@@ -1212,7 +1208,7 @@ case 10:
 	}
 break;
 case 11:
-#line 232 "../../work/ccvs/lib/getdate.y"
+#line 228 "../../lib/getdate.y"
 {
 	    yyHour = yyvsp[-3].Number;
 	    yyMinutes = yyvsp[-1].Number;
@@ -1222,7 +1218,7 @@ case 11:
 	}
 break;
 case 12:
-#line 239 "../../work/ccvs/lib/getdate.y"
+#line 235 "../../lib/getdate.y"
 {
 	    yyHour = yyvsp[-5].Number;
 	    yyMinutes = yyvsp[-3].Number;
@@ -1231,7 +1227,7 @@ case 12:
 	}
 break;
 case 13:
-#line 245 "../../work/ccvs/lib/getdate.y"
+#line 241 "../../lib/getdate.y"
 {
 	    yyHour = yyvsp[-5].Number;
 	    yyMinutes = yyvsp[-3].Number;
@@ -1242,56 +1238,56 @@ case 13:
 	}
 break;
 case 14:
-#line 255 "../../work/ccvs/lib/getdate.y"
+#line 251 "../../lib/getdate.y"
 {
 	    yyTimezone = yyvsp[0].Number;
 	    yyDSTmode = DSToff;
 	}
 break;
 case 15:
-#line 259 "../../work/ccvs/lib/getdate.y"
+#line 255 "../../lib/getdate.y"
 {
 	    yyTimezone = yyvsp[0].Number;
 	    yyDSTmode = DSTon;
 	}
 break;
 case 16:
-#line 264 "../../work/ccvs/lib/getdate.y"
+#line 260 "../../lib/getdate.y"
 {
 	    yyTimezone = yyvsp[-1].Number;
 	    yyDSTmode = DSTon;
 	}
 break;
 case 17:
-#line 270 "../../work/ccvs/lib/getdate.y"
+#line 266 "../../lib/getdate.y"
 {
 	    yyDayOrdinal = 1;
 	    yyDayNumber = yyvsp[0].Number;
 	}
 break;
 case 18:
-#line 274 "../../work/ccvs/lib/getdate.y"
+#line 270 "../../lib/getdate.y"
 {
 	    yyDayOrdinal = 1;
 	    yyDayNumber = yyvsp[-1].Number;
 	}
 break;
 case 19:
-#line 278 "../../work/ccvs/lib/getdate.y"
+#line 274 "../../lib/getdate.y"
 {
 	    yyDayOrdinal = yyvsp[-1].Number;
 	    yyDayNumber = yyvsp[0].Number;
 	}
 break;
 case 20:
-#line 284 "../../work/ccvs/lib/getdate.y"
+#line 280 "../../lib/getdate.y"
 {
 	    yyMonth = yyvsp[-2].Number;
 	    yyDay = yyvsp[0].Number;
 	}
 break;
 case 21:
-#line 288 "../../work/ccvs/lib/getdate.y"
+#line 284 "../../lib/getdate.y"
 {
 	    yyMonth = yyvsp[-4].Number;
 	    yyDay = yyvsp[-2].Number;
@@ -1299,7 +1295,7 @@ case 21:
 	}
 break;
 case 22:
-#line 293 "../../work/ccvs/lib/getdate.y"
+#line 289 "../../lib/getdate.y"
 {
 	    /* ISO 8601 format.  yyyy-mm-dd.  */
 	    yyYear = yyvsp[-2].Number;
@@ -1308,7 +1304,7 @@ case 22:
 	}
 break;
 case 23:
-#line 299 "../../work/ccvs/lib/getdate.y"
+#line 295 "../../lib/getdate.y"
 {
 	    /* e.g. 17-JUN-1992.  */
 	    yyDay = yyvsp[-2].Number;
@@ -1317,14 +1313,14 @@ case 23:
 	}
 break;
 case 24:
-#line 305 "../../work/ccvs/lib/getdate.y"
+#line 301 "../../lib/getdate.y"
 {
 	    yyMonth = yyvsp[-1].Number;
 	    yyDay = yyvsp[0].Number;
 	}
 break;
 case 25:
-#line 309 "../../work/ccvs/lib/getdate.y"
+#line 305 "../../lib/getdate.y"
 {
 	    yyMonth = yyvsp[-3].Number;
 	    yyDay = yyvsp[-2].Number;
@@ -1332,14 +1328,14 @@ case 25:
 	}
 break;
 case 26:
-#line 314 "../../work/ccvs/lib/getdate.y"
+#line 310 "../../lib/getdate.y"
 {
 	    yyMonth = yyvsp[0].Number;
 	    yyDay = yyvsp[-1].Number;
 	}
 break;
 case 27:
-#line 318 "../../work/ccvs/lib/getdate.y"
+#line 314 "../../lib/getdate.y"
 {
 	    yyMonth = yyvsp[-1].Number;
 	    yyDay = yyvsp[-2].Number;
@@ -1347,68 +1343,68 @@ case 27:
 	}
 break;
 case 28:
-#line 325 "../../work/ccvs/lib/getdate.y"
+#line 321 "../../lib/getdate.y"
 {
 	    yyRelSeconds = -yyRelSeconds;
 	    yyRelMonth = -yyRelMonth;
 	}
 break;
 case 30:
-#line 332 "../../work/ccvs/lib/getdate.y"
+#line 328 "../../lib/getdate.y"
 {
 	    yyRelSeconds += yyvsp[-1].Number * yyvsp[0].Number * 60L;
 	}
 break;
 case 31:
-#line 335 "../../work/ccvs/lib/getdate.y"
+#line 331 "../../lib/getdate.y"
 {
 	    yyRelSeconds += yyvsp[-1].Number * yyvsp[0].Number * 60L;
 	}
 break;
 case 32:
-#line 338 "../../work/ccvs/lib/getdate.y"
+#line 334 "../../lib/getdate.y"
 {
 	    yyRelSeconds += yyvsp[0].Number * 60L;
 	}
 break;
 case 33:
-#line 341 "../../work/ccvs/lib/getdate.y"
+#line 337 "../../lib/getdate.y"
 {
 	    yyRelSeconds += yyvsp[-1].Number;
 	}
 break;
 case 34:
-#line 344 "../../work/ccvs/lib/getdate.y"
+#line 340 "../../lib/getdate.y"
 {
 	    yyRelSeconds += yyvsp[-1].Number;
 	}
 break;
 case 35:
-#line 347 "../../work/ccvs/lib/getdate.y"
+#line 343 "../../lib/getdate.y"
 {
 	    yyRelSeconds++;
 	}
 break;
 case 36:
-#line 350 "../../work/ccvs/lib/getdate.y"
+#line 346 "../../lib/getdate.y"
 {
 	    yyRelMonth += yyvsp[-1].Number * yyvsp[0].Number;
 	}
 break;
 case 37:
-#line 353 "../../work/ccvs/lib/getdate.y"
+#line 349 "../../lib/getdate.y"
 {
 	    yyRelMonth += yyvsp[-1].Number * yyvsp[0].Number;
 	}
 break;
 case 38:
-#line 356 "../../work/ccvs/lib/getdate.y"
+#line 352 "../../lib/getdate.y"
 {
 	    yyRelMonth += yyvsp[0].Number;
 	}
 break;
 case 39:
-#line 361 "../../work/ccvs/lib/getdate.y"
+#line 357 "../../lib/getdate.y"
 {
 	    if (yyHaveTime && yyHaveDate && !yyHaveRel)
 		yyYear = yyvsp[0].Number;
@@ -1436,18 +1432,18 @@ case 39:
 	}
 break;
 case 40:
-#line 388 "../../work/ccvs/lib/getdate.y"
+#line 384 "../../lib/getdate.y"
 {
 	    yyval.Meridian = MER24;
 	}
 break;
 case 41:
-#line 391 "../../work/ccvs/lib/getdate.y"
+#line 387 "../../lib/getdate.y"
 {
 	    yyval.Meridian = yyvsp[0].Meridian;
 	}
 break;
-#line 1451 "y.tab.c"
+#line 1447 "y.tab.c"
     }
     yyssp -= yym;
     yystate = *yyssp;
