@@ -1,5 +1,8 @@
 1999-05-27  Jim Kingdon  <http://www.cyclic.com>
 
+	* sanity.sh (spacefiles): Clean up -c, top, and -b at end.
+	(spacefiles, files): Fix bad references to CVSROOT_DIRNAME.
+
 	Fix two problems pointed out by Olaf Kirch of swb.de/caldera.de:
 	* server.c (outside_root): New function, contains expanded version
 	of code from serve_directory.
