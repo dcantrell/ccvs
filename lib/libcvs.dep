@@ -1,5 +1,10 @@
 # Microsoft Developer Studio Generated Dependency File, included by libcvs.mak
 
+.\__fpending.c : \
+	"..\windows-NT\config.h"\
+	".\__fpending.h"\
+	
+
 .\asnprintf.c : \
 	"..\windows-NT\config.h"\
 	".\vasnprintf.h"\
@@ -9,6 +14,17 @@
 	"..\windows-NT\config.h"\
 	"..\windows-NT\stdbool.h"\
 	".\dirname.h"\
+	
+
+.\closeout.c : \
+	"..\windows-NT\config.h"\
+	"..\windows-NT\stdbool.h"\
+	".\__fpending.h"\
+	".\closeout.h"\
+	".\error.h"\
+	".\exitfail.h"\
+	".\gettext.h"\
+	".\quotearg.h"\
 	
 
 .\dirname.c : \
@@ -58,7 +74,6 @@
 .\getdate.c : \
 	"..\windows-NT\config.h"\
 	"..\windows-NT\stdbool.h"\
-	".\alloca.h"\
 	".\getdate.h"\
 	".\setenv.h"\
 	".\timespec.h"\
@@ -103,6 +118,17 @@
 	".\md5.h"\
 	
 
+.\pagealign_alloc.c : \
+	"..\windows-NT\config.h"\
+	"..\windows-NT\unistd.h"\
+	".\error.h"\
+	".\exit.h"\
+	".\getpagesize.h"\
+	".\gettext.h"\
+	".\pagealign_alloc.h"\
+	".\xalloc.h"\
+	
+
 ".\printf-args.c" : \
 	"..\windows-NT\config.h"\
 	".\printf-args.h"\
@@ -114,6 +140,14 @@
 	".\printf-args.h"\
 	".\printf-parse.h"\
 	".\xsize.h"\
+	
+
+.\quotearg.c : \
+	"..\windows-NT\config.h"\
+	"..\windows-NT\stdbool.h"\
+	".\gettext.h"\
+	".\quotearg.h"\
+	".\xalloc.h"\
 	
 
 .\readlink.c : \
@@ -138,6 +172,7 @@
 	"..\windows-NT\config.h"\
 	"..\windows-NT\stdbool.h"\
 	"..\windows-NT\unistd.h"\
+	".\chdir-long.h"\
 	".\save-cwd.h"\
 	".\xgetcwd.h"\
 	
@@ -189,22 +224,6 @@
 	"..\windows-NT\unistd.h"\
 	
 
-.\valloc.c : \
-	"..\windows-NT\config.h"\
-	"..\windows-NT\ndir.h"\
-	"..\windows-NT\pwd.h"\
-	"..\windows-NT\stdbool.h"\
-	"..\windows-NT\stdint.h"\
-	"..\windows-NT\unistd.h"\
-	".\fnmatch.h"\
-	".\getopt.h"\
-	".\getpagesize.h"\
-	".\gettext.h"\
-	".\system.h"\
-	".\timespec.h"\
-	".\unlocked-io.h"\
-	
-
 .\vasnprintf.c : \
 	"..\windows-NT\config.h"\
 	"..\windows-NT\stdint.h"\
@@ -232,6 +251,7 @@
 .\xgetcwd.c : \
 	"..\windows-NT\config.h"\
 	"..\windows-NT\unistd.h"\
+	".\getcwd.h"\
 	".\xalloc.h"\
 	".\xgetcwd.h"\
 	

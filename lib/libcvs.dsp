@@ -85,11 +85,19 @@ LIB32=link.exe -lib
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 # Begin Source File
 
+SOURCE=.\__fpending.c
+# End Source File
+# Begin Source File
+
 SOURCE=.\asnprintf.c
 # End Source File
 # Begin Source File
 
 SOURCE=.\basename.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\closeout.c
 # End Source File
 # Begin Source File
 
@@ -145,11 +153,19 @@ SOURCE=.\md5.c
 # End Source File
 # Begin Source File
 
+SOURCE=.\pagealign_alloc.c
+# End Source File
+# Begin Source File
+
 SOURCE=".\printf-args.c"
 # End Source File
 # Begin Source File
 
 SOURCE=".\printf-parse.c"
+# End Source File
+# Begin Source File
+
+SOURCE=.\quotearg.c
 # End Source File
 # Begin Source File
 
@@ -201,10 +217,6 @@ SOURCE=.\unsetenv.c
 # End Source File
 # Begin Source File
 
-SOURCE=.\valloc.c
-# End Source File
-# Begin Source File
-
 SOURCE=.\vasnprintf.c
 # End Source File
 # Begin Source File
@@ -241,6 +253,10 @@ SOURCE=.\yesno.c
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
 # Begin Source File
 
+SOURCE=.\__fpending.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\alloca.h
 # End Source File
 # Begin Source File
@@ -273,6 +289,14 @@ InputPath=.\alloca_.h
 # Begin Source File
 
 SOURCE=.\allocsa.h
+# End Source File
+# Begin Source File
+
+SOURCE=".\chdir-long.h"
+# End Source File
+# Begin Source File
+
+SOURCE=.\closeout.h
 # End Source File
 # Begin Source File
 
@@ -324,6 +348,10 @@ InputPath=.\fnmatch_.h
 
 !ENDIF 
 
+# End Source File
+# Begin Source File
+
+SOURCE=.\getcwd.h
 # End Source File
 # Begin Source File
 
@@ -390,6 +418,10 @@ SOURCE="..\windows-NT\ndir.h"
 # End Source File
 # Begin Source File
 
+SOURCE=.\pagealign_alloc.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\pathmax.h
 # End Source File
 # Begin Source File
@@ -403,6 +435,10 @@ SOURCE=".\printf-parse.h"
 # Begin Source File
 
 SOURCE="..\windows-NT\pwd.h"
+# End Source File
+# Begin Source File
+
+SOURCE=.\quotearg.h
 # End Source File
 # Begin Source File
 

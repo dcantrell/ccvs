@@ -376,6 +376,10 @@ SOURCE=.\src\client.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\lib\closeout.h
+# End Source File
+# Begin Source File
+
 SOURCE=".\windows-NT\config.h"
 # End Source File
 # Begin Source File
@@ -429,6 +433,10 @@ SOURCE=.\lib\getnline.h
 # Begin Source File
 
 SOURCE=.\lib\getopt.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\lib\getpagesize.h
 # End Source File
 # Begin Source File
 
@@ -493,6 +501,10 @@ SOURCE=.\src\myndbm.h
 # Begin Source File
 
 SOURCE=".\windows-NT\ndir.h"
+# End Source File
+# Begin Source File
+
+SOURCE=.\lib\pagealign_alloc.h
 # End Source File
 # Begin Source File
 

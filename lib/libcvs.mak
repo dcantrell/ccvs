@@ -25,6 +25,9 @@ NULL=
 NULL=nul
 !ENDIF 
 
+CPP=cl.exe
+RSC=rc.exe
+
 !IF  "$(CFG)" == "libcvs - Win32 Release"
 
 OUTDIR=.\WinRel
@@ -37,8 +40,10 @@ ALL : ".\getopt.h" ".\fnmatch.h" ".\alloca.h" "$(OUTDIR)\libcvs.lib"
 
 
 CLEAN :
+	-@erase "$(INTDIR)\__fpending.obj"
 	-@erase "$(INTDIR)\asnprintf.obj"
 	-@erase "$(INTDIR)\basename.obj"
+	-@erase "$(INTDIR)\closeout.obj"
 	-@erase "$(INTDIR)\dirname.obj"
 	-@erase "$(INTDIR)\exitfail.obj"
 	-@erase "$(INTDIR)\fncase.obj"
@@ -52,8 +57,10 @@ CLEAN :
 	-@erase "$(INTDIR)\getopt1.obj"
 	-@erase "$(INTDIR)\gettime.obj"
 	-@erase "$(INTDIR)\md5.obj"
+	-@erase "$(INTDIR)\pagealign_alloc.obj"
 	-@erase "$(INTDIR)\printf-args.obj"
 	-@erase "$(INTDIR)\printf-parse.obj"
+	-@erase "$(INTDIR)\quotearg.obj"
 	-@erase "$(INTDIR)\readlink.obj"
 	-@erase "$(INTDIR)\realloc.obj"
 	-@erase "$(INTDIR)\regex.obj"
@@ -66,7 +73,6 @@ CLEAN :
 	-@erase "$(INTDIR)\stripslash.obj"
 	-@erase "$(INTDIR)\time_r.obj"
 	-@erase "$(INTDIR)\unsetenv.obj"
-	-@erase "$(INTDIR)\valloc.obj"
 	-@erase "$(INTDIR)\vasnprintf.obj"
 	-@erase "$(INTDIR)\vasprintf.obj"
 	-@erase "$(INTDIR)\vc60.idb"
@@ -84,40 +90,7 @@ CLEAN :
 "$(OUTDIR)" :
     if not exist "$(OUTDIR)/$(NULL)" mkdir "$(OUTDIR)"
 
-CPP=cl.exe
 CPP_PROJ=/nologo /ML /W3 /GX /O2 /I "..\windows-NT" /I "." /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "_LIB" /D "HAVE_CONFIG_H" /Fp"$(INTDIR)\libcvs.pch" /YX /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c 
-
-.c{$(INTDIR)}.obj::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-.cpp{$(INTDIR)}.obj::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-.cxx{$(INTDIR)}.obj::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-.c{$(INTDIR)}.sbr::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-.cpp{$(INTDIR)}.sbr::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-.cxx{$(INTDIR)}.sbr::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-RSC=rc.exe
 BSC32=bscmake.exe
 BSC32_FLAGS=/nologo /o"$(OUTDIR)\libcvs.bsc" 
 BSC32_SBRS= \
@@ -154,7 +127,6 @@ LIB32_OBJS= \
 	"$(INTDIR)\stripslash.obj" \
 	"$(INTDIR)\time_r.obj" \
 	"$(INTDIR)\unsetenv.obj" \
-	"$(INTDIR)\valloc.obj" \
 	"$(INTDIR)\vasnprintf.obj" \
 	"$(INTDIR)\vasprintf.obj" \
 	"$(INTDIR)\xalloc-die.obj" \
@@ -162,7 +134,11 @@ LIB32_OBJS= \
 	"$(INTDIR)\xgethostname.obj" \
 	"$(INTDIR)\xmalloc.obj" \
 	"$(INTDIR)\xreadlink.obj" \
-	"$(INTDIR)\yesno.obj"
+	"$(INTDIR)\yesno.obj" \
+	"$(INTDIR)\pagealign_alloc.obj" \
+	"$(INTDIR)\closeout.obj" \
+	"$(INTDIR)\__fpending.obj" \
+	"$(INTDIR)\quotearg.obj"
 
 "$(OUTDIR)\libcvs.lib" : "$(OUTDIR)" $(DEF_FILE) $(LIB32_OBJS)
     $(LIB32) @<<
@@ -181,8 +157,10 @@ ALL : "$(OUTDIR)\libcvs.lib"
 
 
 CLEAN :
+	-@erase "$(INTDIR)\__fpending.obj"
 	-@erase "$(INTDIR)\asnprintf.obj"
 	-@erase "$(INTDIR)\basename.obj"
+	-@erase "$(INTDIR)\closeout.obj"
 	-@erase "$(INTDIR)\dirname.obj"
 	-@erase "$(INTDIR)\exitfail.obj"
 	-@erase "$(INTDIR)\fncase.obj"
@@ -196,8 +174,10 @@ CLEAN :
 	-@erase "$(INTDIR)\getopt1.obj"
 	-@erase "$(INTDIR)\gettime.obj"
 	-@erase "$(INTDIR)\md5.obj"
+	-@erase "$(INTDIR)\pagealign_alloc.obj"
 	-@erase "$(INTDIR)\printf-args.obj"
 	-@erase "$(INTDIR)\printf-parse.obj"
+	-@erase "$(INTDIR)\quotearg.obj"
 	-@erase "$(INTDIR)\readlink.obj"
 	-@erase "$(INTDIR)\realloc.obj"
 	-@erase "$(INTDIR)\regex.obj"
@@ -210,7 +190,6 @@ CLEAN :
 	-@erase "$(INTDIR)\stripslash.obj"
 	-@erase "$(INTDIR)\time_r.obj"
 	-@erase "$(INTDIR)\unsetenv.obj"
-	-@erase "$(INTDIR)\valloc.obj"
 	-@erase "$(INTDIR)\vasnprintf.obj"
 	-@erase "$(INTDIR)\vasprintf.obj"
 	-@erase "$(INTDIR)\vc60.idb"
@@ -226,40 +205,7 @@ CLEAN :
 "$(OUTDIR)" :
     if not exist "$(OUTDIR)/$(NULL)" mkdir "$(OUTDIR)"
 
-CPP=cl.exe
 CPP_PROJ=/nologo /MLd /W3 /Gm /GX /ZI /Od /I "..\windows-NT" /I "." /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /D "HAVE_CONFIG_H" /Fp"$(INTDIR)\libcvs.pch" /YX /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /GZ /c 
-
-.c{$(INTDIR)}.obj::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-.cpp{$(INTDIR)}.obj::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-.cxx{$(INTDIR)}.obj::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-.c{$(INTDIR)}.sbr::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-.cpp{$(INTDIR)}.sbr::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-.cxx{$(INTDIR)}.sbr::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-RSC=rc.exe
 BSC32=bscmake.exe
 BSC32_FLAGS=/nologo /o"$(OUTDIR)\libcvs.bsc" 
 BSC32_SBRS= \
@@ -296,7 +242,6 @@ LIB32_OBJS= \
 	"$(INTDIR)\stripslash.obj" \
 	"$(INTDIR)\time_r.obj" \
 	"$(INTDIR)\unsetenv.obj" \
-	"$(INTDIR)\valloc.obj" \
 	"$(INTDIR)\vasnprintf.obj" \
 	"$(INTDIR)\vasprintf.obj" \
 	"$(INTDIR)\xalloc-die.obj" \
@@ -304,7 +249,11 @@ LIB32_OBJS= \
 	"$(INTDIR)\xgethostname.obj" \
 	"$(INTDIR)\xmalloc.obj" \
 	"$(INTDIR)\xreadlink.obj" \
-	"$(INTDIR)\yesno.obj"
+	"$(INTDIR)\yesno.obj" \
+	"$(INTDIR)\pagealign_alloc.obj" \
+	"$(INTDIR)\closeout.obj" \
+	"$(INTDIR)\__fpending.obj" \
+	"$(INTDIR)\quotearg.obj"
 
 "$(OUTDIR)\libcvs.lib" : "$(OUTDIR)" $(DEF_FILE) $(LIB32_OBJS)
     $(LIB32) @<<
@@ -312,6 +261,36 @@ LIB32_OBJS= \
 <<
 
 !ENDIF 
+
+.c{$(INTDIR)}.obj::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+.cpp{$(INTDIR)}.obj::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+.cxx{$(INTDIR)}.obj::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+.c{$(INTDIR)}.sbr::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+.cpp{$(INTDIR)}.sbr::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+.cxx{$(INTDIR)}.sbr::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
 
 
 !IF "$(NO_EXTERNAL_DEPS)" != "1"
@@ -324,6 +303,11 @@ LIB32_OBJS= \
 
 
 !IF "$(CFG)" == "libcvs - Win32 Release" || "$(CFG)" == "libcvs - Win32 Debug"
+SOURCE=.\__fpending.c
+
+"$(INTDIR)\__fpending.obj" : $(SOURCE) "$(INTDIR)"
+
+
 SOURCE=.\asnprintf.c
 
 "$(INTDIR)\asnprintf.obj" : $(SOURCE) "$(INTDIR)"
@@ -332,6 +316,11 @@ SOURCE=.\asnprintf.c
 SOURCE=.\basename.c
 
 "$(INTDIR)\basename.obj" : $(SOURCE) "$(INTDIR)"
+
+
+SOURCE=.\closeout.c
+
+"$(INTDIR)\closeout.obj" : $(SOURCE) "$(INTDIR)"
 
 
 SOURCE=.\dirname.c
@@ -399,6 +388,11 @@ SOURCE=.\md5.c
 "$(INTDIR)\md5.obj" : $(SOURCE) "$(INTDIR)"
 
 
+SOURCE=.\pagealign_alloc.c
+
+"$(INTDIR)\pagealign_alloc.obj" : $(SOURCE) "$(INTDIR)"
+
+
 SOURCE=".\printf-args.c"
 
 "$(INTDIR)\printf-args.obj" : $(SOURCE) "$(INTDIR)"
@@ -407,6 +401,11 @@ SOURCE=".\printf-args.c"
 SOURCE=".\printf-parse.c"
 
 "$(INTDIR)\printf-parse.obj" : $(SOURCE) "$(INTDIR)"
+
+
+SOURCE=.\quotearg.c
+
+"$(INTDIR)\quotearg.obj" : $(SOURCE) "$(INTDIR)"
 
 
 SOURCE=.\readlink.c
@@ -467,11 +466,6 @@ SOURCE=.\time_r.c
 SOURCE=.\unsetenv.c
 
 "$(INTDIR)\unsetenv.obj" : $(SOURCE) "$(INTDIR)"
-
-
-SOURCE=.\valloc.c
-
-"$(INTDIR)\valloc.obj" : $(SOURCE) "$(INTDIR)"
 
 
 SOURCE=.\vasnprintf.c
