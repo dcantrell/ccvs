@@ -797,3 +797,6 @@ sure it would be possible to remove even the use of temp files in noexec mode,
 but most unlinks should probably be using unlink_file and not CVS_UNLINK.
 
 198.  Remove references to deprecated cvs_temp_name function.
+
+199.  Add test for login & logout functionality, including support for
+backwards compatibility with old CVSROOTs.
