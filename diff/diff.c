@@ -21,11 +21,7 @@ GNU General Public License for more details.
 #define GDIFF_MAIN
 #include "diff.h"
 #include <signal.h>
-#ifdef HAVE_GETOPT_H
 #include "getopt.h"
-#else
-#include "getopt_.h"
-#endif
 
 #ifdef HAVE_FNMATCH
 # include <fnmatch.h> /* This is supposed to be available on Posix systems */
