@@ -20,7 +20,7 @@
 
 #ifndef lint
 static char rcsid[] = "$CVSid: @(#)find_names.c 1.45 94/10/22 $";
-USE(rcsid)
+USE(rcsid);
 #endif
 
 static int find_dirs PROTO((char *dir, List * list, int checkadm));

@@ -15,7 +15,7 @@
 
 #ifndef lint
 static char rcsid[] = "$CVSid: @(#)create_adm.c 1.28 94/09/23 $";
-USE(rcsid)
+USE(rcsid);
 #endif
 
 /* update_dir includes dir as its last component.  */

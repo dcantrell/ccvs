@@ -180,7 +180,7 @@
 
 #ifndef lint
 static char rcsid[] = "$CVSid: @(#)history.c 1.33 94/09/21 $";
-USE(rcsid)
+USE(rcsid);
 #endif
 
 static struct hrec
