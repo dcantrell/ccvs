@@ -1061,7 +1061,8 @@ if test x"$*" = x; then
 	tests="${tests} rm-update-message rmadd rmadd2 rmadd3 resurrection"
 	tests="${tests} dirs dirs2 branches branches2 branches3"
 	tests="${tests} branches4 tagc tagf"
-	tests="${tests} rcslib multibranch import importb importc import-CVS"
+	tests="${tests} rcslib multibranch import importb importc importX"
+	tests="${tests} import-CVS"
 	tests="${tests} update-p import-after-initial branch-after-import"
 	tests="${tests} join join2 join3 join4 join5 join6"
 	tests="${tests} join-readonly-conflict join-admin join-admin-2"
@@ -7886,6 +7887,7 @@ modify-on-br1
 		# import  -- more tests of imports with keywords
 		# importb  -- -b option.
 		# importc -- bunch o' files in bunch o' directories
+		# importX  -- -X option.
 		# modules3
 		# mflag -- various -m messages
 		# ignore  -- import and cvsignore
@@ -8334,6 +8336,149 @@ import-it
 	  TZ=$save_TZ
 	  cd ..
 	  rm -r 1 2
+	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  ;;
+
+
+
+	importX)
+	  # More cvs import tests, especially -X option.
+
+	  # OK, first we get some sources from the Munger version 0.9,
+	  # and import them into the 1.1.1 vendor branch (w/o -X).  (This
+	  # will be used to test subsequent imports of the same file
+	  # with -X.)
+	  mkdir imp-dir
+	  cd imp-dir
+	  echo 'Munger sources 0.9' >file0
+	  dotest_sort importX-1 \
+"${testcvs} import -m add first-dir munger munger-0_9" \
+"
+
+N first-dir/file0
+No conflicts created by this import"
+	  cd ..
+	  rm -r imp-dir
+
+	  # Now we put the sources we get from Munger version 1.0 on
+	  # to the 1.1.1 vendor branch using -X.  (This imports a new
+	  # version of file0, and imports all-new files file1 and file2.)
+	  mkdir imp-dir
+	  cd imp-dir
+	  echo 'Munger sources' >file0
+	  echo 'Munger sources' >file1
+	  echo 'Munger sources' >file2
+	  dotest_sort importX-2 \
+"${testcvs} import -X -m add first-dir munger munger-1_0" \
+"
+
+
+ ${CPROG} checkout -j<prev_rel_tag> -jmunger-1_0 first-dir
+N first-dir/file1
+N first-dir/file2
+No conflicts created by this import.
+U first-dir/file0
+Use the following command to help the merge:"
+	  cd ..
+	  rm -r imp-dir
+
+	  # Now we put the sources we get from Munger version 1.1 on
+	  # to the 1.1.1 vendor branch using -X.  (This imports unchanged
+	  # versions of file0 and file2, a changed version of file1, and
+	  # an all-new file3.)
+	  mkdir imp-dir
+	  cd imp-dir
+	  echo 'Munger sources' >file0
+	  echo 'Munger sources 1.1' >file1
+	  echo 'Munger sources' >file2
+	  echo 'Munger sources 1.1' >file3
+	  dotest_sort importX-3 \
+"${testcvs} -d ${CVSROOT} import -X -m add first-dir munger munger-1_1" \
+"
+
+
+ ${CPROG} -d ${CVSROOT} checkout -j<prev_rel_tag> -jmunger-1_1 first-dir
+1 conflicts created by this import.
+C first-dir/file1
+N first-dir/file3
+U first-dir/file0
+U first-dir/file2
+Use the following command to help the merge:"
+	  cd ..
+	  rm -r imp-dir
+
+	  mkdir 1
+	  cd 1
+	  # only file0 should be checked out
+	  dotest importX-4 "${testcvs} -q co first-dir" \
+"U first-dir/file0"
+	  cd first-dir
+
+	  dotest importX-5 "${testcvs} -q log file0" "
+RCS file: ${CVSROOT_DIRNAME}/first-dir/file0,v
+Working file: file0
+head: 1\.1
+branch: 1\.1\.1
+locks: strict
+access list:
+symbolic names:
+	munger-1_1: 1\.1\.1\.2
+	munger-1_0: 1\.1\.1\.2
+	munger-0_9: 1\.1\.1\.1
+	munger: 1\.1\.1
+keyword substitution: kv
+total revisions: 3;	selected revisions: 3
+description:
+----------------------------
+revision 1\.1
+date: ${ISO8601DATE};  author: ${username};  state: Exp;
+branches:  1\.1\.1;
+Initial revision
+----------------------------
+revision 1\.1\.1\.2
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -1
+add
+----------------------------
+revision 1\.1\.1\.1
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}0 -0
+add
+============================================================================="
+
+	  dotest importX-6 "${testcvs} -q log file1" "
+RCS file: ${CVSROOT_DIRNAME}/first-dir/Attic/file1,v
+Working file: file1
+head: 1\.2
+branch:
+locks: strict
+access list:
+symbolic names:
+	munger-1_1: 1\.1\.1\.2
+	munger-1_0: 1\.1\.1\.1
+	munger: 1\.1\.1
+keyword substitution: kv
+total revisions: 4;	selected revisions: 4
+description:
+----------------------------
+revision 1\.2
+date: ${ISO8601DATE};  author: ${username};  state: dead;  lines: ${PLUS}0 -0
+Revision 1\.1 was added on the vendor branch\.
+----------------------------
+revision 1\.1
+date: ${ISO8601DATE};  author: ${username};  state: Exp;
+branches:  1\.1\.1;
+Initial revision
+----------------------------
+revision 1\.1\.1\.2
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -1
+add
+----------------------------
+revision 1\.1\.1\.1
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}0 -0
+add
+============================================================================="
+
+	  cd ../..
+	  rm -r 1
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
 	  ;;
 

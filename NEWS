@@ -3,6 +3,10 @@ Changes since 1.12.9:
 
 BUG FIXES
 
+* "cvs import" now has a new option, `-X', which causes new files to be
+  imported in a way that they appear only on the vendor branch, and do not
+  automatically appear on the main trunk.
+
 * Thanks to Conrad Pino <conrad@pino.com>, the Windows build works once again.
 
 * Misc updates to the manual.

@@ -31,6 +31,12 @@ static int process_import_file (char *message, char *vfile, char *vtag,
 				int targc, char *targv[]);
 static int update_rcs_file (char *message, char *vfile, char *vtag, int targc,
 			    char *targv[], int inattic);
+#ifdef PRESERVE_PERMISSIONS_SUPPORT
+static int preserve_initial_permissions (FILE *fprcs, const char *userfile,
+					 mode_t file_type, struct stat *sbp);
+#endif
+static int expand_and_copy_contents (FILE *fprcs, mode_t file_type,
+				     const char *user, FILE *fpuser);
 static void add_log (int ch, char *fname);
 
 static int repos_len;
@@ -41,12 +47,14 @@ static char *repository;
 static int conflicts;
 static int use_file_modtime;
 static char *keyword_opt = NULL;
+static int killnew;
 
 static const char *const import_usage[] =
 {
-    "Usage: %s %s [-d] [-k subst] [-I ign] [-m msg] [-b branch]\n",
+    "Usage: %s %s [-dX] [-k subst] [-I ign] [-m msg] [-b branch]\n",
     "    [-W spec] repository vendor-tag release-tags...\n",
     "\t-d\tUse the file's modification time as the time of import.\n",
+    "\t-X\tWhen importing new files, mark their trunk revisions as dead.\n",
     "\t-k sub\tSet default RCS keyword substitution mode.\n",
     "\t-I ign\tMore files to ignore (! to reset).\n",
     "\t-b bra\tVendor branch id.\n",
@@ -75,7 +83,7 @@ import (int argc, char **argv)
 
     vbranch = xstrdup (CVSBRANCH);
     optind = 0;
-    while ((c = getopt (argc, argv, "+Qqdb:m:I:k:W:")) != -1)
+    while ((c = getopt (argc, argv, "+Qqdb:m:I:k:W:X")) != -1)
     {
 	switch (c)
 	{
@@ -128,6 +136,9 @@ import (int argc, char **argv)
 		break;
 	    case 'W':
 		wrap_add (optarg, 0);
+		break;
+	    case 'X':
+		killnew = 1;
 		break;
 	    case '?':
 	    default:
@@ -265,6 +276,8 @@ import (int argc, char **argv)
 	option_with_arg ("-m", message ? message : "");
 	if (keyword_opt != NULL)
 	    option_with_arg ("-k", keyword_opt);
+	if (killnew)
+	    send_arg ("-X");
 	/* The only ignore processing which takes place on the server side
 	   is the CVSROOT/cvsignore file.  But if the user specified -I !,
 	   the documented behavior is to not process said file.  */
@@ -324,7 +337,7 @@ import (int argc, char **argv)
 
     /* Just Do It.  */
     err = import_descend (message, argv[1], argc - 2, argv + 2);
-    if (conflicts)
+    if (conflicts || killnew)
     {
 	if (!really_quiet)
 	{
@@ -332,7 +345,10 @@ import (int argc, char **argv)
 
 	    cvs_output_tagged ("+importmergecmd", NULL);
 	    cvs_output_tagged ("newline", NULL);
-	    sprintf (buf, "%d", conflicts);
+	    if (conflicts)
+	        sprintf (buf, "%d", conflicts);
+	    else
+	        sprintf (buf, "%s", "No");
 	    cvs_output_tagged ("conflicts", buf);
 	    cvs_output_tagged ("text", " conflicts created by this import.");
 	    cvs_output_tagged ("newline", NULL);
@@ -363,7 +379,11 @@ import (int argc, char **argv)
            report any required -d option.  There is no particularly
            clean way to tell the server about the -d option used by
            the client.  */
-	(void) fprintf (logfp, "\n%d conflicts created by this import.\n",
+	if (conflicts)
+	    (void) fprintf (logfp, "\n%d", conflicts);
+	else
+	    (void) fprintf (logfp, "\nNo");
+	(void) fprintf (logfp, " conflicts created by this import.\n",
 			conflicts);
 	(void) fprintf (logfp,
 			"Use the following command to help the merge:\n\n");
@@ -551,7 +571,27 @@ process_import_file (char *message, char *vfile, char *vtag, int targc, char **t
 	    char *free_opt = NULL;
 	    char *our_opt = keyword_opt;
 
-	    free (attic_name);
+	    /* If marking newly-imported files as dead, they must be
+	       created in the attic!  */
+	    if (! killnew)
+	        free (attic_name);
+	    else 
+	    {
+		free (rcs);
+		rcs = attic_name;
+
+		/* Attempt to make the Attic directory, in case it
+		   does not exist.  */
+		(void) sprintf (rcs, "%s/%s", repository, CVSATTIC);
+		if (CVS_MKDIR (rcs, 0777 ) != 0 && errno != EEXIST)
+		    error (1, errno, "cannot make directory `%s'", rcs);
+
+		/* Note that the above clobbered the path name, so we
+		   recreate it here.  */
+		(void) sprintf (rcs, "%s/%s/%s%s", repository, CVSATTIC,
+				vfile, RCSEXT);
+	    }
+
 	    /*
 	     * A new import source file; it doesn't exist as a ,v within the
 	     * repository nor in the Attic -- create it anew.
@@ -591,7 +631,7 @@ process_import_file (char *message, char *vfile, char *vtag, int targc, char **t
 
 	    retval = add_rcs_file (message, rcs, vfile, vhead, our_opt,
 				   vbranch, vtag, targc, targv,
-				   NULL, 0, logfp);
+				   NULL, 0, logfp, killnew);
 	    if (free_opt != NULL)
 		free (free_opt);
 	    free (rcs);
@@ -973,7 +1013,9 @@ get_comment (const char *user)
  *
  * INPUTS
  *   message    Log message for the addition.  Not used if add_vhead == NULL.
- *   rcs        Filename of the RCS file to create.
+ *   rcs        Filename of the RCS file to create.  Note that if 'do_killnew'
+ *		is set, this file should be in the Attic directory, and the
+ *		Attic directory must already exist.
  *   user       Filename of the file to serve as the contents of the initial
  *              revision.  Even if add_vhead is NULL, we use this to determine
  *              the modes to give the new RCS file.
@@ -994,6 +1036,8 @@ get_comment (const char *user)
  *   desclen    The number of bytes in desctext.
  *   add_logfp  Write errors to here as well as via error (), or NULL if we
  *              should use only error ().
+ *   do_killnew	Mark newly-imported files as being dead on the trunk, i.e.,
+ *		as being imported only to the vendor branch.
  *
  * RETURNS
  *   Return value is 0 for success, or nonzero for failure (in which
@@ -1004,7 +1048,7 @@ add_rcs_file (const char *message, const char *rcs, const char *user,
               const char *add_vhead, const char *key_opt,
               const char *add_vbranch, const char *vtag, int targc,
               char **targv, const char *desctext, size_t desclen,
-              FILE *add_logfp)
+              FILE *add_logfp, int do_killnew)
 {
     FILE *fprcs, *fpuser;
     struct stat sb;
@@ -1018,9 +1062,38 @@ add_rcs_file (const char *message, const char *rcs, const char *user,
     const char *userfile;
     char *free_opt = NULL;
     mode_t file_type;
+    char *dead_revision = NULL;
 
     if (noexec)
 	return (0);
+
+    if (do_killnew)
+    {
+	char *last_place;
+	int last_number;
+
+	/* If we are marking the newly imported file as dead, we must
+	   have a head revision.  */
+	if (add_vhead == NULL)
+	    error (1, 0, "killing new file attempted when no head revision is being added");
+
+	/* One extra byte for NUL, plus one for carry generated by adding
+	   one to the last number in the add_vhead revision.  */
+	dead_revision = xmalloc (strlen (add_vhead) + 2);
+	strcpy (dead_revision, add_vhead);
+
+	/* Find the loacation of the last number, which we will increment
+	   and overwrite.  Note that this handles single numbers (w/o
+	   dots), which is probably unnecessary.  */
+	if ((last_place = strrchr (dead_revision, '.')) != NULL)
+	    last_place++;
+	else
+	    last_place = dead_revision;
+	last_number = atoi (last_place);
+	if (++last_number <= 0)
+	  error (1, 0, "invalid revision number %s", add_vhead);
+	sprintf (last_place, "%d", last_number);
+    }
 
     /* Note that as the code stands now, the -k option overrides any
        settings in wrappers (whether CVSROOT/cvswrappers, -W, or
@@ -1097,7 +1170,8 @@ add_rcs_file (const char *message, const char *rcs, const char *user,
      */
     if (add_vhead != NULL)
     {
-	if (fprintf (fprcs, "head     %s;\012", add_vhead) < 0)
+	if (fprintf (fprcs, "head     %s;\012",
+	             do_killnew ? dead_revision : add_vhead) < 0)
 	    goto write_error;
     }
     else
@@ -1106,7 +1180,10 @@ add_rcs_file (const char *message, const char *rcs, const char *user,
 	    goto write_error;
     }
 
-    if (add_vbranch != NULL)
+    /* This sets the default branch.  If using the 'do_killnew' functionality,
+       where imports don't show up until merged, no default branch should
+       be set.  */
+    if (add_vbranch != NULL && ! do_killnew)
     {
 	if (fprintf (fprcs, "branch   %s;\012", add_vbranch) < 0)
 	    goto write_error;
@@ -1153,19 +1230,43 @@ add_rcs_file (const char *message, const char *rcs, const char *user,
 
     /* Write the revision(s), with the date and author and so on
        (that is "delta" rather than "deltatext" from rcsfile(5)).  */
+
+    if (use_file_modtime)
+	now = sb.st_mtime;
+    else
+	(void) time (&now);
+    ftm = gmtime (&now);
+    (void) sprintf (altdate1, DATEFORM,
+		    ftm->tm_year + (ftm->tm_year < 100 ? 0 : 1900),
+		    ftm->tm_mon + 1, ftm->tm_mday, ftm->tm_hour,
+		    ftm->tm_min, ftm->tm_sec);
+    author = getcaller ();
+
+    if (do_killnew)
+    {
+	if (fprintf (fprcs, "\012%s\012", dead_revision) < 0 ||
+	fprintf (fprcs, "date     %s;  author %s;  state %s;\012",
+		 altdate1, author, RCSDEAD) < 0)
+	goto write_error;
+
+	if (fprintf (fprcs, "branches;\012") < 0)
+	    goto write_error;
+	if (fprintf (fprcs, "next    %s;\012", add_vhead) < 0)
+	    goto write_error;
+
+#ifdef PRESERVE_PERMISSIONS_SUPPORT
+	/* Store initial permissions if necessary. */
+	if (preserve_perms)
+	{
+	    if (preserve_initial_permissions (fprcs, userfile,
+					      file_type, sbp))
+		goto write_error;
+	}
+#endif
+    }
+
     if (add_vhead != NULL)
     {
-	if (use_file_modtime)
-	    now = sb.st_mtime;
-	else
-	    (void) time (&now);
-	ftm = gmtime (&now);
-	(void) sprintf (altdate1, DATEFORM,
-			ftm->tm_year + (ftm->tm_year < 100 ? 0 : 1900),
-			ftm->tm_mon + 1, ftm->tm_mday, ftm->tm_hour,
-			ftm->tm_min, ftm->tm_sec);
-	author = getcaller ();
-
 	if (fprintf (fprcs, "\012%s\012", add_vhead) < 0 ||
 	fprintf (fprcs, "date     %s;  author %s;  state Exp;\012",
 		 altdate1, author) < 0)
@@ -1188,48 +1289,9 @@ add_rcs_file (const char *message, const char *rcs, const char *user,
 	/* Store initial permissions if necessary. */
 	if (preserve_perms)
 	{
-	    if (file_type == S_IFLNK)
-	    {
-		char *link = xreadlink (userfile);
-		if (fprintf (fprcs, "symlink\t@") < 0 ||
-		    expand_at_signs (link, strlen (link), fprcs) < 0 ||
-		    fprintf (fprcs, "@;\012") < 0)
-		    goto write_error;
-		free (link);
-	    }
-	    else
-	    {
-		if (fprintf (fprcs, "owner\t%u;\012", sb.st_uid) < 0)
-		    goto write_error;
-		if (fprintf (fprcs, "group\t%u;\012", sb.st_gid) < 0)
-		    goto write_error;
-		if (fprintf (fprcs, "permissions\t%o;\012",
-			     sb.st_mode & 07777) < 0)
-		    goto write_error;
-		switch (file_type)
-		{
-		    case S_IFREG: break;
-		    case S_IFCHR:
-		    case S_IFBLK:
-#ifdef HAVE_STRUCT_STAT_ST_RDEV
-			if (fprintf (fprcs, "special\t%s %lu;\012",
-				     (file_type == S_IFCHR
-				      ? "character"
-				      : "block"),
-				     (unsigned long) sb.st_rdev) < 0)
-			    goto write_error;
-#else
-			error (0, 0,
-"can't import %s: unable to import device files on this system",
-userfile);
-#endif
-			break;
-		    default:
-			error (0, 0,
-			       "can't import %s: unknown kind of special file",
-			       userfile);
-		}
-	    }
+	    if (preserve_initial_permissions (fprcs, userfile,
+					      file_type, sbp))
+		goto write_error;
 	}
 #endif
 
@@ -1246,47 +1308,9 @@ userfile);
 	    /* Store initial permissions if necessary. */
 	    if (preserve_perms)
 	    {
-		if (file_type == S_IFLNK)
-		{
-		    char *link = xreadlink (userfile);
-		    if (fprintf (fprcs, "symlink\t@") < 0 ||
-			expand_at_signs (link, strlen (link), fprcs) < 0 ||
-			fprintf (fprcs, "@;\012") < 0)
-			goto write_error;
-		    free (link);
-		}
-		else
-		{
-		    if (fprintf (fprcs, "owner\t%u;\012", sb.st_uid) < 0 ||
-			fprintf (fprcs, "group\t%u;\012", sb.st_gid) < 0 ||
-			fprintf (fprcs, "permissions\t%o;\012",
-				 sb.st_mode & 07777) < 0)
-			goto write_error;
-	    
-		    switch (file_type)
-		    {
-			case S_IFREG: break;
-			case S_IFCHR:
-			case S_IFBLK:
-#ifdef HAVE_STRUCT_STAT_ST_RDEV
-			    if (fprintf (fprcs, "special\t%s %lu;\012",
-					 (file_type == S_IFCHR
-					  ? "character"
-					  : "block"),
-					 (unsigned long) sb.st_rdev) < 0)
-				goto write_error;
-#else
-			    error (0, 0,
-"can't import %s: unable to import device files on this system",
-userfile);
-#endif
-			    break;
-			default:
-			    error (0, 0,
-			      "cannot import %s: special file of unknown type",
-			       userfile);
-		    }
-		}
+		if (preserve_initial_permissions (fprcs, userfile,
+						  file_type, sbp))
+		    goto write_error;
 	    }
 #endif
 
@@ -1312,6 +1336,29 @@ userfile);
 
     /* Now write the log messages and contents for the revision(s) (that
        is, "deltatext" rather than "delta" from rcsfile(5)).  */
+
+    if (do_killnew)
+    {
+	if (fprintf (fprcs, "\012%s\012", dead_revision) < 0 ||
+	    fprintf (fprcs, "log\012@") < 0)
+	    goto write_error;
+	if (fprintf (fprcs, "Revision %s was added on the vendor branch.\012",
+		     add_vhead) < 0)
+	    goto write_error;
+	if (fprintf (fprcs, "@\012") < 0 ||
+	    fprintf (fprcs, "text\012@") < 0)
+	{
+	    goto write_error;
+	}
+
+	/* Now copy over the contents of the file, expanding at signs.  */
+	if (expand_and_copy_contents (fprcs, file_type, user, fpuser))
+	    goto write_error;
+
+	if (fprintf (fprcs, "@\012\012") < 0)
+	    goto write_error;
+    }
+
     if (add_vhead != NULL)
     {
 	if (fprintf (fprcs, "\012%s\012", add_vhead) < 0 ||
@@ -1338,27 +1385,17 @@ userfile);
 
 	/* Now copy over the contents of the file, expanding at signs.
 	   If preserve_perms is set, do this only for regular files. */
-	if (!preserve_perms || file_type == S_IFREG)
+	if (! do_killnew)
 	{
-	    char buf[8192];
-	    unsigned int len;
-
-	    while (1)
-	    {
-		len = fread (buf, 1, sizeof buf, fpuser);
-		if (len == 0)
-		{
-		    if (ferror (fpuser))
-			error (1, errno, "cannot read file %s for copying",
-			       user);
-		    break;
-		}
-		if (expand_at_signs (buf, len, fprcs) < 0)
-		    goto write_error;
-	    }
+            /* Now copy over the contents of the file, expanding at signs,
+	       if not done as part of do_killnew handling above.  */
+	    if (expand_and_copy_contents (fprcs, file_type, user, fpuser))
+	        goto write_error;
 	}
+
 	if (fprintf (fprcs, "@\012\012") < 0)
 	    goto write_error;
+
 	if (add_vbranch != NULL)
 	{
 	    if (fprintf (fprcs, "\012%s.1\012", add_vbranch) < 0 ||
@@ -1439,7 +1476,127 @@ read_error:
     return (err + 1);
 }
 
+#ifdef PRESERVE_PERMISSIONS_SUPPORT
+/* Write file permissions and symlink information for a file being
+ * added into its RCS file.
+ *
+ * INPUTS
+ *   fprcs	FILE pointer for the (newly-created) RCS file.  Permisisons
+ *		and symlink information should be written here.
+ *   userfile	Filename of the file being added.  (Used to read symbolic
+ *		link contents, for symlinks.)
+ *   file_type	File type of userfile, extracted from sbp->st_mode.
+ *   sbp	'stat' information for userfile.
+ *
+ * RETURNS
+ *   Return value is 0 for success, or nonzero for failure (in which case
+ *   no error message has yet been printed).
+ */
+static int
+preserve_initial_permissions (fprcs, userfile, file_type, sbp)
+    FILE *fprcs;
+    const char *userfile;
+    mode_t file_type;
+    struct stat *sbp;
+{
+    if (file_type == S_IFLNK)
+    {
+	char *link = xreadlink (userfile);
+	if (fprintf (fprcs, "symlink\t@") < 0 ||
+	    expand_at_signs (link, strlen (link), fprcs) < 0 ||
+	    fprintf (fprcs, "@;\012") < 0)
+	    goto write_error;
+	free (link);
+    }
+    else
+    {
+	if (fprintf (fprcs, "owner\t%u;\012", sbp->st_uid) < 0)
+	    goto write_error;
+	if (fprintf (fprcs, "group\t%u;\012", sbp->st_gid) < 0)
+	    goto write_error;
+	if (fprintf (fprcs, "permissions\t%o;\012",
+		     sbp->st_mode & 07777) < 0)
+	    goto write_error;
+	switch (file_type)
+	{
+	    case S_IFREG: break;
+	    case S_IFCHR:
+	    case S_IFBLK:
+#ifdef HAVE_STRUCT_STAT_ST_RDEV
+		if (fprintf (fprcs, "special\t%s %lu;\012",
+			     (file_type == S_IFCHR
+			      ? "character"
+			      : "block"),
+			     (unsigned long) sbp->st_rdev) < 0)
+		    goto write_error;
+#else
+		error (0, 0,
+"can't import %s: unable to import device files on this system",
+userfile);
+#endif
+		break;
+	    default:
+		error (0, 0,
+		       "can't import %s: unknown kind of special file",
+		       userfile);
+	}
+    }
+    return 0;
 
+write_error:
+    return 1;
+}
+#endif /* PRESERVE_PERMISSIONS_SUPPORT */
+
+/* Copy file contents into an RCS file, expanding at signs.
+ *
+ * If preserve_perms is set, nothing is copied if the source is not
+ * a regular file.
+ *
+ * INPUTS
+ *   fprcs	FILE pointer for the (newly-created) RCS file.  The expanded
+ *		contents should be written here.
+ *   file_type	File type of the data source.  No data is copied if
+ *		preserve_permissions is set and the source is not a
+ *		regular file.
+ *   user	Filename of the data source (used to print error messages).
+ *   fpuser	FILE pointer for the data source, whose data is being
+ *		copied into the RCS file.
+ *
+ * RETURNS
+ *   Return value is 0 for success, or nonzero for failure (in which case
+ *   no error message has yet been printed).
+ */
+static int
+expand_and_copy_contents (fprcs, file_type, user, fpuser)
+    FILE *fprcs, *fpuser;
+    mode_t file_type;
+    const char *user;
+{
+    if (!preserve_perms || file_type == S_IFREG)
+    {
+	char buf[8192];
+	unsigned int len;
+
+	while (1)
+	{
+	    len = fread (buf, 1, sizeof buf, fpuser);
+	    if (len == 0)
+	    {
+		if (ferror (fpuser))
+		    error (1, errno, "cannot read file %s for copying",
+			   user);
+		break;
+	    }
+	    if (expand_at_signs (buf, len, fprcs) < 0)
+		goto write_error;
+	}
+    }
+    return 0;
+
+write_error:
+    return 1;
+}
 
 /*
  * Write SIZE bytes at BUF to FP, expanding @ signs into double @

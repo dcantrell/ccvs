@@ -1,3 +1,13 @@
+2004-06-26  Mark D. Baushke  <mdb@cvshome.org>
+
+	* cvs.texinfo (Vendor branch): Document that sometimes
+	the default branch won't be set to the vendor branch.
+	(import options): Add -X.
+	* cvsclient.texi (MT importmergecmd tag): Document that this
+	can also be used with the 'cvs import -X' command, and
+	that it can occur when there are no conflicts.
+	(New feature from Chris Demetriou <cgd@broadcom.com>.)
+
 2004-06-21  Derek Price  <derek@ximbiot.com>
 
 	* cvs.texinfo (Password authentication server): Search for system user
