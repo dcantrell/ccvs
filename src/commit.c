@@ -790,11 +790,11 @@ check_fileproc (void *callerdat, struct file_info *finfo)
     }
 
     if (strncmp (finfo->repository, current_parsed_root->directory, cvsroot_len) == 0
-	&& ISDIRSEP (finfo->repository[cvsroot_len])
+	&& ISSLASH (finfo->repository[cvsroot_len])
 	&& strncmp (finfo->repository + cvsroot_len + 1,
 		    CVSROOTADM,
 		    sizeof (CVSROOTADM) - 1) == 0
-	&& ISDIRSEP (finfo->repository[cvsroot_len + sizeof (CVSROOTADM)])
+	&& ISSLASH (finfo->repository[cvsroot_len + sizeof (CVSROOTADM)])
 	&& strcmp (finfo->repository + cvsroot_len + sizeof (CVSROOTADM) + 1,
 		   CVSNULLREPOS) == 0
 	)

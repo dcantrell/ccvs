@@ -941,7 +941,7 @@ dirswitch (char *dir, char *repos)
 
     dir_len = strlen (dir);
 
-    /* Check for a trailing '/'.  This is not ISDIRSEP because \ in the
+    /* Check for a trailing '/'.  This is not ISSLASH because \ in the
        protocol is an ordinary character, not a directory separator (of
        course, it is perhaps unwise to use it in directory names, but that
        is another issue).  */

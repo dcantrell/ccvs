@@ -195,7 +195,7 @@ Sanitize_Repository_Name (char *repository)
     len = strlen (repository);
     if (len >= 2
 	&& repository[len - 1] == '.'
-	&& ISDIRSEP (repository[len - 2]))
+	&& ISSLASH (repository[len - 2]))
     {
 	repository[len - 2] = '\0';
     }

@@ -300,7 +300,7 @@ find_dirs (char *dir, List *list, int checkadm, List *entries)
        a normal directory name.  */
     if (isabsolute (dir)
 	&& strncmp (dir, current_parsed_root->directory, strlen (current_parsed_root->directory)) == 0
-	&& ISDIRSEP (dir[strlen (current_parsed_root->directory)])
+	&& ISSLASH (dir[strlen (current_parsed_root->directory)])
 	&& strcmp (dir + strlen (current_parsed_root->directory) + 1, CVSROOTADM) == 0)
 	skip_emptydir = 1;
 

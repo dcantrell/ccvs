@@ -233,13 +233,13 @@ lock_name (const char *repository, const char *name)
 	p = short_repos;
 	while (1)
 	{
-	    while (!ISDIRSEP (*p) && *p != '\0')
+	    while (!ISSLASH (*p) && *p != '\0')
 		++p;
-	    if (ISDIRSEP (*p))
+	    if (ISSLASH (*p))
 	    {
 		strncpy (q, short_repos, p - short_repos);
 		q[p - short_repos] = '\0';
-		if (!ISDIRSEP (q[p - short_repos - 1])
+		if (!ISSLASH (q[p - short_repos - 1])
 		    && CVS_MKDIR (retval, new_mode) < 0)
 		{
 		    int saved_errno = errno;
