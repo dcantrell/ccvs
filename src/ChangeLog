@@ -1,3 +1,8 @@
+2005-02-27  Jim Meyering  <jim@meyering.net>
+
+	* login.c (password_entry_operation): Exit nonzero when
+	failing to close a just-appended-to .cvspass file.
+
 2005-02-26  Larry Jones  <lawrence.jones@ugs.com>
 
 	* release.c (release): Remove unneeded code.
@@ -157,12 +162,12 @@
 
 	* filesubr.c (xreadlink): Make sure allocation is tried once at the
 	maximum buffer size.  Protect against overflow.
-	
+
 2004-10-29  Mark D. Baushke  <mdb@cvshome.org>
 
 	* filesubr.c (SIZE_MAX, SSIZE_MAX): Use #include "xsize.h" instead.
 	(xreadlink): Use xrealloc instead of xmalloc/free.
-	
+
 2004-10-29  Mark D. Baushke  <mdb@cvshome.org>
 
 	* filesubr.c (SIZE_MAX, SSIZE_MAX): New constants.
@@ -199,7 +204,7 @@
 	added to a branch. Fixes FIXCVS for tagdate tests.
 	* sanity.sh (tagdate): Update to expect correct results.
 	(death2, branch-after-import, join, ignore-on-branch): Ditto.
-	
+
 2004-10-26 Derek Price <derek@ximbiot.com>
 
 	* client.c (connect_to_gserver): Avoid truncating error messages from
@@ -232,7 +237,7 @@
 	* sanity.sh (getrlogdate): New shell function.
 	(tagdate-{13,14,16}): Use it to avoid 'sleep 60' by using
 	the exact 1.1.4.1 timestamp for tagdate-14 and tagdate-16.
-	
+
 2004-10-22  Mark D. Baushke  <mdb@cvshome.org>
 
 	* sanity.sh (tagdate): Fix typo.
@@ -315,7 +320,7 @@
 	* rcs.c (RCS_checkout): Allow noexec to do checkouts when
 	server_active is true.
 	* sanity.sh (join7): Test above change (fixes a FIXCVS).
-	
+
 2004-09-08  Mark D. Baushke  <mdb@cvshome.org>
 
 	* sanity.sh (join7): Fix if-then-else conditional.
@@ -358,7 +363,7 @@
 	<wilson@specifixinc.com>.)
 	* sanity.sh (modules4): Add some more tests testing the above
 	change.
-	
+
 2004-08-17  Mark D. Baushke  <mdb@cvshome.org>
 
 	* sanity.sh (sshstdio): Fix comment typo plus gratuitous
@@ -373,7 +378,7 @@
 
 	* client.c (handle_e): Similar fix for stderr.
 	* sanity.sh (sshstdio): New test for non-blocking stdio via ssh.
-	
+
 2004-08-11  Derek Price <derek@ximbiot.com>
 
 	* sanity.sh (basicc): Work around a problem in Linux 2.2 & Bash 2.05b
@@ -919,7 +924,7 @@
 	* tag.c (tag_fileproc): Ditto.
 	* update.c (checkout_file): Ditto.
 	* server.c (server_updated): Do not buf_free (filebuf) here.
-	
+
 2004-02-13  Larry Jones  <lawrence.jones@ugsplm.com>
 
 	* rcs.c (locate_rcs): Remove unused variables.
@@ -1137,7 +1142,7 @@
 	"Protocol error: uncounted data discarded" messages in some
 	circumstances.
 	(Problem reported by "Jim.Hyslop" <Jim.Hyslop@Leitch.com>.)
-	
+
 2003-12-03  Derek Price  <derek@ximbiot.com>
 
 	* sanity.sh (recase-8csss): rename to...
@@ -1333,7 +1338,7 @@
 	CVSROOT files being in the way since the client skips destination
 	validity checks since it should be rare that a client is running
 	in client/server mode on the server and CVS has no current way to
-	check if it is running on the server. 
+	check if it is running on the server.
 	(check_repository-3): Test renamed to checkout_repository-3.
 	(dottedroot): New test to check that a CVSROOT with a "." in the
 	name will work.
@@ -1393,7 +1398,7 @@
 2003-10-25  Mark D. Baushke  <mdb@cvshome.org>
 
 	* sanity.sh (parseroot): Perform this test in a subdirectory.
-	It should avoid problems on case-insensitive systems where 
+	It should avoid problems on case-insensitive systems where
 	CVSROOT and cvsroot are the same directory (eg, MacOS X).
 
 2003-10-24  Derek Price  <derek@ximbiot.com>
@@ -1413,7 +1418,7 @@
 	* sanity.sh (join6): New testcase for above.
 	(Suggested by Paul Edwards, from somewhere in Australia.)
 	(import): Fix collateral damage.
-	
+
 2003-10-23  Derek Price  <derek@ximbiot.com>
 
 	* sanity.sh (fail): Refer the user to the `TESTS' and `check.log' files
@@ -1434,7 +1439,7 @@
 	exists.
 	(Reported by Rodolfo Schulz de Lima <rodolfo@rodsoft.org>.)
 	* sanity.sh (admin): Test these changes.
-	
+
 2003-10-17  Mark D. Baushke  <mdb@cvshome.org>
 
 	* admin.c (admin_fileproc): Force tag match on admin
@@ -2041,7 +2046,7 @@
 	rtag' as various parts of cvs "know" how to automatically branch files
 	(eg: cvs add). Trying to remember state is getting "Too Hard (TM)")
 	* sanity.sh (branches3): Test the CVS_LOCAL_BRANCH_NUM feature.
-	
+
 2003-03-04  Derek Price  <derek@ximbiot.com>
 
 	* history.c (history_write): Remove unneeded O_CREAT in the call to
@@ -2096,7 +2101,7 @@
 
 	This bug was discovered and fixed for FreeBSD cvs. See v 1.21 of
 	<http://www.freebsd.org/cgi/cvsweb.cgi/src/contrib/cvs/src/rcs.c.diff>
-        for more information. 
+        for more information.
 
 	* sanity.sh (rcs4): Tests for same.
 	(Patch from Mark D. Baushke <mdb@cvshome.org>.)

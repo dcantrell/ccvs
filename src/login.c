@@ -460,7 +460,7 @@ process:
 	if (fprintf (fp, "/1 %s %s\n", cvsroot_canonical, newpassword) == EOF)
 	    error (1, errno, "cannot write %s", passfile);
 	if (fclose (fp) < 0)
-	    error (0, errno, "cannot close %s", passfile);
+	    error (1, errno, "cannot close %s", passfile);
     }
 
     /* Utter, total, raving paranoia, I know. */
