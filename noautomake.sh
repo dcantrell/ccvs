@@ -19,7 +19,7 @@ help()
 	echo "    -h | --help        Display this text and exit"
 	echo "    -V | --version     Display version and exit"
 	echo "    -a | --autoconf    Allow Autoconf & Autoheader to run (default)"
-	echo "    -A | --noconfigure Prevent Autoconf & Autoheader from running"
+	echo "    -A | --noautoconf  Prevent Autoconf & Autoheader from running"
 	echo
 	echo "Not running Automake & aclocal causes changes to the following user files"
 	echo "to be ignored:"
@@ -29,7 +29,7 @@ help()
 	echo "Not running Autoconf & Autoheader causes changes to the following user"
 	echo "files to be ignored:"
 	echo
-	echo "    configure.in"
+	echo "    acconfig.h, configure.in"
 }
 
 while getopts VACach-: opt; do
