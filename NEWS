@@ -1,4 +1,9 @@
-Changes since 1.11.5:
+Changes since 1.12.1:
+
+* The global '-l' option, which suppressed history logging, has been removed
+from both client and server.
+
+Changes from 1.11.5 to 1.12.1:
 
 * The new --with-external-zlib option can be passed to configure to compile
 CVS against an external installed zlib.
