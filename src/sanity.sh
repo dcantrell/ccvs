@@ -6775,8 +6775,8 @@ File: file3            	Status: Up-to-date
    Sticky Date:		(none)
    Sticky Options:	(none)"
 
-# Test some calls to rls here because we can.  These should probably be
-# somewhere else, but we already have some directories set up.
+	  # Test some calls to rls here because we can.  These should probably
+	  # be somewhere else, but we already have some directories set up.
           dotest branches2-14-rls-1 "$testcvs rls" \
 "$SPROG rls: Listing module: \`.'
 CVSROOT
