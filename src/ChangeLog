@@ -1,3 +1,8 @@
+2000-07-06  Karl Fogel  <kfogel@red-bean.com>
+
+	* sanity.sh (pserver-14): remove this test for portability
+	reasons (it was only recently added for the 2000-07-04 change).
+
 2000-07-06  Larry Jones  <larry.jones@sdrc.com>
 
 	* main.c (main): Catch SIGABRT to try to clean up after assertion
