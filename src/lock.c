@@ -159,6 +159,8 @@ lock_name (char *repository, char *name)
     mode_t save_umask = 0000;
     int saved_umask = 0;
 
+    TRACE (TRACE_FLOW, "lock_name (%s, %s)", repository, name);
+
     if (lock_dir == NULL)
     {
 	/* This is the easy case.  Because the lock files go directly
@@ -352,6 +354,8 @@ Lock_Cleanup (void)
 static void
 remove_locks (void)
 {
+    TRACE (TRACE_FUNCTION, "remove_locks()");
+
     /* Avoid interrupts while accessing globals the interrupt handlers might
      * make use of.
      */
@@ -400,6 +404,8 @@ static void
 lock_simple_remove (struct lock *lock)
 {
     char *tmp;
+
+    TRACE (TRACE_FLOW, "lock_simple_remove()");
 
     /* If readlock is set, the lock directory *might* have been created, but
        since Reader_Lock doesn't use SIG_beginCrSect the way that set_lock

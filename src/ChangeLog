@@ -1,5 +1,10 @@
 2003-10-08  Derek Price  <derek@ximbiot.com>
 
+	* lock.c (lock_name, lock_simple_remove),
+	server.c (server_pathname_check, dirswitch): Add TRACE.
+
+2003-10-08  Derek Price  <derek@ximbiot.com>
+
 	* main.c: Reformat header comment to fit in 80 chars.
 
 2003-10-08  Larry Jones  <lawrence.jones@eds.com>
