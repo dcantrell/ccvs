@@ -45,7 +45,8 @@ EXTRA_DIST = \
 	build_lib.com \
 	libcvs.dep \
 	libcvs.dsp \
-	libcvs.mak
+	libcvs.mak \
+	test-getdate.sh
 
 ## For GNULIB's alloca module.
 BUILT_SOURCES += $(ALLOCA_H)

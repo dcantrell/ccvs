@@ -1,3 +1,7 @@
+2004-11-11  Derek Price  <derek@ximbiot.com>
+
+	* Makefile.am (EXTRA_DIST): Add test-getdate.sh.
+
 2004-11-11  Mark D. Baushke  <mdb@cvshome.org>
 
 	* alloca_.h, allocsa.h, mktime.c: Update from GNULIB.
