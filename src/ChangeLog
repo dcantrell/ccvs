@@ -1,3 +1,7 @@
+Thu Jun 13 11:42:25 1996  Mike Sutton <mws115@llcoolj.dayton.saic.com>
+
+	* sanity.sh: Allow digits in usernames.
+
 Wed Jun 12 16:23:03 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* client.c (send_modified, update_entries): Reindent and add
