@@ -1,5 +1,8 @@
 Mon Apr 28 11:12:56 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvs.texinfo (Invoking CVS): For checkout and update, call them
+	"sticky options" not "sticky kopts".
+
 	* cvs.texinfo (Editing files): Add additional comments on get
 	vs. checkout.
 

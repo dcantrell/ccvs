@@ -8790,7 +8790,7 @@ Get a copy of the sources.  See @ref{checkout}.
 
 @table @code
 @item -A
-Reset any sticky tags/date/kopts.  See @ref{Sticky
+Reset any sticky tags/date/options.  See @ref{Sticky
 tags} and @ref{Keyword substitution}.
 
 @item -c
@@ -9268,7 +9268,7 @@ Bring work tree in sync with repository.  See
 
 @table @code
 @item -A
-Reset any sticky tags/date/kopts.  See @ref{Sticky
+Reset any sticky tags/date/options.  See @ref{Sticky
 tags} and @ref{Keyword substitution}.
 
 @item -D @var{date}
