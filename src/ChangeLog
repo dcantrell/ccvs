@@ -1,3 +1,7 @@
+Tue Jul  9 11:13:29 1996  Ian Lance Taylor  <ian@cygnus.com>
+
+	* modules.c (do_module): Call cvs_outerr rather than fprintf.
+
 Mon Jul 8 1996  Jim Kingdon  <kingdon@cyclic.com>
 
 	* rcs.c (RCS_fast_checkout): If -kb is not in use, open the
