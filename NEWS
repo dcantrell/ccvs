@@ -3,7 +3,11 @@ Changes since 1.12.6:
 
 GENERAL USER ISSUES
 
-* The Windows build files have been regenerated with MS Visual C++ 6.0.
+* The check_cvs and cvscheck scripts in the contrib directory have been renamed
+  validate_repo and sandbox_status, respectively, in the interests of clarity.
+
+* The Windows MS Visual C++ 6.0 project files have been brought up to date.
+  The nmake build files were regenerated from these files with MSVC++ 5.0.
 
 * CVS on Cygwin no longer converts back slashes in paths into forward slashes.
 
