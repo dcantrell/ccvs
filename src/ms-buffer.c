@@ -18,7 +18,7 @@
 #include "buffer.h"
 #include "ms-buffer.h"
 
-#ifdef SERVER_SUPPORT
+#ifdef PROXY_SUPPORT
 
 /* This structure is the closure field of a multi-source buffer.  */
 struct ms_buffer
@@ -147,4 +147,4 @@ ms_buffer_initialize (void (*memory) (struct buffer *),
 
     return retbuf;
 }
-#endif /* SERVER_SUPPORT */
+#endif /* PROXY_SUPPORT */

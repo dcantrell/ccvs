@@ -12,9 +12,11 @@
 
 
 #ifndef MS_BUFFER_H__
-#define MS_BUFFER_H__
+# define MS_BUFFER_H__
+# ifdef PROXY_SUPPORT
 
 struct buffer *
 ms_buffer_initialize (void (*memory) (struct buffer *),
 		      struct buffer *buf, struct buffer *buf2);
+# endif /* PROXY_SUPPORT */
 #endif /* MS_BUFFER_H__ */
