@@ -6432,7 +6432,64 @@ U first-dir/kw"
 	  fi
 	  dotest stamps-8kw \
 	    "cmp ${TESTDIR}/1/stamp.kw.ci ${TESTDIR}/1/stamp.kw.get" ''
+
+	  # Now we want to see what "cvs update" does.
+	  sleep 60
+	  echo add a line >>aa
+	  echo add a line >>kw
+	  dotest stamps-9 "${testcvs} -q ci -m change-them" \
+"Checking in aa;
+${TESTDIR}/cvsroot/first-dir/aa,v  <--  aa
+new revision: 1\.2; previous revision: 1\.1
+done
+Checking in kw;
+${TESTDIR}/cvsroot/first-dir/kw,v  <--  kw
+new revision: 1\.2; previous revision: 1\.1
+done"
+	  ls -l aa >${TESTDIR}/1/stamp.aa.ci2
+	  ls -l kw >${TESTDIR}/1/stamp.kw.ci2
 	  cd ../..
+	  cd 1/first-dir
+	  sleep 60
+	  dotest stamps-10 "${testcvs} -q update" '[UP] aa
+[UP] kw'
+	  # this doesn't serve any function other than being able to
+	  # look at it manually, as we have no machinery for dates being
+	  # newer or older than other dates.
+	  date >${TESTDIR}/1/stamp.debug.update
+	  ls -l aa >${TESTDIR}/1/stamp.aa.update
+	  ls -l kw >${TESTDIR}/1/stamp.kw.update
+	  # stamp.aa.update and stamp.kw.update should both be approximately
+	  # the same as stamp.debug.update.  Perhaps we could be testing
+	  # this in a more fancy fashion by "touch stamp.before" before
+	  # stamps-10, "touch stamp.after" after, and then using ls -t
+	  # to check them.  But for now we just make sure that the *.update
+	  # stamps differ from the *.ci2 ones.
+	  # As for the rationale, this is so that if one updates and gets
+	  # a new revision, then "make" will be sure to regard those files
+	  # as newer than .o files which may be sitting around.
+	  if cmp ${TESTDIR}/1/stamp.aa.update ${TESTDIR}/1/stamp.aa.ci2 \
+	     >/dev/null
+	  then
+	    fail stamps-11aa
+	  else
+	    pass stamps-11aa
+	  fi
+	  if cmp ${TESTDIR}/1/stamp.kw.update ${TESTDIR}/1/stamp.kw.ci2 \
+	     >/dev/null
+	  then
+	    fail stamps-11kw
+	  else
+	    pass stamps-11kw
+	  fi
+
+	  cd ../..
+
+	  if test "$keep" = yes; then
+	    echo Keeping ${TESTDIR} and exiting due to --keep
+	    exit 0
+	  fi
+
 	  rm -r 1 2
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
 	  ;;
