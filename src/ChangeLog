@@ -1,3 +1,8 @@
+2005-02-27  Jim Meyering  <jim@meyering.net>
+
+	* login.c (password_entry_operation): Exit nonzero when
+	failing to close a just-appended-to .cvspass file.
+
 2005-02-26  Derek Price  <derek@ximbiot.com>
 
 	* root.c: Gratuitous reformatting.
@@ -7,7 +12,7 @@
 	* root.c (parse_cvsroot): Handle another Bad CVSROOT.
 	* sanity.sh (parseroot-8r): Test for it.
 	(Problem report from Hiroyuki Ikezoe <poincare@ikezoe.net>.)
-	
+
 2005-02-26  Derek Price  <derek@ximbiot.com>
 
 	* server.c: Include netdb.h with server support.  Other reformatting.
@@ -299,7 +304,7 @@
 	option to CVSROOT.
 	* sanity.sh (parseroot3): New tests for the new options to
 	CVSROOT.
-	
+
 2004-11-30  Larry Jones  <lawrence.jones@ugs.com>
 
 	* mkmodules.c (config_contents): Add LocalKeyword and KeywordExpand,
@@ -526,7 +531,7 @@
 	the log file too.
 
 2004-11-04  Mark D. Baushke  <mdb@cvshome.org>
-	
+
 	* sanity.sh (set_bad_tool, is_bad_tool): Avoid printing errors
 	about the same tool multiple times.
 
@@ -622,7 +627,7 @@
 
 	* filesubr.c (xreadlink): Make sure allocation is tried once at the
 	maximum buffer size.  Protect against overflow.
-	
+
 2004-10-29  Derek Price  <derek@ximbiot.com>
 
 	* server.c (isSameHost): Handle gethostname & gethostbyname errors.
@@ -640,7 +645,7 @@
 
 	* filesubr.c (SIZE_MAX, SSIZE_MAX): Use #include "xsize.h" instead.
 	(xreadlink): Use xrealloc instead of xmalloc/free.
-	
+
 2004-10-29  Mark D. Baushke  <mdb@cvshome.org>
 
 	* filesubr.c (SIZE_MAX, SSIZE_MAX): New constants.
@@ -675,7 +680,7 @@
 	isaccessible), subr.c (isabsolute): Ditto.  Some reformatting.
 	* filesubr.c (xresolvepath): Use save_cwd in place of xgetwd.  Some
 	reformatting.
-	
+
 2004-10-28  Derek Price  <derek@ximbiot.com>
 
 	* client.c (handle_redirect): Detect redirect loops.
@@ -712,7 +717,7 @@
 	added to a branch. Fixes FIXCVS for tagdate tests.
 	* sanity.sh (tagdate): Update to expect correct results.
 	(death2, branch-after-import, join, ignore-on-branch): Ditto.
-	
+
 2004-10-26  Mark D. Baushke  <mdb@cvshome.org>
 
 	* server.c (isProxyServer): Fix hostname setup.
@@ -772,7 +777,7 @@
 	* sanity.sh (getrlogdate): New shell function.
 	(tagdate-{13,14,16}): Use it to avoid 'sleep 60' by using
 	the exact 1.1.4.1 timestamp for tagdate-14 and tagdate-16.
-	
+
 2004-10-25  Derek Price  <derek@ximbiot.com>
 
 	* sanity.sh (depends_on_rsync): Redirect rsync output to /dev/null when
@@ -842,7 +847,7 @@
 	(depends_on_rsync): New function.
 	(writeproxy, writeproxy-noredirect, writeproxy-ssh): Skip these tests
 	gracefully when rsync is missing.
-	
+
 2004-10-21  Mark D. Baushke  <mdb@cvshome.org>
 
 	* add.c (add): Pay attention to cvswrite mode when resurrecting a
@@ -931,7 +936,7 @@
 
 	* server.c (server_pause_check, do_cvs_command, server_cleanup):
 	Avoid typecasts.
-	
+
 2004-10-14  Derek Price  <derek@ximbiot.com>
 
 	* gssapi-client.c: Use new size_t buffer APIs.
@@ -994,7 +999,7 @@
 	* client.c (send_arg, send_option_string, option_with_arg): Make
 	args of function const.
 	* client.h (send_arg, send_option_string, option_with_arg): Ditto.
-	
+
 	* checkout.c (checkout): Make valid_options const.
 
 2004-10-06  Derek Price  <derek@ximbiot.com>
@@ -1124,7 +1129,7 @@
 	* server.h (referrer): Add extern decl.
 	* sanity.sh (ssh-wrapper): Use in remote mode too.
 	(writeproxy-ssh): New tests.
-	
+
 2004-10-04 Derek Price <derek@ximbiot.com>
 
 	* cvs.h (CVSROOT_DFLT): Undef rather than defining to NULL.
@@ -1148,7 +1153,7 @@
 	* main.c (main): Initialize CVSroot before it is used.
 	(Report and patch by Martin Neitzel <neitzel@sco.gaertner.de>.)
 	* sanity.sh (status): Test it.
-	
+
 2004-10-01  Derek Price <derek@ximbiot.com>
 
 	* checkout.c (checkout_proc), fileattr.c (fileattr_read), find_names.c
@@ -1508,7 +1513,7 @@
 	* rcs.c (RCS_checkout): Allow noexec to do checkouts when
 	server_active is true.
 	* sanity.sh (join7): Test above change (fixes a FIXCVS).
-	
+
 2004-09-09  Derek Price  <derek@ximbiot.com>
 
 	* buffer.c (stuct packetizing_buffer): Use size_t & bool as appropriate
@@ -1555,7 +1560,7 @@
 	* server.c (server_updated): Deal with cvs -n update -jt1 -jt2
 	"protocol error: uncounted data discarded" problem.
 	* sanity.sh (join7): New test for this case.
-	
+
 2004-09-04  Derek Price  <derek@ximbiot.com>
 
 	* socket-client.c (socket_client_initialize): Pass new args to
@@ -1566,7 +1571,7 @@
 	Silence `gcc -Wall'.
 
 	* buffer.c (buf_initialize): Remove unnecessary typecasts by using
-	size_t instead of int or bool as args.  
+	size_t instead of int or bool as args.
 	* buffer.c, import.c, log-buffer.c, ms-buffer.c, zlib.c: Change all
 	callers.
 	* buffer.h, cvs.h: Update protos.
@@ -1637,7 +1642,7 @@
 
 	* sanity.sh (sync-secondary): 'dirname -b' fails during the
 	spacefiles-5 test on FreeBSD, so use 'dirname -- "\$dir"' for now
-	and look to AS_DIRNAME at some future date.	
+	and look to AS_DIRNAME at some future date.
 
 2004-08-19  Derek Price  <derek@ximbiot.com>
 
@@ -1827,7 +1832,7 @@
 	(become_proxy): Ditto.
 	(server_cleanup): No need to clean up logfiles any longer.
 	(server): Use new log_buffer_initialize API.
-	
+
 2004-08-04  Derek Price  <derek@ximbiot.com>
 
 	* buffer.c (buf_read_data): s/abort/assert/.
@@ -1976,7 +1981,7 @@
 	(rtag_fileproc): ...here.  Consolidate returns at single location.
 	(*): Misc reformatting.
 	* sanity.sh (sync-secondary): Include more data in the update-log.
-	
+
 2004-07-13  Derek Price  <derek@ximbiot.com>
 
 	* .cvsignore: Ignore coverage data generated by GCC.
@@ -2350,7 +2355,7 @@
 2004-08-24  Derek Price <derek@ximbiot.com>
 
 	* tag.c (tag_check_valid): Use RCS_valid_rev() rather than duplicating
-	code.  Misc error message improvements.  
+	code.  Misc error message improvements.
 
 2004-08-24  Mark D. Baushke  <mdb@cvshome.org>
 
@@ -2361,7 +2366,7 @@
 	<wilson@specifixinc.com>.)
 	* sanity.sh (modules4): Add some more tests testing the above
 	change.
-	
+
 2004-08-20  Mark D. Baushke  <mdb@cvshome.org>
 
 	* sanity.sh (binfiles): Cleanup the 2a temporary directory.
@@ -2425,7 +2430,7 @@
 
 	* log-buffer.c (log_buffer_input): Protect call to fsync()
 	with #ifdef HAVE_FSYNC.
-	
+
 2004-08-17  Mark D. Baushke  <mdb@cvshome.org>
 
 	* sanity.sh (sshstdio): Fix comment typo plus gratuitous
@@ -2440,7 +2445,7 @@
 
 	* client.c (handle_e): Similar fix for stderr.
 	* sanity.sh (sshstdio): New test for non-blocking stdio via ssh.
-	
+
 2004-08-11  Derek Price <derek@ximbiot.com>
 
 	* sanity.sh (basicc): Work around a problem in Linux 2.2 & Bash 2.05b
@@ -2469,10 +2474,10 @@
 2004-07-17  Mark D. Baushke  <mdb@cvshome.org>
 
 	* sanity.sh (basic2-14): Use DOTSTAR to be more portable.
-	
+
 	* status.c (status_fileproc): Print datetimes using output_cvs_tagged.
 	* sanity.sh (basic2-14): Allow for an extra blank line at the end.
-	
+
 2004-07-16  Derek Price  <derek@ximbiot.com>
 
 	* server.c (pamh): New global static to hold the PAM handle.
@@ -2969,7 +2974,7 @@
 	for "cvspserver" rather than the CVS_PROXY_PORT.
 	(Fixes parseroot-3r on machines without "cvspserver" in
 	their /etc/services file.)
-	
+
 2004-04-07  Derek Price  <derek@ximbiot.com>
 
 	* sanity.sh (parseroot): s/oberon/$username/.
@@ -2984,7 +2989,7 @@
 	* client.h (CVS_PROXY_PORT): Define.
 	* root.c (parse_cvsroot): Parse method options.
 	* sanity.sh (parseroot): Add new tests.
-	
+
 2004-04-06  Derek Price  <derek@ximbiot.com>
 
 	* root.h (cvsroot_t): Move username, password, hostname, port inside
@@ -3429,7 +3434,7 @@
 	* run.c (format_cmdline): Don't accept printf `L' modifier at all when
 	long doubles are not available.  Allow UNIQUE_FLOAT_TYPE_LONG_DOUBLE to
 	imply HAVE_LONG_DOUBLE.
-	
+
 2004-02-19  Derek Price  <derek@ximbiot.com>
 
 	* run.c: Remove include of stddef.h - it is already included via
@@ -3651,7 +3656,7 @@
 
 	* server.c (do_cvs_command): Plug a memory leak.
 	(Use buf_free() rather than free().)
-	
+
 2004-02-12  Derek Price  <derek@ximbiot.com>
 
 	* sanity.sh (lockfiles): Reformat a comment for 80 characters.  Fix a
@@ -4102,7 +4107,7 @@
 	being missing from the current file.
 	* sanity.sh (join6): New tests for this case.
 	(trace): Renumber test cases.
-	
+
 2003-11-24  Larry Jones  <lawrence.jones@eds.com>
 
 	* diff.c (diff_file_nodiff): use_rev1 does *not* imply that diff_rev1
@@ -4113,7 +4118,7 @@
 
 	* client.c (connect_to_forked_server): Avoid passing NULL strings
 	to TRACE. Calling printf("%s",NULL) is not defined and may
-	segfault on some systems.	
+	segfault on some systems.
 	* diff.c (diff_file_nodiff): Ditto.
 	* main.c (main): Ditto.
 	* modules.c (do_module): Ditto.
@@ -4311,7 +4316,7 @@
 	* sanity.sh (parseroot): Use dokeep function.
 
 	* sanity.sh (parseroot): Perform this test in a subdirectory.
-	It should avoid problems on case-insensitive systems where 
+	It should avoid problems on case-insensitive systems where
 	CVSROOT and cvsroot are the same directory (eg, MacOS X).
 
 2003-10-24  Derek Price  <derek@ximbiot.com>
@@ -4372,7 +4377,7 @@
 	* sanity.sh (join6): New testcase for above.
 	(Suggested by Paul Edwards, from somewhere in Australia.)
 	(import): Fix collateral damage.
-	
+
 2003-10-23  Derek Price  <derek@ximbiot.com>
 
 	* sanity.sh (fail): Refer the user to the `TESTS' and `check.log' files
@@ -4404,7 +4409,7 @@
 	exists.
 	(Reported by Rodolfo Schulz de Lima <rodolfo@rodsoft.org>.)
 	* sanity.sh (admin): Test these changes.
-	
+
 2003-10-17  Mark D. Baushke  <mdb@cvshome.org>
 
 	* admin.c (admin_fileproc): Force tag match on admin
@@ -4826,7 +4831,7 @@
 	* subr.c: Ditto.
 	(Original patch from Rainer Orth <ro@TechFak.Uni-Bielefeld.DE>
 	to fix IRIX 5.3 problem.)
-	
+
 2003-08-01  Derek Price  <derek@ximbiot.com>
 
 	* sanity.sh (join5): Use $SPROG rather than $PROG.
@@ -5168,7 +5173,7 @@
 
 	* client.c: Reapply Alexey's changes to client.c from three commits
 	back they were left out of the diff.
- 
+
 2003-06-23  Derek Price  <derek@ximbiot.com>
 
 	* add.c (add): Fix xmalloc's strlen() of wrong variable.
@@ -5865,7 +5870,7 @@
 	pid of the parent cvs process.
 	* main.c (main): Initialize it.
 	* sanity.sh (env): Test it.
- 
+
 2003-03-19  Derek Price  <derek@ximbiot.com>
 
 	* sanity.config.sh.in: New file.
@@ -6042,7 +6047,7 @@
 	rtag' as various parts of cvs "know" how to automatically branch files
 	(eg: cvs add). Trying to remember state is getting "Too Hard (TM)")
 	* sanity.sh (branches3): Test the CVS_LOCAL_BRANCH_NUM feature.
-	
+
 2003-03-04  Derek Price  <derek@ximbiot.com>
 
 	* history.c (history_write): Remove unneeded O_CREAT in the call to
@@ -6093,7 +6098,7 @@
 
 	This bug was discovered and fixed for FreeBSD cvs. See v 1.21 of
 	<http://www.freebsd.org/cgi/cvsweb.cgi/src/contrib/cvs/src/rcs.c.diff>
-        for more information. 
+        for more information.
 
 	* sanity.sh (rcs4): Tests for same.
 	(Patch from Mark D. Baushke <mdb@cvshome.org>.)
