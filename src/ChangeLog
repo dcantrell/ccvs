@@ -1,3 +1,10 @@
+1999-12-15  Pavel Roskin <pavel_roskin@geocities.com>
+	and Larry Jones <larry.jones@sdrc.com>
+
+	* src/lock.c (lock_name): fixed assertion failure for the
+	top-level CVS directory when LockDir is used
+	* sanity.sh (lockfiles-9): new test for this case
+
 1999-12-11  Karl Fogel  <kfogel@red-bean.com>
 
 	* Revert previous change -- it doesn't work remotely yet.
