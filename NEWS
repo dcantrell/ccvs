@@ -3,6 +3,8 @@ Changes since 1.11.12:
 
 GENERAL USER ISSUES
 
+* Misc cosmetic, readability, and commenting fixes.
+
 * The CVS server has had the protocol check for unused data from the client
   partially restored.
 
