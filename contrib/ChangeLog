@@ -1,3 +1,11 @@
+Thu Oct 17 18:28:25 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* patch-2.1-.new-fix: Removed; it was not in DISTFILES so it never
+	made it into distributions.  It also isn't clear what it has to do
+	with CVS.  It is available from
+	    ftp://ftp.weird.com/pub/patch-2.1-.new-fix
+	* README: Remove entry for patch-2.1-.new-fix.
+
 Wed Oct 16 10:22:44 1996  Jim Blandy  <jimb@totoro.cyclic.com>
 
 	* rcs2log.sh: Change date output format to something CVS 1.9
