@@ -1146,13 +1146,15 @@ compare_files (dir0, name0, dir1, name1, depth)
 	    failed = 1;
 	  }
       if (inf[1].desc == -2)
-	if (same_files)
-	  inf[1].desc = inf[0].desc;
-	else if ((inf[1].desc = open (inf[1].name, O_RDONLY, 0)) < 0)
-	  {
-	    perror_with_name (inf[1].name);
-	    failed = 1;
-	  }
+	{
+	  if (same_files)
+	    inf[1].desc = inf[0].desc;
+	  else if ((inf[1].desc = open (inf[1].name, O_RDONLY, 0)) < 0)
+	    {
+	      perror_with_name (inf[1].name);
+	      failed = 1;
+	    }
+	}
 
 #if HAVE_SETMODE
       if (binary_I_O)
