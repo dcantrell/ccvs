@@ -833,8 +833,7 @@ isemptydir (dir)
     while ((dp = readdir (dirp)) != NULL)
     {
 	if (strcmp (dp->d_name, ".") != 0 && strcmp (dp->d_name, "..") != 0 &&
-	    strcmp (dp->d_name, CVSADM) != 0 &&
-	    strcmp (dp->d_name, OCVSADM) != 0)
+	    strcmp (dp->d_name, CVSADM) != 0)
 	{
 	    (void) closedir (dirp);
 	    return (0);

@@ -349,9 +349,9 @@ add_directory (repository, dir)
 	       "directory %s not added; must be a direct sub-directory", dir);
 	return (1);
     }
-    if (strcmp (dir, CVSADM) == 0 || strcmp (dir, OCVSADM) == 0)
+    if (strcmp (dir, CVSADM) == 0)
     {
-	error (0, 0, "cannot add a `%s' or a `%s' directory", CVSADM, OCVSADM);
+	error (0, 0, "cannot add a `%s' directory", CVSADM);
 	return (1);
     }
 
@@ -369,10 +369,9 @@ add_directory (repository, dir)
 	error (0, errno, "cannot chdir to %s", dir);
 	return (1);
     }
-    if (!server_active && (isfile (CVSADM) || isfile (OCVSADM)))
+    if (!server_active && isfile (CVSADM))
     {
-	error (0, 0,
-	       "%s/%s (or %s/%s) already exists", dir, CVSADM, dir, OCVSADM);
+	error (0, 0, "%s/%s already exists", dir, CVSADM);
 	goto out;
     }
 

@@ -107,7 +107,7 @@ release (argc, argv)
 		    error (0, 0, "can't chdir to: %s", argv[i]);
 		continue;
 	    }
-	    if (!isdir (CVSADM) && !isdir (OCVSADM))
+	    if (!isdir (CVSADM))
 	    {
 		if (!really_quiet)
 		    error (0, 0, "no repository module: %s", argv[i]);

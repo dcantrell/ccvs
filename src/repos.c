@@ -28,9 +28,8 @@ Name_Repository (dir, update_dir)
     char path[PATH_MAX];
     char tmp[PATH_MAX];
     char cvsadm[PATH_MAX];
-    char ocvsadm[PATH_MAX];
     char *cp;
-    int has_cvsadm = 0, has_ocvsadm = 0;
+    int has_cvsadm = 0;
 
     if (update_dir && *update_dir)
 	xupdate_dir = update_dir;
@@ -38,45 +37,16 @@ Name_Repository (dir, update_dir)
 	xupdate_dir = ".";
 
     if (dir != NULL)
-    {
 	(void) sprintf (cvsadm, "%s/%s", dir, CVSADM);
-	(void) sprintf (ocvsadm, "%s/%s", dir, OCVSADM);
-    }
     else
-    {
 	(void) strcpy (cvsadm, CVSADM);
-	(void) strcpy (ocvsadm, OCVSADM);
-    }
 
     /* sanity checks */
-    if (!(has_cvsadm = isdir (cvsadm)) && !(has_ocvsadm = isdir (ocvsadm)))
+    if (!(has_cvsadm = isdir (cvsadm)))
     {
 	error (0, 0, "in directory %s:", xupdate_dir);
 	error (1, 0, "there is no version here; do '%s checkout' first",
 	       program_name);
-    }
-
-    if (has_ocvsadm)
-    {
-	if (has_cvsadm)
-	{
-	    error (0, 0, "in directory %s:", xupdate_dir);
-	    error (1, 0, "error: both `%s' and `%s' exist; I give up",
-		   CVSADM, OCVSADM);
-	}
-	if (rename (ocvsadm, cvsadm) < 0)
-	{
-	    error (0, 0, "in directory %s:", xupdate_dir);
-	    error (1, errno, "cannot rename `%s' to `%s'; I give up",
-		   OCVSADM, CVSADM);
-	}
-
-	/*
-	 * We have converted the old CVS.adm directory to the new CVS
-	 * directory.  Now, convert the Entries file to the new format, if
-	 * necessary.
-	 */
-	check_entries (dir);
     }
 
     if (dir != NULL)

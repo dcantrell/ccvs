@@ -1,3 +1,11 @@
+Mon May 15 14:35:11 1995  J.T. Conklin  <jtc@rtl.cygnus.com>
+
+	* lock.c (L_LOCK_OWNED): Removed.
+
+	* add.c, checkout.c, client.c, create_adm.c, cvs.h, entries.c,
+	  find_names.c modules.c, recurse.c, release.c, repos.c, update.c:
+	  removed CVS 1.2 compatibility/upgrade code.
+
 Mon May  8 11:25:07 1995  J.T. Conklin  <jtc@rtl.cygnus.com>
 
 	* lock.c (write_lock): Missed one instance where rmdir(tmp) should

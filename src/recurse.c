@@ -122,7 +122,7 @@ start_recursion (fileproc, filesdoneproc, direntproc, dirleaveproc,
 	 * process each of the sub-directories, so we pretend like we were
 	 * called with the list of sub-dirs of the current dir as args
 	 */
-	if ((which & W_LOCAL) && !isdir (CVSADM) && !isdir (OCVSADM))
+	if ((which & W_LOCAL) && !isdir (CVSADM))
 	    dirlist = Find_Dirs ((char *) NULL, W_LOCAL);
 	else
 	    addlist (&dirlist, ".");
@@ -192,7 +192,7 @@ start_recursion (fileproc, filesdoneproc, direntproc, dirleaveproc,
 		addfile (&files_by_dir, dir, comp);
 	    else if (isdir (dir))
 	    {
-		if (isdir (CVSADM) || isdir (OCVSADM))
+		if (isdir (CVSADM))
 		{
 		    /* otherwise, look for it in the repository. */
 		    char *save_update_dir;
@@ -296,7 +296,7 @@ do_recursion (xfileproc, xfilesdoneproc, xdirentproc, xdirleaveproc,
      */
     if (which & W_LOCAL)
     {
-	if (isdir (CVSADM) || isdir (OCVSADM))
+	if (isdir (CVSADM))
 	    repository = Name_Repository ((char *) NULL, update_dir);
 	else
 	    repository = NULL;
