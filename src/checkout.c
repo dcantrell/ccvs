@@ -82,18 +82,18 @@ static const char *const export_usage[] =
 };
 
 static int checkout_prune_dirs;
-static int force_tag_match = 1;
+static int force_tag_match;
 static int pipeout;
 static int aflag;
-static char *options = NULL;
-static char *tag = NULL;
-static int tag_validated = 0;
-static char *date = NULL;
-static char *join_rev1 = NULL;
-static char *join_rev2 = NULL;
-static int join_tags_validated = 0;
-static char *preload_update_dir = NULL;
-static char *history_name = NULL;
+static char *options;
+static char *tag;
+static int tag_validated;
+static char *date;
+static char *join_rev1;
+static char *join_rev2;
+static int join_tags_validated;
+static char *preload_update_dir;
+static char *history_name;
 static enum mtype m_type;
 
 int
@@ -111,6 +111,18 @@ checkout (argc, argv)
     char *where = NULL;
     char *valid_options;
     const char *const *valid_usage;
+
+    /* initialize static options */
+    force_tag_match = 1;
+    if (options)
+    {
+	free (options);
+	options = NULL;
+    }
+    tag = date = join_rev1 = join_rev2 = preload_update_dir = NULL;
+    history_name = NULL;
+    tag_validated = join_tags_validated = 0;
+
 
     /*
      * A smaller subset of options are allowed for the export command, which
@@ -333,7 +345,10 @@ checkout (argc, argv)
     {
 	cat_module (status);
 	if (options)
+	{
 	    free (options);
+	    options = NULL;
+	}
 	return (0);
     }
     db = open_module ();
@@ -371,7 +386,12 @@ checkout (argc, argv)
 			  (char *) NULL);
     close_module (db);
     if (options)
+    {
 	free (options);
+	options = NULL;
+    }
+    if (history_name != tag && history_name != date && history_name != NULL)
+	free (history_name);
     return (err);
 }
 
