@@ -1,5 +1,8 @@
 Tue Feb 17 18:34:01 1998  Ian Lance Taylor  <ian@cygnus.com>
 
+	* sanity.sh (cvsadm, diffmerge2): Remove directories at the end of
+	the test.
+
 	* import.c (expand_at_signs): Rewrite to use memchr and fwrite
 	rather than putc.
 
