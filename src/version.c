@@ -17,4 +17,4 @@ static char rcsid[] = "$CVSid: @(#)version.c 1.15 94/10/03 $";
 USE(rcsid)
 #endif
 
-char *version_string = "\nConcurrent Versions System (CVS) 1.4 Alpha-2(+1)\n";
+char *version_string = "\nCyclic Concurrent Versions System (CCVS) 1.4\n";
