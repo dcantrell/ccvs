@@ -1,3 +1,11 @@
+1999-02-09  Jim Kingdon  <http://www.cyclic.com>
+
+	* vasprintf.c: Removed; there is apparently no clean, portable
+	solution to the VA_LIST_IS_ARRAY problem (C9X drafts have va_copy,
+	but we aren't even assuming C90 yet!).
+	* Makefile.in (SOURCES): Remove vasprintf.c.
+	* build_lib.com: Remove vasprintf.c and vasprintf.obj.
+
 1999-01-26  Jim Kingdon  <http://www.cyclic.com>
 	and Joerg Bullmann  <http://www.glink.net.hk/~jb/MacCVSClient/>
 
