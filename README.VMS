@@ -4,8 +4,8 @@ DISCLAIMER: This port must be considered experimental.  Although
 previous versions have been in use at one large site since about
 October, 1995, and the port is believed to be quite usable, various
 VMS-specific quirks are known and the port cannot be considered as
-mature as, say, Windows NT or unix.  As always, future progress of
-this port will depend on volunteer and customer interest.
+mature as the ports to, say, Windows NT or unix.  As always, future
+progress of this port will depend on volunteer and customer interest.
 
 This port is of the CVS client only.  Or in other words, the port
 implements the full set of CVS commands, but cannot access
