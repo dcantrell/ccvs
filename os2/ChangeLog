@@ -1,3 +1,7 @@
+Fri Oct 27 13:03:28 1995  Karl Fogel  <kfogel@floss.cyclic.com>
+
+        * Makefile.in (DISTFILES): include config.h and options.h.
+
 Wed Oct 25 12:52:54 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
         * config.h: new file; will maintain by hand.
