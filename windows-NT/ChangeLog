@@ -1,3 +1,8 @@
+Fri Oct 18 16:54:00 1996  Tony Brusseau  <brusseau@jprc.com>
+			  and Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* strippath.c (strip_path): Leave leading "\\" unmolested for UNC.
+
 Thu Oct 17 10:57:06 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* README: Clarify who it is who needs to be able to mount the

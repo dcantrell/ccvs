@@ -17,8 +17,8 @@
 
 #include <string.h>
 
-static void remove_component(char *beginc, char *endc);
-void strip_trailing_slashes(char *path);
+static void remove_component (char *beginc, char *endc);
+void strip_trailing_slashes (char *path);
 
 /* Remove unnecessary components from PATH. */
 
@@ -26,25 +26,35 @@ void
 strip_path (path)
      char *path;
 {
-  int stripped = 0;
-  char *cp, *slash;
+    int stripped = 0;
+    char *cp, *slash;
 
-  for (cp = path; *(slash = cp + strcspn (cp, "/\\")) != '\0'; cp = slash)
+    cp = path;
+    /* A leading "\\" means that it is a UNC name, and we must not smash
+       it into a single "\" or "/".  In my test on NT 3.51, "\\", "\/",
+       and "/\" seemed to imply UNC and "//" seemed to be the same as
+       a leading "/".  But we just leave them all unmolested--let the system
+       sort it out.  */
+    if (ISDIRSEP (cp[0]) && ISDIRSEP (cp[1]))
+	cp += 2;
+
+    for (; *(slash = cp + strcspn (cp, "/\\")) != '\0'; cp = slash)
     {
-      *slash = '\0';
-      if ((!*cp && (cp != path || stripped)) ||
-	  strcmp(cp, ".") == 0 || strcmp(cp, "/") == 0)
+	*slash = '\0';
+	if ((!*cp && (cp != path || stripped))
+	    || strcmp(cp, ".") == 0
+	    || strcmp(cp, "/") == 0)
 	{
-	  stripped = 1;
-	  remove_component(cp, slash);
-	  slash = cp;
+	    stripped = 1;
+	    remove_component (cp, slash);
+	    slash = cp;
 	}
-      else
+	else
 	{
-	  *slash++ = '/';
+	    *slash++ = '/';
 	}
     }
-  strip_trailing_slashes(path);
+    strip_trailing_slashes (path);
 }
 
 /* Remove the component delimited by BEGINC and ENDC from the path */
@@ -54,7 +64,7 @@ remove_component (beginc, endc)
      char *beginc;
      char *endc;
 {
-  for (endc++; *endc; endc++)
-    *beginc++ = *endc;
-  *beginc = '\0';
+    for (endc++; *endc; endc++)
+	*beginc++ = *endc;
+    *beginc = '\0';
 }
