@@ -3,6 +3,10 @@ Changes since 1.12.5:
 
 GENERAL USER ISSUES
 
+* Misc error message fixes for consistency.
+
+* Some previously untested behavior is now being tested.
+
 * Server no longer claims to support the "Case" request.
 
 * Case insensitive clients once again preserve the case of filenames in
