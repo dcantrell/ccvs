@@ -63,11 +63,7 @@ cd project ||
 # -------------------------
 # Set up a CVS test with description DESCRIPTION.
 #
-# This macro sets up a CVSROOT, initializes it, initializes projects at the
-# top level named, `project', checks out the project, and cds
-# into the project directory.
-#
-# This macro also puts some information in the envirionment that might be
+# This macro puts some information in the envirionment that might be
 # needed by tests:
 #
 #   $CVS_SERVER		The path to the CVS server executable to use.
@@ -130,8 +126,6 @@ HOME=$at_group_dir/home; export HOME
 # change the format of RCS dates.  Otherwise people using e.g.,
 # RCSINIT=-zLT get lots of spurious failures.
 RCSINIT=
-
-cvs_project_init || exit 1
 
 ###
 ### End AT_CVS_SETUP([$1])

@@ -15,7 +15,7 @@ AT_CVS_BANNER([CVS Version Strings])
 
 AT_CVS_SETUP([version])
 
-
+AT_CHECK([cvs init])dnl
 
 #
 # The complex sed script below:
@@ -85,4 +85,4 @@ AT_CVS_LOCAL(
 
 
 
-AT_CLEANUP
+AT_CLEANUP # version
