@@ -20,6 +20,8 @@ static Dtype admin_dirproc PROTO ((void *callerdat, char *dir,
 				   List *entries));
 static int admin_fileproc PROTO ((void *callerdat, struct file_info *finfo));
 
+char *user_admin_options = "k";
+
 static const char *const admin_usage[] =
 {
     "Usage: %s %s [options] files...\n",
@@ -152,7 +154,7 @@ admin (argc, argv)
     struct admin_data admin_data;
     int c;
     int i;
-    int only_k_option;
+    int only_allowed_options;
 
     if (argc <= 1)
 	usage (admin_usage);
@@ -165,12 +167,12 @@ admin (argc, argv)
        example, admin_data->branch should be not `-bfoo' but simply `foo'. */
 
     optind = 0;
-    only_k_option = 1;
+    only_allowed_options = 1;
     while ((c = getopt (argc, argv,
 			"+ib::c:a:A:e::l::u::LUn:N:m:o:s:t::IqxV:k:")) != -1)
     {
-	if (c != 'k' && c != 'q')
-	    only_k_option = 0;
+	if (c != 'q' && !strchr(user_admin_options, c))
+	    only_allowed_options = 0;
 
 	switch (c)
 	{
@@ -388,8 +390,8 @@ admin (argc, argv)
 	 */
         !current_parsed_root->isremote &&
 # endif	/* CLIENT_SUPPORT */
-        !only_k_option
-	&& (grp = getgrnam(CVS_ADMIN_GROUP)) != NULL)
+        !only_allowed_options &&
+	(grp = getgrnam(CVS_ADMIN_GROUP)) != NULL)
     {
 #ifdef HAVE_GETGROUPS
 	gid_t *grps;

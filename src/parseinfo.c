@@ -392,6 +392,11 @@ warning: this CVS does not support PreservePermissions");
 	    else if (strcmp (p, "stat") == 0)
 	      RereadLogAfterVerify = LOGMSG_REREAD_STAT;
 	}
+	else if (strcmp (line, "UserAdminOptions") == 0)
+	{
+	    user_admin_options = xmalloc(strlen(p) + 1);
+	    strcpy(user_admin_options, p);
+	}
 	else
 	{
 	    /* We may be dealing with a keyword which was added in a
