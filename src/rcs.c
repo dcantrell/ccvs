@@ -5016,6 +5016,31 @@ RCS_checkin (rcs, workfile, message, rev, flags)
 	allocated_workfile = 1;
     }
 
+    /* Is the backend file a symbolic link?  Follow it and replace the
+       filename with the destination of the link.  */
+
+    while (islink (rcs->path))
+    {
+	char *newname = xreadlink (rcs->path);
+	
+	if (isabsolute (newname))
+	{
+	    free (rcs->path);
+	    rcs->path = newname;
+	}
+	else
+	{
+	    char *oldname = last_component (rcs->path);
+	    int dirlen = oldname - rcs->path;
+	    char *fullnewname = xmalloc (dirlen + strlen (newname) + 1);
+	    strncpy (fullnewname, rcs->path, dirlen);
+	    strcpy (fullnewname + dirlen, newname);
+	    free (newname);
+	    free (rcs->path);
+	    rcs->path = fullnewname;
+	}
+    }
+
     checkin_quiet = flags & RCS_FLAGS_QUIET;
     if (!checkin_quiet)
     {
