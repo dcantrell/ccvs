@@ -1,3 +1,14 @@
+Wed Aug 30 12:32:29 1995  Karl Fogel  <kfogel@floss.cyclic.com>
+
+        * cvs.texinfo (Remote Repositories): new node, referred to from
+        `Basics' and `Repository'.
+        (Repository): documented new `-d' vs. `$CVSROOT' vs. `CVS/Root'
+        behavior.
+        (commitinfo): document client/server-case behavior.
+        (editinfo):   document client/server-case behavior.
+        (loginfo):    document client/server-case behavior.
+        (rcsinfo):    document client/server-case behavior.
+
 Mon Aug 21 00:23:45 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvsclient.texi (How To): The way to force rsh is to set

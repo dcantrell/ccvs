@@ -534,9 +534,12 @@ This section is taken from release 2.3 of the @sc{cvs}
 @cindex Repository (intro)
 
 @sc{cvs} stores all files in a centralized
-@dfn{repository}: a directory (such as @file{/usr/local/cvsroot} 
-or @file{user@@remotehost:/usr/local/cvsroot}) which is
+@dfn{repository}: a directory (such as
+@file{/usr/local/cvsroot} or
+@file{user@@remotehost:/usr/local/cvsroot}) which is
 populated with a hierarchy of files and directories.
+(@pxref{Remote repositories} for information about
+keeping the repository on a remote machine.)
 
 Normally, you never access any of the files in the
 repository directly.  Instead, you use @sc{cvs}
@@ -544,19 +547,6 @@ commands to get your own copy of the files, and then
 work on that copy.  When you've finished a set of
 changes, you check (or @dfn{commit}) them back into the
 repository.
-
-@cindex Remote Repository
-@cindex Repository (remote)
-@cindex Client/Server Operation
-Your working copy can be checked out to a machine other
-than the one the repository resides on, as long as the
-two machines are connected via a network.  To access a
-remote repository, use the syntax @file{hostname:/path}
-in naming the repository.  If you have different
-usernames on the local and remote hosts, then use
-@file{user@@hostname:/path} (but you'll have to make
-sure your @file{.rhosts} file is set up so that
-@file{rsh} works transparently).
 
 The files in the repository are organized in
 @dfn{modules}.  Each module is made up of one or more
@@ -912,10 +902,10 @@ Only directories are shown below.
 @end example                              
 
 
-There are a couple of different ways for telling @sc{cvs}
+There are a couple of different ways to tell @sc{cvs}
 where to find the repository.  You can name the
-repository on the command line directly, with the
-@code{-d} (for "directory") option to @sc{cvs}:
+repository on the command line explicitly, with the
+@code{-d} (for "directory") option:
 
 @example
 cvs -d /usr/local/cvsroot checkout yoyodyne/tc
@@ -946,26 +936,18 @@ override the @code{$CVSROOT} environment variable.
 Once you've checked a working copy out from the
 repository, it will remember where its repository is
 (the information is recorded in the
-@file{@sc{cvs}/Root} file in the working copy).
-However, @sc{CVS} will complain if the @code{$CVSROOT}
-environment variable and the @file{@sc{cvs}/Root} file
-disagree on where the repository is.
+@file{@sc{cvs}/Root} file in the working copy).  
+
+The @code{-d} option and the @file{@sc{cvs}/Root} file
+both override the @code{$CVSROOT} environment variable;
+however, @sc{CVS} will complain if the @file{-d}
+argument and the @file{@sc{cvs}/Root} file disagree.
 
 There is nothing magical about the name
 @file{/usr/local/cvsroot}.  You can choose to place the
-repository anywhere you like.
-
-@cindex Remote Repository
-@cindex Repository (remote)
-@cindex Client/Server Operation
-To specify a repository on a remote machine (accessed
-through a network), use the syntax
-"@file{user@@host:/path/to/repository}".  The user on
-the remote machine must have a @file{.rhosts} that will
-allow transparent access (i.e.: rsh won't be prompted
-for a password) from the user on the local machine.
-You can omit the "@file{user@@}" if you have the same
-username on both machines.
+repository anywhere you like.  
+@xref{Remote repositories} to learn how the repository can be on a
+different machine than your working copy of the sources.
 
 The repository is split in two parts.  @file{$CVSROOT/CVSROOT} contains
 administrative files for @sc{cvs}.  The other directories contain the actual
@@ -976,6 +958,7 @@ user-defined modules.
 * Intro administrative files::  Defining modules
 * Multiple repositories::       Multiple repositories
 * Creating a repository::       Creating a repository
+* Remote repositories::         Accessing repositories on remote machines
 @end menu
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -1164,6 +1147,57 @@ single repository.
 
 See the instructions in the @file{INSTALL} file in the
 @sc{cvs} distribution.
+
+@c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+@node Remote repositories
+@section Remote repositories
+@cindex Repositories, remote
+@cindex Remote repositories
+@cindex Client/Server Operation
+
+@c I'm only documenting the rsh method, as I've never
+@c used kerberos access...
+
+The repository and your working copy of the sources can
+be on different machines.  To access a remote
+repository, use the following format for its name:
+
+@example
+        user@@hostname:/path/to/repository
+@end example
+
+(The @file{user@@} can be omitted if it's the same on
+both the local and remote hosts.)
+
+CVS uses the @file{rsh} protocol to perform these
+operations, so the remote user host needs to have a
+@file{.rhosts} file which grants access to the local
+user.
+
+For example, suppose you are the user @file{mozart} on
+the local machine @file{anklet.grunge.com}.  You want
+to access the module @file{foo} in the repository
+@file{/usr/local/sources/}, on machine
+@file{chainsaw.brickyard.com}.
+
+        If your username is also @file{bach} on
+@file{chainsaw.brickyard.com}, then you need only type
+
+@example
+cvs -d bach@@chainsaw.brickyard.com:/user/local/sources checkout foo
+@end example
+
+        Remember, for this to work, @file{bach}'s
+@file{.rhosts} file must contain the line:
+
+@example
+anklet.grunge.com  mozart
+@end example
+
+        Once the working copy is checked out, it is not
+necessary to specify the repository explicitly for
+every subsequent operation --- the working copy records
+it in the @file{CVS/Root} file.
 
 @c ---------------------------------------------------------------------
 @node Starting a new project
@@ -6215,6 +6249,11 @@ All occurances of the name @samp{ALL} appearing as a
 regular expression are used in addition to the first
 matching regular expression or the name @samp{DEFAULT}.
 
+Note: when @sc{CVS} is accessing a remote repository,
+@file{commitinfo} will be run on the @emph{remote}
+(i.e., server) side, not the client side (@pxref{Remote
+repositories}).
+
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node editinfo
 @appendixsec Editinfo
@@ -6262,6 +6301,11 @@ line is used, if it is specified.
 
 If the edit script exits with a non-zero exit status,
 the commit is aborted.
+
+Note: when @sc{CVS} is accessing a remote repository,
+@file{editinfo} will be run on the @emph{remote}
+(i.e., server) side, not the client side (@pxref{Remote
+repositories}).
 
 @menu
 * editinfo example::            Editinfo example
@@ -6355,6 +6399,11 @@ The first matching regular expression is used.
 @xref{commit files}, for a description of the syntax of
 the @file{loginfo} file.  
 
+Note: when @sc{CVS} is accessing a remote repository,
+@file{loginfo} will be run on the @emph{remote}
+(i.e., server) side, not the client side (@pxref{Remote
+repositories}).
+
 @menu
 * loginfo example::             Loginfo example
 @end menu
@@ -6421,6 +6470,11 @@ template.
 
 @xref{editinfo example}, for an example @file{rcsinfo}
 file.
+
+Note: when @sc{CVS} is accessing a remote repository,
+@file{rcsinfo} will be run on the @emph{remote}
+(i.e., server) side, not the client side (@pxref{Remote
+repositories}).
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node cvsignore
