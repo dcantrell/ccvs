@@ -1,4 +1,5 @@
 2000-12-14  Derek Price  <derek.price@openavenue.com>
+	    Thomas Maeder  <maeder@glue.ch>
 
 	* sccs2rcs.csh: unkludge a Y2k workaround
 
