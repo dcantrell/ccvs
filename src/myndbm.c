@@ -133,11 +133,14 @@ mydbm_load_file (fp, list)
     FILE *fp;
     List *list;
 {
-    char line[MAXLINELEN], value[MAXLINELEN];
+    char *line = NULL;
+    size_t line_len;
+    /* FIXME: arbitrary limit.  */
+    char value[MAXLINELEN];
     char *cp, *vp;
     int len, cont;
 
-    for (cont = 0; fgets (line, sizeof (line), fp) != NULL;)
+    for (cont = 0; getline (&line, &line_len, fp) >= 0;)
     {
 	if ((cp = strrchr (line, '\n')) != NULL)
 	    *cp = '\0';			/* strip the newline */
@@ -208,6 +211,7 @@ mydbm_load_file (fp, list)
 	    }
 	}
     }
+    free (line);
 }
 
 #endif				/* MY_NDBM */
