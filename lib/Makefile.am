@@ -98,30 +98,30 @@ MOSTLYCLEANFILES += fnmatch.h fnmatch.h-t
 ## For GNULIB's getdate module.
 libcvs_a_SOURCES += getdate.h getdate.y
 # CVS test scripts for getdate.
-TESTS += test-getdate.sh
-MOSTLYCLEANFILES += getdate-expected getdate-got getdate.diff
-check_PROGRAMS += getdate
-getdate_SOURCES = \
-	getdate.y \
-	gettime.c
+#TESTS += test-getdate.sh
+#MOSTLYCLEANFILES += getdate-expected getdate-got getdate.diff
+#check_PROGRAMS += getdate
+#getdate_SOURCES = \
+#	getdate.y \
+#	gettime.c
 ## The following sources are needed when lstat gets compiled via LIBOBJS.  I
 ## just include them all the time since it shouldn't hurt.
-getdate_SOURCES += \
-	error.c \
-	exitfail.c \
-	exitfail.h \
-	xalloc.h \
-	xmalloc.c \
-	xstrdup.c
+#getdate_SOURCES += \
+#	error.c \
+#	exitfail.c \
+#	exitfail.h \
+#	xalloc.h \
+#	xmalloc.c \
+#	xstrdup.c
 ## This source file was added only for the getdate test program when compiled
 ## with GNULIB's error.c.
-getdate_SOURCES += \
-	progname.c
-getdate_CPPFLAGS = -DTEST
-getdate_LDADD = \
-	@LIBOBJS@ \
-	$(LIB_CLOCK_GETTIME) \
-	$(LIBINTL)
+#getdate_SOURCES += \
+#	progname.c
+#getdate_CPPFLAGS = -DTEST
+#getdate_LDADD = \
+#	@LIBOBJS@ \
+#	$(LIB_CLOCK_GETTIME) \
+#	$(LIBINTL)
 
 ## For GNULIB's gettime module.
 libcvs_a_SOURCES += gettime.c
