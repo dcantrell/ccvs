@@ -5250,9 +5250,6 @@ send_dirent_proc (callerdat, dir, repository, update_dir, entries)
     dir_exists = isdir (cvsadm_name);
     free (cvsadm_name);
 
-    /* initialize the ignore list for this directory */
-    ignlist = getlist ();
-
     /*
      * If there is an empty directory (e.g. we are doing `cvs add' on a
      * newly-created directory), the server still needs to know about it.
@@ -5268,6 +5265,9 @@ send_dirent_proc (callerdat, dir, repository, update_dir, entries)
 	char *repos = Name_Repository (dir, update_dir);
 	send_a_repository (dir, repos, update_dir);
 	free (repos);
+
+	/* initialize the ignore list for this directory */
+	ignlist = getlist ();
     }
     else
     {
@@ -5290,6 +5290,29 @@ send_dirent_proc (callerdat, dir, repository, update_dir, entries)
     }
 
     return (dir_exists ? R_PROCESS : R_SKIP_ALL);
+}
+
+static int send_dirleave_proc PROTO ((void *, char *, int, char *, List *));
+
+/*
+ * send_dirleave_proc () is called back by the recursion code upon leaving
+ * a directory.  All it does is delete the ignore list if it hasn't already
+ * been done (by send_filesdone_proc).
+ */
+/* ARGSUSED */
+static int
+send_dirleave_proc (callerdat, dir, err, update_dir, entries)
+    void *callerdat;
+    char *dir;
+    int err;
+    char *update_dir;
+    List *entries;
+{
+
+    /* Delete the ignore list if it hasn't already been done.  */
+    if (ignlist)
+	dellist (&ignlist);
+    return err;
 }
 
 /*
@@ -5486,7 +5509,7 @@ send_files (argc, argv, local, aflag, flags)
     args.backup_modified = flags & BACKUP_MODIFIED_FILES;
     err = start_recursion
 	(send_fileproc, send_filesdoneproc,
-	 send_dirent_proc, (DIRLEAVEPROC)NULL, (void *) &args,
+	 send_dirent_proc, send_dirleave_proc, (void *) &args,
 	 argc, argv, local, W_LOCAL, aflag, 0, (char *)NULL, 0);
     if (err)
 	error_exit ();

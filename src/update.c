@@ -273,26 +273,23 @@ update (argc, argv)
 		option_with_arg ("-j", join_rev2);
 	    wrap_send ();
 
-	    /* If the server supports the command "update-patches", that means
-	       that it knows how to handle the -u argument to update, which
-	       means to send patches instead of complete files.
-
-	       We don't send -u if failed_patches != NULL, so that the
-	       server doesn't try to send patches which will just fail
-	       again.  At least currently, the client also clobbers the
-	       file and tells the server it is lost, which also will get
-	       a full file instead of a patch, but it seems clean to omit
-	       -u.  */
-	    if (failed_patches == NULL)
-	    {
-		if (supported_request ("update-patches"))
-		    send_arg ("-u");
-	    }
-
-	    if (failed_patches == NULL)
+	    if (failed_patches_count == 0)
 	    {
                 unsigned int flags = 0;
-                
+
+		/* If the server supports the command "update-patches", that 
+		   means that it knows how to handle the -u argument to update,
+		   which means to send patches instead of complete files.
+
+		   We don't send -u if failed_patches != NULL, so that the
+		   server doesn't try to send patches which will just fail
+		   again.  At least currently, the client also clobbers the
+		   file and tells the server it is lost, which also will get
+		   a full file instead of a patch, but it seems clean to omit
+		   -u.  */
+		if (supported_request ("update-patches"))
+		    send_arg ("-u");
+
                 if (update_build_dirs)
                     flags |= SEND_BUILD_DIRS;
 
@@ -328,10 +325,8 @@ update (argc, argv)
 		send_files (failed_patches_count, failed_patches, local,
 			    aflag, update_build_dirs ? SEND_BUILD_DIRS : 0);
 		send_file_names (failed_patches_count, failed_patches, 0);
+		free_names (&failed_patches_count, failed_patches);
 	    }
-
-	    failed_patches = NULL;
-	    failed_patches_count = 0;
 
 	    send_to_server ("update\012", 0);
 
@@ -351,13 +346,15 @@ update (argc, argv)
 	       conflict-and-patch-failed case.  */
 
 	    if (status != 0
-		&& (failed_patches == NULL || pass > 1))
+		&& (failed_patches_count == 0 || pass > 1))
 	    {
+		if (failed_patches_count > 0)
+		    free_names (&failed_patches_count, failed_patches);
 		return status;
 	    }
 
 	    ++pass;
-	} while (failed_patches != NULL);
+	} while (failed_patches_count > 0);
 
 	return 0;
     }

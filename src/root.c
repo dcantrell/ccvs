@@ -174,9 +174,9 @@ Create_Root (dir, rootdir)
    directories.  Then we can check against them when a remote user
    hands us a CVSROOT directory.  */
 
-static unsigned int root_allow_count;
+static int root_allow_count;
 static char **root_allow_vector;
-static unsigned int root_allow_size;
+static int root_allow_size;
 
 void
 root_allow_add (arg)
@@ -233,8 +233,7 @@ void
 root_allow_free ()
 {
     if (root_allow_vector != NULL)
-	free (root_allow_vector);
-    root_allow_count = 0;
+	free_names (&root_allow_count, root_allow_vector);
     root_allow_size = 0;
 }
 
@@ -242,7 +241,7 @@ int
 root_allow_ok (arg)
     char *arg;
 {
-    unsigned int i;
+    int i;
 
     if (root_allow_count == 0)
     {

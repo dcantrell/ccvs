@@ -749,7 +749,6 @@ serve_root (arg)
 {
     char *env;
     char *path;
-    char *arg_dup;
     
     if (error_pending()) return;
 
@@ -1172,9 +1171,8 @@ serve_directory (arg)
     status = buf_read_line (buf_from_net, &repos, (int *) NULL);
     if (status == 0)
     {
-	if (outside_root (repos))
-	    return;
-	dirswitch (arg, repos);
+	if (!outside_root (repos))
+	    dirswitch (arg, repos);
 	free (repos);
     }
     else if (status == -2)
@@ -1943,8 +1941,8 @@ static void
 serve_notify (arg)
     char *arg;
 {
-    struct notify_note *new;
-    char *data;
+    struct notify_note *new = NULL;
+    char *data = NULL;
     int status;
 
     if (error_pending ()) return;
@@ -1952,27 +1950,26 @@ serve_notify (arg)
     if (outside_dir (arg))
 	return;
 
+    if (dir_name == NULL)
+	goto error;
+
     new = (struct notify_note *) malloc (sizeof (struct notify_note));
     if (new == NULL)
     {
 	pending_error = ENOMEM;
 	return;
     }
-    if (dir_name == NULL)
-	goto error;
     new->dir = malloc (strlen (dir_name) + 1);
-    if (new->dir == NULL)
+    new->filename = malloc (strlen (arg) + 1);
+    if (new->dir == NULL || new->filename == NULL)
     {
 	pending_error = ENOMEM;
+	if (new->dir != NULL)
+	    free (new->dir);
+	free (new);
 	return;
     }
     strcpy (new->dir, dir_name);
-    new->filename = malloc (strlen (arg) + 1);
-    if (new->filename == NULL)
-    {
-	pending_error = ENOMEM;
-	return;
-    }
     strcpy (new->filename, arg);
 
     status = buf_read_line (buf_from_net, &data, (int *) NULL);
@@ -1998,6 +1995,9 @@ serve_notify (arg)
 		}
 	    }
 	}
+	free (new->filename);
+	free (new->dir);
+	free (new);
     }
     else
     {
@@ -2049,6 +2049,14 @@ serve_notify (arg)
     if (alloc_pending (80))
 	strcpy (pending_error_text,
 		"E Protocol error; misformed Notify request");
+    if (data != NULL)
+	free (data);
+    if (new != NULL)
+    {
+	free (new->filename);
+	free (new->dir);
+	free (new);
+    }
     return;
 }
 
@@ -5481,14 +5489,14 @@ error 0 %s: no such user\n", username);
 	    /* user exists and has a password */
 	    host_user = ((! strcmp (found_passwd,
                                     crypt (password, found_passwd)))
-                         ? username : NULL);
+                         ? xstrdup (username) : NULL);
             goto handle_return;
         }
 	else if (password && *password)
         {
 	    /* user exists and has no system password, but we got
 	       one as parameter */
-	    host_user = username;
+	    host_user = xstrdup (username);
             goto handle_return;
         }
 	else
@@ -5691,6 +5699,7 @@ pserver_authenticate_connection ()
     free (descrambled_password);
     if (host_user == NULL)
     {
+	free (host_user);
     i_hate_you:
 	printf ("I HATE YOU\n");
 	fflush (stdout);
@@ -5722,6 +5731,7 @@ pserver_authenticate_connection ()
 
     /* Switch to run as this user. */
     switch_to_user (host_user);
+    free (host_user);
     free (tmp);
     free (repository);
     free (username);
