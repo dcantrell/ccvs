@@ -12395,7 +12395,7 @@ programs.
 
 @c ---------------------------------------------------------------------
 @node Credits
-@unnumbered Credits
+@appendix Credits
 
 @cindex Contributors (manual)
 @cindex Credits (manual)
@@ -12440,7 +12440,7 @@ distribution.
 
 @c ---------------------------------------------------------------------
 @node BUGS
-@unnumbered Dealing with bugs in CVS or this manual
+@appendix Dealing with bugs in CVS or this manual
 
 @cindex Bugs in this manual or CVS
 Neither @sc{cvs} nor this manual is perfect, and they
