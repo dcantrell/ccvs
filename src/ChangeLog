@@ -1,3 +1,15 @@
+Tue Jun 25 19:52:02 1996  Ian Lance Taylor  <ian@cygnus.com>
+
+	* update.c (checkout_file): Rewrite handling of dead files when
+	joining.  Avoid space leaks.  Avoid unnecessary file
+	resurrections.
+	(join_file): Add checks to skip merging a dead revision onto a
+	dead revision, and to skip merging a common ancestor onto a dead
+	revision.  Move check for non-existent working file after new
+	checks.
+	* sanity.sh (death): Use dotest for tests 86 and 95, and add test
+	death-file2-1, to test above changes.
+
 Mon Jun 24 11:27:37 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* update.c (merge_file): Replace file, repository, entries, and

@@ -988,43 +988,112 @@ checkout_file (file, repository, entries, rcsnode, vers_ts, update_dir,
 
 	    if (file_is_dead && joining())
 	    {
-		if (RCS_getversion (vers_ts->srcfile, join_rev1,
-				    date_rev1, 1, 0)
-		    || (join_rev2 != NULL && 
-			RCS_getversion (vers_ts->srcfile, join_rev2,
-					date_rev2, 1, 0)))
+	        char *vers1;
+
+		vers1 = RCS_getversion (vers_ts->srcfile, join_rev1,
+					date_rev1, 1, 0);
+
+		if (vers1 == NULL)
 		{
-		    /* when joining, we need to get dead files checked
-		       out.  Try harder.  */
-		    /* I think that RCS_FLAGS_FORCE is here only because
-		       passing -f to co used to enable checking out
-		       a dead revision in the old version of death
-		       support which used a hacked RCS instead of using
-		       the RCS state.  */
-		    retcode = RCS_fast_checkout (vers_ts->srcfile, file,
-						 vers_ts->vn_rcs,
-						 vers_ts->options, RUN_TTY,
-						 RCS_FLAGS_FORCE);
-		    if (retcode != 0)
+		    /* If we can't find join_rev1, then we can't do a
+		       merge.  We used to check out the file here, but
+		       that would effectively resurrect the file,
+		       which makes no sense.  We will report an error
+		       in join_file.  */
+		    return 0;
+		}
+
+		if (join_rev2 == NULL)
+		{
+		    char *gca_ver;
+
+		    /* This is a merge from the greatest common
+                       ancestor of vers_ts->vn_rcs, which is dead, and
+                       vers1.  If vers1 is dead, or if vers1 is itself
+                       the greatest common ancestor, then the merge
+                       should not resurrect the file.  */
+
+		    if (RCS_isdead (vers_ts->srcfile, vers1))
 		    {
-			error (retcode == -1 ? 1 : 0,
-			       retcode == -1 ? errno : 0,
-			       "could not check out %s", file);
-			(void) unlink_file (backup);
-			return (retcode);
+		        free (vers1);
+			return 0;
 		    }
-		    file_is_dead = 0;
-		    resurrecting = 1;
-		    if (resurrecting_out)
-			*resurrecting_out = 1;
+
+		    gca_ver = gca (vers_ts->vn_rcs, vers1);
+
+		    if (strcmp (gca_ver, vers1) == 0)
+		    {
+		        free (gca_ver);
+		        free (vers1);
+			return 0;
+		    }
+
+		    /* If we get here, we want to merge the changes
+		       from gca_ver to vers1 into vers_ts->vn_rcs.  To
+		       make this work, we resurrect vers_ts->vn_rcs
+		       (which gives us the contents just before it
+		       died), merge in the changes (done by the
+		       join_file routine), and treat the result as a
+		       newly added file.  */
+
+		    free (gca_ver);
+		    free (vers1);
 		}
 		else
 		{
-		    /* If the file is dead and does not contain either of
-		       the join revisions, then we don't want to check it
-		       out. */
-		    return 0;
+		    char *vers2;
+
+		    free (vers1);
+
+		    vers2 = RCS_getversion (vers_ts->srcfile, join_rev2,
+					    date_rev2, 1, 0);
+		    if (vers2 == NULL)
+		    {
+		        /* We can't do a merge.  We report the error
+                           in join_file.  */
+		        return 0;
+		    }
+
+		    /* We want to merge the changes from vers1 to
+                       vers2 into vers_ts->vn_rcs, which is dead.  If
+                       vers2 is dead, then the result of the merge
+                       should be dead, and there is nothing to do
+                       here.  Otherwise, we must resurrect
+                       vers_ts->vn_rcs (which gives us the contents
+                       just before it died), merge in the changes
+                       (done by the join_file routine), and treat the
+                       result as a newly added file.  */
+
+		    if (RCS_isdead (vers_ts->srcfile, vers2))
+		    {
+		        free (vers2);
+		        return 0;
+		    }
+
+		    free (vers2);
 		}
+
+		/* I think that RCS_FLAGS_FORCE is here only because
+		   passing -f to co used to enable checking out
+		   a dead revision in the old version of death
+		   support which used a hacked RCS instead of using
+		   the RCS state.  */
+		retcode = RCS_fast_checkout (vers_ts->srcfile, file,
+					     vers_ts->vn_rcs,
+					     vers_ts->options, RUN_TTY,
+					     RCS_FLAGS_FORCE);
+		if (retcode != 0)
+		{
+		    error (retcode == -1 ? 1 : 0,
+			   retcode == -1 ? errno : 0,
+			   "could not check out %s", file);
+		    (void) unlink_file (backup);
+		    return (retcode);
+		}
+		file_is_dead = 0;
+		resurrecting = 1;
+		if (resurrecting_out)
+		    *resurrecting_out = 1;
 	    }
 
 	    if (cvswrite == TRUE
@@ -1593,28 +1662,10 @@ join_file (file, rcsnode, vers, update_dir, entries)
 	jdate1 = NULL;
     }
 
-    /* The file in the working directory doesn't exist in CVS/Entries.
-       FIXME: Shouldn't this case result in additional processing (if
-       the file was added going from rev1 to rev2, then do the equivalent
-       of a "cvs add")?  (yes; easier said than done.. :-) */
-    if (vers->vn_user == NULL)
-    {
-	/* No merge possible YET. */
-	if (jdate2 != NULL)
-	    error (0, 0,
-		   "file %s is present in revision %s as of %s",
-		   file, jrev2, jdate2);
-	else
-	    error (0, 0,
-		   "file %s is present in revision %s",
-		   file, jrev2);
-	return;
-    }
-
     /* Fix for bug CVS/193:
      * Used to dump core if the file had been removed on the current branch.
      */
-    if (strcmp(vers->vn_user, "0") == 0)
+    if (vers->vn_user != NULL && strcmp (vers->vn_user, "0") == 0)
     {
         error(0, 0,
               "file %s has been deleted",
@@ -1638,6 +1689,60 @@ join_file (file, rcsnode, vers, update_dir, entries)
 		       "cannot find revision %s in file %s",
 		       jrev2, file);
 	}
+	return;
+    }
+
+    /* Skip merging a dead revision onto a dead revision.  */
+    if (RCS_isdead (vers->srcfile, rev2)
+	&& (vers->vn_user == NULL
+	    || RCS_isdead (vers->srcfile, vers->vn_user)))
+    {
+        free (rev2);
+	return;
+    }
+
+    /* If the user file is dead, and this is a merge of a branch, and
+       there are no changes on the branch since the greatest common
+       ancestor, then there is nothing to do.  We check this here to
+       avoid the warning just below if vers->vn_user is NULL.  */
+    if (jrev1 == NULL
+	&& vers->vn_rcs != NULL
+	&& RCS_isdead (vers->srcfile, vers->vn_rcs))
+    {
+        char *gca_ver;
+
+	gca_ver = gca (vers->vn_rcs, rev2);
+	if (strcmp (gca_ver, rev2) == 0)
+	{
+	    free (gca_ver);
+	    free (rev2);
+	    return;
+	}
+
+	free (gca_ver);
+    }
+
+    /* The file in the working directory doesn't exist in CVS/Entries.
+       FIXME: Shouldn't this case result in additional processing (if
+       the file was added going from rev1 to rev2, then do the equivalent
+       of a "cvs add")?  (yes; easier said than done.. :-) */
+    if (vers->vn_user == NULL)
+    {
+        if (! RCS_isdead (vers->srcfile, rev2))
+	{
+	    /* No merge possible YET. */
+	    if (jdate2 != NULL)
+	        error (0, 0,
+		       "file %s is present in revision %s as of %s",
+		       file, jrev2, jdate2);
+	    else
+	        error (0, 0,
+		       "file %s is present in revision %s",
+		       file, jrev2);
+	}
+
+	free (rev2);
+
 	return;
     }
 
