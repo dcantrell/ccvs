@@ -4128,9 +4128,16 @@ connect_to_gserver (sock, hostinfo)
 	if (stat_maj != GSS_S_COMPLETE && stat_maj != GSS_S_CONTINUE_NEEDED)
 	{
 	    OM_uint32 message_context;
+	    OM_uint32 new_stat_min;
 
 	    message_context = 0;
-	    gss_display_status (&stat_min, stat_maj, GSS_C_GSS_CODE,
+	    gss_display_status (&new_stat_min, stat_maj, GSS_C_GSS_CODE,
+                                GSS_C_NULL_OID, &message_context, &tok_out);
+	    error (0, 0, "GSSAPI authentication failed: %s",
+		   (char *) tok_out.value);
+
+	    message_context = 0;
+	    gss_display_status (&new_stat_min, stat_min, GSS_C_MECH_CODE,
 				GSS_C_NULL_OID, &message_context, &tok_out);
 	    error (1, 0, "GSSAPI authentication failed: %s",
 		   (char *) tok_out.value);
