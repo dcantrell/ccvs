@@ -758,7 +758,7 @@ checkout_proc (pargc, argv, where, mwhere, mfile, shorten,
 	entries = Entries_Open (0);
 	for (i = 1; i < *pargc; i++)
 	{
-	    char line[MAXLINELEN];
+	    char *line;
 	    char *user;
 	    Vers_TS *vers;
 
@@ -767,10 +767,12 @@ checkout_proc (pargc, argv, where, mwhere, mfile, shorten,
 			       force_tag_match, 0, entries, (List *) NULL);
 	    if (vers->ts_user == NULL)
 	    {
+		line = xmalloc (strlen (user) + 15);
 		(void) sprintf (line, "Initial %s", user);
 		Register (entries, user, vers->vn_rcs ? vers->vn_rcs : "0",
 			  line, vers->options, vers->tag,
 			  vers->date, (char *) 0);
+		free (line);
 	    }
 	    freevers_ts (&vers);
 	}
