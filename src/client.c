@@ -1277,6 +1277,32 @@ warning: server is not creating directories one at a time");
 	    if ( CVS_CHDIR (dir_name) < 0)
 		error (1, errno, "could not chdir to %s", dir_name);
 	}
+	else if (!isdir (CVSADM))
+	{
+	    /*
+	     * Put repository in CVS/Repository.  For historical
+	     * (pre-CVS/Root) reasons, this is an absolute pathname,
+	     * but what really matters is the part of it which is
+	     * relative to cvsroot.
+	     */
+	    char *repo;
+
+	    if (reposdirname_absolute)
+		repo = reposdirname;
+	    else
+	    {
+		repo = xmalloc (strlen (reposdirname)
+				+ strlen (toplevel_repos)
+				+ 10);
+		strcpy (repo, toplevel_repos);
+		strcat (repo, "/");
+		strcat (repo, reposdirname);
+	    }
+
+	    Create_Admin (".", ".", repo, (char *)NULL, (char *)NULL, 0, 1, 1);
+	    if (repo != reposdirname)
+		free (repo);
+	}
 
 	if (strcmp (command_name, "export") != 0)
 	{

@@ -3712,25 +3712,18 @@ done"
 	    dotest_fail dirs2-6 "${testcvs} update -d" \
 "${QUESTION} sdir
 ${PROG} server: Updating \.
-${PROG} update: in directory sdir:
-${PROG} update: cannot open CVS/Entries for reading: No such file or directory
 ${PROG} server: Updating sdir
 ${PROG} update: move away sdir/file1; it is in the way
 C sdir/file1"
 	    rm sdir/file1
+	    rm -r sdir/CVS
 
 	    # This is where things are not just like conflicts3-23
-	    # As with conflicts3-23, all these CVS/Entries* warnings
-	    # are somewhat doubtful, and we probably should think some
-	    # about whether they should be changed/fixed.
 	    dotest dirs2-7 "${testcvs} update -d" \
 "${QUESTION} sdir
 ${PROG} server: Updating \.
-${PROG} update: in directory sdir:
-${PROG} update: cannot open CVS/Entries for reading: No such file or directory
 ${PROG} server: Updating sdir
-U sdir/file1
-${PROG} update: cannot open CVS/Entries.Log: No such file or directory"
+U sdir/file1"
 	  else
 	    dotest dirs2-6 "${testcvs} update -d" \
 "${PROG} update: Updating \.
@@ -3761,14 +3754,9 @@ ${PROG} \[server aborted\]: no such tag br"
 	    dotest_fail dirs2-10-again "${testcvs} update -d -r br" \
 "${QUESTION} sdir
 ${PROG} server: Updating \.
-${PROG} update: in directory sdir:
-${PROG} update: cannot open CVS/Entries for reading: No such file or directory
-${PROG} update: cannot open CVS/Tag: No such file or directory
-${PROG} update: cannot open CVS/Tag: No such file or directory
 ${PROG} server: Updating sdir
 ${PROG} update: move away sdir/file1; it is in the way
-C sdir/file1
-${PROG} update: cannot open CVS/Tag: No such file or directory"
+C sdir/file1"
 	  else
 	    dotest_fail dirs2-10 "${testcvs} update -d -r br" \
 "${PROG} update: in directory sdir:
@@ -3798,14 +3786,9 @@ done"
 	  cd ../../2/first-dir
 	  if test "$remote" = yes; then
 	    dotest dirs2-14 "${testcvs} update -d -r br" \
-"${QUESTION} sdir
+"${QUESTION} sdir/file1
 ${PROG} server: Updating \.
-${PROG} update: in directory sdir:
-${PROG} update: cannot open CVS/Entries for reading: No such file or directory
-${PROG} update: cannot open CVS/Tag: No such file or directory
-${PROG} update: cannot open CVS/Tag: No such file or directory
-${PROG} server: Updating sdir
-${PROG} update: cannot open CVS/Tag: No such file or directory"
+${PROG} server: Updating sdir"
 	  else
 	    dotest dirs2-14 "${testcvs} update -d -r br" \
 "${PROG} update: Updating \.
@@ -6921,15 +6904,8 @@ ${PROG} [a-z]*: ignoring first-dir/sdir (CVS/Entries missing)"
 	  rm -r sdir/CVS
 	  dotest conflicts3-22 "${testcvs} -q update" "${QUESTION} sdir"
 	  if test "x$remote" = xyes; then
-	    # It isn't particularly swift that CVS prints this
-	    # "cannot open CVS/Entries" where it has already printed
-	    # "? sdir".  At least I don't think so.  But do note: (1)
-	    # non-fatal error, and (2) tells us which directory has
-	    # the problem.
 	    dotest_fail conflicts3-23 "${testcvs} -q update -PdA" \
 "${QUESTION} sdir
-${PROG} update: in directory sdir:
-${PROG} update: cannot open CVS/Entries for reading: No such file or directory
 ${PROG} update: move away sdir/sfile; it is in the way
 C sdir/sfile"
 	  else
@@ -6956,17 +6932,8 @@ new revision: delete; previous revision: 1\.1
 done"
 	  rm -r sdir/CVS
 	  dotest conflicts3-27 "${testcvs} -q update" "${QUESTION} sdir"
-	  if test "x$remote" = xyes; then
-	    # Regarding "cannot open CVS/Entries", see comments at
-	    # conflicts3-23.
-	    dotest conflicts3-28 "${testcvs} -q update -PdA" \
-"${QUESTION} sdir
-${PROG} update: in directory sdir:
-${PROG} update: cannot open CVS/Entries for reading: No such file or directory"
-	  else
-	    dotest conflicts3-28 "${testcvs} -q update -PdA" \
+	  dotest conflicts3-28 "${testcvs} -q update -PdA" \
 "${QUESTION} sdir"
-	  fi
 
 	  cd ../..
 
@@ -9997,6 +9964,7 @@ U top-dir/file1"
 "${PROG} [a-z]*: warning: cannot make directory CVS in \.: Permission denied
 ${PROG} [a-z]*: Updating top-dir" \
 "${PROG} [a-z]*: warning: cannot make directory CVS in \.: Permission denied
+${PROG} [a-z]*: warning: cannot make directory CVS in \.: Permission denied
 ${PROG} [a-z]*: in directory \.:
 ${PROG} [a-z]*: cannot open CVS/Entries for reading: No such file or directory
 ${PROG} [a-z]*: Updating top-dir"
