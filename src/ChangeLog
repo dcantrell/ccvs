@@ -1,6 +1,12 @@
 2001-01-10  Derek Price  <derek.price@openavenue.com>
 
-	* Makefile.am (CVSvn.texi): specify $(srcdir) explicitly in target rule
+	* Makefile.am ($(srcdir)/version.c): specify $(srcdir) for all subparts
+	of the build since some systems don't allow mv's across partitions
+	* Makefile.in: regenerated
+
+2001-01-10  Derek Price  <derek.price@openavenue.com>
+
+	* Makefile.am (version.c): specify $(srcdir) explicitly in target rule
 	so version.c gets built properly for all makes.
 	(version.o): specify $(srcdir)/version.c explicitly so dependency is
 	found and built properly
