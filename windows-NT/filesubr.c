@@ -23,7 +23,7 @@
 
 #include "cvs.h"
 
-static int deep_remove_dir PROTO((const char *path));
+static int deep_remove_dir( const char *path );
 
 /* Copies "from" to "to".  Note that the functionality here is similar
    to the win32 function CopyFile, but (1) we copy LastAccessTime and
