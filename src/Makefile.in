@@ -43,11 +43,11 @@ INSTALL_PROGRAM = @INSTALL_PROGRAM@
 
 LIBS = @LIBS@
 
-SOURCES = add.c admin.c checkin.c checkout.c classify.c commit.c \
+SOURCES = add.c admin.c checkin.c checkout.c classify.c client.c commit.c \
 create_adm.c cvsrc.c diff.c entries.c find_names.c hash.c history.c ignore.c \
-import.c lock.c log.c logmsg.c main.c myndbm.c rcs.c modules.c \
-no_diff.c parseinfo.c patch.c recurse.c release.c remove.c repos.c rtag.c \
-status.c tag.c update.c vers_ts.c version.c root.c subr.c server.c client.c
+import.c lock.c log.c logmsg.c main.c modules.c myndbm.c no_diff.c \
+parseinfo.c patch.c rcs.c recurse.c release.c remove.c repos.c root.c rtag.c \
+server.c status.c subr.c tag.c update.c vers_ts.c version.c
 MSOURCES = mkmodules.c
 
 OBJECTS = add.o admin.o checkin.o checkout.o classify.o commit.o \
@@ -61,13 +61,11 @@ MOBJECTS = hash.o mkmodules.o myndbm.o
 COMMON_OBJECTS = subr.o version.o
 
 HEADERS = cvs.h rcs.h hash.h myndbm.h patchlevel.h \
-	update.h server.h client.h
+	update.h server.h client.h options.h.in
 
-DISTFILES = Makefile.in cvsbug.sh \
-            ChangeLog NOTES RCS-patches README-rm-add \
-            ChangeLog.fsf \
-            sanity.sh sanity.el \
-            .cvsignore \
+DISTFILES = .cvsignore Makefile.in ChangeLog ChangeLog.fsf \
+	    NOTES RCS-patches README-rm-add \
+            sanity.sh sanity.el cvsbug.sh convert.sh \
             $(HEADERS) $(SOURCES) $(MSOURCES) 
 
 PROGS = cvs mkmodules cvsbug
@@ -143,9 +141,10 @@ distclean: clean
 realclean: distclean
 .PHONY: realclean
 
-dist:
-	ln $(DISTFILES) ../`cat ../.fname`/src
-.PHONY: dist
+dist-dir:
+	mkdir ${DISTDIR}
+	ln ${DISTFILES} ${DISTDIR}
+.PHONY: dist-dir
 
 # Linking rules.
 
