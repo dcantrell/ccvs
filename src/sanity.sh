@@ -23852,7 +23852,8 @@ ${PROG} server: Updating dir1/sdir/ssdir"
 	  # to work around).
 	  if $remote; then :; else
 	    dotest multiroot2-9a "${testcvs} -t update" \
-" *-> main loop with CVSROOT=${TESTDIR}/root1
+" *-> parse_cvsroot ( ${TESTDIR}/root1 )
+ *-> main loop with CVSROOT=${TESTDIR}/root1
  *-> Write_Template (\., ${TESTDIR}/root1)
 ${PROG} update: Updating \.
  *-> Reader_Lock(${TESTDIR}/root1)
@@ -23861,6 +23862,7 @@ ${PROG} update: Updating \.
 ${PROG} update: Updating dir1
  *-> Reader_Lock(${TESTDIR}/root1/dir1)
  *-> Lock_Cleanup()
+ *-> parse_cvsroot ( ${TESTDIR}/root2 )
  *-> main loop with CVSROOT=${TESTDIR}/root2
  *-> Write_Template (dir1/sdir, ${TESTDIR}/root2/dir1/sdir)
 ${PROG} update: Updating dir1/sdir
