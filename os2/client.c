@@ -1675,8 +1675,10 @@ send_repository (dir, repos, update_dir)
 	f = fopen (adm_name, "r");
 	if (f == NULL)
 	{
-	    if (errno != ENOENT)
-		error (1, errno, "reading %s", adm_name);
+	    if (errno != ENOENT
+                && errno != ENOTEXIST
+                && errno != EOS2ERR)
+              error (1, errno, "reading %s", adm_name);
 	}
 	else
 	{
@@ -1710,8 +1712,10 @@ send_repository (dir, repos, update_dir)
 	f = fopen (adm_name, "r");
 	if (f == NULL)
 	{
-	    if (errno != ENOENT)
-		error (1, errno, "reading %s", adm_name);
+	    if (errno != ENOENT
+                && errno != ENOTEXIST
+                && errno != EOS2ERR)
+              error (1, errno, "reading %s", adm_name);
 	}
 	else
 	{
