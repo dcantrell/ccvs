@@ -4512,6 +4512,7 @@ client_process_import_file (message, vfile, vtag, targc, targv, repository)
     char *repository;
 {
     char *update_dir;
+    char *fullname;
 
     assert (toplevel_repos != NULL);
 
@@ -4521,12 +4522,23 @@ client_process_import_file (message, vfile, vtag, targc, targv, repository)
 	       repository, toplevel_repos);
 
     if (strcmp (repository, toplevel_repos) == 0)
+    {
 	update_dir = "";
+	fullname = xstrdup (vfile);
+    }
     else
+    {
 	update_dir = repository + strlen (toplevel_repos) + 1;
 
+	fullname = xmalloc (strlen (vfile) + strlen (update_dir) + 10);
+	strcpy (fullname, update_dir);
+	strcat (fullname, "/");
+	strcat (fullname, vfile);
+    }
+
     send_a_repository ("", repository, update_dir);
-    send_modified (vfile, vfile, NULL);
+    send_modified (vfile, fullname, NULL);
+    free (fullname);
     return 0;
 }
 
