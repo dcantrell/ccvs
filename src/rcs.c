@@ -2114,189 +2114,210 @@ RCS_fast_checkout (rcs, workfile, tag, options, sout, flags)
      char *sout;
      int flags;
 {
-    if (! noexec
-	&& (sout == RUN_TTY || workfile == NULL))
+    FILE *fp;
+    struct stat sb;
+    char *key;
+    char *value;
+    size_t len;
+    char *ouroptions;
+    int keywords;
+
+    if (trace)
     {
-        FILE *fp;
-	struct stat sb;
-        int found;
-        char *key;
-	char *value;
-	size_t len;
-	char *ouroptions;
+	(void) fprintf (stderr, "%s-> checkout (%s, %s, %s, %s)\n",
+#ifdef SERVER_SUPPORT
+			server_active ? "S" : " ",
+#else
+			"",
+#endif
+			rcs->path,
+			tag != NULL ? tag : "",
+			options != NULL ? options : "",
+			(workfile != NULL
+			 ? workfile
+			 : (sout != RUN_TTY ? sout : "(stdout)")));
+    }
 
-	if (tag == NULL || strcmp (tag, rcs->head) == 0)
+    if (noexec && workfile != NULL)
+	return 0;
+
+    assert (sout == RUN_TTY || workfile == NULL);
+
+    if (tag == NULL || strcmp (tag, rcs->head) == 0)
+    {
+	int gothead;
+
+	/* We want the head revision.  Try to read it directly.  */
+
+	if (rcs->flags & NODELTA)
 	{
-	    /* We want the head revision.  Try to read it directly.  */
+	    free_rcsnode_contents (rcs);
+	    rcs->flags |= PARTIAL;
+	}
 
-	    if (rcs->flags & NODELTA)
+	if (rcs->flags & PARTIAL)
+	    RCS_reparsercsfile (rcs, 0, &fp);
+	else
+	{
+	    fp = CVS_FOPEN (rcs->path, FOPEN_BINARY_READ);
+	    if (fp == NULL)
+		error (1, 0, "unable to reopen `%s'", rcs->path);
+	    if (fseek (fp, rcs->delta_pos, SEEK_SET) != 0)
+		error (1, 0, "cannot fseek RCS file");
+	}
+
+	gothead = 0;
+	getrcsrev (fp, &key);
+	while (getrcskey (fp, &key, &value, &len) >= 0)
+	{
+	    if (strcmp (key, "text") == 0)
 	    {
-		free_rcsnode_contents (rcs);
-		rcs->flags |= PARTIAL;
+		gothead = 1;
+		break;
 	    }
+	}
 
-	    if (rcs->flags & PARTIAL)
-		RCS_reparsercsfile (rcs, 0, &fp);
-	    else
-	    {
-		fp = CVS_FOPEN (rcs->path, FOPEN_BINARY_READ);
-		if (fp == NULL)
-		    error (1, 0, "unable to reopen `%s'", rcs->path);
-		if (fseek (fp, rcs->delta_pos, SEEK_SET) != 0)
-		    error (1, 0, "cannot fseek RCS file");
-	    }
+	if (! gothead)
+	{
+	    error (0, 0, "internal error: cannot find head text");
+	    return 1;
+	}
 
-	    found = 0;
-	    getrcsrev (fp, &key);
-	    while (getrcskey (fp, &key, &value, &len) >= 0)
-	    {
-		if (strcmp (key, "text") == 0)
-		{
-		    found = 1;
-		    break;
-		}
-	    }
+	if (fstat (fileno (fp), &sb) < 0)
+	    error (1, errno, "cannot fstat %s", rcs->path);
 
-	    if (fstat (fileno (fp), &sb) < 0)
-		error (1, errno, "cannot fstat %s", rcs->path);
+	if (fclose (fp) < 0)
+	    error (0, errno, "cannot close %s", rcs->path);
+    }
+    else
+    {
+	/* It isn't the head revision of the trunk.  We'll need to
+	   walk through the deltas.  */
+	/* Numeric version of TAG.  (Should we be having the caller
+	   pass us this in addition to TAG which is often symbolic for
+	   the Name keyword?)  */
+	char *num;
 
-	    if (fclose (fp) < 0)
-		error (0, errno, "cannot close %s", rcs->path);
+	fp = NULL;
+	if (rcs->flags & PARTIAL)
+	    RCS_reparsercsfile (rcs, 0, &fp);
+	num = RCS_getversion (rcs, tag, NULL, 1, 0);
+	if (num == NULL)
+	{
+	    error (0, 0, "internal error: cannot find revision");
+	    return 1;
+	}
+
+	if (fp == NULL)
+	{
+	    /* If RCS_deltas didn't close the file, we could use fstat
+	       here too.  Probably should change it thusly....  */
+	    if (stat (rcs->path, &sb) < 0)
+		error (1, errno, "cannot stat %s", rcs->path);
 	}
 	else
 	{
-	    /* It isn't the head revision of the trunk.  We'll need to
-	       walk through the deltas.  */
-	    /* Numeric version of TAG.  (Should we be having the caller
-	       pass us this in addition to TAG which is often symbolic for the
-	       Name keyword?)  */
-	    char *num;
-
-	    fp = NULL;
-	    if (rcs->flags & PARTIAL)
-		RCS_reparsercsfile (rcs, 0, &fp);
-	    num = RCS_getversion (rcs, tag, NULL, 1, 0);
-	    if (num == NULL)
-	    {
-		error (0, 0, "internal warning: cannot find revision");
-		found = 0;
-	    }
-	    else
-	    {
-		if (fp == NULL)
-		{
-		    /* If RCS_deltas didn't close the file, we could
-		       use fstat here too.  Probably should change it
-		       thusly....  */
-		    if (stat (rcs->path, &sb) < 0)
-			error (1, errno, "cannot stat %s", rcs->path);
-		}
-		else
-		{
-		    if (fstat (fileno (fp), &sb) < 0)
-			error (1, errno, "cannot fstat %s", rcs->path);
-		}
-
-		RCS_deltas (rcs, fp, num, RCS_FETCH, &value, &len);
-		found = 1;
-		free (num);
-	    }
+	    if (fstat (fileno (fp), &sb) < 0)
+		error (1, errno, "cannot fstat %s", rcs->path);
 	}
 
-	/* I'm not completely sure that checking rcs->expand is necessary
-	   or even desirable.  It would appear that Version_TS takes care
-	   of that.  */
-	ouroptions = (options != NULL && strlen (options) > 2
-		      ? options + 2
-		      : (rcs->expand != NULL ? rcs->expand : ""));
-	if (found)
-	{
-	    if (strcmp (ouroptions, "o") != 0
-	        && strcmp (ouroptions, "b") != 0)
-	    {
-	        register int inkeyword;
-	        register char *s, *send;
+	RCS_deltas (rcs, fp, num, RCS_FETCH, &value, &len);
+	free (num);
+    }
 
-	        /* Keyword expansion is being done.  Make sure the
-                   text does not contain any keywords.  If it does
-                   have any, do the regular checkout.  */
+    /* I'm not completely sure that checking rcs->expand is necessary
+       or even desirable.  It would appear that Version_TS takes care
+       of that.  */
+    keywords = 0;
+    ouroptions = (options != NULL && strlen (options) > 2
+		  ? options + 2
+		  : (rcs->expand != NULL ? rcs->expand : ""));
+    if (strcmp (ouroptions, "o") != 0
+	&& strcmp (ouroptions, "b") != 0)
+    {
+	register int inkeyword;
+	register char *s, *send;
+
+	/* Keyword expansion is being done.  Make sure the text does
+	   not contain any keywords.  If it does have any, do the
+	   regular checkout.  */
+	inkeyword = 0;
+	send = value + len;
+	for (s = value; s < send; s++)
+	{
+	    register char c;
+
+	    c = *s;
+	    if (c == '$')
+	    {
+		if (inkeyword)
+		{
+		    keywords = 1;
+		    break;
+		}
+		inkeyword = 1;
+	    }
+	    else if (c == ':')
+	    {
+		if (inkeyword)
+		{
+		    keywords = 1;
+		    break;
+		}
+	    }
+	    else if (inkeyword && ! isalpha ((unsigned char) c))
 		inkeyword = 0;
-		send = value + len;
-		for (s = value; s < send; s++)
-		{
-		    register char c;
-
-		    c = *s;
-		    if (c == '$')
-		    {
-		        if (inkeyword)
-			{
-			    found = 0;
-			    break;
-			}
-			inkeyword = 1;
-		    }
-		    else if (c == ':')
-		    {
-		        if (inkeyword)
-			{
-			    found = 0;
-			    break;
-			}
-		    }
-		    else if (inkeyword && ! isalpha ((unsigned char) c))
-		        inkeyword = 0;
-		}
-	    }
 	}
+    }
 
-	if (found)
+    if (! keywords)
+    {
+	FILE *ofp;
+
+	/* We have the text we want.  */
+
+	if (workfile == NULL)
 	{
-	    FILE *ofp;
-
-	    /* We have the text we want.  */
-
-	    if (workfile == NULL)
-	    {
-	        if (sout == RUN_TTY)
-		    ofp = stdout;
-		else
-		{
-		    ofp = CVS_FOPEN (sout, strcmp (ouroptions, "b") == 0 ? "wb" : "w");
-		    if (ofp == NULL)
-		        error (1, errno, "cannot open %s", sout);
-		}
-	    }
+	    if (sout == RUN_TTY)
+		ofp = stdout;
 	    else
 	    {
-	        ofp = CVS_FOPEN (workfile, strcmp (ouroptions, "b") == 0 ? "wb" : "w");
+		ofp = CVS_FOPEN (sout,
+				 strcmp (ouroptions, "b") == 0 ? "wb" : "w");
 		if (ofp == NULL)
-		    error (1, errno, "cannot open %s", workfile);
+		    error (1, errno, "cannot open %s", sout);
 	    }
-
-	    if (fwrite (value, 1, len, ofp) != len)
-		error (1, errno, "cannot write %s",
-		       (workfile != NULL
-			? workfile
-			: (sout != RUN_TTY ? sout : "stdout")));
-
-	    if (workfile != NULL)
-	    {
-	        if (fclose (ofp) < 0)
-		    error (1, errno, "cannot close %s", workfile);
-	        if (chmod (workfile,
-			   sb.st_mode & ~(S_IWRITE | S_IWGRP | S_IWOTH)) < 0)
-		    error (0, errno, "cannot change mode of file %s",
-			   workfile);
-	    }
-	    else if (sout != RUN_TTY)
-	    {
-		if (fclose (ofp) < 0)
-		    error (1, errno, "cannot close %s", sout);
-	    }
-
-	    return 0;
 	}
+	else
+	{
+	    ofp = CVS_FOPEN (workfile,
+			     strcmp (ouroptions, "b") == 0 ? "wb" : "w");
+	    if (ofp == NULL)
+		error (1, errno, "cannot open %s", workfile);
+	}
+
+	if (fwrite (value, 1, len, ofp) != len)
+	    error (1, errno, "cannot write %s",
+		   (workfile != NULL
+		    ? workfile
+		    : (sout != RUN_TTY ? sout : "stdout")));
+
+	if (workfile != NULL)
+	{
+	    if (fclose (ofp) < 0)
+		error (1, errno, "cannot close %s", workfile);
+	    if (chmod (workfile,
+		       sb.st_mode & ~(S_IWRITE | S_IWGRP | S_IWOTH)) < 0)
+		error (0, errno, "cannot change mode of file %s",
+		       workfile);
+	}
+	else if (sout != RUN_TTY)
+	{
+	    if (fclose (ofp) < 0)
+		error (1, errno, "cannot close %s", sout);
+	}
+
+	return 0;
     }
 
     /* We were not able to optimize retrieving this revision.  */

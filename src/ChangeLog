@@ -1,5 +1,11 @@
 Wed Sep  4 14:42:28 1996  Ian Lance Taylor  <ian@cygnus.com>
 
+	* rcs.c (RCS_fast_checkout): If tracing, output a message.  If
+	noexec, and workfile is not NULL, just return immediately.  Assert
+	that sout is RUN_TTY or workfile is NULL, rather than using it as
+	a conditional.  Replace found variable with two variables--gothead
+	and keywords--reflecting what it actually means.
+
 	* rcs.c (RCS_fast_checkout): Don't handle the case of workfile set
 	to "".
 	* rcscmds.c (RCS_checkout): Likewise.
