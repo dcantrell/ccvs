@@ -1,3 +1,7 @@
+2004-04-15  Derek Price  <derek@ximbiot.com>
+
+	* fix-msvc-mak.pl: Set default build configuration to Debug.
+
 2004-04-14  Derek Price  <derek@ximbiot.com>
 
 	* cvsntfix.pl: Rename to...
