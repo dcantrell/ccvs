@@ -85,6 +85,10 @@ PROG=`basename ${testcvs}`
 # not allowed in usernames.  Other than that I'm not sure.
 username="[a-zA-Z0-9][a-zA-Z0-9]*"
 
+# Regexp to match the name of a temporary file (from cvs_temp_name).
+# This appears in certain diff output.
+tempname="[-a-zA-Z0-9/.%_]*"
+
 # FIXME: try things (what things? checkins?) without -m.
 #
 # Some of these tests are written to expect -Q.  But testing with
@@ -1947,7 +1951,7 @@ ${PROG} [a-z]*: use .${PROG} commit. to remove this file permanently"
 ===================================================================
 RCS file: file1
 diff -N file1
-\*\*\* [-a-zA-Z0-9/.%_]*[ 	][	]*[a-zA-Z0-9: ]*
+\*\*\* ${tempname}[ 	][	]*[a-zA-Z0-9: ]*
 --- /dev/null[ 	][ 	]*[a-zA-Z0-9: ]*
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
 \*\*\* 1 \*\*\*\*
@@ -1971,7 +1975,7 @@ done'
 ===================================================================
 RCS file: file1
 diff -N file1
-\*\*\* [-a-zA-Z0-9/.%_]*[ 	][	]*[a-zA-Z0-9: ]*
+\*\*\* ${tempname}[ 	][	]*[a-zA-Z0-9: ]*
 --- /dev/null[ 	][ 	]*[a-zA-Z0-9: ]*
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
 \*\*\* 1 \*\*\*\*
@@ -1986,7 +1990,7 @@ diff -N file1
 ===================================================================
 RCS file: file1
 diff -N file1
-\*\*\* [-a-zA-Z0-9/.%]*[ 	][	]*[a-zA-Z0-9: ]*
+\*\*\* ${tempname}[ 	][	]*[a-zA-Z0-9: ]*
 --- /dev/null[ 	][ 	]*[a-zA-Z0-9: ]*
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
 \*\*\* 1 \*\*\*\*
@@ -2023,7 +2027,7 @@ diff -c first-dir/file1:1\.1 first-dir/file1:removed
 RCS file: file1
 diff -N file1
 \*\*\* /dev/null[ 	][ 	]*[a-zA-Z0-9: ]*
---- [-a-zA-Z0-9/.%_]*[ 	][ 	]*[a-zA-Z0-9: ]*
+--- ${tempname}[ 	][ 	]*[a-zA-Z0-9: ]*
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
 \*\*\* 0 \*\*\*\*
 --- 1 ----
@@ -2095,7 +2099,7 @@ done'
 RCS file: file3
 diff -N file3
 \*\*\* /dev/null[ 	][ 	]*[a-zA-Z0-9: ]*
---- [-a-zA-Z0-9/.%_]*[ 	][ 	]*[a-zA-Z0-9: ]*
+--- ${tempname}[ 	][ 	]*[a-zA-Z0-9: ]*
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
 \*\*\* 0 \*\*\*\*
 --- 1 ----
@@ -2137,7 +2141,7 @@ Index: file2
 RCS file: file2
 diff -N file2
 \*\*\* /dev/null[ 	][ 	]*[a-zA-Z0-9: ]*
---- [-a-zA-Z0-9/.%_]*[ 	][ 	]*[a-zA-Z0-9: ]*
+--- ${tempname}[ 	][ 	]*[a-zA-Z0-9: ]*
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
 \*\*\* 0 \*\*\*\*
 --- 1 ----
@@ -2147,7 +2151,7 @@ Index: file3
 RCS file: file3
 diff -N file3
 \*\*\* /dev/null[ 	][ 	]*[a-zA-Z0-9: ]*
---- [-a-zA-Z0-9/.%_]*[ 	][ 	]*[a-zA-Z0-9: ]*
+--- ${tempname}[ 	][ 	]*[a-zA-Z0-9: ]*
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
 \*\*\* 0 \*\*\*\*
 --- 1 ----
@@ -2180,7 +2184,7 @@ ${PROG} [a-z]*: file3 is no longer in the repository"
 RCS file: file1
 diff -N file1
 \*\*\* /dev/null[ 	][ 	]*[a-zA-Z0-9: ]*
---- [-a-zA-Z0-9/.%_]*[ 	][ 	]*[a-zA-Z0-9: ]*
+--- ${tempname}[ 	][ 	]*[a-zA-Z0-9: ]*
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
 \*\*\* 0 \*\*\*\*
 --- 1 ----
