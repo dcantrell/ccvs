@@ -564,7 +564,7 @@ if test x"$*" = x; then
 	tests="${tests} devcom devcom2 devcom3 watch4"
 	tests="${tests} unedit-without-baserev"
 	tests="${tests} ignore binfiles binfiles2 mcopy binwrap binwrap2"
-	tests="${tests} binwrap3 mwrap info config"
+	tests="${tests} binwrap3 mwrap info taginfo config"
 	tests="${tests} serverpatch log log2 ann crerepos rcs rcs2"
 	tests="${tests} history"
 	tests="${tests} big modes modes2 stamps"
@@ -10290,6 +10290,7 @@ ${PROG} [a-z]*: Rebuilding administrative file database"
 	  # cvsignore: ignore
 	  # verifymsg: info
 	  # cvswrappers: mwrap
+	  # taginfo: taginfo
 	  # config: config
 
 	  # On Windows, we can't check out CVSROOT, because the case
@@ -10439,6 +10440,95 @@ ${PROG} [a-z]*: Rebuilding administrative file database"
 	  cd ..
 	  rm -r wnt
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  ;;
+
+	taginfo)
+	  # Tests of the CVSROOT/taginfo file.  See the comment at the
+	  # "info" tests for a full list of administrative file tests.
+
+	  # Tests to add:
+	  #   -F to move
+	  #   branch
+	  #   rejectme without -n
+	  #   rejectme with -n
+	  #   would-be-tag with -n (should not log)
+	  #   -d
+
+	  mkdir 1; cd 1
+	  dotest taginfo-1 "${testcvs} -q co CVSROOT" "U CVSROOT/${DOTSTAR}"
+	  cd CVSROOT
+	  cat >${TESTDIR}/1/loggit <<EOF
+#!${TESTSHELL}
+echo "\$@" >>\${TESTDIR}/1/taglog
+if test "\$1" = rejectme; then
+  exit 1
+else
+  exit 0
+fi
+EOF
+	  chmod +x ${TESTDIR}/1/loggit
+	  echo "ALL ${TESTDIR}/1/loggit" >taginfo
+	  dotest taginfo-2 "${testcvs} -q ci -m check-in-taginfo" \
+"Checking in taginfo;
+${TESTDIR}/cvsroot/CVSROOT/taginfo,v  <--  taginfo
+new revision: 1\.2; previous revision: 1\.1
+done
+${PROG} [a-z]*: Rebuilding administrative file database"
+	  cd ..
+	  mkdir first-dir
+	  dotest taginfo-3 "${testcvs} add first-dir" \
+"Directory ${TESTDIR}/cvsroot/first-dir added to the repository"
+	  cd first-dir
+	  echo first >file1
+	  dotest taginfo-4 "${testcvs} add file1" \
+"${PROG} [a-z]*: scheduling file .file1. for addition
+${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
+	  dotest taginfo-5 "${testcvs} -q ci -m add-it" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
+done
+Checking in file1;
+${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
+initial revision: 1\.1
+done"
+	  dotest taginfo-6 "${testcvs} -q tag tag1" "T file1"
+	  dotest taginfo-7 "${testcvs} -q tag -b br" "T file1"
+	  dotest taginfo-8 "${testcvs} -q update -r br" ""
+	  echo add text on branch >>file1
+	  dotest taginfo-9 "${testcvs} -q ci -m modify-on-br" \
+"Checking in file1;
+${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
+new revision: 1\.1\.2\.1; previous revision: 1\.1
+done"
+	  dotest taginfo-10 "${testcvs} -q tag -F -c brtag" "T file1"
+
+	  # The "br" example should be passing 1.1.2 or 1.1.0.2.
+	  # But it turns out that is very hard to implement, since
+	  # check_fileproc doesn't know what branch number it will
+	  # get.  Probably the whole thing should be re-architected
+	  # so that taginfo only allows/denies tagging, and a new
+	  # hook, which is done from tag_fileproc, does logging.
+	  # That would solve this, some more subtle races, and also
+	  # the fact that it is nice for users to run "-n tag foo" to
+	  # see whether a tag would be allowed.  Failing that,
+	  # I suppose passing "1.1.branch" or "branch" for "br"
+	  # would be an improvement.
+	  dotest taginfo-examine "cat ${TESTDIR}/1/taglog" \
+"tag1 add ${TESTDIR}/cvsroot/first-dir file1 1.1
+br add ${TESTDIR}/cvsroot/first-dir file1 1.1
+brtag mov ${TESTDIR}/cvsroot/first-dir file1 1.1.2.1"
+
+	  cd ..
+	  cd CVSROOT
+	  echo '# Keep life simple' > taginfo
+	  dotest taginfo-cleanup-1 "${testcvs} -q ci -m check-in-taginfo" \
+"Checking in taginfo;
+${TESTDIR}/cvsroot/CVSROOT/taginfo,v  <--  taginfo
+new revision: 1\.3; previous revision: 1\.2
+done
+${PROG} [a-z]*: Rebuilding administrative file database"
+	  cd ..
+	  cd ..
+	  rm -r 1
 	  ;;
 
 	config)
