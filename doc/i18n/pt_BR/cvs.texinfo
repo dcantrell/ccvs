@@ -303,7 +303,7 @@ extremamente cuidadosos. Alguns editores, como o
 @sc{gnu} Emacs, tentam se certificar de que o mesmo
 arquivo nunca seja modificado por duas pessoas ao mesmo
 tempo. Infelizmente, se alguém estiver usando outro
-editor, está sugerança não vai funcionar. @sc{cvs}
+editor, está segurança não vai funcionar. @sc{cvs}
 resolve este problema isolando os desenvolvedores uns
 dos outros. Todo desenvolvedor trabalha em seu próprio
 diretório e o @sc{cvs} mescla o trabalho quando cada
@@ -326,16 +326,16 @@ desenvolvedor tiver terminado.
 @c <en>come from them.
 @sc{cvs} começou como um monte de shell scripts
 escritos por Dick Grune, postados no newsgroup
-@code{comp.sources.unix} no volume 6 de Julho,
+@code{comp.sources.unix} no volume 6, de Julho de
 1986. Na verdade, nenhum código daqueles scripts está
-presente na versão atual do @sc{cvs}, mas muito do
+presente na versão atual do @sc{cvs}, mas muito dos
 algoritmos de resolução de conflitos do @sc{cvs} vem
 deles.
 
 @c <en>In April, 1989, Brian Berliner designed and coded @sc{cvs}.
 @c <en>Jeff Polk later helped Brian with the design of the @sc{cvs}
 @c <en>module and vendor branch support.
-Em Abril, 1989, Brian Berliner projetou e codificou
+Em abril de 1989, Brian Berliner projetou e codificou
 @sc{cvs}. Depois, Jeff Polk ajudou Brian com o projeto
 do módulo @sc{cvs} e o suporte ao ramo do fornecedor.
 
@@ -374,20 +374,19 @@ outros tópicos sobre @sc{cvs}, veja:
 @c <en>@code{comp.software.config-mgmt.cvs}, but probably only
 @c <en>if there is sufficient @sc{cvs} traffic on
 @c <en>@url{news:comp.software.config-mgmt}.
-Existe uma lista de discussão conhecida como @email{info-cvs@@gnu.org},
-dedicada ao @sc{cvs}. Para se cadastrar ou descadastrar
+Existe uma lista de discussão, conhecida como @email{info-cvs@@gnu.org},
+dedicada ao @sc{cvs}. Para se cadastrar ou descadastrar nela
 escreva para @email{info-cvs-request@@gnu.org}. Se você
-preferir um grupo de usenet, existe um espelho
-mão-única (postagens para a lista de email são
-usualmente mandadas para o news group, mas não
-vice-versa) do @email{info-cvs@@gnu.org} em
-@url{news:gnu.cvs.help}. O grupo usenet correto para
-postagens é @url{news:comp.software.config-mgmt} que é
-para discussões sobre @sc{cvs} (juntamente com outros
-sistemas de gerência de configuração). No futuro,
-poderá ser criada uma
+preferir um grupo de usenet, existe um espelho de mão
+única (postagens para a lista de email são usualmente
+mandadas para o news group, mas não vice-versa) da lista
+@email{info-cvs@@gnu.org} em @url{news:gnu.cvs.help}. O
+grupo usenet correto para postagens é o
+@url{news:comp.software.config-mgmt} que é para
+discussões sobre @sc{cvs} (juntamente com outros
+sistemas de gerência de configuração). No futuro, poderá ser criada uma
 @code{comp.software.config-mgmt.cvs}, mas apenas se
-houver bastante tráfego sobre @sc{cvs} na
+houver bastante tráfego sobre o @sc{cvs} na
 @url{news:comp.software.config-mgmt}.
 @c Other random data is that the tale was very
 @c skeptical of comp.software.config-mgmt.cvs when the
@@ -401,9 +400,9 @@ houver bastante tráfego sobre @sc{cvs} na
 @c <en>send mail to @email{bug-cvs-request@@gnu.org}.  There is a two-way
 @c <en>usenet mirror (posts to the usenet group are usually sent to the email list and
 @c <en>visa versa) of @email{bug-cvs@@gnu.org} named @url{news:gnu.cvs.bug}.
-Você também pode se cadastrar à lista de discussão
+Você também pode se cadastrar na lista de discussão
 @email{bug-cvs@@gnu.org}, descrita em maiores detalhes
-em @ref{Paus}. Para se cadastrar mande email para
+em @ref{Paus}. Para se cadastrar mande um e-mail para
 @email{bug-cvs-request@@gnu.org}. Existe um espelho
 usenet de mão-dupla (postagens para o grupo usenet são
 usualmente mandadas para a lista e vice-versa) de
@@ -7180,13 +7179,13 @@ sua cópia de trabalho.
 O @samp{-j} significa ``join'', ``juntar''.
 
 @c <en>@cindex Branch merge example
-@cindex Branch merge example
+@cindex Exemplo de mesclagem de ramo
 @c <en>@cindex Example, branch merge
-@cindex Example, branch merge
+@cindex Mesclagem de ramo, exemplo
 @c <en>@cindex Merge, branch example
-@cindex Merge, branch example
+@cindex Mesclagem, de ramo, exemplo
 @c <en>Consider this revision tree:
-Consider this revision tree:
+Considere esta árvore de revisão:
 
 @example
 +-----+    +-----+    +-----+    +-----+
@@ -7203,9 +7202,9 @@ Branch R1fix -> +---! 1.2.2.1 !----! 1.2.2.2 !
 @c <en>The branch 1.2.2 has been given the tag (symbolic name) @samp{R1fix}.  The
 @c <en>following example assumes that the module @samp{mod} contains only one
 @c <en>file, @file{m.c}.
-The branch 1.2.2 has been given the tag (symbolic name) @samp{R1fix}.  The
-following example assumes that the module @samp{mod} contains only one
-file, @file{m.c}.
+O ramo 1.2.2 recebeu a etiqueta (nome simbólico)
+@samp{R1fix}.  O exemplo seguinte assume que o módulo
+@samp{mod} contém apenas um arquivo, @file{m.c}.
 
 @example
 $ cvs checkout mod               # @r{Retrieve the latest revision, 1.4}
@@ -7221,21 +7220,24 @@ $ cvs commit -m "Included R1fix" # @r{Create revision 1.5.}
 @c <en>A conflict can result from a merge operation.  If that
 @c <en>happens, you should resolve it before committing the
 @c <en>new revision.  @xref{Conflicts example}.
-A conflict can result from a merge operation.  If that
-happens, you should resolve it before committing the
-new revision.  @xref{Exemplo de conflitos}.
+Um conflito pode resultar de uma operação de mesclagem.
+Se isto acontecer, você deve resolver isto antes de
+efetivar a nova revisão.  @xref{Exemplo de conflitos}.
 
 @c <en>If your source files contain keywords (@pxref{Keyword substitution}),
 @c <en>you might be getting more conflicts than strictly necessary.  See
 @c <en>@ref{Merging and keywords}, for information on how to avoid this.
-If your source files contain keywords (@pxref{Substituição de palavra-chave}),
-you might be getting more conflicts than strictly necessary.  See
-@ref{Mesclagem e palavras-chave}, for information on how to avoid this.
+Se seu código fonte contém palavras-chave
+(@pxref{Substituição de palavra-chave}), você deve
+obter mais conflitos que os ???strictly necessary???.
+Veja em @ref{Mesclagem e palavras-chave}, para saber
+como evitar isto.
 
 @c <en>The @code{checkout} command also supports the @samp{-j @var{branchname}} flag.  The
 @c <en>same effect as above could be achieved with this:
-The @code{checkout} command also supports the @samp{-j @var{branchname}} flag.  The
-same effect as above could be achieved with this:
+O comando @code{checkout} também suporta a opção
+@samp{-j @var{branchname}}.  O mesmo efeito que o visto
+logo acima pode ser obtido com isto:
 
 @example
 $ cvs checkout -j R1fix mod
@@ -7244,28 +7246,27 @@ $ cvs commit -m "Included R1fix"
 
 @c <en>It should be noted that @code{update -j @var{tagname}} will also work but may
 @c <en>not produce the desired result.  @xref{Merging adds and removals}, for more.
-It should be noted that @code{update -j @var{tagname}} will also work but may
-not produce the desired result.  @xref{Mesclando adicionados e removidos}, for more.
+Observe que o @code{update -j @var{tagname}} também vai
+funcionar mas pode não produzir o efeito desejado.
+@xref{Mesclando adicionados e removidos}, para mais informações.
 
 @c <en>@node Merging more than once
 @node Mesclando mais de uma vez
 @c <en>@section Merging from a branch several times
-@section Merging from a branch several times
+@section Mesclando a partir de um ramo várias vezes
 
 @c <en>Continuing our example, the revision tree now looks
 @c <en>like this:
-Continuing our example, the revision tree now looks
-like this:
+Continuando nosso exemplo, a árvore de revisão agora
+vai parecer com isto:
 
 @example
 +-----+    +-----+    +-----+    +-----+    +-----+
-@c <en>! 1.1 !----! 1.2 !----! 1.3 !----! 1.4 !----! 1.5 !   <- The main trunk
 ! 1.1 !----! 1.2 !----! 1.3 !----! 1.4 !----! 1.5 !   <- The main trunk
 +-----+    +-----+    +-----+    +-----+    +-----+
                 !                           *
                 !                          *
                 !   +---------+    +---------+
-@c <en>Branch R1fix -> +---! 1.2.2.1 !----! 1.2.2.2 !
 Branch R1fix -> +---! 1.2.2.1 !----! 1.2.2.2 !
                     +---------+    +---------+
 @end example
@@ -7274,18 +7275,16 @@ Branch R1fix -> +---! 1.2.2.1 !----! 1.2.2.2 !
 @c <en>where the starred line represents the merge from the
 @c <en>@samp{R1fix} branch to the main trunk, as just
 @c <en>discussed.
-where the starred line represents the merge from the
-@samp{R1fix} branch to the main trunk, as just
-discussed.
+Onde a linha de asteriscos representa a mescla entre o
+ramo @samp{R1fix} e o tronco principal, como acabamos
+de ver.
 
 @c <en>Now suppose that development continues on the
 @c <en>@samp{R1fix} branch:
-Now suppose that development continues on the
-@samp{R1fix} branch:
+Agora suponha que o desenvolvimento continua no ramo @samp{R1fix}:
 
 @example
 +-----+    +-----+    +-----+    +-----+    +-----+
-@c <en>! 1.1 !----! 1.2 !----! 1.3 !----! 1.4 !----! 1.5 !   <- The main trunk
 ! 1.1 !----! 1.2 !----! 1.3 !----! 1.4 !----! 1.5 !   <- The main trunk
 +-----+    +-----+    +-----+    +-----+    +-----+
                 !                           *
@@ -7301,11 +7300,11 @@ Branch R1fix -> +---! 1.2.2.1 !----! 1.2.2.2 !----! 1.2.2.3 !
 @c <en>R1fix m.c} command again, @sc{cvs} will attempt to
 @c <en>merge again the changes which you have already merged,
 @c <en>which can have undesirable side effects.
-and then you want to merge those new changes onto the
-main trunk.  If you just use the @code{cvs update -j
-R1fix m.c} command again, @sc{cvs} will attempt to
-merge again the changes which you have already merged,
-which can have undesirable side effects.
+e então você quer mesclar as novas mudanças dentro do
+tronco principal.  Se você usar simplesmente o comando
+@code{cvs update -j R1fix m.c} de novo, o @sc{cvs} vai
+tentar mesclar de novo as mudanças que você já mesclou,
+o que pode gerar efeitos indesejados.
 
 @c <en>So instead you need to specify that you only want to
 @c <en>merge the changes on the branch which have not yet been
@@ -7313,12 +7312,12 @@ which can have undesirable side effects.
 @c <en>@samp{-j} options, and @sc{cvs} merges the changes from
 @c <en>the first revision to the second revision.  For
 @c <en>example, in this case the simplest way would be
-So instead you need to specify that you only want to
-merge the changes on the branch which have not yet been
-merged into the trunk.  To do that you specify two
-@samp{-j} options, and @sc{cvs} merges the changes from
-the first revision to the second revision.  For
-example, in this case the simplest way would be
+Então, ao invés disto, você precisa especificar que você
+quer apenas mesclar no tronco as mudanças que ainda não
+foram mescladas.  Para fazer isto você especifica duas
+opções @samp{-j}, e o @sc{cvs} mescla as mudanças da
+primeira revisão na segunda revisão.  Por exemplo,
+neste caso a forma mais simples será
 
 @example
 cvs update -j 1.2.2.2 -j R1fix m.c    # @r{Merge changes from 1.2.2.2 to the}
@@ -7328,9 +7327,10 @@ cvs update -j 1.2.2.2 -j R1fix m.c    # @r{Merge changes from 1.2.2.2 to the}
 @c <en>The problem with this is that you need to specify the
 @c <en>1.2.2.2 revision manually.  A slightly better approach
 @c <en>might be to use the date the last merge was done:
-The problem with this is that you need to specify the
-1.2.2.2 revision manually.  A slightly better approach
-might be to use the date the last merge was done:
+O problema com isto é que você precisa especificar a
+revisão 1.2.2.2 manualmente.  Uma abordagem um pouco
+melhor seria usar a data em que a última mesclagem foi
+feita:
 
 @example
 cvs update -j R1fix:yesterday -j R1fix m.c
@@ -7338,8 +7338,9 @@ cvs update -j R1fix:yesterday -j R1fix m.c
 
 @c <en>Better yet, tag the R1fix branch after every merge into
 @c <en>the trunk, and then use that tag for subsequent merges:
-Better yet, tag the R1fix branch after every merge into
-the trunk, and then use that tag for subsequent merges:
+Ou ainda melhor, etiquete o ramo R1fix depois de cada
+mesclagem no tronco, e então use a etiqueta para
+mesclagens subseqüentes:
 
 @example
 cvs update -j merged_from_R1fix_to_trunk -j R1fix m.c
