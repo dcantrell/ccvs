@@ -1,5 +1,8 @@
 2003-01-23  Larry Jones  <lawrence.jones@eds.com>
 
+	* getdate.y: Add RCS/CVS timestamp format (Y.mm.dd.hh.mm.ss).
+	* getdate.c: Regenerated.
+
 	* wait.h (WCOREDUMP): New macro.
 
 2002-12-27  Derek Price  <derek@ximbiot.com>
