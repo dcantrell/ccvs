@@ -175,10 +175,7 @@ release (argc, argv)
           /* If the update exited with an error, then we just want to
            * complain and go on to the next arg.  Especially, we do
            * not want to delete the local copy, since it's obviously
-           * not what the user thinks it is.  However, right now we go
-           * ahead and prompt the user anyway, though at least they'll
-           * see the error messages from "cvs update" and get
-           * suspicious.
+           * not what the user thinks it is.
            */
           if ((pclose (fp)) != 0)
           {
