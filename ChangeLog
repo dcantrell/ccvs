@@ -1,3 +1,8 @@
+Tue Dec 19 17:00:00 1995  Jim Kingdon  <kingdon@peary.cyclic.com>
+
+	* TODO: Remove "regular TODO list:" line which accidentally got
+	checked in.
+
 Mon Dec 18 18:59:30 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* Makefile.in (TAR_VERBOSE): Default to empty, not "v".  I don't
