@@ -9,6 +9,7 @@ debug_check_log
 log
 log_accum
 mfpipe
+pvcs2rcs
 rcs-to-cvs
 rcs2log
 rcslock
