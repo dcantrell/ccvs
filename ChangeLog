@@ -1,5 +1,10 @@
 2003-05-20  Derek Price  <derek@ximbiot.com>
 
+	* aclocal.m4: Regenerated.
+	* configure.in: Ditto.
+
+2003-05-20  Derek Price  <derek@ximbiot.com>
+
 	* INSTALL: Using Autoconf version 2.57.
 	* NEWS: Ditto.  Reorder NEWS items to put the stuff which it is likely
 	that only developers care about last.
