@@ -1,3 +1,9 @@
+1999-01-03  Jim Kingdon  <http://www.cyclic.com>
+
+	* sanity.sh (client): Give file1 a predictable mode so that the
+	output in client-9 will not depend on the umask of the user
+	running the tests.
+
 1998-12-29  Jim Kingdon  <http://www.cyclic.com>
 
 	* client.c (client_senddate): Use date_to_internet rather than
