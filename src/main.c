@@ -187,23 +187,38 @@ main_cleanup (sig)
     int sig;
 {
     const char *name;
+    char temp[10];
 
     switch (sig)
     {
+#ifdef SIGHUP
     case SIGHUP:
 	name = "hangup";
 	break;
+#endif
+#ifdef SIGINT
     case SIGINT:
 	name = "interrupt";
 	break;
+#endif
+#ifdef SIGQUIT
     case SIGQUIT:
 	name = "quit";
 	break;
+#endif
+#ifdef SIGPIPE
     case SIGPIPE:
 	name = "broken pipe";
 	break;
+#endif
+#ifdef SIGTERM
     case SIGTERM:
 	name = "termination";
+	break;
+#endif
+    default:
+	sprintf (temp, "%d", sig);
+	name = temp;
 	break;
     }
 
