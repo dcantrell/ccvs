@@ -1,5 +1,8 @@
 Tue Apr  1 07:51:38 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvs.texinfo (Binary files): Add comment about binary files and
+	merges.
+
 	* cvsclient.texi (Requests): Add discussion of when to send
 	Is-modified.
 

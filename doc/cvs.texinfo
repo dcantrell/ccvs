@@ -5293,6 +5293,10 @@ contain data which looks like a keyword (@pxref{Keyword
 substitution}), so keyword expansion must be turned
 off.
 
+@c FIXME: the third is that one can't do merges with
+@c binary files.  xref to Multiple Developers and the
+@c reserved checkout issues.
+
 The @samp{-kb} option available with some @sc{cvs}
 commands insures that neither line ending conversion
 nor keyword expansion will be done.  If you are using
