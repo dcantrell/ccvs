@@ -350,7 +350,7 @@ HOME=${TESTDIR}/home; export HOME
 # tests.
 
 if test x"$*" = x; then
-	tests="basica basicb basic1 deep basic2 death death2 branches import new newb conflicts conflicts2 modules mflag errmsg1 devcom ignore binfiles info patch"
+	tests="basica basicb basic1 deep basic2 death death2 branches import new newb conflicts conflicts2 modules mflag errmsg1 devcom ignore binfiles binwrap info patch"
 else
 	tests="$*"
 fi
@@ -3586,6 +3586,51 @@ File: binfile          	Status: Up-to-date
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
 	  rm -r 2
 	  ;;
+
+	binwrap)
+	  # Test the ability to specify binary-ness based on file name.
+	  # We could also be testing the ability to use the other
+	  # ways to specify a wrapper (CVSROOT/cvswrappers, etc.).
+
+	  # Skip the whole thing for remote, as wrappers don't work
+	  if test "x$remote" = "xno"; then
+
+	  mkdir dir-to-import
+	  cd dir-to-import
+	  touch foo.c foo.exe
+	  if ${testcvs} import -m message -I ! -W "*.exe -k 'b'" \
+	      first-dir tag1 tag2 >>${LOGFILE}; then
+	    pass binwrap-1
+	  else
+	    fail binwrap-1
+	  fi
+	  cd ..
+	  rm -rf dir-to-import
+	  dotest binwrap-2 "${testcvs} -q co first-dir" 'U first-dir/foo.c
+U first-dir/foo.exe'
+	  dotest binwrap-3 "${testcvs} -q status first-dir" \
+'===================================================================
+File: foo\.c            	Status: Up-to-date
+
+   Working revision:	1\.1\.1\.1.*
+   Repository revision:	1\.1\.1\.1	/tmp/cvs-sanity/cvsroot/first-dir/foo\.c,v
+   Sticky Tag:		(none)
+   Sticky Date:		(none)
+   Sticky Options:	(none)
+
+===================================================================
+File: foo\.exe          	Status: Up-to-date
+
+   Working revision:	1\.1\.1\.1.*
+   Repository revision:	1\.1\.1\.1	/tmp/cvs-sanity/cvsroot/first-dir/foo\.exe,v
+   Sticky Tag:		(none)
+   Sticky Date:		(none)
+   Sticky Options:	-kb'
+	  rm -rf first-dir ${CVSROOT_DIRNAME}/first-dir
+
+	  fi # matches if test "x$remote" = "xno"
+	  ;;
+
 	info)
 	  # Test CVS's ability to handle *info files.
 	  dotest info-1 "${testcvs} -q co CVSROOT" "[UP] CVSROOT${DOTSTAR}"

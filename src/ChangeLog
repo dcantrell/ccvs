@@ -1,3 +1,19 @@
+Thu Jul 18 16:19:21 1996  Bill Bumgarner <bbum@friday.com>
+			  and Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* add.c (add), import.c (add_rcs_file): Check for options from
+	wrappers and use them if specified.
+	* cvs.h (WrapMergeHas): Add WRAP_RCSOPTION.
+	* wrapper.c (WrapperEntry): Add rcsOption field.
+	(wrap_add): Allow a single character argument to an option.
+	(wrap_add): Handle -k option.
+	(wrap_add_entry): Handle rcsOption field.
+	(wrap_name_has): Handle WRAP_RCSOPTION.
+	* wrapper.c, cvs.h (wrap_rcsoption): New function.
+	* add.c, import.c, wrapper.c: Minor beautification (mostly
+	removing trailing spaces).
+	* sanity.sh (binwrap): New tests test for this feature.
+
 Wed Jul 17 10:14:20 1996  Ian Lance Taylor  <ian@cygnus.com>
 
 	* checkout.c (checkout): Remove extraneous else accidentally

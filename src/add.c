@@ -192,11 +192,25 @@ add (argc, argv)
 			error (1, 0, "illegal filename overlap");
 		    }
 
+		    if (vers->options == NULL || *vers->options == '\0')
+		    {
+			/* No options specified on command line (or in
+			   rcs file if it existed, e.g. the file exists
+			   on another branch).  Check for a value from
+			   the wrapper stuff.  */
+			if (wrap_name_has (user, WRAP_RCSOPTION))
+			{
+			    if (vers->options)
+				free (vers->options);
+			    vers->options = wrap_rcsoption (user, 1);
+			}
+		    }
+
 		    /* There is a user file, so build the entry for it */
 		    if (build_entry (repository, user, vers->options,
 				     message, entries, vers->tag) != 0)
 			err++;
-		    else 
+		    else
 		    {
 			added_files++;
 			if (!quiet)

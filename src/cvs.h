@@ -670,10 +670,20 @@ Ctype Classify_File PROTO
 /* Wrappers.  */
 
 typedef enum { WRAP_MERGE, WRAP_COPY } WrapMergeMethod;
-typedef enum { WRAP_TOCVS, WRAP_FROMCVS, WRAP_CONFLICT } WrapMergeHas;
+typedef enum {
+    /* -t and -f wrapper options.  Treating directories as single files.  */
+    WRAP_TOCVS,
+    WRAP_FROMCVS,
+    /* -m wrapper option.  Changing merge behavior (FIXME: look into whether
+       this is still relevant given the 24 Jun 96 change to merge_file).  */
+    WRAP_CONFLICT,
+    /* -k wrapper option.  Default keyword expansion options.  */
+    WRAP_RCSOPTION
+} WrapMergeHas;
 
 void  wrap_setup PROTO((void));
 int   wrap_name_has PROTO((const char *name,WrapMergeHas has));
+char *wrap_rcsoption PROTO ((const char *fileName, int asFlag));
 char *wrap_tocvs_process_file PROTO((const char *fileName));
 int   wrap_merge_is_copy PROTO((const char *fileName));
 char *wrap_fromcvs_process_file PROTO((const char *fileName));

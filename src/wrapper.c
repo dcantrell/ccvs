@@ -22,6 +22,7 @@
   -f		from cvs filter		value: path to filter
   -t		to cvs filter		value: path to filter
   -m		update methodology	value: MERGE or COPY
+  -k		default -k rcs option to use on import or add
 
   and value is a single-quote delimited value.
 
@@ -35,6 +36,7 @@ typedef struct {
     char *tocvsFilter;
     char *fromcvsFilter;
     char *conflictHook;
+    char *rcsOption;
     WrapMergeMethod mergeMethod;
 } WrapperEntry;
 
@@ -133,13 +135,15 @@ void
 wrap_free_entry_internal(e)
     WrapperEntry *e;
 {
-    free(e->wildCard);
-    if(e->tocvsFilter)
-	free(e->tocvsFilter);
-    if(e->fromcvsFilter)
-	free(e->fromcvsFilter);
-    if(e->conflictHook)
-	free(e->conflictHook);
+    free (e->wildCard);
+    if (e->tocvsFilter)
+	free (e->tocvsFilter);
+    if (e->fromcvsFilter)
+	free (e->fromcvsFilter);
+    if (e->conflictHook)
+	free (e->conflictHook);
+    if (e->rcsOption)
+	free (e->rcsOption);
 }
 
 void
@@ -209,7 +213,15 @@ wrap_add (line, isTemp)
 	for(temp=++line;*line && (*line!='\'' || line[-1]=='\\');++line)
 	    ;
 
-	if(line==temp+1)
+	/* This used to "break;" (ignore the option) if there was a
+	   single character between the single quotes (I'm guessing
+	   that was accidental).  Now it "break;"s if there are no
+	   characters.  I'm not sure either behavior is particularly
+	   necessary--the current options might not require ''
+	   arguments, but surely some future option legitimately
+	   might.  Also I'm not sure that ignoring the option is a
+	   swift way to handle syntax errors in general.  */
+	if (line==temp)
 	    break;
 
 	ctemp=*line;
@@ -248,6 +260,11 @@ wrap_add (line, isTemp)
 	    else
 		e.mergeMethod=WRAP_MERGE;
 	    break;
+	case 'k':
+	    if (e.rcsOption)
+		free (e.rcsOption);
+	    e.rcsOption = xstrdup (temp);
+	    break;
 	default:
 	    break;
 	}
@@ -284,6 +301,7 @@ wrap_add_entry(e, temp)
     wrap_list[x]->tocvsFilter=e->tocvsFilter;
     wrap_list[x]->conflictHook=e->conflictHook;
     wrap_list[x]->mergeMethod=e->mergeMethod;
+    wrap_list[x]->rcsOption = e->rcsOption;
 }
 
 /* Return 1 if the given filename is a wrapper filename */
@@ -307,6 +325,9 @@ wrap_name_has (name,has)
 	    case WRAP_CONFLICT:
 		temp=wrap_list[x]->conflictHook;
 		break;
+	    case WRAP_RCSOPTION:
+		temp = wrap_list[x]->rcsOption;
+		break;
 	    default:
 	        abort ();
 	    }
@@ -328,6 +349,33 @@ wrap_matching_entry (name)
 	if (fnmatch (wrap_list[x]->wildCard, name, 0) == 0)
 	    return wrap_list[x];
     return (WrapperEntry *)NULL;
+}
+
+/* Return the RCS options for FILENAME in a newly malloc'd string.  If
+   ASFLAG, then include "-k" at the beginning (e.g. "-kb"), otherwise
+   just give the option itself (e.g. "b").  */
+char *
+wrap_rcsoption (filename, asflag)
+    const char *filename;
+    int asflag;
+{
+    WrapperEntry *e = wrap_matching_entry (filename);
+    char *buf;
+
+    if (e == NULL || e->rcsOption == NULL || (*e->rcsOption == '\0'))
+	return NULL;
+
+    buf = xmalloc (strlen (e->rcsOption + 3));
+    if (asflag)
+    {
+	strcpy (buf, "-k");
+	strcat (buf, e->rcsOption);
+    }
+    else
+    {
+	strcpy (buf, e->rcsOption);
+    }
+    return buf;
 }
 
 char *
