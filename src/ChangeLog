@@ -1,5 +1,10 @@
 2004-04-27  Derek Price  <derek@ximbiot.com>
 
+	* root.c (normalize_cvsroot): Use asnprintf in preference to other
+	indirections.
+
+2004-04-27  Derek Price  <derek@ximbiot.com>
+
 	Add dirname module from GNULIB.
 
 	* add.c, client.c, commit.c, find_names.c, import.c, lock.c, ls.c,
