@@ -69,15 +69,30 @@ to use it without ifdefs (for example, assert() and void * as long as
 you add more casts to and from void * than ANSI requires).  Such constructs
 are generally portable enough, including to NT, OS/2, VMS, etc.
 
-The following headers are assumed and included from lib/system.h: <ctype.h>,
-<pwd.h>, <signal.h>, <stdio.h>.
-
 The following headers can be assumed and are included from lib/system.h for a
 freestanding C89 implementation: <float.h>, <limits.h>, <stdarg.h>, <stddef.h>.
 We are not assuming the other standard headers listed by C89 because these four
 headers are the only headers guaranteed to be shipped with a C89 compiler
 (frestanding compiler).  We are not currently assuming that the system the
 compiler is running on provides the rest of the C89 headers.
+
+The following C89 hosted headers can be assumed due to their presence in UNIX
+version 7 and are included from lib/system.h: <assert.h>, <ctype.h>, <errno.h>,
+<math.h>, <setjmp.h>, <signal.h>, <stdio.h>.  <time.h> can also be assumed but
+is included via lib/xtime.h via lib/system.h to include some Autoconf magic
+which avoids including <time.h> and <sys/time.h> on systems that can't handle
+both.
+
+The following C89 headers are also assumed since we believe GCC includes them
+even on systems where it is installed as a freestanding compiler when the
+system lacks them, despite their not being required: <stdlib.h>, <string.h>.
+A GNULIB developer has made a statement that if this turns out to be a problem,
+GNULIB <stdlib.h> and <string.h> substitutes could be included in GNULIB, so if
+we discover the problem, this should be discussed on <bug-gnulib@gnu.org>.
+
+I hope to include the C99 <stdbool.h> substitute from GNULIB soon.
+
+CVS has been assuming <pwd.h> for some time.  I am unsure of the rationale.
 
 Please do not use multi-line strings.  Despite their common acceptance by many
 compilers, they are not part of the ANSI C specification.  As of GCC version

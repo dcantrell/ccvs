@@ -1,3 +1,8 @@
+2003-08-19  Derek Price  <derek@ximbiot.com>
+
+	* HACKING (Portability): Add further comments about which headers we
+	can use.
+
 2003-08-12  Derek Price  <derek@ximbiot.com>
 
 	* aclocal.m4, configure: Regenerated.
