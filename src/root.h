@@ -41,6 +41,16 @@ typedef struct cvsroot_s {
 #endif /* CLIENT_SUPPORT */
 } cvsroot_t;
 
+cvsroot_t *Name_Root (const char *dir, const char *update_dir);
+void free_cvsroot_t (cvsroot_t *root_in);
+cvsroot_t *parse_cvsroot (const char *root)
+	__attribute__ ((__malloc__));
+cvsroot_t *local_cvsroot (const char *dir)
+	__attribute__ ((__malloc__));
+void Create_Root (const char *dir, const char *rootdir);
+void root_allow_add (char *);
+void root_allow_free (void);
+int root_allow_ok (char *);
 void primary_root_add (const char *arg);
 char *primary_root_translate (const char *root_in);
 char *primary_root_inverse_translate (const char *root_in);

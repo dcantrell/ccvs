@@ -23,11 +23,12 @@ const char method_names[][16] = {
 
 #ifndef DEBUG
 
-char *
-Name_Root (char *dir, char *update_dir)
+cvsroot_t *
+Name_Root (const char *dir, const char *update_dir)
 {
     FILE *fpin;
-    char *ret, *xupdate_dir;
+    cvsroot_t *ret;
+    const char *xupdate_dir;
     char *root = NULL;
     size_t root_allocated = 0;
     char *tmp;
@@ -85,7 +86,7 @@ Name_Root (char *dir, char *update_dir)
 	goto out;
     }
     fclose (fpin);
-    cp = root + (len - 1);
+    cp = root + len - 1;
     if (*cp == '\n')
 	*cp = '\0';			/* strip the newline */
 
@@ -94,43 +95,34 @@ Name_Root (char *dir, char *update_dir)
      * absolute pathname or specify a remote server.
      */
 
-    if (
-#ifdef CLIENT_SUPPORT
-	(strchr (root, ':') == NULL) &&
-#endif
-    	! isabsolute (root))
+    ret = parse_cvsroot (root);
+    if (ret == NULL)
     {
 	error (0, 0, "in directory %s:", xupdate_dir);
 	error (0, 0,
-	       "ignoring %s because it does not contain an absolute pathname.",
+	       "ignoring %s because it does not contain a valid root.",
 	       CVSADM_ROOT);
-	ret = NULL;
 	goto out;
     }
 
-#ifdef CLIENT_SUPPORT
-    if ((strchr (root, ':') == NULL) && !isdir (root))
-#else /* ! CLIENT_SUPPORT */
-    if (!isdir (root))
-#endif /* CLIENT_SUPPORT */
+    if (!ret->isremote && !isdir (ret->directory))
     {
 	error (0, 0, "in directory %s:", xupdate_dir);
 	error (0, 0,
 	       "ignoring %s because it specifies a non-existent repository %s",
 	       CVSADM_ROOT, root);
+	free_cvsroot_t (ret);
 	ret = NULL;
 	goto out;
     }
 
-    /* allocate space to return and fill it in */
-    strip_trailing_slashes (root);
-    ret = xstrdup (root);
+
  out:
     free (cvsadm);
     free (tmp);
     if (root != NULL)
 	free (root);
-    return (ret);
+    return ret;
 }
 
 

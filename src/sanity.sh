@@ -21798,6 +21798,45 @@ EOF
 
 
 
+	parseroot2)
+	  # Test some :ext: roots for consistancy.
+	  if $remote; then :; else
+	    continue
+	  fi
+
+	  depends_on_rsh "$CVS_RSH"
+	  if test $? -eq 77; then
+	    skip parseroot2 "$skipreason"
+	    continue
+	  fi
+
+	  # Test checking out and subsequently updating with some different
+	  # CVSROOTs.
+
+	  # A standard case, hostname:dirname.
+	  mkdir parseroot2; cd parseroot2
+	  CVSROOT=$host:$CVSROOT_DIRNAME
+	  dotest parseroot2-1 "$testcvs -Q co CVSROOT"
+	  cd CVSROOT
+	  dotest parseroot2-2 "$testcvs -Q up"
+	  cd ..
+
+	  # A degenerate remote case, just the server name and the directory
+	  # name, with no :'s to help parsing.  It can be mistaken for a
+	  # relative directory name.
+	  rm -r CVSROOT
+	  CVSROOT=$host$CVSROOT_DIRNAME
+	  dotest parseroot-4-3 "$testcvs -Q co CVSROOT"
+	  cd CVSROOT
+	  dotest parseroot-4-4 "$testcvs -Q up"
+
+	  dokeep
+	  cd ../..
+	  rm -r parseroot2
+	  ;;
+
+
+
 	history)
 	  # CVSROOT/history tests:
 	  # history: various "cvs history" invocations

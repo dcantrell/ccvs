@@ -168,7 +168,8 @@ arg_should_not_be_sent_to_server (char *arg)
     /* Try to decide whether we should send arg to the server by
        checking the contents of the corresponding CVSADM directory. */
     {
-	char *t, *this_root;
+	char *t, *root_string;
+	cvsroot_t *this_root = NULL;
 
 	/* Calculate "dirname arg" */
 	for (t = arg + strlen (arg) - 1; t >= arg; t--)
@@ -198,25 +199,31 @@ arg_should_not_be_sent_to_server (char *arg)
 	    /* Since we didn't find it in the list, check the CVSADM
                files on disk.  */
 	    this_root = Name_Root (arg, NULL);
+	    root_string = this_root->original;
 	    *t = c;
 	}
 	else
 	{
 	    /* We're at the beginning of the string.  Look at the
                CVSADM files in cwd.  */
-	    this_root = (CVSroot_cmdline ? xstrdup (CVSroot_cmdline)
-					 : Name_Root (NULL, NULL));
+	    if (CVSroot_cmdline)
+		root_string = CVSroot_cmdline;
+	    else
+	    {
+		this_root = Name_Root (NULL, NULL);
+		root_string = this_root->original;
+	    }
 	}
 
 	/* Now check the value for root. */
-	if (this_root && current_parsed_root
-	    && (strcmp (this_root, current_parsed_root->original) != 0))
+	if (root_string && current_parsed_root
+	    && (strcmp (root_string, current_parsed_root->original) != 0))
 	{
 	    /* Don't send this, since the CVSROOTs don't match. */
-	    free (this_root);
+	    if (this_root) free_cvsroot_t (this_root);
 	    return 1;
 	}
-	free (this_root);
+	if (this_root) free_cvsroot_t (this_root);
     }
     
     /* OK, let's send it. */
