@@ -1,3 +1,8 @@
+Thu Mar 21 08:25:17 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (Environment variables): Remove POSIXLY_CORRECT; cvs
+	requires options to precede arguments regardless of it.
+
 Thu Mar 21 08:18:42 1996  Norbert Kiesel <nk@col.sw-ley.de>
 
 	* cvs.texinfo: Remove paragrahps about a forthcoming CVS
