@@ -4601,6 +4601,32 @@ diff -N file1
 --- 1 ----
 ${PLUS} first revision"
 
+	  # now back to the trunk
+	  dotest death2-21 "${testcvs} -q update -A" \
+"U file2
+[UP] file4"
+
+	  # test merging with a dead file
+	  dotest death2-22 "${testcvs} -q co first-dir" \
+"U first-dir/file1
+U first-dir/file2
+U first-dir/file4"
+
+	  cd first-dir
+	  dotest death2-23 "${testcvs} rm -f file4" \
+"${PROG} [a-z]*: scheduling .file4. for removal
+${PROG} [a-z]*: use .${PROG} commit. to remove this file permanently"
+	  dotest death2-24 "${testcvs} -q ci -m removed file4" \
+"Removing file4;
+${CVSROOT_DIRNAME}/first-dir/file4,v  <--  file4
+new revision: delete; previous revision: 1\.2
+done"
+	  cd ..
+	  echo "new stuff" >file4
+	  dotest_fail death2-25 "${testcvs} up file4" \
+"${PROG} [a-z]*: conflict: file4 is modified but no longer in the repository
+C file4"
+
 	  cd .. ; rm -rf first-dir ${CVSROOT_DIRNAME}/first-dir
 	  ;;
 
