@@ -4473,15 +4473,18 @@ File: foo\.exe          	Status: Up-to-date
 	  dotest info-1 "${testcvs} -q co CVSROOT" "[UP] CVSROOT${DOTSTAR}"
 	  cd CVSROOT
 	  echo "ALL sh -c \"echo x\${=MYENV}\${=OTHER}y\${=ZEE}=\$USER=\$CVSROOT= >>$TESTDIR/testlog; cat >/dev/null\"" > loginfo
-	  dotest info-2 "${testcvs} add loginfo" \
+
+	  # Might be nice to move this to crerepos tests; it should
+	  # work to create a loginfo file if you didn't create one
+	  # with "cvs init".
+	  : dotest info-2 "${testcvs} add loginfo" \
 "${PROG}"' [a-z]*: scheduling file `loginfo'"'"' for addition
 '"${PROG}"' [a-z]*: use '"'"'cvs commit'"'"' to add this file permanently'
+
 	  dotest info-3 "${testcvs} -q ci -m new-loginfo" \
-'RCS file: /tmp/cvs-sanity/cvsroot/CVSROOT/loginfo,v
-done
-Checking in loginfo;
+'Checking in loginfo;
 /tmp/cvs-sanity/cvsroot/CVSROOT/loginfo,v  <--  loginfo
-initial revision: 1\.1
+new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
 done
 '"${PROG}"' [a-z]*: Rebuilding administrative file database'
 	  cd ..
