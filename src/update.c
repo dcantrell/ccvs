@@ -1512,7 +1512,14 @@ join_file (finfo, vers)
 	if (vers->vn_rcs == NULL)
 	    rev1 = NULL;
 	else if (rev2 == NULL)
-	    rev1 = xstrdup (vers->vn_rcs);
+	{
+	    /* This means that the file never existed on the branch.
+               It does not mean that the file was removed on the
+               branch: that case is represented by a dead rev2.  If
+               the file never existed on the branch, then we have
+               nothing to merge, so we just return.  */
+	    return;
+	}
 	else
 	    rev1 = gca (vers->vn_rcs, rev2);
     }
