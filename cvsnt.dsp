@@ -564,6 +564,10 @@ SOURCE=.\lib\strcase.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\lib\strftime.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\lib\system.h
 # End Source File
 # Begin Source File

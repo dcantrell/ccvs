@@ -1,3 +1,8 @@
+2004-10-22  Conrad T. Pino  <Conrad@Pino.com>
+
+	* cvsnt.dsp: Add "lib/strftime.h" to project.
+	* cvsnt.dep: Regenerate for "cvsnt.dsp" change.
+
 2004-10-22  Mark D. Baushke  <mdb@cvshome.org>
 
 	* gnulib-update (MODULES): Add stdint.
