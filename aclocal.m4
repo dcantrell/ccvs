@@ -224,13 +224,13 @@ when using GSSAPI.])
   AC_SEARCH_LIBS([__dn_expand], [resolv])
 
   #
-  # crypt		Needed by roken under FreeBSD 4.6.
+  # crypt              Needed by roken under FreeBSD 4.6.
   #
   AC_SEARCH_LIBS([crypt], [crypt])
 
   #
   # roken		Heimdal K 0.3d		-lresolv
-  # roken		FreeBSD 4.6		-lcrypt
+  # roken               FreeBSD 4.6             -lcrypt
   #
   AC_SEARCH_LIBS([roken_gethostbyaddr], [roken])
 
