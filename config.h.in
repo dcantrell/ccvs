@@ -141,6 +141,9 @@
 /* Define if you have the vprintf function.  */
 #undef HAVE_VPRINTF
 
+/* Define if you have the wait3 function.  */
+#undef HAVE_WAIT3
+
 /* Define if you have the <direct.h> header file.  */
 #undef HAVE_DIRECT_H
 

@@ -1,3 +1,23 @@
+Thu Mar 13 08:43:04 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* configure.in (AC_C_CROSS): Add comment about obsolescence
+	thereof.
+	* config.h.in, configure: Regenerated with autoconf 2.10.
+
+Thu Mar 13 05:50:29 1997  Philippe De Muyter  <phdm@info.ucl.ac.be>
+
+	Here are the fixes I needed to make to cvs-1.9 to get it to
+	compile and successfully pass 'make check' on m68k-motorola-sysv.
+	* lib/getwd.c (getwd): Added declaration for getcwd().
+	* lib/wait.h (WIFSTOPPED et al.): Macro defined if not defined.
+	* lib/waitpid.c (waitpid): Use wait, not wait3, if !HAVE_WAIT3.
+	* src/admin.c (admin): Added declaration for getgrnam().
+	* src/server.c (fcntl.h): Do not include file twice.  Already included
+	from system.h from cvs.h.
+	* src/sanity.sh (imported-f*): Renamed from imported-file*, that were
+	too long for sysv.
+	* configure.in (wait3): Added to AC_CHECK_FUNCS list.
+
 Wed Mar 12 14:32:50 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* BUGS: Add "failed assertion `rev == NULL || isdigit (*rev)'" bug.
