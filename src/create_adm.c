@@ -159,14 +159,10 @@ Create_Admin (dir, update_dir, repository, tag, date, nonbranch, warn,
     /* Create a new CVS/Tag file */
     WriteTag (dir, tag, date, nonbranch, update_dir, repository);
 
-#ifdef SERVER_SUPPORT
-    if (server_active && dotemplate)
-    {
-	server_template (update_dir, repository);
-    }
+    /* Create a new CVS/Template file */
+    WriteTemplate (update_dir, dotemplate, repository);
 
     TRACE ( 1, "Create_Admin" );
-#endif
 
     free (reposcopy);
     free (tmp);

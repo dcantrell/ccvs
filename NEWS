@@ -7,6 +7,10 @@ their temp files and directories on systems which provide it.
 control which `cvs admin' commands are not restricted to the `cvsadmin'
 group.
 
+* If the rcsinfo specified template changes after a user has checked
+out a tree, the template in the users' tree will be updated rather
+than remaining static from the time of the original checkout.
+
 * Miscellaneous documentation corrections.
 
 * Corrected the path in a failed write error message.

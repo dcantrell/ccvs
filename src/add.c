@@ -809,6 +809,8 @@ add_directory (finfo)
     if (!server_active)
 #endif
         Create_Admin (".", finfo->fullname, rcsdir, tag, date, nonbranch, 0, 1);
+    WriteTemplate (finfo->fullname, 1, rcsdir);
+
     if (tag)
 	free (tag);
     if (date)

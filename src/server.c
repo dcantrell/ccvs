@@ -4416,6 +4416,38 @@ template_proc (repository, template)
 }
 
 void
+server_clear_template (update_dir, repository)
+    char *update_dir;
+    char *repository;
+{
+    assert (update_dir != NULL);
+
+    if (noexec)
+	return;
+
+    if (!supported_response ("Clear-template") &&
+	!supported_response ("Template"))
+	/* Might want to warn the user that the rcsinfo feature won't work.  */
+	return;
+
+    if (supported_response ("Clear-template"))
+    {
+	buf_output0 (protocol, "Clear-template ");
+	output_dir (update_dir, repository);
+	buf_output0 (protocol, "\n");
+	buf_send_counted (protocol);
+    }
+    else
+    {
+	buf_output0 (protocol, "Template ");
+	output_dir (update_dir, repository);
+	buf_output0 (protocol, "\n");
+	buf_output0 (protocol, "0\n");
+	buf_send_counted (protocol);
+    }
+}
+
+void
 server_template (update_dir, repository)
     char *update_dir;
     char *repository;

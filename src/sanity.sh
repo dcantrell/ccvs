@@ -55,7 +55,9 @@ export LC_ALL
 unset fromtest
 keep=false
 remote=false
-while getopts f:kr option ; do
+clientcvs=false
+servercvs=false
+while getopts f:krc:s: option ; do
     case "$option" in
 	f)
 	    fromtest="$OPTARG"
@@ -68,6 +70,14 @@ while getopts f:kr option ; do
 	    keep=:
 	    ;;
 	r)
+	    remote=:
+	    ;;
+        c)
+	    clientcvs="$OPTARG"
+	    remote=:
+	    ;;
+        s)
+	    servercvs="$OPTARG"
 	    remote=:
 	    ;;
 	\?)
@@ -89,14 +99,27 @@ case $1 in
   exit_usage
   ;;
 /*)
-  testcvs=$1
+  cmdargcvs=$1
   ;;
 *)
-  testcvs=`pwd`/$1
+  cmdargcvs=`pwd`/$1
   ;;
 esac
 shift
 
+if [ "$clientcvs" != "false" ]; then
+    testcvs="${clientcvs}"
+else
+    testcvs="${cmdargcvs}"
+fi
+
+dokeep() 
+{ 
+    if ${keep}; then
+      echo "Keeping ${TESTDIR} for test case \`${what}' and exiting due to --keep"
+      exit 0
+    fi
+}
 
 
 ###
@@ -717,7 +740,7 @@ if test x"$*" = x; then
 	# Multiple root directories and low-level protocol tests.
 	tests="${tests} multiroot multiroot2 multiroot3 multiroot4"
 	tests="${tests} rmroot reposmv pserver server server2 client"
-	tests="${tests} fork commit-d"
+	tests="${tests} fork commit-d template"
 else
 	tests="$*"
 fi
@@ -1574,7 +1597,11 @@ if $remote; then
 	# :ext:, you can run the tests that way.  There is a known
 	# difference in modes-15 (see comments there).
 	CVSROOT=:fork:${CVSROOT_DIRNAME} ; export CVSROOT
-	CVS_SERVER=${testcvs}; export CVS_SERVER
+	if [ $servercvs = "false" ]; then
+	    CVS_SERVER=${cmdargcvs}; export CVS_SERVER
+        else
+	    CVS_SERVER=${servercvs}; export CVS_SERVER
+        fi
 else
 	CVSROOT=${CVSROOT_DIRNAME} ; export CVSROOT
 fi
@@ -23405,16 +23432,20 @@ ${PROG} server: Updating dir1/sdir/ssdir"
 	  if $remote; then :; else
 	    dotest multiroot2-9a "${testcvs} -t update" \
 " *-> main loop with CVSROOT=${TESTDIR}/root1
+ *-> Write_Template (\., ${TESTDIR}/root1)
 ${PROG} update: Updating \.
  *-> Reader_Lock(${TESTDIR}/root1)
  *-> Lock_Cleanup()
+ *-> Write_Template (dir1, ${TESTDIR}/root1/dir1)
 ${PROG} update: Updating dir1
  *-> Reader_Lock(${TESTDIR}/root1/dir1)
  *-> Lock_Cleanup()
  *-> main loop with CVSROOT=${TESTDIR}/root2
+ *-> Write_Template (dir1/sdir, ${TESTDIR}/root2/dir1/sdir)
 ${PROG} update: Updating dir1/sdir
  *-> Reader_Lock(${TESTDIR}/root2/sdir)
  *-> Lock_Cleanup()
+ *-> Write_Template (dir1/sdir/ssdir, ${TESTDIR}/root2/sdir/ssdir)
 ${PROG} update: Updating dir1/sdir/ssdir
  *-> Reader_Lock(${TESTDIR}/root2/sdir/ssdir)
  *-> Lock_Cleanup()
@@ -24665,6 +24696,179 @@ new revision: 1.2; previous revision: 1.1
 done"
 	  cd ../..
 	  rm -rf 1 cvsroot/c-d-c
+	  ;;
+
+	template)
+	  # Check that the CVS/Template directory is being
+	  # properly created.
+	  mkdir -p ${CVSROOT_DIRNAME}/first/subdir
+	  mkdir -p ${CVSROOT_DIRNAME}/second
+	  mkdir template; cd template
+
+	  # check that no CVS/Template is created for an empty rcsinfo
+	  # Note: For cvs clients with no Clear-template response, the
+	  # CVS/Template file will exist and be zero bytes in length.
+	  dotest template-empty-1 "${testcvs} -Q co first" ''
+	  dotest template-empty-2 \
+"test ! -f first/CVS/Template || test ! -s first/CVS/Template" ''
+	  dotest template-empty-3 \
+"test ! -f first/subdir/CVS/Template || test ! -s first/subdir/CVS/Template" ''
+	  rm -fr first
+
+	  # create some template files
+	  echo 'CVS: the default template' > ${TESTDIR}/template/temp.def
+	  echo 'CVS: the first template' > ${TESTDIR}/template/temp.first
+	  echo 'CVS: the subdir template' > ${TESTDIR}/template/temp.subdir
+	  
+	  dotest template-rcsinfo-1 "${testcvs} -Q co CVSROOT" ''
+	  cd CVSROOT
+	  echo "^first/subdir ${TESTDIR}/template/temp.subdir" >>rcsinfo
+	  echo "^first ${TESTDIR}/template/temp.first" >>rcsinfo
+	  echo DEFAULT ${TESTDIR}/template/temp.def >>rcsinfo
+	  dotest template-rcsinfo-2 "${testcvs} -Q ci -m. rcsinfo" \
+"Checking in rcsinfo;
+${CVSROOT_DIRNAME}/CVSROOT/rcsinfo,v  <--  rcsinfo
+new revision: 1\.2; previous revision: 1\.1
+done
+$PROG [a-z]*: Rebuilding administrative file database"
+	  # Did the CVSROOT/CVS/Template file get the updated version?
+	  # FIXME. This result is wrong!
+	  #dotest template-rcsinfo-3 "cmp CVS/Template ${TESTDIR}/template/temp.def" ''
+	  dotest template-rcsinfo-3 \
+"test ! -f CVS/Template || test ! -s CVS/Template" ''
+
+	  cd ..
+
+	  # Now checkout the first and second modules and see
+	  # if the proper template has been provided for each
+	  dotest template-first "${testcvs} co first second" \
+"$PROG [a-z]*: Updating first
+$PROG [a-z]*: Updating first/subdir
+$PROG [a-z]*: Updating second"
+
+	  if $remote; then
+	    # When in client/server CVS/Template must exist
+	    dotest template-first-r-1 "test -f first/CVS/Template" ''
+	    dotest template-first-r-2 "test -f first/subdir/CVS/Template" ''
+	    dotest template-first-r-3 "test -f second/CVS/Template" ''
+	    # The value of the CVS/Template should be equal to the
+	    # file called out in the rcsinfo file.
+	    dotest template-first-r-4 \
+"cmp first/CVS/Template ${TESTDIR}/template/temp.first" ''
+	    dotest template-first-r-5 \
+"cmp first/subdir/CVS/Template ${TESTDIR}/template/temp.subdir" ''
+	    dotest template-first-r-6 \
+"cmp second/CVS/Template ${TESTDIR}/template/temp.def" ''
+          else
+	    # When in local mode CVS/Template must NOT exist
+	    dotest_fail template-first-1 "test -f first/CVS/Template" ''
+	    dotest_fail template-first-2 "test -f first/subdir/CVS/Template" ''
+	    dotest_fail template-first-3 "test -f second/CVS/Template" ''
+	  fi
+
+	  # Next, create a new subdirectory and see if it gets the
+	  # correct template or not
+	  cd second
+	  mkdir otherdir
+	  dotest template-add-1 "${testcvs} add otherdir" \
+"Directory ${CVSROOT_DIRNAME}/second/otherdir added to the repository"
+	  if $remote; then
+	    dotest template-add-2r \
+"cmp otherdir/CVS/Template ${TESTDIR}/template/temp.def" ''
+	  else
+	    dotest_fail template-add-2 "test -f otherdir/CVS/Template" ''
+	  fi
+	  cd ..
+
+	  # Update the remote template. Then see if doing an
+	  # update of a checked out tree will properly update
+	  # the CVS/Template files.
+	  echo 'CVS: Line two' >> ${TESTDIR}/template/temp.def
+	  echo 'CVS: Line two' >> ${TESTDIR}/template/temp.first
+	  echo 'CVS: Line two' >> ${TESTDIR}/template/temp.subdir
+	  dotest template-second "${testcvs} update first second" \
+"$PROG [a-z]*: Updating first
+$PROG [a-z]*: Updating first/subdir
+$PROG [a-z]*: Updating second
+$PROG [a-z]*: Updating second/otherdir"
+
+	  if $remote; then
+	    dotest template-second-r-1 \
+"cmp first/CVS/Template ${TESTDIR}/template/temp.first" ''
+	    dotest template-second-r-2 \
+"cmp first/subdir/CVS/Template ${TESTDIR}/template/temp.subdir" ''
+	    dotest template-second-r-3 \
+"cmp second/CVS/Template ${TESTDIR}/template/temp.def" ''
+	    dotest template-second-r-4 \
+"cmp second/otherdir/CVS/Template ${TESTDIR}/template/temp.def" ''
+          else
+	    # When in local mode CVS/Template must NOT exist
+	    dotest_fail template-second-1 "test -f CVS/Template" ''
+	    dotest_fail template-second-2 "test -f subdir/CVS/Template" ''
+	    dotest_fail template-second-3 "test -f second/CVS/Template" ''
+	    dotest_fail template-second-4 \
+"test -f second/otherdir/CVS/Template" ''
+	  fi
+	  # Update the remote template with a zero-length template
+	  : > ${TESTDIR}/template/temp.def
+	  dotest template-third-1 "${testcvs} update second" \
+"${PROG} [a-z]*: Updating second
+${PROG} [a-z]*: Updating second/otherdir"
+
+	  if $remote; then
+	    dotest_fail template-third-r-2 "test -s second/CVS/Template" ''
+	    dotest_fail template-third-r-3 "test -s second/otherdir/CVS/Template" ''
+          else
+	    dotest_fail template-third-2 "test -f second/CVS/Template" ''
+	    dotest_fail template-third-3 \
+"test -f second/otherdir/CVS/Template" ''
+          fi
+
+	  cd CVSROOT
+	  dotest template-norcsinfo-1 "${testcvs} up" \
+"${PROG} [a-z]*: Updating \."
+	  # Did the CVSROOT/CVS/Template file get the updated version?
+	  if $remote; then
+	    dotest template-norcsinfo-r-2 \
+"cmp CVS/Template ${TESTDIR}/template/temp.def" ''
+          else
+	    dotest_fail template-norcsinfo-2 "test -f CVS/Template" ''
+	  fi
+
+	  : > rcsinfo
+	  dotest template-norcsinfo-3 "${testcvs} -Q ci -m. rcsinfo" \
+"Checking in rcsinfo;
+${CVSROOT_DIRNAME}/CVSROOT/rcsinfo,v  <--  rcsinfo
+new revision: 1\.3; previous revision: 1\.2
+done
+${PROG} [a-z]*: Rebuilding administrative file database"
+	  # Did the CVSROOT/CVS/Template file get the updated version?
+	  # FIXME. This result is wrong!
+	  #dotest template-norcsinfo-4 "test -f CVS/Template" ''
+	  dotest template-norcsinfo-4 \
+"test ! -f CVS/Template || test ! -s CVS/Template" ''
+	  cd ..
+
+	  dotest template-norcsinfo-5 "${testcvs} update first" \
+"${PROG} [a-z]*: Updating first
+${PROG} [a-z]*: Updating first/subdir"
+
+	  # Note: For cvs clients with no Clear-template response, the
+	  # CVS/Template file will exist and be zero bytes in length.
+	  dotest template-norcsinfo-6 \
+"test ! -f first/CVS/Template || test ! -s first/CVS/Template" ''
+	  dotest template-norcsinfo-7 \
+"test ! -f first/subdir/CVS/Template || test ! -s first/subdir/CVS/Template" ''
+
+	  dokeep
+
+	  # cleanup
+	  rm -f ${CVS_DIRNAME}/CVSROOT/rcsinfo,v \
+                ${CVS_DIRNAME}/CVSROOT/rcsinfo \
+                ${CVS_DIRNAME}/first ${CVS_DIRNAME}/second
+	  dotest template-cleanup-1 "${testcvs} -Q init" ''
+	  cd ..
+	  rm -rf template
 	  ;;
 
 	*)

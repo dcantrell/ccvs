@@ -999,6 +999,8 @@ update_dirent_proc (callerdat, dir, repository, update_dir, entries)
 	    nonbranch = 0;
 	}
 
+	WriteTemplate (update_dir, dotemplate, repository);
+
 	/* initialize the ignore list for this directory */
 	ignlist = getlist ();
     }

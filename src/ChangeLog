@@ -1,3 +1,30 @@
+2003-03-07  Mark D. Baushke  <mdb@cvshome.org>
+
+	* entries.c (WriteTemplate): New function to control updates to
+	the CVS/Template file or its removal.
+	* create_adm.c (Create_Admin): Use the new WriteTemplate function.
+	* add.c (add_directory): Add a WriteTemplate() call
+	when a new directory is added to the repository.
+	* commit.c (commit_filesdoneproc): Ensure that the CVS/Template is
+	updated at the end of a commit -- mostly to remove it if it is not
+	relevant.
+	(commit_dirleaveproc): Ensure that the CVS/Template gets updated
+	when the directory is left.
+	* update.c (update_dirent_proc): Update CVS/Template file.
+	* server.c (server_clear_template): New protocol response to
+	remove existing CVS/Template files.
+	* client.c (clear_template): New function to remove or truncate a
+	CVS/Template file.
+	(handle_clear_template): New function. Handle Clear-template
+	protocol response message.
+	(save_prog): Add new Clear-template response line.
+	* sanity.sh (template): Test the CVS/Template creation with
+	the remote protocol. Nothing gets created locally.
+	(multiroot2): Fix for minor changes to trace output.
+	(getopts): Allow tests to be run with specified client and server
+	cvs commands to allow for interoperatbility testing.
+	(check_keep): New shell function for --keep processing.
+	
 2003-03-06  Derek Price  <derek@ximbiot.com>
 
 	* subr.c (file_has_conflict): New file.
