@@ -341,6 +341,157 @@ fd_buffer_block (closure, block)
     return 0;
 }
 
+/* Populate all of the directories between BASE_DIR and its relative
+   subdirectory DIR with CVSADM directories.  */
+static int create_adm_p PROTO((char *, char *));
+
+static int
+create_adm_p (base_dir, dir)
+    char *base_dir;
+    char *dir;
+{
+    char *dir_where_cvsadm_lives, *dir_to_register, *p, *tmp;
+    int retval, done;
+    FILE *f;
+
+    if (strcmp (dir, ".") == 0)
+	return;			/* nothing to do */
+
+    /* Allocate some space for our directory-munging string. */
+    p = malloc (strlen (dir) + 1);
+    if (p == NULL)
+	return ENOMEM;
+
+    dir_where_cvsadm_lives = malloc (strlen (base_dir) + strlen (dir) + 100);
+    if (dir_where_cvsadm_lives == NULL)
+	return ENOMEM;
+
+    /* Allocate some space for the temporary string in which we will
+       construct filenames. */
+    tmp = malloc (strlen (base_dir) + strlen (dir) + 100);
+    if (tmp == NULL)
+	return ENOMEM;
+
+    
+    /* We make several passes through this loop.  On the first pass,
+       we simply create the CVSADM directory in the deepest directory.
+       For each subsequent pass, we try to remove the last path
+       element from DIR, create the CVSADM directory in the remaining
+       pathname, and register the subdirectory in the newly created
+       CVSADM directory. */
+
+    retval = done = 0;
+
+    strcpy (p, dir);
+    strcpy (dir_where_cvsadm_lives, base_dir);
+    strcat (dir_where_cvsadm_lives, "/");
+    strcat (dir_where_cvsadm_lives, p);
+    dir_to_register = NULL;
+
+    while (1)
+    {
+#ifdef DEBUG_NJC
+	{
+	    FILE *fp = fopen ("/tmp/cvslog", "a");
+	    fprintf (fp, "create_adm_p %s\n", dir_where_cvsadm_lives);
+	    fflush (fp);
+	    fclose (fp);
+	}
+#endif
+
+	/* Create CVSADM. */
+	(void) sprintf (tmp, "%s/%s", dir_where_cvsadm_lives, CVSADM);
+	if ((CVS_MKDIR (tmp, 0777) < 0) && (errno != EEXIST))
+	{
+	    retval = errno;
+	    goto finish;
+	}
+
+	/* Create CVSADM_REP. */
+	(void) sprintf (tmp, "%s/%s", dir_where_cvsadm_lives, CVSADM_REP);
+	if (! isfile (tmp))
+	{
+	    f = CVS_FOPEN (tmp, "w");
+	    if (f == NULL)
+	    {
+		retval = errno;
+		goto finish;
+	    }
+	    if (fprintf (f, "%s/.\n", CVSroot_directory) < 0)
+	    {
+		retval = errno;
+		fclose (f);
+		goto finish;
+	    }
+	    if (fclose (f) == EOF)
+	    {
+		retval = errno;
+		goto finish;
+	    }
+	}
+
+	/* Create CVSADM_ENT.  We open in append mode because we
+	   don't want to clobber an existing Entries file.  */
+	(void) sprintf (tmp, "%s/%s", dir_where_cvsadm_lives, CVSADM_ENT);
+	f = CVS_FOPEN (tmp, "a");
+	if (f == NULL)
+	{
+	    retval = errno;
+	    goto finish;
+	}
+	if (fclose (f) == EOF)
+	{
+	    retval = errno;
+	    goto finish;
+	}
+
+	if (dir_to_register != NULL)
+	{
+	    /* FIXME: Yes, this results in duplicate entries in the
+	       Entries.Log file, but it doesn't currently matter.  We
+	       might need to change this later on to make sure that we
+	       only write one entry.  */
+
+	    Subdir_Register ((List *) NULL, dir_where_cvsadm_lives,
+			     dir_to_register);
+#ifdef DEBUG_NJC
+	    {
+		FILE *fp = fopen ("/tmp/cvslog", "a");
+		fprintf (fp, "Subdir_Register %s %s\n",
+			 dir_where_cvsadm_lives, dir_to_register);
+		fflush (fp);
+		fclose (fp);
+	    }
+#endif
+	}
+
+	if (done)
+	    break;
+
+	dir_to_register = strrchr (p, '/');
+	if (dir_to_register == NULL)
+	{
+	    dir_to_register = p;
+	    strcpy (dir_where_cvsadm_lives, base_dir);
+	    done = 1;
+	}
+	else
+	{
+	    *dir_to_register = '\0';
+	    dir_to_register++;
+	    strcpy (dir_where_cvsadm_lives, base_dir);
+	    strcat (dir_where_cvsadm_lives, "/");
+	    strcat (dir_where_cvsadm_lives, p);
+	}
+    }
+
+  finish:
+    free (tmp);
+    free (dir_where_cvsadm_lives);
+    free (p);
+    return retval;
+}
+
 /*
  * Make directory DIR, including all intermediate directories if necessary.
  * Returns 0 for success or errno code.
@@ -709,7 +860,6 @@ dirswitch (dir, repos)
 {
     int status;
     FILE *f;
-    char *b;
     size_t dir_len;
 
     server_write_entries ();
@@ -745,7 +895,7 @@ dirswitch (dir, repos)
     strcat (dir_name, "/");
     strcat (dir_name, dir);
 
-    status = mkdir_p (dir_name);	
+    status = mkdir_p (dir_name);
     if (status != 0
 	&& status != EEXIST)
     {
@@ -755,16 +905,13 @@ dirswitch (dir, repos)
 	return;
     }
 
-    /* Note that this call to Subdir_Register will be a noop if the parent
-       directory does not yet exist (for example, if the client sends
-       "Directory foo" followed by "Directory .", then the subdirectory does
-       not get registered, but if the client sends "Directory ." followed
-       by "Directory foo", then the subdirectory does get registered.
-       This seems pretty fishy, but maybe it is the way it needs to work.  */
-    b = strrchr (dir_name, '/');
-    *b = '\0';
-    Subdir_Register ((List *) NULL, dir_name, b + 1);
-    *b = '/';
+    /* We need to create adm directories in all path elements because
+       we want the server to descend them, even if the client hasn't
+       sent the appropriate "Argument xxx" command to match the
+       already-sent "Directory xxx" command.  See recurse.c
+       (start_recursion) for a big discussion of this.  */
+
+    create_adm_p (server_temp_dir, dir);
 
     if ( CVS_CHDIR (dir_name) < 0)
     {
@@ -777,14 +924,17 @@ dirswitch (dir, repos)
      * This is pretty much like calling Create_Admin, but Create_Admin doesn't
      * report errors in the right way for us.
      */
-    if (CVS_MKDIR (CVSADM, 0777) < 0)
+    if ((CVS_MKDIR (CVSADM, 0777) < 0) && (errno != EEXIST))
     {
-	if (errno == EEXIST)
-	    /* Don't create the files again.  */
-	    return;
 	pending_error = errno;
 	return;
     }
+    
+    /* The following will overwrite the contents of CVSADM_REP.  This
+       is the correct behavior -- mkdir_p may have written a
+       placeholder value to this file and we need to insert the
+       correct value. */
+
     f = CVS_FOPEN (CVSADM_REP, "w");
     if (f == NULL)
     {
@@ -2395,9 +2545,9 @@ error  \n");
 	 * Set this in .bashrc if you want to give yourself time to attach
 	 * to the subprocess with a debugger.
 	 */
-	if (getenv ("CVS_SERVER_SLEEP"))
+	if (getenv ("CVS_SERVER_SLEEP2"))
 	{
-	    int secs = atoi (getenv ("CVS_SERVER_SLEEP"));
+	    int secs = atoi (getenv ("CVS_SERVER_SLEEP2"));
 	    sleep (secs);
 	}
 
@@ -4607,6 +4757,16 @@ error ENOMEM Virtual memory exhausted.\n");
        say something like "client apparently supports an option not supported
        by this server" or something like that instead of usage message.  */
     argument_vector[0] = "cvs server";
+
+    /*
+     * Set this in .bashrc if you want to give yourself time to attach
+     * to the subprocess with a debugger.
+     */
+    if (getenv ("CVS_SERVER_SLEEP"))
+    {
+	int secs = atoi (getenv ("CVS_SERVER_SLEEP"));
+	sleep (secs);
+    }
 
     while (1)
     {

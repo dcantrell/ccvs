@@ -1,3 +1,52 @@
+1998-09-01  Noel Cragg  <noel@swish.red-bean.com>
+
+	* server.c (do_cvs_command): add another environment variable,
+	CVS_SERVER_SLEEP2, after forking to pause the program so one can
+	attach a debugger.
+
+	* sanity.sh (crerepos): clean up crerepos-18 now that multiroot
+	works in this case.
+	(multiroot): finalize tests for local vs. remote operation.
+
+	* recurse.c (start_recursion): near the beginning, save the list
+	of directories to spoof as command-line arguments, if necessary.
+	Use that list near the end and call send_file_names to send those
+	arguments to the server.
+	(do_argument_proc): removed, since we call send_file_names now.
+
+	* main.c (main): re-initialize dirs_sent_to_server on each pass
+	through the loop for each CVSROOT.
+
+	* cvs.h: add proto for global variable which keeps track of which
+	directories have been sent to the server when in client mode.
+
+	* client.c (is_arg_a_parent_or_listed_dir): new function.
+	(arg_should_not_be_sent_to_server): new function.  Tries to decide
+	whether the given argument should be sent to the server, based on
+	the current CVSROOT and the list of directories sent to the
+	server.
+	(send_repository): add the directory name to the list of
+	directories sent to the server.
+	(send_file_names): call arg_should_not_be_sent_to_server.
+
+	* add.c (add): switch the order of send_files and send_file_names
+	to make multiple repository support possible.  send_files needs to
+	create a list of directories being requested so that
+	send_file_names can decide which command-line arguments to send to
+	the server for the given current CVSROOT.
+	* admin.c (admin): same.
+	* commit.c (commit): same.
+	* diff.c (diff): same.
+	* edit.c (editors): same.
+	* log.c (cvslog): same.
+	* rcs.c (annotate): same.
+	* remove.c (cvsremove): same.
+	* status.c (cvsstatus): same.
+	* tag.c (cvstag): same.
+	* update.c (update): same.
+	* watch.c (watch_addremove): same.
+	(watchers): same.	
+
 1998-08-31  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* sanity.sh: Remove "debug" function; it was apparently checked
@@ -13,21 +62,58 @@
 	including a test with two dirs and a "no" for the first one (which 
 	fails without the above patch).
 
+1998-08-28  Noel Cragg  <noel@swish.red-bean.com>
+
+	* sanity.sh (crerepos-18): add new comment and change test
+	slightly to support multiroot.
+	(multiroot): add more tests.
+	
+	* server.c (create_adm_p): new function.
+	(dirswitch): call create_adm_p.  Modify the code to always write a
+	new CVSADM_REP file, since create_adm_p might have put a
+	placeholder there and our value is guaranteed to be correct.
+	(server): move the CVS_SERVER_SLEEP check here so we can debug
+	things at an earlier stage.
+
+	* recurse.c (start_recursion): add large comment about the ideal
+	solution to the "Argument xxx" problem.
+
+	* main.c (main): move position of debugging comment for -m flag.
+
+	* diff.c (diff): clear a static variable.
+
+	* client.c (send_file_names): check to see if we should send this
+	argument to the server based on the contents of the appropriate
+	CVSADM directory.  This avoids "nothing known about foo" messages
+	and problems with duplicate modules names in multiple
+	repositories.
+	(send_a_repository): change method of calculating toplevel_repos
+	to support multiple CVSROOTs.
+	(start_server): clear some static variables.
+
 1998-08-28  Jim Meyering  <meyering@ascend.com>
 
 	* sanity.sh (basicc-8, basicc-11): Use `.*' instead of explicit
 	`Operation not permitted'.  Solaris2.5.1 gets a different error:
 	`Invalid argument'.
 
+1998-08-26  Eric M. Hopper
+
+	* sanity.sh: Set LC_COLLATE to "C".
+
+1998-08-25  Noel Cragg  <noel@swish.red-bean.com>
+
+	* sanity.sh (multiroot): new set of tests to check the behavior of
+	multiroot.
+
+	* diff.c (diff): set options value to NULL after freeing to reset
+	the state for the next time around.
+
 1998-08-25  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	Fix problems with trying to rename an open file:
 	* rcs.c, rcs.h (RCS_setattic): New function.
 	* commit.c (remove_file, checkaddfile): Call it.
-
-1998-08-26  Eric M. Hopper
-
-	* sanity.sh: Set LC_COLLATE to "C".
 
 1998-08-24  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
@@ -118,6 +204,45 @@ Wed Aug 19 15:19:13 1998  Larry Jones  <larry.jones@sdrc.com>
 	* main.c (main): Set CVSroot_cmdline if the -d option is used.
 	* import.c (import): If CVSroot_cmdline is not NULL, then mention
 	an explicit -d option in the suggested merge command line.
+
+Wed Aug 19 00:28:50 1998  Noel Cragg  <noel@swish.red-bean.com>
+
+	* recurse.c (do_dir_proc): don't muck with CVS/Root directories
+ 	when running in server mode.
+	(do_recursion): same.
+
+	* main.c (main): add the command-line option `m' to help debug the
+ 	multiroot environment; it prints out the value of CVSROOT for each
+ 	iteration through the main loop.  Also, changed the main loop so
+ 	that it gets executed only once when running in server mode (the
+ 	server will only deal with a single CVSROOT).
+
+	* recurse.c (do_recursion): change default for
+ 	PROCESS_THIS_DIRECTORY to true; we should always process a
+ 	directory's contents unless there's an existing CVS/Root file with
+ 	a different root than the current root to tell us otherwise.
+	(do_dir_proc): same.
+
+Tue Aug 18 14:30:59 1998  Noel Cragg  <noel@swish.red-bean.com>
+
+	* recurse.c (do_recursion): check the current value of CVS/Root
+ 	and add it to our list of CVSROOTs if it doesn't exist.  Decide
+ 	whether or not to process files in this directory based based on
+ 	the value of CURRENT_ROOT.
+	(do_dir_proc): same.
+
+	* main.c: add two new globals -- root_directories and current_root
+ 	-- which keep track of the values of CVSROOT we've seen and which
+ 	value of CVSROOT we're currently processing.
+	(main): put the main loop for stepping through cvsroot values
+ 	here, since we might need to send command-specific arguments for
+ 	every unique non-local cvsroot.  Moved blocks of code around so
+ 	that one-time initializations happen first (outside the loop) and
+ 	the other stuff happens inside the loop.
+	(set_root_directory): helper function.
+	
+	* cvs.h: add prototypes for root_directories and current_root, two
+ 	new globals for keeping track of multiple CVSROOT information.
 
 1998-08-18  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
