@@ -167,11 +167,6 @@ cvslog (argc, argv)
 
     memset (&log_data, 0, sizeof log_data);
 
-    /*
-     * All 'log' command options except -l are passed directly on to 'rlog'.
-     * If we see nothing but -N, we don't invoke 'rlog', but just
-     * handle the printing ourselves.
-     */
     optind = 1;
     while ((c = getopt (argc, argv, "bd:hlNRr::s:tw::")) != -1)
     {
