@@ -1,3 +1,7 @@
+Sat Oct 26 16:17:09 1996  Jim Blandy  <jimb@totoro.cyclic.com>
+
+	* configure.in (AC_CHECK_FUNCS): Check for tzset.
+
 Fri Oct 25 10:27:08 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* NEWS: Mention new loginfo features.

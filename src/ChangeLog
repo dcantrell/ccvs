@@ -58,6 +58,11 @@ Sat Oct 26 18:29:46 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 	the obscure stuff in crerepos we avoid having to do all this stuff
 	any time we run any single test.
 
+Sat Oct 26 16:19:48 1996  Jim Blandy  <jimb@totoro.cyclic.com>
+
+	* main.c (main): If HAVE_TZSET is #defined, call tzset.  This is
+	harmless on all systems I know of, and required on some.
+
 Fri Oct 25 13:20:44 1996  Ian Lance Taylor  <ian@cygnus.com>
 
 	* diff.c (diff_file_nodiff): When setting use_rev1, only return
