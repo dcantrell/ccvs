@@ -14,11 +14,15 @@ Alpha:
 HPPA:
 	HP 9000/710 running HP-UX 8.07A using gcc (about 1.4A2)
 	HP 9000/715 running HP-UX 9.01 using gcc (about 1.4A2)
+	NextSTEP 3.3 (1.4.92, a few tweaks needed)
 i386 family:
 	Gateway P5-66 (pentium) running Solaris 2.4 using gcc (about 1.4A2)
 	PC Clone running UnixWare v1.1.1 using gcc (about 1.4A2)
 	PC Clone running Linux 1.1.48 using gcc (about 1.4A2)
         PC Clone running Fintronic Linux 1.2.5 (***) (1.4.92)
+	NextSTEP 3.3 (1.4.92, a few tweaks needed)
+m68k:
+	NextSTEP 3.3 (1.4.92, a few tweaks needed)
 MIPS:
 	DECstation running Ultrix 4.2a (1.4.90)
 	DECstation running Ultrix 4.3 (1.4.90)
@@ -34,8 +38,7 @@ SPARC:
 	Sun SPARCstation 10 running Solaris 2.3 using gcc and cc (about 1.4A2)
 	Sun SPARCstation 10 running Solaris 2.4 using gcc (about 1.4A2)
 	Sun SPARCstation 10 with SunOS 4.1.3_U1 using gcc and cc (about 1.4A2)
-Some kind of NeXT (not sure whether i386 or m68k, or what OS version)
-	(1.4.92) (one small patch, included in this release, needed)
+	NextSTEP 3.3 (1.4.92, a few tweaks needed)
 
 (*)	AIX 4.1 systems fail to run "configure" due to bugs in their
 	"/bin/sh" implementation.  You might want to try feeding the
