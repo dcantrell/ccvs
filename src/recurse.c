@@ -361,7 +361,7 @@ do_recursion (frame)
     char *this_root;
     List *entries = NULL;
     int should_readlock;
-    int process_this_directory = 0;
+    int process_this_directory = 1;
 
     /* do nothing if told */
     if (frame->flags == R_SKIP_ALL)
@@ -417,7 +417,9 @@ do_recursion (frame)
        not, add it to our lists of CVS/Root directories and do not
        process the files in this directory.  Otherwise, continue as
        usual.  THIS_ROOT might be NULL if we're doing an initial
-       checkout -- check for it.  */
+       checkout -- check before using it.  The default should be that
+       we process a directory's contents and only skip those contents
+       if a CVS/Root file exists.  */
 
     this_root = Name_Root ((char *) NULL, update_dir);
     if (this_root != NULL)
@@ -668,7 +670,7 @@ do_dir_proc (p, closure)
     int err = 0;
     struct saved_cwd cwd;
     char *saved_update_dir;
-    int process_this_directory = 0;
+    int process_this_directory = 1;
 
     if (fncmp (dir, CVSADM) == 0)
     {
