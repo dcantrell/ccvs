@@ -1,5 +1,16 @@
 1999-11-19  Larry Jones <larry.jones@sdrc.com>
 
+	* history.c: Move -e documentation from Flags to Reports.
+	(history): Add -e to list of report types in error message.
+
+	* history.c (history): Process file arguments before client/server
+	processing so they get sent to the server.
+	* sanity.sh (history): New tests for above.  (Also remove comments
+	about variable spacing -- history output is in variable-width
+	columns with exactly one space between.)
+
+1999-11-19  Larry Jones <larry.jones@sdrc.com>
+
 	* sanity.sh: Reestablish check for running as root (using ``id -u''
 	instead of ``whoami'').
 
