@@ -4249,9 +4249,6 @@ Are you sure you want to release (and delete) directory .first-dir.: "
 ${SPROG} rtag: Tagging first-dir/dir1
 ${SPROG} rtag: Tagging first-dir/dir1/dir2"
 
-		dotest basic2-21a "cat $CVSROOT_DIRNAME/CVSROOT/val-tags" \
-"${DOTSTAR}rtagged-by-head y"
-
 		dotest basic2-21b "${testcvs} co -p -r rtagged-by-head first-dir/file6" \
 "===================================================================
 Checking out first-dir/file6
@@ -4263,12 +4260,19 @@ file6"
 		# see what happens when val-tags is removed
 		modify_repo mv $CVSROOT_DIRNAME/CVSROOT/val-tags \
 				$CVSROOT_DIRNAME/CVSROOT/val-tags.save
-		# FIXCVS - just because the val-tags file is gone does
-		# not mean that cvs should fail to do the right thing.
-		# The output should be the same as basic2-21b.
-		dotest_fail basic2-21c "${testcvs} co -p -r rtagged-by-head first-dir/file6" \
-"${SPROG} checkout: cannot open CVS/Entries for reading: No such file or directory
-${SPROG} \[checkout aborted\]: no such tag \`rtagged-by-head'"
+		# The output for this used to be something like:
+		# "${SPROG} checkout: cannot open CVS/Entries for reading: No such file or directory
+		# ${SPROG} \[checkout aborted\]: no such tag \`rtagged-by-head'"
+
+		dotest basic2-21c \
+"${testcvs} co -p -r rtagged-by-head first-dir/file6" \
+"===================================================================
+Checking out first-dir/file6
+RCS:  $CVSROOT_DIRNAME/first-dir/file6,v
+VERS: 1\.2
+\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
+file6
+file6"
 		modify_repo mv $CVSROOT_DIRNAME/CVSROOT/val-tags.save \
 				$CVSROOT_DIRNAME/CVSROOT/val-tags
 
@@ -34302,6 +34306,10 @@ You have \[0\] altered files in this repository\."
 	fail "test slagged \$servercvs"
     fi
 
+    # Reset val-tags to a pristine state.
+    if test -s $CVSROOT_DIRNAME/CVSROOT/val-tags; then
+       modify_repo ":" > $CVSROOT_DIRNAME/CVSROOT/val-tags
+    fi
     verify_tmp_empty "post $what"
 
 done # The big loop
