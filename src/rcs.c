@@ -1928,9 +1928,9 @@ translate_symtag (rcs, tag)
 	char *cp;
 
 	/* Look through the RCS symbols information.  This is like
-           do_symbols, but we don't add the information to a l ist.
-           In most cases, we will only be called once for this file,
-           so generating the list is unnecessary overhead.  */
+           do_symbols, but we don't add the information to a list.  In
+           most cases, we will only be called once for this file, so
+           generating the list is unnecessary overhead.  */
 
 	len = strlen (tag);
 	cp = rcs->symbols_data;

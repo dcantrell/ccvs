@@ -1,3 +1,11 @@
+Tue Aug 13 13:42:36 1996  Ian Lance Taylor  <ian@cygnus.com>
+
+	* log.c (cvslog): Remove comment about calling rlog.
+	* rcs.c (translate_symtag): Correct typo in comment (l ist ->
+	list).
+	* server.c (server_write_entries): Add omitted word (lists) in
+	comment.
+
 Tue Aug 13 14:01:49 1996  Norbert Kiesel  <nk@col.sw-ley.de>
 
 	* wrapper.c (wrap_rcsoption): fix memory access error
