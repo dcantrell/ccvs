@@ -433,7 +433,17 @@ warning: this CVS does not support PreservePermissions");
 	}
 #endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
 	else if (strcmp (line, "PrimaryServer") == 0)
+	{
 	    PrimaryServer = parse_cvsroot (p);
+	    if (PrimaryServer->method != fork
+		&& PrimaryServer->method != ext)
+		/* I intentionally neglect to mention :fork: here.  It is
+	         * really only useful for testing.
+		 */
+	        error (1, 0,
+"Only PrimaryServers with :ext: methods are valid, not `%s'.",
+		       p);
+	}
 	else
 	{
 	    /* We may be dealing with a keyword which was added in a
