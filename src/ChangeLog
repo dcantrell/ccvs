@@ -1,5 +1,9 @@
 Thu Aug 22 14:18:43 1996  Ian Lance Taylor  <ian@cygnus.com>
 
+	* checkin.c (Checkin): Remove local variable xfinfo.  Reparse the
+	RCS file after the checkin.  Call RCS_fast_checkout rather than
+	RCS_checkout.
+
 	* cvs.h (RCS_FLAGS_LOCK): Don't define.
 	(RCS_FLAGS_*): Adjust values to fill in hole left by removal of
 	RCS_FLAGS_LOCK.
