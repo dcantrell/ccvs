@@ -1,5 +1,10 @@
 2000-06-19  Larry Jones  <larry.jones@sdrc.com>
 
+	* root.c (parse_cvsroot): Put the terminating NUL byte into the
+	string *before* copying it, not after. :-(
+
+2000-06-19  Larry Jones  <larry.jones@sdrc.com>
+
 	* main.c (main): Plug memory leaks.
 	* root.c (parse_cvsroot, set_local_cvsroot): Ditto.
 	* server.c (serve_root): Ditto.
