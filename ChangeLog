@@ -1,5 +1,11 @@
 2003-05-09  Derek Price  <derek@ximbiot.com>
 
+	* configure.in: Correct a typo in my last patch.
+
+	* configure: Regenerated.
+
+2003-05-09  Derek Price  <derek@ximbiot.com>
+
 	* configure.in: Add some checks for S_ISSOCK to avoid a problem on
 	SCO OpenServer 5.0.6a.
 	(Reported by Boyd Lynn Gerber <gerberb@zenez.com>.)
