@@ -1,3 +1,7 @@
+Tue Jan 30 18:32:27 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* Makefile.in: Revise comment regarding install and installdirs.
+
 Tue Nov 14 15:47:44 1995  Greg A. Woods  <woods@most.weird.com>
 
 	* cvs.5:
