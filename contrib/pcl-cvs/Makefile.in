@@ -177,7 +177,7 @@ pcl-cvs.dvi pcl-cvs.aux: pcl-cvs.texinfo
 pcl-cvs.ps: pcl-cvs.dvi
 	$(DVIPS) $(DVIPSFLAGS) pcl-cvs.dvi -o pcl-cvs.ps
 
-mostlyclean clean realclean:
+mostlyclean clean:
 	rm -f *~ core $(ELCFILES) $(INFOFILES) $(TEXTMPS)
 .PHONY: mostlyclean clean
 
