@@ -3935,20 +3935,9 @@ connect_to_pserver (tofdp, fromfdp, verify_only, do_gssapi)
     return;
 
   rejected:
-    if (shutdown (sock, 2) < 0)
-    {
-	error (0, 0, 
-	       "authorization failed: server %s rejected access", 
-	       CVSroot_hostname);
-	error (1, 0,
-	       "shutdown() failed (server %s): %s",
-	       CVSroot_hostname,
-	       SOCK_STRERROR (SOCK_ERRNO));
-    }
-
-    error (0, 0, 
-	   "authorization failed: server %s rejected access", 
-	   CVSroot_hostname);
+    error (0, 0,
+	"authorization failed: server %s rejected access to %s for user %s",
+	CVSroot_hostname, CVSroot_directory, CVSroot_username);
 
     /* Output a special error message if authentication was attempted
        with no password -- the user should be made aware that they may
@@ -3957,6 +3946,14 @@ connect_to_pserver (tofdp, fromfdp, verify_only, do_gssapi)
     {
         error (0, 0,
                "used empty password; try \"cvs login\" with a real password");
+    }
+
+    if (shutdown (sock, 2) < 0)
+    {
+	error (0, 0,
+	       "shutdown() failed (server %s): %s",
+	       CVSroot_hostname,
+	       SOCK_STRERROR (SOCK_ERRNO));
     }
 
     error_exit();
