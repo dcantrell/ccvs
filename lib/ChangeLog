@@ -1,3 +1,11 @@
+2004-05-13  Derek Price  <derek@ximbiot.com>
+
+	* .cvsignore: Changed for "libcvs.dsp" changes.
+	* libcvs.dsp: Added for "../cvsnt.dsw" changes.
+	* libcvs.dep: Added for "libcvs.dsp" addition.
+	* libcvs.mak: Added for "libcvs.dsp" addition.
+	(Patch from Conrad Pino <conrad@pino.com>.)
+
 2004-04-20  Derek Price  <derek@ximbiot.com>
 
 	* system.h: Correct comments.

@@ -1,67 +1,88 @@
 # Microsoft Developer Studio Generated Dependency File, included by libcvs.mak
 
-.\exitfail.c : \
-	"..\windows-NT\config.h"\
-	".\exit.h"\
-	".\exitfail.h"\
+.\argmatch.c : \
+	"..\windows-nt\config.h"\
+	
+
+.\fncase.c : \
+	"..\windows-nt\config.h"\
+	"..\windows-NT\ndir.h"\
+	".\system.h"\
+	".\xtime.h"\
+	
+
+.\fnmatch.c : \
+	"..\windows-nt\config.h"\
+	"..\windows-NT\ndir.h"\
+	".\fnmatch.h"\
+	".\system.h"\
+	".\xtime.h"\
 	
 
 .\getdate.c : \
-	"..\windows-NT\config.h"\
+	"..\windows-nt\config.h"\
 	".\xtime.h"\
 	
 
 .\getline.c : \
-	"..\windows-NT\config.h"\
+	"..\windows-nt\config.h"\
 	".\getline.h"\
-	".\getndelim2.h"\
-	
-
-.\getndelim2.c : \
-	"..\windows-NT\config.h"\
-	".\getndelim2.h"\
-	".\unlocked-io.h"\
 	
 
 .\getopt.c : \
-	"..\windows-NT\config.h"\
+	"..\windows-nt\config.h"\
 	".\getopt.h"\
-	".\gettext.h"\
 	
 
 .\getopt1.c : \
-	"..\windows-NT\config.h"\
+	"..\windows-nt\config.h"\
 	".\getopt.h"\
 	
 
-".\printf-args.c" : \
-	"..\windows-NT\config.h"\
-	".\printf-args.h"\
-	
-
-".\printf-parse.c" : \
-	"..\windows-NT\config.h"\
-	".\printf-args.h"\
-	".\printf-parse.h"\
-	".\xsize.h"\
-	
-
-.\realloc.c : \
-	"..\windows-NT\config.h"\
+.\md5.c : \
+	"..\windows-nt\config.h"\
+	".\md5.h"\
 	
 
 .\regex.c : \
-	"..\windows-NT\config.h"\
-	".\gettext.h"\
+	"..\windows-nt\config.h"\
 	".\regex.h"\
-	".\unlocked-io.h"\
 	
 
-!IF  "$(CFG)" == "libcvs - Win32 Release"
+.\savecwd.c : \
+	"..\windows-nt\config.h"\
+	".\savecwd.h"\
+	
 
-!ELSEIF  "$(CFG)" == "libcvs - Win32 Debug"
+.\sighandle.c : \
+	"..\windows-nt\config.h"\
+	"..\windows-NT\ndir.h"\
+	".\system.h"\
+	".\xtime.h"\
+	
 
-!ENDIF 
+.\stripslash.c : \
+	"..\windows-nt\config.h"\
+	
+
+.\valloc.c : \
+	"..\windows-nt\config.h"\
+	"..\windows-NT\ndir.h"\
+	".\getpagesize.h"\
+	".\system.h"\
+	".\xtime.h"\
+	
+
+.\xgetwd.c : \
+	"..\windows-nt\config.h"\
+	"..\windows-NT\ndir.h"\
+	".\system.h"\
+	".\xtime.h"\
+	
+
+.\yesno.c : \
+	"..\windows-nt\config.h"\
+	
 
 !IF  "$(CFG)" == "libcvs - Win32 Release"
 

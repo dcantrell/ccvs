@@ -33,23 +33,27 @@ INTDIR=.\WinRel
 OutDir=.\WinRel
 # End Custom Macros
 
-ALL : ".\fnmatch.h" ".\alloca.h" "$(OUTDIR)\libcvs.lib"
+ALL : ".\fnmatch.h" "$(OUTDIR)\libcvs.lib"
 
 
 CLEAN :
-	-@erase "$(INTDIR)\exitfail.obj"
+	-@erase "$(INTDIR)\argmatch.obj"
+	-@erase "$(INTDIR)\fncase.obj"
+	-@erase "$(INTDIR)\fnmatch.obj"
 	-@erase "$(INTDIR)\getdate.obj"
 	-@erase "$(INTDIR)\getline.obj"
-	-@erase "$(INTDIR)\getndelim2.obj"
 	-@erase "$(INTDIR)\getopt.obj"
 	-@erase "$(INTDIR)\getopt1.obj"
-	-@erase "$(INTDIR)\printf-args.obj"
-	-@erase "$(INTDIR)\printf-parse.obj"
-	-@erase "$(INTDIR)\realloc.obj"
+	-@erase "$(INTDIR)\md5.obj"
 	-@erase "$(INTDIR)\regex.obj"
+	-@erase "$(INTDIR)\savecwd.obj"
+	-@erase "$(INTDIR)\sighandle.obj"
+	-@erase "$(INTDIR)\stripslash.obj"
+	-@erase "$(INTDIR)\valloc.obj"
 	-@erase "$(INTDIR)\vc60.idb"
+	-@erase "$(INTDIR)\xgetwd.obj"
+	-@erase "$(INTDIR)\yesno.obj"
 	-@erase "$(OUTDIR)\libcvs.lib"
-	-@erase ".\alloca.h"
 	-@erase ".\fnmatch.h"
 
 "$(OUTDIR)" :
@@ -96,16 +100,21 @@ BSC32_SBRS= \
 LIB32=link.exe -lib
 LIB32_FLAGS=/nologo /out:"$(OUTDIR)\libcvs.lib" 
 LIB32_OBJS= \
-	"$(INTDIR)\exitfail.obj" \
+	"$(INTDIR)\argmatch.obj" \
+	"$(INTDIR)\fncase.obj" \
+	"$(INTDIR)\fnmatch.obj" \
 	"$(INTDIR)\getdate.obj" \
 	"$(INTDIR)\getline.obj" \
-	"$(INTDIR)\getndelim2.obj" \
 	"$(INTDIR)\getopt.obj" \
 	"$(INTDIR)\getopt1.obj" \
-	"$(INTDIR)\printf-args.obj" \
-	"$(INTDIR)\printf-parse.obj" \
-	"$(INTDIR)\realloc.obj" \
-	"$(INTDIR)\regex.obj"
+	"$(INTDIR)\md5.obj" \
+	"$(INTDIR)\regex.obj" \
+	"$(INTDIR)\savecwd.obj" \
+	"$(INTDIR)\sighandle.obj" \
+	"$(INTDIR)\stripslash.obj" \
+	"$(INTDIR)\valloc.obj" \
+	"$(INTDIR)\xgetwd.obj" \
+	"$(INTDIR)\yesno.obj"
 
 "$(OUTDIR)\libcvs.lib" : "$(OUTDIR)" $(DEF_FILE) $(LIB32_OBJS)
     $(LIB32) @<<
@@ -120,25 +129,28 @@ INTDIR=.\WinDebug
 OutDir=.\WinDebug
 # End Custom Macros
 
-ALL : ".\fnmatch.h" ".\alloca.h" "$(OUTDIR)\libcvs.lib"
+ALL : "$(OUTDIR)\libcvs.lib"
 
 
 CLEAN :
-	-@erase "$(INTDIR)\exitfail.obj"
+	-@erase "$(INTDIR)\argmatch.obj"
+	-@erase "$(INTDIR)\fncase.obj"
+	-@erase "$(INTDIR)\fnmatch.obj"
 	-@erase "$(INTDIR)\getdate.obj"
 	-@erase "$(INTDIR)\getline.obj"
-	-@erase "$(INTDIR)\getndelim2.obj"
 	-@erase "$(INTDIR)\getopt.obj"
 	-@erase "$(INTDIR)\getopt1.obj"
-	-@erase "$(INTDIR)\printf-args.obj"
-	-@erase "$(INTDIR)\printf-parse.obj"
-	-@erase "$(INTDIR)\realloc.obj"
+	-@erase "$(INTDIR)\md5.obj"
 	-@erase "$(INTDIR)\regex.obj"
+	-@erase "$(INTDIR)\savecwd.obj"
+	-@erase "$(INTDIR)\sighandle.obj"
+	-@erase "$(INTDIR)\stripslash.obj"
+	-@erase "$(INTDIR)\valloc.obj"
 	-@erase "$(INTDIR)\vc60.idb"
 	-@erase "$(INTDIR)\vc60.pdb"
+	-@erase "$(INTDIR)\xgetwd.obj"
+	-@erase "$(INTDIR)\yesno.obj"
 	-@erase "$(OUTDIR)\libcvs.lib"
-	-@erase ".\alloca.h"
-	-@erase ".\fnmatch.h"
 
 "$(OUTDIR)" :
     if not exist "$(OUTDIR)/$(NULL)" mkdir "$(OUTDIR)"
@@ -184,16 +196,21 @@ BSC32_SBRS= \
 LIB32=link.exe -lib
 LIB32_FLAGS=/nologo /out:"$(OUTDIR)\libcvs.lib" 
 LIB32_OBJS= \
-	"$(INTDIR)\exitfail.obj" \
+	"$(INTDIR)\argmatch.obj" \
+	"$(INTDIR)\fncase.obj" \
+	"$(INTDIR)\fnmatch.obj" \
 	"$(INTDIR)\getdate.obj" \
 	"$(INTDIR)\getline.obj" \
-	"$(INTDIR)\getndelim2.obj" \
 	"$(INTDIR)\getopt.obj" \
 	"$(INTDIR)\getopt1.obj" \
-	"$(INTDIR)\printf-args.obj" \
-	"$(INTDIR)\printf-parse.obj" \
-	"$(INTDIR)\realloc.obj" \
-	"$(INTDIR)\regex.obj"
+	"$(INTDIR)\md5.obj" \
+	"$(INTDIR)\regex.obj" \
+	"$(INTDIR)\savecwd.obj" \
+	"$(INTDIR)\sighandle.obj" \
+	"$(INTDIR)\stripslash.obj" \
+	"$(INTDIR)\valloc.obj" \
+	"$(INTDIR)\xgetwd.obj" \
+	"$(INTDIR)\yesno.obj"
 
 "$(OUTDIR)\libcvs.lib" : "$(OUTDIR)" $(DEF_FILE) $(LIB32_OBJS)
     $(LIB32) @<<
@@ -213,9 +230,19 @@ LIB32_OBJS= \
 
 
 !IF "$(CFG)" == "libcvs - Win32 Release" || "$(CFG)" == "libcvs - Win32 Debug"
-SOURCE=.\exitfail.c
+SOURCE=.\argmatch.c
 
-"$(INTDIR)\exitfail.obj" : $(SOURCE) "$(INTDIR)"
+"$(INTDIR)\argmatch.obj" : $(SOURCE) "$(INTDIR)"
+
+
+SOURCE=.\fncase.c
+
+"$(INTDIR)\fncase.obj" : $(SOURCE) "$(INTDIR)"
+
+
+SOURCE=.\fnmatch.c
+
+"$(INTDIR)\fnmatch.obj" : $(SOURCE) "$(INTDIR)"
 
 
 SOURCE=.\getdate.c
@@ -228,11 +255,6 @@ SOURCE=.\getline.c
 "$(INTDIR)\getline.obj" : $(SOURCE) "$(INTDIR)"
 
 
-SOURCE=.\getndelim2.c
-
-"$(INTDIR)\getndelim2.obj" : $(SOURCE) "$(INTDIR)"
-
-
 SOURCE=.\getopt.c
 
 "$(INTDIR)\getopt.obj" : $(SOURCE) "$(INTDIR)"
@@ -243,19 +265,9 @@ SOURCE=.\getopt1.c
 "$(INTDIR)\getopt1.obj" : $(SOURCE) "$(INTDIR)"
 
 
-SOURCE=".\printf-args.c"
+SOURCE=.\md5.c
 
-"$(INTDIR)\printf-args.obj" : $(SOURCE) "$(INTDIR)"
-
-
-SOURCE=".\printf-parse.c"
-
-"$(INTDIR)\printf-parse.obj" : $(SOURCE) "$(INTDIR)"
-
-
-SOURCE=.\realloc.c
-
-"$(INTDIR)\realloc.obj" : $(SOURCE) "$(INTDIR)"
+"$(INTDIR)\md5.obj" : $(SOURCE) "$(INTDIR)"
 
 
 SOURCE=.\regex.c
@@ -263,53 +275,57 @@ SOURCE=.\regex.c
 "$(INTDIR)\regex.obj" : $(SOURCE) "$(INTDIR)"
 
 
-SOURCE=.\alloca_.h
+SOURCE=.\savecwd.c
+
+"$(INTDIR)\savecwd.obj" : $(SOURCE) "$(INTDIR)"
+
+
+SOURCE=.\sighandle.c
+
+"$(INTDIR)\sighandle.obj" : $(SOURCE) "$(INTDIR)"
+
+
+SOURCE=.\stripslash.c
+
+"$(INTDIR)\stripslash.obj" : $(SOURCE) "$(INTDIR)"
+
+
+SOURCE=.\valloc.c
+
+"$(INTDIR)\valloc.obj" : $(SOURCE) "$(INTDIR)"
+
+
+SOURCE=.\xgetwd.c
+
+"$(INTDIR)\xgetwd.obj" : $(SOURCE) "$(INTDIR)"
+
+
+SOURCE=.\yesno.c
+
+"$(INTDIR)\yesno.obj" : $(SOURCE) "$(INTDIR)"
+
+
+SOURCE=.\fnmatch.h.in
 
 !IF  "$(CFG)" == "libcvs - Win32 Release"
 
-InputPath=.\alloca_.h
+InputPath=.\fnmatch.h.in
 
-".\alloca.h" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+".\fnmatch.h" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
 	<<tempfile.bat 
 	@echo off 
-	copy .\alloca_.h .\alloca.h
+	copy .\fnmatch.h.in .\fnmatch.h
 << 
 	
 
 !ELSEIF  "$(CFG)" == "libcvs - Win32 Debug"
 
-InputPath=.\alloca_.h
-
-".\alloca.h" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	<<tempfile.bat 
-	@echo off 
-	copy .\alloca_.h .\alloca.h
-<< 
-	
-
-!ENDIF 
-
-SOURCE=.\fnmatch_.h
-
-!IF  "$(CFG)" == "libcvs - Win32 Release"
-
-InputPath=.\fnmatch_.h
+InputPath=.\fnmatch.h.in
 
 ".\fnmatch.h" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
 	<<tempfile.bat 
 	@echo off 
-	copy .\fnmatch_.h .\fnmatch.h
-<< 
-	
-
-!ELSEIF  "$(CFG)" == "libcvs - Win32 Debug"
-
-InputPath=.\fnmatch_.h
-
-".\fnmatch.h" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	<<tempfile.bat 
-	@echo off 
-	copy .\fnmatch_.h .\fnmatch.h
+	copy .\fnmatch.h.in .\fnmatch.h
 << 
 	
 
