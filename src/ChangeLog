@@ -1,3 +1,14 @@
+Tue Jul  9 04:33:03 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* recurse.c (do_recursion): Make static and move declaration to here...
+	* cvs.h: ...from here.
+	* recurse.c (do_recursion): Replace plethora of arguments with
+	single struct recursion_frame *.  Change callers.
+	* recurse.c: New structure frame_and_file.  Use it and existing
+	struct recursion_frame structures to pass info to do_file_proc and
+	do_dir_proc.  Remove globals fileproc, filesdoneproc, direntproc,
+	dirleaveproc, which, flags, aflag, readlock, and dosrcs.
+
 Tue Jul  9 11:13:29 1996  Ian Lance Taylor  <ian@cygnus.com>
 
 	* modules.c (do_module): Call cvs_outerr rather than fprintf.
