@@ -1,3 +1,19 @@
+2003-11-26  Mark D. Baushke  <mdb@cvshome.org>
+
+	* sanity.sh (recase-17sscs): Use ${CVSROOT_DIRNAME} in pattern.
+
+2003-11-26  Derek Price  <derek@ximbiot.com>
+
+	Remove server support for case insensitive clients.  Includes some
+	merges from 1.11.x.
+
+	* add.c, client.c, cvs.h, rcs.c, subr.c: Remove unnecessary support for
+	case insensitive clients.
+	* sanity.sh (tests): Add recase.
+	(recase): New test of cases that might be expected to cause problems
+	with a heterogeneous mix of case sensitive and case insensitive clients
+	and servers.
+
 2003-11-26  Derek Price  <derek@ximbiot.com>
 
 	* sanity.sh (modules3-2): Simplify syntax that may have given Cygwin

@@ -1051,6 +1051,7 @@ if test x"$*" = x; then
 	tests="${tests} diffmerge1 diffmerge2"
 	# Release of multiple directories
 	tests="${tests} release"
+	tests="${tests} recase"
 	# Multiple root directories and low-level protocol tests.
 	tests="${tests} multiroot multiroot2 multiroot3 multiroot4"
 	tests="${tests} rmroot reposmv pserver server server2 client"
@@ -24413,7 +24414,572 @@ ${SPROG} update: Updating first-dir"
 	  cd ..
 	  rm -rf 1 $CVSROOT_DIRNAME/first-dir
 	  ;;
-	  
+
+
+
+	recase)
+	  #
+	  # Some tests of behavior which broke at one time or another when run
+	  # from case insensitive clients against case sensitive servers.
+	  #
+
+	  mkdir 1; cd 1
+
+	  # first, we will expect different results for a few of these tests
+	  # based on whether the repository is on a case sensitive filesystem
+	  # or not and whether the sandbox is on a case sensitive filesystem or
+	  # not.
+	  echo file >file
+	  echo FiLe >FiLe
+	  if cmp file FiLe >/dev/null; then
+	    client_sensitive=false
+	  else
+	    client_sensitive=:
+	  fi
+	  if test -n "$remotehost"; then
+	    $CVS_RSH $remotehost 'echo file >file'
+	    $CVS_RSH $remotehost 'echo FiLe >FiLe'
+	    if $CVS_RSH $remotehost 'cmp file FiLe >/dev/null'; then
+	      server_sensitive=false
+	    else
+	      server_sensitive=:
+	    fi
+	  else
+	    server_sensitive=$client_sensitive
+	  fi
+
+	  # The first test (recase-1 & recase-2) is for a remove of a file then
+	  # a readd in a different case.
+	  mkdir $CVSROOT_DIRNAME/first-dir
+	  dotest recase-init-1 "$testcvs -Q co first-dir"	
+	  cd first-dir
+
+	  echo this file has no content >file
+	  dotest recase-init-2 "$testcvs -Q add file"
+	  dotest recase-init-3 "$testcvs -Q ci -madd" \
+"RCS file: $CVSROOT_DIRNAME/first-dir/file,v
+done
+Checking in file;
+$CVSROOT_DIRNAME/first-dir/file,v  <--  file
+initial revision: 1\.1
+done"
+	  dotest recase-init-4 "$testcvs -Q tag first"
+
+	  # Now remove the file.
+	  dotest recase-init-5 "$testcvs -Q rm -f file"
+	  dotest recase-init-6 "$testcvs -Q ci -mrm" \
+"Removing file;
+$CVSROOT_DIRNAME/first-dir/file,v  <--  file
+new revision: delete; previous revision: 1\.1
+done"
+
+	  # Now the test - readd in a different case.
+	  echo this file needs some content >FiLe
+	  if $server_sensitive; then
+	    dotest recase-1ss "$testcvs add FiLe" \
+"$SPROG add: scheduling file \`FiLe' for addition
+$SPROG add: use \`$SPROG commit' to add this file permanently"
+	    dotest recase-2ss "$testcvs -q ci -mrecase" \
+"RCS file: $CVSROOT_DIRNAME/first-dir/FiLe,v
+done
+Checking in FiLe;
+$CVSROOT_DIRNAME/first-dir/FiLe,v  <--  FiLe
+initial revision: 1\.1
+done"
+	  else
+	    dotest recase-1si "$testcvs add FiLe" \
+"$SPROG add: re-adding file \`FiLe' (in place of dead revision 1\.2)
+$SPROG add: use \`$SPROG commit' to add this file permanently"
+	    dotest recase-2si "$testcvs -q ci -mrecase" \
+"Checking in FiLe;
+$CVSROOT_DIRNAME/first-dir/FiLe,v  <--  FiLe
+new revision: 1\.3; previous revision: 1\.2
+done"
+	  fi
+
+	  # Now verify that a checkout will still work
+	  cd ../..
+	  mkdir 2; cd 2
+	  dotest recase-3 "$testcvs -q co first-dir" \
+"U first-dir/FiLe"
+
+	  cd first-dir
+	  # Prove that we can still get status and log information on
+	  # conflicting case files (1 in Attic, one in parent).
+	  if $remote; then
+	    if $client_sensitive; then
+	      file=file
+	      fIlE=fIlE
+	    else
+	      file=FiLe
+	      fIlE=FiLe
+	    fi
+	  else
+	    file=file
+	    fIlE=fIlE
+	  fi
+	  if $server_sensitive; then
+	    if $client_sensitive; then
+	      # Client finds Entry only for FiLe.  Others returned by server.
+	      dotest recase-4sscs "$testcvs status file" \
+"===================================================================
+File: no file file		Status: Up-to-date
+
+   Working revision:	No entry for file
+   Repository revision:	1\.2	$CVSROOT_DIRNAME/first-dir/Attic/file,v"
+	      dotest recase-5sscs "$testcvs log file" \
+"
+RCS file: $CVSROOT_DIRNAME/first-dir/Attic/file,v
+Working file: file
+head: 1\.2
+branch:
+locks: strict
+access list:
+symbolic names:
+	first: 1\.1
+keyword substitution: kv
+total revisions: 2;	selected revisions: 2
+description:
+----------------------------
+revision 1\.2
+date: [0-9/]* [0-9:]*;  author: $username;  state: dead;  lines: +0 -0
+rm
+----------------------------
+revision 1\.1
+date: [0-9/]* [0-9:]*;  author: $username;  state: Exp;
+add
+============================================================================="
+	      dotest recase-6sscs "$testcvs status FiLe" \
+"===================================================================
+File: FiLe             	Status: Up-to-date
+
+   Working revision:	1\.1.*
+   Repository revision:	1\.1	$CVSROOT_DIRNAME/first-dir/FiLe,v
+   Sticky Tag:		(none)
+   Sticky Date:		(none)
+   Sticky Options:	(none)"
+	      dotest recase-7sscs "$testcvs log FiLe" \
+"
+RCS file: $CVSROOT_DIRNAME/first-dir/FiLe,v
+Working file: FiLe
+head: 1\.1
+branch:
+locks: strict
+access list:
+symbolic names:
+keyword substitution: kv
+total revisions: 1;	selected revisions: 1
+description:
+----------------------------
+revision 1\.1
+date: [0-9/]* [0-9:]*;  author: $username;  state: Exp;
+recase
+============================================================================="
+	    else
+	      # Client finds same Entry for file & FiLe.
+	      dotest recase-4ssci "$testcvs status file" \
+"===================================================================
+File: FiLe             	Status: Up-to-date
+
+   Working revision:	1\.1.*
+   Repository revision:	1\.1	$CVSROOT_DIRNAME/first-dir/FiLe,v
+   Sticky Tag:		(none)
+   Sticky Date:		(none)
+   Sticky Options:	(none)"
+	      dotest recase-5ssci "$testcvs log file" \
+"
+RCS file: $CVSROOT_DIRNAME/first-dir/FiLe,v
+Working file: FiLe
+head: 1\.1
+branch:
+locks: strict
+access list:
+symbolic names:
+keyword substitution: kv
+total revisions: 1;	selected revisions: 1
+description:
+----------------------------
+revision 1\.1
+date: [0-9/]* [0-9:]*;  author: $username;  state: Exp;
+recase
+============================================================================="
+	      dotest recase-6ss "$testcvs status FiLe" \
+"===================================================================
+File: FiLe             	Status: Up-to-date
+
+   Working revision:	1\.1.*
+   Repository revision:	1\.1	$CVSROOT_DIRNAME/first-dir/FiLe,v
+   Sticky Tag:		(none)
+   Sticky Date:		(none)
+   Sticky Options:	(none)"
+	      dotest recase-7ss "$testcvs log FiLe" \
+"
+RCS file: $CVSROOT_DIRNAME/first-dir/FiLe,v
+Working file: FiLe
+head: 1\.1
+branch:
+locks: strict
+access list:
+symbolic names:
+keyword substitution: kv
+total revisions: 1;	selected revisions: 1
+description:
+----------------------------
+revision 1\.1
+date: [0-9/]* [0-9:]*;  author: $username;  state: Exp;
+recase
+============================================================================="
+	    fi
+	  else
+	    # There is only one archive when the server is insensitive, but the
+	    # printed file/archive name can vary.
+	    dotest recase-4si "$testcvs status file" \
+"===================================================================
+File: $file             	Status: Up-to-date
+
+   Working revision:	1\.3.*
+   Repository revision:	1\.3	$CVSROOT_DIRNAME/first-dir/$file,v
+   Sticky Tag:		(none)
+   Sticky Date:		(none)
+   Sticky Options:	(none)"
+	    dotest recase-5si "$testcvs log file" \
+"
+RCS file: $CVSROOT_DIRNAME/first-dir/$file,v
+Working file: $file
+head: 1\.3
+branch:
+locks: strict
+access list:
+symbolic names:
+	first: 1\.1
+keyword substitution: kv
+total revisions: 3;	selected revisions: 3
+description:
+----------------------------
+revision 1\.3
+date: [0-9/]* [0-9:]*;  author: $username;  state: Exp;  lines: +1 -1
+recase
+----------------------------
+revision 1\.2
+date: [0-9/]* [0-9:]*;  author: $username;  state: dead;  lines: +0 -0
+rm
+----------------------------
+revision 1\.1
+date: [0-9/]* [0-9:]*;  author: $username;  state: Exp;
+add
+============================================================================="
+	    dotest recase-6si "$testcvs status FiLe" \
+"===================================================================
+File: FiLe             	Status: Up-to-date
+
+   Working revision:	1\.3.*
+   Repository revision:	1\.3	$CVSROOT_DIRNAME/first-dir/FiLe,v
+   Sticky Tag:		(none)
+   Sticky Date:		(none)
+   Sticky Options:	(none)"
+	    dotest recase-7si "$testcvs log FiLe" \
+"
+RCS file: $CVSROOT_DIRNAME/first-dir/FiLe,v
+Working file: FiLe
+head: 1\.3
+branch:
+locks: strict
+access list:
+symbolic names:
+	first: 1\.1
+keyword substitution: kv
+total revisions: 3;	selected revisions: 3
+description:
+----------------------------
+revision 1\.3
+date: [0-9/]* [0-9:]*;  author: $username;  state: Exp;  lines: +1 -1
+recase
+----------------------------
+revision 1\.2
+date: [0-9/]* [0-9:]*;  author: $username;  state: dead;  lines: +0 -0
+rm
+----------------------------
+revision 1\.1
+date: [0-9/]* [0-9:]*;  author: $username;  state: Exp;
+add
+============================================================================="
+	  fi
+
+	  # And when the file does not exist on the client, we go with the
+	  # client Entries match.
+	  if $client_sensitive && $server_sensitive; then
+	    dotest recase-8cs "$testcvs status fIlE" \
+"$SPROG status: nothing known about \`fIlE'
+===================================================================
+File: no file fIlE		Status: Unknown
+
+   Working revision:	No entry for fIlE
+   Repository revision:	No revision control file"
+	  else
+	    dotest recase-8ci "$testcvs status fIlE" \
+"===================================================================
+File: $fIlE             	Status: Up-to-date
+
+   Working revision:	1\.[0-9]*.*
+   Repository revision:	1\.[0-9]*	$CVSROOT_DIRNAME/first-dir/$fIlE,v
+   Sticky Tag:		(none)
+   Sticky Date:		(none)
+   Sticky Options:	(none)"
+	  fi
+
+	  # and an update
+	  if $server_sensitive; then
+	    dotest recase-9ss "$testcvs -q up -rfirst" \
+"$SPROG update: \`FiLe' is no longer in the repository
+U file"
+
+	    if $client_sensitive; then
+	      dotest recase-10sscs "$testcvs -q up -A" \
+"U FiLe
+$SPROG update: \`file' is no longer in the repository"
+	    else
+	      # FIXCVS: This should remove the offending file first.
+	      dotest_fail recase-10ssci "$testcvs -q up -A" \
+"$SPROG update: move away \`\./FiLe'; it is in the way
+C FiLe
+$SPROG update: \`file' is no longer in the repository"
+
+	      cd ..
+	      rm -r first-dir
+	      dotest recase-11ssci "$testcvs -q co first-dir" \
+"U first-dir/FiLe"
+	      cd first-dir
+	    fi
+
+	    #
+	    # See what happens when cased names clash.
+	    #
+
+	    # Copy the archive
+	    if test -n "$remotehost"; then
+	      $CVS_RSH $remotehost "cp $CVSROOT_DIRNAME/first-dir/FiLe,v \
+		$CVSROOT_DIRNAME/first-dir/FILE,v"
+	    else
+	      cp $CVSROOT_DIRNAME/first-dir/FiLe,v \
+		$CVSROOT_DIRNAME/first-dir/FILE,v
+	    fi
+
+	    if $client_sensitive; then
+	      dotest recase-12sscs "$testcvs -q up" "U FILE"
+	    else
+	      dotest_fail recase-12ssci "$testcvs -q up" \
+"$SPROG update: move away \`\./FILE'; it is in the way
+C FILE"
+	    fi
+	  else
+	    dotest recase-9si "$testcvs -q up -rfirst" "U FiLe"
+	    dotest recase-10si "$testcvs -q up -A" "U FiLe"
+	  fi
+
+	  # Prove that we can still get status and log information on
+	  # conflicting case files (1 in Attic, two in parent).
+	  if $server_sensitive; then
+	    if $client_sensitive; then
+	      # Client finds Entry only for FiLe.  Others returned by server.
+	      dotest recase-13sscs "$testcvs status file" \
+"===================================================================
+File: no file file		Status: Up-to-date
+
+   Working revision:	No entry for file
+   Repository revision:	1\.2	$CVSROOT_DIRNAME/first-dir/Attic/file,v"
+	    dotest recase-14sscs "$testcvs log file" \
+"
+RCS file: $CVSROOT_DIRNAME/first-dir/Attic/file,v
+Working file: file
+head: 1\.2
+branch:
+locks: strict
+access list:
+symbolic names:
+	first: 1\.1
+keyword substitution: kv
+total revisions: 2;	selected revisions: 2
+description:
+----------------------------
+revision 1\.2
+date: [0-9/]* [0-9:]*;  author: $username;  state: dead;  lines: +0 -0
+rm
+----------------------------
+revision 1\.1
+date: [0-9/]* [0-9:]*;  author: $username;  state: Exp;
+add
+============================================================================="
+	    dotest recase-15sscs "$testcvs status FiLe" \
+"===================================================================
+File: FiLe             	Status: Up-to-date
+
+   Working revision:	1\.1.*
+   Repository revision:	1\.1	$CVSROOT_DIRNAME/first-dir/FiLe,v
+   Sticky Tag:		(none)
+   Sticky Date:		(none)
+   Sticky Options:	(none)"
+	      dotest recase-16sscs "$testcvs log FiLe" \
+"
+RCS file: $CVSROOT_DIRNAME/first-dir/FiLe,v
+Working file: FiLe
+head: 1\.1
+branch:
+locks: strict
+access list:
+symbolic names:
+keyword substitution: kv
+total revisions: 1;	selected revisions: 1
+description:
+----------------------------
+revision 1\.1
+date: [0-9/]* [0-9:]*;  author: $username;  state: Exp;
+recase
+============================================================================="
+	      dotest recase-17sscs "$testcvs status FILE" \
+"===================================================================
+File: FILE             	Status: Up-to-date
+
+   Working revision:	1.1.*
+   Repository revision:	1.1	${CVSROOT_DIRNAME}/first-dir/FILE,v
+   Sticky Tag:		(none)
+   Sticky Date:		(none)
+   Sticky Options:	(none)"
+	      dotest recase-18sscs "$testcvs log FILE" \
+"
+RCS file: $CVSROOT_DIRNAME/first-dir/FILE,v
+Working file: FILE
+head: 1\.1
+branch:
+locks: strict
+access list:
+symbolic names:
+keyword substitution: kv
+total revisions: 1;	selected revisions: 1
+description:
+----------------------------
+revision 1\.1
+date: [0-9/]* [0-9:]*;  author: $username;  state: Exp;
+recase
+============================================================================="
+	    else
+	      # Client finds same Entry for file & FiLe.
+	      dotest recase-13ssci "$testcvs status file" \
+"===================================================================
+File: FiLe             	Status: Up-to-date
+
+   Working revision:	1\.1.*
+   Repository revision:	1\.1	$CVSROOT_DIRNAME/first-dir/FiLe,v
+   Sticky Tag:		(none)
+   Sticky Date:		(none)
+   Sticky Options:	(none)"
+	      dotest recase-16ssci "$testcvs log FiLe" \
+"
+RCS file: $CVSROOT_DIRNAME/first-dir/FiLe,v
+Working file: FiLe
+head: 1\.1
+branch:
+locks: strict
+access list:
+symbolic names:
+keyword substitution: kv
+total revisions: 1;	selected revisions: 1
+description:
+----------------------------
+revision 1\.1
+date: [0-9/]* [0-9:]*;  author: $username;  state: Exp;
+recase
+============================================================================="
+	      dotest recase-17ssci "$testcvs status FILE" \
+"===================================================================
+File: FiLe             	Status: Up-to-date
+
+   Working revision:	1\.1.*
+   Repository revision:	1\.1	$CVSROOT_DIRNAME/first-dir/FiLe,v
+   Sticky Tag:		(none)
+   Sticky Date:		(none)
+   Sticky Options:	(none)"
+	      dotest recase-18ssci "$testcvs log FILE" \
+"
+RCS file: $CVSROOT_DIRNAME/first-dir/FiLe,v
+Working file: FiLe
+head: 1\.1
+branch:
+locks: strict
+access list:
+symbolic names:
+keyword substitution: kv
+total revisions: 1;	selected revisions: 1
+description:
+----------------------------
+revision 1\.1
+date: [0-9/]* [0-9:]*;  author: $username;  state: Exp;
+recase
+============================================================================="
+	    fi
+	  else
+	    # Skip these when the server is case insensitive - nothing
+	    # has changed since recase-[4-7]si
+	    :
+	  fi
+
+	  if $client_sensitive && $server_sensitive; then
+	    dotest recase-19cs "$testcvs status fIlE" \
+"$SPROG status: nothing known about \`fIlE'
+===================================================================
+File: no file fIlE		Status: Unknown
+
+   Working revision:	No entry for fIlE
+   Repository revision:	No revision control file"
+	  else
+	    dotest recase-19ci "$testcvs status fIlE" \
+"===================================================================
+File: $fIlE             	Status: Up-to-date
+
+   Working revision:	1\.[0-9]*.*
+   Repository revision:	1\.[0-9]*	$CVSROOT_DIRNAME/first-dir/$fIlE,v
+   Sticky Tag:		(none)
+   Sticky Date:		(none)
+   Sticky Options:	(none)"
+	  fi
+
+	  # And last but not least, prove that a checkout is still possible.
+	  cd ../..
+	  mkdir 3; cd 3
+	  if $server_sensitive; then
+	    if $client_sensitive; then
+	      dotest recase-20sscs "$testcvs -q co first-dir" \
+"U first-dir/FILE
+U first-dir/FiLe"
+	    else
+	      dotest_fail recase-20ssci "$testcvs -q co first-dir" \
+"U first-dir/FILE
+$SPROG checkout: move away \`first-dir/FiLe'; it is in the way
+C first-dir/FiLe"
+	    fi
+	  else
+	    # Skip these since nothing has changed.
+	    :
+	  fi
+
+	  if $keep; then
+	    echo Keeping ${TESTDIR} and exiting due to --keep
+	    exit 0
+	  fi
+
+	  cd ..
+	  rm -r 1 2 3
+	  if $server_sensitive && test -n "$remotehost"; then
+	    # It is necessary to remove one of the case-conflicted files before
+	    # recursively removing the rest under Cygwin on a Samba share or
+	    # Samba returns a permission denied error due to its case
+	    # confusion.
+	    $CVS_RSH $remotehost "rm -f $CVSROOT_DIRNAME/first-dir/FILE,v"
+	  fi
+	  rm -rf $CVSROOT_DIRNAME/first-dir
+	  ;;
+
+
+
 	multiroot)
 	  #
 	  # set up two repositories
