@@ -188,6 +188,7 @@ static const char *const cmd_usage[] =
     "        editors      See who is editing a watched file\n",
     "        history      Shows status of files and users\n",
     "        import       Import sources into CVS, using vendor branches\n",
+    "        init         Create a CVS repository if it doesn't exist\n",
     "        export       Export sources from CVS, similar to checkout\n",
     "        log          Prints out 'rlog' information for files\n",
 #ifdef AUTH_CLIENT_SUPPORT

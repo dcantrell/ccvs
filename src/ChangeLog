@@ -1,3 +1,7 @@
+Thu May 16 17:15:01 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* main.c (cmd_usage): Add "init" command.
+
 Sat May  4 12:33:02 1996  Ian Lance Taylor  <ian@cygnus.com>
 
 	* classify.c (Classify_File): Don't report a conflict for a
