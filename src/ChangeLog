@@ -1,3 +1,8 @@
+Sat Dec 20 19:56:00 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* rcs.c (RCS_delete_revs): Clean up temporary files even if noexec.
+	Without this fix, basica-o5a in sanity.sh would leave files around.
+
 Thu Dec 18 13:05:00 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* run.c: Fix typo in declaration (evecvp -> execvp) (credit to

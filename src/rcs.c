@@ -4546,6 +4546,7 @@ RCS_delete_revs (rcs, tag1, tag2, inclusive)
     RCSVers *revp = NULL;
     RCSVers *beforep;
     int status, found;
+    int save_noexec;
 
     char *branchpoint = NULL;
     char *rev1 = NULL;
@@ -4857,8 +4858,13 @@ RCS_delete_revs (rcs, tag1, tag2, inclusive)
 	    diffbuf = NULL;
 	    bufsize = 0;
 	    get_file (afterfile, afterfile, "r", &diffbuf, &bufsize, &len);
+
+	    save_noexec = noexec;
+	    noexec = 0;
 	    if (unlink_file (afterfile) < 0)
 		error (0, errno, "cannot remove %s", afterfile);
+	    noexec = save_noexec;
+
 	    free (afterfile);
 	    afterfile = NULL;
 
@@ -4986,6 +4992,9 @@ RCS_delete_revs (rcs, tag1, tag2, inclusive)
 	free (before);
     if (after != NULL)
 	free (after);
+
+    save_noexec = noexec;
+    noexec = 0;
     if (beforefile != NULL)
     {
 	if (unlink_file (beforefile) < 0)
@@ -5004,6 +5013,7 @@ RCS_delete_revs (rcs, tag1, tag2, inclusive)
 	    error (0, errno, "cannot remove %s", outfile);
 	free (outfile);
     }
+    noexec = save_noexec;
 
     return status;
 }
