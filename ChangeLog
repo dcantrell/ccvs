@@ -1,3 +1,7 @@
+2001-04-16  Larry Jones  <larry.jones@sdr.com>
+
+	* depcomp (aix): Remove stray HP-UX code.
+
 2001-04-12  Larry Jones  <larry.jones@sdr.com>
 
 	* mkinstalldirs: Newer version from Automake.
