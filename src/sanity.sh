@@ -54,15 +54,15 @@ else
   keep=no
 fi
 
-# You may need to add '-b /path/to/rcsbin_dflt' if you didn't want to
+# You may need to add '-b /path/to/rcsbin_dflt' if you did not want to
 # set RCSBIN_DFLT in options.h, etc....
 # for example: "-b /local/bin -D /local/gnu/bin/diff -p /local/bin/patch"
 # FIXME: need some real option parsing so this doesn't depend on the order
 # in which they are specified.
-if test x"$1" = "x"-G"; then
-	shift
-	testcvs="${testcvs} $1"
-	shift
+if test x"$1" = x"-G"; then
+  shift
+  testcvs="${testcvs} $1"
+  shift
 fi
 
 # Use full path for CVS executable, so that CVS_SERVER gets set properly
@@ -457,7 +457,7 @@ HOME=${TESTDIR}/home; export HOME
 if test x"$*" = x; then
 	# This doesn't yet include log2, because the bug it tests for
 	# is not yet fixed, and/or we might want to wait until after 1.9.
-	tests="basica basicb basic1 deep basic2 rdiff death death2 branches multibranch import join new newb conflicts conflicts2 modules mflag errmsg1 devcom ignore binfiles binwrap info serverpatch log log2"
+	tests="basica basicb basic1 deep basic2 rdiff prune death death2 branches multibranch import join new newb conflicts conflicts2 modules mflag errmsg1 devcom ignore binfiles binwrap info serverpatch log log2"
 else
 	tests="$*"
 fi
@@ -1570,6 +1570,36 @@ diff -c /dev/null trdiff/new:1\.1
 #		fi
 
 		rm -rf ${CVSROOT_DIRNAME}/trdiff
+		;;
+
+	prune)
+		# Test that cvs update -P doesn't elminate directories if there
+		# are things in the directory that have been removed, but not 
+		# committed. 
+		mkdir ${CVSROOT_DIRNAME}/first-dir
+		dotest prune-a "${CVS} co first-dir" ''
+		cd first-dir
+		touch foo
+		dotest prune-b "${testcvs} -q add foo" \
+"${PROG} [a-z]*: use '${PROG} commit' to add this file permanently"
+		dotest prune-c "${testcvs} ci -m new foo" \
+'RCS file: /tmp/cvs-sanity/cvsroot/first-dir/foo,v
+done
+Checking in foo;
+/tmp/cvs-sanity/cvsroot/first-dir/foo,v  <--  foo
+initial revision: 1.1
+done'
+		# FIXME: this should be "rm -f foo", but it is broken for remote
+		rm foo
+		dotest prune-d "${testcvs} -q rm foo" \
+"${PROG} [a-z]*: use 'cvs commit' to remove this file permanently" 
+		cd ..
+		dotest prune-e "${testcvs} update -P" \
+"${PROG} [a-z]*: Updating first-dir
+R first-dir/foo"
+		dotest_status prune-f 0 "test -d first-dir" ''
+		rm -rf ${CVSROOT_DIRNAME}/first-dir
+		rm -r first-dir
 		;;
 
 	death)
