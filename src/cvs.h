@@ -493,7 +493,7 @@ int isabsolute PROTO((const char *filename));
 char *xreadlink PROTO((const char *link));
 char *last_component PROTO((char *path));
 char *get_homedir PROTO ((void));
-char *strcat_filename_onto_homedir PROTO ((char *, char *));
+char *strcat_filename_onto_homedir PROTO ((const char *, const char *));
 char *cvs_temp_name PROTO ((void));
 FILE *cvs_temp_file PROTO ((char **filename));
 

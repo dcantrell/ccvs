@@ -65,10 +65,7 @@ construct_cvspass_filename ()
 	return (char *) NULL;
     }
 
-    passfile =
-	(char *) xmalloc (strlen (homedir) + strlen (CVS_PASSWORD_FILE) + 3);
-    strcpy (passfile, homedir);
-    strcat_filename_onto_homedir (passfile, CVS_PASSWORD_FILE);
+    passfile = strcat_filename_onto_homedir (homedir, CVS_PASSWORD_FILE);
 
     /* Safety first and last, Scouts. */
     if (isfile (passfile))

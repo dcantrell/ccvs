@@ -1,3 +1,9 @@
+2002-05-23  Larry Jones  <lawrence.jones@eds.com>
+
+	* cvs.h (strcat_filename_onto_homedir): Make arguments const.
+	* filesubr.c (strcat_filename_onto_homedir): Make arguments const,
+	move more code here from callers, change all callers.
+
 2002-05-22  Derek Price  <oberon@umich.edu>
 
 	* cvs.h: Add prototype for this...
