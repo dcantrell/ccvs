@@ -2723,8 +2723,16 @@ error  \n");
 	/* At this point we should no longer be using buf_to_net and
 	   buf_from_net.  Instead, everything should go through
 	   protocol.  */
-	buf_to_net = NULL;
-	buf_from_net = NULL;
+	if (buf_to_net != NULL)
+	{
+	    buf_free (buf_to_net);
+	    buf_to_net = NULL;
+	}
+	if (buf_from_net != NULL)
+	{
+	    buf_free (buf_from_net);
+	    buf_from_net = NULL;
+	}
 
 	/* These were originally set up to use outbuf_memory_error.
 	   Since we're now in the child, we should use the simpler
