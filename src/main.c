@@ -932,7 +932,8 @@ cause intermittent sandbox corruption.");
 		if ((current_parsed_root = parse_cvsroot (current_root)) == NULL)
 		    error (1, 0, "Bad CVSROOT: `%s'.", current_root);
 
-		TRACE ( 1, "main loop with CVSROOT=%s", current_root);
+		TRACE ( TRACE_FUNCTION,
+			"main loop with CVSROOT=%s", current_root);
 
 		/*
 		 * Check to see if the repository exists.
