@@ -1,3 +1,10 @@
+Wed Jan 31 18:32:34 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* client.c (read_line, read_from_server): Change "premature end of
+	file from server" message to "end of file from server (consult
+	above messages if any)" because 99% of the time it means rsh has
+	printed an error message and exited.
+
 Wed Jan 31 15:09:51 1996  J.T. Conklin  <jtc@rtl.cygnus.com>
 
 	* edit.c (ncheck_fileproc): Fix memory leak; free line before

@@ -391,7 +391,7 @@ read_line (resultp, eof_ok)
 	    if (eof_ok)
 		return 0;
 	    else
-		error (1, 0, "premature end of file from server");
+		error (1, 0, "end of file from server (consult above messages if any)");
 	}
 
 	if (c == '\n')
@@ -2297,7 +2297,7 @@ read_from_server (buf, len)
           if (ferror (from_server))
             error (1, errno, "reading from server");
           if (feof (from_server))
-            error (1, 0, "premature end-of-file from server");
+            error (1, 0, "end of file from server (consult above messages if any)");
         }
     }
   
