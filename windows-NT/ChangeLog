@@ -1,3 +1,9 @@
+Fri Oct 20 11:09:55 1995  Norbert Kiesel  <nk@col.sw-ley.de>
+
+	* config.h: use same layout and comments as current ../config.h.in
+
+	* options.h: as above for ../src/options.h.in
+
 Tue Oct 10 16:04:18 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* README: Update to remove obsolete information (e.g. ftp
