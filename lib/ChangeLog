@@ -1,3 +1,8 @@
+Thu Aug 31 11:31:42 1995  Jim Blandy  <jimb@totoro.cyclic.com>
+
+	* getdate.y [STDC_HEADERS]: #include <stdlib.h>, for abort.
+	[HAVE_ALLOCA_H]: #include <alloca.h>, for alloca on Windows NT.
+
 Wed Aug 30 18:48:44 1995  Jim Blandy  <jimb@totoro.cyclic.com>
 
 	* system.h [HAVE_IO_H]: #include <io.h>, for Windows NT.
