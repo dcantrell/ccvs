@@ -4824,8 +4824,7 @@ done"
 "Checking in file5;
 ${CVSROOT_DIRNAME}/first-dir/file5,v  <--  file5
 ${PROG} [a-z]*: ${CVSROOT_DIRNAME}/first-dir/file5,v: revision 4\.8 too low; must be higher than 7\.1
-${PROG} [a-z]*: could not check in file5
-7\.1 unlocked"
+${PROG} [a-z]*: could not check in file5"
 	  dotest rmadd-24a "${testcvs} -q ci -r 8.4 -m change file5" \
 "Checking in file5;
 ${CVSROOT_DIRNAME}/first-dir/file5,v  <--  file5
