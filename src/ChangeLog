@@ -1,5 +1,10 @@
 2001-08-24  Derek Price  <dprice@collab.net>
 
+	* parseinfo.c (Parse_Info): Change the function name in the trace
+	and add the client/server string.
+
+2001-08-24  Derek Price  <dprice@collab.net>
+
 	* Implement RereadLogAfterVerify CVSROOT/config option to control
 	FreeBSD read-write of log messages in the verification script.
 	* logmsg.c: RereadLogAfterVerify defaults to LOGMSG_REREAD_NEVER
