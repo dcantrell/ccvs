@@ -481,8 +481,8 @@ unlink_file_dir (f)
     if (unlink (f) != 0)
     {
 	/* under Windows NT, unlink returns EACCES if the path
-	   is a directory.  */
-        if (errno == EISDIR || errno == EACCES)
+	   is a directory.  Under Windows 95, ENOENT.  */
+        if (errno == EISDIR || errno == EACCES || errno == ENOENT)
                 return deep_remove_dir (f);
         else
 		/* The file wasn't a directory and some other
@@ -528,7 +528,14 @@ deep_remove_dir (path)
 	    chmod (buf, _S_IWRITE);
 	    if (unlink (buf) != 0 )
 	    {
-		if (errno == EISDIR || errno == EACCES)
+		/* Under Windows NT, unlink returns EACCES if the path
+		   is a directory.  Under Windows 95, ENOENT.  It
+		   isn't really clear to me whether checking errno is
+		   better or worse than using _stat to check for a directory.
+		   We aren't really trying to prevent race conditions here
+		   (e.g. what if something changes between readdir and
+		   unlink?)  */
+		if (errno == EISDIR || errno == EACCES || errno == ENOENT)
 		{
 		    if (deep_remove_dir (buf))
 		    {
