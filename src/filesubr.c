@@ -936,31 +936,3 @@ expand_wild (int argc, char **argv, int *pargc, char ***pargv)
     for (i = 0; i < argc; ++i)
 	(*pargv)[i] = xstrdup (argv[i]);
 }
-
-
-
-#ifdef SERVER_SUPPORT
-/* Case-insensitive string compare.  I know that some systems
-   have such a routine, but I'm not sure I see any reasons for
-   dealing with the hair of figuring out whether they do (I haven't
-   looked into whether this is a performance bottleneck; I would guess
-   not).  */
-int
-cvs_casecmp (const char *str1, const char *str2)
-{
-    const char *p;
-    const char *q;
-    int pqdiff;
-
-    p = str1;
-    q = str2;
-    while ((pqdiff = tolower (*p) - tolower (*q)) == 0)
-    {
-	if (*p == '\0')
-	    return 0;
-	++p;
-	++q;
-    }
-    return pqdiff;
-}
-#endif /* SERVER_SUPPORT */

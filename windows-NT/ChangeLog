@@ -1,3 +1,7 @@
+2004-09-14  Mark D. Baushke  <mdb@cvshome.org>
+
+	* filesubr.c (cvs_casecmp): Moved to src/subr.c
+
 2004-09-09  Mark D. Baushke  <mdb@cvshome.org>
 
 	* filesubr.c (check_statbuf): Remove unused variables.
