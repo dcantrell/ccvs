@@ -1,3 +1,7 @@
+2003-03-07  Mark D Baushke <mdb@cvshome.org>
+
+	* sanity.sh: Fix broken setting of the servercvs variable.
+
 2003-03-07  Derek Price  <derek@ximbiot.com>
 
 	* sanity.sh (help): Add explanation of CVS-TO-TEST and edit for
