@@ -932,12 +932,12 @@ serve_modified (arg)
 	return;
     }
     if (size_text[0] == 'z')
-      {
+    {
 	gzipped = 1;
 	size = atoi (size_text + 1);
-      }
+    }
     else
-      size = atoi (size_text);
+	size = atoi (size_text);
     free (size_text);
 
     if (error_pending ())
@@ -957,10 +957,10 @@ serve_modified (arg)
     }
 
     if (size >= 0)
-      {
+    {
 	receive_file (size, arg, gzipped);
 	if (error_pending ()) return;
-      }
+    }
 
     {
 	int status = change_mode (arg, mode_text);
@@ -990,7 +990,7 @@ static void
 serve_enable_unchanged (arg)
      char *arg;
 {
-  use_unchanged = 1;
+    use_unchanged = 1;
 }
 
 static void
@@ -3390,10 +3390,10 @@ static int command_pid_is_dead;
 static void wait_sig (sig)
      int sig;
 {
-  int status;
-  pid_t r = wait (&status);
-  if (r == command_pid)
-    command_pid_is_dead++;
+    int status;
+    pid_t r = wait (&status);
+    if (r == command_pid)
+	command_pid_is_dead++;
 }
 #endif
 
@@ -3420,73 +3420,77 @@ server_cleanup (sig)
        assumptions about SunOS, and is only for a bug in that system.
        So only enable it on Suns.  */
 #ifdef sun
-    if (command_pid > 0) {
-      /* To avoid crashes on SunOS due to bugs in SunOS tmpfs
-	 triggered by the use of rename() in RCS, wait for the
-	 subprocess to die.  Unfortunately, this means draining output
-	 while waiting for it to unblock the signal we sent it.  Yuck!  */
-      int status;
-      pid_t r;
+    if (command_pid > 0)
+    {
+	/* To avoid crashes on SunOS due to bugs in SunOS tmpfs
+	   triggered by the use of rename() in RCS, wait for the
+	   subprocess to die.  Unfortunately, this means draining output
+	   while waiting for it to unblock the signal we sent it.  Yuck!  */
+	int status;
+	pid_t r;
 
-      signal (SIGCHLD, wait_sig);
-      if (sig)
-	/* Perhaps SIGTERM would be more correct.  But the child
-	   process will delay the SIGINT delivery until its own
-	   children have exited.  */
-	kill (command_pid, SIGINT);
-      /* The caller may also have sent a signal to command_pid, so
-	 always try waiting.  First, though, check and see if it's still
-	 there....  */
+	signal (SIGCHLD, wait_sig);
+	if (sig)
+	    /* Perhaps SIGTERM would be more correct.  But the child
+	       process will delay the SIGINT delivery until its own
+	       children have exited.  */
+	    kill (command_pid, SIGINT);
+	/* The caller may also have sent a signal to command_pid, so
+	   always try waiting.  First, though, check and see if it's still
+	   there....  */
     do_waitpid:
-      r = waitpid (command_pid, &status, WNOHANG);
-      if (r == 0)
-	;
-      else if (r == command_pid)
-	command_pid_is_dead++;
-      else if (r == -1)
-	switch (errno) {
-	case ECHILD:
-	  command_pid_is_dead++;
-	  break;
-	case EINTR:
-	  goto do_waitpid;
-	}
-      else
-	/* waitpid should always return one of the above values */
-	abort ();
-      while (!command_pid_is_dead) {
-	struct timeval timeout;
-	struct fd_set_wrapper readfds;
-	char buf[100];
-	int i;
-
-	/* Use a non-zero timeout to avoid eating up CPU cycles.  */
-	timeout.tv_sec = 2;
-	timeout.tv_usec = 0;
-	readfds = command_fds_to_drain;
-	switch (select (max_command_fd + 1, &readfds.fds,
-			(fd_set *)0, (fd_set *)0,
-			&timeout)) {
-	case -1:
-	  if (errno != EINTR)
-	    abort ();
-	case 0:
-	  /* timeout */
-	  break;
-	case 1:
-	  for (i = 0; i <= max_command_fd; i++)
+	r = waitpid (command_pid, &status, WNOHANG);
+	if (r == 0)
+	    ;
+	else if (r == command_pid)
+	    command_pid_is_dead++;
+	else if (r == -1)
+	    switch (errno)
 	    {
-	      if (!FD_ISSET (i, &readfds.fds))
-		continue;
-	      /* this fd is non-blocking */
-	      while (read (i, buf, sizeof (buf)) >= 1)
-		;
+		case ECHILD:
+		    command_pid_is_dead++;
+		    break;
+		case EINTR:
+		    goto do_waitpid;
 	    }
-	  break;
-	default:
-	  abort ();
+	else
+	    /* waitpid should always return one of the above values */
+	    abort ();
+	while (!command_pid_is_dead)
+	{
+	    struct timeval timeout;
+	    struct fd_set_wrapper readfds;
+	    char buf[100];
+	    int i;
+
+	    /* Use a non-zero timeout to avoid eating up CPU cycles.  */
+	    timeout.tv_sec = 2;
+	    timeout.tv_usec = 0;
+	    readfds = command_fds_to_drain;
+	    switch (select (max_command_fd + 1, &readfds.fds,
+			    (fd_set *)0, (fd_set *)0,
+			    &timeout))
+	    {
+		case -1:
+		    if (errno != EINTR)
+			abort ();
+		case 0:
+		    /* timeout */
+		    break;
+		case 1:
+		    for (i = 0; i <= max_command_fd; i++)
+		    {
+			if (!FD_ISSET (i, &readfds.fds))
+			    continue;
+			/* this fd is non-blocking */
+			while (read (i, buf, sizeof (buf)) >= 1)
+			    ;
+		    }
+		    break;
+		default:
+		    abort ();
+	    }
 	}
-      }
     }
 #endif
 
@@ -3697,19 +3701,6 @@ error ENOMEM Virtual memory exhausted.\n");
 
 extern char *crypt PROTO((const char *, const char *));
 
-/* This was test code, which we may need again. */
-#if 0
-  /* If we were invoked this way, then stdin comes from the
-     client and stdout/stderr writes to it. */
-  int c;
-  while ((c = getc (stdin)) != EOF && c != '*')
-    {
-      printf ("%c", toupper (c));
-      fflush (stdout);
-    }
-  exit (0);
-#endif /* 1/0 */
-
 
 /* 
  * 0 means no entry found for this user.
@@ -3738,7 +3729,7 @@ check_repository_password (username, password, repository, host_user_ptr)
     strcpy (filename, repository);
     strcat (filename, "/CVSROOT");
     strcat (filename, "/passwd");
-  
+
     fp = CVS_FOPEN (filename, "r");
     if (fp == NULL)
     {
@@ -3849,140 +3840,140 @@ error 0 %s: no such user\n", username);
 void
 pserver_authenticate_connection ()
 {
-  char tmp[PATH_MAX];
-  char repository[PATH_MAX];
-  char username[PATH_MAX];
-  char password[PATH_MAX];
-  char *host_user;
-  char *descrambled_password;
-  struct passwd *pw;
-  int verify_and_exit = 0;
+    char tmp[PATH_MAX];
+    char repository[PATH_MAX];
+    char username[PATH_MAX];
+    char password[PATH_MAX];
+    char *host_user;
+    char *descrambled_password;
+    struct passwd *pw;
+    int verify_and_exit = 0;
 
-  /* The Authentication Protocol.  Client sends:
-   *
-   *   BEGIN AUTH REQUEST\n
-   *   <REPOSITORY>\n
-   *   <USERNAME>\n
-   *   <PASSWORD>\n
-   *   END AUTH REQUEST\n
-   *
-   * Server uses above information to authenticate, then sends
-   *
-   *   I LOVE YOU\n
-   *
-   * if it grants access, else
-   *
-   *   I HATE YOU\n
-   *
-   * if it denies access (and it exits if denying).
-   *
-   * When the client is "cvs login", the user does not desire actual
-   * repository access, but would like to confirm the password with
-   * the server.  In this case, the start and stop strings are
-   *
-   *   BEGIN VERIFICATION REQUEST\n
-   *
-   *            and
-   *
-   *   END VERIFICATION REQUEST\n
-   *
-   * On a verification request, the server's responses are the same
-   * (with the obvious semantics), but it exits immediately after
-   * sending the response in both cases.
-   *
-   * Why is the repository sent?  Well, note that the actual
-   * client/server protocol can't start up until authentication is
-   * successful.  But in order to perform authentication, the server
-   * needs to look up the password in the special CVS passwd file,
-   * before trying /etc/passwd.  So the client transmits the
-   * repository as part of the "authentication protocol".  The
-   * repository will be redundantly retransmitted later, but that's no
-   * big deal.
-   */
+    /* The Authentication Protocol.  Client sends:
+     *
+     *   BEGIN AUTH REQUEST\n
+     *   <REPOSITORY>\n
+     *   <USERNAME>\n
+     *   <PASSWORD>\n
+     *   END AUTH REQUEST\n
+     *
+     * Server uses above information to authenticate, then sends
+     *
+     *   I LOVE YOU\n
+     *
+     * if it grants access, else
+     *
+     *   I HATE YOU\n
+     *
+     * if it denies access (and it exits if denying).
+     *
+     * When the client is "cvs login", the user does not desire actual
+     * repository access, but would like to confirm the password with
+     * the server.  In this case, the start and stop strings are
+     *
+     *   BEGIN VERIFICATION REQUEST\n
+     *
+     *            and
+     *
+     *   END VERIFICATION REQUEST\n
+     *
+     * On a verification request, the server's responses are the same
+     * (with the obvious semantics), but it exits immediately after
+     * sending the response in both cases.
+     *
+     * Why is the repository sent?  Well, note that the actual
+     * client/server protocol can't start up until authentication is
+     * successful.  But in order to perform authentication, the server
+     * needs to look up the password in the special CVS passwd file,
+     * before trying /etc/passwd.  So the client transmits the
+     * repository as part of the "authentication protocol".  The
+     * repository will be redundantly retransmitted later, but that's no
+     * big deal.
+     */
 
-  /* Make sure the protocol starts off on the right foot... */
-  fgets (tmp, PATH_MAX, stdin);
-  if (strcmp (tmp, "BEGIN VERIFICATION REQUEST\n") == 0)
-    verify_and_exit = 1;
-  else if (strcmp (tmp, "BEGIN AUTH REQUEST\n") != 0)
-    error (1, 0, "bad auth protocol start: %s", tmp);
-    
-  /* Get the three important pieces of information in order. */
-  fgets (repository, PATH_MAX, stdin);
-  fgets (username, PATH_MAX, stdin);
-  fgets (password, PATH_MAX, stdin);
+    /* Make sure the protocol starts off on the right foot... */
+    fgets (tmp, PATH_MAX, stdin);
+    if (strcmp (tmp, "BEGIN VERIFICATION REQUEST\n") == 0)
+	verify_and_exit = 1;
+    else if (strcmp (tmp, "BEGIN AUTH REQUEST\n") != 0)
+	error (1, 0, "bad auth protocol start: %s", tmp);
 
-  /* Make them pure. */ 
-  strip_trailing_newlines (repository);
-  strip_trailing_newlines (username);
-  strip_trailing_newlines (password);
+    /* Get the three important pieces of information in order. */
+    fgets (repository, PATH_MAX, stdin);
+    fgets (username, PATH_MAX, stdin);
+    fgets (password, PATH_MAX, stdin);
 
-  /* ... and make sure the protocol ends on the right foot. */
-  fgets (tmp, PATH_MAX, stdin);
-  if (strcmp (tmp,
-              verify_and_exit ?
-              "END VERIFICATION REQUEST\n" : "END AUTH REQUEST\n")
-           != 0)
+    /* Make them pure. */ 
+    strip_trailing_newlines (repository);
+    strip_trailing_newlines (username);
+    strip_trailing_newlines (password);
+
+    /* ... and make sure the protocol ends on the right foot. */
+    fgets (tmp, PATH_MAX, stdin);
+    if (strcmp (tmp,
+		verify_and_exit ?
+		"END VERIFICATION REQUEST\n" : "END AUTH REQUEST\n")
+	!= 0)
     {
-      error (1, 0, "bad auth protocol end: %s", tmp);
+	error (1, 0, "bad auth protocol end: %s", tmp);
     }
 
-  /* We need the real cleartext before we hash it. */
-  descrambled_password = descramble (password);
-  host_user = check_password (username, descrambled_password, repository);
-  if (host_user)
+    /* We need the real cleartext before we hash it. */
+    descrambled_password = descramble (password);
+    host_user = check_password (username, descrambled_password, repository);
+    if (host_user)
     {
-      printf ("I LOVE YOU\n");
-      fflush (stdout);
-      memset (descrambled_password, 0, strlen (descrambled_password));
-      free (descrambled_password);
+	printf ("I LOVE YOU\n");
+	fflush (stdout);
+	memset (descrambled_password, 0, strlen (descrambled_password));
+	free (descrambled_password);
     }
-  else
+    else
     {
-      printf ("I HATE YOU\n");
-      fflush (stdout);
-      memset (descrambled_password, 0, strlen (descrambled_password));
-      free (descrambled_password);
-      exit (EXIT_FAILURE);
+	printf ("I HATE YOU\n");
+	fflush (stdout);
+	memset (descrambled_password, 0, strlen (descrambled_password));
+	free (descrambled_password);
+	exit (EXIT_FAILURE);
     }
-  
-  /* Don't go any farther if we're just responding to "cvs login". */
-  if (verify_and_exit)
-    exit (0);
 
-  /* Switch to run as this user. */
-  pw = getpwnam (host_user);
-  if (pw == NULL)
+    /* Don't go any farther if we're just responding to "cvs login". */
+    if (verify_and_exit)
+	exit (0);
+
+    /* Switch to run as this user. */
+    pw = getpwnam (host_user);
+    if (pw == NULL)
     {
-      printf ("E Fatal error, aborting.\n\
+	printf ("E Fatal error, aborting.\n\
 error 0 %s: no such user\n", username);
-      exit (EXIT_FAILURE);
+	exit (EXIT_FAILURE);
     }
-  
+
 #if HAVE_INITGROUPS
-  initgroups (pw->pw_name, pw->pw_gid);
+    initgroups (pw->pw_name, pw->pw_gid);
 #endif /* HAVE_INITGROUPS */
 
-  setgid (pw->pw_gid);
-  setuid (pw->pw_uid);
-  /* Inhibit access by randoms.  Don't want people randomly
-     changing our temporary tree before we check things in.  */
-  umask (077);
-  
+    setgid (pw->pw_gid);
+    setuid (pw->pw_uid);
+    /* Inhibit access by randoms.  Don't want people randomly
+       changing our temporary tree before we check things in.  */
+    umask (077);
+
 #if HAVE_PUTENV
-  /* Set LOGNAME and USER in the environment, in case they are
-     already set to something else.  */
-  {
-    char *env;
-    
-    env = xmalloc (sizeof "LOGNAME=" + strlen (username));
-    (void) sprintf (env, "LOGNAME=%s", username);
-    (void) putenv (env);
-    
-    env = xmalloc (sizeof "USER=" + strlen (username));
-    (void) sprintf (env, "USER=%s", username);
-    (void) putenv (env);
-  }
+    /* Set LOGNAME and USER in the environment, in case they are
+       already set to something else.  */
+    {
+	char *env;
+
+	env = xmalloc (sizeof "LOGNAME=" + strlen (username));
+	(void) sprintf (env, "LOGNAME=%s", username);
+	(void) putenv (env);
+
+	env = xmalloc (sizeof "USER=" + strlen (username));
+	(void) sprintf (env, "USER=%s", username);
+	(void) putenv (env);
+    }
 #endif /* HAVE_PUTENV */
 }
 

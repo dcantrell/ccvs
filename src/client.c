@@ -101,29 +101,29 @@ mode_to_string (mode)
 	mode_t mode;
 #endif /* __STDC__ */
 {
-	char buf[18], u[4], g[4], o[4];
-	int i;
+    char buf[18], u[4], g[4], o[4];
+    int i;
 
-	i = 0;
-	if (mode & S_IRUSR) u[i++] = 'r';
-	if (mode & S_IWUSR) u[i++] = 'w';
-	if (mode & S_IXUSR) u[i++] = 'x';
-	u[i] = '\0';
-	
-	i = 0;
-	if (mode & S_IRGRP) g[i++] = 'r';
-	if (mode & S_IWGRP) g[i++] = 'w';
-	if (mode & S_IXGRP) g[i++] = 'x';
-	g[i] = '\0';
-	
-	i = 0;
-	if (mode & S_IROTH) o[i++] = 'r';
-	if (mode & S_IWOTH) o[i++] = 'w';
-	if (mode & S_IXOTH) o[i++] = 'x';
-	o[i] = '\0';
+    i = 0;
+    if (mode & S_IRUSR) u[i++] = 'r';
+    if (mode & S_IWUSR) u[i++] = 'w';
+    if (mode & S_IXUSR) u[i++] = 'x';
+    u[i] = '\0';
 
-	sprintf(buf, "u=%s,g=%s,o=%s", u, g, o);
-	return xstrdup(buf);
+    i = 0;
+    if (mode & S_IRGRP) g[i++] = 'r';
+    if (mode & S_IWGRP) g[i++] = 'w';
+    if (mode & S_IXGRP) g[i++] = 'x';
+    g[i] = '\0';
+
+    i = 0;
+    if (mode & S_IROTH) o[i++] = 'r';
+    if (mode & S_IWOTH) o[i++] = 'w';
+    if (mode & S_IXOTH) o[i++] = 'x';
+    o[i] = '\0';
+
+    sprintf(buf, "u=%s,g=%s,o=%s", u, g, o);
+    return xstrdup(buf);
 }
 
 /*
@@ -2572,8 +2572,8 @@ handle_m (args, len)
     char *args;
     int len;
 {
-  fwrite (args, len, sizeof (*args), stdout);
-  putc ('\n', stdout);
+    fwrite (args, len, sizeof (*args), stdout);
+    putc ('\n', stdout);
 }
 
 static void
@@ -2581,8 +2581,8 @@ handle_e (args, len)
     char *args;
     int len;
 {
-  fwrite (args, len, sizeof (*args), stderr);
-  putc ('\n', stderr);
+    fwrite (args, len, sizeof (*args), stderr);
+    putc ('\n', stderr);
 }
 
 /*ARGSUSED*/
@@ -2806,57 +2806,59 @@ get_responses_and_close ()
 
 #ifdef NO_SOCKET_TO_FD
     if (use_socket_style)
-      {
-        if (shutdown (server_sock, 2) < 0)
-          error (1, errno, "shutting down server socket");
-      }
+    {
+	if (shutdown (server_sock, 2) < 0)
+	    error (1, errno, "shutting down server socket");
+    }
     else
 #endif /* NO_SOCKET_TO_FD */
-      {
+    {
 #if defined(HAVE_KERBEROS) || defined(USE_DIRECT_TCP) || defined(AUTH_CLIENT_SUPPORT)
-        if (server_fd != -1)
-          {
-            if (shutdown (server_fd, 1) < 0)
-              error (1, errno, "shutting down connection to %s", CVSroot_hostname);
+	if (server_fd != -1)
+	{
+	    if (shutdown (server_fd, 1) < 0)
+		error (1, errno, "shutting down connection to %s",
+		       CVSroot_hostname);
             /*
              * This test will always be true because we dup the descriptor
              */
-            if (fileno (from_server_fp) != fileno (to_server_fp))
-              {
-                if (fclose (to_server_fp) != 0)
-                  error (1, errno,
-                         "closing down connection to %s",
-                         CVSroot_hostname);
-              }
-          }
+	    if (fileno (from_server_fp) != fileno (to_server_fp))
+	    {
+		if (fclose (to_server_fp) != 0)
+		    error (1, errno,
+			   "closing down connection to %s",
+			   CVSroot_hostname);
+	    }
+	}
         else
 #endif /* HAVE_KERBEROS || USE_DIRECT_TCP || AUTH_CLIENT_SUPPORT */
           
 #ifdef SHUTDOWN_SERVER
-          SHUTDOWN_SERVER (fileno (to_server_fp));
+	    SHUTDOWN_SERVER (fileno (to_server_fp));
 #else /* ! SHUTDOWN_SERVER */
-        {
-          
+	{
+
 #ifdef START_RSH_WITH_POPEN_RW
-          if (pclose (to_server_fp) == EOF)
+	    if (pclose (to_server_fp) == EOF)
 #else /* ! START_RSH_WITH_POPEN_RW */
-            if (fclose (to_server_fp) == EOF)
+		if (fclose (to_server_fp) == EOF)
 #endif /* START_RSH_WITH_POPEN_RW */
-              {
-                error (1, errno, "closing connection to %s", CVSroot_hostname);
-              }
+		{
+		    error (1, errno, "closing connection to %s",
+			   CVSroot_hostname);
+		}
         }
 
-        if (! buf_empty_p (from_server)
+	if (! buf_empty_p (from_server)
 	    || getc (from_server_fp) != EOF)
-          error (0, 0, "dying gasps from %s unexpected", CVSroot_hostname);
-        else if (ferror (from_server_fp))
-          error (0, errno, "reading from %s", CVSroot_hostname);
-        
-        fclose (from_server_fp);
+	    error (0, 0, "dying gasps from %s unexpected", CVSroot_hostname);
+	else if (ferror (from_server_fp))
+	    error (0, errno, "reading from %s", CVSroot_hostname);
+
+	fclose (from_server_fp);
 #endif /* SHUTDOWN_SERVER */
-      }
-        
+    }
+
 #if ! RSH_NOT_TRANSPARENT
     if (rsh_pid != -1
 	&& waitpid (rsh_pid, (int *) 0, 0) == -1)
@@ -2922,7 +2924,7 @@ init_sockaddr (name, hostname, port)
 int
 auth_server_port_number ()
 {
-  return CVS_AUTH_PORT;
+    return CVS_AUTH_PORT;
 }
 
 
