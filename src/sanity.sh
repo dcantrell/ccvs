@@ -350,7 +350,7 @@ HOME=${TESTDIR}/home; export HOME
 # tests.
 
 if test x"$*" = x; then
-	tests="basica basicb basic1 deep basic2 death death2 branches import join new newb conflicts conflicts2 modules mflag errmsg1 devcom ignore binfiles binwrap info patch log"
+	tests="basica basicb basic1 deep basic2 death death2 branches multibranch import join new newb conflicts conflicts2 modules mflag errmsg1 devcom ignore binfiles binwrap info patch log"
 else
 	tests="$*"
 fi
@@ -2099,6 +2099,61 @@ rcsmerge: warning: conflicts during merge'
 =======
 1:brbr
 >>>>>>> 1.1.2.1.2.1'
+	  cd ..
+
+	  if test "$keep" = yes; then
+	    echo Keeping /tmp/cvs-sanity and exiting due to --keep
+	    exit 0
+	  fi
+
+	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  rm -r first-dir
+	  ;;
+
+	multibranch)
+	  # Test the ability to have several branchpoints coming off the
+	  # same revision.
+	  mkdir ${CVSROOT_DIRNAME}/first-dir
+	  dotest multibranch-1 "${testcvs} -q co first-dir" ''
+	  cd first-dir
+	  echo 1:trunk-1 >file1
+	  dotest multibranch-2 "${testcvs} add file1" \
+"${PROG}"' [a-z]*: scheduling file `file1'\'' for addition
+'"${PROG}"' [a-z]*: use '\''cvs commit'\'' to add this file permanently'
+	  dotest_lit multibranch-3 "${testcvs} -q ci -m add-it" <<'HERE'
+RCS file: /tmp/cvs-sanity/cvsroot/first-dir/file1,v
+done
+Checking in file1;
+/tmp/cvs-sanity/cvsroot/first-dir/file1,v  <--  file1
+initial revision: 1.1
+done
+HERE
+	  dotest multibranch-4 "${testcvs} tag -b br1" \
+"${PROG} [a-z]*: Tagging \.
+T file1"
+	  dotest multibranch-5 "${testcvs} tag -b br2" \
+"${PROG} [a-z]*: Tagging \.
+T file1"
+	  dotest multibranch-6 "${testcvs} -q update -r br1" ''
+	  echo on-br1 >file1
+	  dotest multibranch-7 "${testcvs} -q ci -m modify-on-br1" \
+'Checking in file1;
+/tmp/cvs-sanity/cvsroot/first-dir/file1,v  <--  file1
+new revision: 1\.1\.2\.1; previous revision: 1\.1
+done'
+	  dotest multibranch-8 "${testcvs} -q update -r br2" '[UP] file1'
+	  echo br2 adds a line >>file1
+	  dotest multibranch-9 "${testcvs} -q ci -m modify-on-br2" \
+'Checking in file1;
+/tmp/cvs-sanity/cvsroot/first-dir/file1,v  <--  file1
+new revision: 1\.1\.4\.1; previous revision: 1\.1
+done'
+	  dotest multibranch-10 "${testcvs} -q update -r br1" '[UP] file1'
+	  dotest multibranch-11 "cat file1" 'on-br1'
+	  dotest multibranch-12 "${testcvs} -q update -r br2" '[UP] file1'
+	  dotest multibranch-13 "cat file1" '1:trunk-1
+br2 adds a line'
+
 	  cd ..
 
 	  if test "$keep" = yes; then

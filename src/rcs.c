@@ -3096,12 +3096,22 @@ invalid rcs file %s (`d' operand out of range)",
 		}
 
 		/* The next version we want is the entry on
-                   NODE->branches whose prefix is BRANCHVERSION.  */
+                   VERS->branches which matches this branch.  For
+                   example, suppose VERSION is 1.21.4.3 and
+                   BRANCHVERSION was 1.21.  Then we look for an entry
+                   starting with "1.21.4" and we'll put it (probably
+                   1.21.4.1) in NEXT.  We'll advance BRANCHVERSION by
+                   two dots (in this example, to 1.21.4.3).  */
+
 		if (vers->branches == NULL)
 		    error (1, 0, "missing expected branches in %s",
 			   rcs->path);
 		*cpversion = '.';
 		++cpversion;
+		cpversion = strchr (cpversion, '.');
+		if (cpversion == NULL)
+		    error (1, 0, "version number confusion in %s",
+			   rcs->path);
 		for (p = vers->branches->list->next;
 		     p != vers->branches->list;
 		     p = p->next)
@@ -3114,10 +3124,6 @@ invalid rcs file %s (`d' operand out of range)",
 
 		next = p->key;
 
-		cpversion = strchr (cpversion, '.');
-		if (cpversion == NULL)
-		    error (1, 0, "version number confusion in %s",
-			   rcs->path);
 		cpversion = strchr (cpversion + 1, '.');
 		if (cpversion != NULL)
 		    *cpversion = '\0';
