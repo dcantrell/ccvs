@@ -378,15 +378,13 @@ do_recursion (frame)
 		if (isreadable (CVSADM_TAG))
 		    lwhich |= W_ATTIC;
 
-	    /* The Find_Names function is going to look through the
+	    /* In the !(which & W_LOCAL) case, we filled in repository
+	       earlier in the function.  In the (which & W_LOCAL) case,
+	       the Find_Names function is going to look through the
 	       Entries file.  If we do not have a repository, that
 	       does not make sense, so we insist upon having a
 	       repository at this point.  Name_Repository will give a
 	       reasonable error message.  */
-	    /* In the !(which & W_LOCAL) case, Find_Names will not look at
-	       entries (which won't exist), and Name_Repository will just
-	       give an error.  Is there some reason why this is not an
-	       issue, or is there a subtle bug lurking here?  */
 	    if (repository == NULL)
 		repository = Name_Repository ((char *) NULL, update_dir);
 
