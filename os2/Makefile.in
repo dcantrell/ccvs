@@ -84,7 +84,6 @@ OS2_SOURCES = \
        ${srcdir}${SL}waitpid.c \
        ${srcdir}${SL}popen.c \
        ${srcdir}${SL}porttcp.c \
-       ${srcdir}${SL}strippath.c \
        ${srcdir}${SL}getdate.c \
        ${srcdir}${SL}getpass.c
 
@@ -171,7 +170,6 @@ OS2_OBJECTS = \
        ${srcdir}${SL}waitpid.obj \
        ${srcdir}${SL}popen.obj \
        ${srcdir}${SL}porttcp.obj \
-       ${srcdir}${SL}strippath.obj \
        ${srcdir}${SL}getdate.obj \
        ${srcdir}${SL}getpass.obj
 
