@@ -1,3 +1,8 @@
+2004-08-10  Derek Price  <derek@ximbiot.com>
+
+	* NEWS: Credit Juniper Networks funding for writeproxy code and add a
+	few other details.
+
 2004-08-05  Derek Price  <derek@ximbiot.com>
 
 	* configure.in (--enable-proxy): Switch to turn off writeproxy support.
