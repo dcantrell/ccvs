@@ -21,10 +21,9 @@
 #include "edit.h"
 
 int
-Checkin (type, finfo, rcs, rev, tag, options, message)
+Checkin (type, finfo, rev, tag, options, message)
     int type;
     struct file_info *finfo;
-    char *rcs;
     char *rev;
     char *tag;
     char *options;
