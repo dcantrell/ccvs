@@ -212,14 +212,10 @@ do_editor (char *dir, char **messagep, char *repository, List *changes)
     if (strcmp (Editor, "") == 0 && !editinfo_editor)
         error(1, 0, "no editor defined, must use -e or -m");
 
-    /* Create a temporary file */
-    /* FIXME - It's possible we should be relying on cvs_temp_file to open
-     * the file here - we get race conditions otherwise.
-     */
-    fname = cvs_temp_name ();
   again:
-    if ((fp = CVS_FOPEN (fname, "w+")) == NULL)
-	error (1, 0, "cannot create temporary file %s", fname);
+    /* Create a temporary file.  */
+    if( ( fp = cvs_temp_file( &fname ) ) == NULL )
+	error( 1, errno, "cannot create temporary file" );
 
     if (*messagep)
     {
