@@ -70,6 +70,9 @@ NEW FEATURES
   want to upgrade to use the new format. See the documentation in
   contrib/cvs_acls.html for more information.
 
+* Thanks to Dan Peterson <dbpete@aol.com>, the contrib/validate_repo script now
+  accepts and logs corrupted revision numbers in RCS archives.
+
 BUG FIXES
 
 * Thanks to a report from Dan Peterson <dbpete@aol.com>, attempts to resurrect
