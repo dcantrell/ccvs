@@ -1161,7 +1161,8 @@ VERS: ", 0);
 	    set_time =
 		(!noexec
 		 && (vers_ts->vn_user == NULL ||
-		     strncmp (vers_ts->ts_rcs, "Initial", 7) == 0));
+		     strncmp (vers_ts->ts_rcs, "Initial", 7) == 0)
+		 && !file_is_dead);
 
 	    wrap_fromcvs_process_file (finfo->file);
 
