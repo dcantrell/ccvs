@@ -30456,6 +30456,50 @@ EOF
 	  dotest writeproxy-init-3 \
 "$testcvs -Q ci -mconfigure-writeproxy"
 
+	  # Quickly verify that the server can resolve symlinks when
+	  # determining whether it is the primary.
+	  # This shouldn't actually change the repository.
+	  save_CVS_SERVER=$CVS_SERVER
+	  ln -s $PRIMARY_CVSROOT_DIRNAME $TESTDIR/primary_link
+	  dotest writeproxy-0 "$CVS_SERVER server" \
+"Valid-requests Root Valid-responses valid-requests Command-prep Referrer Repository Directory Relative-directory Max-dotdot Static-directory Sticky Entry Kopt Checkin-time Modified Is-modified UseUnchanged Unchanged Notify Hostname LocalDir Questionable Argument Argumentx Global_option Gzip-stream wrapper-sendme-rcsOptions Set Gssapi-authenticate expand-modules ci co update diff log rlog list rlist global-list-quiet ls add remove update-patches gzip-file-contents status rdiff tag rtag import admin export history release watch-on watch-off watch-add watch-remove watchers editors edit init annotate rannotate noop version
+ok
+ok
+ok" \
+<< EOF
+Root $TESTDIR/primary_link
+Valid-responses ok error Valid-requests Redirect Checked-in New-entry Checksum Copy-file Updated Created Update-existing Merged Patched Rcs-diff Mode Mod-time Removed Remove-entry Set-static-directory Clear-static-directory Set-sticky Clear-sticky Edit-file Template Clear-template Notified Module-expansion Wrapper-rcsOption M Mbinary E F MT
+valid-requests
+UseUnchanged
+Command-prep commit
+Global_option -q
+Global_option -Q
+Argument -m
+Argument configure-writeproxy
+Argument --
+Directory .
+CVSROOT
+Entry /checkoutlist/1.1///
+Modified checkoutlist
+u=rw,g=rw,o=r
+495
+# The "checkoutlist" file is used to support additional version controlled
+# administrative files in \$CVSROOT/CVSROOT, such as template files.
+#
+# The first entry on a line is a filename which will be checked out from
+# the corresponding RCS file in the \$CVSROOT/CVSROOT directory.
+# The remainder of the line is an error message to use if the file cannot
+# be checked out.
+#
+# File format:
+#
+#	[<whitespace>]<filename>[<whitespace><error message>]<end-of-line>
+#
+# comment lines begin with '#'
+ci
+EOF
+	  rm $TESTDIR/primary_link
+
 	  # And now the secondary.
 	  $RSYNC -gopr $PRIMARY_CVSROOT_DIRNAME/ $SECONDARY_CVSROOT_DIRNAME
 

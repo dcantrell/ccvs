@@ -504,6 +504,37 @@ supported_response (char *name)
 
 
 
+static inline bool
+same_path (const char *path1_in, const char *path2_in)
+{
+    char *p1, *p2;
+    bool same;
+
+    if (!strcmp (config->PrimaryServer->directory,
+		 current_parsed_root->directory))
+	return true;
+
+    /* Path didn't match, but try to resolve any links that may be
+     * present.
+     */
+    if (!isdir (path1_in) || !isdir (path2_in))
+	/* To be resolvable, paths must exist on this server.  */
+	return false;
+
+    p1 = xresolvepath (path1_in);
+    p2 = xresolvepath (path2_in);
+    if (strcmp (p1, p2))
+	same = false;
+    else
+	same = true;
+
+    free (p1);
+    free (p2);
+    return same;
+}
+
+
+
 /*
  * Return true if we need to relay write requests to a primary server
  * and false otherwise.
@@ -551,10 +582,10 @@ isProxyServer (void)
     /* The directory must not match for fork.  */
     if (config->PrimaryServer->method == fork_method)
     {
-	if (strcmp (config->PrimaryServer->directory,
-		    current_parsed_root->directory))
-	    return true;
-	return false;
+	if (same_path (config->PrimaryServer->directory,
+		       current_parsed_root->directory))
+	    return false;
+	return true;
     }
 
     /* Must be :ext: method, then.  This is enforced when CVSROOT/config is
@@ -569,9 +600,10 @@ isProxyServer (void)
 	gethostname (hostname, MAXHOSTNAMELEN);
 	hostname[MAXHOSTNAMELEN - 1] = '\0';
     }
+
     if (!strcmp (config->PrimaryServer->hostname, hostname)
-	&& !strcmp (config->PrimaryServer->directory,
-		    current_parsed_root->directory))
+	&& same_path (config->PrimaryServer->directory,
+		      current_parsed_root->directory))
 	return false;
 
     return true;

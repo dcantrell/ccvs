@@ -1,5 +1,12 @@
 2004-10-28 Derek Price <derek@ximbiot.com>
 
+	* server.c (same_path): New function.
+	(isProxyServer): Use new function.
+	* sanity.sh (writeproxy): Test that server resolves symlinks when
+	deciding whether it is a primary server.
+
+2004-10-28 Derek Price <derek@ximbiot.com>
+
 	* cvs.h (isdir, isfile, islink, isdevice, isreadable, iswritable,
 	isaccessible, isabsolute): Return boolean rather than int.
 	* filesubr.c (isdir, isfile, islink, isdevice, isreadable, iswritable,
