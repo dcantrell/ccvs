@@ -80,6 +80,7 @@ OS2_SOURCES = \
        ${srcdir}${SL}rcmd.c \
        ${srcdir}${SL}waitpid.c \
        ${srcdir}${SL}popen.c \
+       ${srcdir}${SL}porttcp.c \
        ${srcdir}${SL}strippath.c \
        ${srcdir}${SL}getdate.c \
        ${srcdir}${SL}getpass.c
@@ -96,9 +97,11 @@ COMMON_SOURCES = \
        ${cvs_srcdir}${SL}create_adm.c \
        ${cvs_srcdir}${SL}cvsrc.c \
        ${cvs_srcdir}${SL}diff.c \
+       ${cvs_srcdir}${SL}edit.c \
        ${cvs_srcdir}${SL}entries.c \
        ${cvs_srcdir}${SL}error.c \
        ${cvs_srcdir}${SL}expand_path.c \
+       ${cvs_srcdir}${SL}fileattr.c \
        ${cvs_srcdir}${SL}find_names.c \
        ${cvs_srcdir}${SL}hash.c \
        ${cvs_srcdir}${SL}history.c \
@@ -127,6 +130,7 @@ COMMON_SOURCES = \
        ${cvs_srcdir}${SL}subr.c \
        ${cvs_srcdir}${SL}tag.c \
        ${cvs_srcdir}${SL}update.c \
+       ${cvs_srcdir}${SL}watch.c \
        ${cvs_srcdir}${SL}wrapper.c \
        ${cvs_srcdir}${SL}vers_ts.c \
        ${cvs_srcdir}${SL}version.c
@@ -157,6 +161,7 @@ OS2_OBJECTS = \
        ${srcdir}${SL}rcmd.obj \
        ${srcdir}${SL}waitpid.obj \
        ${srcdir}${SL}popen.obj \
+       ${srcdir}${SL}porttcp.obj \
        ${srcdir}${SL}strippath.obj \
        ${srcdir}${SL}getdate.obj \
        ${srcdir}${SL}getpass.obj
@@ -173,9 +178,11 @@ COMMON_OBJECTS = \
        ${cvs_srcdir}${SL}create_adm.obj \
        ${cvs_srcdir}${SL}cvsrc.obj \
        ${cvs_srcdir}${SL}diff.obj \
+       ${cvs_srcdir}${SL}edit.obj \
        ${cvs_srcdir}${SL}entries.obj \
        ${cvs_srcdir}${SL}error.obj \
        ${cvs_srcdir}${SL}expand_path.obj \
+       ${cvs_srcdir}${SL}fileattr.obj \
        ${cvs_srcdir}${SL}find_names.obj \
        ${cvs_srcdir}${SL}hash.obj \
        ${cvs_srcdir}${SL}history.obj \
@@ -204,6 +211,7 @@ COMMON_OBJECTS = \
        ${cvs_srcdir}${SL}subr.obj \
        ${cvs_srcdir}${SL}tag.obj \
        ${cvs_srcdir}${SL}update.obj \
+       ${cvs_srcdir}${SL}watch.obj \
        ${cvs_srcdir}${SL}wrapper.obj \
        ${cvs_srcdir}${SL}vers_ts.obj \
        ${cvs_srcdir}${SL}version.obj
