@@ -1094,11 +1094,11 @@ read_hrecs (char *fname)
     for (;;)
     {
 	for (nl = cp; nl < cpend && *nl != '\n'; nl++)
-	    if (!isprint(*nl)) *nl = ' ';
+	    if (!isprint (*nl)) *nl = ' ';
 
 	if (nl >= cpend)
 	{
-	    if (nl - cp >= STAT_BLOCKSIZE(st_buf))
+	    if (nl - cp >= STAT_BLOCKSIZE (st_buf))
 	    {
 		error(1, 0, "history line %ld too long (> %lu)", hrec_idx + 1,
 		      (unsigned long) STAT_BLOCKSIZE(st_buf));
@@ -1126,7 +1126,7 @@ read_hrecs (char *fname)
 	    struct hrec *old_head = hrec_head;
 
 	    hrec_max += HREC_INCREMENT;
-	    hrec_head = xrealloc (hrec_head, hrec_max * sizeof (struct hrec));
+	    hrec_head = xnrealloc (hrec_head, hrec_max, sizeof (struct hrec));
 	    if (last_since_tag)
 		last_since_tag = hrec_head + (last_since_tag - old_head);
 	    if (last_backto)
@@ -1144,7 +1144,7 @@ read_hrecs (char *fname)
 	if (select_hrec (&hrec_head[hrec_count]))
 	    hrec_count++;
 	else 
-	    free(hrline);
+	    free (hrline);
 
 	cp = nl + 1;
     }

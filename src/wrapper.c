@@ -459,24 +459,24 @@ wrap_add (char *line, int isTemp)
 }
 
 void
-wrap_add_entry(WrapperEntry *e, int temp)
+wrap_add_entry (WrapperEntry *e, int temp)
 {
     int x;
-    if(wrap_count+wrap_tempcount>=wrap_size){
+    if (wrap_count + wrap_tempcount >= wrap_size)
+    {
 	wrap_size += WRAPPER_GROW;
-	wrap_list = (WrapperEntry **) xrealloc ((char *) wrap_list,
-						wrap_size *
-						sizeof (WrapperEntry *));
+	wrap_list = xnrealloc (wrap_list, wrap_size, sizeof (WrapperEntry *));
     }
 
-    if(!temp && wrap_tempcount){
-	for(x=wrap_count+wrap_tempcount-1;x>=wrap_count;--x)
-	    wrap_list[x+1]=wrap_list[x];
+    if (!temp && wrap_tempcount)
+    {
+	for (x = wrap_count + wrap_tempcount - 1; x >= wrap_count; --x)
+	    wrap_list[x + 1] = wrap_list[x];
     }
 
-    x=(temp ? wrap_count+(wrap_tempcount++):(wrap_count++));
-    wrap_list[x]=(WrapperEntry *)xmalloc(sizeof(WrapperEntry));
-    *wrap_list[x]=*e;
+    x = (temp ? wrap_count + (wrap_tempcount++) : (wrap_count++));
+    wrap_list[x] = xmalloc (sizeof (WrapperEntry));
+    *wrap_list[x] = *e;
 }
 
 /* Return 1 if the given filename is a wrapper filename */

@@ -129,13 +129,12 @@ arg_add (struct admin_data *dat, int opt, char *arg)
     if (dat->av_alloc == 0)
     {
 	dat->av_alloc = 1;
-	dat->av = (char **) xmalloc (dat->av_alloc * sizeof (*dat->av));
+	dat->av = xnmalloc (dat->av_alloc, sizeof (*dat->av));
     }
     else if (dat->ac >= dat->av_alloc)
     {
 	dat->av_alloc *= 2;
-	dat->av = (char **) xrealloc (dat->av,
-				      dat->av_alloc * sizeof (*dat->av));
+	dat->av = xnrealloc (dat->av, dat->av_alloc, sizeof (*dat->av));
     }
     dat->av[dat->ac++] = newelt;
 }
@@ -215,7 +214,7 @@ admin (int argc, char **argv)
     int err;
 #ifdef CVS_ADMIN_GROUP
     struct group *grp;
-    struct group *getgrnam(const char *);
+    struct group *getgrnam (const char *);
 #endif
     struct admin_data admin_data;
     int c;
@@ -264,11 +263,7 @@ admin (int argc, char **argv)
 		if (optarg == NULL)
 		    admin_data.branch = xstrdup ("-b");
 		else
-		{
-		    admin_data.branch = xmalloc (strlen (optarg) + 5);
-		    strcpy (admin_data.branch, "-b");
-		    strcat (admin_data.branch, optarg);
-		}
+		    admin_data.branch = Xasprintf ("-b%s", optarg);
 		break;
 
 	    case 'c':
@@ -277,9 +272,7 @@ admin (int argc, char **argv)
 		    error (0, 0, "duplicate 'c' option");
 		    goto usage_error;
 		}
-		admin_data.comment = xmalloc (strlen (optarg) + 5);
-		strcpy (admin_data.comment, "-c");
-		strcat (admin_data.comment, optarg);
+		admin_data.comment = Xasprintf ("-c%s", optarg);
 		break;
 
 	    case 'a':
@@ -371,9 +364,7 @@ admin (int argc, char **argv)
 		    error (0, 0, "duplicate '-o' option");
 		    goto usage_error;
 		}
-		admin_data.delete_revs = xmalloc (strlen (optarg) + 5);
-		strcpy (admin_data.delete_revs, "-o");
-		strcat (admin_data.delete_revs, optarg);
+		admin_data.delete_revs = Xasprintf ("-o%s", optarg);
 		break;
 
 	    case 's':
@@ -472,11 +463,11 @@ admin (int argc, char **argv)
 	n = getgroups (0, NULL);
 	if (n < 0)
 	    error (1, errno, "unable to get number of auxiliary groups");
-	grps = xmalloc ((n + 1) * sizeof *grps);
+	grps = xnmalloc (n + 1, sizeof *grps);
 	n = getgroups (n, grps);
 	if (n < 0)
 	    error (1, errno, "unable to get list of auxiliary groups");
-	grps[n] = getgid();
+	grps[n] = getgid ();
 	for (i = 0; i <= n; i++)
 	    if (grps[i] == grp->gr_gid) break;
 	free (grps);
@@ -484,12 +475,12 @@ admin (int argc, char **argv)
 	    error (1, 0, "usage is restricted to members of the group %s",
 		   CVS_ADMIN_GROUP);
 #else
-	char *me = getcaller();
+	char *me = getcaller ();
 	char **grnam;
 	
 	for (grnam = grp->gr_mem; *grnam; grnam++)
 	    if (strcmp (*grnam, me) == 0) break;
-	if (!*grnam && getgid() != grp->gr_gid)
+	if (!*grnam && getgid () != grp->gr_gid)
 	    error (1, 0, "usage is restricted to members of the group %s",
 		   CVS_ADMIN_GROUP);
 #endif

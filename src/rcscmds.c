@@ -129,9 +129,9 @@ call_diff_add_arg (const char *s)
     if (call_diff_argc >= call_diff_argc_allocated)
     {
 	call_diff_argc_allocated += 50;
-	call_diff_argv = (char **)
-	    xrealloc ((char *) call_diff_argv,
-		      call_diff_argc_allocated * sizeof (char **));
+	call_diff_argv = xnrealloc (call_diff_argv,
+				    call_diff_argc_allocated,
+				    sizeof (char **));
     }
 
     if (s)
