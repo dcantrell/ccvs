@@ -100,14 +100,6 @@ SOURCE=.\src\annotate.c
 # End Source File
 # Begin Source File
 
-SOURCE=.\lib\argmatch.c
-# End Source File
-# Begin Source File
-
-SOURCE=.\lib\asnprintf.c
-# End Source File
-# Begin Source File
-
 SOURCE=.\src\buffer.c
 # End Source File
 # Begin Source File
@@ -176,22 +168,6 @@ SOURCE=.\src\find_names.c
 # End Source File
 # Begin Source File
 
-SOURCE=.\lib\fncase.c
-# End Source File
-# Begin Source File
-
-SOURCE=.\lib\fnmatch.c
-# End Source File
-# Begin Source File
-
-SOURCE=.\lib\fseeko.c
-# End Source File
-# Begin Source File
-
-SOURCE=.\lib\ftello.c
-# End Source File
-# Begin Source File
-
 SOURCE=.\src\hash.c
 # End Source File
 # Begin Source File
@@ -233,10 +209,6 @@ SOURCE=.\src\ls.c
 # Begin Source File
 
 SOURCE=.\src\main.c
-# End Source File
-# Begin Source File
-
-SOURCE=.\lib\md5.c
 # End Source File
 # Begin Source File
 
@@ -316,19 +288,11 @@ SOURCE=".\windows-NT\run.c"
 # End Source File
 # Begin Source File
 
-SOURCE=.\lib\savecwd.c
-# End Source File
-# Begin Source File
-
 SOURCE=.\src\scramble.c
 # End Source File
 # Begin Source File
 
 SOURCE=.\src\server.c
-# End Source File
-# Begin Source File
-
-SOURCE=.\lib\sighandle.c
 # End Source File
 # Begin Source File
 
@@ -352,10 +316,6 @@ SOURCE=.\src\status.c
 # End Source File
 # Begin Source File
 
-SOURCE=.\lib\stripslash.c
-# End Source File
-# Begin Source File
-
 SOURCE=.\src\subr.c
 # End Source File
 # Begin Source File
@@ -365,14 +325,6 @@ SOURCE=.\src\tag.c
 # Begin Source File
 
 SOURCE=.\src\update.c
-# End Source File
-# Begin Source File
-
-SOURCE=.\lib\valloc.c
-# End Source File
-# Begin Source File
-
-SOURCE=.\lib\vasnprintf.c
 # End Source File
 # Begin Source File
 
@@ -400,22 +352,6 @@ SOURCE=.\src\wrapper.c
 # End Source File
 # Begin Source File
 
-SOURCE=.\lib\xgetwd.c
-# End Source File
-# Begin Source File
-
-SOURCE=.\lib\xmalloc.c
-# End Source File
-# Begin Source File
-
-SOURCE=.\lib\xstrdup.c
-# End Source File
-# Begin Source File
-
-SOURCE=.\lib\yesno.c
-# End Source File
-# Begin Source File
-
 SOURCE=.\src\zlib.c
 # End Source File
 # End Group
@@ -440,11 +376,23 @@ SOURCE=".\windows-NT\config.h"
 # End Source File
 # Begin Source File
 
+SOURCE=.\src\cvs.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\zlib\deflate.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\diff\diffrun.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\src\edit.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\lib\exit.h
 # End Source File
 # Begin Source File
 
@@ -460,7 +408,15 @@ SOURCE=.\lib\fnmatch.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\lib\getdate.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\lib\getline.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\lib\getnline.h
 # End Source File
 # Begin Source File
 
@@ -468,7 +424,19 @@ SOURCE=.\lib\getopt.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\lib\gettext.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\src\hardlink.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\src\hash.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\src\history.h
 # End Source File
 # Begin Source File
 
@@ -508,6 +476,10 @@ SOURCE=".\windows-NT\ndir.h"
 # End Source File
 # Begin Source File
 
+SOURCE=.\lib\pathmax.h
+# End Source File
+# Begin Source File
+
 SOURCE=".\lib\printf-args.h"
 # End Source File
 # Begin Source File
@@ -529,6 +501,10 @@ SOURCE=.\src\rcs.h
 # Begin Source File
 
 SOURCE=.\lib\regex.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\src\root.h
 # End Source File
 # Begin Source File
 
@@ -556,6 +532,22 @@ SOURCE=".\windows-NT\stdbool.h"
 # End Source File
 # Begin Source File
 
+SOURCE=.\lib\system.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\lib\timespec.h
+# End Source File
+# Begin Source File
+
+SOURCE=".\windows-NT\unistd.h"
+# End Source File
+# Begin Source File
+
+SOURCE=".\lib\unlocked-io.h"
+# End Source File
+# Begin Source File
+
 SOURCE=.\src\update.h
 # End Source File
 # Begin Source File
@@ -564,7 +556,23 @@ SOURCE=.\lib\vasnprintf.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\lib\wait.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\src\watch.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\lib\xalloc.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\zlib\zconf.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\zlib\zlib.h
 # End Source File
 # Begin Source File
 
