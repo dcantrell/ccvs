@@ -1,5 +1,9 @@
 2003-02-07  Derek Price  <derek@ximbiot.com>
 
+	* rcscmds (RCS_merge): Add a FIXME.
+
+2003-02-07  Derek Price  <derek@ximbiot.com>
+
 	* commit.c (checkaddfile): Do not lose the vendor branch when
 	adding files to a new branch. Avoids extranious conflicts for
 	future vendor imports. This was found and fixed in FreeBSD cvs.

@@ -254,7 +254,9 @@ RCS_merge(rcs, path, workfile, options, rev1, rev2)
     cvs_output ("\n", 1);
 
     /* Calculate numeric revision numbers from rev1 and rev2 (may be
-       symbolic). */
+       symbolic).
+       FIXME - No they can't.  Both calls to RCS_merge are passing in
+       numeric revisions.  */
     xrev1 = RCS_gettag (rcs, rev1, 0, NULL);
     xrev2 = RCS_gettag (rcs, rev2, 0, NULL);
 
