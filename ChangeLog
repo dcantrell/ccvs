@@ -1,3 +1,11 @@
+2000-11-29  Derek Price  <derek.price@openavenue.com>
+	    Stephen Kennedy  <Stephen.Kennedy@havok.com>
+
+	* cvs.spec (build, post, preun): remove an old, commented out
+	line and replace hardcoded paths with _infodir and _bindir as
+	appropriate
+	(files): replace file list with more generic and succinct one
+
 2000-11-15  Derek Price  <derek.price@openavenue.com>
 
 	* TODO (198): added note about deprecating cvs_temp_name
