@@ -862,9 +862,6 @@ check_fileproc (callerdat, finfo)
 	    }
 	    if (status == T_MODIFIED && !force_ci && vers->ts_conflict)
 	    {
-		char *filestamp;
-		int retcode;
-
 		/*
 		 * We found a "conflict" marker.
 		 *
