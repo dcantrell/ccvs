@@ -4328,6 +4328,19 @@ The examples below assume that the file @var{old} is renamed to
 @node Outside
 @section The Normal way to Rename
 
+@c More rename issues.  Not sure whether these are
+@c worth documenting; I'm putting them here because
+@c it seems to be as good a place as any to try to
+@c set down the issues.
+@c * "cvs annotate" will annotate either the new
+@c file or the old file; it cannot annotate _each
+@c line_ based on whether it was last changed in the
+@c new or old file.  Unlike "cvs log", where the
+@c consequences of having to select either the new
+@c or old name seem fairly benign, this may be a
+@c real advantage to having CVS know about renames
+@c other than as a deletion and an addition.
+
 The normal way to move a file is to copy @var{old} to
 @var{new}, and then issue the normal @sc{cvs} commands
 to remove @var{old} from the repository, and add
