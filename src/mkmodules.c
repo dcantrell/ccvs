@@ -452,11 +452,13 @@ mkmodules (dir)
 		*last = '\0';			/* strip the newline */
 
 	    /* Skip leading white space. */
-	    for (fname = line; *fname && isspace(*fname); fname++)
+	    for (fname = line;
+		 *fname && isspace ((unsigned char) *fname);
+		 fname++)
 		;
 
 	    /* Find end of filename. */
-	    for (cp = fname; *cp && !isspace(*cp); cp++)
+	    for (cp = fname; *cp && !isspace ((unsigned char) *cp); cp++)
 		;
 	    *cp = '\0';
 
@@ -467,7 +469,9 @@ mkmodules (dir)
 	    }
 	    else
 	    {
-		for (cp++; cp < last && *last && isspace(*last); cp++)
+		for (cp++;
+		     cp < last && *last && isspace ((unsigned char) *last);
+		     cp++)
 		    ;
 		if (cp < last && *cp)
 		    error (0, 0, cp, fname);
@@ -612,7 +616,7 @@ write_dbmfile (temp)
 	if (value[0] == '#')
 	    continue;			/* comment line */
 	vp = value;
-	while (*vp && isspace (*vp))
+	while (*vp && isspace ((unsigned char) *vp))
 	    vp++;
 	if (*vp == '\0')
 	    continue;			/* empty line */
@@ -623,11 +627,11 @@ write_dbmfile (temp)
 	if (!cont)
 	{
 	    key.dptr = vp;
-	    while (*vp && !isspace (*vp))
+	    while (*vp && !isspace ((unsigned char) *vp))
 		vp++;
 	    key.dsize = vp - key.dptr;
 	    *vp++ = '\0';		/* NULL terminate the key */
-	    while (*vp && isspace (*vp))
+	    while (*vp && isspace ((unsigned char) *vp))
 		vp++;			/* skip whitespace to value */
 	    if (*vp == '\0')
 	    {
