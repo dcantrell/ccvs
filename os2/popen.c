@@ -331,13 +331,13 @@ popenRW (const char  *Command, FILE **Pipes)
         return FALSE;
     }
   
-    if ((Pipes[0] = fdopen (In2, "w")) == NULL)
+    if ((Pipes[0] = fdopen (In2, "wb")) == NULL)
     {
         fprintf (stderr, "popenRW(): Errno %d: %s\n",
              errno, strerror (errno));
         return FALSE;
     }
-    else if ((Pipes[1] = fdopen (Out2, "r")) == NULL)
+    else if ((Pipes[1] = fdopen (Out2, "rb")) == NULL)
     {
         fclose (Pipes[0]);
         fprintf (stderr, "popenRW(): Errno %d: %s\n",

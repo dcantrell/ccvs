@@ -259,7 +259,7 @@ dist-dir:
 	done
 
 clean:
-	del *.obj cvs.exe
+	rm -f *.obj cvs.exe
 
 %.obj: %.c
 	icc ${OBJ_CFLAGS} ${CFLAGS} /Fo$@ $*.c
