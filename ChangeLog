@@ -1,3 +1,7 @@
+Mon Oct 20 15:23:17 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* BUGS: Add item about spaces in login names.
+
 Mon Oct 20 10:25:42 1997  Hannes R. Boehm  <hannes@boehm.org>
 
 	* INSTALL (Tested platforms): Add Red Hat Linux 4.2.
