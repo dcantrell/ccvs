@@ -22,8 +22,21 @@ sub save_edit
     }
     else
     {
+	my $mode;
+	unless (-w $file_name)
+	{
+	    $mode = (stat $file_name)[2];
+	    chmod 0400, $file_name
+		or warn "Failed to set ", $file_name, " writable: $!";
+	}
 	mv $temp_name, $file_name
 	    or die "Failed to rename ", $temp_name, " to ", $file_name, ": $!";
+	if (defined $mode)
+	{
+	    chmod $mode, $file_name
+		or warn "Failed to restore permissions on ", $file_name, ": $!";
+	}
+
 	print "save edit: ", $file_name, "\n";
     }
 }
