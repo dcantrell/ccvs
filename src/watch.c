@@ -215,20 +215,23 @@ watch_modify_watchers (file, what)
 	free (mynewattr);
 }
 
-static int addremove_fileproc PROTO ((struct file_info *finfo));
+static int addremove_fileproc PROTO ((void *callerdat,
+				      struct file_info *finfo));
 
 static int
-addremove_fileproc (finfo)
+addremove_fileproc (callerdat, finfo)
+    void *callerdat;
     struct file_info *finfo;
 {
     watch_modify_watchers (finfo->file, &the_args);
     return 0;
 }
 
-static int addremove_filesdoneproc PROTO ((int, char *, char *));
+static int addremove_filesdoneproc PROTO ((void *, int, char *, char *));
 
 static int
-addremove_filesdoneproc (err, repository, update_dir)
+addremove_filesdoneproc (callerdat, err, repository, update_dir)
+    void *callerdat;
     int err;
     char *repository;
     char *update_dir;
@@ -348,7 +351,7 @@ watch_addremove (argc, argv)
     lock_tree_for_write (argc, argv, local, 0);
 
     err = start_recursion (addremove_fileproc, addremove_filesdoneproc,
-			   (DIRENTPROC) NULL, (DIRLEAVEPROC) NULL,
+			   (DIRENTPROC) NULL, (DIRLEAVEPROC) NULL, NULL,
 			   argc, argv, local, W_LOCAL, 0, 0, (char *)NULL,
 			   1);
 
@@ -416,10 +419,12 @@ static const char *const watchers_usage[] =
     NULL
 };
 
-static int watchers_fileproc PROTO ((struct file_info *finfo));
+static int watchers_fileproc PROTO ((void *callerdat,
+				     struct file_info *finfo));
 
 static int
-watchers_fileproc (finfo)
+watchers_fileproc (callerdat, finfo)
+    void *callerdat;
     struct file_info *finfo;
 {
     char *them;
@@ -515,7 +520,7 @@ watchers (argc, argv)
 #endif /* CLIENT_SUPPORT */
 
     return start_recursion (watchers_fileproc, (FILESDONEPROC) NULL,
-			    (DIRENTPROC) NULL, (DIRLEAVEPROC) NULL,
+			    (DIRENTPROC) NULL, (DIRLEAVEPROC) NULL, NULL,
 			    argc, argv, local, W_LOCAL, 0, 1, (char *)NULL,
 			    1);
 }

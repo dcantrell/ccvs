@@ -10,8 +10,9 @@
 
 #include "cvs.h"
 
-static Dtype status_dirproc PROTO((char *dir, char *repos, char *update_dir));
-static int status_fileproc PROTO((struct file_info *finfo));
+static Dtype status_dirproc PROTO ((void *callerdat, char *dir,
+				    char *repos, char *update_dir));
+static int status_fileproc PROTO ((void *callerdat, struct file_info *finfo));
 static int tag_list_proc PROTO((Node * p, void *closure));
 
 static int local = 0;
@@ -87,8 +88,9 @@ status (argc, argv)
 #endif
 
     /* start the recursion processor */
-    err = start_recursion (status_fileproc, (FILESDONEPROC) NULL, status_dirproc,
-			   (DIRLEAVEPROC) NULL, argc, argv, local,
+    err = start_recursion (status_fileproc, (FILESDONEPROC) NULL,
+			   status_dirproc, (DIRLEAVEPROC) NULL, NULL,
+			   argc, argv, local,
 			   W_LOCAL, 0, 1, (char *) NULL, 1);
 
     return (err);
@@ -99,7 +101,8 @@ status (argc, argv)
  */
 /* ARGSUSED */
 static int
-status_fileproc (finfo)
+status_fileproc (callerdat, finfo)
+    void *callerdat;
     struct file_info *finfo;
 {
     Ctype status;
@@ -292,7 +295,8 @@ status_fileproc (finfo)
  */
 /* ARGSUSED */
 static Dtype
-status_dirproc (dir, repos, update_dir)
+status_dirproc (callerdat, dir, repos, update_dir)
+    void *callerdat;
     char *dir;
     char *repos;
     char *update_dir;

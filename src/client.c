@@ -3755,11 +3755,12 @@ send_modified (file, short_pathname, vers)
     free (mode_string);
 }
 
-static int send_fileproc PROTO ((struct file_info *finfo));
+static int send_fileproc PROTO ((void *callerdat, struct file_info *finfo));
 
 /* Deal with one file.  */
 static int
-send_fileproc (finfo)
+send_fileproc (callerdat, finfo)
+    void *callerdat;
     struct file_info *finfo;
 {
     Vers_TS *vers;
@@ -3877,10 +3878,11 @@ send_ignproc (file, dir)
     }
 }
 
-static int send_filesdoneproc PROTO ((int, char *, char *));
+static int send_filesdoneproc PROTO ((void *, int, char *, char *));
 
 static int
-send_filesdoneproc (err, repository, update_dir)
+send_filesdoneproc (callerdat, err, repository, update_dir)
+    void *callerdat;
     int err;
     char *repository;
     char *update_dir;
@@ -3895,7 +3897,7 @@ send_filesdoneproc (err, repository, update_dir)
     return (err);
 }
 
-static Dtype send_dirent_proc PROTO ((char *, char *, char *));
+static Dtype send_dirent_proc PROTO ((void *, char *, char *, char *));
 
 /*
  * send_dirent_proc () is called back by the recursion processor before a
@@ -3906,7 +3908,8 @@ static Dtype send_dirent_proc PROTO ((char *, char *, char *));
  *
  */
 static Dtype
-send_dirent_proc (dir, repository, update_dir)
+send_dirent_proc (callerdat, dir, repository, update_dir)
+    void *callerdat;
     char *dir;
     char *repository;
     char *update_dir;
@@ -4123,7 +4126,7 @@ send_files (argc, argv, local, aflag)
      */
     err = start_recursion
 	(send_fileproc, send_filesdoneproc,
-	 send_dirent_proc, (DIRLEAVEPROC)NULL,
+	 send_dirent_proc, (DIRLEAVEPROC)NULL, NULL,
 	 argc, argv, local, W_LOCAL, aflag, 0, (char *)NULL, 0);
     if (err)
 	exit (EXIT_FAILURE);

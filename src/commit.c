@@ -19,15 +19,19 @@
 #include "edit.h"
 #include "fileattr.h"
 
-static Dtype check_direntproc PROTO((char *dir, char *repos, char *update_dir));
-static int check_fileproc PROTO((struct file_info *finfo));
-static int check_filesdoneproc PROTO((int err, char *repos, char *update_dir));
+static Dtype check_direntproc PROTO ((void *callerdat, char *dir,
+				      char *repos, char *update_dir));
+static int check_fileproc PROTO ((void *callerdat, struct file_info *finfo));
+static int check_filesdoneproc PROTO ((void *callerdat, int err,
+				       char *repos, char *update_dir));
 static int checkaddfile PROTO((char *file, char *repository, char *tag,
 			       char *options, RCSNode **rcsnode)); 
-static Dtype commit_direntproc PROTO((char *dir, char *repos, char *update_dir));
-static int commit_dirleaveproc PROTO((char *dir, int err, char *update_dir));
-static int commit_fileproc PROTO((struct file_info *finfo));
-static int commit_filesdoneproc PROTO((int err, char *repository, char *update_dir));
+static Dtype commit_direntproc PROTO ((void *callerdat, char *dir, char *repos, char *update_dir));
+static int commit_dirleaveproc PROTO ((void *callerdat, char *dir,
+				       int err, char *update_dir));
+static int commit_fileproc PROTO ((void *callerdat, struct file_info *finfo));
+static int commit_filesdoneproc PROTO ((void *callerdat, int err,
+					char *repository, char *update_dir));
 static int finaladd PROTO((struct file_info *finfo, char *revision, char *tag,
 			   char *options));
 static int findmaxrev PROTO((Node * p, void *closure));
@@ -114,23 +118,26 @@ struct find_data {
     char *repository;
 };
 
-/* Pass as a static until we get around to fixing start_recursion to
-   pass along a void * where we can stash it.  */
-struct find_data *find_data_static;
-
-static Dtype find_dirent_proc PROTO ((char *dir, char *repository,
-				      char *update_dir));
+static Dtype find_dirent_proc PROTO ((void *callerdat, char *dir,
+				      char *repository, char *update_dir));
 
 static Dtype
-find_dirent_proc (dir, repository, update_dir)
+find_dirent_proc (callerdat, dir, repository, update_dir)
+    void *callerdat;
     char *dir;
     char *repository;
     char *update_dir;
 {
+    struct find_data *find_data = (struct find_data *)callerdat;
+
     /* initialize the ignore list for this directory */
-    find_data_static->ignlist = getlist ();
+    find_data->ignlist = getlist ();
     return R_PROCESS;
 }
+
+/* Here as a static until we get around to fixing ignore_files to pass
+   it along as an argument.  */
+static struct find_data *find_data_static;
 
 static void find_ignproc PROTO ((char *, char *));
 
@@ -149,43 +156,47 @@ find_ignproc (file, dir)
     find_data_static->questionables = p;
 }
 
-static int find_filesdoneproc PROTO ((int err, char *repository,
-				      char *update_dir));
+static int find_filesdoneproc PROTO ((void *callerdat, int err,
+				      char *repository, char *update_dir));
 
 static int
-find_filesdoneproc (err, repository, update_dir)
+find_filesdoneproc (callerdat, err, repository, update_dir)
+    void *callerdat;
     int err;
     char *repository;
     char *update_dir;
 {
-    find_data_static->repository = repository;
+    struct find_data *find_data = (struct find_data *)callerdat;
+    find_data->repository = repository;
 
     /* if this directory has an ignore list, process it then free it */
-    if (find_data_static->ignlist)
+    if (find_data->ignlist)
     {
-	ignore_files (find_data_static->ignlist, update_dir, find_ignproc);
-	dellist (&find_data_static->ignlist);
+	find_data_static = find_data;
+	ignore_files (find_data->ignlist, update_dir, find_ignproc);
+	dellist (&find_data->ignlist);
     }
 
-    find_data_static->repository = NULL;
+    find_data->repository = NULL;
 
     return err;
 }
 
-static int find_fileproc PROTO ((struct file_info *finfo));
+static int find_fileproc PROTO ((void *callerdat, struct file_info *finfo));
 
 /* Machinery to find out what is modified, added, and removed.  It is
    possible this should be broken out into a new client_classify function;
    merging it with classify_file is almost sure to be a mess, though,
    because classify_file has all kinds of repository processing.  */
 static int
-find_fileproc (finfo)
+find_fileproc (callerdat, finfo)
+    void *callerdat;
     struct file_info *finfo;
 {
     Vers_TS *vers;
     enum classify_type status;
     Node *node;
-    struct find_data *args = find_data_static;
+    struct find_data *args = (struct find_data *)callerdat;
     struct file_info xfinfo;
 
     /* if this directory has an ignore list, add this file to it */
@@ -393,9 +404,9 @@ commit (argc, argv)
 	find_args.ignlist = NULL;
 	find_args.repository = NULL;
 
-	find_data_static = &find_args;
 	err = start_recursion (find_fileproc, find_filesdoneproc,
 			       find_dirent_proc, (DIRLEAVEPROC) NULL,
+			       (void *)&find_args,
 			       argc, argv, local, W_LOCAL, 0, 0,
 			       (char *)NULL, 0);
 	if (err)
@@ -516,7 +527,7 @@ commit (argc, argv)
      * Run the recursion processor to verify the files are all up-to-date
      */
     err = start_recursion (check_fileproc, check_filesdoneproc,
-			   check_direntproc, (DIRLEAVEPROC) NULL, argc,
+			   check_direntproc, (DIRLEAVEPROC) NULL, NULL, argc,
 			   argv, local, W_LOCAL, aflag, 0, (char *) NULL, 1);
     if (err)
     {
@@ -529,7 +540,7 @@ commit (argc, argv)
      */
     if (noexec == 0)
 	err = start_recursion (commit_fileproc, commit_filesdoneproc,
-			       commit_direntproc, commit_dirleaveproc,
+			       commit_direntproc, commit_dirleaveproc, NULL,
 			       argc, argv, local, W_LOCAL, aflag, 0,
 			       (char *) NULL, 1);
 
@@ -559,7 +570,8 @@ commit (argc, argv)
  */
 /* ARGSUSED */
 static int
-check_fileproc (finfo)
+check_fileproc (callerdat, finfo)
+    void *callerdat;
     struct file_info *finfo;
 {
     Ctype status;
@@ -865,7 +877,8 @@ check_fileproc (finfo)
  */
 /* ARGSUSED */
 static Dtype
-check_direntproc (dir, repos, update_dir)
+check_direntproc (callerdat, dir, repos, update_dir)
+    void *callerdat;
     char *dir;
     char *repos;
     char *update_dir;
@@ -932,7 +945,8 @@ precommit_proc (repository, filter)
  */
 /* ARGSUSED */
 static int
-check_filesdoneproc (err, repos, update_dir)
+check_filesdoneproc (callerdat, err, repos, update_dir)
+    void *callerdat;
     int err;
     char *repos;
     char *update_dir;
@@ -969,7 +983,8 @@ static char sbranch[PATH_MAX];
 
 /* ARGSUSED */
 static int
-commit_fileproc (finfo)
+commit_fileproc (callerdat, finfo)
+    void *callerdat;
     struct file_info *finfo;
 {
     Node *p;
@@ -1125,7 +1140,8 @@ out:
  */
 /* ARGSUSED */
 static int
-commit_filesdoneproc (err, repository, update_dir)
+commit_filesdoneproc (callerdat, err, repository, update_dir)
+    void *callerdat;
     int err;
     char *repository;
     char *update_dir;
@@ -1230,7 +1246,8 @@ commit_filesdoneproc (err, repository, update_dir)
  */
 /* ARGSUSED */
 static Dtype
-commit_direntproc (dir, repos, update_dir)
+commit_direntproc (callerdat, dir, repos, update_dir)
+    void *callerdat;
     char *dir;
     char *repos;
     char *update_dir;
@@ -1270,7 +1287,8 @@ commit_direntproc (dir, repos, update_dir)
  */
 /* ARGSUSED */
 static int
-commit_dirleaveproc (dir, err, update_dir)
+commit_dirleaveproc (callerdat, dir, err, update_dir)
+    void *callerdat;
     char *dir;
     int err;
     char *update_dir;

@@ -513,10 +513,13 @@ struct file_info
     RCSNode *rcs;
 };
 
-typedef	int (*FILEPROC)		PROTO((struct file_info *finfo));
-typedef	int (*FILESDONEPROC)	PROTO((int err, char *repository, char *update_dir));
-typedef	Dtype (*DIRENTPROC)	PROTO((char *dir, char *repos, char *update_dir));
-typedef	int (*DIRLEAVEPROC)	PROTO((char *dir, int err, char *update_dir));
+typedef	int (*FILEPROC) PROTO ((void *callerdat, struct file_info *finfo));
+typedef	int (*FILESDONEPROC) PROTO ((void *callerdat, int err,
+				     char *repository, char *update_dir));
+typedef	Dtype (*DIRENTPROC) PROTO ((void *callerdat, char *dir,
+				    char *repos, char *update_dir));
+typedef	int (*DIRLEAVEPROC) PROTO ((void *callerdat, char *dir, int err,
+				    char *update_dir));
 
 extern int mkmodules PROTO ((char *dir));
 extern int init PROTO ((int argc, char **argv));
@@ -528,6 +531,7 @@ void history_write PROTO((int type, char *update_dir, char *revs, char *name,
 		    char *repository));
 int start_recursion PROTO((FILEPROC fileproc, FILESDONEPROC filesdoneproc,
 		     DIRENTPROC direntproc, DIRLEAVEPROC dirleaveproc,
+		     void *callerdat,
 		     int argc, char *argv[], int local, int which,
 		     int aflag, int readlock, char *update_preload,
 		     int dosrcs));

@@ -603,8 +603,8 @@ lock_obtained (repos)
     error (0, 0, "[%8.8s] obtained lock in %s", ctime (&now) + 11, repos);
 }
 
-static int lock_filesdoneproc PROTO ((int err, char *repository,
-				      char *update_dir));
+static int lock_filesdoneproc PROTO ((void *callerdat, int err,
+				      char *repository, char *update_dir));
 static int fsortcmp PROTO((const Node * p, const Node * q));
 
 static List *lock_tree_list;
@@ -614,7 +614,8 @@ static List *lock_tree_list;
  */
 /* ARGSUSED */
 static int
-lock_filesdoneproc (err, repository, update_dir)
+lock_filesdoneproc (callerdat, err, repository, update_dir)
+    void *callerdat;
     int err;
     char *repository;
     char *update_dir;
@@ -655,7 +656,7 @@ lock_tree_for_write (argc, argv, local, aflag)
      */
     lock_tree_list = getlist ();
     err = start_recursion ((FILEPROC) NULL, lock_filesdoneproc,
-			   (DIRENTPROC) NULL, (DIRLEAVEPROC) NULL, argc,
+			   (DIRENTPROC) NULL, (DIRLEAVEPROC) NULL, NULL, argc,
 			   argv, local, W_LOCAL, aflag, 0, (char *) NULL, 0);
     sortlist (lock_tree_list, fsortcmp);
     if (Writer_Lock (lock_tree_list) != 0)

@@ -53,11 +53,13 @@ static int isemptydir PROTO((char *dir));
 static int merge_file PROTO ((struct file_info *finfo, Vers_TS *vers));
 static int scratch_file PROTO((char *file, char *repository, List * entries,
 			 char *update_dir));
-static Dtype update_dirent_proc PROTO((char *dir, char *repository, char *update_dir));
-static int update_dirleave_proc PROTO((char *dir, int err, char *update_dir));
-static int update_fileproc PROTO ((struct file_info *));
-static int update_filesdone_proc PROTO((int err, char *repository,
-					char *update_dir));
+static Dtype update_dirent_proc PROTO ((void *callerdat, char *dir,
+					char *repository, char *update_dir));
+static int update_dirleave_proc PROTO ((void *callerdat, char *dir,
+					int err, char *update_dir));
+static int update_fileproc PROTO ((void *callerdat, struct file_info *));
+static int update_filesdone_proc PROTO ((void *callerdat, int err,
+					 char *repository, char *update_dir));
 static int write_letter PROTO((char *file, int letter, char *update_dir));
 #ifdef SERVER_SUPPORT
 static void join_file PROTO ((struct file_info *finfo, Vers_TS *vers_ts,
@@ -396,7 +398,7 @@ do_update (argc, argv, xoptions, xtag, xdate, xforce, local, xbuild, xaflag,
 
     /* call the recursion processor */
     err = start_recursion (update_fileproc, update_filesdone_proc,
-			   update_dirent_proc, update_dirleave_proc,
+			   update_dirent_proc, update_dirleave_proc, NULL,
 			   argc, argv, local, which, aflag, 1,
 			   preload_update_dir, 1);
 
@@ -425,7 +427,8 @@ do_update (argc, argv, xoptions, xtag, xdate, xforce, local, xbuild, xaflag,
  * appropriate magic for checkout
  */
 static int
-update_fileproc (finfo)
+update_fileproc (callerdat, finfo)
+    void *callerdat;
     struct file_info *finfo;
 {
     int retval;
@@ -661,7 +664,8 @@ update_ignproc (file, dir)
 
 /* ARGSUSED */
 static int
-update_filesdone_proc (err, repository, update_dir)
+update_filesdone_proc (callerdat, err, repository, update_dir)
+    void *callerdat;
     int err;
     char *repository;
     char *update_dir;
@@ -705,7 +709,8 @@ update_filesdone_proc (err, repository, update_dir)
  * recursion code should skip this directory.
  */
 static Dtype
-update_dirent_proc (dir, repository, update_dir)
+update_dirent_proc (callerdat, dir, repository, update_dir)
+    void *callerdat;
     char *dir;
     char *repository;
     char *update_dir;
@@ -808,7 +813,8 @@ update_dirent_proc (dir, repository, update_dir)
  */
 /* ARGSUSED */
 static int
-update_dirleave_proc (dir, err, update_dir)
+update_dirleave_proc (callerdat, dir, err, update_dir)
+    void *callerdat;
     char *dir;
     int err;
     char *update_dir;
