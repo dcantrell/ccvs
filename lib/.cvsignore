@@ -1,2 +1,3 @@
-Makefile
 .pure
+Makefile
+getdate.c
