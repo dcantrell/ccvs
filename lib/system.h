@@ -476,7 +476,7 @@ extern int errno;
 #ifdef WOE32
   /* Under Windows NT, filenames are case-insensitive.  */
 # define FILENAMES_CASE_INSENSITIVE 1
-#endif /* __CYGWIN__ || WOE32 */
+#endif /* WOE32 */
 
 
 
