@@ -12956,6 +12956,10 @@ ${TESTDIR}/cvsroot/first-dir/file1,v"
 "${PROG} [a-z]*: Logging \.
 ${PROG} [a-z]*: Logging first-dir
 ${TESTDIR}/cvsroot/first-dir/file1,v"
+	  dotest logopt-6a "${testcvs} log -Rd 2038-01-01" \
+"${PROG} [a-z]*: Logging \.
+${PROG} [a-z]*: Logging first-dir
+${TESTDIR}/cvsroot/first-dir/file1,v"
 	  dotest logopt-7 "${testcvs} log -s Exp -R" \
 "${PROG} [a-z]*: Logging \.
 ${PROG} [a-z]*: Logging first-dir

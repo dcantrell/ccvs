@@ -149,6 +149,43 @@ static const char *const log_usage[] =
     NULL
 };
 
+/* Helper function for send_arg_list.  */
+static int send_one PROTO ((Node *, void *));
+
+static int
+send_one (node, closure)
+    Node *node;
+    void *closure;
+{
+    char *option = (char *) closure;
+
+    send_to_server ("Argument ", 0);
+    send_to_server (option, 0);
+    if (strcmp (node->key, "@@MYSELF") == 0)
+	/* It is a bare -w option.  Note that we must send it as
+	   -w rather than messing with getcaller() or something (which on
+	   the client will return garbage).  */
+	;
+    else
+	send_to_server (node->key, 0);
+    send_to_server ("\012", 0);
+    return 0;
+}
+
+/* For each element in ARG, send an argument consisting of OPTION
+   concatenated with that element.  */
+static void send_arg_list PROTO ((char *, List *));
+
+static void
+send_arg_list (option, arg)
+    char *option;
+    List *arg;
+{
+    if (arg == NULL)
+	return;
+    walklist (arg, send_one, (void *)option);
+}
+
 int
 cvslog (argc, argv)
     int argc;
@@ -206,7 +243,7 @@ cvslog (argc, argv)
 		if (optarg != NULL)
 		    log_parse_list (&log_data.authorlist, optarg);
 		else
-		    log_parse_list (&log_data.authorlist, getcaller ());
+		    log_parse_list (&log_data.authorlist, "@@MYSELF");
 		break;
 	    case '?':
 	    default:
@@ -220,28 +257,87 @@ cvslog (argc, argv)
 #ifdef CLIENT_SUPPORT
     if (client_active)
     {
-	int i;
+	struct datelist *p;
+	struct option_revlist *rp;
+	char datetmp[MAXDATELEN];
 
 	/* We're the local client.  Fire up the remote server.  */
 	start_server ();
 	
 	ign_setup ();
 
-	for (i = 1; i < argc && argv[i][0] == '-'; i++)
-	{
-	    send_arg (argv[i]);
-	    if ((argv[i][1] == 'd' || argv[i][1] == 's') && argv[i][2] == '\0')
-		send_arg (argv[++i]);
-	}
+	if (log_data.default_branch)
+	    send_arg ("-b");
 
-	send_files (argc - i, argv + i, local, 0, SEND_NO_CONTENTS);
-	send_file_names (argc - i, argv + i, SEND_EXPAND_WILD);
+	for (p = log_data.datelist; p != NULL; p = p->next)
+	{
+	    send_to_server ("Argument -d\012", 0);
+	    send_to_server ("Argument ", 0);
+	    date_to_internet (datetmp, p->start);
+	    send_to_server (datetmp, 0);
+	    if (p->inclusive)
+		send_to_server ("<=", 0);
+	    else
+		send_to_server ("<", 0);
+	    date_to_internet (datetmp, p->end);
+	    send_to_server (datetmp, 0);
+	    send_to_server ("\012", 0);
+	}
+	for (p = log_data.singledatelist; p != NULL; p = p->next)
+	{
+	    send_to_server ("Argument -d\012", 0);
+	    send_to_server ("Argument ", 0);
+	    date_to_internet (datetmp, p->end);
+	    send_to_server (datetmp, 0);
+	    send_to_server ("\012", 0);
+	}
+	    
+	if (log_data.header)
+	    send_arg ("-h");
+	if (local)
+	    send_arg("-l");
+	if (log_data.notags)
+	    send_arg("-N");
+	if (log_data.nameonly)
+	    send_arg("-R");
+	if (log_data.long_header)
+	    send_arg("-t");
+
+	for (rp = log_data.revlist; rp != NULL; rp = rp->next)
+	{
+	    send_to_server ("Argument -r", 0);
+	    if (rp->branchhead)
+	    {
+		if (rp->first != NULL)
+		    send_to_server (rp->first, 0);
+		send_to_server (".", 1);
+	    }
+	    else
+	    {
+		if (rp->first != NULL)
+		    send_to_server (rp->first, 0);
+		send_to_server (":", 1);
+		if (rp->last != NULL)
+		    send_to_server (rp->last, 0);
+	    }
+	    send_to_server ("\012", 0);
+	}
+	send_arg_list ("-s", log_data.statelist);
+	send_arg_list ("-w", log_data.authorlist);
+
+	send_files (argc - optind, argv + optind, local, 0, SEND_NO_CONTENTS);
+	send_file_names (argc - optind, argv + optind, SEND_EXPAND_WILD);
 
 	send_to_server ("log\012", 0);
         err = get_responses_and_close ();
 	return err;
     }
 #endif
+
+    /* OK, now that we know we are local/server, we can resolve @@MYSELF
+       into our user name.  */
+    if (findnode (log_data.authorlist, "@@MYSELF") != NULL)
+	log_parse_list (&log_data.authorlist, getcaller ());
 
     err = start_recursion (log_fileproc, (FILESDONEPROC) NULL, log_dirproc,
 			   (DIRLEAVEPROC) NULL, (void *) &log_data,
