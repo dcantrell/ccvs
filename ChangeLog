@@ -1,3 +1,7 @@
+2004-06-28  Derek Price  <derek@ximbiot.com>
+
+	* srclist.txt: Note minmax imported from GNULIB.
+
 2004-06-10  Derek Price  <derek@ximbiot.com>
 
 	* Note addition of write proxy functionality.
