@@ -1,3 +1,8 @@
+2004-10-07  Derek Price  <derek@ximbiot.com>
+
+	* Makefile.in (LIB_SOURCES): Remove stripslash.c.
+	(OS2_OBJECTS): Remove stripslash.obj.
+
 2004-09-17  Derek Price  <derek@ximbiot.com>
 
 	* stripslash.c: Remove file.
