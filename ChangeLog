@@ -1,3 +1,8 @@
+Thu Aug 14 14:42:53 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+			  and Loren James Rittle <rittle@comm.mot.com>
+
+	* INSTALL: Update information for SunOS4 and Solaris.
+
 Mon Aug  4 00:02:24 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* BUGS: Be specific about wrappers not working client/server.
