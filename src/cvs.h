@@ -369,11 +369,10 @@ int RCS_checkout PROTO ((char *rcsfile, char *workfile, char *tag,
                          char *sout, int flags));
 /* Flags used by RCS_* functions.  See the description of the individual
    functions for which flags mean what for each function.  */
-#define RCS_FLAGS_LOCK 1
-#define RCS_FLAGS_FORCE 2
-#define RCS_FLAGS_DEAD 4
-#define RCS_FLAGS_QUIET 8
-#define RCS_FLAGS_MODTIME 16
+#define RCS_FLAGS_FORCE 1
+#define RCS_FLAGS_DEAD 2
+#define RCS_FLAGS_QUIET 4
+#define RCS_FLAGS_MODTIME 8
 int RCS_checkin PROTO ((char *rcsfile, char *workfile, char *message,
 			char *rev, int flags));
 
