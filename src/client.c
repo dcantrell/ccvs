@@ -27,6 +27,7 @@
 # include "md5.h"
 
 #include "socket-client.h"
+#include "rsh-client.h"
 
 # if HAVE_KERBEROS
 
@@ -3362,12 +3363,12 @@ get_cvs_port_number (root)
 
 
 void
-make_bufs_from_fds (tofd, fromfd, child_pid, to_server, from_server, is_sock)
+make_bufs_from_fds (tofd, fromfd, child_pid, to_server_p, from_server_p, is_sock)
     int tofd;
     int fromfd;
     int child_pid;
-    struct buffer **to_server;
-    struct buffer **from_server;
+    struct buffer **to_server_p;
+    struct buffer **from_server_p;
     int is_sock;
 {
     FILE *to_server_fp;
@@ -3377,9 +3378,9 @@ make_bufs_from_fds (tofd, fromfd, child_pid, to_server, from_server, is_sock)
     if (is_sock)
     {
 	assert (tofd == fromfd);
-	*to_server = socket_buffer_initialize (tofd, 0,
+	*to_server_p = socket_buffer_initialize (tofd, 0,
 					      (BUFMEMERRPROC) NULL);
-	*from_server = socket_buffer_initialize (tofd, 1,
+	*from_server_p = socket_buffer_initialize (tofd, 1,
 						(BUFMEMERRPROC) NULL);
     }
     else
@@ -3408,13 +3409,13 @@ make_bufs_from_fds (tofd, fromfd, child_pid, to_server, from_server, is_sock)
 	to_server_fp = fdopen (tofd, FOPEN_BINARY_WRITE);
 	if (to_server_fp == NULL)
 	    error (1, errno, "cannot fdopen %d for write", tofd);
-	*to_server = stdio_buffer_initialize (to_server_fp, 0, 0,
+	*to_server_p = stdio_buffer_initialize (to_server_fp, 0, 0,
 					     (BUFMEMERRPROC) NULL);
 
 	from_server_fp = fdopen (fromfd, FOPEN_BINARY_READ);
 	if (from_server_fp == NULL)
 	    error (1, errno, "cannot fdopen %d for read", fromfd);
-	*from_server = stdio_buffer_initialize (from_server_fp, child_pid, 1,
+	*from_server_p = stdio_buffer_initialize (from_server_fp, child_pid, 1,
 					       (BUFMEMERRPROC) NULL);
     }
 }
@@ -3679,16 +3680,13 @@ auth_server (root, lto_server, lfrom_server, verify_only, do_gssapi, hostinfo)
 
 
 #ifdef CLIENT_SUPPORT
-/* void
- * connect_to_forked_server ( struct buffer **to_server,
- *                            struct buffer **from_server )
- *
+/* 
  * Connect to a forked server process.
  */
-void
-connect_to_forked_server (to_server, from_server)
-    struct buffer **to_server;
-    struct buffer **from_server;
+static void
+connect_to_forked_server (to_server_p, from_server_p)
+    struct buffer **to_server_p;
+    struct buffer **from_server_p;
 {
     int tofd, fromfd;
     int child_pid;
@@ -3714,7 +3712,7 @@ connect_to_forked_server (to_server, from_server)
     if (child_pid < 0)
 	error (1, 0, "could not fork server process");
 
-    make_bufs_from_fds (tofd, fromfd, child_pid, to_server, from_server, 0);
+    make_bufs_from_fds (tofd, fromfd, child_pid, to_server_p, from_server_p, 0);
 }
 #endif /* CLIENT_SUPPORT */
 
@@ -3727,10 +3725,10 @@ connect_to_forked_server (to_server, from_server)
    on such a system (OS/2, Windows 95, and maybe others) will have to
    take care of this.  */
 void
-start_tcp_server (root, to_server, from_server)
+start_tcp_server (root, to_server_p, from_server_p)
     cvsroot_t *root;
-    struct buffer **to_server;
-    struct buffer **from_server;
+    struct buffer **to_server_p;
+    struct buffer **from_server_p;
 {
     int s;
     const char *portenv;
@@ -3791,7 +3789,7 @@ start_tcp_server (root, to_server, from_server)
     free (hname);
 
     /* Give caller the values it wants. */
-    make_bufs_from_fds (s, s, 0, to_server, from_server, 1);
+    make_bufs_from_fds (s, s, 0, to_server_p, from_server_p, 1);
 }
 
 #endif /* HAVE_KERBEROS */
