@@ -1,5 +1,17 @@
 2002-09-24  Derek Price  <derek@ximbiot.com>
 
+	* configure.in (enable-encryption): Move to a more sensible location
+	and print a warning if it is specified with neither the client or the
+	server enabled.
+	(--with-editor): Move to a closer resemblance to alphabetical order.
+	(enables and withs): Reformat help strings for consistency.
+	* acinclude.m4: Ditto.
+
+	* configure: Regenerated.
+	* aclocal.m4: Ditto.
+
+2002-09-24  Derek Price  <derek@ximbiot.com>
+
 	* configure.in (enable-force-editor): New option.
 
 	* configure: Regenerated.

@@ -278,61 +278,8 @@ AC_SEARCH_LIBS(gethostbyname, netinet)
 
 
 dnl
-dnl Set the default editor to use for log messages
+dnl begin --with-*
 dnl
-
-AC_ARG_VAR(
-  [EDITOR],
-  [The text editor CVS will use by default for log messages.])
-
-# Let the confiscator request a specific editor
-AC_ARG_WITH(
-  [editor],
-  AC_HELP_STRING(
-    [--with-editor],
-    [The default text editor CVS should use for log messages
-     (default autoselects)]), ,
-  [with_editor="vi emacs pico edit"])
-
-
-if echo $with_editor |grep ^/ >/dev/null; then
-  # If $with_editor is an absolute path, just trust the user and use it
-  EDITOR=$with_editor
-  AC_MSG_CHECKING([for an editor])
-  AC_MSG_RESULT([$EDITOR])
-  if ! test -f $with_editor \
-      || ! test -x $with_editor; then
-    # warn the user that they may encounter problems
-    AC_MSG_WARN([$with_editor is not a path to an executable file])
-  fi
-elif test no != "${with_editor}"; then
-  # Search for an editor
-  AC_CHECK_PROGS([EDITOR], [$with_editor])
-else
-  AC_MSG_CHECKING([for an editor])
-  AC_MSG_RESULT([no])
-fi
-
-if test -n "${EDITOR}"; then
-  dnl FIXME - Using --without-editor will probably break a compile at
-  dnl the moment, but maybe it is reasonable for someone to want to
-  dnl compile a CVS executable that refuses to run if no $EDITOR,
-  dnl $CVS_EDITOR, or -e option is specified?  Making a preliminary
-  dnl design decision in this direction, subject to discussion.
-  AC_DEFINE_UNQUOTED(
-    [EDITOR_DFLT], ["$EDITOR"],
-    [The default editor to use, if one does not specify the "-e" option
-     to cvs, or does not have an EDITOR environment variable.  If this
-     is not set to an absolute path to an executable, use the shell to
-     find where the editor actually is.  This allows sites with
-     /usr/bin/vi or /usr/ucb/vi to work equally well (assuming that their
-     PATH is reasonable).])
-fi
-
-dnl
-dnl done finding an editor
-dnl
-
 
 dnl
 dnl set $(KRB4) from --with-krb4=value -- WITH_KRB4
@@ -346,7 +293,7 @@ define(WITH_KRB4,[
 AC_ARG_WITH(
   [krb4],
   AC_HELP_STRING(
-    [--with-krb4=value],
+    [--with-krb4],
     [Kerberos 4 directory (default /usr/kerberos)]),
   [KRB4=$with_krb4],
 )dnl
@@ -418,8 +365,74 @@ fi
 AC_CHECK_FUNCS(krb_get_err_text)
 
 
+dnl
 dnl WITH_GSSAPI is external
+dnl
+dnl TODO - I tried to put these in alphabetical order, but ACX_WITH_GSSAPI
+dnl fails unless called after the KRB4 stuff.  I don't know why.
+dnl
 ACX_WITH_GSSAPI
+
+
+dnl
+dnl begin --with-editor
+dnl
+dnl Set the default editor to use for log messages
+dnl
+
+AC_ARG_VAR(
+  [EDITOR],
+  [The text editor CVS will use by default for log messages.])
+
+# Let the confiscator request a specific editor
+AC_ARG_WITH(
+  [editor],
+  AC_HELP_STRING(
+    [--with-editor],
+    [The default text editor CVS should use for log messages
+     (default autoselects)]), ,
+  [with_editor="vi emacs pico edit"])
+
+
+if echo $with_editor |grep ^/ >/dev/null; then
+  # If $with_editor is an absolute path, just trust the user and use it
+  EDITOR=$with_editor
+  AC_MSG_CHECKING([for an editor])
+  AC_MSG_RESULT([$EDITOR])
+  if ! test -f $with_editor \
+      || ! test -x $with_editor; then
+    # warn the user that they may encounter problems
+    AC_MSG_WARN([$with_editor is not a path to an executable file])
+  fi
+elif test no != "${with_editor}"; then
+  # Search for an editor
+  AC_CHECK_PROGS([EDITOR], [$with_editor])
+else
+  AC_MSG_CHECKING([for an editor])
+  AC_MSG_RESULT([no])
+fi
+
+if test -n "${EDITOR}"; then
+  dnl FIXME - Using --without-editor will probably break a compile at
+  dnl the moment, but maybe it is reasonable for someone to want to
+  dnl compile a CVS executable that refuses to run if no $EDITOR,
+  dnl $CVS_EDITOR, or -e option is specified?  Making a preliminary
+  dnl design decision in this direction, subject to discussion.
+  AC_DEFINE_UNQUOTED(
+    [EDITOR_DFLT], ["$EDITOR"],
+    [The default editor to use, if one does not specify the "-e" option
+     to cvs, or does not have an EDITOR environment variable.  If this
+     is not set to an absolute path to an executable, use the shell to
+     find where the editor actually is.  This allows sites with
+     /usr/bin/vi or /usr/ucb/vi to work equally well (assuming that their
+     PATH is reasonable).])
+fi
+
+dnl
+dnl done finding an editor
+dnl
+dnl end --with-editor
+dnl
 
 
 dnl
@@ -430,7 +443,7 @@ AC_ARG_WITH(
   AC_HELP_STRING(
     [--with-tmpdir],
     [The temporary directory CVS should use as a default
-     (default autoselects).]))
+     (default autoselects)]))
 
 AC_MSG_CHECKING([for temporary directory])
 if test -z "$with_tmpdir" || test yes = "$with_tmpdir"; then
@@ -476,7 +489,7 @@ AC_ARG_WITH(
   [umask],
   AC_HELP_STRING(
     [--with-umask],
-    [Set the umask CVS will use by default.]))
+    [Set the umask CVS will use by default in the repository (default 002)]))
 
 if test -z "$with_umask" || test yes = "$with_umask"; then
   with_umask=002
@@ -500,23 +513,14 @@ dnl
 
 
 dnl
+dnl end --with-*
+dnl
+
+
+dnl
 dnl begin --enables
 dnl
 
-dnl
-dnl Use --enable-encryption to turn on encryption support
-dnl
-AC_ARG_ENABLE(
-  [encryption],
-  AC_HELP_STRING(
-    [--enable-encryption],
-    [enable encryption support (disabled by default)]), ,
-  [enable_encryption=no])
-if test "$enable_encryption" = yes; then
-  AC_DEFINE(
-    [ENCRYPTION], [1],
-    [Define to enable encryption support.])
-fi
 
 # Check for options requesting client and server feature. If none are
 # given and we have connect(), we want the full client & server arrangement.
@@ -524,11 +528,11 @@ AC_ARG_ENABLE(
   [client],
   AC_HELP_STRING(
     [--enable-client],
-    [include code for running as a remote client (default)]), ,
+    [Include code for running as a remote client (default)]), ,
   [if test "$ac_cv_search_connect" != no; then
     enable_client=yes
   fi])
-if test "$enable_client" = yes; then
+if test no != "$enable_client"; then
   AC_DEFINE(
     [CLIENT_SUPPORT], [1],
     [Define if you want CVS to be able to be a remote repository client.])
@@ -542,12 +546,12 @@ AC_ARG_ENABLE(
   [server],
   AC_HELP_STRING(
     [--enable-server],
-    [include code for running as a server (default)]), ,
+    [Include code for running as a server (default)]), ,
   [if test "$ac_cv_search_connect" != no; then
      enable_server=yes
    fi])
 
-if test "$enable_server" = yes; then
+if test no != "$enable_server"; then
   AC_DEFINE(
     [SERVER_SUPPORT], [1],
     [Define if you want CVS to be able to serve repositories to remote
@@ -637,6 +641,34 @@ fi # enable_server
 
 
 dnl
+dnl Use --enable-encryption to turn on encryption support, but ignore this
+dnl option unless either client or server is enabled.
+dnl
+AC_ARG_ENABLE(
+  [encryption],
+  AC_HELP_STRING(
+    [--enable-encryption],
+    [Enable encryption support (disabled by default)]), ,
+  [enable_encryption=no])
+if test "$enable_encryption" = yes; then
+  if test no != "$with_client" || test no != "$with_server"; then
+    AC_DEFINE(
+      [ENCRYPTION], [1],
+      [Define to enable encryption support.])
+  else
+    AC_MSG_WARN(
+      [--enable-encryption is meaningless unless the CVS client is enabled
+       (--enable-client), the CVS server is enabled (--enable-server),
+       or both.])
+  fi
+fi
+
+dnl
+dnl end --enable-encryption
+dnl
+
+
+dnl
 dnl begin --enable-force-editor
 dnl
 
@@ -691,7 +723,7 @@ AC_ARG_ENABLE(
   [rootcommit],
   AC_HELP_STRING(
     [--enable-rootcommit],
-    [allow the root user to commit files (disabled by default)]), ,
+    [Allow the root user to commit files (disabled by default)]), ,
   [enable_rootcommit=no])
 if test "$enable_rootcommit" = no; then
   AC_DEFINE(
