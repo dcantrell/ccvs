@@ -4472,7 +4472,7 @@ $ cvs diff -u | less
 
 @itemize @bullet
 @item
-Synopsis: export [-flNnQq] -r rev|-D date [-d dir] module@dots{}
+Synopsis: export [-flNn] -r rev|-D date [-d dir] module@dots{}
 @item
 Requires: repository.
 @item
@@ -5169,7 +5169,7 @@ File bar.h,v changed from revision 1.29.2.1 to 1.2
 
 @itemize @bullet
 @item
-release [-dQq] modules@dots{}
+release [-d] modules@dots{}
 @item
 Requires: Working directory.
 @item
@@ -5403,7 +5403,7 @@ U oj.c
 
 @itemize @bullet
 @item
-rtag [-falnRQq] [-b] [-d] [-r tag | -Ddate] symbolic_tag modules@dots{}
+rtag [-falnR] [-b] [-d] [-r tag | -Ddate] symbolic_tag modules@dots{}
 @item
 Requires: repository.
 @item
@@ -5573,7 +5573,7 @@ to.
 
 @itemize @bullet
 @item
-tag [-lQqR] [-b] [-d] symbolic_tag [files@dots{}]
+tag [-lR] [-b] [-d] symbolic_tag [files@dots{}]
 @item
 Requires: working directory, repository.
 @item
@@ -5671,7 +5671,7 @@ be valuable.
 
 @itemize @bullet
 @item
-update [-AdflPpQqR] [-d] [-r tag|-D date] files@dots{}
+update [-AdflPpR] [-d] [-r tag|-D date] files@dots{}
 @item
 Requires: repository, working directory.
 @item
