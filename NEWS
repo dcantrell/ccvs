@@ -23,7 +23,8 @@ CLIENT SECURITY ISSUES
 * Clients now check paths from the server to verify that they are within one of
   the sandboxes the user requested be updated.  Previously, a trojan server
   could have written or overwritten files anywhere the user had access,
-  presenting a serious security risk.
+  presenting a serious security risk.  This addresses CVE issue CAN-2004-1080.
+  Please see <http://www.cve.mitre.org> for more information.
 
 GENERAL USER ISSUES
 
