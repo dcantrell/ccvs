@@ -857,7 +857,6 @@ cat_module (status)
     int moduleargc;
     struct sortrec *s_h;
     char *cp, *cp2, **argv;
-    char *line;
     char *moduleargv[MAXFILEPERDIR];
 
     Status = status;
@@ -884,20 +883,24 @@ cat_module (status)
     fill = cols - (indent + 2);
     for (s_h = s_head, i = 0; i < s_count; i++, s_h++)
     {
-	line = xmalloc (strlen (s_h->modname) + strlen (s_h->rest)
-			+ strlen (status ? s_h->status : "") + 15);
+	char *line;
 
 	/* Print module name (and status, if wanted) */
+	line = xmalloc (strlen (s_h->modname) + 15);
 	sprintf (line, "%-12s", s_h->modname);
 	cvs_output (line, 0);
+	free (line);
 	if (status)
 	{
+	    line = xmalloc (strlen (s_h->status) + 15);
 	    sprintf (line, " %-11s", s_h->status);
 	    cvs_output (line, 0);
 	    if (s_h->status != def_status)
 		*(s_h->status + strlen (s_h->status)) = ' ';
+	    free (line);
 	}
 
+	line = xmalloc (strlen (s_h->modname) + strlen (s_h->rest) + 15);
 	/* Parse module file entry as command line and print options */
 	(void) sprintf (line, "%s %s", s_h->modname, s_h->rest);
 	line2argv (&moduleargc, moduleargv, line);
