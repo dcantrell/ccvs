@@ -1,5 +1,13 @@
 2003-07-23  Derek Price  <derek@ximbiot.com>
 
+	* client.c: Avoid some warning from gcc -Wall.
+	* lock.c: Ditto.
+	* login.c: Ditto.
+	* modules.c: Ditto.
+	* server.c: Ditto.
+
+2003-07-23  Derek Price  <derek@ximbiot.com>
+
 	* filesubr.c (isaccessible): Correct some double const warnings from
 	protoize.
 	* login.c (password_entry_parseline): Ditto.

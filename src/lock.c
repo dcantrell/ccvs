@@ -163,7 +163,7 @@ lock_name (char *repository, char *name)
     char *p;
     char *q;
     char *short_repos;
-    mode_t save_umask;
+    mode_t save_umask = 0000;
     int saved_umask = 0;
 
     if (lock_dir == NULL)

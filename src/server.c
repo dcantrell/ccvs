@@ -5338,8 +5338,8 @@ check_system_password( char *username, char *password )
 
     if (pam_end(pamh,retval) != PAM_SUCCESS)
     {
-	printf("E Fatal error, aborting.\n
-		pam failed to release authenticator\n");
+	printf("E Fatal error, aborting.\n"
+	       "pam failed to release authenticator\n");
 	error_exit ();
     }
 

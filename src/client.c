@@ -3181,7 +3181,7 @@ auth_server( cvsroot_t *root, struct buffer *to_server,
              struct buffer *from_server, int verify_only, int do_gssapi,
              struct hostent *hostinfo )
 {
-    char *username;			/* the username we use to connect */
+    char *username = NULL;		/* the username we use to connect */
     char no_passwd = 0;			/* gets set if no password found */
 
     /* Run the authorization mini-protocol before anything else. */
@@ -3272,18 +3272,22 @@ auth_server( cvsroot_t *root, struct buffer *to_server,
 	    {
 		/* Authorization not granted.
 		 *
-		 * This is a little confusing since we can reach this while loop in GSSAPI
-		 * mode, but if GSSAPI authentication failed, we already jumped to the
-		 * rejected label (there is no case where the connect_to_gserver function
-		 * can return 1 and we will not receive "I LOVE YOU" from the server, barring
-		 * broken connections and garbled messages, of course).
+		 * This is a little confusing since we can reach this while
+		 * loop in GSSAPI mode, but if GSSAPI authentication failed,
+		 * we already jumped to the rejected label (there is no case
+		 * where the connect_to_gserver function can return 1 and we
+		 * will not receive "I LOVE YOU" from the server, barring
+		 * broken connections and garbled messages, of course).  The
+		 * GSSAPI case is also the case where username can be NULL
+		 * since username is initialized in the !gssapi section.
 		 *
-		 * i.e. This is a pserver specific error message and should be since
-		 * GSSAPI doesn't use username.
+		 * i.e. This is a pserver specific error message and should be
+		 * since GSSAPI doesn't use username.
 		 */
 		error (0, 0,
-			"authorization failed: server %s rejected access to %s for user %s",
-			root->hostname, root->directory, username);
+		       "authorization failed: server %s rejected access to %s for user %s",
+		       root->hostname, root->directory,
+		       username ? username : "(null)");
 
 		/* Output a special error message if authentication was attempted
 		with no password -- the user should be made aware that they may
