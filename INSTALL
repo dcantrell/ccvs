@@ -133,22 +133,18 @@ Installation under Unix:
 
 	$ ./configure --with-diffutils=/usr/gnu/bin/diff
 
-    Configure will also try to find a version of grep that supports the
-    '-s' option, and tries to find the GNU Grep version first.  You can
-    similarly tell it where to find GNU Grep:
-
-	$ ./configure --with-gnugrep
-	$ ./configure --with-gnugrep=/usr/gnu/bin/grep
-
-    If you are using the remote client, you will need a version of patch
-    which understands unidiffs (such as any recent version of GNU
-    patch).  Configure does not yet check to see if you've got this, so
-    be careful!
+    If you are using the remote client, you will need patch installed.
 
     NOTE: The configure program will cache the results of the previous
     configure execution.  If you need to re-run configure from scratch, you
     may need to run "make distclean" first to remove the cached
     configuration information.
+
+    If you are using gcc and are planning to modify CVS, you may want to
+    configure with -Wall, which can detect many programming errors.  This
+    is not the default because it might cause spurious warnings, but at least
+    on some machines, there are no spurious warnings.  For example:
+	$ CFLAGS="-g -Wall" ./configure
 
     Try './configure --help' for further information on its usage.
 
@@ -325,7 +321,6 @@ Supported options are:
 				host-dependent place and shared
 				things in a host-independent place.
 	--with-diffutils[=PATH]	Assume use of GNU diffutils is possible.
-	--with-gnugrep[=PATH]	Assume use of GNU grep is possible.
 
 The following environment variables override configure's default
 behaviour:

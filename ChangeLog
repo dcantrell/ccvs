@@ -1,3 +1,10 @@
+Mon Jan  8 11:42:40 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* INSTALL: Remove grep stuff; no longer necessary.
+	Don't say that patch must understand unidiffs; no longer true.
+	Suggest configuring with -Wall (here until we have a "how to hack
+	CVS document").
+
 Wed Jan  3 19:00:00 1996  Jim Kingdon  <kingdon@peary.cyclic.com>
 
 	* .cvsignore: Add cvsnt.vcp.
