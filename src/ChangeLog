@@ -1,3 +1,8 @@
+Thu Jan  4 09:58:30 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* commit.c (commit): Don't start the server until we have
+	determined that there is something to commit.
+
 Thu Jan  4 09:48:33 1996  Ben Laurie  <ben@gonzo.ben.algroup.co.uk>
 			  and Jim Kingdon  <kingdon@harvey.cyclic.com>
 
