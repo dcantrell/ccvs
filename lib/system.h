@@ -472,29 +472,48 @@ extern int errno;
 # define WOE32 1
 #endif /* defined (__CYGWIN32__) || defined (WIN32) */
 
+
+
 #ifdef WOE32
-/* Under Windows NT, filenames are case-insensitive, and both / and \
-   are path component separators.  */
+  /* Under Windows NT, filenames are case-insensitive.  */
+# define FILENAMES_CASE_INSENSITIVE 1
+#endif /* WOE32 */
 
-#define FOLD_FN_CHAR(c) (WNT_filename_classes[(unsigned char) (c)])
+
+
+#ifdef FILENAMES_CASE_INSENSITIVE
+
+# ifdef WOE32
+    /* Under Windows NT, filenames are case-insensitive, and both / and \
+       are path component separators.  */
+#   define FOLD_FN_CHAR(c) (WNT_filename_classes[(unsigned char) (c)])
 extern unsigned char WNT_filename_classes[];
-#define FILENAMES_CASE_INSENSITIVE 1
+    /* Is the character C a path name separator?  Under
+       Windows NT, you can use either / or \.  */
+#   define ISDIRSEP(c) (FOLD_FN_CHAR(c) == '/')
+# else /* ! WOE32 */
+  /* The only system that I know of that gets FILENAME_CASE_INSENSITIVE
+   * defined that isn't WOE32 is currently Macintosh OS X.
+   *
+   * Under Mac OS X, filenames are case-insensitive.
+   */
+#   define FOLD_FN_CHAR(c) (OSX_filename_classes[(unsigned char) (c)])
+extern unsigned char OSX_filename_classes[];
+# endif /* WOE32 */
 
-/* Is the character C a path name separator?  Under
-   Windows NT, you can use either / or \.  */
-#define ISDIRSEP(c) (FOLD_FN_CHAR(c) == '/')
+/* The following need to be declared for all case insensitive filesystems.
+ * When not FOLD_FN_CHAR is not #defined, a default definition for these
+ * functions is provided later in this header file.  */
 
-/* Like strcmp, but with the appropriate tweaks for file names.
-   Under Windows NT, filenames are case-insensitive but case-preserving,
-   and both \ and / are path element separators.  */
+/* Like strcmp, but with the appropriate tweaks for file names.  */
 extern int fncmp (const char *n1, const char *n2);
 
-/* Fold characters in FILENAME to their canonical forms.  
-   If FOLD_FN_CHAR is not #defined, the system provides a default
-   definition for this.  */
+/* Fold characters in FILENAME to their canonical forms.  */
 extern void fnfold (char *FILENAME);
 
-#endif /* WOE32 */
+#endif /* FILENAMES_CASE_INSENSITIVE */
+
+
 
 /* Some file systems are case-insensitive.  If FOLD_FN_CHAR is
    #defined, it maps the character C onto its "canonical" form.  In a
