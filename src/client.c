@@ -2920,19 +2920,19 @@ handle_wrapper_rcs_option (args, len)
        as free-form as it looks.  */
     p = strchr (args, ' ');
     if (p == NULL)
-	goto error;
+	goto handle_error;
     if (*++p != '-'
 	|| *++p != 'k'
 	|| *++p != ' '
 	|| *++p != '\'')
-	goto error;
+	goto handle_error;
     if (strchr (p, '\'') == NULL)
-	goto error;
+	goto handle_error;
 
     /* Add server-side cvswrappers line to our wrapper list. */
     wrap_add (args, 0);
     return;
- error:
+ handle_error:
     error (0, errno, "protocol error: ignoring invalid wrappers %s", args);
 }
 
