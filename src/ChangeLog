@@ -1,5 +1,9 @@
 2003-10-28  Derek Price  <derek@ximbiot.com>
 
+	* sever.h: Add the standard copyright notice.
+
+2003-10-28  Derek Price  <derek@ximbiot.com>
+
 	* lock.c: Remove some suggestions which have already been implemented
 	or which have become obsolete from the header comment.
 
