@@ -1,5 +1,7 @@
 Tue Sep 24 11:32:20 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* INSTALL: Add VMS entry.  Clarify what "tested" means.
+
 	* README: Replace section about what CVS is with the blurb from
 	cvs.spec (which is also the paragraph we use in the release
 	announcements).
