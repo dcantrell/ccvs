@@ -14,7 +14,6 @@
  *
  */
 
-#include <assert.h>
 #include "cvs.h"
 #include "getline.h"
 #include "edit.h"

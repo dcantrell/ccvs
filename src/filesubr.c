@@ -17,7 +17,6 @@
    definitions under operating systems (like, say, Windows NT) with different
    file system semantics.  */
 
-#include <assert.h>
 #include "cvs.h"
 
 static int deep_remove_dir (const char *path);

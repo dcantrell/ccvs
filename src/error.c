@@ -16,9 +16,6 @@
 
 #include "cvs.h"
 
-/* For functions with variable numbers of arguments */
-#include <stdarg.h>
-
 /* If non-zero, error will use the CVS protocol to stdout to report error
    messages.  This will only be set in the CVS server parent process;
    most other code is run via do_cvs_command, which forks off a child

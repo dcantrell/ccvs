@@ -8,12 +8,8 @@
  * Various useful functions for the CVS support code.
  */
 
-#include <assert.h>
 #include "cvs.h"
 #include "getline.h"
-
-/* For functions with variable numbers of arguments */
-#include <stdarg.h>
 
 #if !defined HAVE_NANOSLEEP && !defined HAVE_USLEEP && defined HAVE_SELECT
   /* use select as a workaround */

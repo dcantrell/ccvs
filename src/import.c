@@ -18,7 +18,6 @@
 
 #include "cvs.h"
 #include "savecwd.h"
-#include <assert.h>
 
 static char *get_comment (char *user);
 static int add_rev (char *message, RCSNode *rcs, char *vfile,

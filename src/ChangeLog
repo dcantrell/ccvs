@@ -1,3 +1,7 @@
+2003-08-19  Derek Price  <derek@ximbiot.com>
+
+	* (*.c): Move some includes to lib/system.h.
+
 2003-08-18  Derek Price  <derek@ximbiot.com>
 
 	* add.c (add): Use consistent quoting style in user messages.

@@ -20,7 +20,6 @@
  *	command line.
  */
 
-#include <assert.h>
 #include "cvs.h"
 #include "savecwd.h"
 

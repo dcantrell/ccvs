@@ -6,7 +6,6 @@
  * specified in the README file that comes with the CVS source distribution.
  */
 
-#include <assert.h>
 #include "cvs.h"
 #include "getline.h"
 

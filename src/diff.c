@@ -14,7 +14,6 @@
  * files.
  */
 
-#include <assert.h>
 #include "cvs.h"
 
 enum diff_file
