@@ -1,3 +1,16 @@
+Thu Feb  1 14:14:31 1996  Karl Fogel  <kfogel@floss.red-bean.com>
+
+        * recurse.c (do_recursion): comment #endif.
+
+        * edit.c (notify_check): surround with #ifdef CLIENT_SUPPORT; else
+        CVS won't compile if CLIENT_SUPPORT is undefined.
+        
+        * edit.h (notify_check): surround declaration with #ifdef
+        CLIENT_SUPPORT.
+
+        * watch.c (watch): if argc <= 1, then just give usage (previously
+        was "argc == -1").
+
 Thu Feb  1 12:28:33 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* README-rm-add: Remove information which is now in cvs.texinfo.
