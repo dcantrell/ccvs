@@ -28,7 +28,6 @@
  * FIXME - They should be in a different file.
  */
 #   include <netdb.h>
-#   include "xgssapi.h"
 /* We use Kerberos 5 routines to map the GSSAPI credential to a user
    name.  */
 #   include <krb5.h>

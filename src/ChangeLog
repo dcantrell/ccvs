@@ -1,3 +1,9 @@
+2003-05-29  Derek Price  <derek@ximbiot.com>
+
+	* gssapi-client.h: Move contents of lib/xgssapi.h here.
+	* server.c: xgssapi.h is no more.
+	(Patch from Alexey Mahotkin <alexm@hsys.msk.ru>.)
+
 2003-05-28  Derek Price  <derek@ximbiot.com>
 
 	* server.c: Use standard PROTOTYPES symbol instead of non-standard

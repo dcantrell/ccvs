@@ -14,7 +14,28 @@
 #ifndef GSSAPI_CLIENT_H__
 #define GSSAPI_CLIENT_H__
 
-#include "xgssapi.h"
+#ifdef HAVE_GSSAPI
+
+/* Here goes the generic include magic necessary for using
+ * cross platform gssapi which configure doesn't perform itself.
+ */
+
+/* Can't include both of these headers at the same time with Solaris 7 &
+ * Heimdal Kerberos 0.3.  If some system ends up requiring both, a configure
+ * test like TIME_AND_SYS_TIME will probably be necessary.
+ */
+#ifdef HAVE_GSSAPI_H
+# include <gssapi.h>
+#else
+/* Assume existance of this header so that the user will get an informative
+ * message if HAVE_GSSAPI somehow gets defined with both headers missing.
+ */
+# include <gssapi/gssapi.h>
+#endif
+#ifdef HAVE_GSSAPI_GSSAPI_GENERIC_H
+/* MIT Kerberos 5 v1.2.1 */
+# include <gssapi/gssapi_generic.h>
+#endif
 
 #include "socket-client.h"
 
@@ -34,5 +55,7 @@ int connect_to_gserver PROTO((cvsroot_t *, int, struct hostent *));
 
 extern void initialize_gssapi_buffers PROTO((struct buffer **to_server_p,
 					     struct buffer **from_server_p));
+
+#endif /* HAVE_GSSAPI */
 
 #endif
