@@ -2146,22 +2146,22 @@ For information on disk space requirements, see
 @subsection Connecting with rsh
 
 @cindex rsh
-@sc{cvs} uses the @file{rsh} protocol to perform these
+@sc{cvs} uses the @samp{rsh} protocol to perform these
 operations, so the remote user host needs to have a
 @file{.rhosts} file which grants access to the local
 user.
 
-For example, suppose you are the user @file{mozart} on
-the local machine @file{toe.example.com}, and the
-server machine is @file{faun.example.org}.  On
+For example, suppose you are the user @samp{mozart} on
+the local machine @samp{toe.example.com}, and the
+server machine is @samp{faun.example.org}.  On
 faun, put the following line into the file
-@file{.rhosts} in @file{bach}'s home directory:
+@file{.rhosts} in @samp{bach}'s home directory:
 
 @example
 toe.example.com  mozart
 @end example
 
-Then test that @code{rsh} is working with
+Then test that @samp{rsh} is working with
 
 @example
 rsh -l bach faun.example.org 'echo $PATH'
