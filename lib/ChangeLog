@@ -1,5 +1,11 @@
 2001-05-08  Derek Price  <oberon@umich.edu>
 
+	* Makefile.in: Regenerated.
+	* fnmatch.h: Move this file...
+	* fnmatch.h.in: here.
+
+2001-05-08  Derek Price  <oberon@umich.edu>
+
 	* strerror.c: Use HAVE_CONFIG_H and put config.h in brackets rather
 	than quotes.
 
