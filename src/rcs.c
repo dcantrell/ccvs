@@ -7814,7 +7814,7 @@ unable to parse %s; `state' not in the expected place", rcsfile);
 
 	/* rcsbuf_getid did not terminate the key, so copy it to new space. */
 	len = rcsbuf->ptr - keybuf;
-	key = (char *) xmalloc (sizeof(char) * (len + 1));
+	key = (char *) xmalloc (len + 1);
 	strncpy (key, keybuf, len);
 	key[len] = '\0';
 
@@ -7871,8 +7871,7 @@ unable to parse %s; `state' not in the expected place", rcsfile);
 
 		temp_value = rcsbuf_valcopy (rcsbuf, valbuf, 1, &valbuflen);
 		len = strlen (value);
-		value = (char *) xrealloc
-		    (value, sizeof(char) * (len + valbuflen + 2));
+		value = (char *) xrealloc (value, len + valbuflen + 2);
 		value[len] = ' ';
 		strcpy (value + len + 1, temp_value);
 		free (temp_value);

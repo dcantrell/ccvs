@@ -759,7 +759,7 @@ logfile_write (repository, filter, message, logfp, changes)
 	}
 
 	len = fmt_end - fmt_begin;
-	str_list_format = xmalloc (sizeof (char) * (len + 1));
+	str_list_format = xmalloc (len + 1);
 	strncpy (str_list_format, fmt_begin, len);
 	str_list_format[len] = '\0';
 
