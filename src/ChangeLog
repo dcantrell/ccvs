@@ -7,8 +7,8 @@ Thu Sep  7 14:38:06 1995  Karl Fogel  <kfogel@floss.cyclic.com>
         * ALL FILES: add semicolon, as indicated below.
         
         * cvs.h (USE): don't provide semicolon in the expansion of the USE
-        macro; we'd rather the uses provided it themselves because that
-        way etags doesn't get screwed up.
+        macro; we'd rather the callers provided it themselves because that
+        way etags doesn't get fooled.
 
 Mon Sep  4 23:30:41 1995  Magnus Hyllander  <mhy@os.se>
 
