@@ -11132,11 +11132,24 @@ done
 ${PROG} commit: Rebuilding administrative file database
 ${PROG} commit: Failed to update no-such-file\."
 
+	  # Versions 1.11.6 & 1.12.1 and earlier of CVS user the error string
+	  # from the checkoutlist file as the format string passed to error()'s
+	  # printf.  Check that this is no longer the case by verifying that
+	  # printf format patterns remain unchanged.
+	  echo "no-such-file     Failed to update %s %lx times because %s happened %d times." >checkoutlist
+	  dotest mkmodules-error-message-2 "${testcvs} -Q ci -m. checkoutlist" \
+"Checking in checkoutlist;
+$CVSROOT_DIRNAME/CVSROOT/checkoutlist,v  <--  checkoutlist
+new revision: 1\.4; previous revision: 1\.3
+done
+${PROG} commit: Rebuilding administrative file database
+${PROG} commit: Failed to update %s %lx times because %s happened %d times\."
+
 	  dotest mkmodules-cleanup-1 "${testcvs} -Q up -pr1.1 checkoutlist >checkoutlist"
 	  dotest mkmodules-cleanup-2 "${testcvs} -Q ci -m. checkoutlist" \
 "Checking in checkoutlist;
 $CVSROOT_DIRNAME/CVSROOT/checkoutlist,v  <--  checkoutlist
-new revision: 1\.4; previous revision: 1\.3
+new revision: 1\.5; previous revision: 1\.4
 done
 ${PROG} commit: Rebuilding administrative file database"
 
