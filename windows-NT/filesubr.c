@@ -771,7 +771,7 @@ xresolvepath ( path )
     char *hardpath;
     char *owd;
 
-    assert ( isdir ( path ) );
+    /* assert ( isdir ( path ) ); */
 
     /* FIXME - If HAVE_READLINK is defined, we should probably walk the path
      * bit by bit calling xreadlink().

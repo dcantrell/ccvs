@@ -23,7 +23,7 @@ usage ()
 {
     echo "Usage: `basename $0` --help"
     echo "Usage: `basename $0` [-klr] [-c CONFIG-FILE] [-f FROM-TEST] \\"
-    echo "                 [-s CVS-FOR-CVS-SERVER] CVS-TO-TEST \\"
+    echo "                 [-h HOSTNAME] [-s CVS-FOR-CVS-SERVER] CVS-TO-TEST \\"
     echo "                 [TESTS-TO-RUN...]"
 }
 
@@ -37,7 +37,7 @@ exit_help ()
 {
     usage
     echo
-    echo "-h|--help	display this text"
+    echo "-H|--help	display this text"
     echo "-l|--link-root"
     echo "		test CVS using a symlink to a real CVSROOT"
     echo "-r|--remote	test client/server, as opposed to local, CVS"
@@ -46,6 +46,12 @@ exit_help ()
     echo "		use CVS-FOR-CVS-SERVER as the path to the CVS SERVER"
     echo "		executable to be tested (defaults to CVS-TO-TEST and"
     echo "		implies --remote)"
+    echo "-h HOSTNAME"
+    echo "--hostname HOSTNAME"
+    echo "              Use :ext:HOSTNAME to run remote tests rather than"
+    echo "              :fork:.  Implies --remote and assumes that \$TESTDIR"
+    echo "              resolves to the same directory on both the client and"
+    echo "              the server."
     echo "-f FROM-TEST"
     echo "--from-test=FROM-TEST"
     echo "		run TESTS-TO-RUN, skipping all tests in the list before"
@@ -98,6 +104,7 @@ export LC_ALL
 #
 unset configfile
 unset fromtest
+unset remotehost
 keep=false
 linkroot=false
 remote=false
@@ -113,7 +120,7 @@ servercvs=false
 #		...
 #	esac
 #
-while getopts Hc:f:klrs:-: option ; do
+while getopts Hc:f:h:klrs:-: option ; do
     # convert the long opts to short opts
     if test x$option = x-;  then
 	# remove any argument
@@ -135,9 +142,17 @@ while getopts Hc:f:klrs:-: option ; do
 		option=f
 		checklongoptarg
 		;;
-	    h|he|hel|help)
+	    h)
+		echo "\`--h' is ambiguous.  Could mean \`--help' or \`--hostname'" >&2
+		exit_usage
+		;;
+	    he|hel|help)
 		option=H
 		OPTARG=
+		;;
+	    ho|hos|host|hostn|hostna|hostnam|hostname)
+		option=h
+		checklongoptarg
 		;;
 	    k|ke|kee|keep)
 		option=k
@@ -166,6 +181,13 @@ while getopts Hc:f:klrs:-: option ; do
 	    ;;
 	f)
 	    fromtest="$OPTARG"
+	    ;;
+	h)
+	    # Set a remotehost to run the remote tests on via :ext:
+	    # Implies `-r' and assumes that $TESTDIR resolves to the same
+	    # directory on the client and the server.
+	    remotehost="$OPTARG"
+	    remote=:
 	    ;;
 	H)
 	    exit_help
@@ -227,6 +249,48 @@ if ${testcvs} --version </dev/null 2>/dev/null |
   exit 1
 fi
 
+# If $remotehost is set, warn if $TESTDIR isn't since we are pretty sure
+# that its default value of `/tmp/cvs-sanity' will not resolve to the same
+# directory on two different machines.
+if test -n "$remotehost" && test -z "$TESTDIR"; then
+    echo "WARNING: CVS server hostname is set and \$TESTDIR is not.  If" >&2
+    echo "$remotehost is not the local machine, then it is unlikely that" >&2
+    echo "the default value assigned to \$TESTDIR will resolve to the same" >&2
+    echo "directory on both this client and the CVS server." >&2
+fi
+
+# Read our config file if we can find it.
+#
+# The config file should always be located in the same directory as the CVS
+# executable, unless we are testing an executable outside of the build
+# directory.  In this case, we echo a warning and attempt to assume the most
+# portable configuration.
+if test -z "$configfile"; then
+	configfile=`dirname $testcvs`/sanity.config.sh
+fi
+if test -r "$configfile"; then
+	. "$configfile"
+else
+	echo "WARNING: Failed to locate test suite config file" >&2
+	echo "         \`$configfile'." >&2
+fi
+
+
+
+# Set a default value for $CVS_RSH. The sanity.config.sh file will
+# have the configured value in the RSH_DFLT variable.
+#
+: ${CVS_RSH=${RSH_DFLT:-ssh}}; export CVS_RSH
+
+if test -n "$remotehost"; then
+    # Verify that $CVS_RSH $remotehost works.
+    result=`$CVS_RSH $remotehost 'echo test'`
+    if test $? != 0 || test "x$result" != "xtest"; then
+	echo "\`$CVS_RSH $remotehost' failed." >&2
+	exit 1
+    fi
+fi
+
 case "${servercvs}" in
 "")
   exit_usage
@@ -240,31 +304,52 @@ false)
   ;;
 esac
 
-# verify that $servercvs works.
 if test false != ${servercvs}; then
-  if test ! -f ${servercvs} || test ! -r ${servercvs}; then
-    echo "No such file or file not readable: ${testcvs}" >&2
-    exit 1
-  fi
-  if ${servercvs} --version </dev/null 2>/dev/null |
-       grep '^Concurrent Versions System' >/dev/null 2>&1; then :; else
-    echo "Not a CVS executable: ${servercvs}" >&2
-    exit 1
-  fi
+  # Allow command line to override $CVS_SERVER
+  CVS_SERVER=$servercvs
+else
+  # default $CVS_SERVER to ${testcvs}
+  : ${CVS_SERVER=$testcvs}
+  # With the previous command, effectively defaults $servercvs to $CVS_SERVER,
+  # then $testcvs
+  servercvs=${CVS_SERVER}
 fi
-
-# default ${servercvs} to ${testcvs}
-if test false != ${servercvs}; then :; else
-	servercvs=${testcvs}
-fi
+export CVS_SERVER
 
 # Fail in client/server mode if our ${servercvs} does not contain server
 # support.
 if $remote; then
-  if ${servercvs} --version </dev/null |
-       grep '^Concurrent.*(.*server)$' >/dev/null 2>&1; then :; else
-    echo "CVS executable \`${servercvs}' does not contain server support." >&2
-    exit 1
+  if test -n "$remotehost"; then
+    if $CVS_RSH $remotehost "test ! -f ${servercvs} || test ! -r ${servercvs}"
+    then
+      echo "No such file or file not readable: $remotehost:${testcvs}" >&2
+      exit 1
+    fi
+    if $CVS_RSH $remotehost "${servercvs} --version </dev/null 2>/dev/null |
+         grep '^Concurrent Versions System' >/dev/null 2>&1"; then :; else
+      echo "Not a CVS executable: $remotehost:${servercvs}" >&2
+      exit 1
+    fi
+    if $CVS_RSH $remotehost "${servercvs} --version </dev/null |
+         grep '^Concurrent.*(.*server)$' >/dev/null 2>&1"; then :; else
+      echo "CVS executable \`$remotehost:${servercvs}' does not contain server support." >&2
+      exit 1
+    fi
+  else
+    if test ! -f ${servercvs} || test ! -r ${servercvs}; then
+      echo "No such file or file not readable: ${testcvs}" >&2
+      exit 1
+    fi
+    if ${servercvs} --version </dev/null 2>/dev/null |
+         grep '^Concurrent Versions System' >/dev/null 2>&1; then :; else
+      echo "Not a CVS executable: ${servercvs}" >&2
+      exit 1
+    fi
+    if ${servercvs} --version </dev/null |
+         grep '^Concurrent.*(.*server)$' >/dev/null 2>&1; then :; else
+      echo "CVS executable \`${servercvs}' does not contain server support." >&2
+      exit 1
+    fi
   fi
 fi
 
@@ -287,6 +372,8 @@ else
   testcvs_server_support=false
 fi
 
+
+
 dokeep() 
 { 
     if ${keep}; then
@@ -294,24 +381,6 @@ dokeep()
       exit 0
     fi
 }
-
-
-
-# Read our config file if we can find it.
-#
-# The config file should always be located in the same directory as the CVS
-# executable, unless we are testing an executable outside of the build
-# directory.  In this case, we echo a warning and attempt to assume the most
-# portable configuration.
-if test -z "$configfile"; then
-	configfile=`dirname $testcvs`/sanity.config.sh
-fi
-if test -r "$configfile"; then
-	. "$configfile"
-else
-	echo "WARNING: Failed to locate test suite config file" >&2
-	echo "         \`$configfile'." >&2
-fi
 
 
 
@@ -355,11 +424,19 @@ tempname="[-a-zA-Z0-9/.%_]*"
 # Regexp to match a date in RFC822 format (as amended by RFC1123).
 RFCDATE="[a-zA-Z0-9 ][a-zA-Z0-9 ]* [0-9:][0-9:]* -0000"
 RFCDATE_EPOCH="1 Jan 1970 00:00:00 -0000"
+RCSDATE="[0-9/]* [0-9:]*"
 
 # Regexp to match a date in standard Unix format as used by rdiff
 # FIXCVS: There's no reason for rdiff to use a different date format
 # than diff does
 DATE="[a-zA-Z]* [a-zA-Z]* [ 1-3][0-9] [0-9:]* [0-9]*"
+# ISO 8601 format "yyyy-dd-mm hh:mm -0000"
+ISODATE="[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9] [0-9][0-9]:[0-9][0-9] [+-][0-9][0-9][0-9][0-9]"
+# %p format is not well defined (nil) and hex digits are common. Using
+# ..* is a bad idea as the tests take a very long time to run due to
+# the complexity of the expressions.  If you run into any other characters
+# that are used in a %p format, add them here.
+PFMT="[0-9a-zA-Z()][0-9a-zA-Z()]*"
 
 # On cygwin32, we may not have /bin/sh.
 if test -r /bin/sh; then
@@ -389,6 +466,12 @@ if test -f check.log; then
 	mv check.log check.plog
 fi
 
+# Create the log file so check.log can be tailed almost immediately after
+# this script is started.  Otherwise it can take up to a minute or two before
+# the log file gets created when $remotehost is specified on some systems,
+# which makes for a lot of failed `tail -f' attempts.
+touch check.log
+
 # The default value of /tmp/cvs-sanity for TESTDIR is dubious,
 # because it loses if two people/scripts try to run the tests
 # at the same time.  Some possible solutions:
@@ -405,8 +488,19 @@ fi
 #     So this would be lost if everything was `pwd`-based.  I suppose
 #     if we wanted to get baroque we could start making symlinks
 #     to ensure the two are different.
-tmp=`(cd /tmp; /bin/pwd || pwd) 2>/dev/null`
+if test -n "$remotehost"; then
+        # We need to set $tmp on the server since $TMPDIR is compared against
+	# messages generated by the server.
+	tmp=`$CVS_RSH $remotehost 'cd /tmp; /bin/pwd || pwd' 2>/dev/null`
+	if test $? != 0; then
+	    echo "$CVS_RSH $remotehost failed." >&2
+	    exit 1
+	fi
+else
+	tmp=`(cd /tmp; /bin/pwd || pwd) 2>/dev/null`
+fi
 : ${TMPDIR=$tmp}
+export TMPDIR
 
 # Now:
 #	1) Set TESTDIR if it's not set already
@@ -426,8 +520,15 @@ fi
 # wouldn't appreciate that.
 mkdir ${TESTDIR} || exit 1
 cd ${TESTDIR} || exit 1
-TESTDIR=`(/bin/pwd || pwd) 2>/dev/null`
 # Ensure $TESTDIR is absolute
+if test -z "${TESTDIR}" || echo "${TESTDIR}" |grep '^[^/]'; then
+    # Don't resolve this unless we have to.  This keeps symlinks intact.  This
+    # is important at least when testing using -h $remotehost, because the same
+    # value for $TESTDIR must resolve to the same directory on the client and
+    # the server and we likely used Samba, and possibly symlinks, to do this.
+    TESTDIR=`(/bin/pwd || pwd) 2>/dev/null`
+fi
+
 if test -z "${TESTDIR}" || echo "${TESTDIR}" |grep '^[^/]'; then
     echo "Unable to resolve TESTDIR to an absolute directory." >&2
     exit 1
@@ -869,6 +970,21 @@ dotest_sort ()
   dotest_internal "$@"
 }
 
+# Like dotest_fail except output is sorted.
+dotest_fail_sort ()
+{
+  rm -f ${TESTDIR}/dotest.ex? 2>&1
+  eval "$2" >${TESTDIR}/dotest.tmp1 2>&1
+  status=$?
+  if test "$status" = 0; then
+    cat ${TESTDIR}/dotest.tmp1 >>${LOGFILE}
+    echo "exit status was $status" >>${LOGFILE}
+    fail "$1"
+  fi
+  ${TR} '	' ' ' < ${TESTDIR}/dotest.tmp1 | sort > ${TESTDIR}/dotest.tmp
+  dotest_internal "$@"
+}
+
 # Avoid picking up any stray .cvsrc, etc., from the user running the tests
 mkdir home
 HOME=${TESTDIR}/home; export HOME
@@ -894,8 +1010,8 @@ if test x"$*" = x; then
 	# Branching, tagging, removing, adding, multiple directories
 	tests="${tests} rdiff rdiff-short"
 	tests="${tests} rdiff2 diff diffnl death death2"
-	tests="${tests} rm-update-message rmadd"
-	tests="${tests} rmadd2 dirs dirs2 branches branches2 branches3"
+	tests="${tests} rm-update-message rmadd rmadd2 rmadd3"
+	tests="${tests} dirs dirs2 branches branches2 branches3"
 	tests="${tests} branches4 tagc tagf"
 	tests="${tests} rcslib multibranch import importb importc"
 	tests="${tests} update-p import-after-initial branch-after-import"
@@ -907,7 +1023,7 @@ if test x"$*" = x; then
 	# Checking out various places (modules, checkout -d, &c)
 	tests="${tests} modules modules2 modules3 modules4 modules5 modules6"
 	tests="${tests} mkmodules"
-	tests="${tests} cvsadm emptydir abspath toplevel toplevel2"
+	tests="${tests} cvsadm emptydir abspath abspath2 toplevel toplevel2"
         tests="${tests} checkout_repository"
 	# Log messages, error messages.
 	tests="${tests} mflag editor env errmsg1 errmsg2 adderrmsg opterrmsg"
@@ -935,6 +1051,7 @@ if test x"$*" = x; then
 	tests="${tests} diffmerge1 diffmerge2"
 	# Release of multiple directories
 	tests="${tests} release"
+	tests="${tests} recase"
 	# Multiple root directories and low-level protocol tests.
 	tests="${tests} multiroot multiroot2 multiroot3 multiroot4"
 	tests="${tests} rmroot reposmv pserver server server2 client"
@@ -1785,25 +1902,52 @@ MTGTXM MtatRk = Zy;
 EOF
 }
 
+
+
+# Echo a new CVSROOT based on $1, $remote, and $remotehost
+newroot() {
+  if $remote; then
+    if test -n "$remotehost"; then
+      echo :ext:$remotehost$1
+    else
+      echo :fork:$1
+    fi
+  else
+    echo $1
+  fi
+}
+
+
+
 # Set up CVSROOT (the crerepos tests will test operating without CVSROOT set).
+#
+# Currently we test :fork: and :ext: (see crerepos test).  There is a
+# known difference between the two in modes-15 (see comments there).
+#
+# :ext: can be tested against a remote machine if:
+#
+#    1. $remotehost is set using the `-h' option to this script.
+#    2. ${CVS_RSH=rsh} $remotehost works.
+#    3. The path to $TESTDIR is the same on both machines (symlinks are okay)
+#    4. The path to $testcvs is the same on both machines (symlinks are okay)
+#       or $CVS_SERVER is overridden in this script's environment to point to
+#       a working CVS exectuable on the remote machine.
+#
+# Testing :pserver: would be hard (inetd issues).  (How about using tcpserver
+# and some high port number?  DRP)
+
 if $linkroot; then
     mkdir ${TESTDIR}/realcvsroot
     ln -s realcvsroot ${TESTDIR}/cvsroot
 fi
 CVSROOT_DIRNAME=${TESTDIR}/cvsroot
-if $remote; then
-	# Currently we test :fork: and :ext: (see crerepos test).
-	# Testing :pserver: would be hard (inetd issues).
-	# Also :ext: and :fork support CVS_SERVER in a convenient way.
-	# If you want to edit this script to change the next line to
-	# :ext:, you can run the tests that way.  There is a known
-	# difference in modes-15 (see comments there).
-	CVSROOT=:fork:${CVSROOT_DIRNAME} ; export CVSROOT
-	CVS_SERVER=${servercvs}; export CVS_SERVER
-else
-	CVSROOT=${CVSROOT_DIRNAME} ; export CVSROOT
-fi
+CVSROOT=`newroot $CVSROOT_DIRNAME`; export CVSROOT
 
+
+
+###
+### The tests
+###
 dotest 1 "${testcvs} init" ''
 dotest 1a "${testcvs} init" ''
 
@@ -1825,7 +1969,7 @@ for what in $tests; do
 '
 Concurrent Versions System (CVS) [0-9.]*.*
 
-Copyright (c) [-0-9]* Brian Berliner, david d .zoo. zuhn, 
+Copyright (c) [-0-9]* Brian Berliner, david d .zoo. zuhn,
                         Jeff Polk, and other authors
 
 CVS may be copied only under the terms of the GNU General Public License,
@@ -2172,7 +2316,7 @@ Directory ${CVSROOT_DIRNAME}/first-dir/sdir2 added to the repository"
 "${SPROG} add: scheduling file .sfile1. for addition
 ${SPROG} add: use .${SPROG} commit. to add this file permanently"
 	  dotest basicb-2a11 "${testcvs} status sfile1" \
-"${SPROG} status: use .${SPROG} add. to create an entry for sfile1
+"${SPROG} status: use \`${SPROG} add' to create an entry for \`sfile1'
 ===================================================================
 File: sfile1           	Status: Unknown
 
@@ -3628,7 +3772,7 @@ U second-dir/dir1/dir2/file7"
 		cd first-dir
 		dotest basic2-34 "${testcvs} update -A -l *file*" \
 "[UP] file6
-${SPROG} update: file7 is no longer in the repository"
+${SPROG} update: \`file7' is no longer in the repository"
 
 		# If we don't delete the tag first, cvs won't retag it.
 		# This would appear to be a feature.
@@ -3888,22 +4032,15 @@ done"
 
 	  mkdir 1; cd 1
 	  dotest spacefiles-1 "${testcvs} -q co -l ." ""
-	  touch ./-c top
-	  dotest spacefiles-2 "${testcvs} add -- -c top" \
+	  touch ./-c
+	  dotest spacefiles-2 "${testcvs} add -- -c" \
 "${SPROG} add: scheduling file .-c. for addition
-${SPROG} add: scheduling file .top. for addition
-${SPROG} add: use .${SPROG} commit. to add these files permanently"
+${SPROG} add: use .${SPROG} commit. to add this file permanently"
 	  dotest spacefiles-3 "${testcvs} -q ci -m add" \
 "RCS file: ${CVSROOT_DIRNAME}/-c,v
 done
 Checking in -c;
 ${CVSROOT_DIRNAME}/-c,v  <--  -c
-initial revision: 1\.1
-done
-RCS file: ${CVSROOT_DIRNAME}/top,v
-done
-Checking in top;
-${CVSROOT_DIRNAME}/top,v  <--  top
 initial revision: 1\.1
 done"
 	  mkdir 'first dir'
@@ -3928,16 +4065,10 @@ done"
 	  cd ../..
 
 	  mkdir 2; cd 2
-	  # Leading slash strikes me as kind of oddball, but there is
-	  # a special case for it in do_module.  And (in the case of
-	  # "top", rather than "-c") it has worked in CVS 1.10.6 and
-	  # presumably back to CVS 1.3 or so.
-	  dotest spacefiles-9 "${testcvs} -q co -- /top" "U \./top"
 	  dotest spacefiles-10 "${testcvs} co -- -b" \
 "${SPROG} checkout: Updating -b"
 	  dotest spacefiles-11 "${testcvs} -q co -- -c" "U \./-c"
 	  rm ./-c
-	  dotest spacefiles-12 "${testcvs} -q co -- /-c" "U \./-c"
 	  dotest spacefiles-13 "${testcvs} -q co 'first dir'" \
 "U first dir/a file"
 	  cd ..
@@ -3950,7 +4081,7 @@ done"
 	  rm -r 1 2 3
 	  rm -rf "${CVSROOT_DIRNAME}/first dir"
 	  rm -r ${CVSROOT_DIRNAME}/-b
-	  rm -f ${CVSROOT_DIRNAME}/-c,v ${CVSROOT_DIRNAME}/top,v
+	  rm -f ${CVSROOT_DIRNAME}/-c,v
 	  ;;
 
 	commit-readonly)
@@ -5213,8 +5344,8 @@ done"
 	  # this case.
 	  dotest death2-14 "${testcvs} -q update -r branch" \
 "[UP] file1
-${SPROG} update: file2 is no longer in the repository
-${SPROG} update: file4 is no longer in the repository"
+${SPROG} update: \`file2' is no longer in the repository
+${SPROG} update: \`file4' is no longer in the repository"
 
 	  # Add a file on the branch with the same name.
 	  echo "branch revision" > file2
@@ -5322,8 +5453,8 @@ diff -N file4
 	  # Switch to the nonbranch tag.
 	  dotest death2-19 "${testcvs} -q update -r tag" \
 "[UP] file1
-${SPROG} update: file2 is no longer in the repository
-${SPROG} update: file3 is no longer in the repository
+${SPROG} update: \`file2' is no longer in the repository
+${SPROG} update: \`file3' is no longer in the repository
 U file4"
 
 	  dotest_fail death2-20 "test -f file2"
@@ -5368,7 +5499,7 @@ done"
 	  cd ..
 	  echo "new stuff" >file4
 	  dotest_fail death2-25 "${testcvs} up file4" \
-"${SPROG} update: conflict: file4 is modified but no longer in the repository
+"${SPROG} update: conflict: \`file4' is modified but no longer in the repository
 C file4"
 
 	  cd .. ; rm -rf first-dir ${CVSROOT_DIRNAME}/first-dir
@@ -5396,7 +5527,7 @@ done"
 
 	  rm $file
 	  dotest rm-update-message-1 "$testcvs up $file" \
-"${SPROG} update: warning: $file was lost
+"${SPROG} update: warning: \`$file' was lost
 U $file"
 
 	  if $keep; then
@@ -5601,8 +5732,8 @@ done"
 
 	  # lose the branch
 	  dotest rmadd-29 "${testcvs} -q up -A" \
-"${SPROG} update: file3 is no longer in the repository
-${SPROG} update: file4 is no longer in the repository"
+"${SPROG} update: \`file3' is no longer in the repository
+${SPROG} update: \`file4' is no longer in the repository"
 
 	  # -f disables recursion
 	  dotest rmadd-30 "${testcvs} -q ci -f -r9 -m." \
@@ -5748,6 +5879,73 @@ File: no file file1		Status: Up-to-date
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
 	  ;;
 
+	rmadd3)
+          # This test demonstrates that CVS notices that file1 exists rather
+	  # that deleting or writing over it after:
+	  #
+	  #   cvs remove -f file1; touch file1; cvs add file1.
+	  #
+          # According to the manual, this should work for:
+	  #
+	  #   rm file1; cvs remove file1; cvs add file1
+	  #
+	  # but in past version of CVS, new content in file1 would be
+	  # erroneously deleted when file1 reappeared between the remove and
+	  # the add.
+	  #
+	  # Later versions of CVS would refuse to perform the add, but still
+	  # allow a subsequent local commit to erase the file from the
+	  # workspace, possibly losing data.
+	  mkdir 1; cd 1
+	  dotest rmadd3-init1 "${testcvs} -q co -l ." ''
+	  mkdir first-dir
+	  dotest rmadd3-init2 "${testcvs} add first-dir" \
+"Directory ${CVSROOT_DIRNAME}/first-dir added to the repository"
+	  cd first-dir
+
+	  echo initial content for file1 >file1
+	  dotest rmadd3-init3 "${testcvs} add file1" \
+"${SPROG} add: scheduling file \`file1' for addition
+${SPROG} add: use \`${SPROG} commit' to add this file permanently"
+	  dotest rmadd3-init4 "${testcvs} -q ci -m add" \
+"RCS file: ${CVSROOT_DIRNAME}/first-dir/file1,v
+done
+Checking in file1;
+${CVSROOT_DIRNAME}/first-dir/file1,v  <--  file1
+initial revision: 1\.1
+done"
+
+	  # Here begins the guts of this test, as detailed above.
+	  dotest rmadd3-1 "${testcvs} rm -f file1" \
+"${SPROG} remove: scheduling \`file1' for removal
+${SPROG} remove: use \`${SPROG} commit' to remove this file permanently"
+
+          # Now recreate the file:
+	  echo desired future contents for file1 >file1
+
+	  # And attempt to resurrect it at the same time:
+	  dotest_fail rmadd3-2 "${testcvs} add file1" \
+"${SPROG} add: \`file1' should be removed and is still there (or is back again)"
+
+	  # Now prove that commit knows that it shouldn't erase files.
+	  dotest_fail rmadd3-3 "${testcvs} -q ci -m." \
+"$SPROG commit: \`file1' should be removed and is still there (or is back again)
+$SPROG \[commit aborted\]: correct above errors first!"
+
+	  # Then these should pass too:
+	  dotest rmadd3-4 "test -f file1"
+	  dotest rmadd3-5 "cat file1" "desired future contents for file1"
+
+	  if $keep; then
+	    echo Keeping ${TESTDIR} and exiting due to --keep
+	    exit 0
+	  fi
+
+	  cd ../..
+	  rm -r 1
+	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  ;;
+
 	dirs)
 	  # Tests related to removing and adding directories.
 	  # See also:
@@ -5855,7 +6053,7 @@ done"
 "${QUESTION} sdir
 ${SPROG} update: Updating \.
 ${SPROG} update: Updating sdir
-${CPROG} update: move away sdir/file1; it is in the way
+${CPROG} update: move away \`sdir/file1'; it is in the way
 C sdir/file1"
 	    rm sdir/file1
 	    rm -r sdir/CVS
@@ -5897,12 +6095,12 @@ ${SPROG} \[update aborted\]: no such tag br"
 "${QUESTION} sdir
 ${SPROG} update: Updating \.
 ${SPROG} update: Updating sdir
-${CPROG} update: move away sdir/file1; it is in the way
+${CPROG} update: move away \`sdir/file1'; it is in the way
 C sdir/file1"
 	  else
 	    dotest_fail dirs2-10 "${testcvs} update -d -r br" \
-"${CPROG} update: in directory sdir:
-${CPROG} \[update aborted\]: there is no version here; do '${CPROG} checkout' first"
+"${CPROG} update: in directory \`sdir':
+${CPROG} \[update aborted\]: there is no version here; do \`${CPROG} checkout' first"
 	  fi
 	  cd ../..
 
@@ -6444,16 +6642,25 @@ File: file5            	Status: Up-to-date
 	branches3)
 	  # test local branch number support
 
-	  mkdir ${CVSROOT_DIRNAME}/first-dir
-	  mkdir branches3; cd branches3
+	  # This test is skipped in $remotehost mode since the
+	  # CVS_LOCAL_BRANCH_NUM is not inherited by the server process as it
+	  # is with :fork:, for hopefully obvious reasons.
+	  #
+	  # FIXCVS?  Is this correct?  Should CVS_LOCAL_BRANCH_NUM be sent as
+	  # a protocol extension or is it reasonable to only want this set on
+	  # the server?
 
-	  dotest branches3-1 "${testcvs} -q co first-dir"
-	  cd first-dir
-	  echo "file1 first revision" > file1
-	  dotest branches3-2 "${testcvs} add file1" \
+	  if test -n "$remotehost"; then :;else
+	    mkdir ${CVSROOT_DIRNAME}/first-dir
+	    mkdir branches3; cd branches3
+
+	    dotest branches3-1 "${testcvs} -q co first-dir"
+	    cd first-dir
+	    echo "file1 first revision" > file1
+	    dotest branches3-2 "${testcvs} add file1" \
 "${SPROG} add: scheduling file .file1. for addition
 ${SPROG} add: use .${SPROG} commit. to add this file permanently"
-	  dotest branches3-3 "${testcvs} commit -m add file1" \
+	    dotest branches3-3 "${testcvs} commit -m add file1" \
 "RCS file: ${CVSROOT_DIRNAME}/first-dir/file1,v
 done
 Checking in file1;
@@ -6461,11 +6668,11 @@ ${CVSROOT_DIRNAME}/first-dir/file1,v  <--  file1
 initial revision: 1\.1
 done"
 
-	  # Tag the file using a CVS_LOCAL_BRANCH_NUM of 1000
-	  CVS_LOCAL_BRANCH_NUM=1000; export CVS_LOCAL_BRANCH_NUM
-	  dotest branches3-4 "${testcvs} -q tag -b tag1" 'T file1'
-	  unset CVS_LOCAL_BRANCH_NUM
-	  dotest branches3-5 "${testcvs} -q log file1" \
+	    # Tag the file using a CVS_LOCAL_BRANCH_NUM of 1000
+	    CVS_LOCAL_BRANCH_NUM=1000; export CVS_LOCAL_BRANCH_NUM
+	    dotest branches3-4 "${testcvs} -q tag -b tag1" 'T file1'
+	    unset CVS_LOCAL_BRANCH_NUM
+	    dotest branches3-5 "${testcvs} -q log file1" \
 "
 RCS file: ${CVSROOT_DIRNAME}/first-dir/file1,v
 Working file: file1
@@ -6484,14 +6691,15 @@ date: [0-9/: ]*;  author: ${username};  state: Exp;
 add
 ============================================================================="
 
-	  if $keep; then
-	    echo Keeping ${TESTDIR} and exiting due to --keep
-	    exit 0
-	  fi
+	    if $keep; then
+	      echo Keeping ${TESTDIR} and exiting due to --keep
+	      exit 0
+	    fi
 
-	  cd ../..
-	  rm -rf ${CVSROOT_DIRNAME}/first-dir
-	  rm -r branches3
+	    cd ../..
+	    rm -rf ${CVSROOT_DIRNAME}/first-dir
+	    rm -r branches3
+	  fi # !$remotehost
 	  ;;
 
 	branches4)
@@ -6749,7 +6957,7 @@ initial revision: 1\.1
 done"
 	  cd ../../2/first-dir
 	  dotest tagc-10 "${testcvs} -q tag -c tag4" \
-"${SPROG} tag: file2 is no longer in the repository
+"${SPROG} tag: \`file2' is no longer in the repository
 T file1
 T file2"
 	  cd ../..
@@ -6807,7 +7015,7 @@ v1"
 	  rm $file
 	  # Before the fix that prompted the addition of this test,
 	  # the following command would fail with this diagnostic:
-	  # cvs update: warning: new-born F has disappeared
+	  # cvs update: warning: new-born \`F' has disappeared
 	  dotest update-p-10 "$testcvs update -p -rT $file" \
 "===================================================================
 Checking out $file
@@ -6829,7 +7037,7 @@ v1"
 	  # that we can then remove.
 	  dotest update-p-undead-0 "$testcvs update -A" \
 "${SPROG} update: Updating \.
-${SPROG} update: warning: new-born $file has disappeared"
+${SPROG} update: warning: new-born \`$file' has disappeared"
 	  dotest update-p-undead-1 "$testcvs update" \
 "${SPROG} update: Updating \.
 U $file"
@@ -7280,7 +7488,15 @@ two
 [>]>>>>>> 1\.2"
 
 	  # Test behavior of symlinks in the repository.
-	  dotest rcslib-symlink-1 "ln -s file1,v ${CVSROOT_DIRNAME}/first-dir/file2,v"
+	  if test -n "$remotehost"; then
+	    # Create the link on the remote system.  This is because Cygwin's
+	    # Windows support creates *.lnk files for Windows.  When creating
+	    # these in an SMB share from UNIX, these links won't work from the
+	    # UNIX side.
+	    dotest rcslib-symlink-1remotehost "${CVS_RSH} $remotehost 'ln -s file1,v ${CVSROOT_DIRNAME}/first-dir/file2,v'"
+	  else
+	    dotest rcslib-symlink-1 "ln -s file1,v ${CVSROOT_DIRNAME}/first-dir/file2,v"
+	  fi
 	  dotest rcslib-symlink-2 "${testcvs} update file2" "U file2"
 	  echo "This is a change" >> file2
 	  dotest rcslib-symlink-3 "${testcvs} ci -m because file2" \
@@ -7288,14 +7504,21 @@ two
 ${CVSROOT_DIRNAME}/first-dir/file1,v  <--  file2
 new revision: 1\.1\.2\.2; previous revision: 1\.1\.2\.1
 done"
-	  dotest rcslib-symlink-4 "ls -l $CVSROOT_DIRNAME/first-dir/file2,v" \
+
+	  # Switch as for rcslib-symlink-1
+	  if test -n "$remotehost"; then
+	    dotest rcslib-symlink-4 "$CVS_RSH $remotehost 'ls -l $CVSROOT_DIRNAME/first-dir/file2,v'" \
 ".*$CVSROOT_DIRNAME/first-dir/file2,v -> file1,v"
+	  else
+	    dotest rcslib-symlink-4 "ls -l $CVSROOT_DIRNAME/first-dir/file2,v" \
+".*$CVSROOT_DIRNAME/first-dir/file2,v -> file1,v"
+	  fi
 
 	  # CVS was failing to check both the symlink and the file
 	  # for timestamp changes for a while.  Test that.
 	  rm file1
 	  dotest rcslib-symlink-3a "${testcvs} -q up file1" \
-"${SPROG} update: warning: file1 was lost
+"${SPROG} update: warning: \`file1' was lost
 U file1"
 	  echo "This is a change" >> file1
 	  dotest rcslib-symlink-3b "${testcvs} ci -m because file1" \
@@ -7314,8 +7537,15 @@ Checking in file3;
 ${CVSROOT_DIRNAME}/first-dir/Attic/file3,v  <--  file3
 new revision: 1\.1\.2\.1; previous revision: 1\.1
 done"
+
 	  rm -f ${CVSROOT_DIRNAME}/first-dir/file2,v
-	  dotest rcslib-symlink-3f "ln -s Attic/file3,v ${CVSROOT_DIRNAME}/first-dir/file2,v"
+	  # As for rcslib-symlink-1
+	  if test -n "$remotehost"; then
+	    dotest rcslib-symlink-3f "$CVS_RSH $remotehost 'ln -s Attic/file3,v ${CVSROOT_DIRNAME}/first-dir/file2,v'"
+	  else
+	    dotest rcslib-symlink-3f "ln -s Attic/file3,v ${CVSROOT_DIRNAME}/first-dir/file2,v"
+	  fi
+
 	  dotest rcslib-symlink-3g "${testcvs} update file2" "U file2"
 
 	  # restore the link to file1 for the following tests
@@ -7327,7 +7557,12 @@ new revision: delete; previous revision: 1\.1\.2\.1
 done"
 	  rm -f ${CVSROOT_DIRNAME}/first-dir/file2,v
 	  rm -f ${CVSROOT_DIRNAME}/first-dir/Attic/file3,v
-	  dotest rcslib-symlink-3h "ln -s file1,v ${CVSROOT_DIRNAME}/first-dir/file2,v"
+	  # As for rcslib-symlink-1
+	  if test -n "$remotehost"; then
+	    dotest rcslib-symlink-3h "$CVS_RSH $remotehost 'ln -s file1,v ${CVSROOT_DIRNAME}/first-dir/file2,v'"
+	  else
+	    dotest rcslib-symlink-3h "ln -s file1,v ${CVSROOT_DIRNAME}/first-dir/file2,v"
+	  fi
 
 	  # Test 5 reveals a problem with having symlinks in the
 	  # repository.  CVS will try to tag both of the files
@@ -7340,8 +7575,14 @@ done"
 "${SPROG} tag: Tagging .
 T file1
 W file2 : the_tag already exists on version 1.1.2.3 : NOT MOVING tag to version 1.1.2.1"
-	  dotest rcslib-symlink-6 "ls -l $CVSROOT_DIRNAME/first-dir/file2,v" \
+	  # As for rcslib-symlink-1
+	  if test -n "$remotehost"; then
+	    dotest rcslib-symlink-6 "$CVS_RSH $remotehost 'ls -l $CVSROOT_DIRNAME/first-dir/file2,v'" \
 ".*$CVSROOT_DIRNAME/first-dir/file2,v -> file1,v"
+	  else
+	    dotest rcslib-symlink-6 "ls -l $CVSROOT_DIRNAME/first-dir/file2,v" \
+".*$CVSROOT_DIRNAME/first-dir/file2,v -> file1,v"
+	  fi
 
 	  # Symlinks tend to interact poorly with the Attic.
 	  cd ..
@@ -7375,6 +7616,18 @@ ${SPROG} rtag: could not read RCS file for first-dir/file2"
 	    exit 0
 	  fi
 
+	  # Must remove the symlink first.  Samba doesn't appear to show
+	  # broken symlink across the SMB share, and rm -rf by itself
+	  # will remove file1,v first and leave file2,v a broken link and the
+	  # rm -rf will fail since it doesn't find file2,v and it still gets
+	  # directory not empty errors removing cvsroot/first-dir.
+	  #
+	  # I'm not sure why I need to do this on $remotehost.  The rm above
+	  # rcslib-symlink-3j works fine, but the next one doesn't unless run
+	  # remotely under Cygwin and using a TESTDIR on a Samba share.
+	  if test -n "$remotehost"; then
+	    $CVS_RSH $remotehost "rm -f ${CVSROOT_DIRNAME}/first-dir/file2,v"
+	  fi
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
 	  rm -r first-dir 2
 	  ;;
@@ -7594,7 +7847,7 @@ done"
 
 		# update to main line
 		dotest import-105 "${testcvs} -q update -A" \
-"${SPROG} update: imported-f1 is no longer in the repository
+"${SPROG} update: \`imported-f1' is no longer in the repository
 [UP] imported-f2"
 
 		# second import - file4 deliberately unchanged
@@ -7648,7 +7901,7 @@ Use the following command to help the merge:"
 
 		# update to main line
 		dotest import-112 "${testcvs} -q update -A" \
-"${SPROG} update: imported-f1 is no longer in the repository
+"${SPROG} update: \`imported-f1' is no longer in the repository
 [UP] imported-f2"
 
 		cd ..
@@ -8012,7 +8265,7 @@ U first-dir/file2'
 'T file1'
 	  dotest branch-after-import-4 \
 "${testcvs} -q update -r TESTTOTRON" \
-"${SPROG} update: file2 is no longer in the repository"
+"${SPROG} update: \`file2' is no longer in the repository"
 
 	  cp ../imp-dir/file2 .
 	  dotest branch-after-import-5 \
@@ -8510,7 +8763,7 @@ U first-dir/file8
 U first-dir/file9'
 	  cd first-dir
 	  dotest join-twobranch-2 "${testcvs} -q update -rbr2 -jbranch" \
-"${SPROG} update: file1 is no longer in the repository
+"${SPROG} update: \`file1' is no longer in the repository
 U file1
 U file2
 RCS file: ${CVSROOT_DIRNAME}/first-dir/file2,v
@@ -8522,9 +8775,9 @@ ${SPROG} update: scheduling file3 for removal
 U file4
 ${SPROG} update: file file4 has been modified, but has been removed in revision branch
 U file7
-${SPROG} update: file8 is no longer in the repository
+${SPROG} update: \`file8' is no longer in the repository
 U file8
-${SPROG} update: file9 is no longer in the repository
+${SPROG} update: \`file9' is no longer in the repository
 U file9"
 	  # Verify that the right changes have been scheduled.
 	  dotest join-twobranch-3 "${testcvs} -q update" \
@@ -8690,10 +8943,10 @@ done"
 	  # CVS, would be a lot of work and I'm not sure this case justifies
 	  # it.
 	  dotest join2-17-circumvent "${testcvs} -q update -A" \
-"${SPROG} update: bradd is no longer in the repository
+"${SPROG} update: \`bradd' is no longer in the repository
 [UP] file1"
 :	  dotest join2-17 "${testcvs} -q update -A bradd" \
-"${SPROG} update: warning: bradd is not (any longer) pertinent"
+"${SPROG} update: warning: \`bradd' is not (any longer) pertinent"
 	  dotest join2-18 "${testcvs} -q update -j br1 bradd" "U bradd"
 	  dotest join2-19 "${testcvs} -q status bradd" \
 "===================================================================
@@ -8770,7 +9023,7 @@ T file2"
 
 	  # Before we actually have any revision on br2, let's try a join
 	  dotest join3-11 "${testcvs} -q update -r br1" "[UP] file1
-${SPROG} update: file2 is no longer in the repository"
+${SPROG} update: \`file2' is no longer in the repository"
 	  dotest join3-12 "${testcvs} -q update -j br2" \
 "RCS file: ${CVSROOT_DIRNAME}/first-dir/file1,v
 retrieving revision 1\.1
@@ -8789,7 +9042,7 @@ trunk:line1
 
 	  # OK, we'll try the same thing with a revision on br2.
 	  dotest join3-14 "${testcvs} -q update -r br2 file1" \
-"${SPROG} update: warning: file1 was lost
+"${SPROG} update: warning: \`file1' was lost
 U file1" "U file1"
 	  echo 'br2:line1' >>file1
 	  dotest join3-15 "${testcvs} -q ci -m modify file1" \
@@ -9141,7 +9394,7 @@ C -file"
 "RCS file: ${CVSROOT_DIRNAME}/join6/temp\.txt,v
 done
 Checking in temp\.txt;
-${CVSROOT_DIRNAME}/join6/temp.txt,v  <--  temp\.txt
+${CVSROOT_DIRNAME}/join6/temp\.txt,v  <--  temp\.txt
 initial revision: 1\.1
 done"
 	  cp temp.txt temp2.txt
@@ -9241,6 +9494,27 @@ retrieving revision 1\.2
 retrieving revision 1\.3
 Merging differences between 1\.2 and 1\.3 into temp\.txt"
 	  dotest join6-13 "${testcvs} diff temp.txt" ""
+
+	  cd ../..
+
+	  mkdir 2; cd 2
+	  echo hello > subfile1
+	  dotest join6-14 "${testcvs} -Q import -madd join6/sub vendor oldver" ""
+	  echo hello > subfile2
+	  dotest join6-15 "${testcvs} -Q import -madd join6/sub vendor newver" ""
+	  cd ../1/join6
+	  dotest_sort join6-16 "${testcvs} update -dP" \
+"? temp2\.txt
+? temp3\.txt
+U sub/subfile1
+U sub/subfile2
+${SPROG} update: Updating \.
+${SPROG} update: Updating sub"
+	  dotest_sort join6-17 "${testcvs} update -dP -j oldver -j newver" \
+"? temp2\.txt
+? temp3\.txt
+${SPROG} update: Updating \.
+${SPROG} update: Updating sub"
 
 	  cd ../../..
 
@@ -9578,14 +9852,14 @@ done"
 	  cd ..
 	  rm -r first-dir
 	  dotest newb-123i "${testcvs} -q co -r branch first-dir/a" \
-"${SPROG} checkout: warning: first-dir/a is not (any longer) pertinent"
+"${SPROG} checkout: warning: \`first-dir/a' is not (any longer) pertinent"
 
 	  # Update the other copy, and make sure that a is removed.
 	  cd ../1/first-dir
 	  # "Entry Invalid" is a rather strange output here.  Something like
 	  # "Removed in Repository" would make more sense.
 	  dotest newb-123j0 "${testcvs} status a" \
-"${SPROG} status: a is no longer in the repository
+"${SPROG} status: \`a' is no longer in the repository
 ===================================================================
 File: a                	Status: Entry Invalid
 
@@ -9595,7 +9869,7 @@ File: a                	Status: Entry Invalid
    Sticky Date:		(none)
    Sticky Options:	(none)"
 	  dotest newb-123j "${testcvs} -q update" \
-"${SPROG} update: a is no longer in the repository"
+"${SPROG} update: \`a' is no longer in the repository"
 
 	  if test -f a; then
 	    fail newb-123k
@@ -9930,25 +10204,25 @@ done"
 "${SPROG} remove: scheduling .a. for removal
 ${SPROG} remove: use .${SPROG} commit. to remove this file permanently"
 	  dotest_fail conflicts2-142b4 "${testcvs} -q update" \
-"${SPROG} update: conflict: removed a was modified by second party
+"${SPROG} update: conflict: removed \`a' was modified by second party
 C a"
 	  # Resolve the conflict by deciding not to remove the file
 	  # after all.
 	  dotest conflicts2-142b5 "${testcvs} add a" "U a
-${SPROG} add: a, version 1\.1, resurrected"
+${SPROG} add: \`a', version 1\.1, resurrected"
 	  dotest conflicts2-142b6 "${testcvs} -q update" ''
 
 	  # Now one level up.
 	  cd ..
 	  dotest conflicts2-142b7 "${testcvs} rm -f first-dir/a" \
-"${SPROG} remove: scheduling .first-dir/a. for removal
-${SPROG} remove: use .${SPROG} commit. to remove this file permanently"
+"${SPROG} remove: scheduling \`first-dir/a' for removal
+${SPROG} remove: use \`${SPROG} commit' to remove this file permanently"
 
 	  if $remote; then
 	    # Haven't investigated this one.
 	    dotest_fail conflicts2-142b8 "${testcvs} add first-dir/a" \
-"${CPROG} add: in directory \.:
-${CPROG} \[add aborted\]: there is no version here; do '${CPROG} checkout' first"
+"${CPROG} add: in directory \`\.':
+${CPROG} \[add aborted\]: there is no version here; do \`${CPROG} checkout' first"
 	    cd first-dir
 	  else
 	    # The "nothing known" is a bug.  Correct behavior is for a to get
@@ -9961,18 +10235,18 @@ ${CPROG} \[add aborted\]: there is no version here; do '${CPROG} checkout' first
 	    # The fix for both is presumably to call RCS_checkout() or
 	    # something other than update().
 	    dotest conflicts2-142b8 "${testcvs} add first-dir/a" \
-"${SPROG} add: nothing known about first-dir
-${SPROG} add: first-dir/a, version 1\.2, resurrected"
+"${SPROG} add: nothing known about \`first-dir'
+${SPROG} add: \`first-dir/a', version 1\.2, resurrected"
 	    cd first-dir
 	    # Now recover from the damage that the 142b8 test did.
 	    dotest conflicts2-142b9 "${testcvs} rm -f a" \
-"${SPROG} remove: scheduling .a. for removal
-${SPROG} remove: use .${SPROG} commit. to remove this file permanently"
+"${SPROG} remove: scheduling \`a' for removal
+${SPROG} remove: use \`${SPROG} commit' to remove this file permanently"
 	  fi
 
 	  # As before, 1.2 instead of 1.1 is a bug.
 	  dotest conflicts2-142b10 "${testcvs} add a" "U a
-${SPROG} add: a, version 1\.2, resurrected"
+${SPROG} add: \`a', version 1\.2, resurrected"
 	  # As with conflicts2-142b6, check that things are normal again.
 	  dotest conflicts2-142b11 "${testcvs} -q update" ''
 	  cd ../..
@@ -9984,8 +10258,8 @@ ${SPROG} add: a, version 1\.2, resurrected"
 	  cd 1/first-dir
 	  rm abc
 	  dotest conflicts2-142c0 "${testcvs} rm abc" \
-"${SPROG} remove: scheduling .abc. for removal
-${SPROG} remove: use .${SPROG} commit. to remove this file permanently"
+"${SPROG} remove: scheduling \`abc' for removal
+${SPROG} remove: use \`${SPROG} commit' to remove this file permanently"
 	  dotest conflicts2-142c1 "${testcvs} -q ci -m remove-abc" \
 "Removing abc;
 ${CVSROOT_DIRNAME}/first-dir/abc,v  <--  abc
@@ -9994,8 +10268,8 @@ done"
 	  cd ../../2/first-dir
 	  rm abc
 	  dotest conflicts2-142c2 "${testcvs} rm abc" \
-"${SPROG} remove: scheduling .abc. for removal
-${SPROG} remove: use .${SPROG} commit. to remove this file permanently"
+"${SPROG} remove: scheduling \`abc' for removal
+${SPROG} remove: use \`${SPROG} commit' to remove this file permanently"
 	  dotest conflicts2-142c3 "${testcvs} update" \
 "${SPROG} update: Updating \."
 	  cd ../..
@@ -10053,32 +10327,32 @@ done"
 	  # the local CVS behavior for remote without the cvs add seems 
 	  # pretty difficult).
 	  if $remote; then
-	    dotest_fail conflicts2-142d2 "${testcvs} -q update" \
+	    dotest_fail conflicts2-142d2r "${testcvs} -q update" \
 "${QUESTION} aa\.c
 ${QUESTION} same\.c
-${CPROG} update: move away \./aa\.c; it is in the way
+${CPROG} update: move away \`\./aa\.c'; it is in the way
 C aa\.c
-${SPROG} update: conflict: bb\.c created independently by second party
+${SPROG} update: conflict: \`bb\.c' created independently by second party
 C bb\.c
-${CPROG} update: move away \./same\.c; it is in the way
+${CPROG} update: move away \`\./same\.c'; it is in the way
 C same\.c"
 	  else
 	    dotest_fail conflicts2-142d2 "${testcvs} -q update" \
-"${CPROG} update: move away aa\.c; it is in the way
+"${CPROG} update: move away \`aa\.c'; it is in the way
 C aa\.c
-${CPROG} update: conflict: bb\.c created independently by second party
+${CPROG} update: conflict: \`bb\.c' created independently by second party
 C bb\.c
 U same\.c"
 	  fi
 	  dotest conflicts2-142d3 "${testcvs} -q status aa.c" \
-"${SPROG} status: move away aa\.c; it is in the way
+"${SPROG} status: move away \`aa\.c'; it is in the way
 ===================================================================
 File: aa\.c             	Status: Unresolved Conflict
 
    Working revision:	No entry for aa\.c
    Repository revision:	1\.1	${CVSROOT_DIRNAME}/first-dir/aa\.c,v"
 	  dotest conflicts2-142d3a "${testcvs} -q status bb.c" \
-"${SPROG} status: conflict: bb\.c created independently by second party
+"${SPROG} status: conflict: \`bb\.c' created independently by second party
 ===================================================================
 File: bb\.c             	Status: Unresolved Conflict
 
@@ -10104,7 +10378,7 @@ File: bb\.c             	Status: Unresolved Conflict
 	  # email lists.  Somehow we need to get more information to users
 	  # via these messages and the ones generated by update. -DRP
 	  dotest_fail conflicts2-142d4 "${testcvs} -q add aa.c" \
-"${SPROG} add: aa.c added independently by second party"
+"${SPROG} add: \`aa.c' added independently by second party"
 
 	  # The user might want to see just what the conflict is.
 	  # Don't bother, diff seems to kind of lose its mind, with or
@@ -10191,11 +10465,11 @@ new revision: delete; previous revision: 1\.1
 done"
 	  cd ../../1/first-dir
 	  dotest conflicts3-12 "${testcvs} -n -q update" \
-"${SPROG} update: file1 is no longer in the repository
-${SPROG} update: file2 is no longer in the repository"
+"${SPROG} update: \`file1' is no longer in the repository
+${SPROG} update: \`file2' is no longer in the repository"
 	  dotest conflicts3-13 "${testcvs} -q update" \
-"${SPROG} update: file1 is no longer in the repository
-${SPROG} update: file2 is no longer in the repository"
+"${SPROG} update: \`file1' is no longer in the repository
+${SPROG} update: \`file2' is no longer in the repository"
 
 	  # OK, now add a directory to both working directories
 	  # and see that CVS doesn't lose its mind.
@@ -10277,7 +10551,7 @@ ${SPROG} update: ignoring first-dir/sdir (CVS/Entries missing)"
 	  if $remote; then
 	    dotest_fail conflicts3-23 "${testcvs} -q update -PdA" \
 "${QUESTION} sdir
-${CPROG} update: move away sdir/sfile; it is in the way
+${CPROG} update: move away \`sdir/sfile'; it is in the way
 C sdir/sfile"
 	  else
 	    dotest conflicts3-23 "${testcvs} -q update -PdA" \
@@ -10735,7 +11009,7 @@ Are you sure you want to release (and delete) directory .dirmodule.: "
 	  # (Dec 95).  Probably the exit status should be nonzero,
 	  # however.
 	  dotest modules-150g1 "${testcvs} co dirmodule/nonexist" \
-"${SPROG} checkout: warning: new-born dirmodule/nonexist has disappeared"
+"${SPROG} checkout: warning: new-born \`dirmodule/nonexist' has disappeared"
 	  # We tolerate the creation of the dirmodule directory, since that
 	  # is what CVS does, not because we view that as preferable to not
 	  # creating it.
@@ -10839,7 +11113,7 @@ done"
 	  cd ..
 	  rm -r first-dir
 	  dotest modules-155c8 "${testcvs} -q co topfiles" \
-"${SPROG} checkout: warning: first-dir/file1 is not (any longer) pertinent
+"${SPROG} checkout: warning: \`first-dir/file1' is not (any longer) pertinent
 U first-dir/file2"
 
 	  cd ..
@@ -11122,8 +11396,8 @@ ${CPROG} \[checkout aborted\]: cannot expand modules"
 	  cd first-dir
 	  echo file1 >file1
 	  dotest modules3-2 "${testcvs} add file1" \
-"${SPROG}"' add: scheduling file `file1'\'' for addition
-'"${SPROG}"' add: use .'"${SPROG}"' commit. to add this file permanently'
+"${SPROG} add: scheduling file \`file1' for addition
+${SPROG} add: use \`${SPROG} commit' to add this file permanently"
 	  dotest modules3-3 "${testcvs} -q ci -m add-it" \
 "RCS file: ${CVSROOT_DIRNAME}/first-dir/file1,v
 done
@@ -11457,7 +11731,12 @@ sleep 1
 echo "$i script invoked in \`pwd\`"
 echo "args: \$@"
 EOF
-	    chmod +x ${CVSROOT_DIRNAME}/$i.sh
+	    # Cygwin doesn't set premissions correctly over the Samba share.
+	    if test -n "$remotehost"; then
+	      $CVS_RSH $remotehost "chmod +x ${CVSROOT_DIRNAME}/$i.sh"
+	    else
+	      chmod +x ${CVSROOT_DIRNAME}/$i.sh
+	    fi
 	  done
 
 	  OPTS="-o${CVSROOT_DIRNAME}/checkout.sh -e ${CVSROOT_DIRNAME}/export.sh -t${CVSROOT_DIRNAME}/tag.sh"
@@ -11571,13 +11850,13 @@ Are you sure you want to release (and delete) directory .dirmodule.: "
 	  # however.
 	  if $remote; then
 	    dotest modules5-22 "${testcvs} co dirmodule/nonexist" \
-"${SPROG} checkout: warning: new-born dirmodule/nonexist has disappeared
+"${SPROG} checkout: warning: new-born \`dirmodule/nonexist' has disappeared
 ${SPROG} checkout: Executing ..${CVSROOT_DIRNAME}/checkout\.sh. .dirmodule..
 checkout script invoked in ${TMPDIR}/cvs-serv[0-9a-z]*
 args: dirmodule"
 	  else
 	    dotest modules5-22 "${testcvs} co dirmodule/nonexist" \
-"${SPROG} checkout: warning: new-born dirmodule/nonexist has disappeared
+"${SPROG} checkout: warning: new-born \`dirmodule/nonexist' has disappeared
 ${SPROG} checkout: Executing ..${CVSROOT_DIRNAME}/checkout\.sh. .dirmodule..
 checkout script invoked in ${TESTDIR}/1
 args: dirmodule"
@@ -11727,13 +12006,13 @@ Are you sure you want to release (and delete) directory .mydir.: "
 	  # however.
 	  if $remote; then
 	    dotest modules5-42 "${testcvs} co -d mydir dirmodule/nonexist" \
-"${SPROG} checkout: warning: new-born mydir/nonexist has disappeared
+"${SPROG} checkout: warning: new-born \`mydir/nonexist' has disappeared
 ${SPROG} checkout: Executing ..${CVSROOT_DIRNAME}/checkout\.sh. .mydir..
 checkout script invoked in ${TMPDIR}/cvs-serv[0-9a-z]*
 args: mydir"
 	  else
 	    dotest modules5-42 "${testcvs} co -d mydir dirmodule/nonexist" \
-"${SPROG} checkout: warning: new-born mydir/nonexist has disappeared
+"${SPROG} checkout: warning: new-born \`mydir/nonexist' has disappeared
 ${SPROG} checkout: Executing ..${CVSROOT_DIRNAME}/checkout\.sh. .mydir..
 checkout script invoked in ${TESTDIR}/1
 args: mydir"
@@ -13132,10 +13411,10 @@ U dir2d1/sub/sub2d1/file1"
 	  # the working directory doesn't correspond to anything in
 	  # the repository.
 	  dotest_fail emptydir-7 "${testcvs} add emptyfile" \
-"${SPROG} \[add aborted\]: cannot add to ${CVSROOT_DIRNAME}/CVSROOT/Emptydir"
+"${SPROG} \[add aborted]: cannot add to \`${CVSROOT_DIRNAME}/CVSROOT/Emptydir'"
 	  mkdir emptydir
 	  dotest_fail emptydir-8 "${testcvs} add emptydir" \
-"${CPROG} \[add aborted\]: cannot add to ${CVSROOT_DIRNAME}/CVSROOT/Emptydir"
+"${CPROG} \[add aborted]: cannot add to \`${CVSROOT_DIRNAME}/CVSROOT/Emptydir'"
 	  cd ..
 	  rm -rf CVS dir2d1
 
@@ -13387,6 +13666,24 @@ ${SPROG} \[checkout aborted\]: than the 0 which Max-dotdot specified"
 
 	  ;;
 
+
+
+	abspath2)
+	  # More absolute path checks.  The following used to attempt to create
+	  # directories in /:
+	  #
+	  # $ cvs -d:fork:/cvsroot co /foo
+	  # cvs checkout: warning: cannot make directory CVS in /: Permission denied
+	  # cvs [checkout aborted]: cannot make directory /foo: Permission denied
+	  # $
+	  dotest_fail abspath2-1 "${testcvs} co /foo" \
+"$CPROG \[checkout aborted\]: Absolute module reference invalid: \`/foo'" \
+"$SPROG \[server aborted\]: Absolute module reference invalid: \`/foo'
+$CPROG \[checkout aborted\]: end of file from server (consult above messages if any)"
+	  ;;
+
+
+
 	toplevel)
 	  # test the feature that cvs creates a CVS subdir also for
 	  # the toplevel directory
@@ -13495,7 +13792,12 @@ U top-dir/file1"
 	  # directory itself was created with 1.9 or older).
 	  rm -r CVS
 	  # Now set the permissions so we can't recreate it.
-	  chmod -w ../1
+	  if test -n "$remotehost"; then
+	    # Cygwin again.
+	    $CVS_RSH $remotehost "chmod -w $TESTDIR/1"
+	  else
+	    chmod -w ../1
+	  fi
 	  # Now see whether CVS has trouble because it can't create CVS.
 	  # First string is for local, second is for remote.
 	  dotest toplevel-12 "${testcvs} co top-dir" \
@@ -13635,25 +13937,25 @@ ${SPROG} commit: Rebuilding administrative file database"
           dotest_fail checkout_repository-2 "${testcvs} co CVSROOT" \
 "${CPROG} \[checkout aborted\]: Cannot check out files into the repository itself" \
 "${SPROG} checkout: Updating CVSROOT
-${CPROG} checkout: move away CVSROOT/checkoutlist; it is in the way
+${CPROG} checkout: move away \`CVSROOT/checkoutlist'; it is in the way
 C CVSROOT/checkoutlist
-${CPROG} checkout: move away CVSROOT/commitinfo; it is in the way
+${CPROG} checkout: move away \`CVSROOT/commitinfo'; it is in the way
 C CVSROOT/commitinfo
-${CPROG} checkout: move away CVSROOT/config; it is in the way
+${CPROG} checkout: move away \`CVSROOT/config'; it is in the way
 C CVSROOT/config
-${CPROG} checkout: move away CVSROOT/cvswrappers; it is in the way
+${CPROG} checkout: move away \`CVSROOT/cvswrappers'; it is in the way
 C CVSROOT/cvswrappers
-${CPROG} checkout: move away CVSROOT/loginfo; it is in the way
+${CPROG} checkout: move away \`CVSROOT/loginfo'; it is in the way
 C CVSROOT/loginfo
-${CPROG} checkout: move away CVSROOT/modules; it is in the way
+${CPROG} checkout: move away \`CVSROOT/modules'; it is in the way
 C CVSROOT/modules
-${CPROG} checkout: move away CVSROOT/notify; it is in the way
+${CPROG} checkout: move away \`CVSROOT/notify'; it is in the way
 C CVSROOT/notify
-${CPROG} checkout: move away CVSROOT/rcsinfo; it is in the way
+${CPROG} checkout: move away \`CVSROOT/rcsinfo'; it is in the way
 C CVSROOT/rcsinfo
-${CPROG} checkout: move away CVSROOT/taginfo; it is in the way
+${CPROG} checkout: move away \`CVSROOT/taginfo'; it is in the way
 C CVSROOT/taginfo
-${CPROG} checkout: move away CVSROOT/verifymsg; it is in the way
+${CPROG} checkout: move away \`CVSROOT/verifymsg'; it is in the way
 C CVSROOT/verifymsg"
 
           dotest checkout_repository-3 \
@@ -14103,7 +14405,11 @@ else
   exit 1
 fi
 EOF
-	    chmod +x ${TESTDIR}/env/test-cvs-pid
+	    if test -n "$remotehost"; then
+	      $CVS_RSH $remotehost "chmod +x ${TESTDIR}/env/test-cvs-pid"
+	    else
+	      chmod +x ${TESTDIR}/env/test-cvs-pid
+	    fi
 	    cd CVSROOT
 	    echo "^env ${TESTDIR}/env/test-cvs-pid" >>commitinfo
 	    dotest env-2 "${testcvs} -q ci -m test-pid commitinfo" \
@@ -14185,11 +14491,20 @@ done"
 	  fi
 
 	  cd ../../2/1dir
-	  dotest 168 "${testcvs} -q update" \
-"${SPROG} update: foo is no longer in the repository
-${CPROG} update: unable to remove foo: Permission denied" \
-"${SPROG} update: foo is no longer in the repository
-${CPROG} update: unable to remove \./foo: Permission denied"
+	  # The second case in the local and remote versions of errmsg1-168
+	  # below happens on Cygwin under Windows, where write privileges
+	  # aren't enforced properly.
+	  if $remote; then
+	    dotest errmsg1-168r "${testcvs} -q update" \
+"${SPROG} update: \`foo' is no longer in the repository
+${SPROG} update: unable to remove \./foo: Permission denied" \
+"${SPROG} update: \`foo' is no longer in the repository"
+	  else
+	    dotest errmsg1-168 "${testcvs} -q update" \
+"${SPROG} update: \`foo' is no longer in the repository
+${SPROG} update: unable to remove foo: Permission denied" \
+"${SPROG} update: \`foo' is no longer in the repository"
+	  fi
 
 	  cd ..
 	  chmod u+w 1dir
@@ -14300,7 +14615,7 @@ ${SPROG} add: use .${SPROG} commit. to add this file permanently"
 	  # message (e.g. the one from local CVS).  But at least it is an
 	  # error message.
 	  dotest_fail errmsg2-16 "${testcvs} add bogus-dir/file16" \
-"${SPROG} add: in directory bogus-dir:
+"${SPROG} add: in directory \`bogus-dir':
 ${SPROG} \[add aborted\]: there is no version here; do .${SPROG} checkout. first" \
 "${CPROG} add: cannot open CVS/Entries for reading: No such file or directory
 ${CPROG} \[add aborted\]: no repository"
@@ -14384,7 +14699,7 @@ ${SPROG} add: use .${SPROG} commit. to add this file permanently"
 
 	  # add it twice
 	  dotest_fail adderrmsg-4 "${testcvs} add file1" \
-"${SPROG} add: file1 has already been entered"
+"${SPROG} add: \`file1' has already been entered"
 	  dotest_fail adderrmsg-5 "${testcvs} -q add file1" ""
 
 	  dotest adderrmsg-6 "${testcvs} -q ci -madd" \
@@ -14397,7 +14712,7 @@ done"
 
 	  # file in Entries & repository
 	  dotest_fail adderrmsg-7 "${testcvs} add file1" \
-"${SPROG} add: file1 already exists, with version number 1\.1"
+"${SPROG} add: \`file1' already exists, with version number 1\.1"
 	  dotest_fail adderrmsg-8 "${testcvs} -q add file1" ""
 
 	  # clean up
@@ -14756,13 +15071,20 @@ G@#..!@#=&"
 	  if $remote; then
 	    CVS_SERVER=${TESTDIR}/cvs-none; export CVS_SERVER
 
-	    # The ${DOTSTAR} matches the exact exec error message
-	    # (which varies) and either "end of file from server"
-	    # (if the process doing the exec exits before the parent
-	    # gets around to sending data to it) or "broken pipe" (if it
-	    # is the other way around).
-	    dotest_fail devcom3-9ar "${testcvs} edit w1" \
-"${CPROG} \[edit aborted\]: cannot exec ${TESTDIR}/cvs-none: ${DOTSTAR}"
+	    # The ${DOTSTAR} below matches the exact CVS server error message,
+	    # which in :fork: mode is:
+	    # "$SPROG \[edit aborted\]: cannot exec $TESTDIR/cvs-none: ${DOTSTAR}",
+	    # but which is:
+	    # "bash2: line 1: $TESTDIR/cvs-none: No such file or directory"
+	    # when testing across an :ext:/ssh link to my Linux 2.4 box.
+	    #
+	    # I can't even test for the second part of the error message,
+	    # from the client, which varies more consistently, usually either
+	    # "end of file from server" (if the process doing the exec exits
+	    # before the parent gets around to sending data to it) or
+	    # "received broken pipe signal" (if it is the other way around),
+	    # since HP-UX fails to output it.
+	    dotest_fail devcom3-9ar "${testcvs} edit w1 2>/dev/null"
 	    dotest devcom3-9br "test -w w1" ""
 	    dotest devcom3-9cr "cat CVS/Notify" \
 "Ew1	[SMTWF][uoehra][neduit] [JFAMSOND][aepuco][nbrylgptvc] [0-9 ][0-9] [0-9:]* [0-9][0-9][0-9][0-9] GMT	[-a-zA-Z_.0-9]*	${TESTDIR}/1/first-dir	EUC"
@@ -14976,7 +15298,7 @@ ${CPROG} unedit: run update to complete the unedit"
 	    "/$file/1\.1\.1\.1/${DOTSTAR}"
 
 	  dotest unedit-without-baserev-6 "${testcvs} -q update" \
-"${CPROG} update: warning: m was lost
+"${CPROG} update: warning: \`m' was lost
 U m"
 
 	  # OK, those were the easy cases.  Now tackle the hard one
@@ -15016,7 +15338,7 @@ C m"
 "m has been modified; revert changes${QUESTION} ${CPROG} unedit: m not mentioned in CVS/Baserev
 ${CPROG} unedit: run update to complete the unedit"
 	  dotest unedit-without-baserev-15 "${testcvs} -q update" \
-"${CPROG} update: warning: m was lost
+"${CPROG} update: warning: \`m' was lost
 U m"
 	  # The following tests are kind of degenerate compared with
 	  # watch4-16 through watch4-18 but might as well make sure that
@@ -15234,7 +15556,7 @@ $CVSROOT_DIRNAME/ignore-on-branch/file2,v  <--  file2
 new revision: 1\.1\.2\.1; previous revision: 1\.1
 done"
 	  dotest ignore-on-branch-6 "$testcvs -q up -rbranch2" \
-"${SPROG} update: file2 is no longer in the repository"
+"${SPROG} update: \`file2' is no longer in the repository"
 	  dotest ignore-on-branch-7 "$testcvs -q up -jbranch" 'U file2'
 
 	  if $keep; then
@@ -15569,8 +15891,12 @@ total revisions: 1
 	  # being munged as if in text mode.
 	  ${AWK} 'BEGIN { printf "%c%c%c@%c%c", 2, 10, 137, 13, 10 }' \
 	    </dev/null | ${TR} '@' '\000' >../binfile
-	  cat ../binfile ../binfile >../binfile2
-	  cat ../binfile2 ../binfile >../binfile3
+	  # Use binfl2 rather than binfile2 because of a problem with Cygwin
+	  # and Samba. that causes cat to report that the input and output file
+	  # are the same when outputting to binfile3.  Why?  I don't know, but
+	  # it is consistently reproducible.
+	  cat ../binfile ../binfile >../binfl2
+	  cat ../binfl2 ../binfile >../binfile3
 
 	  # FIXCVS: unless a branch has at least one file on it,
 	  # tag_check_valid won't know it exists.  So if brmod didn't
@@ -15611,9 +15937,9 @@ T brmod-wdmod'
 	  dotest binfiles2-4 "${testcvs} add -kb binfile.dat" \
 "${SPROG} add: scheduling file .binfile\.dat. for addition on branch .br.
 ${SPROG} add: use .${SPROG} commit. to add this file permanently"
-	  cp ../binfile2 brmod
-	  cp ../binfile2 brmod-trmod
-	  cp ../binfile2 brmod-wdmod
+	  cp ../binfl2 brmod
+	  cp ../binfl2 brmod-trmod
+	  cp ../binfl2 brmod-wdmod
 	  dotest binfiles2-5 "${testcvs} -q ci -m br-changes" \
 "RCS file: ${CVSROOT_DIRNAME}/first-dir/Attic/binfile\.dat,v
 done
@@ -15634,7 +15960,7 @@ ${CVSROOT_DIRNAME}/first-dir/brmod-wdmod,v  <--  brmod-wdmod
 new revision: 1\.1\.2\.1; previous revision: 1\.1
 done"
 	  dotest binfiles2-6 "${testcvs} -q update -A" \
-"${SPROG} update: binfile\.dat is no longer in the repository
+"${SPROG} update: \`binfile\.dat' is no longer in the repository
 [UP] brmod
 [UP] brmod-trmod
 [UP] brmod-wdmod"
@@ -15662,9 +15988,9 @@ ${SPROG} update: file from working directory is now in .#brmod-wdmod.1.1
 C brmod-wdmod"
 
 	  dotest binfiles2-9 "cmp ../binfile binfile.dat"
-	  dotest binfiles2-9-brmod "cmp ../binfile2 brmod"
-	  dotest binfiles2-9-brmod-trmod "cmp ../binfile2 brmod-trmod"
-	  dotest binfiles2-9-brmod-trmod "cmp ../binfile2 brmod-wdmod"
+	  dotest binfiles2-9-brmod "cmp ../binfl2 brmod"
+	  dotest binfiles2-9-brmod-trmod "cmp ../binfl2 brmod-trmod"
+	  dotest binfiles2-9-brmod-trmod "cmp ../binfl2 brmod-wdmod"
 	  dotest binfiles2-9a-brmod-trmod "cmp ../binfile3 .#brmod-trmod.1.2"
 	  dotest binfiles2-9a-brmod-wdmod "cmp ../binfile3 .#brmod-wdmod.1.1"
 
@@ -16512,7 +16838,8 @@ new revision: 1\.3; previous revision: 1\.2
 done"
 	  cd ..
 	  dotest info-9 "cat $TESTDIR/testlog" "xenv-valueyz=${username}=${CVSROOT_DIRNAME}="
-          dotest info-10 "cat $TESTDIR/testlog2" 'first-dir file1,NONE,1.1
+          dotest info-10 "cat $TESTDIR/testlog2" \
+'first-dir file1,NONE,1.1
 first-dir 1.1
 first-dir file1
 first-dir NONEAX
@@ -16565,7 +16892,12 @@ else
 	exit 0
 fi
 EOF
-	  chmod +x ${TESTDIR}/vscript*
+	  # Grumble, grumble, mumble, search for "Cygwin".
+	  if test -n "$remotehost"; then
+	    $CVS_RSH $remotehost "chmod +x ${TESTDIR}/vscript*"
+	  else
+	    chmod +x ${TESTDIR}/vscript*
+	  fi
 	  echo "^first-dir/yet-another\\(/\\|\$\\) ${TESTDIR}/vscript2" >>verifymsg
 	  echo "^first-dir\\(/\\|\$\\) ${TESTDIR}/vscript" >>verifymsg
 	  echo "^missing-script\$ ${TESTDIR}/bogus" >>verifymsg
@@ -16641,9 +16973,14 @@ No conflicts created by this import"
 	  fi
 
 	  # check that errors invoking the script cause verification failure
+	  #
+	  # The second text below occurs on Cygwin, where I assume execvp
+	  # does not return to let CVS print the error message when its
+	  # argument does not exist.
 	  dotest_fail info-v7 "${testcvs} import -m bogus missing-script x y" \
 "${SPROG} import: cannot exec ${TESTDIR}/bogus: No such file or directory
-${SPROG} \[import aborted\]: Message verification failed"
+${SPROG} \[import aborted\]: Message verification failed" \
+"${SPROG} \[import aborted\]: Message verification failed"
 
 	  dotest_fail info-v8 "${testcvs} import -m bogus missing-var x y" \
 "${SPROG} import: verifymsg:25: no such user variable \${=Bogus}
@@ -16799,7 +17136,12 @@ else
   exit 0
 fi
 EOF
-	  chmod +x ${TESTDIR}/1/loggit
+	  # #^@&!^@ Cygwin.
+	  if test -n "$remotehost"; then
+	    $CVS_RSH $remotehost "chmod +x ${TESTDIR}/1/loggit"
+	  else
+	    chmod +x ${TESTDIR}/1/loggit
+	  fi
 	  echo "ALL ${TESTDIR}/1/loggit" >taginfo
 	  dotest taginfo-2 "${testcvs} -q ci -m check-in-taginfo" \
 "Checking in taginfo;
@@ -17001,7 +17343,7 @@ done"
 "P file1
 ${CPROG} update: checksum failure after patch to \./file1; will refetch
 ${CPROG} client: refetching unpatchable files
-${CPROG} update: warning: file1 was lost
+${CPROG} update: warning: \`file1' was lost
 U file1"
 
 	  cd ../..
@@ -17088,7 +17430,7 @@ done"
 
 	  dotest log-7 "${testcvs} -q update -r branch" \
 "[UP] file1
-${SPROG} update: file2 is no longer in the repository"
+${SPROG} update: \`file2' is no longer in the repository"
 
 	  echo 'first branch revision' > file1
 	  dotest log-8 "${testcvs} -q ci -m1b file1" \
@@ -17996,7 +18338,7 @@ ${log_trailer}"
 
 	  dotest log-d99 "${testcvs} -q up -rbranch" \
 "[UP] file1
-${SPROG} update: file2 is no longer in the repository"
+${SPROG} update: \`file2' is no longer in the repository"
 
 	  # Now test outdating revisions
 
@@ -18444,6 +18786,12 @@ Annotations for $file
 	  # local.
 	  if $remote; then
 
+	    # Workaround any X11Forwarding by ssh. Otherwise this text:
+	    #   Warning: No xauth data; using fake authentication data for X11 forwarding.
+	    # has been known to end up in the test results below
+	    # causing the test to fail.
+	    [ -n "$DISPLAY" ] && unset DISPLAY
+
 	    # For remote, just create the repository.  We don't yet do
 	    # the various other tests above for remote but that should be
 	    # changed.
@@ -18462,12 +18810,16 @@ Annotations for $file
 	    # would do the trick.
 
 	    # Note that we set CVS_SERVER at the beginning.
-	    CREREPOS_ROOT=:ext:`hostname`:${TESTDIR}/crerepos
+	    if test -n "$remotehost"; then
+		CREREPOS_ROOT=:ext:$remotehost${TESTDIR}/crerepos
+	    else
+		CREREPOS_ROOT=:ext:`hostname`:${TESTDIR}/crerepos
+	    fi
 
 	    # If we're going to do remote testing, make sure 'rsh' works first.
 	    host="`hostname`"
-	    if test "x`${CVS_RSH-rsh} $host -n 'echo hi'`" != "xhi"; then
-		echo "ERROR: cannot test remote CVS, because \`${CVS_RSH-rsh} $host' fails." >&2
+	    if test "x`${CVS_RSH} $host -n 'echo hi'`" != "xhi"; then
+		echo "ERROR: cannot test remote CVS, because \`${CVS_RSH} $host' fails." >&2
 		exit 1
 	    fi
 
@@ -19383,10 +19735,14 @@ ${SPROG} commit: Rebuilding administrative file database"
 	  # The error message appears twice because Lock_Cleanup only
 	  # stops recursing after the first attempt.
 	  dotest_fail lockfiles-5 "${testcvs} -q update" \
-"${SPROG} \[update aborted\]: cannot stat ${TESTDIR}/locks: No such file or directory
-${SPROG} \[update aborted\]: cannot stat ${TESTDIR}/locks: No such file or directory"
+"${SPROG} \[update aborted\]: cannot stat ${TESTDIR}/locks: No such file or directory"
 	  mkdir ${TESTDIR}/locks
-	  chmod u=rwx,g=r,o= ${TESTDIR}/locks
+	  # Grumble, mumble.  Cygwin.
+	  if test -n "$remotehost"; then
+	    $CVS_RSH $remotehost "chmod u=rwx,g=r,o= ${TESTDIR}/locks"
+	  else
+	    chmod u=rwx,g=r,o= ${TESTDIR}/locks
+	  fi
 	  umask 0077
 	  CVSUMASK=0077; export CVSUMASK
 	  dotest lockfiles-6 "${testcvs} -q update" ""
@@ -19399,10 +19755,19 @@ ${SPROG} \[update aborted\]: cannot stat ${TESTDIR}/locks: No such file or direc
 	  # inherit the permissions from the parent directory.  CVSUMASK
 	  # isn't right, because typically the reason for LockDir is to
 	  # use a different set of permissions.
-	  dotest lockfiles-7a "ls -ld ${TESTDIR}/locks/first-dir" \
-"drwxr----- .*first-dir"
-	  dotest lockfiles-7b "ls -ld ${TESTDIR}/locks/first-dir/sdir/ssdir" \
-"drwxr----- .*first-dir/sdir/ssdir"
+	  #
+	  # Bah!  Cygwin!
+	  if test -n "$remotehost"; then
+	    dotest lockfiles-7a "$CVS_RSH $remotehost 'ls -ld ${TESTDIR}/locks/first-dir'" \
+"drwxr-----.*first-dir"
+	    dotest lockfiles-7b "$CVS_RSH $remotehost 'ls -ld ${TESTDIR}/locks/first-dir/sdir/ssdir'" \
+"drwxr-----.*first-dir/sdir/ssdir"
+	  else
+	    dotest lockfiles-7a "ls -ld ${TESTDIR}/locks/first-dir" \
+"drwxr-----.*first-dir"
+	    dotest lockfiles-7b "ls -ld ${TESTDIR}/locks/first-dir/sdir/ssdir" \
+"drwxr-----.*first-dir/sdir/ssdir"
+	  fi
 
 	  cd ../../..
 	  dotest lockfiles-8 "${testcvs} -q update" ""
@@ -19894,8 +20259,14 @@ Checking in aa;
 ${CVSROOT_DIRNAME}/first-dir/aa,v  <--  aa
 initial revision: 1\.1
 done"
-	  dotest modes-5 "ls -l ${CVSROOT_DIRNAME}/first-dir/aa,v" \
+	  # Yawn.  Cygwin.
+	  if test -n "$remotehost"; then
+	    dotest modes-5remotehost "$CVS_RSH $remotehost 'ls -l ${CVSROOT_DIRNAME}/first-dir/aa,v'" \
 "-r--r--r-- .*"
+	  else
+	    dotest modes-5 "ls -l ${CVSROOT_DIRNAME}/first-dir/aa,v" \
+"-r--r--r-- .*"
+	  fi
 
 	  # Test for whether we can set the execute bit.
 	  chmod +x aa
@@ -19908,19 +20279,38 @@ done"
 	  # If CVS let us update the execute bit, it would be set here.
 	  # But it doesn't, and as far as I know that is longstanding
 	  # CVS behavior.
-	  dotest modes-7 "ls -l ${CVSROOT_DIRNAME}/first-dir/aa,v" \
+	  #
+	  # Yeah, yeah.  Search for "Cygwin".
+	  if test -n "$remotehost"; then
+	    dotest modes-7remotehost "$CVS_RSH $remotehost 'ls -l ${CVSROOT_DIRNAME}/first-dir/aa,v'" \
 "-r--r--r-- .*"
+	  else
+	    dotest modes-7 "ls -l ${CVSROOT_DIRNAME}/first-dir/aa,v" \
+"-r--r--r-- .*"
+	  fi
 
 	  # OK, now manually change the modes and see what happens.
-	  chmod g=r,o= ${CVSROOT_DIRNAME}/first-dir/aa,v
+	  #
+	  # Cygwin, already.
+	  if test -n "$remotehost"; then
+	    $CVS_RSH $remotehost "chmod g=r,o= ${CVSROOT_DIRNAME}/first-dir/aa,v"
+	  else
+	    chmod g=r,o= ${CVSROOT_DIRNAME}/first-dir/aa,v
+	  fi
 	  echo second line >>aa
 	  dotest modes-7a "${testcvs} -q ci -m set-execute-bit" \
 "Checking in aa;
 ${CVSROOT_DIRNAME}/first-dir/aa,v  <--  aa
 new revision: 1\.3; previous revision: 1\.2
 done"
-	  dotest modes-7b "ls -l ${CVSROOT_DIRNAME}/first-dir/aa,v" \
+	  # Cygwin.
+	  if test -n "$remotehost"; then
+	    dotest modes-7bremotehost "$CVS_RSH $remotehost 'ls -l ${CVSROOT_DIRNAME}/first-dir/aa,v'" \
 "-r--r----- .*"
+	  else
+	    dotest modes-7b "ls -l ${CVSROOT_DIRNAME}/first-dir/aa,v" \
+"-r--r----- .*"
+	  fi
 
 	  CVSUMASK=007
 	  export CVSUMASK
@@ -19941,8 +20331,13 @@ done"
 	    # The problem here is that the CVSUMASK environment variable
 	    # needs to be set on the server (e.g. .bashrc).  This is, of
 	    # course, bogus, but that is the way it is currently.
-	    dotest modes-10r "ls -l ${CVSROOT_DIRNAME}/first-dir/ab,v" \
+	    if test -n "$remotehost"; then
+	      dotest modes-10remotehost "$CVS_RSH $remotehost 'ls -l ${CVSROOT_DIRNAME}/first-dir/ab,v'" \
+"-r--r--r--.*"
+	    else
+	      dotest modes-10r "ls -l ${CVSROOT_DIRNAME}/first-dir/ab,v" \
 "-r-xr-x---.*" "-r-xr-xr-x.*"
+	    fi
 	  else
 	    dotest modes-10 "ls -l ${CVSROOT_DIRNAME}/first-dir/ab,v" \
 "-r-xr-x---.*"
@@ -19974,9 +20369,15 @@ done"
 	    # first match is for the :ext: method (where the CVSUMASK
 	    # won't be set), while the second is for the :fork: method
 	    # (where it will be).
-	    dotest modes-15r \
+	    if test -n "$remotehost"; then
+	      dotest modes-15r \
+"$CVS_RSH $remotehost 'ls -l ${CVSROOT_DIRNAME}/first-dir/Attic/ac,v'" \
+"-r--r--r--.*"
+	    else
+	      dotest modes-15r \
 "ls -l ${CVSROOT_DIRNAME}/first-dir/Attic/ac,v" \
 "-r--r--r--.*" "-r--r-----.*"
+	    fi
 	  else
 	    dotest modes-15 \
 "ls -l ${CVSROOT_DIRNAME}/first-dir/Attic/ac,v" \
@@ -20026,9 +20427,12 @@ done"
 	  # do this while the file is still writable.
 	  touch aa
 	  chmod a= aa
-	  dotest_fail modes2-6 "${testcvs} -q update -r 1.1 aa" \
+	  # Don't try this when permissions are broken, as with Cygwin.
+	  if ls ${CVSROOT_DIRNAME}/first-dir >/dev/null 2>&1; then :; else
+	    dotest_fail modes2-6 "${testcvs} -q update -r 1.1 aa" \
 "${CPROG} \[update aborted\]: cannot open file aa for comparing: Permission denied" \
 "${CPROG} \[update aborted\]: reading aa: Permission denied"
+	  fi
 
 	  chmod u+rwx aa
 	  cd ../..
@@ -20066,18 +20470,45 @@ Checking in second-dir/ab;
 ${CVSROOT_DIRNAME}/second-dir/ab,v  <--  ab
 initial revision: 1\.1
 done"
-	  chmod a= ${CVSROOT_DIRNAME}/first-dir
-	  dotest modes3-5 "${testcvs} update" \
+	  if test -n "$remotehost"; then
+	    $CVS_RSH $remotehost "chmod a= ${CVSROOT_DIRNAME}/first-dir"
+	  else
+	    chmod a= ${CVSROOT_DIRNAME}/first-dir
+	  fi
+	  if ls ${CVSROOT_DIRNAME}/first-dir >/dev/null 2>&1; then
+	    # Avoid this test under Cygwin since permissions work differently
+	    # there.
+	    #
+	    # This test also gets avoided under Mac OS X since the system `ls'
+	    # is broken and exits with a 0 status despite the permission
+	    # denied error.
+	    if test -n "$remotehost"; then
+	      cygwin_hack=false
+	    else
+	      cygwin_hack=:
+	    fi
+	  else
+	    cygwin_hack=false
+	  fi
+
+	  cd $TESTDIR/1
+	  if $cygwin_hack; then :; else
+	    dotest modes3-5 "${testcvs} update" \
 "${SPROG} update: Updating \.
 ${SPROG} update: Updating first-dir
 ${SPROG} update: cannot open directory ${CVSROOT_DIRNAME}/first-dir: Permission denied
 ${SPROG} update: skipping directory first-dir
 ${SPROG} update: Updating second-dir"
+	  fi
 
 	  # OK, I can see why one might say the above case could be a
 	  # fatal error, because normally users without access to first-dir
 	  # won't have it in their working directory.  But the next
 	  # one is more of a problem if it is fatal.
+	  #
+	  # The second text string below is for Cygwin again, and again it
+	  # should really be XFAIL under Cygwin, but for now deal with the
+	  # passing opendir by accepting the alternate string.
 	  rm -r first-dir
 	  dotest modes3-6 "${testcvs} update -dP" \
 "${SPROG} update: Updating .
@@ -20086,6 +20517,11 @@ U ${DOTSTAR}
 ${SPROG} update: Updating first-dir
 ${SPROG} update: cannot open directory ${CVSROOT_DIRNAME}/first-dir: Permission denied
 ${SPROG} update: skipping directory first-dir
+${SPROG} update: Updating second-dir" \
+"${SPROG} update: Updating .
+${SPROG} update: Updating CVSROOT
+U ${DOTSTAR}
+${SPROG} update: Updating first-dir
 ${SPROG} update: Updating second-dir"
 
 	  cd ..
@@ -20104,6 +20540,10 @@ ${SPROG} update: Updating second-dir"
 	  cd first-dir
 	  touch aa
 	  echo '$''Id$' >kw
+	  # Cygwin, *cough*, puts the year in the time column until the minute
+	  # is no longer the current minute.  Sleep 60 seconds to avoid this
+	  # problem.
+	  sleep 60
 	  ls -l aa >${TESTDIR}/1/stamp.aa.touch
 	  ls -l kw >${TESTDIR}/1/stamp.kw.touch
 	  # "sleep 1" would suffice if we could assume ls --full-time, but
@@ -20135,6 +20575,10 @@ Checking in kw;
 ${CVSROOT_DIRNAME}/first-dir/kw,v  <--  kw
 initial revision: 1\.1
 done"
+	  # Cygwin, *cough*, puts the year in the time column until the minute
+	  # is no longer the current minute.  Sleep 60 seconds to avoid this
+	  # problem.
+	  sleep 60
 	  ls -l aa >${TESTDIR}/1/stamp.aa.ci
 	  ls -l kw >${TESTDIR}/1/stamp.kw.ci
 	  # If there are no keywords, "cvs ci" leaves the timestamp alone
@@ -20186,6 +20630,11 @@ Checking in kw;
 ${CVSROOT_DIRNAME}/first-dir/kw,v  <--  kw
 new revision: 1\.2; previous revision: 1\.1
 done"
+	  
+	  # Cygwin, *cough*, puts the year in the time column until the minute
+	  # is no longer the current minute.  Sleep 60 seconds to avoid this
+	  # problem.
+	  sleep 60
 	  ls -l aa >${TESTDIR}/1/stamp.aa.ci2
 	  ls -l kw >${TESTDIR}/1/stamp.kw.ci2
 	  cd ../..
@@ -20505,7 +20954,7 @@ done"
 	  dotest sticky-10 "cat file1" ''
 	  touch file2
 	  dotest_fail sticky-11 "${testcvs} add file2" \
-"${SPROG} add: cannot add file on non-branch tag tag1"
+"${SPROG} add: cannot add file on non-branch tag \`tag1'"
 	  dotest sticky-12 "${testcvs} -q update -A" "[UP] file1
 ${QUESTION} file2" "${QUESTION} file2
 [UP] file1"
@@ -20522,7 +20971,7 @@ done"
 
 	  # Now back to tag1
 	  dotest sticky-15 "${testcvs} -q update -r tag1" "[UP] file1
-${SPROG} update: file2 is no longer in the repository"
+${SPROG} update: \`file2' is no longer in the repository"
 
 	  rm file1
 	  dotest sticky-16 "${testcvs} rm file1" \
@@ -20535,8 +20984,8 @@ ${SPROG} remove: use .${SPROG} commit. to remove this file permanently"
 	  dotest sticky-18 "${testcvs} -q update -A" "U file1
 U file2"
 	  dotest sticky-19 "${testcvs} -q update -r tag1" \
-"${SPROG} update: file1 is no longer in the repository
-${SPROG} update: file2 is no longer in the repository"
+"${SPROG} update: \`file1' is no longer in the repository
+${SPROG} update: \`file2' is no longer in the repository"
 	  dotest sticky-20 "${testcvs} -q update -A" "U file1
 U file2"
 
@@ -20558,13 +21007,13 @@ U file2"
 	  # discrepency between local and remote CVS and should probably
 	  # be cleaned up at some point.
 	  dotest sticky-23 "${testcvs} -q update -Dnow file1" \
-"${SPROG} update: warning: file1 was lost
+"${SPROG} update: warning: \`file1' was lost
 U file1" "U file1"
 	  dotest sticky-24 "${testcvs} rm -f file1" \
 "${SPROG} remove: cannot remove file .file1. which has a sticky date of .[0-9.]*."
 
 	  dotest sticky-25 "${testcvs} -q update -A" \
-"${SPROG} update: warning: file1 was lost
+"${SPROG} update: warning: \`file1' was lost
 U file1" "U file1"
 
 	  cd ../..
@@ -20769,7 +21218,7 @@ done"
 "P file1
 ${CPROG} update: checksum failure after patch to \./file1; will refetch
 ${CPROG} client: refetching unpatchable files
-${CPROG} update: warning: file1 was lost
+${CPROG} update: warning: \`file1' was lost
 U file1"
 
 	  dotest keyword-22 "cat file1" '\$'"Name: tag1 "'\$'
@@ -20780,7 +21229,7 @@ U file1"
 	    dotest keyword-23r "${testcvs} update -A file1" "P file1
 ${CPROG} update: checksum failure after patch to \./file1; will refetch
 ${CPROG} client: refetching unpatchable files
-${CPROG} update: warning: file1 was lost
+${CPROG} update: warning: \`file1' was lost
 U file1"
 	  else
 	    dotest keyword-23 "${testcvs} update -A file1" "[UP] file1"
@@ -21076,7 +21525,7 @@ done"
 "P file1
 ${CPROG} update: checksum failure after patch to \./file1; will refetch
 ${CPROG} client: refetching unpatchable files
-${CPROG} update: warning: file1 was lost
+${CPROG} update: warning: \`file1' was lost
 U file1"
 	  dotest keywordname-update-2 "cat file1" '\$'"Name: br "'\$'
 	  dotest keywordname-update-3 "cat file2" '\$'"Name:  "'\$'
@@ -21091,7 +21540,7 @@ T file2"
 "P file1
 ${CPROG} update: checksum failure after patch to \./file1; will refetch
 ${CPROG} client: refetching unpatchable files
-${CPROG} update: warning: file1 was lost
+${CPROG} update: warning: \`file1' was lost
 U file1"
 	  dotest keywordname-update-6 "cat file1" \
 '\$'"Name:  "'\$'"
@@ -21104,7 +21553,7 @@ new data"
 "P file1
 ${CPROG} update: checksum failure after patch to \./file1; will refetch
 ${CPROG} client: refetching unpatchable files
-${CPROG} update: warning: file1 was lost
+${CPROG} update: warning: \`file1' was lost
 U file1"
 	  dotest keywordname-update-9 "cat file1" '\$'"Name: firsttag "'\$'
 	  dotest keywordname-update-10 "cat file2" '\$'"Name:  "'\$'
@@ -21114,7 +21563,7 @@ U file1"
 "P file1
 ${CPROG} update: checksum failure after patch to ./file1; will refetch
 ${CPROG} client: refetching unpatchable files
-${CPROG} update: warning: file1 was lost
+${CPROG} update: warning: \`file1' was lost
 U file1"
 	  dotest keywordname-update-12 "cat file1" \
 '\$'"Name:  "'\$'"
@@ -21249,7 +21698,7 @@ diff -r1\.2 file1
 	  # Here's the problem... shouldn't -kk a binary file...
 	  rm file1
 	  dotest keyword2-13 "${testcvs} -q update -A -kk -j branch" \
-"${SPROG} update: warning: file1 was lost
+"${SPROG} update: warning: \`file1' was lost
 U file1
 RCS file: ${CVSROOT_DIRNAME}/first-dir/file1,v
 retrieving revision 1\.1
@@ -21874,7 +22323,7 @@ new revision: 1\.1\.2\.1; previous revision: 1\.1
 done"
 	  dotest admin-10 "${testcvs} -q update -A" \
 "U file1
-${SPROG} update: file3 is no longer in the repository"
+${SPROG} update: \`file3' is no longer in the repository"
 
 	  # Check that we can administer files in the repository that
 	  # aren't in the working directory.
@@ -22892,7 +23341,12 @@ else
   exit 1
 fi
 EOF
-	  chmod +x ${TESTDIR}/lockme
+	  # Cygwin.  Blaaarg.
+	  if test -n "$remotehost"; then
+	    $CVS_RSH $remotehost "chmod +x ${TESTDIR}/lockme"
+	  else
+	    chmod +x ${TESTDIR}/lockme
+	  fi
 
 	  echo stuff > a-lock
 	  dotest reserved-9 "${testcvs} add a-lock" \
@@ -22928,9 +23382,19 @@ ${SPROG} commit: Rebuilding administrative file database"
 	  # Simulate (approximately) what a-lock would look like
 	  # if someone else had locked revision 1.1.
 	  sed -e 's/locks; strict;/locks fred:1.1; strict;/' ${CVSROOT_DIRNAME}/first-dir/a-lock,v > a-lock,v
-	  chmod 644 ${CVSROOT_DIRNAME}/first-dir/a-lock,v
+	  # Cygwin.
+	  if test -n "$remotehost"; then
+	    $CVS_RSH $remotehost "chmod 644 ${CVSROOT_DIRNAME}/first-dir/a-lock,v"
+	  else
+	    chmod 644 ${CVSROOT_DIRNAME}/first-dir/a-lock,v
+	  fi
 	  dotest reserved-13 "mv a-lock,v ${CVSROOT_DIRNAME}/first-dir/a-lock,v"
-	  chmod 444 ${CVSROOT_DIRNAME}/first-dir/a-lock,v
+	  # Cygwin.  Blah.
+	  if test -n "$remotehost"; then
+	    $CVS_RSH $remotehost "chmod 444 ${CVSROOT_DIRNAME}/first-dir/a-lock,v"
+	  else
+	    chmod 444 ${CVSROOT_DIRNAME}/first-dir/a-lock,v
+	  fi
 	  echo more stuff >> a-lock
 	  dotest_fail reserved-13b "${testcvs} ci -m '' a-lock" \
 "fred has file a-lock locked for version  1\.1
@@ -23947,23 +24411,576 @@ EOF
 "${SPROG} update: Updating \.
 ${SPROG} update: Updating first-dir"
 	  cd ..
-	  rm -rf 1
+	  rm -rf 1 $CVSROOT_DIRNAME/first-dir
 	  ;;
-	  
+
+
+
+	recase)
+	  #
+	  # Some tests of behavior which broke at one time or another when run
+	  # from case insensitive clients against case sensitive servers.
+	  #
+	  # These tests are namned according to the following convention:
+	  #
+	  #   ci	Client (sandbox filesystem) case Insensitive
+	  #   cs	Client (sandbox filesystem) case Sensitive
+	  #   si	Server (repository filesystem) case Insensitive
+	  #   ss	Server (repository filesystem) case Sensitive
+	  #
+
+	  mkdir 1; cd 1
+
+	  # First, we will expect different results for a few of these tests
+	  # based on whether the repository is on a case sensitive filesystem
+	  # or not and whether the sandbox is on a case sensitive filesystem or
+	  # not, so determine which cases we are dealing with:
+	  echo file >file
+	  echo FiLe >FiLe
+	  if cmp file FiLe >/dev/null; then
+	    client_sensitive=false
+	  else
+	    client_sensitive=:
+	  fi
+	  if test -n "$remotehost"; then
+	    $CVS_RSH $remotehost 'echo file >file'
+	    $CVS_RSH $remotehost 'echo FiLe >FiLe'
+	    if $CVS_RSH $remotehost 'cmp file FiLe >/dev/null'; then
+	      server_sensitive=false
+	    else
+	      server_sensitive=:
+	    fi
+	  else
+	    server_sensitive=$client_sensitive
+	  fi
+
+	  # The first test (recase-1 & recase-2) is for a remove of a file then
+	  # a readd in a different case.
+	  mkdir $CVSROOT_DIRNAME/first-dir
+	  dotest recase-init-1 "$testcvs -Q co first-dir"	
+	  cd first-dir
+
+	  echo this file has no content >file
+	  dotest recase-init-2 "$testcvs -Q add file"
+	  dotest recase-init-3 "$testcvs -Q ci -madd" \
+"RCS file: $CVSROOT_DIRNAME/first-dir/file,v
+done
+Checking in file;
+$CVSROOT_DIRNAME/first-dir/file,v  <--  file
+initial revision: 1\.1
+done"
+	  dotest recase-init-4 "$testcvs -Q tag first"
+
+	  # Now remove the file.
+	  dotest recase-init-5 "$testcvs -Q rm -f file"
+	  dotest recase-init-6 "$testcvs -Q ci -mrm" \
+"Removing file;
+$CVSROOT_DIRNAME/first-dir/file,v  <--  file
+new revision: delete; previous revision: 1\.1
+done"
+
+	  # Now the test - readd in a different case.
+	  echo this file needs some content >FiLe
+	  if $server_sensitive; then
+	    dotest recase-1ss "$testcvs add FiLe" \
+"$SPROG add: scheduling file \`FiLe' for addition
+$SPROG add: use \`$SPROG commit' to add this file permanently"
+	    dotest recase-2ss "$testcvs -q ci -mrecase" \
+"RCS file: $CVSROOT_DIRNAME/first-dir/FiLe,v
+done
+Checking in FiLe;
+$CVSROOT_DIRNAME/first-dir/FiLe,v  <--  FiLe
+initial revision: 1\.1
+done"
+	  else # server insensitive
+	    dotest recase-1si "$testcvs add FiLe" \
+"$SPROG add: re-adding file \`FiLe' (in place of dead revision 1\.2)
+$SPROG add: use \`$SPROG commit' to add this file permanently"
+	    dotest recase-2si "$testcvs -q ci -mrecase" \
+"Checking in FiLe;
+$CVSROOT_DIRNAME/first-dir/FiLe,v  <--  FiLe
+new revision: 1\.3; previous revision: 1\.2
+done"
+	  fi
+
+	  # Now verify that a checkout will still work
+	  cd ../..
+	  mkdir 2; cd 2
+	  dotest recase-3 "$testcvs -q co first-dir" \
+"U first-dir/FiLe"
+
+	  cd first-dir
+	  if $server_sensitive; then
+	    if $client_sensitive; then
+	      # Client finds Entry only for FiLe.  Others returned by server.
+	      dotest recase-4sscs "$testcvs status file" \
+"===================================================================
+File: no file file		Status: Up-to-date
+
+   Working revision:	No entry for file
+   Repository revision:	1\.2	$CVSROOT_DIRNAME/first-dir/Attic/file,v"
+	      dotest recase-5sscs "$testcvs log file" \
+"
+RCS file: $CVSROOT_DIRNAME/first-dir/Attic/file,v
+Working file: file
+head: 1\.2
+branch:
+locks: strict
+access list:
+symbolic names:
+	first: 1\.1
+keyword substitution: kv
+total revisions: 2;	selected revisions: 2
+description:
+----------------------------
+revision 1\.2
+date: [0-9/]* [0-9:]*;  author: $username;  state: dead;  lines: +0 -0
+rm
+----------------------------
+revision 1\.1
+date: [0-9/]* [0-9:]*;  author: $username;  state: Exp;
+add
+============================================================================="
+	      dotest recase-6sscs "$testcvs status FiLe" \
+"===================================================================
+File: FiLe             	Status: Up-to-date
+
+   Working revision:	1\.1.*
+   Repository revision:	1\.1	$CVSROOT_DIRNAME/first-dir/FiLe,v
+   Sticky Tag:		(none)
+   Sticky Date:		(none)
+   Sticky Options:	(none)"
+	      dotest recase-7sscs "$testcvs log FiLe" \
+"
+RCS file: $CVSROOT_DIRNAME/first-dir/FiLe,v
+Working file: FiLe
+head: 1\.1
+branch:
+locks: strict
+access list:
+symbolic names:
+keyword substitution: kv
+total revisions: 1;	selected revisions: 1
+description:
+----------------------------
+revision 1\.1
+date: [0-9/]* [0-9:]*;  author: $username;  state: Exp;
+recase
+============================================================================="
+	    else # client insensitive
+	      # Client finds same Entry for file & FiLe.
+	      dotest recase-4ssci "$testcvs status file" \
+"===================================================================
+File: FiLe             	Status: Up-to-date
+
+   Working revision:	1\.1.*
+   Repository revision:	1\.1	$CVSROOT_DIRNAME/first-dir/FiLe,v
+   Sticky Tag:		(none)
+   Sticky Date:		(none)
+   Sticky Options:	(none)"
+	      dotest recase-5ssci "$testcvs log file" \
+"
+RCS file: $CVSROOT_DIRNAME/first-dir/FiLe,v
+Working file: FiLe
+head: 1\.1
+branch:
+locks: strict
+access list:
+symbolic names:
+keyword substitution: kv
+total revisions: 1;	selected revisions: 1
+description:
+----------------------------
+revision 1\.1
+date: [0-9/]* [0-9:]*;  author: $username;  state: Exp;
+recase
+============================================================================="
+	      dotest recase-6ss "$testcvs status FiLe" \
+"===================================================================
+File: FiLe             	Status: Up-to-date
+
+   Working revision:	1\.1.*
+   Repository revision:	1\.1	$CVSROOT_DIRNAME/first-dir/FiLe,v
+   Sticky Tag:		(none)
+   Sticky Date:		(none)
+   Sticky Options:	(none)"
+	      dotest recase-7ss "$testcvs log FiLe" \
+"
+RCS file: $CVSROOT_DIRNAME/first-dir/FiLe,v
+Working file: FiLe
+head: 1\.1
+branch:
+locks: strict
+access list:
+symbolic names:
+keyword substitution: kv
+total revisions: 1;	selected revisions: 1
+description:
+----------------------------
+revision 1\.1
+date: [0-9/]* [0-9:]*;  author: $username;  state: Exp;
+recase
+============================================================================="
+	    fi
+	  else # server insensitive
+	    # There is only one archive when the server is insensitive, but the
+	    # printed file/archive name can vary.
+	    dotest recase-4si "$testcvs status file" \
+"===================================================================
+File: file             	Status: Up-to-date
+
+   Working revision:	1\.3.*
+   Repository revision:	1\.3	$CVSROOT_DIRNAME/first-dir/file,v
+   Sticky Tag:		(none)
+   Sticky Date:		(none)
+   Sticky Options:	(none)"
+	    dotest recase-5si "$testcvs log file" \
+"
+RCS file: $CVSROOT_DIRNAME/first-dir/file,v
+Working file: file
+head: 1\.3
+branch:
+locks: strict
+access list:
+symbolic names:
+	first: 1\.1
+keyword substitution: kv
+total revisions: 3;	selected revisions: 3
+description:
+----------------------------
+revision 1\.3
+date: [0-9/]* [0-9:]*;  author: $username;  state: Exp;  lines: +1 -1
+recase
+----------------------------
+revision 1\.2
+date: [0-9/]* [0-9:]*;  author: $username;  state: dead;  lines: +0 -0
+rm
+----------------------------
+revision 1\.1
+date: [0-9/]* [0-9:]*;  author: $username;  state: Exp;
+add
+============================================================================="
+	    dotest recase-6si "$testcvs status FiLe" \
+"===================================================================
+File: FiLe             	Status: Up-to-date
+
+   Working revision:	1\.3.*
+   Repository revision:	1\.3	$CVSROOT_DIRNAME/first-dir/FiLe,v
+   Sticky Tag:		(none)
+   Sticky Date:		(none)
+   Sticky Options:	(none)"
+	    dotest recase-7si "$testcvs log FiLe" \
+"
+RCS file: $CVSROOT_DIRNAME/first-dir/FiLe,v
+Working file: FiLe
+head: 1\.3
+branch:
+locks: strict
+access list:
+symbolic names:
+	first: 1\.1
+keyword substitution: kv
+total revisions: 3;	selected revisions: 3
+description:
+----------------------------
+revision 1\.3
+date: [0-9/]* [0-9:]*;  author: $username;  state: Exp;  lines: +1 -1
+recase
+----------------------------
+revision 1\.2
+date: [0-9/]* [0-9:]*;  author: $username;  state: dead;  lines: +0 -0
+rm
+----------------------------
+revision 1\.1
+date: [0-9/]* [0-9:]*;  author: $username;  state: Exp;
+add
+============================================================================="
+	  fi
+
+	  # And when the file does not exist on the client, we go with the
+	  # client Entries match.
+	  if $client_sensitive && $server_sensitive; then
+	    dotest recase-8sscs "$testcvs status fIlE" \
+"$SPROG status: nothing known about \`fIlE'
+===================================================================
+File: no file fIlE		Status: Unknown
+
+   Working revision:	No entry for fIlE
+   Repository revision:	No revision control file"
+	  else # ! $client_sensitive && ! $server_sensitive
+	    dotest recase-8 "$testcvs status fIlE" \
+"===================================================================
+File: fIlE             	Status: Up-to-date
+
+   Working revision:	1\.[0-9]*.*
+   Repository revision:	1\.[0-9]*	$CVSROOT_DIRNAME/first-dir/fIlE,v
+   Sticky Tag:		(none)
+   Sticky Date:		(none)
+   Sticky Options:	(none)"
+	  fi
+
+	  # and an update
+	  if $server_sensitive; then
+	    dotest recase-9ss "$testcvs -q up -rfirst" \
+"$SPROG update: \`FiLe' is no longer in the repository
+U file"
+
+	    if $client_sensitive; then
+	      dotest recase-10sscs "$testcvs -q up -A" \
+"U FiLe
+$SPROG update: \`file' is no longer in the repository"
+	    else # client insensitive
+	      # FIXCVS: This should remove the offending file first.
+	      dotest_fail recase-10ssci "$testcvs -q up -A" \
+"$SPROG update: move away \`\./FiLe'; it is in the way
+C FiLe
+$SPROG update: \`file' is no longer in the repository"
+
+	      cd ..
+	      rm -r first-dir
+	      dotest recase-11ssci "$testcvs -q co first-dir" \
+"U first-dir/FiLe"
+	      cd first-dir
+	    fi
+
+	    #
+	    # See what happens when cased names clash.
+	    #
+
+	    # Copy the archive
+	    if test -n "$remotehost"; then
+	      $CVS_RSH $remotehost "cp $CVSROOT_DIRNAME/first-dir/FiLe,v \
+		$CVSROOT_DIRNAME/first-dir/FILE,v"
+	    else
+	      cp $CVSROOT_DIRNAME/first-dir/FiLe,v \
+		$CVSROOT_DIRNAME/first-dir/FILE,v
+	    fi
+
+	    if $client_sensitive; then
+	      dotest recase-12sscs "$testcvs -q up" "U FILE"
+	    else # client insensitive
+	      dotest_fail recase-12ssci "$testcvs -q up" \
+"$SPROG update: move away \`\./FILE'; it is in the way
+C FILE"
+	    fi
+	  else # server insensitive
+	    dotest recase-9si "$testcvs -q up -rfirst" "U FiLe"
+	    dotest recase-10si "$testcvs -q up -A" "U FiLe"
+	  fi
+
+	  # Prove that we can still get status and log information on
+	  # conflicting case files (1 in Attic, two in parent).
+	  if $server_sensitive; then
+	    if $client_sensitive; then
+	      # Client finds Entry only for FiLe.  Others returned by server.
+	      dotest recase-13sscs "$testcvs status file" \
+"===================================================================
+File: no file file		Status: Up-to-date
+
+   Working revision:	No entry for file
+   Repository revision:	1\.2	$CVSROOT_DIRNAME/first-dir/Attic/file,v"
+	    dotest recase-14sscs "$testcvs log file" \
+"
+RCS file: $CVSROOT_DIRNAME/first-dir/Attic/file,v
+Working file: file
+head: 1\.2
+branch:
+locks: strict
+access list:
+symbolic names:
+	first: 1\.1
+keyword substitution: kv
+total revisions: 2;	selected revisions: 2
+description:
+----------------------------
+revision 1\.2
+date: [0-9/]* [0-9:]*;  author: $username;  state: dead;  lines: +0 -0
+rm
+----------------------------
+revision 1\.1
+date: [0-9/]* [0-9:]*;  author: $username;  state: Exp;
+add
+============================================================================="
+	    dotest recase-15sscs "$testcvs status FiLe" \
+"===================================================================
+File: FiLe             	Status: Up-to-date
+
+   Working revision:	1\.1.*
+   Repository revision:	1\.1	$CVSROOT_DIRNAME/first-dir/FiLe,v
+   Sticky Tag:		(none)
+   Sticky Date:		(none)
+   Sticky Options:	(none)"
+	      dotest recase-16sscs "$testcvs log FiLe" \
+"
+RCS file: $CVSROOT_DIRNAME/first-dir/FiLe,v
+Working file: FiLe
+head: 1\.1
+branch:
+locks: strict
+access list:
+symbolic names:
+keyword substitution: kv
+total revisions: 1;	selected revisions: 1
+description:
+----------------------------
+revision 1\.1
+date: [0-9/]* [0-9:]*;  author: $username;  state: Exp;
+recase
+============================================================================="
+	      dotest recase-17sscs "$testcvs status FILE" \
+"===================================================================
+File: FILE             	Status: Up-to-date
+
+   Working revision:	1.1.*
+   Repository revision:	1.1	${CVSROOT_DIRNAME}/first-dir/FILE,v
+   Sticky Tag:		(none)
+   Sticky Date:		(none)
+   Sticky Options:	(none)"
+	      dotest recase-18sscs "$testcvs log FILE" \
+"
+RCS file: $CVSROOT_DIRNAME/first-dir/FILE,v
+Working file: FILE
+head: 1\.1
+branch:
+locks: strict
+access list:
+symbolic names:
+keyword substitution: kv
+total revisions: 1;	selected revisions: 1
+description:
+----------------------------
+revision 1\.1
+date: [0-9/]* [0-9:]*;  author: $username;  state: Exp;
+recase
+============================================================================="
+	    else
+	      # Client finds same Entry for file & FiLe.
+	      dotest recase-13ssci "$testcvs status file" \
+"===================================================================
+File: FiLe             	Status: Up-to-date
+
+   Working revision:	1\.1.*
+   Repository revision:	1\.1	$CVSROOT_DIRNAME/first-dir/FiLe,v
+   Sticky Tag:		(none)
+   Sticky Date:		(none)
+   Sticky Options:	(none)"
+	      dotest recase-16ssci "$testcvs log FiLe" \
+"
+RCS file: $CVSROOT_DIRNAME/first-dir/FiLe,v
+Working file: FiLe
+head: 1\.1
+branch:
+locks: strict
+access list:
+symbolic names:
+keyword substitution: kv
+total revisions: 1;	selected revisions: 1
+description:
+----------------------------
+revision 1\.1
+date: [0-9/]* [0-9:]*;  author: $username;  state: Exp;
+recase
+============================================================================="
+	      dotest recase-17ssci "$testcvs status FILE" \
+"===================================================================
+File: FiLe             	Status: Up-to-date
+
+   Working revision:	1\.1.*
+   Repository revision:	1\.1	$CVSROOT_DIRNAME/first-dir/FiLe,v
+   Sticky Tag:		(none)
+   Sticky Date:		(none)
+   Sticky Options:	(none)"
+	      dotest recase-18ssci "$testcvs log FILE" \
+"
+RCS file: $CVSROOT_DIRNAME/first-dir/FiLe,v
+Working file: FiLe
+head: 1\.1
+branch:
+locks: strict
+access list:
+symbolic names:
+keyword substitution: kv
+total revisions: 1;	selected revisions: 1
+description:
+----------------------------
+revision 1\.1
+date: [0-9/]* [0-9:]*;  author: $username;  state: Exp;
+recase
+============================================================================="
+	    fi
+	  else
+	    # Skip these when the server is case insensitive - nothing
+	    # has changed since recase-[4-7]si
+	    :
+	  fi
+
+	  if $client_sensitive && $server_sensitive; then
+	    dotest recase-19cs "$testcvs status fIlE" \
+"$SPROG status: nothing known about \`fIlE'
+===================================================================
+File: no file fIlE		Status: Unknown
+
+   Working revision:	No entry for fIlE
+   Repository revision:	No revision control file"
+	  else
+	    dotest recase-19ci "$testcvs status fIlE" \
+"===================================================================
+File: fIlE             	Status: Up-to-date
+
+   Working revision:	1\.[0-9]*.*
+   Repository revision:	1\.[0-9]*	$CVSROOT_DIRNAME/first-dir/fIlE,v
+   Sticky Tag:		(none)
+   Sticky Date:		(none)
+   Sticky Options:	(none)"
+	  fi
+
+	  # And last but not least, prove that a checkout is still possible.
+	  cd ../..
+	  mkdir 3; cd 3
+	  if $server_sensitive; then
+	    if $client_sensitive; then
+	      dotest recase-20sscs "$testcvs -q co first-dir" \
+"U first-dir/FILE
+U first-dir/FiLe"
+	    else
+	      dotest_fail recase-20ssci "$testcvs -q co first-dir" \
+"U first-dir/FILE
+$SPROG checkout: move away \`first-dir/FiLe'; it is in the way
+C first-dir/FiLe"
+	    fi
+	  else
+	    # Skip these since nothing has changed.
+	    :
+	  fi
+
+	  if $keep; then
+	    echo Keeping ${TESTDIR} and exiting due to --keep
+	    exit 0
+	  fi
+
+	  cd ..
+	  rm -r 1 2 3
+	  if $server_sensitive && test -n "$remotehost"; then
+	    # It is necessary to remove one of the case-conflicted files before
+	    # recursively removing the rest under Cygwin on a Samba share or
+	    # Samba returns a permission denied error due to its case
+	    # confusion.
+	    $CVS_RSH $remotehost "rm -f $CVSROOT_DIRNAME/first-dir/FILE,v"
+	  fi
+	  rm -rf $CVSROOT_DIRNAME/first-dir
+	  ;;
+
+
+
 	multiroot)
-	
 	  #
 	  # set up two repositories
 	  #
 
 	  CVSROOT1_DIRNAME=${TESTDIR}/root.1
 	  CVSROOT2_DIRNAME=${TESTDIR}/root.2
-	  CVSROOT1=${CVSROOT1_DIRNAME} ; export CVSROOT1
-	  CVSROOT2=${CVSROOT2_DIRNAME} ; export CVSROOT2
-	  if $remote; then
-	      CVSROOT1=:fork:${CVSROOT1_DIRNAME} ; export CVSROOT1
-	      CVSROOT2=:fork:${CVSROOT2_DIRNAME} ; export CVSROOT2
-	  fi
+	  CVSROOT1=`newroot $CVSROOT1_DIRNAME`
+	  CVSROOT2=`newroot $CVSROOT2_DIRNAME`
 	  testcvs1="${testcvs} -d ${CVSROOT1}"
 	  testcvs2="${testcvs} -d ${CVSROOT2}"
 
@@ -25090,12 +26107,8 @@ anyone
 
 	  CVSROOT1_DIRNAME=${TESTDIR}/root1
 	  CVSROOT2_DIRNAME=${TESTDIR}/root2
-	  CVSROOT1=${CVSROOT1_DIRNAME} ; export CVSROOT1
-	  CVSROOT2=${CVSROOT2_DIRNAME} ; export CVSROOT2
-	  if $remote; then
-	      CVSROOT1=:fork:${CVSROOT1_DIRNAME} ; export CVSROOT1
-	      CVSROOT2=:fork:${CVSROOT2_DIRNAME} ; export CVSROOT2
-	  fi
+	  CVSROOT1=`newroot $CVSROOT1_DIRNAME`
+	  CVSROOT2=`newroot $CVSROOT2_DIRNAME`
 
 	  dotest multiroot2-1 "${testcvs} -d ${CVSROOT1} init" ""
 	  dotest multiroot2-2 "${testcvs} -d ${CVSROOT2} init" ""
@@ -25162,22 +26175,23 @@ ${SPROG} update: Updating dir1/sdir/ssdir"
  *-> Write_Template (\., ${TESTDIR}/root1)
 ${CPROG} update: Updating \.
  *-> Reader_Lock(${TESTDIR}/root1)
- *-> Lock_Cleanup()
+ *-> Simple_Lock_Cleanup()
  *-> Write_Template (dir1, ${TESTDIR}/root1/dir1)
 ${CPROG} update: Updating dir1
  *-> Reader_Lock(${TESTDIR}/root1/dir1)
- *-> Lock_Cleanup()
+ *-> Simple_Lock_Cleanup()
  *-> parse_cvsroot ( ${TESTDIR}/root2 )
  *-> main loop with CVSROOT=${TESTDIR}/root2
  *-> Write_Template (dir1/sdir, ${TESTDIR}/root2/dir1/sdir)
 ${CPROG} update: Updating dir1/sdir
  *-> Reader_Lock(${TESTDIR}/root2/sdir)
- *-> Lock_Cleanup()
+ *-> Simple_Lock_Cleanup()
  *-> Write_Template (dir1/sdir/ssdir, ${TESTDIR}/root2/sdir/ssdir)
 ${CPROG} update: Updating dir1/sdir/ssdir
  *-> Reader_Lock(${TESTDIR}/root2/sdir/ssdir)
+ *-> Simple_Lock_Cleanup()
  *-> Lock_Cleanup()
- *-> Lock_Cleanup()"
+ *-> Simple_Lock_Cleanup()"
 	  fi
 
 	  dotest multiroot2-9 "${testcvs} -q tag tag1" \
@@ -25242,13 +26256,8 @@ ${PLUS}change him too"
 	  # Not drastically different from multiroot but it covers somewhat
 	  # different stuff.
 
-	  if $remote; then
-	    CVSROOT1=:fork:${TESTDIR}/root1 ; export CVSROOT1
-	    CVSROOT2=:fork:${TESTDIR}/root2 ; export CVSROOT2
-	  else
-	    CVSROOT1=${TESTDIR}/root1 ; export CVSROOT1
-	    CVSROOT2=${TESTDIR}/root2 ; export CVSROOT2
-	  fi
+	  CVSROOT1=`newroot ${TESTDIR}/root1`
+	  CVSROOT2=`newroot ${TESTDIR}/root2`
 
 	  mkdir 1; cd 1
 	  dotest multiroot3-1 "${testcvs} -d ${CVSROOT1} init" ""
@@ -25327,25 +26336,25 @@ ${SPROG} \[diff aborted\]: read lock failed - giving up"
 	  cd 1a
 	  dotest_fail multiroot3-12 \
 "${testcvs} -d ${CVSROOT1} -q co ../root2/dir2" \
-"${SPROG} checkout: in directory \.\./root2/dir2:
+"${SPROG} checkout: in directory \`\.\./root2/dir2':
 ${SPROG} checkout: .\.\..-relative repositories are not supported.
 ${SPROG} \[checkout aborted\]: invalid source repository"
 	  rm -rf ../root2
 	  dotest_fail multiroot3-13 \
 "${testcvs} -d ${CVSROOT2} -q co ../root1/dir1" \
-"${SPROG} checkout: in directory \.\./root1/dir1:
+"${SPROG} checkout: in directory \`\.\./root1/dir1':
 ${SPROG} checkout: .\.\..-relative repositories are not supported.
 ${SPROG} \[checkout aborted\]: invalid source repository"
 	  rm -rf ../root1
 	  dotest_fail multiroot3-14 \
 "${testcvs} -d ${CVSROOT1} -q co ./../root2/dir2" \
-"${SPROG} checkout: in directory \./\.\./root2/dir2:
+"${SPROG} checkout: in directory \`\./\.\./root2/dir2':
 ${SPROG} checkout: .\.\..-relative repositories are not supported.
 ${SPROG} \[checkout aborted\]: invalid source repository"
 	  rm -rf ../root2
 	  dotest_fail multiroot3-15 \
 "${testcvs} -d ${CVSROOT2} -q co ./../root1/dir1" \
-"${SPROG} checkout: in directory \./\.\./root1/dir1:
+"${SPROG} checkout: in directory \`\./\.\./root1/dir1':
 ${SPROG} checkout: .\.\..-relative repositories are not supported.
 ${SPROG} \[checkout aborted\]: invalid source repository"
 	  rm -rf ../root1
@@ -25367,13 +26376,9 @@ ${SPROG} \[checkout aborted\]: invalid source repository"
 	  # More multiroot tests, in particular we have two roots with
 	  # similarly-named directories and we try to see that CVS can
 	  # keep them separate.
-	  if $remote; then
-	    CVSROOT1=:fork:${TESTDIR}/root1 ; export CVSROOT1
-	    CVSROOT2=:fork:${TESTDIR}/root2 ; export CVSROOT2
-	  else
-	    CVSROOT1=${TESTDIR}/root1 ; export CVSROOT1
-	    CVSROOT2=${TESTDIR}/root2 ; export CVSROOT2
-	  fi
+
+	  CVSROOT1=`newroot ${TESTDIR}/root1`
+	  CVSROOT2=`newroot ${TESTDIR}/root2`
 
 	  mkdir 1; cd 1
 	  dotest multiroot4-1 "${testcvs} -d ${CVSROOT1} init" ""
@@ -25479,14 +26484,8 @@ done"
 	  # More tests of repositories and specifying them.
 	  # Similar to crerepos but that test is probably getting big
 	  # enough.
-
-	  if $remote; then
-	    CVSROOT1=:fork:${TESTDIR}/root1 ; export CVSROOT1
-	    CVSROOT_MOVED=:fork:${TESTDIR}/root-moved ; export CVSROOT1
-	  else
-	    CVSROOT1=${TESTDIR}/root1 ; export CVSROOT1
-	    CVSROOT_MOVED=${TESTDIR}/root-moved ; export CVSROOT1
-	  fi
+	  CVSROOT1=`newroot ${TESTDIR}/root1`
+	  CVSROOT_MOVED=`newroot ${TESTDIR}/root-moved`
 
 	  dotest reposmv-setup-1 "${testcvs} -d ${CVSROOT1} init" ""
 	  mkdir imp-dir; cd imp-dir
@@ -25544,7 +26543,7 @@ ${DOTSTAR}"
 	  if $remote; then
 	    CVSROOT_SAVED=${CVSROOT}
 	    CVSROOT=:fork:${TESTDIR}/root-none; export CVSROOT
-	    dotest_fail reposmv-4 "${testcvs} update" \
+	    dotest_fail reposmv-4r "${testcvs} update" \
 "Cannot access ${TESTDIR}/root1/CVSROOT
 No such file or directory"
 	    CVSROOT=${CVSROOT_SAVED}; export CVSROOT
@@ -25583,6 +26582,8 @@ ${CPROG} \[update aborted\]: ${TESTDIR}/root-none/CVSROOT: No such file or direc
 	pserver)
 	  # Test basic pserver functionality.
 	  if $remote; then
+	    save_servercvs=$servercvs
+	    servercvs=$testcvs
    	    # First set SystemAuth=no.  Not really necessary, I don't
 	    # think, but somehow it seems like the clean thing for
 	    # the testsuite.
@@ -25598,6 +26599,7 @@ done
 ${SPROG} commit: Rebuilding administrative file database"
 	    cat >${CVSROOT_DIRNAME}/CVSROOT/passwd <<EOF
 testme:q6WV9d2t848B2:$username
+dontroot:q6WV9d2t848B2:root
 anonymous::$username
 $username:
 willfail:   :whocares
@@ -25646,6 +26648,16 @@ Ay::'d
 END AUTH REQUEST
 Root ${CVSROOT_DIRNAME}
 noop
+EOF
+
+	    dotest_fail pserver-4.2 \
+"${servercvs} --allow-root=${CVSROOT_DIRNAME} pserver" \
+"error 0: root not allowed" <<EOF
+BEGIN AUTH REQUEST
+${CVSROOT_DIRNAME}
+dontroot
+Ay::'d
+END AUTH REQUEST
 EOF
 
 	    dotest pserver-5 "${servercvs} --allow-root=${CVSROOT_DIRNAME} pserver" \
@@ -26022,12 +27034,15 @@ ${SPROG} commit: Rebuilding administrative file database"
 	    cd ../..
 	    rm -r 1
 	    rm ${CVSROOT_DIRNAME}/CVSROOT/passwd ${CVSROOT_DIRNAME}/CVSROOT/writers
+	    servercvs=$save_severcvs
 	  fi # skip the whole thing for local
 	  ;;
 
 	server)
 	  # Some tests of the server (independent of the client).
 	  if $remote; then
+	    save_servercvs=$servercvs
+	    servercvs=$testcvs
 	    dotest server-1 "${servercvs} server" \
 "E Protocol error: Root request missing
 error  " <<EOF
@@ -26211,6 +27226,7 @@ EOF
 
 	    rm -rf ${TESTDIR}/crerepos
 	    rm gzipped.dat session.dat
+	    servercvs=$save_severcvs
 	  fi # skip the whole thing for local
 	  ;;
 
@@ -26218,6 +27234,8 @@ EOF
 	  # More server tests, in particular testing that various
 	  # possible security holes are plugged.
 	  if $remote; then
+	    save_servercvs=$servercvs
+	    servercvs=$testcvs
 	    dotest server2-1 "${servercvs} server" \
 "E protocol error: directory '${CVSROOT_DIRNAME}/\.\./dir1' not within root '${CVSROOT_DIRNAME}'
 error  " <<EOF
@@ -26258,6 +27276,7 @@ ${CVSROOT_DIRNAME}
 Unchanged foo/bar
 noop
 EOF
+	    servercvs=$save_severcvs
 	  fi
 	  ;;
 
@@ -26283,7 +27302,13 @@ echo "xyz"
 echo "ok"
 cat >/dev/null
 EOF
-	    chmod +x ${TESTDIR}/serveme
+	    # Cygwin.  Pthffffffffft!
+	    if test -n "$remotehost"; then
+	      $CVS_RSH $remotehost "chmod +x ${TESTDIR}/serveme"
+	    else
+	      chmod +x ${TESTDIR}/serveme
+	    fi
+	    save_CVS_SERVER=$CVS_SERVER
 	    CVS_SERVER=${TESTDIR}/serveme; export CVS_SERVER
 	    mkdir 1; cd 1
 	    dotest_fail client-1 "${testcvs} -q co first-dir" \
@@ -26348,6 +27373,7 @@ EOF
 	    # By specifying the time zone in local time, we don't
 	    # know exactly how that will translate to GMT.
 	    dotest client-8 "${testcvs} update -D 99-10-04" "OK, whatever"
+	    # String 2 below is Cygwin again - ptoooey.
 	    dotest client-9 "cat ${TESTDIR}/client.tmp" \
 "Root ${CVSROOT_DIRNAME}
 Valid-responses [-a-zA-Z ]*
@@ -26362,13 +27388,27 @@ Modified file1
 u=rw,g=,o=
 4
 abc
+update" \
+"Root ${CVSROOT_DIRNAME}
+Valid-responses [-a-zA-Z ]*
+valid-requests
+Argument -D
+Argument [34] Oct 1999 [0-9][0-9]:00:00 -0000
+Argument --
+Directory \.
+${CVSROOT_DIRNAME}/first-dir
+Entry /file1/1\.2///
+Modified file1
+u=rw,g=r,o=r
+4
+abc
 update"
 
 	    cd ../..
 	    rm -r 1
 	    rmdir ${TESTDIR}/bogus
 	    rm ${TESTDIR}/serveme
-	    CVS_SERVER=${servercvs}; export CVS_SERVER
+	    CVS_SERVER=${save_CVS_SERVER}; export CVS_SERVER
 	  fi # skip the whole thing for local
 	  ;;
 
@@ -26377,11 +27417,7 @@ update"
 	  CVSROOT_save=${CVSROOT}
 	  CVSROOT_DIRNAME_save=${CVSROOT_DIRNAME}
 	  CVSROOT_DIRNAME=${TESTDIR}/cvs.root
-	  if $remote; then
-	      CVSROOT=:fork:${CVSROOT_DIRNAME}
-	  else
-	      CVSROOT=${CVSROOT_DIRNAME}
-	  fi
+	  CVSROOT=`newroot ${CVSROOT_DIRNAME}`
 
 	  dotest dottedroot-init-1 "${testcvs} init" ""
 	  mkdir dir1
@@ -26421,6 +27457,7 @@ U module1/dir2/file1"
 	  # working, but that test might be better here.
 	  if $remote; then
 	    mkdir fork; cd fork
+	    save_CVS_SERVER=$CVS_SERVER
 	    unset CVS_SERVER
 	    # So looking through $PATH for cvs won't work...
 	    echo "echo junk" >cvs
@@ -26441,13 +27478,11 @@ ${CPROG} version: using the :fork: access method\.
 ${CPROG} \[version aborted\]: This CVS was not compiled with server support\."
 	    fi
 
-	    CVS_SERVER=${servercvs}; export CVS_SERVER
+	    CVS_SERVER=${save_CVS_SERVER}; export CVS_SERVER
+	    unset save_CVS_SERVER
 	    PATH=$save_PATH; unset save_PATH
 
-	    if $keep; then
-	      echo Keeping ${TESTDIR} and exiting due to --keep
-	      exit 0
-	    fi
+	    dokeep
 
 	    cd ..
 	    rm -r fork
@@ -26707,12 +27742,2773 @@ ${SPROG} update: Updating first/subdir"
 	  dokeep
 
 	  # cleanup
-	  rm -f ${CVS_DIRNAME}/CVSROOT/rcsinfo,v \
-                ${CVS_DIRNAME}/CVSROOT/rcsinfo \
-                ${CVS_DIRNAME}/first ${CVS_DIRNAME}/second
+	  rm -fr ${CVSROT_DIRNAME}/CVSROOT/rcsinfo,v \
+                 ${CVSROOT_DIRNAME}/CVSROOT/rcsinfo \
+                 ${CVSROOT_DIRNAME}/first ${CVSROOT_DIRNAME}/second
 	  dotest template-cleanup-1 "${testcvs} -Q init" ''
 	  cd ..
 	  rm -rf template
+	  ;;
+
+	trace)
+	  # Check that there are no core dumps lurking in the trace
+	  # options. 
+
+	  # Perform some cleanup for normalized testing...
+	  rm ${CVSROOT_DIRNAME}/CVSROOT/history
+	  rm -f ${CVSROOT_DIRNAME}/CVSROOT/cvsignore
+	  rm -f ${CVSROOT_DIRNAME}/CVSROOT/cvsignore,v
+
+	  # checkout the trace option
+
+	  mkdir trace && cd trace
+	  mkdir imp && cd imp
+	  touch file1
+
+	  dotest_sort trace-1 "${testcvs} -t -t -t init" \
+"  *-> Lock_Cleanup()
+  *-> RCS_checkout (checkoutlist,v, , , , \.#[0-9][0-9]*)
+  *-> RCS_checkout (commitinfo,v, , , , \.#[0-9][0-9]*)
+  *-> RCS_checkout (config,v, , , , \.#[0-9][0-9]*)
+  *-> RCS_checkout (cvswrappers,v, , , , \.#[0-9][0-9]*)
+  *-> RCS_checkout (loginfo,v, , , , \.#[0-9][0-9]*)
+  *-> RCS_checkout (modules,v, , , , \.#[0-9][0-9]*)
+  *-> RCS_checkout (notify,v, , , , \.#[0-9][0-9]*)
+  *-> RCS_checkout (rcsinfo,v, , , , \.#[0-9][0-9]*)
+  *-> RCS_checkout (taginfo,v, , , , \.#[0-9][0-9]*)
+  *-> RCS_checkout (verifymsg,v, , , , \.#[0-9][0-9]*)
+  *-> main loop with CVSROOT=${CVSROOT_DIRNAME}
+  *-> parse_cvsroot ( ${CVSROOT_DIRNAME} )
+  *-> remove_locks()
+  *-> unlink_file(\.#[0-9][0-9]*)
+  *-> unlink_file(\.#[0-9][0-9]*)
+  *-> unlink_file(\.#[0-9][0-9]*)
+  *-> unlink_file(\.#[0-9][0-9]*)
+  *-> unlink_file(\.#[0-9][0-9]*)
+  *-> unlink_file(\.#[0-9][0-9]*)
+  *-> unlink_file(\.#[0-9][0-9]*)
+  *-> unlink_file(\.#[0-9][0-9]*)
+  *-> unlink_file(\.#[0-9][0-9]*)
+  *-> unlink_file(\.#[0-9][0-9]*)
+  *-> unlink_file(\.#[0-9][0-9]*)
+  *-> unlink_file(\.#[0-9][0-9]*)
+  *-> unlink_file(\.#[0-9][0-9]*)
+  *-> unlink_file(\.#checkoutlist)
+  *-> unlink_file(\.#commitinfo)
+  *-> unlink_file(\.#config)
+  *-> unlink_file(\.#cvswrappers)
+  *-> unlink_file(\.#loginfo)
+  *-> unlink_file(\.#modules)
+  *-> unlink_file(\.#notify)
+  *-> unlink_file(\.#rcsinfo)
+  *-> unlink_file(\.#taginfo)
+  *-> unlink_file(\.#verifymsg)
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )" \
+"
+  *-> Forking server: ${CVS_SERVER} server
+  *-> main loop with CVSROOT=${CVSROOT}
+  *-> parse_cvsroot ( ${CVSROOT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> Lock_Cleanup()
+S -> Lock_Cleanup()
+S -> RCS_checkout (checkoutlist,v, , , , \.#[0-9][0-9]*)
+S -> RCS_checkout (commitinfo,v, , , , \.#[0-9][0-9]*)
+S -> RCS_checkout (config,v, , , , \.#[0-9][0-9]*)
+S -> RCS_checkout (cvswrappers,v, , , , \.#[0-9][0-9]*)
+S -> RCS_checkout (loginfo,v, , , , \.#[0-9][0-9]*)
+S -> RCS_checkout (modules,v, , , , \.#[0-9][0-9]*)
+S -> RCS_checkout (notify,v, , , , \.#[0-9][0-9]*)
+S -> RCS_checkout (rcsinfo,v, , , , \.#[0-9][0-9]*)
+S -> RCS_checkout (taginfo,v, , , , \.#[0-9][0-9]*)
+S -> RCS_checkout (verifymsg,v, , , , \.#[0-9][0-9]*)
+S -> remove_locks()
+S -> remove_locks()
+S -> server_cleanup()
+S -> server_cleanup()
+S -> server_notify()
+S -> unlink_file(\.#[0-9][0-9]*)
+S -> unlink_file(\.#[0-9][0-9]*)
+S -> unlink_file(\.#[0-9][0-9]*)
+S -> unlink_file(\.#[0-9][0-9]*)
+S -> unlink_file(\.#[0-9][0-9]*)
+S -> unlink_file(\.#[0-9][0-9]*)
+S -> unlink_file(\.#[0-9][0-9]*)
+S -> unlink_file(\.#[0-9][0-9]*)
+S -> unlink_file(\.#[0-9][0-9]*)
+S -> unlink_file(\.#[0-9][0-9]*)
+S -> unlink_file(\.#[0-9][0-9]*)
+S -> unlink_file(\.#[0-9][0-9]*)
+S -> unlink_file(\.#[0-9][0-9]*)
+S -> unlink_file(\.#checkoutlist)
+S -> unlink_file(\.#commitinfo)
+S -> unlink_file(\.#config)
+S -> unlink_file(\.#cvswrappers)
+S -> unlink_file(\.#loginfo)
+S -> unlink_file(\.#modules)
+S -> unlink_file(\.#notify)
+S -> unlink_file(\.#rcsinfo)
+S -> unlink_file(\.#taginfo)
+S -> unlink_file(\.#verifymsg)" \
+
+	  dotest_sort trace-2 \
+"${testcvs} -t -t -t import -mimport trace MYVENDOR version-1" \
+"
+
+  *-> Lock_Cleanup()
+  *-> Parse_Info (${CVSROOT_DIRNAME}/CVSROOT/loginfo, trace, ALL)
+  *-> Parse_Info (${CVSROOT_DIRNAME}/CVSROOT/verifymsg, trace, not ALL)
+  *-> main loop with CVSROOT=${CVSROOT_DIRNAME}
+  *-> parse_cvsroot ( ${CVSROOT_DIRNAME} )
+  *-> remove_locks()
+  *-> safe_location( where=(null) )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+N trace/file1
+No conflicts created by this import" \
+"
+
+
+  *-> Forking server: ${CVS_SERVER} server
+  *-> Sending file \`file1' to server
+  *-> main loop with CVSROOT=${CVSROOT}
+  *-> parse_cvsroot ( ${CVSROOT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+N trace/file1
+No conflicts created by this import
+S -> Lock_Cleanup()
+S -> Lock_Cleanup()
+S -> Parse_Info (${CVSROOT_DIRNAME}/CVSROOT/loginfo, trace, ALL)
+S -> Parse_Info (${CVSROOT_DIRNAME}/CVSROOT/verifymsg, trace, not ALL)
+S -> dirswitch (\., ${CVSROOT_DIRNAME}/trace)
+S -> remove_locks()
+S -> remove_locks()
+S -> safe_location( where=(null) )
+S -> serve_directory (\.)
+S -> server_cleanup()
+S -> server_cleanup()
+S -> server_notify()"
+
+	  cd ..
+	  rm -fr imp
+
+	  dotest_sort trace-3 "${testcvs} -t -t -t co trace" \
+"  *callerdat=${PFMT}, argc=0, argv=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *dosrcs=1, repository_in=${CVSROOT_DIRNAME}/trace )
+  *local=0, which=3, aflag=0,
+  *locktype=1, update_preload=trace
+  *-> Create_Admin
+  *-> Create_Admin (\., trace, ${CVSROOT_DIRNAME}/trace, , , 0, 0, 1)
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Lock_Cleanup()
+  *-> Lock_Cleanup()
+  *-> RCS_checkout (${CVSROOT_DIRNAME}/trace/file1,v, 1\.1\.1\.1, , , file1)
+  *-> Reader_Lock(${CVSROOT_DIRNAME}/trace)
+  *-> Register(file1, 1\.1\.1\.1, ${DATE}, ,  )
+  *-> Write_Template (trace, ${CVSROOT_DIRNAME}/trace)
+  *-> chmod(file1,[0-7][0-7]*)
+  *-> do_module (trace, Updating, NULL, NULL)
+  *-> do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> fopen(${CVSROOT_DIRNAME}/CVSROOT/history,a)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.lock)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_simple_remove()
+  *-> main loop with CVSROOT=${CVSROOT_DIRNAME}
+  *-> parse_cvsroot ( ${CVSROOT_DIRNAME} )
+  *-> remove_locks()
+  *-> remove_locks()
+  *-> rename(CVS/Entries\.Backup,CVS/Entries)
+  *-> safe_location( where=(null) )
+  *-> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+  *-> unlink_file(\./CVS/Entries\.Static)
+  *-> unlink_file(\./CVS/Tag)
+  *-> unlink_file(CVS/Entries\.Log)
+  *-> unlink_file_dir(CVS/,,file1)
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+U trace/file1
+${SPROG} checkout: Updating trace" \
+"
+  *callerdat=${PFMT}, argc=0, argv=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *dosrcs=1, repository_in=${CVSROOT_DIRNAME}/trace )
+  *local=0, which=3, aflag=0,
+  *locktype=1, update_preload=trace
+  *-> Create_Admin
+  *-> Create_Admin (trace, trace, ${CVSROOT_DIRNAME}/trace, , , 0, 0, 1)
+  *-> Forking server: ${CVS_SERVER} server
+  *-> Register(file1, 1\.1\.1\.1, ${DATE}, ,  )
+  *-> main loop with CVSROOT=${CVSROOT}
+  *-> parse_cvsroot ( ${CVSROOT} )
+  *-> rename(\.new\.file1,file1)
+  *-> rename(CVS/Entries\.Backup,CVS/Entries)
+  *-> safe_location( where=(null) )
+  *-> unlink_file(CVS/Entries\.Log)
+  *-> unlink_file(CVS/Entries\.Static)
+  *-> unlink_file(CVS/Tag)
+  *-> unlink_file(CVS/Template)
+  *-> unlink_file(trace/CVS/Tag)
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> Create_Admin
+S -> Create_Admin (\., trace, ${CVSROOT_DIRNAME}/trace, , , 0, 0, 1)
+S -> Leaving do_recursion ( frame=${PFMT} )
+S -> Leaving do_recursion ( frame=${PFMT} )
+S -> Lock_Cleanup()
+S -> Lock_Cleanup()
+S -> Lock_Cleanup()
+S -> Parse_Info (${CVSROOT_DIRNAME}/CVSROOT/rcsinfo, trace, ALL)
+S -> RCS_checkout (${CVSROOT_DIRNAME}/trace/file1,v, 1\.1\.1\.1, , , (function))
+S -> Reader_Lock(${CVSROOT_DIRNAME}/trace)
+S -> Register(file1, 1\.1\.1\.1, , ,  )
+S -> Write_Template (trace, ${CVSROOT_DIRNAME}/trace)
+S -> dirswitch (\., ${CVSROOT_DIRNAME})
+S -> dirswitch (\., ${CVSROOT_DIRNAME})
+S -> do_module (trace, Updating, NULL, NULL)
+S -> do_module (trace, Updating, NULL, NULL)
+S -> do_recursion ( frame=${PFMT} )
+S -> do_recursion ( frame=${PFMT} )
+S -> fopen(${CVSROOT_DIRNAME}/CVSROOT/history,a)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.lock)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+S -> lock_simple_remove()
+S -> remove_locks()
+S -> remove_locks()
+S -> remove_locks()
+S -> rename(CVS/Entries\.Backup,CVS/Entries)
+S -> safe_location( where=(null) )
+S -> serve_directory (\.)
+S -> serve_directory (\.)
+S -> server_cleanup()
+S -> server_cleanup()
+S -> server_notify()
+S -> server_register(file1, 1\.1\.1\.1, , , , , )
+S -> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+S -> unlink_file(\./CVS/Entries\.Static)
+S -> unlink_file(\./CVS/Tag)
+S -> unlink_file(CVS/Entries\.Log)
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+U trace/file1
+${SPROG} checkout: Updating trace"
+
+	  cd trace
+	  mkdir subdir
+	  dotest_sort trace-4 "${testcvs} -t -t -t add subdir" \
+"  *-> Create_Admin
+  *-> Create_Admin (\., subdir, ${CVSROOT_DIRNAME}/trace/subdir, , , 0, 0, 1)
+  *-> Lock_Cleanup()
+  *-> Parse_Info (${CVSROOT_DIRNAME}/CVSROOT/loginfo, trace/subdir, ALL)
+  *-> main loop with CVSROOT=${CVSROOT_DIRNAME}
+  *-> parse_cvsroot ( ${CVSROOT_DIRNAME} )
+  *-> remove_locks()
+  *-> rename(CVS/Entries\.Backup,CVS/Entries)
+  *-> unlink_file(\./CVS/Tag)
+  *-> unlink_file(${CVSROOT_DIRNAME}/trace/subdir/CVS/fileattr)
+  *-> unlink_file(CVS/Entries\.Log)
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+Directory ${CVSROOT_DIRNAME}/trace/subdir added to the repository" \
+"
+  *callerdat=${PFMT}, argc=1, argv=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *dosrcs=0, repository_in=(null) )
+  *local=0, which=1, aflag=0,
+  *locktype=0, update_preload=(null)
+  *-> Create_Admin
+  *-> Create_Admin (subdir, subdir, ${CVSROOT_DIRNAME}/trace/subdir, , , 0, 0, 1)
+  *-> Forking server: ${CVS_SERVER} server
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> main loop with CVSROOT=${CVSROOT}
+  *-> parse_cvsroot ( ${CVSROOT} )
+  *-> rename(CVS/Entries\.Backup,CVS/Entries)
+${DOTSTAR}  *-> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+  *-> unlink_file(CVS/Entries\.Log)
+${DOTSTAR}  *-> unlink_file(CVS/Template)
+  *-> unlink_file(subdir/CVS/Tag)
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+${DOTSTAR}Directory ${CVSROOT_DIRNAME}/trace/subdir added to the repository
+S -> Lock_Cleanup()
+S -> Lock_Cleanup()
+S -> Parse_Info (${CVSROOT_DIRNAME}/CVSROOT/loginfo, trace/subdir, ALL)
+S -> Parse_Info (${CVSROOT_DIRNAME}/CVSROOT/rcsinfo, trace/subdir, ALL)
+S -> Write_Template (subdir, ${CVSROOT_DIRNAME}/trace/subdir)
+S -> dirswitch (\., ${CVSROOT_DIRNAME}/trace)
+S -> dirswitch (subdir, ${CVSROOT_DIRNAME}/trace/subdir)
+S -> remove_locks()
+S -> remove_locks()
+S -> rename(CVS/Entries\.Backup,CVS/Entries)
+S -> rename(CVS/Entries\.Backup,CVS/Entries)
+S -> serve_directory (\.)
+S -> serve_directory (subdir)
+S -> server_cleanup()
+S -> server_cleanup()
+S -> server_notify()
+S -> unlink_file(${CVSROOT_DIRNAME}/trace/subdir/CVS/fileattr)
+S -> unlink_file(CVS/Entries\.Log)
+S -> unlink_file(CVS/Entries\.Log)
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )"
+	  touch file2
+	  dotest_sort trace-5 "${testcvs} -t -t -t add file2" \
+"  *-> Lock_Cleanup()
+  *-> Register(file2, 0, Initial file2, ,  )
+  *-> main loop with CVSROOT=${CVSROOT_DIRNAME}
+  *-> parse_cvsroot ( ${CVSROOT_DIRNAME} )
+  *-> remove_locks()
+  *-> rename(CVS/Entries\.Backup,CVS/Entries)
+  *-> unlink_file(CVS/Entries\.Log)
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+${SPROG} add: scheduling file \`file2' for addition
+${SPROG} add: use \`${SPROG} commit' to add this file permanently" \
+"
+  *callerdat=${PFMT}, argc=1, argv=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *dosrcs=0, repository_in=(null) )
+  *local=0, which=1, aflag=0,
+  *locktype=0, update_preload=(null)
+  *-> Forking server: ${CVS_SERVER} server
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Register(file2, 0, dummy timestamp, ,  )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> main loop with CVSROOT=${CVSROOT}
+  *-> parse_cvsroot ( ${CVSROOT} )
+  *-> rename(CVS/Entries\.Backup,CVS/Entries)
+${DOTSTAR}  *-> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+  *-> unlink_file(CVS/Entries\.Log)
+${DOTSTAR}  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+${DOTSTAR}S -> Lock_Cleanup()
+S -> Lock_Cleanup()
+S -> Register(file2, 0, Initial file2, ,  )
+S -> dirswitch (\., ${CVSROOT_DIRNAME}/trace)
+S -> remove_locks()
+S -> remove_locks()
+S -> rename(CVS/Entries\.Backup,CVS/Entries)
+S -> serve_directory (\.)
+S -> server_cleanup()
+S -> server_cleanup()
+S -> server_notify()
+S -> server_register(file2, 0, Initial file2, , , , )
+S -> unlink_file(CVS/Entries\.Log)
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+${SPROG} add: scheduling file \`file2' for addition
+${SPROG} add: use \`${SPROG} commit' to add this file permanently"
+	  dotest_sort trace-6 "${testcvs} -t -t -t ci -mnew-file file2" \
+"  *callerdat=${PFMT}, argc=1, argv=${PFMT},
+  *callerdat=${PFMT}, argc=1, argv=${PFMT},
+  *callerdat=${PFMT}, argc=1, argv=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *dosrcs=0, repository_in=(null) )
+  *dosrcs=1, repository_in=(null) )
+  *dosrcs=1, repository_in=(null) )
+  *local=0, which=1, aflag=0,
+  *local=0, which=1, aflag=0,
+  *local=0, which=1, aflag=0,
+  *locktype=0, update_preload=(null)
+  *locktype=0, update_preload=(null)
+  *locktype=0, update_preload=(null)
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Lock_Cleanup()
+  *-> Lock_Cleanup()
+  *-> Parse_Info (${CVSROOT_DIRNAME}/CVSROOT/commitinfo, trace, ALL)
+  *-> Parse_Info (${CVSROOT_DIRNAME}/CVSROOT/loginfo, trace, ALL)
+  *-> Parse_Info (${CVSROOT_DIRNAME}/CVSROOT/verifymsg, trace, not ALL)
+  *-> RCS_checkout (${CVSROOT_DIRNAME}/trace/file2,v, 1, , , (function))
+  *-> RCS_cmp_file( ${CVSROOT_DIRNAME}/trace/file2,v, 1, (null), , file2 )
+  *-> Register(file2, 1\.1, ${DATE}, ,  )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> fopen(${CVSROOT_DIRNAME}/CVSROOT/history,a)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.lock)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.lock)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.wfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.wfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, )
+  *-> lock_simple_remove()
+  *-> main loop with CVSROOT=${CVSROOT_DIRNAME}
+  *-> parse_cvsroot ( ${CVSROOT_DIRNAME} )
+  *-> rcs_cleanup()
+  *-> remove_locks()
+  *-> remove_locks()
+  *-> rename(${CVSROOT_DIRNAME}/trace/,file2,,${CVSROOT_DIRNAME}/trace/file2,v)
+  *-> rename(${CVSROOT_DIRNAME}/trace/,file2,,${CVSROOT_DIRNAME}/trace/file2,v)
+  *-> rename(CVS/Entries\.Backup,CVS/Entries)
+  *-> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+  *-> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+  *-> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+  *-> unlink_file(CVS/Base/file2)
+  *-> unlink_file(CVS/Entries\.Log)
+  *-> unlink_file(CVS/file2,t)
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> write_lock(${CVSROOT_DIRNAME}/trace)
+${CVSROOT_DIRNAME}/trace/file2,v  <--  file2
+Checking in file2;
+RCS file: ${CVSROOT_DIRNAME}/trace/file2,v
+done
+done
+initial revision: 1\.1" \
+"
+  *callerdat=${PFMT}, argc=1, argv=${PFMT},
+  *callerdat=${PFMT}, argc=1, argv=${PFMT},
+  *callerdat=${PFMT}, argc=1, argv=${PFMT},
+  *callerdat=${PFMT}, argc=1, argv=${PFMT},
+  *callerdat=${PFMT}, argc=1, argv=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *dosrcs=0, repository_in=(null) )
+  *dosrcs=0, repository_in=(null) )
+  *dosrcs=0, repository_in=(null) )
+  *dosrcs=1, repository_in=(null) )
+  *dosrcs=1, repository_in=(null) )
+  *local=0, which=1, aflag=0,
+  *local=0, which=1, aflag=0,
+  *local=0, which=1, aflag=0,
+  *local=0, which=1, aflag=0,
+  *local=0, which=1, aflag=0,
+  *locktype=0, update_preload=(null)
+  *locktype=0, update_preload=(null)
+  *locktype=0, update_preload=(null)
+  *locktype=0, update_preload=(null)
+  *locktype=0, update_preload=(null)
+  *-> Forking server: ${CVS_SERVER} server
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Register(file2, 1\.1, ${DATE}, ,  )
+  *-> Sending file \`file2' to server
+  *-> do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> main loop with CVSROOT=${CVSROOT}
+  *-> parse_cvsroot ( ${CVSROOT} )
+  *-> rename(CVS/Entries\.Backup,CVS/Entries)
+  *-> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+  *-> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+  *-> unlink_file(CVS/Base/file2)
+  *-> unlink_file(CVS/Entries\.Log)
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+${CVSROOT_DIRNAME}/trace/file2,v  <--  file2
+Checking in file2;
+RCS file: ${CVSROOT_DIRNAME}/trace/file2,v
+S -> Leaving do_recursion ( frame=${PFMT} )
+S -> Leaving do_recursion ( frame=${PFMT} )
+S -> Leaving do_recursion ( frame=${PFMT} )
+S -> Lock_Cleanup()
+S -> Lock_Cleanup()
+S -> Lock_Cleanup()
+S -> Parse_Info (${CVSROOT_DIRNAME}/CVSROOT/commitinfo, trace, ALL)
+S -> Parse_Info (${CVSROOT_DIRNAME}/CVSROOT/loginfo, trace, ALL)
+S -> Parse_Info (${CVSROOT_DIRNAME}/CVSROOT/verifymsg, trace, not ALL)
+S -> RCS_checkout (${CVSROOT_DIRNAME}/trace/file2,v, 1, , , (function))
+S -> RCS_cmp_file( ${CVSROOT_DIRNAME}/trace/file2,v, 1, (null), , file2 )
+S -> Register(file2, 1\.1, ${DATE}, ,  )
+S -> dirswitch (\., ${CVSROOT_DIRNAME}/trace)
+S -> do_recursion ( frame=${PFMT} )
+S -> do_recursion ( frame=${PFMT} )
+S -> do_recursion ( frame=${PFMT} )
+S -> fopen(${CVSROOT_DIRNAME}/CVSROOT/history,a)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.lock)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.lock)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.wfl\.${hostname}\.[0-9][0-9]*)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.wfl\.${hostname}\.[0-9][0-9]*)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, )
+S -> lock_simple_remove()
+S -> rcs_cleanup()
+S -> remove_locks()
+S -> remove_locks()
+S -> remove_locks()
+S -> rename(${CVSROOT_DIRNAME}/trace/,file2,,${CVSROOT_DIRNAME}/trace/file2,v)
+S -> rename(${CVSROOT_DIRNAME}/trace/,file2,,${CVSROOT_DIRNAME}/trace/file2,v)
+S -> rename(CVS/Entries\.Backup,CVS/Entries)
+S -> serve_directory (\.)
+S -> server_cleanup()
+S -> server_cleanup()
+S -> server_notify()
+S -> server_pathname_check (file2)
+S -> server_pathname_check (file2)
+S -> server_pathname_check (file2)
+S -> server_register(file2, 1\.1, ${DATE}, , , , )
+S -> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+S -> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+S -> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+S -> unlink_file(CVS/Entries\.Log)
+S -> unlink_file(CVS/file2,t)
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> write_lock(${CVSROOT_DIRNAME}/trace)
+done
+done
+initial revision: 1\.1"
+	  dotest_sort trace-7 "${testcvs} -t -t -t tag bp" \
+"  *callerdat=${PFMT}, argc=0, argv=${PFMT},
+  *callerdat=${PFMT}, argc=0, argv=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *dosrcs=1, repository_in= )
+  *dosrcs=1, repository_in= )
+  *local=0, which=1, aflag=0,
+  *local=0, which=1, aflag=0,
+  *locktype=1, update_preload=(null)
+  *locktype=2, update_preload=(null)
+  *local_specified=0, mname=(null), msg=(null) )
+  *mwhere=(null), mfile=(null), shorten=0,
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Lock_Cleanup()
+  *-> Lock_Cleanup()
+  *-> Lock_Cleanup()
+  *-> Lock_Cleanup()
+  *-> Lock_Cleanup()
+  *-> Parse_Info (${CVSROOT_DIRNAME}/CVSROOT/taginfo, trace, ALL)
+  *-> Reader_Lock(${CVSROOT_DIRNAME}/trace)
+  *-> Reader_Lock(${CVSROOT_DIRNAME}/trace/subdir)
+  *-> check_fileproc ( ${CVSROOT_DIRNAME}/trace, file1, ${CVSROOT_DIRNAME}/trace/file1,v )
+  *-> check_fileproc ( ${CVSROOT_DIRNAME}/trace, file2, ${CVSROOT_DIRNAME}/trace/file2,v )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.lock)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.lock)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.lock)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.wfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.wfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, )
+  *-> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.lock)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.lock)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.lock)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.wfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.wfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace/subdir, )
+  *-> lock_simple_remove()
+  *-> lock_simple_remove()
+  *-> lock_simple_remove()
+  *-> lock_simple_remove()
+  *-> main loop with CVSROOT=${CVSROOT_DIRNAME}
+  *-> parse_cvsroot ( ${CVSROOT_DIRNAME} )
+  *-> rcs_cleanup()
+  *-> remove_locks()
+  *-> remove_locks()
+  *-> remove_locks()
+  *-> remove_locks()
+  *-> remove_locks()
+  *-> rename(${CVSROOT_DIRNAME}/trace/,file1,,${CVSROOT_DIRNAME}/trace/file1,v)
+  *-> rename(${CVSROOT_DIRNAME}/trace/,file2,,${CVSROOT_DIRNAME}/trace/file2,v)
+  *-> rename(CVS/Entries\.Backup,CVS/Entries)
+  *-> rtag_proc ( argc=1, argv=${PFMT}, xwhere=(null),
+  *-> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+  *-> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+  *-> unlink_file(CVS/Entries\.Log)
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> write_lock(${CVSROOT_DIRNAME}/trace)
+  *-> write_lock(${CVSROOT_DIRNAME}/trace/subdir)
+T file1
+T file2
+${SPROG} tag: Tagging \.
+${SPROG} tag: Tagging subdir" \
+"
+  *callerdat=${PFMT}, argc=0, argv=${PFMT},
+  *callerdat=${PFMT}, argc=0, argv=${PFMT},
+  *callerdat=${PFMT}, argc=0, argv=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *dosrcs=0, repository_in=(null) )
+  *dosrcs=1, repository_in= )
+  *dosrcs=1, repository_in= )
+  *local=0, which=1, aflag=0,
+  *local=0, which=1, aflag=0,
+  *local=0, which=1, aflag=0,
+  *locktype=0, update_preload=(null)
+  *locktype=1, update_preload=(null)
+  *locktype=2, update_preload=(null)
+  *local_specified=0, mname=(null), msg=(null) )
+  *mwhere=(null), mfile=(null), shorten=0,
+  *-> Forking server: ${CVS_SERVER} server
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> main loop with CVSROOT=${CVSROOT}
+  *-> parse_cvsroot ( ${CVSROOT} )
+  *-> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> Leaving do_recursion ( frame=${PFMT} )
+S -> Leaving do_recursion ( frame=${PFMT} )
+S -> Leaving do_recursion ( frame=${PFMT} )
+S -> Leaving do_recursion ( frame=${PFMT} )
+S -> Leaving do_recursion ( frame=${PFMT} )
+S -> Leaving do_recursion ( frame=${PFMT} )
+S -> Lock_Cleanup()
+S -> Lock_Cleanup()
+S -> Lock_Cleanup()
+S -> Lock_Cleanup()
+S -> Lock_Cleanup()
+S -> Lock_Cleanup()
+S -> Parse_Info (${CVSROOT_DIRNAME}/CVSROOT/taginfo, trace, ALL)
+S -> Reader_Lock(${CVSROOT_DIRNAME}/trace)
+S -> Reader_Lock(${CVSROOT_DIRNAME}/trace/subdir)
+S -> check_fileproc ( ${CVSROOT_DIRNAME}/trace, file1, ${CVSROOT_DIRNAME}/trace/file1,v )
+S -> check_fileproc ( ${CVSROOT_DIRNAME}/trace, file2, ${CVSROOT_DIRNAME}/trace/file2,v )
+S -> dirswitch (\., ${CVSROOT_DIRNAME}/trace)
+S -> dirswitch (\., ${CVSROOT_DIRNAME}/trace)
+S -> dirswitch (subdir, ${CVSROOT_DIRNAME}/trace/subdir)
+S -> do_recursion ( frame=${PFMT} )
+S -> do_recursion ( frame=${PFMT} )
+S -> do_recursion ( frame=${PFMT} )
+S -> do_recursion ( frame=${PFMT} )
+S -> do_recursion ( frame=${PFMT} )
+S -> do_recursion ( frame=${PFMT} )
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.lock)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.lock)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.lock)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.wfl\.${hostname}\.[0-9][0-9]*)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.wfl\.${hostname}\.[0-9][0-9]*)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, )
+S -> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.lock)
+S -> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.lock)
+S -> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.lock)
+S -> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+S -> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+S -> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+S -> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.wfl\.${hostname}\.[0-9][0-9]*)
+S -> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.wfl\.${hostname}\.[0-9][0-9]*)
+S -> lock_name (${CVSROOT_DIRNAME}/trace/subdir, )
+S -> lock_simple_remove()
+S -> lock_simple_remove()
+S -> lock_simple_remove()
+S -> lock_simple_remove()
+S -> rcs_cleanup()
+S -> remove_locks()
+S -> remove_locks()
+S -> remove_locks()
+S -> remove_locks()
+S -> remove_locks()
+S -> remove_locks()
+S -> rename(${CVSROOT_DIRNAME}/trace/,file1,,${CVSROOT_DIRNAME}/trace/file1,v)
+S -> rename(${CVSROOT_DIRNAME}/trace/,file2,,${CVSROOT_DIRNAME}/trace/file2,v)
+S -> rename(CVS/Entries\.Backup,CVS/Entries)
+S -> rename(CVS/Entries\.Backup,CVS/Entries)
+S -> rtag_proc ( argc=1, argv=${PFMT}, xwhere=(null),
+S -> serve_directory (\.)
+S -> serve_directory (\.)
+S -> serve_directory (subdir)
+S -> server_cleanup()
+S -> server_cleanup()
+S -> server_notify()
+S -> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+S -> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+S -> unlink_file(CVS/Entries\.Log)
+S -> unlink_file(CVS/Entries\.Log)
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> write_lock(${CVSROOT_DIRNAME}/trace)
+S -> write_lock(${CVSROOT_DIRNAME}/trace/subdir)
+T file1
+T file2
+${SPROG} tag: Tagging \.
+${SPROG} tag: Tagging subdir"
+
+	  dotest_sort trace-8 "${testcvs} -t -t -t tag -b branch1" \
+"  *callerdat=${PFMT}, argc=0, argv=${PFMT},
+  *callerdat=${PFMT}, argc=0, argv=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *dosrcs=1, repository_in= )
+  *dosrcs=1, repository_in= )
+  *local=0, which=1, aflag=0,
+  *local=0, which=1, aflag=0,
+  *locktype=1, update_preload=(null)
+  *locktype=2, update_preload=(null)
+  *local_specified=0, mname=(null), msg=(null) )
+  *mwhere=(null), mfile=(null), shorten=0,
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Lock_Cleanup()
+  *-> Lock_Cleanup()
+  *-> Lock_Cleanup()
+  *-> Lock_Cleanup()
+  *-> Lock_Cleanup()
+  *-> Parse_Info (${CVSROOT_DIRNAME}/CVSROOT/taginfo, trace, ALL)
+  *-> Reader_Lock(${CVSROOT_DIRNAME}/trace)
+  *-> Reader_Lock(${CVSROOT_DIRNAME}/trace/subdir)
+  *-> check_fileproc ( ${CVSROOT_DIRNAME}/trace, file1, ${CVSROOT_DIRNAME}/trace/file1,v )
+  *-> check_fileproc ( ${CVSROOT_DIRNAME}/trace, file2, ${CVSROOT_DIRNAME}/trace/file2,v )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.lock)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.lock)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.lock)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.wfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.wfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, )
+  *-> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.lock)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.lock)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.lock)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.wfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.wfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace/subdir, )
+  *-> lock_simple_remove()
+  *-> lock_simple_remove()
+  *-> lock_simple_remove()
+  *-> lock_simple_remove()
+  *-> main loop with CVSROOT=${CVSROOT_DIRNAME}
+  *-> parse_cvsroot ( ${CVSROOT_DIRNAME} )
+  *-> rcs_cleanup()
+  *-> remove_locks()
+  *-> remove_locks()
+  *-> remove_locks()
+  *-> remove_locks()
+  *-> remove_locks()
+  *-> rename(${CVSROOT_DIRNAME}/trace/,file1,,${CVSROOT_DIRNAME}/trace/file1,v)
+  *-> rename(${CVSROOT_DIRNAME}/trace/,file2,,${CVSROOT_DIRNAME}/trace/file2,v)
+  *-> rtag_proc ( argc=1, argv=${PFMT}, xwhere=(null),
+  *-> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+  *-> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> write_lock(${CVSROOT_DIRNAME}/trace)
+  *-> write_lock(${CVSROOT_DIRNAME}/trace/subdir)
+T file1
+T file2
+${SPROG} tag: Tagging \.
+${SPROG} tag: Tagging subdir" \
+"
+  *callerdat=${PFMT}, argc=0, argv=${PFMT},
+  *callerdat=${PFMT}, argc=0, argv=${PFMT},
+  *callerdat=${PFMT}, argc=0, argv=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *dosrcs=0, repository_in=(null) )
+  *dosrcs=1, repository_in= )
+  *dosrcs=1, repository_in= )
+  *local=0, which=1, aflag=0,
+  *local=0, which=1, aflag=0,
+  *local=0, which=1, aflag=0,
+  *locktype=0, update_preload=(null)
+  *locktype=1, update_preload=(null)
+  *locktype=2, update_preload=(null)
+  *local_specified=0, mname=(null), msg=(null) )
+  *mwhere=(null), mfile=(null), shorten=0,
+  *-> Forking server: ${CVS_SERVER} server
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> main loop with CVSROOT=${CVSROOT}
+  *-> parse_cvsroot ( ${CVSROOT} )
+  *-> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> Leaving do_recursion ( frame=${PFMT} )
+S -> Leaving do_recursion ( frame=${PFMT} )
+S -> Leaving do_recursion ( frame=${PFMT} )
+S -> Leaving do_recursion ( frame=${PFMT} )
+S -> Leaving do_recursion ( frame=${PFMT} )
+S -> Leaving do_recursion ( frame=${PFMT} )
+S -> Lock_Cleanup()
+S -> Lock_Cleanup()
+S -> Lock_Cleanup()
+S -> Lock_Cleanup()
+S -> Lock_Cleanup()
+S -> Lock_Cleanup()
+S -> Parse_Info (${CVSROOT_DIRNAME}/CVSROOT/taginfo, trace, ALL)
+S -> Reader_Lock(${CVSROOT_DIRNAME}/trace)
+S -> Reader_Lock(${CVSROOT_DIRNAME}/trace/subdir)
+S -> check_fileproc ( ${CVSROOT_DIRNAME}/trace, file1, ${CVSROOT_DIRNAME}/trace/file1,v )
+S -> check_fileproc ( ${CVSROOT_DIRNAME}/trace, file2, ${CVSROOT_DIRNAME}/trace/file2,v )
+S -> dirswitch (\., ${CVSROOT_DIRNAME}/trace)
+S -> dirswitch (\., ${CVSROOT_DIRNAME}/trace)
+S -> dirswitch (subdir, ${CVSROOT_DIRNAME}/trace/subdir)
+S -> do_recursion ( frame=${PFMT} )
+S -> do_recursion ( frame=${PFMT} )
+S -> do_recursion ( frame=${PFMT} )
+S -> do_recursion ( frame=${PFMT} )
+S -> do_recursion ( frame=${PFMT} )
+S -> do_recursion ( frame=${PFMT} )
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.lock)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.lock)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.lock)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.wfl\.${hostname}\.[0-9][0-9]*)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.wfl\.${hostname}\.[0-9][0-9]*)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, )
+S -> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.lock)
+S -> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.lock)
+S -> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.lock)
+S -> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+S -> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+S -> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+S -> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.wfl\.${hostname}\.[0-9][0-9]*)
+S -> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.wfl\.${hostname}\.[0-9][0-9]*)
+S -> lock_name (${CVSROOT_DIRNAME}/trace/subdir, )
+S -> lock_simple_remove()
+S -> lock_simple_remove()
+S -> lock_simple_remove()
+S -> lock_simple_remove()
+S -> rcs_cleanup()
+S -> remove_locks()
+S -> remove_locks()
+S -> remove_locks()
+S -> remove_locks()
+S -> remove_locks()
+S -> remove_locks()
+S -> rename(${CVSROOT_DIRNAME}/trace/,file1,,${CVSROOT_DIRNAME}/trace/file1,v)
+S -> rename(${CVSROOT_DIRNAME}/trace/,file2,,${CVSROOT_DIRNAME}/trace/file2,v)
+S -> rename(CVS/Entries\.Backup,CVS/Entries)
+S -> rename(CVS/Entries\.Backup,CVS/Entries)
+S -> rtag_proc ( argc=1, argv=${PFMT}, xwhere=(null),
+S -> serve_directory (\.)
+S -> serve_directory (\.)
+S -> serve_directory (subdir)
+S -> server_cleanup()
+S -> server_cleanup()
+S -> server_notify()
+S -> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+S -> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+S -> unlink_file(CVS/Entries\.Log)
+S -> unlink_file(CVS/Entries\.Log)
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> write_lock(${CVSROOT_DIRNAME}/trace)
+S -> write_lock(${CVSROOT_DIRNAME}/trace/subdir)
+T file1
+T file2
+${SPROG} tag: Tagging \.
+${SPROG} tag: Tagging subdir"
+	  dotest_sort trace-9 "${testcvs} -t -t -t log" \
+"
+
+  *callerdat=${PFMT}, argc=0, argv=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *dosrcs=1, repository_in=(null) )
+  *local=0, which=7, aflag=0,
+  *locktype=1, update_preload=(null)
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Lock_Cleanup()
+  *-> Lock_Cleanup()
+  *-> Lock_Cleanup()
+  *-> Reader_Lock(${CVSROOT_DIRNAME}/trace)
+  *-> Reader_Lock(${CVSROOT_DIRNAME}/trace/subdir)
+  *-> do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.lock)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.lock)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_simple_remove()
+  *-> lock_simple_remove()
+  *-> main loop with CVSROOT=${CVSROOT_DIRNAME}
+  *-> parse_cvsroot ( ${CVSROOT_DIRNAME} )
+  *-> remove_locks()
+  *-> remove_locks()
+  *-> remove_locks()
+  *-> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+ MYVENDOR: 1\.1\.1
+ bp: 1\.1
+ bp: 1\.1\.1\.1
+ branch1: 1\.1\.0\.2
+ branch1: 1\.1\.1\.1\.0\.2
+ version-1: 1\.1\.1\.1
+----------------------------
+----------------------------
+----------------------------
+=============================================================================
+=============================================================================
+Initial revision
+RCS file: ${CVSROOT_DIRNAME}/trace/file1,v
+RCS file: ${CVSROOT_DIRNAME}/trace/file2,v
+Working file: file1
+Working file: file2
+access list:
+access list:
+branch:
+branch: 1\.1\.1
+branches:  1\.1\.1;
+${SPROG} log: Logging \.
+${SPROG} log: Logging subdir
+date: ${RCSDATE};  author: ${username};  state: Exp;
+date: ${RCSDATE};  author: ${username};  state: Exp;  lines: ${PLUS}0 -0
+date: ${RCSDATE};  author: ${username};  state: Exp;
+description:
+description:
+head: 1\.1
+head: 1\.1
+import
+keyword substitution: kv
+keyword substitution: kv
+locks: strict
+locks: strict
+new-file
+revision 1\.1
+revision 1\.1
+revision 1\.1\.1\.1
+symbolic names:
+symbolic names:
+total revisions: 1; selected revisions: 1
+total revisions: 2; selected revisions: 2" \
+"
+
+
+  *callerdat=${PFMT}, argc=0, argv=${PFMT},
+  *callerdat=${PFMT}, argc=0, argv=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *dosrcs=0, repository_in=(null) )
+  *dosrcs=1, repository_in=(null) )
+  *local=0, which=1, aflag=0,
+  *local=0, which=7, aflag=0,
+  *locktype=0, update_preload=(null)
+  *locktype=1, update_preload=(null)
+  *-> Forking server: ${CVS_SERVER} server
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> main loop with CVSROOT=${CVSROOT}
+  *-> parse_cvsroot ( ${CVSROOT} )
+  *-> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+ MYVENDOR: 1\.1\.1
+ bp: 1\.1
+ bp: 1\.1\.1\.1
+ branch1: 1\.1\.0\.2
+ branch1: 1\.1\.1\.1\.0\.2
+ version-1: 1\.1\.1\.1
+----------------------------
+----------------------------
+----------------------------
+=============================================================================
+=============================================================================
+Initial revision
+RCS file: ${CVSROOT_DIRNAME}/trace/file1,v
+RCS file: ${CVSROOT_DIRNAME}/trace/file2,v
+S -> Leaving do_recursion ( frame=${PFMT} )
+S -> Leaving do_recursion ( frame=${PFMT} )
+S -> Leaving do_recursion ( frame=${PFMT} )
+S -> Lock_Cleanup()
+S -> Lock_Cleanup()
+S -> Lock_Cleanup()
+S -> Lock_Cleanup()
+S -> Reader_Lock(${CVSROOT_DIRNAME}/trace)
+S -> Reader_Lock(${CVSROOT_DIRNAME}/trace/subdir)
+S -> dirswitch (\., ${CVSROOT_DIRNAME}/trace)
+S -> dirswitch (\., ${CVSROOT_DIRNAME}/trace)
+S -> dirswitch (subdir, ${CVSROOT_DIRNAME}/trace/subdir)
+S -> do_recursion ( frame=${PFMT} )
+S -> do_recursion ( frame=${PFMT} )
+S -> do_recursion ( frame=${PFMT} )
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.lock)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+S -> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.lock)
+S -> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+S -> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+S -> lock_simple_remove()
+S -> lock_simple_remove()
+S -> remove_locks()
+S -> remove_locks()
+S -> remove_locks()
+S -> remove_locks()
+S -> rename(CVS/Entries\.Backup,CVS/Entries)
+S -> rename(CVS/Entries\.Backup,CVS/Entries)
+S -> serve_directory (\.)
+S -> serve_directory (\.)
+S -> serve_directory (subdir)
+S -> server_cleanup()
+S -> server_cleanup()
+S -> server_notify()
+S -> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+S -> unlink_file(CVS/Entries\.Log)
+S -> unlink_file(CVS/Entries\.Log)
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+Working file: file1
+Working file: file2
+access list:
+access list:
+branch:
+branch: 1\.1\.1
+branches:  1\.1\.1;
+${SPROG} log: Logging \.
+${SPROG} log: Logging subdir
+date: ${RCSDATE};  author: ${username};  state: Exp;
+date: ${RCSDATE};  author: ${username};  state: Exp;  lines: ${PLUS}0 -0
+date: ${RCSDATE};  author: ${username};  state: Exp;
+description:
+description:
+head: 1\.1
+head: 1\.1
+import
+keyword substitution: kv
+keyword substitution: kv
+locks: strict
+locks: strict
+new-file
+revision 1\.1
+revision 1\.1
+revision 1\.1\.1\.1
+symbolic names:
+symbolic names:
+total revisions: 1; selected revisions: 1
+total revisions: 2; selected revisions: 2"
+
+	  dotest_sort trace-10 "${testcvs} -t -t -t annotate file1" \
+"
+  *callerdat=${PFMT}, argc=1, argv=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *dosrcs=1, repository_in= )
+  *local=0, which=1, aflag=0,
+  *locktype=1, update_preload=(null)
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Lock_Cleanup()
+  *-> Lock_Cleanup()
+  *-> Reader_Lock(${CVSROOT_DIRNAME}/trace)
+  *-> do_recursion ( frame=${PFMT} )
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.lock)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_simple_remove()
+  *-> main loop with CVSROOT=${CVSROOT_DIRNAME}
+  *-> parse_cvsroot ( ${CVSROOT_DIRNAME} )
+  *-> remove_locks()
+  *-> remove_locks()
+  *-> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
+Annotations for file1" \
+"
+
+  *callerdat=${PFMT}, argc=1, argv=${PFMT},
+  *callerdat=${PFMT}, argc=1, argv=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *dosrcs=0, repository_in=(null) )
+  *dosrcs=1, repository_in= )
+  *local=0, which=1, aflag=0,
+  *local=0, which=1, aflag=0,
+  *locktype=0, update_preload=(null)
+  *locktype=1, update_preload=(null)
+  *-> Forking server: ${CVS_SERVER} server
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> main loop with CVSROOT=${CVSROOT}
+  *-> parse_cvsroot ( ${CVSROOT} )
+  *-> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
+Annotations for file1
+S -> Leaving do_recursion ( frame=${PFMT} )
+S -> Lock_Cleanup()
+S -> Lock_Cleanup()
+S -> Lock_Cleanup()
+S -> Reader_Lock(${CVSROOT_DIRNAME}/trace)
+S -> dirswitch (\., ${CVSROOT_DIRNAME}/trace)
+S -> do_recursion ( frame=${PFMT} )
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.lock)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+S -> lock_simple_remove()
+S -> remove_locks()
+S -> remove_locks()
+S -> remove_locks()
+S -> serve_directory (\.)
+S -> server_cleanup()
+S -> server_cleanup()
+S -> server_notify()
+S -> server_pathname_check (file1)
+S -> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )"
+
+	  dotest_sort \
+trace-11 "${testcvs} -t -t -t rtag -r bp -b branch2 trace" \
+"  *aflag=0, repository=${CVSROOT_DIRNAME}/trace )
+  *callerdat=${PFMT}, argc=0, argv=${PFMT},
+  *callerdat=${PFMT}, argc=0, argv=${PFMT},
+  *callerdat=${PFMT}, argc=0, argv=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *dosrcs=1, repository_in=${CVSROOT_DIRNAME}/trace )
+  *dosrcs=1, repository_in=${CVSROOT_DIRNAME}/trace )
+  *dosrcs=1, repository_in=${CVSROOT_DIRNAME}/trace )
+  *local=0, which=6, aflag=0,
+  *local=0, which=6, aflag=0,
+  *local=0, which=6, aflag=0,
+  *locktype=1, update_preload=(null)
+  *locktype=1, update_preload=trace
+  *locktype=2, update_preload=trace
+  *local_specified=0, mname=trace, msg=Tagging )
+  *mwhere=(null), mfile=(null), shorten=0,
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Lock_Cleanup()
+  *-> Lock_Cleanup()
+  *-> Lock_Cleanup()
+  *-> Lock_Cleanup()
+  *-> Lock_Cleanup()
+  *-> Lock_Cleanup()
+  *-> Lock_Cleanup()
+  *-> Parse_Info (${CVSROOT_DIRNAME}/CVSROOT/taginfo, trace, ALL)
+  *-> Reader_Lock(${CVSROOT_DIRNAME}/trace)
+  *-> Reader_Lock(${CVSROOT_DIRNAME}/trace)
+  *-> Reader_Lock(${CVSROOT_DIRNAME}/trace/subdir)
+  *-> Reader_Lock(${CVSROOT_DIRNAME}/trace/subdir)
+  *-> check_fileproc ( ${CVSROOT_DIRNAME}/trace, trace/file1, ${CVSROOT_DIRNAME}/trace/file1,v )
+  *-> check_fileproc ( ${CVSROOT_DIRNAME}/trace, trace/file2, ${CVSROOT_DIRNAME}/trace/file2,v )
+  *-> do_module (trace, Tagging, NULL, branch2)
+  *-> do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> fopen(${CVSROOT_DIRNAME}/CVSROOT/history,a)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.lock)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.lock)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.lock)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.lock)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.wfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.wfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, )
+  *-> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.lock)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.lock)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.lock)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.lock)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.wfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.wfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace/subdir, )
+  *-> lock_simple_remove()
+  *-> lock_simple_remove()
+  *-> lock_simple_remove()
+  *-> lock_simple_remove()
+  *-> lock_simple_remove()
+  *-> lock_simple_remove()
+  *-> main loop with CVSROOT=${CVSROOT_DIRNAME}
+  *-> parse_cvsroot ( ${CVSROOT_DIRNAME} )
+  *-> rcs_cleanup()
+  *-> remove_locks()
+  *-> remove_locks()
+  *-> remove_locks()
+  *-> remove_locks()
+  *-> remove_locks()
+  *-> remove_locks()
+  *-> remove_locks()
+  *-> rename(${CVSROOT_DIRNAME}/trace/,file1,,${CVSROOT_DIRNAME}/trace/file1,v)
+  *-> rename(${CVSROOT_DIRNAME}/trace/,file2,,${CVSROOT_DIRNAME}/trace/file2,v)
+  *-> rtag_proc ( argc=1, argv=${PFMT}, xwhere=(null),
+  *-> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+  *-> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+  *-> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+  *-> tag_check_valid ( name=bp, argc=0, argv=${PFMT}, local=0,
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> write_lock(${CVSROOT_DIRNAME}/trace)
+  *-> write_lock(${CVSROOT_DIRNAME}/trace/subdir)
+${SPROG} rtag: Tagging trace
+${SPROG} rtag: Tagging trace/subdir" \
+"
+  *aflag=0, repository=${CVSROOT_DIRNAME}/trace )
+  *callerdat=${PFMT}, argc=0, argv=${PFMT},
+  *callerdat=${PFMT}, argc=0, argv=${PFMT},
+  *callerdat=${PFMT}, argc=0, argv=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *dosrcs=1, repository_in=${CVSROOT_DIRNAME}/trace )
+  *dosrcs=1, repository_in=${CVSROOT_DIRNAME}/trace )
+  *dosrcs=1, repository_in=${CVSROOT_DIRNAME}/trace )
+  *local=0, which=6, aflag=0,
+  *local=0, which=6, aflag=0,
+  *local=0, which=6, aflag=0,
+  *locktype=1, update_preload=(null)
+  *locktype=1, update_preload=trace
+  *locktype=2, update_preload=trace
+  *local_specified=0, mname=trace, msg=Tagging )
+  *mwhere=(null), mfile=(null), shorten=0,
+  *-> Forking server: ${CVS_SERVER} server
+  *-> main loop with CVSROOT=${CVSROOT}
+  *-> parse_cvsroot ( ${CVSROOT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> Leaving do_recursion ( frame=${PFMT} )
+S -> Leaving do_recursion ( frame=${PFMT} )
+S -> Leaving do_recursion ( frame=${PFMT} )
+S -> Leaving do_recursion ( frame=${PFMT} )
+S -> Leaving do_recursion ( frame=${PFMT} )
+S -> Leaving do_recursion ( frame=${PFMT} )
+S -> Leaving do_recursion ( frame=${PFMT} )
+S -> Leaving do_recursion ( frame=${PFMT} )
+S -> Leaving do_recursion ( frame=${PFMT} )
+S -> Lock_Cleanup()
+S -> Lock_Cleanup()
+S -> Lock_Cleanup()
+S -> Lock_Cleanup()
+S -> Lock_Cleanup()
+S -> Lock_Cleanup()
+S -> Lock_Cleanup()
+S -> Lock_Cleanup()
+S -> Parse_Info (${CVSROOT_DIRNAME}/CVSROOT/taginfo, trace, ALL)
+S -> Reader_Lock(${CVSROOT_DIRNAME}/trace)
+S -> Reader_Lock(${CVSROOT_DIRNAME}/trace)
+S -> Reader_Lock(${CVSROOT_DIRNAME}/trace/subdir)
+S -> Reader_Lock(${CVSROOT_DIRNAME}/trace/subdir)
+S -> check_fileproc ( ${CVSROOT_DIRNAME}/trace, trace/file1, ${CVSROOT_DIRNAME}/trace/file1,v )
+S -> check_fileproc ( ${CVSROOT_DIRNAME}/trace, trace/file2, ${CVSROOT_DIRNAME}/trace/file2,v )
+S -> do_module (trace, Tagging, NULL, branch2)
+S -> do_recursion ( frame=${PFMT} )
+S -> do_recursion ( frame=${PFMT} )
+S -> do_recursion ( frame=${PFMT} )
+S -> do_recursion ( frame=${PFMT} )
+S -> do_recursion ( frame=${PFMT} )
+S -> do_recursion ( frame=${PFMT} )
+S -> do_recursion ( frame=${PFMT} )
+S -> do_recursion ( frame=${PFMT} )
+S -> do_recursion ( frame=${PFMT} )
+S -> fopen(${CVSROOT_DIRNAME}/CVSROOT/history,a)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.lock)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.lock)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.lock)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.lock)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.wfl\.${hostname}\.[0-9][0-9]*)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.wfl\.${hostname}\.[0-9][0-9]*)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, )
+S -> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.lock)
+S -> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.lock)
+S -> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.lock)
+S -> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.lock)
+S -> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+S -> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+S -> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+S -> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+S -> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+S -> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.wfl\.${hostname}\.[0-9][0-9]*)
+S -> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.wfl\.${hostname}\.[0-9][0-9]*)
+S -> lock_name (${CVSROOT_DIRNAME}/trace/subdir, )
+S -> lock_simple_remove()
+S -> lock_simple_remove()
+S -> lock_simple_remove()
+S -> lock_simple_remove()
+S -> lock_simple_remove()
+S -> lock_simple_remove()
+S -> rcs_cleanup()
+S -> remove_locks()
+S -> remove_locks()
+S -> remove_locks()
+S -> remove_locks()
+S -> remove_locks()
+S -> remove_locks()
+S -> remove_locks()
+S -> remove_locks()
+S -> rename(${CVSROOT_DIRNAME}/trace/,file1,,${CVSROOT_DIRNAME}/trace/file1,v)
+S -> rename(${CVSROOT_DIRNAME}/trace/,file2,,${CVSROOT_DIRNAME}/trace/file2,v)
+S -> rtag_proc ( argc=1, argv=${PFMT}, xwhere=(null),
+S -> server_cleanup()
+S -> server_cleanup()
+S -> server_notify()
+S -> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+S -> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+S -> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+S -> tag_check_valid ( name=bp, argc=0, argv=${PFMT}, local=0,
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> write_lock(${CVSROOT_DIRNAME}/trace)
+S -> write_lock(${CVSROOT_DIRNAME}/trace/subdir)
+${SPROG} rtag: Tagging trace
+${SPROG} rtag: Tagging trace/subdir"
+
+	  dotest_sort trace-12 "${testcvs} -t -t -t status file1" \
+"
+
+  *callerdat=${PFMT}, argc=1, argv=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *dosrcs=1, repository_in=(null) )
+  *local=0, which=1, aflag=0,
+  *locktype=1, update_preload=(null)
+   Repository revision: 1\.1\.1\.1 ${CVSROOT_DIRNAME}/trace/file1,v
+   Sticky Date:  (none)
+   Sticky Options: (none)
+   Sticky Tag:  (none)
+   Working revision: 1\.1\.1\.1 ${DATE}
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Lock_Cleanup()
+  *-> Lock_Cleanup()
+  *-> Reader_Lock(${CVSROOT_DIRNAME}/trace)
+  *-> do_recursion ( frame=${PFMT} )
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.lock)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_simple_remove()
+  *-> main loop with CVSROOT=${CVSROOT_DIRNAME}
+  *-> parse_cvsroot ( ${CVSROOT_DIRNAME} )
+  *-> remove_locks()
+  *-> remove_locks()
+  *-> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+===================================================================
+File: file1  *Status: Up-to-date" \
+"
+
+
+  *callerdat=${PFMT}, argc=1, argv=${PFMT},
+  *callerdat=${PFMT}, argc=1, argv=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *dosrcs=0, repository_in=(null) )
+  *dosrcs=1, repository_in=(null) )
+  *local=0, which=1, aflag=0,
+  *local=0, which=1, aflag=0,
+  *locktype=0, update_preload=(null)
+  *locktype=1, update_preload=(null)
+   Repository revision: 1\.1\.1\.1 ${CVSROOT_DIRNAME}/trace/file1,v
+   Sticky Date:  (none)
+   Sticky Options: (none)
+   Sticky Tag:  (none)
+   Working revision: 1\.1\.1\.1
+  *-> Forking server: ${CVS_SERVER} server
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> main loop with CVSROOT=${CVSROOT}
+  *-> parse_cvsroot ( ${CVSROOT} )
+  *-> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+===================================================================
+File: file1  *Status: Up-to-date
+S -> Leaving do_recursion ( frame=${PFMT} )
+S -> Lock_Cleanup()
+S -> Lock_Cleanup()
+S -> Lock_Cleanup()
+S -> Reader_Lock(${CVSROOT_DIRNAME}/trace)
+S -> dirswitch (\., ${CVSROOT_DIRNAME}/trace)
+S -> do_recursion ( frame=${PFMT} )
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.lock)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+S -> lock_simple_remove()
+S -> remove_locks()
+S -> remove_locks()
+S -> remove_locks()
+S -> serve_directory (\.)
+S -> server_cleanup()
+S -> server_cleanup()
+S -> server_notify()
+S -> server_pathname_check (file1)
+S -> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )"
+
+	  echo foo >> file1
+	  dotest_sort trace-13 "${testcvs} -t -t -t up -C file1" \
+"  *callerdat=${PFMT}, argc=1, argv=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *dosrcs=1, repository_in=(null) )
+  *local=0, which=3, aflag=0,
+  *locktype=1, update_preload=(null)
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Lock_Cleanup()
+  *-> Lock_Cleanup()
+  *-> RCS_checkout (${CVSROOT_DIRNAME}/trace/file1,v, 1\.1\.1\.1, , , (function))
+  *-> RCS_checkout (${CVSROOT_DIRNAME}/trace/file1,v, 1\.1\.1\.1, , , file1)
+  *-> RCS_cmp_file( ${CVSROOT_DIRNAME}/trace/file1,v, 1\.1\.1\.1, (null), , file1 )
+  *-> Reader_Lock(${CVSROOT_DIRNAME}/trace)
+  *-> Register(file1, 1\.1\.1\.1, ${DATE}, ,  )
+  *-> chmod(file1,[0-7][0-7]*)
+  *-> copy(file1,\.#file1\.1\.1\.1\.1)
+  *-> do_recursion ( frame=${PFMT} )
+  *-> fopen(${CVSROOT_DIRNAME}/CVSROOT/history,a)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.lock)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_simple_remove()
+  *-> main loop with CVSROOT=${CVSROOT_DIRNAME}
+  *-> parse_cvsroot ( ${CVSROOT_DIRNAME} )
+  *-> remove_locks()
+  *-> remove_locks()
+  *-> rename(CVS/Entries\.Backup,CVS/Entries)
+  *-> rename(file1,CVS/,,file1)
+  *-> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+  *-> unlink_file(CVS/Entries\.Log)
+  *-> unlink_file_dir(CVS/,,file1)
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+(Locally modified file1 moved to \.#file1\.1\.1\.1\.1)
+U file1" \
+"
+  *callerdat=${PFMT}, argc=1, argv=${PFMT},
+  *callerdat=${PFMT}, argc=1, argv=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *dosrcs=0, repository_in=(null) )
+  *dosrcs=1, repository_in=(null) )
+  *local=0, which=1, aflag=0,
+  *local=0, which=3, aflag=0,
+  *locktype=0, update_preload=(null)
+  *locktype=1, update_preload=(null)
+  *-> Forking server: ${CVS_SERVER} server
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Register(file1, 1\.1\.1\.1, ${DATE}, ,  )
+  *-> copy(file1,\.#file1\.1\.1\.1\.1)
+  *-> do_recursion ( frame=${PFMT} )
+  *-> main loop with CVSROOT=${CVSROOT}
+  *-> parse_cvsroot ( ${CVSROOT} )
+  *-> rename(\.new\.file1,file1)
+  *-> rename(CVS/Entries\.Backup,CVS/Entries)
+  *-> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+  *-> unlink_file(CVS/Entries\.Log)
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+(Locally modified file1 moved to \.#file1\.1\.1\.1\.1)
+S -> Leaving do_recursion ( frame=${PFMT} )
+S -> Lock_Cleanup()
+S -> Lock_Cleanup()
+S -> Lock_Cleanup()
+S -> RCS_checkout (${CVSROOT_DIRNAME}/trace/file1,v, 1\.1\.1\.1, , , (function))
+S -> Reader_Lock(${CVSROOT_DIRNAME}/trace)
+S -> Register(file1, 1\.1\.1\.1, M, ,  )
+S -> dirswitch (\., ${CVSROOT_DIRNAME}/trace)
+S -> do_recursion ( frame=${PFMT} )
+S -> fopen(${CVSROOT_DIRNAME}/CVSROOT/history,a)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.lock)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+S -> lock_simple_remove()
+S -> remove_locks()
+S -> remove_locks()
+S -> remove_locks()
+S -> rename(CVS/Entries\.Backup,CVS/Entries)
+S -> serve_directory (\.)
+S -> server_cleanup()
+S -> server_cleanup()
+S -> server_notify()
+S -> server_pathname_check (file1)
+S -> server_register(file1, 1\.1\.1\.1, M, , , , )
+S -> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+S -> unlink_file(CVS/Entries\.Log)
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+U file1"
+	  echo foo >> file1
+	  dotest_sort trace-14 "${testcvs} -t -t -t ci -madd-data file1" \
+"  *callerdat=${PFMT}, argc=1, argv=${PFMT},
+  *callerdat=${PFMT}, argc=1, argv=${PFMT},
+  *callerdat=${PFMT}, argc=1, argv=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *dosrcs=0, repository_in=(null) )
+  *dosrcs=1, repository_in=(null) )
+  *dosrcs=1, repository_in=(null) )
+  *local=0, which=1, aflag=0,
+  *local=0, which=1, aflag=0,
+  *local=0, which=1, aflag=0,
+  *locktype=0, update_preload=(null)
+  *locktype=0, update_preload=(null)
+  *locktype=0, update_preload=(null)
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Lock_Cleanup()
+  *-> Lock_Cleanup()
+  *-> Parse_Info (${CVSROOT_DIRNAME}/CVSROOT/commitinfo, trace, ALL)
+  *-> Parse_Info (${CVSROOT_DIRNAME}/CVSROOT/loginfo, trace, ALL)
+  *-> Parse_Info (${CVSROOT_DIRNAME}/CVSROOT/verifymsg, trace, not ALL)
+  *-> RCS_checkout (${CVSROOT_DIRNAME}/trace/file1,v, , , , (function))
+  *-> RCS_checkout (${CVSROOT_DIRNAME}/trace/file1,v, 1\.1, , -ko, ${tempname})
+  *-> RCS_checkout (${CVSROOT_DIRNAME}/trace/file1,v, 1\.1\.1\.1, , , (function))
+  *-> RCS_cmp_file( ${CVSROOT_DIRNAME}/trace/file1,v, (null), (null), , file1 )
+  *-> RCS_cmp_file( ${CVSROOT_DIRNAME}/trace/file1,v, 1\.1\.1\.1, (null), , file1 )
+  *-> Register(file1, 1\.2, ${DATE}, ,  )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> fopen(${CVSROOT_DIRNAME}/CVSROOT/history,a)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.lock)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.lock)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.wfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.wfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, )
+  *-> lock_simple_remove()
+  *-> main loop with CVSROOT=${CVSROOT_DIRNAME}
+  *-> parse_cvsroot ( ${CVSROOT_DIRNAME} )
+  *-> rcs_cleanup()
+  *-> remove_locks()
+  *-> remove_locks()
+  *-> rename(${CVSROOT_DIRNAME}/trace/,file1,,${CVSROOT_DIRNAME}/trace/file1,v)
+  *-> rename(CVS/Entries\.Backup,CVS/Entries)
+  *-> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+  *-> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+  *-> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+  *-> unlink_file(${tempname})
+  *-> unlink_file(${tempname})
+  *-> unlink_file(CVS/Base/file1)
+  *-> unlink_file(CVS/Entries\.Log)
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> write_lock(${CVSROOT_DIRNAME}/trace)
+${CVSROOT_DIRNAME}/trace/file1,v  <--  file1
+Checking in file1;
+done
+new revision: 1\.2; previous revision: 1\.1" \
+"
+  *callerdat=${PFMT}, argc=1, argv=${PFMT},
+  *callerdat=${PFMT}, argc=1, argv=${PFMT},
+  *callerdat=${PFMT}, argc=1, argv=${PFMT},
+  *callerdat=${PFMT}, argc=1, argv=${PFMT},
+  *callerdat=${PFMT}, argc=1, argv=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *dosrcs=0, repository_in=(null) )
+  *dosrcs=0, repository_in=(null) )
+  *dosrcs=0, repository_in=(null) )
+  *dosrcs=1, repository_in=(null) )
+  *dosrcs=1, repository_in=(null) )
+  *local=0, which=1, aflag=0,
+  *local=0, which=1, aflag=0,
+  *local=0, which=1, aflag=0,
+  *local=0, which=1, aflag=0,
+  *local=0, which=1, aflag=0,
+  *locktype=0, update_preload=(null)
+  *locktype=0, update_preload=(null)
+  *locktype=0, update_preload=(null)
+  *locktype=0, update_preload=(null)
+  *locktype=0, update_preload=(null)
+  *-> Forking server: ${CVS_SERVER} server
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Register(file1, 1\.2, ${DATE}, ,  )
+  *-> Sending file \`file1' to server
+  *-> do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> main loop with CVSROOT=${CVSROOT}
+  *-> parse_cvsroot ( ${CVSROOT} )
+  *-> rename(CVS/Entries\.Backup,CVS/Entries)
+  *-> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+  *-> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+  *-> unlink_file(CVS/Base/file1)
+  *-> unlink_file(CVS/Entries\.Log)
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+${CVSROOT_DIRNAME}/trace/file1,v  <--  file1
+Checking in file1;
+S -> Leaving do_recursion ( frame=${PFMT} )
+S -> Leaving do_recursion ( frame=${PFMT} )
+S -> Leaving do_recursion ( frame=${PFMT} )
+S -> Lock_Cleanup()
+S -> Lock_Cleanup()
+S -> Lock_Cleanup()
+S -> Parse_Info (${CVSROOT_DIRNAME}/CVSROOT/commitinfo, trace, ALL)
+S -> Parse_Info (${CVSROOT_DIRNAME}/CVSROOT/loginfo, trace, ALL)
+S -> Parse_Info (${CVSROOT_DIRNAME}/CVSROOT/verifymsg, trace, not ALL)
+S -> RCS_checkout (${CVSROOT_DIRNAME}/trace/file1,v, , , , (function))
+S -> RCS_checkout (${CVSROOT_DIRNAME}/trace/file1,v, 1\.1, , -ko, ${tempname})
+S -> RCS_checkout (${CVSROOT_DIRNAME}/trace/file1,v, 1\.1\.1\.1, , , (function))
+S -> RCS_cmp_file( ${CVSROOT_DIRNAME}/trace/file1,v, (null), (null), , file1 )
+S -> RCS_cmp_file( ${CVSROOT_DIRNAME}/trace/file1,v, 1\.1\.1\.1, (null), , file1 )
+S -> Register(file1, 1\.2, ${DATE}, ,  )
+S -> dirswitch (\., ${CVSROOT_DIRNAME}/trace)
+S -> do_recursion ( frame=${PFMT} )
+S -> do_recursion ( frame=${PFMT} )
+S -> do_recursion ( frame=${PFMT} )
+S -> fopen(${CVSROOT_DIRNAME}/CVSROOT/history,a)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.lock)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.lock)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.wfl\.${hostname}\.[0-9][0-9]*)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.wfl\.${hostname}\.[0-9][0-9]*)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, )
+S -> lock_simple_remove()
+S -> rcs_cleanup()
+S -> remove_locks()
+S -> remove_locks()
+S -> remove_locks()
+S -> rename(${CVSROOT_DIRNAME}/trace/,file1,,${CVSROOT_DIRNAME}/trace/file1,v)
+S -> rename(CVS/Entries\.Backup,CVS/Entries)
+S -> serve_directory (\.)
+S -> server_cleanup()
+S -> server_cleanup()
+S -> server_notify()
+S -> server_pathname_check (file1)
+S -> server_pathname_check (file1)
+S -> server_pathname_check (file1)
+S -> server_register(file1, 1\.2, ${DATE}, , , , )
+S -> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+S -> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+S -> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+S -> unlink_file(${tempname})
+S -> unlink_file(${tempname})
+S -> unlink_file(CVS/Entries\.Log)
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> write_lock(${CVSROOT_DIRNAME}/trace)
+done
+new revision: 1\.2; previous revision: 1\.1"
+
+	  dotest_fail_sort trace-15 "${testcvs} -t -t -t diff -r1.1 file1" \
+"  *aflag=0, repository= )
+  *callerdat=${PFMT}, argc=1, argv=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *dosrcs=1, repository_in=(null) )
+  *local=0, which=7, aflag=0,
+  *locktype=1, update_preload=(null)
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Lock_Cleanup()
+  *-> Lock_Cleanup()
+  *-> RCS_checkout (${CVSROOT_DIRNAME}/trace/file1,v, 1\.1, , , ${tempname})
+  *-> RCS_checkout (${CVSROOT_DIRNAME}/trace/file1,v, 1\.2, , , (function))
+  *-> RCS_checkout (${CVSROOT_DIRNAME}/trace/file1,v, 1\.2, , , ${tempname})
+  *-> RCS_cmp_file( ${CVSROOT_DIRNAME}/trace/file1,v, 1\.1, 1\.2, , file1 )
+  *-> Reader_Lock(${CVSROOT_DIRNAME}/trace)
+  *-> diff_file_nodiff (file1, 3)
+  *-> do_recursion ( frame=${PFMT} )
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.lock)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_simple_remove()
+  *-> main loop with CVSROOT=${CVSROOT_DIRNAME}
+  *-> parse_cvsroot ( ${CVSROOT_DIRNAME} )
+  *-> remove_locks()
+  *-> remove_locks()
+  *-> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+  *-> tag_check_valid ( name=1\.1, argc=1, argv=${PFMT}, local=0,
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+0a1
+===================================================================
+> foo
+Index: file1
+RCS file: ${CVSROOT_DIRNAME}/trace/file1,v
+diff -r1\.1 -r1\.2
+retrieving revision 1\.1
+retrieving revision 1\.2" \
+"
+  *aflag=0, repository= )
+  *callerdat=${PFMT}, argc=1, argv=${PFMT},
+  *callerdat=${PFMT}, argc=1, argv=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *dosrcs=0, repository_in=(null) )
+  *dosrcs=1, repository_in=(null) )
+  *local=0, which=1, aflag=0,
+  *local=0, which=7, aflag=0,
+  *locktype=0, update_preload=(null)
+  *locktype=1, update_preload=(null)
+  *-> Forking server: ${CVS_SERVER} server
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> main loop with CVSROOT=${CVSROOT}
+  *-> parse_cvsroot ( ${CVSROOT} )
+  *-> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+0a1
+===================================================================
+> foo
+Index: file1
+RCS file: ${CVSROOT_DIRNAME}/trace/file1,v
+S -> Leaving do_recursion ( frame=${PFMT} )
+S -> Lock_Cleanup()
+S -> Lock_Cleanup()
+S -> Lock_Cleanup()
+S -> RCS_checkout (${CVSROOT_DIRNAME}/trace/file1,v, 1\.1, , , ${tempname})
+S -> RCS_checkout (${CVSROOT_DIRNAME}/trace/file1,v, 1\.2, , , (function))
+S -> RCS_checkout (${CVSROOT_DIRNAME}/trace/file1,v, 1\.2, , , ${tempname})
+S -> RCS_cmp_file( ${CVSROOT_DIRNAME}/trace/file1,v, 1\.1, 1\.2, , file1 )
+S -> Reader_Lock(${CVSROOT_DIRNAME}/trace)
+S -> diff_file_nodiff (file1, 3)
+S -> dirswitch (\., ${CVSROOT_DIRNAME}/trace)
+S -> do_recursion ( frame=${PFMT} )
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.lock)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+S -> lock_simple_remove()
+S -> remove_locks()
+S -> remove_locks()
+S -> remove_locks()
+S -> serve_directory (\.)
+S -> server_cleanup()
+S -> server_cleanup()
+S -> server_notify()
+S -> server_pathname_check (file1)
+S -> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+S -> tag_check_valid ( name=1\.1, argc=1, argv=${PFMT}, local=0,
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+diff -r1\.1 -r1\.2
+retrieving revision 1\.1
+retrieving revision 1\.2"
+
+	  dotest_sort trace-16 "${testcvs} -t -t -t rdiff -rbp trace/file1" \
+"  *aflag=0, repository=${CVSROOT_DIRNAME}/trace )
+  *callerdat=${PFMT}, argc=1, argv=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *dosrcs=1, repository_in=${CVSROOT_DIRNAME}/trace )
+  *local=0, which=6, aflag=0,
+  *locktype=1, update_preload=trace
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Lock_Cleanup()
+  *-> Lock_Cleanup()
+  *-> RCS_checkout (${CVSROOT_DIRNAME}/trace/file1,v, 1\.1\.1\.1, bp, , ${tempname})
+  *-> RCS_checkout (${CVSROOT_DIRNAME}/trace/file1,v, 1\.2, , , ${tempname})
+  *-> Reader_Lock(${CVSROOT_DIRNAME}/trace)
+  *-> do_module (trace/file1, Patching, NULL, NULL)
+  *-> do_recursion ( frame=${PFMT} )
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.lock)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_simple_remove()
+  *-> main loop with CVSROOT=${CVSROOT_DIRNAME}
+  *-> parse_cvsroot ( ${CVSROOT_DIRNAME} )
+  *-> patch_proc ( (null), (null), (null), 0, 0, trace/file1, Patching )
+  *-> remove_locks()
+  *-> remove_locks()
+  *-> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+  *-> tag_check_valid ( name=bp, argc=1, argv=${PFMT}, local=0,
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+\*\*\* 0 \*\*\*\*
+\*\*\* trace/file1:1\.1\.1\.1 ${DATE}
+\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
+${PLUS} foo
+--- 1 ----
+--- trace/file1 ${DATE}
+Index: trace/file1
+diff -c trace/file1:1\.1\.1\.1 trace/file1:1\.2" \
+"
+  *aflag=0, repository=${CVSROOT_DIRNAME}/trace )
+  *callerdat=${PFMT}, argc=1, argv=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *dosrcs=1, repository_in=${CVSROOT_DIRNAME}/trace )
+  *local=0, which=6, aflag=0,
+  *locktype=1, update_preload=trace
+  *-> Forking server: ${CVS_SERVER} server
+  *-> main loop with CVSROOT=${CVSROOT}
+  *-> parse_cvsroot ( ${CVSROOT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+\*\*\* 0 \*\*\*\*
+\*\*\* trace/file1:1\.1\.1\.1 ${DATE}
+\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
+${PLUS} foo
+--- 1 ----
+--- trace/file1 ${DATE}
+Index: trace/file1
+S -> Leaving do_recursion ( frame=${PFMT} )
+S -> Lock_Cleanup()
+S -> Lock_Cleanup()
+S -> Lock_Cleanup()
+S -> RCS_checkout (${CVSROOT_DIRNAME}/trace/file1,v, 1\.1\.1\.1, bp, , ${tempname})
+S -> RCS_checkout (${CVSROOT_DIRNAME}/trace/file1,v, 1\.2, , , ${tempname})
+S -> Reader_Lock(${CVSROOT_DIRNAME}/trace)
+S -> do_module (trace/file1, Patching, NULL, NULL)
+S -> do_recursion ( frame=${PFMT} )
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.lock)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+S -> lock_simple_remove()
+S -> patch_proc ( (null), (null), (null), 0, 0, trace/file1, Patching )
+S -> remove_locks()
+S -> remove_locks()
+S -> remove_locks()
+S -> server_cleanup()
+S -> server_cleanup()
+S -> server_notify()
+S -> server_pathname_check (file1)
+S -> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+S -> tag_check_valid ( name=bp, argc=1, argv=${PFMT}, local=0,
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+diff -c trace/file1:1\.1\.1\.1 trace/file1:1\.2"
+
+	  dotest_sort trace-17 "${testcvs} -t -t -t rm -f file1" \
+"  *callerdat=${PFMT}, argc=1, argv=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *dosrcs=1, repository_in=(null) )
+  *local=0, which=1, aflag=0,
+  *locktype=1, update_preload=(null)
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Lock_Cleanup()
+  *-> Lock_Cleanup()
+  *-> Reader_Lock(${CVSROOT_DIRNAME}/trace)
+  *-> Register(file1, -1\.2, ${DATE}, ,  )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.lock)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_simple_remove()
+  *-> main loop with CVSROOT=${CVSROOT_DIRNAME}
+  *-> parse_cvsroot ( ${CVSROOT_DIRNAME} )
+  *-> remove_locks()
+  *-> remove_locks()
+  *-> rename(CVS/Entries\.Backup,CVS/Entries)
+  *-> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+  *-> unlink_file(CVS/Entries\.Log)
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+${SPROG} remove: scheduling \`file1' for removal
+${SPROG} remove: use \`${SPROG} commit' to remove this file permanently" \
+"
+  *callerdat=${PFMT}, argc=1, argv=${PFMT},
+  *callerdat=${PFMT}, argc=1, argv=${PFMT},
+  *callerdat=${PFMT}, argc=1, argv=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *dosrcs=0, repository_in=(null) )
+  *dosrcs=0, repository_in=(null) )
+  *dosrcs=1, repository_in=(null) )
+  *local=0, which=1, aflag=0,
+  *local=0, which=1, aflag=0,
+  *local=0, which=1, aflag=0,
+  *locktype=0, update_preload=(null)
+  *locktype=0, update_preload=(null)
+  *locktype=1, update_preload=(null)
+  *-> Forking server: ${CVS_SERVER} server
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Register(file1, -1\.2, dummy timestamp, ,  )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> main loop with CVSROOT=${CVSROOT}
+  *-> parse_cvsroot ( ${CVSROOT} )
+  *-> rename(CVS/Entries\.Backup,CVS/Entries)
+  *-> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+  *-> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+  *-> unlink_file(CVS/Entries\.Log)
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> Leaving do_recursion ( frame=${PFMT} )
+S -> Lock_Cleanup()
+S -> Lock_Cleanup()
+S -> Lock_Cleanup()
+S -> Reader_Lock(${CVSROOT_DIRNAME}/trace)
+S -> Register(file1, -1\.2, , ,  )
+S -> dirswitch (\., ${CVSROOT_DIRNAME}/trace)
+S -> do_recursion ( frame=${PFMT} )
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.lock)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+S -> lock_simple_remove()
+S -> remove_locks()
+S -> remove_locks()
+S -> remove_locks()
+S -> rename(CVS/Entries\.Backup,CVS/Entries)
+S -> serve_directory (\.)
+S -> server_cleanup()
+S -> server_cleanup()
+S -> server_notify()
+S -> server_pathname_check (file1)
+S -> server_register(file1, -1\.2, , , , , )
+S -> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+S -> unlink_file(CVS/Entries\.Log)
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+${SPROG} remove: scheduling \`file1' for removal
+${SPROG} remove: use \`${SPROG} commit' to remove this file permanently"
+
+	  dotest_sort trace-18 "${testcvs} -t -t -t ci -mremove file1" \
+"  *callerdat=${PFMT}, argc=1, argv=${PFMT},
+  *callerdat=${PFMT}, argc=1, argv=${PFMT},
+  *callerdat=${PFMT}, argc=1, argv=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *dosrcs=0, repository_in=(null) )
+  *dosrcs=1, repository_in=(null) )
+  *dosrcs=1, repository_in=(null) )
+  *local=0, which=1, aflag=0,
+  *local=0, which=1, aflag=0,
+  *local=0, which=1, aflag=0,
+  *locktype=0, update_preload=(null)
+  *locktype=0, update_preload=(null)
+  *locktype=0, update_preload=(null)
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Lock_Cleanup()
+  *-> Lock_Cleanup()
+  *-> Parse_Info (${CVSROOT_DIRNAME}/CVSROOT/commitinfo, trace, ALL)
+  *-> Parse_Info (${CVSROOT_DIRNAME}/CVSROOT/loginfo, trace, ALL)
+  *-> Parse_Info (${CVSROOT_DIRNAME}/CVSROOT/verifymsg, trace, not ALL)
+  *-> RCS_checkout (${CVSROOT_DIRNAME}/trace/file1,v, , , , file1)
+  *-> RCS_checkout (${CVSROOT_DIRNAME}/trace/file1,v, 1\.2, , -ko, ${tempname})
+  *-> Scratch_Entry(file1)
+  *-> do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> fopen(${CVSROOT_DIRNAME}/CVSROOT/history,a)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.lock)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.lock)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.wfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.wfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, )
+  *-> lock_simple_remove()
+  *-> main loop with CVSROOT=${CVSROOT_DIRNAME}
+  *-> parse_cvsroot ( ${CVSROOT_DIRNAME} )
+  *-> rcs_cleanup()
+  *-> remove_locks()
+  *-> remove_locks()
+  *-> rename(${CVSROOT_DIRNAME}/trace/,file1,,${CVSROOT_DIRNAME}/trace/file1,v)
+  *-> rename(${CVSROOT_DIRNAME}/trace/,file1,,${CVSROOT_DIRNAME}/trace/file1,v)
+  *-> rename(${CVSROOT_DIRNAME}/trace/,file1,,${CVSROOT_DIRNAME}/trace/file1,v)
+  *-> rename(CVS/Entries\.Backup,CVS/Entries)
+  *-> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+  *-> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+  *-> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+  *-> unlink_file(${tempname})
+  *-> unlink_file(${tempname})
+  *-> unlink_file(CVS/Entries\.Log)
+  *-> unlink_file(file1)
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> write_lock(${CVSROOT_DIRNAME}/trace)
+${CVSROOT_DIRNAME}/trace/file1,v  <--  file1
+Removing file1;
+done
+new revision: delete; previous revision: 1\.2" \
+"
+  *callerdat=${PFMT}, argc=1, argv=${PFMT},
+  *callerdat=${PFMT}, argc=1, argv=${PFMT},
+  *callerdat=${PFMT}, argc=1, argv=${PFMT},
+  *callerdat=${PFMT}, argc=1, argv=${PFMT},
+  *callerdat=${PFMT}, argc=1, argv=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *dosrcs=0, repository_in=(null) )
+  *dosrcs=0, repository_in=(null) )
+  *dosrcs=0, repository_in=(null) )
+  *dosrcs=1, repository_in=(null) )
+  *dosrcs=1, repository_in=(null) )
+  *local=0, which=1, aflag=0,
+  *local=0, which=1, aflag=0,
+  *local=0, which=1, aflag=0,
+  *local=0, which=1, aflag=0,
+  *local=0, which=1, aflag=0,
+  *locktype=0, update_preload=(null)
+  *locktype=0, update_preload=(null)
+  *locktype=0, update_preload=(null)
+  *locktype=0, update_preload=(null)
+  *locktype=0, update_preload=(null)
+  *-> Forking server: ${CVS_SERVER} server
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Scratch_Entry(file1)
+  *-> do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> main loop with CVSROOT=${CVSROOT}
+  *-> parse_cvsroot ( ${CVSROOT} )
+  *-> rename(CVS/Entries\.Backup,CVS/Entries)
+  *-> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+  *-> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+  *-> unlink_file(CVS/Entries\.Log)
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+${CVSROOT_DIRNAME}/trace/file1,v  <--  file1
+Removing file1;
+S -> Leaving do_recursion ( frame=${PFMT} )
+S -> Leaving do_recursion ( frame=${PFMT} )
+S -> Leaving do_recursion ( frame=${PFMT} )
+S -> Lock_Cleanup()
+S -> Lock_Cleanup()
+S -> Lock_Cleanup()
+S -> Parse_Info (${CVSROOT_DIRNAME}/CVSROOT/commitinfo, trace, ALL)
+S -> Parse_Info (${CVSROOT_DIRNAME}/CVSROOT/loginfo, trace, ALL)
+S -> Parse_Info (${CVSROOT_DIRNAME}/CVSROOT/verifymsg, trace, not ALL)
+S -> RCS_checkout (${CVSROOT_DIRNAME}/trace/file1,v, , , , file1)
+S -> RCS_checkout (${CVSROOT_DIRNAME}/trace/file1,v, 1\.2, , -ko, ${tempname})
+S -> Scratch_Entry(file1)
+S -> dirswitch (\., ${CVSROOT_DIRNAME}/trace)
+S -> do_recursion ( frame=${PFMT} )
+S -> do_recursion ( frame=${PFMT} )
+S -> do_recursion ( frame=${PFMT} )
+S -> fopen(${CVSROOT_DIRNAME}/CVSROOT/history,a)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.lock)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.lock)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.wfl\.${hostname}\.[0-9][0-9]*)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.wfl\.${hostname}\.[0-9][0-9]*)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, )
+S -> lock_simple_remove()
+S -> rcs_cleanup()
+S -> remove_locks()
+S -> remove_locks()
+S -> remove_locks()
+S -> rename(${CVSROOT_DIRNAME}/trace/,file1,,${CVSROOT_DIRNAME}/trace/file1,v)
+S -> rename(${CVSROOT_DIRNAME}/trace/,file1,,${CVSROOT_DIRNAME}/trace/file1,v)
+S -> rename(${CVSROOT_DIRNAME}/trace/,file1,,${CVSROOT_DIRNAME}/trace/file1,v)
+S -> rename(CVS/Entries\.Backup,CVS/Entries)
+S -> serve_directory (\.)
+S -> server_cleanup()
+S -> server_cleanup()
+S -> server_notify()
+S -> server_pathname_check (file1)
+S -> server_pathname_check (file1)
+S -> server_pathname_check (file1)
+S -> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+S -> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+S -> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+S -> unlink_file(${tempname})
+S -> unlink_file(${tempname})
+S -> unlink_file(CVS/Entries\.Log)
+S -> unlink_file(file1)
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> write_lock(${CVSROOT_DIRNAME}/trace)
+done
+new revision: delete; previous revision: 1\.2"
+
+	  # SGI IRIX seems to have problems with the stdout and stderr
+	  # mix for this test, so separate them.
+	  dotest_sort trace-19 "${testcvs} -t -t -t history file1 2>stderr19" \
+"O ${ISODATE} ${username} trace =trace= ${TESTDIR}/trace/\*" \
+"O ${ISODATE} ${username} trace =trace= <remote>/\*"
+	  dotest_sort trace-19stderr "sort < stderr19" \
+"  *-> Lock_Cleanup()
+  *-> main loop with CVSROOT=${CVSROOT_DIRNAME}
+  *-> parse_cvsroot ( ${CVSROOT_DIRNAME} )
+  *-> remove_locks()
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )" \
+"
+  *-> Forking server: ${CVS_SERVER} server
+  *-> main loop with CVSROOT=${CVSROOT}
+  *-> parse_cvsroot ( ${CVSROOT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> Lock_Cleanup()
+S -> Lock_Cleanup()
+S -> remove_locks()
+S -> remove_locks()
+S -> server_cleanup()
+S -> server_cleanup()
+S -> server_notify()"
+	  rm stderr19
+
+	  cd ..
+	  dotest_sort \
+trace-20 "echo yes | ${testcvs} -t -t -t release -d trace" \
+"  *callerdat=${PFMT}, argc=0, argv=${PFMT},
+  *callerdat=${PFMT}, argc=0, argv=${PFMT},
+  *callerdat=${PFMT}, argc=0, argv=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *dosrcs=0, repository_in=(null) )
+  *dosrcs=0, repository_in=(null) )
+  *dosrcs=0, repository_in=(null) )
+  *local=0, which=1, aflag=0,
+  *local=0, which=1, aflag=0,
+  *local=0, which=1, aflag=0,
+  *locktype=0, update_preload=(null)
+  *locktype=0, update_preload=(null)
+  *locktype=0, update_preload=(null)
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Lock_Cleanup()
+  *-> Lock_Cleanup()
+  *-> do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> fopen(${CVSROOT_DIRNAME}/CVSROOT/history,a)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.lock)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.lock)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.wfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.wfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, )
+  *-> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.lock)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.lock)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.wfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.wfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace/subdir, )
+  *-> lock_simple_remove()
+  *-> lock_simple_remove()
+  *-> main loop with CVSROOT=${CVSROOT_DIRNAME}
+  *-> parse_cvsroot ( ${CVSROOT_DIRNAME} )
+  *-> remove_locks()
+  *-> remove_locks()
+  *-> run_popen(${testcvs} -n -q -d ${CVSROOT_DIRNAME} update,r)
+  *-> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+  *-> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+  *-> unlink_file_dir(trace)
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> write_lock(${CVSROOT_DIRNAME}/trace)
+  *-> write_lock(${CVSROOT_DIRNAME}/trace/subdir)
+Are you sure you want to release (and delete) directory \`trace':   *-> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+You have \[0\] altered files in this repository\." \
+"
+  *callerdat=${PFMT}, argc=0, argv=${PFMT},
+  *callerdat=${PFMT}, argc=0, argv=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *dosrcs=0, repository_in=(null) )
+  *dosrcs=0, repository_in=(null) )
+  *local=0, which=1, aflag=0,
+  *local=0, which=1, aflag=0,
+  *locktype=0, update_preload=(null)
+  *locktype=0, update_preload=(null)
+  *-> Forking server: ${CVS_SERVER} server
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> main loop with CVSROOT=${CVSROOT}
+  *-> parse_cvsroot ( ${CVSROOT} )
+  *-> run_popen(${testcvs} -n -q -d ${CVSROOT} update,r)
+  *-> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+  *-> unlink_file_dir(trace)
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+Are you sure you want to release (and delete) directory \`trace':   *-> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+S -> Lock_Cleanup()
+S -> Lock_Cleanup()
+S -> fopen(${CVSROOT_DIRNAME}/CVSROOT/history,a)
+S -> remove_locks()
+S -> remove_locks()
+S -> server_cleanup()
+S -> server_cleanup()
+S -> server_notify()
+S -> server_notify()
+S -> server_notify()
+You have \[0\] altered files in this repository\."
+
+	  cd ..
+
+	  dokeep
+
+	  rm -fr trace
+	  rm -fr ${CVSROOT_DIRNAME}/trace 
+
 	  ;;
 
 	*)

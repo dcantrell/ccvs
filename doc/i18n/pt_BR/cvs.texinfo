@@ -134,8 +134,10 @@ approved by the Free Software Foundation.
 @node    Top
 @top
 
-This info manual describes how to use and administer
-@sc{cvs} version @value{VERSION}.
+@comment <en> This info manual describes how to use and administer
+Esta página manual ensina a como usar e administrar o
+@comment <en> @sc{cvs} version @value{VERSION}.
+@sc{cvs} versão @value{VERSION}.
 @end ifnottex
 
 @ifinfo
@@ -145,66 +147,113 @@ This info manual describes how to use and administer
 @c This menu is pretty long.  Not sure how easily that
 @c can be fixed (no brilliant ideas right away)...
 @menu
-* Overview::                    An introduction to CVS
-* Repository::                  Where all your sources are stored
-* Starting a new project::      Starting a project with CVS
-* Revisions::                   Numeric and symbolic names for revisions
-* Branching and merging::       Diverging/rejoining branches of development
-* Recursive behavior::          CVS descends directories
-* Adding and removing::         Adding/removing/renaming files/directories
-* History browsing::            Viewing the history of files in various ways
+@comment <en>* Overview::                    An introduction to CVS
+* Visão Geral::                 Uma introdução ao CVS
+@comment <en>* Repository::                  Where all your sources are stored
+* Repositório::                 Onde todos os seus fontes são guardados
+@comment <en>* Starting a new project::      Starting a project with CVS
+* Começando um novo projeto::   Começando um projeto com CVS
+@comment <en>* Revisions::                   Numeric and symbolic names for revisions
+* Revisões::                    Nomes numéricos e simbólicos para revisões
+@comment <en>* Branching and merging::       Diverging/rejoining branches of development
+* Ramificando e mesclando::     Divergindo/reunindo ramos de desenvolvimento
+@comment <en>* Recursive behavior::          CVS descends directories
+* Comportamento recursivo::     CVS adentra nos diretórios
+@comment <en>* Adding and removing::         Adding/removing/renaming files/directories
+* Adicionando e removendo::     Adicionando/apagando/renomeando arquivos/diretórios
+@comment <en>* History browsing::            Viewing the history of files in various ways
+* Navegação no Histórico::      Vendo o histórico dos arquivos de várias formas
 
-CVS and the Real World.
+@comment <en>CVS and the Real World.
+CVS e o mundo Real.
 -----------------------
-* Binary files::                CVS can handle binary files
-* Multiple developers::         How CVS helps a group of developers
-* Revision management::         Policy questions for revision management
-* Keyword substitution::        CVS can include the revision inside the file
+@comment <en>* Binary files::                CVS can handle binary files
+* arquivos Binários::           CVS pode lidar com arquivos binários
+@comment <en>* Multiple developers::         How CVS helps a group of developers
+* Múltiplos desenvolvedores::   Como CVS ajuda um grupo de desenvolvedores
+@comment <en>* Revision management::         Policy questions for revision management
+* Gerenciamento de revisões::   Questões de política para gerenciamento de revisões
+@comment <en>* Keyword substitution::        CVS can include the revision inside the file
+* Substituição de keyword::     CVS inclui a revisão dentro do arquivo
+@comment <en>* Tracking sources::            Tracking third-party sources
 * Tracking sources::            Tracking third-party sources
+@comment <en>* Builds::                      Issues related to CVS and builds
 * Builds::                      Issues related to CVS and builds
-* Special Files::		Devices, links and other non-regular files
+@comment <en>* Special Files::		Devices, links and other non-regular files
+* Arquivos especiais::		Dispositivos, ligações e outros arquivos diferentes
 
-References.
+@comment <en>References.
+Referências.
 -----------
-* CVS commands::                CVS commands share some things
-* Invoking CVS::                Quick reference to CVS commands
-* Administrative files::        Reference manual for the Administrative files
-* Environment variables::       All environment variables which affect CVS
-* Compatibility::               Upgrading CVS versions
-* Troubleshooting::             Some tips when nothing works
-* Credits::                     Some of the contributors to this manual
-* BUGS::                        Dealing with bugs in CVS or this manual
-* Index::                       Index
+@comment <en>* CVS commands::                CVS commands share some things
+* Comandos do CVS::            Comandos do CVS têm algo em comum
+@comment <en>* Invoking CVS::                Quick reference to CVS commands
+* Chamando o CVS::             Referência rápida aos comandos do CVS
+@comment <en>* Administrative files::        Reference manual for the Administrative files
+* Arquivos administrativos::   Manual de referência para os arquivos administrativos
+@comment <en>* Environment variables::       All environment variables which affect CVS
+* Variáveis de ambiente::      Todas as variáveis de ambiente que afetam o CVS
+@comment <en>* Compatibility::               Upgrading CVS versions
+* Compatibilidade::            Upgrading CVS versions
+@comment <en>* Troubleshooting::             Some tips when nothing works
+* resolução de problemas::     Algumas dicas quando nada funciona
+@comment <en>* Credits::                     Some of the contributors to this manual
+* Créditos::                   Alguns dos contribuidores deste manual
+@comment <en>* BUGS::                        Dealing with bugs in CVS or this manual
+* Paus::                       Lidando com paus no CVS ou neste manual
+@comment <en>* Index::                       Index
+* Índice::                     Índice
 @end menu
 
 @c ---------------------------------------------------------------------
-@node Overview
-@chapter Overview
-@cindex Overview
+@comment <en>@node Overview
+@comment <en>@chapter Overview
+@comment <en>@cindex Overview
+@node Visão Geral
+@chapter Visão Geral
+@cindex Visão Geral
 
-This chapter is for people who have never used
-@sc{cvs}, and perhaps have never used version control
-software before.
+@comment <en>This chapter is for people who have never used
+@comment <en>@sc{cvs}, and perhaps have never used version control
+@comment <en>software before.
+Este capítulo é para aqueles que nunca usaram o
+@sc{cvs} antes, e talvez nunca tenham usado um programa
+de controle de versões antes.
 
-If you are already familiar with @sc{cvs} and are just
-trying to learn a particular feature or remember a
-certain command, you can probably skip everything here.
+@comment <en>If you are already familiar with @sc{cvs} and are just
+@comment <en>trying to learn a particular feature or remember a
+@comment <en>certain command, you can probably skip everything here.
+Se você já conhece o @sc{cvs} e está apenas tentando
+aprender sobre uma habilidade em particular ou lembrar
+um certo comando, você provavelmente pode pular tudo
+aqui.
 
 @menu
-* What is CVS?::                What you can do with @sc{cvs}
-* What is CVS not?::            Problems @sc{cvs} doesn't try to solve
-* A sample session::            A tour of basic @sc{cvs} usage
+@comment <en>* What is CVS?::                What you can do with @sc{cvs}
+* O que é CVS?::                O que você pode fazer com @sc{cvs}
+@comment <en>* What is CVS not?::            Problems @sc{cvs} doesn't try to solve
+* O que CVS não é?::            Problemas que o @sc{cvs} não tenta resolver
+@comment <en>* A sample session::            A tour of basic @sc{cvs} usage
+* Uma sessão simples::          Um tour pelo uso básico do @sc{cvs}
 @end menu
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-@node What is CVS?
-@section What is CVS?
-@cindex What is CVS?
-@cindex Introduction to CVS
-@cindex CVS, introduction to
+@comment <en>@node What is CVS?
+@comment <en>@section What is CVS?
+@comment <en>@cindex What is CVS?
+@comment <en>@cindex Introduction to CVS
+@comment <en>@cindex CVS, introduction to
+@node O que é CVS?
+@section O que é CVS?
+@cindex O que é CVS?
+@cindex Introdução ao CVS
+@cindex CVS, introdução ao
 
-@sc{cvs} is a version control system.  Using it, you can
-record the history of your source files.
+@comment <en>@sc{cvs} is a version control system.  Using it, you can
+@comment <en>record the history of your source files.
+@sc{cvs} é um sistema de controle de versões. Ao
+usá-lo, você pode registrar a história dos seus códigos
+fonte.
 
 @c -- ///
 @c -- ///Those who cannot remember the past are condemned to repeat it.
@@ -212,74 +261,134 @@ record the history of your source files.
 @c -- //////
 
 @c -- Insert history  quote here!
-For example, bugs sometimes creep in when
-software is modified, and you might not detect the bug
-until a long time after you make the modification.
-With @sc{cvs}, you can easily retrieve old versions to see
-exactly which change caused the bug.  This can
-sometimes be a big help.
+@comment <en>For example, bugs sometimes creep in when
+@comment <en>software is modified, and you might not detect the bug
+@comment <en>until a long time after you make the modification.
+@comment <en>With @sc{cvs}, you can easily retrieve old versions to see
+@comment <en>exactly which change caused the bug.  This can
+@comment <en>sometimes be a big help.
+Por exemplo, às vezes aparecem erros quando um programa
+é modificado e você não detecta o problema até muito
+tempo depois de você ter feito a modificação. Com
+@sc{cvs}, você pode recuperar versões antigas para ver
+exatamente o que causou o erro. Isto às vezes é de
+grande ajuda.
 
-You could of course save every version of every file
-you have ever created.  This would
-however waste an enormous amount of disk space.  @sc{cvs}
-stores all the versions of a file in a single file in a
-clever way that only stores the differences between
-versions.
+@comment <en>You could of course save every version of every file
+@comment <en>you have ever created.  This would
+@comment <en>however waste an enormous amount of disk space.  @sc{cvs}
+@comment <en>stores all the versions of a file in a single file in a
+@comment <en>clever way that only stores the differences between
+@comment <en>versions.
+Você pode, é claro, salvar toda versão de todo arquivo
+que um dia você criou. Mas isto vai consumir um enorme
+espaço no disco. @sc{cvs} guarda todas as versões de um
+arquivo em um único arquivo em uma forma inteligente
+que guarda apenas as diferenças entre versões.
 
-@sc{cvs} also helps you if you are part of a group of people working
-on the same project.  It is all too easy to overwrite
-each others' changes unless you are extremely careful.
-Some editors, like @sc{gnu} Emacs, try to make sure that
-the same file is never modified by two people at the
-same time.  Unfortunately, if someone is using another
-editor, that safeguard will not work.  @sc{cvs} solves this problem
-by insulating the different developers from each other.  Every
-developer works in his own directory, and @sc{cvs} merges
-the work when each developer is done.
+@comment <en>@sc{cvs} also helps you if you are part of a group of people working
+@comment <en>on the same project.  It is all too easy to overwrite
+@comment <en>each others' changes unless you are extremely careful.
+@comment <en>Some editors, like @sc{gnu} Emacs, try to make sure that
+@comment <en>the same file is never modified by two people at the
+@comment <en>same time.  Unfortunately, if someone is using another
+@comment <en>editor, that safeguard will not work.  @sc{cvs} solves this problem
+@comment <en>by insulating the different developers from each other.  Every
+@comment <en>developer works in his own directory, and @sc{cvs} merges
+@comment <en>the work when each developer is done.
+@sc{cvs} também ajuda se você é parte de um grupo de
+pessoas trabalhando no mesmo projeto. É muito fácil uns
+sobreescreverem as mudanças de outros se não forem
+extremamente cuidadosos. Alguns editores, como o
+@sc{gnu} Emacs, tentam se certificar de que o mesmo
+arquivo nunca seja modificado por duas pessoas ao mesmo
+tempo. Infelizmente, se alguém estiver usando outro
+editor, está sugerança não vai funcionar. @sc{cvs}
+resolve este problema isolando os desenvolvedores uns
+dos outros. Todo desenvolvedor trabalha em seu próprio
+diretório e o @sc{cvs} mescla o trabalho quando cada
+desenvolvedor tiver terminado.
 
-@cindex History of CVS
-@cindex CVS, history of
-@cindex Credits (CVS program)
-@cindex Contributors (CVS program)
-@sc{cvs} started out as a bunch of shell scripts written by
-Dick Grune, posted to the newsgroup
-@code{comp.sources.unix} in the volume 6
-release of July, 1986.  While no actual code from
-these shell scripts is present in the current version
-of @sc{cvs} much of the @sc{cvs} conflict resolution algorithms
-come from them.
+@comment <en>@cindex History of CVS
+@cindex História do CVS
+@comment <en>@cindex CVS, history of
+@cindex CVS, história do
+@comment <en>@cindex Credits (CVS program)
+@cindex Créditos (programa CVS)
+@comment <en>@cindex Contributors (CVS program)
+@cindex Contribuidores (programa CVS)
+@comment <en>@sc{cvs} started out as a bunch of shell scripts written by
+@comment <en>Dick Grune, posted to the newsgroup
+@comment <en>@code{comp.sources.unix} in the volume 6
+@comment <en>release of July, 1986.  While no actual code from
+@comment <en>these shell scripts is present in the current version
+@comment <en>of @sc{cvs} much of the @sc{cvs} conflict resolution algorithms
+@comment <en>come from them.
+@sc{cvs} começou como um monte de shell scripts
+escritos por Dick Grune, postados no newsgroup
+@code{comp.sources.unix} no volume 6 de Julho,
+1986. Na verdade, nenhum código daqueles scripts está
+presente na versão atual do @sc{cvs}, mas muito do
+algoritmos de resolução de conflitos do @sc{cvs} vem
+deles.
 
-In April, 1989, Brian Berliner designed and coded @sc{cvs}.
-Jeff Polk later helped Brian with the design of the @sc{cvs}
-module and vendor branch support.
+@comment <en>In April, 1989, Brian Berliner designed and coded @sc{cvs}.
+@comment <en>Jeff Polk later helped Brian with the design of the @sc{cvs}
+@comment <en>module and vendor branch support.
+Em Abril, 1989, Brian Berliner projetou e codificou
+@sc{cvs}. Depois, Jeff Polk ajudou Brian com o projeto
+do módulo @sc{cvs} e o suporte ao ramo do fornecedor.
 
-@cindex Source, getting CVS source
-You can get @sc{cvs} in a variety of ways, including
-free download from the internet.  For more information
-on downloading @sc{cvs} and other @sc{cvs} topics, see:
+@comment <en>@cindex Source, getting CVS source
+@cindex Fontes, adquirindo os fontes do CVS
+@comment <en>You can get @sc{cvs} in a variety of ways, including
+@comment <en>free download from the internet.  For more information
+@comment <en>on downloading @sc{cvs} and other @sc{cvs} topics, see:
+Você pode conseguir o @sc{cvs} de várias formas,
+inclusive baixando gratuitamente da internet. Para
+maiores informações sobre baixar o @sc{cvs} e para
+outros tópicos sobre @sc{cvs}, veja:
 
 @example
 @url{http://www.cvshome.org/}
 @url{http://www.loria.fr/~molli/cvs-index.html}
 @end example
 
-@cindex Mailing list
-@cindex List, mailing list
+@comment <en>@cindex Mailing list
+@cindex Lista de Discussão
+@comment <en>@cindex List, mailing list
+@cindex Lista, lista de discussão
+@comment <en>@cindex Newsgroups
 @cindex Newsgroups
-There is a mailing list, known as @email{info-cvs@@gnu.org},
-devoted to @sc{cvs}.  To subscribe or
-unsubscribe
-write to
-@email{info-cvs-request@@gnu.org}.
-If you prefer a usenet group, there is a one-way mirror (posts to the email
-list are usually sent to the news group, but not visa versa) of
-@email{info-cvs@@gnu.org} at @url{news:gnu.cvs.help}.  The right
-usenet group for posts is @url{news:comp.software.config-mgmt} which is for
-@sc{cvs} discussions (along with other configuration
-management systems).  In the future, it might be
-possible to create a
-@code{comp.software.config-mgmt.cvs}, but probably only
-if there is sufficient @sc{cvs} traffic on
+@comment <en>There is a mailing list, known as @email{info-cvs@@gnu.org},
+@comment <en>devoted to @sc{cvs}.  To subscribe or
+@comment <en>unsubscribe
+@comment <en>write to
+@comment <en>@email{info-cvs-request@@gnu.org}.
+@comment <en>If you prefer a usenet group, there is a one-way mirror (posts to the email
+@comment <en>list are usually sent to the news group, but not visa versa) of
+@comment <en>@email{info-cvs@@gnu.org} at @url{news:gnu.cvs.help}.  The right
+@comment <en>usenet group for posts is @url{news:comp.software.config-mgmt} which is for
+@comment <en>@sc{cvs} discussions (along with other configuration
+@comment <en>management systems).  In the future, it might be
+@comment <en>possible to create a
+@comment <en>@code{comp.software.config-mgmt.cvs}, but probably only
+@comment <en>if there is sufficient @sc{cvs} traffic on
+@comment <en>@url{news:comp.software.config-mgmt}.
+Existe uma lista de discussão conhecida como @email{info-cvs@@gnu.org},
+dedicada ao @sc{cvs}. Para se cadastrar ou descadastrar
+escreva para @email{info-cvs-request@@gnu.org}. Se você
+preferir um grupo de usenet, existe um espelho
+mão-única (postagens para a lista de email são
+usualmente mandadas para o news group, mas não
+vice-versa) do @email{info-cvs@@gnu.org} em
+@url{news:gnu.cvs.help}. O grupo usenet correto para
+postagens é @url{news:comp.software.config-mgmt} que é
+para discussões sobre @sc{cvs} (juntamente com outros
+sistemas de gerência de configuração). No futuro,
+poderá ser criada uma
+@code{comp.software.config-mgmt.cvs}, mas apenas se
+houver bastante tráfego sobre @sc{cvs} na
 @url{news:comp.software.config-mgmt}.
 @c Other random data is that the tale was very
 @c skeptical of comp.software.config-mgmt.cvs when the
@@ -288,111 +397,201 @@ if there is sufficient @sc{cvs} traffic on
 @c would need to take a more comprehensive look at the
 @c whole comp.software.config-mgmt.* hierarchy).
 
-You can also subscribe to the @email{bug-cvs@@gnu.org} mailing list,
-described in more detail in @ref{BUGS}.  To subscribe
-send mail to @email{bug-cvs-request@@gnu.org}.  There is a two-way
-usenet mirror (posts to the usenet group are usually sent to the email list and
-visa versa) of @email{bug-cvs@@gnu.org} named @url{news:gnu.cvs.bug}.
+@comment <en>You can also subscribe to the @email{bug-cvs@@gnu.org} mailing list,
+@comment <en>described in more detail in @ref{BUGS}.  To subscribe
+@comment <en>send mail to @email{bug-cvs-request@@gnu.org}.  There is a two-way
+@comment <en>usenet mirror (posts to the usenet group are usually sent to the email list and
+@comment <en>visa versa) of @email{bug-cvs@@gnu.org} named @url{news:gnu.cvs.bug}.
+Você também pode se cadastrar à lista de discussão
+@email{bug-cvs@@gnu.org}, descrita em maiores detalhes
+em @ref{Paus}. Para se cadastrar mande email para
+@email{bug-cvs-request@@gnu.org}. Existe um espelho
+usenet de mão-dupla (postagens para o grupo usenet são
+usualmente mandadas para a lista e vice-versa) de
+@email{bug-cvs@@gnu.org} chamado
+@url{news:gnu.cvs.bug}.
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-@node What is CVS not?
-@section What is CVS not?
-@cindex What is CVS not?
+@comment <en>@node What is CVS not?
+@node O que CVS não é?
+@comment <en>@section What is CVS not?
+@section O que CVS não é?
+@comment <en>@cindex What is CVS not?
+@cindex O que CVS não é?
 
-@sc{cvs} can do a lot of things for you, but it does
-not try to be everything for everyone.
+@comment <en>@sc{cvs} can do a lot of things for you, but it does
+@comment <en>not try to be everything for everyone.
+@sc{cvs} pode fazer várias coisas para você, mas não
+tenta fazer tudo para todo mundo.
 
 @table @asis
-@item @sc{cvs} is not a build system.
+@comment <en>@item @sc{cvs} is not a build system.
+@item @sc{cvs} não é um sistema de construção (build system).
 
-Though the structure of your repository and modules
-file interact with your build system
-(e.g. @file{Makefile}s), they are essentially
-independent.
+@comment <en>Though the structure of your repository and modules
+@comment <en>file interact with your build system
+@comment <en>(e.g. @file{Makefile}s), they are essentially
+@comment <en>independent.
+Embora a estrutura do seu repositório e arquivos de
+módulo interajam com seu sistema de construção
+(e.g. @file{Makefile}s), eles são essencialmente
+independentes.
 
-@sc{cvs} does not dictate how you build anything.  It
-merely stores files for retrieval in a tree structure
-you devise.
+@comment <en>@sc{cvs} does not dictate how you build anything.  It
+@comment <en>merely stores files for retrieval in a tree structure
+@comment <en>you devise.
+@sc{cvs} não dita como você constroi nada. Ele apenas
+guarda arquivos para recuperação numa estrutura de
+árvore que você concebeu.
 
-@sc{cvs} does not dictate how to use disk space in the
-checked out working directories.  If you write your
-@file{Makefile}s or scripts in every directory so they
-have to know the relative positions of everything else,
-you wind up requiring the entire repository to be
-checked out.
+@comment <en>@sc{cvs} does not dictate how to use disk space in the
+@comment <en>checked out working directories.  If you write your
+@comment <en>@file{Makefile}s or scripts in every directory so they
+@comment <en>have to know the relative positions of everything else,
+@comment <en>you wind up requiring the entire repository to be
+@comment <en>checked out.
+@sc{cvs} não dita como usar o espaço em disco em
+diretórios de trabalho emprestados. Se você
+escreve seus @file{Makefile}s ou scripts em cada
+diretório, eles têm que saber a posição relativa de
+todo o resto, logo você acaba tendo que pegar todo o
+repositório.
 
-If you modularize your work, and construct a build
-system that will share files (via links, mounts,
-@code{VPATH} in @file{Makefile}s, etc.), you can
-arrange your disk usage however you like.
+@comment <en>If you modularize your work, and construct a build
+@comment <en>system that will share files (via links, mounts,
+@comment <en>@code{VPATH} in @file{Makefile}s, etc.), you can
+@comment <en>arrange your disk usage however you like.
+Se você modularizar o seu trabalho e fizer um sistema
+de construção (build) que irá compartilhar arquivos
+(via links, mounts, @code{VPATH} em @file{Makefile}s,
+etc.), você pode organizar a sua utilização de disco de
+qualquer forma.
 
-But you have to remember that @emph{any} such system is
-a lot of work to construct and maintain.  @sc{cvs} does
-not address the issues involved.
+@comment <en>But you have to remember that @emph{any} such system is
+@comment <en>a lot of work to construct and maintain.  @sc{cvs} does
+@comment <en>not address the issues involved.
+Mas você tem que lembrar que @emph{qualquer} sistema
+desse é muito trabalhoso para construir e
+manter. @sc{cvs} não se importa com tais questões.
 
-Of course, you should place the tools created to
-support such a build system (scripts, @file{Makefile}s,
-etc) under @sc{cvs}.
+@comment <en>Of course, you should place the tools created to
+@comment <en>support such a build system (scripts, @file{Makefile}s,
+@comment <en>etc) under @sc{cvs}.
+Obviamente, você pode botar as ferramentas criadas para
+suportar um tail sistema de construção (scripts,
+@file{Makefile}s, etc) dentro do @sc{cvs}.
 
-Figuring out what files need to be rebuilt when
-something changes is, again, something to be handled
-outside the scope of @sc{cvs}.  One traditional
-approach is to use @code{make} for building, and use
-some automated tool for generating the dependencies which
-@code{make} uses.
+@comment <en>Figuring out what files need to be rebuilt when
+@comment <en>something changes is, again, something to be handled
+@comment <en>outside the scope of @sc{cvs}.  One traditional
+@comment <en>approach is to use @code{make} for building, and use
+@comment <en>some automated tool for generating the dependencies which
+@comment <en>@code{make} uses.
+Definir quais arquivos precisam ser reconstruídos
+quando algo muda é, novamente, algo para ser visto fora
+do escopo do @sc{cvs}.  Uma abordagem tradicional é
+usar o @code{make} para construir, e usar alguma
+ferramenta automatizada para gerar as dependências que
+o @code{make}.
 
-See @ref{Builds}, for more information on doing builds
-in conjunction with @sc{cvs}.
+@comment <en>Veja em @ref{Builds}, for more information on doing builds
+@comment <en>in conjunction with @sc{cvs}.
+See @ref{Builds}, para mais informações sobre
+construção com @sc{cvs}.
 
-@item @sc{cvs} is not a substitute for management.
+@comment <en>@item @sc{cvs} is not a substitute for management.
+@item @sc{cvs} não substitui gerenciamento.
 
-Your managers and project leaders are expected to talk
-to you frequently enough to make certain you are aware
-of schedules, merge points, branch names and release
-dates.  If they don't, @sc{cvs} can't help.
+@comment <en>Your managers and project leaders are expected to talk
+@comment <en>to you frequently enough to make certain you are aware
+@comment <en>of schedules, merge points, branch names and release
+@comment <en>dates.  If they don't, @sc{cvs} can't help.
+Espera-se que seus gerentes e líderes de projetos falem
+com você com a frequência suficiente para que você
+saiba de prazos, pontos de mescla, nomes de ramos e
+datas de lançamento (release). Se eles não o fizerem, o
+@sc{cvs} não pode ajudar.
 
-@sc{cvs} is an instrument for making sources dance to
-your tune.  But you are the piper and the composer.  No
-instrument plays itself or writes its own music.
+@comment <en>@sc{cvs} is an instrument for making sources dance to
+@comment <en>your tune.  But you are the piper and the composer.  No
+@comment <en>instrument plays itself or writes its own music.
+@sc{cvs} é um instrumento para fazer o fonte dançar
+conforme a sua música. Mas você é o maestro e o
+compositor. Nenhum instrumento toca sozinho ou escreve
+sua própria música.
 
-@item @sc{cvs} is not a substitute for developer communication.
+@comment <en>@item @sc{cvs} is not a substitute for developer communication.
+@item @sc{cvs} não é um substituto para comunicação entre desenvolvedores.
 
-When faced with conflicts within a single file, most
-developers manage to resolve them without too much
-effort.  But a more general definition of ``conflict''
-includes problems too difficult to solve without
-communication between developers.
+@comment <en>When faced with conflicts within a single file, most
+@comment <en>developers manage to resolve them without too much
+@comment <en>effort.  But a more general definition of ``conflict''
+@comment <en>includes problems too difficult to solve without
+@comment <en>communication between developers.
+Quando se deparam com conflitos num único arquivo, a
+maioria dos desenvolvedores conseguem resolvê-los sem
+muito esforço. Mas uma definição mais geral de
+``conflito'' inclui problemas tão difíceis de resolver
+que é necessária a comunicação entre os desenvolvedores.
 
-@sc{cvs} cannot determine when simultaneous changes
-within a single file, or across a whole collection of
-files, will logically conflict with one another.  Its
-concept of a @dfn{conflict} is purely textual, arising
-when two changes to the same base file are near enough
-to spook the merge (i.e. @code{diff3}) command.
+@comment <en>@sc{cvs} cannot determine when simultaneous changes
+@comment <en>within a single file, or across a whole collection of
+@comment <en>files, will logically conflict with one another.  Its
+@comment <en>concept of a @dfn{conflict} is purely textual, arising
+@comment <en>when two changes to the same base file are near enough
+@comment <en>to spook the merge (i.e. @code{diff3}) command.
+@sc{cvs} não pode determinar quando é que alterações
+simultâneas em um arquivo, ou vários, vão conflitar
+logicamente umas com as outras. Seu conceito de
+@dfn{conflito} é puramente textual, surgindo quando
+duas alterações num mesmo arquivo inicial são próximas o
+suficiente para intimidar o comando mescla dos
+(i.e. @code{diff3}).
 
-@sc{cvs} does not claim to help at all in figuring out
-non-textual or distributed conflicts in program logic.
+@comment <en>@sc{cvs} does not claim to help at all in figuring out
+@comment <en>non-textual or distributed conflicts in program logic.
+@sc{cvs} não se propõe a dar qualquer ajuda quanto a
+localizar conflitos não-textuais ou distribuídos na
+lógica de programação.
 
-For example: Say you change the arguments to function
-@code{X} defined in file @file{A}.  At the same time,
-someone edits file @file{B}, adding new calls to
-function @code{X} using the old arguments.  You are
-outside the realm of @sc{cvs}'s competence.
+@comment <en>For example: Say you change the arguments to function
+@comment <en>@code{X} defined in file @file{A}.  At the same time,
+@comment <en>someone edits file @file{B}, adding new calls to
+@comment <en>function @code{X} using the old arguments.  You are
+@comment <en>outside the realm of @sc{cvs}'s competence.
+Por exemplo: Digamos que você altere os argumentos da
+função @code{X} definida no arquivo @file{A}. Neste
+instante, alguem altera o arquivo @file{B}, adicionando
+novas chamadas à função @code{X} usando os argumentos
+antigos. Vocês estão fora do escopo da competência do
+@sc{cvs}.
 
-Acquire the habit of reading specs and talking to your
-peers.
+@comment <en>Acquire the habit of reading specs and talking to your
+@comment <en>peers.
+Adquira o hábito de ler documentação e conversar com
+seus parceiros.
 
 
-@item @sc{cvs} does not have change control
+@comment <en>@item @sc{cvs} does not have change control
+@item @sc{cvs} não tem controle de mudanças
 
-Change control refers to a number of things.  First of
-all it can mean @dfn{bug-tracking}, that is being able
-to keep a database of reported bugs and the status of
-each one (is it fixed?  in what release?  has the bug
-submitter agreed that it is fixed?).  For interfacing
-@sc{cvs} to an external bug-tracking system, see the
-@file{rcsinfo} and @file{verifymsg} files
-(@pxref{Administrative files}).
+@comment <en>Change control refers to a number of things.  First of
+@comment <en>all it can mean @dfn{bug-tracking}, that is being able
+@comment <en>to keep a database of reported bugs and the status of
+@comment <en>each one (is it fixed?  in what release?  has the bug
+@comment <en>submitter agreed that it is fixed?).  For interfacing
+@comment <en>@sc{cvs} to an external bug-tracking system, see the
+@comment <en>@file{rcsinfo} and @file{verifymsg} files
+@comment <en>(@pxref{Administrative files}).
+Controle de mudanças se refere a várias coisas. Em
+primeiro lugar, pode significar @dfn{bug-tracking
+(busca de erros)}, que é manter uma base de dados de
+erros relatados e o status de cada um (foi consertado?
+em qual release? o submissor do erro concordou que o
+erro foi corrigido?). Para fazer a interface do
+@sc{cvs} com um sistema de bug-tracking externo, veja
+os arquivos @file{rcsinfo} e @file{verifymsg}
+(@pxref{Arquivos de administração}).
 
 Another aspect of change control is keeping track of
 the fact that changes to several files were in fact
@@ -1296,7 +1495,6 @@ there must be a single tab character there and no spaces.
 @subsection CVS locks in the repository
 
 @cindex #cvs.rfl, technical details
-@cindex #cvs.pfl, technical details
 @cindex #cvs.wfl, technical details
 @cindex #cvs.lock, technical details
 @cindex Locks, cvs, technical details
@@ -1313,8 +1511,6 @@ operating systems or databases.
 @cindex #cvs.tfl
 Any file in the repository with a name starting
 with @file{#cvs.rfl.} is a read lock.  Any file in
-the repository with a name starting with
-@file{#cvs.pfl} is a promotable read lock.  Any file in
 the repository with a name starting with
 @file{#cvs.wfl} is a write lock.  Old versions of @sc{cvs}
 (before @sc{cvs} 1.5) also created files with names starting
@@ -1337,41 +1533,15 @@ Then proceed with reading the repository.  When you are
 done, remove the @file{#cvs.rfl} file to release the
 read lock.
 
-Promotable read locks are a concept you may not find in other literature on
-concurrency.  They are used to allow a two (or more) pass process to only lock
-a file for read on the first (read) pass(es), then upgrade its read locks to
-write locks if necessary for a final pass, still assured that the files have
-not changed since they were first read.  @sc{cvs} uses promotable read locks,
-for example, to prevent commit and tag verification passes from interfering
-with other reading processes.  It can then lock only a single directory at a
-time for write during the write pass.
-
-To obtain a promotable read lock, first create the @file{#cvs.lock} directory,
-as with a non-promotable read lock.  Then check
-that there are no files that start with
-@file{#cvs.pfl}.  If there are, remove the master @file{#cvs.lock} directory,
-wait awhile (CVS waits 30 seconds between lock attempts), and try again.  If
-there are no other promotable locks, go ahead and create a file whose name is
-@file{#cvs.pfl} followed by information of your choice (for example, CVS uses
-its hostname and the process identification number of the CVS server process
-creating the lock).  If versions of @sc{cvs} older than version 1.12.4 access
-your repository directly (not via a @sc{cvs} server of version 1.12.4 or
-later), then you should also create a read lock since older versions of CVS
-will ignore the promotable lock when attempting to create their own write lock.
-Then remove the master @file{#cvs.lock} directory in order to allow other
-processes to obtain read locks.
-
 To obtain a writelock, first create the
-@file{#cvs.lock} directory, as with readlocks.  Then
+@file{#cvs.lock} directory, as with a readlock.  Then
 check that there are no files whose names start with
-@file{#cvs.rfl.} and no files whose names start with @file{#cvs.pfl} that are
-not owned by the process attempting to get the write lock.  If either exist,
-remove @file{#cvs.lock}, wait for a while, and try again.  If
-there are no readers or promotable locks from other processes, then create a
-file whose name is @file{#cvs.wfl} followed by information of your choice
-(again, CVS uses the hostname and server process identification
-number).  Remove your @file{#cvs.pfl} file if present.  Hang on to the
-@file{#cvs.lock} lock.  Proceed
+@file{#cvs.rfl.}.  If there are, remove
+@file{#cvs.lock}, wait for a while, and try again.  If
+there are no readers, then create a file whose name is
+@file{#cvs.wfl} followed by information of your choice
+(for example, hostname and process identification
+number).  Hang on to the @file{#cvs.lock} lock.  Proceed
 with writing the repository.  When you are done, first
 remove the @file{#cvs.wfl} file and then the
 @file{#cvs.lock} directory. Note that unlike the
