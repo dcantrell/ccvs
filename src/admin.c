@@ -779,7 +779,7 @@ admin_fileproc (void *callerdat, struct file_info *finfo)
 			error (0, 0,
 			       "%s: symbolic name %s already bound to %s",
 			       rcs->path,
-			       tag, n->data);
+			       tag, (char *)n->data);
 			status = 1;
 			free (tag);
 			continue;
@@ -838,7 +838,7 @@ admin_fileproc (void *callerdat, struct file_info *finfo)
 		    continue;
 		}
 		free (rev);
-		delta = (RCSVers *) n->data;
+		delta = n->data;
 		free (delta->state);
 		delta->state = tag;
 		break;
@@ -877,7 +877,7 @@ admin_fileproc (void *callerdat, struct file_info *finfo)
 		*p = ':';	/* restore the full text of the -m argument */
 		free (rev);
 
-		delta = (RCSVers *) n->data;
+		delta = n->data;
 		if (delta->text == NULL)
 		{
 		    delta->text = (Deltatext *) xmalloc (sizeof (Deltatext));

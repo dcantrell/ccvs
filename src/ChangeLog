@@ -1,5 +1,8 @@
 2004-02-20  Larry Jones  <lawrence.jones@ugsplm.com>
 
+	* hash.h (struct node): Change data from char * to void *, change
+	all callers.
+
 	* run.c (cmdlinequote, cmdlineescape): Use prototype in definition
 	to match cvs.h.
 	(format_cmdline): UNIQUE_*_TYPE_* macros imply HAVE_*, so no need

@@ -69,7 +69,7 @@ No_Difference (struct file_info *finfo, Vers_TS *vers)
 
 	/* update the entdata pointer in the vers_ts structure */
 	p = findnode (finfo->entries, finfo->file);
-	vers->entdata = (Entnode *) p->data;
+	vers->entdata = p->data;
 
 	ret = 0;
     }

@@ -31,11 +31,10 @@ static int add_entries_proc (Node *, void *);
 static int
 add_entries_proc (Node *node, void *closure)
 {
-    Entnode *entnode;
     Node *fnode;
-    List *filelist = (List *) closure;
+    List *filelist = closure;
+    Entnode *entnode = node->data;
 
-    entnode = (Entnode *) node->data;
     if (entnode->type != ENT_FILE)
 	return (0);
 
@@ -119,11 +118,10 @@ Find_Names (char *repository, int which, int aflag, List **optentries)
 static int
 add_subdir_proc (Node *p, void *closure)
 {
-    List *dirlist = (List *) closure;
-    Entnode *entnode;
+    List *dirlist = closure;
+    Entnode *entnode = p->data;
     Node *dnode;
 
-    entnode = (Entnode *) p->data;
     if (entnode->type != ENT_SUBDIR)
 	return 0;
 
@@ -176,7 +174,7 @@ Find_Directories (char *repository, int which, List *entries)
 	    tmpentries = NULL;
 
 	if (tmpentries != NULL)
-	    sdtp = (struct stickydirtag *) tmpentries->list->data;
+	    sdtp = tmpentries->list->data;
 
 	/* If we do have an entries list, then if sdtp is NULL, or if
            sdtp->subdirs is nonzero, all subdirectory information is

@@ -195,7 +195,7 @@ freenode_mem (Node *p)
 	free (p->key);
 
     /* to be safe, re-initialize these */
-    p->key = p->data = (char *) NULL;
+    p->key = p->data = NULL;
     p->delproc = (void (*) ()) NULL;
 }
 
@@ -476,7 +476,7 @@ printnode (Node *node, void *closure)
 #ifdef HAVE_PRINTF_PTR
     (void) printf("Node at %p: type = %s, key = %p = \"%s\", data = %p, next = %p, prev = %p\n",
 	   (void *) node, nodetypestring(node->type),
-	   (void *) node->key, node->key, (void *) node->data,
+	   (void *) node->key, node->key, node->data,
 	   (void *) node->next, (void *) node->prev);
 #else
     (void) printf("Node at 0x%lx: type = %s, key = 0x%lx = \"%s\", data = 0x%lx, next = 0x%lx, prev = 0x%lx\n",

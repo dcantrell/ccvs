@@ -59,7 +59,7 @@ Version_TS (struct file_info *finfo, char *options, char *tag, char *date,
     else
     {
 	p = findnode_fn (finfo->entries, finfo->file);
-	sdtp = (struct stickydirtag *) finfo->entries->list->data; /* list-private */
+	sdtp = finfo->entries->list->data; /* list-private */
     }
 
     if (p == NULL)
@@ -68,7 +68,7 @@ Version_TS (struct file_info *finfo, char *options, char *tag, char *date,
     }
     else
     {
-	entdata = (Entnode *) p->data;
+	entdata = p->data;
 
 	if (entdata->type == ENT_SUBDIR)
 	{

@@ -112,9 +112,8 @@ setup_tmpfile (FILE *xfp, char *xprefix, List *changes)
 static int
 find_type (Node *p, void *closure)
 {
-    struct logfile_info *li;
+    struct logfile_info *li = p->data;
 
-    li = (struct logfile_info *) p->data;
     if (li->type == type)
 	return (1);
     else
@@ -131,7 +130,7 @@ fmt_proc (Node *p, void *closure)
 {
     struct logfile_info *li;
 
-    li = (struct logfile_info *) p->data;
+    li = p->data;
     if (li->type == type)
     {
         if (li->tag == NULL
@@ -612,36 +611,35 @@ update_logfile_proc(char *repository, char *filter, void *closure)
 static int
 logmsg_list_to_args_proc(Node *p, void *closure)
 {
-    struct format_cmdline_walklist_closure *c;
+    struct format_cmdline_walklist_closure *c = closure;
     struct logfile_info *li;
     char *arg = NULL;
     char *f, *d;
     size_t doff;
 
-    if( p->data == NULL ) return 1;
+    if (p->data == NULL) return 1;
 
-    c = (struct format_cmdline_walklist_closure *) closure;
     f = c->format;
-    d = *( c->d );
+    d = *c->d;
     /* foreach requested atribute */
-    while( *f )
+    while (*f)
     {
-	switch( *f++ )
+	switch (*f++)
 	{
 	    case 's':
 		arg = p->key;
 		break;
 	    case 'V':
-		li = (struct logfile_info *) p->data;
+		li = p->data;
 		arg = li->rev_old ? li->rev_old : "NONE";
 		break;
 	    case 'v':
-		li = (struct logfile_info *) p->data;
+		li = p->data;
 		arg = li->rev_new ? li->rev_new : "NONE";
 		break;
 	    default:
 #ifdef SUPPORT_OLD_INFO_FMT_STRINGS
-		if( c->onearg )
+		if (c->onearg)
 		{
 		    /* The old deafult was to print the empty string for
 		     * unknown args.
@@ -650,63 +648,63 @@ logmsg_list_to_args_proc(Node *p, void *closure)
 		}
 		else
 #endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
-		    error( 1, 0,
-		           "Unknown format character or not a list atribute: %c", f[-1]) ;
+		    error (1, 0,
+		           "Unknown format character or not a list atribute: %c", f[-1]);
 		/* NOTREACHED */
 		break;
 	}
 	/* copy the attribute into an argument */
 #ifdef SUPPORT_OLD_INFO_FMT_STRINGS
-	if( c->onearg )
+	if (c->onearg)
 	{
-	    if( c->firstpass )
+	    if (c->firstpass)
 	    {
 		c->firstpass = 0;
-		doff = d - *( c->buf );
-		expand_string( c->buf, c->length,
-		               doff + strlen( c->srepos ) + 1 );
-		d = *( c->buf ) + doff;
-		strncpy( d, c->srepos, strlen( c->srepos ) );
-		d += strlen( c->srepos );
+		doff = d - *c->buf;
+		expand_string (c->buf, c->length,
+		               doff + strlen (c->srepos) + 1);
+		d = *c->buf + doff;
+		strncpy (d, c->srepos, strlen (c->srepos));
+		d += strlen (c->srepos);
 	    	*d++ = ' ';
 	    }
 	}
 	else /* c->onearg */
 #endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
 	{
-	    if ( c->quotes )
+	    if (c->quotes)
 	    {
-		arg = cmdlineescape( c->quotes, arg );
+		arg = cmdlineescape (c->quotes, arg);
 	    }
 	    else
 	    {
-		arg = cmdlinequote( '"', arg );
+		arg = cmdlinequote ('"', arg);
 	    }
 	} /* !c->onearg */
-	doff = d - *( c->buf );
-	expand_string( c->buf, c->length, doff + strlen( arg ) );
-	d = *( c->buf ) + doff;
-	strncpy( d, arg, strlen( arg ) );
-	d += strlen( arg );
+	doff = d - *c->buf;
+	expand_string (c->buf, c->length, doff + strlen (arg));
+	d = *c->buf + doff;
+	strncpy (d, arg, strlen (arg));
+	d += strlen (arg);
 #ifdef SUPPORT_OLD_INFO_FMT_STRINGS
-	if( !c->onearg )
+	if (!c->onearg)
 #endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
-	    free( arg );
+	    free (arg);
 
 	/* Always put the extra space on.  we'll have to back up a char
 	 * when we're done, but that seems most efficient.
 	 */
-	doff = d - *( c->buf );
-	expand_string( c->buf, c->length, doff + 1 );
-	d = *( c->buf ) + doff;
+	doff = d - *c->buf;
+	expand_string (c->buf, c->length, doff + 1);
+	d = *c->buf + doff;
 #ifdef SUPPORT_OLD_INFO_FMT_STRINGS
-	if( c->onearg && *f ) *d++ = ',';
+	if (c->onearg && *f) *d++ = ',';
 	else
 #endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
 	    *d++ = ' ';
     }
     /* correct our original pointer into the buff */
-    *( c->d ) = d;
+    *c->d = d;
     return 0;
 }
 

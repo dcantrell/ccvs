@@ -128,7 +128,7 @@ static char *rcs_lockfilename (char *);
    string comparisons.  This macro speeds things up a bit by skipping
    the function call when the first characters are different.  It
    evaluates its arguments multiple times.  */
-#define STREQ(a, b) ((a)[0] == (b)[0] && strcmp ((a), (b)) == 0)
+#define STREQ(a, b) (*(char *)(a) == *(char *)(b) && strcmp ((a), (b)) == 0)
 
 static char * getfullCVSname (char *, char **);
 
@@ -565,7 +565,7 @@ RCS_reparsercsfile (RCSNode *rdata, FILE **pfp, struct rcsbuffer *rcsbufp)
 	q = getnode ();
 	q->type = RCSVERS;
 	q->delproc = rcsvers_delproc;
-	q->data = (char *) vnode;
+	q->data = vnode;
 	q->key = vnode->version;
 
 	/* add the nodes to the list */
@@ -732,7 +732,7 @@ RCS_fully_parse (RCSNode *rcs)
 		   "mismatch in rcs file %s between deltas and deltatexts (%s)",
 		   rcs->path, key);
 
-	vnode = (RCSVers *) vers->data;
+	vnode = vers->data;
 
 	while (rcsbuf_getkey (&rcsbuf, &key, &value))
 	{
@@ -947,7 +947,7 @@ free_rcsvers_contents (RCSVers *rnode)
 static void
 rcsvers_delproc (Node *p)
 {
-    free_rcsvers_contents ((RCSVers *) p->data);
+    free_rcsvers_contents (p->data);
 }
 
 /* These functions retrieve keys and values from an RCS file using a
@@ -2602,7 +2602,7 @@ RCS_getbranch (RCSNode *rcs, char *tag, int force_tag_match)
 		else
 		    return (RCS_head (rcs));
 	    }
-	    vn = (RCSVers *) p->data;
+	    vn = p->data;
 	    cp = vn->next;
 	}
 	free (xtag);
@@ -2635,7 +2635,7 @@ RCS_getbranch (RCSNode *rcs, char *tag, int force_tag_match)
     }
 
     /* find the first element of the branch we are looking for */
-    vn = (RCSVers *) p->data;
+    vn = p->data;
     if (vn->branches == NULL)
 	return (NULL);
     xtag = xmalloc (strlen (tag) + 1 + 1);	/* 1 for the extra '.' */
@@ -2669,7 +2669,7 @@ RCS_getbranch (RCSNode *rcs, char *tag, int force_tag_match)
 	    else
 		return (RCS_head (rcs));
 	}
-	vn = (RCSVers *) p->data;
+	vn = p->data;
 	nextvers = vn->next;
     } while (nextvers != NULL);
 
@@ -2756,7 +2756,7 @@ RCS_getbranchpoint (RCSNode *rcs, char *target)
 	error (0, 0, "%s: can't find branch point %s", rcs->path, target);
 	return NULL;
     }
-    rev = (RCSVers *) vp->data;
+    rev = vp->data;
 
     *bp++ = '.';
     while (*bp && *bp != '.')
@@ -2845,7 +2845,7 @@ RCS_getdate (RCSNode *rcs, char *date, int force_tag_match)
 	while (p != NULL)
 	{
 	    /* if the date of this one is before date, take it */
-	    vers = (RCSVers *) p->data;
+	    vers = p->data;
 	    if (RCS_datecmp (vers->date, date) <= 0)
 	    {
 		cur_rev = vers->version;
@@ -2883,7 +2883,7 @@ RCS_getdate (RCSNode *rcs, char *date, int force_tag_match)
 	{
 	    char *date_1_1 = vers->date;
 
-	    vers = (RCSVers *) p->data;
+	    vers = p->data;
 	    if (RCS_datecmp (vers->date, date_1_1) != 0)
 		return xstrdup ("1.1");
 	}
@@ -2939,7 +2939,7 @@ RCS_getdatebranch (RCSNode *rcs, char *date, char *branch)
     free (xrev);
     if (p == NULL)
 	return (NULL);
-    vers = (RCSVers *) p->data;
+    vers = p->data;
 
     /* Tentatively use this revision, if it is early enough.  */
     if (RCS_datecmp (vers->date, date) <= 0)
@@ -2972,7 +2972,7 @@ RCS_getdatebranch (RCSNode *rcs, char *date, char *branch)
     /* walk the next pointers until you find the end, or the date is too late */
     while (p != NULL)
     {
-	vers = (RCSVers *) p->data;
+	vers = p->data;
 	if (RCS_datecmp (vers->date, date) <= 0)
 	    cur_rev = vers->version;
 	else
@@ -3031,7 +3031,7 @@ RCS_getrevtime (RCSNode *rcs, char *rev, char *date, int fudge)
     p = findnode (rcs->versions, rev);
     if (p == NULL)
 	return (-1);
-    vers = (RCSVers *) p->data;
+    vers = p->data;
 
     /* split up the date */
     if (sscanf (vers->date, SDATEFORM, &xtm.tm_year, &xtm.tm_mon,
@@ -3296,7 +3296,7 @@ RCS_isdead (RCSNode *rcs, const char *tag)
     if (p == NULL)
 	return (0);
 
-    version = (RCSVers *) p->data;
+    version = p->data;
     return (version->dead);
 }
 
@@ -4102,7 +4102,7 @@ RCS_checkout (RCSNode *rcs, char *workfile, char *rev, char *nametag, char *opti
 	if (vp == NULL)
 	    error (1, 0, "internal error: no revision information for %s",
 		   rev == NULL ? rcs->head : rev);
-	vers = (RCSVers *) vp->data;
+	vers = vp->data;
 
 	/* First we look for symlinks, which are simplest to handle. */
 	info = findnode (vers->other_delta, "symlink");
@@ -4127,7 +4127,7 @@ RCS_checkout (RCSNode *rcs, char *workfile, char *rev, char *nametag, char *opti
 		error (1, errno, "cannot remove %s", dest);
 	    if (symlink (info->data, dest) < 0)
 		error (1, errno, "cannot create symbolic link from %s to %s",
-		       dest, info->data);
+		       dest, (char *)info->data);
 	    if (free_value)
 		free (value);
 	    if (free_rev)
@@ -4172,8 +4172,7 @@ RCS_checkout (RCSNode *rcs, char *workfile, char *rev, char *nametag, char *opti
 
 		if (uptodate_link != NULL)
 		{
-		    struct hardlink_info *hlinfo =
-			(struct hardlink_info *) uptodate_link->data;
+		    struct hardlink_info *hlinfo = uptodate_link->data;
 
 		    if (link (uptodate_link->key, workfile) < 0)
 			error (1, errno, "cannot link %s to %s",
@@ -4215,7 +4214,7 @@ RCS_checkout (RCSNode *rcs, char *workfile, char *rev, char *nametag, char *opti
 	    if (sscanf (info->data, "%15s %lu",
 			devtype, &devnum_long) < 2)
 		error (1, 0, "%s:%s has bad `special' newphrase %s",
-		       workfile, vers->version, info->data);
+		       workfile, vers->version, (char *)info->data);
 	    devnum = devnum_long;
 	    if (STREQ (devtype, "character"))
 		special_file = S_IFCHR;
@@ -4223,7 +4222,7 @@ RCS_checkout (RCSNode *rcs, char *workfile, char *rev, char *nametag, char *opti
 		special_file = S_IFBLK;
 	    else
 		error (0, 0, "%s is a special file of unsupported type `%s'",
-		       workfile, info->data);
+		       workfile, (char *)info->data);
 	}
     }
 #endif /* PRESERVE_PERMISSIONS_SUPPORT */
@@ -4241,7 +4240,7 @@ RCS_checkout (RCSNode *rcs, char *workfile, char *rev, char *nametag, char *opti
 		       rev == NULL ? rcs->head : rev);
 	}
 
-	expand_keywords (rcs, (RCSVers *) vp->data, nametag, log, loglen,
+	expand_keywords (rcs, vp->data, nametag, log, loglen,
 			 expand, value, len, &newvalue, &len);
 
 	if (newvalue != value)
@@ -4523,7 +4522,7 @@ RCS_findlock_or_tip (RCSNode *rcs)
 		   lock->key);
 	    return NULL;
 	}
-	return (RCSVers *) p->data;
+	return p->data;
     }
 
     /* No existing lock.  The RCS rule is that this is an error unless
@@ -4538,7 +4537,7 @@ RCS_findlock_or_tip (RCSNode *rcs)
        that in other ways if at all anyway (e.g. rcslock.pl).  */
 
     p = findnode (rcs->versions, RCS_getbranch (rcs, rcs->branch, 0));
-    return (RCSVers *) p->data;
+    return p->data;
 }
 
 /* Revision number string, R, must contain a `.'.
@@ -4662,7 +4661,7 @@ RCS_addbranch (RCSNode *rcs, const char *branch)
 	return NULL;
     }
     free (branchpoint);
-    branchnode = (RCSVers *) nodep->data;
+    branchnode = nodep->data;
 
     /* If BRANCH was a full branch number, make sure it is higher than MAX. */
     if ((numdots (branch) & 1) == 1)
@@ -4951,7 +4950,7 @@ workfile);
 	nodep = getnode();
 	nodep->type = RCSVERS;
 	nodep->delproc = rcsvers_delproc;
-	nodep->data = (char *) delta;
+	nodep->data = delta;
 	nodep->key = delta->version;
 	(void) addnode (rcs->versions, nodep);
 
@@ -5131,7 +5130,7 @@ workfile);
 	}
 
 	nodep = findnode (rcs->versions, tip);
-	commitpt = (RCSVers *) nodep->data;
+	commitpt = nodep->data;
 
 	free (branch);
 	free (newrev);
@@ -5160,7 +5159,7 @@ workfile);
 	    {
 		error (0, 0, "%s: revision %s locked by %s",
 		       rcs->path,
-		       nodep->key, nodep->data);
+		       nodep->key, (char *)nodep->data);
 		status = 1;
 		goto checkin_done;
 	    }
@@ -5324,7 +5323,7 @@ workfile);
     nodep = getnode();
     nodep->type = RCSVERS;
     nodep->delproc = rcsvers_delproc;
-    nodep->data = (char *) delta;
+    nodep->data = delta;
     nodep->key = delta->version;
     (void) addnode (rcs->versions, nodep);
 	
@@ -5727,7 +5726,7 @@ RCS_lock (RCSNode *rcs, char *rev, int lock_quiet)
 	}
 	delnode (p);
 #else
-	error (1, 0, "Revision %s is already locked by %s", xrev, p->data);
+	error (1, 0, "Revision %s is already locked by %s", xrev, (char *)p->data);
 #endif
     }
 
@@ -5840,7 +5839,7 @@ RCS_unlock (RCSNode *rcs, char *rev, int unlock_quiet)
 	char *repos, *workfile;
 	if (!unlock_quiet)
 	    error (0, 0, "\
-%s: revision %s locked by %s; breaking lock", rcs->path, xrev, lock->data);
+%s: revision %s locked by %s; breaking lock", rcs->path, xrev, (char *)lock->data);
 	repos = xstrdup (rcs->path);
 	workfile = strrchr (repos, '/');
 	*workfile++ = '\0';
@@ -6134,10 +6133,10 @@ RCS_delete_revs (RCSNode *rcs, char *tag1, char *tag2, int inclusive)
     {
 	/* Walk deltas from BRANCHPOINT on, looking for REV1. */
 	nodep = findnode (rcs->versions, branchpoint);
-	revp = (RCSVers *) nodep->data;
+	revp = nodep->data;
 	while (revp->next != NULL && ! STREQ (revp->next, rev1))
 	{
-	    revp = (RCSVers *) nodep->data;
+	    revp = nodep->data;
 	    nodep = findnode (rcs->versions, revp->next);
 	}
 	if (revp->next == NULL)
@@ -6181,7 +6180,7 @@ RCS_delete_revs (RCSNode *rcs, char *tag1, char *tag2, int inclusive)
     while (!found && next != NULL)
     {
 	nodep = findnode (rcs->versions, next);
-	revp = (RCSVers *) nodep->data;
+	revp = nodep->data;
 
 	if (rev2 != NULL)
 	    found = STREQ (revp->version, rev2);
@@ -6353,7 +6352,7 @@ RCS_delete_revs (RCSNode *rcs, char *tag1, char *tag2, int inclusive)
 
 	/* Save the new change text in after's delta node. */
 	nodep = findnode (rcs->versions, after);
-	revp = (RCSVers *) nodep->data;
+	revp = nodep->data;
 
 	assert (revp->text == NULL);
 
@@ -6381,7 +6380,7 @@ RCS_delete_revs (RCSNode *rcs, char *tag1, char *tag2, int inclusive)
 	 next = revp->next)
     {
 	nodep = findnode (rcs->versions, next);
-	revp = (RCSVers *) nodep->data;
+	revp = nodep->data;
 	revp->outdated = 1;
     }
 
@@ -6405,7 +6404,7 @@ RCS_delete_revs (RCSNode *rcs, char *tag1, char *tag2, int inclusive)
 	else if (STREQ (rev1, branchpoint))
 	{
 	    nodep = findnode (rcs->versions, before);
-	    revp = (RCSVers *) nodep->data;
+	    revp = nodep->data;
 	    nodep = revp->branches->list->next;
 	    while (nodep != revp->branches->list &&
 		   ! STREQ (nodep->key, rev1))
@@ -6422,7 +6421,7 @@ RCS_delete_revs (RCSNode *rcs, char *tag1, char *tag2, int inclusive)
 	else
 	{
 	    nodep = findnode (rcs->versions, before);
-	    beforep = (RCSVers *) nodep->data;
+	    beforep = nodep->data;
 	    free (beforep->next);
 	    beforep->next = xstrdup (after);
 	}
@@ -7018,7 +7017,7 @@ RCS_deltas (RCSNode *rcs, FILE *fp, struct rcsbuffer *rcsbuf, char *version, enu
 	    /* Stash the previous version.  */
 	    prev_vers = vers;
 
-	    vers = (RCSVers *) node->data;
+	    vers = node->data;
 	    next = vers->next;
 
 	    /* Compare key and trunkversion now, because key points to
@@ -7568,7 +7567,7 @@ static int putlock_proc (Node *, void *);
 static int
 putlock_proc (Node *symnode, void *fp)
 {
-    return fprintf ((FILE *) fp, "\n\t%s:%s", symnode->data, symnode->key);
+    return fprintf ((FILE *) fp, "\n\t%s:%s", (char *)symnode->data, symnode->key);
 }
 
 static int
@@ -7755,7 +7754,7 @@ RCS_putdtree (RCSNode *rcs, char *rev, FILE *fp)
                rcs->path);
     }
  
-    versp = (RCSVers *) p->data;
+    versp = p->data;
 
     /* Print the delta node and recurse on its `next' node.  This prints
        the trunk.  If there are any branches printed on this revision,
@@ -7862,7 +7861,7 @@ RCS_copydeltas (RCSNode *rcs, FILE *fin, struct rcsbuffer *rcsbufin, FILE *fout,
 	}
 
 	np = findnode (rcs->versions, dtext->version);
-	dadmin = (RCSVers *) np->data;
+	dadmin = np->data;
 
 	/* If this revision has been outdated, just skip it. */
 	if (dadmin->outdated)
@@ -7972,9 +7971,7 @@ RCS_copydeltas (RCSNode *rcs, FILE *fin, struct rcsbuffer *rcsbufin, FILE *fout,
 static int
 count_delta_actions (Node *np, void *ignore)
 {
-    RCSVers *dadmin;
-
-    dadmin = (RCSVers *) np->data;
+    RCSVers *dadmin = np->data;
 
     if (dadmin->outdated)
 	return 1;

@@ -79,9 +79,7 @@ static int write_ent_proc (Node *, void *);
 static int
 write_ent_proc (Node *node, void *closure)
 {
-    Entnode *entnode;
-
-    entnode = (Entnode *) node->data;
+    Entnode *entnode = node->data;
 
     if (closure != NULL && entnode->type != ENT_FILE)
 	*(int *) closure = 1;
@@ -133,7 +131,7 @@ write_entries (List *list)
 	/* We didn't write out any directories.  Check the list
            private data to see whether subdirectory information is
            known.  If it is, we need to write out an empty D line.  */
-	sdtp = (struct stickydirtag *) list->list->data;
+	sdtp = list->list->data;
 	if (sdtp == NULL || sdtp->subdirs)
 	    if (fprintf (entfile, "D\n") < 0)
 		error (1, errno, "cannot write %s", entfilename);
@@ -241,9 +239,8 @@ Register (List *list, char *fname, char *vn, char *ts, char *options, char *tag,
 static void
 freesdt (Node *p)
 {
-    struct stickydirtag *sdtp;
+    struct stickydirtag *sdtp = p->data;
 
-    sdtp = (struct stickydirtag *) p->data;
     if (sdtp->tag)
 	free (sdtp->tag);
     if (sdtp->date)
@@ -452,7 +449,7 @@ Entries_Open (int aflag, char *update_dir)
 	sdtp->nonbranch = dirnonbranch;
 
 	/* feed it into the list-private area */
-	entries->list->data = (char *) sdtp;
+	entries->list->data = sdtp;
 	entries->list->delproc = freesdt;
     }
 
@@ -517,7 +514,7 @@ Entries_Open (int aflag, char *update_dir)
 	sdtp = (struct stickydirtag *) xmalloc (sizeof (*sdtp));
 	memset ((char *) sdtp, 0, sizeof (*sdtp));
 	sdtp->subdirs = 0;
-	entries->list->data = (char *) sdtp;
+	entries->list->data = sdtp;
 	entries->list->delproc = freesdt;
     }
 
@@ -554,9 +551,8 @@ Entries_Close(List *list)
 static void
 Entries_delproc (Node *node)
 {
-    Entnode *p;
+    Entnode *p = node->data;
 
-    p = (Entnode *) node->data;
     Entnode_Destroy(p);
 }
 
@@ -586,7 +582,7 @@ AddEntryNode (List *list, Entnode *entdata)
        assume that the key is dynamically allocated.  The user's free proc
        should be responsible for freeing the key. */
     p->key = xstrdup (entdata->user);
-    p->data = (char *) entdata;
+    p->data = entdata;
 
     /* put the node into the list */
     addnode (list, p);
@@ -772,11 +768,10 @@ ParseTag (char **tagp, char **datep, int *nonbranchp)
 void
 Subdirs_Known (List *entries)
 {
-    struct stickydirtag *sdtp;
+    struct stickydirtag *sdtp = entries->list->data;
 
     /* If there is no list private data, that means that the
        subdirectory information is known.  */
-    sdtp = (struct stickydirtag *) entries->list->data;
     if (sdtp != NULL && ! sdtp->subdirs)
     {
 	FILE *fp;

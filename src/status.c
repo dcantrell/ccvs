@@ -343,7 +343,7 @@ tag_list_proc (Node *p, void *closure)
 		   + (branch ? strlen (branch) : strlen (p->data)));
     sprintf (buf, "\t%-25s\t(%s: %s)\n", p->key,
 	     branch ? "branch" : "revision",
-	     branch ? branch : p->data);
+	     branch ? branch : (char *)p->data);
     cvs_output (buf, 0);
     free (buf);
 
