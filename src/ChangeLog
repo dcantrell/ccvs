@@ -1,3 +1,24 @@
+1998-03-07  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* sanity.sh: Rename permissions test to perms since that is what
+	each of its individual tests are named.
+	* sanity.sh (perms symlinks hardlinks): Change CVSROOT to
+	CVSROOT_DIRNAME where appropriate.
+	(perms symlinks hardlinks): Disable/adjust the meat of the tests for
+	remote.
+	(symlinks): Link to ${TESTDIR}/fumble rather than
+	/fumble/mumble/grumble.  We shouldn't be making assumptions about
+	what might exist in random directories outside ${TESTDIR}.
+	* hardlink.c (cache_hardlinks_proc): Add comment about trimming
+	whitespace.
+
+1998-03-07  Tim Pierce  <twp@skepsis.com>
+
+	* rcs.c (RCS_checkout): Negation bug when checking out symlinks:
+	existence_error should be !existence_error.
+	* sanity.sh (permissions symlinks hardlinks): New tests, for
+	PreservePermissions.
+
 1998-03-04  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* version.c: Change version number to 1.9.26.1.

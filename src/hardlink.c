@@ -123,6 +123,8 @@ cache_hardlinks_proc (node, data)
 	return err;
 
     /* Trim trailing whitespace. */
+    /* FIXME: Why are we doing this?  It would seem to be bogus if the
+       filenames themselves contain (trailing, in this case) spaces.  */
     p = linked_files + strlen(linked_files) - 1;
     while (p > linked_files && isspace (*p))
 	*p-- = '\0';
