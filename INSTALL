@@ -18,7 +18,7 @@ i386 family:
 	Gateway P5-66 (pentium) running Solaris 2.4 using gcc (about 1.4A2)
 	PC Clone running UnixWare v1.1.1 using gcc (about 1.4A2)
 	PC Clone running Linux 1.1.48 using gcc (about 1.4A2)
-        PC Clone running Fintronic Linux 1.2.5 (***) (1.4.91)
+        PC Clone running Fintronic Linux 1.2.5 (***) (1.4.92)
 MIPS:
 	DECstation running Ultrix 4.2a (1.4.90)
 	DECstation running Ultrix 4.3 (1.4.90)
