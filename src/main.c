@@ -79,8 +79,22 @@ int update PROTO((int argc, char **argv));
 static const struct cmd
 {
     char *fullname;		/* Full name of the function (e.g. "commit") */
-    char *nick1;		/* alternate name (e.g. "ci") */
-    char *nick2;		/* another alternate names (e.g. "ci") */
+
+    /* Synonyms for the command, nick1 and nick2.  We supply them
+       mostly for two reasons: (1) CVS has always supported them, and
+       we need to maintain compatibility, (2) if there is a need for a
+       version which is shorter than the fullname, for ease in typing.
+       Synonyms have the disadvantage that people will see "new" and
+       then have to think about it, or look it up, to realize that is
+       the operation they know as "add".  Also, this means that one
+       cannot create a command "cvs new" with a different meaning.  So
+       new synonyms are probably best used sparingly, and where used
+       should be abbreviations of the fullname (preferably consisting
+       of the first 2 or 3 or so letters).  */
+
+    char *nick1;
+    char *nick2;
+
     int (*func) ();		/* Function takes (argc, argv) arguments. */
 } cmds[] =
 
