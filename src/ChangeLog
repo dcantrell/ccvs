@@ -1,5 +1,7 @@
 Thu Jul 10 00:02:54 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* rcscmds.c (RCS_exec_rcsdiff): Add comment about timezones.
+
 	* server.c, cvs.h (cvs_output_binary): New function.
 	* rcs.c (RCS_checkout): For a binary file, call cvs_output_binary
 	rather than cvs_output.
