@@ -326,10 +326,10 @@ remove_locks (void)
     }
 
     /* clean up multiple locks (if any) */
-    if (locklist != (List *) NULL)
+    if (locklist != NULL)
     {
-	(void) walklist (locklist, unlock_proc, NULL);
-	locklist = (List *) NULL;
+	walklist (locklist, unlock_proc, NULL);
+	locklist = NULL;
     }
 }
 
