@@ -1,3 +1,9 @@
+2003-09-26  Mark D. Baushke  <mdb@cvshome.org>
+
+	* sccs2rcs.in: Use @AWK@ to avoid ancient Solaris awk (no support
+	for the "?" operator). Add support for handling binary SCCS files.
+	(Suggestion from Allan Schrum <agschrum@mindspring.com>.)
+	
 2003-08-06  Derek Price  <derek@ximbiot.com>
 
 	* commit_prep.in, log_accum.in: Port copious changes from Karl Fogel
