@@ -5131,7 +5131,29 @@ error ENOMEM Virtual memory exhausted.\n");
 	}
 	free (orig_cmd);
     }
-    free(error_prog_name);
+    free (error_prog_name);
+
+    /* We expect the client is done talking to us at this point.  If there is
+     * any data in the buffer or on the network pipe, then something we didn't
+     * prepare for is happening.
+     */
+    if (!buf_empty (buf_from_net))
+    {
+	/* Try to send the error message to the client, but also syslog it, in
+	 * case the client isn't listening anymore.
+	 */
+#ifdef HAVE_SYSLOG_H
+	/* FIXME: Can the IP address of the connecting client be retrieved
+	 * and printed here?
+	 */
+	syslog (LOG_DAEMON | LOG_ERR, "Dying gasps received from client.");
+#endif
+	error (0, 0, "Dying gasps received from client.");
+    }
+
+    /* server_cleanup() will be called on a normal exit and close the buffers
+     * explicitly.
+     */
     return 0;
 }
 

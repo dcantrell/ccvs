@@ -1,5 +1,10 @@
 2004-02-25  Derek Price  <derek@ximbiot.com>
 
+	* buffer.c (buf_empty): New function.
+	* server.c (server): Check for unread data in buffer before closing.
+
+2004-02-25  Derek Price  <derek@ximbiot.com>
+
 	* release.c (release): Restore the initial directory before and after
 	calling various sections of code that expect it to prevent corruption
 	of CVS/Entries files on release of a subdir and tell unedit() what to
