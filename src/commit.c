@@ -85,13 +85,13 @@ static time_t last_register_time;
 static const char *const commit_usage[] =
 {
     "Usage: %s %s [-nRlf] [-m msg | -F logfile] [-r rev] files...\n",
-    "\t-n\tDo not run the module program (if any).\n",
-    "\t-R\tProcess directories recursively.\n",
-    "\t-l\tLocal directory only (not recursive).\n",
-    "\t-f\tForce the file to be committed; disables recursion.\n",
-    "\t-F file\tRead the log message from file.\n",
-    "\t-m msg\tLog message.\n",
-    "\t-r rev\tCommit to this branch or trunk revision.\n",
+    "    -n          Do not run the module program (if any).\n",
+    "    -R          Process directories recursively.\n",
+    "    -l          Local directory only (not recursive).\n",
+    "    -f          Force the file to be committed; disables recursion.\n",
+    "    -F logfile  Read the log message from file.\n",
+    "    -m msg      Log message.\n",
+    "    -r rev      Commit to this branch or trunk revision.\n",
     "(Specify the --help global option for a list of other help options)\n",
     NULL
 };
