@@ -1,5 +1,8 @@
 Thu Sep 25 10:57:39 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* getdate.y (get_date): If gmtime returns NULL, try to cope.
+	* getdate.c: Regenerated using byacc.
+
 	* getdate.y: Remove comment about sending email concerning this file
 	to Rich Salz.
 	* getdate.c: Regenerated using byacc.
