@@ -1,5 +1,9 @@
 2004-05-17  Derek Price  <derek@ximbiot.com>
 
+	* BUGS: Note assertion failure of r* commands.
+
+2004-05-17  Derek Price  <derek@ximbiot.com>
+
 	* BUGS: Note current `cvs ls' assertion failure.  Remove out of date
 	comment about out of date Windows build files and several bug reports
 	that are so old, without similar recent reports, that I'm assuming that

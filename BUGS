@@ -102,6 +102,11 @@ formats.
 * CVS currently breaks at an assertion failure when `cvs ls <filename>' is used
   to list information for a single file.
 
+* Most of the remote commands are encountering assertion failures when listing
+  the toplevel of the repository (e.g. `cvs rlog .').  This appears to be
+  related to the symlinked CVS root fix.
+
+
 * Status
 
   This experimental version of CVS contains new features which may not have
