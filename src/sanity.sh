@@ -3705,11 +3705,11 @@ done'
 	  # Add a file with an RCS keyword.
 	  echo '$''Name$' > file1
 	  echo '1' >> file1
-	  dotest death2-2 "${testcvs} add file1" \
+	  dotest patch-2 "${testcvs} add file1" \
 "${PROG}"' [a-z]*: scheduling file `file1'\'' for addition
 '"${PROG}"' [a-z]*: use '\''cvs commit'\'' to add this file permanently'
 
-	  dotest death2-3 "${testcvs} -q commit -m add" \
+	  dotest patch-3 "${testcvs} -q commit -m add" \
 'RCS file: /tmp/cvs-sanity/cvsroot/first-dir/file1,v
 done
 Checking in file1;
