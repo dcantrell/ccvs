@@ -5822,6 +5822,8 @@ slightly different way; @pxref{history options}).
 @c   other reasons.
 @c cvs editors
 @c   current Tue Jun 11 02:54:53 1996 GMT
+@c cvs history
+@c   current 06/11 02:54 +0000
 @c any others?
 @c There is a good chance the proper solution has to
 @c involve at least some level of letting the user
