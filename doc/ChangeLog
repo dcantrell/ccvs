@@ -1,3 +1,10 @@
+2001-03-23  Derek Price  <derek.price@openavenue.com>
+
+	* Makefile.am (MOSTLYCLEANFILES):  Add cvs.cps & cvs.fns as a temporary
+	workaround for an Automake deficiency.
+
+	* Makefile.in:  Regenerated.
+
 2001-03-14  Derek Price  <derek.price@openavenue.com>
 
 	* Makefile.in: Regenerated

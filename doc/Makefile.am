@@ -51,6 +51,11 @@ EXTRA_DIST = \
 	cvs.aux \
 	cvsclient.aux
 
+# Listing cvs.cps & cvs.fns here is a workaround for an Automake deficiency
+MOSTLYCLEANFILES = \
+	cvs.cps \
+	cvs.fns
+
 CLEANFILES = \
 	$(PDFS) \
 	$(TXTS)
