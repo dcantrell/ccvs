@@ -1,3 +1,10 @@
+1999-12-10  Larry Jones <larry.jones@sdrc.com>
+
+	* commit.c (remove_file): Call history_write with update_dir NULL
+	like Checkin() does for add and modify.
+	* sanity.sh (basic2-64): Update to match, add "R" records to expected
+	remote output.
+
 1999-12-09  K.J. Paradise (kj@sourcegear.com)
 
 	* history.c, commit.c, sanity.sh: found (I think) final 
