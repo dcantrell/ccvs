@@ -1,5 +1,12 @@
 1999-05-04  Jim Kingdon  <http://www.cyclic.com>
 
+	* cvs.texinfo (Password authentication security): Remove sentence
+	about how no one has audited pserver for holes; a lot of holes
+	have been closed, looking for, &c, since that was written.
+	In the summary, reword to reflect the fact that sniffing a
+	readonly password does not imply general system access (as far as
+	I know, of course).
+
 	* cvs.texinfo (Connection): Also suggest inetd -d.
 
 1999-04-28  Jim Kingdon  <http://www.cyclic.com>

@@ -2496,9 +2496,6 @@ but no one has done so as of this writing.
 @c closes enough holes to recommend it (plus it is
 @c *very* easy to accidentally screw up a setup of this
 @c type).
-Furthermore, there may be other ways in which having
-access to @sc{cvs} allows people to gain more general
-access to the system; no one has done a careful audit.
 
 Note that because the @file{$CVSROOT/CVSROOT} directory
 contains @file{passwd} and other files which are used
@@ -2522,8 +2519,8 @@ using pserver.
 @c someone who wants to play with it, document it, &c.
 
 In summary, anyone who gets the password gets
-repository access, and some measure of general system
-access as well.  The password is available to anyone
+repository access (which may imply some measure of general system
+access as well).  The password is available to anyone
 who can sniff network packets or read a protected
 (i.e., user read-only) file.  If you want real
 security, get Kerberos.
