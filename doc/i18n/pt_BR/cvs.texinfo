@@ -5752,7 +5752,7 @@ manter várias releases em paralelo, você deve usar um ramo
 @c <en>@node Tags
 @node Etiquetas
 @c <en>@section Tags--Symbolic revisions
-@section Etiquetas--Revisões simbólicas
+@section Etiquetas (Tags)--Revisões simbólicas
 @c <en>@cindex Tags
 @cindex Etiquetas
 
@@ -5763,7 +5763,13 @@ manter várias releases em paralelo, você deve usar um ramo
 @c <en>between two releases.  As an example, some of the
 @c <en>source files that make up @sc{rcs} 5.6 have the following
 @c <en>revision numbers:
-Os números de revisão tem uma vida a parte.  Eles não precisam ter nada a ver com os números de release de seu produto de software.  Dependendo de como você usa o @sc{cvs}, os números de revisão podem mudar várias vezes entre duas releases.  Como um exemplo, alguns dos arquivos fonte do @sc{rcs} 5.6 tinham os seguintes números de revisão:
+Os números de revisão tem uma vida a parte.  Eles não
+precisam ter nada a ver com os números de release de
+seu produto de software.  Dependendo de como você usa o
+@sc{cvs}, os números de revisão podem mudar várias
+vezes entre duas releases.  Como um exemplo, alguns dos
+arquivos fonte do @sc{rcs} 5.6 tinham os seguintes
+números de revisão:
 @c <en>@cindex RCS revision numbers
 @cindex números de revisão do RCS
 
@@ -5807,19 +5813,20 @@ rcsutil.c       5.10
 @c <en>starting with @samp{.}, rather than being named analogously to
 @c <en>@code{BASE} and @code{HEAD}, to avoid conflicts with
 @c <en>actual tag names.
-You can use the @code{tag} command to give a symbolic name to a
-certain revision of a file.  You can use the @samp{-v} flag to the
-@code{status} command to see all tags that a file has, and
-which revision numbers they represent.  Tag names must
-start with an uppercase or lowercase letter and can
-contain uppercase and lowercase letters, digits,
-@samp{-}, and @samp{_}.  The two tag names @code{BASE}
-and @code{HEAD} are reserved for use by @sc{cvs}.  It
-is expected that future names which are special to
-@sc{cvs} will be specially named, for example by
-starting with @samp{.}, rather than being named analogously to
-@code{BASE} and @code{HEAD}, to avoid conflicts with
-actual tag names.
+Você pode usar o comando @code{tag} para dar um nome
+simbólico para uma certa revisão de um arquivo.  Você
+pode usar a opção @samp{-v} com o comando @code{status}
+para ver todas as etiquetas que um arquivo possui, e
+que números de revisão elas representam.  Nomes de
+etiqueta devem começar com letra maiúscula ou minúscula
+e pode conter letras maiúsculas e minúsculas, dígitos,
+@samp{-} e @samp{_}.  Os dois nomes de etiqueta
+@code{BASE} e @code{HEAD} são reservados para o
+@sc{cvs}.  É esperado que nomes futuros que sejam
+especiais para o @sc{cvs} recebam nomes especiais, por
+exemplo começando com @samp{.}, sendo então nomeados de
+forma análoga a @code{BASE} e @code{HEAD}, para evitar
+conflitos com os nomes de etiqueta atuais.
 @c Including a character such as % or = has also been
 @c suggested as the naming convention for future
 @c special tag names.  Starting with . is nice because
@@ -5848,35 +5855,35 @@ actual tag names.
 @c <en>@code{cvs-1-9} or @code{cvs1_9} or what.  You might
 @c <en>even want to consider enforcing your convention in the
 @c <en>taginfo file (@pxref{user-defined logging}).
-You'll want to choose some convention for naming tags,
-based on information such as the name of the program
-and the version number of the release.  For example,
-one might take the name of the program, immediately
-followed by the version number with @samp{.} changed to
-@samp{-}, so that @sc{cvs} 1.9 would be tagged with the name
-@code{cvs1-9}.  If you choose a consistent convention,
-then you won't constantly be guessing whether a tag is
-@code{cvs-1-9} or @code{cvs1_9} or what.  You might
-even want to consider enforcing your convention in the
-taginfo file (@pxref{user-defined logging}).
+Você vai querer definir algumas convenções para nomear
+etiquetas, baseado em informações tais como nome do
+programa e número da versão da release.  Por exemplo,
+algume pode pegar o nome do programa, seguindo pelo
+número de versão com o @samp{.} trocado por @samp{-},
+de forma que o @sc{cvs} 1.9 seja etiquetado com o nome
+de @code{cvs1-9}.  Se você escolhe uma convenção
+consistente, você não vai precisar ficar constantemente
+adivinhando se a etiqueta é @code{cvs-1-9} ou
+@code{cvs1_9} ou sei lá o que.  Você pode até mesmo
+considerar reforçar esta convenção no arquivo taginfo (@pxref{user-defined logging}).
 @c Might be nice to say more about using taginfo this
 @c way, like giving an example, or pointing out any particular
 @c issues which arise.
 
 @c <en>@cindex Adding a tag
-@cindex Adding a tag
+@cindex Adicionando uma etiqueta
 @c <en>@cindex Tags, example
-@cindex Tags, example
+@cindex Etiquetas, exemplo
 @c <en>The following example shows how you can add a tag to a
 @c <en>file.  The commands must be issued inside your working
 @c <en>directory.  That is, you should issue the
 @c <en>command in the directory where @file{backend.c}
 @c <en>resides.
-The following example shows how you can add a tag to a
-file.  The commands must be issued inside your working
-directory.  That is, you should issue the
-command in the directory where @file{backend.c}
-resides.
+O exemplo seguinte mostra como você pode adicionar uma
+etiqueta a um arquivo.  Os comandos devem ser
+executados de dentro do seu diretório de trabalho.  Ou
+seja, você deve executar o comando no diretório onde @file{backend.c}
+fica.
 
 @example
 $ cvs tag rel-0-4 backend.c
@@ -5898,17 +5905,19 @@ File: backend.c         Status: Up-to-date
 
 @c <en>For a complete summary of the syntax of @code{cvs tag},
 @c <en>including the various options, see @ref{Invoking CVS}.
-For a complete summary of the syntax of @code{cvs tag},
-including the various options, see @ref{Chamando o CVS}.
+Para um resumo completo da sintaxe de @code{cvs tag},
+incluindo as várias opções, veja em @ref{Chamando o CVS}.
 
 @c <en>There is seldom reason to tag a file in isolation.  A more common use is
 @c <en>to tag all the files that constitute a module with the same tag at
 @c <en>strategic points in the development life-cycle, such as when a release
 @c <en>is made.
-There is seldom reason to tag a file in isolation.  A more common use is
-to tag all the files that constitute a module with the same tag at
-strategic points in the development life-cycle, such as when a release
-is made.
+Existem poucas razões para etiquetar um arquivo em
+separado.  Um uso mais comum é etiquetar todos os
+arquivos que fazem parte de um módulo com a mesma
+etiqueta em momentos estratégicos do ciclo de vida do
+desenvolvimento, como por exemplo, quando fica pronta
+uma release.
 
 @example
 $ cvs tag rel-1-0 .
@@ -5924,9 +5933,11 @@ T parser.c
 @c <en>(When you give @sc{cvs} a directory as argument, it generally applies the
 @c <en>operation to all the files in that directory, and (recursively), to any
 @c <en>subdirectories that it may contain.  @xref{Recursive behavior}.)
-(When you give @sc{cvs} a directory as argument, it generally applies the
-operation to all the files in that directory, and (recursively), to any
-subdirectories that it may contain.  @xref{Comportamento recursivo}.)
+(Quando você passa um diretório para o @sc{cvs} como
+argumento, ele geralmente realiza a operação em todos
+os arquivos do diretório e (recursivamente) a todo
+subdiretório que ele contenha.
+@xref{Comportamento recursivo}.)
 
 @c <en>@cindex Retrieving an old revision using tags
 @cindex Retrieving an old revision using tags
@@ -5936,10 +5947,11 @@ subdirectories that it may contain.  @xref{Comportamento recursivo}.)
 @c <en>a certain revision of a module.  This flag makes it easy to
 @c <en>retrieve the sources that make up release 1.0 of the module @samp{tc} at
 @c <en>any time in the future:
-The @code{checkout} command has a flag, @samp{-r}, that lets you check out
-a certain revision of a module.  This flag makes it easy to
-retrieve the sources that make up release 1.0 of the module @samp{tc} at
-any time in the future:
+O comando @code{checkout} tem uma opção, @samp{-r}, que
+permite pegar uma certa revisão de um módulo.  Esta
+opção torna fácil recuperar as ontes que fizeram parte
+da release 1.0 do módulo @samp{tc} a qualquer momento
+no futuro:
 
 @example
 $ cvs checkout -r rel-1-0 tc
@@ -5948,26 +5960,29 @@ $ cvs checkout -r rel-1-0 tc
 @noindent
 @c <en>This is useful, for instance, if someone claims that there is a bug in
 @c <en>that release, but you cannot find the bug in the current working copy.
-This is useful, for instance, if someone claims that there is a bug in
-that release, but you cannot find the bug in the current working copy.
+Isto pode ser útil, por exemplo, se alguem afirma que
+tem um pau naquela versão, mas você não acha o pau na
+cópia de trabalho mais recente.
 
 @c <en>You can also check out a module as it was at any given date.
 @c <en>@xref{checkout options}.  When specifying @samp{-r} to
 @c <en>any of these commands, you will need beware of sticky
 @c <en>tags; see @ref{Sticky tags}.
-You can also check out a module as it was at any given date.
-@xref{checkout options}.  When specifying @samp{-r} to
-any of these commands, you will need beware of sticky
-tags; see @ref{Etiquetas adesivas}.
+Você também pode pegar um módulo do jeito que ele
+estava em qualquer data. @xref{checkout options}.
+Quando usar @samp{-r} em qualquer destes comandos, você
+vai precisar estar atento às etiquetas adesivas; veja
+em @ref{Etiquetas adesivas}.
 
 @c <en>When you tag more than one file with the same tag you
 @c <en>can think about the tag as "a curve drawn through a
 @c <en>matrix of filename vs. revision number."  Say we have 5
 @c <en>files with the following revisions:
-When you tag more than one file with the same tag you
-can think about the tag as "a curve drawn through a
-matrix of filename vs. revision number."  Say we have 5
-files with the following revisions:
+Quando você etiqueta mais de um arquivo com a mesma
+etiqueta você pode pensar na etiqueta como "uma curva
+desenhada ao longo da matriz de nomes de arquivo por
+números de revisão".  Digamos que temos 5 arquivos com
+as seguintes revisões:
 
 @example
 @group
@@ -5989,13 +6004,13 @@ files with the following revisions:
 @c <en>way to look at it is that you "sight" through a set of
 @c <en>revisions that is "flat" along the tagged revisions,
 @c <en>like this:
-At some time in the past, the @code{*} versions were tagged.
-You can think of the tag as a handle attached to the curve
-drawn through the tagged revisions.  When you pull on
-the handle, you get all the tagged revisions.  Another
-way to look at it is that you "sight" through a set of
-revisions that is "flat" along the tagged revisions,
-like this:
+Em algum momento no passado, as versões com @code{*}
+foram etiquetadas. Você pode pensar na etiqueta como
+uma alça presa à curva que passa pelas revisões
+marcadas.  Quando você puxa a alça, vem as revisões
+etiquetadas.  outra maneira de perceber isto é ver
+através de um conjunto de revisões que foram alinhadas
+pelas revisões etiquetadas, como isto:
 
 @example
 @group
@@ -6005,7 +6020,7 @@ like this:
                         1.2
                 1.1     1.3                       _
         1.1     1.2     1.4     1.1              /
-        1.2*----1.3*----1.5*----1.2*----1.1     (--- <--- Look here
+        1.2*----1.3*----1.5*----1.2*----1.1*    (--- <--- Look here
         1.3             1.6     1.3              \_
         1.4                     1.4
                                 1.5
@@ -6144,7 +6159,7 @@ cvs tag -r 1.4 stable backend.c
 @c <en>@node Modifying tags
 @node Modificando etiquetas
 @c <en>@section Deleting, moving, and renaming tags
-@section Deleting, moving, and renaming tags
+@section Apagando, movendo e renomeando etiquetas
 
 @c Also see:
 @c  "How do I move or rename a magic branch tag?"
@@ -6155,19 +6170,19 @@ cvs tag -r 1.4 stable backend.c
 @c <en>to record the history of the repository and so deleting
 @c <en>them or changing their meaning would, generally, not be
 @c <en>what you want.
-Normally one does not modify tags.  They exist in order
-to record the history of the repository and so deleting
-them or changing their meaning would, generally, not be
-what you want.
+Normalmente não se modificam etiquetas.  Elas existem
+para registrar o histórico do repositório e, portanto,
+apagá-las ou alterar o significado delas não é, em
+geral, o que você quer.
 
 @c <en>However, there might be cases in which one uses a tag
 @c <en>temporarily or accidentally puts one in the wrong
 @c <en>place.  Therefore, one might delete, move, or rename a
 @c <en>tag.
-However, there might be cases in which one uses a tag
-temporarily or accidentally puts one in the wrong
-place.  Therefore, one might delete, move, or rename a
-tag.
+Entretanto, podem haver casos nos quais alguem usa a
+etiqueta temporariamente ou bota no lugar errado por
+acidente.  Logo, é possível apagar, mover, ou renomear
+uma etiqueta.
 
 @noindent
 @c <en>@strong{WARNING: the commands in this section are
@@ -6176,29 +6191,29 @@ tag.
 @c <en>recover from errors.  If you are a @sc{cvs}
 @c <en>administrator, you may consider restricting these
 @c <en>commands with taginfo (@pxref{user-defined logging}).}
-@strong{WARNING: the commands in this section are
-dangerous; they permanently discard historical
-information and it can be difficult or impossible to
-recover from errors.  If you are a @sc{cvs}
-administrator, you may consider restricting these
-commands with taginfo (@pxref{user-defined logging}).}
+@strong{ATENÇÃO: os comandos nesta seção são perigosos;
+eles apagam permanentemente informações históricas e
+pode ser difícil ou impossível recuperar tais
+informações em caso de erro.  Se você é um
+administrador do @sc{cvs}, você deve considerar
+restringir estes comandos com o taginfo (@pxref{user-defined logging}).}
 
 @c <en>@cindex Deleting tags
-@cindex Deleting tags
+@cindex Apagando etiquetas
 @c <en>@cindex Deleting branch tags
-@cindex Deleting branch tags
+@cindex Apagando etiquetas de ramos
 @c <en>@cindex Removing tags
-@cindex Removing tags
+@cindex Removendo etiquetas
 @c <en>@cindex Removing branch tags
-@cindex Removing branch tags
+@cindex Removendo etiquetas de ramos
 @c <en>@cindex Tags, deleting
-@cindex Tags, deleting
+@cindex Etiquetas, apagando
 @c <en>@cindex Branch tags, deleting
-@cindex Branch tags, deleting
+@cindex Etiquetas de ramos, apagando
 @c <en>To delete a tag, specify the @samp{-d} option to either
 @c <en>@code{cvs tag} or @code{cvs rtag}.  For example:
-To delete a tag, specify the @samp{-d} option to either
-@code{cvs tag} or @code{cvs rtag}.  For example:
+Para apagar uma etiqueta, especifique a opção @samp{-d}
+tanto para @code{cvs tag} quanto para @code{cvs rtag}.  Por exemplo:
 
 @example
 cvs rtag -d rel-0-4 tc
@@ -6212,32 +6227,36 @@ cvs rtag -d rel-0-4 tc
 @c <en>you are doing, the @code{-B} option may be specified to allow deletion
 @c <en>of branch tags.  In that case, any non-branch tags encountered will
 @c <en>trigger warnings and will not be deleted.
-deletes the non-branch tag @code{rel-0-4} from the module @code{tc}.
-In the event that branch tags are encountered within the repository
-with the given name, a warning message will be issued and the branch 
-tag will not be deleted.  If you are absolutely certain you know what
-you are doing, the @code{-B} option may be specified to allow deletion
-of branch tags.  In that case, any non-branch tags encountered will
-trigger warnings and will not be deleted.
+apaga a etiqueta ???non-branch??? @code{rel-0-4} do
+módulo @code{tc}. No caso de etiquetas de ramos serem
+encontradas no repositório com o nome dado, uma
+mensagem de aviso vai ser mostrada e a etiqueta de ramo
+não vai ser apagada.  Se você está absolutamente certo
+de que sabe o que está fazendo, a opção @code{-B} pode
+ser especificada para permitir que se apague as
+etiquetas de ramos.  Neste caso, qualquer etiqueta
+???non-branch??? encontrada vai disparar avisos e não
+vai ser apagada.
 
 @noindent
 @c <en>@strong{WARNING: Moving branch tags is very dangerous!  If you think
 @c <en>you need the @code{-B} option, think again and ask your @sc{cvs}
 @c <en>administrator about it (if that isn't you).  There is almost certainly
 @c <en>another way to accomplish what you want to accomplish.}
-@strong{WARNING: Moving branch tags is very dangerous!  If you think
-you need the @code{-B} option, think again and ask your @sc{cvs}
-administrator about it (if that isn't you).  There is almost certainly
-another way to accomplish what you want to accomplish.}
+@strong{ATENÇÃO: Mover etiquetas de ramos é muito
+perigoso!  Se você pensa que precisa da opção
+@code{-B}, pense duas vezes e pergunte a seu
+administrador do @sc{cvs} sobre ela (se não for você).
+É quase certo que existe outra forma de alcançar o seu objetivo.}
 
 @c <en>@cindex Moving tags
-@cindex Moving tags
+@cindex Movendo etiquetas
 @c <en>@cindex Moving branch tags
-@cindex Moving branch tags
+@cindex Movendo etiquetas de ramos
 @c <en>@cindex Tags, moving
-@cindex Tags, moving
+@cindex Etiquetas, movendo
 @c <en>@cindex Branch tags, moving
-@cindex Branch tags, moving
+@cindex Etiquetas de ramos, movendo
 @c <en>When we say @dfn{move} a tag, we mean to make the same
 @c <en>name point to different revisions.  For example, the
 @c <en>@code{stable} tag may currently point to revision 1.4
@@ -6246,14 +6265,15 @@ another way to accomplish what you want to accomplish.}
 @c <en>@samp{-F} option to either @code{cvs tag} or @code{cvs
 @c <en>rtag}.  For example, the task just mentioned might be
 @c <en>accomplished as:
-When we say @dfn{move} a tag, we mean to make the same
-name point to different revisions.  For example, the
-@code{stable} tag may currently point to revision 1.4
-of @file{backend.c} and perhaps we want to make it
-point to revision 1.6.  To move a non-branch tag, specify the
-@samp{-F} option to either @code{cvs tag} or @code{cvs
-rtag}.  For example, the task just mentioned might be
-accomplished as:
+Quando falamos em @dfn{mover} uma etiqueta, queremos
+dizer fazer com que o mesmo nome aponte para diferentes
+revisões.  Por exemplo, a etiqueta @code{stable} pode
+atualmente apontar para a revisão 1.4 do arquivo
+@file{backend.c} e talvez nós queiramos fazé-la apontar
+para a revisão 1.6.  Para mover uma etiqueta
+???non-branch???, Use a opção @samp{-F} tanto com o
+@code{cvs tag} oquanto com o @code{cvs rtag}.  Por
+exemplo, esta mudança pode ser alcançada com:
 
 @example
 cvs tag -r 1.6 -F stable backend.c
@@ -6266,27 +6286,29 @@ cvs tag -r 1.6 -F stable backend.c
 @c <en>wish to move the branch tag, the @code{-B} option may be specified.
 @c <en>In that case, non-branch tags encountered with the given
 @c <en>name are ignored with a warning message.
-If any branch tags are encountered in the repository 
-with the given name, a warning is issued and the branch
-tag is not disturbed.  If you are absolutely certain you
-wish to move the branch tag, the @code{-B} option may be specified.
-In that case, non-branch tags encountered with the given
-name are ignored with a warning message.
+Se alguma etiqueta de ramo for encontrada no
+repositório com o nome dado, um aviso é mostrado e a
+etiqueta de ramo não é alterada.  Se você está
+absolutamente certo de que você quer mover a etiquta de
+ramo, a opção @code{-B} pode ser especificada. Neste
+caso, etiquetas ???non-branch??? encontradas com o nome
+dado serão ignoradas com uma mensagem de aviso.
 
 @noindent
 @c <en>@strong{WARNING: Moving branch tags is very dangerous!  If you think you
 @c <en>need the @code{-B} option, think again and ask your @sc{cvs}
 @c <en>administrator about it (if that isn't you).  There is almost certainly
 @c <en>another way to accomplish what you want to accomplish.}
-@strong{WARNING: Moving branch tags is very dangerous!  If you think you
-need the @code{-B} option, think again and ask your @sc{cvs}
-administrator about it (if that isn't you).  There is almost certainly
-another way to accomplish what you want to accomplish.}
+@strong{ATENÇÃO: Mover etiquetas de ramos é muito
+perigoso!  Se você pensa que precisa da opção
+@code{-B}, pense duas vezes e pergunte a seu
+administrador do @sc{cvs} sobre ela (se não for você).
+É quase certo que existe outra forma de alcançar o seu objetivo.}
 
 @c <en>@cindex Renaming tags
-@cindex Renaming tags
+@cindex Renomeando etiquetas
 @c <en>@cindex Tags, renaming
-@cindex Tags, renaming
+@cindex Etiquetas, renomeando
 @c <en>When we say @dfn{rename} a tag, we mean to make a
 @c <en>different name point to the same revisions as the old
 @c <en>tag.  For example, one may have misspelled the tag name
@@ -6297,16 +6319,18 @@ another way to accomplish what you want to accomplish.}
 @c <en>this method will not work with branch tags.) 
 @c <en>This leaves the new tag on exactly the 
 @c <en>same files as the old tag.  For example:
-When we say @dfn{rename} a tag, we mean to make a
-different name point to the same revisions as the old
-tag.  For example, one may have misspelled the tag name
-and want to correct it (hopefully before others are
-relying on the old spelling).  To rename a tag, first
-create a new tag using the @samp{-r} option to
-@code{cvs rtag}, and then delete the old name.  (Caution:
-this method will not work with branch tags.) 
-This leaves the new tag on exactly the 
-same files as the old tag.  For example:
+Quando falamos em @dfn{renomear} uma etiqueta, queremos
+dizer fazer com que um nome diferente aponte para para
+as mesmas revisões que a etiqueta antiga.  Por exemplo,
+alguem pode ter digitado errado o nome de uma etiqueta
+e quer corrigir isto (de preferência antes que outros
+caiam no mesmo erro).  Para renomear uma etiqueta,
+primeiro crie uma nova etiqueta usando a opção
+@samp{-r} para o @code{cvs rtag}, e então apague o nome
+antigo.  (Cuidado: este método não vai funcionar com
+etiquetas de ramos). Isto deixa a nova etiqueta
+exatamente nos mesmos arquivos que a etiqueta antiga.
+Por exemplo:
 
 @example
 cvs rtag -r old-name-0-4 rel-0-4 tc
