@@ -1,5 +1,7 @@
 Thu Feb  1 14:38:04 1996  Karl Fogel  <kfogel@floss.red-bean.com>
 
+        * configure: re-ran autoconf.
+
         * Makefile.in (USOURCE_SUBDIRS, SUBDIRS): abstract unix source
         subdirs to new var USOURCE_SUBDIRS, for lint's sake and possibly
         etags's someday.
