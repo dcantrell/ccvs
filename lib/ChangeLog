@@ -1,3 +1,10 @@
+Mon Nov  6 19:20:56 1995  Karl Fogel  <kfogel@floss.cyclic.com>
+
+        * system.h (STAT_MACROS_BROKEN): in defining the S_IF* macros,
+        don't fold to 1 or 0 by first masking with S_IFMT; not all
+        systems have that macro, and anyway it's only necessary that we
+        return non-zero.
+
 Fri Oct 27 13:43:35 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
         * save-cwd.c: use __PROTO instead of __P (see below).
