@@ -158,7 +158,8 @@ case $rlog_options in
 						}
 					}
 				}
-				printf "%d/%02d/%02d-%02d:%02d:%02d\n", year,i+1,dd,hh,mm,ss
+				# Output comma instead of space to avoid CVS 1.5 bug.
+				printf "%d/%02d/%02d,%02d:%02d:%02d\n", year,i+1,dd,hh,mm,ss
 				exit
 			}
 		'
@@ -178,15 +179,23 @@ then
 else
 	rlog='cvs log'
 	repository=`sed 1q <CVS/Repository` || exit
-	case $repository in
-	/*) ;;
-	*) repository=${CVSROOT?}/$repository
+	test ! -f CVS/Root || CVSROOT=`cat <CVS/Root` || exit
+	case $CVSROOT in
+	*:/*)
+		# remote repository
+		;;
+	*)
+		# local repository
+		case $repository in
+		/*) ;;
+		*) repository=${CVSROOT?}/$repository
+		esac
+		if test ! -d "$repository"
+		then
+			echo >&2 "$0: $repository: bad repository (see CVS/Repository)"
+			exit 1
+		fi
 	esac
-	if test ! -d "$repository"
-	then
-		echo >&2 "$0: $repository: bad repository (see CVS/Repository)"
-		exit 1
-	fi
 fi
 
 # With no arguments, examine all files under the RCS directory.
@@ -285,7 +294,7 @@ $logins
 EOF
 esac
 output_authors='/^date: / {
-	if ($2 ~ /^[0-9]*[-\/][0-9][0-9][-\/][0-9][0-9]$/ && $3 ~ /^[0-9][0-9]:[0-9][0-9]:[0-9][0-9][-+0-9]*;$/ && $4 == "author:" && $5 ~ /^[^;]*;$/) {
+	if ($2 ~ /^[0-9]*[-\/][0-9][0-9][-\/][0-9][0-9]$/ && $3 ~ /^[0-9][0-9]:[0-9][0-9]:[0-9][0-9][-+0-9:]*;$/ && $4 == "author:" && $5 ~ /^[^;]*;$/) {
 		print substr($5, 1, length($5)-1)
 	}
 }'
