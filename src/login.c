@@ -153,6 +153,23 @@ login (argc, argv)
       }
   }
     
+  /* CVSroot is now fully qualified and has ":pserver:" prepended.
+     We'll print out most of it so user knows exactly what is being
+     dealt with here. */
+  {
+    char *s;
+    s = strchr (CVSroot, ':');
+    s++;
+    s = strchr (s, ':');
+    s++;
+
+    if (s == NULL)
+      error (1, 0, "NULL CVSroot");
+
+    printf ("(Logging in to %s)\n", s);
+    fflush (stdout);
+  }
+
   passfile = construct_cvspass_filename ();
   typed_password = getpass ("CVS password: ");
   typed_password = scramble (typed_password);

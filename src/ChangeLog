@@ -1,5 +1,8 @@
 Mon Feb 19 01:10:01 1996  Karl Fogel  <kfogel@floss.red-bean.com>
 
+        * login.c (login): print out full repos so user knows which server
+        she's logging into.
+
         * client.c (send_repository): die if `repos' is NULL.  This is a
         lame solution; see comments in code.
 
