@@ -1,9 +1,13 @@
+----------------------------------------------------------------------
+Charter for the devel-cvs mailing list:
+
 The CVS Developers' List <devel-cvs@cyclic.com> exists to help people
 with access to the CVS source repository co-ordinate changes, make
 releases, and administer the repository.
 
-The membership of devel-cvs should be exactly those people who have
-been given access to the repository for the CVS sources.
+Everyone who has been given checkin access to the repository for the
+CVS sources should read devel-cvs.  Only those with checkin access may
+send messages to the list.
 
 The devel-cvs list may be used to discuss:
 - administrivia regarding the CVS source repository and release
