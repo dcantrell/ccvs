@@ -1,5 +1,12 @@
 1999-12-06  Larry Jones  <larry.jones@sdrc.com>
 
+	* configure.in: Update to autoconf 2.13; use new AC_SEARCH_LIBS
+	to handle getspnam, connect, gethostbyname, and crypt correctly;
+	use new AC_FUNC_FNMATCH instead of doing it by hand.
+	* configure: Regenerated with autoconf 2.13.
+
+1999-12-06  Larry Jones  <larry.jones@sdrc.com>
+
 	* INSTALL (Tested platforms): Update info.
 
 1999-11-04  Jim Kingdon  <http://developer.redhat.com/>
