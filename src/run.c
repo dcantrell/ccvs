@@ -398,7 +398,13 @@ run_print (fp)
     else if (fp == stdout)
 	outfn = cvs_output;
     else
+    {
 	error (1, 0, "internal error: bad argument to run_print");
+	/* Solely to placate gcc -Wall.
+	   FIXME: it'd be better to use a function named `fatal' that
+	   is known never to return.  Then kludges wouldn't be necessary.  */
+	outfn = NULL;
+    }
 
     for (i = 0; i < run_argc; i++)
     {
