@@ -1,3 +1,10 @@
+2003-06-09  Derek Price  <derek@ximbiot.com>
+
+	* patch.c (patch_fileproc): Don't assume the content of files is
+	different just because the revision number is different.
+	* sanity.sh (rdiff-add-remove-nodiff): New tests for the above.
+	(Report & original patches from Paul Edwards <kerravon@w3.to>.)
+
 2003-06-04  Derek Price  <derek@ximbiot.com>
 
 	* cvs.h (locate_file_in_dir): New proto.
