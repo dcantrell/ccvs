@@ -1339,7 +1339,7 @@ password:
 
 @example
 cvs -d bach@@chainsaw.brickyard.com:/usr/local/cvsroot login 
-Enter CVS password: 
+CVS password: 
 @end example
 
 The password is checked with the server; if it is
@@ -1382,7 +1382,7 @@ password for transmission to the server.
 @cindex CVS_PASSWORD, environment variable
 The @code{CVS_PASSWORD} environment variable overrides
 @emph{all} stored passwords.  If it is set, @sc{cvs}
-will use it for all all password-authenticated
+will use it for all password-authenticated
 connections.
 
 @node Security considerations with password authentication

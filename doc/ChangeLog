@@ -1,3 +1,8 @@
+Sun Dec 24 02:37:51 1995  Karl Fogel  <kfogel@floss.cyclic.com>
+
+        * cvs.texinfo (Using the client with password authentication): 
+        tixed fypos.
+
 Sun Dec 24 00:00:16 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
         * cvs.texinfo (Remote repositories): use @code{rsh} most places,
@@ -7,7 +12,7 @@ Sun Dec 24 00:00:16 1995  Karl Fogel  <kfogel@floss.cyclic.com>
         (Setting up the server for password authentication): new node.
         (Using the client with password authentication): new node.
         (Security considerations with password authentication): new node.
-        
+
         These are all really long node names, but it seems necessary that
         they be descriptive in case they're referenced elsewhere.  If you
         can think of a way out of this, please change them.
