@@ -80,6 +80,7 @@ wnt_shutdown_server (int fd)
     }
     else
     {
-	close (fd);
+	if (close (fd) < 0)
+	    error (1, errno, "cannot close server connection");
     }
 }
