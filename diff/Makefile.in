@@ -48,7 +48,14 @@ DISTFILES = $(SOURCES)
 
 all: libdiff.a
 
-COMPILE = $(CC) -c $(CPPFLAGS) $(DEFS) -I. -I.. -I../lib $(CFLAGS)
+# $(top_srcdir)/lib is so we don't get the system-supplied headers for
+# functions that we supply ourselves in lib.  $(srcdir) is perhaps not
+# necessary if we assume the unix compiler behavior whereby "" looks
+# in the directory containing the .c file first.
+# -I. is probably unnecessary (I don't think we generate any .h files).
+# -I.. is for config.h.
+COMPILE = $(CC) -c $(CPPFLAGS) $(DEFS) \
+	-I. -I.. -I$(srcdir) -I$(top_srcdir)/lib $(CFLAGS)
 
 .c.o:
 	$(COMPILE) $<
