@@ -281,19 +281,6 @@ get_cvs_password ()
     if (cvs_password)
 	return cvs_password;
 
-    /* Environment should override file. */
-    if ((password = getenv ("CVS_PASSWORD")) != NULL)
-    {
-	char *p;
-
-	p = xstrdup (password);
-	/* If we got it from the environment, then it wasn't properly
-	   scrambled.  Since unscrambling is done on the server side, we
-	   need to transmit it scrambled. */
-	p = scramble (p);
-	return p;
-    }
-
     /* Else get it from the file.  First make sure that the CVSROOT
        variable has the appropriate fields filled in. */
 
@@ -356,8 +343,7 @@ get_cvs_password ()
     else
     {
 	error (0, 0, "cannot find password");
-	error (0, 0, "use \"cvs login\" to log in first");
-	error (1, 0, "or set the CVS_PASSWORD environment variable");
+	error (1, 0, "use \"cvs login\" to log in first");
     }
     /* NOTREACHED */
     return NULL;
