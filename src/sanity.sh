@@ -2960,7 +2960,7 @@ done"
 		rm ${CVSROOT_DIRNAME}/CVSROOT/history
 		touch ${CVSROOT_DIRNAME}/CVSROOT/history
 
-### XXX maybe should use 'cvs imprt -b1 -m new-module first-dir F F1' in an
+### XXX maybe should use `cvs imprt -b1 -m new-module first-dir F F1' in an
 ### empty directory to do this instead of hacking directly into $CVSROOT
 		mkdir ${CVSROOT_DIRNAME}/first-dir
 		dotest basic2-1 "${testcvs} -q co first-dir" ''
@@ -4259,7 +4259,7 @@ No conflicts created by this import'
 	  echo "abc" >file1.txt
 	  dotest rdiff-short-init-3 "${testcvs} add file1.txt" \
 "${SPROG} [a-z]*: scheduling file .file1\.txt' for addition
-${SPROG} [a-z]*: use '${SPROG} commit' to add this file permanently"
+${SPROG} [a-z]*: use \`${SPROG} commit' to add this file permanently"
 	  dotest rdiff-short-init-4 \
 "${testcvs} commit -madd-file1 file1.txt" \
 "RCS file: ${CVSROOT_DIRNAME}/abc/file1\.txt,v
@@ -4295,7 +4295,7 @@ done"
 	  dotest rdiff-short-init-10 \
 "${testcvs} add file2.txt" \
 "${SPROG} [a-z]*: scheduling file .file2\.txt' for addition
-${SPROG} [a-z]*: use '${SPROG} commit' to add this file permanently"
+${SPROG} [a-z]*: use \`${SPROG} commit' to add this file permanently"
 	  dotest rdiff-add-remove-nodiff-init-11 \
 "${testcvs} commit -madd-file2 file2.txt" \
 "RCS file: ${CVSROOT_DIRNAME}/abc/file2\.txt,v
@@ -11886,7 +11886,7 @@ Directory ${CVSROOT_DIRNAME}/mod2-2/sub2-2 added to the repository"
 ${SPROG} [a-z]*: scheduling file .mod1-2/file1-2. for addition
 ${SPROG} [a-z]*: scheduling file .mod2/sub2/file2. for addition
 ${SPROG} [a-z]*: scheduling file .mod2-2/sub2-2/file2-2. for addition
-${SPROG} [a-z]*: use '${SPROG} commit' to add these files permanently"
+${SPROG} [a-z]*: use \`${SPROG} commit' to add these files permanently"
 
 	  dotest cvsadm-2b "${testcvs} ci -m yup mod1 mod1-2 mod2 mod2-2" \
 "${CPROG} commit: Examining mod1
@@ -12961,7 +12961,7 @@ ${SPROG} [a-z]*: Updating moda"
 	  dotest emptydir-4 "${testcvs} add mod1/file1 moda/modasub/filea" \
 "${SPROG} [a-z]*: scheduling file .mod1/file1. for addition
 ${SPROG} [a-z]*: scheduling file .moda/modasub/filea. for addition
-${SPROG} [a-z]*: use '${SPROG} commit' to add these files permanently"
+${SPROG} [a-z]*: use \`${SPROG} commit' to add these files permanently"
 	  dotest emptydir-5 "${testcvs} -q ci -m yup" \
 "RCS file: ${CVSROOT_DIRNAME}/mod1/file1,v
 done
@@ -13051,12 +13051,12 @@ ${SPROG} [a-z]*: Updating mod2"
 	  cd mod1
 	  dotest abspath-1ba "${testcvs} add file1" \
 "${SPROG} [a-z]*: scheduling file .file1. for addition
-${SPROG} [a-z]*: use '${SPROG} commit' to add this file permanently"
+${SPROG} [a-z]*: use \`${SPROG} commit' to add this file permanently"
           cd ..
           cd mod2
 	  dotest abspath-1bb "${testcvs} add file2" \
 "${SPROG} [a-z]*: scheduling file .file2. for addition
-${SPROG} [a-z]*: use '${SPROG} commit' to add this file permanently"
+${SPROG} [a-z]*: use \`${SPROG} commit' to add this file permanently"
           cd ..
 
 	  dotest abspath-1c "${testcvs} ci -m yup mod1 mod2" \
@@ -19349,7 +19349,7 @@ ${SPROG} [a-z]*: Rebuilding administrative file database"
 "Directory ${CVSROOT_DIRNAME}/first-dir/dir added to the repository"
 	  touch file1 dir/file2
 	  dotest backuprecover-4 "${testcvs} -q add file1 dir/file2" \
-"${SPROG} [a-z]*: use '${SPROG} commit' to add these files permanently"
+"${SPROG} [a-z]*: use \`${SPROG} commit' to add these files permanently"
 	  dotest backuprecover-5 "${testcvs} -q ci -mtest" \
 "RCS file: ${CVSROOT_DIRNAME}/first-dir/file1,v
 done
@@ -23721,7 +23721,7 @@ Directory ${CVSROOT1_DIRNAME}/mod1-2 added to the repository"
 	  dotest multiroot-setup-6 "${testcvs1} add mod1-1/file1-1 mod1-2/file1-2" \
 "${SPROG} [a-z]*: scheduling file .mod1-1/file1-1. for addition
 ${SPROG} [a-z]*: scheduling file .mod1-2/file1-2. for addition
-${SPROG} [a-z]*: use '${SPROG} commit' to add these files permanently"
+${SPROG} [a-z]*: use \`${SPROG} commit' to add these files permanently"
 	  dotest multiroot-setup-7 "${testcvs1} commit -m is" \
 "${CPROG} commit: Examining \.
 ${CPROG} commit: Examining mod1-1
@@ -23755,7 +23755,7 @@ Directory ${CVSROOT2_DIRNAME}/mod2-2 added to the repository"
 	  dotest multiroot-setup-6 "${testcvs2} add mod2-1/file2-1 mod2-2/file2-2" \
 "${SPROG} [a-z]*: scheduling file .mod2-1/file2-1. for addition
 ${SPROG} [a-z]*: scheduling file .mod2-2/file2-2. for addition
-${SPROG} [a-z]*: use '${SPROG} commit' to add these files permanently"
+${SPROG} [a-z]*: use \`${SPROG} commit' to add these files permanently"
 	  dotest multiroot-setup-10 "${testcvs2} commit -m anyone" \
 "${CPROG} commit: Examining \.
 ${CPROG} commit: Examining mod2-1
