@@ -1,3 +1,9 @@
+2003-01-20  Larry Jones  <lawrence.jones@eds.com>
+
+	* myndbm.c (O_ACCMODE): Parenthesize the replacement string so that
+	it parses correctly.
+	(Reported by Andres Bertens <abertens@entelchile.net>.)
+
 2003-01-15  Karl Fogel  <kfogel@collab.net>
 
 	* server.c (dirswitch): Don't free dir_name until right before
