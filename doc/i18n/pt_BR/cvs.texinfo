@@ -451,7 +451,7 @@ guarda arquivos para recuperação numa estrutura de
 @comment <en>you wind up requiring the entire repository to be
 @comment <en>checked out.
 @sc{cvs} não dita como usar o espaço em disco em
-diretórios de trabalho emprestados. Se você
+diretórios de trabalho locais. Se você
 escreve seus @file{Makefile}s ou scripts em cada
 diretório, eles têm que saber a posição relativa de
 todo o resto, logo você acaba tendo que pegar todo o
@@ -587,67 +587,113 @@ Controle de mudanças se refere a várias coisas. Em
 primeiro lugar, pode significar @dfn{bug-tracking
 (busca de erros)}, que é manter uma base de dados de
 erros relatados e o status de cada um (foi consertado?
-em qual release? o submissor do erro concordou que o
+em qual lançamento? o submissor do erro concordou que o
 erro foi corrigido?). Para fazer a interface do
 @sc{cvs} com um sistema de bug-tracking externo, veja
 os arquivos @file{rcsinfo} e @file{verifymsg}
 (@pxref{Arquivos de administração}).
 
-Another aspect of change control is keeping track of
-the fact that changes to several files were in fact
-changed together as one logical change.  If you check
-in several files in a single @code{cvs commit}
-operation, @sc{cvs} then forgets that those files were
-checked in together, and the fact that they have the
-same log message is the only thing tying them
-together.  Keeping a @sc{gnu} style @file{ChangeLog}
-can help somewhat.
+@comment <en>Another aspect of change control is keeping track of
+@comment <en>the fact that changes to several files were in fact
+@comment <en>changed together as one logical change.  If you check
+@comment <en>in several files in a single @code{cvs commit}
+@comment <en>operation, @sc{cvs} then forgets that those files were
+@comment <en>checked in together, and the fact that they have the
+@comment <en>same log message is the only thing tying them
+@comment <en>together.  Keeping a @sc{gnu} style @file{ChangeLog}
+@comment <en>can help somewhat.
+Outra característica de controle de mudanças é manter
+um controle no fato de que mudanças em vários arquivos
+foram, de fato, uma única mudança lógica. Se você
+devolve vários arquivos numa única operação com
+@code{cvs commit}, @sc{cvs} esquece que os arquivos
+foram devolvidos juntos, e o fato de eles terem a mesma
+mensagem de log é a única coisa que os une. Manter um
+@file{ChangeLog} no estilo @sc{gnu} pode de certa forma
+ajudar.
 @c FIXME: should have an xref to a section which talks
 @c more about keeping ChangeLog's with CVS, but that
 @c section hasn't been written yet.
 
-Another aspect of change control, in some systems, is
-the ability to keep track of the status of each
-change.  Some changes have been written by a developer,
-others have been reviewed by a second developer, and so
-on.  Generally, the way to do this with @sc{cvs} is to
-generate a diff (using @code{cvs diff} or @code{diff})
-and email it to someone who can then apply it using the
-@code{patch} utility.  This is very flexible, but
-depends on mechanisms outside @sc{cvs} to make sure
-nothing falls through the cracks.
+@comment <en>Another aspect of change control, in some systems, is
+@comment <en>the ability to keep track of the status of each
+@comment <en>change.  Some changes have been written by a developer,
+@comment <en>others have been reviewed by a second developer, and so
+@comment <en>on.  Generally, the way to do this with @sc{cvs} is to
+@comment <en>generate a diff (using @code{cvs diff} or @code{diff})
+@comment <en>and email it to someone who can then apply it using the
+@comment <en>@code{patch} utility.  This is very flexible, but
+@comment <en>depends on mechanisms outside @sc{cvs} to make sure
+@comment <en>nothing falls through the cracks.
+Outro aspecto do controle de mudanças, em alguns
+sistemas, é a habilidade de se obter informação sobre o
+status de cada mudança. Algumas mudanças foram escritas
+por um certo desenvolvedor, outras foram revisadas por
+um segundo desenvolvedor, e por aí vai. Geralmente, a
+forma de fazer isto com o @sc{cvs} é gerando um diff
+(usando @code{cvs diff} ou @code{diff}) e mandando por
+email para alguem que possa ???apply it??? usando o
+utilitário @code{patch}. Isto é muito flexível, mas
+depende de mecanismos externos ao @sc{cvs} para
+garantir que nada dê problema.
 
-@item @sc{cvs} is not an automated testing program
+@comment <en>@item @sc{cvs} is not an automated testing program
+@item @sc{cvs} não é um programa de testes automático
 
-It should be possible to enforce mandatory use of a
-testsuite using the @code{commitinfo} file.  I haven't
-heard a lot about projects trying to do that or whether
-there are subtle gotchas, however.
+@comment <en>It should be possible to enforce mandatory use of a
+@comment <en>testsuite using the @code{commitinfo} file.  I haven't
+@comment <en>heard a lot about projects trying to do that or whether
+@comment <en>there are subtle gotchas, however.
+é possível reforçar o uso obrigatório de uma suíte de
+testes usando o arquivo @code{commitinfo}. Eu nunca
+ouvi falar muito sobre projetos que tentam fazer isto,
+ou sequer que ???there are subtle gotchas, however???.
 
-@item @sc{cvs} does not have a builtin process model
+@comment <en>@item @sc{cvs} does not have a builtin process model
+@item @sc{cvs} não tem um modelo de processo inerente
 
-Some systems provide ways to ensure that changes or
-releases go through various steps, with various
-approvals as needed.  Generally, one can accomplish
-this with @sc{cvs} but it might be a little more work.
-In some cases you'll want to use the @file{commitinfo},
-@file{loginfo}, @file{rcsinfo}, or @file{verifymsg}
-files, to require that certain steps be performed
-before cvs will allow a checkin.  Also consider whether
-features such as branches and tags can be used to
-perform tasks such as doing work in a development tree
-and then merging certain changes over to a stable tree
-only once they have been proven.
+@comment <en>Some systems provide ways to ensure that changes or
+@comment <en>releases go through various steps, with various
+@comment <en>approvals as needed.  Generally, one can accomplish
+@comment <en>this with @sc{cvs} but it might be a little more work.
+@comment <en>In some cases you'll want to use the @file{commitinfo},
+@comment <en>@file{loginfo}, @file{rcsinfo}, or @file{verifymsg}
+@comment <en>files, to require that certain steps be performed
+@comment <en>before cvs will allow a checkin.  Also consider whether
+@comment <en>features such as branches and tags can be used to
+@comment <en>perform tasks such as doing work in a development tree
+@comment <en>and then merging certain changes over to a stable tree
+@comment <en>only once they have been proven.
+alguns sistemas fornecem formas de garantir que
+mudanças ou lançamentos sigam vários passos, com várias
+aprovações ???as needed???. Geralmente, pode-se obter
+isto com o @sc{cvs}, mas acarreta em um pouco mais de
+trabalho. Em alguns casos você vai querer usar o
+arquivo @file{commitinfo}, @file{loginfo},
+@file{rcsinfo}, ou @file{verifymsg} para exigir que
+certos passos sejam executados antes que o cvs permita
+uma devolução (checkin). Também considere se
+características tais como ramos e tags podem ser usadas
+para realizar tarefas como desenvolver numa árvore de
+desenvolvimento e então mesclar certas mudanças numa
+árvore estável apenas quando eles tenham sido confirmados.
 @end table
 
 @c ---------------------------------------------------------------------
-@node A sample session
-@section A sample session
-@cindex Example of a work-session
-@cindex Getting started
-@cindex Work-session, example of
-@cindex tc, Trivial Compiler (example)
-@cindex Trivial Compiler (example)
+@comment <en>@node A sample session
+@node Uma sessão de exemplo
+@comment <en>@section A sample session
+@section Uma sessão de exemplo
+@comment <en>@cindex Example of a work-session
+@cindex Exemplo de uma sessão de trabalho
+@comment <en>@cindex Getting started
+@cindex Iniciando
+@comment <en>@cindex Work-session, example of
+@cindex Sessão de trabalho, exemplo de uma
+@comment <en>@cindex tc, Trivial Compiler (example)
+@cindex ???tc???, ???Trivial Compiler??? (exemplo)
+@comment <en>@cindex Trivial Compiler (example)
+@cindex ???Trivial Compiler??? (example)
 
 @c I think an example is a pretty good way to start.  But
 @c somewhere in here, maybe after the sample session,
@@ -673,48 +719,74 @@ single entity (@pxref{modules}).  A typical usage is to
 define one module per project.
 @end ignore
 
-As a way of introducing @sc{cvs}, we'll go through a
-typical work-session using @sc{cvs}.  The first thing
-to understand is that @sc{cvs} stores all files in a
-centralized @dfn{repository} (@pxref{Repository}); this
-section assumes that a repository is set up.
+@comment <en>As a way of introducing @sc{cvs}, we'll go through a
+@comment <en>typical work-session using @sc{cvs}.  The first thing
+@comment <en>to understand is that @sc{cvs} stores all files in a
+@comment <en>centralized @dfn{repository} (@pxref{Repository}); this
+@comment <en>section assumes that a repository is set up.
+Vamos apresentar o @sc{cvs} usando numa sessão de
+trabalho típica. A primeira coisa a saber é que
+@sc{cvs} guarda todos os arquivos em um
+@dfn{repository} centralizado (@pxref{Repository});
+esta sessão assume que um repositório esteja ativo.
 @c I'm not sure that the sentence concerning the
 @c repository quite tells the user what they need to
 @c know at this point.  Might need to expand on "centralized"
 @c slightly (maybe not here, maybe further down in the example?)
 
-Suppose you are working on a simple compiler.  The source
-consists of a handful of C files and a @file{Makefile}.
-The compiler is called @samp{tc} (Trivial Compiler),
-and the repository is set up so that there is a module
-called @samp{tc}.
+@comment <en>Suppose you are working on a simple compiler.  The source
+@comment <en>consists of a handful of C files and a @file{Makefile}.
+@comment <en>The compiler is called @samp{tc} (Trivial Compiler),
+@comment <en>and the repository is set up so that there is a module
+@comment <en>called @samp{tc}.
+Suponha que você esteja trabalhando num compilador
+simples. O fonte é um ???handful??? de arquivos C e um
+@file{Makefile}. O compilador é chamado @samp{???tc???}
+(???Trivial Compiler???), e o repositório é feito de
+forma que exista um módulo chamado @samp{???tc???}.
 
 @menu
-* Getting the source::          Creating a workspace
-* Committing your changes::     Making your work available to others
-* Cleaning up::                 Cleaning up
-* Viewing differences::         Viewing differences
+@comment <en>* Getting the source::          Creating a workspace
+* Obtendo os fontes::             Criando uma área de trabalho
+@comment <en>* Committing your changes::     Making your work available to others
+* Enviando suas alterações::    Disponibilizando seu trabalho para outros
+@comment <en>* Cleaning up::                 Cleaning up
+* Limpando::                    Limpando
+@comment <en>* Viewing differences::         Viewing differences
+* Vendo as diferenças::         Vendo as diferenças
 @end menu
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-@node Getting the source
-@subsection Getting the source
-@cindex Getting the source
-@cindex Checking out source
-@cindex Fetching source
-@cindex Source, getting from CVS
-@cindex Checkout, example
+@comment <en>@node Getting the source
+@node Obtendo os fontes
+@comment <en>@subsection Getting the source
+@subsection Obtendo os fontes
+@comment <en>@cindex Getting the source
+@cindex Obtendo os fontes
+@comment <en>@cindex Checking out source
+@cindex Pegando emprestado os fontes
+@comment <en>@cindex Fetching source
+@cindex ???Fetching??? source
+@comment <en>@cindex Source, getting from CVS
+@cindex Fonte, pegando do CVS
+@comment <en>@cindex Checkout, example
+@cindex Empréstimos, exemplo
 
-The first thing you must do is to get your own working copy of the
-source for @samp{tc}.  For this, you use the @code{checkout} command:
+@comment <en>The first thing you must do is to get your own working copy of the
+@comment <en>source for @samp{tc}.  For this, you use the @code{checkout} command:
+A primeira coisa a fazer é pegar sua própria cópia de
+trabalho dos fontes de @samp{tc}. Para isto, use o comando
+@code{checkout} (pegar emprestado):
 
 @example
 $ cvs checkout tc
 @end example
 
 @noindent
-This will create a new directory called @file{tc} and populate it with
-the source files.
+@comment <en>This will create a new directory called @file{tc} and populate it with
+@comment <en>the source files.
+Isto vai criar um novo diretório chamado @file{tc} e
+povoa-lo com os fontes.
 
 @example
 $ cd tc
@@ -722,73 +794,128 @@ $ ls
 CVS         Makefile    backend.c   driver.c    frontend.c  parser.c
 @end example
 
-The @file{CVS} directory is used internally by
-@sc{cvs}.  Normally, you should not modify or remove
-any of the files in it.
+@comment <en>The @file{CVS} directory is used internally by
+@comment <en>@sc{cvs}.  Normally, you should not modify or remove
+@comment <en>any of the files in it.
+O diretório @file{CVS} é usado internamente pelo
+@sc{cvs}. Normalmente, você não deve modificar ou
+remover quaisquer arquivos dele.
 
-You start your favorite editor, hack away at @file{backend.c}, and a couple
-of hours later you have added an optimization pass to the compiler.
-A note to @sc{rcs} and @sc{sccs} users: There is no need to lock the files that
-you want to edit.  @xref{Multiple developers}, for an explanation.
+@comment <en>You start your favorite editor, hack away at @file{backend.c}, and a couple
+@comment <en>of hours later you have added an optimization pass to the compiler.
+@comment <en>A note to @sc{rcs} and @sc{sccs} users: There is no need to lock the files that
+@comment <en>you want to edit.  @xref{Multiple developers}, for an explanation.
+Você abre o seu editor favorito, trabalha no arquivo
+@file{backend.c}, e algumas horas depois você deixou o
+compilador mais otimizado. Uma observação para usuários
+de @sc{rcs} e @sc{sccs}: Não é necessário travar (lock)
+os arquivos que você quer editar. @xref{Múltiplos
+desenvolvedores}, para uma explicação.
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-@node Committing your changes
-@subsection Committing your changes
-@cindex Committing changes to files
-@cindex Log message entry
+@comment <en>@node Committing your changes
+@node Devolvendo suas mudanças
+@comment <en>@subsection Committing your changes
+@subsection Devolvendo suas mudanças
+@comment <en>@cindex Committing changes to files
+@cindex Devolvendo mudanças para arquivos
+@comment <en>@cindex Log message entry
+@cindex ???entry??? de mensagens de log
 
-When you have checked that the compiler is still compilable you decide
-to make a new version of @file{backend.c}.  This will
-store your new @file{backend.c} in the repository and
-make it available to anyone else who is using that same
-repository.
+@comment <en>When you have checked that the compiler is still compilable you decide
+@comment <en>to make a new version of @file{backend.c}.  This will
+@comment <en>store your new @file{backend.c} in the repository and
+@comment <en>make it available to anyone else who is using that same
+@comment <en>repository.
+Quando você se certificar que o compilador ainda é
+compilável você decide criar uma nova versão de
+@file{backend.c}. Tal ato vai botar o seu novo
+@file{backend.c} no repositório e torná-lo disponível
+para qualquer outra pessoa que esteja usando o mesmo
+repositório.
 
 @example
 $ cvs commit backend.c
 @end example
 
 @noindent
-@sc{cvs} starts an editor, to allow you to enter a log
-message.  You type in ``Added an optimization pass.'',
-save the temporary file, and exit the editor.
+@comment <en>@sc{cvs} starts an editor, to allow you to enter a log
+@comment <en>message.  You type in ``Added an optimization pass.'',
+@comment <en>save the temporary file, and exit the editor.
+@sc{cvs} inicia um editor, para que você possa digitar
+uma messagem de log. Você digita ``Uma otimização adicionada.'',
+salva o arquivo temporário e sai do editor.
 
-@cindex CVSEDITOR, environment variable
-@cindex EDITOR, environment variable
-The environment variable @code{$CVSEDITOR} determines
-which editor is started.  If @code{$CVSEDITOR} is not
-set, then if the environment variable @code{$EDITOR} is
-set, it will be used. If both @code{$CVSEDITOR} and
-@code{$EDITOR} are not set then there is a default
-which will vary with your operating system, for example
-@code{vi} for unix or @code{notepad} for Windows
+@comment <en>@cindex CVSEDITOR, environment variable
+@cindex CVSEDITOR, variável de ambiente
+@comment <en>@cindex EDITOR, environment variable
+@cindex EDITOR, variável de ambiente
+@comment <en>The environment variable @code{$CVSEDITOR} determines
+@comment <en>which editor is started.  If @code{$CVSEDITOR} is not
+@comment <en>set, then if the environment variable @code{$EDITOR} is
+@comment <en>set, it will be used. If both @code{$CVSEDITOR} and
+@comment <en>@code{$EDITOR} are not set then there is a default
+@comment <en>which will vary with your operating system, for example
+@comment <en>@code{vi} for unix or @code{notepad} for Windows
+@comment <en>NT/95.
+A variável de ambiente @code{$CVSEDITOR} determina qual
+editor vai ser aberto. Se @code{$CVSEDITOR} não existe,
+e se a variável de ambiente @code{$EDITOR} existe, esta
+última é usada. Se nenhuma das duas @code{$CVSEDITOR} e
+@code{$EDITOR} existem então o padrão vai variar
+dependendo do sistema operacional, por exemplo,
+@code{vi} para unix ou @code{notepad} para Windows
 NT/95.
 
-@cindex VISUAL, environment variable
-In addition, @sc{cvs} checks the @code{$VISUAL} environment
-variable.  Opinions vary on whether this behavior is desirable and
-whether future releases of @sc{cvs} should check @code{$VISUAL} or
-ignore it.  You will be OK either way if you make sure that
-@code{$VISUAL} is either unset or set to the same thing as
+@comment <en>@cindex VISUAL, environment variable
+@cindex VISUAL, variável de ambiente
+@comment <en>In addition, @sc{cvs} checks the @code{$VISUAL} environment
+@comment <en>variable.  Opinions vary on whether this behavior is desirable and
+@comment <en>whether future releases of @sc{cvs} should check @code{$VISUAL} or
+@comment <en>ignore it.  You will be OK either way if you make sure that
+@comment <en>@code{$VISUAL} is either unset or set to the same thing as
+@comment <en>@code{$EDITOR}.
+Adicionalmente, @sc{cvs} busca pela variável de
+ambiente @code{$VISUAL}. Isto gera duas opiniões
+divergentes, se este é um comportamento desejável ou se
+versões futuras do @sc{cvs} devem verificar
+@code{$VISUAL} ou ignorá-la. Você vai estar OK se não
+tiver a variável @code{$VISUAL} ou se ela for igual à
 @code{$EDITOR}.
 
 @c This probably should go into some new node
 @c containing detailed info on the editor, rather than
 @c the intro.  In fact, perhaps some of the stuff with
 @c CVSEDITOR and -m and so on should too.
-When @sc{cvs} starts the editor, it includes a list of
-files which are modified.  For the @sc{cvs} client,
-this list is based on comparing the modification time
-of the file against the modification time that the file
-had when it was last gotten or updated.  Therefore, if
-a file's modification time has changed but its contents
-have not, it will show up as modified.  The simplest
-way to handle this is simply not to worry about it---if
-you proceed with the commit @sc{cvs} will detect that
-the contents are not modified and treat it as an
-unmodified file.  The next @code{update} will clue
-@sc{cvs} in to the fact that the file is unmodified,
-and it will reset its stored timestamp so that the file
-will not show up in future editor sessions.
+@comment <en>When @sc{cvs} starts the editor, it includes a list of
+@comment <en>files which are modified.  For the @sc{cvs} client,
+@comment <en>this list is based on comparing the modification time
+@comment <en>of the file against the modification time that the file
+@comment <en>had when it was last gotten or updated.  Therefore, if
+@comment <en>a file's modification time has changed but its contents
+@comment <en>have not, it will show up as modified.  The simplest
+@comment <en>way to handle this is simply not to worry about it---if
+@comment <en>you proceed with the commit @sc{cvs} will detect that
+@comment <en>the contents are not modified and treat it as an
+@comment <en>unmodified file.  The next @code{update} will clue
+@comment <en>@sc{cvs} in to the fact that the file is unmodified,
+@comment <en>and it will reset its stored timestamp so that the file
+@comment <en>will not show up in future editor sessions.
+Quando o @sc{cvs} inicia o editor, ele inclui uma lista
+de arquivos que foram modificados. Para o @sc{cvs}
+cliente, esta lista é baseada na comparação da data de
+modificação do arquivo com a data de modificação que o
+arquivo tinha da última vez que foi pego ou
+atualizado. Entretanto, se a data de modificação de um
+arquivo mudou mas seu conteúdo não, ele vai ser
+considerado modificado. A maneira mais fácil de lidar
+com isto é desconsidarando---se você seguir devolvendo,
+o @sc{cvs} vai notar que o conteúdo está intacto e vai
+tratar o arquivo como não-modificado. O próximo
+@code{update} vai dar a dica para o @sc{cvs} de que o
+arquivo está igual, e isto vai restaurar a data,
+fazendo com que o arquivo não apareça nas próximas
+aparições do editor.
 @c FIXCVS: Might be nice if "commit" and other commands
 @c would reset that timestamp too, but currently commit
 @c doesn't.
@@ -805,25 +932,37 @@ will not show up in future editor sessions.
 @c we want to tell people that, the manual possibly
 @c should say it).
 
-If you want to avoid
-starting an editor you can specify the log message on
-the command line using the @samp{-m} flag instead, like
-this:
+@comment <en>If you want to avoid
+@comment <en>starting an editor you can specify the log message on
+@comment <en>the command line using the @samp{-m} flag instead, like
+@comment <en>this:
+Se você quer evitar o aparecimento de um editor, você
+pode especificar a mensagem de log na linha de comando
+usando a opção @samp{-m}, desta forma:
 
 @example
-$ cvs commit -m "Added an optimization pass" backend.c
+$ cvs commit -m "Uma otimização adicionada" backend.c
 @end example
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-@node Cleaning up
-@subsection Cleaning up
-@cindex Cleaning up
-@cindex Working copy, removing
-@cindex Removing your working copy
-@cindex Releasing your working copy
+@comment <en>@node Cleaning up
+@node Limpando
+@comment <en>@subsection Cleaning up
+@subsection Limpando
+@comment <en>@cindex Cleaning up
+@cindex Limpando
+@comment <en>@cindex Working copy, removing
+@cindex Cópia de trabalho, removendo
+@comment <en>@cindex Removing your working copy
+@cindex Removendo sua cópia de trabalho
+@comment <en>@cindex Releasing your working copy
+@cindex Lançando sua cópia de trabalho
 
-Before you turn to other tasks you decide to remove your working copy of
-tc.  One acceptable way to do that is of course
+@comment <en>Before you turn to other tasks you decide to remove your working copy of
+@comment <en>tc.  One acceptable way to do that is of course
+Antes de ir fazer outras tarefas, você decide remover
+sua cópia de trabalho de tc. Uma forma aceitável de
+fazer isto é, obviamente:
 
 @example
 $ cd ..
@@ -831,7 +970,7 @@ $ rm -r tc
 @end example
 
 @noindent
-but a better way is to use the @code{release} command (@pxref{release}):
+mas uma forma melhor é usando o comando @code{release} (@pxref{release}):
 
 @example
 $ cd ..
@@ -843,56 +982,93 @@ Are you sure you want to release (and delete) directory `tc': n
 ** `release' aborted by user choice.
 @end example
 
-The @code{release} command checks that all your modifications have been
-committed.  If history logging is enabled it also makes a note in the
-history file.  @xref{history file}.
+@comment <en>The @code{release} command checks that all your modifications have been
+@comment <en>committed.  If history logging is enabled it also makes a note in the
+@comment <en>history file.  @xref{history file}.
+O comando @code{release} verifica se todas as suas
+modificações foram devolvidas. Se o ???log de
+histórico??? está ativo ele também escreve uma
+observação no arquivo history
+(histórico). @xref{history file}.
 
-When you use the @samp{-d} flag with @code{release}, it
-also removes your working copy.
+@comment <en>When you use the @samp{-d} flag with @code{release}, it
+@comment <en>also removes your working copy.
+Quando você usa a opção @samp{-d} com o @code{release},
+ele também remove a sua cópia de trabalho local.
 
-In the example above, the @code{release} command wrote a couple of lines
-of output.  @samp{? tc} means that the file @file{tc} is unknown to @sc{cvs}.
-That is nothing to worry about: @file{tc} is the executable compiler,
-and it should not be stored in the repository.  @xref{cvsignore},
-for information about how to make that warning go away.
-@xref{release output}, for a complete explanation of
-all possible output from @code{release}.
+@comment <en>In the example above, the @code{release} command wrote a couple of lines
+@comment <en>of output.  @samp{? tc} means that the file @file{tc} is unknown to @sc{cvs}.
+@comment <en>That is nothing to worry about: @file{tc} is the executable compiler,
+@comment <en>and it should not be stored in the repository.  @xref{cvsignore},
+@comment <en>for information about how to make that warning go away.
+@comment <en>@xref{release output}, for a complete explanation of
+@comment <en>all possible output from @code{release}.
+No exemplo acima, o comando @code{release} escreve
+poucas linhas de saída. @samp{? tc} significa que o
+arquivo @file{tc} é desconhecido pelo @sc{cvs}. Não há
+nada com que se preocupar: @file{tc} é um compilador
+executável, e não deve ser guardado no
+repositório. @xref{cvsignore}, para ver como fazer para
+sumir com este aviso. @xref{release output}, para uma
+explicação geral de todas as possíveis saídas do
+@code{release}.
 
-@samp{M driver.c} is more serious.  It means that the
-file @file{driver.c} has been modified since it was
-checked out.
+@comment <en>@samp{M driver.c} is more serious.  It means that the
+@comment <en>file @file{driver.c} has been modified since it was
+@comment <en>checked out.
+@samp{M driver.c} é mais sério. Significa que o arquivo
+@file{driver.c} foi modificado desde quando foi pego.
 
-The @code{release} command always finishes by telling
-you how many modified files you have in your working
-copy of the sources, and then asks you for confirmation
-before deleting any files or making any note in the
-history file.
+@comment <en>The @code{release} command always finishes by telling
+@comment <en>you how many modified files you have in your working
+@comment <en>copy of the sources, and then asks you for confirmation
+@comment <en>before deleting any files or making any note in the
+@comment <en>history file.
+O comando @code{release} sempre termina dizendo quantos
+arquivos modificados você tem em sua cópia de trabalho
+dos fontes, e então pergunta por confirmação antes de
+apagar qualquer arquivo ou escrever qualquer coisa na
+arquivo history.
 
-You decide to play it safe and answer @kbd{n @key{RET}}
-when @code{release} asks for confirmation.
+@comment <en>You decide to play it safe and answer @kbd{n @key{RET}}
+@comment <en>when @code{release} asks for confirmation.
+Você decide ???to play it safe??? e responder @kbd{n @key{RET}}
+quando @code{release} pede uma confirmação.
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-@node Viewing differences
-@subsection Viewing differences
-@cindex Viewing differences
+@comment <en>@node Viewing differences
+@node Vendo as diferenças
+@comment <en>@subsection Viewing differences
+@subsection Vendo diferenças
+@comment <en>@cindex Viewing differences
+@cindex Vendo diferenças
+@comment <en>@cindex Diff
 @cindex Diff
 
-You do not remember modifying @file{driver.c}, so you want to see what
-has happened to that file.
+@comment <en>You do not remember modifying @file{driver.c}, so you want to see what
+@comment <en>has happened to that file.
+Você não lembra se modificou @file{driver.c}. Logo,
+você precisa ver o que aconteceu com este arquivo.
 
 @example
 $ cd tc
 $ cvs diff driver.c
 @end example
 
-This command runs @code{diff} to compare the version of @file{driver.c}
-that you checked out with your working copy.  When you see the output
-you remember that you added a command line option that enabled the
-optimization pass.  You check it in, and release the module.
+@comment <en>This command runs @code{diff} to compare the version of @file{driver.c}
+@comment <en>that you checked out with your working copy.  When you see the output
+@comment <en>you remember that you added a command line option that enabled the
+@comment <en>optimization pass.  You check it in, and release the module.
+Este comando roda o @code{diff} para comparar a versão
+de @file{driver.c} que você pegou com a da sua cópia de
+trabalho. Quando você vê a saída, você lembra de ter
+adicionado uma opção de linha de comando que permite a
+otimização. Você devolve e lança (release) o módulo.
 @c FIXME: we haven't yet defined the term "check in".
 
 @example
-$ cvs commit -m "Added an optimization pass" driver.c
+@comment <en>$ cvs commit -m "Added an optimization pass" driver.c
+$ cvs commit -m "Uma otimização adicionada" driver.c
 Checking in driver.c;
 /usr/local/cvsroot/tc/driver.c,v  <--  driver.c
 new revision: 1.2; previous revision: 1.1
@@ -905,167 +1081,285 @@ Are you sure you want to release (and delete) directory `tc': y
 @end example
 
 @c ---------------------------------------------------------------------
-@node Repository
-@chapter The Repository
-@cindex Repository (intro)
-@cindex Repository, example
-@cindex Layout of repository
-@cindex Typical repository
-@cindex /usr/local/cvsroot, as example repository
+@comment <en>@node Repository
+@node Repositório
+@comment <en>@chapter The Repository
+@chapter O Repositório
+@comment <en>@cindex Repository (intro)
+@cindex Repositório (intro)
+@comment <en>@cindex Repository, example
+@cindex Repositório, exemplo
+@comment <en>@cindex Layout of repository
+@cindex Estrutura do repositório
+@comment <en>@cindex Typical repository
+@cindex Repositório típico
+@comment <en>@cindex /usr/local/cvsroot, as example repository
+@cindex /usr/local/cvsroot, como um repositório de exemplo
+@comment <en>@cindex cvsroot
 @cindex cvsroot
 
-The @sc{cvs} @dfn{repository} stores a complete copy of
-all the files and directories which are under version
-control.
+@comment <en>The @sc{cvs} @dfn{repository} stores a complete copy of
+@comment <en>all the files and directories which are under version
+@comment <en>control.
+O @dfn{repositório} do @sc{cvs} guarda uma cópia
+completa de todos os arquivos e diretórios que estão
+sob controle de versão.
 
-Normally, you never access any of the files in the
-repository directly.  Instead, you use @sc{cvs}
-commands to get your own copy of the files into a
-@dfn{working directory}, and then
-work on that copy.  When you've finished a set of
-changes, you check (or @dfn{commit}) them back into the
-repository.  The repository then contains the changes
-which you have made, as well as recording exactly what
-you changed, when you changed it, and other such
-information.  Note that the repository is not a
-subdirectory of the working directory, or vice versa;
-they should be in separate locations.
+@comment <en>Normally, you never access any of the files in the
+@comment <en>repository directly.  Instead, you use @sc{cvs}
+@comment <en>commands to get your own copy of the files into a
+@comment <en>@dfn{working directory}, and then
+@comment <en>work on that copy.  When you've finished a set of
+@comment <en>changes, you check (or @dfn{commit}) them back into the
+@comment <en>repository.  The repository then contains the changes
+@comment <en>which you have made, as well as recording exactly what
+@comment <en>you changed, when you changed it, and other such
+@comment <en>information.  Note that the repository is not a
+@comment <en>subdirectory of the working directory, or vice versa;
+@comment <en>they should be in separate locations.
+Normalmente, você nunca acessa qualquer dos arquivos do
+repositório diretamente. Ao invés disso, você usa os
+comandos do @sc{cvs} para pegar emprestada a sua cópia
+dos arquivos num @dfn{diretório de trabalho}, e então
+trabalhar nesta cópia. Quando você termina um conjunto
+de mudanças, você @dfn{devolve})-as ao repositório. O
+repositório então passa a conter as mudanças que você
+fez, assim como gravar exatamente o que você fez,
+quando você fez e outras informações deste
+tipo. Observe que o repositório não é um subdiretório
+do diretório de trabalho nem vice-versa; eles estão em
+locais diferentes.
 @c Need some example, e.g. repository
 @c /usr/local/cvsroot; working directory
 @c /home/joe/sources.  But this node is too long
 @c as it is; need a little reorganization...
 
-@cindex :local:, setting up
-@sc{cvs} can access a repository by a variety of
-means.  It might be on the local computer, or it might
-be on a computer across the room or across the world.
-To distinguish various ways to access a repository, the
-repository name can start with an @dfn{access method}.
-For example, the access method @code{:local:} means to
-access a repository directory, so the repository
-@code{:local:/usr/local/cvsroot} means that the
-repository is in @file{/usr/local/cvsroot} on the
-computer running @sc{cvs}.  For information on other
-access methods, see @ref{Remote repositories}.
+@comment <en>@cindex :local:, setting up
+@cindex :local:, ajustando
+@comment <en>@sc{cvs} can access a repository by a variety of
+@comment <en>means.  It might be on the local computer, or it might
+@comment <en>be on a computer across the room or across the world.
+@comment <en>To distinguish various ways to access a repository, the
+@comment <en>repository name can start with an @dfn{access method}.
+@comment <en>For example, the access method @code{:local:} means to
+@comment <en>access a repository directory, so the repository
+@comment <en>@code{:local:/usr/local/cvsroot} means that the
+@comment <en>repository is in @file{/usr/local/cvsroot} on the
+@comment <en>computer running @sc{cvs}.  For information on other
+@comment <en>access methods, see @ref{Remote repositories}.
+@sc{cvs} pode acessar um repositório de várias
+formas. Ele pode estar no mesmo computador, ou num
+computador do outro lado da sala, ou do outro lado do
+mundo. Para distinguir as várias formas de acessar um
+repositório o seu nome deve começar com um
+@dfn{método de acesso}. Por exemplo, o método de acesso
+@code{:local:} significa acessar um diretório que é um
+repositório. Logo, @code{:local:/usr/local/cvsroot}
+significa que o repositório está em
+@file{/usr/local/cvsroot} no computador rodando
+@sc{cvs}. Para informações sobre outros métodos de
+acesso, vá em @ref{Repositórios Remotos}.
 
 @c Can se say this more concisely?  Like by passing
 @c more of the buck to the Remote repositories node?
-If the access method is omitted, then if the repository
-starts with @samp{/}, then @code{:local:} is
-assumed.  If it does not start with @samp{/} then either
-@code{:ext:} or @code{:server:} is assumed.  For
-example, if you have a local repository in
-@file{/usr/local/cvsroot}, you can use
-@code{/usr/local/cvsroot} instead of
-@code{:local:/usr/local/cvsroot}.  But if (under
-Windows NT, for example) your local repository is
-@file{c:\src\cvsroot}, then you must specify the access
-method, as in @code{:local:c:/src/cvsroot}.
+@comment <en>If the access method is omitted, then if the repository
+@comment <en>starts with @samp{/}, then @code{:local:} is
+@comment <en>assumed.  If it does not start with @samp{/} then either
+@comment <en>@code{:ext:} or @code{:server:} is assumed.  For
+@comment <en>example, if you have a local repository in
+@comment <en>@file{/usr/local/cvsroot}, you can use
+@comment <en>@code{/usr/local/cvsroot} instead of
+@comment <en>@code{:local:/usr/local/cvsroot}.  But if (under
+@comment <en>Windows NT, for example) your local repository is
+@comment <en>@file{c:\src\cvsroot}, then you must specify the access
+@comment <en>method, as in @code{:local:c:/src/cvsroot}.
+Se o método de acesso é omitido e se o repositório
+começa com @samp{/}, então assume-se @code{:local:}. Se
+não começa com @samp{/} então ou @code{:ext:} ou
+@code{:server:} é assumido. Por exemplo, se você tem um
+repositório local em @file{/usr/local/cvsroot}, você
+pode usar @code{/usr/local/cvsroot} ao invés de
+@code{:local:/usr/local/cvsroot}. Mas se (no Windows
+NT, por exemplo) seu repositório local é
+@file{c:\src\cvsroot}, então você deve especificar o
+método de acesso, como em @code{:local:c:/src/cvsroot}.
 
 @c This might appear to go in Repository storage, but
 @c actually it is describing something which is quite
 @c user-visible, when you do a "cvs co CVSROOT".  This
 @c isn't necessary the perfect place for that, though.
-The repository is split in two parts.  @file{$CVSROOT/CVSROOT} contains
-administrative files for @sc{cvs}.  The other directories contain the actual
-user-defined modules.
+@comment <en>The repository is split in two parts.  @file{$CVSROOT/CVSROOT} contains
+@comment <en>administrative files for @sc{cvs}.  The other directories contain the actual
+@comment <en>user-defined modules.
+O repositório é separado em duas
+partes. @file{$CVSROOT/CVSROOT} contém arquivos
+administrativos do @sc{cvs}. Os outros diretórios
+contém os módulos definidos pelo usuário.
 
 @menu
-* Specifying a repository::     Telling CVS where your repository is
-* Repository storage::          The structure of the repository
-* Working directory storage::   The structure of working directories
-* Intro administrative files::  Defining modules
-* Multiple repositories::       Multiple repositories
-* Creating a repository::       Creating a repository
-* Backing up::                  Backing up a repository
-* Moving a repository::         Moving a repository
-* Remote repositories::         Accessing repositories on remote machines
-* Read-only access::            Granting read-only access to the repository
-* Server temporary directory::  The server creates temporary directories
+@comment <en>* Specifying a repository::     Telling CVS where your repository is
+* Especificando um repositório::       Dizendo ao CVS onde está o seu repositório
+@comment <en>* Repository storage::          The structure of the repository
+* ???Repository storage???::           A estrutura do repositório
+@comment <en>* Working directory storage::   The structure of working directories
+* Working directory storage::          A estrutura dos repositórios de trabalho
+@comment <en>* Intro administrative files::  Defining modules
+* Intro aos arquivos administrativos:: Definindo módulos
+@comment <en>* Multiple repositories::       Multiple repositories
+* Repositórios múltiplos::             Repositórios múltiplos
+@comment <en>* Creating a repository::       Creating a repository
+* Criando um repositório::             Criando um repositório
+@comment <en>* Backing up::                  Backing up a repository
+* Fazendo backup::                     Criando Backup de um repositório
+@comment <en>* Moving a repository::         Moving a repository
+* Movendo um repositório::             Movendo um repositório
+@comment <en>* Remote repositories::         Accessing repositories on remote machines
+* Repositórios remotos::               Acessando repositórios em máquinas remotas
+@comment <en>* Read-only access::            Granting read-only access to the repository
+* acesso somente-leitura::             Dando acesso somente-leitura ao repositório
+@comment <en>* Server temporary directory::  The server creates temporary directories
+* Diretório temporário do servidor::   O servidor cria diretórios temporários
 @end menu
 
-@node Specifying a repository
-@section Telling CVS where your repository is
+@comment <en>@node Specifying a repository
+@node Especificando um repositório
+@comment <en>@section Telling CVS where your repository is
+@section Dizendo ao CVS onde está o seu repositório
 
-There are several ways to tell @sc{cvs}
-where to find the repository.  You can name the
-repository on the command line explicitly, with the
-@code{-d} (for "directory") option:
+@comment <en>There are several ways to tell @sc{cvs}
+@comment <en>where to find the repository.  You can name the
+@comment <en>repository on the command line explicitly, with the
+@comment <en>@code{-d} (for "directory") option:
+Existem várias formas de dizer ao @sc{cvs} onde
+encontrar o repositório. Você pode dar o nome do
+repositório explicitamente na linha de comando, com a
+opção @code{-d} (de "diretório"):
 
 @example
 cvs -d /usr/local/cvsroot checkout yoyodyne/tc
 @end example
 
-@cindex .profile, setting CVSROOT in
-@cindex .cshrc, setting CVSROOT in
-@cindex .tcshrc, setting CVSROOT in
-@cindex .bashrc, setting CVSROOT in
-@cindex CVSROOT, environment variable
-        Or you can set the @code{$CVSROOT} environment
-variable to an absolute path to the root of the
-repository, @file{/usr/local/cvsroot} in this example.
-To set @code{$CVSROOT}, @code{csh} and @code{tcsh}
-users should have this line in their @file{.cshrc} or
-@file{.tcshrc} files:
+@comment <en>@cindex .profile, setting CVSROOT in
+@cindex .profile, configurando o CVSROOT no
+@comment <en>@cindex .cshrc, setting CVSROOT in
+@cindex .cshrc, configurando o CVSROOT no
+@comment <en>@cindex .tcshrc, setting CVSROOT in
+@cindex .tcshrc, configurando o CVSROOT no
+@comment <en>@cindex .bashrc, setting CVSROOT in
+@cindex .bashrc, configurando o CVSROOT no
+@comment <en>@cindex CVSROOT, environment variable
+@cindex CVSROOT, variável de ambiente
+@comment <en>        Or you can set the @code{$CVSROOT} environment
+@comment <en>variable to an absolute path to the root of the
+@comment <en>repository, @file{/usr/local/cvsroot} in this example.
+@comment <en>To set @code{$CVSROOT}, @code{csh} and @code{tcsh}
+@comment <en>users should have this line in their @file{.cshrc} or
+@comment <en>@file{.tcshrc} files:
+        Ou você pode ajustar a variável de ambiente
+@code{$CVSROOT} para um caminho absoluto para a raiz
+(root) do repositório, @file{/usr/local/cvsroot} neste
+exemplo. Para ajustar o @code{$CVSROOT}, usuário de
+@code{csh} e @code{tcsh} devem ter esta linha no seu
+arquivo @file{.cshrc} ou @file{.tcshrc}:
 
 @example
 setenv CVSROOT /usr/local/cvsroot
 @end example
 
 @noindent
-@code{sh} and @code{bash} users should instead have these lines in their
-@file{.profile} or @file{.bashrc}:
+@comment <en>@code{sh} and @code{bash} users should instead have these lines in their
+@comment <en>@file{.profile} or @file{.bashrc}:
+usuários de @code{sh} e @code{bash} devem, por sua vez,
+ter estas linhas nos seus @file{.profile} ou @file{.bashrc}:
 
 @example
 CVSROOT=/usr/local/cvsroot
 export CVSROOT
 @end example
 
-@cindex Root file, in CVS directory
-@cindex CVS/Root file
-        A repository specified with @code{-d} will
-override the @code{$CVSROOT} environment variable.
-Once you've checked a working copy out from the
-repository, it will remember where its repository is
-(the information is recorded in the
-@file{CVS/Root} file in the working copy).
+@comment <en>@cindex Root file, in CVS directory
+@cindex O arquivo Root, no diretório CVS
+@comment <en>@cindex CVS/Root file
+@cindex O arquivo CVS/Root
+@comment <en>        A repository specified with @code{-d} will
+@comment <en>override the @code{$CVSROOT} environment variable.
+@comment <en>Once you've checked a working copy out from the
+@comment <en>repository, it will remember where its repository is
+@comment <en>(the information is recorded in the
+@comment <en>@file{CVS/Root} file in the working copy).
+        Um repositório especificado com @code{-d} se
+sobrepõe à variável de ambiente @code{$CVSROOT}. Uma
+vez que você tenha pego emprestada uma cópia de
+trabalho do repositório, ela vai se lembrar onde está o
+seu repositório (a informação é registrada no arquivo
+@file{CVS/Root} na cópia de trabalho).
 
-The @code{-d} option and the @file{CVS/Root} file both
-override the @code{$CVSROOT} environment variable.  If
-@code{-d} option differs from @file{CVS/Root}, the
-former is used.  Of course, for proper operation they
-should be two ways of referring to the same repository.
+@comment <en>The @code{-d} option and the @file{CVS/Root} file both
+@comment <en>override the @code{$CVSROOT} environment variable.  If
+@comment <en>@code{-d} option differs from @file{CVS/Root}, the
+@comment <en>former is used.  Of course, for proper operation they
+@comment <en>should be two ways of referring to the same repository.
+Tanto a opção @code{-d} quanto o arquivo
+@file{CVS/Root} sobreescrevem a variável de ambiente
+@code{$CVSROOT}. Se a opção @code{-d} é diferente do
+@file{CVS/Root}, a primeira é usada. Obviamente, para
+operações corretas, elas devem ser duas formas de
+referenciar o mesmo repositório.
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-@node Repository storage
-@section How data is stored in the repository
-@cindex Repository, how data is stored
+@comment <en>@node Repository storage
+@node ???Repository storage???
+@comment <en>@section How data is stored in the repository
+@section Como os dados são guardados no repositório
+@comment <en>@cindex Repository, how data is stored
+@cindex Repositório, como os dados são guardados no
 
-For most purposes it isn't important @emph{how}
-@sc{cvs} stores information in the repository.  In
-fact, the format has changed in the past, and is likely
-to change in the future.  Since in almost all cases one
-accesses the repository via @sc{cvs} commands, such
-changes need not be disruptive.
+@comment <en>For most purposes it isn't important @emph{how}
+@comment <en>@sc{cvs} stores information in the repository.  In
+@comment <en>fact, the format has changed in the past, and is likely
+@comment <en>to change in the future.  Since in almost all cases one
+@comment <en>accesses the repository via @sc{cvs} commands, such
+@comment <en>changes need not be disruptive.
+Para a maioria das aplicações, não importa @emph{como}
+o @sc{cvs} guarda as informações no repositório. De
+fato, o formato mudou no passado, e provavelmente vai
+mudar no futuro. Já que em quase todo os casos o acesso
+ao repositório é feito via comandos do @sc{cvs}, tais
+mudanças não serão radicais.
 
-However, in some cases it may be necessary to
-understand how @sc{cvs} stores data in the repository,
-for example you might need to track down @sc{cvs} locks
-(@pxref{Concurrency}) or you might need to deal with
-the file permissions appropriate for the repository.
+@comment <en>However, in some cases it may be necessary to
+@comment <en>understand how @sc{cvs} stores data in the repository,
+@comment <en>for example you might need to track down @sc{cvs} locks
+@comment <en>(@pxref{Concurrency}) or you might need to deal with
+@comment <en>the file permissions appropriate for the repository.
+Entretanto, em alguns casos pode ser necessário
+entender como o @sc{cvs} guarda os dados no
+repositório. Por exemplo, você pode precisar localizar
+travas do @sc{cvs} (@pxref{Concorrência}) ou você pode
+precisar lidar com permissões de arquivos apropriadas
+para o repositório.
 
 @menu
-* Repository files::            What files are stored in the repository
-* File permissions::            File permissions
-* Windows permissions::         Issues specific to Windows
-* Attic::                       Some files are stored in the Attic
-* CVS in repository::           Additional information in CVS directory
-* Locks::                       CVS locks control concurrent accesses
-* CVSROOT storage::             A few things about CVSROOT are different
+@comment <en>* Repository files::            What files are stored in the repository
+* Arquivos do repositório::            Quais arquivos são guardados no repositório
+@comment <en>* File permissions::            File permissions
+* Permissões de arquivos::            Permisões de arquivos
+@comment <en>* Windows permissions::         Issues specific to Windows
+* Permissões no Windows::         Questões específicas ao Windows
+@comment <en>* Attic::                       Some files are stored in the Attic
+* Attic::                       Alguns arquivos são guardados no Attic
+@comment <en>* CVS in repository::           Additional information in CVS directory
+* CVS no repositório::           Informações adicionais no diretório CVS
+@comment <en>* Locks::                       CVS locks control concurrent accesses
+* travas::                       ???CVS locks control concurrent accesses???
+@comment <en>* CVSROOT storage::             A few things about CVSROOT are different
+* ???CVSROOT storage???::             Umas poucas coisas sobre CVSROOT são diferentes
 @end menu
 
-@node Repository files
-@subsection Where files are stored within the repository
+@comment <en>@node Repository files
+@node Arquivos do repositório
+@comment <en>@subsection Where files are stored within the repository
+@subsection Onde arquivos são guardados dentro do repositório
 
 @c @cindex Filenames, legal
 @c @cindex Legal filenames
@@ -1084,17 +1378,23 @@ the file permissions appropriate for the repository.
 @c "./-foo", isn't as effective, at least for "cvs add"
 @c which doesn't support pathnames containing "/".
 
-The overall structure of the repository is a directory
-tree corresponding to the directories in the working
-directory.  For example, supposing the repository is in
+@comment <en>The overall structure of the repository is a directory
+@comment <en>tree corresponding to the directories in the working
+@comment <en>directory.  For example, supposing the repository is in
+A estrutura geral do repositório é uma árvore de
+diretórios correspondendo aos diretórios no diretório
+de trabalho. Por exemplo, suponha que o repositório
+está em
 
 @example
 /usr/local/cvsroot
 @end example
 
 @noindent
-here is a possible directory tree (showing only the
-directories):
+@comment <en>here is a possible directory tree (showing only the
+@comment <en>directories):
+Aqui está uma possível árvore de diretórios (mostrando
+apenas os diretórios):
 
 @example
 @t{/usr}
@@ -1104,7 +1404,8 @@ directories):
  |   +--@t{cvsroot}
  |   |    |
  |   |    +--@t{CVSROOT}
-          |      (administrative files)
+@comment <en>          |      (administrative files)
+          |      (arquivos administrativos)
           |
           +--@t{gnu}
           |   |
