@@ -1,3 +1,10 @@
+Sun Feb 16 12:00:44 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* client.c (client_process_import_file): Nuke first_time.  If
+	toplevel_repos were ever NULL here, the code would dump core in
+	strncmp a few lines down.  And client_import_setup ensures
+	toplevel_repos is not NULL.
+
 Sun Feb 16 08:16:48 1997  Ian Lance Taylor  <ian@cygnus.com>
 
 	* client.c (client_process_import_file): Rename short_pathname to
