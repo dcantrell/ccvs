@@ -1,3 +1,8 @@
+1999-11-10  Jim Kingdon  <http://developer.redhat.com/>
+
+	* cvs.1: Don't document -H as a command option; it has been a
+	while since that worked.
+
 1999-01-19  Vitaly V Fedrushkov  <willy@snowyowl.csu.ac.ru>
 
 	* Makefile.in (INSTALL_DATA): Wrong manpage permissions fixed.
