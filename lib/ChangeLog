@@ -1,3 +1,7 @@
+2003-07-23  Derek Price  <derek@ximbiot.com>
+
+	* system.h: Move some includes from src/cvs.h.
+
 2003-07-22  Derek Price  <derek@ximbiot.com>
 
 	* system.h: Assume <stddef.h> per C89.

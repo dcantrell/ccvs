@@ -48,6 +48,11 @@
 #endif /* HAVE_UNISTD_H */
 /* End the default set of autoconf includes */
 
+/* Assume these headers. */
+#include <ctype.h>
+#include <pwd.h>
+#include <signal.h>
+
 /* This include enables the use of the *_unlocked IO functions from glibc. */
 #include "unlocked-io.h"
 
@@ -193,9 +198,9 @@
 #endif /* !def S_IRUSR */
 #endif /* NEED_DECOY_PERMISSIONS */
 
-#if defined(POSIX) || defined(HAVE_UNISTD_H)
-#include <unistd.h>
 #include <limits.h>
+#if defined(POSIX) || defined(HAVE_UNISTD_H)
+# include <unistd.h>
 #else
 off_t lseek ();
 char *getcwd ();
@@ -232,11 +237,13 @@ int utime ();
 #  endif
 #endif
 
-#include <string.h>
-
-#ifndef ERRNO_H_MISSING
-#include <errno.h>
-#endif
+#ifdef HAVE_ERRNO_H
+# include <errno.h>
+#else
+# ifndef errno
+extern int errno;
+# endif /* !errno */
+#endif /* HAVE_ERRNO_H */
 
 /* Not all systems set the same error code on a non-existent-file
    error.  This tries to ask the question somewhat portably.
