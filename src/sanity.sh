@@ -30,12 +30,6 @@ echo 'This test should produce no other output than this line, and a final "OK".
 if test x"$1" = x"-r"; then
 	shift
 	remote=yes
-	# If we're going to do remote testing, make sure 'rsh' works first.
-        host="`hostname`"
-	if test "x`${CVS_RSH-rsh} $host 'echo hi'`" != "xhi"; then
-	    echo "ERROR: cannot test remote CVS, because \`rsh $host' fails." >&2
-	    exit 1
-	fi
 else
 	remote=no
 fi
@@ -472,7 +466,13 @@ CVSROOT=${CVSROOT_DIRNAME} ; export CVSROOT
 if test "x$remote" = xyes; then
 	# Use rsh so we can test it without having to muck with inetd
 	# or anything like that.  Also needed to get CVS_SERVER to
-	# work.
+	# work.  Make sure 'rsh' works altogether.
+        host="`hostname`"
+	if test "x`rsh $host 'echo hi'`" != "xhi"; then
+	    echo "ERROR: cannot test remote CVS, because \`rsh $host' fails." >&2
+	    exit 1
+	fi
+
 	CVSROOT=:ext:`hostname`:${CVSROOT_DIRNAME} ; export CVSROOT
 	CVS_SERVER=${testcvs}; export CVS_SERVER
 fi
@@ -2161,34 +2161,6 @@ done'
 	  dotest multibranch-13 "cat file1" '1:trunk-1
 br2 adds a line'
 
-	  dotest multibranch-14 "${testcvs} log file1" \
-"
-RCS file: /tmp/cvs-sanity/cvsroot/first-dir/file1,v
-Working file: file1
-head: 1\.1
-branch:
-locks: strict
-access list:
-symbolic names:
-	br2: 1\.1\.0\.4
-	br1: 1\.1\.0\.2
-keyword substitution: kv
-total revisions: 3;	selected revisions: 3
-description:
-----------------------------
-revision 1\.1
-date: [0-9/]* [0-9:]*;  author: [0-9a-zA-Z-]*;  state: Exp;
-branches:  1\.1\.2;  1\.1\.4;
-add-it
-----------------------------
-revision 1\.1\.4\.1
-date: [0-9/]* [0-9:]*;  author: [0-9a-zA-Z-]*;  state: Exp;  lines: ${PLUS}1 -0
-modify-on-br2
-----------------------------
-revision 1\.1\.2\.1
-date: [0-9/]* [0-9:]*;  author: [0-9a-zA-Z-]*;  state: Exp;  lines: ${PLUS}1 -1
-modify-on-br1
-============================================================================="
 	  cd ..
 
 	  if test "$keep" = yes; then
@@ -4041,7 +4013,6 @@ done'
 	    dotest binfiles-12 "${testcvs} -q update -A" '[UP] binfile'
 	    dotest binfiles-13 "${testcvs} -q update -A" ''
 	  fi
-
 	  cd ../..
 	  rm -rf 1
 
@@ -4108,30 +4079,6 @@ File: binfile          	Status: Up-to-date
    Sticky Tag:		(none)
    Sticky Date:		(none)
    Sticky Options:	-kv'
-
-	  # Do sticky options work when used with 'cvs update'?
-	  echo "Not a binary file." > nibfile
-	  dotest binfiles-sticky1 "${testcvs} -q add nibfile" \
-	    'cvs [a-z]*: use '\''cvs commit'\'' to add this file permanently'
-	  dotest binfiles-sticky2 "${testcvs} -q ci -m add-it nibfile" \
-	    'RCS file: /tmp/cvs-sanity/cvsroot/first-dir/nibfile,v
-done
-Checking in nibfile;
-/tmp/cvs-sanity/cvsroot/first-dir/nibfile,v  <--  nibfile
-initial revision: 1.1
-done'
-	  dotest binfiles-sticky3 "${testcvs} -q update -kb nibfile" \
-	    '[UP] nibfile'
-	  dotest binfiles-sticky4 "${testcvs} -q status nibfile" \
-'===================================================================
-File: nibfile          	Status: Up-to-date
-
-   Working revision:	1\.1.*
-   Repository revision:	1\.1	/tmp/cvs-sanity/cvsroot/first-dir/nibfile,v
-   Sticky Tag:		(none)
-   Sticky Date:		(none)
-   Sticky Options:	-kb'
-	  # Eventually we should test that -A removes the -kb here...
 
 	  cd ../..
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir

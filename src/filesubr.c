@@ -676,19 +676,7 @@ last_component (path)
 char *
 get_homedir ()
 {
-    static char home[PATH_MAX];
-    char *env = getenv ("HOME");
-    struct passwd *pw;
-
-    if (env)
-	strcpy (home, env);
-    else if ((pw = (struct passwd *) getpwuid (getuid ()))
-	     && pw->pw_dir)
-	strcpy (home, pw->pw_dir);
-    else
-	return 0;
-
-    return home;
+    return getenv ("HOME");
 }
 
 /* See cvs.h for description.  On unix this does nothing, because the
