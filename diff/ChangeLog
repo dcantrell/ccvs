@@ -1,3 +1,8 @@
+2004-09-09  Conrad T. Pino  <Conrad@Pino.com>
+
+	* libdiff.dep: Regenerated for "../cvsnt.dsp" changes made 2004-09-08.
+	* libdiff.mak: Regenerated for "../cvsnt.dsp" changes made 2004-09-08.
+
 2004-07-13  Derek Price  <derek@ximbiot.com>
 
 	* .cvsignore: Ignore GCC profiling data.

@@ -1,5 +1,10 @@
 2004-09-09  Conrad T. Pino  <Conrad@Pino.com>
 
+	* cvsnt.dep: Regenerated for "cvsnt.dsp" changes made 2004-09-08.
+	* cvsnt.mak: Regenerated for "cvsnt.dsp" changes made 2004-09-08.
+
+2004-09-08  Conrad T. Pino  <Conrad@Pino.com>
+
 	* cvsnt.dsp: Add "windows-NT/JmgStat.c" to project.  Add
 	"windows-NT/JmgStat.h" to project.  Add "src/ms-buffer.h" to project.
 

@@ -2,7 +2,6 @@
 
 .\src\add.c : \
 	".\lib\exit.h"\
-	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
@@ -35,7 +34,6 @@
 
 .\src\admin.c : \
 	".\lib\exit.h"\
-	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
@@ -66,7 +64,6 @@
 
 .\src\annotate.c : \
 	".\lib\exit.h"\
-	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
@@ -97,7 +94,6 @@
 
 .\src\buffer.c : \
 	".\lib\exit.h"\
-	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
@@ -128,7 +124,6 @@
 
 .\src\checkin.c : \
 	".\lib\exit.h"\
-	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
@@ -161,7 +156,6 @@
 
 .\src\checkout.c : \
 	".\lib\exit.h"\
-	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
@@ -192,7 +186,6 @@
 
 .\src\classify.c : \
 	".\lib\exit.h"\
-	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
@@ -223,7 +216,6 @@
 
 .\src\client.c : \
 	".\lib\exit.h"\
-	".\lib\fnmatch.h"\
 	".\lib\getline.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
@@ -261,7 +253,6 @@
 
 .\src\commit.c : \
 	".\lib\exit.h"\
-	".\lib\fnmatch.h"\
 	".\lib\getline.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
@@ -296,7 +287,6 @@
 
 .\src\create_adm.c : \
 	".\lib\exit.h"\
-	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
@@ -327,7 +317,6 @@
 
 .\src\cvsrc.c : \
 	".\lib\exit.h"\
-	".\lib\fnmatch.h"\
 	".\lib\getline.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
@@ -359,7 +348,6 @@
 
 .\src\diff.c : \
 	".\lib\exit.h"\
-	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
@@ -390,7 +378,6 @@
 
 .\src\edit.c : \
 	".\lib\exit.h"\
-	".\lib\fnmatch.h"\
 	".\lib\getline.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
@@ -425,7 +412,6 @@
 
 .\src\entries.c : \
 	".\lib\exit.h"\
-	".\lib\fnmatch.h"\
 	".\lib\getline.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
@@ -457,7 +443,6 @@
 
 .\src\error.c : \
 	".\lib\exit.h"\
-	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
@@ -488,7 +473,6 @@
 
 .\src\exithandle.c : \
 	".\lib\exit.h"\
-	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
@@ -519,7 +503,6 @@
 
 .\src\expand_path.c : \
 	".\lib\exit.h"\
-	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
@@ -550,7 +533,6 @@
 
 .\src\fileattr.c : \
 	".\lib\exit.h"\
-	".\lib\fnmatch.h"\
 	".\lib\getline.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
@@ -583,7 +565,6 @@
 
 ".\windows-NT\filesubr.c" : \
 	".\lib\exit.h"\
-	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
@@ -606,6 +587,7 @@
 	".\src\stack.h"\
 	".\src\update.h"\
 	".\windows-NT\config.h"\
+	".\windows-NT\JmgStat.h"\
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
@@ -614,7 +596,6 @@
 
 .\src\find_names.c : \
 	".\lib\exit.h"\
-	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
@@ -645,7 +626,6 @@
 
 .\src\hash.c : \
 	".\lib\exit.h"\
-	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
@@ -676,7 +656,6 @@
 
 .\src\history.c : \
 	".\lib\exit.h"\
-	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
@@ -709,7 +688,6 @@
 
 .\src\ignore.c : \
 	".\lib\exit.h"\
-	".\lib\fnmatch.h"\
 	".\lib\getline.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
@@ -741,7 +719,6 @@
 
 .\src\import.c : \
 	".\lib\exit.h"\
-	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
@@ -771,9 +748,13 @@
 	".\windows-NT\unistd.h"\
 	
 
+".\windows-NT\JmgStat.c" : \
+	".\windows-NT\JmgStat.h"\
+	".\windows-NT\stdbool.h"\
+	
+
 .\src\lock.c : \
 	".\lib\exit.h"\
-	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
@@ -804,7 +785,6 @@
 
 ".\src\log-buffer.c" : \
 	".\lib\exit.h"\
-	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
@@ -835,7 +815,6 @@
 
 .\src\log.c : \
 	".\lib\exit.h"\
-	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
@@ -866,7 +845,6 @@
 
 .\src\login.c : \
 	".\lib\exit.h"\
-	".\lib\fnmatch.h"\
 	".\lib\getline.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
@@ -898,7 +876,6 @@
 
 .\src\logmsg.c : \
 	".\lib\exit.h"\
-	".\lib\fnmatch.h"\
 	".\lib\getline.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
@@ -930,7 +907,6 @@
 
 .\src\ls.c : \
 	".\lib\exit.h"\
-	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
@@ -961,7 +937,6 @@
 
 .\src\main.c : \
 	".\lib\exit.h"\
-	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
@@ -992,7 +967,6 @@
 
 ".\windows-NT\mkdir.c" : \
 	".\lib\exit.h"\
-	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
@@ -1023,7 +997,6 @@
 
 .\src\mkmodules.c : \
 	".\lib\exit.h"\
-	".\lib\fnmatch.h"\
 	".\lib\getline.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
@@ -1057,7 +1030,6 @@
 
 .\src\modules.c : \
 	".\lib\exit.h"\
-	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
@@ -1089,7 +1061,6 @@
 
 .\src\myndbm.c : \
 	".\lib\exit.h"\
-	".\lib\fnmatch.h"\
 	".\lib\getline.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
@@ -1126,7 +1097,6 @@
 
 .\src\no_diff.c : \
 	".\lib\exit.h"\
-	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
@@ -1157,7 +1127,6 @@
 
 .\src\parseinfo.c : \
 	".\lib\exit.h"\
-	".\lib\fnmatch.h"\
 	".\lib\getline.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
@@ -1189,7 +1158,6 @@
 
 .\src\patch.c : \
 	".\lib\exit.h"\
-	".\lib\fnmatch.h"\
 	".\lib\getline.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
@@ -1226,7 +1194,6 @@
 
 ".\windows-NT\rcmd.c" : \
 	".\lib\exit.h"\
-	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
@@ -1258,7 +1225,6 @@
 
 .\src\rcs.c : \
 	".\lib\exit.h"\
-	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
@@ -1292,7 +1258,6 @@
 .\src\rcscmds.c : \
 	".\diff\diffrun.h"\
 	".\lib\exit.h"\
-	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
@@ -1323,7 +1288,6 @@
 
 .\src\recurse.c : \
 	".\lib\exit.h"\
-	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
@@ -1357,7 +1321,6 @@
 
 .\src\release.c : \
 	".\lib\exit.h"\
-	".\lib\fnmatch.h"\
 	".\lib\getline.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
@@ -1390,7 +1353,6 @@
 
 .\src\remove.c : \
 	".\lib\exit.h"\
-	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
@@ -1421,7 +1383,6 @@
 
 .\src\repos.c : \
 	".\lib\exit.h"\
-	".\lib\fnmatch.h"\
 	".\lib\getline.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
@@ -1453,7 +1414,6 @@
 
 .\src\root.c : \
 	".\lib\exit.h"\
-	".\lib\fnmatch.h"\
 	".\lib\getline.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
@@ -1485,7 +1445,6 @@
 
 ".\src\rsh-client.c" : \
 	".\lib\exit.h"\
-	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
@@ -1517,7 +1476,6 @@
 
 ".\windows-NT\run.c" : \
 	".\lib\exit.h"\
-	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
@@ -1548,7 +1506,6 @@
 
 .\src\scramble.c : \
 	".\lib\exit.h"\
-	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
@@ -1579,7 +1536,6 @@
 
 .\src\server.c : \
 	".\lib\exit.h"\
-	".\lib\fnmatch.h"\
 	".\lib\getline.h"\
 	".\lib\getnline.h"\
 	".\lib\getopt.h"\
@@ -1599,6 +1555,8 @@
 	".\src\edit.h"\
 	".\src\fileattr.h"\
 	".\src\hash.h"\
+	".\src\log-buffer.h"\
+	".\src\ms-buffer.h"\
 	".\src\myndbm.h"\
 	".\src\rcs.h"\
 	".\src\root.h"\
@@ -1618,7 +1576,6 @@
 
 ".\src\socket-client.c" : \
 	".\lib\exit.h"\
-	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
@@ -1650,7 +1607,6 @@
 
 .\src\stack.c : \
 	".\lib\exit.h"\
-	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
@@ -1681,7 +1637,6 @@
 
 ".\windows-NT\startserver.c" : \
 	".\lib\exit.h"\
-	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
@@ -1713,7 +1668,6 @@
 
 .\src\status.c : \
 	".\lib\exit.h"\
-	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
@@ -1744,7 +1698,6 @@
 
 .\src\subr.c : \
 	".\lib\exit.h"\
-	".\lib\fnmatch.h"\
 	".\lib\getline.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
@@ -1776,7 +1729,6 @@
 
 .\src\tag.c : \
 	".\lib\exit.h"\
-	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
@@ -1808,7 +1760,6 @@
 
 .\src\update.c : \
 	".\lib\exit.h"\
-	".\lib\fnmatch.h"\
 	".\lib\getline.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
@@ -1845,7 +1796,6 @@
 
 .\src\vers_ts.c : \
 	".\lib\exit.h"\
-	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
@@ -1876,7 +1826,6 @@
 
 .\src\version.c : \
 	".\lib\exit.h"\
-	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
@@ -1911,7 +1860,6 @@
 
 .\src\watch.c : \
 	".\lib\exit.h"\
-	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
@@ -1945,7 +1893,6 @@
 
 ".\windows-NT\woe32.c" : \
 	".\lib\exit.h"\
-	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
@@ -1976,7 +1923,6 @@
 
 .\src\wrapper.c : \
 	".\lib\exit.h"\
-	".\lib\fnmatch.h"\
 	".\lib\getline.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
@@ -2008,7 +1954,6 @@
 
 .\src\zlib.c : \
 	".\lib\exit.h"\
-	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
