@@ -1,3 +1,8 @@
+1999-05-18  Jim Kingdon  <http://www.cyclic.com>
+
+	* sanity.sh (basicc): Allow the behavior whereby unlink(".")
+	succeeds.  Reported by Jeremy Buhler and Pavel Roskin.
+
 1999-05-17  Steve Cameron of Compaq
 
 	* sanity.sh: Modified to no longer use "test -e" for existence
