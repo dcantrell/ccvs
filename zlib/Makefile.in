@@ -2,6 +2,10 @@
 # Copyright (C) 1995-1996 Jean-loup Gailly.
 # For conditions of distribution and use, see copyright notice in zlib.h 
 
+srcdir     = @srcdir@
+top_srcdir = @top_srcdir@
+VPATH      = @srcdir@
+
 # To compile and test, type:
 #   ./configure; make test
 # The call of configure is optional if you don't have special requirements
@@ -25,7 +29,8 @@ LDSHARED=$(CC)
 VER=1.0.3
 LIBS=libz.a
 
-AR=ar rc
+# For CVS, separate AR and ARFLAGS.
+AR=ar
 RANLIB=ranlib
 TAR=tar
 
@@ -40,14 +45,16 @@ TEST_OBJS = example.o minigzip.o
 DISTFILES = README INDEX ChangeLog configure Make*[a-z0-9] descrip.mms \
 	    zlib.def zlib.rc algorithm.doc  *.[ch]
 
-all: example minigzip
+# For CVS, just build libz.a
+all: libz.a
 
 test: all
 	./example
 	echo hello world | ./minigzip | ./minigzip -d 
 
+# For CVS, use an explict rc after $(AR).
 libz.a: $(OBJS)
-	$(AR) $@ $(OBJS)
+	$(AR) rc $@ $(OBJS)
 	-@ ($(RANLIB) $@ || true) 2>/dev/null
 
 libz.so.$(VER): $(OBJS)
@@ -60,29 +67,31 @@ example: example.o $(LIBS)
 minigzip: minigzip.o $(LIBS)
 	$(CC) $(CFLAGS) -o $@ minigzip.o $(LDFLAGS)
 
-install: $(LIBS)
-	-@if [ ! $(prefix)/include  ]; then mkdir $(prefix)/include; fi
-	-@if [ ! $(exec_prefix)/lib ]; then mkdir $(exec_prefix)/lib; fi
-	cp zlib.h zconf.h $(prefix)/include
-	chmod 644 $(prefix)/include/zlib.h $(prefix)/include/zconf.h
-	cp $(LIBS) $(exec_prefix)/lib
-	cd $(exec_prefix)/lib; chmod 644 $(LIBS)
-	-@(cd $(exec_prefix)/lib; $(RANLIB) libz.a || true) >/dev/null 2>&1
-	cd $(exec_prefix)/lib; if test -f libz.so.$(VER); then \
-	  ln -s libz.so.$(VER) libz.so; \
-	fi
-# The ranlib in install is needed on NeXTSTEP which checks file times
-
+# For CVS, remove the install and uninstall targets.
+install:
 uninstall:
-	cd $(exec_prefix)/lib; rm -f $(LIBS); \
-	if test -f libz.so; then \
-	 v=`sed -n '/VERSION "/s/.*"\(.*\)".*/\1/p'<$(prefix)/include/zlib.h`;\
-	 rm -f libz.so.$$v libz.so; \
-	fi
-	cd $(prefix)/include; rm -f zlib.h zconf.h
 
-clean:
+# mostlyclean added for CVS.
+clean mostlyclean:
 	rm -f *.o *~ example minigzip libz.a libz.so* foo.gz
+
+# distclean and realclean added for CVS.
+distclean realclean: clean
+	rm -f Makefile
+.PHONY: distclean realclean
+
+# dist-dir added for CVS.
+dist-dir:
+	mkdir ${DISTDIR}
+	for i in `cd $(srcdir); echo ${DISTFILES}`; do \
+	  ln $(srcdir)/$${i} ${DISTDIR}; \
+	done
+.PHONY: dist-dir
+
+# ls added for CVS.
+ls:
+	@echo $(DISTFILES)
+.PHONY: ls
 
 zip:
 	mv Makefile Makefile~; cp -p Makefile.in Makefile
@@ -104,6 +113,11 @@ dist:
 
 tags:	
 	etags *.[ch]
+
+# Makefile target added for CVS.
+subdir = zlib
+Makefile: ../config.status Makefile.in
+	cd .. && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= ./config.status
 
 depend:
 	makedepend -- $(CFLAGS) -- *.[ch]

@@ -99,7 +99,7 @@ DISTFILES = \
 
 ### Subdirectories to run make in for the primary targets.
 # Unix source subdirs, where we'll want to run lint and etags:
-USOURCE_SUBDIRS = lib src
+USOURCE_SUBDIRS = lib zlib src
 # All other subdirs:
 SUBDIRS = ${USOURCE_SUBDIRS} man doc contrib tools windows-NT os2 macintosh
 # Only make TAGS/tags files in these directories, in this order
