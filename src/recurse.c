@@ -300,10 +300,11 @@ do_recursion (xfileproc, xfilesdoneproc, xdirentproc, xdirleaveproc,
     /*
      * Now would be a good time to check to see if we need to stop
      * generating data, to give the buffers a chance to drain to the
-     * remote client.  We should not have locks active at this point for
-     * an operation that's going to swamp the outgoing buffers. 
+     * remote client.  We should not have locks active at this point.
      */
-    if (server_active)
+    if (server_active
+	/* If there are writelocks around, we cannot pause here.  */
+	&& (readlock || noexec))
 	server_pause_check();
 #endif
 
