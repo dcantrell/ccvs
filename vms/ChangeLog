@@ -1,5 +1,7 @@
 Tue Sep  9 18:53:33 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* pwd.c (getpwuid): Declare argument as unsigned int not uid_t.
+
 	* config.h (SYSTEM_GETCALLER): Define.
 	* pwd.c (getpwuid, getpwnam): Always return NULL (see comment
 	for rationale).
