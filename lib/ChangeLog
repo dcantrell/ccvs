@@ -1,5 +1,9 @@
 2004-04-23  Derek Price  <derek@ximbiot.com>
 
+	* .cvsignore: Add stdbool.h.
+
+2004-04-23  Derek Price  <derek@ximbiot.com>
+
 	* libcvs.dsp: Create stdbool.h.
 	* libcvs.dep, libcvs.mak: Regenerated.
 
