@@ -1,3 +1,8 @@
+Mon Jan 29 15:59:31 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	gcc -Wall lint:
+	* client.c: Include edit.h
+
 Sun Jan 28 09:45:53 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* edit.c, edit.h (mark_up_to_date): New function, to remove file
