@@ -469,13 +469,13 @@ warning: duplicate key `%s' in version `%s' of RCS file `%s'",
     {
 	Node *kv;
 
-	if (vnode->other == NULL)
-	    vnode->other = getlist ();
+	if (rdata->other == NULL)
+	    rdata->other = getlist ();
 	kv = getnode ();
 	kv->type = RCSFIELD;
 	kv->key = xstrdup (key);
 	kv->data = xstrdup (value);
-	if (addnode (vnode->other, kv) != 0)
+	if (addnode (rdata->other, kv) != 0)
 	{
 	    error (0, 0,
 		   "warning: duplicate key `%s' in RCS file `%s'",
