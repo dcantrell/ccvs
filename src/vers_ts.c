@@ -86,10 +86,24 @@ Version_TS (repository, options, tag, date, user, force_tag_match,
      */
     if (options)
 	vers_ts->options = xstrdup (options);
-    else if (sdtp && sdtp->aflag == 0)
+    else if (sdtp && !vers_ts->options)
     {
-	if (!vers_ts->options)
+	if (sdtp->aflag == 0)
 	    vers_ts->options = xstrdup (sdtp->options);
+	else
+	{
+	    /* If no keyword expansion was specified on command line,
+	       use whatever was in the file.  This is how we tell the client
+	       whether a file is binary.  */
+	    if (rcs->flags & PARTIAL)
+		RCS_reparsercsfile (rcs);
+	    if (rcs->expand != NULL)
+	    {
+		vers_ts->options = xmalloc (strlen (rcs->expand) + 2);
+		strcpy (vers_ts->options, "-k");
+		strcat (vers_ts->options, rcs->expand);
+	    }
+	}
     }
     if (!vers_ts->options)
 	vers_ts->options = xstrdup ("");

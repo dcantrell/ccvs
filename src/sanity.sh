@@ -2547,6 +2547,11 @@ done'
 	  cd ../../1/first-dir
 	  dotest binfiles-7 "${testcvs} -q update" '[UP] binfile'
 	  dotest binfiles-8 "cmp ../binfile2.dat binfile" ''
+	  dotest binfiles-9 "${testcvs} -q update -A" ''
+	  dotest binfiles-10 "${testcvs} -q update -kk" '[UP] binfile'
+	  dotest binfiles-11 "${testcvs} -q update" ''
+	  dotest binfiles-12 "${testcvs} -q update -A" '[UP] binfile'
+	  dotest binfiles-13 "${testcvs} -q update -A" ''
 
 	  cd ../..
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
