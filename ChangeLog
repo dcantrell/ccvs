@@ -1,5 +1,9 @@
 2003-11-03  Derek Price  <derek@ximbiot.com>
 
+	* configure.in (AM_INIT_AUTOMAKE): Require Automake 1.7.5.
+
+2003-11-03  Derek Price  <derek@ximbiot.com>
+
 	* INSTALL: Add some notes on Autoconf requirements.
 
 2003-11-03  Derek Price  <derek@ximbiot.com>
