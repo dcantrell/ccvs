@@ -1,3 +1,7 @@
+Wed Jul 10 18:46:39 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (log): Don't document "rlog"; it is deprecated.
+
 Sat Jul  6 22:07:45 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (Environment variables): Document more temp

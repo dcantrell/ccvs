@@ -5960,8 +5960,6 @@ Synopsis: log [-l] rlog-options [files@dots{}]
 Requires: repository, working directory.
 @item
 Changes: nothing.
-@item
-Synonym: rlog
 @end itemize
 
 Display log information for files.  @code{log} calls
