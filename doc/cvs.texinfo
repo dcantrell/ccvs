@@ -6835,7 +6835,8 @@ this module.
 @cindex Wrappers
 
 Wrappers allow you to set a hook which transforms files on
-their way in and out of cvs
+their way in and out of @sc{cvs}.  Most or all of the
+wrappers features do not work with client/server @sc{cvs}.
 
 The file @file{cvswrappers} defines the script that will be
 run on a file when its name matches a regular
@@ -6846,14 +6847,22 @@ with the @code{-t} flag) and the other when the file is
 checked out of the repository (this is denoted with the
 @code{-f} flag)
 
-The @file{cvswrappers} also specifies the merge
-methodology that should be used when the file is
-updated, that is should a MERGE or a straight COPY of
-the diferences be used when checking into the
-repository.
+The @file{cvswrappers} also has a @samp{-m} option to
+specify the merge methodology that should be used when
+the file is updated.  @code{MERGE} means the usual
+@sc{cvs} behavior: try to merge the files (this
+generally will not work for binary files).  @code{COPY}
+means that @code{cvs update} will merely copy one
+version over the other, and require the user using
+mechanisms outside @sc{cvs}, to insert any necessary
+changes.
+@c FIXME: which version is copied over which version?
+The @samp{-m} wrapper option only affects behavior when
+merging is done on update; it does not affect how files
+are stored.  See @xref{Binary files}, for more on
+binary files.
 
-The basic format of the file @file{cvswrappers} is given as
-such:
+The basic format of the file @file{cvswrappers} is:
 
 @example
 wildcard     [option value][option value]...
