@@ -196,3 +196,7 @@ lib/stat-macros.h
 m4/stat.m4
 
 m4/onceonly_2_57.m4
+lib/lstat.c
+m4/lstat.m4
+
+m4/onceonly_2_57.m4
