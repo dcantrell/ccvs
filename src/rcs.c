@@ -193,7 +193,7 @@ l_error:
  *
  * There are no allowances for error here.
  */
-void
+static void
 RCS_reparsercsfile (rdata)
     RCSNode *rdata;
 {
@@ -1591,4 +1591,18 @@ RCS_isdead (rcs, tag)
 
     version = (RCSVers *) p->data;
     return (version->dead);
+}
+
+/* Return the RCS keyword expansion mode.  For example "b" for binary.
+   Returns a pointer into storage which is allocated and freed along with
+   the rest of the RCS information; the caller should not modify this
+   storage.  Returns NULL if the RCS file does not specify a keyword
+   expansion mode; for all other errors, die with a fatal error.  */
+char *
+RCS_getexpand (rcs)
+    RCSNode *rcs;
+{
+    if (rcs->flags & PARTIAL)
+	RCS_reparsercsfile (rcs);
+    return rcs->expand;
 }

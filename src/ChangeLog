@@ -1,5 +1,10 @@
 Wed Mar 13 09:25:56 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	Fix a gcc -Wall warning:
+	* rcs.c, rcs.h (RCS_getexpand): New function.
+	* vers_ts.c (Version_TS): Call it.
+	* rcs.c (RCS_reparsercsfile): Make static.
+
 	Add a "cvs init" command.  This is needed because cvsinit.sh
 	invoked mkmodules which doesn't exist any more.
 	* mkmodules.c: Break filelist out of mkmodules function, rename
