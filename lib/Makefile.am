@@ -86,6 +86,10 @@ EXTRA_DIST = \
 	build_lib.com \
 	xgssapi.h
 
+# Until Automake gets its act together
+distclean-local:
+	rm -f fnmatch.h
+
 # for backwards compatibility with the old makefiles
 realclean: maintainer-clean
 .PHONY: realclean
