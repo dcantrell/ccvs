@@ -4030,6 +4030,18 @@ goal, which is to get software written.
 @cindex Reference, commands
 @cindex Invoking CVS
 
+@c This is a poor organization.  The manual should be
+@c organized by what the user wants to do, not by CVS
+@c commands.  That is why some commands are not described
+@c here--the idea is to (as people get around to it)
+@c move the information from this section to the rest
+@c of the manual.  Two functions where it might be useful to
+@c have a list of commands: (1) to look up where a command
+@c is described in this manual, if you know the name of
+@c the command (the index serves this purpose), (2) as a
+@c quick reminder of what the commands are (the -H option
+@c serves this purpose).
+
 This appendix describes how to invoke @sc{cvs}, and
 describes in detail those subcommands of @sc{cvs} which
 are not fully described elsewhere.  To look up a
@@ -4065,10 +4077,7 @@ particular subcommand, see @ref{Index}.
 @cindex Command structure
 @cindex Format of CVS commands
 
-The first release of @sc{cvs} consisted of a number of shell-scripts.
-Today @sc{cvs} is implemented as a single program that is a front-end
-to @sc{rcs} and @code{diff}. The overall format of all
-@sc{cvs} commands is:
+The overall format of all @sc{cvs} commands is:
 
 @example
 cvs [ cvs_options ] cvs_command [ command_options ] [ command_args ]
@@ -4076,7 +4085,7 @@ cvs [ cvs_options ] cvs_command [ command_options ] [ command_args ]
 
 @table @code
 @item cvs
-The program that is a front-end to @sc{rcs}.
+The name of the @sc{cvs} program.
 
 @item cvs_options
 Some options that affect all sub-commands of @sc{cvs}.  These are
@@ -7719,7 +7728,8 @@ On Windows NT, @code{TMP} is used (via the @code{_tempnam}
 function provided by the system).
 @end table
 
-@sc{cvs} is a front-end to @sc{rcs}.  The following environment
+@sc{cvs} invokes @sc{rcs} to perform certain
+operations.  The following environment
 variables affect @sc{rcs}.  Note that if you are using
 the client/server @sc{cvs}, these variables need to be
 set on the server side (which may or not may be
