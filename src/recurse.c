@@ -135,8 +135,8 @@ start_recursion (fileproc, filesdoneproc, direntproc, dirleaveproc, callerdat,
 	       (void *) fileproc, (void *) filesdoneproc,
 	       (void *) direntproc, (void *) dirleaveproc,
 	       callerdat, argc, (void *) argv,
-	       local, which, aflag, locktype,
-	       update_preload, dosrcs, repository_in );
+	       local, which, aflag, locktype, update_preload, dosrcs,
+	       repository_in ? repository_in : "(null)");
 #else
     TRACE ( TRACE_FLOW,
 	    "start_recursion ( fileproc=%lx, filesdoneproc=%lx,\n"
@@ -148,8 +148,8 @@ start_recursion (fileproc, filesdoneproc, direntproc, dirleaveproc, callerdat,
 	       (unsigned long) fileproc, (unsigned long) filesdoneproc,
 	       (unsigned long) direntproc, (unsigned long) dirleaveproc,
 	       (unsigned long) callerdat, argc, (unsigned long) argv,
-	       local, which, aflag, locktype,
-	       update_preload, dosrcs, repository_in );
+	       local, which, aflag, locktype, update_preload, dosrcs,
+	       repository_in ? repository_in : "(null)");
 #endif
 
     frame.fileproc = fileproc;

@@ -8565,7 +8565,7 @@ RCS_setlocalid (arg)
     keywords[KEYWORD_LOCALID].expandit = 1;
 
     /* options? */
-    while (key = strtok(NULL, ",")) {
+    while ((key = strtok(NULL, ",")) != NULL) {
 	if (!strcmp(key, keywords[KEYWORD_ID].string))
 	    keyword_local = KEYWORD_ID;
 	else if (!strcmp(key, keywords[KEYWORD_HEADER].string))
