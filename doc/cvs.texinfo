@@ -15081,22 +15081,29 @@ set to a non-empty value and re-create the RCS file.
 
 @item cvs [checkout aborted]: no such tag @var{tag}
 This message means that @sc{cvs} isn't familiar with
-the tag @var{tag}.  Usually this means that you have
-mistyped a tag name; however there are (relatively
-obscure) cases in which @sc{cvs} will require you to
+the tag @var{tag}.  Usually the root cause is that you have
+mistyped a tag name.  Ocassionally this can also occur because the
+users creating tags do not have permissions to write to the
+@file{CVSROOT/val-tags} file (@pxref{File permissions}, for more).
+
+Prior to @sc{cvs} version 1.12.10, there were a few relatively
+obscure cases where a given tag could be created in an archive
+file in the repository but @sc{cvs} would require the user to
 @c Search sanity.sh for "no such tag" to see some of
 @c the relatively obscure cases.
-try a few other @sc{cvs} commands involving that tag,
-before you find one which will cause @sc{cvs} to update
+try a few other @sc{cvs} commands involving that tag
+until one was found whch caused @sc{cvs} to update
 @cindex CVSROOT/val-tags file, forcing tags into
 @cindex val-tags file, forcing tags into
-the @file{val-tags} file; see discussion of val-tags in
-@ref{File permissions}.  You only need to worry about
-this once for a given tag; when a tag is listed in
-@file{val-tags}, it stays there.  Note that using
-@samp{-f} to not require tag matches does not override
-this check; see @ref{Common options}.
+the @file{val-tags} file, at which point the originally failing command
+would begin to work.  This same method can be used to repair a @file{val-tags}
+file that becomes out of date due to the permissions problem mentioned above.
+This updating is only required once per tag - once a tag is listed in
+@file{val-tags}, it stays there.
 
+Note that using @samp{tag -f} to not require tag matches did not and
+does not override this check (@pxref{Common options}). 
+ 
 @item *PANIC* administration files missing
 This typically means that there is a directory named
 @sc{cvs} but it does not contain the administrative files

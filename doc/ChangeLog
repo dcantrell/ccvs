@@ -1,5 +1,10 @@
 2004-12-09  Derek Price  <derek@ximbiot.com>
 
+	* cvs.texinfo (Error messages): Note that old, val-tags, "no such tag"
+	problem has been fixed and expound.
+
+2004-12-09  Derek Price  <derek@ximbiot.com>
+
 	* cvs.texinfo (Remote repositories): Move method option data to...
 	(The connection method): ...this new node and rework.
 
