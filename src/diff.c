@@ -119,13 +119,7 @@ static struct option const longopts[] =
     {"paginate", 0, 0, 144},
     {"rcs", 0, 0, 'n'},
     {"show-c-function", 0, 0, 'p'},
-
-    /* This is a potentially very useful option, except the output is so
-       silly.  It would be much better for it to look like "cvs rdiff -s"
-       which displays all the same info, minus quite a few lines of
-       extraneous garbage.  */
     {"brief", 0, 0, 145},
-
     {"report-identical-files", 0, 0, 's'},
     {"expand-tabs", 0, 0, 't'},
     {"ignore-all-space", 0, 0, 'w'},
@@ -528,7 +522,7 @@ diff_fileproc (callerdat, finfo)
 	if (empty_file == DIFF_ADDED)
 	{
 	    if (use_rev2 == NULL)
-		run_setup ("%s %s %s %s", Diffbin, opts, DEVNULL, finfo->file);
+		run_setup ("%s %s %s %s", DIFF, opts, DEVNULL, finfo->file);
 	    else
 	    {
 		int retcode;
@@ -539,7 +533,6 @@ diff_fileproc (callerdat, finfo)
 					(*options
 					 ? options
 					 : vers->options),
-					(char *) NULL,
 					tmp);
 		if (retcode == -1)
 		{
@@ -549,7 +542,7 @@ diff_fileproc (callerdat, finfo)
 		}
 		/* FIXME: what if retcode > 0?  */
 
-		run_setup ("%s %s %s %s", Diffbin, opts, DEVNULL, tmp);
+		run_setup ("%s %s %s %s", DIFF, opts, DEVNULL, tmp);
 	    }
 	}
 	else
@@ -560,7 +553,6 @@ diff_fileproc (callerdat, finfo)
 	    retcode = RCS_checkout (vers->srcfile, (char *) NULL,
 				    use_rev1, (char *) NULL,
 				    *options ? options : vers->options,
-				    (char *) NULL,
 				    tmp);
 	    if (retcode == -1)
 	    {
@@ -570,7 +562,7 @@ diff_fileproc (callerdat, finfo)
 	    }
 	    /* FIXME: what if retcode > 0?  */
 
-	    run_setup ("%s %s %s %s", Diffbin, opts, tmp, DEVNULL);
+	    run_setup ("%s %s %s %s", DIFF, opts, tmp, DEVNULL);
 	}
     }
     else
@@ -855,7 +847,6 @@ diff_file_nodiff (finfo, vers, empty_file)
     retcode = RCS_checkout (vers->srcfile, (char *) NULL, use_rev1,
 			    (char *) NULL,
 			    *options ? options : vers->options,
-			    (char *) NULL,
 			    tmp);
     switch (retcode)
     {

@@ -104,7 +104,9 @@ USOURCE_SUBDIRS = lib zlib src
 # All other subdirs:
 SUBDIRS = ${USOURCE_SUBDIRS} man doc contrib tools \
 	windows-NT os2 macintosh vms
-# Only make TAGS/tags files in these directories.
+# Only make TAGS/tags files in these directories, in this order
+#    [Why in this order?  If we didn't have to stick to this order, we
+#    could make "TSUBDIRS = ${USOURCE_SUBDIRS}".  -Karl]
 TSUBDIRS= src lib
 
 # Set default target.
@@ -193,19 +195,16 @@ saber:
 .PHONY: check
 check:
 	cd lib ; $(MAKE) $(FLAGS_TO_PASS)
-	cd zlib ; $(MAKE) $(FLAGS_TO_PASS)
 	cd src ; $(MAKE) $(FLAGS_TO_PASS) check
 
 .PHONY: remotecheck
 remotecheck:
 	cd lib ; $(MAKE) $(FLAGS_TO_PASS)
-	cd zlib ; $(MAKE) $(FLAGS_TO_PASS)
 	cd src ; $(MAKE) $(FLAGS_TO_PASS) remotecheck
 
 .PHONY: installcheck
 installcheck:
 	cd lib ; $(MAKE) $(FLAGS_TO_PASS)
-	cd zlib ; $(MAKE) $(FLAGS_TO_PASS)
 	cd src ; $(MAKE) $(FLAGS_TO_PASS) installcheck
 
 .PHONY: lint

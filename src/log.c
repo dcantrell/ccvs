@@ -709,7 +709,7 @@ log_fileproc (callerdat, finfo)
 	if (rcsfile->other != NULL)
 	{
 	    p = findnode (rcsfile->other, "desc");
-	    if (p != NULL && p->data != NULL)
+	    if (p != NULL)
 		cvs_output (p->data, 0);
 	}
     }
@@ -1223,7 +1223,7 @@ log_tree (log_data, revlist, rcs, ver)
            the List abstraction, but so does most of the branch
            manipulation in rcs.c.  */
 	head = vnode->branches->list;
-	for (branch = head->prev; branch != head; branch = branch->prev)
+	for (branch = head->prev; branch != head; branch = branch->next)
 	{
 	    log_abranch (log_data, revlist, rcs, branch->key);
 	    log_tree (log_data, revlist, rcs, branch->key);
