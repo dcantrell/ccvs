@@ -1,3 +1,8 @@
+2004-05-20  Derek Price  <derek@ximbiot.com>
+
+	* server.c (cvs_output_tagged): Move new server code inside a
+	SERVER_SUPPORT block.
+
 2004-05-19  Derek Price  <derek@ximbiot.com>
 
 	* cvs.h (gmformat_time_t, entries_time, unix_time_stamp): New protos.
