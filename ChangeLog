@@ -1,3 +1,11 @@
+2003-03-24  Derek Price  <derek@ximbiot.com>
+
+	* configure.in: Add copyright notice.
+	* Makefile.am: Update copyright notice.
+
+	* Makefile.in: Regenerated.
+	* configure: Ditto.
+
 2003-03-19  Mark D. Baushke  <mdb@cvshome.org>
 
 	* configure.in (WITH_RSH): Add --with-rsh configure option. The
