@@ -947,16 +947,28 @@ file around; traditionally clients have left it around forever, thus
 letting the user clean it up as desired.  But another answer, such as
 until the next commit, might be preferable.
 
-@item Patched @var{pathname} \n
+@item Rcs-diff @var{pathname} \n
 This is just like @code{Updated} and takes the same additional data,
 with the one difference that instead of sending a new copy of the file,
-the server sends a patch.  This patch is produced by @samp{diff -c} for
-@sc{cvs} 1.6 and later (see POSIX.2 for a description of this format),
-or @samp{diff -u} for previous versions of @sc{cvs}; clients are
-encouraged to accept either format.  The client must apply this patch to
-the existing file.  This will only be used when the client has an exact
-copy of an earlier revision of a file.  This response is only used if
-the @code{update} command is given the @samp{-u} argument.
+the server sends an RCS change text.  This change text is produced by
+@samp{diff -n} (the GNU diff @samp{-a} option may also be used).  The
+client must apply this change text to the existing file.  This will only
+be used when the client has an exact copy of an earlier revision of a
+file.  This response is only used if the @code{update} command is given
+the @samp{-u} argument.
+
+@item Patched @var{pathname} \n
+This is just like @code{Rcs-diff} and takes the same additional data,
+except that it sends a standard patch rather than an RCS change text.
+The patch is produced by @samp{diff -c} for @sc{cvs} 1.6 and later (see
+POSIX.2 for a description of this format), or @samp{diff -u} for
+previous versions of @sc{cvs}; clients are encouraged to accept either
+format.  Like @code{Rcs-diff}, this response is only used if the
+@code{update} command is given the @samp{-u} argument.
+
+The @code{Patched} response is deprecated in favor of the
+@code{Rcs-diff} response.  However, older clients (pre version 1.10)
+only support @code{Patched}.
 
 @item Mode @var{mode} \n
 This @var{mode} applies to the next file mentioned in
