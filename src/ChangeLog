@@ -1,3 +1,9 @@
+Thu Aug 14 11:08:40 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* main.c (main): Reword copyright notices to include the latest
+	year, to refer to "other authors" in addition to the ones listed,
+	and to be more concisely formatted.
+
 Wed Aug 13 13:50:00 1997  Larry Jones  <larry.jones@sdrc.com>
 
 	* sanity.sh: Replace hard-coded directory with ${TESTDIR}, add
