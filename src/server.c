@@ -4,9 +4,6 @@
 #include <sys/types.h>
 #include <sys/time.h>
 
-/* for stat */
-#include <sys/stat.h>
-
 #if HAVE_SYS_SELECT_H
 #include <sys/select.h>
 #endif
