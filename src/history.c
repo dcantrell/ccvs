@@ -319,37 +319,37 @@ static int
 sort_order (const void *l, const void *r)
 {
     int i;
-    const struct hrec *left = (const struct hrec *) l;
-    const struct hrec *right = (const struct hrec *) r;
+    const struct hrec *left = l;
+    const struct hrec *right = r;
 
     if (user_sort)	/* If Sort by username, compare users */
     {
 	if ((i = strcmp (left->user, right->user)) != 0)
-	    return (i);
+	    return i;
     }
     if (module_sort)	/* If sort by modules, compare module names */
     {
 	if (left->mod && right->mod)
 	    if ((i = strcmp (left->mod, right->mod)) != 0)
-		return (i);
+		return i;
     }
     if (repos_sort)	/* If sort by repository, compare them. */
     {
 	if ((i = strcmp (left->repos, right->repos)) != 0)
-	    return (i);
+	    return i;
     }
     if (file_sort)	/* If sort by filename, compare files, NOT dirs. */
     {
 	if ((i = strcmp (left->file, right->file)) != 0)
-	    return (i);
+	    return i;
 
 	if (working)
 	{
 	    if ((i = strcmp (left->dir, right->dir)) != 0)
-		return (i);
+		return i;
 
 	    if ((i = strcmp (left->end, right->end)) != 0)
-		return (i);
+		return i;
 	}
     }
 
@@ -358,10 +358,10 @@ sort_order (const void *l, const void *r)
      * XXX: This fails after 2030 when date slides into sign bit
      */
     if ((i = ((long) (left->date) - (long) (right->date))) != 0)
-	return (i);
+	return i;
 
     /* For matching dates, keep the sort stable by using record index */
-    return (left->idx - right->idx);
+    return left->idx - right->idx;
 }
 
 int
@@ -436,7 +436,7 @@ history (int argc, char **argv)
 		backto = xstrdup (optarg);
 		break;
 	    case 'f':			/* For specified file */
-		save_file ("", optarg, (char *) NULL);
+		save_file ("", optarg, NULL);
 		break;
 	    case 'm':			/* Full module report */
 		if (!module_report++) report_count++;
@@ -445,7 +445,7 @@ history (int argc, char **argv)
 		save_module (optarg);
 		break;
 	    case 'p':			/* For specified directory */
-		save_file (optarg, "", (char *) NULL);
+		save_file (optarg, "", NULL);
 		break;
 	    case 'r':			/* Since specified Tag/Rev */
 		if (since_date || *since_tag || *backto)
@@ -504,7 +504,7 @@ history (int argc, char **argv)
 		    char *buf = xmalloc (sizeof (f) - 2 + strlen (optarg));
 		    time_t t;
 		    sprintf (buf, f, optarg);
-		    t = get_date (buf, (struct timeb *) NULL);
+		    t = get_date (buf, NULL);
 		    free (buf);
 		    if (t == (time_t) -1)
 			error (0, 0, "%s is not a known time zone", optarg);
@@ -528,7 +528,7 @@ history (int argc, char **argv)
     argc -= optind;
     argv += optind;
     for (i = 0; i < argc; i++)
-	save_file ("", argv[i], (char *) NULL);
+	save_file ("", argv[i], NULL);
 
 
     /* ================ Now analyze the arguments a bit */
@@ -680,8 +680,7 @@ history (int argc, char **argv)
     read_hrecs (fname);
     if(hrec_count>0)
     {
-	qsort ((void *) hrec_head, hrec_count, 
-		sizeof (struct hrec), sort_order);
+	qsort (hrec_head, hrec_count, sizeof (struct hrec), sort_order);
     }
     report_hrecs ();
     free (fname);
@@ -874,7 +873,7 @@ history_write (int type, const char *update_dir, const char *revs,
     line = xmalloc (strlen (username) + strlen (workdir) + strlen (repos)
 		    + strlen (revs) + strlen (name) + 100);
     sprintf (line, "%c%08lx|%s|%s|%s|%s|%s\n",
-	     type, (long) time ((time_t *) NULL),
+	     type, (long) time (NULL),
 	     username, workdir, repos, revs, name);
 
     /* Lessen some race conditions on non-Posix-compliant hosts.  */
@@ -1127,8 +1126,7 @@ read_hrecs (char *fname)
 	    struct hrec *old_head = hrec_head;
 
 	    hrec_max += HREC_INCREMENT;
-	    hrec_head = xrealloc ((char *) hrec_head,
-				  hrec_max * sizeof (struct hrec));
+	    hrec_head = xrealloc (hrec_head, hrec_max * sizeof (struct hrec));
 	    if (last_since_tag)
 		last_since_tag = hrec_head + (last_since_tag - old_head);
 	    if (last_backto)
@@ -1141,7 +1139,7 @@ read_hrecs (char *fname)
 	   why there are ugly hacks here:  I don't want to completely
 	   re-write the whole history stuff right now.  */
 
-	hrline = xstrdup ((char *)cp);
+	hrline = xstrdup (cp);
 	fill_hrec (hrline, &hrec_head[hrec_count]);
 	if (select_hrec (&hrec_head[hrec_count]))
 	    hrec_count++;
@@ -1179,7 +1177,7 @@ within (char *find, char *string)
     int c, len;
 
     if (!find || !string)
-	return (0);
+	return 0;
 
     c = *find++;
     len = strlen (find);
@@ -1187,12 +1185,12 @@ within (char *find, char *string)
     while (*string)
     {
 	if (!(string = strchr (string, c)))
-	    return (0);
+	    return 0;
 	string++;
 	if (!strncmp (find, string, len))
-	    return (1);
+	    return 1;
     }
-    return (0);
+    return 0;
 }
 
 /* The purpose of "select_hrec" is to apply the selection criteria based on
@@ -1211,7 +1209,7 @@ select_hrec (struct hrec *hr)
 	!hr->file || !hr->end)
     {
 	error (0, 0, "warning: history line %ld invalid", hr->idx);
-	return (0);
+	return 0;
     }
 
     /* "Since" checking:  The argument parser guarantees that only one of the
@@ -1241,7 +1239,7 @@ select_hrec (struct hrec *hr)
 	count = RCS_datecmp (ourdate, since_date);
 	free (ourdate);
 	if (count < 0)
-	    return (0);
+	    return 0;
     }
     else if (*since_rev)
     {
@@ -1258,17 +1256,16 @@ select_hrec (struct hrec *hr)
 	finfo.entries = NULL;
 	finfo.rcs = NULL;
 
-	vers = Version_TS (&finfo, (char *) NULL, since_rev, (char *) NULL,
-			   1, 0);
+	vers = Version_TS (&finfo, NULL, since_rev, NULL, 1, 0);
 	if (vers->vn_rcs)
 	{
-	    if ((t = RCS_getrevtime (vers->srcfile, vers->vn_rcs, (char *) 0, 0))
+	    if ((t = RCS_getrevtime (vers->srcfile, vers->vn_rcs, NULL, 0))
 		!= (time_t) 0)
 	    {
 		if (hr->date < t)
 		{
 		    freevers_ts (&vers);
-		    return (0);
+		    return 0;
 		}
 	    }
 	}
@@ -1285,13 +1282,13 @@ select_hrec (struct hrec *hr)
 	    if (within (since_tag, hr->rev))
 	    {
 		last_since_tag = hr;
-		return (1);
+		return 1;
 	    }
 	    else
-		return (0);
+		return 0;
 	}
 	if (!last_since_tag)
-	    return (0);
+	    return 0;
     }
     else if (*backto)
     {
@@ -1299,7 +1296,7 @@ select_hrec (struct hrec *hr)
 	    within (backto, hr->repos))
 	    last_backto = hr;
 	else
-	    return (0);
+	    return 0;
     }
 
     /* User checking:
@@ -1317,7 +1314,7 @@ select_hrec (struct hrec *hr)
 		break;
 	}
 	if (!count)
-	    return (0);			/* Not this user */
+	    return 0;			/* Not this user */
     }
 
     /* Record type checking:
@@ -1330,7 +1327,7 @@ select_hrec (struct hrec *hr)
      *    file_list, matched appropriately.
      */
     if (!strchr (rec_types, *(hr->type)))
-	return (0);
+	return 0;
     if (!strchr ("TFOE", *(hr->type)))	/* Don't bother with "file" if "TFOE" */
     {
 	if (file_list)			/* If file_list is null, accept all */
@@ -1382,7 +1379,7 @@ select_hrec (struct hrec *hr)
 		}
 	    }
 	    if (!count)
-		return (0);		/* String specified and no match */
+		return 0;		/* String specified and no match */
 	}
     }
     if (mod_list)
@@ -1393,10 +1390,10 @@ select_hrec (struct hrec *hr)
 		break;
 	}
 	if (!count)
-	    return (0);	/* Module specified & this record is not one of them. */
+	    return 0;	/* Module specified & this record is not one of them. */
     }
 
-    return (1);		/* Select this record unless rejected above. */
+    return 1;		/* Select this record unless rejected above. */
 }
 
 /* The "sort_order" routine (when handed to qsort) has arranged for the
@@ -1565,12 +1562,12 @@ accept_hrec (struct hrec *lr, struct hrec *hr)
     ty = *(lr->type);
 
     if (last_since_tag && ty == 'T')
-	return (1);
+	return 1;
 
     if (v_checkout)
     {
 	if (ty != 'O')
-	    return (0);			/* Only interested in 'O' records */
+	    return 0;			/* Only interested in 'O' records */
 
 	/* We want to identify all the states that cause the next record
 	 * ("hr") to be different from the current one ("lr") and only
@@ -1584,7 +1581,7 @@ accept_hrec (struct hrec *lr, struct hrec *hr)
 	     (strcmp (hr->dir, lr->dir) ||	/*    and the 1st parts or */
 	      strcmp (hr->end, lr->end))))	/*    the 2nd parts differ */
 
-	    return (1);
+	    return 1;
     }
     else if (modified)
     {
@@ -1592,13 +1589,13 @@ accept_hrec (struct hrec *lr, struct hrec *hr)
 	    !hr ||			/* Last entry is a "last entry" */
 	    strcmp (hr->repos, lr->repos) ||	/* Repository has changed */
 	    strcmp (hr->file, lr->file))/* File has changed */
-	    return (1);
+	    return 1;
 
 	if (working)
 	{				/* If must match "workdir" */
 	    if (strcmp (hr->dir, lr->dir) ||	/*    and the 1st parts or */
 		strcmp (hr->end, lr->end))	/*    the 2nd parts differ */
-		return (1);
+		return 1;
 	}
     }
     else if (module_report)
@@ -1608,13 +1605,13 @@ accept_hrec (struct hrec *lr, struct hrec *hr)
 	    strcmp (hr->mod, lr->mod) ||/* Module has changed */
 	    strcmp (hr->repos, lr->repos) ||	/* Repository has changed */
 	    strcmp (hr->file, lr->file))/* File has changed */
-	    return (1);
+	    return 1;
     }
     else
     {
 	/* "extract" and "tag_report" always print selected records. */
-	return (1);
+	return 1;
     }
 
-    return (0);
+    return 0;
 }
