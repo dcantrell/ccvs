@@ -79,13 +79,72 @@ if test -f check.log; then
 	mv check.log check.plog
 fi
 
+GEXPRLOCS="`echo $PATH | sed 's/:/ /g'` /usr/local/bin /usr/contrib/bin /usr/gnu/bin /local/bin /local/gnu/bin /gun/bin"
+
+# Cause NextStep 3.3 users to lose in a more graceful fashion.
+if expr 'abc
+def' : 'abc
+def' >/dev/null; then
+  : good, it works
+else
+  for path in $GEXPRLOCS ; do
+    if test -x $path/gexpr ; then
+      if test "X`$path/gexpr --version`" != "X--version" ; then
+        EXPR=$path/gexpr
+        break
+      fi
+    fi
+    if test -x $path/expr ; then
+      if test "X`$path/expr --version`" != "X--version" ; then
+        EXPR=$path/expr
+        break
+      fi
+    fi
+  done
+  if test -z "$EXPR" ; then
+    echo 'Running these tests requires an "expr" program that can handle'
+    echo 'multi-line patterns.  Make sure that such an expr (GNU, or many but'
+    echo 'not all vendor-supplied versions) is in your path.'
+    exit 1
+  fi
+fi
+
+# Warn SunOS, SysVr3.2, etc., users that they may be partially losing
+# if we can't find a GNU expr to ease their troubles...
+if expr 'a
+b' : 'a
+c' >/dev/null; then
+  for path in $GEXPRLOCS ; do
+    if test -x $path/gexpr ; then
+      if test "X`$path/gexpr --version`" != "X--version" ; then
+        EXPR=$path/gexpr
+        break
+      fi
+    fi
+    if test -x $path/expr ; then
+      if test "X`$path/expr --version`" != "X--version" ; then
+        EXPR=$path/expr
+        break
+      fi
+    fi
+  done
+  if test -z "$EXPR" ; then
+    echo 'Warning: you are using a version of expr which does not correctly'
+    echo 'match multi-line patterns.  Some tests may spuriously pass.'
+    echo 'You may wish to make sure GNU expr is in your path.'
+    EXPR=expr
+  fi
+else
+  : good, it works
+fi
+
 # That we should have to do this is total bogosity, but GNU expr
 # version 1.9.4 uses the emacs definition of "$" instead of the unix
 # (e.g. SunOS 4.1.3 expr) one.  Rumor has it this will be fixed in the
 # next release of GNU expr after 1.12 (but we still have to cater to the old
 # ones for some time because they are in many linux distributions).
 ENDANCHOR="$"
-if expr 'abc
+if $EXPR 'abc
 def' : 'abc$' >/dev/null; then
   ENDANCHOR='\'\'
 fi
@@ -99,7 +158,7 @@ fi
 # next release of GNU expr after 1.12 (but we still have to cater to the old
 # ones for some time because they are in many linux distributions).
 DOTSTAR='.*'
-if expr 'abc
+if $EXPR 'abc
 def' : "a${DOTSTAR}f" >/dev/null; then
   : good, it works
 else
@@ -115,7 +174,7 @@ fi
 # next release of GNU expr after 1.12 (but we still have to cater to the old
 # ones for some time because they are in many linux distributions).
 PLUS='+'
-if expr 'a +b' : "a ${PLUS}b" >/dev/null; then
+if $EXPR 'a +b' : "a ${PLUS}b" >/dev/null; then
   : good, it works
 else
   PLUS='\+'
@@ -123,33 +182,10 @@ fi
 
 # Likewise, for ?
 QUESTION='?'
-if expr 'a?b' : "a${QUESTION}b" >/dev/null; then
+if $EXPR 'a?b' : "a${QUESTION}b" >/dev/null; then
   : good, it works
 else
   QUESTION='\?'
-fi
-
-# Cause NextStep 3.3 users to lose in a more graceful fashion.
-if expr 'abc
-def' : 'abc
-def' >/dev/null; then
-  : good, it works
-else
-  echo 'Running these tests requires an "expr" program that can handle'
-  echo 'multi-line patterns.  Make sure that such an expr (GNU, or many but'
-  echo 'not all vendor-supplied versions) is in your path.'
-  exit 1
-fi
-
-# Warn SunOS, SysVr3.2, etc., users that they may be partially losing
-if expr 'a
-b' : 'a
-c' >/dev/null; then
-  echo 'Warning: you are using a version of expr which does not correctly'
-  echo 'match multi-line patterns.  Some tests may spuriously pass.'
-  echo 'You may wish to make sure GNU expr is in your path.'
-else
-  : good, it works
 fi
 
 pass ()
@@ -182,13 +218,13 @@ dotest_internal ()
       pass "$1"
     fi
   else
-    if expr "`cat ${TESTDIR}/dotest.tmp`" : \
+    if $EXPR "`cat ${TESTDIR}/dotest.tmp`" : \
 	"$3"${ENDANCHOR} >/dev/null; then
       cat ${TESTDIR}/dotest.tmp >>${LOGFILE}
       pass "$1"
     else
       if test x"$4" != x; then
-	if expr "`cat ${TESTDIR}/dotest.tmp`" : \
+	if $EXPR "`cat ${TESTDIR}/dotest.tmp`" : \
 	    "$4"${ENDANCHOR} >/dev/null; then
 	  cat ${TESTDIR}/dotest.tmp >>${LOGFILE}
 	  pass "$1"
@@ -236,6 +272,30 @@ dotest ()
     fail "$1"
   fi
   dotest_internal "$@"
+}
+
+# Like dotest except only 2 args and result must exactly match stdin
+dotest_lit ()
+{
+  if $2 >${TESTDIR}/dotest.tmp 2>&1; then
+    : so far so good
+  else
+    status=$?
+    cat ${TESTDIR}/dotest.tmp >>${LOGFILE}
+    echo "exit status was $status" >>${LOGFILE}
+    fail "$1"
+  fi
+  cat >${TESTDIR}/dotest.res
+  if cmp ${TESTDIR}/dotest.res ${TESTDIR}/dotest.tmp >/dev/null 2>&1; then
+    cat ${TESTDIR}/dotest.tmp >>${LOGFILE}
+    pass "$1"
+  else
+    echo "** expected: " >>${LOGFILE}
+    cat ${TESTDIR}/dotest.res >>${LOGFILE}
+    echo "** got: " >>${LOGFILE}
+    cat ${TESTDIR}/dotest.tmp >>${LOGFILE}
+    fail "$1"
+  fi
 }
 
 # Like dotest except exitstatus should be nonzero.
@@ -639,8 +699,8 @@ ${PROG}"': does not match command line -d /tmp/cvs-sanity/nonexist setting
 '"${PROG}"' [a-z]*: use '\''cvs commit'\'' to add this file permanently'
 	  done
 	  cd ../../../../../../../../..
-	  dotest deep-4 "${testcvs} -q ci -m add-them first-dir" \
-'RCS file: /tmp/cvs-sanity/cvsroot/first-dir/dir1/file1,v
+	  dotest_lit deep-4 "${testcvs} -q ci -m add-them first-dir" <<'HERE'
+RCS file: /tmp/cvs-sanity/cvsroot/first-dir/dir1/file1,v
 done
 Checking in first-dir/dir1/file1;
 /tmp/cvs-sanity/cvsroot/first-dir/dir1/file1,v  <--  file1
@@ -687,7 +747,8 @@ done
 Checking in first-dir/dir1/dir2/dir3/dir4/dir5/dir6/dir7/dir8/file1;
 /tmp/cvs-sanity/cvsroot/first-dir/dir1/dir2/dir3/dir4/dir5/dir6/dir7/dir8/file1,v  <--  file1
 initial revision: 1.1
-done'
+done
+HERE
 
 	  if echo "yes" | ${testcvs} release -d first-dir >>${LOGFILE}; then
 	    pass deep-5
@@ -1401,8 +1462,8 @@ done'
 '"${PROG}"' [a-z]*: scheduling file `file3'\'' for addition
 '"${PROG}"' [a-z]*: scheduling file `file4'\'' for addition
 '"${PROG}"' [a-z]*: use '\''cvs commit'\'' to add these files permanently'
-	  dotest branches-3 "${testcvs} -q ci -m add-it" \
-'RCS file: /tmp/cvs-sanity/cvsroot/first-dir/file1,v
+	  dotest_lit branches-3 "${testcvs} -q ci -m add-it" <<'HERE'
+RCS file: /tmp/cvs-sanity/cvsroot/first-dir/file1,v
 done
 Checking in file1;
 /tmp/cvs-sanity/cvsroot/first-dir/file1,v  <--  file1
@@ -1425,7 +1486,8 @@ done
 Checking in file4;
 /tmp/cvs-sanity/cvsroot/first-dir/file4,v  <--  file4
 initial revision: 1.1
-done'
+done
+HERE
 	  echo 4:trunk-2 >file4
 	  dotest branches-3.2 "${testcvs} -q ci -m trunk-before-branch" \
 'Checking in file4;
@@ -2267,7 +2329,7 @@ U nameddir/b'
 	  dotest modules-155a2 "test -d first-dir/subdir" ''
 	  dotest modules-155a3 "test -d first-dir/subdir/ssdir" ''
 	  # Test that nothing extraneous got created.
-	  dotest modules-155a4 "ls -1" "first-dir"
+	  dotest modules-155a4 "ls" "first-dir"
 	  cd ..
 	  rm -rf 2
 
@@ -2842,6 +2904,7 @@ done
 echo "OK, all tests completed."
 
 # TODO:
+# * use "test" not "[" and see if all test's support `-z'
 # * Test `cvs admin'.
 # * Test `cvs update -d foo' (where foo does not exist).
 # * Test `cvs update foo bar' (where foo and bar are both from the same
