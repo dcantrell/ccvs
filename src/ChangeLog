@@ -1,3 +1,14 @@
+2005-01-19 Brian Murphy <brian@murphy.dk>
+
+	* server.c (pam_username, pam_password) new global static
+	variables to hold the username and pasword for cvs_pam_conv.
+	(cvs_pam_conv) using pam_username and pam_password.
+	(check_pam_password) set pam_username, pam_password before
+	authentication and clear them when authentication is finished.
+	(server, switch_to_user) Check for pamh being set before using
+	pam functionality, NULL indicating that this user was authenticated
+	using the repository password file.
+
 2004-12-09 Derek Price <derek@ximbiot.com>
 
 	* log-buffer.c (buf_count_mem): Compile this for PROXY_SUPPORT.

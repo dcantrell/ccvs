@@ -112,6 +112,9 @@ static char *Pserver_Repos = NULL;
 #   include <security/pam_appl.h>
 
 static pam_handle_t *pamh = NULL;
+
+static char *pam_username;
+static char *pam_password;
 # endif /* HAVE_PAM */
 
 
@@ -6349,6 +6352,7 @@ error ENOMEM Virtual memory exhausted.\n");
     }
 
 #ifdef HAVE_PAM
+    if (pamh)
     {
         int retval;
 
@@ -6387,16 +6391,19 @@ switch_to_user (const char *cvs_username, const char *username)
     int retval;
     char *pam_stage = "open session";
 
-    retval = pam_open_session(pamh, 0);
-    if (retval == PAM_SUCCESS) {
-        pam_stage = "get pam user";
-        retval = pam_get_item(pamh, PAM_USER, (const void **)&username);
-    }
+    if (pamh)
+    {
+        retval = pam_open_session(pamh, 0);
+        if (retval == PAM_SUCCESS) {
+            pam_stage = "get pam user";
+            retval = pam_get_item(pamh, PAM_USER, (const void **)&username);
+        }
 
-    if (retval != PAM_SUCCESS) {
-        printf("E PAM %s error: %s\n", pam_stage,
-                pam_strerror(pamh, retval));
-        exit (EXIT_FAILURE);
+        if (retval != PAM_SUCCESS) {
+            printf("E PAM %s error: %s\n", pam_stage,
+                    pam_strerror(pamh, retval));
+            exit (EXIT_FAILURE);
+        }
     }
 #endif
 
@@ -6445,11 +6452,14 @@ error 0 %s: no such system user\n", username);
 #endif /* HAVE_INITGROUPS */
 
 #ifdef HAVE_PAM
-    retval = pam_setcred(pamh, PAM_ESTABLISH_CRED);
-    if (retval != PAM_SUCCESS) {
-        printf("E PAM reestablish credentials error: %s\n", 
-                pam_strerror(pamh, retval));
-        exit (EXIT_FAILURE);
+    if (pamh)
+    {
+        retval = pam_setcred(pamh, PAM_ESTABLISH_CRED);
+        if (retval != PAM_SUCCESS) {
+            printf("E PAM reestablish credentials error: %s\n", 
+                    pam_strerror(pamh, retval));
+            exit (EXIT_FAILURE);
+        }
     }
 #endif
 
@@ -6696,18 +6706,12 @@ check_repository_password (char *username, char *password, char *repository, cha
 
 #ifdef HAVE_PAM
 
-struct cvs_pam_userinfo {
-    char *username;
-    char *password;
-};
-
 static int
 cvs_pam_conv (int num_msg, const struct pam_message **msg,
               struct pam_response **resp, void *appdata_ptr)
 {
     int i;
     struct pam_response *response;
-    struct cvs_pam_userinfo *ui = (struct cvs_pam_userinfo *)appdata_ptr;
 
     assert (msg && resp);
 
@@ -6720,13 +6724,13 @@ cvs_pam_conv (int num_msg, const struct pam_message **msg,
 	{
 	    /* PAM wants a username */
 	    case PAM_PROMPT_ECHO_ON:
-                assert (ui && ui->username);
-		response[i].resp = xstrdup (ui->username);
+                assert (pam_username != 0);
+		response[i].resp = xstrdup (pam_username);
 		break;
 	    /* PAM wants a password */
 	    case PAM_PROMPT_ECHO_OFF:
-                assert (ui && ui->password);
-		response[i].resp = xstrdup (ui->password);
+                assert (pam_password != 0);
+		response[i].resp = xstrdup (pam_password);
 		break;
 	    case PAM_ERROR_MSG:
 	    case PAM_TEXT_INFO:
@@ -6758,9 +6762,11 @@ static int
 check_pam_password (char **username, char *password)
 {
     int retval, err;
-    struct cvs_pam_userinfo ui = { *username, password };
-    struct pam_conv conv = { cvs_pam_conv, (void *)&ui };
+    struct pam_conv conv = { cvs_pam_conv, 0 };
     char *pam_stage = "start";
+
+    pam_username = *username;
+    pam_password = password;
 
     retval = pam_start (PAM_SERVICE_NAME, *username, &conv, &pamh);
 
@@ -6787,6 +6793,10 @@ check_pam_password (char **username, char *password)
 
     if (retval != PAM_SUCCESS)
 	printf ("E PAM %s error: %s\n", pam_stage, pam_strerror(pamh, retval));
+
+    /* clear the pointers to make sure we don't use these references again */
+    pam_username = 0;
+    pam_password = 0; 
 
     return retval == PAM_SUCCESS;       /* indicate success */
 }
