@@ -189,17 +189,13 @@ SccGet (void *context_arg, HWND window, LONG num_files,
 
     for (i = 0; i < num_files; ++i)
     {
-	FILE *fp;
-
 	/* As with all file names passed to us by the SCC, these
 	   file names are absolute pathnames.  I think they will
 	   tend to be paths within context->local, although I
 	   don't know whether there are any exceptions to that.  */
 	fname = file_names[i];
 	fprintf (context->debuglog, "%s ", fname);
-#if 0
-	fp = fopen (fname, "w");
-#endif
+	/* Here we would write to the file named fname.  */
     }
     fprintf (context->debuglog, "\nExiting SccGet\n");
     fflush (context->debuglog);
