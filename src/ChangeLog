@@ -1,5 +1,9 @@
 2001-03-20  Derek Price  <dprice@collab.net>
 
+	* sanity.sh: Don't remove ${TESTDIR} when -k (keep) set.
+
+2001-03-20  Derek Price  <dprice@collab.net>
+
 	* sanity.sh: Change usage to match the new getopts format and comment.
 
 2001-03-16  Derek Price  <dprice@collab.net>
