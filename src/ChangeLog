@@ -1,3 +1,7 @@
+Thu Sep 18 08:45:05 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* sanity.sh (rcs-7): Fix stupid ${TESTDIR} omission.
+
 Wed Sep 17 16:27:41 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* sanity.sh (rcs): New tests rcs-5 through rcs-13 test for

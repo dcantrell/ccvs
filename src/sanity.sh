@@ -7567,7 +7567,7 @@ EOF
 
 	  dotest rcs-7 "${testcvs} admin -b file2" \
 "rcs: ${TESTDIR}/cvsroot/first-dir/file2,v: warning: Unknown phrases like .testofanewphrase ...;. are present.
-RCS file: /home/kingdon/tmp/cvs-sanity/cvsroot/first-dir/file2,v
+RCS file: ${TESTDIR}/cvsroot/first-dir/file2,v
 done"
 	  # But we do want to make sure that "cvs admin" leaves the newphrases
 	  # in the file.
