@@ -1,3 +1,10 @@
+2002-11-08  Derek Price  <derek@ximbiot.com>
+
+	* sanity.sh (importc): Update the use of the touch command to be
+	compliant with POSIX 1003.1-2001, SUS2, and SUS3 now that GNU touch
+	supports this.  If this breaks any test platforms we should test
+	the behavior of touch like we do for other tools.
+
 2002-11-03  Derek Price  <derek@ximbiot.com>
 
 	* sanity.sh (rcs2-7): Notate with a wild untested hypothesis.
