@@ -1,5 +1,12 @@
 2004-04-27  Derek Price  <derek@ximbiot.com>
 
+	* ls.c (ls): Set client_prune_dirs in order to delete any directories
+	created by the server.
+	(ls_dirleaveproc): Always delete directories created by
+	ls_direntproc().
+
+2004-04-27  Derek Price  <derek@ximbiot.com>
+
 	* ls.c: Remove unneeded prototypes.  Add `prune' option.
 	(dircount): Remove static global.
 	(set_tag, created_dir, ls_prune_dirs): New static globals.
