@@ -746,6 +746,28 @@ update_dirent_proc (dir, repository, update_dir)
 	    Create_Admin (dir, update_dir, repository, tag, date);
 	}
     }
+    else
+    {
+	char *cvsadmdir;
+
+	/* The directory exists.  Check to see if it has a CVS
+	   subdirectory.  */
+
+	cvsadmdir = xmalloc (strlen (dir) + 80);
+	strcpy (cvsadmdir, dir);
+	strcat (cvsadmdir, "/");
+	strcat (cvsadmdir, CVSADM);
+
+	if (!isdir (cvsadmdir))
+	{
+	    /* We cannot successfully recurse into a directory without a CVS
+	       subdirectory.  Generally we will have already printed
+	       "? foo".  */
+	    free (cvsadmdir);
+	    return R_SKIP_ALL;
+	}
+	free (cvsadmdir);
+    }
 
     /*
      * If we are building dirs and not going to stdout, we make sure there is

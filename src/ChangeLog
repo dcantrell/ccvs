@@ -1,5 +1,9 @@
 Tue Feb 20 22:10:05 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* update.c (update_dirent_proc): If dir lacks a CVS subdirectory,
+	don't recurse into it.
+	* sanity.sh (conflicts): Test for above-fixed bug.
+
 	* update.c (merge_file): Use write_letter not printf.
 
 Tue Feb 20 12:34:07 EST 1996: Gary Oberbrunner <garyo@avs.com>

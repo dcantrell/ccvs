@@ -1735,28 +1735,40 @@ rcsmerge: warning: conflicts during merge'
 
 		cd ../../1/first-dir
 		echo add a line >>a
-		if ${CVS} ci -m changed >>${LOGFILE} 2>&1; then
-			echo 'PASS: test 128' >>${LOGFILE}
-		else
-			echo 'FAIL: test 128' | tee -a ${LOGFILE}
-		fi
-
+		mkdir dir1
+		dotest conflicts-127b "${testcvs} add dir1" \
+'Directory /tmp/cvs-sanity/cvsroot/first-dir/dir1 added to the repository'
+		dotest conflicts-128 "${testcvs} -q ci -m changed" \
+'Checking in a;
+/tmp/cvs-sanity/cvsroot/first-dir/a,v  <--  a
+new revision: 1.2; previous revision: 1.1
+done'
 		cd ../../2/first-dir
 		echo add a conflicting line >>a
-		if ${CVS} ci -m changed >>${LOGFILE} 2>&1; then
-			echo 'FAIL: test 129' | tee -a ${LOGFILE}
-		else
-			# Should be printing `out of date check failed'.
-			echo 'PASS: test 129' >>${LOGFILE}
-		fi
-
-		if ${CVS} update 2>>${LOGFILE}; then
-			# We should get a conflict, but that doesn't affect
-			# exit status
-			echo 'PASS: test 130' >>${LOGFILE}
-		else
-			echo 'FAIL: test 130' | tee -a ${LOGFILE}
-		fi
+		dotest_fail conflicts-129 "${testcvs} -q ci -m changed" \
+"${PROG}"' [a-z]*: Up-to-date check failed for `a'\''
+'"${PROG}"' \[[a-z]* aborted\]: correct above errors first!'
+		mkdir dir1
+		mkdir sdir
+		dotest conflicts-130 "${testcvs} -q update" \
+'RCS file: /tmp/cvs-sanity/cvsroot/first-dir/a,v
+retrieving revision 1.1
+retrieving revision 1.2
+Merging differences between 1.1 and 1.2 into a
+rcsmerge: warning: conflicts during merge
+'"${PROG}"' [a-z]*: conflicts found in a
+C a
+\? dir1
+\? sdir' \
+'\? dir1
+\? sdir
+RCS file: /tmp/cvs-sanity/cvsroot/first-dir/a,v
+retrieving revision 1.1
+retrieving revision 1.2
+Merging differences between 1.1 and 1.2 into a
+rcsmerge: warning: conflicts during merge
+'"${PROG}"' [a-z]*: conflicts found in a
+C a'
 
 		# Try to check in the file with the conflict markers in it.
 		if ${CVS} ci -m try 2>>${LOGFILE}; then
@@ -1797,16 +1809,15 @@ rcsmerge: warning: conflicts during merge'
 			echo 'FAIL: test 135' | tee -a ${LOGFILE}
 		fi
 		cd ../../2
-		if ${testcvs} -q update >>${LOGFILE}; then
-			echo 'PASS: test 136' >>${LOGFILE}
-		else
-			echo 'FAIL: test 136' | tee -a ${LOGFILE}
-		fi
-		if test -f first-dir/abc; then
-			echo 'PASS: test 137' >>${LOGFILE}
-		else
-			echo 'FAIL: test 137' | tee -a ${LOGFILE}
-		fi
+		dotest conflicts-136 "${testcvs} -q update" \
+'[UP] first-dir/abc
+\? first-dir/dir1
+\? first-dir/sdir' \
+'\? first-dir/dir1
+\? first-dir/sdir
+[UP] first-dir/abc'
+		dotest conflicts-137 'test -f first-dir/abc' ''
+		rmdir first-dir/dir1 first-dir/sdir
 
 		# Now test something similar, but in which the parent directory
 		# (not the directory in question) has the Entries.Static flag
