@@ -1764,6 +1764,7 @@ rcsbuf_valword (rcsbuf, valp)
     if (c == '@')
     {
 	int embedded_at = 0;
+	size_t vlen;
 
 	pat = ++ptr;
 	while ((pat = strchr (pat, '@')) != NULL)
@@ -1775,12 +1776,14 @@ rcsbuf_valword (rcsbuf, valp)
 	}
 
 	/* Here PAT points to the final '@' in the string.  */
-	*pat = '\0';
+	*pat++ = '\0';
 	assert (rcsbuf->at_string);
+	vlen = rcsbuf->vlen - (pat - *valp);
+	rcsbuf->vlen = pat - ptr - 1;
 	rcsbuf->embedded_at = embedded_at;
 	ptr = rcsbuf_valcopy (rcsbuf, ptr, 0, (size_t *) NULL);
-	rcsbuf->vlen -= ++pat - *valp;
 	*valp = pat;
+	rcsbuf->vlen = vlen;
 	if (strchr (pat, '@') == NULL)
 	    rcsbuf->at_string = 0;
 	else
