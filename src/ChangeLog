@@ -1,3 +1,8 @@
+2000-02-16  Jim Meyering  <meyering@lucent.com>
+
+	* update.c (join_file): Correct typo in diagnostic:
+	change `file %s is present...' to `file %s is not present...'.
+
 2000-02-10  Larry Jones  <larry.jones@sdrc.com>
 
 	* parseinfo.c (Parse_Info): Treat matching lines with bad expansions
@@ -45,9 +50,9 @@
 
 2000-01-24  K.J. Paradise <kj@sourcegear.com>
 
-	* run.c :> prevents a user from creating a privileged shell from the 
-	text editor when the SETXID_SUPPORT option is selected.  This came from 
-	Bob Colle <bcolle@ilx.com>, and is his completely. 
+	* run.c :> prevents a user from creating a privileged shell from the
+	text editor when the SETXID_SUPPORT option is selected.  This came from
+	Bob Colle <bcolle@ilx.com>, and is his completely.
 
 2000-01-22  Jim Kingdon  <http://developer.redhat.com/>
 
@@ -105,21 +110,21 @@
 
 2000-01-02  John P Cavanaugh <cavanaug@sr.hp.com>
         and Karl Fogel <kfogel@red-bean.com>
-	
+
 	New -C option to update: overwrites local changes with clean
 	copies from the repository.  (This is an unreversion of the
 	1999-12-10 change, further modified to work remotely.)
-	
+
 	* client.h (BACKUP_MODIFIED_FILES): new #define.
-	
+
 	* client.c (struct send_data): new element `backup_modified'.
 	(send_files): set above element if BACKUP_MODIFIED_FILES flag is
 	present.
-	
+
 	* filesubr.c (backup_file): new function.
-	
+
 	* cvs.h: prototype for new function `backup_file'.
-	
+
 	* update.c (toss_local_changes): new file-scoped global.
 	(update): set toss_local_changes if -C flag seen.  If
 	client_active, send "-C" to server, and set SEND_NO_CONTENTS and
@@ -132,7 +137,7 @@
 	changes.
 
 	* sanity.sh: new test `clean', for update -C option.
-	
+
 1999-12-29  Jim Kingdon  <http://developer.redhat.com/>
 
 	* history.c (read_hrecs): st_blksize is unsigned long, not int.
@@ -173,14 +178,14 @@
 
 1999-12-10  John P Cavanaugh <cavanaug@sr.hp.com>
         and Karl Fogel <kfogel@red-bean.com>
-	
+
 	* update.c: new -C option to update, overwrites local changes with
 	clean copies from the repository.
 	Also, fixed indentation and formatting for a particularly bad
 	stretch of code near these changes in update_fileproc().
-	
+
 	* sanity.sh: test new update -C option.
-	
+
 1999-12-10  Larry Jones <larry.jones@sdrc.com>
 
 	* commit.c (remove_file): Call history_write with update_dir NULL
@@ -190,15 +195,15 @@
 
 1999-12-09  K.J. Paradise (kj@sourcegear.com)
 
-	* history.c, commit.c, sanity.sh: found (I think) final 
-	cause of seg fault in history command.  Also, added the "R" 
-	history functionality.  Fixed basic2-64 so it looks correct for 
-	the change. 
+	* history.c, commit.c, sanity.sh: found (I think) final
+	cause of seg fault in history command.  Also, added the "R"
+	history functionality.  Fixed basic2-64 so it looks correct for
+	the change.
 
 1999-11-30  K.J. Paradise (kj@sourcegear.com)
 
-	* history.c: fixed seg fault caused by 11-03 changes.  
-	off by one in block memory allocations. 
+	* history.c: fixed seg fault caused by 11-03 changes.
+	off by one in block memory allocations.
 
 1999-11-29  Karl Fogel  <kfogel@red-bean.com>
 
@@ -226,7 +231,7 @@
 	unedit" prints an accurate usage message (formerly it printed the
 	message for "cvs edit", even though the two commands do not have
 	identical usages).
-	
+
 1999-11-19  Larry Jones <larry.jones@sdrc.com>
 
 	* history.c: Move -e documentation from Flags to Reports.
@@ -254,7 +259,7 @@
 	* mkmodules.c (init): make history file world-writeable after
 	creating it, since it needs to be writeable for virtually any
 	CVS operation.
-	
+
 1999-11-10  Jim Kingdon  <http://developer.redhat.com/>
 
 	* admin.c: Revert change to add -H command option.  The help
@@ -271,8 +276,8 @@
 	* sanity.sh (logopt-6a): New test, for this fix.
 
 1999-11-09  K.J. Paradise <kj@sourcegear.com>
-	
-	* admin.c: made the -H option do what it is documented to 
+
+	* admin.c: made the -H option do what it is documented to
 	do.  a
 
 1999-11-08  Tom Tromey  <tromey@cygnus.com>
@@ -287,10 +292,10 @@
 
 1999-11-05  K.J. Paradise (kj@sourcegear.com)
 
-	* history.c: Added a trap to verify that if a 
-	read(file, buffer,blocksize) returns less than blocksize, 
+	* history.c: Added a trap to verify that if a
+	read(file, buffer,blocksize) returns less than blocksize,
 	that we really are at the end of the file.  I can't easily
-	come up with a test case where this code gets touched, so 
+	come up with a test case where this code gets touched, so
 	it may cause problems.  All sanity tests still pass though.
 
 1999-11-05  Jim Kingdon  <http://developer.redhat.com/>
@@ -316,7 +321,7 @@
 	   cvs log -d '>1999-03-01' > log-out.with-space
 
 	and then run this (note there's no space after -d now):
-	
+
 	   cvs log -d'>1999-03-01' > log-out.no-space
 
 	The resulting files differ; furthermore, a glance at the output of
@@ -331,10 +336,10 @@
 	-s.  A space is allowed (see sanity.sh for example).
 
 1999-11-03  K.J. Paradise (kj@sourcegear.com>
-	
+
 	* history.c: cleaned up my prior change a bit, per Larry Jones'
 	comments, and John O'Conner's additional comments about bits of
-	non MS-Visual C++ compliancy of my code.  
+	non MS-Visual C++ compliancy of my code.
 
 1999-11-04  Larry Jones <larry.jones@sdrc.com>
 
@@ -345,7 +350,7 @@
 1999-11-04  Karl Fogel  <kfogel@red-bean.com>
 
 	Changes for empty/random passwords in anon pserver access:
-	
+
 	* server.c (check_repository_password): if password empty, grant
 	access no matter what password is received; this is so anon CVS no
 	longer requires a password but remains backwards-compatible with
@@ -362,13 +367,13 @@
 
 	* sanity.sh (pserver-9, pserver-10, pserver-11, pserver-12,
 	pserver-13): new tests, about empty-password pserver access.
-	
+
 1999-11-03  K.J. Paradise (kj@sourcegear.com>
 
 	* history.c:  modify parsing routines to parse the history
 	file a block at a time, rather than all at once.  This allows
-	people with large history files and small amount of memory 
-	to still get some functionality out of the history file. 
+	people with large history files and small amount of memory
+	to still get some functionality out of the history file.
 
 1999-11-03  Karl Fogel  <kfogel@red-bean.com>
 
@@ -393,12 +398,12 @@
 1999-10-18  K.J. Paradise <kj@sourcegear.com>
 
 	Bug: users 'stan' and 'cartman' both have full read/write access
-	to the cvs repository.  'cartman' does a 'cvs admin -l foo.c'. 
-	'stan' then does a 'cvs admin -u foo.c'.  The lock wouldn't be 
-	removed, and no warning/error would be given.  This is now fixed. 
-	* rcs.c:(c.6157) remove caller/user check on the multiple lock 
+	to the cvs repository.  'cartman' does a 'cvs admin -l foo.c'.
+	'stan' then does a 'cvs admin -u foo.c'.  The lock wouldn't be
+	removed, and no warning/error would be given.  This is now fixed.
+	* rcs.c:(c.6157) remove caller/user check on the multiple lock
         detection routines.  Sanity.sh runs with no errors after this fix.
-	
+
 1999-10-14  Larry Jones  <larry.jones@sdrc.com>
 
 	Make "cvs admin -e" (with no list of users) work:
@@ -478,7 +483,7 @@
 
 	client.c: Eliminate redundant #if.  (Patch submitted by Assar
 	Westerlund <assar@sics.se>.)
-  
+
 1999-07-30  Larry Jones  <larry.jones@sdrc.com>
 
 	* rcs.c (RCS_checkin): Terminate cleanly if RCS_addbranch fails

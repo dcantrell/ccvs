@@ -2369,7 +2369,7 @@ join_file (finfo, vers)
 		   finfo->fullname, jrev2, jdate2);
 	else
 	    error (0, 0,
-		   "file %s is present in revision %s",
+		   "file %s is not present in revision %s",
 		   finfo->fullname, jrev2);
 
 	/* FIXME: Should we arrange to return a non-zero exit status?  */
