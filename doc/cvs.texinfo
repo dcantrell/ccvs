@@ -11075,11 +11075,13 @@ not work with client/server @sc{cvs}.
 
 The @file{cvswrappers} also has a @samp{-m} option to
 specify the merge methodology that should be used when
-the file is updated.  @code{MERGE} means the usual
+a non-binary file is updated.  @code{MERGE} means the usual
 @sc{cvs} behavior: try to merge the files.  @code{COPY}
 means that @code{cvs update} will refuse to merge
 files, as it also does for files specified as binary
-with @samp{-kb}.  CVS will provide the user with the
+with @samp{-kb} (but if the file is specified as
+binary, there is no need to specify @samp{-m 'COPY'}).
+CVS will provide the user with the
 two versions of the files, and require the user using
 mechanisms outside @sc{cvs}, to insert any necessary
 changes.  @strong{WARNING}: do not use @code{COPY} with
