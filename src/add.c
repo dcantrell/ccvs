@@ -125,7 +125,7 @@ add (argc, argv)
 	      free (rcsdir);
 	    }
 	send_files (argc, argv, 0, 0);
-	if (fprintf (to_server, "add\n") == EOF)
+	if (fprintf (to_server, "add\n") < 0)
 	  error (1, errno, "writing to server");
 	return get_responses_and_close ();
       }

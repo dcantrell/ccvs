@@ -212,13 +212,13 @@ import (argc, argv)
 	ign_setup ();
 
 	if (quiet)
-	    if (fprintf (to_server, "Argument -q\n") == EOF)
+	    if (fprintf (to_server, "Argument -q\n") < 0)
 		error (1, errno, "writing to server");
 	if (really_quiet)
-	    if (fprintf (to_server, "Argument -Q\n") == EOF)
+	    if (fprintf (to_server, "Argument -Q\n") < 0)
 		error (1, errno, "writing to server");
 	if (use_file_modtime)
-	    if (fprintf (to_server, "Argument -d\n") == EOF)
+	    if (fprintf (to_server, "Argument -d\n") < 0)
 		error (1, errno, "writing to server");
 
 	if (vbranch[0] != '\0')
@@ -237,7 +237,7 @@ import (argc, argv)
 	logfp = stdin;
 	err = import_descend (message, argv[1], argc - 2, argv + 2);
 	client_import_done ();
-	if (fprintf (to_server, "import\n") == EOF)
+	if (fprintf (to_server, "import\n") < 0)
 	    error (1, errno, "writing to server");
 	err += get_responses_and_close ();
 	return err;

@@ -139,28 +139,28 @@ rtag (argc, argv)
 	ign_setup ();
 
 	if (local)
-	    if (fprintf (to_server, "Argument -l\n") == EOF)
+	    if (fprintf (to_server, "Argument -l\n") < 0)
 		error (1, errno, "writing to server");
 	if (quiet)
-	    if (fprintf (to_server, "Argument -q\n") == EOF)
+	    if (fprintf (to_server, "Argument -q\n") < 0)
 		error (1, errno, "writing to server");
 	if (really_quiet)
-	    if (fprintf (to_server, "Argument -Q\n") == EOF)
+	    if (fprintf (to_server, "Argument -Q\n") < 0)
 		error (1, errno, "writing to server");
 	if (delete)
-	    if (fprintf (to_server, "Argument -d\n") == EOF)
+	    if (fprintf (to_server, "Argument -d\n") < 0)
 		error (1, errno, "writing to server");
 	if (branch_mode)
-	    if (fprintf (to_server, "Argument -b\n") == EOF)
+	    if (fprintf (to_server, "Argument -b\n") < 0)
 		error (1, errno, "writing to server");
 	if (force_tag_move)
-	    if (fprintf (to_server, "Argument -F\n") == EOF)
+	    if (fprintf (to_server, "Argument -F\n") < 0)
 		error (1, errno, "writing to server");
 	if (run_module_prog)
-	    if (fprintf (to_server, "Argument -n\n") == EOF)
+	    if (fprintf (to_server, "Argument -n\n") < 0)
 		error (1, errno, "writing to server");
 	if (attic_too)
-	    if (fprintf (to_server, "Argument -a\n") == EOF)
+	    if (fprintf (to_server, "Argument -a\n") < 0)
 		error (1, errno, "writing to server");
 
 	if (numtag)
@@ -176,7 +176,7 @@ rtag (argc, argv)
 		send_arg (argv[i]);
 	}
 
-	if (fprintf (to_server, "rtag\n") == EOF)
+	if (fprintf (to_server, "rtag\n") < 0)
 	    error (1, errno, "writing to server");
         return get_responses_and_close ();
     }

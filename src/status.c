@@ -85,7 +85,7 @@ status (argc, argv)
 	 contents themselves will not be examined.  */
       send_files (argc, argv, local, 0);
 
-      if (fprintf (to_server, "status\n") == EOF)
+      if (fprintf (to_server, "status\n") < 0)
 	error (1, errno, "writing to server");
       err = get_responses_and_close ();
 

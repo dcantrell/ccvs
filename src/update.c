@@ -213,28 +213,28 @@ update (argc, argv)
 	    ign_setup ();
 
 	    if (local)
-		if (fprintf (to_server, "Argument -l\n") == EOF)
+		if (fprintf (to_server, "Argument -l\n") < 0)
 		    error (1, errno, "writing to server");
 	    if (quiet)
-		if (fprintf (to_server, "Argument -q\n") == EOF)
+		if (fprintf (to_server, "Argument -q\n") < 0)
 		    error (1, errno, "writing to server");
 	    if (really_quiet)
-		if (fprintf (to_server, "Argument -Q\n") == EOF)
+		if (fprintf (to_server, "Argument -Q\n") < 0)
 		    error (1, errno, "writing to server");
 	    if (update_build_dirs)
-		if (fprintf (to_server, "Argument -d\n") == EOF)
+		if (fprintf (to_server, "Argument -d\n") < 0)
 		    error (1, errno, "writing to server");
 	    if (pipeout)
-		if (fprintf (to_server, "Argument -p\n") == EOF)
+		if (fprintf (to_server, "Argument -p\n") < 0)
 		    error (1, errno, "writing to server");
 	    if (!force_tag_match)
-		if (fprintf (to_server, "Argument -f\n") == EOF)
+		if (fprintf (to_server, "Argument -f\n") < 0)
 		    error (1, errno, "writing to server");
 	    if (aflag)
-		if (fprintf (to_server, "Argument -A\n") == EOF)
+		if (fprintf (to_server, "Argument -A\n") < 0)
 		    error (1, errno, "writing to server");
 	    if (update_prune_dirs)
-		if (fprintf (to_server, "Argument -P\n") == EOF)
+		if (fprintf (to_server, "Argument -P\n") < 0)
 		    error (1, errno, "writing to server");
 	    client_prune_dirs = update_prune_dirs;
 	    option_with_arg ("-r", tag);
@@ -258,7 +258,7 @@ update (argc, argv)
 		    {
 			if (rq->status == rq_supported)
 			{
-			    if (fprintf (to_server, "Argument -u\n") == EOF)
+			    if (fprintf (to_server, "Argument -u\n") < 0)
 				error (1, errno, "writing to server");
 			}
 			break;
@@ -290,7 +290,7 @@ update (argc, argv)
 	    failed_patches = NULL;
 	    failed_patches_count = 0;
 
-	    if (fprintf (to_server, "update\n") == EOF)
+	    if (fprintf (to_server, "update\n") < 0)
 		error (1, errno, "writing to server");
 
 	    status = get_responses_and_close ();
