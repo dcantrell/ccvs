@@ -1,3 +1,9 @@
+2003-05-19  Derek Price  <derek@ximbiot.com>
+
+	* cvsnt.mak: added rules and dependencies for log-buffer.[c,obj],
+	socket-client.[c,obj], and rsh-client.[c,obj]
+	(Patch from Anthon Pang <apang@telus.net>.)
+
 2003-05-18  Larry Jones  <lawrence.jones@eds.com>
 
 	* acinclude.m4 (CVS_FUNC_PRINTF_PTR): New test.
