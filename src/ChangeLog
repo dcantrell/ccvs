@@ -1,3 +1,9 @@
+2004-01-01  Larry Jones  <lawrence.jones@ugsplm.com>
+
+	* zlib.c (read_and_gzip, gunzip_and_write): Fix potential buffer
+	overruns, use names for magic numbers.
+	(Original patch from Jeff Downs <heydowns@borg.com>.)
+
 2003-12-18  Derek Price  <derek@ximbiot.com>
 
 	* server.c (switch_to_user): SysLog attempts to root from pserver.
