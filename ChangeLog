@@ -1,3 +1,7 @@
+1999-02-25  Mehul N. Sanghvi (and Jim Kingdon)
+
+	* INSTALL: Add MkLinux on PowerPC.
+
 1999-02-18  Jim Kingdon
 
 	* cvsnt.mak: Remove vasprintf.  Plus of course the usual
