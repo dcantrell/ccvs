@@ -562,6 +562,19 @@ diff -c -r1\.1 ssfile
 --- 1,2 ----
   ssfile
 '"${PLUS} ssfile line 2"
+	  dotest_status basica-6.3 1 "${testcvs} -q diff -c -rBASE" \
+'Index: sdir/ssdir/ssfile
+===================================================================
+RCS file: /tmp/cvs-sanity/cvsroot/first-dir/sdir/ssdir/ssfile,v
+retrieving revision 1\.1
+diff -c -r1\.1 ssfile
+\*\*\* ssfile	[0-9/]* [0-9:]*	1\.1
+--- ssfile	[0-9/]* [0-9:]*
+\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
+\*\*\* 1 \*\*\*\*
+--- 1,2 ----
+  ssfile
+'"${PLUS} ssfile line 2"
 	  dotest basica-7 "${testcvs} -q ci -m modify-it" \
 'Checking in sdir/ssdir/ssfile;
 /tmp/cvs-sanity/cvsroot/first-dir/sdir/ssdir/ssfile,v  <--  ssfile
