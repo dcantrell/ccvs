@@ -1,3 +1,9 @@
+Fri Jun 23 00:00:51 1995  James Kingdon  <kingdon@harvey.cyclic.com>
+
+	* README-rm-add: Do not talk about patching RCS, that only
+	confuses people.
+	* RCS-patches, convert.sh: Removed (likewise).
+
 Thu Jun 22 10:41:41 1995  James Kingdon  <kingdon@harvey.cyclic.com>
 
 	* subr.c: Change -1 to (size_t)-1 when comparing against a size_t.
