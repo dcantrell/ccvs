@@ -116,7 +116,7 @@ fail ()
 }
 
 # Usage:
-#  dotest TESTNAME COMMAND OUTPUT
+#  dotest TESTNAME COMMAND OUTPUT [OUTPUT2]
 # TESTNAME is the name used in the log to identify the test.
 # COMMAND is the command to run; for the test to pass, it exits with 
 # exitstatus zero.
@@ -125,6 +125,9 @@ fail ()
 # of the output, so should start or end with ".*" if that is what is desired.
 # Trailing newlines are stripped from the command's actual output before
 # matching against OUTPUT.
+# If OUTPUT2 is specified and the output matches it, then it is also
+# a pass (partial workaround for the fact that some versions of expr
+# lack \|).
 dotest ()
 {
   if $2 >${TESTDIR}/dotest.tmp 2>&1; then
@@ -154,11 +157,27 @@ dotest ()
       cat ${TESTDIR}/dotest.tmp >>${LOGFILE}
       pass "$1"
     else
-      echo "** expected: " >>${LOGFILE}
-      echo "$3" >>${LOGFILE}
-      echo "** got: " >>${LOGFILE}
-      cat ${TESTDIR}/dotest.tmp >>${LOGFILE}
-      fail "$1"
+      if test x"$4" != x; then
+	if expr "`cat ${TESTDIR}/dotest.tmp`" : \
+	    "$4"${ENDANCHOR} >/dev/null; then
+	  cat ${TESTDIR}/dotest.tmp >>${LOGFILE}
+	  pass "$1"
+	else
+	  echo "** expected: " >>${LOGFILE}
+	  echo "$3" >>${LOGFILE}
+	  echo "** or: " >>${LOGFILE}
+	  echo "$4" >>${LOGFILE}
+	  echo "** got: " >>${LOGFILE}
+	  cat ${TESTDIR}/dotest.tmp >>${LOGFILE}
+	  fail "$1"
+	fi
+      else
+	echo "** expected: " >>${LOGFILE}
+	echo "$3" >>${LOGFILE}
+	echo "** got: " >>${LOGFILE}
+	cat ${TESTDIR}/dotest.tmp >>${LOGFILE}
+	fail "$1"
+      fi
     fi
   fi
 }
@@ -2156,17 +2175,19 @@ cvs [a-z]*: Executing '"'"''"'"'.*mkmodules'"'"' '"'"'/tmp/cvs-sanity/cvsroot/CV
 	  # We really should allow the files to be listed in any order.
 	  # But we (kludgily) just list the orders which have been observed.
 	  dotest 188a "${testcvs} import -m m -I optig.c first-dir tag1 tag2" \
-	    '\(N first-dir/foobar.c
+	    'N first-dir/foobar.c
 N first-dir/bar.c
 I first-dir/rootig.c
 I first-dir/defig.o
 I first-dir/envig.c
-I first-dir/optig.c\|I first-dir/defig.o
+I first-dir/optig.c
+
+No conflicts created by this import' 'I first-dir/defig.o
 I first-dir/envig.c
 I first-dir/optig.c
 N first-dir/foobar.c
 N first-dir/bar.c
-I first-dir/rootig.c\)
+I first-dir/rootig.c
 
 No conflicts created by this import'
 	  dotest 188b "${testcvs} import -m m -I ! second-dir tag3 tag4" \

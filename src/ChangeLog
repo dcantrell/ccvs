@@ -1,5 +1,8 @@
 Mon Jan  8 11:37:57 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* sanity.sh (dotest): New argument OUTPUT2.
+	(188a): Use it instead of \|.
+
 	* sanity.sh (import): Avoid using string $ followed by Id followed
 	by $ in sanity.sh source, in case sanity.sh itself is under CVS.
 	I hate keyword expansion.
