@@ -1,5 +1,8 @@
 Changes since 1.8:
 
+* The "log" command no longer invokes the RCS "rlog" program.  The
+option handling and printing are now handled internally.
+
 * Encryption is now supported over a Kerberos client/server
 connection.  The new "-x" global option requests it.
 

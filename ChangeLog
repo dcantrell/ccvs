@@ -1,3 +1,7 @@
+Tue Aug  6 17:01:23 1996  Ian Lance Taylor  <ian@cygnus.com>
+
+	* NEWS: Mention that "cvs log" no longer invokes "rlog".
+
 Wed Jul 31 16:06:03 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* HACKING: Mention rule about _ vs - in file names.
