@@ -5185,6 +5185,11 @@ linevector_copy (to, from)
 {
     unsigned int ln;
 
+    for (ln = 0; ln < to->nlines; ++ln)
+    {
+	if (--to->vector[ln]->refcount == 0)
+	    free (to->vector[ln]);
+    }
     if (from->nlines > to->lines_alloced)
     {
 	if (to->lines_alloced == 0)
