@@ -1625,7 +1625,7 @@ rcsbuf_getword (rcsbuf, wordp)
     {
 	*wordp = NULL;
 	*ptr++ = '\0';
-	rcsbuf->ptr = ptr + 1;
+	rcsbuf->ptr = ptr;
 	rcsbuf->vlen = 0;
 	return 1;
     }
