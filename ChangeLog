@@ -1,5 +1,8 @@
 Wed Aug 30 18:45:28 1995  Jim Blandy  <jimb@totoro.cyclic.com>
 
+        * .cvsignore: Ignore WinDebug and WinRel directories, used by
+	Microsoft Visual C++ to store object files and executables.
+
 	* acconfig.h (CVS_SUPPORT, CLIENT_SUPPORT, SERVER_SUPPORT): New
 	symbols, which autoheader will use to build config.h.in from
 	configure.in.
