@@ -1,6 +1,10 @@
 2003-12-18  Derek Price  <derek@ximbiot.com>
 
-	* config.h, stamp-ch: Regenerated for 1.11.18.
+	* config.h, stamp-ch: Regenerated for 1.11.11.1.
+
+2003-12-18  Derek Price  <derek@ximbiot.com>
+
+	* config.h, stamp-ch: Regenerated for 1.11.11.
 
 2003-12-10  Derek Price  <derek@ximbiot.com>
 
