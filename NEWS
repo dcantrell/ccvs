@@ -1,5 +1,9 @@
 Changes since 1.12.1:
 
+* Some minor corrections were made to the diff code to keep diff & rdiff from
+printing diff headers with empty change texts when two files have different
+revision numbers but the same content.
+
 * The global '-l' option, which suppressed history logging, has been removed
 from both client and server.
 
