@@ -1,3 +1,8 @@
+2001-06-11  Derek Price  <dprice@collab.net>
+
+	* cvsnt.dsp: Add src/annotate.c to source file list.
+	(Thanks to Jerzy Kaczorowski <kaczoroj@hotmail.com>.)
+
 2001-05-30  Derek Price  <dprice@collab.net>
 
 	* configure.in (AC_OUTPUT): Change contrib/pvcs2cvs to contrib/pvcs2rcs.

@@ -118,6 +118,21 @@ SOURCE=.\src\admin.c
 # End Source File
 # Begin Source File
 
+SOURCE=.\src\annotate.c
+
+!IF  "$(CFG)" == "cvsnt - Win32 Release"
+
+# PROP Intermediate_Dir "Release"
+
+!ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
+
+# PROP Intermediate_Dir "Debug"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
 SOURCE=.\lib\argmatch.c
 
 !IF  "$(CFG)" == "cvsnt - Win32 Release"
