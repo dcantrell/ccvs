@@ -305,7 +305,7 @@ unsigned sleep (unsigned);
 
 /* This is in the winsock library.  */
 /* todo: got to do some research here... */
-int __stdcall gethostname(char *name, int namelen);
+int gethostname(char *name, int namelen);
 
 /* Don't worry, Microsoft, it's okay for these functions to
    be in our namespace.  */
