@@ -1,3 +1,8 @@
+2004-10-29  Mark D. Baushke  <mdb@cvshome.org>
+
+	* sanity.sh (writeproxy): Use DOTSTAR to avoid problems with
+	a missing Gssapi-authenticate in Valid-requests.
+
 2004-10-28 Derek Price <derek@ximbiot.com>
 
 	* server.c (same_path): New function.
