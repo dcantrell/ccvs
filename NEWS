@@ -3,6 +3,9 @@ Changes since 1.12.9:
 
 NEW FEATURES
 
+* Commit messages once again include the full relative path to the file being
+  committed.
+ 
 * Thanks to funding from Juniper Networks <http://juniper.net>, "write proxy"
   functionality has been added to the CVS server.  Write proxy functionality
   allows any of multiple, read-only "secondary" servers to relay write requests
