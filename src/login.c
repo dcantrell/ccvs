@@ -552,6 +552,12 @@ login (argc, argv)
     {
 	char *tmp;
 	tmp = GETPASS ("CVS password: ");
+	/* Must deal with a NULL return value here.  I haven't managed to
+	 * disconnect the CVS process from the tty and force a NULL return
+	 * in sanity.sh, but the Linux version of getpass is documented
+	 * to return NULL when it can't open /dev/tty...
+	 */
+	if (!tmp) error (1, errno, "login: Failed to read password.");
 	typed_password = scramble (tmp);
 	memset (tmp, 0, strlen (tmp));
     }
