@@ -1,3 +1,29 @@
+Thu Dec 11 15:32:31 1997  Ian Lance Taylor  <ian@cygnus.com>
+
+	Generalize buffering code used by Kerberos encryption routines
+	into a generic packetizing buffer.  The new code in buffer.c is a
+	modified version of the code removed from server.c.
+	* buffer.c (struct packetizing_buffer): Define.
+	(packetizing_buffer_initialize): New function.
+	(packetizing_buffer_input): New static function.
+	(packetizing_buffer_output): New static function.
+	(packetizing_buffer_flush): New static function.
+	(packetizing_buffer_block): New static function.
+	(packetizing_buffer_shutdown): New static function.
+	* buffer.h (packetizing_buffer_initialize): Declare.
+	* server.c (struct krb_encrypt_data): Rename from
+	krb_encrypt_buffer, and remove all fields not related to
+	encryption.
+	(krb_encrypt_buffer_initialize): Just call
+	packetizing_buffer_initialize.
+	(krb_encrypt_input): New static function.
+	(krb_encrypt_output): New static function.
+	(krb_encrypt_buffer_input): Remove.
+	(krb_encrypt_buffer_output): Remove.
+	(krb_encrypt_buffer_flush): Remove.
+	(krb_encrypt_buffer_block): Remove.
+	(krb_encrypt_buffer_shutdown): Remove.
+
 Wed Dec 10 15:39:44 1997  Ian Lance Taylor  <ian@cygnus.com>
 
 	* buffer.c (stdio_buffer_initialize): Correct formatting.
