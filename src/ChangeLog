@@ -1,3 +1,7 @@
+Tue Oct 31 09:25:10 1995  Norbert Kiesel  <nk@col.sw-ley.de>
+
+	* sanity.sh: Use absolute pathname for mkmodules.
+
 Sat Oct 28 01:01:41 1995  Jim Meyering  (meyering@comco.com)
 
 	* entries.c (ParseTag): Use getline instead of fgets.
