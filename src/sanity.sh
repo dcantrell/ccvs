@@ -14645,6 +14645,7 @@ modify-on-branch
 	  # test for what CVS actually exports, and figure we can revise
 	  # the check as needed (within the confines of the RCS5 format as
 	  # documented in RCSFILES).
+	  # Note that we must accept either 2 or 4 digit year.
 	  dotest admin-13 "cat ${CVSROOT_DIRNAME}/first-dir/file1,v" \
 "head	1\.1;
 branch	1\.1\.2;
@@ -14659,13 +14660,13 @@ comment	@xx@;
 
 
 1\.1
-date	[0-9][0-9]\.[0-9][0-9]\.[0-9][0-9]\.[0-9][0-9]\.[0-9][0-9]\.[0-9][0-9];	author ${username};	state Exp;
+date	[0-9][0-9]*\.[0-9][0-9]\.[0-9][0-9]\.[0-9][0-9]\.[0-9][0-9]\.[0-9][0-9];	author ${username};	state Exp;
 branches
 	1\.1\.2\.1;
 next	;
 
 1\.1\.2\.1
-date	[0-9][0-9]\.[0-9][0-9]\.[0-9][0-9]\.[0-9][0-9]\.[0-9][0-9]\.[0-9][0-9];	author ${username};	state foo;
+date	[0-9][0-9]*\.[0-9][0-9]\.[0-9][0-9]\.[0-9][0-9]\.[0-9][0-9]\.[0-9][0-9];	author ${username};	state foo;
 branches;
 next	;
 
@@ -15064,13 +15065,13 @@ comment	@xx@;
 
 
 1\.1
-date	[0-9][0-9]\.[0-9][0-9]\.[0-9][0-9]\.[0-9][0-9]\.[0-9][0-9]\.[0-9][0-9];	author ${username};	state Exp;
+date	[0-9][0-9]*\.[0-9][0-9]\.[0-9][0-9]\.[0-9][0-9]\.[0-9][0-9]\.[0-9][0-9];	author ${username};	state Exp;
 branches
 	1\.1\.2\.1;
 next	;
 
 1\.1\.2\.1
-date	[0-9][0-9]\.[0-9][0-9]\.[0-9][0-9]\.[0-9][0-9]\.[0-9][0-9]\.[0-9][0-9];	author ${username};	state foo;
+date	[0-9][0-9]*\.[0-9][0-9]\.[0-9][0-9]\.[0-9][0-9]\.[0-9][0-9]\.[0-9][0-9];	author ${username};	state foo;
 branches;
 next	;
 
@@ -15235,17 +15236,17 @@ comment	@# @;
 
 
 1\.4
-date	[0-9][0-9]\.[0-9][0-9]\.[0-9][0-9]\.[0-9][0-9]\.[0-9][0-9]\.[0-9][0-9];	author ${username};	state Exp;
+date	[0-9][0-9]*\.[0-9][0-9]\.[0-9][0-9]\.[0-9][0-9]\.[0-9][0-9]\.[0-9][0-9];	author ${username};	state Exp;
 branches;
 next	1\.3;
 
 1\.3
-date	[0-9][0-9]\.[0-9][0-9]\.[0-9][0-9]\.[0-9][0-9]\.[0-9][0-9]\.[0-9][0-9];	author ${username};	state Exp;
+date	[0-9][0-9]*\.[0-9][0-9]\.[0-9][0-9]\.[0-9][0-9]\.[0-9][0-9]\.[0-9][0-9];	author ${username};	state Exp;
 branches;
 next	1\.2;
 
 1\.2
-date	[0-9][0-9]\.[0-9][0-9]\.[0-9][0-9]\.[0-9][0-9]\.[0-9][0-9]\.[0-9][0-9];	author ${username};	state Exp;
+date	[0-9][0-9]*\.[0-9][0-9]\.[0-9][0-9]\.[0-9][0-9]\.[0-9][0-9]\.[0-9][0-9];	author ${username};	state Exp;
 branches;
 next	;
 
