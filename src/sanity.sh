@@ -23825,7 +23825,7 @@ revision 1\.1
 date: [0-9/]* [0-9:]*;  author: $username;  state: Exp;
 recase
 ============================================================================="
-	    else # client insensitive
+	    else # server sensitive && client insensitive
 	      # Client finds same Entry for file & FiLe.
 	      dotest recase-4ssci "$testcvs status file" \
 "===================================================================
@@ -23965,8 +23965,8 @@ File: no file fIlE		Status: Unknown
 
    Working revision:	No entry for fIlE
    Repository revision:	No revision control file"
-	  else # ! $client_sensitive && ! $server_sensitive
-	    dotest recase-8 "$testcvs status fIlE" \
+	  else # !$client_sensitive || !$server_sensitive
+	    dotest recase-8anyi "$testcvs status fIlE" \
 "===================================================================
 File: $fIlE             	Status: Up-to-date
 
@@ -24026,11 +24026,6 @@ C FILE"
 	    dotest recase-10si "$testcvs -q up -A" "U FiLe"
 	  fi
 
-	  if $keep; then
-	    echo Keeping ${TESTDIR} and exiting due to --keep
-	    exit 0
-	  fi
-
 	  # Prove that we can still get status and log information on
 	  # conflicting case files (1 in Attic, two in parent).
 	  if $server_sensitive; then
@@ -24040,6 +24035,7 @@ C FILE"
 "===================================================================
 File: no file file		Status: Up-to-date
 
+5A
    Working revision:	No entry for file
    Repository revision:	1\.2	$CVSROOT_DIRNAME/first-dir/Attic/file,v"
 	    dotest recase-14sscs "$testcvs log file" \
@@ -24116,7 +24112,7 @@ revision 1\.1
 date: [0-9/]* [0-9:]*;  author: $username;  state: Exp;
 recase
 ============================================================================="
-	    else
+	    else # $server_sensitive && !$client_sensitive
 	      # Client finds same Entry for file & FiLe.
 	      dotest recase-13ssci "$testcvs status file" \
 "===================================================================
@@ -24171,22 +24167,22 @@ date: [0-9/]* [0-9:]*;  author: $username;  state: Exp;
 recase
 ============================================================================="
 	    fi
-	  else
+	  else # !$server_sensitive
 	    # Skip these when the server is case insensitive - nothing
 	    # has changed since recase-[4-7]si
 	    :
 	  fi
 
 	  if $client_sensitive && $server_sensitive; then
-	    dotest recase-19cs "$testcvs status fIlE" \
+	    dotest recase-19sscs "$testcvs status fIlE" \
 "$PROG status: nothing known about fIlE
 ===================================================================
 File: no file fIlE		Status: Unknown
 
    Working revision:	No entry for fIlE
    Repository revision:	No revision control file"
-	  else
-	    dotest recase-19ci "$testcvs status fIlE" \
+	  else # !$client_sensitive || !$server_sensitive
+	    dotest recase-19anyi "$testcvs status fIlE" \
 "===================================================================
 File: $fIlE             	Status: Up-to-date
 
@@ -24205,15 +24201,20 @@ File: $fIlE             	Status: Up-to-date
 	      dotest recase-20sscs "$testcvs -q co first-dir" \
 "U first-dir/FILE
 U first-dir/FiLe"
-	    else
+	    else # $server_senstive && !$client_sensitive
 	      dotest_fail recase-20ssci "$testcvs -q co first-dir" \
 "U first-dir/FILE
 $PROG checkout: move away first-dir/FiLe; it is in the way
 C first-dir/FiLe"
 	    fi
-	  else
+	  else # !$server_sensitive
 	    # Skip these since nothing has changed.
 	    :
+	  fi
+
+	  if $keep; then
+	    echo Keeping ${TESTDIR} and exiting due to --keep
+	    exit 0
 	  fi
 
 	  cd ..

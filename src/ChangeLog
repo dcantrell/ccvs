@@ -1,3 +1,8 @@
+2004-02-04  Derek Price  <derek@ximbiot.com>
+
+	* sanity.sh (recase): Update test names and comments for clarity and
+	consistency.
+
 2004-02-03  Derek Price  <derek@ximbiot.com>
 
 	Preserve the case of checked out directories in a path as well as file
