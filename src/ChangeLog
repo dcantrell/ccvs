@@ -1,3 +1,9 @@
+Tue Sep  9 19:22:44 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* subr.c (getcaller): If SYSTEM_GETCALLER is defined, call it
+	instead of all the getlogin/getpwuid/etc.
+	* wrapper.c (wrap_setup): Call get_homedir not getpwuid.
+
 Mon Sep  8 17:54:14 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* sanity.sh (basicc): Change ls -1 to echo *; according to

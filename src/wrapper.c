@@ -79,7 +79,7 @@ void wrap_restore_saved PROTO((void));
 
 void wrap_setup()
 {
-    struct passwd *pw;
+    char *homedir;
 
 #ifdef CLIENT_SUPPORT
     if (!client_active)
@@ -102,14 +102,14 @@ void wrap_setup()
     }
 
     /* Then add entries found in home dir, (if user has one) and file
-       exists.  (FIXME: I think this probably should be using
-       get_homedir, i.e. $HOME).  */
-    if ((pw = (struct passwd *) getpwuid (getuid ())) && pw->pw_dir)
+       exists.  */
+    homedir = get_homedir ();
+    if (homedir != NULL)
     {
 	char *file;
 
-	file = xmalloc (strlen (pw->pw_dir) + sizeof (CVSDOTWRAPPER) + 10);
-	(void) sprintf (file, "%s/%s", pw->pw_dir, CVSDOTWRAPPER);
+	file = xmalloc (strlen (homedir) + sizeof (CVSDOTWRAPPER) + 10);
+	(void) sprintf (file, "%s/%s", homedir, CVSDOTWRAPPER);
 	if (isfile (file))
 	{
 	    wrap_add_file (file, 0);
