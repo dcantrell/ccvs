@@ -47,7 +47,7 @@
 /* #undef mode_t */
 
 /* Define if you don't have <dirent.h>, but have <ndir.h>.  */
-/* #undef NDIR */
+#define HAVE_NDIR_H
 
 /* Define to `int' if <sys/types.h> doesn't define.  */
 /* #undef pid_t */
