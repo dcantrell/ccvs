@@ -1,5 +1,10 @@
 2003-05-09  Derek Price  <derek@ximbiot.com>
 
+	* xgssapi.h: #include config.h.
+	(Reported by Boyd Lynn Gerber <gerberb@zenez.com>.)
+
+2003-05-09  Derek Price  <derek@ximbiot.com>
+
 	* system.h: Define S_ISSOCK on SCO OpenServer.
 
 2003-05-09  Derek Price  <derek@ximbiot.com>
