@@ -67,39 +67,34 @@ exit_usage ()
     exit 2
 }
 
-args=`getopt f:kr $*`
-if test $? -ne 0 ; then
-    exit_usage
-fi
-
+# read our options
 unset fromtest
 keep=no
 remote=no
-set -- $args
-for i
-do
-    case "$i" in
-	-f)
-	    fromtest=$2
-	    shift
-	    shift
+while getopts f:kr option ; do
+    case "$option" in
+	f)
+	    fromtest="$OPTARG"
 	    ;;
-	-k)
+	k)
 	    # The --keep option will eventually cause all the tests to leave around the
 	    # contents of the /tmp directory; right now only some implement it.  Not
 	    # useful if you are running more than one test.
 	    keep=yes
-	    shift
 	    ;;
-	-r)
+	r)
 	    remote=yes
-	    shift
 	    ;;
-	--)
-	    shift
-	    break
+	\?)
+	    exit_usage
 	    ;;
     esac
+done
+
+# boot the arguments we used above
+while test $OPTIND -gt 1 ; do
+    shift
+    OPTIND=`expr $OPTIND - 1`
 done
 
 # Use full path for CVS executable, so that CVS_SERVER gets set properly
