@@ -1,5 +1,10 @@
 1998-10-14  Jim Kingdon
 
+	* ccvs-rsh.pl: Removed; it was not in DISTFILES so it didn't
+	actually get distributed.  I'm going to move it to the web on the
+	theory that the web is a better place for such things.
+	* README: Don't mention it.
+
 	* Makefile.in (dist-dir, distclean): Remove references to elib.
 	* elib: Remove this subdirectory and all its contents.  It went
 	with pcl-cvs, which is no longer distributed with CVS.
