@@ -1,3 +1,7 @@
+Tue Dec 17 13:13:30 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* NEWS: Add entry for verifymsg.
+
 Tue Dec 10 19:22:20 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs-format.el: Revise comments to explain how to use it and

@@ -1,5 +1,11 @@
 Changes since 1.9:
 
+* There is a new administrative file verifymsg which is like editinfo
+but merely validates the message, rather than also getting it from the
+user.  It therefore works with client/server CVS or if one uses the -m
+or -F options to commit.  See the verifymsg section of cvs.texinfo for
+details.
+
 * The %s format formerly accepted in loginfo has been extended to
 formats such as %{sVv}, so that loginfo scripts have access to the
 version numbers being changed.  See the Loginfo section of cvs.texinfo
