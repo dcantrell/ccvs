@@ -1,3 +1,7 @@
+2003-02-12  Derek Price  <derek@ximbiot.com>
+
+	* main.c (main): Update copyright message to 2003.
+
 2003-02-08  Derek Price  <derek@ximbiot.com>
 
 	* rcs.c (RCS_checkout): Supply the full function name in the TRACE
