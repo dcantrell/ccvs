@@ -8,6 +8,7 @@
 
 #include "cvs.h"
 #include "getline.h"
+#include <assert.h>
 
 /*
  * Parse the INFOFILE file for the specified REPOSITORY.  Invoke CALLPROC for
@@ -184,4 +185,155 @@ Parse_Info (infofile, repository, callproc, all)
 	free (line);
 
     return (err);
+}
+
+
+/* Parse the CVS config file.  The syntax right now is a bit ad hoc
+   but tries to draw on the best or more common features of the other
+   *info files and various unix (or non-unix) config file syntaxes.
+   Lines starting with # are comments.  Settings are lines of the form
+   KEYWORD=VALUE.  There is currently no way to have a multi-line
+   VALUE (would be nice if there was, probably).
+
+   Returns 0 for success, negative value for failure.  Unless NOERR is
+   set, will call error() with errors in addition to the return value.
+   NOERR is a total crock to cope with the fact that we can't call
+   error() when called from serve_root.  */
+int
+parse_config (noerr)
+{
+    char *infopath;
+    FILE *fp_info;
+    char *line = NULL;
+    size_t line_allocated = 0;
+    size_t len;
+    char *p;
+
+    infopath = xmalloc (strlen (CVSroot_directory)
+			+ sizeof (CVSROOTADM_CONFIG)
+			+ sizeof (CVSROOTADM)
+			+ 10);
+    strcpy (infopath, CVSroot_directory);
+    strcat (infopath, "/");
+    strcat (infopath, CVSROOTADM);
+    strcat (infopath, "/");
+    strcat (infopath, CVSROOTADM_CONFIG);
+
+    fp_info = CVS_FOPEN (infopath, "r");
+    if (fp_info == NULL)
+    {
+	/* If no file, don't do anything special.  */
+	if (!existence_error (errno))
+	{
+	    if (!noerr)
+		/* Just a warning message; doesn't affect return
+		   value, currently at least.  */
+		error (0, errno, "cannot open %s", infopath);
+	}
+	free (infopath);
+	return 0;
+    }
+
+    while (getline (&line, &line_allocated, fp_info) >= 0)
+    {
+	/* Skip comments.  */
+	if (line[0] == '#')
+	    continue;
+
+	/* At least for the moment we don't skip whitespace at the start
+	   of the line.  Too picky?  Maybe.  But being insufficiently
+	   picky leads to all sorts of confusion, and it is a lot easier
+	   to start out picky and relax it than the other way around.
+
+	   Is there any kind of written standard for the syntax of this
+	   sort of config file?  Anywhere in POSIX for example (I guess
+	   makefiles are sort of close)?  Red Hat Linux has a bunch of
+	   these too (with some GUI tools which edit them)...
+
+	   Along the same lines, we might want a table of keywords,
+	   with various types (boolean, string, &c), as a mechanism
+	   for making sure the syntax is consistent.  Any good examples
+	   to follow there (Apache?)?  */
+
+	/* Strip the training newline.  There will be one unless we
+	   read a partial line without a newline, and then got end of
+	   file (or error?).  */
+
+	len = strlen (line) - 1;
+	if (line[len] == '\n')
+	    line[len] = '\0';
+
+	/* Skip blank lines.  */
+	if (line[0] == '\0')
+	    continue;
+
+	/* The first '=' separates keyword from value.  */
+	p = strchr (line, '=');
+	if (p == NULL)
+	{
+	    if (!noerr)
+		/* Probably should be printing line number.  */
+		error (0, 0, "syntax error in %s: line '%s' is missing '='",
+		       infopath, line);
+	    goto error_return;
+	}
+
+	*p++ = '\0';
+
+	if (strcmp (line, "RCSBIN") == 0)
+	{
+	    if (free_Rcsbin)
+		free (Rcsbin);
+
+	    len = strlen (p);
+	    /* 2 is for '/' and '\0'.  */
+	    Rcsbin = malloc (len + 2);
+	    if (Rcsbin == NULL)
+	    {
+		free_Rcsbin = 0;
+		if (!noerr)
+		    error (1, ENOMEM, "Cannot allocate Rcsbin");
+		goto error_return;
+	    }
+	    free_Rcsbin = 1;
+	    strcpy (Rcsbin, p);
+
+	    /* If Rcsbin does not end in a ISDIRSEP character, add a
+	       trailing slash.  */
+	    if (!ISDIRSEP (Rcsbin[len - 1]))
+	    {
+		Rcsbin[len] = '/';
+		Rcsbin[len + 1] = '\0';
+	    }
+	}
+	else
+	{
+	    if (!noerr)
+		error (0, 0, "%s: unrecognized keyword '%s'",
+		       infopath, line);
+	    goto error_return;
+	}
+    }
+    if (ferror (fp_info))
+    {
+	if (!noerr)
+	    error (0, errno, "cannot read %s", infopath);
+	goto error_return;
+    }
+    if (fclose (fp_info) < 0)
+    {
+	if (!noerr)
+	    error (0, errno, "cannot close %s", infopath);
+	goto error_return;
+    }
+    free (infopath);
+    if (line != NULL)
+	free (line);
+    return 0;
+
+ error_return:
+    free (infopath);
+    if (line != NULL)
+	free (line);
+    return -1;
 }
