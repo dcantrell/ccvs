@@ -672,16 +672,11 @@ commit (argc, argv)
     Lock_Cleanup ();
     dellist (&mulist);
 
+    /* see if we need to sleep before returning to avoid time-stamp races */
     if (last_register_time)
     {
-	time_t now;
-
-	for (;;)
-	{
-	    (void) time (&now);
-	    if (now != last_register_time) break;
-	    sleep (1);			/* to avoid time-stamp races */
-	}
+	while (time ((time_t *) NULL) == last_register_time)
+	    sleep (1);
     }
 
     return (err);

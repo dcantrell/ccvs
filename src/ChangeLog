@@ -1,3 +1,16 @@
+2000-01-04  Larry Jones  <larry.jones@sdrc.com>
+
+	* client.c (get_responses_and_close): Simplify time-stamp race
+	avoidance code.
+	* commit.c (commit): Ditto.
+	* update.c (do_update): Ditto.
+	(Prompted by patch submitted by Pavel Roskin
+	<pavel_roskin@geocities.com>.)
+
+	* hardlink.c: sizeof (char) is 1, by definition.
+	* logmsg.c: Ditto.
+	* rcs.c: Ditto.
+
 2000-01-03  Karl Fogel  <kfogel@red-bean.com>
 
 	* filesubr.c, subr.c (backup_file): moved this function from
