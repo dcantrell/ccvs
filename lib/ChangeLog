@@ -1,3 +1,13 @@
+Sat Nov 18 16:20:37 1995  Karl Fogel  <kfogel@floss.cyclic.com>
+
+        * rename.c: same.
+
+        * mkdir.c: Use new macro `existence_error', instead of comparing
+        errno to ENOENT directly.
+
+        * system.h (existence_error): new macro, tries to portably ask if
+        errno represents a file-not-exist error.
+
 Fri Nov 17 20:08:58 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
         * system.h (NEED_DECOY_PERMISSIONS): moved this section to where
