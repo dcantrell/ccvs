@@ -1,3 +1,16 @@
+2003-03-19  Derek Price  <derek@ximbiot.com>
+
+	* add.c (add_directory): Only call WriteTemplate when the server is
+	active.
+	* create_adm.c (Create_Admin): Don't call WriteTemplate here since
+	Create_Admin is only called from the client.
+	* commit.c (commit_dirleaveproc): Don't call WriteTemplate here.  I'm
+	a little confused as to why since update_direntproc works for update.c,
+	but I can't come up with a test case that fails when this call is
+	missing.  Nor can I come up with a test case that passes when this call
+	is present and the one in commit_filesdoneproc is removed.
+	* sanity.sh (template): Tidy, minimize, and add some extra tests.
+
 2003-03-19  Mark D. Baushke  <mdb@cvshome.org>
 
 	* .cvsignore: Added sanity.config.sh, a new auto-generated file.

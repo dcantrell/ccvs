@@ -806,10 +806,11 @@ add_directory (finfo)
     }
 
 #ifdef SERVER_SUPPORT
-    if (!server_active)
+    if ( server_active )
+	WriteTemplate ( finfo->fullname, 1, rcsdir );
+    else
 #endif
-        Create_Admin (".", finfo->fullname, rcsdir, tag, date, nonbranch, 0, 1);
-    WriteTemplate (finfo->fullname, 1, rcsdir);
+	Create_Admin (".", finfo->fullname, rcsdir, tag, date, nonbranch, 0, 1);
 
     if (tag)
 	free (tag);
@@ -883,3 +884,8 @@ build_entry (repository, user, options, message, entries, tag)
     free (line);
     return (0);
 }
+
+
+
+/* vim:tabstop=8:shiftwidth=4
+ */

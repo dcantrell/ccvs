@@ -24987,9 +24987,9 @@ done"
 	  # CVS/Template file will exist and be zero bytes in length.
 	  dotest template-empty-1 "${testcvs} -Q co first" ''
 	  dotest template-empty-2 \
-"test ! -f first/CVS/Template || test ! -s first/CVS/Template" ''
+"test ! -s first/CVS/Template" ''
 	  dotest template-empty-3 \
-"test ! -f first/subdir/CVS/Template || test ! -s first/subdir/CVS/Template" ''
+"test ! -s first/subdir/CVS/Template" ''
 	  rm -fr first
 
 	  # create some template files
@@ -24999,22 +24999,39 @@ done"
 	  
 	  dotest template-rcsinfo-1 "${testcvs} -Q co CVSROOT" ''
 	  cd CVSROOT
+	  echo DEFAULT ${TESTDIR}/template/temp.def >>rcsinfo
+	  dotest template-rcsinfo-2 "${testcvs} -Q ci -m." \
+"Checking in rcsinfo;
+${CVSROOT_DIRNAME}/CVSROOT/rcsinfo,v  <--  rcsinfo
+new revision: 1\.2; previous revision: 1\.1
+done
+$PROG [a-z]*: Rebuilding administrative file database"
+	  # Make sure we get the update without a commit.
+	  dotest template-rcsinfo-3 "${testcvs} -Q ci -m." ''
+	  # Did the CVSROOT/CVS/Template file get the updated version?
+	  if $remote; then
+	    dotest template-rcsinfo-4r \
+"cmp CVS/Template ${TESTDIR}/template/temp.def" ''
+	  else
+	    dotest template-rcsinfo-4 \
+"test ! -f CVS/Template" ''
+	  fi
 	  echo "^first/subdir ${TESTDIR}/template/temp.subdir" >>rcsinfo
 	  echo "^first ${TESTDIR}/template/temp.first" >>rcsinfo
 	  echo DEFAULT ${TESTDIR}/template/temp.def >>rcsinfo
 	  dotest template-rcsinfo-2 "${testcvs} -Q ci -m. rcsinfo" \
 "Checking in rcsinfo;
 ${CVSROOT_DIRNAME}/CVSROOT/rcsinfo,v  <--  rcsinfo
-new revision: 1\.2; previous revision: 1\.1
+new revision: 1\.3; previous revision: 1\.2
 done
 $PROG [a-z]*: Rebuilding administrative file database"
 	  # Did the CVSROOT/CVS/Template file get the updated version?
 	  if $remote; then
-	    dotest template-rcsinfo-3r \
+	    dotest template-rcsinfo-5r \
 "cmp CVS/Template ${TESTDIR}/template/temp.def" ''
 	  else
-	    dotest template-rcsinfo-3 \
-"test ! -f CVS/Template || test ! -s CVS/Template" ''
+	    dotest template-rcsinfo-5 \
+"test ! -f CVS/Template" ''
 	  fi
 	  cd ..
 
@@ -25137,13 +25154,13 @@ done"
 	  dotest template-norcsinfo-3 "${testcvs} -Q ci -m. rcsinfo" \
 "Checking in rcsinfo;
 ${CVSROOT_DIRNAME}/CVSROOT/rcsinfo,v  <--  rcsinfo
-new revision: 1\.3; previous revision: 1\.2
+new revision: 1\.4; previous revision: 1\.3
 done
 ${PROG} [a-z]*: Rebuilding administrative file database"
 	  # Did the CVSROOT/CVS/Template file get the updated version?
 	  # The file should be gone or of zero length.
 	  dotest template-norcsinfo-4 \
-"test ! -f CVS/Template || test ! -s CVS/Template" ''
+"test ! -s CVS/Template" ''
 	  cd ..
 
 	  dotest template-norcsinfo-5 "${testcvs} update first" \
@@ -25153,9 +25170,9 @@ ${PROG} [a-z]*: Updating first/subdir"
 	  # Note: For cvs clients with no Clear-template response, the
 	  # CVS/Template file will exist and be zero bytes in length.
 	  dotest template-norcsinfo-6 \
-"test ! -f first/CVS/Template || test ! -s first/CVS/Template" ''
+"test ! -s first/CVS/Template" ''
 	  dotest template-norcsinfo-7 \
-"test ! -f first/subdir/CVS/Template || test ! -s first/subdir/CVS/Template" ''
+"test ! -s first/subdir/CVS/Template" ''
 
 	  dokeep
 
