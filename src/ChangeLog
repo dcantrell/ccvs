@@ -1,3 +1,10 @@
+2000-11-29  Derek Price  <derek.price@openavenue.com>
+
+	* root.c (parse_cvsroot): back out yesterday's redundant changes
+	* main.c (main): fix CVSROOT trace message to look like other trace
+	messages
+	* sanity.sh (multiroot2-9): expect new trace message
+
 2000-11-28  Derek Price  <derek.price@openavenue.com>
 
 	* root.c (parse_cvsroot): add trace on this function

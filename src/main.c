@@ -932,8 +932,8 @@ Copyright (c) 1989-2000 Brian Berliner, david d `zoo' zuhn, \n\
 		    error (1, 0, "Bad CVSROOT.");
 
 		if (trace)
-		    error (0, 0, "notice: main loop with CVSROOT=%s",
-			   current_root);
+		    fprintf (stderr, "%s-> main loop with CVSROOT=%s\n",
+			   CLIENT_SERVER_STR, current_root);
 
 		/*
 		 * Check to see if the repository exists.
