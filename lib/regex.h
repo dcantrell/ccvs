@@ -462,8 +462,8 @@ extern void re_set_registers
              unsigned num_regs, regoff_t *starts, regoff_t *ends));
 
 /* 4.2 bsd compatibility.  System headers may declare the argument as
-   either "char *" (e.g. Cray) or "const char *) (e.g. linux), so don't
-   prototype them here.  */
+   either "char *" (e.g. Cray unistd.h) or "const char *" (e.g. linux
+   regex.h), so don't prototype them here.  */
 extern char *re_comp ();
 extern int re_exec ();
 
