@@ -350,7 +350,9 @@ test group.  See AT_CVS_SIMPLE_PROJECT in `basic.at' for an example.
 REGENERATING THE TEST SUITE
 ***************************
 
-Regenerating the test suite requires Autoconf 2.58.
+Regenerating the test suite requires Autoconf 2.58 and that configure be run
+with the `--enable-maintainer-mode' option specified.  Please see the `INSTALL'
+file for more.
 
 Use `make suite' in the `src/tests' directory or `make check' from the
-`src/tests' directory or either of its parents.
+`src/tests' directory or its parent or grandparent.

@@ -1,5 +1,10 @@
 2003-11-17  Derek Price  <derek@ximbiot.com>
 
+	* TESTS: Note that --enable-maintainer-mode is required to rebuild the
+	test suite.
+
+2003-11-17  Derek Price  <derek@ximbiot.com>
+
 	* configure: Regenerated with Autoconf 2.58.
 
 2003-11-10  Derek Price  <derek@ximbiot.com>
