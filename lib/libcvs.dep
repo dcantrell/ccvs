@@ -185,6 +185,12 @@
 	".\xsize.h"\
 	
 
+.\vasprintf.c : \
+	"..\windows-NT\config.h"\
+	".\vasnprintf.h"\
+	".\vasprintf.h"\
+	
+
 ".\xalloc-die.c" : \
 	"..\windows-NT\config.h"\
 	".\error.h"\
