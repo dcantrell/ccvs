@@ -1,3 +1,9 @@
+1999-05-18 Derek Price
+	<http://www-personal.engin.umich.edu/~oberon/resume.html>
+
+	* sanity.sh (keyword2): Escaped a newline in an awk script.
+	Apparently Solaris awk don't like 'em.
+
 1999-05-18  Jim Kingdon  <http://www.cyclic.com>
 
 	* sanity.sh (basicc): Allow the behavior whereby unlink(".")
