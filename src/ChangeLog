@@ -1,3 +1,9 @@
+1998-06-02  Assar Westerlund  <assar@sics.se>
+
+	* client.c: Check for HAVE_GSS_C_NT_HOSTBASED_SERVICE rather than
+	assuming that GSS_C_NT_HOSTBASED_SERVICE is a macro.
+	* server.c: Likewise.
+
 1998-06-02  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* fileattr.c (fileattr_read): Check for NULL return from strchr.
