@@ -27,34 +27,37 @@ prefix = @prefix@
 exec_prefix = @exec_prefix@
 
 SOURCES = \
-    alloca.c \
-    argmatch.c \
-    error.c \
-    fnmatch.c \
-    ftruncate.c \
-    getdate.y \
-    getopt.c \
-    getopt1.c \
-    getwd.c \
-    hostname.c \
-    md5.c \
-    memmove.c \
-    mkdir.c \
-    regex.c \
-    rename.c \
-    sighandle.c \
-    strdup.c \
-    strerror.c \
-    strippath.c \
-    stripslash.c \
-    waitpid.c \
-    yesno.c 
+	alloca.c \
+	argmatch.c \
+	dup2.c \
+	error.c \
+	fnmatch.c \
+	ftruncate.c \
+	getdate.y \
+	getopt.c \
+	getopt1.c \
+	getwd.c \
+	hostname.c \
+	md5.c \
+	memmove.c \
+	mkdir.c \
+	regex.c \
+	rename.c \
+	sighandle.c \
+	strdup.c \
+	strerror.c \
+	strippath.c \
+	stripslash.c \
+	valloc.c \
+	waitpid.c \
+	yesno.c 
+
+HEADERS = getopt.h fnmatch.h regex.h system.h wait.h md5.h
 
 OBJECTS = \
     @ALLOCA@ @LIBOBJS@ \
     argmatch.o \
     error.o \
-    fnmatch.o \
     getopt.o \
     getopt1.o \
     md5.o \
@@ -64,8 +67,9 @@ OBJECTS = \
     yesno.o \
     getdate.o
 
-DISTFILES = Makefile.in getopt.h fnmatch.h regex.h system.h wait.h $(SOURCES) \
-    md5.h
+DISTFILES = \
+	.cvsignore ChangeLog ChangeLog.fsf Makefile.in \
+	${SOURCES} ${HEADERS}
 
 DEFS = @DEFS@
 RANLIB = @RANLIB@
@@ -107,9 +111,10 @@ realclean: distclean
 	rm -f *.tab.c getdate.c
 .PHONY: realclean
 
-dist:
-	ln $(DISTFILES) ../`cat ../.fname`/lib
-.PHONY: dist
+dist-dir:
+	mkdir ${DISTDIR}
+	ln $(DISTFILES) ${DISTDIR}
+.PHONY: dist-dir
 
 libcvs.a: $(OBJECTS)
 	$(AR) cr $@ $(OBJECTS)
