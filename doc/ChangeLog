@@ -1,3 +1,9 @@
+1998-09-01  Noel Cragg  <noel@swish.red-bean.com>
+
+	* cvsclient.texi (Requests): added a detailed explanation of the
+	Directory request and how it is handled, both for pre-1.10 and
+	post-1.10 servers.
+
 1998-09-01  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (Multiple repositories): Also describe the CVS 1.10
