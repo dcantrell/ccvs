@@ -778,7 +778,7 @@ if test x"$*" = x; then
 	# Branching, tagging, removing, adding, multiple directories
 	tests="${tests} rdiff rdiff-short"
 	tests="${tests} rdiff2 diff diffnl death death2"
-	tests="${tests} rm-update-message rmadd rmadd2 rmadd3"
+	tests="${tests} rm-update-message rmadd rmadd2 rmadd3 resurrection"
 	tests="${tests} dirs dirs2 branches branches2 tagc tagf"
 	tests="${tests} rcslib multibranch import importb importc import-CVS"
 	tests="${tests} update-p import-after-initial branch-after-import"
@@ -5698,6 +5698,88 @@ $PROG \[commit aborted\]: correct above errors first!"
 	  cd ../..
 	  rm -r 1
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  ;;
+
+	resurrection)
+	  # This test tests a few file resurrection scenarios.
+	  mkdir 1; cd 1
+	  dotest resurrection-init1 "$testcvs -q co -l ." ''
+	  mkdir first-dir
+	  dotest resurrection-init2 "$testcvs add first-dir" \
+"Directory $CVSROOT_DIRNAME/first-dir added to the repository"
+	  cd first-dir
+
+	  echo initial content for file1 >file1
+	  dotest resurrection-init3 "$testcvs add file1" \
+"$PROG add: scheduling file \`file1' for addition
+$PROG add: use '$PROG commit' to add this file permanently"
+	  dotest resurrection-init4 "$testcvs -q ci -m add" \
+"RCS file: $CVSROOT_DIRNAME/first-dir/file1,v
+done
+Checking in file1;
+$CVSROOT_DIRNAME/first-dir/file1,v  <--  file1
+initial revision: 1\.1
+done"
+
+	  dotest resurrection-init5 "$testcvs -Q rm -f file1"
+
+	  # The first test is that `cvs add' will resurrect a file before it
+	  # has been committed.
+	  dotest resurrection-1 "$testcvs add file1" \
+"U file1
+$PROG add: file1, version 1\.1, resurrected"
+	  dotest resurrection-2 "$testcvs -Q diff file1" ""
+
+	  dotest resurrection-init6 "$testcvs -Q tag -b resurrection"
+	  dotest resurrection-init7 "$testcvs -Q rm -f file1"
+	  dotest resurrection-init8 "$testcvs -Q ci -mrm" \
+"Removing file1;
+$CVSROOT_DIRNAME/first-dir/file1,v  <--  file1
+new revision: delete; previous revision: 1\.1
+done"
+
+	  # The next test is that CVS will resurrect a committed removal.
+	  dotest_sort resurrection-3 "$testcvs add file1" \
+"U file1
+$PROG add: file \`file1' resurrected from revision 1\.1
+$PROG add: re-adding file \`file1' (in place of dead revision 1\.2)
+$PROG add: use 'cvs commit' to add this file permanently"
+	  dotest resurrection-4 "$testcvs -q diff -r1.1 file1" ""
+	  dotest resurrection-5 "$testcvs -q ci -mreadd" \
+"Checking in file1;
+$CVSROOT_DIRNAME/first-dir/file1,v  <--  file1
+new revision: 1\.3; previous revision: 1\.2
+done"
+
+	  dotest resurrection-init9 "$testcvs -Q up -rresurrection"
+	  dotest resurrection-init10 "$testcvs -Q rm -f file1"
+	  dotest resurrection-init11 "$testcvs -Q ci -mrm-on-resurrection" \
+"Removing file1;
+$CVSROOT_DIRNAME/first-dir/file1,v  <--  file1
+new revision: delete; previous revision: 1\.1
+done"
+
+	  # The next test is that CVS will resurrect a committed removal to a
+	  # branch.
+	  dotest_sort resurrection-6 "$testcvs add file1" \
+"U file1
+$PROG add: file \`file1' resurrected from revision 1\.1
+$PROG add: file \`file1' will be added on branch \`resurrection' from version 1\.1\.2\.1
+$PROG add: use 'cvs commit' to add this file permanently"
+	  dotest resurrection-7 "$testcvs -Q diff -r1.1 file1" ""
+	  dotest resurrection-8 "$testcvs -q ci -mreadd" \
+"Checking in file1;
+$CVSROOT_DIRNAME/first-dir/file1,v  <--  file1
+new revision: 1\.1\.2\.2; previous revision: 1\.1\.2\.1
+done"
+	  if $keep; then
+	    echo Keeping $TESTDIR and exiting due to --keep
+	    exit 0
+	  fi
+
+	  cd ../..
+	  rm -rf 1
+	  rm -rf $CVSROOT_DIRNAME/first-dir
 	  ;;
 
 	dirs)

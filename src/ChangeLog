@@ -1,5 +1,16 @@
 2004-03-14  Derek Price  <derek@ximbiot.com>
 
+	* cvs.h (previous_rev, write_letter): New prototypes.
+	(struct file_info): Move to before the write_letter prototype.
+	* add.c (add): Allow resurrection of files which used to exist on a
+	branch.
+	* subr.c (previous_rev): New function.
+	* update.c: Consolidate like pragmas.
+	 (write_letter): Remove prototype.  Remove static declaration.
+	* sanity.sh (resurrection): New tests.
+
+2004-03-14  Derek Price  <derek@ximbiot.com>
+
 	* commit.c (remove_file): Print the actual previous revision instead of
 	a branch number.
 	* sanity.sh: Update to match.
