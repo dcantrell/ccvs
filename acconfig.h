@@ -29,3 +29,10 @@
 /* Define if utime requires write access to the file (true on Windows,
    but not Unix).  */
 #undef UTIME_EXPECTS_WRITABLE
+
+/* Define if setmode is required when writing binary data to stdout.  */
+#undef USE_SETMODE_STDOUT
+
+/* Define if the diff library should use setmode for binary files.
+   FIXME: Why two different macros for setmode?  */
+#undef HAVE_SETMODE
