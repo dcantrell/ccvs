@@ -1,3 +1,7 @@
+1998-06-04  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* add.c (add): Only send "Directory" requests if we need to.
+
 1998-06-02  Assar Westerlund  <assar@sics.se>
 
 	* client.c: Check for HAVE_GSS_C_NT_HOSTBASED_SERVICE rather than
