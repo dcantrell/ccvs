@@ -1,3 +1,9 @@
+Wed Sep 27 15:34:04 1995  Peter Wemm  <peter@haywire.dialix.com>
+
+	* configure.in: correct detection of GNU diff's -a option for
+	src/options.h
+	* configure: regenerate with autoconf
+
 Fri Sep 22 14:29:31 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* TODO: Remove item about reindenting on the way in and out.

@@ -1098,15 +1098,15 @@ test -n "$gdiff_path" && break
 done
 test -n "$gdiff_path" || gdiff_path="diff"
 
-cat >> confdefs.h <<EOF
-#define DIFF "$gdiff_path"
-EOF
-
 echo $ac_n "checking to see if $gdiff_path supports -a""... $ac_c" 1>&6
 if $gdiff_path -a /dev/null /dev/null > /dev/null 2>&1 ; then
   echo "$ac_t""yes; appending -a to $gdiff_path" 1>&6
   gdiff_path="$gdiff_path -a"
 fi
+cat >> confdefs.h <<EOF
+#define DIFF "$gdiff_path"
+EOF
+
 
 for ac_prog in ggrep gnugrep grep
 do
@@ -1144,10 +1144,6 @@ test -n "$ggrep_path" && break
 done
 test -n "$ggrep_path" || ggrep_path="grep"
 
-cat >> confdefs.h <<EOF
-#define GREP "$ggrep_path"
-EOF
-
 echo $ac_n "checking to see if $ggrep_path supports -s""... $ac_c" 1>&6
 echo foostring | $ggrep_path -s foostring > conftest.out 2>/dev/null
 if test $? -ne 0 ; then
@@ -1171,6 +1167,10 @@ else
     echo "$ac_t""yes" 1>&6
   fi
 fi
+cat >> confdefs.h <<EOF
+#define GREP "$ggrep_path"
+EOF
+
 rm -f conftest*
 
 echo $ac_n "checking for ANSI C header files""... $ac_c" 1>&6
