@@ -497,6 +497,7 @@ DEP_SERVE=\
 	.\src\cvs.h\
 	.\src\watch.h\
 	.\src\edit.h\
+	.\src\fileattr.h\
 	".\windows-NT\config.h"\
 	".\windows-NT\options.h"\
 	".\windows-NT\alloca.h"\
@@ -553,6 +554,7 @@ $(INTDIR)/diff.obj :  $(SOURCE)  $(DEP_DIFF_) $(INTDIR)
 SOURCE=.\src\client.c
 DEP_CLIEN=\
 	.\src\cvs.h\
+	.\lib\getline.h\
 	.\lib\md5.h\
 	".\windows-NT\config.h"\
 	".\windows-NT\options.h"\
@@ -667,6 +669,7 @@ $(INTDIR)/entries.obj :  $(SOURCE)  $(DEP_ENTRI) $(INTDIR)
 SOURCE=.\src\tag.c
 DEP_TAG_C=\
 	.\src\cvs.h\
+	".\lib\save-cwd.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\options.h"\
 	".\windows-NT\alloca.h"\
@@ -779,6 +782,7 @@ $(INTDIR)/root.obj :  $(SOURCE)  $(DEP_ROOT_) $(INTDIR)
 SOURCE=.\src\myndbm.c
 DEP_MYNDB=\
 	.\src\cvs.h\
+	.\lib\getline.h\
 	".\windows-NT\config.h"\
 	".\windows-NT\options.h"\
 	".\windows-NT\alloca.h"\
@@ -949,6 +953,8 @@ SOURCE=.\src\commit.c
 DEP_COMMI=\
 	.\src\cvs.h\
 	.\lib\getline.h\
+	.\src\edit.h\
+	.\src\fileattr.h\
 	".\windows-NT\config.h"\
 	".\windows-NT\options.h"\
 	".\windows-NT\alloca.h"\
@@ -1064,6 +1070,8 @@ DEP_UPDAT=\
 	.\src\cvs.h\
 	.\lib\md5.h\
 	.\src\watch.h\
+	.\src\fileattr.h\
+	.\src\edit.h\
 	".\windows-NT\config.h"\
 	".\windows-NT\options.h"\
 	".\windows-NT\alloca.h"\
@@ -1378,7 +1386,6 @@ $(INTDIR)/create_adm.obj :  $(SOURCE)  $(DEP_CREAT) $(INTDIR)
 SOURCE=.\src\main.c
 DEP_MAIN_=\
 	.\src\cvs.h\
-	.\src\patchlevel.h\
 	".\windows-NT\config.h"\
 	".\windows-NT\options.h"\
 	".\windows-NT\alloca.h"\
@@ -1632,8 +1639,8 @@ $(INTDIR)/error.obj :  $(SOURCE)  $(DEP_ERROR) $(INTDIR)
 
 SOURCE=.\src\expand_path.c
 DEP_EXPAN=\
-	".\windows-NT\config.h"\
 	.\src\cvs.h\
+	".\windows-NT\config.h"\
 	".\windows-NT\options.h"\
 	".\windows-NT\alloca.h"\
 	.\lib\fnmatch.h\
@@ -1661,6 +1668,7 @@ $(INTDIR)/expand_path.obj :  $(SOURCE)  $(DEP_EXPAN) $(INTDIR)
 SOURCE=.\src\edit.c
 DEP_EDIT_=\
 	.\src\cvs.h\
+	.\lib\getline.h\
 	.\src\watch.h\
 	.\src\edit.h\
 	.\src\fileattr.h\
@@ -1692,6 +1700,7 @@ $(INTDIR)/edit.obj :  $(SOURCE)  $(DEP_EDIT_) $(INTDIR)
 SOURCE=.\src\fileattr.c
 DEP_FILEA=\
 	.\src\cvs.h\
+	.\lib\getline.h\
 	.\src\fileattr.h\
 	".\windows-NT\config.h"\
 	".\windows-NT\options.h"\
