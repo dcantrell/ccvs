@@ -1,3 +1,12 @@
+2002-10-03  Larry Jones  <lawrence.jones@eds.com>
+
+	* lock.c (readers_exist): Ignore our own read lock, if any, to
+	allow upgrading an existing read lock to a write lock.
+	* tag.c (rtag_proc, rtag_fileproc, tag_fileproc): Rather than
+	locking the entire tree, have start_recursion establish read
+	locks and then upgrade the read lock to a write lock (so only
+	one directory is locked at a time).
+
 2002-09-27  Larry Jones  <lawrence.jones@eds.com>
 
 	* add.c (add): Send "--" before file names.
