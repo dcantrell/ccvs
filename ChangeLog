@@ -1,5 +1,9 @@
 2004-08-24  Derek Price  <derek@ximbiot.com>
 
+	* TODO (24, 49, 92, 113): Remove completed/obsolescent items.
+
+2004-08-24  Derek Price  <derek@ximbiot.com>
+
 	* BUGS: Remove release subdir note.  This was fixed with the commit on
 	2004-02-25, based on Matthew Ogilvie's patch.
 
