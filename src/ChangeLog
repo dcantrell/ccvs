@@ -1,3 +1,9 @@
+Thu Jun 15 17:33:28 1995  J.T. Conklin  <jtc@rtl.cygnus.com>
+
+	* server.c (get_buffer_data, buf_append_char, buf_append_data):
+	  Don't conditionalize use of "inline".  Autoconf takes care of
+	  defining it away on systems that don't grok it.
+
 Thu Jun 15 13:43:38 1995  Jim Kingdon  (kingdon@cyclic.com)
 
 	* options.h.in (DIFF): Default to "diff" not "diff -a" since diff
