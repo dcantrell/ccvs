@@ -979,7 +979,7 @@ serve_notify (arg)
 
     if (error_pending ()) return;
 
-    new = malloc (sizeof (struct notify_note));
+    new = (struct notify_note *) malloc (sizeof (struct notify_note));
     if (new == NULL)
     {
 	pending_error = ENOMEM;
