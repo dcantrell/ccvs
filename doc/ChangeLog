@@ -1,3 +1,8 @@
+2002-03-09  Larry Jones  <larry.jones@sdrc.com>
+
+	* cvs.texinfo (Update imports): Suggest merging with two rel tags
+	instead of the branch tag and a date and explain why.
+
 2002-02-26  Larry Jones  <larry.jones@sdrc.com>
 
 	* cvs.texinfo (diff options): Document all the diff options.
