@@ -1432,7 +1432,8 @@ echo Ok.
 # * -P option to checkout--(a) refrains from checking out new empty dirs,
 #   (b) prunes empty dirs already there.
 
-# clean any old remnants
+# Remove the test directory, but first change out of it.
+cd /tmp
 rm -rf ${TESTDIR}
 
 # end of sanity.sh
