@@ -1,6 +1,8 @@
 Wed Sep 11 12:46:23 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
-	* build_src.com: Add zlib.c.
+	* login.c (construct_cvspass_filename): If NO_SLASH_AFTER_HOME,
+	don't put a '/' between $HOME and .cvspass.  Reindent function.
+	* build_src.com: Add zlib.c, login.c, and scramble.c.
 
 	* rcs.c (RCS_deltas): When looking for our branch in ->branches,
 	check the branch number.
