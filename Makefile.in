@@ -88,7 +88,7 @@ FLAGS_TO_PASS = \
 	exec_prefix='$(exec_prefix)'
 
 DISTFILES = \
-	COPYING COPYING.LIB INSTALL README TODO \
+	COPYING COPYING.LIB INSTALL README TODO PROJECTS \
 	BUGS MINOR-BUGS FAQ \
 	ChangeLog NEWS ChangeLog.zoo \
 	configure configure.in stamp-h.in config.h.in Makefile.in acconfig.h \
