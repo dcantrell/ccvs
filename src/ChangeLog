@@ -1,3 +1,15 @@
+2002-12-06  Derek Price  <derek@ximbiot.com>
+
+	* buffer.c: Replace calls to malloc with calls to xmalloc and calls to
+	realloc with calls to xrealloc.
+	* parseinfo.c: Ditto.
+	* root.c: Ditto.
+	* server.c: Ditto.
+	* zlib.c: Ditto.
+	* scramble.c: Change some comments to refer to xmalloc rather than
+	malloc.
+	(Reported by Dan Peterson <dbpete@aol.com>.)
+
 2002-12-04  Derek Price  <derek@ximbiot.com>
 
 	* options.h: Remove CVS_ADMIN_GROUP.
