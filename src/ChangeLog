@@ -1,3 +1,10 @@
+Wed Jun 5 1996  Jim Kingdon  <kingdon@cyclic.com>
+
+	Visual C++ lint:
+	* client.c (update_entries): Copy the size to an unsigned variable
+	before comparing it with unsigned variables.
+	(handle_created, handle_update_existing): Prototype.
+
 Tue Jun  4 10:02:44 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* client.c (responses): Add Created and Update-existing responses.
