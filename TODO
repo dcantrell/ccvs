@@ -848,3 +848,8 @@ cvsadmin group to turn watch off for users whose logins and email address may
 not exist anymore.
 
 232. Use file descriptor operations exclusively for I/O (not STDIO).
+
+233.  The ls-D-2 test fails when run in the hour transition between daylight
+savings time and standard time.  This probably has something to do with the
+two 1AM to 2AM time slots that occur over that two hour period (one such
+failure was on the morning of October 31st, 2004).
