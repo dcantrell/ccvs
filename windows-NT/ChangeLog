@@ -1,3 +1,9 @@
+2004-04-25  Derek Price  <derek@ximbiot.com>
+
+	* Makefile.am (stamp-sh): s/\$\(HAVE__BOOL\)/0/.  Windows does not
+	HAVE__BOOL.
+	* stdbool.h, stamp-sh, Makefile.in: Regenerated.
+
 2004-04-23  Derek Price  <derek@ximbiot.com>
 
 	* stamp-ch: Regenerated.
