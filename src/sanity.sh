@@ -14666,7 +14666,8 @@ xx"
 "${PROG} [a-z]*: scheduling file .file1. for addition
 ${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
 
-	  awk 'BEGIN { printf "%c%c%c$Revision$@%c%c", 2, 10, 137, 13, 10 }' \
+	  awk 'BEGIN { printf "%c%c%c%sRevision: 1.1 $@%c%c", 
+	    2, 10, 137, "$", 13, 10 }' \
 	    </dev/null | tr '@' '\000' >../binfile.dat
 	  cp ../binfile.dat .
 	  dotest keyword2-5 "${testcvs} add -kb binfile.dat" \
@@ -14726,7 +14727,7 @@ diff -r1\.2 file1
 > <<<<<<< file1
 1a3,5
 > =======
-> \\\$Revision$
+> \\\$""Revision: 1\.1\.2\.1 $
 > >>>>>>> 1\.1\.2\.1
 14a19
 > what else do we have?"

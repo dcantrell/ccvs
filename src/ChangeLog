@@ -1,3 +1,9 @@
+1999-02-24  Jim Kingdon  <http://www.cyclic.com>
+
+	* sanity.sh (keyword2): Protect keywords against accidental
+	expansion in sanity.sh itself (most occurrences had this, but not
+	all).
+
 1999-02-23  Derek Price  <http://www.cyclic.com>
 	and Jim Kingdon.
 
