@@ -1,3 +1,7 @@
+2003-01-02  Larry Jones  <lawrence.jones@eds.com>
+
+	* rcs.c (getdelta): Use RCSDEAD rather than literal "dead".
+
 2002-12-27  Derek Price  <derek@ximbiot.com>
 
 	* admin.c: s/LOCK_(NONE|WRITE|READ)/CVS_$&/g; since the definition of
