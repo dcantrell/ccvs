@@ -381,6 +381,7 @@ test -f src/options.h && (
 )
 
 AC_OUTPUT([Makefile \
+	  cvs.spec \
 	  contrib/Makefile \
 	  contrib/clmerge \
 	  contrib/cln_hist \
