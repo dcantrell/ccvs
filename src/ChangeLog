@@ -1,5 +1,9 @@
 2004-02-12  Mark D. Baushke  <mdb@cvshome.org>
 
+	* lock.c (readers_exist): Plug a memory leak.
+
+2004-02-12  Mark D. Baushke  <mdb@cvshome.org>
+
 	* server.c (do_cvs_command): Plug a memory leak.
 
 2004-02-12  Derek Price  <derek@ximbiot.com>
