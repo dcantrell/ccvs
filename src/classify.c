@@ -10,7 +10,7 @@
 #include "cvs.h"
 
 #ifndef lint
-static char rcsid[] = "$CVSid: @(#)classify.c 1.17 94/10/07 $";
+static const char rcsid[] = "$CVSid: @(#)classify.c 1.17 94/10/07 $";
 USE(rcsid)
 #endif
 

@@ -18,7 +18,7 @@
 #ifdef MY_NDBM
 
 #ifndef lint
-static char rcsid[] = "$CVSid: @(#)myndbm.c 1.7 94/09/23 $";
+static const char rcsid[] = "$CVSid: @(#)myndbm.c 1.7 94/09/23 $";
 USE(rcsid)
 #endif
 

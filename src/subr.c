@@ -11,7 +11,7 @@
 #include "cvs.h"
 
 #ifndef lint
-static char rcsid[] = "$CVSid: @(#)subr.c 1.64 94/10/07 $";
+static const char rcsid[] = "$CVSid: @(#)subr.c 1.64 94/10/07 $";
 USE(rcsid)
 #endif
 
@@ -561,14 +561,13 @@ line2argv (pargc, argv, line)
  */
 int
 numdots (s)
-    char *s;
+    const char *s;
 {
-    char *cp;
     int dots = 0;
 
-    for (cp = s; *cp; cp++)
+    for (; *s; s++)
     {
-	if (*cp == '.')
+	if (*s == '.')
 	    dots++;
     }
     return (dots);

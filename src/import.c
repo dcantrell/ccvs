@@ -19,7 +19,7 @@
 #include "cvs.h"
 
 #ifndef lint
-static char rcsid[] = "$CVSid: @(#)import.c 1.63 94/09/30 $";
+static const char rcsid[] = "$CVSid: @(#)import.c 1.63 94/09/30 $";
 USE(rcsid)
 #endif
 
@@ -306,7 +306,7 @@ import_descend (message, vtag, targc, targv)
     DIR *dirp;
     struct dirent *dp;
     int err = 0;
-    int has_dirs = 0;
+    List *dirlist;
 
     /* first, load up any per-directory ignore lists */
     ign_add_file (CVSDOTIGNORE, 1);
@@ -341,7 +341,14 @@ import_descend (message, vtag, targc, targv)
 #endif
 		isdir (dp->d_name))
             {	
-		has_dirs = 1;
+		Node *n;
+
+		if (dirlist == NULL)
+		    dirlist = getlist();
+
+		n = getnode();
+		n->key = xstrdup (dp->d_name);
+		addnode(dirlist, n);
 	    }
 	    else if (
 #ifdef DT_DIR
@@ -367,26 +374,20 @@ import_descend (message, vtag, targc, targv)
 	}
 	(void) closedir (dirp);
     }
-    if (has_dirs)
+
+    if (dirlist != NULL) 
     {
-	if ((dirp = opendir (".")) == NULL)
-	    err++;
-	else
+	Node *head, *p;
+
+	head = dirlist->list;
+	for (p = head->next; p != head; p = p->next)
 	{
-	    while ((dp = readdir (dirp)) != NULL)
-	    {
-		if (!strcmp(".", dp->d_name) || !strcmp("..", dp->d_name))
-		    continue;
-		if (!isdir (dp->d_name) || ign_name (dp->d_name))
-		    continue;
-		err += import_descend_dir (message, dp->d_name,
-					   vtag, targc, targv);
-		/* need to re-load .cvsignore after each dir traversal */
-		ign_add_file (CVSDOTIGNORE, 1);
-	    }
-	    (void) closedir (dirp);
+	    err += import_descend_dir (message, p->key, vtag, targc, targv);
 	}
+
+	dellist(&dirlist);
     }
+
     return (err);
 }
 

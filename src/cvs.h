@@ -395,7 +395,7 @@ int isreadable PROTO((const char *file));
 int iswritable PROTO((const char *file));
 int joining PROTO((void));
 int link_file PROTO((const char *from, const char *to));
-int numdots PROTO((char *s));
+int numdots PROTO((const char *s));
 int run_exec PROTO((char *stin, char *stout, char *sterr, int flags));
 int unlink_file PROTO((const char *f));
 int update PROTO((int argc, char *argv[]));
