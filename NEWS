@@ -9,14 +9,9 @@ SERVER SECURITY ISSUES
   misplaced directories, but nevertheless, the CVS server now rejects the
   malformed requests.
 
-OTHER ISSUES
+GENERAL USER ISSUES
 
 * CVSROOTs which contain a symlink to a real repository should work.
-
-* We've standardized on Autoconf version 2.58 to avoid a bug and get at a few
-  new macros.  Again, this should only really affect developers.  See the
-  section of the INSTALL file about using the autotools if you are compiling
-  CVS yourself.
 
 * The configure script now tests whether it is building CVS on a case
   insensitive file system.  If it is, CVS assumes that all file systems on this
@@ -43,6 +38,17 @@ OTHER ISSUES
   modified to use and recommend more portable commands rather than using and
   recommending commands which were not compatible with the POSIX 1003.1-2001
   specification.
+
+DEVELOPER ISSUES
+
+* We've standardized on Automake 1.7.9 to get a bug fix.  See the note below
+  on the Autoconf upgrade for more details.
+
+* We've standardized on Autoconf version 2.58 to avoid a bug and get at a few
+  new macros.  Again, this should only really affect developers, though it is
+  possible that CVS will now compile on a few new platforms.  Please see the
+  section of the INSTALL file about using the autotools if you are compiling
+  CVS yourself.
 
 Changes from 1.11.8 to 1.11.9:
 
