@@ -1,3 +1,8 @@
+Mon Jun 19 13:49:35 1995  Jim Blandy  <jimb@totoro.cyclic.com>
+
+	* sanity.sh: Fix commencement message --- the test suite says
+	"Ok." when it's done.
+
 Fri Jun 16 11:23:44 1995  Jim Meyering  (meyering@comco.com)
 
 	* entries.c (fgetentent): Parenthesize assignment in if-conditional.

@@ -1,3 +1,8 @@
+Mon Jun 19 13:47:20 1995  Jim Blandy  <jimb@totoro.cyclic.com>
+
+	* Makefile.in: Add a "remotecheck" target here, for consistency;
+	people shouldn't have to switch to src before running the tests.
+
 Mon Jun 19 10:08:03 1995  Jim Kingdon  (kingdon@lioth.cygnus.com)
 
 	* INSTALL: Update list of machines tested.  Remove note about
