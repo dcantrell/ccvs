@@ -5099,7 +5099,7 @@ error ENOMEM Virtual memory exhausted.\n");
 
 #if defined (HAVE_KERBEROS) || defined (AUTH_SERVER_SUPPORT) || defined (HAVE_GSSAPI)
 static void
-switch_to_user (const char *username)
+switch_to_user (const char *cvs_username, const char *username)
 {
     struct passwd *pw;
 
@@ -5116,8 +5116,16 @@ error 0 %s: no such system user\n", username);
 
     if (pw->pw_uid == 0)
     {
+#ifdef HAVE_SYSLOG_H
+	    /* FIXME: Can the IP address of the connecting client be retrieved
+	     * and printed here?
+	     */
+	    syslog (LOG_DAEMON | LOG_ALERT,
+		    "attempt to root from account: %s", cvs_username
+		   );
+#endif
         printf("error 0: root not allowed\n");
-        exit (EXIT_FAILURE);
+	exit (EXIT_FAILURE);
     }
 
 #if HAVE_INITGROUPS
@@ -5794,7 +5802,7 @@ pserver_authenticate_connection (void)
     strcpy (Pserver_Repos, repository);
 
     /* Switch to run as this user. */
-    switch_to_user (host_user);
+    switch_to_user (username, host_user);
     free (host_user);
     free (tmp);
     free (repository);
@@ -5988,7 +5996,7 @@ gserver_authenticate_connection (void)
 	    error (1, errno, "fwrite failed");
     }
 
-    switch_to_user (buf);
+    switch_to_user ("GSSAPI", buf);
 
     printf ("I LOVE YOU\n");
     fflush (stdout);
