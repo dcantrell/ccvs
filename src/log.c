@@ -1566,22 +1566,23 @@ log_version (struct log_data *log_data, struct revlist *revlist, RCSNode *rcs,
 	cvs_output (p->data, 0);
 	cvs_output (";", 1);
     }
+    cvs_output ("\n", 1);
 
-    cvs_output ("\ndate: ", 0);
+    cvs_output_tagged ("text", "date: ");
     (void)sscanf (ver->date, SDATEFORM, &year, &mon, &mday, &hour, &min,
 		  &sec);
     if (year < 1900)
 	year += 1900;
-    sprintf (buf, "%04d/%02d/%02d %02d:%02d:%02d", year, mon, mday,
+    sprintf (buf, "%04d-%02d-%02d %02d:%02d:%02d +0000", year, mon, mday,
 	     hour, min, sec);
-    cvs_output (buf, 0);
+    cvs_output_tagged ("date", buf);
 
-    cvs_output (";  author: ", 0);
-    cvs_output (ver->author, 0);
+    cvs_output_tagged ("text", ";  author: ");
+    cvs_output_tagged ("text", ver->author);
 
-    cvs_output (";  state: ", 0);
-    cvs_output (ver->state, 0);
-    cvs_output (";", 1);
+    cvs_output_tagged ("text", ";  state: ");
+    cvs_output_tagged ("text", ver->state);
+    cvs_output_tagged ("text", ";");
 
     if (! trunk)
     {
@@ -1609,19 +1610,19 @@ log_version (struct log_data *log_data, struct revlist *revlist, RCSNode *rcs,
 
     if (padd != NULL)
     {
-	cvs_output ("  lines: +", 0);
-	cvs_output (padd->data, 0);
-	cvs_output (" -", 2);
-	cvs_output (pdel->data, 0);
+	cvs_output_tagged ("text", "  lines: +");
+	cvs_output_tagged ("text", padd->data);
+	cvs_output_tagged ("text", " -");
+	cvs_output_tagged ("text", pdel->data);
     }
+    cvs_output_tagged ("newline", NULL);
 
     if (ver->branches != NULL)
     {
-	cvs_output ("\nbranches:", 0);
+	cvs_output ("branches:", 0);
 	walklist (ver->branches, log_branch, NULL);
+	cvs_output ("\n", 1);
     }
-
-    cvs_output ("\n", 1);
 
     p = findnode (ver->other, "log");
     /* The p->date == NULL case is the normal one for an empty log

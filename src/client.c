@@ -2734,6 +2734,12 @@ handle_mt( char *args, int len )
 	    }
 	    else if (strcmp (tag, "newline") == 0)
 		printf ("\n");
+	    else if (strcmp (tag, "date") == 0)
+	    {
+		char *date = format_date_alloc (text);
+		printf ("%s", date);
+		free (date);
+	    }
 	    else if (text != NULL)
 		printf ("%s", text);
     }
