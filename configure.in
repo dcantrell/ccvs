@@ -189,6 +189,8 @@ AC_CHECK_MEMBERS([struct stat.st_rdev])
 # Replace functions with versions in lib/ when they can't be found.
 AC_REPLACE_FUNCS(\
 	dup2 \
+	fseeko \
+	ftello \
 	ftruncate \
 	mkdir \
 	rename \

@@ -465,6 +465,10 @@ extern int errno;
 #define CVS_FNMATCH fnmatch
 #endif
 
+#ifndef HAVE_FTELLO
+off_t ftello (FILE *);
+#endif
+
 #if defined (__CYGWIN32__) || defined (WIN32)
 /*
  * According to GNU conventions, we should avoid referencing any macro
