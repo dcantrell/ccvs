@@ -1,5 +1,10 @@
 2000-10-18  Derek Price  <derek.price@openavenue.com>
 
+	* root.c (normalize_cvsroot): remove calls to snprintf for
+	compatibility with M$ Windoze.
+
+2000-10-18  Derek Price  <derek.price@openavenue.com>
+
 	* sanity.sh (crerepos-6a, crerepos-6a-r): fix a "?" in a regex & pipe
 	the output of a test to /dev/null since we don't know what error
 	messages specific rsh implementations will output.
