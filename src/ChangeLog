@@ -1,3 +1,9 @@
+2003-10-11  Larry Jones  <lawrence.jones@eds.com>
+
+	* server.c (server_cleanup): Replace CVS_CHDIR call: some systems
+	won't allow you to delete a directory tree containg your working
+	directory.
+
 2003-10-10  Derek Price  <derek@ximbiot.com>
 
 	* server.c (cvs_output, cvs_outerr): Protect calls to syslog()
