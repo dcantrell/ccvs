@@ -1,3 +1,8 @@
+2000-07-10  Larry Jones  <larry.jones@sdrc.com>
+
+	* cvs.texinfo (Invoking CVS): Document new version command.
+	* cvsclient.texi (Requests): Document new version request.
+
 2000-07-06  Larry Jones  <larry.jones@sdrc.com>
 
 	* cvs.texinfo (admin options): Remove note about -t not working
