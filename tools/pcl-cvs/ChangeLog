@@ -1,3 +1,15 @@
+Mon Apr 15 01:34:27 1996  Karl Fogel  <kfogel@floss.red-bean.com>
+
+        * Makefile: removed.  Why was this in the repository in the first
+        place?
+
+        * Makefile.in (BATCHFLAGS): don't pass -q to Emacs when compiling,
+        because Emacs probably can't find Elib's cookie.el[c] if we do
+        that.  (Actually, it still can't, but that may be due to a bug in
+        Emacs).
+
+        * INSTALL: reflect changed location of elib in the CVS dist.
+
 Sun Apr 14 12:18:12 1996  Karl Fogel  <kfogel@floss.red-bean.com>
 
         * pcl-cvs.el (cookie): Changed "(load \"cookie\")" to
