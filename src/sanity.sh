@@ -3945,7 +3945,7 @@ File: tfile            	Status: Locally Modified
 	    dotest commit-readonlyfs-2r4 "${testcvs} -R co $module" \
 "${PROG}: WARNING: Read-only repository access mode selected via \`cvs -R'\.
 Using this option to access a repository which some users write to may
-cause intermittant sandbox corruption\.
+cause intermittent sandbox corruption\.
 ${PROG} [a-z]*: Updating $module
 U $module/junk"
           fi
