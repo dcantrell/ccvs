@@ -656,7 +656,6 @@ only once they have been proven.
 @c ---------------------------------------------------------------------
 @node A sample session
 @chapter A sample session
-@cindex A sample session
 @cindex Example of a work-session
 @cindex Getting started
 @cindex Work-session, example of
