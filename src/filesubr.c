@@ -716,8 +716,10 @@ cvs_temp_name ()
  *
  * OUTPUTS
  *   filename	dereferenced, will point to the newly allocated file name
- *   		string, unless filename was NULL initially.
- *   		This value is undefined if the function returns an error
+ *   		string, unless filename was NULL initially, in which case the
+ *   		file will be deleted so that the space can be reclaimed when
+ *   		it is closed.
+ *   		This value is undefined if the function returns an error.
  *
  * RETURNS
  *   An open file pointer to a read/write mode empty temporary file with the
@@ -839,7 +841,21 @@ FILE *cvs_temp_file (filename)
 
 #endif
 
-    *filename = fn;
+    if (fp != NULL)
+    {
+	/* if we're going to exit normally, take care of setting the exit
+	 * value of filename and deleting the newly created temp file if
+	 * necessary
+	 */
+	if (filename == NULL)
+	{
+	    /* the caller doesn't want the file name */
+	    if (unlink (fn))
+		error (0, errno, "Failed to unlink temporary file %s", fn);
+	}
+	else *filename = fn;
+    }
+
     return fp;
 }
 
