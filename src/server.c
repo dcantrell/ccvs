@@ -5239,9 +5239,11 @@ error 0 %s: no such user\n", username);
        the client.  */
     umask (0);
 
+#ifdef AUTH_SERVER_SUPPORT
     /* Make sure our CVS_Username has been set. */
     if (CVS_Username == NULL)
 	CVS_Username = xstrdup (username);
+#endif
       
 #if HAVE_PUTENV
     /* Set LOGNAME and USER in the environment, in case they are
