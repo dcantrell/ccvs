@@ -359,9 +359,9 @@ typedef enum direnter_type Dtype;
 #endif
 
 /* Recursion processor lock types */
-#define LOCK_NONE	0
-#define LOCK_READ	1
-#define LOCK_WRITE	2
+#define CVS_LOCK_NONE	0
+#define CVS_LOCK_READ	1
+#define CVS_LOCK_WRITE	2
 
 extern char *program_name, *program_path, *command_name;
 extern char *Tmpdir, *Editor;
