@@ -1,3 +1,19 @@
+Tue Dec 17 13:14:22 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* logmsg.c (do_verify): Reindent comments.  Check errno if return
+	code from run_exec is -1, not if it is 1.
+	* sanity.sh (info): Move tests info-4 and info-8 to end and rename
+	them.  Add verifymsg tests.  Instead of forcibly removing loginfo,
+	remove it nicely (test info-11).
+
+Tue Dec 17 12:45:32 1996  Abe Feldman  <feldman@cyclic.com>
+
+	* commit.c, import.c: Call do_verify as well as do_editor.
+	* cvs.h (CVSROOTADM_VERIFYMSG): Define.
+	* logmsg.c, cvs.h (do_verify, verifymsg_proc): New functions.
+	(verifymsg_script): New variable.
+	* mkmodules.c (filelist): Add CVSROOTADM_VERIFYMSG.
+
 Mon Dec 16 13:24:47 1996  Ian Lance Taylor  <ian@cygnus.com>
 
 	* lock.c (remove_locks): New static function, copied from part of

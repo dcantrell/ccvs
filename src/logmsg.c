@@ -18,11 +18,13 @@ static int title_proc PROTO((Node * p, void *closure));
 static int update_logfile_proc PROTO((char *repository, char *filter));
 static void setup_tmpfile PROTO((FILE * xfp, char *xprefix, List * changes));
 static int editinfo_proc PROTO((char *repository, char *template));
+static int verifymsg_proc PROTO((char *repository, char *script));
 
 static FILE *fp;
 static char *str_list;
 static char *str_list_format;	/* The format for str_list's contents. */
 static char *editinfo_editor;
+static char *verifymsg_script;
 static Ctype type;
 
 /*
@@ -188,6 +190,7 @@ do_editor (dir, messagep, repository, changes)
     /* Abort creation of temp file if no editor is defined */
     if (strcmp (Editor, "") == 0 && !editinfo_editor)
 	error(1, 0, "no editor defined, must use -e or -m");
+
 
     /* Create a temporary file */
     fname = cvs_temp_name ();
@@ -364,6 +367,71 @@ do_editor (dir, messagep, repository, changes)
     if (unlink_file (fname) < 0)
 	error (0, errno, "warning: cannot remove temp file %s", fname);
     free (fname);
+}
+
+/* Runs the user-defined verification script as part of the commit or import 
+   process.  This verification is meant to be run whether or not the user 
+   included the -m atribute.  unlike the do_editor function, this is 
+   independant of the running of an editor for getting a message.
+ */
+void
+do_verify (message, repository)
+    char *message;
+    char *repository;
+{
+    FILE *fp;
+    char *fname;
+    int retcode = 0;
+
+    /* if there's no message, then we have nothing to verify */
+
+    if ((message == (char *) NULL) || (noexec))
+    {
+	printf ("No message to verify\n");
+	return;
+    }
+
+    /* Get a temp filename, open a temporary file, write the message to the 
+       temp file, and close the file.  */
+
+    fname = cvs_temp_name ();
+
+    if ((fp = fopen (fname, "w")) < 0)
+    {
+	error (1, 0, "cannot create temporary file %s", fname);
+	return;
+    }
+    else
+    {
+	fprintf (fp, "%s", message);
+	if ((message)[strlen (message) - 1] != '\n')
+	    (void) fprintf (fp, "%s", "\n");
+	if (fclose (fp) == EOF)
+	    error (1, errno, "%s", fname);
+
+	/* Get the name of the verification script to run  */
+
+	if (repository != NULL)
+	    (void) Parse_Info (CVSROOTADM_VERIFYMSG, repository, 
+			       verifymsg_proc, 0);
+
+	/* Run the verification script  */
+
+	if (verifymsg_script)
+	{
+	    run_setup ("%s", verifymsg_script);
+	    run_arg (fname);
+	    if ((retcode = run_exec (RUN_TTY, RUN_TTY, RUN_TTY,
+				     RUN_NORMAL | RUN_SIGIGNORE)) != 0)
+		error (1, retcode == -1 ? errno : 0, 
+		       "Message verification failed");
+	}
+
+	/* Close and delete the temp file  */
+
+	unlink_file (fname);
+	free (fname);
+    }
 }
 
 /*
@@ -744,5 +812,21 @@ editinfo_proc(repository, editor)
 	free (editinfo_editor);
 
     editinfo_editor = xstrdup (editor);
+    return (0);
+}
+
+/*  This routine is calld by Parse_Info.  it asigns the name of the
+ *  message verification script to the global variable verify_script
+ */
+static int
+verifymsg_proc (repository, script)
+    char *repository;
+    char *script;
+{
+    if (verifymsg_script && strcmp (verifymsg_script, script) == 0)
+	return (0);
+    if (verifymsg_script)
+	free (verifymsg_script);
+    verifymsg_script = xstrdup (script);
     return (0);
 }
