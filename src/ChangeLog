@@ -1,3 +1,7 @@
+2004-06-30  Derek Price  <derek@ximbiot.com>
+
+	* buffer.c (buf_append_buffer): Handle NULL from->data.
+
 2004-06-28  Derek Price  <derek@ximbiot.com>
 
 	* log-buffer.c (log_buffer_flush): Sync all, not just data.

@@ -527,11 +527,12 @@ buf_append_buffer (struct buffer *to, struct buffer *from)
     from->last_index += from->last_count;
     from->last_count = 0;
     n = from->data;
-    do
+    while (n)
     {
 	from->last_count += n->size;
+	if (n == from->last) break;
 	n = n->next;
-    } while (n && n != from->last);
+    }
 
     /* Remove from the original location.  */
     from->data = NULL;
