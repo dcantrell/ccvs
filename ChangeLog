@@ -1,3 +1,7 @@
+2004-11-01  Derek Price  <derek@ximbiot.com>
+
+	* gnulib-update (MODULES): Add allocsa, setenv, getdate.
+
 2004-10-30  Mark D. Baushke  <mdb@juniper.net>
 
 	* configure.in: Add AC_SEARCH_LIBS for hstrerror in resolv to also
