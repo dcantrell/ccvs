@@ -1,5 +1,7 @@
 Fri Jun 27 10:27:48 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* scramble.c, login.c: Reindent.
+
 	* client.c (connect_to_pserver): Check for errors from send().
 	If socket() fails, include SOCK_STRERROR (SOCK_ERRNO) in message.
 
