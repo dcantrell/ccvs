@@ -12165,6 +12165,23 @@ it might be sufficient to place GNU diff3 in your
 @code{rcsmerge} which looks in the @code{PATH}.
 @c Should we mention the cvsaux binaries here?
 
+@item warning: unrecognized response `@var{text}' from cvs server
+If @var{text} contains a valid response (such as
+@samp{ok}) followed by an extra carriage return
+character (on many systems this will cause the second
+part of the message to overwrite the first part), then
+it probably means that you are using the @samp{:ext:}
+access method with a version of rsh, such as most
+non-unix rsh versions, which does not by default
+provide a transparent data stream.  In such cases you
+probably want to try @samp{:server:} instead of
+@samp{:ext:}.  If @var{text} is something else, this
+may signify a problem with your CVS server.
+Double-check your installation against the instructions
+for setting up the CVS server.
+@c FIXCVS: should be printing CR as \r or \015 or some
+@c such, probably.
+
 @item cvs commit: warning: editor session failed
 @cindex exit status, of editor
 This means that the editor which @sc{cvs} is using exits with a nonzero

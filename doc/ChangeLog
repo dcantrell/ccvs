@@ -1,3 +1,8 @@
+Wed Oct 22 10:08:27 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (Error messages): Add message about unrecognized
+	response from cvs server.
+
 1997-10-11  Noel Cragg  <noel@swish.red-bean.com>
 
 	* cvs.texinfo (checkout options): describe how the `-d' and `-N'
