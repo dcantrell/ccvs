@@ -17,6 +17,7 @@
  *  X		is a single character showing the type of event:
  *		T	"Tag" cmd.
  *		O	"Checkout" cmd.
+ *              E       "Export" cmd.
  *		F	"Release" cmd.
  *		W	"Update" cmd - No User file, Remove from Entries file.
  *		U	"Update" cmd - File was checked out over User file.
@@ -40,18 +41,18 @@
  *		command was typed.
  *		T	"A" --> New Tag, "D" --> Delete Tag
  *			Otherwise it is the Tag or Date to modify.
- *		O,F	A "" (null field)
+ *		O,F,E	A "" (null field)
  *
  *  rev(s)	Revision number or tag.
  *		T	The Tag to apply.
- *		O	The Tag or Date, if specified, else "" (null field).
+ *		O,E	The Tag or Date, if specified, else "" (null field).
  *		F	"" (null field)
  *		W	The Tag or Date, if specified, else "" (null field).
  *		U	The Revision checked out over the User file.
  *		G,C	The Revision(s) involved in merge.
  *		M,A,R	RCS Revision affected.
  *
- *  argument	The module (for [TOUF]) or file (for [WUGCMAR]) affected.
+ *  argument	The module (for [TOEUF]) or file (for [WUGCMAR]) affected.
  *
  *
  *** Report categories: "User" and "Since" modifiers apply to all reports.
@@ -59,7 +60,7 @@
  *
  *   Extract list of record types
  *
- *	-e, -x [TOFWUGCMAR]
+ *	-e, -x [TOEFWUGCMAR]
  *
  *		Extracted records are simply printed, No analysis is performed.
  *		All "field" modifiers apply.  -e chooses all types.
@@ -206,7 +207,7 @@ static void save_file PROTO((char *dir, char *name, char *module));
 static void save_module PROTO((char *module));
 static void save_user PROTO((char *name));
 
-#define ALL_REC_TYPES "TOFWUCGMAR"
+#define ALL_REC_TYPES "TOEFWUCGMAR"
 #define USER_INCREMENT	2
 #define FILE_INCREMENT	128
 #define MODULE_INCREMENT 5
@@ -273,7 +274,7 @@ static const char *const history_usg[] =
     "        -c              Committed (Modified) files\n",
     "        -o              Checked out modules\n",
     "        -m <module>     Look for specified module (repeatable)\n",
-    "        -x [TOFWUCGMAR] Extract by record type\n",
+    "        -x [TOEFWUCGMAR] Extract by record type\n",
     "   Flags:\n",
     "        -a              All users (Default is self)\n",
     "        -e              Everything (same as -x, but all record types)\n",
@@ -969,7 +970,7 @@ fill_hrec (line, hr)
     NEXT_BAR (repos);
     NEXT_BAR (rev);
     hr->idx = idx++;
-    if (strchr ("FOT", *(hr->type)))
+    if (strchr ("FOET", *(hr->type)))
 	hr->mod = line;
 
     NEXT_BAR (file);	/* This returns ptr to next line or final '\0' */
@@ -1219,7 +1220,7 @@ select_hrec (hr)
      */
     if (!strchr (rec_types, *(hr->type)))
 	return (0);
-    if (!strchr ("TFO", *(hr->type)))	/* Don't bother with "file" if "TFO" */
+    if (!strchr ("TFOE", *(hr->type)))	/* Don't bother with "file" if "TFOE" */
     {
 	if (file_list)			/* If file_list is null, accept all */
 	{
@@ -1406,6 +1407,7 @@ report_hrecs ()
 		    (void) printf (" {%s}", workdir);
 		break;
 	    case 'F':
+	    case 'E':
 	    case 'O':
 		if (lr->rev && *(lr->rev))
 		    (void) printf (" [%s]", lr->rev);

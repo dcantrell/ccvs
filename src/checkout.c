@@ -789,6 +789,9 @@ checkout_proc (pargc, argv, where, mwhere, mfile, shorten,
 	if (strcmp (command_name, "export") != 0 && !pipeout)
 	    history_write ('O', preload_update_dir, history_name, where,
 			   repository);
+	else if (strcmp (command_name, "export") == 0 && !pipeout)
+	    history_write ('E', preload_update_dir, tag ? tag : date, where,
+			   repository);
 	err += do_update (0, (char **) NULL, options, tag, date,
 			  force_tag_match, 0 /* !local */ ,
 			  1 /* update -d */ , aflag, checkout_prune_dirs,
