@@ -1,3 +1,7 @@
+2004-04-19  Derek Price  <derek@ximbiot.com>
+
+	* system.h: Gratuitous reformatting.
+
 2004-04-07  Derek Price  <derek@ximbiot.com>
 
 	* regex.c: Revise "FREE_VAR" macro to eliminate C4090/C4022 warnings
