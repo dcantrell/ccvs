@@ -1,3 +1,11 @@
+2003-07-28  Derek Price  <derek@ximbiot.com>
+
+	* configure.in: Do not check for getpassphrase.  Define `getpass' to
+	`cvs_getpass' in config.h to avoid conflicts with system decls.
+	* NEWS: Note use of GNULIB getpass.
+
+	* config.h.in, configure: Regenerated.
+
 2003-07-25  Derek Price  <derek@ximbiot.com>
 
 	* INSTALL: Note --without-gssapi required to configure on OS X.

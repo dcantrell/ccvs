@@ -1,5 +1,10 @@
 Changes since 1.11.6:
 
+* CVS now will always compile and its own getpass() function (originally from
+GNULIB) in favor of any system one that may exist.  This avoids some problems
+with long passwords on some systems and updates us to POSIX.2 compliance, since
+getpass() was removed from the POSIX.2 specification.
+
 * A bug that allowed a write lock to be created in a directory despite
 there being existing read locks when using LockDir in CVSROOT/config has
 been fixed.
