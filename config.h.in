@@ -107,6 +107,12 @@
 /* Define to 1 if you have the `btowc' function. */
 #undef HAVE_BTOWC
 
+/* Define to 1 if you have the `clock_gettime' function. */
+#undef HAVE_CLOCK_GETTIME
+
+/* Define to 1 if you have the `clock_settime' function. */
+#undef HAVE_CLOCK_SETTIME
+
 /* Define if you have the connect function. */
 #undef HAVE_CONNECT
 
