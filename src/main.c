@@ -10,28 +10,6 @@
  * Credit to Dick Grune, Vrije Universiteit, Amsterdam, for writing
  * the shell-script CVS system that this is based on.
  *
- * Usage:
- *	cvs [options] command [options] [files/modules...]
- *
- * Where "command" is composed of:
- *		init		create/initialize a CVS repository
- *		admin		RCS command
- *		checkout	Check out a module/dir/file
- *		export		Like checkout, but used for exporting sources
- *		update		Brings work tree in sync with repository
- *		commit		Checks files into the repository
- *		diff		Runs diffs between revisions
- *		log		Prints "rlog" information for files
- *		login		Record user, host, repos, password
- *		add		Adds an entry to the repository
- *		remove		Removes an entry from the repository
- *		status		Status info on the revisions
- *		rdiff		"patch" format diff listing between releases
- *		tag		Add/delete a symbolic tag to the RCS file
- *		rtag		Add/delete a symbolic tag to the RCS file
- *		import		Import sources into CVS, using vendor branches
- *		release		Indicate that Module is no longer in use.
- *		history		Display history of Users and Modules.
  */
 
 #include "cvs.h"
