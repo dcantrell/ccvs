@@ -1204,7 +1204,8 @@ commit_fileproc (void *callerdat, struct file_info *finfo)
 	if (checkaddfile (finfo->file, finfo->repository, ci->tag, ci->options,
 			  &finfo->rcs) != 0)
 	{
-	    fixaddfile (finfo->rcs->path);
+	    if (finfo->rcs != NULL)
+		fixaddfile (finfo->rcs->path);
 	    err = 1;
 	    goto out;
 	}
@@ -1668,7 +1669,7 @@ finaladd (struct file_info *finfo, char *rev, char *tag, char *options)
 	    error (0, errno, "cannot remove %s", tmp);
 	free (tmp);
     }
-    else
+    else if (finfo->rcs != NULL)
 	fixaddfile (finfo->rcs->path);
 
     (void) time (&last_register_time);

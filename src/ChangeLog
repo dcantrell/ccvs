@@ -1,3 +1,9 @@
+2003-10-15  Larry Jones  <lawrence.jones@eds.com>
+
+	* commit.c (commit_fileproc, finaladd): Don't call fixaddfile()
+	if the RCS file didn't get created at all.
+	(Reported by David Wood <David.Wood@thestreet.com>.)
+
 2003-10-14  Derek Price  <derek@ximbiot.com>
 
 	Port to pedantic POSIX 1003.1-2001 hosts, such as Debian GNU/Linux
