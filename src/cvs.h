@@ -429,6 +429,8 @@ void Subdir_Register PROTO((List *, const char *, const char *));
 void Subdir_Deregister PROTO((List *, const char *, const char *));
 
 char *Make_Date PROTO((char *rawdate));
+char *date_from_time_t PROTO ((time_t));
+
 char *Name_Repository PROTO((char *dir, char *update_dir));
 char *Short_Repository PROTO((char *repository));
 void Sanitize_Repository_Name PROTO((char *repository));

@@ -565,6 +565,7 @@ if test x"$*" = x; then
 	tests="${tests} ignore binfiles binfiles2 mcopy binwrap binwrap2"
 	tests="${tests} binwrap3 mwrap info config"
 	tests="${tests} serverpatch log log2 ann crerepos rcs rcs2"
+	tests="${tests} history"
 	tests="${tests} big modes stamps"
 	# PreservePermissions stuff: permissions, symlinks et al.
 	tests="${tests} perms symlinks hardlinks"
@@ -11404,6 +11405,56 @@ EOF
 	  cd ..
 	  rm -r first-dir
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  ;;
+
+	history)
+	  # CVSROOT/history tests:
+	  # history: various "cvs history" invocations
+	  # basic2: Generating the CVSROOT/history file via CVS commands.
+
+	  # Put in some data for the history file (discarding what was
+	  # there before).  Note that this file format is fixed; the
+	  # user may wish to analyze data from a previous version of
+	  # CVS.  If we phase out this format, it should be done
+	  # slowly and carefully.
+	  cat >${CVSROOT_DIRNAME}/CVSROOT/history <<EOF
+O3395c677|anonymous|<remote>/*0|ccvs||ccvs
+M339cafae|nk|<remote>|ccvs/src|1.229|sanity.sh
+M339dc339|kingdon|~/work/*0|ccvs/src|1.231|sanity.sh
+W33a6eada|anonymous|<remote>*4|ccvs/emx||Makefile.in
+C3b235f50|kingdon|<remote>|ccvs/emx|1.3|README
+M3b23af50|kingdon|~/work/*0|ccvs/doc|1.281|cvs.texinfo
+EOF
+	  dotest history-1 "${testcvs} history -e -a" \
+"O 06/04 19:48 ${PLUS}0000 anonymous ccvs     =ccvs= <remote>/\*
+W 06/17 19:51 ${PLUS}0000 anonymous       Makefile\.in ccvs/emx == <remote>/emx
+M 06/10 21:12 ${PLUS}0000 kingdon   1\.231 sanity\.sh   ccvs/src == ~/work/ccvs/src
+C 06/10 11:51 ${PLUS}0000 kingdon   1\.3   README      ccvs/emx == <remote>
+M 06/10 17:33 ${PLUS}0000 kingdon   1\.281 cvs\.texinfo ccvs/doc == ~/work/ccvs/doc
+M 06/10 01:36 ${PLUS}0000 nk        1\.229 sanity\.sh   ccvs/src == <remote>"
+	  if ${testcvs} history -e -a -D '10 Jun 1997 13:00 UT' \
+	      >${TESTDIR}/output.tmp
+	  then
+	    dotest history-2 "cat ${TESTDIR}/output.tmp" \
+"W 06/17 19:51 ${PLUS}0000 anonymous       Makefile\.in ccvs/emx == <remote>/emx
+M 06/10 21:12 ${PLUS}0000 kingdon   1\.231 sanity\.sh   ccvs/src == ~/work/ccvs/src
+C 06/10 11:51 ${PLUS}0000 kingdon   1\.3   README      ccvs/emx == <remote>
+M 06/10 17:33 ${PLUS}0000 kingdon   1\.281 cvs\.texinfo ccvs/doc == ~/work/ccvs/doc"
+	  else
+	    fail history-2
+	  fi
+	  if ${testcvs} history -e -a -D '10 Jun 2001 13:00 UT' \
+	      >${TESTDIR}/output.tmp
+	  then
+	    # For reasons that are completely unclear to me, the number
+	    # of spaces betwen "kingdon" and "1.281" is different than
+	    # for the other tests.
+	    dotest history-3 "cat ${TESTDIR}/output.tmp" \
+"M 06/10 17:33 ${PLUS}0000 kingdon 1\.281 cvs\.texinfo ccvs/doc == ~/work/ccvs/doc"
+	  else
+	    fail history-3
+	  fi
+	  rm ${TESTDIR}/output.tmp
 	  ;;
 
 	big)
