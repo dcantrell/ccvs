@@ -8648,13 +8648,13 @@ done"
 	  echo "but maybe it could charge bytheword" >>-file
 	  # This is the test that used to spew complaints from diff3:
 	  dotest join5 "${testcvs} up" \
-"$PROG [a-z]*: Updating .
+"$PROG [a-z]*: Updating \.
 RCS file: ${CVSROOT_DIRNAME}/join5/-file,v
 retrieving revision 1\.1
 retrieving revision 1\.2
 Merging differences between 1\.1 and 1\.2 into -file
 rcsmerge: warning: conflicts during merge
-cvs [a-z]*: conflicts found in -file
+$PROG [a-z]*: conflicts found in -file
 C -file"
 	  cd ../..
 
