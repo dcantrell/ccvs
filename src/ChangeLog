@@ -1,5 +1,11 @@
 2004-02-19  Derek Price  <derek@ximbiot.com>
 
+	* run.c (format_cmdline): Don't accept printf `L' modifier at all when
+	long doubles are not available.  Allow UNIQUE_FLOAT_TYPE_LONG_DOUBLE to
+	imply HAVE_LONG_DOUBLE.
+	
+2004-02-19  Derek Price  <derek@ximbiot.com>
+
 	* run.c: Remove include of stddef.h - it is already included via
 	lib/system.h.
 
