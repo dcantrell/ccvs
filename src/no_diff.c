@@ -89,7 +89,12 @@ No_Difference (file, vers, entries, repository, update_dir)
 	     * has been set to 1.  */
 	    if (trace)
 		(void) fprintf (stderr, "%c-> unlink (%s)\n",
-				(server_active) ? 'S' : ' ', tocvsPath);
+#ifdef SERVER_SUPPORT
+				(server_active) ? 'S' : ' ',
+#else
+				' ',
+#endif
+				tocvsPath);
 	    if (unlink (tocvsPath) < 0)
 		error (0, errno, "could not remove %s", tocvsPath);
 	}
