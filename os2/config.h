@@ -311,10 +311,6 @@ extern pid_t getpid (void);
 /* todo: we don't appear to have a sleep function at all.  Blech. */
 unsigned sleep (unsigned);
 
-/* This is in the winsock library.  */
-/* todo: got to do some research here... */
-int gethostname(char *name, int namelen);
-
 /* Under OS/2, filenames are case-insensitive, and both / and \
    are path component separators.  */
 #define FOLD_FN_CHAR(c) (OS2_filename_classes[(unsigned char) (c)])
@@ -386,5 +382,18 @@ extern void os2_shutdown_server (int fd);
 /* For getpid() */
 #include <process.h>
 
+/* So "tcpip.h" gets included in lib/system.h: */
+#define USE_OWN_TCPIP_H 1
+/* The IBM TCP/IP library gets initialized in main(): */
+#define NEED_CALL_SOCKINIT 1
+
 /* Under OS/2, we have our own popen() and pclose(). */
 #define USE_OWN_POPEN 1
+
+/* For debugging. */
+#if 1
+#define KFF_DEBUG(call) printf("*** %s:%d: ", __FILE__, __LINE__); \
+                        call; fflush(stdout);
+#else
+#define KFF_DEBUG(call)
+#endif
