@@ -1,3 +1,11 @@
+Wed May 29 15:56:47 1996  Greg A. Woods  <woods@most.weird.com>
+
+	* modules.c (do_module): call expand_path() on the program name
+	specfied by one of '-o', '-t', or '-e' in the modules file before
+	passing it to run_setup().  This makes it possible to use $CVSROOT
+	(or indeed ~user or any other user-specified variable) to specify
+	pathnames for programs not installed in the normal execution path.
+
 Sun May 26 21:57:09 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* client.c (start_server): Don't include %s in error message;
