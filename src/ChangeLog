@@ -1,3 +1,8 @@
+2003-10-23  Derek Price  <derek@ximbiot.com>
+
+	* sanity.sh (fail): Refer the user to the `TESTS' and `check.log' files
+	on failure.
+
 2003-10-22  Derek Price  <derek@ximbiot.com>
 
 	* recurse.c (start_recursion): Reformat function declaration and
