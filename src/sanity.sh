@@ -3585,14 +3585,18 @@ done"
 T file2
 T file3
 T file4"
+	  # Modify this file before branching, to deal with the case where
+	  # someone is hacking along, says "oops, I should be doing this on
+	  # a branch", and only then creates the branch.
+	  echo 1:br1 >file1
 	  dotest branches-4 "${testcvs} tag -b br1" "${PROG}"' [a-z]*: Tagging \.
 T file1
 T file2
 T file3
 T file4'
 	  dotest branches-5 "${testcvs} update -r br1" \
-"${PROG}"' [a-z]*: Updating \.'
-	  echo 1:br1 >file1
+"${PROG} [a-z]*: Updating \.
+M file1"
 	  echo 2:br1 >file2
 	  echo 4:br1 >file4
 	  dotest branches-6 "${testcvs} -q ci -m modify" \
