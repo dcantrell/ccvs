@@ -3820,12 +3820,12 @@ existed.
 
 The way that you remove a directory is to remove all
 the files in it.  Then specify the @samp{-P} option to
-@code{update} or @code{checkout}, which will cause
-@sc{cvs} to remove empty directories from working
-directories.  Probably the best way to do this is to
-always specify @samp{-P}; if you want an empty
-directory then put a dummy file (for example
-@file{.keepme}) in it to prevent @samp{-P} from
+@code{cvs update}, @code{cvs checkout}, or @code{cvs
+export}, which will cause @sc{cvs} to remove empty
+directories from working directories.  Probably the
+best way to do this is to always specify @samp{-P}; if
+you want an empty directory then put a dummy file (for
+example @file{.keepme}) in it to prevent @samp{-P} from
 removing it.
 
 @c I'd try to give a rationale for this, but I'm not
@@ -4153,16 +4153,14 @@ numbers will start at 1.0 again.
 @cindex Renaming directories
 @cindex Directories, moving
 
-If you want to be able to retrieve old versions of the
-module, you must move each file in the directory
-with the @sc{cvs} commands.  @xref{Outside}.  The old, empty
-directory will remain inside the repository, but it
-will not appear in your workspace when you check out
-the module in the future.
-@c -- rephrase
+The normal way to rename or move a directory is to
+rename or move each file within it as described in
+@ref{Outside}.  Then check out with the @samp{-P}
+option, as described in @ref{Removing directories}.
 
-If you really want to rename or delete a directory, you
-can do it like this:
+If you really want to hack the repository to rename or
+delete a directory in the repository, you can do it
+like this:
 
 @enumerate
 @item
@@ -5854,7 +5852,7 @@ with the @samp{-o} option in the modules file;
 @pxref{modules}).
 
 @item -P
-Prune empty directories.
+Prune empty directories.  See @ref{Moving directories}.
 
 @item -p
 Pipe files to the standard output.
@@ -7513,7 +7511,7 @@ to see the sticky options.  @xref{status}.
 Local; run only in current working directory.  @xref{Recursive behavior}.
 
 @item -P
-Prune empty directories.
+Prune empty directories.  See @ref{Moving directories}.
 
 @item -p
 Pipe files to the standard output.
@@ -7827,7 +7825,7 @@ Don't shorten module paths if -d specified.  See @ref{checkout options}.
 Do not run module program (if any).  See @ref{checkout options}.
 
 @item -P
-Prune empty directories.  See @ref{checkout options}.
+Prune empty directories.  See @ref{Moving directories}.
 
 @item -p
 Check out files to standard output (avoids
@@ -7951,7 +7949,7 @@ Don't shorten module paths if -d specified.  See @ref{export options}.
 Do not run module program (if any).  See @ref{export options}.
 
 @item -P
-Prune empty directories.  See @ref{export options}.
+Prune empty directories.  See @ref{Moving directories}.
 
 @item -r @var{tag}
 Checkout revision @var{tag} (is sticky).  See @ref{Common options}.
@@ -8293,7 +8291,7 @@ Use @var{kflag} keyword expansion.  See
 Local; run only in current working directory.  @xref{Recursive behavior}.
 
 @item -P
-Prune empty directories.  See @ref{update options}.
+Prune empty directories.  See @ref{Moving directories}.
 
 @item -p
 Check out files to standard output (avoids
