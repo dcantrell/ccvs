@@ -510,7 +510,7 @@ if test x"$*" = x; then
 	tests="${tests} mwrap info config"
 	tests="${tests} serverpatch log log2 crerepos rcs big modes stamps"
 	tests="${tests} sticky keyword toplevel head admin reserved"
-	tests="${tests} cvsadm"
+	tests="${tests} cvsadm diffmerge1 diffmerge2"
 else
 	tests="$*"
 fi
@@ -11438,6 +11438,866 @@ U dir/dir2/dir2d2/sub2d2/file2"
 	  rm -rf ${CVSROOT_DIRNAME}/1mod-2
 	  rm -rf ${CVSROOT_DIRNAME}/2mod
 	  rm -rf ${CVSROOT_DIRNAME}/2mod-2
+	  ;;
+
+        diffmerge1)
+	  # Make sure CVS can merge correctly in circumstances where it
+	  # used to mess up (due to a bug which existed in diffutils 2.7
+	  # and 2.6, but not 2.5, and which has been fixed in CVS's diff
+	  # lib by Paul Eggert, bless his bitty heart).
+
+	  # This first test involves two working copies, "mine" and
+	  # "yours", checked out from the same repository at the same
+	  # time.  In yours, you remove some text from the end of the
+	  # file and check it in; meanwhile, "me" has commented out some
+	  # lines earlier in the file, and I go to check it in right
+	  # after you checked yours in.  CVS naturally tells me the file
+	  # is not up-to-date, so I run cvs update, but it updates
+	  # incorrectly, leaving in the lines of text you just deleted.
+	  # Bad!  I'm in too much of a hurry to actually look at the
+	  # file, so I check it in and go home, and so your changes have
+	  # been lost.  Later you discover this, and you suspect me of
+	  # deliberately sabotaging your work, so you let all the air
+	  # out of my tires.  Only after a series of expensive lawsuits
+	  # and countersuits do we discover it this was all CVS's
+	  # fault.
+	  #
+	  # Luckily, this problem has been fixed now, as our test will
+	  # handily confirm, no doubt:
+
+	  # First make a repository containing the original text:
+
+	  # We should be here anyway, but cd to it just in case:
+	  cd ${TESTDIR}
+
+	  mkdir diffmerge1
+	  cd diffmerge1
+
+	  # The text of the file is inlined here because `echo' loses
+	  # newlines, and I don't know how portable the -e flag is.
+	  # 
+	  # This is the file we both start out with:
+	  echo "// Button.java
+
+package random.application;
+
+import random.util.star;
+
+public class Button
+{
+  /star Instantiates a Button with origin (0, 0) and zero width and height.
+   star You must call an initializer method to properly initialize the Button.
+   star/
+  public Button ()
+  {
+    super ();
+
+    _titleColor = Color.black;
+    _disabledTitleColor = Color.gray;
+    _titleFont = Font.defaultFont ();
+  }
+
+  /star Convenience constructor for instantiating a Button with
+   star bounds x, y, width, and height.  Equivalent to
+   star     foo = new Button ();
+   star     foo.init (x, y, width, height);
+   star/
+  public Button (int x, int y, int width, int height)
+  {
+    this ();
+    init (x, y, width, height);
+  }
+}" > the_file
+
+	  dotest diffmerge1_import \
+	    "${testcvs} import -m import diffmerge1 tag1 tag2" \
+	    "${DOTSTAR}No conflicts created by this import"
+	  cd ..
+	  rm -rf diffmerge1
+
+	  # Check out two working copies, one for "you" and one for "me"
+	  ${testcvs} checkout diffmerge1 >/dev/null 2>&1
+	  mv diffmerge1 diffmerge1_yours
+	  ${testcvs} checkout diffmerge1 >/dev/null 2>&1
+	  mv diffmerge1 diffmerge1_mine
+
+	  # In your working copy, you'll remove the Button() method, and
+	  # then check in your change before I check in mine:
+	  cd diffmerge1_yours
+	  echo "// Button.java
+
+package random.application;
+
+import random.util.star;
+
+public class Button
+{
+  /star Instantiates a Button with origin (0, 0) and zero width and height.
+   star You must call an initializer method to properly initialize the Button.
+   star/
+  public Button ()
+  {
+    super ();
+
+    _titleColor = Color.black;
+    _disabledTitleColor = Color.gray;
+    _titleFont = Font.defaultFont ();
+  }
+}" > the_file
+	  dotest diffmerge1_yours \
+	    "${testcvs} ci -m yours" \
+	    "${DOTSTAR}hecking in ${DOTSTAR}"
+
+	  # My working copy still has the Button() method, but I
+	  # comment out some code at the top of the class.  Then I
+	  # update, after both my modifications and your checkin:
+	  cd ../diffmerge1_mine
+	  echo "// Button.java
+
+package random.application;
+
+import random.util.star;
+
+public class Button
+{
+  /star Instantiates a Button with origin (0, 0) and zero width and height.
+   star You must call an initializer method to properly initialize the Button.
+   star/
+  public Button ()
+  {
+    super ();
+
+    // _titleColor = Color.black;
+    // _disabledTitleColor = Color.gray;
+    // _titleFont = Font.defaultFont ();
+  }
+
+  /star Convenience constructor for instantiating a Button with
+   star bounds x, y, width, and height.  Equivalent to
+   star     foo = new Button ();
+   star     foo.init (x, y, width, height);
+   star/
+  public Button (int x, int y, int width, int height)
+  {
+    this ();
+    init (x, y, width, height);
+  }
+}" > the_file
+	  dotest diffmerge1_mine \
+	    "${testcvs} update" \
+	    "${DOTSTAR}erging${DOTSTAR}"
+
+	  # So if your changes didn't make it into my working copy, or
+	  # in any case if the file does not look like the final text as
+	  # quoted below, then the test flunks:
+	  echo "// Button.java
+
+package random.application;
+
+import random.util.star;
+
+public class Button
+{
+  /star Instantiates a Button with origin (0, 0) and zero width and height.
+   star You must call an initializer method to properly initialize the Button.
+   star/
+  public Button ()
+  {
+    super ();
+
+    // _titleColor = Color.black;
+    // _disabledTitleColor = Color.gray;
+    // _titleFont = Font.defaultFont ();
+  }
+}" > comp_me
+	  dotest diffmerge1_cmp "cmp the_file comp_me" ''
+
+	  # Clean up after ourselves:
+	  cd ..
+	  rm -rf diffmerge1_yours diffmerge1_mine ${CVSROOT_DIRNAME}/diffmerge1
+
+	  ;;
+
+        diffmerge2)
+
+	  # FIXME: This test should be rewritten to be much more concise.
+	  # It currently weighs in at something like 600 lines, but the
+	  # same thing could probably be tested in more like 50-100 lines.
+	  mkdir diffmerge2
+
+	  # This tests for another diffmerge bug reported by Martin
+	  # Tomes; actually, his bug was probably caused by an initial
+	  # fix for the bug in test diffmerge1, and likely wasn't ever
+	  # a problem in CVS as long as one was using a normal
+	  # distribution of diff or a version of CVS that has the diff
+	  # lib in it. 
+	  #
+	  # Nevertheless, once burned twice cautious, so we test for his
+	  # bug here.
+	  #
+	  # Here is his report, more or less verbatim:
+	  # ------------------------------------------
+	  #
+	  # Put the attached file (sgrid.h,v) into your repository
+	  # somewhere, check out the module and do this:
+	  #
+	  # cvs update -j Review_Phase_2_Enhancements sgrid.h
+	  # cvs diff -r Review_V1p3 sgrid.h
+	  #
+	  # As there have been no changes made on the trunk there
+	  # should be no differences, however this is output:
+	  #
+	  # % cvs diff -r Review_V1p3 sgrid.h
+	  # Index: sgrid.h
+	  # ===================================================================
+	  # RCS file: /usr/local/repository/play/fred/sgrid.h,v
+	  # retrieving revision 1.1.2.1
+	  # diff -r1.1.2.1 sgrid.h
+	  # 178a179,184
+	  # > /*--------------------------------------------------------------
+	  # > INLINE FUNCTION    :    HORIZONTALLINES
+	  # > NOTES              :    Description at the end of the file
+	  # > ----------------------------------------------------------------*/
+	  # >         uint16 horizontalLines( void );
+	  # >
+	  #
+	  # I did a cvs diff -c -r 1.1 -r 1.1.2.1 sgrid.h and patched those
+	  # differences to sgrid.h version 1.1 and got the correct result
+	  # so it looks like the built in patch is faulty.
+	  # -------------------------------------------------------------------
+	  #
+	  # This is the RCS file, sgrid.h,v, that he sent:
+
+	  echo "head	1.1;
+access;
+symbols
+	Review_V1p3:1.1.2.1
+	Review_V1p3C:1.1.2.1
+	Review_1p3A:1.1.2.1
+	Review_V1p3A:1.1.2.1
+	Review_Phase_2_Enhancements:1.1.0.2
+	Review_V1p2:1.1
+	Review_V1p2B:1.1
+	Review_V1p2A:1.1
+	Review_V1p1:1.1
+	Review_1p1:1.1;
+locks; strict;
+comment	@ * @;
+
+
+1.1
+date	97.04.02.11.20.05;	author colinl;	state Exp;
+branches
+	1.1.2.1;
+next	;
+
+1.1.2.1
+date	97.06.09.10.00.07;	author colinl;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.1
+log
+@Project:     DEV1175
+DCN:
+Tested By:   Colin Law
+Reviewed By:
+Reason for Change: Initial Revision of all files
+
+Design Change Details:
+
+Implications:
+@
+text
+@/* \$Header$ */
+/*
+ * \$Log$
+ * 
+ *    Rev 1.1.1.0   24 Jan 1996 14:59:20   PAULT
+ * Branched
+ * 
+ *    Rev 1.1   24 Jan 1996 12:09:52   PAULT
+ * Consolidated 4100 code merged to trunk
+ * 
+ *    Rev 1.0.2.0   01 Jun 1995 14:18:58   DAVEH
+ * Branched
+ * 
+ *    Rev 1.0   19 Apr 1995 16:32:48   COLINL
+ * Initial revision.
+*/
+/*****************************************************************************
+FILE        :   SGRID.H
+VERSION     :   2.1
+AUTHOR      :   Dave Hartley
+SYSTEM      :   Borland C++
+DESCRIPTION :   The declaration of the scrolling grid class
+                  
+*****************************************************************************/
+#if !defined(__SGRID_H)
+#define __SGRID_H
+
+#if !defined(__SCROLL_H)
+#include <scroll.h>
+#endif
+
+#if !defined(__GKI_H)
+#include \"gki.h\"
+#endif
+
+#if defined PRINTING_SUPPORT
+class Printer;
+#endif
+
+/*****************************************************************************
+CLASS      :    ScrollingGrid   
+DESCRIPTION:    This class inherits from a grid and a scrollable, and
+                can therefore use all the PUBLIC services provided by these
+                classes. A description of these can be found in
+                GRID.H and SCROLL.H.
+                A scrolling grid is a set of horizontal and vertical lines
+                that scroll and continually update to provide a complete grid
+
+*****************************************************************************/
+
+class ScrollingGrid : public Scrollable
+{
+    public:
+#if defined _WINDOWS
+/*---------------------------------------------------------------------------
+FUNCTION    :   CONSTRUCTOR
+DESCRIPTION :   sets up the details of the grid, ready for painting
+ARGUMENTS   :   name  : sgColour
+                        - the colour of the grid
+                        sgLineType
+                        - the syle of line
+                        sgHorizontalTotal
+                        - the total number of horizontal grid lines
+                        verticalSpacingMin
+                        - the min distance between the vertical grid lines
+                          on the scrolling axis
+                        currentTimestamp
+                        - timestamp value now
+                        ticksPerSecond
+                        - number of timestamp ticks per second
+                        ticksPerPixel
+                        - number of timestamp ticks per pixel required
+                      
+RETURN      :   None
+NOTES       :   
+---------------------------------------------------------------------------*/
+        ScrollingGrid( GkiColour sgColour, GkiLineType sgLineType, 
+            uint16 sgHorizontalTotal, 
+            uint16 verticalSpacingMin, uint32 currentTimestamp, 
+            uint16 ticksPerSecond, uint32 ticksPerPixel );
+#else
+/*---------------------------------------------------------------------------
+FUNCTION    :   CONSTRUCTOR
+DESCRIPTION :   sets up the details of the grid, ready for painting
+ARGUMENTS   :   name  : sgColour
+                        - the colour of the grid
+                        sgLineType
+                        - the syle of line
+                        sgHorizontalTotal ( THE MAX NUMBER OF LINES IS 100 )
+                        - the total number of horizontal grid lines
+                        sgVerticalSpacing
+                        - the distance between the vertical grid lines
+                        on the scrolling axis
+                      
+RETURN      :   None
+NOTES       :   If the caller does not get the total grid lines value, synced
+                with the overall size of the viewport, the spacing between
+                grid lines will not be consistent.
+
+---------------------------------------------------------------------------*/
+        ScrollingGrid( GkiColour sgColour, GkiLineType sgLineType
+                     , uint16 sgHorizontalTotal, uint16 sgVerticalSpacing );
+#endif
+/*---------------------------------------------------------------------------
+FUNCTION    :   DESTRUCTOR
+DESCRIPTION :   tidies it all up
+ARGUMENTS   :   name  :      
+                      
+RETURN      :   None
+NOTES       : 
+---------------------------------------------------------------------------*/
+        ~ScrollingGrid( void );
+
+/*---------------------------------------------------------------------------
+FUNCTION    :   ATTACH
+DESCRIPTION :   This service overloads the base class service, as it does
+                additional work at the time of attachment.
+
+ARGUMENTS   :   name  : tDrawingArea
+                        - the scrolled viewport to attach this trend to
+                      
+RETURN      :   None
+NOTES       :
+---------------------------------------------------------------------------*/
+        void attach( SViewport *tDrawingArea );
+
+#if defined _WINDOWS
+/*---------------------------------------------------------------------------
+FUNCTION    :   calculateVerticalSpacing
+DESCRIPTION :   determines optimum spacing along time axis
+ARGUMENTS   :   
+RETURN      :   None
+NOTES       : 
+---------------------------------------------------------------------------*/
+        void calculateVerticalSpacing();
+
+/*---------------------------------------------------------------------------
+FUNCTION    :   gridSpacingTicks
+DESCRIPTION :   Provides the grid spacing in the time axis in ticks
+ARGUMENTS   :   
+RETURN      :   Number of ticks
+NOTES       : 
+---------------------------------------------------------------------------*/
+        uint32 gridSpacingTicks();
+
+#endif
+
+/*---------------------------------------------------------------------------
+INLINE FUNCTION    :    HORIZONTALLINES
+NOTES              :    Description at the end of the file
+---------------------------------------------------------------------------*/
+        uint16 horizontalLines( void );
+
+#if defined _WINDOWS
+// In Windows the OnDraw() function replaces paint()
+/*---------------------------------------------------------------------------
+FUNCTION    :   ScrollingGrid OnDraw   
+DESCRIPTION :   Paints the given area of the grid.
+                Pure virtual
+ARGUMENTS   :   pDC     pointer to the device context to use for display
+                        Note that the device context operates in the coords
+                        of the window owning the viewport
+RETURN      :   None
+NOTES       : 
+---------------------------------------------------------------------------*/
+        virtual void OnDraw( CDC *pDC );
+
+#else   // not Windows            
+
+/*---------------------------------------------------------------------------
+FUNCTION    :   PAINT
+DESCRIPTION :   This extends the standard grid paint method to paint the
+                viewport relative to its current position. 
+                
+ARGUMENTS   :   name  :      
+                      
+RETURN      :   None
+NOTES       : 
+---------------------------------------------------------------------------*/
+        void paint( void );
+#endif
+
+/*---------------------------------------------------------------------------
+FUNCTION    :   P A I N T   T E X T   M A R K E R S 
+DESCRIPTION :   this service allow the text markers to be painted seperatley
+                from the grid lines
+
+ARGUMENTS   :   name : 
+                                                                          
+RETURN      :   None
+NOTES       : 
+---------------------------------------------------------------------------*/
+        void paintTextMarkers();
+
+#if defined PRINTING_SUPPORT
+/*---------------------------------------------------------------------------
+FUNCTION    :   P R I N T 
+DESCRIPTION :   This print service prints a grid marker ( being either a
+                timestamp or a date, IF there is one at the plot position
+                given
+
+ARGUMENTS   :   name :
+                        displayPosition
+                        - Where in the log to look to see if there is an
+                          entry to print
+
+                        - printerPtr
+                          the printer to print to
+                                                                          
+RETURN      :   None
+NOTES       : 
+---------------------------------------------------------------------------*/
+        void print( uint16 currentPrintPos, Printer *printerPtr );
+#endif
+
+/*---------------------------------------------------------------------------
+FUNCTION    :   S E T  D R I V E  D I R E C T I O N
+DESCRIPTION :   Sets direction for update and scrolling forwards or backwards
+ARGUMENTS   :   direction  - required direction
+RETURN      :   None
+NOTES       : 
+---------------------------------------------------------------------------*/
+        void setDriveDirection( ScrollDirection direction );
+
+/*---------------------------------------------------------------------------
+FUNCTION    :   S E T U P 
+DESCRIPTION :   service that will setup the grid prior to a paint
+
+ARGUMENTS   :   name :
+                        - newTimestamp
+                            
+
+                        - newTimeBase
+                        the number of ticks that represent a plot point on
+                        the trendgraph. 
+                                                                          
+RETURN      :   None
+NOTES       : 
+---------------------------------------------------------------------------*/
+        void setup( uint32 newTimestamp, uint32 newTimeBase );
+
+#if defined PRINTING_SUPPORT
+/*---------------------------------------------------------------------------
+FUNCTION    :   S E T U P   F O R   P R I N T   
+DESCRIPTION :   This service iis to be called prior to printing. It allows
+                the grid to prepare its markers ready for the print
+                commands
+
+ARGUMENTS   :   name : 
+                                                                          
+RETURN      :   None
+NOTES       : 
+---------------------------------------------------------------------------*/
+        void setupForPrint();
+#endif
+
+/*---------------------------------------------------------------------------
+FUNCTION    :   UPDATE
+DESCRIPTION :   When this service is called it will calculate what needs to
+                be painted and fill in the display again.
+
+ARGUMENTS   :   name  :     timeStamp
+                            - the reference time of this update.
+                      
+RETURN      :   None
+NOTES       : 
+---------------------------------------------------------------------------*/
+        void update( uint32 timeStamp );
+
+/*---------------------------------------------------------------------------
+FUNCTION    :   U P D A T E   B U F F E R
+DESCRIPTION :   When a display update is not required, use this method. It
+                updates the internal data ready for a call to paint that
+                will then show the grid in the right position
+
+ARGUMENTS   :   name  :      
+                      
+RETURN      :   None
+NOTES       : 
+---------------------------------------------------------------------------*/
+        void updateBuffer( void );
+
+    private:
+
+/*---------------------------------------------------------------------------
+FUNCTION    :   M A K E   G R I D   M A R K E R 
+DESCRIPTION :   service that perpares a string for display. The string will
+                either be a short date, or short time. this is determined
+                by the current setting of the dateMarker flag
+
+ARGUMENTS   :   name :  timestampVal
+                        - the value to convert
+                        
+                        storePtr
+                        - the place to put the string
+
+RETURN      :   None
+NOTES       : 
+---------------------------------------------------------------------------*/
+        void makeGridMarker( uint32 timestampVal, char *storePtr );
+            
+/*---------------------------------------------------------------------------
+FUNCTION    :   P A I N T   G R I D   M A R K E R 
+DESCRIPTION :   given a position will put the string on the display
+
+ARGUMENTS   :   name :
+                        yPos
+                        - were it goes on the Y-axis
+
+                        gridMarkerPtr
+                        - what it is
+                                                                          
+RETURN      :   None
+NOTES       : 
+---------------------------------------------------------------------------*/
+        void paintGridMarker( uint16 yPos, char *gridMarkerPtr );
+
+#if defined _WINDOWS
+/*---------------------------------------------------------------------------
+FUNCTION    :   PAINTHORIZONTALLINES
+DESCRIPTION :   responsible for painting the grids horizontal lines 
+ARGUMENTS   :   pRectToDraw     pointer to rectangle that needs refreshing.
+                                in viewport coords
+                pDC             pointer to device context to use
+                      
+RETURN      : None
+NOTES       :
+---------------------------------------------------------------------------*/
+        void paintHorizontalLines(RectCoords* pRectToDraw, CDC* pDC );
+#else
+/*---------------------------------------------------------------------------
+FUNCTION    :   PAINTHORIZONTALLINES
+DESCRIPTION :   responsible for painting the grids horizontal lines 
+ARGUMENTS   : name: xStart
+                    - the starting X co-ordinate for the horizontal line
+                    xEnd
+                    - the ending X co-ordinate for the horizontal line
+                      
+RETURN      : None
+NOTES       : Remember lines are drawn from origin. The origin in a
+              horizontal viewport will be the top.    
+---------------------------------------------------------------------------*/
+        void paintHorizontalLines( uint16 xStart, uint16 xEnd );
+#endif
+
+#if defined _WINDOWS
+/*---------------------------------------------------------------------------
+FUNCTION    :   PAINTVERTICALLINES
+DESCRIPTION :   responsible for painting the grids vertical lines 
+ARGUMENTS   :   pRectToDraw     pointer to rectangle that needs refreshing.
+                                in viewport coords
+                offset          offset from rhs that rightmost line would be 
+                                drawn if rectangle included whole viewport
+                pDC             pointer to device context to use
+RETURN      : None
+NOTES       : 
+---------------------------------------------------------------------------*/
+        void paintVerticalLines( RectCoords* pRectToDraw, uint16 offset,
+            CDC* pDC );
+#else
+/*---------------------------------------------------------------------------
+FUNCTION    :   PAINTVERTICALLINES
+DESCRIPTION :   responsible for painting the grids vertical lines 
+ARGUMENTS   : name  :   yStart
+                        - the starting Y co-ordinate for the vertical line
+                        yEnd
+                        - the ending Y co-ordinate for the vertical line
+                        offset
+                        - a starting point offset that determines at what X
+                        position the first line will be drawn
+
+                      
+RETURN      : None
+NOTES       : 
+---------------------------------------------------------------------------*/
+        void paintVerticalLines( uint16 yStart, uint16 yEnd, uint16 offset );
+#endif
+
+#if defined _WINDOWS
+/*---------------------------------------------------------------------------
+FUNCTION    :   PAINTVERTICALLINE
+DESCRIPTION :   paints one line at the position specified, and length
+ARGUMENTS   :   name  : yStart
+                        - the starting point on the y axis for the line
+                        yEnd
+                        - the end point on the y axis for the line
+                        xPosition
+                        - The horizontal offset from the start of the viewport
+                pDC             pointer to device context to use
+                      
+RETURN      :   None
+NOTES       :   There is not an equivalent horizontal method as yet. This
+                is a seperate method because the service is useful to a
+                derivation of this class
+---------------------------------------------------------------------------*/
+        void paintVerticalLine( uint16 yStart, uint16 yEnd
+                              , uint16 xPosition, CDC *pDC );
+#else
+/*---------------------------------------------------------------------------
+FUNCTION    :   PAINTVERTICALLINE
+DESCRIPTION :   paints one line at the position specified, and length
+ARGUMENTS   :   name  : yStart
+                        - the starting point on the y axis for the line
+                        yEnd
+                        - the end point on the y axis for the line
+                        xPosition
+                        - The horizontal offset from the start of the viewport
+                      
+RETURN      :   None
+NOTES       :   There is not an equivalent horizontal method as yet. This
+                is a seperate method because the service is useful to a
+                derivation of this class
+---------------------------------------------------------------------------*/
+        void paintVerticalLine( uint16 yStart, uint16 yEnd
+                              , uint16 xPosition );
+#endif
+
+/*---------------------------------------------------------------------------
+INLINE FUNCTION    :    VERTICALSPACING
+NOTES              :    Description at the end of the file
+---------------------------------------------------------------------------*/
+        uint16 verticalSpacing( void );
+
+
+        // Position in viewport that we are now writing to if going forwards
+        // Note that if this is greater than viewport length then we have
+        // just scrolled and value must be adjusted before use.
+        sint16 forwardsOutputPosition;
+        
+        // Position in viewport that we are now writing to if going backwards
+        // Note that if this is less than zero then we have
+        // just scrolled and value must be adjusted before use.
+        sint16 backwardsOutputPosition;
+
+        // position in grid cycle of forwards output position.
+        // if zero then it is time to output a grid line
+        sint16 forwardsIntervalCount;
+
+        // position in grid cycle of forwards output position.
+        // if zero then it is time to output a grid line
+        sint16 backwardsIntervalCount;
+        
+        uint32  lastUpdateTimestamp;
+        uint32  timeBase;       // ticks per pixel
+        uint16  currentOutputPosition;
+        uint16  gridTimestampSpacing;
+        uint16  intervalCount;
+        uint16  horizontalTotal;
+        uint16  vSpacing;
+#if defined PRINTING_SUPPORT
+        uint16  numberOfGridMarkersPrinted;
+#endif
+        bool    firstTime;       // indicates first time through
+        bool    dateMarker;
+
+        GkiLineType lineType;
+        GkiColour   gridColour;
+
+    #if defined _WINDOWS
+        uint16 ticksPerSec;     // number of time ticks per second
+        uint16 vSpacingMin;     // minimum pixels per division along time axis 
+        CPen *pPen;             // the pen to use for drawing in windows
+    #endif
+
+};
+
+
+/*****************************************************************************
+                        I N L I N E   F U N C T I O N S   
+*****************************************************************************/
+
+/*---------------------------------------------------------------------------
+FUNCTION    :   HORIZONTALLINES
+DESCRIPTION :   supplies the number of horizontal lines in the grid
+ARGUMENTS   :   name  :      
+                      
+RETURN      :   
+NOTES       : 
+---------------------------------------------------------------------------*/
+inline uint16 ScrollingGrid::horizontalLines( void )
+{
+    return( horizontalTotal );
+}
+/*---------------------------------------------------------------------------
+FUNCTION    :   VERTICALSPACING
+DESCRIPTION :   returns the distance between adjacent vertical lines
+ARGUMENTS   :   name  :      
+                      
+RETURN      :   None
+NOTES       : 
+---------------------------------------------------------------------------*/
+inline uint16 ScrollingGrid::verticalSpacing( void )
+{
+    return( vSpacing );
+}
+
+#endif
+@
+
+
+1.1.2.1
+log
+@DEV1194:DS4    Provision of major and minor grid lines
+@
+text
+@d1 1
+a1 1
+/* \$Header$ */
+d3 1
+a3 12
+ * \$Log$
+ * Revision 1.1  1997/04/02 11:20:05  colinl
+ * Project:     DEV1175
+ * DCN:
+ * Tested By:   Colin Law
+ * Reviewed By:
+ * Reason for Change: Initial Revision of all files
+ *
+ * Design Change Details:
+ *
+ * Implications:
+ *
+d58 6
+a63 5
+ARGUMENTS   :   name  : majorColour         colour for major grid lines
+                        minorColour         colour for minor grid lines
+                        sgLineType          line type for minor grid lines
+                        yMajorGridLines     number of major y lines on grid
+                        yMinorGridLines     number of major y lines on grid
+d77 2
+a78 3
+        ScrollingGrid( GkiColour majorColour, GkiColour minorColour, 
+            GkiLineType sgLineType, 
+            uint16 yMajorGridLines, uint16 yMinorGridLines,
+a137 17
+FUNCTION    :   DrawHorizontalGridLines
+
+DESCRIPTION :   Draws major or minor grid lines
+ARGUMENTS   :   pDC         device context
+                pPen        pen to use
+                numLines    total lines required
+                yLow, yHigh, xLow, xHigh   rectangle to draw in
+                yMax        max y value
+RETURN      :   None
+NOTES       :   
+---------------------------------------------------------------------------*/
+        void DrawHorizontalGridLines( CDC* pDC, CPen* pPen, 
+            uint16 numLines,
+            uint16 yLow, uint16 yHigh, uint16 xLow, uint16 xHigh, 
+            uint16 yMax );
+
+/*---------------------------------------------------------------------------
+d148 6
+d448 1
+a448 2
+        uint16  m_yMajorGridLines;
+        uint16  m_yMinorGridLines;
+d456 2
+a457 3
+        GkiLineType lineType;    // line type for minor grid lines
+        GkiColour   m_majorColour;
+        GkiColour   m_minorColour;
+d462 1
+a462 2
+        CPen *pMajorPen;        // pen to use for drawing major grid lines
+        CPen *pMinorPen;        // pen to use for drawing minor grid lines
+d472 12
+@" > diffmerge2/sgrid.h,v
+
+	  # We have to put the RCS file in the repository by hand for
+	  # this test:
+	  mkdir ${CVSROOT_DIRNAME}/diffmerge2
+	  cp diffmerge2/sgrid.h,v ${CVSROOT_DIRNAME}/diffmerge2/sgrid.h,v
+	  rm -rf diffmerge2
+	  dotest diffmerge2_co \
+	    "${testcvs} co diffmerge2" "${DOTSTAR}U ${DOTSTAR}"
+	  cd diffmerge2
+	  dotest diffmerge2_update \
+	    "${testcvs} update -j Review_Phase_2_Enhancements sgrid.h" \
+	    "${DOTSTAR}erging ${DOTSTAR}"
+	  # This is the one that counts -- there should be no output:
+	  dotest diffmerge2_diff \
+	    "${testcvs} diff -r Review_V1p3 sgrid.h" ''
+
 	  ;;
 
 	*)
