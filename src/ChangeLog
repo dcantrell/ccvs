@@ -1,3 +1,16 @@
+Sat Feb 24 01:40:28 1996  Marcus Daniels  <marcus@sayre.sysc.pdx.edu>
+                          and Karl Fogel  <kfogel@floss.red-bean.com>
+ 
+ 	* server.c (check_repository_password): Return by reference an
+  	  optional username, the `host_user', from the passwd file.  The
+  	  host_user will be the user-id under which the cvs repository is
+  	  run.
+ 	  (check_repository_password): Use `read_line' instead of fgets to
+  	  allow for passwords larger than 32 characters, as well as the
+  	  optional host user argument.
+ 	  (check_password): Modify to use host_user.
+ 	  (authenticate_connection): Modify to use host_user.
+
 Sat Feb 24 01:05:21 1996  Karl Fogel  <kfogel@floss.red-bean.com>
 
         * scramble.c (descramble): just shift descrambled string to get

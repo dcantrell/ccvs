@@ -1308,13 +1308,16 @@ for the user in the @sc{cvs} @file{passwd} file.  If it
 finds the user, it compares against that password.  If
 it does not find the user, or if the @sc{cvs}
 @file{passwd} file does not exist, then the server
-tries the system's @file{/etc/passwd} file.  In either
-case, assuming the password is correct, the server
-switches to run as that user immediately after
-authentication, so that it will have no privileges
-which that user would not have.  Therefore it is
-necessary that usernames in the @sc{cvs} @file{passwd}
-file be valid usernames on the system.
+tries to match the password using the system's
+user-lookup routine.  When using the @sc{cvs}
+@file{passwd} file, the server runs under as the
+username specified in the the third argument in the
+entry, or as the first argument if there is no third
+argument (in this way @sc{cvs} allows imaginary
+usernames provided the @sc{cvs} @file{passwd} file
+indicates corresponding valid system usernames).  In
+any case, @sc{cvs} will have no privileges which the
+(valid) user would not have.
 
 Right now, the only way to put a password in the
 @sc{cvs} @file{passwd} file is to paste it there from
