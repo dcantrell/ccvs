@@ -5711,8 +5711,8 @@ initial revision: 1\.1
 done"
 
 	  # Tag the file using a CVS_LOCAL_BRANCH_NUM of 1000
-	  CVS_LOCAL_BRANCH_NUM=1000 \
-	  dotest branches3-4 "${testcvs} -q tag -b tag1" 'T file1'
+	  (CVS_LOCAL_BRANCH_NUM=1000 \
+	  dotest branches3-4 "${testcvs} -q tag -b tag1" 'T file1')
 	  dotest branches3-5 "${testcvs} -q log file1" \
 "
 RCS file: ${CVSROOT_DIRNAME}/first-dir/file1,v

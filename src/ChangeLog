@@ -1,5 +1,8 @@
 2003-03-03  Mark D. Baushke  <mdb@cvshome.org>
 
+	* sanith.sh (branches3): Localize the setting of
+	the CVS_LOCAL_BRANCH_NUM environment variable.
+
 	* rcs.c (RCS_magicrev): CVS_LOCAL_BRANCH_NUM feature.
 	Port of the FreeBSD hack for setting the next magic branch number
 	to be used. The original patch was written by Peter Wemm
