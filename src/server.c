@@ -5613,6 +5613,21 @@ error 0 %s: no such user\n", username);
 	    exit (EXIT_FAILURE);
 	}
 
+	/* Allow for dain bramaged HPUX passwd aging
+	 *  - Basically, HPUX adds a comma and some data
+	 *    about whether the passwd has expired or not
+	 *    on the end of the passwd field.
+	 *  - This code replaces the ',' with '\0'.
+	 *
+	 * FIXME - our workaround is brain damaged too.  I'm
+	 * guessing that HPUX WANTED other systems to think the
+	 * password was wrong so logins would fail if the
+	 * system didn't handle expired passwds and the passwd
+	 * might be expired.  I think the way to go here
+	 * is with PAM.
+	 */
+	strtok (found_passwd, ",");
+
 	if (*found_passwd)
         {
 	    /* user exists and has a password */
