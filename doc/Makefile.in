@@ -143,6 +143,12 @@ EXTRA_DIST = \
 	cvsclient.aux
 
 
+# Listing cvs.cps & cvs.fns here is a workaround for an Automake deficiency
+MOSTLYCLEANFILES = \
+	cvs.cps \
+	cvs.fns
+
+
 CLEANFILES = \
 	$(PDFS) \
 	$(TXTS)
@@ -175,11 +181,11 @@ all: all-am
 .SUFFIXES:
 .SUFFIXES: .aux .txt .pdf .dvi .info .ps .texi .texinfo .txi
 
-$(srcdir)/Makefile.in: Makefile.am  $(top_srcdir)/configure.in $(ACLOCAL_M4)
+$(srcdir)/Makefile.in:  Makefile.am  $(top_srcdir)/configure.in $(ACLOCAL_M4)
 	cd $(top_srcdir) && \
 	  $(AUTOMAKE) --gnu  doc/Makefile
 
-Makefile: $(srcdir)/Makefile.in  $(top_builddir)/config.status
+Makefile:  $(srcdir)/Makefile.in  $(top_builddir)/config.status
 	cd $(top_builddir) && \
 	  CONFIG_HEADERS= CONFIG_LINKS= \
 	  CONFIG_FILES=$(subdir)/$@ $(SHELL) ./config.status
@@ -251,9 +257,9 @@ dist-info: $(INFO_DEPS)
 	done
 
 mostlyclean-aminfo:
-	-rm -f cvs.aux cvs.cp cvs.cps cvs.dvi cvs.fn cvs.fns cvs.ky cvs.log \
-	  cvs.pg cvs.ps cvs.toc cvs.tp cvs.vr cvsclient.aux cvsclient.cp \
-	  cvsclient.dvi cvsclient.fn cvsclient.ky cvsclient.log cvsclient.pg \
+	-rm -f cvs.aux cvs.cp cvs.dvi cvs.fn cvs.ky cvs.log cvs.pg cvs.ps cvs.toc \
+	  cvs.tp cvs.vr cvsclient.aux cvsclient.cp cvsclient.dvi \
+	  cvsclient.fn cvsclient.ky cvsclient.log cvsclient.pg \
 	  cvsclient.ps cvsclient.toc cvsclient.tp cvsclient.vr
 
 maintainer-clean-aminfo:
@@ -310,6 +316,7 @@ install-strip:
 	  INSTALL_PROGRAM_ENV='$(INSTALL_STRIP_PROGRAM_ENV)' install
 
 mostlyclean-generic:
+	-test -z "$(MOSTLYCLEANFILES)" || rm -f $(MOSTLYCLEANFILES)
 
 clean-generic:
 	-test -z "$(CLEANFILES)" || rm -f $(CLEANFILES)
