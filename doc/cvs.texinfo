@@ -11362,6 +11362,15 @@ every place it appears in your @code{modules}
 file.  For more information on the @code{modules} file,
 see @ref{modules}.
 
+@item *PANIC* administration files missing
+This typically means that there is a directory named
+CVS but it does not contain the administrative files
+which CVS puts in a CVS directory.  If the problem is
+that you created a CVS directory via some mechanism
+other than CVS, then the answer is simple, use a name
+other than CVS.  If not, it indicates a CVS bug
+(@pxref{BUGS}).
+
 @item rcs error: Unknown option: -x,v/
 This message will be followed by a usage message for
 @sc{rcs}.  It means that you have an old version of
