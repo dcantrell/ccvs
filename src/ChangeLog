@@ -1,3 +1,9 @@
+1999-11-19  Karl Fogel  <kfogel@red-bean.com>
+
+	* mkmodules.c (init): make history file world-writeable after
+	creating it, since it needs to be writeable for virtually any
+	CVS operation.
+	
 1999-11-10  Jim Kingdon  <http://developer.redhat.com/>
 
 	* admin.c: Revert change to add -H command option.  The help
