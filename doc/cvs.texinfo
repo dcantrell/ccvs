@@ -4844,7 +4844,8 @@ commands, first @code{cvs -q update} and then
 build tool.  Secondly, you do not necessarily
 @emph{want} to get a copy of a change someone else made
 until you have finished your own work.  One suggested
-approach is to first update your sources, then make and
+approach is to first update your sources, then
+implement, build and
 test the change you were thinking of, and then commit
 your sources (updating first if necessary).  By
 periodically (in between changes, using the approach
@@ -4899,7 +4900,8 @@ is Odin (see
 @c Of course, many non-CVS systems have this kind of
 @c functionality, for example OSF's ODE
 @c (http://www.osf.org/ode/) or mk
-@c (ftp://ftp.interlog.com/pub/unix/mk).  But I'm not sure
+@c (http://www.io.org/~pzi/heading.html;
+@c ftp://ftp.interlog.com/pub/unix/mk is out of date).  But I'm not sure
 @c there is any point in mentioning them here unless they
 @c can work with CVS.
 

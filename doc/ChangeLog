@@ -1,3 +1,9 @@
+Tue Dec 10 16:23:40 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (Builds): Change "make" to "implement" and "build";
+	in this context "make" is ambiguous.
+	(Builds): Add new URL of mk web page.
+
 Mon Dec  9 11:03:37 1996  Jim Blandy  <jimb@floss.cyclic.com>
 
 	* cvs.texinfo (Password authentication client, Environment
