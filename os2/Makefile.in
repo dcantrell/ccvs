@@ -2,7 +2,9 @@
 ### file.  In any case, we would need it for 'make dist' to work
 ### properly on Unix machines.
 
-HEADERS = tcpip.h
+# tcpip.mak will probably be unnecessary, but I include it for now.
+
+HEADERS = tcpip.h tcpip.mak
 
 SOURCES = 
 
