@@ -204,3 +204,9 @@ lib/strerror.c
 m4/strerror.m4
 
 m4/onceonly_2_57.m4
+lib/vasprintf.h
+lib/vasprintf.c
+lib/asprintf.c
+m4/vasprintf.m4
+
+m4/onceonly_2_57.m4

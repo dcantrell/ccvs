@@ -1,3 +1,7 @@
+2004-10-15  Derek Price  <derek@ximbiot.com>
+
+	* gnulib-update (MODULES): Add vasprintf.
+
 2004-10-14  Derek Price  <derek@ximbiot.com>
 
 	* NEWS: Note new import branch verification.
