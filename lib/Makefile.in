@@ -33,6 +33,7 @@ SOURCES = \
 	error.c \
 	fnmatch.c \
 	ftruncate.c \
+	getdate.c \
 	getdate.y \
 	getopt.c \
 	getopt1.c \

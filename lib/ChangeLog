@@ -1,3 +1,7 @@
+Sat Jul 29 15:53:55 1995  James Kingdon  <kingdon@harvey.cyclic.com>
+
+	* Makefile.in (SOURCES): Add getdate.c.
+
 Thu Jul 27 09:11:41 1995  Robert Lipe <robertl@rjlhome.arnet.com>
 
 	* system.h: Check for PATHSIZE before falling back to _POSIX_PATH_MAX.
