@@ -330,7 +330,6 @@ ls_fileproc (void *callerdat, struct file_info *finfo)
 {
     Vers_TS *vers;
     char *regex_err;
-    void *buf;
     size_t length;
     Node *p, *n;
     bool isdead;

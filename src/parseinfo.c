@@ -448,6 +448,7 @@ warning: this CVS does not support PreservePermissions");
 		goto error_return;
 	    }
 	}
+#ifdef PROXY_SUPPORT
 	else if (strcmp (line, "PrimaryServer") == 0)
 	{
 	    PrimaryServer = parse_cvsroot (p);
@@ -460,6 +461,7 @@ warning: this CVS does not support PreservePermissions");
 "Only PrimaryServers with :ext: methods are valid, not `%s'.",
 		       p);
 	}
+#endif /* PROXY_SUPPORT */
 #if defined PROXY_SUPPORT && ! defined TRUST_OS_FILE_CACHE
 	else if (strcmp (line, "MaxProxyBufferSize") == 0)
 	{

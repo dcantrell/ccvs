@@ -408,7 +408,6 @@ unix_time_stamp (const char *file)
 char *
 time_stamp (const char *file)
 {
-    struct stat sb;
     time_t mtime = unix_time_stamp (file);
     return mtime ? entries_time (mtime) : NULL;
 }
