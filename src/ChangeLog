@@ -1,3 +1,7 @@
+2000-07-26  Larry Jones  <larry.jones@sdrc.com>
+
+	* sanity.sh (info): Fix problems when running twice in a row.
+
 2000-07-17  Larry Jones  <larry.jones@sdrc.com>
 
 	* sanity.sh (modules5-7, cvsadm-1e, emptydir-2): Allow for a nil

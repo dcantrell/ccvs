@@ -12486,6 +12486,7 @@ ${PROG} [a-z]*: Rebuilding administrative file database"
 
 	  dotest info-1 "${testcvs} -q co CVSROOT" "[UP] CVSROOT${DOTSTAR}"
 	  cd CVSROOT
+	  rm -f $TESTDIR/testlog $TESTDIR/testlog2
 	  echo "ALL sh -c \"echo x\${=MYENV}\${=OTHER}y\${=ZEE}=\$USER=\$CVSROOT= >>$TESTDIR/testlog; cat >/dev/null\"" > loginfo
           # The following cases test the format string substitution
           echo "ALL echo %{sVv} >>$TESTDIR/testlog2; cat >/dev/null" >> loginfo
@@ -12562,7 +12563,7 @@ first-dir file1ux'
 	  dotest info-11 "${testcvs} -q -s ZEE=garbage ci -m nuke-loginfo" \
 "Checking in loginfo;
 ${TESTDIR}/cvsroot/CVSROOT/loginfo,v  <--  loginfo
-new revision: 1\.[0-9]; previous revision: 1\.[0-9]
+new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
 done
 ${PROG} [a-z]*: Rebuilding administrative file database"
 
@@ -12581,7 +12582,7 @@ EOF
 	  dotest info-v1 "${testcvs} -q ci -m add-verification" \
 "Checking in verifymsg;
 ${TESTDIR}/cvsroot/CVSROOT/verifymsg,v  <--  verifymsg
-new revision: 1\.2; previous revision: 1\.1
+new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
 done
 ${PROG} [a-z]*: Rebuilding administrative file database"
 
@@ -12617,7 +12618,7 @@ ${PROG} \[[a-z]* aborted\]: Message verification failed"
 	  dotest info-cleanup-verifymsg "${testcvs} -q ci -m nuke-verifymsg" \
 "Checking in verifymsg;
 ${TESTDIR}/cvsroot/CVSROOT/verifymsg,v  <--  verifymsg
-new revision: 1\.[0-9]; previous revision: 1\.[0-9]
+new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
 done
 ${PROG} [a-z]*: Rebuilding administrative file database"
 	  cd ..
