@@ -3208,12 +3208,8 @@ RCS_findlock_or_tip (rcs)
     RCSNode *rcs;
 {
     char *user = getcaller();
-    struct stat rstat;
     Node *lock, *p;
     List *locklist;
-
-    if (CVS_STAT (rcs->path, &rstat) < 0 && !existence_error (errno))
-	error (0, errno, "warning: cannot stat %s", rcs->path);
 
     /* Find unique delta locked by caller. This code is very similar
        to the code in RCS_unlock -- perhaps it could be abstracted
@@ -3247,14 +3243,17 @@ RCS_findlock_or_tip (rcs)
 	return (RCSVers *) p->data;
     }
 
-    /* No existing lock.  We can only get away with this if we are the
-       file owner AND strict locking is not in effect; if that's true,
-       return the default branch or head. */
-    if (rcs->strict_locks || rstat.st_uid != getuid())
-    {
-	rcserror (rcs->path, "no lock set by %s", user);
-	return NULL;
-    }
+    /* No existing lock.  The RCS rule is that this is an error unless
+       locking is nonstrict AND the file is owned by the current
+       user.  Trying to determine the latter is a portability nightmare
+       in the face of NT, VMS, AFS, and other systems with non-unix-like
+       ideas of users and owners.  In the case of CVS, we should never get
+       here (as long as the traditional behavior of making sure to call
+       RCS_lock persists).  Anyway, we skip the RCS error checks
+       and just return the default branch or head.  The reasoning is that
+       those error checks are to make users lock before a checkin, and we do
+       that in other ways if at all anyway (e.g. rcslock.pl).  */
+
     p = findnode (rcs->versions, RCS_getbranch (rcs, rcs->branch, 0));
     return (RCSVers *) p->data;
 }
