@@ -54,7 +54,6 @@ libcvs_a_SOURCES = \
 	md5.h \
 	pathmax.h \
 	regex.h \
-        PROTO.h \
 	savecwd.h \
 	system.h \
 	unlocked-io.h \
