@@ -1,3 +1,9 @@
+Fri Aug  4 00:13:47 1995  Jim Meyering  (meyering@comco.com)
+
+	* Makefile.in (LDFLAGS): Set to @LDFLAGS@.
+	(options.h): Depend on ../config.status and options.h.in.
+	Add rule to build it from dependents.
+
 Thu Aug  3 10:12:20 1995  Jim Meyering  (meyering@comco.com)
 
 	* import.c (import_descend_dir): Don't print probably-bogus CWD
