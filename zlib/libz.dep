@@ -22,11 +22,6 @@
 	".\zutil.h"\
 	
 
-.\example.c : \
-	".\zconf.h"\
-	".\zlib.h"\
-	
-
 .\gzio.c : \
 	".\zconf.h"\
 	".\zlib.h"\
@@ -88,11 +83,6 @@
 	".\zconf.h"\
 	".\zlib.h"\
 	".\zutil.h"\
-	
-
-.\minigzip.c : \
-	".\zconf.h"\
-	".\zlib.h"\
 	
 
 .\trees.c : \

@@ -101,10 +101,6 @@ SOURCE=.\deflate.c
 # End Source File
 # Begin Source File
 
-SOURCE=.\example.c
-# End Source File
-# Begin Source File
-
 SOURCE=.\gzio.c
 # End Source File
 # Begin Source File
@@ -130,10 +126,6 @@ SOURCE=.\inftrees.c
 # Begin Source File
 
 SOURCE=.\infutil.c
-# End Source File
-# Begin Source File
-
-SOURCE=.\minigzip.c
 # End Source File
 # Begin Source File
 
