@@ -12969,7 +12969,13 @@ done"
 
 	  # Now set up for a join.  One of the original fixes for this would
 	  # print out a 'U' and a '?' during a join which added a file.
-	  dotest ignore-on-branch-3 "$testcvs -q tag -b branch2" 'T file1'
+	  if $remote; then
+	    dotest ignore-on-branch-3 "$testcvs -q tag -b branch2" \
+'? file2
+T file1'
+	  else
+	    dotest ignore-on-branch-3 "$testcvs -q tag -b branch2" 'T file1'
+	  fi
 	  dotest ignore-on-branch-4 "$testcvs -q add file2" \
 "$PROG [a-z]*: use .cvs commit. to add this file permanently"
 	  dotest ignore-on-branch-5 "$testcvs -q ci -mbranch file2" \
