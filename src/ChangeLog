@@ -1,5 +1,9 @@
 1998-11-22  Jim Kingdon
 
+	* sanity.sh (release): Move the commments listing "cvs release"
+	tests from modules2-6 to here.
+	* release.c (release): Update comment to reflect "? foo" case.
+
 	* find_names.c (Find_Names): If we can't read the repository, make
 	it a nonfatal error.  Tell the caller whether this happened.
 	(find_rcs): Add comment regarding this behavior.
