@@ -354,16 +354,16 @@ do_editor (dir, messagep, repository, changes)
     if (fclose (fp) < 0)
 	error (0, errno, "warning: cannot close %s", fname);
 
-    if (pre_stbuf.st_mtime == post_stbuf.st_mtime ||
-	*messagep == NULL ||
-	(*messagep)[0] == '\0' ||
-	strcmp (*messagep, "\n") == 0)
+    /* canonicalize emply messages */
+    if (*messagep != NULL &&
+        (**messagep == '\0' || strcmp (*messagep, "\n") == 0))
     {
-	if (*messagep)
-	{
-	    free (*messagep);
-	    *messagep = NULL;
-	}
+	free (*messagep);
+	*messagep = NULL;
+    }
+
+    if (pre_stbuf.st_mtime == post_stbuf.st_mtime || *messagep == NULL)
+    {
 	for (;;)
 	{
 	    (void) printf ("\nLog message unchanged or not specified\n");
