@@ -38,18 +38,16 @@ EXTRA_DIST = \
 	mdate-sh \
 	cvs-paper.ms
 
-CLEANFILES = \
-	$(PDFS) \
+MOSTLYCLEANFILES = \
 	$(TXTS)
 
+# These Automake generates MOSTLYCLEAN targets for PostScripts genersted from
+# TEXINFOS, but it shouldn't when those files are in EXTRA_DIST
 MAINTAINERCLEANFILES = \
-	cvs-paper.ps
+	$(POSTSCRIPTS)
 
-doc ps: $(POSTSCRIPTS)
-.PHONY: doc ps
-
-pdf: $(PDFS)
-.PHONY: pdf
+doc: info ps
+.PHONY: doc
 
 txt: $(TXTS)
 .PHONY: txt
@@ -61,7 +59,8 @@ dvi: cvs.dvi cvsclient.dvi
 # For some reason if I remove version.texi, it doesn't get built automatically.
 # This needs to be fixed in automake.
 cvs.aux cvs.pdf cvs.txt: cvs.texinfo $(srcdir)/version.texi
-cvsclient.aux cvsclient.pdf cvsclient.txt: cvsclient.texi
+cvsclient.aux cvsclient.pdf cvsclient.txt: cvsclient.texi \
+					   $(srcdir)/version-client.texi
 
 # These targets need to be very specific so that the other PDFs get generated
 # correctly.  If they are more generic and cvs.ps is made before cvs.pdf, then
@@ -72,36 +71,37 @@ cvs-paper.ps: cvs-paper.ms
 	mv $@-t $@
 
 cvs-paper.pdf: cvs-paper.ps
-	$(PS2PDF) $< $@
 
 SUFFIXES = .aux .txt .pdf
 
 # texinfo based targets automake neglects to include
 .texinfo.pdf:
-	TEXINPUTS=$(srcdir):$$TEXINPUTS \
-	  MAKEINFO='$(MAKEINFO) -I $(srcdir)' $(TEXI2DVI) --pdf --batch $<
+	TEXINPUTS="$(am__TEXINFO_TEX_DIR)$(PATH_SEPARATOR)$$TEXINPUTS" \
+	MAKEINFO='$(MAKEINFO) $(AM_MAKEINFOFLAGS) $(MAKEINFOFLAGS) -I $(srcdir)' \
+	$(TEXI2DVI) --pdf --batch `test -f '$<' || echo '$(srcdir)/'`$<
 .txi.pdf:
-	TEXINPUTS=$(srcdir):$$TEXINPUTS \
-	  MAKEINFO='$(MAKEINFO) -I $(srcdir)' $(TEXI2DVI) --pdf --batch $<
+	TEXINPUTS="$(am__TEXINFO_TEX_DIR)$(PATH_SEPARATOR)$$TEXINPUTS" \
+	MAKEINFO='$(MAKEINFO) $(AM_MAKEINFOFLAGS) $(MAKEINFOFLAGS) -I $(srcdir)' \
+	$(TEXI2DVI) --pdf --batch `test -f '$<' || echo '$(srcdir)/'`$<
 .texi.pdf:
-	TEXINPUTS=$(srcdir):$$TEXINPUTS \
-	  MAKEINFO='$(MAKEINFO) -I $(srcdir)' $(TEXI2DVI) --pdf --batch $<
+	TEXINPUTS="$(am__TEXINFO_TEX_DIR)$(PATH_SEPARATOR)$$TEXINPUTS" \
+	MAKEINFO='$(MAKEINFO) $(AM_MAKEINFOFLAGS) $(MAKEINFOFLAGS) -I $(srcdir)' \
+	$(TEXI2DVI) --pdf --batch `test -f '$<' || echo '$(srcdir)/'`$<
 
 .texinfo.txt:
-	TEXINPUTS=$(srcdir):$$TEXINPUTS \
-	  MAKEINFO='$(MAKEINFO) -I $(srcdir)' $(MAKEINFO) $< --no-headers -o $@
+	$(MAKEINFO) $(AM_MAKEINFOFLAGS) $(MAKEINFOFLAGS) -I $(srcdir) \
+	 --no-headers -o $@ `test -f '$<' || echo '$(srcdir)/'`$<
 .txi.txt:
-	TEXINPUTS=$(srcdir):$$TEXINPUTS \
-	  MAKEINFO='$(MAKEINFO) -I $(srcdir)' $(MAKEINFO) $< --no-headers -o $@
+	$(MAKEINFO) $(AM_MAKEINFOFLAGS) $(MAKEINFOFLAGS) -I $(srcdir) \
+	 --no-headers -o $@ `test -f '$<' || echo '$(srcdir)/'`$<
 .texi.txt:
-	TEXINPUTS=$(srcdir):$$TEXINPUTS \
-	  MAKEINFO='$(MAKEINFO) -I $(srcdir)' $(MAKEINFO) $< --no-headers -o $@
+	$(MAKEINFO) $(AM_MAKEINFOFLAGS) $(MAKEINFOFLAGS) -I $(srcdir) \
+	 --no-headers -o $@ `test -f '$<' || echo '$(srcdir)/'`$<
 
 ##
 ## MAINTAINER Targets
 ##
 
-## realclean ##
 # for backwards compatibility with the old makefiles
 realclean: maintainer-clean
 .PHONY: realclean
