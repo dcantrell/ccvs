@@ -5390,6 +5390,26 @@ U first-dir/w3'
 	  dotest_fail devcom2-9 "test -w first-dir/w1" ''
 	  dotest_fail devcom2-10 "test -w first-dir/w2" ''
 	  dotest_fail devcom2-11 "test -w first-dir/w3" ''
+
+	  cd first-dir
+	  # OK, now we want to try files in various states with cvs edit.
+	  dotest devcom2-12 "${testcvs} edit w4" \
+"${PROG} edit: no such file w4; ignored"
+	  # Try the same thing with a per-directory watch set.
+	  dotest devcom2-13 "${testcvs} watch on" ''
+	  dotest devcom2-14 "${testcvs} edit w5" \
+"${PROG} edit: no such file w5; ignored"
+	  dotest devcom2-15 "${testcvs} editors" ''
+	  dotest devcom2-16 "${testcvs} editors w4" ''
+	  # Make sure there are no droppings lying around
+	  dotest devcom2-17 "cat ${CVSROOT_DIRNAME}/first-dir/CVS/fileattr" \
+"Fw1	_watched=
+Fw2	_watched=
+Fw3	_watched=
+Fnw1	_watched=
+D	_watched="
+	  cd ..
+
 	  cd ..
 
 	  # Use -f because of the readonly files.
