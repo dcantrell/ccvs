@@ -134,7 +134,7 @@ do_module (db, mname, m_type, msg, callback_proc, where,
 
 #ifdef SERVER_SUPPORT
     int restore_server_dir = 0;
-    char *server_dir_to_restore;
+    char *server_dir_to_restore = NULL;
     if (trace)
     {
 	char *buf;
@@ -274,6 +274,11 @@ do_module (db, mname, m_type, msg, callback_proc, where,
 		    }
 		}
 		is_found = 1;
+	    }
+	    else
+	    {
+		/* This initialization suppresses a warning from gcc -Wall.  */
+	        value = NULL;
 	    }
 	}
 	free (attic_file);
