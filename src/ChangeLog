@@ -1,5 +1,9 @@
 2004-08-24  Derek Price <derek@ximbiot.com>
 
+	* recurse.c (start_recursion): Don't shorten //. to / (use //).
+
+2004-08-24  Derek Price <derek@ximbiot.com>
+
 	* recurse.c (start_recursion): Strip trailing CWD indirections on
 	repository.
 	* sanity.sh (rstar-toplevel): Update to account for new behavior.
