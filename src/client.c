@@ -5177,7 +5177,10 @@ notified_a_file (data, ent_list, short_pathname, filename)
     fp = open_file (CVSADM_NOTIFY, "r");
     if (getline (&line, &line_len, fp) < 0)
     {
-	error (0, errno, "cannot read %s", CVSADM_NOTIFY);
+	if (feof (fp))
+	    error (0, 0, "cannot read %s: end of file", CVSADM_NOTIFY);
+	else
+	    error (0, errno, "cannot read %s", CVSADM_NOTIFY);
 	goto error_exit;
     }
     cp = strchr (line, '\t');

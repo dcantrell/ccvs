@@ -1,3 +1,14 @@
+Sat Jan 10 11:05:40 1998  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvsrc.c, entries.c, login.c, logmsg.c, myndbm.c, patch.c,
+	release.c, server.c: Check for errors from getline, CVS_FOPEN,
+	fprintf, CVS_UNLINK and fclose.  Note that the new errors are
+	nonfatal.  This is because of conservatism more than because
+	it is always the best thing.
+	* login.c (get_cvs_password): Close the file when done with it.
+	* client.c (notified_a_file): If -1 return from getline, check
+	feof rather than assuming errno is set.
+
 Fri Jan  9 14:38:54 1998  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* server.c (expand_proc): Also output server_dir in

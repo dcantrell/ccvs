@@ -113,6 +113,7 @@ login (argc, argv)
     char *linebuf = (char *) NULL;
     size_t linebuf_len;
     int root_len, already_entered = 0;
+    int line_length;
 
     if (argc < 0)
 	usage (login_usage);
@@ -168,7 +169,7 @@ login (argc, argv)
     if (fp != NULL)
     {
 	/* Check each line to see if we have this entry already. */
-	while (getline (&linebuf, &linebuf_len, fp) >= 0)
+	while ((line_length = getline (&linebuf, &linebuf_len, fp)) >= 0)
         {
           if (strncmp (CVSroot_original, linebuf, root_len) == 0)
             {
@@ -176,8 +177,11 @@ login (argc, argv)
 		break;
             }
         }
-	fclose (fp);
+	if (fclose (fp) < 0)
+	    error (0, errno, "cannot close %s", passfile);
     }
+    else if (!existence_error (errno))
+	error (0, errno, "cannot open %s", passfile);
 
     if (already_entered)
     {
@@ -216,22 +220,35 @@ login (argc, argv)
 	    /* I'm not paranoid, they really ARE out to get me: */
 	    chmod (passfile, 0600);
 
-	    while (getline (&linebuf, &linebuf_len, fp) >= 0)
+	    while ((line_length = getline (&linebuf, &linebuf_len, fp)) >= 0)
             {
 		if (strncmp (CVSroot_original, linebuf, root_len))
-		    fprintf (tmp_fp, "%s", linebuf);
+		{
+		    if (fprintf (tmp_fp, "%s", linebuf) == EOF)
+			error (0, errno, "cannot write %s", tmp_name);
+		}
 		else
-		    fprintf (tmp_fp, "%s %s\n", CVSroot_original,
-			     typed_password);
-
+		{
+		    if (fprintf (tmp_fp, "%s %s\n", CVSroot_original,
+				 typed_password) == EOF)
+			error (0, errno, "cannot write %s", tmp_name);
+		}
             }
+	    if (line_length < 0 && !feof (fp))
+		error (0, errno, "cannot read %s", passfile);
             if (linebuf)
                 free (linebuf);
-	    fclose (tmp_fp);
-	    fclose (fp);
+	    if (fclose (tmp_fp) < 0)
+		error (0, errno, "cannot close %s", tmp_name);
+	    if (fclose (fp) < 0)
+		error (0, errno, "cannot close %s", passfile);
+
+	    /* FIXME: rename_file would make more sense (e.g. almost
+	       always faster).  */
 	    copy_file (tmp_name, passfile);
 	    unlink_file (tmp_name);
 	    chmod (passfile, 0600);
+
 	    free (tmp_name);
         }
     }
@@ -246,8 +263,10 @@ login (argc, argv)
 	    return 1;
         }
 
-	fprintf (fp, "%s %s\n", CVSroot_original, typed_password);
-	fclose (fp);
+	if (fprintf (fp, "%s %s\n", CVSroot_original, typed_password) == EOF)
+	    error (0, errno, "cannot write %s", passfile);
+	if (fclose (fp) < 0)
+	    error (0, errno, "cannot close %s", passfile);
     }
 
     /* Utter, total, raving paranoia, I know. */
@@ -273,6 +292,7 @@ get_cvs_password ()
     size_t linebuf_len;
     FILE *fp;
     char *passfile;
+    int line_length;
 
     /* If someone (i.e., login()) is calling connect_to_pserver() out of
        context, then assume they have supplied the correct, scrambled
@@ -321,7 +341,7 @@ get_cvs_password ()
     root_len = strlen (CVSroot_original);
 
     /* Check each line to see if we have this entry already. */
-    while (getline (&linebuf, &linebuf_len, fp) >= 0)
+    while ((line_length = getline (&linebuf, &linebuf_len, fp)) >= 0)
     {
 	if (strncmp (CVSroot_original, linebuf, root_len) == 0)
         {
@@ -330,6 +350,10 @@ get_cvs_password ()
 	    break;
         }
     }
+    if (line_length < 0 && !feof (fp))
+	error (0, errno, "cannot read %s", passfile);
+    if (fclose (fp) < 0)
+	error (0, errno, "cannot close %s", passfile);
 
     if (found_it)
     {
@@ -376,6 +400,7 @@ logout (argc, argv)
     char *linebuf = (char *) NULL;
     size_t linebuf_len;
     int root_len, found = 0;
+    int line_length;
 
     if (argc < 0)
 	usage (logout_usage);
@@ -428,17 +453,25 @@ logout (argc, argv)
 
     /* Check each line to see if we have this entry. */
     /* Copy only those lines that do not match this entry */
-    while (getline (&linebuf, &linebuf_len, fp) >= 0)
+    while ((line_length = getline (&linebuf, &linebuf_len, fp)) >= 0)
     {
-	if (strncmp (CVSroot_original, linebuf, root_len)) 
-	    fprintf (tmp_fp, "%s", linebuf);
+	if (strncmp (CVSroot_original, linebuf, root_len))
+	{
+	    if (fprintf (tmp_fp, "%s", linebuf) == EOF)
+		error (0, errno, "cannot write %s", tmp_name);
+	}
 	else
 	    found = 1;
     }
+    if (line_length < 0 && !feof (fp))
+	error (0, errno, "cannot read %s", passfile);
+
     if (linebuf)
         free (linebuf);
-    fclose (fp);
-    fclose (tmp_fp);
+    if (fclose (fp) < 0)
+	error (0, errno, "cannot close %s", passfile);
+    if (fclose (tmp_fp) < 0)
+	error (0, errno, "cannot close %s", tmp_name);
 
     if (! found) 
     {
@@ -447,6 +480,8 @@ logout (argc, argv)
     }
     else
     {
+	/* FIXME: rename_file would make more sense (e.g. almost
+	   always faster).  */
 	copy_file (tmp_name, passfile);
 	unlink_file (tmp_name);
 	chmod (passfile, 0600);

@@ -1957,10 +1957,18 @@ check_command_legal_p (cmd_name)
 			CVSROOTADM, CVSROOTADM_READERS);
 
          fp = fopen (fname, "r");
-         free (fname);
 
          if (fp == NULL)
-             goto do_writers;
+	 {
+	     if (!existence_error (errno))
+	     {
+		 /* Need to deny access, so that attackers can't fool
+		    us with some sort of denial of service attack.  */
+		 error (0, errno, "cannot open %s", fname);
+		 free (fname);
+		 return 0;
+	     }
+	 }
          else  /* successfully opened readers file */
          {
              while ((num_red = getline (&linebuf, &linebuf_len, fp)) >= 0)
@@ -1978,16 +1986,19 @@ check_command_legal_p (cmd_name)
                  if (strcmp (linebuf, CVS_Username) == 0)
                      goto handle_illegal;
              }
+	     if (num_red < 0 && !feof (fp))
+		 error (0, errno, "cannot read %s", fname);
 
              /* If not listed specifically as a reader, then this user
                 has write access by default unless writers are also
                 specified in a file . */
-             fclose (fp);
-             goto do_writers;
+	     if (fclose (fp) < 0)
+		 error (0, errno, "cannot close %s", fname);
          }
+	 free (fname);
 
-    do_writers:
-         
+	 /* Now check the writers file.  */
+
          flen = strlen (CVSroot_directory)
                 + strlen (CVSROOTADM)
                 + strlen (CVSROOTADM_WRITERS)
@@ -1998,18 +2009,27 @@ check_command_legal_p (cmd_name)
 			CVSROOTADM, CVSROOTADM_WRITERS);
 
          fp = fopen (fname, "r");
-         free (fname);
 
          if (fp == NULL)
          {
-             /* writers file does not exist, so everyone is a writer,
-                by default */
 	     if (linebuf)
 	         free (linebuf);
-             return 1;
+	     if (existence_error (errno))
+	     {
+		 /* Writers file does not exist, so everyone is a writer,
+		    by default.  */
+		 free (fname);
+		 return 1;
+	     }
+	     else
+	     {
+		 /* Need to deny access, so that attackers can't fool
+		    us with some sort of denial of service attack.  */
+		 error (0, errno, "cannot read %s", fname);
+		 free (fname);
+		 return 0;
+	     }
          }
-
-         /* else */
 
          found_it = 0;
          while ((num_red = getline (&linebuf, &linebuf_len, fp)) >= 0)
@@ -2024,20 +2044,26 @@ check_command_legal_p (cmd_name)
                  break;
              }
          }
+	 if (num_red < 0 && !feof (fp))
+	     error (0, errno, "cannot read %s", fname);
 
          if (found_it)
          {
-             fclose (fp);
+             if (fclose (fp) < 0)
+		 error (0, errno, "cannot close %s", fname);
              if (linebuf)
                  free (linebuf);
+	     free (fname);
              return 1;
          }
          else   /* writers file exists, but this user not listed in it */
          {
          handle_illegal:
-             fclose (fp);
+             if (fclose (fp) < 0)
+		 error (0, errno, "cannot close %s", fname);
              if (linebuf)
                  free (linebuf);
+	     free (fname);
 	     return 0;
          }
     }

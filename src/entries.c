@@ -281,6 +281,9 @@ freesdt (p)
     free ((char *) sdtp);
 }
 
+/* Return the next real Entries line.  On end of file, returns NULL.
+   On error, prints an error message and returns NULL.  */
+
 static Entnode *
 fgetentent(fpin, cmd, sawdir)
     FILE *fpin;
@@ -294,12 +297,13 @@ fgetentent(fpin, cmd, sawdir)
     enum ent_type type;
     char *l, *user, *vn, *ts, *options;
     char *tag_or_date, *tag, *date, *ts_conflict;
+    int line_length;
 
     line = NULL;
     line_chars_allocated = 0;
 
     ent = NULL;
-    while (getline (&line, &line_chars_allocated, fpin) > 0)
+    while ((line_length = getline (&line, &line_chars_allocated, fpin)) > 0)
     {
 	l = line;
 
@@ -393,6 +397,9 @@ fgetentent(fpin, cmd, sawdir)
 			      ts_conflict);
 	break;
     }
+
+    if (line_length < 0 && !feof (fpin))
+	error (0, errno, "cannot read entries file");
 
     free (line);
     return ent;
@@ -687,7 +694,10 @@ WriteTag (dir, tag, date, nonbranch, update_dir, repository)
 
    If it does not exist, or contains something unrecognized by this
    version of CVS, set *DATEP and *TAGP to NULL and *NONBRANCHP to
-   an unspecified value.  */
+   an unspecified value.
+
+   If there is an error, print an error message, set *DATEP and *TAGP
+   to NULL, and return.  */
 void
 ParseTag (tagp, datep, nonbranchp)
     char **tagp;
@@ -743,9 +753,25 @@ ParseTag (tagp, datep, nonbranchp)
 		    break;
 	    }
 	}
-	(void) fclose (fp);
+
+	if (line_length < 0)
+	{
+	    /* FIXME-update-dir: should include update_dir in messages.  */
+	    if (feof (fp))
+		error (0, 0, "cannot read %s: end of file", CVSADM_TAG);
+	    else
+		error (0, errno, "cannot read %s", CVSADM_TAG);
+	}
+
+	if (fclose (fp) < 0)
+	    /* FIXME-update-dir: should include update_dir in message.  */
+	    error (0, errno, "cannot close %s", CVSADM_TAG);
+
 	free (line);
     }
+    else if (!existence_error (errno))
+	/* FIXME-update-dir: should include update_dir in message.  */
+	error (0, errno, "cannot open %s", CVSADM_TAG);
 }
 
 /*

@@ -160,6 +160,8 @@ release (argc, argv)
 
 	if (!really_quiet)
 	{
+	    int line_length;
+
 	    /* The "release" command piggybacks on "update", which
 	       does the real work of finding out if anything is not
 	       up-to-date with the repository.  Then "release" prompts
@@ -172,12 +174,14 @@ release (argc, argv)
 
 	    c = 0;
 
-	    while (getline (&line, &line_allocated, fp) >= 0)
+	    while ((line_length = getline (&line, &line_allocated, fp)) >= 0)
 	    {
 		if (strchr ("MARCZ", *line))
 		    c++;
 		(void) printf (line);
 	    }
+	    if (line_length < 0 && !feof (fp))
+		error (0, errno, "cannot read from subprocess");
 
 	    /* If the update exited with an error, then we just want to
 	       complain and go on to the next arg.  Especially, we do
