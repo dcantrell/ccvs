@@ -1292,7 +1292,7 @@ For an introduction to @sc{cvs} locks focusing on
 user-visible behavior, see @ref{Concurrency}.  The
 following section is aimed at people who are writing
 tools which want to access a @sc{cvs} repository without
-interfering with other tools acessing the same
+interfering with other tools accessing the same
 repository.  If you find yourself confused by concepts
 described here, like @dfn{read lock}, @dfn{write lock},
 and @dfn{deadlock}, you might consult the literature on
@@ -3612,7 +3612,7 @@ Therefore, you are generally better off using @code{cvs
 rtag}.  The exceptions might be cases like:
 
 @example
-cvs tag -r 1.4 backend.c
+cvs tag -r 1.4 stable backend.c
 @end example
 
 @node Modifying tags
@@ -4451,7 +4451,7 @@ branch since @sc{cvs} does not automatically add static tags to dead revisions.
 The exception to this rule occurs when
 a static tag has been attached to a dead revision manually.  Use the branch tag
 to merge all changes from the branch or use two static tags as merge endpoints
-to be sure that all intended changes are propogated in the merge.
+to be sure that all intended changes are propagated in the merge.
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node Merging and keywords
@@ -7453,7 +7453,7 @@ to break a project down into smaller
 @c may not use the modules file.
 separately-compiled subsystems, and arrange a way of
 releasing them internally so that each developer need
-check out only those subsystems which are they are
+check out only those subsystems which they are
 actively working on.
 
 Another approach is to set up a structure which allows
@@ -9502,7 +9502,7 @@ it is specified; otherwise it is a format that outputs the line group as-is.
 
 @item --new-group-format=@var{format}
 These line groups are hunks containing only lines from the second
-file.  The default new group format is same as the the changed group
+file.  The default new group format is same as the changed group
 format if it is specified; otherwise it is a format that outputs the
 line group as-is.
 
@@ -9593,7 +9593,7 @@ This format spec is equivalent to @var{T} if
 @var{A}'s value equals @var{B}'s; otherwise it is equivalent to @var{E}.
 
 For example, @samp{%(N=0?no:%dN) line%(N=1?:s)} is equivalent to
-@samp{no lines} if @var{N} (the number of lines in the group in the the
+@samp{no lines} if @var{N} (the number of lines in the group in the
 new file) is 0, to @samp{1 line} if @var{N} is 1, and to @samp{%dN lines}
 otherwise.
 @end table
@@ -9645,11 +9645,11 @@ following forms.
 
 @table @samp
 @item %l
-stands for the the contents of the line, not counting its trailing
+stands for the contents of the line, not counting its trailing
 newline (if any).  This format ignores whether the line is incomplete.
 
 @item %L
-stands for the the contents of the line, including its trailing newline
+stands for the contents of the line, including its trailing newline
 (if any).  If a line is incomplete, this format preserves its
 incompleteness.
 
@@ -11623,7 +11623,7 @@ be tagged.  See @ref{Tagging add/remove}.
 Create a branch named @var{tag}.  See @ref{Branching and merging}.
 
 @item -B
-Used in conjuntion with -F or -d, enables movement and deletion of
+Used in conjunction with -F or -d, enables movement and deletion of
 branch tags.  Use with extreme caution. 
 
 @item -D @var{date}
@@ -12890,7 +12890,7 @@ quotation marks (@t{"}).
 Any embedded dollar signs (@t{$}), backticks (@t{`}),
 backslashes (@t{\}), or quotation marks will be preceded
 by a backslash (this allows the shell to correctly parse it
-as a single string, reguardless of the characters it contains).
+as a single string, regardless of the characters it contains).
 For backwards compatibility, the first
 token will be the repository subdirectory.  The rest of the
 tokens will be comma-delimited lists of the information

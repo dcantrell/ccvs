@@ -1,3 +1,16 @@
+2003-05-06  Derek Price  <derek@ximbiot.com>
+
+	* cvs.texinfo (Specifying what to tag by date or revision): Add a
+	missing a tag argument to the example.
+	(How your build system interacts with CVS): Correct typo.
+	(*): Let the spell checker have its way.
+	(Thanks to Anthon Pang <apang@telus.net> for the patch and
+	Max Bowsher <maxb@ukf.net> for validating it. This closes issue #84 on
+	<http://ccvs.cvshome.org>.)
+
+	* stamp-vti: Regenerated.
+	* version.texi: Ditto.
+
 2003-04-30  Derek Price  <derek@ximbiot.com>
 
 	* Makefile.in: Regenerated.
