@@ -1,5 +1,10 @@
 Sun Aug  3 21:03:14 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvs.texinfo (A sample session): Nuke index entry for "A sample
+	session".  The fact that this isn't "sample session" is totally
+	bogus, but in general the table of contents is probably better for
+	this entry.
+
 	* cvs.texinfo (Error messages): Add comment about wording of error
 	concerning unknown -x option.
 
