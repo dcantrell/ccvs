@@ -1,5 +1,10 @@
 2003-07-18  Derek Price  <derek@ximbiot.com>
 
+	* sanity.sh (release): Add new tests for release with unrecognized
+	recognized directories.
+
+2003-07-18  Derek Price  <derek@ximbiot.com>
+
 	* vers_ts (Version_TS): Don't allow command line keyword expansion
 	modes to override binary mode.
 	* sanity.sh (): Tests for the above.
