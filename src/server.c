@@ -4796,7 +4796,7 @@ check_password (username, password, repository)
 	    found_passwd = pw->pw_passwd;
 	}
 	
-	if (pw == NULL)
+	if (found_passwd == NULL)
 	{
 	    printf ("E Fatal error, aborting.\n\
 error 0 %s: no such user\n", username);
@@ -4814,8 +4814,9 @@ error 0 %s: no such user\n", username);
 	    exit (EXIT_FAILURE);
 	}
 	
-	if (found_passwd && *found_passwd)
+	if (*found_passwd)
         {
+	    /* user exists and has a password */
 	    host_user = ((! strcmp (found_passwd,
                                     crypt (password, found_passwd)))
                          ? username : NULL);
@@ -4823,11 +4824,14 @@ error 0 %s: no such user\n", username);
         }
 	else if (password && *password)
         {
+	    /* user exists and has no system password, but we got
+	       one as parameter */
 	    host_user = username;
             goto handle_return;
         }
 	else
         {
+	    /* user exists but has no password at all */
 	    host_user = NULL;
             goto handle_return;
         }
@@ -5586,7 +5590,7 @@ cvs_output_binary (str, len)
 
 	if (error_use_protocol)
 	    buf = buf_to_net;
-	else if (server_active)
+	else
 	    buf = protocol;
 
 	if (!supported_response ("Mbinary"))
