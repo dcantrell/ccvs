@@ -1,6 +1,12 @@
 Changes since 1.11.14:
 **********************
 
+SERVER SECURITY ISSUES
+
+* Piped checkouts of paths above $CVSROOT no longer work.  Previously, clients
+  could have requested the contents of RCS archive files anywhere on a CVS
+  server.
+
 GENERAL USER ISSUES
 
 * Method options (used by WinCVS & CVS 1.12.7+) in CVSROOTs are ignored.
