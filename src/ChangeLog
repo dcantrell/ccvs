@@ -1,5 +1,9 @@
 20 Mar 1997  Jim Kingdon
 
+	* client.c (send_repository): When sending Directory request,
+	send any ISDIRSEP character as '/'.  Fixes
+	"cvs log foo\bar\baz.c" on NT & friends.
+
 	* client.c (send_file_names): Don't try to read Entries file if
 	CVSADM directory does not exist.  Fixes fairly serious regression
 	(warning on all fresh checkouts) introduced by 1997-01-08 change.
