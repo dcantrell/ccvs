@@ -1,3 +1,7 @@
+2004-11-30  Conrad T. Pino  <Conrad@Pino.com>
+
+	* libz.mak: Regenerated for "../cvsnt.dsp" change.
+
 2004-11-16  Derek Price  <derek@ximbiot.com>
 
 	* zconf.in.h: Remove unneeded file.
