@@ -1,3 +1,8 @@
+2001-10-25  Larry Jones  <larry.jones@sdrc.com>
+
+	* log.c (log_expand_revlist): Make erroneous or inconsistent revision
+	specs select no revisions rather than all revisions.
+
 2001-10-23  Larry Jones  <larry.jones@sdrc.com>
 
 	* import.c (add_rcs_file): Don't put an expand entry into the file

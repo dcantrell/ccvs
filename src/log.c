@@ -1029,24 +1029,25 @@ log_expand_revlist (rcs, revlist, default_branch)
 	    {
 		branch = RCS_whatbranch (rcs, r->first);
 		if (branch == NULL)
+		    nr->first = NULL;
+		else
 		{
-		    error (0, 0, "warning: `%s' is not a branch in `%s'",
-			   r->first, rcs->path);
-		    free (nr);
-		    continue;
+		    nr->first = RCS_getbranch (rcs, branch, 1);
+		    free (branch);
 		}
-		nr->first = RCS_getbranch (rcs, branch, 1);
-		free (branch);
 	    }
 	    if (nr->first == NULL)
 	    {
-		error (0, 0, "warning: no revision `%s' in `%s'",
+		error (0, 0, "warning: no branch `%s' in `%s'",
 		       r->first, rcs->path);
-		free (nr);
-		continue;
+		nr->last = NULL;
+		nr->fields = 0;
 	    }
-	    nr->last = xstrdup (nr->first);
-	    nr->fields = numdots (nr->first) + 1;
+	    else
+	    {
+		nr->last = xstrdup (nr->first);
+		nr->fields = numdots (nr->first) + 1;
+	    }
 	}
 	else
 	{
@@ -1127,11 +1128,12 @@ log_expand_revlist (rcs, revlist, default_branch)
 			   "invalid branch or revision pair %s:%s in `%s'",
 			   r->first, r->last, rcs->path);
 		    free (nr->first);
+		    nr->first = NULL;
 		    free (nr->last);
-		    free (nr);
-		    continue;
+		    nr->last = NULL;
+		    nr->fields = 0;
 		}
-		if (version_compare (nr->first, nr->last, nr->fields) > 0)
+		else if (version_compare (nr->first, nr->last, nr->fields) > 0)
 		{
 		    char *tmp;
 
