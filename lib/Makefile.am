@@ -28,7 +28,9 @@ libcvs_a_SOURCES = \
 ## Because @LIBOBJS@ is included below and AC_LIBOBJ is sometimes called on
 ## these files from configure.in, automake automatically knows about many of
 ## the *.c files in this directory.
-libcvs_a_LIBADD = @LIBOBJS@
+libcvs_a_LIBADD = \
+	@LIBOBJS@ \
+	@ALLOCA@
 
 
 
