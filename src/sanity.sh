@@ -4473,26 +4473,14 @@ $output_dead"
 	  ## file in CVS/Entries
 	  dotest ls-filename-1 "$testcvs ls dead"
 
-	  # FIXCVS: ls'ing a file that already exists causes an assertion
-	  #         failure.
-	  #
-	  # then FIXME: this test should be:
-	  #
-	  # dotest ls-filename-2 "$testcvs ls living" "living"
-	  dotest_fail ls-filename-2 "$testcvs ls living" \
-"${DOTSTAR}ssertion.*failed${DOTSTAR}" "${DOTSTAR}failed assertion${DOTSTAR}"
+	  # ls'ing a file that already exists once caused an assertion failure.
+	  dotest ls-filename-2 "$testcvs ls living" "living"
 
 	  cd ..
 	  dotest ls-filename-3 "$testcvs ls cemetery/dead"
 
-	  # FIXCVS: ls'ing a file that already exists causes an assertion
-	  #         failure.
-	  #
-	  # then FIXME: this test should be:
-	  #
-	  # dotest ls-filename-4 "$testcvs ls cemetery/living" "cemetary/living"
-	  dotest_fail ls-filename-4 "$testcvs ls cemetery/living" \
-"${DOTSTAR}ssertion.*failed${DOTSTAR}" "${DOTSTAR}failed assertion${DOTSTAR}"
+	  # ls'ing a file that already exists once caused an assertion failure.
+	  dotest ls-filename-4 "$testcvs ls cemetery/living" "cemetery/living"
 	  cd cemetery
 
 	  ## file not in CVS/Entries
@@ -4500,26 +4488,14 @@ $output_dead"
 
 	  dotest ls-filename-5 "$testcvs ls dead"
 
-	  # FIXCVS: ls'ing a file that already exists causes an assertion
-	  #         failure.
-	  #
-	  # then FIXME: this test should be:
-	  #
-	  # dotest ls-filename-6 "$testcvs ls living" "living"
-	  dotest_fail ls-filename-6 "$testcvs ls living" \
-"${DOTSTAR}ssertion.*failed${DOTSTAR}" "${DOTSTAR}failed assertion${DOTSTAR}"
+	  # ls'ing a file that already exists once caused an assertion failure.
+	  dotest ls-filename-6 "$testcvs ls living" "living"
 
 	  cd ..
 	  dotest ls-filename-7 "$testcvs ls cemetery/dead"
 
-	  # FIXCVS: ls'ing a file that already exists causes an assertion
-	  #         failure.
-	  #
-	  # then FIXME: this test should be:
-	  #
-	  # dotest ls-filename-8 "$testcvs ls cemetery/living" "cemetary/living"
-	  dotest_fail ls-filename-8 "$testcvs ls cemetery/living" \
-"${DOTSTAR}ssertion.*failed${DOTSTAR}" "${DOTSTAR}failed assertion${DOTSTAR}"
+	  # ls'ing a file that already exists once caused an assertion failure.
+	  dotest ls-filename-8 "$testcvs ls cemetery/living" "cemetery/living"
 
 	  cd cemetery
 
@@ -4542,25 +4518,13 @@ $output_dead"
 
 	  dotest ls-D-1 "$testcvs ls -D '$time_prebirth' -e dated"
 
-	  # FIXCVS: ls'ing a file that already exists causes an assertion
-	  #         failure.
-	  #
-	  # then FIXME: this test should be:
-	  #
-	  # dotest ls-D-2 "$testcvs ls -D '$time_newborn' -e dated" \
-	  # "/dated/1\.1/.*"
-	  dotest_fail ls-D-2 "$testcvs ls -D '$time_newborn' -e dated" \
-"${DOTSTAR}ssertion.*failed${DOTSTAR}" "${DOTSTAR}failed assertion${DOTSTAR}"
+	  # ls'ing a file that already exists once caused an assertion failure.
+	  dotest ls-D-2 "$testcvs ls -D '$time_newborn' -e dated" \
+"/dated/1\.1/.*"
 
-	  # FIXCVS: ls'ing a file that already exists causes an assertion
-	  #         failure.
-	  #
-	  # then FIXME: this test should be:
-	  #
-	  # dotest ls-D-3 "$testcvs ls -D '$time_predeath' -e dated" \
-	  # "/dated/1.2/.*"
-	  dotest_fail ls-D-3 "$testcvs ls -D '$time_predeath' -e dated" \
-"${DOTSTAR}ssertion.*failed${DOTSTAR}" "${DOTSTAR}failed assertion${DOTSTAR}"
+	  # ls'ing a file that already exists once caused an assertion failure.
+	  dotest ls-D-3 "$testcvs ls -D '$time_predeath' -e dated" \
+"/dated/1.2/.*"
 
 	  dotest ls-D-4 "$testcvs ls -D '$time_postdeath' -e dated"
 
