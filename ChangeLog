@@ -1,3 +1,8 @@
+2004-09-23  Mark D. Baushke  <mdb@cvshome.org>
+
+	* NEWS: Fix spelling.
+	(Reported by Shane Turner <shane.turner@infointeractive.com>.)
+
 2004-09-17  Derek Price  <derek@ximbiot.com>
 
 	* NEWS: Correct file cache note.
