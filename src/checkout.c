@@ -270,13 +270,13 @@ checkout (argc, argv)
 			  && supported_request ("expand-modules"));
 	
 	if (expand_modules)
-	  {
+	{
 	    /* This is done here because we need to read responses
                from the server before we send the command checkout or
                export files. */
 
 	    client_expand_modules (argc, argv, local);
-	  }
+	}
 
 	if (!run_module_prog) send_arg ("-n");
 	if (local) send_arg ("-l");
@@ -310,16 +310,16 @@ checkout (argc, argv)
 	    option_with_arg ("-j", join_rev2);
 
 	if (expand_modules)
-	  {
-	    client_send_expansions (local);
-	  }
+	{
+	    client_send_expansions (local, where);
+	}
 	else
-	  {
+	{
 	    int i;
 	    for (i = 0; i < argc; ++i)
-	      send_arg (argv[i]);
+		send_arg (argv[i]);
 	    client_nonexpanded_setup ();
-	  }
+	}
 
 	send_to_server (strcmp (command_name, "export") == 0 ?
                         "export\012" : "co\012",

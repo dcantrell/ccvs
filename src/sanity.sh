@@ -660,6 +660,15 @@ T sdir2/sfile2'
 new revision: 1\.2; previous revision: 1\.1
 done'
 	  cd ..
+
+	  # Test that we recurse into the correct directory when checking
+	  # for existing files, even if co -d is in use.
+	  touch first-dir/extra
+	  dotest basicb-cod-1 "${testcvs} -q co -d first-dir1 first-dir" \
+'U first-dir1/sdir1/sfile1
+U first-dir1/sdir2/sfile2'
+	  rm -rf first-dir1
+
 	  rm -rf first-dir
 	  dotest basicb-9 \
 "${testcvs} -q co -d newdir -r release-1 first-dir/sdir1 first-dir/sdir2" \
@@ -670,6 +679,7 @@ U newdir/sdir2/sfile2'
 sfile2 starts"
 
 	  rm -rf newdir
+
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
 	  ;;
 

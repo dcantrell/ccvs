@@ -2560,8 +2560,9 @@ client_expand_modules (argc, argv, local)
 }
 
 void
-client_send_expansions (local)
-     int local;
+client_send_expansions (local, where)
+    int local;
+    char *where;
 {
     int i;
     char *argv[1];
@@ -2576,7 +2577,7 @@ client_send_expansions (local)
 
     for (i = 0; i < modules_count; ++i)
     {
-	argv[0] = modules_vector[i];
+	argv[0] = where ? where : modules_vector[i];
 	if (isfile (argv[0]))
 	    send_files (1, argv, local, 0);
     }
