@@ -1,5 +1,16 @@
 2003-04-30  Derek Price  <derek@ximbiot.com>
 
+	* acinclude.m4 (ACX_WITH_GSSAPI): Get rid of $includeopt, using
+	$CPPFLAGS as intended by the Autoconf folk.
+	* configure.in: Ditto.
+	(Original patch from Alexey Mahotkin <alexm@hsys.msk.ru>.)
+
+	* aclocal.m4: Regenerated.
+	* configure: Ditto.
+	* Makefile.in: Ditto.
+
+2003-04-30  Derek Price  <derek@ximbiot.com>
+
 	* acinclude.m4 (ACX_WITH_GSSAPI): Fix typo in broken conditional.
 	(Thanks to Alexey Mahotkin <alexm@hsys.msk.ru>.)
 

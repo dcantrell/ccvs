@@ -365,8 +365,6 @@ if test -z "$krb_h"; then
 fi
 AC_MSG_RESULT($krb_h)
 
-includeopt=
-AC_SUBST(includeopt)
 if test -n "$krb_h"; then
   krb_lib=
   if test "$cross_compiling" != yes && test -r $KRB4/lib/libkrb.a; then
@@ -395,7 +393,7 @@ if test -n "$krb_h"; then
     AC_CHECK_LIB(krb,krb_recvauth)
     LDFLAGS=$hold_ldflags
     if test -n "$krb_incdir"; then
-      includeopt="${includeopt} -I$krb_incdir"
+      CPPFLAGS="$CPPFLAGS -I$krb_incdir"
     fi
   fi
 fi
