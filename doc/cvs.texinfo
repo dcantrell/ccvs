@@ -11612,6 +11612,16 @@ happening with CVS 1.9 on Solaris 2.5.  The cause is
 unknown; if you know more about what causes it, let us
 know as described in @ref{BUGS}.
 
+@item cvs [@var{command} aborted]: cannot start server via rcmd
+This, unfortunately, is a rather nonspecific error
+message which @sc{cvs} 1.9 will print if you are
+running the @sc{cvs} client and it is having trouble
+connecting to the server.  Current versions of @sc{cvs}
+should print a much more specific error message.  If
+you get this message when you didn't mean to run the
+client at all, you probably forgot to specify
+@code{:local:}, as described in @ref{Repository}.
+
 @item ci: @var{file},v: bad diff output line: Binary files - and /tmp/T2a22651 differ
 This happens when trying to check in a binary file if
 @sc{rcs} is not correctly installed.  Re-read the
