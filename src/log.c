@@ -142,8 +142,8 @@ static const char *const log_usage[] =
     "\t-N\tDo not list tags.\n",
     "\t-b\tOnly list revisions on the default branch.\n",
     "\t-r[revisions]\tSpecify revision(s)s to list.\n",
-    "\t-dDATES\tSpecify dates (D1<D2 for range, D for latest before).\n",
-    "\t-sSTATES\tOnly list revisions with specified states.\n",
+    "\t-d dates\tSpecify dates (D1<D2 for range, D for latest before).\n",
+    "\t-s states\tOnly list revisions with specified states.\n",
     "\t-w[logins]\tOnly list revisions checked in by specified logins.\n",
     "(Specify the --help global option for a list of other help options)\n",
     NULL
