@@ -1,5 +1,8 @@
 Tue Jul 16 11:37:41 1996  Ian Lance Taylor  <ian@cygnus.com>
 
+	* sanity.sh (import): Use dotest to examine the output of test
+ 	113, and the actual contents of the file in test 116.
+
 	* update.c (join_file): Always skip rcsmerge if the two revisions
  	are the same (the old code always did the rcsmerge when two -j
 	options were specified).
