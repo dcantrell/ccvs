@@ -6746,6 +6746,22 @@ Checking in brmod-wdmod;
 ${TESTDIR}/cvsroot/first-dir/brmod-wdmod,v  <--  brmod-wdmod
 new revision: 1\.2; previous revision: 1\.1
 done"
+
+	  dotest_fail binfiles2-o1 "${testcvs} -q admin -o :1.2 brmod-trmod" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/brmod-trmod,v
+deleting revision 1\.2
+rcs: ${TESTDIR}/cvsroot/first-dir/brmod-trmod,v: can't remove branch point 1\.1
+${PROG} [a-z]*: rcs failed for .brmod-trmod."
+	  : dotest binfiles2-o2 "${testcvs} -q admin -o 1.1.2.1: brmod-trmod" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/brmod-trmod,v
+deleting revision 1\.1\.\2\.1
+done"
+	  : dotest binfiles2-o3 "${testcvs} -q admin -o :1.2 brmod-trmod" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/brmod-trmod,v
+deleting revision 1\.2
+deleting revision 1\.1
+done"
+	  : dotest binfiles2-o4 "${testcvs} -q log -N brmod-trmod" fixme
 	  cd ..
 	  cd ..
 

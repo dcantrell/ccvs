@@ -764,8 +764,7 @@ admin_fileproc (callerdat, finfo)
     }
     else
     {
-	if (!quiet)
-	    error (0, 0, "%s failed for `%s'", RCS, finfo->file);
+	error (0, 0, "%s failed for `%s'", RCS, finfo->file);
 	/* Upon failure, we want to abandon any changes made to the
 	   RCS data structure.  Forcing a reparse does the trick,
 	   but leaks memory and is kludgey.  Should we export
