@@ -1059,12 +1059,12 @@ second party")
 	     ;; Was it a conflict?
 	     ((looking-at
 	       ;; Allow both RCS 5.5 and 5.6. (5.6 prints "rcs" and " warning").
-	       "^\\(rcs\\)?merge\\( warning\\)?: \\(overlaps\\|conflicts\\) during merge$")
+	       "^\\(rcs\\)?merge:?\\( warning\\)?: \\(overlaps\\|conflicts\\) during merge$")
 
 	      ;; Yes, this is a conflict.
 	      (cvs-skip-line
 	       stdout-buffer stderr-buffer
-	       "^\\(rcs\\)?merge\\( warning\\)?: \\(overlaps\\|conflicts\\) during merge$")
+	       "^\\(rcs\\)?merge:?\\( warning\\)?: \\(overlaps\\|conflicts\\) during merge$")
 
 	      (cvs-skip-line stdout-buffer stderr-buffer
 			     "^cvs \\(update\\|server\\): conflicts found in ")
