@@ -1,3 +1,9 @@
+Fri Apr  7 14:53:14 1995  Samuel Tardieu  <sam@inf.enst.fr>
+
+	* commit.c (mark_dead): Make the CVSDEA directory have the same
+	  mode than its father to make sure that concurrent developpers
+	  can resurrect version marked as dead by someone else.
+
 Thu Apr  6 13:05:15 1995  Jim Blandy  <jimb@totoro.bio.indiana.edu>
 
 	* commit.c (checkaddfile): If we didn't manage to fopen the file,
