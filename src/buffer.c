@@ -2043,7 +2043,9 @@ fd_buffer_block (void *closure, bool block)
     else
 	flags |= O_NONBLOCK;
 
-    if (fcntl (fb->fd, F_SETFL, flags) < 0)
+    if (fcntl (fb->fd, F_SETFL, flags) < 0 && errno != ENODEV)
+	/* BSD returns ENODEV when we try to set block/nonblock on /dev/null.
+	 */
 	return errno;
 #endif /* F_GETFL && O_NONBLOCK && F_SETFL */
 
