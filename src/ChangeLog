@@ -1,3 +1,9 @@
+Sun Mar  9 10:06:29 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* root.c (parse_cvsroot), server.c (serve_root, serve_init):
+	If CVSroot_directory is not an absolute pathname, give a fatal error.
+	* sanity.sh (crerepos): New tests crerepos-6* test for above fixes.
+
 Sat Mar  8 22:06:17 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	This cleans up the last known code which can overflow its buffers

@@ -523,6 +523,13 @@ serve_root (arg)
     
     if (error_pending()) return;
 
+    if (!isabsolute (arg))
+    {
+	if (alloc_pending (80 + strlen (arg)))
+	    sprintf (pending_error_text,
+		     "E Root %s must be an absolute pathname", arg);
+	return;
+    }
     set_local_cvsroot (arg);
 
     path = xmalloc (strlen (CVSroot_directory)
@@ -2872,6 +2879,14 @@ static void
 serve_init (arg)
     char *arg;
 {
+    if (!isabsolute (arg))
+    {
+	if (alloc_pending (80 + strlen (arg)))
+	    sprintf (pending_error_text,
+		     "E Root %s must be an absolute pathname", arg);
+	/* Fall through to do_cvs_command which will return the
+	   actual error.  */
+    }
     set_local_cvsroot (arg);
 
     do_cvs_command ("init", init);

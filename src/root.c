@@ -371,6 +371,14 @@ parse_cvsroot (CVSroot)
 	    error (0, 0, "(%s)", CVSroot);
 	    return 1;
 	}
+	/* cvs.texinfo has always told people that CVSROOT must be an
+	   absolute pathname.  Furthermore, attempts to use a relative
+	   pathname produced various errors (I couldn't get it to work),
+	   so there would seem to be little risk in making this a fatal
+	   error.  */
+	if (!isabsolute (CVSroot_directory))
+	    error (1, 0, "CVSROOT %s must be an absolute pathname",
+		   CVSroot_directory);
 	break;
     case kserver_method:
 #ifndef HAVE_KERBEROS
