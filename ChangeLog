@@ -1,5 +1,11 @@
 2004-04-27  Derek Price  <derek@ximbiot.com>
 
+	* configure.in: Call gl_TIMESPEC.
+	* srclist.txt (timespec): New module.
+	* Makefile.in, aclocal.m4, config.h.in, configure: Regenerated.
+
+2004-04-27  Derek Price  <derek@ximbiot.com>
+
 	* configure.in: Replace calls to AC_AIX, AC_MINIX, & AC_GNU_SOURCE
 	with gl_USE_SYSTEM_EXTENSIONS.
 	* srclist.txt (extensions): New module.

@@ -4182,6 +4182,92 @@ AC_DEFUN([jm_PREREQ_REGEX],
   AC_CHECK_FUNCS(btowc)
 ])
 
+#serial 8
+
+dnl From Jim Meyering
+
+AC_DEFUN([gl_TIMESPEC],
+[
+  dnl Prerequisites of lib/timespec.h.
+  AC_REQUIRE([AC_HEADER_TIME])
+  AC_CHECK_HEADERS_ONCE(sys/time.h)
+  gl_CHECK_TYPE_STRUCT_TIMESPEC
+  AC_STRUCT_ST_MTIM_NSEC
+
+  dnl Persuade glibc <time.h> to declare nanosleep().
+  AC_REQUIRE([AC_GNU_SOURCE])
+
+  AC_CHECK_DECLS(nanosleep, , , [#include <time.h>])
+])
+
+dnl Define HAVE_STRUCT_TIMESPEC if `struct timespec' is declared
+dnl in time.h or sys/time.h.
+
+AC_DEFUN([gl_CHECK_TYPE_STRUCT_TIMESPEC],
+[
+  dnl Persuade pedantic Solaris to declare struct timespec.
+  AC_REQUIRE([gl_USE_SYSTEM_EXTENSIONS])
+
+  AC_REQUIRE([AC_HEADER_TIME])
+  AC_CHECK_HEADERS_ONCE(sys/time.h)
+  AC_CACHE_CHECK([for struct timespec], fu_cv_sys_struct_timespec,
+    [AC_TRY_COMPILE(
+      [
+#      if TIME_WITH_SYS_TIME
+#       include <sys/time.h>
+#       include <time.h>
+#      else
+#       if HAVE_SYS_TIME_H
+#        include <sys/time.h>
+#       else
+#        include <time.h>
+#       endif
+#      endif
+      ],
+      [static struct timespec x; x.tv_sec = x.tv_nsec;],
+      fu_cv_sys_struct_timespec=yes,
+      fu_cv_sys_struct_timespec=no)
+    ])
+
+  if test $fu_cv_sys_struct_timespec = yes; then
+    AC_DEFINE(HAVE_STRUCT_TIMESPEC, 1,
+	      [Define if struct timespec is declared in <time.h>. ])
+  fi
+])
+
+#serial 6
+
+dnl From Paul Eggert.
+
+# Define ST_MTIM_NSEC to be the nanoseconds member of struct stat's st_mtim,
+# if it exists.
+
+AC_DEFUN([AC_STRUCT_ST_MTIM_NSEC],
+ [AC_CACHE_CHECK([for nanoseconds member of struct stat.st_mtim],
+   ac_cv_struct_st_mtim_nsec,
+   [ac_save_CPPFLAGS="$CPPFLAGS"
+    ac_cv_struct_st_mtim_nsec=no
+    # tv_nsec -- the usual case
+    # _tv_nsec -- Solaris 2.6, if
+    #	(defined _XOPEN_SOURCE && _XOPEN_SOURCE_EXTENDED == 1
+    #	 && !defined __EXTENSIONS__)
+    # st__tim.tv_nsec -- UnixWare 2.1.2
+    for ac_val in tv_nsec _tv_nsec st__tim.tv_nsec; do
+      CPPFLAGS="$ac_save_CPPFLAGS -DST_MTIM_NSEC=$ac_val"
+      AC_TRY_COMPILE([#include <sys/types.h>
+#include <sys/stat.h>], [struct stat s; s.st_mtim.ST_MTIM_NSEC;],
+        [ac_cv_struct_st_mtim_nsec=$ac_val; break])
+    done
+    CPPFLAGS="$ac_save_CPPFLAGS"])
+
+  if test $ac_cv_struct_st_mtim_nsec != no; then
+    AC_DEFINE_UNQUOTED(ST_MTIM_NSEC, $ac_cv_struct_st_mtim_nsec,
+      [Define to be the nanoseconds member of struct stat's st_mtim,
+       if it exists.])
+  fi
+ ]
+)
+
 # xalloc.m4 serial 8
 dnl Copyright (C) 2002-2003 Free Software Foundation, Inc.
 dnl This file is free software, distributed under the terms of the GNU

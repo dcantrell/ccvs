@@ -166,6 +166,10 @@
    */
 #undef HAVE_DECL_GETENV
 
+/* Define to 1 if you have the declaration of `nanosleep', and to 0 if you
+   don't. */
+#undef HAVE_DECL_NANOSLEEP
+
 /* Define to 1 if you have the declaration of `putchar_unlocked', and to 0 if
    you don't. */
 #undef HAVE_DECL_PUTCHAR_UNLOCKED
@@ -448,6 +452,9 @@
 /* Define to 1 if `st_rdev' is member of `struct stat'. */
 #undef HAVE_STRUCT_STAT_ST_RDEV
 
+/* Define if struct timespec is declared in <time.h>. */
+#undef HAVE_STRUCT_TIMESPEC
+
 /* Define to 1 if you have the <syslog.h> header file. */
 #undef HAVE_SYSLOG_H
 
@@ -713,6 +720,10 @@
 
 /* Define to 1 if you have the ANSI C header files. */
 #undef STDC_HEADERS
+
+/* Define to be the nanoseconds member of struct stat's st_mtim, if it exists.
+   */
+#undef ST_MTIM_NSEC
 
 /* Enable support for the pre 1.12.1 *info scripting hook format strings.
    Disable this option for a smaller executable once your scripting hooks have
