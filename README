@@ -61,7 +61,7 @@ understand how to parse older RCS formats, but cannot do any of the fancier
 features (like vendor branch support) without RCS branch support.
 
 This version of CVS can access repositories on a remote machine.  See
-remote-FAQ for more information.
+REMOTE-CVS-FAQ for more information.
 
 Short blurb from the manual page (larger blurb is included there):
      cvs is a front end to the  rcs(1)  revision  control  system
@@ -122,10 +122,12 @@ list.  Anyway, the mailing lists are:
 	remote-cvs@cyclic.com
 		Questions, bugs, porting problems, hints, or whatever
 		can be sent to this address.  A Frequently Asked
-		Questions (FAQ) may be available from host "think.com"
-		in the "/pub/cvs" directory.  Please consult the FAQ
-		before sending questions to remote-cvs.  DO NOT SEND
-		ADDITION AND REMOVAL REQUESTS TO THIS ALIAS.
+		Questions (FAQ) file for remote CVS is in the file
+		REMOTE-CVS-FAQ in this directory.  A full FAQ on CVS
+		may be available from host "think.com" in the
+		"/pub/cvs" directory.  Please consult the FAQ before
+		sending questions to remote-cvs.  DO NOT SEND ADDITION
+		AND REMOVAL REQUESTS TO THIS ALIAS.
 
 The following lists handle the non-remote distribution of CVS.  Send
 messages to this list only if you are pretty sure your question/
