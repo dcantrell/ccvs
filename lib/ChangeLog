@@ -1,3 +1,7 @@
+2004-05-14  Derek Price  <derek@ximbiot.com>
+
+	* gettime.c, nanosleep.c: Updated from GNULIB.
+
 2004-05-03  Mark D. Baushke  <mdb@cvshome.org>
 
 	* Makefile.in (check-TESTS): Correct the script to deal with some
