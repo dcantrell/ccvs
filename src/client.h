@@ -44,13 +44,10 @@ extern int client_prune_dirs;
 extern FILE *to_server;
 /* Stream to read from the server.  */
 extern FILE *from_server;
-/* Process ID of rsh subprocess.  */
-extern int rsh_pid;
 
 /* Internal functions that handle client communication to server, etc.  */
-
-void
-option_with_arg PROTO((char *option, char *arg));
+int supported_request PROTO ((char *));
+void option_with_arg PROTO((char *option, char *arg));
 
 /* Get the responses and then close the connection.  */
 extern int get_responses_and_close PROTO((void));
