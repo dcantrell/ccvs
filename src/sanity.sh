@@ -14667,8 +14667,24 @@ else
     exit 1
 fi
 EOF
-	  chmod +x ${TESTDIR}/vscript
-	  echo "^first-dir ${TESTDIR}/vscript" >>verifymsg
+	  cat >${TESTDIR}/vscript2 <<EOF
+#!${TESTSHELL}
+if test -f CVS/Repository; then
+	repo=\`cat CVS/Repository\`
+else
+	repo=\`pwd\`
+fi
+echo \$repo
+if echo "\$repo" |grep yet-another/ >/dev/null 2>&1; then
+	exit 1
+else
+	exit 0
+fi
+EOF
+	  chmod +x ${TESTDIR}/vscript*
+	  echo "^first-dir/yet-another\\(/\\|\$\\) ${TESTDIR}/vscript2" >>verifymsg
+	  echo "^first-dir\\(/\\|\$\\) ${TESTDIR}/vscript" >>verifymsg
+	  # first test the directory independant verifymsg
 	  dotest info-v1 "${testcvs} -q ci -m add-verification" \
 "Checking in verifymsg;
 ${CVSROOT_DIRNAME}/CVSROOT/verifymsg,v  <--  verifymsg
@@ -14691,6 +14707,8 @@ EOF
 ${CVSROOT_DIRNAME}/first-dir/file1,v  <--  file1
 new revision: 1\.4; previous revision: 1\.3
 done"
+	  rm ${TESTDIR}/comment.tmp
+
 	  cd ..
 	  mkdir another-dir
 	  cd another-dir
@@ -14699,9 +14717,46 @@ done"
 	    "${testcvs} import -m bogus first-dir/another x y" \
 "No BugId found\.
 ${PROG} \[[a-z]* aborted\]: Message verification failed"
+
+	  # now verify that directory dependent verifymsgs work
+	  dotest info-v5 \
+	    "${testcvs} import -m bogus first-dir/yet-another x y" \
+"${TESTDIR}/wnt/another-dir
+N first-dir/yet-another/file2
+
+No conflicts created by this import" \
+"${CVSROOT_DIRNAME}/first-dir/yet-another
+N first-dir/yet-another/file2
+
+No conflicts created by this import"
+
+	  # FIXMECVS
+	  #
+	  # note that in the local case the error message is the same as
+	  # info-v5
+	  #
+	  # This means that the verifymsg scripts cannot reliably and
+	  # consistantly obtain information on which directory is being
+	  # committed to.  Thus it is currently useless for them to be
+	  # running in every dir.  They should either be run once or
+	  # directory information should be passed.
+	  if $remote; then
+	    dotest_fail info-v6r \
+	      "${testcvs} import -m bogus first-dir/yet-another/and-another x y" \
+"${CVSROOT_DIRNAME}/first-dir/yet-another/and-another
+${PROG} \[[a-z]* aborted\]: Message verification failed"
+	  else
+	    dotest info-v6 \
+	      "${testcvs} import -m bogus first-dir/yet-another/and-another x y" \
+"${TESTDIR}/wnt/another-dir
+N first-dir/yet-another/and-another/file2
+
+No conflicts created by this import"
+	  fi
 	  rm file2
 	  cd ..
 	  rmdir another-dir
+
 
 	  cd CVSROOT
 	  echo '# do nothing' >verifymsg
@@ -14711,6 +14766,7 @@ ${CVSROOT_DIRNAME}/CVSROOT/verifymsg,v  <--  verifymsg
 new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
 done
 ${PROG} [a-z]*: Rebuilding administrative file database"
+	  rm ${TESTDIR}/vscript*
 	  cd ..
 
 	  dotest_fail info-cleanup-0 "${testcvs} -n release -d CVSROOT" \
