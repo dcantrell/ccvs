@@ -1,3 +1,8 @@
+13 Mar 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* filesubr.c (get_homedir): Allocate pathbuf; removes arbitrary
+	limit.
+
 Wed Mar 12 16:10:01 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* filesubr.c (get_homedir): Expand comment about HOME
