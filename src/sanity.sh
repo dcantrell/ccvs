@@ -11681,6 +11681,28 @@ description:
 ${log_rev3}
 ${log_trailer}"
 
+	  dotest log-14a "${testcvs} log -rHEAD file1" \
+"${log_header}
+${log_tags}
+${log_header2}
+total revisions: 5;	selected revisions: 1
+description:
+${log_rev3}
+${log_trailer}"
+
+	  # The user might not realize that "-r" must not take a space.
+	  # In the error message, HEAD is a file name, not a tag name (which
+	  # might be confusing itself).
+	  dotest_fail log-14b "${testcvs} log -r HEAD file1" \
+"${PROG} [a-z]*: nothing known about HEAD
+${log_header}
+${log_tags}
+${log_header2}
+total revisions: 5;	selected revisions: 1
+description:
+${log_rev3}
+${log_trailer}"
+
 	  dotest log-15 "${testcvs} log -r1.2 file1" \
 "${log_header}
 ${log_tags}
