@@ -1,5 +1,9 @@
 2004-04-27  Derek Price  <derek@ximbiot.com>
 
+	* dos.m4: Update from GNULIB.
+
+2004-04-27  Derek Price  <derek@ximbiot.com>
+
 	Add dirname module from GNULIB.
 
 	* Makefile.am (EXTRA_DIST): Add new files.
