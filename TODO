@@ -404,3 +404,6 @@ cut it, because it is inclusive on the bar end.  I'm not sure that is
 ever a useful or logical behavior ("cvs diff -r foo -r bar" is not
 similarly inclusive), but is compatibility an issue?
 
+183.  "cvs status" should report on Entries.Static flag and CVS/Tag (how?
+maybe a "cvs status -d" to give directory status?).  There should also
+be more documentation of how these get set and how/when to re-set them.
