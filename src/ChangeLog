@@ -1,5 +1,8 @@
 Wed Oct 22 12:16:10 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* sanity.sh (reserved): Instead of looking for rcslock.pl in CVS
+	distribution, just use our own equivalent.
+
 	* rcs.c (RCS_rewrite): Call ferror before fclose to avoid "Invalid
 	argument" warnings.
 

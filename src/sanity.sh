@@ -90,15 +90,6 @@ case $1 in
 	;;
 esac
 
-# Find location of sanity.sh.  We only need to do this for the `rcslock'
-# tests, which need to figure out where rcslock is installed and so
-# have to examine other files in the source directory.
-wd=`pwd`
-srcdir=`dirname $0 | sed -e 's:^\./:$wd/:'`
-if test $srcdir = "." ; then
-  srcdir=$wd
-fi
-
 shift
 
 # Regexp to match what CVS will call itself in output that it prints.
@@ -9618,28 +9609,28 @@ date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
 add
 ============================================================================="
 
-	  # rcslock.pl tests.  This is kind of grungy because, among
-	  # other things, we can't run rcslock from the source
-	  # directory: it doesn't have a real interpreter pathname
-	  # until it's installed.  So we have to tickle Makefiles to
-	  # figure out *where* rcslock is installed, if at all; if it
-	  # can't be found, this test is skipped.  Also, we have to
-	  # muck with the repository's administrative files.
+	  # rcslock.pl tests.  Of course, the point isn't to test
+	  # rcslock.pl from the distribution but equivalent
+	  # functionality (for example, many sites may have an old
+	  # rcslock.pl).  The functionality of this hook falls
+	  # short of the real rcslock.pl though.
+	  # Note that we can use rlog or look at the RCS file directly,
+	  # but we can't use "cvs log" because "cvs commit" has a lock.
 
-	  makefile=$srcdir/../contrib/Makefile
-	  if ! test -f $makefile ; then
-	    echo "could not find $makefile; skipping rcslock tests"
-	  else
-	    prefix=`grep '^prefix' $makefile | sed -e 's/.*= //'`
-	    if test "X$prefix" = "X" ; then
-	      echo "could not find 'prefix' setting in $makefile; skipping rcslock tests"
-	    else
-	      installdir=$prefix/lib/cvs/contrib
-	      rcslock=$installdir/rcslock
-	      if ! test -x $rcslock ; then
-		echo "could not find $rcslock; skipping rcslock tests"
-		echo "rcslock must be installed in $installdir before it can be tested"
-	      else
+	  cat >${TESTDIR}/lockme <<EOF
+#!/bin/sh
+line=\`grep <\$1/\$2,v 'locks ${username}:1\.[0-9];'\`
+if test -z "\$line"; then
+  # It isn't locked
+  exit 0
+else
+  user=\`echo \$line | sed -e 's/locks \\(${username}\\):[0-9.]*;.*/\\1/'\`
+  version=\`echo \$line | sed -e 's/locks ${username}:\\([0-9.]*\\);.*/\\1/'\`
+  echo "\$user has file a-lock locked for version  \$version"
+  exit 1
+fi
+EOF
+	  chmod +x ${TESTDIR}/lockme
 		echo stuff > a-lock
 		dotest reserved-9 "${testcvs} add a-lock" \
 "${PROG} [a-z]*: scheduling file .a-lock. for addition
@@ -9662,7 +9653,7 @@ done"
 		  fail reserved-11
 		fi
 		cd CVSROOT
-		echo "DEFAULT $rcslock" >>commitinfo
+		echo "DEFAULT ${TESTDIR}/lockme" >>commitinfo
 		dotest reserved-12 "${testcvs} -q ci -m rcslock commitinfo" \
 "Checking in commitinfo;
 ${TESTDIR}/cvsroot/CVSROOT/commitinfo,v  <--  commitinfo
@@ -9678,7 +9669,7 @@ ${PROG} [a-z]*: Rebuilding administrative file database"
 		dotest reserved-13 "mv a-lock,v ${TESTDIR}/cvsroot/first-dir/a-lock,v"
 		chmod 444 ${TESTDIR}/cvsroot/first-dir/a-lock,v
 		echo more stuff >> a-lock
-		dotest_fail reserved-13 "${testcvs} ci -m '' a-lock" \
+		dotest_fail reserved-13b "${testcvs} ci -m '' a-lock" \
 "fred has file a-lock locked for version  1\.1
 ${PROG} [a-z]*: Pre-commit check failed
 ${PROG} \[[a-z]* aborted\]: correct above errors first!"
@@ -9700,12 +9691,10 @@ done"
 deleting revision 1\.2
 done"
 		cd ..; rm -r CVSROOT; cd first-dir
-	      fi
-	    fi
-	  fi
 
 	  cd ../..
 	  rm -r 1
+	  rm ${TESTDIR}/lockme
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
 	  ;;
 
