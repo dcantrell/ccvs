@@ -1,3 +1,10 @@
+2004-01-30  Derek Price  <derek@ximbiot.com>
+
+	Close issue #146.
+	* cvs.1: Reference `cvs --help diff' rather than the rcsdiff man page.
+	Use consistent spelling of `initialization'.
+	(Patch from (Ville Skyttä <scop@cvshome.org>.)
+
 2003-11-25  Mark D. Baushke  <mdb@cvshome.org>
 
 	* Makefile.in: Regenerate for new configure.in.
