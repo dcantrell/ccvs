@@ -1,5 +1,8 @@
 Thu Sep 11 10:09:04 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* commit.c (classify_file_internal): Add comment about saving
+	quiet vs. saving really_quiet.
+
 	* sanity.sh (newb-123j0): Use two regexps instead of assuming that
 	expr has "\(", "\|", and "\)".  If we want to require the latter,
 	we should check for it up front, rather than let people get
