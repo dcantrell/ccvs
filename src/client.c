@@ -4549,24 +4549,26 @@ send_fileproc (callerdat, finfo)
 
     if (vers->vn_user != NULL)
     {
-	char *tmp;
-
-	tmp = xmalloc (strlen (filename) + strlen (vers->vn_user)
-		       + strlen (vers->options) + 200);
-	sprintf (tmp, "Entry /%s/%s/%s%s/%s/", 
-		 filename, vers->vn_user,
-		 vers->ts_conflict == NULL ? "" : "+",
-		 (vers->ts_conflict == NULL ? ""
-		  : (vers->ts_user != NULL &&
-		     strcmp (vers->ts_conflict, vers->ts_user) == 0
-		     ? "="
-		     : "modified")),
-		 vers->options);
-
 	/* The Entries request.  */
-	/* Not sure about whether this deals with -k and stuff right.  */
-	send_to_server (tmp, 0);
-        free (tmp);
+	send_to_server ("Entry /", 0);
+	send_to_server (filename, 0);
+	send_to_server ("/", 0);
+	send_to_server (vers->vn_user, 0);
+	send_to_server ("/", 0);
+	if (vers->ts_conflict != NULL)
+	{
+	    if (vers->ts_user != NULL &&
+		strcmp (vers->ts_conflict, vers->ts_user) == 0)
+		send_to_server ("+=", 0);
+	    else
+		send_to_server ("+modified", 0);
+	}
+	send_to_server ("/", 0);
+	send_to_server (vers->entdata != NULL
+			? vers->entdata->options
+			: vers->options,
+			0);
+	send_to_server ("/", 0);
 	if (vers->entdata != NULL && vers->entdata->tag)
 	{
 	    send_to_server ("T", 0);

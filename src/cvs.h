@@ -298,8 +298,13 @@ struct entnode
     enum ent_type type;
     char *user;
     char *version;
+
+    /* Timestamp, or "" if none (never NULL).  */
     char *timestamp;
+
+    /* Keyword expansion options, or "" if none (never NULL).  */
     char *options;
+
     char *tag;
     char *date;
     char *conflict;
