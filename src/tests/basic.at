@@ -23,7 +23,7 @@ AT_CHECK([cvs -q status])
 AT_CHECK([cvs -q update .])
 AT_CHECK([cvs -q update ./])
 
-AT_CLEANUP
+AT_CLEANUP # Operations on empty projects
 
 
 
@@ -186,11 +186,16 @@ AT_CLEANUP # tag, update, & diff
 
 
 
-AT_CVS_SETUP([commit -r, diff -r, strange resurrections])
+AT_CVS_SETUP([strange revision numbers])
+
+AT_KEYWORDS([commit commit-r diff diff-r admin admin-o resurrection])
 
 AT_CVS_BASIC_START_PROJECT()
-echo "ssfile line 2" >>sdir/ssdir/ssfile
 
+AT_CHECK([cvs -q tag NOT_RESERVED],,[T sdir/ssdir/ssfile
+])
+
+echo "ssfile line 2" >>sdir/ssdir/ssfile
 AT_CHECK_NOESCAPE([cvs -q ci -m modify-it],,
 [Checking in sdir/ssdir/ssfile;
 $CVSROOT_DIR/project/sdir/ssdir/ssfile,v  <--  ssfile
@@ -290,7 +295,98 @@ new revision: 3.3; previous revision: 3.2
 done
 ])
 
-AT_CLEANUP
+# As long as we have a file with a few revisions, test
+# a few "cvs admin -o" invocations.
+cd sdir/ssdir
+AT_CHECK_NOESCAPE([cvs admin -o 1.2::1.2],[1],,
+[[$CPROG admin: while processing more than one file:
+$CPROG [admin aborted]: attempt to specify a numeric revision
+]])
+
+AT_CHECK_NOESCAPE([cvs admin -o 1.2::1.2 ssfile],,
+[RCS file: $CVSROOT_DIR/project/sdir/ssdir/ssfile,v
+done
+])
+
+AT_CHECK_NOESCAPE([cvs admin -o 1.1::NOT_RESERVED ssfile],,
+[RCS file: $CVSROOT_DIR/project/sdir/ssdir/ssfile,v
+done
+])
+
+AT_CHECK_NOESCAPE([cvs admin -o 1.1::NOT_EXIST ssfile],[1],
+[RCS file: ${CVSROOT_DIR}/project/sdir/ssdir/ssfile,v
+],
+[$SPROG admin: $CVSROOT_DIR/project/sdir/ssdir/ssfile,v: Revision NOT_EXIST doesn't exist.
+$SPROG admin: RCS file for \`ssfile' not modified.
+])
+
+AT_CHECK_NOESCAPE([cvs admin -o 1.2::1.3 ssfile],,
+[RCS file: $CVSROOT_DIR/project/sdir/ssdir/ssfile,v
+done
+])
+
+AT_CHECK_NOESCAPE([cvs admin -o 3.1:: ssfile],,
+[RCS file: $CVSROOT_DIR/project/sdir/ssdir/ssfile,v
+deleting revision 3.3
+deleting revision 3.2
+done
+])
+
+AT_CHECK_NOESCAPE([cvs admin -o ::1.1 ssfile],,
+[RCS file: $CVSROOT_DIR/project/sdir/ssdir/ssfile,v
+done
+])
+
+AT_CHECK_NOESCAPE([cvs -n admin -o 1.2::3.1 ssfile],,
+[RCS file: $CVSROOT_DIR/project/sdir/ssdir/ssfile,v
+deleting revision 2.0
+deleting revision 1.3
+done
+])
+
+AT_CHECK_NOESCAPE([cvs admin -o 1.2::3.1 ssfile],,
+[RCS file: $CVSROOT_DIR/project/sdir/ssdir/ssfile,v
+deleting revision 2.0
+deleting revision 1.3
+done
+])
+
+AT_CHECK_NOESCAPE([cvs admin -o 3.1.2: ssfile],,
+[RCS file: $CVSROOT_DIR/project/sdir/ssdir/ssfile,v
+deleting revision 3.1.2.1
+done
+])
+
+AT_CVS_CHECK_LOG([cvs log -N ssfile],,
+[
+RCS file: $CVSROOT_DIR/project/sdir/ssdir/ssfile,v
+Working file: ssfile
+head: 3.1
+branch:
+locks: strict
+access list:
+keyword substitution: kv
+total revisions: 3;	selected revisions: 3
+description:
+----------------------------
+revision 3.1
+date: DATE;  author: USERNAME;  state: Exp;  lines: +0 -0
+bump-it
+----------------------------
+revision 1.2
+date: DATE;  author: USERNAME;  state: Exp;  lines: +1 -0
+modify-it
+----------------------------
+revision 1.1
+date: DATE;  author: USERNAME;  state: Exp;
+add-it
+=============================================================================
+])
+
+AT_CHECK([cvs -q update -p -r 1.1 ./ssfile],,[ssfile
+])
+
+AT_CLEANUP # strange revision numbers
 
 
 
@@ -314,79 +410,4 @@ Annotations for sdir/ssdir/ssfile
 ***************
 ])
 
-AT_CLEANUP
-
-
-
-AT_CVS_SETUP([Resurrection])
-
-AT_CVS_BASIC_START_PROJECT()
-
-AT_CHECK([exit 77])
-
-	  # As long as we have a file with a few revisions, test
-	  # a few "cvs admin -o" invocations.
-	  cd sdir/ssdir
-	  dotest_fail basica-o1 "${testcvs} admin -o 1.2::1.2" \
-"${CPROG} admin: while processing more than one file:
-${CPROG} \[admin aborted\]: attempt to specify a numeric revision"
-	  dotest basica-o2 "${testcvs} admin -o 1.2::1.2 ssfile" \
-"RCS file: ${CVSROOT_DIR}/project/sdir/ssdir/ssfile,v
-done"
-	  dotest basica-o2a "${testcvs} admin -o 1.1::NOT_RESERVED ssfile" \
-"RCS file: ${CVSROOT_DIR}/project/sdir/ssdir/ssfile,v
-done"
-	  dotest_fail basica-o2b "${testcvs} admin -o 1.1::NOT_EXIST ssfile" \
-"RCS file: ${CVSROOT_DIR}/project/sdir/ssdir/ssfile,v
-${SPROG} [a-z]*: ${CVSROOT_DIR}/project/sdir/ssdir/ssfile,v: Revision NOT_EXIST doesn't exist.
-${SPROG} [a-z]*: RCS file for .ssfile. not modified\."
-	  dotest basica-o3 "${testcvs} admin -o 1.2::1.3 ssfile" \
-"RCS file: ${CVSROOT_DIR}/project/sdir/ssdir/ssfile,v
-done"
-	  dotest basica-o4 "${testcvs} admin -o 3.1:: ssfile" \
-"RCS file: ${CVSROOT_DIR}/project/sdir/ssdir/ssfile,v
-deleting revision 3\.3
-deleting revision 3\.2
-done"
-	  dotest basica-o5 "${testcvs} admin -o ::1.1 ssfile" \
-"RCS file: ${CVSROOT_DIR}/project/sdir/ssdir/ssfile,v
-done"
-	  dotest basica-o5a "${testcvs} -n admin -o 1.2::3.1 ssfile" \
-"RCS file: ${CVSROOT_DIR}/project/sdir/ssdir/ssfile,v
-deleting revision 2\.0
-deleting revision 1\.3
-done"
-	  dotest basica-o6 "${testcvs} admin -o 1.2::3.1 ssfile" \
-"RCS file: ${CVSROOT_DIR}/project/sdir/ssdir/ssfile,v
-deleting revision 2\.0
-deleting revision 1\.3
-done"
-	  dotest basica-o6a "${testcvs} admin -o 3.1.2: ssfile" \
-"RCS file: ${CVSROOT_DIR}/project/sdir/ssdir/ssfile,v
-deleting revision 3\.1\.2\.1
-done"
-	  dotest basica-o7 "${testcvs} log -N ssfile" "
-RCS file: ${CVSROOT_DIR}/project/sdir/ssdir/ssfile,v
-Working file: ssfile
-head: 3\.1
-branch:
-locks: strict
-access list:
-keyword substitution: kv
-total revisions: 3;	selected revisions: 3
-description:
-----------------------------
-revision 3\.1
-date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;  lines: ${PLUS}0 -0
-bump-it
-----------------------------
-revision 1\.2
-date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
-modify-it
-----------------------------
-revision 1\.1
-date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
-add-it
-============================================================================="
-	  dotest basica-o8 "${testcvs} -q update -p -r 1.1 ./ssfile" "ssfile"
-AT_CLEANUP
+AT_CLEANUP # annotate

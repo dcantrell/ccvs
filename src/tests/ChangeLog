@@ -1,5 +1,17 @@
 2003-11-07  Derek R. Price  <derek@ximbiot.com>
 
+	Import the rest of the basica tests.
+
+	* atspecific.m4 (AT_CVS_CHECK_NORMALIZED): Remove unecessary
+	normalization of stderr.
+	(AT_CVS_CHECK_ANNOTATE): Ditto.  Fix 8 character username algorithm.
+	Expand header comment.
+	(AT_CVS_CHECK_LOG): New function.
+	* basic.at: Import the last of hte basica tests.
+	* suite: Regenerated.
+
+2003-11-07  Derek R. Price  <derek@ximbiot.com>
+
 	No need to normalize the "server" string.  That has been fixed to
 	output normally.
 

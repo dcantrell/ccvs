@@ -172,20 +172,20 @@ dnl quotes make it through to the sed commands.
 [sed \
     -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
     -e "s/^P /U /" \
-    <stdout >nstdout
-sed \
-    -e "s/\<[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000\>/RFCDATE/" \
-    -e "s/^P /U /" \
-    <stderr >nstderr]
-rm stderr stdout
+    <stdout >nstdout]
+rm stdout
 
-AT_CHECK_NOESCAPE([(cat nstdout; cat nstderr >&2)],,[$3],[$4],[$5],[$6])
-rm nstderr nstdout])# AT_CVS_CHECK_NORMALIZED
+AT_CHECK_NOESCAPE([(cat nstdout; cat stderr >&2)],,[$3],[$4],[$5],[$6])
+rm stderr nstdout])# AT_CVS_CHECK_NORMALIZED
 
 
 
 # AT_CVS_CHECK_ANNOTATE(COMMANDS, [STATUS = 0], [STDOUT = ``''],
 #                       [STDERR = ``''], [RUN-IF-FAIL], [RUN-IF-PASS])
+#
+# Like AT_CVS_CHECK_NORMALIZED, but designed specifically for `cvs annotate'.
+# Specifically, replace the username date portion of each line annotation
+# with the string `USERNAME DATE'.
 # --------------------------------------------------------------------
 m4_defun([AT_CVS_CHECK_ANNOTATE],
 [AT_KEYWORDS([annotate])dnl
@@ -194,9 +194,7 @@ AT_CHECK([$as_cvs_have_username || exit 77])
 
 # Set $nsrname to $username normalized to account for the fact that most CVS
 # output is optimized to print $username in 8 characters.
-AS_IF([echo $username |awk -F '' '{if ($9) exit 1}'],
-      [nsrname=$username],
-      [nsrname=`echo "$username       " |sed 's/^\(........\).*$/\1/'`])
+nsrname=`echo "$username" |sed 's/^\(.\{1,8\}\).*$/\1/'`
 
 # Now for the actual test
 AT_CHECK([$1],[$2],[stdout],[stderr],[$5])
@@ -204,14 +202,43 @@ AT_CHECK([$1],[$2],[stdout],[stderr],[$5])
 # Normalize the output of the previous command
 dnl The sed commands below need to be quoted twice so that all the autotest
 dnl quotes make it through to the sed commands.
-[sed -e "s/($nsrname [0-9][0-9]-[A-Z][a-z][a-z]-[0-9][0-9])/(USERNAME DATE)/" \
-    <stdout >nstdout
-sed -e "s/($nsrname [0-9][0-9]-[A-Z][a-z][a-z]-[0-9][0-9])/(USERNAME DATE)/" \
-    <stderr >nstderr]
-rm stderr stdout
+[sed -e "s/($nsrname   [0-9][0-9]-[A-Z][a-z][a-z]-[0-9][0-9])/(USERNAME DATE)/" \
+    <stdout >nstdout]
+rm stdout
 
-AT_CHECK([(cat nstdout; cat nstderr >&2)],,[$3],[$4],[$5],[$6])
-rm nstderr nstdout])# AT_CVS_CHECK_ANNOTATE
+AT_CHECK([(cat nstdout; cat stderr >&2)],,[$3],[$4],[$5],[$6])
+rm stderr nstdout])# AT_CVS_CHECK_ANNOTATE
+
+
+
+# AT_CVS_CHECK_LOG(COMMANDS, [STATUS = 0], [STDOUT = ``''],
+#                  [STDERR = ``''], [RUN-IF-FAIL], [RUN-IF-PASS])
+#
+# Like AT_CVS_CHECK_NORMALIZED, but specifically for testing `cvs log'.
+# Specifically, this replaces dates with the string `DATE' and the current
+# username in the author field with the string `USERNAME'.
+# --------------------------------------------------------------------
+m4_defun([AT_CVS_CHECK_LOG],
+[AT_KEYWORDS([log])dnl
+# Skip this group if we don't know our username
+AT_CHECK([$as_cvs_have_username || exit 77])
+
+# Set $nsrname to $username normalized to account for the fact that most CVS
+# output is optimized to print $username in 8 characters.
+nsrname=`echo "$username" |sed 's/^\(.\{1,8\}\).*$/\1/'`
+
+# Now for the actual test
+AT_CHECK([$1],[$2],[stdout],[stderr],[$5])
+
+# Normalize the output of the previous command
+dnl The sed commands below need to be quoted twice so that all the autotest
+dnl quotes make it through to the sed commands.
+[sed -e "s,^date: 2[0-9][0-9][0-9]/[01][0-9]/[0-3][0-9] [0-2][0-9]:[0-6][0-9]:[0-6][0-9];  author: $nsrname;  ,date: DATE;  author: USERNAME;  ," \
+    <stdout >nstdout]
+rm stdout
+
+AT_CHECK_NOESCAPE([(cat nstdout; cat stderr >&2)],,[$3],[$4],[$5],[$6])
+rm stderr nstdout])# AT_CVS_CHECK_LOG
 
 
 
