@@ -69,3 +69,9 @@
 
 !ENDIF 
 
+!IF  "$(CFG)" == "libcvs - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "libcvs - Win32 Debug"
+
+!ENDIF 
+
