@@ -216,6 +216,8 @@ int client_active;
 
 int client_prune_dirs;
 
+static int cvsroot_parsed = 0;
+
 /* Set server_host and server_cvsroot.  */
 static void
 parse_cvsroot ()
@@ -225,6 +227,9 @@ parse_cvsroot ()
     static char *access_method;
 #endif /* AUTH_CLIENT_SUPPORT */
 
+    /* Don't go through the trouble twice. */
+    if (cvsroot_parsed)
+      return;
 
     server_host = xstrdup (CVSroot);
 
@@ -278,6 +283,7 @@ parse_cvsroot ()
     }
  			
     client_active = 1;
+    cvsroot_parsed = 1;
 }
 
 #ifdef NO_SOCKET_TO_FD
@@ -2434,15 +2440,30 @@ auth_server_port_number ()
 }
 
 
-void
-connect_to_pserver (tofdp, fromfdp)
+/*
+ * Connect to the authenticating server.
+ *
+ * If VERIFY_ONLY is non-zero, then just verify that the password is
+ * correct and then shutdown the connection.  In this case, the return
+ * values is 1 if the password was correct, 0 if not.
+ *
+ * If VERIFY_ONLY is 0, then really connect to the server.  In this
+ * case the return value is 1 on succees, but is probably ignored.  If
+ * fail to connect, then die with error.
+ */
+int
+connect_to_pserver (tofdp, fromfdp, verify_only)
      int *tofdp, *fromfdp;
+     int verify_only;
 {
   int sock;
   int tofd, fromfd;
   int port_number;
   struct hostent *host;
   struct sockaddr_in client_sai;
+
+  /* Does nothing if already called before now. */
+  parse_cvsroot ();
 
   sock = socket (AF_INET, SOCK_STREAM, 0);
   if (sock == -1)
@@ -2458,11 +2479,22 @@ connect_to_pserver (tofdp, fromfdp)
   {
     int i;
     char ch, read_buf[PATH_MAX];
-    char *begin      = "BEGIN AUTH REQUEST\n";
+    char *begin      = NULL;
     char *repository = server_cvsroot;
     char *username   = server_user;
     char *password   = NULL;
-    char *end        = "END AUTH REQUEST\n";
+    char *end        = NULL;
+
+    if (verify_only)
+      {
+        begin = "BEGIN VERIFICATION REQUEST\n";
+        end   = "END VERIFICATION REQUEST\n";
+      }
+    else
+      {
+        begin = "BEGIN AUTH REQUEST\n";
+        end   = "END AUTH REQUEST\n";
+      }
 
     /* Get the password, probably from ~/.cvspass. */
     password = get_cvs_password (server_user, server_host, server_cvsroot);
@@ -2503,7 +2535,7 @@ connect_to_pserver (tofdp, fromfdp)
       }
 
     if (strcmp (read_buf, "I HATE YOU\n") == 0)
-    {
+      {
         /* Authorization not granted. */
         if (shutdown (sock, 2) < 0)
           {
@@ -2513,40 +2545,55 @@ connect_to_pserver (tofdp, fromfdp)
             error (1, errno,
                    "shutdown() failed (server %s)", server_host);
           }
-        error (1, 0, 
-               "authorization failed: server %s rejected access", 
-               server_host);
-    }     
+   
+        if (verify_only)
+          return 0;
+        else
+          error (1, 0, 
+                 "authorization failed: server %s rejected access", 
+                 server_host);
+      }     
     else if (strcmp (read_buf, "I LOVE YOU\n") != 0)
-    {
+      {
         /* Unrecognized response from server. */
         if (shutdown (sock, 2) < 0)
           {
             error (0, 0,
                    "unrecognized auth response from %s: %s", 
                    server_host, read_buf);
-            error (1, errno, "shutdown() failed", server_host);
+            error (1, errno, "shutdown() failed, server %s", server_host);
           }
         error (1, 0, 
                "unrecognized auth response from %s: %s", 
                server_host, read_buf);
-    }
+      }
   }
 
+  if (verify_only)
+    {
+      if (shutdown (sock, 2) < 0)
+        error (0, errno, "shutdown() failed, server %s", server_host);
+      return 1;
+    }
+  else
+    {
 #ifdef NO_SOCKET_TO_FD
-  use_socket_style = 1;
-  server_sock = sock;
-  /* Try to break mistaken callers: */
-  *tofdp = 0;
-  *fromfdp = 0;
+      use_socket_style = 1;
+      server_sock = sock;
+      /* Try to break mistaken callers: */
+      *tofdp = 0;
+      *fromfdp = 0;
 #else /* ! NO_SOCKET_TO_FD */
-  server_fd = sock;
-  close_on_exec (server_fd);
-  tofd = fromfd = sock;
-  /* Hand them back to the caller. */
-  *tofdp   = tofd;
-  *fromfdp = fromfd;
+      server_fd = sock;
+      close_on_exec (server_fd);
+      tofd = fromfd = sock;
+      /* Hand them back to the caller. */
+      *tofdp   = tofd;
+      *fromfdp = fromfd;
 #endif /* NO_SOCKET_TO_FD */
+    }
+
+  return 1;
 }
 #endif /* AUTH_CLIENT_SUPPORT */
 
@@ -2703,7 +2750,9 @@ start_server ()
 #ifdef AUTH_CLIENT_SUPPORT
     if (use_authenticating_server)
       {
-        connect_to_pserver (&tofd, &fromfd);
+        /* Toss the return value.  It will die with error if anything
+           goes wrong anyway. */
+        connect_to_pserver (&tofd, &fromfd, 0);
       }
     else
 #endif /* AUTH_CLIENT_SUPPORT */

@@ -24,6 +24,8 @@ USE(rcsid);
 #define CVS_PASSWORD_FILE ".cvspass"
 #endif
 
+/* If non-NULL, get_cvs_password() will just return this. */
+static char *cvs_password = NULL;
 
 /* The return value will need to be freed. */
 char *
@@ -31,6 +33,10 @@ construct_cvspass_filename ()
 {
   char *homedir;
   char *passfile;
+
+  /* Environment should override file. */
+  if ((passfile = getenv ("CVS_PASSFILE")) != NULL)
+    return xstrdup (passfile);
 
   /* Construct absolute pathname to user's password file. */
   /* todo: does this work under Win-NT and OS/2 ? */
@@ -123,20 +129,48 @@ login (argc, argv)
 
   /* Check to make sure it's fully-qualified before going on. 
    * Fully qualified in this context means it has both a user and a
-   * host portion.
+   * host:repos portion.
    */
-  if (! CVSroot)
-    {
+  {
+    char *r, *p;
+
+    /* After confirming that CVSroot is non-NULL, we skip past the
+       initial ":pserver:" to test the rest of it. */
+
+    if (! CVSroot)
       error (1, 0, "CVSroot is NULL");
-    }
-  else if ((! strchr (CVSroot, '@')) || (! strchr (CVSroot, ':')))
-    {
-      error (1, 0, "CVSroot not fully-qualified: %s", CVSroot);
-    }
-
-
+    else if (! strchr ((r = (CVSroot + strlen (":pserver:"))), '@'))
+      {
+        error (0, 0, "*** it is : %s", r);
+        goto not_fqrn;
+      }
+    else if (! strchr (r, ':'))
+      {
+        error (0, 0, "*** it is : %s", r);
+        goto not_fqrn;
+      }
+    
+    if (0)        /* Lovely. */
+      {
+      not_fqrn:
+        error (0, 0, "CVSroot not fully-qualified: %s", CVSroot);
+        error (1, 0, "should be format user@host:/path/to/repository");
+      }
+  }
+    
   passfile = construct_cvspass_filename ();
   typed_password = getpass ("Enter CVS password: ");
+  scramble (typed_password);
+
+  /* Force get_cvs_password() to use this one, instead of consulting
+     the file. */
+  cvs_password = xstrdup (typed_password);
+
+  if (connect_to_pserver (NULL, NULL, 1) == 0)
+    {
+      /* The password is wrong, according to the server. */
+      error (1, 0, "incorrect password");
+    }
 
   /* IF we have a password for this "[user@]host:/path" already
    *  THEN
@@ -246,13 +280,14 @@ login (argc, argv)
   memset (typed_password, 0, strlen (typed_password));
 
   free (passfile);
+  free (cvs_password);
+  cvs_password = NULL;
   return 0;
 }
 
 /* todo: "cvs logout" could erase an entry from the file.
  * But to what purpose?
  */
-
 
 char *
 get_cvs_password ()
@@ -265,13 +300,23 @@ get_cvs_password ()
   FILE *fp;
   char *passfile;
 
+  /* If someone (i.e., login()) is calling connect_to_pserver() out of
+     context, then assume they have supplied the correct password. */
+  if (cvs_password)
+    return cvs_password;
+
+  /* Environment should override file. */
+  if ((password = getenv ("CVS_PASSWORD")) != NULL)
+    return xstrdup (password);
+
+  /* Else get it from the file. */
   passfile = construct_cvspass_filename ();
   fp = fopen (passfile, "r");
   if (fp == NULL)
     {
       error (0, errno, "could not open %s", passfile);
       free (passfile);
-      goto prompt_for_it;
+      error (1, 0, "use \"cvs login\" to log in first");
     }
 
   root_len = strlen (CVSroot);
@@ -309,8 +354,9 @@ get_cvs_password ()
     }
   else
     {
-    prompt_for_it:
-      return getpass ("CVS password: ");
+      error (0, 0, "cannot find password");
+      error (0, 0, "use \"cvs login\" to log in first");
+      error (1, 0, "or set the CVS_PASSWORD environment variable");
     }
   free (linebuf);
 }

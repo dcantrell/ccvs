@@ -4206,7 +4206,8 @@ authenticate_connection ()
   char password[PATH_MAX];
   char server_user[PATH_MAX];
   struct passwd *pw;
-  
+  int verify_and_exit = 0;
+
   /* The Authentication Protocol.  Client sends:
    *
    *   BEGIN AUTH REQUEST\n
@@ -4225,6 +4226,20 @@ authenticate_connection ()
    *
    * if it denies access (and it exits if denying).
    *
+   * When the client is "cvs login", no repository access is needed,
+   * but the client would like to confirm the password with the
+   * server.  In this case, the start and stop strings are
+   *
+   *   BEGIN VERIFICATION REQUEST\n
+   *
+   *            and
+   *
+   *   END VERIFICATION REQUEST\n
+   *
+   * On a verification request, the server's responses are the same
+   * (with the obvious semantics), but it exits immediately after
+   * sending the response.
+   *
    * Note that the actual client/server protocol has not started up
    * yet, because we haven't authenticated!  Therefore, there are
    * certain things we can't take for granted.  For example, don't use
@@ -4242,7 +4257,12 @@ authenticate_connection ()
 
   /* Make sure the protocol starts off on the right foot... */
   fgets (tmp, PATH_MAX, stdin);
-  if (strcmp (tmp, "BEGIN AUTH REQUEST\n"))
+
+  if (strcmp (tmp, "BEGIN VERIFICATION REQUEST\n") == 0)
+    {
+      verify_and_exit = 1;
+    }
+  else if (strcmp (tmp, "BEGIN AUTH REQUEST\n") != 0)
     {
       printf ("error: bad auth protocol start: %s", tmp);
       fflush (stdout);
@@ -4261,12 +4281,18 @@ authenticate_connection ()
 
   /* ... and make sure the protocol ends on the right foot. */
   fgets (tmp, PATH_MAX, stdin);
-  if (strcmp (tmp, "END AUTH REQUEST\n"))
+  if (strcmp (tmp,
+              verify_and_exit ?
+              "END VERIFICATION REQUEST\n" : "END AUTH REQUEST\n")
+           != 0)
     {
       printf ("error: bad auth protocol end: %s", tmp);
       fflush (stdout);
       exit (1);
     }
+
+  /* We need the real cleartext before we hash it. */
+  descramble (password);
 
   if (check_password (username, password, repository))
     {
@@ -4280,7 +4306,11 @@ authenticate_connection ()
       exit (1);
     }
   
-  /* Do everything that kerberos did. */
+  /* Don't go any farther if we're just responding to "cvs login". */
+  if (verify_and_exit)
+    exit (0);
+
+  /* Switch to run as this user. */
   pw = getpwnam (username);
   if (pw == NULL)
     {
