@@ -4275,17 +4275,14 @@ ac_given_srcdir=$srcdir
 ac_given_INSTALL="$INSTALL"
 
 trap 'rm -fr `echo "Makefile \
-	  cvs.spec \
 	  contrib/Makefile \
 	  diff/Makefile \
 	  doc/Makefile \
-	  doc/CVSvn.texi \
 	  emx/Makefile \
 	  lib/Makefile \
 	  man/Makefile \
 	  os2/Makefile \
 	  src/Makefile \
-	  src/version.c \
 	  tools/Makefile \
 	  vms/Makefile \
 	  windows-NT/Makefile \
@@ -4399,17 +4396,14 @@ EOF
 cat >> $CONFIG_STATUS <<EOF
 
 CONFIG_FILES=\${CONFIG_FILES-"Makefile \
-	  cvs.spec \
 	  contrib/Makefile \
 	  diff/Makefile \
 	  doc/Makefile \
-	  doc/CVSvn.texi \
 	  emx/Makefile \
 	  lib/Makefile \
 	  man/Makefile \
 	  os2/Makefile \
 	  src/Makefile \
-	  src/version.c \
 	  tools/Makefile \
 	  vms/Makefile \
 	  windows-NT/Makefile \
