@@ -1,3 +1,8 @@
+Fri Jun 20 17:00:20 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (Error messages): Add "binary files differ" when
+	trying to check in a binary file.
+
 Fri Jun 20 14:01:23 1997  David J MacKenzie  <djm@va.pubnix.com>
 			  and Jim Kingdon  <kingdon@harvey.cyclic.com>
 
