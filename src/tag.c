@@ -221,7 +221,7 @@ check_fileproc (finfo)
 				      finfo->update_dir, 0);
 	if ((status != T_UPTODATE) && (status != T_CHECKOUT))
 	{
-	    error (0, 0, "%s is not up-to-date", finfo->file);
+	    error (0, 0, "%s is locally modified", finfo->fullname);
 	    return (1);
 	}
     }
