@@ -75,19 +75,19 @@ cat >getdate-expected <<EOF
 Enter date, or blank line to exit.
 	> Bad format - couldn't convert.
 	> Bad format - couldn't convert.
-	> 1972-12-05 00:00:00.000000000
-	> 1974-03-29 00:00:00.000000000
-	> 1996-05-12 13:57:45.000000000
-	> 2012-05-12 00:00:00.000000000
-	> 1996-05-12 00:00:00.000000000
+	> Bad format - couldn't convert.
+	> Fri Mar 29 00:00:00 1974
+	> Sun May 12 13:57:45 1996
+	> Sat May 12 00:00:00 2012
+	> Sun May 12 00:00:00 1996
 	> Bad format - couldn't convert.
 	> Bad format - couldn't convert.
-	> 1970-01-01 02:00:00.000000000
+	> Thu Jan  1 02:00:00 1970
 	> Bad format - couldn't convert.
-	> 1969-12-31 22:00:00.000000000
 	> Bad format - couldn't convert.
-	> 1970-01-01 06:00:00.000000000
-	> 1997-01-12 00:00:00.000000000
+	> Bad format - couldn't convert.
+	> Thu Jan  1 06:00:00 1970
+	> Sun Jan 12 00:00:00 1997
 	> 
 EOF
 

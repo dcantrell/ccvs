@@ -90,6 +90,21 @@ EXTRA_DIST = \
 	libcvs.dep libcvs.dsp libcvs.mak \
 	xgssapi.h
 
+TESTS =
+MOSTLYCLEANFILES =
+check_PROGRAMS =
+
+# Test GNULIB getdate module.
+TESTS += test-getdate.sh
+MOSTLYCLEANFILES += getdate-expected getdate-got getdate.diff
+# Program required by test-getdate.sh for testing getdate.y.
+check_PROGRAMS += getdate
+EXTRA_DIST += $(check_PROGRAMS)
+getdate_SOURCES = getdate.y
+getdate_CPPFLAGS = -DTEST
+##getdate_LDADD = \
+##	$(noinst_LIBRARIES)
+
 # For the xsize module from GNULIB.
 libcvs_a_SOURCES += xsize.h
 
