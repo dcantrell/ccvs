@@ -5,6 +5,13 @@ Wed May  8 14:06:24 1996  Greg A. Woods  <woods@most.weird.com>
 Wed May  8 13:46:56 1996  Greg A. Woods  <woods@most.weird.com>
 
 	* sanity.sh (expr): - make a valiant attempt to find GNU expr
+	- Patch from Larry Jones:
+	sanity test deep-4 failed with "expr: arg list too long"
+	sanity test 56 failed because the stderr and stdout output was not
+	interleaved as expected.
+	sanity test modules-155a4 failed with "ls: illegal option -- 1"
+
+	* main.c (main): - Patch from Larry Jones for SysV setvbuf
 
 Tue May  7 16:41:16 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
