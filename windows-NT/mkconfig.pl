@@ -112,7 +112,7 @@ sub make_config_h
     my %build_macros;
     while (<FINP>)
     {
-	if (/^\s*#\s*define\s*(\w+)\s*(.*)/)
+	if (/^\s*#\s*define\s*(\w+)(\s+(.+))?$/)
 	{
 	    if (exists $build_macros{$1})
 	    {
@@ -120,10 +120,10 @@ sub make_config_h
 	    }
 	    else
 	    {
-		$build_macros{$1} = [$., "d", $2];
+		$build_macros{$1} = [$., "d", $3];
 	    }
 	}
-	elsif (/^\s*#\s*undef\s*(\w+)/)
+	elsif (/^\s*#\s*undef\s+(\w+)/)
 	{
 	    if (exists $build_macros{$1})
 	    {
@@ -177,7 +177,7 @@ EOF
 
 	my $out_line = $_;
 
-	if (/^\s*#\s*undef\s*(\w+)/)
+	if (/^\s*#\s*undef\s+(\w+)/)
 	{
 	    if (exists $ph_macros{$1})
 	    {
@@ -194,7 +194,7 @@ EOF
 		$out_line = "#define $1";
 
 		$out_line .= " " . $build_macros{$1}[2]
-		    if $build_macros{$1}[2];
+		    if defined $build_macros{$1}[2];
 
 		$out_line .= "\n";
 	    }
