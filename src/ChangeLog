@@ -9,6 +9,16 @@
 
 2003-06-13  Derek Price  <derek@ximbiot.com>
 
+	* subr.c (file_has_conflict): Fix comment.
+	(Patch from Paul Edwards <kerravon@w3.to>.)
+
+2003-06-13  Derek Price  <derek@ximbiot.com>
+
+	* subr.c (xrealloc): Trivial comment fix.
+	(Patch from Kenneth Lorber <keni@his.com>.)
+
+2003-06-13  Derek Price  <derek@ximbiot.com>
+
 	* diff.c (diff_fileproc): Fix memory leak.
 	(Patch from Kenneth Lorber <keni@his.com>.)
 

@@ -1,5 +1,13 @@
 2003-06-16  Derek Price  <derek@ximbiot.com>
 
+	* cvs.texinfo (splitrcskeyword): New macro, now that @ifhtml will work
+	properly with texi2html (as of version 1.68), to cause output HTML to
+	contain <i></i> where we used to have @asis{} and prevent RCS keyword
+	substitution in generated HTML.
+	(Original patch from Patrice Dumas <dumas@centre-cired.fr>.)
+
+2003-06-16  Derek Price  <derek@ximbiot.com>
+
 	* stamp-vti: Regenerated.
 	* version.texi: Ditto.
 

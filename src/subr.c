@@ -52,7 +52,7 @@ xmalloc (bytes)
 /*
  * realloc data and die if it fails [I've always wanted to have "realloc" do
  * a "malloc" if the argument is NULL, but you can't depend on it.  Here, I
- * can *force* it.
+ * can *force* it.]
  */
 void *
 xrealloc (ptr, bytes)
@@ -572,7 +572,7 @@ make_message_rcsvalid (message)
  * RETURNS
  *  TRUE	ts_conflict matches the current timestamp.
  *  FALSE	The ts_conflict field does not match the file's
- *		timestamp does not match.
+ *		timestamp.
  */
 int
 file_has_conflict (finfo, ts_conflict)
