@@ -1,3 +1,7 @@
+Mon Jun  3 07:26:35 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* version.c: Increment version number to 1.8.4.
+
 Mon Jun  3 02:20:30 1996  Noel Cragg  <noel@gargle.rain.org>
 
 	* version.c: version 1.8.3.
