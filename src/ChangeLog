@@ -1,3 +1,8 @@
+Thu Sep  4 15:55:39 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* sanity.sh (modules3): New tests modules3-16 and modules3-17 test
+	for another behavior involving '/' in a module name.
+
 Sun Aug 31 12:03:15 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* add.c (add): Remove checks for '/' in pathnames.
