@@ -6246,6 +6246,10 @@ RCS_copydeltas (rcs, fin, fout, newdtext, insertpt)
    processes from stomping all over each other's laundry.  Hence,
    they are `internal' locking functions.
 
+   Note that we don't clean up the ,foo, file on ^C.  We probably should.
+   I'm not completely sure whether RCS does or not (I looked at the code
+   a little, and didn't find it).
+
    If there is an error, give a fatal error; if we return we always
    return a non-NULL value.  */
 
