@@ -2653,22 +2653,26 @@ error  \n");
 
     if (pipe (stdout_pipe) < 0)
     {
+	buf_output0 (buf_to_net, "E pipe failed\n");
 	print_error (errno);
 	goto error_exit;
     }
     if (pipe (stderr_pipe) < 0)
     {
+	buf_output0 (buf_to_net, "E pipe failed\n");
 	print_error (errno);
 	goto error_exit;
     }
     if (pipe (protocol_pipe) < 0)
     {
+	buf_output0 (buf_to_net, "E pipe failed\n");
 	print_error (errno);
 	goto error_exit;
     }
 #ifdef SERVER_FLOWCONTROL
     if (pipe (flowcontrol_pipe) < 0)
     {
+	buf_output0 (buf_to_net, "E pipe failed\n");
 	print_error (errno);
 	goto error_exit;
     }
@@ -2679,6 +2683,7 @@ error  \n");
     dev_null_fd = CVS_OPEN (DEVNULL, O_RDONLY);
     if (dev_null_fd < 0)
     {
+	buf_output0 (buf_to_net, "E open /dev/null failed\n");
 	print_error (errno);
 	goto error_exit;
     }
@@ -2706,6 +2711,7 @@ error  \n");
     command_pid = fork ();
     if (command_pid < 0)
     {
+	buf_output0 (buf_to_net, "E fork failed\n");
 	print_error (errno);
 	goto error_exit;
     }
@@ -2831,6 +2837,7 @@ error  \n");
 
 	if (close (stdout_pipe[1]) < 0)
 	{
+	    buf_output0 (buf_to_net, "E close failed\n");
 	    print_error (errno);
 	    goto error_exit;
 	}
@@ -2838,6 +2845,7 @@ error  \n");
 
 	if (close (stderr_pipe[1]) < 0)
 	{
+	    buf_output0 (buf_to_net, "E close failed\n");
 	    print_error (errno);
 	    goto error_exit;
 	}
@@ -2845,6 +2853,7 @@ error  \n");
 
 	if (close (protocol_pipe[1]) < 0)
 	{
+	    buf_output0 (buf_to_net, "E close failed\n");
 	    print_error (errno);
 	    goto error_exit;
 	}
@@ -2853,6 +2862,7 @@ error  \n");
 #ifdef SERVER_FLOWCONTROL
 	if (close (flowcontrol_pipe[0]) < 0)
 	{
+	    buf_output0 (buf_to_net, "E close failed\n");
 	    print_error (errno);
 	    goto error_exit;
 	}
@@ -2861,6 +2871,7 @@ error  \n");
 
 	if (close (dev_null_fd) < 0)
 	{
+	    buf_output0 (buf_to_net, "E close failed\n");
 	    print_error (errno);
 	    goto error_exit;
 	}
@@ -2928,6 +2939,7 @@ error  \n");
 		if (numfds < 0
 		    && errno != EINTR)
 		{
+		    buf_output0 (buf_to_net, "E select failed\n");
 		    print_error (errno);
 		    goto error_exit;
 		}
@@ -2952,6 +2964,7 @@ error  \n");
 		    stdout_pipe[0] = -1;
 		else if (status > 0)
 		{
+		    buf_output0 (buf_to_net, "E buf_input_data failed\n");
 		    print_error (status);
 		    goto error_exit;
 		}
@@ -2973,6 +2986,7 @@ error  \n");
 		    stderr_pipe[0] = -1;
 		else if (status > 0)
 		{
+		    buf_output0 (buf_to_net, "E buf_input_data failed\n");
 		    print_error (status);
 		    goto error_exit;
 		}
@@ -2994,6 +3008,7 @@ error  \n");
 		    protocol_pipe[0] = -1;
 		else if (status > 0)
 		{
+		    buf_output0 (buf_to_net, "E buf_input_data failed\n");
 		    print_error (status);
 		    goto error_exit;
 		}
@@ -3190,6 +3205,7 @@ server_pause_check()
 	    if (numfds < 0
 		&& errno != EINTR)
 	    {
+		buf_output0 (buf_to_net, "E select failed\n");
 		print_error (errno);
 		return;
 	    }
