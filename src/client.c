@@ -2998,6 +2998,11 @@ init_sockaddr (name, hostname, port)
 int
 auth_server_port_number ()
 {
+  struct servent *s = getservbyname ("cvs", "tcp");
+
+  if (s)
+    return ntohs (s->s_port);
+  else
     return CVS_AUTH_PORT;
 }
 
@@ -3036,7 +3041,7 @@ connect_to_pserver (tofdp, fromfdp, verify_only)
     if (connect (sock, (struct sockaddr *) &client_sai, sizeof (client_sai))
 	< 0)
 	error (1, errno, "connect to %s:%d failed", CVSroot_hostname,
-	       CVS_AUTH_PORT);
+	       port_number);
 
     /* Run the authorization mini-protocol before anything else. */
     {
