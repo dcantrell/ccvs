@@ -427,10 +427,12 @@ commit (argc, argv)
     /* numeric specified revision means we ignore sticky tags... */
     if (saved_tag && isdigit ((unsigned char) *saved_tag))
     {
+        char *p = saved_tag + strlen (saved_tag);
 	aflag = 1;
-	/* strip trailing dots */
-	while (saved_tag[strlen (saved_tag) - 1] == '.')
-	    saved_tag[strlen (saved_tag) - 1] = '\0';
+	/* strip trailing dots and leading zeros */
+	while (*--p == '.') ;
+	p[1] = '\0';
+	while (*saved_tag == '0') ++saved_tag;
     }
 
     /* some checks related to the "-F logfile" option */
