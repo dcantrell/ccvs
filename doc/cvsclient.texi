@@ -80,7 +80,7 @@ that it runs over TCP, UUCP, etc.
 
 @item
 Security and authentication are handled outside this protocol (but see
-below about @samp{cvs kserver}).
+below about @samp{cvs kserver} and @samp{cvs pserver}).
 
 @item
 This might be a first step towards adding transactions to CVS (i.e. a
@@ -109,21 +109,13 @@ client makes it complicated.
 @chapter Notes on the Current Implementation
 
 The client is built in to the normal @code{cvs} program, triggered by a
-@code{CVSROOT} variable containing a colon, for example
-@code{cygnus.com:/rel/cvsfiles}. 
+specially-formatted @code{CVSROOT} variable, for example
+@code{:server:cygnus.com:/rel/cvsfiles}.
 
 The client stores what is stored in checked-out directories (including
 @file{CVS}).  The way these are stored is totally compatible with
 standard CVS.  The server requires no storage other than the repository,
 which also is totally compatible with standard CVS.
-
-The server is started by @code{cvs server}.  There is no particularly
-compelling reason for this rather than making it a separate program
-which shares a lot of sources with cvs.
-
-The server can also be started by @code{cvs kserver}, in which case it
-does an initial Kerberos authentication on stdin.  If the authentication
-succeeds, it subsequently runs identically to @code{cvs server}.
 
 The current server implementation can use up huge amounts of memory
 when transmitting a lot of data over a slow link (i.e. the network is
@@ -175,7 +167,7 @@ Connection and authentication occurs before the CVS protocol itself is
 started.  There are several ways to connect.
 
 @table @asis
-@item rsh
+@item server
 If the client has a way to execute commands on the server, and provide
 input to the commands and output from them, then it can connect that
 way.  This could be the usual rsh (port 514) protocol, Kerberos rsh,
@@ -302,6 +294,12 @@ carefully thought out).
 @node Requests
 @section Requests
 
+By convention, requests which begin with a capital letter do not elicit
+a response from the server, while all others do -- save one.  The
+exception is @samp{gzip-file-contents}.  Unrecognized requests will
+always elicit a response from the server, even if that request begins
+with a capital letter.
+
 File contents (noted below as @var{file transmission}) can be sent in
 one of two forms.  The simpler form is a number of bytes, followed by a
 newline, followed by the specified number of bytes of file contents.
@@ -318,11 +316,12 @@ compressed form) ends with a newline.
 @table @code
 @item Root @var{pathname} \n
 Response expected: no.  Tell the server which @code{CVSROOT} to use.
-@var{pathname} must already exist; if creating a new root, use the
-@code{init} request, not @code{Root}.  @var{pathname} does not include
-the hostname of the server, how to access the server, etc.; by the time
-the CVS protocol is in use, connection, authentication, etc., are
-already taken care of.
+Note that @var{pathname} is a local directory and @emph{not} a fully
+qualified @code{CVSROOT} variable.  @var{pathname} must
+already exist; if creating a new root, use the @code{init} request, not
+@code{Root}.  @var{pathname} does not include the hostname of the
+server, how to access the server, etc.; by the time the CVS protocol is
+in use, connection, authentication, etc., are already taken care of.
 
 @item Valid-responses @var{request-list} \n
 Response expected: no.
@@ -343,7 +342,8 @@ also for @code{ci} and the other commands; normal usage is to send a
 for the original directory, then the command.
 
 @item Directory @var{local-directory} \n
-Additional data: @var{repository} \n.  This is like @code{Repository},
+Additional data: @var{repository} \n.  Response expected: no.
+This is like @code{Repository},
 but the local name of the directory may differ from the repository name.
 If the client uses this request, it affects the way the server returns
 pathnames; see @ref{Responses}.  @var{local-directory} is relative to
@@ -353,6 +353,7 @@ to indicate that top level, @samp{.} should be send for
 @var{local-directory}.
 
 @item Max-dotdot @var{level} \n
+Response expected: no.
 Tell the server that @var{level} levels of directories above the
 directory which @code{Directory} requests are relative to will be
 needed.  For example, if the client is planning to use a
@@ -429,6 +430,7 @@ knows what possible files may exist, and thus what files are
 nonexistent.
 
 @item Notify @var{filename} \n
+Response expected: no.
 Tell the server that a @code{edit} or @code{unedit} command has taken
 place.  The server needs to send a @code{Notified} response, but such
 response is deferred until the next time that the server is sending
@@ -456,6 +458,7 @@ recent @code{Directory} request.
 @c requests, but isn't documented and should be.
 
 @item Case \n
+Response expected: no.
 Tell the server that filenames should be matched against ignore patterns
 in a case-insensitive fashion.  Note that this does not apply to other
 comparisons---for example the filenames given in @code{Entry} and
@@ -473,6 +476,7 @@ Response expected: no.  Append \n followed by text to the current
 argument being saved.
 
 @item Global_option @var{option} \n
+Response expected: no.
 Transmit one of the global options @samp{-q}, @samp{-Q}, @samp{-l},
 @samp{-t}, @samp{-r}, or @samp{-n}.  @var{option} must be one of those
 strings, no variations (such as combining of options) are allowed.  For
@@ -481,6 +485,7 @@ make new global options separate requests, rather than trying to add
 them to this request.
 
 @item Set @var{variable}=@var{value} \n
+Response expected: no.
 Set a user variable @var{variable} to @var{value}.
 
 @item expand-modules \n
@@ -516,8 +521,9 @@ specify a log message.
 
 @itemx init @var{root-name} \n
 Response expected: yes.  If it doesn't already exist, create a @sc{cvs}
-repository @var{root-name}.  The @code{Root} request need not have been
-previously sent.
+repository @var{root-name}.  Note that @var{root-name} is a local
+directory and @emph{not} a fully qualified @code{CVSROOT} variable.  The
+@code{Root} request need not have been previously sent.
 
 @itemx update \n
 Response expected: yes.  Actually do a @code{cvs update} command.  This
@@ -561,12 +567,15 @@ expecting a response) sends back any responses pertaining to pending
 errors, pending @code{Notified} responses, etc.
 
 @item update-patches \n
+Response expected: yes.
 This request does not actually do anything.  It is used as a signal that
 the server is able to generate patches when given an @code{update}
 request.  The client must issue the @code{-u} argument to @code{update}
 in order to receive patches.
 
 @item gzip-file-contents @var{level} \n
+Response expected: no.  Note that this request does not follow the
+response convention stated above.
 This request asks the server to filter files it sends to the client
 through the @samp{gzip} program, using the specified level of
 compression.  If this request is not made, the server must not do any

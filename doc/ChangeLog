@@ -35,6 +35,35 @@ Mon May 20 13:15:25 1996  Greg A. Woods  <woods@most.weird.com>
 	(tag): description from main.c:cmd_usage
 	[all for the sake of consistency]
 
+Fri May 17 11:42:46 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo: Add index entries for :local:, etc.
+	(Password authentication server): Revert erroneous change
+	regarding the format of CVSROOT/passwd file.
+
+Thu May 16 17:06:46 1996  Noel Cragg  <noel@gargle.rain.org>
+
+	* cvsclient.texi (Notes): Removed paragraphs about various server
+ 	invocations which are now described in full in node "Connection
+ 	and Authentication."
+	(Requests): Include a note that "gzip-file-contents" doesn't
+ 	follow the upper/lowercase convention and that unknown reqests
+ 	always elicit a response, regardless of capitalization.
+
+	* cvs.texinfo (Kerberos authenticated): Removed bogus version
+ 	number.
+	(Repository): explain the ":local:" access method.
+
+Wed May 15 23:43:04 1996  Noel Cragg  <noel@gargle.rain.org>
+
+	* cvsclient.texi (Goals): mention access methods.
+	(Requests): add note about convention: requests starting with a
+ 	captial letter don't have any expected response.  Made sure each
+ 	request has a "Response expected" note.
+
+	* cvs.texinfo (Remote repositories): add info about access
+ 	methods; fix pserver info.
+
 Tue May 14 08:56:41 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (Environment variables): Try to document somewhat
