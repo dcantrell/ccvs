@@ -59,7 +59,7 @@ static List *tlist;
 
 static const char *const tag_usage[] =
 {
-    "Usage: %s %s [-lRF] [-b] [-d] tag [files...]\n",
+    "Usage: %s %s [-lRF] [-b] [-d] [-r tag|-D date] tag [files...]\n",
     "\t-l\tLocal directory only, not recursive.\n",
     "\t-R\tProcess directories recursively.\n",
     "\t-d\tDelete the given Tag.\n",
@@ -138,6 +138,8 @@ tag (argc, argv)
     argc--;
     argv++;
 
+    if (date && numtag)
+	error (1, 0, "-r and -D options are mutually exclusive");
     if (delete && branch_mode)
 	error (0, 0, "warning: -b ignored with -d options");
     RCS_check_tag (symtag);
