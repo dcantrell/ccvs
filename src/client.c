@@ -4512,15 +4512,8 @@ client_process_import_file (message, vfile, vtag, targc, targv, repository)
     char *repository;
 {
     char *update_dir;
-    int first_time;
 
-    /* FIXME: I think this is always false now that we call
-       client_import_setup at the start.  */
-
-    first_time = toplevel_repos == NULL;
-
-    if (first_time)
-	send_a_repository ("", repository, "");
+    assert (toplevel_repos != NULL);
 
     if (strncmp (repository, toplevel_repos, strlen (toplevel_repos)) != 0)
 	error (1, 0,
@@ -4532,10 +4525,7 @@ client_process_import_file (message, vfile, vtag, targc, targv, repository)
     else
 	update_dir = repository + strlen (toplevel_repos) + 1;
 
-    if (!first_time)
-    {
-	send_a_repository ("", repository, update_dir);
-    }
+    send_a_repository ("", repository, update_dir);
     send_modified (vfile, vfile, NULL);
     return 0;
 }
