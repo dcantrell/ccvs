@@ -74,69 +74,8 @@ fi
 
 # Create the special *info files within $CVSROOT/CVSROOT
 
-# Trump up a simple modules file, if one doesn't exist
-if [ -f $CVSROOT/CVSROOT/modules,v ]; then
-    if [ ! -f $CVSROOT/CVSROOT/modules ]; then
-	echo "Checking out $CVSROOT/CVSROOT/modules"
-	echo "  from $CVSROOT/CVSROOT/modules,v..."
-	(cd $CVSROOT/CVSROOT; co -q modules)
-    fi
-else
-    if [ -f $CVSROOT/CVSROOT/modules ]; then
-	echo "Checking in $CVSROOT/CVSROOT/modules,v"
-	echo "  from $CVSROOT/CVSROOT/modules..."
-    else
-	echo "Creating a simple $CVSROOT/CVSROOT/modules file..."
-	sed -n -e '/END_REQUIRED_CONTENT/q' -e p $CVSLIB/examples/modules > $CVSROOT/CVSROOT/modules
-
-    fi
-    (cd $CVSROOT/CVSROOT; ci -q -u -t/dev/null -m'initial checkin of modules' modules)
-fi
-
-# check to see if there are any references to the old CVSROOT.adm directory
-if grep CVSROOT.adm $CVSROOT/CVSROOT/modules >/dev/null 2>&1; then
-    echo "Warning: your $CVSROOT/CVSROOT/modules file still"
-    echo "	contains references to the old CVSROOT.adm directory"
-    echo "	You should really change these to the new CVSROOT directory"
-    echo ""
-fi
-
-# loginfo, like modules, is special-cased
-if [ -f $CVSROOT/CVSROOT/loginfo,v ]; then
-    if [ ! -f $CVSROOT/CVSROOT/loginfo ]; then
-	echo "Checking out $CVSROOT/CVSROOT/loginfo"
-	echo "  from $CVSROOT/CVSROOT/loginfo,v..."
-	(cd $CVSROOT/CVSROOT; co -q loginfo)
-    fi
-else
-    if [ -f $CVSROOT/CVSROOT/loginfo ]; then
-	echo "Checking in $CVSROOT/CVSROOT/loginfo,v"
-	echo "  from $CVSROOT/CVSROOT/loginfo..."
-    else
-	echo "Creating a simple $CVSROOT/CVSROOT/loginfo file..."
-	# try to find perl; use fancy log script if we can
-	for perlpath in `echo $PATH | sed -e 's/:/ /g'` x; do
-	    if [ -f $perlpath/perl ]; then
-		echo "#!$perlpath/perl" > $CVSROOT/CVSROOT/log
-		cat $CVSLIB/contrib/log >> $CVSROOT/CVSROOT/log
-		chmod 755 $CVSROOT/CVSROOT/log
-		cp $CVSLIB/examples/loginfo $CVSROOT/CVSROOT/loginfo
-		break
-	    fi
-	done
-	if [ $perlpath = x ]; then
-	    # we did not find perl anywhere, so make a simple loginfo file
-	    grep '^#' $CVSLIB/examples/loginfo > $CVSROOT/CVSROOT/loginfo
-	    cat >> $CVSROOT/CVSROOT/loginfo <<"END_HERE_DOC"
-DEFAULT		(echo ""; echo $USER; date; cat) >> $CVSROOT/CVSROOT/commitlog
-END_HERE_DOC
-	fi
-    fi
-    (cd $CVSROOT/CVSROOT; ci -q -u -t/dev/null -m'initial checkin of loginfo' loginfo)
-fi
-
-# These files are generated from the examples files.
-for info in commitinfo rcsinfo editinfo rcstemplate checkoutlist; do
+for info in modules loginfo commitinfo rcsinfo editinfo rcstemplate \
+        checkoutlist; do
     if [ -f $CVSROOT/CVSROOT/${info},v ]; then
 	if [ ! -f $CVSROOT/CVSROOT/$info ]; then
 	    echo "Checking out $CVSROOT/CVSROOT/$info"
@@ -149,11 +88,51 @@ for info in commitinfo rcsinfo editinfo rcstemplate checkoutlist; do
 	    echo "  from $CVSROOT/CVSROOT/$info..."
 	else
 	    echo "Creating a simple $CVSROOT/CVSROOT/$info file..."
-	    sed -e 's/^\([^#]\)/#\1/' $CVSLIB/examples/$info > $CVSROOT/CVSROOT/$info
+	    case $info in
+	      modules)
+		sed -n -e '/END_REQUIRED_CONTENT/q' \
+		    -e p $CVSLIB/examples/modules > $CVSROOT/CVSROOT/modules
+		;;
+	      loginfo)
+		# try to find perl; use fancy log script if we can
+		for perlpath in `echo $PATH | sed -e 's/:/ /g'` x; do
+		    if [ -f $perlpath/perl ]; then
+			echo "#!$perlpath/perl" > $CVSROOT/CVSROOT/log
+			cat $CVSLIB/contrib/log >> $CVSROOT/CVSROOT/log
+			chmod 755 $CVSROOT/CVSROOT/log
+			cp $CVSLIB/examples/loginfo $CVSROOT/CVSROOT/loginfo
+			break
+		    fi
+		done
+		if [ $perlpath = x ]; then
+		    # we did not find perl, so make a simple loginfo file
+		    grep '^#' $CVSLIB/examples/loginfo \
+			> $CVSROOT/CVSROOT/loginfo
+		    cat >> $CVSROOT/CVSROOT/loginfo <<"END_HERE_DOC"
+DEFAULT		(echo ""; echo $USER; date; cat) >> $CVSROOT/CVSROOT/commitlog
+END_HERE_DOC
+		fi
+		;;
+	      rcstemplate)
+		cp $CVSLIB/examples/$info $CVSROOT/CVSROOT/$info
+		;;
+	      *)
+		sed -e 's/^\([^#]\)/#\1/' $CVSLIB/examples/$info \
+		    > $CVSROOT/CVSROOT/$info
+		;;
+	    esac
 	fi
 	(cd $CVSROOT/CVSROOT; ci -q -u -t/dev/null -m"initial checkin of $info" $info)
     fi
 done
+
+# check to see if there are any references to the old CVSROOT.adm directory
+if grep CVSROOT.adm $CVSROOT/CVSROOT/modules >/dev/null 2>&1; then
+    echo "Warning: your $CVSROOT/CVSROOT/modules file still"
+    echo "	contains references to the old CVSROOT.adm directory"
+    echo "	You should really change these to the new CVSROOT directory"
+    echo ""
+fi
 
 # These files are generated from the contrib files.
 # FIXME: Is it really wise to overwrite local changes like this?

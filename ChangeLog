@@ -1,3 +1,9 @@
+Sun Jul 30 20:12:26 1995  James Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvsinit.sh: Unify code for modules and loginfo with code for
+	other files which have checked-out and ,v files in CVSROOT.
+	Don't add "#" to start of lines in rcstemplate.
+
 Sat Jul 29 16:48:05 1995  James Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvsinit.sh: If arguments are given, give version number and
