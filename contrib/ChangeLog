@@ -1,3 +1,9 @@
+Mon May  6 13:04:57 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* Makefile.in (install): Don't tell user to run cvsinit.  It isn't
+	called cvsinit anymore, and it isn't necessary (repositories are,
+	and need to be, compatible between cvs versions).
+
 Sun Apr 14 11:30:36 1996  Karl Fogel  <kfogel@floss.red-bean.com>
 
         * Removed pcl-cvs/ subdir; see tools/ subdir in the top-level from
