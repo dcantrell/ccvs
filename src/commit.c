@@ -50,7 +50,7 @@ static int precommit_proc PROTO(( char *repository, char *filter,
                                   void *closure ));
 static int remove_file PROTO ((struct file_info *finfo, char *tag,
 			       char *message));
-static void fixaddfile PROTO((char *file, char *repository));
+static void fixaddfile PROTO((const char *file, const char *repository));
 static void fixbranch PROTO((RCSNode *, char *branch));
 static void unlockrcs PROTO((RCSNode *rcs));
 static void ci_delproc PROTO((Node *p));
@@ -1776,14 +1776,15 @@ unlockrcs (rcs)
  */
 static void
 fixaddfile (file, repository)
-    char *file;
-    char *repository;
+    const char *file;
+    const char *repository;
 {
     RCSNode *rcsfile;
     char *rcs;
     int save_really_quiet;
 
-    rcs = locate_rcs ( repository, file, NULL );
+    rcs = locate_rcs (repository, file, NULL);
+    if (rcs == NULL) return;
     save_really_quiet = really_quiet;
     really_quiet = 1;
     if ((rcsfile = RCS_parsercsfile (rcs)) == NULL)
