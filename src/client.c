@@ -33,6 +33,11 @@ extern char *krb_realmofhost ();
 #ifndef HAVE_KRB_GET_ERR_TEXT
 #define krb_get_err_text(status) krb_err_txt[status]
 #endif /* HAVE_KRB_GET_ERR_TEXT */
+
+/* Information we need if we are going to use Kerberos encryption.  */
+static C_Block kblock;
+static Key_schedule sched;
+
 #endif /* HAVE_KERBEROS */
 
 #endif /* HAVE_KERBEROS || USE_DIRECT_TCP */
@@ -3240,7 +3245,6 @@ start_tcp_server (tofdp, fromfdp)
 	int laddrlen;
 	MSG_DAT msg_data;
 	CREDENTIALS cred;
-	Key_schedule sched;
 
 	laddrlen = sizeof (laddr);
 	if (getsockname (s, (struct sockaddr *) &laddr, &laddrlen) < 0)
@@ -3257,6 +3261,8 @@ start_tcp_server (tofdp, fromfdp)
         }
 	else
         {
+	    memcpy (kblock, cred.session, sizeof (C_Block));
+
 #endif /* HAVE_KERBEROS */
 
 	    server_fd = s;
@@ -3549,6 +3555,30 @@ start_server ()
 		error (1, 0,
 		       "This server does not support the global -l option.");
 	}
+    }
+    if (encrypt)
+    {
+	/* Turn on encryption before turning on compression.  We do
+           not want to try to compress the encrypted stream.  Instead,
+           we want to encrypt the compressed stream.  If we can't turn
+           on encryption, bomb out; don't let the user think the data
+           is being encrypted when it is not.  */
+#ifdef HAVE_KERBEROS
+	if (CVSroot_method == kserver_method)
+	{
+	    if (! supported_request ("Kerberos-encrypt"))
+		error (1, 0, "This server does not support encryption");
+	    send_to_server ("Kerberos-encrypt\012", 0);
+	    to_server = krb_encrypt_buffer_initialize (to_server, 0, sched,
+						       kblock,
+						       buf_memory_error);
+	    from_server = krb_encrypt_buffer_initialize (from_server, 1,
+							 sched, kblock,
+							 buf_memory_error);
+	}
+	else
+#endif
+	    error (1, 0, "Encryption is only supported when using Kerberos");
     }
     if (gzip_level)
     {

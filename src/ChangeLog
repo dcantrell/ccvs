@@ -1,3 +1,30 @@
+Wed Jul 24 15:06:08 1996  Ian Lance Taylor  <ian@cygnus.com>
+
+	Add encryption support over a Kerberos connection.
+	* main.c (usg): Mention -x if CLIENT_SUPPORT.
+	(main): Handle -x.
+	* client.h (encrypt): Declare.
+	(krb_encrypt_buffer_initialize): Declare.
+	* client.c (kblock, sched): New static variables if
+	HAVE_KERBEROS.
+	(start_tcp_server): Remove sched local variable.  Copy
+	cred.session into kblock.
+	(start_server): Turn on encryption if requested.
+	* server.c (kblock, sched): New static variables if
+	HAVE_KERBEROS.
+	(serve_kerberos_encrypt): New static function.
+	(requests): Add "Kerberos-encrypt" if HAVE_KERBEROS.
+	(kserver_authenticate_connection): Remove sched local variable.
+	Copy auth.session into kblock.
+	(encrypt): New global variable.
+	(struct krb_encrypt_buffer): Define.
+	(krb_encrypt_buffer_initialize): New function.
+	(krb_encrypt_buffer_input): New static function.
+	(krb_encrypt_buffer_output): New static function.
+	(krb_encrypt_buffer_flush): New static function.
+	(krb_encrypt_buffer_block): New static function.
+	(krb_encrypt_buffer_shutdown): New static function.
+
 Wed Jul 24 09:28:33 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* recurse.c (do_recursion): Add comment about calling
