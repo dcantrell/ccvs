@@ -1,3 +1,10 @@
+2002-06-18  Derek Price  <oberon@umich.edu>
+
+	* server.c: Handle HPUX password expiration fields in the passwd
+	string in case we are set up on a server with NIS passwords served
+	from HPUX.
+	(Original patch from John Cavanaugh <john_cavanaugh@agilent.com>.)
+
 2002-06-17  Larry Jones  <lawrence.jones@eds.com>
 	    and Jonathan Kamens  <jik@kamens.brookline.ma.us>
 
