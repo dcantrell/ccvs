@@ -139,7 +139,7 @@ realclean: distclean
 	rm -f cvs.info* cvs.ps cvs-paper.ps cvsclient.info* cvsclient.ps
 .PHONY: realclean
 
-dist-dir: $(DISTFILES)
+dist-dir: $(DISTFILES) $(OBJDIR_DISTFILES)
 	mkdir ${DISTDIR}
 	for i in ${DISTFILES}; do \
 	  ln $(srcdir)/$${i} ${DISTDIR}; \
