@@ -280,6 +280,16 @@ parse_cvsroot ()
     client_active = 1;
 }
 
+#ifdef NO_SOCKET_TO_FD
+/* Under certain circumstances, we must communicate with the server
+   via a socket using send() and recv().  This is because under some
+   operating systems (OS/2 and Windows NT come to mind), a socket
+   cannot be converted to a file descriptor -- it must be treated as a
+   socket and nothing else. */
+static int use_socket_style = 0;
+static int server_socket;
+#endif /* NO_SOCKET_TO_FD */
+
 /* Stream to write to the server.  */
 static FILE *to_server;
 /* Stream to read from the server.  */
@@ -2328,9 +2338,8 @@ auth_server_port_number ()
 
 
 void
-connect_to_pserver (tofdp, fromfdp, log)
+connect_to_pserver (tofdp, fromfdp)
      int *tofdp, *fromfdp;
-     char *log;
 {
   int sock;
   int tofd, fromfd;
@@ -2427,23 +2436,9 @@ connect_to_pserver (tofdp, fromfdp, log)
     }
   }
 
-  /* This was stolen straight from start_kerberos_server(). */
-  {
-    server_fd = sock;
-    close_on_exec (server_fd);
-    /*
-     * If we do any filtering, TOFD and FROMFD will be
-     * closed.  So make sure they're copies of SERVER_FD,
-     * and not the same fd number.
-     */
-    if (log)
-      {
-        tofd = dup (sock);
-        fromfd = dup (sock);
-      }
-    else
-      tofd = fromfd = sock;
-  }
+  server_fd = sock;
+  close_on_exec (server_fd);
+  tofd = fromfd = sock;
 
   /* Hand them back to the caller. */
   *tofdp   = tofd;
@@ -2454,9 +2449,8 @@ connect_to_pserver (tofdp, fromfdp, log)
 
 #if HAVE_KERBEROS
 void
-start_kerberos_server (tofdp, fromfdp, log)
+start_kerberos_server (tofdp, fromfdp)
      int *tofdp, *fromfdp;
-     char *log;
 {
   int tofd, fromfd;
 
@@ -2551,18 +2545,7 @@ start_kerberos_server (tofdp, fromfdp, log)
         {
           server_fd = s;
           close_on_exec (server_fd);
-          /*
-           * If we do any filtering, TOFD and FROMFD will be
-           * closed.  So make sure they're copies of SERVER_FD,
-           * and not the same fd number.
-           */
-          if (log)
-            {
-              tofd = dup (s);
-              fromfd = dup (s);
-            }
-          else
-            tofd = fromfd = s;
+          tofd = fromfd = s;
         }
     }
   
@@ -2601,14 +2584,14 @@ start_server ()
   to_server_logfile   = (FILE *) NULL;
 
 #if HAVE_KERBEROS
-    start_kerberos_server (&tofd, &fromfd, log);
+    start_kerberos_server (&tofd, &fromfd);
 
 #else /* ! HAVE_KERBEROS */
 
 #ifdef AUTH_CLIENT_SUPPORT
     if (use_authenticating_server)
       {
-        connect_to_pserver (&tofd, &fromfd, log);
+        connect_to_pserver (&tofd, &fromfd);
       }
     else
 #endif /* AUTH_CLIENT_SUPPORT */
@@ -3130,8 +3113,6 @@ send_modified (file, short_pathname, vers)
 	  send_to_server (tmp, len);
 
           send_to_server (buf, newsize);
-          if (feof (to_server) || ferror (to_server))
-	    error (1, errno, "writing to server");
         }
     }
     else
