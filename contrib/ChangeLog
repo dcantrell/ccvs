@@ -1,3 +1,13 @@
+2003-10-14  Derek Price  <derek@ximbiot.com>
+
+	Port to pedantic POSIX 1003.1-2001 hosts, such as Debian GNU/Linux
+	testing with _POSIX2_VERSION=200112 in the environment.
+
+	* cvs2vendor.sh: Work with POSIX sort as well as with
+	traditional sort.
+	* rcs2sccs.sh, sccs2rcs.in: Likewise.
+	(Patch from Paul Eggert <eggert@twinsun.com>.)
+
 2003-09-26  Mark D. Baushke  <mdb@cvshome.org>
 
 	* sccs2rcs.in: Use @AWK@ to avoid ancient Solaris awk (no support
