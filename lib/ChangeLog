@@ -1,5 +1,10 @@
 2003-07-22  Derek Price  <derek@ximbiot.com>
 
+	* strerror.c: Import current version from GNULIB.
+	* Makefile.in: Regenerated.
+
+2003-07-22  Derek Price  <derek@ximbiot.com>
+
 	* Makefile.am: Make a comment more specific about LIBOBJ, while
 	removing a list of LIBOBJ'd file maintained elsewhere.
 	* memmove.c: Import current version from GNULIB.
