@@ -18136,33 +18136,41 @@ No such file or directory"
 
 	  # CVS/Root overrides $CVSROOT
 	  if test "$remote" = no; then
-	    CVSROOT=${TESTDIR}/root-moved dotest reposmv-3 \
-	      "${testcvs} update" \
+	    CVSROOT_SAVED=${CVSROOT}
+	    CVSROOT=${TESTDIR}/root-moved; export CVSROOT
+	    dotest reposmv-3 "${testcvs} update" \
 "${DOTSTAR}
 ${PROG} update: ignoring CVS/Root because it specifies a non-existent repository ${TESTDIR}/root1
 ${PROG} update: Updating \.
 ${DOTSTAR}"
+	    CVSROOT=${CVSROOT_SAVED}; export CVSROOT
 	  else
-	    CVSROOT=:fork:${TESTDIR}/root-moved dotest_fail reposmv-3 \
-	      "${testcvs} update" \
+	    CVSROOT_SAVED=${CVSROOT}
+	    CVSROOT=:fork:${TESTDIR}/root-moved; export CVSROOT
+	    dotest_fail reposmv-3 "${testcvs} update" \
 "Cannot access ${TESTDIR}/root1/CVSROOT
 No such file or directory"
+	    CVSROOT=${CVSROOT_SAVED}; export CVSROOT
 	  fi
 
 	  if test "$remote" = no; then
 	    # CVS/Root doesn't seem to quite completely override $CVSROOT
 	    # Bug?  Not necessarily a big deal if it only affects error
 	    # messages.
-	    CVSROOT=${TESTDIR}/root-none dotest_fail reposmv-4 \
-	      "${testcvs} update" \
+	    CVSROOT_SAVED=${CVSROOT}
+	    CVSROOT=${TESTDIR}/root-none; export CVSROOT
+	    dotest_fail reposmv-4 "${testcvs} update" \
 "${PROG} update: in directory \.:
 ${PROG} update: ignoring CVS/Root because it specifies a non-existent repository ${TESTDIR}/root1
 ${PROG} \[update aborted\]: ${TESTDIR}/root-none/CVSROOT: No such file or directory"
+	    CVSROOT=${CVSROOT_SAVED}; export CVSROOT
 	  else
-	    CVSROOT=:fork:${TESTDIR}/root-none dotest_fail reposmv-4 \
-	      "${testcvs} update" \
+	    CVSROOT_SAVED=${CVSROOT}
+	    CVSROOT=:fork:${TESTDIR}/root-none; export CVSROOT
+	    dotest_fail reposmv-4 "${testcvs} update" \
 "Cannot access ${TESTDIR}/root1/CVSROOT
 No such file or directory"
+	    CVSROOT=${CVSROOT_SAVED}; export CVSROOT
 	  fi
 
 	  # -d overrides CVS/Root
