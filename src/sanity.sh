@@ -2174,7 +2174,7 @@ if $proxy; then
     SECONDARY_CVSROOT_DIRNAME=$TESTDIR/secondary_cvsroot
 
     tryrsync=`Which rsync`
-    if test -n "$RSYNC" && test -r "$RSYNC"; then :; else
+    if test -n "$RSYNC"; then :; else
 	echo "Unable to test in proxy mode: No rsync found in $PATH" >&2
 	exit 1
     fi
@@ -29596,7 +29596,7 @@ ${SPROG} update: Updating first/subdir"
 	  fi
 
 	  tryrsync=`Which rsync`
-	  if test -n "$RSYNC" && test -r "$RSYNC"; then :; else
+	  if test -n "$RSYNC"; then :; else
 	    skip writeproxy "No rsync found in $PATH"
 	    continue
 	  fi
@@ -29791,7 +29791,7 @@ $SPROG \[update aborted\]: could not find desired version 1\.4 in $PRIMARY_CVSRO
 	    continue
 	  fi
 
-	  if test -n "$RSYNC" && test -r "$RSYNC"; then :; else
+	  if test -n "$RSYNC"; then :; else
 	    skip writeproxy-noredirect "No rsync found in $PATH"
 	    continue
 	  fi
