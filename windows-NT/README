@@ -3,7 +3,7 @@
 			   Cyclic Software
 
 Check the ../INSTALL file for information on the most recent version
-of CVS which has been known to be tested with NT.
+of CVS which has been known to be tested with NT and/or Win95.
 
 This port implements the full set of CVS commands, both local and
 client.  It does not provide a CVS server for NT.
@@ -65,11 +65,6 @@ Morten Hindsholm's port of CVS 1.4A2 to Windows NT may be useful if
 you're modifying CVS itself:
 
 	ftp://ftp.digex.net/pub/access/schueman/cvs/cvsnt14b.zip
-
-Mark A. Solinski <markso@www.mcs.net> has ported CVS 1.7 to Windows
-95.  You can find his source code at:
-
-	http://www.mcs.net/~markso/cvs/cvs95.html
 
 Here are some other things which may be of interest for unix junkies:
 
