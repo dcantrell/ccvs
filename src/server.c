@@ -4858,6 +4858,7 @@ server (argc, argv)
 	else
 	{
 	    int status;
+	    int i = 0;
 
 	    server_temp_dir = malloc (strlen (Tmpdir) + 80);
 	    if (server_temp_dir == NULL)
@@ -4904,12 +4905,21 @@ error ENOMEM Virtual memory exhausted.\n");
 	    /* Create the temporary directory, and set the mode to
                700, to discourage random people from tampering with
                it.  */
-	    status = mkdir_p (server_temp_dir);
-	    if (status != 0 && status != EEXIST)
+	    while ((status = mkdir_p (server_temp_dir)) == EEXIST)
 	    {
-		if (alloc_pending (80))
-		    strcpy (pending_error_text,
-			    "E can't create temporary directory");
+	        static const char suffix[] = "abcdefghijklmnopqrstuvwxyz";
+
+	        if (i >= sizeof suffix - 1) break;
+		if (i == 0) p = server_temp_dir + strlen (server_temp_dir);
+		p[0] = suffix[i++];
+		p[1] = '\0';
+	    }
+	    if (status != 0)
+	    {
+		if (alloc_pending (80) + strlen (server_temp_dir))
+		    sprintf (pending_error_text,
+			    "E can't create temporary directory %s",
+			    server_temp_dir);
 		pending_error = status;
 	    }
 #ifndef CHMOD_BROKEN
@@ -4918,9 +4928,10 @@ error ENOMEM Virtual memory exhausted.\n");
 		if (chmod (server_temp_dir, S_IRWXU) < 0)
 		{
 		    int save_errno = errno;
-		    if (alloc_pending (80))
-			strcpy (pending_error_text, "\
-E cannot change permissions on temporary directory");
+		    if (alloc_pending (80) + strlen (server_temp_dir))
+			sprintf (pending_error_text,
+"E cannot change permissions on temporary directory %s",
+				server_temp_dir);
 		    pending_error = save_errno;
 		}
 	    }
