@@ -154,6 +154,7 @@ LINK32_OBJS= \
 	"$(INTDIR)\history.obj" \
 	"$(INTDIR)\ignore.obj" \
 	"$(INTDIR)\import.obj" \
+	"$(INTDIR)\JmgStat.obj" \
 	"$(INTDIR)\lock.obj" \
 	"$(INTDIR)\log.obj" \
 	"$(INTDIR)\login.obj" \
@@ -193,7 +194,6 @@ LINK32_OBJS= \
 	"$(INTDIR)\woe32.obj" \
 	"$(INTDIR)\wrapper.obj" \
 	"$(INTDIR)\zlib.obj" \
-	"$(INTDIR)\JmgStat.obj" \
 	".\diff\WinRel\libdiff.lib" \
 	".\zlib\WinRel\libz.lib" \
 	".\lib\WinRel\libcvs.lib"
@@ -329,6 +329,7 @@ LINK32_OBJS= \
 	"$(INTDIR)\history.obj" \
 	"$(INTDIR)\ignore.obj" \
 	"$(INTDIR)\import.obj" \
+	"$(INTDIR)\JmgStat.obj" \
 	"$(INTDIR)\lock.obj" \
 	"$(INTDIR)\log.obj" \
 	"$(INTDIR)\login.obj" \
@@ -368,7 +369,6 @@ LINK32_OBJS= \
 	"$(INTDIR)\woe32.obj" \
 	"$(INTDIR)\wrapper.obj" \
 	"$(INTDIR)\zlib.obj" \
-	"$(INTDIR)\JmgStat.obj" \
 	".\diff\WinDebug\libdiff.lib" \
 	".\zlib\WinDebug\libz.lib" \
 	".\lib\WinDebug\libcvs.lib"
