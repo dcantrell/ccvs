@@ -282,7 +282,7 @@ password_entry_operation (operation, root, newpassword)
     char *cvsroot_canonical = NULL;
     char *password = NULL;
     int line_length;
-    long line;
+    long line = -1;
     char *linebuf = NULL;
     size_t linebuf_len;
     char *p;
