@@ -254,7 +254,7 @@ extern int readlink (char *path, char *buf, int buf_size);
 extern pid_t getpid (void);
 
 /* We definitely have prototypes.  */
-#define USE_PROTOTYPES 1
+#define PROTOTYPES 1
 
 /* This is just a call to the Win32 Sleep function.  */
 unsigned int sleep (unsigned int);
@@ -448,3 +448,21 @@ typedef int ssize_t;
  * place the version string needs to be updated by hand for a new release.
  */
 #define PACKAGE_STRING "Concurrent Versions System (CVS) %PACKAGE_VERSION%"
+
+/*
+ * For lib/system.h
+ */
+#define HAVE_STDLIB_H 1
+#define HAVE_MALLOC 1
+#define HAVE_REALLOC 1
+#define HAVE_SYS_STAT_H 1
+#define HAVE_SYS_TYPES_H 1
+
+/*
+ * The default RSH client to use, it it has not been specified using the
+ * CVS_RSH environment variable.
+ *
+ * This is actually a poor default since the Windows RSH is broken, but it's
+ * better than nothing.
+ */
+#define RSH_DFLT "rsh"
