@@ -1,3 +1,8 @@
+2004-06-09  Derek Price  <derek@ximbiot.com>
+
+	* Makefile.am (EXTRA_DIST): Remove some files that are included by
+	virtue of appearing in configure.in rules.
+
 2004-04-14  Derek Price  <derek@ximbiot.com>
 
 	* Makefile.am (CLEANFILES): Clean bin_LINKS, not bin_SCRIPTS.
