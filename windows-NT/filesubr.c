@@ -793,10 +793,37 @@ convert_file (char *infile,  int inflags,
         error (0, errno, "warning: couldn't close %s", infile);
 }
 
+
+/* NT has two evironment variables, HOMEPATH and HOMEDRIVE, which,
+   when combined as ${HOMEDRIVE}${HOMEPATH}, give the unix equivalent
+   of HOME.  Some NT users are just too unixy, though, and set the
+   HOME variable themselves.  Therefore, we check for HOME first, and
+   then try to combine the other two if that fails.  */
+
 char *
 get_homedir ()
 {
-    return getenv ("HOMEPATH");
+    static char pathbuf[PATH_MAX * 2];
+    char *hd, *hp;
+
+    if ((hd = getenv ("HOME")))
+	return hd;
+    else if ((hd = getenv ("HOMEDRIVE")) && (hp = getenv ("HOMEPATH")))
+    {
+	/* Watch for buffer overruns. */
+
+#define cvs_min(x,y) ((x <= y) ? (x) : (y))
+
+	int ld = cvs_min (PATH_MAX, strlen (hd));
+	int lp = cvs_min (PATH_MAX, strlen (hp));
+
+	strncpy (pathbuf, hd, ld);
+	strncpy (pathbuf + ld, hp, lp);
+
+	return pathbuf;
+    }
+    else
+	return NULL;
 }
 
 /* See cvs.h for description.  */
@@ -823,6 +850,34 @@ expand_wild (argc, argv, pargc, pargv)
 	HANDLE h;
 	WIN32_FIND_DATA fdata;
 
+	/* These variables help us extract the directory name from the
+           given pathname. */
+
+	char *last_forw_slash, *last_back_slash, *end_of_dirname;
+	int dirname_length = 0;
+
+	/* FindFirstFile doesn't return pathnames, so we have to do
+	   this ourselves.  Luckily, it's no big deal, since globbing
+	   characters under Win32s can only occur in the last segment
+	   of the path.  For example,
+                /a/path/q*.h                      valid
+	        /w32/q*.dir/cant/do/this/q*.h     invalid */
+
+	/* Win32 can handle both forward and backward slashes as
+           filenames -- check for both. */
+	     
+	last_forw_slash = strrchr (argv[i], '/');
+	last_back_slash = strrchr (argv[i], '\\');
+
+#define cvs_max(x,y) ((x >= y) ? (x) : (y))
+
+	end_of_dirname = cvs_max (last_forw_slash, last_back_slash);
+
+	if (end_of_dirname == NULL)
+	  dirname_length = 0;	/* no directory name */
+	else
+	  dirname_length = end_of_dirname - argv[i] + 1; /* include slash */
+
 	h = FindFirstFile (argv[i], &fdata);
 	if (h == INVALID_HANDLE_VALUE)
 	{
@@ -848,7 +903,26 @@ expand_wild (argc, argv, pargc, pargv)
 	{
 	    while (1)
 	    {
-		new_argv [new_argc++] = xstrdup (fdata.cFileName);
+		new_argv[new_argc] =
+		    (char *) xmalloc (strlen (fdata.cFileName) + 1
+				      + dirname_length);
+
+		/* Copy the directory name, if there is one. */
+
+		if (dirname_length)
+		{
+		    strncpy (new_argv[new_argc], argv[i], dirname_length);
+		    new_argv[new_argc][dirname_length] = '\0';
+		}
+		else
+		    new_argv[new_argc][0] = '\0';
+
+		/* Copy the file name. */
+		
+		strcat (new_argv[new_argc], fdata.cFileName);
+
+		new_argc++;
+
 		if (new_argc == max_new_argc)
 		{
 		    max_new_argc *= 2;
