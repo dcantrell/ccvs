@@ -1,3 +1,7 @@
+2005-03-17  Derek Price  <derek@ximbiot.com>
+
+	* client.c (call_in_directory): Put function call after var decls.
+
 2005-03-16  Derek Price  <derek@ximbiot.com>
 
 	* client.c (call_in_directory), commit.c (commit_filesdoneproc), log.c
