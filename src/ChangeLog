@@ -1,3 +1,7 @@
+Thu Jun 22 10:41:41 1995  James Kingdon  <kingdon@harvey.cyclic.com>
+
+	* subr.c: Change -1 to (size_t)-1 when comparing against a size_t.
+
 Wed Jun 21 16:51:54 1995  nk@ipgate.col.sw-ley.de (Norbert Kiesel)
 
 	* create_adm.c, entries.c, modules.c: Avoid coredumps if

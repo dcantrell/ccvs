@@ -86,7 +86,7 @@ copy_file (from, to)
 	for (;;) 
 	{
 	    n = read (fdin, buf, sizeof(buf));
-	    if (n == -1)
+	    if (n == (size_t)-1)
 	    {
 #ifdef EINTR
 		if (errno == EINTR)
@@ -434,13 +434,13 @@ block_read (fd, buf, nchars)
     do 
     {
 	nread = read (fd, bp, nchars);
-	if (nread == -1)
+	if (nread == (size_t)-1)
 	{
 #ifdef EINTR
 	    if (errno == EINTR)
 		continue;
 #endif
-	    return -1;
+	    return (size_t)-1;
 	}
 
 	if (nread == 0)
@@ -498,11 +498,11 @@ xcmp (file1, file2)
 	do 
 	{
 	    read1 = block_read (fd1, buf1, buf_size);
-	    if (read1 == -1) 
+	    if (read1 == (size_t)-1)
 		error (1, errno, "cannot read file %s for comparing", file1);
 
 	    read2 = block_read (fd2, buf2, buf_size);
-	    if (read2 == -1)
+	    if (read2 == (size_t)-1)
 		error (1, errno, "cannot read file %s for comparing", file2);
 
 	    /* assert (read1 == read2); */
