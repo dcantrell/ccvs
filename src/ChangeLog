@@ -1,3 +1,8 @@
+2000-11-28  Derek Price  <derek.price@openavenue.com>
+
+	* root.c (parse_cvsroot): add trace on this function
+	* client.c (get_port_number): make trace print look like others
+
 2000-11-16  Derek Price  <derek.price@openavenue.com>
 
 	* filesubr.c (cvs_temp_file): back out the previous change in the

@@ -3719,7 +3719,7 @@ get_port_number (envname, portname, defaultport)
 	    error (1, 0, "variable.");
 	}
 	if (trace)
-	    fprintf(stderr, "Using TCP port %d to contact server.\n", port);
+	    fprintf(stderr, " -> Using TCP port %d to contact server.\n", port);
 	return (port);
     }
     else if (portname && (s = getservbyname (portname, "tcp")))

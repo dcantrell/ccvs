@@ -304,6 +304,9 @@ parse_cvsroot (CVSroot)
     char *cvsroot_copy, *p, *q;		/* temporary pointers for parsing */
     int check_hostname, no_port, no_password;
 
+    if (trace)
+	fprintf (stderr, "%s-> parse_cvsroot(%s)\n", CLIENT_SERVER_STR, CVSroot);
+
     if (CVSroot_original != NULL)
 	free (CVSroot_original);
     if (CVSroot_directory != NULL)
