@@ -1,5 +1,9 @@
 Sun Aug 10 12:18:31 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* sanity.sh: Remove TODO item about more keyword expansion tests.
+	The keyword test and others cover it pretty well, and such an item
+	isn't useful unless it is specific.
+
 	* sanity.sh (importb): New tests test "cvs import -b".
 
 	* mkmodules.c: Update comment with more reasons why having

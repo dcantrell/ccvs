@@ -8277,7 +8277,6 @@ echo "OK, all tests completed."
 # * Test all flags in modules file.
 #   Test that ciprog gets run both on checkin in that directory, or a
 #     higher-level checkin which recurses into it.
-# * More tests of keyword expansion.
 # * Test operations on a directory that contains other directories but has
 #   no files of its own.
 # * -t global option
