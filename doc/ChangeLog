@@ -1,3 +1,8 @@
+1998-03-04  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (Special Files): Add notes about client/server CVS
+	and hard links across directories.
+
 1998-03-01  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (Keeping a checked out copy): The magic loginfo
