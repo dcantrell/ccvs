@@ -56,7 +56,7 @@ testmkmodules=`pwd`/mkmodules
 # So new tests probably should invoke ${testcvs} directly, rather than ${CVS}.
 # and then they've obviously got to do something with the output....
 #
-CVS="${testcvs} -Q -f"
+CVS="${testcvs} -Q"
 
 LOGFILE=`pwd`/check.log
 
@@ -227,6 +227,10 @@ dotest_fail ()
 rm -rf ${TESTDIR}
 mkdir ${TESTDIR}
 cd ${TESTDIR}
+
+# Avoid picking up any stray .cvsrc, etc., from the user running the tests
+mkdir home
+HOME=${TESTDIR}/home; export HOME
 
 # Remaining arguments are the names of tests to run.
 #
@@ -2209,8 +2213,6 @@ abc	[a-z0-9]*	edit	unedit	commit'
 	  ;;
 
 	ignore)
-	  mkdir home
-	  HOME=${TESTDIR}/home; export HOME
 	  dotest 187a1 "${testcvs} -q co CVSROOT" 'U CVSROOT/modules'
 	  cd CVSROOT
 	  echo rootig.c >cvsignore
