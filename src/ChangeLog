@@ -1,3 +1,8 @@
+2003-11-10  Mark D. Baushke  <mdb@cvshome.org>
+
+	* recurse.c (do_dir_proc): Set xframe.repository to NULL after a
+	call to free().
+
 2003-11-10  Derek Price  <derek@ximbiot.com>
 
 	* sanity.sh (rmadd3): Fix typo.
