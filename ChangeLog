@@ -1,5 +1,10 @@
 2003-01-20  Derek Price  <derek@ximbiot.com>
 
+	* NEWS: Update the news for the last release to mention that client
+	builds are not affected by the security vulnerability.
+
+2003-01-20  Derek Price  <derek@ximbiot.com>
+
 	* configure.in: Update to dev version 1.11.5.1.
 	* configure: Regenerated.
 
