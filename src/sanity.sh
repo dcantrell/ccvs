@@ -7139,6 +7139,34 @@ U cleanme\.txt"
 "The usual boring test text\.
 bluegill"
 
+	  # Now try with conflicts
+	  cd ..
+	  dotest clean-15 "${testcvs} -q co -d second-dir first-dir" \
+'U second-dir/cleanme\.txt'
+	  cd second-dir
+	  echo "conflict test" >> cleanme.txt
+	  dotest clean-16 "${testcvs} -q ci -m." \
+"Checking in cleanme\.txt;
+${TESTDIR}/cvsroot/first-dir/cleanme\.txt,v  <--  cleanme\.txt
+new revision: 1\.2; previous revision: 1\.1
+done"
+	  cd ../first-dir
+	  echo "fish" >> cleanme.txt
+	  dotest clean-17 "${testcvs} -nq update" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/cleanme\.txt,v
+retrieving revision 1\.1
+retrieving revision 1\.2
+Merging differences between 1\.1 and 1\.2 into cleanme\.txt
+rcsmerge: warning: conflicts during merge
+${PROG} [a-z]*: conflicts found in cleanme\.txt
+C cleanme\.txt"
+	  dotest clean-18 "${testcvs} -q update -C" \
+"(Locally modified cleanme\.txt moved to \.#cleanme\.txt\.1\.1)
+U cleanme\.txt"
+	  dotest clean-19 "cat .#cleanme.txt.1.1" \
+"The usual boring test text\.
+fish"
+	  
           # Done.  Clean up.
 	  cd ../..
           rm -rf 1
