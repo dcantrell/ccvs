@@ -88,9 +88,9 @@ char *RCS_gettag PROTO((RCSNode * rcs, char *symtag, int force_tag_match,
 char *RCS_getversion PROTO((RCSNode * rcs, char *tag, char *date,
 		      int force_tag_match, int return_both));
 char *RCS_magicrev PROTO((RCSNode *rcs, char *rev));
-int RCS_isbranch PROTO((char *file, char *rev, RCSNode *rcs));
-int RCS_nodeisbranch PROTO((char *rev, RCSNode *rcs));
-char *RCS_whatbranch PROTO((char *file, char *tag, RCSNode *rcs));
+int RCS_isbranch PROTO((RCSNode *rcs, const char *rev));
+int RCS_nodeisbranch PROTO((RCSNode *rcs, const char *tag));
+char *RCS_whatbranch PROTO((RCSNode *rcs, const char *tag));
 char *RCS_head PROTO((RCSNode * rcs));
 int RCS_datecmp PROTO((char *date1, char *date2));
 time_t RCS_getrevtime PROTO((RCSNode * rcs, char *rev, char *date, int fudge));

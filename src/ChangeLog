@@ -1,3 +1,15 @@
+Thu Feb 29 07:36:57 1996  J.T. Conklin  <jtc@rtl.cygnus.com>
+
+	* rcs.c (RCS_isbranch, RCS_whatbranch): Remove no longer used file
+ 	argument, swap order of remaining two arguments to be like other
+	RCS_* functions.
+	(RCS_nodeisbranch): swap order of arguments to be like other RCS_*
+	functions.
+	* rcs.h (RCS_isbranch, RCS_whatbranch, RCS_nodeisbranch): Update
+	prototypes for above changes.
+	* commit.c, rtag.c, status.c, tag.c: Update for above calling
+ 	convention changes.
+
 Thu Feb 29 08:39:03 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* client.c (start_server): Revert changes which claimed to fall

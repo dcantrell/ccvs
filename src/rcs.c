@@ -973,15 +973,16 @@ checkmagic_proc (p, closure)
 }
 
 /*
- * Given a list of RCSNodes, returns non-zero if the specified
- * revision number or symbolic tag resolves to a "branch" within the
- * rcs file.
+ * Given an RCSNode, returns non-zero if the specified revision number 
+ * or symbolic tag resolves to a "branch" within the rcs file.
+ *
+ * FIXME: this is the same as RCS_nodeisbranch except for the special 
+ *        case for handling a null rcsnode.
  */
 int
-RCS_isbranch (file, rev, rcs)
-    char *file;
-    char *rev;
+RCS_isbranch (rcs, rev)
     RCSNode *rcs;
+    const char *rev;
 {
     /* numeric revisions are easy -- even number of dots is a branch */
     if (isdigit (*rev))
@@ -992,7 +993,7 @@ RCS_isbranch (file, rev, rcs)
 	return (0);
 
     /* now, look for a match in the symbols list */
-    return (RCS_nodeisbranch (rev, rcs));
+    return (RCS_nodeisbranch (rcs, rev));
 }
 
 /*
@@ -1001,9 +1002,9 @@ RCS_isbranch (file, rev, rcs)
  * take into account any magic branches as well.
  */
 int
-RCS_nodeisbranch (rev, rcs)
-    char *rev;
+RCS_nodeisbranch (rcs, rev)
     RCSNode *rcs;
+    const char *rev;
 {
     int dots;
     Node *p;
@@ -1046,10 +1047,9 @@ RCS_nodeisbranch (rev, rcs)
  * for the specified *symbolic* tag.  Magic branches are handled correctly.
  */
 char *
-RCS_whatbranch (file, rev, rcs)
-    char *file;
-    char *rev;
+RCS_whatbranch (rcs, rev)
     RCSNode *rcs;
+    const char *rev;
 {
     Node *p;
     int dots;
