@@ -69,12 +69,13 @@ for my $file (@ARGV)
 		# Need to do this everywhere.  i.e., before we print example
 		# lines, since literal back slashes can appear there too.
 		s/\\/\\\\/g;
+		s/^\./\\&./;
 
 		# Examples should be indented and otherwise untouched
 		if (/^\@example$/)
 		{
 			$indent += 2;
-			print qq{.IP "" $indent\n};
+			print qq{.SP\n.PD 0\n};
 			$inexample = 1;
 			next;
 		}
@@ -83,7 +84,7 @@ for my $file (@ARGV)
 			if (/^\@end example$/)
 			{
 				$indent -= 2;
-				print qq{.IP "" $indent\n};
+				print qq{\n.PD\n.IP "" $indent\n};
 				$inexample = 0;
 				next;
 			}
@@ -92,8 +93,16 @@ for my $file (@ARGV)
 				print ".SP\n";
 				next;
 			}
-			s/\@\@/\@/g;
 
+			# Replace special chars.
+			s/\@dots{}/\\&.../g;
+			s/\@([{}])/$1/g;
+			s/\@\@/\@/g;
+			s/^'/\\'/g;
+			s/^\./\\./g;
+
+			# Preserve the newline.
+			print qq{.IP "" $indent\n};
 			print $_;
 			next;
 		}
@@ -193,9 +202,11 @@ for my $file (@ARGV)
 		s/\@(strong){([^}]+)}/\\fB$2\\fP/g;
 		s/\@(sc|code|file|samp){([^}]+)}/\\fB$2\\fP/g;
 		s/\@(emph|var|dfn){([^}]+)}/\\fI$2\\fP/g;
-		s/\@dots{}/.../g;
+		s/\@dots{}/\\&.../g;
 		s/\@([{}])/$1/g;
 		s/\@\@/\@/g;
+		s/^'/\\'/g;
+		s/^\./\\./g;
 
 		# Index entries.
 		if (/^\@cindex (.*)$/)
@@ -208,21 +219,3 @@ for my $file (@ARGV)
 		print $_;
 	}
 }
-#	sed '
-#/^@c\( .*\)\?$/d;/^@comment\( .*\)\?$/d;
-#s/@sc{cvs}/[\
-#.B CVS\
-#]/g;
-#s/^@cindex \(.*\)$/.IX "\1"/;
-#s/^@node \(.*\)$/.SH "\1"/;
-#s/^@appendix[subec]* \(.*\)$/.SS "\1"/;
-#s/@\(px\?\)\?ref{\([^}]*\)}/see node `\2'"'"' in the Cederqvist/g;
-#/^@menu$/,/^@end menu$/d;
-#/^@table @code$/,/^@end table$/{
-#1d;
-#s/^@item \(.*\)$/.TP\
-#\1/;
-#/^@end table$/d;n;};
-#' <"$file".tmp >"$file".tmp2
-
-#done
