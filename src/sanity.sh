@@ -25004,7 +25004,6 @@ C FILE"
 "===================================================================
 File: no file file		Status: Up-to-date
 
-5A
    Working revision:	No entry for file
    Repository revision:	1\.2	$CVSROOT_DIRNAME/first-dir/Attic/file,v"
 	    dotest recase-14sscs "$testcvs log file" \
