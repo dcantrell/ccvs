@@ -46,6 +46,8 @@ Parse_Info (infofile, repository, callproc, all)
     const char *srepos;
     const char *regex_err;
 
+    assert (repository);
+
     if (current_parsed_root == NULL)
     {
 	/* XXX - should be error maybe? */

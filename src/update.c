@@ -39,6 +39,7 @@
  */
 
 #include "cvs.h"
+#include <assert.h>
 #include "savecwd.h"
 #ifdef SERVER_SUPPORT
 # include "md5.h"
@@ -1956,6 +1957,8 @@ merge_file (finfo, vers)
     int status;
     int retcode = 0;
     int retval;
+
+    assert (vers->vn_user);
 
     /*
      * The users currently modified file is moved to a backup file name

@@ -752,6 +752,8 @@ logfile_write (repository, filter, message, logfp, changes)
     char *fmt_percent;		/* the location of the percent sign
 				   that starts the format string. */
 
+    assert (repository);
+
     /* The user may specify a format string as part of the filter.
        Originally, `%s' was the only valid string.  The string that
        was substituted for it was:

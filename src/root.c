@@ -15,6 +15,7 @@
  */
 
 #include "cvs.h"
+#include <assert.h>
 #include "getline.h"
 
 /* Printable names for things in the current_parsed_root->method enum variable.
@@ -375,6 +376,8 @@ parse_cvsroot (root_in)
 #ifdef CLIENT_SUPPORT
     int check_hostname, no_port, no_password;
 #endif /* CLIENT_SUPPORT */
+
+    assert (root_in);
 
     /* allocate some space */
     newroot = new_cvsroot_t();
@@ -742,6 +745,8 @@ normalize_cvsroot (root)
     char *cvsroot_canonical;
     char *p, *hostname, *username;
     char port_s[64];
+
+    assert (root && root->hostname && root->directory);
 
     /* get the appropriate port string */
     sprintf (port_s, "%d", get_cvs_port_number (root));
