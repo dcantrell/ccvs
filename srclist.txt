@@ -42,6 +42,10 @@ CVS Repository: :pserver:anoncvs@subversions.gnu.org:/cvsroot/gnulib
 Imported files					CVS		Local
 						Directory	Modifications
 ----------------------------------------------- --------------- ---------------
+# $GNULIB/modules/alloca
+$GNULIB/lib/alloca.c				lib		no NI
+$GNULIB/lib/alloca_.h				lib		no NI
+$GNULIB/m4/alloca.m4				m4		no NI
 # $GNULIB/modules/atexit
 $GNULIB/lib/atexit.c				lib		no NI
 $GNULIB/m4/atexit.m4				m4		no NI

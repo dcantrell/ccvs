@@ -13,6 +13,11 @@
 /* Define to 1 if the `closedir' function returns void instead of `int'. */
 #undef CLOSEDIR_VOID
 
+/* Define to one of `_getb67', `GETB67', `getb67' for Cray-2 and Cray-YMP
+   systems. This function is required for `alloca.c' support on those systems.
+   */
+#undef CRAY_STACKSEG_END
+
 /* The CVS admin command is restricted to the members of the group
    CVS_ADMIN_GROUP. If this group does not exist, all users are allowed to run
    CVS admin. To disable the CVS admin command for all users, create an empty
@@ -30,6 +35,9 @@
    checking by passing the "--enable-rootcommit" option to configure or by
    commenting out the lines below. */
 #undef CVS_BADROOT
+
+/* Define to 1 if using `alloca.c'. */
+#undef C_ALLOCA
 
 /* The default editor to use, if one does not specify the "-e" option to cvs,
    or does not have an EDITOR environment variable. If this is not set to an
@@ -63,6 +71,13 @@
    in the gssapi.h header file. MIT Kerberos 1.2.1 requires this. Only
    relevant when using GSSAPI. */
 #undef GSS_C_NT_HOSTBASED_SERVICE
+
+/* Define to 1 if you have `alloca', as a function or macro. */
+#undef HAVE_ALLOCA
+
+/* Define to 1 if you have <alloca.h> and it should be used (not on Ultrix).
+   */
+#undef HAVE_ALLOCA_H
 
 /* Define to 1 if you have the `atexit' function. */
 #undef HAVE_ATEXIT
@@ -568,6 +583,14 @@
 /* Define if you want CVS to be able to serve repositories to remote clients.
    */
 #undef SERVER_SUPPORT
+
+/* If using the C implementation of alloca, define if you know the
+   direction of stack growth for your system; otherwise it will be
+   automatically deduced at run-time.
+	STACK_DIRECTION > 0 => grows toward higher addresses
+	STACK_DIRECTION < 0 => grows toward lower addresses
+	STACK_DIRECTION = 0 => direction of growth unknown */
+#undef STACK_DIRECTION
 
 /* Define to 1 if the `S_IS*' macros in <sys/stat.h> do not work properly. */
 #undef STAT_MACROS_BROKEN
