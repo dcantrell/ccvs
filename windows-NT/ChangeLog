@@ -1,3 +1,9 @@
+Tue Dec 12 19:18:00 1995  Karl Fogel  <kfogel@floss.cyclic.com>
+
+        * options.h (AUTH_CLIENT_SUPPORT, AUTH_SERVER_SUPPORT): these
+        replace CVS_LOGIN.
+        (RCSBIN_DFLT): expand comment.
+
 Mon Dec 11 12:43:35 1995  adamg  <adamg@microsoft.com>
 
 	* config.h: Add INITIALIZE_SOCKET_SUBSYSTEM macro to ensure that
