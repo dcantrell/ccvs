@@ -1,3 +1,7 @@
+2003-10-03  Derek Price  <derek@ximbiot.com>
+
+	* modules.c (do_module): Use TRACE.
+
 2003-10-02  Derek Price  <derek@ximbiot.com>
 
 	* main.c (main): Don't free globals that might be needed by the cleanup
