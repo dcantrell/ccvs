@@ -1,3 +1,9 @@
+Mon Dec 18 18:59:30 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* Makefile.in (TAR_VERBOSE): Default to empty, not "v".  I don't
+	want that whole long list of files any more than jimb's daily
+	update script does.
+
 Sun Dec 17 23:59:11 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* configure.in (AC_REPLACE_FUNCS): Remove vasprintf.
