@@ -1369,7 +1369,7 @@ tag_dirproc (void *callerdat, const char *dir, const char *repos,
    if carefully done), and/or be harder to implement correctly.  */
 
 struct val_args {
-    char *name;
+    const char *name;
     int found;
 };
 
@@ -1442,7 +1442,7 @@ val_direntproc (void *callerdat, const char *dir, const char *repository,
  *   Nothing.
  */
 void
-tag_check_valid (char *name, int argc, char **argv, int local, int aflag,
+tag_check_valid (const char *name, int argc, char **argv, int local, int aflag,
                  char *repository, bool valid)
 {
     DBM *db;
@@ -1499,14 +1499,11 @@ Numeric tag %s invalid.  Numeric tags should be of the form X[.X]...", name);
        If two processes try to write val-tags at the same time, it would
        seem like we are in trouble.  */
 
-    mytag.dptr = name;
+    mytag.dptr = xstrdup (name);
     mytag.dsize = strlen (name);
 
-    valtags_filename = xmalloc (strlen (current_parsed_root->directory)
-				+ sizeof CVSROOTADM
-				+ sizeof CVSROOTADM_VALTAGS + 3);
-    sprintf (valtags_filename, "%s/%s/%s", current_parsed_root->directory,
-					   CVSROOTADM, CVSROOTADM_VALTAGS);
+    valtags_filename = Xasprintf ("%s/%s/%s", current_parsed_root->directory,
+                                  CVSROOTADM, CVSROOTADM_VALTAGS);
     db = dbm_open (valtags_filename, O_RDWR, 0666);
     if (db == NULL)
     {
@@ -1605,5 +1602,6 @@ Numeric tag %s invalid.  Numeric tags should be of the form X[.X]...", name);
 	error (0, errno, "cannot store %s into %s", name,
 	       valtags_filename);
     dbm_close (db);
+    free (mytag.dptr);
     free (valtags_filename);
 }

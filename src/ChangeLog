@@ -1,5 +1,11 @@
 2005-02-25  Derek Price  <derek@ximbiot.com>
 
+	* cvs.h (tag_check_valid): Declare NAME arg const.
+	* tag.c (tag_check_valid): Ditto, update to account for this.
+	Xasprintf instead of xmalloc/sprintf.
+
+2005-02-25  Derek Price  <derek@ximbiot.com>
+
 	* client.c (send_modified): Suppress a -Wall warning.
 
 2005-02-25  Derek Price  <derek@ximbiot.com>
