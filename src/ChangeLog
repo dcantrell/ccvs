@@ -1,3 +1,9 @@
+2004-03-07  Derek Price  <derek@ximbiot.com>
+
+	* run.c (struct cmdline_bindings, cmdline_bindings_hash_node_delete,
+	cmdline_escape, cmdline_quote, format_cmdline): Move...
+	* subr.c: ...here so they will compile under Windows.
+
 2004-03-03  Derek Price  <derek@ximbiot.com>
 
 	* import.c (import): Check that the module name specified by the user
