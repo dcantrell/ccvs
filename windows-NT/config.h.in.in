@@ -73,11 +73,11 @@
 /* Define on systems for which file names may have a so-called `drive letter'
    prefix, define this to compute the length of that prefix, including the
    colon. */
-#define FILESYSTEM_ACCEPTS_DRIVE_LETTER_PREFIX 1
+#define FILE_SYSTEM_ACCEPTS_DRIVE_LETTER_PREFIX 1
 
 /* Define if the backslash character may also serve as a file name component
    separator. */
-#define FILESYSTEM_BACKSLASH_IS_FILE_NAME_SEPARATOR 1
+#define FILE_SYSTEM_BACKSLASH_IS_FILE_NAME_SEPARATOR 1
 
 /* When committing or importing files, you must enter a log message. Normally,
    you can do this either via the -m flag on the command line, the -F flag on
