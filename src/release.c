@@ -68,7 +68,7 @@ release (argc, argv)
     char *thisarg;
     int arg_start_idx;
     int err = 0;
-    short delete_flag;
+    short delete_flag = 0;
 
 #ifdef SERVER_SUPPORT
     if (server_active)
