@@ -34,13 +34,12 @@ SOURCES = \
 	ftruncate.c \
 	getdate.c \
 	getdate.y \
-    	getline.c \
+	getline.c \
 	getopt.c \
 	getopt1.c \
 	getwd.c \
 	hostname.c \
 	md5.c \
-	memmove.c \
 	mkdir.c \
 	regex.c \
 	rename.c \
