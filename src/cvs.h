@@ -11,25 +11,6 @@
 				   can't easily be automatically checked
 				   for */
 
-/* AIX requires this to be the first thing in the file. */
-#ifdef __GNUC__
-#define alloca __builtin_alloca
-#else /* not __GNUC__ */
-#if HAVE_ALLOCA_H
-#include <alloca.h>
-#else /* not HAVE_ALLOCA_H */
-#ifdef _AIX
- #pragma alloca
-#else /* not _AIX */
-#ifdef ALLOCA_IN_STDLIB
- /* then we need do nothing */
-#else
-char *alloca ();
-#endif /* not ALLOCA_IN_STDLIB */
-#endif /* not _AIX */
-#endif /* not HAVE_ALLOCA_H */
-#endif /* not __GNUC__ */
-
 /* Changed from if __STDC__ to ifdef __STDC__ because of Sun's acc compiler */
 
 #ifdef __STDC__

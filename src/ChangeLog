@@ -1,3 +1,7 @@
+Thu Feb 22 22:34:11 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.h: Remove alloca cruft.
+
 Wed Feb 21 07:30:16 1996  J.T. Conklin  <jtc@rtl.cygnus.com>
 
 	* modules.c (do_module): call free_cwd before exiting.
