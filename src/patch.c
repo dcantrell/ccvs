@@ -13,6 +13,7 @@
  */
 
 #include "cvs.h"
+#include "getline.h"
 
 #ifndef lint
 static const char rcsid[] = "$CVSid: @(#)patch.c 1.57 94/09/30 $";
