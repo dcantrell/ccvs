@@ -1194,7 +1194,7 @@ serve_modified (arg)
     }
 
     {
-	int status = change_mode (arg, mode_text);
+	int status = change_mode (arg, mode_text, 0);
 	free (mode_text);
 	if (status)
 	{
