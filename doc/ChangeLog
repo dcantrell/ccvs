@@ -1,3 +1,8 @@
+Fri Jun  7 18:02:36 1996  Ian Lance Taylor  <ian@cygnus.com>
+			  and Jim Kingdon  <kingdon@cyclic.com>
+
+	* cvs.texinfo (annotate): Document new -r, -D, and -f options.
+
 Fri Jun  7 16:59:47 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (Invoking CVS): Add comment describing why only some
