@@ -1,3 +1,8 @@
+2000-12-26  Derek Price  <derek.price@openavenue.com>
+
+	* Makefile.am (INCLUDES): add zlib
+	* Makefile.in: Regenerated
+
 2000-12-22  Derek Price  <derek.price@openavenue.com>
 
 	* Makefile.am (DISTCLEANFILES): added a few files
