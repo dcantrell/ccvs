@@ -111,7 +111,7 @@ pr_path = @pr_path@
 # $(includeopt) is CVS specific and set by configure
 
 
-INCLUDES = -I$(top_srcdir)/$(src) $(includeopt)
+INCLUDES = -I$(top_srcdir)/src $(includeopt)
 
 noinst_LIBRARIES = libcvs.a
 
