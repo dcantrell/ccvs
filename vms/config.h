@@ -327,4 +327,8 @@ extern void fnfold (char *FILENAME);
 
 /* End of CVS options.h section */
 
+/* Return non-zero iff FILENAME is absolute.
+   Trivial under Unix, but more complicated under other systems.  */
+#define ISABSOLUTE(filename) (filename[0] == '/' || filename[0] == '[' || filename[0] == '<' || strchr(filename, ':'))
+
 #include "vms.h"
