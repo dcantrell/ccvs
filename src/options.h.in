@@ -251,6 +251,13 @@
 #undef AUTH_CLIENT_SUPPORT
 #undef AUTH_SERVER_SUPPORT
 
+/* This goes along with the AUTH_{CLIENT,SERVER}_SUPPORT above, but if
+ * neither of them are set, then this won't ever be used either.
+ * Define it to make CVS passwords case-insensitive.  We leave it
+ * unset by default, figuring that most will not want it.
+ */
+#undef CVS_PASSWORDS_CASE_INSENSITIVE
+
 /*
  * If you are working with a large remote repository and a 'cvs checkout' is
  * swamping your network and memory, define these to enable flow control.
