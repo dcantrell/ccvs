@@ -11,6 +11,10 @@ SERVER SECURITY ISSUES
 
 GENERAL USER ISSUES
 
+* Case insensitive clients using a case sensitive server can now use a
+  `cvs rm -f file; cvs add FILE' command sequence to add a file with the same
+  name in a new case.
+
 * CVSROOTs which contain a symlink to a real repository should work.
 
 * The configure script now tests whether it is building CVS on a case
