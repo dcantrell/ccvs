@@ -1,5 +1,17 @@
 2003-10-03  Derek Price  <derek@ximbiot.com>
 
+	Move calls to Lock_Cleanup to the atexit handler.
+
+	* commit.c (commit): Don't call Lock_Cleanup on error exit.
+	* error.c (error_exit): Don't call Lock_Cleanup.
+	* lock.c (Lock_Cleanup): Don't worry about recursive calls now that we
+	are using atexit for calls on exit.  Dispose locklist storage after the
+	locks are removed.  Expand comments.
+	* main.c (main): Move Lock_Cleanup call into atexit(Lock_Cleanup).
+	* server.c (server_notify): Add TRACE.
+
+2003-10-03  Derek Price  <derek@ximbiot.com>
+
 	* recurse.c (start_recursion): Remove unnecessary typecasts.
 	(do_recursion): Ditto.  Add TRACE.  Expand comments.  Remove unneeded
 	parens.

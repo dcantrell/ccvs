@@ -686,6 +686,8 @@ cause intermittent sandbox corruption.");
 	/* The user didn't ask for help, so go ahead and authenticate,
            set up CVSROOT, and the rest of it. */
 
+	short int lock_cleanup_setup = 0;
+
 	/* The UMASK environment variable isn't handled with the
 	   others above, since we don't want to signal errors if the
 	   user has asked for help.  This won't work if somebody adds
@@ -1021,6 +1023,22 @@ cause intermittent sandbox corruption.");
 	    }
 #endif
 
+	    if (
+#ifdef SERVER_SUPPORT
+		/* Don't worry about lock_cleanup_setup when the server is
+		 * active since we can only go through this loop once in that
+		 * case anyhow.
+		 */
+		server_active ||
+#endif
+		!current_parsed_root->isremote && !lock_cleanup_setup)
+	    {
+		/* Set up to clean up any locks we might create on exit.  */
+		atexit (Lock_Cleanup);
+		lock_cleanup_setup = 1;
+	    }
+
+	    /* Call our worker function.  */
 	    err = (*(cm->func)) (argc, argv);
 	
 	    /* Mark this root directory as done.  When the server is
@@ -1047,8 +1065,6 @@ cause intermittent sandbox corruption.");
 	} /* end of loop for cvsroot values */
 
     } /* end of stuff that gets done if the user DOESN'T ask for help */
-
-    Lock_Cleanup ();
 
     if (free_CVSroot)
 	free (CVSroot);
