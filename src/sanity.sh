@@ -478,7 +478,11 @@ RCSINIT=; export RCSINIT
 # tests.
 
 if test x"$*" = x; then
-	tests="basica basicb basic1 deep basic2 rdiff death death2 branches multibranch import join new newb conflicts conflicts2 modules modules2 modules3 mflag errmsg1 devcom devcom2 devcom3 ignore binfiles binfiles2 binwrap info serverpatch log log2 crerepos rcs big modes"
+	tests="basica basicb basic1 deep basic2 rdiff death death2 branches"
+	tests="${tests} multibranch import join new newb conflicts conflicts2"
+	tests="${tests} modules modules2 modules3 mflag errmsg1 devcom devcom2"
+	tests="${tests} devcom3 ignore binfiles binfiles2 binwrap info"
+	tests="${tests} serverpatch log log2 crerepos rcs big modes"
 	tests="${tests} sticky keyword"
 else
 	tests="$*"
