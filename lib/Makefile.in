@@ -128,7 +128,8 @@ am_libcvs_a_OBJECTS = sighandle.$(OBJEXT) allocsa.$(OBJEXT) \
 	exitfail.$(OBJEXT) getdate.$(OBJEXT) getnline.$(OBJEXT) \
 	gettime.$(OBJEXT) md5.$(OBJEXT) save-cwd.$(OBJEXT) \
 	strftime.$(OBJEXT) xmalloc.$(OBJEXT) xalloc-die.$(OBJEXT) \
-	xgetcwd.$(OBJEXT) xreadlink.$(OBJEXT) yesno.$(OBJEXT)
+	xgetcwd.$(OBJEXT) xgethostname.$(OBJEXT) xreadlink.$(OBJEXT) \
+	yesno.$(OBJEXT)
 libcvs_a_OBJECTS = $(am_libcvs_a_OBJECTS)
 am_getdate_OBJECTS = getdate-allocsa.$(OBJEXT) getdate-error.$(OBJEXT) \
 	getdate-exitfail.$(OBJEXT) getdate-getdate.$(OBJEXT) \
@@ -300,8 +301,8 @@ libcvs_a_SOURCES = sighandle.c system.h wait.h xselect.h xtime.h \
 	regex.h save-cwd.h save-cwd.c setenv.h stat-macros.h strcase.h \
 	strftime.c strftime.h time_r.h timespec.h unlocked-io.h \
 	printf-args.h printf-parse.h vasnprintf.h vasprintf.h xalloc.h \
-	xmalloc.c xalloc-die.c xgetcwd.h xgetcwd.c xreadlink.h \
-	xreadlink.c xsize.h yesno.c yesno.h
+	xmalloc.c xalloc-die.c xgetcwd.h xgetcwd.c xgethostname.h \
+	xgethostname.c xreadlink.h xreadlink.c xsize.h yesno.c yesno.h
 libcvs_a_LIBADD = \
 	@LIBOBJS@ \
 	@ALLOCA@
@@ -449,6 +450,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/stripslash.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xalloc-die.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xgetcwd.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xgethostname.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xmalloc.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xreadlink.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/yesno.Po@am__quote@
