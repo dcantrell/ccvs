@@ -9306,11 +9306,21 @@ N import-quirks-3/file2
 N import-quirks-3/file3
 No conflicts created by this import"
 
+	  dotest_sort import-quirks-4 \
+"$testcvs import -b1.1.2 -mthis-ones-ok import-quirks-4 VB RT" \
+"
+
+N import-quirks-4/file1
+N import-quirks-4/file2
+N import-quirks-4/file3
+No conflicts created by this import"
+
 	  dokeep
 	  cd ..
 	  rm -r import-quirks
 	  rm -rf $CVSROOT_DIRNAME/import-quirks-2 \
-		 $CVSROOT_DIRNAME/import-quirks-3
+		 $CVSROOT_DIRNAME/import-quirks-3 \
+		 $CVSROOT_DIRNAME/import-quirks-4
 	  ;;
 
 

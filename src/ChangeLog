@@ -1,5 +1,9 @@
 2004-10-25 Derek Price <derek@ximbiot.com>
 
+	* sanity.sh (import-quirks): Test an even branch number.
+
+2004-10-25 Derek Price <derek@ximbiot.com>
+
 	* import.c (import): Repair regex for regressions introduced in last
 	commit.
 	* sanity.sh (import-quirks): Test a few branch numbers import shouldn't
