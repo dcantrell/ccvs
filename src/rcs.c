@@ -3149,7 +3149,7 @@ translate_symtag (RCSNode *rcs, const char *tag)
     if (rcs->symbols_data != NULL)
     {
 	size_t len;
-	char *cp;
+	char *cp, *last;
 
 	/* Look through the RCS symbols information.  This is like
            do_symbols, but we don't add the information to a list.  In
@@ -3158,8 +3158,16 @@ translate_symtag (RCSNode *rcs, const char *tag)
 
 	len = strlen (tag);
 	cp = rcs->symbols_data;
+	/* Keeping track of LAST below isn't strictly necessary, now that tags
+	 * should be parsed for validity before they are accepted, but tags
+	 * with spaces used to cause the code below to loop indefintely, so
+	 * I have corrected for that.  Now, in the event that I missed
+	 * something, the server cannot be hung.  -DRP
+	 */
+	last = NULL;
 	while ((cp = strchr (cp, tag[0])) != NULL)
 	{
+	    if (cp == last) break;
 	    if ((cp == rcs->symbols_data || whitespace (cp[-1]))
 		&& strncmp (cp, tag, len) == 0
 		&& cp[len] == ':')
@@ -3182,6 +3190,7 @@ translate_symtag (RCSNode *rcs, const char *tag)
 		++cp;
 	    if (*cp == '\0')
 		break;
+	    last = cp;
 	}
     }
 
