@@ -1,3 +1,10 @@
+Fri Jan 12 13:38:12 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* configure.in, configure: Revert "Checking user's gender" change.
+	Sure, you only live once, but I want mine to be a *long* life, not
+	one interrupted by a CVS user who is not amused coming after me
+	with an axe.
+
 Fri Jan 12 12:46:23 1996  Karl Fogel  <kfogel@floss.red-bean.com>
 
         * configure: regenerated.

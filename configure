@@ -3284,9 +3284,6 @@ LIBOBJS="$LIBOBJS hostname.o"
 fi
 
 
-echo $ac_n "checking user's gender""... $ac_c" 1>&6
-echo "$ac_t""ok" 1>&6
-
 # If we have connect(), we want the full client & server arrangement.
 if test "$ac_cv_func_connect" = yes; then
 cat >> confdefs.h <<\EOF

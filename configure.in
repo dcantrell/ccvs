@@ -456,9 +456,6 @@ AC_CHECK_FUNCS(connect)])
 
 AC_CHECK_FUNC(gethostname, :, LIBOBJS="$LIBOBJS hostname.o")
 
-AC_MSG_CHECKING([user's gender])
-AC_MSG_RESULT([ok])
-
 # If we have connect(), we want the full client & server arrangement.
 if test "$ac_cv_func_connect" = yes; then
 AC_DEFINE(CLIENT_SUPPORT)
