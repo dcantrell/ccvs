@@ -3594,6 +3594,17 @@ two
 3
 [>]>>>>>> 1\.2"
 
+	  # Test behavior of symlinks in the repository.
+	  dotest rcslib-symlink-1 "ln -s file1,v ${CVSROOT_DIRNAME}/first-dir/file2,v"
+	  dotest rcslib-symlink-2 "${testcvs} update file2" "U file2"
+	  echo "This is a change" >> file2
+	  dotest rcslib-symlink-3 "${testcvs} ci -m because file2" \
+"Checking in file2;
+${TESTDIR}/cvsroot/first-dir/file1,v  <--  file2
+new revision: 1\.1\.2\.2; previous revision: 1\.1\.2\.1
+done"
+	  dotest rcslib-symlink-4 "test -L ${CVSROOT_DIRNAME}/first-dir/file2,v"
+
 	  cd ..
 
 	  if test "$keep" = yes; then
