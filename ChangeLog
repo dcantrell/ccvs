@@ -1,5 +1,11 @@
 2003-06-09  Derek Price  <derek@ximbiot.com>
 
+	* cvsnt.mak: Rename win32.c to woe32.c in accordance with the GNU
+	convention to avoid implying that we consider the Microsoft Windows
+	Operating Environment any sort of "win".
+
+2003-06-09  Derek Price  <derek@ximbiot.com>
+
 	* NEWS: Note short patch fix.
 
 2003-06-09  Derek Price  <derek@ximbiot.com>
