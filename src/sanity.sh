@@ -12470,15 +12470,18 @@ done"
 U dir/file2"
 	  dotest co-d-1.2 "cat dir/CVS/Repository" "$module"
 
-	  # FIXCVS: This should work.  Correct expected result:
-	  #
-	  #"U dir2/sdir/file1
-	  #U dir2/sdir/file2"
-	  dotest_fail co-d-2 "$testcvs -q co -d dir2/sdir $module" \
-"$SPROG \[checkout aborted\]: could not change directory to requested checkout directory \`dir2': No such file or directory"
-	  # FIXCVS:
-	  # dotest co-d-2.2 "cat dir4/CVS/Repository" "CVSROOT/Emptydir"
-	  # dotest co-d-2.3 "cat dir5/CVS/Repository" "$module"
+	  dotest co-d-2 "$testcvs -q co -d dir2/sdir $module" \
+"U dir2/sdir/file1
+U dir2/sdir/file2"
+	  dotest co-d-2.2 "cat dir2/CVS/Repository" "."
+	  dotest co-d-2.3 "cat dir2/sdir/CVS/Repository" "$module"
+
+	  dotest co-d-2.4 "$testcvs -q co -d dir2.4/sdir/sdir2 $module" \
+"U dir2.4/sdir/sdir2/file1
+U dir2.4/sdir/sdir2/file2"
+	  dotest co-d-2.4.2 "cat dir2.4/CVS/Repository" "CVSROOT/Emptydir"
+	  dotest co-d-2.4.3 "cat dir2.4/sdir/CVS/Repository" "."
+	  dotest co-d-2.4.3 "cat dir2.4/sdir/sdir2/CVS/Repository" "$module"
 
 	  mkdir dir3
 	  dotest co-d-3 "$testcvs -q co -d dir3 $module" \
@@ -12486,39 +12489,40 @@ U dir/file2"
 U dir3/file2"
 	  dotest co-d-3.2 "cat dir3/CVS/Repository" "$module"
 
-	  if $remote; then
-	    # FIXCVS: As for co-d-2.
-	    mkdir dir4
-	    dotest_fail co-d-4r "$testcvs -q co -d dir4/sdir $module" \
-"$SPROG \[checkout aborted\]: could not change directory to requested checkout directory \`dir4': No such file or directory"
-
-	    # FIXCVS: As for co-d-2.
-	    mkdir dir5
-	    mkdir dir5/sdir
-	    dotest_fail co-d-5r "$testcvs -q co -d dir5/sdir $module" \
-"$SPROG \[checkout aborted\]: could not change directory to requested checkout directory \`dir5': No such file or directory"
-	  else
-	    mkdir dir4
-	    dotest co-d-4 "$testcvs -q co -d dir4/sdir $module" \
+	  mkdir dir4
+	  dotest co-d-4 "$testcvs -q co -d dir4/sdir $module" \
 "U dir4/sdir/file1
 U dir4/sdir/file2"
-	    # CVS only creates administration directories for directories it
-	    # creates, and the last portion of the path passed to -d
-	    # regardless.
-	    dotest_fail co-d-4.2 "test -d dir4/CVS"
-	    dotest co-d-4.3 "cat dir4/sdir/CVS/Repository" "$module"
 
-	    mkdir dir5
-	    mkdir dir5/sdir
-	    dotest co-d-5 "$testcvs -q co -d dir5/sdir $module" \
+	  # CVS is only supposed to create administration directories in
+	  # directories it also creates, and in the directory specified by
+	  # the last portion of the path passed to -d regardless.  This is
+	  #
+	  # FIXCVS:
+	  # This is broken in client/server mode because the server does not
+	  # know the client's directory structure and has to create
+	  # everything.
+	  if $remote; then
+	    dotest co-d-4.2r "cat dir4/CVS/Repository" "."
+	  else
+	    dotest_fail co-d-4.2 "test -d dir4/CVS"
+	  fi
+
+	  dotest co-d-4.3 "cat dir4/sdir/CVS/Repository" "$module"
+
+	  mkdir dir5
+	  mkdir dir5/sdir
+	  dotest co-d-5 "$testcvs -q co -d dir5/sdir $module" \
 "U dir5/sdir/file1
 U dir5/sdir/file2"
-	    # CVS only creates administration directories for directories it
-	    # creates, and the last portion of the path passed to -d
-	    # regardless.
+	    # FIXCVS as for co-d-4.2r.
+	  if $remote; then
+	    dotest co-d-5.2 "cat dir5/CVS/Repository" "."
+	  else
 	    dotest_fail co-d-5.2 "test -d dir5/CVS"
-	    dotest co-d-5.3 "cat dir5/sdir/CVS/Repository" "$module"
 	  fi
+
+	  dotest co-d-5.3 "cat dir5/sdir/CVS/Repository" "$module"
 
 	  # clean up
 	  if $keep; then
@@ -13440,225 +13444,219 @@ U dir/dir2d2-2/sub2d2-2/file2-2"
 	  ## on the command line, but use a longer path.
 	  ##################################################
 
-	  dotest_fail cvsadm-2d3-1 "${testcvs} co -d dir/dir2 1mod" \
-"${SPROG} \[checkout aborted\]: could not change directory to requested checkout directory .dir.: No such file or directory"
-
-	  if $remote; then :; else
-	    # Remote can't handle this, even with the "mkdir dir".
-	    # This was also true of CVS 1.9.
-
-	    mkdir dir
-	    dotest cvsadm-2d3 "${testcvs} co -d dir/dir2 1mod" \
-"${SPROG} checkout: Updating dir/dir2
+	  dotest cvsadm-2d3-1 "$testcvs co -d dir/dir2 1mod" \
+"$SPROG checkout: Updating dir/dir2
 U dir/dir2/file1"
-	    dotest cvsadm-2d3b "cat CVS/Repository" "\."
-	    dotest_fail cvsadm-2d3d "test -f dir/CVS/Repository" ""
-	    dotest cvsadm-2d3f "cat dir/dir2/CVS/Repository" "mod1"
-	    rm -rf CVS dir
 
-	    mkdir dir
-	    dotest cvsadm-2d4 "${testcvs} co -d dir/dir2 2mod" \
-"${SPROG} checkout: Updating dir/dir2
+	  # Remote couldn't handle this, even with the "mkdir dir", before
+	  # CVS 1.11.14.
+	  dotest cvsadm-2d3b "cat CVS/Repository" "\."
+	  dotest cvsadm-2d3d "cat dir/CVS/Repository" "."
+	  dotest cvsadm-2d3f "cat dir/dir2/CVS/Repository" "mod1"
+	  rm -rf CVS dir
+
+	  mkdir dir
+	  dotest cvsadm-2d4 "$testcvs co -d dir/dir2 2mod" \
+"$SPROG checkout: Updating dir/dir2
 U dir/dir2/file2"
-	    dotest cvsadm-2d4b "cat CVS/Repository" "\."
-	    dotest cvsadm-2d4f "cat dir/dir2/CVS/Repository" "mod2/sub2"
-	    rm -rf CVS dir
+	  dotest cvsadm-2d4b "cat CVS/Repository" "\."
+	  dotest cvsadm-2d4f "cat dir/dir2/CVS/Repository" "mod2/sub2"
+	  rm -rf CVS dir
 
-	    mkdir dir
-	    dotest cvsadm-2d5 "${testcvs} co -d dir/dir2 1d1mod" \
-"${SPROG} checkout: Updating dir/dir2
+	  mkdir dir
+	  dotest cvsadm-2d5 "$testcvs co -d dir/dir2 1d1mod" \
+"$SPROG checkout: Updating dir/dir2
 U dir/dir2/file1"
-	    dotest cvsadm-2d5b "cat CVS/Repository" "\."
-	    dotest cvsadm-2d5f "cat dir/dir2/CVS/Repository" "mod1"
-	    rm -rf CVS dir
+	  dotest cvsadm-2d5b "cat CVS/Repository" "\."
+	  dotest cvsadm-2d5f "cat dir/dir2/CVS/Repository" "mod1"
+	  rm -rf CVS dir
 
-	    mkdir dir
-	    dotest cvsadm-2d6 "${testcvs} co -d dir/dir2 1d2mod" \
-"${SPROG} checkout: Updating dir/dir2
+	  mkdir dir
+	  dotest cvsadm-2d6 "$testcvs co -d dir/dir2 1d2mod" \
+"$SPROG checkout: Updating dir/dir2
 U dir/dir2/file2"
-	    dotest cvsadm-2d6b "cat CVS/Repository" "\."
-	    dotest cvsadm-2d6f "cat dir/dir2/CVS/Repository" "mod2/sub2"
-	    rm -rf CVS dir
+	  dotest cvsadm-2d6b "cat CVS/Repository" "\."
+	  dotest cvsadm-2d6f "cat dir/dir2/CVS/Repository" "mod2/sub2"
+	  rm -rf CVS dir
 
-	    mkdir dir
-	    dotest cvsadm-2d7 "${testcvs} co -d dir/dir2 2d1mod" \
-"${SPROG} checkout: Updating dir/dir2
+	  mkdir dir
+	  dotest cvsadm-2d7 "$testcvs co -d dir/dir2 2d1mod" \
+"$SPROG checkout: Updating dir/dir2
 U dir/dir2/file1"
-	    dotest cvsadm-2d7b "cat CVS/Repository" "\."
-	    dotest cvsadm-2d7f "cat dir/dir2/CVS/Repository" "mod1"
-	    rm -rf CVS dir
+	  dotest cvsadm-2d7b "cat CVS/Repository" "\."
+	  dotest cvsadm-2d7f "cat dir/dir2/CVS/Repository" "mod1"
+	  rm -rf CVS dir
 
-	    mkdir dir
-	    dotest cvsadm-2d8 "${testcvs} co -d dir/dir2 2d2mod" \
-"${SPROG} checkout: Updating dir/dir2
+	  mkdir dir
+	  dotest cvsadm-2d8 "$testcvs co -d dir/dir2 2d2mod" \
+"$SPROG checkout: Updating dir/dir2
 U dir/dir2/file2"
-	    dotest cvsadm-2d8b "cat CVS/Repository" "\."
-	    dotest cvsadm-2d8f "cat dir/dir2/CVS/Repository" "mod2/sub2"
-	    rm -rf CVS dir
+	  dotest cvsadm-2d8b "cat CVS/Repository" "\."
+	  dotest cvsadm-2d8f "cat dir/dir2/CVS/Repository" "mod2/sub2"
+	  rm -rf CVS dir
 
-	    ##################################################
-	    ## And now, a few of those tests revisited to
-	    ## test the behavior of the -N flag.
-	    ##################################################
+	  ##################################################
+	  ## And now, a few of those tests revisited to
+	  ## test the behavior of the -N flag.
+	  ##################################################
 
-	    dotest cvsadm-N3 "${testcvs} co -N 1mod" \
-"${SPROG} checkout: Updating 1mod
+	  dotest cvsadm-N3 "$testcvs co -N 1mod" \
+"$SPROG checkout: Updating 1mod
 U 1mod/file1"
-	    dotest cvsadm-N3b "cat CVS/Repository" "\."
-	    dotest cvsadm-N3d "cat 1mod/CVS/Repository" "mod1"
-	    rm -rf CVS 1mod
+	  dotest cvsadm-N3b "cat CVS/Repository" "\."
+	  dotest cvsadm-N3d "cat 1mod/CVS/Repository" "mod1"
+	  rm -rf CVS 1mod
 
-	    dotest cvsadm-N4 "${testcvs} co -N 2mod" \
-"${SPROG} checkout: Updating 2mod
+	  dotest cvsadm-N4 "$testcvs co -N 2mod" \
+"$SPROG checkout: Updating 2mod
 U 2mod/file2"
-	    dotest cvsadm-N4b "cat CVS/Repository" "\."
-	    dotest cvsadm-N4d "cat 2mod/CVS/Repository" "mod2/sub2"
-	    rm -rf CVS 2mod
+	  dotest cvsadm-N4b "cat CVS/Repository" "\."
+	  dotest cvsadm-N4d "cat 2mod/CVS/Repository" "mod2/sub2"
+	  rm -rf CVS 2mod
 
-	    dotest cvsadm-N5 "${testcvs} co -N 1d1mod" \
-"${SPROG} checkout: Updating dir1d1
+	  dotest cvsadm-N5 "$testcvs co -N 1d1mod" \
+"$SPROG checkout: Updating dir1d1
 U dir1d1/file1"
-	    dotest cvsadm-N5b "cat CVS/Repository" "\."
-	    dotest cvsadm-N5d "cat dir1d1/CVS/Repository" "mod1"
-	    rm -rf CVS dir1d1
+	  dotest cvsadm-N5b "cat CVS/Repository" "\."
+	  dotest cvsadm-N5d "cat dir1d1/CVS/Repository" "mod1"
+	  rm -rf CVS dir1d1
 
-	    dotest cvsadm-N6 "${testcvs} co -N 1d2mod" \
-"${SPROG} checkout: Updating dir1d2
+	  dotest cvsadm-N6 "$testcvs co -N 1d2mod" \
+"$SPROG checkout: Updating dir1d2
 U dir1d2/file2"
-	    dotest cvsadm-N6b "cat CVS/Repository" "\."
-	    dotest cvsadm-N6d "cat dir1d2/CVS/Repository" "mod2/sub2"
-	    rm -rf CVS dir1d2
+	  dotest cvsadm-N6b "cat CVS/Repository" "\."
+	  dotest cvsadm-N6d "cat dir1d2/CVS/Repository" "mod2/sub2"
+	  rm -rf CVS dir1d2
 
-	    dotest cvsadm-N7 "${testcvs} co -N 2d1mod" \
-"${SPROG} checkout: Updating dir2d1/sub2d1
+	  dotest cvsadm-N7 "$testcvs co -N 2d1mod" \
+"$SPROG checkout: Updating dir2d1/sub2d1
 U dir2d1/sub2d1/file1"
-	    dotest cvsadm-N7b "cat CVS/Repository" "\."
-	    dotest cvsadm-N7d "cat dir2d1/CVS/Repository" "\."
-	    dotest cvsadm-N7f "cat dir2d1/sub2d1/CVS/Repository" "mod1"
-	    rm -rf CVS dir2d1
+	  dotest cvsadm-N7b "cat CVS/Repository" "\."
+	  dotest cvsadm-N7d "cat dir2d1/CVS/Repository" "\."
+	  dotest cvsadm-N7f "cat dir2d1/sub2d1/CVS/Repository" "mod1"
+	  rm -rf CVS dir2d1
 
-	    dotest cvsadm-N8 "${testcvs} co -N 2d2mod" \
-"${SPROG} checkout: Updating dir2d2/sub2d2
+	  dotest cvsadm-N8 "$testcvs co -N 2d2mod" \
+"$SPROG checkout: Updating dir2d2/sub2d2
 U dir2d2/sub2d2/file2"
-	    dotest cvsadm-N8b "cat CVS/Repository" "\."
-	    dotest cvsadm-N8d "cat dir2d2/CVS/Repository" "mod2"
-	    dotest cvsadm-N8f "cat dir2d2/sub2d2/CVS/Repository" "mod2/sub2"
-	    rm -rf CVS dir2d2
+	  dotest cvsadm-N8b "cat CVS/Repository" "\."
+	  dotest cvsadm-N8d "cat dir2d2/CVS/Repository" "mod2"
+	  dotest cvsadm-N8f "cat dir2d2/sub2d2/CVS/Repository" "mod2/sub2"
+	  rm -rf CVS dir2d2
 
-	    ## the ones in one-deep directories
+	  ## the ones in one-deep directories
 
-	    dotest cvsadm-N1d3 "${testcvs} co -N -d dir 1mod" \
-"${SPROG} checkout: Updating dir/1mod
+	  dotest cvsadm-N1d3 "$testcvs co -N -d dir 1mod" \
+"$SPROG checkout: Updating dir/1mod
 U dir/1mod/file1"
-	    dotest cvsadm-N1d3b "cat CVS/Repository" "\."
-	    dotest cvsadm-N1d3d "cat dir/CVS/Repository" "\."
-	    dotest cvsadm-N1d3f "cat dir/1mod/CVS/Repository" "mod1"
-	    rm -rf CVS dir
+	  dotest cvsadm-N1d3b "cat CVS/Repository" "\."
+	  dotest cvsadm-N1d3d "cat dir/CVS/Repository" "\."
+	  dotest cvsadm-N1d3f "cat dir/1mod/CVS/Repository" "mod1"
+	  rm -rf CVS dir
 
-	    dotest cvsadm-N1d4 "${testcvs} co -N -d dir 2mod" \
-"${SPROG} checkout: Updating dir/2mod
+	  dotest cvsadm-N1d4 "$testcvs co -N -d dir 2mod" \
+"$SPROG checkout: Updating dir/2mod
 U dir/2mod/file2"
-	    dotest cvsadm-N1d4b "cat CVS/Repository" "\."
-	    dotest cvsadm-N1d4d "cat dir/CVS/Repository" "mod2"
-	    dotest cvsadm-N1d4f "cat dir/2mod/CVS/Repository" "mod2/sub2"
-	    rm -rf CVS dir
+	  dotest cvsadm-N1d4b "cat CVS/Repository" "\."
+	  dotest cvsadm-N1d4d "cat dir/CVS/Repository" "mod2"
+	  dotest cvsadm-N1d4f "cat dir/2mod/CVS/Repository" "mod2/sub2"
+	  rm -rf CVS dir
 
-	    dotest cvsadm-N1d5 "${testcvs} co -N -d dir 1d1mod" \
-"${SPROG} checkout: Updating dir/dir1d1
+	  dotest cvsadm-N1d5 "$testcvs co -N -d dir 1d1mod" \
+"$SPROG checkout: Updating dir/dir1d1
 U dir/dir1d1/file1"
-	    dotest cvsadm-N1d5b "cat CVS/Repository" "\."
-	    dotest cvsadm-N1d5d "cat dir/CVS/Repository" "\."
-	    dotest cvsadm-N1d5d "cat dir/dir1d1/CVS/Repository" "mod1"
-	    rm -rf CVS dir
+	  dotest cvsadm-N1d5b "cat CVS/Repository" "\."
+	  dotest cvsadm-N1d5d "cat dir/CVS/Repository" "\."
+	  dotest cvsadm-N1d5d "cat dir/dir1d1/CVS/Repository" "mod1"
+	  rm -rf CVS dir
 
-	    dotest cvsadm-N1d6 "${testcvs} co -N -d dir 1d2mod" \
-"${SPROG} checkout: Updating dir/dir1d2
+	  dotest cvsadm-N1d6 "$testcvs co -N -d dir 1d2mod" \
+"$SPROG checkout: Updating dir/dir1d2
 U dir/dir1d2/file2"
-	    dotest cvsadm-N1d6b "cat CVS/Repository" "\."
-	    dotest cvsadm-N1d6d "cat dir/CVS/Repository" "mod2"
-	    dotest cvsadm-N1d6f "cat dir/dir1d2/CVS/Repository" "mod2/sub2"
-	    rm -rf CVS dir
+	  dotest cvsadm-N1d6b "cat CVS/Repository" "\."
+	  dotest cvsadm-N1d6d "cat dir/CVS/Repository" "mod2"
+	  dotest cvsadm-N1d6f "cat dir/dir1d2/CVS/Repository" "mod2/sub2"
+	  rm -rf CVS dir
 
-	    dotest cvsadm-N1d7 "${testcvs} co -N -d dir 2d1mod" \
-"${SPROG} checkout: Updating dir/dir2d1/sub2d1
+	  dotest cvsadm-N1d7 "$testcvs co -N -d dir 2d1mod" \
+"$SPROG checkout: Updating dir/dir2d1/sub2d1
 U dir/dir2d1/sub2d1/file1"
-	    dotest cvsadm-N1d7b "cat CVS/Repository" "\."
-	    dotest cvsadm-N1d7d "cat dir/CVS/Repository" "CVSROOT/Emptydir"
-	    dotest cvsadm-N1d7f "cat dir/dir2d1/CVS/Repository" "\."
-	    dotest cvsadm-N1d7h "cat dir/dir2d1/sub2d1/CVS/Repository" "mod1"
-	    rm -rf CVS dir
+	  dotest cvsadm-N1d7b "cat CVS/Repository" "\."
+	  dotest cvsadm-N1d7d "cat dir/CVS/Repository" "CVSROOT/Emptydir"
+	  dotest cvsadm-N1d7f "cat dir/dir2d1/CVS/Repository" "\."
+	  dotest cvsadm-N1d7h "cat dir/dir2d1/sub2d1/CVS/Repository" "mod1"
+	  rm -rf CVS dir
 
-	    dotest cvsadm-N1d8 "${testcvs} co -N -d dir 2d2mod" \
-"${SPROG} checkout: Updating dir/dir2d2/sub2d2
+	  dotest cvsadm-N1d8 "$testcvs co -N -d dir 2d2mod" \
+"$SPROG checkout: Updating dir/dir2d2/sub2d2
 U dir/dir2d2/sub2d2/file2"
-	    dotest cvsadm-N1d8b "cat CVS/Repository" "\."
-	    dotest cvsadm-N1d8d "cat dir/CVS/Repository" "\."
-	    dotest cvsadm-N1d8d "cat dir/dir2d2/CVS/Repository" "mod2"
-	    dotest cvsadm-N1d8d "cat dir/dir2d2/sub2d2/CVS/Repository" \
+	  dotest cvsadm-N1d8b "cat CVS/Repository" "\."
+	  dotest cvsadm-N1d8d "cat dir/CVS/Repository" "\."
+	  dotest cvsadm-N1d8d "cat dir/dir2d2/CVS/Repository" "mod2"
+	  dotest cvsadm-N1d8d "cat dir/dir2d2/sub2d2/CVS/Repository" \
 "mod2/sub2"
-	    rm -rf CVS dir
+	  rm -rf CVS dir
 
-	    ## the ones in two-deep directories
+	  ## the ones in two-deep directories
 
-	    mkdir dir
-	    dotest cvsadm-N2d3 "${testcvs} co -N -d dir/dir2 1mod" \
-"${SPROG} checkout: Updating dir/dir2/1mod
+	  mkdir dir
+	  dotest cvsadm-N2d3 "$testcvs co -N -d dir/dir2 1mod" \
+"$SPROG checkout: Updating dir/dir2/1mod
 U dir/dir2/1mod/file1"
-	    dotest cvsadm-N2d3b "cat CVS/Repository" "\."
-	    dotest cvsadm-N2d3f "cat dir/dir2/CVS/Repository" "\."
-	    dotest cvsadm-N2d3h "cat dir/dir2/1mod/CVS/Repository" "mod1"
-	    rm -rf CVS dir
+	  dotest cvsadm-N2d3b "cat CVS/Repository" "\."
+	  dotest cvsadm-N2d3f "cat dir/dir2/CVS/Repository" "\."
+	  dotest cvsadm-N2d3h "cat dir/dir2/1mod/CVS/Repository" "mod1"
+	  rm -rf CVS dir
 
-	    mkdir dir
-	    dotest cvsadm-N2d4 "${testcvs} co -N -d dir/dir2 2mod" \
-"${SPROG} checkout: Updating dir/dir2/2mod
+	  mkdir dir
+	  dotest cvsadm-N2d4 "$testcvs co -N -d dir/dir2 2mod" \
+"$SPROG checkout: Updating dir/dir2/2mod
 U dir/dir2/2mod/file2"
-	    dotest cvsadm-N2d4b "cat CVS/Repository" "\."
-	    dotest cvsadm-N2d4f "cat dir/dir2/CVS/Repository" "mod2"
-	    dotest cvsadm-N2d4h "cat dir/dir2/2mod/CVS/Repository" "mod2/sub2"
-	    rm -rf CVS dir
+	  dotest cvsadm-N2d4b "cat CVS/Repository" "\."
+	  dotest cvsadm-N2d4f "cat dir/dir2/CVS/Repository" "mod2"
+	  dotest cvsadm-N2d4h "cat dir/dir2/2mod/CVS/Repository" "mod2/sub2"
+	  rm -rf CVS dir
 
-	    mkdir dir
-	    dotest cvsadm-N2d5 "${testcvs} co -N -d dir/dir2 1d1mod" \
-"${SPROG} checkout: Updating dir/dir2/dir1d1
+	  mkdir dir
+	  dotest cvsadm-N2d5 "$testcvs co -N -d dir/dir2 1d1mod" \
+"$SPROG checkout: Updating dir/dir2/dir1d1
 U dir/dir2/dir1d1/file1"
-	    dotest cvsadm-N2d5b "cat CVS/Repository" "\."
-	    dotest cvsadm-N2d5f "cat dir/dir2/CVS/Repository" "\."
-	    dotest cvsadm-N2d5h "cat dir/dir2/dir1d1/CVS/Repository" "mod1"
-	    rm -rf CVS dir
+	  dotest cvsadm-N2d5b "cat CVS/Repository" "\."
+	  dotest cvsadm-N2d5f "cat dir/dir2/CVS/Repository" "\."
+	  dotest cvsadm-N2d5h "cat dir/dir2/dir1d1/CVS/Repository" "mod1"
+	  rm -rf CVS dir
 
-	    mkdir dir
-	    dotest cvsadm-N2d6 "${testcvs} co -N -d dir/dir2 1d2mod" \
-"${SPROG} checkout: Updating dir/dir2/dir1d2
+	  mkdir dir
+	  dotest cvsadm-N2d6 "$testcvs co -N -d dir/dir2 1d2mod" \
+"$SPROG checkout: Updating dir/dir2/dir1d2
 U dir/dir2/dir1d2/file2"
-	    dotest cvsadm-N2d6b "cat CVS/Repository" "\."
-	    dotest cvsadm-N2d6f "cat dir/dir2/CVS/Repository" "mod2"
-	    dotest cvsadm-N2d6h "cat dir/dir2/dir1d2/CVS/Repository" "mod2/sub2"
-	    rm -rf CVS dir
+	  dotest cvsadm-N2d6b "cat CVS/Repository" "\."
+	  dotest cvsadm-N2d6f "cat dir/dir2/CVS/Repository" "mod2"
+	  dotest cvsadm-N2d6h "cat dir/dir2/dir1d2/CVS/Repository" "mod2/sub2"
+	  rm -rf CVS dir
 
-	    mkdir dir
-	    dotest cvsadm-N2d7 "${testcvs} co -N -d dir/dir2 2d1mod" \
-"${SPROG} checkout: Updating dir/dir2/dir2d1/sub2d1
+	  mkdir dir
+	  dotest cvsadm-N2d7 "$testcvs co -N -d dir/dir2 2d1mod" \
+"$SPROG checkout: Updating dir/dir2/dir2d1/sub2d1
 U dir/dir2/dir2d1/sub2d1/file1"
-	    dotest cvsadm-N2d7b "cat CVS/Repository" "\."
-	    dotest cvsadm-N2d7f "cat dir/dir2/CVS/Repository" "CVSROOT/Emptydir"
-	    dotest cvsadm-N2d7g "cat dir/dir2/dir2d1/CVS/Repository" "\."
-	    dotest cvsadm-N2d7h "cat dir/dir2/dir2d1/sub2d1/CVS/Repository" \
+	  dotest cvsadm-N2d7b "cat CVS/Repository" "\."
+	  dotest cvsadm-N2d7f "cat dir/dir2/CVS/Repository" "CVSROOT/Emptydir"
+	  dotest cvsadm-N2d7g "cat dir/dir2/dir2d1/CVS/Repository" "\."
+	  dotest cvsadm-N2d7h "cat dir/dir2/dir2d1/sub2d1/CVS/Repository" \
 "mod1"
-	    rm -rf CVS dir
+	  rm -rf CVS dir
 
-	    mkdir dir
-	    dotest cvsadm-N2d8 "${testcvs} co -N -d dir/dir2 2d2mod" \
-"${SPROG} checkout: Updating dir/dir2/dir2d2/sub2d2
+	  mkdir dir
+	  dotest cvsadm-N2d8 "$testcvs co -N -d dir/dir2 2d2mod" \
+"$SPROG checkout: Updating dir/dir2/dir2d2/sub2d2
 U dir/dir2/dir2d2/sub2d2/file2"
-	    dotest cvsadm-N2d8b "cat CVS/Repository" "\."
-	    dotest cvsadm-N2d8f "cat dir/dir2/CVS/Repository" "\."
-	    dotest cvsadm-N2d8h "cat dir/dir2/dir2d2/CVS/Repository" "mod2"
-	    dotest cvsadm-N2d8j "cat dir/dir2/dir2d2/sub2d2/CVS/Repository" \
+	  dotest cvsadm-N2d8b "cat CVS/Repository" "\."
+	  dotest cvsadm-N2d8f "cat dir/dir2/CVS/Repository" "\."
+	  dotest cvsadm-N2d8h "cat dir/dir2/dir2d2/CVS/Repository" "mod2"
+	  dotest cvsadm-N2d8j "cat dir/dir2/dir2d2/sub2d2/CVS/Repository" \
 "mod2/sub2"
-	    rm -rf CVS dir
-
-	  fi # end of tests to be skipped for remote
+	  rm -rf CVS dir
+	  # End of test that didn't work for remote prior to CVS 1.11.14.
 
 	  ##################################################
 	  ## That's enough of that, thank you very much.
@@ -13798,7 +13796,12 @@ ${SPROG} checkout: Updating dir2d1/suba"
 	  dotest emptydir-16 "${testcvs} co 2d1mod" \
 "${SPROG} checkout: Updating dir2d1/sub/sub2d1
 U dir2d1/sub/sub2d1/file1"
-	  dotest emptydir-17 "test -d dir2d1/CVS"
+
+	  if $remote; then
+	    dotest emptydir-17 "cat dir2d1/CVS/Repository" "CVSROOT/Emptydir"
+	  else
+	    dotest_fail emptydir-17 "test -d dir2d1/CVS"
+	  fi
 
 	  # clean up
 	  if $keep; then
@@ -13877,50 +13880,45 @@ U ${TESTDIR}/1/file1"
 	  dotest abspath-2b "cat ${TESTDIR}/1/CVS/Repository" "mod1"
 
 	  # Done.  Clean up.
-	  rm -rf ${TESTDIR}/1
+	  rm -r ${TESTDIR}/1
 
 
 	  # Now try in a subdirectory.  We're not covering any more
 	  # code here, but we might catch a future error if someone
 	  # changes the checkout code.
 
-	  # Note that for the same reason that the shell command
-	  # "touch 1/2/3" requires directories 1 and 1/2 to already
-	  # exist, we expect ${TESTDIR}/1 to already exist.  I believe
-	  # this is the behavior of CVS 1.9 and earlier.
+	  # Since CVS 1.11.14, CVS will create leading directories specified
+	  # via co -d.
+	  # I am unsure that this wasn't the behavior prior to CVS 1.9, but the
+	  # comment that used to be here leads me to believe it was not.
 	  if $remote; then :; else
-	    dotest_fail abspath-3.1 "${testcvs} co -d ${TESTDIR}/1/2 mod1" \
-"${CPROG} \[checkout aborted\]: could not change directory to requested checkout directory .${TESTDIR}/1.: No such file or directory"
+	    dotest abspath-3.1 "${testcvs} -q co -d ${TESTDIR}/1/2 mod1" \
+"U $TESTDIR/1/2/file1"
+	    rm -r $TESTDIR/1
 	  fi
-	  dotest_fail abspath-3.2 "${testcvs} co -d 1/2 mod1" \
-"${SPROG} \[checkout aborted\]: could not change directory to requested checkout directory .1.: No such file or directory"
+	  dotest abspath-3.2 "${testcvs} -q co -d 1/2 mod1" \
+"U 1/2/file1"
+	  rm -r 1
 
+	  # We don't to mess with an existing directory just to traverse it,
+	  # for example by creating a CVS directory, but currently we can't
+	  # avoid this in client/server mode.
 	  mkdir 1
-
 	  if $remote; then
-	    # The server wants the directory to exist, but that is
-	    # a bug, it should only need to exist on the client side.
-	    # See also cvsadm-2d3.
-	    dotest_fail abspath-3a "${testcvs} co -d 1/2 mod1" \
-"${SPROG} \[checkout aborted\]: could not change directory to requested checkout directory .1.: No such file or directory"
-	    cd 1
-	    dotest abspath-3a-try2 "${testcvs} co -d 2 mod1" \
-"${SPROG} checkout: Updating 2
-U 2/file1"
-	    cd ..
-	    rm -rf 1/CVS
+	    dotest abspath-3ar "$testcvs co -d 1/2 mod1" \
+"$SPROG checkout: Updating 1/2
+U 1/2/file1"
+	    dotest abspath-3br "cat 1/CVS/Repository" .
 	  else
-	  dotest abspath-3a "${testcvs} co -d ${TESTDIR}/1/2 mod1" \
-"${SPROG} checkout: Updating ${TESTDIR}/1/2
-U ${TESTDIR}/1/2/file1"
-	  fi # remote workaround
-	  dotest abspath-3b "cat ${TESTDIR}/1/2/CVS/Repository" "mod1"
+	    dotest abspath-3a "$testcvs co -d $TESTDIR/1/2 mod1" \
+"$SPROG checkout: Updating $TESTDIR/1/2
+U $TESTDIR/1/2/file1"
+	    dotest_fail abspath-3b "test -d ${TESTDIR}/1/CVS"
+	  fi
 
-	  # For all the same reasons that we want "1" to already
-	  # exist, we don't to mess with it to traverse it, for
-	  # example by creating a CVS directory.
+	  dotest abspath-3c "cat ${TESTDIR}/1/2/CVS/Repository" mod1
 
-	  dotest_fail abspath-3c "test -d ${TESTDIR}/1/CVS" ''
+
 	  # Done.  Clean up.
 	  rm -rf ${TESTDIR}/1
 
@@ -14010,10 +14008,10 @@ ${SPROG} \[checkout aborted\]: than the 0 which Max-dotdot specified"
 "U 3/file2"
 	    cd 1/mod1
 	  else
-	  dotest abspath-7d "${testcvs} -q co -d ${TESTDIR}/3 mod2" \
+	    dotest abspath-7d "${testcvs} -q co -d ${TESTDIR}/3 mod2" \
 "U ${TESTDIR}/3/file2"
 	  fi # remote workaround
-	  dotest abspath-7e "${testcvs} -q update -d" ""
+	  dotest abspath-7e "${testcvs} -q update -d"
 	  cd ../..
 	  rm -r 1 2 3
 
@@ -27378,14 +27376,14 @@ ${PLUS}change him too"
 	  mkdir dir2
 
 	  # OK, the problem is that CVS/Entries doesn't look quite right,
-	  # I suppose because of the "rm -r".
-	  # For local this fixes it up.
-	  dotest multiroot3-6 "${testcvs} -d ${CVSROOT1} -q co dir1" ""
-	  if $remote; then
-	    # For remote that doesn't do it.  Use the quick and dirty fix.
-	    echo "D/dir1////" >CVS/Entries
-	    echo "D/dir2////" >>CVS/Entries
-	  fi
+	  # I suppose because of the "rm -r".  Then again, why *should* it
+	  # look right?  CVS/Root can only point to a single location, but
+	  # we expect CVS/Entries to hold entries for two repositories?  It
+	  # just plain isn't part of the filespec yet.
+	  #
+	  # Use the quick and dirty fix.
+	  echo "D/dir1////" >CVS/Entries
+	  echo "D/dir2////" >>CVS/Entries
 
 	  dotest multiroot3-7 "${testcvs} add dir2" \
 "Directory ${TESTDIR}/root2/dir2 added to the repository"
