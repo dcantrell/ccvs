@@ -1,3 +1,8 @@
+1998-05-23  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* BUGS: Remove items about binary file bugs which were fixed
+	approximately 6 months ago.
+
 1998-04-28  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* TESTS: Add note about Solaris sort program (reported by Mark
