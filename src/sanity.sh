@@ -479,7 +479,7 @@ RCSINIT=; export RCSINIT
 
 if test x"$*" = x; then
 	tests="basica basicb basic1 deep basic2 rdiff death death2 branches multibranch import join new newb conflicts conflicts2 modules modules2 modules3 mflag errmsg1 devcom devcom2 devcom3 ignore binfiles binwrap info serverpatch log log2 crerepos rcs big modes"
-	tests="${tests} sticky"
+	tests="${tests} sticky keyword"
 else
 	tests="$*"
 fi
@@ -5980,6 +5980,243 @@ ${PROG} [a-z]*: use .cvs commit. to add this file permanently"
 	  cd ..
 
 	  rm -rf 1 ${TESTDIR}/first-dir
+	  ;;
+
+	keyword)
+	  # Test keyword expansion.
+	  mkdir 1; cd 1
+	  dotest keyword-1 "${testcvs} -q co -l ." ''
+	  mkdir first-dir
+	  dotest keyword-2 "${testcvs} add first-dir" \
+"Directory ${TESTDIR}/cvsroot/first-dir added to the repository"
+          cd first-dir
+
+	  echo '$''Author$' > file1
+	  echo '$''Date$' >> file1
+	  echo '$''Header$' >> file1
+	  echo '$''Id$' >> file1
+	  echo '$''Locker$' >> file1
+	  echo '$''Name$' >> file1
+	  echo '$''RCSfile$' >> file1
+	  echo '$''Revision$' >> file1
+	  echo '$''Source$' >> file1
+	  echo '$''State$' >> file1
+	  echo '$''Nonkey$' >> file1
+	  # Omit the trailing dollar sign
+	  echo '$''Date' >> file1
+	  # Put two keywords on one line
+	  echo '$''State$' '$''State$' >> file1
+	  # Use a header for Log
+	  echo 'xx $''Log$' >> file1
+
+	  dotest keyword-3 "${testcvs} add file1" \
+"${PROG} [a-z]*: scheduling file .file1. for addition
+${PROG} [a-z]*: use .cvs commit. to add this file permanently"
+	  dotest keyword-4 "${testcvs} -q ci -m add" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
+done
+Checking in file1;
+${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
+initial revision: 1\.1
+done"
+	  dotest keyword-5 "cat file1" \
+'\$'"Author: ${username} "'\$'"
+"'\$'"Date: [0-9][0-9][0-9][0-9]/[0-9][0-9]/[0-9][0-9] [0-9][0-9]:[0-9][0-9]:[0-9][0-9] "'\$'"
+"'\$'"Header: ${TESTDIR}/cvsroot/first-dir/file1,v 1\.1 [0-9/]* [0-9:]* ${username} Exp "'\$'"
+"'\$'"Id: file1,v 1\.1 [0-9/]* [0-9:]* ${username} Exp "'\$'"
+"'\$'"Locker:  "'\$'"
+"'\$'"Name:  "'\$'"
+"'\$'"RCSfile: file1,v "'\$'"
+"'\$'"Revision: 1\.1 "'\$'"
+"'\$'"Source: ${TESTDIR}/cvsroot/first-dir/file1,v "'\$'"
+"'\$'"State: Exp "'\$'"
+"'\$'"Nonkey"'\$'"
+"'\$'"Date
+"'\$'"State: Exp "'\$'" "'\$'"State: Exp "'\$'"
+xx "'\$'"Log: file1,v "'\$'"
+xx Revision 1\.1  [0-9/]* [0-9:]*  ${username}
+xx add
+xx"
+
+	  # Use cvs admin to lock the RCS file in order to check -kkvl
+	  # vs. -kkv.  CVS does not normally lock RCS files, but some
+	  # people use cvs admin to enforce reserved checkouts.
+	  dotest keyword-6 "${testcvs} admin -l file1" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
+1\.1 locked
+done"
+
+	  dotest keyword-7 "${testcvs} update -kkv file1" "U file1"
+	  dotest keyword-8 "cat file1" \
+'\$'"Author: ${username} "'\$'"
+"'\$'"Date: [0-9][0-9][0-9][0-9]/[0-9][0-9]/[0-9][0-9] [0-9][0-9]:[0-9][0-9]:[0-9][0-9] "'\$'"
+"'\$'"Header: ${TESTDIR}/cvsroot/first-dir/file1,v 1\.1 [0-9/]* [0-9:]* ${username} Exp "'\$'"
+"'\$'"Id: file1,v 1\.1 [0-9/]* [0-9:]* ${username} Exp "'\$'"
+"'\$'"Locker:  "'\$'"
+"'\$'"Name:  "'\$'"
+"'\$'"RCSfile: file1,v "'\$'"
+"'\$'"Revision: 1\.1 "'\$'"
+"'\$'"Source: ${TESTDIR}/cvsroot/first-dir/file1,v "'\$'"
+"'\$'"State: Exp "'\$'"
+"'\$'"Nonkey"'\$'"
+"'\$'"Date
+"'\$'"State: Exp "'\$'" "'\$'"State: Exp "'\$'"
+xx "'\$'"Log: file1,v "'\$'"
+xx Revision 1\.1  [0-9/]* [0-9:]*  ${username}
+xx add
+xx"
+
+	  dotest keyword-9 "${testcvs} update -kkvl file1" "U file1"
+	  dotest keyword-10 "cat file1" \
+'\$'"Author: ${username} "'\$'"
+"'\$'"Date: [0-9][0-9][0-9][0-9]/[0-9][0-9]/[0-9][0-9] [0-9][0-9]:[0-9][0-9]:[0-9][0-9] "'\$'"
+"'\$'"Header: ${TESTDIR}/cvsroot/first-dir/file1,v 1\.1 [0-9/]* [0-9:]* ${username} Exp ${username} "'\$'"
+"'\$'"Id: file1,v 1\.1 [0-9/]* [0-9:]* ${username} Exp ${username} "'\$'"
+"'\$'"Locker: ${username} "'\$'"
+"'\$'"Name:  "'\$'"
+"'\$'"RCSfile: file1,v "'\$'"
+"'\$'"Revision: 1\.1 "'\$'"
+"'\$'"Source: ${TESTDIR}/cvsroot/first-dir/file1,v "'\$'"
+"'\$'"State: Exp "'\$'"
+"'\$'"Nonkey"'\$'"
+"'\$'"Date
+"'\$'"State: Exp "'\$'" "'\$'"State: Exp "'\$'"
+xx "'\$'"Log: file1,v "'\$'"
+xx Revision 1\.1  [0-9/]* [0-9:]*  ${username}
+xx add
+xx"
+
+	  dotest keyword-11 "${testcvs} update -kk file1" "U file1"
+	  dotest keyword-12 "cat file1" \
+'\$'"Author"'\$'"
+"'\$'"Date"'\$'"
+"'\$'"Header"'\$'"
+"'\$'"Id"'\$'"
+"'\$'"Locker"'\$'"
+"'\$'"Name"'\$'"
+"'\$'"RCSfile"'\$'"
+"'\$'"Revision"'\$'"
+"'\$'"Source"'\$'"
+"'\$'"State"'\$'"
+"'\$'"Nonkey"'\$'"
+"'\$'"Date
+"'\$'"State"'\$'" "'\$'"State"'\$'"
+xx "'\$'"Log"'\$'"
+xx Revision 1\.1  [0-9/]* [0-9:]*  ${username}
+xx add
+xx"
+
+	  dotest keyword-13 "${testcvs} update -kv file1" "U file1"
+	  dotest keyword-14 "cat file1" \
+"${username}
+[0-9][0-9][0-9][0-9]/[0-9][0-9]/[0-9][0-9] [0-9][0-9]:[0-9][0-9]:[0-9][0-9]
+${TESTDIR}/cvsroot/first-dir/file1,v 1\.1 [0-9/]* [0-9:]* ${username} Exp
+file1,v 1\.1 [0-9/]* [0-9:]* ${username} Exp
+
+
+file1,v
+1\.1
+${TESTDIR}/cvsroot/first-dir/file1,v
+Exp
+"'\$'"Nonkey"'\$'"
+"'\$'"Date
+Exp Exp
+xx file1,v
+xx Revision 1\.1  [0-9/]* [0-9:]*  ${username}
+xx add
+xx"
+
+	  dotest keyword-15 "${testcvs} update -ko file1" "U file1"
+	  dotest keyword-16 "cat file1" \
+'\$'"Author"'\$'"
+"'\$'"Date"'\$'"
+"'\$'"Header"'\$'"
+"'\$'"Id"'\$'"
+"'\$'"Locker"'\$'"
+"'\$'"Name"'\$'"
+"'\$'"RCSfile"'\$'"
+"'\$'"Revision"'\$'"
+"'\$'"Source"'\$'"
+"'\$'"State"'\$'"
+"'\$'"Nonkey"'\$'"
+"'\$'"Date
+"'\$'"State"'\$'" "'\$'"State"'\$'"
+xx "'\$'"Log"'\$'
+
+	  # Test the Name keyword.  First go back to normal expansion.
+
+	  # FIXME: When using remote, update -A does not revert the
+	  # keyword expansion mode.  We work around that bug here.
+	  # This workaround should be removed when the bug is fixed.
+	  if test "x$remote" = "xyes"; then
+	    cd ..
+	    rm -rf first-dir
+	    dotest keyword-17 "${testcvs} -q co first-dir" "U first-dir/file1"
+	    cd first-dir
+	  else
+	    dotest keyword-17 "${testcvs} update -A file1" "U file1"
+	  fi
+
+	  echo '$''Name$' > file1
+	  dotest keyword-18 "${testcvs} ci -m modify file1" \
+"Checking in file1;
+${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
+new revision: 1\.2; previous revision: 1\.1
+done"
+	  dotest keyword-19 "${testcvs} -q tag tag1" "T file1"
+	  echo "change" >> file1
+	  dotest keyword-20 "${testcvs} -q ci -m mod2 file1" \
+"Checking in file1;
+${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
+new revision: 1\.3; previous revision: 1\.2
+done"
+	  dotest keyword-21 "${testcvs} -q update -r tag1" "[UP] file1"
+
+	  # FIXME: This test fails when remote.  The second expect
+	  # string below should be removed when this is fixed.
+	  dotest keyword-22 "cat file1" '\$'"Name: tag1 "'\$' \
+'\$'"Name:  "'\$'
+
+	  dotest keyword-23 "${testcvs} update -A file1" "[UP] file1"
+
+	  # Test the Log keyword.
+	  echo 'xx $''Log$' > file1
+	  cat >${TESTDIR}/comment.tmp <<EOF
+First log line
+Second log line
+EOF
+	  dotest keyword-24 "${testcvs} ci -F ${TESTDIR}/comment.tmp file1" \
+"Checking in file1;
+${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
+new revision: 1\.4; previous revision: 1\.3
+done"
+	  rm -f ${TESTDIR}/comment.tmp
+	  dotest keyword-25 "cat file1" \
+"xx "'\$'"Log: file1,v "'\$'"
+xx Revision 1\.4  [0-9/]* [0-9:]*  ${username}
+xx First log line
+xx Second log line
+xx"
+
+	  echo "change" >> file1
+	  dotest keyword-26 "${testcvs} ci -m modify file1" \
+"Checking in file1;
+${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
+new revision: 1\.5; previous revision: 1\.4
+done"
+	  dotest keyword-27 "cat file1" \
+"xx "'\$'"Log: file1,v "'\$'"
+xx Revision 1\.5  [0-9/]* [0-9:]*  ${username}
+xx modify
+xx
+xx Revision 1\.4  [0-9/]* [0-9:]*  ${username}
+xx First log line
+xx Second log line
+xx
+change"
+
+	  cd ../..
+	  rm -rf 1 ${CVSROOT_DIRNAME}/first-dir
 	  ;;
 
 	*)

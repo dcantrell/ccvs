@@ -1,3 +1,7 @@
+Sat Apr 12 17:32:59 1997  Ian Lance Taylor  <ian@cygnus.com>
+
+	* sanity.sh (keyword): New tests for RCS keyword expansion.
+
 Sat Apr 12 16:47:13 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* sanity.sh (basicb): New tests basicb-1b, basicb-1c, basicb-9b,
