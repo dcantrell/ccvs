@@ -18,7 +18,7 @@
 
 #ifndef lint
 static char rcsid[] = "$CVSid: @(#)commit.c 1.101 94/10/07 $";
-USE(rcsid)
+USE(rcsid);
 #endif
 
 static Dtype check_direntproc PROTO((char *dir, char *repos, char *update_dir));

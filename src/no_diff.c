@@ -18,7 +18,7 @@
 
 #ifndef lint
 static char rcsid[] = "$CVSid: @(#)no_diff.c 1.39 94/10/07 $";
-USE(rcsid)
+USE(rcsid);
 #endif
 
 int

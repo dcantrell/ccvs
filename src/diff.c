@@ -18,7 +18,7 @@
 
 #ifndef lint
 static char rcsid[] = "$CVSid: @(#)diff.c 1.61 94/10/22 $";
-USE(rcsid)
+USE(rcsid);
 #endif
 
 static Dtype diff_dirproc PROTO((char *dir, char *pos_repos, char *update_dir));

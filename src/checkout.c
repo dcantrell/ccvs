@@ -37,7 +37,7 @@
 
 #ifndef lint
 static char rcsid[] = "$CVSid: @(#)checkout.c 1.78 94/10/07 $";
-USE(rcsid)
+USE(rcsid);
 #endif
 
 static char *findslash PROTO((char *start, char *p));

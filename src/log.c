@@ -16,7 +16,7 @@
 
 #ifndef lint
 static char rcsid[] = "$CVSid: @(#)log.c 1.44 94/09/30 $";
-USE(rcsid)
+USE(rcsid);
 #endif
 
 static Dtype log_dirproc PROTO((char *dir, char *repository, char *update_dir));
