@@ -1,3 +1,20 @@
+1998-09-01  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	Administrative note regarding Noel's changes to allow one to
+	switch from one CVS root to another in a single command: The
+	ChangeLog entries for the changes which Noel just checked in
+	appear for 1998-09-01, 1998-08-28, 1998-08-25, 1998-08-19, and
+	1998-08-18, rather than being all together.
+
+	* main.c (set_root_directory): Fix whitespace.
+	(main): Nuke new -m option and just have that message controlled
+	by -t.
+	* server.c (server): Revert the CVS_SERVER_SLEEP code back the way
+	it was in CVS 1.10.  Attaching to the parent process is relatively
+	boring (you can just run "cvs server" under a debugger instead),
+	but connecting to the child process is what the old code was for.
+	* recurse.c, server.c: Remove DEBUG_NJC code.
+
 1998-09-01  Noel Cragg  <noel@swish.red-bean.com>
 
 	* server.c (do_cvs_command): add another environment variable,

@@ -560,18 +560,9 @@ do_recursion (frame)
 		if (addnode (root_directories, n))
 		    error (1, 0, "cannot add new CVSROOT %s", this_root);
 	
-#ifdef DEBUG_NJC
-		error (0, 0, "notice: noticed new CVSROOT %s in do_recursion",
-		       this_root);
-#endif
 	    }
 	
 	    process_this_directory = (strcmp (current_root, this_root) == 0);
-#ifdef DEBUG_NJC
-	    if (! process_this_directory)
-		error (0, 0, "notice: skipping CVSROOT %s for %s in do_recursion",
-		       this_root, strcmp (update_dir, "") ? update_dir : ".");
-#endif
 	
 	    free (this_root);
 	}
@@ -953,18 +944,9 @@ but CVS uses %s for its own purposes; skipping %s directory",
 		if (addnode (root_directories, n))
 		    error (1, 0, "cannot add new CVSROOT %s", this_root);
 
-#ifdef DEBUG_NJC
-		error (0, 0, "notice: noticed new CVSROOT %s in do_dir_proc",
-		       this_root);
-#endif
 	    }
 
 	    process_this_directory = (strcmp (current_root, this_root) == 0);
-#ifdef DEBUG_NJC
-	    if (! process_this_directory)
-		error (0, 0, "notice: skipping CVSROOT %s for %s in do_dir_proc",
-		       this_root, strcmp (update_dir, "") ? update_dir : ".");
-#endif
 	    free (this_root);
 	}
     }

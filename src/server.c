@@ -390,15 +390,6 @@ create_adm_p (base_dir, dir)
 
     while (1)
     {
-#ifdef DEBUG_NJC
-	{
-	    FILE *fp = fopen ("/tmp/cvslog", "a");
-	    fprintf (fp, "create_adm_p %s\n", dir_where_cvsadm_lives);
-	    fflush (fp);
-	    fclose (fp);
-	}
-#endif
-
 	/* Create CVSADM. */
 	(void) sprintf (tmp, "%s/%s", dir_where_cvsadm_lives, CVSADM);
 	if ((CVS_MKDIR (tmp, 0777) < 0) && (errno != EEXIST))
@@ -454,15 +445,6 @@ create_adm_p (base_dir, dir)
 
 	    Subdir_Register ((List *) NULL, dir_where_cvsadm_lives,
 			     dir_to_register);
-#ifdef DEBUG_NJC
-	    {
-		FILE *fp = fopen ("/tmp/cvslog", "a");
-		fprintf (fp, "Subdir_Register %s %s\n",
-			 dir_where_cvsadm_lives, dir_to_register);
-		fflush (fp);
-		fclose (fp);
-	    }
-#endif
 	}
 
 	if (done)
@@ -2545,9 +2527,9 @@ error  \n");
 	 * Set this in .bashrc if you want to give yourself time to attach
 	 * to the subprocess with a debugger.
 	 */
-	if (getenv ("CVS_SERVER_SLEEP2"))
+	if (getenv ("CVS_SERVER_SLEEP"))
 	{
-	    int secs = atoi (getenv ("CVS_SERVER_SLEEP2"));
+	    int secs = atoi (getenv ("CVS_SERVER_SLEEP"));
 	    sleep (secs);
 	}
 
@@ -4757,16 +4739,6 @@ error ENOMEM Virtual memory exhausted.\n");
        say something like "client apparently supports an option not supported
        by this server" or something like that instead of usage message.  */
     argument_vector[0] = "cvs server";
-
-    /*
-     * Set this in .bashrc if you want to give yourself time to attach
-     * to the subprocess with a debugger.
-     */
-    if (getenv ("CVS_SERVER_SLEEP"))
-    {
-	int secs = atoi (getenv ("CVS_SERVER_SLEEP"));
-	sleep (secs);
-    }
 
     while (1)
     {
