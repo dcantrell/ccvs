@@ -94,13 +94,14 @@ approved by the Free Software Foundation.
 @end macro
 @end ifhtml
 
-@ifinfo
-@format
-START-INFO-DIR-ENTRY
+@dircategory GNU Packages
+@direntry
 * CVS: (cvs).                   Concurrent Versions System
-END-INFO-DIR-ENTRY
-@end format
-@end ifinfo
+@end direntry
+@dircategory Individual utilities
+@direntry
+* cvs: (cvs)CVS commands.       Concurrent Versions System
+@end direntry
 
 @comment The titlepage section does not appear in the Info file.
 @titlepage
