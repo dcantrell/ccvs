@@ -24,8 +24,6 @@
 #define __DECC_VER 0
 #endif
 
-#if __VMS_VER < 70200000 || __DECC_VER < 50700000
-
 #include <varargs.h>
 #include <rms.h>
 #include <descrip.h>
@@ -101,7 +99,7 @@ typedef struct
 } VMS_DIR;
 
 DIR *
-opendir (infilename, filepattern)
+vms_opendir (infilename, filepattern)
      char *infilename;	/* name of directory */
      char *filepattern;
 {
@@ -180,7 +178,7 @@ opendir (infilename, filepattern)
      now, by trying to read the first entry.  */
   if (vms_low_readdir ((DIR *) dirp) == (struct direct *) -1)
     {
-      closedir (dirp);		/* was: xfree (dirp);  */
+      vms_closedir (dirp);		/* was: xfree (dirp);  */
       errno = ENOENT;
       return 0;
     }
@@ -191,8 +189,8 @@ opendir (infilename, filepattern)
 }
 
 int
-closedir (dirp)
-     register DIR *dirp;		/* stream from opendir */
+vms_closedir (dirp)
+     register DIR *dirp;		/* stream from vms_opendir */
 {
   {
     VMS_DIR *vms_dirp = (VMS_DIR *) dirp;
@@ -296,8 +294,8 @@ vms_low_readdir (dirp)
 
 /* ARGUSED */
 struct direct *
-readdir (dirp)
-     register DIR *dirp;	/* stream from opendir */
+vms_readdir (dirp)
+     register DIR *dirp;	/* stream from vms_opendir */
 {
   register struct direct *dp;
 
@@ -312,9 +310,3 @@ readdir (dirp)
       return dp;
     }
 }
-
-#else  /*  __VMS_VER >= 70200000 && __DECC_VER >= 50700000  */
-
-#pragma message disable EMPTYFILE
-
-#endif  /*  __VMS_VER >= 70200000 && __DECC_VER >= 50700000  */

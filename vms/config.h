@@ -5,6 +5,14 @@
 #define CLIENT_SUPPORT 1
 #undef SERVER_SUPPORT
 
+/* Set up for other #if's which follow */
+#ifndef __DECC_VER
+#define __DECC_VER  0
+#endif
+#ifndef __VMS_VER
+#define __VMS_VER   0
+#endif
+
 /* VMS is case insensitive */
 /* #define FOLD_FN_CHAR(c) tolower(c) */
 
@@ -126,10 +134,8 @@
 /* #undef HAVE_ERRNO_H */
 
 /* Define if you have the <fcntl.h> header file.  */
-#ifdef __DECC_VER
 #if __DECC_VER >= 50700000
 # define HAVE_FCNTL_H 1
-#endif
 #endif
 
 /* Define if you have the <memory.h> header file.  */
@@ -199,6 +205,12 @@ extern void fnfold (char *FILENAME);
 #define optopt cvs_optopt
 #define optarg cvs_optarg
 #define opterr cvs_opterr
+
+/* Avoid open/read/closedir name conflicts with DEC C 5.7 libraries,
+   and fix the problem with readdir() retaining the trailing period.  */
+#define CVS_OPENDIR  vms_opendir
+#define CVS_READDIR  vms_readdir
+#define CVS_CLOSEDIR vms_closedir
 
 /* argv[0] in VMS is the full pathname which would look really ugly in error
    messages.  Even if we stripped out the directory and ".EXE;5", it would

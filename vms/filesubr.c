@@ -499,13 +499,13 @@ deep_remove_dir (path)
 
     if (rmdir (path) != 0 && (errno == ENOTEMPTY || errno == EEXIST)) 
     {
-	if ((dirp = opendir (path)) == NULL)
+	if ((dirp = CVS_OPENDIR (path)) == NULL)
 	    /* If unable to open the directory return
 	     * an error
 	     */
 	    return -1;
 
-	while ((dp = readdir (dirp)) != NULL)
+	while ((dp = CVS_READDIR (dirp)) != NULL)
 	{
 	    if (strcmp (dp->d_name, ".") == 0 ||
 			strcmp (dp->d_name, "..") == 0)
@@ -519,7 +519,7 @@ deep_remove_dir (path)
 		{
 		    if (deep_remove_dir (buf))
 		    {
-			closedir (dirp);
+			CVS_CLOSEDIR (dirp);
 			return -1;
 		    }
 		}
@@ -528,12 +528,12 @@ deep_remove_dir (path)
 		    /* buf isn't a directory, or there are
 		     * some sort of permision problems
 		     */
-		    closedir (dirp);
+		    CVS_CLOSEDIR (dirp);
 		    return -1;
 		}
 	    }
 	}
-	closedir (dirp);
+	CVS_CLOSEDIR (dirp);
 	return rmdir (path);
 	}
 
@@ -701,7 +701,7 @@ fncmp (const char *n1, const char *n2)
 {
     while (*n1 && *n2
            && (VMS_filename_classes[(unsigned char) *n1]
-	       == VMS_filename_classes[(unsigned char) *n2]))
+               == VMS_filename_classes[(unsigned char) *n2]))
         n1++, n2++;
     return (VMS_filename_classes[(unsigned char) *n1]
             - VMS_filename_classes[(unsigned char) *n2]);
@@ -913,19 +913,34 @@ void expand_wild (int argc, char **argv, int *pargc, char ***pargv) {
     for (totfiles=0,i=0;  i<argc;  ++i) {
         char *arg = argv[i];
 
-        if (   strchr(arg,' ') != 0 || strchr(arg,',') != 0
-            || strcmp(arg,".") == 0 || strcmp(arg,"..") == 0) {
+        if (arg != 0 && (   strchr(arg,' ') != 0
+                         || strcmp(arg,".") == 0
+                         || strcmp(arg,"..") == 0) ) {
             ++totfiles;
-        }else {
-            int num = decc$from_vms (arg, ew_no_op, 1);
-            totfiles += num>0 ? num : 1;
+        }else if (arg != 0) {
+            int num;
+            char *p = arg;
+            /* Handle comma-separated filelists */
+            while ( (p=strchr(p,',')) != 0) {
+                *p = '\0';
+                num = decc$from_vms (arg, ew_no_op, 1);
+                totfiles += num>0 ? num : 1;
+                *p++ = ',';
+                arg = p;
+            }
+            if (*arg != '\0') {
+                num = decc$from_vms (arg, ew_no_op, 1);
+                totfiles += num>0 ? num : 1;
+            }
         }
     }
+    largv = 0;
     if (totfiles) {
         largv = malloc (sizeof*largv * (totfiles + 1));
     }
     filesgotten = 0;
     if (largv != 0) {
+        int len;
         /* All bits set to zero may not be a NULL ptr */
         for (i=totfiles;  --i>=0;  ) {
             largv[i] = 0;
@@ -936,8 +951,9 @@ void expand_wild (int argc, char **argv, int *pargc, char ***pargv) {
 
         /*--- getcwd has an OpenVMS extension that allows us to ---*/
         /*--- get back Unix-style path names ---*/
-        (void) getcwd (CurWorkingDir, sizeof CurWorkingDir, 0);
-        if (CurWorkingDir[strlen(CurWorkingDir)-1] != '/') {
+        (void) getcwd (CurWorkingDir, sizeof CurWorkingDir - 1, 0);
+        len = strlen (CurWorkingDir);
+        if (   len > 0 && CurWorkingDir[len-1] != '/') {
             (void) strcat (CurWorkingDir, "/");
         }
         CurArg = 0;
@@ -946,18 +962,35 @@ void expand_wild (int argc, char **argv, int *pargc, char ***pargv) {
 
         for (i=0;  i<argc;  ++i) {
             char *arg = argv[i];
-            if (   strchr(arg,' ') != 0 || strchr(arg,',') != 0
-                || strcmp(arg,".") == 0 || strcmp(arg,"..") == 0) {
+
+            if (arg != 0 && (   strchr(arg,' ') != 0
+                             || strcmp(arg,".") == 0
+                             || strcmp(arg,"..") == 0) ) {
                 if (CurArg < MaxArgs) {
                     ArgvList[CurArg++] = strdup(arg);
                 }
                 ++filesgotten;
-            }else if (*arg != '\0') {
-                int num = decc$from_vms (arg, ew_add_file, 1);
-                if (num <= 0 && CurArg < MaxArgs) {
-                    ArgvList[CurArg++] = strdup(arg);
+            }else if (arg != 0) {
+                char *p = arg;
+                int num;
+                /* Handle comma-separated filelists */
+                while ( (p=strchr(p,',')) != 0) {
+                    *p = '\0';
+                    num = decc$from_vms (arg, ew_add_file, 1);
+                    if (num <= 0 && CurArg < MaxArgs) {
+                        ArgvList[CurArg++] = strdup(arg);
+                    }
+                    filesgotten += num>0 ? num : 1;
+                    *p++ = ',';
+                    arg = p;
                 }
-                filesgotten += num>0 ? num : 1;
+                if (*arg != '\0') {
+                    num = decc$from_vms (arg, ew_add_file, 1);
+                    if (num <= 0 && CurArg < MaxArgs) {
+                        ArgvList[CurArg++] = strdup(arg);
+                    }
+                    filesgotten += num>0 ? num : 1;
+                }
             }
         }
         if (filesgotten != totfiles) {
@@ -967,8 +1000,15 @@ void expand_wild (int argc, char **argv, int *pargc, char ***pargv) {
 
         release_globs();
     }
+    if (!largv) {
+        (*pargv) = malloc (sizeof(char *));
+        if ((*pargv) != 0) {
+            *(*pargv) = 0;
+        }
+    }else {
+        (*pargv) = largv;
+    }
     (*pargc) = largv ? filesgotten : 0;
-    (*pargv) = largv;
 
     return;
 }
