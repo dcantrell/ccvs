@@ -1,5 +1,8 @@
 Sat Nov 18 13:39:06 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
+        * filesubr.c (make_directories): compare errno to EACCESS, not
+        EEXIST, to see if the dir already exists.
+
         * client.c, filesubr.c: Use new macro `existence_error', instead
         of comparing errno to ENOENT directly.
 
