@@ -1,3 +1,9 @@
+Fri Aug 15 16:42:12 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* INSTALL: Remove the "CVS 1.6" crud; it really isn't needed.  Add
+	paragraph about the meaning of the last three arguments to cvs
+	import.
+
 Thu Aug 14 14:42:53 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 			  and Loren James Rittle <rittle@comm.mot.com>
 
