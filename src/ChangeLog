@@ -1,3 +1,9 @@
+2003-05-05  Derek Price  <derek@ximbiot.com>
+
+	* hash.c (findnode): Document behavior of this function when its list
+	argument is NULL and document this behavior.  Remove FIXME comment to
+	the effect that this is necessary.
+
 2003-05-01  Derek Price  <derek@ximbiot.com>
 
 	* main.c (main): Ignore -z when CLIENT_SUPPORT is not defined.
