@@ -1,5 +1,9 @@
 Wed Jul 12 09:15:02 1995  Jim Meyering  (meyering@comco.com)
 
+	* configure.in (gdiff_path): Remove gdiff from the list of programs.
+	SGI's Irix includes a program named gdiff that is an X-based GUI to
+	diff.
+
 	* configure.in: Add check for working fnmatch functions so that
 	systems providing it don't incur the space overhead of linking
 	with the version in lib.  Cross compiling builds always use the
