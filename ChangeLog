@@ -1,3 +1,8 @@
+Mon Dec 11 22:44:58 1995  Karl Fogel  <kfogel@totoro.cyclic.com>
+
+        * New subdir "macintosh", for Mike Ladwig's
+        <mike@twinpeaks.prc.com> port-in-progress.
+
 Thu Dec  7 14:32:49 1995  Jim Meyering	(meyering@comco.com)
 
 	* Makefile.in (check): Make sure library is built before running
