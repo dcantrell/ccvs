@@ -1,3 +1,15 @@
+Sun Sep 10 21:38:05 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* TODO: CVS can already undo a change, suggest documenting how.
+	Expand slightly on mode stuff.
+	Remove item about not letting people check out into repository (it
+	is done).
+	Redo item about expanding env vars in *info to reflect current
+	thinking.
+	Remove item about making it hard to accidentally move tags; it is
+	done.
+	Add client/server note to suggestion regarding interactive merging.
+
 Fri Sep  1 12:07:02 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* BUGS: Remove items about refetching unpatchable files and options.h.
