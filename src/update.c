@@ -840,9 +840,12 @@ update_dirleave_proc (callerdat, dir, err, update_dir, entries)
 	    if ((cp = strrchr (line, '\n')) != NULL)
 		*cp = '\0';
 	    run_setup ("%s %s", line, repository);
-	    (void) printf ("%s %s: Executing '", program_name, command_name);
+	    cvs_output (program_name, 0);
+	    cvs_output (" ", 1);
+	    cvs_output (command_name, 0);
+	    cvs_output (": Executing '", 0);
 	    run_print (stdout);
-	    (void) printf ("'\n");
+	    cvs_output ("'\n", 0);
 	    (void) run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL);
 	}
 	(void) fclose (fp);

@@ -58,10 +58,8 @@ open_module ()
 
     if (CVSroot_original == NULL)
     {
-	(void) fprintf (stderr, 
-			"%s: must set the CVSROOT environment variable\n",
-			program_name);
-	error (1, 0, "or specify the '-d' option to %s", program_name);
+	error (0, 0, "must set the CVSROOT environment variable");
+	error (1, 0, "or specify the '-d' global option");
     }
     (void) sprintf (mfile, "%s/%s/%s", CVSroot_directory,
 		    CVSROOTADM, CVSROOTADM_MODULES);
@@ -668,10 +666,12 @@ do_module (db, mname, m_type, msg, callback_proc, where,
 
 		if (!quiet)
 		{
-		    (void) printf ("%s %s: Executing '", program_name,
-				   command_name);
+		    cvs_output (program_name, 0);
+		    cvs_output (" ", 1);
+		    cvs_output (command_name, 0);
+		    cvs_output (": Executing '", 0);
 		    run_print (stdout);
-		    (void) printf ("'\n");
+		    cvs_output ("'\n", 0);
 		}
 		err += run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL);
 		free (expanded_path);
@@ -865,17 +865,21 @@ cat_module (status)
     fill = cols - (indent + 2);
     for (s_h = s_head, i = 0; i < s_count; i++, s_h++)
     {
+	line = xmalloc (strlen (s_h->modname) + strlen (s_h->rest)
+			+ strlen (status ? s_h->status : "") + 15);
+
 	/* Print module name (and status, if wanted) */
-	(void) printf ("%-12s", s_h->modname);
+	sprintf (line, "%-12s", s_h->modname);
+	cvs_output (line, 0);
 	if (status)
 	{
-	    (void) printf (" %-11s", s_h->status);
+	    sprintf (line, " %-11s", s_h->status);
+	    cvs_output (line, 0);
 	    if (s_h->status != def_status)
 		*(s_h->status + strlen (s_h->status)) = ' ';
 	}
 
 	/* Parse module file entry as command line and print options */
-	line = xmalloc (strlen (s_h->modname) + strlen (s_h->rest) + 10);
 	(void) sprintf (line, "%s %s", s_h->modname, s_h->rest);
 	line2argv (&moduleargc, moduleargv, line);
 	free (line);
@@ -890,17 +894,28 @@ cat_module (status)
 	    {
 		if (c == 'a' || c == 'l')
 		{
-		    (void) printf (" -%c", c);
+		    char buf[5];
+
+		    sprintf (buf, " -%c", c);
+		    cvs_output (buf, 0);
 		    wid += 3;		/* Could just set it to 3 */
 		}
 		else
 		{
+		    char buf[10];
+
 		    if (strlen (optarg) + 4 + wid > (unsigned) fill)
 		    {
-			(void) printf ("\n%*s", indent, "");
+			int j;
+
+			cvs_output ("\n", 1);
+			for (j = 0; j < indent; ++j)
+			    cvs_output (" ", 1);
 			wid = 0;
 		    }
-		    (void) printf (" -%c %s", c, optarg);
+		    sprintf (buf, " -%c ", c);
+		    cvs_output (buf, 0);
+		    cvs_output (optarg, 0);
 		    wid += strlen (optarg) + 4;
 		}
 	    }
@@ -913,21 +928,31 @@ cat_module (status)
 	{
 	    if (strlen (*argv) + wid > (unsigned) fill)
 	    {
-		(void) printf ("\n%*s", indent, "");
+		int j;
+
+		cvs_output ("\n", 1);
+		for (j = 0; j < indent; ++j)
+		    cvs_output (" ", 1);
 		wid = 0;
 	    }
-	    (void) printf (" %s", *argv);
+	    cvs_output (" ", 1);
+	    cvs_output (*argv, 0);
 	    wid += strlen (*argv) + 1;
 	}
-	(void) printf ("\n");
+	cvs_output ("\n", 1);
 
 	/* Format the comment field -- save_d (), compressed spaces */
 	for (cp2 = cp = s_h->comment; *cp; cp2 = cp)
 	{
-	    (void) printf ("%*s # ", indent, "");
+	    int j;
+
+	    for (j = 0; j < indent; ++j)
+		cvs_output (" ", 1);
+	    cvs_output (" # ", 0);
 	    if (strlen (cp2) < (unsigned) (fill - 2))
 	    {
-		(void) printf ("%s\n", cp2);
+		cvs_output (cp2, 0);
+		cvs_output ("\n", 1);
 		break;
 	    }
 	    cp += fill - 2;
@@ -935,12 +960,14 @@ cat_module (status)
 		cp--;
 	    if (cp == cp2)
 	    {
-		(void) printf ("%s\n", cp2);
+		cvs_output (cp2, 0);
+		cvs_output ("\n", 1);
 		break;
 	    }
 
 	    *cp++ = '\0';
-	    (void) printf ("%s\n", cp2);
+	    cvs_output (cp2, 0);
+	    cvs_output ("\n", 1);
 	}
 
 	free_names(&moduleargc, moduleargv);
