@@ -550,7 +550,7 @@ while(<ENTRIES>) {
     $i = $i + 1;
     if (m|
           /                             # 1st slash
-          ([\w.]*)                      # file name -> $1
+          ([\w.-]*)                     # file name -> $1
           /                             # 2nd slash
           .*                            # revision number
           /                             # 3rd slash

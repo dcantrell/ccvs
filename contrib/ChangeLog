@@ -1,3 +1,9 @@
+2005-01-25  Mark D. Baushke  <mdb@cvshome.org>
+
+	* cvs_acls.in: Filenames may include a '-' character.
+	(Patch from "Kumar Gala" <kumar.gala@freescale.com
+	forwarded by "Peter Connolly" <Peter.Connolly@cnet.com>.)
+
 2004-12-14  Derek Price  <derek@ximbiot.com>
 
 	* Makefile.am (contrib_MANS): Add rcs2log.1.
