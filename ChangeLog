@@ -1,3 +1,16 @@
+2001-02-20  Derek Price  <derek.price@openavenue.com>
+
+	* acconfig.h (HAVE_GSSAPI): Removed.  Entries in acconfig.h aren't
+	necesary when the full functionality of AC_DEFINE is used.
+	(HAVE_GSS_C_NT_HOSTBASED_SERVICE): Ditto.
+	* acinclude.m4 (ACX_WITH_GSSAPI): New file with GSSAPI configure code.
+	* configure.in: Use ACX_WITH_GSSAPI instead of writing GSSAPI code in
+	place.
+
+	* aclocal.m4: Regenerated.
+	* config.h.in: Regenerated.
+	* configure: Regenerated.
+
 2001-02-15  Derek Price  <derek.price@openavenue.com>
 
 	* configure: Regenerated without beta automake macros.

@@ -77,13 +77,6 @@
 /* Define if you have MIT Kerberos version 4 available.  */
 #undef HAVE_KERBEROS
 
-/* Define if you have GSSAPI with MIT Kerberos version 5 available.  */
-#undef HAVE_GSSAPI
-
-/* Define if GSS_C_NT_HOSTBASED_SERVICE is defined in the gssapi.h
-   header file.  Only relevant when using GSSAPI.  */
-#undef HAVE_GSS_C_NT_HOSTBASED_SERVICE
-
 /* Define if you want CVS to be able to be a remote repository client.  */
 #undef CLIENT_SUPPORT
 
@@ -318,12 +311,17 @@
 /* Define if you have the <utime.h> header file.  */
 #undef HAVE_UTIME_H
 
-/* Define if you have the gen library (-lgen).  */
-#undef HAVE_LIBGEN
-
 /* Name of package */
 #undef PACKAGE
 
 /* Version number of package */
 #undef VERSION
+
+/* Define if you have GSSAPI with Kerberos version 5 available. */
+#undef HAVE_GSSAPI
+
+/* Define to an alternative value if GSS_C_NT_HOSTBASED_SERVICE isn't defined
+in the gssapi.h header file.  MIT Kerberos 1.2.1 requires this.  Only relevant
+when using GSSAPI. */
+#undef GSS_C_NT_HOSTBASED_SERVICE
 
