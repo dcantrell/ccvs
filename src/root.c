@@ -110,7 +110,7 @@ Name_Root(dir, update_dir)
     }
 
     /* allocate space to return and fill it in */
-    strip_path (root);
+    strip_trailing_slashes (root);
     ret = xstrdup (root);
     return (ret);
 }

@@ -105,7 +105,7 @@ Name_Repository (dir, update_dir)
     }
 
     /* allocate space to return and fill it in */
-    strip_path (repos);
+    strip_trailing_slashes (repos);
     ret = xstrdup (repos);
     return (ret);
 }

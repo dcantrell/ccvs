@@ -68,7 +68,7 @@ Create_Admin (dir, update_dir, repository, tag, date)
 	    error (1, errno, "cannot open %s/%s", update_dir, CVSADM_REP);
     }
     cp = repository;
-    strip_path (cp);
+    strip_trailing_slashes (cp);
 
 #ifdef RELATIVE_REPOS
     /*
