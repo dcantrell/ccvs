@@ -1,3 +1,12 @@
+Sun Dec 21 20:36:39 1997  Karl Fogel  <kfogel@floss.red-bean.com>
+			  and Jim Kingdon
+
+	Note that this is just moving text, not changing it:
+	* cvs.texinfo: divide top-level menu into sections.
+	(Multiple developers, Builds, Tracking sources, Keyword
+	substitution): moved to be in "CVS and the Real World" section.
+	(Compatibility): moved to be in "References" section.
+
 Mon Dec 22 08:54:31 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvsclient.texi (Example): In comment, in citing the BNF style

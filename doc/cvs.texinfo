@@ -138,22 +138,28 @@ This info manual describes how to use and administer
 * Overview::                    An introduction to CVS
 * Repository::                  Where all your sources are stored
 * Starting a new project::      Starting a project with CVS
-* Multiple developers::         How CVS helps a group of developers
 * Revisions and branches::      Numeric, symbolic, and branch revisions
 * Merging::                     How to move changes between branches
 * Recursive behavior::          CVS descends directories
 * Adding and removing::         Adding/removing/renaming files/directories
-* Tracking sources::            Tracking third-party sources
 * History browsing::            Viewing the history of files in various ways
-* Keyword substitution::        CVS can include the revision inside the file
+
+CVS and the Real World.
+-----------------------
 * Binary files::                CVS can handle binary files
-* Builds::                      Issues related to CVS and builds
-* Compatibility::               Upgrading CVS versions
+* Multiple developers::         How CVS helps a group of developers
 * Revision management::         Policy questions for revision management
+* Keyword substitution::        CVS can include the revision inside the file
+* Tracking sources::            Tracking third-party sources
+* Builds::                      Issues related to CVS and builds
+
+References.
+-----------
 * CVS commands::                CVS commands share some things
 * Invoking CVS::                Quick reference to CVS commands
 * Administrative files::        Reference manual for the Administrative files
 * Environment variables::       All environment variables which affect CVS
+* Compatibility::               Upgrading CVS versions
 * Troubleshooting::             Some tips when nothing works
 * Credits::                     Some of the contributors to this manual
 * BUGS::                        Dealing with bugs in CVS or this manual
@@ -2931,1038 +2937,6 @@ $ cvs release -d CVSROOT
 @end enumerate
 
 @c ---------------------------------------------------------------------
-@node Multiple developers
-@chapter Multiple developers
-@cindex Multiple developers
-@cindex Team of developers
-@cindex File locking
-@cindex Locking files
-@cindex Working copy
-@cindex reserved checkouts
-@cindex unreserved checkouts
-@cindex RCS-style locking
-
-When more than one person works on a software project
-things often get complicated.  Often, two people try to
-edit the same file simultaneously.  One solution, known
-as @dfn{file locking} or @dfn{reserved checkouts}, is
-to allow only one person to edit each file at a time.
-This is the only solution with some version control
-systems, including @sc{rcs} and @sc{sccs}.  Currently
-the usual way to get reserved checkouts with @sc{cvs}
-is the @code{cvs admin -l} command (@pxref{admin
-options}).  This is not as nicely integrated into
-@sc{cvs} as the watch features, described below, but it
-seems that most people with a need for reserved
-checkouts find it adequate.
-@c Or "find it better than worrying about implementing
-@c nicely integrated reserved checkouts" or ...?
-It also may be possible to use the watches
-features described below, together with suitable
-procedures (not enforced by software), to avoid having
-two people edit at the same time.
-
-@c Our unreserved checkout model might not
-@c be quite the same as others.  For example, I
-@c think that some systems will tend to create a branch
-@c in the case where CVS prints "up-to-date check failed".
-@c It isn't clear to me whether we should try to
-@c explore these subtleties; it could easily just
-@c confuse people.
-The default model with @sc{cvs} is known as
-@dfn{unreserved checkouts}.  In this model, developers
-can edit their own @dfn{working copy} of a file
-simultaneously.  The first person that commits his
-changes has no automatic way of knowing that another
-has started to edit it.  Others will get an error
-message when they try to commit the file.  They must
-then use @sc{cvs} commands to bring their working copy
-up to date with the repository revision.  This process
-is almost automatic.
-
-@c FIXME? should probably use the word "watch" here, to
-@c tie this into the text below and above.
-@sc{Cvs} also supports mechanisms which facilitate
-various kinds of communcation, without actually
-enforcing rules like reserved checkouts do.
-
-The rest of this chapter describes how these various
-models work, and some of the issues involved in
-choosing between them.
-
-@ignore
-Here is a draft reserved checkout design or discussion
-of the issues.  This seems like as good a place as any
-for this.
-
-Might want a cvs lock/cvs unlock--in which the names
-differ from edit/unedit because the network must be up
-for these to work.  unedit gives an error if there is a
-reserved checkout in place (so that people don't
-accidentally leave locks around); unlock gives an error
-if one is not in place (this is more arguable; perhaps
-it should act like unedit in that case).
-
-On the other hand, might want it so that emacs,
-scripts, etc., can get ready to edit a file without
-having to know which model is in use.  In that case we
-would have a "cvs watch lock" (or .cvsrc?) (that is,
-three settings, "on", "off", and "lock").  Having cvs
-watch lock set would cause a get to record in the CVS
-directory which model is in use, and cause "cvs edit"
-to change behaviors.  We'd want a way to query which
-setting is in effect (this would be handy even if it is
-only "on" or "off" as presently).  If lock is in
-effect, then commit would require a lock before
-allowing a checkin; chmod wouldn't suffice (might be
-debatable--see chmod comment below, in watches--but it
-is the way people expect RCS to work and I can't think
-of any significant downside.  On the other hand, maybe
-it isn't worth bothering, because people who are used
-to RCS wouldn't think to use chmod anyway).
-
-Implementation: use file attributes or use RCS
-locking.  The former avoids more dependence on RCS
-behaviors we will need to reimplement as we librarify
-RCS, and makes it easier to import/export RCS files (in
-that context, want to ignore the locker field).  But
-note that RCS locks are per-branch, which is the
-correct behavior (this is also an issue for the "watch
-on" features; they should be per-branch too).
-
-Here are a few more random notes about implementation
-details, assuming "cvs watch lock" and
-
-CVS/Watched file?  Or try to fit this into CVS/Entries somehow?
-Cases: (1) file is checked out (unreserved or with watch on) by old
-version of CVS, now we do something with new one, (2) file is checked
-out by new version, now we do something with old one.
-
-Remote protocol would have a "Watched" analogous to "Mode".  Of course
-it would apply to all Updated-like requests.  How do we keep this
-setting up to date?  I guess that there wants to be a Watched request,
-and the server would send a new one if it isn't up to date? (Ugh--hard
-to implement and slows down "cvs -q update"--is there an easier way?)
-
-"cvs edit"--checks CVS/Watched, and if watch lock, then sends
-"edit-lock" request.  Which comes back with a Checked-in with
-appropriate Watched (off, on, lock, locked, or some such?), or error
-message if already locked.
-
-"cvs commit"--only will commit if off/on/locked.  lock is not OK.
-
-Doc:
-note that "cvs edit" must be connected to network if watch lock is in
-effect.
-
-Talk about what to do if someone has locked a file and you want to
-edit that file.  (breaking locks, or lack thereof).
-
-
-One other idea (which could work along with the
-existing "cvs admin -l" reserved checkouts, as well as
-the above):
-
-"cvs editors" could show who has the file locked, if
-someone does.
-
-@end ignore
-
-@menu
-* File status::                 A file can be in several states
-* Updating a file::             Bringing a file up-to-date
-* Conflicts example::           An informative example
-* Informing others::            To cooperate you must inform
-* Concurrency::                 Simultaneous repository access
-* Watches::                     Mechanisms to track who is editing files
-* Choosing a model::            Reserved or unreserved checkouts?
-@end menu
-
-@c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-@node File status
-@section File status
-@cindex File status
-@cindex Status of a file
-
-@c Shouldn't this start with an example or something,
-@c introducing the unreserved checkout model?  Before we
-@c dive into listing states?
-Based on what operations you have performed on a
-checked out file, and what operations others have
-performed to that file in the repository, one can
-classify a file in a number of states.  The states, as
-reported by the @code{status} command, are:
-
-@c The order of items is chosen to group logically
-@c similar outputs together.
-@c People who want alphabetical can use the index...
-@table @asis
-@cindex Up-to-date
-@item Up-to-date
-The file is identical with the latest revision in the
-repository for the branch in use.
-@c FIXME: should we clarify "in use"?  The answer is
-@c sticky tags, and trying to distinguish branch sticky
-@c tags from non-branch sticky tags seems rather awkward
-@c here.
-@c FIXME: What happens with non-branch sticky tags?  Is
-@c a stuck file "Up-to-date" or "Needs checkout" or what?
-
-@item Locally Modified
-@cindex Locally Modified
-You have edited the file, and not yet committed your changes.
-
-@item Locally Added
-@cindex Locally Added
-You have added the file with @code{add}, and not yet
-committed your changes.
-@c There are many cases involving the file being
-@c added/removed/modified in the working directory, and
-@c added/removed/modified in the repository, which we
-@c don't try to describe here.  I'm not sure that "cvs
-@c status" produces a non-confusing output in most of
-@c those cases.
-
-@item Locally Removed
-@cindex Locally Removed
-You have removed the file with @code{remove}, and not yet
-committed your changes.
-
-@item Needs Checkout
-@cindex Needs Checkout
-Someone else has committed a newer revision to the
-repository.  The name is slightly misleading; you will
-ordinarily use @code{update} rather than
-@code{checkout} to get that newer revision.
-
-@item Needs Patch
-@cindex Needs Patch
-@c See also newb-123j0 in sanity.sh (although that case
-@c should probably be changed rather than documented).
-Like Needs Checkout, but the @sc{cvs} server will send
-a patch rather than the entire file.  Sending a patch or
-sending an entire file accomplishes the same thing.
-
-@item Needs Merge
-@cindex Needs Merge
-Someone else has committed a newer revision to the repository, and you
-have also made modifications to the file.
-
-@item File had conflicts on merge
-@cindex File had conflicts on merge
-@c is it worth saying that this message was "Unresolved
-@c Conflict" in CVS 1.9 and earlier?  I'm inclined to
-@c think that is unnecessarily confusing to new users.
-This is like Locally Modified, except that a previous
-@code{update} command gave a conflict.  If you have not
-already done so, you need to
-resolve the conflict as described in @ref{Conflicts example}.
-
-@item Unknown
-@cindex Unknown
-@sc{Cvs} doesn't know anything about this file.  For
-example, you have created a new file and have not run
-@code{add}.
-@c 
-@c "Entry Invalid" and "Classify Error" are also in the
-@c status.c.  The latter definitely indicates a CVS bug
-@c (should it be worded more like "internal error" so
-@c people submit bug reports if they see it?).  The former
-@c I'm not as sure; I haven't tracked down whether/when it
-@c appears in "cvs status" output.
-
-@end table
-
-To help clarify the file status, @code{status} also
-reports the @code{Working revision} which is the
-revision that the file in the working directory derives
-from, and the @code{Repository revision} which is the
-latest revision in the repository for the branch in
-use.
-@c FIXME: should we clarify "in use"?  The answer is
-@c sticky tags, and trying to distinguish branch sticky
-@c tags from non-branch sticky tags seems rather awkward
-@c here.
-@c FIXME: What happens with non-branch sticky tags?
-@c What is the Repository Revision there?  See the
-@c comment at vn_rcs in cvs.h, which is kind of
-@c confused--we really need to document better what this
-@c field contains.
-@c Q: Should we document "New file!" and other such
-@c outputs or are they self-explanatory?
-@c FIXME: what about the date to the right of "Working
-@c revision"?  It doesn't appear with client/server and
-@c seems unnecessary (redundant with "ls -l") so
-@c perhaps it should be removed for non-client/server too?
-@c FIXME: Need some examples.
-@c FIXME: Working revision can also be something like
-@c "-1.3" for a locally removed file.  Not at all
-@c self-explanatory (and it is possible that CVS should
-@c be changed rather than documenting this).
-
-@c Would be nice to have an @example showing output
-@c from cvs status, with comments showing the xref
-@c where each part of the output is described.  This
-@c might fit in nicely if it is desirable to split this
-@c node in two; one to introduce "cvs status" and one
-@c to list each of the states.
-The options to @code{status} are listed in
-@ref{Invoking CVS}.  For information on its @code{Sticky tag}
-and @code{Sticky date} output, see @ref{Sticky tags}.
-For information on its @code{Sticky options} output,
-see the @samp{-k} option in @ref{update options}.
-
-You can think of the @code{status} and @code{update}
-commands as somewhat complementary.  You use
-@code{update} to bring your files up to date, and you
-can use @code{status} to give you some idea of what an
-@code{update} would do (of course, the state of the
-repository might change before you actually run
-@code{update}).  In fact, if you want a command to
-display file status in a more brief format than is
-displayed by the @code{status} command, you can invoke
-
-@cindex update, to display file status
-@example
-$ cvs -n -q update
-@end example
-
-The @samp{-n} option means to not actually do the
-update, but merely to display statuses; the @samp{-q}
-option avoids printing the name of each directory.  For
-more information on the @code{update} command, and
-these options, see @ref{Invoking CVS}.
-
-@c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-@node Updating a file
-@section Bringing a file up to date
-@cindex Bringing a file up to date
-@cindex Updating a file
-@cindex Merging a file
-@cindex update, introduction
-
-When you want to update or merge a file, use the @code{update}
-command.  For files that are not up to date this is roughly equivalent
-to a @code{checkout} command: the newest revision of the file is
-extracted from the repository and put in your working copy of the
-module.
-
-Your modifications to a file are never lost when you
-use @code{update}.  If no newer revision exists,
-running @code{update} has no effect.  If you have
-edited the file, and a newer revision is available,
-@sc{cvs} will merge all changes into your working copy.
-
-For instance, imagine that you checked out revision 1.4 and started
-editing it.  In the meantime someone else committed revision 1.5, and
-shortly after that revision 1.6.  If you run @code{update} on the file
-now, @sc{cvs} will incorporate all changes between revision 1.4 and 1.6 into
-your file.
-
-@cindex Overlap
-If any of the changes between 1.4 and 1.6 were made too
-close to any of the changes you have made, an
-@dfn{overlap} occurs.  In such cases a warning is
-printed, and the resulting file includes both
-versions of the lines that overlap, delimited by
-special markers.
-@xref{update}, for a complete description of the
-@code{update} command.
-
-@c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-@node Conflicts example
-@section Conflicts example
-@cindex Merge, an example
-@cindex Example of merge
-@cindex driver.c (merge example)
-
-Suppose revision 1.4 of @file{driver.c} contains this:
-
-@example
-#include <stdio.h>
-
-void main()
-@{
-    parse();
-    if (nerr == 0)
-        gencode();
-    else
-        fprintf(stderr, "No code generated.\n");
-    exit(nerr == 0 ? 0 : 1);
-@}
-@end example
-
-@noindent
-Revision 1.6 of @file{driver.c} contains this:
-
-@example
-#include <stdio.h>
-
-int main(int argc,
-         char **argv)
-@{
-    parse();
-    if (argc != 1)
-    @{
-        fprintf(stderr, "tc: No args expected.\n");
-        exit(1);
-    @}
-    if (nerr == 0)
-        gencode();
-    else
-        fprintf(stderr, "No code generated.\n");
-    exit(!!nerr);
-@}
-@end example
-
-@noindent
-Your working copy of @file{driver.c}, based on revision
-1.4, contains this before you run @samp{cvs update}:
-@c -- Really include "cvs"?
-
-@example
-#include <stdlib.h>
-#include <stdio.h>
-
-void main()
-@{
-    init_scanner();
-    parse();
-    if (nerr == 0)
-        gencode();
-    else
-        fprintf(stderr, "No code generated.\n");
-    exit(nerr == 0 ? EXIT_SUCCESS : EXIT_FAILURE);
-@}
-@end example
-
-@noindent
-You run @samp{cvs update}:
-@c -- Really include "cvs"?
-
-@example
-$ cvs update driver.c
-RCS file: /usr/local/cvsroot/yoyodyne/tc/driver.c,v
-retrieving revision 1.4
-retrieving revision 1.6
-Merging differences between 1.4 and 1.6 into driver.c
-rcsmerge warning: overlaps during merge
-cvs update: conflicts found in driver.c
-C driver.c
-@end example
-
-@noindent
-@cindex Conflicts (merge example)
-@sc{cvs} tells you that there were some conflicts.
-Your original working file is saved unmodified in
-@file{.#driver.c.1.4}.  The new version of
-@file{driver.c} contains this:
-
-@example
-#include <stdlib.h>
-#include <stdio.h>
-
-int main(int argc,
-         char **argv)
-@{
-    init_scanner();
-    parse();
-    if (argc != 1)
-    @{
-        fprintf(stderr, "tc: No args expected.\n");
-        exit(1);
-    @}
-    if (nerr == 0)
-        gencode();
-    else
-        fprintf(stderr, "No code generated.\n");
-@asis{}<<<<<<< driver.c
-    exit(nerr == 0 ? EXIT_SUCCESS : EXIT_FAILURE);
-@asis{}=======
-    exit(!!nerr);
-@asis{}>>>>>>> 1.6
-@}
-@end example
-
-@noindent
-@cindex Markers, conflict
-@cindex Conflict markers
-@cindex <<<<<<<
-@cindex >>>>>>>
-@cindex =======
-
-Note how all non-overlapping modifications are incorporated in your working
-copy, and that the overlapping section is clearly marked with
-@samp{<<<<<<<}, @samp{=======} and @samp{>>>>>>>}.
-
-@cindex Resolving a conflict
-@cindex Conflict resolution
-You resolve the conflict by editing the file, removing the markers and
-the erroneous line.  Suppose you end up with this file:
-@c -- Add xref to the pcl-cvs manual when it talks
-@c -- about this.
-@example
-#include <stdlib.h>
-#include <stdio.h>
-
-int main(int argc,
-         char **argv)
-@{
-    init_scanner();
-    parse();
-    if (argc != 1)
-    @{
-        fprintf(stderr, "tc: No args expected.\n");
-        exit(1);
-    @}
-    if (nerr == 0)
-        gencode();
-    else
-        fprintf(stderr, "No code generated.\n");
-    exit(nerr == 0 ? EXIT_SUCCESS : EXIT_FAILURE);
-@}
-@end example
-
-@noindent
-You can now go ahead and commit this as revision 1.7.
-
-@example
-$ cvs commit -m "Initialize scanner. Use symbolic exit values." driver.c
-Checking in driver.c;
-/usr/local/cvsroot/yoyodyne/tc/driver.c,v  <--  driver.c
-new revision: 1.7; previous revision: 1.6
-done
-@end example
-
-For your protection, @sc{cvs} will refuse to check in a
-file if a conflict occurred and you have not resolved
-the conflict.  Currently to resolve a conflict, you
-must change the timestamp on the file.  In previous
-versions of @sc{cvs}, you also needed to
-insure that the file contains no conflict markers.
-Because
-your file may legitimately contain conflict markers (that
-is, occurrences of @samp{>>>>>>> } at the start of a
-line that don't mark a conflict), the current
-version of @sc{cvs} will print a warning and proceed to
-check in the file.
-@c The old behavior was really icky; the only way out
-@c was to start hacking on
-@c the @code{CVS/Entries} file or other such workarounds.
-@c 
-@c If the timestamp thing isn't considered nice enough,
-@c maybe there should be a "cvs resolved" command
-@c which clears the conflict indication.  For a nice user
-@c interface, this should be invoked by an interactive
-@c merge tool like emerge rather than by the user
-@c directly--such a tool can verify that the user has
-@c really dealt with each conflict.
-
-@cindex emerge
-If you use release 1.04 or later of pcl-cvs (a @sc{gnu}
-Emacs front-end for @sc{cvs}) you can use an Emacs
-package called emerge to help you resolve conflicts.
-See the documentation for pcl-cvs.
-
-@c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-@node Informing others
-@section Informing others about commits
-@cindex Informing others
-@cindex Spreading information
-@cindex Mail, automatic mail on commit
-
-It is often useful to inform others when you commit a
-new revision of a file.  The @samp{-i} option of the
-@file{modules} file, or the @file{loginfo} file, can be
-used to automate this process.  @xref{modules}.
-@xref{loginfo}.  You can use these features of @sc{cvs}
-to, for instance, instruct @sc{cvs} to mail a
-message to all developers, or post a message to a local
-newsgroup.
-@c -- More text would be nice here.
-
-@node Concurrency
-@section Several developers simultaneously attempting to run CVS
-
-@cindex locks, cvs
-@c For a discussion of *why* CVS creates locks, see
-@c the comment at the start of src/lock.c
-If several developers try to run @sc{cvs} at the same
-time, one may get the following message:
-
-@example
-[11:43:23] waiting for bach's lock in /usr/local/cvsroot/foo
-@end example
-
-@sc{cvs} will try again every 30 seconds, and either
-continue with the operation or print the message again,
-if it still needs to wait.  If a lock seems to stick
-around for an undue amount of time, find the person
-holding the lock and ask them about the cvs command
-they are running.  If they aren't running a cvs
-command, look in the repository directory mentioned in
-the message and remove files which they own whose names
-start with @file{#cvs.tfl}, @file{#cvs.rfl}, or
-@file{#cvs.wfl}.
-
-Note that these locks are to protect @sc{cvs}'s
-internal data structures and have no relationship to
-the word @dfn{lock} in the sense used by
-@sc{rcs}---which refers to reserved checkouts
-(@pxref{Multiple developers}).
-
-Any number of people can be reading from a given
-repository at a time; only when someone is writing do
-the locks prevent other people from reading or writing.
-
-@cindex Atomic transactions, lack of
-@cindex Transactions, atomic, lack of
-@c the following talks about what one might call commit/update
-@c atomicity.
-@c Probably also should say something about
-@c commit/commit atomicity, that is, "An update will
-@c not get partial versions of more than one commit".
-@c CVS currently has this property and I guess we can
-@c make it a documented feature.
-@c For example one person commits
-@c a/one.c and b/four.c and another commits a/two.c and
-@c b/three.c.  Then an update cannot get the new a/one.c
-@c and a/two.c and the old b/four.c and b/three.c.
-One might hope for the following property
-
-@example
-If someone commits some changes in one cvs command,
-then an update by someone else will either get all the
-changes, or none of them.
-@end example
-
-but @sc{cvs} does @emph{not} have this property.  For
-example, given the files
-
-@example
-a/one.c
-a/two.c
-b/three.c
-b/four.c
-@end example
-
-if someone runs
-
-@example
-cvs ci a/two.c b/three.c
-@end example
-
-and someone else runs @code{cvs update} at the same
-time, the person running @code{update} might get only
-the change to @file{b/three.c} and not the change to
-@file{a/two.c}.
-
-@node Watches
-@section Mechanisms to track who is editing files
-@cindex Watches
-
-For many groups, use of @sc{cvs} in its default mode is
-perfectly satisfactory.  Users may sometimes go to
-check in a modification only to find that another
-modification has intervened, but they deal with it and
-proceed with their check in.  Other groups prefer to be
-able to know who is editing what files, so that if two
-people try to edit the same file they can choose to
-talk about who is doing what when rather than be
-surprised at check in time.  The features in this
-section allow such coordination, while retaining the
-ability of two developers to edit the same file at the
-same time.
-
-@c Some people might ask why CVS does not enforce the
-@c rule on chmod, by requiring a cvs edit before a cvs
-@c commit.  The main reason is that it could always be
-@c circumvented--one could edit the file, and
-@c then when ready to check it in, do the cvs edit and put
-@c in the new contents and do the cvs commit.  One
-@c implementation note: if we _do_ want to have cvs commit
-@c require a cvs edit, we should store the state on
-@c whether the cvs edit has occurred in the working
-@c directory, rather than having the server try to keep
-@c track of what working directories exist.
-@c FIXME: should the above discussion be part of the
-@c manual proper, somewhere, not just in a comment?
-For maximum benefit developers should use @code{cvs
-edit} (not @code{chmod}) to make files read-write to
-edit them, and @code{cvs release} (not @code{rm}) to
-discard a working directory which is no longer in use,
-but @sc{cvs} is not able to enforce this behavior.
-
-@c I'm a little dissatisfied with this presentation,
-@c because "watch on"/"edit"/"editors" are one set of
-@c functionality, and "watch add"/"watchers" is another
-@c which is somewhat orthogonal even though they interact in
-@c various ways.  But I think it might be
-@c confusing to describe them separately (e.g. "watch
-@c add" with loginfo).  I don't know.
-
-@menu
-* Setting a watch::             Telling CVS to watch certain files
-* Getting Notified::            Telling CVS to notify you
-* Editing files::               How to edit a file which is being watched
-* Watch information::           Information about who is watching and editing
-* Watches Compatibility::       Watches interact poorly with CVS 1.6 or earlier
-@end menu
-
-@node Setting a watch
-@subsection Telling CVS to watch certain files
-
-To enable the watch features, you first specify that
-certain files are to be watched.
-
-@cindex watch on (subcommand)
-@deffn Command {cvs watch on} [@code{-lR}] files @dots{}
-
-@cindex read-only files, and watches
-Specify that developers should run @code{cvs edit}
-before editing @var{files}.  CVS will create working
-copies of @var{files} read-only, to remind developers
-to run the @code{cvs edit} command before working on
-them.
-
-If @var{files} includes the name of a directory, CVS
-arranges to watch all files added to the corresponding
-repository directory, and sets a default for files
-added in the future; this allows the user to set
-notification policies on a per-directory basis.  The
-contents of the directory are processed recursively,
-unless the @code{-l} option is given.
-The @code{-R} option can be used to force recursion if the @code{-l}
-option is set in @file{~/.cvsrc} (@pxref{~/.cvsrc}).
-
-If @var{files} is omitted, it defaults to the current directory.
-
-@cindex watch off (subcommand)
-@end deffn
-
-@deffn Command {cvs watch off} [@code{-lR}] files @dots{}
-
-Do not provide notification about work on @var{files}.  CVS will create
-working copies of @var{files} read-write.
-
-The @var{files} and options are processed as for @code{cvs
-watch on}.
-
-@end deffn
-
-@node Getting Notified
-@subsection Telling CVS to notify you
-
-You can tell @sc{cvs} that you want to receive
-notifications about various actions taken on a file.
-You can do this without using @code{cvs watch on} for
-the file, but generally you will want to use @code{cvs
-watch on}, so that developers use the @code{cvs edit}
-command.
-
-@cindex watch add (subcommand)
-@deffn Command {cvs watch add} [@code{-a} action] [@code{-lR}] files @dots{}
-
-Add the current user to the list of people to receive notification of
-work done on @var{files}.
-
-The @code{-a} option specifies what kinds of events CVS should notify
-the user about.  @var{action} is one of the following:
-
-@table @code
-
-@item edit
-Another user has applied the @code{cvs edit} command (described
-below) to a file.
-
-@item unedit
-Another user has applied the @code{cvs unedit} command (described
-below) or the @code{cvs release} command to a file, or has deleted
-the file and allowed @code{cvs update} to recreate it.
-
-@item commit
-Another user has committed changes to a file.
-
-@item all
-All of the above.
-
-@item none
-None of the above.  (This is useful with @code{cvs edit},
-described below.)
-
-@end table
-
-The @code{-a} option may appear more than once, or not at all.  If
-omitted, the action defaults to @code{all}.
-
-The @var{files} and options are processed as for the
-@code{cvs watch} commands.
-
-@end deffn
-
-
-@cindex watch remove (subcommand)
-@deffn Command {cvs watch remove} [@code{-a} action] [@code{-lR}] files @dots{}
-
-Remove a notification request established using @code{cvs watch add};
-the arguments are the same.  If the @code{-a} option is present, only
-watches for the specified actions are removed.
-
-@end deffn
-
-@cindex notify (admin file)
-When the conditions exist for notification, @sc{cvs}
-calls the @file{notify} administrative file.  Edit
-@file{notify} as one edits the other administrative
-files (@pxref{Intro administrative files}).  This
-file follows the usual conventions for administrative
-files (@pxref{syntax}), where each line is a regular
-expression followed by a command to execute.  The
-command should contain a single ocurrence of @samp{%s}
-which will be replaced by the user to notify; the rest
-of the information regarding the notification will be
-supplied to the command on standard input.  The
-standard thing to put in the @code{notify} file is the
-single line:
-
-@example
-ALL mail %s -s \"CVS notification\"
-@end example
-
-This causes users to be notified by electronic mail.
-@c FIXME: should it be this hard to set up this
-@c behavior (and the result when one fails to do so,
-@c silent failure to notify, so non-obvious)?  Should
-@c CVS give a warning if no line in notify matches (and
-@c document the use of "DEFAULT :" for the case where
-@c skipping the notification is indeed desired)?
-
-@cindex users (admin file)
-Note that if you set this up in the straightforward
-way, users receive notifications on the server machine.
-One could of course write a @file{notify} script which
-directed notifications elsewhere, but to make this
-easy, @sc{cvs} allows you to associate a notification
-address for each user.  To do so create a file
-@file{users} in @file{CVSROOT} with a line for each
-user in the format @var{user}:@var{value}.  Then
-instead of passing the name of the user to be notified
-to @file{notify}, @sc{cvs} will pass the @var{value}
-(normally an email address on some other machine).
-
-@sc{Cvs} does not notify you for your own changes.
-Currently this check is done based on whether the user
-name of the person taking the action which triggers
-notification matches the user name of the person
-getting notification.  In fact, in general, the watches
-features only track one edit by each user.  It probably
-would be more useful if watches tracked each working
-directory separately, so this behavior might be worth
-changing.
-@c "behavior might be worth changing" is an effort to
-@c point to future directions while also not promising
-@c that "they" (as in "why don't they fix CVS to....")
-@c will do this.
-@c one implementation issue is identifying whether a
-@c working directory is same or different.  Comparing
-@c pathnames/hostnames is hopeless, but having the server
-@c supply a serial number which the client stores in the
-@c CVS directory as a magic cookie should work.
-
-@node Editing files
-@subsection How to edit a file which is being watched
-
-@cindex checkout, as term for getting ready to edit
-Since a file which is being watched is checked out
-read-only, you cannot simply edit it.  To make it
-read-write, and inform others that you are planning to
-edit it, use the @code{cvs edit} command.  Some systems
-call this a @dfn{checkout}, but @sc{cvs} uses that term
-for obtaining a copy of the sources (@pxref{Getting the
-source}), an operation which those systems call a
-@dfn{get} or a @dfn{fetch}.
-@c Issue to think about: should we transition CVS
-@c towards the "get" terminology?  "cvs get" is already a
-@c synonym for "cvs checkout" and that section of the
-@c manual refers to "Getting the source".  If this is
-@c done, needs to be done gingerly (for example, we should
-@c still accept "checkout" in .cvsrc files indefinitely
-@c even if the CVS's messages are changed from "cvs checkout: "
-@c to "cvs get: ").
-@c There is a concern about whether "get" is not as
-@c good for novices because it is a more general term
-@c than "checkout" (and thus arguably harder to assign
-@c a technical meaning for).
-
-@cindex edit (subcommand)
-@deffn Command {cvs edit} [options] files @dots{}
-
-Prepare to edit the working files @var{files}.  CVS makes the
-@var{files} read-write, and notifies users who have requested
-@code{edit} notification for any of @var{files}.
-
-The @code{cvs edit} command accepts the same @var{options} as the
-@code{cvs watch add} command, and establishes a temporary watch for the
-user on @var{files}; CVS will remove the watch when @var{files} are
-@code{unedit}ed or @code{commit}ted.  If the user does not wish to
-receive notifications, she should specify @code{-a none}.
-
-The @var{files} and options are processed as for the @code{cvs
-watch} commands.
-
-@end deffn
-
-Normally when you are done with a set of changes, you
-use the @code{cvs commit} command, which checks in your
-changes and returns the watched files to their usual
-read-only state.  But if you instead decide to abandon
-your changes, or not to make any changes, you can use
-the @code{cvs unedit} command.
-
-@cindex unedit (subcommand)
-@cindex abandoning work
-@cindex reverting to repository version
-@deffn Command {cvs unedit} [@code{-lR}] files @dots{}
-
-Abandon work on the working files @var{files}, and revert them to the
-repository versions on which they are based.  CVS makes those
-@var{files} read-only for which users have requested notification using
-@code{cvs watch on}.  CVS notifies users who have requested @code{unedit}
-notification for any of @var{files}.
-
-The @var{files} and options are processed as for the
-@code{cvs watch} commands.
-
-If watches are not in use, the @code{unedit} command
-probably does not work, and the way to revert to the
-repository version is to remove the file and then use
-@code{cvs update} to get a new copy.  The meaning is
-not precisely the same; removing and updating may also
-bring in some changes which have been made in the
-repository since the last time you updated.
-@c It would be a useful enhancement to CVS to make
-@c unedit work in the non-watch case as well.
-@end deffn
-
-When using client/server @sc{cvs}, you can use the
-@code{cvs edit} and @code{cvs unedit} commands even if
-@sc{cvs} is unable to succesfully communicate with the
-server; the notifications will be sent upon the next
-successful @sc{cvs} command.
-
-@node Watch information
-@subsection Information about who is watching and editing
-
-@cindex watchers (subcommand)
-@deffn Command {cvs watchers} [@code{-lR}] files @dots{}
-
-List the users currently watching changes to @var{files}.  The report
-includes the files being watched, and the mail address of each watcher.
-
-The @var{files} and options are processed as for the
-@code{cvs watch} commands.
-
-@end deffn
-
-
-@cindex editors (subcommand)
-@deffn Command {cvs editors} [@code{-lR}] files @dots{}
-
-List the users currently working on @var{files}.  The report
-includes the mail address of each user, the time when the user began
-working with the file, and the host and path of the working directory
-containing the file.
-
-The @var{files} and options are processed as for the
-@code{cvs watch} commands.
-
-@end deffn
-
-@node Watches Compatibility
-@subsection Using watches with old versions of CVS
-
-@cindex CVS 1.6, and watches
-If you use the watch features on a repository, it
-creates @file{CVS} directories in the repository and
-stores the information about watches in that directory.
-If you attempt to use @sc{cvs} 1.6 or earlier with the
-repository, you get an error message such as the
-following (all on one line):
-
-@example
-cvs update: cannot open CVS/Entries for reading:
-No such file or directory
-@end example
-
-and your operation will likely be aborted.  To use the
-watch features, you must upgrade all copies of @sc{cvs}
-which use that repository in local or server mode.  If
-you cannot upgrade, use the @code{watch off} and
-@code{watch remove} commands to remove all watches, and
-that will restore the repository to a state which
-@sc{cvs} 1.6 can cope with.
-
-@node Choosing a model
-@section Choosing between reserved or unreserved checkouts
-@cindex choosing, reserved or unreserved checkouts
-
-Reserved and unreserved checkouts each have pros and
-cons.  Let it be said that a lot of this is a matter of
-opinion or what works given different groups' working
-styles, but here is a brief description of some of the
-issues.  There are many ways to organize a team of
-developers.  @sc{cvs} does not try to enforce a certain
-organization.  It is a tool that can be used in several
-ways.
-
-Reserved checkouts can be very counter-productive.  If
-two persons want to edit different parts of a file,
-there may be no reason to prevent either of them from
-doing so.  Also, it is common for someone to take out a
-lock on a file, because they are planning to edit it,
-but then forget to release the lock.
-
-@c "many groups"?  specifics?  cites to papers on this?
-@c some way to weasel-word it a bit more so we don't
-@c need facts :-)?
-People, especially people who are familiar with
-reserved checkouts, often wonder how often conflicts
-occur if unreserved checkouts are used, and how
-difficult they are to resolve.  The experience with
-many groups is that they occur rarely and usually are
-relatively straightforward to resolve.
-
-The rarity of serious conflicts may be surprising, until one realizes
-that they occur only when two developers disagree on the proper design
-for a given section of code; such a disagreement suggests that the
-team has not been communicating properly in the first place.  In order
-to collaborate under @emph{any} source management regimen, developers
-must agree on the general design of the system; given this agreement,
-overlapping changes are usually straightforward to merge.
-
-In some cases unreserved checkouts are clearly
-inappropriate.  If no merge tool exists for the kind of
-file you are managing (for example word processor files
-or files edited by Computer Aided Design programs), and
-it is not desirable to change to a program which uses a
-mergeable data format, then resolving conflicts is
-going to be unpleasant enough that you generally will
-be better off to simply avoid the conflicts instead, by
-using reserved checkouts.
-
-The watches features described above in @ref{Watches}
-can be considered to be an intermediate model between
-reserved checkouts and unreserved checkouts.  When you
-go to edit a file, it is possible to find out who else
-is editing it.  And rather than having the system
-simply forbid both people editing the file, it can tell
-you what the situation is and let you figure out
-whether it is a problem in that particular case or not.
-Therefore, for some groups it can be considered the
-best of both the reserved checkout and unreserved
-checkout worlds.
-
-@c ---------------------------------------------------------------------
 @node Revisions and branches
 @chapter Revisions and branches
 @cindex Branches
@@ -5451,255 +4425,6 @@ releases correctly, since they probably depend on the
 name of the directories.
 
 @c ---------------------------------------------------------------------
-@node Tracking sources
-@chapter Tracking third-party sources
-@cindex Third-party sources
-@cindex Tracking sources
-
-@c FIXME: Need discussion of added and removed files.
-@c FIXME: This doesn't really adequately introduce the
-@c concepts of "vendor" and "you".  They don't *have*
-@c to be separate organizations or separate people.
-@c We want a description which is somewhat more based on
-@c the technical issues of which sources go where, but
-@c also with enough examples of how this relates to
-@c relationships like customer-supplier, developer-QA,
-@c maintainer-contributor, or whatever, to make it
-@c seem concrete.
-If you modify a program to better fit your site, you
-probably want to include your modifications when the next
-release of the program arrives.  @sc{cvs} can help you with
-this task.
-
-@cindex Vendor
-@cindex Vendor branch
-@cindex Branch, vendor-
-In the terminology used in @sc{cvs}, the supplier of the
-program is called a @dfn{vendor}.  The unmodified
-distribution from the vendor is checked in on its own
-branch, the @dfn{vendor branch}.  @sc{cvs} reserves branch
-1.1.1 for this use.
-
-When you modify the source and commit it, your revision
-will end up on the main trunk.  When a new release is
-made by the vendor, you commit it on the vendor branch
-and copy the modifications onto the main trunk.
-
-Use the @code{import} command to create and update
-the vendor branch.  After a successful @code{import}
-the vendor branch is made the `head' revision, so
-anyone that checks out a copy of the file gets that
-revision.  When a local modification is committed it is
-placed on the main trunk, and made the `head'
-revision.
-
-@menu
-* First import::                Importing a module for the first time
-* Update imports::              Updating a module with the import command
-* Reverting local changes::     Reverting a module to the latest vendor release
-* Binary files in imports::     Binary files require special handling
-* Keywords in imports::         Keyword substitution might be undesirable
-* Multiple vendor branches::    What if you get sources from several places?
-@end menu
-
-@c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-@node First import
-@section Importing a module for the first time
-@cindex Importing modules
-
-@c Should mention naming conventions for vendor tags,
-@c release tags, and perhaps directory names.
-Use the @code{import} command to check in the sources
-for the first time.  When you use the @code{import}
-command to track third-party sources, the @dfn{vendor
-tag} and @dfn{release tags} are useful.  The
-@dfn{vendor tag} is a symbolic name for the branch
-(which is always 1.1.1, unless you use the @samp{-b
-@var{branch}} flag---@xref{Multiple vendor branches}.).  The
-@dfn{release tags} are symbolic names for a particular
-release, such as @samp{FSF_0_04}.
-
-@c I'm not completely sure this belongs here.  But
-@c we need to say it _somewhere_ reasonably obvious; it
-@c is a common misconception among people first learning CVS
-Note that @code{import} does @emph{not} change the
-directory in which you invoke it.  In particular, it
-does not set up that directory as a @sc{cvs} working
-directory; if you want to work with the sources import
-them first and then check them out into a different
-directory (@pxref{Getting the source}).
-
-@cindex Wdiff (import example)
-Suppose you have the sources to a program called
-@code{wdiff} in a directory @file{wdiff-0.04},
-and are going to make private modifications that you
-want to be able to use even when new releases are made
-in the future.  You start by importing the source to
-your repository:
-
-@example
-$ cd wdiff-0.04
-$ cvs import -m "Import of FSF v. 0.04" fsf/wdiff FSF_DIST WDIFF_0_04
-@end example
-
-The vendor tag is named @samp{FSF_DIST} in the above
-example, and the only release tag assigned is
-@samp{WDIFF_0_04}.
-@c FIXME: Need to say where fsf/wdiff comes from.
-
-@c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-@node Update imports
-@section Updating a module with the import command
-
-When a new release of the source arrives, you import it into the
-repository with the same @code{import} command that you used to set up
-the repository in the first place.  The only difference is that you
-specify a different release tag this time.
-
-@example
-$ tar xfz wdiff-0.05.tar.gz
-$ cd wdiff-0.05
-$ cvs import -m "Import of FSF v. 0.05" fsf/wdiff FSF_DIST WDIFF_0_05
-@end example
-
-For files that have not been modified locally, the newly created
-revision becomes the head revision.  If you have made local
-changes, @code{import} will warn you that you must merge the changes
-into the main trunk, and tell you to use @samp{checkout -j} to do so.
-
-@c FIXME: why "wdiff" here and "fsf/wdiff" in the
-@c "import"?  I think the assumption is that one has
-@c "wdiff fsf/wdiff" or some such in modules, but it
-@c would be better to not use modules in this example.
-@example
-$ cvs checkout -jFSF_DIST:yesterday -jFSF_DIST wdiff
-@end example
-
-@noindent
-The above command will check out the latest revision of
-@samp{wdiff}, merging the changes made on the vendor branch @samp{FSF_DIST}
-since yesterday into the working copy.  If any conflicts arise during
-the merge they should be resolved in the normal way (@pxref{Conflicts
-example}).  Then, the modified files may be committed.
-
-Using a date, as suggested above, assumes that you do
-not import more than one release of a product per
-day. If you do, you can always use something like this
-instead:
-
-@example
-$ cvs checkout -jWDIFF_0_04 -jWDIFF_0_05 wdiff
-@end example
-
-@noindent
-In this case, the two above commands are equivalent.
-
-@node Reverting local changes
-@section Reverting to the latest vendor release
-
-You can also revert local changes completely and return
-to the latest vendor release by changing the `head'
-revision back to the vendor branch on all files.  For
-example, if you have a checked-out copy of the sources
-in @file{~/work.d/wdiff}, and you want to revert to the
-vendor's version for all the files in that directory,
-you would type:
-
-@example
-$ cd ~/work.d/wdiff
-$ cvs admin -bWDIFF .
-@end example
-
-@noindent
-You must specify the @samp{-bWDIFF} without any space
-after the @samp{-b}.  @xref{admin options}.
-
-@node Binary files in imports
-@section How to handle binary files with cvs import
-
-Use the @samp{-k} wrapper option to tell import which
-files are binary.  @xref{Wrappers}.
-
-@node Keywords in imports
-@section How to handle keyword substitution with cvs import
-
-The sources which you are importing may contain
-keywords (@pxref{Keyword substitution}).  For example,
-the vendor may use @sc{cvs} or some other system
-which uses similar keyword expansion syntax.  If you
-just import the files in the default fashion, then
-the keyword expansions supplied by the vendor will
-be replaced by keyword expansions supplied by your
-own copy of @sc{cvs}.  It may be more convenient to
-maintain the expansions supplied by the vendor, so
-that this information can supply information about
-the sources that you imported from the vendor.
-
-To maintain the keyword expansions supplied by the
-vendor, supply the @samp{-ko} option to @code{cvs
-import} the first time you import the file.
-This will turn off keyword expansion
-for that file entirely, so if you want to be more
-selective you'll have to think about what you want
-and use the @samp{-k} option to @code{cvs update} or
-@code{cvs admin} as appropriate.
-@c Supplying -ko to import if the file already existed
-@c has no effect.  Not clear to me whether it should
-@c or not.
-
-@node Multiple vendor branches
-@section Multiple vendor branches
-
-All the examples so far assume that there is only one
-vendor from which you are getting sources.  In some
-situations you might get sources from a variety of
-places.  For example, suppose that you are dealing with
-a project where many different people and teams are
-modifying the software.  There are a variety of ways to
-handle this, but in some cases you have a bunch of
-source trees lying around and what you want to do more
-than anything else is just to all put them in CVS so
-that you at least have them in one place.
-
-For handling situations in which there may be more than
-one vendor, you may specify the @samp{-b} option to
-@code{cvs import}.  It takes as an argument the vendor
-branch to import to.  The default is @samp{-b 1.1.1}.
-
-For example, suppose that there are two teams, the red
-team and the blue team, that are sending you sources.
-You want to import the red team's efforts to branch
-1.1.1 and use the vendor tag RED.  You want to import
-the blue team's efforts to branch 1.1.3 and use the
-vendor tag BLUE.  So the commands you might use are:
-
-@example
-$ cvs import dir RED RED_1-0
-$ cvs import -b 1.1.3 dir BLUE BLUE_1-5
-@end example
-
-Note that if your vendor tag does not match your
-@samp{-b} option, CVS will not detect this case!  For
-example,
-
-@example
-$ cvs import -b 1.1.3 dir RED RED_1-0
-@end example
-
-@noindent
-Be careful; this kind of mismatch is sure to sow
-confusion or worse.  I can't think of a useful purpose
-for the ability to specify a mismatch here, but if you
-discover such a use, don't.  CVS is likely to make this
-an error in some future release.
-
-@c Probably should say more about the semantics of
-@c multiple branches.  What about the default branch?
-@c What about joining (perhaps not as useful with
-@c multiple branches, or perhaps it is.  Either way
-@c should be mentioned).
-
-@c ---------------------------------------------------------------------
 @node History browsing
 @chapter History browsing
 @cindex History browsing
@@ -5946,6 +4671,1281 @@ in more detail in @ref{Common options}.
 @c what it means to select a revision might be worth a
 @c few words of explanation ("you want to see who
 @c changed this line *before* 1.4"...).
+
+@c ---------------------------------------------------------------------
+@node Binary files
+@chapter Handling binary files
+@cindex Binary files
+
+The most common use for @sc{cvs} is to store text
+files.  With text files, @sc{cvs} can merge revisions,
+display the differences between revisions in a
+human-visible fashion, and other such operations.
+However, if you are willing to give up a few of these
+abilities, @sc{cvs} can store binary files.  For
+example, one might store a web site in @sc{cvs}
+including both text files and binary images.
+
+@menu
+* Binary why::     More details on issues with binary files
+* Binary howto::   How to store them
+@end menu
+
+@node Binary why
+@section The issues with binary files
+
+While the need to manage binary files may seem obvious
+if the files that you customarily work with are binary,
+putting them into version control does present some
+additional issues.
+
+One basic function of version control is to show the
+differences between two revisions.  For example, if
+someone else checked in a new version of a file, you
+may wish to look at what they changed and determine
+whether their changes are good.  For text files,
+@sc{cvs} provides this functionality via the @code{cvs
+diff} command.  For binary files, it may be possible to
+extract the two revisions and then compare them with a
+tool external to @sc{cvs} (for example, word processing
+software often has such a feature).  If there is no
+such tool, one must track changes via other mechanisms,
+such as urging people to write good log messages, and
+hoping that the changes they actually made were the
+changes that they intended to make.
+
+Another ability of a version control system is the
+ability to merge two revisions.  For @sc{cvs} this
+happens in two contexts.  The first is when users make
+changes in separate working directories
+(@pxref{Multiple developers}).  The second is when one
+merges from one branch to another with the @samp{update
+-j} command (@pxref{Merging}).
+
+In the case of text
+files, @sc{cvs} can merge changes made independently,
+and signal a conflict if the changes conflict.  With
+binary files, the best that @sc{cvs} can do is present
+the two different copies of the file, and leave it to
+the user to resolve the conflict.  The user may choose
+one copy or the other, or may run an external merge
+tool which knows about that particular file format, if
+one exists.
+Note that having the user merge relies primarily on the
+user to not accidentally omit some changes, and thus is
+potentially error prone.
+
+If this process is thought to be undesirable, the best
+choice may be to avoid merging.  To avoid the merges
+that result from separate working directories, see the
+discussion of reserved checkouts (file locking) in
+@ref{Multiple developers}.  To avoid the merges
+resulting from branches, restrict use of branches.
+
+@node Binary howto
+@section How to store binary files
+
+There are two issues with using @sc{cvs} to store
+binary files.  The first is that @sc{cvs} by default
+converts line endings between the canonical form in
+which they are stored in the repository (linefeed
+only), and the form appropriate to the operating system
+in use on the client (for example, carriage return
+followed by line feed for Windows NT).
+
+The second is that a binary file might happen to
+contain data which looks like a keyword (@pxref{Keyword
+substitution}), so keyword expansion must be turned
+off.
+
+@c FIXME: the third is that one can't do merges with
+@c binary files.  xref to Multiple Developers and the
+@c reserved checkout issues.
+
+The @samp{-kb} option available with some @sc{cvs}
+commands insures that neither line ending conversion
+nor keyword expansion will be done.
+
+Here is an example of how you can create a new file
+using the @samp{-kb} flag:
+
+@example
+$ echo '$@asis{}Id$' > kotest
+$ cvs add -kb -m"A test file" kotest
+$ cvs ci -m"First checkin; contains a keyword" kotest
+@end example
+
+If a file accidentally gets added without @samp{-kb},
+one can use the @code{cvs admin} command to recover.
+For example:
+
+@example
+$ echo '$@asis{}Id$' > kotest
+$ cvs add -m"A test file" kotest
+$ cvs ci -m"First checkin; contains a keyword" kotest
+$ cvs admin -kb kotest
+$ cvs update -A kotest
+# @r{For non-unix systems:}
+# @r{Copy in a good copy of the file from outside CVS}
+$ cvs commit -m "make it binary" kotest
+@end example
+
+@c Trying to describe this for both unix and non-unix
+@c in the same description is very confusing.  Might
+@c want to split the two, or just ditch the unix "shortcut"
+@c (unixheads don't do much with binary files, anyway).
+@c This used to say "(Try the above example, and do a
+@c @code{cat kotest} after every command)".  But that
+@c only really makes sense for the unix case.
+When you check in the file @file{kotest} the file is
+not preserved as a binary file, because you did not
+check it in as a binary file.  The @code{cvs
+admin -kb} command sets the default keyword
+substitution method for this file, but it does not
+alter the working copy of the file that you have.  If you need to
+cope with line endings (that is, you are using 
+@sc{cvs} on a non-unix system), then you need to
+check in a new copy of the file, as shown by the
+@code{cvs commit} command above.
+On unix, the @code{cvs update -A} command suffices.
+@c FIXME: should also describe what the *other users*
+@c need to do, if they have checked out copies which
+@c have been corrupted by lack of -kb.  I think maybe
+@c "cvs update -kb" or "cvs
+@c update -A" would suffice, although the user who
+@c reported this suggested removing the file, manually
+@c removing it from CVS/Entries, and then "cvs update"
+
+However, in using @code{cvs admin -k} to change the
+keyword expansion, be aware that the keyword expansion
+mode is not version controlled.  This means that, for
+example, that if you have a text file in old releases,
+and a binary file with the same name in new releases,
+@sc{cvs} provides no way to check out the file in text
+or binary mode depending on what version you are
+checking out.  There is no good workaround for this
+problem.
+
+You can also set a default for whether @code{cvs add}
+and @code{cvs import} treat a file as binary based on
+its name; for example you could say that files who
+names end in @samp{.exe} are binary.  @xref{Wrappers}.
+There is currently no way to have @sc{cvs} detect
+whether a file is binary based on its contents.  The
+main difficulty with designing such a feature is that
+it is not clear how to distinguish between binary and
+non-binary files, and the rules to apply would vary
+considerably with the operating system.
+@c For example, it would be good on MS-DOS-family OSes
+@c for anything containing ^Z to be binary.  Having
+@c characters with the 8th bit set imply binary is almost
+@c surely a bad idea in the context of ISO-8859-* and
+@c other such character sets.  On VMS or the Mac, we
+@c could use the OS's file typing.  This is a
+@c commonly-desired feature, and something of this sort
+@c may make sense.  But there are a lot of pitfalls here.
+@c
+@c Another, probably better, way to tell is to read the
+@c file in text mode, write it to a temp file in text
+@c mode, and then do a binary mode compare of the two 
+@c files.  If they differ, it is a binary file.  This
+@c might have problems on VMS (or some other system
+@c with several different text modes), but in general
+@c should be relatively portable.  The only other
+@c downside I can think of is that it would be fairly
+@c slow, but that is perhaps a small price to pay for
+@c not having your files corrupted.  Another issue is
+@c what happens if you import a text file with bare
+@c linefeeds on Windows.  Such files will show up on
+@c Windows sometimes (I think some native windows
+@c programs even write them, on occasion).  Perhaps it
+@c is reasonable to treat such files as binary; after
+@c all it is something of a presumption to assume that
+@c the user would want the linefeeds converted to CRLF.
+
+@c ---------------------------------------------------------------------
+@node Multiple developers
+@chapter Multiple developers
+@cindex Multiple developers
+@cindex Team of developers
+@cindex File locking
+@cindex Locking files
+@cindex Working copy
+@cindex reserved checkouts
+@cindex unreserved checkouts
+@cindex RCS-style locking
+
+When more than one person works on a software project
+things often get complicated.  Often, two people try to
+edit the same file simultaneously.  One solution, known
+as @dfn{file locking} or @dfn{reserved checkouts}, is
+to allow only one person to edit each file at a time.
+This is the only solution with some version control
+systems, including @sc{rcs} and @sc{sccs}.  Currently
+the usual way to get reserved checkouts with @sc{cvs}
+is the @code{cvs admin -l} command (@pxref{admin
+options}).  This is not as nicely integrated into
+@sc{cvs} as the watch features, described below, but it
+seems that most people with a need for reserved
+checkouts find it adequate.
+@c Or "find it better than worrying about implementing
+@c nicely integrated reserved checkouts" or ...?
+It also may be possible to use the watches
+features described below, together with suitable
+procedures (not enforced by software), to avoid having
+two people edit at the same time.
+
+@c Our unreserved checkout model might not
+@c be quite the same as others.  For example, I
+@c think that some systems will tend to create a branch
+@c in the case where CVS prints "up-to-date check failed".
+@c It isn't clear to me whether we should try to
+@c explore these subtleties; it could easily just
+@c confuse people.
+The default model with @sc{cvs} is known as
+@dfn{unreserved checkouts}.  In this model, developers
+can edit their own @dfn{working copy} of a file
+simultaneously.  The first person that commits his
+changes has no automatic way of knowing that another
+has started to edit it.  Others will get an error
+message when they try to commit the file.  They must
+then use @sc{cvs} commands to bring their working copy
+up to date with the repository revision.  This process
+is almost automatic.
+
+@c FIXME? should probably use the word "watch" here, to
+@c tie this into the text below and above.
+@sc{Cvs} also supports mechanisms which facilitate
+various kinds of communcation, without actually
+enforcing rules like reserved checkouts do.
+
+The rest of this chapter describes how these various
+models work, and some of the issues involved in
+choosing between them.
+
+@ignore
+Here is a draft reserved checkout design or discussion
+of the issues.  This seems like as good a place as any
+for this.
+
+Might want a cvs lock/cvs unlock--in which the names
+differ from edit/unedit because the network must be up
+for these to work.  unedit gives an error if there is a
+reserved checkout in place (so that people don't
+accidentally leave locks around); unlock gives an error
+if one is not in place (this is more arguable; perhaps
+it should act like unedit in that case).
+
+On the other hand, might want it so that emacs,
+scripts, etc., can get ready to edit a file without
+having to know which model is in use.  In that case we
+would have a "cvs watch lock" (or .cvsrc?) (that is,
+three settings, "on", "off", and "lock").  Having cvs
+watch lock set would cause a get to record in the CVS
+directory which model is in use, and cause "cvs edit"
+to change behaviors.  We'd want a way to query which
+setting is in effect (this would be handy even if it is
+only "on" or "off" as presently).  If lock is in
+effect, then commit would require a lock before
+allowing a checkin; chmod wouldn't suffice (might be
+debatable--see chmod comment below, in watches--but it
+is the way people expect RCS to work and I can't think
+of any significant downside.  On the other hand, maybe
+it isn't worth bothering, because people who are used
+to RCS wouldn't think to use chmod anyway).
+
+Implementation: use file attributes or use RCS
+locking.  The former avoids more dependence on RCS
+behaviors we will need to reimplement as we librarify
+RCS, and makes it easier to import/export RCS files (in
+that context, want to ignore the locker field).  But
+note that RCS locks are per-branch, which is the
+correct behavior (this is also an issue for the "watch
+on" features; they should be per-branch too).
+
+Here are a few more random notes about implementation
+details, assuming "cvs watch lock" and
+
+CVS/Watched file?  Or try to fit this into CVS/Entries somehow?
+Cases: (1) file is checked out (unreserved or with watch on) by old
+version of CVS, now we do something with new one, (2) file is checked
+out by new version, now we do something with old one.
+
+Remote protocol would have a "Watched" analogous to "Mode".  Of course
+it would apply to all Updated-like requests.  How do we keep this
+setting up to date?  I guess that there wants to be a Watched request,
+and the server would send a new one if it isn't up to date? (Ugh--hard
+to implement and slows down "cvs -q update"--is there an easier way?)
+
+"cvs edit"--checks CVS/Watched, and if watch lock, then sends
+"edit-lock" request.  Which comes back with a Checked-in with
+appropriate Watched (off, on, lock, locked, or some such?), or error
+message if already locked.
+
+"cvs commit"--only will commit if off/on/locked.  lock is not OK.
+
+Doc:
+note that "cvs edit" must be connected to network if watch lock is in
+effect.
+
+Talk about what to do if someone has locked a file and you want to
+edit that file.  (breaking locks, or lack thereof).
+
+
+One other idea (which could work along with the
+existing "cvs admin -l" reserved checkouts, as well as
+the above):
+
+"cvs editors" could show who has the file locked, if
+someone does.
+
+@end ignore
+
+@menu
+* File status::                 A file can be in several states
+* Updating a file::             Bringing a file up-to-date
+* Conflicts example::           An informative example
+* Informing others::            To cooperate you must inform
+* Concurrency::                 Simultaneous repository access
+* Watches::                     Mechanisms to track who is editing files
+* Choosing a model::            Reserved or unreserved checkouts?
+@end menu
+
+@c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+@node File status
+@section File status
+@cindex File status
+@cindex Status of a file
+
+@c Shouldn't this start with an example or something,
+@c introducing the unreserved checkout model?  Before we
+@c dive into listing states?
+Based on what operations you have performed on a
+checked out file, and what operations others have
+performed to that file in the repository, one can
+classify a file in a number of states.  The states, as
+reported by the @code{status} command, are:
+
+@c The order of items is chosen to group logically
+@c similar outputs together.
+@c People who want alphabetical can use the index...
+@table @asis
+@cindex Up-to-date
+@item Up-to-date
+The file is identical with the latest revision in the
+repository for the branch in use.
+@c FIXME: should we clarify "in use"?  The answer is
+@c sticky tags, and trying to distinguish branch sticky
+@c tags from non-branch sticky tags seems rather awkward
+@c here.
+@c FIXME: What happens with non-branch sticky tags?  Is
+@c a stuck file "Up-to-date" or "Needs checkout" or what?
+
+@item Locally Modified
+@cindex Locally Modified
+You have edited the file, and not yet committed your changes.
+
+@item Locally Added
+@cindex Locally Added
+You have added the file with @code{add}, and not yet
+committed your changes.
+@c There are many cases involving the file being
+@c added/removed/modified in the working directory, and
+@c added/removed/modified in the repository, which we
+@c don't try to describe here.  I'm not sure that "cvs
+@c status" produces a non-confusing output in most of
+@c those cases.
+
+@item Locally Removed
+@cindex Locally Removed
+You have removed the file with @code{remove}, and not yet
+committed your changes.
+
+@item Needs Checkout
+@cindex Needs Checkout
+Someone else has committed a newer revision to the
+repository.  The name is slightly misleading; you will
+ordinarily use @code{update} rather than
+@code{checkout} to get that newer revision.
+
+@item Needs Patch
+@cindex Needs Patch
+@c See also newb-123j0 in sanity.sh (although that case
+@c should probably be changed rather than documented).
+Like Needs Checkout, but the @sc{cvs} server will send
+a patch rather than the entire file.  Sending a patch or
+sending an entire file accomplishes the same thing.
+
+@item Needs Merge
+@cindex Needs Merge
+Someone else has committed a newer revision to the repository, and you
+have also made modifications to the file.
+
+@item File had conflicts on merge
+@cindex File had conflicts on merge
+@c is it worth saying that this message was "Unresolved
+@c Conflict" in CVS 1.9 and earlier?  I'm inclined to
+@c think that is unnecessarily confusing to new users.
+This is like Locally Modified, except that a previous
+@code{update} command gave a conflict.  If you have not
+already done so, you need to
+resolve the conflict as described in @ref{Conflicts example}.
+
+@item Unknown
+@cindex Unknown
+@sc{Cvs} doesn't know anything about this file.  For
+example, you have created a new file and have not run
+@code{add}.
+@c 
+@c "Entry Invalid" and "Classify Error" are also in the
+@c status.c.  The latter definitely indicates a CVS bug
+@c (should it be worded more like "internal error" so
+@c people submit bug reports if they see it?).  The former
+@c I'm not as sure; I haven't tracked down whether/when it
+@c appears in "cvs status" output.
+
+@end table
+
+To help clarify the file status, @code{status} also
+reports the @code{Working revision} which is the
+revision that the file in the working directory derives
+from, and the @code{Repository revision} which is the
+latest revision in the repository for the branch in
+use.
+@c FIXME: should we clarify "in use"?  The answer is
+@c sticky tags, and trying to distinguish branch sticky
+@c tags from non-branch sticky tags seems rather awkward
+@c here.
+@c FIXME: What happens with non-branch sticky tags?
+@c What is the Repository Revision there?  See the
+@c comment at vn_rcs in cvs.h, which is kind of
+@c confused--we really need to document better what this
+@c field contains.
+@c Q: Should we document "New file!" and other such
+@c outputs or are they self-explanatory?
+@c FIXME: what about the date to the right of "Working
+@c revision"?  It doesn't appear with client/server and
+@c seems unnecessary (redundant with "ls -l") so
+@c perhaps it should be removed for non-client/server too?
+@c FIXME: Need some examples.
+@c FIXME: Working revision can also be something like
+@c "-1.3" for a locally removed file.  Not at all
+@c self-explanatory (and it is possible that CVS should
+@c be changed rather than documenting this).
+
+@c Would be nice to have an @example showing output
+@c from cvs status, with comments showing the xref
+@c where each part of the output is described.  This
+@c might fit in nicely if it is desirable to split this
+@c node in two; one to introduce "cvs status" and one
+@c to list each of the states.
+The options to @code{status} are listed in
+@ref{Invoking CVS}.  For information on its @code{Sticky tag}
+and @code{Sticky date} output, see @ref{Sticky tags}.
+For information on its @code{Sticky options} output,
+see the @samp{-k} option in @ref{update options}.
+
+You can think of the @code{status} and @code{update}
+commands as somewhat complementary.  You use
+@code{update} to bring your files up to date, and you
+can use @code{status} to give you some idea of what an
+@code{update} would do (of course, the state of the
+repository might change before you actually run
+@code{update}).  In fact, if you want a command to
+display file status in a more brief format than is
+displayed by the @code{status} command, you can invoke
+
+@cindex update, to display file status
+@example
+$ cvs -n -q update
+@end example
+
+The @samp{-n} option means to not actually do the
+update, but merely to display statuses; the @samp{-q}
+option avoids printing the name of each directory.  For
+more information on the @code{update} command, and
+these options, see @ref{Invoking CVS}.
+
+@c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+@node Updating a file
+@section Bringing a file up to date
+@cindex Bringing a file up to date
+@cindex Updating a file
+@cindex Merging a file
+@cindex update, introduction
+
+When you want to update or merge a file, use the @code{update}
+command.  For files that are not up to date this is roughly equivalent
+to a @code{checkout} command: the newest revision of the file is
+extracted from the repository and put in your working copy of the
+module.
+
+Your modifications to a file are never lost when you
+use @code{update}.  If no newer revision exists,
+running @code{update} has no effect.  If you have
+edited the file, and a newer revision is available,
+@sc{cvs} will merge all changes into your working copy.
+
+For instance, imagine that you checked out revision 1.4 and started
+editing it.  In the meantime someone else committed revision 1.5, and
+shortly after that revision 1.6.  If you run @code{update} on the file
+now, @sc{cvs} will incorporate all changes between revision 1.4 and 1.6 into
+your file.
+
+@cindex Overlap
+If any of the changes between 1.4 and 1.6 were made too
+close to any of the changes you have made, an
+@dfn{overlap} occurs.  In such cases a warning is
+printed, and the resulting file includes both
+versions of the lines that overlap, delimited by
+special markers.
+@xref{update}, for a complete description of the
+@code{update} command.
+
+@c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+@node Conflicts example
+@section Conflicts example
+@cindex Merge, an example
+@cindex Example of merge
+@cindex driver.c (merge example)
+
+Suppose revision 1.4 of @file{driver.c} contains this:
+
+@example
+#include <stdio.h>
+
+void main()
+@{
+    parse();
+    if (nerr == 0)
+        gencode();
+    else
+        fprintf(stderr, "No code generated.\n");
+    exit(nerr == 0 ? 0 : 1);
+@}
+@end example
+
+@noindent
+Revision 1.6 of @file{driver.c} contains this:
+
+@example
+#include <stdio.h>
+
+int main(int argc,
+         char **argv)
+@{
+    parse();
+    if (argc != 1)
+    @{
+        fprintf(stderr, "tc: No args expected.\n");
+        exit(1);
+    @}
+    if (nerr == 0)
+        gencode();
+    else
+        fprintf(stderr, "No code generated.\n");
+    exit(!!nerr);
+@}
+@end example
+
+@noindent
+Your working copy of @file{driver.c}, based on revision
+1.4, contains this before you run @samp{cvs update}:
+@c -- Really include "cvs"?
+
+@example
+#include <stdlib.h>
+#include <stdio.h>
+
+void main()
+@{
+    init_scanner();
+    parse();
+    if (nerr == 0)
+        gencode();
+    else
+        fprintf(stderr, "No code generated.\n");
+    exit(nerr == 0 ? EXIT_SUCCESS : EXIT_FAILURE);
+@}
+@end example
+
+@noindent
+You run @samp{cvs update}:
+@c -- Really include "cvs"?
+
+@example
+$ cvs update driver.c
+RCS file: /usr/local/cvsroot/yoyodyne/tc/driver.c,v
+retrieving revision 1.4
+retrieving revision 1.6
+Merging differences between 1.4 and 1.6 into driver.c
+rcsmerge warning: overlaps during merge
+cvs update: conflicts found in driver.c
+C driver.c
+@end example
+
+@noindent
+@cindex Conflicts (merge example)
+@sc{cvs} tells you that there were some conflicts.
+Your original working file is saved unmodified in
+@file{.#driver.c.1.4}.  The new version of
+@file{driver.c} contains this:
+
+@example
+#include <stdlib.h>
+#include <stdio.h>
+
+int main(int argc,
+         char **argv)
+@{
+    init_scanner();
+    parse();
+    if (argc != 1)
+    @{
+        fprintf(stderr, "tc: No args expected.\n");
+        exit(1);
+    @}
+    if (nerr == 0)
+        gencode();
+    else
+        fprintf(stderr, "No code generated.\n");
+@asis{}<<<<<<< driver.c
+    exit(nerr == 0 ? EXIT_SUCCESS : EXIT_FAILURE);
+@asis{}=======
+    exit(!!nerr);
+@asis{}>>>>>>> 1.6
+@}
+@end example
+
+@noindent
+@cindex Markers, conflict
+@cindex Conflict markers
+@cindex <<<<<<<
+@cindex >>>>>>>
+@cindex =======
+
+Note how all non-overlapping modifications are incorporated in your working
+copy, and that the overlapping section is clearly marked with
+@samp{<<<<<<<}, @samp{=======} and @samp{>>>>>>>}.
+
+@cindex Resolving a conflict
+@cindex Conflict resolution
+You resolve the conflict by editing the file, removing the markers and
+the erroneous line.  Suppose you end up with this file:
+@c -- Add xref to the pcl-cvs manual when it talks
+@c -- about this.
+@example
+#include <stdlib.h>
+#include <stdio.h>
+
+int main(int argc,
+         char **argv)
+@{
+    init_scanner();
+    parse();
+    if (argc != 1)
+    @{
+        fprintf(stderr, "tc: No args expected.\n");
+        exit(1);
+    @}
+    if (nerr == 0)
+        gencode();
+    else
+        fprintf(stderr, "No code generated.\n");
+    exit(nerr == 0 ? EXIT_SUCCESS : EXIT_FAILURE);
+@}
+@end example
+
+@noindent
+You can now go ahead and commit this as revision 1.7.
+
+@example
+$ cvs commit -m "Initialize scanner. Use symbolic exit values." driver.c
+Checking in driver.c;
+/usr/local/cvsroot/yoyodyne/tc/driver.c,v  <--  driver.c
+new revision: 1.7; previous revision: 1.6
+done
+@end example
+
+For your protection, @sc{cvs} will refuse to check in a
+file if a conflict occurred and you have not resolved
+the conflict.  Currently to resolve a conflict, you
+must change the timestamp on the file.  In previous
+versions of @sc{cvs}, you also needed to
+insure that the file contains no conflict markers.
+Because
+your file may legitimately contain conflict markers (that
+is, occurrences of @samp{>>>>>>> } at the start of a
+line that don't mark a conflict), the current
+version of @sc{cvs} will print a warning and proceed to
+check in the file.
+@c The old behavior was really icky; the only way out
+@c was to start hacking on
+@c the @code{CVS/Entries} file or other such workarounds.
+@c 
+@c If the timestamp thing isn't considered nice enough,
+@c maybe there should be a "cvs resolved" command
+@c which clears the conflict indication.  For a nice user
+@c interface, this should be invoked by an interactive
+@c merge tool like emerge rather than by the user
+@c directly--such a tool can verify that the user has
+@c really dealt with each conflict.
+
+@cindex emerge
+If you use release 1.04 or later of pcl-cvs (a @sc{gnu}
+Emacs front-end for @sc{cvs}) you can use an Emacs
+package called emerge to help you resolve conflicts.
+See the documentation for pcl-cvs.
+
+@c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+@node Informing others
+@section Informing others about commits
+@cindex Informing others
+@cindex Spreading information
+@cindex Mail, automatic mail on commit
+
+It is often useful to inform others when you commit a
+new revision of a file.  The @samp{-i} option of the
+@file{modules} file, or the @file{loginfo} file, can be
+used to automate this process.  @xref{modules}.
+@xref{loginfo}.  You can use these features of @sc{cvs}
+to, for instance, instruct @sc{cvs} to mail a
+message to all developers, or post a message to a local
+newsgroup.
+@c -- More text would be nice here.
+
+@node Concurrency
+@section Several developers simultaneously attempting to run CVS
+
+@cindex locks, cvs
+@c For a discussion of *why* CVS creates locks, see
+@c the comment at the start of src/lock.c
+If several developers try to run @sc{cvs} at the same
+time, one may get the following message:
+
+@example
+[11:43:23] waiting for bach's lock in /usr/local/cvsroot/foo
+@end example
+
+@sc{cvs} will try again every 30 seconds, and either
+continue with the operation or print the message again,
+if it still needs to wait.  If a lock seems to stick
+around for an undue amount of time, find the person
+holding the lock and ask them about the cvs command
+they are running.  If they aren't running a cvs
+command, look in the repository directory mentioned in
+the message and remove files which they own whose names
+start with @file{#cvs.tfl}, @file{#cvs.rfl}, or
+@file{#cvs.wfl}.
+
+Note that these locks are to protect @sc{cvs}'s
+internal data structures and have no relationship to
+the word @dfn{lock} in the sense used by
+@sc{rcs}---which refers to reserved checkouts
+(@pxref{Multiple developers}).
+
+Any number of people can be reading from a given
+repository at a time; only when someone is writing do
+the locks prevent other people from reading or writing.
+
+@cindex Atomic transactions, lack of
+@cindex Transactions, atomic, lack of
+@c the following talks about what one might call commit/update
+@c atomicity.
+@c Probably also should say something about
+@c commit/commit atomicity, that is, "An update will
+@c not get partial versions of more than one commit".
+@c CVS currently has this property and I guess we can
+@c make it a documented feature.
+@c For example one person commits
+@c a/one.c and b/four.c and another commits a/two.c and
+@c b/three.c.  Then an update cannot get the new a/one.c
+@c and a/two.c and the old b/four.c and b/three.c.
+One might hope for the following property
+
+@example
+If someone commits some changes in one cvs command,
+then an update by someone else will either get all the
+changes, or none of them.
+@end example
+
+but @sc{cvs} does @emph{not} have this property.  For
+example, given the files
+
+@example
+a/one.c
+a/two.c
+b/three.c
+b/four.c
+@end example
+
+if someone runs
+
+@example
+cvs ci a/two.c b/three.c
+@end example
+
+and someone else runs @code{cvs update} at the same
+time, the person running @code{update} might get only
+the change to @file{b/three.c} and not the change to
+@file{a/two.c}.
+
+@node Watches
+@section Mechanisms to track who is editing files
+@cindex Watches
+
+For many groups, use of @sc{cvs} in its default mode is
+perfectly satisfactory.  Users may sometimes go to
+check in a modification only to find that another
+modification has intervened, but they deal with it and
+proceed with their check in.  Other groups prefer to be
+able to know who is editing what files, so that if two
+people try to edit the same file they can choose to
+talk about who is doing what when rather than be
+surprised at check in time.  The features in this
+section allow such coordination, while retaining the
+ability of two developers to edit the same file at the
+same time.
+
+@c Some people might ask why CVS does not enforce the
+@c rule on chmod, by requiring a cvs edit before a cvs
+@c commit.  The main reason is that it could always be
+@c circumvented--one could edit the file, and
+@c then when ready to check it in, do the cvs edit and put
+@c in the new contents and do the cvs commit.  One
+@c implementation note: if we _do_ want to have cvs commit
+@c require a cvs edit, we should store the state on
+@c whether the cvs edit has occurred in the working
+@c directory, rather than having the server try to keep
+@c track of what working directories exist.
+@c FIXME: should the above discussion be part of the
+@c manual proper, somewhere, not just in a comment?
+For maximum benefit developers should use @code{cvs
+edit} (not @code{chmod}) to make files read-write to
+edit them, and @code{cvs release} (not @code{rm}) to
+discard a working directory which is no longer in use,
+but @sc{cvs} is not able to enforce this behavior.
+
+@c I'm a little dissatisfied with this presentation,
+@c because "watch on"/"edit"/"editors" are one set of
+@c functionality, and "watch add"/"watchers" is another
+@c which is somewhat orthogonal even though they interact in
+@c various ways.  But I think it might be
+@c confusing to describe them separately (e.g. "watch
+@c add" with loginfo).  I don't know.
+
+@menu
+* Setting a watch::             Telling CVS to watch certain files
+* Getting Notified::            Telling CVS to notify you
+* Editing files::               How to edit a file which is being watched
+* Watch information::           Information about who is watching and editing
+* Watches Compatibility::       Watches interact poorly with CVS 1.6 or earlier
+@end menu
+
+@node Setting a watch
+@subsection Telling CVS to watch certain files
+
+To enable the watch features, you first specify that
+certain files are to be watched.
+
+@cindex watch on (subcommand)
+@deffn Command {cvs watch on} [@code{-lR}] files @dots{}
+
+@cindex read-only files, and watches
+Specify that developers should run @code{cvs edit}
+before editing @var{files}.  CVS will create working
+copies of @var{files} read-only, to remind developers
+to run the @code{cvs edit} command before working on
+them.
+
+If @var{files} includes the name of a directory, CVS
+arranges to watch all files added to the corresponding
+repository directory, and sets a default for files
+added in the future; this allows the user to set
+notification policies on a per-directory basis.  The
+contents of the directory are processed recursively,
+unless the @code{-l} option is given.
+The @code{-R} option can be used to force recursion if the @code{-l}
+option is set in @file{~/.cvsrc} (@pxref{~/.cvsrc}).
+
+If @var{files} is omitted, it defaults to the current directory.
+
+@cindex watch off (subcommand)
+@end deffn
+
+@deffn Command {cvs watch off} [@code{-lR}] files @dots{}
+
+Do not provide notification about work on @var{files}.  CVS will create
+working copies of @var{files} read-write.
+
+The @var{files} and options are processed as for @code{cvs
+watch on}.
+
+@end deffn
+
+@node Getting Notified
+@subsection Telling CVS to notify you
+
+You can tell @sc{cvs} that you want to receive
+notifications about various actions taken on a file.
+You can do this without using @code{cvs watch on} for
+the file, but generally you will want to use @code{cvs
+watch on}, so that developers use the @code{cvs edit}
+command.
+
+@cindex watch add (subcommand)
+@deffn Command {cvs watch add} [@code{-a} action] [@code{-lR}] files @dots{}
+
+Add the current user to the list of people to receive notification of
+work done on @var{files}.
+
+The @code{-a} option specifies what kinds of events CVS should notify
+the user about.  @var{action} is one of the following:
+
+@table @code
+
+@item edit
+Another user has applied the @code{cvs edit} command (described
+below) to a file.
+
+@item unedit
+Another user has applied the @code{cvs unedit} command (described
+below) or the @code{cvs release} command to a file, or has deleted
+the file and allowed @code{cvs update} to recreate it.
+
+@item commit
+Another user has committed changes to a file.
+
+@item all
+All of the above.
+
+@item none
+None of the above.  (This is useful with @code{cvs edit},
+described below.)
+
+@end table
+
+The @code{-a} option may appear more than once, or not at all.  If
+omitted, the action defaults to @code{all}.
+
+The @var{files} and options are processed as for the
+@code{cvs watch} commands.
+
+@end deffn
+
+
+@cindex watch remove (subcommand)
+@deffn Command {cvs watch remove} [@code{-a} action] [@code{-lR}] files @dots{}
+
+Remove a notification request established using @code{cvs watch add};
+the arguments are the same.  If the @code{-a} option is present, only
+watches for the specified actions are removed.
+
+@end deffn
+
+@cindex notify (admin file)
+When the conditions exist for notification, @sc{cvs}
+calls the @file{notify} administrative file.  Edit
+@file{notify} as one edits the other administrative
+files (@pxref{Intro administrative files}).  This
+file follows the usual conventions for administrative
+files (@pxref{syntax}), where each line is a regular
+expression followed by a command to execute.  The
+command should contain a single ocurrence of @samp{%s}
+which will be replaced by the user to notify; the rest
+of the information regarding the notification will be
+supplied to the command on standard input.  The
+standard thing to put in the @code{notify} file is the
+single line:
+
+@example
+ALL mail %s -s \"CVS notification\"
+@end example
+
+This causes users to be notified by electronic mail.
+@c FIXME: should it be this hard to set up this
+@c behavior (and the result when one fails to do so,
+@c silent failure to notify, so non-obvious)?  Should
+@c CVS give a warning if no line in notify matches (and
+@c document the use of "DEFAULT :" for the case where
+@c skipping the notification is indeed desired)?
+
+@cindex users (admin file)
+Note that if you set this up in the straightforward
+way, users receive notifications on the server machine.
+One could of course write a @file{notify} script which
+directed notifications elsewhere, but to make this
+easy, @sc{cvs} allows you to associate a notification
+address for each user.  To do so create a file
+@file{users} in @file{CVSROOT} with a line for each
+user in the format @var{user}:@var{value}.  Then
+instead of passing the name of the user to be notified
+to @file{notify}, @sc{cvs} will pass the @var{value}
+(normally an email address on some other machine).
+
+@sc{Cvs} does not notify you for your own changes.
+Currently this check is done based on whether the user
+name of the person taking the action which triggers
+notification matches the user name of the person
+getting notification.  In fact, in general, the watches
+features only track one edit by each user.  It probably
+would be more useful if watches tracked each working
+directory separately, so this behavior might be worth
+changing.
+@c "behavior might be worth changing" is an effort to
+@c point to future directions while also not promising
+@c that "they" (as in "why don't they fix CVS to....")
+@c will do this.
+@c one implementation issue is identifying whether a
+@c working directory is same or different.  Comparing
+@c pathnames/hostnames is hopeless, but having the server
+@c supply a serial number which the client stores in the
+@c CVS directory as a magic cookie should work.
+
+@node Editing files
+@subsection How to edit a file which is being watched
+
+@cindex checkout, as term for getting ready to edit
+Since a file which is being watched is checked out
+read-only, you cannot simply edit it.  To make it
+read-write, and inform others that you are planning to
+edit it, use the @code{cvs edit} command.  Some systems
+call this a @dfn{checkout}, but @sc{cvs} uses that term
+for obtaining a copy of the sources (@pxref{Getting the
+source}), an operation which those systems call a
+@dfn{get} or a @dfn{fetch}.
+@c Issue to think about: should we transition CVS
+@c towards the "get" terminology?  "cvs get" is already a
+@c synonym for "cvs checkout" and that section of the
+@c manual refers to "Getting the source".  If this is
+@c done, needs to be done gingerly (for example, we should
+@c still accept "checkout" in .cvsrc files indefinitely
+@c even if the CVS's messages are changed from "cvs checkout: "
+@c to "cvs get: ").
+@c There is a concern about whether "get" is not as
+@c good for novices because it is a more general term
+@c than "checkout" (and thus arguably harder to assign
+@c a technical meaning for).
+
+@cindex edit (subcommand)
+@deffn Command {cvs edit} [options] files @dots{}
+
+Prepare to edit the working files @var{files}.  CVS makes the
+@var{files} read-write, and notifies users who have requested
+@code{edit} notification for any of @var{files}.
+
+The @code{cvs edit} command accepts the same @var{options} as the
+@code{cvs watch add} command, and establishes a temporary watch for the
+user on @var{files}; CVS will remove the watch when @var{files} are
+@code{unedit}ed or @code{commit}ted.  If the user does not wish to
+receive notifications, she should specify @code{-a none}.
+
+The @var{files} and options are processed as for the @code{cvs
+watch} commands.
+
+@end deffn
+
+Normally when you are done with a set of changes, you
+use the @code{cvs commit} command, which checks in your
+changes and returns the watched files to their usual
+read-only state.  But if you instead decide to abandon
+your changes, or not to make any changes, you can use
+the @code{cvs unedit} command.
+
+@cindex unedit (subcommand)
+@cindex abandoning work
+@cindex reverting to repository version
+@deffn Command {cvs unedit} [@code{-lR}] files @dots{}
+
+Abandon work on the working files @var{files}, and revert them to the
+repository versions on which they are based.  CVS makes those
+@var{files} read-only for which users have requested notification using
+@code{cvs watch on}.  CVS notifies users who have requested @code{unedit}
+notification for any of @var{files}.
+
+The @var{files} and options are processed as for the
+@code{cvs watch} commands.
+
+If watches are not in use, the @code{unedit} command
+probably does not work, and the way to revert to the
+repository version is to remove the file and then use
+@code{cvs update} to get a new copy.  The meaning is
+not precisely the same; removing and updating may also
+bring in some changes which have been made in the
+repository since the last time you updated.
+@c It would be a useful enhancement to CVS to make
+@c unedit work in the non-watch case as well.
+@end deffn
+
+When using client/server @sc{cvs}, you can use the
+@code{cvs edit} and @code{cvs unedit} commands even if
+@sc{cvs} is unable to succesfully communicate with the
+server; the notifications will be sent upon the next
+successful @sc{cvs} command.
+
+@node Watch information
+@subsection Information about who is watching and editing
+
+@cindex watchers (subcommand)
+@deffn Command {cvs watchers} [@code{-lR}] files @dots{}
+
+List the users currently watching changes to @var{files}.  The report
+includes the files being watched, and the mail address of each watcher.
+
+The @var{files} and options are processed as for the
+@code{cvs watch} commands.
+
+@end deffn
+
+
+@cindex editors (subcommand)
+@deffn Command {cvs editors} [@code{-lR}] files @dots{}
+
+List the users currently working on @var{files}.  The report
+includes the mail address of each user, the time when the user began
+working with the file, and the host and path of the working directory
+containing the file.
+
+The @var{files} and options are processed as for the
+@code{cvs watch} commands.
+
+@end deffn
+
+@node Watches Compatibility
+@subsection Using watches with old versions of CVS
+
+@cindex CVS 1.6, and watches
+If you use the watch features on a repository, it
+creates @file{CVS} directories in the repository and
+stores the information about watches in that directory.
+If you attempt to use @sc{cvs} 1.6 or earlier with the
+repository, you get an error message such as the
+following (all on one line):
+
+@example
+cvs update: cannot open CVS/Entries for reading:
+No such file or directory
+@end example
+
+and your operation will likely be aborted.  To use the
+watch features, you must upgrade all copies of @sc{cvs}
+which use that repository in local or server mode.  If
+you cannot upgrade, use the @code{watch off} and
+@code{watch remove} commands to remove all watches, and
+that will restore the repository to a state which
+@sc{cvs} 1.6 can cope with.
+
+@node Choosing a model
+@section Choosing between reserved or unreserved checkouts
+@cindex choosing, reserved or unreserved checkouts
+
+Reserved and unreserved checkouts each have pros and
+cons.  Let it be said that a lot of this is a matter of
+opinion or what works given different groups' working
+styles, but here is a brief description of some of the
+issues.  There are many ways to organize a team of
+developers.  @sc{cvs} does not try to enforce a certain
+organization.  It is a tool that can be used in several
+ways.
+
+Reserved checkouts can be very counter-productive.  If
+two persons want to edit different parts of a file,
+there may be no reason to prevent either of them from
+doing so.  Also, it is common for someone to take out a
+lock on a file, because they are planning to edit it,
+but then forget to release the lock.
+
+@c "many groups"?  specifics?  cites to papers on this?
+@c some way to weasel-word it a bit more so we don't
+@c need facts :-)?
+People, especially people who are familiar with
+reserved checkouts, often wonder how often conflicts
+occur if unreserved checkouts are used, and how
+difficult they are to resolve.  The experience with
+many groups is that they occur rarely and usually are
+relatively straightforward to resolve.
+
+The rarity of serious conflicts may be surprising, until one realizes
+that they occur only when two developers disagree on the proper design
+for a given section of code; such a disagreement suggests that the
+team has not been communicating properly in the first place.  In order
+to collaborate under @emph{any} source management regimen, developers
+must agree on the general design of the system; given this agreement,
+overlapping changes are usually straightforward to merge.
+
+In some cases unreserved checkouts are clearly
+inappropriate.  If no merge tool exists for the kind of
+file you are managing (for example word processor files
+or files edited by Computer Aided Design programs), and
+it is not desirable to change to a program which uses a
+mergeable data format, then resolving conflicts is
+going to be unpleasant enough that you generally will
+be better off to simply avoid the conflicts instead, by
+using reserved checkouts.
+
+The watches features described above in @ref{Watches}
+can be considered to be an intermediate model between
+reserved checkouts and unreserved checkouts.  When you
+go to edit a file, it is possible to find out who else
+is editing it.  And rather than having the system
+simply forbid both people editing the file, it can tell
+you what the situation is and let you figure out
+whether it is a problem in that particular case or not.
+Therefore, for some groups it can be considered the
+best of both the reserved checkout and unreserved
+checkout worlds.
+
+@c ---------------------------------------------------------------------
+@node Revision management
+@chapter Revision management
+@cindex Revision management
+
+@c -- This chapter could be expanded a lot.
+@c -- Experiences are very welcome!
+
+If you have read this far, you probably have a pretty
+good grasp on what @sc{cvs} can do for you.  This
+chapter talks a little about things that you still have
+to decide.
+
+If you are doing development on your own using @sc{cvs}
+you could probably skip this chapter.  The questions
+this chapter takes up become more important when more
+than one person is working in a repository.
+
+@menu
+* When to commit::              Some discussion on the subject
+@end menu
+
+@c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+@node When to commit
+@section When to commit?
+@cindex When to commit
+@cindex Commit, when to
+@cindex Policy
+
+Your group should decide which policy to use regarding
+commits.  Several policies are possible, and as your
+experience with @sc{cvs} grows you will probably find
+out what works for you.
+
+If you commit files too quickly you might commit files
+that do not even compile.  If your partner updates his
+working sources to include your buggy file, he will be
+unable to compile the code.  On the other hand, other
+persons will not be able to benefit from the
+improvements you make to the code if you commit very
+seldom, and conflicts will probably be more common.
+
+It is common to only commit files after making sure
+that they can be compiled.  Some sites require that the
+files pass a test suite.  Policies like this can be
+enforced using the commitinfo file
+(@pxref{commitinfo}), but you should think twice before
+you enforce such a convention.  By making the
+development environment too controlled it might become
+too regimented and thus counter-productive to the real
+goal, which is to get software written.
 
 @c ---------------------------------------------------------------------
 @node Keyword substitution
@@ -6296,195 +6296,253 @@ That way the long list of change messages will not
 interfere with everyday source file browsing.
 
 @c ---------------------------------------------------------------------
-@node Binary files
-@chapter Handling binary files
-@cindex Binary files
+@node Tracking sources
+@chapter Tracking third-party sources
+@cindex Third-party sources
+@cindex Tracking sources
 
-The most common use for @sc{cvs} is to store text
-files.  With text files, @sc{cvs} can merge revisions,
-display the differences between revisions in a
-human-visible fashion, and other such operations.
-However, if you are willing to give up a few of these
-abilities, @sc{cvs} can store binary files.  For
-example, one might store a web site in @sc{cvs}
-including both text files and binary images.
+@c FIXME: Need discussion of added and removed files.
+@c FIXME: This doesn't really adequately introduce the
+@c concepts of "vendor" and "you".  They don't *have*
+@c to be separate organizations or separate people.
+@c We want a description which is somewhat more based on
+@c the technical issues of which sources go where, but
+@c also with enough examples of how this relates to
+@c relationships like customer-supplier, developer-QA,
+@c maintainer-contributor, or whatever, to make it
+@c seem concrete.
+If you modify a program to better fit your site, you
+probably want to include your modifications when the next
+release of the program arrives.  @sc{cvs} can help you with
+this task.
+
+@cindex Vendor
+@cindex Vendor branch
+@cindex Branch, vendor-
+In the terminology used in @sc{cvs}, the supplier of the
+program is called a @dfn{vendor}.  The unmodified
+distribution from the vendor is checked in on its own
+branch, the @dfn{vendor branch}.  @sc{cvs} reserves branch
+1.1.1 for this use.
+
+When you modify the source and commit it, your revision
+will end up on the main trunk.  When a new release is
+made by the vendor, you commit it on the vendor branch
+and copy the modifications onto the main trunk.
+
+Use the @code{import} command to create and update
+the vendor branch.  After a successful @code{import}
+the vendor branch is made the `head' revision, so
+anyone that checks out a copy of the file gets that
+revision.  When a local modification is committed it is
+placed on the main trunk, and made the `head'
+revision.
 
 @menu
-* Binary why::     More details on issues with binary files
-* Binary howto::   How to store them
+* First import::                Importing a module for the first time
+* Update imports::              Updating a module with the import command
+* Reverting local changes::     Reverting a module to the latest vendor release
+* Binary files in imports::     Binary files require special handling
+* Keywords in imports::         Keyword substitution might be undesirable
+* Multiple vendor branches::    What if you get sources from several places?
 @end menu
 
-@node Binary why
-@section The issues with binary files
+@c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+@node First import
+@section Importing a module for the first time
+@cindex Importing modules
 
-While the need to manage binary files may seem obvious
-if the files that you customarily work with are binary,
-putting them into version control does present some
-additional issues.
+@c Should mention naming conventions for vendor tags,
+@c release tags, and perhaps directory names.
+Use the @code{import} command to check in the sources
+for the first time.  When you use the @code{import}
+command to track third-party sources, the @dfn{vendor
+tag} and @dfn{release tags} are useful.  The
+@dfn{vendor tag} is a symbolic name for the branch
+(which is always 1.1.1, unless you use the @samp{-b
+@var{branch}} flag---@xref{Multiple vendor branches}.).  The
+@dfn{release tags} are symbolic names for a particular
+release, such as @samp{FSF_0_04}.
 
-One basic function of version control is to show the
-differences between two revisions.  For example, if
-someone else checked in a new version of a file, you
-may wish to look at what they changed and determine
-whether their changes are good.  For text files,
-@sc{cvs} provides this functionality via the @code{cvs
-diff} command.  For binary files, it may be possible to
-extract the two revisions and then compare them with a
-tool external to @sc{cvs} (for example, word processing
-software often has such a feature).  If there is no
-such tool, one must track changes via other mechanisms,
-such as urging people to write good log messages, and
-hoping that the changes they actually made were the
-changes that they intended to make.
+@c I'm not completely sure this belongs here.  But
+@c we need to say it _somewhere_ reasonably obvious; it
+@c is a common misconception among people first learning CVS
+Note that @code{import} does @emph{not} change the
+directory in which you invoke it.  In particular, it
+does not set up that directory as a @sc{cvs} working
+directory; if you want to work with the sources import
+them first and then check them out into a different
+directory (@pxref{Getting the source}).
 
-Another ability of a version control system is the
-ability to merge two revisions.  For @sc{cvs} this
-happens in two contexts.  The first is when users make
-changes in separate working directories
-(@pxref{Multiple developers}).  The second is when one
-merges from one branch to another with the @samp{update
--j} command (@pxref{Merging}).
-
-In the case of text
-files, @sc{cvs} can merge changes made independently,
-and signal a conflict if the changes conflict.  With
-binary files, the best that @sc{cvs} can do is present
-the two different copies of the file, and leave it to
-the user to resolve the conflict.  The user may choose
-one copy or the other, or may run an external merge
-tool which knows about that particular file format, if
-one exists.
-Note that having the user merge relies primarily on the
-user to not accidentally omit some changes, and thus is
-potentially error prone.
-
-If this process is thought to be undesirable, the best
-choice may be to avoid merging.  To avoid the merges
-that result from separate working directories, see the
-discussion of reserved checkouts (file locking) in
-@ref{Multiple developers}.  To avoid the merges
-resulting from branches, restrict use of branches.
-
-@node Binary howto
-@section How to store binary files
-
-There are two issues with using @sc{cvs} to store
-binary files.  The first is that @sc{cvs} by default
-converts line endings between the canonical form in
-which they are stored in the repository (linefeed
-only), and the form appropriate to the operating system
-in use on the client (for example, carriage return
-followed by line feed for Windows NT).
-
-The second is that a binary file might happen to
-contain data which looks like a keyword (@pxref{Keyword
-substitution}), so keyword expansion must be turned
-off.
-
-@c FIXME: the third is that one can't do merges with
-@c binary files.  xref to Multiple Developers and the
-@c reserved checkout issues.
-
-The @samp{-kb} option available with some @sc{cvs}
-commands insures that neither line ending conversion
-nor keyword expansion will be done.
-
-Here is an example of how you can create a new file
-using the @samp{-kb} flag:
+@cindex Wdiff (import example)
+Suppose you have the sources to a program called
+@code{wdiff} in a directory @file{wdiff-0.04},
+and are going to make private modifications that you
+want to be able to use even when new releases are made
+in the future.  You start by importing the source to
+your repository:
 
 @example
-$ echo '$@asis{}Id$' > kotest
-$ cvs add -kb -m"A test file" kotest
-$ cvs ci -m"First checkin; contains a keyword" kotest
+$ cd wdiff-0.04
+$ cvs import -m "Import of FSF v. 0.04" fsf/wdiff FSF_DIST WDIFF_0_04
 @end example
 
-If a file accidentally gets added without @samp{-kb},
-one can use the @code{cvs admin} command to recover.
-For example:
+The vendor tag is named @samp{FSF_DIST} in the above
+example, and the only release tag assigned is
+@samp{WDIFF_0_04}.
+@c FIXME: Need to say where fsf/wdiff comes from.
+
+@c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+@node Update imports
+@section Updating a module with the import command
+
+When a new release of the source arrives, you import it into the
+repository with the same @code{import} command that you used to set up
+the repository in the first place.  The only difference is that you
+specify a different release tag this time.
 
 @example
-$ echo '$@asis{}Id$' > kotest
-$ cvs add -m"A test file" kotest
-$ cvs ci -m"First checkin; contains a keyword" kotest
-$ cvs admin -kb kotest
-$ cvs update -A kotest
-# @r{For non-unix systems:}
-# @r{Copy in a good copy of the file from outside CVS}
-$ cvs commit -m "make it binary" kotest
+$ tar xfz wdiff-0.05.tar.gz
+$ cd wdiff-0.05
+$ cvs import -m "Import of FSF v. 0.05" fsf/wdiff FSF_DIST WDIFF_0_05
 @end example
 
-@c Trying to describe this for both unix and non-unix
-@c in the same description is very confusing.  Might
-@c want to split the two, or just ditch the unix "shortcut"
-@c (unixheads don't do much with binary files, anyway).
-@c This used to say "(Try the above example, and do a
-@c @code{cat kotest} after every command)".  But that
-@c only really makes sense for the unix case.
-When you check in the file @file{kotest} the file is
-not preserved as a binary file, because you did not
-check it in as a binary file.  The @code{cvs
-admin -kb} command sets the default keyword
-substitution method for this file, but it does not
-alter the working copy of the file that you have.  If you need to
-cope with line endings (that is, you are using 
-@sc{cvs} on a non-unix system), then you need to
-check in a new copy of the file, as shown by the
-@code{cvs commit} command above.
-On unix, the @code{cvs update -A} command suffices.
-@c FIXME: should also describe what the *other users*
-@c need to do, if they have checked out copies which
-@c have been corrupted by lack of -kb.  I think maybe
-@c "cvs update -kb" or "cvs
-@c update -A" would suffice, although the user who
-@c reported this suggested removing the file, manually
-@c removing it from CVS/Entries, and then "cvs update"
+For files that have not been modified locally, the newly created
+revision becomes the head revision.  If you have made local
+changes, @code{import} will warn you that you must merge the changes
+into the main trunk, and tell you to use @samp{checkout -j} to do so.
 
-However, in using @code{cvs admin -k} to change the
-keyword expansion, be aware that the keyword expansion
-mode is not version controlled.  This means that, for
-example, that if you have a text file in old releases,
-and a binary file with the same name in new releases,
-@sc{cvs} provides no way to check out the file in text
-or binary mode depending on what version you are
-checking out.  There is no good workaround for this
-problem.
+@c FIXME: why "wdiff" here and "fsf/wdiff" in the
+@c "import"?  I think the assumption is that one has
+@c "wdiff fsf/wdiff" or some such in modules, but it
+@c would be better to not use modules in this example.
+@example
+$ cvs checkout -jFSF_DIST:yesterday -jFSF_DIST wdiff
+@end example
 
-You can also set a default for whether @code{cvs add}
-and @code{cvs import} treat a file as binary based on
-its name; for example you could say that files who
-names end in @samp{.exe} are binary.  @xref{Wrappers}.
-There is currently no way to have @sc{cvs} detect
-whether a file is binary based on its contents.  The
-main difficulty with designing such a feature is that
-it is not clear how to distinguish between binary and
-non-binary files, and the rules to apply would vary
-considerably with the operating system.
-@c For example, it would be good on MS-DOS-family OSes
-@c for anything containing ^Z to be binary.  Having
-@c characters with the 8th bit set imply binary is almost
-@c surely a bad idea in the context of ISO-8859-* and
-@c other such character sets.  On VMS or the Mac, we
-@c could use the OS's file typing.  This is a
-@c commonly-desired feature, and something of this sort
-@c may make sense.  But there are a lot of pitfalls here.
-@c
-@c Another, probably better, way to tell is to read the
-@c file in text mode, write it to a temp file in text
-@c mode, and then do a binary mode compare of the two 
-@c files.  If they differ, it is a binary file.  This
-@c might have problems on VMS (or some other system
-@c with several different text modes), but in general
-@c should be relatively portable.  The only other
-@c downside I can think of is that it would be fairly
-@c slow, but that is perhaps a small price to pay for
-@c not having your files corrupted.  Another issue is
-@c what happens if you import a text file with bare
-@c linefeeds on Windows.  Such files will show up on
-@c Windows sometimes (I think some native windows
-@c programs even write them, on occasion).  Perhaps it
-@c is reasonable to treat such files as binary; after
-@c all it is something of a presumption to assume that
-@c the user would want the linefeeds converted to CRLF.
+@noindent
+The above command will check out the latest revision of
+@samp{wdiff}, merging the changes made on the vendor branch @samp{FSF_DIST}
+since yesterday into the working copy.  If any conflicts arise during
+the merge they should be resolved in the normal way (@pxref{Conflicts
+example}).  Then, the modified files may be committed.
+
+Using a date, as suggested above, assumes that you do
+not import more than one release of a product per
+day. If you do, you can always use something like this
+instead:
+
+@example
+$ cvs checkout -jWDIFF_0_04 -jWDIFF_0_05 wdiff
+@end example
+
+@noindent
+In this case, the two above commands are equivalent.
+
+@node Reverting local changes
+@section Reverting to the latest vendor release
+
+You can also revert local changes completely and return
+to the latest vendor release by changing the `head'
+revision back to the vendor branch on all files.  For
+example, if you have a checked-out copy of the sources
+in @file{~/work.d/wdiff}, and you want to revert to the
+vendor's version for all the files in that directory,
+you would type:
+
+@example
+$ cd ~/work.d/wdiff
+$ cvs admin -bWDIFF .
+@end example
+
+@noindent
+You must specify the @samp{-bWDIFF} without any space
+after the @samp{-b}.  @xref{admin options}.
+
+@node Binary files in imports
+@section How to handle binary files with cvs import
+
+Use the @samp{-k} wrapper option to tell import which
+files are binary.  @xref{Wrappers}.
+
+@node Keywords in imports
+@section How to handle keyword substitution with cvs import
+
+The sources which you are importing may contain
+keywords (@pxref{Keyword substitution}).  For example,
+the vendor may use @sc{cvs} or some other system
+which uses similar keyword expansion syntax.  If you
+just import the files in the default fashion, then
+the keyword expansions supplied by the vendor will
+be replaced by keyword expansions supplied by your
+own copy of @sc{cvs}.  It may be more convenient to
+maintain the expansions supplied by the vendor, so
+that this information can supply information about
+the sources that you imported from the vendor.
+
+To maintain the keyword expansions supplied by the
+vendor, supply the @samp{-ko} option to @code{cvs
+import} the first time you import the file.
+This will turn off keyword expansion
+for that file entirely, so if you want to be more
+selective you'll have to think about what you want
+and use the @samp{-k} option to @code{cvs update} or
+@code{cvs admin} as appropriate.
+@c Supplying -ko to import if the file already existed
+@c has no effect.  Not clear to me whether it should
+@c or not.
+
+@node Multiple vendor branches
+@section Multiple vendor branches
+
+All the examples so far assume that there is only one
+vendor from which you are getting sources.  In some
+situations you might get sources from a variety of
+places.  For example, suppose that you are dealing with
+a project where many different people and teams are
+modifying the software.  There are a variety of ways to
+handle this, but in some cases you have a bunch of
+source trees lying around and what you want to do more
+than anything else is just to all put them in CVS so
+that you at least have them in one place.
+
+For handling situations in which there may be more than
+one vendor, you may specify the @samp{-b} option to
+@code{cvs import}.  It takes as an argument the vendor
+branch to import to.  The default is @samp{-b 1.1.1}.
+
+For example, suppose that there are two teams, the red
+team and the blue team, that are sending you sources.
+You want to import the red team's efforts to branch
+1.1.1 and use the vendor tag RED.  You want to import
+the blue team's efforts to branch 1.1.3 and use the
+vendor tag BLUE.  So the commands you might use are:
+
+@example
+$ cvs import dir RED RED_1-0
+$ cvs import -b 1.1.3 dir BLUE BLUE_1-5
+@end example
+
+Note that if your vendor tag does not match your
+@samp{-b} option, CVS will not detect this case!  For
+example,
+
+@example
+$ cvs import -b 1.1.3 dir RED RED_1-0
+@end example
+
+@noindent
+Be careful; this kind of mismatch is sure to sow
+confusion or worse.  I can't think of a useful purpose
+for the ability to specify a mismatch here, but if you
+discover such a use, don't.  CVS is likely to make this
+an error in some future release.
+
+@c Probably should say more about the semantics of
+@c multiple branches.  What about the default branch?
+@c What about joining (perhaps not as useful with
+@c multiple branches, or perhaps it is.  Either way
+@c should be mentioned).
 
 @c I'm not sure about the best location for this.  In
 @c one sense, it might belong right after we've introduced
@@ -6582,136 +6640,6 @@ is Odin (see
 @c ftp://ftp.uu.net/pub/cmvc/mk).  But I'm not sure
 @c there is any point in mentioning them here unless they
 @c can work with CVS.
-
-@node Compatibility
-@chapter Compatibility between CVS Versions
-
-@cindex CVS, versions of
-@cindex versions, of CVS
-@cindex compatibility, between CVS versions
-@c We don't mention versions older than CVS 1.3
-@c on the theory that it would clutter it up for the vast
-@c majority of people, who don't have anything that old.
-@c
-The repository format is compatible going back to
-@sc{cvs} 1.3.  But see @ref{Watches Compatibility}, if
-you have copies of @sc{cvs} 1.6 or older and you want
-to use the optional developer communication features.
-@c If you "cvs rm" and commit using 1.3, then you'll
-@c want to run "rcs -sdead <file,v>" on each of the
-@c files in the Attic if you then want 1.5 and
-@c later to recognize those files as dead (I think the
-@c symptom if this is not done is that files reappear
-@c in joins).  (Wait: the above will work but really to
-@c be strictly correct we should suggest checking
-@c in a new revision rather than just changing the
-@c state of the head revision, shouldn't we?).
-@c The old convert.sh script was for this, but it never
-@c did get updated to reflect use of the RCS "dead"
-@c state.
-@c Note: this is tricky to document without confusing
-@c people--need to carefully say what CVS version we
-@c are talking about and keep in mind the distinction 
-@c between a
-@c repository created with 1.3 and on which one now
-@c uses 1.5+, and a repository on which one wants to
-@c use both versions side by side (e.g. during a
-@c transition period).
-@c Wait, can't CVS just detect the case in which a file
-@c is in the Attic but the head revision is not dead?
-@c Not sure whether this should produce a warning or
-@c something, and probably needs further thought, but
-@c it would appear that the situation can be detected.
-@c 
-@c We might want to separate out the 1.3 compatibility
-@c section (for repository & working directory) from the
-@c rest--that might help avoid confusing people who
-@c are upgrading (for example) from 1.6 to 1.8.
-@c
-@c A minor incompatibility is if a current version of CVS
-@c puts "Nfoo" into CVS/Tag, then CVS 1.9 or older will
-@c see this as if there is no tag.  Seems to me this is
-@c too obscure to mention.
-
-The working directory format is compatible going back
-to @sc{cvs} 1.5.  It did change between @sc{cvs} 1.3
-and @sc{cvs} 1.5.  If you run @sc{cvs} 1.5 or newer on
-a working directory checked out with @sc{cvs} 1.3,
-@sc{cvs} will convert it, but to go back to @sc{cvs}
-1.3 you need to check out a new working directory with
-@sc{cvs} 1.3.
-
-The remote protocol is interoperable going back to @sc{cvs} 1.5, but no
-further (1.5 was the first official release with the remote protocol,
-but some older versions might still be floating around).  In many
-cases you need to upgrade both the client and the server to take
-advantage of new features and bugfixes, however.
-
-@c Perhaps should be saying something here about the
-@c "D" lines in Entries (written by CVS 1.9; 1.8 and
-@c older don't use them).  These are supposed to be
-@c compatible in both directions, but I'm not sure
-@c they quite are 100%.  One common gripe is if you
-@c "rm -r" a directory and 1.9 gets confused, as it
-@c still sees it in Entries.  That one is fixed in
-@c (say) 1.9.6.  Someone else reported problems with
-@c starting with a directory which was checked out with
-@c an old version, and then using a new version, and
-@c some "D" lines appeared, but not for every
-@c directory, causing some directories to be skipped.
-@c They weren't sure how to reproduce this, though.
-
-@c ---------------------------------------------------------------------
-@node Revision management
-@chapter Revision management
-@cindex Revision management
-
-@c -- This chapter could be expanded a lot.
-@c -- Experiences are very welcome!
-
-If you have read this far, you probably have a pretty
-good grasp on what @sc{cvs} can do for you.  This
-chapter talks a little about things that you still have
-to decide.
-
-If you are doing development on your own using @sc{cvs}
-you could probably skip this chapter.  The questions
-this chapter takes up become more important when more
-than one person is working in a repository.
-
-@menu
-* When to commit::              Some discussion on the subject
-@end menu
-
-@c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-@node When to commit
-@section When to commit?
-@cindex When to commit
-@cindex Commit, when to
-@cindex Policy
-
-Your group should decide which policy to use regarding
-commits.  Several policies are possible, and as your
-experience with @sc{cvs} grows you will probably find
-out what works for you.
-
-If you commit files too quickly you might commit files
-that do not even compile.  If your partner updates his
-working sources to include your buggy file, he will be
-unable to compile the code.  On the other hand, other
-persons will not be able to benefit from the
-improvements you make to the code if you commit very
-seldom, and conflicts will probably be more common.
-
-It is common to only commit files after making sure
-that they can be compiled.  Some sites require that the
-files pass a test suite.  Policies like this can be
-enforced using the commitinfo file
-(@pxref{commitinfo}), but you should think twice before
-you enforce such a convention.  By making the
-development environment too controlled it might become
-too regimented and thus counter-productive to the real
-goal, which is to get software written.
 
 @c ---------------------------------------------------------------------
 @node CVS commands
@@ -11922,6 +11850,84 @@ if your server and client are both running @sc{cvs}
 1.9.10 or later, @sc{cvs} will not invoke an external
 @code{patch} program.
 @end table
+
+@node Compatibility
+@appendix Compatibility between CVS Versions
+
+@cindex CVS, versions of
+@cindex versions, of CVS
+@cindex compatibility, between CVS versions
+@c We don't mention versions older than CVS 1.3
+@c on the theory that it would clutter it up for the vast
+@c majority of people, who don't have anything that old.
+@c
+The repository format is compatible going back to
+@sc{cvs} 1.3.  But see @ref{Watches Compatibility}, if
+you have copies of @sc{cvs} 1.6 or older and you want
+to use the optional developer communication features.
+@c If you "cvs rm" and commit using 1.3, then you'll
+@c want to run "rcs -sdead <file,v>" on each of the
+@c files in the Attic if you then want 1.5 and
+@c later to recognize those files as dead (I think the
+@c symptom if this is not done is that files reappear
+@c in joins).  (Wait: the above will work but really to
+@c be strictly correct we should suggest checking
+@c in a new revision rather than just changing the
+@c state of the head revision, shouldn't we?).
+@c The old convert.sh script was for this, but it never
+@c did get updated to reflect use of the RCS "dead"
+@c state.
+@c Note: this is tricky to document without confusing
+@c people--need to carefully say what CVS version we
+@c are talking about and keep in mind the distinction 
+@c between a
+@c repository created with 1.3 and on which one now
+@c uses 1.5+, and a repository on which one wants to
+@c use both versions side by side (e.g. during a
+@c transition period).
+@c Wait, can't CVS just detect the case in which a file
+@c is in the Attic but the head revision is not dead?
+@c Not sure whether this should produce a warning or
+@c something, and probably needs further thought, but
+@c it would appear that the situation can be detected.
+@c 
+@c We might want to separate out the 1.3 compatibility
+@c section (for repository & working directory) from the
+@c rest--that might help avoid confusing people who
+@c are upgrading (for example) from 1.6 to 1.8.
+@c
+@c A minor incompatibility is if a current version of CVS
+@c puts "Nfoo" into CVS/Tag, then CVS 1.9 or older will
+@c see this as if there is no tag.  Seems to me this is
+@c too obscure to mention.
+
+The working directory format is compatible going back
+to @sc{cvs} 1.5.  It did change between @sc{cvs} 1.3
+and @sc{cvs} 1.5.  If you run @sc{cvs} 1.5 or newer on
+a working directory checked out with @sc{cvs} 1.3,
+@sc{cvs} will convert it, but to go back to @sc{cvs}
+1.3 you need to check out a new working directory with
+@sc{cvs} 1.3.
+
+The remote protocol is interoperable going back to @sc{cvs} 1.5, but no
+further (1.5 was the first official release with the remote protocol,
+but some older versions might still be floating around).  In many
+cases you need to upgrade both the client and the server to take
+advantage of new features and bugfixes, however.
+
+@c Perhaps should be saying something here about the
+@c "D" lines in Entries (written by CVS 1.9; 1.8 and
+@c older don't use them).  These are supposed to be
+@c compatible in both directions, but I'm not sure
+@c they quite are 100%.  One common gripe is if you
+@c "rm -r" a directory and 1.9 gets confused, as it
+@c still sees it in Entries.  That one is fixed in
+@c (say) 1.9.6.  Someone else reported problems with
+@c starting with a directory which was checked out with
+@c an old version, and then using a new version, and
+@c some "D" lines appeared, but not for every
+@c directory, causing some directories to be skipped.
+@c They weren't sure how to reproduce this, though.
 
 @c ---------------------------------------------------------------------
 @node Troubleshooting
