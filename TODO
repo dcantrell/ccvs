@@ -1,3 +1,5 @@
+The "TODO" file!                              -*-Indented-Text-*-
+
 22. Catch signals for cleanup when "add"ing files.
 
 24. Insist on a log message.
@@ -58,8 +60,8 @@ trying to accomplish and what the best way is -kingdon, Jul 1997).
 73. Consider an option (in .cvsrc?) to automatically add files that are new
     and specified to commit.
 
-79. Might be nice to have some sort of interface to TFS and tagged
-    revisions.
+79. Might be nice to have some sort of interface to Sun's Translucent
+    (?) File System and tagged revisions.
 
 82. Maybe the import stuff should allow an arbitrary revision to be
     specified.
@@ -67,8 +69,10 @@ trying to accomplish and what the best way is -kingdon, Jul 1997).
 84. Improve the documentation about administration of the repository and
     how to add/remove files and the use of symbolic links.
 
-85. Add revision controlled symbolic links to CVS using one of the tag
-    fields in the RCS file.
+85. Make symbolic links a valid thing to put under version control.
+    Perhaps use one of the tag fields in the RCS file?  Note that we
+    can only support symlinks that are relative and within the scope of
+    the sources being controlled.
 
 92. Look into this:
 	After a bit of soul searching via dbx, I realized my sin was that I'd
@@ -131,11 +135,12 @@ trying to accomplish and what the best way is -kingdon, Jul 1997).
 113. The "cvs update" command should tee its output to a log file in ".".
      (why?  What is wrong with piping stdout to "tee"? -kingdon, Jun 1995)
 
-119. Consider an option to have import checkout the RCS or SCCS files
-     if necessary.  (this is if someone want to import something which is
-     in RCS or SCCS without preserving the history, but making sure they
-     do get the latest versions.  It isn't clear to me how useful that is
-     -kingdon, June 1996).
+119. When importing a directory tree that is under SCCS/RCS control,
+     consider an option to have import checkout the SCCS/RCS files if
+     necessary.  (This is if someone wants to import something which
+     is in RCS or SCCS without preserving the history, but makes sure
+     they do get the latest versions.  It isn't clear to me how useful
+     that is -kingdon, June 1996).
 
 122. If Name_Repository fails, it currently causes CVS to die completely.  It
      should instead return NULL and have the caller do something reasonable
@@ -143,6 +148,7 @@ trying to accomplish and what the best way is -kingdon, Jul 1997).
      -kingdon, June 1996).
 
 123. Add a flag to import to not build vendor branches for local code.
+     (See `importb' tests in src/sanity.sh for more details).
 
 124. Anyway, I thought you might want to add something like the following
      to the cvs man pages:
@@ -157,8 +163,6 @@ trying to accomplish and what the best way is -kingdon, Jul 1997).
 
 127. Look at *info files; they should all be quiet if the files are not
      there.  Should be able to point at a RCS directory and go.
-
-128. When I tag a file, the message tells me that I'm tagging a directory.
 
 130. cvs diff with no -r arguments does not need to look up the current RCS
      version number since it only cares about what's in the Entries file.
@@ -185,10 +189,14 @@ trying to accomplish and what the best way is -kingdon, Jul 1997).
      variable to limit the amount of sources that need to be duplicated for
      sites with giant source trees and no disk space.
 
-141. Import should accept modules as its directory argument.
+141. Import should accept modules as its directory argument.  If we're
+     going to implement this, we should think hard about how modules
+     might be expanded and how to handle those cases.
 
 143. Update the documentation to show that the source repository is
-     something far away from the files that you work on.
+     something far away from the files that you work on.  (People who
+     come from an RCS background are used to their `repository' being
+     _very_ close to their working directory.)
 
 144. Have cvs checkout look for the environment variable CVSPREFIX
      (or CVSMODPREFIX or some such).  If it's set, then when looking
@@ -277,27 +285,30 @@ trying to accomplish and what the best way is -kingdon, Jul 1997).
 151. Also, is there a flag I am missing that allows replacing Ulrtx_Build
      by Ultrix_build?  I.E. I would like a tag replacement to be a one step
      operation rather than a two step "cvs rtag -r Ulrtx_Build Ultrix_Build"
-     followed by "cvs trag -d Ulrtx_Build"
+     followed by "cvs tag -d Ulrtx_Build"
 
 152. The "cvs -n" option does not work as one would expect for all the
      commands.  In particular, for "commit" and "import", where one would
      also like to see what it would do, without actually doing anything.
 
-153. There should be some command (maybe I just haven't figured
-     out which one...) to import a source directory which is already
-     RCS-administered without losing all prior RCS gathered data.  Thus, it
-     would have to examine the RCS files and choose a starting version and
-     branch higher than previous ones used.
+153. There should be some command (maybe I just haven't figured out
+     which one...) to import a source directory which is already
+     RCS-administered without losing all prior RCS gathered data.
+     Thus, it would have to examine the RCS files and choose a
+     starting version and branch higher than previous ones used.
+     (Check out rcs-to-cvs and see if it addresses this issue.)
 
 154. When committing the modules file, a pre-commit check should be done to
      verify the validity of the new modules file before allowing it to be
      committed.
 
 155. The options for "cvs history" are mutually exclusive, even though
-     useful queries can be done if they are not, as in specifying both a
-     module and a tag.  A workaround is to specify the module, then run the
-     output through grep to only display lines that begin with T, which are
-     tag lines.
+     useful queries can be done if they are not, as in specifying both
+     a module and a tag.  A workaround is to specify the module, then
+     run the output through grep to only display lines that begin with
+     T, which are tag lines.  (Better perhaps if we redesign the whole
+     "history" business -- check out doc/cvs.texinfo for the entire
+     rant.)
 
 156. Also, how hard would it be to allow continuation lines in the
      {commit,rcs,log}info files? It would probably be useful with all of
