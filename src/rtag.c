@@ -22,6 +22,7 @@ static int pretag_list_proc PROTO((Node *p, void *closure));
 
 static Dtype rtag_dirproc PROTO((char *dir, char *repos, char *update_dir));
 static int rtag_fileproc PROTO((struct file_info *finfo));
+static int rtag_filesdoneproc PROTO((int err, char *repos, char *update_dir));
 static int rtag_proc PROTO((int *pargc, char **argv, char *xwhere,
 		      char *mwhere, char *mfile, int shorten,
 		      int local_specified, char *mname, char *msg));
@@ -301,9 +302,9 @@ rtag_proc (pargc, argv, xwhere, mwhere, mfile, shorten, local_specified,
     }
      
     /* start the recursion processor */
-    err = start_recursion (rtag_fileproc, (FILESDONEPROC) NULL, rtag_dirproc,
+    err = start_recursion (rtag_fileproc, rtag_filesdoneproc, rtag_dirproc,
 			   (DIRLEAVEPROC) NULL, *pargc - 1, argv + 1, local,
-			   which, 0, 1, where, 1, 1);
+			   which, 0, 0, where, 1, 1);
 
     dellist(&mtlist);
 
@@ -490,6 +491,20 @@ pretag_list_proc(p, closure)
     return (0);
 }
 
+/* It would be nice to provide consistency with respect to commits;
+   however CVS lacks the infrastructure to do that (see Concurrency
+   in cvs.texinfo and comment in do_recursion).  We can and will
+   prevent simultaneous tag operations from interfering with
+   each other, by write locking each directory as we enter
+   it, and unlocking it as we leave it.
+
+   This variable holds the write locked directory.  We lock it in
+   tag_fileproc and clear the lock in tag_filesdoneproc.  We don't use
+   a direntproc and dirleaveproc because those won't handle the case
+   where the user specifies a list of files on the command line.  */
+static char *locked_dir;
+static List *locked_list;
+
 /*
  * Called to tag a particular file, as appropriate with the options that were
  * set above.
@@ -502,6 +517,29 @@ rtag_fileproc (finfo)
     RCSNode *rcsfile;
     char *version, *rev;
     int retcode = 0;
+
+    /* If we haven't write locked the directory yet, do it now.  */
+    if (finfo->repository != NULL
+	&& (locked_dir == NULL
+	    || strcmp (locked_dir, finfo->repository) != 0))
+    {
+        Node *node;
+
+        if (locked_dir != NULL)
+	{
+	    Lock_Cleanup ();
+	    dellist (&locked_list);
+	    free (locked_dir);
+	}
+
+	locked_dir = xstrdup (finfo->repository);
+	locked_list = getlist ();
+	node = getnode ();
+	node->type = LOCK;
+	node->key = xstrdup (finfo->repository);
+	(void) addnode (locked_list, node);
+	Writer_Lock (locked_list);
+    }
 
     /* find the parsed RCS data */
     if ((rcsfile = finfo->rcs) == NULL)
@@ -661,6 +699,25 @@ rtag_delete (rcsfile)
 	return (1);
     }
     return (0);
+}
+
+/* Clear any lock we may hold on the current directory.  */
+
+static int
+rtag_filesdoneproc(err, repos, update_dir)
+    int err;
+    char *repos;
+    char *update_dir;
+{
+    if (locked_dir != NULL)
+    {
+        Lock_Cleanup ();
+	dellist (&locked_list);
+	free (locked_dir);
+	locked_dir = NULL;
+    }
+
+    return (err);
 }
 
 /*

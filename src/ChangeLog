@@ -1,3 +1,29 @@
+Thu Jun 13 12:55:56 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* rtag.c (locked_dir): Revise comments regarding locking; the rtag
+	and tag situations are different (changing from readlocking one
+	directory at a time to writelocking one directory at a time does
+	not do everything we might want, but it does fix simultaneous tags
+	and it doesn't make anything worse).
+
+Thu Jun 13 1996  Ian Lance Taylor  <ian@cygnus.com>
+
+	Prevent simultaneous tag operations from interfering with each
+	other.
+	* rtag.c (rtag_proc): Pass rtag_filesdoneproc to start_recursion,
+	and pass readlock as 0.
+	(locked_dir, locked_list): New static variables.
+	(rtag_fileproc): Write lock the repository if it is not already
+	locked.
+	(rtag_filesdoneproc): New static function to unlock the
+	repository.
+	* tag.c (tag): Pass tag_filesdoneproc to start_recursion, and pass
+	readlock as 0.
+	(locked_dir, locked_list): New static variables.
+	(tag_fileproc): Write lock the repository if it is not already
+	locked.
+	(tag_filesdoneproc): New static function.
+
 Thu Jun 13 11:42:25 1996  Mike Sutton <mws115@llcoolj.dayton.saic.com>
 
 	* sanity.sh: Allow digits in usernames.
