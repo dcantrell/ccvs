@@ -1,5 +1,8 @@
 Mon May 19 00:21:49 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvs.texinfo (Keywords in imports): New node.
+	(Tracking sources): Add comment about what a "vendor" is.
+
 	* cvs.texinfo (Keyword substitution): Where it refers to RCS
 	having a certain behavior, rewrite to not pass the buck like
 	that.  Saying "RCS file" is still OK; that is a legit CVS
