@@ -95,7 +95,9 @@ copy_file (from, to)
 #endif
 		error (1, errno, "cannot read file %s for copying", from);
 	    }
-
+            else if (n == 0) 
+		break;
+  
 	    if (write(fdout, buf, n) != n) {
 		error (1, errno, "cannot write file %s for copying", to);
 	    }
