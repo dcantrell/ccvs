@@ -1,5 +1,8 @@
 Sat Jul 29 16:48:05 1995  James Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvsinit.sh: If arguments are given, give version number and
+	usage message.  Make printed messages much more concise.
+
 	* cvsinit.sh: Rename log.pl to log.  Don't install log twice.
 
 	* Makefile.in (install-local), contrib/Makefile.in (install):
