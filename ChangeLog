@@ -1,5 +1,10 @@
 2004-08-10  Derek Price  <derek@ximbiot.com>
 
+	* NEWS: Note recent attempts at improving I/O efficiency.
+	* configure.in (--enable-file-cache-trust): New option.
+
+2004-08-10  Derek Price  <derek@ximbiot.com>
+
 	* NEWS: Credit Juniper Networks funding for writeproxy code and add a
 	few other details.
 
