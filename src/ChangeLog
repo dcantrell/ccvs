@@ -1,3 +1,7 @@
+Wed Sep  4 13:35:09 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* Version 1.8.7.
+
 Wed Sep  4 1996  Jim Kingdon  <kingdon@cyclic.com>
 
 	* client.c (send_file_names): Look for the name to send in
