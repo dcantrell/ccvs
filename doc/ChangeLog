@@ -1,3 +1,8 @@
+Tue Oct 24 11:01:22 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo: More precisely describe scope of document.
+	* cvsclient.texi: Describe scope of document
+
 Thu Oct 12 11:25:40 1995  Karl Fogel  <kfogel@totoro.cyclic.com>
 
         * cvs.texinfo: cover page now refers to CVS 1.6, and "last
