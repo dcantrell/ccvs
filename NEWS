@@ -1,5 +1,9 @@
 Changes since 1.9:
 
+* There is a new syntax, "cvs admin -orev1::rev2", which collapses the
+revisions between rev1 and rev2 without deleting rev1 or rev2
+themselves.
+
 * There is a new administrative file CVSROOT/config which allows one
 to specify miscellaneous aspects of CVS configuration.  Currently
 supported here:

@@ -1,3 +1,7 @@
+Fri Oct 31 16:30:57 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* NEWS: Mention admin -o rev1::rev2.
+
 Wed Oct 29 08:40:05 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* TODO: Add item 193, about alternatives to timestamps in CVS/Entries.
