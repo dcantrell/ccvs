@@ -780,14 +780,7 @@ E Protocol error: Root says \"%s\" but pserver says \"%s\"",
 	}
     }
 #endif
-    arg_dup = malloc (strlen (arg) + 1);
-    if (arg_dup == NULL)
-    {
-	pending_error = ENOMEM;
-	return;
-    }
-    strcpy (arg_dup, arg);
-    set_local_cvsroot (arg_dup);
+    set_local_cvsroot (arg);
 
     /* For pserver, this will already have happened, and the call will do
        nothing.  But for rsh, we need to do it now.  */

@@ -962,12 +962,17 @@ Copyright (c) 1989-2000 Brian Berliner, david d `zoo' zuhn, \n\
 		/* FIXME (njc): should we always set this with the CVSROOT from the command line? */
 		if (cvs_update_env)
 		{
+		    static char *prev;
 		    char *env;
 		    env = xmalloc (strlen (CVSROOT_ENV) + strlen (CVSroot)
 				   + 1 + 1);
 		    (void) sprintf (env, "%s=%s", CVSROOT_ENV, CVSroot);
 		    (void) putenv (env);
-		    /* do not free env, as putenv has control of it */
+		    /* do not free env yet, as putenv has control of it */
+		    /* but do free the previous value, if any */
+		    if (prev != NULL)
+			free (prev);
+		    prev = env;
 		}
 #endif
 	    }

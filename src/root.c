@@ -295,7 +295,7 @@ parse_cvsroot (CVSroot)
     char *CVSroot;
 {
     static int cvsroot_parsed = 0;
-    char *cvsroot_copy, *p;
+    char *cvsroot_copy, *cvsroot_save, *p;
     int check_hostname;
 
     /* Don't go through the trouble twice. */
@@ -305,10 +305,19 @@ parse_cvsroot (CVSroot)
 	return 0;
     }
 
-    CVSroot_original = xstrdup (CVSroot);
-    cvsroot_copy = xstrdup (CVSroot);
+    if (CVSroot_original != NULL)
+	free (CVSroot_original);
+    if (CVSroot_directory != NULL)
+	free (CVSroot_directory);
+    if (CVSroot_username != NULL)
+	free (CVSroot_username);
+    if (CVSroot_hostname != NULL)
+	free (CVSroot_hostname);
 
-    if ((*cvsroot_copy == ':'))
+    CVSroot_original = xstrdup (CVSroot);
+    cvsroot_save = cvsroot_copy = xstrdup (CVSroot);
+
+    if (*cvsroot_copy == ':')
     {
 	char *method = ++cvsroot_copy;
 
@@ -324,6 +333,7 @@ parse_cvsroot (CVSroot)
 	if (! (p = strchr (method, ':')))
 	{
 	    error (0, 0, "bad CVSroot: %s", CVSroot);
+	    free (cvsroot_save);
 	    return 1;
 	}
 	*p = '\0';
@@ -348,6 +358,7 @@ parse_cvsroot (CVSroot)
 	else
 	{
 	    error (0, 0, "unknown method in CVSroot: %s", CVSroot);
+	    free (cvsroot_save);
 	    return 1;
 	}
     }
@@ -378,18 +389,18 @@ parse_cvsroot (CVSroot)
     {
 	/* Check to see if there is a username in the string. */
 
-	if ((p = strchr (cvsroot_copy, '@')))
+	if ((p = strchr (cvsroot_copy, '@')) != NULL)
 	{
-	    CVSroot_username = cvsroot_copy;
+	    CVSroot_username = xstrdup (cvsroot_copy);
 	    *p = '\0';
 	    cvsroot_copy = ++p;
 	    if (*CVSroot_username == '\0')
 		CVSroot_username = NULL;
 	}
 
-	if ((p = strchr (cvsroot_copy, ':')))
+	if ((p = strchr (cvsroot_copy, ':')) != NULL)
 	{
-	    CVSroot_hostname = cvsroot_copy;
+	    CVSroot_hostname = xstrdup (cvsroot_copy);
 	    *p = '\0';
 	    cvsroot_copy = ++p;
       
@@ -398,7 +409,8 @@ parse_cvsroot (CVSroot)
 	}
     }
 
-    CVSroot_directory = cvsroot_copy;
+    CVSroot_directory = xstrdup(cvsroot_copy);
+    free (cvsroot_save);
 
 #if ! defined (CLIENT_SUPPORT) && ! defined (DEBUG)
     if (CVSroot_method != local_method)
@@ -488,18 +500,24 @@ parse_cvsroot (CVSroot)
 
 
 /* Set up the global CVSroot* variables as if we're using the local
-   repository DIR.  DIR must point to storage which will last for the
-   rest of the CVS invocation (for example, the caller might malloc it
-   and never free it, or free it just before exiting CVS).  */
+   repository DIR.  */
 
 void
 set_local_cvsroot (dir)
     char *dir;
 {
-    CVSroot_original = dir;
+    if (CVSroot_original != NULL)
+	free (CVSroot_original);
+    CVSroot_original = xstrdup(dir);
     CVSroot_method = local_method;
-    CVSroot_directory = CVSroot_original;
+    if (CVSroot_directory != NULL)
+	free (CVSroot_directory);
+    CVSroot_directory = xstrdup(dir);
+    if (CVSroot_username != NULL)
+	free (CVSroot_username);
     CVSroot_username = NULL;
+    if (CVSroot_hostname != NULL)
+	free (CVSroot_hostname);
     CVSroot_hostname = NULL;
     client_active = 0;
 }

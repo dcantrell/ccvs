@@ -1,3 +1,9 @@
+2000-06-19  Larry Jones  <larry.jones@sdrc.com>
+
+	* main.c (main): Plug memory leaks.
+	* root.c (parse_cvsroot, set_local_cvsroot): Ditto.
+	* server.c (serve_root): Ditto.
+
 2000-06-16  Larry Jones  <larry.jones@sdrc.com>
 
 	* fileattr.c (fileattr_read): Plug memory leak.
