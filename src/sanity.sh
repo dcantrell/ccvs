@@ -466,7 +466,7 @@ CVSROOT=${CVSROOT_DIRNAME} ; export CVSROOT
 if test "x$remote" = xyes; then
 	# Use rsh so we can test it without having to muck with inetd or anything 
 	# like that.  Also needed to get CVS_SERVER to work.
-	CVSROOT=:server:`hostname`:${CVSROOT_DIRNAME} ; export CVSROOT
+	CVSROOT=:ext:`hostname`:${CVSROOT_DIRNAME} ; export CVSROOT
 	CVS_SERVER=${testcvs}; export CVS_SERVER
 fi
 
