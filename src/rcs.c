@@ -4213,13 +4213,16 @@ RCS_addbranch (rcs, branch)
     return newrevnum;
 }
 
-/* Check in to RCSFILE with revision REV (which must be greater than the
-   largest revision) and message MESSAGE (which is checked for legality).
-   If FLAGS & RCS_FLAGS_DEAD, check in a dead revision.  If FLAGS &
-   RCS_FLAGS_QUIET, tell ci to be quiet.  If FLAGS & RCS_FLAGS_MODTIME,
-   use the working file's modification time for the checkin time.
-   WORKFILE is the working file to check in from, or NULL to use the usual
-   RCS rules for deriving it from the RCSFILE.
+/* Check in to RCSFILE with revision REV (which must be greater than
+   the largest revision) and message MESSAGE (which is checked for
+   legality).  If FLAGS & RCS_FLAGS_DEAD, check in a dead revision.
+   If FLAGS & RCS_FLAGS_QUIET, tell ci to be quiet.  If FLAGS &
+   RCS_FLAGS_MODTIME, use the working file's modification time for the
+   checkin time.  WORKFILE is the working file to check in from, or
+   NULL to use the usual RCS rules for deriving it from the RCSFILE.
+   If FLAGS & RCS_FLAGS_KEEPFILE, don't unlink the working file;
+   unlinking the working file is standard RCS behavior, but is rarely
+   appropriate for CVS.
 
    This function should almost exactly mimic the behavior of `rcs ci'.  The
    principal point of difference is the support here for preserving file
@@ -4230,10 +4233,6 @@ RCS_addbranch (rcs, branch)
    Return value is -1 for error (and errno is set to indicate the
    error), positive for error (and an error message has been printed),
    or zero for success.  */
-
-/* TODO: RCS_checkin always unlinks the working file after checkin --
-   then RCS_checkout checks it out again.  The logic should probably
-   be reversed here. */
 
 int
 RCS_checkin (rcs, workfile, message, rev, flags)
@@ -4436,12 +4435,12 @@ RCS_checkin (rcs, workfile, message, rev, flags)
 	rcs_internal_unlockfile (fout, rcs->path);
 	freedeltatext (dtext);
 
-	/* Removing the file here is an RCS user-visible behavior which
-	   we almost surely do not need in the CVS case.  In fact, getting
-	   rid of it should clean up link_file and friends in import.c.  */
-	if (unlink_file (workfile) < 0)
-	    /* FIXME-update-dir: message does not include update_dir.  */
-	    error (0, errno, "cannot remove %s", workfile);
+	if ((flags & RCS_FLAGS_KEEPFILE) == 0)
+	{
+	    if (unlink_file (workfile) < 0)
+		/* FIXME-update-dir: message does not include update_dir.  */
+		error (0, errno, "cannot remove %s", workfile);
+	}
 
 	if (!checkin_quiet)
 	    cvs_output ("done\n", 5);
@@ -4762,12 +4761,12 @@ RCS_checkin (rcs, workfile, message, rev, flags)
 
     RCS_rewrite (rcs, dtext, commitpt->version);
 
-    /* Removing the file here is an RCS user-visible behavior which
-       we almost surely do not need in the CVS case.  In fact, getting
-       rid of it should clean up link_file and friends in import.c.  */
-    if (unlink_file (workfile) < 0)
-	/* FIXME-update-dir: message does not include update_dir.  */
-	error (1, errno, "cannot remove %s", workfile);
+    if ((flags & RCS_FLAGS_KEEPFILE) == 0)
+    {
+	if (unlink_file (workfile) < 0)
+	    /* FIXME-update-dir: message does not include update_dir.  */
+	    error (1, errno, "cannot remove %s", workfile);
+    }
     if (unlink_file (tmpfile) < 0)
 	error (0, errno, "cannot remove %s", tmpfile);
     if (unlink_file (changefile) < 0)

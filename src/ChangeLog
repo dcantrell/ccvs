@@ -1,3 +1,12 @@
+Sun Feb 22 13:31:51 1998  Ian Lance Taylor  <ian@cygnus.com>
+
+	* cvs.h (RCS_FLAGS_KEEPFILE): Define.
+	* rcs.c (RCS_checkin): If RCS_FLAGS_KEEPFILE is set in the flags
+	parameter, don't unlink the working file.
+	* checkin.c (Checkin): Don't copy the file.  Instead pass
+ 	RCS_FLAGS_KEEPFILE to RCS_checkin, and only check the file out
+	again if it has changed.
+
 1998-02-21  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* rcs.c (rcs_internal_unlockfile, RCS_rewrite): Don't assume errno

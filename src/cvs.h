@@ -402,6 +402,7 @@ int RCS_merge PROTO((RCSNode *, char *, char *, char *, char *, char *));
 #define RCS_FLAGS_DEAD 2
 #define RCS_FLAGS_QUIET 4
 #define RCS_FLAGS_MODTIME 8
+#define RCS_FLAGS_KEEPFILE 16
 
 extern int RCS_exec_rcsdiff PROTO ((RCSNode *rcsfile,
 				    char *opts, char *options,
