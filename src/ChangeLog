@@ -1,3 +1,13 @@
+2003-03-25  Derek Price  <derek@ximbiot.com>
+
+	* subr.c (cvs_trace): #ifdef use of server_active.
+	(Report from Jim Salter <jsalter@proofpoint.com>.)
+
+	* cvs.h (xmalloc, xrealloc, xstrdup, parse_cvsroot,
+	local_cvsroot, normalize_cvsroot): Use GNU attributes.
+	* error.h (error_exit): Fix PROTO/__attribute__ specification.
+	* root.c (new_cvsroot_t): Add GNU attribute.
+
 2003-03-24  Derek Price  <derek@ximbiot.com>
 
 	* Makefile.am: Update copyright notice.

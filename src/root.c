@@ -281,6 +281,9 @@ cvsroot_t *current_parsed_root = NULL;
  * Some of the other zeroes remain meaningful as, "never set, use default",
  * or the like
  */
+/* Functions which allocate memory are not pure.  */
+static cvsroot_t * new_cvsroot_t PROTO(())
+    __attribute__ ((__malloc__));
 static cvsroot_t *
 new_cvsroot_t ()
 {

@@ -42,9 +42,12 @@
 /* The __-protected variants of `format' and `printf' attributes
    are accepted by gcc versions 2.6.4 (effectively 2.7) and later.  */
 # if __GNUC__ < 2 || (__GNUC__ == 2 && __GNUC_MINOR__ < 7)
+#  define __const__	const
 #  define __format__	format
-#  define __printf__	printf
+#  define __malloc__	malloc
 #  define __noreturn__	noreturn
+#  define __printf__	printf
+#  define __pure__	pure
 # endif
 #endif
 
@@ -506,8 +509,10 @@ void Sanitize_Repository_Name PROTO((char *repository));
 
 char *Name_Root PROTO((char *dir, char *update_dir));
 void free_cvsroot_t PROTO((cvsroot_t *root_in));
-cvsroot_t *parse_cvsroot PROTO((char *root));
-cvsroot_t *local_cvsroot PROTO((char *dir));
+cvsroot_t *parse_cvsroot PROTO((char *root))
+	__attribute__ ((__malloc__));
+cvsroot_t *local_cvsroot PROTO((char *dir))
+	__attribute__ ((__malloc__));
 void Create_Root PROTO((char *dir, char *rootdir));
 void root_allow_add PROTO ((char *));
 void root_allow_free PROTO ((void));
@@ -518,11 +523,14 @@ extern void check_numeric PROTO ((const char *, int, char **));
 char *getcaller PROTO((void));
 char *time_stamp PROTO((char *file));
 
-void *xmalloc PROTO((size_t bytes));
-void *xrealloc PROTO((void *ptr, size_t bytes));
+void *xmalloc PROTO((size_t bytes))
+	__attribute__((__malloc__));
+void *xrealloc PROTO((void *ptr, size_t bytes))
+	__attribute__ ((__malloc__));
 void expand_string PROTO ((char **, size_t *, size_t));
 void xrealloc_and_strcat PROTO ((char **, size_t *, const char *));
-char *xstrdup PROTO((const char *str));
+char *xstrdup PROTO((const char *str))
+	__attribute__ ((__malloc__));
 void strip_trailing_newlines PROTO((char *str));
 int pathname_levels PROTO ((char *path));
 
@@ -947,8 +955,12 @@ char *descramble PROTO ((char *str));
 
 #ifdef AUTH_CLIENT_SUPPORT
 char *get_cvs_password PROTO((void));
+/* get_cvs_port_number() is not pure since the /etc/services file could change
+ * between calls.  */
 int get_cvs_port_number PROTO((const cvsroot_t *root));
-char *normalize_cvsroot PROTO((const cvsroot_t *root));
+/* normalize_cvsroot() is not pure since it calls get_cvs_port_number.  */
+char *normalize_cvsroot PROTO((const cvsroot_t *root))
+	__attribute__ ((__malloc__));
 #endif /* AUTH_CLIENT_SUPPORT */
 
 extern void tag_check_valid PROTO ((char *, int, char **, int, int, char *));

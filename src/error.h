@@ -43,7 +43,7 @@ void error PROTO ((int, int, const char *, ...)
 
 /* Exit due to an error.  Similar to error (1, 0, "message"), but call
    it in the case where the message has already been printed.  */
-void error_exit PROTO ((void) __attribute__ ((__noreturn__)));
+void error_exit PROTO ((void)) __attribute__ ((__noreturn__));
 
 /* If non-zero, error will use the CVS protocol to report error
    messages.  This will only be set in the CVS server parent process;
