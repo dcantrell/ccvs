@@ -199,6 +199,7 @@ import (argc, argv)
     if (msglen == 0 || message[msglen - 1] != '\n')
     {
 	char *nm = xmalloc (msglen + 2);
+	*nm = '\0';
 	if (message != NULL)
 	{
 	    (void) strcpy (nm, message);
