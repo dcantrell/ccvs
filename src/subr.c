@@ -38,14 +38,6 @@ USE(rcsid)
  */
 #if defined(NeXT)
 #define LOSING_TMPNAM_FUNCTION
-#ifndef	_POSIX_SOURCE
-/*
- * NeXT doesn't define these without _POSIX_SOURCE,
- * but that changes a lot of things.
- */
-#define	WEXITSTATUS(x)	((x).w_retcode)
-#define	WTERMSIG(x)	((x).w_termsig)
-#endif
 #endif
 
 static void run_add_arg PROTO((const char *s));
@@ -737,11 +729,7 @@ run_exec (stin, stout, sterr, flags)
 {
     int shin, shout, sherr;
     int mode_out, mode_err;
-#if	defined(NeXT) && !defined(_POSIX_SOURCE)
-    union wait status;
-#else
     int status;
-#endif
     int rc = -1;
     int rerrno = 0;
     int pid, w;
