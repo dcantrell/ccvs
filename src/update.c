@@ -2096,11 +2096,9 @@ join_file (finfo, vers)
     xchmod (finfo->file, 1);
 
     options = vers->options;
-#ifdef HAVE_RCS5
 #if 0
     if (*options == '\0')
 	options = "-kk";		/* to ignore keyword expansions */
-#endif
 #endif
 
     /* If the source of the merge is the same as the working file

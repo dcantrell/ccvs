@@ -1,3 +1,9 @@
+Sat Dec 27 17:41:11 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* client.c, options.h.in, history.c, import.c, main.c, rcs.c,
+	update.c: Remove !HAVE_RCS5 code.  It had bit-rotted a while ago,
+	and more to the point is obsolete with the RCS library.
+
 27 Dec 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* zlib.c, server.h (gunzip_and_write): New function.

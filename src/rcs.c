@@ -2080,15 +2080,9 @@ RCS_getrevtime (rcs, rev, date, fudge)
 	ftm->tm_year -= 1900;
 
     /* put the date in a form getdate can grok */
-#ifdef HAVE_RCS5
     (void) sprintf (tdate, "%d/%d/%d GMT %d:%d:%d", ftm->tm_mon,
 		    ftm->tm_mday, ftm->tm_year + 1900, ftm->tm_hour,
 		    ftm->tm_min, ftm->tm_sec);
-#else
-    (void) sprintf (tdate, "%d/%d/%d %d:%d:%d", ftm->tm_mon,
-		    ftm->tm_mday, ftm->tm_year + 1900, ftm->tm_hour,
-		    ftm->tm_min, ftm->tm_sec);
-#endif
 
     /* turn it into seconds since the epoch */
     revdate = get_date (tdate, (struct timeb *) NULL);
@@ -2098,11 +2092,7 @@ RCS_getrevtime (rcs, rev, date, fudge)
 	if (date)
 	{
 	    /* put an appropriate string into ``date'' if we were given one */
-#ifdef HAVE_RCS5
 	    ftm = gmtime (&revdate);
-#else
-	    ftm = localtime (&revdate);
-#endif
 	    (void) sprintf (date, DATEFORM,
 			    ftm->tm_year + (ftm->tm_year < 100 ? 0 : 1900),
 			    ftm->tm_mon + 1, ftm->tm_mday, ftm->tm_hour,
@@ -2239,11 +2229,6 @@ RCS_check_kflag (arg)
     /* Big enough to hold any of the strings from kflags.  */
     char karg[10];
     char const *const *cpp = NULL;
-
-#ifndef HAVE_RCS5
-    error (1, 0, "%s %s: your version of RCS does not support the -k option",
-	   program_name, command_name);
-#endif
 
     if (arg)
     {
