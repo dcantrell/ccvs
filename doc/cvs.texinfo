@@ -1062,6 +1062,8 @@ the file permissions appropriate for the repository.
 * File permissions::            File permissions
 * Windows permissions::         Issues specific to Windows
 * Attic::                       Some files are stored in the Attic
+* CVS in repository::           Additional information in CVS directory
+* Locks::                       CVS locks control concurrent accesses
 * CVSROOT storage::             A few things about CVSROOT are different
 @end menu
 
@@ -1385,6 +1387,92 @@ non-@code{dead} state.
 @c arrange the discussion of the dead state, versus
 @c discussion of the attic).
 
+@node CVS in repository
+@subsection The CVS directory in the repository
+@cindex CVS directory, in repository
+
+The @file{CVS} directory in each repository directory
+contains information such as file attributes (in a file
+called @file{CVS/fileattr}; see fileattr.h in the CVS
+source distribution for more documentation).  In the
+future additional files may be added to this directory,
+so implementations should silently ignore additional
+files.
+
+This behavior is implemented only by @sc{cvs} 1.7 and
+later; for details see @ref{Watches Compatibility}.
+
+@node Locks
+@subsection CVS locks in the repository
+
+For an introduction to CVS locks focusing on
+user-visible behavior, see @ref{Concurrency}.  The
+following section is aimed at people who are writing
+tools which want to access a CVS repository without
+interfering with other tools acessing the same
+repository.  If you find yourself confused by concepts
+described here, like @dfn{read lock}, @dfn{write lock},
+and @dfn{deadlock}, you might consult the literature on
+operating systems or databases.
+
+Any file in the repository with a name starting
+with @file{#cvs.rfl} is a read lock.  Any file in
+the repository with a name starting with
+@file{#cvs.wfl} is a write lock.  Old versions of CVS
+(before CVS 1.5) also created files with names starting
+with @file{#cvs.tfl}, but they are not discussed here.
+The directory @file{#cvs.lock} serves as a master
+lock.  That is, one must obtain this lock first before
+creating any of the other locks.
+
+To obtain a readlock, first create the @file{#cvs.lock}
+directory.  This operation must be atomic (which should
+be true for creating a directory under most operating
+systems).  If it fails because the directory already
+existed, wait for a while and try again.  After
+obtaining the @file{#cvs.lock} lock, create a file
+whose name is @file{#cvs.rfl} followed by information
+of your choice (for example, hostname and process
+identification number).  Then remove the
+@file{#cvs.lock} directory to release the master lock.
+Then proceed with reading the repository.  When you are
+done, remove the @file{#cvs.rfl} file to release the
+read lock.
+
+To obtain a writelock, first create the
+@file{#cvs.lock} directory, as with a readlock.  Then
+check that there are no files whose names start with
+@file{#cvs.rfl}.  If there are, remove
+@file{#cvs.lock}, wait for a while, and try again.  If
+there are no readers, then create a file whose name is
+@file{#cvs.wfl} followed by information of your choice
+(for example, hostname and process identification
+number).  Hang on to the @file{#cvs.lock} lock.  Proceed
+with writing the repository.  When you are done, first
+remove the @file{#cvs.wfl} file and then the
+@file{#cvs.lock} directory. Note that unlike the
+@file{#cvs.rfl} file, the @file{#cvs.wfl} file is just
+informational; it has no effect on the locking operation
+beyond what is provided by holding on to the
+@file{#cvs.lock} lock itself.
+
+Note that each lock (writelock or readlock) only locks
+a single directory in the repository, including
+@file{Attic} and @file{CVS} but not including
+subdirectories which represent other directories under
+version control.  To lock an entire tree, you need to
+lock each directory (note that if you fail to obtain
+any lock you need, you must release the whole tree
+before waiting and trying again, to avoid deadlocks).
+
+Note also that @sc{cvs} expects writelocks to control
+access to individual @file{foo,v} files.  @sc{rcs} has
+a scheme where the @file{,foo,} file serves as a lock,
+but @sc{cvs} does not implement it and so taking out a
+@sc{cvs} writelock is recommended.  See the comments at
+rcs_internal_lockfile in the @sc{cvs} source code for
+further discussion/rationale.
+
 @node CVSROOT storage
 @subsection How files are stored in the CVSROOT directory
 @cindex CVSROOT, storage of files
@@ -1450,6 +1538,7 @@ administrative files, see @ref{Administrative files}.
 @c whether that is a good organization (is it based on
 @c what the user wants to do?).
 
+@cindex CVS directory, in working directory
 While we are discussing @sc{cvs} internals which may
 become visible from time to time, we might as well talk
 about what @sc{cvs} puts in the @file{CVS} directories
