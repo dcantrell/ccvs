@@ -2335,8 +2335,14 @@ Return non-nil iff it is."
 		      ".* "
 		      (regexp-quote (substring (current-time-string) -4))
 		      "[ \t]+"
-		      (regexp-quote add-log-full-name)
-		      "  <" (regexp-quote add-log-mailing-address))))
+		      (regexp-quote (if (boundp 'add-log-full-name)
+                                        add-log-full-name
+                                      user-full-name))
+		      "  <"
+                      (regexp-quote
+                       (if (boundp 'add-log-mailing-address)
+                           add-log-mailing-address
+                         user-mail-address)))))
 
 (defun cvs-relative-path (base child)
   "Return a directory path relative to BASE for CHILD.
@@ -2359,6 +2365,8 @@ where LOGBUFFER is the name of the ChangeLog buffer, and each
 		 (cvs-changelog-name
 		  (file-name-directory
 		   (expand-file-name file)))))
+    (or (eq major-mode 'change-log-mode)
+	(change-log-mode))
     (goto-char (point-min))
     (if (looking-at "[ \t\n]*\n")
 	(goto-char (match-end 0)))

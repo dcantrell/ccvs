@@ -1,3 +1,11 @@
+Wed Nov 22 11:01:50 1995  Joshua Cowan <jcowan@hermit.reslife.okstate.edu>
+
+        * pcl-cvs.el (cvs-changelog-ours-p): use `user-full-name' if
+        `add-log-full-name' unbound, as not every uses the stuff in
+        add-log.el.  Same with `add-log-mailing-address'.
+        (cvs-changelog-entries): change to `change-log-mode' unless
+        already in it.
+
 Sun Jul  9 20:57:11 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
         * "/bin/rmdir" as default, not "/usr/local/bin/rmdir".
