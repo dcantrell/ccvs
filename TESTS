@@ -68,14 +68,14 @@ framework.  A quick look at sanity.sh should make it clear that there
 are indeed reasons to be dissatisfied with the status quo.  Ideally a
 replacement framework would achieve the following:
 
-1.  Widely portable, including to NT, Win95, OS/2, VMS, probably DOS
-and Win3, etc.
+1.  Widely portable, including to a wide variety of unices, NT, Win95,
+OS/2, VMS, probably DOS and Win3, etc.
 
 2.  Nicely match extended regular expressions of unlimited length.
 
-3.  Be portable, freely redistributable, and if possible already the
-kind of thing people might have already installed.  If this criterion
-is not met, people won't run the tests.
+3.  Be freely redistributable, and if possible already the kind of
+thing people might have already installed.  The harder it is to get
+and install the framework, the less people will run the tests.
 
 The various contenders are:
 
