@@ -1,3 +1,7 @@
+2003-02-25  Derek Price  <derek@ximbiot.com>
+
+	* watch.c (watch_usage): Use {} rather than () for literals.
+
 2003-02-14  Derek Price  <derek@ximbiot.com>
 
 	* watch.c (watch_usage): Make the repeatability of -a part of the
