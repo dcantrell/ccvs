@@ -60,6 +60,8 @@ revision numbers but the same content.
 * The global '-l' option, which suppressed history logging, has been removed
 from both client and server.
 
+* Other miscellaneous bug fixes.
+
 Changes from 1.11.5 to 1.12.1:
 
 * The new --with-external-zlib option can be passed to configure to compile
