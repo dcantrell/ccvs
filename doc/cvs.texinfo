@@ -1002,7 +1002,7 @@ rules see @ref{Tags}.
 @c FIXME: we need to somehow reflect "permissions in
 @c repository" versus "permissions in working
 @c directory" in the index entries.
-@cindex Group
+@cindex Group, UNIX file premissions, in repository
 @cindex Read-only files, in repository
 All @samp{,v} files are created read-only, and you
 should not change the permission of those files.  The
