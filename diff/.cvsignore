@@ -1,6 +1,0 @@
-*.plg
-.deps
-Makefile
-WinDebug
-WinRel
-libdiff.001
