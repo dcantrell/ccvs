@@ -1,3 +1,7 @@
+Fri Jun 16 07:56:04 1995  Jim Kingdon  (kingdon@lioth.cygnus.com)
+
+	* cvs-paper.ps: Added.
+
 Sat May 27 08:46:00 1995  Jim Meyering  (meyering@comco.com)
 
 	* Makefile.in (Makefile): Regenerate only Makefile in current
