@@ -15071,16 +15071,15 @@ G@#..!@#=&"
 	    # "$SPROG \[edit aborted\]: cannot exec $TESTDIR/cvs-none: ${DOTSTAR}",
 	    # but which is:
 	    # "bash2: line 1: $TESTDIR/cvs-none: No such file or directory"
-	    # when testing across a :ext:/ssh link to my Linux 2.4 box.
+	    # when testing across an :ext:/ssh link to my Linux 2.4 box.
 	    #
-	    # For now, I'm testing for the second part of the error message
-	    # from the client, which varies more consistently, either
+	    # I can't even test for the second part of the error message,
+	    # from the client, which varies more consistently, usually either
 	    # "end of file from server" (if the process doing the exec exits
 	    # before the parent gets around to sending data to it) or
-	    # "received broken pipe signal" (if it is the other way around).
-	    dotest_fail devcom3-9ar "${testcvs} edit w1" \
-"${DOTSTAR}end of file from server (consult above messages if any)" \
-"${DOTSTAR}received broken pipe signal"
+	    # "received broken pipe signal" (if it is the other way around),
+	    # since HP-UX fails to output it.
+	    dotest_fail devcom3-9ar "${testcvs} edit w1 2>/dev/null"
 	    dotest devcom3-9br "test -w w1" ""
 	    dotest devcom3-9cr "cat CVS/Notify" \
 "Ew1	[SMTWF][uoehra][neduit] [JFAMSOND][aepuco][nbrylgptvc] [0-9 ][0-9] [0-9:]* [0-9][0-9][0-9][0-9] GMT	[-a-zA-Z_.0-9]*	${TESTDIR}/1/first-dir	EUC"

@@ -1,3 +1,8 @@
+2003-11-25  Derek Price  <derek@ximbiot.com>
+
+	* sanity.sh (devcom3-9ar): Ignore the stderr output since it varies
+	considerably between platforms.
+
 2003-11-25  Mark D. Baushke  <mdb@cvshome.org>
 
 	* sanity.sh (CVS_RSH): Read config file sooner to pickup RSH_DFLT
