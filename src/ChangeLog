@@ -1,5 +1,7 @@
 1998-11-12  Jim Kingdon
 
+	* server.c (server_copy_file): Add comment about noexec.
+
 	* update.c (checkout_file): Handle noexec case involving revbuf
 	and modes.
 	(update_fileproc): In case T_NEEDS_MERGE, let merge_file take care
