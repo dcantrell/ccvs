@@ -21655,7 +21655,8 @@ _ACEOF
 
 
 
- echo "$as_me:$LINENO: checking whether strerror_r is declared" >&5
+ # The error and getdate modules still pose merge problems.
+echo "$as_me:$LINENO: checking whether strerror_r is declared" >&5
 echo $ECHO_N "checking whether strerror_r is declared... $ECHO_C" >&6
 if test "${ac_cv_have_decl_strerror_r+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6

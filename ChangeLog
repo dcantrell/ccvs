@@ -1,5 +1,9 @@
 2004-10-21  Derek Price  <derek@ximbiot.com>
 
+	* configure.in: Remove outdated comment.
+
+2004-10-21  Derek Price  <derek@ximbiot.com>
+
 	* configure.in: Remove call to gl_FUNC_GNU_STRFTIME.
 	* gnulib-update (MODULES): Add strftime module.
 	* srclist.txt: Remove GNULIB strftime module.
