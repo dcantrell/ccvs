@@ -1,3 +1,7 @@
+2002-02-27  Larry Jones  <larry.jones@sdrc.com>
+
+	* diff.c (diff_fileproc): Treat dead revisions as nonexistent.
+
 2002-02-26  Larry Jones  <larry.jones@sdrc.com>
 
 	* diff.c (diff): Remove -V and --paginate options: they aren't valid.
