@@ -2659,6 +2659,11 @@ cat >> confdefs.h <<\EOF
 #define SERVER_SUPPORT 1
 EOF
 
+# As far as I know this works on all machines which use configure (i.e. unix)
+cat >> confdefs.h <<\EOF
+#define AUTH_SERVER_SUPPORT 1
+EOF
+
 fi
 
 test -f src/options.h && (
