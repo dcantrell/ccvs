@@ -1,3 +1,7 @@
+Thu Jun 15 12:22:42 1995  Jim Kingdon  (kingdon@cyclic.com)
+
+	* TODO: Remove various items already fixed.  Revise others.
+
 Thu Jun 15 12:24:45 1995  J.T. Conklin  <jtc@rtl.cygnus.com>
 
 	* configure.in: Use AC_C_INLINE to handle inline.
