@@ -1,3 +1,8 @@
+Tue Aug 15 08:13:14 1995  Karl Fogel  <kfogel@floss.cyclic.com>
+
+        * Makefile.in (MANFILES): include $MAN8FILES too, so they get
+        tarred up in the distribution just like anything else.
+
 Mon Jul 24 19:11:15 1995  James Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.1: Remove references to -q and -Q command options.
