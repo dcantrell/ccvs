@@ -6821,16 +6821,8 @@ add
 	  mkdir adir/sub1/ssdir
 	  mkdir bdir/subdir
 	  touch adir/sub1/file1 adir/sub2/file2 adir/sub1/ssdir/ssfile
-	  # If I'm correctly reading the Single Unix Specification,
-	  # version 2, then "touch -t 197107040343" or "touch -t 203412251801"
-	  # should work.  But GNU touch seems to have other ideas.
-	  # I sort of wonder if this is lossage by the standards bodies,
-	  # I'm not sure.
-	  # Note that some versions of touch when used without -t don't handle
-	  # y2k and/or set the seconds reliably.
-	  # We should probably find a different way of doing this.
-	  touch 0704034371 bdir/subdir/file1
-	  touch 1225180134 cdir/cfile
+	  touch -t 197107040343 bdir/subdir/file1
+	  touch -t 203412251801 cdir/cfile
 	  dotest_sort importc-1 \
 "${testcvs} import -d -m import-it first-dir vendor release" \
 "
