@@ -1,12 +1,12 @@
 /*
  * Copyright (c) 1992, Brian Berliner and Jeff Polk
  * Copyright (c) 1989-1992, Brian Berliner
- * 
+ *
  * You may distribute under the terms of the GNU General Public License as
  * specified in the README file that comes with the CVS source distribution.
- * 
+ *
  * Tag and Rtag
- * 
+ *
  * Add or delete a symbolic name to an RCS file, or a collection of RCS files.
  * Tag uses the checked out revision in the current directory, rtag uses
  * the modules database, if necessary.
@@ -111,7 +111,7 @@ cvstag (argc, argv)
     int run_module_prog = 1;
 
     is_rtag = (strcmp (command_name, "rtag") == 0);
-    
+
     if (argc == -1)
 	usage (is_rtag ? rtag_usage : tag_usage);
 
@@ -257,7 +257,7 @@ cvstag (argc, argv)
 	for (i = 0; i < argc; i++)
 	{
 	    /* XXX last arg should be repository, but doesn't make sense here */
-	    history_write ('T', (delete_flag ? "D" : (numtag ? numtag : 
+	    history_write ('T', (delete_flag ? "D" : (numtag ? numtag :
 			   (date ? date : "A"))), symtag, argv[i], "");
 	    err += do_module (db, argv[i], TAG,
 			      delete_flag ? "Untagging" : "Tagging",
@@ -300,12 +300,21 @@ rtag_proc (argc, argv, xwhere, mwhere, mfile, shorten, local_specified,
     char *repository;
     char *where;
 
+#ifdef HAVE_PRINTF_PTR
     TRACE ( TRACE_FUNCTION,
-	    "rtag_proc ( argc=%d, argv=%x, xwhere=%s,\n"
+	    "rtag_proc ( argc=%d, argv=%p, xwhere=%s,\n"
        "                 mwhere=%s, mfile=%s, shorten=%d,\n"
        "                 local_specified=%d, mname=%s, msg=%s )",
-	    argc, argv, xwhere, mwhere, mfile, shorten, local_specified,
-	    mname, msg );
+	    argc, (void *)argv, xwhere, mwhere, mfile, shorten,
+	    local_specified, mname, msg );
+#else
+    TRACE ( TRACE_FUNCTION,
+	    "rtag_proc ( argc=%d, argv=%lx, xwhere=%s,\n"
+       "                 mwhere=%s, mfile=%s, shorten=%d,\n"
+       "                 local_specified=%d, mname=%s, msg=%s )",
+	    argc, (unsigned long)argv, xwhere, mwhere, mfile, shorten,
+	    local_specified, mname, msg );
+#endif
 
     if (is_rtag)
     {
@@ -381,7 +390,7 @@ rtag_proc (argc, argv, xwhere, mwhere, mfile, shorten, local_specified,
 	numtag_validated = 1;
     }
 
-    /* check to make sure they are authorized to tag all the 
+    /* check to make sure they are authorized to tag all the
        specified files in the repository */
 
     mtlist = getlist();
@@ -389,12 +398,12 @@ rtag_proc (argc, argv, xwhere, mwhere, mfile, shorten, local_specified,
                             (DIRENTPROC) NULL, (DIRLEAVEPROC) NULL, NULL,
 			    argc - 1, argv + 1, local_specified, which, 0,
 			    CVS_LOCK_READ, where, 1, repository );
-    
+
     if (err)
     {
        error (1, 0, "correct the above errors first!");
     }
-     
+
     /* It would be nice to provide consistency with respect to
        commits; however CVS lacks the infrastructure to do that (see
        Concurrency in cvs.texinfo and comment in do_recursion).  */
@@ -429,7 +438,7 @@ check_fileproc (callerdat, finfo)
 	    finfo->repository, finfo->fullname,
 	    finfo->rcs ? finfo->rcs->path : "NULL" );
 
-    if (check_uptodate) 
+    if (check_uptodate)
     {
 	switch (Classify_File (finfo, (char *) NULL, (char *) NULL,
 				      (char *) NULL, 1, 0, &vers, 0))
@@ -453,7 +462,7 @@ check_fileproc (callerdat, finfo)
     }
     else
 	vers = Version_TS (finfo, NULL, NULL, NULL, 0, 0);
-    
+
     if (finfo->update_dir[0] == '\0')
 	xdir = ".";
     else
@@ -465,7 +474,7 @@ check_fileproc (callerdat, finfo)
     else
     {
 	struct master_lists *ml;
-        
+
 	tlist = getlist ();
 	p = getnode ();
 	p->key = xstrdup (xdir);
@@ -505,10 +514,10 @@ check_fileproc (callerdat, finfo)
     {
         int addit = 1;
         char *oversion;
-        
+
         oversion = RCS_getversion (vers->srcfile, symtag, (char *) NULL, 1,
 				   (int *) NULL);
-        if (oversion == NULL) 
+        if (oversion == NULL)
         {
             if (delete_flag)
             {
@@ -544,7 +553,7 @@ check_fileproc (callerdat, finfo)
     (void) addnode (tlist, p);
     return (0);
 }
-                         
+
 static int
 check_filesdoneproc (callerdat, err, repos, update_dir, entries)
     void *callerdat;
@@ -724,7 +733,7 @@ rtag_fileproc (callerdat, finfo)
     else
     {
 	char *oversion;
-       
+
 	/*
 	 * As an enhancement for the case where a tag is being re-applied to
 	 * a large body of a module, make one extra call to RCS_getversion to
@@ -751,16 +760,16 @@ rtag_fileproc (callerdat, finfo)
 		free (version);
 		return (0);
 	    }
-	  
+
 	    if (!force_tag_move)
 	    {
 		/* we're NOT going to move the tag */
 		(void) printf ("W %s", finfo->fullname);
 
-		(void) printf (" : %s already exists on %s %s", 
+		(void) printf (" : %s already exists on %s %s",
 			       symtag, isbranch ? "branch" : "version",
 			       oversion);
-		(void) printf (" : NOT MOVING tag to %s %s\n", 
+		(void) printf (" : NOT MOVING tag to %s %s\n",
 			       branch_mode ? "branch" : "version", rev);
 		free (oversion);
 		free (version);
@@ -771,11 +780,11 @@ rtag_fileproc (callerdat, finfo)
 		if ((isbranch && !disturb_branch_tags) ||
 		    (!isbranch && disturb_branch_tags))
 	    {
-	        error(0,0, "%s: Not moving %s tag `%s' from %s to %s%s.", 
+	        error(0,0, "%s: Not moving %s tag `%s' from %s to %s%s.",
 			finfo->fullname,
 			isbranch ? "branch" : "non-branch",
 			symtag, oversion, rev,
-			isbranch ? "" : " due to `-B' option"); 
+			isbranch ? "" : " due to `-B' option");
 		if (branch_mode) free(rev);
 		free (oversion);
 		free (version);
@@ -808,10 +817,10 @@ rtag_fileproc (callerdat, finfo)
  * If -d is specified, "force_tag_match" is set, so that this call to
  * RCS_getversion() will return a NULL version string if the symbolic
  * tag does not exist in the RCS file.
- * 
+ *
  * If the -r flag was used, numtag is set, and we only delete the
  * symtag from files that have numtag.
- * 
+ *
  * This is done here because it's MUCH faster than just blindly calling
  * "rcs" to remove the tag... trust me.
  */
@@ -839,15 +848,15 @@ rtag_delete (rcsfile)
 
 
     isbranch = RCS_nodeisbranch (rcsfile, symtag);
-    if ((isbranch && !disturb_branch_tags) || 
+    if ((isbranch && !disturb_branch_tags) ||
 	(!isbranch && disturb_branch_tags))
     {
 	if (!quiet)
 	    error(0, 0,
-		"Not removing %s tag `%s' from `%s'%s.", 
+		"Not removing %s tag `%s' from `%s'%s.",
 		isbranch ? "branch" : "non-branch",
 		symtag, rcsfile->path,
-		isbranch ? "" : " due to `-B' option"); 
+		isbranch ? "" : " due to `-B' option");
 	return (1);
     }
 
@@ -903,7 +912,7 @@ tag_fileproc (callerdat, finfo)
 	 * If -d is specified, "force_tag_match" is set, so that this call to
 	 * RCS_getversion() will return a NULL version string if the symbolic
 	 * tag does not exist in the RCS file.
-	 * 
+	 *
 	 * This is done here because it's MUCH faster than just blindly calling
 	 * "rcs" to remove the tag... trust me.
 	 */
@@ -918,20 +927,20 @@ tag_fileproc (callerdat, finfo)
 	free (version);
 
 	isbranch = RCS_nodeisbranch (finfo->rcs, symtag);
-	if ((isbranch && !disturb_branch_tags) || 
+	if ((isbranch && !disturb_branch_tags) ||
 	    (!isbranch && disturb_branch_tags))
 	{
 	    if (!quiet)
 		error(0, 0,
-		       "Not removing %s tag `%s' from `%s'%s.", 
+		       "Not removing %s tag `%s' from `%s'%s.",
 			isbranch ? "branch" : "non-branch",
 			symtag, vers->srcfile->path,
-			isbranch ? "" : " due to `-B' option"); 
+			isbranch ? "" : " due to `-B' option");
 	    freevers_ts (&vers);
 	    return (1);
 	}
 
-	if ((retcode = RCS_deltag(vers->srcfile, symtag)) != 0) 
+	if ((retcode = RCS_deltag(vers->srcfile, symtag)) != 0)
 	{
 	    if (!quiet)
 		error (0, retcode == -1 ? errno : 0,
@@ -1009,7 +1018,7 @@ tag_fileproc (callerdat, finfo)
 	int isbranch = RCS_nodeisbranch (finfo->rcs, symtag);
 
 	/*
-	 * if versions the same and neither old or new are branches don't have 
+	 * if versions the same and neither old or new are branches don't have
 	 * to do anything
 	 */
 	if (strcmp (version, oversion) == 0 && !branch_mode && !isbranch)
@@ -1047,11 +1056,11 @@ tag_fileproc (callerdat, finfo)
 		if ((isbranch && !disturb_branch_tags) ||
 		    (!isbranch && disturb_branch_tags))
 	{
-	    error(0,0, "%s: Not moving %s tag `%s' from %s to %s%s.", 
+	    error(0,0, "%s: Not moving %s tag `%s' from %s to %s%s.",
 		    finfo->fullname,
 		    isbranch ? "branch" : "non-branch",
 		    symtag, oversion, rev,
-		    isbranch ? "" : " due to `-B' option"); 
+		    isbranch ? "" : " due to `-B' option");
 	    free (oversion);
 	    if (branch_mode) free(rev);
 	    freevers_ts (&vers);
@@ -1204,10 +1213,17 @@ tag_check_valid (name, argc, argv, local, aflag, repository)
     struct saved_cwd cwd;
     int which;
 
+#ifdef HAVE_PRINTF_PTR
     TRACE ( TRACE_FUNCTION,
-	    "tag_check_valid ( name=%s, argc=%d, argv=%x, local=%d,\n"
+	    "tag_check_valid ( name=%s, argc=%d, argv=%p, local=%d,\n"
        "                       aflag=%d, repository=%s )",
-	    name, argc, argv, local, aflag, repository );
+	    name, argc, (void *)argv, local, aflag, repository );
+#else
+    TRACE ( TRACE_FUNCTION,
+	    "tag_check_valid ( name=%s, argc=%d, argv=%lx, local=%d,\n"
+       "                       aflag=%d, repository=%s )",
+	    name, argc, (unsigned long)argv, local, aflag, repository );
+#endif
 
     /* Numeric tags require only a syntactic check.  */
     if (isdigit ((unsigned char) name[0]))

@@ -1,9 +1,9 @@
 /*
  * Copyright (c) 1992, Brian Berliner and Jeff Polk
- * 
+ *
  * You may distribute under the terms of the GNU General Public License as
  * specified in the README file that comes with the CVS source distribution.
- * 
+ *
  * Polk's hash list manager.  So cool.
  */
 
@@ -28,7 +28,7 @@ hashp (key)
     unsigned int g;
 
     assert(key != NULL);
-    
+
     while (*key != 0)
     {
 	unsigned int c = *key++;
@@ -223,7 +223,7 @@ freenode (p)
  * Link item P into list LIST before item MARKER.  If P->KEY is non-NULL and
  * that key is already in the hash table, return -1 without modifying any
  * parameter.
- * 
+ *
  * return 0 on success
  */
 int
@@ -270,7 +270,7 @@ insert_before (list, marker, p)
 /*
  * insert item p at end of list "list" (maybe hash it too) if hashing and it
  * already exists, return -1 and don't actually put it in the list
- * 
+ *
  * return 0 on success
  */
 int
@@ -360,8 +360,14 @@ walklist (list, proc, closure)
     Node *head, *p;
     int err = 0;
 
-    TRACE ( TRACE_FLOW, "walklist ( list=%x, proc=%x, closure=%x )",
-	    list, proc, closure );
+#ifdef HAVE_PRINTF_PTR
+    TRACE ( TRACE_FLOW, "walklist ( list=%p, proc=%p, closure=%p )",
+	    (void *) list, (void *) proc, closure );
+#else
+    TRACE ( TRACE_FLOW, "walklist ( list=%lx, proc=%lx, closure=%lx )",
+	    (unsigned long) list, (unsigned long) proc,
+	    (unsigned long) closure );
+#endif
 
     if (list == NULL)
 	return (0);
@@ -489,8 +495,17 @@ printnode (node, closure)
 	return(0);
     }
 
-    (void) printf("Node at 0x%p: type = %s, key = 0x%p = \"%s\", data = 0x%p, next = 0x%p, prev = 0x%p\n",
-	   node, nodetypestring(node->type), node->key, node->key, node->data, node->next, node->prev);
+#ifdef HAVE_PRINTF_PTR
+    (void) printf("Node at %p: type = %s, key = %p = \"%s\", data = %p, next = %p, prev = %p\n",
+	   (void *) node, nodetypestring(node->type),
+	   (void *) node->key, node->key, (void *) node->data,
+	   (void *) node->next, (void *) node->prev);
+#else
+    (void) printf("Node at 0x%lx: type = %s, key = 0x%lx = \"%s\", data = 0x%lx, next = 0x%lx, prev = 0x%lx\n",
+	   (unsigned long) node, nodetypestring(node->type),
+	   (unsigned long) node->key, node->key, (unsigned long) node->data,
+	   (unsigned long) node->next, (unsigned long) node->prev);
+#endif
 
     return(0);
 }
@@ -510,9 +525,15 @@ printlist (list)
 	return;
     }
 
-    (void) printf("List at 0x%p: list = 0x%p, HASHSIZE = %d, next = 0x%p\n",
-	   list, list->list, HASHSIZE, list->next);
-    
+#ifdef HAVE_PRINTF_PTR
+    (void) printf("List at %p: list = %p, HASHSIZE = %d, next = %p\n",
+	   (void *) list, (void *) list->list, HASHSIZE, (void *) list->next);
+#else
+    (void) printf("List at 0x%lx: list = 0x%lx, HASHSIZE = %d, next = 0x%lx\n",
+	   (unsigned long) list, (unsigned long) list->list, HASHSIZE,
+	   (unsigned long) list->next);
+#endif
+
     (void) walklist(list, printnode, NULL);
 
     return;

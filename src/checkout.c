@@ -429,7 +429,6 @@ safe_location (where)
     char *where_location;
     char *hardpath;
     size_t hardpath_len;
-    int  x;
     int retval;
 
     TRACE ( TRACE_FUNCTION, "safe_location ( where=%s )", where );
