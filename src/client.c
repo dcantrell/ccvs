@@ -3000,12 +3000,12 @@ init_sockaddr (name, hostname, port)
 int
 auth_server_port_number ()
 {
-  struct servent *s = getservbyname ("cvs", "tcp");
+    struct servent *s = getservbyname ("cvspserver", "tcp");
 
-  if (s)
-    return ntohs (s->s_port);
-  else
-    return CVS_AUTH_PORT;
+    if (s)
+	return ntohs (s->s_port);
+    else
+	return CVS_AUTH_PORT;
 }
 
 

@@ -1,3 +1,9 @@
+Tue Sep 10 20:35:23 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* client.c (auth_server_port_number): Change name of service from
+	"cvs" to "cvspserver".  The latter is what the manual has always
+	recommended, and it is also officially registered with IANA.
+
 Tue Sep 10 11:12:42 1996  Mark A. Solinski <markso@mcs.com>
 			  and Jim Kingdon  <kingdon@harvey.cyclic.com>
 
