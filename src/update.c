@@ -1647,7 +1647,7 @@ patch_file (finfo, vers_ts, docheckout, file_info, checksum)
 	cvs_MD5Init (&data.context);
 
 	retcode = RCS_checkout (vers_ts->srcfile, (char *) NULL,
-				vers_ts->vn_rcs, (char *) NULL,
+				vers_ts->vn_rcs, vers_ts->vn_tag,
 				vers_ts->options, RUN_TTY,
 				patch_file_write, (void *) &data);
 

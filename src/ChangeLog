@@ -1,3 +1,11 @@
+1999-05-16  Jim Kingdon  <http://www.cyclic.com>
+
+	* update.c (patch_file): When we are passing vn_rcs to
+	RCS_checkout, pass vn_tag as well.
+	* sanity.sh (keyword): In test keyword-22, test for the fixed
+	behavior rather than the buggy behavior.  Adjust keyword-23.  Add
+	test keyword-24, to see whether keyword-23 really worked.
+
 1999-05-12  Larry Jones  <larry.jones@sdrc.com>
 
 	* sanity.sh (pserver-4, pserver-5): Bogus error messages from

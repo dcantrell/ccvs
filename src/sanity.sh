@@ -15003,12 +15003,20 @@ new revision: 1\.3; previous revision: 1\.2
 done"
 	  dotest keyword-21 "${testcvs} -q update -r tag1" "[UP] file1"
 
-	  # FIXME: This test fails when remote.  The second expect
-	  # string below should be removed when this is fixed.
-	  dotest keyword-22 "cat file1" '\$'"Name: tag1 "'\$' \
-'\$'"Name:  "'\$'
+	  dotest keyword-22 "cat file1" '\$'"Name: tag1 "'\$'
 
-	  dotest keyword-23 "${testcvs} update -A file1" "[UP] file1"
+	  if test "$remote" = yes; then
+	    # Like serverpatch-8.  Not sure there is anything much we
+	    # can or should do about this.
+	    dotest keyword-23 "${testcvs} update -A file1" "P file1
+${PROG} update: checksum failure after patch to \./file1; will refetch
+${PROG} client: refetching unpatchable files
+U file1"
+	  else
+	    dotest keyword-23 "${testcvs} update -A file1" "[UP] file1"
+	  fi
+	  dotest keyword-24 "cat file1" '\$'"Name:  "'\$'"
+change"
 
 	  cd ../..
 	  rm -r 1
