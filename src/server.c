@@ -564,7 +564,7 @@ isSecondaryServer (void)
 
     /* Our hostname and directory must match for this to be the primary.  */
     gethostname (hostname, sizeof hostname);
-    hostname[sizeof hostname] = '\0';
+    hostname[sizeof hostname - 1] = '\0';
     if (!strcmp (PrimaryServer->hostname, hostname)
 	&& !strcmp (PrimaryServer->directory, current_parsed_root->directory))
 	return false;

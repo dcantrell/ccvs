@@ -250,13 +250,13 @@ shift
 
 # Verify that $testcvs looks like CVS.
 # we can't use test -x since BSD 4.3 doesn't support it.
-if test ! -f ${testcvs} || test ! -r ${testcvs}; then
-  echo "No such file or file not readable: ${testcvs}" >&2
+if test ! -f $testcvs || test ! -r $testcvs; then
+  echo "No such file or file not readable: $testcvs" >&2
   exit 1
 fi
-if ${testcvs} --version </dev/null 2>/dev/null |
+if $testcvs --version </dev/null 2>/dev/null |
      grep '^Concurrent Versions System' >/dev/null 2>&1; then :; else
-  echo "Not a CVS executable: ${testcvs}" >&2
+  echo "Not a CVS executable: $testcvs" >&2
   exit 1
 fi
 
@@ -559,17 +559,17 @@ fi
 : ${TESTDIR=$tmp/cvs-sanity}
 # clean any old remnants (we need the chmod because some tests make
 # directories read-only)
-if test -d ${TESTDIR}; then
-    chmod -R a+wx ${TESTDIR}
-    rm -rf ${TESTDIR}
+if test -d $TESTDIR; then
+    chmod -R a+wx $TESTDIR
+    rm -rf $TESTDIR
 fi
 # These exits are important.  The first time I tried this, if the `mkdir && cd`
 # failed then the build directory would get blown away.  Some people probably
 # wouldn't appreciate that.
-mkdir ${TESTDIR} || exit 1
-cd ${TESTDIR} || exit 1
+mkdir $TESTDIR || exit 1
+cd $TESTDIR || exit 1
 # Ensure $TESTDIR is absolute
-if echo "${TESTDIR}" |grep '^[^/]'; then
+if echo "$TESTDIR" |grep '^[^/]'; then
     # Don't resolve this unless we have to.  This keeps symlinks intact.  This
     # is important at least when testing using -h $remotehost, because the same
     # value for $TESTDIR must resolve to the same directory on the client and
@@ -577,11 +577,47 @@ if echo "${TESTDIR}" |grep '^[^/]'; then
     TESTDIR=`(/bin/pwd || pwd) 2>/dev/null`
 fi
 
-if test -z "${TESTDIR}" || echo "${TESTDIR}" |grep '^[^/]'; then
+if test -z "$TESTDIR" || echo "$TESTDIR" |grep '^[^/]'; then
     echo "Unable to resolve TESTDIR to an absolute directory." >&2
     exit 1
 fi
-cd ${TESTDIR}
+cd $TESTDIR
+
+
+
+if test -n "$remotehost"; then
+    # Now override our CVS_RSH in order to forward variables which affect the
+    # test suite through.
+    : ${TIMING=false}
+    if $TIMING; then
+	time="/usr/bin/time -ao'$TESTDIR/time.out'"
+    else
+	time=
+    fi
+    cat >$TESTDIR/ssh-wrapper <<EOF
+#! $TESTSHELL
+hostname=\$1
+shift
+exec \
+$CVS_RSH \
+	 \$hostname \
+	 "CVS_SERVER='\$CVS_SERVER';" \
+	 "CVS_SERVER_SLEEP='\$CVS_SERVER_SLEEP';" \
+	 "export CVS_SERVER CVS_SERVER_SLEEP;" \
+	 "CVS_PARENT_SERVER_SLEEP='\$CVS_PARENT_SERVER_SLEEP';" \
+	 "CVS_SERVER_LOG='\$CVS_SERVER_LOG';" \
+	 "export CVS_PARENT_SERVER_SLEEP CVS_SERVER_LOG;" \
+	 "CVS_SECONDARY_LOG='\$CVS_SECONDARY_LOG';" \
+	 "TMPDIR='\$TMPDIR';" \
+	 "export CVS_SECONDARY_LOG TMPDIR;" \
+	 "CVS_RSH='$TESTDIR/ssh-wrapper';" \
+	 "export CVS_SECONDARY_LOG ;" \
+	 $time \
+	 \${1+"\$@"}
+EOF
+    chmod a+x $TESTDIR/ssh-wrapper
+    CVS_RSH=$TESTDIR/ssh-wrapper
+fi # $remotehost
 
 
 
@@ -2171,7 +2207,7 @@ cp -rp $CVSROOT_DIRNAME/CVSROOT/ $TESTDIR/CVSROOT.save/
 ###
 ### The tests
 ###
-dotest 1a "$testcvs init" ''
+dotest 1a "$testcvs init"
 
 ### The big loop
 for what in $tests; do
@@ -19599,10 +19635,10 @@ initial revision: 1\.1"
 	  rm -r 1
 
 	  mkdir 1; cd 1
-	  dotest crerepos-12 "${testcvs} -d ${CREREPOS_ROOT} -q co -l ." ''
+	  dotest crerepos-12 "$testcvs -d $CREREPOS_ROOT -q co -l ."
 	  mkdir crerepos-dir
-	  dotest crerepos-13 "${testcvs} add crerepos-dir" \
-"Directory ${TESTDIR}/crerepos/crerepos-dir added to the repository"
+	  dotest crerepos-13 "$testcvs add crerepos-dir" \
+"Directory $TESTDIR/crerepos/crerepos-dir added to the repository"
 	  cd crerepos-dir
 	  touch cfile
 	  dotest crerepos-14 "${testcvs} add cfile" \
@@ -31784,7 +31820,11 @@ echo "OK, all tests completed."
 dokeep
 
 # Remove the test directory, but first change out of it.
-cd `dirname $TESTDIR`
-rm -rf $TESTDIR
+if $TIMING; then
+    echo "exiting without removing test dir in order to preserve timing information."
+else
+    cd `dirname $TESTDIR`
+    rm -rf $TESTDIR
+fi
 
 # end of sanity.sh
