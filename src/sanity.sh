@@ -22584,7 +22584,8 @@ ${SPROG} add: use .${SPROG} commit. to add these files permanently"
 initial revision: 1\.1
 $CVSROOT_DIRNAME/second-dir/ab,v  <--  second-dir/ab
 initial revision: 1\.1"
-	  modify_repo chmod a= $CVSROOT_DIRNAME/first-dir
+	  # quiet down this one as it will be noisy in proxy mode
+	  modify_repo chmod a= $CVSROOT_DIRNAME/first-dir >/dev/null 2>&1
 	  if ${LS} ${CVSROOT_DIRNAME}/first-dir >/dev/null 2>&1; then
 	    # Avoid this test under Cygwin since permissions work differently
 	    # there.
@@ -22637,7 +22638,8 @@ ${SPROG} update: Updating second-dir"
 	  dokeep
 	  cd ..
 	  rm -r 1
-	  modify_repo chmod u+rwx $CVSROOT_DIRNAME/first-dir
+	  # quiet down this one as it will be noisy in proxy mode
+	  modify_repo chmod u+rwx $CVSROOT_DIRNAME/first-dir 2>/dev/null
 	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir \
 			     $CVSROOT_DIRNAME/second-dir
 	  ;;
