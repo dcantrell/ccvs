@@ -1,5 +1,9 @@
 2003-07-20  Derek Price  <derek@ximbiot.com>
 
+	* NEWS: Mention experimental PAM support.
+
+2003-07-20  Derek Price  <derek@ximbiot.com>
+
 	* configure.in (--enable-pam): New experimental option to enable PAM
 	support on systems that support it.
 	(--with-hardcoded-pam-service-name): PAM configuration option.
