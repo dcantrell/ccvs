@@ -673,6 +673,7 @@ if test x"$*" = x; then
 	tests="version basica basicb basicc basic1 deep basic2"
 	tests="${tests} files spacefiles commit-readonly"
 	tests="${tests} commit-add-missing"
+	tests="${tests} status"
 	# Branching, tagging, removing, adding, multiple directories
 	tests="${tests} rdiff diff death death2 rm-update-message rmadd rmadd2"
 	tests="${tests} dirs dirs2 branches branches2 branches3 tagc tagf"
@@ -3732,6 +3733,98 @@ done"
 	  rm -rf ${CVSROOT_DIRNAME}/$module
 	  ;;
 
+	status)
+		# This tests for a bug in the status command which failed to
+		# notice resolved conflicts.
+		mkdir status; cd status
+		dotest status-init-1 "${testcvs} -q co -l ." ""
+		mkdir first-dir
+		dotest status-init-2 "${testcvs} add first-dir" \
+"Directory ${CVSROOT_DIRNAME}/first-dir added to the repository"
+		cd first-dir
+		echo a line >tfile
+		dotest status-init-3 "${testcvs} add tfile" \
+"${PROG} [a-z]*: scheduling file .tfile. for addition
+${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
+		dotest status-init-4 "${testcvs} -q ci -m add" \
+"RCS file: ${CVSROOT_DIRNAME}/first-dir/tfile,v
+done
+Checking in tfile;
+${CVSROOT_DIRNAME}/first-dir/tfile,v  <--  tfile
+initial revision: 1\.1
+done"
+		cd ..
+		dotest status-init-5 "${testcvs} -q co -dsecond-dir first-dir" \
+"U second-dir/tfile"
+		cd second-dir
+		echo some junk >>tfile
+		dotest status-init-6 "${testcvs} -q ci -maline" \
+"Checking in tfile;
+${CVSROOT_DIRNAME}/first-dir/tfile,v  <--  tfile
+new revision: 1\.2; previous revision: 1\.1
+done"
+		cd ../first-dir
+		echo force a conflict >>tfile
+		dotest status-init-7 "${testcvs} -q up" \
+"RCS file: ${CVSROOT_DIRNAME}/first-dir/tfile,v
+retrieving revision 1\.1
+retrieving revision 1\.2
+Merging differences between 1\.1 and 1\.2 into tfile
+rcsmerge: warning: conflicts during merge
+cvs [a-z]*: conflicts found in tfile
+C tfile"
+
+		# Now note our status
+		dotest status-1 "${testcvs} status tfile" \
+"===================================================================
+File: tfile            	Status: File had conflicts on merge
+
+   Working revision:	1\.2.*
+   Repository revision:	1\.2	${CVSROOT_DIRNAME}/first-dir/tfile,v
+   Sticky Tag:		(none)
+   Sticky Date:		(none)
+   Sticky Options:	(none)"
+
+		# touch the file, leaving conflict markers in place
+		# and note our status
+		touch tfile
+		dotest status-2 "${testcvs} status tfile" \
+"===================================================================
+File: tfile            	Status: File had conflicts on merge
+
+   Working revision:	1\.2.*
+   Repository revision:	1\.2	${CVSROOT_DIRNAME}/first-dir/tfile,v
+   Sticky Tag:		(none)
+   Sticky Date:		(none)
+   Sticky Options:	(none)"
+
+		# resolve the conflict
+		echo resolution >tfile
+		dotest status-3 "${testcvs} status tfile" \
+"===================================================================
+File: tfile            	Status: Locally Modified
+
+   Working revision:	1\.2.*
+   Repository revision:	1\.2	${CVSROOT_DIRNAME}/first-dir/tfile,v
+   Sticky Tag:		(none)
+   Sticky Date:		(none)
+   Sticky Options:	(none)"
+
+		# FIXCVS:
+		# Update is supposed to re-Register() the file when it
+		# finds resolved conflicts:
+		dotest status-4 "grep 'Result of merge' CVS/Entries" \
+"/tfile/1\.2/Result of merge${PLUS}[a-zA-Z0-9 :]*//"
+
+		if $keep; then
+			echo Keeping ${TESTDIR} and exiting due to --keep
+			exit 0
+		fi
+
+		cd ../..
+		rm -rf status
+		rm -rf ${CVSROOT_DIRNAME}/first-dir
+		;;
 
 	rdiff)
 		# Test rdiff

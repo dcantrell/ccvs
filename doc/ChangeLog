@@ -1,3 +1,14 @@
+2003-03-06  Derek Price  <derek@ximbiot.com>
+
+	* cvs.texinfo (What is CVS?): Correct date of first post of CVS by
+	Dick Grune from December to July based on the archive posted on
+	Google:
+	<http://groups.google.com/groups?q=Grune+cvs+group:mod.sources.*&hl=en&lr=&ie=UTF-8&selm=122%40mirror.UUCP&rnum=2>.
+	(Thanks to David A Wheeler <dwheeler@dwheeler.com>.)
+
+	* stamp-vti: Regenerated.
+	* version.texi: Ditto.
+
 2003-03-03  Mark D. Baushke  <mdb@cvshome.org>
 
 	* cvs.texinfo (CVS_LOCAL_BRANCH_NUM): Document new environment
