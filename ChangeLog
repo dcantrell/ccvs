@@ -1,5 +1,10 @@
 2001-04-27  Derek Price  <dprice@collab.net>
 
+	* TODO (202): Remove my claim.
+	(203): New item.
+
+2001-04-27  Derek Price  <dprice@collab.net>
+
 	* configure.in: Update version number.
 
 	* configure: Regenerated.
