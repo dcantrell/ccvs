@@ -1,3 +1,37 @@
+Fri May 17 11:53:13 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* README: In a few places it used to say "server" when it meant
+	"client".  Fix it.  Say explicitly that there is no server on NT.
+	Fix typos (4,0 -> 4.0; CVS.system -> CVS).
+
+Thu May 16 16:52:45 1996  Noel Cragg  <noel@gargle.rain.org>
+
+	* README: explain which utilities are required for client support
+ 	and local support in separate paragraphs.
+
+	* filesubr.c (expand_wild): rename max to cvs_max to avoid
+ 	conflicts with other already-defined routines.
+	(get_homedir): rename min to cvs_min.
+
+Thu May 16 01:18:22 1996  noel  <noel@BOAT_ANCHOR>
+
+	* sanity.sh: Hacked version of src/sanity.sh for use under
+ 	CYGWIN32.
+
+	* filesubr.c (expand_wild): Since FindFirstFile and FindNextFile
+ 	don't return the pathname of a file, we need to keep track of it
+ 	ourselves.
+
+	* options.h: Fix defines for DIFF and GREP. 
+
+	* run.c (run_exec): Flush stdout and stderr so we end up with the
+ 	correct interleaving of output for sanity.sh.  This can be removed
+ 	later, if desired.
+
+Wed May 15 23:51:49 1996  Noel Cragg  <noel@gargle.rain.org>
+
+	* README: mention that grep is mandatory.
+
 Tue May 14 1996  Jim Kingdon  <kingdon@cyclic.com>
 
 	* filesubr.c (cvs_temp_name): Call _tempnam not tmpnam.
@@ -5,6 +39,11 @@ Tue May 14 1996  Jim Kingdon  <kingdon@cyclic.com>
 Tue May 14 13:38:51 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* filesubr.c (cvs_temp_name): New function..
+
+Wed May 01 01:28:41 1996  noel  <noel@BOAT_ANCHOR>
+
+	* filesubr.c (get_homedir): use both HOMEDRIVE and HOMEPATH to
+ 	construct the user's home directory.
 
 Tue Apr  9 20:56:14 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
