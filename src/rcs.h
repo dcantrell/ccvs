@@ -186,7 +186,7 @@ enum rcs_delta_op {RCS_ANNOTATE, RCS_FETCH};
  * exported interfaces
  */
 RCSNode *RCS_parse (const char *file, const char *repos);
-RCSNode *RCS_parsercsfile (char *rcsfile);
+RCSNode *RCS_parsercsfile (const char *rcsfile);
 void RCS_fully_parse (RCSNode *);
 void RCS_reparsercsfile (RCSNode *, FILE **, struct rcsbuffer *);
 extern int RCS_setattic (RCSNode *, int);
@@ -194,7 +194,7 @@ extern int RCS_setattic (RCSNode *, int);
 char *RCS_check_kflag (const char *arg);
 char *RCS_getdate (RCSNode * rcs, char *date, int force_tag_match);
 char *RCS_gettag (RCSNode * rcs, char *symtag, int force_tag_match,
-			int *simple_tag);
+		  int *simple_tag);
 int RCS_exist_rev (RCSNode *rcs, char *rev);
 int RCS_exist_tag (RCSNode *rcs, char *tag);
 char *RCS_tag2rev (RCSNode *rcs, char *tag);
@@ -219,11 +219,11 @@ int RCS_isdead (RCSNode *, const char *);
 char *RCS_getexpand (RCSNode *);
 void RCS_setexpand (RCSNode *, char *);
 int RCS_checkout (RCSNode *, char *, char *, char *, char *, char *,
-			 RCSCHECKOUTPROC, void *);
+		  RCSCHECKOUTPROC, void *);
 int RCS_checkin (RCSNode *rcs, char *workfile, char *message,
-			char *rev, int flags);
-int RCS_cmp_file ( RCSNode *, char *, char **, char *, char *,
-			 const char * );
+		 char *rev, int flags);
+int RCS_cmp_file (RCSNode *, char *, char **, char *, char *,
+		  const char * );
 int RCS_settag (RCSNode *, const char *, const char *);
 int RCS_deltag (RCSNode *, const char *);
 int RCS_setbranch (RCSNode *, const char *);
@@ -237,10 +237,10 @@ RETSIGTYPE rcs_cleanup (void);
 void RCS_rewrite (RCSNode *, Deltatext *, char *);
 void RCS_abandon (RCSNode *);
 int rcs_change_text (const char *, char *, size_t, const char *,
-			    size_t, char **, size_t *);
+		     size_t, char **, size_t *);
 void RCS_deltas (RCSNode *, FILE *, struct rcsbuffer *, char *,
-			enum rcs_delta_op, char **, size_t *,
-			char **, size_t *);
+		 enum rcs_delta_op, char **, size_t *,
+		 char **, size_t *);
 void RCS_setincexc (const char *arg);
 void RCS_setlocalid (const char *arg);
 char *make_file_label (char *, char *, RCSNode *);

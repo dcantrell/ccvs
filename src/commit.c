@@ -21,36 +21,29 @@
 #include "fileattr.h"
 #include "hardlink.h"
 
-static Dtype check_direntproc (void *callerdat, char *dir,
-				      char *repos, char *update_dir,
-				      List *entries);
+static Dtype check_direntproc (void *callerdat, char *dir, char *repos,
+			       char *update_dir, List *entries);
 static int check_fileproc (void *callerdat, struct file_info *finfo);
-static int check_filesdoneproc (void *callerdat, int err,
-				       char *repos, char *update_dir,
-				       List *entries);
+static int check_filesdoneproc (void *callerdat, int err, char *repos,
+				char *update_dir, List *entries);
 static int checkaddfile (char *file, char *repository, char *tag,
-			       char *options, RCSNode **rcsnode);
-static Dtype commit_direntproc (void *callerdat, char *dir,
-				       char *repos, char *update_dir,
-				       List *entries);
-static int commit_dirleaveproc (void *callerdat, char *dir,
-				       int err, char *update_dir,
-				       List *entries);
+			 char *options, RCSNode **rcsnode);
+static Dtype commit_direntproc (void *callerdat, char *dir, char *repos,
+				char *update_dir, List *entries);
+static int commit_dirleaveproc (void *callerdat, char *dir, int err,
+				char *update_dir, List *entries);
 static int commit_fileproc (void *callerdat, struct file_info *finfo);
-static int commit_filesdoneproc (void *callerdat, int err,
-					char *repository, char *update_dir,
-					List *entries);
+static int commit_filesdoneproc (void *callerdat, int err, char *repository,
+				 char *update_dir, List *entries);
 static int finaladd (struct file_info *finfo, char *revision, char *tag,
-			   char *options);
+		     char *options);
 static int findmaxrev (Node * p, void *closure);
-static int lock_RCS (char *user, RCSNode *rcs, char *rev,
-			   char *repository);
+static int lock_RCS (char *user, RCSNode *rcs, char *rev, char *repository);
 static int precommit_list_proc (Node * p, void *closure);
-static int precommit_proc ( char *repository, char *filter,
-                                  void *closure );
+static int precommit_proc (char *repository, char *filter, void *closure);
 static int remove_file (struct file_info *finfo, char *tag,
-			       char *message);
-static void fixaddfile (const char *file, const char *repository);
+			char *message);
+static void fixaddfile (const char *rcs);
 static void fixbranch (RCSNode *, char *branch);
 static void unlockrcs (RCSNode *rcs);
 static void ci_delproc (Node *p);
@@ -1216,7 +1209,7 @@ commit_fileproc (void *callerdat, struct file_info *finfo)
 	if (checkaddfile (finfo->file, finfo->repository, ci->tag, ci->options,
 			  &finfo->rcs) != 0)
 	{
-	    fixaddfile (finfo->file, finfo->repository);
+	    fixaddfile (finfo->rcs->path);
 	    err = 1;
 	    goto out;
 	}
@@ -1681,7 +1674,7 @@ finaladd (struct file_info *finfo, char *rev, char *tag, char *options)
 	free (tmp);
     }
     else
-	fixaddfile (finfo->file, finfo->repository);
+	fixaddfile (finfo->rcs->path);
 
     (void) time (&last_register_time);
 
@@ -1703,18 +1696,21 @@ unlockrcs (RCSNode *rcs)
 	RCS_rewrite (rcs, NULL, NULL);
 }
 
+
+
 /*
  * remove a partially added file.  if we can parse it, leave it alone.
+ *
+ * FIXME: Every caller that calls this function can access finfo->rcs (the
+ * parsed RCSNode data), so we should be able to detect that the file needs
+ * to be removed without reparsing the file as we do below.
  */
 static void
-fixaddfile (const char *file, const char *repository)
+fixaddfile (const char *rcs)
 {
     RCSNode *rcsfile;
-    char *rcs;
     int save_really_quiet;
 
-    rcs = locate_rcs (repository, file, NULL);
-    if (rcs == NULL) return;
     save_really_quiet = really_quiet;
     really_quiet = 1;
     if ((rcsfile = RCS_parsercsfile (rcs)) == NULL)
@@ -1725,8 +1721,9 @@ fixaddfile (const char *file, const char *repository)
     else
 	freercsnode (&rcsfile);
     really_quiet = save_really_quiet;
-    free (rcs);
 }
+
+
 
 /*
  * put the branch back on an rcs file
