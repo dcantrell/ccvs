@@ -915,6 +915,18 @@ do_recursion (struct recursion_frame *frame)
 
 /*
  * Process each of the files in the list with the callback proc
+ *
+ * NOTES
+ *    Fills in FINFO->fullname, and sometimes FINFO->rcs before
+ *    calling the callback proc (FRFILE->frame->fileproc), but frees them
+ *    before return.
+ *
+ * OUTPUTS
+ *    Fills in FINFO->file.
+ *
+ * RETURNS
+ *    0 if we were supposed to find an RCS file but couldn't.
+ *    Otherwise, returns the error code returned by the callback function.
  */
 static int
 do_file_proc (Node *p, void *closure)
@@ -925,14 +937,13 @@ do_file_proc (Node *p, void *closure)
     char *tmp;
 
     finfo->file = p->key;
-    tmp = xmalloc (strlen (finfo->file) + strlen (finfo->update_dir) + 2);
-    tmp[0] = '\0';
     if (finfo->update_dir[0] != '\0')
     {
-	strcat (tmp, finfo->update_dir);
-	strcat (tmp, "/");
+	size_t dummy;
+	tmp = asnprintf (NULL, &dummy, "%s/%s", finfo->update_dir, finfo->file);
     }
-    strcat (tmp, finfo->file);
+    else
+	tmp = xstrdup (finfo->file);
 
     if (frfile->frame->dosrcs && repository)
     {
