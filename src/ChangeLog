@@ -1,3 +1,8 @@
+1998-09-25  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* sanity.sh (log2): New test log2-7a tests for one error handling
+	case.  Add a comment about another.
+
 1998-09-24  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* sanity.sh: Change crerepos test back to :ext: (for several
