@@ -33,8 +33,15 @@ INTDIR=.\WinRel
 OutDir=.\WinRel
 # End Custom Macros
 
+!IF "$(RECURSE)" == "0" 
+
 ALL : "$(OUTDIR)\zlib.lib"
 
+!ELSE 
+
+ALL : "$(OUTDIR)\zlib.lib"
+
+!ENDIF 
 
 CLEAN :
 	-@erase "$(INTDIR)\adler32.obj"
@@ -52,47 +59,50 @@ CLEAN :
 	-@erase "$(INTDIR)\minigzip.obj"
 	-@erase "$(INTDIR)\trees.obj"
 	-@erase "$(INTDIR)\uncompr.obj"
-	-@erase "$(INTDIR)\vc60.idb"
+	-@erase "$(INTDIR)\vc50.idb"
 	-@erase "$(INTDIR)\zutil.obj"
 	-@erase "$(OUTDIR)\zlib.lib"
 
 "$(OUTDIR)" :
     if not exist "$(OUTDIR)/$(NULL)" mkdir "$(OUTDIR)"
 
-CPP=cl.exe
-CPP_PROJ=/nologo /ML /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /Fp"$(INTDIR)\zlib.pch" /YX /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c 
-
-.c{$(INTDIR)}.obj::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-.cpp{$(INTDIR)}.obj::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-.cxx{$(INTDIR)}.obj::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-.c{$(INTDIR)}.sbr::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-.cpp{$(INTDIR)}.sbr::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-.cxx{$(INTDIR)}.sbr::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
 RSC=rc.exe
+CPP=cl.exe
+CPP_PROJ=/nologo /ML /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS"\
+ /Fp"$(INTDIR)\zlib.pch" /YX /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c 
+CPP_OBJS=.\WinRel/
+CPP_SBRS=.
+
+.c{$(CPP_OBJS)}.obj::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+.cpp{$(CPP_OBJS)}.obj::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+.cxx{$(CPP_OBJS)}.obj::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+.c{$(CPP_SBRS)}.sbr::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+.cpp{$(CPP_SBRS)}.sbr::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+.cxx{$(CPP_SBRS)}.sbr::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
 BSC32=bscmake.exe
 BSC32_FLAGS=/nologo /o"$(OUTDIR)\zlib.bsc" 
 BSC32_SBRS= \
@@ -130,11 +140,18 @@ INTDIR=.\WinDebug
 OutDir=.\WinDebug
 # End Custom Macros
 
+!IF "$(RECURSE)" == "0" 
+
 ALL : "$(OUTDIR)\zlib.lib"
 
+!ELSE 
+
+ALL : "$(OUTDIR)\zlib.lib"
+
+!ENDIF 
 
 CLEAN :
-	-@erase "$(INTDIR)\vc60.idb"
+	-@erase "$(INTDIR)\vc50.idb"
 	-@erase "$(OUTDIR)\zlib.lib"
 	-@erase ".\WinDebug\adler32.obj"
 	-@erase ".\WinDebug\compress.obj"
@@ -156,40 +173,43 @@ CLEAN :
 "$(OUTDIR)" :
     if not exist "$(OUTDIR)/$(NULL)" mkdir "$(OUTDIR)"
 
-CPP=cl.exe
-CPP_PROJ=/nologo /MLd /W3 /GX /Z7 /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /Fp"$(INTDIR)\zlib.pch" /YX /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c 
-
-.c{$(INTDIR)}.obj::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-.cpp{$(INTDIR)}.obj::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-.cxx{$(INTDIR)}.obj::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-.c{$(INTDIR)}.sbr::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-.cpp{$(INTDIR)}.sbr::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-.cxx{$(INTDIR)}.sbr::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
 RSC=rc.exe
+CPP=cl.exe
+CPP_PROJ=/nologo /MLd /W3 /GX /Z7 /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS"\
+ /Fp"$(INTDIR)\zlib.pch" /YX /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c 
+CPP_OBJS=.\WinDebug/
+CPP_SBRS=.
+
+.c{$(CPP_OBJS)}.obj::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+.cpp{$(CPP_OBJS)}.obj::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+.cxx{$(CPP_OBJS)}.obj::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+.c{$(CPP_SBRS)}.sbr::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+.cpp{$(CPP_SBRS)}.sbr::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+.cxx{$(CPP_SBRS)}.sbr::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
 BSC32=bscmake.exe
 BSC32_FLAGS=/nologo /o"$(OUTDIR)\zlib.bsc" 
 BSC32_SBRS= \
@@ -222,28 +242,29 @@ LIB32_OBJS= \
 !ENDIF 
 
 
-!IF "$(NO_EXTERNAL_DEPS)" != "1"
-!IF EXISTS("zlib.dep")
-!INCLUDE "zlib.dep"
-!ELSE 
-!MESSAGE Warning: cannot find "zlib.dep"
-!ENDIF 
-!ENDIF 
-
-
 !IF "$(CFG)" == "zlib - Win32 Release" || "$(CFG)" == "zlib - Win32 Debug"
 SOURCE=.\adler32.c
 
 !IF  "$(CFG)" == "zlib - Win32 Release"
 
+DEP_CPP_ADLER=\
+	".\zconf.h"\
+	".\zlib.h"\
+	
 
-"$(INTDIR)\adler32.obj" : $(SOURCE) "$(INTDIR)"
+"$(INTDIR)\adler32.obj" : $(SOURCE) $(DEP_CPP_ADLER) "$(INTDIR)"
 
 
 !ELSEIF  "$(CFG)" == "zlib - Win32 Debug"
 
+DEP_CPP_ADLER=\
+	".\zconf.h"\
+	".\zlib.h"\
+	{$(INCLUDE)}"sys\types.h"\
+	
+INTDIR_SRC=.\WinDebug
 
-".\WinDebug\adler32.obj" : $(SOURCE)
+".\WinDebug\adler32.obj" : $(SOURCE) $(DEP_CPP_ADLER) "$(INTDIR_SRC)"
 
 
 !ENDIF 
@@ -252,14 +273,24 @@ SOURCE=.\compress.c
 
 !IF  "$(CFG)" == "zlib - Win32 Release"
 
+DEP_CPP_COMPR=\
+	".\zconf.h"\
+	".\zlib.h"\
+	
 
-"$(INTDIR)\compress.obj" : $(SOURCE) "$(INTDIR)"
+"$(INTDIR)\compress.obj" : $(SOURCE) $(DEP_CPP_COMPR) "$(INTDIR)"
 
 
 !ELSEIF  "$(CFG)" == "zlib - Win32 Debug"
 
+DEP_CPP_COMPR=\
+	".\zconf.h"\
+	".\zlib.h"\
+	{$(INCLUDE)}"sys\types.h"\
+	
+INTDIR_SRC=.\WinDebug
 
-".\WinDebug\compress.obj" : $(SOURCE)
+".\WinDebug\compress.obj" : $(SOURCE) $(DEP_CPP_COMPR) "$(INTDIR_SRC)"
 
 
 !ENDIF 
@@ -268,14 +299,24 @@ SOURCE=.\crc32.c
 
 !IF  "$(CFG)" == "zlib - Win32 Release"
 
+DEP_CPP_CRC32=\
+	".\zconf.h"\
+	".\zlib.h"\
+	
 
-"$(INTDIR)\crc32.obj" : $(SOURCE) "$(INTDIR)"
+"$(INTDIR)\crc32.obj" : $(SOURCE) $(DEP_CPP_CRC32) "$(INTDIR)"
 
 
 !ELSEIF  "$(CFG)" == "zlib - Win32 Debug"
 
+DEP_CPP_CRC32=\
+	".\zconf.h"\
+	".\zlib.h"\
+	{$(INCLUDE)}"sys\types.h"\
+	
+INTDIR_SRC=.\WinDebug
 
-".\WinDebug\crc32.obj" : $(SOURCE)
+".\WinDebug\crc32.obj" : $(SOURCE) $(DEP_CPP_CRC32) "$(INTDIR_SRC)"
 
 
 !ENDIF 
@@ -284,14 +325,28 @@ SOURCE=.\deflate.c
 
 !IF  "$(CFG)" == "zlib - Win32 Release"
 
+DEP_CPP_DEFLA=\
+	".\deflate.h"\
+	".\zconf.h"\
+	".\zlib.h"\
+	".\zutil.h"\
+	
 
-"$(INTDIR)\deflate.obj" : $(SOURCE) "$(INTDIR)"
+"$(INTDIR)\deflate.obj" : $(SOURCE) $(DEP_CPP_DEFLA) "$(INTDIR)"
 
 
 !ELSEIF  "$(CFG)" == "zlib - Win32 Debug"
 
+DEP_CPP_DEFLA=\
+	".\deflate.h"\
+	".\zconf.h"\
+	".\zlib.h"\
+	".\zutil.h"\
+	{$(INCLUDE)}"sys\types.h"\
+	
+INTDIR_SRC=.\WinDebug
 
-".\WinDebug\deflate.obj" : $(SOURCE)
+".\WinDebug\deflate.obj" : $(SOURCE) $(DEP_CPP_DEFLA) "$(INTDIR_SRC)"
 
 
 !ENDIF 
@@ -300,14 +355,24 @@ SOURCE=.\example.c
 
 !IF  "$(CFG)" == "zlib - Win32 Release"
 
+DEP_CPP_EXAMP=\
+	".\zconf.h"\
+	".\zlib.h"\
+	
 
-"$(INTDIR)\example.obj" : $(SOURCE) "$(INTDIR)"
+"$(INTDIR)\example.obj" : $(SOURCE) $(DEP_CPP_EXAMP) "$(INTDIR)"
 
 
 !ELSEIF  "$(CFG)" == "zlib - Win32 Debug"
 
+DEP_CPP_EXAMP=\
+	".\zconf.h"\
+	".\zlib.h"\
+	{$(INCLUDE)}"sys\types.h"\
+	
+INTDIR_SRC=.\WinDebug
 
-".\WinDebug\example.obj" : $(SOURCE)
+".\WinDebug\example.obj" : $(SOURCE) $(DEP_CPP_EXAMP) "$(INTDIR_SRC)"
 
 
 !ENDIF 
@@ -316,14 +381,26 @@ SOURCE=.\gzio.c
 
 !IF  "$(CFG)" == "zlib - Win32 Release"
 
+DEP_CPP_GZIO_=\
+	".\zconf.h"\
+	".\zlib.h"\
+	".\zutil.h"\
+	
 
-"$(INTDIR)\gzio.obj" : $(SOURCE) "$(INTDIR)"
+"$(INTDIR)\gzio.obj" : $(SOURCE) $(DEP_CPP_GZIO_) "$(INTDIR)"
 
 
 !ELSEIF  "$(CFG)" == "zlib - Win32 Debug"
 
+DEP_CPP_GZIO_=\
+	".\zconf.h"\
+	".\zlib.h"\
+	".\zutil.h"\
+	{$(INCLUDE)}"sys\types.h"\
+	
+INTDIR_SRC=.\WinDebug
 
-".\WinDebug\gzio.obj" : $(SOURCE)
+".\WinDebug\gzio.obj" : $(SOURCE) $(DEP_CPP_GZIO_) "$(INTDIR_SRC)"
 
 
 !ENDIF 
@@ -332,14 +409,34 @@ SOURCE=.\infblock.c
 
 !IF  "$(CFG)" == "zlib - Win32 Release"
 
+DEP_CPP_INFBL=\
+	".\infblock.h"\
+	".\infcodes.h"\
+	".\inftrees.h"\
+	".\infutil.h"\
+	".\zconf.h"\
+	".\zlib.h"\
+	".\zutil.h"\
+	
 
-"$(INTDIR)\infblock.obj" : $(SOURCE) "$(INTDIR)"
+"$(INTDIR)\infblock.obj" : $(SOURCE) $(DEP_CPP_INFBL) "$(INTDIR)"
 
 
 !ELSEIF  "$(CFG)" == "zlib - Win32 Debug"
 
+DEP_CPP_INFBL=\
+	".\infblock.h"\
+	".\infcodes.h"\
+	".\inftrees.h"\
+	".\infutil.h"\
+	".\zconf.h"\
+	".\zlib.h"\
+	".\zutil.h"\
+	{$(INCLUDE)}"sys\types.h"\
+	
+INTDIR_SRC=.\WinDebug
 
-".\WinDebug\infblock.obj" : $(SOURCE)
+".\WinDebug\infblock.obj" : $(SOURCE) $(DEP_CPP_INFBL) "$(INTDIR_SRC)"
 
 
 !ENDIF 
@@ -348,14 +445,36 @@ SOURCE=.\infcodes.c
 
 !IF  "$(CFG)" == "zlib - Win32 Release"
 
+DEP_CPP_INFCO=\
+	".\infblock.h"\
+	".\infcodes.h"\
+	".\inffast.h"\
+	".\inftrees.h"\
+	".\infutil.h"\
+	".\zconf.h"\
+	".\zlib.h"\
+	".\zutil.h"\
+	
 
-"$(INTDIR)\infcodes.obj" : $(SOURCE) "$(INTDIR)"
+"$(INTDIR)\infcodes.obj" : $(SOURCE) $(DEP_CPP_INFCO) "$(INTDIR)"
 
 
 !ELSEIF  "$(CFG)" == "zlib - Win32 Debug"
 
+DEP_CPP_INFCO=\
+	".\infblock.h"\
+	".\infcodes.h"\
+	".\inffast.h"\
+	".\inftrees.h"\
+	".\infutil.h"\
+	".\zconf.h"\
+	".\zlib.h"\
+	".\zutil.h"\
+	{$(INCLUDE)}"sys\types.h"\
+	
+INTDIR_SRC=.\WinDebug
 
-".\WinDebug\infcodes.obj" : $(SOURCE)
+".\WinDebug\infcodes.obj" : $(SOURCE) $(DEP_CPP_INFCO) "$(INTDIR_SRC)"
 
 
 !ENDIF 
@@ -364,14 +483,36 @@ SOURCE=.\inffast.c
 
 !IF  "$(CFG)" == "zlib - Win32 Release"
 
+DEP_CPP_INFFA=\
+	".\infblock.h"\
+	".\infcodes.h"\
+	".\inffast.h"\
+	".\inftrees.h"\
+	".\infutil.h"\
+	".\zconf.h"\
+	".\zlib.h"\
+	".\zutil.h"\
+	
 
-"$(INTDIR)\inffast.obj" : $(SOURCE) "$(INTDIR)"
+"$(INTDIR)\inffast.obj" : $(SOURCE) $(DEP_CPP_INFFA) "$(INTDIR)"
 
 
 !ELSEIF  "$(CFG)" == "zlib - Win32 Debug"
 
+DEP_CPP_INFFA=\
+	".\infblock.h"\
+	".\infcodes.h"\
+	".\inffast.h"\
+	".\inftrees.h"\
+	".\infutil.h"\
+	".\zconf.h"\
+	".\zlib.h"\
+	".\zutil.h"\
+	{$(INCLUDE)}"sys\types.h"\
+	
+INTDIR_SRC=.\WinDebug
 
-".\WinDebug\inffast.obj" : $(SOURCE)
+".\WinDebug\inffast.obj" : $(SOURCE) $(DEP_CPP_INFFA) "$(INTDIR_SRC)"
 
 
 !ENDIF 
@@ -380,14 +521,28 @@ SOURCE=.\inflate.c
 
 !IF  "$(CFG)" == "zlib - Win32 Release"
 
+DEP_CPP_INFLA=\
+	".\infblock.h"\
+	".\zconf.h"\
+	".\zlib.h"\
+	".\zutil.h"\
+	
 
-"$(INTDIR)\inflate.obj" : $(SOURCE) "$(INTDIR)"
+"$(INTDIR)\inflate.obj" : $(SOURCE) $(DEP_CPP_INFLA) "$(INTDIR)"
 
 
 !ELSEIF  "$(CFG)" == "zlib - Win32 Debug"
 
+DEP_CPP_INFLA=\
+	".\infblock.h"\
+	".\zconf.h"\
+	".\zlib.h"\
+	".\zutil.h"\
+	{$(INCLUDE)}"sys\types.h"\
+	
+INTDIR_SRC=.\WinDebug
 
-".\WinDebug\inflate.obj" : $(SOURCE)
+".\WinDebug\inflate.obj" : $(SOURCE) $(DEP_CPP_INFLA) "$(INTDIR_SRC)"
 
 
 !ENDIF 
@@ -396,14 +551,30 @@ SOURCE=.\inftrees.c
 
 !IF  "$(CFG)" == "zlib - Win32 Release"
 
+DEP_CPP_INFTR=\
+	".\inffixed.h"\
+	".\inftrees.h"\
+	".\zconf.h"\
+	".\zlib.h"\
+	".\zutil.h"\
+	
 
-"$(INTDIR)\inftrees.obj" : $(SOURCE) "$(INTDIR)"
+"$(INTDIR)\inftrees.obj" : $(SOURCE) $(DEP_CPP_INFTR) "$(INTDIR)"
 
 
 !ELSEIF  "$(CFG)" == "zlib - Win32 Debug"
 
+DEP_CPP_INFTR=\
+	".\inffixed.h"\
+	".\inftrees.h"\
+	".\zconf.h"\
+	".\zlib.h"\
+	".\zutil.h"\
+	{$(INCLUDE)}"sys\types.h"\
+	
+INTDIR_SRC=.\WinDebug
 
-".\WinDebug\inftrees.obj" : $(SOURCE)
+".\WinDebug\inftrees.obj" : $(SOURCE) $(DEP_CPP_INFTR) "$(INTDIR_SRC)"
 
 
 !ENDIF 
@@ -412,14 +583,34 @@ SOURCE=.\infutil.c
 
 !IF  "$(CFG)" == "zlib - Win32 Release"
 
+DEP_CPP_INFUT=\
+	".\infblock.h"\
+	".\infcodes.h"\
+	".\inftrees.h"\
+	".\infutil.h"\
+	".\zconf.h"\
+	".\zlib.h"\
+	".\zutil.h"\
+	
 
-"$(INTDIR)\infutil.obj" : $(SOURCE) "$(INTDIR)"
+"$(INTDIR)\infutil.obj" : $(SOURCE) $(DEP_CPP_INFUT) "$(INTDIR)"
 
 
 !ELSEIF  "$(CFG)" == "zlib - Win32 Debug"
 
+DEP_CPP_INFUT=\
+	".\infblock.h"\
+	".\infcodes.h"\
+	".\inftrees.h"\
+	".\infutil.h"\
+	".\zconf.h"\
+	".\zlib.h"\
+	".\zutil.h"\
+	{$(INCLUDE)}"sys\types.h"\
+	
+INTDIR_SRC=.\WinDebug
 
-".\WinDebug\infutil.obj" : $(SOURCE)
+".\WinDebug\infutil.obj" : $(SOURCE) $(DEP_CPP_INFUT) "$(INTDIR_SRC)"
 
 
 !ENDIF 
@@ -428,14 +619,25 @@ SOURCE=.\minigzip.c
 
 !IF  "$(CFG)" == "zlib - Win32 Release"
 
+DEP_CPP_MINIG=\
+	".\zconf.h"\
+	".\zlib.h"\
+	
 
-"$(INTDIR)\minigzip.obj" : $(SOURCE) "$(INTDIR)"
+"$(INTDIR)\minigzip.obj" : $(SOURCE) $(DEP_CPP_MINIG) "$(INTDIR)"
 
 
 !ELSEIF  "$(CFG)" == "zlib - Win32 Debug"
 
+DEP_CPP_MINIG=\
+	".\zconf.h"\
+	".\zlib.h"\
+	{$(INCLUDE)}"sys\stat.h"\
+	{$(INCLUDE)}"sys\types.h"\
+	
+INTDIR_SRC=.\WinDebug
 
-".\WinDebug\minigzip.obj" : $(SOURCE)
+".\WinDebug\minigzip.obj" : $(SOURCE) $(DEP_CPP_MINIG) "$(INTDIR_SRC)"
 
 
 !ENDIF 
@@ -444,14 +646,30 @@ SOURCE=.\trees.c
 
 !IF  "$(CFG)" == "zlib - Win32 Release"
 
+DEP_CPP_TREES=\
+	".\deflate.h"\
+	".\trees.h"\
+	".\zconf.h"\
+	".\zlib.h"\
+	".\zutil.h"\
+	
 
-"$(INTDIR)\trees.obj" : $(SOURCE) "$(INTDIR)"
+"$(INTDIR)\trees.obj" : $(SOURCE) $(DEP_CPP_TREES) "$(INTDIR)"
 
 
 !ELSEIF  "$(CFG)" == "zlib - Win32 Debug"
 
+DEP_CPP_TREES=\
+	".\deflate.h"\
+	".\trees.h"\
+	".\zconf.h"\
+	".\zlib.h"\
+	".\zutil.h"\
+	{$(INCLUDE)}"sys\types.h"\
+	
+INTDIR_SRC=.\WinDebug
 
-".\WinDebug\trees.obj" : $(SOURCE)
+".\WinDebug\trees.obj" : $(SOURCE) $(DEP_CPP_TREES) "$(INTDIR_SRC)"
 
 
 !ENDIF 
@@ -460,14 +678,24 @@ SOURCE=.\uncompr.c
 
 !IF  "$(CFG)" == "zlib - Win32 Release"
 
+DEP_CPP_UNCOM=\
+	".\zconf.h"\
+	".\zlib.h"\
+	
 
-"$(INTDIR)\uncompr.obj" : $(SOURCE) "$(INTDIR)"
+"$(INTDIR)\uncompr.obj" : $(SOURCE) $(DEP_CPP_UNCOM) "$(INTDIR)"
 
 
 !ELSEIF  "$(CFG)" == "zlib - Win32 Debug"
 
+DEP_CPP_UNCOM=\
+	".\zconf.h"\
+	".\zlib.h"\
+	{$(INCLUDE)}"sys\types.h"\
+	
+INTDIR_SRC=.\WinDebug
 
-".\WinDebug\uncompr.obj" : $(SOURCE)
+".\WinDebug\uncompr.obj" : $(SOURCE) $(DEP_CPP_UNCOM) "$(INTDIR_SRC)"
 
 
 !ENDIF 
@@ -476,14 +704,26 @@ SOURCE=.\zutil.c
 
 !IF  "$(CFG)" == "zlib - Win32 Release"
 
+DEP_CPP_ZUTIL=\
+	".\zconf.h"\
+	".\zlib.h"\
+	".\zutil.h"\
+	
 
-"$(INTDIR)\zutil.obj" : $(SOURCE) "$(INTDIR)"
+"$(INTDIR)\zutil.obj" : $(SOURCE) $(DEP_CPP_ZUTIL) "$(INTDIR)"
 
 
 !ELSEIF  "$(CFG)" == "zlib - Win32 Debug"
 
+DEP_CPP_ZUTIL=\
+	".\zconf.h"\
+	".\zlib.h"\
+	".\zutil.h"\
+	{$(INCLUDE)}"sys\types.h"\
+	
+INTDIR_SRC=.\WinDebug
 
-".\WinDebug\zutil.obj" : $(SOURCE)
+".\WinDebug\zutil.obj" : $(SOURCE) $(DEP_CPP_ZUTIL) "$(INTDIR_SRC)"
 
 
 !ENDIF 
