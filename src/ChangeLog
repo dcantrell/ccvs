@@ -1,3 +1,7 @@
+Fri Aug 29 17:49:20 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* client.c (get_server_responses): Add comment about "ok^M".
+
 Thu Aug 28 13:35:12 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* edit.c (edit_fileproc): If file doesn't exist, give an error.
