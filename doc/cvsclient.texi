@@ -497,7 +497,7 @@ command line client (versions 1.5 through at least 1.9).
 
 For the @samp{-d} option to the @code{log} request, servers should at
 least support RFC 822/1123 format.  Clients are encouraged to use this
-format too (traditionally the command line CVS client has just passed
+format too (the command line CVS client, version 1.10 and older, just passed
 along the date format specified by the user, however).
 
 The @code{Mod-time} response and @code{Checkin-time} request use RFC
@@ -1069,7 +1069,6 @@ directory.
 @itemx diff \n
 @itemx tag \n
 @itemx status \n
-@itemx log \n
 @itemx admin \n
 @itemx history \n
 @itemx watchers \n
@@ -1082,6 +1081,56 @@ last @code{Directory} sent specifies the working directory at the time
 of the operation.  No provision is made for any input from the user.
 This means that @code{ci} must use a @code{-m} argument if it wants to
 specify a log message.
+
+@item log \n
+Response expected: yes.  Show information for past revisions.  This uses
+any previous @code{Directory}, @code{Entry}, or @code{Modified}
+requests, if they have been sent.  The last @code{Directory} sent
+specifies the working directory at the time of the operation.  Also uses
+previous @code{Argument}'s of which the canonical forms are the
+following (@sc{cvs} 1.10 and older clients sent what the user specified,
+but clients are encouraged to use the canonical forms and other forms
+are deprecated):
+
+@table @code
+@item -b, -h, -l, -N, -R, -t
+These options go by themselves, one option per @code{Argument} request.
+
+@item -d @var{date1}<@var{date2}
+Select revisions between @var{date1} and @var{date2}.  Either date
+may be omitted in which case there is no date limit at that end of the
+range (clients may specify dates such as 1 Jan 1970 or 1 Jan 2038 for
+similar purposes but this is problematic as it makes assumptions about
+what dates the server supports).  Dates are in RFC822/1123 format.  The
+@samp{-d} is one @code{Argument} request and the date range is a second
+one.
+
+@item -d @var{date1}<=@var{date2}
+Likewise but compare dates for equality.
+
+@item -d @var{singledate}
+Select the single, latest revision dated @var{singledate} or earlier.
+
+To include several date ranges and/or singledates, repeat the @samp{-d}
+option as many times as necessary.
+
+@item -r@var{rev1}:@var{rev2}
+@itemx -r@var{branch}
+@itemx -r@var{branch}.
+@itemx -r
+Specify revisions (note that @var{rev1} or @var{rev2} can be omitted, or
+can refer to branches).  Send both the @samp{-r} and the revision
+information in a single @code{Argument} request.  To include several
+revision selections, repeat the @samp{-r} option.
+
+@item -s @var{state}
+@itemx -w
+@itemx -w@var{login}
+Select on states or users.  To include more than one state or user,
+repeat the option.  Send the @samp{-s} option as a separate argument
+from the state being selected.  Send the @samp{-w} option as part of the
+same argument as the user being selected.
+@end table
 
 @item co \n
 Response expected: yes.  Get files from the repository.  This uses any
