@@ -2075,7 +2075,7 @@ start_server ()
 {
   /* From old start_server(): */
   int tofd, fromfd;
-  int rc;
+  int pid;
   char *log = getenv ("CVS_CLIENT_LOG");
   
   FILE *pipes[2];
@@ -2086,10 +2086,13 @@ start_server ()
   char *cvs_rsh = getenv ("CVS_RSH");
   char *cvs_server = getenv ("CVS_SERVER");
   char command[PATH_MAX];
-  int i;
+  int i = 0;
+  /* This needs to fit "rsh", "-b", "-l", "USER", "host",
+	 "cmd (w/ args)", and NULL.  We leave some room to grow. */
+  char *rsh_argv[10];
   
   if (!cvs_rsh)
-    cvs_rsh = "rsh -b"; /* kff: todo: "-b" for binary, under OS/2. */
+    cvs_rsh = "rsh";
   if (!cvs_server)
     cvs_server = "cvs";
   
@@ -2099,25 +2102,25 @@ start_server ()
    * containing a colon (or better yet, upgrade the server).  */
   
   /* The command line starts out with rsh. */
-  sprintf (command, "%s ", cvs_rsh);
+  rsh_argv[i++] = cvs_rsh;
   
+  /* "-b" for binary, under OS/2. */
+  rsh_argv[i++] = "-b";
+
   /* Then we strcat more things on the end one by one. */
   if (server_user != NULL)
     {
-      strcat (command, "-l");
-      strcat (command, " ");
-      strcat (command, server_user);
-      strcat (command, " ");
+      rsh_argv[i++] = "-l";
+      rsh_argv[i++] = server_user;
     }
   
-  strcat (command, server_host);
-  strcat (command, " ");
-  
-  strcat (command, cvs_server);
-  strcat (command, " ");
-  strcat (command, "server");
-  strcat (command, " ");
-  
+  rsh_argv[i++] = server_host;
+  rsh_argv[i++] = cvs_server;
+  rsh_argv[i++] = "server";
+
+  /* Mark the end of the arg list. */
+  rsh_argv[i]   = (char *) NULL;
+
   if (trace)
     {
       fprintf (stderr, " -> Starting server: ");
@@ -2125,14 +2128,14 @@ start_server ()
       putc ('\n', stderr);
     }
   
-  rc = popenRW (command, pipes);
+  pid = popenRW (rsh_argv, pipes);
   
   to_server   = pipes[0];
   from_server = pipes[1];
   
   fflush (stdout);
   
-  if (rc != TRUE)
+  if (pid < 0)
     error (1, errno, "cannot start server via rsh");
   
   /* Do we need to do this now?  Probably not. */

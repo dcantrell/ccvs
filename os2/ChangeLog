@@ -1,3 +1,11 @@
+Tue Nov 21 16:34:37 1995  unknown  (unknown@beezley)
+
+        * client.c (start_server): pass a char **argv to popenRW and get a
+        pid in return (instead of a return code).
+
+        * popen.c (popenRW): use a char **argv and spawnvp(), instead of a
+        char *command and DosExecPgm().
+
 Mon Nov 20 23:31:54 1995  unknown  (unknown@beezley)
 
 		* filesubr.c (convert_file): pass (S_IREAD | S_IWRITE) to open();
