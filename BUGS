@@ -1,3 +1,21 @@
+* If patch fails, CCVS tries to transfer the whole file, but it
+  doesn't seem to handle this correctly:
+
+    cvs server: Updating .
+    patch: **** malformed patch at line 98: 28978/socket: File name too long
+    cvs update: could not patch BUGS; will refetch
+    cvs server: Updating contrib
+    cvs server: Updating contrib/pcl-cvs
+    cvs server: Updating doc
+    cvs server: Updating examples
+    cvs server: Updating lib
+    cvs server: Updating man
+    cvs server: Updating src
+    P BUGS
+    cvs client: refetching unpatchable files
+    ? .//.new.BUGS
+    Is a directory
+
 * The build process isn't configure, make.  The stuff in options.h
   could be derived by autoconf, couldn't it?
 
@@ -94,8 +112,8 @@
 
   [...]
 
-  ls: cvs-serv28978/cvs-serv28978/arpa/cvs-serv28978/assert/cvs-serv28978/bare/cvs-serv28978/conf/cvs-serv28978/crypt/cvs-serv28978/csu/cvs-serv28978/ctype/cvs-serv28978/dirent/cvs-serv28978/elf/cvs-serv28978/gnu/cvs-serv28978/gnulib/cvs-serv28978/grp/cvs-serv28978/hurd/cvs-serv28978/hurd/hurd/cvs-serv28978/inet/cvs-serv28978/inet/arpa/cvs-serv28978/inet/netinet/cvs-serv28978/inet/protocols/cvs-serv28978/io/cvs-serv28978/io/sys/cvs-serv28978/locale/cvs-serv28978/mach/cvs-serv28978/mach/mach/cvs-serv28978/malloc/cvs-serv28978/manual/cvs-serv28978/manual/examples/cvs-serv28978/math/cvs-serv28978/misc/cvs-serv28978/misc/sys/cvs-serv28978/netinet/cvs-serv28978/posix/cvs-serv28978/posix/glob/cvs-serv28978/posix/gnu/cvs-serv28978/posix/sys/cvs-serv28978/protocols/cvs-serv28978/pwd/cvs-serv28978/resolv/cvs-serv28978/resolv/arpa/cvs-serv28978/resolv/sys/cvs-serv28978/resource/cvs-serv28978/resource/sys/cvs-serv28978/rpc/cvs-serv28978/setjmp/cvs-serv28978/signal/cvs-serv28978/signal/sys/cvs-serv28978/socket/cvs-serv28978/socket: File name too long
-  cvs-serv28978/cvs-serv28978/arpa/cvs-serv28978/assert/cvs-serv28978/bare/cvs-serv28978/conf/cvs-serv28978/crypt/cvs-serv28978/csu/cvs-serv28978/ctype/cvs-serv28978/dirent/cvs-serv28978/elf/cvs-serv28978/gnu/cvs-serv28978/gnulib/cvs-serv28978/grp/cvs-serv28978/hurd/cvs-serv28978/hurd/hurd/cvs-serv28978/inet/cvs-serv28978/inet/arpa/cvs-serv28978/inet/netinet/cvs-serv28978/inet/protocols/cvs-serv28978/io/cvs-serv28978/io/sys/cvs-serv28978/locale/cvs-serv28978/mach/cvs-serv28978/mach/mach/cvs-serv28978/malloc/cvs-serv28978/manual/cvs-serv28978/manual/examples/cvs-serv28978/math/cvs-serv28978/misc/cvs-serv28978/misc/sys/cvs-serv28978/netinet/cvs-serv28978/posix/cvs-serv28978/posix/glob/cvs-serv28978/posix/gnu/cvs-serv28978/posix/sys/cvs-serv28978/protocols/cvs-serv28978/pwd/cvs-serv28978/resolv/cvs-serv28978/resolv/arpa/cvs-serv28978/resolv/sys/cvs-serv28978/resource/cvs-serv28978/resource/sys/cvs-serv28978/rpc/cvs-serv28978/setjmp/cvs-serv28978/signal/cvs-serv28978/signal/sys/cvs-serv28978/socket/cvs-serv28978:
+  ls: cvs-serv28978/cvs-serv28978/arpa/cvs-serv28978/assert/cvs-serv28978/bare/cvs-serv28978/conf/cvs-serv28978/crypt/cvs-serv28978/csu/cvs-serv28978/ctype/cvs-serv28978/dirent/cvs-serv28978/elf/cvs-serv28978/gnu/cvs-serv28978/gnulib/cvs-serv28978/grp/cvs-serv28978/hurd/cvs-serv28978/hurd/hurd/cvs-serv28978/inet/cvs-serv28978/inet/arpa/cvs-serv28978/inet/netinet[...]/cvs-serv28978/posix/cvs-serv28978/posix/glob/cvs-serv28978/posix/gnu/cvs-serv28978/posix/sys/cvs-serv28978/protocols/cvs-serv28978/pwd/cvs-serv28978/resolv/cvs-serv28978/resolv/arpa/cvs-serv28978/resolv/sys/cvs-serv28978/resource/cvs-serv28978/resource/sys/cvs-serv28978/rpc/cvs-serv28978/setjmp/cvs-serv28978/signal/cvs-serv28978/signal/sys/cvs-serv28978/socket/cvs-serv28978/socket: File name too long
+  cvs-serv28978/cvs-serv28978/arpa/cvs-serv28978/assert/cvs-serv28978/bare/cvs-serv28978/conf/cvs-serv28978/crypt/cvs-serv28978/csu/cvs-serv28978/ctype/cvs-serv28978/dirent/cvs-serv28978/elf/cvs-serv28978/gnu/cvs-serv28978/gnulib/cvs-serv28978/grp/cvs-serv28978/hurd/cvs-serv28978/hurd/hurd/cvs-serv28978/inet/cvs-serv28978/inet/arpa/cvs-serv28978/inet/netinet[...]/cvs-serv28978/posix/glob/cvs-serv28978/posix/gnu/cvs-serv28978/posix/sys/cvs-serv28978/protocols/cvs-serv28978/pwd/cvs-serv28978/resolv/cvs-serv28978/resolv/arpa/cvs-serv28978/resolv/sys/cvs-serv28978/resource/cvs-serv28978/resource/sys/cvs-serv28978/rpc/cvs-serv28978/setjmp/cvs-serv28978/signal/cvs-serv28978/signal/sys/cvs-serv28978/socket/cvs-serv28978:
 
 
 * From: billr@mpd.tandem.com (Bill Robertson)
