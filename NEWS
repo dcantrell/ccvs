@@ -3,6 +3,11 @@ Changes since 1.12.11:
 
 NEW FEATURES
 
+* CVS creates a unique session id that gets written to the RCS files during
+  import and commit. When committing several files at once, they all get the
+  same 'commitid'. The commitid becomes visible with log and status commands,
+  and is derived and compatible with the cvsnt project.
+
 * CVS now compiles correctly configured with --disable-client again.
 
 * CVS now accepts the <tag>:<date> format, which has long been acceptable as an
