@@ -125,7 +125,7 @@ realclean: distclean
 	rm -f cvs.info* cvs-paper.ps
 .PHONY: realclean
 
-dist:
+dist: $(DISTFILES)
 	ln $(DISTFILES) ../`cat ../.fname`/doc
 .PHONY: dist
 
