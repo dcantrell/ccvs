@@ -1,3 +1,9 @@
+Thu Oct 12 11:25:40 1995  Karl Fogel  <kfogel@totoro.cyclic.com>
+
+        * cvs.texinfo: cover page now refers to CVS 1.6, and "last
+        updated" date has been upped to today.
+	Added Cyclic Software `ifinfo' copyrights.
+
 Wed Oct 11 22:30:10 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* Makefile.in (info): Look for *.info* either in build dir or in
