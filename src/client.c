@@ -196,8 +196,27 @@ change_mode (filename, mode_string)
 	if (*p == ',')
 	    ++p;
     }
+
+#ifdef CHMOD_BROKEN
+    /* We can only distinguish between
+         1) readable
+         2) writeable
+         3) Picasso's "Blue Period"
+       We handle the first two. */
+    if (! ((mode && S_IWUSR)  /* No writeable requested. */
+           || (mode && S_IWGRP)
+           || (mode && S_IWOTH))
+    {
+        xchmod (filename, 0);
+    }
+    else /* writeable requested */
+    {
+        xchmod (filename, 1);
+    }
+#else /* ! CHMOD_BROKEN */
     if (chmod (filename, mode) < 0)
 	return errno;
+#endif /* ! CHMOD_BROKEN */
     return 0;
 }
 
