@@ -1,3 +1,20 @@
+2004-10-29  Mark D. Baushke  <mdb@cvshome.org>
+
+	* server.c: Need to #include <netdb.h> for either PROXY_SUPPORT or
+	HAVE_GSSAPI to get gethostbyname() declarations for
+
+2004-10-29  Mark D. Baushke  <mdb@cvshome.org>
+
+	* filesubr.c(SIZE_MAX, SSIZE_MAX): Use #include "xsize.h" instead.
+	(xreadlink): Use xrealloc instead of xmalloc/free.
+	
+2004-10-29  Mark D. Baushke  <mdb@cvshome.org>
+
+	* filesubr.c (SIZE_MAX, SSIZE_MAX): New constants.
+	(xreadlink): Deal with symlinks longer than 127 bytes.
+	(Problem reported as issue 190 by Gottfried Ganssauge
+	<gotti@cvshome.org>.)
+	
 2004-10-29 Derek Price <derek@ximbiot.com>
 
 	* server.c (isSameHost): New fuction.

@@ -19,6 +19,7 @@
 
 #include "cvs.h"
 #include "save-cwd.h"
+#include "xsize.h"
 
 static int deep_remove_dir (const char *path);
 
@@ -793,26 +794,28 @@ char *
 xreadlink (const char *link)
 {
     char *file = NULL;
-    int buflen = 128;
-    int link_name_len;
+    size_t buflen = 128;
+    ssize_t link_name_len;
 
-    /* Get the name of the file to which `from' is linked.
-       FIXME: what portability issues arise here?  Are readlink &
-       ENAMETOOLONG defined on all systems? -twp */
-    do
+    /* Get the name of the file to which `from' is linked. */
+    while (1)
     {
 	file = xrealloc (file, buflen);
-	link_name_len = readlink (link, file, buflen - 1);
+	link_name_len = readlink (link, file, buflen);
+
+	if (link_name_len < 0)
+	    error (1, errno, "cannot readlink %s", link);
+
+	/* If there is space for the NUL byte, set it and return. */
+	if ((size_t) link_name_len < buflen)
+	{
+	    file[link_name_len] = '\0';
+	    return file;
+	}
 	buflen *= 2;
+	if (! (0 < buflen && buflen < SSIZE_MAX))
+	    error (1, ENAMETOOLONG, "cannot readlink %s", link);
     }
-    while (link_name_len < 0 && errno == ENAMETOOLONG);
-
-    if (link_name_len < 0)
-	error (1, errno, "cannot readlink %s", link);
-
-    file[link_name_len] = '\0';
-
-    return file;
 }
 #endif /* HAVE_READLINK */
 
