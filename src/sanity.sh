@@ -7343,68 +7343,71 @@ U dir/dir2d2-2/sub2d2-2/file2-2"
 	  ## on the command line, but use a longer path.
 	  ##################################################
 
+	  dotest_fail cvsadm-2d3-1 "${testcvs} co -d dir/dir2 1mod" \
+"${PROG} [a-z]*: cannot chdir to dir: No such file or directory
+${PROG} [a-z]*: ignoring module 1mod"
+
+	  if test "$remote" = no; then
+	  # Remote can't handle this, even with the "mkdir dir".
+	  # This was also true of CVS 1.9.
+
+	  mkdir dir
 	  dotest cvsadm-2d3 "${testcvs} co -d dir/dir2 1mod" \
 "${PROG} [a-z]*: Updating dir/dir2
 U dir/dir2/file1"
 	  dotest cvsadm-2d3b "cat CVS/Repository" \
 "${AREP}\."
-	  dotest cvsadm-2d3d "cat dir/CVS/Repository" \
-"${AREP}CVSROOT/Emptydir"
+	  dotest_fail cvsadm-2d3d "test -f dir/CVS/Repository" ""
 	  dotest cvsadm-2d3f "cat dir/dir2/CVS/Repository" \
 "${AREP}mod1"
 	  rm -rf CVS dir
 
+	  mkdir dir
 	  dotest cvsadm-2d4 "${testcvs} co -d dir/dir2 2mod" \
 "${PROG} [a-z]*: Updating dir/dir2
 U dir/dir2/file2"
 	  dotest cvsadm-2d4b "cat CVS/Repository" \
 "${AREP}\."
-	  dotest cvsadm-2d4d "cat dir/CVS/Repository" \
-"${AREP}CVSROOT/Emptydir"
 	  dotest cvsadm-2d4f "cat dir/dir2/CVS/Repository" \
 "${AREP}mod2/sub2"
 	  rm -rf CVS dir
 
+	  mkdir dir
 	  dotest cvsadm-2d5 "${testcvs} co -d dir/dir2 1d1mod" \
 "${PROG} [a-z]*: Updating dir/dir2
 U dir/dir2/file1"
 	  dotest cvsadm-2d5b "cat CVS/Repository" \
 "${AREP}\."
-	  dotest cvsadm-2d5d "cat dir/CVS/Repository" \
-"${AREP}CVSROOT/Emptydir"
 	  dotest cvsadm-2d5f "cat dir/dir2/CVS/Repository" \
 "${AREP}mod1"
 	  rm -rf CVS dir
 
+	  mkdir dir
 	  dotest cvsadm-2d6 "${testcvs} co -d dir/dir2 1d2mod" \
 "${PROG} [a-z]*: Updating dir/dir2
 U dir/dir2/file2"
 	  dotest cvsadm-2d6b "cat CVS/Repository" \
 "${AREP}\."
-	  dotest cvsadm-2d6d "cat dir/CVS/Repository" \
-"${AREP}CVSROOT/Emptydir"
 	  dotest cvsadm-2d6f "cat dir/dir2/CVS/Repository" \
 "${AREP}mod2/sub2"
 	  rm -rf CVS dir
 
+	  mkdir dir
 	  dotest cvsadm-2d7 "${testcvs} co -d dir/dir2 2d1mod" \
 "${PROG} [a-z]*: Updating dir/dir2
 U dir/dir2/file1"
 	  dotest cvsadm-2d7b "cat CVS/Repository" \
 "${AREP}\."
-	  dotest cvsadm-2d7d "cat dir/CVS/Repository" \
-"${AREP}CVSROOT/Emptydir"
 	  dotest cvsadm-2d7f "cat dir/dir2/CVS/Repository" \
 "${AREP}mod1"
 	  rm -rf CVS dir
 
+	  mkdir dir
 	  dotest cvsadm-2d8 "${testcvs} co -d dir/dir2 2d2mod" \
 "${PROG} [a-z]*: Updating dir/dir2
 U dir/dir2/file2"
 	  dotest cvsadm-2d8b "cat CVS/Repository" \
 "${AREP}\."
-	  dotest cvsadm-2d8d "cat dir/CVS/Repository" \
-"${AREP}CVSROOT/Emptydir"
 	  dotest cvsadm-2d8f "cat dir/dir2/CVS/Repository" \
 "${AREP}mod2/sub2"
 	  rm -rf CVS dir
@@ -7546,65 +7549,60 @@ U dir/dir2d2/sub2d2/file2"
 
 	  ## the ones in two-deep directories
 
+	  mkdir dir
 	  dotest cvsadm-N2d3 "${testcvs} co -N -d dir/dir2 1mod" \
 "${PROG} [a-z]*: Updating dir/dir2/1mod
 U dir/dir2/1mod/file1"
 	  dotest cvsadm-N2d3b "cat CVS/Repository" \
 "${AREP}\."
-	  dotest cvsadm-N2d3d "cat dir/CVS/Repository" \
-"${AREP}CVSROOT/Emptydir"
 	  dotest cvsadm-N2d3f "cat dir/dir2/CVS/Repository" \
 "${AREP}\."
 	  dotest cvsadm-N2d3h "cat dir/dir2/1mod/CVS/Repository" \
 "${AREP}mod1"
 	  rm -rf CVS dir
 
+	  mkdir dir
 	  dotest cvsadm-N2d4 "${testcvs} co -N -d dir/dir2 2mod" \
 "${PROG} [a-z]*: Updating dir/dir2/2mod
 U dir/dir2/2mod/file2"
 	  dotest cvsadm-N2d4b "cat CVS/Repository" \
 "${AREP}\."
-	  dotest cvsadm-N2d4d "cat dir/CVS/Repository" \
-"${AREP}CVSROOT/Emptydir"
 	  dotest cvsadm-N2d4f "cat dir/dir2/CVS/Repository" \
 "${AREP}\."
 	  dotest cvsadm-N2d4h "cat dir/dir2/2mod/CVS/Repository" \
 "${AREP}mod2/sub2"
 	  rm -rf CVS dir
 
+	  mkdir dir
 	  dotest cvsadm-N2d5 "${testcvs} co -N -d dir/dir2 1d1mod" \
 "${PROG} [a-z]*: Updating dir/dir2/dir1d1
 U dir/dir2/dir1d1/file1"
 	  dotest cvsadm-N2d5b "cat CVS/Repository" \
 "${AREP}\."
-	  dotest cvsadm-N2d5d "cat dir/CVS/Repository" \
-"${AREP}CVSROOT/Emptydir"
 	  dotest cvsadm-N2d5f "cat dir/dir2/CVS/Repository" \
 "${AREP}\."
 	  dotest cvsadm-N2d5h "cat dir/dir2/dir1d1/CVS/Repository" \
 "${AREP}mod1"
 	  rm -rf CVS dir
 
+	  mkdir dir
 	  dotest cvsadm-N2d6 "${testcvs} co -N -d dir/dir2 1d2mod" \
 "${PROG} [a-z]*: Updating dir/dir2/dir1d2
 U dir/dir2/dir1d2/file2"
 	  dotest cvsadm-N2d6b "cat CVS/Repository" \
 "${AREP}\."
-	  dotest cvsadm-N2d6d "cat dir/CVS/Repository" \
-"${AREP}CVSROOT/Emptydir"
 	  dotest cvsadm-N2d6f "cat dir/dir2/CVS/Repository" \
 "${AREP}\."
 	  dotest cvsadm-N2d6h "cat dir/dir2/dir1d2/CVS/Repository" \
 "${AREP}mod2/sub2"
 	  rm -rf CVS dir
 
+	  mkdir dir
 	  dotest cvsadm-N2d7 "${testcvs} co -N -d dir/dir2 2d1mod" \
 "${PROG} [a-z]*: Updating dir/dir2/dir2d1/sub2d1
 U dir/dir2/dir2d1/sub2d1/file1"
 	  dotest cvsadm-N2d7b "cat CVS/Repository" \
 "${AREP}\."
-	  dotest cvsadm-N2d7d "cat dir/CVS/Repository" \
-"${AREP}CVSROOT/Emptydir"
 	  dotest cvsadm-N2d7f "cat dir/dir2/CVS/Repository" \
 "${AREP}\."
 	  dotest cvsadm-N2d7f "cat dir/dir2/dir2d1/CVS/Repository" \
@@ -7613,13 +7611,12 @@ U dir/dir2/dir2d1/sub2d1/file1"
 "${AREP}mod1"
 	  rm -rf CVS dir
 
+	  mkdir dir
 	  dotest cvsadm-N2d8 "${testcvs} co -N -d dir/dir2 2d2mod" \
 "${PROG} [a-z]*: Updating dir/dir2/dir2d2/sub2d2
 U dir/dir2/dir2d2/sub2d2/file2"
 	  dotest cvsadm-N2d8b "cat CVS/Repository" \
 "${AREP}\."
-	  dotest cvsadm-N2d8d "cat dir/CVS/Repository" \
-"${AREP}CVSROOT/Emptydir"
 	  dotest cvsadm-N2d8f "cat dir/dir2/CVS/Repository" \
 "${AREP}\."
 	  dotest cvsadm-N2d8h "cat dir/dir2/dir2d2/CVS/Repository" \
@@ -7627,6 +7624,8 @@ U dir/dir2/dir2d2/sub2d2/file2"
 	  dotest cvsadm-N2d8j "cat dir/dir2/dir2d2/sub2d2/CVS/Repository" \
 "${AREP}mod2/sub2"
 	  rm -rf CVS dir
+
+	  fi # end of tests to be skipped for remote
 
 	  ##################################################
 	  ## That's enough of that, thank you very much.
@@ -7714,11 +7713,27 @@ U ${TESTDIR}/1/file1"
 	  # Now try in a subdirectory.  We're not covering any more
 	  # code here, but we might catch a future error if someone
 	  # changes the checkout code.
+
+	  # Note that for the same reason that the shell command
+	  # "touch 1/2/3" requires directories 1 and 1/2 to already
+	  # exist, we expect ${TESTDIR}/1 to already exist.  I believe
+	  # this is the behavior of CVS 1.9 and earlier.
+	  dotest_fail abspath-3.1 "${testcvs} co -d ${TESTDIR}/1/2 mod1" \
+"${PROG} [a-z]*: cannot chdir to 1: No such file or directory
+${PROG} [a-z]*: ignoring module mod1"
+	  mkdir 1
+
 	  dotest abspath-3a "${testcvs} co -d ${TESTDIR}/1/2 mod1" \
 "${PROG} [a-z]*: Updating ${TESTDIR}/1/2
 U ${TESTDIR}/1/2/file1"
 	  dotest abspath-3b "cat ${TESTDIR}/1/2/CVS/Repository" \
 "${AREP}mod1"
+
+	  # For all the same reasons that we want "1" to already
+	  # exist, we don't to mess with it to traverse it, for
+	  # example by creating a CVS directory.
+
+	  dotest_fail abspath-3c "test -d ${TESTDIR}/1/CVS" ''
 	  # Done.  Clean up.
 	  rm -rf ${TESTDIR}/1
 
@@ -7769,17 +7784,31 @@ U ${TESTDIR}/1/mod2/file2"
 	  # Done.  Clean up.
 	  rm -rf ${TESTDIR}/1
 
+	  # Test that an absolute pathname to some other directory
+	  # doesn't mess with the current working directory.
+	  mkdir 1
+	  cd 1
+	  dotest abspath-7a "${testcvs} -q co -d ${TESTDIR}/2 mod2" \
+"U ${TESTDIR}/2/file2"
+	  if test "$remote" = no; then
+	    # Remote is creating a CVS directory.  Grr.
+	    dotest abspath-7b "ls" ""
+	  fi
+	  dotest abspath-7c "${testcvs} -q co mod1" \
+"U mod1/file1"
+	  cd mod1
+	  dotest abspath-7d "${testcvs} -q co -d ${TESTDIR}/3 mod2" \
+"U ${TESTDIR}/3/file2"
+	  dotest abspath-7e "${testcvs} -q update -d" ""
+	  cd ../..
+	  rm -r 1 2 3
+
 	  #
 	  # FIXME: do other functions here (e.g. update /tmp/foo)
 	  #
 
 	  # Finished with all tests.  Remove the module.
-	  rm -rf ${CVSROOT_DIRNAME}/mod1 ${CVSROOT_DIRNAME}/mod1
-
-	  # FIXME: the absolute pathname fixes create CVS directories
-	  # wherever they can.  That means for the standard TESTDIR, a
-	  # /tmp/CVS directory will be created as well.  It's not safe
-	  # to remove it, however.
+	  rm -rf ${CVSROOT_DIRNAME}/mod1 ${CVSROOT_DIRNAME}/mod2
 
 	  ;;
 

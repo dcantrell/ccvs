@@ -1,3 +1,28 @@
+1998-04-16  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* checkout.c (checkout_proc): Don't create directories above the
+	last one specified in "co -d".
+	(build_dirs_and_chdir): Revert Noel's change of 17 Feb 1998.
+	(struct dir_to_build): New field just_chdir.
+	(build_dirs_and_chdir): Test it.
+	* sanity.sh (abspath): New tests abspath-7* test for a bug which
+	we fix, in which CVS would create bogus "D/////" entries in
+	CVS/Entries.
+	(abspath): Revise abspath-3* tests to test for the fact that we no
+	longer create directories above the last one specified in "co -d".
+	I checked that CVS 1.9 gives an error on this, so changing this
+	behavior back should be OK.
+	(cvsadm-2d3): Likewise (also checked CVS 1.9 for this case).
+	(cvsadm-2d3d): Likewise (also checked CVS 1.9 for this case).
+	(cvsadm-2d{4,5,6,7,8}, cvsadm-N2d{3,4,5,6,7,8}): Adjust for new
+	behavior (same case as cvsadm-2d3).
+	(cvsadm-2d{4,5,6,7,8}d, cvsadm-N2d{3,4,5,6,7,8}d): Remove test
+	(same case as cvsadm-2d3d).
+	(cvsadm): For remote, skip most these tests.
+	(abspath): When cleaning up, delete mod1 and mod2 rather than mod1
+	twice (longstanding bug, apparently only becomes visible if you
+	run the tests in a certain order).
+
 1998-04-14  Wilfredo Sanchez  <wsanchez@apple.com>
 
 	* rcs.c: variable "lockfile" was being referenced after being
