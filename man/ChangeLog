@@ -1,3 +1,7 @@
+Mon Sep 30 18:21:05 1996  Greg A. Woods  <woods@most.weird.com>
+
+	* cvs.1: document -D, -g, DIFFBIN, and GREPBIN.
+
 Mon Sep 16 23:22:16 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvsbug.8: Remove references to cvsbug.el (or other aspects of

@@ -4,6 +4,42 @@ Mon Sep 30 23:31:01 1996  Jim Blandy  <jimb@floss.cyclic.com>
  	node in rcsfile->other, thanks to Ian's change below, we had
  	better deal correctly if we find a null pointer in it.
 
+Mon Sep 30 13:55:03 1996  Greg A. Woods  <woods@most.weird.com>
+
+	* main.c (main): don't set need_to_create_root for "cvs init"
+	either, just in case it's run from within a valid working
+	directory.
+
+	* sanity.sh (testcvs): oops, forgot to comment out test version I
+ 	was using...
+
+	* diff.c (diff_fileproc): use Diffbin instead of DIFF (3).
+	* patch.c (patch_fileproc): use Diffbin instead of DIFF.
+	* commit.c (check_fileproc): use Grepbin instead of GREP.
+	* rcscmds.c (RCS_merge): use Grepbin instead of GREP.
+	* update.c (patch_file): use Diffbin instead of DIFF.
+	(update_fileproc): use Grepbin instead of GREP.
+	* cvs.h (Diffbin): new declaration.
+	(Grepbin): new declaration.
+	(DIFFBIN_ENV): new manifest to name DIFFBIN environ var.
+	(GREPBIN_ENV): new manifest to name GREPBIN environ var.
+	* option.h.in (DIFFBIN_DFLT): renamed from DIFF.
+	(GREPBIN_DFLT): renamed from GREP.
+	* main.c (main): new variables diffbin_update_env and
+	grepbin_update_inv, ala rcsbin_update_env.
+	(main): new options -D diffbin and -g grepbin
+	(usg): describe new options -D diffbin and -g grepbin.
+	(Diffbin): new global variable for DIFF path.
+	(Grepfbin): new global variable for GREP path.
+
+	* options.h.in (RCSBIN_DFLT): mention this needs to be set if
+	your PATH isn't set properly by rshd.
+
+	* sanity.sh (rdiff): re-do Jim's change, but with the original
+	keywords I had intended (should be a bit more like real life), and
+	Jim's better RCS date and user matching form.
+	[I guess that's what I get for checking things in at 3am! ;-)]
+
 Mon Sep 30 17:00:20 1996  Ian Lance Taylor  <ian@cygnus.com>
 
 	* rcs.c (RCS_reparsercsfile): Store desc field value in main RCS
