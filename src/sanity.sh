@@ -4189,31 +4189,36 @@ File: a                	Status: File had conflicts on merge
    Sticky Tag:		(none)
    Sticky Date:		(none)
    Sticky Options:	(none)"
-		dotest_fail conflicts-132 "${testcvs} -q ci -m try" \
-"${PROG} [a-z]*: file .a. still contains conflict indicators
-${PROG} \[[a-z]* aborted\]: correct above errors first!"
+		dotest conflicts-132 "${testcvs} -q ci -m try" \
+"${PROG} [a-z]*: warning: file .a. seems to still contain conflict indicators
+Checking in a;
+${TESTDIR}/cvsroot/first-dir/a,v  <--  a
+new revision: 1\.3; previous revision: 1\.2
+done"
 
+		# OK, the user saw the warning (good user), and now
+		# resolves it for real.
 		echo resolve conflict >a
 		dotest conflicts-status-3 "${testcvs} status a" \
 "===================================================================
-File: a                	Status: File had conflicts on merge
+File: a                	Status: Locally Modified
 
-   Working revision:	1\.2.*
-   Repository revision:	1\.2	${TESTDIR}/cvsroot/first-dir/a,v
+   Working revision:	1\.3.*
+   Repository revision:	1\.3	${TESTDIR}/cvsroot/first-dir/a,v
    Sticky Tag:		(none)
    Sticky Date:		(none)
    Sticky Options:	(none)"
 		dotest conflicts-133 "${testcvs} -q ci -m resolved" \
 "Checking in a;
 ${TESTDIR}/cvsroot/first-dir/a,v  <--  a
-new revision: 1\.3; previous revision: 1\.2
+new revision: 1\.4; previous revision: 1\.3
 done"
 		dotest conflicts-status-4 "${testcvs} status a" \
 "===================================================================
 File: a                	Status: Up-to-date
 
-   Working revision:	1\.3.*
-   Repository revision:	1\.3	${TESTDIR}/cvsroot/first-dir/a,v
+   Working revision:	1\.4.*
+   Repository revision:	1\.4	${TESTDIR}/cvsroot/first-dir/a,v
    Sticky Tag:		(none)
    Sticky Date:		(none)
    Sticky Options:	(none)"

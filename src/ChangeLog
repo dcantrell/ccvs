@@ -1,3 +1,11 @@
+Sun Sep 14 12:23:15 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* commit.c (check_fileproc): If the file has "conflict
+	indicators", spit a warning and proceed with the checkin.
+	* sanity.sh (conflicts): Adjust tests conflicts-132,
+	conflicts-status-3, conflicts-133, and conflicts-status-4
+	for new behavior.
+
 Fri Sep 12 11:12:34 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* add.c, admin.c, checkin.c, checkout.c, classify.c, commit.c,
