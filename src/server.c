@@ -2517,7 +2517,7 @@ check_command_valid_p (char *cmd_name)
 }
 
 
-
+
 /* Execute COMMAND in a subprocess with the approriate funky things done.  */
 
 static struct fd_set_wrapper { fd_set fds; } command_fds_to_drain;
@@ -2528,6 +2528,28 @@ static int max_command_fd;
 #ifdef SERVER_FLOWCONTROL
 static int flowcontrol_pipe[2];
 #endif /* SERVER_FLOWCONTROL */
+
+
+
+/*
+ * Set buffer FD to non-blocking I/O.  Returns 0 for success or errno
+ * code.
+ */
+int
+set_nonblock_fd (fd)
+     int fd;
+{
+    int flags;
+
+    flags = fcntl (fd, F_GETFL, 0);
+    if (flags < 0)
+	return errno;
+    if (fcntl (fd, F_SETFL, flags | O_NONBLOCK) < 0)
+	return errno;
+    return 0;
+}
+
+
 
 static void
 do_cvs_command (char *cmd_name, int (*command) (int, char **))

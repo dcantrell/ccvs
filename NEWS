@@ -3,6 +3,10 @@ Changes since 1.12.5:
 
 GENERAL USER ISSUES
 
+* The CVS server has had the protocol check for unused data from the client
+  completely removed.  It is now assumed that the server knows when to shut
+  down or we would detect it via other means.
+
 * The CVSROOT/*info files want a new command format and the old style strings
   have been deprecated.  Please see the manual for more information on the new
   format.

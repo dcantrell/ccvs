@@ -815,5 +815,3 @@ main( int argc, char *argv[] )
    /* NOTREACHED */
 }
 #endif
-/* vim:tabstop=8:shiftwidth=4
- */

@@ -1,5 +1,9 @@
 2004-02-20  Derek Price  <derek@ximbiot.com>
 
+	* NEWS: Note that the dying gasp check has now been completely removed.
+
+2004-02-20  Derek Price  <derek@ximbiot.com>
+
 	Import xalloc module from GNULIB, as well as its remaining unimported
 	dependency, the exitfail module.
 
