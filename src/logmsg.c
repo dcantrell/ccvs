@@ -560,6 +560,7 @@ do_verify (messagep, repository)
     if (unlink_file (fname) < 0)
 	error (0, errno, "cannot remove %s", fname);
     free (fname);
+    free( verifymsg_script );
 }
 
 /*

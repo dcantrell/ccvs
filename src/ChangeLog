@@ -1,5 +1,18 @@
 2003-06-23  Derek Price  <derek@ximbiot.com>
 
+	* add.c (add): Fix xmalloc's strlen() of wrong variable.
+	* checkout.c (safe_location): leak: reused where_location without free.
+	* log.c (rlog_proc): leak: free where before exit.
+	* logmsg.c (do_verify): leak: free verifymsg_script before exit.
+	(Original patch from Kenneth Lorber <keni@his.com>.)
+
+2003-06-23  Derek Price  <derek@ximbiot.com>
+
+	* client.c: Remove silly comment.
+	(Patch from Alexey Mahotkin  <alexm@hsys.msk.ru>.)
+
+2003-06-23  Derek Price  <derek@ximbiot.com>
+
 	* kerberos4-client.h, kerberos4-client.c, client.c: Rename
 	start_tcp_server() to start_kerberos4_server().
 	(Patch from Alexey Mahotkin  <alexm@hsys.msk.ru>.)
