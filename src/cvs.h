@@ -506,7 +506,7 @@ extern int ign_case;
 
 #include "update.h"
 
-void line2argv PROTO((int *pargc, char *argv[], char *line));
+void line2argv PROTO ((int *pargc, char ***argv, char *line));
 void make_directories PROTO((const char *name));
 void make_directory PROTO((const char *name));
 extern int mkdir_if_needed PROTO ((char *name));
