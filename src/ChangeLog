@@ -1,3 +1,10 @@
+Fri Feb 13 17:07:32 1998  Ian Lance Taylor  <ian@cygnus.com>
+
+	Fix some file system ordering problems found on Irix 6.4:
+	* sanity.sh (basic2): Use dotest_sort for test 56.
+	(importb): Use dotest_sort for tests importb-1 and importb-2.
+	(head): Use dotest_sort for test head-1.
+
 Thu Feb 12 15:15:33 1998  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* import.c (add_rcs_file): If add_logfp is NULL, don't call fperror.

@@ -1903,20 +1903,21 @@ done"
 		# interrupt, while we've got a clean 1.1 here, let's import it
 		# into a couple of other modules.
 		cd export-dir
-		dotest 56 "${testcvs} import -m first-import second-dir first-immigration immigration1 immigration1_0" \
-"N second-dir/file14
-N second-dir/file6
-N second-dir/file7
-${PROG} [a-z]*: Importing ${TESTDIR}/cvsroot/second-dir/dir1
-N second-dir/dir1/file14
-N second-dir/dir1/file6
-N second-dir/dir1/file7
-${PROG} [a-z]*: Importing ${TESTDIR}/cvsroot/second-dir/dir1/dir2
+		dotest_sort 56 "${testcvs} import -m first-import second-dir first-immigration immigration1 immigration1_0" \
+"
+
 N second-dir/dir1/dir2/file14
 N second-dir/dir1/dir2/file6
 N second-dir/dir1/dir2/file7
-
-No conflicts created by this import"
+N second-dir/dir1/file14
+N second-dir/dir1/file6
+N second-dir/dir1/file7
+N second-dir/file14
+N second-dir/file6
+N second-dir/file7
+No conflicts created by this import
+${PROG} [a-z]*: Importing ${TESTDIR}/cvsroot/second-dir/dir1
+${PROG} [a-z]*: Importing ${TESTDIR}/cvsroot/second-dir/dir1/dir2"
 		cd ..
 
 		if ${CVS} export -r HEAD second-dir  ; then
@@ -3567,11 +3568,12 @@ rev 2 of file 2
 	  cd imp-dir
 	  echo 'OpenMunger sources' >file1
 	  echo 'OpenMunger sources' >file2
-	  dotest importb-1 \
+	  dotest_sort importb-1 \
 "${testcvs} import -m add first-dir openmunger openmunger-1_0" \
-"N first-dir/file1
-N first-dir/file2
+"
 
+N first-dir/file1
+N first-dir/file2
 No conflicts created by this import"
 	  cd ..
 	  rm -r imp-dir
@@ -3583,15 +3585,16 @@ No conflicts created by this import"
 	  echo 'FreeMunger sources' >file2
 	  # Not completely sure how the conflict detection is supposed to
 	  # be working here (haven't really thought about it).
-	  dotest importb-2 \
+	  dotest_sort importb-2 \
 "${testcvs} import -m add -b 1.1.3 first-dir freemunger freemunger-1_0" \
-"C first-dir/file1
-C first-dir/file2
+"
 
+
+	${PROG} checkout -jfreemunger:yesterday -jfreemunger first-dir
 2 conflicts created by this import.
-Use the following command to help the merge:
-
-	${PROG} checkout -jfreemunger:yesterday -jfreemunger first-dir"
+C first-dir/file1
+C first-dir/file2
+Use the following command to help the merge:"
 	  cd ..
 	  rm -r imp-dir
 
@@ -10089,10 +10092,11 @@ ${PROG} [a-z]*: Updating top-dir"
 	  # It may seem like we don't do much with file2, but do note that
 	  # the "cvs diff" invocations do also diff file2 (and come up empty).
 	  echo 'imported contents' >file2
-	  dotest head-1 "${testcvs} import -m add first-dir tag1 tag2" \
-"N first-dir/file1
-N first-dir/file2
+	  dotest_sort head-1 "${testcvs} import -m add first-dir tag1 tag2" \
+"
 
+N first-dir/file1
+N first-dir/file2
 No conflicts created by this import"
 	  cd ..
 	  rm -r imp-dir
