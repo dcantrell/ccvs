@@ -1,3 +1,7 @@
+2003-10-23  Mark D. Baushke  <mdb@cvshome.org>
+
+	* NEWS: Note behavior change for cvs update -jrev1 -jrev2.
+
 2003-10-21  Derek Price  <derek@ximbiot.com>
 
 	* NEWS: Note Mark's recent admin -m fix.
