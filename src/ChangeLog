@@ -1,3 +1,10 @@
+2001-08-30  Derek Price  <dprice@collab.net>
+
+	* server.c (pserver_authenticate_connection): Don't print from the
+	NULL pointer in the error message string in the case where the client
+	didn't send any data.
+	* sanity.sh (pserver): Test for this case.
+
 2001-08-24  Derek Price  <dprice@collab.net>
 
 	* logmsg.c (do_editor): Add comment and assertion.

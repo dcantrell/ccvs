@@ -23489,6 +23489,11 @@ END AUTH REQUEST
 init ${CVSROOT_DIRNAME}
 EOF
 
+	    # pserver used to try and print from the NULL pointer 
+	    # in this error message in this case
+	    dotest_fail pserver-bufinit "cat /dev/null |${testcvs} pserver" \
+"$PROG \[pserver aborted\]: bad auth protocol start: "
+
 	    # Clean up.
 	    echo "# comments only" >config
 	    dotest pserver-cleanup-1 "${testcvs} -q ci -m config-it" \
