@@ -181,6 +181,7 @@ static const char *const usg[] =
 #ifdef CLIENT_SUPPORT
     "        -z #         Use 'gzip -#' for net traffic if possible.\n",
 #endif
+    "        -s VAR=VAL   Set CVS user variable.\n",
     "\n",
     "    and where 'command' is: add, admin, etc. (use the --help-commands\n",
     "    option for a list of commands)\n",

@@ -1,3 +1,7 @@
+Wed Feb 14 19:11:08 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* main.c (usg): Add -s option.
+
 Tue Feb 13 20:26:06 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	gcc -Wall lint:
