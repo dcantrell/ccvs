@@ -1,3 +1,8 @@
+Mon Jul 14 15:58:25 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* scc.c: Add many comments and defines to document additional
+	aspects of the SCC API.
+
 7 Jul 1997  Frederic Van Haren  <Frederic.Van.Haren@lhs.be>
 
 	* scc.c (SccHistory): file_names is LPSTR * not LPSTR.
