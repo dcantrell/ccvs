@@ -138,6 +138,21 @@ $GNULIB/m4/strerror.m4				m4		no NI
 $GNULIB/lib/unlocked-io.h			lib		no NI
 $GNULIB/m4/onceonly_2_57.m4			m4		no NI
 $GNULIB/m4/unlocked-io.m4			m4		no NI
+# $GNULIB/modules/vasnprintf
+$GNULIB/lib/asnprintf.c				lib		no NI
+$GNULIB/lib/printf-args.c			lib		no NI
+$GNULIB/lib/printf-args.h			lib		no NI
+$GNULIB/lib/printf-parse.c			lib		no NI
+$GNULIB/lib/printf-parse.h			lib		no NI
+$GNULIB/lib/vasnprintf.c			lib		no NI
+$GNULIB/lib/vasnprintf.h			lib		no NI
+$GNULIB/m4/intmax_t.m4				m4		no NI
+$GNULIB/m4/longdouble.m4			m4		no NI
+$GNULIB/m4/longlong.m4				m4		no NI
+$GNULIB/m4/signed.m4				m4		no NI
+$GNULIB/m4/vasnprintf.m4			m4		no NI
+$GNULIB/m4/wchar_t.m4				m4		no NI
+$GNULIB/m4/wint_t.m4				m4		no NI
 # $GNULIB/modules/xsize
 $GNULIB/lib/xsize.h				lib		no NI
 $GNULIB/m4/xsize.m4				m4		no NI
