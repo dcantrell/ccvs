@@ -1,3 +1,9 @@
+2001-06-20  Larry Jones  <larry.jones@sdrc.com>
+
+	* server.c (switch_to_user): Only set $CVS_USER if
+	AUTH_SERVER_SUPPORT is defined.
+	(Reported by Nalin Dahyabhai <nalin@blade.devel.redhat.com>.)
+
 2001-06-13  Derek Price  <dprice@collab.net>
 
         * client.c: Fix incorrect fixed-size buffer usage in
