@@ -1,3 +1,11 @@
+Tue Sep 10 17:15:21 1996  Jim Blandy  <jimb@totoro.cyclic.com>
+
+	* client.c (auth_server_port_number): Look up "cvs" in the
+ 	services database, and use the value it returns; fall back to
+	CVS_AUTH_PORT if no entry is present.
+	(connect_to_pserver): Use the correct port number in any error
+	messages.
+
 Tue Sep 10 11:12:42 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* sanity.sh (newb): New test newb-123j0 tests for another "cvs
