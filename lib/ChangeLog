@@ -1,3 +1,9 @@
+Wed Jan  3 18:16:50 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* sighandle.c (SIG_register): Use memset not bzero.
+	* system.h: Remove defines for index, rindex, bcmp, and bzero.
+	All the calls to those functions are gone from CVS.
+
 Tue Jan  2 13:00:00 1996  Jim Kingdon  <kingdon@peary.cyclic.com>
 
 	Visual C++ lint:
