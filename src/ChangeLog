@@ -1,3 +1,8 @@
+2000-05-26  Larry Jones  <larry.jones@sdrc.com>
+
+	* rcs.c (rcsbuf_getstring, rcsbuf_getword, getdelta): Plug memory
+	leaks.
+
 2000-05-25  Larry Jones  <larry.jones@sdrc.com>
 
 	* checkout.c (checkout, build_one_dir, checkout_proc): Move m_type
