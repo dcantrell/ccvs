@@ -21,8 +21,6 @@ extern int fnmatch(char *pattern, char *string, int options);
 #include "pwd.h"
 #include "pipe.h"
 
-#define DEATH_SUPPORT 1
-
 int unlink(char *path);
 int link(char *from, char *to);
 

@@ -1,5 +1,7 @@
 Wed Feb 28 11:08:06 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* vms.h: Remove DEATH_SUPPORT; it was removed from CVS Feb 9.
+
 	* alloca.c: Removed.
 	* build_vms.com: Remove alloca.
 	* startserver.c (vms_start_server): Use xmalloc/free, not alloca.
