@@ -1,3 +1,8 @@
+2001-02-01  Larry Jones  <larry.jones@sdrc.com>
+
+	* cvs.texinfo (Connection): Add still more notes about common
+	pserver error messages.
+
 2001-01-18  Derek Price  <derek.price@openavenue.com>
 
 	* cvs.texinfo (Quick reference to CVS commands): add index entry for
