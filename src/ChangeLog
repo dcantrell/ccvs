@@ -1,7 +1,7 @@
 2004-02-12  Larry Jones  <lawrence.jones@ugsplm.com>
 
 	* lock.c (_lock_simple_remove): Rename to remove_lock_files to avoid
-	reserved name.
+	reserved name.  Fix typo (free => free_repository).
 	(lock_simple_remove): Delete; use remove_lock_files directly.
 	(lock_simple_remove_and_free): Ditto.
 	(_lock_exists): Rename to lock_exists.
