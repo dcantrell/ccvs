@@ -1,4 +1,4 @@
-Mon Dec 11 15:57:03 1995  unknown  (unknown@beezley)
+Mon Dec 11 15:57:03 1995  Karl Fogel  (kfogel@beezley.cyclic.com)
 
 		* Removed cvs.exe; we don't need to keep the binary in the
 		repository, now that binary file handling has been tested.
@@ -7,7 +7,7 @@ Mon Dec 11 15:53:51 1995  Karl Fogel  (kfogel@beezley.cyclic.com)
 
 		* rcmd.c (init_sockets): use sock_init(), not SockInit().
 
-Mon Dec 11 12:43:35 1995  adamg  <adamg@microsoft.com>
+Mon Dec 11 12:43:35 1995  Adam Glass  <adamg@microsoft.com>
         
 	* config.h: Remove NEED_CALL_SOCKINIT macro in favor of the more
  	generic INITIALIZE_SOCKET_SUBSYSTEM.
