@@ -801,18 +801,18 @@ logfile_write (const char *repository, const char *filter, const char *message,
 			             logmsg_list_to_args_proc, (void *) NULL,
 	                      (char *)NULL
 	                     );
-    if( !cmdline || !strlen( cmdline ) )
+    if (!cmdline || !strlen (cmdline))
     {
-	if( cmdline ) free( cmdline );
-	error( 0, 0, "logmsg proc resolved to the empty string!" );
+	if (cmdline) free (cmdline);
+	error (0, 0, "logmsg proc resolved to the empty string!");
 	return 1;
     }
 
-    if( ( pipefp = run_popen( cmdline, "w" ) ) == NULL )
+    if ((pipefp = run_popen (cmdline, "w")) == NULL)
     {
 	if (!noexec)
-	    error( 0, 0, "cannot write entry to log filter: %s", cmdline );
-	free( cmdline );
+	    error (0, 0, "cannot write entry to log filter: %s", cmdline);
+	free (cmdline);
 	return 1;
     }
     (void) fprintf (pipefp, "Update of %s\n", repository);
@@ -829,12 +829,12 @@ logfile_write (const char *repository, const char *filter, const char *message,
 
     setup_tmpfile (pipefp, "", changes);
     (void) fprintf (pipefp, "Log Message:\n%s\n", (message) ? message : "");
-    if (logfp != (FILE *) 0)
+    if (logfp)
     {
 	(void) fprintf (pipefp, "Status:\n");
 	rewind (logfp);
 	while ((c = getc (logfp)) != EOF)
-	    (void) putc ((char) c, pipefp);
+	    (void) putc (c, pipefp);
     }
     free (cmdline);
     pipestatus = pclose (pipefp);

@@ -827,10 +827,10 @@ notify_proc (const char *repository, const char *filter, void *closure)
 	"s", "s", args->notifyee,
 	NULL
 	);
-    if (!cmdline || !strlen(cmdline))
+    if (!cmdline || !strlen (cmdline))
     {
 	if (cmdline) free (cmdline);
-	error(0, 0, "pretag proc resolved to the empty string!");
+	error (0, 0, "pretag proc resolved to the empty string!");
 	return 1;
     }
 
@@ -838,7 +838,7 @@ notify_proc (const char *repository, const char *filter, void *closure)
     if (pipefp == NULL)
     {
 	error (0, errno, "cannot write entry to notify filter: %s", cmdline);
-	free(cmdline);
+	free (cmdline);
 	return 1;
     }
 
@@ -849,7 +849,7 @@ notify_proc (const char *repository, const char *filter, void *closure)
     /* Lots more potentially useful information we could add here; see
        logfile_write for inspiration.  */
 
-    free(cmdline);
+    free (cmdline);
     return pclose (pipefp);
 }
 
