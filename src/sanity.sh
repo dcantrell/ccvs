@@ -705,7 +705,7 @@ if test x"$*" = x; then
 	# PreservePermissions stuff: permissions, symlinks et al.
 	# tests="${tests} perms symlinks symlinks2 hardlinks"
 	# More tag and branch tests, keywords.
-	tests="${tests} sticky keyword keyword2 keywordlog"
+	tests="${tests} sticky keyword keywordlog keywordname keyword2"
 	tests="${tests} head tagdate multibranch2 tag8k"
 	# "cvs admin", reserved checkouts.
 	tests="${tests} admin reserved"
@@ -18897,6 +18897,117 @@ xx"
 	  fi
 
 	  rm -r 1 2
+	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  ;;
+
+	keywordname)
+	  # Test the Name keyword.
+	  # See the keyword test for a descriptions of some other tests that
+	  # test keyword expansion modes.
+	  mkdir keywordname; cd keywordname
+	  mkdir 1; cd 1
+	  dotest keywordname-init-1 "${testcvs} -q co -l ." ''
+	  mkdir first-dir
+	  dotest keywordname-init-2 "${testcvs} add first-dir" \
+"Directory ${CVSROOT_DIRNAME}/first-dir added to the repository"
+	  cd first-dir
+
+	  echo '$'"Name$" >file1
+	  echo '$'"Name$" >file2
+	  dotest keywordname-init-3 "${testcvs} add file1 file2" \
+"${PROG} [a-z]*: scheduling file .file1. for addition
+${PROG} [a-z]*: scheduling file .file2. for addition
+${PROG} [a-z]*: use .${PROG} commit. to add these files permanently"
+
+	  # See "rmadd" for a list of other tests of cvs ci -r.
+	  dotest keywordname-init-4 "${testcvs} -q ci -r 1.3 -m add" \
+"RCS file: ${CVSROOT_DIRNAME}/first-dir/file1,v
+done
+Checking in file1;
+${CVSROOT_DIRNAME}/first-dir/file1,v  <--  file1
+initial revision: 1\.3
+done
+RCS file: ${CVSROOT_DIRNAME}/first-dir/file2,v
+done
+Checking in file2;
+${CVSROOT_DIRNAME}/first-dir/file2,v  <--  file2
+initial revision: 1\.3
+done"
+
+	  dotest keywordname-init-6 "${testcvs} -q up -A"
+	  dotest keywordname-init-7 "${testcvs} -q tag -b br" \
+"T file1
+T file2"
+
+	  echo new data >>file1
+	  dotest keywordname-init-8 "${testcvs} -q ci -mchange" \
+"Checking in file1;
+${CVSROOT_DIRNAME}/first-dir/file1,v  <--  file1
+new revision: 1\.4; previous revision: 1\.3
+done"
+
+	  # First check out a branch.  Note the lack of a substitution in
+	  # both the update and non-update case.  Though it seems natural and
+	  # the doc seems to agree that the non-update case shouldn't include
+	  # a substitution, I think this is a bug in the update case.  Why
+	  # should branch tags be treated differently than static tags here?
+	  # FIXME - BUG
+	  #
+	  # Of course, as far as it being natural that the non-update case not
+	  # contain the substitution, why shouldn't it?  an update -kk or -A
+	  # will unsub and sub keywords without updates being required.
+	  dotest keywordname-update-1 "${testcvs} -q up -rbr" "[UP] file1"
+	  dotest keywordname-update-2 "cat file1" '\$'"Name:  "'\$'
+	  dotest keywordname-update-3 "cat file2" '\$'"Name:  "'\$'
+
+	  # Now verify that updating to the trunk leaves no substitution for
+	  # $Name
+	  dotest keywordname-update-4 "${testcvs} -q tag firsttag" \
+"T file1
+T file2"
+	  dotest keywordname-update-5 "${testcvs} -q up -A" "[UP] file1"
+	  dotest keywordname-update-6 "cat file1" \
+'\$'"Name:  "'\$'"
+new data"
+	  dotest keywordname-update-7 "cat file2" '\$'"Name:  "'\$'
+
+	  # But updating to a static tag does cause a substitution
+	  dotest keywordname-update-8 "${testcvs} -q up -rfirsttag" "[UP] file1"
+	  dotest keywordname-update-9 "cat file1" '\$'"Name: firsttag "'\$'
+	  dotest keywordname-update-10 "cat file2" '\$'"Name:  "'\$'
+
+	  # And reverify the trunk update when the change is actually removed.
+	  dotest keywordname-update-11 "${testcvs} -q up -A" "[UP] file1" \
+"P file1
+cvs update: checksum failure after patch to ./file1; will refetch
+cvs client: refetching unpatchable files
+U file1"
+	  dotest keywordname-update-12 "cat file1" \
+'\$'"Name:  "'\$'"
+new data"
+	  dotest keywordname-update-13 "cat file2" '\$'"Name:  "'\$'
+
+	  cd ../..
+
+	  # now verify that a fresh checkout substitutes all the $Name fields
+	  mkdir 2; cd 2
+	  dotest keywordname-checkout-1 \
+"${testcvs} -q co -rfirsttag first-dir" \
+"U first-dir/file1
+U first-dir/file2"
+	  cd first-dir
+	  dotest keywordname-checkout-2 "cat file1" '\$'"Name: firsttag "'\$'
+	  dotest keywordname-checkout-3 "cat file2" '\$'"Name: firsttag "'\$'
+
+	  cd ../..
+
+	  if $keep; then
+	    echo Keeping ${TESTDIR} and exiting due to --keep
+	    exit 0
+	  fi
+
+	  cd ..
+	  rm -r keywordname
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
 	  ;;
 
