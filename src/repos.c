@@ -14,7 +14,7 @@
 
 #ifndef lint
 static const char rcsid[] = "$CVSid: @(#)repos.c 1.32 94/09/23 $";
-USE(rcsid)
+USE(rcsid);
 #endif
 
 char *

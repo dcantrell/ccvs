@@ -12,7 +12,7 @@
 
 #ifndef lint
 static const char rcsid[] = "$CVSid: @(#)status.c 1.56 94/10/07 $";
-USE(rcsid)
+USE(rcsid);
 #endif
 
 static Dtype status_dirproc PROTO((char *dir, char *repos, char *update_dir));

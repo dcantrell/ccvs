@@ -10,7 +10,7 @@
 
 #ifndef lint
 static const char rcsid[] = "$CVSid: @(#)parseinfo.c 1.18 94/09/23 $";
-USE(rcsid)
+USE(rcsid);
 #endif
 
 /*

@@ -11,7 +11,7 @@
 
 #ifndef lint
 static const char rcsid[] = "$CVSid: @(#)classify.c 1.17 94/10/07 $";
-USE(rcsid)
+USE(rcsid);
 #endif
 
 #ifdef SERVER_SUPPORT

@@ -43,7 +43,7 @@
 
 #ifndef lint
 static const char rcsid[] = "$CVSid: @(#)update.c 1.95 94/10/22 $";
-USE(rcsid)
+USE(rcsid);
 #endif
 
 static int checkout_file PROTO((char *file, char *repository, List *entries,

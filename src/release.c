@@ -13,7 +13,7 @@
 
 #ifndef lint
 static const char rcsid[] = "$CVSid: @(#)release.c 1.23 94/09/21 $";
-USE(rcsid)
+USE(rcsid);
 #endif
 
 static void release_delete PROTO((char *dir));

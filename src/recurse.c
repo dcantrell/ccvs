@@ -13,7 +13,7 @@
 
 #ifndef lint
 static const char rcsid[] = "$CVSid: @(#)recurse.c 1.31 94/09/30 $";
-USE(rcsid)
+USE(rcsid);
 #endif
 
 static int do_dir_proc PROTO((Node * p, void *closure));
