@@ -1131,31 +1131,55 @@ date_from_time_t (unixtime)
 void
 date_to_internet (dest, source)
     char *dest;
-    char *source;
+    const char *source;
 {
-    int year, month, day, hour, minute, second;
+    struct tm date;
 
-    /* Just to reiterate, these strings are from RFC822 and do not vary
-       according to locale.  */
-    static const char *const month_names[] =
-      {"Jan", "Feb", "Mar", "Apr", "May", "Jun",
-	 "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
+    date_to_tm (&date, source);
+    tm_to_internet (dest, &date);
+}
 
+void
+date_to_tm (dest, source)
+    struct tm *dest;
+    const char *source;
+{
     if (sscanf (source, SDATEFORM,
-		&year, &month, &day, &hour, &minute, &second)
-	!= 6)
+		&dest->tm_year, &dest->tm_mon, &dest->tm_mday,
+		&dest->tm_hour, &dest->tm_min, &dest->tm_sec)
+	    != 6)
 	/* Is there a better way to handle errors here?  I made this
 	   non-fatal in case we are called from the code which can't
 	   deal with fatal errors.  */
 	error (0, 0, "internal error: bad date %s", source);
 
-    /* Always send a four digit year.  */
-    if (year < 100)
-	year += 1900;
+    if (dest->tm_year > 100)
+	dest->tm_year -= 1900;
 
-    sprintf (dest, "%d %s %d %02d:%02d:%02d -0000", day,
-	     month < 1 || month > 12 ? "???" : month_names[month - 1],
-	     year, hour, minute, second);
+    dest->tm_mon -= 1;
+}
+
+/* Convert a date to RFC822/1123 format.  This is used in contexts like
+   dates to send in the protocol; it should not vary based on locale or
+   other such conventions for users.  We should have another routine which
+   does that kind of thing.
+
+   The SOURCE date is a pointer to a struct tm.  DEST should point to
+   storage managed by the caller, at least MAXDATELEN characters.  */
+void
+tm_to_internet (dest, source)
+    char *dest;
+    const struct tm *source;
+{
+    /* Just to reiterate, these strings are from RFC822 and do not vary
+       according to locale.  */
+    static const char *const month_names[] =
+      {"Jan", "Feb", "Mar", "Apr", "May", "Jun",
+	 "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
+    
+    sprintf (dest, "%d %s %d %02d:%02d:%02d -0000", source->tm_mday,
+	     source->tm_mon < 0 || source->tm_mon > 11 ? "???" : month_names[source->tm_mon],
+	     source->tm_year + 1900, source->tm_hour, source->tm_min, source->tm_sec);
 }
 
 void

@@ -428,8 +428,9 @@ extern int RCS_exec_rcsdiff PROTO ((RCSNode *rcsfile,
 				    char *rev1, char *rev2,
 				    char *label1, char *label2,
 				    char *workfile));
-extern int diff_exec PROTO ((char *file1, char *file2, char *options,
-			     char *out));
+extern int diff_exec PROTO ((char *file1, char *file2,
+			     char *label1, char *label2,
+			     char *options, char *out));
 extern int diff_execv PROTO ((char *file1, char *file2,
 			      char *label1, char *label2,
 			      char *options, char *out));
@@ -449,7 +450,9 @@ void Subdir_Deregister PROTO((List *, const char *, const char *));
 
 char *Make_Date PROTO((char *rawdate));
 char *date_from_time_t PROTO ((time_t));
-void date_to_internet PROTO ((char *, char *));
+void date_to_internet PROTO ((char *, const char *));
+void date_to_tm PROTO ((struct tm *, const char *));
+void tm_to_internet PROTO ((char *, const struct tm *));
 
 char *Name_Repository PROTO((char *dir, char *update_dir));
 char *Short_Repository PROTO((char *repository));
@@ -472,6 +475,7 @@ char *time_stamp PROTO((char *file));
 void *xmalloc PROTO((size_t bytes));
 void *xrealloc PROTO((void *ptr, size_t bytes));
 void expand_string PROTO ((char **, size_t *, size_t));
+void allocate_and_strcat PROTO ((char **, size_t *, const char *));
 char *xstrdup PROTO((const char *str));
 void strip_trailing_newlines PROTO((char *str));
 int pathname_levels PROTO ((char *path));

@@ -503,7 +503,14 @@ patch_fileproc (callerdat, finfo)
     }
 
     /* Create 3 empty files.  I'm not really sure there is any advantage
-       to doing so now rather than just waiting until later.  */
+     * to doing so now rather than just waiting until later.
+     *
+     * There is - cvs_temp_file opens the file so that it can guarantee that
+     * we have exclusive write access to the file.  Unfortunately we spoil that
+     * by closing it and reopening it again.  Of course any better solution
+     * requires that the RCS functions accept open file pointers rather than
+     * simple file names.
+     */
     if ((fp1 = cvs_temp_file (&tmpfile1)) == NULL)
     {
 	error (0, errno, "cannot create temporary file %s", tmpfile1);
@@ -575,7 +582,7 @@ patch_fileproc (callerdat, finfo)
 	    (void) utime (tmpfile2, &t);
     }
 
-    switch (diff_exec (tmpfile1, tmpfile2, unidiff ? "-u" : "-c", tmpfile3))
+    switch (diff_exec (tmpfile1, tmpfile2, NULL, NULL, unidiff ? "-u" : "-c", tmpfile3))
     {
 	case -1:			/* fork/wait failure */
 	    error (1, errno, "fork for diff failed on %s", rcs);

@@ -5260,7 +5260,7 @@ workfile);
 	memset (commitpt->text, 0, sizeof (Deltatext));
 
 	bufsize = 0;
-	switch (diff_exec (workfile, tmpfile, diffopts, changefile))
+	switch (diff_exec (workfile, tmpfile, NULL, NULL, diffopts, changefile))
 	{
 	    case 0:
 	    case 1:
@@ -5308,7 +5308,7 @@ workfile);
 	/* This file is not being inserted at the head, but on a side
 	   branch somewhere.  Make a diff from the previous revision
 	   to the working file. */
-	switch (diff_exec (tmpfile, workfile, diffopts, changefile))
+	switch (diff_exec (tmpfile, workfile, NULL, NULL, diffopts, changefile))
 	{
 	    case 0:
 	    case 1:
@@ -6362,7 +6362,7 @@ RCS_delete_revs (rcs, tag1, tag2, inclusive)
 		goto delrev_done;
 
 	    outfile = cvs_temp_name();
-	    status = diff_exec (beforefile, afterfile, "-an", outfile);
+	    status = diff_exec (beforefile, afterfile, NULL, NULL, "-an", outfile);
 
 	    if (status == 2)
 	    {
@@ -8501,6 +8501,11 @@ annotate (argc, argv)
  *
  * The date and time used are the revision's last checkin date and time.
  * If REV is NULL, use the working copy's mtime instead.
+ *
+ * /dev/null is not statted but assumed to have been created on the Epoch.
+ * At least using the POSIX.2 definition of patch, this should cause creation
+ * of files on platforms such as Windoze where the null IO device isn't named
+ * /dev/null to be parsed by patch properly.
  */
 char *
 make_file_label (path, rev, rcs)
@@ -8508,37 +8513,45 @@ make_file_label (path, rev, rcs)
     char *rev;
     RCSNode *rcs;
 {
-    char datebuf[MAXDATELEN];
+    char datebuf[MAXDATELEN + 1];
     char *label;
-    char *file;
 
-    file = last_component (path);
     label = (char *) xmalloc (strlen (path)
-			      + (rev == NULL ? 0 : strlen (rev))
-			      + 50);
+			      + (rev == NULL ? 0 : strlen (rev) + 1)
+			      + MAXDATELEN
+			      + 2);
 
     if (rev)
     {
-	char *date;
+	char date[MAXDATELEN + 1];
+	/* revs cannot be attached to /dev/null ... duh. */
+	assert (strcmp(DEVNULL, path));
 	RCS_getrevtime (rcs, rev, datebuf, 0);
-	date = printable_date (datebuf);
+	(void) date_to_internet (date, datebuf);
 	(void) sprintf (label, "-L%s\t%s\t%s", path, date, rev);
-	free (date);
     }
     else
     {
 	struct stat sb;
-	struct tm *wm;
+	struct tm *wm = NULL;
 
-	if (CVS_STAT (file, &sb) < 0)
-	    error (0, 1, "could not get info for `%s'", path);
+	if (strcmp(DEVNULL, path))
+	{
+	    char *file = last_component (path);
+	    if (CVS_STAT (file, &sb) < 0)
+		error (0, 1, "could not get info for `%s'", path);
+	    else
+		wm = gmtime (&sb.st_mtime);
+	}
 	else
 	{
-	    wm = gmtime (&sb.st_mtime);
-	    (void) sprintf (datebuf, "%04d/%02d/%02d %02d:%02d:%02d",
-			    wm->tm_year + 1900, wm->tm_mon + 1,
-			    wm->tm_mday, wm->tm_hour,
-			    wm->tm_min, wm->tm_sec);
+	    time_t t = 0;
+	    wm = gmtime(&t);
+	}
+
+	if (wm)
+	{
+	    (void) tm_to_internet (datebuf, wm);
 	    (void) sprintf (label, "-L%s\t%s", path, datebuf);
 	}
     }
