@@ -71,6 +71,10 @@ Generally speaking the GNU coding standards are mostly used by CVS
 and perhaps an exception or two we haven't mentioned).  This is the
 file standards.text at the GNU FTP sites.
 
+Filenames for .c and .h files may contain _ but should not contain -
+(the latter causes Visual C++ 2.1 to create makefiles which Visual C++
+4.0 cannot use).
+
 * Submitting patches
 
 Please include a ChangeLog entry (see the GNU coding standards for
