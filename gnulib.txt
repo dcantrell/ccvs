@@ -183,3 +183,7 @@ m4/onceonly_2_57.m4
 lib/minmax.h
 
 m4/onceonly_2_57.m4
+lib/memmove.c
+m4/memmove.m4
+
+m4/onceonly_2_57.m4
