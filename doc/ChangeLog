@@ -1,3 +1,9 @@
+Tue Jun 24 09:37:26 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (Password authentication security): Note about
+	permissions on $CVSROOT also applies to its parent and so on up to
+	/.
+
 Mon Jun 23 18:28:18 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (Creating a repository): xref to Server requirements
