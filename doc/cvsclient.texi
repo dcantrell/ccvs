@@ -17,6 +17,7 @@ means.
 * Goals::             Basic design decisions, requirements, scope, etc.
 * Protocol Notes::    Possible enhancements, limitations, etc. of the protocol
 * Connection and Authentication::  Various ways to connect to the server
+* Password scrambling::  Scrambling used by pserver
 * Protocol::          Complete description of the protocol
 @end menu
 
