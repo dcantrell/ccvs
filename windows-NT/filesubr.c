@@ -831,7 +831,27 @@ convert_file (char *infile,  int inflags,
    when combined as ${HOMEDRIVE}${HOMEPATH}, give the unix equivalent
    of HOME.  Some NT users are just too unixy, though, and set the
    HOME variable themselves.  Therefore, we check for HOME first, and
-   then try to combine the other two if that fails.  */
+   then try to combine the other two if that fails.
+
+   Looking for HOME strikes me as bogus, particularly if the only reason
+   is to cater to "unixy users".  On the other hand, if the reasoning is
+   there should be a single variable, rather than requiring people to
+   set both HOMEDRIVE and HOMEPATH, then it starts to make a little more
+   sense.
+
+   Win95: The system doesn't set HOME, HOMEDRIVE, or HOMEPATH (at
+   least if you set it up as the "all users under one user ID" or
+   whatever the name of that option is).  Based on thing overheard on
+   the net, it seems that users of the pserver client have gotten in
+   the habit of setting HOME (if you don't use pserver, you can
+   probably get away without having a reasonable return from
+   get_homedir.  Of course you lose .cvsrc and .cvsignore, but many
+   users won't notice).  So it would seem that we should be somewhat
+   careful if we try to change the current behavior.
+
+   NT 3.51 or NT 4.0: I haven't checked this myself, but I am told
+   that HOME gets set, but not to the user's home directory.  It is
+   said to be set to c:\users\default by default.  */
 
 char *
 get_homedir ()
