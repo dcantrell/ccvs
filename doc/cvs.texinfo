@@ -6553,6 +6553,12 @@ Do not change any files.  Attempt to execute the
 @samp{cvs_command}, but only to issue reports; do not remove,
 update, or merge any existing files, or create any new files.
 
+Note that @sc{cvs} will not necessarily produce exactly
+the same output as without @samp{-n}.  In some cases
+the output will be the same, but in other cases
+@sc{cvs} will skip some of the processing that would
+have been required to produce the exact same output.
+
 @item -Q
 Cause the command to be really quiet; the command will only
 generate output for serious problems.
