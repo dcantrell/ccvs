@@ -1,5 +1,10 @@
 2004-10-20  Derek Price  <derek@ximbiot.com>
 
+	* validate_repo.in (get_ignore_files_from_cvsroot): Add new script
+	hooks to default ignore list and alphabetize.
+
+2004-10-20  Derek Price  <derek@ximbiot.com>
+
 	* validate_repo.in: Accept but log bad revision numbers.
 	(Patch from Dan Peterson <dbpete@aol.com>.)
 
