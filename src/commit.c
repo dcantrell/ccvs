@@ -615,7 +615,7 @@ commit (argc, argv)
 
     wrap_setup ();
 
-    lock_tree_for_write (argc, argv, local, aflag);
+    lock_tree_for_write (argc, argv, local, W_LOCAL, aflag);
 
     /*
      * Set up the master update list and hard link list

@@ -98,7 +98,7 @@ watch_onoff (argc, argv)
 
     setting_default = (argc <= 0);
 
-    lock_tree_for_write (argc, argv, local, 0);
+    lock_tree_for_write (argc, argv, local, W_LOCAL, 0);
 
     err = start_recursion (onoff_fileproc, onoff_filesdoneproc,
 			   (DIRENTPROC) NULL, (DIRLEAVEPROC) NULL, NULL,
@@ -259,7 +259,7 @@ send_notifications (argc, argv, local)
     {
 	/* Local.  */
 
-	lock_tree_for_write (argc, argv, local, 0);
+	lock_tree_for_write (argc, argv, local, W_LOCAL, 0);
 	err += start_recursion (ncheck_fileproc, (FILESDONEPROC) NULL,
 				(DIRENTPROC) NULL, (DIRLEAVEPROC) NULL, NULL,
 				argc, argv, local, W_LOCAL, 0, 0, (char *)NULL,

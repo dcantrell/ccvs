@@ -497,7 +497,7 @@ admin (argc, argv)
     }
 #endif /* CLIENT_SUPPORT */
 
-    lock_tree_for_write (argc, argv, 0, 0);
+    lock_tree_for_write (argc, argv, 0, W_LOCAL, 0);
 
     err = start_recursion (admin_fileproc, (FILESDONEPROC) NULL, admin_dirproc,
 			   (DIRLEAVEPROC) NULL, (void *)&admin_data,

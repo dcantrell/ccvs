@@ -26,9 +26,6 @@ static Dtype rtag_dirproc PROTO ((void *callerdat, char *dir,
 				  char *repos, char *update_dir,
 				  List *entries));
 static int rtag_fileproc PROTO ((void *callerdat, struct file_info *finfo));
-static int rtag_filesdoneproc PROTO ((void *callerdat, int err,
-				      char *repos, char *update_dir,
-				      List *entries));
 static int rtag_proc PROTO((int argc, char **argv, char *xwhere,
 		      char *mwhere, char *mfile, int shorten,
 		      int local_specified, char *mname, char *msg));
@@ -321,14 +318,23 @@ rtag_proc (argc, argv, xwhere, mwhere, mfile, shorten, local_specified,
        error (1, 0, "correct the above errors first!");
     }
      
+    /* It would be nice to provide consistency with respect to
+       commits; however CVS lacks the infrastructure to do that (see
+       Concurrency in cvs.texinfo and comment in do_recursion).  We
+       do need to ensure that the RCS file info that gets read and
+       cached in do_recursion isn't stale by the time we get around
+       to using it to rewrite the RCS file in the callback, and this
+       is the easiest way to accomplish that.  */
+    lock_tree_for_write (argc - 1, argv + 1, local, which, 0);
+
     /* start the recursion processor */
-    err = start_recursion (rtag_fileproc, rtag_filesdoneproc, rtag_dirproc,
+    err = start_recursion (rtag_fileproc, (FILESDONEPROC) NULL, rtag_dirproc,
 			   (DIRLEAVEPROC) NULL, NULL,
 			   argc - 1, argv + 1, local,
 			   which, 0, 0, where, 1);
+    Lock_Cleanup ();
+    dellist (&mtlist);
     free (where);
-    dellist(&mtlist);
-
     return (err);
 }
 
@@ -536,18 +542,6 @@ rtag_fileproc (callerdat, finfo)
     char *version, *rev;
     int retcode = 0;
 
-    /* Lock the directory if it is not already locked.  We might be
-       able to rely on rtag_dirproc for this.  */
-
-    /* It would be nice to provide consistency with respect to
-       commits; however CVS lacks the infrastructure to do that (see
-       Concurrency in cvs.texinfo and comment in do_recursion).  We
-       can and will prevent simultaneous tag operations from
-       interfering with each other, by write locking each directory as
-       we enter it, and unlocking it as we leave it.  */
-
-    lock_dir_for_write (finfo->repository);
-
     /* find the parsed RCS data */
     if ((rcsfile = finfo->rcs) == NULL)
 	return (1);
@@ -717,21 +711,6 @@ rtag_delete (rcsfile)
     }
     RCS_rewrite (rcsfile, NULL, NULL);
     return (0);
-}
-
-/* Clear any lock we may hold on the current directory.  */
-
-static int
-rtag_filesdoneproc (callerdat, err, repos, update_dir, entries)
-    void *callerdat;
-    int err;
-    char *repos;
-    char *update_dir;
-    List *entries;
-{
-    Lock_Cleanup ();
-
-    return (err);
 }
 
 /*

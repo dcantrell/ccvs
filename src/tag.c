@@ -27,9 +27,6 @@ static Dtype tag_dirproc PROTO ((void *callerdat, char *dir,
 				 char *repos, char *update_dir,
 				 List *entries));
 static int tag_fileproc PROTO ((void *callerdat, struct file_info *finfo));
-static int tag_filesdoneproc PROTO ((void *callerdat, int err,
-				     char *repos, char *update_dir,
-				     List *entries));
 
 static char *numtag;
 static char *date = NULL;
@@ -206,12 +203,22 @@ cvstag (argc, argv)
     {
        error (1, 0, "correct the above errors first!");
     }
-     
+
+    /* Lock the tree.  This is overkill; the revisions are obtained from
+       the working directory, so we do not require consistency across
+       the entire repository.  However, we do need to ensure that the
+       RCS file info that gets read and cached in do_recursion isn't
+       stale by the time we get around to using it to rewrite the RCS
+       file in the callback, and this is the easiest way to accomplish
+       that.  */
+    lock_tree_for_write (argc, argv, local, W_LOCAL, 0);
+
     /* start the recursion processor */
-    err = start_recursion (tag_fileproc, tag_filesdoneproc, tag_dirproc,
+    err = start_recursion (tag_fileproc, (FILESDONEPROC) NULL, tag_dirproc,
 			   (DIRLEAVEPROC) NULL, NULL, argc, argv, local,
 			   W_LOCAL, 0, 0, (char *) NULL, 1);
-    dellist(&mtlist);
+    Lock_Cleanup ();
+    dellist (&mtlist);
     return (err);
 }
 
@@ -453,17 +460,6 @@ tag_fileproc (callerdat, finfo)
     Vers_TS *vers;
     int retcode = 0;
 
-    /* Lock the directory if it is not already locked.  We can't rely
-       on tag_dirproc because it won't handle the case where the user
-       specifies a list of files on the command line.  */
-    /* We do not need to acquire a full write lock for the tag operation:
-       the revisions are obtained from the working directory, so we do not
-       require consistency across the entire repository.  However, we do
-       need to prevent simultaneous tag operations from interfering with
-       each other.  Therefore, we write lock each directory as we enter
-       it, and unlock it as we leave it.  */
-    lock_dir_for_write (finfo->repository);
-
     vers = Version_TS (finfo, NULL, NULL, NULL, 0, 0);
 
     if ((numtag != NULL) || (date != NULL))
@@ -643,21 +639,6 @@ tag_fileproc (callerdat, finfo)
     }
     freevers_ts (&vers);
     return (0);
-}
-
-/* Clear any lock we may hold on the current directory.  */
-
-static int
-tag_filesdoneproc (callerdat, err, repos, update_dir, entries)
-    void *callerdat;
-    int err;
-    char *repos;
-    char *update_dir;
-    List *entries;
-{
-    Lock_Cleanup ();
-
-    return (err);
 }
 
 /*

@@ -1,3 +1,17 @@
+2001-02-02  Larry Jones  <larry.jones@sdrc.com>
+
+	* rtag.c (rtag_proc): Call lock_tree_for_write() before calling
+	start_recursion.  This fixes a serious problem where do_recursion
+	was reading and caching RCS files without any locks in place and
+	that information was subsequently being used to rewrite the file
+	causing any intermediate changes to be lost.
+	(rtag_filesdoneproc): Defunct.
+	(Reported by Karl Tomlinson <k.tomlinson@auckland.ac.nz>.)
+	* tag.c (cvstag, tag_filesdoneproc): Ditto.
+	* lock.c (lock_tree_for_write): Add which argument, change all
+	callers to pass W_LOCAL.
+	* rcs.h: Ditto.
+
 2001-01-29  Derek Price  <derek.price@openavenue.com>
 
 	* client.c (get_cvs_port_number): change the prototype to accept a
