@@ -1,5 +1,12 @@
 Tue Jan  9 09:41:29 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	We use version numbers instead of patchlevels.  But there was some
+	confusing patchlevel stuff lying around.  Nuke it:
+	* Makefile.in (HEADERS): Remove patchlevel.h
+	* patchlevel.h: Removed.
+	* main.c: Don't include patchlevel.h.
+	(main): Don't print patch level.
+
 	* server.c (check_repository_password): Check for errors from
 	system calls; reindent function.
 
