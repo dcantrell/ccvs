@@ -1,3 +1,8 @@
+2003-06-23  Derek Price  <derek@ximbiot.com>
+
+	* Don't call CVS with the -l option since CVS no longer accepts it.
+	(Suggestion from Matt Doar <matt@trpz.com>.)
+
 2003-06-11  Derek Price  <derek@ximbiot.com>
 
 	* Makefile.in: Regenerate for new configure.in.
