@@ -1,3 +1,8 @@
+Tue Jan  6 22:56:29 1998  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* sanity.sh (crerepos): Fix mistaken variable name which caused us
+	not to clean up at the end of the test.
+
 Mon Dec 22 01:40:57 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* add.c (add): Also look for .cvswrappers files.

@@ -8368,7 +8368,7 @@ U crerepos-dir/cfile"
 	  cd ..
 
 	  rm -r 1
-	  rm -rf ${CVSROOT_DIRECTORY}/first-dir ${TESTDIR}/crerepos
+	  rm -rf ${CVSROOT_DIRNAME}/first-dir ${TESTDIR}/crerepos
 	  ;;
 
 	rcs)
