@@ -1075,6 +1075,8 @@ update_entries (data_arg, ent_list, short_pathname, filename)
 	else if (*tag_or_date == 'D')
 	    date = tag_or_date + 1;
     }
+    else
+	options = NULL;
 
     if (data->contents == UPDATE_ENTRIES_UPDATE
 	|| data->contents == UPDATE_ENTRIES_PATCH)
@@ -1124,12 +1126,10 @@ update_entries (data_arg, ent_list, short_pathname, filename)
            flag, then we don't want to convert, else we do (because
            CVS assumes text files by default). */
 
-        /* Actually, I don't believe options can be NULL here, but I'm
-           not dead certain of that. */
-        if (options)
-          bin = !(strcmp (options, "-kb"));
-        else
-          bin = 0;
+	if (options)
+	    bin = !(strcmp (options, "-kb"));
+	else
+	    bin = 0;
 
         fd = open (temp_filename,
                    O_WRONLY | O_CREAT | O_TRUNC | (bin ? OPEN_BINARY : 0),
