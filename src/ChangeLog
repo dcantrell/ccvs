@@ -1,5 +1,15 @@
 2001-03-20  Derek Price  <dprice@collab.net>
 
+	* sanity.sh (diffmerge1): Minor formatting and syntax changes.
+
+	    for Jacob Burckhardt  <bjacob@ca.metsci.com>
+
+	* sanity.sh (diffmerge1): More merging behavior tests.  Specifically,
+	test some cases which broke before in Karl Tomlinson's diff fix was
+	checked in today.
+
+2001-03-20  Derek Price  <dprice@collab.net>
+
 	* sanity.sh: Don't use unescaped parens in sh outside of quotes.
 
 2001-03-20  Derek Price  <dprice@collab.net>

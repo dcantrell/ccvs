@@ -719,6 +719,810 @@ directory_cmp ()
 	return 0
 }
 
+
+
+#
+# The following 4 functions are used by the diffmerge1 test case.  They set up,
+# respectively, the four versions of the files necessary:
+#
+#	1.  Ancestor revisions.
+#	2.  "Your" changes.
+#	3.  "My" changes.
+#	4.  Expected merge result.
+#
+
+# Create ancestor revisions for diffmerge1
+diffmerge_create_older_files() {
+	  # This test case was supplied by Noah Friedman:
+	  cat >testcase01 <<EOF
+// Button.java
+
+package random.application;
+
+import random.util.*;
+
+public class Button
+{
+  /* Instantiates a Button with origin (0, 0) and zero width and height.
+   * You must call an initializer method to properly initialize the Button.
+   */
+  public Button ()
+  {
+    super ();
+
+    _titleColor = Color.black;
+    _disabledTitleColor = Color.gray;
+    _titleFont = Font.defaultFont ();
+  }
+
+  /* Convenience constructor for instantiating a Button with
+   * bounds x, y, width, and height.  Equivalent to
+   *     foo = new Button ();
+   *     foo.init (x, y, width, height);
+   */
+  public Button (int x, int y, int width, int height)
+  {
+    this ();
+    init (x, y, width, height);
+  }
+}
+EOF
+
+	  # This test case was supplied by Jacob Burckhardt:
+	  cat >testcase02 <<EOF
+a
+a
+a
+a
+a
+EOF
+
+	  # This test case was supplied by Karl Tomlinson who also wrote the
+	  # patch which lets CVS correctly handle this and several other cases:
+	  cat >testcase03 <<EOF
+x
+s
+a
+b
+s
+y
+EOF
+
+	  # This test case was supplied by Karl Tomlinson:
+	  cat >testcase04 <<EOF
+s
+x
+m
+m
+x
+s
+v
+s
+x
+m
+m
+x
+s
+EOF
+
+	  # This test case was supplied by Karl Tomlinson:
+	  cat >testcase05 <<EOF
+s
+x
+m
+m
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+s
+s
+s
+s
+s
+s
+s
+s
+s
+s
+v
+EOF
+
+	  # This test case was supplied by Jacob Burckhardt:
+	  cat >testcase06 <<EOF
+g
+
+
+
+
+
+
+
+
+
+
+
+i
+EOF
+
+	  # This test is supposed to verify that the horizon lines are the same
+	  # for both 2-way diffs, but unfortunately, it does not fail with the
+	  # old version of cvs.  However, Karl Tomlinson still thought it would
+	  # be good to test it anyway:
+	  cat >testcase07 <<EOF
+h
+f
+
+
+
+
+
+
+
+
+
+g
+r
+
+
+
+i
+
+
+
+
+
+
+
+
+
+
+i
+EOF
+
+	  # This test case was supplied by Jacob Burckhardt:
+	  cat >testcase08 <<EOF
+Both changes move this line to the end of the file.
+
+no
+changes
+here
+
+First change will delete this line.
+
+First change will also delete this line.
+
+    no
+    changes
+    here
+
+Second change will change it here.
+
+        no
+        changes
+        here
+EOF
+
+	  # This test case was supplied by Jacob Burckhardt.  Note that I do not
+	  # think cvs has ever failed with this case, but I include it anyway,
+	  # since I think it is a hard case.  It is hard because Peter Miller's
+	  # fmerge utility fails on it:
+	  cat >testcase09 <<EOF
+m
+a
+{
+}
+b
+{
+}
+EOF
+
+	  # This test case was supplied by Martin Dorey and simplified by Jacob
+	  # Burckhardt:
+	  cat >testcase10 <<EOF
+
+    petRpY ( MtatRk );
+    fV ( MtatRk != Zy ) UDTXUK_DUUZU ( BGKT_ZFDK_qjT_HGTG );
+
+    MtatRk = MQfr_GttpfIRte_MtpeaL ( &acI, jfle_Uecopd_KRLIep * jfle_Uecopd_MfJe_fY_nEtek );
+    OjZy MtatRk = Uead_GttpfIRte_MtpeaL ( &acI, jfle_Uecopd_MfJe_fY_nEtek, nRVVep );
+
+    Bloke_GttpfIRte_MtpeaL ( &acI );
+MTGTXM Uead_Ktz_qjT_jfle_Uecopd ( fYt Y, uofd *nRVVep )
+{
+    fV ( Y < 16 )
+    {
+        petRpY ( Uead_Mectopk ( noot_Uecopd.qVtHatabcY0 * noot_Uecopd.MectopkFepBlRktep +
+                                                      Y * jfle_Uecopd_MfJe_fY_Mectopk,
+                                jfle_Uecopd_MfJe_fY_Mectopk,
+                                nRVVep ) );
+    }
+    elke
+    {
+        petRpY ( Uead_Mectopk ( noot_Uecopd.qVtqfppHatabcY0 * noot_Uecopd.MectopkFepBlRktep +
+                                                 ( Y - 16 ) * jfle_Uecopd_MfJe_fY_Mectopk,
+                                jfle_Uecopd_MfJe_fY_Mectopk,
+                                nRVVep ) );
+    }
+
+}
+
+
+/****************************************************************************
+*                                                                           *
+*   Uead Mectopk ( Uelatfue to tze cRppeYt raptftfoY )                      *
+*                                                                           *
+****************************************************************************/
+
+MTGTXM Uead_Mectopk ( RfYt64 Mtapt_Mectop, RfYt64 KRL_Mectopk, uofd *nRVVep )
+{
+MTGTXM MtatRk = Zy;
+
+    MtatRk = Uead_HfkQ ( FaptftfoY_TaIle.Uelatfue_Mectop + Mtapt_Mectop, KRL_Mectopk, nRVVep );
+
+    petRpY ( MtatRk );
+
+}
+    HfkQipfte ( waYdle,                 /*  waYdle                         */
+                waYdleFok,              /*  ZVVket VpoL ktapt oV dfkQ      */
+                (coYkt RfYt8*) nRVVep,  /*  nRVVep                         */
+                0,                      /*  MRrepVlRoRk KfxoYfkL           */
+                beYgtz                  /*  nEtek to Apfte                 */
+              );
+
+    petRpY ( Zy );
+}
+EOF
+}
+
+# Create "your" revisions for diffmerge1
+diffmerge_create_your_files() {
+	  # remove the Button() method
+	  cat >testcase01 <<\EOF
+// Button.java
+
+package random.application;
+
+import random.util.*;
+
+public class Button
+{
+  /* Instantiates a Button with origin (0, 0) and zero width and height.
+   * You must call an initializer method to properly initialize the Button.
+   */
+  public Button ()
+  {
+    super ();
+
+    _titleColor = Color.black;
+    _disabledTitleColor = Color.gray;
+    _titleFont = Font.defaultFont ();
+  }
+}
+EOF
+
+	  cat >testcase02 <<\EOF
+y
+a
+a
+a
+a
+EOF
+
+	  cat >testcase03 <<\EOF
+x
+s
+a
+b
+s
+b
+s
+y
+EOF
+
+	  cat >testcase04 <<\EOF
+s
+m
+s
+v
+s
+m
+s
+EOF
+
+	  cat >testcase05 <<\EOF
+v
+s
+m
+s
+s
+s
+s
+s
+s
+s
+s
+s
+s
+v
+EOF
+
+	  # Test case 6 and test case 7 both use the same input files, but they
+	  # order the input files differently.  In one case, a certain file is
+	  # used as the older file, but in the other test case, that same file
+	  # is used as the file which has changes.  I could have put echo
+	  # commands here, but since the echo lines would be the same as those
+	  # in the previous function, I decided to save space and avoid repeating
+	  # several lines of code.  Instead, I merely swap the files:
+	  mv testcase07 tmp
+	  mv testcase06 testcase07
+	  mv tmp testcase06
+
+	  # Make the date newer so that cvs thinks that the files are changed:
+	  touch testcase06 testcase07
+
+	  cat >testcase08 <<\EOF
+no
+changes
+here
+
+First change has now added this in.
+
+    no
+    changes
+    here
+
+Second change will change it here.
+
+        no
+        changes
+        here
+
+Both changes move this line to the end of the file.
+EOF
+
+	  cat >testcase09 <<\EOF
+
+m
+a
+{
+}
+b
+{
+}
+c
+{
+}
+EOF
+
+	  cat >testcase10 <<\EOF
+
+    fV ( BzQkV_URYYfYg ) (*jfle_Uecopdk)[0].jfle_Uecopd_KRLIep = ZpfgfYal_jUK;
+
+    petRpY ( MtatRk );
+    fV ( MtatRk != Zy ) UDTXUK_DUUZU ( BGKT_ZFDK_qjT_HGTG );
+
+    fV ( jfle_Uecopd_KRLIep < 16 )
+    {
+        MtatRk = Uead_Ktz_qjT_jfle_Uecopd ( jfle_Uecopd_KRLIep, (uofd*)nRVVep );
+    }
+    elke
+    {
+        MtatRk = ZreY_GttpfIRte_MtpeaL ( qjT_jfle_Uecopdk, qjT_jfle_Uecopd_BoRYt, HGTG_TvFD, KXbb, KXbb, &acI );
+        fV ( MtatRk != Zy ) UDTXUK_DUUZU ( BGKT_ZFDK_qjT_HGTG );
+
+        MtatRk = MQfr_GttpfIRte_MtpeaL ( &acI, jfle_Uecopd_KRLIep * jfle_Uecopd_MfJe_fY_nEtek );
+        OjZy MtatRk = Uead_GttpfIRte_MtpeaL ( &acI, jfle_Uecopd_MfJe_fY_nEtek, nRVVep );
+
+    Bloke_GttpfIRte_MtpeaL ( &acI );
+MTGTXM Uead_Ktz_qjT_jfle_Uecopd ( fYt Y, uofd *nRVVep )
+{
+MTGTXM MtatRk = Zy;
+
+    fV ( Y < 16 )
+    {
+        petRpY ( Uead_Mectopk ( noot_Uecopd.qVtHatabcY0 * noot_Uecopd.MectopkFepBlRktep +
+                                                      Y * jfle_Uecopd_MfJe_fY_Mectopk,
+                                jfle_Uecopd_MfJe_fY_Mectopk,
+                                nRVVep ) );
+    }
+    elke
+    {
+        petRpY ( Uead_Mectopk ( noot_Uecopd.qVtqfppHatabcY0 * noot_Uecopd.MectopkFepBlRktep +
+                                                 ( Y - 16 ) * jfle_Uecopd_MfJe_fY_Mectopk,
+                                jfle_Uecopd_MfJe_fY_Mectopk,
+                                nRVVep ) );
+    }
+
+    petRpY ( MtatRk );
+
+}
+
+
+/****************************************************************************
+*                                                                           *
+*   Uead Mectopk ( Uelatfue to tze cRppeYt raptftfoY )                      *
+*                                                                           *
+****************************************************************************/
+
+MTGTXM Uead_Mectopk ( RfYt64 Mtapt_Mectop, RfYt64 KRL_Mectopk, uofd *nRVVep )
+{
+MTGTXM MtatRk = Zy;
+
+    MtatRk = Uead_HfkQ ( FaptftfoY_TaIle.Uelatfue_Mectop + Mtapt_Mectop, KRL_Mectopk, nRVVep );
+
+    petRpY ( MtatRk );
+
+}
+    HfkQipfte ( waYdle,                 /*  waYdle                         */
+                waYdleFok,              /*  ZVVket VpoL ktapt oV dfkQ      */
+                (coYkt RfYt8*) nRVVep,  /*  nRVVep                         */
+                0,                      /*  MRrepVlRoRk KfxoYfkL           */
+                beYgtz                  /*  nEtek to Apfte                 */
+              );
+
+    petRpY ( Zy );
+}
+
+EOF
+}
+
+# Create "my" revisions for diffmerge1
+diffmerge_create_my_files() {
+          # My working copy still has the Button() method, but I
+	  # comment out some code at the top of the class.
+	  cat >testcase01 <<\EOF
+// Button.java
+
+package random.application;
+
+import random.util.*;
+
+public class Button
+{
+  /* Instantiates a Button with origin (0, 0) and zero width and height.
+   * You must call an initializer method to properly initialize the Button.
+   */
+  public Button ()
+  {
+    super ();
+
+    // _titleColor = Color.black;
+    // _disabledTitleColor = Color.gray;
+    // _titleFont = Font.defaultFont ();
+  }
+
+  /* Convenience constructor for instantiating a Button with
+   * bounds x, y, width, and height.  Equivalent to
+   *     foo = new Button ();
+   *     foo.init (x, y, width, height);
+   */
+  public Button (int x, int y, int width, int height)
+  {
+    this ();
+    init (x, y, width, height);
+  }
+}
+EOF
+
+	  cat >testcase02 <<\EOF
+a
+a
+a
+a
+m
+EOF
+
+	  cat >testcase03 <<\EOF
+x
+s
+c
+s
+b
+s
+y
+EOF
+
+	  cat >testcase04 <<\EOF
+v
+s
+x
+m
+m
+x
+s
+v
+s
+x
+m
+m
+x
+s
+v
+EOF
+
+	  # Note that in test case 5, there are no changes in the "mine"
+	  # section, which explains why there is no command here which writes to
+	  # file testcase05.
+
+	  # no changes for testcase06
+
+	  # The two branches make the same changes:
+	  cp ../yours/testcase07 .
+
+	  cat >testcase08 <<\EOF
+no
+changes
+here
+
+First change will delete this line.
+
+First change will also delete this line.
+
+    no
+    changes
+    here
+
+Second change has now changed it here.
+
+        no
+        changes
+        here
+
+Both changes move this line to the end of the file.
+EOF
+
+	  cat >testcase09 <<\EOF
+m
+a
+{
+}
+b
+{
+}
+c
+{
+}
+EOF
+
+	  cat >testcase10 <<\EOF
+
+    petRpY ( MtatRk );
+    fV ( MtatRk != Zy ) UDTXUK_DUUZU ( BGKT_ZFDK_qjT_HGTG );
+
+    MtatRk = MQfr_GttpfIRte_MtpeaL ( &acI, jfle_Uecopd_KRLIep * jfle_Uecopd_MfJe_fY_nEtek );
+    OjZy MtatRk = Uead_GttpfIRte_MtpeaL ( &acI, jfle_Uecopd_MfJe_fY_nEtek, nRVVep );
+
+    Bloke_GttpfIRte_MtpeaL ( &acI );
+MTGTXM Uead_Ktz_qjT_jfle_Uecopd ( fYt Y, uofd *nRVVep )
+{
+    fV ( Y < 16 )
+    {
+        petRpY ( Uead_Mectopk ( noot_Uecopd.qVtHatabcY0 * noot_Uecopd.MectopkFepBlRktep +
+                                                      Y * jfle_Uecopd_MfJe_fY_Mectopk,
+                                jfle_Uecopd_MfJe_fY_Mectopk,
+                                nRVVep ) );
+    }
+    elke
+    {
+        petRpY ( Uead_Mectopk ( noot_Uecopd.qVtqfppHatabcY0 * noot_Uecopd.MectopkFepBlRktep +
+                                                 ( Y - 16 ) * jfle_Uecopd_MfJe_fY_Mectopk,
+                                jfle_Uecopd_MfJe_fY_Mectopk,
+                                nRVVep ) );
+    }
+
+}
+
+
+/****************************************************************************
+*                                                                           *
+*   Uead Mectopk ( Uelatfue to tze cRppeYt raptftfoY )                      *
+*                                                                           *
+****************************************************************************/
+
+MTGTXM Uead_Mectopk ( RfYt64 Mtapt_Mectop, RfYt64 KRL_Mectopk, uofd *nRVVep )
+{
+MTGTXM MtatRk = Zy;
+
+    MtatRk = Uead_HfkQ ( FaptftfoY_TaIle.Uelatfue_Mectop + Mtapt_Mectop, KRL_Mectopk, nRVVep );
+
+    petRpY ( MtatRk );
+
+}
+    HfkQipfte ( waYdle,                 /*  waYdle                         */
+                waYdleFok,              /*  ZVVket VpoL ktapt oV dfkQ      */
+                (coYkt RfYt8*) nRVVep,  /*  nRVVep                         */
+                beYgtz                  /*  nEtek to Apfte                 */
+              );
+
+    petRpY ( Zy );
+}
+
+EOF
+}
+
+# Create expected results of merge for diffmerge1
+diffmerge_create_expected_files() {
+	  cat >testcase01 <<\EOF
+// Button.java
+
+package random.application;
+
+import random.util.*;
+
+public class Button
+{
+  /* Instantiates a Button with origin (0, 0) and zero width and height.
+   * You must call an initializer method to properly initialize the Button.
+   */
+  public Button ()
+  {
+    super ();
+
+    // _titleColor = Color.black;
+    // _disabledTitleColor = Color.gray;
+    // _titleFont = Font.defaultFont ();
+  }
+}
+EOF
+
+	  cat >testcase02 <<\EOF
+y
+a
+a
+a
+m
+EOF
+
+	  cat >testcase03 <<\EOF
+x
+s
+c
+s
+b
+s
+b
+s
+y
+EOF
+
+	  cat >testcase04 <<\EOF
+v
+s
+m
+s
+v
+s
+m
+s
+v
+EOF
+
+	  # Since there are no changes in the "mine" section, just take exactly
+	  # the version in the "yours" section:
+	  cp ../yours/testcase05 .
+
+	  cp ../yours/testcase06 .
+
+	  # Since the two branches make the same changes, the result should be
+	  # the same as both branches.  Here, I happen to pick yours to copy from,
+	  # but I could have also picked mine, since the source of the copy is
+	  # the same in either case.  However, the mine has already been
+	  # altered by the update command, so don't use it.  Instead, use the
+	  # yours section which has not had an update on it and so is unchanged:
+	  cp ../yours/testcase07 .
+
+	  cat >testcase08 <<\EOF
+no
+changes
+here
+
+First change has now added this in.
+
+    no
+    changes
+    here
+
+Second change has now changed it here.
+
+        no
+        changes
+        here
+
+Both changes move this line to the end of the file.
+EOF
+
+	  cat >testcase09 <<\EOF
+
+m
+a
+{
+}
+b
+{
+}
+c
+{
+}
+EOF
+
+	  cat >testcase10 <<\EOF
+
+    fV ( BzQkV_URYYfYg ) (*jfle_Uecopdk)[0].jfle_Uecopd_KRLIep = ZpfgfYal_jUK;
+
+    petRpY ( MtatRk );
+    fV ( MtatRk != Zy ) UDTXUK_DUUZU ( BGKT_ZFDK_qjT_HGTG );
+
+    fV ( jfle_Uecopd_KRLIep < 16 )
+    {
+        MtatRk = Uead_Ktz_qjT_jfle_Uecopd ( jfle_Uecopd_KRLIep, (uofd*)nRVVep );
+    }
+    elke
+    {
+        MtatRk = ZreY_GttpfIRte_MtpeaL ( qjT_jfle_Uecopdk, qjT_jfle_Uecopd_BoRYt, HGTG_TvFD, KXbb, KXbb, &acI );
+        fV ( MtatRk != Zy ) UDTXUK_DUUZU ( BGKT_ZFDK_qjT_HGTG );
+
+        MtatRk = MQfr_GttpfIRte_MtpeaL ( &acI, jfle_Uecopd_KRLIep * jfle_Uecopd_MfJe_fY_nEtek );
+        OjZy MtatRk = Uead_GttpfIRte_MtpeaL ( &acI, jfle_Uecopd_MfJe_fY_nEtek, nRVVep );
+
+    Bloke_GttpfIRte_MtpeaL ( &acI );
+MTGTXM Uead_Ktz_qjT_jfle_Uecopd ( fYt Y, uofd *nRVVep )
+{
+MTGTXM MtatRk = Zy;
+
+    fV ( Y < 16 )
+    {
+        petRpY ( Uead_Mectopk ( noot_Uecopd.qVtHatabcY0 * noot_Uecopd.MectopkFepBlRktep +
+                                                      Y * jfle_Uecopd_MfJe_fY_Mectopk,
+                                jfle_Uecopd_MfJe_fY_Mectopk,
+                                nRVVep ) );
+    }
+    elke
+    {
+        petRpY ( Uead_Mectopk ( noot_Uecopd.qVtqfppHatabcY0 * noot_Uecopd.MectopkFepBlRktep +
+                                                 ( Y - 16 ) * jfle_Uecopd_MfJe_fY_Mectopk,
+                                jfle_Uecopd_MfJe_fY_Mectopk,
+                                nRVVep ) );
+    }
+
+    petRpY ( MtatRk );
+
+}
+
+
+/****************************************************************************
+*                                                                           *
+*   Uead Mectopk ( Uelatfue to tze cRppeYt raptftfoY )                      *
+*                                                                           *
+****************************************************************************/
+
+MTGTXM Uead_Mectopk ( RfYt64 Mtapt_Mectop, RfYt64 KRL_Mectopk, uofd *nRVVep )
+{
+MTGTXM MtatRk = Zy;
+
+    MtatRk = Uead_HfkQ ( FaptftfoY_TaIle.Uelatfue_Mectop + Mtapt_Mectop, KRL_Mectopk, nRVVep );
+
+    petRpY ( MtatRk );
+
+}
+    HfkQipfte ( waYdle,                 /*  waYdle                         */
+                waYdleFok,              /*  ZVVket VpoL ktapt oV dfkQ      */
+                (coYkt RfYt8*) nRVVep,  /*  nRVVep                         */
+                beYgtz                  /*  nEtek to Apfte                 */
+              );
+
+    petRpY ( Zy );
+}
+
+EOF
+}
+
 # Set up CVSROOT (the crerepos tests will test operating without CVSROOT set).
 CVSROOT_DIRNAME=${TESTDIR}/cvsroot
 CVSROOT=${CVSROOT_DIRNAME} ; export CVSROOT
@@ -18415,149 +19219,68 @@ ${PROG} [a-z]*: Rebuilding administrative file database"
 	  mkdir diffmerge1
 	  cd diffmerge1
 
-	  # The text of the file is inlined here because `echo' loses
-	  # newlines, and I don't know how portable the -e flag is.
-	  # 
-	  # This is the file we both start out with:
-	  echo "// Button.java
-
-package random.application;
-
-import random.util.star;
-
-public class Button
-{
-  /star Instantiates a Button with origin (0, 0) and zero width and height.
-   star You must call an initializer method to properly initialize the Button.
-   star/
-  public Button ()
-  {
-    super ();
-
-    _titleColor = Color.black;
-    _disabledTitleColor = Color.gray;
-    _titleFont = Font.defaultFont ();
-  }
-
-  /star Convenience constructor for instantiating a Button with
-   star bounds x, y, width, and height.  Equivalent to
-   star     foo = new Button ();
-   star     foo.init (x, y, width, height);
-   star/
-  public Button (int x, int y, int width, int height)
-  {
-    this ();
-    init (x, y, width, height);
-  }
-}" > the_file
+	  # These are the files we both start out with:
+	  mkdir import
+	  cd import
+	  diffmerge_create_older_files
 
 	  dotest diffmerge1_import \
 	    "${testcvs} import -m import diffmerge1 tag1 tag2" \
 	    "${DOTSTAR}No conflicts created by this import"
 	  cd ..
-	  rm -rf diffmerge1
 
-	  # Check out two working copies, one for "you" and one for "me"
+	  # Check out two working copies, one for "you" and one for
+	  # "me".  If no branch is used and cvs detects that only one
+	  # of the two people made changes, then cvs does not run the
+	  # merge algorithm.  But if a branch is used, then cvs does run
+	  # the merge algorithm (even in this case of only one of the two
+	  # people having made changes).  CVS used to have a bug in this
+	  # case.  Therefore, it is important to test this case by
+	  # using a branch:
+	  ${testcvs} rtag     -b tag diffmerge1 >/dev/null 2>&1
+	  ${testcvs} checkout -r tag diffmerge1 >/dev/null 2>&1
+	  mv diffmerge1 yours
 	  ${testcvs} checkout diffmerge1 >/dev/null 2>&1
-	  mv diffmerge1 diffmerge1_yours
-	  ${testcvs} checkout diffmerge1 >/dev/null 2>&1
-	  mv diffmerge1 diffmerge1_mine
+	  mv diffmerge1 mine
 
-	  # In your working copy, you'll remove the Button() method, and
-	  # then check in your change before I check in mine:
-	  cd diffmerge1_yours
-	  echo "// Button.java
-
-package random.application;
-
-import random.util.star;
-
-public class Button
-{
-  /star Instantiates a Button with origin (0, 0) and zero width and height.
-   star You must call an initializer method to properly initialize the Button.
-   star/
-  public Button ()
-  {
-    super ();
-
-    _titleColor = Color.black;
-    _disabledTitleColor = Color.gray;
-    _titleFont = Font.defaultFont ();
-  }
-}" > the_file
+	  # In your working copy, you'll make changes, and
+	  # then check in your changes before I check in mine:
+	  cd yours
+	  diffmerge_create_your_files
 	  dotest diffmerge1_yours \
 	    "${testcvs} ci -m yours" \
 	    "${DOTSTAR}hecking in ${DOTSTAR}"
 
-	  # My working copy still has the Button() method, but I
-	  # comment out some code at the top of the class.  Then I
+	  # Change my copy.  Then I
 	  # update, after both my modifications and your checkin:
-	  cd ../diffmerge1_mine
-	  echo "// Button.java
-
-package random.application;
-
-import random.util.star;
-
-public class Button
-{
-  /star Instantiates a Button with origin (0, 0) and zero width and height.
-   star You must call an initializer method to properly initialize the Button.
-   star/
-  public Button ()
-  {
-    super ();
-
-    // _titleColor = Color.black;
-    // _disabledTitleColor = Color.gray;
-    // _titleFont = Font.defaultFont ();
-  }
-
-  /star Convenience constructor for instantiating a Button with
-   star bounds x, y, width, and height.  Equivalent to
-   star     foo = new Button ();
-   star     foo.init (x, y, width, height);
-   star/
-  public Button (int x, int y, int width, int height)
-  {
-    this ();
-    init (x, y, width, height);
-  }
-}" > the_file
+	  cd ../mine
+	  diffmerge_create_my_files
 	  dotest diffmerge1_mine \
-	    "${testcvs} update" \
+	    "${testcvs} update -j tag" \
 	    "${DOTSTAR}erging${DOTSTAR}"
 
 	  # So if your changes didn't make it into my working copy, or
-	  # in any case if the file does not look like the final text as
-	  # quoted below, then the test flunks:
-	  echo "// Button.java
+	  # in any case if the files do not look like the final text
+	  # in the files in directory comp_me, then the test flunks:
+	  cd ..
+	  mkdir comp_me
+	  cd comp_me
+	  diffmerge_create_expected_files
+	  cd ..
+	  rm mine/.#*
 
-package random.application;
-
-import random.util.star;
-
-public class Button
-{
-  /star Instantiates a Button with origin (0, 0) and zero width and height.
-   star You must call an initializer method to properly initialize the Button.
-   star/
-  public Button ()
-  {
-    super ();
-
-    // _titleColor = Color.black;
-    // _disabledTitleColor = Color.gray;
-    // _titleFont = Font.defaultFont ();
-  }
-}" > comp_me
-	  dotest diffmerge1_cmp "cmp the_file comp_me" ''
+	  # If you have GNU's version of diff, you may try
+	  # uncommenting the following line which will give more
+	  # fine-grained information about how cvs differed from the
+	  # correct result:
+	  #dotest diffmerge1_cmp "diff -u --recursive --exclude=CVS comp_me mine" ''
+	  dotest diffmerge1_cmp "directory_cmp comp_me mine"
 
 	  # Clean up after ourselves:
 	  cd ..
-	  rm -rf diffmerge1_yours diffmerge1_mine ${CVSROOT_DIRNAME}/diffmerge1
-
+	  if test $keep = no; then
+	    rm -rf diffmerge1 ${CVSROOT_DIRNAME}/diffmerge1
+	  fi
 	  ;;
 
         diffmerge2)
