@@ -7186,14 +7186,8 @@ retrieving revision 1\.1\.1\.1
 retrieving revision 1\.1\.1\.2
 Merging differences between 1\.1\.1\.1 and 1\.1\.1\.2 into imported-f2
 rcsmerge: warning: conflicts during merge
-RCS file: ${CVSROOT_DIRNAME}/first-dir/imported-f3,v
-retrieving revision 1\.1\.1\.1
-retrieving revision 1\.1\.1\.2
-Merging differences between 1\.1\.1\.1 and 1\.1\.1\.2 into imported-f3
-RCS file: ${CVSROOT_DIRNAME}/first-dir/imported-f4,v
-retrieving revision 1\.1\.1\.1
-retrieving revision 1\.1\.1\.3
-Merging differences between 1\.1\.1\.1 and 1\.1\.1\.3 into imported-f4"
+first-dir/imported-f3 already contains the differences between 1\.1\.1\.1 and 1\.1\.1\.2
+first-dir/imported-f4 already contains the differences between 1\.1\.1\.1 and 1\.1\.1\.3"
 
 		cd first-dir
 
@@ -8682,6 +8676,37 @@ done"
 ${CVSROOT_DIRNAME}/join6/temp.txt,v  <--  temp\.txt
 new revision: 1\.2; previous revision: 1\.1
 done"
+
+	  # The case where the merge target is up-to-date and its base revision
+	  # matches the second argument to -j: CVS doesn't bother attempting
+	  # the merge since it already knows that the target contains the
+	  # change.
+	  dotest join6-3.2 "${testcvs} diff temp\.txt" ""
+	  dotest join6-3.3 "${testcvs} update -j1.1 -j1.2 temp\.txt" \
+"temp\.txt already contains the differences between 1\.1 and 1\.2"
+	  dotest join6-3.4 "${testcvs} diff temp\.txt" ""
+
+	  # The case where the merge target is modified but already contains
+	  # the change.
+	  echo bbb >temp.txt
+	  echo ccc >>temp.txt
+	  echo ddd >>temp.txt
+	  dotest join6-3.5 "${testcvs} update -j1.1 -j1.2 temp.txt" \
+"M temp\.txt
+RCS file: ${CVSROOT_DIRNAME}/join6/temp\.txt,v
+retrieving revision 1\.1
+retrieving revision 1\.2
+Merging differences between 1\.1 and 1\.2 into temp\.txt
+temp\.txt already contains the differences between 1\.1 and 1\.2"
+	  dotest_fail join6-3.6 "${testcvs} diff temp.txt" \
+"Index: temp\.txt
+===================================================================
+RCS file: ${CVSROOT_DIRNAME}/join6/temp\.txt,v
+retrieving revision 1\.2
+diff -r1\.2 temp.txt
+1d0
+< aaa"
+
 	  cp temp2.txt temp.txt
 	  dotest_fail join6-4 "${testcvs} diff temp.txt" \
 "Index: temp.txt
@@ -8944,6 +8969,7 @@ RCS file: ${CVSROOT_DIRNAME}/x/e,v
 retrieving revision 1\.1
 retrieving revision 1\.2
 Merging differences between 1\.1 and 1\.2 into e
+e already contains the differences between 1\.1 and 1\.2
 ${QUESTION} e0" \
 "${QUESTION} e0
 ${PROG} update: Updating .
@@ -8952,7 +8978,8 @@ U e
 RCS file: ${CVSROOT_DIRNAME}/x/e,v
 retrieving revision 1\.1
 retrieving revision 1\.2
-Merging differences between 1\.1 and 1\.2 into e"
+Merging differences between 1\.1 and 1\.2 into e
+e already contains the differences between 1\.1 and 1\.2"
 
 	  # Verify that the $Id.$ string is not expanded.
 	  dotest join-admin-2-15 "cat e" '$''Id$'
@@ -22251,6 +22278,7 @@ RCS file: ${CVSROOT_DIRNAME}/diffmerge1/testcase07,v
 retrieving revision 1\.1\.1\.1
 retrieving revision 1\.1\.1\.1\.2\.1
 Merging differences between 1\.1\.1\.1 and 1\.1\.1\.1\.2\.1 into testcase07
+testcase07 already contains the differences between 1\.1\.1\.1 and 1\.1\.1\.1\.2\.1
 M testcase08
 RCS file: ${CVSROOT_DIRNAME}/diffmerge1/testcase08,v
 retrieving revision 1\.1\.1\.1
