@@ -1,3 +1,8 @@
+Wed Oct 18 11:07:07 1995  Vince Demarco  <vdemarco@bou.shl.com>
+
+	* cvs.1 (Flag): Updated the CVSROOT/wrappers stuff. Everyone seems
+        to think this is a NEXT specific thing it isn't.
+
 Tue Oct 17 17:38:27 1995  Warren Jones  <wjones@tc.fluke.com>
 
 	* cvs.1: Change \. to \&. at start of line.
