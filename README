@@ -183,8 +183,8 @@ Paul Sander, HaL Computer Systems, Inc. <paul@hal.com> wrote and
 contributed the code in lib/sighandle.c.  I added support for POSIX, BSD,
 and non-POSIX/non-BSD systems.
 
-Jim Kingdon of Cygnus Support <kingdon@cygnus.com> wrote the remote
-repository access code.
+Jim Kingdon and others at Cygnus Support <info@cygnus.com> wrote the
+remote repository access code.
 
 In addition to the above contributors, the following Beta testers deserve
 special mention for their support.  If I have left off your name, I
