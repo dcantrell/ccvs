@@ -3715,6 +3715,11 @@ expand_proc (pargc, argv, where, mwhere, mfile, shorten,
     if (mwhere != NULL)
     {
 	buf_output0 (buf_to_net, "Module-expansion ");
+	if (server_dir != NULL)
+	{
+	    buf_output0 (buf_to_net, server_dir);
+	    buf_output0 (buf_to_net, "/");
+	}
 	buf_output0 (buf_to_net, mwhere);
 	if (mfile != NULL)
 	{
@@ -3730,6 +3735,11 @@ expand_proc (pargc, argv, where, mwhere, mfile, shorten,
 	if (*pargc == 1)
 	{
 	    buf_output0 (buf_to_net, "Module-expansion ");
+	    if (server_dir != NULL)
+	    {
+		buf_output0 (buf_to_net, server_dir);
+		buf_output0 (buf_to_net, "/");
+	    }
 	    buf_output0 (buf_to_net, dir);
 	    buf_append_char (buf_to_net, '\n');
 	}
@@ -3738,6 +3748,11 @@ expand_proc (pargc, argv, where, mwhere, mfile, shorten,
 	    for (i = 1; i < *pargc; ++i)
 	    {
 	        buf_output0 (buf_to_net, "Module-expansion ");
+		if (server_dir != NULL)
+		{
+		    buf_output0 (buf_to_net, server_dir);
+		    buf_output0 (buf_to_net, "/");
+		}
 		buf_output0 (buf_to_net, dir);
 		buf_append_char (buf_to_net, '/');
 		buf_output0 (buf_to_net, argv[i]);

@@ -5340,6 +5340,27 @@ EOF
 
 	  cd ..
 
+	  # Now we create another directory named first-dir and make
+	  # sure that CVS doesn't get them mixed up.
+	  mkdir first-dir
+	  # Note that this message should say "Updating ampermodule/first-dir"
+	  # I suspect.  This is a long-standing behavior/bug....
+	  dotest modules2-9 "${testcvs} co ampermodule" \
+"${PROG} [a-z]*: Updating first-dir
+${PROG} [a-z]*: Updating second-dir"
+	  touch ampermodule/first-dir/amper1
+	  dotest modules2-10 "${testcvs} add ampermodule/first-dir/amper1" \
+"${PROG} [a-z]*: scheduling file .ampermodule/first-dir/amper1. for addition
+${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
+
+	  # As with the "Updating xxx" message, the "U first-dir/amper1"
+	  # message (instead of "U ampermodule/first-dir/amper1") is
+	  # rather fishy.
+	  dotest modules2-12 "${testcvs} co ampermodule" \
+"${PROG} [a-z]*: Updating first-dir
+A first-dir/amper1
+${PROG} [a-z]*: Updating second-dir"
+
 	  # Test that CVS gives an error if one combines -a with
 	  # other options.
 	  cd CVSROOT
