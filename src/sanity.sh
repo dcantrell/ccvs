@@ -21002,9 +21002,10 @@ EOF
 	  # 29 Feb 2000
 	  dotest rcs2-4 "${testcvs} -q update -p -D '2000-02-29 11:30 UT' file1" \
 "2000 is also a good year for leaping"
-	  # 29 Feb 2003 is invalid
-	  dotest_fail rcs2-5 "${testcvs} -q update -p -D '2003-02-29 11:30 UT' file1" \
-"${CPROG} \[update aborted\]: Can't parse date/time: 2003-02-29 11:30 UT"
+	  # 29 Feb 2003 is valid since the new getdate.y in 1.12.8.
+	  dotest rcs2-5 \
+"${testcvs} -q update -p -D '2003-02-29 11:30 UT' file1" \
+"2003 wasn't"
 
 	  dotest rcs2-6 "${testcvs} -q update -p -D 2007-01-07 file1" \
 "head revision"
