@@ -996,17 +996,16 @@ AC_DEFUN([AM_FUNC_GETLINE],
     AC_DEFINE([getline], [gnu_getline],
       [Define to a replacement function name for getline().])
     AC_LIBOBJ(getline)
+
+    # Avoid multiple inclusions of getndelim2.o into LIBOBJS.
+    # This hack won't be needed after gnulib requires Autoconf 2.58 or later.
+    case " $LIB@&t@OBJS " in
+    *" getndelim2.$ac_objext "* ) ;;
+    *) AC_LIBOBJ(getndelim2);;
+    esac
+
     gl_PREREQ_GETLINE
-    dnl The following lines used to be here:
-    dnl
-    dnl   AC_LIBOBJ(getndelim2)
-    dnl   gl_PREREQ_GETNDELIM2
-    dnl
-    dnl The fix to Autoconf that forbids multiple inclusions in LIBOBJ of the
-    dnl same filename went in before release 2.58, so after GNULIB requires
-    dnl Autoconf 2.58 or greater, the following line can be removed and the
-    dnl above two restored.
-    gl_GETNDELIM2
+    gl_PREREQ_GETNDELIM2
   fi
 ])
 
@@ -1026,14 +1025,13 @@ dnl the same distribution terms as the rest of that program.
 
 AC_DEFUN([gl_GETNDELIM2],
 [
-  dnl The fix to Autoconf that forbids multiple inclusions in LIBOBJ of the
-  dnl same filename went in before release 2.58, so after GNULIB requires
-  dnl Autoconf 2.58 or greater, the variable set below and check to prevent
-  dnl running AC_LIBOBJ twice will no longer be necessary.
-  if test -z "$gl_getndelim2_invoked"; then
-    gl_getndelim2_invoked=:
-    AC_LIBOBJ(getndelim2)
-  fi
+  # Avoid multiple inclusions of getndelim2.o into LIBOBJS.
+  # This hack won't be needed after gnulib requires Autoconf 2.58 or later.
+  case " $LIB@&t@OBJS " in
+  *" getndelim2.$ac_objext "* ) ;;
+  *) AC_LIBOBJ(getndelim2);;
+  esac
+
   gl_PREREQ_GETNDELIM2
 ])
 

@@ -1,5 +1,11 @@
 2003-11-19  Derek Price  <derek@ximbiot.com>
 
+	* srclist.txt (getline): Update to match new module definitions and
+	imports.
+	* aclocal.m4, configure: Regenerated.
+
+2003-11-19  Derek Price  <derek@ximbiot.com>
+
 	* NEWS: Rename "OTHER ISSUES" to "GENERAL USER ISSUES" and move the
 	note about the Autoconf upgrade to a new "DEVELOPER ISSUES" section.
 	Add a note about upgrading Automake.
