@@ -64,7 +64,8 @@ relying on it.
 * Microsoft Developer Studio 4.x Professional (not Standard, not 2.x).
 * Powersoft's Optima++, PowerJ, and Power++
   (not sure which versions, but this information was added in 1997 if
-   that helps).
+   that helps.  Someone on usenet reports 32 bit Powerbuilder version
+   5.03 but not version 4, version 5.0, or 16 bit Powerbuilder.).
 * Premia's CodeWright editor 
   (versions 5.00b and 5.00c; not sure about older versions).
 
