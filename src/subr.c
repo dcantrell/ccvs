@@ -70,7 +70,8 @@ copy_file (from, to)
     char *buf;
 
     if (trace)
-	(void) fprintf (stderr, "-> copy(%s,%s)\n", from, to);
+	(void) fprintf (stderr, "%c-> copy(%s,%s)\n",
+			(server_active) ? 'S' : ' ', from, to);
     if (noexec)
 	return;
 
@@ -202,7 +203,8 @@ Fopen (name, mode)
     char *mode;
 {
     if (trace)
-	(void) fprintf (stderr, "-> fopen(%s,%s)\n", name, mode);
+	(void) fprintf (stderr, "%c-> fopen(%s,%s)\n",
+			(server_active) ? 'S' : ' ', name, mode);
     if (noexec)
 	return (NULL);
 
@@ -337,7 +339,8 @@ xchmod (fname, writable)
     }
 
     if (trace)
-	(void) fprintf (stderr, "-> chmod(%s,%o)\n", fname, mode);
+	(void) fprintf (stderr, "%c-> chmod(%s,%o)\n",
+			(server_active) ? 'S' : ' ', fname, mode);
     if (noexec)
 	return;
 
@@ -354,7 +357,8 @@ rename_file (from, to)
     char *to;
 {
     if (trace)
-	(void) fprintf (stderr, "-> rename(%s,%s)\n", from, to);
+	(void) fprintf (stderr, "%c-> rename(%s,%s)\n",
+			(server_active) ? 'S' : ' ', from, to);
     if (noexec)
 	return;
 
@@ -370,7 +374,8 @@ link_file (from, to)
     char *from, *to;
 {
     if (trace)
-	(void) fprintf (stderr, "-> link(%s,%s)\n", from, to);
+	(void) fprintf (stderr, "%c-> link(%s,%s)\n",
+			(server_active) ? 'S' : ' ', from, to);
     if (noexec)
 	return (0);
 
@@ -385,7 +390,8 @@ unlink_file (f)
     char *f;
 {
     if (trace)
-	(void) fprintf (stderr, "-> unlink(%s)\n", f);
+	(void) fprintf (stderr, "%c-> unlink(%s)\n",
+			(server_active) ? 'S' : ' ', f);
     if (noexec)
 	return (0);
 
@@ -689,7 +695,7 @@ run_exec (stin, stout, sterr, flags)
 
     if (trace)
     {
-	(void) fprintf (stderr, "-> system(");
+	(void) fprintf (stderr, "%c-> system(", (server_active) ? 'S' : ' ');
 	run_print (stderr);
 	(void) fprintf (stderr, ")\n");
     }
@@ -896,7 +902,8 @@ Popen (cmd, mode)
     char *cmd, *mode;
 {
     if (trace)
-	(void) fprintf (stderr, "-> Popen(%s,%s)\n", cmd, mode);
+	(void) fprintf (stderr, "%c-> Popen(%s,%s)\n",
+			(server_active) ? 'S' : ' ', cmd, mode);
     if (noexec)
 	return (NULL);
     return (popen (cmd, mode));

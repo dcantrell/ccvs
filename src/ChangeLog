@@ -1,3 +1,26 @@
+Sun Apr 23 20:58:32 1995  Noel Cragg  <noel@vo.com>
+
+       	* checkout.c (checkout): Disabled "expand-module" functionality on
+        remote checkout, since it makes modules behave like aliases (see
+        longer note there).  This change necessitated the change below.
+        Also merged the like parts of a conditional.
+
+	* client.c (call_in_directory): Changed the algorithm that created
+        nested and directories and the "CVS" administration directories
+        therein.  The algoithm wrongly assumed that the name of the
+        directory that that was to be created and the repository name were
+        the same, which breaks modules.
+
+	* create_adm.c (Create_Admin), module.c (do_module), server.c
+        (server_register), subr.c, entries.c: Added fprintfs for trace-mode
+	debugging.
+
+	* client.c (client_send_expansions): Argument to function didn't
+        have a type -- added one.
+
+	* server.c (new_entries_line): Arguments to this function are
+        never used -- reoved them and fixed callers.
+
 Sat Apr 22 11:17:20 1995  Jim Kingdon  (kingdon@lioth.cygnus.com)
 
 	* rcs.c (RCS_parse): If we can't open the file, give an error

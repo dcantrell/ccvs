@@ -242,13 +242,31 @@ checkout (argc, argv)
 	start_server ();
 
 	ign_setup ();
+	
+	/* Turning on the EXPAND_MODULES has the effect of turning
+	   modules into aliases -- if you have module foo pointing to
+	   bar/baz, when you checkout foo it will be created in
+	   bar/baz instead of foo.  The whole reason for modules in
+	   the first place was so we didn't have to deal with this.
 
-	expand_modules =
-	  !cat && !status && !pipeout && supported_request ("expand-modules");
+	   I've left the original statement in here as a comment in
+	   case anyone ever discovers that they have to re-enable this
+	   functionality.
+	   
+	   expand_modules = (!cat && !status && !pipeout
+                             && supported_request ("expand-modules"));
+	   */
+
+	expand_modules = 0;
+
 	if (expand_modules)
-	{
+	  {
+	    /* This is done here because we need to read responses
+               from the server before we send the command checkout or
+               export files. */
+
 	    client_expand_modules (argc, argv, local);
-	}
+	  }
 
 	if (!run_module_prog) send_arg ("-n");
 	if (really_quiet) send_arg ("-Q");
@@ -288,28 +306,24 @@ checkout (argc, argv)
 	if (join_rev2 != NULL)
 	    option_with_arg ("-j", join_rev2);
 
-	if (!expand_modules)
-	{
+	if (expand_modules)
+	  {
+	    client_send_expansions (local);
+	  }
+	else
+	  {
 	    int i;
 	    for (i = 0; i < argc; ++i)
-		send_arg (argv[i]);
+	      send_arg (argv[i]);
 	    client_nonexpanded_setup ();
+	  }
 
-	    if (fprintf
-		(to_server,
-		 strcmp (command_name, "export") == 0 ? "export\n" : "co\n")
-		== EOF)
-		error (1, errno, "writing to server");
-	}
-	else
-	{
-	    client_send_expansions (local);
-	    if (fprintf
-		(to_server,
-		 strcmp (command_name, "export") == 0 ? "export\n" : "co\n")
-		== EOF)
-		error (1, errno, "writing to server");
-	}
+	if (fprintf
+	    (to_server,
+	     strcmp (command_name, "export") == 0 ? "export\n" : "co\n")
+	    == EOF)
+	  error (1, errno, "writing to server");
+
 	return get_responses_and_close ();
     }
 
