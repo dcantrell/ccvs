@@ -1,5 +1,8 @@
 Thu Mar 27 09:57:05 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvs.texinfo (Error messages): Give exact wording of broken pipe
+	error message.
+
 	* cvs.texinfo (history database): Add comment about various
 	problems with the history file.
 

@@ -10386,9 +10386,8 @@ sure which version of @sc{cvs} they are using at any
 particular moment).
 
 @table @code
-@item broken pipe
-This message (I'm not sure about the exact wording of
-the message) seems to be caused by a hard-to-track-down
+@item cvs [server aborted]: received broken pipe signal
+This message seems to be caused by a hard-to-track-down
 bug in @sc{cvs} or the systems it runs on (we don't
 know---we haven't tracked it down yet!).  It seems to
 happen only after a @sc{cvs} command has completed, and
