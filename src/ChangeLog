@@ -1,3 +1,43 @@
+2001-08-24  Derek Price  <dprice@collab.net>
+
+	* Implement RereadLogAfterVerify CVSROOT/config option to control
+	FreeBSD read-write of log messages in the verification script.
+	* logmsg.c: RereadLogAfterVerify defaults to LOGMSG_REREAD_NEVER
+	to preserve the status quo.
+	* parseinfo.c (parse_config): Add parsing for RereadLogAfterVerify
+	option. Possible values are: no | never | yes | always | stat
+	* cvs.h: Add extern for RereadLogAfterVerify and new value macros
+	LOGMSG_REREAD_NEVER, LOGMSG_REREAD_ALWAYS, LOGMSG_REREAD_STAT for
+	its values.
+	(Patch from Mark D. Baushke  <mdb@cvshome.org>.)
+
+	* Apply changes from FreeBSD cvs sources to implement a read-write
+	user-defined verification script.
+	* logmsg.c (do_verify): Update do_verify to expect a pointer
+	to the saved message. The log file passed to the verifymsg_script
+	should be re-read after the user-defined verification script has
+	been run. The user-defined verification script is allowed to
+	modify the message.  This allows the script to add extra
+	information to the log message or to remove template lines that
+	are not needed.
+	* cvs.h: Update prototype for do_verify prototype to expect a
+	pointer to the saved_message.
+	* commit.c (commit, commit_fileproc, commit_direntproc): Update
+	calls to do_verify as the saved_message arg is now read-write.
+	* import.c (import):  Update calls to do_verify as the
+	saved_message arg is now read-write.
+	* sanity.sh (info-v4-[12]): Rename the old info-v4 test to info-v5
+	and add a new info-v4 test case have the verification script
+	modify the log message to test the above changes.
+	(Patch from Mark D. Baushke  <mdb@cvshome.org>.)
+
+	* logmsg.c: Change RereadLogAfterVerify default to always.
+	(do_verify): Reformat and make minor fixes to Mark's patch.
+	* mkmodules.c (config_constants): Add comment about
+	RereadLogAfterVerify.
+	* sanity.sh (info-rereadlog): Rename the tests from Mark's patch and
+	reformat them a bit.
+
 2001-08-23  Derek Price  <dprice@collab.net>
 
 	* sanity.sh (info): Demonstrate that the verifymsg scripts can

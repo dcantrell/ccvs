@@ -388,6 +388,12 @@ extern int logoff;		/* Don't write history entry */
 
 extern int top_level_admin;
 
+
+#define LOGMSG_REREAD_NEVER 0	/* do_verify - never  reread message */
+#define LOGMSG_REREAD_ALWAYS 1	/* do_verify - always reread message */
+#define LOGMSG_REREAD_STAT 2	/* do_verify - reread message if changed */
+extern int RereadLogAfterVerify;
+
 #ifdef CLIENT_SUPPORT
 extern List *dirs_sent_to_server; /* used to decide which "Argument
 				     xxx" commands to send to each
@@ -573,7 +579,7 @@ void Update_Logfile PROTO((char *repository, char *xmessage, FILE * xlogfp,
 void do_editor PROTO((char *dir, char **messagep,
 		      char *repository, List * changes));
 
-void do_verify PROTO((char *message, char *repository));
+void do_verify PROTO((char **messagep, char *repository));
 
 typedef	int (*CALLBACKPROC)	PROTO((int argc, char *argv[], char *where,
 	char *mwhere, char *mfile, int shorten, int local_specified,
