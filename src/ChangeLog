@@ -1,4 +1,5 @@
-Sun Nov 10 21:13:38 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+Sun Nov 10 21:13:38 1996  Paul Sanders <p.sanders@dial.pipex.com>
+			  and Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* server.c: Use all the right cruft which goes along with
 	including sys/time.h.
