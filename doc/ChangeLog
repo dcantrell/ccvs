@@ -1,3 +1,8 @@
+Sat Aug 16 10:19:06 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (Error messages): Add note about how "could not
+	check out foo.c" seems to also have been observed on Irix.
+
 Fri Aug 15 17:28:01 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (Error messages): Add "could not check out foo.c".
