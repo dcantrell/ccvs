@@ -1,5 +1,7 @@
 Wed Jul 30 08:42:04 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* Version 1.9.14.
+
 	* create_adm.c, cvs.h (Create_Admin): If new argument WARN is set,
 	then make creating the CVS directory itself a warning not a fatal
 	error.  New return value indicates whether we did this.
