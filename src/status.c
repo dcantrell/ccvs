@@ -204,14 +204,18 @@ status_fileproc (file, update_dir, repository, entries, srcfiles)
 		    (void) printf ("   Sticky Tag:\t\t%s\n", edata->tag);
 		else
 		{
-		    int isbranch = RCS_isbranch (file, edata->tag, srcfiles);
+		    char *branch = NULL;
+	
+		    if (RCS_isbranch (file, edata->tag, srcfiles))
+			branch = RCS_whatbranch(file, edata->tag, srcfiles);
 
 		    (void) printf ("   Sticky Tag:\t\t%s (%s: %s)\n",
 				   edata->tag,
-				   isbranch ? "branch" : "revision",
-				   isbranch ?
-				   RCS_whatbranch(file, edata->tag, srcfiles) :
-				   vers->vn_rcs);
+				   branch ? "branch" : "revision",
+				   branch ? branch : vers->vn_rcs);
+
+		    if (branch)
+			free (branch);
 		}
 	    }
 	}
@@ -272,11 +276,17 @@ tag_list_proc (p, closure)
     Node *p;
     void *closure;
 {
-    int isbranch = RCS_isbranch (xfile, p->key, xsrcfiles);
+    char *branch = NULL;
+
+    if (RCS_isbranch (xfile, p->key, xsrcfiles))
+	branch = RCS_whatbranch(xfile, p->key, xsrcfiles) ;
 
     (void) printf ("\t%-25.25s\t(%s: %s)\n", p->key,
-		   isbranch ? "branch" : "revision",
-		   isbranch ? RCS_whatbranch(xfile, p->key, xsrcfiles) :
-		   p->data);
+		   branch ? "branch" : "revision",
+		   branch ? branch : p->data);
+
+    if (branch)
+	free (branch);
+
     return (0);
 }

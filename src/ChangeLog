@@ -1,3 +1,19 @@
+Tue Jan 30 06:50:19 1996  J.T. Conklin  <jtc@rtl.cygnus.com>
+
+	* client.c (send_repository): Fix memory leak; free adm_name
+ 	before returning.
+	* diff.c (diff_file_nodiff): Fix memory leak; free xvers before
+ 	returning.
+	* rtag.c (rtag_fileproc): Fix memory leak; if branch_mode is set,
+ 	free rev before returning.
+	* status.c (status_fileproc, tag_list_proc): Fix memory leak; free
+ 	return value of RCS_whatbranch.
+	* tag.c (tag_fileproc): Fix memory leak; free vers before
+ 	returning.
+	(val_fileproc): Fix memory leak; free return value of RCS_gettag.
+	* watch.c (watch_modify_watchers): Fix memory leak; free mynewattr
+	before returning.
+
 Tue Jan 30 09:43:34 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* lock.c (readers_exist): If stat gave an error, print an error

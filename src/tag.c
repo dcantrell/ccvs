@@ -565,11 +565,11 @@ tag_fileproc (file, update_dir, repository, entries, srcfiles)
 	    (void) printf ("T %s\n", file);
     }
 
-    freevers_ts (&vers);
     if (nversion != NULL)
     {
         free(nversion);
     }
+    freevers_ts (&vers);
     return (0);
 }
 
@@ -618,6 +618,7 @@ val_fileproc (file, update_dir, repository, entries, srcfiles)
     RCSNode *rcsdata;
     Node *node;
     struct val_args *args = val_args_static;
+    char *tag;
 
     node = findnode (srcfiles, file);
     if (node == NULL)
@@ -625,10 +626,13 @@ val_fileproc (file, update_dir, repository, entries, srcfiles)
 	   W_REPOS | W_ATTIC.  */
 	return 0;
     rcsdata = (RCSNode *) node->data;
-    if (RCS_gettag (rcsdata, args->name, 1, 0) != NULL)
+
+    tag = RCS_gettag (rcsdata, args->name, 1, 0);
+    if (tag != NULL)
     {
 	/* FIXME: should find out a way to stop the search at this point.  */
 	args->found = 1;
+	free (tag);
     }
     return 0;
 }

@@ -211,6 +211,8 @@ watch_modify_watchers (file, what)
 	free (curattr);
     if (mycurattr != NULL)
 	free (mycurattr);
+    if (mynewattr != NULL)
+	free (mynewattr);
 }
 
 static int addremove_fileproc PROTO ((char *, char *, char *, List *, List *));

@@ -1943,6 +1943,7 @@ send_repository (dir, repos, update_dir)
 		error (0, errno, "closing %s", adm_name);
 	}
     }
+    free (adm_name);
     if (last_repos != NULL)
 	free (last_repos);
     if (last_update_dir != NULL)

@@ -530,6 +530,8 @@ diff_file_nodiff (file, repository, entries, srcfiles, vers)
 		else
 		    error (0, 0, "no revision for date %s in file %s",
 			   diff_date1, file);
+
+		freevers_ts (&xvers);
 		return (1);
 	    }
 	    use_rev1 = xstrdup (xvers->vn_rcs);
@@ -555,6 +557,8 @@ diff_file_nodiff (file, repository, entries, srcfiles, vers)
 		else
 		    error (0, 0, "no revision for date %s in file %s",
 			   diff_date2, file);
+
+		freevers_ts (&xvers);
 		return (1);
 	    }
 	    use_rev2 = xstrdup (xvers->vn_rcs);
