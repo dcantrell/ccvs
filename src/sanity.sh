@@ -689,7 +689,7 @@ if test x"$*" = x; then
 	# Watches, binary files, history browsing, &c.
 	tests="${tests} devcom devcom2 devcom3 watch4 watch5"
 	tests="${tests} unedit-without-baserev"
-	tests="${tests} ignore binfiles binfiles2 binfiles3"
+	tests="${tests} ignore ignore-on-branch binfiles binfiles2 binfiles3"
 	tests="${tests} mcopy binwrap binwrap2"
 	tests="${tests} binwrap3 mwrap info taginfo config"
 	tests="${tests} serverpatch log log2 logopt ann ann-id"
@@ -12786,18 +12786,18 @@ U m"
 	ignore)
 	  # On Windows, we can't check out CVSROOT, because the case
 	  # insensitivity means that this conflicts with cvsroot.
-	  mkdir wnt
-	  cd wnt
+	  mkdir ignore
+	  cd ignore
 
-	  dotest 187a1 "${testcvs} -q co CVSROOT" "U CVSROOT/${DOTSTAR}"
+	  dotest ignore-1 "${testcvs} -q co CVSROOT" "U CVSROOT/${DOTSTAR}"
 	  cd CVSROOT
 	  echo rootig.c >cvsignore
-	  dotest 187a2 "${testcvs} add cvsignore" "${PROG}"' [a-z]*: scheduling file `cvsignore'"'"' for addition
+	  dotest ignore-2 "${testcvs} add cvsignore" "${PROG}"' [a-z]*: scheduling file `cvsignore'"'"' for addition
 '"${PROG}"' [a-z]*: use .'"${PROG}"' commit. to add this file permanently'
 
 	  # As of Jan 96, local CVS prints "Examining ." and remote doesn't.
 	  # Accept either.
-	  dotest 187a3 " ${testcvs} ci -m added" \
+	  dotest ignore-3 " ${testcvs} ci -m added" \
 "${PROG} [a-z]*: Examining \.
 RCS file: ${CVSROOT_DIRNAME}/CVSROOT/cvsignore,v
 done
@@ -12809,9 +12809,9 @@ ${PROG} [a-z]*: Rebuilding administrative file database"
 
 	  cd ..
 	  if echo "yes" | ${testcvs} release -d CVSROOT >>${LOGFILE} ; then
-	      pass 187a4
+	      pass ignore-4
 	  else
-	      fail 187a4
+	      fail ignore-4
 	  fi
 
 	  # CVS looks at the home dir from getpwuid, not HOME (is that correct
@@ -12823,46 +12823,46 @@ ${PROG} [a-z]*: Rebuilding administrative file database"
 	  touch foobar.c bar.c rootig.c defig.o envig.c optig.c
 	  # We use sort because we can't predict the order in which
 	  # the files will be listed.
-	  dotest_sort 188a "${testcvs} import -m m -I optig.c first-dir tag1 tag2" \
+	  dotest_sort ignore-5 "${testcvs} import -m m -I optig.c ignore/first-dir tag1 tag2" \
 '
 
-I first-dir/defig.o
-I first-dir/envig.c
-I first-dir/optig.c
-I first-dir/rootig.c
-N first-dir/bar.c
-N first-dir/foobar.c
+I ignore/first-dir/defig.o
+I ignore/first-dir/envig.c
+I ignore/first-dir/optig.c
+I ignore/first-dir/rootig.c
+N ignore/first-dir/bar.c
+N ignore/first-dir/foobar.c
 No conflicts created by this import'
-	  dotest_sort 188b "${testcvs} import -m m -I ! second-dir tag3 tag4" \
+	  dotest_sort ignore-6 "${testcvs} import -m m -I ! ignore/second-dir tag3 tag4" \
 '
 
-N second-dir/bar.c
-N second-dir/defig.o
-N second-dir/envig.c
-N second-dir/foobar.c
-N second-dir/optig.c
-N second-dir/rootig.c
+N ignore/second-dir/bar.c
+N ignore/second-dir/defig.o
+N ignore/second-dir/envig.c
+N ignore/second-dir/foobar.c
+N ignore/second-dir/optig.c
+N ignore/second-dir/rootig.c
 No conflicts created by this import'
 	  cd ..
 	  rm -r dir-to-import
 
 	  mkdir 1
 	  cd 1
-	  dotest 189a "${testcvs} -q co second-dir" \
+	  dotest ignore-7 "${testcvs} -q co -dsecond-dir ignore/second-dir" \
 'U second-dir/bar.c
 U second-dir/defig.o
 U second-dir/envig.c
 U second-dir/foobar.c
 U second-dir/optig.c
 U second-dir/rootig.c'
-	  dotest 189b "${testcvs} -q co first-dir" 'U first-dir/bar.c
+	  dotest ignore-8 "${testcvs} -q co -dfirst-dir ignore/first-dir" 'U first-dir/bar.c
 U first-dir/foobar.c'
 	  cd first-dir
 	  touch rootig.c defig.o envig.c optig.c notig.c
-	  dotest 189c "${testcvs} -q update -I optig.c" "${QUESTION} notig.c"
+	  dotest ignore-9 "${testcvs} -q update -I optig.c" "${QUESTION} notig.c"
 	  # The fact that CVS requires us to specify -I CVS here strikes me
 	  # as a bug.
-	  dotest_sort 189d "${testcvs} -q update -I ! -I CVS" \
+	  dotest_sort ignore-10 "${testcvs} -q update -I ! -I CVS" \
 "${QUESTION} defig.o
 ${QUESTION} envig.c
 ${QUESTION} notig.c
@@ -12874,7 +12874,7 @@ ${QUESTION} rootig.c"
 	  # CVS only prints it on update.
 	  rm optig.c
 	  if $remote; then
-	    dotest 189er "${testcvs} -q diff" "${QUESTION} notig.c"
+	    dotest ignore-11r "${testcvs} -q diff" "${QUESTION} notig.c"
 
 	    # Force the server to be contacted.  Ugh.  Having CVS
 	    # contact the server for the sole purpose of checking
@@ -12885,7 +12885,7 @@ ${QUESTION} rootig.c"
 	    # contents.
 	    touch bar.c
 
-	    dotest 189fr "${testcvs} -q ci -m commit-it" "${QUESTION} notig.c"
+	    dotest ignore-11r "${testcvs} -q ci -m commit-it" "${QUESTION} notig.c"
 	  fi
 
 	  # now test .cvsignore files
@@ -12893,11 +12893,11 @@ ${QUESTION} rootig.c"
 	  echo notig.c >first-dir/.cvsignore
 	  echo foobar.c >second-dir/.cvsignore
 	  touch first-dir/notig.c second-dir/notig.c second-dir/foobar.c
-	  dotest_sort 190 "${testcvs} -qn update" \
+	  dotest_sort ignore-12 "${testcvs} -qn update" \
 "${QUESTION} first-dir/.cvsignore
 ${QUESTION} second-dir/.cvsignore
 ${QUESTION} second-dir/notig.c"
-	  dotest_sort 191 "${testcvs} -qn update -I! -I CVS" \
+	  dotest_sort ignore-13 "${testcvs} -qn update -I! -I CVS" \
 "${QUESTION} first-dir/.cvsignore
 ${QUESTION} first-dir/defig.o
 ${QUESTION} first-dir/envig.c
@@ -12905,22 +12905,87 @@ ${QUESTION} first-dir/rootig.c
 ${QUESTION} second-dir/.cvsignore
 ${QUESTION} second-dir/notig.c"
 
-	  echo yes | dotest ignore-192 "${testcvs} release -d first-dir" \
+	  echo yes | dotest ignore-14 "${testcvs} release -d first-dir" \
 "${QUESTION} \.cvsignore
 You have \[0\] altered files in this repository.
 Are you sure you want to release (and delete) directory .first-dir': "
 
 	  echo add a line >>second-dir/foobar.c
 	  rm second-dir/notig.c second-dir/.cvsignore
-	  echo yes | dotest ignore-194 "${testcvs} release -d second-dir" \
+	  echo yes | dotest ignore-15 "${testcvs} release -d second-dir" \
 "M foobar.c
 You have \[1\] altered files in this repository.
 Are you sure you want to release (and delete) directory .second-dir': "
+
+	  cd ../..
+	  if $keep; then :; else
+	    rm -r ignore
+	    rm -rf ${CVSROOT_DIRNAME}/ignore
+	  fi
+	  ;;
+
+	ignore-on-branch)
+	  # Test that CVS _doesn't_ ignore files on branches because they were
+	  # added to the trunk.
+	  mkdir ignore-on-branch; cd ignore-on-branch
+	  mkdir $CVSROOT_DIRNAME/ignore-on-branch
+
+	  # create file1 & file2 on trunk
+	  dotest ignore-on-branch-setup-1 "$testcvs -q co -dsetup ignore-on-branch" ''
+	  cd setup
+	  echo file1 >file1 
+	  dotest ignore-on-branch-setup-2 "$testcvs -q add file1" \
+"$PROG [a-z]*: use .cvs commit. to add this file permanently"
+	  dotest ignore-on-branch-setup-3 "$testcvs -q ci -mfile1 file1" \
+"RCS file: $CVSROOT_DIRNAME/ignore-on-branch/file1,v
+done
+Checking in file1;
+$CVSROOT_DIRNAME/ignore-on-branch/file1,v  <--  file1
+initial revision: 1\.1
+done"
+	  dotest ignore-on-branch-setup-4 "$testcvs -q tag -b branch" 'T file1'
+	  echo file2 >file2 
+	  dotest ignore-on-branch-setup-5 "$testcvs -q add file2" \
+"$PROG [a-z]*: use .cvs commit. to add this file permanently"
+	  dotest ignore-on-branch-setup-6 "$testcvs -q ci -mtrunk file2" \
+"RCS file: $CVSROOT_DIRNAME/ignore-on-branch/file2,v
+done
+Checking in file2;
+$CVSROOT_DIRNAME/ignore-on-branch/file2,v  <--  file2
+initial revision: 1\.1
+done"
+
 	  cd ..
-	  rm -r 1
-	  cd ..
-	  rm -r wnt
-	  rm -rf ${CVSROOT_DIRNAME}/first-dir ${CVSROOT_DIRNAME}/second-dir
+
+	  # Check out branch.
+	  #
+	  # - This was the original failure case - file2 would not be flagged
+	  #   with a '?'
+	  dotest ignore-on-branch-1 "$testcvs -q co -rbranch ignore-on-branch" \
+'U ignore-on-branch/file1'
+	  cd ignore-on-branch
+	  echo file2 on branch >file2 
+	  dotest ignore-on-branch-2 "$testcvs -nq update" '? file2'
+
+	  # Now set up for a join.  One of the original fixes for this would
+	  # print out a 'U' and a '?' during a join which added a file.
+	  dotest ignore-on-branch-3 "$testcvs -q tag -b branch2" 'T file1'
+	  dotest ignore-on-branch-4 "$testcvs -q add file2" \
+"$PROG [a-z]*: use .cvs commit. to add this file permanently"
+	  dotest ignore-on-branch-5 "$testcvs -q ci -mbranch file2" \
+"Checking in file2;
+$CVSROOT_DIRNAME/ignore-on-branch/file2,v  <--  file2
+new revision: 1\.1\.2\.1; previous revision: 1\.1
+done"
+	  dotest ignore-on-branch-6 "$testcvs -q up -rbranch2" \
+"$PROG [a-z]*: file2 is no longer in the repository"
+	  dotest ignore-on-branch-7 "$testcvs -q up -jbranch" 'U file2'
+
+	  cd ../..
+	  if $keep; then :; else
+	    rm -r ignore-on-branch
+	    rm -rf $CVSROOT_DIRNAME/ignore-on-branch
+	  fi
 	  ;;
 
 	binfiles)

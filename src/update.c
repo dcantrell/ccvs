@@ -796,7 +796,7 @@ update_fileproc (callerdat, finfo)
 	join_file (finfo, vers);
 
     /* if this directory has an ignore list, add this file to it */
-    if (ignlist)
+    if (ignlist && (status != T_UNKNOWN || vers->ts_user == NULL))
     {
 	Node *p;
 

@@ -1,4 +1,13 @@
 2001-04-02  Derek Price  <dprice@collab.net>
+	    Larry Jones  <larry.jones@sdrc.com>
+	    reported by Jakob Bøhm  <JB@Danware.dk>
+
+	* update.c (update_fileproc): Don't store a file with T_UNKNOWN status
+	in ignlist if present in the sandbox.
+	* sanity.sh (ignore-on-branch): New test.
+	(ignore): Tidy this test.
+
+2001-04-02  Derek Price  <dprice@collab.net>
 
 	* sanity.sh: Make sure the test for `id' fails when a nonstandard `id'
 	is used and the user is root.  Fix some quoting in error messages.
