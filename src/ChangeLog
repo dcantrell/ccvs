@@ -1,3 +1,7 @@
+2002-07-31  Derek Price  <oberon@umich.edu>
+
+	* sanity.sh: Add another date to the comment about rcs2-7 failing.
+
 2002-07-26  Jim Meyering  <meyering@lucent.com>
 
 	* commit.c (find_fileproc): When committing in client mode,
