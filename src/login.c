@@ -103,14 +103,20 @@ login (argc, argv)
       fclose (fp);
     }
       
-  /* This user/host has a password in the file already */  
+  /* This user/host has a password in the file already. */
   if (already_entered)
     {
       strtok (linebuf, " \n");
       found_password = strtok (NULL, " \n");
       if (strcmp (found_password, typed_password))
         {
-          /* They don't match, so we'll have to update the file. */
+          /* typed_password and found_password don't match, so we'll
+           * have to update passfile.  We replace the old password
+           * with the new one by writing a tmp file whose contents are
+           * exactly the same as passfile except that this one entry
+           * gets typed_password instead of found_password.  Then we
+           * rename the tmp file on top of passfile.
+           */
           char *tmp_name;
           FILE *tmp_fp;
 
