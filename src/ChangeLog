@@ -1,5 +1,12 @@
 1998-08-14  Jim Meyering  <meyering@ascend.com>
 
+	* hardlink.c (lookup_file_by_inode): Use existence_error rather than
+	comparing errno to ENOENT directly.
+
+	* client.c (copy_a_file): Unlink destination before doing copy.
+	* sanity.sh (join-readonly-conflict): New test for this -- it would
+	fail only in client/server mode.
+
 	* sanity.sh (rcsmerge-symlink-4): Don't use `test -L', it's not
 	portable.  Instead, match against the output of `ls -l'.
 	(dotest tag8k-16): Simplify tag-construction code and at the same

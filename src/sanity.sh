@@ -557,7 +557,7 @@ if test x"$*" = x; then
 	# Branching, tagging, removing, adding, multiple directories
 	tests="${tests} rdiff death death2 branches branches2"
 	tests="${tests} rcslib multibranch import importb importc"
-	tests="${tests} join join2 join3"
+	tests="${tests} join join2 join3 join-readonly-conflict"
 	tests="${tests} new newb conflicts conflicts2 conflicts3"
 	# Checking out various places (modules, checkout -d, &c)
 	tests="${tests} modules modules2 modules3 modules4"
@@ -4727,6 +4727,60 @@ br2:line1
 	  cd ../..
 	  rm -r 1
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  ;;
+
+	join-readonly-conflict)
+	  # Demonstrate that cvs-1.9.29 can fail on 2nd and subsequent
+	  # conflict-evoking join attempts.
+	  # Even with that version of CVS, This test failed only in
+	  # client-server mode, and would have been noticed in normal
+	  # operation only for files that were read-only (either due to
+	  # use of cvs' global -r option, setting the CVSREAD envvar,
+	  # or use of watch lists).
+	  mkdir 1; cd 1
+	  dotest join-readonly-conflict-1 "$testcvs -q co -l ." ''
+	  module=x
+	  mkdir $module
+	  $testcvs -q add $module >>$LOGFILE 2>&1
+	  cd $module
+
+	  file=m
+	  echo trunk > $file
+	  $testcvs -q add $file >>$LOGFILE 2>&1
+	  $testcvs -q ci -m . $file >>$LOGFILE 2>&1
+
+	  $testcvs tag -b B $file >>$LOGFILE 2>&1
+	  $testcvs -q update -rB $file >>$LOGFILE 2>&1
+	  echo branch B > $file
+	  $testcvs ci -m . $file >>$LOGFILE 2>&1
+
+	  rm $file
+	  $testcvs update -A $file >>$LOGFILE 2>&1
+	  # Make sure $file is read-only.  This can happen more realistically
+	  # via patch -- which could be used to apply a delta, yet would
+	  # preserve a file's read-only permissions.
+	  echo conflict > $file; chmod u-w $file
+	  $testcvs update -r B $file >>$LOGFILE 2>&1
+
+	  rm -f $file
+	  $testcvs update -A $file >>$LOGFILE 2>&1
+	  # This one would fail because cvs couldn't open the existing
+	  # (and read-only) .# file for writing.
+	  echo conflict > $file
+
+	  test -w ".#$file.1.1" && fail "$file is writable"
+	  dotest join-readonly-conflict-2 "$testcvs update -r B $file" \
+"RCS file: ${TESTDIR}/cvsroot/$module/$file,v
+retrieving revision 1\.1
+retrieving revision 1\.1\.2\.1
+Merging differences between 1\.1 and 1\.1\.2\.1 into $file
+rcsmerge: warning: conflicts during merge
+${PROG} [a-z]*: conflicts found in $file
+C m"
+
+	  cd ../..
+	  rm -rf 1
+	  rm -rf ${CVSROOT_DIRNAME}/$module
 	  ;;
 
 	new) # look for stray "no longer pertinent" messages.
