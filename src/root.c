@@ -428,19 +428,44 @@ parse_cvsroot (root_in)
 			  : local_method);
     }
 
+    /*
+     * There are a few sanity checks we can do now, only knowing the
+     * method of this root.
+     */
+#ifndef DEBUG
+    /* Why do we avoid these checks when DEBUG is set?  How is this used?  */
+# if ! defined (CLIENT_SUPPORT)
+    if (newroot->method != local_method)
+    {
+	error (0, 0, "CVSROOT is set for a remote access method but your");
+	error (0, 0, "CVS executable doesn't support it.");
+	goto error_exit;
+    }
+# endif
+
+# if !defined (SERVER_SUPPORT)
+    if (newroot->method == fork_method)
+    {
+	error (0, 0, "CVSROOT is set to use the :fork: access method but your");
+	error (0, 0, "CVS executable doesn't support it.");
+	goto error_exit;
+     }
+# endif
+#endif /* ! DEBUG */
+
 #ifdef CLIENT_SUPPORT
     newroot->isremote = (newroot->method != local_method);
-#endif /* CLIENT_SUPPORT */
 
-
-    if (readonlyfs && newroot->method != local_method)
+    if ( readonlyfs && newroot->isremote )
 	error (1, 0,
 	       "Read-only repository feature unavailable with remote roots (cvsroot = %s)",
 	       cvsroot_copy);
 
-
     if ((newroot->method != local_method)
-	&& (newroot->method != fork_method))
+#ifdef SERVER_SUPPORT
+	&& ( newroot->method != fork_method )
+#endif /* SERVER_SUPPORT */
+       )
     {
 	/* split the string into [[user][:password]@]host[:[port]] & /path
 	 *
@@ -525,6 +550,7 @@ parse_cvsroot (root_in)
 	cvsroot_copy = firstslash;
 	*cvsroot_copy = '/';
     }
+#endif /* CLIENT_SUPPORT */
 
     /* parse the path for all methods */
     newroot->directory = xstrdup(cvsroot_copy);
@@ -533,33 +559,18 @@ parse_cvsroot (root_in)
      * Do various sanity checks.
      */
 
-#if ! defined (CLIENT_SUPPORT) && ! defined (DEBUG)
-    if (newroot->method != local_method)
-    {
-	error (0, 0, "CVSROOT is set for a remote access method but your");
-	error (0, 0, "CVS executable doesn't support it.");
-	goto error_exit;
-    }
-#endif
-
-#if ! defined (SERVER_SUPPORT) && ! defined (DEBUG)
-    if (newroot->method == fork_method)
-    {
-	error (0, 0, "CVSROOT is set to use the :fork: access method but your");
-	error (0, 0, "CVS executable doesn't support it.");
-	goto error_exit;
-     }
-#endif
-
     if (newroot->username && ! newroot->hostname)
     {
 	error (0, 0, "Missing hostname in CVSROOT.");
 	goto error_exit;
     }
 
+#ifdef CLIENT_SUPPORT
+    /* We won't have attempted to parse these without CLIENT_SUPPORT */
     check_hostname = 0;
     no_password = 1;
     no_port = 0;
+#endif /* CLIENT_SUPPORT */
     switch (newroot->method)
     {
     case local_method:
@@ -581,9 +592,16 @@ parse_cvsroot (root_in)
 	    error (0, 0, "when using local access method.");
 	    goto error_exit;
 	}
+#ifdef CLIENT_SUPPORT
+	/* We don't need to check for these in :local: mode, really, since
+	 * we shouldn't be able to hit the code above which parses them, but
+	 * I'm leaving them here in lieu of assertions.
+	 */
 	no_port = 1;
 	/* no_password already set */
+#endif /* CLIENT_SUPPORT */
 	break;
+#ifdef CLIENT_SUPPORT
     case fork_method:
 	/* We want :fork: to behave the same as other remote access
            methods.  Therefore, don't check to see that the repository
@@ -605,25 +623,25 @@ parse_cvsroot (root_in)
 	/* no_password already set */
 	break;
     case kserver_method:
-#ifndef HAVE_KERBEROS
+# ifndef HAVE_KERBEROS
        	error (0, 0, "CVSROOT is set for a kerberos access method but your");
 	error (0, 0, "CVS executable doesn't support it.");
 	goto error_exit;
-#else
+# else
 	check_hostname = 1;
 	/* no_password already set */
 	break;
-#endif
+# endif
     case gserver_method:
-#ifndef HAVE_GSSAPI
+# ifndef HAVE_GSSAPI
 	error (0, 0, "CVSROOT is set for a GSSAPI access method but your");
 	error (0, 0, "CVS executable doesn't support it.");
 	goto error_exit;
-#else
+# else
 	check_hostname = 1;
 	/* no_password already set */
 	break;
-#endif
+# endif
     case server_method:
     case ext_method:
 	no_port = 1;
@@ -634,10 +652,12 @@ parse_cvsroot (root_in)
 	no_password = 0;
 	check_hostname = 1;
 	break;
+#endif /* CLIENT_SUPPORT */
     default:
 	error (1, 0, "Invalid method found in parse_cvsroot");
     }
 
+#ifdef CLIENT_SUPPORT
     if (no_password && newroot->password)
     {
 	error (0, 0, "CVSROOT password specification is only valid for");
@@ -657,6 +677,7 @@ parse_cvsroot (root_in)
 	    error (0, 0, "and pserver connection methods.");
 	    goto error_exit;
 	}
+#endif /*CLIENT_SUPPORT */
 
     if (*newroot->directory == '\0')
     {
