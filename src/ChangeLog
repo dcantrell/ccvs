@@ -1,5 +1,9 @@
 2004-11-19  Derek Price  <derek@ximbiot.com>
 
+	* server.c: Misc reformatting and comment corrections.
+
+2004-11-19  Derek Price  <derek@ximbiot.com>
+
 	* cvs.h (hostname): Redeclare as pointer rather than array.
 	* main.c: Include xgethostname.h.  Declare server_hostname.
 	(main): Use xgethostname().  Set server_hostname.
