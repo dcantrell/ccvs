@@ -3601,6 +3601,11 @@ server_cleanup (sig)
 #endif
 
     CVS_CHDIR (Tmpdir);
+    /* FIXME?  Would be nice to not ignore errors.  But what should we do?
+       We could try to do this before we shut down the network connection,
+       and try to notify the client (but the client might not be waiting
+       for responses).  We could try something like syslog() or our own
+       log file.  */
     unlink_file_dir (server_temp_dir);
 
     if (buf_to_net != NULL)

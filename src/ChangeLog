@@ -1,3 +1,8 @@
+Mon Sep 16 11:46:36 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* server.c (server_cleanup): Add comment about ignoring errors
+	from unlink_file_dir.
+
 Mon Sep 16 10:31:48 1996  Norbert Kiesel  <nk@col.sw-ley.de>
 
 	* main.c: Add support for -T <tmpdir> command line option.  This
