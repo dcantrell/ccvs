@@ -1,3 +1,9 @@
+1998-09-09  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* update.c (merge_file): Use cvs_output for "already contains the
+	differences" message.  Found this one when I actually observed the
+	out-of-order bug in Real Life(TM).
+
 1998-09-09  Jim Kingdon
 
 	* find_names.c (find_dirs): Make sure to zero errno before

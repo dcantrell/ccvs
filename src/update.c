@@ -1978,8 +1978,13 @@ merge_file (finfo, vers)
 
     if (!noexec && !xcmp (backup, finfo->file))
     {
-	printf ("%s already contains the differences between %s and %s\n",
-		finfo->fullname, vers->vn_user, vers->vn_rcs);
+	cvs_output (finfo->fullname, 0);
+	cvs_output (" already contains the differences between ", 0);
+	cvs_output (vers->vn_user, 0);
+	cvs_output (" and ", 0);
+	cvs_output (vers->vn_rcs, 0);
+	cvs_output ("\n", 1);
+
 	history_write ('G', finfo->update_dir, vers->vn_rcs, finfo->file,
 		       finfo->repository);
 	retval = 0;
