@@ -221,9 +221,16 @@
 #define	CVS_DIFFDATE
 #endif
 
-/*
- * define this to enable the SETXID support (see FAQ 4D.13)
- */
+/* Define this to enable the SETXID support.  The way to use this is
+   to create a group with no users in it (except perhaps cvs
+   administrators), set the cvs executable to setgid that group, chown
+   all the repository files to that group, and change all directory
+   permissions in the repository to 770.  The last person to modify a
+   file will own it, but as long as directory permissions are set
+   right that won't matter.  You'll need a system which inherits file
+   groups from the parent directory.  I don't know how carefully this
+   has been inspected for security holes.  */
+
 #ifndef SETXID_SUPPORT
 /* #define SETXID_SUPPORT */
 #endif
