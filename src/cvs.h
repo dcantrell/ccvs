@@ -33,6 +33,21 @@
 # endif
 #endif
 
+/* Add GNU attribute suppport.  */
+#ifndef __attribute__
+/* This feature is available in gcc versions 2.5 and later.  */
+# if __GNUC__ < 2 || (__GNUC__ == 2 && __GNUC_MINOR__ < 5) || __STRICT_ANSI__
+#  define __attribute__(Spec) /* empty */
+# endif
+/* The __-protected variants of `format' and `printf' attributes
+   are accepted by gcc versions 2.6.4 (effectively 2.7) and later.  */
+# if __GNUC__ < 2 || (__GNUC__ == 2 && __GNUC_MINOR__ < 7)
+#  define __format__	format
+#  define __printf__	printf
+#  define __noreturn__	noreturn
+# endif
+#endif
+
 /* Begin the default set of autoconf includes */
 #include <stdio.h>
 #if HAVE_SYS_TYPES_H
@@ -937,5 +952,6 @@ extern void cvs_flushout PROTO ((void));
 extern void cvs_output_tagged PROTO ((char *, char *));
 
 /* The trace funciton from subr.c */
-void cvs_trace PROTO (( int level, const char *fmt, ... ));
+void cvs_trace PROTO ((int level, const char *fmt, ...)
+  __attribute__ ((__format__ (__printf__, 2, 3))));
 #define TRACE cvs_trace

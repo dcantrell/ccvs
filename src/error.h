@@ -17,11 +17,11 @@
 /* Add prototype support.  Normally this is done in cvs.h, but that
    doesn't get included from lib/savecwd.c.  */
 #ifndef PROTO
-#if defined (USE_PROTOTYPES) ? USE_PROTOTYPES : defined (__STDC__)
-#define PROTO(ARGS) ARGS
-#else
-#define PROTO(ARGS) ()
-#endif
+# if PROTOTYPES
+#   define PROTO(ARGS) ARGS
+# else
+#   define PROTO(ARGS) ()
+# endif
 #endif
 
 #ifndef __attribute__
@@ -38,20 +38,12 @@
 # endif
 #endif
 
-#ifdef __STDC__
-void error (int, int, const char *, ...) \
-  __attribute__ ((__format__ (__printf__, 3, 4)));
-#else
-void error ();
-#endif
+void error PROTO ((int, int, const char *, ...)
+  __attribute__ ((__format__ (__printf__, 3, 4))));
 
 /* Exit due to an error.  Similar to error (1, 0, "message"), but call
    it in the case where the message has already been printed.  */
-#ifdef __STDC__
-void error_exit (void) __attribute__ ((__noreturn__));
-#else
-void error_exit ();
-#endif
+void error_exit PROTO ((void) __attribute__ ((__noreturn__)));
 
 /* If non-zero, error will use the CVS protocol to report error
    messages.  This will only be set in the CVS server parent process;
