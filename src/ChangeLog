@@ -1,5 +1,9 @@
 Thu Jul 13 11:03:17 1995  Jim Meyering  (meyering@comco.com)
 
+	* recurse.c (free_cwd): New function.
+	(save_cwd, restore_cwd): Use it instead of simply freeing any
+	string.  The function also closes any open file descriptor.
+
 	* import.c (comtable): Now static.
 	(comtable): Put braces around each element of initializer.
 
@@ -45,7 +49,7 @@ Wed Jul 12 19:45:24 1995  Dominik Westner (dominik@gowest.ppp.informatik.uni-mue
         * client.c (server_user): new var.
         (parse_cvsroot): set above if repo is "user@host:/dir".
         (start_rsh_server): if server_user set, then use it.
-        
+
 Wed Jul 12 10:53:36 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
         * sanity.sh: remove the TESTDIR after done.
