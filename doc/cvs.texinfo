@@ -7807,6 +7807,10 @@ the @code{tmpnam} function provided by the system).
 
 On Windows NT, @code{TMP} is used (via the @code{_tempnam}
 function provided by the system).
+
+The @code{patch} program which is used by the @sc{cvs}
+client uses @code{TMPDIR}, and if it is not set, uses
+@file{/tmp} (at least with GNU patch 2.1).
 @end table
 
 @sc{cvs} invokes @sc{rcs} to perform certain
