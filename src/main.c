@@ -58,10 +58,10 @@ int top_level_admin = 0;
 #ifdef SUPPORT_OLD_INFO_FMT_STRINGS
 int UseNewInfoFmtStrings = 0;
 #endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
-#ifdef SECONDARY_SUPPORT
+#ifdef PROXY_SUPPORT
 cvsroot_t *PrimaryServer;
 size_t MaxSecondaryBufferSize = (size_t)0; /* 0 bytes = disabled. */
-#endif /* SECONDARY_SUPPORT */
+#endif /* PROXY_SUPPORT */
 
 
 

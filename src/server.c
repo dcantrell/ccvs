@@ -129,7 +129,7 @@ static struct buffer *buf_from_net;
 
 
 
-#ifdef SECONDARY_SUPPORT
+#ifdef PROXY_SUPPORT
 /* These are the secondary log buffers so that we can disable them after
  * creation, when it is determined that they are unneeded, regardless of what
  * other filters have been prepended to the buffer chain.
@@ -141,7 +141,7 @@ static struct buffer *secondary_log_out;
  * to some requests twice.
  */
 static bool reprocessing;
-#endif /* SECONDARY_SUPPORT */
+#endif /* PROXY_SUPPORT */
 
 
 
@@ -501,7 +501,7 @@ supported_response (char *name)
 
 
 
-#ifdef SECONDARY_SUPPORT
+#ifdef PROXY_SUPPORT
 /*
  * Return true if we need to relay write requests to a primary server
  * and false otherwise.
@@ -564,7 +564,7 @@ isSecondaryServer (void)
 
     return true;
 }
-#endif /* SECONDARY_SUPPORT */
+#endif /* PROXY_SUPPORT */
 
 
 
@@ -575,12 +575,12 @@ serve_valid_responses (char *arg)
     char *q;
     struct response *rs;
 
-#ifdef SECONDARY_SUPPORT
+#ifdef PROXY_SUPPORT
     /* Process this in the first pass since the data it gathers can be used
      * prior to a `Root' request.
      */
     if (reprocessing) return;
-#endif /* SECONDARY_SUPPORT */
+#endif /* PROXY_SUPPORT */
 
     do
     {
@@ -661,7 +661,7 @@ input_memory_error (struct buffer *buf)
 
 
 
-#ifdef SECONDARY_SUPPORT
+#ifdef PROXY_SUPPORT
 /* This function reprocesses the write proxy log file if it exists.  If it
  * does not exist, this function will return without errors.  This has the
  * effect of both allowing this function to be called twice in certain cases
@@ -708,7 +708,7 @@ reprocess_secondary_log (void)
 					 buf_from_net);
     reprocessing = true;
 }
-#endif /* SECONDARY_SUPPORT */
+#endif /* PROXY_SUPPORT */
 
 
 
@@ -838,9 +838,9 @@ serve_root (char *arg)
 
     /* Don't process this twice or when errors are pending.  */
     if (error_pending()
-#ifdef SECONDARY_SUPPORT
+#ifdef PROXY_SUPPORT
 	|| reprocessing
-#endif /* SECONDARY_SUPPORT */
+#endif /* PROXY_SUPPORT */
        ) return;
 
     if (!isabsolute (arg))
@@ -892,7 +892,7 @@ E Protocol error: Root says \"%s\" but pserver says \"%s\"",
        nothing.  But for rsh, we need to do it now.  */
     parse_config (current_parsed_root->directory);
 
-#ifdef SECONDARY_SUPPORT
+#ifdef PROXY_SUPPORT
     /* At this point we have enough information to determine if we are a
      * secondary server or not.
      */
@@ -935,7 +935,7 @@ E Protocol error: Root says \"%s\" but pserver says \"%s\"",
 	 *   secondary_log_out = NULL;
 	 */
     }
-#endif /* SECONDARY_SUPPORT */
+#endif /* PROXY_SUPPORT */
 
 
     path = xmalloc (strlen (current_parsed_root->directory)
@@ -1085,9 +1085,9 @@ serve_max_dotdot (char *arg)
     int i;
     char *p;
 
-#ifdef SECONDARY_SUPPORT
+#ifdef PROXY_SUPPORT
     if (secondary_log) return;
-#endif /* SECONDARY_SUPPORT */
+#endif /* PROXY_SUPPORT */
 
     if (lim < 0 || lim > 10000)
 	return;
@@ -1309,9 +1309,9 @@ dirswitch (char *dir, char *repos)
 static void
 serve_repository (char *arg)
 {
-#ifdef SECONDARY_SUPPORT
+#ifdef PROXY_SUPPORT
     assert (!secondary_log);
-#endif /* SECONDARY_SUPPORT */
+#endif /* PROXY_SUPPORT */
 
     if (alloc_pending (80))
 	strcpy (pending_error_text,
@@ -1362,9 +1362,9 @@ serve_directory (char *arg)
 	char *lrepos = primary_root_translate (repos);
 	free (repos);
 	if (
-#ifdef SECONDARY_SUPPORT
+#ifdef PROXY_SUPPORT
 	    !secondary_log &&
-#endif /* SECONDARY_SUPPORT */
+#endif /* PROXY_SUPPORT */
 	    !outside_root (lrepos))
 	    dirswitch (arg, lrepos);
 	free (lrepos);
@@ -1379,9 +1379,9 @@ serve_static_directory (char *arg)
     FILE *f;
 
     if (error_pending ()
-#ifdef SECONDARY_SUPPORT
+#ifdef PROXY_SUPPORT
 	|| secondary_log
-#endif /* SECONDARY_SUPPORT */
+#endif /* PROXY_SUPPORT */
        ) return;
 
     f = CVS_FOPEN (CVSADM_ENTSTAT, "w+");
@@ -1411,9 +1411,9 @@ serve_sticky (char *arg)
     FILE *f;
 
     if (error_pending ()
-#ifdef SECONDARY_SUPPORT
+#ifdef PROXY_SUPPORT
 	|| secondary_log
-#endif /* SECONDARY_SUPPORT */
+#endif /* PROXY_SUPPORT */
        ) return;
 
     f = CVS_FOPEN (CVSADM_TAG, "w+");
@@ -1745,9 +1745,9 @@ serve_modified (char *arg)
     }
 
     if (
-#ifdef SECONDARY_SUPPORT
+#ifdef PROXY_SUPPORT
 	!secondary_log &&
-#endif /* SECONDARY_SUPPORT */
+#endif /* PROXY_SUPPORT */
 	outside_dir (arg))
     {
 	free (mode_text);
@@ -1757,9 +1757,9 @@ serve_modified (char *arg)
     if (size >= 0)
     {
 	receive_file (size,
-#ifdef SECONDARY_SUPPORT
+#ifdef PROXY_SUPPORT
 	              secondary_log ? DEVNULL :
-#endif /* SECONDARY_SUPPORT */
+#endif /* PROXY_SUPPORT */
 				      arg,
 		      gzipped);
 	if (error_pending ())
@@ -1769,12 +1769,12 @@ serve_modified (char *arg)
 	}
     }
 
-#ifdef SECONDARY_SUPPORT
+#ifdef PROXY_SUPPORT
     /* We've read all the data that needed to be read if we're still logging
      * for a secondary.  Return.
      */
     if (secondary_log) return;
-#endif /* SECONDARY_SUPPORT */
+#endif /* PROXY_SUPPORT */
 
     if (checkin_time_valid)
     {
@@ -1820,14 +1820,14 @@ serve_modified (char *arg)
 static void
 serve_enable_unchanged (char *arg)
 {
-#ifdef SECONDARY_SUPPORT
+#ifdef PROXY_SUPPORT
     /* Might as well skip this since this function does nothing anyhow.  If
      * it did do anything and could generate errors, then the line below would
      * be necessary since this can be processed before a `Root' request.
      *
      *     if (reprocessing) return;
      */
-#endif /* SECONDARY_SUPPORT */
+#endif /* PROXY_SUPPORT */
 }
 
 
@@ -1850,9 +1850,9 @@ serve_unchanged (char *arg)
     char *timefield;
 
     if (error_pending ()
-#ifdef SECONDARY_SUPPORT
+#ifdef PROXY_SUPPORT
 	|| secondary_log
-#endif /* SECONDARY_SUPPORT */
+#endif /* PROXY_SUPPORT */
        ) return;
 
     if (outside_dir (arg))
@@ -1947,9 +1947,9 @@ serve_is_modified (char *arg)
     int found;
 
     if (error_pending ()
-#ifdef SECONDARY_SUPPORT
+#ifdef PROXY_SUPPORT
 	|| secondary_log
-#endif /* SECONDARY_SUPPORT */
+#endif /* PROXY_SUPPORT */
        ) return;
 
     if (outside_dir (arg))
@@ -2063,9 +2063,9 @@ serve_entry (char *arg)
     int i = 0;
 
     if (error_pending()
-#ifdef SECONDARY_SUPPORT
+#ifdef PROXY_SUPPORT
 	|| secondary_log
-#endif /* SECONDARY_SUPPORT */
+#endif /* PROXY_SUPPORT */
        ) return;
 
     /* Verify that the entry is well-formed.  This can avoid problems later.
@@ -2112,9 +2112,9 @@ static void
 serve_kopt (char *arg)
 {
     if (error_pending ()
-#ifdef SECONDARY_SUPPORT
+#ifdef PROXY_SUPPORT
 	|| secondary_log
-#endif /* SECONDARY_SUPPORT */
+#endif /* PROXY_SUPPORT */
        )
 	return;
 
@@ -2154,9 +2154,9 @@ static void
 serve_checkin_time (char *arg)
 {
     if (error_pending ()
-#ifdef SECONDARY_SUPPORT
+#ifdef PROXY_SUPPORT
 	|| secondary_log
-#endif /* SECONDARY_SUPPORT */
+#endif /* PROXY_SUPPORT */
        )
 	return;
 
@@ -2239,7 +2239,7 @@ server_write_entries (void)
 
 
 
-#ifdef SECONDARY_SUPPORT
+#ifdef PROXY_SUPPORT
 /*
  * callback proc to run a script when admin finishes.
  */
@@ -2588,7 +2588,7 @@ become_proxy (void)
     Parse_Info (CVSROOTADM_POSTPROXY, current_parsed_root->directory,
 		prepost_proxy_proc, PIOPT_ALL, &pre);
 }
-#endif /* SECONDARY_SUPPORT */
+#endif /* PROXY_SUPPORT */
 
 
 
@@ -2623,14 +2623,14 @@ serve_notify (char *arg)
 
     if (error_pending ()) return;
 
-#ifdef SECONDARY_SUPPORT
+#ifdef PROXY_SUPPORT
     if (isSecondaryServer())
     {
 	/* This is effectively a write command, so run it on the primary.  */
 	become_proxy ();
 	exit (EXIT_SUCCESS);
     }
-#endif /* SECONDARY_SUPPORT */
+#endif /* PROXY_SUPPORT */
 
     if (outside_dir (arg))
 	return;
@@ -2891,12 +2891,12 @@ serve_argumentx (char *arg)
 static void
 serve_global_option (char *arg)
 {
-#ifdef SECONDARY_SUPPORT
+#ifdef PROXY_SUPPORT
     /* This can generate error messages and termination before `Root' requests,
      * so it must be dealt with in the first pass.
      */ 
     if (reprocessing) return;
-#endif /* SECONDARY_SUPPORT */
+#endif /* PROXY_SUPPORT */
 
     if (arg[0] != '-' || arg[1] == '\0' || arg[2] != '\0')
     {
@@ -2942,9 +2942,9 @@ serve_global_option (char *arg)
 static void
 serve_set (char *arg)
 {
-#ifdef SECONDARY_SUPPORT
+#ifdef PROXY_SUPPORT
     if (reprocessing) return;
-#endif /* SECONDARY_SUPPORT */
+#endif /* PROXY_SUPPORT */
 
     /* FIXME: This sends errors immediately (I think); they should be
        put into pending_error.  */
@@ -2958,9 +2958,9 @@ serve_set (char *arg)
 static void
 serve_kerberos_encrypt( char *arg )
 {
-#ifdef SECONDARY_SUPPORT
+#ifdef PROXY_SUPPORT
     assert (!secondary_log);
-#endif /* SECONDARY_SUPPORT */
+#endif /* PROXY_SUPPORT */
 
     /* All future communication with the client will be encrypted.  */
 
@@ -2979,9 +2979,9 @@ serve_kerberos_encrypt( char *arg )
 static void
 serve_gssapi_encrypt( char *arg )
 {
-#ifdef SECONDARY_SUPPORT
+#ifdef PROXY_SUPPORT
     assert (!secondary_log);
-#endif /* SECONDARY_SUPPORT */
+#endif /* PROXY_SUPPORT */
 
     if (cvs_gssapi_wrapping)
     {
@@ -3018,9 +3018,9 @@ serve_gssapi_encrypt( char *arg )
 static void
 serve_gssapi_authenticate (char *arg)
 {
-#ifdef SECONDARY_SUPPORT
+#ifdef PROXY_SUPPORT
     assert (!secondary_log);
-#endif /* SECONDARY_SUPPORT */
+#endif /* PROXY_SUPPORT */
 
     if (cvs_gssapi_wrapping)
     {
@@ -3062,9 +3062,9 @@ serve_questionable (char *arg)
 {
     static int initted;
 
-#ifdef SECONDARY_SUPPORT
+#ifdef PROXY_SUPPORT
     if (secondary_log) return;
-#endif /* SECONDARY_SUPPORT */
+#endif /* PROXY_SUPPORT */
 
     if (!initted)
     {
@@ -3351,7 +3351,7 @@ do_cvs_command (char *cmd_name, int (*command) (int, char **))
 
     TRACE (TRACE_FUNCTION, "do_cvs_command (%s)", cmd_name);
 
-#ifdef SECONDARY_SUPPORT
+#ifdef PROXY_SUPPORT
     /* Write proxy logging is always terminated when a command is received.
      * Therefore, we wish to avoid reprocessing the command since that would
      * cause endless recursion.
@@ -3388,7 +3388,7 @@ do_cvs_command (char *cmd_name, int (*command) (int, char **))
 	    }
 	}
     }
-#endif /* SECONDARY_SUPPORT */
+#endif /* PROXY_SUPPORT */
 
     command_pid = -1;
     stdout_pipe[0] = -1;
@@ -4150,7 +4150,7 @@ output_dir (const char *update_dir, const char *repository)
     else
 	buf_output0 (protocol, update_dir);
     buf_output0 (protocol, "/\n");
-#ifdef SECONDARY_SUPPORT
+#ifdef PROXY_SUPPORT
     if (isSecondaryServer())
     {
 	char *prepo = primary_root_inverse_translate (repository);
@@ -4158,7 +4158,7 @@ output_dir (const char *update_dir, const char *repository)
 	free (prepo);
     }
     else
-#endif /* SECONDARY_SUPPORT */
+#endif /* PROXY_SUPPORT */
 	buf_output0 (protocol, repository);
     buf_output0 (protocol, "/");
 }
@@ -4533,11 +4533,11 @@ serve_editors (char *arg)
 
 
 
-#ifdef SECONDARY_SUPPORT
+#ifdef PROXY_SUPPORT
 /* We need to handle some of this before reprocessing since it is defined to
  * send a response and print errors before a Root request is received.
  */
-#endif /* SECONDARY_SUPPORT */
+#endif /* PROXY_SUPPORT */
 static void
 serve_noop (char *arg)
 {
@@ -4546,11 +4546,11 @@ serve_noop (char *arg)
      */
     bool pe = print_pending_error();
 
-#ifdef SECONDARY_SUPPORT
+#ifdef PROXY_SUPPORT
     /* The portions below need not be handled until reprocessing anyhow since
      * there should be no entries or notifications prior to that.  */
     if (!secondary_log)
-#endif /* SECONDARY_SUPPORT */
+#endif /* PROXY_SUPPORT */
     {
 	server_write_entries ();
 	if (!pe)
@@ -4558,10 +4558,10 @@ serve_noop (char *arg)
     }
 
     if (!pe
-#ifdef SECONDARY_SUPPORT
+#ifdef PROXY_SUPPORT
         /* "ok" only goes across in the first pass.  */
         && !reprocessing
-#endif /* SECONDARY_SUPPORT */
+#endif /* PROXY_SUPPORT */
        )
 	buf_output0 (buf_to_net, "ok\n");
     buf_flush (buf_to_net, 1);
@@ -4634,7 +4634,7 @@ serve_co (char *arg)
     if (print_pending_error ())
 	return;
 
-#ifdef SECONDARY_SUPPORT
+#ifdef PROXY_SUPPORT
     /* If we are not a secondary server, the write proxy log will already have
      * been processed.
      */
@@ -4652,7 +4652,7 @@ serve_co (char *arg)
 	    return;
 	}
     }
-#endif /* SECONDARY_SUPPORT */
+#endif /* PROXY_SUPPORT */
 
     if (!isdir (CVSADM))
     {
@@ -5248,9 +5248,9 @@ serve_gzip_contents (char *arg)
 {
     int level;
 
-#ifdef SECONDARY_SUPPORT
+#ifdef PROXY_SUPPORT
     assert (!secondary_log);
-#endif /* SECONDARY_SUPPORT */
+#endif /* PROXY_SUPPORT */
 
     level = atoi (arg);
     if (level == 0)
@@ -5286,9 +5286,9 @@ serve_gzip_stream (char *arg)
     /* This needs to be skipped in subsequent passes to avoid compressing data
      * to the client twice.
      */
-#ifdef SECONDARY_SUPPORT
+#ifdef PROXY_SUPPORT
     if (reprocessing) return;
-#endif /* SECONDARY_SUPPORT */
+#endif /* PROXY_SUPPORT */
     buf_to_net = compress_buffer_initialize (buf_to_net, 0, level,
 					     buf_to_net->memory_error);
 }
@@ -5307,9 +5307,9 @@ serve_wrapper_sendme_rcs_options (char *arg)
      */
     char *wrapper_line = NULL;
 
-#ifdef SECONDARY_SUPPORT
+#ifdef PROXY_SUPPORT
     if (reprocessing) return;
-#endif /* SECONDARY_SUPPORT */
+#endif /* PROXY_SUPPORT */
 
     wrap_setup ();
 
@@ -5339,9 +5339,9 @@ serve_ignore (char *arg)
      * update-patches command, which is not a real command, but a signal
      * to the client that update will accept the -u argument.
      */
-#ifdef SECONDARY_SUPPORT
+#ifdef PROXY_SUPPORT
     assert (!secondary_log);
-#endif /* SECONDARY_SUPPORT */
+#endif /* PROXY_SUPPORT */
 }
 
 
@@ -5416,14 +5416,14 @@ serve_expand_modules (char *arg)
     int err = 0;
     DBM *db;
 
-#ifdef SECONDARY_SUPPORT
+#ifdef PROXY_SUPPORT
     /* This needs to be processed in the first pass since the client expects a
      * response but we may not yet know if we are a secondary.
      *
      * On the second pass, we still must make sure to ignore the arguments.
      */
     if (!reprocessing)
-#endif /* SECONDARY_SUPPORT */
+#endif /* PROXY_SUPPORT */
     {
 	err = 0;
 
@@ -5447,9 +5447,9 @@ serve_expand_modules (char *arg)
 	argument_count = 1;
     }
 
-#ifdef SECONDARY_SUPPORT
+#ifdef PROXY_SUPPORT
     if (!reprocessing)
-#endif /* SECONDARY_SUPPORT */
+#endif /* PROXY_SUPPORT */
     {
 	if (err)
 	    /* We will have printed an error message already.  */
@@ -5590,9 +5590,9 @@ serve_valid_requests (char *arg)
      * second pass.
      */
     if (print_pending_error ()
-#ifdef SECONDARY_SUPPORT
+#ifdef PROXY_SUPPORT
 	|| reprocessing
-#endif /* SECONDARY_SUPPORT */
+#endif /* PROXY_SUPPORT */
        )
 	return;
 
@@ -5922,7 +5922,7 @@ server (int argc, char **argv)
 
     setup_logfiles ("CVS_SERVER_LOG", &buf_to_net, &buf_from_net);
 
-#ifdef SECONDARY_SUPPORT
+#ifdef PROXY_SUPPORT
     /* We have to set up the recording for all servers.  Until we receive the
      * `Root' request and load CVSROOT/config, we can't tell if we are a
      * secondary or primary.
@@ -5940,7 +5940,7 @@ server (int argc, char **argv)
 					    outbuf_memory_error);
 	secondary_log_out = buf_to_net;
     }
-#endif /* SECONDARY_SUPPORT */
+#endif /* PROXY_SUPPORT */
 
     saved_output = buf_nonio_initialize (outbuf_memory_error);
     saved_outerr = buf_nonio_initialize (outbuf_memory_error);

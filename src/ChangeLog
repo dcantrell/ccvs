@@ -1,5 +1,10 @@
 2004-08-10  Derek Price  <derek@ximbiot.com>
 
+	* cvs.h, log-buffer.h, main.c, mkmodules.c, parseinfo.c, server.c:
+	s/SECONDARY_SUPPORT/PROXY_SUPPORT/.
+
+2004-08-10  Derek Price  <derek@ximbiot.com>
+
 	* server.c (isSecondaryServer): Declare static.
 	* server.h (isSecondaryServer): Remove proto.
 
