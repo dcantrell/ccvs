@@ -177,6 +177,9 @@
 /* Define if you have the mktemp function.  */
 #undef HAVE_MKTEMP
 
+/* Define if you have the nanosleep function.  */
+#undef HAVE_NANOSLEEP
+
 /* Define if you have the putenv function.  */
 #undef HAVE_PUTENV
 
@@ -185,6 +188,9 @@
 
 /* Define if you have the rename function.  */
 #undef HAVE_RENAME
+
+/* Define if you have the select function.  */
+#undef HAVE_SELECT
 
 /* Define if you have the sigaction function.  */
 #undef HAVE_SIGACTION
@@ -218,6 +224,9 @@
 
 /* Define if you have the tzset function.  */
 #undef HAVE_TZSET
+
+/* Define if you have the usleep function.  */
+#undef HAVE_USLEEP
 
 /* Define if you have the valloc function.  */
 #undef HAVE_VALLOC
