@@ -169,11 +169,11 @@ AC_CACHE_CHECK(
   [for S_ISSOCK],
   [acx_cv_s_issock],
   [acx_cv_s_issock=no
-   AC_TRY_COMPILE( [#include <sys/stat.h>], [int a; S_ISSOCK(a);],
-                   [acx_cv_s_issock=yes] )
+   AC_TRY_LINK( [#include <sys/stat.h>], [int a; S_ISSOCK(a);],
+                [acx_cv_s_issock=yes] )
    if test $acx_cv_s_issock = no; then
-     AC_TRY_COMPILE( [#include <sys/stat.h>], [int a; S_ISNAM(a);],
-                     [acx_cv_s_issock=S_ISNAM] )
+     AC_TRY_LINK( [#include <sys/stat.h>], [int a; S_ISNAM(a);],
+                  [acx_cv_s_issock=S_ISNAM] )
    fi])
 if test $acx_cv_s_issock != yes && test $acx_cv_s_issock != no; then
 dnl   The following comment is repeated verbatim in ACX_GSSAPI in
