@@ -1,6 +1,12 @@
 Changes since 1.11.14:
 **********************
 
+GENERAL USER ISSUES
+
+* Diffing of locally added files against arbitrary revisions in an RCS archive
+  is now allowed when a file of the same name exists or used to exist on some
+  branch.
+
 * Misc documentation fixes.
 
 Changes from 1.11.13 to 1.11.14:
