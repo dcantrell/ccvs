@@ -442,6 +442,8 @@ HOME=${TESTDIR}/home; export HOME
 # tests.
 
 if test x"$*" = x; then
+	# This doesn't yet include log2, because the bug it tests for
+	# is not yet fixed, and/or we might want to wait until after 1.9.
 	tests="basica basicb basic1 deep basic2 rdiff death death2 branches multibranch import join new newb conflicts conflicts2 modules mflag errmsg1 devcom ignore binfiles binwrap info serverpatch log"
 else
 	tests="$*"
@@ -4804,6 +4806,52 @@ ${log_trailer}"
 
 	  cd ..
 	  rm -rf first-dir ${CVSROOT_DIRNAME}/first-dir
+	  ;;
+
+	log2)
+	  # More "cvs log" tests, for example the file description.
+
+	  # Setting the file description doesn't yet work client/server, so 
+	  # skip these tests for remote.
+	  if test "x$remote" = xno; then
+
+	  # Check in a file
+	  mkdir ${CVSROOT_DIRNAME}/first-dir
+	  dotest log2-1 "${testcvs} -q co first-dir" ''
+	  cd first-dir
+	  echo 'first revision' > file1
+	  dotest log2-2 "${testcvs} add -m file1-is-for-testing file1" \
+"${PROG}"' [a-z]*: scheduling file `file1'\'' for addition
+'"${PROG}"' [a-z]*: use '\''cvs commit'\'' to add this file permanently'
+	  dotest log2-3 "${testcvs} -q commit -m 1" \
+'RCS file: /tmp/cvs-sanity/cvsroot/first-dir/file1,v
+done
+Checking in file1;
+/tmp/cvs-sanity/cvsroot/first-dir/file1,v  <--  file1
+initial revision: 1\.1
+done'
+	  dotest log2-4 "${testcvs} log -N file1" '
+RCS file: /tmp/cvs-sanity/cvsroot/first-dir/file1,v
+Working file: file1
+head: 1\.1
+branch:
+locks: strict
+access list:
+keyword substitution: kv
+total revisions: 1;	selected revisions: 1
+description:
+file1-is-for-testing
+----------------------------
+revision 1\.1
+date: [0-9/]* [0-9:]*;  author: [a-zA-Z0-9@]*;  state: Exp;
+1
+============================================================================='
+
+	  cd ..
+	  rm -rf first-dir ${CVSROOT_DIRNAME}/first-dir
+
+	  fi # end of tests skipped for remote
+
 	  ;;
 
 	*)
