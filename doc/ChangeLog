@@ -1,3 +1,9 @@
+2003-02-04  Derek Price  <derek@ximbiot.com>
+
+	* cvs.texinfo (File status): Mention the "Unresolved Conflict" status
+	which was apparently and erroneously removed from the doc at some
+	point in the past.
+
 2003-02-03  Derek Price  <derek@ximbiot.com>
 
 	* cvs.texinfo (Merging a branch): Mention the GCA as opposed to the
