@@ -1,3 +1,9 @@
+2000-07-27  Noel Cragg  <noel@red-bean.com>
+
+	* root.c (parse_cvsroot): change fork method to behave like other
+	remote methods -- let the server check that the repository
+	directory is an absolute pathname.
+
 2000-07-27  Larry Jones  <larry.jones@sdrc.com>
 
 	* lock.c (set_lock): Include actual lock directory in error message.

@@ -433,12 +433,10 @@ parse_cvsroot (CVSroot)
     switch (CVSroot_method)
     {
     case local_method:
-    case fork_method:
 	if (CVSroot_username || CVSroot_hostname)
 	{
 	    error (0, 0, "can't specify hostname and username in CVSROOT");
-	    error (0, 0, "when using %s access method",
-		   CVSroot_method == local_method ? "local" : "fork");
+	    error (0, 0, "when using local access method");
 	    error (0, 0, "(%s)", CVSroot);
 	    return 1;
 	}
@@ -450,6 +448,18 @@ parse_cvsroot (CVSroot)
 	if (!isabsolute (CVSroot_directory))
 	    error (1, 0, "CVSROOT %s must be an absolute pathname",
 		   CVSroot_directory);
+	break;
+    case fork_method:
+	/* We want :fork: to behave the same as other remote access
+           methods.  Therefore, don't check to see that the repository
+           name is absolute -- let the server do it.  */
+	if (CVSroot_username || CVSroot_hostname)
+	{
+	    error (0, 0, "can't specify hostname and username in CVSROOT");
+	    error (0, 0, "when using fork access method");
+	    error (0, 0, "(%s)", CVSroot);
+	    return 1;
+	}
 	break;
     case kserver_method:
 #ifndef HAVE_KERBEROS
