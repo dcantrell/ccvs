@@ -3,15 +3,13 @@
 
 #include <stdio.h>
 
-#ifndef __P
 #if defined (__GNUC__) || (defined (__STDC__) && __STDC__)
-#define __P(args) args
+#define __PROTO(args) args
 #else
-#define __P(args) ()
+#define __PROTO(args) ()
 #endif  /* GCC.  */
-#endif  /* Not __P.  */
 
 int
-  getline __P ((char **_lineptr, size_t *_n, FILE *_stream));
+  getline __PROTO ((char **_lineptr, size_t *_n, FILE *_stream));
 
 #endif /* _getline_h_ */
