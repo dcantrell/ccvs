@@ -1,3 +1,8 @@
+Sun Jan 11 13:46:54 1998  Peter Wemm  <peter@netplex.com.au>
+
+	* cvs.1: Fix "the the" typo.  From Wolfram Schneider
+ 	<wosch@freebsd.org> via FreeBSD sources.
+
 Wed Feb 12 14:20:43 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* Makefile.in (install): Depend on installdirs.
