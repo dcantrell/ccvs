@@ -1,3 +1,21 @@
+Tue Oct  3 13:43:33 1995  Del  <del@matra.com.au>
+
+	* cvs.1: Updated man page for all the new features of 1.6
+	(including some that were missed in 1.5 and 1.4.xx).  This includes:
+	- -f and -z global options.
+	- tag -F, and -r options.
+	- rtag -F options
+	- CVSROOT/taginfo and CVSROOT/wrappers files (the latter could use a touch
+	  up because I don't really understand how wrappers work or why anyone would
+	  use them -- I haven't ever played with a NEXT.
+	- export -k option
+	- New environment variables CVS_IGNORE_REMOTE_ROOT, CVS_RSH, CVS_SERVER, and
+	  CVSWRAPPERS.  I left CVS_CLIENT_LOG, CVS_CLIENT_PORT, and CVS_SERVER_SLEEP
+	  undocumented because these appear to be for testing / debugging only.
+	  Note that TMPDIR, HOME and PATH are used as well and strictly speaking
+	  should be documented.
+	- New files ~/.cvsrc and ~/.cvswrappers
+
 Tue Aug 15 08:13:14 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
         * Makefile.in (MANFILES): include $MAN8FILES too, so they get
