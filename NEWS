@@ -3,7 +3,7 @@ Changes since 1.11.2:
 * When waiting for another user's lock, the message timestamps are now
 in UTC rather than the server's local time.
 
-* We've standardized on Automake version 1.6 and Autoconf version 2.53.
+* We've standardized on Automake version 1.6.3 and Autoconf version 2.53.
 They are cleaner, less bug prone, and will hopfully allow me to start updating
 sanity.sh to use Autotest and Autoshell.  Again, this should only really affect
 developers.  See the section of the INSTALL file about using the autotools if
