@@ -1,3 +1,7 @@
+Mon Nov 17 18:20:47 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (tag options): Expand comment with reference to FAQ.
+
 Fri Nov 14 11:02:37 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (Error messages): Update discussion of "dying gasps".
