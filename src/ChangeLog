@@ -1,5 +1,10 @@
 2001-04-27  Derek Price  <dprice@collab.net>
 
+	* sanity.sh (version-2r): Update to handle patch releases in version
+	numbers.
+
+2001-04-27  Derek Price  <dprice@collab.net>
+
 	* version.c: Regenerated.
 
 2001-04-27  Derek Price  <dprice@collab.net>
