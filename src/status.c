@@ -326,7 +326,7 @@ tag_list_proc (p, closure)
 
     buf = xmalloc (80 + strlen (p->key)
 		   + (branch ? strlen (branch) : strlen (p->data)));
-    sprintf (buf, "\t%-25.25s\t(%s: %s)\n", p->key,
+    sprintf (buf, "\t%-25s\t(%s: %s)\n", p->key,
 	     branch ? "branch" : "revision",
 	     branch ? branch : p->data);
     cvs_output (buf, 0);
