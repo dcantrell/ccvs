@@ -173,15 +173,12 @@ strip_trailing_newlines (str)
 
 
 
-/* Return the number of levels that path ascends above where it starts.
-   For example:
-   "../../foo" -> 2
-   "foo/../../bar" -> 1
-   */
-/* FIXME: Should be using ISDIRSEP, last_component, or some other
-   mechanism which is more general than just looking at slashes,
-   particularly for the client.c caller.  The server.c caller might
-   want something different, so be careful.  */
+/* Return the number of levels that PATH ascends above where it starts.
+ * For example:
+ *
+ *   "../../foo" -> 2
+ *   "foo/../../bar" -> 1
+ */
 int
 pathname_levels (path)
     char *path;
@@ -191,14 +188,19 @@ pathname_levels (path)
     int level;
     int max_level;
 
+    assert (p != NULL);
+
     max_level = 0;
     p = path;
     level = 0;
     do
     {
-	q = strchr (p, '/');
-	if (q != NULL)
-	    ++q;
+	/* q = strchr (p, '/'); but sub ISDIRSEP() for '/': */
+	q = p;
+	while (*q != '\0' && !ISDIRSEP (*q)) q++;
+	if (*q != '\0') q++;
+
+	/* Now look for pathname level-ups.  */
 	if (p[0] == '.' && p[1] == '.' && (p[2] == '\0' || p[2] == '/'))
 	{
 	    --level;
@@ -211,7 +213,7 @@ pathname_levels (path)
 	else
 	    ++level;
 	p = q;
-    } while (p != NULL);
+    } while (*p != '\0');
     return max_level;
 }
 
