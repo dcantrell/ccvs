@@ -17,6 +17,7 @@
 
 #include "cvs.h"
 #include "fileattr.h"
+#include "edit.h"
 
 #ifndef lint
 static const char rcsid[] = "$CVSid: @(#)checkin.c 1.48 94/10/07 $";
@@ -199,7 +200,9 @@ Checkin (type, file, update_dir, repository,
 	else
 	    server_checked_in (file, update_dir, repository);
     }
+    else
 #endif
+	mark_up_to_date (file);
 
     return (0);
 }

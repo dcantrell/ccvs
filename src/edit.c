@@ -541,6 +541,24 @@ unedit (argc, argv)
 
     return err;
 }
+
+void
+mark_up_to_date (file)
+    char *file;
+{
+    char *base;
+
+    /* The file is up to date, so we better get rid of an out of
+       date file in CVSADM_BASE.  */
+    base = xmalloc (strlen (file) + 80);
+    strcpy (base, CVSADM_BASE);
+    strcat (base, "/");
+    strcat (base, file);
+    if (unlink_file (base) < 0 && ! existence_error (errno))
+	error (0, errno, "cannot remove %s", file);
+    free (base);
+}
+
 
 void
 editor_set (filename, editor, val)

@@ -125,8 +125,8 @@ change_mode (filename, mode_string)
     char *mode_string;
 {
 #ifdef CHMOD_BROKEN
-	char *p;
-	int writeable = 0;
+    char *p;
+    int writeable = 0;
 
     /* We can only distinguish between
          1) readable
@@ -1320,7 +1320,10 @@ update_entries (data_arg, ent_list, short_pathname, filename)
 	if (vn[0] == '\0' || vn[0] == '0' || vn[0] == '-')
 	    local_timestamp = "dummy timestamp";
 	else if (local_timestamp == NULL)
+	{
 	    local_timestamp = file_timestamp;
+	    mark_up_to_date (filename);
+	}
 
 	Register (ent_list, filename, vn, local_timestamp,
 		  options, tag, date, ts[0] == '+' ? file_timestamp : NULL);
