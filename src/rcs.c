@@ -2832,16 +2832,21 @@ RCS_getdate (rcs, date, force_tag_match)
 
     /* if the head is on a branch, try the branch first */
     if (rcs->branch != NULL)
+    {
 	retval = RCS_getdatebranch (rcs, date, rcs->branch);
-
-    /* if we found a match, we are done */
-    if (retval != NULL)
-	return (retval);
+	if (retval != NULL)
+	    return (retval);
+    }
 
     /* otherwise if we have a trunk, try it */
     if (rcs->head)
     {
 	p = findnode (rcs->versions, rcs->head);
+	if (p == NULL)
+	{
+	    error (0, 0, "%s: head revision %s doesn't exist", rcs->path,
+		   rcs->head);
+	}
 	while (p != NULL)
 	{
 	    /* if the date of this one is before date, take it */
@@ -2859,10 +2864,13 @@ RCS_getdate (rcs, date, force_tag_match)
 		p = (Node *) NULL;
 	}
     }
+    else
+	error (0, 0, "%s: no head revision", rcs->path);
 
     /*
      * at this point, either we have the revision we want, or we have the
-     * first revision on the trunk (1.1?) in our hands
+     * first revision on the trunk (1.1?) in our hands, or we've come up
+     * completely empty
      */
 
     /* if we found what we're looking for, and it's not 1.1 return it */
@@ -2895,7 +2903,8 @@ RCS_getdate (rcs, date, force_tag_match)
     if (retval != NULL)
 	return (retval);
 
-    if (!force_tag_match || RCS_datecmp (vers->date, date) <= 0)
+    if (!force_tag_match ||
+	(vers != NULL && RCS_datecmp (vers->date, date) <= 0))
 	return (xstrdup (vers->version));
     else
 	return (NULL);
