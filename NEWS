@@ -1,5 +1,8 @@
 Changes since 1.12.1:
 
+* A build problem that caused warnings and slower builds on systems without a
+working getline() function (e.g. Mac OS X 10.1) has been fixed.
+
 * A build problem that prevented the CVS executable from being built on systems
 with the gettext library installed has been fixed.
 

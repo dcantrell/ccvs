@@ -1,3 +1,10 @@
+2003-10-23  Derek Price  <derek@ximbiot.com>
+
+	* NEWS: Note that double include of getndelim2.o problem is gone from
+	OS X.
+	* srclist.txt (getline, getndelim2): Note divergence from GNULIB.
+	* aclocal.m4, configure: Regenerated.
+
 2003-10-22  Derek Price  <derek@ximbiot.com>
 
 	* NEWS: Note that we build on systems with gettext installed now.
