@@ -346,7 +346,7 @@ HOME=${TESTDIR}/home; export HOME
 # tests.
 
 if test x"$*" = x; then
-	tests="basica basic1 deep basic2 death branches import new conflicts conflicts2 modules mflag errmsg1 devcom ignore binfiles info"
+	tests="basica basicb basic1 deep basic2 death branches import new conflicts conflicts2 modules mflag errmsg1 devcom ignore binfiles info"
 else
 	tests="$*"
 fi
@@ -580,6 +580,67 @@ ${PROG} \[[a-z]* aborted\]: /tmp/cvs-sanity/nonexist/CVSROOT: .*"
 
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
 	  rm -r first-dir
+	  ;;
+
+	basicb)
+	  # More basic tests, including non-branch tags and co -d.
+	  mkdir ${CVSROOT_DIRNAME}/first-dir
+	  dotest basicb-1 "${testcvs} -q co first-dir" ''
+	  cd first-dir
+	  mkdir sdir1 sdir2
+	  dotest basicb-2 "${testcvs} add sdir1 sdir2" \
+'Directory /tmp/cvs-sanity/cvsroot/first-dir/sdir1 added to the repository
+Directory /tmp/cvs-sanity/cvsroot/first-dir/sdir2 added to the repository'
+	  cd sdir1
+	  echo sfile1 starts >sfile1
+	  dotest basicb-3 "${testcvs} add sfile1" \
+"${PROG} [a-z]*: scheduling file .sfile1. for addition
+${PROG} [a-z]*: use .cvs commit. to add this file permanently"
+	  cd ../sdir2
+	  echo sfile2 starts >sfile2
+	  dotest basicb-4 "${testcvs} add sfile2" \
+"${PROG} [a-z]*: scheduling file .sfile2. for addition
+${PROG} [a-z]*: use .cvs commit. to add this file permanently"
+	  cd ..
+	  dotest basicb-5 "${testcvs} -q ci -m add" \
+'RCS file: /tmp/cvs-sanity/cvsroot/first-dir/sdir1/sfile1,v
+done
+Checking in sdir1/sfile1;
+/tmp/cvs-sanity/cvsroot/first-dir/sdir1/sfile1,v  <--  sfile1
+initial revision: 1\.1
+done
+RCS file: /tmp/cvs-sanity/cvsroot/first-dir/sdir2/sfile2,v
+done
+Checking in sdir2/sfile2;
+/tmp/cvs-sanity/cvsroot/first-dir/sdir2/sfile2,v  <--  sfile2
+initial revision: 1\.1
+done'
+	  echo sfile1 develops >sdir1/sfile1
+	  dotest basicb-6 "${testcvs} -q ci -m modify" \
+'Checking in sdir1/sfile1;
+/tmp/cvs-sanity/cvsroot/first-dir/sdir1/sfile1,v  <--  sfile1
+new revision: 1\.2; previous revision: 1\.1
+done'
+	  dotest basicb-7 "${testcvs} -q tag release-1" 'T sdir1/sfile1
+T sdir2/sfile2'
+	  echo not in time for release-1 >sdir2/sfile2
+	  dotest basicb-8 "${testcvs} -q ci -m modify-2" \
+'Checking in sdir2/sfile2;
+/tmp/cvs-sanity/cvsroot/first-dir/sdir2/sfile2,v  <--  sfile2
+new revision: 1\.2; previous revision: 1\.1
+done'
+	  cd ..
+	  rm -rf first-dir
+	  dotest basicb-9 \
+"${testcvs} -q co -d newdir -r release-1 first-dir/sdir1 first-dir/sdir2" \
+'U newdir/sdir1/sfile1
+U newdir/sdir2/sfile2'
+	  dotest basicb-10 "cat newdir/sdir1/sfile1 newdir/sdir2/sfile2" \
+"sfile1 develops
+sfile2 starts"
+
+	  rm -rf newdir
+	  rm -rf ${CVSROOT_DIRNAME}/first-dir
 	  ;;
 
 	basic1) # first dive - add a files, first singly, then in a group.
