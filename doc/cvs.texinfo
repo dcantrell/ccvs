@@ -1080,10 +1080,15 @@ the file permissions appropriate for the repository.
 @c repository.  Not "/" (not even on non-unix).  And
 @c here is a specific set of issues:
 @c 	Files starting with a - are handled inconsistently. They can not
-@c be added to a repository with an add command, because it they are
-@c interpreted as a switch. They can appear in a repository if they are
-@c part of a tree that is imported. They can not be removed from the tree
-@c once they are there.
+@c   be added to a repository with an add command, because it they are
+@c   interpreted as a switch. They can appear in a repository if they are
+@c   part of a tree that is imported. They can not be removed from the tree
+@c   once they are there.
+@c Note that "--" *is* supported (as a
+@c consequence of using GNU getopt).  Should document
+@c this somewhere ("Common options"?).  The other usual technique,
+@c "./-foo", isn't as effective, at least for "cvs add"
+@c which doesn't support pathnames containing "/".
 
 The overall structure of the repository is a directory
 tree corresponding to the directories in the working

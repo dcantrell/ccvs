@@ -1,3 +1,8 @@
+Sat Jul 12 11:12:18 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (Repository files): Further comments about leading
+	"-" in filenames.
+
 Fri Jul 11 21:30:11 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (Repository files): Add comment about legal
