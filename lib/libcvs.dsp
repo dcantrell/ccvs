@@ -85,11 +85,35 @@ LIB32=link.exe -lib
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 # Begin Source File
 
+SOURCE=.\argmatch.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\asnprintf.c
+# End Source File
+# Begin Source File
+
 SOURCE=.\basename.c
 # End Source File
 # Begin Source File
 
 SOURCE=.\exitfail.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\fncase.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\fnmatch.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\fseeko.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\ftello.c
 # End Source File
 # Begin Source File
 
@@ -117,6 +141,10 @@ SOURCE=.\gettime.c
 # End Source File
 # Begin Source File
 
+SOURCE=.\md5.c
+# End Source File
+# Begin Source File
+
 SOURCE=".\printf-args.c"
 # End Source File
 # Begin Source File
@@ -131,10 +159,50 @@ SOURCE=.\realloc.c
 
 SOURCE=.\regex.c
 # End Source File
+# Begin Source File
+
+SOURCE=.\savecwd.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\sighandle.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\stripslash.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\valloc.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\vasnprintf.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\xgetwd.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\xmalloc.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\xstrdup.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\yesno.c
+# End Source File
 # End Group
 # Begin Group "Header Files"
 
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
+# Begin Source File
+
+SOURCE=.\alloca.h
+# End Source File
 # Begin Source File
 
 SOURCE=.\alloca_.h
@@ -168,6 +236,26 @@ SOURCE="..\windows-NT\config.h"
 # End Source File
 # Begin Source File
 
+SOURCE=.\dirname.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\error.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\exit.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\exitfail.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\fnmatch.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\fnmatch_.h
 
 !IF  "$(CFG)" == "libcvs - Win32 Release"
@@ -195,11 +283,91 @@ InputPath=.\fnmatch_.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\getdate.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\getline.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\getndelim2.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\getopt.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\getpagesize.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\gettext.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\md5.h
+# End Source File
+# Begin Source File
+
+SOURCE="..\windows-NT\ndir.h"
+# End Source File
+# Begin Source File
+
+SOURCE=.\pathmax.h
+# End Source File
+# Begin Source File
+
+SOURCE=".\printf-args.h"
+# End Source File
+# Begin Source File
+
+SOURCE=".\printf-parse.h"
+# End Source File
+# Begin Source File
+
+SOURCE="..\windows-NT\pwd.h"
+# End Source File
+# Begin Source File
+
 SOURCE=.\regex.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\savecwd.h
+# End Source File
+# Begin Source File
+
 SOURCE="..\windows-NT\stdbool.h"
+# End Source File
+# Begin Source File
+
+SOURCE=.\system.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\timespec.h
+# End Source File
+# Begin Source File
+
+SOURCE="..\windows-NT\unistd.h"
+# End Source File
+# Begin Source File
+
+SOURCE=".\unlocked-io.h"
+# End Source File
+# Begin Source File
+
+SOURCE=.\vasnprintf.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\xalloc.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\xsize.h
 # End Source File
 # End Group
 # End Target
