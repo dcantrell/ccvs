@@ -8,9 +8,6 @@ NEW FEATURES
 * Most output from the `cvs commit' command is suppressed when the -Q global
   option is specified.
 
-* Some half-hour timezone strings are now handled in dates, but try to use the
-  -0000 for instead.
-
 * Repository directory browsing via `cvs rls' & `cvs ls' commands.  Expect
   changes in the long format output soon.  The "entries" format output should
   remain fairly stable for automated parsers.
