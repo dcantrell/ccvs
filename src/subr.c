@@ -150,17 +150,27 @@ xstrdup (str)
     return (s);
 }
 
-/* Remove trailing newlines from STRING, destructively. */
-void
-strip_trailing_newlines (str)
-     char *str;
+
+
+/* Remove trailing newlines from STRING, destructively.
+ *
+ * RETURNS
+ *
+ *   True if any newlines were removed, false otherwise.
+ */
+int
+strip_trailing_newlines (char *str)
 {
-    int len;
-    len = strlen (str) - 1;
+    int len, origlen;
+    len = origlen = strlen (str) - 1;
 
     while (str[len] == '\n')
 	str[len--] = '\0';
+
+    return len != origlen;
 }
+
+
 
 /* Return the number of levels that path ascends above where it starts.
    For example:

@@ -5656,10 +5656,16 @@ pserver_authenticate_connection ()
     getline_safe (&username, &username_allocated, stdin, PATH_MAX);
     getline_safe (&password, &password_allocated, stdin, PATH_MAX);
 
-    /* Make them pure. */
-    strip_trailing_newlines (repository);
-    strip_trailing_newlines (username);
-    strip_trailing_newlines (password);
+    /* Make them pure.
+     *
+     * We check that none of the lines were truncated by getnline in order
+     * to be sure that we don't accidentally allow a blind DOS attack to
+     * authenticate, however slim the odds of that might be.
+     */
+    if (!strip_trailing_newlines (repository)
+	|| !strip_trailing_newlines (username)
+	|| !strip_trailing_newlines (password))
+	error (1, 0, "Maximum line length exceeded during authentication.");
 
     /* ... and make sure the protocol ends on the right foot. */
     /* See above comment about error handling.  */
