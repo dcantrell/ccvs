@@ -1,5 +1,14 @@
 Changes since 1.9:
 
+* Read-only repository access is implemented for the
+password-authenticated server (other access methods are just governed
+by Unix file permissions, since they require login access to the
+repository machine anyway).  See the "Repository" section of
+cvs.texinfo for details.  Note that the security cautions in
+cvs.texinfo ("Password authentication security"), and the requirement
+that read-only users be able to create locks and write the history
+file, both apply.
+
 * The "checkout" command now creates a CVS directory at the top level
 of the new working directory, in addition to CVS directories created
 within checked-out directories.
