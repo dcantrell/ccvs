@@ -7056,7 +7056,7 @@ Note that this keyword has only been recently
 introduced to @sc{cvs} and may cause problems with
 existing installations if $@splitrcskeyword{CVSHeader}$ is already
 in the files for a different purpose. This keyword may
-be excluded using the @code{KeywordExpansion=eCVSHeader}
+be excluded using the @code{KeywordExpand=eCVSHeader}
 in the @file{CVSROOT/config} file. 
 See @ref{Configuring keyword expansion} for more details.
 
@@ -7196,7 +7196,7 @@ bug to the third-party and reducing the number of
 conflicts that arise during an import of a new version.
 
 All keyword expansion except the local keyword may be
-disabled using the @code{KeywordExpansion} option in
+disabled using the @code{KeywordExpand} option in
 the @file{CVSROOT/config} file---see 
 @ref{Configuring keyword expansion} for more details.
 
@@ -7405,14 +7405,14 @@ these cases, it is typically desirable to disable the
 expansion of all keywords except the configured local
 keyword.
 
-The @code{KeywordExpansion} option in the
+The @code{KeywordExpand} option in the
 @file{CVSROOT/config} file is intended to allow for the
 either the explicit exclusion of a keyword or list of
 keywords, or for the explicit inclusion of a keyword or
 a list of keywords. This list may include the
 @code{LocalKeyword} that has been configured.
 
-The @code{KeywordExpansion} option is followed by
+The @code{KeywordExpand} option is followed by
 @code{=} and the next character may either be @code{i}
 to start an inclusion list or @code{e} to start an
 exclusion list. If the following lines were added to
