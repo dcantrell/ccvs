@@ -16736,6 +16736,11 @@ _ACEOF
 
 
 cat >>confdefs.h <<\_ACEOF
+#define opterr rpl_opterr
+_ACEOF
+
+
+cat >>confdefs.h <<\_ACEOF
 #define optopt rpl_optopt
 _ACEOF
 

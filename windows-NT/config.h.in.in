@@ -1042,6 +1042,9 @@
 /* Define to rpl_optarg if the replacement variable should be used. */
 #define optarg rpl_optarg
 
+/* Define to rpl_opterr if the replacement variable should be used. */
+#define opterr rpl_opterr
+
 /* Define to rpl_optind if the replacement variable should be used. */
 #define optind rpl_optind
 
