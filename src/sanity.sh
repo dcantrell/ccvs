@@ -17149,6 +17149,50 @@ ${PROG} update: Updating dir1/sdir
 ${PROG} update: Updating dir1/sdir/ssdir"
 	  fi
 
+	  dotest multiroot2-9 "${testcvs} -q tag tag1" \
+"T dir1/file1
+T dir1/sdir/sfile
+T dir1/sdir/ssdir/ssfile"
+	  echo "change it" >>dir1/file1
+	  echo "change him too" >>dir1/sdir/sfile
+	  dotest multiroot2-10 "${testcvs} -q ci -m modify" \
+"Checking in dir1/file1;
+${TESTDIR}/root1/dir1/file1,v  <--  file1
+new revision: 1\.2; previous revision: 1\.1
+done
+Checking in dir1/sdir/sfile;
+${TESTDIR}/root2/sdir/sfile,v  <--  sfile
+new revision: 1\.2; previous revision: 1\.1
+done"
+	  dotest multiroot2-11 "${testcvs} -q tag tag2" \
+"T dir1/file1
+T dir1/sdir/sfile
+T dir1/sdir/ssdir/ssfile"
+	  dotest_status multiroot2-12 1 \
+"${testcvs} -q diff -u -r tag1 -r tag2" \
+"Index: dir1/file1
+===================================================================
+RCS file: ${TESTDIR}/root1/dir1/file1,v
+retrieving revision 1\.1\.1\.1
+retrieving revision 1\.2
+diff -u -r1\.1\.1\.1 -r1\.2
+--- dir1/file1	[0-9/]* [0-9:]*	1\.1\.1\.1
+${PLUS}${PLUS}${PLUS} dir1/file1	[0-9/]* [0-9:]*	1\.2
+@@ -1 ${PLUS}1,2 @@
+ file1
+${PLUS}change it
+Index: dir1/sdir/sfile
+===================================================================
+RCS file: ${TESTDIR}/root2/sdir/sfile,v
+retrieving revision 1\.1\.1\.1
+retrieving revision 1\.2
+diff -u -r1\.1\.1\.1 -r1\.2
+--- dir1/sdir/sfile	[0-9/]* [0-9:]*	1\.1\.1\.1
+${PLUS}${PLUS}${PLUS} dir1/sdir/sfile	[0-9/]* [0-9:]*	1\.2
+@@ -1 ${PLUS}1,2 @@
+ sfile
+${PLUS}change him too"
+
 	  if test "$keep" = yes; then
 	    echo Keeping ${TESTDIR} and exiting due to --keep
 	    exit 0
