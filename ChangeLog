@@ -1,3 +1,32 @@
+Wed Oct  2 17:01:54 1996  Greg A. Woods  <woods@most.weird.com>
+
+	* configure.in: fixed RCS Id string.
+ 	(VERSION): new variable & define to specify pkg version.
+	(PACKAGE): new variable & define to specify pkg name.
+	(AC_PREREQ): 2.10 is required now.
+	(AC_ARG_PROGRAM): allow program name transforms.
+	(AC_PROG_MAKE_SET): setup for MAKE.
+	(AC_CONFIG_HEADER): no more src/options.h -- all in config.h.
+	(--with-rcsbin): allow RCSBIN_DFLT to be set.
+	(--with-diff): allow DIFF_DFLT to be set.
+	(--with-grep): allow GREP_DFLT to be set.
+	(--with-patch): allow PATCH_DFLT to be set.
+	(--with-editor): allow EDITOR_DFLT to be set.
+	(--with-tmpdir): allow TMPDIR_DFLT to be set.
+	(--with-cvs_server): allow CVS_SERVER_DFLT to be set.
+	(--with-rsh): allow RSH_DFLT to be set, default to the appropriate
+	path of either rsh or remsh.
+	(--enable-force_editor): to set FORCE_USE_EDITOR.
+	(--enable-admin_group): to set CVS_ADMIN_GROUP.
+	* acconfig.h: added stuff from src/options.h.in.
+	rename some variables to match configure.in and the general naming
+	conventions elsewhere (_DFLT's are used to set default values that
+	can be changed by command-line or environment variable options).
+
+	* configure: removed -- developers must have autoconf.
+	* config.h.in: removed -- developers must have autoheader.
+	[And I think the next step should be using automake!].
+	
 Mon Sep 30 14:51:36 1996  Greg A. Woods  <woods@most.weird.com>
 
 	* INSTALL (sun3): 1.8.86+ builds and runs make check.
