@@ -1,3 +1,10 @@
+2004-06-24  Derek Price  <derek@ximbiot.com>
+
+	* libcvs.dsp: Add "./xsize.h" to Header file list.  Add "./strftime.c"
+	& "./time_r.c" to Source file list.
+	* libcvs.dep, libcvs.mak: Regenerated for "./libcvs.dsp" change.
+	(Patch submitted by Conrad T. Pino <Conrad@Pino.com>.)
+
 2004-06-09  Derek Price  <derek@ximbiot.com>
 
 	* Makefile.am (xsize): Move GNULIB xsize module into its own section.
