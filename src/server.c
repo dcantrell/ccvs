@@ -3459,7 +3459,8 @@ do_cvs_command (char *cmd_name, int (*command) (int, char **))
 	buf_output0 (buf_to_net, program_name);
 	buf_output0 (buf_to_net, " [server aborted]: \"");
 	buf_output0 (buf_to_net, cmd_name);
-	buf_output0 (buf_to_net, "\" requires write access to the repository\n\
+	buf_output0 (buf_to_net,
+"\" requires write access to the repository\n\
 error  \n");
 	goto free_args_and_return;
     }
