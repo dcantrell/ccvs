@@ -1,3 +1,12 @@
+2003-10-23  Derek Price  <derek@ximbiot.com>
+
+	Avoid including getndelim.o in $(LIBOBJ) twice.
+
+	* getndelim2.m4 (gl_GETNDELIM2): Only allow AC_LIBOBJ(getndelim2) to be
+	called once.
+	* getline.m4 (gl_GETLINE): Use gl_GETNDELIM2 rather than calling
+	AC_LIBOBJ(getndelim2) directly.
+
 2003-10-01  Derek Price  <derek@ximbiot.com>
 
 	Add the GNULIB restrict module.
