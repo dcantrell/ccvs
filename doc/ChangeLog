@@ -1,5 +1,9 @@
 Fri Jul 25 10:40:22 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvsclient.texi (Requests): Remove obsolete sentence regarding
+	using Directory instead of Repository enabling alternate response
+	syntax.
+
 	* cvsclient.texi (Response intro): Add discussing of file updating
 	responses and file update modifying responses.
 	(Responses): Refer to this description rather than trying to
