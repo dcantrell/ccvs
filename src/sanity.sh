@@ -483,7 +483,7 @@ if test x"$*" = x; then
 	tests="${tests} new newb conflicts conflicts2"
 	tests="${tests} modules modules2 modules3 mflag errmsg1 errmsg2"
 	tests="${tests} devcom devcom2 devcom3 watch4"
-	tests="${tests} ignore binfiles binfiles2 mcopy binwrap"
+	tests="${tests} ignore binfiles binfiles2 mcopy binwrap binwrap2"
 	tests="${tests} mwrap info config"
 	tests="${tests} serverpatch log log2 crerepos rcs big modes stamps"
 	tests="${tests} sticky keyword toplevel head admin reserved"
@@ -6298,16 +6298,61 @@ File: foo\.exe          	Status: Up-to-date
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
 	  ;;
 
+	binwrap2)
+	  # Test the ability to specify binary-ness based on file name.
+	  # See "mwrap" for a list of other wrappers tests.
+
+	  mkdir dir-to-import
+	  cd dir-to-import
+	  touch foo.c foo.exe
+
+	  # Specify that all files are binary except *.c.
+	  # The order seems to matter, with the earlier rules taking
+	  # precedence.  I'm not sure whether that is good or not,
+	  # but it is the current behavior.
+	  if ${testcvs} import -m message -I ! \
+	      -W "*.c -k 'o'" -W "* -k 'b'" \
+	      first-dir tag1 tag2 >>${LOGFILE}; then
+	    pass binwrap2-1
+	  else
+	    fail binwrap2-1
+	  fi
+	  cd ..
+	  rm -r dir-to-import
+	  dotest binwrap2-2 "${testcvs} -q co first-dir" 'U first-dir/foo.c
+U first-dir/foo.exe'
+	  dotest binwrap2-3 "${testcvs} -q status first-dir" \
+"===================================================================
+File: foo\.c            	Status: Up-to-date
+
+   Working revision:	1\.1\.1\.1.*
+   Repository revision:	1\.1\.1\.1	${TESTDIR}/cvsroot/first-dir/foo\.c,v
+   Sticky Tag:		(none)
+   Sticky Date:		(none)
+   Sticky Options:	-ko
+
+===================================================================
+File: foo\.exe          	Status: Up-to-date
+
+   Working revision:	1\.1\.1\.1.*
+   Repository revision:	1\.1\.1\.1	${TESTDIR}/cvsroot/first-dir/foo\.exe,v
+   Sticky Tag:		(none)
+   Sticky Date:		(none)
+   Sticky Options:	-kb"
+	  rm -r first-dir
+	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  ;;
+
 	mwrap)
 	  # Tests of various wrappers features:
 	  # -m 'COPY' and cvs update: mwrap
 	  # -m 'COPY' and joining: mcopy
-	  # -k: binwrap
+	  # -k: binwrap, binwrap2
 	  # -t/-f: hasn't been written yet.
 	  # 
 	  # Tests of different ways of specifying wrappers:
 	  # CVSROOT/cvswrappers: mwrap
-	  # -W: binwrap
+	  # -W: binwrap, binwrap2
 	  # .cvswrappers in working directory: mcopy
 	  # CVSWRAPPERS environment variable: mcopy
 
