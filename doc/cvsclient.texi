@@ -673,10 +673,14 @@ request; if there are several @code{Notify} requests for a single file,
 the requests should be processed in order; the first @code{Notified}
 response pertains to the first @code{Notify} request, etc.
 
-@item Module-expansion @var{pathname} \n
-Return a file or directory which is included in a particular module.
-@var{pathname} is relative to cvsroot, unlike most pathnames in
-responses.
+@item Module-expansion @var{pathname} \n Return a file or directory
+which is included in a particular module.  @var{pathname} is relative
+to cvsroot, unlike most pathnames in responses.  @var{pathname} should
+be used to look and see whether some or all of the module exists on
+the client side; it is not necessarily suitable for passing as an
+argument to a @code{co} request (for example, if the modules file
+contains the @samp{-d} option, it will be the directory specified with
+@samp{-d}, not the name of the module).
 
 @item M @var{text} \n
 A one-line message for the user.
