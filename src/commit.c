@@ -871,20 +871,7 @@ check_fileproc (callerdat, finfo)
 		 * If the timestamp on the file is the same as the
 		 * timestamp stored in the Entries file, we block the commit.
 		 */
-#ifdef SERVER_SUPPORT
-		if (server_active)
-		    retcode = vers->ts_conflict[0] != '=';
-		else {
-		    filestamp = time_stamp (finfo->file);
-		    retcode = strcmp (vers->ts_conflict, filestamp);
-		    free (filestamp);
-		}
-#else
-		filestamp = time_stamp (finfo->file);
-		retcode = strcmp (vers->ts_conflict, filestamp);
-		free (filestamp);
-#endif
-		if (retcode == 0)
+		if ( file_has_conflict ( finfo, vers->ts_conflict ) )
 		{
 		    error (0, 0,
 			  "file `%s' had a conflict and has not been modified",
