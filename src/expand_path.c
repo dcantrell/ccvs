@@ -1,3 +1,4 @@
+
 /* expand_path.c -- expand environmental variables in passed in string
  *
  * The main routine is expand_path(), it is the routine that handles
@@ -16,8 +17,8 @@
 #include <sys/types.h>
 
 static char *expand_variable (char *env, char *file, int line);
-
 
+
 /* User variables.  */
 
 List *variable_list = NULL;
@@ -25,7 +26,7 @@ List *variable_list = NULL;
 static void variable_delproc (Node *);
 
 static void
-variable_delproc (Node *node)
+variable_delproc (Node * node)
 {
     free (node->data);
 }
@@ -44,14 +45,16 @@ variable_set (char *nameval)
     while (isalnum ((unsigned char) *p) || *p == '_')
 	++p;
     if (*p != '=')
-	error ( 1, 0, "invalid character in user variable name in %s",
-		nameval );
+	error (1, 0, "invalid character in user variable name in %s",
+	       nameval);
     if (p == nameval)
 	error (1, 0, "empty user variable name in %s", nameval);
     name = xmalloc (p - nameval + 1);
     strncpy (name, nameval, p - nameval);
     name[p - nameval] = '\0';
-    /* Make p point to the value.  */
+    /*
+       Make p point to the value.  
+     */
     ++p;
     if (strchr (p, '\012') != NULL)
 	error (1, 0, "linefeed in user variable value in %s", nameval);
@@ -71,8 +74,10 @@ variable_set (char *nameval)
     }
     else
     {
-	/* Replace the old value.  For example, this means that -s
-	   options on the command line override ones from .cvsrc.  */
+	/*
+	   Replace the old value.  For example, this means that -s
+	   options on the command line override ones from .cvsrc.  
+	 */
 	free (node->data);
 	node->data = xstrdup (p);
 	free (name);
@@ -101,14 +106,18 @@ expand_path (char *name, char *file, int line)
 
     char *result;
 
-    /* Sorry this routine is so ugly; it is a head-on collision
+    /*
+       Sorry this routine is so ugly; it is a head-on collision
        between the `traditional' unix *d++ style and the need to
        dynamically allocate.  It would be much cleaner (and probably
        faster, not that this is a bottleneck for CVS) with more use of
        strcpy & friends, but I haven't taken the effort to rewrite it
-       thusly.  */
+       thusly.  
+     */
 
-    /* First copy from NAME to MYBUF, expanding $<foo> as we go.  */
+    /*
+       First copy from NAME to MYBUF, expanding $<foo> as we go.  
+     */
     s = name;
     d = mybuf;
     doff = d - mybuf;
@@ -128,7 +137,7 @@ expand_path (char *name, char *file, int line)
 	    for (; (*d++ = *s); s++)
 	    {
 		if (flag
-		    ? *s =='}'
+		    ? *s == '}'
 		    : isalnum ((unsigned char) *s) == 0 && *s != '_')
 		    break;
 		doff = d - mybuf;
@@ -154,7 +163,9 @@ expand_path (char *name, char *file, int line)
 		    s++;
 	    }
 	    else
-		/* expand_variable has already printed an error message.  */
+		/*
+		   expand_variable has already printed an error message.  
+		 */
 		goto error_exit;
 	}
 	doff = d - mybuf;
@@ -166,22 +177,26 @@ expand_path (char *name, char *file, int line)
     d = mybuf + doff;
     *d = '\0';
 
-    /* Then copy from MYBUF to BUF, expanding ~.  */
+    /*
+       Then copy from MYBUF to BUF, expanding ~.  
+     */
     s = mybuf;
     d = buf;
-    /* If you don't want ~username ~/ to be expanded simply remove
-     * This entire if statement including the else portion
+    /*
+       If you don't want ~username ~/ to be expanded simply remove
+       * This entire if statement including the else portion
      */
     if (*s++ == '~')
     {
 	char *t;
-	char *p=s;
-	if (*s=='/' || *s==0)
+	char *p = s;
+
+	if (*s == '/' || *s == 0)
 	    t = get_homedir ();
 	else
 	{
 #ifdef GETPWNAM_MISSING
-	    for (; *p!='/' && *p; p++)
+	    for (; *p != '/' && *p; p++)
 		;
 	    *p = 0;
 	    if (line != 0)
@@ -189,20 +204,21 @@ expand_path (char *name, char *file, int line)
 		       "%s:%d:tilde expansion not supported on this system",
 		       file, line);
 	    else
-		error (0, 0, "%s:tilde expansion not supported on this system",
+		error (0, 0,
+		       "%s:tilde expansion not supported on this system",
 		       file);
 	    return NULL;
 #else
 	    struct passwd *ps;
-	    for (; *p!='/' && *p; p++)
+
+	    for (; *p != '/' && *p; p++)
 		;
 	    *p = 0;
 	    ps = getpwnam (s);
 	    if (ps == 0)
 	    {
 		if (line != 0)
-		    error (0, 0, "%s:%d: no such user %s",
-			   file, line, s);
+		    error (0, 0, "%s:%d: no such user %s", file, line, s);
 		else
 		    error (0, 0, "%s: no such user %s", file, s);
 		return NULL;
@@ -224,12 +240,14 @@ expand_path (char *name, char *file, int line)
 	}
 	--d;
 	if (*p == 0)
-	    *p = '/';	       /* always add / */
-	s=p;
+	    *p = '/';			/* always add / */
+	s = p;
     }
     else
 	--s;
-	/* Kill up to here */
+    /*
+       Kill up to here 
+     */
     doff = d - buf;
     expand_string (&buf, &buf_size, doff + 1);
     d = buf + doff;
@@ -244,16 +262,20 @@ expand_path (char *name, char *file, int line)
     d = buf + doff;
     *d = '\0';
 
-    /* OK, buf contains the value we want to return.  Clean up and return
-       it.  */
+    /*
+       OK, buf contains the value we want to return.  Clean up and return
+       it.  
+     */
     free (mybuf);
-    /* Save a little memory with xstrdup; buf will tend to allocate
-       more than it needs to.  */
+    /*
+       Save a little memory with xstrdup; buf will tend to allocate
+       more than it needs to.  
+     */
     result = xstrdup (buf);
     free (buf);
     return result;
 
- error_exit:
+  error_exit:
     if (mybuf != NULL)
 	free (mybuf);
     if (buf != NULL)
@@ -281,23 +303,27 @@ expand_variable (char *name, char *file, int line)
 	return getcaller ();
     else if (isalpha ((unsigned char) name[0]))
     {
-	/* These names are reserved for future versions of CVS,
-	   so that is why it is an error.  */
+	/*
+	   These names are reserved for future versions of CVS,
+	   so that is why it is an error.  
+	 */
 	if (line != 0)
 	    error (0, 0, "%s:%d: no such internal variable $%s",
 		   file, line, name);
 	else
-	    error (0, 0, "%s: no such internal variable $%s",
-		   file, name);
+	    error (0, 0, "%s: no such internal variable $%s", file, name);
 	return NULL;
     }
     else if (name[0] == '=')
     {
 	Node *node;
-	/* Crazy syntax for a user variable.  But we want
+
+	/*
+	   Crazy syntax for a user variable.  But we want
 	   *something* that lets the user name a user variable
 	   anything he wants, without interference from
-	   (existing or future) internal variables.  */
+	   (existing or future) internal variables.  
+	 */
 	node = findnode (variable_list, name + 1);
 	if (node == NULL)
 	{
@@ -305,24 +331,24 @@ expand_variable (char *name, char *file, int line)
 		error (0, 0, "%s:%d: no such user variable ${%s}",
 		       file, line, name);
 	    else
-		error (0, 0, "%s: no such user variable ${%s}",
-		       file, name);
+		error (0, 0, "%s: no such user variable ${%s}", file, name);
 	    return NULL;
 	}
 	return node->data;
     }
     else
     {
-	/* It is an unrecognized character.  We return an error to
+	/*
+	   It is an unrecognized character.  We return an error to
 	   reserve these for future versions of CVS; it is plausible
 	   that various crazy syntaxes might be invented for inserting
-	   information about revisions, branches, etc.  */
+	   information about revisions, branches, etc.  
+	 */
 	if (line != 0)
 	    error (0, 0, "%s:%d: unrecognized variable syntax %s",
 		   file, line, name);
 	else
-	    error (0, 0, "%s: unrecognized variable syntax %s",
-		   file, name);
+	    error (0, 0, "%s: unrecognized variable syntax %s", file, name);
 	return NULL;
     }
 }

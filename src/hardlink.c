@@ -1,3 +1,4 @@
+
 /* This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
    the Free Software Foundation; either version 2, or (at your option)
@@ -37,9 +38,9 @@
 /* TODO: change this to something with a marginal degree of
    efficiency, like maybe a hash table.  Yeah. */
 
-List *hardlist;		/* Record hardlink information for working files */
-char *working_dir;	/* The top-level working directory, used for
-			   constructing full pathnames. */
+List *hardlist;			/* Record hardlink information for working files */
+char *working_dir;		/* The top-level working directory, used for
+				   constructing full pathnames. */
 
 /* Return a pointer to FILEPATH's node in the hardlist.  This means
    looking up its inode, retrieving the list of files linked to that
@@ -52,24 +53,30 @@ lookup_file_by_inode (const char *filepath)
     struct stat sb;
     Node *hp, *p;
 
-    /* Get file's basename, so that we can stat it. */
+    /*
+       Get file's basename, so that we can stat it. 
+     */
     file = strrchr (filepath, '/');
     if (file)
 	++file;
     else
 	file = (char *) filepath;
 
-    /* inodestr contains the hexadecimal representation of an
+    /*
+       inodestr contains the hexadecimal representation of an
        inode, so it requires two bytes of text to represent
-       each byte of the inode number. */
-    inodestr = (char *) xmalloc (2*sizeof(ino_t) + 1);
-    if( CVS_STAT( file, &sb ) < 0 )
+       each byte of the inode number. 
+     */
+    inodestr = (char *) xmalloc (2 * sizeof (ino_t) + 1);
+    if (CVS_STAT (file, &sb) < 0)
     {
 	if (existence_error (errno))
 	{
-	    /* The file doesn't exist; we may be doing an update on a
+	    /*
+	       The file doesn't exist; we may be doing an update on a
 	       file that's been removed.  A nonexistent file has no
-	       link information, so return without changing hardlist. */
+	       link information, so return without changing hardlist. 
+	     */
 	    free (inodestr);
 	    return NULL;
 	}
@@ -78,15 +85,17 @@ lookup_file_by_inode (const char *filepath)
 
     sprintf (inodestr, "%lx", (unsigned long) sb.st_ino);
 
-    /* Find out if this inode is already in the hardlist, adding
-       a new entry to the list if not. */
+    /*
+       Find out if this inode is already in the hardlist, adding
+       a new entry to the list if not. 
+     */
     hp = findnode (hardlist, inodestr);
     if (hp == NULL)
     {
 	hp = getnode ();
 	hp->type = NT_UNKNOWN;
 	hp->key = inodestr;
-	hp->data = (char *) getlist();
+	hp->data = (char *) getlist ();
 	hp->delproc = dellist;
 	(void) addnode (hardlist, hp);
     }
@@ -98,7 +107,7 @@ lookup_file_by_inode (const char *filepath)
     p = findnode ((List *) hp->data, filepath);
     if (p == NULL)
     {
-	p = getnode();
+	p = getnode ();
 	p->type = NT_UNKNOWN;
 	p->key = xstrdup (filepath);
 	p->data = NULL;
@@ -123,10 +132,13 @@ update_hardlink_info (const char *file)
     }
     else
     {
-	/* file is a relative pathname; assume it's from the current
-	   working directory. */
-	char *dir = xgetwd();
-	path = xmalloc (strlen(dir) + strlen(file) + 2);
+	/*
+	   file is a relative pathname; assume it's from the current
+	   working directory. 
+	 */
+	char *dir = xgetwd ();
+
+	path = xmalloc (strlen (dir) + strlen (file) + 2);
 	sprintf (path, "%s/%s", dir, file);
 	free (dir);
     }
@@ -134,9 +146,11 @@ update_hardlink_info (const char *file)
     n = lookup_file_by_inode (path);
     if (n == NULL)
     {
-	/* Something is *really* wrong if the file doesn't exist here;
+	/*
+	   Something is *really* wrong if the file doesn't exist here;
 	   update_hardlink_info should be called only when a file has
-	   just been checked out to a working directory. */
+	   just been checked out to a working directory. 
+	 */
 	error (1, 0, "lost hardlink info for %s", file);
     }
 
@@ -161,38 +175,49 @@ list_linked_files_on_disk (char *file)
     struct stat sb;
     Node *n;
 
-    /* If hardlist is NULL, we have not been doing an operation that
+    /*
+       If hardlist is NULL, we have not been doing an operation that
        would permit us to know anything about the file's hardlinks
-       (cvs update, cvs commit, etc).  Return an empty list. */
+       (cvs update, cvs commit, etc).  Return an empty list. 
+     */
     if (hardlist == NULL)
-	return getlist();
+	return getlist ();
 
-    /* Get the full pathname of file (assuming the working directory) */
+    /*
+       Get the full pathname of file (assuming the working directory) 
+     */
     if (file[0] == '/')
 	path = xstrdup (file);
     else
     {
-	char *dir = xgetwd();
-	path = (char *) xmalloc (strlen(dir) + strlen(file) + 2);
+	char *dir = xgetwd ();
+
+	path = (char *) xmalloc (strlen (dir) + strlen (file) + 2);
 	sprintf (path, "%s/%s", dir, file);
 	free (dir);
     }
 
-    /* We do an extra lookup_file here just to make sure that there
+    /*
+       We do an extra lookup_file here just to make sure that there
        is a node for `path' in the hardlist.  If that were not so,
        comparing the working directory linkage against the repository
-       linkage for a file would always fail. */
+       linkage for a file would always fail. 
+     */
     (void) lookup_file_by_inode (path);
 
-    if( CVS_STAT( path, &sb ) < 0 )
+    if (CVS_STAT (path, &sb) < 0)
 	error (1, errno, "cannot stat %s", file);
-    /* inodestr contains the hexadecimal representation of an
+    /*
+       inodestr contains the hexadecimal representation of an
        inode, so it requires two bytes of text to represent
-       each byte of the inode number. */
-    inodestr = (char *) xmalloc (2*sizeof(ino_t) + 1);
+       each byte of the inode number. 
+     */
+    inodestr = (char *) xmalloc (2 * sizeof (ino_t) + 1);
     sprintf (inodestr, "%lx", (unsigned long) sb.st_ino);
 
-    /* Make sure the files linked to this inode are sorted. */
+    /*
+       Make sure the files linked to this inode are sorted. 
+     */
     n = findnode (hardlist, inodestr);
     sortlist ((List *) n->data, fsortcmp);
 
@@ -210,9 +235,9 @@ list_linked_files_on_disk (char *file)
    basenames are stored in the RCS file.  If anyone ever solves the
    problem of correctly managing cross-directory hardlinks, this
    function (along with most functions in this file) must be fixed. */
-						      
+
 int
-compare_linkage_lists (List *links1, List *links2)
+compare_linkage_lists (List * links1, List * links2)
 {
     Node *n1, *n2;
     char *p1, *p2;
@@ -225,7 +250,9 @@ compare_linkage_lists (List *links1, List *links2)
 
     while (n1 != links1->list && n2 != links2->list)
     {
-	/* Get the basenames of both files. */
+	/*
+	   Get the basenames of both files. 
+	 */
 	p1 = strrchr (n1->key, '/');
 	if (p1 == NULL)
 	    p1 = n1->key;
@@ -238,7 +265,9 @@ compare_linkage_lists (List *links1, List *links2)
 	else
 	    ++p2;
 
-	/* Compare the files' basenames. */
+	/*
+	   Compare the files' basenames. 
+	 */
 	if (strcmp (p1, p2) != 0)
 	    return 0;
 
@@ -246,8 +275,10 @@ compare_linkage_lists (List *links1, List *links2)
 	n2 = n2->next;
     }
 
-    /* At this point we should be at the end of both lists; if not,
-       one file has more links than the other, and return 1. */
+    /*
+       At this point we should be at the end of both lists; if not,
+       one file has more links than the other, and return 1. 
+     */
     return (n1 == links1->list && n2 == links2->list);
 }
 
@@ -257,22 +288,25 @@ compare_linkage_lists (List *links1, List *links2)
    is not currently used. */
 
 int
-find_checkedout_proc (Node *node, void *data)
+find_checkedout_proc (Node * node, void *data)
 {
     Node **uptodate = (Node **) data;
     Node *link;
-    char *dir = xgetwd();
+    char *dir = xgetwd ();
     char *path;
     struct hardlink_info *hlinfo;
 
-    /* If we have already found a file, don't do anything. */
+    /*
+       If we have already found a file, don't do anything. 
+     */
     if (*uptodate != NULL)
 	return 0;
 
-    /* Look at this file in the hardlist and see whether the checked_out
-       field is 1, meaning that it has been checked out during this CVS run. */
-    path = (char *)
-	xmalloc (strlen (dir) + strlen (node->key) + 2);
+    /*
+       Look at this file in the hardlist and see whether the checked_out
+       field is 1, meaning that it has been checked out during this CVS run. 
+     */
+    path = (char *) xmalloc (strlen (dir) + strlen (node->key) + 2);
     sprintf (path, "%s/%s", dir, node->key);
     link = lookup_file_by_inode (path);
     free (path);
@@ -280,19 +314,22 @@ find_checkedout_proc (Node *node, void *data)
 
     if (link == NULL)
     {
-	/* We haven't seen this file -- maybe it hasn't been checked
-	   out yet at all. */
+	/*
+	   We haven't seen this file -- maybe it hasn't been checked
+	   out yet at all. 
+	 */
 	return 0;
     }
 
     hlinfo = (struct hardlink_info *) link->data;
     if (hlinfo->checked_out)
     {
-	/* This file has been checked out recently, so it's safe to
-           link to it. */
+	/*
+	   This file has been checked out recently, so it's safe to
+	   link to it. 
+	 */
 	*uptodate = link;
     }
 
     return 0;
 }
-

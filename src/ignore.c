@@ -1,3 +1,4 @@
+
 /* This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
    the Free Software Foundation; either version 2, or (at your option)
@@ -23,15 +24,15 @@
  *	    element forever, unless a "!" clears it out.
  */
 
-static char **ign_list;			/* List of files to ignore in update
-					 * and import */
+static char **ign_list;		/* List of files to ignore in update
+				 * and import */
 static char **s_ign_list = NULL;
-static int ign_count;			/* Number of active entries */
+static int ign_count;		/* Number of active entries */
 static int s_ign_count = 0;
-static int ign_size;			/* This many slots available (plus
-					 * one for a NULL) */
-static int ign_hold = -1;		/* Index where first "temporary" item
-					 * is held */
+static int ign_size;		/* This many slots available (plus
+				 * one for a NULL) */
+static int ign_hold = -1;	/* Index where first "temporary" item
+				 * is held */
 
 const char *ign_default = ". .. core RCSLOG tags TAGS RCS SCCS .make.state\
  .nse_depinfo #* .#* cvslog.* ,* CVS CVS.adm .del-* *.a *.olb *.o *.obj\
@@ -58,46 +59,62 @@ ign_setup (void)
 
     ign_inhibit_server = 0;
 
-    /* Start with default list and special case */
+    /*
+       Start with default list and special case 
+     */
     tmp = xstrdup (ign_default);
     ign_add (tmp, 0);
     free (tmp);
 
 #ifdef CLIENT_SUPPORT
-    /* The client handles another way, by (after it does its own ignore file
+    /*
+       The client handles another way, by (after it does its own ignore file
        processing, and only if !ign_inhibit_server), letting the server
        know about the files and letting it decide whether to ignore
-       them based on CVSROOOTADM_IGNORE.  */
+       them based on CVSROOOTADM_IGNORE.  
+     */
     if (!current_parsed_root->isremote)
 #endif
     {
-	char *file = xmalloc (strlen (current_parsed_root->directory) + sizeof (CVSROOTADM)
-			      + sizeof (CVSROOTADM_IGNORE) + 10);
-	/* Then add entries found in repository, if it exists */
+	char *file =
+	    xmalloc (strlen (current_parsed_root->directory) +
+		     sizeof (CVSROOTADM) + sizeof (CVSROOTADM_IGNORE) + 10);
+	/*
+	   Then add entries found in repository, if it exists 
+	 */
 	(void) sprintf (file, "%s/%s/%s", current_parsed_root->directory,
 			CVSROOTADM, CVSROOTADM_IGNORE);
 	ign_add_file (file, 0);
 	free (file);
     }
 
-    /* Then add entries found in home dir, (if user has one) and file exists */
+    /*
+       Then add entries found in home dir, (if user has one) and file exists 
+     */
     home_dir = get_homedir ();
-    /* If we can't find a home directory, ignore ~/.cvsignore.  This may
+    /*
+       If we can't find a home directory, ignore ~/.cvsignore.  This may
        make tracking down problems a bit of a pain, but on the other
        hand it might be obnoxious to complain when CVS will function
        just fine without .cvsignore (and many users won't even know what
-       .cvsignore is).  */
+       .cvsignore is).  
+     */
     if (home_dir)
     {
 	char *file = strcat_filename_onto_homedir (home_dir, CVSDOTIGNORE);
+
 	ign_add_file (file, 0);
 	free (file);
     }
 
-    /* Then add entries found in CVSIGNORE environment variable. */
+    /*
+       Then add entries found in CVSIGNORE environment variable. 
+     */
     ign_add (getenv (IGNORE_ENV), 0);
 
-    /* Later, add ignore entries found in -I arguments */
+    /*
+       Later, add ignore entries found in -I arguments 
+     */
 }
 
 /*
@@ -112,7 +129,9 @@ ign_add_file (char *file, int hold)
     char *line = NULL;
     size_t line_allocated = 0;
 
-    /* restore the saved list (if any) */
+    /*
+       restore the saved list (if any) 
+     */
     if (s_ign_list != NULL)
     {
 	int i;
@@ -127,10 +146,14 @@ ign_add_file (char *file, int hold)
 	s_ign_list = NULL;
     }
 
-    /* is this a temporary ignore file? */
+    /*
+       is this a temporary ignore file? 
+     */
     if (hold)
     {
-	/* re-set if we had already done a temporary file */
+	/*
+	   re-set if we had already done a temporary file 
+	 */
 	if (ign_hold >= 0)
 	{
 	    int i;
@@ -146,11 +169,13 @@ ign_add_file (char *file, int hold)
 	}
     }
 
-    /* load the file */
+    /*
+       load the file 
+     */
     fp = CVS_FOPEN (file, "r");
     if (fp == NULL)
     {
-	if (! existence_error (errno))
+	if (!existence_error (errno))
 	    error (0, errno, "cannot open %s", file);
 	return;
     }
@@ -175,7 +200,9 @@ ign_add (char *ign, int hold)
 	char *mark;
 	char save;
 
-	/* ignore whitespace before the token */
+	/*
+	   ignore whitespace before the token 
+	 */
 	if (isspace ((unsigned char) *ign))
 	    continue;
 
@@ -184,12 +211,14 @@ ign_add (char *ign, int hold)
 	 * (saving it if necessary).  We also catch * as a special case in a
 	 * global ignore file as an optimization
 	 */
-	if ((!*(ign+1) || isspace ((unsigned char) *(ign+1)))
+	if ((!*(ign + 1) || isspace ((unsigned char) *(ign + 1)))
 	    && (*ign == '!' || *ign == '*'))
 	{
 	    if (!hold)
 	    {
-		/* permanently reset the ignore list */
+		/*
+		   permanently reset the ignore list 
+		 */
 		int i;
 
 		for (i = 0; i < ign_count; i++)
@@ -197,7 +226,9 @@ ign_add (char *ign, int hold)
 		ign_count = 0;
 		ign_list[0] = NULL;
 
-		/* if we are doing a '!', continue; otherwise add the '*' */
+		/*
+		   if we are doing a '!', continue; otherwise add the '*' 
+		 */
 		if (*ign == '!')
 		{
 		    ign_inhibit_server = 1;
@@ -206,7 +237,9 @@ ign_add (char *ign, int hold)
 	    }
 	    else if (*ign == '!')
 	    {
-		/* temporarily reset the ignore list */
+		/*
+		   temporarily reset the ignore list 
+		 */
 		int i;
 
 		if (ign_hold >= 0)
@@ -225,7 +258,9 @@ ign_add (char *ign, int hold)
 	    }
 	}
 
-	/* If we have used up all the space, add some more */
+	/*
+	   If we have used up all the space, add some more 
+	 */
 	if (ign_count >= ign_size)
 	{
 	    ign_size += IGN_GROW;
@@ -233,9 +268,13 @@ ign_add (char *ign, int hold)
 					   (ign_size + 1) * sizeof (char *));
 	}
 
-	/* find the end of this token */
+	/*
+	   find the end of this token 
+	 */
 	for (mark = ign; *mark && !isspace ((unsigned char) *mark); mark++)
-	     /* do nothing */ ;
+	    /*
+	       do nothing 
+	     */ ;
 
 	save = *mark;
 	*mark = '\0';
@@ -267,11 +306,13 @@ ign_name (char *name)
 
     if (ign_case)
     {
-	/* We do a case-insensitive match by calling fnmatch on copies of
+	/*
+	   We do a case-insensitive match by calling fnmatch on copies of
 	   the pattern and the name which have been converted to
 	   lowercase.  FIXME: would be much cleaner to just unify this
 	   with the other case-insensitive fnmatch stuff (FOLD_FN_CHAR
-	   in lib/fnmatch.c; os2_fnmatch in emx/system.c).  */
+	   in lib/fnmatch.c; os2_fnmatch in emx/system.c).  
+	 */
 	char *name_lower;
 	char *pat_lower;
 	char *p;
@@ -317,7 +358,9 @@ static int dir_ign_current = 0;
 void
 ign_dir_add (char *name)
 {
-    /* Make sure we've got the space for the entry.  */
+    /*
+       Make sure we've got the space for the entry.  
+     */
     if (dir_ign_current <= dir_ign_max)
     {
 	dir_ign_max += IGN_GROW;
@@ -359,7 +402,8 @@ ignore_directory (char *name)
  * directory with a CVS administration directory is known.
  */
 void
-ignore_files (List *ilist, List *entries, char *update_dir, Ignore_proc proc)
+ignore_files (List * ilist, List * entries, char *update_dir,
+	      Ignore_proc proc)
 {
     int subdirs;
     DIR *dirp;
@@ -370,7 +414,9 @@ ignore_files (List *ilist, List *entries, char *update_dir, Ignore_proc proc)
     List *files;
     Node *p;
 
-    /* Set SUBDIRS if we have subdirectory information in ENTRIES.  */
+    /*
+       Set SUBDIRS if we have subdirectory information in ENTRIES.  
+     */
     if (entries == NULL)
 	subdirs = 0;
     else
@@ -381,7 +427,9 @@ ignore_files (List *ilist, List *entries, char *update_dir, Ignore_proc proc)
 	subdirs = sdtp == NULL || sdtp->subdirs;
     }
 
-    /* we get called with update_dir set to "." sometimes... strip it */
+    /*
+       we get called with update_dir set to "." sometimes... strip it 
+     */
     if (strcmp (update_dir, ".") == 0)
 	xdir = "";
     else
@@ -397,7 +445,9 @@ ignore_files (List *ilist, List *entries, char *update_dir, Ignore_proc proc)
     ign_add_file (CVSDOTIGNORE, 1);
     wrap_add_file (CVSDOTWRAPPER, 1);
 
-    /* Make a list for the files.  */
+    /*
+       Make a list for the files.  
+     */
     files = getlist ();
 
     while (errno = 0, (dp = CVS_READDIR (dirp)) != NULL)
@@ -412,16 +462,17 @@ ignore_files (List *ilist, List *entries, char *update_dir, Ignore_proc proc)
 	    Node *node;
 
 	    node = findnode_fn (entries, file);
-	    if (node != NULL
-		&& ((Entnode *) node->data)->type == ENT_SUBDIR)
+	    if (node != NULL && ((Entnode *) node->data)->type == ENT_SUBDIR)
 	    {
 		char *p;
 		int dir;
 
-		/* For consistency with past behaviour, we only ignore
+		/*
+		   For consistency with past behaviour, we only ignore
 		   this directory if there is a CVS subdirectory.
 		   This will normally be the case, but the user may
-		   have messed up the working directory somehow.  */
+		   have messed up the working directory somehow.  
+		 */
 		p = xmalloc (strlen (file) + sizeof CVSADM + 10);
 		sprintf (p, "%s/%s", file, CVSADM);
 		dir = isdir (p);
@@ -431,28 +482,30 @@ ignore_files (List *ilist, List *entries, char *update_dir, Ignore_proc proc)
 	    }
 	}
 
-	/* We could be ignoring FIFOs and other files which are neither
-	   regular files nor directories here.  */
+	/*
+	   We could be ignoring FIFOs and other files which are neither
+	   regular files nor directories here.  
+	 */
 	if (ign_name (file))
 	    continue;
 
 	if (
 #ifdef DT_DIR
-		dp->d_type != DT_UNKNOWN ||
+	       dp->d_type != DT_UNKNOWN ||
 #endif
-		CVS_LSTAT( file, &sb ) != -1 ) 
+	       CVS_LSTAT (file, &sb) != -1)
 	{
 
 	    if (
 #ifdef DT_DIR
-		dp->d_type == DT_DIR
-		|| (dp->d_type == DT_UNKNOWN && S_ISDIR (sb.st_mode))
+		   dp->d_type == DT_DIR
+		   || (dp->d_type == DT_UNKNOWN && S_ISDIR (sb.st_mode))
 #else
-		S_ISDIR (sb.st_mode)
+		   S_ISDIR (sb.st_mode)
 #endif
 		)
 	    {
-		if (! subdirs)
+		if (!subdirs)
 		{
 		    char *temp;
 
@@ -469,12 +522,12 @@ ignore_files (List *ilist, List *entries, char *update_dir, Ignore_proc proc)
 #ifdef S_ISLNK
 	    else if (
 #ifdef DT_DIR
-		     dp->d_type == DT_LNK
-		     || (dp->d_type == DT_UNKNOWN && S_ISLNK(sb.st_mode))
+			dp->d_type == DT_LNK
+			|| (dp->d_type == DT_UNKNOWN && S_ISLNK (sb.st_mode))
 #else
-		     S_ISLNK (sb.st_mode)
+			S_ISLNK (sb.st_mode)
 #endif
-		     )
+		)
 	    {
 		continue;
 	    }

@@ -1,3 +1,4 @@
+
 /*
  * Copyright (c) 1992, Brian Berliner and Jeff Polk
  * Copyright (c) 1989-1992, Brian Berliner
@@ -30,10 +31,9 @@
 
 static int add_directory (struct file_info *finfo);
 static int build_entry (char *repository, char *user, char *options,
-		        char *message, List * entries, char *tag);
+			char *message, List * entries, char *tag);
 
-static const char *const add_usage[] =
-{
+static const char *const add_usage[] = {
     "Usage: %s %s [-k rcs-kflag] [-m message] files...\n",
     "\t-k\tUse \"rcs-kflag\" to add the file with the specified kflag.\n",
     "\t-m\tUse \"message\" for the creation log.\n",
@@ -54,8 +54,11 @@ add (int argc, char **argv)
     List *entries;
     Vers_TS *vers;
     struct saved_cwd cwd;
-    /* Nonzero if we found a slash, and are thus adding files in a
-       subdirectory.  */
+
+    /*
+       Nonzero if we found a slash, and are thus adding files in a
+       subdirectory.  
+     */
     int found_slash = 0;
     size_t cvsroot_len;
 
@@ -64,7 +67,9 @@ add (int argc, char **argv)
 
     wrap_setup ();
 
-    /* parse args */
+    /*
+       parse args 
+     */
     optind = 0;
     while ((c = getopt (argc, argv, "+k:m:")) != -1)
     {
@@ -93,29 +98,34 @@ add (int argc, char **argv)
 
     cvsroot_len = strlen (current_parsed_root->directory);
 
-    /* First some sanity checks.  I know that the CVS case is (sort of)
+    /*
+       First some sanity checks.  I know that the CVS case is (sort of)
        also handled by add_directory, but we need to check here so the
-       client won't get all confused in send_file_names.  */
+       client won't get all confused in send_file_names.  
+     */
     for (i = 0; i < argc; i++)
     {
 	int skip_file = 0;
 
-	/* If it were up to me I'd probably make this a fatal error.
+	/*
+	   If it were up to me I'd probably make this a fatal error.
 	   But some people are really fond of their "cvs add *", and
 	   don't seem to object to the warnings.
-	   Whatever.  */
+	   Whatever.  
+	 */
 	strip_trailing_slashes (argv[i]);
 	if (strcmp (argv[i], ".") == 0
-	    || strcmp (argv[i], "..") == 0
-	    || fncmp (argv[i], CVSADM) == 0)
+	    || strcmp (argv[i], "..") == 0 || fncmp (argv[i], CVSADM) == 0)
 	{
 	    if (!quiet)
-		error (0, 0, "cannot add special file `%s'; skipping", argv[i]);
+		error (0, 0, "cannot add special file `%s'; skipping",
+		       argv[i]);
 	    skip_file = 1;
 	}
 	else
 	{
 	    char *p;
+
 	    p = argv[i];
 	    while (*p != '\0')
 	    {
@@ -132,14 +142,18 @@ add (int argc, char **argv)
 	{
 	    int j;
 
-	    /* FIXME: We don't do anything about free'ing argv[i].  But
+	    /*
+	       FIXME: We don't do anything about free'ing argv[i].  But
 	       the problem is that it is only sometimes allocated (see
-	       cvsrc.c).  */
+	       cvsrc.c).  
+	     */
 
 	    for (j = i; j < argc - 1; ++j)
 		argv[j] = argv[j + 1];
 	    --argc;
-	    /* Check the new argv[i] again.  */
+	    /*
+	       Check the new argv[i] again.  
+	     */
 	    --i;
 	    ++err;
 	}
@@ -151,10 +165,12 @@ add (int argc, char **argv)
 	int j;
 
 	if (argc == 0)
-	    /* We snipped out all the arguments in the above sanity
+	    /*
+	       We snipped out all the arguments in the above sanity
 	       check.  We can just forget the whole thing (and we
 	       better, because if we fired up the server and passed it
-	       nothing, it would spit back a usage message).  */
+	       nothing, it would spit back a usage message).  
+	     */
 	    return err;
 
 	start_server ();
@@ -167,10 +183,12 @@ add (int argc, char **argv)
 	option_with_arg ("-m", message);
 	send_arg ("--");
 
-	/* If !found_slash, refrain from sending "Directory", for
+	/*
+	   If !found_slash, refrain from sending "Directory", for
 	   CVS 1.9 compatibility.  If we only tried to deal with servers
 	   which are at least CVS 1.9.26 or so, we wouldn't have to
-	   special-case this.  */
+	   special-case this.  
+	 */
 	if (found_slash)
 	{
 	    repository = Name_Repository (NULL, NULL);
@@ -180,10 +198,13 @@ add (int argc, char **argv)
 
 	for (j = 0; j < argc; ++j)
 	{
-	    /* FIXME: Does this erroneously call Create_Admin in error
+	    /*
+	       FIXME: Does this erroneously call Create_Admin in error
 	       conditions which are only detected once the server gets its
-	       hands on things?  */
-	    /* FIXME-also: if filenames are case-insensitive on the
+	       hands on things?  
+	     */
+	    /*
+	       FIXME-also: if filenames are case-insensitive on the
 	       client, and the directory in the repository already
 	       exists and is named "foo", and the command is "cvs add
 	       FOO", this call to Create_Admin puts the wrong thing in
@@ -191,7 +212,8 @@ add (int argc, char **argv)
 	       give an error.  The fix will be to have the server report
 	       back what it actually did (e.g. use tagged text for the
 	       "Directory %s added" message), and then Create_Admin,
-	       which should also fix the error handling concerns.  */
+	       which should also fix the error handling concerns.  
+	     */
 
 	    if (isdir (argv[j]))
 	    {
@@ -201,8 +223,11 @@ add (int argc, char **argv)
 		char *rcsdir;
 		char *p;
 		char *update_dir;
-		/* This is some mungeable storage into which we can point
-		   with p and/or update_dir.  */
+
+		/*
+		   This is some mungeable storage into which we can point
+		   with p and/or update_dir.  
+		 */
 		char *filedir;
 
 		if (save_cwd (&cwd))
@@ -219,33 +244,37 @@ add (int argc, char **argv)
 		    p[-1] = '\0';
 		    update_dir = filedir;
 		    if (CVS_CHDIR (update_dir) < 0)
-			error (1, errno,
-			       "could not chdir to %s", update_dir);
+			error (1, errno, "could not chdir to %s", update_dir);
 		}
 
-		/* find the repository associated with our current dir */
+		/*
+		   find the repository associated with our current dir 
+		 */
 		repository = Name_Repository (NULL, update_dir);
 
-		/* don't add stuff to Emptydir */
-		if (strncmp (repository, current_parsed_root->directory, cvsroot_len) == 0
-		    && ISDIRSEP (repository[cvsroot_len])
-		    && strncmp (repository + cvsroot_len + 1,
-				CVSROOTADM,
+		/*
+		   don't add stuff to Emptydir 
+		 */
+		if (strncmp
+		    (repository, current_parsed_root->directory,
+		     cvsroot_len) == 0 && ISDIRSEP (repository[cvsroot_len])
+		    && strncmp (repository + cvsroot_len + 1, CVSROOTADM,
 				sizeof CVSROOTADM - 1) == 0
 		    && ISDIRSEP (repository[cvsroot_len + sizeof CVSROOTADM])
-		    && strcmp (repository + cvsroot_len + sizeof CVSROOTADM + 1,
-			       CVSNULLREPOS) == 0)
+		    && strcmp (repository + cvsroot_len + sizeof CVSROOTADM +
+			       1, CVSNULLREPOS) == 0)
 		    error (1, 0, "cannot add to %s", repository);
 
-		/* before we do anything else, see if we have any
-		   per-directory tags */
+		/*
+		   before we do anything else, see if we have any
+		   per-directory tags 
+		 */
 		ParseTag (&tag, &date, &nonbranch);
 
 		rcsdir = xmalloc (strlen (repository) + strlen (p) + 5);
 		sprintf (rcsdir, "%s/%s", repository, p);
 
-		Create_Admin (p, argv[j], rcsdir, tag, date,
-			      nonbranch, 0, 1);
+		Create_Admin (p, argv[j], rcsdir, tag, date, nonbranch, 0, 1);
 
 		if (found_slash)
 		    send_a_repository ("", repository, update_dir);
@@ -279,15 +308,19 @@ add (int argc, char **argv)
     }
 #endif
 
-    /* walk the arg list adding files/dirs */
+    /*
+       walk the arg list adding files/dirs 
+     */
     for (i = 0; i < argc; i++)
     {
 	int begin_err = err;
+
 #ifdef SERVER_SUPPORT
 	int begin_added_files = added_files;
 #endif
 	struct file_info finfo;
 	char *p;
+
 #if defined (SERVER_SUPPORT) && !defined (FILENAMES_CASE_INSENSITIVE)
 	char *found_name = NULL;
 #endif
@@ -313,20 +346,25 @@ add (int argc, char **argv)
 		error (1, errno, "could not chdir to %s", finfo.update_dir);
 	}
 
-	/* Add wrappers for this directory.  They exist only until
-	   the next call to wrap_add_file.  */
+	/*
+	   Add wrappers for this directory.  They exist only until
+	   the next call to wrap_add_file.  
+	 */
 	wrap_add_file (CVSDOTWRAPPER, 1);
 
 	finfo.rcs = NULL;
 
-	/* Find the repository associated with our current dir.  */
+	/*
+	   Find the repository associated with our current dir.  
+	 */
 	repository = Name_Repository (NULL, finfo.update_dir);
 
-	/* don't add stuff to Emptydir */
-	if (strncmp (repository, current_parsed_root->directory, cvsroot_len) == 0
-	    && ISDIRSEP (repository[cvsroot_len])
-	    && strncmp (repository + cvsroot_len + 1,
-			CVSROOTADM,
+	/*
+	   don't add stuff to Emptydir 
+	 */
+	if (strncmp (repository, current_parsed_root->directory, cvsroot_len)
+	    == 0 && ISDIRSEP (repository[cvsroot_len])
+	    && strncmp (repository + cvsroot_len + 1, CVSROOTADM,
 			sizeof CVSROOTADM - 1) == 0
 	    && ISDIRSEP (repository[cvsroot_len + sizeof CVSROOTADM])
 	    && strcmp (repository + cvsroot_len + sizeof CVSROOTADM + 1,
@@ -341,19 +379,22 @@ add (int argc, char **argv)
 #if defined (SERVER_SUPPORT) && !defined (FILENAMES_CASE_INSENSITIVE)
 	if (ign_case)
 	{
-	    /* Need to check whether there is a directory with the
+	    /*
+	       Need to check whether there is a directory with the
 	       same name but different case.  We'll check for files
 	       with the same name later (when Version_TS calls
 	       RCS_parse which calls locate_rcs).  If CVS some day
 	       records directories in the RCS files, then we should be
 	       able to skip the separate check here, which would be
-	       cleaner.  */
+	       cleaner.  
+	     */
 	    DIR *dirp;
 	    struct dirent *dp;
 
 	    dirp = CVS_OPENDIR (finfo.repository);
 	    if (dirp == NULL)
-		error (1, errno, "cannot read directory %s", finfo.repository);
+		error (1, errno, "cannot read directory %s",
+		       finfo.repository);
 	    errno = 0;
 	    while ((dp = CVS_READDIR (dirp)) != NULL)
 	    {
@@ -366,45 +407,57 @@ add (int argc, char **argv)
 		}
 	    }
 	    if (errno != 0)
-		error (1, errno, "cannot read directory %s", finfo.repository);
+		error (1, errno, "cannot read directory %s",
+		       finfo.repository);
 	    CVS_CLOSEDIR (dirp);
 
 	    if (found_name != NULL)
 	    {
-		/* OK, we are about to patch up the name, so patch up
+		/*
+		   OK, we are about to patch up the name, so patch up
 		   the temporary directory too to match.  The isdir
 		   should "always" be true (since files have ,v), but
 		   I guess we might as well make some attempt to not
-		   get confused by stray files in the repository.  */
+		   get confused by stray files in the repository.  
+		 */
 		if (isdir (finfo.file))
 		{
-		    if (CVS_MKDIR (found_name, 0777) < 0
-			&& errno != EEXIST)
+		    if (CVS_MKDIR (found_name, 0777) < 0 && errno != EEXIST)
 			error (0, errno, "cannot create %s", finfo.file);
 		}
 
-		/* OK, we found a directory with the same name, maybe in
+		/*
+		   OK, we found a directory with the same name, maybe in
 		   a different case.  Treat it as if the name were the
-		   same.  */
+		   same.  
+		 */
 		finfo.file = found_name;
 	    }
 	}
 #endif
 
-	/* We pass force_tag_match as 1.  If the directory has a
-           sticky branch tag, and there is already an RCS file which
-           does not have that tag, then the head revision is
-           meaningless to us.  */
+	/*
+	   We pass force_tag_match as 1.  If the directory has a
+	   sticky branch tag, and there is already an RCS file which
+	   does not have that tag, then the head revision is
+	   meaningless to us.  
+	 */
 	vers = Version_TS (&finfo, options, NULL, NULL, 1, 0);
 	if (vers->vn_user == NULL)
 	{
-	    /* No entry available, ts_rcs is invalid */
+	    /*
+	       No entry available, ts_rcs is invalid 
+	     */
 	    if (vers->vn_rcs == NULL)
 	    {
-		/* There is no RCS file either */
+		/*
+		   There is no RCS file either 
+		 */
 		if (vers->ts_user == NULL)
 		{
-		    /* There is no user file either */
+		    /*
+		       There is no user file either 
+		     */
 		    error (0, 0, "nothing known about %s", finfo.fullname);
 		    err++;
 		}
@@ -416,8 +469,7 @@ add (int argc, char **argv)
 		     * the same name.  If so, blow this request off.
 		     */
 		    char *dname = xmalloc (strlen (repository)
-					   + strlen (finfo.file)
-					   + 10);
+					   + strlen (finfo.file) + 10);
 		    (void) sprintf (dname, "%s/%s", repository, finfo.file);
 		    if (isdir (dname))
 		    {
@@ -432,10 +484,12 @@ add (int argc, char **argv)
 
 		    if (vers->options == NULL || *vers->options == '\0')
 		    {
-			/* No options specified on command line (or in
+			/*
+			   No options specified on command line (or in
 			   rcs file if it existed, e.g. the file exists
 			   on another branch).  Check for a value from
-			   the wrapper stuff.  */
+			   the wrapper stuff.  
+			 */
 			if (wrap_name_has (finfo.file, WRAP_RCSOPTION))
 			{
 			    if (vers->options)
@@ -447,15 +501,18 @@ add (int argc, char **argv)
 		    if (vers->nonbranch)
 		    {
 			error (0, 0,
-				"cannot add file on non-branch tag %s",
-				vers->tag);
+			       "cannot add file on non-branch tag %s",
+			       vers->tag);
 			++err;
 		    }
 		    else
 		    {
-			/* There is a user file, so build the entry for it */
-			if (build_entry (repository, finfo.file, vers->options,
-					 message, entries, vers->tag) != 0)
+			/*
+			   There is a user file, so build the entry for it 
+			 */
+			if (build_entry
+			    (repository, finfo.file, vers->options, message,
+			     entries, vers->tag) != 0)
 			    err++;
 			else
 			{
@@ -464,20 +521,14 @@ add (int argc, char **argv)
 			    {
 				if (vers->tag)
 				    error (0, 0, "\
-scheduling %s `%s' for addition on branch `%s'",
-					   (wrap_name_has (finfo.file,
-							   WRAP_TOCVS)
-					    ? "wrapper"
-					    : "file"),
-					   finfo.fullname, vers->tag);
+scheduling %s `%s' for addition on branch `%s'", (wrap_name_has (finfo.file, WRAP_TOCVS) ? "wrapper" : "file"), finfo.fullname, vers->tag);
 				else
 				    error (0, 0,
 					   "scheduling %s `%s' for addition",
 					   (wrap_name_has (finfo.file,
 							   WRAP_TOCVS)
 					    ? "wrapper"
-					    : "file"),
-					   finfo.fullname);
+					    : "file"), finfo.fullname);
 			    }
 			}
 		    }
@@ -508,20 +559,19 @@ same name already exists in the repository.");
 			{
 			    if (vers->tag)
 				error (0, 0, "\
-file `%s' will be added on branch `%s' from version %s",
-					finfo.fullname, vers->tag, vers->vn_rcs);
+file `%s' will be added on branch `%s' from version %s", finfo.fullname, vers->tag, vers->vn_rcs);
 			    else
-				/* I'm not sure that mentioning
+				/*
+				   I'm not sure that mentioning
 				   vers->vn_rcs makes any sense here; I
 				   can't think of a way to word the
-				   message which is not confusing.  */
+				   message which is not confusing.  
+				 */
 				error (0, 0, "\
-re-adding file `%s' (in place of dead revision %s)",
-					finfo.fullname, vers->vn_rcs);
+re-adding file `%s' (in place of dead revision %s)", finfo.fullname, vers->vn_rcs);
 			}
 			Register (entries, finfo.file, "0", vers->ts_user,
-				  vers->options,
-				  vers->tag, NULL, NULL);
+				  vers->options, vers->tag, NULL, NULL);
 			++added_files;
 		    }
 		}
@@ -550,10 +600,14 @@ re-adding file `%s' (in place of dead revision %s)",
 	}
 	else if (vers->vn_user[0] == '-')
 	{
-	    /* An entry for a removed file, ts_rcs is invalid */
+	    /*
+	       An entry for a removed file, ts_rcs is invalid 
+	     */
 	    if (vers->ts_user == NULL)
 	    {
-		/* There is no user file (as it should be) */
+		/*
+		   There is no user file (as it should be) 
+		 */
 		if (vers->vn_rcs == NULL)
 		{
 
@@ -572,37 +626,44 @@ cannot resurrect %s; RCS file removed by second party", finfo.fullname);
 		     * There is an RCS file, so remove the "-" from the
 		     * version number and restore the file
 		     */
-		    char *tmp = xmalloc( strlen( vers->vn_user ) );
+		    char *tmp = xmalloc (strlen (vers->vn_user));
+
 		    (void) strcpy (tmp, vers->vn_user + 1);
 		    (void) strcpy (vers->vn_user, tmp);
-		    free( tmp );
-		    tmp = xmalloc( strlen( finfo.file ) + 13 );
+		    free (tmp);
+		    tmp = xmalloc (strlen (finfo.file) + 13);
 		    (void) sprintf (tmp, "Resurrected %s", finfo.file);
 		    Register (entries, finfo.file, vers->vn_user, tmp,
 			      vers->options,
 			      vers->tag, vers->date, vers->ts_conflict);
 		    free (tmp);
 
-		    /* XXX - bugs here; this really resurrect the head */
-		    /* Note that this depends on the Register above actually
+		    /*
+		       XXX - bugs here; this really resurrect the head 
+		     */
+		    /*
+		       Note that this depends on the Register above actually
 		       having written Entries, or else it won't really
-		       check the file out.  */
+		       check the file out.  
+		     */
 		    if (update (2, argv + i - 1) == 0)
 		    {
 			error (0, 0, "%s, version %s, resurrected",
-			       finfo.fullname,
-			       vers->vn_user);
+			       finfo.fullname, vers->vn_user);
 		    }
 		    else
 		    {
-			error (0, 0, "could not resurrect %s", finfo.fullname);
+			error (0, 0, "could not resurrect %s",
+			       finfo.fullname);
 			err++;
 		    }
 		}
 	    }
 	    else
 	    {
-		/* The user file shouldn't be there */
+		/*
+		   The user file shouldn't be there 
+		 */
 		error (0, 0, "\
 %s should be removed and is still there (or is back again)", finfo.fullname);
 		err++;
@@ -610,19 +671,21 @@ cannot resurrect %s; RCS file removed by second party", finfo.fullname);
 	}
 	else
 	{
-	    /* A normal entry, ts_rcs is valid, so it must already be there */
+	    /*
+	       A normal entry, ts_rcs is valid, so it must already be there 
+	     */
 	    if (!quiet)
 		error (0, 0, "%s already exists, with version number %s",
-			finfo.fullname,
-			vers->vn_user);
+		       finfo.fullname, vers->vn_user);
 	    err++;
 	}
 	freevers_ts (&vers);
 
-	/* passed all the checks.  Go ahead and add it if its a directory */
+	/*
+	   passed all the checks.  Go ahead and add it if its a directory 
+	 */
 	if (begin_err == err
-	    && isdir (finfo.file)
-	    && !wrap_name_has (finfo.file, WRAP_TOCVS))
+	    && isdir (finfo.file) && !wrap_name_has (finfo.file, WRAP_TOCVS))
 	{
 	    err += add_directory (&finfo);
 	}
@@ -682,7 +745,9 @@ add_directory (struct file_info *finfo)
 
     if (strchr (dir, '/') != NULL)
     {
-	/* "Can't happen".  */
+	/*
+	   "Can't happen".  
+	 */
 	error (0, 0,
 	       "directory %s not added; must be a direct sub-directory", dir);
 	return (1);
@@ -693,19 +758,25 @@ add_directory (struct file_info *finfo)
 	return (1);
     }
 
-    /* before we do anything else, see if we have any per-directory tags */
+    /*
+       before we do anything else, see if we have any per-directory tags 
+     */
     ParseTag (&tag, &date, &nonbranch);
 
-    /* Remember the default attributes from this directory, so we can apply
-       them to the new directory.  */
+    /*
+       Remember the default attributes from this directory, so we can apply
+       them to the new directory.  
+     */
     fileattr_startdir (repository);
     attrs = fileattr_getall (NULL);
     fileattr_free ();
 
-    /* now, remember where we were, so we can get back */
+    /*
+       now, remember where we were, so we can get back 
+     */
     if (save_cwd (&cwd))
 	return (1);
-    if ( CVS_CHDIR (dir) < 0)
+    if (CVS_CHDIR (dir) < 0)
     {
 	error (0, errno, "cannot chdir to %s", finfo->fullname);
 	return (1);
@@ -729,12 +800,15 @@ add_directory (struct file_info *finfo)
 	goto out;
     }
 
-    /* setup the log message */
+    /*
+       setup the log message 
+     */
     message = xmalloc (strlen (rcsdir)
 		       + 80
 		       + (tag == NULL ? 0 : strlen (tag) + 80)
 		       + (date == NULL ? 0 : strlen (date) + 80));
-    (void) sprintf (message, "Directory %s added to the repository\n", rcsdir);
+    (void) sprintf (message, "Directory %s added to the repository\n",
+		    rcsdir);
     if (tag)
     {
 	(void) strcat (message, "--> Using per-directory sticky tag `");
@@ -755,13 +829,15 @@ add_directory (struct file_info *finfo)
 	List *ulist;
 	struct logfile_info *li;
 
-	/* There used to be some code here which would prompt for
+	/*
+	   There used to be some code here which would prompt for
 	   whether to add the directory.  The details of that code had
 	   bitrotted, but more to the point it can't work
 	   client/server, doesn't ask in the right way for GUIs, etc.
 	   A better way of making it harder to accidentally add
 	   directories would be to have to add and commit directories
-	   like for files.  The code was #if 0'd at least since CVS 1.5.  */
+	   like for files.  The code was #if 0'd at least since CVS 1.5.  
+	 */
 
 	if (!noexec)
 	{
@@ -775,8 +851,10 @@ add_directory (struct file_info *finfo)
 	    (void) umask (omask);
 	}
 
-	/* Now set the default file attributes to the ones we inherited
-	   from the parent directory.  */
+	/*
+	   Now set the default file attributes to the ones we inherited
+	   from the parent directory.  
+	 */
 	fileattr_startdir (rcsdir);
 	fileattr_setall (NULL, attrs);
 	fileattr_write ();
@@ -803,11 +881,12 @@ add_directory (struct file_info *finfo)
     }
 
 #ifdef SERVER_SUPPORT
-    if ( server_active )
-	WriteTemplate ( finfo->fullname, 1, rcsdir );
+    if (server_active)
+	WriteTemplate (finfo->fullname, 1, rcsdir);
     else
 #endif
-	Create_Admin (".", finfo->fullname, rcsdir, tag, date, nonbranch, 0, 1);
+	Create_Admin (".", finfo->fullname, rcsdir, tag, date, nonbranch, 0,
+		      1);
 
     if (tag)
 	free (tag);
@@ -827,7 +906,7 @@ add_directory (struct file_info *finfo)
 
     return (0);
 
-out:
+  out:
     if (restore_cwd (&cwd, NULL))
 	error_exit ();
     free_cwd (&cwd);
@@ -841,7 +920,8 @@ out:
  * interrogating the user.  Returns non-zero on error.
  */
 static int
-build_entry (char *repository, char *user, char *options, char *message, List *entries, char *tag)
+build_entry (char *repository, char *user, char *options, char *message,
+	     List * entries, char *tag)
 {
     char *fname;
     char *line;
@@ -859,9 +939,9 @@ build_entry (char *repository, char *user, char *options, char *message, List *e
     (void) sprintf (fname, "%s/%s%s", CVSADM, user, CVSEXT_LOG);
     fp = open_file (fname, "w+");
     if (message && fputs (message, fp) == EOF)
-	    error (1, errno, "cannot write to %s", fname);
-    if (fclose(fp) == EOF)
-        error(1, errno, "cannot close %s", fname);
+	error (1, errno, "cannot write to %s", fname);
+    if (fclose (fp) == EOF)
+	error (1, errno, "cannot close %s", fname);
     free (fname);
 
     /*

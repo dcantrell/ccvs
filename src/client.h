@@ -1,3 +1,4 @@
+
 /* Interface between the client and the rest of CVS.  */
 
 /* Stuff shared with the server.  */
@@ -11,10 +12,8 @@ extern int file_gzip_level;
 struct buffer;
 #endif
 
-void make_bufs_from_fds ( int, int, int,
-			        struct buffer **,
-			        struct buffer **,
-			        int );
+void make_bufs_from_fds (int, int, int,
+			 struct buffer **, struct buffer **, int);
 
 
 #if defined (CLIENT_SUPPORT) || defined (SERVER_SUPPORT)
@@ -35,11 +34,12 @@ extern struct buffer *krb_encrypt_buffer_initialize ();
 
 #   endif /* HAVE_KERBEROS */
 
-# endif /* ENCRYPTION */
+# endif	/* ENCRYPTION */
 
 #endif /* defined (CLIENT_SUPPORT) || defined (SERVER_SUPPORT) */
 
 #ifdef CLIENT_SUPPORT
+
 /*
  * Flag variable for seeing whether the server has been started yet.
  * As of this writing, only edit.c:notify_check() uses it.
@@ -51,22 +51,20 @@ extern int client_prune_dirs;
 
 # ifdef AUTH_CLIENT_SUPPORT
 extern int use_authenticating_server;
-# endif /* AUTH_CLIENT_SUPPORT */
+# endif	/* AUTH_CLIENT_SUPPORT */
 # if defined (AUTH_CLIENT_SUPPORT) || defined (HAVE_GSSAPI)
 void connect_to_pserver (cvsroot_t *,
-				struct buffer **,
-				struct buffer **,
-				int, int );
+			 struct buffer **, struct buffer **, int, int);
 #   ifndef CVS_AUTH_PORT
 #     define CVS_AUTH_PORT 2401
 #   endif /* CVS_AUTH_PORT */
-# endif /* (AUTH_CLIENT_SUPPORT) || defined (HAVE_GSSAPI) */
+# endif	/* (AUTH_CLIENT_SUPPORT) || defined (HAVE_GSSAPI) */
 
 # if HAVE_KERBEROS
 #   ifndef CVS_PORT
 #     define CVS_PORT 1999
 #   endif
-# endif /* HAVE_KERBEROS */
+# endif	/* HAVE_KERBEROS */
 
 /* Talking to the server. */
 void send_to_server (char *str, size_t len);
@@ -82,14 +80,13 @@ extern int get_responses_and_close (void);
 extern int get_server_responses (void);
 
 /* Start up the connection to the server on the other end.  */
-void
-start_server (void);
+void start_server (void);
 
 /* Send the names of all the argument files to the server.  */
-void
-send_file_names (int argc, char **argv, unsigned int flags);
+void send_file_names (int argc, char **argv, unsigned int flags);
 
 /* Flags for send_file_names.  */
+
 /* Expand wild cards?  */
 # define SEND_EXPAND_WILD 1
 
@@ -99,8 +96,7 @@ send_file_names (int argc, char **argv, unsigned int flags);
  * local is nonzero if we should not recurse (-l option).
  */
 void
-send_files (int argc, char **argv, int local, int aflag,
-		  unsigned int flags);
+send_files (int argc, char **argv, int local, int aflag, unsigned int flags);
 
 /* Flags for send_files.  */
 # define SEND_BUILD_DIRS 1
@@ -109,12 +105,10 @@ send_files (int argc, char **argv, int local, int aflag,
 # define BACKUP_MODIFIED_FILES 8
 
 /* Send an argument to the remote server.  */
-void
-send_arg (char *string);
+void send_arg (char *string);
 
 /* Send a string of single-char options to the remote server, one by one.  */
-void
-send_option_string (char *string);
+void send_option_string (char *string);
 
 extern void send_a_repository (char *, char *, char *);
 
@@ -127,7 +121,9 @@ extern void send_a_repository (char *, char *, char *);
 
 struct response
 {
-    /* Name of the response.  */
+    /*
+       Name of the response.  
+     */
     char *name;
 
 #ifdef CLIENT_SUPPORT
@@ -145,30 +141,38 @@ struct response
      * responses, and error indicates we should exit with nonzero
      * exitstatus.
      */
-    enum {response_type_normal, response_type_ok, response_type_error} type;
+    enum
+    { response_type_normal, response_type_ok, response_type_error }
+    type;
 #endif
 
-    /* Used by the server to indicate whether response is supported by
-       the client, as set by the Valid-responses request.  */
-    enum {
-      /*
-       * Failure to implement this response can imply a fatal
-       * error.  This should be set only for responses which were in the
-       * original version of the protocol; it should not be set for new
-       * responses.
-       */
-      rs_essential,
+    /*
+       Used by the server to indicate whether response is supported by
+       the client, as set by the Valid-responses request.  
+     */
+    enum
+    {
+	/*
+	 * Failure to implement this response can imply a fatal
+	 * error.  This should be set only for responses which were in the
+	 * original version of the protocol; it should not be set for new
+	 * responses.
+	 */
+	rs_essential,
 
-      /* Some clients might not understand this response.  */
-      rs_optional,
+	/*
+	   Some clients might not understand this response.  
+	 */
+	rs_optional,
 
-      /*
-       * Set by the server to one of the following based on what this
-       * client actually supports.
-       */
-      rs_supported,
-      rs_not_supported
-      } status;
+	/*
+	 * Set by the server to one of the following based on what this
+	 * client actually supports.
+	 */
+	rs_supported,
+	rs_not_supported
+    }
+    status;
 };
 
 /* Table of responses ending in an entry with a NULL name.  */
@@ -179,8 +183,7 @@ extern struct response responses[];
 
 extern void client_senddate (const char *date);
 extern void client_expand_modules (int argc, char **argv, int local);
-extern void client_send_expansions (int local, char *where,
-					  int build_dirs);
+extern void client_send_expansions (int local, char *where, int build_dirs);
 extern void client_nonexpanded_setup (void);
 
 extern void send_init_command (void);
@@ -191,8 +194,8 @@ extern char *toplevel_wd;
 extern void client_import_setup (char *repository);
 extern int client_process_import_file
     (char *message, char *vfile, char *vtag,
-	   int targc, char *targv[], char *repository, int all_files_binary,
-	   int modtime);
+     int targc, char *targv[], char *repository, int all_files_binary,
+     int modtime);
 extern void client_import_done (void);
 extern void client_notify (char *, char *, char *, int, char *);
 #endif /* CLIENT_SUPPORT */

@@ -1,3 +1,4 @@
+
 /* Interface to "cvs edit", "cvs watch on", and related features
 
    This program is free software; you can redistribute it and/or modify
@@ -14,6 +15,7 @@ extern int watch_on (int argc, char **argv);
 extern int watch_off (int argc, char **argv);
 
 #ifdef CLIENT_SUPPORT
+
 /* Check to see if any notifications are sitting around in need of being
    sent.  These are the notifications stored in CVSADM_NOTIFY (edit,unedit);
    commit calls notify_do directly.  */
@@ -26,7 +28,7 @@ extern void notify_check (char *repository, char *update_dir);
    _editors, and WATCHES is zero or more of E,U,C, in that order, to specify
    what kinds of temporary watches to set.  */
 extern void notify_do (int type, char *filename, char *who,
-			      char *val, char *watches, char *repository);
+		       char *val, char *watches, char *repository);
 
 /* Set attributes to reflect the fact that EDITOR is editing FILENAME.
    VAL is time+host+directory, or NULL if we are to say that EDITOR is

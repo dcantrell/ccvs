@@ -1,3 +1,4 @@
+
 /* zlib.c --- interface to the zlib compression library
    Ian Lance Taylor <ian@cygnus.com>
 
@@ -44,9 +45,13 @@
 
 struct compress_buffer
 {
-    /* The underlying buffer.  */
+    /*
+       The underlying buffer.  
+     */
     struct buffer *buf;
-    /* The compression information.  */
+    /*
+       The compression information.  
+     */
     z_stream zstr;
 };
 
@@ -61,7 +66,7 @@ static int compress_buffer_shutdown_output (struct buffer *);
 /* Report an error from one of the zlib functions.  */
 
 static void
-compress_error (int status, int zstatus, z_stream *zstr, const char *msg)
+compress_error (int status, int zstatus, z_stream * zstr, const char *msg)
 {
     int hold_errno;
     const char *zmsg;
@@ -72,19 +77,18 @@ compress_error (int status, int zstatus, z_stream *zstr, const char *msg)
     zmsg = zstr->msg;
     if (zmsg == NULL)
     {
-        sprintf (buf, "error %d", zstatus);
+	sprintf (buf, "error %d", zstatus);
 	zmsg = buf;
     }
 
-    error (status,
-	   zstatus == Z_ERRNO ? hold_errno : 0,
-	   "%s: %s", msg, zmsg);
+    error (status, zstatus == Z_ERRNO ? hold_errno : 0, "%s: %s", msg, zmsg);
 }
 
 /* Create a compression buffer.  */
 
 struct buffer *
-compress_buffer_initialize (struct buffer *buf, int input, int level, void (*memory) (struct buffer *))
+compress_buffer_initialize (struct buffer *buf, int input, int level,
+			    void (*memory) (struct buffer *))
 {
     struct compress_buffer *n;
     int zstatus;
@@ -101,15 +105,17 @@ compress_buffer_initialize (struct buffer *buf, int input, int level, void (*mem
     if (zstatus != Z_OK)
 	compress_error (1, zstatus, &n->zstr, "compression initialization");
 
-    /* There may already be data buffered on BUF.  For an output
+    /*
+       There may already be data buffered on BUF.  For an output
        buffer, this is OK, because these routines will just use the
        buffer routines to append data to the (uncompressed) data
        already on BUF.  An input buffer expects to handle a single
        buffer_data of buffered input to be uncompressed, so that is OK
        provided there is only one buffer.  At present that is all
        there ever will be; if this changes, compress_buffer_input must
-       be modified to handle multiple input buffers.  */
-    assert (! input || buf->data == NULL || buf->data->next == NULL);
+       be modified to handle multiple input buffers.  
+     */
+    assert (!input || buf->data == NULL || buf->data->next == NULL);
 
     return buf_initialize (input ? compress_buffer_input : NULL,
 			   input ? NULL : compress_buffer_output,
@@ -117,15 +123,14 @@ compress_buffer_initialize (struct buffer *buf, int input, int level, void (*mem
 			   compress_buffer_block,
 			   (input
 			    ? compress_buffer_shutdown_input
-			    : compress_buffer_shutdown_output),
-			   memory,
-			   n);
+			    : compress_buffer_shutdown_output), memory, n);
 }
 
 /* Input data from a compression buffer.  */
 
 static int
-compress_buffer_input (void *closure, char *data, int need, int size, int *got)
+compress_buffer_input (void *closure, char *data, int need, int size,
+		       int *got)
 {
     struct compress_buffer *cb = (struct compress_buffer *) closure;
     struct buffer_data *bd;
@@ -133,14 +138,16 @@ compress_buffer_input (void *closure, char *data, int need, int size, int *got)
     if (cb->buf->input == NULL)
 	abort ();
 
-    /* We use a single buffer_data structure to buffer up data which
+    /*
+       We use a single buffer_data structure to buffer up data which
        the z_stream structure won't use yet.  We can safely store this
        on cb->buf->data, because we never call the buffer routines on
        cb->buf; we only call the buffer input routine, since that
        gives us the semantics we want.  As noted in
        compress_buffer_initialize, the buffer_data structure may
        already exist, and hold data which was already read and
-       buffered before the decompression began.  */
+       buffered before the decompression began.  
+     */
     bd = cb->buf->data;
     if (bd == NULL)
     {
@@ -165,10 +172,12 @@ compress_buffer_input (void *closure, char *data, int need, int size, int *got)
     {
 	int zstatus, sofar, status, nread;
 
-	/* First try to inflate any data we already have buffered up.
+	/*
+	   First try to inflate any data we already have buffered up.
 	   This is useful even if we don't have any buffered data,
 	   because there may be data buffered inside the z_stream
-	   structure.  */
+	   structure.  
+	 */
 
 	cb->zstr.avail_in = bd->size;
 	cb->zstr.next_in = (Bytef *) bd->bufp;
@@ -183,8 +192,8 @@ compress_buffer_input (void *closure, char *data, int need, int size, int *got)
 		compress_error (0, zstatus, &cb->zstr, "inflate");
 		return EIO;
 	    }
-	} while (cb->zstr.avail_in > 0
-		 && cb->zstr.avail_out > 0);
+	}
+	while (cb->zstr.avail_in > 0 && cb->zstr.avail_out > 0);
 
 	bd->size = cb->zstr.avail_in;
 	bd->bufp = (char *) cb->zstr.next_in;
@@ -192,25 +201,31 @@ compress_buffer_input (void *closure, char *data, int need, int size, int *got)
 	if (zstatus == Z_STREAM_END)
 	    return -1;
 
-	/* If we have obtained NEED bytes, then return, unless NEED is
-           zero and we haven't obtained anything at all.  If NEED is
-           zero, we will keep reading from the underlying buffer until
-           we either can't read anything, or we have managed to
-           inflate at least one byte.  */
+	/*
+	   If we have obtained NEED bytes, then return, unless NEED is
+	   zero and we haven't obtained anything at all.  If NEED is
+	   zero, we will keep reading from the underlying buffer until
+	   we either can't read anything, or we have managed to
+	   inflate at least one byte.  
+	 */
 	sofar = size - cb->zstr.avail_out;
 	if (sofar > 0 && sofar >= need)
 	    break;
 
-	/* All our buffered data should have been processed at this
-           point.  */
+	/*
+	   All our buffered data should have been processed at this
+	   point.  
+	 */
 	assert (bd->size == 0);
 
-	/* This will work well in the server, because this call will
+	/*
+	   This will work well in the server, because this call will
 	   do an unblocked read and fetch all the available data.  In
 	   the client, this will read a single byte from the stdio
 	   stream, which will cause us to call inflate once per byte.
 	   It would be more efficient if we could make a call which
-	   would fetch all the available bytes, and at least one byte.  */
+	   would fetch all the available bytes, and at least one byte.  
+	 */
 
 	status = (*cb->buf->input) (cb->buf->closure, bd->text,
 				    need > 0 ? 1 : 0,
@@ -218,9 +233,11 @@ compress_buffer_input (void *closure, char *data, int need, int size, int *got)
 	if (status != 0)
 	    return status;
 
-	/* If we didn't read anything, then presumably the buffer is
-           in nonblocking mode, and we should just get out now with
-           whatever we've inflated.  */
+	/*
+	   If we didn't read anything, then presumably the buffer is
+	   in nonblocking mode, and we should just get out now with
+	   whatever we've inflated.  
+	 */
 	if (nread == 0)
 	{
 	    assert (need == 0);
@@ -268,9 +285,11 @@ compress_buffer_output (void *closure, const char *data, int have, int *wrote)
 
     *wrote = have;
 
-    /* We will only be here because buf_send_output was called on the
+    /*
+       We will only be here because buf_send_output was called on the
        compression buffer.  That means that we should now call
-       buf_send_output on the underlying buffer.  */
+       buf_send_output on the underlying buffer.  
+     */
     return buf_send_output (cb->buf);
 }
 
@@ -294,9 +313,11 @@ compress_buffer_flush (void *closure)
 
 	zstatus = deflate (&cb->zstr, Z_SYNC_FLUSH);
 
-	/* The deflate function will return Z_BUF_ERROR if it can't do
-           anything, which in this case means that all data has been
-           flushed.  */
+	/*
+	   The deflate function will return Z_BUF_ERROR if it can't do
+	   anything, which in this case means that all data has been
+	   flushed.  
+	 */
 	if (zstatus == Z_BUF_ERROR)
 	    break;
 
@@ -310,16 +331,20 @@ compress_buffer_flush (void *closure)
 	    buf_output (cb->buf, buffer,
 			BUFFER_DATA_SIZE - cb->zstr.avail_out);
 
-	/* If the deflate function did not fill the output buffer,
-           then all data has been flushed.  */
+	/*
+	   If the deflate function did not fill the output buffer,
+	   then all data has been flushed.  
+	 */
 	if (cb->zstr.avail_out > 0)
 	    break;
     }
 
-    /* Now flush the underlying buffer.  Note that if the original
+    /*
+       Now flush the underlying buffer.  Note that if the original
        call to buf_flush passed 1 for the BLOCK argument, then the
        buffer will already have been set into blocking mode, so we
-       should always pass 0 here.  */
+       should always pass 0 here.  
+     */
     return buf_flush (cb->buf, 0);
 }
 
@@ -344,7 +369,9 @@ compress_buffer_shutdown_input (struct buffer *buf)
     struct compress_buffer *cb = (struct compress_buffer *) buf->closure;
     int zstatus;
 
-    /* Pick up any trailing data, such as the checksum.  */
+    /*
+       Pick up any trailing data, such as the checksum.  
+     */
     while (1)
     {
 	int status, nread;
@@ -392,7 +419,8 @@ compress_buffer_shutdown_output (struct buffer *buf)
 	if (cb->zstr.avail_out != BUFFER_DATA_SIZE)
 	    buf_output (cb->buf, buffer,
 			BUFFER_DATA_SIZE - cb->zstr.avail_out);
-    } while (zstatus != Z_STREAM_END);
+    }
+    while (zstatus != Z_STREAM_END);
 
     zstatus = deflateEnd (&cb->zstr);
     if (zstatus != Z_OK)
@@ -439,8 +467,10 @@ gunzip_and_write (int fd, char *fullname, unsigned char *buf, size_t size)
 	return 1;
     }
 
-    /* Skip over the fixed header, and then skip any of the variable-length
-       fields.  */
+    /*
+       Skip over the fixed header, and then skip any of the variable-length
+       fields.  
+     */
     pos = 10;
     if (buf[3] & 4)
 	pos += buf[pos] + (buf[pos + 1] << 8) + 2;
@@ -452,19 +482,23 @@ gunzip_and_write (int fd, char *fullname, unsigned char *buf, size_t size)
 	pos += 2;
 
     memset (&zstr, 0, sizeof zstr);
-    /* Passing a negative argument tells zlib not to look for a zlib
+    /*
+       Passing a negative argument tells zlib not to look for a zlib
        (RFC1950) header.  This is an undocumented feature; I suppose if
        we wanted to be anal we could synthesize a header instead,
-       but why bother?  */
+       but why bother?  
+     */
     zstatus = inflateInit2 (&zstr, -15);
 
     if (zstatus != Z_OK)
 	compress_error (1, zstatus, &zstr, fullname);
 
-    /* I don't see why we should have to include the 8 byte trailer in
+    /*
+       I don't see why we should have to include the 8 byte trailer in
        avail_in.  But I see that zlib/gzio.c does, and it seemed to fix
        a fairly rare bug in which we'd get a Z_BUF_ERROR for no obvious
-       reason.  */
+       reason.  
+     */
     zstr.avail_in = size - pos;
     zstr.next_in = buf + pos;
 
@@ -486,7 +520,8 @@ gunzip_and_write (int fd, char *fullname, unsigned char *buf, size_t size)
 	    return 1;
 	}
 	crc = crc32 (crc, outbuf, sizeof (outbuf) - zstr.avail_out);
-    } while (zstatus != Z_STREAM_END);
+    }
+    while (zstatus != Z_STREAM_END);
     zstatus = inflateEnd (&zstr);
     if (zstatus != Z_OK)
 	compress_error (0, zstatus, &zstr, fullname);
@@ -520,7 +555,8 @@ gunzip_and_write (int fd, char *fullname, unsigned char *buf, size_t size)
    recover from it).  LEVEL is the compression level (1-9).  */
 
 int
-read_and_gzip (int fd, char *fullname, unsigned char **buf, size_t *size, size_t *len, int level)
+read_and_gzip (int fd, char *fullname, unsigned char **buf, size_t * size,
+	       size_t * len, int level)
 {
     z_stream zstr;
     int zstatus;
@@ -546,7 +582,9 @@ read_and_gzip (int fd, char *fullname, unsigned char **buf, size_t *size, size_t
     (*buf)[2] = 8;
     (*buf)[3] = 0;
     (*buf)[4] = (*buf)[5] = (*buf)[6] = (*buf)[7] = 0;
-    /* Could set this based on level, but why bother?  */
+    /*
+       Could set this based on level, but why bother?  
+     */
     (*buf)[8] = 0;
     (*buf)[9] = 255;
 
@@ -573,7 +611,9 @@ read_and_gzip (int fd, char *fullname, unsigned char **buf, size_t *size, size_t
 	    return 1;
 	}
 	else if (nread == 0)
-	    /* End of file.  */
+	    /*
+	       End of file.  
+	     */
 	    finish = 1;
 	crc = crc32 (crc, inbuf, nread);
 	zstr.next_in = inbuf;
@@ -583,10 +623,12 @@ read_and_gzip (int fd, char *fullname, unsigned char **buf, size_t *size, size_t
 	{
 	    size_t offset;
 
-	    /* I don't see this documented anywhere, but deflate seems
+	    /*
+	       I don't see this documented anywhere, but deflate seems
 	       to tend to dump core sometimes if we pass it Z_FINISH and
 	       a small (e.g. 2147 byte) avail_out.  So we insist on at
-	       least 4096 bytes (that is what zlib/gzio.c uses).  */
+	       least 4096 bytes (that is what zlib/gzio.c uses).  
+	     */
 
 	    if (zstr.avail_out < 4096)
 	    {
@@ -610,9 +652,10 @@ read_and_gzip (int fd, char *fullname, unsigned char **buf, size_t *size, size_t
 		goto done;
 	    else if (zstatus != Z_OK)
 		compress_error (0, zstatus, &zstr, fullname);
-	} while (zstr.avail_out == 0);
+	}
+	while (zstr.avail_out == 0);
     }
- done:
+  done:
     *(*buf + zstr.total_out + 10) = crc & 0xff;
     *(*buf + zstr.total_out + 11) = (crc >> 8) & 0xff;
     *(*buf + zstr.total_out + 12) = (crc >> 16) & 0xff;

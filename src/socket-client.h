@@ -1,3 +1,4 @@
+
 /* CVS socket client stuff.
 
    This program is free software; you can redistribute it and/or modify
@@ -15,8 +16,7 @@
 
 #include <config.h>
 
-struct buffer *socket_buffer_initialize
-  (int, int, void (*) (struct buffer *));
+struct buffer *socket_buffer_initialize (int, int, void (*)(struct buffer *));
 
 # if defined(AUTH_CLIENT_SUPPORT) || defined(HAVE_KERBEROS) || defined(HAVE_GSSAPI) || defined(SOCK_ERRNO) || defined(SOCK_STRERROR)
 #   ifdef HAVE_WINSOCK_H
@@ -50,7 +50,7 @@ struct buffer *socket_buffer_initialize
 #   ifndef strerror
 extern char *strerror (int);
 #   endif
-# endif /* ! SOCK_STRERROR */
+# endif	/* ! SOCK_STRERROR */
 
 struct hostent *init_sockaddr (struct sockaddr_in *, char *, unsigned int);
 

@@ -1,3 +1,4 @@
+
 /*
  * Copyright (c) 1992, Brian Berliner and Jeff Polk
  * Copyright (c) 1989-1992, Brian Berliner
@@ -18,8 +19,7 @@
 
 static RETSIGTYPE patch_cleanup (void);
 static Dtype patch_dirproc (void *callerdat, char *dir,
-				   char *repos, char *update_dir,
-				   List *entries);
+			    char *repos, char *update_dir, List * entries);
 static int patch_fileproc (void *callerdat, struct file_info *finfo);
 static int patch_proc (int argc, char **argv, char *xwhere,
 		       char *mwhere, char *mfile, int shorten,
@@ -40,8 +40,7 @@ static char *tmpfile2 = NULL;
 static char *tmpfile3 = NULL;
 static int unidiff = 0;
 
-static const char *const patch_usage[] =
-{
+static const char *const patch_usage[] = {
     "Usage: %s %s [-flR] [-c|-u] [-s|-t] [-V %%d]\n",
     "    -r rev|-D date [-r rev2 | -D date2] modules...\n",
     "\t-f\tForce a head revision match if tag/date not found.\n",
@@ -78,8 +77,10 @@ patch (int argc, char **argv)
 	    case 'Q':
 	    case 'q':
 #ifdef SERVER_SUPPORT
-		/* The CVS 1.5 client sends these options (in addition to
-		   Global_option requests), so we must ignore them.  */
+		/*
+		   The CVS 1.5 client sends these options (in addition to
+		   Global_option requests), so we must ignore them.  
+		 */
 		if (!server_active)
 #endif
 		    error (1, 0,
@@ -104,7 +105,7 @@ patch (int argc, char **argv)
 	    case 'D':
 		if (rev2 != NULL || date2 != NULL)
 		    error (1, 0,
-		       "no more than two revisions/dates can be specified");
+			   "no more than two revisions/dates can be specified");
 		if (rev1 != NULL || date1 != NULL)
 		    date2 = Make_Date (optarg);
 		else
@@ -113,7 +114,7 @@ patch (int argc, char **argv)
 	    case 'r':
 		if (rev2 != NULL || date2 != NULL)
 		    error (1, 0,
-		       "no more than two revisions/dates can be specified");
+			   "no more than two revisions/dates can be specified");
 		if (rev1 != NULL || date1 != NULL)
 		    rev2 = optarg;
 		else
@@ -125,7 +126,8 @@ patch (int argc, char **argv)
 		options = RCS_check_kflag (optarg);
 		break;
 	    case 'V':
-		/* This option is pretty seriously broken:
+		/*
+		   This option is pretty seriously broken:
 		   1.  It is not clear what it does (does it change keyword
 		   expansion behavior?  If so, how?  Or does it have
 		   something to do with what version of RCS we are using?
@@ -139,7 +141,8 @@ patch (int argc, char **argv)
 		   removing it entirely, and updating NEWS and cvs.texinfo,
 		   but in case it is a good idea to give people more time
 		   to complain if they would miss it, I'll just add this
-		   quick and dirty error message for now.  */
+		   quick and dirty error message for now.  
+		 */
 		error (1, 0,
 		       "the -V option is obsolete and should not be used");
 #if 0
@@ -166,7 +169,9 @@ patch (int argc, char **argv)
     argc -= optind;
     argv += optind;
 
-    /* Sanity checks */
+    /*
+       Sanity checks 
+     */
     if (argc < 1)
 	usage (patch_usage);
 
@@ -183,28 +188,32 @@ patch (int argc, char **argv)
 	if (RCS_datecmp (date1, date2) >= 0)
 	    error (1, 0, "second date must come after first date!");
 
-    /* if options is NULL, make it a NULL string */
+    /*
+       if options is NULL, make it a NULL string 
+     */
     if (options == NULL)
 	options = xstrdup ("");
 
 #ifdef CLIENT_SUPPORT
     if (current_parsed_root->isremote)
     {
-	/* We're the client side.  Fire up the remote server.  */
+	/*
+	   We're the client side.  Fire up the remote server.  
+	 */
 	start_server ();
-	
+
 	ign_setup ();
 
 	if (local)
-	    send_arg("-l");
+	    send_arg ("-l");
 	if (!force_tag_match)
-	    send_arg("-f");
+	    send_arg ("-f");
 	if (toptwo_diffs)
-	    send_arg("-t");
+	    send_arg ("-t");
 	if (patch_short)
-	    send_arg("-s");
+	    send_arg ("-s");
 	if (unidiff)
-	    send_arg("-u");
+	    send_arg ("-u");
 
 	if (rev1)
 	    option_with_arg ("-r", rev1);
@@ -219,16 +228,19 @@ patch (int argc, char **argv)
 
 	{
 	    int i;
+
 	    for (i = 0; i < argc; ++i)
 		send_arg (argv[i]);
 	}
 
 	send_to_server ("rdiff\012", 0);
-        return get_responses_and_close ();
+	return get_responses_and_close ();
     }
 #endif
 
-    /* clean up if we get a signal */
+    /*
+       clean up if we get a signal 
+     */
 #ifdef SIGABRT
     (void) SIG_register (SIGABRT, patch_cleanup);
 #endif
@@ -261,9 +273,11 @@ patch (int argc, char **argv)
 /*
  * callback proc for doing the real work of patching
  */
+
 /* ARGSUSED */
 static int
-patch_proc (int argc, char **argv, char *xwhere, char *mwhere, char *mfile, int shorten, int local_specified, char *mname, char *msg)
+patch_proc (int argc, char **argv, char *xwhere, char *mwhere, char *mfile,
+	    int shorten, int local_specified, char *mname, char *msg)
 {
     char *myargv[2];
     int err = 0;
@@ -271,23 +285,30 @@ patch_proc (int argc, char **argv, char *xwhere, char *mwhere, char *mfile, int 
     char *repository;
     char *where;
 
-    TRACE ( TRACE_FUNCTION, "patch_proc ( %s, %s, %s, %d, %d, %s, %s )",
-	    xwhere, mwhere, mfile, shorten, local_specified, mname, msg );
+    TRACE (TRACE_FUNCTION, "patch_proc ( %s, %s, %s, %d, %d, %s, %s )",
+	   xwhere, mwhere, mfile, shorten, local_specified, mname, msg);
 
-    repository = xmalloc (strlen (current_parsed_root->directory) + strlen (argv[0])
-			  + (mfile == NULL ? 0 : strlen (mfile) + 1) + 2);
-    (void) sprintf (repository, "%s/%s", current_parsed_root->directory, argv[0]);
-    where = xmalloc (strlen (argv[0]) + (mfile == NULL ? 0 : strlen (mfile) + 1)
-		     + 1);
+    repository =
+	xmalloc (strlen (current_parsed_root->directory) + strlen (argv[0]) +
+		 (mfile == NULL ? 0 : strlen (mfile) + 1) + 2);
+    (void) sprintf (repository, "%s/%s", current_parsed_root->directory,
+		    argv[0]);
+    where =
+	xmalloc (strlen (argv[0]) + (mfile == NULL ? 0 : strlen (mfile) + 1) +
+		 1);
     (void) strcpy (where, argv[0]);
 
-    /* if mfile isn't null, we need to set up to do only part of the module */
+    /*
+       if mfile isn't null, we need to set up to do only part of the module 
+     */
     if (mfile != NULL)
     {
 	char *cp;
 	char *path;
 
-	/* if the portion of the module is a path, put the dir part on repos */
+	/*
+	   if the portion of the module is a path, put the dir part on repos 
+	 */
 	if ((cp = strrchr (mfile, '/')) != NULL)
 	{
 	    *cp = '\0';
@@ -298,12 +319,16 @@ patch_proc (int argc, char **argv, char *xwhere, char *mwhere, char *mfile, int 
 	    mfile = cp + 1;
 	}
 
-	/* take care of the rest */
+	/*
+	   take care of the rest 
+	 */
 	path = xmalloc (strlen (repository) + strlen (mfile) + 2);
 	(void) sprintf (path, "%s/%s", repository, mfile);
 	if (isdir (path))
 	{
-	    /* directory means repository gets the dir tacked on */
+	    /*
+	       directory means repository gets the dir tacked on 
+	     */
 	    (void) strcpy (repository, path);
 	    (void) strcat (where, "/");
 	    (void) strcat (where, mfile);
@@ -318,8 +343,10 @@ patch_proc (int argc, char **argv, char *xwhere, char *mwhere, char *mfile, int 
 	free (path);
     }
 
-    /* cd to the starting repository */
-    if ( CVS_CHDIR (repository) < 0)
+    /*
+       cd to the starting repository 
+     */
+    if (CVS_CHDIR (repository) < 0)
     {
 	error (0, errno, "cannot chdir to %s", repository);
 	return (1);
@@ -332,23 +359,26 @@ patch_proc (int argc, char **argv, char *xwhere, char *mwhere, char *mfile, int 
 
     if (rev1 != NULL && !rev1_validated)
     {
-	tag_check_valid ( rev1, argc - 1, argv + 1, local_specified, 0,
-			  repository );
+	tag_check_valid (rev1, argc - 1, argv + 1, local_specified, 0,
+			 repository);
 	rev1_validated = 1;
     }
     if (rev2 != NULL && !rev2_validated)
     {
-	tag_check_valid ( rev2, argc - 1, argv + 1, local_specified, 0,
-			  repository );
+	tag_check_valid (rev2, argc - 1, argv + 1, local_specified, 0,
+			 repository);
 	rev2_validated = 1;
     }
 
-    /* start the recursion processor */
-    err = start_recursion ( patch_fileproc, (FILESDONEPROC) NULL, patch_dirproc,
-			    (DIRLEAVEPROC) NULL, NULL,
-			    argc - 1, argv + 1, local_specified,
-			    which, 0, CVS_LOCK_READ, where, 1, repository );
-    free ( repository );
+    /*
+       start the recursion processor 
+     */
+    err =
+	start_recursion (patch_fileproc, (FILESDONEPROC) NULL, patch_dirproc,
+			 (DIRLEAVEPROC) NULL, NULL, argc - 1, argv + 1,
+			 local_specified, which, 0, CVS_LOCK_READ, where, 1,
+			 repository);
+    free (repository);
     free (where);
 
     return (err);
@@ -358,6 +388,7 @@ patch_proc (int argc, char **argv, char *xwhere, char *mwhere, char *mfile, int 
  * Called to examine a particular RCS file, as appropriate with the options
  * that were set above.
  */
+
 /* ARGSUSED */
 static int
 patch_fileproc (void *callerdat, struct file_info *finfo)
@@ -386,7 +417,9 @@ patch_fileproc (void *callerdat, struct file_info *finfo)
     line2_chars_allocated = 0;
     vers_tag = vers_head = NULL;
 
-    /* find the parsed rcs file */
+    /*
+       find the parsed rcs file 
+     */
     if ((rcsfile = finfo->rcs) == NULL)
     {
 	ret = 1;
@@ -398,7 +431,9 @@ patch_fileproc (void *callerdat, struct file_info *finfo)
     rcs = xmalloc (strlen (finfo->file) + sizeof (RCSEXT) + 5);
     (void) sprintf (rcs, "%s%s", finfo->file, RCSEXT);
 
-    /* if vers_head is NULL, may have been removed from the release */
+    /*
+       if vers_head is NULL, may have been removed from the release 
+     */
     if (isattic && rev2 == NULL && date2 == NULL)
 	vers_head = NULL;
     else
@@ -423,7 +458,7 @@ patch_fileproc (void *callerdat, struct file_info *finfo)
 	if (!date1)
 	    date1 = xmalloc (MAXDATELEN);
 	*date1 = '\0';
-	if (RCS_getrevtime (rcsfile, vers_head, date1, 1) == (time_t)-1)
+	if (RCS_getrevtime (rcsfile, vers_head, date1, 1) == (time_t) - 1)
 	{
 	    if (!really_quiet)
 		error (0, 0, "cannot find date in rcs file %s revision %s",
@@ -436,56 +471,59 @@ patch_fileproc (void *callerdat, struct file_info *finfo)
 			       (int *) NULL);
     if (vers_tag != NULL && RCS_isdead (rcsfile, vers_tag))
     {
-        free (vers_tag);
+	free (vers_tag);
 	vers_tag = NULL;
     }
 
     if ((vers_tag == NULL && vers_head == NULL) ||
-        (vers_tag != NULL && vers_head != NULL &&
+	(vers_tag != NULL && vers_head != NULL &&
 	 strcmp (vers_head, vers_tag) == 0))
     {
-	/* Nothing known about specified revs or
-	 * not changed between releases.
+	/*
+	   Nothing known about specified revs or
+	   * not changed between releases.
 	 */
 	ret = 0;
 	goto out2;
     }
 
-    if( patch_short && ( vers_tag == NULL || vers_head == NULL ) )
+    if (patch_short && (vers_tag == NULL || vers_head == NULL))
     {
-	/* For adds & removes with a short patch requested, we can print our
-	 * error message now and get out.
+	/*
+	   For adds & removes with a short patch requested, we can print our
+	   * error message now and get out.
 	 */
 	cvs_output ("File ", 0);
 	cvs_output (finfo->fullname, 0);
 	if (vers_tag == NULL)
 	{
-	    cvs_output( " is new; ", 0 );
-	    cvs_output( rev2 ? rev2 : date2 ? date2 : "current", 0 );
-	    cvs_output( " revision ", 0 );
+	    cvs_output (" is new; ", 0);
+	    cvs_output (rev2 ? rev2 : date2 ? date2 : "current", 0);
+	    cvs_output (" revision ", 0);
 	    cvs_output (vers_head, 0);
 	    cvs_output ("\n", 1);
 	}
 	else
 	{
-	    cvs_output( " is removed; ", 0 );
-	    cvs_output( rev1 ? rev1 : date1, 0 );
-	    cvs_output( " revision ", 0 );
-	    cvs_output( vers_tag, 0 );
+	    cvs_output (" is removed; ", 0);
+	    cvs_output (rev1 ? rev1 : date1, 0);
+	    cvs_output (" revision ", 0);
+	    cvs_output (vers_tag, 0);
 	    cvs_output ("\n", 1);
 	}
 	ret = 0;
 	goto out2;
     }
 
-    /* Create 3 empty files.  I'm not really sure there is any advantage
-     * to doing so now rather than just waiting until later.
-     *
-     * There is - cvs_temp_file opens the file so that it can guarantee that
-     * we have exclusive write access to the file.  Unfortunately we spoil that
-     * by closing it and reopening it again.  Of course any better solution
-     * requires that the RCS functions accept open file pointers rather than
-     * simple file names.
+    /*
+       Create 3 empty files.  I'm not really sure there is any advantage
+       * to doing so now rather than just waiting until later.
+       *
+       * There is - cvs_temp_file opens the file so that it can guarantee that
+       * we have exclusive write access to the file.  Unfortunately we spoil that
+       * by closing it and reopening it again.  Of course any better solution
+       * requires that the RCS functions accept open file pointers rather than
+       * simple file names.
      */
     if ((fp1 = cvs_temp_file (&tmpfile1)) == NULL)
     {
@@ -493,27 +531,24 @@ patch_fileproc (void *callerdat, struct file_info *finfo)
 	ret = 1;
 	goto out;
     }
-    else
-	if (fclose (fp1) < 0)
-	    error (0, errno, "warning: cannot close %s", tmpfile1);
+    else if (fclose (fp1) < 0)
+	error (0, errno, "warning: cannot close %s", tmpfile1);
     if ((fp2 = cvs_temp_file (&tmpfile2)) == NULL)
     {
 	error (0, errno, "cannot create temporary file %s", tmpfile2);
 	ret = 1;
 	goto out;
     }
-    else
-	if (fclose (fp2) < 0)
-	    error (0, errno, "warning: cannot close %s", tmpfile2);
+    else if (fclose (fp2) < 0)
+	error (0, errno, "warning: cannot close %s", tmpfile2);
     if ((fp3 = cvs_temp_file (&tmpfile3)) == NULL)
     {
 	error (0, errno, "cannot create temporary file %s", tmpfile3);
 	ret = 1;
 	goto out;
     }
-    else
-	if (fclose (fp3) < 0)
-	    error (0, errno, "warning: cannot close %s", tmpfile3);
+    else if (fclose (fp3) < 0)
+	error (0, errno, "warning: cannot close %s", tmpfile3);
 
     if (vers_tag != NULL)
     {
@@ -522,16 +557,17 @@ patch_fileproc (void *callerdat, struct file_info *finfo)
 				(RCSCHECKOUTPROC) NULL, (void *) NULL);
 	if (retcode != 0)
 	{
-	    error (0, 0,
-		   "cannot check out revision %s of %s", vers_tag, rcs);
+	    error (0, 0, "cannot check out revision %s of %s", vers_tag, rcs);
 	    ret = 1;
 	    goto out;
 	}
 	memset ((char *) &t, 0, sizeof (t));
 	if ((t.actime = t.modtime = RCS_getrevtime (rcsfile, vers_tag,
 						    (char *) 0, 0)) != -1)
-	    /* I believe this timestamp only affects the dates in our diffs,
-	       and therefore should be on the server, not the client.  */
+	    /*
+	       I believe this timestamp only affects the dates in our diffs,
+	       and therefore should be on the server, not the client.  
+	     */
 	    (void) utime (tmpfile1, &t);
     }
     else if (toptwo_diffs)
@@ -553,17 +589,20 @@ patch_fileproc (void *callerdat, struct file_info *finfo)
 	}
 	if ((t.actime = t.modtime = RCS_getrevtime (rcsfile, vers_head,
 						    (char *) 0, 0)) != -1)
-	    /* I believe this timestamp only affects the dates in our diffs,
-	       and therefore should be on the server, not the client.  */
+	    /*
+	       I believe this timestamp only affects the dates in our diffs,
+	       and therefore should be on the server, not the client.  
+	     */
 	    (void) utime (tmpfile2, &t);
     }
 
-    switch (diff_exec (tmpfile1, tmpfile2, NULL, NULL, unidiff ? "-u" : "-c", tmpfile3))
+    switch (diff_exec
+	    (tmpfile1, tmpfile2, NULL, NULL, unidiff ? "-u" : "-c", tmpfile3))
     {
 	case -1:			/* fork/wait failure */
 	    error (1, errno, "fork for diff failed on %s", rcs);
 	    break;
-	case 0:				/* nothing to do */
+	case 0:			/* nothing to do */
 	    break;
 	case 1:
 	    /*
@@ -573,25 +612,29 @@ patch_fileproc (void *callerdat, struct file_info *finfo)
 	     * user wanted a short patch.  In that case, just output the short
 	     * message.
 	     */
-	    if( patch_short )
+	    if (patch_short)
 	    {
-		cvs_output( "File ", 0 );
-		cvs_output( finfo->fullname, 0 );
-		cvs_output( " changed from revision ", 0 );
-		cvs_output( vers_tag, 0 );
-		cvs_output( " to ", 0 );
-		cvs_output( vers_head, 0 );
-		cvs_output( "\n", 1 );
+		cvs_output ("File ", 0);
+		cvs_output (finfo->fullname, 0);
+		cvs_output (" changed from revision ", 0);
+		cvs_output (vers_tag, 0);
+		cvs_output (" to ", 0);
+		cvs_output (vers_head, 0);
+		cvs_output ("\n", 1);
 		ret = 0;
 		goto out;
 	    }
 
-	    /* Output an "Index:" line for patch to use */
+	    /*
+	       Output an "Index:" line for patch to use 
+	     */
 	    cvs_output ("Index: ", 0);
 	    cvs_output (finfo->fullname, 0);
 	    cvs_output ("\n", 1);
 
-	    /* Now the munging. */
+	    /*
+	       Now the munging. 
+	     */
 	    fp = open_file (tmpfile3, "r");
 	    if (getline (&line1, &line1_chars_allocated, fp) < 0 ||
 		getline (&line2, &line2_chars_allocated, fp) < 0)
@@ -627,7 +670,7 @@ failed to read diff file header %s for %s: end of file", tmpfile3, rcs);
 		if (strncmp (line1, "--- ", 4) != 0 ||
 		    strncmp (line2, "+++ ", 4) != 0 ||
 		    (cp1 = strchr (line1, '\t')) == NULL ||
-		    (cp2 = strchr  (line2, '\t')) == NULL)
+		    (cp2 = strchr (line2, '\t')) == NULL)
 		{
 		    error (0, 0, "invalid unidiff header for %s", rcs);
 		    ret = 1;
@@ -639,19 +682,22 @@ failed to read diff file header %s for %s: end of file", tmpfile3, rcs);
 	    assert (current_parsed_root != NULL);
 	    assert (current_parsed_root->directory != NULL);
 	    {
-		strippath = xmalloc (strlen (current_parsed_root->directory) + 2);
-		(void) sprintf (strippath, "%s/", current_parsed_root->directory);
+		strippath =
+		    xmalloc (strlen (current_parsed_root->directory) + 2);
+		(void) sprintf (strippath, "%s/",
+				current_parsed_root->directory);
 	    }
-	    /*else
-		strippath = xstrdup (REPOS_STRIP); */
+	    /*
+	       else
+	       strippath = xstrdup (REPOS_STRIP); 
+	     */
 	    if (strncmp (rcs, strippath, strlen (strippath)) == 0)
 		rcs += strlen (strippath);
 	    free (strippath);
 	    if (vers_tag != NULL)
 	    {
 		file1 = xmalloc (strlen (finfo->fullname)
-				 + strlen (vers_tag)
-				 + 10);
+				 + strlen (vers_tag) + 10);
 		(void) sprintf (file1, "%s:%s", finfo->fullname, vers_tag);
 	    }
 	    else
@@ -664,9 +710,11 @@ failed to read diff file header %s for %s: end of file", tmpfile3, rcs);
 	    (void) sprintf (file2, "%s:%s", finfo->fullname,
 			    vers_head ? vers_head : "removed");
 
-	    /* Note that the string "diff" is specified by POSIX (for -c)
+	    /*
+	       Note that the string "diff" is specified by POSIX (for -c)
 	       and is part of the diff output format, not the name of a
-	       program.  */
+	       program.  
+	     */
 	    if (unidiff)
 	    {
 		cvs_output ("diff -u ", 0);
@@ -697,10 +745,11 @@ failed to read diff file header %s for %s: end of file", tmpfile3, rcs);
 	    cvs_output (finfo->fullname, 0);
 	    cvs_output (cp2, 0);
 
-	    /* spew the rest of the diff out */
+	    /*
+	       spew the rest of the diff out 
+	     */
 	    while ((line_length
-		    = getline (&line1, &line1_chars_allocated, fp))
-		   >= 0)
+		    = getline (&line1, &line1_chars_allocated, fp)) >= 0)
 		cvs_output (line1, 0);
 	    if (line_length < 0 && !feof (fp))
 		error (0, errno, "cannot read %s", tmpfile3);
@@ -715,9 +764,9 @@ failed to read diff file header %s for %s: end of file", tmpfile3, rcs);
     }
   out:
     if (line1)
-        free (line1);
+	free (line1);
     if (line2)
-        free (line2);
+	free (line2);
     if (CVS_UNLINK (tmpfile1) < 0)
 	error (0, errno, "cannot unlink %s", tmpfile1);
     if (CVS_UNLINK (tmpfile2) < 0)
@@ -729,7 +778,7 @@ failed to read diff file header %s for %s: end of file", tmpfile3, rcs);
     free (tmpfile3);
     tmpfile1 = tmpfile2 = tmpfile3 = NULL;
 
- out2:
+  out2:
     if (vers_tag != NULL)
 	free (vers_tag);
     if (vers_head != NULL)
@@ -742,9 +791,11 @@ failed to read diff file header %s for %s: end of file", tmpfile3, rcs);
 /*
  * Print a warm fuzzy message
  */
+
 /* ARGSUSED */
 static Dtype
-patch_dirproc (void *callerdat, char *dir, char *repos, char *update_dir, List *entries)
+patch_dirproc (void *callerdat, char *dir, char *repos, char *update_dir,
+	       List * entries)
 {
     if (!quiet)
 	error (0, 0, "Diffing %s", update_dir);
@@ -757,28 +808,27 @@ patch_dirproc (void *callerdat, char *dir, char *repos, char *update_dir, List *
 static RETSIGTYPE
 patch_cleanup (void)
 {
-    /* Note that the checks for existence_error are because we are
+    /*
+       Note that the checks for existence_error are because we are
        called from a signal handler, without SIG_begincrsect, so
-       we don't know whether the files got created.  */
+       we don't know whether the files got created.  
+     */
 
     if (tmpfile1 != NULL)
     {
-	if (unlink_file (tmpfile1) < 0
-	    && !existence_error (errno))
+	if (unlink_file (tmpfile1) < 0 && !existence_error (errno))
 	    error (0, errno, "cannot remove %s", tmpfile1);
 	free (tmpfile1);
     }
     if (tmpfile2 != NULL)
     {
-	if (unlink_file (tmpfile2) < 0
-	    && !existence_error (errno))
+	if (unlink_file (tmpfile2) < 0 && !existence_error (errno))
 	    error (0, errno, "cannot remove %s", tmpfile2);
 	free (tmpfile2);
     }
     if (tmpfile3 != NULL)
     {
-	if (unlink_file (tmpfile3) < 0
-	    && !existence_error (errno))
+	if (unlink_file (tmpfile3) < 0 && !existence_error (errno))
 	    error (0, errno, "cannot remove %s", tmpfile3);
 	free (tmpfile3);
     }

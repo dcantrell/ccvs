@@ -1,3 +1,4 @@
+
 /*
  * Copyright (c) 1992, Brian Berliner and Jeff Polk
  * Copyright (c) 1989-1992, Brian Berliner
@@ -16,14 +17,12 @@
 #include <assert.h>
 
 static Dtype admin_dirproc (void *callerdat, char *dir,
-				   char *repos, char *update_dir,
-				   List *entries);
+			    char *repos, char *update_dir, List * entries);
 static int admin_fileproc (void *callerdat, struct file_info *finfo);
 
 char *UserAdminOptions = "k";
 
-static const char *const admin_usage[] =
-{
+static const char *const admin_usage[] = {
     "Usage: %s %s [options] files...\n",
     "\t-a users   Append (comma-separated) user names to access list.\n",
     "\t-A file    Append another file's access list.\n",
@@ -70,40 +69,58 @@ static const char *const admin_usage[] =
 /* This structure is used to pass information through start_recursion.  */
 struct admin_data
 {
-    /* Set default branch (-b).  It is "-b" followed by the value
+    /*
+       Set default branch (-b).  It is "-b" followed by the value
        given, or NULL if not specified, or merely "-b" if -b is
-       specified without a value.  */
+       specified without a value.  
+     */
     char *branch;
 
-    /* Set comment leader (-c).  It is "-c" followed by the value
+    /*
+       Set comment leader (-c).  It is "-c" followed by the value
        given, or NULL if not specified.  The comment leader is
        relevant only for old versions of RCS, but we let people set it
-       anyway.  */
+       anyway.  
+     */
     char *comment;
 
-    /* Set strict locking (-L).  */
+    /*
+       Set strict locking (-L).  
+     */
     int set_strict;
 
-    /* Set nonstrict locking (-U).  */
+    /*
+       Set nonstrict locking (-U).  
+     */
     int set_nonstrict;
 
-    /* Delete revisions (-o).  It is "-o" followed by the value specified.  */
+    /*
+       Delete revisions (-o).  It is "-o" followed by the value specified.  
+     */
     char *delete_revs;
 
-    /* Keyword substitution mode (-k), e.g. "-kb".  */
+    /*
+       Keyword substitution mode (-k), e.g. "-kb".  
+     */
     char *kflag;
 
-    /* Description (-t).  */
+    /*
+       Description (-t).  
+     */
     char *desc;
 
-    /* Interactive (-I).  Problematic with client/server.  */
+    /*
+       Interactive (-I).  Problematic with client/server.  
+     */
     int interactive;
 
-    /* This is the cheesy part.  It is a vector with the options which
+    /*
+       This is the cheesy part.  It is a vector with the options which
        we don't deal with above (e.g. "-afoo" "-abar,baz").  In the future
        this presumably will be replaced by other variables which break
        out the data in a more convenient fashion.  AV as well as each of
-       the strings it points to is malloc'd.  */
+       the strings it points to is malloc'd.  
+     */
     int ac;
     char **av;
     int av_alloc;
@@ -117,6 +134,7 @@ static void
 arg_add (struct admin_data *dat, int opt, char *arg)
 {
     char *newelt = xmalloc ((arg == NULL ? 0 : strlen (arg)) + 3);
+
     strcpy (newelt, "-");
     newelt[1] = opt;
     if (arg == NULL)
@@ -142,9 +160,10 @@ int
 admin (int argc, char **argv)
 {
     int err;
+
 #ifdef CVS_ADMIN_GROUP
     struct group *grp;
-    struct group *getgrnam(const char *);
+    struct group *getgrnam (const char *);
 #endif
     struct admin_data admin_data;
     int c;
@@ -158,23 +177,27 @@ admin (int argc, char **argv)
 
     memset (&admin_data, 0, sizeof admin_data);
 
-    /* TODO: get rid of `-' switch notation in admin_data.  For
-       example, admin_data->branch should be not `-bfoo' but simply `foo'. */
+    /*
+       TODO: get rid of `-' switch notation in admin_data.  For
+       example, admin_data->branch should be not `-bfoo' but simply `foo'. 
+     */
 
     optind = 0;
     only_allowed_options = 1;
     while ((c = getopt (argc, argv,
 			"+ib::c:a:A:e::l::u::LUn:N:m:o:s:t::IqxV:k:")) != -1)
     {
-	if (c != 'q' && !strchr(UserAdminOptions, c))
+	if (c != 'q' && !strchr (UserAdminOptions, c))
 	    only_allowed_options = 0;
 
 	switch (c)
 	{
 	    case 'i':
-		/* This has always been documented as useless in cvs.texinfo
+		/*
+		   This has always been documented as useless in cvs.texinfo
 		   and it really is--admin_fileproc silently does nothing
-		   if vers->vn_user is NULL. */
+		   if vers->vn_user is NULL. 
+		 */
 		error (0, 0, "the -i option to admin is not supported");
 		error (0, 0, "run add or import to create an RCS file");
 		goto usage_error;
@@ -211,11 +234,13 @@ admin (int argc, char **argv)
 		break;
 
 	    case 'A':
-		/* In the client/server case, this is cheesy because
+		/*
+		   In the client/server case, this is cheesy because
 		   we just pass along the name of the RCS file, which
 		   then will want to exist on the server.  This is
 		   accidental; having the client specify a pathname on
-		   the server is not a design feature of the protocol.  */
+		   the server is not a design feature of the protocol.  
+		 */
 		arg_add (&admin_data, 'A', optarg);
 		break;
 
@@ -224,19 +249,25 @@ admin (int argc, char **argv)
 		break;
 
 	    case 'l':
-		/* Note that multiple -l options are valid.  */
+		/*
+		   Note that multiple -l options are valid.  
+		 */
 		arg_add (&admin_data, 'l', optarg);
 		break;
 
 	    case 'u':
-		/* Note that multiple -u options are valid.  */
+		/*
+		   Note that multiple -u options are valid.  
+		 */
 		arg_add (&admin_data, 'u', optarg);
 		break;
 
 	    case 'L':
-		/* Probably could also complain if -L is specified multiple
+		/*
+		   Probably could also complain if -L is specified multiple
 		   times, although RCS doesn't and I suppose it is reasonable
-		   just to have it mean the same as a single -L.  */
+		   just to have it mean the same as a single -L.  
+		 */
 		if (admin_data.set_nonstrict)
 		{
 		    error (0, 0, "-U and -L are incompatible");
@@ -246,9 +277,11 @@ admin (int argc, char **argv)
 		break;
 
 	    case 'U':
-		/* Probably could also complain if -U is specified multiple
+		/*
+		   Probably could also complain if -U is specified multiple
 		   times, although RCS doesn't and I suppose it is reasonable
-		   just to have it mean the same as a single -U.  */
+		   just to have it mean the same as a single -U.  
+		 */
 		if (admin_data.set_strict)
 		{
 		    error (0, 0, "-U and -L are incompatible");
@@ -258,37 +291,45 @@ admin (int argc, char **argv)
 		break;
 
 	    case 'n':
-		/* Mostly similar to cvs tag.  Could also be parsing
+		/*
+		   Mostly similar to cvs tag.  Could also be parsing
 		   the syntax of optarg, although for now we just pass
 		   it to rcs as-is.  Note that multiple -n options are
-		   valid.  */
+		   valid.  
+		 */
 		arg_add (&admin_data, 'n', optarg);
 		break;
 
 	    case 'N':
-		/* Mostly similar to cvs tag.  Could also be parsing
+		/*
+		   Mostly similar to cvs tag.  Could also be parsing
 		   the syntax of optarg, although for now we just pass
 		   it to rcs as-is.  Note that multiple -N options are
-		   valid.  */
+		   valid.  
+		 */
 		arg_add (&admin_data, 'N', optarg);
 		break;
 
 	    case 'm':
-		/* Change log message.  Could also be parsing the syntax
+		/*
+		   Change log message.  Could also be parsing the syntax
 		   of optarg, although for now we just pass it to rcs
-		   as-is.  Note that multiple -m options are valid.  */
+		   as-is.  Note that multiple -m options are valid.  
+		 */
 		arg_add (&admin_data, 'm', optarg);
 		break;
 
 	    case 'o':
-		/* Delete revisions.  Probably should also be parsing the
+		/*
+		   Delete revisions.  Probably should also be parsing the
 		   syntax of optarg, so that the client can give errors
 		   rather than making the server take care of that.
 		   Other than that I'm not sure whether it matters much
 		   whether we parse it here or in admin_fileproc.
 
 		   Note that multiple -o options are invalid, in RCS
-		   as well as here.  */
+		   as well as here.  
+		 */
 
 		if (admin_data.delete_revs != NULL)
 		{
@@ -301,7 +342,9 @@ admin (int argc, char **argv)
 		break;
 
 	    case 's':
-		/* Note that multiple -s options are valid.  */
+		/*
+		   Note that multiple -s options are valid.  
+		 */
 		arg_add (&admin_data, 's', optarg);
 		break;
 
@@ -324,19 +367,22 @@ admin (int argc, char **argv)
 		break;
 
 	    case 'I':
-		/* At least in RCS this can be specified several times,
-		   with the same meaning as being specified once.  */
+		/*
+		   At least in RCS this can be specified several times,
+		   with the same meaning as being specified once.  
+		 */
 		admin_data.interactive = 1;
 		break;
 
 	    case 'q':
-		/* Silently set the global really_quiet flag.  This keeps admin in
-		 * sync with the RCS man page and allows us to silently support
-		 * older servers when necessary.
-		 *
-		 * Some logic says we might want to output a deprecation warning
-		 * here, but I'm opting not to in order to stay quietly in sync
-		 * with the RCS man page.
+		/*
+		   Silently set the global really_quiet flag.  This keeps admin in
+		   * sync with the RCS man page and allows us to silently support
+		   * older servers when necessary.
+		   *
+		   * Some logic says we might want to output a deprecation warning
+		   * here, but I'm opting not to in order to stay quietly in sync
+		   * with the RCS man page.
 		 */
 		really_quiet = 1;
 		break;
@@ -347,7 +393,9 @@ admin (int argc, char **argv)
 		goto usage_error;
 
 	    case 'V':
-		/* No longer supported. */
+		/*
+		   No longer supported. 
+		 */
 		error (0, 0, "the `-V' option is obsolete");
 		break;
 
@@ -361,11 +409,15 @@ admin (int argc, char **argv)
 		break;
 	    default:
 	    case '?':
-		/* getopt will have printed an error message.  */
+		/*
+		   getopt will have printed an error message.  
+		 */
 
-	    usage_error:
-		/* Don't use command_name; it might be "server".  */
-	        error (1, 0, "specify %s -H admin for usage information",
+	      usage_error:
+		/*
+		   Don't use command_name; it might be "server".  
+		 */
+		error (1, 0, "specify %s -H admin for usage information",
 		       program_name);
 	}
     }
@@ -373,47 +425,54 @@ admin (int argc, char **argv)
     argv += optind;
 
 #ifdef CVS_ADMIN_GROUP
-    /* The use of `cvs admin -k' is unrestricted.  However, any other
+    /*
+       The use of `cvs admin -k' is unrestricted.  However, any other
        option is restricted if the group CVS_ADMIN_GROUP exists on the
-       server.  */
+       server.  
+     */
     if (
 # ifdef CLIENT_SUPPORT
-        /* This is only "secure" on the server, since the user could edit the
-	 * RCS file on a local host, but some people like this kind of
-	 * check anyhow.  The alternative would be to check only when
-	 * (server_active) rather than when not on the client.
-	 */
-        !current_parsed_root->isremote &&
+	   /*
+	      This is only "secure" on the server, since the user could edit the
+	      * RCS file on a local host, but some people like this kind of
+	      * check anyhow.  The alternative would be to check only when
+	      * (server_active) rather than when not on the client.
+	    */
+	   !current_parsed_root->isremote &&
 # endif	/* CLIENT_SUPPORT */
-        !only_allowed_options &&
-	(grp = getgrnam(CVS_ADMIN_GROUP)) != NULL)
+	   !only_allowed_options &&
+	   (grp = getgrnam (CVS_ADMIN_GROUP)) != NULL)
     {
 #ifdef HAVE_GETGROUPS
 	gid_t *grps;
 	int n;
 
-	/* get number of auxiliary groups */
+	/*
+	   get number of auxiliary groups 
+	 */
 	n = getgroups (0, NULL);
 	if (n < 0)
 	    error (1, errno, "unable to get number of auxiliary groups");
-	grps = (gid_t *) xmalloc((n + 1) * sizeof *grps);
+	grps = (gid_t *) xmalloc ((n + 1) * sizeof *grps);
 	n = getgroups (n, grps);
 	if (n < 0)
 	    error (1, errno, "unable to get list of auxiliary groups");
-	grps[n] = getgid();
+	grps[n] = getgid ();
 	for (i = 0; i <= n; i++)
-	    if (grps[i] == grp->gr_gid) break;
+	    if (grps[i] == grp->gr_gid)
+		break;
 	free (grps);
 	if (i > n)
 	    error (1, 0, "usage is restricted to members of the group %s",
 		   CVS_ADMIN_GROUP);
 #else
-	char *me = getcaller();
+	char *me = getcaller ();
 	char **grnam;
-	
+
 	for (grnam = grp->gr_mem; *grnam; grnam++)
-	    if (strcmp (*grnam, me) == 0) break;
-	if (!*grnam && getgid() != grp->gr_gid)
+	    if (strcmp (*grnam, me) == 0)
+		break;
+	if (!*grnam && getgid () != grp->gr_gid)
 	    error (1, 0, "usage is restricted to members of the group %s",
 		   CVS_ADMIN_GROUP);
 #endif
@@ -451,14 +510,18 @@ admin (int argc, char **argv)
 #ifdef CLIENT_SUPPORT
     if (current_parsed_root->isremote)
     {
-	/* We're the client side.  Fire up the remote server.  */
+	/*
+	   We're the client side.  Fire up the remote server.  
+	 */
 	start_server ();
-	
+
 	ign_setup ();
 
-	/* Note that option_with_arg does not work for us, because some
+	/*
+	   Note that option_with_arg does not work for us, because some
 	   of the options must be sent without a space between the option
-	   and its argument.  */
+	   and its argument.  
+	 */
 	if (admin_data.interactive)
 	    error (1, 0, "-I option not useful with client/server");
 	if (admin_data.branch != NULL)
@@ -474,6 +537,7 @@ admin (int argc, char **argv)
 	if (admin_data.desc != NULL)
 	{
 	    char *p = admin_data.desc;
+
 	    send_to_server ("Argument -t-", 0);
 	    while (*p)
 	    {
@@ -485,15 +549,18 @@ admin (int argc, char **argv)
 		else
 		{
 		    char *q = strchr (p, '\n');
-		    if (q == NULL) q = p + strlen (p);
+
+		    if (q == NULL)
+			q = p + strlen (p);
 		    send_to_server (p, q - p);
 		    p = q;
 		}
 	    }
 	    send_to_server ("\012", 1);
 	}
-	/* Send this for all really_quiets since we know that it will be silently
-	 * ignored when unneeded.  This supports old servers.
+	/*
+	   Send this for all really_quiets since we know that it will be silently
+	   * ignored when unneeded.  This supports old servers.
 	 */
 	if (really_quiet)
 	    send_arg ("-q");
@@ -507,7 +574,7 @@ admin (int argc, char **argv)
 	send_files (argc, argv, 0, 0, SEND_NO_CONTENTS);
 	send_file_names (argc, argv, SEND_EXPAND_WILD);
 	send_to_server ("admin\012", 0);
-        err = get_responses_and_close ();
+	err = get_responses_and_close ();
 	goto return_it;
     }
 #endif /* CLIENT_SUPPORT */
@@ -515,13 +582,13 @@ admin (int argc, char **argv)
     lock_tree_for_write (argc, argv, 0, W_LOCAL, 0);
 
     err = start_recursion
-	    ( admin_fileproc, (FILESDONEPROC) NULL, admin_dirproc,
-	      (DIRLEAVEPROC) NULL, (void *) &admin_data,
-	      argc, argv, 0,
-	      W_LOCAL, 0, CVS_LOCK_NONE, (char *) NULL, 1, (char *) NULL );
+	(admin_fileproc, (FILESDONEPROC) NULL, admin_dirproc,
+	 (DIRLEAVEPROC) NULL, (void *) &admin_data,
+	 argc, argv, 0,
+	 W_LOCAL, 0, CVS_LOCK_NONE, (char *) NULL, 1, (char *) NULL);
     Lock_Cleanup ();
 
- return_it:
+  return_it:
     if (admin_data.branch != NULL)
 	free (admin_data.branch);
     if (admin_data.comment != NULL)
@@ -543,6 +610,7 @@ admin (int argc, char **argv)
 /*
  * Called to run "rcs" on a particular file.
  */
+
 /* ARGSUSED */
 static int
 admin_fileproc (void *callerdat, struct file_info *finfo)
@@ -586,13 +654,14 @@ admin_fileproc (void *callerdat, struct file_info *finfo)
     if (admin_data->branch != NULL)
     {
 	char *branch = &admin_data->branch[2];
-	if (*branch != '\0' && ! isdigit ((unsigned char) *branch))
+
+	if (*branch != '\0' && !isdigit ((unsigned char) *branch))
 	{
 	    branch = RCS_whatbranch (rcs, admin_data->branch + 2);
 	    if (branch == NULL)
 	    {
 		error (0, 0, "%s: Symbolic name %s is undefined.",
-				rcs->path, admin_data->branch + 2);
+		       rcs->path, admin_data->branch + 2);
 		status = 1;
 	    }
 	}
@@ -614,7 +683,10 @@ admin_fileproc (void *callerdat, struct file_info *finfo)
     if (admin_data->delete_revs != NULL)
     {
 	char *s, *t, *rev1, *rev2;
-	/* Set for :, clear for ::.  */
+
+	/*
+	   Set for :, clear for ::.  
+	 */
 	int inclusive;
 	char *t2;
 
@@ -632,19 +704,25 @@ admin_fileproc (void *callerdat, struct file_info *finfo)
 		t2 = t + 1;
 	}
 
-	/* Note that we don't support '-' for ranges.  RCS considers it
+	/*
+	   Note that we don't support '-' for ranges.  RCS considers it
 	   obsolete and it is problematic with tags containing '-'.  "cvs log"
-	   has made the same decision.  */
+	   has made the same decision.  
+	 */
 
 	if (t == NULL)
 	{
-	    /* -orev */
+	    /*
+	       -orev 
+	     */
 	    rev1 = xstrdup (s);
 	    rev2 = xstrdup (s);
 	}
 	else if (t == s)
 	{
-	    /* -o:rev2 */
+	    /*
+	       -o:rev2 
+	     */
 	    rev1 = NULL;
 	    rev2 = xstrdup (t2);
 	}
@@ -652,18 +730,24 @@ admin_fileproc (void *callerdat, struct file_info *finfo)
 	{
 	    *t = '\0';
 	    rev1 = xstrdup (s);
-	    *t = ':';	/* probably unnecessary */
+	    *t = ':';			/* probably unnecessary */
 	    if (*t2 == '\0')
-		/* -orev1: */
+		/*
+		   -orev1: 
+		 */
 		rev2 = NULL;
 	    else
-		/* -orev1:rev2 */
+		/*
+		   -orev1:rev2 
+		 */
 		rev2 = xstrdup (t2);
 	}
 
 	if (rev1 == NULL && rev2 == NULL)
 	{
-	    /* RCS segfaults if `-o:' is given */
+	    /*
+	       RCS segfaults if `-o:' is given 
+	     */
 	    error (0, 0, "no valid revisions specified in `%s' option",
 		   admin_data->delete_revs);
 	    status = 1;
@@ -686,13 +770,16 @@ admin_fileproc (void *callerdat, struct file_info *finfo)
     {
 	char *kflag = admin_data->kflag + 2;
 	char *oldexpand = RCS_getexpand (rcs);
+
 	if (oldexpand == NULL || strcmp (oldexpand, kflag) != 0)
 	    RCS_setexpand (rcs, kflag);
     }
 
-    /* Handle miscellaneous options.  TODO: decide whether any or all
+    /*
+       Handle miscellaneous options.  TODO: decide whether any or all
        of these should have their own fields in the admin_data
-       structure. */
+       structure. 
+     */
     for (i = 0; i < admin_data->ac; ++i)
     {
 	char *arg;
@@ -701,13 +788,13 @@ admin_fileproc (void *callerdat, struct file_info *finfo)
 	int argc, u;
 	Node *n;
 	RCSVers *delta;
-	
+
 	arg = admin_data->av[i];
 	switch (arg[1])
 	{
-	    case 'a': /* fall through */
+	    case 'a':			/* fall through */
 	    case 'e':
-	        line2argv (&argc, &users, arg + 2, " ,\t\n");
+		line2argv (&argc, &users, arg + 2, " ,\t\n");
 		if (arg[1] == 'a')
 		    for (u = 0; u < argc; ++u)
 			RCS_addaccess (rcs, users[u]);
@@ -720,7 +807,8 @@ admin_fileproc (void *callerdat, struct file_info *finfo)
 		break;
 	    case 'A':
 
-		/* See admin-19a-admin and friends in sanity.sh for
+		/*
+		   See admin-19a-admin and friends in sanity.sh for
 		   relative pathnames.  It makes sense to think in
 		   terms of a syntax which give pathnames relative to
 		   the repository or repository corresponding to the
@@ -729,14 +817,15 @@ admin_fileproc (void *callerdat, struct file_info *finfo)
 		   is a little pointless unless you first worry about
 		   whether "cvs admin -A" as a whole makes any sense
 		   (currently probably not, as access lists don't
-		   affect the behavior of CVS).  */
+		   affect the behavior of CVS).  
+		 */
 
 		rcs2 = RCS_parsercsfile (arg + 2);
 		if (rcs2 == NULL)
 		    error (1, 0, "cannot continue");
 
 		p = xstrdup (RCS_getaccess (rcs2));
-	        line2argv (&argc, &users, p, " \t\n");
+		line2argv (&argc, &users, p, " \t\n");
 		free (p);
 		freercsnode (&rcs2);
 
@@ -744,7 +833,7 @@ admin_fileproc (void *callerdat, struct file_info *finfo)
 		    RCS_addaccess (rcs, users[u]);
 		free_names (&argc, users);
 		break;
-	    case 'n': /* fall through */
+	    case 'n':			/* fall through */
 	    case 'N':
 		if (arg[2] == '\0')
 		{
@@ -759,8 +848,7 @@ admin_fileproc (void *callerdat, struct file_info *finfo)
 		    if (RCS_deltag (rcs, arg + 2) != 0)
 		    {
 			error (0, 0, "%s: Symbolic name %s is undefined.",
-			       rcs->path, 
-			       arg + 2);
+			       rcs->path, arg + 2);
 			status = 1;
 			continue;
 		    }
@@ -770,7 +858,9 @@ admin_fileproc (void *callerdat, struct file_info *finfo)
 		tag = xstrdup (arg + 2);
 		*p++ = ':';
 
-		/* Option `n' signals an error if this tag is already bound. */
+		/*
+		   Option `n' signals an error if this tag is already bound. 
+		 */
 		if (arg[1] == 'n')
 		{
 		    n = findnode (RCS_symbols (rcs), tag);
@@ -778,24 +868,24 @@ admin_fileproc (void *callerdat, struct file_info *finfo)
 		    {
 			error (0, 0,
 			       "%s: symbolic name %s already bound to %s",
-			       rcs->path,
-			       tag, n->data);
+			       rcs->path, tag, n->data);
 			status = 1;
 			free (tag);
 			continue;
 		    }
 		}
 
-                /* Attempt to perform the requested tagging.  */
+		/*
+		   Attempt to perform the requested tagging.  
+		 */
 
-		if ((*p == 0 && (rev = RCS_head (rcs)))
-                    || (rev = RCS_tag2rev (rcs, p))) /* tag2rev may exit */
+		if ((*p == 0 && (rev = RCS_head (rcs))) || (rev = RCS_tag2rev (rcs, p)))	/* tag2rev may exit */
 		{
-		    RCS_check_tag (tag); /* exit if not a valid tag */
+		    RCS_check_tag (tag);	/* exit if not a valid tag */
 		    RCS_settag (rcs, tag, rev);
 		    free (rev);
 		}
-                else
+		else
 		{
 		    if (!really_quiet)
 			error (0, 0,
@@ -806,7 +896,7 @@ admin_fileproc (void *callerdat, struct file_info *finfo)
 		free (tag);
 		break;
 	    case 's':
-	        p = strchr (arg, ':');
+		p = strchr (arg, ':');
 		if (p == NULL)
 		{
 		    tag = xstrdup (arg + 2);
@@ -831,8 +921,7 @@ admin_fileproc (void *callerdat, struct file_info *finfo)
 		{
 		    error (0, 0,
 			   "%s: can't set state of nonexisting revision %s",
-			   rcs->path,
-			   rev);
+			   rcs->path, rev);
 		    free (rev);
 		    status = 1;
 		    continue;
@@ -844,7 +933,7 @@ admin_fileproc (void *callerdat, struct file_info *finfo)
 		break;
 
 	    case 'm':
-	        p = strchr (arg, ':');
+		p = strchr (arg, ':');
 		if (p == NULL)
 		{
 		    error (0, 0, "%s: -m option lacks revision number",
@@ -876,12 +965,13 @@ admin_fileproc (void *callerdat, struct file_info *finfo)
 		break;
 
 	    case 'l':
-	        status |= RCS_lock (rcs, arg[2] ? arg + 2 : NULL, 0);
+		status |= RCS_lock (rcs, arg[2] ? arg + 2 : NULL, 0);
 		break;
 	    case 'u':
 		status |= RCS_unlock (rcs, arg[2] ? arg + 2 : NULL, 0);
 		break;
-	    default: assert(0);	/* can't happen */
+	    default:
+		assert (0);		/* can't happen */
 	}
     }
 
@@ -893,10 +983,12 @@ admin_fileproc (void *callerdat, struct file_info *finfo)
     }
     else
     {
-	/* Note that this message should only occur after another
+	/*
+	   Note that this message should only occur after another
 	   message has given a more specific error.  The point of this
 	   additional message is to make it clear that the previous problems
-	   caused CVS to forget about the idea of modifying the RCS file.  */
+	   caused CVS to forget about the idea of modifying the RCS file.  
+	 */
 	if (!really_quiet)
 	    error (0, 0, "RCS file for `%s' not modified.", finfo->file);
 	RCS_abandon (rcs);
@@ -910,9 +1002,11 @@ admin_fileproc (void *callerdat, struct file_info *finfo)
 /*
  * Print a warm fuzzy message
  */
+
 /* ARGSUSED */
 static Dtype
-admin_dirproc (void *callerdat, char *dir, char *repos, char *update_dir, List *entries)
+admin_dirproc (void *callerdat, char *dir, char *repos, char *update_dir,
+	       List * entries)
 {
     if (!quiet)
 	error (0, 0, "Administrating %s", update_dir);

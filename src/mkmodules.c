@@ -1,3 +1,4 @@
+
 /*
  * Copyright (c) 1992, Brian Berliner and Jeff Polk
  * Copyright (c) 1989-1992, Brian Berliner
@@ -20,30 +21,37 @@ static void rename_rcsfile (char *temp, char *real);
 #ifndef MY_NDBM
 static void rename_dbmfile (char *temp);
 static void write_dbmfile (char *temp);
-#endif				/* !MY_NDBM */
+#endif /* !MY_NDBM */
 
 /* Structure which describes an administrative file.  */
-struct admin_file {
-   /* Name of the file, within the CVSROOT directory.  */
-   char *filename;
+struct admin_file
+{
+    /*
+       Name of the file, within the CVSROOT directory.  
+     */
+    char *filename;
 
-   /* This is a one line description of what the file is for.  It is not
-      currently used, although one wonders whether it should be, somehow.
-      If NULL, then don't process this file in mkmodules (FIXME?: a bit of
-      a kludge; probably should replace this with a flags field).  */
-   char *errormsg;
+    /*
+       This is a one line description of what the file is for.  It is not
+       currently used, although one wonders whether it should be, somehow.
+       If NULL, then don't process this file in mkmodules (FIXME?: a bit of
+       a kludge; probably should replace this with a flags field).  
+     */
+    char *errormsg;
 
-   /* Contents which the file should have in a new repository.  To avoid
-      problems with brain-dead compilers which choke on long string constants,
-      this is a pointer to an array of char * terminated by NULL--each of
-      the strings is concatenated.
+    /*
+       Contents which the file should have in a new repository.  To avoid
+       problems with brain-dead compilers which choke on long string constants,
+       this is a pointer to an array of char * terminated by NULL--each of
+       the strings is concatenated.
 
-      If this field is NULL, the file is not created in a new
-      repository, but it can be added with "cvs add" (just as if one
-      had created the repository with a version of CVS which didn't
-      know about the file) and the checked-out copy will be updated
-      without having to add it to checkoutlist.  */
-   const char * const *contents;
+       If this field is NULL, the file is not created in a new
+       repository, but it can be added with "cvs add" (just as if one
+       had created the repository with a version of CVS which didn't
+       know about the file) and the checked-out copy will be updated
+       without having to add it to checkoutlist.  
+     */
+    const char *const *contents;
 };
 
 static const char *const loginfo_contents[] = {
@@ -206,7 +214,7 @@ static const char *const checkoutlist_contents[] = {
 static const char *const cvswrappers_contents[] = {
     "# This file affects handling of files based on their names.\n",
     "#\n",
-#if 0    /* see comments in wrap_add in wrapper.c */
+#if 0				/* see comments in wrap_add in wrapper.c */
     "# The -t/-f options allow one to treat directories of files\n",
     "# as a single file, or to transform a file in other ways on\n",
     "# its way in and out of CVS.\n",
@@ -321,48 +329,51 @@ static const char *const config_contents[] = {
 };
 
 static const struct admin_file filelist[] = {
-    {CVSROOTADM_LOGINFO, 
-	"no logging of 'cvs commit' messages is done without a %s file",
-	&loginfo_contents[0]},
+    {CVSROOTADM_LOGINFO,
+     "no logging of 'cvs commit' messages is done without a %s file",
+     &loginfo_contents[0]},
     {CVSROOTADM_RCSINFO,
-	"a %s file can be used to configure 'cvs commit' templates",
-	rcsinfo_contents},
+     "a %s file can be used to configure 'cvs commit' templates",
+     rcsinfo_contents},
     {CVSROOTADM_EDITINFO,
-	"a %s file can be used to validate log messages",
-	editinfo_contents},
+     "a %s file can be used to validate log messages",
+     editinfo_contents},
     {CVSROOTADM_VERIFYMSG,
-	"a %s file can be used to validate log messages",
-	verifymsg_contents},
+     "a %s file can be used to validate log messages",
+     verifymsg_contents},
     {CVSROOTADM_COMMITINFO,
-	"a %s file can be used to configure 'cvs commit' checking",
-	commitinfo_contents},
+     "a %s file can be used to configure 'cvs commit' checking",
+     commitinfo_contents},
     {CVSROOTADM_TAGINFO,
-	"a %s file can be used to configure 'cvs tag' checking",
-	taginfo_contents},
+     "a %s file can be used to configure 'cvs tag' checking",
+     taginfo_contents},
     {CVSROOTADM_IGNORE,
-	"a %s file can be used to specify files to ignore",
-	NULL},
+     "a %s file can be used to specify files to ignore",
+     NULL},
     {CVSROOTADM_CHECKOUTLIST,
-	"a %s file can specify extra CVSROOT files to auto-checkout",
-	checkoutlist_contents},
+     "a %s file can specify extra CVSROOT files to auto-checkout",
+     checkoutlist_contents},
     {CVSROOTADM_WRAPPER,
-	"a %s file can be used to specify files to treat as wrappers",
-	cvswrappers_contents},
+     "a %s file can be used to specify files to treat as wrappers",
+     cvswrappers_contents},
     {CVSROOTADM_NOTIFY,
-	"a %s file can be used to specify where notifications go",
-	notify_contents},
+     "a %s file can be used to specify where notifications go",
+     notify_contents},
     {CVSROOTADM_MODULES,
-	/* modules is special-cased in mkmodules.  */
-	NULL,
-	modules_contents},
+     /*
+        modules is special-cased in mkmodules.  
+      */
+     NULL,
+     modules_contents},
     {CVSROOTADM_READERS,
-	"a %s file specifies read-only users",
-	NULL},
+     "a %s file specifies read-only users",
+     NULL},
     {CVSROOTADM_WRITERS,
-	"a %s file specifies read/write users",
-	NULL},
+     "a %s file specifies read/write users",
+     NULL},
 
-    /* Some have suggested listing CVSROOTADM_PASSWD here too.  This
+    /*
+       Some have suggested listing CVSROOTADM_PASSWD here too.  This
        would mean that CVS commands which operate on the
        CVSROOTADM_PASSWD file would transmit hashed passwords over the
        net.  This might seem to be no big deal, as pserver normally
@@ -377,11 +388,12 @@ static const struct admin_file filelist[] = {
        Another worry is the implications of storing old passwords--if
        someone used a password in the past they might be using it
        elsewhere, using a similar password, etc, and so saving old
-       passwords, even hashed, is probably not a good idea.  */
+       passwords, even hashed, is probably not a good idea.  
+     */
 
     {CVSROOTADM_CONFIG,
-	 "a %s file configures various behaviors",
-	 config_contents},
+     "a %s file configures various behaviors",
+     config_contents},
     {NULL, NULL, NULL}
 };
 
@@ -392,6 +404,7 @@ mkmodules (char *dir)
     struct saved_cwd cwd;
     char *temp;
     char *cp, *last, *fname;
+
 #ifdef MY_NDBM
     DBM *db;
 #endif
@@ -406,7 +419,7 @@ mkmodules (char *dir)
     if (save_cwd (&cwd))
 	error_exit ();
 
-    if ( CVS_CHDIR (dir) < 0)
+    if (CVS_CHDIR (dir) < 0)
 	error (1, errno, "cannot chdir to %s", dir);
 
     /*
@@ -418,7 +431,9 @@ mkmodules (char *dir)
 
 	case 0:			/* everything ok */
 #ifdef MY_NDBM
-	    /* open it, to generate any duplicate errors */
+	    /*
+	       open it, to generate any duplicate errors 
+	     */
 	    if ((db = dbm_open (temp, O_RDONLY, 0666)) != NULL)
 		dbm_close (db);
 #else
@@ -430,18 +445,20 @@ mkmodules (char *dir)
 
 	default:
 	    error (0, 0,
-		"'cvs checkout' is less functional without a %s file",
-		CVSROOTADM_MODULES);
+		   "'cvs checkout' is less functional without a %s file",
+		   CVSROOTADM_MODULES);
 	    break;
     }					/* switch on checkout_file() */
 
-    if (unlink_file (temp) < 0
-	&& !existence_error (errno))
+    if (unlink_file (temp) < 0 && !existence_error (errno))
 	error (0, errno, "cannot remove %s", temp);
     free (temp);
 
-    /* Checkout the files that need it in CVSROOT dir */
-    for (fileptr = filelist; fileptr && fileptr->filename; fileptr++) {
+    /*
+       Checkout the files that need it in CVSROOT dir 
+     */
+    for (fileptr = filelist; fileptr && fileptr->filename; fileptr++)
+    {
 	if (fileptr->errormsg == NULL)
 	    continue;
 	temp = make_tempfile ();
@@ -458,8 +475,7 @@ mkmodules (char *dir)
 	else if (fileptr->errormsg)
 	    error (0, 0, fileptr->errormsg, fileptr->filename);
 #endif
-	if (unlink_file (temp) < 0
-	    && !existence_error (errno))
+	if (unlink_file (temp) < 0 && !existence_error (errno))
 	    error (0, errno, "cannot remove %s", temp);
 	free (temp);
     }
@@ -475,20 +491,25 @@ mkmodules (char *dir)
 	 */
 	while (getline (&line, &line_allocated, fp) >= 0)
 	{
-	    /* skip lines starting with # */
+	    /*
+	       skip lines starting with # 
+	     */
 	    if (line[0] == '#')
 		continue;
 
 	    if ((last = strrchr (line, '\n')) != NULL)
-		*last = '\0';			/* strip the newline */
+		*last = '\0';		/* strip the newline */
 
-	    /* Skip leading white space. */
+	    /*
+	       Skip leading white space. 
+	     */
 	    for (fname = line;
-		 *fname && isspace ((unsigned char) *fname);
-		 fname++)
+		 *fname && isspace ((unsigned char) *fname); fname++)
 		;
 
-	    /* Find end of filename. */
+	    /*
+	       Find end of filename. 
+	     */
 	    for (cp = fname; *cp && !isspace ((unsigned char) *cp); cp++)
 		;
 	    *cp = '\0';
@@ -507,8 +528,7 @@ mkmodules (char *dir)
 		if (cp < last && *cp)
 		    error (0, 0, cp, fname);
 	    }
-	    if (unlink_file (temp) < 0
-		&& !existence_error (errno))
+	    if (unlink_file (temp) < 0 && !existence_error (errno))
 		error (0, errno, "cannot remove %s", temp);
 	    free (temp);
 	}
@@ -521,7 +541,9 @@ mkmodules (char *dir)
     }
     else
     {
-	/* Error from CVS_FOPEN.  */
+	/*
+	   Error from CVS_FOPEN.  
+	 */
 	if (!existence_error (errno))
 	    error (0, errno, "cannot open %s", CVSROOTADM_CHECKOUTLIST);
     }
@@ -549,13 +571,13 @@ make_tempfile (void)
     while (1)
     {
 	(void) sprintf (temp, "%s%d", BAKPREFIX, seed++);
-	if ((fd = CVS_OPEN (temp, O_CREAT|O_EXCL|O_RDWR, 0666)) != -1)
+	if ((fd = CVS_OPEN (temp, O_CREAT | O_EXCL | O_RDWR, 0666)) != -1)
 	    break;
 	if (errno != EEXIST)
 	    error (1, errno, "cannot create temporary file %s", temp);
     }
-    if (close(fd) < 0)
-	error(1, errno, "cannot close temporary file %s", temp);
+    if (close (fd) < 0)
+	error (1, errno, "cannot close temporary file %s", temp);
     return temp;
 }
 
@@ -586,10 +608,11 @@ checkout_file (char *file, char *temp)
 			    (RCSCHECKOUTPROC) NULL, (void *) NULL);
     if (retcode != 0)
     {
-	/* Probably not necessary (?); RCS_checkout already printed a
-	   message.  */
-	error (0, 0, "failed to check out %s file",
-	       file);
+	/*
+	   Probably not necessary (?); RCS_checkout already printed a
+	   message.  
+	 */
+	error (0, 0, "failed to check out %s file", file);
     }
     freercsnode (&rcsnode);
     free (rcs);
@@ -599,7 +622,7 @@ checkout_file (char *file, char *temp)
 #ifndef MY_NDBM
 
 static void
-write_dbmfile( char *temp )
+write_dbmfile (char *temp)
 {
     char line[DBLKSIZ], value[DBLKSIZ];
     FILE *fp;
@@ -683,35 +706,36 @@ write_dbmfile( char *temp )
 	error (0, errno, "cannot close %s", temp);
     if (err)
     {
-	/* I think that the size of the buffer needed here is
+	/*
+	   I think that the size of the buffer needed here is
 	   just determined by sizeof (CVSROOTADM_MODULES), the
 	   filenames created by make_tempfile, and other things that won't
-	   overflow.  */
+	   overflow.  
+	 */
 	char dotdir[50], dotpag[50], dotdb[50];
 
 	(void) sprintf (dotdir, "%s.dir", temp);
 	(void) sprintf (dotpag, "%s.pag", temp);
 	(void) sprintf (dotdb, "%s.db", temp);
-	if (unlink_file (dotdir) < 0
-	    && !existence_error (errno))
+	if (unlink_file (dotdir) < 0 && !existence_error (errno))
 	    error (0, errno, "cannot remove %s", dotdir);
-	if (unlink_file (dotpag) < 0
-	    && !existence_error (errno))
+	if (unlink_file (dotpag) < 0 && !existence_error (errno))
 	    error (0, errno, "cannot remove %s", dotpag);
-	if (unlink_file (dotdb) < 0
-	    && !existence_error (errno))
+	if (unlink_file (dotdb) < 0 && !existence_error (errno))
 	    error (0, errno, "cannot remove %s", dotdb);
 	error (1, 0, "DBM creation failed; correct above errors");
     }
 }
 
 static void
-rename_dbmfile( char *temp )
+rename_dbmfile (char *temp)
 {
-    /* I think that the size of the buffer needed here is
+    /*
+       I think that the size of the buffer needed here is
        just determined by sizeof (CVSROOTADM_MODULES), the
        filenames created by make_tempfile, and other things that won't
-       overflow.  */
+       overflow.  
+     */
     char newdir[50], newpag[50], newdb[50];
     char dotdir[50], dotpag[50], dotdb[50];
     char bakdir[50], bakpag[50], bakdb[50];
@@ -734,10 +758,14 @@ rename_dbmfile( char *temp )
     (void) chmod (newpag, 0666);
     (void) chmod (newdb, 0666);
 
-    /* don't mess with me */
+    /*
+       don't mess with me 
+     */
     SIG_beginCrSect ();
 
-    /* rm .#modules.dir .#modules.pag */
+    /*
+       rm .#modules.dir .#modules.pag 
+     */
     if (unlink_file (bakdir) < 0)
 	dir1_errno = errno;
     if (unlink_file (bakpag) < 0)
@@ -745,31 +773,47 @@ rename_dbmfile( char *temp )
     if (unlink_file (bakdb) < 0)
 	db1_errno = errno;
 
-    /* mv modules.dir .#modules.dir */
+    /*
+       mv modules.dir .#modules.dir 
+     */
     if (CVS_RENAME (dotdir, bakdir) < 0)
 	dir2_errno = errno;
-    /* mv modules.pag .#modules.pag */
+    /*
+       mv modules.pag .#modules.pag 
+     */
     if (CVS_RENAME (dotpag, bakpag) < 0)
 	pag2_errno = errno;
-    /* mv modules.db .#modules.db */
+    /*
+       mv modules.db .#modules.db 
+     */
     if (CVS_RENAME (dotdb, bakdb) < 0)
 	db2_errno = errno;
 
-    /* mv "temp".dir modules.dir */
+    /*
+       mv "temp".dir modules.dir 
+     */
     if (CVS_RENAME (newdir, dotdir) < 0)
 	dir3_errno = errno;
-    /* mv "temp".pag modules.pag */
+    /*
+       mv "temp".pag modules.pag 
+     */
     if (CVS_RENAME (newpag, dotpag) < 0)
 	pag3_errno = errno;
-    /* mv "temp".db modules.db */
+    /*
+       mv "temp".db modules.db 
+     */
     if (CVS_RENAME (newdb, dotdb) < 0)
 	db3_errno = errno;
 
-    /* OK -- make my day */
+    /*
+       OK -- make my day 
+     */
     SIG_endCrSect ();
 
-    /* I didn't want to call error() when we had signals blocked
-       (unnecessary?), but do it now.  */
+    /*
+       I didn't want to call error() when we had signals blocked
+       (unnecessary?), but do it now.  
+     */
     if (dir1_errno && !existence_error (dir1_errno))
 	error (0, dir1_errno, "cannot remove %s", bakdir);
     if (pag1_errno && !existence_error (pag1_errno))
@@ -792,7 +836,7 @@ rename_dbmfile( char *temp )
 	error (0, db3_errno, "cannot remove %s", bakdb);
 }
 
-#endif				/* !MY_NDBM */
+#endif /* !MY_NDBM */
 
 static void
 rename_rcsfile (char *temp, char *real)
@@ -801,12 +845,13 @@ rename_rcsfile (char *temp, char *real)
     struct stat statbuf;
     char *rcs;
 
-    /* Set "x" bits if set in original. */
+    /*
+       Set "x" bits if set in original. 
+     */
     rcs = xmalloc (strlen (real) + sizeof (RCSEXT) + 10);
     (void) sprintf (rcs, "%s%s", real, RCSEXT);
-    statbuf.st_mode = 0; /* in case rcs file doesn't exist, but it should... */
-    if (CVS_STAT (rcs, &statbuf) < 0
-	&& !existence_error (errno))
+    statbuf.st_mode = 0;		/* in case rcs file doesn't exist, but it should... */
+    if (CVS_STAT (rcs, &statbuf) < 0 && !existence_error (errno))
 	error (0, errno, "cannot stat %s", rcs);
     free (rcs);
 
@@ -815,19 +860,22 @@ rename_rcsfile (char *temp, char *real)
     bak = xmalloc (strlen (real) + sizeof (BAKPREFIX) + 10);
     (void) sprintf (bak, "%s%s", BAKPREFIX, real);
 
-    /* rm .#loginfo */
-    if (unlink_file (bak) < 0
-	&& !existence_error (errno))
+    /*
+       rm .#loginfo 
+     */
+    if (unlink_file (bak) < 0 && !existence_error (errno))
 	error (0, errno, "cannot remove %s", bak);
 
-    /* mv loginfo .#loginfo */
-    if (CVS_RENAME (real, bak) < 0
-	&& !existence_error (errno))
+    /*
+       mv loginfo .#loginfo 
+     */
+    if (CVS_RENAME (real, bak) < 0 && !existence_error (errno))
 	error (0, errno, "cannot rename %s to %s", real, bak);
 
-    /* mv "temp" loginfo */
-    if (CVS_RENAME (temp, real) < 0
-	&& !existence_error (errno))
+    /*
+       mv "temp" loginfo 
+     */
+    if (CVS_RENAME (temp, real) < 0 && !existence_error (errno))
 	error (0, errno, "cannot rename %s to %s", temp, real);
 
     free (bak);
@@ -842,13 +890,24 @@ const char *const init_usage[] = {
 int
 init (int argc, char **argv)
 {
-    /* Name of CVSROOT directory.  */
+    /*
+       Name of CVSROOT directory.  
+     */
     char *adm;
-    /* Name of this administrative file.  */
+
+    /*
+       Name of this administrative file.  
+     */
     char *info;
-    /* Name of ,v file for this administrative file.  */
+
+    /*
+       Name of ,v file for this administrative file.  
+     */
     char *info_v;
-    /* Exit status.  */
+
+    /*
+       Exit status.  
+     */
     int err;
 
     const struct admin_file *fileptr;
@@ -869,28 +928,38 @@ init (int argc, char **argv)
     }
 #endif /* CLIENT_SUPPORT */
 
-    /* Note: we do *not* create parent directories as needed like the
+    /*
+       Note: we do *not* create parent directories as needed like the
        old cvsinit.sh script did.  Few utilities do that, and a
        non-existent parent directory is as likely to be a typo as something
-       which needs to be created.  */
+       which needs to be created.  
+     */
     mkdir_if_needed (current_parsed_root->directory);
 
-    adm = xmalloc (strlen (current_parsed_root->directory) + sizeof (CVSROOTADM) + 2);
+    adm =
+	xmalloc (strlen (current_parsed_root->directory) +
+		 sizeof (CVSROOTADM) + 2);
     sprintf (adm, "%s/%s", current_parsed_root->directory, CVSROOTADM);
     mkdir_if_needed (adm);
 
-    /* This is needed because we pass "fileptr->filename" not "info"
+    /*
+       This is needed because we pass "fileptr->filename" not "info"
        to add_rcs_file below.  I think this would be easy to change,
        thus nuking the need for CVS_CHDIR here, but I haven't looked
-       closely (e.g. see wrappers calls within add_rcs_file).  */
-    if ( CVS_CHDIR (adm) < 0)
+       closely (e.g. see wrappers calls within add_rcs_file).  
+     */
+    if (CVS_CHDIR (adm) < 0)
 	error (1, errno, "cannot change to directory %s", adm);
 
-    /* Make Emptydir so it's there if we need it */
+    /*
+       Make Emptydir so it's there if we need it 
+     */
     mkdir_if_needed (CVSNULLREPOS);
 
-    /* 80 is long enough for all the administrative file names, plus
-       "/" and so on.  */
+    /*
+       80 is long enough for all the administrative file names, plus
+       "/" and so on.  
+     */
     info = xmalloc (strlen (adm) + 80);
     info_v = xmalloc (strlen (adm) + 80);
     for (fileptr = filelist; fileptr && fileptr->filename; ++fileptr)
@@ -903,8 +972,10 @@ init (int argc, char **argv)
 	strcpy (info_v, info);
 	strcat (info_v, RCSEXT);
 	if (isfile (info_v))
-	    /* We will check out this file in the mkmodules step.
-	       Nothing else is required.  */
+	    /*
+	       We will check out this file in the mkmodules step.
+	       Nothing else is required.  
+	     */
 	    ;
 	else
 	{
@@ -913,7 +984,7 @@ init (int argc, char **argv)
 	    if (!isfile (info))
 	    {
 		FILE *fp;
-		const char * const *p;
+		const char *const *p;
 
 		fp = open_file (info, "w");
 		for (p = fileptr->contents; *p != NULL; ++p)
@@ -922,24 +993,29 @@ init (int argc, char **argv)
 		if (fclose (fp) < 0)
 		    error (1, errno, "cannot close %s", info);
 	    }
-	    /* The message used to say " of " and fileptr->filename after
+	    /*
+	       The message used to say " of " and fileptr->filename after
 	       "initial checkin" but I fail to see the point as we know what
-	       file it is from the name.  */
+	       file it is from the name.  
+	     */
 	    retcode = add_rcs_file ("initial checkin", info_v,
 				    fileptr->filename, "1.1", NULL,
-
-				    /* No vendor branch.  */
-				    NULL, NULL, 0, NULL,
-
-				    NULL, 0, NULL);
+				    /*
+				       No vendor branch.  
+				     */
+				    NULL, NULL, 0, NULL, NULL, 0, NULL);
 	    if (retcode != 0)
-		/* add_rcs_file already printed an error message.  */
+		/*
+		   add_rcs_file already printed an error message.  
+		 */
 		err = 1;
 	}
     }
 
-    /* Turn on history logging by default.  The user can remove the file
-       to disable it.  */
+    /*
+       Turn on history logging by default.  The user can remove the file
+       to disable it.  
+     */
     strcpy (info, adm);
     strcat (info, "/");
     strcat (info, CVSROOTADM_HISTORY);
@@ -950,14 +1026,18 @@ init (int argc, char **argv)
 	fp = open_file (info, "w");
 	if (fclose (fp) < 0)
 	    error (1, errno, "cannot close %s", info);
- 
-        /* Make the new history file world-writeable, since every CVS
-           user will need to be able to write to it.  We use chmod()
-           because xchmod() is too shy. */
-        chmod (info, 0666);
+
+	/*
+	   Make the new history file world-writeable, since every CVS
+	   user will need to be able to write to it.  We use chmod()
+	   because xchmod() is too shy. 
+	 */
+	chmod (info, 0666);
     }
 
-    /* Make an empty val-tags file to prevent problems creating it later.  */
+    /*
+       Make an empty val-tags file to prevent problems creating it later.  
+     */
     strcpy (info, adm);
     strcat (info, "/");
     strcat (info, CVSROOTADM_VALTAGS);
@@ -968,11 +1048,13 @@ init (int argc, char **argv)
 	fp = open_file (info, "w");
 	if (fclose (fp) < 0)
 	    error (1, errno, "cannot close %s", info);
- 
-        /* Make the new val-tags file world-writeable, since every CVS
-           user will need to be able to write to it.  We use chmod()
-           because xchmod() is too shy. */
-        chmod (info, 0666);
+
+	/*
+	   Make the new val-tags file world-writeable, since every CVS
+	   user will need to be able to write to it.  We use chmod()
+	   because xchmod() is too shy. 
+	 */
+	chmod (info, 0666);
     }
 
     free (info);

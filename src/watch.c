@@ -1,3 +1,4 @@
+
 /* Implementation for "cvs watch add", "cvs watchers", and related commands
 
    This program is free software; you can redistribute it and/or modify
@@ -15,8 +16,7 @@
 #include "fileattr.h"
 #include "watch.h"
 
-const char *const watch_usage[] =
-{
+const char *const watch_usage[] = {
     "Usage: %s %s {on|off|add|remove} [-lR] [-a <action>]... [<path>]...\n",
     "on/off: turn on/off read-only checkouts of files\n",
     "add/remove: add or remove notification on actions\n",
@@ -57,16 +57,20 @@ watch_modify_watchers (char *file, struct addremove_args *what)
     who = getcaller ();
     who_len = strlen (who);
 
-    /* Look for current watcher types for this user.  */
+    /*
+       Look for current watcher types for this user.  
+     */
     mycurattr = NULL;
     if (curattr != NULL)
     {
 	p = curattr;
-	while (1) {
-	    if (strncmp (who, p, who_len) == 0
-		&& p[who_len] == '>')
+	while (1)
+	{
+	    if (strncmp (who, p, who_len) == 0 && p[who_len] == '>')
 	    {
-		/* Found this user.  */
+		/*
+		   Found this user.  
+		 */
 		mycurattr = p + who_len + 1;
 	    }
 	    p = strchr (p, ',');
@@ -83,9 +87,11 @@ watch_modify_watchers (char *file, struct addremove_args *what)
 	    *p = '\0';
     }
 
-    /* Now copy mycurattr to mynewattr, making the requisite modifications.
+    /*
+       Now copy mycurattr to mynewattr, making the requisite modifications.
        Note that we add a dummy '+' to the start of mynewattr, to reduce
-       special cases (but then we strip it off when we are done).  */
+       special cases (but then we strip it off when we are done).  
+     */
 
     mynewattr_size = sizeof "+edit+unedit+commit+tedit+tunedit+tcommit";
     if (mycurattr != NULL)
@@ -103,7 +109,9 @@ watch_modify_watchers (char *file, struct addremove_args *what)
     add_tunedit_pending = what->add_tunedit;
     add_tcommit_pending = what->add_tcommit;
 
-    /* Copy over existing watch types, except those to be removed.  */
+    /*
+       Copy over existing watch types, except those to be removed.  
+     */
     p = mycurattr;
     while (p != NULL)
     {
@@ -116,7 +124,9 @@ watch_modify_watchers (char *file, struct addremove_args *what)
 	else
 	    nextp = pend + 1;
 
-	/* Process this item.  */
+	/*
+	   Process this item.  
+	 */
 	if (pend - p == 4 && strncmp ("edit", p, 4) == 0)
 	{
 	    if (!remove_edit_pending)
@@ -157,19 +167,25 @@ watch_modify_watchers (char *file, struct addremove_args *what)
 	{
 	    char *mp;
 
-	    /* Copy over any unrecognized watch types, for future
-	       expansion.  */
+	    /*
+	       Copy over any unrecognized watch types, for future
+	       expansion.  
+	     */
 	    mp = mynewattr + strlen (mynewattr);
 	    *mp++ = '+';
 	    strncpy (mp, p, pend - p);
 	    *(mp + (pend - p)) = '\0';
 	}
 
-	/* Set up for next item.  */
+	/*
+	   Set up for next item.  
+	 */
 	p = nextp;
     }
 
-    /* Add in new watch types.  */
+    /*
+       Add in new watch types.  
+     */
     if (add_edit_pending)
 	strcat (mynewattr, "+edit");
     if (add_unedit_pending)
@@ -187,19 +203,17 @@ watch_modify_watchers (char *file, struct addremove_args *what)
 	char *curattr_new;
 
 	curattr_new =
-	  fileattr_modify (curattr,
-			   who,
-			   mynewattr[0] == '\0' ? NULL : mynewattr + 1,
-			   '>',
-			   ',');
-	/* If the attribute is unchanged, don't rewrite the attribute file.  */
+	    fileattr_modify (curattr,
+			     who,
+			     mynewattr[0] == '\0' ? NULL : mynewattr + 1,
+			     '>', ',');
+	/*
+	   If the attribute is unchanged, don't rewrite the attribute file.  
+	 */
 	if (!((curattr_new == NULL && curattr == NULL)
 	      || (curattr_new != NULL
-		  && curattr != NULL
-		  && strcmp (curattr_new, curattr) == 0)))
-	    fileattr_set (file,
-			  "_watchers",
-			  curattr_new);
+		  && curattr != NULL && strcmp (curattr_new, curattr) == 0)))
+	    fileattr_set (file, "_watchers", curattr_new);
 	if (curattr_new != NULL)
 	    free (curattr_new);
     }
@@ -212,8 +226,7 @@ watch_modify_watchers (char *file, struct addremove_args *what)
 	free (mynewattr);
 }
 
-static int addremove_fileproc (void *callerdat,
-				      struct file_info *finfo);
+static int addremove_fileproc (void *callerdat, struct file_info *finfo);
 
 static int
 addremove_fileproc (void *callerdat, struct file_info *finfo)
@@ -222,11 +235,11 @@ addremove_fileproc (void *callerdat, struct file_info *finfo)
     return 0;
 }
 
-static int addremove_filesdoneproc (void *, int, char *, char *,
-					   List *);
+static int addremove_filesdoneproc (void *, int, char *, char *, List *);
 
 static int
-addremove_filesdoneproc (void *callerdat, int err, char *repository, char *update_dir, List *entries)
+addremove_filesdoneproc (void *callerdat, int err, char *repository,
+			 char *update_dir, List * entries)
 {
     if (the_args.setting_default)
 	watch_modify_watchers (NULL, &the_args);
@@ -305,8 +318,10 @@ watch_addremove (int argc, char **argv)
 
 	if (local)
 	    send_arg ("-l");
-	/* FIXME: copes poorly with "all" if server is extended to have
-	   new watch types and client is still running an old version.  */
+	/*
+	   FIXME: copes poorly with "all" if server is extended to have
+	   new watch types and client is still running an old version.  
+	 */
 	if (the_args.edit)
 	    option_with_arg ("-a", "edit");
 	if (the_args.unedit)
@@ -319,8 +334,7 @@ watch_addremove (int argc, char **argv)
 	send_files (argc, argv, local, 0, SEND_NO_CONTENTS);
 	send_file_names (argc, argv, SEND_EXPAND_WILD);
 	send_to_server (the_args.adding ?
-                        "watch-add\012" : "watch-remove\012",
-                        0);
+			"watch-add\012" : "watch-remove\012", 0);
 	return get_responses_and_close ();
     }
 #endif /* CLIENT_SUPPORT */
@@ -330,10 +344,10 @@ watch_addremove (int argc, char **argv)
     lock_tree_for_write (argc, argv, local, W_LOCAL, 0);
 
     err = start_recursion
-	( addremove_fileproc, addremove_filesdoneproc,
-	  (DIRENTPROC) NULL, (DIRLEAVEPROC) NULL, NULL,
-	  argc, argv, local, W_LOCAL, 0, CVS_LOCK_NONE,
-	  (char *) NULL, 1, (char *) NULL );
+	(addremove_fileproc, addremove_filesdoneproc,
+	 (DIRENTPROC) NULL, (DIRLEAVEPROC) NULL, NULL,
+	 argc, argv, local, W_LOCAL, 0, CVS_LOCK_NONE,
+	 (char *) NULL, 1, (char *) NULL);
 
     Lock_Cleanup ();
     return err;
@@ -387,8 +401,7 @@ watch (int argc, char **argv)
     return 0;
 }
 
-static const char *const watchers_usage[] =
-{
+static const char *const watchers_usage[] = {
     "Usage: %s %s [-lR] [files...]\n",
     "\t-l\tProcess this directory only (not recursive).\n",
     "\t-R\tProcess directories recursively.\n",
@@ -396,8 +409,7 @@ static const char *const watchers_usage[] =
     NULL
 };
 
-static int watchers_fileproc (void *callerdat,
-				     struct file_info *finfo);
+static int watchers_fileproc (void *callerdat, struct file_info *finfo);
 
 static int
 watchers_fileproc (void *callerdat, struct file_info *finfo)
@@ -419,7 +431,9 @@ watchers_fileproc (void *callerdat, struct file_info *finfo)
 	    cvs_output (p++, 1);
 	if (*p == '\0')
 	{
-	    /* Only happens if attribute is misformed.  */
+	    /*
+	       Only happens if attribute is misformed.  
+	     */
 	    cvs_output ("\n", 1);
 	    break;
 	}
@@ -495,8 +509,8 @@ watchers (int argc, char **argv)
 #endif /* CLIENT_SUPPORT */
 
     return start_recursion
-	( watchers_fileproc, (FILESDONEPROC) NULL,
-	  (DIRENTPROC) NULL, (DIRLEAVEPROC) NULL, NULL,
-	  argc, argv, local, W_LOCAL, 0, CVS_LOCK_READ,
-	  (char *) NULL, 1, (char *) NULL );
+	(watchers_fileproc, (FILESDONEPROC) NULL,
+	 (DIRENTPROC) NULL, (DIRLEAVEPROC) NULL, NULL,
+	 argc, argv, local, W_LOCAL, 0, CVS_LOCK_READ,
+	 (char *) NULL, 1, (char *) NULL);
 }

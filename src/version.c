@@ -1,3 +1,4 @@
+
 /*
  * Copyright (c) 1994 david d `zoo' zuhn
  * Copyright (c) 1994 Free Software Foundation, Inc.
@@ -28,8 +29,7 @@ char *config_string = "\n";
 
 
 
-static const char *const version_usage[] =
-{
+static const char *const version_usage[] = {
     "Usage: %s %s\n",
     NULL
 };
@@ -53,12 +53,14 @@ version (int argc, char **argv)
 
 #ifdef CLIENT_SUPPORT
     if (current_parsed_root && current_parsed_root->isremote)
-        (void) fputs ("Client: ", stdout);
+	(void) fputs ("Client: ", stdout);
 #endif
 
-    /* Having the year here is a good idea, so people have
+    /*
+       Having the year here is a good idea, so people have
        some idea of how long ago their version of CVS was
-       released.  */
+       released.  
+     */
     (void) fputs (PACKAGE_STRING, stdout);
     (void) fputs (config_string, stdout);
 
@@ -79,4 +81,3 @@ version (int argc, char **argv)
 #endif
     return err;
 }
-	

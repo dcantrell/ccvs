@@ -1,3 +1,4 @@
+
 /*
  *
  *    You may distribute under the terms of the GNU General Public License
@@ -182,23 +183,24 @@
 
 static struct hrec
 {
-    char *type;		/* Type of record (In history record) */
-    char *user;		/* Username (In history record) */
-    char *dir;		/* "Compressed" Working dir (In history record) */
-    char *repos;	/* (Tag is special.) Repository (In history record) */
-    char *rev;		/* Revision affected (In history record) */
-    char *file;		/* Filename (In history record) */
-    char *end;		/* Ptr into repository to copy at end of workdir */
-    char *mod;		/* The module within which the file is contained */
-    time_t date;	/* Calculated from date stored in record */
-    long idx;		/* Index of record, for "stable" sort. */
-} *hrec_head;
+    char *type;			/* Type of record (In history record) */
+    char *user;			/* Username (In history record) */
+    char *dir;			/* "Compressed" Working dir (In history record) */
+    char *repos;		/* (Tag is special.) Repository (In history record) */
+    char *rev;			/* Revision affected (In history record) */
+    char *file;			/* Filename (In history record) */
+    char *end;			/* Ptr into repository to copy at end of workdir */
+    char *mod;			/* The module within which the file is contained */
+    time_t date;		/* Calculated from date stored in record */
+    long idx;			/* Index of record, for "stable" sort. */
+}
+*hrec_head;
 static long hrec_idx;
 
 
-static void fill_hrec (char *line, struct hrec * hr);
-static int accept_hrec (struct hrec * hr, struct hrec * lr);
-static int select_hrec (struct hrec * hr);
+static void fill_hrec (char *line, struct hrec *hr);
+static int accept_hrec (struct hrec *hr, struct hrec *lr);
+static int select_hrec (struct hrec *hr);
 static int sort_order (const void *l, const void *r);
 static int within (char *find, char *string);
 static void expand_modules (void);
@@ -244,8 +246,9 @@ char *logHistory = ALL_REC_TYPES;
 static char *since_rev;
 static char *since_tag;
 static char *backto;
+
 /* -D option, or 0 if not specified.  RCS format.  */
-static char * since_date;
+static char *since_date;
 
 static struct hrec *last_since_tag;
 static struct hrec *last_backto;
@@ -266,7 +269,8 @@ static struct file_list_str
 {
     char *l_file;
     char *l_module;
-} *file_list;			/* Ptr to array file name structs */
+}
+*file_list;			/* Ptr to array file name structs */
 static int file_max;		/* Number of elements allocated */
 static int file_count;		/* Number of elements used */
 
@@ -282,8 +286,7 @@ static char *histfile;		/* Ptr to the history file name */
    all, what does "reports" mean?  I think it means that you can only
    supply one of those options, but "reports" hardly has that meaning in
    a self-explanatory way.  */
-static const char *const history_usg[] =
-{
+static const char *const history_usg[] = {
     "Usage: %s %s [-report] [-flags] [-options args] [files...]\n\n",
     "   Reports:\n",
     "        -T              Produce report on all TAGs\n",
@@ -306,7 +309,8 @@ static const char *const history_usg[] =
     "        -t <tag>        Since tag record placed in history file (by anyone).\n",
     "        -u <user>       For user name (repeatable)\n",
     "        -z <tz>         Output for time zone <tz> (e.g. -z -0700)\n",
-    NULL};
+    NULL
+};
 
 /* Sort routine for qsort:
    - If a user is selected at all, sort it first. User-within-file is useless.
@@ -322,23 +326,23 @@ sort_order (const void *l, const void *r)
     const struct hrec *left = (const struct hrec *) l;
     const struct hrec *right = (const struct hrec *) r;
 
-    if (user_sort)	/* If Sort by username, compare users */
+    if (user_sort)			/* If Sort by username, compare users */
     {
 	if ((i = strcmp (left->user, right->user)) != 0)
 	    return (i);
     }
-    if (module_sort)	/* If sort by modules, compare module names */
+    if (module_sort)			/* If sort by modules, compare module names */
     {
 	if (left->mod && right->mod)
 	    if ((i = strcmp (left->mod, right->mod)) != 0)
 		return (i);
     }
-    if (repos_sort)	/* If sort by repository, compare them. */
+    if (repos_sort)			/* If sort by repository, compare them. */
     {
 	if ((i = strcmp (left->repos, right->repos)) != 0)
 	    return (i);
     }
-    if (file_sort)	/* If sort by filename, compare files, NOT dirs. */
+    if (file_sort)			/* If sort by filename, compare files, NOT dirs. */
     {
 	if ((i = strcmp (left->file, right->file)) != 0)
 	    return (i);
@@ -360,7 +364,9 @@ sort_order (const void *l, const void *r)
     if ((i = ((long) (left->date) - (long) (right->date))) != 0)
 	return (i);
 
-    /* For matching dates, keep the sort stable by using record index */
+    /*
+       For matching dates, keep the sort stable by using record index 
+     */
     return (left->idx - right->idx);
 }
 
@@ -378,7 +384,8 @@ history (int argc, char **argv)
     backto = xstrdup ("");
     rec_types = xstrdup ("");
     optind = 0;
-    while ((c = getopt (argc, argv, "+Tacelow?D:b:f:m:n:p:r:t:u:x:X:z:")) != -1)
+    while ((c =
+	    getopt (argc, argv, "+Tacelow?D:b:f:m:n:p:r:t:u:x:X:z:")) != -1)
     {
 	switch (c)
 	{
@@ -436,8 +443,11 @@ history (int argc, char **argv)
 		save_file ("", optarg, (char *) NULL);
 		break;
 	    case 'm':			/* Full module report */
-		if (!module_report++) report_count++;
-		/* fall through */
+		if (!module_report++)
+		    report_count++;
+		/*
+		   fall through 
+		 */
 	    case 'n':			/* Look for specified module */
 		save_module (optarg);
 		break;
@@ -479,16 +489,16 @@ history (int argc, char **argv)
 
 		    for (cp = optarg; *cp; cp++)
 			if (!strchr (ALL_REC_TYPES, *cp))
-			    error (1, 0, "%c is not a valid report type", *cp);
+			    error (1, 0, "%c is not a valid report type",
+				   *cp);
 		}
 		free (rec_types);
 		rec_types = xstrdup (optarg);
 		break;
 	    case 'z':
-		tz_local = 
+		tz_local =
 		    (optarg[0] == 'l' || optarg[0] == 'L')
-		    && (optarg[1] == 't' || optarg[1] == 'T')
-		    && !optarg[2];
+		    && (optarg[1] == 't' || optarg[1] == 'T') && !optarg[2];
 		if (tz_local)
 		    tz_name = optarg;
 		else
@@ -500,10 +510,11 @@ history (int argc, char **argv)
 		    static char f[] = "1/1/1970 23:00 %s";
 		    char *buf = xmalloc (sizeof (f) - 2 + strlen (optarg));
 		    time_t t;
+
 		    sprintf (buf, f, optarg);
 		    t = get_date (buf, (struct timeb *) NULL);
 		    free (buf);
-		    if (t == (time_t) -1)
+		    if (t == (time_t) - 1)
 			error (0, 0, "%s is not a known time zone", optarg);
 		    else
 		    {
@@ -511,7 +522,8 @@ history (int argc, char **argv)
 			 * Convert to seconds east of GMT, removing the
 			 * 23-hour offset mentioned above.
 			 */
-			tz_seconds_east_of_GMT = (time_t)23 * 60 * 60  -  t;
+			tz_seconds_east_of_GMT = (time_t) 23 *60 * 60 - t;
+
 			tz_name = optarg;
 		    }
 		}
@@ -528,7 +540,9 @@ history (int argc, char **argv)
 	save_file ("", argv[i], (char *) NULL);
 
 
-    /* ================ Now analyze the arguments a bit */
+    /*
+       ================ Now analyze the arguments a bit 
+     */
     if (!report_count)
 	v_checkout++;
     else if (report_count > 1)
@@ -540,25 +554,27 @@ history (int argc, char **argv)
 	struct file_list_str *f1;
 	char **mod;
 
-	/* We're the client side.  Fire up the remote server.  */
+	/*
+	   We're the client side.  Fire up the remote server.  
+	 */
 	start_server ();
-	
+
 	ign_setup ();
 
 	if (tag_report)
-	    send_arg("-T");
+	    send_arg ("-T");
 	if (all_users)
-	    send_arg("-a");
+	    send_arg ("-a");
 	if (modified)
-	    send_arg("-c");
+	    send_arg ("-c");
 	if (last_entry)
-	    send_arg("-l");
+	    send_arg ("-l");
 	if (v_checkout)
-	    send_arg("-o");
+	    send_arg ("-o");
 	if (working)
-	    send_arg("-w");
+	    send_arg ("-w");
 	if (histfile)
-	    send_arg("-X");
+	    send_arg ("-X");
 	if (since_date)
 	    client_senddate (since_date);
 	if (backto[0] != '\0')
@@ -571,7 +587,7 @@ history (int argc, char **argv)
 		option_with_arg ("-f", f1->l_file);
 	}
 	if (module_report)
-	    send_arg("-m");
+	    send_arg ("-m");
 	for (mod = mod_list; mod < &mod_list[mod_count]; ++mod)
 	    option_with_arg ("-n", *mod);
 	if (*since_rev)
@@ -585,7 +601,7 @@ history (int argc, char **argv)
 	option_with_arg ("-z", tz_name);
 
 	send_to_server ("history\012", 0);
-        return get_responses_and_close ();
+	return get_responses_and_close ();
     }
 #endif
 
@@ -639,11 +655,15 @@ history (int argc, char **argv)
 	working = 0;			/* User's workdir doesn't count here */
     }
     else
-	/* Must be "checkout" or default */
+	/*
+	   Must be "checkout" or default 
+	 */
     {
 	free (rec_types);
 	rec_types = xstrdup ("OF");
-	/* See comments in "modified" above */
+	/*
+	   See comments in "modified" above 
+	 */
 	if (!last_entry && user_list)
 	    user_sort++;
 	if (last_entry
@@ -651,11 +671,15 @@ history (int argc, char **argv)
 	    file_sort++;
     }
 
-    /* If no users were specified, use self (-a saves a universal ("") user) */
+    /*
+       If no users were specified, use self (-a saves a universal ("") user) 
+     */
     if (!user_list)
 	save_user (getcaller ());
 
-    /* If we're looking back to a Tag value, must consider "Tag" records */
+    /*
+       If we're looking back to a Tag value, must consider "Tag" records 
+     */
     if (*since_tag && !strchr (rec_types, 'T'))
     {
 	rec_types = xrealloc (rec_types, strlen (rec_types) + 5);
@@ -666,17 +690,18 @@ history (int argc, char **argv)
 	fname = xstrdup (histfile);
     else
     {
-	fname = xmalloc (strlen (current_parsed_root->directory) + sizeof (CVSROOTADM)
-			 + sizeof (CVSROOTADM_HISTORY) + 10);
+	fname =
+	    xmalloc (strlen (current_parsed_root->directory) +
+		     sizeof (CVSROOTADM) + sizeof (CVSROOTADM_HISTORY) + 10);
 	(void) sprintf (fname, "%s/%s/%s", current_parsed_root->directory,
 			CVSROOTADM, CVSROOTADM_HISTORY);
     }
 
     read_hrecs (fname);
-    if(hrec_count>0)
+    if (hrec_count > 0)
     {
-	qsort ((void *) hrec_head, hrec_count, 
-		sizeof (struct hrec), sort_order);
+	qsort ((void *) hrec_head, hrec_count,
+	       sizeof (struct hrec), sort_order);
     }
     report_hrecs ();
     free (fname);
@@ -691,7 +716,8 @@ history (int argc, char **argv)
 }
 
 void
-history_write (int type, char *update_dir, char *revs, char *name, char *repository)
+history_write (int type, char *update_dir, char *revs, char *name,
+	       char *repository)
 {
     char *fname;
     char *workdir;
@@ -703,26 +729,30 @@ history_write (int type, char *update_dir, char *revs, char *name, char *reposit
     static char *tilde = "";
     static char *PrCurDir = NULL;
 
-    if (logoff)			/* History is turned off by noexec or
-				 * readonlyfs.
-				 */
+    if (logoff)				/* History is turned off by noexec or
+					 * readonlyfs.
+					 */
 	return;
-    if ( strchr(logHistory, type) == NULL )	
+    if (strchr (logHistory, type) == NULL)
 	return;
-    fname = xmalloc (strlen (current_parsed_root->directory) + sizeof (CVSROOTADM)
-		     + sizeof (CVSROOTADM_HISTORY) + 3);
+    fname =
+	xmalloc (strlen (current_parsed_root->directory) +
+		 sizeof (CVSROOTADM) + sizeof (CVSROOTADM_HISTORY) + 3);
     (void) sprintf (fname, "%s/%s/%s", current_parsed_root->directory,
 		    CVSROOTADM, CVSROOTADM_HISTORY);
 
-    /* turn off history logging if the history file does not exist */
-    /* FIXME:  This should check for write permissions instead.  This way,
-     * O_CREATE could be added back into the call to open() below and
-     * there would be no race condition involved in log rotation.
-     *
-     * Note that the new method of turning off logging would be either via
-     * the CVSROOT/config file (probably the quicker method, but would need
-     * to be added, or at least checked for, too) or by creating a dummy
-     * history file with 0444 permissions.
+    /*
+       turn off history logging if the history file does not exist 
+     */
+    /*
+       FIXME:  This should check for write permissions instead.  This way,
+       * O_CREATE could be added back into the call to open() below and
+       * there would be no race condition involved in log rotation.
+       *
+       * Note that the new method of turning off logging would be either via
+       * the CVSROOT/config file (probably the quicker method, but would need
+       * to be added, or at least checked for, too) or by creating a dummy
+       * history file with 0444 permissions.
      */
     if (!isfile (fname))
     {
@@ -730,19 +760,19 @@ history_write (int type, char *update_dir, char *revs, char *name, char *reposit
 	goto out;
     }
 
-    TRACE ( 1, "fopen(%s,a)", fname );
+    TRACE (1, "fopen(%s,a)", fname);
 
     if (noexec)
 	goto out;
     fd = CVS_OPEN (fname, O_WRONLY | O_APPEND | OPEN_BINARY, 0666);
     if (fd < 0)
     {
-	if (! really_quiet)
-        {
-            error (0, errno, "warning: cannot write to history file %s",
-                   fname);
-        }
-        goto out;
+	if (!really_quiet)
+	{
+	    error (0, errno, "warning: cannot write to history file %s",
+		   fname);
+	}
+	goto out;
     }
 
     repos = Short_Repository (repository);
@@ -755,7 +785,9 @@ history_write (int type, char *update_dir, char *revs, char *name, char *reposit
 	PrCurDir = CurDir;
 	if (pwdir != NULL)
 	{
-	    /* Assumes neither CurDir nor pwdir ends in '/' */
+	    /*
+	       Assumes neither CurDir nor pwdir ends in '/' 
+	     */
 	    i = strlen (pwdir);
 	    if (!strncmp (CurDir, pwdir, i))
 	    {
@@ -764,14 +796,16 @@ history_write (int type, char *update_dir, char *revs, char *name, char *reposit
 	    }
 	    else
 	    {
-		/* Try harder to find a "homedir" */
+		/*
+		   Try harder to find a "homedir" 
+		 */
 		struct saved_cwd cwd;
 		char *homedir;
 
 		if (save_cwd (&cwd))
 		    error_exit ();
 
-		if ( CVS_CHDIR (pwdir) < 0 || (homedir = xgetwd ()) == NULL)
+		if (CVS_CHDIR (pwdir) < 0 || (homedir = xgetwd ()) == NULL)
 		    homedir = pwdir;
 
 		if (restore_cwd (&cwd, NULL))
@@ -807,7 +841,7 @@ history_write (int type, char *update_dir, char *revs, char *name, char *reposit
 
     /*
      * "workdir" is the directory where the file "name" is. ("^~" == $HOME)
-     * "repos"	is the Repository, relative to $CVSROOT where the RCS file is.
+     * "repos"  is the Repository, relative to $CVSROOT where the RCS file is.
      *
      * "$workdir/$name" is the working file name.
      * "$CVSROOT/$repos/$name,v" is the RCS file in the Repository.
@@ -867,7 +901,9 @@ history_write (int type, char *update_dir, char *revs, char *name, char *reposit
 	     type, (long) time ((time_t *) NULL),
 	     username, workdir, repos, revs, name);
 
-    /* Lessen some race conditions on non-Posix-compliant hosts.  */
+    /*
+       Lessen some race conditions on non-Posix-compliant hosts.  
+     */
     if (lseek (fd, (off_t) 0, SEEK_END) == -1)
 	error (1, errno, "cannot seek to end of history file: %s", fname);
 
@@ -877,7 +913,7 @@ history_write (int type, char *update_dir, char *revs, char *name, char *reposit
     if (close (fd) != 0)
 	error (1, errno, "cannot close history file: %s", fname);
     free (workdir);
- out:
+  out:
     free (fname);
 }
 
@@ -919,7 +955,8 @@ save_file (char *dir, char *name, char *module)
     {
 	file_max += FILE_INCREMENT;
 	file_list = (struct file_list_str *) xrealloc ((char *) file_list,
-						   file_max * sizeof (*fl));
+						       file_max *
+						       sizeof (*fl));
     }
     fl = &file_list[file_count++];
     fl->l_file = cp = xmalloc (strlen (dir) + strlen (name) + 2);
@@ -1062,7 +1099,7 @@ read_hrecs (char *fname)
     if (!(st_buf.st_size))
 	error (1, 0, "history file is empty");
 
-    cpstart = xmalloc (2 * STAT_BLOCKSIZE(st_buf));
+    cpstart = xmalloc (2 * STAT_BLOCKSIZE (st_buf));
     cpstart[0] = '\0';
     cp = cpend = cpstart;
 
@@ -1073,20 +1110,21 @@ read_hrecs (char *fname)
     for (;;)
     {
 	for (nl = cp; nl < cpend && *nl != '\n'; nl++)
-	    if (!isprint(*nl)) *nl = ' ';
+	    if (!isprint (*nl))
+		*nl = ' ';
 
 	if (nl >= cpend)
 	{
-	    if (nl - cp >= STAT_BLOCKSIZE(st_buf))
+	    if (nl - cp >= STAT_BLOCKSIZE (st_buf))
 	    {
-		error(1, 0, "history line %ld too long (> %lu)", hrec_idx + 1,
-		      (unsigned long) STAT_BLOCKSIZE(st_buf));
+		error (1, 0, "history line %ld too long (> %lu)",
+		       hrec_idx + 1, (unsigned long) STAT_BLOCKSIZE (st_buf));
 	    }
 	    if (nl > cp)
 		memmove (cpstart, cp, nl - cp);
 	    nl = cpstart + (nl - cp);
 	    cp = cpstart;
-	    i = read (fd, nl, STAT_BLOCKSIZE(st_buf));
+	    i = read (fd, nl, STAT_BLOCKSIZE (st_buf));
 	    if (i > 0)
 	    {
 		cpend = nl + i;
@@ -1095,7 +1133,8 @@ read_hrecs (char *fname)
 	    }
 	    if (i < 0)
 		error (1, errno, "error reading history file");
-	    if (nl == cp) break;
+	    if (nl == cp)
+		break;
 	    error (0, 0, "warning: no newline at end of history file");
 	}
 	*nl = '\0';
@@ -1113,28 +1152,31 @@ read_hrecs (char *fname)
 		last_backto = hrec_head + (last_backto - old_head);
 	}
 
-	/* fill_hrec dates from when history read the entire 
+	/*
+	   fill_hrec dates from when history read the entire 
 	   history file in one chunk, and then records were pulled out
 	   by pointing to the various parts of this big chunk.  This is
 	   why there are ugly hacks here:  I don't want to completely
-	   re-write the whole history stuff right now.  */
+	   re-write the whole history stuff right now.  
+	 */
 
-	hrline = xstrdup ((char *)cp);
+	hrline = xstrdup ((char *) cp);
 	fill_hrec (hrline, &hrec_head[hrec_count]);
 	if (select_hrec (&hrec_head[hrec_count]))
 	    hrec_count++;
-	else 
-	    free(hrline);
+	else
+	    free (hrline);
 
 	cp = nl + 1;
     }
     free (cpstart);
     close (fd);
 
-    /* Special selection problem: If "since_tag" is set, we have saved every
-     * record from the 1st occurrence of "since_tag", when we want to save
-     * records since the *last* occurrence of "since_tag".  So what we have
-     * to do is bump hrec_head forward and reduce hrec_count accordingly.
+    /*
+       Special selection problem: If "since_tag" is set, we have saved every
+       * record from the 1st occurrence of "since_tag", when we want to save
+       * records since the *last* occurrence of "since_tag".  So what we have
+       * to do is bump hrec_head forward and reduce hrec_count accordingly.
      */
     if (last_since_tag)
     {
@@ -1142,7 +1184,9 @@ read_hrecs (char *fname)
 	hrec_head = last_since_tag;
     }
 
-    /* Much the same thing is necessary for the "backto" option. */
+    /*
+       Much the same thing is necessary for the "backto" option. 
+     */
     if (last_backto)
     {
 	hrec_count -= (last_backto - hrec_head);
@@ -1184,7 +1228,9 @@ select_hrec (struct hrec *hr)
     struct file_list_str *fl;
     int count;
 
-    /* basic validity checking */
+    /*
+       basic validity checking 
+     */
     if (!hr->type || !hr->user || !hr->dir || !hr->repos || !hr->rev ||
 	!hr->file || !hr->end)
     {
@@ -1192,30 +1238,32 @@ select_hrec (struct hrec *hr)
 	return (0);
     }
 
-    /* "Since" checking:  The argument parser guarantees that only one of the
-     *			  following four choices is set:
-     *
-     * 1. If "since_date" is set, it contains the date specified on the
-     *    command line. hr->date fields earlier than "since_date" are ignored.
-     * 2. If "since_rev" is set, it contains either an RCS "dotted" revision
-     *    number (which is of limited use) or a symbolic TAG.  Each RCS file
-     *    is examined and the date on the specified revision (or the revision
-     *    corresponding to the TAG) in the RCS file (CVSROOT/repos/file) is
-     *    compared against hr->date as in 1. above.
-     * 3. If "since_tag" is set, matching tag records are saved.  The field
-     *    "last_since_tag" is set to the last one of these.  Since we don't
-     *    know where the last one will be, all records are saved from the
-     *    first occurrence of the TAG.  Later, at the end of "select_hrec"
-     *    records before the last occurrence of "since_tag" are skipped.
-     * 4. If "backto" is set, all records with a module name or file name
-     *    matching "backto" are saved.  In addition, all records with a
-     *    repository field with a *prefix* matching "backto" are saved.
-     *    The field "last_backto" is set to the last one of these.  As in
-     *    3. above, "select_hrec" adjusts to include the last one later on.
+    /*
+       "Since" checking:  The argument parser guarantees that only one of the
+       *                          following four choices is set:
+       *
+       * 1. If "since_date" is set, it contains the date specified on the
+       *    command line. hr->date fields earlier than "since_date" are ignored.
+       * 2. If "since_rev" is set, it contains either an RCS "dotted" revision
+       *    number (which is of limited use) or a symbolic TAG.  Each RCS file
+       *    is examined and the date on the specified revision (or the revision
+       *    corresponding to the TAG) in the RCS file (CVSROOT/repos/file) is
+       *    compared against hr->date as in 1. above.
+       * 3. If "since_tag" is set, matching tag records are saved.  The field
+       *    "last_since_tag" is set to the last one of these.  Since we don't
+       *    know where the last one will be, all records are saved from the
+       *    first occurrence of the TAG.  Later, at the end of "select_hrec"
+       *    records before the last occurrence of "since_tag" are skipped.
+       * 4. If "backto" is set, all records with a module name or file name
+       *    matching "backto" are saved.  In addition, all records with a
+       *    repository field with a *prefix* matching "backto" are saved.
+       *    The field "last_backto" is set to the last one of these.  As in
+       *    3. above, "select_hrec" adjusts to include the last one later on.
      */
     if (since_date)
     {
 	char *ourdate = date_from_time_t (hr->date);
+
 	count = RCS_datecmp (ourdate, since_date);
 	free (ourdate);
 	if (count < 0)
@@ -1229,7 +1277,9 @@ select_hrec (struct hrec *hr)
 
 	memset (&finfo, 0, sizeof finfo);
 	finfo.file = hr->file;
-	/* Not used, so don't worry about it.  */
+	/*
+	   Not used, so don't worry about it.  
+	 */
 	finfo.update_dir = NULL;
 	finfo.fullname = finfo.file;
 	finfo.repository = hr->repos;
@@ -1240,8 +1290,9 @@ select_hrec (struct hrec *hr)
 			   1, 0);
 	if (vers->vn_rcs)
 	{
-	    if ((t = RCS_getrevtime (vers->srcfile, vers->vn_rcs, (char *) 0, 0))
-		!= (time_t) 0)
+	    if ((t =
+		 RCS_getrevtime (vers->srcfile, vers->vn_rcs, (char *) 0,
+				 0)) != (time_t) 0)
 	    {
 		if (hr->date < t)
 		{
@@ -1280,10 +1331,11 @@ select_hrec (struct hrec *hr)
 	    return (0);
     }
 
-    /* User checking:
-     *
-     * Run down "user_list", match username ("" matches anything)
-     * If "" is not there and actual username is not there, return failure.
+    /*
+       User checking:
+       *
+       * Run down "user_list", match username ("" matches anything)
+       * If "" is not there and actual username is not there, return failure.
      */
     if (user_list && hr->user)
     {
@@ -1298,14 +1350,15 @@ select_hrec (struct hrec *hr)
 	    return (0);			/* Not this user */
     }
 
-    /* Record type checking:
-     *
-     * 1. If Record type is not in rec_types field, skip it.
-     * 2. If mod_list is null, keep everything.  Otherwise keep only modules
-     *    on mod_list.
-     * 3. If neither a 'T', 'F' nor 'O' record, run through "file_list".  If
-     *    file_list is null, keep everything.  Otherwise, keep only files on
-     *    file_list, matched appropriately.
+    /*
+       Record type checking:
+       *
+       * 1. If Record type is not in rec_types field, skip it.
+       * 2. If mod_list is null, keep everything.  Otherwise keep only modules
+       *    on mod_list.
+       * 3. If neither a 'T', 'F' nor 'O' record, run through "file_list".  If
+       *    file_list is null, keep everything.  Otherwise, keep only files on
+       *    file_list, matched appropriately.
      */
     if (!strchr (rec_types, *(hr->type)))
 	return (0);
@@ -1315,18 +1368,21 @@ select_hrec (struct hrec *hr)
 	{
 	    for (fl = file_list, count = file_count; count; fl++, count--)
 	    {
-		/* 1. If file_list entry starts with '*', skip the '*' and
-		 *    compare it against the repository in the hrec.
-		 * 2. If file_list entry has a '/' in it, compare it against
-		 *    the concatenation of the repository and file from hrec.
-		 * 3. Else compare the file_list entry against the hrec file.
+		/*
+		   1. If file_list entry starts with '*', skip the '*' and
+		   *    compare it against the repository in the hrec.
+		   * 2. If file_list entry has a '/' in it, compare it against
+		   *    the concatenation of the repository and file from hrec.
+		   * 3. Else compare the file_list entry against the hrec file.
 		 */
 		char *cmpfile = NULL;
 
 		if (*(cp = fl->l_file) == '*')
 		{
 		    cp++;
-		    /* if argument to -p is a prefix of repository */
+		    /*
+		       if argument to -p is a prefix of repository 
+		     */
 		    if (!strncmp (cp, hr->repos, strlen (cp)))
 		    {
 			hr->mod = fl->l_module;
@@ -1338,8 +1394,7 @@ select_hrec (struct hrec *hr)
 		    if (strchr (cp, '/'))
 		    {
 			cmpfile = xmalloc (strlen (hr->repos)
-					   + strlen (hr->file)
-					   + 10);
+					   + strlen (hr->file) + 10);
 			(void) sprintf (cmpfile, "%s/%s",
 					hr->repos, hr->file);
 			cp2 = cmpfile;
@@ -1349,7 +1404,9 @@ select_hrec (struct hrec *hr)
 			cp2 = hr->file;
 		    }
 
-		    /* if requested file is found within {repos}/file fields */
+		    /*
+		       if requested file is found within {repos}/file fields 
+		     */
 		    if (within (cp, cp2))
 		    {
 			hr->mod = fl->l_module;
@@ -1371,10 +1428,10 @@ select_hrec (struct hrec *hr)
 		break;
 	}
 	if (!count)
-	    return (0);	/* Module specified & this record is not one of them. */
+	    return (0);			/* Module specified & this record is not one of them. */
     }
 
-    return (1);		/* Select this record unless rejected above. */
+    return (1);				/* Select this record unless rejected above. */
 }
 
 /* The "sort_order" routine (when handed to qsort) has arranged for the
@@ -1410,7 +1467,9 @@ report_hrecs (void)
 
     user_len = file_len = rev_len = mod_len = repos_len = 0;
 
-    /* Run through lists and find maximum field widths */
+    /*
+       Run through lists and find maximum field widths 
+     */
     hr = lr = hrec_head;
     hr++;
     for (count = hrec_count; count--; lr = hr, hr++)
@@ -1444,14 +1503,15 @@ report_hrecs (void)
 	free (repos);
     }
 
-    /* Walk through hrec array setting "lr" (Last Record) to each element.
-     * "hr" points to the record following "lr" -- It is NULL in the last
-     * pass.
-     *
-     * There are two sections in the loop below:
-     * 1. Based on the report type (e.g. extract, checkout, tag, etc.),
-     *    decide whether the record should be printed.
-     * 2. Based on the record type, format and print the data.
+    /*
+       Walk through hrec array setting "lr" (Last Record) to each element.
+       * "hr" points to the record following "lr" -- It is NULL in the last
+       * pass.
+       *
+       * There are two sections in the loop below:
+       * 1. Based on the report type (e.g. extract, checkout, tag, etc.),
+       *    decide whether the record should be printed.
+       * 2. Based on the record type, format and print the data.
      */
     for (lr = hrec_head, hr = (lr + 1); hrec_count--; lr = hr, hr++)
     {
@@ -1467,14 +1527,15 @@ report_hrecs (void)
 	if (!tz_local)
 	{
 	    time_t t = lr->date + tz_seconds_east_of_GMT;
+
 	    tm = gmtime (&t);
 	}
 	else
 	    tm = localtime (&(lr->date));
 
 	(void) printf ("%c %04d-%02d-%02d %02d:%02d %s %-*s", ty,
-		  tm->tm_year+1900, tm->tm_mon + 1, tm->tm_mday, tm->tm_hour,
-		  tm->tm_min, tz_name, user_len, lr->user);
+		       tm->tm_year + 1900, tm->tm_mon + 1, tm->tm_mday,
+		       tm->tm_hour, tm->tm_min, tz_name, user_len, lr->user);
 
 	workdir = xmalloc (strlen (lr->dir) + strlen (lr->end) + 10);
 	(void) sprintf (workdir, "%s%s", lr->dir, lr->end);
@@ -1498,7 +1559,9 @@ report_hrecs (void)
 	switch (ty)
 	{
 	    case 'T':
-		/* 'T'ag records: repository is a "tag type", rev is the tag */
+		/*
+		   'T'ag records: repository is a "tag type", rev is the tag 
+		 */
 		(void) printf (" %-*s [%s:%s]", mod_len, lr->mod, lr->rev,
 			       repos);
 		if (working)
@@ -1525,7 +1588,8 @@ report_hrecs (void)
 			       lr->mod ? lr->mod : "", workdir);
 		break;
 	    default:
-		(void) printf ("Hey! What is this junk? RecType[0x%2.2x]", ty);
+		(void) printf ("Hey! What is this junk? RecType[0x%2.2x]",
+			       ty);
 		break;
 	}
 	(void) putchar ('\n');
@@ -1549,14 +1613,15 @@ accept_hrec (struct hrec *lr, struct hrec *hr)
 	if (ty != 'O')
 	    return (0);			/* Only interested in 'O' records */
 
-	/* We want to identify all the states that cause the next record
-	 * ("hr") to be different from the current one ("lr") and only
-	 * print a line at the allowed boundaries.
+	/*
+	   We want to identify all the states that cause the next record
+	   * ("hr") to be different from the current one ("lr") and only
+	   * print a line at the allowed boundaries.
 	 */
 
 	if (!hr ||			/* The last record */
 	    strcmp (hr->user, lr->user) ||	/* User has changed */
-	    strcmp (hr->mod, lr->mod) ||/* Module has changed */
+	    strcmp (hr->mod, lr->mod) ||	/* Module has changed */
 	    (working &&			/* If must match "workdir" */
 	     (strcmp (hr->dir, lr->dir) ||	/*    and the 1st parts or */
 	      strcmp (hr->end, lr->end))))	/*    the 2nd parts differ */
@@ -1568,7 +1633,7 @@ accept_hrec (struct hrec *lr, struct hrec *hr)
 	if (!last_entry ||		/* Don't want only last rec */
 	    !hr ||			/* Last entry is a "last entry" */
 	    strcmp (hr->repos, lr->repos) ||	/* Repository has changed */
-	    strcmp (hr->file, lr->file))/* File has changed */
+	    strcmp (hr->file, lr->file))	/* File has changed */
 	    return (1);
 
 	if (working)
@@ -1582,14 +1647,16 @@ accept_hrec (struct hrec *lr, struct hrec *hr)
     {
 	if (!last_entry ||		/* Don't want only last rec */
 	    !hr ||			/* Last entry is a "last entry" */
-	    strcmp (hr->mod, lr->mod) ||/* Module has changed */
+	    strcmp (hr->mod, lr->mod) ||	/* Module has changed */
 	    strcmp (hr->repos, lr->repos) ||	/* Repository has changed */
-	    strcmp (hr->file, lr->file))/* File has changed */
+	    strcmp (hr->file, lr->file))	/* File has changed */
 	    return (1);
     }
     else
     {
-	/* "extract" and "tag_report" always print selected records. */
+	/*
+	   "extract" and "tag_report" always print selected records. 
+	 */
 	return (1);
     }
 
