@@ -1,5 +1,9 @@
 2004-09-17  Derek Price  <derek@ximbiot.com>
 
+	* config.h.in: Remove TRUST_OS_FILE_CACHE.
+
+2004-09-17  Derek Price  <derek@ximbiot.com>
+
 	* stripslash.c: Remove file.
 
 2004-09-14  Mark D. Baushke  <mdb@cvshome.org>
