@@ -31546,14 +31546,8 @@ EOF
 
 	  # Checkin to secondary
 	  cd ../..
-	  #CVSROOT_save=$CVSROOT
-	  #CVSROOT=$SECONDARY_CVSROOT
-	  #CVS_SERVER_LOG=/tmp/cvsserverlog
-	  #CVS_CLIENT_LOG=/tmp/cvsclientlog
-	  #export CVS_SERVER_LOG CVS_CLIENT_LOG
 	  dotest writeproxy-ssh-noredirect-1 \
 "$testcvs -qd '$SECONDARY_CVSROOT' co -ldtop ."
-	  #CVSROOT=$CVSROOT_save
 
 	  cd top
 	  mkdir firstdir
