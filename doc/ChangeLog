@@ -1,3 +1,40 @@
+2003-02-06  Derek Price  <derek@ximbiot.com>
+
+	* cvs.texinfo (Working directory storage, Module options,
+	Module program options): Correct description of where Checkin.prog
+	and Update.prog are run.  Provide more index entries and cross
+	references.  Remove some FIXME comments.  Add a FIXCVS THEN FIXME.
+	(Thanks to Art Manion at the CERT Coordination Center <cert@cert.org>.)
+
+2003-02-04  Derek Price  <derek@ximbiot.com>
+
+	* cvs.texinfo (File status): Mention the "Unresolved Conflict" status
+	which was apparently and erroneously removed from the doc at some
+	point in the past.
+
+2003-02-03  Derek Price  <derek@ximbiot.com>
+
+	* cvs.texinfo (Merging a branch): Mention the GCA as opposed to the
+	"branch point" as the implicit revision when merging a branch.
+
+2003-02-03  Derek Price  <derek@ximbiot.com>
+
+	* cvs.texinfo (Remote repositories): :METHOD: is optional.
+
+2003-02-03  Derek Price  <derek@ximbiot.com>
+
+	* cvs.texinfo (Committing your changes): Move index entries closer to
+	their corresponding references.
+	(Environment variables): Include $VISUAL in order of
+	preference.  Add index entries.  Reference Global options node.
+	(Variables): Change order of list to match the Env. Variables node
+	mentioned above.
+
+	* stamp-1: Regenerated.
+	* stamp-vti: Ditto.
+	* version-client.texi: Ditto.
+	* version.texi: Ditto.
+
 2003-02-14  Derek Price  <derek@ximbiot.com>
 
 	* cvs.texinfo (Watch Information, Editing files, Getting Notified,
