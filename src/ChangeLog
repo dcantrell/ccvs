@@ -1,3 +1,10 @@
+2000-05-18  Larry Jones  <larry.jones@sdrc.com>
+
+	* client.c (connect_to_pserver): Include repository and username in
+	authorization failed message -- if a directory tree crosses multiple
+	repositories, it can be quite difficult for the user to figure out
+	which one is the problem.
+
 2000-05-17  Larry Jones  <larry.jones@sdrc.com>
 
 	* main.c (main): Use full set of options when looking for -f to
