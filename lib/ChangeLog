@@ -1,5 +1,9 @@
 2004-11-02  Mark D. Baushke  <mdb@cvshome.org>
 
+	* getpass.c, setenv.h: Update from GNULIB.
+
+2004-11-02  Mark D. Baushke  <mdb@cvshome.org>
+
 	* test-getdate.sh (getdate): Do not assume 'diff -u' is
 	universally available.
 	* Makefile.am (getdate_SOURCES): Add allocsa.c sources needed by

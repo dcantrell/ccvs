@@ -172,6 +172,10 @@
    you don't. */
 #undef HAVE_DECL_FGETS_UNLOCKED
 
+/* Define to 1 if you have the declaration of `flockfile', and to 0 if you
+   don't. */
+#undef HAVE_DECL_FLOCKFILE
+
 /* Define to 1 if you have the declaration of `fputc_unlocked', and to 0 if
    you don't. */
 #undef HAVE_DECL_FPUTC_UNLOCKED
@@ -183,6 +187,10 @@
 /* Define to 1 if you have the declaration of `fread_unlocked', and to 0 if
    you don't. */
 #undef HAVE_DECL_FREAD_UNLOCKED
+
+/* Define to 1 if you have the declaration of `funlockfile', and to 0 if you
+   don't. */
+#undef HAVE_DECL_FUNLOCKFILE
 
 /* Define to 1 if you have the declaration of `fwrite_unlocked', and to 0 if
    you don't. */
@@ -942,6 +950,9 @@
 /* Define if utime requires write access to the file (true on Windows, but not
    Unix). */
 #define UTIME_EXPECTS_WRITABLE
+
+/* Define if unsetenv() returns void, not int. */
+#undef VOID_UNSETENV
 
 /* Define to 1 if your processor stores words with the most significant byte
    first (like Motorola and SPARC, unlike Intel and VAX). */

@@ -99,11 +99,12 @@
 /* Define to 1 if you have the `alarm' function. */
 #undef HAVE_ALARM
 
-/* Define to 1 if you have `alloca', as a function or macro. */
+/* Define to 1 if you have `alloca' after including <alloca.h>, a header that
+   may be supplied by this distribution. */
 #undef HAVE_ALLOCA
 
-/* Define to 1 if you have <alloca.h> and it should be used (not on Ultrix).
-   */
+/* Define HAVE_ALLOCA_H for backward compatibility with older code that
+   includes <alloca.h> only if HAVE_ALLOCA_H is defined. */
 #define HAVE_ALLOCA_H 1
 
 /* Define to 1 if you have the `atexit' function. */
@@ -148,6 +149,10 @@
    you don't. */
 #undef HAVE_DECL_FGETS_UNLOCKED
 
+/* Define to 1 if you have the declaration of `flockfile', and to 0 if you
+   don't. */
+#undef HAVE_DECL_FLOCKFILE
+
 /* Define to 1 if you have the declaration of `fputc_unlocked', and to 0 if
    you don't. */
 #undef HAVE_DECL_FPUTC_UNLOCKED
@@ -159,6 +164,10 @@
 /* Define to 1 if you have the declaration of `fread_unlocked', and to 0 if
    you don't. */
 #undef HAVE_DECL_FREAD_UNLOCKED
+
+/* Define to 1 if you have the declaration of `funlockfile', and to 0 if you
+   don't. */
+#undef HAVE_DECL_FUNLOCKFILE
 
 /* Define to 1 if you have the declaration of `fwrite_unlocked', and to 0 if
    you don't. */
@@ -205,6 +214,12 @@
 
 /* Define to 1 if you have the `dup2' function. */
 #undef HAVE_DUP2
+
+/* Define if you have the declaration of environ. */
+#undef HAVE_ENVIRON_DECL
+
+/* Define if you have the declaration of errno. */
+#undef HAVE_ERRNO_DECL
 
 /* Define to 1 if you have the `fchdir' function. */
 #undef HAVE_FCHDIR
@@ -432,6 +447,12 @@
 /* Define to 1 if you have run the test for working tzset. */
 #define HAVE_RUN_TZSET_TEST 1
 
+/* Define to 1 if you have the <search.h> header file. */
+#undef HAVE_SEARCH_H
+
+/* Define to 1 if you have the `setenv' function. */
+#undef HAVE_SETENV
+
 /* Define if the diff library should use setmode for binary files. */
 #define HAVE_SETMODE 1
 
@@ -570,6 +591,9 @@
    `HAVE_STRUCT_TM_TM_ZONE' instead. */
 #undef HAVE_TM_ZONE
 
+/* Define to 1 if you have the `tsearch' function. */
+#undef HAVE_TSEARCH
+
 /* Define to 1 if you don't have `tm_zone' but do have the external array
    `tzname'. */
 #undef HAVE_TZNAME
@@ -585,6 +609,9 @@
 
 /* Define to 1 if you have the <unistd.h> header file. */
 #define HAVE_UNISTD_H 1
+
+/* Define to 1 if you have the `unsetenv' function. */
+#undef HAVE_UNSETENV
 
 /* Define if you have the 'unsigned long long' type. */
 #undef HAVE_UNSIGNED_LONG_LONG
@@ -675,6 +702,9 @@
 /* Define to 1 if `lstat' dereferences a symlink specified with a trailing
    slash. */
 #undef LSTAT_FOLLOWS_SLASHED_SYMLINK
+
+/* If malloc(0) is != NULL, define this to 1. Otherwise define this to 0. */
+#undef MALLOC_0_IS_NONNULL
 
 /* By default, CVS stores its modules and other such items in flat text files
    (MY_NDBM enables this). Turning off MY_NDBM causes CVS to look for a
@@ -827,13 +857,6 @@
 /* Define to 1 if your <sys/time.h> declares `struct tm'. */
 #undef TM_IN_SYS_TIME
 
-/* Define if you want CVS to attempt to second-guess the system file cacne. On
-   some systems, disabling this option may provide a performance boost, but on
-   most modern operating systems it probably won't. If you find a system where
-   this option improves CVS's performance, please send a note describing it to
-   the <bug-cvs@gnu.org> mailing list. */
-#undef TRUST_OS_FILE_CACHE
-
 /* Define if tzset clobbers localtime's static buffer. */
 #undef TZSET_CLOBBERS_LOCALTIME_BUFFER
 
@@ -898,6 +921,9 @@
 /* Define if utime requires write access to the file (true on Windows, but not
    Unix). */
 #define UTIME_EXPECTS_WRITABLE
+
+/* Define if unsetenv() returns void, not int. */
+#undef VOID_UNSETENV
 
 /* Define to 1 if your processor stores words with the most significant byte
    first (like Motorola and SPARC, unlike Intel and VAX). */
@@ -1005,6 +1031,9 @@
 /* Define to the name of the strftime replacement function. */
 #define my_strftime nstrftime
 
+/* Define to rpl_nanosleep if the replacement function should be used. */
+#undef nanosleep
+
 /* Define to rpl_optarg if the replacement variable should be used. */
 #define optarg rpl_optarg
 
@@ -1013,9 +1042,6 @@
 
 /* Define to rpl_optopt if the replacement variable should be used. */
 #define optopt rpl_optopt
-
-/* Define to rpl_nanosleep if the replacement function should be used. */
-#undef nanosleep
 
 /* Define to `int' if <sys/types.h> does not define. */
 #define pid_t int
