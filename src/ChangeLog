@@ -1,3 +1,7 @@
+Wed Jul 24 09:28:33 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* lock.c (set_lock): Adjust comment regarding why we call stat.
+
 Wed Jul 24 15:06:08 1996  Ian Lance Taylor  <ian@cygnus.com>
 
 	Add encryption support over a Kerberos connection.
