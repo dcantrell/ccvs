@@ -14,26 +14,17 @@
  */
 
 #include "cvs.h"
+#include "xgethostname.h"
 #include "strftime.h"
-
-#ifdef HAVE_WINSOCK_H
-# include <winsock.h>
-#elif !HAVE_GETHOSTNAME
-extern int gethostname (char *, int);
-#endif
 
 const char *program_name;
 const char *program_path;
 const char *cvs_cmd_name;
 
-/* I'd dynamically allocate this, but it seems like gethostname
-   requires a fixed size array.  If I'm remembering the RFCs right,
-   256 should be enough.  */
-#ifndef MAXHOSTNAMELEN
-#define MAXHOSTNAMELEN  256
-#endif
-
-char hostname[MAXHOSTNAMELEN];
+char *hostname;
+#ifdef SERVER_SUPPORT
+char *server_hostname;
+#endif /* SERVER_SUPPORT */
 
 int use_editor = 1;
 int use_cvsrc = 1;
@@ -810,7 +801,14 @@ cause intermittent sandbox corruption.");
 	/* make sure we clean up on error */
 	signals_register (main_cleanup);
 
-	gethostname(hostname, sizeof (hostname));
+	hostname = xgethostname();
+#ifdef SERVER_SUPPORT
+	/* Keep track of this separately since the client can change the
+	 * hostname.
+	 */
+	if (server_active)
+	    server_hostname = xstrdup (hostname);
+#endif /* SERVER_SUPPORT */
 
 #ifdef KLUDGE_FOR_WNT_TESTSUITE
 	/* Probably the need for this will go away at some point once

@@ -1,5 +1,17 @@
 2004-11-19  Derek Price  <derek@ximbiot.com>
 
+	* cvs.h (hostname): Redeclare as pointer rather than array.
+	* main.c: Include xgethostname.h.  Declare server_hostname.
+	(main): Use xgethostname().  Set server_hostname.
+	* server.c (MAXHOSTNAMELEN): Remove this macro.
+	(isThisHost): Reference global HOSTNAME rather than looking it up.
+	Improve header comment block.
+	(gserver_authenticate_connection): Likewise.
+	(serve_command_prep): Correct comment.
+	(serve_hostname): Don't bother to validate hostname length.
+
+2004-11-19  Derek Price  <derek@ximbiot.com>
+
 	* server.c (isThisHost): strcasecmp before consulting the DNS as an
 	optimization.
 

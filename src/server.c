@@ -48,17 +48,7 @@ static int cvs_gssapi_wrapping;
 
 #ifdef SERVER_SUPPORT
 
-/* This isn't defined anywhere else that I know of.  We made it up.  Referenced
- * both times this file can call gethostname.
- *
- * FIXME: This should probably correspond to any hostname length limits defined
- * by POSIX or some appropriate internet standard, but I'm not sure where to
- * look and I haven't heard any complaints.  If you happen to know the correct
- * standard, it should probably at least be referenced in this comment.
- */
-# ifndef MAXHOSTNAMELEN
-#   define MAXHOSTNAMELEN (256)
-# endif
+extern char *server_hostname;
 
 # ifdef HAVE_WINSOCK_H
 #   include <winsock.h>
@@ -542,28 +532,24 @@ isSamePath (const char *path1_in, const char *path2_in)
 
 
 /* Return true if OTHERHOST resolves to this host in the DNS.
+ *
+ * GLOBALS
+ *   server_hostname	The name of this host, as determined by the call to
+ *			xgethostname() in main().
+ *
+ * RETURNS
+ *   true	If OTHERHOST equals or resolves to HOSTNAME.
+ *   false	Otherwise.
  */
 static inline bool
 isThisHost (const char *otherhost)
 {
-    /* THISHOST is static so that it may be cached.  Our hostname will not
-     * change from one call to the next.
-     */
-    static char *thishost = NULL;
     struct hostent *hinfo;
-
-    if (!thishost)
-    {
-	thishost = xmalloc (MAXHOSTNAMELEN);
-	if (gethostname (thishost, MAXHOSTNAMELEN))
-	    error (1, errno, "Failed to retrieve hostname.");
-	thishost[MAXHOSTNAMELEN - 1] = '\0';
-    }
 
     /* As an optimization, check the literal strings before looking up
      * OTHERHOST in the DNS.
      */
-    if (!strcasecmp (thishost, otherhost))
+    if (!strcasecmp (server_hostname, otherhost))
 	return true;
 
     if (!(hinfo = gethostbyname (otherhost)))
@@ -575,7 +561,7 @@ isThisHost (const char *otherhost)
 	       otherhost, h_errno);
 #endif
 
-    return !strcasecmp (thishost, hinfo->h_name);
+    return !strcasecmp (server_hostname, hinfo->h_name);
 }
 
 
@@ -2753,16 +2739,8 @@ serve_notify (char *arg)
 static void
 serve_hostname (char *arg)
 {
-    if (strlen (hostname) >= MAXHOSTNAMELEN)
-    {
-	pending_error = 0;
-	if (alloc_pending (80))
-	    strcpy (pending_error_text,
-		    "E Protocol error; hostname too long.");
-	return;
-    }
-
-    strcpy (hostname, arg);
+    free (hostname);
+    hostname = xstrdup (arg);
     return;
 }
 
@@ -5547,8 +5525,8 @@ serve_command_prep (char *arg)
     supported = supported_response ("Redirect");
     if (config->PrimaryServer && supported
 	&& lookup_command_attribute (arg) & CVS_CMD_MODIFIES_REPOSITORY
-	/* I call isProxyServer() last because it is probably the slowest
-	 * call due to the call to gethostname().
+	/* I call isProxyServer() last because it can probably be the slowest
+	 * call due to the call to gethostbyname().
 	 */
 	&& isProxyServer ())
     {
@@ -7192,13 +7170,16 @@ error 0 kerberos: %s\n", krb_get_err_text(status));
 
 #ifdef HAVE_GSSAPI
 /* Authenticate a GSSAPI connection.  This is called from
-   pserver_authenticate_connection, and it handles success and failure
-   the same way.  */
-
+ * pserver_authenticate_connection, and it handles success and failure
+ * the same way.
+ *
+ * GLOBALS
+ *   server_hostname	The name of this host, as set via a call to
+ *			xgethostname() in main().
+ */
 static void
 gserver_authenticate_connection (void)
 {
-    char hostname[MAXHOSTNAMELEN];
     struct hostent *hp;
     gss_buffer_desc tok_in, tok_out;
     char buf[1024];
@@ -7210,8 +7191,7 @@ gserver_authenticate_connection (void)
     int nbytes;
     gss_OID mechid;
 
-    gethostname (hostname, sizeof hostname);
-    hp = gethostbyname (hostname);
+    hp = gethostbyname (server_hostname);
     if (hp == NULL)
 	error (1, 0, "can't get canonical hostname");
 
