@@ -1,3 +1,14 @@
+1996-11-19  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* root.c, repos.c, modules.c, create_adm.c: Change all calls to
+	strip_path to strip_trailing_slashes.  Basically strip_path is
+	just an unneeded complication (we should keep the pathname the way
+	the user specifies it, and the system can worry about things like
+	consecutive /'s if it wants to).  Stripping trailing slashes is
+	potentially dubious for the same reason, but it is a somewhat
+	different case which I won't try to tackle now.
+	* cvs.h (strip_path): Remove declaration.
+
 Tue Nov 19 15:18:13 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	There are a lot of details to this change, but the concept is

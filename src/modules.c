@@ -150,7 +150,7 @@ do_module (db, mname, m_type, msg, callback_proc, where,
     }
 
     /* strip extra stuff from the module name */
-    strip_path (mname);
+    strip_trailing_slashes (mname);
 
     /*
      * Look up the module using the following scheme:
