@@ -1,3 +1,7 @@
+Wed Apr 23 11:20:40 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* entries.c (ParseTag): Always set *NONBRANCHP.
+
 21 Apr 1997  Jim Kingdon
 
 	* client.c (update_entries), rcs.c (expand_keywords): Rewrite
