@@ -448,6 +448,52 @@ warning: this CVS does not support PreservePermissions");
 "Only PrimaryServers with :ext: methods are valid, not `%s'.",
 		       p);
 	}
+	else if (strcmp (line, "MaxSecondaryBufferSize") == 0)
+	{
+	    size_t factor = 1;
+	    char *q = p;
+
+	    /* Record the factor character (kilo, mega, giga, tera).  */
+	    switch (p[strlen(p)])
+	    {
+		case 'T':
+		    factor = xtimes (factor, 2 ^ 10);
+		case 'G':
+		    factor = xtimes (factor, 2 ^ 10);
+		case 'M':
+		    factor = xtimes (factor, 2 ^ 10);
+		case 'k':
+		    factor = xtimes (factor, 2 ^ 10);
+		    p[strlen(p)] = '\0';
+		    break;
+		default:
+		{
+		    char *pinfopath = primary_root_inverse_translate (infopath);
+		    error (0, 0,
+"%s: Unknown MaxSecondaryBufferSize factor: `%c'",
+			   pinfopath, p[strlen(p)]);
+		    free (pinfopath);
+		}
+	    }
+
+	    /* Verify that *q is a number.  */
+	    while (*q)
+	    {
+		if (*q < 0 || *q > 9)
+		{
+		    char *pinfopath = primary_root_inverse_translate (infopath);
+		    error (0, 0,
+"%s: MaxSecondaryBufferSize must be a postitive integer, not '%s'",
+			   pinfopath, p);
+		    free (pinfopath);
+		}
+		q++;
+	    }
+
+	    /* Compute final value.  */
+	    MaxSecondaryBufferSize = strtoul (p, NULL, 10);
+	    MaxSecondaryBufferSize = xtimes (MaxSecondaryBufferSize, factor);
+	}
 	else
 	{
 	    /* We may be dealing with a keyword which was added in a

@@ -59,6 +59,7 @@ int top_level_admin = 0;
 int UseNewInfoFmtStrings = 0;
 #endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
 cvsroot_t *PrimaryServer;
+size_t MaxSecondaryBufferSize = (size_t)(32 * 2^20); /* 32M */
 
 
 

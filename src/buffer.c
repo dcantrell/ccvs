@@ -109,9 +109,8 @@ allocate_buffer_datas (void)
     /* Allocate buffer_data structures in blocks of 16.  */
 # define ALLOC_COUNT (16)
 
-    alc = ((struct buffer_data *)
-	   xmalloc (ALLOC_COUNT * sizeof (struct buffer_data)));
-    space = (char *) valloc (ALLOC_COUNT * BUFFER_DATA_SIZE);
+    alc = xmalloc (ALLOC_COUNT * sizeof (struct buffer_data));
+    space = valloc (ALLOC_COUNT * BUFFER_DATA_SIZE);
     if (alc == NULL || space == NULL)
 	return;
     for (i = 0; i < ALLOC_COUNT; i++, alc++, space += BUFFER_DATA_SIZE)
@@ -473,7 +472,7 @@ buf_send_counted (struct buffer *buf)
 
 /*
  * Send a special count.  COUNT should be negative.  It will be
- * handled speciallyi by buf_copy_counted.  This function returns 0 or
+ * handled specially by buf_copy_counted.  This function returns 0 or
  * an errno code.
  *
  * Sending the count in binary is OK since this is only used on a pipe
@@ -519,6 +518,43 @@ buf_append_data (struct buffer *buf, struct buffer_data *data,
 	    buf->last->next = data;
 	buf->last = last;
     }
+}
+
+
+
+/* Copy data structures and append them to a buffer.
+ *
+ * ERRORS
+ *   Failure to allocate memory here is fatal.
+ */
+void
+buf_copy_data (struct buffer *buf, struct buffer_data *data,
+               struct buffer_data *last)
+{
+    struct buffer_data *first, *new, *cur, *prev;
+
+    assert (buf);
+    assert (data);
+
+    prev = first = NULL;
+    cur = data;
+    while (1)
+    {
+	new = get_buffer_data ();
+	if (!new) error (1, errno, "Failed to allocate buffer data.");
+
+	if (!first) first = new;
+	memcpy (new->text, cur->bufp, cur->size);
+	new->bufp = new->text;
+	new->size = cur->size;
+	new->next = NULL;
+	if (prev) prev->next = new;
+	if (cur == last) break;
+	prev = new;
+	cur = cur->next;
+    }
+
+    buf_append_data (buf, first, cur);
 }
 
 

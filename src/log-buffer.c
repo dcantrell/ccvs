@@ -33,52 +33,126 @@ struct log_buffer
     FILE *log;
     /* Whether errors writing to the log file should be fatal or not.  */
     bool fatal_errors;
+
+    /* The memory buffer (cache) backing this log.  */
+    struct buffer *back_buf;
+
+    /* The name of the file backing this buffer so that it may be deleted on
+     * buffer shutdown.
+     */
+    char *back_fn;
+
+    /* Set once logging is permanently disabled for a buffer.  */
+    bool disabled;
+
+    /* The maximum number of bytes to store in memory before beginning logging
+     * to a file.
+     */
+    size_t max;
+
+    /* Once we start logging to a file we do not want to stop unless asked.  */
+    bool tofile;
 };
 
+
+
+static inline void
+log_buffer_force_file (struct log_buffer *lb)
+{
+    /* TODO: Force existance of lb->log.  */
+    if (!lb->log && !lb->disabled)
+    {
+	lb->log = cvs_temp_file (&lb->back_fn);
+        if (!lb->log)
+	    error (lb->fatal_errors, errno, "failed to open log file.");
+    }
+}
+
+
+
+/* Create a log buffer.
+ *
+ * INPUTS
+ *   buf		A pointer to the buffer structure to log input from.
+ *   fp			A file name to log data to.  May be NULL.
+ *   fatal_errors	Whether errors writing to a log file should be
+ *			considered fatal.
+ *   input		Whether we will log data for an input or output
+ *			buffer.
+ *   max		The maximum size of our memory cache.
+ *   memory		The function to call when memory allocation errors are
+ *			encountered.
+ *
+ * RETURNS
+ *   A pointer to a new buffer structure.
+ */
 static int log_buffer_input (void *, char *, int, int, int *);
 static int log_buffer_output (void *, const char *, int, int *);
 static int log_buffer_flush (void *);
 static int log_buffer_block (void *, int);
 static int log_buffer_get_fd (void *);
 static int log_buffer_shutdown (struct buffer *);
-
-/* Create a log buffer.  */
-
 struct buffer *
 log_buffer_initialize (struct buffer *buf, FILE *fp, bool fatal_errors,
-                       bool input, void (*memory) (struct buffer *))
+                       bool input, size_t max,
+		       void (*memory) (struct buffer *))
 {
-    struct log_buffer *n = xmalloc (sizeof *n);
+    struct log_buffer *lb = xmalloc (sizeof *lb);
     struct buffer *retbuf;
 
-    n->buf = buf;
-    n->log = fp;
-    n->fatal_errors = fatal_errors;
+    assert (size_in_bounds_p (max));
+
+    lb->buf = buf;
+    lb->back_buf = buf_nonio_initialize (memory);
+    lb->back_fn = NULL;
+    lb->log = fp;
+    lb->fatal_errors = fatal_errors;
+    lb->max = max;
+    lb->disabled = false;
+    lb->tofile = false;
     retbuf = buf_initialize (0, 0,
                              input ? log_buffer_input : NULL,
 			     input ? NULL : log_buffer_output,
 			     input ? NULL : log_buffer_flush,
 			     log_buffer_block, log_buffer_get_fd,
-			     log_buffer_shutdown, memory, n);
+			     log_buffer_shutdown, memory, lb);
 
     if (!buf_empty_p (buf))
     {
-	/* If our buffer already had data, log it & copy it.  This can happen,
-	 * for instance, with a pserver, where we deliberately do not
-         * instantiate the log buffer until after authentication so that auth
-         * data does not get logged (the pserver data will not be logged in
-	 * this case, but any data which was left unused in the buffer by the
-	 * auth code will be logged and put in our new buffer).
+	/* If our buffer already had data, copy it & log it if necessary.  This
+	 * can happen, for instance, with a pserver, where we deliberately do
+	 * not instantiate the log buffer until after authentication so that
+	 * auth data does not get logged (the pserver data will not be logged
+	 * in this case, but any data which was left unused in the buffer by
+	 * the auth code will be logged and put in our new buffer).
 	 */
 	struct buffer_data *data;
+	size_t total;
+
+	if (!lb->tofile) total = buf_count_mem (lb->back_buf);
 	for (data = buf->data; data = data->next; data != NULL)
 	{
-	    if (data->size)
+	    if (!lb->tofile)
 	    {
-		if (fwrite (data->bufp, 1, data->size, fp) != data->size)
-		    error (fatal_errors, errno, "writing to log file");
-		fflush (fp);
+		total = xsum (data->size, total);
+		if (total >= max)
+		    lb->tofile = true;
 	    }
+
+	    if (lb->tofile)
+	    {
+		log_buffer_force_file (lb);
+		if (lb->log)
+		{
+		    if (fwrite (data->bufp, 1, data->size, lb->log)
+			!= data->size)
+			error (fatal_errors, errno, "writing to log file");
+		    fflush (lb->log);
+		}
+	    }
+	    else
+		/* Log to memory buffer.  */
+		buf_copy_data (lb->back_buf, data, data);
 	}
 	buf_append_buffer (retbuf, buf);
     }
@@ -93,21 +167,32 @@ log_buffer_input (void *closure, char *data, int need, int size, int *got)
 {
     struct log_buffer *lb = closure;
     int status;
-    size_t n_to_write;
 
-    if (lb->buf->input == NULL)
-	abort ();
+    assert (lb->buf->input);
 
     status = (*lb->buf->input) (lb->buf->closure, data, need, size, got);
     if (status != 0)
 	return status;
 
-    if (lb->log && *got > 0)
+    if (!lb->disabled && *got > 0)
     {
-	n_to_write = *got;
-	if (fwrite (data, 1, n_to_write, lb->log) != n_to_write)
-	    error (lb->fatal_errors, errno, "writing to log file");
-	fflush (lb->log);
+	if (!lb->tofile
+	    && xsum (*got, buf_count_mem (lb->back_buf)) >= lb->max)
+	    lb->tofile = true;
+
+	if (lb->tofile)
+	{
+	    log_buffer_force_file (lb);
+	    if (lb->log)
+	    {
+		if (fwrite (data, 1, *got, lb->log) != *got)
+		    error (lb->fatal_errors, errno, "writing to log file");
+		fflush (lb->log);
+	    }
+	}
+	else
+	    /* Log to memory buffer.  */
+	    buf_output (lb->back_buf, data, *got);
     }
 
     return 0;
@@ -121,21 +206,32 @@ log_buffer_output (void *closure, const char *data, int have, int *wrote)
 {
     struct log_buffer *lb = closure;
     int status;
-    size_t n_to_write;
 
-    if (lb->buf->output == NULL)
-	abort ();
+    assert (lb->buf->output);
 
     status = (*lb->buf->output) (lb->buf->closure, data, have, wrote);
     if (status != 0)
 	return status;
 
-    if (lb->log && *wrote > 0)
+    if (!lb->disabled && *wrote > 0)
     {
-	n_to_write = *wrote;
-	if (fwrite (data, 1, n_to_write, lb->log) != n_to_write)
-	    error (lb->fatal_errors, errno, "writing to log file");
-	fflush (lb->log);
+	if (!lb->tofile
+	    && xsum (*wrote, buf_count_mem (lb->back_buf)) >= lb->max)
+	    lb->tofile = true;
+
+	if (lb->tofile)
+	{
+	    log_buffer_force_file (lb);
+	    if (lb->log)
+	    {
+		if (fwrite (data, 1, *wrote, lb->log) != *wrote)
+		    error (lb->fatal_errors, errno, "writing to log file");
+		fflush (lb->log);
+	    }
+	}
+	else
+	    /* Log to memory buffer.  */
+	    buf_output (lb->back_buf, data, *wrote);
     }
 
     return 0;
@@ -179,20 +275,51 @@ log_buffer_block (void *closure, int block)
 
 /* Disable logging without shutting down the next buffer in the chain.
  */
-FILE *
-log_buffer_disable (struct buffer *buf)
+struct buffer *
+log_buffer_rewind (struct buffer *buf)
 {
     struct log_buffer *lb = buf->closure;
-    FILE *fp;
+    struct buffer *retbuf;
+    void *tmp;
+    int fd;
 
-    fp = lb->log;
-    if (fp)
+    lb->disabled = true;
+
+    if (lb->log)
     {
-	fflush (fp);
+	tmp = lb->log;
 	lb->log = NULL;
+
+	/* flush & rewind the file.  */
+	if (fflush (tmp) < 0)
+	    error (0, errno, "flushing log file");
+	rewind (tmp);
+
+	/* Get a descriptor for the log and close the FILE *.  */
+	fd = dup (fileno (tmp));
+	if (fclose (tmp) < 0)
+	    error (0, errno, "closing log file");
+    }
+    else
+	fd = open (DEVNULL, O_RDONLY);
+
+    /* Catch dup/open errors.  */
+    if (fd < 0)
+    {
+	error (lb->fatal_errors, errno, "failed to rewind log buf.");
+	return NULL;
     }
 
-    return fp;
+    /* Create a new fd buffer around the log.  */
+    retbuf = fd_buffer_initialize (fd, 0, NULL, true, buf->memory_error);
+
+    /* Insert the data which wasn't written to a file.  */
+    buf_append_buffer (retbuf, lb->back_buf);
+    tmp = lb->back_buf;
+    lb->back_buf = NULL;
+    buf_free (tmp);
+
+    return retbuf;
 }
 
 
@@ -204,25 +331,35 @@ void
 log_buffer_closelog (struct buffer *buf)
 {
     struct log_buffer *lb = buf->closure;
-    FILE *fp;
+    void *tmp;
 
-    fp = log_buffer_disable (buf);
-    if (fp && fclose (fp) < 0)
-	error (0, errno, "closing log file");
-}
+    lb->disabled = true;
 
+    /* Close the log.  */
+    if (lb->log)
+    {
+	tmp = lb->log;
+	lb->log = NULL;
+	if (fclose (tmp) < 0)
+	    error (0, errno, "closing log file");
+    }
 
+    /* Delete the log if we know its name.  */
+    if (lb->back_fn)
+    {
+	tmp = lb->back_fn;
+	lb->back_fn = NULL;
+	if (CVS_UNLINK (tmp))
+	    error (0, errno, "Failed to delete log file.");
+	free (tmp);
+    }
 
-/* Return the file descriptor of our log, flushing the stream first.
- */
-int
-log_buffer_get_log_fd (struct buffer *buf)
-{
-    struct log_buffer *lb = buf->closure;
-    assert (lb->log);
-    if (fflush (lb->log) == EOF)
-	error (1, errno, "Failed to flush log stream");
-    return fileno (lb->log);
+    if (lb->back_buf)
+    {
+	tmp = lb->back_buf;
+	lb->back_buf = NULL;
+	buf_free (tmp);
+    }
 }
 
 
@@ -242,9 +379,8 @@ static int
 log_buffer_shutdown (struct buffer *buf)
 {
     struct log_buffer *lb = buf->closure;
-    int retval;
 
-    log_buffer_disable (buf);
+    log_buffer_closelog (buf);
     return buf_shutdown (lb->buf);
 }
 
@@ -284,7 +420,7 @@ setup_logfiles (char *var, struct buffer **to_server_p,
 	error (0, errno, "opening to-server logfile %s", buf);
       else
 	*to_server_p = log_buffer_initialize (*to_server_p, fp, false, false,
-					      NULL);
+					      0, NULL);
 
       strcpy (p, ".out");
       fp = open_file (buf, "wb");
@@ -292,7 +428,7 @@ setup_logfiles (char *var, struct buffer **to_server_p,
 	error (0, errno, "opening from-server logfile %s", buf);
       else
 	*from_server_p = log_buffer_initialize (*from_server_p, fp, false,
-                                                true, NULL);
+                                                true, 0, NULL);
 
       free (buf);
     }

@@ -1,3 +1,31 @@
+2004-08-05  Derek Price  <derek@ximbiot.com>
+
+	* buffer.c (buf_copy_data): New function.
+	* buffer.h: Proto new function.
+	* cvs.h (MaxSecondaryBufferSize): Declare new config global.
+	* log-buffer.c: Allow file-backed memory buffers for "speed".
+	(struct log_buffer): Add new fields.
+	(log_buffer_force_file): New function.
+	(log_buffer_initialize): Initialize new fields.
+	(log_buffer_input, log_buffer_output): Handle logging to memory when
+	asked.
+	(log_buffer_disable): Remove function, moving much functionality...
+	(log_buffer_rewind): ...to this new function and expanding.
+	(log_buffer_closelog): Handle new fields and structs.
+	(log_buffer_get_fd): Remove function.
+	(setup_logfiles): Use new _initialize API.
+	* log-buffer.h: Update protos to match.
+	* main.c (MaxSecondaryBufferSize): Init new config global.
+	* mkmodules.c (config_contents): Add comments 4 MaxSecondaryBufferSize.
+	* parseinfo.c (parse_config): Parse MaxSecondaryBufferSize..
+	* server.c (secondary_log_name, secondary_log_out_name): Remove unused
+	globals.
+	(read_secondary_log): Remove function.
+	(reprocess_secondary_log): Use log_buffer_rewind() instead of the above.
+	(become_proxy): Ditto.
+	(server_cleanup): No need to clean up logfiles any longer.
+	(server): Use new log_buffer_initialize API.
+	
 2004-08-04  Derek Price  <derek@ximbiot.com>
 
 	* buffer.c (buf_read_data): s/abort/assert/.
