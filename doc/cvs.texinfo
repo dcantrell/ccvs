@@ -2513,12 +2513,19 @@ connection via rsh; this version will not do so.
 @node Connecting via fork
 @subsection Connecting with fork
 
-@cindex fork
+@cindex fork, access method
 @cindex :fork:, setting up
 This access method allows you to connect to a
 repository on your local disk via the remote protocol.
-While this method isn't very useful for day-to-day
-operations, it is @emph{very} useful when testing or
+In other words it does pretty much the same thing as
+@code{:local:}, but various quirks, bugs and the like are
+those of the remote @sc{cvs} rather than the local
+@sc{cvs}.
+
+For day-to-day operations you might prefer either
+@code{:local:} or @code{:fork:}, depending on your
+preferences.  Of course @code{:fork:} comes in
+particularly handy in testing or
 debugging @code{cvs} and the remote protocol.
 Specifically, we avoid all of the network-related
 setup/configuration, timeouts, and authentication
@@ -2532,6 +2539,11 @@ repository.  For example:
 @example
 cvs -d :fork:/usr/local/cvsroot checkout foo
 @end example
+
+@cindex CVS_SERVER, and :fork:
+As with @code{:ext:}, the server is called @samp{cvs}
+by default, or the value of the @code{CVS_SERVER}
+environment variable.
 
 @c ---------------------------------------------------------------------
 @node Read-only access
