@@ -1,3 +1,12 @@
+Mon Jun 16 16:46:28 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* run.c (piped_child, filter_stream_through_program):
+	If USE_SETMODE_BINARY, then put the pipes into binary mode.
+	* find_names.c, ignore.c, lock.c, wrapper.c: Change fnmatch to
+	CVS_FNMATCH.
+	* client.c (start_server): If NO_EXT_METHOD, then give a fatal
+	error on any use of :ext:.
+
 Sun Jun 15 22:30:27 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* sanity.sh (toplevel): Match U CVSROOT/* lines with DOTSTAR in
