@@ -1,3 +1,11 @@
+Wed Apr 19 08:52:37 1995  Jim Kingdon  (kingdon@lioth.cygnus.com)
+
+	* client.c (send_repository): Check for CVSADM_ENTSTAT in `dir', not
+	in `.'.
+
+	* sanity.sh: Add TODO list.  Revise some comments.  Add tests of
+	one working directory adding a file and other updating it.
+
 Sat Apr  8 14:52:55 1995  Jim Blandy  <jimb@totoro.bio.indiana.edu>
 
 	* Makefile.in (CFLAGS): Let configure set the default for CFLAGS.
