@@ -670,14 +670,14 @@ diff_fileproc (void *callerdat, struct file_info *finfo)
 	    label2 = make_file_label (DEVNULL, NULL, NULL);
 	else
 	    label2 = make_file_label (finfo->fullname, use_rev2,
-	                              vers ? vers->srcfile : NULL);
+	                              vers->srcfile);
 	if (!have_rev1_label)
 	{
 	    if (empty_file == DIFF_ADDED)
 		label1 = make_file_label (DEVNULL, NULL, NULL);
 	    else
 		label1 = make_file_label (finfo->fullname, use_rev1,
-		                          vers ? vers->srcfile : NULL);
+		                          vers->srcfile);
 	}
     }
 
