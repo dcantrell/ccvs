@@ -1,5 +1,10 @@
 2004-10-26  Derek Price  <derek@ximbiot.com>
 
+	* bison.m4 (gl_BISON): Update comment to eliminate new spaces from
+	generated configure script.
+
+2004-10-26  Derek Price  <derek@ximbiot.com>
+
 	* bison.m4 (gl_BISON): Update comment to specify an Automake version
 	number, rather than Autoconf.
 
