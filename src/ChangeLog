@@ -1,3 +1,9 @@
+Wed Aug  2 10:06:51 1995  Vince DeMarco  <vdemarco@bou.shl.com>
+
+	* server.c: fix compiler warnings (on NeXT) (declare functions as
+	static inline instead of just static) functions: get_buffer_date,
+	buf_append_char, and buf_append_data
+
 Mon Sep  4 22:31:28 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* client.c (update_entries), import.c (expand_at_signs): Check for

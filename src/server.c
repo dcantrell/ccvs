@@ -1085,16 +1085,16 @@ struct buffer_data
 static struct buffer_data *free_buffer_data;
 
 static void allocate_buffer_datas PROTO((void));
-static struct buffer_data *get_buffer_data PROTO((void));
+static inline struct buffer_data *get_buffer_data PROTO((void));
 static int buf_empty_p PROTO((struct buffer *));
 static void buf_output PROTO((struct buffer *, const char *, int));
 static void buf_output0 PROTO((struct buffer *, const char *));
-static void buf_append_char PROTO((struct buffer *, int));
+static inline void buf_append_char PROTO((struct buffer *, int));
 static int buf_send_output PROTO((struct buffer *));
 static int set_nonblock PROTO((struct buffer *));
 static int set_block PROTO((struct buffer *));
 static int buf_send_counted PROTO((struct buffer *));
-static void buf_append_data PROTO((struct buffer *,
+static inline void buf_append_data PROTO((struct buffer *,
 				     struct buffer_data *,
 				     struct buffer_data *));
 static int buf_read_file PROTO((FILE *, long, struct buffer_data **,
