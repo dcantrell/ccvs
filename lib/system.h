@@ -295,7 +295,9 @@ int utime ();
    /* memory.h and strings.h conflict on some systems. */
 #endif /* not STDC_HEADERS and not HAVE_STRING_H */
 
+#ifndef ERRNO_H_MISSING
 #include <errno.h>
+#endif
 
 /* Not all systems set the same error code on a non-existent-file
    error.  This tries to ask the question somewhat portably.
