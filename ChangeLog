@@ -1,3 +1,8 @@
+2004-09-17  Derek Price  <derek@ximbiot.com>
+
+	* NEWS: Correct file cache note.
+	* configure.in (--enable-trust-file-cache): Remove option.
+
 2004-09-16  Derek Price  <derek@ximbiot.com>
 
 	* HACKING: Correct obsolete note about configure not remembering -Wall.
