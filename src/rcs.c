@@ -1651,7 +1651,7 @@ RCS_check_kflag (arg)
     const char *arg;
 {
     static const char *const kflags[] =
-    {"kv", "kvl", "k", "v", "o", (char *) NULL};
+    {"kv", "kvl", "k", "v", "o", "b", (char *) NULL};
     static const char *const  keyword_usage[] =
     {
       "%s %s: invalid RCS keyword expansion mode\n",
@@ -1661,6 +1661,7 @@ RCS_check_kflag (arg)
       "   -kk\tGenerate only keyword names in keyword strings.\n",
       "   -kv\tGenerate only keyword values in keyword strings.\n",
       "   -ko\tGenerate the old keyword string (no changes from checked in file).\n",
+      "   -kb\tGenerate binary file unmodified (merges not allowed) (RCS 5.7).\n",
       NULL,
     };
     char karg[10];
