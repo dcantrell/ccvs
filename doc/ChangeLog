@@ -1,3 +1,8 @@
+Mon Apr 14 12:37:35 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvsclient.texi (Responses): Say that servers need to create
+	directories one at a time.
+
 Sat Apr 12 09:32:58 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (Committing your changes): Say that editor default
