@@ -601,6 +601,8 @@ Copyright (c) 1989-2000 Brian Berliner, david d `zoo' zuhn, \n\
 		if (CVSroot_cmdline != NULL)
 		    free (CVSroot_cmdline);
 		CVSroot_cmdline = xstrdup (optarg);
+		if (free_CVSroot)
+		    free (CVSroot);
 		CVSroot = xstrdup (optarg);
 		free_CVSroot = 1;
 		cvs_update_env = 1;	/* need to update environment */

@@ -1,3 +1,11 @@
+2000-10-11  Derek Price  <derek.price@openavenue.com>
+
+	* main.c (main): Dispose old CVSroot when parsing a '-d' option if
+	free_CVSroot is set.
+	* root.c (parse_cvsroot): remove references to 'cvsroot_parsed', a
+	static boolean I expect hasn't been used since CVS learned to handle
+	multiple CVSROOTs.
+
 2000-10-10  Larry Jones  <larry.jones@sdrc.com>
 
 	* server.c (print_error): Make up a message if strerror fails.

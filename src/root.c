@@ -293,16 +293,8 @@ int
 parse_cvsroot (CVSroot)
     char *CVSroot;
 {
-    static int cvsroot_parsed = 0;
     char *cvsroot_copy, *cvsroot_save, *p;
     int check_hostname;
-
-    /* Don't go through the trouble twice. */
-    if (cvsroot_parsed)
-    {
-	error (0, 0, "WARNING (parse_cvsroot): someone called me twice!\n");
-	return 0;
-    }
 
     if (CVSroot_original != NULL)
 	free (CVSroot_original);
