@@ -339,8 +339,8 @@ b' : 'a
 c' >/dev/null; then
   EXPR=`find_tool expr`
   if test -z "$EXPR" ; then
-    echo 'Warning: you are using a version of expr which does not correctly'
-    echo 'match multi-line patterns.  Some tests may spuriously pass.'
+    echo 'Warning: you are using a version of expr that does not correctly'
+    echo 'match multi-line patterns.  Some tests may spuriously pass or fail.'
     echo 'You may wish to make sure GNU expr is in your path.'
     EXPR=expr
   fi
@@ -358,8 +358,8 @@ if $EXPR "`cat ${TESTDIR}/bar`" : "`cat ${TESTDIR}/bar`" >/dev/null; then
 else
   EXPR=`find_tool expr`
   if test -z "$EXPR" ; then
-    echo 'Warning: you are using a version of expr which does not correctly'
-    echo 'match large patterns.  Some tests may spuriously fail.'
+    echo 'Warning: you are using a version of expr that does not correctly'
+    echo 'match large patterns.  Some tests may spuriously pass or fail.'
     echo 'You may wish to make sure GNU expr is in your path.'
     EXPR=expr
   fi
@@ -367,8 +367,8 @@ fi
 if $EXPR "`cat ${TESTDIR}/bar`x" : "`cat ${TESTDIR}/bar`y" >/dev/null; then
   EXPR=`find_tool expr`
   if test -z "$EXPR" ; then
-    echo 'Warning: you are using a version of expr which does not correctly'
-    echo 'match large patterns.  Some tests may spuriously pass.'
+    echo 'Warning: you are using a version of expr that does not correctly'
+    echo 'match large patterns.  Some tests may spuriously pass or fail.'
     echo 'You may wish to make sure GNU expr is in your path.'
     EXPR=expr
   fi
@@ -410,8 +410,8 @@ if $EXPR "`cat ${TESTDIR}/bar`" : "${DOTSTAR}xyzABC${DOTSTAR}$" >/dev/null; then
 else
   EXPR=`find_tool expr`
   if test -z "$EXPR" ; then
-    echo 'Warning: you are using a version of expr which does not correctly'
-    echo 'match large patterns.  Some tests may spuriously fail.'
+    echo 'Warning: you are using a version of expr that does not correctly'
+    echo 'match large patterns.  Some tests may spuriously pass or fail.'
     echo 'You may wish to make sure GNU expr is in your path.'
     EXPR=expr
   fi
