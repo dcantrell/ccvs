@@ -6205,8 +6205,8 @@ done"
 	  dotest rcslib-symlink-3c "${testcvs} update file2" "[UP] file2"
 
 	  echo some new text >file3
-	  dotest rcslib-symlink-3d "cvs -Q add file3" ''
-	  dotest rcslib-symlink-3e "cvs -Q ci -mtest file3" \
+	  dotest rcslib-symlink-3d "${testcvs} -Q add file3" ''
+	  dotest rcslib-symlink-3e "${testcvs} -Q ci -mtest file3" \
 "RCS file: ${CVSROOT_DIRNAME}/first-dir/Attic/file3,v
 done
 Checking in file3;
@@ -6218,8 +6218,8 @@ done"
 	  dotest rcslib-symlink-3g "${testcvs} update file2" "U file2"
 
 	  # restore the link to file1 for the following tests
-	  dotest rcslib-symlink-3i "cvs -Q rm -f file3" ''
-	  dotest rcslib-symlink-3j "cvs -Q ci -mwhatever file3" \
+	  dotest rcslib-symlink-3i "${testcvs} -Q rm -f file3" ''
+	  dotest rcslib-symlink-3j "${testcvs} -Q ci -mwhatever file3" \
 "Removing file3;
 ${CVSROOT_DIRNAME}/first-dir/Attic/file3,v  <--  file3
 new revision: delete; previous revision: 1\.1\.2\.1
