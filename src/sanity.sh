@@ -5113,7 +5113,27 @@ done"
 	  # Again, try to see that there are no droppings.
 	  dotest errmsg2-12 "${testcvs} -q update" ""
 
-	  cd ../..
+	  # Now test adding files with '/' in the name, both one level
+	  # down and more than one level down.
+	  cd ..
+	  mkdir first-dir/sdir10/ssdir
+	  dotest_fail errmsg2-13 "${testcvs} add first-dir/sdir10/ssdir" \
+"${PROG} [a-z]*: cannot add files with '/' in their name; first-dir/sdir10/ssdir not added"
+	  touch first-dir/sdir10/ssdir/ssfile
+	  dotest_fail errmsg2-14 "${testcvs} add first-dir/sdir10/ssdir/ssfile" \
+"${PROG} [a-z]*: cannot add files with '/' in their name; first-dir/sdir10/ssdir/ssfile not added"
+	  touch first-dir/file15
+	  dotest_fail errmsg2-15 "${testcvs} add first-dir/file15" \
+"${PROG} [a-z]*: cannot add files with '/' in their name; first-dir/file15 not added"
+
+	  # Now the case where we try to give it a directory which is not
+	  # under CVS control.
+	  mkdir bogus-dir
+	  touch bogus-dir/file16
+	  dotest_fail errmsg2-16 "${testcvs} add bogus-dir/file16" \
+"${PROG} [a-z]*: cannot add files with '/' in their name; bogus-dir/file16 not added"
+
+	  cd ..
 	  rm -r 1
 	  rm -rf ${TESTDIR}/cvsroot/first-dir
 	  ;;
