@@ -4413,6 +4413,10 @@ File: aa\.c             	Status: Unresolved Conflict
 	    exit 1
 	  fi
 	  cd ..
+	  # The "statusmod" module contains an error; trying to use it
+	  # will produce "modules file missing directory" I think.
+	  # However, that shouldn't affect the ability of "cvs co -c" or
+	  # "cvs co -s" to do something reasonable with it.
 	  dotest 148a0 "${testcvs} co -c" 'aliasmodule  -a first-dir/subdir/a
 aliasnested  -a first-dir/subdir/ssdir
 bogusalias   first-dir/subdir/a -a
