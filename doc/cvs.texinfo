@@ -13151,6 +13151,11 @@ particular moment).
 @c FIXME: What is the correct way to format a multiline
 @c error message here?  Maybe @table is the wrong
 @c choice?  Texinfo gurus?
+@item @var{file}:@var{line}: Assertion '@var{text}' failed
+The exact format of this message may vary depending on
+your system.  It indicates a bug in @sc{cvs}, which can
+be handled as described in @ref{BUGS}.
+
 @item cvs @var{command}: authorization failed: server @var{host} rejected access
 This is a generic response when trying to connect to a
 pserver server which chooses not to provide a
@@ -13158,11 +13163,6 @@ specific reason for denying authorization.  Check that
 the username and password specified are correct and
 that the @code{CVSROOT} specified is allowed by @samp{--allow-root}
 in @file{inetd.conf}.  See @ref{Password authenticated}.
-
-@item @var{file}:@var{line}: Assertion '@var{text}' failed
-The exact format of this message may vary depending on
-your system.  It indicates a bug in @sc{cvs}, which can
-be handled as described in @ref{BUGS}.
 
 @item cvs @var{command}: conflict: removed @var{file} was modified by second party
 This message indicates that you removed a file, and
@@ -13211,6 +13211,16 @@ for example @file{/var/tmp}; see @code{TMPDIR} in
 @ref{Environment variables}, for how to set the
 temporary directory.
 
+@item cannot commit files as 'root'
+When committing a permanent change, @sc{cvs} makes a log entry of
+who committed the change.  If you are committing the change logged
+in as "root" (not under "su" or other root-priv giving program),
+@sc{cvs} cannot determine who is actually making the change.
+As such, by default, @sc{cvs} disallows changes to be committed by users
+logged in as "root".  (You can disable this option by commenting out
+the definition of @code{CVS_BADROOT} in @file{options.h} before
+building @sc{cvs}.
+
 @c For one example see basica-1a10 in the testsuite
 @c For another example, "cvs co ." on NT; see comment
 @c at windows-NT/filesubr.c (expand_wild).
@@ -13231,6 +13241,10 @@ accompanied by other errors, the operation has
 completed successfully.  This message should not occur
 with current versions of @sc{cvs}, but it is documented
 here for the benefit of @sc{cvs} 1.9 and older.
+
+@item cvs server: cannot open /root/.cvsignore: Permission denied
+@itemx cvs [server aborted]: can't chdir(/root): Permission denied
+See @ref{Connection}.
 
 @item cvs [checkout aborted]: cannot rename file @var{file} to CVS/,,@var{file}: Invalid argument
 This message has been reported as intermittently
@@ -13452,10 +13466,6 @@ find the log file which inetd writes
 (@file{/var/log/messages} or whatever inetd uses on
 your system).  For details, see @ref{Connection}, and
 @ref{Password authentication server}.
-
-@item cvs server: cannot open /root/.cvsignore: Permission denied
-@itemx cvs [server aborted]: can't chdir(/root): Permission denied
-See @ref{Connection}.
 
 @item cvs commit: Up-to-date check failed for `@var{file}'
 This means that someone else has committed a change to

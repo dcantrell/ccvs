@@ -1,6 +1,9 @@
 2001-05-21  Larry Jones  <larry.jones@sdrc.com>
 
-	* cvs.texinfo(Invoking CVS): Add entries for kserver, pserver,
+	* cvs.texinfo (Error messages): Fix ordering; add "cannot commit
+	files as root".
+
+	* cvs.texinfo (Invoking CVS): Add entries for kserver, pserver,
 	rannotate, rlog, and server.
 
 	* cvs.texinfo: Lots of minor editorial corrections.  Mostly adding
