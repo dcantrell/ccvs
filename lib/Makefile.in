@@ -23,8 +23,8 @@ VPATH      = @srcdir@
 
 SHELL = /bin/sh
 
-prefix = /usr/local
-exec_prefix = $(prefix)
+prefix = @prefix@
+exec_prefix = @exec_prefix@
 
 SOURCES = \
     alloca.c \

@@ -17,4 +17,4 @@
 # If the name ALL appears as a regular expression it is always used
 # in addition to the first matching regex or DEFAULT.
 #
-DEFAULT			$CVSROOT/CVSROOT/log.pl %s $CVSROOT/CVSROOT/commitlog
+DEFAULT		$CVSROOT/CVSROOT/log.pl %s -f $CVSROOT/CVSROOT/commitlog

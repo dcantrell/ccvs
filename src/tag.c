@@ -15,7 +15,7 @@
 
 #ifndef lint
 static char rcsid[] = "$CVSid: @(#)tag.c 1.60 94/09/30 $";
-USE(rcsid)
+USE(rcsid);
 #endif
 
 static Dtype tag_dirproc PROTO((char *dir, char *repos, char *update_dir));

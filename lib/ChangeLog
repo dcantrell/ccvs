@@ -1,3 +1,10 @@
+Wed Feb  8 06:37:53 1995  Roland McGrath  <roland@churchy.gnu.ai.mit.edu>
+
+	* system.h (S_IRUSR et al): Define if not already defined.
+
+	* waitpid.c [HAVE_CONFIG_H]: Include "config.h".
+	(ualloc): Return OLDPTR rather than running off the end.
+
 Mon Aug 22 22:48:19 1994  Ken Raeburn  (raeburn@kr-pc.cygnus.com)
 
 	* error.c (strerror): Replaced conditional static definition
