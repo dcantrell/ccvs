@@ -1,3 +1,8 @@
+Tue Aug 22 10:09:29 1995  Kirby Koster <koster@sctc.com>
+			  and Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* update.c (join_file): If vers->vn_user is NULL, just return.
+
 Tue Aug 22 10:09:29 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* server.c, client.c: Add comments about modes and umasks.

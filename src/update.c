@@ -1546,8 +1546,16 @@ join_file (file, srcfiles, vers, update_dir, entries)
     }
 	
     /* skip joining identical revs */
-    if (strcmp (rev2, vers->vn_user) == 0) /* no merge necessary */
+    if (/* The file in the working directory doesn't exist in CVS/Entries.
+	   FIXME: Shouldn't this case result in additional processing (if
+	   the file was added going from rev1 to rev2, then do the equivalent
+	   of a "cvs add")?  */
+	vers->vn_user == NULL
+
+	/* Identical revs.  */
+	|| strcmp (rev2, vers->vn_user) == 0)
     {
+	/* No merge necessary.  */
 	free (rev2);
 	return;
     }
@@ -1559,6 +1567,9 @@ join_file (file, srcfiles, vers, update_dir, entries)
 	   greatest common ancestor of both the join rev, and the
 	   checked out rev. */
 	
+	/* FIXME: What is this check for '!' about?  If it is legal to
+	   have '!' in the first character of vn_user, it isn't
+	   documented at struct vers_ts in cvs.h.  */
 	tst = vers->vn_user;
 	if (*tst == '!')
 	{
