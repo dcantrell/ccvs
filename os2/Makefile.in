@@ -161,7 +161,8 @@ OS2_OBJECTS = \
        rcmd.obj \
        waitpid.obj \
        popen.obj \
-       strippath.obj
+       strippath.obj \
+       client.obj
 
 # object files from ..${PS}src
 COMMON_OBJECTS = \
@@ -170,7 +171,6 @@ COMMON_OBJECTS = \
        ${cvs_srcdir}${PS}checkin.obj \
        ${cvs_srcdir}${PS}checkout.obj \
        ${cvs_srcdir}${PS}classify.obj \
-       ${cvs_srcdir}${PS}client.obj \
        ${cvs_srcdir}${PS}commit.obj \
        ${cvs_srcdir}${PS}create_adm.obj \
        ${cvs_srcdir}${PS}cvsrc.obj \

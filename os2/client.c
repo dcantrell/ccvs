@@ -1638,7 +1638,9 @@ send_repository (dir, repos, update_dir)
 	f = fopen (adm_name, "r");
 	if (f == NULL)
 	{
-	    if (errno != ENOENT)
+	    if (errno != ENOENT
+                && errno != ENOTEXIST
+                && errno != EOS2ERROR)
 		error (1, errno, "reading %s", adm_name);
 	}
 	else
