@@ -558,7 +558,7 @@ if test x"$*" = x; then
 	# Basic/miscellaneous functionality
 	tests="basica basicb basicc basic1 deep basic2 commit-readonly"
 	# Branching, tagging, removing, adding, multiple directories
-	tests="${tests} rdiff death death2 rmadd dirs branches branches2"
+	tests="${tests} rdiff diff death death2 rmadd dirs branches branches2"
 	tests="${tests} rcslib multibranch import importb importc"
 	tests="${tests} join join2 join3 join-readonly-conflict"
 	tests="${tests} new newb conflicts conflicts2 conflicts3"
@@ -2231,6 +2231,31 @@ diff -c /dev/null trdiff/new:1\.1
 		rm -r testimport
 		rm -rf ${CVSROOT_DIRNAME}/trdiff
 		;;
+
+	diff)
+	  # Various tests specific to the "cvs diff" command.
+	  # Related tests:
+	  #   death2: -N
+	  #   rcslib: cvs diff and $Name.
+	  #   rdiff: cvs rdiff.
+	  #   diffmerge*: nuts and bolts (stuff within diff library)
+	  mkdir 1; cd 1
+	  dotest diff-1 "${testcvs} -q co -l ." ''
+	  mkdir first-dir
+	  dotest diff-2 "${testcvs} add first-dir" \
+"Directory ${TESTDIR}/cvsroot/first-dir added to the repository"
+	  cd first-dir
+
+	  # diff is anomalous.  Most CVS commands print the "nothing
+	  # known" message (or worse yet, no message in some cases) but
+	  # diff says "I know nothing".  Shrug.
+	  dotest_fail diff-3 "${testcvs} diff xyzpdq" \
+"${PROG} [a-z]*: I know nothing about xyzpdq"
+
+	  cd ../..
+	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  rm -r 1
+	  ;;
 
 	death)
 		# next dive.  test death support.

@@ -1,5 +1,8 @@
 1998-11-14  Jim Kingdon
 
+	* sanity.sh (diff): New test, for now just tests for the "I know
+	nothing" message.
+
 	* sanity.sh (conflicts2-142b7 through conflicts2-142b11): New
 	tests; resurrecting doesn't work from one level up.
 
