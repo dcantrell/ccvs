@@ -2199,7 +2199,7 @@ RCS_fast_checkout (rcs, workfile, tag, options, sout, flags)
 	/* I'm not completely sure that checking rcs->expand is necessary
 	   or even desirable.  It would appear that Version_TS takes care
 	   of that.  */
-	ouroptions = (options != NULL
+	ouroptions = (options != NULL && strlen (options) > 2
 		      ? options + 2
 		      : (rcs->expand != NULL ? rcs->expand : ""));
 	if (found)
