@@ -1,3 +1,7 @@
+Wed Dec 20 15:18:06 1995  Karl Fogel  <kfogel@floss.cyclic.com>
+
+        * Makefile.in: build scramble.obj.
+
 Mon Dec 18 22:49:28 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
         * Reverted all changes between Mon Dec 18 14:54:04 1995 and
