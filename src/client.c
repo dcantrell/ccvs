@@ -219,15 +219,56 @@ static void
 parse_cvsroot ()
 {
     char *p;
+#ifdef AUTH_CLIENT_SUPPORT
+    static char *access_method;
+#endif /* AUTH_CLIENT_SUPPORT */
+
 
     server_host = xstrdup (CVSroot);
+
+#ifdef AUTH_CLIENT_SUPPORT
+    if ((server_host[0] == ':'))
+    {
+      /* Access method specified, as in
+       * "cvs -d :pserver:user@host:/path".
+       * We need to get past that part of CVSroot before parsing the
+       * rest of it.
+       */
+      access_method = p = &(server_host[1]);
+
+      if (! *access_method)
+        error (1, 0, "bad CVSroot: %s", CVSroot);
+
+      if (! *(p = strchr (access_method, ':')))
+        error (1, 0, "bad CVSroot: %s", CVSroot);
+      
+      *p = '\0';
+      p++;
+
+      server_host = p;
+      
+      if (! *server_host)
+        error (1, 0, "bad CVSroot: %s", CVSroot);
+
+      if (strcmp (access_method, "pserver") == 0)
+        use_authenticating_server = 1;
+      else
+        error (1, 0, "unknown access method: %s", access_method);
+    }
+#endif /* AUTH_CLIENT_SUPPORT */
+    
+    /* First get just the pathname. */
     server_cvsroot = strchr (server_host, ':');
     *server_cvsroot = '\0';
     ++server_cvsroot;
-
-    if ( (p = strchr (server_host, '@')) == NULL) {
+    
+    /* Then deal with host and possible user. */
+    if ( (p = strchr (server_host, '@')) == NULL)
+    {
       server_user = NULL;
-    } else {
+    }
+    else
+    {
       server_user = server_host;
       server_host = p;
       ++server_host;

@@ -1,3 +1,20 @@
+Mon Dec 11 15:58:47 1995  Karl Fogel  <kfogel@floss.cyclic.com>
+
+        * root.c: added some comments.
+
+        * main.c: removed all code pertaining to the "-a" option.  We
+        specify access-method in CVSroot now.
+
+        * client.c (parse_cvsroot): new var, `access_method'.  If CVSroot
+        is prepended with an access method (i.e.,
+        ":pserver:user@host:/path"), then handle it.
+
+        * login.c (login): use || when checking if CVSroot is "fully
+        qualified".
+        Prepend ":pserver:" before writing to ~/.cvspass.
+        (get_cvs_password): Take no parameters; we'll just use CVSroot to
+        get the password.
+
 Mon Dec 11 12:43:35 1995  adamg  <adamg@microsoft.com>
 
 	* error.c, client.c, remove.c, main.c: Add explicit casts for some

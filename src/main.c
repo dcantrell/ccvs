@@ -174,9 +174,6 @@ static const char *const usg[] =
     "        -H           Displays Usage information for command\n",
     "        -Q           Cause CVS to be really quiet.\n",
     "        -q           Cause CVS to be somewhat quiet.\n",
-#ifdef AUTH_CLIENT_SUPPORT
-    "        -a           Use the authenticating server, not rsh.\n",
-#endif /* AUTH_CLIENT_SUPPORT */
     "        -r           Make checked-out files read-only\n",
     "        -w           Make checked-out files read-write (default)\n",
     "        -l           Turn History logging off\n",
@@ -318,7 +315,7 @@ main (argc, argv)
     optind = 1;
 
     while ((c = getopt_long
-            (argc, argv, "Qqrawtnlvb:e:d:Hfz:", long_options, &option_index))
+            (argc, argv, "Qqrwtnlvb:e:d:Hfz:", long_options, &option_index))
            != EOF)
       {
 	switch (c)
@@ -335,11 +332,6 @@ main (argc, argv)
 	    case 'r':
 		cvswrite = FALSE;
 		break;
-#ifdef AUTH_CLIENT_SUPPORT
-	    case 'a':
-		use_authenticating_server = TRUE;
-		break;
-#endif /* AUTH_CLIENT_SUPPORT */
 	    case 'w':
 		cvswrite = TRUE;
 		break;
