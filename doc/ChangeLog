@@ -1,3 +1,7 @@
+2001-07-05  Larry Jones  <larry.jones@sdrc.com>
+
+	* cvs.texinfo (Working directory storage): Add Emptydir to index.
+
 2001-07-04  Derek Price  <dprice@collab.net>
 
 	* Makefile.in: Regenerated with new Automake release candidate 1.4h.
