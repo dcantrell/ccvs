@@ -1,5 +1,9 @@
 2004-04-28  Derek Price  <derek@ximbiot.com>
 
+	* sanity.sh (rcs2-5): Update to cope with new getdate.y.
+
+2004-04-28  Derek Price  <derek@ximbiot.com>
+
 	* Makefile.am (cvs_LIBADD): Use libs for nanosleep & clock_gettime when
 	necessary.
 	* cvs.h: Remove get_date() proto and #include getdate.h.
