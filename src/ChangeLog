@@ -1,3 +1,9 @@
+2001-08-24  Derek Price  <dprice@collab.net>
+
+	* logmsg.c (do_editor): Add comment and assertion.
+	* import.c (import): Don't call do_editor with a repository argument
+	in client mode.
+
 2001-08-24  Larry Jones  <larry.jones@sdrc.com>
 
 	* log.c (log_expand_revlist): Arrange for nil revision specs to

@@ -6,6 +6,8 @@
  * specified in the README file that comes with the CVS source distribution.
  */
 
+#include <assert.h>
+
 #include "cvs.h"
 #include "getline.h"
 
@@ -175,7 +177,8 @@ fmt_proc (p, closure)
  * stripped and the log message is stored in the "message" argument.
  * 
  * If REPOSITORY is non-NULL, process rcsinfo for that repository; if it
- * is NULL, use the CVSADM_TEMPLATE file instead.
+ * is NULL, use the CVSADM_TEMPLATE file instead.  REPOSITORY should be
+ * NULL when running in client mode.
  */
 void
 do_editor (dir, messagep, repository, changes)
@@ -191,6 +194,9 @@ do_editor (dir, messagep, repository, changes)
     char *fname;
     struct stat pre_stbuf, post_stbuf;
     int retcode = 0;
+
+    assert (current_parsed_root->isremote && !repository
+	    || !current_parsed_root->isremote && repository);
 
     if (noexec || reuse_log_message)
 	return;
