@@ -9385,9 +9385,22 @@ if test "${with_editor+set}" = set; then
   withval="$with_editor"
 
 else
-  with_editor="vi emacs nano pico edit"
+  with_editor=yes
 fi;
 
+# If --with-editor was supplied with an argument, let it override $EDITOR from
+# the user's environment.  We need to unset EDITOR here because AC_CHECK_PROGS
+# will let the value of EDITOR ride when it is set rather than searching.  We
+# ignore the --without-editor case since it will be caught below.
+if test -n "$EDITOR" && test yes != $with_editor; then
+  $as_unset EDITOR || test "${EDITOR+set}" != set || { EDITOR=; export EDITOR; }
+fi
+
+# Set the default when --with-editor wasn't supplied or when it was supplied
+# without an argument.
+if test yes = $with_editor; then
+  with_editor="vim vi emacs nano pico edit"
+fi
 
 if echo $with_editor |grep ^/ >/dev/null; then
   # If $with_editor is an absolute path, issue a warning if the executable
@@ -9445,20 +9458,34 @@ fi
 
   test -n "$EDITOR" && break
 done
+test -n "$EDITOR" || EDITOR="no"
 
+    if test no = "${EDITOR}"; then
+      { { echo "$as_me:$LINENO: error:
+    Failed to find a text file editor.  CVS cannot be compiled
+    without a default log message editor.  Searched for
+    \`$with_editor'.  Try \`configure --with-editor'." >&5
+echo "$as_me: error:
+    Failed to find a text file editor.  CVS cannot be compiled
+    without a default log message editor.  Searched for
+    \`$with_editor'.  Try \`configure --with-editor'." >&2;}
+   { (exit 1); exit 1; }; }
+    fi
 else
-  { { echo "$as_me:$LINENO: error: CVS cannot be compiled without a default log message editor.  Try \`configure --with-editor'." >&5
-echo "$as_me: error: CVS cannot be compiled without a default log message editor.  Try \`configure --with-editor'." >&2;}
+  { { echo "$as_me:$LINENO: error:
+    CVS cannot be compiled without a default log message editor.
+    Try \`configure --with-editor'." >&5
+echo "$as_me: error:
+    CVS cannot be compiled without a default log message editor.
+    Try \`configure --with-editor'." >&2;}
    { (exit 1); exit 1; }; }
 fi
 
-if test -n "${EDITOR}"; then
 
 cat >>confdefs.h <<_ACEOF
 #define EDITOR_DFLT "$EDITOR"
 _ACEOF
 
-fi
 
 
 
