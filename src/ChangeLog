@@ -1,3 +1,8 @@
+1999-11-04  Jim Kingdon  <http://developer.redhat.com/>
+
+	* log.c (log_usage): Revert Karl's change regarding -d and
+	-s.  A space is allowed (see sanity.sh for example).
+
 1999-11-03  K.J. Paradise (kj@sourcegear.com>
 	
 	* history.c: cleaned up my prior change a bit, per Larry Jones'
