@@ -3723,10 +3723,12 @@ U first-dir/file2"
 'U CVSROOT/modules'
 	  cd CVSROOT
 	  echo 'ampermodule &first-dir &second-dir' > modules
+	  # Depending on whether the user also ran the modules test
+	  # we will be checking in revision 1.2 or 1.3.
 	  dotest modules2-2 "${testcvs} -q ci -m add-modules" \
 "Checking in modules;
 /tmp/cvs-sanity/cvsroot/CVSROOT/modules,v  <--  modules
-new revision: 1\.2; previous revision: 1\.1
+new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
 done
 ${PROG} [a-z]*: Rebuilding administrative file database"
 
