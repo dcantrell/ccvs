@@ -1,3 +1,8 @@
+Sat Feb 24 10:50:42 1996  Karl Fogel  <kfogel@floss.red-bean.com>
+
+        * checkout.c (safe_location): put assignment to hardpath[x] in an
+        `else'-clause, so we don't do it when x == -1.
+
 Sat Feb 24 01:40:28 1996  Marcus Daniels  <marcus@sayre.sysc.pdx.edu>
                           and Karl Fogel  <kfogel@floss.red-bean.com>
  
