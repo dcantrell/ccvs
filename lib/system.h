@@ -11,8 +11,42 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.  */
 
-#include <sys/types.h>
-#include <sys/stat.h>
+/* Begin the default set of autoconf includes */
+#include <stdio.h>
+#if HAVE_SYS_TYPES_H
+# include <sys/types.h>
+#endif /* HAVE_SYS_TYPES_H */
+#if HAVE_SYS_STAT_H
+# include <sys/stat.h>
+#endif /* HAVE_SYS_STAT_H */
+#if STDC_HEADERS
+# include <stdlib.h>
+# include <stddef.h>
+#else /* ! STDC_HEADERS */
+# if HAVE_STDLIB_H
+#   include <stdlib.h>
+# endif /* HAVE_STDLIB_H */
+#endif /* STDC_HEADERS */
+#if HAVE_STRING_H
+# if !STDC_HEADERS && HAVE_MEMORY_H
+#  include <memory.h>
+# endif /* !STDC_HEADERS && HAVE_MEMORY_H */
+# include <string.h>
+#endif /* HAVE_STRING_H */
+#if HAVE_STRINGS_H
+# include <strings.h>
+#endif /* HAVE_STRINGS_H */
+#if HAVE_INTTYPES_H
+# include <inttypes.h>
+#else /* ! HAVE_INTTYPES_H */
+# if HAVE_STDINT_H
+#  include <stdint.h>
+# endif /* HAVE_STDINT_H */
+#endif /* HAVE_INTTYPES_H */
+#if HAVE_UNISTD_H
+# include <unistd.h>
+#endif /* HAVE_UNISTD_H */
+/* End the default set of autoconf includes */
 
 #ifdef STAT_MACROS_BROKEN
 #undef S_ISBLK
@@ -287,10 +321,16 @@ int utime ();
 #  endif
 #endif
 
+#ifdef HAVE_MALLOC
+# define CVS_MALLOC malloc
+# else /* !HAVE_MALLOC */
+# define CVS_MALLOC rpl_malloc
+#endif /* HAVE_MALLOC */
+#ifndef CVS_REALLOC
+# define CVS_REALLOC realloc
+#endif /* !CVS_REALLOC */
 
-#ifdef STDC_HEADERS
-#include <stdlib.h>
-#else
+#ifndef HAVE_STDLIB_H
 char *getenv ();
 char *malloc ();
 char *realloc ();
