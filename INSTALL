@@ -178,6 +178,7 @@ SPARC:
 	Sun SPARCstation running Solaris 2.4 using gcc and cc (about 1.5.91)
 	Sun SPARC running Solaris 2.5 (1.8.87)
 	Sun SPARC running Solaris 2.5.1 using gcc 2.7.2.2 (1.9.14)
+	Sun UltraSPARC running Solaris 2.6 using gcc 2.8.1 (1.10)
 	NextSTEP 3.3 (1.7)
 	Sun SPARC running Linux 2.0.17, gcc 2.7.2 (1.8.87)
 VAX:
