@@ -1,3 +1,8 @@
+2004-05-15  Derek Price  <derek@ximbiot.com>
+
+	* ndir.c, pwd.c: Include xmalloc.h.
+	(Patch from Conrad Pino <conrad@pino.com>.)
+
 2004-05-14  Derek Price  <derek@ximbiot.com>
 
 	* woe32.c (my_usleep): Declare as static.
