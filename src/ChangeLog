@@ -1,3 +1,13 @@
+2003-02-19  Larry Jones  <lawrence.jones@eds.com>
+
+	* sanity.sh (admin-10): Add test for repository files not in
+	working directory.
+
+	* admin.c (admin_fileproc): Fix crash when no rcs file, return
+	failure status for bogus files.
+	* sanity.sh (admin-4a): Test for above.
+	(Original patch submitted by Mark D. Baushke <mdb@cvshome.org>).
+
 2003-02-14  Larry Jones  <lawrence.jones@eds.com>
 
 	* log.c (log_expand_revlist): Fix crashes in error cases.
