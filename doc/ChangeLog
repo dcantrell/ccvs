@@ -1,3 +1,7 @@
+1998-10-15  Jim Kingdon
+
+	* cvsclient.texi (Requests): It is OK to send Set before Root.
+
 1998-10-13  Jim Kingdon
 
 	* cvsclient.texi (Protocol Notes): Remove item about "cvs update"
