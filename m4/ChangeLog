@@ -1,5 +1,14 @@
 2003-07-17  Derek Price  <derek@ximbiot.com>
 
+	* getline.m4 (gl_PREREQ_GETLINE): s/gl_FUNC_GETNDELIM2/gl_GETNDELIM2/.
+	* getnline.m4 (gl_FUNC_GETNLINE): Rename to...
+	(gl_GETNLINE): ...this and s/gl_FUNC_GETNDELIM2/gl_GETNDELIM2/.
+	* getndelim2.m4 (gl_FUNC_GETNDELIM2): Rename to...
+	(gl_GETNDELIM2): ...this.
+	(Merging some of Bruno Habile's changes from GNULIB.)
+
+2003-07-17  Derek Price  <derek@ximbiot.com>
+
 	* getndelim2.m4: New file.
 	* ssize_t.m4: Ditto.
 
