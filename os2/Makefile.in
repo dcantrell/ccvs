@@ -58,11 +58,11 @@ OS2_HEADERS = \
        pwd.h \
        dirent.h \
        rcmd.h \
-       client.h \
        popen.h
 
 # headers we use from the common src dir, ..${PS}src
 COMMON_HEADERS = \
+       ${cvs_srcdir}${PS}client.h \
        ${cvs_srcdir}${PS}cvs.h \
        ${cvs_srcdir}${PS}rcs.h \
        ${cvs_srcdir}${PS}hash.h \
@@ -84,7 +84,6 @@ OS2_SOURCES = \
        waitpid.c \
        popen.c \
        strippath.c \
-       client.c \
        getdate.c
 
 # sources we use from the common src dir, ..${PS}src
@@ -94,6 +93,7 @@ COMMON_SOURCES = \
        ${cvs_srcdir}${PS}checkin.c \
        ${cvs_srcdir}${PS}checkout.c \
        ${cvs_srcdir}${PS}classify.c \
+       ${cvs_srcdir}${PS}client.c \
        ${cvs_srcdir}${PS}commit.c \
        ${cvs_srcdir}${PS}create_adm.c \
        ${cvs_srcdir}${PS}cvsrc.c \
@@ -160,7 +160,6 @@ OS2_OBJECTS = \
        waitpid.obj \
        popen.obj \
        strippath.obj \
-       client.obj \
        getdate.obj
 
 # object files from ..${PS}src
@@ -170,6 +169,7 @@ COMMON_OBJECTS = \
        ${cvs_srcdir}${PS}checkin.obj \
        ${cvs_srcdir}${PS}checkout.obj \
        ${cvs_srcdir}${PS}classify.obj \
+       ${cvs_srcdir}${PS}client.obj \
        ${cvs_srcdir}${PS}commit.obj \
        ${cvs_srcdir}${PS}create_adm.obj \
        ${cvs_srcdir}${PS}cvsrc.obj \

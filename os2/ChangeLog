@@ -1,3 +1,13 @@
+Thu Nov 30 18:09:50 1995  Karl Fogel  <kfogel@floss.cyclic.com>
+
+        * run.c (close_on_exec): don't error, just silently do nothing.
+
+        * Makefile.in: use src/client.c, not os2/client.c.
+
+        * config.h (EXECUTE_PERMISSION_LOSES): define to 1 (see
+        src/client.c for why).
+        (START_RSH_WITH_POPEN_RW): define to 1 (see src/client.c).
+
 Wed Nov 29 16:34:34 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
         * client.c (start_server): declare pipes[] as int, not FILE *.

@@ -560,21 +560,11 @@ pipe (int *filedesc)
 void
 close_on_exec (int fd)
 {
-    fprintf (stderr,
-             "Error: pipe() should not have been called in client.\n");
-    exit (1);
+  /* Just does nothing for now... */
 
-    /* Actually, we probably *can* implement this one.  Let's see... */
-
-    /* Nope.  OS/2 has <fcntl.h>, but no fcntl() !  Wow. */
-
-    /* Well, I'll leave this stuff in for future reference. */
-
-#if defined (FD_CLOEXEC) && defined (F_SETFD)
-  if (fcntl (fd, F_SETFD, 1))
-    error (1, errno, "can't set close-on-exec flag on %d", fd);
-#endif
-  
+  /* Actually, we probably *can* implement this one.  Let's see... */
+  /* Nope.  OS/2 has <fcntl.h>, but no fcntl() !  Wow. */
+  /* Well, I'll leave this stuff in for future reference. */
 }
 
 
