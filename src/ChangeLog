@@ -1,3 +1,14 @@
+2000-05-15  Larry Jones  <larry.jones@sdrc.com>
+
+	* update.c (join_file): When registering the result of the merge,
+	make sure that the version number is valid (vers->vn_rcs may be
+	null if the file doesn't exist on the branch yet).  (Patch submitted
+	by Robert de Vries <rhdv@rhdv.cistron.nl>.)
+	* update.c (join_file): Correct diagnostics (previous change was not
+	correct -- the file *does* exist in the specified revision, it just
+	doesn't exist in the sandbox).
+	* sanity.sh (import-113, join): New tests and changes for above.
+
 2000-05-04  Larry Jones  <larry.jones@sdrc.com>
 
 	* sanity.sh: Look for a useful id program.  Since we're getting

@@ -2365,11 +2365,11 @@ join_file (finfo, vers)
 
 	if (jdate2 != NULL)
 	    error (0, 0,
-		   "file %s is present in revision %s as of %s",
+		   "file %s does not exist, but is present in revision %s as of %s",
 		   finfo->fullname, jrev2, jdate2);
 	else
 	    error (0, 0,
-		   "file %s is not present in revision %s",
+		   "file %s does not exist, but is present in revision %s",
 		   finfo->fullname, jrev2);
 
 	/* FIXME: Should we arrange to return a non-zero exit status?  */
@@ -2533,9 +2533,9 @@ join_file (finfo, vers)
 	    (void) time (&last_register_time);
 	    cp = time_stamp (finfo->file);
 	}
-	Register (finfo->entries, finfo->file, vers->vn_rcs,
-		  "Result of merge", vers->options, vers->tag,
-		  vers->date, cp);
+	Register (finfo->entries, finfo->file,
+		  vers->vn_rcs ? vers->vn_rcs : "0", "Result of merge",
+		  vers->options, vers->tag, vers->date, cp);
 	if (cp)
 	    free(cp);
     }
