@@ -5010,6 +5010,8 @@ server (argc, argv)
      int argc;
      char **argv;
 {
+    char *error_prog_name;		/* Used in error messages */
+
     if (argc == -1)
     {
 	static const char *const msg[] =
@@ -5165,39 +5167,18 @@ error ENOMEM Virtual memory exhausted.\n");
     /* Small for testing.  */
     argument_vector_size = 1;
     argument_vector =
-	(char **) malloc (argument_vector_size * sizeof (char *));
-    if (argument_vector == NULL)
-    {
-	/*
-	 * Strictly speaking, we're not supposed to output anything
-	 * now.  But we're about to exit(), give it a try.
-	 */
-	printf ("E Fatal server error, aborting.\n\
-error ENOMEM Virtual memory exhausted.\n");
-
-	/* I'm doing this manually rather than via error_exit ()
-	   because I'm not sure whether we want to call server_cleanup.
-	   Needs more investigation....  */
-
-#ifdef SYSTEM_CLEANUP
-	/* Hook for OS-specific behavior, for example socket subsystems on
-	   NT and OS2 or dealing with windows and arguments on Mac.  */
-	SYSTEM_CLEANUP ();
-#endif
-
-	exit (EXIT_FAILURE);
-    }
-
+	(char **) xmalloc (argument_vector_size * sizeof (char *));
     argument_count = 1;
     /* This gets printed if the client supports an option which the
        server doesn't, causing the server to print a usage message.
-       FIXME: probably should be using program_name here.
        FIXME: just a nit, I suppose, but the usage message the server
        prints isn't literally true--it suggests "cvs server" followed
        by options which are for a particular command.  Might be nice to
        say something like "client apparently supports an option not supported
        by this server" or something like that instead of usage message.  */
-    argument_vector[0] = "cvs server";
+    error_prog_name = xmalloc( strlen(program_name) + 8 );
+    sprintf(error_prog_name, "%s server", program_name);
+    argument_vector[0] = error_prog_name;
 
     while (1)
     {
@@ -5270,6 +5251,7 @@ error ENOMEM Virtual memory exhausted.\n");
 	}
 	free (orig_cmd);
     }
+    free(command_name);
     server_cleanup (0);
     return 0;
 }
@@ -5578,7 +5560,7 @@ check_password (username, password, repository)
     {
 	/* No cvs password found, so try /etc/passwd. */
 
-	const char *found_passwd = NULL;
+	char *found_passwd = NULL;
 	struct passwd *pw;
 #ifdef HAVE_GETSPNAM
 	struct spwd *spw;

@@ -3720,14 +3720,18 @@ get_port_number (envname, portname, defaultport)
  * we do this here instead of in parse_cvsroot so that we can keep network
  * code confined to a localized area and also to delay the lookup until the
  * last possible moment so it remains possible to run cvs client commands that
- * skip opening connections to the server (i.e. skip network operations entirely)
+ * skip opening connections to the server (i.e. skip network operations
+ * entirely)
  *
- * and yes, I know none of the the commands do that now, but here's to planning
+ * and yes, I know none of the commands do that now, but here's to planning
  * for the future, eh?  cheers.
  *
  * FIXME - We could cache the port lookup safely right now as we never change
  * it for a single root on the fly, but we'd have to un'const some other
- * functions
+ * functions - REMOVE_FIXME? This may be unecessary.  We're talking about,
+ * what, usually one, sometimes two lookups of the port per invocation.  I
+ * think twice is by far the rarer of the two cases - only the login function
+ * will need to do it to save the canonical CVSROOT. -DRP
  */
 int
 get_cvs_port_number (root)
