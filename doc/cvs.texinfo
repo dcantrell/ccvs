@@ -1433,7 +1433,7 @@ revision for a removed file.  @var{timestamp} is the
 timestamp of the file at the time that @sc{cvs} created
 it; if the timestamp differs with the actual
 modification time of the file it means the file has
-been modified.  It is in Universal Time (UT), stored in
+been modified.  It is stored in
 the format used by the ISO C asctime() function (for
 example, @samp{Sun Apr  7 01:29:26 1996}).  One may
 write a string which is not in that format, for
@@ -1454,6 +1454,19 @@ contains a pair of timestamps separated by a space,
 rather than a single timestamp, you are dealing with a
 version of @sc{cvs} earlier than @sc{cvs} 1.5 (not
 documented here).
+
+The timezone on the timestamp in CVS/Entries (local or
+universal) should be the same as the operating system
+stores for the timestamp of the file itself.  For
+example, on Unix the file's timestamp is in universal
+time (UT), so the timestamp in CVS/Entries should be
+too.  On @sc{vms}, the file's timestamp is in local
+time, so @sc{cvs} on @sc{vms} should use local time.
+This rule is so that files do not appear to be modified
+merely because the timezone changed (for example, to or
+from summer time).
+@c See comments and calls to gmtime() and friends in
+@c src/vers_ts.c (function time_stamp).
 
 If the first character of a line in @file{Entries} is
 @samp{D}, then it indicates a subdirectory.  @samp{D}

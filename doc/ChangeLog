@@ -1,3 +1,8 @@
+1999-04-09  Jim Kingdon  <http://www.cyclic.com>
+
+	* cvs.texinfo (Working directory storage): Whether the timestamp
+	in CVS/Entries is local or universal actually depends on the system.
+
 1999-04-05  Derek Price
 	<http://www-personal.engin.umich.edu/~oberon/resume.html>
 
