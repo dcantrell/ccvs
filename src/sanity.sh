@@ -2123,7 +2123,7 @@ if $proxy; then
     # Script to sync the secondary root.
     cat >$TESTDIR/sync-secondary <<EOF
 #! $TESTSHELL
-date >>$TESTDIR/update-log
+# date >>$TESTDIR/update-log
 
 ps=\$1
 cmd=\$2
@@ -2132,8 +2132,8 @@ shift
 shift
 shift
 
-echo "updating from \$ps for command \\\`\$cmd' in dir \\\`\$dir'" \${1+"\$@"} \\
-     >>$TESTDIR/update-log
+# echo "updating from \$ps for command \\\`\$cmd' in dir \\\`\$dir'" \${1+"\$@"} \\
+#      >>$TESTDIR/update-log
 
 # If multiple CVS executables could attempt to access the repository, we would
 # Need to lock for this sync and sleep
