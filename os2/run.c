@@ -367,7 +367,7 @@ static int
 my_pipe (int *readwrite)
 {
     fprintf (stderr,
-             "Error: my_pipe() doesn't work.\n");
+             "Error: my_pipe() is unimplemented.\n");
     exit (1);
 }
 
@@ -379,7 +379,7 @@ static int
 start_child (char *command, int in, int out)
 {
     fprintf (stderr,
-             "Error: start_child() doesn't work.\n");
+             "Error: start_child() is unimplemented.\n");
     exit (1);
 }
 
@@ -461,7 +461,7 @@ int
 piped_child (char **argv, int *to, int *from)
 {
     fprintf (stderr,
-             "Error: piped_child() doesn't work.\n");
+             "Error: piped_child() is unimplemented.\n");
     exit (1);
 }
 

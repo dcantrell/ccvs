@@ -1,3 +1,8 @@
+Sat Dec 16 21:31:02 1995  Karl Fogel  <kfogel@floss.cyclic.com>
+
+        * run.c: mark unimplemented routines more clearly.  Hopefully I'll
+        get time to implement them soon.
+
 Fri Dec 15 17:50:17 1995  Karl Fogel  (kfogel@floss.cyclic.com)
 
         * tcpip.h, porttcp.c: new files.
