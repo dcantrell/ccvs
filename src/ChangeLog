@@ -1,6 +1,7 @@
 2001-06-07  Derek Price  <dprice@collab.net>
 
-	* sanity.sh: Use $CVSROOT_DIRNAME rather than /tmp/cvs-sanity/cvsroot.
+	* sanity.sh (tagf): Use $CVSROOT_DIRNAME rather than
+	/tmp/cvs-sanity/cvsroot.
 
 2001-06-06  Derek Price  <dprice@collab.net>
 
