@@ -10529,6 +10529,7 @@ ${PROG} [a-z]*: Rebuilding administrative file database"
 	  cd ..
 	  cd ..
 	  rm -r 1
+	  rm -rf ${CVSROOT_DIRNAME}/first-dir
 	  ;;
 
 	config)
