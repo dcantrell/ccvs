@@ -723,7 +723,7 @@ module `%s' is a request for a file in a module which is not a directory",
 		err += run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL);
 		free (expanded_path);
 	    }
-	    free (real_prog);
+	    if (real_prog) free (real_prog);
 	}
     }
 
