@@ -203,6 +203,10 @@ AC_REPLACE_FUNCS(\
 	valloc \
 	waitpid \
 )
+dnl Look for stat & lstat and replace with versions in lib/ when necessary.
+jm_FUNC_STAT
+jm_FUNC_LSTAT
+
 AC_CHECK_FUNCS(\
 	fchdir \
 	fchmod \
@@ -1017,6 +1021,7 @@ AC_CONFIG_FILES([Makefile \
 	  doc/Makefile \
 	  emx/Makefile \
 	  lib/Makefile \
+	  m4/Makefile \
 	  man/Makefile \
 	  os2/Makefile \
 	  src/Makefile \
