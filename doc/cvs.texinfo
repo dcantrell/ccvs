@@ -4789,6 +4789,8 @@ further updates in the same directory will use the same date
 @c use to specify dates)?  We want to rely on standards
 @c like ISO8601 and RFC822 as much as practical, but
 @c which standard(s)?....
+@cindex timezone, in input
+@cindex zone, time, in input
 A wide variety of date formats are supported by
 @sc{cvs}.  The @var{date_spec} is interpreted as being
 in the local timezone, unless a specific timezone is
@@ -6395,6 +6397,12 @@ determines the format of the output and the options,
 which are not quite in the style of the other @sc{cvs}
 commands.
 
+@cindex timezone, in output
+@cindex zone, time, in output
+@c Kind of a funny place to document the timezone used
+@c in output from commands other than @code{log}.
+@c There is also more we need to say about this,
+@c including what happens in a client/server environment.
 The output includes the location of the @sc{rcs} file,
 the @dfn{head} revision (the latest revision on the
 trunk), all symbolic names (tags) and some other
@@ -6403,7 +6411,15 @@ author, the number of lines added/deleted and the log
 message are printed.  All times are displayed in
 Coordinated Universal Time (UTC).  (Other parts of
 @sc{cvs} print times in the local timezone).
-@c -- timezone--
+@c FIXCVS: need a better way to control the timezone
+@c used in output.  Previous/current versions of CVS did/do
+@c sometimes support -z in RCSINIT, and/or an
+@c undocumented (except by reference to 'rlog') -z option
+@c to cvs log, but this has not been a consistent,
+@c documented feature.  Perhaps a new global option,
+@c where LT means the client's timezone, which the
+@c client then communicates to the server, is the
+@c right solution.
 
 @menu
 * log options::                 log options

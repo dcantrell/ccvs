@@ -1,3 +1,8 @@
+Thu Sep 26 08:26:01 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (log): Add comments about timezones.
+	(log, Common options): Add index entries for timezone and zone, time.
+
 Wed Sep 25 11:05:30 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (log options): Add xref to where we describe the
