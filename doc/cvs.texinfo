@@ -892,13 +892,20 @@ control.
 
 Normally, you never access any of the files in the
 repository directly.  Instead, you use @sc{cvs}
-commands to get your own copy of the files, and then
+commands to get your own copy of the files into a
+@dfn{working directory}, and then
 work on that copy.  When you've finished a set of
 changes, you check (or @dfn{commit}) them back into the
 repository.  The repository then contains the changes
 which you have made, as well as recording exactly what
 you changed, when you changed it, and other such
-information.
+information.  Note that the repository is not a
+subdirectory of the working directory, or vice versa;
+they should be in separate locations.
+@c Need some example, e.g. repository
+@c /usr/local/cvsroot; working directory
+@c /home/joe/sources.  But this node is too long
+@c as it is; need a little reorganization...
 
 @cindex :local:
 @sc{Cvs} can access a repository by a variety of
