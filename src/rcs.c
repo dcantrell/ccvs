@@ -3193,8 +3193,24 @@ RCS_getdate (rcs, date, force_tag_match)
      */
 
     /* if we found what we're looking for, and it's not 1.1 return it */
-    if (cur_rev != NULL && ! STREQ (cur_rev, "1.1"))
-	return (xstrdup (cur_rev));
+    if (cur_rev != NULL)
+      {
+	RCSVers *x_vers;
+	if (! STREQ (cur_rev, "1.1"))
+	  return (xstrdup (cur_rev));
+
+	/* This is 1.1;  if the date of 1.1 is not the same as that for the
+	   1.1.1.1 version, then return 1.1.  This happens when the first
+	   version of a file is created by a regular cvs add and commit,
+	   and there is a subsequent cvs import of the same file.  */
+	p = findnode (rcs->versions, "1.1.1.1");
+	if (p)
+	  {
+	    vers = (RCSVers *) p->data;
+	    if (RCS_datecmp (vers->date, date) != 0)
+	      return xstrdup ("1.1");
+	  }
+      }
 
     /* look on the vendor branch */
     retval = RCS_getdatebranch (rcs, date, CVSBRANCH);
@@ -8746,4 +8762,3 @@ make_file_label (path, rev, rcs)
     }
     return label;
 }
-
