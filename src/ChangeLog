@@ -1,3 +1,7 @@
+Tue Jan 13 10:26:43 1998  Larry Jones  <larry.jones@sdrc.com>
+
+	* add.c, rcs.c: Plug memory leaks.
+
 Mon Jan 12 10:45:27 1998  Larry Jones  <larry.jones@sdrc.com>
 
 	* server.c (mkdir_p): Don't try to create nameless directories

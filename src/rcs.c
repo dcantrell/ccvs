@@ -3617,6 +3617,7 @@ RCS_checkin (rcs, workfile, message, rev, flags)
 	    error (1, errno, "cannot ftell for %s", rcs->path);
 	putdeltatext (fout, dtext);
 	rcs_internal_unlockfile (fout, rcs->path);
+	freedeltatext (dtext);
 
 	/* Removing the file here is an RCS user-visible behavior which
 	   we almost surely do not need in the CVS case.  In fact, getting
@@ -6438,6 +6439,7 @@ rcs_internal_unlockfile (fp, rcsfile)
 	error (1, errno, "error closing lock file %s", lockfile);
 
     rename_file (lockfile, rcsfile);
+    free (lockfile);
 }
 
 static char *
