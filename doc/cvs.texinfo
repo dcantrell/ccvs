@@ -1706,22 +1706,15 @@ to check out the working directory
 (@pxref{Specifying a repository}).
 
 The big advantage of having multiple repositories is
-that they can reside on different servers.  The big
-disadvantage is that you cannot have a single @sc{cvs}
-command recurse into directories which comes from
-different repositories.  Generally speaking, if you are
-thinking of setting up several repositories on the same
-machine, you might want to consider using several
-directories within the same repository.
-@c FIXCVS: the thing about recursing into diverse roots
-@c would be nice to fix.  But it gets hairy if they are
-@c on diverse servers--it isn't clear this is really
-@c all that useful.
+that they can reside on different servers.  As of
+version 1.10.1, you can check out code from multiple
+servers into your working directory.  @sc{cvs} will
+recurse and handle all the details of making
+connections to as many server machines as necessary to
+perform the requested command.
+
 @c FIXME: Does the FAQ have more about this?  I have a
 @c dim recollection, but I'm too lazy to check right now.
-
-None of the examples in this manual show multiple
-repositories.
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node Creating a repository
@@ -12204,8 +12197,14 @@ send from the server is logged into
 @item $CVS_SERVER_SLEEP
 Used only for debugging the server side in
 client-server mode.  If set, delays the start of the
-server child process the specified amount of
-seconds so that you can attach to it with a debugger.
+server child process the specified amount of seconds so
+that you can attach to it with a debugger.  This pause
+occurs before forking the child process.
+
+@cindex CVS_SERVER_SLEEP2, environment variable
+@item $CVS_SERVER_SLEEP2
+Similar to @code{CVS_SERVER_SLEEP}, but pauses the
+program just after forking the child process.
 
 @cindex CVS_IGNORE_REMOTE_ROOT, environment variable
 @item $CVS_IGNORE_REMOTE_ROOT
