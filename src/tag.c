@@ -293,15 +293,19 @@ rtag_proc (int argc, char **argv, char *xwhere, char *mwhere, char *mfile, int s
 	    "rtag_proc ( argc=%d, argv=%p, xwhere=%s,\n"
        "                 mwhere=%s, mfile=%s, shorten=%d,\n"
        "                 local_specified=%d, mname=%s, msg=%s )",
-	    argc, (void *)argv, xwhere, mwhere, mfile, shorten,
-	    local_specified, mname, msg );
+	    argc, (void *)argv, xwhere ? xwhere : "(null)",
+	    mwhere ? mwhere : "(null)", mfile ? mfile : "(null)",
+	    shorten, local_specified,
+	    mname ? mname : "(null)", msg ? msg : "(null)" );
 #else
     TRACE ( TRACE_FUNCTION,
 	    "rtag_proc ( argc=%d, argv=%lx, xwhere=%s,\n"
        "                 mwhere=%s, mfile=%s, shorten=%d,\n"
        "                 local_specified=%d, mname=%s, msg=%s )",
-	    argc, (unsigned long)argv, xwhere, mwhere, mfile, shorten,
-	    local_specified, mname, msg );
+	    argc, (unsigned long)argv, xwhere ? xwhere : "(null)",
+	    mwhere ? mwhere : "(null)", mfile ? mfile : "(null)",
+	    shorten, local_specified,
+	    mname ? mname : "(null)", msg ? msg : "(null)" );
 #endif
 
     if (is_rtag)
@@ -421,8 +425,10 @@ check_fileproc (void *callerdat, struct file_info *finfo)
     Vers_TS *vers;
 
     TRACE ( TRACE_FUNCTION, "check_fileproc ( %s, %s, %s )",
-	    finfo->repository, finfo->fullname,
-	    finfo->rcs ? finfo->rcs->path : "NULL" );
+	    finfo->repository ? finfo->repository : "(null)",
+	    finfo->fullname ? finfo->fullname : "(null)",
+	    finfo->rcs ? (finfo->rcs->path ? finfo->rcs->path : "(null)")
+	    : "NULL" );
 
     if (check_uptodate)
     {
@@ -1183,12 +1189,14 @@ tag_check_valid (char *name, int argc, char **argv, int local, int aflag, char *
     TRACE ( TRACE_FUNCTION,
 	    "tag_check_valid ( name=%s, argc=%d, argv=%p, local=%d,\n"
        "                       aflag=%d, repository=%s )",
-	    name, argc, (void *)argv, local, aflag, repository );
+	    name ? name : "(name)", argc, (void *)argv, local, aflag,
+	    repository ? repository : "(null)" );
 #else
     TRACE ( TRACE_FUNCTION,
 	    "tag_check_valid ( name=%s, argc=%d, argv=%lx, local=%d,\n"
        "                       aflag=%d, repository=%s )",
-	    name, argc, (unsigned long)argv, local, aflag, repository );
+	    name ? name : "(name)", argc, (unsigned long)argv, local, aflag,
+	    repository ? repository : "(null") );
 #endif
 
     /* Numeric tags require only a syntactic check.  */

@@ -1,3 +1,7 @@
+2003-11-25  Mark D. Baushke  <mdb@cvshome.org>
+
+	* Makefile.in: Regenerate for new configure.in.
+
 2003-10-14  Derek Price  <derek@ximbiot.com>
 
 	Port to pedantic POSIX 1003.1-2001 hosts, such as Debian GNU/Linux

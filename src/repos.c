@@ -62,8 +62,8 @@ Name_Repository (char *dir, char *update_dir)
 
 	if (!isdir (cvsadm))
 	{
-	    error (0, 0, "in directory %s:", xupdate_dir);
-	    error (1, 0, "there is no version here; do '%s checkout' first",
+	    error (0, 0, "in directory `%s':", xupdate_dir);
+	    error (1, 0, "there is no version here; do `%s checkout' first",
 		   program_name);
 	}
 	free (cvsadm);
@@ -81,17 +81,17 @@ Name_Repository (char *dir, char *update_dir)
 	    error (1, 0, "*PANIC* administration files missing!");
 	}
 
-	error (1, save_errno, "cannot open %s", tmp);
+	error (1, save_errno, "cannot open `%s'", tmp);
     }
 
     if (getline (&repos, &repos_allocated, fpin) < 0)
     {
 	/* FIXME: should be checking for end of file separately.  */
-	error (0, 0, "in directory %s:", xupdate_dir);
-	error (1, errno, "cannot read %s", CVSADM_REP);
+	error (0, 0, "in directory `%s':", xupdate_dir);
+	error (1, errno, "cannot read `%s'", CVSADM_REP);
     }
     if (fclose (fpin) < 0)
-	error (0, errno, "cannot close %s", tmp);
+	error (0, errno, "cannot close `%s'", tmp);
     free (tmp);
 
     if ((cp = strrchr (repos, '\n')) != NULL)
@@ -108,14 +108,14 @@ Name_Repository (char *dir, char *update_dir)
 
 	if (current_parsed_root == NULL)
 	{
-	    error (0, 0, "in directory %s:", xupdate_dir);
+	    error (0, 0, "in directory `%s:", xupdate_dir);
 	    error (0, 0, "must set the CVSROOT environment variable\n");
-	    error (0, 0, "or specify the '-d' option to %s.", program_name);
+	    error (0, 0, "or specify the '-d' option to `%s'.", program_name);
 	    error (1, 0, "invalid repository setting");
 	}
 	if (pathname_levels (repos) > 0)
 	{
-	    error (0, 0, "in directory %s:", xupdate_dir);
+	    error (0, 0, "in directory `%s':", xupdate_dir);
 	    error (0, 0, "`..'-relative repositories are not supported.");
 	    error (1, 0, "invalid source repository");
 	}
