@@ -1,3 +1,7 @@
+Wed May 15 23:47:59 1996  Noel Cragg  <noel@gargle.rain.org>
+
+	* main.c (usg): revert usage strings for `-H' flag change.
+
 Wed May 01 21:08:21 1996  noel  <noel@BOAT_ANCHOR>
 
 	* client.c (filter_through_gunzip): use "gzip -d" instead of
