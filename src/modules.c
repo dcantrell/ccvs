@@ -347,7 +347,7 @@ do_module (db, mname, m_type, msg, callback_proc, where,
 		(void) sprintf (nullrepos, "%s/%s/%s", CVSroot,
 				CVSROOTADM, CVSNULLREPOS);
 		if (!isfile (nullrepos))
-		    (void) mkdir (nullrepos, 0777);
+		    (void) CVS_MKDIR (nullrepos, 0777);
 		if (!isdir (nullrepos))
 		    error (1, 0, "there is no repository %s", nullrepos);
 
