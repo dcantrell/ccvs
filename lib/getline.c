@@ -47,7 +47,6 @@ getline (char **lineptr, size_t *n, FILE *stream)
 #else /* ! have getdelim */
 
 # include "getnline.h"
-# include "unlocked-io.h"
 
 int
 getline (char **lineptr, size_t *n, FILE *stream)
