@@ -36,7 +36,7 @@
    Return the number of bytes read and stored at *LINEPTR + OFFSET (not
    including the NUL terminator), or -1 on error or EOF.  */
 extern ssize_t getndelim2 (char **_lineptr, size_t *_linesize, size_t _offset,
-                           ssize_t _limit, int _delim1, int _delim2,
+                           size_t _limit, int _delim1, int _delim2,
                            FILE *_stream);
 
 #endif /* GETNDELIM2_H */

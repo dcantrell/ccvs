@@ -26,12 +26,6 @@
 /* Specification.  */
 #include "getline.h"
 
-/* The `getdelim' function is only declared if the following symbol
-   is defined.  */
-#ifndef _GNU_SOURCE
-# define _GNU_SOURCE 1
-#endif
-
 #if defined __GNU_LIBRARY__ && HAVE_GETDELIM
 
 ssize_t
@@ -57,4 +51,4 @@ getdelim (char **lineptr, size_t *linesize, int delimiter, FILE *stream)
   return getndelim2 (lineptr, linesize, 0, GETNDELIM_NO_LIMIT, delimiter, 0,
                      stream);
 }
-#endif /* have getdelim */
+#endif
