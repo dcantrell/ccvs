@@ -3632,8 +3632,6 @@ open_connection_to_server (cvsroot_t *root, struct buffer **to_server_p,
 
     /* "Hi, I'm Darlene and I'll be your server tonight..." */
     server_started = 1;
-
-    setup_logfiles ("CVS_CLIENT_LOG", to_server_p, from_server_p);
 }
 
 
@@ -3651,6 +3649,7 @@ start_server (void)
 
     open_connection_to_server (current_parsed_root, &global_to_server,
                                &global_from_server);
+    setup_logfiles ("CVS_CLIENT_LOG", &global_to_server, &global_from_server);
 
     /* Clear static variables.  */
     if (toplevel_repos != NULL)

@@ -1,3 +1,33 @@
+2004-07-02  Derek Price  <derek@ximbiot.com>
+
+	Woo-hoo!  Write proxies work!
+	* client.c (open_connection_to_server): Set up log files...
+	(start_server): ...here.
+	* server.c (secondary_log_out_name, secondary_log_out): New globals.
+	(argument_cound, argument_vector, argument_vector_size): Move before...
+	(reprocess_secondary_log): ...referencing here.  Assume secondary_log.
+	(read_secondary_log): Accept buf & name args.
+	(serve_modified, serve_unchanged, serve_is_modified, serve_entry):
+	Handle logging pass.
+	(become_proxy): Use new output-to-client-log.  Verify buffers still
+	exist before using.
+	(output_dir): Translate paths to the client on the secondary.
+	(serve_co): Only reprocess the secondary log when one exists.
+	(server_cleanup): Free buf after shutdown.  Dispose of client output
+	log.
+	(server): Create client output log.
+	(*): Misc reformatting & detypecasting.
+	* log-buffer.c (log_buffer_output): Handle fatal_errors.
+	(log_buffer_flush): Don't operate on NULL streams.
+	(log_buffer_disable): Reformat so as not to confuse the optimizer.
+	* root.c (primary_root_translate): Remove unused variable and redundant
+	slash.
+	(primary_root_inverse_translate): New function.
+	* root.h: Add new proto.
+	* sanity.sh (writeproxy): Wrap server executables to set args and
+	server variables properly.  Fill in some test gaps.  Correct `cd' args.
+	Clean up wrappers.
+
 2004-06-30  Derek Price  <derek@ximbiot.com>
 
 	* root.h (primary_root_add, primary_root_translate): New protos.

@@ -133,15 +133,18 @@ static struct buffer *buf_from_net_save;
 
 
 
-/* This is the name of the writeproxy log file so we can delete it on cleanup.
+/* These are the names of the writeproxy log files so we can delete them on
+ * cleanup.
  */
 static char *secondary_log_name;
+static char *secondary_log_out_name;
 
-/* This is the secondary log buffer so that we can disable it after creation
- * if it is unneeded regardless of what other filters have been prepended to
- * the buffer chain.
+/* These are the secondary log buffers so that we can disable them after
+ * creation, when it is determined that they are unneeded, regardless of what
+ * other filters have been prepended to the buffer chain.
  */
 static struct buffer *secondary_log;
+static struct buffer *secondary_log_out;
 
 /* Set while we are reprocessing a log so that we can avoid sending responses
  * to some requests twice.
@@ -149,6 +152,11 @@ static struct buffer *secondary_log;
 static bool reprocessing;
 
 
+
+/* Arguments storage for `Argument' & `Argumentx' requests.  */
+static int argument_count;
+static char **argument_vector;
+static int argument_vector_size;
 
 /*
  * This is where we stash stuff we are going to use.  Format string
@@ -749,19 +757,19 @@ error ENOMEM Virtual memory exhausted.\n");
  *   read.
  */
 static int
-read_secondary_log (void)
+read_secondary_log (struct buffer **buf_in, const char *name)
 {
     int fd;
+    struct buffer *buf = *buf_in;
+
+    assert (buf);
 
     /* Close the secondary log.  */
-    if (secondary_log)
-    {
-	log_buffer_disable (secondary_log);
-	secondary_log = NULL;
-    }
+    log_buffer_disable (buf);
+    *buf_in = NULL;
 
-    /* And reprocess the log.  */
-    fd = open (secondary_log_name, O_RDONLY | O_LARGEFILE);
+    /* And reopen the log.  */
+    fd = open (name, O_RDONLY | O_LARGEFILE);
     if (fd < 0)
     {
 	int err = errno;
@@ -793,32 +801,48 @@ read_secondary_log (void)
 static void
 reprocess_secondary_log (void)
 {
-    if (secondary_log)
+    int fd;
+
+    assert (secondary_log);
+
+    /* Free the arguments since we processed some of them in the first pass.
+     */
     {
-	int fd = read_secondary_log ();
-
-	SIG_beginCrSect();
-	buf_from_net_save = buf_from_net;
-	buf_from_net = fd_buffer_initialize (fd, 0, NULL, true,
-					     outbuf_memory_error);
-	SIG_endCrSect();
-
-	/* Set this to avoid processing some requests twice.  */
-	reprocessing = true;
-	loop_over_inputs ();
-	reprocessing = false;
-
-	/* Restore the connection to the client.  This is in a critical
-	 * section since an interrupt could cause server_cleanup() to
-	 * attempt to dispose of the buffers.
+	/* argument_vector[0] is a dummy argument, we don't mess with
+	 * it.
 	 */
-	SIG_beginCrSect();
-	(void) buf_shutdown (buf_from_net);
-	free (buf_from_net);
-	buf_from_net = buf_from_net_save;
-	buf_from_net_save = NULL;
-	SIG_endCrSect();
+	char **cp;
+	for (cp = argument_vector + 1;
+	     cp < argument_vector + argument_count;
+	     ++cp)
+	    free (*cp);
+
+	argument_count = 1;
     }
+
+    fd = read_secondary_log (&secondary_log, secondary_log_name);
+
+    SIG_beginCrSect();
+    buf_from_net_save = buf_from_net;
+    buf_from_net = fd_buffer_initialize (fd, 0, NULL, true,
+					 outbuf_memory_error);
+    SIG_endCrSect();
+
+    /* Set this to avoid processing some requests twice.  */
+    reprocessing = true;
+    loop_over_inputs ();
+    reprocessing = false;
+
+    /* Restore the connection to the client.  This is in a critical
+     * section since an interrupt could cause server_cleanup() to
+     * attempt to dispose of the buffers.
+     */
+    SIG_beginCrSect();
+    (void) buf_shutdown (buf_from_net);
+    free (buf_from_net);
+    buf_from_net = buf_from_net_save;
+    buf_from_net_save = NULL;
+    SIG_endCrSect();
 }
 
 
@@ -1032,11 +1056,16 @@ E Protocol error: Root says \"%s\" but pserver says \"%s\"",
 	                     buf, len);
 #endif
     }
-    else
-	/* We are not a secondary server, so reprocess the secondary log and
-	 * continue.
+    else if (secondary_log)
+    {
+	/* Else we are not a secondary server.  There is no point in
+	 * reprocessing since we handle all the requests we can receive
+	 * before `Root' as we receive them.  But close the log.
 	 */
-	reprocess_secondary_log ();
+	log_buffer_disable (secondary_log);
+	secondary_log = NULL;
+    }
+
 
     path = xmalloc (strlen (current_parsed_root->directory)
 		   + sizeof (CVSROOTADM)
@@ -1743,8 +1772,6 @@ serve_modified (char *arg)
 
     int gzipped = 0;
 
-    assert (!secondary_log);
-
     /*
      * This used to return immediately if error_pending () was true.
      * However, that fails, because it causes each line of the file to
@@ -1832,7 +1859,7 @@ serve_modified (char *arg)
 	return;
     }
 
-    if (outside_dir (arg))
+    if (!secondary_log && outside_dir (arg))
     {
 	free (mode_text);
 	return;
@@ -1840,13 +1867,18 @@ serve_modified (char *arg)
 
     if (size >= 0)
     {
-	receive_file (size, arg, gzipped);
+	receive_file (size, secondary_log ? DEVNULL : arg, gzipped);
 	if (error_pending ())
 	{
 	    free (mode_text);
 	    return;
 	}
     }
+
+    /* We've read all the data that needed to be read if we're still logging
+     * for a secondary.  Return.
+     */
+    if (secondary_log) return;
 
     if (checkin_time_valid)
     {
@@ -1919,9 +1951,7 @@ serve_unchanged (char *arg)
     char *cp;
     char *timefield;
 
-    if (error_pending ()) return;
-
-    assert (!secondary_log);
+    if (error_pending () || secondary_log) return;
 
     if (outside_dir (arg))
 	return;
@@ -2014,9 +2044,7 @@ serve_is_modified (char *arg)
     /* Have we found this file in "entries" yet.  */
     int found;
 
-    if (error_pending ()) return;
-
-    assert (!secondary_log);
+    if (error_pending () || secondary_log) return;
 
     if (outside_dir (arg))
 	return;
@@ -2127,9 +2155,8 @@ serve_entry (char *arg)
     struct an_entry *p;
     char *cp;
     int i = 0;
-    if (error_pending()) return;
 
-    assert (!secondary_log);
+    if (error_pending() || secondary_log) return;
 
     /* Verify that the entry is well-formed.  This can avoid problems later.
      * At the moment we only check that the Entry contains five slashes in
@@ -2512,10 +2539,6 @@ server_notify (void)
 
 
 
-static int argument_count;
-static char **argument_vector;
-static int argument_vector_size;
-
 /* This request is processed in all passes since requests which must
  * sometimes be processed before it is known whether we are running as a
  * secondary or not, for instance the `expand-modules' request, sometimes use
@@ -2539,9 +2562,8 @@ serve_argument (char *arg)
     if (argument_vector_size <= argument_count)
     {
 	argument_vector_size *= 2;
-	argument_vector =
-	    (char **) xrealloc ((char *)argument_vector,
-			       argument_vector_size * sizeof (char *));
+	argument_vector = xrealloc (argument_vector,
+			            argument_vector_size * sizeof (char *));
 	if (argument_vector == NULL)
 	{
 	    pending_error = ENOMEM;
@@ -3036,7 +3058,9 @@ become_proxy (void)
     struct buffer *buf_from_primary;
 
     /* Close the log and open it for read.  */
-    int log_fd = read_secondary_log ();
+    int log_fd = read_secondary_log (&secondary_log, secondary_log_name);
+    int clientlog_fd = read_secondary_log (&secondary_log_out,
+                                           secondary_log_out_name);
     int status, to_primary_fd, from_primary_fd, to_net_fd, from_net_fd;
     struct buffer *buf_from_net_l;
 
@@ -3062,6 +3086,7 @@ become_proxy (void)
 
     buf_from_net_l = fd_buffer_initialize (log_fd, 0, NULL, true,
                                            outbuf_memory_error);
+
     from_net_fd = log_fd;
     while (from_primary_fd >= 0 || from_net_fd >= 0
            || to_primary_fd >= 0 || to_net_fd >= 0)
@@ -3070,11 +3095,13 @@ become_proxy (void)
 	int status, numfds = -1;
 	struct timeval *timeout_ptr;
 	struct timeval timeout;
+	size_t toread;
 
 	FD_ZERO (&readfds);
 	FD_ZERO (&writefds);
 
-	if (!buf_empty_p (buf_from_net) || !buf_empty_p (buf_from_primary))
+	if (buf_from_net && !buf_empty_p (buf_from_net)
+	    || buf_from_primary && !buf_empty_p (buf_from_primary))
 	{
 	    /* There is data pending so don't block if we don't find any new
 	     * data on the fds.
@@ -3151,8 +3178,14 @@ become_proxy (void)
 	if (from_net_fd >= 0 && (FD_ISSET (from_net_fd, &readfds)))
 	    status = buf_input_data (buf_from_net_l, NULL);
 
-	if (!buf_empty_p (buf_from_net_l))
-	    buf_append_buffer (buf_to_primary, buf_from_net_l);
+	if (buf_from_net_l && !buf_empty_p (buf_from_net_l))
+	{
+	    if (buf_to_primary)
+		buf_append_buffer (buf_to_primary, buf_from_net_l);
+	    else
+		/* (Sys?)log this?  */;
+		
+	}
 
 	if (status == -1 /* EOF */)
 	{
@@ -3176,6 +3209,7 @@ become_proxy (void)
 		buf_free (buf_from_net);
 		buf_from_net = NULL;
 		SIG_endCrSect();
+		buf_from_net_l = NULL;
 		from_net_fd = -1;
 	    }
 	}
@@ -3196,10 +3230,53 @@ become_proxy (void)
 
 	status = 0;
 	if (from_primary_fd >= 0 && FD_ISSET (from_primary_fd, &readfds))
-	    status = buf_input_data (buf_from_primary, NULL);
+	    status = buf_input_data (buf_from_primary, &toread);
 
-	if (!buf_empty_p (buf_from_primary))
-	    buf_append_buffer (buf_to_net, buf_from_primary);
+	/* Avoid resending data from the server which we already sent to the
+	 * client.  Otherwise clients get really confused.
+	 */
+	if (clientlog_fd != -1
+	    && buf_from_primary && !buf_empty_p (buf_from_primary))
+	{
+	    /* Dispose of data we already sent to the client.  */
+	    char data[4096];
+	    while (clientlog_fd != -1 && toread > 0)
+	    {
+		size_t thispass = toread > sizeof (data)
+		                  ? sizeof (data)
+		                  : toread;
+		ssize_t got = read (clientlog_fd, data, thispass);
+		if (got < 0)
+		    error (1, errno, "Error reading writeproxy log.");
+		else if (got == 0)
+		{
+		    close (clientlog_fd);
+		    clientlog_fd = -1;
+		}
+		thispass = got;
+		while (thispass > 0)
+		{
+		    char *newdata;
+		    size_t read;
+		    buf_read_data (buf_from_primary, thispass, &newdata, &got);
+		    /* Verify that we are throwing away what we think we are.
+		     */
+		    if (memcmp (data, newdata, got))
+			error (1, 0, "Secondary out of sync with primary!");
+		    thispass -= got;
+		}
+		toread -= got;
+	    }
+	}
+
+	if (buf_from_primary && !buf_empty_p (buf_from_primary))
+	{
+	    if (buf_to_net)
+		buf_append_buffer (buf_to_net, buf_from_primary);
+	    else
+		/* (Sys?)log this?  */;
+		
+	}
 
 	if (status == -1 /* EOF */)
 	{
@@ -3218,7 +3295,8 @@ become_proxy (void)
 	/* If our "source pipe" is closed and all data has been sent, close
 	 * the corresponding "dest pipe".
 	 */
-	if (from_primary_fd < 0 && buf_empty_p (buf_to_net))
+	if (from_primary_fd < 0
+	    && buf_to_net && buf_empty_p (buf_to_net))
 	{
 	    SIG_beginCrSect();
 	    /* Need only to shut this down and set to NULL, really, in
@@ -3233,7 +3311,8 @@ become_proxy (void)
 	    SIG_endCrSect();
 	    to_net_fd = -1;
 	}
-	if (from_net_fd < 0 && buf_empty_p (buf_to_primary))
+	if (from_net_fd < 0
+	    && buf_to_primary && buf_empty_p (buf_to_primary))
 	{
 	    buf_shutdown (buf_to_primary);
 	    buf_free (buf_to_primary);
@@ -3288,7 +3367,10 @@ do_cvs_command (char *cmd_name, int (*command) (int, char **))
 		/* WRITEPROXY: Generate secondary version output.  */;
 	    exit (EXIT_SUCCESS);
 	}
-	else
+	else if (/* serve_co may have called this already and missing logs
+	          * should have generated an error in serve_root().
+	          */
+	         secondary_log)
 	    reprocess_secondary_log ();
     }
 
@@ -4051,7 +4133,14 @@ output_dir (const char *update_dir, const char *repository)
     else
 	buf_output0 (protocol, update_dir);
     buf_output0 (protocol, "/\n");
-    buf_output0 (protocol, repository);
+    if (isSecondaryServer())
+    {
+	char *prepo = primary_root_inverse_translate (repository);
+	buf_output0 (protocol, prepo);
+	free (prepo);
+    }
+    else
+	buf_output0 (protocol, repository);
     buf_output0 (protocol, "/");
 }
 
@@ -4534,9 +4623,9 @@ serve_co (char *arg)
 	return;
 
     /* If we are not a secondary server, the write proxy log will already have
-     * been reprocessed.
+     * been processed.
      */
-    if (isSecondaryServer ())
+    if (isSecondaryServer () && secondary_log)
 	reprocess_secondary_log ();
 
     if (!isdir (CVSADM))
@@ -5636,9 +5725,9 @@ server_cleanup (void)
 		 * reporting errors encountered closing the file.  It will be
 		 * deleted shortly anyhow.
 		 */
-		tmp = buf_from_net;
+		buf_shutdown (buf_from_net);
+		buf_free (buf_from_net);
 		buf_from_net = NULL;
-		buf_shutdown (tmp);
 	    }
 	    SIG_endCrSect();
 	}
@@ -5744,6 +5833,8 @@ server_cleanup (void)
 
 	    if (secondary_log_name && CVS_UNLINK (secondary_log_name))
                 error (0, errno, "Failed to delete log file.");
+	    if (secondary_log_out_name && CVS_UNLINK (secondary_log_out_name))
+                error (0, errno, "Failed to delete log file.");
 
 	    SIG_endCrSect();
 	} /* !dont_delete_temp */
@@ -5841,6 +5932,28 @@ server (int argc, char **argv)
 	    buf_from_net = log_buffer_initialize (buf_from_net, fp, true, true,
 	                                          outbuf_memory_error);
 	    secondary_log = buf_from_net;
+	}
+	else
+	{
+	    /* This error is not fatal... if we failed to open the log though,
+	     * this fact will cause a fatal error later in serve_root() if we
+	     * discover that we are actually a secondary server.
+	     */
+	    error (0, errno, "Failed to open writeproxy log.");
+	}
+
+	/* And again for the out log.  */
+	SIG_beginCrSect();
+	fp = cvs_temp_file (&secondary_log_out_name);
+	if (!fp) secondary_log_out_name = NULL;
+	SIG_endCrSect();
+
+	if (fp)
+	{
+	    /* The secondary log was successfully opened.  Store this info.  */
+	    buf_to_net = log_buffer_initialize (buf_to_net, fp, true, false,
+	                                        outbuf_memory_error);
+	    secondary_log_out = buf_to_net;
 	}
 	else
 	{

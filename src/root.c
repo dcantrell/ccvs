@@ -215,8 +215,6 @@ primary_root_add (const char *arg)
 char *
 primary_root_translate (const char *root_in)
 {
-    char *root_out = NULL;
-
     if (primary_root_in
         && !strncmp (root_in, primary_root_in, strlen (primary_root_in))
         && strlen (root_in) >= strlen (primary_root_in)
@@ -224,9 +222,32 @@ primary_root_translate (const char *root_in)
             || root_in[strlen (primary_root_in)] == '\0'))
     {
 	size_t dummy;
-	return asnprintf (NULL, &dummy, "%s/%s",
+	return asnprintf (NULL, &dummy, "%s%s",
 	                  primary_root_out,
 	                  root_in + strlen (primary_root_in));
+    }
+
+    /* There is no primary root configured or it didn't match.  */
+    return xstrdup (root_in);
+}
+
+
+
+/* Translate a primary root in reverse for PATHNAMEs in responses.
+ */
+char *
+primary_root_inverse_translate (const char *root_in)
+{
+    if (primary_root_out
+        && !strncmp (root_in, primary_root_out, strlen (primary_root_out))
+        && strlen (root_in) >= strlen (primary_root_out)
+        && (ISSLASH (root_in[strlen (primary_root_out)])
+            || root_in[strlen (primary_root_out)] == '\0'))
+    {
+	size_t dummy;
+	return asnprintf (NULL, &dummy, "%s%s",
+	                  primary_root_in,
+	                  root_in + strlen (primary_root_out));
     }
 
     /* There is no primary root configured or it didn't match.  */

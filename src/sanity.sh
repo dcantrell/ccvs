@@ -28128,10 +28128,16 @@ EOF
 	    # secondary.
 	    cat <<EOF >$TESTDIR/secondary-wrapper
 #! /bin/sh
-export CVS_SERVER=$CVS_SERVER
+export CVS_SERVER=$TESTDIR/primary-wrapper
 $CVS_SERVER --primary-root $TESTDIR/primary_cvsroot=$TESTDIR/secondary_cvsroot "\$@"
 EOF
-	    chmod a+x $TESTDIR/secondary-wrapper
+	    cat <<EOF >$TESTDIR/primary-wrapper
+#! /bin/sh
+#CVS_SERVER_LOG=/tmp/cvsprimarylog
+$CVS_SERVER "\$@"
+EOF
+
+	    chmod a+x $TESTDIR/secondary-wrapper $TESTDIR/primary-wrapper
 	    CVS_SERVER_save=$CVS_SERVER
 	    CVS_SERVER_secondary=$TESTDIR/secondary-wrapper
 	    CVS_SERVER=$CVS_SERVER_secondary
@@ -28182,6 +28188,7 @@ PrimaryServer=$PRIMARY_CVSROOT"
 	    cd firstdir
 	    echo now you see me >file1
 	    dotest writeproxy-6 "$testcvs -Q add file1"
+	    dotest writeproxy-6a "grep file1 CVS/Entries >/dev/null"
 	    dotest writeproxy-7 "$testcvs -Q ci -mfirst-file file1"
 
 	    # Make sure the sync took place
@@ -28205,7 +28212,7 @@ PrimaryServer=$PRIMARY_CVSROOT"
 
 	    CVS_SERVER=$CVS_SERVER_secondary
 	    # Update from secondary
-	    cd ../../secondary/firstdir
+	    cd ../../secondary/top/firstdir
 	    dotest writeproxy-11 "$testcvs -q up" \
 "U file1"
 
@@ -28213,20 +28220,25 @@ PrimaryServer=$PRIMARY_CVSROOT"
 	    dotest writeproxy-12 "cat file1" "now you see me again"
 
 	    # Test a failing rsync
-	    cd ../CVSROOT
+	    cd ../../CVSROOT
 	    sed \$d <loginfo >tmp
 	    mv tmp loginfo
-	    echo \
-"ALL echo >&2 'Im rsync and I encountered an error!'; exit 1" >>loginfo
+	    echo >>loginfo \
+"ALL echo >&2 'Im rsync and I encountered an error!'; cat >/dev/null; exit 1"
 	    dotest writeproxy-init-4 "$testcvs -Q ci -mbreak-rsync"
 	    echo "# a comment" >>loginfo
-	    dotest writeproxy-13 "$testcvs -Q ci -mtest-broken-rsync"
+	    dotest writeproxy-13 "$testcvs -Q ci -mtest-broken-rsync" \
+"Im rsync and I encountered an error!"
+	    touch loginfo
+	    dotest_fail writeproxy-14 "$testcvs up" \
+"$SPROG update: Updating \.
+$SPROG \[update aborted\]: could not find desired version 1\.4 in $SECONDARY_CVSROOT_DIRNAME/CVSROOT/loginfo,v"
 
 	    dokeep
 	    cd ../../..
 	    rm -r writeproxy
 	    rm -rf $PRIMARY_CVSROOT_DIRNAME $SECONDARY_CVSROOT_DIRNAME
-	    rm $TESTDIR/secondary-wrapper
+	    rm $TESTDIR/secondary-wrapper $TESTDIR/primary-wrapper
 	    CVS_SERVER=$CVS_SERVER_save
 	  fi
 	  ;;
