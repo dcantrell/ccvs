@@ -280,23 +280,20 @@ lock_name (char *repository, char *name)
     return retval;
 }
 
+
+
 /*
- * Clean up all outstanding locks
+ * Clean up all outstanding locks and free their storage.
+ *
+ * FIXME: This needs to be reentrant or protected from interrupts.  Calling
+ * exit() from a handler routine will not cause this function to be called
+ * again, but interrupts when this routine is called from before the exit
+ * sequence can.
  */
 void
 Lock_Cleanup (void)
 {
-    /* FIXME: error handling here is kind of bogus; we sometimes will call
-       error, which in turn can call us again.  For the moment work around
-       this by refusing to reenter this function (this is a kludge).  */
-    /* FIXME-reentrancy: the workaround isn't reentrant.  */
-    static int in_lock_cleanup = 0;
-
-    TRACE (1, "Lock_Cleanup()");
-
-    if (in_lock_cleanup)
-	return;
-    in_lock_cleanup = 1;
+    TRACE (TRACE_FUNCTION, "Lock_Cleanup()");
 
     remove_locks ();
 
@@ -304,16 +301,22 @@ Lock_Cleanup (void)
 
     if (locked_dir != NULL)
     {
-	dellist (&locked_list);
-	free (locked_dir);
+	char *tmp = locked_dir;
 	locked_dir = NULL;
-	locked_list = NULL;
+	dellist (&locked_list);
+	free (tmp);
     }
-    in_lock_cleanup = 0;
 }
 
+
+
 /*
- * Remove locks without discarding the lock information
+ * Remove locks without discarding the lock information.
+ *
+ * FIXME: This needs to be reentrant or protected from interrupts.  Calling
+ * exit() from a handler routine will not cause this function to be called
+ * again, but interrupts when this routine is called from before the exit
+ * sequence can.
  */
 static void
 remove_locks (void)
@@ -328,8 +331,9 @@ remove_locks (void)
     /* clean up multiple locks (if any) */
     if (locklist != NULL)
     {
-	walklist (locklist, unlock_proc, NULL);
+	List *tmp = locklist;
 	locklist = NULL;
+	walklist (tmp, unlock_proc, NULL);
     }
 }
 

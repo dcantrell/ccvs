@@ -1995,6 +1995,8 @@ server_notify (void)
     struct notify_note *p;
     char *repos;
 
+    TRACE (TRACE_FUNCTION, "server_notify()");
+
     while (notify_list != NULL)
     {
 	if ( CVS_CHDIR (notify_list->dir) < 0)

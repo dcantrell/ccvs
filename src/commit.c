@@ -626,10 +626,7 @@ commit (int argc, char **argv)
 	  argv, local, W_LOCAL, aflag, CVS_LOCK_NONE,
 	  (char *) NULL, 1, (char *) NULL );
     if (err)
-    {
-	Lock_Cleanup ();
 	error (1, 0, "correct above errors first!");
-    }
 
     /*
      * Run the recursion processor to commit the files
