@@ -1,9 +1,5 @@
 # Microsoft Developer Studio Generated Dependency File, included by libcvs.mak
 
-.\argmatch.c : \
-	"..\windows-NT\config.h"\
-	
-
 .\asnprintf.c : \
 	"..\windows-NT\config.h"\
 	".\vasnprintf.h"\
