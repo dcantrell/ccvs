@@ -12,12 +12,10 @@ project: cvs.exe
 # this var.
 PS = /
 
-# I don't want to fool around with autoconf right now.  First get it
-# working, then make it fancy.
-srcdir     = .
-top_srcdir = ..
-libdir     = ..${PS}lib
-cvs_srcdir = ..${PS}src
+srcdir     = @srcdir@
+top_srcdir = @top_srcdir@
+libdir     = @top_srcdir@${PS}src
+cvs_srcdir = @top_srcdir@${PS}src
 
 # Do we need these?
 # prefix = /usr/local
@@ -51,14 +49,14 @@ CFLAGS 	 += -DTCPIP_IBM -Is:${PS}ibmtcpip${PS}include
 # We list OS2_HEADERS so we know what to include when we make dist-dir
 # here.
 OS2_HEADERS = \
-       tcpip.h \
-       tcpip.mak \
-       config.h \
-       options.h \
-       pwd.h \
-       dirent.h \
-       rcmd.h \
-       popen.h
+       ${srcdir}${PS}tcpip.h \
+       ${srcdir}${PS}tcpip.mak \
+       ${srcdir}${PS}config.h \
+       ${srcdir}${PS}options.h \
+       ${srcdir}${PS}pwd.h \
+       ${srcdir}${PS}dirent.h \
+       ${srcdir}${PS}rcmd.h \
+       ${srcdir}${PS}popen.h
 
 # headers we use from the common src dir, ..${PS}src
 COMMON_HEADERS = \
@@ -74,17 +72,17 @@ COMMON_HEADERS = \
 
 # sources specific to OS/2
 OS2_SOURCES = \
-       mkdir.c \
-       pwd.c \
-       filesubr.c \
-       dirent.c \
-       run.c \
-       stripslash.c \
-       rcmd.c \
-       waitpid.c \
-       popen.c \
-       strippath.c \
-       getdate.c
+       ${srcdir}${PS}mkdir.c \
+       ${srcdir}${PS}pwd.c \
+       ${srcdir}${PS}filesubr.c \
+       ${srcdir}${PS}dirent.c \
+       ${srcdir}${PS}run.c \
+       ${srcdir}${PS}stripslash.c \
+       ${srcdir}${PS}rcmd.c \
+       ${srcdir}${PS}waitpid.c \
+       ${srcdir}${PS}popen.c \
+       ${srcdir}${PS}strippath.c \
+       ${srcdir}${PS}getdate.c
 
 # sources we use from the common src dir, ..${PS}src
 COMMON_SOURCES = \
@@ -150,17 +148,17 @@ LIB_SOURCES = \
 
 # object files from OS/2 sources
 OS2_OBJECTS = \
-       mkdir.obj \
-       pwd.obj \
-       filesubr.obj \
-       dirent.obj \
-       run.obj \
-       stripslash.obj \
-       rcmd.obj \
-       waitpid.obj \
-       popen.obj \
-       strippath.obj \
-       getdate.obj
+       ${srcdir}${PS}mkdir.obj \
+       ${srcdir}${PS}pwd.obj \
+       ${srcdir}${PS}filesubr.obj \
+       ${srcdir}${PS}dirent.obj \
+       ${srcdir}${PS}run.obj \
+       ${srcdir}${PS}stripslash.obj \
+       ${srcdir}${PS}rcmd.obj \
+       ${srcdir}${PS}waitpid.obj \
+       ${srcdir}${PS}popen.obj \
+       ${srcdir}${PS}strippath.obj \
+       ${srcdir}${PS}getdate.obj
 
 # object files from ..${PS}src
 COMMON_OBJECTS = \
@@ -259,7 +257,10 @@ dist-dir:
 # We don't have a real distclean or anything like that, but at least
 # we can get rid of the obj files and cvs.exe. 
 clean:
-	rm -f *.obj cvs.exe ..${PS}src${PS}*.obj ..${PS}lib${PS}*.obj
+	rm -f cvs.exe
+	rm -f ${srcdir}${PS}*.obj 
+	rm -f ${libdir}${PS}*.obj 
+	rm -f ${cvs_srcdir}${PS}*.obj 
 
 %.obj: %.c
 	icc ${OBJ_CFLAGS} ${CFLAGS} /Fo$@ $*.c

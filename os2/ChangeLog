@@ -1,3 +1,9 @@
+Fri Dec  1 14:29:44 1995  Karl Fogel  <kfogel@floss.cyclic.com>
+
+        * Makefile.in (srcdir, libdir, cvs_srcdir): use autoconf vars.
+        (dist-dir): use above vars now that they are autoconf-friendly.
+        (clean): same.
+
 Thu Nov 30 18:09:50 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
         * waitpid.c (waitpid): if _cwait() returns -1, test errno.  If
