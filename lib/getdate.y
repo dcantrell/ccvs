@@ -116,10 +116,6 @@ extern struct tm	*localtime();
 #define yylex getdate_yylex
 #define yyerror getdate_yyerror
 
-#if	!defined(lint) && !defined(SABER)
-static char RCS[] = "$CVSid: @(#)getdate.y 1.11 94/09/21 $";
-#endif	/* !defined(lint) && !defined(SABER) */
-
 static int yylex ();
 static int yyerror ();
 
