@@ -83,9 +83,11 @@ static char *date = NULL;
    end, once we have the right value for nonbranch, we call WriteTag
    again.  I don't know whether the first call is necessary or not.
    rewrite_tag is nonzero if we are going to have to make that second
-   call.  */
+   call.  warned is nonzero if we've already warned the user that the
+   tag occurs as both a revision tag and a branch tag.  */
 static int rewrite_tag;
 static int nonbranch;
+static int warned;
 
 /* If we set the tag or date for a subdirectory, we use this to undo
    the setting.  See update_dirent_proc.  */
@@ -400,7 +402,8 @@ update (argc, argv)
 	    WriteTag ((char *) NULL, tag, date, 0, ".", repos);
 	    free (repos);
 	    rewrite_tag = 1;
-	    nonbranch = 0;
+	    nonbranch = -1;
+	    warned = 0;
 	}
     }
 
@@ -592,7 +595,7 @@ update_fileproc (callerdat, finfo)
     void *callerdat;
     struct file_info *finfo;
 {
-    int retval;
+    int retval, nb;
     Ctype status;
     Vers_TS *vers;
 
@@ -601,16 +604,24 @@ update_fileproc (callerdat, finfo)
 
     /* Keep track of whether TAG is a branch tag.
        Note that if it is a branch tag in some files and a nonbranch tag
-       in others, treat it as a nonbranch tag.  It is possible that case
-       should elicit a warning or an error.  */
+       in others, treat it as a nonbranch tag.  */
     if (rewrite_tag
 	&& tag != NULL
 	&& finfo->rcs != NULL)
     {
 	char *rev = RCS_getversion (finfo->rcs, tag, NULL, 1, NULL);
 	if (rev != NULL
-	    && !RCS_nodeisbranch (finfo->rcs, tag))
-	    nonbranch = 1;
+	    && nonbranch != (nb = !RCS_nodeisbranch (finfo->rcs, tag)))
+	{
+	    if (nonbranch >= 0 && !warned && !quiet)
+	    {
+		error (0, 0,
+"warning: %s is a branch tag in some files and a revision tag in others.",
+			tag);
+		warned = 1;
+	    }
+	    if (nonbranch < nb) nonbranch = nb;
+	}
 	if (rev != NULL)
 	    free (rev);
     }
@@ -825,6 +836,7 @@ update_filesdone_proc (callerdat, err, repository, update_dir, entries)
     char *update_dir;
     List *entries;
 {
+    if (nonbranch < 0) nonbranch = 0;
     if (rewrite_tag)
     {
 	WriteTag (NULL, tag, date, nonbranch, update_dir, repository);
@@ -950,7 +962,8 @@ update_dirent_proc (callerdat, dir, repository, update_dir, entries)
 			  0,
 			  dotemplate);
 	    rewrite_tag = 1;
-	    nonbranch = 0;
+	    nonbranch = -1;
+	    warned = 0;
 	    Subdir_Register (entries, (char *) NULL, dir);
 	}
     }
@@ -1004,7 +1017,8 @@ update_dirent_proc (callerdat, dir, repository, update_dir, entries)
 	{
 	    WriteTag (dir, tag, date, 0, update_dir, repository);
 	    rewrite_tag = 1;
-	    nonbranch = 0;
+	    nonbranch = -1;
+	    warned = 0;
 	}
 
 	WriteTemplate (update_dir, dotemplate, repository);
@@ -1056,7 +1070,8 @@ update_dirleave_proc (callerdat, dir, err, update_dir, entries)
 	    free (date);
 	    date = NULL;
 	}
-	nonbranch = 0;
+	nonbranch = -1;
+	warned = 0;
 	free (tag_update_dir);
 	tag_update_dir = NULL;
     }
