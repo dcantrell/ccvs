@@ -77,3 +77,36 @@ playing around with the SCC, and if you have done that and then
 proceed to run into those areas which pubscc.h does not document well,
 you are encouraged to send mail to bug-cvs@prep.ai.mit.edu with your
 questions.
+
+OTHER INTERFACES
+
+There are other interfaces which interface between a development
+environment (or other front-end) and a source control system.  That
+is, in general terms they provide somewhat the function of the SCC,
+although they may be at a somewhat different level and systems may
+support/use several interfaces rather than it being an either/or thing.
+
+If you know of other interfaces which should be added here I guess the
+best place to make suggestions is bug-cvs@prep.ai.mit.edu (although
+this list is not intended to be CVS-centric).
+
+* The CVS remote protocol is documented in doc/cvsclient.texi in the
+CVS distribution and has at least 3 implementations of the client
+(jCVS, CVS command line client, and CVSwiz), in addition to having
+been implemented at least once by a special-purpose perl script.
+
+* Microsoft's OLE Automation interface.  The spec is available for
+download at http://www.microsoft.com/ssafe.  I'm not sure whether this
+has been implemented by other source control systems.  Metrowerks
+implements this via a module which speaks the Metrowerks API out one
+end and the OLE Automation interface out the other (the module runs on
+Windows, not Mac).
+
+* There is an API (for Java, I think) which is supported by Symantec's
+Visual Cafe 2.0, and will be supported by a service pack which will
+implement it for StarTeam 2.1 (source: usenet post by Steve Reynolds
+of StarBase, Oct 1997).
+
+* Metrowerks publishes and implements the CodeWarrior IDE Version
+Control System API.  I think maybe the way to get a copy of the spec
+is as part of CodeWarrior but I'm not completely clear on that.
