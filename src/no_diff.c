@@ -37,7 +37,8 @@ No_Difference (finfo, vers)
 	options = xstrdup ("");
 
     tmp = cvs_temp_name ();
-    retcode = RCS_checkout (vers->srcfile, NULL, vers->vn_user, options, tmp);
+    retcode = RCS_checkout (vers->srcfile, (char *) NULL, vers->vn_user,
+			    (char *) NULL, options, tmp);
     if (retcode == 0)
     {
 #if 0
