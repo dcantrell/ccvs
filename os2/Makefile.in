@@ -21,7 +21,7 @@ srcdir     = @srcdir@
 # top_srcdir is usually ".."
 top_srcdir = @top_srcdir@
 
-libdir     = @top_srcdir@${SL}lib
+lib_dir     = @top_srcdir@${SL}lib
 cvs_srcdir = @top_srcdir@${SL}src
 
 # Do we need these?
@@ -34,7 +34,7 @@ CINC = -Is:${SL}ibmcpp${SL}include -Is:${SL}toolkt21${SL}c${SL}os2h
 # This says we are building an object file, not a full executable.
 OBJ_CFLAGS = -C+
 CFLAGS = -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm ${CINC}
-CFLAGS += -I${srcdir} -I${libdir} -I${cvs_srcdir}
+CFLAGS += -I${srcdir} -I${lib_dir} -I${cvs_srcdir}
 CFLAGS += -DIBM_CPP -DHAVE_CONFIG_H
 
 # needed to make command-line wildcard expansion work right.  That's
@@ -142,17 +142,17 @@ COMMON_SOURCES = \
 
 # sources from ..${SL}lib
 LIB_SOURCES = \
-       ${libdir}${SL}getopt.c \
-       ${libdir}${SL}getopt1.c \
-       ${libdir}${SL}getline.c \
-       ${libdir}${SL}getwd.c \
-       ${libdir}${SL}save-cwd.c \
-       ${libdir}${SL}sighandle.c \
-       ${libdir}${SL}yesno.c \
-       ${libdir}${SL}xgetwd.c \
-       ${libdir}${SL}md5.c \
-       ${libdir}${SL}fnmatch.c \
-       ${libdir}${SL}regex.c
+       ${lib_dir}${SL}getopt.c \
+       ${lib_dir}${SL}getopt1.c \
+       ${lib_dir}${SL}getline.c \
+       ${lib_dir}${SL}getwd.c \
+       ${lib_dir}${SL}save-cwd.c \
+       ${lib_dir}${SL}sighandle.c \
+       ${lib_dir}${SL}yesno.c \
+       ${lib_dir}${SL}xgetwd.c \
+       ${lib_dir}${SL}md5.c \
+       ${lib_dir}${SL}fnmatch.c \
+       ${lib_dir}${SL}regex.c
 
 # object files from OS/2 sources
 OS2_OBJECTS = \
@@ -224,17 +224,17 @@ COMMON_OBJECTS = \
 
 # objects from ..${SL}lib
 LIB_OBJECTS = \
-       ${libdir}${SL}getopt.obj \
-       ${libdir}${SL}getopt1.obj \
-       ${libdir}${SL}getline.obj \
-       ${libdir}${SL}getwd.obj \
-       ${libdir}${SL}save-cwd.obj \
-       ${libdir}${SL}sighandle.obj \
-       ${libdir}${SL}yesno.obj \
-       ${libdir}${SL}xgetwd.obj \
-       ${libdir}${SL}md5.obj \
-       ${libdir}${SL}fnmatch.obj \
-       ${libdir}${SL}regex.obj
+       ${lib_dir}${SL}getopt.obj \
+       ${lib_dir}${SL}getopt1.obj \
+       ${lib_dir}${SL}getline.obj \
+       ${lib_dir}${SL}getwd.obj \
+       ${lib_dir}${SL}save-cwd.obj \
+       ${lib_dir}${SL}sighandle.obj \
+       ${lib_dir}${SL}yesno.obj \
+       ${lib_dir}${SL}xgetwd.obj \
+       ${lib_dir}${SL}md5.obj \
+       ${lib_dir}${SL}fnmatch.obj \
+       ${lib_dir}${SL}regex.obj
 
 SOURCES = ${COMMON_SOURCES} ${LIB_SOURCES} ${OS2_SOURCES}
 HEADERS = ${COMMON_HEADERS} ${OS2_HEADERS}
@@ -275,7 +275,7 @@ dist-dir:
 clean:
 	rm -f cvs.exe
 	rm -f ${srcdir}${SL}*.obj 
-	rm -f ${libdir}${SL}*.obj 
+	rm -f ${lib_dir}${SL}*.obj 
 	rm -f ${cvs_srcdir}${SL}*.obj 
 
 install-cvs: cvs.exe
