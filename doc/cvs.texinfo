@@ -4995,6 +4995,10 @@ revision becomes the head revision.  If you have made local
 changes, @code{import} will warn you that you must merge the changes
 into the main trunk, and tell you to use @samp{checkout -j} to do so.
 
+@c FIXME: why "wdiff" here and "fsf/wdiff" in the
+@c "import"?  I think the assumption is that one has
+@c "wdiff fsf/wdiff" or some such in modules, but it
+@c would be better to not use modules in this example.
 @example
 $ cvs checkout -jFSF_DIST:yesterday -jFSF_DIST wdiff
 @end example
