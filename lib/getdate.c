@@ -113,6 +113,14 @@ struct timeb {
 #define bcopy(from, to, len) memcpy ((to), (from), (len))
 #endif
 
+#if defined (STDC_HEADERS)
+#include <stdlib.h>
+#endif
+
+#if defined (HAVE_ALLOCA_H)
+#include <alloca.h>
+#endif
+
 extern struct tm	*gmtime();
 extern struct tm	*localtime();
 
@@ -184,7 +192,7 @@ static time_t	yyRelMonth;
 static time_t	yyRelSeconds;
 
 
-#line 167 "/u/jimb/cvs/cvs-1.5/lib/getdate.y"
+#line 175 "/u/jimb/cvs/cvs-1.5/lib/getdate.y"
 typedef union {
     time_t		Number;
     enum _MERIDIAN	Meridian;
@@ -281,11 +289,11 @@ static const short yyrhs[] = {    -1,
 
 #if YYDEBUG != 0
 static const short yyrline[] = { 0,
-   181,   182,   185,   188,   191,   194,   197,   200,   203,   209,
-   215,   222,   228,   238,   242,   246,   253,   257,   261,   267,
-   271,   276,   282,   288,   292,   297,   301,   308,   312,   315,
-   318,   321,   324,   327,   330,   333,   336,   339,   344,   371,
-   374
+   189,   190,   193,   196,   199,   202,   205,   208,   211,   217,
+   223,   230,   236,   246,   250,   254,   261,   265,   269,   275,
+   279,   284,   290,   296,   300,   305,   309,   316,   320,   323,
+   326,   329,   332,   335,   338,   341,   344,   347,   352,   379,
+   382
 };
 
 static const char * const yytname[] = {   "$","error","$illegal.","tAGO","tDAY",
@@ -822,37 +830,37 @@ yyreduce:
   switch (yyn) {
 
 case 3:
-#line 185 "/u/jimb/cvs/cvs-1.5/lib/getdate.y"
+#line 193 "/u/jimb/cvs/cvs-1.5/lib/getdate.y"
 {
 	    yyHaveTime++;
 	;
     break;}
 case 4:
-#line 188 "/u/jimb/cvs/cvs-1.5/lib/getdate.y"
+#line 196 "/u/jimb/cvs/cvs-1.5/lib/getdate.y"
 {
 	    yyHaveZone++;
 	;
     break;}
 case 5:
-#line 191 "/u/jimb/cvs/cvs-1.5/lib/getdate.y"
+#line 199 "/u/jimb/cvs/cvs-1.5/lib/getdate.y"
 {
 	    yyHaveDate++;
 	;
     break;}
 case 6:
-#line 194 "/u/jimb/cvs/cvs-1.5/lib/getdate.y"
+#line 202 "/u/jimb/cvs/cvs-1.5/lib/getdate.y"
 {
 	    yyHaveDay++;
 	;
     break;}
 case 7:
-#line 197 "/u/jimb/cvs/cvs-1.5/lib/getdate.y"
+#line 205 "/u/jimb/cvs/cvs-1.5/lib/getdate.y"
 {
 	    yyHaveRel++;
 	;
     break;}
 case 9:
-#line 203 "/u/jimb/cvs/cvs-1.5/lib/getdate.y"
+#line 211 "/u/jimb/cvs/cvs-1.5/lib/getdate.y"
 {
 	    yyHour = yyvsp[-1].Number;
 	    yyMinutes = 0;
@@ -861,7 +869,7 @@ case 9:
 	;
     break;}
 case 10:
-#line 209 "/u/jimb/cvs/cvs-1.5/lib/getdate.y"
+#line 217 "/u/jimb/cvs/cvs-1.5/lib/getdate.y"
 {
 	    yyHour = yyvsp[-3].Number;
 	    yyMinutes = yyvsp[-1].Number;
@@ -870,7 +878,7 @@ case 10:
 	;
     break;}
 case 11:
-#line 215 "/u/jimb/cvs/cvs-1.5/lib/getdate.y"
+#line 223 "/u/jimb/cvs/cvs-1.5/lib/getdate.y"
 {
 	    yyHour = yyvsp[-3].Number;
 	    yyMinutes = yyvsp[-1].Number;
@@ -880,7 +888,7 @@ case 11:
 	;
     break;}
 case 12:
-#line 222 "/u/jimb/cvs/cvs-1.5/lib/getdate.y"
+#line 230 "/u/jimb/cvs/cvs-1.5/lib/getdate.y"
 {
 	    yyHour = yyvsp[-5].Number;
 	    yyMinutes = yyvsp[-3].Number;
@@ -889,7 +897,7 @@ case 12:
 	;
     break;}
 case 13:
-#line 228 "/u/jimb/cvs/cvs-1.5/lib/getdate.y"
+#line 236 "/u/jimb/cvs/cvs-1.5/lib/getdate.y"
 {
 	    yyHour = yyvsp[-5].Number;
 	    yyMinutes = yyvsp[-3].Number;
@@ -900,56 +908,56 @@ case 13:
 	;
     break;}
 case 14:
-#line 238 "/u/jimb/cvs/cvs-1.5/lib/getdate.y"
+#line 246 "/u/jimb/cvs/cvs-1.5/lib/getdate.y"
 {
 	    yyTimezone = yyvsp[0].Number;
 	    yyDSTmode = DSToff;
 	;
     break;}
 case 15:
-#line 242 "/u/jimb/cvs/cvs-1.5/lib/getdate.y"
+#line 250 "/u/jimb/cvs/cvs-1.5/lib/getdate.y"
 {
 	    yyTimezone = yyvsp[0].Number;
 	    yyDSTmode = DSTon;
 	;
     break;}
 case 16:
-#line 247 "/u/jimb/cvs/cvs-1.5/lib/getdate.y"
+#line 255 "/u/jimb/cvs/cvs-1.5/lib/getdate.y"
 {
 	    yyTimezone = yyvsp[-1].Number;
 	    yyDSTmode = DSTon;
 	;
     break;}
 case 17:
-#line 253 "/u/jimb/cvs/cvs-1.5/lib/getdate.y"
+#line 261 "/u/jimb/cvs/cvs-1.5/lib/getdate.y"
 {
 	    yyDayOrdinal = 1;
 	    yyDayNumber = yyvsp[0].Number;
 	;
     break;}
 case 18:
-#line 257 "/u/jimb/cvs/cvs-1.5/lib/getdate.y"
+#line 265 "/u/jimb/cvs/cvs-1.5/lib/getdate.y"
 {
 	    yyDayOrdinal = 1;
 	    yyDayNumber = yyvsp[-1].Number;
 	;
     break;}
 case 19:
-#line 261 "/u/jimb/cvs/cvs-1.5/lib/getdate.y"
+#line 269 "/u/jimb/cvs/cvs-1.5/lib/getdate.y"
 {
 	    yyDayOrdinal = yyvsp[-1].Number;
 	    yyDayNumber = yyvsp[0].Number;
 	;
     break;}
 case 20:
-#line 267 "/u/jimb/cvs/cvs-1.5/lib/getdate.y"
+#line 275 "/u/jimb/cvs/cvs-1.5/lib/getdate.y"
 {
 	    yyMonth = yyvsp[-2].Number;
 	    yyDay = yyvsp[0].Number;
 	;
     break;}
 case 21:
-#line 271 "/u/jimb/cvs/cvs-1.5/lib/getdate.y"
+#line 279 "/u/jimb/cvs/cvs-1.5/lib/getdate.y"
 {
 	    yyMonth = yyvsp[-4].Number;
 	    yyDay = yyvsp[-2].Number;
@@ -957,7 +965,7 @@ case 21:
 	;
     break;}
 case 22:
-#line 276 "/u/jimb/cvs/cvs-1.5/lib/getdate.y"
+#line 284 "/u/jimb/cvs/cvs-1.5/lib/getdate.y"
 {
 	    /* ISO 8601 format.  yyyy-mm-dd.  */
 	    yyYear = yyvsp[-2].Number;
@@ -966,7 +974,7 @@ case 22:
 	;
     break;}
 case 23:
-#line 282 "/u/jimb/cvs/cvs-1.5/lib/getdate.y"
+#line 290 "/u/jimb/cvs/cvs-1.5/lib/getdate.y"
 {
 	    /* e.g. 17-JUN-1992.  */
 	    yyDay = yyvsp[-2].Number;
@@ -975,14 +983,14 @@ case 23:
 	;
     break;}
 case 24:
-#line 288 "/u/jimb/cvs/cvs-1.5/lib/getdate.y"
+#line 296 "/u/jimb/cvs/cvs-1.5/lib/getdate.y"
 {
 	    yyMonth = yyvsp[-1].Number;
 	    yyDay = yyvsp[0].Number;
 	;
     break;}
 case 25:
-#line 292 "/u/jimb/cvs/cvs-1.5/lib/getdate.y"
+#line 300 "/u/jimb/cvs/cvs-1.5/lib/getdate.y"
 {
 	    yyMonth = yyvsp[-3].Number;
 	    yyDay = yyvsp[-2].Number;
@@ -990,14 +998,14 @@ case 25:
 	;
     break;}
 case 26:
-#line 297 "/u/jimb/cvs/cvs-1.5/lib/getdate.y"
+#line 305 "/u/jimb/cvs/cvs-1.5/lib/getdate.y"
 {
 	    yyMonth = yyvsp[0].Number;
 	    yyDay = yyvsp[-1].Number;
 	;
     break;}
 case 27:
-#line 301 "/u/jimb/cvs/cvs-1.5/lib/getdate.y"
+#line 309 "/u/jimb/cvs/cvs-1.5/lib/getdate.y"
 {
 	    yyMonth = yyvsp[-1].Number;
 	    yyDay = yyvsp[-2].Number;
@@ -1005,68 +1013,68 @@ case 27:
 	;
     break;}
 case 28:
-#line 308 "/u/jimb/cvs/cvs-1.5/lib/getdate.y"
+#line 316 "/u/jimb/cvs/cvs-1.5/lib/getdate.y"
 {
 	    yyRelSeconds = -yyRelSeconds;
 	    yyRelMonth = -yyRelMonth;
 	;
     break;}
 case 30:
-#line 315 "/u/jimb/cvs/cvs-1.5/lib/getdate.y"
+#line 323 "/u/jimb/cvs/cvs-1.5/lib/getdate.y"
 {
 	    yyRelSeconds += yyvsp[-1].Number * yyvsp[0].Number * 60L;
 	;
     break;}
 case 31:
-#line 318 "/u/jimb/cvs/cvs-1.5/lib/getdate.y"
+#line 326 "/u/jimb/cvs/cvs-1.5/lib/getdate.y"
 {
 	    yyRelSeconds += yyvsp[-1].Number * yyvsp[0].Number * 60L;
 	;
     break;}
 case 32:
-#line 321 "/u/jimb/cvs/cvs-1.5/lib/getdate.y"
+#line 329 "/u/jimb/cvs/cvs-1.5/lib/getdate.y"
 {
 	    yyRelSeconds += yyvsp[0].Number * 60L;
 	;
     break;}
 case 33:
-#line 324 "/u/jimb/cvs/cvs-1.5/lib/getdate.y"
+#line 332 "/u/jimb/cvs/cvs-1.5/lib/getdate.y"
 {
 	    yyRelSeconds += yyvsp[-1].Number;
 	;
     break;}
 case 34:
-#line 327 "/u/jimb/cvs/cvs-1.5/lib/getdate.y"
+#line 335 "/u/jimb/cvs/cvs-1.5/lib/getdate.y"
 {
 	    yyRelSeconds += yyvsp[-1].Number;
 	;
     break;}
 case 35:
-#line 330 "/u/jimb/cvs/cvs-1.5/lib/getdate.y"
+#line 338 "/u/jimb/cvs/cvs-1.5/lib/getdate.y"
 {
 	    yyRelSeconds++;
 	;
     break;}
 case 36:
-#line 333 "/u/jimb/cvs/cvs-1.5/lib/getdate.y"
+#line 341 "/u/jimb/cvs/cvs-1.5/lib/getdate.y"
 {
 	    yyRelMonth += yyvsp[-1].Number * yyvsp[0].Number;
 	;
     break;}
 case 37:
-#line 336 "/u/jimb/cvs/cvs-1.5/lib/getdate.y"
+#line 344 "/u/jimb/cvs/cvs-1.5/lib/getdate.y"
 {
 	    yyRelMonth += yyvsp[-1].Number * yyvsp[0].Number;
 	;
     break;}
 case 38:
-#line 339 "/u/jimb/cvs/cvs-1.5/lib/getdate.y"
+#line 347 "/u/jimb/cvs/cvs-1.5/lib/getdate.y"
 {
 	    yyRelMonth += yyvsp[0].Number;
 	;
     break;}
 case 39:
-#line 344 "/u/jimb/cvs/cvs-1.5/lib/getdate.y"
+#line 352 "/u/jimb/cvs/cvs-1.5/lib/getdate.y"
 {
 	    if (yyHaveTime && yyHaveDate && !yyHaveRel)
 		yyYear = yyvsp[0].Number;
@@ -1094,13 +1102,13 @@ case 39:
 	;
     break;}
 case 40:
-#line 371 "/u/jimb/cvs/cvs-1.5/lib/getdate.y"
+#line 379 "/u/jimb/cvs/cvs-1.5/lib/getdate.y"
 {
 	    yyval.Meridian = MER24;
 	;
     break;}
 case 41:
-#line 374 "/u/jimb/cvs/cvs-1.5/lib/getdate.y"
+#line 382 "/u/jimb/cvs/cvs-1.5/lib/getdate.y"
 {
 	    yyval.Meridian = yyvsp[0].Meridian;
 	;
@@ -1303,7 +1311,7 @@ yyerrhandle:
   yystate = yyn;
   goto yynewstate;
 }
-#line 379 "/u/jimb/cvs/cvs-1.5/lib/getdate.y"
+#line 387 "/u/jimb/cvs/cvs-1.5/lib/getdate.y"
 
 
 /* Month and day table. */
