@@ -1,3 +1,8 @@
+4 Aug 1997  Jim Kingdon
+
+	* scc.c (SccGet): Replace #if 0'd code with a comment and
+	adjust to avoid compiler warning.
+
 Mon Aug  4 09:58:11 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* scc.c: Split out the interface declarations into a new file
