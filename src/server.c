@@ -18,9 +18,9 @@
 
 #if defined(SERVER_SUPPORT) || defined(CLIENT_SUPPORT)
 
-#include "gssapi-client.h"
-
 # ifdef HAVE_GSSAPI
+#   include "gssapi-client.h"
+
 /* This stuff isn't included solely with SERVER_SUPPORT since some of these
  * functions (encryption & the like) get compiled with or without server
  * support.
@@ -32,9 +32,6 @@
 /* We use Kerberos 5 routines to map the GSSAPI credential to a user
    name.  */
 #   include <krb5.h>
-
-/* We need this to wrap data.  */
-static gss_ctx_id_t gcontext;
 
 static void gserver_authenticate_connection PROTO((void));
 
