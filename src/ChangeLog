@@ -1,3 +1,8 @@
+Tue Dec 12 18:56:38 1995  Karl Fogel  <kfogel@totoro.cyclic.com>
+
+        * options.h.in (RCSBIN_DFLT): document the probable need for this
+        to be set in the authenticating server.
+
 Tue Dec 12 11:56:43 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* server.c (expand_proc): If mfile is non-NULL, return it too as
