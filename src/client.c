@@ -1655,7 +1655,6 @@ update_entries (data_arg, ent_list, short_pathname, filename)
 	else
 	{
 	    int fd;
-	    pid_t gzip_pid = 0;
 
 	    fd = CVS_OPEN (temp_filename,
 			   (O_WRONLY | O_CREAT | O_TRUNC
@@ -1675,31 +1674,18 @@ update_entries (data_arg, ent_list, short_pathname, filename)
 		goto discard_file_and_return;
 	    }
 
-	    if (use_gzip)
-		fd = filter_through_gunzip (fd, 0, &gzip_pid);
-
 	    if (size > 0)
 	    {
 		read_from_server (buf, size);
 
-		if (write (fd, buf, size) != size)
+		if (use_gzip)
+		    gunzip_and_write (fd, short_pathname, buf, size);
+		else if (write (fd, buf, size) != size)
 		    error (1, errno, "writing %s", short_pathname);
 	    }
 
 	    if (close (fd) < 0)
 		error (1, errno, "writing %s", short_pathname);
-	    if (gzip_pid > 0)
-	    {
-		int gzip_status;
-
-		if (waitpid (gzip_pid, &gzip_status, 0) == -1)
-		    error (1, errno, "waiting for gzip process %ld",
-			   (long) gzip_pid);
-		else if (gzip_status != 0)
-		    error (1, 0, "gzip process exited %d", gzip_status);
-	    }
-
-	    gzip_pid = -1;
 	}
 
 	/* This is after we have read the file from the net (a change
@@ -1718,54 +1704,11 @@ update_entries (data_arg, ent_list, short_pathname, filename)
 	    updated_fname = 0;
 	}
 
-	/* Since gunzip writes files without converting LF to CRLF
-	   (a reasonable behavior), we now have a patch file in LF
-	   format.  Leave the file as is if we're just going to feed
-	   it to patch; patch can handle it.  However, if it's the
-	   final source file, convert it.  */
-
 	patch_failed = 0;
 
 	if (data->contents == UPDATE_ENTRIES_UPDATE)
 	{
-#ifdef LINES_CRLF_TERMINATED
-
-            /* `bin' is non-zero iff `options' contains "-kb", meaning
-                treat this file as binary. */
-
-	    if (use_gzip && (! bin))
-	    {
-	        convert_file (temp_filename, O_RDONLY | OPEN_BINARY,
-	    		      filename, O_WRONLY | O_CREAT | O_TRUNC);
-	        if ( CVS_UNLINK (temp_filename) < 0)
-	            error (0, errno, "warning: couldn't delete %s",
-                           temp_filename);
-	    }
-	    else
-#ifdef BROKEN_READWRITE_CONVERSION
-	    {
-		/* If only stdio, not open/write/etc., do text/binary
-		   conversion, use convert_file which can compensate
-		   (FIXME: we could just use stdio instead which would
-		   avoid the whole problem).  */
-		if (!bin)
-		{
-		    convert_file (temp_filename, O_RDONLY | OPEN_BINARY,
-				  filename, O_WRONLY | O_CREAT | O_TRUNC);
-		    if (CVS_UNLINK (temp_filename) < 0)
-			error (0, errno, "warning: couldn't delete %s",
-			       temp_filename);
-		}
-		else
-		    rename_file (temp_filename, filename);
-	    }
-#else
-		rename_file (temp_filename, filename);
-#endif
-	        
-#else /* ! LINES_CRLF_TERMINATED */
 	    rename_file (temp_filename, filename);
-#endif /* LINES_CRLF_TERMINATED */
 	}
 	else if (data->contents == UPDATE_ENTRIES_PATCH)
 	{
@@ -4614,105 +4557,14 @@ send_modified (file, short_pathname, vers)
 
     if (file_gzip_level && sb.st_size > 100)
     {
-	int nread, newsize = 0, gzip_status;
-	pid_t gzip_pid;
-	char *bufp = buf;
-	int readsize = 8192;
-#ifdef LINES_CRLF_TERMINATED
-	char *tempfile;
-	int converting;
-#endif /* LINES_CRLF_TERMINATED */
+	int newsize = 0;
 
-#ifdef LINES_CRLF_TERMINATED
-	if (vers == NULL)
-	    /* "Can't happen".  */
-	    converting = 1;
-	else
-            /* Otherwise, we convert things unless they're binary. */
-	    converting = (! bin);
+	read_and_gzip (fd, short_pathname, (unsigned char **)&buf,
+		       &bufsize, &newsize,
+		       file_gzip_level);
 
-	if (converting)
-	{
-	    /* gzip reads and writes files without munging CRLF
-	       sequences, as it should, but files should be
-	       transmitted in LF form.  Convert CRLF to LF before
-	       gzipping, on systems where this is necessary.
-
-	       If Windows NT supported fork, we could do this by
-	       pushing another filter on in front of gzip.  But it
-	       doesn't.  I'd have to write a trivial little program to
-	       do the conversion and have CVS spawn it off.  But
-	       little executables like that always get lost.
-
-	       Alternatively, this cruft could go away if we switched
-	       to a gzip library instead of a subprocess; then we
-	       could tell gzip to open the file with CRLF translation
-	       enabled.  */
-	    if (close (fd) < 0)
-		error (0, errno, "warning: can't close %s", short_pathname);
-
-	    tempfile = cvs_temp_name ();
-	    convert_file (file, O_RDONLY,
-			  tempfile,
-			  O_WRONLY | O_CREAT | O_TRUNC | OPEN_BINARY);
-
-	    /* This OPEN_BINARY doesn't make any difference, I think, because
-	       gzip will deal with the inherited handle as it pleases.  But I
-	       do remember something obscure in the manuals about propagating
-	       the translation mode to created processes via environment
-	       variables, ick.  */
-	    fd = CVS_OPEN (tempfile, O_RDONLY | OPEN_BINARY);
-	    if (fd < 0)
-		error (1, errno, "reading %s", short_pathname);
-	}
-#endif /* LINES_CRLF_TERMINATED */
-
-	fd = filter_through_gzip (fd, 1, file_gzip_level, &gzip_pid);
-
-	/* FIXME: is there any reason to go through all this realloc'ing
-	   when we could just be writing the data to the network as we read
-	   it from gzip?  */
-	while (1)
-	{
-	    if ((bufp - buf) + readsize >= bufsize)
-	    {
-		/*
-		 * We need to expand the buffer if gzip ends up expanding
-		 * the file.
-		 */
-		newsize = bufp - buf;
-		while (newsize + readsize >= bufsize)
-		  bufsize *= 2;
-		buf = xrealloc (buf, bufsize);
-		bufp = buf + newsize;
-	    }
-	    nread = read (fd, bufp, readsize);
-	    if (nread < 0)
-		error (1, errno, "reading from gzip pipe");
-	    else if (nread == 0)
-		/* eof */
-		break;
-	    bufp += nread;
-	}
-	newsize = bufp - buf;
 	if (close (fd) < 0)
 	    error (0, errno, "warning: can't close %s", short_pathname);
-
-	if (waitpid (gzip_pid, &gzip_status, 0) != gzip_pid)
-	    error (1, errno, "waiting for gzip proc %ld", (long) gzip_pid);
-	else if (gzip_status != 0)
-	    error (1, errno, "gzip exited %d", gzip_status);
-
-#if LINES_CRLF_TERMINATED
-	if (converting)
-	{
-	    if ( CVS_UNLINK (tempfile) < 0)
-		error (0, errno,
-		       "warning: can't remove temp file %s", tempfile);
-	    free (tempfile);
-	    tempfile = NULL;
-	}
-#endif /* LINES_CRLF_TERMINATED */
 
         {
           char tmp[80];
