@@ -644,7 +644,7 @@ if test x"$*" = x; then
 	tests="${tests} mkmodules-temp-file-removal"
 	tests="${tests} cvsadm emptydir abspath toplevel toplevel2"
 	# Log messages, error messages.
-	tests="${tests} mflag editor errmsg1 errmsg2"
+	tests="${tests} mflag editor errmsg1 errmsg2 adderrmsg"
 	# Watches, binary files, history browsing, &c.
 	tests="${tests} devcom devcom2 devcom3 watch4 watch5"
 	tests="${tests} unedit-without-baserev"
@@ -5308,8 +5308,7 @@ import-it
 	  dotest import-after-initial-2 "$testcvs -Q co $module" ''
 	  cd $module
 	  echo original > $file
-	  dotest import-after-initial-3 "${testcvs} -Q add $file" \
-"${PROG}"' [a-z]*: use .'"${PROG}"' commit. to add this file permanently'
+	  dotest import-after-initial-3 "${testcvs} -Q add $file" ""
 	  dotest import-after-initial-4 "${testcvs} -Q ci -m. $file" \
 "RCS file: ${TESTDIR}/cvsroot/$module/$file,v
 done
@@ -10524,6 +10523,56 @@ done"
 	  cd ..
 	  rm -r 1
 	  rm -rf ${TESTDIR}/cvsroot/first-dir
+	  ;;
+
+	adderrmsg)
+	  # Test some of the error messages the 'add' command can return and
+	  # their reactions to '-q'.
+
+	  # First the usual setup; create a directory first-dir.
+	  mkdir 1; cd 1
+	  dotest adderrmsg-init1 "${testcvs} -q co -l ." ''
+	  mkdir adderrmsg-dir
+	  dotest adderrmsg-init2 "${testcvs} add adderrmsg-dir" \
+"Directory ${TESTDIR}/cvsroot/adderrmsg-dir added to the repository"
+          cd adderrmsg-dir
+
+	  # try to add the admin dir
+	  dotest_fail adderrmsg-1 "${testcvs} add CVS" \
+"${PROG} [a-z]*: cannot add special file .CVS.; skipping"
+	  # might not want to see this message when you 'cvs add *'
+	  dotest_fail adderrmsg-2 "${testcvs} -q add CVS" ""
+
+	  # to test some other messages
+	  touch file1
+	  dotest adderrmsg-3 "${testcvs} add file1" \
+"${PROG} [a-z]*: scheduling file .file1. for addition
+${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
+
+	  # add it twice
+	  dotest_fail adderrmsg-4 "${testcvs} add file1" \
+"${PROG} [a-z]*: file1 has already been entered"
+	  dotest_fail adderrmsg-5 "${testcvs} -q add file1" ""
+
+	  dotest adderrmsg-6 "${testcvs} -q ci -madd" \
+"RCS file: ${CVSROOT_DIRNAME}/adderrmsg-dir/file1,v
+done
+Checking in file1;
+${CVSROOT_DIRNAME}/adderrmsg-dir/file1,v  <--  file1
+initial revision: 1\.1
+done"
+
+	  # file in Entries & repository
+	  dotest_fail adderrmsg-7 "${testcvs} add file1" \
+"${PROG} [a-z]*: file1 already exists, with version number 1\.1"
+	  dotest_fail adderrmsg-8 "${testcvs} -q add file1" ""
+
+	  # clean up
+	  cd ../..
+	  if test "$keep" = no; then
+	      rm -r 1
+	      rm -rf ${TESTDIR}/cvsroot/adderrmsg-dir
+	  fi
 	  ;;
 
 	devcom)

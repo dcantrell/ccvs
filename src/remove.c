@@ -115,7 +115,7 @@ cvsremove (argc, argv)
 			   argc, argv,
                            local, W_LOCAL, 0, 1, (char *) NULL, 1);
 
-    if (removed_files)
+    if (removed_files && !really_quiet)
 	error (0, 0, "use '%s commit' to remove %s permanently", program_name,
 	       (removed_files == 1) ? "this file" : "these files");
 

@@ -111,7 +111,8 @@ add (argc, argv)
 	    || strcmp (argv[i], "..") == 0
 	    || fncmp (argv[i], CVSADM) == 0)
 	{
-	    error (0, 0, "cannot add special file `%s'; skipping", argv[i]);
+	    if (!quiet)
+		error (0, 0, "cannot add special file `%s'; skipping", argv[i]);
 	    skip_file = 1;
 	}
 	else
@@ -448,8 +449,8 @@ add (argc, argv)
 		    if (vers->nonbranch)
 		    {
 			error (0, 0,
-			       "cannot add file on non-branch tag %s",
-			       vers->tag);
+				"cannot add file on non-branch tag %s",
+				vers->tag);
 			++err;
 		    }
 		    else
@@ -505,18 +506,21 @@ same name already exists in the repository.");
 		    }
 		    else
 		    {
-			if (vers->tag)
-			    error (0, 0, "\
+			if (!quiet)
+			{
+			    if (vers->tag)
+				error (0, 0, "\
 file `%s' will be added on branch `%s' from version %s",
-				   finfo.fullname, vers->tag, vers->vn_rcs);
-			else
-			    /* I'm not sure that mentioning
-			       vers->vn_rcs makes any sense here; I
-			       can't think of a way to word the
-			       message which is not confusing.  */
-			    error (0, 0, "\
+					finfo.fullname, vers->tag, vers->vn_rcs);
+			    else
+				/* I'm not sure that mentioning
+				   vers->vn_rcs makes any sense here; I
+				   can't think of a way to word the
+				   message which is not confusing.  */
+				error (0, 0, "\
 re-adding file %s (in place of dead revision %s)",
-				   finfo.fullname, vers->vn_rcs);
+					finfo.fullname, vers->vn_rcs);
+			}
 			Register (entries, finfo.file, "0", vers->ts_user,
 				  vers->options,
 				  vers->tag, NULL, NULL);
@@ -542,7 +546,8 @@ re-adding file %s (in place of dead revision %s)",
 	     * An entry for a new-born file, ts_rcs is dummy, but that is
 	     * inappropriate here
 	     */
-	    error (0, 0, "%s has already been entered", finfo.fullname);
+	    if (!quiet)
+		error (0, 0, "%s has already been entered", finfo.fullname);
 	    err++;
 	}
 	else if (vers->vn_user[0] == '-')
@@ -607,9 +612,10 @@ cannot resurrect %s; RCS file removed by second party", finfo.fullname);
 	else
 	{
 	    /* A normal entry, ts_rcs is valid, so it must already be there */
-	    error (0, 0, "%s already exists, with version number %s",
-		   finfo.fullname,
-		   vers->vn_user);
+	    if (!quiet)
+		error (0, 0, "%s already exists, with version number %s",
+			finfo.fullname,
+			vers->vn_user);
 	    err++;
 	}
 	freevers_ts (&vers);
@@ -641,7 +647,7 @@ cannot resurrect %s; RCS file removed by second party", finfo.fullname);
 	    free (found_name);
 #endif
     }
-    if (added_files)
+    if (added_files && !really_quiet)
 	error (0, 0, "use '%s commit' to add %s permanently",
 	       program_name,
 	       (added_files == 1) ? "this file" : "these files");
