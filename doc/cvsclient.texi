@@ -5,6 +5,10 @@
 @node Top
 @top CVS Client/Server
 
+This manual describes the client/server protocol used by CVS.  It does
+not describe how to use or administer client/server CVS; see the
+regular CVS manual for that.
+
 @menu
 * Goals::             Basic design decisions, requirements, scope, etc.
 * Notes::             Notes on the current implementation

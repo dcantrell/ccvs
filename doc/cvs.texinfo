@@ -113,8 +113,9 @@ Free Software Foundation instead of in the original English.
 @node    Top
 @top
 
-This info manual describes @sc{cvs} and is updated to
-release 1.4 or something similar.  
+This info manual describes how to use and administer
+@sc{cvs} and is updated to release 1.4 or something
+similar.
 @end ifinfo
 
 @menu
