@@ -634,15 +634,7 @@ update_fileproc (callerdat, finfo)
 		write_letter (finfo, 'C');
 		break;
 	    case T_NEEDS_MERGE:		/* needs merging */
-		if (noexec)
-		{
-		    retval = 1;
-		    write_letter (finfo, 'C');
-		}
-		else
-		{
-		    retval = merge_file (finfo, vers);
-		}
+		retval = merge_file (finfo, vers);
 		break;
 	    case T_MODIFIED:		/* locally modified */
 		retval = 0;
@@ -1310,11 +1302,14 @@ VERS: ", 0);
 	{
 	    Vers_TS *xvers_ts;
 
-	    if (revbuf != NULL)
+	    if (revbuf != NULL && !noexec)
 	    {
 		struct stat sb;
 
-		/* FIXME: We should have RCS_checkout return the mode.  */
+		/* FIXME: We should have RCS_checkout return the mode.
+		   That would also fix the kludge with noexec, above, which
+		   is here only because noexec doesn't write srcfile->path
+		   for us to stat.  */
 		if (stat (vers_ts->srcfile->path, &sb) < 0)
 		    error (1, errno, "cannot stat %s",
 			   vers_ts->srcfile->path);
@@ -1998,6 +1993,8 @@ merge_file (finfo, vers)
     }
 #endif
 
+    /* FIXME: the noexec case is broken.  RCS_merge could be doing the
+       xcmp on the temporary files without much hassle, I think.  */
     if (!noexec && !xcmp (backup, finfo->file))
     {
 	cvs_output (finfo->fullname, 0);
@@ -2015,8 +2012,7 @@ merge_file (finfo, vers)
 
     if (status == 1)
     {
-	if (!noexec)
-	    error (0, 0, "conflicts found in %s", finfo->fullname);
+	error (0, 0, "conflicts found in %s", finfo->fullname);
 
 	write_letter (finfo, 'C');
 

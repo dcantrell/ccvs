@@ -5385,6 +5385,14 @@ File: a                	Status: Needs Merge
    Sticky Tag:		(none)
    Sticky Date:		(none)
    Sticky Options:	(none)"
+		dotest conflicts-129a "${testcvs} -nq update a" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/a,v
+retrieving revision 1\.1
+retrieving revision 1\.2
+Merging differences between 1\.1 and 1\.2 into a
+rcsmerge: warning: conflicts during merge
+${PROG} [a-z]*: conflicts found in a
+C a"
 		dotest conflicts-130 "${testcvs} -q update" \
 "RCS file: ${TESTDIR}/cvsroot/first-dir/a,v
 retrieving revision 1\.1

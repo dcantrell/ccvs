@@ -1,3 +1,14 @@
+1998-11-12  Jim Kingdon
+
+	* update.c (checkout_file): Handle noexec case involving revbuf
+	and modes.
+	(update_fileproc): In case T_NEEDS_MERGE, let merge_file take care
+	of noexec, so it can tell the user if there would be conflicts.
+	(merge_file): Print "conflicts found in FILE" message
+	regardless of noexec.  Add comment about checking for whether the
+	file already contained the changes, and noexec.
+	* sanity.sh (conflicts-192a): New test, for this.
+
 1998-10-20  Jim Kingdon
 
 	Use the gzip library on the server.  Probably doesn't speed things
