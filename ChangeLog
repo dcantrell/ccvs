@@ -1,3 +1,7 @@
+2003-11-06  Derek Price  <derek@ximbiot.com>
+
+	* configure: Regenerated with autoconf 2.59.
+
 2003-08-13  Derek Price  <derek@ximbiot.com>
 
 	* configure.in: Set up Autotest.  s/AC_HELP_STRING/AS_HELP_STRING/ for
