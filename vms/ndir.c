@@ -109,7 +109,7 @@ opendir (infilename, filepattern)
   filename = (char *) malloc(length+1);
   strcpy(filename, infilename);
 
-  strip_path(filename);
+  strip_trailing_slashes (filename);
   if(strcmp(filename, ".") == 0)
      {
      getcwd(filename, length+1, 1); /* Get a VMS filespec */
