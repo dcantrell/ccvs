@@ -6,9 +6,8 @@
  */
 
 #include "cvs.h"
+#include "savecwd.h"
 #include "getline.h"
-
-static void release_delete PROTO((char *dir));
 
 static const char *const release_usage[] =
 {
@@ -132,7 +131,12 @@ release (argc, argv)
 
     for (i = arg_start_idx; i < argc; i++)
     {
+	struct saved_cwd cwd;
+
 	thisarg = argv[i];
+
+	if (save_cwd (&cwd))
+	    error_exit ();
 
         if (isdir (thisarg))
         {
@@ -239,7 +243,20 @@ release (argc, argv)
         }
 
         free (repository);
-        if (delete_flag) release_delete (thisarg);
+
+	if (restore_cwd (&cwd, NULL))
+	    error_exit ();
+	free_cwd (&cwd);
+
+	if (delete_flag)
+	{
+	    /* FIXME?  Shouldn't this just delete the CVS-controlled
+	       files and, perhaps, the files that would normally be
+	       ignored and leave everything else?  */
+
+	    if (unlink_file_dir (thisarg) < 0)
+		error (0, errno, "deletion of directory %s failed", thisarg);
+	}
 
 #ifdef CLIENT_SUPPORT
         if (client_active)
@@ -263,38 +280,4 @@ release (argc, argv)
     if (line != NULL)
 	free (line);
     return err;
-}
-
-
-/* We want to "rm -r" the working directory, but let us be a little
-   paranoid.  */
-static void
-release_delete (dir)
-    char *dir;
-{
-    struct stat st;
-    ino_t ino;
-
-    (void) CVS_STAT (".", &st);
-    ino = st.st_ino;
-    (void) CVS_CHDIR ("..");
-    (void) CVS_STAT (dir, &st);
-    if (ino != st.st_ino)
-    {
-	/* This test does not work on cygwin32, because under cygwin32
-	   the st_ino field is not the same when you refer to a file
-	   by a different name.  This is a cygwin32 bug, but then I
-	   don't see what the point of this test is anyhow.  */
-#ifndef __CYGWIN32__
-	error (0, 0,
-	       "Parent dir on a different disk, delete of %s aborted", dir);
-	return;
-#endif
-    }
-    /*
-     * XXX - shouldn't this just delete the CVS-controlled files and, perhaps,
-     * the files that would normally be ignored and leave everything else?
-     */
-    if (unlink_file_dir (dir) < 0)
-	error (0, errno, "deletion of directory %s failed", dir);
 }
