@@ -80,8 +80,13 @@ import (int argc, char **argv)
 
     /* Force -X behaviour or not based on the CVS repository
        CVSROOT/config setting.  */
+#if defined (CLIENT_SUPPORT) || defined (SERVER_SUPPORT)
     killnew = !current_parsed_root->isremote
 	      && config->ImportNewFilesToVendorBranchOnly;
+#else
+    killnew = config->ImportNewFilesToVendorBranchOnly;
+#endif /* defined (CLIENT_SUPPORT) || defined (SERVER_SUPPORT) */
+
 
     ign_setup ();
     wrap_setup ();

@@ -118,8 +118,12 @@ release (int argc, char **argv)
        not be able to communicate with the server.  */
     update_cmd = Xasprintf ("%s %s%s-n -q -d %s update",
 			    program_path,
+#if defined (CLIENT_SUPPORT) || defined (SERVER_SUPPORT)
 			    cvsauthenticate ? "-a " : "",
 			    cvsencrypt ? "-x " : "",
+#else
+			    "", "",
+#endif
 			    original_parsed_root->original);
 
 #ifdef CLIENT_SUPPORT
