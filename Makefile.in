@@ -101,7 +101,7 @@ DISTFILES = \
 PROGS = cvsinit
 
 # Subdirectories to run make in for the primary targets.
-SUBDIRS = lib src man doc contrib examples windows-NT os2
+SUBDIRS = lib src man doc contrib examples windows-NT os2 macintosh
 # Only make TAGS/tags files in these directories, in this order
 TSUBDIRS= src lib
 
