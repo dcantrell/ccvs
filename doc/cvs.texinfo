@@ -4793,15 +4793,29 @@ with the @code{tag} or @code{rtag} command, two special tags are
 always available: @samp{HEAD} refers to the most recent version
 available in the repository, and @samp{BASE} refers to the
 revision you last checked out into the current working directory.
+
 @c FIXME: What does HEAD really mean?  I believe that
 @c the current answer is the head of the default branch
-@c for all cvs commands except diff, and the head of the
-@c branch on which any sticky tag exists for diff.  This
+@c for all cvs commands except diff.  For diff, it
+@c seems to be (a) the head of the trunk (or the default
+@c branch?) if there is no sticky tag, (b) the head of the
+@c branch if there is a branch sticky tag, and (c) the
+@c same as BASE if there is a non-branch sticky tag.  (c)
+@c would appear to be strange, maybe accidental, and so there would
+@c presumably be
+@c little problem changing it.  (b) is ugly as it differs
+@c from what HEAD means for other commands, but people
+@c might be used to it (note a change in NEWS? Or provide
+@c advance warning of it changing?) and possible useful
+@c (could be fixed by a new tag ".bhead" which would mean
+@c the head of the appropriate branch).  This
 @c should be investigated, test cases written, and
 @c documented (but HEAD should mean the same thing for all
-@c CVS commands, so don't document grossly broken behavior).
+@c CVS commands, so I don't know if we should be
+@c documenting the current "cvs diff" behavior).
 
-The tag specification is sticky when you use this option
+The tag specification is sticky when you use this
+@c option
 with @code{checkout} or @code{update} to make your own
 copy of a file: @sc{cvs} remembers the tag and continues to use it on
 future update commands, until you specify otherwise (for more information
