@@ -1,3 +1,10 @@
+1998-12-29  Jim Kingdon  <http://www.cyclic.com>
+
+	* getdate.y (RelativeMonth): Add 1900 to tm_year, so that in 2000,
+	we pass 2000, not 100, to Convert.
+	(Convert): Add comment about Year argument.
+	* getdate.c: Regenerated using byacc.
+
 Tue Mar 24 16:08:00 1998  Ian Lance Taylor  <ian@cygnus.com>
 
 	* Makefile.in (CFLAGS): Set to @CFLAGS@, not -g.
