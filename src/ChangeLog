@@ -1,3 +1,12 @@
+Sun Dec 17 00:44:17 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* update.c (ignore_files): Revert H.J. Lu change; it was wrong for
+	directories and sometimes looked at sb.st_mode when it wasn't set.
+	* import.c (import_descend): Revert H.J. Lu change; it was wrong
+	for directories and the extra lstat call was an unnecessary
+	performance hit.
+	* sanity.sh (import): Add test for the second of these two bugs.
+
 Sat Dec 16 17:26:08 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* client.c (send_to_server): Remove arbitrary limit.  Also remove
