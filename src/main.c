@@ -14,6 +14,7 @@
  *	cvs [options] command [options] [files/modules...]
  *
  * Where "command" is composed of:
+ *		init		create/initialize a CVS repository
  *		admin		RCS command
  *		checkout	Check out a module/dir/file
  *		export		Like checkout, but used for exporting sources
