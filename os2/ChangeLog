@@ -1,3 +1,7 @@
+Sun Feb  9 20:17:41 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* README: Most of the compiler warnings are gone.
+
 1997-02-09  Jim Kingdon  <kingdon@cyclic.com>
 
 	* popen.h: Arguments to popen are const char * not char *.
