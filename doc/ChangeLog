@@ -1,3 +1,8 @@
+Tue Apr 23 09:31:29 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (Wrappers): Talk about what -m does (and does not
+	do).  Other minor edits.
+
 Wed Apr 17 15:27:03 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (rcsinfo): Rewrite paragraph concerning remote CVS.
