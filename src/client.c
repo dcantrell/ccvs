@@ -1211,6 +1211,8 @@ copy_a_file (data, ent_list, short_pathname, filename)
        if(*p == '.' || *p == '#') *p = '_';
 #endif
 
+    if (unlink_file (newname) && !existence_error (errno))
+	error (0, errno, "unable to remove %s", newname);
     copy_file (filename, newname);
     free (newname);
 }
