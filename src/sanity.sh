@@ -45,10 +45,6 @@ esac
 
 shift
 
-# Use full path for mkmodules, so that the right one will be invoked
-#
-testmkmodules=`pwd`/mkmodules
-
 # FIXME: try things (what things? checkins?) without -m.
 #
 # Some of these tests are written to expect -Q.  But testing with
@@ -278,7 +274,9 @@ ${CVS} -d `pwd`/../cvsroot co CVSROOT 2>> ${LOGFILE}
 cd .. ; rm -rf tmp
 
 # set up a minimal modules file...
-echo "CVSROOT		-i ${testmkmodules} CVSROOT" > cvsroot/CVSROOT/modules
+# (now that mkmodules is gone, this doesn't test -i the way it
+# used to.  In fact, it looks like a noop to me).
+echo "CVSROOT		CVSROOT" > cvsroot/CVSROOT/modules
 # The following line stolen from cvsinit.sh.  FIXME: create our
 # repository via cvsinit.sh; that way we test it too.
 (cd cvsroot/CVSROOT; ci -q -u -t/dev/null \
@@ -2291,7 +2289,7 @@ Checking in cvsignore;
 /tmp/cvs-sanity/cvsroot/CVSROOT/cvsignore,v  <--  cvsignore
 initial revision: 1.1
 done
-cvs [a-z]*: Executing '"'"''"'"'.*mkmodules'"'"' '"'"'/tmp/cvs-sanity/cvsroot/CVSROOT'"'"''"'"''
+cvs [a-z]*: Rebuilding administrative file database'
 
 	  cd ..
 	  if echo "yes" | ${testcvs} release -d CVSROOT >>${LOGFILE} ; then
@@ -2418,7 +2416,7 @@ Checking in loginfo;
 /tmp/cvs-sanity/cvsroot/CVSROOT/loginfo,v  <--  loginfo
 initial revision: 1.1
 done
-cvs [a-z]*: Executing '"'"''"'"'.*mkmodules'"'"' '"'"'/tmp/cvs-sanity/cvsroot/CVSROOT'"'"''"'"''
+cvs [a-z]*: Rebuilding administrative file database'
 	  cd ..
 	  if echo "yes" | ${testcvs} release -d CVSROOT >>${LOGFILE} ; then
 	    pass info-4

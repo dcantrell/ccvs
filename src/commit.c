@@ -1077,6 +1077,31 @@ commit_filesdoneproc (err, repository, update_dir)
     if (xtag)
 	free (xtag);
 
+    /* Build the administrative files if necessary.  */
+    {
+	char *p;
+
+	if (strncmp (CVSroot, repository, strlen (CVSroot)) != 0)
+	    error (0, 0, "internal error: repository doesn't begin with root");
+	p = repository + strlen (CVSroot);
+	if (*p == '/')
+	    ++p;
+	if (strcmp ("CVSROOT", p) == 0)
+	{
+	    /* "Database" might a little bit grandiose and/or vague,
+	       but "checked-out copies of administrative files, unless
+	       in the case of modules and you are using ndbm in which
+	       case modules.{pag,dir,db}" is verbose and excessively
+	       focused on how the database is implemented.  */
+
+	    cvs_output (program_name, 0);
+	    cvs_output (" ", 1);
+	    cvs_output (command_name, 0);
+	    cvs_output (": Rebuilding administrative file database\n", 0);
+	    mkmodules (repository);
+	}
+    }
+
     if (err == 0 && run_module_prog)
     {
 	FILE *fp;

@@ -1,5 +1,18 @@
 Mon Feb 12 12:20:04 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* mkmodules.c: Rename main to mkmodules and remove various pieces
+	of scaffolding which it used to emulate non-existent parts of CVS.
+	Change calling convention to just take a char * not argc,argv.
+	Save and restore working directory.
+	* commit.c (commit_filesdoneproc): Call it if checking files into
+	CVSROOT.
+	* Makefile.in (SOURCES): Add mkmodules.c.
+	(OBJECTS): Add mkmodules.o.
+	(MSOURCES,MOBJECTS): Removed.
+	(COMMON_OBJECTS): Removed; move former contents into OBJECTS.
+	Update other rules accordingly.
+	* sanity.sh: Adjust to reflect nonexistence of mkmodules.
+
 	These changes introduce functions cvs_output and cvs_outerr;
 	eventually all server output will go through them rather than
 	stdio directly.
