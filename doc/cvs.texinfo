@@ -1488,6 +1488,8 @@ yoyodyne/tc
 If the particular working directory does not correspond
 to a directory in the repository, then @file{Repository}
 should contain @file{CVSROOT/Emptydir}.
+@cindex Emptydir, in CVSROOT directory
+@cindex CVSROOT/Emptydir file
 
 @cindex Entries file, in CVS directory
 @cindex CVS/Entries file
