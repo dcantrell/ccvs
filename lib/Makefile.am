@@ -62,23 +62,9 @@ libcvs_a_SOURCES = \
 	wait.h \
 	xselect.h \
 	xtime.h
-## because @LIBOBJS@ is included below, automake automatically knows about
-##     dup2.c
-##     fncase.c
-##     fnmatch.c
-##     fnmatch.h
-##     ftruncate.c
-##     gethostname.c
-##     malloc.c
-##     memmove.c
-##     mkdir.c
-##     realloc.c
-##     rename.c
-##     strstr.c
-##     strerror.c
-##     strtoul.c
-##     valloc.c
-##     waitpid.c
+## Because @LIBOBJS@ is included below and AC_LIBOBJ is sometimes called on
+## these files from configure.in, automake automatically knows about many of
+## the *.c files in this directory.
 libcvs_a_LIBADD = @LIBOBJS@
 
 EXTRA_DIST = \
