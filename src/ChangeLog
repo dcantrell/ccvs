@@ -1,3 +1,7 @@
+2005-02-26  Larry Jones  <lawrence.jones@ugs.com>
+
+	* release.c (release): Remove unneeded code.
+
 2005-02-22 Derek Price <derek@ximbiot.com>
 
 	* edit.c: Load watch settings before setting new ones with
