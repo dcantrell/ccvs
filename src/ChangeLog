@@ -1,5 +1,11 @@
 2004-07-15  Derek Price  <derek@ximbiot.com>
 
+	* sanity.sh: Misc gratuitous cleanup.
+	(modify_repo): Sleep 1 before rsync to avoid timestamp comparison
+	issues.
+
+2004-07-15  Derek Price  <derek@ximbiot.com>
+
 	* log-buffer.c (log_buffer_output): Remove extremely slow fsync call.
 	(log_buffer_disable): Move to here so log files are sync'd before
 	close.
