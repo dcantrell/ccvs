@@ -1,5 +1,8 @@
 Mon Sep 30 13:01:45 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* sanity.sh (log2): New test, tests cvs add -m.  Not yet enabled
+	in "tests" because CVS currently flunks this test.
+
 	* sanity.sh (rdiff, basic2): Allow "cvs server" as well as "cvs
 	checkout" and friends in messages.  In testing output of cvs
 	status, don't require a tab which isn't there for remote.  Skip
