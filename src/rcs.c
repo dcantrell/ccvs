@@ -8494,7 +8494,6 @@ static FILE *
 rcs_internal_lockfile (rcsfile)
     char *rcsfile;
 {
-    char *lockfile;
     int fd;
     struct stat rstat;
     FILE *fp;
