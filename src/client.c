@@ -4286,6 +4286,45 @@ send_file_names( int argc, char **argv, unsigned int flags )
 	if (arg_should_not_be_sent_to_server (argv[i]))
 	    continue;
 
+#ifdef FILENAMES_CASE_INSENSITIVE
+	/* We want to send the file name as it appears
+	   in CVS/Entries.  We put this inside an ifdef
+	   to avoid doing all these system calls in
+	   cases where fncmp is just strcmp anyway.  */
+	/* For now just do this for files in the local
+	   directory.  Would be nice to handle the
+	   non-local case too, though.  */
+	/* The isdir check could more gracefully be replaced
+	   with a way of having Entries_Open report back the
+	   error to us and letting us ignore existence_error.
+	   Or some such.  */
+	if (p == last_component (p) && isdir (CVSADM))
+	{
+	    List *entries;
+	    Node *node;
+
+	    /* If we were doing non-local directory,
+	       we would save_cwd, CVS_CHDIR
+	       like in update.c:isemptydir.  */
+	    /* Note that if we are adding a directory,
+	       the following will read the entry
+	       that we just wrote there, that is, we
+	       will get the case specified on the
+	       command line, not the case of the
+	       directory in the filesystem.  This
+	       is correct behavior.  */
+	    entries = Entries_Open (0, NULL);
+	    node = findnode_fn (entries, p);
+	    if (node != NULL)
+	    {
+		line = xstrdup (node->key);
+		p = line;
+		delnode (node);
+	    }
+	    Entries_Close (entries);
+	}
+#endif /* FILENAMES_CASE_INSENSITIVE */
+
 	send_to_server ("Argument ", 0);
 
 	while (*p)
