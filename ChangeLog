@@ -1,3 +1,7 @@
+2004-11-11  Derek Price  <derek@ximbiot.com>
+
+	* BUGS: Note current CVS server turds on AIX.
+
 2004-11-11  Mark D. Baushke  <mdb@juniper.net>
 
 	* config.h.in, configure: Regenerated.

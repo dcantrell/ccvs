@@ -95,6 +95,12 @@ interpret its option string, then the problem may be output in unexpected
 formats.
 
 
+* The CVS server is leaving a temp directory (/tmp/cvs-serv*) on AIX 4.3 under
+very rare circumstances (one out of c. 10,500 test cases).  This appears to be
+dependent on some sort of race condition as it disappears with tracing enabled
+and under the debugger.  Informative feedback is welcome.
+
+
 * Status
 
   This experimental version of CVS contains new features which may not have
