@@ -1,9 +1,7 @@
 Mon Sep 11 10:03:59 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
-        * release.c (release): check return value of pclose to determine
-        if "cvs update" errored; if it did, print an error and `continue'
-        with the next arg, instead of going through with the release
-        process for this arg.
+        * release.c (release): use return value of pclose to determine
+        success of update.
 
 Mon Sep 11 09:56:33 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
