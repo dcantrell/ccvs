@@ -38,7 +38,7 @@ alloca.h: alloca_.h
 	mv $@-t $@
 MOSTLYCLEANFILES += alloca.h alloca.h-t
 
-libgnu_a_LIBADD += @{perhapsLT}ALLOCA@
+libgnu_a_LIBADD += @ALLOCA@
 ## end   gnulib module alloca
 
 ## begin gnulib module alloca-opt
@@ -240,3 +240,5 @@ libgnu_a_SOURCES += xsize.h
 
 ## end   gnulib module xsize
 
+
+# Makefile.am ends here
