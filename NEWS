@@ -1,3 +1,11 @@
+Changes since 1.6:
+
+* The command name .cvsrc now matches the official name of the
+command, not the one (possibly an alias) by which it was invoked.  If
+you had previously relied on "cvs di" and "cvs diff" using different
+options, instead use a shell function or alias (for example "alias
+cvsdi='cvs diff -u'").
+
 Changes from 1.5 to 1.6:
 
 * Del updated the man page to include all of the new features
