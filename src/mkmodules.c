@@ -649,6 +649,7 @@ init (argc, argv)
     if (argc == -1 || argc > 1)
 	usage (init_usage);
 
+#ifdef CLIENT_SUPPORT
     if (client_active)
     {
 	start_server ();
@@ -657,6 +658,7 @@ init (argc, argv)
 	send_init_command ();
 	return get_responses_and_close ();
     }
+#endif /* CLIENT_SUPPORT */
 
     /* Note: we do *not* create parent directories as needed like the
        old cvsinit.sh script did.  Few utilities do that, and a

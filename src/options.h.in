@@ -238,7 +238,9 @@
 /* Should we build the password-authenticating client?  Whether to
    include the password-authenticating _server_, on the other hand, is
    set in config.h.  */
+#ifdef CLIENT_SUPPORT
 #define AUTH_CLIENT_SUPPORT 1
+#endif
 
 /*
  * If you are working with a large remote repository and a 'cvs checkout' is
