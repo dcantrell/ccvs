@@ -27725,29 +27725,35 @@ ${SPROG} \[diff aborted\]: read lock failed - giving up"
 	  mkdir 1a
 	  cd 1a
 	  dotest_fail multiroot3-12 \
-"${testcvs} -d ${CVSROOT1} -q co ../root2/dir2" \
-"${SPROG} checkout: in directory \`\.\./root2/dir2':
-${SPROG} checkout: .\.\..-relative repositories are not supported.
-${SPROG} \[checkout aborted\]: invalid source repository"
-	  rm -rf ../root2
+"$testcvs -d $CVSROOT1 -q co ../root2/dir2" \
+"$CPROG \[checkout aborted\]: up-level in module reference (\`..') invalid: \`\.\./root2/dir2'\." \
+"$SPROG \[server aborted\]: up-level in module reference (\`..') invalid: \`\.\./root2/dir2'\.
+$CPROG \[checkout aborted\]: end of file from server (consult above messages if any)"
 	  dotest_fail multiroot3-13 \
-"${testcvs} -d ${CVSROOT2} -q co ../root1/dir1" \
-"${SPROG} checkout: in directory \`\.\./root1/dir1':
-${SPROG} checkout: .\.\..-relative repositories are not supported.
-${SPROG} \[checkout aborted\]: invalid source repository"
-	  rm -rf ../root1
+"$testcvs -d $CVSROOT2 -q co ../root1/dir1" \
+"$CPROG \[checkout aborted\]: up-level in module reference (\`..') invalid: \`\.\./root1/dir1'\." \
+"$SPROG \[server aborted\]: up-level in module reference (\`..') invalid: \`\.\./root1/dir1'\.
+$CPROG \[checkout aborted\]: end of file from server (consult above messages if any)"
 	  dotest_fail multiroot3-14 \
-"${testcvs} -d ${CVSROOT1} -q co ./../root2/dir2" \
-"${SPROG} checkout: in directory \`\./\.\./root2/dir2':
-${SPROG} checkout: .\.\..-relative repositories are not supported.
-${SPROG} \[checkout aborted\]: invalid source repository"
-	  rm -rf ../root2
+"$testcvs -d $CVSROOT1 -q co ./../root2/dir2" \
+"$CPROG \[checkout aborted\]: up-level in module reference (\`..') invalid: \`\./\.\./root2/dir2'\." \
+"$SPROG \[server aborted\]: up-level in module reference (\`..') invalid: \`\./\.\./root2/dir2'\.
+$CPROG \[checkout aborted\]: end of file from server (consult above messages if any)"
 	  dotest_fail multiroot3-15 \
-"${testcvs} -d ${CVSROOT2} -q co ./../root1/dir1" \
-"${SPROG} checkout: in directory \`\./\.\./root1/dir1':
-${SPROG} checkout: .\.\..-relative repositories are not supported.
-${SPROG} \[checkout aborted\]: invalid source repository"
-	  rm -rf ../root1
+"$testcvs -d $CVSROOT2 -q co ./../root1/dir1" \
+"$CPROG \[checkout aborted\]: up-level in module reference (\`..') invalid: \`\./\.\./root1/dir1'\." \
+"$SPROG \[server aborted\]: up-level in module reference (\`..') invalid: \`\./\.\./root1/dir1'\.
+$CPROG \[checkout aborted\]: end of file from server (consult above messages if any)"
+	  dotest_fail multiroot3-16 \
+"$testcvs -d $CVSROOT1 -q co -p ../root2/dir2" \
+"$CPROG \[checkout aborted\]: up-level in module reference (\`..') invalid: \`\.\./root2/dir2'\." \
+"$SPROG \[server aborted\]: up-level in module reference (\`..') invalid: \`\.\./root2/dir2'\.
+$CPROG \[checkout aborted\]: end of file from server (consult above messages if any)"
+	  dotest_fail multiroot3-17 \
+"$testcvs -d $CVSROOT1 -q co -p ./../root1/dir1" \
+"$CPROG \[checkout aborted\]: up-level in module reference (\`..') invalid: \`\./\.\./root1/dir1'\." \
+"$SPROG \[server aborted\]: up-level in module reference (\`..') invalid: \`\./\.\./root1/dir1'\.
+$CPROG \[checkout aborted\]: end of file from server (consult above messages if any)"
 
 	  cd ../..
 
