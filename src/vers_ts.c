@@ -99,7 +99,7 @@ Version_TS (repository, options, tag, date, user, force_tag_match,
 	    char *rcsexpand = RCS_getexpand (rcs);
 	    if (rcsexpand != NULL)
 	    {
-		vers_ts->options = xmalloc (strlen (rcsexpand) + 2);
+		vers_ts->options = xmalloc (strlen (rcsexpand) + 3);
 		strcpy (vers_ts->options, "-k");
 		strcat (vers_ts->options, rcsexpand);
 	    }
