@@ -3122,23 +3122,26 @@ RCS_getrevtime (RCSNode *rcs, char *rev, char *date, int fudge)
     vers = (RCSVers *) p->data;
 
     /* split up the date */
-    ftm = &xtm;
-    (void) sscanf (vers->date, SDATEFORM, &ftm->tm_year, &ftm->tm_mon,
-		   &ftm->tm_mday, &ftm->tm_hour, &ftm->tm_min,
-		   &ftm->tm_sec);
+    if (sscanf (vers->date, SDATEFORM, &xtm.tm_year, &xtm.tm_mon,
+		&xtm.tm_mday, &xtm.tm_hour, &xtm.tm_min, &xtm.tm_sec) != 6)
+	error (1, 0, "%s: invalid date for revision %s (%s)", rcs->path,
+	       rev, vers->date);
 
     /* If the year is from 1900 to 1999, RCS files contain only two
        digits, and sscanf gives us a year from 0-99.  If the year is
        2000+, RCS files contain all four digits and we subtract 1900,
        because the tm_year field should contain years since 1900.  */
 
-    if (ftm->tm_year > 1900)
-	ftm->tm_year -= 1900;
+    if (xtm.tm_year >= 100 && xtm.tm_year < 2000)
+	error (0, 0, "%s: non-standard date format for revision %s (%s)",
+	       rcs->path, rev, vers->date);
+    if (xtm.tm_year >= 1900)
+	xtm.tm_year -= 1900;
 
     /* put the date in a form getdate can grok */
-    (void) sprintf (tdate, "%d/%d/%d GMT %d:%d:%d", ftm->tm_mon,
-		    ftm->tm_mday, ftm->tm_year + 1900, ftm->tm_hour,
-		    ftm->tm_min, ftm->tm_sec);
+    (void) sprintf (tdate, "%d/%d/%d GMT %d:%d:%d", xtm.tm_mon,
+		    xtm.tm_mday, xtm.tm_year + 1900, xtm.tm_hour,
+		    xtm.tm_min, xtm.tm_sec);
 
     /* turn it into seconds since the epoch */
     revdate = get_date (tdate, (struct timeb *) NULL);
