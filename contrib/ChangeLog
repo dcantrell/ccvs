@@ -1,3 +1,20 @@
+Sun Sep 29 19:45:19 1996  Greg A. Woods  <woods@most.weird.com>
+
+	* README: add entry for patch-2.1-.new-fix.
+	
+	* README: re-write the top section a bit.
+
+	* patch-2.1-.new-fix: re-generated using fixed "cvs patch" command.
+
+	* patch-2.1-.new-fix: new file.
+
+Sun Sep 29 14:25:28 1996  Dave Love  <d.love@dl.ac.uk>
+
+	* rcs2log.sh (month_data):  Make default date format acceptable to
+ 	CVS post v1.8 as well as earlier CVSs and RCS.
+	Message-Id: <199609291546.QAA25531@mserv1.dl.ac.uk>
+	To: bug-gnu-emacs@prep.ai.mit.edu
+
 Thu Aug 29 11:58:03 1996  Jim Blandy  <jimb@totoro.cyclic.com>
 
 	* rcs2log: Update FSF address.

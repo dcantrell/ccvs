@@ -1,3 +1,80 @@
+Mon Sep 30 03:21:37 1996  Greg A. Woods  <woods@most.weird.com>
+
+	* sanity.sh: change all regexpr literal '.' to '\.'
+ 	(basic2): why are tests 34 & 42 commented out (because
+	of 'diff -u'?)?
+	add tests 56[abc], 57a, and 58a to test import to the main
+	branch (i.e. branch '1').
+	(rdiff): new test section for rdiff -K, etc.
+	(dotest): remove dotest.ex? before running a new test.
+	(dotest_fail): remove dotest.ex? before running a new test.
+	(dotest_internal): write expected output to dotest.exp, or if $4
+	also used, to dotest.ex1 and dotest.ex2.
+	(patch): renamed this test to 'serverpatch'.
+	(dotest_lit): rename dotest.res to dotest.exp ala dotest().
+	remove dotest.ex? before running a new test.
+	(DOTSTAR): mention the bug exists up to 1.12
+	(ENDANCHOR): mention the bug exists up to 1.12
+	(dotest_all_in_one): new function for debugging.
+	(dotest_line_by_line): new function for debugging.
+	(dotest_internal_debug): new function for debugging.
+	(dotest_internal): stop emulating the ancient tests and don't spew
+	the dotest.tmp contents onto $LOGFILE -- it's just too much
+	meaningless noise.  Only do this if the test fails.  Many tests
+	don't use dotest() yet, so this isn't quite so helpful as it might
+	otherwise be.
+	(TODO): mention CVS/* files, especially CVS/Root.
+	
+	* main.c (main): add a commented out piece of code to suggest that
+	there should be a function lookup_command_attribute() that could
+	tell us various things about internal commands, such as whether
+	they use CVS/Root, or if they're repository-only, or if they need
+	a working directory, etc....
+	(main): don't set need_to_create_root if command doesn't use a
+	local working directory.
+
+	* patch.c (patch): CLIENT_SUPPORT: send '-f' if NOT force_tag_match
+
+	* error.c (fperror): protect declaration for un-defined __STDC__
+
+	* import.c (import): permit imports to a branch with zero dots,
+	i.e. the trunk.
+	(update_rcs_file): don't detect conflicts if importing to the
+	trunk.
+	(import): add hint that we should allow a module name, instead of
+	just a pathname relative to $CVSROOT.
+	(add_rcs_file): if importing to trunk, do it with ci(1).
+
+	* import.c: XXX the following are all #if 0'ed out until a full
+	implementation can be designed....
+	(cbranch): new variable to support conflict detection on another
+	branch set by -c.
+	(import): truncate -b and -c optarg if to fit in static storage.
+	(import_usage): describe -c
+
+	* rcscmds.c (RCS_checkout): add new argument 'rcsver'.  If rcsver
+	is set, turn on 'keywords' to force call to RCS_exec_checkout.
+	* rcs.c (RCS_exec_checkout): add new argument 'rcsver'.  Pass
+	'rcsver' to "co" with run_arg().
+	* cvs.h: (RCS_checkout): add new argument 'rcsver' to prototype.
+	(RCS_exec_checkout): add new argument 'rcsver' to prototype.
+	* commit.c (remove_file): supply new argument to RCS_checkout.
+	* checkin.c (Checkin): supply new argument to RCS_checkout.
+	* diff.c (diff_fileproc): supply new argument to RCS_checkout.
+	(diff_file_nodiff): supply new argument to RCS_checkout.
+	* no_diff.c (No_Difference): supply new argument to RCS_checkout.
+	* update.c (checkout_file): supply new argument to RCS_checkout.
+	(patch_file): supply new argument to RCS_checkout.
+	(join_file): supply new argument to RCS_checkout.
+
+	* patch.c: (o_options): new variable for -K
+	(rcsver): new variable for -V.
+	(patch): add -K flag which sets o_options, change -V to set
+	rcsver, send o_options and rcsver if in client mode.
+	(patch_fileproc): use RCS_checkout instead of RCS_fast_checkout in
+	order to ensure $Name is expanded, use o_options if set, or
+	options if set, or by default "-ko" when getting "old" file.
+
 Sun Sep 29 16:43:28 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* rcscmds.c: Replace comment at top of file concerning RCS library
