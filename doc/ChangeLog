@@ -1,3 +1,9 @@
+1998-03-07  Tim Pierce  <twp@skepsis.com>
+
+	* cvs.texinfo (Editing files, Special Files): Document hardlinks.
+	Various cleanups to PreservePermissions text.
+	* RCSFILES: Document PreservePermissions newphrases.
+
 1998-03-04  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (Special Files): Add notes about client/server CVS
