@@ -2272,15 +2272,14 @@ join_file (struct file_info *finfo, Vers_TS *vers)
 	return;
     }
 
-    /* If the target of the merge is the same as the working file
-       revision, then there is nothing to do.  */
-    if (vers->vn_user != NULL && strcmp (rev2, vers->vn_user) == 0)
-    {
-	if (rev1 != NULL)
-	    free (rev1);
-	free (rev2);
-	return;
-    }
+    /* At one time, there was a test here to see if the file to be
+       merged was already at rev2. If so, this function returned after
+       freeing rev1 and rev2. The assumption that there was nothing
+       useful to do appears to have been a bad one. However, not
+       having that block of code means that text that was
+       intentionally added, removed or modified in the area of the
+       merge requested will either be silently re-introduced,
+       re-removed, or result in conflict markers. */
 
     /* If rev1 is dead or does not exist, then the file was added
        between rev1 and rev2.  */
