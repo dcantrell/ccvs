@@ -3026,13 +3026,13 @@ RCS_checkout (rcs, workfile, rev, nametag, options, sout, pfn, callerdat)
 	}
 	else
 	{
-	    /* NT (not sure what version) is said to have trouble
-	       writing 2099999 bytes (for example) in a single fwrite.
-	       So break it down (there is no need to be writing that
-	       much at once anyway; it is possible that LARGEST_FWRITE
-	       should be somewhat larger for good performance, but for
-	       testing I want to start with a small value until/unless
-	       a bigger one proves useful).  */
+	    /* NT 4.0 is said to have trouble writing 2099999 bytes
+	       (for example) in a single fwrite.  So break it down
+	       (there is no need to be writing that much at once
+	       anyway; it is possible that LARGEST_FWRITE should be
+	       somewhat larger for good performance, but for testing I
+	       want to start with a small value until/unless a bigger
+	       one proves useful).  */
 #define LARGEST_FWRITE 8192
 	    size_t nleft = len;
 	    size_t nstep = (len < LARGEST_FWRITE ? len : LARGEST_FWRITE);
