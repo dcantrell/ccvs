@@ -79,7 +79,7 @@ watch_onoff (argc, argv)
     argv += optind;
 
 #ifdef CLIENT_SUPPORT
-    if (CVSroot_remote)
+    if (client_active)
     {
 	start_server ();
 
@@ -234,7 +234,7 @@ send_notifications (argc, argv, local)
     /* OK, we've done everything which needs to happen on the client side.
        Now we can try to contact the server; if we fail, then the
        notifications stay in CVSADM_NOTIFY to be sent next time.  */
-    if (CVSroot_remote)
+    if (client_active)
     {
 	if (strcmp (command_name, "release") != 0)
 	{
@@ -996,7 +996,7 @@ editors (argc, argv)
     argv += optind;
 
 #ifdef CLIENT_SUPPORT
-    if (CVSroot_remote)
+    if (client_active)
     {
 	start_server ();
 	ign_setup ();

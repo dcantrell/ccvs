@@ -27,7 +27,11 @@ int connect_to_pserver PROTO((int *tofdp, int* fromfdp, int verify_only));
 #endif /* AUTH_CLIENT_SUPPORT */
 
 #ifdef AUTH_SERVER_SUPPORT
-extern void authenticate_connection PROTO ((void));
+extern void pserver_authenticate_connection PROTO ((void));
+#endif
+
+#if defined (SERVER_SUPPORT) && defined (HAVE_KERBEROS)
+extern void kserver_authenticate_connection PROTO ((void));
 #endif
 
 /* Talking to the server. */

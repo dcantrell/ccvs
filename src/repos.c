@@ -109,7 +109,7 @@ Name_Repository (dir, update_dir)
 	(void) sprintf (repos, "%s/%s", CVSroot_directory, path);
     }
 #ifdef CLIENT_SUPPORT
-    if (!CVSroot_remote && !isdir (repos))
+    if (!client_active && !isdir (repos))
 #else
     if (!isdir (repos))
 #endif

@@ -58,7 +58,7 @@ ign_setup ()
        processing, and only if !ign_inhibit_server), letting the server
        know about the files and letting it decide whether to ignore
        them based on CVSROOOTADM_IGNORE.  */
-    if (!CVSroot_remote)
+    if (!client_active)
 #endif
     {
 	/* Then add entries found in repository, if it exists */

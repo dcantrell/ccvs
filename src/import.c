@@ -169,7 +169,7 @@ import (argc, argv)
     *cp = '\0';
 
 #ifdef CLIENT_SUPPORT
-    if (CVSroot_remote)
+    if (client_active)
     {
 	/* Do this now; don't ask for a log message if we can't talk to the
 	   server.  But if there is a syntax error in the options, give
@@ -198,7 +198,7 @@ import (argc, argv)
     }
 
 #ifdef CLIENT_SUPPORT
-    if (CVSroot_remote)
+    if (client_active)
     {
 	int err;
 
@@ -387,7 +387,7 @@ import_descend (message, vtag, targc, targv)
 	    else
 	    {
 #ifdef CLIENT_SUPPORT
-		if (CVSroot_remote)
+		if (client_active)
 		    err += client_process_import_file (message, dp->d_name,
 							   vtag, targc, targv,
 							   repository);
@@ -1151,7 +1151,7 @@ import_descend_dir (message, dir, vtag, targc, targv)
 	(void) strcat (repository, dir);
     }
 #ifdef CLIENT_SUPPORT
-    if (!quiet && !CVSroot_remote)
+    if (!quiet && !client_active)
 #else
     if (!quiet)
 #endif
@@ -1166,7 +1166,7 @@ import_descend_dir (message, dir, vtag, targc, targv)
 	goto out;
     }
 #ifdef CLIENT_SUPPORT
-    if (!CVSroot_remote && !isdir (repository))
+    if (!client_active && !isdir (repository))
 #else
     if (!isdir (repository))
 #endif

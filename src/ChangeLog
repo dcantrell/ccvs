@@ -1,3 +1,55 @@
+Fri Apr 26 07:59:44 1996  Noel Cragg  <noel@gargle>
+
+	* main.c (main): move the setting of the UMASK environment
+ 	variable inside the stuff that gets done if the user is NOT asking
+ 	for help, so we don't signal any errors prematurely (don't want to
+ 	give an error because we can't parse an environment variable
+ 	correctly if the user asks for help).  Similar mods for the code
+ 	that tries to get the working directory.
+
+	Also make `CVSADM_Root' a local variable instead of a global,
+ 	since its scope is only about 20 lines here!
+
+	* server.c (kserver_authenticate_connection): moved code from
+ 	main.c to clean up MAIN.  Makes sense, since we already have a
+ 	PSERVER_AUTHENTICATE_CONNECTION.
+	(pserver_authenticate_connection): rename from
+ 	AUTHENTICATE_CONNECTION.
+
+	* main.c (main): reorganized the routine to eliminate variables
+ 	HELP, HELP_COMMANDS, and VERSION_FLAG.  Now the routine is much
+ 	clearer, since we don't have to be checking to see if these
+ 	variables are set.  One behavior that was a bug/feature which is
+ 	now gone is an invocation like "cvs -H rtag" -- previously this
+ 	would give usage for rtag, but now gives usage for cvs itself.
+  	The first behavior didn't make sense, especially since we say in
+ 	the docs that command-line flags are position-specific.
+
+Thu Apr 25 20:05:10 1996  Noel Cragg  <noel@gargle>
+
+        * main.c (main): make sure we have a valid command name before we
+ 	do anything else (moved the thing that looks for a command in CMDS
+ 	to right after the GETOPT loop).  Added `kserver' and `pserver' to
+ 	the table so they will be recognized; set their functions to
+ 	SERVER so that help will be given when asked for.
+	
+	* expand_path.c (expand_variable): return CVSroot_original rather
+ 	than CVSroot_directory.
+
+	* main.c (main): save CVSroot in the env rather than
+ 	CVSroot_original, since we might not have called PARSE_CVSROOT
+ 	(this can happen if we use the -H option to a command).
+
+	* root.c (parse_cvsroot): the parsing method was bogus for
+ 	guessing when we had hostnames vs. directories specified.  Any
+ 	ambiguity should be removed by having the user specify the access
+ 	method.  If the access method isn't specified, choose
+ 	SERVER_METHOD if the string contains a colon or LOCAL_METHOD
+ 	otherwise.
+
+	* Changed `CVSroot_remote' back to `client_active' since the code
+ 	reads better.
+	
 Mon Apr 22 00:38:08 1996  Noel Cragg  <noel@gargle>
 
 	* create_adm.c (Create_Admin): pass CVSroot_original instead of

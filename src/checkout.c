@@ -249,7 +249,7 @@ checkout (argc, argv)
     }
 
 #ifdef CLIENT_SUPPORT
-    if (CVSroot_remote)
+    if (client_active)
     {
 	int expand_modules;
 

@@ -97,7 +97,7 @@ release (argc, argv)
 
 #ifdef CLIENT_SUPPORT
     /* Start the server; we'll close it after looping. */
-    if (CVSroot_remote)
+    if (client_active)
       {
 	start_server ();
 	ign_setup ();
@@ -209,7 +209,7 @@ release (argc, argv)
 	    && !server_active
 #endif
 #ifdef CLIENT_SUPPORT
-	    && !(CVSroot_remote
+	    && !(client_active
 		 && (!supported_request ("noop")
 		     || !supported_request ("Notify")))
 #endif
@@ -225,7 +225,7 @@ release (argc, argv)
 	}
 
 #ifdef CLIENT_SUPPORT
-        if (CVSroot_remote)
+        if (client_active)
         {
           send_to_server ("Argument ", 0);
           send_to_server (thisarg, 0);
@@ -244,7 +244,7 @@ release (argc, argv)
         if (delete_flag) release_delete (thisarg);
         
 #ifdef CLIENT_SUPPORT
-        if (CVSroot_remote)
+        if (client_active)
           return get_responses_and_close ();
         else
 #endif /* CLIENT_SUPPORT */

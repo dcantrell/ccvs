@@ -415,7 +415,7 @@ do_recursion (xfileproc, xfilesdoneproc, xdirentproc, xdirleaveproc,
 	   place (server_notify).  For local, we can't do them here--we don't
 	   have writelocks in place, and there is no way to get writelocks
 	   here.  */
-	if (CVSroot_remote)
+	if (client_active)
 	    notify_check (repository, update_dir);
 #endif /* CLIENT_SUPPORT */
 

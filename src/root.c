@@ -183,7 +183,7 @@ Create_Root (dir, rootdir)
  * and host. */
 
 char *CVSroot_original = NULL;	/* the CVSroot that was passed in */
-int CVSroot_remote;		/* nonzero if we are doing remote access */
+int client_active;		/* nonzero if we are doing remote access */
 CVSmethod CVSroot_method;	/* one of the enum values defined in cvs.h */
 char *CVSroot_username;		/* the username or NULL if method == local */
 char *CVSroot_hostname;		/* the hostname or NULL if method == local */
@@ -194,7 +194,6 @@ parse_cvsroot (char *CVSroot)
 {
   static int cvsroot_parsed = 0;
   char *cvsroot_copy, *p;
-  int have_method = 0;
 
   /* Don't go through the trouble twice. */
   if (cvsroot_parsed)
@@ -236,70 +235,53 @@ parse_cvsroot (char *CVSroot)
       else if (strcmp (method, "rsh") == 0)
 	CVSroot_method = server_method;
       else
-	error (1, 0, "bad method in CVSroot: %s", CVSroot);
-
-      have_method = 1;
+	error (1, 0, "unknown method in CVSroot: %s", CVSroot);
     }
-
-  /* Check to see if there is a username in the string. */
-
-  if (! (p = strchr (cvsroot_copy, '@')))
-    CVSroot_username = NULL;
   else
     {
-      CVSroot_username = cvsroot_copy;
-      *p = '\0';
-      cvsroot_copy = ++p;
-      if (*CVSroot_username == '\0')
-	CVSroot_username = NULL;
+      /* If the method isn't specified, assume SERVER_METHOD if the
+         string contains a colon or LOCAL_METHOD otherwise. */
+
+      CVSroot_method = ((strchr (cvsroot_copy, ':'))
+			? server_method
+			: local_method);
     }
 
-  /* Check to see if there is a hostname in the string.  At this point
-   * we'll have something like
-   *
-   * "totoro:/u/src/master"
-   * "/u/src/master"
-   * "e:\path"
-   * "CVS_ROOT:[000000]"
-   *
-   * Be nice to WNT and VMS machines!
-   */
+  client_active = (CVSroot_method != local_method);
 
-  if ((! (p = strchr (cvsroot_copy, ':')))
-      || (p[1] == '\\')
-      || (p[1] == '['))
-    CVSroot_hostname = NULL;
-  else
+  /* Check for username/hostname if we're not LOCAL_METHOD. */
+
+  CVSroot_username = NULL;
+  CVSroot_hostname = NULL;
+
+  if (CVSroot_method != local_method)
     {
-      CVSroot_hostname = cvsroot_copy;
-      *p = '\0';
-      cvsroot_copy = ++p;
-      
-      if (*CVSroot_hostname == '\0')
-	CVSroot_hostname = NULL;
+      /* Check to see if there is a username in the string. */
 
-      if (! have_method)
+      if ((p = strchr (cvsroot_copy, '@')))
 	{
-	  CVSroot_method = server_method;
-	  have_method = 1;
+	  CVSroot_username = cvsroot_copy;
+	  *p = '\0';
+	  cvsroot_copy = ++p;
+	  if (*CVSroot_username == '\0')
+	    CVSroot_username = NULL;
+	}
+
+      if ((p = strchr (cvsroot_copy, ':')))
+	{
+	  CVSroot_hostname = cvsroot_copy;
+	  *p = '\0';
+	  cvsroot_copy = ++p;
+      
+	  if (*CVSroot_hostname == '\0')
+	    CVSroot_hostname = NULL;
 	}
     }
 
-  if (! have_method)
-    CVSroot_method = local_method;
-
-  if (CVSroot_username && ! CVSroot_hostname)
-    error (1, 0, "missing hostname in CVSROOT: %s", CVSroot);
-
   CVSroot_directory = cvsroot_copy;
 
-  if (*CVSroot_directory == '\0')
-    error (1, 0, "missing directory in CVSROOT: %s", CVSroot);
-
-  CVSroot_remote = (CVSroot_method != local_method);
-
 #if ! defined (CLIENT_SUPPORT) && ! defined (DEBUG)
-  if (CVSroot_remote)
+  if (CVSroot_method != local_method)
     {
       error (0, 0, "Your CVSROOT is set for a remote access method");
       error (0, 0, "but your CVS executable doesn't support it");
@@ -308,6 +290,9 @@ parse_cvsroot (char *CVSroot)
 #endif
   
   /* Do various sanity checks. */
+
+  if (CVSroot_username && ! CVSroot_hostname)
+    error (1, 0, "missing hostname in CVSROOT: %s", CVSroot);
 
   switch (CVSroot_method)
     {
@@ -331,6 +316,9 @@ parse_cvsroot (char *CVSroot)
 	error (1, 0, "didn't specify hostname in CVSROOT: %s", CVSroot);
       break;
     }
+
+  if (*CVSroot_directory == '\0')
+    error (1, 0, "missing directory in CVSROOT: %s", CVSroot);
 }
 
 
