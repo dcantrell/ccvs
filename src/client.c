@@ -6,19 +6,19 @@
 
 #include "md5.h"
 
-#ifdef AUTH_CLIENT_SUPPORT
+#if defined(AUTH_CLIENT_SUPPORT) || HAVE_KERBEROS
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netdb.h>
+#endif /* defined(AUTH_CLIENT_SUPPORT) || HAVE_KERBEROS */
+
+#ifdef AUTH_CLIENT_SUPPORT
 char *get_cvs_password PROTO((char *user, char *host, char *cvsrooot));
 #endif /* AUTH_CLIENT_SUPPORT */
 
 #if HAVE_KERBEROS
 #define CVS_PORT 1999
 
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <netdb.h>
 #include <krb.h>
 
 extern char *krb_realmofhost ();
@@ -2674,7 +2674,7 @@ start_kerberos_server (tofdp, fromfdp)
   tofd = -1;
   if (connect (s, (struct sockaddr *) &sin, sizeof sin) < 0)
     {
-      error (0, errno, "connect");
+      error (0, errno, "kerberos connect");
       close (s);
     }
   else
@@ -2930,12 +2930,9 @@ start_server ()
 	if (supported_request ("gzip-file-contents"))
 	  {
             char gzip_level_buf[5];
-            int len;
-
 	    send_to_server ("gzip-file-contents ", 0);
-
-            len = sprintf (gzip_level_buf, "%d", gzip_level);
-	    send_to_server (gzip_level_buf, len);
+            sprintf (gzip_level_buf, "%d", gzip_level);
+	    send_to_server (gzip_level_buf, 0);
 
 	    send_to_server ("\n", 1);
 	  }
@@ -3270,15 +3267,14 @@ send_modified (file, short_pathname, vers)
 
         {
           char tmp[80];
-          int len;
 
 	  send_to_server ("Modified ", 0);
 	  send_to_server (file, 0);
 	  send_to_server ("\n", 1);
 	  send_to_server (mode_string, 0);
 	  send_to_server ("\nz", 2);
-	  len = sprintf (tmp, "%lu\n", (unsigned long) newsize);
-	  send_to_server (tmp, len);
+	  sprintf (tmp, "%lu\n", (unsigned long) newsize);
+	  send_to_server (tmp, 0);
 
           send_to_server (buf, newsize);
         }
@@ -3304,15 +3300,14 @@ send_modified (file, short_pathname, vers)
 
         {
           char tmp[80];
-          int len;
 
 	  send_to_server ("Modified ", 0);
 	  send_to_server (file, 0);
 	  send_to_server ("\n", 1);
 	  send_to_server (mode_string, 0);
 	  send_to_server ("\n", 1);
-          len = sprintf (tmp, "%lu\n", (unsigned long) newsize);
-          send_to_server (tmp, len);
+          sprintf (tmp, "%lu\n", (unsigned long) newsize);
+          send_to_server (tmp, 0);
         }
 
 	/*
@@ -3354,23 +3349,22 @@ send_fileproc (file, update_dir, repository, entries, srcfiles)
     if (vers->vn_user != NULL)
     {
       char *tmp;
-      int len;
 
       tmp = xmalloc (strlen (file) + strlen (vers->vn_user)
 		     + strlen (vers->options) + 200);
-      len = sprintf (tmp, "Entry /%s/%s/%s%s/%s/", 
-                     file, vers->vn_user,
-		     vers->ts_conflict == NULL ? "" : "+",
-		     (vers->ts_conflict == NULL ? ""
-		      : (vers->ts_user != NULL &&
-			 strcmp (vers->ts_conflict, vers->ts_user) == 0
-			 ? "="
-			 : "modified")),
-		     vers->options);
+      sprintf (tmp, "Entry /%s/%s/%s%s/%s/", 
+               file, vers->vn_user,
+               vers->ts_conflict == NULL ? "" : "+",
+               (vers->ts_conflict == NULL ? ""
+                : (vers->ts_user != NULL &&
+                   strcmp (vers->ts_conflict, vers->ts_user) == 0
+                   ? "="
+                   : "modified")),
+               vers->options);
 
 	/* The Entries request.  */
 	/* Not sure about whether this deals with -k and stuff right.  */
-	send_to_server (tmp, len);
+	send_to_server (tmp, 0);
         free (tmp);
 	if (vers->entdata != NULL && vers->entdata->tag)
 	{
@@ -3605,11 +3599,10 @@ send_file_names (argc, argv)
 	if (supported_request ("Max-dotdot"))
 	{
             char buf[10];
-            int len;
-            len = sprintf (buf, "%d", max_level);
+            sprintf (buf, "%d", max_level);
 
 	    send_to_server ("Max-dotdot ", 0);
-	    send_to_server (buf, len);
+	    send_to_server (buf, 0);
 	    send_to_server ("\n", 1);
 	}
 	else

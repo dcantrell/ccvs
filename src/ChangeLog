@@ -1,3 +1,17 @@
+Thu Dec 21 15:24:37 1995  Karl Fogel  <kfogel@occs.cs.oberlin.edu>
+
+        * client.c: don't include socket headers twice just because
+        both HAVE_KERBEROS and AUTH_CLIENT_SUPPORT are set.
+        (start_kerberos_server): if fail to connect to kerberos, print out
+        a more specific error message, mainly so pcl-cvs can know what
+        happened and not panic.
+        (start_server): don't assume sprintf() returns len
+        written (only some systems provide this); instead, have
+        send_to_server() calculate the length itself.
+        (send_modified): same.
+        (send_fileproc): same.
+        (send_file_names): same.
+
 Wed Dec 20 14:00:28 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* update.c (ignore_files): Move from here...
