@@ -1398,6 +1398,9 @@ stdio_buffer_shutdown (buf)
 		error (0, errno, "reading from %s", current_parsed_root->hostname);
 	}
 
+# ifdef SHUTDOWN_SERVER
+	if (current_parsed_root->method != server_method)
+# endif
 	/* shutdown() sockets */
 	if (S_ISSOCK(s.st_mode))
 	    shutdown ( fileno (bc->fp), 0);
@@ -1415,16 +1418,17 @@ stdio_buffer_shutdown (buf)
     }
     else if (buf->output)
     {
-	/* shutdown() sockets */
-	if (S_ISSOCK(s.st_mode))
-	    shutdown ( fileno (bc->fp), 1);
 # ifdef SHUTDOWN_SERVER
 	/* FIXME:  Should have a SHUTDOWN_SERVER_INPUT &
 	 * SHUTDOWN_SERVER_OUTPUT
 	 */
-	else if (current_parsed_root->method == server_method)
+	if (current_parsed_root->method == server_method)
 	    SHUTDOWN_SERVER ( fileno (bc->fp) );
+	else
 # endif
+	/* shutdown() sockets */
+	if (S_ISSOCK(s.st_mode))
+	    shutdown ( fileno (bc->fp), 1);
 
 	buf->output = NULL;
     }
