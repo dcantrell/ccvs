@@ -5301,7 +5301,6 @@ through the history.
 * log messages::                Log messages
 * history database::            The history database
 * user-defined logging::        User-defined logging
-* annotate::                    What revision modified each line of a file?
 @end menu
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -8632,7 +8631,7 @@ modification for each line.
 
 @menu
 * annotate options::            annotate options
-* annotate examples::           annotate examples
+* annotate example::            annotate example
 @end menu
 
 @c . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
