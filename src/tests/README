@@ -1,0 +1,17 @@
+This test suite currently requires the development version of Autoconf to be
+regenerated.  The distributed Bourne shell script should still be useful to
+those who simply want to test their system and do not need to alter the test
+suite.
+
+To run from this directory:
+
+	$ ./suite AUTOTEST_PATH=src
+
+To run from any directory with a working cvs or to test the first executable
+named `cvs' in $PATH:
+
+	$ suite
+
+For more info:
+
+	$ suite --help

@@ -1,0 +1,72 @@
+m4_divert_text([HEADER-COPYRIGHT],
+[# Copyright (C) 2003 Derek Price, Ximbiot,
+#                    & The Free Software Foundation, Inc.
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2, or (at your option)
+# any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+])
+
+# Include the macros specific to this (CVS) test suite.
+m4_include([atspecific.m4])
+
+# FIXME
+# I'd rather be able to set this dynamically, but for now Autotest is set to
+# pick an executable with a fixed name from the path.
+AT_TESTED([cvs])
+
+# Init Autotest
+AT_INIT
+
+
+
+#
+# Set up some variables our tests will use.
+#
+m4_divert_text([DEFAULTS],
+[CPROG=cvs
+AS_CVS_FIND_TOOL([ID],[id],
+[$ID -un </dev/null >/dev/null 2>&1 &&
+  test "`$ID -u </dev/null 2>/dev/null`" != ""])
+AS_IF([$as_cvs_have_ID],
+      [username=`$ID -un`; as_cvs_have_username=:],
+      [as_cvs_have_username=false])])
+
+
+
+#
+# Set up the options this test suite accepts.
+#
+AT_ARG_OPTION(
+  [remote|r],
+  [AS_HELP_STRING([-r | --remote],
+                  [Run test suite in remote mode.  This is the same as
+                   specifying --keywords=remote.],
+                  [                 ])],
+  [at_keywords="$at_keywords,remote"])dnl
+
+AT_ARG_OPTION_ARG(
+  [server|s],
+  [AS_HELP_STRING([-s | --server=PATH],
+                  [Run using PATH as the CVS server for client/server
+                   testing.  Implies --remote.  Defaults to \`cvs'.],
+                  [                 ])],
+  [server="$server"
+   at_keywords="$at_keywords,remote"],
+  [server=$CPROG])dnl
+
+
+
+##
+## Run the tests
+##
+
+AT_CVS_INCLUDE([init.at])
+AT_CVS_INCLUDE([version.at])
+AT_CVS_INCLUDE([basic.at])

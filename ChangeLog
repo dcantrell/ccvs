@@ -1,3 +1,20 @@
+2003-11-06  Derek Price  <derek@ximbiot.com>
+
+	* configure: Regenerated with autoconf 2.59.
+
+2003-08-13  Derek Price  <derek@ximbiot.com>
+
+	* configure.in: Set up Autotest.  s/AC_HELP_STRING/AS_HELP_STRING/ for
+	development version of Autoconf.
+
+2003-03-31  Derek Price  <derek@ximbiot.com>
+
+	* configure.in: AC_SUBST CLIENT_SUPPORT, AUTH_CLIENT_SUPPORT,
+	SERVER_SUPPORT, & AUTH_SERVER_SUPPORT for the new test suite.
+
+	* Makefile.in: Regenerated.
+	* configure: Ditto.
+
 2003-11-03  Derek Price  <derek@ximbiot.com>
 
 	* configure.in (AM_INIT_AUTOMAKE): Require Automake 1.7.5.

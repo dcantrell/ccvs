@@ -1,0 +1,29 @@
+dnl Copyright (C) 2003 Derek Price, Ximbiot,
+dnl			& The Free Software Foundation, Inc.
+dnl
+dnl This program is free software; you can redistribute it and/or modify
+dnl it under the terms of the GNU General Public License as published by
+dnl the Free Software Foundation; either version 2, or (at your option)
+dnl any later version.
+dnl
+dnl This program is distributed in the hope that it will be useful,
+dnl but WITHOUT ANY WARRANTY; without even the implied warranty of
+dnl MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+dnl GNU General Public License for more details.
+
+AT_CVS_BANNER([Initialize a repository])
+
+AT_CVS_SETUP([init])
+
+# This one is more of an assert.  It's here to watch the test suite
+# and warn us if anything changes.
+AT_CHECK_NOESCAPE([echo $CVSROOT], [0], [$method$at_group_dir/cvsroot
+])
+
+dnl We used to initialize a repository here, but the call to AT_CVS_SETUP now
+dnl always does that for us.
+
+# Verify that we get no errors when we initialize a repository twice.
+AT_CHECK([cvs init])
+
+AT_CLEANUP
