@@ -590,8 +590,7 @@ receive_file (size, file, gzipped)
      char *file;
      int gzipped;
 {
-    char *buf, *p;
-    int fd, bytes_left, nbytes;
+    int fd;
     char *arg = file;
     pid_t gzip_pid = 0;
     int gzip_status;
@@ -653,15 +652,11 @@ static void
 serve_modified (arg)
      char *arg;
 {
-    int fd;
-    char *buf = NULL;
-    char *p;
-
     int size;
     char *size_text;
     char *mode_text;
 
-    int nbytes, bytes_left, gzipped = 0;
+    int gzipped = 0;
 
     if (error_pending ()) return;
 
@@ -3243,7 +3238,6 @@ server_cleanup (sig)
 {
     /* Do "rm -rf" on the temp directory.  */
     int len;
-    char *tempbuf;
     char *cmd;
     char *temp_dir;
 
