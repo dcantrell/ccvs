@@ -177,7 +177,8 @@ do_editor (dir, messagep, repository, changes)
 		    CVSEDITPREFIX);
 
     /* finish off the temp file */
-    (void) fclose (fp);
+    if (fclose (fp) == EOF)
+        error (1, errno, "%s", fname);
     if (stat (fname, &pre_stbuf) == -1)
 	pre_stbuf.st_mtime = 0;
 
