@@ -333,6 +333,9 @@ print_error (status)
     if (msg)
 	buf_output0 (buf_to_net, msg);
     buf_append_char (buf_to_net, '\n');
+
+    /* FIXME: This call to buf_send_output could conceivably cause
+       deadlock, as noted in server_cleanup.  */
     buf_send_output (buf_to_net);
 }
 
@@ -355,7 +358,11 @@ print_pending_error ()
 	    print_error (pending_error);
 	else
 	    buf_output0 (buf_to_net, "error  \n");
+
+	/* FIXME: This call to buf_send_output could conceivably cause
+	   deadlock, as noted in server_cleanup.  */
 	buf_send_output (buf_to_net);
+
 	pending_error = 0;
 	free (pending_error_text);
 	pending_error_text = NULL;
@@ -422,8 +429,12 @@ serve_valid_responses (arg)
 	    buf_output0 (buf_to_net, "E response `");
 	    buf_output0 (buf_to_net, rs->name);
 	    buf_output0 (buf_to_net, "' not supported by client\nerror  \n");
+
+	    /* FIXME: This call to buf_send_output could conceivably
+	       cause deadlock, as noted in server_cleanup.  */
 	    set_block (buf_to_net);
 	    buf_send_output (buf_to_net);
+
 	    exit (EXIT_FAILURE);
 	}
 	else if (rs->status == rs_optional)
@@ -632,7 +643,6 @@ serve_directory (arg)
     char *repos;
 
     use_dir_and_repos = 1;
-    buf_send_output (buf_to_net);
     status = buf_read_line (buf_from_net, &repos);
     if (status == 0)
     {
@@ -872,7 +882,6 @@ serve_modified (arg)
      * read the file if we can.
      */
 
-    buf_send_output (buf_to_net);
     status = buf_read_line (buf_from_net, &mode_text);
     if (status != 0)
     {
@@ -1204,7 +1213,6 @@ serve_notify (arg)
     }
     strcpy (new->filename, arg);
 
-    buf_send_output (buf_to_net);
     status = buf_read_line (buf_from_net, &data);
     if (status != 0)
     {
@@ -3165,6 +3173,10 @@ serve_expand_modules (arg)
 	buf_output0 (buf_to_net, "error  \n");
     else
 	buf_output0 (buf_to_net, "ok\n");
+
+    /* The client is waiting for the module expansions, so we must
+       send the output now.  */
+    buf_send_output (buf_to_net);
 }
 
 void
@@ -3346,6 +3358,10 @@ serve_valid_requests (arg)
 	}
     }
     buf_output0 (buf_to_net, "\nok\n");
+
+    /* The client is waiting for the list of valid requests, so we
+       must send the output now.  */
+    buf_send_output (buf_to_net);
 }
 
 #ifdef sun
@@ -3373,6 +3389,10 @@ server_cleanup (sig)
     char *cmd;
     char *temp_dir;
 
+    /* FIXME: If this is not the final call from server, this could
+       deadlock, because the client might be blocked writing to us.
+       This should not be a problem in practice, because we do not
+       generate much output when the client is not waiting for it.  */
     set_block (buf_to_net);
     buf_send_output (buf_to_net);
 
@@ -3609,7 +3629,6 @@ error ENOMEM Virtual memory exhausted.\n");
 	struct request *rq;
 	int status;
 	
-	buf_send_output (buf_to_net);
 	status = buf_read_line (buf_from_net, &cmd);
 	if (status == -2)
 	{
@@ -4091,7 +4110,6 @@ cvs_outerr (str, len)
     {
 	buf_output (saved_outerr, str, len);
 	buf_copy_lines (buf_to_net, saved_outerr, 'E');
-	buf_send_output (buf_to_net);
     }
     else if (server_active)
     {
