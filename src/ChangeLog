@@ -1,3 +1,8 @@
+2004-02-11  Larry Jones  <lawrence.jones@ugsplm.com>
+
+	* root.c (parse_cvsroot): Set hostname in fork mode for error messages.
+	* buffer.c (stdio_buffer_shutdown): Undo previous change.
+
 2004-02-11  Mark D. Baushke  <mdb@cvshome.org>
 
 	* buffer.c (buf_free): Plug a memory leak.
