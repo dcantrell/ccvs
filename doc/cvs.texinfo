@@ -39,7 +39,7 @@
 
 @setfilename cvs.info
 @include CVSvn.texi
-@settitle CVS---Concurrent Versions System @value{CVSVN}
+@settitle CVS---Concurrent Versions System v@value{CVSVN}
 @setchapternewpage odd
 
 @c -- TODO list:

@@ -1,5 +1,10 @@
 2000-11-08  Derek Price  <derek.price@openavenue.com>
 
+	* cvs.texinfo (settitle): stick a 'v' in front of the version number
+	to make it harder to confuse with chapter, section, and page numbers.
+
+2000-11-08  Derek Price  <derek.price@openavenue.com>
+
 	* cvs.texinfo (settitle): add the version number to the title string
 	so that it is easier to find on HTML pages and the like.
 
