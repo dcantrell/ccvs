@@ -1,3 +1,8 @@
+Tue Nov 19 17:19:35 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* Makefile.in (SOURCES): Remove strippath.c.
+	* strippath.c: Removed.
+
 Sun Nov 10 22:54:04 1996  Paul Sanders <p.sanders@dial.pipex.com>
 			  and Jim Kingdon  <kingdon@harvey.cyclic.com>
 
