@@ -1,5 +1,15 @@
 Sun Apr 13 13:16:40 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* checkout.c (build_one_dir): New function.
+	(struct dir_to_build): New structure.
+	(build_dirs_and_chir): Rewritten to accept a linked list of struct
+	dir_to_build rather than the silly string processing we had been
+	doing before.
+	(checkout_proc): Rewrite code that calls build_dirs_and_chdir
+	accordingly.
+	* sanity.sh: Enable tests modules3-10 and modules3-11 for local CVS;
+	tests for above fix.
+
 	* rcs.h (RCS_CO): Removed; no longer used.
 
 Sun Apr 13 00:04:34 1997  Ian Lance Taylor  <ian@cygnus.com>
