@@ -1,5 +1,9 @@
 Fri Nov 17 21:13:22 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
+        * client.c (call_in_directory): Ask EACCESS even though we're
+        looking for EEXIST.  That's just The Way Things Are Done here,
+        apparently.  Ick.
+
         * getdate.c: took out some cruft that the more portable versions
         need.
 
