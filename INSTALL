@@ -19,7 +19,7 @@ i386 family:
 	PC Clone running ISC 4.0.1 (1.4.93) (footnote 5)
         PC Clone running Fintronic Linux 1.2.5 (1.5)
         PC Clone running BSDI 2.0 (1.4.93) (footnote 6)
-	PC Clone running Windows NT 3.51 (1.5)
+	PC Clone running Windows NT 3.51 (1.5 client)
 	NextSTEP 3.3 (1.4.92, a few tweaks needed)
 	SCO Unix 3.2.4.2 (1.4.93) (footnote 4)
 	SCO OpenServer 5.0.0, "CC='cc -b elf' configure"
