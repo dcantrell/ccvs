@@ -1,5 +1,11 @@
 2003-09-30  Derek Price  <derek@ximbiot.com>
 
+	* entries.c (WriteTemplate): TRACE on entrance to a function, not exit.
+	Don't worry about checking noexec without server support since this
+	function will then do nothing.
+
+2003-09-30  Derek Price  <derek@ximbiot.com>
+
 	* update.c (do_update): Reformat function decl.  Move and merge
 	comment.
 
