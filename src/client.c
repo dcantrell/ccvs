@@ -2221,7 +2221,7 @@ connect_to_pserver (tofdp, fromfdp, log)
     write (sock, end, strlen (end));
 
     /* Paranoia. */
-    bzero (password, strlen (password));
+    memset (password, 0, strlen (password));
 
     /* Get ACK or NACK from the server. 
      * 
@@ -2234,7 +2234,7 @@ connect_to_pserver (tofdp, fromfdp, log)
      * end of both ACK and NACK, and we read until "\n".
      */
     ch = 0;
-    bzero (read_buf, PATH_MAX);
+    memset (read_buf, 0, PATH_MAX);
     for (i = 0; (i < (PATH_MAX - 1)) && (ch != '\n'); i++)
       {
         read (sock, &ch, 1);

@@ -273,7 +273,7 @@ get_cvs_password (user, host, cvsroot)
       tmp = xmalloc (strlen (password) + 1);
       strcpy (tmp, password);
       tmp[strlen (password)] = '\0';
-      bzero (password, strlen (password));
+      bzero (password, 0, strlen (password));
       return tmp;
     }
   else
