@@ -1,5 +1,9 @@
 2004-08-10  Derek Price  <derek@ximbiot.com>
 
+	* server.c (server_cleanup): Remove unused variable.
+
+2004-08-10  Derek Price  <derek@ximbiot.com>
+
 	* server.c (buf_from_net_save): Remove obsolete variable.
 	(server_cleanup): Don't close BUF_FROM_NET_SAVE.
 
