@@ -3925,7 +3925,6 @@ send_arg (char *string)
 /* VERS->OPTIONS specifies whether the file is binary or not.  NOTE: BEFORE
    using any other fields of the struct vers, we would need to fix
    client_process_import_file to set them up.  */
-
 static void
 send_modified (const char *file, const char *short_pathname, Vers_TS *vers)
 {
@@ -4083,7 +4082,7 @@ struct send_data
 static int
 send_fileproc (void *callerdat, struct file_info *finfo)
 {
-    struct send_data *args = (struct send_data *) callerdat;
+    struct send_data *args = callerdat;
     Vers_TS *vers;
     struct file_info xfinfo;
     /* File name to actually use.  Might differ in case from
@@ -4622,10 +4621,9 @@ send_files (int argc, char **argv, int local, int aflag, unsigned int flags)
     args.no_contents = flags & SEND_NO_CONTENTS;
     args.backup_modified = flags & BACKUP_MODIFIED_FILES;
     err = start_recursion
-	( send_fileproc, send_filesdoneproc,
-	  send_dirent_proc, send_dirleave_proc, (void *) &args,
-	  argc, argv, local, W_LOCAL, aflag, CVS_LOCK_NONE, (char *) NULL, 0,
-	  (char *) NULL );
+	(send_fileproc, send_filesdoneproc, send_dirent_proc,
+         send_dirleave_proc, &args, argc, argv, local, W_LOCAL, aflag,
+         CVS_LOCK_NONE, NULL, 0, NULL);
     if (err)
 	exit (EXIT_FAILURE);
     if (toplevel_repos == NULL)
