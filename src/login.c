@@ -7,9 +7,9 @@
  * Allow user to log in for an authenticating server.
  */
 
-#ifdef CVS_LOGIN   /* This covers the whole file. */
-
 #include "cvs.h"
+
+#ifdef CVS_LOGIN   /* This covers the rest of the file. */
 
 #ifndef lint
 static const char rcsid[] = "$CVSid: @(#)login.c 1.1 95/10/01 $";
@@ -27,9 +27,9 @@ login (argc, argv)
   printf ("\"%s %s\" not yet supported.\n",
           program_name, command_name);
   
-  for (i = 0, i < argc; i++)
+  for (i = 0; i < argc; i++)
     {
-      printf ("\"%s %s\" arg %d: %s\n",
+      printf ("   \"%s %s\" arg %d: %s\n",
               program_name, command_name, i, argv[i]);
     }
 

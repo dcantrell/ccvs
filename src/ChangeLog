@@ -1,5 +1,12 @@
 Tue Oct 10 19:11:16 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
+        * options.h.in (CVS_LOGIN): discuss, but leave commented out.
+        The "cvs login" command is still under construction; however, the
+        repository was changing so fast that instead of creating a branch
+        and dealing with the attendant hair, I'm just developing on the
+        trunk, making sure that everything is surrounded by "#ifdef
+        CVS_LOGIN ... #endif" so I don't get in anyone's way.
+
         * login.c: include cvs.h before checking CVS_LOGIN, so it has a
         chance to get defined before we ask if it's defined.
         (login): oops, use semi not comma in `for' loop init.
