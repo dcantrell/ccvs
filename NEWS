@@ -8,6 +8,11 @@ you are compiling CVS yourself.
 
 Changes from 1.11.1p1 to 1.11.2:
 
+* There is a new feature, enabled by RereadLogAfterVerify in CVSROOT/config,
+which tells CVS to reread the log message after running the verifymsg
+script.  This allows the verifymsg script to reformat or otherwise
+modify the log message.
+
 * The interpretation of revision ranges using :: in "log" and "rlog"
 has changed: a::b now excludes the log message from revision a but
 includes the log message from revision b.  Also, revision ranges that
