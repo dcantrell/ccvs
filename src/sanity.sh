@@ -711,9 +711,8 @@ is_bad_tool ()
 
 find_tool ()
 {
-  GLOCS="`IFS=:; echo $SEARCHPATH`"
   TOOL=""
-  for path in $GLOCS ; do
+  for path in `IFS=:; echo $SEARCHPATH`; do
     if is_bad_tool $path/g$1 ; then continue; fi
     if test -f $path/g$1 && test -r $path/g$1 &&
         RES=`$path/g$1 --version </dev/null 2>/dev/null`; then
