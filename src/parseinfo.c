@@ -237,6 +237,7 @@ readBool (const char *infopath, const char *option, const char *p, bool *val)
 	error (0, 0, "%s: unrecognized value '%s' for `%s'",
 	       pinfopath, option, p);
 	free (pinfopath);
+	return false;
     }
     return true;
 }
