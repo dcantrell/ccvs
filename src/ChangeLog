@@ -1,3 +1,9 @@
+2001-02-28  Jim Meyering  <meyering@lucent.com>
+
+	* commit.c (commit_usage): Use `-F logfile' (rather than -F file') in
+	the description of that option, to be consistent with the `-F logfile'
+	in the Usage: line.  Use spaces instead of TAB characters, and realign.
+
 2001-03-02  Derek Price  <derek.price@openavenue.com>
 
 	* sanity.sh (crerepos): Make failed ${CVS_RSH-rsh} attempt print the
