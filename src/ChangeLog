@@ -1,5 +1,7 @@
 1998-09-18  Jim Kingdon  <kingdon@pennington.cyclic.com>
 
+	* version.c: Advance version number to 1.10.2.1.
+
 	* Version 1.10.2.
 
 1998-09-13  Jim Kingdon  <kingdon@harvey.cyclic.com>
