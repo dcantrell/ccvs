@@ -6165,17 +6165,14 @@ RCS_unlock (rcs, rev, unlock_quiet)
 	lock = NULL;
 	for (p = locks->list->next; p != locks->list; p = p->next)
 	{
-	    if (STREQ (p->data, user))
+	    if (lock != NULL)
 	    {
-		if (lock != NULL)
-		{
-		    if (!unlock_quiet)
-			error (0, 0, "\
+		if (!unlock_quiet)
+		    error (0, 0, "\
 %s: multiple revisions locked by %s; please specify one", rcs->path, user);
-		    return 1;
-		}
-		lock = p;
+		return 1;
 	    }
+	    lock = p;
 	}
 	if (lock == NULL)
 	    return 0;	/* no lock found, ergo nothing to do */
