@@ -2962,7 +2962,6 @@ U second-dir/envig.c
 U second-dir/foobar.c
 U second-dir/optig.c
 U second-dir/rootig.c'
-	  rm -rf second-dir
 	  dotest 189b "${testcvs} -q co first-dir" 'U first-dir/bar.c
 U first-dir/foobar.c'
 	  cd first-dir
@@ -2995,9 +2994,37 @@ ${QUESTION} notig.c"
 	    dotest 189f "${testcvs} -q ci -m commit-it" "${QUESTION} notig.c"
 	  fi
 
+	  # now test .cvsignore files
 	  cd ..
-	  rm -rf first-dir
+	  echo notig.c >first-dir/.cvsignore
+	  echo foobar.c >second-dir/.cvsignore
+	  touch first-dir/notig.c second-dir/notig.c second-dir/foobar.c
+	  dotest 190 "${testcvs} -qn update" \
+"${QUESTION} first-dir/.cvsignore
+${QUESTION} second-dir/.cvsignore
+${QUESTION} second-dir/notig.c" \
+"${QUESTION} first-dir/.cvsignore
+${QUESTION} second-dir/notig.c
+${QUESTION} second-dir/.cvsignore"
+	  dotest 191 "${testcvs} -qn update -I!" \
+"${QUESTION} first-dir/CVS
+${QUESTION} first-dir/rootig.c
+${QUESTION} first-dir/defig.o
+${QUESTION} first-dir/envig.c
+${QUESTION} first-dir/.cvsignore
+${QUESTION} second-dir/CVS
+${QUESTION} second-dir/.cvsignore
+${QUESTION} second-dir/notig.c" \
+"${QUESTION} first-dir/CVS
+${QUESTION} first-dir/rootig.c
+${QUESTION} first-dir/defig.o
+${QUESTION} first-dir/envig.c
+${QUESTION} first-dir/.cvsignore
+${QUESTION} second-dir/CVS
+${QUESTION} second-dir/notig.c
+${QUESTION} second-dir/.cvsignore"
 
+	  rm -rf first-dir second-dir
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir ${CVSROOT_DIRNAME}/second-dir
 	  ;;
 
