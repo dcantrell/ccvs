@@ -429,6 +429,10 @@ extern int errno;
 #define CVS_FOPEN fopen
 #endif
 
+#ifndef CVS_FDOPEN
+#define CVS_FDOPEN fdopen
+#endif
+
 #ifndef CVS_MKDIR
 #define CVS_MKDIR mkdir
 #endif
