@@ -6661,7 +6661,7 @@ RCS_delete_revs (rcs, tag1, tag2, inclusive)
 		goto delrev_done;
 
 	    outfile = cvs_temp_name();
-	    status = diff_exec (beforefile, afterfile, "-n", outfile);
+	    status = diff_exec (beforefile, afterfile, "-an", outfile);
 
 	    if (status == 2)
 	    {
