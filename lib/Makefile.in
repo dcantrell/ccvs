@@ -715,8 +715,8 @@ check-TESTS: $(TESTS)
 	  dashes=`echo "$$dashes" | sed s/./=/g`; \
 	  echo "$$dashes"; \
 	  echo "$$banner"; \
-	  test -n "$$skipped" && echo "$$skipped" || :; \
-	  test -n "$$report" && echo "$$report" || :; \
+	  test -n "$$skipped" && echo "$$skipped"; \
+	  test -n "$$report" && echo "$$report"; \
 	  echo "$$dashes"; \
 	  test "$$failed" -eq 0; \
 	else :; fi

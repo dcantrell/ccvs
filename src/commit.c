@@ -139,7 +139,7 @@ find_dirent_proc (void *callerdat, const char *dir, const char *repository,
        is that it (or some variant thereof) should go in all the
        dirent procs.  Unless someone has some better idea...  */
     if (!isdir (dir))
-	return (R_SKIP_ALL);
+	return R_SKIP_ALL;
 
     /* initialize the ignore list for this directory */
     find_data->ignlist = getlist ();
@@ -196,7 +196,7 @@ find_filesdoneproc (void *callerdat, int err, const char *repository,
     return err;
 }
 
-static int find_fileproc (void *callerdat, struct file_info *finfo);
+
 
 /* Machinery to find out what is modified, added, and removed.  It is
    possible this should be broken out into a new client_classify function;
@@ -356,15 +356,16 @@ commit (int argc, char **argv)
 	struct passwd *pw;
 
 	if ((pw = getpwnam (getcaller ())) == NULL)
-	    error (1, 0, "your apparent username (%s) is unknown to this system",
-			 getcaller ());
+	    error (1, 0,
+                   "your apparent username (%s) is unknown to this system",
+                   getcaller ());
 	if (pw->pw_uid == (uid_t) 0)
 	    error (1, 0, "'root' is not allowed to commit files");
     }
 #endif /* CVS_BADROOT */
 
     optind = 0;
-    while( ( c = getopt( argc, argv, COMMIT_OPTIONS ) ) != -1 )
+    while ((c = getopt (argc, argv, COMMIT_OPTIONS)) != -1)
     {
 	switch (c)
 	{
@@ -764,6 +765,8 @@ classify_file_internal (struct file_info *finfo, Vers_TS **vers)
     return status;
 }
 
+
+
 /*
  * Check to see if a file is ok to commit and make sure all files are
  * up-to-date
@@ -786,10 +789,11 @@ check_fileproc (void *callerdat, struct file_info *finfo)
     if (!finfo->repository)
     {
 	error (0, 0, "nothing known about `%s'", finfo->fullname);
-	return (1);
+	return 1;
     }
 
-    if (strncmp (finfo->repository, current_parsed_root->directory, cvsroot_len) == 0
+    if (strncmp (finfo->repository, current_parsed_root->directory,
+                 cvsroot_len) == 0
 	&& ISSLASH (finfo->repository[cvsroot_len])
 	&& strncmp (finfo->repository + cvsroot_len + 1,
 		    CVSROOTADM,
@@ -1061,12 +1065,12 @@ check_direntproc (void *callerdat, const char *dir, const char *repos,
                   const char *update_dir, List *entries)
 {
     if (!isdir (dir))
-	return (R_SKIP_ALL);
+	return R_SKIP_ALL;
 
     if (!quiet)
 	error (0, 0, "Examining %s", update_dir);
 
-    return (R_PROCESS);
+    return R_PROCESS;
 }
 
 
@@ -1273,7 +1277,7 @@ commit_fileproc (void *callerdat, struct file_info *finfo)
      * all up-to-date so nothing really needs to be done
      */
     if (p == NULL)
-	return (0);
+	return 0;
     ulist = ((struct master_lists *) p->data)->ulist;
     cilist = ((struct master_lists *) p->data)->cilist;
 
@@ -1297,7 +1301,7 @@ commit_fileproc (void *callerdat, struct file_info *finfo)
 
     p = findnode (cilist, finfo->file);
     if (p == NULL)
-	return (0);
+	return 0;
 
     ci = p->data;
     if (ci->status == T_MODIFIED)
@@ -1455,7 +1459,7 @@ out:
     if (SIG_inCrSect ())
 	SIG_endCrSect ();
 
-    return (err);
+    return err;
 }
 
 
@@ -1473,7 +1477,7 @@ commit_filesdoneproc (void *callerdat, int err, const char *repository,
 
     p = findnode (mulist, update_dir);
     if (p == NULL)
-	return (err);
+	return err;
 
     ulist = ((struct master_lists *) p->data)->ulist;
 
@@ -1524,7 +1528,7 @@ commit_filesdoneproc (void *callerdat, int err, const char *repository,
 	}
     }
 
-    return (err);
+    return err;
 }
 
 
@@ -1542,7 +1546,7 @@ commit_direntproc (void *callerdat, const char *dir, const char *repos,
     char *real_repos;
 
     if (!isdir (dir))
-	return (R_SKIP_ALL);
+	return R_SKIP_ALL;
 
     /* find the update list for this dir */
     p = findnode (mulist, update_dir);
@@ -1553,7 +1557,7 @@ commit_direntproc (void *callerdat, const char *dir, const char *repos,
 
     /* skip the files as an optimization */
     if (ulist == NULL || ulist->list->next == ulist->list)
-	return (R_SKIP_FILES);
+	return R_SKIP_FILES;
 
     /* get commit message */
     got_message = 1;
@@ -1566,7 +1570,7 @@ commit_direntproc (void *callerdat, const char *dir, const char *repos,
 	do_editor (update_dir, &saved_message, real_repos, ulist);
     do_verify (&saved_message, real_repos);
     free (real_repos);
-    return (R_PROCESS);
+    return R_PROCESS;
 }
 
 
@@ -1591,8 +1595,10 @@ commit_dirleaveproc (void *callerdat, const char *dir, int err,
 	free (repos);
     }
 
-    return (err);
+    return err;
 }
+
+
 
 /*
  * find the maximum major rev number in an entries file
@@ -1675,7 +1681,7 @@ remove_file (struct file_info *finfo, char *tag, char *message)
 	if (rev == NULL)
 	{
 	    error (0, 0, "cannot find branch \"%s\".", tag);
-	    return (1);
+	    return 1;
 	}
 
 	branchname = RCS_getbranch (finfo->rcs, rev, 1);
@@ -1707,7 +1713,7 @@ remove_file (struct file_info *finfo, char *tag, char *message)
 	{
 	    error (0, 0, "cannot change branch to default for %s",
 		   finfo->fullname);
-	    return (1);
+	    return 1;
 	}
 	RCS_rewrite (finfo->rcs, NULL, NULL);
     }
@@ -1721,7 +1727,7 @@ remove_file (struct file_info *finfo, char *tag, char *message)
     {
 	error (0, 0,
 	       "failed to check out `%s'", finfo->fullname);
-	return (1);
+	return 1;
     }
 
     /* Except when we are creating a branch, lock the revision so that
@@ -1742,7 +1748,7 @@ remove_file (struct file_info *finfo, char *tag, char *message)
 	if (!quiet)
 	    error (0, retcode == -1 ? errno : 0,
 		   "failed to commit dead revision for `%s'", finfo->fullname);
-	return (1);
+	return 1;
     }
     /* At this point, the file has been committed as removed.  We should
        probably tell the history file about it  */
@@ -1767,8 +1773,10 @@ remove_file (struct file_info *finfo, char *tag, char *message)
     free (old_path);
 
     Scratch_Entry (finfo->entries, finfo->file);
-    return (0);
+    return 0;
 }
+
+
 
 /*
  * Do the actual checkin for added files
@@ -1794,8 +1802,10 @@ finaladd (struct file_info *finfo, char *rev, char *tag, char *options)
 
     (void) time (&last_register_time);
 
-    return (ret);
+    return ret;
 }
+
+
 
 /*
  * Unlock an rcs file
@@ -2193,6 +2203,8 @@ checkaddfile (const char *file, const char *repository, const char *tag,
     return retval;
 }
 
+
+
 /*
  * Attempt to place a lock on the RCS file; returns 0 if it could and 1 if it
  * couldn't.  If the RCS file currently has a branch as the head, we must
@@ -2227,7 +2239,7 @@ lock_RCS (const char *user, RCSNode *rcs, const char *rev,
 		       rcs->path);
 		if (branch)
 		    free (branch);
-		return (1);
+		return 1;
 	    }
 	}
 	err = RCS_lock (rcs, NULL, 1);
@@ -2261,7 +2273,7 @@ lock_RCS (const char *user, RCSNode *rcs, const char *rev,
 	if (sbranch != NULL)
 	    free (sbranch);
 	sbranch = branch;
-	return (0);
+	return 0;
     }
 
     /* try to restore the branch if we can on error */
@@ -2270,8 +2282,10 @@ lock_RCS (const char *user, RCSNode *rcs, const char *rev,
 
     if (branch)
 	free (branch);
-    return (1);
+    return 1;
 }
+
+
 
 /*
  * free an UPDATE node's data

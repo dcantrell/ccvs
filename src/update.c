@@ -1821,8 +1821,10 @@ patch_file (struct file_info *finfo, Vers_TS *vers_ts, int *docheckout, struct s
     free (backup);
     free (file1);
     free (file2);
-    return (retval);
+    return retval;
 }
+
+
 
 /* Write data to a file.  Record whether the last byte written was a
    newline.  Optionally compute a checksum.  This is called by
@@ -2942,8 +2944,10 @@ special_file_mismatch (struct file_info *finfo, char *rev1, char *rev2)
 #endif
 }
 
+
+
 int
 joining (void)
 {
-    return (join_rev1 != NULL);
+    return join_rev1 != NULL;
 }

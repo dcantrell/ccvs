@@ -1,3 +1,16 @@
+2004-05-05  Derek Price  <derek@ximbiot.com>
+
+	* commit.c: Some gratuitous reformatting.
+
+2004-05-04  Derek Price  <derek@ximbiot.com>
+
+	* update.c: Some gratuitous reformatting.
+
+2004-05-04  Derek Price  <derek@ximbiot.com>
+
+	* add.c (add): Remove obsolete FIXME comment.
+	(*): Some gratuitous reformatting.
+
 2004-05-03  Derek Price  <derek@ximbiot.com>
 
 	* src/sanity.sh (branches2-14-ls-4): Change expectations due to new -d
