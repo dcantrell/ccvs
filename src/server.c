@@ -5251,7 +5251,7 @@ error ENOMEM Virtual memory exhausted.\n");
 	}
 	free (orig_cmd);
     }
-    free(command_name);
+    free(error_prog_name);
     server_cleanup (0);
     return 0;
 }
@@ -5401,8 +5401,8 @@ check_repository_password (username, password, repository, host_user_ptr)
     int found_it = 0;
     int namelen;
 
-    /* We don't use current_parsed_root->directory because it hasn't been set yet
-     * -- our `repository' argument came from the authentication
+    /* We don't use current_parsed_root->directory because it hasn't been
+     * set yet -- our `repository' argument came from the authentication
      * protocol, not the regular CVS protocol.
      */
 
