@@ -76,6 +76,6 @@ AC_DEFUN([gl_PREREQ_GETLINE],
                  gl_have_getdelim=yes,
                  gl_have_getdelim=no)
   if test $gl_have_getdelim = no; then
-    gl_PREREQ_GETNLINE
+    gl_FUNC_GETNDELIM2
   fi
 ])
