@@ -1,3 +1,7 @@
+2000-06-14  Larry Jones  <larry.jones@sdrc.com>
+
+	* tag.c (val_direntproc): Return R_PROCESS instead of 0.
+
 2000-06-13  Larry Jones  <larry.jones@sdrc.com>
 
 	* add.c (add): Plug memory leaks.

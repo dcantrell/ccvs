@@ -730,7 +730,7 @@ val_direntproc (callerdat, dir, repository, update_dir, entries)
        files in a directory which does not exist yet, but which is
        about to be created.  */
     if (isdir (dir))
-	return 0;
+	return R_PROCESS;
     return R_SKIP_ALL;
 }
 
