@@ -1,5 +1,10 @@
 2003-07-19  Derek Price  <derek@ximbiot.com>
 
+	* srclist.txt: New file which describes where various external source
+	files come from.
+
+2003-07-19  Derek Price  <derek@ximbiot.com>
+
 	* aclocal.m4: Regenerated.
 	* configure: Ditto.
 

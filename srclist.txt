@@ -1,0 +1,103 @@
+# Files for which we are not the source.
+
+# In the "Local Modifications" fields below, "I" means the source files were
+# imported using the CVS import command and "NI" means CVS import was not used.
+
+GNU ZLib
+Stream compression and decompression libraries.
+License: zlib/README (Public Domain, but do not misrepresent source.)
+Bug Report Email: bug-zlib@gnu.org
+GNU Web Page: http://www.gnu.org/directory/GNU/zlib.html
+Last Web Location: http://www.gzip.org/zlib
+
+Imported files					CVS		Local
+						Directory	Modifications
+----------------------------------------------- --------------- ---------------
+$GNUZLIB/*					zlib		build scripts
+								only I
+
+
+
+GNU Diffutils
+License: GPL
+Bug Report Email: bug-gnu-utils@gnu.org
+GNU Web Page: http://www.gnu.org/directory/GNU/diffutils.html
+Project Web Page: http://savannah.gnu.org/projects/diffutils/
+
+Imported files					CVS		Local
+						Directory	Modifications
+----------------------------------------------- --------------- ---------------
+$GNUDIFF/*					diff		yes NI
+
+
+
+GNULib
+Portable implementations of useful functions found on some platforms but not
+others.  We update these files directly from the GNULIB CVS repository.
+License: GPL
+Bug Report Email: bug-gnulib@gnu.org
+Project Web Page: http://savannah.gnu.org/projects/gnulib
+CVS Repository: :pserver:anoncvs@subversions.gnu.org:/cvsroot/gnulib
+
+Imported files					CVS		Local
+						Directory	Modifications
+----------------------------------------------- --------------- ---------------
+# $GNULIB/modules/getline
+$GNULIB/lib/getline.h				lib		yes NI
+$GNULIB/lib/getline.c				lib		yes NI
+$GNULIB/m4/getline.m4				m4		yes NI
+# $GNULIB/modules/getndelim2
+$GNULIB/lib/getndelim2.c			lib		yes NI
+$GNULIB/lib/getndelim2.h			lib		yes NI
+$GNULIB/m4/getndelim2.m4			m4		yes NI
+# $GNULIB/modules/getnline
+$GNULIB/lib/getnline.c				lib		yes NI
+$GNULIB/lib/getnline.h				lib		yes NI
+$GNULIB/m4/getnline.m4				m4		yes NI
+# $GNULIB/modules/gettext
+$GNULIB/lib/gettext.h				lib		no NI
+$GNULIB/m4/codeset.m4				m4		no NI
+$GNULIB/m4/gettext.m4				m4		no NI
+$GNULIB/m4/glibc21.m4				m4		no NI
+$GNULIB/m4/iconv.m4				m4		no NI
+$GNULIB/m4/intdiv0.m4				m4		no NI
+$GNULIB/m4/inttypes-pri.m4			m4		no NI
+$GNULIB/m4/inttypes.m4				m4		no NI
+$GNULIB/m4/inttypes_h.m4			m4		no NI
+$GNULIB/m4/isc-posix.m4				m4		no NI
+$GNULIB/m4/lcmessage.m4				m4		no NI
+$GNULIB/m4/lib-ld.m4				m4		no NI
+$GNULIB/m4/lib-link.m4				m4		no NI
+$GNULIB/m4/lib-prefix.m4			m4		no NI
+$GNULIB/m4/nls.m4				m4		no NI
+$GNULIB/m4/po.m4				m4		no NI
+$GNULIB/m4/progtest.m4				m4		no NI
+$GNULIB/m4/stdint_h.m4				m4		no NI
+$GNULIB/m4/uintmax_t.m4				m4		no NI
+$GNULIB/m4/ulonglong.m4				m4		no NI
+# $GNULIB/modules/lstat
+$GNULIB/lib/lstat.c				lib		yes NI
+$GNULIB/m4/lstat.m4				m4		no NI
+# $GNULIB/modules/malloc
+$GNULIB/m4/malloc.m4				m4		no NI
+$GNULIB/lib/malloc.c				lib		no NI
+# $GNULIB/modules/mkstemp
+$GNULIB/m4/mkstemp.m4				m4		no NI
+$GNULIB/lib/mkstemp.c				lib		no NI
+$GNULIB/m4/onceonly_2_57.m4			m4		no NI
+# $GNULIB/modules/pathmax
+$GNULIB/lib/pathmax.h				lib		no NI
+$GNULIB/m4/onceonly_2_57.m4			m4		no NI
+$GNULIB/m4/pathmax.m4				m4		no NI
+# $GNULIB/modules/realloc
+$GNULIB/lib/realloc.c				lib		no NI
+$GNULIB/m4/realloc.m4				m4		no NI
+# $GNULIB/modules/stat
+$GNULIB/lib/stat.c				lib		no NI
+$GNULIB/m4/stat.m4				m4		yes NI
+# $GNULIB/modules/unlocked-io
+$GNULIB/lib/unlocked-io.h			lib		no NI
+$GNULIB/m4/onceonly_2_57.m4			m4		no NI
+$GNULIB/m4/unlocked-io.m4			m4		no NI
+# shared
+$GNULIB/m4/onceonly_2_57.m4			m4		no NI
