@@ -174,39 +174,11 @@ sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 with_default_rsh = @with_default_rsh@
 
-#
-# savecwd.h needs src/error.h
-#
-AM_CPPFLAGS = -I$(top_srcdir)/src
-
 noinst_LIBRARIES = libcvs.a
 
-# Always use CVS's regular expression matcher regex.o, because of
-# variations in regular expression syntax - we want to be the same
-# across systems and (probably) compared with old versions of CVS too.
-#
-# On a more mundane/detail level, having regex.h match regex.c can be
-# an issue if we aren't careful.
-#
-# Also should look into unifying regular expression matching in CVS
+# Should look into unifying regular expression matching in CVS
 # with the diff library (perhaps to have the caller, CVS, do the
 # matching?)
-
-# For GNULIB's dirname module.
-
-# For GNULIB's exitfail module.
-
-# For GNULIB's getdate module.
-
-# For GNULIB's gettime module.
-
-# For GNULIB's time_r module.
-
-# For GNULIB's timespec module.
-
-# For GNULIB's vasnprintf module.
-
-# For GNULIB's xalloc module.
 libcvs_a_SOURCES = \
 	argmatch.c \
 	getnline.c \
@@ -238,15 +210,12 @@ libcvs_a_SOURCES = \
 basename.c dirname.c dirname.h stripslash.c exitfail.h exitfail.c getdate.h getdate.y gettime.c time_r.h timespec.h printf-args.h printf-parse.h vasnprintf.h xalloc.h xmalloc.c xstrdup.c
 libcvs_a_LIBADD = @LIBOBJS@
 
-
-# For GNULIB's alloca module.
-
-# For GNULIB's fnmatch module.
-
-# For GNULIB's stdbool module.
 BUILT_SOURCES = $(ALLOCA_H) $(FNMATCH_H) getdate.c $(STDBOOL_H)
-MOSTLYCLEANFILES = alloca.h alloca.h-t fnmatch.h fnmatch.h-t stdbool.h stdbool.h-t
+MOSTLYCLEANFILES = alloca.h alloca.h-t fnmatch.h fnmatch.h-t getdate-expected getdate-got getdate.diff stdbool.h stdbool.h-t
 MAINTAINERCLEANFILES = getdate.c
+# CVS test scripts for getdate.
+TESTS = test-getdate.sh
+check_PROGRAMS = getdate
 
 EXTRA_DIST = \
 	.cvsignore \
@@ -256,6 +225,15 @@ EXTRA_DIST = \
 	libcvs.dsp \
 	libcvs.mak\
 alloca_.h fnmatch_.h fnmatch_loop.c stdbool_.h
+getdate_SOURCES = \
+	getdate.y \
+	gettime.c
+
+getdate_CPPFLAGS = -DTEST
+getdate_LDADD = \
+	@LIBOBJS@ \
+	$(LIB_CLOCK_GETTIME)
+
 subdir = lib
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
@@ -272,6 +250,11 @@ am_libcvs_a_OBJECTS = argmatch.$(OBJEXT) getnline.$(OBJEXT) \
 	stripslash.$(OBJEXT) exitfail.$(OBJEXT) getdate.$(OBJEXT) \
 	gettime.$(OBJEXT) xmalloc.$(OBJEXT) xstrdup.$(OBJEXT)
 libcvs_a_OBJECTS = $(am_libcvs_a_OBJECTS)
+check_PROGRAMS = getdate$(EXEEXT)
+am_getdate_OBJECTS = getdate-getdate.$(OBJEXT) getdate-gettime.$(OBJEXT)
+getdate_OBJECTS = $(am_getdate_OBJECTS)
+getdate_DEPENDENCIES = @LIBOBJS@
+getdate_LDFLAGS =
 
 DEFAULT_INCLUDES =  -I. -I$(srcdir) -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
@@ -295,6 +278,8 @@ am__depfiles_maybe = depfiles
 @AMDEP_TRUE@	$(DEPDIR)/vasnprintf.Po $(DEPDIR)/waitpid.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/argmatch.Po ./$(DEPDIR)/basename.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/dirname.Po ./$(DEPDIR)/exitfail.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/getdate-getdate.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/getdate-gettime.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/getdate.Po ./$(DEPDIR)/getnline.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/getopt.Po ./$(DEPDIR)/getopt1.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/gettime.Po ./$(DEPDIR)/md5.Po \
@@ -307,7 +292,8 @@ COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 CCLD = $(CC)
 LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 YACCCOMPILE = $(YACC) $(YFLAGS) $(AM_YFLAGS)
-DIST_SOURCES = $(libcvs_a_SOURCES)
+YLWRAP = $(top_srcdir)/ylwrap
+DIST_SOURCES = $(libcvs_a_SOURCES) $(getdate_SOURCES)
 DIST_COMMON = README $(srcdir)/Makefile.in ChangeLog Makefile.am \
 	asnprintf.c atexit.c dup2.c fncase.c fnmatch.c fseeko.c \
 	ftello.c ftruncate.c getdate.c gethostname.c getline.c \
@@ -316,7 +302,7 @@ DIST_COMMON = README $(srcdir)/Makefile.in ChangeLog Makefile.am \
 	printf-parse.c realloc.c regex.c rename.c stat.c strerror.c \
 	strstr.c strtoul.c tempname.c time_r.c valloc.c vasnprintf.c \
 	waitpid.c
-SOURCES = $(libcvs_a_SOURCES)
+SOURCES = $(libcvs_a_SOURCES) $(getdate_SOURCES)
 
 all: $(BUILT_SOURCES)
 	$(MAKE) $(AM_MAKEFLAGS) all-am
@@ -337,6 +323,12 @@ libcvs.a: $(libcvs_a_OBJECTS) $(libcvs_a_DEPENDENCIES)
 	-rm -f libcvs.a
 	$(libcvs_a_AR) libcvs.a $(libcvs_a_OBJECTS) $(libcvs_a_LIBADD)
 	$(RANLIB) libcvs.a
+
+clean-checkPROGRAMS:
+	-test -z "$(check_PROGRAMS)" || rm -f $(check_PROGRAMS)
+getdate$(EXEEXT): $(getdate_OBJECTS) $(getdate_DEPENDENCIES) 
+	@rm -f getdate$(EXEEXT)
+	$(LINK) $(getdate_LDFLAGS) $(getdate_OBJECTS) $(getdate_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT) core *.core
@@ -382,6 +374,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/basename.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dirname.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/exitfail.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/getdate-getdate.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/getdate-gettime.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/getdate.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/getnline.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/getopt.Po@am__quote@
@@ -418,25 +412,52 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(COMPILE) -c `if test -f '$<'; then $(CYGPATH_W) '$<'; else $(CYGPATH_W) '$(srcdir)/$<'; fi`
 
+getdate-getdate.o: getdate.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(getdate_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT getdate-getdate.o -MD -MP -MF "$(DEPDIR)/getdate-getdate.Tpo" \
+@am__fastdepCC_TRUE@	  -c -o getdate-getdate.o `test -f 'getdate.c' || echo '$(srcdir)/'`getdate.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/getdate-getdate.Tpo" "$(DEPDIR)/getdate-getdate.Po"; \
+@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/getdate-getdate.Tpo"; exit 1; \
+@am__fastdepCC_TRUE@	fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='getdate.c' object='getdate-getdate.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/getdate-getdate.Po' tmpdepfile='$(DEPDIR)/getdate-getdate.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(getdate_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o getdate-getdate.o `test -f 'getdate.c' || echo '$(srcdir)/'`getdate.c
+
+getdate-getdate.obj: getdate.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(getdate_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT getdate-getdate.obj -MD -MP -MF "$(DEPDIR)/getdate-getdate.Tpo" \
+@am__fastdepCC_TRUE@	  -c -o getdate-getdate.obj `if test -f 'getdate.c'; then $(CYGPATH_W) 'getdate.c'; else $(CYGPATH_W) '$(srcdir)/getdate.c'; fi`; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/getdate-getdate.Tpo" "$(DEPDIR)/getdate-getdate.Po"; \
+@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/getdate-getdate.Tpo"; exit 1; \
+@am__fastdepCC_TRUE@	fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='getdate.c' object='getdate-getdate.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/getdate-getdate.Po' tmpdepfile='$(DEPDIR)/getdate-getdate.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(getdate_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o getdate-getdate.obj `if test -f 'getdate.c'; then $(CYGPATH_W) 'getdate.c'; else $(CYGPATH_W) '$(srcdir)/getdate.c'; fi`
+
+getdate-gettime.o: gettime.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(getdate_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT getdate-gettime.o -MD -MP -MF "$(DEPDIR)/getdate-gettime.Tpo" \
+@am__fastdepCC_TRUE@	  -c -o getdate-gettime.o `test -f 'gettime.c' || echo '$(srcdir)/'`gettime.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/getdate-gettime.Tpo" "$(DEPDIR)/getdate-gettime.Po"; \
+@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/getdate-gettime.Tpo"; exit 1; \
+@am__fastdepCC_TRUE@	fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gettime.c' object='getdate-gettime.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/getdate-gettime.Po' tmpdepfile='$(DEPDIR)/getdate-gettime.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(getdate_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o getdate-gettime.o `test -f 'gettime.c' || echo '$(srcdir)/'`gettime.c
+
+getdate-gettime.obj: gettime.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(getdate_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT getdate-gettime.obj -MD -MP -MF "$(DEPDIR)/getdate-gettime.Tpo" \
+@am__fastdepCC_TRUE@	  -c -o getdate-gettime.obj `if test -f 'gettime.c'; then $(CYGPATH_W) 'gettime.c'; else $(CYGPATH_W) '$(srcdir)/gettime.c'; fi`; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/getdate-gettime.Tpo" "$(DEPDIR)/getdate-gettime.Po"; \
+@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/getdate-gettime.Tpo"; exit 1; \
+@am__fastdepCC_TRUE@	fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gettime.c' object='getdate-gettime.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/getdate-gettime.Po' tmpdepfile='$(DEPDIR)/getdate-gettime.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(getdate_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o getdate-gettime.obj `if test -f 'gettime.c'; then $(CYGPATH_W) 'gettime.c'; else $(CYGPATH_W) '$(srcdir)/gettime.c'; fi`
+
 .y.c:
-	$(YACCCOMPILE) `test -f '$<' || echo '$(srcdir)/'`$<
-	if test -f y.tab.h; then \
-	  to=`echo "$*_H" | sed \
-                -e 'y/abcdefghijklmnopqrstuvwxyz/ABCDEFGHIJKLMNOPQRSTUVWXYZ/' \
-                -e 's/[^ABCDEFGHIJKLMNOPQRSTUVWXYZ]/_/g'`; \
-	  sed "/^#/ s/Y_TAB_H/$$to/g" y.tab.h >$*.ht; \
-	  rm -f y.tab.h; \
-	  if cmp -s $*.ht $*.h; then \
-	    rm -f $*.ht ;\
-	  else \
-	    mv $*.ht $*.h; \
-	  fi; \
-	fi
-	if test -f y.output; then \
-	  mv y.output $*.output; \
-	fi
-	sed '/^#/ s|y\.tab\.c|$@|' y.tab.c >$@t && mv $@t $@
-	rm -f y.tab.c
+	$(SHELL) $(YLWRAP) `test -f '$<' || echo '$(srcdir)/'`$< y.tab.c $@ y.tab.h $*.h y.output $*.output -- $(YACCCOMPILE)
 uninstall-info-am:
 
 ETAGS = etags
@@ -492,6 +513,79 @@ GTAGS:
 
 distclean-tags:
 	-rm -f TAGS ID GTAGS GRTAGS GSYMS GPATH tags
+
+check-TESTS: $(TESTS)
+	@failed=0; all=0; xfail=0; xpass=0; skip=0; \
+	srcdir=$(srcdir); export srcdir; \
+	list='$(TESTS)'; \
+	if test -n "$$list"; then \
+	  for tst in $$list; do \
+	    if test -f ./$$tst; then dir=./; \
+	    elif test -f $$tst; then dir=; \
+	    else dir="$(srcdir)/"; fi; \
+	    if $(TESTS_ENVIRONMENT) $${dir}$$tst; then \
+	      all=`expr $$all + 1`; \
+	      case " $(XFAIL_TESTS) " in \
+	      *" $$tst "*) \
+	        xpass=`expr $$xpass + 1`; \
+	        failed=`expr $$failed + 1`; \
+	        echo "XPASS: $$tst"; \
+	      ;; \
+	      *) \
+	        echo "PASS: $$tst"; \
+	      ;; \
+	      esac; \
+	    elif test $$? -ne 77; then \
+	      all=`expr $$all + 1`; \
+	      case " $(XFAIL_TESTS) " in \
+	      *" $$tst "*) \
+	        xfail=`expr $$xfail + 1`; \
+	        echo "XFAIL: $$tst"; \
+	      ;; \
+	      *) \
+	        failed=`expr $$failed + 1`; \
+	        echo "FAIL: $$tst"; \
+	      ;; \
+	      esac; \
+	    else \
+	      skip=`expr $$skip + 1`; \
+	      echo "SKIP: $$tst"; \
+	    fi; \
+	  done; \
+	  if test "$$failed" -eq 0; then \
+	    if test "$$xfail" -eq 0; then \
+	      banner="All $$all tests passed"; \
+	    else \
+	      banner="All $$all tests behaved as expected ($$xfail expected failures)"; \
+	    fi; \
+	  else \
+	    if test "$$xpass" -eq 0; then \
+	      banner="$$failed of $$all tests failed"; \
+	    else \
+	      banner="$$failed of $$all tests did not behave as expected ($$xpass unexpected passes)"; \
+	    fi; \
+	  fi; \
+	  dashes="$$banner"; \
+	  skipped=""; \
+	  if test "$$skip" -ne 0; then \
+	    skipped="($$skip tests were not run)"; \
+	    test `echo "$$skipped" | wc -c` -gt `echo "$$banner" | wc -c` && \
+	      dashes="$$skipped"; \
+	  fi; \
+	  report=""; \
+	  if test "$$failed" -ne 0 && test -n "$(PACKAGE_BUGREPORT)"; then \
+	    report="Please report to $(PACKAGE_BUGREPORT)"; \
+	    test `echo "$$report" | wc -c` -gt `echo "$$banner" | wc -c` && \
+	      dashes="$$report"; \
+	  fi; \
+	  dashes=`echo "$$dashes" | sed s/./=/g`; \
+	  echo "$$dashes"; \
+	  echo "$$banner"; \
+	  test -n "$$skipped" && echo "$$skipped"; \
+	  test -n "$$report" && echo "$$report"; \
+	  echo "$$dashes"; \
+	  test "$$failed" -eq 0; \
+	else :; fi
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 
 top_distdir = ..
@@ -525,6 +619,8 @@ distdir: $(DISTFILES)
 	  fi; \
 	done
 check-am: all-am
+	$(MAKE) $(AM_MAKEFLAGS) $(check_PROGRAMS)
+	$(MAKE) $(AM_MAKEFLAGS) check-TESTS
 check: $(BUILT_SOURCES)
 	$(MAKE) $(AM_MAKEFLAGS) check-am
 all-am: Makefile $(LIBRARIES)
@@ -561,7 +657,8 @@ maintainer-clean-generic:
 	-test -z "$(BUILT_SOURCES)" || rm -f $(BUILT_SOURCES)
 clean: clean-am
 
-clean-am: clean-generic clean-noinstLIBRARIES mostlyclean-am
+clean-am: clean-checkPROGRAMS clean-generic clean-noinstLIBRARIES \
+	mostlyclean-am
 
 distclean: distclean-am
 	-rm -rf $(DEPDIR) ./$(DEPDIR)
@@ -606,15 +703,16 @@ ps-am:
 
 uninstall-am: uninstall-info-am
 
-.PHONY: CTAGS GTAGS all all-am check check-am clean clean-generic \
-	clean-noinstLIBRARIES ctags distclean distclean-compile \
-	distclean-generic distclean-tags distdir dvi dvi-am info \
-	info-am install install-am install-data install-data-am \
-	install-exec install-exec-am install-info install-info-am \
-	install-man install-strip installcheck installcheck-am \
-	installdirs maintainer-clean maintainer-clean-generic \
-	mostlyclean mostlyclean-compile mostlyclean-generic pdf pdf-am \
-	ps ps-am tags uninstall uninstall-am uninstall-info-am
+.PHONY: CTAGS GTAGS all all-am check check-TESTS check-am clean \
+	clean-checkPROGRAMS clean-generic clean-noinstLIBRARIES ctags \
+	distclean distclean-compile distclean-generic distclean-tags \
+	distdir dvi dvi-am info info-am install install-am install-data \
+	install-data-am install-exec install-exec-am install-info \
+	install-info-am install-man install-strip installcheck \
+	installcheck-am installdirs maintainer-clean \
+	maintainer-clean-generic mostlyclean mostlyclean-compile \
+	mostlyclean-generic pdf pdf-am ps ps-am tags uninstall \
+	uninstall-am uninstall-info-am
 
 all-local $(lib_OBJECTS): $(ALLOCA_H)
 alloca.h: alloca_.h

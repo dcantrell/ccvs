@@ -1,5 +1,17 @@
 2004-04-28  Derek Price  <derek@ximbiot.com>
 
+	* .cvsignore: Add getdate executable.
+	* Makefile.am: Remove out-of-date comment about regex.  Use Automake
+	comments where the comments won't look good in the Makefile.
+	(AM_CPPFLAGS): Remove obsolescent include.
+	(TESTS, MOSTLYCLEANFILES, check_PROGRAMS, getdate_*): Add support for
+	testing getdate.
+	* test-getdate.sh: New file.
+	* getdate.y: Move include to compile in test mode.
+	* Makefile.in, getdate.c: Regenerated.
+
+2004-04-28  Derek Price  <derek@ximbiot.com>
+
 	* system.h: Include timespec.h instead of xtime.h.
 	* xtime.h: Removed.
 
