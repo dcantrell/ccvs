@@ -1,3 +1,13 @@
+Thu May 23 10:40:24 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* rcs.c (RCS_fast_checkout): If error closing file, and workfile
+	is NULL, use sout in error message instead of workfile.
+
+Thu May 23 1996  Ian Lance Taylor  <ian@cygnus.com>
+
+	* rcs.c (RCS_fast_checkout): Do a fast checkout in the case where
+	workfile is NULL and sout is a file name.
+
 Wed May 22 19:06:23 1996  Mark Immel  <immel@centerline.com>
 
 	* update.c (checkout_file): New arg resurrecting_out, to provide
