@@ -1,3 +1,11 @@
+Wed Sep 25 11:05:30 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (log options): Add xref to where we describe the
+	date formats that -d accepts.
+	(Common options): Don't refer to date formats accepted by co(1);
+	CVS's rules have never been the same.  Add long whiny comment
+	about what a mess date formats are.
+
 Tue Sep 24 11:49:02 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (From other version control systems): The RCS file
