@@ -1,3 +1,9 @@
+2000-12-22  Derek Price  <derek.price@openavenue.com>
+
+	* Makefile.in: Regenerated
+	* aclocal.m4: Regenerated due to a change to AM_PROG_ETAGS
+	* configure: Regenerated
+
 2000-12-21  Derek Price  <derek.price@openavenue.com>
 
 	* .cvsignore: removed newly unused files, added new stamp file,
