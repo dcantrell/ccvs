@@ -1,3 +1,8 @@
+2005-03-16  Derek Price  <derek@ximbiot.com>
+
+	* server.c (become_proxy): Close pipe to primary when pipe from it
+	closes.
+
 2005-03-16  Mark D. Baushke  <mdb@cvshome.org>
 
 	* sanity.sh (debug-log-nonfatal): Only set CVS_CLIENT_LOG to the
