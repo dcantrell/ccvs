@@ -22,10 +22,8 @@
    file system semantics.  */
 
 #include <io.h>
-#define INCL_DOSFILEMGR   /* File Manager values */
-#define INCL_DOSERRORS
-#include <os2.h>
 
+#include "os2inc.h"
 #include "cvs.h"
 
 static int deep_remove_dir PROTO((const char *path));
@@ -244,7 +242,7 @@ make_directories (name)
     if (noexec)
 	return;
 
-    if (mkdir ((char *)name) == 0 || errno == EACCESS)
+    if (mkdir ((char *)name) == 0 || errno == EACCES)
 	return;
     if (! existence_error (errno))
     {
@@ -275,19 +273,19 @@ mkdir_if_needed (name)
 
 	       "The file already exists",
 
-	   and the error string for EACCESS is:
+           and the error string for EACCES is:
 
 	       "The file or directory specified is read-only".
 
-	   Nonetheless, mkdir() will set EACCESS if the
+           Nonetheless, mkdir() will set EACCES if the
 	   directory *exists*, according both to the
 	   documentation and its actual behavior.
 
 	   I'm sure that this made sense, to someone,
 	   somewhere, sometime.  Just not me, here, now.  */
 	if (errno != EEXIST
-#ifdef EACCESS
-	    && errno != EACCESS
+#ifdef EACCES
+            && errno != EACCES
 #endif
 	    )
 	    error (1, errno, "cannot make directory %s", name);
@@ -413,9 +411,9 @@ unlink_file_dir (f)
 
     if (unlink_file (f) != 0)
     {
-	/* under OS/2, unlink returns EACCESS if the path
+        /* under OS/2, unlink returns EACCES if the path
 	   is a directory.  */
-        if (errno == EACCESS)
+        if (errno == EACCES)
                 return deep_remove_dir (f);
         else
 		/* The file wasn't a directory and some other
@@ -439,7 +437,7 @@ deep_remove_dir (path)
     struct dirent *dp;
     char	   buf[PATH_MAX];
 
-    if ( rmdir ((char *)path) != 0 && errno == EACCESS )
+    if (rmdir ((char *)path) != 0 && errno == EACCES)
     {
 	if ((dirp = opendir ((char *)path)) == NULL)
 	    /* If unable to open the directory return
@@ -864,7 +862,7 @@ expand_wild (argc, argv, pargc, pargv)
 	    }
 	    else
 	    {
-		error (1, rc, "cannot find %s", argv[i]);
+                error (1, rc, "cannot find %s", PathName);
 	    }
 	}
 	else
