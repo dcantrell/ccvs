@@ -379,6 +379,8 @@ ignore_files (ilist, entries, update_dir, proc)
     struct stat sb;
     char *file;
     char *xdir;
+    List *files;
+    Node *p;
 
     /* Set SUBDIRS if we have subdirectory information in ENTRIES.  */
     if (entries == NULL)
@@ -407,14 +409,16 @@ ignore_files (ilist, entries, update_dir, proc)
     ign_add_file (CVSDOTIGNORE, 1);
     wrap_add_file (CVSDOTWRAPPER, 1);
 
-    errno = 0;
-    while ((dp = CVS_READDIR (dirp)) != NULL)
+    /* Make a list for the files.  */
+    files = getlist ();
+
+    while (errno = 0, (dp = CVS_READDIR (dirp)) != NULL)
     {
 	file = dp->d_name;
 	if (strcmp (file, ".") == 0 || strcmp (file, "..") == 0)
-	    goto continue_loop;
+	    continue;
 	if (findnode_fn (ilist, file) != NULL)
-	    goto continue_loop;
+	    continue;
 	if (subdirs)
 	{
 	    Node *node;
@@ -435,14 +439,14 @@ ignore_files (ilist, entries, update_dir, proc)
 		dir = isdir (p);
 		free (p);
 		if (dir)
-		    goto continue_loop;
+		    continue;
 	    }
 	}
 
 	/* We could be ignoring FIFOs and other files which are neither
 	   regular files nor directories here.  */
 	if (ign_name (file))
-	    goto continue_loop;
+	    continue;
 
 	if (
 #ifdef DT_DIR
@@ -469,7 +473,7 @@ ignore_files (ilist, entries, update_dir, proc)
 		    if (isdir (temp))
 		    {
 			free (temp);
-			goto continue_loop;
+			continue;
 		    }
 		    free (temp);
 		}
@@ -484,16 +488,22 @@ ignore_files (ilist, entries, update_dir, proc)
 #endif
 		     )
 	    {
-		goto continue_loop;
+		continue;
 	    }
 #endif
-    	}
+	}
 
-	(*proc) (file, xdir);
-    continue_loop:
-	errno = 0;
+	p = getnode ();
+	p->type = FILES;
+	p->key = xstrdup (file);
+	(void) addnode (files, p);
     }
     if (errno != 0)
 	error (0, errno, "error reading current directory");
     (void) CVS_CLOSEDIR (dirp);
+
+    sortlist (files, fsortcmp);
+    for (p = files->list->next; p != files->list; p = p->next)
+	(*proc) (p->key, xdir);
+    dellist (&files);
 }

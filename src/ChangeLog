@@ -1,3 +1,9 @@
+2001-04-04  Larry Jones  <larry.jones@sdrc.com>
+
+	* ignore.c (ignore_files): Collect unignored files into a list and
+	sort it before calling PROC to avoid order dependencies.  Rewrite
+	the while loop to allow normal continues instead of goto.
+
 2001-04-04  Derek Price  <dprice@collab.net>
 
 	* sanity.sh (ignore-on-branch-3): Fix in the remote case.
