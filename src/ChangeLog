@@ -55,7 +55,6 @@
 	(xreadlink): Deal with symlinks longer than 127 bytes.
 	(Problem reported as issue 190 by Gottfried Ganssauge
 	<gotti@cvshome.org>.)
-<<<<<<< ChangeLog
 
 2004-10-29 Derek Price <derek@ximbiot.com>
 
