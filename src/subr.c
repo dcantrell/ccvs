@@ -57,13 +57,14 @@ xrealloc (ptr, bytes)
 }
 
 /* Two constants which tune expand_string.  Having MIN_INCR as large
-   as 1024 might waste a bit of memory, but it still smaller than
-   typical values for PATH_MAX and CVS's own (soon to be extinct if I
-   have anything to say about it) limits like MAXPROGLEN.  Probably
-   anything which is going to allocate memory which is likely to get
-   as big as MAX_INCR shouldn't be doing it in one block which must be
-   contiguous, but since getrcskey does so, we might as well limit the
-   wasted memory to MAX_INCR or so bytes.  */
+   as 1024 might waste a bit of memory, but it shouldn't be too bad
+   (CVS used to allocate arrays of, say, 3000, PATH_MAX (8192, often),
+   or other such sizes).  Probably anything which is going to allocate
+   memory which is likely to get as big as MAX_INCR shouldn't be doing
+   it in one block which must be contiguous, but since getrcskey does
+   so, we might as well limit the wasted memory to MAX_INCR or so
+   bytes.  */
+
 #define MIN_INCR 1024
 #define MAX_INCR (2*1024*1024)
 
