@@ -1,3 +1,7 @@
+Sat Nov 23 18:36:11 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* README: Try to clarify status vis-a-vis client vs. local.
+
 Tue Nov 19 17:21:52 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* Makefile.in (OS2_SOURCES): Remove strippath.c
