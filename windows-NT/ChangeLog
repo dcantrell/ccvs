@@ -1,3 +1,7 @@
+2004-10-15  Derek Price  <derek@ximbiot.com>
+
+	* config.h.in.in (HAVE_VASPRINTF): Define this for GNULIB.
+
 2004-10-11  Conrad T. Pino  <Conrad@Pino.com>
 
 	* config.h.in.in: Add #undef for "HAVE_STDIO_EXT_H", "HAVE_STRCASECMP",
