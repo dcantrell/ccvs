@@ -1,3 +1,9 @@
+1999-03-25  Jim Kingdon  <http://www.cyclic.com>
+
+	* cvs.texinfo (admin options): Say there can be no space between
+	-e and its argument (since the previous sentence said the argument
+	can be omitted, this is the only possibility).
+
 1999-02-26  Jim Kingdon  <http://www.cyclic.com>
 
 	* cvs.texinfo (Merging and keywords): When including conflict
