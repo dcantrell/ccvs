@@ -1,3 +1,9 @@
+1999-08-18  Larry Jones  <larry.jones@sdrc.com>
+
+	* update.c (special_file_mismatch): Initialize *_hardlinks to
+	avoid trying to free garbage later on.  (Reported by Jan
+	Scheffczyk <herta@Xterminator.StudFB.UniBw-Muenchen.de>.)
+
 1999-08-17  Larry Jones  <larry.jones@sdrc.com>
 
 	* sanity.sh (basicc-11): Older versions of sh don't understand
