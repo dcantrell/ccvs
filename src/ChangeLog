@@ -1,5 +1,14 @@
 2001-08-22  Derek Price  <dprice@collab.net>
 
+	* logmsg.c: Back out the last change - the repository which is passed
+	in is actually the directory and changes with each call to do_verify.
+	If a verifymsg script is using `pwd`, this could change the operation.
+	* cvs.h: Ditto.
+	* commit.c: Ditto.
+	* import.c: Ditto.
+
+2001-08-22  Derek Price  <dprice@collab.net>
+
 	* logmsg.c (do_editor): Return reused_message.
 	(do_verify): Don't verify the same log message more than once.
 	* cvs.h: Update prototypes for do_verify and do_editor.

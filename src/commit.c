@@ -1223,9 +1223,10 @@ commit_fileproc (callerdat, finfo)
     if (!(got_message))
     {
 	got_message = 1;
-	do_verify (saved_message, finfo->repository,
-		   !use_editor || do_editor (finfo->update_dir, &saved_message,
-					     finfo->repository, ulist));
+	if (use_editor)
+	    do_editor (finfo->update_dir, &saved_message,
+		       finfo->repository, ulist);
+	do_verify (saved_message, finfo->repository);
     }
 
     p = findnode (cilist, finfo->file);
@@ -1545,8 +1546,9 @@ commit_direntproc (callerdat, dir, repos, update_dir, entries)
     /* get commit message */
     real_repos = Name_Repository (dir, update_dir);
     got_message = 1;
-    do_verify (saved_message, real_repos,
-	       !use_editor || do_editor (update_dir, &saved_message, real_repos, ulist));
+    if (use_editor)
+	do_editor (update_dir, &saved_message, real_repos, ulist);
+    do_verify (saved_message, real_repos);
     free (real_repos);
     return (R_PROCESS);
 }
