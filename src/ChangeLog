@@ -1,5 +1,9 @@
 Tue Mar 26 09:48:49 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* rcscmds.c (RCS_settag): Complain if user tries to add a tag name
+	reserved to CVS.
+	* sanity.sh (basica): Test for this behavior.
+
 	* sanity.sh (binfiles): New tests test ability to change keyword
 	expansion.
 
