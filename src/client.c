@@ -2170,45 +2170,6 @@ do_deferred_progs ()
     update_progs = NULL;
 }
 
-static int client_isemptydir PROTO((char *));
-
-/*
- * Returns 1 if the argument directory exists and is completely empty,
- * other than the existence of the CVS directory entry.  Zero otherwise.
- */
-static int
-client_isemptydir (dir)
-    char *dir;
-{
-    DIR *dirp;
-    struct dirent *dp;
-
-    if ((dirp = CVS_OPENDIR (dir)) == NULL)
-    {
-	if (! existence_error (errno))
-	    error (0, errno, "cannot open directory %s for empty check", dir);
-	return (0);
-    }
-    errno = 0;
-    while ((dp = readdir (dirp)) != NULL)
-    {
-	if (strcmp (dp->d_name, ".") != 0 && strcmp (dp->d_name, "..") != 0 &&
-	    strcmp (dp->d_name, CVSADM) != 0)
-	{
-	    (void) closedir (dirp);
-	    return (0);
-	}
-    }
-    if (errno != 0)
-    {
-	error (0, errno, "cannot read directory %s", dir);
-	(void) closedir (dirp);
-	return (0);
-    }
-    (void) closedir (dirp);
-    return (1);
-}
-
 struct save_dir {
     char *dir;
     struct save_dir *next;
@@ -2245,7 +2206,7 @@ process_prune_candidates ()
     }
     for (p = prune_candidates; p != NULL; )
     {
-	if (client_isemptydir (p->dir))
+	if (isemptydir (p->dir, 1))
 	{
 	    char *b;
 
