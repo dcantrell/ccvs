@@ -1,5 +1,11 @@
 2003-10-04  Derek Price  <derek@ximbiot.com>
 
+	* hash.c (dellist): Immediately set input pointers to NULL in case they
+	are references to global variables which might be accessed by interrupt
+	handlers.
+
+2003-10-04  Derek Price  <derek@ximbiot.com>
+
 	* rcs.c (rcs_cleanup): Declare static.
 	* rcs.h (rcs_cleanup): Remove prototype.
 
