@@ -9864,21 +9864,18 @@ Revisions @var{rev1} to @var{rev2} (which must be on
 the same branch).
 
 @item @var{rev1}::@var{rev2}
-Revisions between, but not including, @var{rev1} and @var{rev2}.
+The same, but excluding @var{rev1}.
 
 @item :@var{rev}
+@itemx ::@var{rev}
 Revisions from the beginning of the branch up to
 and including @var{rev}.
-
-@item ::@var{rev}
-Revisions from the beginning of the branch up to,
-but not including, @var{rev}.
 
 @item @var{rev}:
 Revisions starting with @var{rev} to the end of the
 branch containing @var{rev}.
 
-@item @var{rev}:
+@item @var{rev}::
 Revisions starting just after @var{rev} to the end of the
 branch containing @var{rev}.
 
@@ -12843,6 +12840,7 @@ server machine).
 When using pserver, this is the user specified in the repository
 specification which need not be the same as the username the
 server is running as (@pxref{Password authentication server}).
+Do not confuse this with the environment variable of the same name.
 @end table
 
 If you want to pass a value to the administrative files
@@ -12880,8 +12878,6 @@ Environment variables passed to administrative files are:
 
 @table @code
 @cindex environment variables, passed to administrative files
-@c FIXME: should document USER, LOGNAME, and whatever else is
-@c available both in internal variables and environment variables.
 
 @item CVS_USER
 @cindex CVS_USER, environment variable
@@ -12890,6 +12886,15 @@ can be provided (currently just for the pserver access
 method), and to the empty string otherwise.  (@code{CVS_USER}
 and @code{USER} may differ when @file{$CVSROOT/CVSROOT/passwd}
 is used to map @sc{cvs} usernames to system usernames.)
+
+@item LOGNAME
+@cindex LOGNAME, environment variable
+The username of the system user.
+
+@item USER
+@cindex USER, environment variable
+Same as @code{LOGNAME}.
+Do not confuse this with the internal variable of the same name.
 @end table
 
 @node config

@@ -1,3 +1,8 @@
+2002-01-10  Larry Jones  <larry.jones@sdrc.com>
+
+	* cvs.texinfo (log options): Update -r :: to match code changes.
+	(Variables): Document LOGNAME and USER environment variables.
+
 2001-12-03  Larry Jones  <larry.jones@sdrc.com>
 
 	* cvs.texinfo (Invoking CVS): Add -F option for annotate and
