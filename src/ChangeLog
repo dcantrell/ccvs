@@ -1,3 +1,8 @@
+2004-02-04  Derek Price  <derek@ximbiot.com>
+
+	* sanity.sh (recase): Restore some cruft necessary when clients know
+	they are on case insensitive systems.
+
 2004-02-03  Derek Price  <derek@ximbiot.com>
 
 	Preserve the case of checked out directories in a path as well as file
