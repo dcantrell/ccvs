@@ -125,7 +125,7 @@ Parse_Info (const char *infofile, const char *repository, CALLPROC callproc,
 		       default_line, line_number, infofile);
 		free (default_value);
 	    }
-	    default_value = xstrdup(value);
+	    default_value = xstrdup (value);
 	    default_line = line_number;
 	    continue;
 	}
@@ -167,10 +167,10 @@ Parse_Info (const char *infofile, const char *repository, CALLPROC callproc,
 	    continue;				/* no match */
 
 	/* it did, so do the callback and note that we did one */
-	if( ( expanded_value = expand_path( value, infofile, line_number, 1 )
-	    ) != NULL )
+	if ((expanded_value = expand_path( value, infofile, line_number, 1)
+	    ) != NULL)
 	{
-	    err += callproc( repository, expanded_value, closure );
+	    err += callproc (repository, expanded_value, closure);
 	    free (expanded_value);
 	}
 	else
@@ -185,11 +185,11 @@ Parse_Info (const char *infofile, const char *repository, CALLPROC callproc,
     /* if we fell through and didn't callback at all, do the default */
     if (callback_done == 0 && default_value != NULL)
     {
-	if( ( expanded_value = expand_path( default_value, infofile,
-	                                    line_number, 1 )
-	    ) != NULL )
+	if ((expanded_value = expand_path (default_value, infofile,
+	                                   line_number, 1)
+	    ) != NULL)
 	{
-	    err += callproc( repository, expanded_value, closure );
+	    err += callproc (repository, expanded_value, closure);
 	    free (expanded_value);
 	}
 	else
@@ -203,7 +203,7 @@ Parse_Info (const char *infofile, const char *repository, CALLPROC callproc,
     if (line != NULL)
 	free (line);
 
-    return (err);
+    return err;
 }
 
 

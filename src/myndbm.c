@@ -32,12 +32,12 @@ mydbm_open (char *file, int flags, int mode)
     FILE *fp;
     DBM *db;
 
-    fp = CVS_FOPEN (file, (flags & O_ACCMODE) != O_RDONLY ?
-                                 FOPEN_BINARY_READWRITE : FOPEN_BINARY_READ);
+    fp = CVS_FOPEN (file, (flags & O_ACCMODE) != O_RDONLY
+			  ?  FOPEN_BINARY_READWRITE : FOPEN_BINARY_READ);
     if (fp == NULL && !(existence_error (errno) && (flags & O_CREAT)))
-	return ((DBM *) 0);
+	return NULL;
 
-    db = (DBM *) xmalloc (sizeof (*db));
+    db = xmalloc (sizeof (*db));
     db->dbm_list = getlist ();
     db->modified = 0;
     db->name = xstrdup (file);
@@ -46,23 +46,29 @@ mydbm_open (char *file, int flags, int mode)
     {
 	mydbm_load_file (fp, db->dbm_list, file);
 	if (fclose (fp) < 0)
-	    error (0, errno, "cannot close %s", file);
+	{
+	    char *pfile = primary_root_inverse_translate (file);
+	    error (0, errno, "cannot close %s", pfile);
+	    free (pfile);
+	}
     }
-    return (db);
+    return db;
 }
 
-static int write_item (Node *, void *);
+
 
 static int
 write_item (Node *node, void *data)
 {
-    FILE *fp = (FILE *)data;
+    FILE *fp = data;
     fputs (node->key, fp);
     fputs (" ", fp);
     fputs (node->data, fp);
     fputs ("\012", fp);
     return 0;
 }
+
+
 
 void
 mydbm_close (DBM *db)
@@ -73,14 +79,16 @@ mydbm_close (DBM *db)
 	fp = CVS_FOPEN (db->name, FOPEN_BINARY_WRITE);
 	if (fp == NULL)
 	    error (1, errno, "cannot write %s", db->name);
-	walklist (db->dbm_list, write_item, (void *)fp);
+	walklist (db->dbm_list, write_item, fp);
 	if (fclose (fp) < 0)
 	    error (0, errno, "cannot close %s", db->name);
     }
     free (db->name);
     dellist (&db->dbm_list);
-    free ((char *) db);
+    free (db);
 }
+
+
 
 datum
 mydbm_fetch (DBM *db, datum key)
@@ -102,12 +110,14 @@ mydbm_fetch (DBM *db, datum key)
     }
     else
     {
-	val.dptr = (char *) NULL;
+	val.dptr = NULL;
 	val.dsize = 0;
     }
     free (s);
-    return (val);
+    return val;
 }
+
+
 
 datum
 mydbm_firstkey (DBM *db)
@@ -124,12 +134,14 @@ mydbm_firstkey (DBM *db)
     }
     else
     {
-	key.dptr = (char *) NULL;
+	key.dptr = NULL;
 	key.dsize = 0;
     }
     db->dbm_next = p->next;
-    return (key);
+    return key;
 }
+
+
 
 datum
 mydbm_nextkey (DBM *db)
@@ -150,8 +162,10 @@ mydbm_nextkey (DBM *db)
 	key.dsize = 0;
     }
     db->dbm_next = p->next;
-    return (key);
+    return key;
 }
+
+
 
 /* Note: only updates the in-memory copy, which is written out at
    mydbm_close time.  Note: Also differs from DBM in that on duplication,
@@ -183,11 +197,15 @@ mydbm_store (DBM *db, datum key, datum value, int flags)
     return 0;
 }
 
+
+
+/* Load a DBM file.
+ *
+ * INPUTS
+ *   filename		Used in error messages.
+ */
 static void
 mydbm_load_file (FILE *fp, List *list, char *filename)
-             
-               
-                   	/* Used in error messages. */
 {
     char *line = NULL;
     size_t line_size;
@@ -203,8 +221,7 @@ mydbm_load_file (FILE *fp, List *list, char *filename)
 
     cont = 0;
     line_num=0;
-    while( ( line_length = 
-             getdelim( &line, &line_size, '\012', fp ) ) >= 0 )
+    while ((line_length = getdelim (&line, &line_size, '\012', fp)) >= 0)
     {
 	line_num++;
 	if (line_length > 0 && line[line_length - 1] == '\012')
@@ -282,9 +299,13 @@ mydbm_load_file (FILE *fp, List *list, char *filename)
 	    if (*vp == '\0')
 	    {
 		if (!really_quiet)
+		{
+		    char *pfile = primary_root_inverse_translate (filename);
 		    error (0, 0,
 			"warning: NULL value for key `%s' at line %d of `%s'",
-			p->key, line_num, filename);
+			p->key, line_num, pfile);
+		    free (pfile);
+		}
 		freenode (p);
 		continue;
 	    }
@@ -292,16 +313,25 @@ mydbm_load_file (FILE *fp, List *list, char *filename)
 	    if (addnode (list, p) == -1)
 	    {
 		if (!really_quiet)
+		{
+		    char *pfile = primary_root_inverse_translate (filename);
 		    error (0, 0,
 			"duplicate key found for `%s' at line %d of `%s'",
-			p->key, line_num, filename);
+			p->key, line_num, pfile);
+		    free (pfile);
+		}
 		freenode (p);
 	    }
 	}
     }
     if (line_length < 0 && !feof (fp))
 	/* FIXME: should give the name of the file.  */
-	error (0, errno, "cannot read file in mydbm_load_file");
+    {
+	char *pfile = primary_root_inverse_translate (filename);
+	error (0, errno, "cannot read file `%s' in mydbm_load_file",
+	       pfile);
+	free (pfile);
+    }
 
     free (line);
     free (value);

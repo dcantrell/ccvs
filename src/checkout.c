@@ -571,12 +571,16 @@ build_one_dir (char *repository, char *dirpath, int sticky)
     }
 }
 
+
+
 /*
  * process_module calls us back here so we do the actual checkout stuff
  */
 /* ARGSUSED */
 static int
-checkout_proc (int argc, char **argv, char *where_orig, char *mwhere, char *mfile, int shorten, int local_specified, char *omodule, char *msg)
+checkout_proc (int argc, char **argv, char *where_orig, char *mwhere,i
+               char *mfile, int shorten, int local_specified, char *omodule,
+               char *msg)
 {
     char *myargv[2];
     int err = 0;
@@ -992,12 +996,16 @@ internal error: %s doesn't start with %s in checkout_proc",
 		error (1, 0, "cannot export into working directory");
 
 	    /* get the contents of the previously existing repository */
-	    repos = Name_Repository ((char *) NULL, preload_update_dir);
+	    repos = Name_Repository (NULL, preload_update_dir);
 	    if (fncmp (repository, repos) != 0)
 	    {
+		char *prepository = primary_root_inverse_translate (repository);
+		char *prepos = primary_root_inverse_translate (repos);
 		error (0, 0, "existing repository %s does not match %s",
-		       repos, repository);
+		       prepos, prepository);
 		error (0, 0, "ignoring module %s", omodule);
+		free (prepos);
+		free (prepository);
 		free (repos);
 		err = 1;
 		goto out;

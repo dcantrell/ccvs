@@ -2234,15 +2234,13 @@ serve_kopt (char *arg)
     strcpy (kopt, arg);
 }
 
-static void serve_checkin_time (char *);
+
 
 static void
 serve_checkin_time (char *arg)
 {
-    if (error_pending ())
+    if (error_pending () || secondary_log)
 	return;
-
-    assert (!secondary_log);
 
     if (checkin_time_valid)
     {
@@ -2262,6 +2260,8 @@ serve_checkin_time (char *arg)
     }
     checkin_time_valid = 1;
 }
+
+
 
 static void
 server_write_entries (void)
@@ -2321,6 +2321,355 @@ server_write_entries (void)
 
 
 
+/*
+ * callback proc to run a script when admin finishes.
+ */
+static int
+prepost_proxy_proc (const char *repository, const char *filter, void *closure)
+{
+    char *cmdline;
+    bool *pre = closure;
+
+    /* %c = cvs_cmd_name
+     * %p = shortrepos
+     * %r = repository
+     */
+    TRACE (TRACE_FUNCTION, "prepost_proxy_proc (%s, %s, %s)", repository,
+	   filter, *pre ? "pre" : "post");
+
+    cmdline = format_cmdline (
+#ifdef SUPPORT_OLD_INFO_FMT_STRINGS
+	                      0, ".",
+#endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
+	                      filter,
+	                      "c", "s", cvs_cmd_name,
+	                      "p", "s", ".",
+	                      "r", "s", current_parsed_root->directory,
+	                      (char *)NULL
+	                     );
+
+    if (!cmdline || !strlen (cmdline))
+    {
+	if (cmdline) free (cmdline);
+	if (*pre)
+	    error (0, 0, "preadmin proc resolved to the empty string!");
+	else
+	    error (0, 0, "postadmin proc resolved to the empty string!");
+	return 1;
+    }
+
+    run_setup (cmdline);
+
+    free (cmdline);
+
+    /* FIXME - read the comment in verifymsg_proc() about why we use abs()
+     * below() and shouldn't.
+     */
+    return abs (run_exec (RUN_TTY, RUN_TTY, RUN_TTY,
+			  RUN_NORMAL | RUN_SIGIGNORE));
+}
+
+
+
+/* Become a secondary write proxy to a master server.
+ *
+ * This function opens the connection to the primary, dumps the secondary log
+ * to the primary, then reads data from any available connection and writes it
+ * to its partner:
+ *
+ *   buf_from_net -> buf_to_primary
+ *   buf_from_primary -> buf_to_net
+ *
+ * When all "from" connections have sent EOF and all data has been sent to
+ * "to" connections, this function closes the "to" pipes and returns.
+ */
+static void
+become_proxy (void)
+{
+    struct buffer *buf_to_primary;
+    struct buffer *buf_from_primary;
+
+    /* Close the log and open it for read.  */
+    int log_fd = read_secondary_log (&secondary_log, secondary_log_name);
+    int clientlog_fd = read_secondary_log (&secondary_log_out,
+                                           secondary_log_out_name);
+    int status, to_primary_fd, from_primary_fd, to_net_fd, from_net_fd;
+    struct buffer *buf_from_net_l;
+
+    /* Call presecondary script.  */
+    bool pre = true;
+    Parse_Info (CVSROOTADM_PREPROXY, current_parsed_root->directory,
+		prepost_proxy_proc, PIOPT_ALL, &pre);
+
+    /* Open connection to primary server.  */
+    open_connection_to_server (PrimaryServer, &buf_to_primary,
+                               &buf_from_primary);
+    setup_logfiles ("CVS_SECONDARY_LOG", &buf_to_primary, &buf_from_primary);
+    if (status = set_nonblock (buf_from_primary))
+	error (1, status, "failed to set nonblocking io from primary");
+    if (status = set_nonblock (buf_from_net))
+	error (1, status, "failed to set nonblocking io from client");
+    if (status = set_nonblock (buf_to_primary))
+	error (1, status, "failed to set nonblocking io to primary");
+    if (status = set_nonblock (buf_to_net))
+	error (1, status, "failed to set nonblocking io to client");
+
+    to_primary_fd = buf_get_fd (buf_to_primary);
+    from_primary_fd = buf_get_fd (buf_from_primary);
+    to_net_fd = buf_get_fd (buf_to_net);
+    assert (to_primary_fd >= 0 && from_primary_fd >= 0 && to_net_fd >= 0);
+
+    buf_from_net_l = fd_buffer_initialize (log_fd, 0, NULL, true,
+                                           outbuf_memory_error);
+
+    from_net_fd = log_fd;
+    while (from_primary_fd >= 0 || to_primary_fd >= 0)
+    {
+	fd_set readfds, writefds;
+	int status, numfds = -1;
+	struct timeval *timeout_ptr;
+	struct timeval timeout;
+	size_t toread;
+
+	FD_ZERO (&readfds);
+	FD_ZERO (&writefds);
+
+	if (buf_from_net && !buf_empty_p (buf_from_net)
+	    || buf_from_primary && !buf_empty_p (buf_from_primary))
+	{
+	    /* There is data pending so don't block if we don't find any new
+	     * data on the fds.
+	     */
+	    timeout.tv_sec = 0;
+	    timeout.tv_usec = 0;
+	    timeout_ptr = &timeout;
+	}
+	else
+	    /* block indefinately */
+	    timeout_ptr = NULL;
+
+	/* Set writefds if data is pending.  */
+	if (to_net_fd >= 0 && !buf_empty_p (buf_to_net))
+	{
+	    FD_SET (to_net_fd, &writefds);
+	    numfds = MAX (numfds, to_net_fd);
+	}
+	if (to_primary_fd >= 0 && !buf_empty_p (buf_to_primary))
+	{
+	    FD_SET (to_primary_fd, &writefds);
+	    numfds = MAX (numfds, to_primary_fd);
+	}
+
+	/* Set readfds if descriptors are still open.  */
+	if (from_net_fd >= 0)
+	{
+	    FD_SET (from_net_fd, &readfds);
+	    numfds = MAX (numfds, from_net_fd);
+	}
+	if (from_primary_fd >= 0)
+	{
+	    FD_SET (from_primary_fd, &readfds);
+	    numfds = MAX (numfds, from_primary_fd);
+	}
+
+	/* NUMFDS needs to be the highest descriptor + 1 according to the
+	 * select spec.
+	 */
+	numfds++;
+
+	do {
+	    /* This used to select on exceptions too, but as far
+	       as I know there was never any reason to do that and
+	       SCO doesn't let you select on exceptions on pipes.  */
+	    numfds = select (numfds, &readfds, &writefds,
+			     NULL, timeout_ptr);
+	    if (numfds < 0 && errno != EINTR)
+	    {
+		/* Sending an error to the client, possibly in the middle of a
+		 * separate protocol message, will likely not mean much to the
+		 * client, but it's better than nothing, I guess.
+		 */
+		buf_output0 (buf_to_net, "E select failed\n");
+		print_error (errno);
+		exit (EXIT_FAILURE);
+	    }
+	} while (numfds < 0);
+
+	if (numfds == 0)
+	{
+	    FD_ZERO (&readfds);
+	    FD_ZERO (&writefds);
+	}
+
+	if (to_net_fd >= 0 && FD_ISSET (to_net_fd, &writefds))
+	{
+	    /* What should we do with errors?  syslog() them?  */
+	    buf_send_output (buf_to_net);
+	    buf_flush (buf_to_net, false);
+	}
+
+	status = 0;
+	if (from_net_fd >= 0 && (FD_ISSET (from_net_fd, &readfds)))
+	    status = buf_input_data (buf_from_net_l, NULL);
+
+	if (buf_from_net_l && !buf_empty_p (buf_from_net_l))
+	{
+	    if (buf_to_primary)
+		buf_append_buffer (buf_to_primary, buf_from_net_l);
+	    else
+		/* (Sys?)log this?  */;
+		
+	}
+
+	if (status == -1 /* EOF */)
+	{
+	    if (from_net_fd == log_fd)
+	    {
+		buf_shutdown (buf_from_net_l);
+		buf_free (buf_from_net_l);
+		buf_from_net_l = buf_from_net;
+		assert ((from_net_fd = buf_get_fd (buf_from_net)) >= 0);
+	    }
+	    else
+	    {
+		SIG_beginCrSect();
+		/* Need only to shut this down and set to NULL, really, in
+		 * crit sec, to ensure no double-dispose and to make sure
+		 * network pipes are closed as properly as possible, but I
+		 * don't see much optimization potential in saving values and
+		 * postponing the free.
+		 */
+		buf_shutdown (buf_from_net);
+		buf_free (buf_from_net);
+		buf_from_net = NULL;
+		SIG_endCrSect();
+		buf_from_net_l = NULL;
+		from_net_fd = -1;
+	    }
+	}
+	else if (status > 0 /* ERRNO */)
+	{
+	    buf_output0 (buf_to_net,
+			 "E buf_input_data failed reading from client\n");
+	    print_error (status);
+	    exit (EXIT_FAILURE);
+	}
+
+	if (to_primary_fd >= 0 && FD_ISSET (to_primary_fd, &writefds))
+	{
+	    /* What should we do with errors?  syslog() them?  */
+	    buf_send_output (buf_to_primary);
+	    buf_flush (buf_to_primary, false);
+	}
+
+	status = 0;
+	if (from_primary_fd >= 0 && FD_ISSET (from_primary_fd, &readfds))
+	    status = buf_input_data (buf_from_primary, &toread);
+
+	/* Avoid resending data from the server which we already sent to the
+	 * client.  Otherwise clients get really confused.
+	 */
+	if (clientlog_fd != -1
+	    && buf_from_primary && !buf_empty_p (buf_from_primary))
+	{
+	    /* Dispose of data we already sent to the client.  */
+	    char data[4096];
+	    while (clientlog_fd != -1 && toread > 0)
+	    {
+		size_t thispass = toread > sizeof (data)
+		                  ? sizeof (data)
+		                  : toread;
+		ssize_t got = read (clientlog_fd, data, thispass);
+		if (got < 0)
+		    error (1, errno, "Error reading writeproxy log.");
+		else if (got == 0)
+		{
+		    close (clientlog_fd);
+		    clientlog_fd = -1;
+		}
+		thispass = got;
+		while (thispass > 0)
+		{
+		    char *newdata;
+		    size_t read;
+		    buf_read_data (buf_from_primary, thispass, &newdata, &got);
+		    /* Verify that we are throwing away what we think we are.
+		     */
+		    if (memcmp (data, newdata, got))
+			error (1, 0, "Secondary out of sync with primary!");
+		    thispass -= got;
+		}
+		toread -= got;
+	    }
+	}
+
+	if (buf_from_primary && !buf_empty_p (buf_from_primary))
+	{
+	    if (buf_to_net)
+		buf_append_buffer (buf_to_net, buf_from_primary);
+	    else
+		/* (Sys?)log this?  */;
+		
+	}
+
+	if (status == -1 /* EOF */)
+	{
+	    buf_shutdown (buf_from_primary);
+	    buf_from_primary = NULL;
+	    from_primary_fd = -1;
+	}
+	else if (status > 0 /* ERRNO */)
+	{
+	    buf_output0 (buf_to_net,
+			 "E buf_input_data failed reading from primary\n");
+	    print_error (status);
+	    exit (EXIT_FAILURE);
+	}
+
+	/* If our "source pipe" is closed and all data has been sent, close
+	 * the corresponding "dest pipe".
+	 */
+	if (from_primary_fd < 0
+	    && buf_to_net && buf_empty_p (buf_to_net))
+	{
+	    to_net_fd = -1;
+	    /* Don't actually shut down or free BUF_TO_NET unless BUF_FROM_NET
+	     * is already closed.  Let the shutdown handlers do it otherwise
+	     * since we might need it later.
+	     */
+	    if (!buf_from_net)
+	    {
+		SIG_beginCrSect();
+		/* Need only to shut this down and set to NULL, really, in
+		 * crit sec, to ensure no double-dispose and to make sure
+		 * network pipes are closed as properly as possible, but I
+		 * don't see much optimization potential in saving values and
+		 * postponing the free.
+		 */
+		buf_shutdown (buf_to_net);
+		buf_free (buf_to_net);
+		buf_to_net = NULL;
+		SIG_endCrSect();
+	    }
+	}
+	if (from_net_fd < 0
+	    && buf_to_primary && buf_empty_p (buf_to_primary))
+	{
+	    buf_shutdown (buf_to_primary);
+	    buf_free (buf_to_primary);
+	    buf_to_primary = NULL;
+	    to_primary_fd = -1;
+	}
+    }
+
+    /* Call postsecondary script.  */
+    pre = false;
+    Parse_Info (CVSROOTADM_POSTPROXY, current_parsed_root->directory,
+		prepost_proxy_proc, PIOPT_ALL, &pre);
+}
+
+
+
 struct notify_note {
     /* Directory in which this notification happens.  xmalloc'd*/
     char *dir;
@@ -2352,34 +2701,37 @@ serve_notify (char *arg)
 
     if (error_pending ()) return;
 
-    /* Skip everything but the readline when still logging.  */
-    if (!secondary_log)
+    if (isSecondaryServer())
     {
-	if (outside_dir (arg))
-	    return;
-
-	if (dir_name == NULL)
-	    goto error;
-
-	new = xmalloc (sizeof (struct notify_note));
-	if (new == NULL)
-	{
-	    pending_error = ENOMEM;
-	    return;
-	}
-	new->dir = xmalloc (strlen (dir_name) + 1);
-	new->filename = xmalloc (strlen (arg) + 1);
-	if (new->dir == NULL || new->filename == NULL)
-	{
-	    pending_error = ENOMEM;
-	    if (new->dir != NULL)
-		free (new->dir);
-	    free (new);
-	    return;
-	}
-	strcpy (new->dir, dir_name);
-	strcpy (new->filename, arg);
+	/* This is effectively a write command, so run it on the primary.  */
+	become_proxy ();
+	exit (EXIT_SUCCESS);
     }
+
+    if (outside_dir (arg))
+	return;
+
+    if (dir_name == NULL)
+	goto error;
+
+    new = xmalloc (sizeof (struct notify_note));
+    if (new == NULL)
+    {
+	pending_error = ENOMEM;
+	return;
+    }
+    new->dir = xmalloc (strlen (dir_name) + 1);
+    new->filename = xmalloc (strlen (arg) + 1);
+    if (new->dir == NULL || new->filename == NULL)
+    {
+	pending_error = ENOMEM;
+	if (new->dir != NULL)
+	    free (new->dir);
+	free (new);
+	return;
+    }
+    strcpy (new->dir, dir_name);
+    strcpy (new->filename, arg);
 
     status = buf_read_line (buf_from_net, &data, NULL);
     if (status != 0)
@@ -2408,8 +2760,6 @@ serve_notify (char *arg)
 	free (new->dir);
 	free (new);
     }
-    else if (secondary_log)
-	return;
     else
     {
 	char *cp;
@@ -2443,16 +2793,12 @@ serve_notify (char *arg)
 	   for future expansion.  */
 	cp = strchr (cp, '\t');
 	if (cp != NULL)
-	{
 	    *cp = '\0';
-	}
 
 	new->next = NULL;
 
 	if (last_node == NULL)
-	{
 	    notify_list = new;
-	}
 	else
 	    last_node->next = new;
 	last_node = new;
@@ -3040,354 +3386,6 @@ set_nonblock_fd (fd)
     if (fcntl (fd, F_SETFL, flags | O_NONBLOCK) < 0)
 	return errno;
     return 0;
-}
-
-
-
-/*
- * callback proc to run a script when admin finishes.
- */
-static int
-prepost_proxy_proc (const char *repository, const char *filter, void *closure)
-{
-    char *cmdline;
-    bool *pre = closure;
-
-    /* %p = shortrepos
-     * %r = repository
-     */
-    TRACE (TRACE_FUNCTION, "prepost_proxy_proc (%s, %s, %s)", repository,
-	   filter, *pre ? "pre" : "post");
-
-    cmdline = format_cmdline (
-#ifdef SUPPORT_OLD_INFO_FMT_STRINGS
-	                      0, ".",
-#endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
-	                      filter,
-	                      "p", "s", ".",
-	                      "r", "s", current_parsed_root->directory,
-	                      (char *)NULL
-	                     );
-
-    if (!cmdline || !strlen (cmdline))
-    {
-	if (cmdline) free (cmdline);
-	if (*pre)
-	    error (0, 0, "preadmin proc resolved to the empty string!");
-	else
-	    error (0, 0, "postadmin proc resolved to the empty string!");
-	return 1;
-    }
-
-    run_setup (cmdline);
-
-    free (cmdline);
-
-    /* FIXME - read the comment in verifymsg_proc() about why we use abs()
-     * below() and shouldn't.
-     */
-    return abs (run_exec (RUN_TTY, RUN_TTY, RUN_TTY,
-			  RUN_NORMAL | RUN_SIGIGNORE));
-}
-
-
-
-/* Become a secondary write proxy to a master server.
- *
- * This function opens the connection to the primary, dumps the secondary log
- * to the primary, then reads data from any available connection and writes it
- * to its partner:
- *
- *   buf_from_net -> buf_to_primary
- *   buf_from_primary -> buf_to_net
- *
- * When all "from" connections have sent EOF and all data has been sent to
- * "to" connections, this function closes the "to" pipes and returns.
- */
-static void
-become_proxy (void)
-{
-    struct buffer *buf_to_primary;
-    struct buffer *buf_from_primary;
-
-    /* Close the log and open it for read.  */
-    int log_fd = read_secondary_log (&secondary_log, secondary_log_name);
-    int clientlog_fd = read_secondary_log (&secondary_log_out,
-                                           secondary_log_out_name);
-    int status, to_primary_fd, from_primary_fd, to_net_fd, from_net_fd;
-    struct buffer *buf_from_net_l;
-
-    /* Call presecondary script.  */
-    bool pre = true;
-    Parse_Info (CVSROOTADM_PREPROXY, current_parsed_root->directory,
-		prepost_proxy_proc, PIOPT_ALL, &pre);
-
-    /* Open connection to primary server.  */
-    open_connection_to_server (PrimaryServer, &buf_to_primary,
-                               &buf_from_primary);
-    setup_logfiles ("CVS_SECONDARY_LOG", &buf_to_primary, &buf_from_primary);
-    if (status = set_nonblock (buf_from_primary))
-	error (1, status, "failed to set nonblocking io from primary");
-    if (status = set_nonblock (buf_from_net))
-	error (1, status, "failed to set nonblocking io from client");
-    if (status = set_nonblock (buf_to_primary))
-	error (1, status, "failed to set nonblocking io to primary");
-    if (status = set_nonblock (buf_to_net))
-	error (1, status, "failed to set nonblocking io to client");
-
-    to_primary_fd = buf_get_fd (buf_to_primary);
-    from_primary_fd = buf_get_fd (buf_from_primary);
-    to_net_fd = buf_get_fd (buf_to_net);
-    assert (to_primary_fd >= 0 && from_primary_fd >= 0 && to_net_fd >= 0);
-
-    buf_from_net_l = fd_buffer_initialize (log_fd, 0, NULL, true,
-                                           outbuf_memory_error);
-
-    from_net_fd = log_fd;
-    while (from_primary_fd >= 0 || to_primary_fd >= 0)
-    {
-	fd_set readfds, writefds;
-	int status, numfds = -1;
-	struct timeval *timeout_ptr;
-	struct timeval timeout;
-	size_t toread;
-
-	FD_ZERO (&readfds);
-	FD_ZERO (&writefds);
-
-	if (buf_from_net && !buf_empty_p (buf_from_net)
-	    || buf_from_primary && !buf_empty_p (buf_from_primary))
-	{
-	    /* There is data pending so don't block if we don't find any new
-	     * data on the fds.
-	     */
-	    timeout.tv_sec = 0;
-	    timeout.tv_usec = 0;
-	    timeout_ptr = &timeout;
-	}
-	else
-	    /* block indefinately */
-	    timeout_ptr = NULL;
-
-	/* Set writefds if data is pending.  */
-	if (to_net_fd >= 0 && !buf_empty_p (buf_to_net))
-	{
-	    FD_SET (to_net_fd, &writefds);
-	    numfds = MAX (numfds, to_net_fd);
-	}
-	if (to_primary_fd >= 0 && !buf_empty_p (buf_to_primary))
-	{
-	    FD_SET (to_primary_fd, &writefds);
-	    numfds = MAX (numfds, to_primary_fd);
-	}
-
-	/* Set readfds if descriptors are still open.  */
-	if (from_net_fd >= 0)
-	{
-	    FD_SET (from_net_fd, &readfds);
-	    numfds = MAX (numfds, from_net_fd);
-	}
-	if (from_primary_fd >= 0)
-	{
-	    FD_SET (from_primary_fd, &readfds);
-	    numfds = MAX (numfds, from_primary_fd);
-	}
-
-	/* NUMFDS needs to be the highest descriptor + 1 according to the
-	 * select spec.
-	 */
-	numfds++;
-
-	do {
-	    /* This used to select on exceptions too, but as far
-	       as I know there was never any reason to do that and
-	       SCO doesn't let you select on exceptions on pipes.  */
-	    numfds = select (numfds, &readfds, &writefds,
-			     NULL, timeout_ptr);
-	    if (numfds < 0 && errno != EINTR)
-	    {
-		/* Sending an error to the client, possibly in the middle of a
-		 * separate protocol message, will likely not mean much to the
-		 * client, but it's better than nothing, I guess.
-		 */
-		buf_output0 (buf_to_net, "E select failed\n");
-		print_error (errno);
-		exit (EXIT_FAILURE);
-	    }
-	} while (numfds < 0);
-
-	if (numfds == 0)
-	{
-	    FD_ZERO (&readfds);
-	    FD_ZERO (&writefds);
-	}
-
-	if (to_net_fd >= 0 && FD_ISSET (to_net_fd, &writefds))
-	{
-	    /* What should we do with errors?  syslog() them?  */
-	    buf_send_output (buf_to_net);
-	    buf_flush (buf_to_net, false);
-	}
-
-	status = 0;
-	if (from_net_fd >= 0 && (FD_ISSET (from_net_fd, &readfds)))
-	    status = buf_input_data (buf_from_net_l, NULL);
-
-	if (buf_from_net_l && !buf_empty_p (buf_from_net_l))
-	{
-	    if (buf_to_primary)
-		buf_append_buffer (buf_to_primary, buf_from_net_l);
-	    else
-		/* (Sys?)log this?  */;
-		
-	}
-
-	if (status == -1 /* EOF */)
-	{
-	    if (from_net_fd == log_fd)
-	    {
-		buf_shutdown (buf_from_net_l);
-		buf_free (buf_from_net_l);
-		buf_from_net_l = buf_from_net;
-		assert ((from_net_fd = buf_get_fd (buf_from_net)) >= 0);
-	    }
-	    else
-	    {
-		SIG_beginCrSect();
-		/* Need only to shut this down and set to NULL, really, in
-		 * crit sec, to ensure no double-dispose and to make sure
-		 * network pipes are closed as properly as possible, but I
-		 * don't see much optimization potential in saving values and
-		 * postponing the free.
-		 */
-		buf_shutdown (buf_from_net);
-		buf_free (buf_from_net);
-		buf_from_net = NULL;
-		SIG_endCrSect();
-		buf_from_net_l = NULL;
-		from_net_fd = -1;
-	    }
-	}
-	else if (status > 0 /* ERRNO */)
-	{
-	    buf_output0 (buf_to_net,
-			 "E buf_input_data failed reading from client\n");
-	    print_error (status);
-	    exit (EXIT_FAILURE);
-	}
-
-	if (to_primary_fd >= 0 && FD_ISSET (to_primary_fd, &writefds))
-	{
-	    /* What should we do with errors?  syslog() them?  */
-	    buf_send_output (buf_to_primary);
-	    buf_flush (buf_to_primary, false);
-	}
-
-	status = 0;
-	if (from_primary_fd >= 0 && FD_ISSET (from_primary_fd, &readfds))
-	    status = buf_input_data (buf_from_primary, &toread);
-
-	/* Avoid resending data from the server which we already sent to the
-	 * client.  Otherwise clients get really confused.
-	 */
-	if (clientlog_fd != -1
-	    && buf_from_primary && !buf_empty_p (buf_from_primary))
-	{
-	    /* Dispose of data we already sent to the client.  */
-	    char data[4096];
-	    while (clientlog_fd != -1 && toread > 0)
-	    {
-		size_t thispass = toread > sizeof (data)
-		                  ? sizeof (data)
-		                  : toread;
-		ssize_t got = read (clientlog_fd, data, thispass);
-		if (got < 0)
-		    error (1, errno, "Error reading writeproxy log.");
-		else if (got == 0)
-		{
-		    close (clientlog_fd);
-		    clientlog_fd = -1;
-		}
-		thispass = got;
-		while (thispass > 0)
-		{
-		    char *newdata;
-		    size_t read;
-		    buf_read_data (buf_from_primary, thispass, &newdata, &got);
-		    /* Verify that we are throwing away what we think we are.
-		     */
-		    if (memcmp (data, newdata, got))
-			error (1, 0, "Secondary out of sync with primary!");
-		    thispass -= got;
-		}
-		toread -= got;
-	    }
-	}
-
-	if (buf_from_primary && !buf_empty_p (buf_from_primary))
-	{
-	    if (buf_to_net)
-		buf_append_buffer (buf_to_net, buf_from_primary);
-	    else
-		/* (Sys?)log this?  */;
-		
-	}
-
-	if (status == -1 /* EOF */)
-	{
-	    buf_shutdown (buf_from_primary);
-	    buf_from_primary = NULL;
-	    from_primary_fd = -1;
-	}
-	else if (status > 0 /* ERRNO */)
-	{
-	    buf_output0 (buf_to_net,
-			 "E buf_input_data failed reading from primary\n");
-	    print_error (status);
-	    exit (EXIT_FAILURE);
-	}
-
-	/* If our "source pipe" is closed and all data has been sent, close
-	 * the corresponding "dest pipe".
-	 */
-	if (from_primary_fd < 0
-	    && buf_to_net && buf_empty_p (buf_to_net))
-	{
-	    to_net_fd = -1;
-	    /* Don't actually shut down or free BUF_TO_NET unless BUF_FROM_NET
-	     * is already closed.  Let the shutdown handlers do it otherwise
-	     * since we might need it later.
-	     */
-	    if (!buf_from_net)
-	    {
-		SIG_beginCrSect();
-		/* Need only to shut this down and set to NULL, really, in
-		 * crit sec, to ensure no double-dispose and to make sure
-		 * network pipes are closed as properly as possible, but I
-		 * don't see much optimization potential in saving values and
-		 * postponing the free.
-		 */
-		buf_shutdown (buf_to_net);
-		buf_free (buf_to_net);
-		buf_to_net = NULL;
-		SIG_endCrSect();
-	    }
-	}
-	if (from_net_fd < 0
-	    && buf_to_primary && buf_empty_p (buf_to_primary))
-	{
-	    buf_shutdown (buf_to_primary);
-	    buf_free (buf_to_primary);
-	    buf_to_primary = NULL;
-	    to_primary_fd = -1;
-	}
-    }
-
-    /* WRITEPROXY: Call postsecondary script.  */
-    /* Call presecondary script.  */
-    pre = false;
-    Parse_Info (CVSROOTADM_POSTPROXY, current_parsed_root->directory,
-		prepost_proxy_proc, PIOPT_ALL, &pre);
 }
 
 

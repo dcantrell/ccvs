@@ -1281,8 +1281,8 @@ struct update_entries_data
 
 /* Update the Entries line for this file.  */
 static void
-update_entries( char *data_arg, List *ent_list, char *short_pathname,
-                char *filename )
+update_entries (char *data_arg, List *ent_list, char *short_pathname,
+                char *filename)
 {
     char *entries_line;
     struct update_entries_data *data = (struct update_entries_data *)data_arg;
@@ -1618,7 +1618,7 @@ update_entries( char *data_arg, List *ent_list, char *short_pathname,
 		    if (memcmp (checksum, stored_checksum, 16) != 0)
 		    {
 			error (0, 0,
-			       "checksum failure after patch to %s; will refetch",
+"checksum failure after patch to %s; will refetch",
 			       short_pathname);
 
 			patch_failed = 1;

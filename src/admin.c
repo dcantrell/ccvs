@@ -150,7 +150,8 @@ postadmin_proc (const char *repository, const char *filter, void *closure)
 
     TRACE (TRACE_FUNCTION, "postadmin_proc (%s, %s)", repository, filter);
 
-    /* %p = shortrepos
+    /* %c = cvs_cmd_name
+     * %p = shortrepos
      * %r = repository
      */
     cmdline = format_cmdline (
@@ -158,6 +159,7 @@ postadmin_proc (const char *repository, const char *filter, void *closure)
 	                      0, srepos,
 #endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
 	                      filter,
+	                      "c", "s", cvs_cmd_name,
 	                      "p", "s", srepos,
 	                      "r", "s", current_parsed_root->directory,
 	                      (char *)NULL

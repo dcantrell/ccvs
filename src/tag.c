@@ -313,6 +313,7 @@ posttag_proc (const char *repository, const char *filter, void *closure)
      * %o = operation = "add" | "mov" | "del"
      * %b = branch mode = "?" (delete ops - unknown) | "T" (branch)
      *                    | "N" (not branch)
+     * %c = cvs_cmd_name
      * %p = path from $CVSROOT
      * %r = path from root
      * %{sVv} = attribute list = file name, old version tag will be deleted
@@ -329,6 +330,7 @@ posttag_proc (const char *repository, const char *filter, void *closure)
 	"o", "s", ppd->delete_flag ? "del" :
 	          ppd->force_tag_move ? "mov" : "add",
     	"b", "c", delete_flag ? '?' : branch_mode ? 'T' : 'N',
+        "c", "s", cvs_cmd_name,
     	"p", "s", srepos,
 	"r", "s", current_parsed_root->directory,
 	"sVv", ",", ppd->tlist, pretag_list_to_args_proc, (void *)NULL,
@@ -737,6 +739,7 @@ pretag_proc (const char *repository, const char *filter, void *closure)
      * %o = operation = "add" | "mov" | "del"
      * %b = branch mode = "?" (delete ops - unknown) | "T" (branch)
      *                    | "N" (not branch)
+     * %c = cvs_cmd_name
      * %p = path from $CVSROOT
      * %r = path from root
      * %{sVv} = attribute list = file name, old version tag will be deleted
@@ -753,6 +756,7 @@ pretag_proc (const char *repository, const char *filter, void *closure)
 	"o", "s", ppd->delete_flag ? "del" :
 	          ppd->force_tag_move ? "mov" : "add",
     	"b", "c", delete_flag ? '?' : branch_mode ? 'T' : 'N',
+        "c", "s", cvs_cmd_name,
     	"p", "s", srepos,
 	"r", "s", current_parsed_root->directory,
 	"sVv", ",", ppd->tlist, pretag_list_to_args_proc, (void *) NULL,
