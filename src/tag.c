@@ -319,6 +319,11 @@ posttag_proc (const char *repository, const char *filter, void *closure)
      *                           deleted from until
      *                           SUPPORT_OLD_INFO_FMT_STRINGS is undefined).
      */
+    /*
+     * Cast any NULL arguments as appropriate pointers as this is an
+     * stdarg function and we need to be certain the caller gets what
+     * is expected.
+     */
     cmdline = format_cmdline (
 #ifdef SUPPORT_OLD_INFO_FMT_STRINGS
 			      false, srepos,
@@ -336,8 +341,8 @@ posttag_proc (const char *repository, const char *filter, void *closure)
 			      "p", "s", srepos,
 			      "r", "s", current_parsed_root->directory,
 			      "sVv", ",", ppd->tlist,
-			      pretag_list_to_args_proc, NULL,
-			      NULL);
+			      pretag_list_to_args_proc, (void *) NULL,
+			      (char *) NULL);
 
     if (!cmdline || !strlen (cmdline))
     {
@@ -750,6 +755,11 @@ pretag_proc (const char *repository, const char *filter, void *closure)
      *                           deleted from until
      *                           SUPPORT_OLD_INFO_FMT_STRINGS is undefined)
      */
+    /*
+     * Cast any NULL arguments as appropriate pointers as this is an
+     * stdarg function and we need to be certain the caller gets what
+     * is expected.
+     */
     cmdline = format_cmdline (
 #ifdef SUPPORT_OLD_INFO_FMT_STRINGS
 			      false, srepos,
@@ -767,8 +777,8 @@ pretag_proc (const char *repository, const char *filter, void *closure)
 			      "p", "s", srepos,
 			      "r", "s", current_parsed_root->directory,
 			      "sVv", ",", ppd->tlist,
-			      pretag_list_to_args_proc, NULL,
-			      NULL);
+			      pretag_list_to_args_proc, (void *) NULL,
+			      (char *) NULL);
 
     if (newfilter) free (newfilter);
 

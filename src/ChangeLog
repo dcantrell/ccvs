@@ -1,3 +1,16 @@
+2005-03-17  Mark D. Baushke  <mdb@cvshome.org>
+
+	* admin.c (postadmin_proc): Cast NULL when it is an argument to
+	stdarg function to ensure it is the correct type.
+	* commit.c (precommit_proc): Ditto.
+	* edit.c (notify_proc): Ditto.
+	* fileattr.c (postwatch_proc): Ditto.
+	* logmsg.c (logfile_write, verifymsg_proc): Ditto.
+	* server.c (prepost_proxy_proc): Ditto.
+	* subr.c (cmdlineescape): Ditto.
+	* tag.c (posttag_proc): Ditto.
+	(Thanks to a report from Derek Price <derek@ximbiot.com>.)
+	
 2005-03-17  Derek Price  <derek@ximbiot.com>
 
 	* rcs.h (RCSNode): Improve comment.
@@ -26,7 +39,7 @@
 	* log.c (log_expand_revlist): Suppress message and not error handling
 	when really_quiet.
 
-2005-03-16  Mark D. Baushke  <mdb@juniper.net>
+2005-03-16  Mark D. Baushke  <mdb@cvshome.org>
 
 	* buffer.c (fd_buffer_shutdown): Replace (int *) 0 with NULL.
 	* server.c (do_cvs_command): Ditto.

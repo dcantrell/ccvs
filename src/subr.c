@@ -1056,7 +1056,7 @@ cmdlineescape (char quotes, char *s)
  *                    "xG", "ld", longintwhichwontbeusedthispass,
  *                    "sVv", ",", tlist, pretag_list_to_args_proc,
  *                    (void *) mydata,
- *                    NULL);
+ *                    (char *) NULL);
  *
  *    would generate the following command line, assuming two files in tlist,
  *    file1 & file2, each with old versions 1.1 and new version 1.1.2.3:
