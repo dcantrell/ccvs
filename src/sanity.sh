@@ -294,7 +294,7 @@ fi
 mkdir ${TESTDIR} || exit 1
 cd ${TESTDIR} || exit 1
 # Ensure $TESTDIR is absolute
-if test -z "${TESTDIR}" || echo "${TESTDIR}" |grep '^[^/]'; then
+if echo "${TESTDIR}" |grep '^[^/]'; then
     # Don't resolve this unless we have to.  This keeps symlinks intact.  This
     # is important at least when testing using -h $remotehost, because the same
     # value for $TESTDIR must resolve to the same directory on the client and
