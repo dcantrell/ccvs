@@ -16,6 +16,7 @@
 #include "getnline.h"
 #include "buffer.h"
 #include "log-buffer.h"
+#include "ms-buffer.h"
 
 #if defined(SERVER_SUPPORT) || defined(CLIENT_SUPPORT)
 
@@ -800,6 +801,7 @@ static void
 reprocess_secondary_log (void)
 {
     int fd;
+    struct buffer *log;
 
     assert (secondary_log);
 
@@ -820,27 +822,14 @@ reprocess_secondary_log (void)
 
     fd = read_secondary_log (&secondary_log, secondary_log_name);
 
-    SIG_beginCrSect();
-    buf_from_net_save = buf_from_net;
-    buf_from_net = fd_buffer_initialize (fd, 0, NULL, true,
-					 outbuf_memory_error);
-    SIG_endCrSect();
-
-    /* Set this to avoid processing some requests twice.  */
-    reprocessing = true;
-    loop_over_inputs ();
-    reprocessing = false;
-
-    /* Restore the connection to the client.  This is in a critical
-     * section since an interrupt could cause server_cleanup() to
-     * attempt to dispose of the buffers.
+    log = fd_buffer_initialize (fd, 0, NULL, true, outbuf_memory_error);
+    /* Dispose of any read but unused data in the net buffer since it will
+     * already be in the log.
      */
-    SIG_beginCrSect();
-    (void) buf_shutdown (buf_from_net);
-    free (buf_from_net);
-    buf_from_net = buf_from_net_save;
-    buf_from_net_save = NULL;
-    SIG_endCrSect();
+    buf_free_data (buf_from_net);
+    buf_from_net = ms_buffer_initialize (outbuf_memory_error, log,
+					 buf_from_net);
+    reprocessing = true;
 }
 
 
@@ -2379,12 +2368,10 @@ become_proxy (void)
     struct buffer *buf_to_primary;
     struct buffer *buf_from_primary;
 
-    /* Close the log and open it for read.  */
-    int log_fd = read_secondary_log (&secondary_log, secondary_log_name);
+    /* Close the client log and open it for read.  */
     int clientlog_fd = read_secondary_log (&secondary_log_out,
                                            secondary_log_out_name);
     int status, to_primary_fd, from_primary_fd, to_net_fd, from_net_fd;
-    struct buffer *buf_from_net_l;
 
     /* Call presecondary script.  */
     bool pre = true;
@@ -2409,10 +2396,9 @@ become_proxy (void)
     to_net_fd = buf_get_fd (buf_to_net);
     assert (to_primary_fd >= 0 && from_primary_fd >= 0 && to_net_fd >= 0);
 
-    buf_from_net_l = fd_buffer_initialize (log_fd, 0, NULL, true,
-                                           outbuf_memory_error);
+    /* Close the client log and open it for read.  */
+    reprocess_secondary_log ();
 
-    from_net_fd = log_fd;
     while (from_primary_fd >= 0 || to_primary_fd >= 0)
     {
 	fd_set readfds, writefds;
@@ -2423,6 +2409,9 @@ become_proxy (void)
 
 	FD_ZERO (&readfds);
 	FD_ZERO (&writefds);
+
+	/* The fd for a multi-source buffer can change with any read.  */
+	from_net_fd = buf_from_net ? buf_get_fd (buf_from_net) : -1;
 
 	if (buf_from_net && !buf_empty_p (buf_from_net)
 	    || buf_from_primary && !buf_empty_p (buf_from_primary))
@@ -2500,12 +2489,12 @@ become_proxy (void)
 
 	status = 0;
 	if (from_net_fd >= 0 && (FD_ISSET (from_net_fd, &readfds)))
-	    status = buf_input_data (buf_from_net_l, NULL);
+	    status = buf_input_data (buf_from_net, NULL);
 
-	if (buf_from_net_l && !buf_empty_p (buf_from_net_l))
+	if (buf_from_net && !buf_empty_p (buf_from_net))
 	{
 	    if (buf_to_primary)
-		buf_append_buffer (buf_to_primary, buf_from_net_l);
+		buf_append_buffer (buf_to_primary, buf_from_net);
 	    else
 		/* (Sys?)log this?  */;
 		
@@ -2513,29 +2502,19 @@ become_proxy (void)
 
 	if (status == -1 /* EOF */)
 	{
-	    if (from_net_fd == log_fd)
-	    {
-		buf_shutdown (buf_from_net_l);
-		buf_free (buf_from_net_l);
-		buf_from_net_l = buf_from_net;
-		assert ((from_net_fd = buf_get_fd (buf_from_net)) >= 0);
-	    }
-	    else
-	    {
-		SIG_beginCrSect();
-		/* Need only to shut this down and set to NULL, really, in
-		 * crit sec, to ensure no double-dispose and to make sure
-		 * network pipes are closed as properly as possible, but I
-		 * don't see much optimization potential in saving values and
-		 * postponing the free.
-		 */
-		buf_shutdown (buf_from_net);
-		buf_free (buf_from_net);
-		buf_from_net = NULL;
-		SIG_endCrSect();
-		buf_from_net_l = NULL;
-		from_net_fd = -1;
-	    }
+	    SIG_beginCrSect();
+	    /* Need only to shut this down and set to NULL, really, in
+	     * crit sec, to ensure no double-dispose and to make sure
+	     * network pipes are closed as properly as possible, but I
+	     * don't see much optimization potential in saving values and
+	     * postponing the free.
+	     */
+	    buf_shutdown (buf_from_net);
+	    buf_free (buf_from_net);
+	    buf_from_net = NULL;
+	    /* So buf_to_primary will be closed at the end of this loop.  */
+	    from_net_fd = -1;
+	    SIG_endCrSect();
 	}
 	else if (status > 0 /* ERRNO */)
 	{
@@ -3409,23 +3388,37 @@ do_cvs_command (char *cmd_name, int (*command) (int, char **))
      * Therefore, we wish to avoid reprocessing the command since that would
      * cause endless recursion.
      */
-    if (reprocessing) return;
-
     if (isSecondaryServer())
     {
-	if (lookup_command_attribute (cmd_name) & CVS_CMD_MODIFIES_REPOSITORY
-	    || !strcmp (cmd_name, "version"))
+	if (reprocessing)
+	    /* This must be the second time we've reached this point.
+	     * Done reprocessing.
+	     */
+	    reprocessing = false;
+	else
 	{
-	    become_proxy ();
-	    if (!strcmp (cmd_name, "version"))
-		version (0, NULL);
-	    exit (EXIT_SUCCESS);
+	    if (lookup_command_attribute (cmd_name)
+		    & CVS_CMD_MODIFIES_REPOSITORY
+		|| !strcmp (cmd_name, "version"))
+	    {
+		become_proxy ();
+		if (!strcmp (cmd_name, "version"))
+		    version (0, NULL);
+		exit (EXIT_SUCCESS);
+	    }
+	    else if (/* serve_co may have called this already and missing logs
+		      * should have generated an error in serve_root().
+		      */
+		     secondary_log)
+	    {
+		/* Set up the log for reprocessing.  */
+		reprocess_secondary_log ();
+		/* And return to the main loop in server(), where we will now
+		 * find the logged secondary data and reread it.
+		 */
+		return;
+	    }
 	}
-	else if (/* serve_co may have called this already and missing logs
-	          * should have generated an error in serve_root().
-	          */
-	         secondary_log)
-	    reprocess_secondary_log ();
     }
 
     command_pid = -1;
@@ -4670,18 +4663,26 @@ serve_co (char *arg)
     char *tempdir;
     int status;
 
-    /* Write proxy logging is always terminated when a command is received.
-     * Therefore, we wish to avoid reprocessing the command since that would
-     * cause endless recursion.
-     */
-    if (print_pending_error () || reprocessing)
+    if (print_pending_error ())
 	return;
 
     /* If we are not a secondary server, the write proxy log will already have
      * been processed.
      */
     if (isSecondaryServer () && secondary_log)
-	reprocess_secondary_log ();
+    {
+	if (reprocessing)
+	    reprocessing = false;
+	else
+	{
+	    /* Set up the log for reprocessing.  */
+	    reprocess_secondary_log ();
+	    /* And return to the main loop in server(), where we will now find
+	     * the logged secondary data and reread it.
+	     */
+	    return;
+	}
+    }
 
     if (!isdir (CVSADM))
     {

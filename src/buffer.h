@@ -156,6 +156,7 @@ int buf_copy_counted (struct buffer *, struct buffer *, int *);
 int buf_chain_length (struct buffer_data *);
 int buf_length (struct buffer *);
 int buf_shutdown (struct buffer *);
+void buf_free_data (struct buffer *);
 
 #ifdef SERVER_FLOWCONTROL
 int buf_count_mem (struct buffer *);
