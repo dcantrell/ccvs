@@ -400,11 +400,14 @@ uninstall-info: uninstall-info-am
 	mostlyclean-generic uninstall uninstall-am uninstall-info-am
 
 
-doc: $(POSTSCRIPTS)
+doc ps: $(POSTSCRIPTS)
+.PHONY: doc ps
 
 pdf: $(PDFS)
+.PHONY: pdf
 
 txt: $(TXTS)
+.PHONY: txt
 
 dvi: cvs.dvi cvsclient.dvi
 .PHONY: dvi
