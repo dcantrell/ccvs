@@ -1,4 +1,15 @@
-2000-06-19  Larry Jones  <larry.jones@sdrc.com>
+2000-06-21  Larry Jones  <larry.jones@sdrc.com>
+
+	* client.c (update_entries, get_responses_and_close): Plug memory leaks.
+	* commit.c (find_fileproc, commit): Ditto.
+	* import.c (import): Ditto.
+	* log.c (cvslog): Ditto.
+	* recurse.c (start_recursion): Ditto.
+	* remove.c (cvsremove): Ditto.
+	* server.c (fd_buffer_initialize, server_notify, do_cvs_command): Ditto.
+	(fd_buffer_shutdown): New function.
+
+2000-06-20  Larry Jones  <larry.jones@sdrc.com>
 
 	* root.c (parse_cvsroot): Put the terminating NUL byte into the
 	string *before* copying it, not after. :-(

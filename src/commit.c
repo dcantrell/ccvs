@@ -263,6 +263,7 @@ find_fileproc (callerdat, finfo)
 	else
 	    error (0, 0, "use `%s add' to create an entry for %s",
 		   program_name, finfo->fullname);
+	freevers_ts (&vers);
 	return 1;
     }
     else if (vers->ts_user != NULL
@@ -284,6 +285,7 @@ find_fileproc (callerdat, finfo)
 	   cases.  FIXME: we probably should be printing a message and
 	   returning 1 for many of those cases (but I'm not sure
 	   exactly which ones).  */
+	freevers_ts (&vers);
 	return 0;
     }
 
@@ -457,11 +459,14 @@ commit (argc, argv)
 	    error (1, 0, "correct above errors first!");
 
 	if (find_args.argc == 0)
+	{
 	    /* Nothing to commit.  Exit now without contacting the
 	       server (note that this means that we won't print "?
 	       foo" for files which merit it, because we don't know
 	       what is in the CVSROOT/cvsignore file).  */
+	    dellist (&find_args.ulist);
 	    return 0;
+	}
 
 	/* Now we keep track of which files we actually are going to
 	   operate on, and only work with those files in the future.
@@ -567,6 +572,8 @@ commit (argc, argv)
 	   previous versions of client/server CVS, but it probably is a Good
 	   Thing, or at least Not Such A Bad Thing.  */
 	send_file_names (find_args.argc, find_args.argv, 0);
+	free (find_args.argv);
+	dellist (&find_args.ulist);
 
 	send_to_server ("ci\012", 0);
 	err = get_responses_and_close ();

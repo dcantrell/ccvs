@@ -1757,6 +1757,7 @@ update_entries (data_arg, ent_list, short_pathname, filename)
 	    }
 
 	    free (mode_string);
+	    free (scratch_entries);
 	    free (entries_line);
 
 	    /* The Mode, Mod-time, and Checksum responses should not carry
@@ -2023,6 +2024,8 @@ update_entries (data_arg, ent_list, short_pathname, filename)
 
 	    free (mode_string);
 	    free (buf);
+	    free (scratch_entries);
+	    free (entries_line);
 
 	    return;
 	}
@@ -2121,8 +2124,8 @@ update_entries (data_arg, ent_list, short_pathname, filename)
 	if (file_timestamp)
 	    free (file_timestamp);
 
-	free (scratch_entries);
     }
+    free (scratch_entries);
     free (entries_line);
 }
 
@@ -3592,6 +3595,8 @@ get_responses_and_close ()
 	&& waitpid (rsh_pid, (int *) 0, 0) == -1)
 	error (1, errno, "waiting for process %d", rsh_pid);
 
+    buf_free (to_server);
+    buf_free (from_server);
     server_started = 0;
 
     /* see if we need to sleep before returning to avoid time-stamp races */

@@ -270,8 +270,10 @@ cvslog (argc, argv)
 	if (log_data.default_branch)
 	    send_arg ("-b");
 
-	for (p = log_data.datelist; p != NULL; p = p->next)
+	while (log_data.datelist != NULL)
 	{
+	    p = log_data.datelist;
+	    log_data.datelist = p->next;
 	    send_to_server ("Argument -d\012", 0);
 	    send_to_server ("Argument ", 0);
 	    date_to_internet (datetmp, p->start);
@@ -283,14 +285,24 @@ cvslog (argc, argv)
 	    date_to_internet (datetmp, p->end);
 	    send_to_server (datetmp, 0);
 	    send_to_server ("\012", 0);
+	    if (p->start)
+		free (p->start);
+	    if (p->end)
+		free (p->end);
+	    free (p);
 	}
-	for (p = log_data.singledatelist; p != NULL; p = p->next)
+	while (log_data.singledatelist != NULL)
 	{
+	    p = log_data.singledatelist;
+	    log_data.singledatelist = p->next;
 	    send_to_server ("Argument -d\012", 0);
 	    send_to_server ("Argument ", 0);
 	    date_to_internet (datetmp, p->end);
 	    send_to_server (datetmp, 0);
 	    send_to_server ("\012", 0);
+	    if (p->end)
+		free (p->end);
+	    free (p);
 	}
 	    
 	if (log_data.header)
@@ -304,8 +316,10 @@ cvslog (argc, argv)
 	if (log_data.long_header)
 	    send_arg("-t");
 
-	for (rp = log_data.revlist; rp != NULL; rp = rp->next)
+	while (log_data.revlist != NULL)
 	{
+	    rp = log_data.revlist;
+	    log_data.revlist = rp->next;
 	    send_to_server ("Argument -r", 0);
 	    if (rp->branchhead)
 	    {
@@ -322,9 +336,16 @@ cvslog (argc, argv)
 		    send_to_server (rp->last, 0);
 	    }
 	    send_to_server ("\012", 0);
+	    if (rp->first)
+		free (rp->first);
+	    if (rp->last)
+		free (rp->last);
+	    free (rp);
 	}
 	send_arg_list ("-s", log_data.statelist);
+	dellist (&log_data.statelist);
 	send_arg_list ("-w", log_data.authorlist);
+	dellist (&log_data.authorlist);
 
 	send_files (argc - optind, argv + optind, local, 0, SEND_NO_CONTENTS);
 	send_file_names (argc - optind, argv + optind, SEND_EXPAND_WILD);
