@@ -34,6 +34,8 @@ SPARC:
 	Sun SPARCstation 10 running Solaris 2.3 using gcc and cc (about 1.4A2)
 	Sun SPARCstation 10 running Solaris 2.4 using gcc (about 1.4A2)
 	Sun SPARCstation 10 with SunOS 4.1.3_U1 using gcc and cc (about 1.4A2)
+Some kind of NeXT (not sure whether i386 or m68k, or what OS version)
+	(1.4.92) (one small patch, included in this release, needed)
 
 (*)	AIX 4.1 systems fail to run "configure" due to bugs in their
 	"/bin/sh" implementation.  You might want to try feeding the
