@@ -32,3 +32,6 @@ them.
 
 Use lots of index markers.  Scan the index for the current style.  Try to reuse
 an existing entry if the meaning is similar.
+
+For more on using texinfo docs, see the `info texinfo' documentation or
+http://www.gnu.org/manual/texinfo/texinfo.html .
