@@ -4,7 +4,7 @@
 	"Peter Connolly" <Peter.Connolly@cnet.com>.
 	* cvs_acls.html: New file from
 	"Peter Connolly" <Peter.Connolly@cnet.com>.
-	* Makefile.am (EXTRA_DIST): Add cvs_acls2.html
+	* Makefile.am (EXTRA_DIST): Add cvs_acls.html
 	(Close ccvs Issue #170.)
 	* Makefile.in: Regenerated.
 	
