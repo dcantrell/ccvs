@@ -7018,11 +7018,17 @@ tiny shell-script below, appends all log messages
 to the file @file{$CVSROOT/CVSROOT/commitlog},
 and any commits to the administrative files (inside
 the @file{CVSROOT} directory) are also logged in
-@file{/usr/adm/cvsroot-log} and mailed to @t{ceder}.
+@file{/usr/adm/cvsroot-log}.
+@c and mailed to @t{ceder}.
 
+@c FIXME: is it a CVS feature or bug that only the
+@c first matching line is used?  It is documented
+@c above, but is it useful?  This example (with the
+@c mail to ceder put back in) is awkward to write if
+@c only the first matching line is used.
 @example
 ALL             /usr/local/bin/cvs-log $CVSROOT/CVSROOT/commitlog
-^CVSROOT        Mail -s %s ceder
+@c ^CVSROOT        Mail -s %s ceder
 ^CVSROOT        /usr/local/bin/cvs-log /usr/adm/cvsroot-log
 @end example
 
