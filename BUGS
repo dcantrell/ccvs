@@ -15,11 +15,6 @@ similar file for the unix-like operating systems (not yet, at least).
 This file also might contain some platform-specific bugs.
 
 
-* The ~/.cvsignore file is not consulted on windows-NT and perhaps on
-other non-unix systems (note to implementors: should be calling
-get_homedir not getpwuid).
-
-
 * The "&" feature of the modules file does not work correctly with
 client/server CVS.  The documented behavior (which is implemented by
 non-client/server CVS) is the correct one.
