@@ -1498,6 +1498,7 @@ AC_CONFIG_FILES([Makefile \
 	  doc/i18n/pt_BR/Makefile \
 	  emx/Makefile \
 	  lib/Makefile \
+	  maint-aux/Makefile \
 	  man/Makefile \
 	  os2/Makefile \
 	  src/Makefile \

@@ -1,5 +1,5 @@
 ## Process this file with automake to produce Makefile.in
-# Master Makefile for the GNU Concurrent Versions System.
+# Makefile for the maint-aux directory of the GNU Concurrent Versions System.
 # Copyright (C) 1986, 1987, 1988, 1989, 1990, 1991, 1992, 1993, 1994,
 #               1995, 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003
 #               Free Software Foundation, Inc.
@@ -15,47 +15,11 @@
 # GNU General Public License for more details.
 
 ## Subdirectories to run make in for the primary targets.
-# Unix source subdirs, where we'll want to run lint and etags:
-# This is a legacy variable from b4 Automake
-USOURCE_SUBDIRS = lib $(ZLIB_SUBDIRS) diff src
-# All other subdirs:
-SUBDIRS = $(USOURCE_SUBDIRS) man doc contrib tools \
-	windows-NT os2 emx vms maint-aux
-
-ACLOCAL_AMFLAGS = -I m4
-
 EXTRA_DIST = \
-	.cvsignore \
-	BUGS \
-	ChangeLog.zoo \
-	DEVEL-CVS \
-	FAQ \
-	HACKING \
-	MINOR-BUGS \
-	PROJECTS \
-	README.VMS \
-	TESTS \
-	build.com \
-	cvs-format.el \
-	cvsnt.dep \
-	cvsnt.dsp \
-	cvsnt.dsw \
-	cvsnt.mak \
-	cvs.spec \
-	mktemp.sh \
-	m4/ChangeLog \
-	m4/README
-
-
-## MAINTAINER Targets
-
-.PHONY: localcheck remotecheck proxycheck
-localcheck remotecheck proxycheck: all
-	cd src && $(MAKE) $(AM_MAKEFLAGS) "$@"
-
-.PHONY: doc
-doc:
-	cd doc && $(MAKE) $(AM_MAKEFLAGS) "$@"
+	gnulib.txt \
+	gnulib-modules \
+	gnulib-update \
+	srclist.txt
 
 # for backwards compatibility with the old makefiles
 .PHONY: realclean
