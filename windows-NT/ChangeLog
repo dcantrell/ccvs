@@ -1,3 +1,9 @@
+2002-12-06  Derek Price  <derek@ximbiot.com>
+
+	* ndir.c: Replace some calls to malloc with calls to xmalloc.
+	* pwd.c: Ditto.
+	(Reported by Dan Peterson <dbpete@aol.com>.)
+
 2002-09-24  Derek Price  <derek@ximbiot.com>
 
 	* options.h: Remove prototype of STDC exit().
