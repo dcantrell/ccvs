@@ -1,5 +1,7 @@
 Tue Apr 30 15:46:03 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* Version 1.7.87.
+
 	* server.c (check_password): Don't use ANSI string concatenation.
 	Reindent function.
 
