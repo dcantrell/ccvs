@@ -1,5 +1,10 @@
 2000-12-22  Derek Price  <derek.price@openavenue.com>
 
+	* configure.in (AC_OUTPUT): Stretched
+	* configure: Regenerated
+
+2000-12-22  Derek Price  <derek.price@openavenue.com>
+
 	* aclocal.m4: Regenerated due to Automake update
 
 2000-12-22  Derek Price  <derek.price@openavenue.com>
