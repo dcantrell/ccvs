@@ -301,7 +301,7 @@ static const char *const config_contents[] = {
     "#LogHistory=TOFEWGCMAR\n",
     "\n",
     "# Set `RereadLogAfterVerify' to `always' (the default) to allow the verifymsg\n",
-    "# script to change the log message.  Set it to `stat' to force CVS to verify",
+    "# script to change the log message.  Set it to `stat' to force CVS to verify\n",
     "# that the file has changed before reading it (this can take up to an extra\n",
     "# second per directory being committed, so it is not recommended for large\n",
     "# repositories.  Set it to `never' (the previous CVS behavior) to prevent\n",
