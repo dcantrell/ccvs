@@ -555,6 +555,14 @@ which will vary with your operating system, for example
 @code{vi} for unix or @code{notepad} for Windows
 NT/95.
 
+@cindex VISUAL, environment variable
+In addition, @sc{cvs} checks the @code{$VISUAL} environment
+variable.  Opinions vary on whether this behavior is desirable and
+whether future releases of @sc{cvs} should check @code{$VISUAL} or
+ignore it.  You will be OK either way if you make sure that
+@code{$VISUAL} is either unset or set to the same thing as
+@code{$EDITOR}.
+
 @c This probably should go into some new node
 @c containing detailed info on the editor, rather than
 @c the intro.  In fact, perhaps some of the stuff with
@@ -12190,6 +12198,7 @@ directory.
 
 @item $EDITOR
 @itemx $CVSEDITOR
+@itemx $VISUAL
 Specifies the program to use for recording log messages
 during commit.  @code{$CVSEDITOR} overrides
 @code{$EDITOR}.  See @ref{Committing your changes}.
