@@ -1,3 +1,7 @@
+2001-03-30  Larry Jones  <larry.jones@sdrc.com>
+
+	* cvsclient.texi (Dates, Requests): Add rannotate and rlog.
+
 2001-03-26  Larry Jones  <larry.jones@sdrc.com>
 
 	* cvs.texinfo (admin options): Fix typo: should be @pxref, not @xref.
