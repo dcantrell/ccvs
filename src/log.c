@@ -839,15 +839,15 @@ log_fileproc (callerdat, finfo)
     cvs_output ("RCS file: ", 0);
     cvs_output (rcsfile->path, 0);
 
-    cvs_output ("\nWorking file: ", 0);
-    if (finfo->update_dir[0] == '\0')
-	cvs_output (finfo->file, 0);
-    else
+    if (!is_rlog)
     {
-	cvs_output (finfo->update_dir, 0);
-	cvs_output ("/", 0);
+	cvs_output ("\nWorking file: ", 0);
+	if (finfo->update_dir[0] != '\0')
+	{
+	    cvs_output (finfo->update_dir, 0);
+	    cvs_output ("/", 0);
+	}
 	cvs_output (finfo->file, 0);
-
     }
 
     cvs_output ("\nhead:", 0);
