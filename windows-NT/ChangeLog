@@ -1,3 +1,8 @@
+Tue Dec 31 11:01:29 1996  Noel Cragg  <noel@gargle.rain.org>
+
+	* README: Add note that the various support utilities can also be
+ 	found at the Cyclic FTP site; things move around on the net.
+
 Tue Dec 31 12:33:29 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* README: Add note about lack of need for rsh.  I don't know if
