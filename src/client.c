@@ -2586,7 +2586,7 @@ send_modified (file, short_pathname)
 #if LINES_CRLF_TERMINATED
 	if (unlink (tempfile) < 0)
 	    error (0, errno, "warning: can't remove temp file %s", tempfile);
-#endif LINES_CRLF_TERMINATED
+#endif /* LINES_CRLF_TERMINATED */
 
 	fprintf (to_server, "Modified %s\n%s\nz%lu\n", file, mode_string,
 		 (unsigned long) newsize);
