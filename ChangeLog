@@ -1,3 +1,7 @@
+2004-03-11  Derek Price  <derek@ximbiot.com>
+
+	* srclist.txt: Note unfork of lib/xsize.h.
+
 2004-03-07  Derek Price  <derek@ximbiot.com>
 
 	* cvsnt.mak (asnprintf, vasnprintf, printf-args, printf-parse):
