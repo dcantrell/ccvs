@@ -21,7 +21,6 @@
 #ifndef UNISTD_H
 #define UNISTD_H
 
-char * getpass (const char *prompt);
 int chdir (const char *path);
 int close (int fd);
 
