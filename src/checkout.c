@@ -466,8 +466,8 @@ build_one_dir (repository, dirpath, sticky)
 	    error (1, 0, "there is no repository %s", repository);
 
 	if (Create_Admin (".", dirpath, repository,
-			  sticky ? (char *) NULL : tag,
-			  sticky ? (char *) NULL : date,
+			  sticky ? tag : (char *) NULL,
+			  sticky ? date : (char *) NULL,
 
 			  /* FIXME?  This is a guess.  If it is important
 			     for nonbranch to be set correctly here I

@@ -7950,10 +7950,14 @@ done"
 	  dotest modules2-1 "${testcvs} -q co CVSROOT/modules" \
 'U CVSROOT/modules'
 	  cd CVSROOT
-	  echo 'ampermodule &first-dir &second-dir' > modules
-	  echo 'combmodule third-dir file3 &first-dir' >> modules
-	  echo 'ampdirmod -d newdir &first-dir &second-dir' >> modules
-	  echo 'badmod -d newdir' >> modules
+	  cat >> modules << EOF
+ampermodule &first-dir &second-dir
+combmodule third-dir file3 &first-dir
+ampdirmod -d newdir &first-dir &second-dir
+badmod -d newdir
+messymod first-dir &messymodchild
+messymodchild -d sdir/child second-dir
+EOF
 	  # Depending on whether the user also ran the modules test
 	  # we will be checking in revision 1.2 or 1.3.
 	  dotest modules2-2 "${testcvs} -q ci -m add-modules" \
@@ -8090,12 +8094,31 @@ U first-dir/amper1"
 U first-dir/amper1
 ${PROG} [a-z]*: Updating second-dir"
 	  dotest modules2-21 "test -f newdir/first-dir/amper1" ""
-	  dotest_fail modules2-22 "${testcvs} co badmod" \
+	  dotest modules2-22 "test -d newdir/second-dir" ""
+	  dotest_fail modules2-23 "${testcvs} co badmod" \
 "${PROG} [a-z]*: modules file missing directory for module badmod" \
 "${PROG} [a-z]*: modules file missing directory for module badmod
 ${PROG} \[[a-z]* aborted\]: cannot expand modules"
 	  cd ..
 	  rm -r 1
+
+	  # Test for tag files when an ampermod is renamed more deeply than you
+	  # might expect.
+	  #
+	  # FIXME: This is currently broken in the remote case, possibly only
+	  # because the messymodchild isn't being checked out at all.
+	  mkdir 1; cd 1
+	  dotest modules2-tagfiles-setup-1 \
+"${testcvs} -Q rtag -b branch first-dir second-dir" \
+''
+	  dotest modules2-tagfiles-1 "${testcvs} -q co -rbranch messymod" \
+"U messymod/amper1"
+	  if test $remote = yes; then
+	    dotest_fail modules2-tagfiles-2r "test -d messymod/sdir" ''
+	  else
+	    dotest modules2-tagfiles-2 "cat messymod/sdir/CVS/Tag" 'Tbranch'
+	  fi
+	  cd ..; rm -r 1
 
 	  # Test that CVS gives an error if one combines -a with
 	  # other options.
@@ -8118,11 +8141,9 @@ ${PROG} [a-z]*: Rebuilding administrative file database"
 "${PROG} [a-z]*: -a cannot be specified in the modules file along with other options" \
 "${PROG} [a-z]*: -a cannot be specified in the modules file along with other options
 ${PROG} \[[a-z]* aborted\]: cannot expand modules"
+	  cd ..;  rm -r 1
 
 	  # Clean up.
-	  rm -r CVSROOT
-	  cd ..
-	  rm -r 1
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
 	  rm -rf ${CVSROOT_DIRNAME}/second-dir
 	  rm -rf ${CVSROOT_DIRNAME}/third-dir
