@@ -129,7 +129,7 @@ Parse_Info (infofile, repository, callproc, all)
                expression?  */
 	    if (default_value != NULL)
 		free (default_value);
-	    default_value = value;
+	    default_value = xstrdup(value);
 	    default_line = line_number;
 	    continue;
 	}
