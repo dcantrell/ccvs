@@ -1,5 +1,13 @@
 2003-01-31  Derek Price  <derek@ximbiot.com>
 
+	* configure.in: Check for varargs.h.  Use the AC_C_PROTOTYPES macro
+	to check for handling of prototypes.
+
+	* configure: Regenerated.
+	* config.h.in: Regenerated.
+
+2003-01-31  Derek Price  <derek@ximbiot.com>
+
 	* acinclude.m4 (ACX_WITH_GSSAPI): Move the checkin from 1/23 to here.
 	* configure.in: Update version to 1.12.10.1.
 
