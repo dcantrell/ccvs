@@ -1,3 +1,20 @@
+Sat Feb 10 16:55:37 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	By itself this is only a small cleanup, but in the long run it
+	will be way cool (for reference, it takes CVS's text segment from
+	290816 bytes to 294912, which I expect will be made up by future
+	changes which this enables):
+	* cvs.h (struct file_info): Added.
+	(FILEPROC): Replace 5 args with single struct file_info *.
+	* recurse.c (do_file_proc): Adjust args to fileproc; passed in
+	instead of from globals.
+	(do_recursion): Call do_file_proc accordingly.  Remove srcfiles
+	global variable.
+	* update.c (update_fileproc): Renamed from update_file_proc.
+	* admin.c, client.c, commit.c, diff.c, edit.c, log.c, patch.c,
+	remove.c, rtag.c, status.c, tag.c, update.c, watch.c: Update
+	fileprocs to new calling convention.
+
 Fri Feb  9 15:30:32 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* expand_path.c (expand_variable): Accept a variable name starting

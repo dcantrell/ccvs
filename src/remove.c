@@ -17,9 +17,7 @@
 
 #include "cvs.h"
 
-static int remove_fileproc PROTO((char *file, char *update_dir,
-			    char *repository, List *entries,
-			    List *srcfiles));
+static int remove_fileproc PROTO((struct file_info *finfo));
 static Dtype remove_dirproc PROTO((char *dir, char *repos, char *update_dir));
 
 static int force;
@@ -108,12 +106,8 @@ cvsremove (argc, argv)
  */
 /* ARGSUSED */
 static int
-remove_fileproc (file, update_dir, repository, entries, srcfiles)
-    char *file;
-    char *update_dir;
-    char *repository;
-    List *entries;
-    List *srcfiles;
+remove_fileproc (finfo)
+    struct file_info *finfo;
 {
     char fname[PATH_MAX];
     Vers_TS *vers;
@@ -122,32 +116,32 @@ remove_fileproc (file, update_dir, repository, entries, srcfiles)
     {
 	if (!noexec)
 	{
-	    if (unlink (file) < 0 && ! existence_error (errno))
+	    if (unlink (finfo->file) < 0 && ! existence_error (errno))
 	    {
-		if (update_dir[0] == '\0')
-		    error (0, errno, "unable to remove %s", file);
+		if (finfo->update_dir[0] == '\0')
+		    error (0, errno, "unable to remove %s", finfo->file);
 		else
-		    error (0, errno, "unable to remove %s/%s", update_dir,
-			   file);
+		    error (0, errno, "unable to remove %s/%s", finfo->update_dir,
+			   finfo->file);
 	    }
 	}
 	/* else FIXME should probably act as if the file doesn't exist
 	   in doing the following checks.  */
     }
 
-    vers = Version_TS (repository, (char *) NULL, (char *) NULL, (char *) NULL,
-		       file, 0, 0, entries, srcfiles);
+    vers = Version_TS (finfo->repository, (char *) NULL, (char *) NULL, (char *) NULL,
+		       finfo->file, 0, 0, finfo->entries, finfo->srcfiles);
 
     if (vers->ts_user != NULL)
     {
 	existing_files++;
 	if (!quiet)
-	    error (0, 0, "file `%s' still in working directory", file);
+	    error (0, 0, "file `%s' still in working directory", finfo->file);
     }
     else if (vers->vn_user == NULL)
     {
 	if (!quiet)
-	    error (0, 0, "nothing known about `%s'", file);
+	    error (0, 0, "nothing known about `%s'", finfo->file);
     }
     else if (vers->vn_user[0] == '0' && vers->vn_user[1] == '\0')
     {
@@ -155,36 +149,36 @@ remove_fileproc (file, update_dir, repository, entries, srcfiles)
 	 * It's a file that has been added, but not commited yet. So,
 	 * remove the ,t file for it and scratch it from the
 	 * entries file.  */
-	Scratch_Entry (entries, file);
-	(void) sprintf (fname, "%s/%s%s", CVSADM, file, CVSEXT_LOG);
+	Scratch_Entry (finfo->entries, finfo->file);
+	(void) sprintf (fname, "%s/%s%s", CVSADM, finfo->file, CVSEXT_LOG);
 	(void) unlink_file (fname);
 	if (!quiet)
-	    error (0, 0, "removed `%s'", file);
+	    error (0, 0, "removed `%s'", finfo->file);
 
 #ifdef SERVER_SUPPORT
 	if (server_active)
-	    server_checked_in (file, update_dir, repository);
+	    server_checked_in (finfo->file, finfo->update_dir, finfo->repository);
 #endif
     }
     else if (vers->vn_user[0] == '-')
     {
 	if (!quiet)
-	    error (0, 0, "file `%s' already scheduled for removal", file);
+	    error (0, 0, "file `%s' already scheduled for removal", finfo->file);
     }
     else
     {
 	/* Re-register it with a negative version number.  */
 	(void) strcpy (fname, "-");
 	(void) strcat (fname, vers->vn_user);
-	Register (entries, file, fname, vers->ts_rcs, vers->options,
+	Register (finfo->entries, finfo->file, fname, vers->ts_rcs, vers->options,
 		  vers->tag, vers->date, vers->ts_conflict);
 	if (!quiet)
-	    error (0, 0, "scheduling `%s' for removal", file);
+	    error (0, 0, "scheduling `%s' for removal", finfo->file);
 	removed_files++;
 
 #ifdef SERVER_SUPPORT
 	if (server_active)
-	    server_checked_in (file, update_dir, repository);
+	    server_checked_in (finfo->file, finfo->update_dir, finfo->repository);
 #endif
     }
 

@@ -56,8 +56,7 @@ static int scratch_file PROTO((char *file, char *repository, List * entries,
 			 char *update_dir));
 static Dtype update_dirent_proc PROTO((char *dir, char *repository, char *update_dir));
 static int update_dirleave_proc PROTO((char *dir, int err, char *update_dir));
-static int update_file_proc PROTO((char *file, char *update_dir, char *repository,
-			     List * entries, List * srcfiles));
+static int update_fileproc PROTO ((struct file_info *));
 static int update_filesdone_proc PROTO((int err, char *repository,
 					char *update_dir));
 static int write_letter PROTO((char *file, int letter, char *update_dir));
@@ -402,7 +401,7 @@ do_update (argc, argv, xoptions, xtag, xdate, xforce, local, xbuild, xaflag,
 	date_rev2 = (char *) NULL;
 
     /* call the recursion processor */
-    err = start_recursion (update_file_proc, update_filesdone_proc,
+    err = start_recursion (update_fileproc, update_filesdone_proc,
 			   update_dirent_proc, update_dirleave_proc,
 			   argc, argv, local, which, aflag, 1,
 			   preload_update_dir, 1, 0);
@@ -432,20 +431,16 @@ do_update (argc, argv, xoptions, xtag, xdate, xforce, local, xbuild, xaflag,
  * appropriate magic for checkout
  */
 static int
-update_file_proc (file, update_dir, repository, entries, srcfiles)
-    char *file;
-    char *update_dir;
-    char *repository;
-    List *entries;
-    List *srcfiles;
+update_fileproc (finfo)
+    struct file_info *finfo;
 {
     int retval;
     Ctype status;
     Vers_TS *vers;
 
-    status = Classify_File (file, tag, date, options, force_tag_match,
-			    aflag, repository, entries, srcfiles, &vers,
-			    update_dir, pipeout);
+    status = Classify_File (finfo->file, tag, date, options, force_tag_match,
+			    aflag, finfo->repository, finfo->entries, finfo->srcfiles, &vers,
+			    finfo->update_dir, pipeout);
     if (pipeout)
     {
 	/*
@@ -474,13 +469,13 @@ update_file_proc (file, update_dir, repository, entries, srcfiles)
 #ifdef SERVER_SUPPORT
 	    case T_PATCH:		/* needs patch */
 #endif
-		retval = checkout_file (file, repository, entries, srcfiles,
-					vers, update_dir);
+		retval = checkout_file (finfo->file, finfo->repository, finfo->entries, finfo->srcfiles,
+					vers, finfo->update_dir);
 		break;
 
 	    default:			/* can't ever happen :-) */
 		error (0, 0,
-		       "unknown file status %d for file %s", status, file);
+		       "unknown file status %d for file %s", status, finfo->file);
 		retval = 0;
 		break;
 	}
@@ -496,24 +491,24 @@ update_file_proc (file, update_dir, repository, entries, srcfiles)
 		break;
 	    case T_CONFLICT:		/* old punt-type errors */
 		retval = 1;
-		(void) write_letter (file, 'C', update_dir);
+		(void) write_letter (finfo->file, 'C', finfo->update_dir);
 		break;
 	    case T_NEEDS_MERGE:		/* needs merging */
 		if (noexec)
 		{
 		    retval = 1;
-		    (void) write_letter (file, 'C', update_dir);
+		    (void) write_letter (finfo->file, 'C', finfo->update_dir);
 		}
 		else
 		{
-		    if (wrap_merge_is_copy (file))
+		    if (wrap_merge_is_copy (finfo->file))
 			/* Should we be warning the user that we are
 			 * overwriting the user's copy of the file?  */
-			retval = checkout_file (file, repository, entries,
-						srcfiles, vers, update_dir);
+			retval = checkout_file (finfo->file, finfo->repository, finfo->entries,
+						finfo->srcfiles, vers, finfo->update_dir);
 		    else
-			retval = merge_file (file, repository, entries,
-					     vers, update_dir);
+			retval = merge_file (finfo->file, finfo->repository, finfo->entries,
+					     vers, finfo->update_dir);
 		}
 		break;
 	    case T_MODIFIED:		/* locally modified */
@@ -531,12 +526,12 @@ update_file_proc (file, update_dir, repository, entries, srcfiles)
 		    if (server_active)
 			retcode = vers->ts_conflict[0] != '=';
 		    else {
-			filestamp = time_stamp (file);
+			filestamp = time_stamp (finfo->file);
 			retcode = strcmp (vers->ts_conflict, filestamp);
 			free (filestamp);
 		    }
 #else
-		    filestamp = time_stamp (file);
+		    filestamp = time_stamp (finfo->file);
 		    retcode = strcmp (vers->ts_conflict, filestamp);
 		    free (filestamp);
 #endif
@@ -549,36 +544,36 @@ update_file_proc (file, update_dir, repository, entries, srcfiles)
 			 */
 			run_setup ("%s", GREP);
 			run_arg (RCS_MERGE_PAT);
-			run_arg (file);
+			run_arg (finfo->file);
 			retcode = run_exec (RUN_TTY, DEVNULL,
 					    RUN_TTY,RUN_NORMAL);
 			if (retcode == -1)
 			{
-			    if (update_dir[0] == '\0')
+			    if (finfo->update_dir[0] == '\0')
 				error (1, errno,
 				"fork failed while examining conflict in `%s'",
-				       file);
+				       finfo->file);
 			    else
 				error (1, errno,
 			     "fork failed while examining conflict in `%s/%s'",
-				       update_dir, file);
+				       finfo->update_dir, finfo->file);
 			}
 		    }
 		    if (!retcode)
 		    {
-			(void) write_letter (file, 'C', update_dir);
+			(void) write_letter (finfo->file, 'C', finfo->update_dir);
 			retval = 1;
 		    }
 		    else
 		    {
 			/* Reregister to clear conflict flag. */
-			Register (entries, file, vers->vn_rcs, vers->ts_rcs,
+			Register (finfo->entries, finfo->file, vers->vn_rcs, vers->ts_rcs,
 				  vers->options, vers->tag,
 				  vers->date, (char *)0);
 		    }
 		}
 		if (!retval)
-		    retval = write_letter (file, 'M', update_dir);
+		    retval = write_letter (finfo->file, 'M', finfo->update_dir);
 		break;
 #ifdef SERVER_SUPPORT
 	    case T_PATCH:		/* needs patch */
@@ -588,13 +583,13 @@ update_file_proc (file, update_dir, repository, entries, srcfiles)
 		    struct stat file_info;
 		    unsigned char checksum[16];
 
-		    retval = patch_file (file, repository, entries, srcfiles,
-					 vers, update_dir, &docheckout,
+		    retval = patch_file (finfo->file, finfo->repository, finfo->entries, finfo->srcfiles,
+					 vers, finfo->update_dir, &docheckout,
 					 &file_info, checksum);
 		    if (! docheckout)
 		    {
 		        if (server_active && retval == 0)
-			    server_updated (file, update_dir, repository,
+			    server_updated (finfo->file, finfo->update_dir, finfo->repository,
 					    SERVER_PATCHED, &file_info,
 					    checksum);
 			break;
@@ -607,33 +602,33 @@ update_file_proc (file, update_dir, repository, entries, srcfiles)
 		/* Fall through.  */
 #endif
 	    case T_CHECKOUT:		/* needs checkout */
-		retval = checkout_file (file, repository, entries, srcfiles,
-					vers, update_dir);
+		retval = checkout_file (finfo->file, finfo->repository, finfo->entries, finfo->srcfiles,
+					vers, finfo->update_dir);
 #ifdef SERVER_SUPPORT
 		if (server_active && retval == 0)
-		    server_updated (file, update_dir, repository,
+		    server_updated (finfo->file, finfo->update_dir, finfo->repository,
 				    SERVER_UPDATED, (struct stat *) NULL,
 				    (unsigned char *) NULL);
 #endif
 		break;
 	    case T_ADDED:		/* added but not committed */
-		retval = write_letter (file, 'A', update_dir);
+		retval = write_letter (finfo->file, 'A', finfo->update_dir);
 		break;
 	    case T_REMOVED:		/* removed but not committed */
-		retval = write_letter (file, 'R', update_dir);
+		retval = write_letter (finfo->file, 'R', finfo->update_dir);
 		break;
 	    case T_REMOVE_ENTRY:	/* needs to be un-registered */
-		retval = scratch_file (file, repository, entries, update_dir);
+		retval = scratch_file (finfo->file, finfo->repository, finfo->entries, finfo->update_dir);
 #ifdef SERVER_SUPPORT
 		if (server_active && retval == 0)
-		    server_updated (file, update_dir, repository,
+		    server_updated (finfo->file, finfo->update_dir, finfo->repository,
 				    SERVER_UPDATED, (struct stat *) NULL,
 				    (unsigned char *) NULL);
 #endif
 		break;
 	    default:			/* can't ever happen :-) */
 		error (0, 0,
-		       "unknown file status %d for file %s", status, file);
+		       "unknown file status %d for file %s", status, finfo->file);
 		retval = 0;
 		break;
 	}
@@ -642,9 +637,9 @@ update_file_proc (file, update_dir, repository, entries, srcfiles)
     /* only try to join if things have gone well thus far */
     if (retval == 0 && join_rev1)
 #ifdef SERVER_SUPPORT
-	join_file (file, srcfiles, vers, update_dir, entries, repository);
+	join_file (finfo->file, finfo->srcfiles, vers, finfo->update_dir, finfo->entries, finfo->repository);
 #else
-	join_file (file, srcfiles, vers, update_dir, entries);
+	join_file (finfo->file, finfo->srcfiles, vers, finfo->update_dir, finfo->entries);
 #endif
 
     /* if this directory has an ignore list, add this file to it */
@@ -654,7 +649,7 @@ update_file_proc (file, update_dir, repository, entries, srcfiles)
 
 	p = getnode ();
 	p->type = FILES;
-	p->key = xstrdup (file);
+	p->key = xstrdup (finfo->file);
 	if (addnode (ignlist, p) != 0)
 	    freenode (p);
     }

@@ -3381,39 +3381,35 @@ send_modified (file, short_pathname, vers)
     free (mode_string);
 }
 
-static int send_fileproc PROTO ((char *, char *, char *, List *, List *));
+static int send_fileproc PROTO ((struct file_info *finfo));
 
 /* Deal with one file.  */
 static int
-send_fileproc (file, update_dir, repository, entries, srcfiles)
-    char *file;
-    char *update_dir;
-    char *repository;
-    List *entries;
-    List *srcfiles;
+send_fileproc (finfo)
+    struct file_info *finfo;
 {
     Vers_TS *vers;
-    int update_dir_len = strlen (update_dir);
-    char *short_pathname = xmalloc (update_dir_len + strlen (file) + 40);
-    strcpy (short_pathname, update_dir);
-    if (update_dir[0] != '\0')
+    int update_dir_len = strlen (finfo->update_dir);
+    char *short_pathname = xmalloc (update_dir_len + strlen (finfo->file) + 40);
+    strcpy (short_pathname, finfo->update_dir);
+    if (finfo->update_dir[0] != '\0')
 	strcat (short_pathname, "/");
-    strcat (short_pathname, file);
+    strcat (short_pathname, finfo->file);
 
-    send_a_repository ("", repository, update_dir);
+    send_a_repository ("", finfo->repository, finfo->update_dir);
 
     vers = Version_TS ((char *)NULL, (char *)NULL, (char *)NULL,
 		       (char *)NULL,
-		       file, 0, 0, entries, (List *)NULL);
+		       finfo->file, 0, 0, finfo->entries, (List *)NULL);
 
     if (vers->vn_user != NULL)
     {
       char *tmp;
 
-      tmp = xmalloc (strlen (file) + strlen (vers->vn_user)
+      tmp = xmalloc (strlen (finfo->file) + strlen (vers->vn_user)
 		     + strlen (vers->options) + 200);
       sprintf (tmp, "Entry /%s/%s/%s%s/%s/", 
-               file, vers->vn_user,
+               finfo->file, vers->vn_user,
                vers->ts_conflict == NULL ? "" : "+",
                (vers->ts_conflict == NULL ? ""
                 : (vers->ts_user != NULL &&
@@ -3450,7 +3446,7 @@ send_fileproc (file, update_dir, repository, entries, srcfiles)
 	{
 	    /* if the server is old, use the old request... */
 	    send_to_server ("Lost ", 0);
-	    send_to_server (file, 0);
+	    send_to_server (finfo->file, 0);
 	    send_to_server ("\012", 1);
 	    /*
 	     * Otherwise, don't do anything for missing files,
@@ -3461,7 +3457,7 @@ send_fileproc (file, update_dir, repository, entries, srcfiles)
     else if (vers->ts_rcs == NULL
 	     || strcmp (vers->ts_user, vers->ts_rcs) != 0)
     {
-	send_modified (file, short_pathname, vers);
+	send_modified (finfo->file, short_pathname, vers);
     }
     else
     {
@@ -3469,7 +3465,7 @@ send_fileproc (file, update_dir, repository, entries, srcfiles)
 	if (use_unchanged)
           {
 	    send_to_server ("Unchanged ", 0);
-	    send_to_server (file, 0);
+	    send_to_server (finfo->file, 0);
 	    send_to_server ("\012", 1);
           }
     }
@@ -3481,7 +3477,7 @@ send_fileproc (file, update_dir, repository, entries, srcfiles)
 
 	p = getnode ();
 	p->type = FILES;
-	p->key = xstrdup (file);
+	p->key = xstrdup (finfo->file);
 	(void) addnode (ignlist, p);
     }
 

@@ -13,9 +13,7 @@
 
 #include "cvs.h"
 
-static int check_fileproc PROTO((char *file, char *update_dir,
-     			 char *repository, List * entries,
-			 List * srcfiles));
+static int check_fileproc PROTO((struct file_info *finfo));
 static int check_filesdoneproc PROTO((int err, char *repos, char *update_dir));
 static int pretag_proc PROTO((char *repository, char *filter));
 static void masterlist_delproc PROTO((Node *p));
@@ -23,9 +21,7 @@ static void tag_delproc PROTO((Node *p));
 static int pretag_list_proc PROTO((Node *p, void *closure));
 
 static Dtype rtag_dirproc PROTO((char *dir, char *repos, char *update_dir));
-static int rtag_fileproc PROTO((char *file, char *update_dir,
-			  char *repository, List * entries,
-			  List * srcfiles));
+static int rtag_fileproc PROTO((struct file_info *finfo));
 static int rtag_proc PROTO((int *pargc, char **argv, char *xwhere,
 		      char *mwhere, char *mfile, int shorten,
 		      int local_specified, char *mname, char *msg));
@@ -318,21 +314,17 @@ rtag_proc (pargc, argv, xwhere, mwhere, mfile, shorten, local_specified,
 /* All we do here is add it to our list */
 
 static int
-check_fileproc(file, update_dir, repository, entries, srcfiles)
-    char *file;
-    char *update_dir;
-    char *repository;
-    List * entries;
-    List * srcfiles;
+check_fileproc (finfo)
+    struct file_info *finfo;
 {
     char *xdir;
     Node *p;
     Vers_TS *vers;
     
-    if (update_dir[0] == '\0')
+    if (finfo->update_dir[0] == '\0')
 	xdir = ".";
     else
-	xdir = update_dir;
+	xdir = finfo->update_dir;
     if ((p = findnode (mtlist, xdir)) != NULL)
     {
 	tlist = ((struct master_lists *) p->data)->tlist;
@@ -354,11 +346,11 @@ check_fileproc(file, update_dir, repository, entries, srcfiles)
     }
     /* do tlist */
     p = getnode ();
-    p->key = xstrdup (file);
+    p->key = xstrdup (finfo->file);
     p->type = UPDATE;
     p->delproc = tag_delproc;
-    vers = Version_TS (repository, (char *) NULL, (char *) NULL,
-        (char *) NULL, file, 0, 0, entries, srcfiles);
+    vers = Version_TS (finfo->repository, (char *) NULL, (char *) NULL,
+        (char *) NULL, finfo->file, 0, 0, finfo->entries, finfo->srcfiles);
     p->data = RCS_getversion(vers->srcfile, numtag, date, force_tag_match, 0);
     if (p->data != NULL)
     {
@@ -504,12 +496,8 @@ pretag_list_proc(p, closure)
  */
 /* ARGSUSED */
 static int
-rtag_fileproc (file, update_dir, repository, entries, srcfiles)
-    char *file;
-    char *update_dir;
-    char *repository;
-    List *entries;
-    List *srcfiles;
+rtag_fileproc (finfo)
+    struct file_info *finfo;
 {
     Node *p;
     RCSNode *rcsfile;
@@ -517,7 +505,7 @@ rtag_fileproc (file, update_dir, repository, entries, srcfiles)
     int retcode = 0;
 
     /* find the parsed RCS data */
-    p = findnode (srcfiles, file);
+    p = findnode (finfo->srcfiles, finfo->file);
     if (p == NULL)
 	return (1);
     rcsfile = (RCSNode *) p->data;
@@ -588,7 +576,7 @@ rtag_fileproc (file, update_dir, repository, entries, srcfiles)
        oversion = RCS_getversion (rcsfile, symtag, (char *) NULL, 1, 0);
        if (oversion != NULL)
        {
-	  int isbranch = RCS_isbranch (file, symtag, srcfiles);
+	  int isbranch = RCS_isbranch (finfo->file, symtag, finfo->srcfiles);
 
 	  /*
 	   * if versions the same and neither old or new are branches don't
@@ -602,10 +590,10 @@ rtag_fileproc (file, update_dir, repository, entries, srcfiles)
 	  }
 	  
 	  if (!force_tag_move) {	/* we're NOT going to move the tag */
-	     if (update_dir[0])
-		(void) printf ("W %s/%s", update_dir, file);
+	     if (finfo->update_dir[0])
+		(void) printf ("W %s/%s", finfo->update_dir, finfo->file);
 	     else
-		(void) printf ("W %s", file);
+		(void) printf ("W %s", finfo->file);
 	     
 	     (void) printf (" : %s already exists on %s %s", 
 			    symtag, isbranch ? "branch" : "version", oversion);

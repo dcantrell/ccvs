@@ -29,17 +29,13 @@ static int setting_tedit;
 static int setting_tunedit;
 static int setting_tcommit;
 
-static int onoff_fileproc PROTO ((char *, char *, char *, List *, List *));
+static int onoff_fileproc PROTO ((struct file_info *finfo));
 
 static int
-onoff_fileproc (file, update_dir, repository, entries, srcfiles)
-    char *file;
-    char *update_dir;
-    char *repository;
-    List *entries;
-    List *srcfiles;
+onoff_fileproc (finfo)
+    struct file_info *finfo;
 {
-    fileattr_set (file, "_watched", turning_on ? "" : NULL);
+    fileattr_set (finfo->file, "_watched", turning_on ? "" : NULL);
     return 0;
 }
 
@@ -132,15 +128,11 @@ watch_off (argc, argv)
     return watch_onoff (argc, argv);
 }
 
-static int dummy_fileproc PROTO ((char *, char *, char *, List *, List *));
+static int dummy_fileproc PROTO ((struct file_info *finfo));
 
 static int
-dummy_fileproc (file, update_dir, repository, entries, srcfiles)
-    char *file;
-    char *update_dir;
-    char *repository;
-    List *entries;
-    List *srcfiles;
+dummy_fileproc (finfo)
+    struct file_info *finfo;
 {
     /* This is a pretty hideous hack, but the gist of it is that recurse.c
        won't call notify_check unless there is a fileproc, so we can't just
@@ -148,9 +140,7 @@ dummy_fileproc (file, update_dir, repository, entries, srcfiles)
     return 0;
 }
 
-static int ncheck_fileproc PROTO ((char *file, char *update_dir,
-				   char *repository,
-				   List * entries, List * srcfiles));
+static int ncheck_fileproc PROTO ((struct file_info *finfo));
 
 /* Check for and process notifications.  Local only.  I think that doing
    this as a fileproc is the only way to catch all the
@@ -159,12 +149,8 @@ static int ncheck_fileproc PROTO ((char *file, char *update_dir,
    processed the directory.  */
 
 static int
-ncheck_fileproc (file, update_dir, repository, entries, srcfiles)
-    char *file;
-    char *update_dir;
-    char *repository;
-    List *entries;
-    List *srcfiles;
+ncheck_fileproc (finfo)
+    struct file_info *finfo;
 {
     int notif_type;
     char *filename;
@@ -217,7 +203,7 @@ ncheck_fileproc (file, update_dir, repository, entries, srcfiles)
 	*cp = '\0';
 
 	notify_do (notif_type, filename, getcaller (), val, watches,
-		   repository);
+		   finfo->repository);
     }
     free (line);
 
@@ -282,15 +268,11 @@ send_notifications (argc, argv, local)
     return err;
 }
 
-static int edit_fileproc PROTO ((char *, char *, char *, List *, List *));
+static int edit_fileproc PROTO ((struct file_info *finfo));
 
 static int
-edit_fileproc (file, update_dir, repository, entries, srcfiles)
-    char *file;
-    char *update_dir;
-    char *repository;
-    List *entries;
-    List *srcfiles;
+edit_fileproc (finfo)
+    struct file_info *finfo;
 {
     FILE *fp;
     time_t now;
@@ -305,7 +287,7 @@ edit_fileproc (file, update_dir, repository, entries, srcfiles)
     (void) time (&now);
     ascnow = asctime (gmtime (&now));
     ascnow[24] = '\0';
-    fprintf (fp, "E%s\t%s GMT\t%s\t%s\t", file,
+    fprintf (fp, "E%s\t%s GMT\t%s\t%s\t", finfo->file,
 	     ascnow, hostname, CurDir);
     if (setting_tedit)
 	fprintf (fp, "E");
@@ -317,13 +299,13 @@ edit_fileproc (file, update_dir, repository, entries, srcfiles)
 
     if (fclose (fp) < 0)
     {
-	if (update_dir[0] == '\0')
-	    error (0, errno, "cannot close %s", file);
+	if (finfo->update_dir[0] == '\0')
+	    error (0, errno, "cannot close %s", finfo->file);
 	else
-	    error (0, errno, "cannot close %s/%s", update_dir, file);
+	    error (0, errno, "cannot close %s/%s", finfo->update_dir, finfo->file);
     }
 
-    xchmod (file, 1);
+    xchmod (finfo->file, 1);
 
     /* Now stash the file away in CVSADM so that unedit can revert even if
        it can't communicate with the server.  We stash away a writable
@@ -343,11 +325,11 @@ edit_fileproc (file, update_dir, repository, entries, srcfiles)
 		    )
 	    error (1, errno, "cannot mkdir %s", CVSADM_BASE);
     }
-    basefilename = xmalloc (10 + sizeof CVSADM_BASE + strlen (file));
+    basefilename = xmalloc (10 + sizeof CVSADM_BASE + strlen (finfo->file));
     strcpy (basefilename, CVSADM_BASE);
     strcat (basefilename, "/");
-    strcat (basefilename, file);
-    copy_file (file, basefilename);
+    strcat (basefilename, finfo->file);
+    copy_file (finfo->file, basefilename);
     free (basefilename);
 
     return 0;
@@ -438,15 +420,11 @@ edit (argc, argv)
     return err;
 }
 
-static int unedit_fileproc PROTO ((char *, char *, char *, List *, List *));
+static int unedit_fileproc PROTO ((struct file_info *finfo));
 
 static int
-unedit_fileproc (file, update_dir, repository, entries, srcfiles)
-    char *file;
-    char *update_dir;
-    char *repository;
-    List *entries;
-    List *srcfiles;
+unedit_fileproc (finfo)
+    struct file_info *finfo;
 {
     FILE *fp;
     time_t now;
@@ -456,10 +434,10 @@ unedit_fileproc (file, update_dir, repository, entries, srcfiles)
     if (noexec)
 	return 0;
 
-    basefilename = xmalloc (10 + sizeof CVSADM_BASE + strlen (file));
+    basefilename = xmalloc (10 + sizeof CVSADM_BASE + strlen (finfo->file));
     strcpy (basefilename, CVSADM_BASE);
     strcat (basefilename, "/");
-    strcat (basefilename, file);
+    strcat (basefilename, finfo->file);
     if (!isfile (basefilename))
     {
 	/* This file apparently was never cvs edit'd (e.g. we are uneditting
@@ -468,11 +446,11 @@ unedit_fileproc (file, update_dir, repository, entries, srcfiles)
 	return 0;
     }
 
-    if (xcmp (file, basefilename) != 0)
+    if (xcmp (finfo->file, basefilename) != 0)
     {
-	if (update_dir[0] != '\0')
-	    printf ("%s/", update_dir);
-	printf ("%s has been modified; revert changes? ", file);
+	if (finfo->update_dir[0] != '\0')
+	    printf ("%s/", finfo->update_dir);
+	printf ("%s has been modified; revert changes? ", finfo->file);
 	if (!yesno ())
 	{
 	    /* "no".  */
@@ -480,7 +458,7 @@ unedit_fileproc (file, update_dir, repository, entries, srcfiles)
 	    return 0;
 	}
     }
-    rename_file (basefilename, file);
+    rename_file (basefilename, finfo->file);
     free (basefilename);
 
     fp = open_file (CVSADM_NOTIFY, "a");
@@ -488,18 +466,18 @@ unedit_fileproc (file, update_dir, repository, entries, srcfiles)
     (void) time (&now);
     ascnow = asctime (gmtime (&now));
     ascnow[24] = '\0';
-    fprintf (fp, "U%s\t%s GMT\t%s\t%s\t\n", file,
+    fprintf (fp, "U%s\t%s GMT\t%s\t%s\t\n", finfo->file,
 	     ascnow, hostname, CurDir);
 
     if (fclose (fp) < 0)
     {
-	if (update_dir[0] == '\0')
-	    error (0, errno, "cannot close %s", file);
+	if (finfo->update_dir[0] == '\0')
+	    error (0, errno, "cannot close %s", finfo->file);
 	else
-	    error (0, errno, "cannot close %s/%s", update_dir, file);
+	    error (0, errno, "cannot close %s/%s", finfo->update_dir, finfo->file);
     }
 
-    xchmod (file, 0);
+    xchmod (finfo->file, 0);
     return 0;
 }
 
@@ -935,27 +913,23 @@ static const char *const editors_usage[] =
     NULL
 };
 
-static int editors_fileproc PROTO ((char *, char *, char *, List *, List *));
+static int editors_fileproc PROTO ((struct file_info *finfo));
 
 static int
-editors_fileproc (file, update_dir, repository, entries, srcfiles)
-    char *file;
-    char *update_dir;
-    char *repository;
-    List *entries;
-    List *srcfiles;
+editors_fileproc (finfo)
+    struct file_info *finfo;
 {
     char *them;
     char *p;
 
-    them = fileattr_get0 (file, "_editors");
+    them = fileattr_get0 (finfo->file, "_editors");
     if (them == NULL)
 	return 0;
 
-    if (update_dir[0] == '\0')
-	printf ("%s", file);
+    if (finfo->update_dir[0] == '\0')
+	printf ("%s", finfo->file);
     else
-	printf ("%s/%s", update_dir, file);
+	printf ("%s/%s", finfo->update_dir, finfo->file);
 
     p = them;
     while (1)

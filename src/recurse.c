@@ -35,8 +35,6 @@ static int dosrcs;
 static char update_dir[PATH_MAX];
 static char *repository = NULL;
 static List *entries = NULL;
-static List *srcfiles = NULL;
-
 static List *filelist = NULL; /* holds list of files on which to operate */
 static List *dirlist = NULL; /* holds list of directories on which to operate */
 
@@ -105,8 +103,6 @@ start_recursion (fileproc, filesdoneproc, direntproc, dirleaveproc,
 	Entries_Close (entries);
 	entries = NULL;
     }
-    if (srcfiles)
-	dellist (&srcfiles);
     if (filelist)
 	dellist (&filelist); /* FIXME-krp: no longer correct. */
 /* FIXME-krp: clean up files_by_dir */
@@ -405,6 +401,8 @@ do_recursion (xfileproc, xfilesdoneproc, xdirentproc, xdirleaveproc,
     /* process the files (if any) */
     if (filelist != NULL)
     {
+	struct file_info finfo_struct;
+
 	/* read lock it if necessary */
 	if (readlock && repository && Reader_Lock (repository) != 0)
 	    error (1, 0, "read lock failed - giving up");
@@ -420,12 +418,17 @@ do_recursion (xfileproc, xfilesdoneproc, xdirentproc, xdirleaveproc,
 
 	/* pre-parse the source files */
 	if (dosrcs && repository)
-	    srcfiles = RCS_parsefiles (filelist, repository);
+	    finfo_struct.srcfiles = RCS_parsefiles (filelist, repository);
 	else
-	    srcfiles = (List *) NULL;
+	    finfo_struct.srcfiles = (List *) NULL;
+
+	finfo_struct.repository = repository;
+	finfo_struct.update_dir = update_dir;
+	finfo_struct.entries = entries;
+	/* do_file_proc will fill in finfo_struct.file.  */
 
 	/* process the files */
-	err += walklist (filelist, do_file_proc, NULL);
+	err += walklist (filelist, do_file_proc, &finfo_struct);
 
 	/* unlock it */
 	if (readlock)
@@ -433,7 +436,7 @@ do_recursion (xfileproc, xfilesdoneproc, xdirentproc, xdirleaveproc,
 
 	/* clean up */
 	dellist (&filelist);
-	dellist (&srcfiles);
+	dellist (&finfo_struct.srcfiles);
 	Entries_Close (entries);
 	entries = NULL;
     }
@@ -472,8 +475,10 @@ do_file_proc (p, closure)
     Node *p;
     void *closure;
 {
+    struct file_info *finfo = (struct file_info *)closure;
+    finfo->file = p->key;
     if (fileproc != NULL)
-	return (fileproc (p->key, update_dir, repository, entries, srcfiles));
+	return fileproc (finfo);
     else
 	return (0);
 }
