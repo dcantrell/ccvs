@@ -14,6 +14,7 @@
  */
 
 #include "cvs.h"
+#include "getline.h"
 
 #ifdef MY_NDBM
 

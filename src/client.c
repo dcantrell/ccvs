@@ -1,6 +1,7 @@
 /* CVS client-related stuff.  */
 
 #include "cvs.h"
+#include "getline.h"
 
 #ifdef CLIENT_SUPPORT
 
@@ -327,8 +328,8 @@ read_line (resultp, eof_ok)
 {
     int c;
     char *result;
-    int input_index = 0;
-    int result_size = 80;
+    size_t input_index = 0;
+    size_t result_size = 80;
 
 #ifdef NO_SOCKET_TO_FD
     if (! use_socket_style)
@@ -920,6 +921,8 @@ handle_checksum (args, len)
 static int stored_mode_valid;
 static char *stored_mode;
 
+static void handle_mode PROTO ((char *, int));
+
 static void
 handle_mode (args, len)
     char *args;
@@ -1037,11 +1040,8 @@ update_entries (data_arg, ent_list, short_pathname, filename)
 	char *size_string;
 	char *mode_string;
 	int size;
-	int size_read;
-	int size_left;
 	int fd;
 	char *buf;
-	char *buf2;
 	char *temp_filename;
 	int use_gzip, gzip_status;
 	pid_t gzip_pid = 0;
@@ -2165,7 +2165,7 @@ struct response responses[] =
 void
 send_to_server (str, len)
      char *str;
-     int len;
+     size_t len;
 {
   if (len == 0)
     len = strlen (str);
@@ -2191,7 +2191,7 @@ send_to_server (str, len)
   else
 #endif /* NO_SOCKET_TO_FD */
     {
-      int wrtn = 0;
+      size_t wrtn = 0;
       
       while (wrtn < len)
         {
@@ -2218,7 +2218,7 @@ send_to_server (str, len)
 void
 read_from_server (buf, len)
      char *buf;
-     int len;
+     size_t len;
 {
 #ifdef NO_SOCKET_TO_FD
   if (use_socket_style)
@@ -2241,7 +2241,7 @@ read_from_server (buf, len)
   else
 #endif /* NO_SOCKET_TO_FD */
     {
-      int red = 0;
+      size_t red = 0;
       
       while (red < len)
         {

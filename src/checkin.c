@@ -16,6 +16,7 @@
  */
 
 #include "cvs.h"
+#include "fileattr.h"
 
 #ifndef lint
 static const char rcsid[] = "$CVSid: @(#)checkin.c 1.48 94/10/07 $";

@@ -60,8 +60,8 @@ int connect_to_pserver PROTO((int *tofdp, int* fromfdp, int verify_only));
 #endif /* AUTH_CLIENT_SUPPORT */
 
 /* Talking to the server. */
-void send_to_server PROTO((char *str, int len));
-void read_from_server PROTO((char *buf, int len));
+void send_to_server PROTO((char *str, size_t len));
+void read_from_server PROTO((char *buf, size_t len));
 
 /* Internal functions that handle client communication to server, etc.  */
 int supported_request PROTO ((char *));
