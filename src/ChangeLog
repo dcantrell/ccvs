@@ -1,3 +1,8 @@
+2001-03-02  Derek Price  <derek.price@openavenue.com>
+
+	* sanity.sh (crerepos): Make failed ${CVS_RSH-rsh} attempt print the
+	name of the command it actually used rather than 'rsh'.
+
 2001-02-27  Derek Price  <derek.price@openavenue.com>
 
 	* sanity.sh (modules2-ampermod-*): Added these tests to make sure the
