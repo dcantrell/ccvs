@@ -1,5 +1,8 @@
 Sat Oct 26 18:29:46 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* sanity.sh (rdiff): cd out of testimport directory and remove it
+	when done.
+
 	* sanity.sh (info): Adjust tests to reflect fact that loginfo was
 	created by cvs init.
 
