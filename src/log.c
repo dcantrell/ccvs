@@ -1393,6 +1393,8 @@ log_version_requested (log_data, revlist, rcs, vnode)
     return 1;
 }
 
+
+
 /*
  * Output a single symbol.  This is called via walklist.
  */
@@ -1408,6 +1410,8 @@ log_symbol (p, closure)
     cvs_output (p->data, 0);
     return 0;
 }
+
+
 
 /*
  * Count the number of entries on a list.  This is called via walklist.
