@@ -1302,57 +1302,44 @@ patch_file (finfo, vers_ts, docheckout, file_info, checksum)
 
     if (! fail)
     {
-        /* Check it out into finfo->file, and then move to file2, so that we
-           can get the right modes into *FILE_INFO.  We can't check it
-           out directly into file2 because co doesn't understand how
-           to do that.  */
-	retcode = RCS_checkout (vers_ts->srcfile, finfo->file,
+	retcode = RCS_checkout (vers_ts->srcfile, file2,
 				vers_ts->vn_rcs, (char *) NULL,
 				vers_ts->options, RUN_TTY);
 	if (retcode != 0)
 	    fail = 1;
 	else
 	{
-	    if (!isreadable (finfo->file))
-	    {
-	        /* File is dead.  */
-	        fail = 1;
-	    }
+	    if (cvswrite == TRUE
+		&& !fileattr_get (finfo->file, "_watched"))
+		xchmod (file2, 1);
+	    e = CVS_FOPEN (file2, "r");
+	    if (e == NULL)
+		fail = 1;
 	    else
 	    {
-	        rename_file (finfo->file, file2);
-		if (cvswrite == TRUE
-		    && !fileattr_get (finfo->file, "_watched"))
-		    xchmod (file2, 1);
-		e = CVS_FOPEN (file2, "r");
-		if (e == NULL)
-		    fail = 1;
-		else
+		struct MD5Context context;
+		int nl;
+		unsigned char buf[8192];
+		unsigned len;
+
+		nl = 0;
+
+		/* Compute the MD5 checksum and make sure there is
+		   a trailing newline.  */
+		MD5Init (&context);
+		while ((len = fread (buf, 1, sizeof buf, e)) != 0)
 		{
-		    struct MD5Context context;
-		    int nl;
-		    unsigned char buf[8192];
-		    unsigned len;
-
-		    nl = 0;
-
-		    /* Compute the MD5 checksum and make sure there is
-                       a trailing newline.  */
-		    MD5Init (&context);
-		    while ((len = fread (buf, 1, sizeof buf, e)) != 0)
-		    {
-			nl = buf[len - 1] == '\n';
-		        MD5Update (&context, buf, len);
-		    }
-		    MD5Final (checksum, &context);
-
-		    if (ferror (e) || ! nl)
-		    {
-		        fail = 1;
-		    }
-
-		    fclose (e);
+		    nl = buf[len - 1] == '\n';
+		    MD5Update (&context, buf, len);
 		}
+		MD5Final (checksum, &context);
+
+		if (ferror (e) || ! nl)
+		{
+		    fail = 1;
+		}
+
+		fclose (e);
 	    }
 	}
     }	  
