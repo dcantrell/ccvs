@@ -307,13 +307,6 @@ from 1.1 to 1.2).
      emerge.el.  (but be careful in making this work client/server--it means
      doing the interactive merging at the end after the server is done).
 
-148. It would be nice if cvs import (and perhaps commit when the rcs file
-     is created) would set the comment leader automagically to the prefix
-     string of $Log entry, if some option is given.  For example, if a file
-     has a line `%*&# $Log...'  the comment leader would be set to `%*&# '.
-     It would help a lot for unknown files with unknown suffix, and if the
-     comment leader is not standard.
-
 149. On Sun, 2 Feb 92 22:01:38 EST, rouilj@dl5000.bc.edu (John P. Rouillard)
      said:
      Maybe there should be an option to cvs admin that allows a user to

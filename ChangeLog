@@ -1,3 +1,8 @@
+Sun Oct  1 11:35:17 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* TODO: Remove item about setting comment leader automatically;
+	RCS 5.7 does this.
+
 Thu Sep 28 13:37:04 1995  Larry Jones <larry.jones@sdrc.com>
         
         * configure: set CFLAGS and LIBS correctly for ISC.
