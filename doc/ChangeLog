@@ -1,5 +1,9 @@
 Sun May  4 14:38:35 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvs.texinfo (CVS commands, diff): Change "run diffs" to "show
+	differences"; the former is jargon.
+	(CVS commands): Don't refer to "rlog" in describing what log does.
+
 	* Makefile.in (cvsclient.dvi cvsclient.aux): Run texi2dvi rather
 	than (poorly) emulating it ourself.
 

@@ -6128,11 +6128,11 @@ reference to @sc{cvs} commands, @pxref{Invoking CVS}).
 * admin::                       Administration front end for rcs
 * checkout::                    Checkout sources for editing
 * commit::                      Check files into the repository
-* diff::                        Run diffs between revisions
+* diff::                        Show differences between revisions
 * export::                      Export sources from CVS, similar to checkout
 * history::                     Show status of files and users
 * import::                      Import sources into CVS, using vendor branches
-* log::                         Print out 'rlog' information for files
+* log::                         Show log messages for files
 * rdiff::                       'patch' format diffs between releases
 * release::                     Indicate that a Module is no longer in use
 * rtag::                        Add a tag to a module
@@ -7408,7 +7408,7 @@ $ cvs checkout -r EXPR1 whatever_module
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node diff
-@appendixsec diff---Run diffs between revisions
+@appendixsec diff---Show differences between revisions
 @cindex Diff (subcommand)
 
 @itemize @bullet
