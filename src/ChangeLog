@@ -1,3 +1,8 @@
+2003-07-20  Derek Price  <derek@ximbiot.com>
+
+	* wrapper.c: Remove mention of obsolete -f and -t wrapper options from
+	a comment.
+
 2003-07-12  Larry Jones  <lawrence.jones@eds.com>
 
 	* sanity.sh (diffnl): New tests for diff on files with no newline
