@@ -67,8 +67,8 @@ admin (argc, argv)
 	}
 
 	if (denied)
-	    error (1, 0, "usage is restricted to members of the group "
-		   CVS_ADMIN_GROUP "!");
+	    error (1, 0, "usage is restricted to members of the group %s",
+		   CVS_ADMIN_GROUP);
     }
 #endif
 

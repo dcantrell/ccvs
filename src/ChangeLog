@@ -1,3 +1,8 @@
+Wed Oct 25 12:44:32 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* admin.c (admin): Don't rely on ANSI C string concatenation;
+	SunOS 4.1.3 /bin/cc doesn't support it.
+
 Tue Oct 24 22:34:22 1995  Anthony J. Lill  <ajlill@ajlc.waterloo.on.ca>
 
 	* import.c (expand_at_signs): Check errno as well as return value
