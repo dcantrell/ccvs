@@ -7234,6 +7234,7 @@ ${PROG} [a-z]*: Updating top-dir"
 
 	  cd ..
 	  rm -r 1
+	  rm -rf ${CVSROOT_DIRNAME}/top-dir
 	  ;;
 
 	head)
@@ -7394,6 +7395,7 @@ ${PLUS} modify on branch after brtag"
 
 	  cd ../..
 	  rm -r 1
+	  rm -rf ${CVSROOT_DIRNAME}/first-dir
 	  ;;
 
 	admin)
