@@ -1,3 +1,7 @@
+Thu May  1 13:44:51 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* sanity.sh (binfiles2): New tests, for update -j and binary files.
+
 Wed Apr 30 11:18:36 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* recurse.c (start_recursion): Also free reposfile.
