@@ -1,5 +1,11 @@
 2003-06-11  Derek Price  <derek@ximbiot.com>
 
+	* cvs.texinfo (Invoking CVS): Remove `-P' from the list of `cvs export'
+	options.
+	(Patch from Alexander Taler <dissent@cvshome.org>.)
+
+2003-06-11  Derek Price  <derek@ximbiot.com>
+
 	* cvs.texinfo (Top): Remove out-of-date (by at least 5 years) comment.
 	(Patch from Alexander Taler <dissent@cvshome.org>.)
 
