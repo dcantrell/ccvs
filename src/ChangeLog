@@ -1,5 +1,10 @@
 Thu Dec 11 15:32:31 1997  Ian Lance Taylor  <ian@cygnus.com>
 
+	* client.c (init_sockaddr): Compile if HAVE_KERBEROS, as well as
+	if AUTH_CLIENT_SUPPORT.  Return a pointer to a struct hostent.
+	(start_tcp_server): Clean up.  Use init_sockaddr.  Use
+	SOCK_STRERROR and SOCK_ERRNO.  Don't bind the socket.
+
 	Generalize buffering code used by Kerberos encryption routines
 	into a generic packetizing buffer.  The new code in buffer.c is a
 	modified version of the code removed from server.c.

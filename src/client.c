@@ -3288,18 +3288,18 @@ supported_request (name)
 }
 
 
-#ifdef AUTH_CLIENT_SUPPORT
-static void init_sockaddr PROTO ((struct sockaddr_in *, char *,
-				  unsigned int));
+#if defined (AUTH_CLIENT_SUPPORT) || defined (HAVE_KERBEROS)
+static struct hostent *init_sockaddr PROTO ((struct sockaddr_in *, char *,
+					     unsigned int));
 
-static void
+static struct hostent *
 init_sockaddr (name, hostname, port)
     struct sockaddr_in *name;
     char *hostname;
     unsigned int port;
 {
     struct hostent *hostinfo;
-	unsigned short shortport = port;
+    unsigned short shortport = port;
 
     memset (name, 0, sizeof (*name));
     name->sin_family = AF_INET;
@@ -3311,8 +3311,12 @@ init_sockaddr (name, hostname, port)
 	error_exit ();
     }
     name->sin_addr = *(struct in_addr *) hostinfo->h_addr;
+    return hostinfo;
 }
 
+#endif /* defined (AUTH_CLIENT_SUPPORT) || defined (HAVE_KERBEROS) */
+
+#ifdef AUTH_CLIENT_SUPPORT
 
 static int auth_server_port_number PROTO ((void));
 
@@ -3586,39 +3590,16 @@ void
 start_tcp_server (tofdp, fromfdp)
     int *tofdp, *fromfdp;
 {
-    int tofd = -1, fromfd;
-
-    struct hostent *hp;
-    char *hname;
+    int s;
     const char *portenv;
     int port;
+    struct hostent *hp;
     struct sockaddr_in sin;
-    int s;
+    char *hname;
 
-#if HAVE_KERBEROS
-    KTEXT_ST ticket;
-    const char *realm;
-#endif /* HAVE_KERBEROS */
-
-    int status;
-
-    /*
-     * We look up the host to give a better error message if it
-     * does not exist.  However, we then pass CVSroot_hostname to
-     * krb_sendauth, rather than the canonical name, because
-     * krb_sendauth is going to do its own canonicalization anyhow
-     * and that lets us not worry about the static storage used by
-     * gethostbyname.
-     */
-    hp = gethostbyname (CVSroot_hostname);
-    if (hp == NULL)
-	error (1, 0, "%s: unknown host", CVSroot_hostname);
-    hname = xmalloc (strlen (hp->h_name) + 1);
-    strcpy (hname, hp->h_name);
-  
-#if HAVE_KERBEROS
-    realm = krb_realmofhost (hname);
-#endif /* HAVE_KERBEROS */
+    s = socket (AF_INET, SOCK_STREAM, 0);
+    if (s < 0)
+	error (1, 0, "cannot create socket: %s", SOCK_STRERROR (SOCK_ERRNO));
 
     /* Get CVS_CLIENT_PORT or look up cvs/tcp with CVS_PORT as default */
     portenv = getenv ("CVS_CLIENT_PORT");
@@ -3647,77 +3628,50 @@ start_tcp_server (tofdp, fromfdp)
 	    port = sp->s_port;
     }
 
-    s = socket (AF_INET, SOCK_STREAM, 0);
-    if (s < 0)
-	error (1, errno, "socket");
+    hp = init_sockaddr (&sin, CVSroot_hostname, port);
 
-    memset (&sin, 0, sizeof sin);
-    sin.sin_family = AF_INET;
-    sin.sin_addr.s_addr = INADDR_ANY;
-    sin.sin_port = 0;
-
-    if (bind (s, (struct sockaddr *) &sin, sizeof sin) < 0)
-	error (1, errno, "bind");
-
-    memcpy (&sin.sin_addr, hp->h_addr, hp->h_length);
-    sin.sin_port = port;
-
+    hname = xmalloc (strlen (hp->h_name) + 1);
+    strcpy (hname, hp->h_name);
+  
     if (connect (s, (struct sockaddr *) &sin, sizeof sin) < 0)
-    {
-	error (0, errno, "connect");
-	close (s);
-    }
-    else
-    {
+	error (1, 0, "connect to %s:%d failed: %s", CVSroot_hostname,
+	       port, SOCK_STRERROR (SOCK_ERRNO));
+
 #ifdef HAVE_KERBEROS
+    {
+	const char *realm;
 	struct sockaddr_in laddr;
 	int laddrlen;
+	KTEXT_ST ticket;
 	MSG_DAT msg_data;
 	CREDENTIALS cred;
+	int status;
+
+	realm = krb_realmofhost (hname);
 
 	laddrlen = sizeof (laddr);
 	if (getsockname (s, (struct sockaddr *) &laddr, &laddrlen) < 0)
-	    error (1, errno, "getsockname");
+	    error (1, 0, "getsockname failed: %s", SOCK_STRERROR (SOCK_ERRNO));
 
 	/* We don't care about the checksum, and pass it as zero.  */
 	status = krb_sendauth (KOPT_DO_MUTUAL, s, &ticket, "rcmd",
 			       hname, realm, (unsigned long) 0, &msg_data,
 			       &cred, sched, &laddr, &sin, "KCVSV1.0");
 	if (status != KSUCCESS)
-        {
-	    error (0, 0, "kerberos: %s", krb_get_err_text(status));
-	    close (s);
-        }
-	else
-        {
-	    memcpy (kblock, cred.session, sizeof (C_Block));
-
+	    error (1, 0, "kerberos authentication failed: %s",
+		   krb_get_err_text (status));
+	memcpy (kblock, cred.session, sizeof (C_Block));
+    }
 #endif /* HAVE_KERBEROS */
 
-	    server_fd = s;
-	    close_on_exec (server_fd);
-	    tofd = fromfd = s;
-
-#ifdef HAVE_KERBEROS
-        }
-#endif /* HAVE_KERBEROS */
-    }
-  
-    if (tofd == -1)
-    {
-#ifdef HAVE_KERBEROS
-	error (0, 0, "Kerberos connect failed");
-#else
-	error (0, 0, "Direct TCP connect failed");
-#endif
-	error (1, 0, "couldn't connect to remote host %s", CVSroot_hostname);
-    }
+    server_fd = s;
+    close_on_exec (server_fd);
 
     free (hname);
 
     /* Give caller the values it wants. */
-    *tofdp   = tofd;
-    *fromfdp = fromfd;
+    *tofdp   = s;
+    *fromfdp = s;
 }
 
 #endif /* HAVE_KERBEROS */
