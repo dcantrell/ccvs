@@ -146,10 +146,10 @@ find_fileproc (finfo)
 	status = T_MODIFIED;
     else
     {
-	/* This covers unmodified files, as well as a variety of other cases
-	   (e.g. "touch foo", "cvs ci foo").  FIXME: we probably should be
-	   printing a message and returning 1 for many of those cases (but
-	   I'm not sure exactly which ones).  */
+	/* This covers unmodified files, as well as a variety of other
+	   cases.  FIXME: we probably should be printing a message and
+	   returning 1 for many of those cases (but I'm not sure
+	   exactly which ones).  */
 	free (fullname);
 	return 0;
     }
