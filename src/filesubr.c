@@ -396,6 +396,8 @@ unlink_file (const char *f)
     return (CVS_UNLINK (f));
 }
 
+
+
 /*
  * Unlink a file or dir, if possible.  If it is a directory do a deep
  * removal of all of the files in the directory.  Return -1 on error
@@ -410,12 +412,12 @@ unlink_file_dir (const char *f)
 	/* This is called by the server parent process in contexts where
 	   it is not OK to send output (e.g. after we sent "ok" to the
 	   client).  */
-	if ( !server_active )
+	if (!server_active)
 #endif
-	TRACE ( 1, "unlink_file_dir(%s)", f );
+	TRACE (TRACE_FUNCTION, "unlink_file_dir(%s)", f);
 
     if (noexec)
-	return (0);
+	return 0;
 
     /* For at least some unices, if root tries to unlink() a directory,
        instead of doing something rational like returning EISDIR,
@@ -438,6 +440,8 @@ unlink_file_dir (const char *f)
 
     return CVS_UNLINK (f);
 }
+
+
 
 /* Remove a directory and everything it contains.  Returns 0 for
  * success, -1 for failure (in which case errno is set).
@@ -479,11 +483,11 @@ deep_remove_dir (const char *path)
 		/* See comment in unlink_file_dir explanation of why we use
 		   isdir instead of just calling unlink and checking the
 		   status.  */
-		if (isdir(buf)) 
+		if (isdir (buf)) 
 		{
-		    if (deep_remove_dir(buf))
+		    if (deep_remove_dir (buf))
 		    {
-			CVS_CLOSEDIR(dirp);
+			CVS_CLOSEDIR (dirp);
 			free (buf);
 			return -1;
 		    }
@@ -492,7 +496,7 @@ deep_remove_dir (const char *path)
 		{
 		    if (CVS_UNLINK (buf) != 0)
 		    {
-			CVS_CLOSEDIR(dirp);
+			CVS_CLOSEDIR (dirp);
 			free (buf);
 			return -1;
 		    }
@@ -518,6 +522,8 @@ deep_remove_dir (const char *path)
     /* Was able to remove the directory return 0 */
     return 0;
 }
+
+
 
 /* Read NCHARS bytes from descriptor FD into BUF.
    Return the number of characters successfully read.

@@ -154,7 +154,7 @@ Create_Admin (const char *dir, const char *update_dir, const char *repository,
     /* Create a new CVS/Tag file */
     WriteTag (dir, tag, date, nonbranch, update_dir, repository);
 
-    TRACE ( 1, "Create_Admin" );
+    TRACE (1, "Create_Admin");
 
     free (reposcopy);
     free (tmp);

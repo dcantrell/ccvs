@@ -321,6 +321,8 @@ copy_ulist (Node *node, void *data)
 }
 #endif /* CLIENT_SUPPORT */
 
+
+
 #ifdef SERVER_SUPPORT
 # define COMMIT_OPTIONS "+nlRm:fF:r:"
 #else /* !SERVER_SUPPORT */
@@ -353,7 +355,7 @@ commit (int argc, char **argv)
     {
 	struct passwd *pw;
 
-	if ((pw = (struct passwd *) getpwnam (getcaller ())) == NULL)
+	if ((pw = getpwnam (getcaller ())) == NULL)
 	    error (1, 0, "your apparent username (%s) is unknown to this system",
 			 getcaller ());
 	if (pw->pw_uid == (uid_t) 0)
@@ -640,11 +642,9 @@ commit (int argc, char **argv)
     /*
      * Run the recursion processor to verify the files are all up-to-date
      */
-    err = start_recursion
-	( check_fileproc, check_filesdoneproc,
-	  check_direntproc, (DIRLEAVEPROC) NULL, NULL, argc,
-	  argv, local, W_LOCAL, aflag, CVS_LOCK_NONE,
-	  (char *) NULL, 1, (char *) NULL );
+    err = start_recursion (check_fileproc, check_filesdoneproc,
+                           check_direntproc, NULL, NULL, argc, argv, local,
+                           W_LOCAL, aflag, CVS_LOCK_NONE, NULL, 1, NULL);
     if (err)
 	error (1, 0, "correct above errors first!");
 
@@ -653,11 +653,10 @@ commit (int argc, char **argv)
      */
     write_dirnonbranch = 0;
     if (noexec == 0)
-	err = start_recursion
-	    (commit_fileproc, commit_filesdoneproc,
-	     commit_direntproc, commit_dirleaveproc, NULL,
-	     argc, argv, local, W_LOCAL, aflag, CVS_LOCK_WRITE,
-	     NULL, 1, NULL);
+	err = start_recursion (commit_fileproc, commit_filesdoneproc,
+                               commit_direntproc, commit_dirleaveproc, NULL,
+                               argc, argv, local, W_LOCAL, aflag,
+                               CVS_LOCK_WRITE, NULL, 1, NULL);
 
     /*
      * Unlock all the dirs and clean up
@@ -677,6 +676,8 @@ commit (int argc, char **argv)
 
     return err;
 }
+
+
 
 /* This routine determines the status of a given file and retrieves
    the version information that is associated with that file. */
@@ -1212,23 +1213,25 @@ check_filesdoneproc (void *callerdat, int err, const char *repos,
     if (p != NULL)
 	saved_ulist = ((struct master_lists *) p->data)->ulist;
     else
-	saved_ulist = (List *) NULL;
+	saved_ulist = NULL;
 
     /* skip the checks if there's nothing to do */
     if (saved_ulist == NULL || saved_ulist->list->next == saved_ulist->list)
-	return (err);
+	return err;
 
     /* run any pre-commit checks */
-    n = Parse_Info( CVSROOTADM_COMMITINFO, repos, precommit_proc, PIOPT_ALL,
-                    saved_ulist );
+    n = Parse_Info (CVSROOTADM_COMMITINFO, repos, precommit_proc, PIOPT_ALL,
+                    saved_ulist);
     if (n > 0)
     {
 	error (0, 0, "Pre-commit check failed");
 	err += n;
     }
 
-    return (err);
+    return err;
 }
+
+
 
 /*
  * Do the work of committing a file

@@ -911,6 +911,8 @@ Subdir_Register (List *entries, const char *parent, const char *dir)
 	Entnode_Destroy (entnode);
 }
 
+
+
 /*
  * Record the removal of a subdirectory.  The arguments are the same
  * as for Subdir_Register.

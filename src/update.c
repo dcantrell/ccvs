@@ -128,6 +128,8 @@ static const char *const update_usage[] =
     NULL
 };
 
+
+
 /*
  * update is the argv,argc based front end for arg parsing
  */
@@ -395,7 +397,7 @@ update (int argc, char **argv)
 	if (aflag || tag || date)
 	{
 	    char *repos = Name_Repository (NULL, NULL);
-	    WriteTag ((char *) NULL, tag, date, 0, ".", repos);
+	    WriteTag (NULL, tag, date, 0, ".", repos);
 	    free (repos);
 	    rewrite_tag = 1;
 	    nonbranch = -1;
@@ -411,17 +413,18 @@ update (int argc, char **argv)
 	which |= W_ATTIC;
 
     /* call the command line interface */
-    err = do_update ( argc, argv, options, tag, date, force_tag_match,
-		      local, update_build_dirs, aflag, update_prune_dirs,
-		      pipeout, which, join_rev1, join_rev2, (char *) NULL, 1,
-		      (char *) NULL );
+    err = do_update (argc, argv, options, tag, date, force_tag_match,
+		     local, update_build_dirs, aflag, update_prune_dirs,
+		     pipeout, which, join_rev1, join_rev2, NULL, 1, NULL);
 
     /* free the space Make_Date allocated if necessary */
     if (date != NULL)
 	free (date);
 
-    return (err);
+    return err;
 }
+
+
 
 /*
  * Command line interface to update (used by checkout)
@@ -460,14 +463,14 @@ do_update (int argc, char **argv, char *xoptions, char *xtag, char *xdate,
 	date_rev1 = Make_Date (cp);
     }
     else
-	date_rev1 = (char *) NULL;
+	date_rev1 = NULL;
     if (join_rev2 && (cp = strchr (join_rev2, ':')) != NULL)
     {
 	*cp++ = '\0';
 	date_rev2 = Make_Date (cp);
     }
     else
-	date_rev2 = (char *) NULL;
+	date_rev2 = NULL;
 
 #ifdef PRESERVE_PERMISSIONS_SUPPORT
     if (preserve_perms)
@@ -481,12 +484,11 @@ do_update (int argc, char **argv, char *xoptions, char *xtag, char *xdate,
 	   function call was copied from the update_fileproc call that
 	   follows it; someone should make sure that I did it right. */
 	err = start_recursion
-	    ( get_linkinfo_proc, (FILESDONEPROC) NULL,
-	      (DIRENTPROC) NULL, (DIRLEAVEPROC) NULL, NULL,
-	      argc, argv, local, which, aflag, CVS_LOCK_READ,
-	      preload_update_dir, 1, (char *) NULL );
+	    (get_linkinfo_proc, NULL, NULL, NULL, NULL,
+	     argc, argv, local, which, aflag, CVS_LOCK_READ,
+	     preload_update_dir, 1, NULL);
 	if (err)
-	    return (err);
+	    return err;
 
 	/* FIXME-twp: at this point we should walk the hardlist
 	   and update the `links' field of each hardlink_info struct
@@ -500,7 +502,7 @@ do_update (int argc, char **argv, char *xoptions, char *xtag, char *xdate,
     err = start_recursion (update_fileproc, update_filesdone_proc,
 			   update_dirent_proc, update_dirleave_proc, NULL,
 			   argc, argv, local, which, aflag, CVS_LOCK_READ,
-			   preload_update_dir, 1, repository );
+			   preload_update_dir, 1, repository);
 
 #ifdef SERVER_SUPPORT
     if (server_active)
@@ -513,8 +515,10 @@ do_update (int argc, char **argv, char *xoptions, char *xtag, char *xdate,
 	sleep_past (last_register_time);
     }
 
-    return (err);
+    return err;
 }
+
+
 
 #ifdef PRESERVE_PERMISSIONS_SUPPORT
 /*
@@ -840,10 +844,10 @@ update_filesdone_proc (void *callerdat, int err, const char *repository,
     {
         /* If there is no CVS/Root file, add one */
         if (!isfile (CVSADM_ROOT))
-	    Create_Root ((char *) NULL, current_parsed_root->original);
+	    Create_Root (NULL, current_parsed_root->original);
     }
 
-    return (err);
+    return err;
 }
 
 
@@ -872,7 +876,7 @@ update_dirent_proc (void *callerdat, const char *dir, const char *repository,
     {
 	/* if we aren't building dirs, blow it off */
 	if (!update_build_dirs)
-	    return (R_SKIP_ALL);
+	    return R_SKIP_ALL;
 
 	/* Various CVS administrators are in the habit of removing
 	   the repository directory for things they don't want any
@@ -900,7 +904,7 @@ update_dirent_proc (void *callerdat, const char *dir, const char *repository,
 	{
 	    /* ignore the missing dir if -n is specified */
 	    error (0, 0, "New directory `%s' -- ignored", update_dir);
-	    return (R_SKIP_ALL);
+	    return R_SKIP_ALL;
 	}
 	else
 	{
@@ -935,7 +939,7 @@ update_dirent_proc (void *callerdat, const char *dir, const char *repository,
 	    rewrite_tag = 1;
 	    nonbranch = -1;
 	    warned = 0;
-	    Subdir_Register (entries, (char *) NULL, dir);
+	    Subdir_Register (entries, NULL, dir);
 	}
     }
     /* Do we need to check noexec here? */
@@ -1002,7 +1006,7 @@ update_dirent_proc (void *callerdat, const char *dir, const char *repository,
     if (!quiet)
 	error (0, 0, "Updating %s", update_dir);
 
-    return (R_PROCESS);
+    return R_PROCESS;
 }
 
 
@@ -1055,14 +1059,14 @@ update_dirleave_proc (void *callerdat, const char *dir, int err,
 	       this code used to ignore all errors, I'll play it safe.	*/
 	    if (unlink_file_dir (dir) < 0 && !existence_error (errno))
 		error (0, errno, "cannot remove %s directory", dir);
-	    Subdir_Deregister (entries, (char *) NULL, dir);
+	    Subdir_Deregister (entries, NULL, dir);
 	}
     }
 
-    return (err);
+    return err;
 }
 
-static int isremoved (Node *, void *);
+
 
 /* Returns 1 if the file indicated by node has been removed.  */
 static int
@@ -1091,7 +1095,7 @@ isemptydir (const char *dir, int might_not_exist)
 	if (might_not_exist && existence_error (errno))
 	    return 0;
 	error (0, errno, "cannot open directory %s for empty check", dir);
-	return (0);
+	return 0;
     }
     errno = 0;
     while ((dp = CVS_READDIR (dirp)) != NULL)
@@ -1104,7 +1108,7 @@ isemptydir (const char *dir, int might_not_exist)
 		/* An entry other than the CVS directory.  The directory
 		   is certainly not empty. */
 		(void) CVS_CLOSEDIR (dirp);
-		return (0);
+		return 0;
 	    }
 	    else
 	    {
@@ -1135,7 +1139,7 @@ isemptydir (const char *dir, int might_not_exist)
 		    /* There are files that have been removed, but not
 		       committed!  Do not consider the directory empty. */
 		    (void) CVS_CLOSEDIR (dirp);
-		    return (0);
+		    return 0;
 		}
 	    }
 	}
@@ -1145,11 +1149,13 @@ isemptydir (const char *dir, int might_not_exist)
     {
 	error (0, errno, "cannot read directory %s", dir);
 	(void) CVS_CLOSEDIR (dirp);
-	return (0);
+	return 0;
     }
     (void) CVS_CLOSEDIR (dirp);
-    return (1);
+    return 1;
 }
+
+
 
 /*
  * scratch the Entries file entry associated with a file
@@ -1164,10 +1170,7 @@ scratch_file (struct file_info *finfo, Vers_TS *vers)
     {
 	if (vers->ts_user == NULL)
 	    server_scratch_entry_only ();
-	server_updated (finfo, vers,
-		SERVER_UPDATED, (mode_t) -1,
-		(unsigned char *) NULL,
-		(struct buffer *) NULL);
+	server_updated (finfo, vers, SERVER_UPDATED, (mode_t) -1, NULL, NULL);
     }
 #endif
     if (unlink_file (finfo->file) < 0 && ! existence_error (errno))
@@ -1193,14 +1196,17 @@ scratch_file (struct file_info *finfo, Vers_TS *vers)
 	    vers->ts_user = NULL;
 	}
     }
-    return (0);
+    return 0;
 }
+
+
 
 /*
  * Check out a file.
  */
 static int
-checkout_file (struct file_info *finfo, Vers_TS *vers_ts, int adding, int merging, int update_server)
+checkout_file (struct file_info *finfo, Vers_TS *vers_ts, int adding,
+               int merging, int update_server)
 {
     char *backup;
     int set_time, retval = 0;
@@ -1275,8 +1281,8 @@ VERS: ", 0);
 	    && ! joining ()
 	    && ! wrap_name_has (finfo->file, WRAP_FROMCVS))
 	{
-	    revbuf = buf_nonio_initialize ((BUFMEMERRPROC) NULL);
-	    status = RCS_checkout (vers_ts->srcfile, (char *) NULL,
+	    revbuf = buf_nonio_initialize (NULL);
+	    status = RCS_checkout (vers_ts->srcfile, NULL,
 				   vers_ts->vn_rcs, vers_ts->tag,
 				   vers_ts->options, RUN_TTY,
 				   checkout_to_buffer, revbuf);
@@ -1286,8 +1292,7 @@ VERS: ", 0);
 	    status = RCS_checkout (vers_ts->srcfile,
 				   pipeout ? NULL : finfo->file,
 				   vers_ts->vn_rcs, vers_ts->tag,
-				   vers_ts->options, RUN_TTY,
-				   (RCSCHECKOUTPROC) NULL, (void *) NULL);
+				   vers_ts->options, RUN_TTY, NULL, NULL);
     }
     if (file_is_dead || status == 0)
     {
@@ -1413,7 +1418,7 @@ VERS: ", 0);
 			  adding ? "0" : xvers_ts->vn_rcs,
 			  xvers_ts->ts_user, xvers_ts->options,
 			  xvers_ts->tag, xvers_ts->date,
-			  (char *)0); /* Clear conflict flag on fresh checkout */
+			  NULL); /* Clear conflict flag on fresh checkout */
 
 	    /* fix up the vers structure, in case it is used by join */
 	    if (join_rev1)
@@ -1478,8 +1483,10 @@ VERS: ", 0);
 
     if (revbuf != NULL)
 	buf_free (revbuf);
-    return (retval);
+    return retval;
 }
+
+
 
 #ifdef SERVER_SUPPORT
 
