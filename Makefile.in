@@ -99,7 +99,9 @@ DISTFILES = \
 PROGS = cvsinit
 
 # Subdirectories to run make in for the primary targets.
-SUBDIRS = lib src man doc contrib examples windows-NT
+# windows-NT is commented out because there is no configure.in stuff
+# for windows-NT and thus it won't exist in the build dir.
+SUBDIRS = lib src man doc contrib examples # windows-NT
 # Only make TAGS/tags files in these directories, in this order
 TSUBDIRS= src lib
 
