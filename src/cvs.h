@@ -379,6 +379,9 @@ extern char *CVSroot_username;	/* the username or NULL if method == local */
 extern char *CVSroot_hostname;	/* the hostname or NULL if method == local */
 extern char *CVSroot_directory;	/* the directory name */
 
+extern List *root_directories;
+extern char *current_root;
+
 extern char *emptydir_name PROTO ((void));
 
 extern int trace;		/* Show all commands */

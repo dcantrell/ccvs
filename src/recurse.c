@@ -213,8 +213,7 @@ start_recursion (fileproc, filesdoneproc, direntproc, dirleaveproc, callerdat,
 	else
 	    addlist (&dirlist, ".");
 
-	err += do_recursion (&frame);
-	goto out;
+	goto do_the_work;
     }
 
 
@@ -335,12 +334,14 @@ start_recursion (fileproc, filesdoneproc, direntproc, dirleaveproc, callerdat,
 
     /* then do_recursion on the dirlist. */
     if (dirlist != NULL)
+    {
+    do_the_work:
 	err += do_recursion (&frame);
-
+    }
+	
     /* Free the data which expand_wild allocated.  */
     free_names (&argc, argv);
 
- out:
     free (update_dir);
     update_dir = NULL;
     return (err);
@@ -357,8 +358,10 @@ do_recursion (frame)
     int err = 0;
     int dodoneproc = 1;
     char *srepository;
+    char *this_root;
     List *entries = NULL;
     int should_readlock;
+    int process_this_directory = 0;
 
     /* do nothing if told */
     if (frame->flags == R_SKIP_ALL)
@@ -409,6 +412,42 @@ do_recursion (frame)
 	&& (should_readlock || noexec))
 	server_pause_check();
 #endif
+
+    /* Check the value in CVSADM_ROOT and see if it's in the list.  If
+       not, add it to our lists of CVS/Root directories and do not
+       process the files in this directory.  Otherwise, continue as
+       usual.  THIS_ROOT might be NULL if we're doing an initial
+       checkout -- check for it.  */
+
+    this_root = Name_Root ((char *) NULL, update_dir);
+    if (this_root != NULL)
+    {
+	if (findnode (root_directories, this_root) == NULL)
+	{
+	    /* Add it to our list. */
+
+	    Node *n = getnode ();
+	    n->type = UNKNOWN;
+	    n->key = xstrdup (this_root);
+
+	    if (addnode (root_directories, n))
+		error (1, 0, "cannot add new CVSROOT %s", this_root);
+	
+#ifdef DEBUG_NJC
+	    error (0, 0, "notice: noticed new CVSROOT %s in do_recursion",
+		   this_root);
+#endif
+	}
+
+	process_this_directory = (strcmp (current_root, this_root) == 0);
+#ifdef DEBUG_NJC
+	if (! process_this_directory)
+	    error (0, 0, "notice: skipping CVSROOT %s for %s in do_recursion",
+		   this_root, strcmp (update_dir, "") ? update_dir : ".");
+#endif
+	
+	free (this_root);
+    }
 
     /*
      * Fill in repository with the current repository
@@ -468,12 +507,16 @@ do_recursion (frame)
 		repository = Name_Repository ((char *) NULL, update_dir);
 
 	    /* find the files and fill in entries if appropriate */
-	    filelist = Find_Names (repository, lwhich, frame->aflag, &entries);
+	    if (process_this_directory)
+		filelist = Find_Names (repository, lwhich, frame->aflag,
+				       &entries);
 	}
 
 	/* find sub-directories if we will recurse */
 	if (frame->flags != R_SKIP_DIRS)
-	    dirlist = Find_Directories (repository, frame->which, entries);
+	    dirlist = Find_Directories (
+		process_this_directory ? repository : NULL,
+		frame->which, entries);
     }
     else
     {
@@ -487,7 +530,7 @@ do_recursion (frame)
     }
 
     /* process the files (if any) */
-    if (filelist != NULL && frame->fileproc)
+    if (process_this_directory && filelist != NULL && frame->fileproc)
     {
 	struct file_info finfo_struct;
 	struct frame_and_file frfile;
@@ -525,7 +568,7 @@ do_recursion (frame)
     }
 
     /* call-back files done proc (if any) */
-    if (dodoneproc && frame->filesdoneproc != NULL)
+    if (process_this_directory && dodoneproc && frame->filesdoneproc != NULL)
 	err = frame->filesdoneproc (frame->callerdat, err, repository,
 				    update_dir[0] ? update_dir : ".",
 				    entries);
@@ -625,6 +668,7 @@ do_dir_proc (p, closure)
     int err = 0;
     struct saved_cwd cwd;
     char *saved_update_dir;
+    int process_this_directory = 0;
 
     if (fncmp (dir, CVSADM) == 0)
     {
@@ -760,12 +804,54 @@ but CVS uses %s for its own purposes; skipping %s directory",
 	free (cvsadmdir);
     }
 
+    /* Only process this directory if the root matches.  This nearly
+       duplicates code in do_recursion. */
+    {
+	char *this_root = Name_Root (dir, update_dir);
+	if (this_root != NULL)
+	{
+	    if (findnode (root_directories, this_root) == NULL)
+	    {
+		/* Add it to our list. */
+
+		Node *n = getnode ();
+		n->type = UNKNOWN;
+		n->key = xstrdup (this_root);
+
+		if (addnode (root_directories, n))
+		    error (1, 0, "cannot add new CVSROOT %s", this_root);
+
+#ifdef DEBUG_NJC
+		error (0, 0, "notice: noticed new CVSROOT %s in do_dir_proc",
+		       this_root);
+#endif
+	    }
+
+	    process_this_directory = (strcmp (current_root, this_root) == 0);
+#ifdef DEBUG_NJC
+	    if (! process_this_directory)
+		error (0, 0, "notice: skipping CVSROOT %s for %s in do_dir_proc",
+		       this_root, strcmp (update_dir, "") ? update_dir : ".");
+#endif
+	    free (this_root);
+	}
+    }
+
     /* call-back dir entry proc (if any) */
     if (dir_return == R_SKIP_ALL)
 	;
     else if (frame->direntproc != NULL)
-	dir_return = frame->direntproc (frame->callerdat, dir, newrepos,
-					update_dir, frent->entries);
+    {
+	/* If we're doing the actual processing, call direntproc.
+           Otherwise, assume that we need to process this directory
+           and recurse. FIXME. */
+
+	if (process_this_directory)
+	    dir_return = frame->direntproc (frame->callerdat, dir, newrepos,
+					    update_dir, frent->entries);
+	else
+	    dir_return = R_PROCESS;
+    }
     else
     {
 	/* Generic behavior.  I don't see a reason to make the caller specify
@@ -811,7 +897,7 @@ but CVS uses %s for its own purposes; skipping %s directory",
 	    (void) strcpy (update_dir, ".");
 
 	/* call-back dir leave proc (if any) */
-	if (frame->dirleaveproc != NULL)
+	if (process_this_directory && frame->dirleaveproc != NULL)
 	    err = frame->dirleaveproc (frame->callerdat, dir, err, update_dir,
 				       frent->entries);
 

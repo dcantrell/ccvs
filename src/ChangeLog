@@ -1,3 +1,24 @@
+Tue Aug 18 14:30:59 1998  Noel Cragg  <noel@swish.red-bean.com>
+
+	* recurse.c (do_recursion): check the current value of CVS/Root
+ 	and add it to our list of CVSROOTs if it doesn't exist.  Decide
+ 	whether or not to process files in this directory based based on
+ 	the value of CURRENT_ROOT.
+	(do_dir_proc): same.
+
+	* main.c: add two new globals -- root_directories and current_root
+ 	-- which keep track of the values of CVSROOT we've seen and which
+ 	value of CVSROOT we're currently processing.
+	(main): put the main loop for stepping through cvsroot values
+ 	here, since we might need to send command-specific arguments for
+ 	every unique non-local cvsroot.  Moved blocks of code around so
+ 	that one-time initializations happen first (outside the loop) and
+ 	the other stuff happens inside the loop.
+	(set_root_directory): helper function.
+	
+	* cvs.h: add prototypes for root_directories and current_root, two
+ 	new globals for keeping track of multiple CVSROOT information.
+
 Thu Aug 13 11:15:24 1998  Noel Cragg  <noel@swish.red-bean.com>
 
 	* version.c: Change version number to 1.10 and name to `Halibut'.
