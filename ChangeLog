@@ -1,3 +1,8 @@
+2003-04-28  Derek Price  <derek@ximbiot.com>
+
+	* NEWS (Changes since 1.11.5): Note removal of Checkin.prog and
+	Update.prog functionality.
+
 2003-04-10  Larry Jones  <lawrence.jones@eds.com>
 
 	* aclocal.m4 (AM_MAINTAINER_MODE): New macro to support

@@ -6,6 +6,11 @@ no longer needed and has been removed.
 
 * Corrected the path in a failed write error message.
 
+* The Checkin.prog and Update.prog functionality has been removed.  This
+fuctionality previously allowed executables to be specified in the modules file
+to be run at update and checkin time, but users could edit these files on a per
+workspace basis, creating a security hole.
+
 Changes from 1.11.4 to 1.11.5:
 
 * Fixed a security hole in the CVS server by which users with read only access
