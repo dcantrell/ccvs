@@ -1,5 +1,13 @@
 2004-04-30  Derek Price  <derek@ximbiot.com>
 
+	* mkman.in: Handle single quotes better.  Parse out some redundancy
+	from node and section names.
+	* cvs.man.footer: Replace some quotes with the usual bold font.
+	Reformat links in the SEE ALSO section.
+	* cvs.1: Regenerated.
+
+2004-04-30  Derek Price  <derek@ximbiot.com>
+
 	* mkman.in: Handle examples better.  Protect a few more characters.
 	* cvs.1, stamp-vti, version.texi: Regenerated.
 
