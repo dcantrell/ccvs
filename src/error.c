@@ -61,7 +61,9 @@ void exit ();
 #endif /* __STDC__ */
 #endif /* STDC_HEADERS */
 
+#ifndef strerror
 extern char *strerror ();
+#endif
 
 extern int vasprintf ();
 

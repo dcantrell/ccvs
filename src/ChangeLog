@@ -1,4 +1,8 @@
 Wed Jun 05 10:07:29 1996  Mike Ladwig  <mike@twinpeaks.prc.com>
+
+	* error.c: Don't declare strerror if it is #defined.
+
+Wed Jun 05 10:07:29 1996  Mike Ladwig  <mike@twinpeaks.prc.com>
 			  and Jim Kingdon  <kingdon@cyclic.com>
 
 	* cvs.h: If ENUMS_CAN_BE_TROUBLE, typedef Dtype to int not an enum.
