@@ -59,7 +59,6 @@ login (argc, argv)
       return 1;
     }
 
-  /* todo: free this */
   passfile =
     (char *) xmalloc (strlen (homedir) + strlen (CVS_PASSWORD_FILE) + 3);
   strcpy (passfile, homedir);
@@ -154,7 +153,7 @@ login (argc, argv)
           return 1;
         }
 
-      /* todo: Blank lines in the file are ok, right?. */
+      /* It's safer this way, and blank lines in the file are OK. */
       fprintf (fp, "\n%s %s\n", CVSroot, typed_password);
       fclose (fp);
     }
