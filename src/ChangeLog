@@ -1,3 +1,8 @@
+Mon Nov 20 14:07:41 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* Makefile.in (TAGFILES): Separate out from DISTFILES, for C code.
+	(TAGS,tags): Use TAGFILES not DISTFILES.
+
 Sun Nov 19 11:22:43 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* recurse.c (do_recursion): Don't call server_pause_check if there
