@@ -4445,19 +4445,29 @@ default.  @code{cvs export} always uses @code{-kv},
 regardless of which keyword substitution is set with
 @code{cvs admin}.
 
+@cindex Reserved checkouts
+@cindex RCS-style locking
 @item -l[@var{rev}]
-Probably useless with @sc{cvs}.  With bare @sc{rcs},
-this option can be used to lock the revision with
-number @var{rev}.  If a branch is given, lock the
-latest revision on that branch.  If @var{rev} is
-omitted, lock the latest revision on the default
-branch.
+Lock the revision with number @var{rev}.  If a branch
+is given, lock the latest revision on that branch.  If
+@var{rev} is omitted, lock the latest revision on the
+default branch.
+
+This can be used in conjunction with the
+@file{rcslock.pl} script in the @file{contrib}
+directory of the @sc{cvs} source distribution to
+provide reserved checkouts (where only one user can be
+editing a given file at a time).  See the comments in
+that file for details (and see the @file{README} file
+in that directory for disclaimers about the unsupported
+nature of contrib).  According to comments in that
+file, locking must set to strict (which is the default).
 
 @item -L
-Probably useless with @sc{cvs}.  Used with bare
-@sc{rcs} to set locking to strict.  Strict
-locking means that the owner of an RCS file is not
-exempt from locking for checkin.
+Set locking to strict.  Strict locking means that the
+owner of an RCS file is not exempt from locking for
+checkin.  For use with @sc{cvs}, strict locking must be
+set; see the discussion under the @samp{-l} option above.
 
 @cindex Changing a log message
 @cindex Replacing a log message
@@ -4556,23 +4566,24 @@ from the @var{string} into the @sc{rcs} file, deleting
 the existing text.
 
 @item -U
-Probably useless with @sc{cvs}.  Used with bare
-@sc{rcs} to set locking to non-strict.  Non-strict
-locking means that the owner of a file need not lock a
-revision for checkin.
+Set locking to non-strict.  Non-strict locking means
+that the owner of a file need not lock a revision for
+checkin.  For use with @sc{cvs}, strict locking must be
+set; see the discussion under the @samp{-l} option
+above.
 
 @item -u[@var{rev}]
-Probably useless with @sc{cvs}.  With bare @sc{rcs},
-unlock the revision with number @var{rev}.  If a branch
-is given, unlock the latest revision on that branch.
-If @var{rev} is omitted, remove the latest lock held by
-the caller.  Normally, only the locker of a revision
-may unlock it.  Somebody else unlocking a revision
-breaks the lock.  This causes a mail message to be sent
-to the original locker.  The message contains a
-commentary solicited from the breaker.  The commentary
-is terminated by end-of-file or by a line containing
-@code{.} by itself.
+See the option @samp{-l} above, for a discussion of
+using this option with @sc{cvs}.  Unlock the revision
+with number @var{rev}.  If a branch is given, unlock
+the latest revision on that branch.  If @var{rev} is
+omitted, remove the latest lock held by the caller.
+Normally, only the locker of a revision may unlock it.
+Somebody else unlocking a revision breaks the lock.
+This causes a mail message to be sent to the original
+locker.  The message contains a commentary solicited
+from the breaker.  The commentary is terminated by
+end-of-file or by a line containing @code{.} by itself.
 
 @item -V@var{n}
 Emulate @sc{rcs} version @var{n}. Use -V@var{n} to make
