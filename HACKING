@@ -43,11 +43,17 @@ the person checking in such a patch should reindent it.
 
 * Portability
 
-If it is in ANSI C and it is in SunOS4 (using /bin/cc), generally it
-is OK to use it without ifdefs (for example, assert() and void * as
-long as you add more casts to and from void * than ANSI requires.  But
-not function prototypes).  Such constructs are generally portable
-enough, including to NT, OS/2, VMS, etc.
+The general rule for portability is that it is only worth including
+portability cruft for systems on which people are actually testing and
+using new CVS releases.  Without testing, CVS will fail to be portable
+for any number of unanticipated reasons.
+
+The current consequence of that general rule seems to be that if it
+is in ANSI C and it is in SunOS4 (using /bin/cc), generally it is OK
+to use it without ifdefs (for example, assert() and void * as long as
+you add more casts to and from void * than ANSI requires.  But not
+function prototypes).  Such constructs are generally portable enough,
+including to NT, OS/2, VMS, etc.
 
 * Run-time behaviors
 
