@@ -1,3 +1,8 @@
+1998-09-24  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* sanity.sh: Change crerepos test back to :ext: (for several
+	reasons; see comments).
+
 1998-09-24  Noel Cragg  <noel@swish.red-bean.com>
 
 	* sanity.sh (rcslib-symlink-5, rcslib-symlink-6): new tests to
