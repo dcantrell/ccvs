@@ -1,3 +1,9 @@
+Mon Jan  1 23:40:01 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* filesubr.c (link_file): New function.
+
+	* README: Mention CRLF vs. LF in cvsnt.mak.  Other minor revisions.
+
 Fri Dec 22 12:00:00 1995  Jim Kingdon  <kingdon@peary.cyclic.com>
 
 	* run.c (filter_stream_through_program): On error, error() rather
