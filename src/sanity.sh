@@ -838,7 +838,7 @@ if test x"$*" = x; then
 	tests="${tests} cvsadm emptydir abspath toplevel toplevel2"
         tests="${tests} checkout_repository"
 	# Log messages, error messages.
-	tests="${tests} mflag editor env errmsg1 errmsg2 adderrmsg"
+	tests="${tests} mflag editor env errmsg1 errmsg2 adderrmsg opterrmsg"
 	# Watches, binary files, history browsing, &c.
 	tests="${tests} devcom devcom2 devcom3 watch4 watch5"
 	tests="${tests} unedit-without-baserev"
@@ -13156,6 +13156,25 @@ done"
 	  cd ../..
 	  rm -r 1
 	  rm -rf ${CVSROOT_DIRNAME}/adderrmsg-dir
+	  ;;
+
+	opterrmsg)
+	  # Test some option parsing error messages
+
+	  # No init is necessary since these error messages are printed b4
+	  # CVS looks for a sandbox or repository
+
+	  # -z used to accept non-numeric arguments.  This bit someone who
+	  # attempted `cvs -z -n up' when the -n was read as the argument to
+	  # -z.
+	  dotest_fail opterrmsg-1 "${testcvs} -z -n up" \
+"${PROG}: gzip compression level must be between 0 and 9"
+
+	  # Some general -z checks
+	  dotest_fail opterrmsg-2 "${testcvs} -z -1 up" \
+"${PROG}: gzip compression level must be between 0 and 9"
+	  dotest_fail opterrmsg-3 "${testcvs} -z10 up" \
+"${PROG}: gzip compression level must be between 0 and 9"
 	  ;;
 
 	devcom)

@@ -600,15 +600,18 @@ Copyright (c) 1989-2003 Brian Berliner, david d `zoo' zuhn, \n\
 		use_cvsrc = 0; /* unnecessary, since we've done it above */
 		break;
 	    case 'z':
-#ifdef CLIENT_SUPPORT
 		gzip_level = strtol (optarg, &end, 10);
 		if (*end != '\0' || gzip_level < 0 || gzip_level > 9)
 		  error (1, 0,
 			 "gzip compression level must be between 0 and 9");
-#endif
 		/* If no CLIENT_SUPPORT, we just silently ignore the gzip
-		   level, so that users can have it in their .cvsrc and not
-		   cause any trouble.  */
+		 * level, so that users can have it in their .cvsrc and not
+		 * cause any trouble.
+		 *
+		 * We still parse the argument to -z for correctness since
+		 * one user complained of being bitten by a run of
+		 * `cvs -z -n up' which read -n as the argument to -z without
+		 * complaining.  */
 		break;
 	    case 's':
 		variable_set (optarg);
