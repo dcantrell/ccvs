@@ -1,3 +1,8 @@
+1998-05-12  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* commit.c (commit_filesdoneproc): Add comment explaining last
+	change.
+
 1998-05-12  Jim Meyering  <meyering@ascend.com>
 
 	* commit.c (commit_filesdoneproc): Call mkmodules not just when

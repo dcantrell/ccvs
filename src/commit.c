@@ -1418,6 +1418,9 @@ commit_filesdoneproc (callerdat, err, repository, update_dir, entries)
 	if (*p == '/')
 	    ++p;
 	if (strcmp ("CVSROOT", p) == 0
+
+	    /* Check for subdirectories because people may want to create
+	       subdirectories and list files therein in checkoutlist.  */
 	    || strncmp ("CVSROOT/", p, strlen ("CVSROOT/")) == 0)
 	{
 	    /* "Database" might a little bit grandiose and/or vague,
