@@ -2,11 +2,13 @@ Tue Feb  4 11:42:30 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* Rename devel-cvs (which had only been in the repository, not the
 	distribution) to DEVEL-CVS.  Add "Charter for the devel-cvs
-	mailing list:" heading (editorial change).  Revise paragraph
-	concerning membership in the list to reflect policy change to make
-	read-only membership different from the ability to send to the
-	list (the new wording was approved by devel-cvs, as was the rename
-	and including it in the distribution).
+	mailing list:" heading, "CVS Development Policies" title, and
+	one-sentence introduction (editorial changes, not run by
+	devel-cvs).  Revise paragraph concerning membership in the list to
+	reflect policy change to make read-only membership different from
+	the ability to send to the list (the new wording was approved by
+	devel-cvs, as was the rename and including it in the
+	distribution).
 	* Makefile.in (DISTFILES): Add DEVEL-CVS.
 	* HACKING: Add "Mailing lists" section.
 
