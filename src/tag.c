@@ -271,6 +271,8 @@ check_fileproc (callerdat, finfo)
     {
         if (!really_quiet)
 	    error (0, 0, "nothing known about %s", finfo->file);
+	freevers_ts (&vers);
+	freenode (p);
 	return (1);
     }
 

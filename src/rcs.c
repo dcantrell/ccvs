@@ -5277,8 +5277,9 @@ RCS_checkin (rcs, workfile, message, rev, flags)
 	delta->version = xstrdup (newrev);
 	nodep = getnode();
 	nodep->type = RCSVERS;
-	nodep->key = xstrdup (newrev);
+	nodep->delproc = rcsvers_delproc;
 	nodep->data = (char *) delta;
+	nodep->key = delta->version;
 	(void) addnode (rcs->versions, nodep);
 
 	dtext->version = xstrdup (newrev);
@@ -5312,7 +5313,6 @@ RCS_checkin (rcs, workfile, message, rev, flags)
 	    error (1, errno, "cannot ftell for %s", rcs->path);
 	putdeltatext (fout, dtext);
 	rcs_internal_unlockfile (fout, rcs->path);
-	freedeltatext (dtext);
 
 	if ((flags & RCS_FLAGS_KEEPFILE) == 0)
 	{
@@ -5324,7 +5324,8 @@ RCS_checkin (rcs, workfile, message, rev, flags)
 	if (!checkin_quiet)
 	    cvs_output ("done\n", 5);
 
-	return 0;
+	status = 0;
+	goto checkin_done;
     }
 
     /* Derive a new revision number.  From the `ci' man page:
@@ -5651,8 +5652,9 @@ RCS_checkin (rcs, workfile, message, rev, flags)
 	rcs->versions = getlist();
     nodep = getnode();
     nodep->type = RCSVERS;
-    nodep->key = xstrdup (delta->version);
+    nodep->delproc = rcsvers_delproc;
     nodep->data = (char *) delta;
+    nodep->key = delta->version;
     (void) addnode (rcs->versions, nodep);
 	
     /* Write the new RCS file, inserting the new delta at COMMITPT. */

@@ -2039,74 +2039,76 @@ checkaddfile (file, repository, tag, options, rcsnode)
 	newfile = 1;
 	if (desc != NULL)
 	    free (desc);
-    }
-
-    /* when adding a file for the first time, and using a tag, we need
-       to create a dead revision on the trunk.  */
-    if (adding_on_branch && newfile)
-    {
-	char *tmp;
-	FILE *fp;
-
-	/* move the new file out of the way. */
-	fname = xmalloc (strlen (file) + sizeof (CVSADM)
-			 + sizeof (CVSPREFIX) + 10);
-	(void) sprintf (fname, "%s/%s%s", CVSADM, CVSPREFIX, file);
-	rename_file (file, fname);
-
-	/* Create empty FILE.  Can't use copy_file with a DEVNULL
-	   argument -- copy_file now ignores device files. */
-	fp = fopen (file, "w");
-	if (fp == NULL)
-	    error (1, errno, "cannot open %s for writing", file);
-	if (fclose (fp) < 0)
-	    error (0, errno, "cannot close %s", file);
-
-	tmp = xmalloc (strlen (file) + strlen (tag) + 80);
-	/* commit a dead revision. */
-	(void) sprintf (tmp, "file %s was initially added on branch %s.",
-			file, tag);
-	retcode = RCS_checkin (rcsfile, NULL, tmp, NULL,
-			       RCS_FLAGS_DEAD | RCS_FLAGS_QUIET);
-	free (tmp);
-	if (retcode != 0)
-	{
-	    error (retcode == -1 ? 1 : 0, retcode == -1 ? errno : 0,
-		   "could not create initial dead revision %s", rcs);
-	    retval = 1;
-	    goto out;
-	}
-
-	/* put the new file back where it was */
-	rename_file (fname, file);
-	free (fname);
-
-	/* double-check that the file was written correctly */
-	freercsnode (&rcsfile);
-	rcsfile = RCS_parse (file, repository);
-	if (rcsfile == NULL)
-	{
-	    error (0, 0, "could not read %s", rcs);
-	    retval = 1;
-	    goto out;
-	}
 	if (rcsnode != NULL)
 	{
 	    assert (*rcsnode == NULL);
 	    *rcsnode = rcsfile;
 	}
-
-	/* and lock it once again. */
-	if (lock_RCS (file, rcsfile, NULL, repository))
-	{
-	    error (0, 0, "cannot lock `%s'.", rcs);
-	    retval = 1;
-	    goto out;
-	}
     }
 
+    /* when adding a file for the first time, and using a tag, we need
+       to create a dead revision on the trunk.  */
     if (adding_on_branch)
     {
+	if (newfile)
+	{
+	    char *tmp;
+	    FILE *fp;
+
+	    /* move the new file out of the way. */
+	    fname = xmalloc (strlen (file) + sizeof (CVSADM)
+			     + sizeof (CVSPREFIX) + 10);
+	    (void) sprintf (fname, "%s/%s%s", CVSADM, CVSPREFIX, file);
+	    rename_file (file, fname);
+
+	    /* Create empty FILE.  Can't use copy_file with a DEVNULL
+	       argument -- copy_file now ignores device files. */
+	    fp = fopen (file, "w");
+	    if (fp == NULL)
+		error (1, errno, "cannot open %s for writing", file);
+	    if (fclose (fp) < 0)
+		error (0, errno, "cannot close %s", file);
+
+	    tmp = xmalloc (strlen (file) + strlen (tag) + 80);
+	    /* commit a dead revision. */
+	    (void) sprintf (tmp, "file %s was initially added on branch %s.",
+			    file, tag);
+	    retcode = RCS_checkin (rcsfile, NULL, tmp, NULL,
+				   RCS_FLAGS_DEAD | RCS_FLAGS_QUIET);
+	    free (tmp);
+	    if (retcode != 0)
+	    {
+		error (retcode == -1 ? 1 : 0, retcode == -1 ? errno : 0,
+		       "could not create initial dead revision %s", rcs);
+		retval = 1;
+		goto out;
+	    }
+
+	    /* put the new file back where it was */
+	    rename_file (fname, file);
+	    free (fname);
+
+	    /* double-check that the file was written correctly */
+	    freercsnode (&rcsfile);
+	    rcsfile = RCS_parse (file, repository);
+	    if (rcsfile == NULL)
+	    {
+		error (0, 0, "could not read %s", rcs);
+		retval = 1;
+		goto out;
+	    }
+	    if (rcsnode != NULL)
+		*rcsnode = rcsfile;
+
+	    /* and lock it once again. */
+	    if (lock_RCS (file, rcsfile, NULL, repository))
+	    {
+		error (0, 0, "cannot lock `%s'.", rcs);
+		retval = 1;
+		goto out;
+	    }
+	}
+
 	/* when adding with a tag, we need to stub a branch, if it
 	   doesn't already exist.  */
 

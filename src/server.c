@@ -2745,8 +2745,11 @@ error  \n");
 	    error (1, errno, "can't set up pipes");
 	if (dup2 (stderr_pipe[1], STDERR_FILENO) < 0)
 	    error (1, errno, "can't set up pipes");
+	close (dev_null_fd);
 	close (stdout_pipe[0]);
+	close (stdout_pipe[1]);
 	close (stderr_pipe[0]);
+	close (stderr_pipe[1]);
 	close (protocol_pipe[0]);
 #ifdef SERVER_FLOWCONTROL
 	close (flowcontrol_pipe[1]);
@@ -2961,7 +2964,10 @@ error  \n");
 		buf_copy_lines (buf_to_net, stdoutbuf, 'M');
 
 		if (status == -1)
+		{
+		    close (stdout_pipe[0]);
 		    stdout_pipe[0] = -1;
+		}
 		else if (status > 0)
 		{
 		    buf_output0 (buf_to_net, "E buf_input_data failed\n");
@@ -2983,7 +2989,10 @@ error  \n");
 		buf_copy_lines (buf_to_net, stderrbuf, 'E');
 
 		if (status == -1)
+		{
+		    close (stderr_pipe[0]);
 		    stderr_pipe[0] = -1;
+		}
 		else if (status > 0)
 		{
 		    buf_output0 (buf_to_net, "E buf_input_data failed\n");
@@ -3005,7 +3014,10 @@ error  \n");
 		status = buf_input_data (protocol_inbuf, &count_read);
 
 		if (status == -1)
+		{
+		    close (protocol_pipe[0]);
 		    protocol_pipe[0] = -1;
+		}
 		else if (status > 0)
 		{
 		    buf_output0 (buf_to_net, "E buf_input_data failed\n");
@@ -3065,6 +3077,11 @@ error  \n");
 	if (! buf_empty_p (protocol_inbuf))
 	    buf_output0 (buf_to_net,
 			 "E Protocol error: uncounted data discarded\n");
+
+#ifdef SERVER_FLOWCONTROL
+	close (flowcontrol_pipe[1]);
+	flowcontrol_pipe[1] = -1;
+#endif /* SERVER_FLOWCONTROL */
 
 	errs = 0;
 
@@ -3150,6 +3167,10 @@ E CVS locks may need cleaning up.\n");
     close (stderr_pipe[1]);
     close (stdout_pipe[0]);
     close (stdout_pipe[1]);
+#ifdef SERVER_FLOWCONTROL
+    close (flowcontrol_pipe[0]);
+    close (flowcontrol_pipe[1]);
+#endif /* SERVER_FLOWCONTROL */
 
  free_args_and_return:
     /* Now free the arguments.  */
