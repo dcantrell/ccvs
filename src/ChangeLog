@@ -1,3 +1,9 @@
+2003-02-02  Larry Jones  <lawrence.jones@eds.com>
+
+	* cvs.h (cvs_trace): Add attribute for GNU printf format checking.
+	* error.h: Use same check for prototypes as cvs.h.  Use PROTO
+	macro rather than #ifdef for error and error_exit.
+
 2003-02-01  Larry Jones  <lawrence.jones@eds.com>
 
 	* buffer.c (stdio_buffer_shutdown): Handle EINTR from waitpid.
