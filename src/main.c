@@ -222,8 +222,6 @@ error_cleanup ()
 #endif
 }
 
-#define KF_GETOPT_LONG 1
-
 int
 main (argc, argv)
     int argc;

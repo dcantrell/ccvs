@@ -1,3 +1,8 @@
+Fri Nov 10 14:38:56 1995  Karl Fogel  <kfogel@floss.cyclic.com>
+
+        * main.c (main): removed "#define KF_GETOPT_LONG 1", since that
+        change is no longer in testing.
+
 Thu Nov  9 20:32:12 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
         * release.c (release): Use Popen(), not popen().
