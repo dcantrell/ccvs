@@ -79,6 +79,7 @@ EXEEXT = @EXEEXT@
 FNMATCH_H = @FNMATCH_H@
 GMSGFMT = @GMSGFMT@
 HAVE_PUTENV = @HAVE_PUTENV@
+HAVE__BOOL = @HAVE__BOOL@
 INSTALL_DATA = @INSTALL_DATA@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
@@ -122,6 +123,7 @@ RSH_DFLT = @RSH_DFLT@
 SENDMAIL = @SENDMAIL@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
+STDBOOL_H = @STDBOOL_H@
 STRIP = @STRIP@
 TEXI2DVI = @TEXI2DVI@
 USE_NLS = @USE_NLS@
@@ -230,8 +232,10 @@ libcvs_a_LIBADD = @LIBOBJS@
 # For GNULIB's alloca module.
 
 # For GNULIB's fnmatch module.
-BUILT_SOURCES = $(ALLOCA_H) $(FNMATCH_H)
-MOSTLYCLEANFILES = alloca.h alloca.h-t fnmatch.h fnmatch.h-t
+
+# For GNULIB's stdbool module.
+BUILT_SOURCES = $(ALLOCA_H) $(FNMATCH_H) $(STDBOOL_H)
+MOSTLYCLEANFILES = alloca.h alloca.h-t fnmatch.h fnmatch.h-t stdbool.h stdbool.h-t
 
 EXTRA_DIST = \
 	.cvsignore \
@@ -240,7 +244,7 @@ EXTRA_DIST = \
 	libcvs.dep \
 	libcvs.dsp \
 	libcvs.mak\
-alloca_.h fnmatch_.h fnmatch_loop.c
+alloca_.h fnmatch_.h fnmatch_loop.c stdbool_.h
 subdir = lib
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
@@ -596,6 +600,13 @@ alloca.h: alloca_.h
 all-local $(libcvs_a_OBJECTS): $(FNMATCH_H)
 fnmatch.h: fnmatch_.h
 	cp $(srcdir)/fnmatch_.h $@-t
+	mv $@-t $@
+# We need the following in order to create an <stdbool.h> when the system
+# doesn't have one that works.
+all-local $(lib_OBJECTS): $(STDBOOL_H)
+stdbool.h: stdbool_.h
+	sed -e 's/@''HAVE__BOOL''@/$(HAVE__BOOL)/g' \
+		< $(srcdir)/stdbool_.h > $@-t
 	mv $@-t $@
 
 # for backwards compatibility with the old makefiles
