@@ -134,9 +134,6 @@ echo "default place for krb4 is $KRB4"
 AC_SUBST(KRB4)])dnl
 WITH_KRB4
 
-AC_CHECK_SIZEOF(long)
-AC_CHECK_SIZEOF(int)
-
 krb_h=
 AC_MSG_CHECKING([for krb.h])
 AC_TRY_LINK([#include <krb.h>],[int i;],

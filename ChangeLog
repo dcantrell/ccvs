@@ -1,5 +1,12 @@
 Tue Jan 28 10:41:05 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* configure.in: Remove AC_CHECK_SIZEOF; no longer needed with
+	lib/md5.c changes.
+	* acconfig.h: Add HAVE_CONNECT.  This is needed so that autoheader
+	2.10 works; I think this has been broken since 2 Dec 1996.
+	* config.h.in: Regenerated with autoheader 2.10.
+	* configure: Regenerated with autoconf 2.10.
+
 	* HACKING: Revise criterion for whether something goes in NEWS
 	again (now "user-visible change worth mentioning"--the language
 	from the GNU coding standards).
