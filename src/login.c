@@ -61,6 +61,11 @@ construct_cvspass_filename ()
     return passfile;
 }
 
+static const char *const login_usage[] =
+{
+    "Usage: %s %s\n",
+    NULL
+};
 
 /* Prompt for a password, and store it in the file "CVS/.cvspass".
  *
@@ -96,6 +101,9 @@ login (argc, argv)
     char *linebuf = (char *) NULL;
     size_t linebuf_len;
     int root_len, already_entered = 0;
+
+    if (argc < 0)
+	usage (login_usage);
 
     if (CVSroot_method != pserver_method)
     {
