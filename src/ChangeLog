@@ -1,3 +1,7 @@
+2004-03-24  Mark D. Baushke  <mdb@cvshome.org>
+
+	* sanity.sh (ISODATE): Fix ISO 8601 format comment.
+
 2004-03-22  Derek Price  <derek@ximbiot.com>
 
 	* sanity.sh (toplevel): Remove FIXME type comment and unneeded
