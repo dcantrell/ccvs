@@ -11,6 +11,9 @@
 # even the implied warranty of MERCHANTABILITY or FITNESS FOR A
 # PARTICULAR PURPOSE.
 
+@SET_MAKE@
+
+
 SHELL = @SHELL@
 
 srcdir = @srcdir@
@@ -56,9 +59,6 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
-
-@SET_MAKE@
-AMDEP = @AMDEP@
 AMTAR = @AMTAR@
 AWK = @AWK@
 CC = @CC@
@@ -82,9 +82,9 @@ TEXI2DVI = @TEXI2DVI@
 VERSION = @VERSION@
 YACC = @YACC@
 _am_include = @_am_include@
+_am_quote = @_am_quote@
 includeopt = @includeopt@
 install_sh = @install_sh@
-
 
 INCLUDES = -I$(top_srcdir)/lib
 
@@ -104,46 +104,47 @@ CONFIG_HEADER = $(top_builddir)/config.h $(top_builddir)/src/options.h
 CONFIG_CLEAN_FILES =
 LIBRARIES = $(noinst_LIBRARIES)
 
+libdiff_a_AR = $(AR) cru
+libdiff_a_LIBADD =
+am_libdiff_a_OBJECTS = diff.$(OBJEXT) diff3.$(OBJEXT) analyze.$(OBJEXT) \
+	cmpbuf.$(OBJEXT) io.$(OBJEXT) context.$(OBJEXT) ed.$(OBJEXT) \
+	normal.$(OBJEXT) ifdef.$(OBJEXT) util.$(OBJEXT) dir.$(OBJEXT) \
+	version.$(OBJEXT) side.$(OBJEXT)
+libdiff_a_OBJECTS = $(am_libdiff_a_OBJECTS)
+AR = ar
+COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
+	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+CFLAGS = @CFLAGS@
+CCLD = $(CC)
+LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 
 DEFAULT_INCLUDES =  -I. -I$(srcdir) -I$(top_builddir) -I$(top_builddir)/src
 DEFS = @DEFS@
 CPPFLAGS = @CPPFLAGS@
 LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
-libdiff_a_AR = $(AR) cru
-libdiff_a_LIBADD = 
-am_libdiff_a_OBJECTS = diff.$(OBJEXT) diff3.$(OBJEXT) analyze.$(OBJEXT) \
-cmpbuf.$(OBJEXT) io.$(OBJEXT) context.$(OBJEXT) ed.$(OBJEXT) \
-normal.$(OBJEXT) ifdef.$(OBJEXT) util.$(OBJEXT) dir.$(OBJEXT) \
-version.$(OBJEXT) side.$(OBJEXT)
-libdiff_a_OBJECTS = $(am_libdiff_a_OBJECTS)
-AR = ar
-COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-CFLAGS = @CFLAGS@
-CCLD = $(CC)
-LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 DIST_SOURCES = $(libdiff_a_SOURCES)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
-@AMDEP@DEP_FILES = $(DEPDIR)/analyze.Po $(DEPDIR)/cmpbuf.Po \
-@AMDEP@ $(DEPDIR)/context.Po $(DEPDIR)/diff.Po $(DEPDIR)/diff3.Po \
-@AMDEP@ $(DEPDIR)/dir.Po $(DEPDIR)/ed.Po $(DEPDIR)/ifdef.Po \
-@AMDEP@ $(DEPDIR)/io.Po $(DEPDIR)/normal.Po $(DEPDIR)/side.Po \
-@AMDEP@ $(DEPDIR)/util.Po $(DEPDIR)/version.Po
+@AMDEP_TRUE@DEP_FILES = $(DEPDIR)/analyze.Po $(DEPDIR)/cmpbuf.Po \
+@AMDEP_TRUE@	$(DEPDIR)/context.Po $(DEPDIR)/diff.Po \
+@AMDEP_TRUE@	$(DEPDIR)/diff3.Po $(DEPDIR)/dir.Po $(DEPDIR)/ed.Po \
+@AMDEP_TRUE@	$(DEPDIR)/ifdef.Po $(DEPDIR)/io.Po \
+@AMDEP_TRUE@	$(DEPDIR)/normal.Po $(DEPDIR)/side.Po \
+@AMDEP_TRUE@	$(DEPDIR)/util.Po $(DEPDIR)/version.Po
 DIST_COMMON = ChangeLog Makefile.am Makefile.in
-
 SOURCES = $(libdiff_a_SOURCES)
 OBJECTS = $(am_libdiff_a_OBJECTS)
 
 all: all-am
 
 .SUFFIXES:
-.SUFFIXES: .c .h .o .obj
+.SUFFIXES: .c .o .obj
 
-$(srcdir)/Makefile.in: Makefile.am  $(top_srcdir)/configure.in $(ACLOCAL_M4)
+$(srcdir)/Makefile.in:  Makefile.am  $(top_srcdir)/configure.in $(ACLOCAL_M4)
 	cd $(top_srcdir) && \
 	  $(AUTOMAKE) --gnu  diff/Makefile
 
-Makefile: $(srcdir)/Makefile.in  $(top_builddir)/config.status
+Makefile:  $(srcdir)/Makefile.in  $(top_builddir)/config.status
 	cd $(top_builddir) && \
 	  CONFIG_HEADERS= CONFIG_LINKS= \
 	  CONFIG_FILES=$(subdir)/$@ $(SHELL) ./config.status
@@ -151,16 +152,16 @@ Makefile: $(srcdir)/Makefile.in  $(top_builddir)/config.status
 clean-noinstLIBRARIES:
 	-test -z "$(noinst_LIBRARIES)" || rm -f $(noinst_LIBRARIES)
 
+libdiff.a: $(libdiff_a_OBJECTS) $(libdiff_a_DEPENDENCIES)
+	-rm -f libdiff.a
+	$(libdiff_a_AR) libdiff.a $(libdiff_a_OBJECTS) $(libdiff_a_LIBADD)
+	$(RANLIB) libdiff.a
+
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT) core *.core
 
 distclean-compile:
 	-rm -f *.tab.c
-
-libdiff.a: $(libdiff_a_OBJECTS) $(libdiff_a_DEPENDENCIES)
-	-rm -f libdiff.a
-	$(libdiff_a_AR) libdiff.a $(libdiff_a_OBJECTS) $(libdiff_a_LIBADD)
-	$(RANLIB) libdiff.a
 
 tags: TAGS
 
@@ -173,7 +174,7 @@ ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
 	       END { for (i in files) print i; }'`; \
 	mkid -fID $$unique $(LISP)
 
-TAGS: $(HEADERS) $(SOURCES)  $(TAGS_DEPENDENCIES) \
+TAGS:  $(HEADERS) $(SOURCES)  $(TAGS_DEPENDENCIES) \
 		$(TAGS_FILES) $(LISP)
 	tags=; \
 	here=`pwd`; \
@@ -194,35 +195,35 @@ GTAGS:
 distclean-tags:
 	-rm -f TAGS ID
 
-@AMDEP@@_am_include@ $(DEPDIR)/analyze.Po
-@AMDEP@@_am_include@ $(DEPDIR)/cmpbuf.Po
-@AMDEP@@_am_include@ $(DEPDIR)/context.Po
-@AMDEP@@_am_include@ $(DEPDIR)/diff.Po
-@AMDEP@@_am_include@ $(DEPDIR)/diff3.Po
-@AMDEP@@_am_include@ $(DEPDIR)/dir.Po
-@AMDEP@@_am_include@ $(DEPDIR)/ed.Po
-@AMDEP@@_am_include@ $(DEPDIR)/ifdef.Po
-@AMDEP@@_am_include@ $(DEPDIR)/io.Po
-@AMDEP@@_am_include@ $(DEPDIR)/normal.Po
-@AMDEP@@_am_include@ $(DEPDIR)/side.Po
-@AMDEP@@_am_include@ $(DEPDIR)/util.Po
-@AMDEP@@_am_include@ $(DEPDIR)/version.Po
+@_am_include@ @_am_quote@$(DEPDIR)/analyze.Po@_am_quote@
+@_am_include@ @_am_quote@$(DEPDIR)/cmpbuf.Po@_am_quote@
+@_am_include@ @_am_quote@$(DEPDIR)/context.Po@_am_quote@
+@_am_include@ @_am_quote@$(DEPDIR)/diff.Po@_am_quote@
+@_am_include@ @_am_quote@$(DEPDIR)/diff3.Po@_am_quote@
+@_am_include@ @_am_quote@$(DEPDIR)/dir.Po@_am_quote@
+@_am_include@ @_am_quote@$(DEPDIR)/ed.Po@_am_quote@
+@_am_include@ @_am_quote@$(DEPDIR)/ifdef.Po@_am_quote@
+@_am_include@ @_am_quote@$(DEPDIR)/io.Po@_am_quote@
+@_am_include@ @_am_quote@$(DEPDIR)/normal.Po@_am_quote@
+@_am_include@ @_am_quote@$(DEPDIR)/side.Po@_am_quote@
+@_am_include@ @_am_quote@$(DEPDIR)/util.Po@_am_quote@
+@_am_include@ @_am_quote@$(DEPDIR)/version.Po@_am_quote@
 
 distclean-depend:
 	-rm -rf $(DEPDIR)
 
-@AMDEP@CCDEPMODE = @CCDEPMODE@
+CCDEPMODE = @CCDEPMODE@
 
 .c.o:
-@AMDEP@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
-@AMDEP@	depfile='$(DEPDIR)/$*.Po' tmpdepfile='$(DEPDIR)/$*.TPo' @AMDEPBACKSLASH@
-@AMDEP@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
+	depfile='$(DEPDIR)/$*.Po' tmpdepfile='$(DEPDIR)/$*.TPo' @AMDEPBACKSLASH@
+	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 	$(COMPILE) -c -o $@ `test -f $< || echo '$(srcdir)/'`$<
 
 .c.obj:
-@AMDEP@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
-@AMDEP@	depfile='$(DEPDIR)/$*.Po' tmpdepfile='$(DEPDIR)/$*.TPo' @AMDEPBACKSLASH@
-@AMDEP@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
+	depfile='$(DEPDIR)/$*.Po' tmpdepfile='$(DEPDIR)/$*.TPo' @AMDEPBACKSLASH@
+	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 	$(COMPILE) -c -o $@ `cygpath -w $<`
 
 

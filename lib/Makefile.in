@@ -11,6 +11,35 @@
 # even the implied warranty of MERCHANTABILITY or FITNESS FOR A
 # PARTICULAR PURPOSE.
 
+@SET_MAKE@
+
+# Makefile for library files used by GNU CVS.
+# Copyright (C) 1986, 1988-1994, 2000 Free Software Foundation, Inc.
+
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2, or (at your option)
+# any later version.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+# For now we need to include $(top_srcdir)/src because some systems
+# (at least 'AIX rioscpu2 3 4 000030498200',
+# 'HP-UX hp60 B.10.20 A 9000/770 hp60 two-user license', &
+# 'IRIX64 sgiop110 6.5 07151433 IP30') have trouble finding error.h
+# when compiling savecwd.c
+#
+# FIXME - the fact that compiling on my Linux 2.2.16 system finds
+# /usr/include/error.h instead of $(top_srcdir)/src/error.h but
+# everything compiles and tests anyhow implies that src/error.h may
+# be unecessary now.  Should look more deeply into this
+#
+# $(includeopt) is CVS specific and set by configure
+
+
 SHELL = @SHELL@
 
 srcdir = @srcdir@
@@ -56,9 +85,6 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
-
-@SET_MAKE@
-AMDEP = @AMDEP@
 AMTAR = @AMTAR@
 AWK = @AWK@
 CC = @CC@
@@ -82,35 +108,9 @@ TEXI2DVI = @TEXI2DVI@
 VERSION = @VERSION@
 YACC = @YACC@
 _am_include = @_am_include@
+_am_quote = @_am_quote@
 includeopt = @includeopt@
 install_sh = @install_sh@
-
-# Makefile for library files used by GNU CVS.
-# Copyright (C) 1986, 1988-1994, 2000 Free Software Foundation, Inc.
-
-# This program is free software; you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation; either version 2, or (at your option)
-# any later version.
-
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-
-# For now we need to include $(top_srcdir)/src because some systems
-# (at least 'AIX rioscpu2 3 4 000030498200',
-# 'HP-UX hp60 B.10.20 A 9000/770 hp60 two-user license', &
-# 'IRIX64 sgiop110 6.5 07151433 IP30') have trouble finding error.h
-# when compiling savecwd.c
-#
-# FIXME - the fact that compiling on my Linux 2.2.16 system finds
-# /usr/include/error.h instead of $(top_srcdir)/src/error.h but
-# everything compiles and tests anyhow implies that src/error.h may
-# be unecessary now.  Should look more deeply into this
-#
-# $(includeopt) is CVS specific and set by configure
-
 
 INCLUDES = -I$(top_srcdir)/src $(includeopt)
 
@@ -167,52 +167,57 @@ CONFIG_HEADER = $(top_builddir)/config.h $(top_builddir)/src/options.h
 CONFIG_CLEAN_FILES =
 LIBRARIES = $(noinst_LIBRARIES)
 
+libcvs_a_AR = $(AR) cru
+libcvs_a_DEPENDENCIES = @LIBOBJS@
+am_libcvs_a_OBJECTS = argmatch.$(OBJEXT) ftruncate.$(OBJEXT) \
+	getdate.$(OBJEXT) getline.$(OBJEXT) getopt.$(OBJEXT) \
+	getopt1.$(OBJEXT) md5.$(OBJEXT) regex.$(OBJEXT) \
+	savecwd.$(OBJEXT) sighandle.$(OBJEXT) stripslash.$(OBJEXT) \
+	xgetwd.$(OBJEXT) yesno.$(OBJEXT)
+libcvs_a_OBJECTS = $(am_libcvs_a_OBJECTS)
+AR = ar
+COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
+	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+CFLAGS = @CFLAGS@
+CCLD = $(CC)
+LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 
 DEFAULT_INCLUDES =  -I. -I$(srcdir) -I$(top_builddir) -I$(top_builddir)/src
 DEFS = @DEFS@
 CPPFLAGS = @CPPFLAGS@
 LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
-libcvs_a_AR = $(AR) cru
-libcvs_a_DEPENDENCIES = @LIBOBJS@
-am_libcvs_a_OBJECTS = argmatch.$(OBJEXT) ftruncate.$(OBJEXT) \
-getdate.$(OBJEXT) getline.$(OBJEXT) getopt.$(OBJEXT) getopt1.$(OBJEXT) \
-md5.$(OBJEXT) regex.$(OBJEXT) savecwd.$(OBJEXT) sighandle.$(OBJEXT) \
-stripslash.$(OBJEXT) xgetwd.$(OBJEXT) yesno.$(OBJEXT)
-libcvs_a_OBJECTS = $(am_libcvs_a_OBJECTS)
-AR = ar
-COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-CFLAGS = @CFLAGS@
-CCLD = $(CC)
-LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 DIST_SOURCES = $(libcvs_a_SOURCES)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
-@AMDEP@DEP_FILES = $(DEPDIR)/argmatch.Po $(DEPDIR)/dup2.Po \
-@AMDEP@ $(DEPDIR)/fncase.Po $(DEPDIR)/fnmatch.Po $(DEPDIR)/ftruncate.Po \
-@AMDEP@ $(DEPDIR)/getdate.Po $(DEPDIR)/getline.Po $(DEPDIR)/getopt.Po \
-@AMDEP@ $(DEPDIR)/getopt1.Po $(DEPDIR)/hostname.Po $(DEPDIR)/md5.Po \
-@AMDEP@ $(DEPDIR)/memmove.Po $(DEPDIR)/mkdir.Po $(DEPDIR)/regex.Po \
-@AMDEP@ $(DEPDIR)/rename.Po $(DEPDIR)/savecwd.Po $(DEPDIR)/sighandle.Po \
-@AMDEP@ $(DEPDIR)/strerror.Po $(DEPDIR)/stripslash.Po \
-@AMDEP@ $(DEPDIR)/strstr.Po $(DEPDIR)/strtoul.Po $(DEPDIR)/valloc.Po \
-@AMDEP@ $(DEPDIR)/waitpid.Po $(DEPDIR)/xgetwd.Po $(DEPDIR)/yesno.Po
+@AMDEP_TRUE@DEP_FILES = $(DEPDIR)/argmatch.Po $(DEPDIR)/dup2.Po \
+@AMDEP_TRUE@	$(DEPDIR)/fncase.Po $(DEPDIR)/fnmatch.Po \
+@AMDEP_TRUE@	$(DEPDIR)/ftruncate.Po $(DEPDIR)/getdate.Po \
+@AMDEP_TRUE@	$(DEPDIR)/getline.Po $(DEPDIR)/getopt.Po \
+@AMDEP_TRUE@	$(DEPDIR)/getopt1.Po $(DEPDIR)/hostname.Po \
+@AMDEP_TRUE@	$(DEPDIR)/md5.Po $(DEPDIR)/memmove.Po \
+@AMDEP_TRUE@	$(DEPDIR)/mkdir.Po $(DEPDIR)/regex.Po \
+@AMDEP_TRUE@	$(DEPDIR)/rename.Po $(DEPDIR)/savecwd.Po \
+@AMDEP_TRUE@	$(DEPDIR)/sighandle.Po $(DEPDIR)/strerror.Po \
+@AMDEP_TRUE@	$(DEPDIR)/stripslash.Po $(DEPDIR)/strstr.Po \
+@AMDEP_TRUE@	$(DEPDIR)/strtoul.Po $(DEPDIR)/valloc.Po \
+@AMDEP_TRUE@	$(DEPDIR)/waitpid.Po $(DEPDIR)/xgetwd.Po \
+@AMDEP_TRUE@	$(DEPDIR)/yesno.Po
 DIST_COMMON = ChangeLog Makefile.am Makefile.in dup2.c fncase.c \
-fnmatch.c getdate.c hostname.c memmove.c mkdir.c rename.c strerror.c \
-strstr.c strtoul.c valloc.c waitpid.c
-
+	fnmatch.c getdate.c hostname.c memmove.c mkdir.c rename.c \
+	strerror.c strstr.c strtoul.c valloc.c waitpid.c
 SOURCES = $(libcvs_a_SOURCES)
 OBJECTS = $(am_libcvs_a_OBJECTS)
 
 all: all-am
 
 .SUFFIXES:
-.SUFFIXES: .c .h .o .obj .y
+.SUFFIXES: .c .o .obj .y
 
-$(srcdir)/Makefile.in: Makefile.am  $(top_srcdir)/configure.in $(ACLOCAL_M4)
+$(srcdir)/Makefile.in:  Makefile.am  $(top_srcdir)/configure.in $(ACLOCAL_M4)
 	cd $(top_srcdir) && \
 	  $(AUTOMAKE) --gnu  lib/Makefile
 
-Makefile: $(srcdir)/Makefile.in  $(top_builddir)/config.status
+Makefile:  $(srcdir)/Makefile.in  $(top_builddir)/config.status
 	cd $(top_builddir) && \
 	  CONFIG_HEADERS= CONFIG_LINKS= \
 	  CONFIG_FILES=$(subdir)/$@ $(SHELL) ./config.status
@@ -220,22 +225,27 @@ Makefile: $(srcdir)/Makefile.in  $(top_builddir)/config.status
 clean-noinstLIBRARIES:
 	-test -z "$(noinst_LIBRARIES)" || rm -f $(noinst_LIBRARIES)
 
+libcvs.a: $(libcvs_a_OBJECTS) $(libcvs_a_DEPENDENCIES)
+	-rm -f libcvs.a
+	$(libcvs_a_AR) libcvs.a $(libcvs_a_OBJECTS) $(libcvs_a_LIBADD)
+	$(RANLIB) libcvs.a
+
+.y.c:
+	$(YACC) $(AM_YFLAGS) $(YFLAGS) $< && mv y.tab.c $*.c
+	if test -f y.tab.h; then \
+	  if cmp -s y.tab.h $*.h; then \
+	    rm -f y.tab.h; \
+	  else \
+	    mv y.tab.h $*.h; \
+	  fi; \
+	fi
+
+
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT) core *.core
 
 distclean-compile:
 	-rm -f *.tab.c
-
-libcvs.a: $(libcvs_a_OBJECTS) $(libcvs_a_DEPENDENCIES)
-	-rm -f libcvs.a
-	$(libcvs_a_AR) libcvs.a $(libcvs_a_OBJECTS) $(libcvs_a_LIBADD)
-	$(RANLIB) libcvs.a
-.y.c:
-	$(YACC) $(AM_YFLAGS) $(YFLAGS) $< && mv y.tab.c $*.c
-	if test -f y.tab.h; then \
-	if cmp -s y.tab.h $*.h; then rm -f y.tab.h; else mv y.tab.h $*.h; fi; \
-	else :; fi
-
 
 tags: TAGS
 
@@ -248,7 +258,7 @@ ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
 	       END { for (i in files) print i; }'`; \
 	mkid -fID $$unique $(LISP)
 
-TAGS: $(HEADERS) $(SOURCES)  $(TAGS_DEPENDENCIES) \
+TAGS:  $(HEADERS) $(SOURCES)  $(TAGS_DEPENDENCIES) \
 		$(TAGS_FILES) $(LISP)
 	tags=; \
 	here=`pwd`; \
@@ -269,47 +279,47 @@ GTAGS:
 distclean-tags:
 	-rm -f TAGS ID
 
-@AMDEP@@_am_include@ $(DEPDIR)/argmatch.Po
-@AMDEP@@_am_include@ $(DEPDIR)/dup2.Po
-@AMDEP@@_am_include@ $(DEPDIR)/fncase.Po
-@AMDEP@@_am_include@ $(DEPDIR)/fnmatch.Po
-@AMDEP@@_am_include@ $(DEPDIR)/ftruncate.Po
-@AMDEP@@_am_include@ $(DEPDIR)/getdate.Po
-@AMDEP@@_am_include@ $(DEPDIR)/getline.Po
-@AMDEP@@_am_include@ $(DEPDIR)/getopt.Po
-@AMDEP@@_am_include@ $(DEPDIR)/getopt1.Po
-@AMDEP@@_am_include@ $(DEPDIR)/hostname.Po
-@AMDEP@@_am_include@ $(DEPDIR)/md5.Po
-@AMDEP@@_am_include@ $(DEPDIR)/memmove.Po
-@AMDEP@@_am_include@ $(DEPDIR)/mkdir.Po
-@AMDEP@@_am_include@ $(DEPDIR)/regex.Po
-@AMDEP@@_am_include@ $(DEPDIR)/rename.Po
-@AMDEP@@_am_include@ $(DEPDIR)/savecwd.Po
-@AMDEP@@_am_include@ $(DEPDIR)/sighandle.Po
-@AMDEP@@_am_include@ $(DEPDIR)/strerror.Po
-@AMDEP@@_am_include@ $(DEPDIR)/stripslash.Po
-@AMDEP@@_am_include@ $(DEPDIR)/strstr.Po
-@AMDEP@@_am_include@ $(DEPDIR)/strtoul.Po
-@AMDEP@@_am_include@ $(DEPDIR)/valloc.Po
-@AMDEP@@_am_include@ $(DEPDIR)/waitpid.Po
-@AMDEP@@_am_include@ $(DEPDIR)/xgetwd.Po
-@AMDEP@@_am_include@ $(DEPDIR)/yesno.Po
+@_am_include@ @_am_quote@$(DEPDIR)/argmatch.Po@_am_quote@
+@_am_include@ @_am_quote@$(DEPDIR)/dup2.Po@_am_quote@
+@_am_include@ @_am_quote@$(DEPDIR)/fncase.Po@_am_quote@
+@_am_include@ @_am_quote@$(DEPDIR)/fnmatch.Po@_am_quote@
+@_am_include@ @_am_quote@$(DEPDIR)/ftruncate.Po@_am_quote@
+@_am_include@ @_am_quote@$(DEPDIR)/getdate.Po@_am_quote@
+@_am_include@ @_am_quote@$(DEPDIR)/getline.Po@_am_quote@
+@_am_include@ @_am_quote@$(DEPDIR)/getopt.Po@_am_quote@
+@_am_include@ @_am_quote@$(DEPDIR)/getopt1.Po@_am_quote@
+@_am_include@ @_am_quote@$(DEPDIR)/hostname.Po@_am_quote@
+@_am_include@ @_am_quote@$(DEPDIR)/md5.Po@_am_quote@
+@_am_include@ @_am_quote@$(DEPDIR)/memmove.Po@_am_quote@
+@_am_include@ @_am_quote@$(DEPDIR)/mkdir.Po@_am_quote@
+@_am_include@ @_am_quote@$(DEPDIR)/regex.Po@_am_quote@
+@_am_include@ @_am_quote@$(DEPDIR)/rename.Po@_am_quote@
+@_am_include@ @_am_quote@$(DEPDIR)/savecwd.Po@_am_quote@
+@_am_include@ @_am_quote@$(DEPDIR)/sighandle.Po@_am_quote@
+@_am_include@ @_am_quote@$(DEPDIR)/strerror.Po@_am_quote@
+@_am_include@ @_am_quote@$(DEPDIR)/stripslash.Po@_am_quote@
+@_am_include@ @_am_quote@$(DEPDIR)/strstr.Po@_am_quote@
+@_am_include@ @_am_quote@$(DEPDIR)/strtoul.Po@_am_quote@
+@_am_include@ @_am_quote@$(DEPDIR)/valloc.Po@_am_quote@
+@_am_include@ @_am_quote@$(DEPDIR)/waitpid.Po@_am_quote@
+@_am_include@ @_am_quote@$(DEPDIR)/xgetwd.Po@_am_quote@
+@_am_include@ @_am_quote@$(DEPDIR)/yesno.Po@_am_quote@
 
 distclean-depend:
 	-rm -rf $(DEPDIR)
 
-@AMDEP@CCDEPMODE = @CCDEPMODE@
+CCDEPMODE = @CCDEPMODE@
 
 .c.o:
-@AMDEP@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
-@AMDEP@	depfile='$(DEPDIR)/$*.Po' tmpdepfile='$(DEPDIR)/$*.TPo' @AMDEPBACKSLASH@
-@AMDEP@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
+	depfile='$(DEPDIR)/$*.Po' tmpdepfile='$(DEPDIR)/$*.TPo' @AMDEPBACKSLASH@
+	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 	$(COMPILE) -c -o $@ `test -f $< || echo '$(srcdir)/'`$<
 
 .c.obj:
-@AMDEP@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
-@AMDEP@	depfile='$(DEPDIR)/$*.Po' tmpdepfile='$(DEPDIR)/$*.TPo' @AMDEPBACKSLASH@
-@AMDEP@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
+	depfile='$(DEPDIR)/$*.Po' tmpdepfile='$(DEPDIR)/$*.TPo' @AMDEPBACKSLASH@
+	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 	$(COMPILE) -c -o $@ `cygpath -w $<`
 
 
