@@ -1,6 +1,6 @@
 2003-05-21  Derek Price  <derek@ximbiot.com>
 
-	* Makefile.in: Regenerate with Autoconf version 1.7.5.
+	* Makefile.in: Regenerate with Automake version 1.7.5.
 
 2003-05-21  Derek Price  <derek@ximbiot.com>
 
