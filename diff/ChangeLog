@@ -1,3 +1,7 @@
+2000-12-21  Derek Price  <derek.price@openavenue.com>
+
+	* Makefile.in: Some changes to support Automake targets
+
 2000-10-26  Larry Jones  <larry.jones@sdrc.com>
 
 	* Makefile.in: Get PR_PROGRAM from autoconf instead of hard coding.
