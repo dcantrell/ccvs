@@ -1,5 +1,11 @@
 2004-10-05  Derek Price  <derek@ximbiot.com>
 
+	* configure.in: Remove call to gl_DIRNAME.
+	* gnulib-update (MODULES): Add dirname.
+	* srclist.txt: Remove auto-updated GNULIB modules.
+
+2004-10-05  Derek Price  <derek@ximbiot.com>
+
 	* gnulib.txt: New file.
 
 2004-10-05  Derek Price  <derek@ximbiot.com>

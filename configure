@@ -7797,6 +7797,91 @@ _ACEOF
 fi
 
 
+    echo "$as_me:$LINENO: checking whether system is Windows or MSDOS" >&5
+echo $ECHO_N "checking whether system is Windows or MSDOS... $ECHO_C" >&6
+if test "${ac_cv_win_or_dos+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+
+        cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+
+int
+main ()
+{
+#if !defined _WIN32 && !defined __WIN32__ && !defined __MSDOS__ && !defined __CYGWIN__
+neither MSDOS nor Windows
+#endif
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext
+if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
+  (eval $ac_compile) 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } &&
+	 { ac_try='test -z "$ac_c_werror_flag"
+			 || test ! -s conftest.err'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; } &&
+	 { ac_try='test -s conftest.$ac_objext'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then
+  ac_cv_win_or_dos=yes
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+ac_cv_win_or_dos=no
+fi
+rm -f conftest.err conftest.$ac_objext conftest.$ac_ext
+
+fi
+echo "$as_me:$LINENO: result: $ac_cv_win_or_dos" >&5
+echo "${ECHO_T}$ac_cv_win_or_dos" >&6
+
+    if test x"$ac_cv_win_or_dos" = xyes; then
+      ac_fs_accepts_drive_letter_prefix=1
+      ac_fs_backslash_is_file_name_separator=1
+    else
+      ac_fs_accepts_drive_letter_prefix=0
+      ac_fs_backslash_is_file_name_separator=0
+    fi
+
+
+
+
+
+cat >>confdefs.h <<_ACEOF
+#define FILE_SYSTEM_ACCEPTS_DRIVE_LETTER_PREFIX $ac_fs_accepts_drive_letter_prefix
+_ACEOF
+
+
+
+
+
+
+cat >>confdefs.h <<_ACEOF
+#define FILE_SYSTEM_BACKSLASH_IS_FILE_NAME_SEPARATOR $ac_fs_backslash_is_file_name_separator
+_ACEOF
+
+
+
 
 
 
@@ -10703,6 +10788,10 @@ done
   :
 
   fi
+
+
+
+
 
 
 
@@ -15391,95 +15480,6 @@ done
 
 
   fi
-
-
-    echo "$as_me:$LINENO: checking whether system is Windows or MSDOS" >&5
-echo $ECHO_N "checking whether system is Windows or MSDOS... $ECHO_C" >&6
-if test "${ac_cv_win_or_dos+set}" = set; then
-  echo $ECHO_N "(cached) $ECHO_C" >&6
-else
-
-        cat >conftest.$ac_ext <<_ACEOF
-/* confdefs.h.  */
-_ACEOF
-cat confdefs.h >>conftest.$ac_ext
-cat >>conftest.$ac_ext <<_ACEOF
-/* end confdefs.h.  */
-
-int
-main ()
-{
-#if !defined _WIN32 && !defined __WIN32__ && !defined __MSDOS__ && !defined __CYGWIN__
-neither MSDOS nor Windows
-#endif
-  ;
-  return 0;
-}
-_ACEOF
-rm -f conftest.$ac_objext
-if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
-  (eval $ac_compile) 2>conftest.er1
-  ac_status=$?
-  grep -v '^ *+' conftest.er1 >conftest.err
-  rm -f conftest.er1
-  cat conftest.err >&5
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); } &&
-	 { ac_try='test -z "$ac_c_werror_flag"
-			 || test ! -s conftest.err'
-  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
-  (eval $ac_try) 2>&5
-  ac_status=$?
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); }; } &&
-	 { ac_try='test -s conftest.$ac_objext'
-  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
-  (eval $ac_try) 2>&5
-  ac_status=$?
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); }; }; then
-  ac_cv_win_or_dos=yes
-else
-  echo "$as_me: failed program was:" >&5
-sed 's/^/| /' conftest.$ac_ext >&5
-
-ac_cv_win_or_dos=no
-fi
-rm -f conftest.err conftest.$ac_objext conftest.$ac_ext
-
-fi
-echo "$as_me:$LINENO: result: $ac_cv_win_or_dos" >&5
-echo "${ECHO_T}$ac_cv_win_or_dos" >&6
-
-    if test x"$ac_cv_win_or_dos" = xyes; then
-      ac_fs_accepts_drive_letter_prefix=1
-      ac_fs_backslash_is_file_name_separator=1
-    else
-      ac_fs_accepts_drive_letter_prefix=0
-      ac_fs_backslash_is_file_name_separator=0
-    fi
-
-
-
-
-
-cat >>confdefs.h <<_ACEOF
-#define FILESYSTEM_ACCEPTS_DRIVE_LETTER_PREFIX $ac_fs_accepts_drive_letter_prefix
-_ACEOF
-
-
-
-
-
-
-cat >>confdefs.h <<_ACEOF
-#define FILESYSTEM_BACKSLASH_IS_FILE_NAME_SEPARATOR $ac_fs_backslash_is_file_name_separator
-_ACEOF
-
-
-
-
-
 
 
     :
