@@ -976,14 +976,6 @@ Make_Date (rawdate)
     if (unixtime == (time_t) - 1)
 	error (1, 0, "Can't parse date/time: %s", rawdate);
 
-#ifndef HAVE_RCS5
-    you lose;
-    /* Would need to call localtime instead of gmtime.  But I'm not sure
-       anyone is using the !HAVE_RCS5 code anymore.  I'm also not sure
-       the !HAVE_RCS5 code really gets this right (in terms of effectively
-       handling RCS files in the old format).  */
-#endif
-
     ftm = gmtime (&unixtime);
     if (ftm == NULL)
 	/* This is a system, like VMS, where the system clock is in local

@@ -5333,11 +5333,6 @@ client_senddate (date)
         error (1, 0, "diff_client_senddate: sscanf failed on date");
     }
 
-#ifndef HAVE_RCS5
-    /* We need to fix the timezone in this case; see Make_Date.  */
-    abort ();
-#endif /* HAVE_RCS5 */
-
     sprintf (buf, "%d/%d/%d %d:%d:%d GMT", month, day, year,
 	     hour, minute, second);
     option_with_arg ("-D", buf);

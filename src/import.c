@@ -934,9 +934,6 @@ add_rcs_file (message, rcs, user, add_vhead, key_opt,
     struct tm *ftm;
     time_t now;
     char altdate1[MAXDATELEN];
-#ifndef HAVE_RCS5
-    char altdate2[MAXDATELEN];
-#endif
     char *author;
     int i, ierrno, err = 0;
     mode_t mode;
@@ -1061,27 +1058,11 @@ add_rcs_file (message, rcs, user, add_vhead, key_opt,
 	    now = sb.st_mtime;
 	else
 	    (void) time (&now);
-#ifdef HAVE_RCS5
 	ftm = gmtime (&now);
-#else
-	ftm = localtime (&now);
-#endif
 	(void) sprintf (altdate1, DATEFORM,
 			ftm->tm_year + (ftm->tm_year < 100 ? 0 : 1900),
 			ftm->tm_mon + 1, ftm->tm_mday, ftm->tm_hour,
 			ftm->tm_min, ftm->tm_sec);
-#ifdef HAVE_RCS5
-#define	altdate2 altdate1
-#else
-	/* If you don't have RCS V5 or later, you need to lie about the ci
-	   time, since RCS V4 and earlier insist that the times differ.  */
-	now++;
-	ftm = localtime (&now);
-	(void) sprintf (altdate2, DATEFORM,
-			ftm->tm_year + (ftm->tm_year < 100 ? 0 : 1900),
-			ftm->tm_mon + 1, ftm->tm_mday, ftm->tm_hour,
-			ftm->tm_min, ftm->tm_sec);
-#endif
 	author = getcaller ();
 
 	if (fprintf (fprcs, "\012%s\012", add_vhead) < 0 ||
@@ -1105,7 +1086,7 @@ add_rcs_file (message, rcs, user, add_vhead, key_opt,
 	{
 	    if (fprintf (fprcs, "\012%s.1\012", add_vbranch) < 0 ||
 		fprintf (fprcs, "date     %s;  author %s;  state Exp;\012",
-			 altdate2, author) < 0 ||
+			 altdate1, author) < 0 ||
 		fprintf (fprcs, "branches ;\012") < 0 ||
 		fprintf (fprcs, "next     ;\012\012") < 0)
 		goto write_error;
