@@ -1,5 +1,9 @@
 2003-07-22  Derek Price  <derek@ximbiot.com>
 
+	* strerror.m4: New file from GNULIB.
+
+2003-07-22  Derek Price  <derek@ximbiot.com>
+
 	* memmove.m4: New file from GNULIB.
 
 2003-07-19  Derek Price  <derek@ximbiot.com>
