@@ -1,3 +1,9 @@
+1998-05-12  Jim Meyering  <meyering@ascend.com>
+
+	* commit.c (commit_filesdoneproc): Call mkmodules not just when
+	committing a file directly under CVSROOT, but also when committing
+	files in subdirectories of CVSROOT.
+
 1998-05-08  Jim Meyering  <meyering@ascend.com>
 
 	* filesubr.c (xreadlink):  NUL-terminate the symbolic link name.
