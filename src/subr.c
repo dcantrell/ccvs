@@ -627,13 +627,13 @@ void
 run_setup (const char *fmt,...)
 #else
 void 
-run_setup (fmt, a1, a2, a3, a4, a5, a6, a7, a8)
+run_setup (fmt, va_alist)
     char *fmt;
+    va_dcl
 #endif
 {
 #ifdef HAVE_VPRINTF
     va_list args;
-
 #endif
     char *cp;
     int i;
@@ -678,13 +678,13 @@ void
 run_args (const char *fmt,...)
 #else
 void 
-run_args (fmt, a1, a2, a3, a4, a5, a6, a7, a8)
+run_args (fmt, va_alist)
     char *fmt;
+    va_dcl
 #endif
 {
 #ifdef HAVE_VPRINTF
     va_list args;
-
 #endif
 
     run_init_prog ();
