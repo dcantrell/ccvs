@@ -1,3 +1,12 @@
+2004-04-07  Derek Price  <derek@ximbiot.com>
+
+	Update regex module from GNULIB.
+
+	* NEWS: Note update.
+	* configure.in: Call gl_REGEX.
+	* srclist.txt: Note origins of regex module.
+	* Makefile.in, configure, config.h.in, aclocal.m4: Regenerated.
+
 2004-04-06  Derek Price  <derek@ximbiot.com>
 
 	* NEWS: Note web proxy support.

@@ -130,6 +130,10 @@ $GNULIB/m4/pathmax.m4				m4		no NI
 # $GNULIB/modules/realloc
 $GNULIB/lib/realloc.c				lib		no NI
 $GNULIB/m4/realloc.m4				m4		no NI
+# $GNULIB/modules/regex
+$GNULIB/lib/regex.c				lib		no NI
+$GNULIB/lib/regex.h				lib		no NI
+$GNULIB/m4/regex.m4				m4		no NI
 # $GNULIB/modules/restrict
 $GNULIB/m4/restrict.m4				m4		no NI
 # $GNULIB/modules/stat
