@@ -1,3 +1,7 @@
+1998-04-09  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* filesubr.c, cvs.h (link_file): Remove; no longer used.
+
 1998-04-08  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* recurse.c (do_dir_proc): Restore update_dir rather than a
