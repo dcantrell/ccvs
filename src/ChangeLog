@@ -1,5 +1,10 @@
 2004-02-04  Derek Price  <derek@ximbiot.com>
 
+	* stack.c (shift, shift_string): Make sure these functions return their
+	result.
+
+2004-02-04  Derek Price  <derek@ximbiot.com>
+
 	* modules.c (do_modules): Move content to and make this function a
 	wrapper for...
 	(_do_modules): ...this new function which can watch for infinite loops

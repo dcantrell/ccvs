@@ -163,7 +163,7 @@ void *
 shift (stack)
     List *stack;
 {
-    _shift (stack, 0);
+    return _shift (stack, 0);
 }
 
 
@@ -172,7 +172,7 @@ char *
 shift_string (stack)
     List *stack;
 {
-    _shift (stack, 1);
+    return _shift (stack, 1);
 }
 
 
