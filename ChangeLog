@@ -1,3 +1,8 @@
+Thu Oct  9 12:59:28 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* TODO: Revise item #182 to be clearer and to point to the
+	unofficial patch.
+
 Thu Sep 25 14:48:26 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* build.com: Also recurse into diff directory.

@@ -406,10 +406,12 @@ trying to accomplish and what the best way is -kingdon, Jul 1997).
      is down!).
 
 182.  There should be a way to show log entries corresponding to
-changes from tag "foo" to tag "bar".  "cvs log -rfoo -rbar" doesn't
-cut it, because it is inclusive on the bar end.  I'm not sure that is
-ever a useful or logical behavior ("cvs diff -r foo -r bar" is not
-similarly inclusive), but is compatibility an issue?
+changes from tag "foo" to tag "bar".  "cvs log -rfoo:bar" doesn't cut
+it, because it erroneously shows the changes associated with the
+change from the revision before foo to foo.  I'm not sure that is ever
+a useful or logical behavior ("cvs diff -r foo -r bar" gets this
+right), but is compatibility an issue?  See
+http://www.cyclic.com/cvs/unoff-log.txt for an unofficial patch.
 
 183.  "cvs status" should report on Entries.Static flag and CVS/Tag (how?
 maybe a "cvs status -d" to give directory status?).  There should also
