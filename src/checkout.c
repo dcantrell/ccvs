@@ -428,7 +428,7 @@ safe_location ()
     }
     else
     {
-      hardpath[x] = '\0';
+        hardpath[x] = '\0';
     }
     getwd (current);
     if (strncmp(current, hardpath, strlen(hardpath)) == 0)
