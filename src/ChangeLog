@@ -1,5 +1,19 @@
 2004-02-25  Derek Price  <derek@ximbiot.com>
 
+	No longer require directories specified to `checkout -d' to exist.
+
+	* checkout.c (safe_location): Only confirm that destination is a safe
+	location for directories that already exist since we can assume that
+	creating directories under such a safe directory is acceptable.
+	(dir_to_build): Remove just_chdir member.
+	(checkout_proc): Add trace.  No longer set dir_to_build->just_chdir.
+	Minor reformatting.
+	(build_dirs_and_chdir): Don't create or register directories that are
+	not created.
+	* sanity.sh (*): Update tests to account for new behavior.
+
+2004-02-25  Derek Price  <derek@ximbiot.com>
+
 	* buffer.c (buf_empty): New function.
 	* server.c (server): Check for unread data in buffer before closing.
 

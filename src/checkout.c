@@ -414,7 +414,6 @@ int
 safe_location (char *where)
 {
     char *current;
-    char *where_location;
     char *hardpath;
     size_t hardpath_len;
     int retval;
@@ -434,62 +433,61 @@ safe_location (char *where)
 
     hardpath = xresolvepath ( current_parsed_root->directory );
 
-    /* if where is set, set current to where, where - last_component( where ),
-     * or fail, depending on whether the directories exist or not.
+    /* if where is set, set current to as much of where as exists,
+     * or fail.
      */
-    if ( where != NULL )
+    if (where != NULL)
     {
-	if ( CVS_CHDIR ( where ) != -1 )
+	char *where_this_pass = xstrdup (where);
+	while (1)
 	{
-	    /* where */
-	    where_location = xgetwd();
-	    if( where_location == NULL )
-		error( 1, errno, "could not get working directory" );
-
-	    if( CVS_CHDIR ( current ) == -1 )
-		error( 1, errno, "could not change directory to `%s'", current );
-
-	    free( current );
-	    current = where_location;
-        }
-	else if( errno == ENOENT )
-	{
-	    if ( last_component( where ) != where )
+	    if (CVS_CHDIR (where_this_pass) != -1)
 	    {
-		/* where - last_component( where ) */
+		/* where */
+		free (where_this_pass);
+		where_this_pass = xgetwd();
+		if (where_this_pass == NULL)
+		    error (1, errno, "could not get working directory");
+
+		if (CVS_CHDIR (current) == -1)
+		    error (1, errno,
+			   "could not restore directory to `%s'", current);
+
+		free (current);
+		current = where_this_pass;
+		break;
+	    }
+	    else if (errno == ENOENT)
+	    {
+		/* where_this_pass - last_component (where_this_pass) */
 		char *parent;
 
-		/* strip the last_component */
-		where_location = xstrdup( where );
-		parent = last_component( where_location );
-		parent[-1] = '\0';
-
-		if( CVS_CHDIR ( where_location ) != -1 )
+		if ((parent = last_component (where_this_pass))
+		        != where_this_pass)
 		{
-		    free( where_location );
-		    where_location = xgetwd();
-		    if( where_location == NULL )
-			error( 1, errno, "could not get working directory (nominally `%s')", where_location );
-
-		    if( CVS_CHDIR ( current ) == -1 )
-			error( 1, errno, "could not change directory to `%s'", current );
-
-		    free( current );
-		    current = where_location;
+		    /* strip the last_component */
+		    parent[-1] = '\0';
+		    /* continue */
 		}
 		else
-		    /* fail */
-		    error( 1, errno, "could not change directory to requested checkout directory `%s'", where_location );
+		{
+		    /* ERRNO == ENOENT
+		     *   && last_component (where_this_pass) == where_this_pass
+		     * means we've tried all the parent diretories and not one
+		     * exists, so there is no need to test any portion of where
+		     * - it is all being created.
+		     */
+		    free (where_this_pass);
+		    break;
+		}
 	    }
-	    /* else: ERRNO == ENOENT & last_component(where) == where
-	     * for example, 'cvs co -d newdir module', where newdir hasn't
-	     * been created yet, so leave current set to '.' and check that
-	     */
-	}
-	else
-	    /* fail */
-	    error( 1, errno, "could not change directory to requested checkout directory `%s'", where );
-    }
+	    else
+		/* we don't know how to handle other errors, so fail */
+		error (1, errno, "\
+could not change directory to requested checkout directory `%s'",
+		       where_this_pass);
+	} /* while (1) */
+    } /* where != NULL */
 
     hardpath_len = strlen (hardpath);
     if (strlen (current) >= hardpath_len
@@ -519,10 +517,6 @@ struct dir_to_build
     char *repository;
     /* The path to the directory.  */
     char *dirpath;
-
-    /* If set, don't build the directory, just change to it.
-       The caller will also want to set REPOSITORY to NULL.  */
-    int just_chdir;
 
     struct dir_to_build *next;
 };
@@ -589,6 +583,18 @@ checkout_proc (int argc, char **argv, char *where_orig, char *mwhere, char *mfil
     char *oldupdate = NULL;
     char *where;
 
+    if (trace)
+	(void) fprintf (stderr,
+	                "%s-> checkout_proc (%s, %s, %s, %d, %d, %s, %s)\n",
+			CLIENT_SERVER_STR,
+			where_orig ? where_orig : "(null)",
+			mwhere ? mwhere : "(null)",
+			mfile ? mfile : "(null)",
+	                shorten, local_specified,
+			omodule ? omodule : "(null)",
+			msg ? msg : "(null)"
+	               );
+
     /*
      * OK, so we're doing the checkout! Our args are as follows: 
      *  argc,argv contain either dir or dir followed by a list of files 
@@ -606,7 +612,8 @@ checkout_proc (int argc, char **argv, char *where_orig, char *mwhere, char *mfil
 			  + strlen (argv[0])
 			  + (mfile == NULL ? 0 : strlen (mfile))
 			  + 10);
-    (void) sprintf (repository, "%s/%s", current_parsed_root->directory, argv[0]);
+    (void) sprintf (repository, "%s/%s",
+                    current_parsed_root->directory, argv[0]);
     Sanitize_Repository_Name (repository);
 
 
@@ -796,8 +803,6 @@ internal error: %s doesn't start with %s in checkout_proc",
 	head->repository = NULL;
 	head->dirpath = xstrdup (where);
 	head->next = NULL;
-	head->just_chdir = 0;
-
 
 	/* Make a copy of the repository name to play with. */
 	reposcopy = xstrdup (repository);
@@ -836,23 +841,6 @@ internal error: %s doesn't start with %s in checkout_proc",
 	    }
 	    new->next = head;
 	    head = new;
-
-	    /* If where consists of multiple pathname components,
-	       then we want to just cd into it, without creating
-	       directories or modifying CVS directories as we go.
-	       In CVS 1.9 and earlier, the code actually does a
-	       CVS_CHDIR up-front; I'm not going to try to go back
-	       to that exact code but this is somewhat similar
-	       in spirit.  */
-	    if (where_orig != NULL
-		&& cp - where < strlen (where_orig))
-	    {
-		new->repository = NULL;
-		new->just_chdir = 1;
-		continue;
-	    }
-
-	    new->just_chdir = 0;
 
 	    /* Now figure out what repository directory to generate.
                The most complete case would be something like this:
@@ -1211,12 +1199,10 @@ build_dirs_and_chdir (struct dir_to_build *dirs, int sticky)
     while (dirs != NULL)
     {
 	char *dir = last_component (dirs->dirpath);
+	int made_dir = 0;
 
-	if (!dirs->just_chdir)
-	{
-	    mkdir_if_needed (dir);
-	    Subdir_Register (NULL, NULL, dir);
-	}
+	made_dir = !mkdir_if_needed (dir);
+	if (made_dir) Subdir_Register (NULL, NULL, dir);
 
 	if (CVS_CHDIR (dir) < 0)
 	{
@@ -1226,7 +1212,8 @@ build_dirs_and_chdir (struct dir_to_build *dirs, int sticky)
 	}
 	if (dirs->repository != NULL)
 	{
-	    build_one_dir (dirs->repository, dirs->dirpath, sticky);
+	    if (made_dir)
+		build_one_dir (dirs->repository, dirs->dirpath, sticky);
 	    free (dirs->repository);
 	}
 	nextdir = dirs->next;
