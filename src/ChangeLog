@@ -1,5 +1,9 @@
 2000-03-01  Larry Jones  <larry.jones@sdrc.com>
 
+	* main.c (main): Update year in copyright message.
+
+2000-03-01  Larry Jones  <larry.jones@sdrc.com>
+
 	* logmsg.c (do_editor): Correct previous change.
 
 2000-02-29  Larry Jones  <larry.jones@sdrc.com>
