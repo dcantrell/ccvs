@@ -153,6 +153,24 @@ static const char spacetab[] = {
 
 #define whitespace(c)	(spacetab[(unsigned char)c] != 0)
 
+/* A few generic thoughts on error handling, in particular the
+   printing of unexpected characters that we find in the RCS file
+   (that is, why we use '\x%x' rather than %c or some such).
+
+   * Avoiding %c means we don't have to worry about what is printable
+   and other such stuff.  In error handling, often better to keep it
+   simple.
+
+   * Hex rather than decimal or octal because character set standards
+   tend to use hex.
+
+   * Saying "character 0x%x" might make it sound like we are printing
+   a file offset.  So we use '\x%x'.
+
+   * Would be nice to print the offset within the file, but I can
+   imagine various portability hassles (in particular, whether
+   unsigned long is always big enough to hold file offsets).  */
+
 /* Parse an rcsfile given a user file name and a repository.  If there is
    an error, we print an error message and return NULL.  If the file
    does not exist, we return NULL without printing anything (I'm not
@@ -763,7 +781,8 @@ warning: duplicate key `%s' in version `%s' of RCS file `%s'",
 
 			op = *cp++;
 			if (op != 'a' && op  != 'd')
-			    error (1, 0, "unrecognized operation '%c' in %s",
+			    error (1, 0, "\
+unrecognized operation '\\x%x' in %s",
 				   op, rcs->path);
 			(void) strtoul (cp, (char **) &cp, 10);
 			if (*cp++ != ' ')
@@ -1571,7 +1590,8 @@ rcsbuf_getstring (rcsbuf, strp)
 
     /* PTR should now point to the start of a string. */
     if (c != '@')
-	error (1, 0, "expected @-string at `%c' in %s", c, rcsbuf->filename);
+	error (1, 0, "expected @-string at '\\x%x' in %s",
+	       c, rcsbuf->filename);
 
     /* Optimize the common case of a value composed of a single
        '@' string.  */
@@ -1898,7 +1918,8 @@ rcsbuf_getrevnum (rcsbuf, revp)
 
     if (! isdigit (c) && c != '.')
 	error (1, 0,
-	       "unexpected `%c' reading revision number in RCS file %s",
+	       "\
+unexpected '\\x%x' reading revision number in RCS file %s",
 	       c, rcsbuf->filename);
 
     *revp = ptr;
@@ -1921,7 +1942,8 @@ rcsbuf_getrevnum (rcsbuf, revp)
     while (isdigit (c) || c == '.');
 
     if (! whitespace (c))
-	error (1, 0, "unexpected `%c' reading revision number in RCS file %s",
+	error (1, 0, "\
+unexpected '\\x%x' reading revision number in RCS file %s",
 	       c, rcsbuf->filename);
 
     *ptr = '\0';
@@ -7087,7 +7109,8 @@ apply_rcs_changes (lines, diffbuf, difflen, name, addvers, delvers)
 	if (op != 'a' && op != 'd')
 	    /* Can't just skip over the deltafrag, because the value
 	       of op determines the syntax.  */
-	    error (1, 0, "unrecognized operation '%c' in %s", op, name);
+	    error (1, 0, "unrecognized operation '\\x%x' in %s",
+		   op, name);
 	df = (struct deltafrag *) xmalloc (sizeof (struct deltafrag));
 	df->next = dfhead;
 	dfhead = df;
