@@ -245,7 +245,7 @@ DISTFILES = ${OS2_HEADERS} ${OS2_SOURCES} \
   ${srcdir}${SL}Makefile.in ${srcdir}${SL}.cvsignore \
   ${srcdir}${SL}test-makefile Makefile
 
-all: cvs.exe
+all:
 
 .PHONY: all install uninstall
 all install uninstall:
