@@ -1,5 +1,10 @@
 2005-03-16  Derek Price  <derek@ximbiot.com>
 
+	* history.c (history_write): Remove test that always evaluates to
+	false.
+
+2005-03-16  Derek Price  <derek@ximbiot.com>
+
 	* server.c (become_proxy): Close pipe to primary when pipe from it
 	closes.
 
