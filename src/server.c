@@ -1895,6 +1895,9 @@ input_memory_error (buf)
 
 /* Execute COMMAND in a subprocess with the approriate funky things done.  */
 
+static struct fd_set_wrapper { fd_set fds; } command_fds_to_drain;
+static int max_command_fd;
+
 static void
 do_cvs_command (command)
     int (*command) PROTO((int argc, char **argv));
@@ -2019,13 +2022,18 @@ do_cvs_command (command)
 	int num_to_check;
 	int count_needed = 0;
 
+	FD_ZERO (&command_fds_to_drain.fds);
 	num_to_check = stdout_pipe[0];
+	FD_SET (stdout_pipe[0], &command_fds_to_drain.fds);
 	if (stderr_pipe[0] > num_to_check)
 	  num_to_check = stderr_pipe[0];
+	FD_SET (stderr_pipe[0], &command_fds_to_drain.fds);
 	if (protocol_pipe[0] > num_to_check)
 	  num_to_check = protocol_pipe[0];
+	FD_SET (protocol_pipe[0], &command_fds_to_drain.fds);
 	if (STDOUT_FILENO > num_to_check)
 	  num_to_check = STDOUT_FILENO;
+	max_command_fd = num_to_check;
 	/*
 	 * File descriptors are numbered from 0, so num_to_check needs to
 	 * be one larger than the largest descriptor.
@@ -3208,6 +3216,16 @@ serve_valid_requests (arg)
  * Delete temporary files.  SIG is the signal making this happen, or
  * 0 if not called as a result of a signal.
  */
+static int command_pid_is_dead;
+static void wait_sig (sig)
+     int sig;
+{
+  int status;
+  pid_t r = wait (&status);
+  if (r == command_pid)
+    command_pid_is_dead++;
+}
+
 void
 server_cleanup (sig)
     int sig;
@@ -3220,6 +3238,75 @@ server_cleanup (sig)
 
     if (dont_delete_temp)
 	return;
+
+    if (command_pid > 0) {
+      /* To avoid crashes on SunOS due to bugs in SunOS tmpfs
+	 triggered by the use of rename() in RCS, wait for the
+	 subprocess to die.  Unfortunately, this means draining output
+	 while waiting for it to unblock the signal we sent it.  Yuck!  */
+      int status;
+      pid_t r;
+
+      signal (SIGCHLD, wait_sig);
+      if (sig)
+	/* Perhaps SIGTERM would be more correct.  But the child
+	   process will delay the SIGINT delivery until its own
+	   children have exited.  */
+	kill (command_pid, SIGINT);
+      /* The caller may also have sent a signal to command_pid, so
+	 always try waiting.  First, though, check and see if it's still
+	 there....  */
+    do_waitpid:
+      r = waitpid (command_pid, &status, WNOHANG);
+      if (r == 0)
+	;
+      else if (r == command_pid)
+	command_pid_is_dead++;
+      else if (r == -1)
+	switch (errno) {
+	case ECHILD:
+	  command_pid_is_dead++;
+	  break;
+	case EINTR:
+	  goto do_waitpid;
+	}
+      else
+	/* waitpid should always return one of the above values */
+	abort ();
+      while (!command_pid_is_dead) {
+	struct timeval timeout;
+	struct fd_set_wrapper readfds;
+	char buf[100];
+	int i;
+
+	/* Use a non-zero timeout to avoid eating up CPU cycles.  */
+	timeout.tv_sec = 2;
+	timeout.tv_usec = 0;
+	readfds = command_fds_to_drain;
+	switch (select (max_command_fd + 1, &readfds.fds,
+			(fd_set *)0, (fd_set *)0,
+			&timeout)) {
+	case -1:
+	  if (errno != EINTR)
+	    abort ();
+	case 0:
+	  /* timeout */
+	  break;
+	case 1:
+	  for (i = 0; i <= max_command_fd; i++)
+	    {
+	      if (!FD_ISSET (i, &readfds.fds))
+		continue;
+	      /* this fd is non-blocking */
+	      while (read (i, buf, sizeof (buf)) >= 1)
+		;
+	    }
+	  break;
+	default:
+	  abort ();
+	}
+      }
+    }
 
     /* This might be set by the user in ~/.bashrc, ~/.cshrc, etc.  */
     temp_dir = getenv ("TMPDIR");
