@@ -1,5 +1,11 @@
 2003-07-16  Derek Price  <derek@ximbiot.com>
 
+	* pathmax.m4: New file.
+	* Makefile.am (EXTRA_DIST): Add new file.
+	* Makefile.in: Regenerated.
+
+2003-07-16  Derek Price  <derek@ximbiot.com>
+
 	* getline.m4: New file based on GNULIB and resubmitted to GNULIB.
 	* getnline.m4: Ditto.
 
