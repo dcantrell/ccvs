@@ -88,7 +88,7 @@ static Key_schedule sched;
 #include <gssapi/gssapi_generic.h>
 #endif
 
-#ifndef GSS_C_NT_HOSTBASED_SERVICE
+#ifndef HAVE_GSS_C_NT_HOSTBASED_SERVICE
 #define GSS_C_NT_HOSTBASED_SERVICE gss_nt_service_name
 #endif
 
