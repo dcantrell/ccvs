@@ -2126,6 +2126,8 @@ serve_kopt (char *arg)
 static void
 serve_checkin_time (char *arg)
 {
+    struct timespec t;
+
     if (error_pending ()
 #ifdef PROXY_SUPPORT
 	|| proxy_log
@@ -2142,13 +2144,15 @@ serve_checkin_time (char *arg)
 	return;
     }
 
-    checkin_time = get_date (arg, NULL);
-    if (checkin_time == (time_t)-1)
+    if (!get_date (&t, arg, NULL))
     {
 	if (alloc_pending (80 + strlen (arg)))
 	    sprintf (pending_error_text, "E cannot parse date %s", arg);
 	return;
     }
+
+    /* Truncate any nanoseconds returned by get_date().  */
+    checkin_time = t.tv_sec;
     checkin_time_valid = 1;
 }
 

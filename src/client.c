@@ -1271,13 +1271,17 @@ static time_t stored_modtime;
 static void
 handle_mod_time (char *args, size_t len)
 {
+    struct timespec newtime;
     if (stored_modtime_valid)
 	error (0, 0, "protocol error: duplicate Mod-time");
-    stored_modtime = get_date (args, NULL);
-    if (stored_modtime == (time_t) -1)
-	error (0, 0, "protocol error: cannot parse date %s", args);
-    else
+    if (get_date (&newtime, args, NULL))
+    {
+	/* Truncate nanoseconds.  */
+	stored_modtime = newtime.tv_sec;
 	stored_modtime_valid = 1;
+    }
+    else
+	error (0, 0, "protocol error: cannot parse date %s", args);
 }
 
 

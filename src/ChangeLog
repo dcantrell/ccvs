@@ -1,5 +1,12 @@
 2004-11-01 Derek Price <derek@ximbiot.com>
 
+	* cvs.h: Remove getdate proto in favor of including getdate.h.
+	* client.c (handle_mod_time), history.c (history), main.c (Make_Date,
+	format_date_alloc), rcs.c (RCS_getrevtime), server.c
+	(serve_checkin_time): Use new get_date API.
+
+2004-11-01 Derek Price <derek@ximbiot.com>
+
 	* sanity.sh (rcslib): Fix typo in path.
 
 2004-11-01 Derek Price <derek@ximbiot.com>
