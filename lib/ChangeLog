@@ -1,3 +1,8 @@
+2002-08-08  Derek Price  <oberon@umich.edu>
+
+	* regex.c: Removed unused `compile_range' declaration.
+	(Patch from John Tytgat <John.Tytgat@aaug.net>.)
+	
 2002-05-09  Larry Jones  <lawrence.jones@eds.com>
 
 	* getline.c (getstr): Make terminator int instead of char to avoid
