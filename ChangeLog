@@ -1,3 +1,7 @@
+1999-05-07  Jim Kingdon  <http://www.cyclic.com>
+
+	* TESTS: Add note about send-expect style interaction.
+
 1999-04-26  Jim Kingdon
 
 	* cvsnt.mak: Revert to the version before today's changes

@@ -146,3 +146,8 @@ workaround).
 
 b.  pass stdin to the program under test (sanity.sh, again, handles
 this by bypassing dotest).
+
+c.  have a send-expect type dialog with the program under test
+    (e.g. see server-7 or pserver-4 which want to talk the CVS
+    protocol, or the many tests which need to answer the prompt of "cvs
+    release", e.g. deep-5).
