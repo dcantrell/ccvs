@@ -135,13 +135,16 @@ admin (argc, argv)
     optind = 0;
     only_k_option = 1;
     while ((c = getopt (argc, argv,
-			"+ib::c:a:A:e::l::u::LUn:N:m:o:s:t::IqxV:k:")) != -1)
+			"+ib::c:a:A:e::l::H::u::LUn:N:m:o:s:t::IqxV:k:")) != -1)
     {
 	if (c != 'k')
 	    only_k_option = 0;
 
 	switch (c)
 	{
+	    case 'H':
+		usage (admin_usage);
+		break;
 	    case 'i':
 		/* This has always been documented as useless in cvs.texinfo
 		   and it really is--admin_fileproc silently does nothing
