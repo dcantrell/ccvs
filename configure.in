@@ -84,6 +84,26 @@ AC_CHECK_FUNC(gethostname, :, LIBOBJS="$LIBOBJS hostname.o")
 AC_FUNC_UTIME_NULL
 AC_FUNC_ALLOCA
 AC_SYS_LONG_FILE_NAMES
+
+AC_MSG_CHECKING([for working fnmatch function])
+AC_CACHE_VAL(ccvs_cv_sys_working_fnmatch,
+[AC_TRY_RUN([
+#include <fnmatch.h>
+int
+main ()
+{
+  exit ((fnmatch ("a", "a", FNM_FILE_NAME) == 0
+	 && fnmatch ("a", "b", FNM_FILE_NAME) == FNM_NOMATCH)
+	? 0 : 1);
+}],
+ccvs_cv_sys_working_fnmatch=yes,
+ccvs_cv_sys_working_fnmatch=no,
+ccvs_cv_sys_working_fnmatch=no)])
+if test $ccvs_cv_sys_working_fnmatch = no; then
+  LIBOBJS="$LIBOBJS fnmatch.o"
+fi
+AC_MSG_RESULT($ccvs_cv_sys_working_fnmatch)
+
 dnl
 dnl set $(KRB4) from --with-krb4=value -- WITH_KRB4
 dnl
