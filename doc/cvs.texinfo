@@ -7156,7 +7156,8 @@ assigned with @code{cvs admin -s}---see @ref{admin options}.
 @item Local keyword
 The @code{LocalKeyword} option in the @file{CVSROOT/config} file
 may be used to specify a local keyword which is to be
-used as an alias for one of the other keywords. For
+used as an alias for one of the keywords: $@splitrcskeyword{Id}$,
+$@splitrcskeyword{Header}$, or $@splitrcskeyword{CVSHeader}$. For
 example, if the @file{CVSROOT/config} file contains
 a line with @code{LocalKeyword=MYBSD=CVSHeader}, then a
 file with the local keyword $@splitrcskeyword{MYBSD}$ will be
