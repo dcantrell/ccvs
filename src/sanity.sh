@@ -2258,11 +2258,13 @@ rcsmerge: warning: conflicts during merge'
 
 		cd ..
 
-		if ${CVS} co -jjunk-1_0 -jjunk-2_0 first-dir  >>${LOGFILE} 2>&1; then
-			echo "PASS: test 113" >>${LOGFILE}
-		else
-			echo "FAIL: test 113" | tee -a ${LOGFILE} ; exit 1
-		fi
+		dotest import-113 \
+"${testcvs} -q co -jjunk-1_0 -jjunk-2_0 first-dir" \
+'RCS file: /tmp/cvs-sanity/cvsroot/first-dir/imported-file2,v
+retrieving revision 1.1.1.1
+retrieving revision 1.1.1.2
+Merging differences between 1.1.1.1 and 1.1.1.2 into imported-file2
+rcsmerge: warning: conflicts during merge'
 
 		cd first-dir
 
@@ -2280,11 +2282,16 @@ rcsmerge: warning: conflicts during merge'
 			fi
 		done
 
-		if cat imported-file2 | grep '===='  >> ${LOGFILE}; then
-			echo "PASS: test 116" >>${LOGFILE}
-		else
-			echo "FAIL: test 116" | tee -a ${LOGFILE} ; exit 1
-		fi
+		dotest import-116 'cat imported-file2' \
+'imported file2
+<<<<<<< imported-file2
+import should not expand \$Id$
+local-change
+=======
+import should not expand \$Id$
+rev 2 of file 2
+>>>>>>> 1\.1\.1\.2'
+
 		cd .. ; rm -rf first-dir ${CVSROOT_DIRNAME}/first-dir
 		rm -rf import-dir
 		;;
