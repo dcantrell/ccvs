@@ -1,4 +1,22 @@
+Wed Aug 30 18:45:28 1995  Jim Blandy  <jimb@totoro.cyclic.com>
+
+	* Makefile.in (SUBDIRS): Uncomment windows-NT.
+
+	* INSTALL: Added Windows NT to list of supported platforms.
+	Added Windows NT installation instructions.
+
 Tue Aug 29 16:08:01 1995  Jim Blandy  <jimb@totoro.cyclic.com>
+
+	* cvsnt.mak: Completed Windows NT port.
+
+	* configure.in (SERVER_SUPPORT, CLIENT_SUPPORT): Arrange for these
+	to get #defined.  In the config.h file for the Windows NT port, we
+	only #define CLIENT_SUPPORT.
+	* config.h.in (SERVER_SUPPORT, CLIENT_SUPPORT): Add #undefs for
+        these.
+
+	* configure.in (AC_OUTPUT): Build the Makefile for the windows-NT
+	subdirectory too.
 
 	* cvsnt.vcp: Removed.  This doesn't store any information needed
 	to compile CVS; it seems to be mostly programmer preference stuff.
