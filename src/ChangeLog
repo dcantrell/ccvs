@@ -1,3 +1,9 @@
+Sat Jan 27 16:26:30 1996  Karl Fogel  (kfogel@floss.cyclic.com)
+
+        * client.c (notified_a_file): use rename_file() instead of
+        rename() (but temporarily set `noexec' to 0 so it runs
+        unconditionally).
+
 Fri Jan 26 00:14:00 1996  Karl Fogel  <kfogel@floss.red-bean.com>
 
         * server.c: renamed `dirname' to `dir_name', to avoid conflicts
