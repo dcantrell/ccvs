@@ -11,8 +11,6 @@
 
 #ifdef CVS_LOGIN   /* This covers the rest of the file. */
 
-#include <pwd.h>   /* todo: autoconfify? */
-
 #ifndef lint
 static const char rcsid[] = "$CVSid: @(#)login.c 1.1 95/10/01 $";
 USE(rcsid);
