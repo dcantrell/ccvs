@@ -159,7 +159,8 @@ xstrdup (str)
  *   True if any newlines were removed, false otherwise.
  */
 int
-strip_trailing_newlines (char *str)
+strip_trailing_newlines (str)
+    char *str;
 {
     int len, origlen;
     len = origlen = strlen (str) - 1;
