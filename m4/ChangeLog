@@ -1,5 +1,9 @@
 2003-05-21  Derek Price  <derek@ximbiot.com>
 
+	* unlocked-io.m4: New file from GNULIB.
+
+2003-05-21  Derek Price  <derek@ximbiot.com>
+
 	* realloc.m4: New file from GNULIB.
 
 2003-05-20  Derek Price  <derek@ximbiot.com>
