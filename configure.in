@@ -159,7 +159,6 @@ AC_HEADER_SYS_WAIT
 AC_CHECK_HEADERS(\
 	direct.h \
 	fcntl.h \
-	fnmatch.h \
 	io.h \
 	memory.h \
 	ndbm.h \
@@ -221,6 +220,7 @@ gl_C_RESTRICT
 gl_EXITFAIL
 gl_FUNC_ALLOCA
 gl_FUNC_ATEXIT
+gl_FUNC_FNMATCH_POSIX
 gl_FUNC_GETHOSTNAME
 gl_FUNC_MEMMOVE
 gl_FUNC_STRERROR
@@ -551,13 +551,6 @@ AC_SEARCH_LIBS(getspnam, sec gen, AC_DEFINE(HAVE_GETSPNAM, 1,
 
 AC_FUNC_UTIME_NULL
 AC_SYS_LONG_FILE_NAMES
-
-AC_FUNC_FNMATCH
-if test "$ac_cv_func_fnmatch_works" = no; then
-  AC_LIBOBJ(fnmatch)
-  AC_CONFIG_LINKS(lib/fnmatch.h:lib/fnmatch.h.in)
-  AC_LIBSOURCE(fnmatch.h.in)
-fi
 
 dnl for the buffer routine replacements
 AC_FUNC_MMAP

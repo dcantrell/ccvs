@@ -1,5 +1,15 @@
 2004-04-14  Derek Price  <derek@ximbiot.com>
 
+	Update to current fnmatch module from GNULIB.
+
+	* configure.in: Call gl_FUNC_FNMATCH_POSIX.
+	(AC_CHECK_HEADERS): Don't bother checking for fnmatch.h - we can assume
+	it.
+	* srclist.txt: Note origins of fnmatch.
+	* aclocal.m4, config.h.in, configure, Makefile.in: Regenerated.
+
+2004-04-14  Derek Price  <derek@ximbiot.com>
+
 	* Makefile.am (EXTRA_DIST): Remove cvsnt.dep.
 	* Makefile.in: Regenerated.
 
