@@ -1,3 +1,7 @@
+2003-01-23  Larry Jones  <lawrence.jones@eds.com>
+
+	* wait.h (WCOREDUMP): New macro.
+
 2002-12-27  Derek Price  <derek@ximbiot.com>
 
 	* getdate.c: Regenerated with Bison 1.35.
