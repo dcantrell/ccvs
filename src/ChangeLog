@@ -1,3 +1,7 @@
+Thu Oct 19 14:58:40 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* root.c (Create_Root): If noexec, don't create CVS/Root.
+
 Wed Oct 18 11:19:40 1995  J.T. Conklin  <jtc@slave.cygnus.com>
 
 	* lock.c (unlock): Change order of comparison so that Check_Owner

@@ -162,6 +162,9 @@ Create_Root (dir, rootdir)
     FILE *fout;
     char tmp[PATH_MAX];
 
+    if (noexec)
+	return;
+
     /* record the current cvs root */
 
     if (rootdir != NULL)
