@@ -1,3 +1,8 @@
+2000-01-02  Karl Fogel  <kfogel@red-bean.com>
+
+	* pwd.c (getlogin): try to find login name in environment
+	variables before asking the operating system.
+
 1999-02-26  Jim Kingdon  <http://www.cyclic.com>
 
 	* options.h: Make RELATIVE_REPOS the default, as in
