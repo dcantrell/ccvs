@@ -1,5 +1,14 @@
 Sun Mar 16 10:18:28 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* rcscmds.c (RCS_checkin): Preserve the mode of the rcsfile.
+	RCS_CI usually, but not always, does this for us.
+	* commit.c (fix_rcs_modes): Replace algorithm with a more
+	CVSUMASK-friendly one.
+	* sanity.sh (modes): Update tests modes-5, modes-7, modes-10, and
+	modes-15 so they test that CVSUMASK is honored.
+
+Sun Mar 16 10:18:28 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
 	* sanity.sh (modes): New tests modes-7a and modes-7b test behavior
 	if one manually changes the modes in the repository.
 
