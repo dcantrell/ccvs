@@ -1,5 +1,14 @@
 2004-06-23  Derek Price  <derek@ximbiot.com>
 
+	Checkout and probably other read-only commands now work.
+
+	* server.c (serve_expand_modules): Discard arguments even when
+	reprocessing.
+	(serve_argument): Always process arguments.
+	(serve_wrapper_sendme_rcs_options): Process in first pass.
+
+2004-06-23  Derek Price  <derek@ximbiot.com>
+
 	Operate correctly in non-write proxy mode, delaying processing of most
 	commands until after the `Root' request is received.
 
